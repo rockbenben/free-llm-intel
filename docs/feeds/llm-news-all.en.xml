@@ -453,6 +453,86 @@ jobs:
 <ul><li><a href="https://openrouter.ai/docs/cookbook/coding-agents/automatic-code-review">Automatic code review cookbook</a></li><li><a href="https://openrouter.ai/docs/guides/features/server-tools/shell">Shell tool guide</a> and <a href="https://openrouter.ai/docs/guides/features/containers">Containers guide</a></li><li><a href="https://openrouter.ai/docs/guides/features/server-tools/apply-patch">Apply Patch tool guide</a></li><li><a href="https://openrouter.ai/docs/guides/features/files-api">Files API guide</a></li><li><a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval documentation</a></li><li><a href="https://openrouter.ai/blog/tutorials/how-to-gate-pull-requests-on-llm-evals-in-ci/">How to gate pull requests on LLM evals in CI</a></li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>[DeepInfra] MiMo-V2.6-Pro Is Now Available on DeepInfra</title>
+      <link>https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra?li=1</guid>
+      <pubDate>Sun, 01 Nov 2026 00:00:00 +0000</pubDate>
+      <category>DeepInfra</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.en.xml">DeepInfra</source>
+      <content:encoded><![CDATA[<h1>MiMo-V2.6-Pro Is Now Available on DeepInfra</h1>
+<p>Published on 2026.11.01 by DeepInfra</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/MiMo-V2.6-Pro-Announcement-Banner.png" alt="MiMo-V2.6-Pro Is Now Available on DeepInfra"></p>
+<p>From 19.0 to 71.9 on DeepSWE — that’s the jump Xiaomi reports between MiMo-V2.5-Pro and <a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro</a>, its new flagship, on real-world software engineering tasks. That puts it, on Xiaomi’s own published figures, alongside Claude Opus 5 (74.0) and GPT-5.6 Sol (73.0) on a benchmark designed to test repository-level coding rather than toy problems. Built by Xiaomi’s MiMo team, it’s a sparse Mixture-of-Experts model with 1.02T total parameters and 42B activated per forward pass, designed for long-horizon agentic workloads across a 1-million-token context window. It handles text, image, video, and audio natively — no bolt-on adapters.</p>
+<p>The training approach is what makes the architecture choices pay off. Xiaomi calls it “You Only RL Once”: a single RL run that mixes coding, general agent, visual, and cybersecurity tasks in the same batch rather than running separate per-domain phases — so strategies transfer across domains within one training run. That shows up in Xiaomi’s own reported numbers: AutomationBench goes from 16.0 to 53.1, CyberGym from 40.0 to 94.0, versus the previous version. It ships under an MIT license, which removes the licensing friction that typically complicates production deployments at this parameter scale. <a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro</a> is now available on DeepInfra.</p>
+<h2>What Makes This Model Different</h2>
+<p>MiMo-V2.6-Pro is a sparse Mixture-of-Experts model with 1.02T total parameters, but only 42B are activated per forward pass. The LLM backbone runs 70 layers (60 sliding-window attention / 10 global attention), with 384 routed experts and 8 activated per token — no shared experts. It’s natively omnimodal, processing text, image, video, and audio through dedicated encoders: a 681M-parameter MiMo ViT for vision and two audio encoders (an AudioTokenizer at 308M params and an audio patch encoder at 127M). The context window is 1,048,576 tokens (1M), which matters practically for long repository ingestion, multi-tool agent traces, and multi-session runs.</p>
+<p>The training story is worth understanding. Xiaomi calls it “You Only RL Once”: a single mixed RL run across coding, general agent tasks, visual, and cybersecurity domains simultaneously — not separate per-domain fine-tuning passes. Tasks are mixed in the same batch, so the model can transfer reasoning strategies across domains. This is complemented by Groupwise Agentic Grading, a self-improvement loop that builds task-specific rubrics from contrasting rollouts and re-ranks passing trajectories to steer toward shorter, more token-efficient solutions. A speculative decoder (5-layer SWA MTP drafter) predicts 7 subsequent tokens per forward pass, improving throughput without changing output quality.</p>
+<p>The improvement over MiMo-V2.5-Pro is substantial across the board, per Xiaomi’s own benchmark comparisons:</p>
+<table><thead><tr><th><strong>Benchmark</strong></th><th><strong>V2.5 Pro</strong></th><th><strong>V2.6 Pro</strong></th><th><strong>Δ</strong></th></tr></thead><tbody><tr><td>DeepSWE v1.1</td><td>19.0</td><td>71.9</td><td>+52.9</td></tr><tr><td>AutomationBench v1.0.6</td><td>16.0</td><td>53.1</td><td>+37.1</td></tr><tr><td>Terminal Bench 4.0</td><td>1.5</td><td>34.9</td><td>+33.4</td></tr><tr><td>JobBench</td><td>25.0</td><td>62.0</td><td>+37.0</td></tr><tr><td>CyberGym</td><td>40.0</td><td>94.0</td><td>+54.0</td></tr><tr><td>MiMo Cyber Bench</td><td>0.0</td><td>80.2</td><td>+80.2</td></tr></tbody></table>
+<p>Those aren’t incremental gains — the cybersecurity and agentic terminal benchmarks in particular suggest a substantial capability shift rather than tuning on familiar evals.</p>
+<p>Against frontier competitors, V2.6-Pro is competitive on agentic tasks while trailing on others. On Xiaomi’s published benchmark comparisons, it beats Claude Opus 5 (50.3) and GPT-5.6 Sol (45.8) on AutomationBench with a score of 53.1. On MiMo VisualCoding (72.3) it edges out Claude Opus 5 (70.0). It falls behind on ExploitBench (47.9 vs. 70–78.5 for Claude Opus 5 and GPT-5.6 Sol) and Terminal Bench 4.0 (34.9 vs. 39.9–49.0). The model’s strength is clearly in multi-step agentic workflows rather than single-turn reasoning benchmarks.</p>
+<p>This release also introduces MiMo-V2.6-Pro-UltraSpeed — a serving mode built for substantially faster output than standard Pro. It’s not a separate model; it’s the same Pro checkpoint served differently, designed for real-time and latency-sensitive workflows. Pricing and provider availability for UltraSpeed vary by provider and are worth checking directly on the <a href="https://deepinfra.com/pricing">DeepInfra pricing page</a> before committing to a workload. It runs at a higher cost per token but is available both via API and through MiMo Desktop.</p>
+<h2>Getting Started on DeepInfra</h2>
+<p>MiMo-V2.6-Pro is available now on DeepInfra. Pricing is $0.435 per million input tokens (cache miss), $0.0036 per million cached input tokens, and $0.87 per million output tokens.</p>
+<p>If your workload involves long, repetitive context — agent traces, large codebases, multi-turn sessions — the <a href="https://docs.deepinfra.com/chat/prompt-caching">prompt cache</a> makes a real difference at that input price.</p>
+<p>DeepInfra exposes the model through an <a href="https://docs.deepinfra.com/quickstart">OpenAI-compatible API</a> with usage-based billing and no infrastructure to manage. It plugs in wherever you already use the OpenAI SDK. Private endpoint deployment is also available through the DeepInfra dashboard for workloads that need dedicated capacity. DeepInfra operates with a zero-retention policy on all inference requests and is SOC 2 and ISO 27001 certified.</p>
+<p>Here’s a minimal example to get your first call running. Swap in your DeepInfra API key and you’re set:</p>
+<h3>Python</h3>
+<pre><code>from openai import OpenAI
+ 
+client = OpenAI(
+    api_key=&quot;$DEEPINFRA_TOKEN&quot;,
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+)
+ 
+response = client.chat.completions.create(
+    model=&quot;XiaomiMiMo/MiMo-V2.6-Pro&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Outline a research plan for synthesizing a MOF optimized for PFAS adsorption.&quot;}],
+    temperature=1.0,
+    top_p=0.95,
+)
+print(response.choices[0].message.content)copy</code></pre>
+<p>Shell</p>
+<pre><code>curl &quot;https://api.deepinfra.com/v1/openai/chat/completions&quot; \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Authorization: Bearer $DEEPINFRA_TOKEN&quot; \
+    -d '{
+          &quot;model&quot;: &quot;XiaomiMiMo/MiMo-V2.6-Pro&quot;,
+          &quot;messages&quot;: [
+            {
+                &quot;role&quot;: &quot;user&quot;,
+                &quot;content&quot;: &quot;Outline a research plan for synthesizing a MOF optimized for PFAS adsorption.&quot;
+            }
+          ],
+          &quot;temperature&quot;: 1.0,
+          &quot;top_p&quot;: 0.95
+      }'copy</code></pre>
+<p>JavaScript</p>
+<pre><code>import OpenAI from &quot;openai&quot;;
+ 
+const openai = new OpenAI({
+  apiKey: &quot;$DEEPINFRA_TOKEN&quot;,
+  baseURL: &quot;https://api.deepinfra.com/v1/openai&quot;,
+});
+ 
+const response = await openai.chat.completions.create({
+  model: &quot;XiaomiMiMo/MiMo-V2.6-Pro&quot;,
+  messages: [{ role: &quot;user&quot;, content: &quot;Outline a research plan for synthesizing a MOF optimized for PFAS adsorption.&quot; }],
+  temperature: 1.0,
+  top_p: 0.95,
+});
+console.log(response.choices[0].message.content);copy</code></pre>
+<p>Xiaomi’s own deployment guidance recommends temperature=1.0 and top_p=0.95 — worth sticking to those defaults, especially for agentic and reasoning workloads where the model benefits from the full output distribution. Head to the MiMo-V2.6-Pro page on DeepInfra to grab your API key and start building.</p>
+<h2>Conclusion</h2>
+<p>MiMo-V2.6-Pro is a serious agentic model — the benchmark jumps reflect genuine capability changes rather than eval overfitting, and the MIT license means you can ship it without legal back-and-forth. The combination of a 1M-token context window, native <a href="https://deepinfra.com/blog/deepinfra-function-calling-guide">function calling</a>, and training that explicitly optimizes for multi-step tool use makes it a reasonable fit for the class of problems that single-turn models still struggle with: long-running coding agents, automated security workflows, and complex multi-session tasks that require coherent reasoning across large contexts.</p>
+<p>If you’re building anything in the agentic space, this is worth running through your eval suite — and worth comparing against other recent releases like <a href="https://deepinfra.com/blog/deepseek-v4-flash-vs-qwen3-6-vs-glm-4-6">DeepSeek V4 Flash and Qwen3.6</a> or the <a href="https://deepinfra.com/blog/kimi-k3-vs-claude-opus-4-8-vs-gpt-5-6-sol">Kimi K3 vs. Claude Opus 4.8 vs. GPT-5.6 Sol</a> lineup. Start at the <a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro model page</a> on DeepInfra, or browse the full <a href="https://docs.deepinfra.com/models">model catalog</a> for other options.</p>
+<p>Related articles</p>
+<p><a href="https://deepinfra.com/blog/qwen3-coder-480b-a35b-api-benchmarks"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/qwen-3-coder-480_res.webp" alt="Qwen3 Coder 480B A35B API Benchmarks: Latency &amp; Cost"></a><a href="https://deepinfra.com/blog/qwen3-coder-480b-a35b-api-benchmarks">Qwen3 Coder 480B A35B API Benchmarks: Latency &amp; Cost</a>&lt;p&gt;About Qwen3 Coder 480B A35B Instruct Qwen3 Coder 480B A35B Instruct is a state-of-the-art large language model developed by the Qwen team at Alibaba Cloud, specifically designed for code generation and agentic coding tasks. It is a Mixture-of-Experts (MoE) model with 480 billion total parameters and 35 billion active parameters per inference, enabling high performance [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/inference-economics-ai-costs-at-scale"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/Interence-economics_rs.webp" alt="Inference Economics: True AI Costs at Scale"></a><a href="https://deepinfra.com/blog/inference-economics-ai-costs-at-scale">Inference Economics: True AI Costs at Scale</a>&lt;p&gt;Most teams discover their inference economics the same way: a production bill arrives that looks nothing like the number they expected. The per-token price seemed small enough during testing. Then real traffic showed up, agents started chaining calls, RAG pipelines bloated the context window, and suddenly the math looked completely different. Token prices have fallen [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/best-api-providers-for-nvidia-nemotron-3-super-120b"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/best-api.png" alt="Best API Providers for NVIDIA Nemotron 3 Super 120B"></a><a href="https://deepinfra.com/blog/best-api-providers-for-nvidia-nemotron-3-super-120b">Best API Providers for NVIDIA Nemotron 3 Super 120B</a>&lt;p&gt;Nemotron 3 Super 120B is available across a growing number of hosted APIs and deployment platforms. At 120B total parameters with 12B active per inference pass, the right provider matters: latency, throughput, and cost vary significantly depending on where you run it. This guide covers the top options by use case — from fully managed [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">View all</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>[OpenRouter] How to Build Your Own Always-On AI Agent</title>
       <link>https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/?li=1</guid>
@@ -10548,78 +10628,6 @@ y = model(Tensor.ones([2, 8, 3]))             # same op, now compiled</code></pr
 <p>Oct 21, 2026</p>
 <h3>Introducing Claude Duet</h3>
 <p>A research preview is available by waitlist today, starting with US Pro and Max subscribers.</p>
-<p>Article</p>
-<p>Oct 21, 2026</p>
-<h3>Claude Security now scans continuously and tracks fixes</h3>
-<p>Claude Security now keeps up with your repositories as code changes, tracks findings until they’re fixed, learns from the context your team adds, and connects to your tools through an API and MCP. Available in public beta for Claude Enterprise customers.</p>
-<p>Claude Security</p>
-<p>Article</p>
-<p>Oct 15, 2026</p>
-<h3>Code Review is now generally available</h3>
-<p>Catch more bugs before they reach production.</p>
-<p>Claude Code</p>
-<p>Article</p>
-<p>Oct 8, 2026</p>
-<h3>Build live dashboards and animate explainers with Claude</h3>
-<p>Claude Dashboards and Claude Motion are now in beta. Docs, Slides, and Design are out of beta and on every Claude plan, including Free.</p>
-<p>Claude apps</p>
-<p>Claude Design</p>
-<p>2 more</p>
-<p>: Claude Cowork and Claude Code</p>
-<p>Claude CoworkClaude Code</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
-<h3>Get the developer newsletter</h3>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Anthropic Claude] Introducing Claude Duet</title>
-      <link>https://claude.com/resources/articles/claude-duet</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/claude-duet?li=1</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <category>Anthropic Claude</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.en.xml">Anthropic Claude</source>
-      <content:encoded><![CDATA[<p>Today, we’re opening a research preview of Claude Duet, a new app where Claude works as a proactive agent. It comes to you with what needs your attention, completes tasks you ask of it, keeps working even when you step away, and checks with you before it acts on your behalf. We built Claude Duet for professionals and small business owners with more on their plates than they can track.</p>
-<p>It’s available as a standalone app on iOS and Android, and on claude.ai. For this research preview, Claude Duet is included in Pro and Max plans and uses the same usage limits as the rest of Claude. To get access, <a href="https://claude.com/product/claude-duet">join the waitlist (opens in new tab)</a>.</p>
-<h2>Put your attention where it matters most</h2>
-<p>We designed Claude Duet to be a partner you can trust. Professionals of all kinds have to juggle many decisions a day, and we think they’ll find Claude Duet most useful. It helps you prioritize where to spend your time and energy, and to leave room for the ambitious projects that felt impossible or daunting before.</p>
-<p>What makes Claude Duet so helpful is its judgment. We designed it around <a href="https://www.anthropic.com/claude-opus-5-5">Claude Opus 5.5 (opens in new tab)</a> and built it to be resourceful and to decide what needs you, what can wait, and when to check with you first.</p>
-<p>Each morning, it sends you a short brief on the most important items across your connected apps. Throughout the day, it keeps tabs on those apps and messages you only when something needs your attention. You can also hand it tasks of all shapes—from simple administrative tasks of scheduling meetings to more complex ones, such as building dashboards with dozens of tools, creating financial or sales forecasts, prototyping, and building web apps.</p>
-<h2>Safety and discretion are built in</h2>
-<p>Claude Duet draws on years of security, safety, and privacy work on agents, both our own and the infrastructure businesses use to run theirs:</p>
-<ul><li>Claude Duet draws on our <a href="https://www.anthropic.com/research/trustworthy-agents">framework for trustworthy agents (opens in new tab)</a>, which also guides agents like Claude Code and Claude in Chrome.</li><li>Claude Duet’s handling of credentials follows the design we use for <a href="https://www.anthropic.com/engineering/managed-agents">Claude Managed Agents (opens in new tab)</a>, so it never directly sees your passwords or sign-in tokens.</li><li>Actions are approved by our <a href="https://www.anthropic.com/engineering/claude-code-auto-mode">auto mode classifier (opens in new tab)</a>, the same safeguard that protects Claude and Claude Code from taking steps you didn’t ask for.</li><li>Claude Duet’s defenses against hidden instructions and prompt injection come from our <a href="https://www.anthropic.com/research/prompt-injection-defenses">browser-use research (opens in new tab)</a>, and our models and safeguards also cover this more broadly.</li><li>We run adversarial tests for Claude Duet’s security infrastructure. Red teams and an external firm penetration tested Claude Duet, and it’s covered by our public <a href="https://hackerone.com/anthropic">bug bounty program (opens in new tab)</a>.</li></ul>
-<p><strong>How Duet handles sensitive information.</strong> We’re also releasing Claude Duet with a new dedicated classifier and safety system prompt that checks each message and guards against leaks of sensitive information. An agent that reads email and sends messages for you is constantly deciding where information should go. This new classifier and prompt are designed to reject requests to share the strictest tier of information, including credit card numbers and government identification. Other sensitive information, such as health or personal finances, are let through only when you’ve explicitly instructed Claude Duet to send it.</p>
-<p>We’re continuing to develop and strengthen these protections, and will share more details about how Claude Duet is designed for safety in the coming days.</p>
-<h2>How testers are using Claude Duet</h2>
-<p>People at Anthropic have been using Claude Duet to accomplish more, but also to leave more room for thinking and being present. Boris Cherny, who leads our Claude Code team, talks through his mental to-do list with Claude Duet on walks, instead of saving the work for his desk. Chelsea Larsson, who leads our model and product behavior design team, hands Claude Duet her to-do list before leaving to be with her kids and it saves the results for an evening report. And the team behind Claude Duet uses it to build the product. Karan Ahuja, who leads the team, works with it to schedule user interviews, partner with him on prototypes, and even ship code.</p>
-<p>We gave small business owners and entrepreneurs early access to Claude Duet, and some have been using it to help run their businesses. Here’s what some of them said:</p>
-<p><img src="https://assets.claude.com/04a24f1e5f837cd4772f819fdf835bf695d545e0.jpg?w=168&amp;q=75&amp;fm=webp&amp;fit=max" alt=""></p>
-<blockquote>Jess gets a rundown from Claude Duet each morning. One day, without being asked, it flagged a property showing that was on her calendar for the wrong day. “[This is] exactly the kind of thing I want caught without having to ask,” she said.</blockquote>
-<p>Jess Provencher, broker and owner, Pro Homes</p>
-<p><img src="https://assets.claude.com/28f5d3327f8406423e470308445e55db43409b73.jpg?w=168&amp;q=75&amp;fm=webp&amp;fit=max" alt=""></p>
-<blockquote>Amin owns Shahs of Kabob in South Florida with about 110 employees. He’s used Claude Duet for accounting, customer support, and marketing, and has worked through his invoices store by store. “It brings it all together,” he said. “I don’t need to open up 100 tabs.”</blockquote>
-<p>Amin Ebrahimi, owner, Shahs of Kabob</p>
-<p><img src="https://assets.claude.com/f1e82e9c902af913a2d794c587841fdf39cfda50.jpg?w=168&amp;q=75&amp;fm=webp&amp;fit=max" alt=""></p>
-<blockquote>Mya had a call coming up with a potential client. Claude Duet saw it on her calendar and prepared a brief. It also noticed the call fell right before her flight and offered to move it. “I didn’t realize that it was right before my flight,” she said. “I love that proactivity.”</blockquote>
-<p>Mya Dalton, a brand strategist</p>
-<h2>How Claude Duet works</h2>
-<p><strong>Your context from Claude is the foundation.</strong> Claude Duet carries over your memory, skills, and connected apps from your Claude account, so setting it up requires minimal work. What changes is how you work together: Claude Duet comes to you first, and you can message it through typing or voice in one ongoing thread, so a quick reply and a weeklong project both start in the same place.</p>
-<p><strong>Work continues when you step away.</strong> Claude Duet has a virtual machine with its own browser, so it doesn’t require your laptop or phone to be on. Describe a task in a short message, and it works out which apps to use and what steps to take in the background. You’ll receive a notification when the task is complete or needs your review.</p>
-<p><strong>Receive a message when something needs you.</strong> Claude Duet checks your connected accounts every few hours, because checking nonstop would use up your plan’s limits much faster. We’re continuing to test its judgment about when to message you, and we’ll keep tuning it based on what testers tell us. You can also tell it what you want to hear about and how often.</p>
-<p><strong>Important decisions stay with you.</strong> Claude Duet reads, drafts, and prepares work on its own. But before it sends a message, makes a payment, signs a document, or deletes anything, it shows you exactly what it’s about to do and waits for your approval. A few things are off-limits even with your approval, like trading securities or moving money between accounts. You’re also able to disconnect any app Claude Duet has access to.</p>
-<p><strong>Connect with the tools your business runs on.</strong> Claude Duet can use the over 6,000 connectors and plugins in the <a href="https://claude.com/marketplace/connectors-plugins">Claude Marketplace (opens in new tab)</a> to:</p>
-<ul><li>Find the Gmail and Slack messages you’ve missed and help you reply.</li><li>Check Intuit QuickBooks or Stripe for unpaid invoices and draft reminders.</li><li>Prepare and run payroll in Gusto, with hours, bonuses, and reimbursements filled in.</li><li>Draft a job posting and, once you edit and approve, post it to LinkedIn.</li><li>Help prepare agreements and send them for review and signature through Docusign.</li><li>Draft follow-up emails using the contact and deal history in HubSpot.</li><li>Turn your product launch into a social campaign in Canva.</li><li>Set up, design, and manage your Shopify store. Coming soon, a richer visual editor will let you design your storefront and preview it before anything goes live.</li></ul>
-<p>You can also use Claude Duet to purchase things for your business using Link, Stripe’s digital wallet. Claude Duet confirms the item with you, and Link asks you to approve the spend. It then pays with a virtual card, so your real card number isn’t shared. It can also use Shop Pay from Shopify to check out at online stores. Coming soon, with your permission, it will be able to sign in to sites with logins you’ve saved in 1Password.</p>
-<p><img src="https://assets.claude.com/c3618d5ce675bcaa9716a06d180879c2b94161c3.png" alt="Logos of apps that work with Claude Duet"></p>
-<h2>Join the research preview</h2>
-<p>This is an early version of Claude Duet, and it still might misread a thread or miscalibrate what’s urgent. We built its core functionality around work, so personal errands, such as booking tickets, aren’t quite as strong, and it can’t yet show you its browser. For now, Claude Duet lives in its own app, separate from the main Claude app. What we learn from early users will shape how the two work together.</p>
-<p>During the research preview, Claude Duet shares your plan’s usage limits with the rest of Claude, and it uses them differently than a typical conversation does. Its background checks count toward those limits, and larger tasks, like building a financial model or a deck, require more model turns and background work.</p>
-<p>We’re starting today with Pro and Max users in the US. Join the <a href="https://claude.com/product/claude-duet">waitlist (opens in new tab)</a> and we’ll email as soon as Claude Duet’s ready for you.</p>
-<p>Article</p>
-<p>Oct 21, 2026</p>
-<h3>HCLTech joins the Claude Partner Network as a Global Premier partner</h3>
-<p>HCLTech will bring Claude into the solutions it provides for banks, hospitals, telecom companies, and manufacturers.</p>
 <p>Article</p>
 <p>Oct 21, 2026</p>
 <h3>Claude Security now scans continuously and tracks fixes</h3>

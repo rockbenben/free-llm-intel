@@ -3510,6 +3510,12 @@ def train_loop_per_worker(config: dict):
 <p>Serve 持续弥合模型开发与生产之间的鸿沟，坚持让系统保持 Pythonic、可组合，并默认具备可扩展性。</p>]]></content:encoded>
     </item>
     <item>
+      <title>Ray Train V2: Unified Distributed Training on Ray</title>
+      <link>https://anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray</guid>
+      <pubDate>Tue, 04 Nov 2025 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>发布 Ray Direct Transport：Ray Core 支持 RDMA（上篇）</title>
       <link>https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core</guid>
@@ -3931,6 +3937,13 @@ def train_loop_per_worker(config: dict):
 <p>最后一张图</p>]]></content:encoded>
     </item>
     <item>
+      <title>Streamline Distributed AI Monitoring and Debugging with New…</title>
+      <link>https://anyscale.com/blog/ray-train-data-dashboard</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-train-data-dashboard</guid>
+      <pubDate>Tue, 20 May 2025 00:00:00 +0000</pubDate>
+      <description>完整标题：Streamline Distributed AI Monitoring and Debugging with New Ray Train &amp; Ray Data Dashboards in Anyscale</description>
+    </item>
+    <item>
       <title>Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化</title>
       <link>https://anyscale.com/blog/announcing-compiled-graphs</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-compiled-graphs</guid>
@@ -4217,6 +4230,12 @@ def train_loop_per_worker(config: dict):
 <p>¹ Anyscale 定价基于自托管计算模型，按 2024 年 9 月的 EC2 列表价计算。</p>]]></content:encoded>
     </item>
     <item>
+      <title>Introducing Elastic Distributed Training on Anyscale</title>
+      <link>https://anyscale.com/blog/introducing-elastic-distributed-training</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/introducing-elastic-distributed-training</guid>
+      <pubDate>Mon, 22 Jul 2024 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>用 Anyscale Replica Compaction 部署 Ray Serve，节点数最多省 50%</title>
       <link>https://anyscale.com/blog/new-feature-replica-compaction</link>
       <guid isPermaLink="true">https://anyscale.com/blog/new-feature-replica-compaction</guid>
@@ -4350,205 +4369,6 @@ def train_loop_per_worker(config: dict):
 <p>RayLLM v0.5 同时支持 TensorRT-LLM 与 vLLM，让开发者为 LLM 部署选择最优后端。</p>
 <p>请查阅<a href="https://docs.ray.io/en/master/serve/tutorials/triton-server-integration.html">这份指南</a>在 Ray Serve 上试用 Triton Inference Server。从<a href="https://github.com/ray-project/ray-llm">这里</a>开始使用 Ray LLM，部署经 TensorRT-LLM 优化的模型。</p>
 <p><strong>作者：</strong> <a href="https://www.linkedin.com/in/neelay-shah-75b5781/">Neelay Shah</a>，NVIDIA <a href="https://www.linkedin.com/in/akshay-malik-a47a1416/">Akshay Malik</a>，Anyscale</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>大规模 RAG：用 Anyscale 和 Pinecone 将 Embedding 计算成本降低 10 倍</title>
-      <link>https://anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone</guid>
-      <pubDate>Tue, 16 Jan 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：RAG at Scale: 10x Cheaper Embedding Computations with Anyscale and Pinecone</description>
-      <content:encoded><![CDATA[<h1>规模化 RAG：用 Anyscale 与 Pinecone 把嵌入计算成本降到 1/10</h1>
-<p>作者：Scott Lee、Kyle Huang、Cheng Su 和 Hao Chen | 2024 年 1 月 16 日</p>
-<h3>欢迎阅读我们更新后的 RAG 博客</h3>
-<p>想了解用 Ray 跑最佳 RAG 流水线的最新内容，请<a href="https://www.anyscale.com/blog/rag-pipelines-how-to">阅读我们更新后的博客</a>。</p>
-<p><em>此前我们展示过 Ray Data 在批量推理上相比其他方案的高效（详见<a href="https://www.anyscale.com/blog/offline-batch-inference-comparing-ray-apache-spark-and-sagemaker"></em>博客<em></a>）。本文在一个与 Pinecone 合作的真实大规模生产负载上验证这一点。</em></p>
-<p>构建<a href="https://www.anyscale.com/blog/a-comprehensive-guide-for-building-rag-based-llm-applications-part-1">检索增强生成（RAG）</a>应用的第一步，是为数据创建嵌入（embedding）——向量数据库用于搜索与检索的意义和上下文的表示。创建嵌入面临若干挑战：</p>
-<ul><li><strong>规模：</strong> TB 级数据集很常见，且负载内存密集。规模伴随成本。</li><li><strong>异构计算：</strong> 嵌入计算涉及数据摄取、预处理、切块与推理，需要 CPU 与 GPU 计算混搭。更具挑战的是，可能还需要混合多种 GPU 型号。</li><li><strong>多模态数据：</strong> RAG 应用要处理文档、图像以及越来越多的数据模态。</li></ul>
-<p>我们很高兴宣布：借助 <a href="https://www.anyscale.com/">Anyscale</a> 与 <a href="https://www.pinecone.io/">Pinecone</a>，用户现在能以其他流行方案 10% 的成本，为分布式向量数据库生成嵌入！</p>
-<h2><strong>突破性向量数据库，成本最多省 50 倍</strong></h2>
-<p>随着这次发布，Pinecone 通过彻底重构向量数据库，进一步巩固其技术与市场领导地位。这一开创性的 serverless 向量数据库让企业以前所未有的 2% 成本为 GenAI 应用添加无限知识。用 Pinecone serverless，你可以存储数十亿向量，只为搜索的部分付费。</p>
-<p>带来成本节省与高性能的关键创新包括：</p>
-<ul><li>读、写与存储的分离，为各种类型和规模的负载显著降低成本。</li><li>首创架构：在 blob 存储之上做向量聚类，以低成本对几乎无限的数据规模提供低延迟、始终新鲜的向量搜索。</li><li>新型索引与检索算法，让向量搜索能在 blob 存储上快速、内存高效地进行，而不牺牲检索质量。</li><li>多租户计算层，为上千用户提供按需的强效检索。这成就了 serverless 体验：开发者无需配置、管理甚至考虑基础设施；按用量计费让公司只为自己使用的部分付费。</li></ul>
-<h2><strong>与其他嵌入计算方案对比</strong></h2>
-<p>计算嵌入时，常见的做法有这么几种：</p>
-<ul><li><strong>OpenAI：</strong> OpenAI 这类 API 服务商能处理嵌入计算，但数据摄取与预处理需要另外的可扩展方案，模型选择的灵活性也有限。</li><li><strong>Spark：</strong> Spark 这类分布式框架能扩展数据摄取与预处理，但高效的嵌入计算需要另外的方案。</li><li><strong>Vertex AI：</strong> Google Cloud 能处理数据摄取与预处理，Vertex AI 能处理嵌入计算。与 OpenAI 类似，模型选择灵活性有限。</li></ul>
-<p>上述方案都不是能同时规模化处理数据摄取与嵌入计算、又在预处理步骤与嵌入模型上保留灵活性的全家桶方案。</p>
-<p><strong>RAG 整体技术栈</strong></p>
-<p><em>Pinecone Partners Launch</em></p>
-<p>往大了看，嵌入计算只是图景的一部分。构建 RAG 应用需要很多拼图：</p>
-<ul><li>一个高性能分布式向量数据库（如 <a href="https://www.pinecone.io/">Pinecone</a>）必不可少，用以支持基于所算嵌入的高效插入与查询。</li><li><a href="https://huggingface.co/">Hugging Face</a> 与 <a href="https://www.langchain.com/">LangChain</a> 提供用于计算嵌入的开源模型与工具。</li><li>最后，一个分布式计算引擎（如 <a href="https://github.com/ray-project/ray/">Ray</a>）把所有这些元素粘合起来，无缝管理端到端工作流。</li></ul>
-<h2><strong>使用 Ray Data 与 Pinecone API</strong></h2>
-<p>以下示例演示如何用 Ray Data 与 Pinecone API 计算嵌入并 upsert 到 Pinecone：</p>
-<pre><code>1import ray
-2from pinecone import Pinecone
-3
-4from langchain.text_splitter import RecursiveCharacterTextSplitter
-5import numpy as np
-6from transformers import AutoTokenizer, AutoModel
-7import uuid
-8
-9def chunk_row(row):
-10      # Chunk each input row
-11      splitter = RecursiveCharacterTextSplitter(...)
-12      chunks = splitter.split_text(row[&quot;text&quot;])
-13      return [
-14             {
-15                    &quot;id&quot;: str(uuid.uuid4()),
-16                    &quot;text&quot;: chunk,
-17             } for chunk in chunks
-18      ]
-19
-20class ComputeEmbeddings:
-21      def __init__(self, model_name=&quot;thenlper/gte-large&quot;):
-22            # To use a different embedding model, update the default name 
-23            # above, or pass the new model name in the map_batches() call:
-24            # chunked_ds.map_batches(
-25            # 	ComputeEmbeddings, fn_constructor_args=(new_model_name,)
-26            # )
-27            self.model = AutoModel.from_pretrained(model_name)
-28            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-29
-30      def __call__(self, batch):
-31            batch_text = batch[&quot;text&quot;]
-32            tokenize_results = self.tokenizer(batch_text)
-33            model_input = {
-34                    &quot;input_ids&quot;: tokenize_results[&quot;input_ids&quot;],
-35                    &quot;token_type_ids&quot;: tokenize_results[&quot;token_type_ids&quot;],
-36                    &quot;attention_mask&quot;: tokenize_results[&quot;attention_mask&quot;],
-37            }
-38
-39            embeddings = self.model(**model_input)
-40            embeddings = self._average_pool(outputs.last_hidden_state, model_input['attention_mask'])
-41            embeddings = F.normalize(embeddings)
-42
-43            batch[&quot;values&quot;] = embeddings.numpy().astype(np.float32)
-44            return batch
-45
-46      def _average_pool(self, last_hidden_states, attention_mask):
-47              last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
-48              return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
-49
-50def pinecone_upsert(batch):
-51      client = Pinecone(api_key=...)
-52      index = client.Index(index_name)
-53      result = index.upsert(vectors=batch)
-54      return {&quot;num_success&quot;: np.array([result.upserted_count])}
-55
-56# replace with read API corresponding to your input file type
-57ds = ray.data.read_parquet(&quot;s3://bucket-raw-text&quot;)
-58
-59# chunk the input text
-60chunked_ds = ds.flat_map(chunk_row)
-61
-62# compute embeddings with a class that calls the embeddings model
-63embeddings_ds = chunked_ds.map_batches(ComputeEmbeddings)
-64
-65# replace with write API corresponding to your desired output file type
-66embeddings_ds.write_parquet(&quot;s3://output-embeddings&quot;)
-67
-68# upsert embeddings to Pinecone with the Pinecone API
-69upsert_results = embeddings_ds.map_batches(pinecone_upsert).materialize()
-70</code></pre>
-<p>关于如何最佳利用 Ray Data API 的更多细节与示例，请参阅 <a href="https://docs.ray.io/en/latest/data/data.html">Ray Data 文档</a>。</p>
-<h2><strong>成本对比</strong></h2>
-<p>为对比 Anyscale 与其他方案的性价比，我们在 AWS EC2 的 <a href="https://aws.amazon.com/ec2/instance-types/g5/">g5.xlarge</a> 机器上为 <a href="https://huggingface.co/datasets/tiiuae/falcon-refinedweb">falcon-refinedweb 数据集</a>（超过 6,000 亿 token）生成嵌入，预处理在纯 CPU 机器上完成。下表比较 Anyscale 与几个流行方案生成 10 亿个嵌入的成本估计（价格为 2024 年 1 月）：</p>
-<table><thead><tr><th></th><th>生成嵌入的总成本</th></tr></thead><tbody><tr><td>OpenAI</td><td>$60,000（<a href="https://openai.com/pricing">$0.0001 / 千 token</a>）</td></tr><tr><td>Vertex AI</td><td>$48,000（<a href="https://cloud.google.com/vertex-ai/pricing#generative_ai_models">$0.00002 / 千字符</a>）</td></tr><tr><td>Anyscale</td><td>$6,000</td></tr></tbody></table>
-<p>注意：这里列出的替代方案，其成本不含数据摄取与预处理费用——所以 Anyscale 的成本效率比上表显示的还要高！</p>
-<h2><strong>结语</strong></h2>
-<p>生成嵌入是打造成功 RAG 应用的关键任务，而 Anyscale 是这一工作流成本效率最高的方案。要充分享受 Anyscale 带来的规模，请<a href="https://www.pinecone.io/">了解 Pinecone 的分布式向量数据库服务</a>，并试用 <a href="https://www.anyscale.com/get-started?utm_source=anyscale&amp;utm_content=rag10xpinecone">Anyscale Platform</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>开源 LLM：可用于生产，还是低质量玩具？</title>
-      <link>https://anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy</guid>
-      <pubDate>Mon, 20 Nov 2023 00:00:00 +0000</pubDate>
-      <description>原文标题：Open Source LLMs: Viable for Production or a Low-Quality Toy?</description>
-      <content:encoded><![CDATA[<h1>开源 LLM：可用于生产，还是低质量玩具？</h1>
-<p>作者：Anyscale Ray Team | 2023 年 11 月 20 日</p>
-<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
-<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
-<h2>核心要点</h2>
-<ul><li>LLaMA 等开源大语言模型（LLM）可以胜任生产用例。Anyscale、Hugging Face 等公司提供开源 LLM 的托管服务，让它们用起来很轻松。</li><li>开源 LLM 可以比 GPT-3 这类专有模型便宜得多（例如便宜 30 倍），同时对许多应用提供足够好的性能。这一成本差距让一些产品/用例成为可能——若用专有模型则根本不可行。</li><li>微调后的开源 LLM 有时甚至能胜过 GPT-4 这类最大的专有通用 LLM。但微调不是万能药——它对语言格式的塑造比对事实信息的注入更有效。</li><li>开源 LLM 目前在某些方面落后于专有模型：输出质量、精确遵循指令、函数模板（function templates）支持、大上下文窗口。但许多差距正在被积极攻克。</li><li>开源与专有 LLM 混合使用可以取得不错的成本/性能折衷。演讲者举了一个例子：5% 的查询发给 GPT-4，95% 发给一个开源 LLM。</li></ul>
-<p>开源语言模型（LLM）正日益成为生产可用之选，挑战着&quot;它们是低质量玩具&quot;的旧观念。本文探讨开源 LLM 与 GPT-4 这类专有模型相比的强项与短板，深入模型质量、指令遵循、函数模板、上下文窗口大小等因素，凸显开源 LLM 的成本效益与在各种应用中的可行潜力。</p>
-<h2>开源 LLM：可用于生产，还是低质量玩具？</h2>
-<p>近年来，语言模型的版图发生巨变，开源模型赢得关注，挑战了它们只是低质量玩具的看法。这引出了问题：开源 LLM 真的能胜任生产应用吗？为回答它，我们拆解近期题为《Open Source LLMs: Viable for Production or a Low-Quality Toy?》演讲中的洞见，比较开源 LLM 与专有模型的强弱。</p>
-<h2>质量很重要</h2>
-<p>演讲先直面房间里的大象：模型质量。历史上，GPT-4 这类专有 LLM 被视为高质量输出的金标准：它们在类比推理、规划和生成精炼回答方面表现出色。但演讲者带来一个转折——Llama 70b 等开源 LLM 绝不可轻视。虽然 GPT-4 可能在某些任务上领先，开源 LLM 已能与专有对手抗衡，在摘要与微调等任务上尤其如此。</p>
-<h2>指令遵循：对齐与灵活</h2>
-<p>一个出人意料的发现是：专有 LLM 得益于 RLHF（基于人类反馈的强化学习），在被明确指令时表现出更好的服从性。开源 LLM 则可能还需要额外一步微调，才能确保精确遵循指令。不过演讲者提出一个变通之道：用会&quot;指挥&quot;其他 LLM 的任务专用 LLM，取得更好的性能与成本效益。</p>
-<h2>函数模板：锁定输出格式</h2>
-<p>专有 LLM 带来一个便利特性——函数模板。它让用户锁定期望的输出格式，免去后处理纠错。最初缺乏这一特性的开源 LLM 正在追赶。虽然并非所有开源模型都已提供函数模板，从进行中的项目看，这一差距有望很快弥合。</p>
-<h2>上下文窗口：越大越好</h2>
-<p>上下文窗口大小对处理信息至关重要，专有 LLM 一直凭借更大的窗口保持领先。Llama 70b 等开源模型在这方面可能落后，但一些有前景的项目正着手解决这一限制。随着技术演进，人们寄望开源 LLM 很快追平乃至超过专有模型的上下文窗口。</p>
-<h2>成本效益：开源 LLM 的优势</h2>
-<p>开源 LLM 最令人信服的论点之一是成本效益。演讲强调，开源模型不是便宜一点点，而是能便宜得夸张。这一成本优势打开了无限可能，让某些应用在专有模型下财务上不可行的情况下变得经济可行。</p>
-<h2>前路：挑战与机遇</h2>
-<p>尽管开源 LLM 已取得长足进步，挑战犹存。质量提升、上下文窗口扩展、函数模板集成，都是开源社区持续的努力方向。然而开源 LLM 的潜力毋庸置疑：它们在多种任务上挑战专有模型的能力，加上成本优势，使其成为开发者与企业的强劲选项。</p>
-<h2>结语：为合适的活选合适的工具</h2>
-<p>总之，关于开源 LLM 是生产可用还是只是玩具的争论，正在倒向&quot;可用&quot;一边。演讲提供了细致的视角，提醒我们按需选择合适的工具。开源 LLM 不是万能方案，但它们带来的成本优势与能力，可以在特定场景中被有效利用。</p>
-<p>随着开源社区持续创新、补齐当前短板，开源 LLM 的前景光明。开发者与企业都应密切关注这一快速演进的版图，随时拥抱这些日益强大且高性价比的语言模型带来的机会。</p>
-<p>立即注册 <a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Spotify 如何打造稳健且开发者体验无阻的 Ray 平台</title>
-      <link>https://anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer</guid>
-      <pubDate>Thu, 09 Nov 2023 00:00:00 +0000</pubDate>
-      <description>原文标题：How Spotify Built a Robust Ray Platform with a Frictionless Developer Experience</description>
-      <content:encoded><![CDATA[<h1>Spotify 如何打造稳健且开发者体验无阻的 Ray 平台</h1>
-<p>作者：Anyscale Ray Team | 2023 年 11 月 9 日</p>
-<p>2024 年 6 月更新：Anyscale Endpoints（Anyscale 的 LLM API 服务）与 Private Endpoints（自托管 LLM）现已作为 Anyscale Platform 的一部分提供。点击<a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">这里</a>在 Anyscale 平台上开始使用。</p>
-<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
-<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
-<h2>核心要点</h2>
-<p>Spotify 打造稳健 Ray 平台、实现无摩擦开发者体验的历程，是一个关于创新与精简机器学习开发流程的励志故事。本文深入介绍他们的做法：面临的挑战、实施的解法，以及经验教训。了解 Spotify 如何利用 Kubernetes、Ray 与自定义 SDK，打造友好的云端开发环境（CDE），为 ML 工程师、研究员与数据科学家简化开发工作流。</p>
-<ul><li>Spotify 用 Ray 驱动机器学习应用：个性化内容推荐、搜索排序、内容发现等。</li><li>Spotify 在 Ray 之上构建了名为 Hendrix 的内部 ML 平台，部署在 Google Kubernetes Engine 上，为工程师提供把 ML 应用快速产品化的工具与环境。</li><li>新平台 Hendrix 的 SDK 内置 Ray 与 PyTorch 库，把常见 ML 任务标准化；同时利用 Hydra、DeepSpeed 等开源库。</li><li>Spotify 构建了云端开发环境（CDE）方案，统一开发环境、规避本地配置的种种问题。它提供配备 GPU、工具自动配置好的远程云环境。</li><li>CDE 通过消除环境问题提升生产力，提供更充裕的算力，并让背景各异的用户都能无摩擦上手。</li><li>关键经验：保障可用性、性能与安全；允许定制与扩展；使用 Kubernetes 并发挥其特性。</li><li>Spotify 把 PyTorch 与 Ray 集成，用于可扩展训练、超参数调优等。Ray 生态在 Spotify 持续催生更多 ML 创新。</li></ul>
-<h2>Spotify 如何打造稳健且开发者体验无阻的 Ray 平台</h2>
-<p>全球音频流媒体领军者 Spotify 长期与前沿技术相伴。公司横跨 184 个市场、拥有超过 5.15 亿用户与 2.1 亿订阅者，依靠先进的机器学习应用提升用户体验、驱动创新。为此，他们踏上了一条构建稳健 Ray 平台、并使其与无摩擦开发者体验无缝融合的旅程。</p>
-<p>本文深入剖析 Spotify 如何达成这一成就，拆解其策略的关键要素与一路积累的洞见。读完你会全面理解 Spotify 如何改造其 ML 开发流程，并可以借鉴到自己的项目里。</p>
-<h2>背景</h2>
-<p>Spotify 的机器学习平台在公司运营中扮演枢纽角色，支撑个性化内容推荐、搜索结果优化、内容发现等诸多应用。为支持这些 ML 计划，Spotify 的 ML 平台团队打造了名为 Hendrix 的集中式机器学习平台。</p>
-<p>Hendrix 的关键组件之一是强大的分布式计算框架 Ray。要高效利用 Ray，Spotify 需要创建一个用户友好的云端开发环境（CDE）。挑战在于：为从 ML 工程师到数据科学家等不同背景的用户，提供统一而直白的界面。</p>
-<h2>愿景</h2>
-<p>Spotify 的目标很明确：简化机器学习开发流程。为此，他们构想了能为不同用户理顺工作流的 CDE。无论用户角色或背景如何，CDE 都以灵活高效的方式访问被托管的 Ray 基础设施。</p>
-<p>本质上，愿景是创造无摩擦的开发者体验，让用户专注于自己的 ML 任务，不被搭建与配置的复杂事务拖住。</p>
-<h2>技术方案</h2>
-<p>Spotify 为这种无摩擦开发者体验给出的技术方案，是深思熟虑的技术组合加自研开发。关键组件如下：</p>
-<h3>Kubernetes 上的 Ray 集群</h3>
-<p>Spotify 的机器学习平台基于 Kubernetes，GPU 节点通过 Google Kubernetes Engine（GKE）接入。他们用名为 Kubeflow 的开源 Kubernetes operator 做编排。把 Ray 集群部署在 Kubernetes 上，获得了可扩展、可维护的基础设施。</p>
-<h3>集成 Ray 与 PyTorch 的 Python SDK</h3>
-<p>为用户提供无缝体验，Spotify 构建了包含 Ray 与 PyTorch 库的自定义 Python SDK。该 SDK 简化了访问 Ray 基础设施的流程，加速 ML 应用开发，满足不同背景与需求的用户。</p>
-<h3>云端开发环境</h3>
-<p>Spotify 创建了云端开发环境（CDE），让用户在云上无缝工作。CDE 基于 Kubernetes，具备快速启动、低延迟、任意设备可用的特点。用户可以瞬间搭好配置完备的开发环境，不必再排查本地机器上的坏配置。</p>
-<h3>定制的 VS Code 扩展</h3>
-<p>Spotify 认识到用户对开发环境的偏好各不相同。为此他们开发了定制的 VS Code 扩展，与 Spotify 生态的其他部分集成：用户可以查询内部数据端点、运行自定义 SQL 引擎等。</p>
-<h3>生态支持</h3>
-<p>Spotify 也充分利用 Ray 更大的生态，集成 Hugging Face、DeepSpeed、PyG 等流行 ML 库，确保用户能获取大量工具与方案来应对各种 ML 问题。</p>
-<h2>经验教训</h2>
-<p>Spotify 构建无摩擦开发者体验的历程揭示了若干关键经验：</p>
-<h3>可用性与性能</h3>
-<p>对任何开发环境而言，高可用与快速启动时间至关重要。Spotify 强调需要一个快速、高可用的反向代理来优化用户体验。</p>
-<h3>定制与扩展</h3>
-<p>在个人级与仓库级配置上提供高度可定制能力很重要。用户应当能按自己的偏好个性化其环境。</p>
-<h3>安全与遥测</h3>
-<p>设计时必须考虑安全。实现访问控制、授权与遥测等功能，提供安全且可观察的平台。</p>
-<h3>效率与成本节约</h3>
-<p>精简平台以最大化效率、降低成本。实现空闲自动关停（idle shutdown）等功能，节约资源、减少开销。</p>
-<h3>与现有工具集成</h3>
-<p>考虑新平台如何与组织内现有工具和工作流集成。无缝集成能显著改善用户体验。</p>
-<h2>未来</h2>
-<p>Spotify 的无摩擦开发者体验之旅没有止步于此。他们对未来有雄心计划，包括完成在 Ray 上的 PyTorch 开发、优化 ML 计算加速器的分配、进一步把开发环境平台化，以提供更好的可访问性、可靠性与可观察性。</p>
-<h2>结语</h2>
-<p>Spotify 成功改造其 ML 开发流程，证明了创新与深思熟虑规划的力量。通过组合 Ray、Kubernetes 与自定义 SDK 等技术，他们打造了满足 ML 工程师、研究员与数据科学家需求的友好云端开发环境。</p>
-<p>他们的历程得出的要点，适用于任何想精简开发工作流的人：</p>
-<p><strong>简化开发流程</strong>：尽力消除开发流程中的复杂度，让用户专注于自己的任务。</p>
-<p><strong>选对技术</strong>：选择与你的愿景和需求契合的技术与工具。</p>
-<p><strong>定制与扩展</strong>：提供选项，让用户按偏好定制环境。</p>
-<p><strong>安全与遥测</strong>：优先保障安全与监控，营造安全、可观察的环境。</p>
-<p><strong>集成与扩展性</strong>：确保平台与现有工具无缝集成，并能随组织成长而扩展。</p>
-<p>Spotify 的历程展示了组织精简机器学习开发的潜力，途中积累的洞见对任何踏上类似转型的人都很宝贵。</p>
-<p>从 Spotify 的故事中汲取灵感，你也能让自己的开发者体验更少摩擦、更高效、更友好，最终为你的项目与产品注入创新动力。</p>
-<p>立即注册 <a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -4301,6 +4301,85 @@ def train_loop_per_worker(config: dict):
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
+      <title>Ray Train V2: Unified Distributed Training on Ray</title>
+      <link>https://anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray?li=1</guid>
+      <pubDate>Tue, 04 Nov 2025 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Ray Train V2: Unified Distributed Training on Ray</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=matthew-deng">Matthew Deng</a>, <a href="https://www.anyscale.com/blog?author=justin-yu">Justin Yu</a>, <a href="https://www.anyscale.com/blog?author=timothy-seah">Timothy Seah</a>, <a href="https://www.anyscale.com/blog?author=jason-li">Jason Li</a>, <a href="https://www.anyscale.com/blog?author=lehui-liu">Lehui Liu</a>, <a href="https://www.anyscale.com/blog?author=xinyuan-gui">Xinyuan Gui</a> and <a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a> | November 4, 2025</p>
+<p>Over the past few releases, the Ray Train team has focused on improving the developer experience and runtime stability for distributed training workloads.</p>
+<p><strong>Ray Train V2</strong> builds on this foundation — providing better usability, stronger reliability guarantees, and a cleaner API surface that enables faster feature development across the stack.</p>
+<p>To that end, all new functionality introduced this quarter is built on <strong>Ray Train V2</strong>, and we strongly encourage users to begin migrating. See the <a href="https://github.com/ray-project/enhancements/blob/main/reps/2024-10-18-train-tune-api-revamp/2024-10-18-train-tune-api-revamp.md">Train Tune API Revamp REP</a> and the <a href="https://github.com/ray-project/ray/issues/49454">Migration Guide</a> for full details.</p>
+<h3>LinkAsynchronous Checkpointing</h3>
+<p>Ray Train has an existing set of functionality around managing model checkpoints. By default, checkpoints are uploaded synchronously to the target directory when the train.report API is called. However, this can cause GPU utilization to be low if checkpoints are large or are frequently saved.</p>
+<p>To address this, Ray Train V2 now offers built-in asynchronous checkpoint uploading. If enabled, checkpoints can be uploaded to cloud storage in a separate CPU thread, so GPU training jobs don’t pause during I/O operations. This approach keeps GPU utilization high when checkpoints are large or frequent. Read more about asynchronous checkpointing in <a href="https://docs.ray.io/en/releases-2.51.1/train/user-guides/checkpoints.html#asynchronous-checkpoint-uploading">the documentation</a>.</p>
+<pre><code>1def train_fn(config):
+2    ...
+3    metrics = {...}
+4    tmpdir = tempfile.mkdtemp()
+5    ...  # Save checkpoint to tmpdir
+6    checkpoint = Checkpoint.from_directory(tmpdir)
+7    train.report(
+8        metrics,
+9        checkpoint=checkpoint,
+10        checkpoint_upload_mode=train.CheckpointUploadMode.ASYNC,
+11    )</code></pre>
+<h3>LinkAsynchronous Validation</h3>
+<p>It is common to validate the model periodically during training to measure model performance and prevent overfitting. The standard way to do this is to periodically switch between training and validation within the training loop.</p>
+<p>In Ray 2.51, Ray Train now allows you to asynchronously validate the model in a separate Ray task. This means you can</p>
+<ul><li>Run validation in parallel without blocking the training loop, leading to higher training goodput</li><li>Run validation on different (cheaper, less efficient) hardware than training</li><li>Easily scale out the validation using Ray Data or Ray Train</li><li>Leverage autoscaling to launch machines only for the duration of the validation</li></ul>
+<p>Read more about asynchronous checkpoint validation in <a href="https://docs.ray.io/en/master/train/user-guides/asynchronous-validation.html">the documentation</a>.</p>
+<pre><code>1def validate_fn(checkpoint, config):
+2    ...
+3    return {&quot;score&quot;: ...}
+4
+5def train_fn(config):
+6    ...
+7    ray.train.report(
+8        metrics,
+9        checkpoint=checkpoint,
+10        checkpoint_upload_mode=ray.train.CheckpointUploadMode.ASYNC,
+11        validate_fn=validate_fn,
+12        validate_config={&quot;dataset&quot;: ...},
+13    )</code></pre>
+<h3>LinkJaxTrainer on TPU</h3>
+<p>Ray Train now offers a <strong>JaxTrainer</strong> API, which enables seamless scaling of distributed <strong>JAX</strong> training to <strong>TPUs.</strong></p>
+<p>Distributed JAX has historically required users to run in a multi-controller configuration, spawning parallel processes across each device. However, this style of execution can be hard to recover from failures and can be hard to develop against iteratively.</p>
+<p>With this new API, users can now scale JAX workloads natively on TPUs with the same single-controller orchestration and fault tolerance as other commonly used APIs like Ray Train’s TorchTrainer and TensorFlowTrainer. Read more about <a href="https://docs.ray.io/en/master/train/getting-started-jax.html">JAX</a> on Ray Train in the documentation.</p>
+<pre><code>1from ray.train.v2.jax import JaxTrainer
+2from ray.train import ScalingConfig
+3
+4def train_func():
+5    # Your JAX training code here.
+6
+7scaling_config = ScalingConfig(num_workers=4, use_tpu=True, topology=&quot;4x4&quot;, accelerator_type=&quot;TPU-V6E&quot;)
+8trainer = JaxTrainer(train_func, scaling_config=scaling_config)
+9result = trainer.fit()</code></pre>
+<h3>LinkLocal Mode for streamlined debugging</h3>
+<p>Ray Train v2 now offers a “local” mode of execution. In <code>local mode</code>, instead of the default execution strategy of running training code across multiple Ray actors in parallel, local mode executes your training function directly in the current process, without needing to change your code. This provides a simplified debugging environment where you can iterate quickly on your training logic.</p>
+<p>Local mode supports two execution modes:</p>
+<ul><li>Single-process mode: Runs your training function in a single process, ideal for rapid iteration and debugging.</li><li>Multi-process mode with torchrun: Launches multiple processes for multi-GPU training, useful for debugging distributed training logic with familiar tools.</li></ul>
+<p>Read more about <a href="https://docs.ray.io/en/master/train/user-guides/local_mode.html">local mode on the Ray Train documentation</a>.</p>
+<h2>LinkLooking Ahead</h2>
+<p>Ray Train V2 lays the groundwork for the next generation of distributed training — one that’s <strong>more modular, performant, and developer-friendly</strong>. Upcoming releases will extend this foundation with enhanced fault tolerance, deeper framework integrations, and unified experiment management across Train and Tune.</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray#asynchronous-checkpointing">Asynchronous Checkpointing</a></li><li><a href="https://www.anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray#asynchronous-validation">Asynchronous Validation</a></li><li><a href="https://www.anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray#jaxtrainer-on-tpu">JaxTrainer on TPU</a></li><li><a href="https://www.anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray#local-mode-for-streamlined-debugging">Local Mode for streamlined debugging</a></li><li><a href="https://www.anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray#looking-ahead">Looking Ahead</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-production-best-practices-field.png?w=140" alt="kuberay-production-best-practices-field"></p>
+<h4>KubeRay in production: best practices from the field</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="Announcing Ray support for PyTorch on Google TPUs"></p>
+<h4>Announcing Ray support for PyTorch on Google TPUs</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="Running Ray at scale on Kubernetes with KubeRay"></p>
+<h4>Running Ray at scale on Kubernetes with KubeRay</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>Announcing Ray Direct Transport: RDMA Support in Ray Core (P…</title>
       <link>https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core?li=1</guid>
@@ -4798,6 +4877,145 @@ def train_loop_per_worker(config: dict):
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
+      <title>Streamline Distributed AI Monitoring and Debugging with New…</title>
+      <link>https://anyscale.com/blog/ray-train-data-dashboard</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-train-data-dashboard?li=1</guid>
+      <pubDate>Tue, 20 May 2025 00:00:00 +0000</pubDate>
+      <description>Full title: Streamline Distributed AI Monitoring and Debugging with New Ray Train &amp; Ray Data Dashboards in Anyscale</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Streamline Distributed AI Monitoring and Debugging with New Ray Train &amp; Ray Data Dashboards in Anyscale</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=alan-guo">Alan Guo</a>, <a href="https://www.anyscale.com/blog?author=cuong-nguyen">Cuong Nguyen</a>, <a href="https://www.anyscale.com/blog?author=justin-yu">Justin Yu</a>, <a href="https://www.anyscale.com/blog?author=matthew-deng">Matthew Deng</a>, <a href="https://www.anyscale.com/blog?author=matthew-owen">Matthew Owen</a> and <a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a> | May 20, 2025</p>
+<p><a href="https://docs.ray.io/en/latest/train/overview.html">Ray Train</a> and <a href="https://docs.ray.io/en/latest/data/key-concepts.html#data-key-concepts">Ray Data</a> help ML engineers focus on their model training and data processing logic by offering familiar, high-level APIs on top of Ray’s distributed compute engine. However, when it comes to observability, logs and metrics are often scattered and not semantically tagged, requiring engineers to manually piece them together to build visualizations. Even after this time-consuming and error-prone effort, most teams still lack a unified interface to monitor overall run status with integrated drill downs to diagnose specific issues like data loading bottlenecks or out-of-memory errors.</p>
+<p>To make debugging and performance tuning faster and more intuitive for practitioners scaling out model training and data processing, we're excited to introduce:</p>
+<ul><li><strong>New Ray Train Dashboard: </strong>The new Ray Train dashboard provides four critical observability features: training progress, error attribution, logs/metrics, and profiling. With the ability to drill down into worker-level behavior and use built-in profiling tools, identifying performance bottlenecks becomes much simpler. For example, Torch training runs can easily be profiled using integrated tools like <code>dynolog</code>. <a href="https://www.anyscale.com/blog/ray-train-data-dashboard#ray-train-dashboard:-unified-observability-for-distributed-training">Learn more</a>.</li><li><strong>New Ray Data Dashboard: </strong>With Tree and DAG views for pipeline drilldowns, operation-level metrics, and dataset-aware log aggregations, ML engineers can more quickly identify bottlenecks and optimize performance for data pipelines – the foundation of AI applications. <a href="https://www.anyscale.com/blog/ray-train-data-dashboard#ray-data-dashboard:-faster-pipeline-debugging-with-tree-and-dag-views">Learn more</a>.</li></ul>
+<p>Both <strong>Ray Data and Ray Train logs are automatically persisted </strong>in Anyscale – enabling powerful post-mortem analysis even after cluster failures (e.g., out-of-memory errors). Debugging without reruns to reproduce the error or having to keep expensive clusters running is just one of the many benefits. Persistent logs also make it easy to evaluate trends over time and spot slow or inefficient stages across multiple runs, helping you identify optimization opportunities.</p>
+<h2>LinkRay Train Dashboard: Unified Observability for Distributed Training</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/78CDDiSdLnZHdva5pGUgVT/0a97eff8cb2af57ffb9a9efe29021866/fig1_running.png" alt="Figure 1: Distributed AI Training Observability with  Ray Train Dashboard"></p>
+<p>Figure 1: Distributed AI Training Observability with Ray Train Dashboard</p>
+<p><em>Fig 1. Distributed AI Training Observability with Ray Train Dashboard</em></p>
+<p>Scaling model training with a distributed framework like Ray introduces significant complexity, particularly when monitoring the job in progress and debugging failures. Today, practitioners need to manually assemble logs, metrics, and context scattered across various nodes to understand what went wrong, a process that becomes increasingly cumbersome as the number of workers and nodes increases.</p>
+<p>The new Ray Train Dashboard in Anyscale addresses these challenges with a comprehensive toolkit for understanding and optimizing distributed training workloads:</p>
+<ul><li><strong>Unified experience:</strong> A unified interface for accessing logs and metrics</li><li><strong>Progress tracking:</strong> A clear visualization of training progress and job state</li><li><strong>Rich error context</strong>: Insights into errors, retries, and fault tolerance behavior</li><li><strong>One-click profiling:</strong> One-click CPU, GPU, and memory profiling for live training jobs</li></ul>
+<h3>LinkUnified Interface for Log and Metric Drilldowns</h3>
+<p>Distributed training environments typically scatter logs and metrics across different systems and interfaces, forcing you to manually correlate information between worker logs, controller outputs, and resource metrics. This context-switching becomes increasingly frustrating and error-prone as your training scales to dozens or hundreds of workers.</p>
+<p>The Ray Train Dashboard solves this by providing a unified interface for viewing logs and metrics from both the Train Controller and Worker processes.</p>
+<p>Start with the <code>TrainRun</code> page for a high-level view of your job status and performance, then drill down into specific worker pages to investigate process-level or node-level behavior. All relevant information is organized in context, saving you time and reducing the cognitive load of monitoring complex distributed jobs.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5aIiXpxAdkqNnCJKOpFuOx/12cc8557ba0c601d3540ae4ac89ea41c/fig2_metrics.png" alt="Figure 2: Ray Train Dashboard provides more metrics broken down by controller, worker, and node"></p>
+<p>Figure 2: Ray Train Dashboard provides more metrics broken down by controller, worker, and node</p>
+<p><em>Fig 2. Ray Train Dashboard provides more metrics broken down by controller, worker, and node</em></p>
+<h3>LinkClear Visualization of Training Progress and Job State</h3>
+<p>Ever wondered where your training job is spending its time? The Ray Train Dashboard introduces workload-level abstractions – such as training runs and attempts, in addition to providing immediate visibility into all workers – to help you visualize and understand what's happening in your distributed training jobs at different altitudes.</p>
+<p>From the moment you launch a training job, you can monitor resource requests, scheduling behavior, and utilization patterns. Instead of guessing what's happening inside your training cluster, you get a clear view of execution progress and system performance throughout the entire job lifecycle.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5CNYBeizlDkw5dAZjln4r5/174ff4dcfff0733282d8725021fca033/fig3_autoscale.png" alt="Figure 3: Ray Train Dashboard provides contextual information based on its stage. In this example, the train run has requested 4 GPUs, and the dashboard will present relevant autoscaling information."></p>
+<p>Figure 3: Ray Train Dashboard provides contextual information based on its stage. In this example, the train run has requested 4 GPUs, and the dashboard will present relevant autoscaling information.</p>
+<p><em>Fig 3. Ray Train Dashboard provides contextual information based on its stage. In this example, the train run has requested 4 GPUs, and the dashboard will present relevant autoscaling information.</em></p>
+<h3>LinkDetailed Error Context When Things Go Wrong</h3>
+<p>Failures in distributed training are inevitable, but diagnosing them shouldn't be painful. The Ray Train Dashboard provides rich context around failures, helping you quickly understand and address the root cause.</p>
+<p>When a training job fails, you get detailed information about:</p>
+<ul><li>The specific worker(s) affected</li><li>Whether it's an application error or hardware issue</li><li>Relevant logs and metrics across the entire stack</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7CFvh3FDFVRHklTsIcrej3/8caa1835e148b205b3c7aa282920214a/fig4_error1.png" alt="Figure 4: When a failure occurs, the train run will be marked as Errored and will have status details explaining where the error came from."></p>
+<p>Figure 4: When a failure occurs, the train run will be marked as Errored and will have status details explaining where the error came from.</p>
+<p><em>Fig 4.</em> <em>When a failure occurs, the train run will be marked as Errored and will have status details explaining where the error came from</em></p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6tvv2PqTOR2FtFpzPWk0iC/2c390f0d1d8c0fc64d567d18fa810950/fig5_error2.png" alt="Figure 5: When an error occurs, individual workers will also have status details, including relevant node logs, such as this GPU failure."></p>
+<p>Figure 5: When an error occurs, individual workers will also have status details, including relevant node logs, such as this GPU failure.</p>
+<p><em>Fig 5. When an error occurs, individual workers will also have status details, including relevant node logs, such as this GPU failure.</em></p>
+<p>If you're using Ray Train's fault tolerance capabilities, or <a href="https://docs.anyscale.com/rayturbo/rayturbo-train/">RayTurbo Train's</a> elastic training capabilities, the dashboard clearly visualizes the rescheduled training attempts and allows you to inspect the historical retries, making it easy to understand how the system is recovering from failures.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3lXpH0aAMevE3Mn3pHuRke/5117ceca611d2e0fd929ee65fce75548/fig6_attempts.png" alt="Figure 6: Ray Train breaks down its runs by attempts. In this example, the training run succeeded on its 6th attempt. You can click into the previous 5 attempts to see the root cause for why each attempt failed."></p>
+<p>Figure 6: Ray Train breaks down its runs by attempts. In this example, the training run succeeded on its 6th attempt. You can click into the previous 5 attempts to see the root cause for why each attempt failed.</p>
+<p><em>Fig 6.</em> <em>Ray Train breaks down its runs by attempts. In this example, the training run succeeded on its 6th attempt. You can click into the previous 5 attempts to see the root cause for why each attempt failed.</em></p>
+<h3>LinkOne-Click Profiling for Performance Optimization</h3>
+<p>Identifying performance bottlenecks in distributed training has traditionally required deep expertise in both AI frameworks and distributed systems, in addition to knowing how to use multiple, specialized tools.</p>
+<p>To make it easier to optimize performance, the Ray Train Dashboard integrates profiling tools like <code>py-spy</code> and <code>dynolog</code> for on-demand performance analysis. With <code>py-spy</code>, users can generate flame graphs and stack traces to identify CPU bottlenecks or hangs. For Torch training runs, <code>dynolog</code> can provide traces showing the full picture of CPU and GPU activity, which can uncover bottlenecks in the training pipeline. These tools can be launched with a single click and enable users to pinpoint areas of optimization across the cluster.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6FU76PoZxqpAdzAVV3R8wq/af5029ad4f774f561ca4b5af9845c1db/fig7_cpu-trace.png" alt="Figure 7: A flamegraph generated by "></p>
+<p>Figure 7: A flamegraph generated by</p>
+<p><em>Fig 7. A flamegraph generated by on-demand sampling-based CPU profiling of the training worker process, which can be used to identify bottlenecks. In this example, there's some metric aggregation logic that is taking up a large percentage of the CPU time.</em></p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4eupDt0ctE8TkjrKvZW3b1/36cf4dc3ae97e69ea562bec5faeb2461/fig8_gpu-trace.png" alt="Figure 8: A trace visualization generated from on-demand GPU profiling on Anyscale. This trace can help identify bottlenecks on both the CPU and GPU sides by showing a ti"></p>
+<p>Figure 8: A trace visualization generated from on-demand GPU profiling on Anyscale. This trace can help identify bottlenecks on both the CPU and GPU sides by showing a ti</p>
+<p><em>Fig 8. A trace visualization generated from on-demand GPU profiling on Anyscale. This trace can help identify bottlenecks on both the CPU and GPU sides by showing a timeline of CPU operations and GPU kernels. The picture above zooms in on a collective all-reduce operation which is part of the Distributed Data Parallel algorithm for distributed training</em></p>
+<h2>LinkRay Data Dashboard: Faster Pipeline Debugging with Tree and DAG views</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/2BQry7C4sGcpI2uawdXc8f/1e200f3e00aecb819fc612ddc93d6ed7/image2.png" alt="Fig 2. Visualize pipeline execution with new DAG views"></p>
+<p>Fig 2. Visualize pipeline execution with new DAG views</p>
+<p><em>Fig 9. Visualize pipeline execution with new DAG views</em></p>
+<p>Data processing workloads are the foundation of AI services, yet they remain notoriously difficult to debug and optimize when scaled out as part of a distributed pipeline running with Ray. When data pipelines stall, the debugging process can consume hours of valuable development time and waste expensive compute resources.</p>
+<p>With the new purpose-built dashboard for Ray Data, available exclusively on Anyscale, teams can address several common challenges encountered in large-scale data workloads with:</p>
+<ul><li><strong>Data Pipeline Drilldowns:</strong> High-level overviews with easy drilldowns using Tree and DAG views</li><li><strong>Bottleneck Insights:</strong> Pinpoint bottlenecks with operation-level progress status, resolve using easy to access operator metrics</li><li><strong>Dataset-Aware Log Views:</strong> Trace and Fix Hidden Issues with Dataset-Aware Log Views</li></ul>
+<h3>LinkProgress Overview and Drill-Downs with Tree and DAG Views</h3>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/pK7keNfR7RNPYw3OqBeiR/f9e8fe96c27c9e3cb735fe2aa5a45522/image5.png" alt="Fig 3. Data Pipeline High-Level Status with Tree Views in Ray Data Dashboard"></p>
+<p>Fig 3. Data Pipeline High-Level Status with Tree Views in Ray Data Dashboard</p>
+<p><em>Fig 10. Data Pipeline High-Level Status with Tree Views in Ray Data Dashboard</em></p>
+<p><a href="https://docs.ray.io/en/latest/data/monitoring-your-workload.html#ray-data-logs">Ray Data</a> logs provide rich information about pipeline yet it lacks out-of-the-box visibility into the actual structure of your pipeline. To quickly reveal your workload’s topology to monitor and debug different stages of a pipeline, The Ray Data Dashboard gives you both Tree and DAG views that reveal your workload's true topology at a glance.</p>
+<p>Let's look at a practical example. Imagine you have a data pre-processing workload used for training. As part of this data pre-processing workload, you need to read a high volume of images from multiple S3 data sources.</p>
+<pre><code>1dataset_01 = ray.data.read_parquet(&quot;s3://...&quot;, columns=[&quot;image&quot;, &quot;label&quot;])
+2dataset_02 = ray.data.read_parquet(&quot;s3://...&quot;, columns=[&quot;image&quot;, &quot;label&quot;])
+3dataset = dataset_01.union(dataset_02).limit(100000).map(map_fn(...))</code></pre>
+<p>The Tree view reveals the workload’s general status at a glance. DAG view provides a different set of insights by providing visibility into the pipeline’s progression through various stages. This view shows concurrent read operations, merging steps, and pre-processing activities to quickly verify pipeline is executing as intended – no more guesswork or manual checks about what's actually happening under the hood.</p>
+<h3>LinkPinpoint and Resolve Bottlenecks with Operator Metrics</h3>
+<p>Instead of just showing that something is slow, the Ray Data Dashboard in Anyscale takes it one step further by providing additional details that can help you pinpoint exactly where your bottlenecks are.</p>
+<p>The dashboard displays essential metrics for debugging, including:</p>
+<ul><li>Progress (number of rows processed)</li><li>Resource utilization (CPU, GPU, and memory)</li><li>Concurrency levels (number of active tasks and actors)</li><li>Live and peak throughput</li><li>Number of queued blocks</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6Ai25k6umoYYENYwSmwp8M/78e4101bf10f0a84371f17bb26831136/image6.png" alt="Fig 6. Ray Data Dashboard Operator Metrics View"></p>
+<p>Fig 6. Ray Data Dashboard Operator Metrics View</p>
+<p><em>Fig 11. Ray Data Dashboard Operator Metrics View</em></p>
+<p>Taking the example above, the dashboard shows that the <code>Map(map_fn)</code> operator is the bottleneck in the pipeline, as it accounts for the largest share of processing time. However, while the system is running smoothly, the operator is fully utilizing the available resources limiting the throughput. Armed with these types of insights, ML practitioners can take immediate action such as increasing CPU resources to eliminate bottlenecks. In one internal test, simply increasing CPU allocation from 272 to 512 (less than 2x) led to a nearly 4x speedup, reducing job time from over 20 minutes to just a little over 5.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5AZQ1ybRDNOEthJDvo0xsa/facc614613a308525cf6cd5a23a53fae/image7.png" alt="Fig 7. Operation execution post CPU resources increment"></p>
+<p>Fig 7. Operation execution post CPU resources increment</p>
+<p><em>Fig 12. Operation execution post CPU resources increment</em></p>
+<h3>LinkTrace and Fix Hidden Issues with Dataset-Aware Log Views</h3>
+<p>Debugging data issues in distributed systems is notoriously difficult. The Ray Dashboard's Log view automatically captures and highlights problematic data patterns that would otherwise be nearly impossible to detect. The logs are emitted and traced back to the associated dataset by default – no manual setup required. Unlike traditional logging systems, the Log view surfaces both system-level logs and user-emitted logs, making it easy to have complete visibility into your data pipeline.</p>
+<p>Let's look at a practical example of how a holistic Log view simplifies debugging.</p>
+<p>In the figure below, we see a Ray Data program that has a mailformed data, since the <code>inverse</code> function did not handle 0 value. This program triggers a division-by-zero error during a map function.</p>
+<pre><code>1dataset01 = from_items([{&quot;id&quot;: 1, &quot;value&quot;: 100}, {&quot;id&quot;: 2, &quot;value&quot;: 0}])
+2
+3def inverse(batch):
+4   return {
+5       &quot;id&quot;: batch[&quot;id&quot;],
+6       &quot;value&quot;: 1/batch[&quot;value&quot;],
+7   }
+8
+9dataset01.map(inverse).materialize()
+10</code></pre>
+<p>To address this, the Log View emits the exact content of the problematic block (in this case, <code>{</code>id<code>: 2, </code>value<code>: 0}</code>) along with a stack trace indicating where the error originated.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/YWWRuDZMbEltfidqqxVjB/c230a08cc99b381f49b3f8e5d3fd67bf/image3.png" alt="Fig 9. Mailformed row data with log view"></p>
+<p>Fig 9. Mailformed row data with log view</p>
+<p><em>Fig 13. Malformed row data with log view</em></p>
+<p>RayTurbo Data Dashboard’s Log View also allows you to define a custom sampling function to monitor how block data flows through the pipeline – directly within the Log View.</p>
+<pre><code>1   def inspection(batch):
+2   	 logger = logging.getLogger(&quot;ray.data&quot;)
+3   	 if random.random() &lt; 0.001:
+4        logger.info(f&quot;Processing {batch}&quot;)
+5     return batch
+6   dataset = dataset.map(inspection)
+7</code></pre>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/2oPP5ejrntwAttm74lgzOz/feeccef94fc5058e4c36a3c313d7ab8f/image1.png" alt="Fig 11. Sampling data with log view"></p>
+<p>Fig 11. Sampling data with log view</p>
+<p><em>Fig 14. Sampling data with log view</em></p>
+<p>With these advanced logging features, you can quickly identify and fix issues that would otherwise remain hidden in complex, distributed pipelines.</p>
+<h2>LinkFuture Enhancements</h2>
+<p>Both dashboards are actively evolving to provide even more value. Planned enhancements include:</p>
+<p>For the Ray Data Dashboard:</p>
+<ul><li>Automated issue detection with built-in health checks for stalled operators, high memory usage, and more</li></ul>
+<p>For the Ray Train Dashboard:</p>
+<ul><li>Integration with the Ray Data Dashboard for end-to-end observability</li><li>Support for experiment tracking via Weights &amp; Biases, MLflow, and similar platforms</li></ul>
+<h2>LinkTry It Today</h2>
+<p>Whether you're processing massive datasets or training complex models, Anyscale's observability dashboards give you the visibility you need to build, optimize, and scale your AI systems with greater confidence and efficiency.</p>
+<p>Ready to see how these dashboards can transform your AI workflows? Get started on the Anyscale Platform today. <a href="https://console.anyscale.com/register/ha?utm_source=blog&amp;utm_medium=web&amp;utm_campaign=ray-day">Sign up now and receive $100 in free credits</a> to experience this purpose-built observability for debugging and optimization design for your distributed applications using Ray.</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#ray-train-dashboard:-unified-observability-for-distributed-training">Ray Train Dashboard: Unified Observability for Distributed Training</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#unified-interface-for-log-and-metric-drilldowns">Unified Interface for Log and Metric Drilldowns</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#clear-visualization-of-training-progress-and-job-state">Clear Visualization of Training Progress and Job State</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#detailed-error-context-when-things-go-wrong">Detailed Error Context When Things Go Wrong</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#one-click-profiling-for-performance-optimization">One-Click Profiling for Performance Optimization</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#ray-data-dashboard:-faster-pipeline-debugging-with-tree-and-dag-views">Ray Data Dashboard: Faster Pipeline Debugging with Tree and DAG views</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#progress-overview-and-drill-downs-with-tree-and-dag-views-">Progress Overview and Drill-Downs with Tree and DAG Views </a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#pinpoint-and-resolve-bottlenecks-with-operator-metrics">Pinpoint and Resolve Bottlenecks with Operator Metrics</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#trace-and-fix-hidden-issues-with-dataset-aware-log-views">Trace and Fix Hidden Issues with Dataset-Aware Log Views</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#future-enhancements">Future Enhancements</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#try-it-today">Try It Today</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-production-best-practices-field.png?w=140" alt="kuberay-production-best-practices-field"></p>
+<h4>KubeRay in production: best practices from the field</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="Announcing Ray support for PyTorch on Google TPUs"></p>
+<h4>Announcing Ray support for PyTorch on Google TPUs</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="Running Ray at scale on Kubernetes with KubeRay"></p>
+<h4>Running Ray at scale on Kubernetes with KubeRay</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>Ray Compiled Graphs: Optimized AI Workloads with Native GPU…</title>
       <link>https://anyscale.com/blog/announcing-compiled-graphs</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-compiled-graphs?li=1</guid>
@@ -5199,6 +5417,47 @@ def train_loop_per_worker(config: dict):
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
+      <title>Introducing Elastic Distributed Training on Anyscale</title>
+      <link>https://anyscale.com/blog/introducing-elastic-distributed-training</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/introducing-elastic-distributed-training?li=1</guid>
+      <pubDate>Mon, 22 Jul 2024 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Introducing Elastic Distributed Training on Anyscale</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=matthew-deng">Matthew Deng</a> and <a href="https://www.anyscale.com/blog?author=justin-yu">Justin Yu</a> | July 22, 2024</p>
+<p>Running ML training jobs on a cluster of GPU nodes is essential with the increasing scale of data and models. Distributed ML training allows practitioners to train models in reasonable time frames, but it also introduces more opportunities for failures to occur during training.</p>
+<p>Furthermore, practitioners leveraging spot instances to reduce cost increase the failure rate due to spot preemptions. Combined with low spot availability for popular GPU node types, this can oftentimes delay jobs for long periods of time, which is counter to the original cost saving objective.</p>
+<h2>Link<strong>The Solution: Elastic Training with Ray on Anyscale</strong></h2>
+<p>Anyscale now supports elastic training, enabling jobs to seamlessly adapt to changes in resource availability. This ensures continuous execution despite hardware failures or node preemptions, avoiding idle or wasted time. As more nodes become available, the cluster dynamically scales up to speed up training with more worker processes.</p>
+<p>With Anyscale’s support for spot instances and configurable fallback to on-demand instances, users gain fine-grained control over job execution and cost efficiency. For example, a high-priority training job can be set to prefer spot instances but fall back to on-demand instances if needed. This approach maintains the largest possible cluster to ensure timely results while optimizing for cost savings.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/76yHGZdGgMXMMG7N0Gp1QA/f1ae1a89d6060c0b4f800d3c88f526eb/image1.png" alt="image1"></p>
+<p>image1</p>
+<p>For non-critical jobs or those with flexible timelines, users can configure the job to run exclusively on spot instances. If spot nodes are evicted, the cluster continues to progress with fewer nodes instead of halting altogether.</p>
+<h2>LinkExample of how it works<strong>:</strong></h2>
+<p>The example below shows a training run configured so that the Ray Train worker group that may elastically scale from 4 to 6 GPU workers. Each node has 2 GPUs.</p>
+<ul><li>The training starts with at least 4 workers.If only 2 out of 3 nodes are available to start with, then training will begin with only 4 workers since the cluster only has 4 GPUs.</li><li>Let’s assume that training was able to start with all 6 workers. After some period, the spot node (Spot node 3) is evicted. The cluster will continue training on 4 GPU workers with elastic training.</li><li>If another node becomes available, the cluster autoscaling will scale up and add the node.Note that the non-elastic alternative could possibly hang here for minutes to even hours if spot availability never opens up, which is not unusual for high-demand GPU instances. All remaining GPUs would be idle, wasting money and compute that could be used to make some forward training progress.</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4EAMZO7C8NtmMySjkvoEQx/a3bf6036e54dc228feda6531f6b3aee1/elastic_training__1_.png" alt="elastic training"></p>
+<p>elastic training</p>
+<p><strong>Note how easy it is to take advantage of Elastic Training on Anyscale. </strong>Developers and practitioners need to only change <code>ScalingConfig(num_workers)</code> to specify <code>(min_workers, max_workers)</code> as a tuple instead of a fixed worker group size.</p>
+<h2>LinkSummary and Key Benefits:</h2>
+<ul><li>Lower Costs - run training on lower cost spot instances and save as much as 60% on cloud costs</li><li>Faster training - ensure uninterrupted continued progress while training. Deliver models in less time</li><li>Minimal Code Changes: Implementing elastic training in Anyscale requires minimal modifications to your existing code.</li></ul>
+<p><a href="https://console.anyscale.com/register/ha?utm_source=blog&amp;utm_content=elastic-training">Get started today on Anyscale!</a></p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/introducing-elastic-distributed-training#the-solution:-elastic-training-with-ray-on-anyscale">The Solution: Elastic Training with Ray on Anyscale</a></li><li><a href="https://www.anyscale.com/blog/introducing-elastic-distributed-training#example-of-how-it-works">Example of how it works</a></li><li><a href="https://www.anyscale.com/blog/introducing-elastic-distributed-training#summary-and-key-benefits:">Summary and Key Benefits:</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-production-best-practices-field.png?w=140" alt="kuberay-production-best-practices-field"></p>
+<h4>KubeRay in production: best practices from the field</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="Announcing Ray support for PyTorch on Google TPUs"></p>
+<h4>Announcing Ray support for PyTorch on Google TPUs</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="Running Ray at scale on Kubernetes with KubeRay"></p>
+<h4>Running Ray at scale on Kubernetes with KubeRay</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>Deploy Ray Serve with up to 50% fewer nodes using Anyscale R…</title>
       <link>https://anyscale.com/blog/new-feature-replica-compaction</link>
       <guid isPermaLink="true">https://anyscale.com/blog/new-feature-replica-compaction?li=1</guid>
@@ -5400,262 +5659,6 @@ def train_loop_per_worker(config: dict):
 <p><strong>Authors: </strong><a href="https://www.linkedin.com/in/neelay-shah-75b5781/">Neelay Shah</a>, NVIDIA <a href="https://www.linkedin.com/in/akshay-malik-a47a1416/">Akshay Malik</a>, Anyscale</p>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/low-latency-generative-ai-model-serving-with-ray-nvidia#model-serving-with-ray-serve-and-rayllm">Model Serving with Ray Serve and RayLLM</a></li><li><a href="https://www.anyscale.com/blog/low-latency-generative-ai-model-serving-with-ray-nvidia#ai-deployment-with-nvidia-triton-inference-server-and-tensorrt-llm">AI Deployment with NVIDIA Triton Inference Server and TensorRT-LLM</a></li><li><a href="https://www.anyscale.com/blog/low-latency-generative-ai-model-serving-with-ray-nvidia#maximizing-potential:-leveraging-ray-serve-and-rayllm-with-triton-inference-server-and-tensorrt-llm">Maximizing Potential: Leveraging Ray Serve and RayLLM with Triton Inference Server and TensorRT-LLM</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>RAG at Scale: 10x Cheaper Embedding Computations with Anysca…</title>
-      <link>https://anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone?li=1</guid>
-      <pubDate>Tue, 16 Jan 2024 00:00:00 +0000</pubDate>
-      <description>Full title: RAG at Scale: 10x Cheaper Embedding Computations with Anyscale and Pinecone</description>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>RAG at Scale: 10x Cheaper Embedding Computations with Anyscale and Pinecone</h1>
-<p>By</p>
-<p>Scott Lee</p>
-<p>,</p>
-<p>Kyle Huang</p>
-<p>,</p>
-<p>Cheng Su</p>
-<p>and</p>
-<p>Hao Chen</p>
-<p>|</p>
-<p>January 16, 2024</p>
-<h3>Check out our updated RAG blog</h3>
-<p>For the most up-to-date content on how to run the best RAG pipelines with Ray, <a href="https://www.anyscale.com/blog/rag-pipelines-how-to">read our updated blog</a>.</p>
-<p><em>Previously, we showed how Ray Data is highly efficient on batch inference compared to other solutions (see the </em><a href="https://www.anyscale.com/blog/offline-batch-inference-comparing-ray-apache-spark-and-sagemaker"><em>blog post</em></a> <em>for more details). In this blog, we demonstrate this on a large-scale production workload with Pinecone.</em></p>
-<p>The first steps in building a <a href="https://www.anyscale.com/blog/a-comprehensive-guide-for-building-rag-based-llm-applications-part-1">Retrieval-Augmented Generation (RAG)</a> application is to create embeddings of your data. These are representations of meaning and context that vector databases use for search and retrieval. Creating embeddings presents several challenges.</p>
-<ul><li><strong>Scale:</strong> Terabyte-sized datasets are common, and the workloads are memory-intensive. With scale comes cost.</li><li><strong>Heterogeneous compute:</strong> Embedding computations involve data ingest, preprocessing, chunking, and inference. This requires a mix of CPU and GPU compute. Adding to the challenge, a mixture of GPU types may be needed.</li><li><strong>Multimodal data:</strong> RAG applications work with documents, images, and an increasing variety of data modalities.</li></ul>
-<p>We are excited to announce that with <a href="https://www.anyscale.com/">Anyscale</a> and <a href="https://www.pinecone.io/">Pinecone</a>, users can now generate embeddings for use in a distributed vector database at 10% of the cost of other popular offerings!</p>
-<h2>Link<strong>Breakthrough vector database delivers up to 50x cost savings</strong></h2>
-<p>With this launch, Pinecone is extending its lead as the technology and market leader by completely re-inventing the vector database. This groundbreaking serverless vector database lets companies add unlimited knowledge to their GenAI apps at 2% of the prior cost. With Pinecone serverless, you can store billions of vectors and only pay for what you search<strong>.</strong></p>
-<p>Key innovations that lead to the cost-savings and high performance include the following.</p>
-<ul><li>The separation of reads, writes, and storage significantly reduces costs for all types and sizes of workloads.</li><li>A pioneering architecture, with vector clustering on top of blob storage, provides low latency and always-fresh vector search over practically unlimited data sizes at a low cost.</li><li>Novel indexing and retrieval algorithms enable fast and memory-efficient vector search from blob storage without sacrificing retrieval quality.</li><li>A multi-tenant compute layer provides powerful and efficient retrieval for thousands of users, on demand. This enables a serverless experience in which developers don’t need to provision, manage, or even think about infrastructure, as well as usage-based billing that lets companies pay only for what they use.</li></ul>
-<h2>Link<strong>Comparing to other embedding computation approaches</strong></h2>
-<p>When computing embeddings, there are a handful of common approaches.</p>
-<ul><li><strong>OpenAI:</strong> API providers like OpenAI can handle embeddings computation, but require a separate solution for scalable data ingest and preprocessing. Flexibility in model choice is limited.</li><li><strong>Spark:</strong> Distributed frameworks like Spark can scale data ingest and preprocessing, but need a separate solution for efficient embeddings computation.</li><li><strong>Vertex AI:</strong> Google Cloud can handle data ingest and preprocessing, and Vertex AI can handle embedding computations. Like OpenAI, flexibility in model choice is limited.</li></ul>
-<p>The approaches above do not comprise an all-in-one solution that handles both data ingestion and embedding computations at scale, while allowing for flexibility in the preprocessing step and embedding model.</p>
-<p><strong>The Overall RAG Stack</strong></p>
-<p>Pinecone Partners Launch</p>
-<p>Zooming out, embedding computations are just part of the picture. To build a RAG application, there are many pieces.</p>
-<ul><li>A high-performance, distributed vector database such as <a href="https://www.pinecone.io/">Pinecone</a> is necessary to support efficient inserts and queries with the computed embeddings.</li><li><a href="https://huggingface.co/">Hugging Face</a> and <a href="https://www.langchain.com/">LangChain</a> provide open source models and utilities used for computing embeddings.</li><li>Finally, a distributed computation engine such as <a href="https://github.com/ray-project/ray/">Ray</a> ties all of these elements together and seamlessly manages the end-to-end workflow.</li></ul>
-<h2>Link<strong>Using Ray Data and the Pinecone API</strong></h2>
-<p>The following example outlines how to use Ray Data and the Pinecone API to compute and upsert embeddings to Pinecone:</p>
-<pre><code>1import ray
-2from pinecone import Pinecone
-3
-4from langchain.text_splitter import RecursiveCharacterTextSplitter
-5import numpy as np
-6from transformers import AutoTokenizer, AutoModel
-7import uuid
-8
-9def chunk_row(row):
-10      # Chunk each input row
-11      splitter = RecursiveCharacterTextSplitter(...)
-12      chunks = splitter.split_text(row[&quot;text&quot;])
-13      return [
-14             {
-15                    &quot;id&quot;: str(uuid.uuid4()),
-16                    &quot;text&quot;: chunk,
-17             } for chunk in chunks
-18      ]
-19
-20class ComputeEmbeddings:
-21      def __init__(self, model_name=&quot;thenlper/gte-large&quot;):
-22            # To use a different embedding model, update the default name 
-23            # above, or pass the new model name in the map_batches() call:
-24            # chunked_ds.map_batches(
-25            # 	ComputeEmbeddings, fn_constructor_args=(new_model_name,)
-26            # )
-27            self.model = AutoModel.from_pretrained(model_name)
-28            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-29
-30      def __call__(self, batch):
-31            batch_text = batch[&quot;text&quot;]
-32            tokenize_results = self.tokenizer(batch_text)
-33            model_input = {
-34                    &quot;input_ids&quot;: tokenize_results[&quot;input_ids&quot;],
-35                    &quot;token_type_ids&quot;: tokenize_results[&quot;token_type_ids&quot;],
-36                    &quot;attention_mask&quot;: tokenize_results[&quot;attention_mask&quot;],
-37            }
-38
-39            embeddings = self.model(**model_input)
-40            embeddings = self._average_pool(outputs.last_hidden_state, model_input['attention_mask'])
-41            embeddings = F.normalize(embeddings)
-42
-43            batch[&quot;values&quot;] = embeddings.numpy().astype(np.float32)
-44            return batch
-45
-46      def _average_pool(self, last_hidden_states, attention_mask):
-47              last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
-48              return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
-49
-50def pinecone_upsert(batch):
-51      client = Pinecone(api_key=...)
-52      index = client.Index(index_name)
-53      result = index.upsert(vectors=batch)
-54      return {&quot;num_success&quot;: np.array([result.upserted_count])}
-55
-56# replace with read API corresponding to your input file type
-57ds = ray.data.read_parquet(&quot;s3://bucket-raw-text&quot;)
-58
-59# chunk the input text
-60chunked_ds = ds.flat_map(chunk_row)
-61
-62# compute embeddings with a class that calls the embeddings model
-63embeddings_ds = chunked_ds.map_batches(ComputeEmbeddings)
-64
-65# replace with write API corresponding to your desired output file type
-66embeddings_ds.write_parquet(&quot;s3://output-embeddings&quot;)
-67
-68# upsert embeddings to Pinecone with the Pinecone API
-69upsert_results = embeddings_ds.map_batches(pinecone_upsert).materialize()
-70</code></pre>
-<p>For more details and additional examples on how to best leverage the Ray Data API, please refer to the <a href="https://docs.ray.io/en/latest/data/data.html">Ray Data documentation</a>.</p>
-<h2>Link<strong>Cost comparison</strong></h2>
-<p>To compare the price-performance of Anyscale to other solutions, we generated embeddings for the <a href="https://huggingface.co/datasets/tiiuae/falcon-refinedweb">falcon-refinedweb dataset</a>, which has over 600 billion tokens using Amazon Web Services EC2 service <a href="https://aws.amazon.com/ec2/instance-types/g5/">g5.xlarge</a> machines, pre-processing was done on CPU-only machines. The following table compares cost estimates for Anyscale and several popular alternatives to generate the 1 billion embeddings (prices as of January 2024):</p>
-<table><thead><tr><th></th><th>Total cost for generating embeddings</th></tr></thead><tbody><tr><td>OpenAI</td><td>$60,000 (<a href="https://openai.com/pricing">$0.0001 per 1000 tokens</a>)</td></tr><tr><td>Vertex AI</td><td>$48,000 (<a href="https://cloud.google.com/vertex-ai/pricing#generative_ai_models">$0.00002 per 1000 characters</a>)</td></tr><tr><td>Anyscale</td><td>$6,000</td></tr></tbody></table>
-<p>Note that for the alternatives listed here, these costs do not include data ingest and preprocessing costs, so Anyscale is even more cost-efficient than the above estimates suggest!</p>
-<h2>Link<strong>Conclusion</strong></h2>
-<p>Generating embeddings is a critical task for developing successful RAG applications, and Anyscale is the most cost-efficient solution for this workflow. To fully take advantage of the scale that Anyscale enables, <a href="https://www.pinecone.io/">check out Pinecone’s distributed vector database service</a> and try out the <a href="https://www.anyscale.com/get-started?utm_source=anyscale&amp;utm_content=rag10xpinecone">Anyscale Platform</a>.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone#breakthrough-vector-database-delivers-up-to-50x-cost-savings">Breakthrough vector database delivers up to 50x cost savings</a></li><li><a href="https://www.anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone#comparing-to-other-embedding-computation-approaches">Comparing to other embedding computation approaches</a></li><li><a href="https://www.anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone#using-ray-data-and-the-pinecone-api">Using Ray Data and the Pinecone API</a></li><li><a href="https://www.anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone#cost-comparison">Cost comparison</a></li><li><a href="https://www.anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Open Source LLMs: Viable for Production or a Low-Quality Toy…</title>
-      <link>https://anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy?li=1</guid>
-      <pubDate>Mon, 20 Nov 2023 00:00:00 +0000</pubDate>
-      <description>Full title: Open Source LLMs: Viable for Production or a Low-Quality Toy?</description>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Open Source LLMs: Viable for Production or a Low-Quality Toy?</h1>
-<p>By</p>
-<p>Anyscale Ray Team</p>
-<p>|</p>
-<p>November 20, 2023</p>
-<p><em>This blog post is part of the Ray Summit 2023 highlights series where we provide a summary of the most exciting talk from our recent LLM developer conference.</em></p>
-<p><em>Disclaimer: Summary was AI generated with human edits from video transcript.</em></p>
-<h2>LinkKey Takeaways</h2>
-<ul><li>Open source large language models (LLMs) like LLaMA are viable for production use cases. Companies like Anyscale and Hugging Face offer managed hosting of open source LLMs that makes it easy to use them.</li><li>Open source LLMs can be much cheaper (e.g. 30x cheaper) than proprietary models like GPT-3 while still providing good enough performance for many applications. This cost difference allows some products/use cases to exist that wouldn't be feasible with proprietary models.</li><li>Fine-tuned open source LLMs can sometimes outperform even the largest proprietary general purpose LLMs like GPT-4. However, fine-tuning is not a silver bullet - it works better for language formats vs factual information.</li><li>Open source LLMs currently lag behind proprietary models in some areas like output quality, following instructions precisely, support for function templates, and large context window sizes. But many of these gaps are being actively worked on.</li><li>Using a hybrid approach with both open source and proprietary LLMs can provide a good cost/performance tradeoff. The speaker gave an example where they send 5% of queries to GPT-4 and 95% to an open source LLM.</li></ul>
-<p>Open-source Language Models (LLMs) are increasingly becoming viable for production, challenging the notion that they are low-quality toys. This blog post explores the strengths and weaknesses of open LLMs compared to proprietary ones like GP4. We delve into factors such as model quality, instruction following, function templates, and context window sizes, highlighting the cost-effectiveness and potential feasibility of open LLMs in various applications.</p>
-<h2>LinkOpen Source LLMs: Viable for Production or a Low-Quality Toy?</h2>
-<p>In recent years, the landscape of language models has undergone a significant transformation, with open-source models gaining attention and challenging the perception that they are merely low-quality toys. This shift raises the question: are Open Source Language Models (LLMs) truly viable for production applications? To answer this question, we'll dissect the insights provided in a recent talk titled &quot;Open Source LLMs: Viable for Production or a Low-Quality Toy?&quot; and explore the strengths and weaknesses of open LLMs in comparison to their proprietary counterparts.</p>
-<h2>LinkQuality Matters</h2>
-<p>The talk begins by addressing the elephant in the room: model quality. Historically, proprietary LLMs, such as GP4, have been considered the gold standard for high-quality outputs. They excel in analogical reasoning, planning, and generating refined answers. However, the speaker introduces a twist—open LLMs like Llama 70b are not to be dismissed. While GP4 might lead in certain tasks, open LLMs can rival their proprietary counterparts, particularly in tasks like summarization and fine-tuning.</p>
-<h2>LinkInstruction Following: Alignment and Flexibility</h2>
-<p>A surprising revelation emerges: proprietary LLMs showcase better obedience when explicitly instructed, thanks to reinforcement learning through human feedback. Open LLMs, on the other hand, might need an additional fine-tuning step to ensure precise instruction following. However, the speaker suggests a workaround: task-specific LLMs that instruct other LLMs, resulting in better performance and cost-effectiveness.</p>
-<h2>LinkFunction Templates: Locking in Format</h2>
-<p>Proprietary LLMs introduce a convenient feature—function templates. These templates allow users to lock in the desired format, eliminating the need for post-processing corrections. Open LLMs, initially lacking this feature, are catching up. While function templates might not be readily available in all open-source models, ongoing projects indicate that this gap could be closed in the near future.</p>
-<h2>LinkContext Window Sizes: The Larger, the Better</h2>
-<p>Context window sizes play a crucial role in handling information, and proprietary LLMs have been ahead of the curve with larger context windows. Open-source models like Llama 70b might lag in this aspect, but promising projects are underway to address this limitation. As technology evolves, the hope is that open LLMs will soon match, if not exceed, the context window sizes offered by their proprietary counterparts.</p>
-<h2>LinkCost-Effectiveness: The Open LLM Advantage</h2>
-<p>One of the most compelling arguments for open LLMs is cost-effectiveness. The talk emphasizes that open models are not just marginally cheaper but can be radically cheaper. This cost advantage opens the door to a myriad of possibilities, making certain applications economically feasible that would otherwise be financially prohibitive using proprietary models.</p>
-<h2>LinkThe Road Ahead: Challenges and Opportunities</h2>
-<p>While open LLMs have made significant strides, challenges persist. Quality improvements, expanded context windows, and the integration of function templates are ongoing efforts within the open-source community. However, the potential of open LLMs is unmistakable. Their ability to challenge proprietary models in various tasks and the cost advantage they offer make them a formidable option for developers and businesses.</p>
-<h2>LinkConclusion: Choosing the Right Tool for the Job</h2>
-<p>In conclusion, the debate about open LLMs being viable for production or mere toys is shifting in favor of viability. The talk provides a nuanced perspective, urging us to choose the right tool for the right job. Open LLMs are not a one-size-fits-all solution, but they bring cost advantages and capabilities that can be leveraged effectively in specific scenarios.</p>
-<p>As the open-source community continues to innovate and address current limitations, the future looks promising for open LLMs. Developers and businesses alike should keep a watchful eye on this evolving landscape, ready to embrace the opportunities presented by these increasingly powerful and cost-effective language models.</p>
-<p>Sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy#key-takeaways">Key Takeaways</a></li><li><a href="https://www.anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy#open-source-llms:-viable-for-production-or-a-low-quality-toy?">Open Source LLMs: Viable for Production or a Low-Quality Toy?</a></li><li><a href="https://www.anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy#quality-matters">Quality Matters</a></li><li><a href="https://www.anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy#instruction-following:-alignment-and-flexibility">Instruction Following: Alignment and Flexibility</a></li><li><a href="https://www.anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy#function-templates:-locking-in-format">Function Templates: Locking in Format</a></li><li><a href="https://www.anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy#context-window-sizes:-the-larger,-the-better">Context Window Sizes: The Larger, the Better</a></li><li><a href="https://www.anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy#cost-effectiveness:-the-open-llm-advantage">Cost-Effectiveness: The Open LLM Advantage</a></li><li><a href="https://www.anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy#the-road-ahead:-challenges-and-opportunities">The Road Ahead: Challenges and Opportunities</a></li><li><a href="https://www.anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy#conclusion:-choosing-the-right-tool-for-the-job">Conclusion: Choosing the Right Tool for the Job</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>How Spotify Built a Robust Ray Platform with a Frictionless…</title>
-      <link>https://anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer?li=1</guid>
-      <pubDate>Thu, 09 Nov 2023 00:00:00 +0000</pubDate>
-      <description>Full title: How Spotify Built a Robust Ray Platform with a Frictionless Developer Experience</description>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>How Spotify Built a Robust Ray Platform with a Frictionless Developer Experience</h1>
-<p>By</p>
-<p>Anyscale Ray Team</p>
-<p>|</p>
-<p>November 9, 2023</p>
-<p>Update June 2024: Anyscale Endpoints (Anyscale's LLM API Offering) and Private Endpoints (self-hosted LLMs) are now available as part of the Anyscale Platform. Click <a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">here</a> to get started on the Anyscale platform.</p>
-<p><em>This blog post is part of the Ray Summit 2023 highlights series where we provide a summary of the most exciting talk from our recent LLM developer conference.</em></p>
-<p><em>Disclaimer: Summary was AI generated with human edits from video transcript.</em></p>
-<h2>LinkKey Takeaway</h2>
-<p>Spotify's journey to building a robust Ray platform with a frictionless developer experience is an inspiring story of innovation and streamlining the machine learning development process. This blog post delves into the details of their approach, covering the challenges they faced, the solutions they implemented, and the key takeaways from their experience. Learn how Spotify leveraged Kubernetes, Ray, and custom SDKs to create a user-friendly Cloud Development Environment (CDE) that simplified the development workflow for ML engineers, researchers, and data scientists.</p>
-<ul><li>Spotify uses Ray to power machine learning applications like recommending personalized content, search ranking, content discovery, etc.</li><li>Spotify built an internal ML platform called Hendrix on top of Ray, deployed on Google Kubernetes Engine. It provides tools and environments for engineers to quickly productionize ML apps.</li><li>Spotify’s new platform, Hendrix, has an SDK with Ray and PyTorch libraries to standardize common ML tasks. It also leverages open source libraries like Hydra, DeepSpeed, etc.</li><li>Spotify created a cloud development environment (CDE) solution to standardize dev environments and avoid issues with local setups. It provides remote cloud environments with GPUs, auto-configured with tools.</li><li>The CDE improved productivity by eliminating environment issues, provided more compute power, and enabled frictionless onboarding for users of diverse backgrounds.</li><li>Key lessons learned: Ensure availability, performance, and security. Allow for customization and extensibility. Use Kubernetes and leverage its features.</li><li>Spotify integrated PyTorch support with Ray for scalable training, hyperparameter tuning, etc. The Ray ecosystem at Spotify continues to drive more ML innovations.</li></ul>
-<h2>LinkHow Spotify Built a Robust Ray Platform with a Frictionless Developer Experience</h2>
-<p>Spotify, a global leader in the audio streaming industry, has long been associated with cutting-edge technology. With over 515 million users and 210 million subscribers across 184 markets, the company relies on advanced machine learning (ML) applications to enhance user experiences and drive innovation. To achieve this, they embarked on a journey to build a robust Ray platform, seamlessly integrated with a frictionless developer experience.</p>
-<p>In this blog post, we will dive deep into how Spotify accomplished this feat, breaking down the key elements of their strategy and the insights gained along the way. By the end, you'll have a comprehensive understanding of how Spotify transformed their ML development process, inspiring you to implement similar solutions in your projects.</p>
-<h2>LinkBackground</h2>
-<p>Spotify's machine learning platform plays a pivotal role in the company's operations. It powers various applications, including personalized content recommendations, search result optimizations, and content discovery. To support these ML initiatives, Spotify's ML platform team developed a centralized machine learning platform named Hendrix.</p>
-<p>One of the critical components of Hendrix is Ray, a powerful distributed computing framework. To leverage Ray effectively, Spotify needed to create a user-friendly Cloud Development Environment (CDE). The challenge was to provide a unified and straightforward interface that accommodated users with varying backgrounds, from ML engineers to data scientists.</p>
-<h2>LinkThe Vision</h2>
-<p>Spotify's aim was clear: they wanted to simplify the machine learning development process. To achieve this, they envisioned a CDE that would streamline the workflow for different users. The CDE would offer a flexible and efficient way to access managed Ray infrastructure, no matter the user's role or background.</p>
-<p>In essence, the vision was to create a frictionless developer experience that enabled users to focus on their ML tasks without being bogged down by setup and configuration complexities.</p>
-<h2>LinkThe Technical Solution</h2>
-<p>Spotify's technical solution for building this frictionless developer experience was a well-thought-out combination of technologies and custom developments. Here are the key components of their approach:</p>
-<h3>LinkRay Clusters on Kubernetes</h3>
-<p>Spotify's machine learning platform is based on Kubernetes, with GPU nodes attached to it through Google Kubernetes Engine (GKE). They used the open-source Kubernetes operator called Kubeflow for orchestration. By deploying Ray clusters on Kubernetes, they provided a scalable and maintainable infrastructure.</p>
-<h3>LinkPython SDK with Ray and PyTorch</h3>
-<p>To provide a seamless experience for their users, Spotify built a custom Python SDK that included Ray and PyTorch libraries. This SDK simplifies the process of accessing Ray infrastructure and accelerates ML application development. It caters to users with various backgrounds and requirements.</p>
-<h3>LinkCloud Development Environments</h3>
-<p>Spotify created Cloud Development Environments (CDEs) to enable users to work in the cloud seamlessly. These CDEs are based on Kubernetes, offering a quick startup, low latency, and the ability to work from any device. Users can instantly set up fully configured development environments, eliminating the need to troubleshoot broken configurations on their local machines.</p>
-<h3>LinkCustom vs. Code Extensions</h3>
-<p>Spotify recognized that users had diverse preferences when it came to their development environment. To cater to this, they developed custom vs. Code extensions. These extensions integrate with other parts of Spotify's ecosystem, allowing users to query internal data endpoints, run custom SQL engines, and more.</p>
-<h3>LinkEcosystem Support</h3>
-<p>Spotify also leveraged Ray's broader ecosystem, integrating popular ML libraries like Hugging Face, DeepSpeed, PyG, and others. This approach ensured that users could access a wide range of tools and solutions to tackle various ML problems.</p>
-<h2>LinkLessons Learned</h2>
-<p>Spotify's journey to building a frictionless developer experience highlighted several key lessons and insights:</p>
-<h3>LinkAvailability and Performance</h3>
-<p>Ensuring high availability and fast startup times is crucial for any developer environment. Spotify emphasized the need for a fast, highly available reverse proxy to optimize the user experience.</p>
-<h3>LinkCustomization and Extensibility</h3>
-<p>Offering a high level of customization for both personal and repository-level configuration is essential. Users should be able to personalize their environment according to their preferences.</p>
-<h3>LinkSecurity and Telemetry</h3>
-<p>Designing with security in mind is vital. Implement features like access control, authorization, and telemetry to provide a secure and observable platform.</p>
-<h3>LinkEfficiency and Cost Savings</h3>
-<p>Streamline the platform to maximize efficiency and reduce costs. Implement features like idle shutdown to save resources and minimize expenses.</p>
-<h3>LinkIntegration with Existing Tools</h3>
-<p>Consider how the new platform will integrate with existing tools and workflows within your organization. A seamless integration can significantly improve the user experience.</p>
-<h2>LinkThe Future</h2>
-<p>Spotify's journey to building a frictionless developer experience doesn't end here. They have ambitious plans for the future, including completing PyTorch development on Ray, optimizing ML compute accelerator allocation, and further platformizing their development environment to offer better accessibility, reliability, and observability.</p>
-<h2>LinkConclusion</h2>
-<p>Spotify's successful transformation of its ML development process is a testament to the power of innovation and thoughtful planning. By combining technologies like Ray, Kubernetes, and custom SDKs, they have created a user-friendly Cloud Development Environment that caters to the needs of ML engineers, researchers, and data scientists.</p>
-<p>The key takeaways from their journey are applicable to anyone looking to streamline their development workflow:</p>
-<p><strong>Simplify the Development Process</strong>: Strive to eliminate complexities in the development process and empower users to focus on their tasks.</p>
-<p><strong>Leverage the Right Technologies</strong>: Choose the right technologies and tools that align with your vision and needs.</p>
-<p><strong>Customization and Extensibility</strong>: Provide options for users to customize their environment to suit their preferences.</p>
-<p><strong>Security and Telemetry</strong>: Prioritize security and monitoring for a secure and observable environment.</p>
-<p><strong>Integration and Scalability</strong>: Ensure that the platform integrates seamlessly with existing tools and can scale as your organization grows.</p>
-<p>Spotify's journey showcases the potential for organizations to streamline their machine learning development, and the insights gained along the way are valuable for anyone embarking on a similar transformation.</p>
-<p>By taking inspiration from Spotify's story, you can make your own developer experience more frictionless, efficient, and user-friendly, ultimately driving innovation in your projects and products.</p>
-<p>Sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#key-takeaway">Key Takeaway</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer-experience">How Spotify Built a Robust Ray Platform with a Frictionless Developer Experience</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#background">Background</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#the-vision">The Vision</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#the-technical-solution">The Technical Solution</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#ray-clusters-on-kubernetes">Ray Clusters on Kubernetes</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#python-sdk-with-ray-and-pytorch">Python SDK with Ray and PyTorch</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#cloud-development-environments">Cloud Development Environments</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#custom-vs.-code-extensions">Custom vs. Code Extensions</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#ecosystem-support">Ecosystem Support</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#lessons-learned">Lessons Learned</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#availability-and-performance">Availability and Performance</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#customization-and-extensibility">Customization and Extensibility</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#security-and-telemetry">Security and Telemetry</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#efficiency-and-cost-savings">Efficiency and Cost Savings</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#integration-with-existing-tools">Integration with Existing Tools</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#the-future">The Future</a></li><li><a href="https://www.anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer#conclusion">Conclusion</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>
