@@ -9,7 +9,7 @@
 
 ## 全部文章（共 50 篇，按日期倒序；无日期条目列于最后）
 
-1. [MiMo-V2.6-Pro Is Now Available on DeepInfra](https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra)（2026-11-01）
+1. [MiMo-V2.6-Pro 现已登陆 DeepInfra](https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra)（2026-11-01） <!--orig:MiMo-V2.6-Pro Is Now Available on DeepInfra-->
 2. [开放模型为什么在发布数周后才提速](https://deepinfra.com/blog/why-open-models-get-faster)（2026-10-31） <!--orig:Why Open Models Get Faster Weeks After Launch-->
 3. [最佳 JEV 替代方案：托管 API 和开放模型 (2026)](https://deepinfra.com/blog/jev-alternatives)（2026-10-30） <!--orig:Best Jev Alternatives: Hosted APIs and Open Models (2026)-->
 4. [从录音到记录：NVIDIA Nemotron 3.5 Transcribe 在 DeepInfra 上线](https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release)（2026-10-28） <!--orig:From Recordings to Records: NVIDIA Nemotron 3.5 Transcribe on DeepInfra-->

@@ -44,17 +44,17 @@
 33. [AI 负载中的 GPU（低）效率问题](https://anyscale.com/blog/gpu-in-efficiency-in-ai-workloads)（2026-01-21） <!--orig:GPU (In)efficiency in AI Workloads-->
 34. [Ray 与分离式混合并行，多模态 AI 训练提速 30%](https://anyscale.com/blog/30-faster-multimodal-ai-training-with-ray-and-disaggregated-hybrid)（2025-12-09） <!--orig:30% Faster Multimodal AI Training with Ray and Disaggregated Hybrid Parallelism-->
 35. [Ray Serve：以异步推理、自定义请求路由与自定义扩缩推进灵活性](https://anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing)（2025-11-11） <!--orig:Ray Serve: Advancing Flexibility with Async Inference, Custom Request Routing, and Custom Autoscaling-->
-36. [Ray Train V2: Unified Distributed Training on Ray](https://anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray)（2025-11-04）
+36. [Ray Train V2：在 Ray 上统一的分布式训练](https://anyscale.com/blog/ray-train-v2-unified-distributed-training-on-ray)（2025-11-04） <!--orig:Ray Train V2: Unified Distributed Training on Ray-->
 37. [发布 Ray Direct Transport：Ray Core 支持 RDMA（上篇）](https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core)（2025-11-03） <!--orig:Announcing Ray Direct Transport: RDMA Support in Ray Core (Part 1)-->
 38. [Ray 引入 label selector：调度灵活性更强](https://anyscale.com/blog/introducing-label-selectors-scheduling-ray)（2025-10-30） <!--orig:Introducing Label Selectors: Improved Scheduling  Flexibility in Ray-->
 39. [大规模 Ray 任务监控：Anyscale 现已支持 1 万个以上任务的持久化](https://anyscale.com/blog/ray-task-monitoring-persistent-logs)（2025-09-12） <!--orig:Ray Task Monitoring at Scale: Announcing Persistence for +10k Tasks on Anyscale-->
 40. [阿里云上的 Ray：构建机器学习平台](https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform)（2025-06-12） <!--orig:Ray on Alibaba Cloud: Building an ML Platform-->
-41. [Streamline Distributed AI Monitoring and Debugging with New Ray Train & Ray Data Dashboards in Anyscale](https://anyscale.com/blog/ray-train-data-dashboard)（2025-05-20）
+41. [用 Anyscale 全新的 Ray Train 与 Ray Data 看板，把分布式 AI 的监控和调试理顺](https://anyscale.com/blog/ray-train-data-dashboard)（2025-05-20） <!--orig:Streamline Distributed AI Monitoring and Debugging with New Ray Train & Ray Data Dashboards in Anyscale-->
 42. [Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化](https://anyscale.com/blog/announcing-compiled-graphs)（2024-10-07） <!--orig:Ray Compiled Graphs: Optimized AI Workloads with Native GPU Communication-->
 43. [在 Anyscale 上自动扩缩大型 AI 模型，速度最高提升 5.1 倍](https://anyscale.com/blog/autoscale-large-ai-models-faster)（2024-10-01） <!--orig:Autoscaling Large AI Models up to 5.1x Faster on Anyscale-->
 44. [发布 Anyscale Runtime：由 Ray 驱动，让 AI 更快、更便宜、更具弹性](https://anyscale.com/blog/announcing-anyscale-rayturbo)（2024-10-01） <!--orig:Announcing RayTurbo-->
 45. [Anyscale 上的批量 LLM 推理可将 AWS Bedrock 成本最多降低 6 倍](https://anyscale.com/blog/batch-llm-inference-announcement)（2024-10-01） <!--orig:Batch LLM Inference on Anyscale slashes AWS Bedrock costs by up to 6x-->
-46. [Introducing Elastic Distributed Training on Anyscale](https://anyscale.com/blog/introducing-elastic-distributed-training)（2024-07-22）
+46. [Anyscale 推出弹性分布式训练](https://anyscale.com/blog/introducing-elastic-distributed-training)（2024-07-22） <!--orig:Introducing Elastic Distributed Training on Anyscale-->
 47. [用 Anyscale Replica Compaction 部署 Ray Serve，节点数最多省 50%](https://anyscale.com/blog/new-feature-replica-compaction)（2024-07-15） <!--orig:Deploy Ray Serve with up to 50% fewer nodes using Anyscale Replica Compaction-->
 48. [Ray 聚焦：我们如何做到每周发布 Ray](https://anyscale.com/blog/ray-spotlight-delivering-weekly-releases)（2024-06-25） <!--orig:Ray Spotlight: How we delivered Ray weekly releases-->
 49. [Ray Spotlight 系列：用 Runtime Env 即容器构建多租户 Serve 应用](https://anyscale.com/blog/ray-spotlight-series-multitenant-serve-applications-with-runtime-envs-as-containers)（2024-06-13） <!--orig:Ray Spotlight Series: Multitenant Serve Applications with Runtime Envs as Containers-->

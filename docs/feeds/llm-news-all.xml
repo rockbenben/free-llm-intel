@@ -466,12 +466,80 @@ jobs:
 <ul><li><a href="https://openrouter.ai/docs/cookbook/coding-agents/automatic-code-review">自动代码审查 cookbook</a></li><li><a href="https://openrouter.ai/docs/guides/features/server-tools/shell">Shell tool 指南</a>和 <a href="https://openrouter.ai/docs/guides/features/containers">Containers 指南</a></li><li><a href="https://openrouter.ai/docs/guides/features/server-tools/apply-patch">Apply Patch tool 指南</a></li><li><a href="https://openrouter.ai/docs/guides/features/files-api">Files API 指南</a></li><li><a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval 文档</a></li><li><a href="https://openrouter.ai/blog/tutorials/how-to-gate-pull-requests-on-llm-evals-in-ci/">如何在 CI 里用 LLM eval 给 pull request 设门禁</a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>[DeepInfra] MiMo-V2.6-Pro Is Now Available on DeepInfra</title>
+      <title>[DeepInfra] MiMo-V2.6-Pro 现已登陆 DeepInfra</title>
       <link>https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra</guid>
       <pubDate>Sun, 01 Nov 2026 00:00:00 +0000</pubDate>
       <category>DeepInfra</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml">DeepInfra</source>
+      <description>原文标题：MiMo-V2.6-Pro Is Now Available on DeepInfra</description>
+      <content:encoded><![CDATA[<h1>MiMo-V2.6-Pro 现已登陆 DeepInfra</h1>
+<p>发布于 2026.11.01 | DeepInfra</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/MiMo-V2.6-Pro-Announcement-Banner.png" alt="MiMo-V2.6-Pro 现已登陆 DeepInfra"></p>
+<p>DeepSWE 上从 19.0 到 71.9——这就是小米报告的 MiMo-V2.5-Pro 到它的新一代旗舰 <a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro</a> 在真实软件工程任务上的跨度。按小米自己公布的数字，它已经和 Claude Opus 5（74.0）、GPT-5.6 Sol（73.0）站在同一档，而这个基准测的是仓库级的编码能力，不是玩具题。它由小米 MiMo 团队打造，是一个稀疏 Mixture-of-Experts 模型，总参数 1.02T，每次前向传播激活 42B，为 100 万 token 上下文窗口下的长周期 agentic 负载而设计。文本、图像、视频、音频全部原生处理——没有外挂的 adapter。</p>
+<p>训练思路才是让这些架构选择真正划得来的地方。小米把它叫作“You Only RL Once”：只跑一次 RL，把编码、通用 agent、视觉和网络安全任务混在同一个 batch 里，而不是按领域分成一轮一轮的独立阶段——于是策略能在同一次训练里跨领域迁移。这在小米自己报告的数字里看得到：相比上一版，AutomationBench 从 16.0 涨到 53.1，CyberGym 从 40.0 涨到 94.0。它以 MIT 许可证发布，省掉了这个参数规模下通常会卡住生产部署的授权摩擦。<a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro</a> 现已在 DeepInfra 上可用。</p>
+<h2>这个模型不一样在哪</h2>
+<p>MiMo-V2.6-Pro 是一个总参数 1.02T 的稀疏 Mixture-of-Experts 模型，但每次前向传播只激活 42B。LLM 主干是 70 层（60 层滑动窗口注意力 / 10 层全局注意力），384 个被路由的 expert、每个 token 激活 8 个——没有共享 expert。它原生全模态，文本、图像、视频、音频各走专用编码器：视觉用 681M 参数的 MiMo ViT，音频两个编码器（308M 参数的 AudioTokenizer 和 127M 参数的音频 patch 编码器）。上下文窗口是 1,048,576 个 token（1M），这在长仓库摄入、多工具 agent trace 和多轮会话上是有实际意义的。</p>
+<p>训练这件事也值得弄明白。小米把它叫作“You Only RL Once”：一次混合 RL，同时覆盖编码、通用 agent 任务、视觉和网络安全四个领域——不是按领域各做一轮微调。任务混在同一个 batch 里，模型因此能把推理策略跨领域迁移。配合它的是 Groupwise Agentic Grading，一个自我改进循环：从对比性的 rollout 里为具体任务搭出评分细则，再对通过的轨迹重新排序，把模型往更短、更省 token 的解法上引。还有一个推测解码器（5 层 SWA MTP drafter），每次前向传播预测后续 7 个 token，在不改变输出质量的前提下提升吞吐。</p>
+<p>按小米自己的基准对比，相对 MiMo-V2.5-Pro 的提升是全面性的：</p>
+<table><thead><tr><th><strong>基准</strong></th><th><strong>V2.5 Pro</strong></th><th><strong>V2.6 Pro</strong></th><th><strong>Δ</strong></th></tr></thead><tbody><tr><td>DeepSWE v1.1</td><td>19.0</td><td>71.9</td><td>+52.9</td></tr><tr><td>AutomationBench v1.0.6</td><td>16.0</td><td>53.1</td><td>+37.1</td></tr><tr><td>Terminal Bench 4.0</td><td>1.5</td><td>34.9</td><td>+33.4</td></tr><tr><td>JobBench</td><td>25.0</td><td>62.0</td><td>+37.0</td></tr><tr><td>CyberGym</td><td>40.0</td><td>94.0</td><td>+54.0</td></tr><tr><td>MiMo Cyber Bench</td><td>0.0</td><td>80.2</td><td>+80.2</td></tr></tbody></table>
+<p>这些不是渐进式的收益——尤其是网络安全和 agentic 终端这两类基准，它们指向的是一次实质的能力跃迁，而不是在熟悉的评测上调了调参。</p>
+<p>对着前沿竞品看，V2.6-Pro 在 agentic 任务上有竞争力，在别的地方则落后。按小米公布的基准对比，它在 AutomationBench 上以 53.1 分超过 Claude Opus 5（50.3）和 GPT-5.6 Sol（45.8）。在 MiMo VisualCoding（72.3）上它小胜 Claude Opus 5（70.0）。在 ExploitBench 上它落后（47.9，而 Claude Opus 5 和 GPT-5.6 Sol 是 70–78.5），在 Terminal Bench 4.0 上也落后（34.9，对面是 39.9–49.0）。这个模型的强项显然在多步 agentic 工作流，而不是单轮推理基准。</p>
+<p>这次发布还带来了 MiMo-V2.6-Pro-UltraSpeed——一个为比标准 Pro 显著更快的输出而构建的服务模式。它不是另一个模型，而是同一个 Pro checkpoint 换一种服务方式，面向实时和对延迟敏感的工作流。UltraSpeed 的价格和提供方可用性因供应商而异，在把负载定下来之前值得直接去 <a href="https://deepinfra.com/pricing">DeepInfra 定价页</a>确认。它的单 token 成本更高，但 API 和 MiMo Desktop 两条路都能用。</p>
+<h2>在 DeepInfra 上开始使用</h2>
+<p>MiMo-V2.6-Pro 现已在 DeepInfra 上可用。价格是每百万输入 token $0.435（缓存未命中）、每百万命中缓存的输入 token $0.0036、每百万输出 token $0.87。</p>
+<p>如果你的负载里有又长又重复的上下文——agent trace、大型代码库、多轮会话——在这个输入单价下，<a href="https://docs.deepinfra.com/chat/prompt-caching">prompt cache</a> 会带来实打实的差别。</p>
+<p>DeepInfra 通过 <a href="https://docs.deepinfra.com/quickstart">OpenAI 兼容 API</a> 提供这个模型，按用量计费，你不用管任何基础设施。你原来在哪儿用 OpenAI SDK，它就能在哪儿接上。需要独占容量的负载，也可以在 DeepInfra 控制台里部署私有端点。DeepInfra 对所有推理请求执行零保留策略，并通过 SOC 2 和 ISO 27001 认证。</p>
+<p>下面是一个最小示例，先把第一次调用跑通。换上你自己的 DeepInfra API key 就行：</p>
+<h3>Python</h3>
+<pre><code>from openai import OpenAI
+ 
+client = OpenAI(
+    api_key=&quot;$DEEPINFRA_TOKEN&quot;,
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+)
+ 
+response = client.chat.completions.create(
+    model=&quot;XiaomiMiMo/MiMo-V2.6-Pro&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Outline a research plan for synthesizing a MOF optimized for PFAS adsorption.&quot;}],
+    temperature=1.0,
+    top_p=0.95,
+)
+print(response.choices[0].message.content)copy</code></pre>
+<p>Shell</p>
+<pre><code>curl &quot;https://api.deepinfra.com/v1/openai/chat/completions&quot; \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Authorization: Bearer $DEEPINFRA_TOKEN&quot; \
+    -d '{
+          &quot;model&quot;: &quot;XiaomiMiMo/MiMo-V2.6-Pro&quot;,
+          &quot;messages&quot;: [
+            {
+                &quot;role&quot;: &quot;user&quot;,
+                &quot;content&quot;: &quot;Outline a research plan for synthesizing a MOF optimized for PFAS adsorption.&quot;
+            }
+          ],
+          &quot;temperature&quot;: 1.0,
+          &quot;top_p&quot;: 0.95
+      }'copy</code></pre>
+<p>JavaScript</p>
+<pre><code>import OpenAI from &quot;openai&quot;;
+ 
+const openai = new OpenAI({
+  apiKey: &quot;$DEEPINFRA_TOKEN&quot;,
+  baseURL: &quot;https://api.deepinfra.com/v1/openai&quot;,
+});
+ 
+const response = await openai.chat.completions.create({
+  model: &quot;XiaomiMiMo/MiMo-V2.6-Pro&quot;,
+  messages: [{ role: &quot;user&quot;, content: &quot;Outline a research plan for synthesizing a MOF optimized for PFAS adsorption.&quot; }],
+  temperature: 1.0,
+  top_p: 0.95,
+});
+console.log(response.choices[0].message.content);copy</code></pre>
+<p>小米自己的部署建议是 temperature=1.0、top_p=0.95——值得守住这两个默认值，尤其是 agentic 和推理类负载，这类负载下模型能从完整的输出分布里获益。去 DeepInfra 上的 MiMo-V2.6-Pro 页面拿 API key，就可以开始构建了。</p>
+<h2>结论</h2>
+<p>MiMo-V2.6-Pro 是一个真正意义上的 agentic 模型——基准上的跳变反映的是实打实的能力变化，而不是把熟悉的评测刷高了；MIT 许可证意味着你可以直接上线，不用来回走法务。100 万 token 上下文窗口、原生 <a href="https://deepinfra.com/blog/deepinfra-function-calling-guide">function calling</a>，加上明确针对多步工具使用做的训练，这个组合让它很适合单轮模型仍然吃力的那一类问题：长时间运行的编码 agent、自动化的安全工作流，以及需要在大上下文里保持推理连贯的复杂多轮会话任务。</p>
+<p>如果你正在做 agentic 方向上的任何东西，这个模型值得过一遍你自己的评测套件——也值得和最近的其他发布对比一下，比如 <a href="https://deepinfra.com/blog/deepseek-v4-flash-vs-qwen3-6-vs-glm-4-6">DeepSeek V4 Flash 与 Qwen3.6</a>，或者 <a href="https://deepinfra.com/blog/kimi-k3-vs-claude-opus-4-8-vs-gpt-5-6-sol">Kimi K3 对 Claude Opus 4.8 对 GPT-5.6 Sol</a> 那一组。从 <a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro 模型页</a>开始，或者翻一翻完整的<a href="https://docs.deepinfra.com/models">模型目录</a>看别的选择。</p>]]></content:encoded>
     </item>
     <item>
       <title>[OpenRouter] 如何构建你自己的常驻 AI agent</title>
