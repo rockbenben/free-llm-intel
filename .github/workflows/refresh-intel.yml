@@ -244,9 +244,13 @@ jobs:
       # 快照、新闻、README、档案覆盖层、情报变更日志**单次原子提交**并推送到 main。
       # 2026-09-22 起不再区分「有 AI 档案更新」与「无」—— 原先前者要开 PR 等审核，
       # 现在统一走这一条路径（档案更新带 `_evidence` 页面原文摘录，可事后追溯）。
+      #
+      # `docs/images` 必须在清单里：README 顶部的「懒人首选速览」是巡检按 GUIDE_META
+      # 生成的 `top-picks.svg`，漏掉它的话正文按新名单渲染、图却停在上一版，
+      # 且因为工作区每次都重新生成，这个漂移不会自己暴露（2026-11-04 修）。
       - name: Commit all updates
         run: |
-          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds docs/articles README.md profile_overrides.json
+          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds docs/articles docs/images README.md profile_overrides.json
           # 变更日志要到第一次 AI 采纳档案更新才落盘；对不存在的路径 git add 会
           # 以 exit 128 中断整个提交步骤（2026-09-25 巡检就是这么挂的），故先判存在。
           if [ -f llm-intel-changelog.md ]; then git add llm-intel-changelog.md; fi

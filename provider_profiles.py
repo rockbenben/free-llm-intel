@@ -725,7 +725,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "promotions": "公告《Qoder CN（原灵码）计费模式和价格调整》见 developer.aliyun.com/article/1757168",
         "notes": "与已收录的 qoder（国际版 docs.qoder.com）同族但**额度政策各自独立**，本条目只覆盖国内版；国际版情报见 Qoder 条目",
         "links": [
-            ("计费说明（个人体验版 Free）", "https://help.aliyun.com/zh/lingma/product-overview/billing-description"),
+            ("计费说明（个人体验版 Free）", "https://help.aliyun.com/zh/lingma/billing-description"),
             ("计费模式调整公告", "https://developer.aliyun.com/article/1757168"),
         ],
     },
@@ -861,8 +861,8 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "invite_reward": "**未找到官方邀请活动页**：第三方情报库指向的 `siliconflow.cn/about/reward` 已 307 跳转回官网首页（该路径不存在）；所称「注册 + 推荐各得 16 元、可无限叠加」无法复核，**不予采信**。实际奖励以控制台活动页公示为准。",
         "notes": "免费模型清单随平台调整，以定价页「免费」标签为准；旗舰模型按 token 计费，可用代金券抵扣。",
         "links": [
-            ("官方主页", "https://siliconflow.cn/"),
-            ("定价 / 免费模型清单", "https://siliconflow.cn/pricing"),
+            ("官方主页", "https://www.siliconflow.cn/"),
+            ("定价 / 免费模型清单", "https://www.siliconflow.cn/pricing"),
             ("API Key 申请直达", "https://cloud.siliconflow.cn/account/ak"),
             ("计费 FAQ（额度说明）", "https://docs.siliconflow.com/cn/faqs/billing-rules"),
         ],
@@ -883,9 +883,9 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "notes": "方舟（Ark）为模型接入平台，豆包为自研模型系列；支持「安心体验模式」防止超额扣费。",
         "links": [
             ("火山方舟产品页", "https://www.volcengine.com/product/ark"),
-            ("火山方舟控制台直达", "https://console.volcengine.com/ark/"),
-            ("免费额度官方文档", "https://docs.volcengine.com/docs/82379/1263512?lang=zh"),
-            ("计费说明文档", "https://docs.volcengine.com/docs/82379/1099455?lang=zh"),
+            ("火山方舟控制台直达", "https://console.volcengine.com/ark/region:cn-beijing/overview"),
+            ("免费额度官方文档", "https://docs.volcengine.com/docs/ark/DoubaoAPICallGuide?lang=zh"),
+            ("计费说明文档", "https://docs.volcengine.com/docs/ark/product-overview?lang=zh"),
         ],
     },
     "zhipu_glm": {
@@ -977,7 +977,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("免费额度官方文档", "https://help.aliyun.com/zh/model-studio/new-free-quota"),
             ("API Key 申请直达", "https://bailian.console.aliyun.com/?apiKey=1"),
             ("模型服务控制台", "https://bailian.console.aliyun.com/"),
-            ("通义千问官网", "https://tongyi.aliyun.com/"),
+            ("通义千问官网", "https://qianwen.aliyun.com/"),
         ],
     },
     "baidu_qianfan": {
@@ -1039,7 +1039,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "openai_compat": {
             "summary": "新用户 Token Plan 订阅/体验",
             "api_key_label": "控制台申请",
-            "api_key_url": "https://platform.minimax.cn/console/access?tab=api-keys",
+            "api_key_url": "https://platform.minimax.cn/console/keys?tab=api-keys",
             "base_url": "https://api.minimax.chat/v1",
             "models": "`MiniMax-M3`, `MiniMax-M2.7`",
         },
@@ -1053,9 +1053,9 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "promotions": "**Token Plan 订阅**（官方定价文档）：Plus ¥49/月、Max ¥119/月、Ultra ¥469/月，覆盖 M3/M2.7/图像/语音（H3 视频、音色克隆等特殊模型除外）；预付积分包 1,000 积分 = ¥7，有效期 365 天。",
         "notes": "“Builder 共建者邀请返券”在现行官方文档中无入口记载；开放平台文档站已统一至 platform.minimax.cn/docs（旧域名 platform.minimaxi.com 全站 301 跳转至此）。",
         "links": [
-            ("API Key 申请直达", "https://platform.minimax.cn/console/access?tab=api-keys"),
+            ("API Key 申请直达", "https://platform.minimax.cn/console/keys?tab=api-keys"),
             ("模型介绍文档", "https://platform.minimax.cn/docs/guides/models-intro"),
-            ("Token Plan 定价", "https://platform.minimax.cn/docs/guides/pricing-token-plan"),
+            ("Token Plan 定价", "https://platform.minimax.cn/docs/m-plan/intro"),
             ("官方网站", "https://www.minimax.cn/"),
         ],
     },
@@ -1089,7 +1089,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("API Key 获取指南", "https://platform.kimi.com/docs/get-api-key"),
             ("账号与支付（15 元代金券说明）", "https://platform.kimi.com/docs/guide/account-and-payments"),
             ("模型列表", "https://platform.kimi.com/docs/models"),
-            ("K3 定价", "https://platform.kimi.com/docs/pricing/chat-k3"),
+            ("K3 定价", "https://platform.kimi.com/docs/pricing/chat"),
         ],
     },
     "ppio": {
@@ -1251,7 +1251,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "promotions": "集成 360 搜索增强能力；模型与价格以 /open/models 页面实时列表为准。",
         "notes": "自研模型与第三方托管模型同页计费，注意区分。",
         "links": [
-            ("模型与定价页", "https://ai.360.com/open/models"),
+            ("模型与定价页", "https://ai.360.com/open/zh/models"),
             ("开发者文档", "https://ai.360.com/docs"),
         ],
     },
@@ -1269,7 +1269,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "links": [
             ("九天人工智能平台门户", "https://jiutian.10086.cn/portal/"),
             ("九天帮助中心", "https://jiutian.10086.cn/portal/common-helpcenter"),
-            ("移动云", "https://ecloud.10086.cn/"),
+            ("移动云", "https://ecloud.10086.cn/portal"),
         ],
     },
     "unisound_shanhai": {
@@ -1399,11 +1399,11 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "notes": "注意：**2026 年 3 月起，$300 Google Cloud 试用金不能用于支付 Gemini API / AI Studio 费用**（官方 billing 文档原文）；旧“Gemini 1.5 Flash/Pro、Gemma 2、15 RPM/1500 RPD”等型号与数字均已换代或下架。",
         "links": [
             ("API Key 申请直达 (AI Studio)", "https://aistudio.google.com/apikey"),
-            ("OpenAI 兼容端点快速入门", "https://ai.google.dev/gemini-api/docs/openai"),
+            ("OpenAI 兼容端点快速入门", "https://aistudio.google.com/docs/openai"),
             ("AI Studio 官网", "https://ai.google.dev/"),
-            ("API 定价文档", "https://ai.google.dev/gemini-api/docs/pricing"),
-            ("计费与免费层说明", "https://ai.google.dev/gemini-api/docs/billing"),
-            ("速率限制说明", "https://ai.google.dev/gemini-api/docs/rate-limits"),
+            ("API 定价文档", "https://aistudio.google.com/docs/pricing"),
+            ("计费与免费层说明", "https://aistudio.google.com/docs/billing"),
+            ("速率限制说明", "https://aistudio.google.com/docs/rate-limits"),
         ],
     },
     "groq": {
@@ -1555,8 +1555,8 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "links": [
             ("API Key 控制台直达", "https://console.mistral.ai/api-keys/"),
             ("官方主页", "https://mistral.ai/"),
-            ("API 定价", "https://mistral.ai/pricing/api/"),
-            ("模型文档", "https://docs.mistral.ai/getting-started/models/"),
+            ("API 定价", "https://docs.mistral.ai/inference/pricing"),
+            ("模型文档", "https://docs.mistral.ai/models"),
             ("新闻动态", "https://mistral.ai/news/"),
         ],
     },
@@ -1572,8 +1572,8 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "promotions": "主流推理平台（Groq、Cerebras、Cloudflare、Together、DeepInfra 等）均托管 Llama 4。",
         "notes": "官方主站已迁至 developer.meta.com/ai；llama.com 301 跳转至此；Llama 4 许可页为 /ai/llama4/license/。",
         "links": [
-            ("Meta AI 开发者站", "https://developer.meta.com/ai/"),
-            ("Llama 4 许可协议", "https://developer.meta.com/ai/llama4/license/"),
+            ("Meta AI 开发者站", "https://dev.meta.ai/"),
+            ("Llama 4 许可协议", "https://dev.meta.ai/llama/llama4/license"),
             ("Hugging Face 组织", "https://huggingface.co/meta-llama"),
         ],
     },
@@ -1611,7 +1611,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "promotions": "Batch 5 折；支持 Function Calling 与 JSON Schema 结构化输出。",
         "notes": "现行 serverless 价目表中已无 Llama 聊天模型单列（未列名模型按尺寸档位计费）。",
         "links": [
-            ("API Key 控制台直达", "https://fireworks.ai/api-keys"),
+            ("API Key 控制台直达", "https://app.fireworks.ai/settings/users/api-keys"),
             ("官方主页", "https://fireworks.ai/"),
             ("定价说明", "https://fireworks.ai/pricing"),
             ("Serverless 计费文档", "https://docs.fireworks.ai/serverless/pricing"),
@@ -1732,7 +1732,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("官方主页", "https://x.ai/"),
             ("API 定价", "https://docs.x.ai/developers/pricing"),
             ("快速开始", "https://docs.x.ai/developers/quickstart"),
-            ("开发者控制台", "https://console.x.ai/"),
+            ("开发者控制台", "https://console.x.ai/home"),
         ],
     },
     "nebius": {
@@ -1814,7 +1814,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "promotions": "**Stability AI Community License**：年营收低于 **100 万美元** 的组织/个人可免费使用（含商用），超过需申请企业授权。",
         "notes": "图像/视频生成模型厂商；25 积分为注册赠送，开源部署为零成本长期路径。",
         "links": [
-            ("API 定价（25 free credits 说明）", "https://platform.stability.ai/pricing"),
+            ("API 定价（25 free credits 说明）", "https://docs.stability.ai/pricing"),
             ("社区许可协议", "https://stability.ai/license"),
             ("Stable Image 模型页", "https://stability.ai/stable-image"),
         ],
@@ -1835,8 +1835,8 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "promotions": "面向 AI 编程与智能体场景优化推理延迟；兼容 OpenAI SDK。",
         "notes": "免费额度适合个人开发与轻量调用。",
         "links": [
-            ("定价页（免费层说明）", "https://morphllm.com/pricing"),
-            ("官方主页", "https://morphllm.com/"),
+            ("定价页（免费层说明）", "https://www.morphllm.com/pricing"),
+            ("官方主页", "https://www.morphllm.com/"),
         ],
     },
     "mancer": {
@@ -1944,7 +1944,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "links": [
             ("Startup Program", "https://www.baseten.co/startup-program/"),
             ("定价页", "https://www.baseten.co/pricing/"),
-            ("官方主页", "https://baseten.co/"),
+            ("官方主页", "https://www.baseten.co/"),
         ],
     },
     "modular_cloud": {
@@ -2021,9 +2021,9 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "promotions": "**Microsoft for Startups Founders Hub** 最高 **$150,000** Azure 额度。",
         "notes": "企业级合规与数据隔离；可用 $200 赠金抵扣 Foundry 模型调用。",
         "links": [
-            ("Azure 免费账号页", "https://azure.microsoft.com/en-us/free/"),
+            ("Azure 免费账号页", "https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account"),
             ("Azure AI 产品页", "https://azure.microsoft.com/en-us/products/ai/"),
-            ("Foundry 模型文档", "https://learn.microsoft.com/en-us/azure/ai-foundry/openai/concepts/models"),
+            ("Foundry 模型文档", "https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure"),
         ],
     },
     "gcp_vertex_ai": {
@@ -2039,8 +2039,8 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "notes": "$300 赠金可抵扣 Vertex AI 调用；整合 GCP 全栈 MLOps 与 Grounding 检索。",
         "links": [
             ("GCP 免费套餐页", "https://cloud.google.com/free"),
-            ("Vertex AI 文档", "https://cloud.google.com/vertex-ai/docs"),
-            ("Vertex AI 定价", "https://cloud.google.com/vertex-ai/pricing"),
+            ("Vertex AI 文档", "https://docs.cloud.google.com/gemini-enterprise-agent-platform"),
+            ("Vertex AI 定价", "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing"),
         ],
     },
     "ibm_watsonx": {
@@ -2059,7 +2059,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "promotions": "Granite 开源模型免许可费，面向受监管行业提供治理与版权保障。",
         "notes": "免费层适合原型验证；生产用途需升级 Standard/Premium。",
         "links": [
-            ("watsonx.ai 产品页", "https://www.ibm.com/watsonx"),
+            ("watsonx.ai 产品页", "https://www.ibm.com/products/watsonx"),
             ("watsonx.ai 定价", "https://www.ibm.com/products/watsonx-ai/pricing"),
         ],
     },

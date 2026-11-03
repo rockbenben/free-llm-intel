@@ -484,7 +484,7 @@ sources:
   - vendor_id: openai
     type: blog
     lang: zh
-    url: https://openai.com/blog
+    url: https://openai.com/news/
   - vendor_id: openai
     type: news
     lang: zh
@@ -506,7 +506,7 @@ sources:
   - vendor_id: anthropic
     type: blog
     lang: en
-    url: https://claude.com/blog
+    url: https://claude.com/resources/articles
   - vendor_id: anthropic
     type: news
     lang: en
@@ -516,18 +516,25 @@ sources:
   # 只把归档撑到 67 条、其中 31 条无日期。要看工程文章可从 /news 里点进去。
 
   # Google Gemini
+  #
+  # ⚠️ 2026-11-04：Google 把 Gemini API 文档整体迁到 aistudio.google.com，HTML 页改为
+  # JS 渲染（requests 只拿到 40–60 字的空壳，`snapshot_ok=False` → **变化检测彻底失效**，
+  # 额度改版不会被巡检发现）。官方同时在这些页面提供了纯文本 `.md` 版本
+  # （`> ## AI Agent Context` 开头），静态可读、内容与 HTML 同源，故情报源一律走 `.md`。
+  # 旧的 ai.google.dev/gemini-api/docs/* 现在 302 到这里；`.md` 后缀在旧域名上返回的是
+  # HTML 壳（不是 markdown），迁移时别用旧域名 + `.md`。
   - vendor_id: google_gemini
     type: api_docs
-    url: https://ai.google.dev/gemini-api/
+    url: https://aistudio.google.com/docs
   - vendor_id: google_gemini
     type: pricing
-    url: https://ai.google.dev/gemini-api/docs/pricing
+    url: https://aistudio.google.com/docs/pricing.md
   - vendor_id: google_gemini
     type: billing
-    url: https://ai.google.dev/gemini-api/docs/billing
+    url: https://aistudio.google.com/docs/billing.md
   - vendor_id: google_gemini
     type: rate_limits
-    url: https://ai.google.dev/gemini-api/docs/rate-limits
+    url: https://aistudio.google.com/docs/rate-limits.md
   - vendor_id: google_gemini
     # **官方 API 变更日志** —— 本仓库关心的是模型上下线 / 定价 / 限额，这才是对的源
     # （113 条全部带日期，条目如「Gemini 3.8 Flash generally available (GA)」）。
@@ -537,14 +544,21 @@ sources:
     # 与「API 免费额度」无关，已弃用。
     # 该页的标题 id 是 MM-DD-YYYY（`id="09-17-2026"`），曾因日期解析只认 YYYY-MM-DD
     # 而整页 0 条 —— 已修（见 extract_changelog_sections 的日期 id 解析）。
+    # 变更日志**不要**换成 `.md`：markdown 版只有「日期 → 无序列表」，抽取器给不出条目
+    # （实测 0 条）；HTML 版虽要浏览器兜底，但一条日期段能拆出多条（实测 100 条，带日期），
+    # CI 装了 Chromium，本地跑也默认启用浏览器。
+    #
+    # lang 声明 zh 与页面语种无关：这个字段管「Accept-Language」与「进不进英文镜像」。
+    # 归档里 151 条标题早已汉化冻住，改成 en 会把中文标题灌进英文合并流
+    # （`_english_eligible` 只看源声明）；页面本身是英文，但我们的产物是中文口径。
     type: changelog
     lang: zh
-    url: https://ai.google.dev/gemini-api/docs/changelog
+    url: https://aistudio.google.com/docs/changelog
 
   # xAI Grok
   - vendor_id: xai_grok
     type: api_docs
-    url: https://docs.x.ai/
+    url: https://docs.x.ai/overview
   - vendor_id: xai_grok
     type: pricing
     url: https://docs.x.ai/developers/pricing
@@ -553,16 +567,17 @@ sources:
     url: https://docs.x.ai/developers/quickstart
   - vendor_id: xai_grok
     type: console
-    url: https://console.x.ai/
+    url: https://console.x.ai/home
   - vendor_id: xai_grok
     type: news
     lang: en
     url: https://x.ai/news
 
   # Groq Cloud
-  - vendor_id: groq
-    type: pricing
-    url: https://groq.com/pricing/
+  # ⚠️ 2026-11-04 复核：groq.com/pricing 已 302 到官方首页（定价页下线），
+  # 该入口抓到的只是首页营销文案，会把「首页改版」误报成「定价变化」，故不再保留
+  # pricing 源。免费层限额见下方 rate_limits（Free Plan Limits 分页），
+  # 付费档位与单价只在控制台内可见。
   - vendor_id: groq
     type: rate_limits
     url: https://console.groq.com/docs/rate-limits
@@ -704,7 +719,7 @@ sources:
   # 豆包 / 火山方舟
   - vendor_id: volcengine_doubao
     type: pricing
-    url: https://docs.volcengine.com/docs/82379/1099455?lang=zh
+    url: https://docs.volcengine.com/docs/ark/product-overview?lang=zh
   - vendor_id: volcengine_doubao
     type: free_quota
     url: https://docs.volcengine.com/docs/82379/1263512?lang=zh
@@ -720,7 +735,7 @@ sources:
   # 模型免费调用规则 / 开通流程（原免费额度文档 URL 1263512 已 301 重定向至此）
   - vendor_id: volcengine_doubao
     type: free_quota
-    url: https://docs.volcengine.com/docs/82379/1522733
+    url: https://docs.volcengine.com/docs/82379/1522733?lang=zh
 
   # 百度千帆
   - vendor_id: baidu_qianfan
@@ -762,7 +777,7 @@ sources:
   # SiliconFlow
   - vendor_id: siliconflow
     type: pricing
-    url: https://siliconflow.cn/pricing
+    url: https://www.siliconflow.cn/pricing
   - vendor_id: siliconflow
     type: billing_rules
     url: https://docs.siliconflow.com/cn/faqs/billing-rules
@@ -774,15 +789,15 @@ sources:
   - vendor_id: siliconflow
     type: updates
     lang: zh
-    url: https://docs.siliconflow.cn/cn/release-notes/overview
+    url: https://docs.siliconflow.cn/docs/release-notes/overview
 
   # MiniMax
   - vendor_id: minimax
     type: token_plan
-    url: https://platform.minimax.cn/subscribe/token-plan
+    url: https://www.minimax.cn/m-plan
   - vendor_id: minimax
     type: pricing
-    url: https://platform.minimax.cn/docs/guides/pricing-token-plan
+    url: https://platform.minimax.cn/docs/m-plan/intro
   - vendor_id: minimax
     type: models_docs
     url: https://platform.minimax.cn/docs/guides/models-intro
@@ -817,14 +832,14 @@ sources:
     url: https://platform.kimi.com/docs/models
   - vendor_id: moonshot_kimi
     type: pricing
-    url: https://platform.kimi.com/docs/pricing/chat-k3
+    url: https://platform.kimi.com/docs/pricing/chat
   - vendor_id: moonshot_kimi
     type: api_product
     url: https://platform.kimi.com/
   - vendor_id: moonshot_kimi
     type: changelog
     lang: zh
-    url: https://platform.kimi.com/docs/changelog/changelog/changelog
+    url: https://platform.kimi.com/docs/changelog
 
   # Mistral
   - vendor_id: mistral
@@ -869,10 +884,10 @@ sources:
   # Meta Llama
   - vendor_id: meta_llama
     type: license
-    url: https://developer.meta.com/ai/llama4/license/
+    url: https://dev.meta.ai/llama/llama4/license
   - vendor_id: meta_llama
     type: free_tier
-    url: https://developer.meta.com/ai/
+    url: https://dev.meta.ai/
   - vendor_id: meta_llama
     type: hf_org
     url: https://huggingface.co/meta-llama
@@ -933,7 +948,7 @@ sources:
   # OpenRouter
   - vendor_id: openrouter
     type: api_docs
-    url: https://openrouter.ai/docs
+    url: https://openrouter.ai/docs/quickstart
   - vendor_id: openrouter
     type: rate_limits
     url: https://openrouter.ai/docs/api_reference/limits
@@ -1023,24 +1038,24 @@ sources:
     url: https://azure.microsoft.com/en-us/products/ai/
   - vendor_id: azure_openai
     type: docs
-    url: https://learn.microsoft.com/en-us/azure/ai-foundry/openai/concepts/models
+    url: https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure
   - vendor_id: azure_openai
     type: free_tier
-    url: https://azure.microsoft.com/en-us/free/
+    url: https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account
   - vendor_id: azure_openai
     type: pricing
-    url: https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/
+    url: https://azure.microsoft.com/en-us/pricing/details/azure-openai/
 
   # Google Vertex AI
   - vendor_id: gcp_vertex_ai
     type: docs
-    url: https://cloud.google.com/vertex-ai/docs
+    url: https://docs.cloud.google.com/gemini-enterprise-agent-platform
   - vendor_id: gcp_vertex_ai
     type: free_tier
     url: https://cloud.google.com/free
   - vendor_id: gcp_vertex_ai
     type: pricing
-    url: https://cloud.google.com/vertex-ai/pricing
+    url: https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing
 
   # Fireworks AI
   - vendor_id: fireworks_ai
@@ -1051,7 +1066,7 @@ sources:
     url: https://docs.fireworks.ai/serverless/pricing
   - vendor_id: fireworks_ai
     type: billing_docs
-    url: https://docs.fireworks.ai/faq/billing-pricing-usage/pricing/cost-structure
+    url: https://docs.fireworks.ai/faq-new/billing-pricing/how-much-does-fireworks-cost
 
   # Together AI
   - vendor_id: together_ai
@@ -1065,7 +1080,7 @@ sources:
     url: https://api.together.xyz/
   - vendor_id: together_ai
     type: platform_docs
-    url: https://docs.together.ai/
+    url: https://docs.together.ai/intro
   # 官网自带原生 RSS（实测 81 条，含日期）
   - vendor_id: together_ai
     type: feed
@@ -1084,7 +1099,7 @@ sources:
   # IBM watsonx.ai
   - vendor_id: ibm_watsonx
     type: product
-    url: https://www.ibm.com/watsonx
+    url: https://www.ibm.com/products/watsonx
   - vendor_id: ibm_watsonx
     type: pricing
     url: https://www.ibm.com/products/watsonx-ai/pricing
@@ -1103,10 +1118,10 @@ sources:
   # Stability AI
   - vendor_id: stability_ai
     type: api_docs
-    url: https://platform.stability.ai/docs
+    url: https://docs.stability.ai
   - vendor_id: stability_ai
     type: pricing
-    url: https://platform.stability.ai/pricing
+    url: https://docs.stability.ai/pricing
   - vendor_id: stability_ai
     type: license
     url: https://stability.ai/license
@@ -1186,7 +1201,7 @@ sources:
     url: https://jiutian.10086.cn/portal/common-helpcenter
   - vendor_id: china_mobile_moma
     type: product
-    url: https://ecloud.10086.cn/
+    url: https://ecloud.10086.cn/portal
 
   # 数眼智能 DataEye
   - vendor_id: dataeye
@@ -1194,12 +1209,12 @@ sources:
     url: https://www.shuyanai.com/price
   - vendor_id: dataeye
     type: product
-    url: https://shuyanai.com/
+    url: https://www.shuyanai.com/
 
   # 360智脑
   - vendor_id: zhinao_360
     type: pricing
-    url: https://ai.360.com/open/models
+    url: https://ai.360.com/open/zh/models
   - vendor_id: zhinao_360
     type: docs
     url: https://ai.360.com/docs
@@ -1276,7 +1291,7 @@ sources:
   # baseten 本身仍在厂商总表与攻略里（它有免卡的一次性额度）。
   - vendor_id: baseten
     type: product
-    url: https://baseten.co/
+    url: https://www.baseten.co/
 
   # Modular（BentoML/BentoCloud 已被 Modular 收购）
   - vendor_id: modular_cloud
@@ -1296,10 +1311,10 @@ sources:
   # Morph Labs
   - vendor_id: morph_labs
     type: pricing
-    url: https://morphllm.com/pricing
+    url: https://www.morphllm.com/pricing
   - vendor_id: morph_labs
     type: product
-    url: https://morphllm.com/
+    url: https://www.morphllm.com/
 
   # Relace
   - vendor_id: relace
@@ -1471,7 +1486,7 @@ sources:
     url: https://www.trae.ai/pricing
   - vendor_id: tongyi_lingma
     type: pricing
-    url: https://help.aliyun.com/zh/lingma/product-overview/billing-description
+    url: https://help.aliyun.com/zh/lingma/billing-description
   - vendor_id: comate
     type: pricing
     url: https://cloud.baidu.com/doc/COMATE/s/rlnvnio4a

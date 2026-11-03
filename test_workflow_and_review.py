@@ -257,6 +257,21 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertIn("docs/feeds", by_name["Commit all updates"]["run"],
                       "Commit all updates 必须提交自建 RSS 产物，否则 Pages 上的订阅源不会更新")
 
+    def test_workflow_commits_generated_picks_svg(self):
+        """「懒人首选速览」是巡检产物（docs/images/top-picks.svg），提交清单必须带上。
+
+        Regression: 漏掉它时 README 正文按新名单渲染、图却停在上一版；而且工作区每次巡检
+        都会重新生成同一个文件，本地 `git status` 看不出「提交漏了哪一项」，漂移不会自曝
+        （2026-11-04 修）。
+        """
+        with open(self.workflow_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        by_name = {s.get("name", ""): s for s in data["jobs"]["crawl"]["steps"]}
+        commit = by_name["Commit all updates"]["run"]
+        self.assertIn("docs/images", commit,
+                      "提交清单必须包含 docs/images（GUIDE_META 生成的 top-picks.svg）")
+        self.assertIn("README.md", commit)
+
     def test_workflow_changelog_add_is_conditional(self):
         """llm-intel-changelog.md 要等第一次 AI 采纳档案更新才落盘，git add 必须判存在。
 
