@@ -4722,6 +4722,57 @@ class TestGuideRendering(unittest.TestCase):
         self.assertNotIn("intel-top5.png", content,
                          "旧的 5 家手绘图已废弃（名单一变就过期）")
 
+    def test_guide_render_mode_rewrites_only_the_guide_block(self):
+        """`--guide-render` 只动攻略块：块外的正文、图、幂等性都要守住。"""
+        import tempfile
+        root = Path(__file__).resolve().parent
+        with tempfile.TemporaryDirectory() as tmp:
+            tmpdir = Path(tmp)
+            vendors, _sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+            records = crawler_llm_intel.order_vendor_records(
+                crawler_llm_intel._stub_intel_list(vendors))
+            readme = tmpdir / "README.md"
+            readme.write_text(
+                "# 标题\n\n正文之前\n\n"
+                + crawler_llm_intel.render_guide_block(records)
+                + "\n\n正文之后\n", encoding="utf-8")
+            # 故意塞一个过期的首选，验证会被重排回 GUIDE_META 的现渲染
+            stale = readme.read_text(encoding="utf-8").replace("这 6 家都", "这 5 家都")
+            readme.write_text(stale, encoding="utf-8")
+
+            rc = crawler_llm_intel.render_guide_only(tmpdir, vendors, readme)
+            self.assertEqual(rc, 0)
+            text = readme.read_text(encoding="utf-8")
+            self.assertTrue(text.startswith("# 标题\n\n正文之前\n"))
+            self.assertTrue(text.endswith("\n\n正文之后\n"))
+            self.assertIn("这 6 家都", text)
+            self.assertNotIn("这 5 家都", text)
+            self.assertTrue((tmpdir / "docs" / "images" / "top-picks.svg").exists())
+
+            # 同一份源再跑一次：零改写（G5 同款契约）
+            before = readme.read_text(encoding="utf-8")
+            svg_before = (tmpdir / "docs" / "images" / "top-picks.svg").read_text(encoding="utf-8")
+            crawler_llm_intel.render_guide_only(tmpdir, vendors, readme)
+            self.assertEqual(readme.read_text(encoding="utf-8"), before)
+            self.assertEqual(
+                (tmpdir / "docs" / "images" / "top-picks.svg").read_text(encoding="utf-8"),
+                svg_before)
+
+    def test_audit_lines_prefer_quota_facts_over_nav(self):
+        """审计摘要要挑「带数字的额度行」，别把面包屑/导航词当真事实。"""
+        text = "\n".join([
+            "模型价格",
+            "输入价格（M Tokens）",
+            "免费模型 GLM-4.7-Flash 输入免费、输出免费，上下文 200K",
+            "限时免费：每 5 小时 120,000 积分",
+        ])
+        lines = crawler_llm_intel._audit_lines(text, title="模型价格")
+        self.assertTrue(lines)
+        self.assertNotIn("模型价格", lines)
+        self.assertTrue(any("120,000" in ln or "200K" in ln for ln in lines),
+                        f"应优先挑出带额度数字的行，实际：{lines}")
+        self.assertNotIn("输入价格（M Tokens）", lines, "只有表头的行不该入选")
+
     def test_tier_rows_value_ordered_not_realname_segmented(self):
         """实名不算门槛：国内永久层进 A，国内一次性进 B；只有绑卡才单列 C。"""
         records = build_records()

@@ -39,6 +39,8 @@ crawler_llm_intel.py — LLM 厂商免费额度 / 活动情报巡检脚本
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import os
 import subprocess
@@ -3479,6 +3481,162 @@ def render_picks_svg(records: list[tuple[int, VendorIntel, dict]]) -> str:
     return "\n".join(head_svg + out + body) + "\n</svg>\n"
 
 
+def _stub_intel_list(vendors: list[dict]) -> list[VendorIntel]:
+    """只有 id / brand / homepage 的占位记录：攻略与速览图只看 id 与 profile。"""
+    return [VendorIntel(vendor_id=v.get("id", ""), brand=v.get("brand", ""),
+                        homepage=v.get("homepage", ""),
+                        products=v.get("products") or [])
+            for v in vendors]
+
+
+def render_guide_only(root: Path, vendors: list[dict], readme_path: Path) -> int:
+    """`--guide-render`：只重排 README 的攻略生成块与顶部速览图（不联网、不写其他产物）。
+
+    场景：改了 `GUIDE_META` 的 `pick` / `short` / `tip` 或档案文案之后，全量巡检太慢，
+    而 `--render-only` 按契约**不碰 README**。这个入口就是补那一格：改完推荐跑一次，
+    正文与图一起对齐；同一份源连跑两次零改写。
+    """
+    records = order_vendor_records(_stub_intel_list(vendors))
+    block = render_guide_block(records)
+
+    text = readme_path.read_text(encoding="utf-8")
+    if GUIDE_BEGIN not in text or GUIDE_END not in text:
+        print(f"[fatal] {readme_path.name} 里找不到攻略生成块标记"
+              "（LLM-GUIDE:BEGIN / END），无法重排", file=sys.stderr)
+        return 2
+    head, rest = text.split(GUIDE_BEGIN, 1)
+    _old, tail = rest.split(GUIDE_END, 1)
+    new_text = head + block + tail
+    readme_changed = new_text != text
+    if readme_changed:
+        readme_path.write_text(new_text, encoding="utf-8")
+
+    svg_path = root / TOP_PICKS_SVG
+    svg = render_picks_svg(records)
+    svg_changed = not svg_path.exists() or svg_path.read_text(encoding="utf-8") != svg
+    if svg_changed:
+        svg_path.parent.mkdir(parents=True, exist_ok=True)
+        svg_path.write_text(svg, encoding="utf-8")
+
+    picks = [intel for _idx, intel, prof in records
+             if get_guide_meta(intel.vendor_id).get("pick")]
+    print(f"      攻略块 {readme_path.name}：{'已重排' if readme_changed else '无内容变化'}"
+          f"（首选 {len(picks)} 家："
+          + "、".join(re.sub(r"[（(][^（）()]*[)）]\s*$", "",
+                             get_provider_profile(i.vendor_id).get("display_name", i.vendor_id)).strip()
+                     for i in picks) + "）")
+    print(f"      速览图 {TOP_PICKS_SVG}：{'已刷新' if svg_changed else '无内容变化'}")
+    print("      提示：档案字段（free_quota / free_models 等）也改过的话，"
+          "再跑 --render-only 同步 quotas.json 与订阅源视图。")
+    return 0
+
+
+#: 审计只挑「额度会不会变」的句子：整页糊进终端看不完，也会淹掉真正的变化。
+_AUDIT_LINE_RE = re.compile(
+    r"免费|限免|白嫖|额度|定价|价格|费率|限速|并发|试用|到期|"
+    r"free plan|free tier|免费层|免费套餐|"
+    r"free|pricing|price|quota|rate.?limit|429", re.I)
+
+
+def _audit_lines(text: str, title: str = "", limit: int = 3, width: int = 220) -> list[str]:
+    """从一页里挑「最像额度事实」的几行：带数字/单位/货币的优先，纯导航词降权。"""
+    scored: list[tuple[int, int, str]] = []
+    seen: set[str] = set()
+    for raw in (text or "").splitlines():
+        line = re.sub(r"\s+", " ", raw).strip()
+        if not (8 <= len(line) <= width) or not _AUDIT_LINE_RE.search(line):
+            continue
+        if title and line == title:
+            continue
+        # 纯表头 / 栏目名（「输入价格（M Tokens）」这种）既没数字也没额度词，直接跳过：
+        # 它们只是价格表的列名，读的人拿不到任何额度事实。
+        if not re.search(r"\d", line) and not re.search(r"免费|额度|积分|限免", line) \
+                and re.search(r"价格|tokens|定价|pricing", line, re.I):
+            continue
+        key = line[:60]
+        if key in seen:
+            continue
+        seen.add(key)
+        score = 0
+        if re.search(r"\d", line):
+            score += 2
+        if re.search(r"¥|\$|元|积分|token|RPM|RPD|次/|/月|/天|额度|定价", line, re.I):
+            score += 2
+        if re.fullmatch(r"[^\s]{1,14}", line):  # 纯导航词 / 面包屑
+            score -= 3
+        scored.append((score, len(scored), line))
+    top = sorted(scored, key=lambda t: -t[0])[:limit]
+    top.sort(key=lambda t: t[1])
+    return [t[2] for t in top]
+
+
+def run_picks_audit(root: Path, vendors: list[dict], grouped: dict[str, list[dict]],
+                    session, *, delay: float, browser=None,
+                    timeout: tuple[float, float] = (8.0, 20.0)) -> int:
+    """`--picks-audit`：只抓「懒人首选」厂商的官方页，打印一手证据（**不写任何文件**）。
+
+    给本地 coding 工具用的入口：更新推荐时先看这里 —— 每家当前推荐语、官方页新鲜原句、
+    与快照是否一致；要改就改 `GUIDE_META` / 档案，再跑 `--guide-render` + `--render-only`。
+    """
+    state_path = root / SNAPSHOT_STATE
+    stored: dict = {}
+    if state_path.exists():
+        try:
+            stored = (json.loads(state_path.read_text(encoding="utf-8")) or {}).get("sources", {})
+        except Exception:  # noqa: BLE001 - 审计模式不应因快照损坏而中断
+            stored = {}
+
+    records = order_vendor_records(_stub_intel_list(vendors))
+    by_id = {intel.vendor_id: (idx, prof) for idx, intel, prof in records}
+    pick_ids = [intel.vendor_id for _idx, intel, _prof in records
+                if get_guide_meta(intel.vendor_id).get("pick")]
+
+    print("=" * 78)
+    print("懒人首选 · 官方页审计（只读，不写任何文件）")
+    print("=" * 78)
+    n_ok = n_fail = n_changed = 0
+    for vid in pick_ids:
+        idx, prof = by_id[vid]
+        meta = get_guide_meta(vid)
+        vendor = next((v for v in vendors if v.get("id") == vid), None)
+        if vendor is None:
+            continue
+        print(f"\n[{idx}] {prof.get('display_name', vid)}  ({vid})")
+        print(f"    pick: {_plain_md(meta.get('pick', ''))}")
+        print(f"    short: {_plain_md(meta.get('short', '') or '（无）')}")
+        # crawl_vendor 会逐源打印抓取行（部分走 stderr）；审计报告自己排版，这里吞掉流水账
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            intel = crawl_vendor(vendor, grouped.get(vid, []), session, delay,
+                                 browser=browser, timeout=timeout)
+        for page in intel.intel_pages:
+            flag = "ok" if page.ok and not page.sparse else ("sparse" if page.ok else "FAIL")
+            note = "（JS 渲染壳）" if page.ok and page.sparse else ""
+            extra = f"  {page.error}" if page.error else ""
+            target = page.final_url or page.url
+            moved = f"（请求的 {page.url} 被重定向）" if page.final_url and page.final_url != page.url else ""
+            print(f"  - {page.stype:<16} {flag:<6} {target}{note}{moved}{extra}")
+            if page.ok:
+                n_ok += 1
+                for line in _audit_lines(page.text, page.title):
+                    print(f"      · {line}")
+                key = _snapshot_key(vid, page)
+                old = (stored.get(key) or {}).get("sha256")
+                if old and page.snapshot_text:
+                    same = old == _snapshot_hash(page.snapshot_text)
+                    if not same:
+                        n_changed += 1
+                    print(f"      快照：{'一致' if same else '已变化'}")
+                elif page.snapshot_text:
+                    print("      快照：无记录（下次巡检建档）")
+            else:
+                n_fail += 1
+    print("\n" + "-" * 78)
+    print(f"源页：成功 {n_ok} / 失败 {n_fail}；与快照不一致 {n_changed} 个。")
+    print("改完 GUIDE_META / 档案后：--guide-render（攻略块 + 速览图）→ --render-only"
+          "（quotas 与订阅源视图）→ python test_workflow_and_review.py")
+    return 0 if n_ok else 2
+
+
 def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
                          records: list[tuple[int, VendorIntel, dict]],
                          feeds_base: str = "") -> str:
@@ -6857,6 +7015,14 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--only", action="append", default=[],
                         help="只巡检指定 vendor_id（可多次使用，调试用；不覆盖全局 README 与新闻总表）")
     parser.add_argument("--no-news", action="store_true", help="跳过博客 / RSS 发现")
+    parser.add_argument("--guide-render", action="store_true",
+                        help="维护模式（不联网）：只按 GUIDE_META 重排 README 的「白嫖攻略」生成块"
+                             "与顶部速览图 docs/images/top-picks.svg。改完 pick / 档案文案后本地用"
+                             "（--render-only 按契约不碰 README，缺的就是这一格）。")
+    parser.add_argument("--picks-audit", action="store_true",
+                        help="只抓「懒人首选」厂商的官方页，打印额度相关原句与快照一致性"
+                             "（**只读，不写任何文件**）；本地 coding 工具更新推荐前用它取一手证据。"
+                             "与 --only / --no-news / --render-only / --rebuild-only / --guide-render 互斥")
     parser.add_argument("--render-only", action="store_true",
                         help="维护模式（不联网）：只重排**产出层**——docs/feeds/*.xml、"
                              "articles.json、vendors.json、model-releases.json、"
@@ -7331,6 +7497,28 @@ def main(argv: list[str] | None = None) -> int:
         missing = wanted - {v.get("id") for v in vendors}
         if missing:
             print(f"[warn] --only 指定的 vendor_id 不存在: {sorted(missing)}", file=sys.stderr)
+
+    # 两个「本地更新推荐」专用入口（不跑全量巡检）：
+    #   --guide-render  改完 GUIDE_META 后重排 README 攻略块 + 速览图（不联网）
+    #   --picks-audit   只抓首选厂商的官方页，打印一手证据（只读）
+    if args.guide_render:
+        if args.only or args.no_news or disk_only or args.picks_audit:
+            print("[fatal] --guide-render 与 --only / --no-news / --render-only / --rebuild-only"
+                  " / --picks-audit 互斥（它只重排 README 攻略块与速览图）", file=sys.stderr)
+            return 2
+        return render_guide_only(
+            root, vendors,
+            (root / args.readme) if not Path(args.readme).is_absolute() else Path(args.readme))
+    if args.picks_audit:
+        if args.only or args.no_news or disk_only:
+            print("[fatal] --picks-audit 与 --only / --no-news / --render-only / --rebuild-only 互斥"
+                  "（它只抓首选厂商的官方页，只读）", file=sys.stderr)
+            return 2
+        use_browser = not args.no_browser
+        with BrowserSession(enabled=use_browser) as browser:
+            return run_picks_audit(root, vendors, grouped, build_session(),
+                                   delay=args.delay, browser=browser,
+                                   timeout=(8.0, args.timeout))
 
     if disk_only and (args.only or args.no_news):
         print("[fatal] --rebuild-only / --render-only 与 --only / --no-news 互斥"

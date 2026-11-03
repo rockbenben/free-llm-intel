@@ -77,6 +77,23 @@ CI 流程的细则都在那）。本文件只放最容易踩、踩了会返工�
 reconcile 后必查 `pending_translation_keys` 归零、并对每篇新 `.md` 扫 CJK 占比与长度，
 把英文漏网/过短挑出来重做。
 
+## 更新「懒人首选 / 白嫖信息」（本地 coding 工具用这条流水线）
+
+推荐语的唯一源是 `provider_profiles.py` 的 `GUIDE_META`（`pick` / `short` / `tip`）与厂商档案字段；
+README 攻略块与 `docs/images/top-picks.svg` 都是它的**视图**。改推荐不要手改 README / SVG：
+
+```bash
+python crawler_llm_intel.py --picks-audit      # ① 只抓首选厂商官方页：额度原句 + 快照是否变化（只读）
+#   → 按输出改 GUIDE_META / 档案（sparse = JS 渲染壳，必须开浏览器或看官方页，不许凭印象写数字）
+python crawler_llm_intel.py --guide-render     # ② 不联网，重排 README 攻略块 + 速览图
+python crawler_llm_intel.py --render-only      # ③ 档案字段也改过时跑，同步 quotas.json / 订阅源视图
+python test_workflow_and_review.py             # ④ 门禁（含「SVG 与 GUIDE_META 不同步」守卫）
+```
+
+`--picks-audit` 的输出标记：`ok` 正常 / `sparse` JS 壳（静态抓不到事实）/ `FAIL` 抓取失败；
+`快照：一致 | 已变化 | 无记录` 表示与上次巡检相比该页有没有变；`（请求的 … 被重定向）`
+说明官方页搬家了（如 `groq.com/pricing` 跳首页、Gemini 文档迁到 aistudio.google.com）。
+
 ## 其它硬规矩
 
 - **push 前先问**（用户惯例）；推语料可能触发 GitHub secret-scanning 对抓取正文里
