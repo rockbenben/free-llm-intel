@@ -4717,6 +4717,71 @@ class TestGuideRendering(unittest.TestCase):
         self.assertFalse(f("免费试用 30 天，每日限量 100 名", today))
         self.assertFalse(f("代码模型限时免费（官方未公布截止日）", today))
 
+    #: 免费期的终点被写成收费的起点（DeepSeek Search/Fetch 实测措辞），没有截止字样
+    DEAD_ONSET = ("**限时免费活动**：Search/Fetch 接口目前未计费，"
+                  "将于北京时间 2026 年 11 月 1 日 00:00 起按次收取调用费用。")
+    LIVE_TAIL = "实行**峰谷定价**（元/百万 tokens）：deepseek-flash 输出 8.0（高峰）/4.0（空闲）。"
+
+    def test_promo_onset_without_deadline_word(self):
+        f = crawler_llm_intel._promo_fragment_expired
+        today = date(2026, 11, 4)
+        self.assertTrue(f("Search/Fetch 目前未计费，将于北京时间 2026 年 11 月 1 日 00:00 "
+                          "起按次收取调用费用", today))
+        # 日期还没到 -> 仍是在世的优惠，必须留着
+        self.assertFalse(f("将于 2026 年 12 月 1 日起开始收费", date(2026, 11, 4)))
+        # 过去的权益起点（自 X 起每日领取）不是到期，不能当过期活动删
+        self.assertFalse(f("自 2026-09-18 起每日领取 100 Credits", today))
+        # 无 将 的常态计费描述不受影响
+        self.assertFalse(f("按 token 计费，每 1,000 次成功请求 5 元", today))
+
+    def test_strip_dead_promos_removes_every_dead_segment(self):
+        s = crawler_llm_intel.strip_dead_promos
+        today = date(2026, 11, 4)
+        self.assertEqual(s(self.LIVE_TAIL + self.DEAD_ONSET, today), self.LIVE_TAIL)
+        # 「已于 X 结束」同样是死活动：过期即摘，前端不复述
+        self.assertEqual(s("官方公告原文：“邀请奖励”活动已于 2025-11-30 结束", today), "")
+        # 摘掉末句后不留悬空的连接标点（句号是句子收尾，留着）
+        self.assertEqual(s("现行文档无赠金记载；“邀请奖励”已于 2025-11-30 结束", today),
+                         "现行文档无赠金记载")
+        self.assertEqual(s("长期活动，截止 2025-01-01。另有无日期优惠", today),
+                         "另有无日期优惠")
+        # 未来截止日与无日期优惠都留
+        self.assertEqual(s("限时五折（截止 2026-12-31）", today), "限时五折（截止 2026-12-31）")
+        self.assertEqual(s("每日限量 100 名", today), "每日限量 100 名")
+        # 幂等：摘完再摘一次不动
+        once = s(self.LIVE_TAIL + self.DEAD_ONSET, today)
+        self.assertEqual(s(once, today), once)
+        # 非字符串（列表列）原样返回
+        self.assertEqual(s(["a", "b"], today), ["a", "b"])
+
+    def test_dead_promo_leaves_both_render_views(self):
+        """活动列（README 表）与机读镜像（quotas.json）都不许登已过期的时效承诺。"""
+        vid = "deepseek_test_deadpromo"
+        prof = {"category": "domestic", "display_name": "DeepSeek", "free_models": [],
+                "links": [("官方主页", "")], "openai_compat": True,
+                "promotions": self.LIVE_TAIL + self.DEAD_ONSET,
+                "free_quota": "无账户赠送", "validity": "按量计费"}
+        today = date(2026, 11, 4)
+        real = crawler_llm_intel.get_provider_profile
+        crawler_llm_intel.get_provider_profile = lambda *a, **k: prof
+        try:
+            intel = crawler_llm_intel.VendorIntel(
+                vendor_id=vid, brand="DeepSeek", homepage="", products=[])
+            table = "\n".join(crawler_llm_intel.render_freellm_table(
+                intel, crawler_llm_intel.sanitize_profile_view(prof, today), 1))
+            rows = crawler_llm_intel.build_quotas_payload(
+                [{"id": vid, "brand": "DeepSeek", "homepage": ""}],
+                {}).get("vendors", [])
+        finally:
+            crawler_llm_intel.get_provider_profile = real
+        self.assertNotIn("将于北京时间 2026 年 11 月 1 日", table)
+        self.assertIn("峰谷定价", table)
+        self.assertEqual(len(rows), 1)
+        self.assertNotIn("目前未计费", rows[0]["promotions"])
+        self.assertIn("峰谷定价", rows[0]["promotions"])
+        # 视图归视图，源不动：档案原值仍含那句（AI 核查与证据链要看得到它）
+        self.assertIn(self.DEAD_ONSET, prof["promotions"])
+
     def test_guide_section_picks_and_expiry(self):
         import re
         records = build_records()

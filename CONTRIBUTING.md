@@ -180,7 +180,7 @@ python test_workflow_and_review.py           # ④ 门禁
 ① 的输出里：`ok` = 抓到了；`sparse` = 页面是 JS 渲染壳（静态抓不到事实，要点进官方页或用浏览器兜底）；`FAIL` = 抓取失败；`快照：一致 / 已变化 / 无记录` = 与上次巡检相比该页有没有变；`（请求的 … 被重定向）` = 官方页搬家（实测 `groq.com/pricing` 跳首页、Gemini 文档迁去 `aistudio.google.com`）——这时先把 `llm-intel.yaml` 里的源地址改准，再谈额度数字。审计**只读**，不写快照，所以可以随便跑。
 ② 只重排 README 的攻略块与 SVG，不联网、不碰其他产物；同一份源连跑两次零改写（测试 `test_guide_render_mode_rewrites_only_the_guide_block` 钉着）。`--render-only` 按契约不碰 README，缺的就是这一格。
 
-「限时 / 易变信息」一节无需手工维护——爬虫自动扫描各档案的 `promotions`、`free_models` 等字段中的「截止 / 限量 / 限时 / 爆满 / limited time」关键词；片段中写明的截止/结束日期（`YYYY-MM-DD`、`YYYY年M月D日` 等）若已过当天，该片段自动剔除，因此到期活动应直接从档案字段中删除或改写为无日期表述。
+「限时 / 易变信息」一节与厂商表的三列时效字段（`promotions`「邀请 / 特惠活动」、`free_quota`「注册福利」、`validity`「额度有效期」）都无需手工维护——爬虫按两类判据识别已经翻篇的时效片段：写明截止/结束日期（`YYYY-MM-DD`、`YYYY年M月D日` 等）且已过当天，或把免费期的终点写成收费的起点（「将于 X 起按次收取调用费用」，这类片段一个截止字样都没有）且该日已过。命中即从展示层摘掉（README 与 `docs/feeds/quotas.json` 同步，浏览页读的就是它），**前端不复述过期活动**；档案字段与 `_evidence` 保留原句，AI 核查与证据链照旧看得见它，所以到期活动不必急着从档案里删。
 修改元数据后可用 `python crawler_llm_intel.py --only <vendor_id> --no-browser` 验证单厂商逻辑；提交前运行全量巡检生成完整攻略区块。攻略区块不含时间戳，无内容变化时产物不会被改写。
 
 ## 订阅源显示名（FEED_ALIASES）

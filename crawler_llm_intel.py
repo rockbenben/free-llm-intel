@@ -3054,8 +3054,12 @@ def bucket_by_readme_order(pairs: list[tuple[Any, dict]]) -> list[tuple[Any, dic
 
 
 def order_vendor_records(intel_list: list[VendorIntel]) -> list[tuple[int, VendorIntel, dict]]:
-    """返回 README 里的 `(序号, intel, profile)`，序号即章节编号（锚点靠它拼）。"""
-    pairs = [(intel, get_provider_profile(intel.vendor_id, intel.brand, intel.homepage))
+    """返回 README 里的 `(序号, intel, profile)`，序号即章节编号（锚点靠它拼）。
+
+    profile 过 `sanitize_profile_view`：过期时效片段不进任何展示产物。
+    """
+    pairs = [(intel, sanitize_profile_view(
+                    get_provider_profile(intel.vendor_id, intel.brand, intel.homepage)))
              for intel in intel_list]
     return [(idx, intel, prof)
             for idx, (intel, prof) in enumerate(bucket_by_readme_order(pairs), 1)]
@@ -3074,7 +3078,23 @@ def _gh_slug(heading: str) -> str:
 
 
 _PROMO_END_PAT = re.compile(r"截止|到期|结束|止至|until|end(?:s|ed)?\b", re.I)
+#: 免费期的终点常被写成收费的起点（「将于 X 起按次收取调用费用」）。这类片段一个
+#: 截止/到期 字样都没有，只由 将 + 日期 + 计费动词 构成（DeepSeek Search/Fetch 实测）。
+_PROMO_ONSET_PAT = re.compile(
+    r"将[^。；]{0,40}?(?:起|开始|后)[^。；]{0,24}?(?:收费|计费|扣费|收取|生效)", re.I)
 _PROMO_DATE_PAT = re.compile(r"(20\d{2})" + _DATE_SEP_YM + r"(\d{1,2})" + _DATE_SEP_MD + r"(\d{1,2})")
+#: 展示层摘时效片段的三列（与攻略「限时 / 易变信息」扫的是同一批字段）
+_PROMO_TEXT_FIELDS = ("promotions", "free_quota", "validity")
+
+
+def _promo_dates(frag: str) -> list[date]:
+    out: list[date] = []
+    for m in _PROMO_DATE_PAT.finditer(frag):
+        try:
+            out.append(date(int(m.group(1)), int(m.group(2)), int(m.group(3))))
+        except ValueError:
+            continue
+    return out
 
 
 def _promo_fragment_expired(frag: str, today: date) -> bool:
@@ -3082,15 +3102,42 @@ def _promo_fragment_expired(frag: str, today: date) -> bool:
 
     无明确日期的片段（如「每日限量 100 名」「未公布截止日」）一律保留，交由人工复核。
     """
-    if not _PROMO_END_PAT.search(frag):
+    if not (_PROMO_END_PAT.search(frag) or _PROMO_ONSET_PAT.search(frag)):
         return False
-    dates = []
-    for m in _PROMO_DATE_PAT.finditer(frag):
-        try:
-            dates.append(date(int(m.group(1)), int(m.group(2)), int(m.group(3))))
-        except ValueError:
-            continue
+    dates = _promo_dates(frag)
     return bool(dates) and max(dates) < today
+
+
+def strip_dead_promos(text: str, today: date | None = None) -> str:
+    """摘掉档案字段里已经翻篇的时效承诺，供 README 活动列与 quotas.json 使用。
+
+    过期即摘，不复述：展示层不出现「曾限时免费 / 已于 X 结束」这类死活动。
+    """
+    if not isinstance(text, str) or not text:
+        return text
+    today = today or date.today()
+    out: list[str] = []
+    parts = re.split(r"([。；;\n])", text)
+    for i in range(0, len(parts), 2):
+        seg = parts[i].strip()
+        if not seg:
+            continue
+        sep = parts[i + 1] if i + 1 < len(parts) else ""
+        if _promo_fragment_expired(re.sub(r"[*`]", "", seg), today):
+            continue
+        out.append(seg + sep)
+    # 摘掉末句后，前一句留下的**连接**标点会悬在结尾（ppio 实测「…无法复核）；」）；
+    # 句号是句子自身的收尾，不动。
+    return re.sub(r"[；;，,、\s]+$", "", "".join(out)).strip()
+
+
+def sanitize_profile_view(prof: dict, today: date | None = None) -> dict:
+    """渲染视图：时效字段里已过期的片段不进产物。源（yaml / 档案 / overlay）一个字不动。"""
+    cleaned = {key: strip_dead_promos(prof[key], today) for key in _PROMO_TEXT_FIELDS
+               if isinstance(prof.get(key), str) and prof[key]}
+    if all(cleaned[key] == prof[key] for key in cleaned):
+        return prof
+    return {**prof, **cleaned}
 
 
 def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[str]:
@@ -6337,9 +6384,10 @@ def build_quotas_payload(vendors: list[dict], reviews: dict[str, str]) -> dict:
     `reviewed` 取例行复查日期，让机器读者也能判断「这条情报多久没核过了」。
     确定性：无时间戳、键序固定。
     """
-    pairs = [(vendor, get_provider_profile(vendor.get("id", "unknown"),
-                                          vendor.get("brand", ""),
-                                          vendor.get("homepage", "")))
+    pairs = [(vendor, sanitize_profile_view(
+                       get_provider_profile(vendor.get("id", "unknown"),
+                                           vendor.get("brand", ""),
+                                           vendor.get("homepage", ""))))
              for vendor in vendors]
     rows = []
     for idx, (vendor, prof) in enumerate(bucket_by_readme_order(pairs), 1):
