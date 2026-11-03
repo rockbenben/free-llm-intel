@@ -1385,17 +1385,17 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "free_quota": "**AI Studio 免费层（Free Tier）长期存在**（官方计费文档原文 “New accounts begin on the Free Tier”），仅需 Google 账号、免绑信用卡；注意：**2026 年 3 月起 $300 Google Cloud 试用金不能用于支付 Gemini API / AI Studio 费用**；付费层需关联结算账户并预付最低 **$5**",
         "validity": "免费层按速率限额滚动（RPD 太平洋时间午夜重置）",
         "free_models": [
-            "`Gemini 3.8 / 3.7 / 3.6 Flash`、Gemini 3.5 Flash/Flash-Lite、Gemini 3.1 Flash-Lite、Gemini 3 Flash Preview、`Gemini 2.5 Pro/Flash/Flash-Lite`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置；官方文档已不再公开各模型具体免费层数字，以 AI Studio 内 Rate Limit 页为准）",
-            "`Gemini 3.1 Pro Preview` 与 Nano Banana 图像系列 —— **无免费层**",
+            "`Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；**官方已不公开逐模型免费清单与数值**（2026-11-03 复核：定价页只剩 Free / Paid 两档说明，具体限额只在 AI Studio 内显示）",
+            "`Gemini 4 Argon`、`Gemini 3.1 Pro Preview` 与 Nano Banana 图像系列 —— **无免费层**",
         ],
         "tier_caveats": [
-            "**不是所有模型都有免费层**：3.x Flash / Gemma 4 / Embedding 系列可用；`Gemini 3.1 Pro Preview`、Nano Banana 图像系列**无免费层**，调错模型会直接付费",
+            "**不是所有模型都有免费层**：Flash 级 / Gemma 4 / Embedding 系列可用，但官方不再逐一公示；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、Nano Banana 图像系列**无免费层**，调错模型会直接付费",
             "**隐私代价**：免费层输入/输出数据可能被用于改进 Google 产品；敏感数据不要走免费层",
             "免费层限速官方已不再公开固定数值，以 AI Studio 内 Rate Limit 页为准；RPD 按太平洋时间午夜重置",
             "$300 Google Cloud 试用金**不能**用于 Gemini API / AI Studio（2026 年 3 月起）；付费层需关联结算账户并预付最低 $5",
         ],
         "preconditions": "仅需 Google 账号即可生成 API Key，免绑信用卡；免费层数据可能用于产品改进",
-        "promotions": "付费层预付 $5 起；与 Google Cloud Vertex AI 深度集成。",
+        "promotions": "付费层预付 $5 起；与 Google Gemini Enterprise Agent Platform（原 Vertex AI）深度集成。",
         "notes": "注意：**2026 年 3 月起，$300 Google Cloud 试用金不能用于支付 Gemini API / AI Studio 费用**（官方 billing 文档原文）；旧“Gemini 1.5 Flash/Pro、Gemma 2、15 RPM/1500 RPD”等型号与数字均已换代或下架。",
         "links": [
             ("API Key 申请直达 (AI Studio)", "https://aistudio.google.com/apikey"),
@@ -1445,10 +1445,11 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "free_quota": "注册 Cloudflare 账号即可使用、免绑卡；超额后开通 Workers Paid 按 **$0.011 / 1,000 Neurons** 计费（官方定价页原文）",
         "validity": "**每日 UTC 0 点重置**",
         "free_models": [
-            "全目录 **86 个模型**共享免费额度：代表 `@cf/meta/llama-4-scout-17b`、`llama-3.3-70b-fp8`、`@cf/openai/gpt-oss-120b/20b`、`deepseek-v4-flash-0731/v4-pro-0813`、`gemma-4-26b`、`glm-5.3(-flash)`、`kimi-k2.6`、`nemotron-3-120b`、`qwen3-30b`、`bge-m3` —— **每日 10,000 Neurons 免费**（官方定价页原文 “10,000 Neurons per day at no charge”），UTC 0 点刷新；旧 llama-3.1-8b、mistral-7b 已弃用",
+            "目录内模型共享 **每日 10,000 Neurons 免费额度**（官方定价页原文 “use a total of 10,000 Neurons per day at no charge”），UTC 0 点刷新；代表免费模型 `@cf/meta/llama-4-scout-17b`、`llama-3.3-70b-fp8`、`@cf/openai/gpt-oss-120b/20b`、`qwen3-30b`、`bge-m3` 等；**`kimi-k2.6`/`kimi-k2.7-code`、`glm-5.2`/`glm-5.3`/`glm-5.3-flash`、`deepseek-v4-flash-0731`/`v4.1-flash-1017`/`v4-pro-0813` 要求付费计费方式，不在免费层**",
         ],
         "tier_caveats": [
-            "86 个模型**共享每日 10,000 Neurons** 总额度（不是每模型各 1 万），按太平洋时间午夜重置；超额按 $0.011 / 1,000 Neurons 计费，需开 Workers Paid",
+            "免费额度是账号级 **每日 10,000 Neurons 共享总额度**（不是每模型各 1 万），所有限额每日 00:00 UTC 重置；超额按 $0.011 / 1,000 Neurons 计费，需开通 Workers Paid",
+            "kimi / glm-5.x / deepseek-v4 系列等前沿模型**要求付费计费方式，不在免费层内**；免费层主要覆盖 Llama 3.x/4、Qwen、Mistral、gpt-oss 等模型",
             "免费层主要面向 Workers 平台内调用；Neurons 换算随模型不同",
         ],
         "preconditions": "注册 Cloudflare 账号即可使用，免绑卡",
@@ -2028,19 +2029,22 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "gcp_vertex_ai": {
         "category": "cloud",
-        "display_name": "Google Cloud Vertex AI",
+        # 2026 年官方改名：Vertex AI Platform → Gemini Enterprise Agent Platform
+        # （官方「名称变更」页逐项列出新旧名）。vendor_id 保持 gcp_vertex_ai 不动：
+        # 它是快照键、归档文件名、订阅源 URL 的锚，换 id 会把历史上的一切切断。
+        "display_name": "Google Gemini Enterprise Agent Platform",
         "free_quota": "新账号 **$300 赠金（90 天）** + **Always Free** 永久免费资源（官方免费页，需开通 Cloud Billing、信用卡验证）；**Google for Startups Cloud Program** 标准 $200,000、AI 赛道最高 **$350,000**",
         "validity": "$300 赠金 **90 天**；Always Free 永久",
         "free_models": [
-            "Vertex 托管 Gemini 3.x 系列、Anthropic Claude Opus/Sonnet 5、Llama 4 等 —— 可用 **$300 赠金**抵扣调用（模型可用性以区域与 Vertex 模型页为准）",
+            "平台托管的 Gemini 3.x 系列、Anthropic Claude Opus/Sonnet 5、Llama 4 等 —— 可用 **$300 赠金**抵扣调用（模型可用性以区域与平台模型页为准）；**原名为 Vertex AI**",
         ],
         "preconditions": "Google 账号 + 开通 Cloud Billing（需信用卡验证）",
         "promotions": "**Google for Startups Cloud Program**：标准 **$200,000**，AI 赛道最高 **$350,000**。",
-        "notes": "$300 赠金可抵扣 Vertex AI 调用；整合 GCP 全栈 MLOps 与 Grounding 检索。",
+        "notes": "$300 赠金可抵扣平台调用；整合 GCP 全栈 MLOps 与 Grounding 检索。Vertex AI 已于 2026 年更名为 Gemini Enterprise Agent Platform（官方「名称变更」页列出了 Vertex AI Studio → Agent Studio、Vertex AI Search → Agent Search 等逐项对照）。",
         "links": [
             ("GCP 免费套餐页", "https://cloud.google.com/free"),
-            ("Vertex AI 文档", "https://docs.cloud.google.com/gemini-enterprise-agent-platform"),
-            ("Vertex AI 定价", "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing"),
+            ("Agent Platform 文档", "https://docs.cloud.google.com/gemini-enterprise-agent-platform"),
+            ("平台定价", "https://cloud.google.com/products/gemini-enterprise-agent-platform/pricing"),
         ],
     },
     "ibm_watsonx": {
