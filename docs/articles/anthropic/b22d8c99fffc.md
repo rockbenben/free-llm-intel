@@ -1,91 +1,91 @@
 ---
 vendor: anthropic
-title: 通过消息线程使长时间运行的代理更快
+title: 用 message threads 让长时间运行的 agent 更快
 original_title: 
 url: https://claude.com/resources/articles/message-threads
 date: 2026-11-02
 lang: zh
 captured: 2026-11-03
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: efa257331639
+body_sha: 36f3f7adb78b
 ---
 
-消息线程现已在 Claude 平台上提供公共测试版。通过消息线程，代理不再需要每次都重新发送完整的对话历史记录，从而减少了长时间运行会话的延迟。
+Message threads 现已在 Claude Platform 上开放 public beta。有了 message threads，agents 不再需要在每一轮重新发送完整的对话历史，从而降低了长时间运行会话的延迟。
 
-### 消息线程如何工作
+### message threads 如何工作
 
-编码代理可能在一个会话中发出数百个请求，每个请求都会重新发送每条较早的消息和工具结果。一旦对话达到数十万个令牌，重新发送所有令牌会增加Claude开始响应之前的时间。通过消息线程，代理仅发送自上一轮以来的新内容，这减少了第一个令牌 (TTFT) 的时间。
+一个 coding agent 在一次会话里可能发出数百个请求，而每个请求都会把此前所有消息和工具结果重发一遍。一旦对话累积到数十万个 tokens，这样整份重发就会在 Claude 开始响应之前额外加上时间。有了 message threads，agents 只需要发送上一轮之后的新增内容，从而缩短 time to first token（TTFT）。
 
-对于大多数 Claude Code 用户来说，默认情况下消息线程处于打开状态，具有 500k 到 1M 令牌的请求的 TTFT 中值下降了约 35%。
+在 message threads 对多数 Claude Code 用户默认开启之后，token 量在 500k 到 1M 之间的请求，其中位 TTFT 下降了约 35%。
 
-要使用消息线程，请将“thread”参数添加到消息 API 请求中。第一个请求包括完整的对话并启动一个线程。此后的每个请求仅包含新消息和先前响应的 ID。在轮流之间，我们将每个线程保存在内存中，它被加密并且不会写入磁盘。线程在最后一次请求后 5 分钟后过期，然后您的客户端重新发送完整对话以开始新的对话。虽然消息线程的每个请求都较小，但 Claude 仍然每次都会读取完整的对话，因此令牌使用量保持不变。
+要使用 message threads，请在 Messages API 请求里加上 `thread` 参数。第一个请求包含完整对话，并开启一个 thread。之后的每个请求只包含新增消息和上一个响应的 ID。在两轮之间，我们把每个 thread 保存在内存中，在那里它是加密的且不会写入磁盘。一个 thread 在其最后一次请求 5 分钟后过期，届时你的客户端会重发完整对话来开启一个新的。虽然用上 message threads 后每个请求都更小，但 Claude 每一轮仍然读取完整对话，所以 token 用量保持不变。
 
-消息线程最适合延迟很重要的活动会话，包括：
+message threads 最适合那些在意延迟的活跃会话，包括：
 
-- **长期运行的编码代理**，其中每个工具结果或文件编辑都会添加到对话中。
-- **计算机使用代理**，其中屏幕截图保留在线程中，而不是每次都重新上传。
-- **文档和图像密集的工作流程**，其中请求较小。
+- **长时间运行的 coding agents**，每个工具结果或文件编辑都会往对话里累加。
+- **Computer use agents**，截图留在 thread 里，而不必每一轮都重新上传。
+- **文档和图片量大的工作流**，请求因此变得更小。
 
-代理携带的上下文越多，可以减少第一个令牌的时间的消息线程就越多。
+一个 agent 携带的上下文越多，message threads 能在 time to first token 上省下的就越多。
 
 ### 开始使用
 
-消息线程现已在本机 Claude 平台、AWS 上的 Claude 平台、Microsoft Foundry 中的 Claude 以及 Google Cloud 上的 Claude 模型（人工管理）上提供公开测试版。标准 Claude 代币利率和现有利率限制适用。请参阅[文档](http://platform.claude.com/docs/en/build-with-claude/message-threads)开始。
+message threads 现已在原生 Claude Platform 上开放 public beta，同时也支持 Claude Platform on AWS、Claude in Microsoft Foundry，以及 Claude Models on Google Cloud（Anthropic 托管）。适用标准的 Claude token 费率和现有的限流。请查阅[文档](http://platform.claude.com/docs/en/build-with-claude/message-threads)开始使用。
 
 文章
 
 2026 年 10 月 28 日
 
-### Claude Enterprise 的智能报告、调查和汇总集团预算
+### Claude Enterprise 的智能报告、调研与群组预算池化
 
-在许多组织中，成员已经确定了Claude可以解锁的独特工作。下一步是将这项工作扩展到每个团队。
+在许多组织里，成员们已经找到了 Claude 能够释放出来的独特工作。下一步是把这种工作扩展到每一个团队。
 
-Claude·恩企业
+Claude Enterprise
 
 文章
 
 2026 年 10 月 28 日
 
-### IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude
+### IDC 把 Quanta 接入 Claude，并在全公司采用 Claude
 
-IDC 将 Claude 整合为其 Quanta 平台的一部分，并将 Claude 推广到自己的业务中
+IDC 已把 Claude 集成进自己的 Quanta 平台，并在自身业务中全面铺开了 Claude
 
-Claude·科沃克
+Claude Cowork
 
-Claude·科德
+Claude Code
 
 还有 1 个
 
-：Claude·企业
+：Claude Enterprise
 
-Claude·恩企业
+Claude Enterprise
 
 文章
 
 2026 年 10 月 28 日
 
-### 为法律工作引入工件
+### 推出面向法律工作的 artifacts
 
-Claude for Legal 现在包含用于法律工作的即用型工件，团队可以使用自己的数据和连接器进行调整，并在整个企业中共享。
+Claude for Legal 如今加入了开箱即用的法律工作 artifacts，团队可以结合自己的数据和连接器加以调整，并在整个业务中共享。
 
-Claude·恩企业
+Claude Enterprise
 
 文章
 
 2026 年 10 月 27 日
 
-### 财务顾问Claude
+### Claude for Financial Advisors
 
-财务顾问现在可以将 Claude 连接到他们所依赖的托管人、投资组合平台、CRM 和规划工具，以及针对财务顾问日常工作量身定制的新技能。
+理财顾问如今可以把 Claude 连到他们依赖的托管机构、投资组合平台、CRM 和规划工具上，此外还有针对理财顾问日常工作定制的新 skills。
 
-## 与 Claude 一起改变您的组织的运作方式
+## 用 Claude 变革你的组织运作方式
 
-[查看定价](https://claude.com/pricing#api)[联系销售人员](https://claude.com/contact-sales)
+[查看定价](https://claude.com/pricing#api)[联系销售](https://claude.com/contact-sales)
 
-### 获取开发者通讯
+### 订阅开发者通讯
 
-产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。
+产品更新、操作指南、社区亮点，以及更多内容。每月送达你的收件箱。
 
-如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。
+如果你希望接收我们每月的开发者通讯，请提供你的电子邮箱地址。你可以随时退订。

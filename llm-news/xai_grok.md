@@ -9,7 +9,7 @@
 
 ## 全部文章（共 117 篇，按日期倒序；无日期条目列于最后）
 
-1. [通过 Grok Bot 为每个团队提供一名数据科学家](https://x.ai/news/data-bot)（2026-11-02） <!--orig:Giving every team a data scientist with Grok Bot-->
+1. [用 Grok Bot 给每个团队配一位数据科学家](https://x.ai/news/data-bot)（2026-11-02） <!--orig:Giving every team a data scientist with Grok Bot-->
 2. [您的下一个销售团队成员应该是 Grok Bot](https://x.ai/news/grok-bot-sales)（2026-10-27） <!--orig:Your next sales teammate should be a Grok Bot-->
 3. [SpaceX Super Intelligence 合作伙伴网络正式推出](https://x.ai/news/partnernetworkannouncement)（2026-10-22） <!--orig:Introducing the SpaceX Super Intelligence Partner Network-->
 4. [用 Grok Bot 检测并响应线上事故](https://x.ai/news/incident-sweep)（2026-10-20） <!--orig:Using Grok Bot to detect and respond to incidents-->

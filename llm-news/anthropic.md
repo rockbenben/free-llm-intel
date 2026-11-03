@@ -10,7 +10,7 @@
 
 ## 全部文章（共 135 篇，按日期倒序；无日期条目列于最后）
 
-1. [通过消息线程使长时间运行的代理更快](https://claude.com/resources/articles/message-threads)（2026-11-02） <!--orig:Make long-running agents faster with message threads-->
+1. [用 message threads 让长时间运行的 agent 更快](https://claude.com/resources/articles/message-threads)（2026-11-02） <!--orig:Make long-running agents faster with message threads-->
 2. [Claude Enterprise 的智能报告、调查与共享群组预算](https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets)（2026-10-28） <!--orig:Smart reports, surveys, and pooled group budgets for Claude Enterprise-->
 3. [IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude](https://claude.com/resources/articles/idc-brings-quanta-into-claude-and-adopts-claude-across-the-company)（2026-10-28） <!--orig:IDC brings Quanta into Claude and adopts Claude across the company-->
 4. [为法律工作引入 Claude artifacts](https://claude.com/resources/articles/introducing-artifacts-for-legal-work)（2026-10-28） <!--orig:Introducing artifacts for legal work-->

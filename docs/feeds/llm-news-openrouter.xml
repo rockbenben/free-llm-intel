@@ -978,52 +978,52 @@ export CLAUDE_CODE_SUBAGENT_MODEL=&quot;anthropic/claude-haiku-5.5&quot;</code><
 <ul><li><a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval</a> 会在你自己的任务上运行 Opus、Sonnet 和 Haiku，并推荐一个。要开始，给你的编程智能体这条指令：<code>run curl -fsSL https://openrouter.ai/skills/spawn-ori-eval and follow the instructions in its output to get started</code>。</li><li>我们的<a href="https://openrouter.ai/docs/cookbook/coding-agents/claude-code-integration">配置指南</a>覆盖按角色设置模型，我们的教程 <a href="https://openrouter.ai/blog/tutorials/claude-code-openrouter/">Claude Code 搭配 OpenRouter：配置、模型与成本</a>覆盖模型选择与成本。</li><li><a href="https://openrouter.ai/anthropic/claude-opus-5.5">Opus 5.5</a>、<a href="https://openrouter.ai/anthropic/claude-sonnet-5.5">Sonnet 5.5</a> 和 <a href="https://openrouter.ai/anthropic/claude-haiku-5.5">Haiku 5.5</a> 的模型页面显示当前的价格、provider 和可用性。我们的 <a href="https://openrouter.ai/compare/anthropic/claude-opus-5.5/anthropic/claude-sonnet-5.5">Opus 5.5 对 Sonnet 5.5 对比页面</a>把其中两个并排放在一起。</li><li><a href="https://openrouter.ai/docs/guides/best-practices/prompt-caching">Prompt caching</a> 解释了上表中的缓存读取价格。</li><li>如果你要从更早的 Claude 模型迁移，<a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/model-migrations/claude-5-5">Claude 5.5 迁移指南</a>覆盖了相关的 API 变化。</li><li><a href="https://openrouter.ai/blog/insights/cost-vs-quality-tradeoff-framework-for-agent-models/">agent 模型的成本与质量权衡框架</a>和<a href="https://openrouter.ai/blog/insights/confidence-thresholds-for-model-escalation-routing/">模型升级路由的置信度阈值</a>讲了何时该把一个请求升到更高一档。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>Guardrails 现在将组织限制与工作空间默认值分开</title>
+      <title>Guardrails 把 organization 级上限与 workspace 默认设置分开</title>
       <link>https://openrouter.ai/blog/announcements/guardrail-policies/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/guardrail-policies/</guid>
       <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Guardrails Now Separate Organization Limits from Workspace Defaults</description>
-      <content:encoded><![CDATA[<h1>Guardrails 现在将组织限制与工作空间默认值分开</h1>
-<p>萨莎·布卢门菲尔德 ·2026 年 10 月 30 日</p>
-<p><img src="https://openrouter.ai/blog/images/guardrail-policies.png" alt="Guardrails 现在将组织限制与工作空间默认值分开"></p>
-<p>一年前，OpenRouter 上的大多数公司在少数团队中使用了人工智能。现在它已经扩展到各个部门。在 10 人或更多的团队中使用 OpenRouter 的人数增长了 70 倍，随着更多工作转移到代理，平均组织运行的活动 API 密钥数量是原来的三倍。</p>
-<p>管理所有这些的管理员不断要求同样的事情：为整个组织制定一套规则，并为需要更多规则的人提供例外空间。</p>
-<p>我们重建了 Guardrails 的配置方式，以便管理员现在可以设置组织范围的限制，为人们提供不同的预算和模型访问权限，并自行更改每项策略。</p>
-<p>首先，打开工作区的 <a href="https://openrouter.ai/workspaces">Guardrails 页面</a> 以设置策略，或阅读 <a href="https://openrouter.ai/docs/guides/features/guardrails/policies">Guardrail 策略文档</a>。</p>
-<h2>为什么我们改变护栏</h2>
-<p>我们针对早期模式构建了 Guardrails 的第一个版本：几个团队，一些 API 密钥。如今，我们看到成百上千的员工通过 SSO 登录，编码代理在每个工程师的笔记本电脑上运行，平台团队负责所有成本。</p>
-<p><img src="https://openrouter.ai/blog/images/guardrail-policies-approval-workflow.png" alt="选择护栏类型：预算、模型和提供商访问或内容审核。"></p>
-<p>这种转变体现在客户对我们的要求中：</p>
-<ul><li><strong>每人的预算，有例外。</strong> 团队希望为每个人提供默认的每月或每周预算，并为有需要的人提供更高的预算。由于每个预算水平都有一个护栏，一位客户有望为其大约 1,200 名员工每人创建一个单独的护栏。</li><li><strong>开始时的默认设置是保守的。</strong>客户希望新成员从最保守的设置开始，并随着时间的推移获得更多。旧模型的工作方式相反：工作区默认值是任何人都可以获得的最大工作区，而其他所有护栏只能收紧它。</li><li><strong>一条规则跨越多个工作区。</strong> 拥有多个业务部门的公司希望一次性设置 ZDR、提供商和区域规则，而不是将相同的护栏复制到每个工作区。</li><li><strong>一种处理请求的方法。</strong> 管理员不断被要求提供更大的预算或访问项目的新模型，并希望批准这是一个快速更改，而不是重建。</li></ul>
-<p>一些客户现在已经在 Guardrails 之上构建了自己的内部工作流程。员工要求更高的预算或访问项目的特定模型，并解释原因，然后管理员批准。通过组织设置单独的策略类型和限制，批准该请求只需一次更改。他们只是为该人员分配不同的预算或模型访问策略，并且它会自动保持在组织的限制范围内。</p>
-<h2>组织限制与工作区默认值是分开的</h2>
-<p>组织管理员现在可以为整个工作区设置限制，例如最大预算、零数据保留要求或可以使用哪些模型和提供程序。这些限制适用于工作区中的每个成员和 API 密钥，包括拥有自己的预算或模型政策的人员。</p>
-<p>在这些限制内，工作区管理员设置默认值。新会员加入后会立即获得默认预算和型号列表，管理员可以为特定人员提供更高的预算或访问更多型号的权限。所有这些都不能超越组织的限制。</p>
-<p><img src="https://openrouter.ai/blog/images/guardrail-policies-limits-defaults.png" alt="配置预算护栏，每月信用额度为 2,000 美元，并包含 BYOK 支出。"></p>
-<p>实际上，组织管理员将工程工作空间限制为每人每月 2,000 美元，仅限 ZDR 提供商，并且无法访问特定的高成本模型。工作区管理员将团队标准模型的新成员默认设置为每月 200 美元。新加入的工程师会自动获得 200 美元的违约金。领导代理项目的高级工程师每月可以获得 1,500 美元，并可以使用更多模型。工作场所中的任何人每月的费用不得超过 2,000 美元，也不得使用非 ZDR 提供商。</p>
-<h2>预算、模型访问和审核是单独的政策</h2>
-<p>一种护栏，用于将预算、模型和提供商访问以及内容审核捆绑到一个命名对象中。它们现在是三种不同的保单类型：</p>
-<ul><li><strong>预算</strong>设置美元支出上限，每天、每周或每月重置。</li><li><strong>模型和提供程序访问</strong>控制可以使用哪些模型和提供程序、ZDR 和数据区域。</li><li><strong>内容审核</strong>涵盖提示注入保护、敏感信息检测和自定义内容过滤器。</li></ul>
-<p>我们将它们分开，因为它们不会一起改变。一个人的预算可能会随着每个新项目的变化而变化，而团队的模型列表和审核规则可能会在几个月内保持不变。</p>
-<p>现在，团队共享一种模型访问策略和一项审核策略，您可以更改一个人的预算，而无需触及其他任何内容。</p>
+      <content:encoded><![CDATA[<h1>Guardrails 把 organization 级上限与 workspace 默认设置分开</h1>
+<p>Sasha Blumenfeld ·2026 年 10 月 30 日</p>
+<p><img src="https://openrouter.ai/blog/images/guardrail-policies.png" alt="Guardrails 将 organization 级上限与 workspace 默认设置分离开来"></p>
+<p>一年前，OpenRouter 上的大多数公司只在几个团队里使用 AI。如今它已经渗透到各个部门。在 10 人及以上的团队里使用 OpenRouter 的人增长了 70 倍，而随着越来越多的工作转向 agent，平均每个 organization 运行的活跃 API key 也变成了原来的三倍。</p>
+<p>管理这一切的 admins 反复提出同一个诉求：为整个 organization 定一套规则，同时又能给需要更多额度的人留出破例的空间。</p>
+<p>我们重构了 Guardrails 的配置方式，如今 admins 可以设定 organization 级别的整体限制，在这些限制内给不同的人分配不同的预算和模型访问权限，并且能够单独修改每一条策略。</p>
+<p>要开始使用，打开你 workspace 的 <a href="https://openrouter.ai/workspaces">Guardrails 页面</a> 来设置策略，或者阅读 <a href="https://openrouter.ai/docs/guides/features/guardrails/policies">Guardrail Policies 文档</a>。</p>
+<h2>我们为什么改 Guardrails</h2>
+<p>Guardrails 的第一版，是为那种早期的形态打造的：几个团队，寥寥几个 API key。而今天我们看到的是成百上千的员工通过 SSO 登录，每一台工程师的笔记本上都跑着 coding agent，还有平台团队要为这一切的成本负责。</p>
+<p><img src="https://openrouter.ai/blog/images/guardrail-policies-approval-workflow.png" alt="选择一种 guardrail 类型：Budget、Model &amp; provider access 或 Content moderation。"></p>
+<p>这一变化体现在客户向我们提出的诉求上：</p>
+<ul><li><strong>按人设预算，并可破例。</strong> 团队想要一个对所有人都适用的默认月度或周度预算，再给需要的人单独设一个更高的。如果每一档预算都要对应一条 guardrail，那有一家客户眼看就要为它大约 1,200 名员工逐一创建单独的 guardrail。</li><li><strong>默认从严起步。</strong> 客户希望新成员一开始就用最保守的设置，之后再随时间逐步获得更多权限。旧的模式恰恰相反：workspace 默认值是任何人能拿到的上限，其余每一条 guardrail 都只能在这个基础上进一步收紧。</li><li><strong>一条规则覆盖多个 workspace。</strong> 拥有多个业务单元的公司，想把 ZDR、provider 和 region 规则只设一次，而不是把同一条 guardrail 复制到每一个 workspace 里。</li><li><strong>有一套处理申请的办法。</strong> admins 不断被请求为某个项目提高预算或放开某个新模型的访问权限，他们希望批准这种请求是一次快速的改动，而不必推倒重建。</li></ul>
+<p>如今一些客户已经在 Guardrails 之上搭建了自己的内部工作流。一名员工为某个项目申请更高的预算或某个特定模型的访问权限，说明理由，然后由一名 admin 批准。有了分开的策略类型、以及由 organization 设定的上限，批准这样一个请求就是一处改动：他们只需要给这个人指派一条不同的预算或模型访问策略，系统就会自动把它保持在 organization 的上限之内。</p>
+<h2>organization 上限与 workspace 默认值分离</h2>
+<p>Organization admins 现在可以为整个 workspace 设定上限，比如预算上限、Zero Data Retention 要求，或者哪些 models 和 providers 可以使用。这些上限适用于该 workspace 里的每一位成员和每一个 API key，包括那些拥有自己预算或模型策略的人。</p>
+<p>在这些上限之内，由 workspace admins 来设定默认值。新成员一加入就能拿到一个默认的预算和模型列表，而 admin 可以给特定的人更高的预算或更多模型的访问权限。这一切都不能越过 organization 的上限。</p>
+<p><img src="https://openrouter.ai/blog/images/guardrail-policies-limits-defaults.png" alt="配置一条预算 guardrail：每月 $2,000 的额度上限，并把 BYOK 的支出也算在内。"></p>
+<p>落到实践中，情况是这样的：一名 organization admin 把 Engineering workspace 限制为每人每月 $2,000、只允许 ZDR 的 providers，并且不开放某个高成本模型的访问。workspace admin 把新成员的默认值设为每月 $200，配以团队的标准模型。一名新加入的工程师会自动拿到 $200 这个默认值。而一位牵头做 agent 项目的资深工程师，可以拿到每月 $1,500 并使用更多模型。这个 workspace 里没有任何人能超过每月 $2,000，也不能使用非 ZDR 的 provider。</p>
+<h2>Budget、模型访问与内容审核是分开的策略</h2>
+<p>一条 guardrail 过去会把预算、模型与 provider 访问、内容审核捆绑进一个具名对象。现在它们被拆成了三种独立的策略类型：</p>
+<ul><li><strong>Budget</strong>：设定一个以美元计的支出上限，按日、周或月重置。</li><li><strong>Model and provider access</strong>：管控哪些 models 和 providers 可以使用，以及 ZDR 与 data regions。</li><li><strong>Content moderation</strong>：涵盖 prompt injection 防护、敏感信息检测，以及自定义内容过滤器。</li></ul>
+<p>我们之所以把它们拆开，是因为它们并不会一起变动。一个人的预算可能每来一个新项目就变一次，而团队的模型列表和审核规则几个月都可以保持不变。</p>
+<p>现在团队共享一条模型访问策略和一条内容审核策略，你可以只改某个人的预算，而不必动其他任何东西。</p>
 <h2>向后兼容</h2>
-<p>您无需更改任何内容即可保持当前设置。现有的 Guardrails 保留其 ID 并执行相同的规则，并且 Guardrails API 和 Terraform 资源像以前一样工作。现在，每个护栏还显示为单独的预算、模型访问和审核策略，因此您可以在准备好时一次移动一个工作区。</p>
-<p>如果您通过 API 或 Terraform 管理 Guardrail，请首先阅读<a href="https://openrouter.ai/docs/guides/features/guardrails/policies-migration">迁移到 Guardrail 策略</a>，因为在仪表板中所做的更改不会同步回您的配置。</p>
+<p>要保留你现有的配置，不需要改动任何东西。已有的 guardrails 会保留各自的 ID、继续执行同样的规则，guardrails API 和 Terraform 资源也和以前一样工作。每条 guardrail 现在还会分别显示为独立的预算、模型访问和内容审核策略，因此你可以在准备好了的时候，按 workspace 一个一个地迁移过来。</p>
+<p>如果你通过 API 或 Terraform 来管理 guardrails，请先阅读 <a href="https://openrouter.ai/docs/guides/features/guardrails/policies-migration">Migrating to Guardrail Policies</a>，因为在 dashboard 里所做的改动不会同步回你的配置。</p>
 <h2>开始使用</h2>
-<p>要尝试它，请在您管理的任何工作区中打开 Guardrails 页面。您现有的护栏已经作为单独的策略存在。良好的第一步是提高一个人的预算而不触及其他任何东西。组织管理员可以通过工作区范围的护栏设置组织范围的限制。有关完整设置，请参阅 <a href="https://openrouter.ai/docs/guides/features/guardrails/policies">Guardrail 策略文档</a>。</p>
-<h2>常见问题解答</h2>
-<h3>什么是 OpenRouter Guardrail？</h3>
-<p>Guardrails 允许组织控制其成员和 API 密钥的支出、模型和提供商访问以及内容审核。</p>
-<h3>我可以为不同的人设置不同的人工智能预算吗？</h3>
-<p>是的。将预算政策分配给成员或 API 密钥。它每天、每周或每月重置，并且不能超出组织管理员设置的限制。</p>
-<h3>预算是否在整个工作区共享？</h3>
-<p>否。每个预算适用于每个成员或每个 API 密钥，而不是作为共享池。每月 100 美元的限额意味着每个人最多可以花费 100 美元。</p>
-<h3>我现有的护栏会怎样？</h3>
-<p>他们继续执行相同的规则并保留自己的身份证件。每一项现在还显示为最多三项单独的政策。</p>
+<p>想试一试，就打开你所管理的任意一个 workspace 里的 Guardrails 页面。你已有的 guardrails 会以独立策略的形式已经在那里了。一个好的第一步是：只提高某个人的预算，而不改动其他任何东西。Organization admins 可以通过 Workspace-wide guardrails 来设定整个 organization 范围内的上限。完整配置请见 <a href="https://openrouter.ai/docs/guides/features/guardrails/policies">Guardrail Policies 文档</a>。</p>
+<h2>常见问题</h2>
+<h3>什么是 OpenRouter Guardrails？</h3>
+<p>Guardrails 让 organizations 能够管控其成员和 API key 的支出、模型与 provider 访问，以及内容审核。</p>
+<h3>我能给不同的人设不同的 AI 预算吗？</h3>
+<p>可以。给某个成员或某个 API key 指派一条预算策略。它按日、周或月重置，并且不能超过你的 organization admin 设定的上限。</p>
+<h3>预算是在整个 workspace 里共享的吗？</h3>
+<p>不是。每条预算是按成员或按 API key 各自生效的，而不是一个共享池。每月 $100 的上限，意思是每个人最多可以花到 $100。</p>
+<h3>我已有的 guardrails 会怎样？</h3>
+<p>它们会继续执行同样的规则，并保留各自的 ID。每一条现在还会以最多三条独立策略的形式呈现。</p>
 <h3>我需要迁移到新的 API 吗？</h3>
-<p>不会。现有的 Guardrails API 和 Terraform 资源将继续工作。新的策略端点与它们一起位于“/api/v1/guardrails/policies”下。</p>
-<h3>谁可以管理护栏政策？</h3>
-<p>组织管理员可以管理每项策略，包括组织范围的限制。工作区管理员管理工作区中的策略。</p>]]></content:encoded>
+<p>不需要。已有的 guardrails API 和 Terraform 资源会继续工作。新的策略端点与它们并存，位于 <code>/api/v1/guardrails/policies</code> 之下。</p>
+<h3>谁可以管理 guardrail 策略？</h3>
+<p>Organization admins 可以管理每一条策略，包括整个 organization 范围内的上限。Workspace admins 管理所在 workspace 里的策略。</p>]]></content:encoded>
     </item>
     <item>
       <title>如何用 LLM 从 PDF 中提取表格</title>

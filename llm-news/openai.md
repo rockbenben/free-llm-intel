@@ -11,12 +11,12 @@
 
 ## 全部文章（共 1346 篇，按日期倒序；无日期条目列于最后）
 
-1. [扩展 Git 和 OpenAI](https://openai.com/index/scaling-git-at-openai)（2026-11-02） <!--orig:Scaling Git at OpenAI-->
-2. [电网保护者计划简介](https://openai.com/index/grid-protectors-program)（2026-11-02） <!--orig:Introducing the Grid Protectors Program-->
-3. [用更大的错误赏金奖励防御者](https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties)（2026-11-02） <!--orig:Rewarding defenders with bigger bug bounties-->
-4. [准备下一次安全冲刺以强化 OpenAI](https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai)（2026-11-02） <!--orig:Preparing our next security sprint to harden OpenAI-->
-5. [LifeVal](https://openai.com/index/lifeval)（2026-11-02）
-6. [Qodo 使用 Codex 将上下文构建到 AI 代码审查中](https://openai.com/index/qodo-codex-plugin)（2026-11-02） <!--orig:Qodo builds context into AI code review with Codex-->
+1. [在 OpenAI 规模化 Git](https://openai.com/index/scaling-git-at-openai)（2026-11-02） <!--orig:Scaling Git at OpenAI-->
+2. [推出 Grid Protectors Program](https://openai.com/index/grid-protectors-program)（2026-11-02） <!--orig:Introducing the Grid Protectors Program-->
+3. [用更高的 bug bounty 奖励防御者](https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties)（2026-11-02） <!--orig:Rewarding defenders with bigger bug bounties-->
+4. [筹备我们的下一次安全冲刺，加固 OpenAI](https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai)（2026-11-02） <!--orig:Preparing our next security sprint to harden OpenAI-->
+5. [LifeVal](https://openai.com/index/lifeval)（2026-11-02） <!--orig:LifeVal-->
+6. [Qodo 借助 Codex 把上下文带进 AI 代码评审](https://openai.com/index/qodo-codex-plugin)（2026-11-02） <!--orig:Qodo builds context into AI code review with Codex-->
 7. [OpenAI 任命 Dan Driscoll 为国家安全现代化高级顾问](https://openai.com/index/dan-driscoll-joins-openai)（2026-11-02） <!--orig:OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization-->
 8. [让网站更容易表达人工智能训练偏好](https://openai.com/index/helping-websites-express-ai-training-preferences)（2026-10-30） <!--orig:Making it easier for websites to express AI training preferences-->
 9. [社区安全报告和针对青少年的新保护](https://openai.com/index/community-safety-report-and-new-protections-for-teens)（2026-10-30） <!--orig:Community safety report and new protections for teens-->

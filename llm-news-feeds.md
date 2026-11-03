@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-03 12:19:23**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-03 18:09:00**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,7 +26,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-03，标题自动汉化）：
-  1. [通过消息线程使长时间运行的代理更快](https://claude.com/resources/articles/message-threads)（2026-11-02）
+  1. [用 message threads 让长时间运行的 agent 更快](https://claude.com/resources/articles/message-threads)（2026-11-02）
   2. [Claude Enterprise 的智能报告、调查与共享群组预算](https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets)（2026-10-28）
   3. [IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude](https://claude.com/resources/articles/idc-brings-quanta-into-claude-and-adopts-claude-across-the-company)（2026-10-28）
   4. [为法律工作引入 Claude artifacts](https://claude.com/resources/articles/introducing-artifacts-for-legal-work)（2026-10-28）
@@ -40,10 +40,10 @@
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [RSS/Atom 订阅源](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-03，标题自动汉化）：
-  1. [扩展 Git 和 OpenAI](https://openai.com/index/scaling-git-at-openai)（2026-11-02）
-  2. [电网保护者计划简介](https://openai.com/index/grid-protectors-program)（2026-11-02）
-  3. [用更大的错误赏金奖励防御者](https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties)（2026-11-02）
-  4. [准备下一次安全冲刺以强化 OpenAI](https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai)（2026-11-02）
+  1. [在 OpenAI 规模化 Git](https://openai.com/index/scaling-git-at-openai)（2026-11-02）
+  2. [推出 Grid Protectors Program](https://openai.com/index/grid-protectors-program)（2026-11-02）
+  3. [用更高的 bug bounty 奖励防御者](https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties)（2026-11-02）
+  4. [筹备我们的下一次安全冲刺，加固 OpenAI](https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai)（2026-11-02）
   5. [LifeVal](https://openai.com/index/lifeval)（2026-11-02）
   - 📄 完整文章归档（共 1346 篇）：[openai.md](llm-news/openai.md)
 
@@ -114,7 +114,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xai_grok.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-03，标题自动汉化）：
-  1. [通过 Grok Bot 为每个团队提供一名数据科学家](https://x.ai/news/data-bot)（2026-11-02）
+  1. [用 Grok Bot 给每个团队配一位数据科学家](https://x.ai/news/data-bot)（2026-11-02）
   2. [您的下一个销售团队成员应该是 Grok Bot](https://x.ai/news/grok-bot-sales)（2026-10-27）
   3. [SpaceX Super Intelligence 合作伙伴网络正式推出](https://x.ai/news/partnernetworkannouncement)（2026-10-22）
   4. [用 Grok Bot 检测并响应线上事故](https://x.ai/news/incident-sweep)（2026-10-20）
@@ -308,10 +308,10 @@
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-03，标题自动汉化）：
-  1. [Prepare web content for Amazon Bedrock Knowledge Bases with Crawl4AI](https://aws.amazon.com/blogs/machine-learning/prepare-web-content-for-amazon-bedrock-knowledge-bases-with-crawl4ai/)（2026-11-02）
-  2. [在 Amazon SageMaker AI 上通过知识蒸馏构建高效的代理](https://aws.amazon.com/blogs/machine-learning/build-efficient-agents-with-knowledge-distillation-on-amazon-sagemaker-ai/)（2026-11-02）
-  3. [使用 Amazon Nova Multimodal Embeddings 和 Amazon Bedrock AgentCore 实现代理工程智能](https://aws.amazon.com/blogs/machine-learning/agentic-engineering-intelligence-with-amazon-nova-multimodal-embeddings-and-amazon-bedrock-agentcore/)（2026-11-02）
-  4. [Circle K 如何使用 Amazon Bedrock 将 DevOps 事件分类速度缩短到 15 分钟以内](https://aws.amazon.com/blogs/machine-learning/how-circle-k-accelerated-devops-incident-triage-to-under-15-minutes-with-amazon-bedrock/)（2026-11-02）
+  1. [用 Crawl4AI 为 Amazon Bedrock Knowledge Bases 准备网页内容](https://aws.amazon.com/blogs/machine-learning/prepare-web-content-for-amazon-bedrock-knowledge-bases-with-crawl4ai/)（2026-11-02）
+  2. [在 Amazon SageMaker AI 上用知识蒸馏构建高效 agent](https://aws.amazon.com/blogs/machine-learning/build-efficient-agents-with-knowledge-distillation-on-amazon-sagemaker-ai/)（2026-11-02）
+  3. [用 Amazon Nova Multimodal Embeddings 与 Amazon Bedrock AgentCore 打造 Agentic 工程智能](https://aws.amazon.com/blogs/machine-learning/agentic-engineering-intelligence-with-amazon-nova-multimodal-embeddings-and-amazon-bedrock-agentcore/)（2026-11-02）
+  4. [Circle K 如何用 Amazon Bedrock 把 DevOps 事故分诊压到 15 分钟以内](https://aws.amazon.com/blogs/machine-learning/how-circle-k-accelerated-devops-incident-triage-to-under-15-minutes-with-amazon-bedrock/)（2026-11-02）
   5. [端到端管理 Amazon Bedrock 成本：FinOps 和平台团队的手册](https://aws.amazon.com/blogs/machine-learning/managing-amazon-bedrock-costs-end-to-end-a-playbook-for-finops-and-platform-teams/)（2026-10-30）
   - 📄 完整文章归档（共 147 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
@@ -354,7 +354,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-03，标题自动汉化）：
-  1. [MiMo-V2.6-Pro Pricing Guide: Developer Cost Breakdown](https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide)（2026-11-02）
+  1. [MiMo-V2.6-Pro 定价指南：开发者成本拆解](https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide)（2026-11-02）
   2. [MiMo-V2.6-Pro 现已登陆 DeepInfra](https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra)（2026-11-01）
   3. [开放模型为什么在发布数周后才提速](https://deepinfra.com/blog/why-open-models-get-faster)（2026-10-31）
   4. [最佳 JEV 替代方案：托管 API 和开放模型 (2026)](https://deepinfra.com/blog/jev-alternatives)（2026-10-30）
