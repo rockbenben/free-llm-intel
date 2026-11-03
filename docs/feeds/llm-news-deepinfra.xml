@@ -7,7 +7,97 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sun, 01 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>MiMo-V2.6-Pro Pricing Guide: Developer Cost Breakdown</title>
+      <link>https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>MiMo-V2.6-Pro 定价指南：开发者成本明细</h1>
+<p>DeepInfra 发布于 2026.11.02</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/MiMo-V2.6-Pro-Pricing-Guide.png" alt="MiMo-V2.6-Pro 定价指南：开发者成本明细"></p>
+<p><a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro</a> 是一种值得一读的定价指南模型：它结合了开放权重、1M 代币上下文窗口以及削弱典型大型开放权重推理模型的定价。按照每百万输入代币 0.435 美元和每百万输出代币 0.87 美元的列出费率，它低于同类模型的人工分析报告的中位定价，同时发布的人工智能分析智能指数得分为 30。对于试图平衡能力与基础设施和 API 支出的团队来说，这不仅仅是另一个大检查点。</p>
+<p>MiMo-V2.6-Pro 是小米 MiMo-V2.6 系列中的旗舰型号，于 2026 年 9 月 21 日发布。它是一个稀疏的 Mixture-of-Experts 模型，总参数约为 1 万亿个，每个令牌有 420 亿个活动参数，专为推理繁重的工作负载而构建，原生设计用于文本、图像、视频和音频输入和文本输出。该模型在 MIT 许可证下发布，其权重可在 Hugging Face 上以XiaomiMiMo/MiMo-V2.6-Pro-RL 的形式提供，并且可通过 DeepInfra 和 OpenRouter 等提供商进行托管访问 - 请参阅完整的 <a href="https://docs.deepinfra.com/models">DeepInfra 模型目录</a> 了解与它一起托管的所有其他内容。对于开发人员来说，这种组合很重要：您可以将其作为 API 进行评估、自行托管，或两者兼而有之。</p>
+<p>MiMo-V2.6-Pro 的突出之处不仅在于尺寸，还在于其折衷的形状。它将非常大的上下文窗口（1,048,576 到 1,050,000 个令牌（具体取决于来源））与具有竞争力的推理定价、99% 的缓存折扣以及对函数调用和结构化输出的内置支持配对。在小米自己发布的基准摘要中，它在 DeepSWE v1.1 上得分为 71.9，在 AutomationBench v1.0.6 上得分为 53.1，在 Terminal Bench 4.0 上得分为 34.9，在多个代理和编码任务上与 Claude Opus 5、GPT-5.6 Sol 和 Claude Fable 5 等模型处于同一水平。权衡是速度：与类似的开放权重模型相比，人工分析在输出吞吐量和首次代币时间方面的评价低于平均水平，因此这与原始响应能力无关，而更多与每美元的能力有关。</p>
+<p>如果您正在评估用于生产的 MiMo-V2.6-Pro，真正的问题不是它是否有趣。问题在于它的长上下文、多模式输入、开放权重许可和积极的代币定价的组合是否比更快或更锁定的替代方案更适合您的工作负载。现在，围绕该模型存在一个实际的提供商市场，这一点尤其重要，OpenRouter 列出了五个提供商，而 DeepInfra 则公开了具有 JSON 模式、函数调用、多模式支持和私有部署选项的托管端点。</p>
+<h2>MiMo-V2.6-Pro 执行摘要</h2>
+<p>MiMo-V2.6-Pro 处于一个有用的中间地带：比许多大型型号替代品更便宜、开放重量，并且可以通过多个托管路线使用。如果您需要长上下文推理、代理工作流程或多模式输入，而又不放弃以后自行托管的选项，那么它是一个强有力的候选者；如果您最关心绝对最低的价格，那么通过 OpenRouter 的小米是最便宜的，而 DeepInfra 更适合需要具有开发人员友好功能和部署灵活性的托管 API 的团队。</p>
+<table><thead><tr><th><strong>最适合</strong></th><th><strong>供应商推荐</strong></th><th><strong>为什么</strong></th></tr></thead><tbody><tr><td>最简单的入职/最快的首次通话时间</td><td>深基础设施</td><td>DeepInfra 将模型直接公开为XiaomiMiMo/MiMo-V2.6-Pro，并包括采用 JSON 模式的托管 API 访问、函数调用、多模式支持、零数据保留和私有端点部署。</td></tr><tr><td>RAG、大量文档或长上下文生产工作负载</td><td>深基础设施</td><td>托管模型支持完整的 1,048,576 个令牌上下文窗口和 0.003 美元/M 令牌的低缓存输入定价，非常适合重复检索和文档工作负载。</td></tr><tr><td>最低价格/成本敏感型工作负载</td><td>小米通过 OpenRouter</td><td>OpenRouter 以提供商集中最低折扣率列出小米：0.3698 美元/M 输入、0.7395 美元/M 输出和 0.0034 美元/M 缓存读取。</td></tr><tr><td>专有或托管模型访问</td><td>开放路由器</td><td>OpenRouter 提供跨五个提供商的托管访问，并具有价格、速度和故障转移的路由模式，如果您想要 API 便利性而又不想使用单一后端，那么这非常有用。</td></tr><tr><td>最低延迟/最快提供商性能</td><td>通过 OpenRouter 的 GMICloud</td><td>GMICloud 被列为该模型最快的 OpenRouter 提供商，大约有 1.26 秒的 P50 延迟和 41 个令牌/秒的吞吐量——在依赖它之前值得根据当前的 OpenRouter 列表进行确认，因为本指南没有对此进行独立重新验证。</td></tr><tr><td>团队与封闭模型替代方案进行比较</td><td>DeepInfra 或 OpenRouter 上的 MiMo-V2.6-Pro</td><td>小米发布的基准摘要显示，它在多项代理和编码评估方面与 Claude Opus 5、GPT-5.6 Sol 和 Claude Fable 5 保持竞争力，同时保持开放权重和 MIT 许可。</td></tr></tbody></table>
+<h2>了解代币以及如何收费</h2>
+<p>MiMo-V2.6-Pro 按标准 API 方式定价：您为令牌输入、令牌输出付费，有时还为提供商可以重用提示状态时的缓存令牌付费。有了 100 万代币上下文窗口，代币数学很快就不再是学术性的了。</p>
+<ul><li>令牌是一段文本，而不是一个单词。</li><li>英语平均每个标记大约有 3 到 4 个字符，或者每个标记大约 0.75 个单词。</li><li>代码、JSON、标记和 OCR 密集型文档文本的标记化效率通常低于普通散文。</li><li>图像、音频和视频也可以通过多模式 API 转换为可计费输入令牌。即使来源不是文本，您仍然需要在输入端付费。</li><li>长上下文模型是指较小的每个代币费率仍然可以产生大量账单的情况。如果您每次请求发送一百万个代币，那么便宜的百万代币模型仍然很昂贵。</li></ul>
+<table><thead><tr><th><strong>代币类型</strong></th><th><strong>它是什么</strong></th><th><strong>为什么重要</strong></th></tr></thead><tbody><tr><td>输入令牌</td><td>您发送到模型的所有内容：系统提示、用户消息、工具架构、检索到的上下文、对话历史记录以及标记化后的多模式内容</td><td>这是静静生长的部分。在模型写回单个令牌之前，RAG 块、长聊天和大型工具定义可能会主导成本。</td></tr><tr><td>输出代币</td><td>模型生成的所有内容：答案、大量推理响应、JSON、工具调用和长代码块</td><td>MiMo-V2.6-Pro 的输出收费比标价输入高出 2 倍，因此详细的响应可能会比预期更快地降低成本。</td></tr><tr><td>缓存输入令牌</td><td>提供商可以以折扣价重复使用以前看到的输入令牌 - 请参阅<a href="https://docs.deepinfra.com/chat/prompt-caching">提示缓存如何工作</a></td><td>这就是 MiMo-V2.6-Pro 对重复的长提示异常有吸引力的地方。如果您的提供商很好地支持缓存读取，那么经济效益会提高很多。</td></tr><tr><td>上下文窗口标记</td><td>请求中可用的总活动提示预算，最多约为 1,048,576 至 1,050,000 个代币，具体取决于提供商列表</td><td>大上下文很有用，但它也更容易意外地将巨大的提示投入生产，并使不良的成本模式正常化。</td></tr></tbody></table>
+<p>对于 MiMo-V2.6-Pro，主要价格为：</p>
+<ul><li>标准输入：每百万代币 0.435 美元</li><li>标准产出：每百万代币 0.87 美元</li><li>缓存输入：折扣前每百万代币通常约为 0.0036 美元</li></ul>
+<p>DeepInfra 列出的折扣价格为：</p>
+<ul><li>$0.387/M 输入</li><li>$0.783/M 产出</li><li>$0.003/M 缓存输入</li></ul>
+<p>OpenRouter的小米折扣路由列表：</p>
+<ul><li>$0.3698/M 输入</li><li>$0.7395/M 产出</li><li>$0.0034/M 缓存读取</li></ul>
+<p>一个实用的思考方式：</p>
+<ul><li>简短的提示，长的答案：产出定价最重要。</li><li>大型 RAG 背景，温和的答案：投入定价最重要。</li><li>带有稳定前缀的重复大提示：缓存定价非常重要。</li><li>具有工具模式和不断增长的历史记录的代理循环：这三者都很重要，并且输出通常会在迅速膨胀之后成为第二个让人们感到惊讶的东西。</li></ul>
+<p>MiMo-V2.6-Pro 在人工分析测试中也显得有些冗长。这并不意味着默认情况下它是浪费的。这确实意味着您应该期望输出标记在大量推理或使用工具的工作流程中比在简洁的分类模型上添加得更快。</p>
+<h2>MiMo-V2.6-Pro 的提供商令牌成本权衡</h2>
+<p>型号定价中令人烦恼的部分是“相同型号”并不总是意味着“相同的钞票形状”。 MiMo-V2.6-Pro 就是一个很好的例子：各个提供商的令牌率都很接近，但最佳选择会根据您是否最关心原始价格、缓存经济性、路由或操作简单性而变化。</p>
+<table><thead><tr><th><strong>提供商</strong></th><th><strong>输入</strong></th><th><strong>输出</strong></th><th><strong>缓存输入/缓存读取</strong></th><th><strong>优点</strong></th><th><strong>缺点</strong></th></tr></thead><tbody><tr><td>DeepInfra（直接）</td><td>$0.387/月</td><td>$0.783/月</td><td>$0.003/月</td><td>强大的全方位定价。列出的组中最便宜的缓存速率。非常适合长期提示、RAG 和重复代理脚手架。直接模型访问很简单，因此计费更容易推理。</td><td>如果您纯粹针对最便宜的路由访问进行优化，则不是绝对最低的输入/输出价格。</td></tr><tr><td>小米OpenRouter</td><td>$0.3698/月</td><td>$0.7395/月</td><td>$0.0034/月</td><td>列出的最低投入和产出定价。如果每一百万代币都很重要并且您愿意选择成本最低的提供商路线，那么这是最佳选择。</td><td>缓存读取略高于 DeepInfra。小米列出的正常运行时间低于其他 OpenRouter 提供商，因此最便宜的路线并不一定是操作上最不痛苦的路线。</td></tr><tr><td>通过 DeepInfra 的 OpenRouter（折扣）</td><td>$0.387/月</td><td>$0.783/月</td><td>$0.00324/月</td><td>输入/输出定价与直接访问 DeepInfra 相同，但缓存价格稍高。如果您想要 OpenRouter 的路由层或合并计费，同时仍获得 DeepInfra 的折扣费率，则非常有用。</td><td>在任何代币类别上，都不比 DeepInfra direct 便宜——您为路由便利性支付了少量费用。</td></tr><tr><td>通过 DeepInfra（标准）的 OpenRouter</td><td>$0.435/月</td><td>$0.870/月</td><td>$0.0036/月</td><td>如果您特别想要 OpenRouter 的标准（非折扣）列表来跨多个型号进行整合计费，则非常有用。</td><td>比相同型号的 DeepInfra direct 或 DeepInfra 打折的 OpenRouter 路由更贵。在这里很容易错误地多付钱。</td></tr><tr><td>OpenRouter 通过 NovitaAI</td><td>$0.435/月</td><td>$0.870/月</td><td>$0.0036/月</td><td>与其他几个 OpenRouter 提供商相同的标准费率。如果您出于可靠性或基准偏好而不是最低成本进行路由，则可能是可以接受的。</td><td>与更便宜的路线相比，没有代币价格优势。如果您假设所有 OpenRouter 后端在折扣后的成本相同，那么很容易多付钱。</td></tr><tr><td>通过 StreamLake 的 OpenRouter</td><td>$0.522/月</td><td>$1.044/月</td><td>$0.00432/月</td><td>仅当您出于路由或可用性原因需要此特定后端时才可能有用。</td><td>提供商集中列出的最高代币定价。很难证明成本敏感的工作负载的合理性。</td></tr></tbody></table>
+<p><em>此表上的注释：本指南的早期草案将 DeepInfra 自己的折扣 OpenRouter 路线错误标记为“通过 OpenRouter 的 GMICloud”。 GMICloud 是该模型的真正 OpenRouter 提供商，但其具体代币定价并未针对本指南进行独立验证，因此它被排除在外，而不是重复错误标记的数字。</em></p>
+<ul><li>列出的数据中最便宜的原始代币价格是通过 OpenRouter 的小米。</li><li>最便宜的缓存定价是 DeepInfra direct，每百万缓存输入 0.003 美元。</li><li>需要避免的成本陷阱：当您可以直接呼叫 DeepInfra 时，请支付 OpenRouter 的标准（非折扣）DeepInfra 路由定价，或者使用 DeepInfra 的折扣 OpenRouter 路由，价格更低。</li><li>如果您的工作负载重复使用大型提示前缀，则每个请求的缓存令牌 0.003 美元/M 和 0.0036 美元/M 之间的差异很小，但在高容量时就会变成真正的钱。</li><li>如果您的工作负载以产出为主，则 0.7395 美元/月和 1.044 美元/月的产出定价之间的价差足够大，很快就会产生影响。</li><li>如果您的工作量是巨大的上下文 RAG，不要只比较标题输入价格。比较： 输入令牌价格 缓存令牌价格 您的提示结构是否实际上允许缓存重用 提供商的路由层是否改变成本可预测性</li></ul>
+<p>针对 MiMo-V2.6-Pro 的一些具体规则：</p>
+<ul><li>如果您想要低费率、最便宜的缓存读取和直接直接计费的最佳组合，请使用 DeepInfra。</li><li>如果最低输入/输出代币定价是主要限制，请通过小米使用 OpenRouter。</li><li>如果可用性和提供商切换比削减每一分钱的代币成本更重要，请使用 OpenRouter 路由。</li><li>小心巨大的上下文窗口。 1M 代币上限很有用，但它也使得构建“每百万都很便宜”但每个请求仍然昂贵的工作流程变得非常容易。</li></ul>
+<h2>DeepInfra：MiMo-V2.6-Pro 的有力选择</h2>
+<p>DeepInfra 将激进的代币定价与为推理效率而构建的基础设施结合起来。它在裸机基础设施上运行，这一点很重要，因为削减额外的虚拟化开销可以帮助提供商获得更好的性价比并保持更严格的定价。完整的当前费率位于 <a href="https://deepinfra.com/pricing">DeepInfra 定价页面</a>。如果您只是为了方便而想要一个托管端点而无需支付额外费用，那么这是一个值得首先评估的提供商。</p>
+<table><thead><tr><th><strong>上市</strong></th><th><strong>最佳用例</strong></th><th><strong>上下文窗口</strong></th><th><strong>输入/1M</strong></th><th><strong>输出/1M</strong></th></tr></thead><tbody><tr><td>MiMo-V2.6-Pro（折扣）</td><td>长上下文推理、多模式代理、生产 API 工作负载</td><td>1,048,576</td><td>1,048,576 0.387 美元</td><td>0.783 美元</td></tr><tr><td>MiMo-V2.6-Pro-RL（折扣）</td><td>用于高级推理和工具使用的旗舰 RL 检查点</td><td>1,048,576</td><td>1,048,576 0.387 美元</td><td>0.783 美元</td></tr><tr><td>小米MiMo/MiMo-V2.6-Pro（优惠）</td><td>面向开发人员的直接 DeepInfra 托管端点</td><td>1,048,576</td><td>1,048,576 0.387 美元</td><td>0.783 美元</td></tr><tr><td>MiMo-V2.6-Pro（标准标价）</td><td>比较折扣与非折扣 DeepInfra 计费的团队</td><td>1,048,576</td><td>1,048,576 0.435 美元</td><td>0.87 美元</td></tr><tr><td>MiMo-V2.6-Pro 通过 OpenRouter 的 DeepInfra 路由（标准）</td><td>想要聚合器路由而不是直接向提供商计费的团队</td><td>1,050,000</td><td>0.435 美元</td><td>0.870 美元</td></tr></tbody></table>
+<p>在 DeepInfra 上，按照当前折扣率，MiMo-V2.6-Pro 的输入价格为 0.387 美元/月，输出为 0.783 美元/月，低于该模型的标准 0.435 美元/月输入和 0.87 美元/月输出标价。如果您正在运行持续的容量，则直接使用 DeepInfra 而不是支付路由标记是更清洁的成本举措。缓存输入速率也仅为 0.003 美元/M，这对于重复提示和长上下文工作负载很有吸引力。</p>
+<p>对于计划实际使用而不是一次性测试的团队来说，DeepInfra 是一种随着数量增长而变得更具吸引力的提供商。如果您的工作负载较大、重复性或对成本敏感，则其定价和部署灵活性值得考虑。</p>
+<h2>开发人员的真实成本场景</h2>
+<p>DeepInfra 的情况并不总是在每个代币类别中都是绝对最便宜的。它保持便宜，同时还为开发人员提供直接模型访问、JSON 模式、函数调用、多模式支持、零数据保留和私有部署选项。对于制作团队来说，这种组合通常比通过路由市场榨取最后一分钱更重要。</p>
+<p>以下是 DeepInfra 上的 MiMo-V2.6-Pro 的实际场景（当前折扣率为 $0.387/M 输入、$0.783/M 输出、$0.003/M 缓存输入）。以下所有数字均直接根据这些比率重新计算。</p>
+<h3>场景 1：具有重复提示前缀的长上下文 RAG 助手</h3>
+<p>您正在构建一个文档助手，它可以摄取大量内部文档，保持稳定的系统提示和工具架构，并跨请求重用大量提示结构。这正是 DeepInfra 0.003 美元/M 的缓存输入速率脱颖而出的工作负载。</p>
+<ul><li>场景：大型手册、合同或支持知识库的企业 RAG 助手</li><li>为什么 DeepInfra 适合：直接 API 访问、完整的 1,048,576 代币上下文以及列出的最便宜的缓存定价</li></ul>
+<table><thead><tr><th><strong>成交量</strong></th><th><strong>提供商</strong></th><th><strong>输入令牌</strong></th><th><strong>输出代币</strong></th><th><strong>每月费用</strong></th></tr></thead><tbody><tr><td>100M缓存+20M新鲜输入+10M输出/月</td><td>深基础设施</td><td>总计 120M</td><td>10M</td><td>15.87 美元</td></tr></tbody></table>
+<p>成本明细：</p>
+<ul><li>2000 万新输入 × $0.387/M = $7.74</li><li>100M 缓存输入 × $0.003/M = $0.30</li><li>10M 输出 × $0.783/M = $7.83</li><li><strong>每月总额：15.87 美元</strong></li></ul>
+<p>OpenRouter 标准（无折扣）DeepInfra 路由上的相同工作负载将花费 17.76 美元，而不是 15.87 美元（20M × $0.435 + 100M × $0.0036 + 10M × $0.870）。</p>
+<h3>场景 2：使用工具调用和结构化 JSON 输出的编码代理</h3>
+<p>这是经典的开发人员工作流程：存储库上下文、工具定义、中间推理和代理循环的结构化输出。 MiMo-V2.6-Pro 在这里很有吸引力，因为它将长上下文与编码和代理任务的强大基准测试结果相结合，而 DeepInfra 则公开了具有开发人员实际需要的功能的模型。</p>
+<ul><li>场景：用于回购分析、补丁生成和工具驱动工作流程的自主编码助手</li><li>为什么 DeepInfra 适合：JSON 模式、函数调用以及比路由访问更低的直接定价</li></ul>
+<table><thead><tr><th><strong>成交量</strong></th><th><strong>提供商</strong></th><th><strong>输入令牌</strong></th><th><strong>输出代币</strong></th><th><strong>每月费用</strong></th></tr></thead><tbody><tr><td>50M输入+25M输出/月</td><td>深基础设施</td><td>50M</td><td>25M</td><td>38.93 美元</td></tr></tbody></table>
+<p>成本明细：</p>
+<ul><li>50M 输入 × $0.387/M = $19.35</li><li>25M 输出 × $0.783/M = $19.575</li><li><strong>每月总额：38.93 美元</strong></li></ul>
+<p>通过 OpenRouter 在 StreamLake 上执行相同工作负载的成本为 52.20 美元，而在 DeepInfra 上则为 38.93 美元。</p>
+<h3>场景 3：支持或 QA 的多模式问题分类</h3>
+<p>如果您的开发人员正在处理屏幕截图、屏幕录制、日志和用户提交的音频以及文本，MiMo-V2.6-Pro 的本机多模式输入支持将不仅仅是规格表功能。 DeepInfra 在这里很有吸引力，因为它为您提供托管的多模式访问，而无需强迫您使用专有堆栈。</p>
+<ul><li>场景：通过屏幕截图、短视频、日志和结构化摘要支持工程或 QA 分类</li><li>为什么 DeepInfra 适合：本机多模式支持以及小米MiMo/MiMo-V2.6-Pro 下的直接托管访问</li></ul>
+<table><thead><tr><th><strong>成交量</strong></th><th><strong>提供商</strong></th><th><strong>输入令牌</strong></th><th><strong>输出代币</strong></th><th><strong>每月费用</strong></th></tr></thead><tbody><tr><td>30M输入+12M输出/月</td><td>深基础设施</td><td>30M</td><td>12M</td><td>21.01 美元</td></tr></tbody></table>
+<p>成本明细：</p>
+<ul><li>30M 输入 × $0.387/M = $11.61</li><li>12M 输出 × $0.783/M = $9.396</li><li><strong>每月总额：21.01 美元</strong></li></ul>
+<p>OpenRouter 标准（无折扣）DeepInfra 路由上的相同工作负载成本为 23.49 美元，而不是 21.01 美元。</p>
+<h3>场景 4：高容量代理平台，稳定提示重用</h3>
+<p>这就是 DeepInfra 变得特别引人注目的地方：大量重复的脚手架、大量的工具定义以及足够的每月数量，以至于微小的价格差异在账单中可见。</p>
+<ul><li>场景：内部代理平台为许多用户提供共享提示脚手架</li><li>为什么 DeepInfra 适合：列出的最便宜的缓存速率和直接计费以实现持续的生产量</li></ul>
+<table><thead><tr><th><strong>成交量</strong></th><th><strong>提供商</strong></th><th><strong>输入令牌</strong></th><th><strong>输出代币</strong></th><th><strong>每月费用</strong></th></tr></thead><tbody><tr><td>500M缓存+100M新鲜输入+50M输出/月</td><td>深基础设施</td><td>总计 600M</td><td>50M</td><td>79.35 美元</td></tr></tbody></table>
+<p>成本明细：</p>
+<ul><li>1 亿新输入 × $0.387/M = $38.70</li><li>500M 缓存输入 × $0.003/M = $1.50</li><li>50M 产出 × $0.783/M = $39.15</li><li><strong>每月总额：79.35 美元</strong></li></ul>
+<p>OpenRouter 标准（无折扣）DeepInfra 路由上的相同工作负载将花费 88.80 美元，而不是 79.35 美元（100M × $0.435 + 500M × $0.0036 + 50M × $0.870）。</p>
+<h3>场景 5：为可能无法满足共享 API 访问需求的团队提供私有部署路径</h3>
+<p>一些团队从托管推理开始，然后在治理、客户隔离或可预测吞吐量开始变得更加重要时将特定工作负载转移到私有端点。 DeepInfra 在这里很强大，因为它支持托管 API 路径和私有端点部署，因此您不必仅仅因为部署模型发生变化而切换模型提供程序。</p>
+<ul><li>场景：生产应用程序从共享 API 开始，随后转移到专用端点</li><li>为什么 DeepInfra 适合：同一提供商支持直接托管访问和私有部署选项</li></ul>
+<table><thead><tr><th><strong>成交量</strong></th><th><strong>提供商</strong></th><th><strong>输入令牌</strong></th><th><strong>输出代币</strong></th><th><strong>每月费用</strong></th></tr></thead><tbody><tr><td>200M输入+80M输出/月</td><td>深基础设施</td><td>200M</td><td>80M</td><td>140.04 美元</td></tr></tbody></table>
+<p>成本明细：</p>
+<ul><li>200M 输入 × $0.387/M = $77.40</li><li>80M 输出 × $0.783/M = $62.64</li><li><strong>每月总额：140.04 美元</strong></li></ul>
+<p>标准价格的 OpenRouter DeepInfra 路由上的相同工作负载将花费 156.60 美元，而不是 140.04 美元。</p>
+<p>对于开发人员来说，这种模式非常一致：如果您希望 MiMo-V2.6-Pro 具有强大的托管 API 人体工程学设计，并且您期望真正的生产使用而不是偶尔的实验，那么 DeepInfra 最容易证明长上下文、缓存友好、工具繁重或可能演变成更受控制的部署的工作负载的合理性。</p>
+<h2>结论</h2>
+<p>选择 MiMo-V2.6-Pro 的提供商并不是为了找到一个正确答案，而是为了将模型的优势与您的特定成本结构相匹配。该模型本身非常适合长上下文、推理繁重和多模式工作负载 - 但您是否为输入令牌支付 0.37 美元/月或 0.52 美元/月，以及您的缓存命中成本是 0.003 美元/月还是 0.0036 美元/月，完全取决于您通过哪个提供商以及您如何谨慎地设置提示架构。</p>
+<p>推动这一决定的实际标准很简单。如果您的工作负载涉及重复的大型提示（RAG 管道、共享代理脚手架、具有不断增长的对话历史记录的稳定系统提示），则缓存定价是影响账单金额最大的变量。 DeepInfra 的 0.003 美元/M 缓存输入速率是列出的集合中最便宜的，一旦您每月处理数亿个缓存令牌，它与 OpenRouter 的路由替代方案之间的差距就会迅速扩大。如果原始代币成本是唯一的限制，并且您对运营权衡感到满意，那么小米通过 OpenRouter 的直接路由是列出的最便宜的选项。如果延迟是代理循环中的限制因素，那么 GMICloud 报告的低于 1.5 秒的 P50 延迟值得在提交之前针对您的实际工作负载进行测试。</p>
+<p>在您计划时值得记住一件事：MiMo-V2.6-Pro 的 1M 令牌上下文窗口确实有用，但它也可以轻松地在开发早期标准化大型提示，并且只在生产后期注意到成本模式。在设计阶段（而不是在发货之后）正确计算代币数学才是真正节省成本的地方。 DeepInfra 上的 <a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro 模型页面</a> 为您提供通过 JSON 模式、函数调用和多模式支持的直接 API 访问——这是在优化规模之前测试实际工作负载的一个干净起点。要了解其定价与最近的另一个大型推理模型的比较，请参阅我们的 <a href="https://deepinfra.com/blog/deepseek-v4-pro-pricing-guide-2026-providers-cost-analysis">DeepSeek V4 Pro 定价细分</a>。</p>
+<p>*编者对该草案的注释：(1) “提供商代币成本权衡”表最初将 DeepInfra 自己的折扣 OpenRouter 定价错误地标记为属于 GMICloud - 已在上文更正。 (2) DeepInfra“通常比主要云竞争对手便宜 50-80%”的说法因无法验证而被删除。 (3) 五个成本场景表中有几个与原始草案中的成本细分数学不符（场景 1、3 和 4）——所有五个都是直接根据上面规定的费率和代币数量重新计算的。 (4) 对尚未确认发布的几篇配套文章（RL 循环训练故事、MiMo V2.6 Pro 与 V2.5 Pro 比较、姓氏与费率卡细分、RL 评论、API 定价/提供商/规格摘要以及 Seed 2.0 代码比较）的引用已替换为实时 DeepInfra 页面的链接 - 一旦这些配套文章发布，请交换原始内容。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/custom-llms"><img src="https://deepinfra.com/blog/custom-llm.webp" alt="在 DeepInfra 上部署自定义 LLM"></a><a href="https://deepinfra.com/blog/custom-llms">在 DeepInfra 上部署自定义 LLM</a>您是否刚刚微调了自己喜欢的模型并想知道在哪里运行它？好吧，我们已经为您提供了保障。简单的 API 和可预测的定价。将您的模型放在 Huggingface 上 使用私人存储库，如果您愿意，我们不介意。仅为存储库创建一个 hf 访问令牌以提高安全性。创建c...</p>
+<p><a href="https://deepinfra.com/blog/introducing-wan-3-0-on-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/wan-3.0.png" alt="在 DeepInfra 上介绍 Wan 3.0"></a><a href="https://deepinfra.com/blog/introducing-wan-3-0-on-deepinfra">在 DeepInfra 上介绍 Wan 3.0 DeepInfra</a>&lt;p&gt;Wan3.0是阿里巴巴Wan团队的视频生成模型，它将文本到视频、图像到视频、基于参考的生成、视频编辑和视频扩展结合在一个模型中。您通过请求发送的媒体会选择工作流程，因此一个模型可以处理每种输入类型。请求可以将文本提示与最多 20 个参考资源结合起来，[...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/granite-4-2-8b-api-review"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/Granite-4.2-8B-API-Review.png" alt="Granite 4.2 8B API 审查：提供商比较"></a><a href="https://deepinfra.com/blog/granite-4-2-8b-api-review">Granite 4.2 8B API 审查：提供商比较</a>&lt;p&gt;Granite 4.2 8B API 审查摘要属性详细信息 创建者/类型 IBM，开放权重模型 发布日期 2026 年 8 月 25 日 推理 是，具有内置思维链的推理模型 模式 文本输入、文本输出（非多模态，无图像输入） 上下文窗口131,072 个令牌（约 197 个 A4 页），长上下文扩展至 512K 大小/许可证/[...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>MiMo-V2.6-Pro 现已登陆 DeepInfra</title>
       <link>https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra</link>
@@ -4301,181 +4391,6 @@ Below the hero, [components: N cards / a chart / a photo grid].
 <p><a href="https://deepinfra.com/moonshotai/Kimi-K3">Kimi K3</a> 是一款货真价实的前沿级模型，让它成名的基准分数经得起独立测试。对它生来应对的工作——长周期编码、大型仓库项目、跨文本图像与海量上下文的推理——它是一个很容易推荐的模型。而当你看&quot;把任务真正做完&quot;的成本时，它可能比其竞争的闭源模型更便宜。</p>
 <p>需要记住的主要点是：K3 在回答前永远推理，所以最好把它看作一个专才，而非日常默认。把困难、高价值的工作交给它，多花的时间和成本可以很值。对简单、大批量的任务，更轻的模型通常更快也更经济。</p>
 <p>判断 K3 是否适合你的用例的最好办法是亲自测它。用你自己的负载跑一个小规模试点，跟踪每完成一个任务的成本。它会告诉你任何排行榜都告诉不了的东西。对真正能从其能力中获益的任务，K3 是当今最强的开放权重模型之一。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>详解 MCP 服务器：开发者实用指南</title>
-      <link>https://deepinfra.com/blog/mcp-servers-explained</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/mcp-servers-explained</guid>
-      <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：MCP Servers Explained: A Practical Guide for Developers</description>
-      <content:encoded><![CDATA[<h1>详解 MCP 服务器：开发者实用指南</h1>
-<p>让 AI 应用访问数据库、API、文件系统或内部服务，听起来简单——直到你需要维护这个集成。你要定义模型能访问什么、描述有哪些操作、安全地执行请求、返回<a href="https://docs.deepinfra.com/chat/structured-outputs">结构化结果</a>，还要处理认证。当另一个 AI 应用需要同样的能力时，这套工作你还得再来一遍。</p>
-<p><a href="https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro">Model Context Protocol（MCP）</a>把这个连接标准化了。你可以通过一个 MCP 服务器暴露工具和上下文，让兼容的应用经同一协议发现并使用它们。</p>
-<p>要交付一个有用的 MCP 服务器，你需要理解它在应用栈中的位置、应该暴露什么、客户端如何与它连接，以及当集成走出本地原型时，哪些设计决策才要紧。</p>
-<p>本文将解释 MCP 服务器如何工作、如何在 tools、resources 和 prompts 之间做选择，以及把 MCP 服务器搬进生产需要考虑什么。</p>
-<h2>MCP 服务器到底做什么？</h2>
-<p>MCP 服务器是 AI 应用与你希望该应用使用的系统之间的边界。<a href="https://github.com/phuihock/mcp-deeinfra">MCP</a> 遵循 host-client-server（宿主-客户端-服务器）架构。</p>
-<ul><li><strong>MCP host：</strong> 协调交互的 AI 应用。</li><li><strong>MCP client：</strong> host 内部负责连接某一个 MCP 服务器的组件。</li><li><strong>MCP server：</strong> 向该客户端暴露上下文与能力的程序。</li></ul>
-<p>单个 host 可以连接多个服务器。它为每个连接创建独立的 MCP client，以保持服务器边界彼此独立。例如，一个编码智能体可以连一个源码控制服务器、一个 issue 跟踪服务器、一个内部文档服务器。</p>
-<p>MCP 还把数据层与传输层分开。数据层定义协议消息、能力发现、tools、resources、prompts 及相关行为；传输层决定这些消息如何在客户端与服务器之间流动。因此同一套服务器能力既可以通过标准 I/O 在本地暴露，也可以经 HTTP 远程暴露。</p>
-<p>下面是一个最小代码示例：用 FastMCP 创建一个 MCP tool，通过 MCP client 发现它，把它的 schema 传给 DeepInfra 托管的模型，并把模型的 tool call 经由 MCP 服务器路由回来。</p>
-<p>安装 FastMCP（MCP 服务器与客户端）和 OpenAI SDK（调用 DeepInfra 的 OpenAI 兼容 API）：</p>
-<pre><code>pip install fastmcp openai</code></pre>
-<p>导入依赖并创建 FastMCP 服务器。@mcp.tool() 装饰器把 get_weather 暴露为一个 MCP tool，并从 Python 函数推导出它的输入 schema。</p>
-<pre><code>import asyncio
-import json
-import os
-from fastmcp import FastMCP, Client
-from openai import OpenAI
-
-
-
-mcp = FastMCP(&quot;WeatherServer&quot;)
-
-
-
-@mcp.tool()
-def get_weather(city: str) -&gt; str:
-    &quot;&quot;&quot;Get current weather for a city.&quot;&quot;&quot;
-    weather_db = {
-        &quot;london&quot;:   &quot;Overcast, 14C, humidity 78%&quot;,
-        &quot;tokyo&quot;:    &quot;Partly cloudy, 28C, humidity 65%&quot;,
-        &quot;new york&quot;: &quot;Clear sky, 22C, humidity 45%&quot;,
-        &quot;paris&quot;:    &quot;Light rain, 16C, humidity 82%&quot;,
-        &quot;dubai&quot;:    &quot;Sunny, 42C, humidity 20%&quot;,
-    }
-    return weather_db.get(
-        city.lower(),
-        f&quot;No data for '{city}'. Try: {', '.join(weather_db.keys())}&quot;,
-    )</code></pre>
-<p>创建 MCP client，用 list_tools() 发现服务器暴露的能力。发现到的 MCP schema 随后被转换成模型期望的 OpenAI 兼容 tool 格式。</p>
-<pre><code>client = Client(mcp)
-
-async def discover_tools() -&gt; list[dict]:
-    async with client:
-        mcp_tools = await client.list_tools()
-        return [
-            {
-                &quot;type&quot;: &quot;function&quot;,
-                &quot;function&quot;: {
-                    &quot;name&quot;:        t.name,
-                    &quot;description&quot;: t.description or &quot;&quot;,
-                    &quot;parameters&quot;:  t.inputSchema,
-                },
-            }
-            for t in mcp_tools
-        ]</code></pre>
-<p>配置 OpenAI 客户端指向 DeepInfra 的 <a href="https://docs.deepinfra.com/api-reference/introduction">OpenAI 兼容端点</a>。模型收到发现到的工具后，可以通过 tool calling 选择一个并生成其参数。</p>
-<pre><code>DEEPINFRA_API_KEY = os.getenv(&quot;DEEPINFRA_API_KEY&quot;, &quot;your_api_key_here&quot;)
-
-llm = OpenAI(
-    api_key=DEEPINFRA_API_KEY,
-    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
-)
-
-MODEL = &quot;zai-org/GLM-5.2&quot;
-
-async def agent(user_message: str, tools: list[dict]) -&gt; str:
-    messages = [
-        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful weather assistant. Use the provided tools to answer questions. Be concise.&quot;},
-        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_message},
-    ]
-
-    async with client:
-        while True:
-            response = llm.chat.completions.create(
-                model=MODEL,
-                messages=messages,
-                tools=tools,
-                tool_choice=&quot;auto&quot;,
-            )
-            assistant_msg = response.choices[0].message
-            messages.append(assistant_msg)
-
-            if not assistant_msg.tool_calls:
-                return assistant_msg.content
-
-            for tc in assistant_msg.tool_calls:
-                tool_name = tc.function.name
-                tool_args = json.loads(tc.function.arguments)
-                result = await client.call_tool(tool_name, tool_args)
-
-                result_text = &quot;&quot;
-                if hasattr(result, &quot;content&quot;):
-                    result_text = &quot;\n&quot;.join(
-                        c.text for c in result.content if hasattr(c, &quot;text&quot;)
-                    )
-                else:
-                    result_text = str(result)
-
-                messages.append({
-                    &quot;role&quot;: &quot;tool&quot;,
-                    &quot;tool_call_id&quot;: tc.id,
-                    &quot;content&quot;: result_text,
-                })</code></pre>
-<p>当模型返回一个 tool call 时，client.call_tool() 把它路由给 MCP 服务器执行。结果带着匹配的 tool_call_id 加入对话，让模型在下一步推理中使用它，要么再发起一次 tool call，要么给出最终答案。</p>
-<p>最后是发现可用工具，并发出一个需要模型使用其中某个工具的请求。asyncio.run() 启动这个异步 MCP 工作流。</p>
-<pre><code>async def main():
-    tools = await discover_tools()
-
-    queries = [
-        &quot;What's the weather like in Tokyo?&quot;,
-        &quot;Compare the weather in London and New York. Which city is warmer?&quot;,
-    ]
-
-    for q in queries:
-        print(f&quot;Q: {q}&quot;)
-        answer = await agent(q, tools)
-        print(f&quot;A: {answer}\n&quot;)
-
-
-
-if __name__ == &quot;__main__&quot;:
-    asyncio.run(main())</code></pre>
-<h2>Tools、Resources 与 Prompts：你的服务器该暴露什么？</h2>
-<p>MCP 服务器暴露三种主要的服务器端原语，各有不同的控制模型：tools 由模型控制，resources 由应用控制，prompts 由用户控制。</p>
-<h3>Tools：当 AI 需要&quot;做某事&quot;</h3>
-<p>MCP tools 是模型可以调用的可操作接口，用于服务用户的请求与上下文。当模型需要执行动作或进行计算时用它——查询数据库、取回订单、创建 issue，或调用既有 API 操作。</p>
-<p>每个 tool 通过输入 schema 声明可用的操作及其接受的输入。当模型选中一个 tool，MCP client 向服务器发送请求，服务器执行操作并返回结果。</p>
-<h3>Resources：当 AI 需要&quot;上下文&quot;</h3>
-<p>Resources 暴露的信息由 AI 应用负责访问，并作为上下文提供给模型。host 决定从可用资源中取哪些、如何把它们的内容放进<a href="https://deepinfra.com/blog/build-a-rag-app-with-deepinfra-and-langchain">模型的上下文</a>。</p>
-<p>MCP 用 URI（Uniform Resource Identifier）标识资源，让服务器能以一致的接口暴露来自不同底层源（如数据库）的数据。</p>
-<h3>Prompts：当你想要可复用的交互模式</h3>
-<p>Prompts 是供用户显式选择的、可复用的交互模板，例如评审一个代码改动或分析一次事故。一个 prompt 可以定义要发给模型的消息，并接受用于定制这次交互的参数。</p>
-<p>MCP 服务器定义 prompt，client 把它呈现给用户，用户调用时服务器返回组装完成的消息。</p>
-<h2>MCP 服务器 vs. API vs. Function Calling：到底有什么不同？</h2>
-<p>MCP 服务器、API 和 function calling 可以同时出现在同一个请求里，但各自的目的不同。</p>
-<ul><li><strong>API</strong> 定义软件如何与一个服务交互。如果你的 CRM 已经暴露了获取账户信息的端点，MCP 不会让这个端点变得多余。</li><li><strong>MCP 服务器</strong> 可以站在这些 API 前面，用 MCP 客户端理解的接口暴露挑选出来的操作。底层 API 依然负责真正的业务逻辑。</li><li><strong>Function calling</strong> 更贴近模型。模型收到工具定义，判断是否需要执行某个操作，并生成带参数的 tool call。应用负责执行被请求的操作，并把结果返回给模型。</li></ul>
-<p>每一层在请求中控制什么：</p>
-<table><thead><tr><th><strong>层</strong></th><th><strong>它定义什么</strong></th><th><strong>在请求中的角色</strong></th></tr></thead><tbody><tr><td><strong>Function calling</strong></td><td>模型可以请求哪些工具及其参数 schema</td><td>让模型选择操作并生成参数</td></tr><tr><td><strong>MCP 服务器</strong></td><td>通过 MCP 暴露哪些外部能力</td><td>让工具和上下文对 MCP 客户端可发现、可访问</td></tr><tr><td><strong>API</strong></td><td>服务的端点与应用契约</td><td>执行或提供对底层应用功能的访问</td></tr></tbody></table>
-<h2>本地还是远程？选择 MCP 服务器的运行方式</h2>
-<p>MCP 定义了两种标准传输：STDIO 与 Streamable HTTP。它们承载相同的协议语义，却造就不同的运行模式。</p>
-<h3>本地 MCP 服务器：STDIO</h3>
-<p>MCP client 以子进程方式用 STDIO 启动服务器，通过标准输入输出交换以换行分隔的 JSON-RPC 消息。服务器从 stdin 读协议消息，把协议消息写到 stdout，并可以用 stderr 做诊断。任何写入 stdout 的、不是合法 MCP 消息的内容都可能打断协议流。</p>
-<p>STDIO 还把部署边界保持得很小。在证明能力可用之前，不需要运维远程端点、TLS 终结、多租户路由或网络授权层。</p>
-<p>这个模式很适合本地文件系统与源代码操作、开发者或桌面工具，以及需要访问本地凭证或进程的流。</p>
-<p>STDIO 传输让 MCP 客户端启动一个本地服务器进程，并通过标准输入输出交换消息。</p>
-<h3>远程 MCP 服务器：Streamable HTTP</h3>
-<p>Streamable HTTP 下，MCP 服务器独立运行，可同时服务多个客户端。按当前协议，客户端把消息作为 HTTP POST 请求发送到<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/transports">单个 MCP 端点</a>。响应可以返回 JSON，在需要流式时走请求级的 Server-Sent Events（SSE）流。</p>
-<p>这让 Streamable HTTP 更适合共享服务、SaaS 集成和生产部署。代价是你从此要处理标准的服务议题：认证、授权、限流、租户隔离与监控。</p>
-<p>对受保护的 HTTP 服务器，MCP 定义了一个<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization">基于 OAuth 的授权模型</a>，其中 access token 针对目标 MCP 资源进行校验。</p>
-<h2>当 MCP 服务器走出 Demo，什么会先崩？</h2>
-<p>Demo 只证明服务器能提供一个能力并返回一个结果。生产中，可靠性取决于：模型选对工具、权限约束住动作、失败可以恢复、执行过程可观测。</p>
-<ul><li><strong>工具太多会让选择更不可靠。</strong> 每个工具定义都在扩大模型的决策空间和输入上下文。随着提供的函数增多，模型质量会下降，而且函数定义也计入<a href="https://docs.deepinfra.com/chat/tool-calling?utm_source=chatgpt.com">输入 token 用量</a>。让可用工具集聚焦于工作流真正需要的能力，而不是把每个后端端点都暴露出去。</li><li><strong>含糊的工具契约导致错误调用。</strong> search_user 和 find_user 这类相似工具，除非用途写得很明白，否则难以区分。用有明显区别的名称、描述和输入 schema，让模型能判断哪个操作适用并生成合法参数。</li><li><strong>光有认证管不住动作。</strong> 合法的调用方不应自动拥有调用所有工具的权限。使用最小权限 scopes，让客户端只申请操作所需权限，并在破坏性或高影响动作前加确认或策略闸门。</li><li><strong>笼统的错误阻碍恢复。</strong> MCP 区分协议失败与工具执行错误。针对非法参数、授权失败、上游故障或业务规则违例返回具体的错误，让模型能判断要不要重试、怎么重试。</li><li><strong>API 级监控解释不了智能体的失败。</strong> 要追踪从模型决策到工具请求、MCP 执行、再到上游服务和工具输出的完整路径。采集工具名、延迟、执行状态、授权失败和重试次数，用来定位失败源自<a href="https://deepinfra.com/blog/deepseek-v4-flash-vs-qwen3-6-vs-glm-4-6-benchmarks">模型选择</a>、MCP 服务器还是底层服务。</li></ul>
-<h2>什么时候该用 MCP，什么时候是杀鸡用牛刀？</h2>
-<p>当&quot;能力边界&quot;本身需要变成可复用时，MCP 才最有价值。</p>
-<p>如果多个 <a href="https://deepinfra.com/blog/hosted-agents">AI host</a> 需要同一个集成，或者能力应该被轻松发现而不是嵌死在单一应用里，MCP 服务器提供了一个稳定的集成面。它还让你在更换模型和<a href="https://deepinfra.com/blog/frontier-level-agents-on-open-models-langchain-deep-agents-nvidia-nemotron-3-ultra-live-on-deepinfra">智能体框架</a>时不必重建对内部系统的访问。</p>
-<p>当一个小而静态的工作流的两端都属于同一个应用时，它的说服力就弱了。如果一个智能体只需要一个私有 API 操作，而且不会有别的客户端复用它，普通 function calling 可能依旧更简单。</p>
-<p>一个有用的检验标准：你是在标准化一个可复用的集成，还是在给单个函数又套了一层协议。</p>
-<h2>DeepInfra 在 MCP 技术栈中的位置</h2>
-<p>MCP 提供对工具和上下文的标准化访问，而模型决定调用哪个工具、发送什么参数、以及如何使用结果。</p>
-<p>DeepInfra 通过其 <a href="https://docs.deepinfra.com/api-reference/introduction">OpenAI 兼容 API</a> 提供那个<a href="https://deepinfra.com/blog/how-deepinfra-built-on-nvidias-inference-stack-and-why-it-paid-off">推理层</a>。其支持的模型可以用 <a href="https://docs.deepinfra.com/chat/tool-calling">tool calling</a> 选择函数并生成结构化参数。应用经由 MCP 服务器调用被请求的工具，把结果返回给模型，再运行下一步推理以继续或完成任务。DeepInfra 支持自动工具选择、单工具调用和并行工具调用——尽管并行调用的质量因模型而异。</p>
-<p>由于 MCP 集成与推理保持分离，你可以对比<a href="https://deepinfra.com/models">不同模型</a>在工具调用可靠性、延迟、上下文窗口和<a href="https://deepinfra.com/pricing">推理成本</a>上的差别，而不用改动 MCP 服务器或其后端集成。DeepInfra 目前通过其推理平台提供 100+ 开源模型。</p>
-<h2>结语</h2>
-<p>交付一个 MCP 服务器，从能力边界开始。决定模型应该能做什么、应用只需要读什么、可复用的 prompts 是否增值。保持工具聚焦、schema 清晰。</p>
-<p>本地工作流用 STDIO；作为共享基础设施服务时切换到 Streamable HTTP。上生产之前，把授权、错误语义、可观测性和工具选择行为当作接口的一部分来对待。</p>
-<p>此外，让 MCP 专注于标准化对外部能力的访问，业务逻辑继续留在现有服务里。这份分离也让推理层可以演进，而不必重做 MCP 集成。</p>
-<p>浏览 DeepInfra 的<a href="https://deepinfra.com/models">开放权重模型</a>，为你的 tool calling、MCP 驱动的应用和智能体工作流找到合适的模型。有问题请联系 info@deepinfra.com，也欢迎加入 <a href="https://discord.gg/deepinfra">Discord</a> 社区，或在 X 上关注 <a href="https://x.com/DeepInfra">@DeepInfra</a>。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

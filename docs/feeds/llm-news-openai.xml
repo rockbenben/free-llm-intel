@@ -7,7 +7,407 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 30 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>扩展 Git 和 OpenAI</title>
+      <link>https://openai.com/index/scaling-git-at-openai</link>
+      <guid isPermaLink="true">https://openai.com/index/scaling-git-at-openai</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Scaling Git at OpenAI</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
+<p>工程</p>
+<h1>在 OpenAI 上扩展 Git</h1>
+<p>在投资 Git 生态系统的同时构建代理规模的源代码控制。</p>
+<p>作者：技术人员 Aaron Friel、Taylor Blau 和 Ted Nyman</p>
+<p>在过去的一年里，我们单一仓库的规模和需求以惊人的速度增长。很明显，我们需要改进我们的源代码控制系统，以扩展到 Codex 所实现的并发工作水平。</p>
+<p>我们构建了 Pando，一个新的 Git 存储库后端，没有中断任何工程工作或改变我们团队使用 Git 的方式。 Pando 现在为 OpenAI monorepo 的所有开发提供支持。 Pando 旨在满足两个雄心勃勃的目标：首先，水平可扩展写入，针对并发推送到多个分支进行优化。其次，最大化读取吞吐量，以便客户端可以足够快地下载数据，以完全饱和其可用网络带宽。</p>
+<p>我们实现了这些目标，同时保留了与 Git 协议和客户端的兼容性，使我们的工程师和代理能够将 Pando 无缝地采用到他们现有的工作流程中。在生产中，Pando 将中位推送延迟缩短了近 5 倍。现在，它每天提供近 PB 的 Git 数据。</p>
+<p>在这里，我们将介绍构建新的源代码控制系统的动机，以及为什么我们选择保留与 Git 的兼容性。我们将把我们的系统与常见的 Git 扩展方法进行比较，描述为什么 Pando 能够独特地满足 OpenAI 的可扩展性需求。我们还讨论了下一步的发展，以及我们将如何继续为 Git 做出贡献以支持代理规模的工作。</p>
+<h2>为什么我们需要一个新的源代码控制系统</h2>
+<p>Codex 改变了 OpenAI 的开发规模和速度，使工程师能够并行完成更多工作。这意味着更多的分支和推送、更多的合并以及更多来自开发环境、研究工作和 CI 的获取和克隆。</p>
+<p>这些要求复合在一起。一名工程师现在可以立即为 CI 准备好多项更改，并且每次推送都可以设置多个作业来获取相同的提交。</p>
+<p>从去年年底开始，支持我们单一存储库的系统就开始难以跟上。我们遭遇了读取和推送缓慢以及合并失败的问题，可靠性有时会低于 90%。我们是否已经达到了 Git 本身的极限，或者我们服务单一存储库的方式的极限？ Git 诞生于一个通过电子邮件交换内核补丁的社区。二十多年来，随着开发人员构建软件的方式发生变化，开发人员围绕 Git 调整了他们的工具。当我们开始在自己的单一存储库中感受到摩擦时，我们可以继续在这项工作的基础上继续发展，这对我们来说很重要。</p>
+<p>我们找到了一种方法来保持熟悉的工作流程，同时重建后端以并行处理对不同分支的推送，并同时向许多读者提供相同的历史记录。以 Git 作为我们源代码控制工作流程的基础，这意味着对客户端的改进可能比 OpenAI 更有用。我们希望将这些改进从我们的 <a href="https://github.com/openai/git">Git 副本</a> 贡献给上游，与更广泛的社区分享。</p>
+<h3>大规模 Git 工程</h3>
+<p>扩展源代码控制系统有两个基本维度：许多作者推送到不同的分支，以及许多读者获取相同的历史记录。 Pando 对两者进行了优化。</p>
+<p>首先，Pando 独立协调每个分支的更新。对不相关分支的更新可以并行进行，读取分支的读者可以获得该修订所需的历史记录。权衡是，查看多个分支的读者可以在不同的时间点看到它们。</p>
+<p>其次，Pando 在提取过程中重用包文件（Git 用于将多个对象压缩在一起的格式），而不是为每个客户端生成单独的包文件。客户端可以下载一些它已经拥有的对象，但是服务器可以通过很少的计算向许多客户端提供相同的字节。</p>
+<p>这些选择让我们可以跨分支扩展写入并提供从缓存的读取服务。为了了解它们如何组合在一起，让我们从 Git 如何存储和传输历史记录开始。</p>
+<h3>Git 对象存储入门</h3>
+<p>Git 必须能够保持存储库的两个部分同步：<em>对象</em>和<em>引用</em>。</p>
+<p>Git 存储库记录文件快照以及将它们连接为对象图的历史记录。对象可以是 blob、树、提交或标签。 Blob 保存单个文件的内容，树将名称与 Blob 或其他树相关联以形成目录结构。提交指向根树和零个或多个父提交，形成存储库的历史记录。</p>
+<p>对象由其类型和内容的哈希值来标识。对象也是不可变的：记录更改的文件会创建一个新的 blob，而未更改的文件和目录可以重用现有对象。</p>
+<p>分支和标签是指向提交的引用或“refs”。在分支上提交会创建一个新的提交并更新分支的引用以指向它。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2HM5lol94vaZXcGl7zXuf1/96c979a79f2b5971397cf3068a4767da/how-git-objects-reference-each-other-diagram-desktop-light.svg?w=3840&amp;q=90" alt="分支 refs/heads/main 指向提交 C2，其父级是 C1。 C1 指向根树 T1，其中 parser.py 引用 blob B1。 C2 指向根树 T2，其中 parser.py 引用 blob B2。在两个根树中，docs/ 指的是同一棵树 T3。它的 README.md 入口指向 blob B3，usage.md 指向 blob B4."></p>
+<p>Git 对象通过 ID 相互引用、提交到树、树到树和 blob。分支 refs/heads/main 指向提交 C2，其父级是 C1。 C1 指向根树 T1，其中 parser.py 引用 blob B1。 C2 指向根树 T2，其中 parser.py 引用 blob B2。在两个根树中，docs/ 指的是同一棵树 T3。其 README.md 条目指向 blob B3，usage.md 指向 blob B4。</p>
+<p>Git 以“松散”或“打包”状态存储对象。松散对象存储在由其对象 ID 标识的单独文件中。打包的对象一起存储在一个包文件中，从而使相似的对象能够存储为彼此的增量。</p>
+<p>![ $GIT_DIR/objects 下出现了两个版本的 parser.py 。作为松散对象，blob A 包含 parse()，blob B 包含 parse() 和 parse_file()。 packfile 完整存储 A 并将 B 表示为复制所有 A 并附加 parse_file() 的指令。随附的 *.idx 文件按对象定位 packfile 中的两个 blob ID.](https://images.ctfassets.net/kftzwdyauwt9/4xklltw3tJY3qRk8mzW0l3/f7f44a2cb856b0067 7a31506465e6d1a/存储-git-objects-in-packfiles-diagram-desktop-light.svg?w=3840&amp;q=90)</p>
+<p>Git 可以将 Blob 存储为单独的文件或将它们打包在一起，将一个 Blob 编码为另一个 Blob 的增量。</p>
+<p>在 Git 中，如果 Git 可以通过跟踪来自该提交的链接通过其父对象、树和 blob 找到该对象，则该对象可以从该提交“访问”。在获取期间，客户端告诉服务器它想要哪些提交以及它已经拥有哪些提交。服务器找到可从所需提交访问的对象，排除它知道客户端已经拥有的对象，并将剩余部分作为包文件以 Git 在磁盘上使用的相同格式发送。完整克隆开始时没有任何对象，因此它需要从正在克隆的历史记录中可访问的所有对象。</p>
+<p>推送通过要求服务器更新一个或多个引用来向另一个方向传输对象。客户端使用服务器的一组广告引用来避免发送服务器已有的对象。因此，发送的包可以依赖于现有的对象：单独接收包不足以重建新的历史记录。</p>
+<p>复制 Git 存储库意味着保持对象和引用在多个服务器上可用。在副本可以提供引用的新值之前，它必须能够提供可从该值访问的对象。该服务还需要协调竞争的“参考更新”，即尝试将同一分支从同一旧提示移动到不同的新提交的推送。对存储库的所有写入施加单一顺序的系统可能会使对不相关分支的推送相互等待。</p>
+<h2>现有的分布式Git服务模式</h2>
+<p>在设计 Pando 时，我们评估了使用 Git 扩展源代码控制的传统方法：一种使用三阶段提交（3PC，一种用于协调跨多个节点提交的协议）协调存储库副本之间的引用更新，另一种通过 Blob 存储中的共享预写日志（WAL，应用之前写入的更改记录）来排序更新。</p>
+<h3>三阶段提交（3PC）</h3>
+<p>在我们建模的三阶段提交设计中，Git 服务在多个副本上保留存储库的完整副本。当任何服务器收到推送时，传入的包文件将被复制并并行发送到所有副本。要发布推送，大多数副本必须接受引用更新。管理此操作的服务器是协调器，它需要协调器和每个其他副本之间进行多轮通信。</p>
+<p>为了接受引用更新，每个副本都会锁定其引用的副本，并检查它是否仍然指向客户端期望的提交。然后，协调器向接受的副本发送一条预提交消息。一旦大多数人确认预提交消息，协调员就会告诉他们执行更新。然后，任何最新的副本都可以从其存储库的本地副本通告新的分支提示。</p>
+<p>保留完整的副本可以在本地提供读取服务，并保证客户端无论选择哪个副本都可以获得所有引用的一致视图。因此，引用一次更新一个，并且每次推送都需要多次往返来协调副本之间的引用更新。</p>
+<p>等待仲裁会将副本磁盘性能和通信延迟置于推送路径上。随着写入量的增长，副本必须跟上传入包和读取流量。</p>
+<h3>预写日志 (WAL)</h3>
+<p>在我们建模的基于 WAL 的设计中，Git 服务使用 Blob 存储中的共享清单来排序存储库中的更新。当服务器收到推送时，它将传入的包文件上传到 blob 存储，并在存储库的本地副本中准备引用更新。为了发布推送，它会向存储在 blob 存储中的共享清单添加一个条目，该条目记录引用更新并指向 packfile。然后，Git 服务器使用比较和交换操作更新清单。这会自动替换清单，否则会拒绝更改。如果另一个编写者同时更新了它，服务器会读取中间条目，检查其引用更新是否仍然有效，并使用已上传的包重试。</p>
+<p>编写者可以并行上传他们的包文件，但即使推送到不相关的分支也需要更新相同的清单。成功比较和交换的往返时间限制了存储库发布新清单的频率。低延迟的 blob 存储使这一步变得更快。批处理允许一个清单同时更新多个引用，但代价是排队更新和增加延迟。</p>
+<p>Blob 存储可以并行接收包文件，但对共享清单的更新仍然相互竞争。仅增加 Blob 存储的容量并不能解决该瓶颈。每个副本仍需要从 Blob 存储中读取包并为其建立索引，然后才能在本地提供这些包。如果传入的写入速度超过了工作速度，副本就会落后，客户端会等待更长时间才能获取新推送的提交。</p>
+<h2>构建 Pando</h2>
+<p>这让我们想到了潘多。 Pando 是一种为 Git 存储库提供服务的新架构，其目标是扩展到许多客户端同时推送。它的工作原理如下：</p>
+<h3>重新思考约束</h3>
+<p>在开发 Pando 之前，我们有一种预感，我们可以在不影响 Git 的情况下满足我们的要求，但我们确实需要在大多数 Git 系统认为是要求的一些事情上做出妥协：</p>
+<ul><li><strong>存储库范围内的一致性</strong>：提供所有引用的一致的时间点快照需要跨存储库进行协调。在将所有引用更新一起排序的系统中，推送到不相关的分支在单个协调点上竞争。</li><li><strong>每个客户端都有唯一的包文件</strong>：如果具有不同本地历史记录的两个客户端获取相同的分支，服务器可能需要为每个客户端生成不同的包，以避免发送它们已经拥有的对象。创建这些响应会消耗 CPU 和磁盘 I/O，因此难以扩展到大量读取器。</li></ul>
+<p>相反，Pando 提供了宽松的一致性模型（因果一致性）来扩展写入，并重用包文件来扩展读取。</p>
+<h3>因果一致性 (CC)</h3>
+<p>当客户端推送到分支时，Pando 将传入的包文件作为不可变的 blob 存储在 blob 存储中。每次分支移动时，Pando 都会在元数据存储中记录一个“参考版本”，其中包含新提示、提供该提示的包以及该包所依赖的任何早期参考版本。 Blob 存储和元数据存储都是水平可扩展的。</p>
+<p>从 Pando 获取提交或引用需要向客户端重放一组引用版本（包文件），从而重建创建所获取的引用版本的客户端的状态。这在整个存储库中提供了较弱的一致性形式，同时为单个引用的更新提供了可序列化性。客户端仅在同时推送到同一引用时才会发生冲突。读取多个分支的客户端不能假设这些读取描述了存储库中的单个时间点。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5wDkqDPp9fjzOjtAQRDRzw/117b2f107fd11818f7e9154c958b0878/representing-branches-in-pando-diagram-desktop-light.svg?w=3840&amp;q=90" alt="在左侧，三个连续的主干包包含提交 A、B 和 C； D 和 E；在右侧，主干和主题在 C 处分叉。主干前进到 G，而主题前进到 D、E 和 F。最新的主题包包含 D、E 和 F。虚线轮廓标记 D 和 E 也出现在早期的主题包中。蓝色箭头标记了新包对 G 的主干的依赖。F 的 Git 父级是E."></p>
+<p>推送到主干会添加一个增量包，其中包含一个或多个提交。每次推送到侧分支都会再次包含该主题的早期提交，因此具有广告主干版本的客户端可以在一个包中获取该主题。</p>
+<p>这是<em>因果一致性</em>的一种形式。为了获取参考资料，读者需要观察其作者的历史。在推送过程中，Pando 控制客户端和服务器同意的共享历史记录，确保客户端生成更容易共享的包文件。</p>
+<p>因此，Pando 不提供 Git 操作期间所有引用的时间点状态，也不提供克隆或获取中引用更新的顺序。具体来说，假设分支“foo”和“bar”在完整克隆的协商期间都被更新。在协商过程中，一个客户端可能会观察版本 1 的“foo”和版本 2 的“bar”，而另一个客户端可能会观察版本 2 的“foo”和版本 1 的“bar”。实际上，用户和代理对引用更新的全局顺序是不可知的，而是依赖于单个引用的更新顺序。</p>
+<h3>比较方法</h3>
+<p>在这三个一致性模型的模拟中，我们配置 1,000 个客户端，每个客户端选择一个不同的分支，然后重复推送唯一的提交，测量总挂钟持续时间和推送获取延迟。后者是工作负载的重要指标，因为它测量用户和代理协作或使用依赖版本控制的其他系统的往返时间。该仿真对从商品到高级虚拟机和 blob 存储系统的硬件进行建模。在这个模拟中，我们放宽了三阶段提交的存储库范围的一致性。</p>
+<h2>模拟 Git 服务器实现</h2>
+<p>通过重复推送跟踪每个作者，并单独测量独立读者何时可以检查每个提交。</p>
+<p>基础设施</p>
+<p>标准快速超快</p>
+<p>回放</p>
+<p>1×5×10×30×60×</p>
+<p>作家</p>
+<p>1002004006001,000</p>
+<p>模拟合并</p>
+<p>批量主干合并</p>
+<h3>三阶段提交</h3>
+<p>准备好</p>
+<p>模拟时间</p>
+<p>0秒</p>
+<p>平均推取</p>
+<p>—</p>
+<p>作家完成</p>
+<p>1,000 / 1,0000 / 1,000</p>
+<p>每个方块代表一位作家。所有选定的架构都运行相同的工作负载。当确认推送时，方块会变亮；当写入完成时，方块会变蓝。该图表显示了作家在模拟时间内完成的工作；独立读者之后可以继续获取。使用箭头键选择写入者，使用 Home 或 End 进行跳转，使用 Escape 进行清除。</p>
+<p>0 / 10,000 次推送已确认 · 0 次已获取</p>
+<p>选择一个方块来检查该作家。</p>
+<h3>对象存储 WAL</h3>
+<p>准备好</p>
+<p>模拟时间</p>
+<p>0秒</p>
+<p>平均推取</p>
+<p>—</p>
+<p>作家完成</p>
+<p>1,000 / 1,0000 / 1,000</p>
+<p>每个方块代表一位作家。所有选定的架构都运行相同的工作负载。当确认推送时，方块会变亮；当写入完成时，方块会变蓝。该图表显示了作家在模拟时间内完成的工作；独立读者之后可以继续获取。使用箭头键选择写入者，使用 Home 或 End 进行跳转，使用 Escape 进行清除。</p>
+<p>0 / 10,000 次推送已确认 · 0 次已获取</p>
+<p>选择一个方块来检查该作家。</p>
+<p>###潘多</p>
+<p>准备好</p>
+<p>模拟时间</p>
+<p>0秒</p>
+<p>平均推取</p>
+<p>—</p>
+<p>作家完成</p>
+<p>1,000 / 1,0000 / 1,000</p>
+<p>每个方块代表一位作家。所有选定的架构都运行相同的工作负载。当确认推送时，方块会变亮；当写入完成时，方块会变蓝。该图表显示了作家在模拟时间内完成的工作；独立读者之后可以继续获取。使用箭头键选择写入者，使用 Home 或 End 进行跳转，使用 Escape 进行清除。</p>
+<p>0 / 10,000 次推送已确认 · 0 次已获取</p>
+<p>选择一个方块来检查该作家。</p>
+<h3>Writer 通过验证提取取得进度</h3>
+<ul><li>三阶段提交</li><li>对象存储WAL</li><li>潘多</li></ul>
+<p>模拟时间0 s</p>
+<ul><li>等待</li><li>推</li><li>所有推送均已确认</li></ul>
+<p>0 稍后</p>
+<p>综合教学模型，而不是生产基准。平均推送获取涵盖主题推送，从第一次尝试到重试，直到独立读者验证该提交。它包括等待读取器插槽并排除构建和测试。启用合并后，编写器完成包括所需的提取和主干合并。</p>
+<h3>结果</h3>
+<p>进行比较以查看记录的结果。</p>
+<p>综合教学模型，而不是生产基准。平均推送获取涵盖主题推送，从第一次尝试到重试，直到独立读者验证该提交。它包括等待读取器插槽并排除构建和测试。启用合并后，编写器完成包括所需的提取和主干合并。</p>
+<p>运行此模拟，将 Pando 与其他两种方法进行比较。选择基础设施（从普通硬件到高级硬件）、客户端数量以及更多设置，以了解它们的比较结果。</p>
+<p>当磁盘饱和时，建模的三阶段提交系统在负载下显示出明显更长的写入延迟；同时，出于同样的原因，预写日志系统显示出明显更长的读取延迟，因为服务器很难跟上从日志中读取的速度。在我们的 monorepo 的现实测试和模拟中，Pando 支持数千个客户端，能够同时推送而不影响负载下的性能。</p>
+<p>在处理推送时，Pando 会验证传入的包文件，同时将其流式传输到 blob 存储，而不将其解包到本地存储库中。当客户端开始获取时，Pando 选择读者需要的存储包，然后读者下载它们。没有服务器需要将包文件应用到本地存储库或执行昂贵的解包和打包操作。由于这些服务器主要执行协商和包文件选择，因此 Pando 服务器可以在商用硬件上运行。</p>
+<p>这使得 Pando 能够扩展到客户端、客户端和 Pando 之间的网络以及 blob 存储服务的限制。有了足够的容量，在独立分支上工作的客户端就可以按照自己的连接允许的速度传输包。为了以这种速度为更多客户提供服务，我们可以添加 Pando 服务器并扩展元数据存储和 blob 存储。</p>
+<h2>在 Pando 中推送和获取分支</h2>
+<p>Pando 将 writer 的 packfile 存储在 blob 存储中，并将 ref 版本记录在元数据服务中。在获取时，Pando 选择读者需要的包，然后 Express 为他们提供服务。</p>
+<p>流式推送获取分支</p>
+<ul><li>包文件字节</li><li>元数据</li><li>请求/确认</li><li>包文件 URI</li></ul>
+<p>代理编辑文件并在本地创建提交，然后运行“git push”，这会创建这些更改的包文件以更新分支。 Pando 接收包并将其流式传输到 blob 存储。在使用单通道解码验证传入推送后，Pando 使用多密钥事务在我们的元数据存储中记录引用版本并自动更新引用指针。这使得 Pando 能够提供“读你自己写”的一致性。整个写入操作需要 <em>$O(1)$</em> 元数据读取和写入。</p>
+<p>当另一个客户端获取分支时，Pando 使用客户端已有的历史记录选择一组存储的包。此操作需要 <em>$O(\log \Delta)$</em> 元数据读取，<em>$\Delta$</em> 是客户端拥有的内容与客户端想要的内容之间的参考版本中的最短距离。服务器返回包文件 URI，客户端通过 Express 服务下载它们，该服务将包文件存储在区域缓存中。</p>
+<p>此设计依赖于 Pando 架构的三个核心服务：推送、获取和压缩。</p>
+<h3>缩放推送</h3>
+<p>当客户端推送时，传统的 Git 服务器就像一个扑克玩家展示其所有牌，向客户端显示其拥有的每个分支。然后，客户端收集提交、树和 blob 以创建一个包文件，该包文件<em>排除</em>它知道服务器已经拥有的对象。</p>
+<p>广告更多的裁判可以使推动力更小。它还可能使包更难重用，因为另一个客户端可能会丢失作者遗漏的对象。</p>
+<p>Pando采取了不同的方法。它没有展示其全部信息，而是仅向客户宣传一组选定的分支。这样做有两个原因：</p>
+<ul><li>为每个裁判提供一致的视图是昂贵的。拥有数百万个分支，仅 ref 广告就可以超过 100 MiB。提供这一点需要每个服务器要么维护当前映射（需要大量的协调开销），要么维护随引用数量扩展的数据库查询。</li><li>通过仅向客户端提供引用的子集，客户端将生成一个仅取决于服务器明确允许客户端排除的内容的包。跟踪依赖关系允许 Pando 重用客户端在一次推送中生成的包文件，将其作为对后续获取的响应。</li></ul>
+<p>随着 Git 服务器公布更多的引用，推送的客户端就有更多的源来排除对象，从而使它们能够生成更小的包。然而，重用这些包文件需要服务器能够证明获取的客户端具有每个依赖项。否则，packfile 可能会省略客户端需要的对象。</p>
+<p>另一方面，如果 Git 服务器根本不发布任何广告，客户端将生成一个包含存储库完整历史记录的包文件。该包文件可以被任何其他客户端使用，但要以有效获取完整克隆的任何分支为代价，付出巨大的代价。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3H8EcvD2zWlkO6LDnf4Zzy/90597498322b48ae7215638f012fe716/how-advertished-refs-affect-packfile-size-diagram-desktop-light.svg?w=3840&amp;q=90" alt="曲线显示广告引用如何影响包文件大小，从没有的完整历史记录，到广告主干，到仅包含所有内容的新对象参考文献。"></p>
+<p>广告更多的引用会产生更小的包文件。大部分尺寸的减小可以来自于仅对其中一项进行广告。</p>
+<p>默认情况下，当客户端推送新功能分支时，Pando 仅通告指定的主干分支作为基础。这使得广告的大小与存储库获得分支的大小相同，但需要权衡。当工程师多次推送到单个分支或将一个功能分支堆叠在另一个功能分支之上时，客户端必须重新发送主干之外的所有内容。</p>
+<p>这会导致连续的分支推送变得更大，包含潜在冗余的对象，并使用额外的客户端带宽。在我们的 monorepo 中，以这种方式生成的包文件中位数低于 20 KiB，第 99 个百分位低于 3 MiB。对于我们来说，这是一个明智的权衡，因为已经拥有广告主干历史记录的读者可以使用该包文件获取分支。</p>
+<p>选择要向客户端通告的引用集后，Pando 接受推送并更新其元数据存储。 Pando 将元数据更新分为同步部分和异步部分。同步元数据更新确保客户端可以立即获取新更新的提交。这会写入一个新的 ref 版本，并更新映射到该新版本的 ref 指针，该新版本存储该新提示、用于协商包文件的依赖项以及指向已推送的包文件的链接。</p>
+<p>同时，异步工作被记录在同一个事务中，例如调度compaction。对于非常大的推送，仅同步写入提交的子集。这使得我们只需要对元数据存储进行恒定数量的读取和写入，而不管推送的大小。</p>
+<p>重要的是，Pando 服务器可以独立接受对不相关引用的推送。唯一有争议的键是 ref 指针，我们使用类似原子比较和交换的操作来保护它。我们可以通过添加 Pando 服务器、元数据存储扩展单元或 Blob 存储来扩展写入吞吐量。</p>
+<h3>线速获取和克隆性能</h3>
+<p>当客户端执行获取时，它会向服务器提供两组提交 ID，在协议中称为“have”和“want”。在传统的 Git 服务器中，服务器计算有者可到达的对象和有者可到达的对象之间的集合差，压缩它们，并将结果发送到客户端。虽然开源 Git 服务器在本地有各种索引来加速此操作，但这些包文件的计算成本可能很高，并且通常难以缓存。</p>
+<p>相反，Pando 使用推送中记录的提交映射来查找客户端的“have”和“want”，将它们解析为一组包含这些提交的引用版本。每个参考版本都链接到 Pando 之前收到的包文件。服务器使用它来解决客户端的需求，选择涵盖客户端所需的对象集的包文件。</p>
+<h4>计划在 Pando 获取</h4>
+<p>Pando 将客户端拥有的内容与其想要的内容进行比较，然后选择所需的存储包文件 - 包括任何缺少的分支依赖项。</p>
+<p>已经持有Fetch缺少分支依赖</p>
+<p>取出 27 个行李箱。</p>
+<p>选择一个分支以包含其主干依赖项。</p>
+<p>Pando 将 Git 协议的“haves”和“wants”映射到一系列参考版本。想要一个侧分支意味着想要达到它对主干的依赖关系。</p>
+<p>Git 协议仅允许在克隆或获取时在 HTTP 响应中发送单个包文件。然而，Git 协议的一个未被充分重视的功能“packfile-uri”允许服务器返回单独下载其他包的链接。 Pando 专门使用它，并内联传输一个空的包文件。为了支持此功能，OpenAI 对上游“packfile-uri”做出了许多改进。</p>
+<p>OpenAI 系统在许多地理区域运行，因此我们维护 Pando 集群，每个集群都有本地缓存​​。包交付服务 Express 会缓存我们的 Blob 存储，而一个单独的服务会缓存元数据存储。这些缓存使 Pando 能够完全从该集群中的缓存状态中处理对提交 ID 的请求或对引用的特殊读取。我们使用一致的散列将对包文件的请求路由到 Express 服务器，缓存命中率超过 99%。</p>
+<p>该缓存系统提供极高的吞吐量，能够满足客户端和 Pando 之间的网络限制。使用这些包文件 URI 和本地缓存，我们验证了仅使用标准云提供商虚拟机，我们看到克隆和获取操作使 10 Gbps 网络链接饱和。</p>
+<h3>压缩和第一个字节的时间</h3>
+<p>对于大多数 Git 服务器来说，重新打包和垃圾收集对于维持不断增长的存储库的性能是必要的。这两个步骤都会回收空间，但都是计算和 I/O 密集型的。</p>
+<p>在像 OpenAI 的 monorepo 这样快速移动的存储库中，为自上次获取以来发生的每次推送发送单独的包文件 URI 是不可行的。每天，客户需要下载数万个包文件才能赶上他们的主干。</p>
+<p>相反，Pando 在后台组合包来减少这种开销，采用类似于日志结构合并树中的压缩的设计。每次推送都会生成 Pando 所说的“L0”包文件，代表 Pando 可以传输的最小数据单元。随着时间的推移，后台工作人员将这些包文件收集到涵盖一系列参考版本的封面中，从 L0 开始按几何比例缩放。如今，我们的 monorepo 使用了高达 L4 的包文件封面。</p>
+<p>这些盖子有双重用途。当一个盖子足够满后，压缩工作人员将认领它并生成一个包文件。这通过重新组织 packfile 内的对象来提高压缩率。但它还通过充当引用版本的跳过列表来提高获取协商性能。通过同时扫描每个级别的索引，Pando 可以选择一组包在对数时间内发送给客户端。这些包文件覆盖，无论是否重新打包，都可以提供更有效的解决方案来获取规划，从而降低 Pando 的吞吐量和延迟要求。</p>
+<h4>Pando 中的压实</h4>
+<p>小包文件被分组为跨级别的更大封面，从而改进压缩并加快获取速度。</p>
+<p>发布现有包的封面</p>
+<p>L2</p>
+<p>L1</p>
+<p>L0</p>
+<p>压实进行中已发布封面</p>
+<p>压缩在后台合并来自许多参考版本的包文件，从而可以使用更少的文件更有效地获取。</p>
+<p>与许多 Git 服务器不同，包文件保存在各个级别，不会被丢弃或垃圾收集。每个级别的包都用于根据客户在获取中请求的“拥有”和“想要”来持续为客户提供服务。对于使用 Pando 作为 API 的客户端来说，从包文件中读取任意对象往往需要从 L0 读取比从 L4 读取更少的数据，因为它不太可能被压缩。</p>
+<p>Pando 中的压缩显着减少了发送给客户端的总传输大小，并使包规划能够根据客户端落后的程度进行亚线性扩展。这对于大型且快速变化的存储库尤其重要，我们预计这将成为软件开发的新常态。</p>
+<h2>构建 Pando</h2>
+<p>我们使用 Codex 构建了 Pando，从启动到生产仅用了 10 周。 Pando 的核心由一名工程师设计，由代理团队实施，并由少数工程师部署。 Pando 于今年 4 月开始为生产流量提供服务，是 OpenAI 使用的更大的源代码控制管理工具系统的一部分。</p>
+<p>在验证 Pando 的设计时，我们采用了多种方法。我们应用我们的原则来<a href="https://openai.com/index/cooperative-disclosure-of-ritic-vulnerability/#building-more-secure-software-foundations">构建更安全的软件基础⁠</a>。作为一个全新项目，我们选择在 Rust 中实现 Pando，并且没有遗留依赖。我们编写了一个一致性测试套件，以便代理可以根据标准 Git 行为测试他们的更改。我们还开发了确定性模拟测试工具，使我们能够检查系统的不变量和属性，使我们能够发现并减轻谈判和包装规划中微妙的竞争条件和回归。</p>
+<p>许多模型都为这个系统做出了贡献；随着新型号的推出，我们使用它们来提高 Pando 的性能和可靠性。使用 GPT-6 Astra，特工编写了 Lean 和 TLA+ 来形式化“Pando 理论”，我们用它来查找和修复实施中的错误，并证明系统的属性。多个连续会话运行数百小时，查找并修复 Pando 中的边缘情况。我们还全天候运行代理，使用支持 Daybreak 的模型对 Git 和 Pando 进行红队处理。</p>
+<h2>部署 Pando</h2>
+<p>我们最初部署 Pando 是作为我们现有源代码控制系统的读写代理。这使我们能够保持 Pando 和之前的系统同步，这样我们就可以安全地将流量转移到 Pando 上，而无需停机。</p>
+<p>作为缓存设计的一部分，Pando 还可以在代理之前删除重复数据并合并请求。这使我们能够在将系统一次迁移到 Pando 时保持现有工具的正常运行。随着我们将更多工作负载迁移到 Pando，它们的推送填充了 Pando 的缓存并提高了我们之前后端的可靠性。</p>
+<p>为了优化使用 Pando 时的性能，我们开始将 Git 的公共发行版运送到开发人员计算机和 ChatGPT 桌面应用程序中。为了将客户端迁移到 Pando，我们使用了 Git CLI 的内部包装器来分阶段迁移客户端。我们创建了许多其他工具来处理变更请求、代码审查和自动化 API。我们迁移了数百个依赖于旧版 API、Webhook 和存储库下载以及 Git 流量的集成。</p>
+<p>Codex 本身帮助开发人员和团队采取了行动。我们创建了准备现有结帐并指导代理商使用新系统的技能。因此，开发人员只需要求 Codex 迁移他们的开发环境和服务即可。</p>
+<p>改用 Pando 提高了合并可靠性，并将中值推送的延迟减少了近 80%。</p>
+<p>Pando 每天只需几个 CPU 核心即可交付 PB 的 Git 数据。 Pando 在一个小时内提供了超过 57 TB 的 Git 包，其中 99% 以上的字节来自本地磁盘缓存。</p>
+<p>重用包可以让许多客户端下载相同的存储库历史记录，而在服务节点上只需很少的计算。此示例显示了单个存储库，但 Pando 旨在支持更多存储库。随着需求的增长，我们可以独立扩展数据交付和 Git 协商。</p>
+<h2>回馈 Git 项目</h2>
+<p>在 Git 协议和客户端上构建 Pando 帮助我们识别错误和提高 Git 自身性能的机会。</p>
+<p>例如，Pando 直接向客户提供可重复使用的包，因此下载和索引这些包成为使系统快速可靠的核心部分。这项工作解决了并发下载、传输中断后的清理以及恢复已完成的下载等边缘情况。我们修复了这些路径，在接受现有包进行提取时添加了验证，并将该工作贡献给上游。</p>
+<p>我们还需要了解时间和带宽的去向，因此我们添加了对“packfile-uri”下载的跟踪和包生成的字节计数，从而更容易判断缓慢的获取是否花费了时间生成包或传输它们。</p>
+<p>在<a href="https://github.com/openai/git">OpenAI的Git构建</a>中，客户端可以并行下载和索引独立包。我们添加了“显式拥有”的概念，因此服务器可以将分支的当前提示与推送客户端可能遗漏的历史记录分开进行广告。在 Pando 上，这使客户端能够使用“--force-with-lease”来检查功能分支是否未移动并仅针对主干构建其包。具有该主干历史记录的任何人都可以使用相同的包获取分支。</p>
+<p>其中一些改进已经存在于上游 Git 中，还有许多其他改进已经存在于我们的公共存储库中。我们将继续与 Git 社区合作，使这些改进在 Pando 之外发挥作用。您可以在我们的<a href="https://oai-git.openai.chatgpt.site/">公共补丁跟踪器</a> 中关注该工作。</p>
+<h2>下一步是什么</h2>
+<p>通过重新思考如何扩展 Git 存储库的传统智慧，Pando 使我们能够在不改变我们的工程师和代理已经使用的 Git 工作流程的情况下扩展我们的单一存储库。在我们的 monorepo 中，Pando 解锁了更大程度的并行性，提高了合并可靠性，并减少了发布代码更改所需的时间。除了我们的 monorepo 之外，我们还在 OpenAI 中探索 Pando 的其他用途，包括大量代理需要在共享 Git 存储库上进行协作的工作负载。</p>
+<p>随着工程师和代理生产更多的软件，OpenAI 之外的更多团队将遇到我们在源代码控制方面遇到的限制。我们目前正在探索与我们的用户分享使 Pando 成为可能的技术的方法。</p>
+<p>Pando 建立在 Git 存储库用户和运营商二十年的经验之上。我们将继续开发 Pando，同时与开源 Git 社区合作，分享任何可以让 Git 用户更广泛受益的改进。</p>
+<p>＃＃ 作者</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>电网保护者计划简介</title>
+      <link>https://openai.com/index/grid-protectors-program</link>
+      <guid isPermaLink="true">https://openai.com/index/grid-protectors-program</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing the Grid Protectors Program</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
+<p>全球事务</p>
+<p>公司简介</p>
+<h1>电网保护者计划简介</h1>
+<p>启动一项国家计划，帮助我们未来的计算园区支持可靠、负担得起的电力。</p>
+<p>今天，我们推出<strong>电网保护者计划</strong>，这是一项全国性努力，旨在为我们所在社区的家庭和企业提供负担得起的、可靠的电力。我们将与公用事业公司、监管机构和政策制定者合作，为未来的园区制定安排，以减少电网紧张时的电力需求。</p>
+<p>无论是在北方寒流期间为房屋供暖，还是在南方热浪期间运行空调，家庭都需要可靠的电力。我们的目标是使校园灵活性成为公用事业公司在社区最需要时可以调用的资源。</p>
+<p>随着美国数据中心容量预计到 2030 年将超过 <a href="https://about.bnef.com/insights/data-centers/six-things-to-know-about-bnefs-new-us-data-center-capacity-outlook/">100 吉瓦</a>，我们有千载难逢的机会通过建设可以在社区最需要时调整电力使用的园区来加强电网。</p>
+<p>通过 Grid Protectors，我们的目标是使这种灵活性成为我们建设和运营未来园区的核心部分。这意味着设计设施以在需要时减少用电量，并与公用事业公司合作，就减少需求量、减少速度和减少时间等达成一致。这些安排将因地点而异，我们将在最终确定后分享额外的承诺。</p>
+<p>根据当地需求和可用设备，我们还将与电网运营商合作，通过现场发电或存储提供电力，并使用电池和电力控制来平滑需求的变化。</p>
+<p>无论需求高低，输电线、变电站和其他电网基础设施建设都是固定成本。通过在电网有空间时使用更多电力并在电力紧张时减少使用，我们可以帮助支付基础设施费用，同时限制为满足高峰需求而进行昂贵的升级的需要。这有助于降低其他客户的成本。</p>
+<p>美国需要更多的电力来支持经济增长，而人工智能正在成为这一需求的重要组成部分。不应要求家庭和小型企业补贴计算园区的电力需求。我们始终致力于支付自己的能源成本，包括我们使用的电力以及为我们的校园提供服务所需的基础设施。大型计算设施应该支付其成本并帮助公用事业公司管理他们所依赖的系统。</p>
+<h2>乔治亚州的一名模特</h2>
+<p>对于我们规划的埃芬汉县园区，我们承诺支付该项目所需的全部基础设施和电力服务费用。一旦园区投入运营，我们就可以减少在需要时消耗的电力，从而帮助为其他客户节省电力。</p>
+<p>我们与佐治亚电力公司达成的协议还包括高达 1,000 兆瓦的灵活需求响应，释放电力以帮助数十万家庭在酷暑期间保持空调运行。就规模而言，这相当于大约70万户家庭的平均电力需求。这比华盛顿特区和波士顿的家庭总和还多。</p>
+<p>这些计算设施与几年前建造的数据中心有很大不同，使我们能够灵活地满足电力需求。</p>
+<p>这意味着我们可以拒绝我们的需求，以便家庭、小企业和其他纳税人继续拥有权力。建设电网资产成本高昂，乔治亚电力公司表示，这种灵活性可以减少为满足未来增长而需要建设的新一代发电量。尽管园区仍在开发中，但我们打算让埃芬汉作为电网保护者的试点，以已经为未来园区提供模型的协议为基础。</p>
+<p>想象一下度假小镇里的一家餐馆。它需要足够的桌子和厨房空间来应对旺季，但它必须为全年的容量付费。常客帮助保持其使用并在旅游业放缓时支付账单。我们建议成为该常客。</p>
+<p>电力需求也会随着季节的变化而升降，不同地区在不同的时间面临最大的高峰。我们的计算园区全年都需要电力。通过正确的协议，稳定的需求可以帮助将电网的固定成本分摊到更多的电力销售上，而灵活性可以让我们在系统最繁忙时减少需求。我们仍然需要支付校园造成的成本；我们的目标是让其他客户也受益。</p>
+<p>我们的协议还有助于乔治亚电力公司降低客户成本的更广泛计划。该公用事业公司[预计从 2029 年开始，每年可为客户节省约 9.5 亿美元](https://www.georgiapower.com/news-hub/press-releases/contract-openai-approved-part-portfolio-delivering-950-million-annual- savings.html)，其大负荷协议组合和预期增长（包括 Camellia 项目）。据估计，使用 1,000 千瓦时的典型住宅客户每月至少可获得 15 美元的收益。</p>
+<p>＃＃ 期待</p>
+<p>格鲁吉亚协议是一个起点。在 OpenAI，通过我们的电网保护者计划，我们看到了帮助社区即使在紧急情况和高需求时期也能保持供电的机会。我们将与公用事业公司、监管机构和政策制定者合作，为我们未来建设的园区制定切实可行的安排——反映当地电网需求的安排，帮助园区在电网面临压力时支持电网，并支付我们创造的成本。如果项目被推迟、减少或取消，长期合同和财务保证可以保护其他客户。</p>
+<p>灵活性不能取代对新能源供应和传输的投资。除了这些投资之外，我们的电网保护者计划还可以帮助提高电网的可靠性，并保护家庭和小型企业免于承担人工智能基础设施的成本。这就是我们希望我们的计算园区达到的标准。</p>
+<p>＃＃ 作者</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>用更大的错误赏金奖励防御者</title>
+      <link>https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties</link>
+      <guid isPermaLink="true">https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Rewarding defenders with bigger bug bounties</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
+<p>安全</p>
+<h1>用更大的错误赏金奖励防御者</h1>
+<p><a href="https://bugcrowd.com/engagements/openai">安全漏洞赏金计划</a></p>
+<p>我们正在提高 OpenAI 安全漏洞赏金计划的奖励，以进一步鼓励独立研究人员寻找 OpenAI 软件中我们的测试可能遗漏的漏洞。我们还为研究人员引入了新的激励措施，以通过更高质量的漏洞报告赚取更多收入。</p>
+<p>独立安全研究人员在保护整个行业的技术方面发挥着重要作用。在 OpenAI，激励负责任的披露是我们安全模型的核心部分，补充了我们的 <a href="https://openai.com/the-defense-factory/">Defense Factory⁠</a> 工作，我们的工程师使用我们的模型来查找弱点、重现弱点并测试修复。</p>
+<p>今天的更新旨在鼓励和增强研究人员的能力，并继续构建协作的、社区优先的安全环境。</p>
+<h2>严重的漏洞会得到丰厚的奖励</h2>
+<p>平均而言，我们将中、高和关键发现的奖励范围中点增加了四倍以上。 ChatGPT、Codex 或 API 平台等核心产品中的严重漏洞现在将赚取高达 30,000 美元。对这些目标的杰出关键发现仍然有资格获得最高 100,000 美元的奖金，现在最高可达 172,000 美元的奖金。完整的详细信息可在<a href="https://bugcrowd.com/engagements/openai">我们的安全漏洞赏金计划</a> 中找到。</p>
+<h3>高质量报告奖金乘数</h3>
+<p>High-quality reports will be eligible to earn a bonus multiplier on the base bounty. A reliable proof of concept that isolates the bug, shows when it can be exploited, and demonstrates its impact gives us a head start on a fix. The quality multiplier recognizes the extra work that makes a finding especially useful.</p>
+<h3>忠诚度计划奖金</h3>
+<p>To build long-term relationships and continuously empower our security community, we are introducing a tiered loyalty bonus program. This 5-tier system provides scaling bonuses to recognize, support, and celebrate researchers who consistently partner with us in making AI technology safer for everyone.</p>
+<h3>优先活动乘数</h3>
+<p>To support community engagement as technology evolves, priority campaigns will feature dedicated bonus pools for newly launched features. These short-term campaigns give researchers early, high-reward opportunities to test new developments and be recognized for their early contributions.</p>
+<h2>更新了支付计算示例</h2>
+<table><thead><tr><th><strong>漏洞示例</strong></th><th><strong>历史奖项示例</strong></th><th><strong>新支付计算示例</strong></th><th><strong>新奖励</strong></th></tr></thead><tbody><tr><td>中 - ChatGPT（核心资产）：只读成员可以将文件上传到项目，而无需写入权限。</td><td>750 美元</td><td>2,000 美元 × 1.15 质量奖金 × 1.05 铜牌忠诚度奖金</td><td>2,415 美元</td></tr><tr><td>High - Prism（非核心资产）：IDOR 导致读取上传到用户项目的文件</td><td>1,000 美元</td><td>2,500 美元 × 1.15 质量奖金 × 1.10 黄金级忠诚度奖金</td><td>3,162.50 美元</td></tr><tr><td>关键 - ChatGPT（核心资产）：一键帐户接管。</td><td>6,500 美元</td><td>$30,000 × 1.15 质量奖金 × 1.30 优先活动奖金 × 1.15 31337 忠诚度奖金</td><td>51,577 美元</td></tr><tr><td>例外 - ChatGPT（核心资产）：对安全边界的重大损害（例如，能够查看任意 ChatGPT 用户的聊天消息。） 100,000 美元</td><td>100,000 美元 × 1.15 质量 × 1.30 优先活动 × 1.15 31337 忠诚度</td><td>$171,925</td><td>171,925 美元</td></tr></tbody></table>
+<p>所有情景和历史奖项都具有说明性。</p>
+<h2>追溯付款</h2>
+<p>如果您已经提交了报告并且我们尚未授予赏金，我们将应用<strong>新</strong>奖励范围。对于我们在本公告发布前 ** 30 天内授予的赏金，如果您的发现在新范围（基本奖励 + 忠诚度奖励）下可以赚取更多，我们将向您支付差额。</p>
+<h2>在奥克兰与我们见面</h2>
+<p>11 月 20 日至 21 日，我们的安全团队将前往奥克兰的 <a href="https://p2p.nahamcon.com/">PROMPT2PWN</a>，研究人员可以在那里亲自测试目标。如果您出席，我们很想听听您一直在做什么以及如何与您合作。</p>
+<p>感谢所有花时间调查线索并向我们报告的人。我们希望 OpenAI 成为一个当你发现我们错过的东西时你会回来的团队。</p>
+<p>＃＃ 作者</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>准备下一次安全冲刺以强化 OpenAI</title>
+      <link>https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai</link>
+      <guid isPermaLink="true">https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Preparing our next security sprint to harden OpenAI</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
+<p>安全</p>
+<h1>准备下一次安全冲刺以强化 OpenAI</h1>
+<p>我们正在计划 OpenAI 的下一次内部安全冲刺，将新的研究人员和安全合作伙伴与我们自己的团队聚集在一起，使用我们的模型来测试和增强我们的系统。我们正在与 Cathedral 合作，其研究人员将与我们的团队一起使用 OpenAI 的模型来挑战我们的防御，带来差异化的专业知识和方法来发现弱点并帮助我们保护我们的平台。</p>
+<blockquote>“OpenAI 通过与外部安全公司合作并使用自己的模型来不断测试和加强其防御，树立了重要的榜样。每个公司都应该考虑如何将这些功能发挥作用。我们很高兴与 OpenAI 的团队合作，将他们的模型和安全专业知识与我们的研究相结合，以发现弱点、测试修复并加强这种持续防御的方法。”</blockquote>
+<p><strong>Gavin Kliger，Cathedral 首席执行官兼联合创始人</strong></p>
+<p>我们还对我们的安全漏洞赏金计划进行改进，包括将关键发现的奖励增加四倍以上。我们希望研究人员挑战我们的假设，并帮助加强我们的系统和我们用来捍卫它们的方法。</p>
+<p>这是我们不断努力使用人工智能来不断发现和修复系统中的弱点的一部分。我们的上一次冲刺展示了这种方法可以带来什么。我们投入了 25% 的产品工程师来查找和修复系统中的弱点。使用 Codex，工程师调查了结果，在隔离环境中重现了漏洞并准备了补丁以供审查。</p>
+<p>我们正在开展这项工作，因为仅靠传统的网络防御已经不够了。整个行业最近发生的事件表明，威胁出现的速度有多快，以及建立持续的防御循环以在攻击者之前发现并修复弱点是多么重要。</p>
+<p>保持<a href="https://openai.com/index/the-defenders-window/">防御者之窗</a>开放需要组织使用前沿网络能力来强化其系统。我们正在使用最强大的模型来加强我们自己的防御，并将其提供给 <a href="https://openai.com/daybreak/">Daybreak</a> 客户。我们已承诺在六个月内投入 <a href="https://openai.com/index/daybreak-for-frontline-defenders/">10 亿美元</a>，为保护基本服务和数字基础设施的一线防御者提供访问补贴。我们还分享了上一次冲刺的<a href="https://openai.com/the-defense-factory/">架构和经验教训</a>，以及我们的<a href="https://openai.com/index/empowering-cyber-defenders/">蓝图</a>，以增强跨行业和政府的网络防御者的能力。</p>
+<p>我们将不断改进我们的模型，利用它们来增强我们自己的系统，并扩大可信赖的防御者的访问范围。保持防守者的窗口打开将在整个行业中采取行动，而这项工作需要现在就开始。</p>
+<p>＃＃ 作者</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>LifeVal</title>
+      <link>https://openai.com/index/lifeval</link>
+      <guid isPermaLink="true">https://openai.com/index/lifeval</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><img src="https://openai.com/_next/static/immutable/media/blue-brick.09p9qhhy100mf.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://openai.com/_next/static/immutable/media/storage-box.3476weajf3ald.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://openai.com/_next/static/immutable/media/school-bus.3by8e4a49l01n.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://openai.com/_next/static/immutable/media/pink-case.2xo-x1vhvff_h.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2kDzAYlRLs4Aa5eCBj0c0s/34b28e39a3685c59d40df3f96a439cc8/assorted-shopping-cart.png?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6K0cM0DVuJOf6yY7BA2q4P/fe658bead3bff7217d50ff0689ec971b/assorted-calendar.png?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/33prB2g2HLW6Azbom6co0a/a5fd275ffbdef887211846448f2fac6b/assorted-ecg.png?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/31Q75V3wFI3n0xK4Nxsog0/f0b03a26cf990bb2254e879dc8678d8b/photo-06.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1UfbC89B8yZRrvvmLEpMV/bf244804cb209b62d1be578e6e8b582f/photo-09.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7sFzZxKpcOhJP4T1ppAf6b/57fbb1cd4a8a73066261aa1e450117ec/photo-05.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://openai.com/_next/static/immutable/media/glucose-meter.3-90ldcd6b37a.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/618uJhR5QI4ZmuQycqQZx5/4efe8f2977a023df632849ec8c1d5f0b/photo-07.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://openai.com/_next/static/immutable/media/tomato.2658gdx30jvhr.webp?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3QHEbVZRPTyhQyaKgdES5l/00f4c9670307832bbc5d00740c86fc5f/image__32_.png?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p>2026 年 11 月 2 日</p>
+<p>出版物</p>
+<h1>生命值</h1>
+<p>衡量人工智能在日常生活中重要任务上的进展。</p>
+<p>OpenAI 的使命是确保通用人工智能造福全人类。对于目前每周使用 ChatGPT 的超过 10 亿人，我们希望构建人工智能来帮助应对日常生活中的实际挑战，例如寻找托儿服务、获得政府服务、制定预算、为上学做准备、修改食谱、订购杂货、设计锻炼计划等等。</p>
+<p>当有人寻求帮助让他们的生活更轻松时，他们需要的不仅仅是建议或聊天回复。要成为真正有帮助的个人助理，ChatGPT 应该能够采取实际行动来完成工作。</p>
+<p>为了衡量模型在日常任务中随时间的表现，我们对任务进行了评估，涵盖了用户最需要人工智能和个人代理帮助的领域。我们使用此评估来跟踪和推动过去一年中日常任务模型性能的改进。</p>
+<p>＃＃ 背景</p>
+<p>为了确定人们最看重的任务，我们首先进行了两项大型研究，追踪人们在美国和国际上如何度过时间：<a href="https://www.bls.gov/tus/">美国时间使用调查</a> 和<a href="https://www.timeuse.org/mtus">跨国时间使用研究</a>。这些数据集共同提供了人们在不同人口统计、一天中的时间和季节中执行的日常生活任务的详细目录。为了了解人们在哪些方面最看重人工智能的帮助，我们在现有调查的基础上进行了一项针对 3,995 名受访者的新的具有人口代表性的调查。对于每项任务，我们都会提出各种问题，以确定人们最需要私人助理帮助的领域。由此产生的任务涵盖了人们需要帮助的最重要领域，包括护理、健康、教育、家庭管理、个人财务、购物和获得政府服务。</p>
+<h2>个人任务示例</h2>
+<p>以下是我们当前模型如何在日常生活中的实际工作流程中执行的一些示例。</p>
+<p>###搬家后入读合适的幼儿园</p>
+<p>93.1%</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/0PsOKDe2IX2yO0sZVTxNn/d1de90b42ea9c430a6910aaf9e4f731b/bus.png?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p>比较我们新家附近的幼儿园，并选出最合适的幼儿园。</p>
+<p>我把范围缩小到三所幼儿园，并整理了招生详情。有两个偏好仍然需要您的来电。想查看入围名单吗？</p>
+<h3>Manage volunteers ahead of a flood</h3>
+<p>98.0%</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1hDPV5I4BneWeWnKWVsAvs/6bdf8f993cbedc6b20dc2a03c8824dce/water-drop-dingbat.png?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p>帮助我为需要防洪援助的四个邻居组织我们社区的防洪志愿者队伍。</p>
+<p>我准备了一个简单的行动计划来帮助志愿者评估提到的地点并帮助他们为即将到来的恶劣天气做好准备。</p>
+<h3>Find a new home for my family</h3>
+<p>100%</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4p9ZKTfC9iNi5m1xXkMCQl/ffdff61608bbc569e5bfa647c1a38c84/welcome-mat-white-cropped.png?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p>在卢泽恩县找到一个适合我的预算、有独立的居住单元、并且放学后通勤时间短的房子。 Add the deed to my cart so I can review it.</p>
+<p>I found one home that meets your requirements.我已经计算了转让税，并将契约添加到您所在国家/地区的记录购物车中以供审核。</p>
+<h3>Watch a game with grandma from far away</h3>
+<p>96.3%</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1EixydflAQZXI6yTNaL6Zg/6cc1f7086d118c3853f3a8c83da589fb/football.png?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p>为我和奶奶设置一个简单的方式一起远程观看比赛。</p>
+<p>最简单的手表设置已准备就绪，并在流失败时进行备份。 Want me to walk you through it with grandma?</p>
+<h3>为适应新的糖尿病诊断的父母准备膳食</h3>
+<p>90.4%</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7cn1KRGTQUsctQue7wawds/5be11f2e14bffbcb227e0ee375f5529e/cart.png?w=3840&amp;q=90&amp;fm=webp" alt=""></p>
+<p>通过实用的护理和膳食计划帮助我的父母适应新的糖尿病诊断。</p>
+<p>第一周计划已准备就绪，包括膳食、提醒和针对护理团队的问题。想在与父母分享之前一起查看吗？</p>
+<p>我们的最新模型在许多 LifeVal 任务上得分非常高。查看更多</p>
+<p>在过去的一年里，我们训练了我们的模型，使其变得更快、更强大，并且在浏览器使用、计算机使用和连接器任务方面更加一致。在 ChatGPT 中启用这些功能还扩展了模型可以帮助完成的任务类型，帮助 ChatGPT 超越聊天工具，成为真正的代理个人助理。</p>
+<h2>为什么这很重要</h2>
+<p>为了确保 AGI 惠及全人类，我们需要衡量和改进模型在日常生活中重要问题上的进展。这意味着超越对模型知识的学术评估，并实际衡量人工智能模型如何帮助人们进行决策、管理日常职责和完成有意义的事情。我们希望 LifeVal 能够朝着这一目标迈出一步。</p>
+<ul><li><img src="https://images.ctfassets.net/kftzwdyauwt9/9irZEa7VuG3EddaIPYWD5/f267058764f8a5eda29a410fe80114d0/photo-02.webp?w=3840&amp;q=90&amp;fm=webp" alt="帮助老年人使用助行器的护理人员"></li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/2lhC1WTyvGX4qBssxZraQj/b7792d227886b7f1adaec281eb2bee01/photo-03.webp?w=3840&amp;q=90&amp;fm=webp" alt="一个人喂猫"></li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/5i50ehjTmYbz5jB0E6lJHZ/16a4356b416bc033df4cfcfdc705b1a6/photo-04.webp?w=3840&amp;q=90&amp;fm=webp" alt="一个人在移动的卡车旁搬运箱子"></li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/7sFzZxKpcOhJP4T1ppAf6b/57fbb1cd4a8a73066261aa1e450117ec/photo-05.webp?w=3840&amp;q=90&amp;fm=webp" alt="人们一起处理文书工作"></li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/31Q75V3wFI3n0xK4Nxsog0/f0b03a26cf990bb2254e879dc8678d8b/photo-06.webp?w=3840&amp;q=90&amp;fm=webp" alt="一个人拎着一袋杂货"></li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/618uJhR5QI4ZmuQycqQZx5/4efe8f2977a023df632849ec8c1d5f0b/photo-07.webp?w=3840&amp;q=90&amp;fm=webp" alt="一只手在地图上追踪路线"></li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/M4upvozkrlrSSfvHaYlzF/3a3f9a3f8ecd7ba77d9ad7e79d2c4641/photo-08.webp?w=3840&amp;q=90&amp;fm=webp" alt="成人与幼儿一起阅读"></li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/1UfbC89B8yZRrvvmLEpMV/bf244804cb209b62d1be578e6e8b582f/photo-09.webp?w=3840&amp;q=90&amp;fm=webp" alt="一个人在墙上整理笔记"></li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/rzxlK2Ggnph5Op4ysnUc4/94c42358418debcc92b7900de0b865da/photo-10.webp?w=3840&amp;q=90&amp;fm=webp" alt="检查医学扫描的人"></li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/5XfHlU5MluLbVrnc7AoCZK/dc74b9270813c16ae476edc65ff3ade2/photo-11.webp?w=3840&amp;q=90&amp;fm=webp" alt="身边拿着笔记本电脑的人"></li></ul>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Qodo 使用 Codex 将上下文构建到 AI 代码审查中</title>
+      <link>https://openai.com/index/qodo-codex-plugin</link>
+      <guid isPermaLink="true">https://openai.com/index/qodo-codex-plugin</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Qodo builds context into AI code review with Codex</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
+<p>启动</p>
+<h1>Qodo 使用 Codex 将上下文构建到 AI 代码审查中</h1>
+<p>Qodo 将组织环境和代码库标准引入 Codex，帮助开发人员跨存储库捕获 P0 问题。</p>
+<p><a href="https://openai.com/startups">开始构建</a></p>
+<p>公司规模：初创公司</p>
+<p>地区： 北美</p>
+<p>行业：科技</p>
+<p>产品：API、Codex</p>
+<p><a href="https://www.qodo.ai/">Qodo</a> 构建用于代码审查和软件质量的人工智能工具，为编码代理提供理解他们更改的代码所需的组织知识。联合创始人兼首席执行官 Itamar Friedman 称其为“编码代理最好的朋友”。</p>
+<p>Qodo 使用包括 GPT‑6 Astra 在内的 OpenAI 模型来收集工程知识、审查代码和监控软件质量。它的 Codex 插件将上下文和审查带入开发人员的编码会话中。</p>
+<blockquote>“我们喜欢 OpenAI 模型。我们想要前沿的、最好的推理模型，但也想要那些非常快的模型。”</blockquote>
+<p>——Itamar Friedman，Qodo 联合创始人兼首席执行官</p>
+<h2>使用 Codex 跨存储库查找 P0 错误</h2>
+<p>Itamar 描述了可以跨越 10,000 个或更多存储库的客户环境，其中本地代码更改可能会破坏下游服务，即使它本身看起来是正确的。 Qodo 在 Codex 市场中构建了一个插件来解决这个问题。</p>
+<p>“Codex 非常擅长承担本地任务并以有效的方式完成它，”Itamar 说。 Qodo 的插件使 Codex 能够通过 Qodo 的 Agentic Toolbox 访问代码库知识、组织规则和独立审查。</p>
+<p>通过上下文，Codex 可以解释存储库之间的依赖关系，包括由不同 Git 提供商托管的存储库或通过 Kafka 连接的服务。 “Qodo 将建立这种联系，并帮助 Codex 从整体上看待软件，而不会错过那些 P0 错误，”Itamar 说。</p>
+<h2>自动审查，同时保留人工判断</h2>
+<p>在 Codex 开始编写代码之前，它可以使用 Qodo 的插件检索相关的代码库规则并拉取请求历史记录和模式。 Codex 进行更改后，Qodo 会对其进行审核，并在开发人员打开拉取请求之前，在同一会话中将其结果直接返回给 Codex。</p>
+<p>Qodo 的 AI 开发者关系主管 Nnenna Ndukwe 看到开发者使用此工作流程来构建功能并利用 Codex 中的 GPT-6 模型解决技术债务。他们正在自动化 Codex 的编码工作和 Qodo 的独立审查之间的交接。 “这就是我看到开发人员所做的事情，这真的很令人兴奋，因为 GPT-6 功能非常强大，”Nnenna 说。</p>
+<p>Itamar 将编码和审查代理描述为“阴阳”：一个创建代码，另一个挑战代码。每个角色都需要自己的设置和上下文，并且可能涉及多个代理。他的愿景是让特工讨论调查结果，并“只提出他们不接受的内容”以供人工审查。开发人员将成为规划者和审查者，能够检查未解决的问题以及代理的讨论、背景和先前的开发人员决策。</p>
+<p>“这就是建立信任的方式，”伊塔马尔说。 “我认为这使得整个过程整体更加高效，”Nnenna 补充道。 “我们可以利用我们专业知识中最好的部分。”</p>
+<h2>让 Codex 每天发挥作用</h2>
+<p>Internally at Qodo, Nnenna has been using GPT‑6 Astra’s Extra High and Ultra effort settings in her own automated development workflows as well as knowledge work.</p>
+<blockquote>“Codex 不做什么？我喜欢 Codex 所做的一切。我喜欢将人工智能和自动化相结合的想法。”</blockquote>
+<p>—Nnenna Ndukwe，Qodo 人工智能开发者关系主管</p>
+<p>Nnenna 安排 Codex 报告她在一周内完成的工作以及下一步可以重点关注或改进的地方。她还用它来研究社交平台上有关代理工程的对话，并为开发人员内容提出建议。当涉及到她自己的代码更改时，她安排 Codex 来分析她的工作并建议创建或改进的代理技能。</p>
+<h2>选择决策 API 所应用的编码规则</h2>
+<p>Itamar sees an opportunity to use OpenAI’s recently launched Decisions API to choose which rules and agent skills apply at each stage of development, rather than rely on language models for every decision.</p>
+<p>他举了一个例子，决策 API 可以在语言模型通过相关规则进行推理之前，从 200 条规则中选择需要检查的规则，从而有助于更快、更便宜地进行选择，同时提高审核质量。 “Decisions API 为我们提供了一个巨大的机会，可以让我们对流程产生更多信任，”Itamar 说道。</p>
+<h2>构建客户可以拥有的软件工厂</h2>
+<p>Nnenna 表示，Qodo 的方法结合了“人工智能的最佳方面以及传统软件工程和脚本编写的最佳方面”。公司知识指导编码代理，独立审查检查他们的工作，人类专业知识解决仍然存在的问题。</p>
+<p>这为 Itamar 所描述的软件工厂奠定了基础：客户可以组装和拥有的系统，将编码和审查代理结合在一起，并了解软件在生产中如何变化。</p>
+<p>通过 OpenAI，Qodo 正在构建一个未来，编码代理可以将更多公司的经验运用到工作中，而开发人员可以将他们的判断集中在最重要的地方。</p>
+<h2>OpenAI &lt;3 startups</h2>
+<p><a href="https://openai.com/leads/startup/">加入社区</a><a href="https://openai.com/startups">开始构建</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>OpenAI 任命 Dan Driscoll 为国家安全现代化高级顾问</title>
+      <link>https://openai.com/index/dan-driscoll-joins-openai</link>
+      <guid isPermaLink="true">https://openai.com/index/dan-driscoll-joins-openai</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
+<p>公司简介</p>
+<p>全球事务</p>
+<h1>OpenAI 任命 Dan Driscoll 为国家安全现代化高级顾问</h1>
+<p>Dan Driscoll 将加入 OpenAI，担任国家安全现代化高级顾问，与高级领导层和外部合作伙伴合作，就先进人工智能如何加强国家和网络安全提供建议，特别注重与美国盟友合作，推动其负责任的使用。</p>
+<p>在这个新设立的角色中，Dan 将与 OpenAI 团队以及政府、行业、学术界和联盟机构的领导者合作，推进支持民主人工智能建设的实用现代化举措。他还将帮助 OpenAI 内部团队了解全球国家安全机构的运营需求。</p>
+<p>丹此前曾担任第 26 任陆军部长，负责监督陆军的运营、现代化和资源。他带来了兵役、高级政府领导和私营部门的经验。</p>
+<p>丹将在其职位上为我们的公共和私营部门合作伙伴提供现代化政策和战略选择方面的建议，以解锁人工智能的实际用途，以改善国家安全，并帮助确保世界正在构建人工智能以支持民主原则。他将努力确定运营需求、制度变革和新兴人工智能功能的结合点。 Dan 的任命体现了我们致力于帮助民主机构负责任地使用先进人工智能来加强共享安全的承诺，并以 OpenAI 与盟友和合作伙伴的合作为基础，根据其 <a href="https://openai.com/daybreak/">Daybreak</a> 计划加强网络弹性并保护基本服务。</p>
+<blockquote>“人工智能应该赋予人们更多的生活权力，人们应该对其发展方式拥有发言权。美国拥有与其他国家合作推广民主人工智能的绝佳机会，我很高兴欢迎 Dan Driscoll 加入 OpenAI，以加强美国的领导力并帮助我们实现这一目标。”</blockquote>
+<p>萨姆·奥特曼</p>
+<blockquote>“我的大部分职业生涯都在公共服务领域度过，首先是作为一名士兵，最近担任陆军部长和 ATF 代理主任。服务的人们应该得到我们可以放在他们手中的最好的工具。国家安全要求的变化速度比过去五十年来的任何时候都快。这项技术将帮助他们通过简化文书工作、理解更多信息并更快地向正确的人提供正确的答案来跟上步伐。我加入 OpenAI 是为了帮助美国和我们的盟友将这项技术应用到公共服务中。为保障我们安全的人们负责任地工作。”</blockquote>
+<p>丹·德里斯科尔</p>
+<p><strong>丹·德里斯科尔</strong>是美国第 26 任陆军部长。作为部长，他负责监督近 100 万现役、警卫和预备役士兵以及超过 265,000 名陆军文职人员的行动、现代化和资源分配。他推动陆军转型，重点是加速新技术的部署、改革采办和建设一支更有能力的军队。丹曾是陆军军官和商界领袖，拥有兵役、法律和私营部门的经验。</p>
+<p>＃＃ 作者</p>]]></content:encoded>
+    </item>
     <item>
       <title>让网站更容易表达人工智能训练偏好</title>
       <link>https://openai.com/index/helping-websites-express-ai-training-preferences</link>
@@ -1924,72 +2324,6 @@
 <p><a href="https://openai.com/contact-sales/">联系销售</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>Localiza 如何围绕生成式人工智能重组工作</title>
-      <link>https://openai.com/index/localiza-generative-ai</link>
-      <guid isPermaLink="true">https://openai.com/index/localiza-generative-ai</guid>
-      <pubDate>Fri, 16 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：How Localiza reorganized work around generative AI</description>
-      <content:encoded><![CDATA[<p>2026年10月16日</p>
-<h1>Localiza 如何围绕生成式 AI 重塑工作方式</h1>
-<p>对这家公司而言，生成式 AI 不只是提升生产力的辅助工具，更是一种全新的计算交互界面。这一理念落实在三个方向上：推动业务转型、打造新的客户交互界面，以及构建 AI 原生产品。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<p>公司规模: 企业</p>
-<p>区域: 拉丁美洲</p>
-<p>行业: 旅行</p>
-<p>产品: ChatGPT, API, Codex</p>
-<h2>一种全新的计算方式，而不只是新工具</h2>
-<p>生成式 AI 出现时，Localiza 就确立了一个观点，并以此引领后续行动：这不只是工具箱里又多了一款软件，而是公司运营方式的变革。</p>
-<p>公司没有着眼于孤立的用例，而是围绕三大战略支柱与 OpenAI 展开合作：通过大规模试验推动业务转型、打造新的客户交互界面，以及构建 AI 原生产品。贯穿这三大支柱的，是围绕智能、上下文和速度重新设计流程的决策。</p>
-<blockquote>“我们将其视为一款强大的工具，帮助团队更好地发挥已有优势。他们践行我们的文化，理解客户的需求，也知道如何提供出色的服务。”</blockquote>
-<p>—André Petenussi，Localiza 首席技术官</p>
-<h2>支柱一：以规模促进学习</h2>
-<p>指导内部应用的原则很简单：规模促进学习，学习带来更好的产品。</p>
-<p>落实到实践中，就是将 ChatGPT 许可作为支持试验、提升生产力的资源来分配，而不只是个人福利。从财务到日常运营，Localiza 各团队都在积极尝试使用自定义 GPT、智能体和 Codex。</p>
-<p>Codex 最先在技术部门落地，由软件工程师、产品经理、设计师和数据科学家使用。但应用范围并未止步于此：分析师、经理、项目管理办公室人员、律师以及其他业务专家也开始自行构建原型和自动化流程，验证各自专业领域内的假设。</p>
-<p>这带来了公司未曾预料的变化：开发前的工作阶段被重新定义，跨专业团队会先为解决方案构建原型，再将其纳入开发排期。</p>
-<p>他说，瓶颈在人，而不在技术。</p>
-<blockquote>“最大的挑战在于，帮助庞大的团队学习新的工作方式、掌握新技能，同时确保全部 19 个部落和 130 个小队高效运作、步调一致。”</blockquote>
-<p>—André Petenussi，Localiza 首席技术官</p>
-<h2>支柱二：客户用自然语言描述需求</h2>
-<p>第二个方向源于对用户行为的观察：人们开始用自然语言描述自己的需求。这为出行服务创造了一个新入口，让服务在人们表达意图的那一刻就能介入。</p>
-<p>Localiza 的内部数据证实了这一转变：自 2024 年以来，来自大语言模型的流量快速增长，ChatGPT 已成为主要渠道。</p>
-<p>公司选择及早布局这一领域。2026 年 3 月，Localiza 成为巴西首家、也是拉丁美洲最早一批推出直接集成于 ChatGPT 的应用的出行平台。客户可以在对话中了解租车、汽车订阅和二手车方案，开启服务旅程，再到 Localiza 的安全环境中完成交易。</p>
-<blockquote>“我们相信，之所以能够以这些新方式服务客户，是因为我们很早就迎接了这项挑战，并在每一步都坚持学习。”</blockquote>
-<p>—André Petenussi，Localiza 首席技术官</p>
-<p>在 Localiza 内部，团队明确将其在 ChatGPT 中的应用定位为一项试验：紧跟客户行为的最新变化，加快从真实交互中学习，并探索 AI 如何补充现有生态系统。</p>
-<h2>支柱三：Liza，一款围绕对话设计的产品</h2>
-<p>Liza 是公司最具代表性的 AI 原生产品。这款对话式助手已成为其运营中一个成熟的成功案例。</p>
-<p>它与传统聊天机器人的区别在于架构，而非界面。Liza 并不遵循固定的决策树，而是围绕对话、意图和上下文构建：它将 OpenAI 模型、Localiza 服务和专用工具相结合，为体验中的重要环节提供支持，从理解最初的请求，到协助完成租车旅程的关键步骤。</p>
-<p>其目标是高质量地处理重复性服务流程，让团队腾出精力应对更复杂、价值更高的交互。</p>
-<p>但衡量成功的标准并不是自动化处理量。</p>
-<p>在接触这类技术之前，Localiza 就已开始梳理和衡量客户服务旅程。有了这一基础，公司才能明确判断哪些环节应交给智能体，哪些环节需要人工介入。</p>
-<blockquote>“我们始终致力于让客户旅程尽可能顺畅，并制定了衡量体验质量的指标。当然，我们也跟踪转化情况，但最关注的始终是客户体验。”</blockquote>
-<p>—André Petenussi，Localiza 首席技术官</p>
-<p>Liza 还构成了一个持续学习的闭环：通过汇总和监测交互信号，帮助识别客户需求、体验障碍和服务机会。结合语音转文字和文字转语音能力，这些信号推动 Liza 从交易型聊天机器人演进为 AI 原生的客户交互界面，能够在不同的出行服务旅程中持续学习并扩展应用。</p>
-<blockquote>“这让团队中的许多人得以腾出精力，更有信心、更从容地解决更有意义的问题，帮助我们践行为客户服务的使命。”</blockquote>
-<p>—André Petenussi，Localiza 首席技术官</p>
-<h2>从 GPT‑3.5 时代起，共同学习</h2>
-<p>与 OpenAI 的合作很早就开始了：Liza 的最初版本还运行在 GPT‑3.5 上。</p>
-<p>对 Petenussi 而言，这段合作关系的核心价值不在于某项具体功能，而在于两家同步发展的公司积极相互学习。在这一过程中，合作伙伴能够理解 Localiza 面临的挑战，以及其技术和非技术领域各项能力所处的不同成熟阶段。</p>
-<p>他也经常向市场上的其他公司强调这一点：面对仍在走向成熟的技术，试错与密切合作具有重要价值。</p>
-<blockquote>“我们认为，这项技术的发展仍处于早期，但它已经在改变市场、我们的工作方式，以及我们使用产品和服务的方式。在未来 5 年、10 年乃至 15 年里，它都将参与塑造我们的世界。”</blockquote>
-<p>—André Petenussi，Localiza 首席技术官</p>
-<h2>成果概览</h2>
-<ul><li>2026 年 3 月，Localiza 成为巴西首家、也是拉丁美洲最早一批推出直接集成于 ChatGPT 的应用的公司；近期，它又以广告主身份参与了该平台在巴西的广告试点。</li><li>自 2024 年以来，来自大语言模型的流量快速增长，其中 ChatGPT 是主要渠道。</li><li>Liza 助手由 60 多个专用智能体协同运作，依托推理模型、MCP 集成和专用工具，统筹租车流程。</li><li>从财务到运营，公司各团队都在积极尝试使用自定义 GPT、智能体和 Codex。</li><li>Codex 从技术部门推广到业务领域，分析师、经理、项目管理办公室人员和律师都开始自行构建原型和自动化流程。</li><li>技术团队由 19 个部落和 130 个小队组成。</li></ul>
-<h2>给领导者的启示</h2>
-<ul><li>将 AI 视为一种新的运营模式，而非提升生产力的辅助工具。最大的收益来自围绕智能、上下文和速度重新设计流程。</li><li>以规模促进学习。大规模并行试验所积累的组织知识，比一次完美的试点更多。</li><li>让试验走出技术部门。当律师、项目管理办公室人员和分析师在各自领域构建原型时，开发前期工作的性质也随之改变。</li><li>先梳理和衡量客户旅程，再实现自动化。建立质量指标后，才能判断哪些环节应由智能体介入，哪些环节离不开人工。</li><li>应用落地的瓶颈在于技能再培训，而非模型。改变数百人的工作方式，比技术集成更难，也更能决定成败。</li></ul>
-<h2>实用建议</h2>
-<ul><li>从客户的问题和旅程出发，而不是从模型的某项功能出发。</li><li>将许可作为试验预算来分配，而非个人福利。</li><li>先建立质量指标，再扩大对话式智能体的应用规模。</li><li>将入驻新的对话渠道视为一次学习试验，而非获客活动。</li><li>形成闭环：利用每次交互产生的信号，改进产品本身。</li></ul>
-<h2>下一步</h2>
-<p>Localiza 希望将 AI 置于未来体验和流程的核心，无论是完成工作的方式、为客户打造的体验，还是运营问题的解决。</p>
-<p>公司已与 OpenAI 着手推进下一阶段的工作，包括升级 Liza 和面向销售的智能体、将对话式界面打造为客户入口，以及开启由智能体驱动的软件开发新周期。</p>
-<blockquote>“我们最关注的是如何创造更好的体验。无论是为了提升业务盈利能力、确保业务健康发展，还是最重要的，为客户和员工创造愉悦的体验。”</blockquote>
-<p>—André Petenussi，Localiza 首席技术官</p>
-<h2>迈入工作新时代</h2>
-<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>]]></content:encoded>
-    </item>
-    <item>
       <title>Grupo Boticário 如何利用人工智能加强人际关系</title>
       <link>https://openai.com/index/grupo-boticario</link>
       <guid isPermaLink="true">https://openai.com/index/grupo-boticario</guid>
@@ -2062,318 +2396,69 @@
 <p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>Benefit Street Partners 通过 Codex 更快地回答问题</title>
-      <link>https://openai.com/index/benefit-street-partners</link>
-      <guid isPermaLink="true">https://openai.com/index/benefit-street-partners</guid>
+      <title>Localiza 如何围绕生成式人工智能重组工作</title>
+      <link>https://openai.com/index/localiza-generative-ai</link>
+      <guid isPermaLink="true">https://openai.com/index/localiza-generative-ai</guid>
       <pubDate>Fri, 16 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Benefit Street Partners answers questions faster with Codex</description>
-      <content:encoded><![CDATA[<p>2026 年 10 月 16 日</p>
-<h1>Benefit Street Partners 通过 Codex 更快地回答问题</h1>
-<p>Anant Kumar 自己搭出了比对贷款估值、分析信贷协议的工具，代码审查和后续跟进都交给 Codex。</p>
-<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4hoSVzGnXTL7t0Lc8leJTZ/bc394d73a743bc7c555a0ef89df90c2a/square.png?w=3840&amp;q=90&amp;fm=webp" alt="深古铜色拉丝纹理上放着白色的 Benefit Street Partners 标识，并注明来自 Franklin Templeton"></p>
-<p>公司规模：企业级</p>
-<p>地区：北美</p>
-<p>行业：金融</p>
-<p>产品：Codex</p>
-<p>~1 天</p>
-<p>第一版 BDC mark 跟踪器；连同后续加功能和打磨界面，总开发工时约 10–12 小时。</p>
-<p>~20 分钟</p>
-<p>一份信贷协议跑完初轮分析约 20 分钟，之后还有 1 小时以上的人工复核。</p>
-<p>在 Benefit Street Partners 这家专注信贷的投资管理机构，过去回应投资委员会的追问要花几天甚至几周。组合管理人 Anant Kumar 说，现在分析师用 Codex 一天就能把一轮意见消化完，常常还在会上就把问题答了。BSP 用这些工具在同一时间窗口里给承做环节加进更多复核容量和更严格的把关，而不是去做更多交易。</p>
-<blockquote>“我不再只是分析师和组合管理人，现在也算个开发者。我能自己动手把东西做出来。”</blockquote>
-<p>—Anant Kumar，Benefit Street Partners 组合管理人</p>
-<h2>自己搭看板</h2>
-<p>要做一块能分享给同事的看板，Kumar 过去得找懂软件的人帮他建网站、把数据接进来。现在他自己做工具，让 AI 起草代码，再让它审一遍有没有错。</p>
-<p>他做的跟踪器取商业发展公司（BDC）公开的 SEC 申报文件，比对各家机构对同一笔贷款估的价。团队因此能看见自己的 mark 跟其他持有人的估值差在哪。</p>
-<p>跟踪器由 Kumar 搭建，代码审查用 Codex。第一版花了一天。之后几周里不断加功能、打磨界面，他估算总开发时间大约 10–12 小时。</p>
-<h2>做一份信贷协议分析器</h2>
-<p>Kumar 的另一件工具分析信贷协议，这类文件常常 300 页起步。投资人需要找出可能把价值从贷款方那边挪走的条款，而这件事过去意味着请外部律师逐页过一遍整份协议。Kumar 把几家头部律所关于该盯哪些条款和风险备忘录收拢到一起。他形容这个分析器是「我们组织里的第二大脑」。</p>
-<p>上传一份信贷协议，大约 20 分钟出初轮分析，接着还要一小时以上的人工复核。BSP 已经用 GPT‑6 Astra 重构了这件工具，如今在公司自托管的门户里正式上线。</p>
-<p>「AI 在汇总数据、读进来、合成分析这几件事上很有用，但最终的投资决策必须由人来下。」他说。</p>
-<p>承做通常是好几轮的过程。一轮包括进一步尽调，以及一份回应投资委员会提问的修订版备忘录。交易周期从几天到几周不等，所以轮数也不固定。Kumar 说：「因为我们手里能用的信息更多，做决定时更有底气。」</p>
-<blockquote>“我的分析质量好了太多，也快了很多。”</blockquote>
-<p>—Anant Kumar，Benefit Street Partners 组合管理人</p>
-<h2>成果一览</h2>
-<ul><li>一天之内做出第一版 BDC 跟踪器，代码审查交给 Codex；连同后来加的功能，总共约 10–12 小时。</li><li>一份信贷协议约 20 分钟出初轮分析，之后再加一小时以上的人工复核。</li><li>按 Kumar 的说法，有了 Codex，回答委员会的追问快了很多，常常当场在会上就答完。</li></ul>
-<h2>下一步</h2>
-<p>BSP 正在打通跨交易的信息。持续承做是他们更长期的设想：团队可以随新闻发生就盯住手里的贷款、查看单一事件在整个组合上的影响，而不是等事件发生之后才重新做一遍承做。</p>
-<p>「Codex 把我的时间解放出来了，因为一天里我能拿更多小时去做高层次的工作，少做那些例行的活。」Kumar 说。</p>
-<h2>加入新的工作方式时代</h2>
-<p>全球已有超过 100 万家企业用 OpenAI 拿到了实打实的成果。</p>
-<p><a href="https://openai.com/contact-sales/">联系销售</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Stack Overflow for Agents 靠 ChatGPT plugin 让注册量增至三倍</title>
-      <link>https://openai.com/index/stack-overflow-chatgpt-plugin</link>
-      <guid isPermaLink="true">https://openai.com/index/stack-overflow-chatgpt-plugin</guid>
-      <pubDate>Fri, 16 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Stack Overflow for Agents triples signups with ChatGPT plugin</description>
-      <content:encoded><![CDATA[<p>2026 年 10 月 16 日</p>
-<p>初创公司</p>
-<h1>Stack Overflow for Agents 靠 ChatGPT plugin 让注册量增至三倍</h1>
-<p>两名工程师用 Codex 在几周内交付了 Stack Overflow for Agents，而它的 ChatGPT plugin 帮助智能体创建量实现最高 10× 增长。</p>
-<p><a href="https://openai.com/startups">用 OpenAI 开始构建</a></p>
-<p>公司规模：初创公司</p>
-<p>地区：北美</p>
-<p>行业：科技</p>
-<p>产品：Codex、API</p>
-<p>10x</p>
-<p>借助 ChatGPT plugin 创建了更多智能体</p>
-<p>3x</p>
-<p>借助 ChatGPT plugin 一夜之间为 Stack Overflow for Agents 带来更多注册</p>
-<p>87%</p>
-<p>构建单个 connector 所需时间的最大降幅，从 3–6 周降到 4 天</p>
-<p>人和 AI 智能体都需要上下文才能把事情做完，但上下文通常散落在各个系统里，从 Slack 到 Google Docs 都有。要把它们找齐、并理解它们如何拼合成一个整体，可能是一件棘手的事。</p>
-<p>正因如此，<a href="https://stackoverflow.co/">Stack Overflow</a> 正在构建一个知识智能平台，把这些来源统一起来，把原始上下文变成经过验证的知识，让它们在人与智能体工作的任何地方都能被取用。</p>
-<p>GPT‑6 Astra 和 GPT‑6 Sol 这类 OpenAI 模型为平台的 AI 提供动力，任务会依据所需的推理程度与成本路由到不同模型。Codex 帮助公司工程师构建这些产品，而一个 ChatGPT plugin 让他们较新的智能体产品 Stack Overflow for Agents 更容易被发现和使用。</p>
-<blockquote>“我们为 Stack Overflow for Agents 做了一个 ChatGPT plugin，注册量一夜之间增至三倍。”</blockquote>
-<p>—Alexandra Lato，Stack Overflow 产品副总裁</p>
-<h2>两名工程师用 Codex 在几周内交付一个全新产品</h2>
-<p>Stack Overflow for Agents 把 Stack 的智能层延伸到智能体身上，它始于一个假设和两名使用 Codex 的工程师。工程师们给 Codex 一个开发环境和一份计划，然后与它一起把产品做了出来。Alex 说，几周之内他们就有了一款完整成型的产品。</p>
-<p>“所以它真的让那个团队觉得自己变大了，”Alex 说。“他们能够把一个容器丢给它，然后说：‘这是我们的计划，帮我们把它建起来。’”</p>
-<h2>用 Codex 开发 connector：要几天，而不是几周</h2>
-<p>Stack Internal 是 Stack Overflow 的企业级产品，需要接入各个组织存放自己知识的所有系统。构建这种能力，比 Stack Overflow for Agents 背后那两名工程师的投入需要更多人的参与，但 Codex 也在加速这部分工作。</p>
-<p>Alex 描述了如何用 Codex 为企业产品走出一条短得多的上市路径：三个月，而不是一年。构建 connector 就是一个具体的例子。</p>
-<blockquote>“平均而言，构建一个 connector 要我们 3 到 6 周。有了 Codex，我们能在 4 天之内做出来。”</blockquote>
-<p>—Alexandra Lato，Stack Overflow 产品副总裁</p>
-<p>最近，团队在一天之内就做出了一个 connector。通过加快 connector 的开发，Codex 帮助 Stack Overflow 把企业产品更快地推向市场。</p>
-<h2>用 ChatGPT plugin 提升智能体创建量与注册量</h2>
-<p>Stack Overflow for Agents 具备分发条件之后，团队需要一条把它送进人们工作流的途径。它做了一个 ChatGPT plugin，让用户可以在 ChatGPT 里发现并完成该产品的设置，步骤比传统的 Model Context Protocol（MCP）配置更少。</p>
-<blockquote>“一旦有了 plugin，与 ChatGPT 的搭建就成了无摩擦的过程。”</blockquote>
-<p>—Alexandra Lato，Stack Overflow 产品副总裁</p>
-<p>Alex 说，这个 plugin 让注册量增至三倍，也加速了智能体的创建：“上次我查看的时候，记得已经涨到 10X 了。”</p>
-<h2>用 Decisions API 减少配置工作</h2>
-<p>Stack Overflow 自己管理模型路由与配置，但 Alex 希望探索使用 Decisions API，来减少其中一部分工作，把更多工程产能投到产品上。</p>
-<p>Alex 说：“如果我们能够直接通过 OpenAI 把它自动化，就能省下大量时间和金钱，让我们更专注于真正在构建的产品本身，而不是围着它的那些护栏。”</p>
-<h2>扩展到完整的知识生命周期</h2>
-<p>Stack Overflow 同时也在扩展它的知识产品，让人们学到的东西能够被分享。迄今为止，它的重点一直是把信息拉进来。现在，Alex 正在闭合这个循环：与开发者或工程之外的同事进行一对一交流时获得的知识，同样能够帮助其他人。</p>
-<p>Alex 说：“当我在学习的时候，我怎么确保组织里其余的人也在跟我一起学习？我真的很期待做出一款能够支撑那整个知识生命周期的产品。”</p>
-<h2>OpenAI &lt;3 初创公司</h2>
-<p><a href="https://openai.com/leads/startup/">加入社区</a><a href="https://openai.com/startups">开始构建</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>把 GPT‑Rosalind 带进学术研究实验室</title>
-      <link>https://openai.com/index/introducing-the-rosalind-academic-plan</link>
-      <guid isPermaLink="true">https://openai.com/index/introducing-the-rosalind-academic-plan</guid>
-      <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Bringing GPT-Rosalind to academic research labs</description>
-      <content:encoded><![CDATA[<p>2026 年 10 月 15 日</p>
-<h1>把 GPT‑Rosalind 带进学术研究实验室</h1>
-<p>介绍 Rosalind Academic Plan，为符合条件的实验室提供 GPT‑Rosalind 的资助访问，以及用于生命科学发现的工具。</p>
-<p>我们推出 Rosalind Academic Plan，帮助更多学术科学家获得 <a href="https://openai.com/rosalind/">GPT‑Rosalind⁠</a>——我们的生命科学专用模型。它把 frontier 推理与 <a href="https://developers.openai.com/blog/rosalind-workbench">Rosalind workbench</a> 结合在一起，后者能够在药物化学、基因组学、湿实验辅助以及其他科学应用之间编排专门的工具。符合条件的实验室可以免费获得最多 30 个 Business Standard 席位，最长期限为 12 个月；对 GPT‑Rosalind 的访问以 trusted-access 审批为前提。</p>
-<p>学术研究创造的知识，是整个学科赖以建设的基础。从某个关于生物学的根本问题开始的工作，最终可能改变我们诊断疾病、开发药物或种植粮食的方式。但这些进步取决于科学家是否拥有资源去探索想法、检验它们，并分享他们所学到的东西。</p>
-<p>加速科学发现是 OpenAI 使命的核心——确保通用人工智能惠及全人类。通过这个计划，我们正在为从事这项基础工作的科学家投入——帮助更多实验室把他们的专业知识和判断力，与专为生命科学研究构建的 AI 工具结合起来。</p>
-<h2>支撑未来突破背后的研究</h2>
-<p>我们今天所依赖的许多进步，都源自多年的基础研究。</p>
-<p>Human Genome Project 帮助开启了现代基因组学，改变了医学、诊断和生物技术。</p>
-<p>由好奇心驱动的细菌免疫系统研究带来了 CRISPR-Cas9，它革新了基因组编辑，如今正在推进癌症、遗传病、农业和生物技术领域的研究。数十年的大学 mRNA 研究也为 COVID-19 疫苗以及新一代疫苗与疗法奠定了基础。</p>
-<p>学术研究一向为医学和生物技术的进步奠基。通过帮助更多科学家把他们的科学专长与判断力同 GPT‑Rosalind 的高级专门推理结合起来，我们希望能支持那些收益远超实验室本身的发现。</p>
-<h2>学术实验室正在如何使用 GPT‑Rosalind</h2>
-<p>OpenAI 致力于让学术研究者能够追求他们的科学志向。杰出的学术实验室已经在探索 GPT‑Rosalind 如何支持从蛋白质设计到理解神经退行性疾病等一系列工作。这些例子展示了研究者在其科学工作流中应用该模型的位置。</p>
-<p>第 1 张，共 3 张</p>
-<blockquote>“GPT‑Rosalind 帮我更快地收集药物的理化参数。PubChem 和 NCBI 工具帮我在十种药物之间开展工作，同时厘清预测值与实验测量值之间的区分”</blockquote>
-<p>Zhao Lab, UCSF</p>
-<blockquote>“我在整个研究过程中都使用 GPT 模型，从探索文献到打磨实验和计算方法。它们帮我对想法迭代得快得多，也探索了比以往更多的可能性。我作为研究者更高效，也有了更多空间去探索和创造性地思考。”</blockquote>
-<p>Dr. Mathieu Bourdenx, Bourdenx Lab</p>
-<blockquote>“Rosalind 不仅会帮助我们改进当前的发现与设计任务，还能把它们应用到以前无法企及的更大规模上，同时仍然为生物学研究者提供有用的洞见。”</blockquote>
-<p>Dr. Brian Hie, Stanford University 和 Arc Institute</p>
-<ul><li>Zhao Lab, UCSF</li><li>Dr. Mathieu Bourdenx, Bourdenx Lab</li><li>Dr. Brian Hie, Stanford University 和 Arc Institute</li></ul>
-<h2>这个计划包含什么</h2>
-<p>借助新的 Rosalind Academic Plan，学术研究者可以更灵活地把 GPT‑Rosalind 和 Rosalind Workbench 带进自己的实验室，并利用 frontier 模型的智能开展科学研究。</p>
-<p>符合条件的实验室可获得：</p>
-<ul><li>最多 30 个 Business Standard 席位，每位用户每月 $0，最长 12 个月。</li><li>访问所有市售可得的 frontier OpenAI 模型，但受该计划的用量限制约束。</li><li>在 trusted-access 审批通过后访问 GPT‑Rosalind。</li></ul>
-<p>通过 Rosalind Academic Plan 共享的研究数据默认不会被用于训练我们的模型。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4lQJfRuZrLbrnGsnQ9RN9K/6d5388a7865ad6627496933c77f4b5be/rosalind-academic-plan-application-steps.png?w=3840&amp;q=90&amp;fm=webp" alt="四个步骤：了解该计划、登录并申请、完成验证，然后在访问开通后开始研究。"></p>
-<h2>为生命科学研究而构建</h2>
-<p>GPT‑Rosalind 是一个生命科学专用模型，旨在支持对复杂生物学问题进行更深入的推理。通过 trusted access，获批的研究者可以在为正当研究设计的防护措施内，用它探究敏感的科学问题。</p>
-<p>研究领域包括：</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5c0IktgmCg1GgRkmyzGQkQ/bb57a4c10470399eb5cd9fb5545e15bc/drug-and-protein-design-icon.svg?w=3840&amp;q=90" alt="药物与蛋白质设计"></p>
-<h3>药物与蛋白质设计</h3>
-<p>设计候选药物、治疗蛋白、多肽和酶，并优化它们的分子相互作用、选择性、稳定性以及适合开发程度。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5pQetyC0FwPDYjr9ifj8dP/43b95ef4ce70f16831e17da59a33518b/disease-detection-and-monitoring-icon.svg?w=3840&amp;q=90" alt="疾病检测与监测"></p>
-<h3>疾病检测与监测</h3>
-<p>识别疾病的分子特征，并开发液体活检及其他微创诊断手段，以更早发现疾病、监测进展并评估治疗反应。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/72aOkJVB9XXaMUqB2GThLz/ca4867fd0ccd25a6b8dce7d824cd15a5/vaccines-and-immune-responses-icon.svg?w=3840&amp;q=90" alt="疫苗与免疫应答"></p>
-<h3>疫苗与免疫应答</h3>
-<p>针对新出现的病毒变体设计和评估抗体与疫苗，研究宿主–病原体相互作用，并研究保护性免疫应答的强度与持久性。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3DsriUPacDfuSlDBHa5R2O/1eeae5ca8384b1b05e315ea9b6c90d87/genetic-and-rna-therapies-icon.svg?w=3840&amp;q=90" alt="基因与 RNA 疗法"></p>
-<h3>基因与 RNA 疗法</h3>
-<p>开发纠正遗传缺陷与调控基因表达的方法，设计 RNA 疗法，并研究如何把治疗安全、有效地递送到预期组织。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4dKMIrjct6PgOO2WP5uOgx/5ed515cdb21b0a48ddf15e373957648d/agriculture-and-animal-health-icon.svg?w=3840&amp;q=90" alt="农业与动物健康"></p>
-<h3>农业与动物健康</h3>
-<p>研究作物韧性、植物疾病与动物健康，并把遗传、营养和生物学方面的洞见应用于改善粮食生产与兽医护理。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6xljQh1rmZ41sxIXbUTHQk/a4c9908cf5e6c0346106aa555693b3f9/ecology-and-conservation-icon.svg?w=3840&amp;q=90" alt="生态与保护"></p>
-<h3>生态与保护</h3>
-<p>研究生物多样性、适应、物种相互作用与环境暴露，以理解生态系统变化，并为保护、生物修复以及应对气候变化的行动提供依据。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/58rIQQhU6wXqEt6ymtpUgN/33235c0a2ccfb3a87fbacc6c8f57ab4c/antimicrobial-resistance-icon.svg?w=3840&amp;q=90" alt="抗微生物耐药性"></p>
-<h3>抗微生物耐药性</h3>
-<p>研究微生物如何对抗生素、抗病毒药和抗真菌药产生耐药性，并为耐药感染、生物膜和持续性疾病开发新的疗法。</p>
-<p>01 / 07</p>
-<p>第 1 张卡片，共 7 张：药物与蛋白质设计</p>
-<h2>代表你的实验室申请</h2>
-<p>Rosalind Academic Plan 目前面向美国大学的学术实验室。在没有 OpenAI Enterprise 协议的大学里，PI 和实验室负责人可以通过我们的 trusted access 流程代表自己的实验室申请。已经存在协议的大学里的实验室，必须通过其所在大学的 Enterprise 访问流程申请。</p>
-<p>一旦获批，PI 和实验室负责人可以为最多 30 位具名成员开通 GPT‑Rosalind 的免费访问， 以及该计划包含的其他 OpenAI frontier 模型。此时尚不包含 API 访问。已认证的 PI 和实验室负责人管理成员权限，并负责其实验室的获准使用。</p>
-<h3>开始使用 GPT‑Rosalind</h3>
-<p>为你的实验室或组织选择申请路径。</p>
-<h3>学术实验室</h3>
-<p>Rosalind Academic Plan</p>
-<p>适用于尚无现有 Enterprise 账户的符合条件机构中的 PI 和实验室负责人。</p>
-<p>代表你的实验室申请。</p>
-<p><a href="https://chatgpt.com/rosalind/lab/application">申请学术实验室访问</a></p>
-<h3>已有的 Enterprise 账户</h3>
-<p>GPT-Rosalind 访问</p>
-<p>适用于已有 OpenAI Enterprise 协议的符合条件机构中的学术用户。</p>
-<p>通过你现有的 Enterprise 账户申请访问。</p>
-<p><a href="https://chatgpt.com/rosalind/application">申请 GPT-Rosalind 访问</a></p>
-<p>GPT‑Rosalind 访问需经审批。</p>
-<p>在我们的 <a href="https://help.openai.com/articles/20001602"><strong>帮助中心指南</strong></a> 中可以了解更多关于资格、申请要求与如何开始的内容。</p>
-<h2>面向科学研究的责任制访问</h2>
-<p>在开通访问之前，我们会：</p>
-<ul><li>核实机构的合法性，以及 PI 或实验室负责人的身份</li><li>审查负责人的职业背景、机构任职，以及监督实验室访问的权限</li><li>评估实验室的机构隶属、研究活动与预期用途</li><li>为实验室负责人和指定的机构安全联系人确立清晰的职责</li></ul>
-<p>防护措施在开通之后通过监控与执行继续生效。对于已注册的高敏感度用例，我们的安全检查会考虑获批的研究背景。当出现问题时，我们可能会跟进研究者以澄清工作并确认授权。这种做法旨在发现潜在滥用，同时兼顾正当的研究背景，并减少对获准工作的不必要中断。</p>
-<h2>面向复杂科学问题的专门智能</h2>
-<h2>开始使用</h2>
-<p>我们从学术实验室开始，作为更广泛努力的一部分，把有用的 AI 工具交到更多科学家手中。通过降低访问成本，我们希望给更多研究者留出空间，去追求那些收益可能远超其自身实验室的想法——从对疾病更清晰的理解，到更好的疗法和更有韧性的粮食系统。</p>
-<p>这些进步将来自科学家提出重要问题并付出努力去回答它们。我们希望帮助更多研究者做这项工作。</p>
-<p>如果你隶属于某个学术实验室，请进一步了解 Rosalind Academic Plan，并<a href="https://chatgpt.com/rosalind/lab/application">查看你是否有资格</a>。</p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026</a></li></ul>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>通过提问教学生思考与学习</title>
-      <link>https://openai.com/index/teaching-students-to-think-and-learn-through-questions</link>
-      <guid isPermaLink="true">https://openai.com/index/teaching-students-to-think-and-learn-through-questions</guid>
-      <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Teaching students to think and learn through questions</description>
-      <content:encoded><![CDATA[<p>2026 年 10 月 15 日</p>
-<p>公司</p>
-<h1>通过提问教学生思考与学习</h1>
-<p>在教师节这一天，我们向那些帮助我们学习的人致敬。一个好问题能改变一堂课的走向。它可以让一个未曾说出口的问题浮出水面，可以为解决某个问题打开另一条路，也可以帮助一个人认出自己其实已经知道什么。老师们每天都在做这样的工作：他们了解自己的学生，选择如何引出一个概念，并把学生从第一次尝试一路带到真正理解。</p>
-<p>这场活动把场景设在一间大学教室里，用幽默的目光看待师生之间正在变化的关系，并礼赞 AI 世界里教育者所扮演的角色。</p>
-<h2>AI for Educators 现已提供葡萄牙语版本</h2>
-<p>今天，我们在 OpenAI Academy——OpenAI 的免费学习平台——上推出巴西葡萄牙语版的 <a href="https://academy.openai.com/home/courses/ai-for-educators-lc8j1"><strong>AI for Educators</strong></a> 课程。这门课程面向小学、中学和高等教育的教育者设计，展示如何用 AI 来规划课程、设计活动与评估、准备沟通材料，同时保留教育者自己的教学判断。</p>
-<h2>通过主动参与，一步一步地学习</h2>
-<p><a href="https://chatgpt.com/features/study-mode/">Study Mode 帮助你探索一个学科</a>，一步一步来，用提问、提示、讲解以及检验理解的方式。这个功能与教师、科学家以及教学法专家合作开发，目的在于鼓励主动参与，并促使学生反思自己的推理过程。</p>
-<p>要开启 <strong>Study Mode</strong>，请在 ChatGPT 的工具菜单里选择 Study。</p>
-<p>例如，一个正在复习生物的学生可以这样提问：“我在学酶。一次只问我一个问题，等我的回答，并帮我找出我需要复习的地方。”</p>
-<p>老师们也可以拿自己很熟悉的学科试试 Study Mode，看看它提出的问题是否能激发推理，看看它的讲解是否适合自己的班级。</p>
-<p>比如在一堂讲蒸发的科学课上，老师可能让学生去探究衣服为什么能在晾衣绳上变干。在用 Study Mode 探索完这个主题之后，每个学生写下自己的解释，以及一个想在课堂上讨论的问题，期间不再回看那段对话。老师可以用这些回答来判断哪些内容需要带全班重新过一遍。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/8U7eN0Ja8K5q2L2VVXckl/bc7b2bb1dc4bb1e2bb8763ce984afc2c/chatgpt-study-mode-enzymes-inline-01-en-us.png?w=3840&amp;q=90&amp;fm=webp" alt="ChatGPT Study Mode 用英语一次问一个问题地带着学生做酶相关的自测。"></p>
-<p>这个教师节，我们邀请你也来试一试：去体验 AI for Educators 课程、试试 Study Mode，看看这些工具在不同的教学情境里能怎样帮上忙。技术可以打开新的学习方式，但真正了解自己的学生、问出最重要的那些问题、并把好奇心变成知识的，是老师。</p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Sullivan &amp; Cromwell 把本所的专业能力带进协议审查</title>
-      <link>https://openai.com/index/sullivan-cromwell</link>
-      <guid isPermaLink="true">https://openai.com/index/sullivan-cromwell</guid>
-      <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Sullivan &amp; Cromwell brings legal expertise into agreement review</description>
-      <content:encoded><![CDATA[<p>2026 年 10 月 15 日</p>
-<h1>Sullivan &amp; Cromwell 把本所的专业能力带进协议审查</h1>
-<p>Sullivan &amp; Cromwell 与 OpenAI 合作开发了 Agreement Analyzer，一件用来在协议草稿里识别问题的 AI 工具。</p>
-<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
-<p>公司规模：Enterprise</p>
-<p>地区：北美</p>
-<p>行业：服务业</p>
-<p>产品：ChatGPT</p>
-<p>对 Sullivan &amp; Cromwell 的律师而言，审一份协议草稿意味着拿它的条款去比照相关先例，用建立在本所经验之上的方法，同时顾及客户的优先事项。本所的 Agreement Analyzer 把这些输入收进同一条审查流程，产出分析与修改建议，交由律师查验和打磨。</p>
-<blockquote>“我觉得 AI 会……让律师把精力放在他们的判断最要紧的地方……这样他们就能专注于对客户最关键的问题。”</blockquote>
-<p>——John Savva，Sullivan &amp; Cromwell 合伙人</p>
-<h2>把本所的专业能力带进协议审查</h2>
-<p>AI 最初大多用在重复性的事务工作上，比如起草邮件回复、查看日历；Savva 发现，AI 模型分析能力的近期提升改变了它的用法。“现在我们看到，在那些有难度的法律任务上有远为更多的可用之处，比如深度分析复杂协议。”</p>
-<p>Agreement Analyzer 帮助律师在不同先例之间比对相应的条款，并追踪这些条款如何相互作用。</p>
-<p>Sullivan &amp; Cromwell 合伙人 John Savva 先用 Codex 搭出一个单用户的概念验证，做成了 Agreement Analyzer。随后他与 OpenAI 合作提升输出质量，靠并行处理提高效率，把这个应用变成多名律师可以同时使用的工具。</p>
-<p>Agreement Analyzer 打通了 Sullivan &amp; Cromwell 的工作流程、本所筛过的先例库、谈判手册与 ChatGPT Enterprise。律师把协议草稿输入工具后，可以自己挑入先例、加上承载本所与客户立场的手册，还可以补充市场惯例的信息。工具会从不同视角执行多轮审查，汇总各路输出，帮助识别潜在问题，最后返回一份备忘录和带修订标记的修改建议，供律师审阅、调整或否决。</p>
-<blockquote>“这不是要取代律师。这是给律师一件工具，让他们做更深入的分析、找到更多依据与先例，为客户拿出更高质量的成果。”</blockquote>
-<p>——John Savva，Sullivan &amp; Cromwell 合伙人</p>
-<h2>把来源和不确定性摆在明面上</h2>
-<p>Savva 强调，让一件 AI 工具的输出值得信赖的，是彻底的透明。“如果一件 AI 工具对市场惯例下了判断，你得能看到这条信息的出处。”</p>
-<p>Savva 描述了一种用法：一些 agent 得出结论，另一些 agent 在对立式的过程里质疑这些结论。在一个潜在的应用场景里，专门的 agent 并行审查协议，分别盯市场偏离与风险分配、条款之间的相互影响，以及可能影响诉讼的歧义。结果会区分出“经过其他 agent 质疑后依然成立的发现”“被驳倒的发现”，以及“带着限定条件保留下来的未证实问题”。律师可以查验这些问题、支撑它们的说明以及相关先例，再决定哪些发现值得落到最终的修订稿里。</p>
-<h2>下一步</h2>
-<p>Sullivan &amp; Cromwell 仍在继续探索围绕具体法律任务打造的工具。在 Savva 看来，更强的分析能力带来了一个机会：支撑研究与写作过程中更多的环节。</p>
-<p>Savva 提到 GPT‑6 Astra 在推理能力上的进展：“Astra 确实把可用的推理质量往前推了一大步，而这在过去一直是瓶颈。”</p>
-<h2>加入新的工作时代</h2>
-<p>全球已有超过 100 万家企业借助 OpenAI 取得了有分量的成果。</p>
-<p><a href="https://openai.com/contact-sales/">联系销售</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Amp 借助 OpenAI 模型，让 AI 智能体承担编程之外的工作</title>
-      <link>https://openai.com/index/amp-beyond-coding</link>
-      <guid isPermaLink="true">https://openai.com/index/amp-beyond-coding</guid>
-      <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Amp puts AI agents to work beyond code with OpenAI models</description>
-      <content:encoded><![CDATA[<p>2026年10月14日</p>
-<p>初创企业</p>
-<h1>Amp 借助 OpenAI 模型，让 AI 智能体承担编程之外的工作</h1>
-<p>了解 Amp 如何借助 GPT‑6 Astra、超高速模式、GPT‑Live‑1 和“使用 ChatGPT 登录”，不断拓展智能体的能力边界。</p>
-<p><a href="https://openai.com/startups/">开始使用 OpenAI 进行开发</a></p>
-<p>公司规模: 初创企业</p>
-<p>区域: 北美</p>
-<p>行业: 科技</p>
-<p>产品: API</p>
-<p><a href="https://ampcode.com/">Amp</a> 正在打造一款前沿 AI 智能体，帮助开发者将雄心勃勃的构想变成可运行的软件。在 Amp 首席执行官 Quinn Slack 看来，模型的每一次进步，都意味着有机会拓展智能体的能力：从帮助开发者决定要构建什么，到编写代码、设计页面。</p>
-<p>Amp 根据用户的实际使用效果来选择和推荐模型，而 OpenAI 模型占据了 Amp 中大部分的 Token 用量。Quinn 分享道：“OpenAI 非常透明，采取了哪些安全防护措施，用户都知道，也能理解。这让 OpenAI 模型用起来非常省心。你可以在 Amp 中用 OpenAI 模型完成所有工作，而且用得很满意。”</p>
-<blockquote>“OpenAI 模型一直在稳步提升，我们的用户对此非常认可。”</blockquote>
-<p>—Quinn Slack，Amp 首席执行官兼技术团队成员</p>
-<h2>通过“使用 ChatGPT 登录”降低开发成本</h2>
-<p>随着开发者将更多工作交给智能体，Token 成本可能成为制约因素。Quinn 提到，一些 Amp 用户每周会消耗 100 亿个 Token。他认为，如果用户对每一点用量都精打细算，可能就无法充分探索智能体的能力。</p>
-<p>为了缓解这一问题，Amp 集成并推出了“使用 ChatGPT 登录”功能。Quinn 表示，这让 Amp 用户可以使用更多 Token 和 OpenAI 模型，包括 GPT‑6 Astra，也让他们更愿意把大型任务交给智能体。</p>
-<p>他说：“有了‘使用 ChatGPT 登录’，大家就能放下顾虑，不必对每一个 Token 都精打细算。”“而一旦你真正放手，给智能体更多发挥空间，就会发现它能做的事远超想象。”Quinn 表示，他看到用户让智能体制定计划、决定要构建什么，并在产品发布后继续推进工作。</p>
-<h2>借助 GPT‑6 Astra 进行写作、设计与创作</h2>
-<p>Amp 希望智能体能参与产品开发和增长过程中的所有工作。Amp 自己的 20 人团队就是这样使用智能体的，市场营销也不例外。Quinn 说：“我们没有专人负责这件事，但有一个专门负责的智能体。”团队依靠智能体改善新用户体验，并帮助更多人通过搜索及其他渠道发现 Amp。</p>
-<p>要做好这些工作，高质量的文案和设计至关重要。GPT‑6 Astra 帮助团队编写文档、设计页面，达到 Amp 的严苛标准。</p>
-<blockquote>“我们的设计和写作风格非常独特。我们在这方面很挑剔，但 GPT-6 Astra 的表现一直让我们很满意。”</blockquote>
-<p>—Quinn Slack，Amp 首席执行官兼技术团队成员</p>
-<p>回到家中，Quinn 也在继续尝试 GPT‑6 Astra 的各种用法。他把自家的房屋图纸交给它，让它在 Blender 中创建了一个 3D 模型。随后，他和孩子们把这个模型变成了游戏：在房子里加上一条漂流河，或是满屋追逐大蒜——这个点子的灵感来自孩子们的祖母不喜欢大蒜。他说：“就在几个月前，这还是做不到的。”</p>
-<h2>通过 GPT‑Live‑1 与智能体对话</h2>
-<p>Amp 最近发布了内置的对话式 AI 助手 Puck，帮助用户启动和管理其他智能体。用户可以让 Puck 启动智能体来排查程序错误、协调多个智能体，或查找之前关于某个技术问题的对话。</p>
-<p>借助由 GPT‑Live‑1 驱动的“呼叫 Puck”功能，用户可以与 Puck 实时交谈，甚至可以通过手表与它对话。Quinn 设想，人们可以借助它，在离开电脑时继续让智能体工作，即使出门跑步也不例外。</p>
-<h2>借助超高速模式加快智能体工作流</h2>
-<p>Amp 一直在测试 GPT‑6 Astra 的超高速模式。Quinn 表示，速度提升正在改变人们使用智能体的方式。如今，人们常常在等待智能体完成任务的间隙，切换到其他智能体任务上。响应更快，就可能让用户不必同时兼顾那么多智能体，或让智能体有更多时间在返回结果前检查自己的工作。</p>
-<blockquote>“大家从未见过表现这么出色、速度又这么快的模型。”</blockquote>
-<p>—Quinn Slack，Amp 首席执行官兼技术团队成员</p>
-<p>对 Amp 而言，下一步是将更多编程前后的工作交给智能体，让开发者无需事事亲力亲为，也能将构想推进得更远。“人类会创造出什么，仍是未知数，而我们都有机会共同见证。能参与其中，真的很酷。”Quinn 说。</p>
-<h2>OpenAI 全方位赋能初创企业</h2>
-<p><a href="https://openai.com/leads/startup/">加入社区</a><a href="https://openai.com/startups">开始构建</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>SentinelOne 将恶意软件分析时间从数周缩短至数小时</title>
-      <link>https://openai.com/index/sentinelone</link>
-      <guid isPermaLink="true">https://openai.com/index/sentinelone</guid>
-      <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：SentinelOne cuts malware analysis from weeks to hours</description>
-      <content:encoded><![CDATA[<p>2026年10月14日</p>
-<h1>SentinelOne 将恶意软件分析时间从数周缩短至数小时</h1>
-<p>借助 OpenAI Daybreak，SentinelOne 将原本需要数周的恶意软件分析缩短至数小时，从而有余力调查更多威胁。</p>
+      <description>原文标题：How Localiza reorganized work around generative AI</description>
+      <content:encoded><![CDATA[<p>2026年10月16日</p>
+<h1>Localiza 如何围绕生成式 AI 重塑工作方式</h1>
+<p>对这家公司而言，生成式 AI 不只是提升生产力的辅助工具，更是一种全新的计算交互界面。这一理念落实在三个方向上：推动业务转型、打造新的客户交互界面，以及构建 AI 原生产品。</p>
 <p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6dB5D4UP3HM0JcORjPMaDG/0d9055a178aaf98f4ce24b3127a2d737/sentinelone-woven-texture-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="紫色编织艺术作品上的 SentinelOne 文字标志。"></p>
 <p>公司规模: 企业</p>
-<p>区域: 北美</p>
-<p>行业: 科技</p>
-<p>产品: Daybreak</p>
-<p>8</p>
-<p>小时即可完成恶意软件逆向工程，原需 4–6 周</p>
-<p>对一款复杂的恶意软件进行逆向工程，顶尖安全研究人员可能需要四到六周。这项工作艰苦而细致：研究人员要拆解软件，了解其行为，而且每当发现新信息时，往往需要回头重新梳理。SentinelOne 首席 AI 官 Gregor Stewart 表示，OpenAI Daybreak 现在大约八小时就能产出达到人类水平的逆向工程成果。</p>
-<p>OpenAI 缩短了深度分析所需的时间，让 SentinelOne 的研究人员能够调查更多恶意软件，并将不同样本的分析结果联系起来。这种更全面的视角，往往能揭示单独调查时可能遗漏的关联。Stewart 将这一机会形容为“让我们获得了一种过去根本负担不起的情报能力”。</p>
-<blockquote>“过去顶尖研究人员要花四周或六周才能完成的工作，如今 AI 大约八小时就能完成，而且成果可达到人类水平。”</blockquote>
-<p>—Gregor Stewart，SentinelOne 首席 AI 官</p>
-<h2>用更少的时间调查更多恶意软件</h2>
-<p>Daybreak 让防守方能够使用 OpenAI 模型开展网络安全工作。SentinelOne 利用这些能力对恶意软件进行逆向工程，通过检查软件来了解其行为。分析速度的提升，让研究人员有余力调查更多样本。</p>
-<p>Stewart 强调，他的团队仍须对结果负责。他说：“唯一无法自动化的，就是责任的承担。”“以更改架构的决策为例。这种事情仍然需要人工把关；而局部修复，或是不会从根本上改变软件运行方式的工作，可能更适合自动化处理。”他补充道。</p>
-<h2>发现威胁之间的关联</h2>
-<p>过去，SentinelOne 的研究团队只能从发现的威胁中，挑选最值得关注或最重要的进行深入调查。Stewart 说：“我们当时只能对极少数软件进行逆向工程。”可供比较的样本较少，他们发现威胁之间关联的机会也就更少。</p>
-<blockquote>“逆向工程速度的提升，让我们能够掌握更大范围内的恶意软件状况，并跟上它们的变化。这让我们的研究人员更清楚地了解威胁之间的关联，以及这些关联如何演变。”</blockquote>
-<p>—Gregor Stewart，SentinelOne 首席 AI 官</p>
-<p>Daybreak 加快了分析速度，让研究人员有更多机会比较恶意软件样本，寻找共用组件。例如，在两个看似无关的样本中发现同一组件，就可能为研究人员在客户调查中提供一条可继续追查的线索。</p>
-<p>对比更多样本的分析结果，还能揭示威胁之间更广泛的关联。Stewart 表示，发现这些关联“有助于将防线前移，让防御更主动”。</p>
-<h2>让更多团队有能力承担安全工作</h2>
-<p>Stewart 表示，在 SentinelOne 内部，OpenAI 的网络安全能力正让更多人能够承担安全工作。他说：“现在几乎每个人都能获得专业知识支持，而就在几个月前，这种专业能力可能还非常稀缺。”更多团队成员可以自行调查问题，而不必依赖少数专家。</p>
-<p>Stewart 希望将 OpenAI 的网络安全能力融入代码编写过程，让 SentinelOne 的开发人员在开发过程中就能解决安全问题。</p>
-<blockquote>“OpenAI 为开发团队的每一位成员提供专家级网络安全能力，让防守方逐渐占据优势。”</blockquote>
-<p>—Gregor Stewart，SentinelOne 首席 AI 官</p>
-<h2>开启办公新时代</h2>
-<p>全球逾百万家企业正通过 OpenAI 获得切实收益。</p>
+<p>区域: 拉丁美洲</p>
+<p>行业: 旅行</p>
+<p>产品: ChatGPT, API, Codex</p>
+<h2>一种全新的计算方式，而不只是新工具</h2>
+<p>生成式 AI 出现时，Localiza 就确立了一个观点，并以此引领后续行动：这不只是工具箱里又多了一款软件，而是公司运营方式的变革。</p>
+<p>公司没有着眼于孤立的用例，而是围绕三大战略支柱与 OpenAI 展开合作：通过大规模试验推动业务转型、打造新的客户交互界面，以及构建 AI 原生产品。贯穿这三大支柱的，是围绕智能、上下文和速度重新设计流程的决策。</p>
+<blockquote>“我们将其视为一款强大的工具，帮助团队更好地发挥已有优势。他们践行我们的文化，理解客户的需求，也知道如何提供出色的服务。”</blockquote>
+<p>—André Petenussi，Localiza 首席技术官</p>
+<h2>支柱一：以规模促进学习</h2>
+<p>指导内部应用的原则很简单：规模促进学习，学习带来更好的产品。</p>
+<p>落实到实践中，就是将 ChatGPT 许可作为支持试验、提升生产力的资源来分配，而不只是个人福利。从财务到日常运营，Localiza 各团队都在积极尝试使用自定义 GPT、智能体和 Codex。</p>
+<p>Codex 最先在技术部门落地，由软件工程师、产品经理、设计师和数据科学家使用。但应用范围并未止步于此：分析师、经理、项目管理办公室人员、律师以及其他业务专家也开始自行构建原型和自动化流程，验证各自专业领域内的假设。</p>
+<p>这带来了公司未曾预料的变化：开发前的工作阶段被重新定义，跨专业团队会先为解决方案构建原型，再将其纳入开发排期。</p>
+<p>他说，瓶颈在人，而不在技术。</p>
+<blockquote>“最大的挑战在于，帮助庞大的团队学习新的工作方式、掌握新技能，同时确保全部 19 个部落和 130 个小队高效运作、步调一致。”</blockquote>
+<p>—André Petenussi，Localiza 首席技术官</p>
+<h2>支柱二：客户用自然语言描述需求</h2>
+<p>第二个方向源于对用户行为的观察：人们开始用自然语言描述自己的需求。这为出行服务创造了一个新入口，让服务在人们表达意图的那一刻就能介入。</p>
+<p>Localiza 的内部数据证实了这一转变：自 2024 年以来，来自大语言模型的流量快速增长，ChatGPT 已成为主要渠道。</p>
+<p>公司选择及早布局这一领域。2026 年 3 月，Localiza 成为巴西首家、也是拉丁美洲最早一批推出直接集成于 ChatGPT 的应用的出行平台。客户可以在对话中了解租车、汽车订阅和二手车方案，开启服务旅程，再到 Localiza 的安全环境中完成交易。</p>
+<blockquote>“我们相信，之所以能够以这些新方式服务客户，是因为我们很早就迎接了这项挑战，并在每一步都坚持学习。”</blockquote>
+<p>—André Petenussi，Localiza 首席技术官</p>
+<p>在 Localiza 内部，团队明确将其在 ChatGPT 中的应用定位为一项试验：紧跟客户行为的最新变化，加快从真实交互中学习，并探索 AI 如何补充现有生态系统。</p>
+<h2>支柱三：Liza，一款围绕对话设计的产品</h2>
+<p>Liza 是公司最具代表性的 AI 原生产品。这款对话式助手已成为其运营中一个成熟的成功案例。</p>
+<p>它与传统聊天机器人的区别在于架构，而非界面。Liza 并不遵循固定的决策树，而是围绕对话、意图和上下文构建：它将 OpenAI 模型、Localiza 服务和专用工具相结合，为体验中的重要环节提供支持，从理解最初的请求，到协助完成租车旅程的关键步骤。</p>
+<p>其目标是高质量地处理重复性服务流程，让团队腾出精力应对更复杂、价值更高的交互。</p>
+<p>但衡量成功的标准并不是自动化处理量。</p>
+<p>在接触这类技术之前，Localiza 就已开始梳理和衡量客户服务旅程。有了这一基础，公司才能明确判断哪些环节应交给智能体，哪些环节需要人工介入。</p>
+<blockquote>“我们始终致力于让客户旅程尽可能顺畅，并制定了衡量体验质量的指标。当然，我们也跟踪转化情况，但最关注的始终是客户体验。”</blockquote>
+<p>—André Petenussi，Localiza 首席技术官</p>
+<p>Liza 还构成了一个持续学习的闭环：通过汇总和监测交互信号，帮助识别客户需求、体验障碍和服务机会。结合语音转文字和文字转语音能力，这些信号推动 Liza 从交易型聊天机器人演进为 AI 原生的客户交互界面，能够在不同的出行服务旅程中持续学习并扩展应用。</p>
+<blockquote>“这让团队中的许多人得以腾出精力，更有信心、更从容地解决更有意义的问题，帮助我们践行为客户服务的使命。”</blockquote>
+<p>—André Petenussi，Localiza 首席技术官</p>
+<h2>从 GPT‑3.5 时代起，共同学习</h2>
+<p>与 OpenAI 的合作很早就开始了：Liza 的最初版本还运行在 GPT‑3.5 上。</p>
+<p>对 Petenussi 而言，这段合作关系的核心价值不在于某项具体功能，而在于两家同步发展的公司积极相互学习。在这一过程中，合作伙伴能够理解 Localiza 面临的挑战，以及其技术和非技术领域各项能力所处的不同成熟阶段。</p>
+<p>他也经常向市场上的其他公司强调这一点：面对仍在走向成熟的技术，试错与密切合作具有重要价值。</p>
+<blockquote>“我们认为，这项技术的发展仍处于早期，但它已经在改变市场、我们的工作方式，以及我们使用产品和服务的方式。在未来 5 年、10 年乃至 15 年里，它都将参与塑造我们的世界。”</blockquote>
+<p>—André Petenussi，Localiza 首席技术官</p>
+<h2>成果概览</h2>
+<ul><li>2026 年 3 月，Localiza 成为巴西首家、也是拉丁美洲最早一批推出直接集成于 ChatGPT 的应用的公司；近期，它又以广告主身份参与了该平台在巴西的广告试点。</li><li>自 2024 年以来，来自大语言模型的流量快速增长，其中 ChatGPT 是主要渠道。</li><li>Liza 助手由 60 多个专用智能体协同运作，依托推理模型、MCP 集成和专用工具，统筹租车流程。</li><li>从财务到运营，公司各团队都在积极尝试使用自定义 GPT、智能体和 Codex。</li><li>Codex 从技术部门推广到业务领域，分析师、经理、项目管理办公室人员和律师都开始自行构建原型和自动化流程。</li><li>技术团队由 19 个部落和 130 个小队组成。</li></ul>
+<h2>给领导者的启示</h2>
+<ul><li>将 AI 视为一种新的运营模式，而非提升生产力的辅助工具。最大的收益来自围绕智能、上下文和速度重新设计流程。</li><li>以规模促进学习。大规模并行试验所积累的组织知识，比一次完美的试点更多。</li><li>让试验走出技术部门。当律师、项目管理办公室人员和分析师在各自领域构建原型时，开发前期工作的性质也随之改变。</li><li>先梳理和衡量客户旅程，再实现自动化。建立质量指标后，才能判断哪些环节应由智能体介入，哪些环节离不开人工。</li><li>应用落地的瓶颈在于技能再培训，而非模型。改变数百人的工作方式，比技术集成更难，也更能决定成败。</li></ul>
+<h2>实用建议</h2>
+<ul><li>从客户的问题和旅程出发，而不是从模型的某项功能出发。</li><li>将许可作为试验预算来分配，而非个人福利。</li><li>先建立质量指标，再扩大对话式智能体的应用规模。</li><li>将入驻新的对话渠道视为一次学习试验，而非获客活动。</li><li>形成闭环：利用每次交互产生的信号，改进产品本身。</li></ul>
+<h2>下一步</h2>
+<p>Localiza 希望将 AI 置于未来体验和流程的核心，无论是完成工作的方式、为客户打造的体验，还是运营问题的解决。</p>
+<p>公司已与 OpenAI 着手推进下一阶段的工作，包括升级 Liza 和面向销售的智能体、将对话式界面打造为客户入口，以及开启由智能体驱动的软件开发新周期。</p>
+<blockquote>“我们最关注的是如何创造更好的体验。无论是为了提升业务盈利能力、确保业务健康发展，还是最重要的，为客户和员工创造愉悦的体验。”</blockquote>
+<p>—André Petenussi，Localiza 首席技术官</p>
+<h2>迈入工作新时代</h2>
+<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
 <p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>]]></content:encoded>
     </item>
   </channel>

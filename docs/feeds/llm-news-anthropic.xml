@@ -7,7 +7,52 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 28 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>通过消息线程使长时间运行的代理更快</title>
+      <link>https://claude.com/resources/articles/message-threads</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/message-threads</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Make long-running agents faster with message threads</description>
+      <content:encoded><![CDATA[<p>消息线程现已在 Claude 平台上提供公共测试版。通过消息线程，代理不再需要每次都重新发送完整的对话历史记录，从而减少了长时间运行会话的延迟。</p>
+<h3>消息线程如何工作</h3>
+<p>编码代理可能在一个会话中发出数百个请求，每个请求都会重新发送每条较早的消息和工具结果。一旦对话达到数十万个令牌，重新发送所有令牌会增加Claude开始响应之前的时间。通过消息线程，代理仅发送自上一轮以来的新内容，这减少了第一个令牌 (TTFT) 的时间。</p>
+<p>对于大多数 Claude Code 用户来说，默认情况下消息线程处于打开状态，具有 500k 到 1M 令牌的请求的 TTFT 中值下降了约 35%。</p>
+<p>要使用消息线程，请将“thread”参数添加到消息 API 请求中。第一个请求包括完整的对话并启动一个线程。此后的每个请求仅包含新消息和先前响应的 ID。在轮流之间，我们将每个线程保存在内存中，它被加密并且不会写入磁盘。线程在最后一次请求后 5 分钟后过期，然后您的客户端重新发送完整对话以开始新的对话。虽然消息线程的每个请求都较小，但 Claude 仍然每次都会读取完整的对话，因此令牌使用量保持不变。</p>
+<p>消息线程最适合延迟很重要的活动会话，包括：</p>
+<ul><li><strong>长期运行的编码代理</strong>，其中每个工具结果或文件编辑都会添加到对话中。</li><li><strong>计算机使用代理</strong>，其中屏幕截图保留在线程中，而不是每次都重新上传。</li><li><strong>文档和图像密集的工作流程</strong>，其中请求较小。</li></ul>
+<p>代理携带的上下文越多，可以减少第一个令牌的时间的消息线程就越多。</p>
+<h3>开始使用</h3>
+<p>消息线程现已在本机 Claude 平台、AWS 上的 Claude 平台、Microsoft Foundry 中的 Claude 以及 Google Cloud 上的 Claude 模型（人工管理）上提供公开测试版。标准 Claude 代币利率和现有利率限制适用。请参阅<a href="http://platform.claude.com/docs/en/build-with-claude/message-threads">文档</a>开始。</p>
+<p>文章</p>
+<p>2026 年 10 月 28 日</p>
+<h3>Claude Enterprise 的智能报告、调查和汇总集团预算</h3>
+<p>在许多组织中，成员已经确定了Claude可以解锁的独特工作。下一步是将这项工作扩展到每个团队。</p>
+<p>Claude·恩企业</p>
+<p>文章</p>
+<p>2026 年 10 月 28 日</p>
+<h3>IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude</h3>
+<p>IDC 将 Claude 整合为其 Quanta 平台的一部分，并将 Claude 推广到自己的业务中</p>
+<p>Claude·科沃克</p>
+<p>Claude·科德</p>
+<p>还有 1 个</p>
+<p>：Claude·企业</p>
+<p>Claude·恩企业</p>
+<p>文章</p>
+<p>2026 年 10 月 28 日</p>
+<h3>为法律工作引入工件</h3>
+<p>Claude for Legal 现在包含用于法律工作的即用型工件，团队可以使用自己的数据和连接器进行调整，并在整个企业中共享。</p>
+<p>Claude·恩企业</p>
+<p>文章</p>
+<p>2026 年 10 月 27 日</p>
+<h3>财务顾问Claude</h3>
+<p>财务顾问现在可以将 Claude 连接到他们所依赖的托管人、投资组合平台、CRM 和规划工具，以及针对财务顾问日常工作量身定制的新技能。</p>
+<h2>与 Claude 一起改变您的组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<h3>获取开发者通讯</h3>
+<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
+<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+    </item>
     <item>
       <title>Claude Enterprise 的智能报告、调查与共享群组预算</title>
       <link>https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets</link>
@@ -939,6 +984,41 @@
 <p>如果你想接收我们每月的开发者通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
+      <title>向 Agentic AI Foundation 捐赠 Agent Skills</title>
+      <link>https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Donating Agent Skills to the Agentic AI Foundation</description>
+      <content:encoded><![CDATA[<h1>向 Agentic AI Foundation 捐赠 Agent Skills</h1>
+<p>今天，我们把 <a href="https://agentskills.io/home">Agent Skills</a>——这个为 AI agents 提供专门知识和工作流的开放标准——捐赠给 Agentic AI Foundation（AAIF）。自 2025 年 12 月我们发布这一标准以来，已有 70 多个 agent 平台集成了 Agent Skills，其中包括 ChatGPT、Cursor、GitHub Copilot 和 VS Code。</p>
+<h3>以简约实现 Agent 互操作</h3>
+<p>一个 skill 就是一个文件夹，其中包含一个 SKILL.md 文件，用来教会 agent 某项具体任务或某个具体领域的做法，并附上它所需的任何脚本或参考资料。我们在做 Claude Code 的过程中开发了 skills。它把通用知识工作处理得很好，却常常缺少真实业务任务所需要的流程性知识。在 2025 年 10 月上线后的几周之内，开发者们就在 GitHub 上发布了数千个 skills，并为 Codex、Cursor 和 OpenCode 写出了加载器。随后我们把 Agent Skills 发布为开放标准，放在它自己的 GitHub organization 和域名之下，好让任何 agent 都能使用它。到目前为止，已发布的 skills 达 100 万个，安装量接近 2.8 亿。</p>
+<h3>把 Agent Skills 捐赠给 AAIF</h3>
+<p>我们致力于让 Agent Skills 保持开放、由社区驱动、厂商中立。今天，我们把这一标准捐赠给隶属于 Linux Foundation 的 Agentic AI Foundation（AAIF）——去年我们与 Block 和 OpenAI 一起<a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation">共同创立</a>了它，我们捐赠的 Model Context Protocol（MCP）也在它那里。今后，AAIF 将为这一标准提供一个中立的归属，确保社区对 Agent Skills 下一步走向有发言权。</p>
+<p>我们捐赠的还有 Agent Skills 的名称和标识、GitHub organization，以及 <a href="https://agentskills.io/home">agentskills.io</a> 域名。你无需加入 AAIF，也可以继续使用这一标准或为其做出贡献。</p>
+<p>来自 Anthropic、Google、OpenAI 及其他公司的工程师将以个人身份维护这一标准，由 David Soria Parra 和 Mahesh Murag 担任 Lead Maintainers。</p>
+<h3>接下来会做什么</h3>
+<p>我们提议先从一个路线图开始，内容涵盖版本化发布、正式的提案流程，以及写给 skills 编写者和安装者的安全指引。和 MCP 一样，这个项目会继续把社区意见和透明的决策机制放在首位。你可以加入项目的 <a href="https://discord.gg/MKPE9g8aUy">Discord</a>，对拟议中的规范变更提出反馈。</p>
+<p>感谢从一开始就用 Agent Skills 进行构建的开发者，也感谢把 skills 带进自己产品的各个团队。请到 <a href="https://agentskills.io">agentskills.io</a> 阅读规范，并到 <a href="https://github.com/agentskills/agentskills">GitHub</a> 参与讨论。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>公开招募生命科学客座研究员</title>
+      <link>https://www.anthropic.com/news/open-call-guest-investigators-life-sciences</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/open-call-guest-investigators-life-sciences</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Open call for guest investigators in the life sciences</description>
+      <content:encoded><![CDATA[<h1>公开招募生命科学客座研究员</h1>
+<p>今天，我们邀请生命科学社区的成员提交申请，与我们一起开展专题项目。我们期待这样的提案：来自学术机构、非营利组织或政府实验室的课题负责人及其研究团队，希望用 Claude 来研究人类因果生物学、结构与计算分子生物学、药物化学、药物发现以及临床科学中的关键问题。</p>
+<p>你可以在<a href="https://www.anthropic.com/guest-investigator-program">这里提交项目提案</a>。</p>
+<p>在 8–12 周的时间里，客座研究员将与 Anthropic 的研究人员直接合作，围绕一个他们感兴趣的问题开展工作，并产出对他们的实际工作最有帮助的分析、成果物和工具。我们的团队会免费为他们运行我们的模型和 harness。</p>
+<p>我们将一起发表这些成果，并把配套的数据和代码开源。客座研究员在项目的每个阶段都保留对自身数据的权利，同时也拥有对我们这次合作可能带来的任何独立后续研究的权利。</p>
+<p>我们希望申请者能够说清楚，与 Anthropic 的研究人员直接合作会让他们怎样受益。申请者还应当能够合理地论证，自己的成果（例如初步发现、对开放性问题的解答、开源数据集或公共资源）可以在 8 到 12 周的合作期内产出。部分项目可能会获得在初始合作期之外延长的选项。</p>
+<p>我们理解，多数我们所关注的开放问题，其结果要验证需要长得多的时间，但我们寻找的是能够在相对较短的时间内产出一些初步证据的提案。</p>
+<p>我们并不要求客座研究员把数据交给我们，无论是在申请材料里还是在合作期间；我们也要求申请者只在自己的申请材料中包含公开可得的信息。</p>
+<p>申请通道将开放约 14 天，我们会尽力在申请截止后约 14 天以邮件通知入选者。随着我们进一步了解怎样才能最好地支持科学社区，我们期待未来有可能进一步扩大这项工作。</p>
+<p>这个项目是 Anthropic 为在生命科学以及更广泛的科学研究社区投入更多而推进的多个举措之一。希望直接用上我们面向生物学的最强公开可用模型的科研人员，可以申请加入我们的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>。我们也继续通过 <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science initiative</a> 支持研究人员，该计划为科研人员提供 Claude 额度，以加快他们做出科学发现的进程。</p>]]></content:encoded>
+    </item>
+    <item>
       <title>完整的 Claude 平台登陆 Google Cloud</title>
       <link>https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed</guid>
@@ -998,41 +1078,6 @@
 <h3>订阅开发者通讯</h3>
 <p>产品更新、操作指南、社区聚焦等。每月送达你的收件箱。</p>
 <p>如果你希望收到我们每月的开发者通讯，请提供你的电子邮箱地址。你可以随时退订。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>向 Agentic AI Foundation 捐赠 Agent Skills</title>
-      <link>https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</guid>
-      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Donating Agent Skills to the Agentic AI Foundation</description>
-      <content:encoded><![CDATA[<h1>向 Agentic AI Foundation 捐赠 Agent Skills</h1>
-<p>今天，我们把 <a href="https://agentskills.io/home">Agent Skills</a>——这个为 AI agents 提供专门知识和工作流的开放标准——捐赠给 Agentic AI Foundation（AAIF）。自 2025 年 12 月我们发布这一标准以来，已有 70 多个 agent 平台集成了 Agent Skills，其中包括 ChatGPT、Cursor、GitHub Copilot 和 VS Code。</p>
-<h3>以简约实现 Agent 互操作</h3>
-<p>一个 skill 就是一个文件夹，其中包含一个 SKILL.md 文件，用来教会 agent 某项具体任务或某个具体领域的做法，并附上它所需的任何脚本或参考资料。我们在做 Claude Code 的过程中开发了 skills。它把通用知识工作处理得很好，却常常缺少真实业务任务所需要的流程性知识。在 2025 年 10 月上线后的几周之内，开发者们就在 GitHub 上发布了数千个 skills，并为 Codex、Cursor 和 OpenCode 写出了加载器。随后我们把 Agent Skills 发布为开放标准，放在它自己的 GitHub organization 和域名之下，好让任何 agent 都能使用它。到目前为止，已发布的 skills 达 100 万个，安装量接近 2.8 亿。</p>
-<h3>把 Agent Skills 捐赠给 AAIF</h3>
-<p>我们致力于让 Agent Skills 保持开放、由社区驱动、厂商中立。今天，我们把这一标准捐赠给隶属于 Linux Foundation 的 Agentic AI Foundation（AAIF）——去年我们与 Block 和 OpenAI 一起<a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation">共同创立</a>了它，我们捐赠的 Model Context Protocol（MCP）也在它那里。今后，AAIF 将为这一标准提供一个中立的归属，确保社区对 Agent Skills 下一步走向有发言权。</p>
-<p>我们捐赠的还有 Agent Skills 的名称和标识、GitHub organization，以及 <a href="https://agentskills.io/home">agentskills.io</a> 域名。你无需加入 AAIF，也可以继续使用这一标准或为其做出贡献。</p>
-<p>来自 Anthropic、Google、OpenAI 及其他公司的工程师将以个人身份维护这一标准，由 David Soria Parra 和 Mahesh Murag 担任 Lead Maintainers。</p>
-<h3>接下来会做什么</h3>
-<p>我们提议先从一个路线图开始，内容涵盖版本化发布、正式的提案流程，以及写给 skills 编写者和安装者的安全指引。和 MCP 一样，这个项目会继续把社区意见和透明的决策机制放在首位。你可以加入项目的 <a href="https://discord.gg/MKPE9g8aUy">Discord</a>，对拟议中的规范变更提出反馈。</p>
-<p>感谢从一开始就用 Agent Skills 进行构建的开发者，也感谢把 skills 带进自己产品的各个团队。请到 <a href="https://agentskills.io">agentskills.io</a> 阅读规范，并到 <a href="https://github.com/agentskills/agentskills">GitHub</a> 参与讨论。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>公开招募生命科学客座研究员</title>
-      <link>https://www.anthropic.com/news/open-call-guest-investigators-life-sciences</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/open-call-guest-investigators-life-sciences</guid>
-      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Open call for guest investigators in the life sciences</description>
-      <content:encoded><![CDATA[<h1>公开招募生命科学客座研究员</h1>
-<p>今天，我们邀请生命科学社区的成员提交申请，与我们一起开展专题项目。我们期待这样的提案：来自学术机构、非营利组织或政府实验室的课题负责人及其研究团队，希望用 Claude 来研究人类因果生物学、结构与计算分子生物学、药物化学、药物发现以及临床科学中的关键问题。</p>
-<p>你可以在<a href="https://www.anthropic.com/guest-investigator-program">这里提交项目提案</a>。</p>
-<p>在 8–12 周的时间里，客座研究员将与 Anthropic 的研究人员直接合作，围绕一个他们感兴趣的问题开展工作，并产出对他们的实际工作最有帮助的分析、成果物和工具。我们的团队会免费为他们运行我们的模型和 harness。</p>
-<p>我们将一起发表这些成果，并把配套的数据和代码开源。客座研究员在项目的每个阶段都保留对自身数据的权利，同时也拥有对我们这次合作可能带来的任何独立后续研究的权利。</p>
-<p>我们希望申请者能够说清楚，与 Anthropic 的研究人员直接合作会让他们怎样受益。申请者还应当能够合理地论证，自己的成果（例如初步发现、对开放性问题的解答、开源数据集或公共资源）可以在 8 到 12 周的合作期内产出。部分项目可能会获得在初始合作期之外延长的选项。</p>
-<p>我们理解，多数我们所关注的开放问题，其结果要验证需要长得多的时间，但我们寻找的是能够在相对较短的时间内产出一些初步证据的提案。</p>
-<p>我们并不要求客座研究员把数据交给我们，无论是在申请材料里还是在合作期间；我们也要求申请者只在自己的申请材料中包含公开可得的信息。</p>
-<p>申请通道将开放约 14 天，我们会尽力在申请截止后约 14 天以邮件通知入选者。随着我们进一步了解怎样才能最好地支持科学社区，我们期待未来有可能进一步扩大这项工作。</p>
-<p>这个项目是 Anthropic 为在生命科学以及更广泛的科学研究社区投入更多而推进的多个举措之一。希望直接用上我们面向生物学的最强公开可用模型的科研人员，可以申请加入我们的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>。我们也继续通过 <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science initiative</a> 支持研究人员，该计划为科研人员提供 Claude 额度，以加快他们做出科学发现的进程。</p>]]></content:encoded>
     </item>
     <item>
       <title>物理学家 Christopher Stubbs 加入 Anthropic 的 Long-Term Benefit Tru…</title>
@@ -2917,49 +2962,6 @@ return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
 <h2>接下来</h2>
 <p>提供这些前沿能力，是我们支持生命科学社区、推进我们「加速治愈疾病、改善人类健康」这一共同使命的更广泛努力的一部分。我们会在未来几个月分享关于新产品、研究协作和计划改进的更多内容。</p>
 <p><strong>变更日志：</strong> 2026 年 9 月 30 日。我们澄清了：我们链接的表单是一份意向表达，而非申请。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>站在前沿工作：Balyasny 资产管理如何评估与治理 Claude Fable 5</title>
-      <link>https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5</link>
-      <guid isPermaLink="true">https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5</guid>
-      <pubDate>Thu, 17 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Working at the frontier: How Balyasny Asset Management evaluates and governs Claude Fable 5</description>
-      <content:encoded><![CDATA[<h1>站在前沿工作：Balyasny 资产管理如何评估与治理 Claude Fable 5</h1>
-<p>Balyasny 资产管理（BAM）首席 AI 官 Charlie Flanagan 谈该公司为何使用 Claude Fable 5，以及防护在跨组织安全、可靠地部署前沿智能中所扮演的角色。</p>
-<ul><li>类别：<a href="https://claude.com/blog/category/enterprise-ai">企业 AI</a></li><li>产品：<a href="https://claude.com/platform/api">Claude Platform</a>、<a href="https://claude.com/product/claude-code">Claude Code</a></li><li>日期：2026 年 9 月 17 日</li><li>阅读时长：5 分钟</li><li>分享：<a href="https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5#">复制链接</a>https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5</li></ul>
-<p>Balyasny 资产管理（BAM）是一家全球性、多策略投资公司，管理约 380 亿美元资产，支撑着一支约 2,000 名投资专业人士和员工的团队。首席 AI 官 Charlie Flanagan 与 Anthropic 谈了该公司如何在数千个真实金融任务上评估新模型、为何构建了自己的运行 agent 的平台，以及 Claude Fable 5 的发布带来了什么变化。</p>
-<h2>前沿 AI 在 2026 年为 BAM 带来了怎样的变化？</h2>
-<p>2026 年是我们从做搜索的 AI 系统，转向做工作的 AI 系统的一年。</p>
-<p>关键的变化不只是模型，而是围绕它们的那些 harness，比如 Claude Code。它们让我们构建的 AI 方案能承担远更复杂、运行更长的任务。能给一个 AI 一个成果、而非一个 prompt，并让它一直工作到完成——这种能力是颠覆性的。</p>
-<p>一个实际的例子是并购套利分析。当一桩交易被宣布时，agent 现在会构建初步的交易分析包。它们估计交易成交的可能性有多大、要花多久，提取关键的经济和法律条款，识别条件和里程碑，并标记出需要投资人判断的领域。</p>
-<p>一年前，那些步骤还零散分布在人工研究和各个独立工具之间；我们没有能可靠地把完整多步骤工作流坚持到一个可用结论的 agent。那项工作过去要三到五天。现在不到一天。agent 运行大约 30 分钟，在任何被依赖的重要输出之前都有人类审阅。</p>
-<p>我们使用 Anthropic 的前沿模型，但大部分基础设施是在 BAM 内部构建的，包括执行 harness、数据访问和审阅控制。</p>
-<h2>在开启 Claude Fable 5 之前，你们是如何评估它的？</h2>
-<p>我们多年前做的一件、一直极其受用的事，是投资于稳健的评测系统。我们用结果可验证的数千个真实金融任务——横跨股票、宏观和大宗商品——来测试新模型，而非依赖通用基准或孤立的演示。它让我们能就模型选择和路由做出数据驱动的决策，我认为所有企业都应当在这上面投入。</p>
-<p>我们既测模型本身，也测它在我们 agentic 环境内的表现——用我们用户所用的相同工具、文件和需求。它能否规划工作、选择并使用正确的工具、查找并分析证据、从错误中恢复、检查其中间结果，并产出一份有据可依的交付物？我们也寻找特定的失败模式，如数值错误、覆盖不全、无依据的结论和检索问题。</p>
-<p>在相关子集上，Fable 在数千个任务上达到 89.4%，而此前的生产模型为 86.1%。它最出彩的地方是复杂规划、分析和 agentic 执行。</p>
-<p>令人惊讶的结果是一组经济学问题——我们测过却从未有任何模型成功完成——直到 Fable。起初我们把这个结果当作一个潜在的评测问题，因为它相对我们测过的每一个模型都代表着一次重大的阶跃变化。我们重跑了评测、独立核查了任务和打分逻辑，并与 Anthropic 一起审阅了结果，最终断定这一改进是真实的。那是一个惊艳的时刻。</p>
-<p>如今，我们的投资团队把 Fable 用作其系统化和编码工作的首选前沿模型。我们基于效率和成本，就何时用 Fable、何时用其他模型给他们指导。</p>
-<h2>你们如何看待当今前沿模型的安全性？</h2>
-<p>我们把安全当作一个产品和运营模式的问题来对待，而不是一次性的模型选择练习。相关的问题不只是模型能做什么，而是它能访问什么数据、能用什么工具、能采取什么动作、什么必须保持人类批准，以及当某件事出错时我们如何得知。</p>
-<p>这意味着在模型周围布置控制，而非假设模型本身就是控制。我们使用获批准的数据边界、最小权限访问、工具级权限、日志与可追溯性、对重要输出的人类审阅，以及为边缘情形设置的清晰升级路径。我们在扩大访问之前，也会测试对抗和失败场景。</p>
-<p>这些控制是第一天的优先事项，而安全并没有随 Fable 发生根本变化。一个更有能力的模型不会仅因为它能更有效地推理或规划，就获得更广泛的授权。模型只能使用为该用户和该任务批准的工具和数据源，且它们不能给自己授予更多访问权。投资判断和问责仍留在人手中。</p>
-<h2>BAMAgent 在何处发挥作用？</h2>
-<p>展望未来，行进的方向是朝着更有能力的、能承担更长运行、多步骤动作的 agent。这让治理更重要，而非更不重要。对我们而言，那意味着构建 BAMAgent——我们内部用于把 agent 安全部署进获批准企业工作流的平台。它给 agent 所需的工具与系统，但只是那些工具与系统。我们已经构建了六个月，它支撑着数千个自主 agent 全天候 24/7 工作。</p>
-<p>BAMAgent 是我们聊天平台之后的下一步。聊天帮助人们接收并综合信息。BAMAgent 则来做工作：能运行数小时或数天的多步骤研究和分析，agent 并行工作，最后以一个人可审阅的东西收尾。它能构建并维护一份公司研究包、为一次财报或宏观事件做准备，或把新证据变成金融情景。agent 规划工作、使用获批准的内部系统、运行分析、检查其中间输出，并返回一份研究产物、模型或决策支持包。</p>
-<p>Fable 是我们在规划和分析阶段的首选模型。那里的一个错误会流过随后的每一份交付物，因此我们希望可用的最强模型来决定如何拆解一个问题、哪些证据重要、如何调和相互冲突的信号。这正是让 agent 像一个有能力的同事那样工作的原因。</p>
-<p>每家企业都应当制定战略，迈向一种托管 agent 的模型，它允许企业管理和执法，同时为用户把 agent 的效用最大化。</p>
-<h2>Claude Fable 5 为 BAM 带来了什么可能？</h2>
-<p>反响极其正面。归根结底，人们关心的是这项技术能在他们的日常工作中解锁什么。</p>
-<p>在一个例子中，一个 BAMAgent 运行了一次税务亏损收割分析。它探查了 90,000 张数据库表，找到了相关的共同基金持仓数据，并构建了自己的加权系统。经我们团队审阅后，其结果比传统方法所能产生的更全面。</p>
-<p>另外，我们的首席经济学家配置了一套 agent 工作流，把一项周期性的央行分析从约两天缩减到大约 30 分钟，而经济学家保留了审阅和判断。</p>
-<p>Fable 贡献推理、综合和多步骤问题求解。BAM 的 harness 提供工作流设计、获批准的数据和工具访问、检索上下文、权限、监控和人工审阅控制。两者都是产出生产级质量结果所必需的。</p>
-<h2>随着模型日益强大，你们 AI 路线图的下一步是什么？</h2>
-<p>这是从「人们拥有工具」走向「人们拥有队友」的一年。就像一名队友那样，随着你与 agent 共事、完成更复杂的任务、并开始让它们主动来帮忙，它们会随时间变得更有用。</p>
-<p>我们已经有一些团队在运行 300 多个 agent，不断对新数据和新信息做分析。它帮助团队既更快地获得洞察、又不遗漏任何东西。</p>
-<p>它也改变了我们提的问题。我们过去构建专家系统、并教人们去自动化他们已经拥有的流程。现在我们问的是：有没有一条通往成果的更好办法。</p>
-<p>真正的限制不过是我们自己的想象力。工具、数据和模型如今已到了一个能实实在在工作好几个小时的地步；轮到我们继续重新想象什么是可能的。接下来的 12 个月将会激动人心。</p>
-<p><em><strong>即刻 </strong></em><a href="https://www.anthropic.com/claude/fable"><em><strong> Claude Fable</strong></em></a><em><strong> 上手。</strong></em></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

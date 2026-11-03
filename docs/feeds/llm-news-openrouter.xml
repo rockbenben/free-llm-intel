@@ -978,6 +978,54 @@ export CLAUDE_CODE_SUBAGENT_MODEL=&quot;anthropic/claude-haiku-5.5&quot;</code><
 <ul><li><a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval</a> 会在你自己的任务上运行 Opus、Sonnet 和 Haiku，并推荐一个。要开始，给你的编程智能体这条指令：<code>run curl -fsSL https://openrouter.ai/skills/spawn-ori-eval and follow the instructions in its output to get started</code>。</li><li>我们的<a href="https://openrouter.ai/docs/cookbook/coding-agents/claude-code-integration">配置指南</a>覆盖按角色设置模型，我们的教程 <a href="https://openrouter.ai/blog/tutorials/claude-code-openrouter/">Claude Code 搭配 OpenRouter：配置、模型与成本</a>覆盖模型选择与成本。</li><li><a href="https://openrouter.ai/anthropic/claude-opus-5.5">Opus 5.5</a>、<a href="https://openrouter.ai/anthropic/claude-sonnet-5.5">Sonnet 5.5</a> 和 <a href="https://openrouter.ai/anthropic/claude-haiku-5.5">Haiku 5.5</a> 的模型页面显示当前的价格、provider 和可用性。我们的 <a href="https://openrouter.ai/compare/anthropic/claude-opus-5.5/anthropic/claude-sonnet-5.5">Opus 5.5 对 Sonnet 5.5 对比页面</a>把其中两个并排放在一起。</li><li><a href="https://openrouter.ai/docs/guides/best-practices/prompt-caching">Prompt caching</a> 解释了上表中的缓存读取价格。</li><li>如果你要从更早的 Claude 模型迁移，<a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/model-migrations/claude-5-5">Claude 5.5 迁移指南</a>覆盖了相关的 API 变化。</li><li><a href="https://openrouter.ai/blog/insights/cost-vs-quality-tradeoff-framework-for-agent-models/">agent 模型的成本与质量权衡框架</a>和<a href="https://openrouter.ai/blog/insights/confidence-thresholds-for-model-escalation-routing/">模型升级路由的置信度阈值</a>讲了何时该把一个请求升到更高一档。</li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>Guardrails 现在将组织限制与工作空间默认值分开</title>
+      <link>https://openrouter.ai/blog/announcements/guardrail-policies/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/guardrail-policies/</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Guardrails Now Separate Organization Limits from Workspace Defaults</description>
+      <content:encoded><![CDATA[<h1>Guardrails 现在将组织限制与工作空间默认值分开</h1>
+<p>萨莎·布卢门菲尔德 ·2026 年 10 月 30 日</p>
+<p><img src="https://openrouter.ai/blog/images/guardrail-policies.png" alt="Guardrails 现在将组织限制与工作空间默认值分开"></p>
+<p>一年前，OpenRouter 上的大多数公司在少数团队中使用了人工智能。现在它已经扩展到各个部门。在 10 人或更多的团队中使用 OpenRouter 的人数增长了 70 倍，随着更多工作转移到代理，平均组织运行的活动 API 密钥数量是原来的三倍。</p>
+<p>管理所有这些的管理员不断要求同样的事情：为整个组织制定一套规则，并为需要更多规则的人提供例外空间。</p>
+<p>我们重建了 Guardrails 的配置方式，以便管理员现在可以设置组织范围的限制，为人们提供不同的预算和模型访问权限，并自行更改每项策略。</p>
+<p>首先，打开工作区的 <a href="https://openrouter.ai/workspaces">Guardrails 页面</a> 以设置策略，或阅读 <a href="https://openrouter.ai/docs/guides/features/guardrails/policies">Guardrail 策略文档</a>。</p>
+<h2>为什么我们改变护栏</h2>
+<p>我们针对早期模式构建了 Guardrails 的第一个版本：几个团队，一些 API 密钥。如今，我们看到成百上千的员工通过 SSO 登录，编码代理在每个工程师的笔记本电脑上运行，平台团队负责所有成本。</p>
+<p><img src="https://openrouter.ai/blog/images/guardrail-policies-approval-workflow.png" alt="选择护栏类型：预算、模型和提供商访问或内容审核。"></p>
+<p>这种转变体现在客户对我们的要求中：</p>
+<ul><li><strong>每人的预算，有例外。</strong> 团队希望为每个人提供默认的每月或每周预算，并为有需要的人提供更高的预算。由于每个预算水平都有一个护栏，一位客户有望为其大约 1,200 名员工每人创建一个单独的护栏。</li><li><strong>开始时的默认设置是保守的。</strong>客户希望新成员从最保守的设置开始，并随着时间的推移获得更多。旧模型的工作方式相反：工作区默认值是任何人都可以获得的最大工作区，而其他所有护栏只能收紧它。</li><li><strong>一条规则跨越多个工作区。</strong> 拥有多个业务部门的公司希望一次性设置 ZDR、提供商和区域规则，而不是将相同的护栏复制到每个工作区。</li><li><strong>一种处理请求的方法。</strong> 管理员不断被要求提供更大的预算或访问项目的新模型，并希望批准这是一个快速更改，而不是重建。</li></ul>
+<p>一些客户现在已经在 Guardrails 之上构建了自己的内部工作流程。员工要求更高的预算或访问项目的特定模型，并解释原因，然后管理员批准。通过组织设置单独的策略类型和限制，批准该请求只需一次更改。他们只是为该人员分配不同的预算或模型访问策略，并且它会自动保持在组织的限制范围内。</p>
+<h2>组织限制与工作区默认值是分开的</h2>
+<p>组织管理员现在可以为整个工作区设置限制，例如最大预算、零数据保留要求或可以使用哪些模型和提供程序。这些限制适用于工作区中的每个成员和 API 密钥，包括拥有自己的预算或模型政策的人员。</p>
+<p>在这些限制内，工作区管理员设置默认值。新会员加入后会立即获得默认预算和型号列表，管理员可以为特定人员提供更高的预算或访问更多型号的权限。所有这些都不能超越组织的限制。</p>
+<p><img src="https://openrouter.ai/blog/images/guardrail-policies-limits-defaults.png" alt="配置预算护栏，每月信用额度为 2,000 美元，并包含 BYOK 支出。"></p>
+<p>实际上，组织管理员将工程工作空间限制为每人每月 2,000 美元，仅限 ZDR 提供商，并且无法访问特定的高成本模型。工作区管理员将团队标准模型的新成员默认设置为每月 200 美元。新加入的工程师会自动获得 200 美元的违约金。领导代理项目的高级工程师每月可以获得 1,500 美元，并可以使用更多模型。工作场所中的任何人每月的费用不得超过 2,000 美元，也不得使用非 ZDR 提供商。</p>
+<h2>预算、模型访问和审核是单独的政策</h2>
+<p>一种护栏，用于将预算、模型和提供商访问以及内容审核捆绑到一个命名对象中。它们现在是三种不同的保单类型：</p>
+<ul><li><strong>预算</strong>设置美元支出上限，每天、每周或每月重置。</li><li><strong>模型和提供程序访问</strong>控制可以使用哪些模型和提供程序、ZDR 和数据区域。</li><li><strong>内容审核</strong>涵盖提示注入保护、敏感信息检测和自定义内容过滤器。</li></ul>
+<p>我们将它们分开，因为它们不会一起改变。一个人的预算可能会随着每个新项目的变化而变化，而团队的模型列表和审核规则可能会在几个月内保持不变。</p>
+<p>现在，团队共享一种模型访问策略和一项审核策略，您可以更改一个人的预算，而无需触及其他任何内容。</p>
+<h2>向后兼容</h2>
+<p>您无需更改任何内容即可保持当前设置。现有的 Guardrails 保留其 ID 并执行相同的规则，并且 Guardrails API 和 Terraform 资源像以前一样工作。现在，每个护栏还显示为单独的预算、模型访问和审核策略，因此您可以在准备好时一次移动一个工作区。</p>
+<p>如果您通过 API 或 Terraform 管理 Guardrail，请首先阅读<a href="https://openrouter.ai/docs/guides/features/guardrails/policies-migration">迁移到 Guardrail 策略</a>，因为在仪表板中所做的更改不会同步回您的配置。</p>
+<h2>开始使用</h2>
+<p>要尝试它，请在您管理的任何工作区中打开 Guardrails 页面。您现有的护栏已经作为单独的策略存在。良好的第一步是提高一个人的预算而不触及其他任何东西。组织管理员可以通过工作区范围的护栏设置组织范围的限制。有关完整设置，请参阅 <a href="https://openrouter.ai/docs/guides/features/guardrails/policies">Guardrail 策略文档</a>。</p>
+<h2>常见问题解答</h2>
+<h3>什么是 OpenRouter Guardrail？</h3>
+<p>Guardrails 允许组织控制其成员和 API 密钥的支出、模型和提供商访问以及内容审核。</p>
+<h3>我可以为不同的人设置不同的人工智能预算吗？</h3>
+<p>是的。将预算政策分配给成员或 API 密钥。它每天、每周或每月重置，并且不能超出组织管理员设置的限制。</p>
+<h3>预算是否在整个工作区共享？</h3>
+<p>否。每个预算适用于每个成员或每个 API 密钥，而不是作为共享池。每月 100 美元的限额意味着每个人最多可以花费 100 美元。</p>
+<h3>我现有的护栏会怎样？</h3>
+<p>他们继续执行相同的规则并保留自己的身份证件。每一项现在还显示为最多三项单独的政策。</p>
+<h3>我需要迁移到新的 API 吗？</h3>
+<p>不会。现有的 Guardrails API 和 Terraform 资源将继续工作。新的策略端点与它们一起位于“/api/v1/guardrails/policies”下。</p>
+<h3>谁可以管理护栏政策？</h3>
+<p>组织管理员可以管理每项策略，包括组织范围的限制。工作区管理员管理工作区中的策略。</p>]]></content:encoded>
+    </item>
+    <item>
       <title>如何用 LLM 从 PDF 中提取表格</title>
       <link>https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm/</guid>
@@ -8240,280 +8288,6 @@ if usage:
 <p>先描述改动，再点名要保留什么，例如 &quot;Change the background to a snowy street at night. Keep the subject exactly as is.&quot;。一个请求一条指令效果最好。要精准结果，就小步编辑，把每张返回的图作为下一个提示词的源图再发回去。</p>
 <h2>参考资料</h2>
 <ul><li><a href="https://openrouter.ai/keys">OpenRouter API keys</a>：创建管理每个请求用到的 key。</li><li><a href="https://openrouter.ai/collections/image-models">图像模型合集</a>：可编辑模型的完整清单及其输入支持。</li><li><a href="https://openrouter.ai/docs/guides/overview/multimodal/image-generation">图像生成文档</a>：从文本创建图片的姊妹指南。</li><li><a href="https://openrouter.ai/docs/guides/features/presets">Presets 指南</a>：按环境而非代码钉住模型及其选项。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Seedance 2.5 评测：它最擅长什么、何时使用</title>
-      <link>https://openrouter.ai/blog/insights/seedance-2-5-review/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/insights/seedance-2-5-review/</guid>
-      <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Seedance 2.5 Review: What It&apos;s Best At and When to Use It</description>
-      <content:encoded><![CDATA[<h1>Seedance 2.5 评测：它最擅长什么、何时使用</h1>
-<p>OpenRouter ·9/9/2026 · 更新于 9/24/2026</p>
-<p>Seedance 2.5 自 2026 年 8 月 7 日起在我们的视频 API 上线。截至 2026 年 9 月 3 日，<a href="https://openrouter.ai/bytedance/seedance-2.5">模型页面</a>列出的价格是每生成一秒视频 $0.1028 起，也就是 480p 折算出来的秒价。这个每秒价格是推导值，不是固定价。计费按视频 token，token 数随输出像素和时长一起缩放，所以同一模型一秒 720p 大约是一秒 480p 的两倍出头。</p>
-<p>这个模型的形态也和 Seedance 2.0 不同：时长做到 30 秒而不是 15 秒，分辨率停在 720p 而不是 4K。下面讲的是它擅长什么、各分辨率下一条片段花多少钱、它与我们自己目录数据下的 Seedance 2.0、Wan 3.0 和 Veo 3.1 怎么比，以及我们建议改用其他模型的情形。</p>
-<h2>太长不看</h2>
-<ul><li>最擅长长单镜头，以及从已有素材出发的工作。片段最长 30 秒，<code>input_references</code> 接受图像、视频和音频素材，已有片段可以被编辑或延展，而不是重新生成。</li><li>截至 2026 年 9 月 3 日的在线规格：4 到 30 秒片段，480p 或 720p，六种画幅比，首尾帧控制，音频在同一次生成中产出。</li><li>成本约 480p 每秒 $0.103、720p 每秒 $0.231，由计费公式推导：24 fps 下（宽 x 高 x fps x 时长）/ 1024 个视频 token，每 token $0.0000107。</li><li>带视频参考的请求按每 token $0.0000064 计费，比基础价低约 40%，这让编辑和延展的每秒成本比从零生成更便宜。</li><li>音频不加钱：<code>generate_audio</code> 开或关我们都按同一价计费。Veo 3.1 和 Seedance 1.5 Pro 不是这样，两者静音输出都更便宜。</li><li>需要 1080p 或 4K、需要同片段长度下最低秒价、或需要逐帧可复现时，请换模型。</li><li>slug 是 <code>bytedance/seedance-2.5</code>。更高分辨率属于 <code>bytedance/seedance-2.0</code>；<code>bytedance/seedance-2.0-fast</code> 和 <code>bytedance/seedance-2.0-mini</code> 是更便宜的草稿 slug。</li></ul>
-<h2>Seedance 2.5 是什么</h2>
-<p>Seedance 2.5 是 ByteDance（字节跳动）的视频生成模型，能把多种输入合成一路视频输出。你可以纯文本提示词生成，可以用图像钉住镜头的首帧或尾帧，也可以用参考素材引导结果而不锁定具体帧。我们的模型页把它描述为适合长镜头叙事、参考生成、视频编辑和视频延展，这四件事基本覆盖了它的用途。</p>
-<p>下面是来自我们<a href="https://openrouter.ai/api/v1/videos/models">视频模型端点</a>的当前规格快照，方便你看到这些能力在实际中到哪儿为止。</p>
-<table><thead><tr><th><strong>字段</strong></th><th><strong>值</strong></th></tr></thead><tbody><tr><td>Slug</td><td><code>bytedance/seedance-2.5</code></td></tr><tr><td>发布日期</td><td>2026 年 8 月 7 日</td></tr><tr><td>片段长度</td><td>4 到 30 秒</td></tr><tr><td>分辨率</td><td>480p、720p</td></tr><tr><td>画幅比</td><td>16:9、4:3、1:1、3:4、9:16、21:9</td></tr><tr><td>帧控制</td><td><code>frame_images</code> 接受 <code>first_frame</code> 和 <code>last_frame</code></td></tr><tr><td>参考</td><td><code>input_references</code> 接受图像、视频和音频素材</td></tr><tr><td>音频</td><td><code>generate_audio</code>，默认为 true</td></tr><tr><td>Seed</td><td>接受，但不保证确定性</td></tr><tr><td>提供商透传键</td><td><code>watermark</code>、<code>req_key</code>、<code>output_format</code></td></tr><tr><td>价格</td><td>每视频 token $0.0000107；带视频参考时 $0.0000064</td></tr></tbody></table>
-<p><em>最后核验于 2026 年 9 月 3 日，来源为视频模型端点。</em></p>
-<p>端点还列出了精确输出尺寸。当你更愿意发 <code>size</code> 而不是&quot;分辨率+画幅比&quot;时这很有用：480p 有 854x480、752x560、640x640、560x752、480x854、992x432；720p 有 1280x720、1112x834、960x960、834x1112、720x1280、1470x630。</p>
-<h3>五个 Seedance slug，你要的是哪一个</h3>
-<p>模型名是给人看的标签（ByteDance: Seedance 2.5），slug 是你填进 model 字段的字符串（<code>bytedance/seedance-2.5</code>）。我们上架了五个，它们不能互换。Seedance 2.5 最新也最长。<a href="https://openrouter.ai/bytedance/seedance-2.0">Seedance 2.0</a> 是高分辨率担当：4 到 15 秒、480p 到 4K，480p 和 720p 按每视频 token $0.000007。<a href="https://openrouter.ai/bytedance/seedance-2.0-fast">Seedance 2.0 Fast</a> 和 <a href="https://openrouter.ai/bytedance/seedance-2.0-mini">Seedance 2.0 Mini</a> 最长 15 秒、封顶 720p，每 token $0.0000042 和 $0.0000035，是草稿用的两个 slug。<a href="https://openrouter.ai/bytedance/seedance-1-5-pro">Seedance 1.5 Pro</a> 是老一代，单趟同时生成视频和音频，封顶 1080p 和 12 秒，带音频每 token $0.0000024，不带音频减半。</p>
-<h3>它不做什么</h3>
-<p>Seedance 2.5 没有列 1080p，也没有 4K 输出。需要其中之一，请找同家族的 Seedance 2.0，或家族之外的 Veo 3.1。这是新版比旧版规格更窄的唯一一项，围绕 2.5 做设计之前，请先对照你的交付格式检查这条。</p>
-<h2>它最擅长什么</h2>
-<p>4 到 30 秒的时长窗口和参考输入描述的是模型&quot;接受什么&quot;。选择它而不是家族里其他成员的理由更窄：它是家族里为长度、为已有素材而生的那个 Seedance。</p>
-<p><img src="https://openrouter.ai/blog/images/seedance-2-5-review-controls.png" alt="Seedance 2.5 的四个可选请求控制叠加成层级的示意图：纯文本提示词、钉住首尾帧的 frame images、接受图像视频音频素材的 input references、以及收窄波动的 seed 加提供商透传"></p>
-<p><em>四个可选控制，每个都减少模型能自行改变的程度。帧图与参考素材选择的是不同模式而非叠加使用，两者都发送时帧图优先。</em></p>
-<h3>一次生成 30 秒</h3>
-<p>30 秒是我们平台上最长的单次生成，只有 <a href="https://openrouter.ai/alibaba/wan-3.0">Wan 3.0</a> 和 <a href="https://openrouter.ai/alibaba/wan-3.0-prime">Wan 3.0 Prime</a> 持平。其他所有公布时长范围的模型都止步 20 秒或更短。这一点重要，因为长镜头的替代品就是拼接短镜头，而拼接正是连续性崩掉的地方。如果你的交付物是一条 30 秒广告或一个连续场景，这是最短路径。</p>
-<h3>三种模态的参考</h3>
-<p>从生成代际 2 开始（含 2.5），<a href="https://openrouter.ai/docs/cookbook/video-generation/reference-to-video"><code>input_references</code></a> 接受图像、音频和视频素材。图像参考带入一张脸、一个产品或一种风格；视频参考给模型一段可编辑或可延展的现成素材；音频参考给它一条可依循的音轨。我们的模型页列了每次请求最多 50 个参考素材——这是模型页的数字，不是我们端点公布的限制，请把确切上限当作&quot;报告值&quot;而非&quot;实测值&quot;。</p>
-<p>视频和音频参考适用于代际 2 起的所有 Seedance 模型，所以在家族内这不是 2.5 独有的。它独有于家族对目录其余部分：Wan 3.0、Veo 3.1 和 Kling v3.0 Pro 都只接受图像参考。</p>
-<h3>编辑和延展按更低费率计费</h3>
-<p>带视频参考且不带帧图的请求按每视频 token $0.0000064 而不是 $0.0000107 计费，便宜约 40%。720p 下就是每秒 $0.138 而不是 $0.231。所以从这个模型拿 30 秒 720p 内容最便宜的方式，是延展你已有的素材，而不是冷启动生成。</p>
-<h3>镜头的两端都能钉，不只是开头</h3>
-<p><a href="https://openrouter.ai/docs/cookbook/video-generation/image-to-video"><code>frame_images</code></a> 接受 <code>first_frame</code> 和 <code>last_frame</code> 两种类型，你可以钉住一个镜头从哪里开始、在哪里结束，让模型补中间的运动。另一个 30 秒模型 Wan 3.0 只列了 <code>first_frame</code>。如果请求同时带帧图和参考素材，帧图优先，任务按图生视频处理——参考不会有可见效果，请求按基础价计费。</p>
-<h3>音频同趟生成、不加钱</h3>
-<p><code>generate_audio</code> 默认为 true，而我们的视频 token 单价与音频开关无关，静音并不会省钱。Veo 3.1 带音频 $0.40/秒、不带 $0.20；Seedance 1.5 Pro 对静音输出直接把自己减半。模型页还列了多语言视听生成，所以非英文的台词值得先在这里试一把，再决定要不要为配音单独留预算。</p>
-<h2>它的用武之地（附可直接粘贴的提示词）</h2>
-<p>长度、参考、附带音频，指向一类具体的活：一个连续场景，或改动一段已有素材。三种情况非常贴合。</p>
-<h3>一个长镜头</h3>
-<p>这是最强的适配。30 秒够演一整场戏，模型也不需要你剪。按顺序写好节拍，每个节拍给镜头一条指令。</p>
-<pre><code>A single continuous 30-second take in a working bakery at dawn.
-
-Beats, in order: flour dust in low window light; a baker scoring a loaf;
-the loaf sliding into the oven; a wide of the shop as the lights come up
-and the first customer opens the door.
-
-Camera: slow handheld follow, no cuts, 35mm, natural light only.
-Audio: room tone, oven fan, one door chime at the end.</code></pre>
-<h3>延展或编辑已有素材</h3>
-<p>把片段作为视频参考发过来，只描述该变什么或接下来是什么。这就是按更低的视频输入费率计费的那种请求。</p>
-<pre><code>Video reference: the last 4 seconds of the bakery clip.
-
-Continue the same shot for 10 more seconds. The baker turns toward the
-counter and starts wiping it down. Keep the same lighting, lens, grain,
-and camera motion. Do not change the room or the wardrobe.</code></pre>
-<h3>对话与口播镜头</h3>
-<p>短句比长句对口型更稳，但 30 秒让你在一个镜头里放两三句，而不是一代际一句。</p>
-<pre><code>Reference image: a portrait of the speaker.
-
-The speaker sits at a desk in soft office light and says: &quot;We tried it on
-one team first. It took a week. Then we rolled it out everywhere.&quot;
-Natural lip movement synced to the lines, a short pause between sentences,
-medium close-up, subtle hand gesture on the last word. Room tone and light
-keyboard ambiance underneath.</code></pre>
-<h3>可迁移的提示词模式</h3>
-<ul><li>节拍按顺序排、标好时间。30 秒的提示词更像分镜表而不像描写文。</li><li>点名哪些东西必须保持不变。脸、服装、产品比例、镜头、灯光都值得明说，别指望参考自动带上。</li><li>点名运镜和镜头。推近、手持、35mm、浅景深，都是模型会执行的指令。</li><li>480p 打草稿，720p 出成品。两档价格差了两倍多，但提示词的写法没有区别。</li></ul>
-<h2>在你自己的代码里调用</h2>
-<p>上面那些提示词是进请求体的，不是聊天消息——视频生成不走 <code>/chat/completions</code>。它有一个<a href="https://openrouter.ai/blog/tutorials/video-generation-api/">专用异步端点</a>：向 <code>POST /api/v1/videos</code> 提交任务，轮询我们返回的 <code>polling_url</code> 直到状态变为 <code>completed</code>，然后用 API key 下载结果。生成通常要 30 秒到几分钟，30 秒轮询间隔是合理默认。视频模型也不出现在普通模型列表里，请用 <code>/api/v1/videos/models</code> 或<a href="https://openrouter.ai/collections/video-models">视频模型合集</a>找它们。</p>
-<p>最小的文生视频调用就是&quot;提交 + 轮询&quot;。</p>
-<p><strong>cURL</strong></p>
-<pre><code>curl -X POST &quot;https://openrouter.ai/api/v1/videos&quot; \
-  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
-  -H &quot;Content-Type: application/json&quot; \
-  -d '{
-    &quot;model&quot;: &quot;bytedance/seedance-2.5&quot;,
-    &quot;prompt&quot;: &quot;A chef plates a bowl of ramen in a narrow shop at night, neon reflections moving across the window. Slow push-in, shallow depth of field.&quot;,
-    &quot;duration&quot;: 12,
-    &quot;resolution&quot;: &quot;720p&quot;,
-    &quot;aspect_ratio&quot;: &quot;16:9&quot;
-  }'
-
-# The 202 response carries { id, polling_url, status }. Poll that URL
-# every 30 seconds until status is &quot;completed&quot;. A status of &quot;failed&quot;,
-# &quot;cancelled&quot;, or &quot;expired&quot; is terminal, with the reason in .error.
-curl &quot;https://openrouter.ai/api/v1/videos/JOB_ID/content?index=0&quot; \
-  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
-  --output shot-01.mp4</code></pre>
-<p><strong>TypeScript</strong></p>
-<pre><code>const key = process.env.OPENROUTER_API_KEY;
-const headers = { Authorization: `Bearer ${key}`, &quot;Content-Type&quot;: &quot;application/json&quot; };
-
-const submit = await fetch(&quot;https://openrouter.ai/api/v1/videos&quot;, {
-  method: &quot;POST&quot;,
-  headers,
-  body: JSON.stringify({
-    model: &quot;bytedance/seedance-2.5&quot;,
-    prompt: &quot;A chef plates a bowl of ramen in a narrow shop at night, neon &quot; +
-      &quot;reflections moving across the window. Slow push-in.&quot;,
-    duration: 12,
-    resolution: &quot;720p&quot;,
-    aspect_ratio: &quot;16:9&quot;,
-  }),
-});
-
-const job = await submit.json();
-let status = job;
-
-while (status.status === &quot;pending&quot; || status.status === &quot;in_progress&quot;) {
-  await new Promise((r) =&gt; setTimeout(r, 30_000));
-  status = await (await fetch(job.polling_url, { headers })).json();
-}
-
-if (status.status === &quot;completed&quot;) {
-  console.log(status.unsigned_urls[0]);
-} else {
-  // failed, cancelled, or expired are all terminal. The reason is in status.error.
-  console.error(status.status, status.error);
-}</code></pre>
-<p><strong>Python</strong></p>
-<pre><code>import os
-import time
-import requests
-
-headers = {
-    &quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;,
-    &quot;Content-Type&quot;: &quot;application/json&quot;,
-}
-
-job = requests.post(
-    &quot;https://openrouter.ai/api/v1/videos&quot;,
-    headers=headers,
-    json={
-        &quot;model&quot;: &quot;bytedance/seedance-2.5&quot;,
-        &quot;prompt&quot;: &quot;A chef plates a bowl of ramen in a narrow shop at night, &quot;
-        &quot;neon reflections moving across the window. Slow push-in.&quot;,
-        &quot;duration&quot;: 12,
-        &quot;resolution&quot;: &quot;720p&quot;,
-        &quot;aspect_ratio&quot;: &quot;16:9&quot;,
-    },
-).json()
-
-status = job
-while status[&quot;status&quot;] in (&quot;pending&quot;, &quot;in_progress&quot;):
-    time.sleep(30)
-    status = requests.get(job[&quot;polling_url&quot;], headers=headers).json()
-
-if status[&quot;status&quot;] == &quot;completed&quot;:
-    video = requests.get(status[&quot;unsigned_urls&quot;][0], headers=headers)
-    with open(&quot;shot-01.mp4&quot;, &quot;wb&quot;) as f:
-        f.write(video.content)
-else:
-    # failed, cancelled, or expired are all terminal. The reason is in &quot;error&quot;.
-    raise RuntimeError(f&quot;{status['status']}: {status.get('error')}&quot;)</code></pre>
-<p>加上参考，就把上面的调用变成了编辑或延展工作流。下面的例子延展一条已有片段——正是按更低视频输入费率计费的那种请求。分辨率、时长、画幅比都是可选的，seed 值只是占位而不是必填。</p>
-<p><strong>cURL</strong></p>
-<pre><code># A video reference asks the model to edit or extend existing footage.
-# frame_images pins exact frames instead, takes priority if you send both,
-# and bills at the base rate rather than the video-input rate.
-curl -X POST &quot;https://openrouter.ai/api/v1/videos&quot; \
-  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
-  -H &quot;Content-Type: application/json&quot; \
-  -d '{
-    &quot;model&quot;: &quot;bytedance/seedance-2.5&quot;,
-    &quot;prompt&quot;: &quot;Continue the same shot. The chef looks up from the counter, a flicker of recognition. Keep the lighting, lens, and camera motion.&quot;,
-    &quot;input_references&quot;: [
-      { &quot;type&quot;: &quot;video_url&quot;, &quot;video_url&quot;: { &quot;url&quot;: &quot;https://example.com/ramen-shop.mp4&quot; } },
-      { &quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: { &quot;url&quot;: &quot;https://example.com/chef.png&quot; } }
-    ],
-    &quot;duration&quot;: 10,
-    &quot;resolution&quot;: &quot;720p&quot;,
-    &quot;aspect_ratio&quot;: &quot;16:9&quot;,
-    &quot;generate_audio&quot;: true,
-    &quot;seed&quot;: 42
-  }'</code></pre>
-<p><strong>TypeScript</strong></p>
-<pre><code>const body = {
-  model: &quot;bytedance/seedance-2.5&quot;,
-  prompt: &quot;Continue the same shot. The chef looks up from the counter, a &quot; +
-    &quot;flicker of recognition. Keep the lighting, lens, and camera motion.&quot;,
-  // A video reference asks the model to edit or extend existing footage.
-  // frame_images pins exact frames instead, takes priority if you send both,
-  // and bills at the base rate rather than the video-input rate.
-  input_references: [
-    { type: &quot;video_url&quot;, video_url: { url: &quot;https://example.com/ramen-shop.mp4&quot; } },
-    { type: &quot;image_url&quot;, image_url: { url: &quot;https://example.com/chef.png&quot; } },
-  ],
-  duration: 10,
-  resolution: &quot;720p&quot;,
-  aspect_ratio: &quot;16:9&quot;,
-  generate_audio: true,
-  seed: 42,
-};
-
-const res = await fetch(&quot;https://openrouter.ai/api/v1/videos&quot;, {
-  method: &quot;POST&quot;,
-  headers: {
-    Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-    &quot;Content-Type&quot;: &quot;application/json&quot;,
-  },
-  body: JSON.stringify(body),
-});
-
-const job = await res.json(); // { id, polling_url, status: &quot;pending&quot; }
-console.log(job.id, job.polling_url);</code></pre>
-<p><strong>Python</strong></p>
-<pre><code>import os
-import requests
-
-body = {
-    &quot;model&quot;: &quot;bytedance/seedance-2.5&quot;,
-    &quot;prompt&quot;: &quot;Continue the same shot. The chef looks up from the counter, &quot;
-    &quot;a flicker of recognition. Keep the lighting, lens, and camera motion.&quot;,
-    # A video reference asks the model to edit or extend existing footage.
-    # frame_images pins exact frames instead, takes priority if you send
-    # both, and bills at the base rate rather than the video-input rate.
-    &quot;input_references&quot;: [
-        {&quot;type&quot;: &quot;video_url&quot;,
-         &quot;video_url&quot;: {&quot;url&quot;: &quot;https://example.com/ramen-shop.mp4&quot;}},
-        {&quot;type&quot;: &quot;image_url&quot;,
-         &quot;image_url&quot;: {&quot;url&quot;: &quot;https://example.com/chef.png&quot;}},
-    ],
-    &quot;duration&quot;: 10,
-    &quot;resolution&quot;: &quot;720p&quot;,
-    &quot;aspect_ratio&quot;: &quot;16:9&quot;,
-    &quot;generate_audio&quot;: True,
-    &quot;seed&quot;: 42,
-}
-
-job = requests.post(
-    &quot;https://openrouter.ai/api/v1/videos&quot;,
-    headers={&quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;},
-    json=body,
-).json()
-
-print(job[&quot;id&quot;], job[&quot;polling_url&quot;])</code></pre>
-<p>Seedance 2.5 接受 seed，但并非每个提供商都保证确定性。构建依赖可复现输出的工作流之前，请先看<a href="https://openrouter.ai/docs/guides/overview/multimodal/video-generation">视频生成文档</a>。<a href="https://openrouter.ai/docs/cookbook/video-generation/provider-specific-video-options">提供商专属选项</a>走 <code>provider.options.&lt;slug&gt;.parameters</code>，其中 <code>&lt;slug&gt;</code> 是提供商 slug。Seedance 只跑在一家提供商上：<code>seed</code>，其允许的透传键是 <code>watermark</code>、<code>req_key</code> 和 <code>output_format</code>。</p>
-<h2>一条片段实际花多少钱</h2>
-<p>这些请求按公式而不是固定秒价计费，这是上量之前最值得搞懂的一件事。token 数是 24 fps 下的（宽 x 高 x fps x 时长）/ 1024，每个 token 按 $0.0000107 计费，带视频参考时 $0.0000064。所以变量只有像素、秒数、以及你是否供了素材——任何片段在跑之前就能算出价来。</p>
-<table><thead><tr><th><strong>分辨率</strong></th><th><strong>每秒视频 token</strong></th><th><strong>每秒</strong></th><th><strong>10 秒片段</strong></th><th><strong>30 秒片段</strong></th><th><strong>带视频参考的每秒</strong></th></tr></thead><tbody><tr><td>480p (854x480)</td><td>约 9,600</td><td>$0.103</td><td>$1.03</td><td>$3.08</td><td>$0.062</td></tr><tr><td>720p (1280x720)</td><td>21,600</td><td>$0.231</td><td>$2.31</td><td>$6.93</td><td>$0.138</td></tr></tbody></table>
-<p><em>最后核验于 2026 年 9 月 3 日。数字由 token 公式和视频模型端点上的单价计算得出。竖屏在像素数相同时与横屏等价，720x1280 的价格与 1280x720 相同。</em></p>
-<p>把其中一行从头算一遍：16:9 的 10 秒 720p 片段是 (1280 x 720 x 24 x 10) / 1024 = 216,000 个视频 token，216,000 x $0.0000107 = $2.31。每秒那一列就是这个数除以时长、保留三位小数。</p>
-<p>对账之前有两个细节值得知道。我们的事前估算用每个分辨率档的标准尺寸，所以 720p 的 21:9 片段会按 1280x720 估，最终扣款以任务完成时提供商上报的 token 数为准。带视频参考的请求预先授权固定 $2 而不是按公式，因为 token 数取决于你输入素材的长度，任务跑起来之前无从得知。这类请求的最终扣款仍按上报 token 数以视频输入费率结算。</p>
-<p>拿 Veo 3.1 带音频 $0.40/秒作对照：Seedance 2.5 在 480p 大约便宜四倍，720p 大约便宜 1.7 倍。拿 Wan 3.0 的 480p $0.05/秒、720p $0.10/秒作对照：Seedance 2.5 两档都大约贵一倍。它不是最便宜的视频生成方式，它是最便宜的&quot;30 秒 + 尾帧控制/视频参考/音频参考&quot;生成方式。</p>
-<h2>Seedance 2.5 对阵 Seedance 2.0、Wan 3.0 和 Veo 3.1</h2>
-<p>会算一条片段的钱之后，对比就归结为<a href="https://openrouter.ai/docs/cookbook/video-generation/choose-video-model">哪个需求先撞上你</a>。下面四个模型都在我们目录里，所有数字来自同一天同一个端点。</p>
-<p><img src="https://openrouter.ai/blog/images/seedance-2-5-review-capability-matrix.png" alt="能力矩阵：创作者对 Seedance 2.5 检验的五个类别，长片段、多模态参考、编辑与延展为文档记载，音频为文档记载且有质量反馈，运动真实感仅创作者反馈"></p>
-<p><em>创作者会检验的五个类别，对照我们自己的来源对每一项的记载。</em></p>
-<table><thead><tr><th></th><th><strong>Seedance 2.5</strong></th><th><strong>Seedance 2.0</strong></th><th><strong>Wan 3.0</strong></th><th><strong>Veo 3.1</strong></th></tr></thead><tbody><tr><td>Slug</td><td><code>bytedance/seedance-2.5</code></td><td><code>bytedance/seedance-2.0</code></td><td><code>alibaba/wan-3.0</code></td><td><code>google/veo-3.1</code></td></tr><tr><td>片段长度</td><td>4 到 30 秒</td><td>4 到 15 秒</td><td>2 到 30 秒</td><td>4、6 或 8 秒</td></tr><tr><td>分辨率</td><td>480p、720p</td><td>480p 到 4K</td><td>480p 到 1080p</td><td>720p 到 4K</td></tr><tr><td>画幅比数量</td><td>6</td><td>7</td><td>5</td><td>2</td></tr><tr><td>首帧</td><td>有</td><td>有</td><td>有</td><td>有</td></tr><tr><td>尾帧</td><td>有</td><td>有</td><td>未列出</td><td>有</td></tr><tr><td>图像参考</td><td>有</td><td>有</td><td>有</td><td>有</td></tr><tr><td>视频与音频参考</td><td>有</td><td>有</td><td>未列出</td><td>未列出</td></tr><tr><td>接受 seed</td><td>有</td><td>有</td><td>有</td><td>有</td></tr><tr><td>480p 带音频，每秒</td><td>$0.103</td><td>$0.067</td><td>$0.05</td><td>无此档</td></tr><tr><td>720p 带音频，每秒</td><td>$0.231</td><td>$0.151</td><td>$0.10</td><td>$0.40</td></tr><tr><td>1080p 带音频，每秒</td><td>无此档</td><td>$0.374</td><td>$0.20</td><td>$0.40</td></tr><tr><td>4K 带音频，每秒</td><td>无此档</td><td>$0.778</td><td>无此档</td><td>$0.60</td></tr></tbody></table>
-<p><em>最后核验于 2026 年 9 月 3 日，来源为视频模型端点。Seedance 的每秒数字由 token 公式推导，而 Wan 3.0 和 Veo 3.1 在同一端点上公布的是固定每秒 SKU——数字可比，但来路不同。</em></p>
-<p>Seedance 2.5 同时赢在输入广度和时长上。它是这里唯一在一个请求里同时收 30 秒、两种帧控制、视频和音频参考的模型。要 1080p 和 4K 请用 Seedance 2.0，而且两者共有的每个分辨率上它每秒都更便宜。Wan 3.0 用一半的价格做到 30 秒上限并能到 1080p，但只列了首帧控制、没有视频或音频参考——做长的文生视频它是更好的默认，做编辑它更差。Veo 3.1 是固定长度选项，4K 每秒 $0.60；想更便宜地上 4K，还有每秒 $0.30 生成 4K 的 Veo 3.1 Fast。</p>
-<p>四个模型都在同一个 <code>POST /api/v1/videos</code> 调用和同一个 key 后面，自己跑对比是改一个字段，不是订四份服务。<a href="https://openrouter.ai/collections/video-models">视频模型合集</a>列了我们上架的全部视频模型，模态筛选已替你做好。</p>
-<p>对比也不一定要写代码。我们的<a href="https://openrouter.ai/benchmarks/media/videos">视频基准页面</a>把同一个提示词跑遍我们上架的每个视频模型，包括 Seedance 2.5、Seedance 2.0、Wan 3.0 和 Veo 3.1，每条产出旁边就是它的成本和生成耗时。看片子，按成本或耗时排序，再挑模型去聊天里试。买任何单之前，先用它核验本文的这些说法。</p>
-<h2>结论</h2>
-<p>当片段长度、已有素材或附带音频比分辨率更重要时，Seedance 2.5 是对的选择。一次生成 30 秒、图像/视频/音频三种参考、两种帧控制、带视频参考的请求更低价——这个组合在我们目录里没有第二家。需要 1080p 或 4K 用 Seedance 2.0；想用更少的钱拿 30 秒文生视频用 Wan 3.0；交付物是固定 4/6/8 秒的 4K 片段用 Veo 3.1。需要可复现、可送审产出的团队，请把它现在的结果当待审素材而不是成片。</p>
-<h2>常见问题</h2>
-<h3>Seedance 2.5 真的适合做视频吗？</h3>
-<p>适合——对更长的单镜头和从已有素材出发的工作。Seedance 2.5 生成 4 到 30 秒片段，接受图像、视频和音频参考，支持首尾帧控制，音频同趟生成且不加价。当你需要 1080p 或 4K 输出、最低每秒价格或逐帧可复现时，它是更弱的选择。</p>
-<h3>Seedance 2.5 能做什么？</h3>
-<p>Seedance 2.5 可以从文本提示词生成视频，从钉住首帧或尾帧的图像生成，或从把主体、风格、已有素材带进新片段的参考素材生成。截至 2026 年 9 月 3 日，它产出 4 到 30 秒、480p 或 720p、六种画幅比，默认带音频，并有一个 seed 参数收窄运行间波动。<a href="https://openrouter.ai/bytedance/seedance-2.5">模型页面</a>还列了视频编辑、视频延展和每次请求最多 50 个参考素材。</p>
-<h3>Seedance 2.5 每条视频多少钱？</h3>
-<p>Seedance 2.5 按视频 token 计费，token 数是 24 fps 下的（宽 x 高 x fps x 时长）/ 1024，价格随像素和秒数一起缩放。单价每 token $0.0000107，折算约 480p 每秒 $0.103、720p 每秒 $0.231，10 秒 720p 片段大约 $2.31。音频按同价包含在内。带视频参考的请求改按每 token $0.0000064，便宜约 40%。</p>
-<h3>哪个 AI 视频模型最好？</h3>
-<p>没有唯一最好的视频模型，正确答案取决于哪个需求先撞上你。要 30 秒片段且需要尾帧控制或视频/音频参考，选 Seedance 2.5；要 1080p 和 4K，选 Seedance 2.0；Wan 3.0 也能到 30 秒、每秒更便宜、能到 1080p，但只列了首帧控制；Veo 3.1 适合固定 4/6/8 秒的 4K 片段。它们都走同一个异步视频端点，改一个字段就能用你自己的提示词对比。完整清单见<a href="https://openrouter.ai/collections/video-models">视频模型合集</a>。</p>
-<h3>我怎么访问 Seedance 2.5 API？</h3>
-<p>向 <code>https://openrouter.ai/api/v1/videos</code> 发 POST 请求，model 字段填 <code>bytedance/seedance-2.5</code>，<code>prompt</code> 填提示词；然后轮询响应里的 <code>polling_url</code> 直到状态 <code>completed</code>，用 API key 下载结果。生成是异步的，通常 30 秒到几分钟。完整请求 schema 包括 <a href="https://openrouter.ai/docs/cookbook/video-generation/video-generation-webhooks">webhooks</a>，见<a href="https://openrouter.ai/docs/guides/overview/multimodal/video-generation">视频生成页面</a>。</p>
-<h3>Seedance 2.5 做音频吗？</h3>
-<p>做。音频与视频同趟生成，<code>generate_audio</code> 默认 true。开不开音频每 token 单价都一样，没有省钱理由去关掉。Veo 3.1 和 Seedance 1.5 Pro 不是这样，两者静音输出都更便宜。模型页还列了多语言视听生成，值得用你的目标语言台词测一把。</p>
-<h3>Seedance 2.5 和 Seedance 2.0 有什么区别？</h3>
-<p>2.5 时长翻倍、分辨率封顶更低。它生成 4 到 30 秒的 480p/720p 片段，接受图像、视频和音频参考，每视频 token $0.0000107。<a href="https://openrouter.ai/bytedance/seedance-2.0">Seedance 2.0</a> 生成 4 到 15 秒、480p 到 4K，480p/720p 每 token $0.000007，每秒更便宜，也是两者中唯一能到 1080p 或 4K 的。要长度、要编辑已有素材选 2.5，要分辨率选 2.0。</p>
-<h2>参考资料</h2>
-<ul><li><a href="https://openrouter.ai/bytedance/seedance-2.5">ByteDance: Seedance 2.5 模型页面</a>。入门价、发布日期、每秒费率、参考素材数量和特性描述。</li><li><a href="https://openrouter.ai/api/v1/videos/models">视频模型端点 (/api/v1/videos/models)</a>。本文引用的每个视频模型的支持时长、分辨率、画幅比、输出尺寸、帧图类型、seed 支持、透传键和定价 SKU。</li><li><a href="https://openrouter.ai/docs/guides/overview/multimodal/video-generation">视频生成文档</a>。请求 schema、异步任务生命周期、提供商透传、webhooks 和零数据保留排除条款。</li><li><a href="https://openrouter.ai/blog/announcements/video-generation/">Announcing Video Generation</a>。视频端点的发布范围和第一天支持的模型。</li><li><a href="https://openrouter.ai/collections/video-models">视频模型合集</a>。按视频输出筛选的目录，本文对比集的来源。</li><li><a href="https://openrouter.ai/benchmarks/media/videos">视频基准</a>。同一提示词下所有视频模型的并排产出，含每个模型的成本和生成时间。</li><li><a href="https://openrouter.ai/bytedance/seedance-2.0">ByteDance: Seedance 2.0 模型页面</a>。家族里高分辨率担当的分辨率范围、时长上限和每 token 费率。</li><li><a href="https://openrouter.ai/alibaba/wan-3.0">Alibaba: Wan 3.0 模型页面</a>。另一个 30 秒模型的时长上限、分辨率、帧控制和每秒定价。</li><li><a href="https://openrouter.ai/google/veo-3.1">Google: Veo 3.1 模型页面</a>。固定片段长度，以及带/不带音频的每秒定价。</li></ul>
-<p>以上所有产品来源最后核验于 2026 年 9 月 3 日。创作者报道仅作定位引用，不作为规格或价格来源。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

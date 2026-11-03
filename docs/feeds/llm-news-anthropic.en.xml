@@ -7,7 +7,51 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 28 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Make long-running agents faster with message threads</title>
+      <link>https://claude.com/resources/articles/message-threads</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/message-threads?li=1</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Message threads is now available in public beta on the Claude Platform. With message threads, agents no longer need to resend the full conversation history on every turn, reducing latency for long-running sessions.</p>
+<h3>How message threads works</h3>
+<p>A coding agent might make hundreds of requests in one session, and each request resends every earlier message and tool result. Once a conversation reaches hundreds of thousands of tokens, resending all of it adds time before Claude starts responding. With message threads, agents send only what’s new since the last turn, which reduces time to first token (TTFT).</p>
+<p>With message threads on by default for most Claude Code users, requests with 500k to 1M tokens see median TTFT drop by about 35%.</p>
+<p>To use message threads, add the <code>thread</code> parameter to Messages API requests. The first request includes the full conversation and starts a thread. Each request after that includes only the new messages and the ID of the previous response. Between turns, we hold each thread in memory, where it’s encrypted and not written to disk. A thread expires 5 minutes after its last request and your client then resends the full conversation to start a new one. While each request is smaller with message threads, Claude still reads the full conversation on every turn, so token usage stays the same.</p>
+<p>Message threads is best for active sessions where latency matters, including:</p>
+<ul><li><strong>Long-running coding agents</strong>, where each tool result or file edit adds to the conversation.</li><li><strong>Computer use agents</strong>, where screenshots stay with the thread instead of being re-uploaded on every turn.</li><li><strong>Document and image-heavy workflows</strong>, where requests are made smaller.</li></ul>
+<p>The more context an agent carries, the more message threads can reduce time to first token.</p>
+<h3>Getting started</h3>
+<p>Message threads is available now in public beta on the native Claude Platform, and on Claude Platform on AWS, Claude in Microsoft Foundry, and on Claude Models on Google Cloud (Anthropic managed). Standard Claude token rates and existing rate limits apply. See the <a href="http://platform.claude.com/docs/en/build-with-claude/message-threads">documentation</a> to get started.</p>
+<p>Article</p>
+<p>Oct 28, 2026</p>
+<h3>Smart reports, surveys, and pooled group budgets for Claude Enterprise</h3>
+<p>In many organizations, members have identified the unique work that Claude can unlock. The next step is expanding that work to every team.</p>
+<p>Claude Enterprise</p>
+<p>Article</p>
+<p>Oct 28, 2026</p>
+<h3>IDC brings Quanta into Claude and adopts Claude across the company</h3>
+<p>IDC integrated Claude as part of its Quanta platform, and it has rolled Claude out across its own business</p>
+<p>Claude Cowork</p>
+<p>Claude Code</p>
+<p>1 more</p>
+<p>: Claude Enterprise</p>
+<p>Claude Enterprise</p>
+<p>Article</p>
+<p>Oct 28, 2026</p>
+<h3>Introducing artifacts for legal work</h3>
+<p>Claude for Legal now includes ready-to-use artifacts for legal work that teams can adapt with their own data and connectors, and share across the business.</p>
+<p>Claude Enterprise</p>
+<p>Article</p>
+<p>Oct 27, 2026</p>
+<h3>Claude for Financial Advisors</h3>
+<p>Financial advisors can now connect Claude to the custodians, portfolio platforms, CRMs, and planning tools they depend on, along with new skills tailored to the daily work of a financial advisor.</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Smart reports, surveys, and pooled group budgets for Claude…</title>
       <link>https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets</link>
@@ -932,6 +976,37 @@
 <p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
     </item>
     <item>
+      <title>Donating Agent Skills to the Agentic AI Foundation</title>
+      <link>https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation?li=1</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Today, we’re donating <a href="https://agentskills.io/home">Agent Skills</a>, the open standard that gives AI agents specialized knowledge and workflows, to the Agentic AI Foundation (AAIF). More than 70 agent platforms, including ChatGPT, Cursor, GitHub Copilot, and VS Code, have integrated Agent Skills since we published the standard in December 2025.</p>
+<h3>Agent interoperability through simplicity</h3>
+<p>A skill is a folder containing a SKILL.md file that teaches an agent a specific task or domain, along with any scripts or reference material it needs. We developed skills while working on Claude Code. It handled general knowledge work well, but often lacked the procedural knowledge that real business tasks need. Within weeks of our October 2025 launch, developers published thousands of skills on GitHub and wrote loaders for Codex, Cursor, and OpenCode. We then published Agent Skills as an open standard, under its own GitHub organization and domain, so any agent could use it. So far, 1 million skills have been published and nearly 280 million installed.</p>
+<h3>Donating Agent Skills to AAIF</h3>
+<p>We’re committed to keeping Agent Skills open, community-driven, and vendor-neutral. Today, we are donating the standard to the Agentic AI Foundation (AAIF) under the Linux Foundation, <a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation">which we co-founded</a> with Block and OpenAI last year, and to which we donated the Model Context Protocol (MCP). The AAIF will provide a neutral home to the standard going forward, ensuring the community has a say in where Agent Skills go next.</p>
+<p>We are donating the Agent Skills name and logo, the GitHub organization, and the <a href="https://agentskills.io/home">agentskills.io</a> domain. You can continue to use the standard or contribute to it without joining the AAIF.</p>
+<p>Engineers from Anthropic, Google, OpenAI, and other companies will maintain the standard as individuals, with David Soria Parra and Mahesh Murag as Lead Maintainers.</p>
+<h3>What comes next</h3>
+<p>We’ve proposed starting with a roadmap covering versioned releases, a formal proposal process, and security guidance for people who write and install skills. As with MCP, the project will continue to prioritize community input and transparent decision-making. You can join the project’s <a href="https://discord.gg/MKPE9g8aUy">Discord</a> to give feedback on proposed specification changes.</p>
+<p>Thank you to the developers who built with Agent Skills from the start, and to the teams who brought skills into their products. Read the specification at <a href="https://agentskills.io">agentskills.io</a> and join the discussion on <a href="https://github.com/agentskills/agentskills">GitHub</a>.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Open call for guest investigators in the life sciences</title>
+      <link>https://www.anthropic.com/news/open-call-guest-investigators-life-sciences</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/open-call-guest-investigators-life-sciences?li=1</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Today, we’re inviting members of the life sciences community to apply to work with us on special projects. We’re looking for proposals from principal investigators and their research groups at academic institutions, nonprofits, or government labs who want to use Claude to investigate key questions in causal human biology, structural and computational molecular biology, medicinal chemistry, drug discovery, and clinical science.</p>
+<p>You can submit a <a href="https://www.anthropic.com/guest-investigator-program">proposal for a project here</a>.</p>
+<p>Over 8–12 weeks, guest investigators will work directly with Anthropic researchers on a problem of interest and produce the analyses, artifacts, and tools that will be most helpful for them in their work. Our team will run our models and harnesses at no cost to them.</p>
+<p>We’ll work together to publish these outputs and open-source the accompanying data and code. Guest investigators retain the rights to their data at every step during their project. They will also have the rights to any independent follow-on research that might come out of our collaboration.</p>
+<p>We’re looking for applicants who can clearly explain how they would benefit from direct collaboration with Anthropic’s researchers. Applicants should also make a reasonable case that their outputs (e.g., preliminary discoveries, answers to open questions, open-source datasets, or public resources) can be produced within the 8- to 12-week collaboration period. There may be an option for extension beyond the initial collaboration period for some projects.</p>
+<p>We understand that the results for most open problems of interest will take much longer to validate, but we’re looking for proposals that can produce some preliminary evidence in a relatively short amount of time.</p>
+<p>We aren’t asking for guest investigators to give us their data, either in the application or during the collaboration, and we’re requesting that applicants include only publicly available information in their application materials.</p>
+<p>Applications will be open for approximately 14 days, and we’ll strive to notify selected participants by email approximately 14 days after applications close. We look forward to potentially expanding this effort in the future as we learn more about how we can best support the scientific community.</p>
+<p>This program is one of several initiatives Anthropic is pursuing to invest more heavily in the life sciences and the broader scientific research community. Scientists who would like direct access to our most capable publicly available models for biology can apply to join our <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>. We’ve also continued to support researchers through our <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science initiative</a>, which provides scientists with Claude credits to accelerate their progress toward making scientific discoveries.</p>]]></content:encoded>
+    </item>
+    <item>
       <title>The full Claude Platform, available on Google Cloud</title>
       <link>https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed?li=1</guid>
@@ -989,37 +1064,6 @@
 <h3>Get the developer newsletter</h3>
 <p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
 <p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Donating Agent Skills to the Agentic AI Foundation</title>
-      <link>https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation?li=1</guid>
-      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Today, we’re donating <a href="https://agentskills.io/home">Agent Skills</a>, the open standard that gives AI agents specialized knowledge and workflows, to the Agentic AI Foundation (AAIF). More than 70 agent platforms, including ChatGPT, Cursor, GitHub Copilot, and VS Code, have integrated Agent Skills since we published the standard in December 2025.</p>
-<h3>Agent interoperability through simplicity</h3>
-<p>A skill is a folder containing a SKILL.md file that teaches an agent a specific task or domain, along with any scripts or reference material it needs. We developed skills while working on Claude Code. It handled general knowledge work well, but often lacked the procedural knowledge that real business tasks need. Within weeks of our October 2025 launch, developers published thousands of skills on GitHub and wrote loaders for Codex, Cursor, and OpenCode. We then published Agent Skills as an open standard, under its own GitHub organization and domain, so any agent could use it. So far, 1 million skills have been published and nearly 280 million installed.</p>
-<h3>Donating Agent Skills to AAIF</h3>
-<p>We’re committed to keeping Agent Skills open, community-driven, and vendor-neutral. Today, we are donating the standard to the Agentic AI Foundation (AAIF) under the Linux Foundation, <a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation">which we co-founded</a> with Block and OpenAI last year, and to which we donated the Model Context Protocol (MCP). The AAIF will provide a neutral home to the standard going forward, ensuring the community has a say in where Agent Skills go next.</p>
-<p>We are donating the Agent Skills name and logo, the GitHub organization, and the <a href="https://agentskills.io/home">agentskills.io</a> domain. You can continue to use the standard or contribute to it without joining the AAIF.</p>
-<p>Engineers from Anthropic, Google, OpenAI, and other companies will maintain the standard as individuals, with David Soria Parra and Mahesh Murag as Lead Maintainers.</p>
-<h3>What comes next</h3>
-<p>We’ve proposed starting with a roadmap covering versioned releases, a formal proposal process, and security guidance for people who write and install skills. As with MCP, the project will continue to prioritize community input and transparent decision-making. You can join the project’s <a href="https://discord.gg/MKPE9g8aUy">Discord</a> to give feedback on proposed specification changes.</p>
-<p>Thank you to the developers who built with Agent Skills from the start, and to the teams who brought skills into their products. Read the specification at <a href="https://agentskills.io">agentskills.io</a> and join the discussion on <a href="https://github.com/agentskills/agentskills">GitHub</a>.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Open call for guest investigators in the life sciences</title>
-      <link>https://www.anthropic.com/news/open-call-guest-investigators-life-sciences</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/open-call-guest-investigators-life-sciences?li=1</guid>
-      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Today, we’re inviting members of the life sciences community to apply to work with us on special projects. We’re looking for proposals from principal investigators and their research groups at academic institutions, nonprofits, or government labs who want to use Claude to investigate key questions in causal human biology, structural and computational molecular biology, medicinal chemistry, drug discovery, and clinical science.</p>
-<p>You can submit a <a href="https://www.anthropic.com/guest-investigator-program">proposal for a project here</a>.</p>
-<p>Over 8–12 weeks, guest investigators will work directly with Anthropic researchers on a problem of interest and produce the analyses, artifacts, and tools that will be most helpful for them in their work. Our team will run our models and harnesses at no cost to them.</p>
-<p>We’ll work together to publish these outputs and open-source the accompanying data and code. Guest investigators retain the rights to their data at every step during their project. They will also have the rights to any independent follow-on research that might come out of our collaboration.</p>
-<p>We’re looking for applicants who can clearly explain how they would benefit from direct collaboration with Anthropic’s researchers. Applicants should also make a reasonable case that their outputs (e.g., preliminary discoveries, answers to open questions, open-source datasets, or public resources) can be produced within the 8- to 12-week collaboration period. There may be an option for extension beyond the initial collaboration period for some projects.</p>
-<p>We understand that the results for most open problems of interest will take much longer to validate, but we’re looking for proposals that can produce some preliminary evidence in a relatively short amount of time.</p>
-<p>We aren’t asking for guest investigators to give us their data, either in the application or during the collaboration, and we’re requesting that applicants include only publicly available information in their application materials.</p>
-<p>Applications will be open for approximately 14 days, and we’ll strive to notify selected participants by email approximately 14 days after applications close. We look forward to potentially expanding this effort in the future as we learn more about how we can best support the scientific community.</p>
-<p>This program is one of several initiatives Anthropic is pursuing to invest more heavily in the life sciences and the broader scientific research community. Scientists who would like direct access to our most capable publicly available models for biology can apply to join our <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>. We’ve also continued to support researchers through our <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science initiative</a>, which provides scientists with Claude credits to accelerate their progress toward making scientific discoveries.</p>]]></content:encoded>
     </item>
     <item>
       <title>Physicist Christopher Stubbs joins Anthropic&apos;s Long-Term Ben…</title>
@@ -2966,86 +3010,6 @@ return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
 <p>Barclays, the British universal bank, is expanding its strategic collaboration with Anthropic to integrate secure, enterprise-grade AI systems across its global operations.</p>
 <h3>Claude discovers a novel enzyme system with CRISPR-like repeats</h3>
 <p>We’re announcing a new life sciences research group and laboratory at Anthropic. This post introduces the team behind this work and shares early results in which Claude discovered a novel enzyme system with properties reminiscent of CRISPR, with only high-level direction from our scientists.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Working at the frontier: How Balyasny Asset Management evalu…</title>
-      <link>https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5</link>
-      <guid isPermaLink="true">https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5?li=1</guid>
-      <pubDate>Thu, 17 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Working at the frontier: How Balyasny Asset Management evaluates and governs Claude Fable 5</description>
-      <content:encoded><![CDATA[<h1>Working at the frontier: How Balyasny Asset Management evaluates and governs Claude Fable 5</h1>
-<p>Balyasny Asset Management (BAM) Chief AI Officer Charlie Flanagan on why the firm uses Claude Fable 5 and the role of safeguards in deploying frontier intelligence safely and reliably across the organization.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/enterprise-ai">Enterprise AI</a></li><li>Product<a href="https://claude.com/platform/api">Claude Platform</a><a href="https://claude.com/product/claude-code">Claude Code</a></li><li>DateSeptember 17, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5#">Copy link</a>https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5</li></ul>
-<p>Balyasny Asset Management (BAM) is a global, multi-strategy investment firm that manages roughly $38 billion in assets and supports a team of roughly 2,000 investment professionals and staff. Charlie Flanagan, Chief AI Officer, spoke with Anthropic about how the firm evaluates new models on thousands of real financial tasks, why it built its own platform for running agents, and what changed with the launch of Claude Fable 5.</p>
-<h2>How has frontier AI changed for BAM in 2026?</h2>
-<p>2026 is the year we moved from AI systems that do search to AI systems that do work.</p>
-<p>The key change has been not just the models, but the harnesses around them, such as Claude Code. They allow the AI solutions we build to take on vastly more complex and longer-running tasks. The ability to give an AI an outcome rather than a prompt, and have it keep working until complete, has been a gamechanger.</p>
-<p>A practical example is merger-arbitrage analysis. When a deal is announced, agents now build the initial deal-analysis package. They estimate how likely the deal is to close and how long it will take, extract the key economic and legal terms, identify conditions and milestones, and flag the areas that need investor judgment.</p>
-<p>A year ago, those steps were fragmented across manual research and separate tools; we did not have an agent that could reliably sustain the full multi-step workflow to a usable conclusion. That work used to take three to five days. Now it takes less than one. The agent runs for approximately 30 minutes, with human review before any material output is relied on.</p>
-<p>We use Anthropic's frontier models, but most of the infrastructure is built in-house at BAM, including the execution harness, data access, and review controls.</p>
-<h2>How did you evaluate Claude Fable 5 before turning it on?</h2>
-<p>One thing we did years ago which has served us extremely well was invest in robust evaluation systems. We test new models on thousands of real-world financial tasks with verifiable outcomes, across equities, macro, and commodities, rather than relying on general benchmarks or isolated demonstrations. It has allowed us to make data-driven decisions around model choice and routing, and is something I think all enterprises should invest in.</p>
-<p>We test both the model on its own and how it performs inside our agentic environment, with the same tools, files, and requirements our users have. Can it plan the work, choose and use the right tools, find and analyze evidence, recover from errors, check its intermediate results, and produce a grounded deliverable? We also look for specific failure modes, like numerical errors, missed coverage, unsupported conclusions, and retrieval problems.</p>
-<p>On the relevant subset, Fable achieved 89.4% versus 86.1% for the prior production model, across thousands of tasks. Where it stood out most was complex planning, analysis, and agentic execution.</p>
-<p>The surprising result was a set of economics problems we have tested that we have never had a model complete successfully, until Fable. We initially treated the result as a potential evaluation issue because it represented a material step change versus every model we had tested. We reran the evaluation, independently checked the task and scoring logic, and reviewed the result with Anthropic before concluding that the improvement was real. It was a wow moment.</p>
-<p>Today, our investment teams use Fable as their go-to frontier model for systematic and coding work. We give them guidance on when to use Fable versus other models, based on efficiency and cost.</p>
-<h2>How are you thinking about safety with today's frontier models?</h2>
-<p>We treat safety as a product and operating-model question, not as a one-time model-selection exercise. The relevant questions are not only what the model can do, but what data it can access, what tools it can use, what actions it can take, what must remain human-approved, and how we will know when something has gone wrong.</p>
-<p>That means putting controls around the model rather than assuming the model itself is the control. We use approved data boundaries, least-privilege access, tool-level permissions, logging and traceability, human review for material outputs, and clear escalation paths for edge cases. We also test adversarial and failure scenarios before broadening access.</p>
-<p>Those controls were a day-one priority, and security did not fundamentally change with Fable. A more capable model does not receive broader authority simply because it can reason or plan more effectively. Models can use only the tools and data sources approved for that user and task, and they cannot grant themselves more access. Investment judgment and accountability remain with people.</p>
-<h2>Where does BAMAgent fit in?</h2>
-<p>Looking ahead, the direction of travel is toward more capable agents that can take longer-running, multi-step actions. That makes governance more important, not less. For us, that has meant building BAMAgent, our internal platform for securely deploying agents into approved enterprise workflows. It gives agents the tools and systems they need, but only those tools and systems. We have been building it for six months now and it supports thousands of autonomous agents working 24/7.</p>
-<p>BAMAgent is the next step beyond our chat platform. Chat helps people take in and synthesize information. BAMAgent does the work: multi-step research and analysis that can run for hours or days, with agents working in parallel, and it ends in something a person can review. It can build and maintain a company research package, prepare for an earnings or macro event, or turn new evidence into financial scenarios. The agent plans the work, uses approved internal systems, runs the analysis, checks its intermediate outputs, and returns a research artifact, model, or decision-support package.</p>
-<p>Fable is our preferred model for the planning and analysis stages. A mistake there flows through every deliverable that follows, so we want the strongest available model deciding how to break down a problem, which evidence matters, and how to reconcile conflicting signals. That is what lets the agent work like a capable coworker.</p>
-<p>Every enterprise should be developing a strategy to move toward a hosted-agent model that allows enterprise management and enforcement while maximizing the utility of agents for users.</p>
-<h2>What has Claude Fable 5 made possible for BAM?</h2>
-<p>The reaction has been incredibly positive. Ultimately, people care about what this technology can unlock in their day-to-day work.</p>
-<p>In one example, a BAMAgent ran a tax-loss harvesting analysis. It explored 90,000 database tables, found the relevant mutual fund holdings data, and built its own weighting system. After a review by our team, the result was more comprehensive than what a traditional approach would have produced.</p>
-<p>Separately, our Chief Economist has configured an agent workflow that reduces a recurring central-bank analysis from roughly two days to approximately 30 minutes, with the economist retaining review and judgment.</p>
-<p>Fable contributes the reasoning, synthesis, and multi-step problem-solving. BAM's harness provides the workflow design, approved data and tool access, retrieval context, permissions, monitoring, and human-review controls. Both are necessary for a production-quality result.</p>
-<h2>As models become increasingly powerful, what's next on your AI roadmap?</h2>
-<p>This is the year we go from people having tools to having teammates. Much like a teammate, agents will become more useful over time as you work with them, complete more complex tasks, and start to do work proactively to help.</p>
-<p>We already have some teams running over 300 agents doing analysis over new data and information constantly. It helps the teams both be faster to insights and not miss anything.</p>
-<p>It also changes the question we ask. We used to build expert systems and teach people to automate the processes they already had. Now we ask whether there is a better way to reach the outcome.</p>
-<p>The limits are really just our own imagination. The tools, data, and models are now at a point where they can do real work for hours on end; it's up to us to continue to reimagine what is possible. It is going to be an incredibly exciting next 12 months.</p>
-<p><em><strong>Get started with</strong></em><a href="https://www.anthropic.com/claude/fable"><em><strong> Claude Fable</strong></em></a><em><strong>.</strong></em></p>
-<p>No items found.</p>
-<p>Prev</p>
-<p>0</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Jul 20, 2026</p>
-<h3>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</h3>
-<p>Enterprise AI</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Sep 30, 2026</p>
-<h3>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</h3>
-<p>Enterprise AI</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>May 21, 2026</p>
-<h3>Claude now works with more security and compliance tools</h3>
-<p>Enterprise AI</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Aug 21, 2026</p>
-<h3>The AI-native SDLC playbook</h3>
-<p>Enterprise AI</p>
-<p>The AI-native SDLC playbook</p>
-<p>The AI-native SDLC playbook</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -1,6 +1,6 @@
 # Fireworks AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-24**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-03**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Fireworks AI（`fireworks_ai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -17,15 +17,15 @@
 6. [Fireworks 上的 Kimi K3：前沿规模的高速 RL](https://fireworks.ai/research/kimi-k3-on-fireworks-fast-rl-at-frontier-scale/) <!--orig:Kimi K3 on Fireworks: Fast RL at frontier scale-->
 7. [强化学习：为什么数值与 MoE 路由的对齐如此重要](https://fireworks.ai/blog/reinforcement-learning-why-alignment-of-numerics-and-MoE-routing-matter/) <!--orig:Reinforcement learning: Why alignment of numerics and MoE routing matter-->
 8. [深入 Fireworks 多区域部署：一个部署，全球规模](https://fireworks.ai/blog/multi-region-deployment/) <!--orig:Inside Fireworks multi-region deployments: One deployment, global scale-->
-9. [介绍 FireRouter 与 Opus](https://fireworks.ai/blog/introducing-firerouter-with-opus/) <!--orig:Introducing FireRouter with Opus-->
-10. [每个字节都算数：ARCv3 与跨区域 RL 的必要性](https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl/) <!--orig:Every byte counts: ARCv3 and the case for cross-region RL-->
-11. [Fireworks 上的 DeepSeek-V4.1-Flash：Astra 级 DeepSWE，成本仅 1/15](https://fireworks.ai/blog/deepseek-v4-1-flash-vs-astra-benchmarks/) <!--orig:DeepSeek-V4.1-Flash on Fireworks: Astra-level DeepSWE at 1/15th the cost-->
-12. [飞跃到专业智能](https://fireworks.ai/blog/specialized-intelligence-train-your-own-model/) <!--orig:Making the leap to specialized intelligence-->
-13. [训练超越边界：训练 API 现已普遍可用](https://fireworks.ai/blog/training-api-general-availability/) <!--orig:Train past the frontier: Training API now generally available-->
-14. [DeepSeek V4 Pro：登顶 SWE-Bench，较 Fable 5 单任务成本降低 3 倍](https://fireworks.ai/blog/deepseek-v4-pro-vs-fable-5-benchmarks/) <!--orig:DeepSeek V4 Pro: Tops SWE-Bench & cuts cost per task by 3x vs. Fable 5-->
-15. [DeepSeek V4 Pro 正在重新定义安全 Agent 的经济性](https://fireworks.ai/blog/deepseek-v4-pro-cybergym-security-benchmark/) <!--orig:DeepSeek V4 Pro is redefining security agent economics-->
-16. [开源模型在开口前能否携带可读的静默信号？在 Kimi K3 与 Qwen3.5-9B 上复现 J-Lens 读数](https://fireworks.ai/research/j-lens-interpretability-kimi-k3-qwen/) <!--orig:Can open models carry readable silent signals before they speak? Reproducing J-Lens readouts on Kimi K3 & Qwen3.5-9B-->
-17. [来自 Meta on Fireworks 的 Muse Glimmer：永远在线代理的理想选择](https://fireworks.ai/blog/meta-muse-glimmer-30b/) <!--orig:Muse Glimmer from Meta on Fireworks: Ideal for your always-on agents-->
+9. [每个字节都算数：ARCv3 与跨区域 RL 的必要性](https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl/) <!--orig:Every byte counts: ARCv3 and the case for cross-region RL-->
+10. [Fireworks 上的 DeepSeek-V4.1-Flash：Astra 级 DeepSWE，成本仅 1/15](https://fireworks.ai/blog/deepseek-v4-1-flash-vs-astra-benchmarks/) <!--orig:DeepSeek-V4.1-Flash on Fireworks: Astra-level DeepSWE at 1/15th the cost-->
+11. [飞跃到专业智能](https://fireworks.ai/blog/specialized-intelligence-train-your-own-model/) <!--orig:Making the leap to specialized intelligence-->
+12. [训练超越边界：训练 API 现已普遍可用](https://fireworks.ai/blog/training-api-general-availability/) <!--orig:Train past the frontier: Training API now generally available-->
+13. [DeepSeek V4 Pro：登顶 SWE-Bench，较 Fable 5 单任务成本降低 3 倍](https://fireworks.ai/blog/deepseek-v4-pro-vs-fable-5-benchmarks/) <!--orig:DeepSeek V4 Pro: Tops SWE-Bench & cuts cost per task by 3x vs. Fable 5-->
+14. [DeepSeek V4 Pro 正在重新定义安全 Agent 的经济性](https://fireworks.ai/blog/deepseek-v4-pro-cybergym-security-benchmark/) <!--orig:DeepSeek V4 Pro is redefining security agent economics-->
+15. [开源模型在开口前能否携带可读的静默信号？在 Kimi K3 与 Qwen3.5-9B 上复现 J-Lens 读数](https://fireworks.ai/research/j-lens-interpretability-kimi-k3-qwen/) <!--orig:Can open models carry readable silent signals before they speak? Reproducing J-Lens readouts on Kimi K3 & Qwen3.5-9B-->
+16. [来自 Meta on Fireworks 的 Muse Glimmer：永远在线代理的理想选择](https://fireworks.ai/blog/meta-muse-glimmer-30b/) <!--orig:Muse Glimmer from Meta on Fireworks: Ideal for your always-on agents-->
+17. [介绍 FireRouter 与 Opus](https://fireworks.ai/blog/introducing-firerouter-with-opus/) <!--orig:Introducing FireRouter with Opus-->
 18. [Specialized Intelligence Index 正式发布](https://fireworks.ai/blog/introducing-the-specialized-intelligence-index) <!--orig:Introducing The Specialized Intelligence Index-->
 19. [前沿不是一个模型，而是一个路由器](https://fireworks.ai/blog/the-frontier-isnt-a-model-its-a-router) <!--orig:The frontier isn’t a model. It’s a router.-->
 20. [Fireworks 上的 DeepSeek-V4.1-Flash：Astra 级 DeepSWE，成本仅 1/15](https://fireworks.ai/blog/DeepSeek-V4.1-Flash-Astra) <!--orig:DeepSeek-V4.1-Flash on Fireworks: Astra-level DeepSWE at 1/15th the cost-->

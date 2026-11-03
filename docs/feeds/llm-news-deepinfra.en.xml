@@ -7,7 +7,97 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sun, 01 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>MiMo-V2.6-Pro Pricing Guide: Developer Cost Breakdown</title>
+      <link>https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide?li=1</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>MiMo-V2.6-Pro Pricing Guide: Developer Cost Breakdown</h1>
+<p>Published on 2026.11.02 by DeepInfra</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/MiMo-V2.6-Pro-Pricing-Guide.png" alt="MiMo-V2.6-Pro Pricing Guide: Developer Cost Breakdown"></p>
+<p><a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro</a> is the kind of model that gets a pricing guide worth reading: it combines open weights, a 1M-token context window, and pricing that undercuts the typical large open-weight reasoning model. At listed rates of $0.435 per million input tokens and $0.87 per million output tokens, it comes in below the median pricing Artificial Analysis reports for comparable models, while posting an Artificial Analysis Intelligence Index score of 30. For teams trying to balance capability against infrastructure and API spend, that makes it more than just another big checkpoint.</p>
+<p>MiMo-V2.6-Pro is Xiaomi’s flagship model in the MiMo-V2.6 family, released on September 21, 2026. It is a sparse Mixture-of-Experts model with roughly 1 trillion total parameters and 42 billion active parameters per token, built for reasoning-heavy workloads and natively designed for text, image, video, and audio input with text output. The model ships under an MIT license, its weights are available on Hugging Face as XiaomiMiMo/MiMo-V2.6-Pro-RL, and hosted access is available through providers including DeepInfra and OpenRouter — see the full <a href="https://docs.deepinfra.com/models">DeepInfra model catalog</a> for everything else hosted alongside it. For developers, that combination matters: you can evaluate it as an API, self-host it, or do both.</p>
+<p>What makes MiMo-V2.6-Pro stand out is not just scale, but the shape of the tradeoff. It pairs a very large context window — 1,048,576 to 1,050,000 tokens depending on the source — with competitive inference pricing, a 99% cache discount, and built-in support for <a href="https://deepinfra.com/blog/deepinfra-function-calling-guide">function calling</a> and structured outputs. On Xiaomi’s own published benchmark summaries, it scores 71.9 on DeepSWE v1.1, 53.1 on AutomationBench v1.0.6, and 34.9 on Terminal Bench 4.0, putting it in the same conversation as models like Claude Opus 5, GPT-5.6 Sol, and Claude Fable 5 on several agent and coding tasks. The tradeoff is speed: Artificial Analysis rates it below average on output throughput and time-to-first-token versus similar open-weight models, so this is less about raw responsiveness and more about capability per dollar.</p>
+<p>If you are evaluating MiMo-V2.6-Pro for production, the real question is not whether it is interesting. It is whether its mix of long context, multimodal input, open-weight licensing, and aggressive token pricing fits your workload better than faster or more locked-down alternatives. That is especially relevant now that there is an actual provider market around the model, with OpenRouter listing five providers and DeepInfra exposing a managed endpoint with JSON mode, function calling, multimodal support, and private deployment options.</p>
+<h2>MiMo-V2.6-Pro Executive Summary</h2>
+<p>MiMo-V2.6-Pro sits in a useful middle ground: cheaper than many large-model alternatives, open-weight, and available through multiple hosted routes. If you need long-context reasoning, agent workflows, or multimodal input without giving up the option to self-host later, it is a strong candidate; if you care most about the absolute lowest price, Xiaomi via OpenRouter is cheapest, while DeepInfra is the cleaner fit for teams that want a managed API with developer-friendly features and deployment flexibility.</p>
+<table><thead><tr><th><strong>Best For</strong></th><th><strong>Provider Recommendation</strong></th><th><strong>Why</strong></th></tr></thead><tbody><tr><td>Easiest onboarding / fastest time-to-first-call</td><td>DeepInfra</td><td>DeepInfra exposes the model directly as XiaomiMiMo/MiMo-V2.6-Pro and includes managed API access with JSON mode, function calling, multimodal support, zero data retention, and private endpoint deployment.</td></tr><tr><td>RAG, document-heavy, or long-context production workloads</td><td>DeepInfra</td><td>The hosted model supports the full 1,048,576-token context window and low cached-input pricing at $0.003/M tokens, which fits repetitive retrieval and document workloads well.</td></tr><tr><td>Lowest price / cost-sensitive workloads</td><td>Xiaomi via OpenRouter</td><td>OpenRouter lists Xiaomi at the lowest discounted rate in the provider set: $0.3698/M input, $0.7395/M output, and $0.0034/M cache read.</td></tr><tr><td>Proprietary or managed model access</td><td>OpenRouter</td><td>OpenRouter gives managed access across five providers with routing modes for price, speed, and failover, which is useful if you want API convenience without committing to a single backend.</td></tr><tr><td>Lowest latency / fastest provider performance</td><td>GMICloud via OpenRouter</td><td>GMICloud is listed as the fastest OpenRouter provider for this model, at roughly 1.26s P50 latency and 41 tokens/second throughput — worth confirming against current OpenRouter listings before relying on it, as this wasn’t independently re-verified for this guide.</td></tr><tr><td>Teams comparing against closed-model alternatives</td><td>MiMo-V2.6-Pro on DeepInfra or OpenRouter</td><td>Xiaomi’s published benchmark summaries show it staying competitive with Claude Opus 5, GPT-5.6 Sol, and Claude Fable 5 on several agent and coding evaluations while remaining open-weight and MIT-licensed.</td></tr></tbody></table>
+<h2>Understanding Tokens and How You’re Charged</h2>
+<p>MiMo-V2.6-Pro is priced the standard API way: you pay for tokens in, tokens out, and sometimes cached tokens when the provider can reuse prompt state. With a 1M-token context window, token math stops being academic pretty quickly.</p>
+<ul><li>A token is a chunk of text, not a word.</li><li>English averages roughly 3 to 4 characters per token, or about 0.75 words per token.</li><li>Code, JSON, markup, and OCR-heavy document text often tokenize less efficiently than plain prose.</li><li>Images, audio, and video also get converted into billable input tokens by multimodal APIs. You still pay on the input side, even if the source was not text.</li><li>Long-context models are where small per-token rates can still produce large bills. A cheap million-token model is still expensive if you send a million tokens every request.</li></ul>
+<table><thead><tr><th><strong>Token Type</strong></th><th><strong>What It Is</strong></th><th><strong>Why It Matters</strong></th></tr></thead><tbody><tr><td>Input tokens</td><td>Everything you send to the model: system prompt, user message, tool schemas, retrieved context, conversation history, and multimodal content after tokenization</td><td>This is the part that grows quietly. RAG chunks, long chats, and large tool definitions can dominate cost before the model writes a single token back.</td></tr><tr><td>Output tokens</td><td>Everything the model generates: answers, reasoning-heavy responses, JSON, tool calls, and long code blocks</td><td>MiMo-V2.6-Pro charges 2x more for output than input at list price, so verbose responses can move cost faster than expected.</td></tr><tr><td>Cached input tokens</td><td>Previously seen input tokens the provider can reuse at a discounted rate — see <a href="https://docs.deepinfra.com/chat/prompt-caching">how prompt caching works</a></td><td>This is where MiMo-V2.6-Pro gets unusually attractive for repeated long prompts. If your provider supports cache reads well, the economics improve a lot.</td></tr><tr><td>Context window tokens</td><td>The total active prompt budget available in a request, up to about 1,048,576 to 1,050,000 tokens depending on provider listing</td><td>Big context is useful, but it also makes it easier to accidentally ship giant prompts into production and normalize a bad cost pattern.</td></tr></tbody></table>
+<p>For MiMo-V2.6-Pro, the headline prices are:</p>
+<ul><li>Standard input: $0.435 per million tokens</li><li>Standard output: $0.87 per million tokens</li><li>Cached input: typically around $0.0036 per million tokens before discounts</li></ul>
+<p>DeepInfra lists discounted pricing at:</p>
+<ul><li>$0.387/M input</li><li>$0.783/M output</li><li>$0.003/M cached input</li></ul>
+<p>OpenRouter’s discounted Xiaomi route lists:</p>
+<ul><li>$0.3698/M input</li><li>$0.7395/M output</li><li>$0.0034/M cache read</li></ul>
+<p>A practical way to think about it:</p>
+<ul><li>Short prompts, long answers: output pricing matters most.</li><li>Large RAG context, modest answers: input pricing matters most.</li><li>Repeated large prompts with stable prefixes: cache pricing matters a lot.</li><li>Agent loops with tool schemas and growing history: all three matter, and output usually becomes the thing that surprises people second, right after prompt bloat.</li></ul>
+<p>MiMo-V2.6-Pro also trends somewhat verbose in Artificial Analysis testing. That does not mean it is wasteful by default. It does mean you should expect output tokens to add up faster on reasoning-heavy or tool-using workflows than they would on a terse classification model.</p>
+<h2>Provider Token Cost Tradeoffs for MiMo-V2.6-Pro</h2>
+<p>The annoying part of model pricing is that “same model” does not always mean “same bill shape.” MiMo-V2.6-Pro is a good example: token rates are close across providers, but the best choice changes depending on whether you care most about raw price, cache economics, routing, or operational simplicity.</p>
+<table><thead><tr><th><strong>Provider</strong></th><th><strong>Input</strong></th><th><strong>Output</strong></th><th><strong>Cached Input / Cache Read</strong></th><th><strong>Advantages</strong></th><th><strong>Disadvantages</strong></th></tr></thead><tbody><tr><td>DeepInfra (direct)</td><td>$0.387/M</td><td>$0.783/M</td><td>$0.003/M</td><td>Strong all-around pricing. Cheapest cache rate in the listed set. Good fit for long-lived prompts, RAG, and repeated agent scaffolding. Direct model access is simple, so billing is easier to reason about.</td><td>Not the absolute lowest input/output price if you optimize purely for cheapest routed access.</td></tr><tr><td>OpenRouter via Xiaomi</td><td>$0.3698/M</td><td>$0.7395/M</td><td>$0.0034/M</td><td>Lowest listed input and output pricing. Best option if every million tokens counts and you are comfortable choosing the lowest-cost provider route.</td><td>Cache read is slightly higher than DeepInfra. Xiaomi’s listed uptime is lower than other OpenRouter providers, so the cheapest route is not automatically the least painful one operationally.</td></tr><tr><td>OpenRouter via DeepInfra (discounted)</td><td>$0.387/M</td><td>$0.783/M</td><td>$0.00324/M</td><td>Same input/output pricing as going direct to DeepInfra, with a slightly higher cache price. Useful if you want OpenRouter’s routing layer or consolidated billing while still getting DeepInfra’s discounted rate.</td><td>Not cheaper than DeepInfra direct on any token category — you’re paying a small amount more for routing convenience.</td></tr><tr><td>OpenRouter via DeepInfra (standard)</td><td>$0.435/M</td><td>$0.870/M</td><td>$0.0036/M</td><td>Useful if you specifically want OpenRouter’s standard (non-discounted) listing for consolidated billing across many models.</td><td>More expensive than either DeepInfra direct or DeepInfra’s discounted OpenRouter route for the same model. Easy to overpay here by mistake.</td></tr><tr><td>OpenRouter via NovitaAI</td><td>$0.435/M</td><td>$0.870/M</td><td>$0.0036/M</td><td>Same standard rates as several other OpenRouter providers. May be acceptable if you are routing for reliability or benchmark preference rather than lowest cost.</td><td>No token-price advantage versus the cheaper routes. Easy to overpay if you assume all OpenRouter backends cost the same after discounts.</td></tr><tr><td>OpenRouter via StreamLake</td><td>$0.522/M</td><td>$1.044/M</td><td>$0.00432/M</td><td>Potentially useful only if you need this specific backend for routing or availability reasons.</td><td>Highest listed token pricing in the provider set. Hard to justify for cost-sensitive workloads.</td></tr></tbody></table>
+<p><em>A note on this table: the earlier draft of this guide mislabeled DeepInfra’s own discounted OpenRouter route as “GMICloud via OpenRouter.” GMICloud is a real OpenRouter provider for this model, but its specific token pricing wasn’t independently verified for this guide, so it has been left out rather than repeat the mislabeled figures.</em></p>
+<ul><li>The cheapest raw token price in the listed data is Xiaomi through OpenRouter.</li><li>The cheapest cache pricing is DeepInfra direct, at $0.003/M cached input.</li><li>A cost trap to avoid: paying OpenRouter’s standard (non-discounted) DeepInfra route pricing when you could call DeepInfra directly, or use DeepInfra’s discounted OpenRouter route, for less.</li><li>If your workload reuses large prompt prefixes, the difference between $0.003/M and $0.0036/M on cached tokens is small per request, but it becomes real money at high volume.</li><li>If your workload is output-heavy, the spread between $0.7395/M and $1.044/M output pricing is big enough to matter quickly.</li><li>If your workload is huge-context RAG, do not just compare headline input price. Compare:  input token price cache token price whether your prompt structure actually allows cache reuse whether the provider’s routing layer changes cost predictability</li></ul>
+<p>A few grounded rules for MiMo-V2.6-Pro specifically:</p>
+<ul><li>Use DeepInfra if you want the best mix of low rates, cheapest cache reads, and straightforward direct billing.</li><li>Use OpenRouter via Xiaomi if lowest input/output token pricing is the main constraint.</li><li>Use OpenRouter routing if availability and provider switching matter more than shaving every fraction of a cent off token cost.</li><li>Be careful with giant context windows. A 1M-token ceiling is useful, but it also makes it very easy to build a workflow that is “cheap per million” and still expensive per request.</li></ul>
+<h2>DeepInfra: a Strong Choice for MiMo-V2.6-Pro</h2>
+<p>DeepInfra pairs aggressive token pricing with infrastructure built for inference efficiency. It runs on bare-metal infrastructure, which matters because cutting out extra virtualization overhead can help providers squeeze out better performance-per-dollar and keep pricing tighter. Full current rates are on the <a href="https://deepinfra.com/pricing">DeepInfra pricing page</a>. If you want a managed endpoint without paying a premium just for convenience, this is a provider worth evaluating first.</p>
+<table><thead><tr><th><strong>Listing</strong></th><th><strong>Best Use Case</strong></th><th><strong>Context Window</strong></th><th><strong>Input / 1M</strong></th><th><strong>Output / 1M</strong></th></tr></thead><tbody><tr><td>MiMo-V2.6-Pro (discounted)</td><td>Long-context reasoning, multimodal agents, production API workloads</td><td>1,048,576</td><td>$0.387</td><td>$0.783</td></tr><tr><td>MiMo-V2.6-Pro-RL (discounted)</td><td>Flagship RL checkpoint for advanced reasoning and tool use</td><td>1,048,576</td><td>$0.387</td><td>$0.783</td></tr><tr><td>XiaomiMiMo/MiMo-V2.6-Pro (discounted)</td><td>Direct DeepInfra hosted endpoint for developers</td><td>1,048,576</td><td>$0.387</td><td>$0.783</td></tr><tr><td>MiMo-V2.6-Pro (standard list price)</td><td>Teams comparing discounted vs. non-discounted DeepInfra billing</td><td>1,048,576</td><td>$0.435</td><td>$0.87</td></tr><tr><td>MiMo-V2.6-Pro via OpenRouter’s DeepInfra route (standard)</td><td>Teams that want aggregator routing instead of direct provider billing</td><td>1,050,000</td><td>$0.435</td><td>$0.870</td></tr></tbody></table>
+<p>On DeepInfra, MiMo-V2.6-Pro is $0.387/M input and $0.783/M output at the current discounted rate — below the model’s standard $0.435/M input and $0.87/M output list pricing. If you are running sustained volume, going direct to DeepInfra instead of paying a routed markup is the cleaner cost move. The cached-input rate is also just $0.003/M, which is attractive for repeat-prompt and long-context workloads.</p>
+<p>For teams planning real usage rather than one-off tests, DeepInfra is the kind of provider that gets more compelling as volume grows. If your workload is large, repetitive, or cost-sensitive, its pricing and deployment flexibility are worth factoring in.</p>
+<h2>Real-World Cost Scenarios for Developers</h2>
+<p>The case for DeepInfra is not that it is always the absolute cheapest on every token category. It is that it stays cheap while also giving developers direct model access, JSON mode, function calling, multimodal support, zero data retention, and private deployment options. For production teams, that combination often matters more than squeezing out the very last fraction of a cent through a routed marketplace.</p>
+<p>Below are practical scenarios where MiMo-V2.6-Pro on DeepInfra (at its current discounted rate of $0.387/M input, $0.783/M output, $0.003/M cached input) makes a strong case. All figures below are recalculated directly from those rates.</p>
+<h3>Scenario 1: Long-context RAG assistant with repeated prompt prefixes</h3>
+<p>You are building a document assistant that ingests large internal docs, keeps a stable system prompt and tool schema, and reuses a lot of prompt structure across requests. This is exactly the kind of workload where DeepInfra’s $0.003/M cached input rate stands out.</p>
+<ul><li>Scenario: Enterprise RAG assistant for large manuals, contracts, or support knowledge bases</li><li>Why DeepInfra fits: Direct API access, full 1,048,576-token context, and the cheapest listed cache pricing</li></ul>
+<table><thead><tr><th><strong>Volume</strong></th><th><strong>Provider</strong></th><th><strong>Input Tokens</strong></th><th><strong>Output Tokens</strong></th><th><strong>Monthly Cost</strong></th></tr></thead><tbody><tr><td>100M cached + 20M fresh input + 10M output / month</td><td>DeepInfra</td><td>120M total</td><td>10M</td><td>$15.87</td></tr></tbody></table>
+<p>Cost breakdown:</p>
+<ul><li>20M fresh input × $0.387/M = $7.74</li><li>100M cached input × $0.003/M = $0.30</li><li>10M output × $0.783/M = $7.83</li><li><strong>Monthly total: $15.87</strong></li></ul>
+<p>The same workload on OpenRouter’s standard (non-discounted) DeepInfra route would cost $17.76 instead of $15.87 (20M × $0.435 + 100M × $0.0036 + 10M × $0.870).</p>
+<h3>Scenario 2: Coding agent with tool calls and structured JSON output</h3>
+<p>This is the classic developer workflow: repo context, tool definitions, intermediate reasoning, and structured outputs for an agent loop. MiMo-V2.6-Pro is attractive here because it pairs long context with strong benchmark results on coding and agent tasks, while DeepInfra exposes the model with the features developers actually need.</p>
+<ul><li>Scenario: Autonomous coding assistant for repo analysis, patch generation, and tool-driven workflows</li><li>Why DeepInfra fits: JSON mode, function calling, and lower direct pricing than routed access</li></ul>
+<table><thead><tr><th><strong>Volume</strong></th><th><strong>Provider</strong></th><th><strong>Input Tokens</strong></th><th><strong>Output Tokens</strong></th><th><strong>Monthly Cost</strong></th></tr></thead><tbody><tr><td>50M input + 25M output / month</td><td>DeepInfra</td><td>50M</td><td>25M</td><td>$38.93</td></tr></tbody></table>
+<p>Cost breakdown:</p>
+<ul><li>50M input × $0.387/M = $19.35</li><li>25M output × $0.783/M = $19.575</li><li><strong>Monthly total: $38.93</strong></li></ul>
+<p>The same workload on StreamLake through OpenRouter would cost $52.20, versus $38.93 on DeepInfra.</p>
+<h3>Scenario 3: Multimodal issue triage for support or QA</h3>
+<p>If your developers are processing screenshots, screen recordings, logs, and user-submitted audio alongside text, MiMo-V2.6-Pro’s native multimodal input support becomes more than a spec-sheet feature. DeepInfra is appealing here because it gives you managed multimodal access without forcing you into a proprietary stack.</p>
+<ul><li>Scenario: Support engineering or QA triage with screenshots, short videos, logs, and structured summaries</li><li>Why DeepInfra fits: Native multimodal support plus direct hosted access under XiaomiMiMo/MiMo-V2.6-Pro</li></ul>
+<table><thead><tr><th><strong>Volume</strong></th><th><strong>Provider</strong></th><th><strong>Input Tokens</strong></th><th><strong>Output Tokens</strong></th><th><strong>Monthly Cost</strong></th></tr></thead><tbody><tr><td>30M input + 12M output / month</td><td>DeepInfra</td><td>30M</td><td>12M</td><td>$21.01</td></tr></tbody></table>
+<p>Cost breakdown:</p>
+<ul><li>30M input × $0.387/M = $11.61</li><li>12M output × $0.783/M = $9.396</li><li><strong>Monthly total: $21.01</strong></li></ul>
+<p>The same workload on OpenRouter’s standard (non-discounted) DeepInfra route would cost $23.49 instead of $21.01.</p>
+<h3>Scenario 4: High-volume agent platform with steady prompt reuse</h3>
+<p>This is where DeepInfra gets especially compelling: lots of repeated scaffolding, lots of tool definitions, and enough monthly volume that small pricing differences become visible in the bill.</p>
+<ul><li>Scenario: Internal agent platform serving many users with shared prompt scaffolding</li><li>Why DeepInfra fits: Cheapest listed cache rate and straightforward direct billing for sustained production volume</li></ul>
+<table><thead><tr><th><strong>Volume</strong></th><th><strong>Provider</strong></th><th><strong>Input Tokens</strong></th><th><strong>Output Tokens</strong></th><th><strong>Monthly Cost</strong></th></tr></thead><tbody><tr><td>500M cached + 100M fresh input + 50M output / month</td><td>DeepInfra</td><td>600M total</td><td>50M</td><td>$79.35</td></tr></tbody></table>
+<p>Cost breakdown:</p>
+<ul><li>100M fresh input × $0.387/M = $38.70</li><li>500M cached input × $0.003/M = $1.50</li><li>50M output × $0.783/M = $39.15</li><li><strong>Monthly total: $79.35</strong></li></ul>
+<p>The same workload on OpenRouter’s standard (non-discounted) DeepInfra route would cost $88.80 instead of $79.35 (100M × $0.435 + 500M × $0.0036 + 50M × $0.870).</p>
+<h3>Scenario 5: Private deployment path for teams that may outgrow shared API access</h3>
+<p>Some teams start with hosted inference, then move specific workloads to private endpoints once governance, customer isolation, or predictable throughput starts to matter more. DeepInfra is strong here because it supports both the managed API path and private endpoint deployment, so you do not have to switch model providers just because your deployment model changes.</p>
+<ul><li>Scenario: Production app starting on shared API, with a later move to private endpoints</li><li>Why DeepInfra fits: Same provider supports both direct hosted access and private deployment options</li></ul>
+<table><thead><tr><th><strong>Volume</strong></th><th><strong>Provider</strong></th><th><strong>Input Tokens</strong></th><th><strong>Output Tokens</strong></th><th><strong>Monthly Cost</strong></th></tr></thead><tbody><tr><td>200M input + 80M output / month</td><td>DeepInfra</td><td>200M</td><td>80M</td><td>$140.04</td></tr></tbody></table>
+<p>Cost breakdown:</p>
+<ul><li>200M input × $0.387/M = $77.40</li><li>80M output × $0.783/M = $62.64</li><li><strong>Monthly total: $140.04</strong></li></ul>
+<p>The same workload on standard-priced OpenRouter DeepInfra routing would cost $156.60 instead of $140.04.</p>
+<p>For developers, the pattern is pretty consistent: if you want MiMo-V2.6-Pro with strong managed API ergonomics and you expect real production usage rather than occasional experiments, DeepInfra is easiest to justify on workloads that are long-context, cache-friendly, tool-heavy, or likely to evolve into more controlled deployments.</p>
+<h2>Conclusion</h2>
+<p>Choosing a provider for MiMo-V2.6-Pro is less about finding the one correct answer and more about matching the model’s strengths to your specific cost structure. The model itself is a strong fit for long-context, reasoning-heavy, and multimodal workloads — but whether you pay $0.37/M or $0.52/M on input tokens, and whether your cache hits cost $0.003/M or $0.0036/M, depends entirely on which provider you route through and how deliberately you set up your prompt architecture.</p>
+<p>The practical criteria that should drive that decision are straightforward. If your workload involves repeated large prompts — RAG pipelines, shared agent scaffolding, stable system prompts with growing conversation history — cache pricing is the variable that moves the bill most at volume. DeepInfra’s $0.003/M cached input rate is the cheapest in the listed set, and the gap between that and OpenRouter’s routed alternatives compounds fast once you are processing hundreds of millions of cached tokens per month. If raw token cost is the only constraint and you are comfortable with the operational tradeoffs, Xiaomi’s direct route through OpenRouter is the cheapest listed option. And if latency is the limiting factor in your agent loop, GMICloud’s reported sub-1.5-second P50 latency is worth testing against your actual workload before committing.</p>
+<p>One thing worth keeping in mind as you plan: MiMo-V2.6-Pro’s 1M-token context window is genuinely useful, but it also makes it easy to normalize large prompts early in development and only notice the cost pattern later in production. Getting your token math right at the design stage — not after you have shipped — is where the real savings come from. The <a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro model page</a> on DeepInfra gives you direct API access with JSON mode, function calling, and multimodal support — a clean starting point for testing your actual workload before optimizing for scale. For a sense of how its pricing compares to another recent large reasoning model, see our <a href="https://deepinfra.com/blog/deepseek-v4-pro-pricing-guide-2026-providers-cost-analysis">DeepSeek V4 Pro pricing breakdown</a>.</p>
+<p><em>Editor’s notes on this draft: (1) The “Provider Token Cost Tradeoffs” table originally mislabeled DeepInfra’s own discounted OpenRouter pricing as belonging to GMICloud — corrected above. (2) The claim that DeepInfra is “typically 50–80% cheaper than major cloud competitors” has been removed as unverifiable. (3) Several of the five cost-scenario tables didn’t match their own cost-breakdown math in the original draft (Scenarios 1, 3, and 4) — all five have been recalculated directly from the stated rates and token volumes above. (4) References to several companion pieces that aren’t confirmed as published yet (the RL-loop training story, a MiMo V2.6 Pro vs. V2.5 Pro comparison, a family-names-vs-rate-cards breakdown, an RL review, an API pricing/providers/specs summary, and a Seed 2.0 Code comparison) have been replaced with links to live DeepInfra pages instead — swap in the originals once those companion pieces are published.</em></p>
+<p>Related articles</p>
+<p><a href="https://deepinfra.com/blog/custom-llms"><img src="https://deepinfra.com/blog/custom-llm.webp" alt="Deploy Custom LLMs on DeepInfra"></a><a href="https://deepinfra.com/blog/custom-llms">Deploy Custom LLMs on DeepInfra</a>Did you just finetune your favorite model and are wondering where to run it? Well, we have you covered. Simple API and predictable pricing. Put your model on huggingface Use a private repo, if you wish, we don't mind. Create a hf access token just for the repo for better security. Create c...</p>
+<p><a href="https://deepinfra.com/blog/introducing-wan-3-0-on-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/wan-3.0.png" alt="Introducing Wan 3.0 on DeepInfra"></a><a href="https://deepinfra.com/blog/introducing-wan-3-0-on-deepinfra">Introducing Wan 3.0 on DeepInfra</a>&lt;p&gt;Wan3.0 is a video generation model from Alibaba&amp;#8217;s Wan team that combines text-to-video, image-to-video, reference-based generation, video editing, and video extension in a single model. The media you send with a request selects the workflow, so one model handles every input type. A request can combine a text prompt with up to 20 reference assets, [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/granite-4-2-8b-api-review"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/Granite-4.2-8B-API-Review.png" alt="Granite 4.2 8B API Review: Providers Compared"></a><a href="https://deepinfra.com/blog/granite-4-2-8b-api-review">Granite 4.2 8B API Review: Providers Compared</a>&lt;p&gt;Granite 4.2 8B API Review Summary Attribute Details Creator / Type IBM, open-weights model Release Date August 25, 2026 Reasoning Yes, a reasoning model with built-in chain-of-thought Modalities Text in, text out (not multimodal, no image input) Context Window 131,072 tokens (about 197 A4 pages), with a long-context extension to 512K Size / License / [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">View all</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>MiMo-V2.6-Pro Is Now Available on DeepInfra</title>
       <link>https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra</link>
@@ -5069,210 +5159,6 @@ copy</code></pre>
 <p>&lt;p&gt;Modern large language models (LLMs) are incredibly powerful at understanding and generating text, but until recently they were largely static: they could only respond based on patterns in their training data. Function calling changes that. It lets language models interact with external logic — your own code, APIs, utilities, or business systems — while still [&amp;hellip;]&lt;/p&gt;</p>
 <p>Qwen3 Coder 480B A35B API Benchmarks: Latency &amp; Cost</p>
 <p>&lt;p&gt;About Qwen3 Coder 480B A35B Instruct Qwen3 Coder 480B A35B Instruct is a state-of-the-art large language model developed by the Qwen team at Alibaba Cloud, specifically designed for code generation and agentic coding tasks. It is a Mixture-of-Experts (MoE) model with 480 billion total parameters and 35 billion active parameters per inference, enabling high performance [&amp;hellip;]&lt;/p&gt;</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>MCP Servers Explained: A Practical Guide for Developers</title>
-      <link>https://deepinfra.com/blog/mcp-servers-explained</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/mcp-servers-explained?li=1</guid>
-      <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>MCP Servers Explained: A Practical Guide for Developers</p>
-<p>Published on 2026.09.16 by DeepInfra</p>
-<p>Giving an AI application access to a database, API, file system, or internal service sounds simple until you have to maintain the integration. You need to define what the model can access, describe operations, execute requests safely, return <a href="https://docs.deepinfra.com/chat/structured-outputs">structured results</a>, and handle authentication. You may need to repeat much of that work when another AI application needs the same capability.</p>
-<p>The <a href="https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro">Model Context Protocol (MCP)</a> standardizes that connection. You can expose tools and context through an MCP server and let compatible applications discover and use them through the same protocol.</p>
-<p>To ship a useful MCP server, you need to understand where it sits in the application stack, what it should expose, how clients connect to it, and which design decisions matter when the integration leaves the local prototype.</p>
-<p>In this article, we’ll explain how MCP servers work, how to choose between tools, resources, and prompts, and what you need to consider when moving an MCP server into production.</p>
-<h2>What Does an MCP Server Actually Do?</h2>
-<p>An MCP server is the boundary between an AI application and the systems you want that application to use. <a href="https://github.com/phuihock/mcp-deeinfra">MCP</a> follows a host-client-server architecture.</p>
-<ul><li><strong>MCP host:</strong> The AI application coordinating the interaction.</li><li><strong>MCP client:</strong> The component inside the host that connects to one MCP server.</li><li><strong>MCP server:</strong> The program that exposes context and capabilities to that client.</li></ul>
-<p>A single host can connect to multiple servers. It creates a separate MCP client for each connection to keep server boundaries independent. For example, a coding agent might connect to one server for source control, another for issue tracking, and another for internal documentation.</p>
-<p>MCP also separates a data layer and a transport layer. The data layer defines protocol messages, capability discovery, tools, resources, prompts, and related behavior. The transport layer determines how those messages move between client and server. So, the same server capabilities can be exposed locally through standard I/O or remotely over HTTP.</p>
-<p>Here is a minimal code example using FastMCP to create one MCP tool, discover that tool through an MCP client, pass its schema to a DeepInfra-hosted model, and route the model’s tool call back through the MCP server.</p>
-<p>Install FastMCP for the MCP server and client, and the OpenAI SDK for DeepInfra’s OpenAI-compatible API:</p>
-<p>“`</p>
-<pre><code>pip install fastmcp openaicopy</code></pre>
-<p>“`</p>
-<p>Import the dependencies and create a FastMCP server. The @mcp.tool() decorator exposes get_weather as an MCP tool and derives its input schema from the Python function.</p>
-<p>“`</p>
-<pre><code>import asyncio
-import json
-import os
-from fastmcp import FastMCP, Client
-from openai import OpenAI
-
-
-mcp = FastMCP(&quot;WeatherServer&quot;)
-
-
-
-
-@mcp.tool()
-def get_weather(city: str) -&gt; str:
-    &quot;&quot;&quot;Get current weather for a city.&quot;&quot;&quot;
-    weather_db = {
-        &quot;london&quot;:   &quot;Overcast, 14C, humidity 78%&quot;,
-        &quot;tokyo&quot;:    &quot;Partly cloudy, 28C, humidity 65%&quot;,
-        &quot;new york&quot;: &quot;Clear sky, 22C, humidity 45%&quot;,
-        &quot;paris&quot;:    &quot;Light rain, 16C, humidity 82%&quot;,
-        &quot;dubai&quot;:    &quot;Sunny, 42C, humidity 20%&quot;,
-    }
-    return weather_db.get(
-        city.lower(),
-        f&quot;No data for '{city}'. Try: {', '.join(weather_db.keys())}&quot;,
-    )copy</code></pre>
-<p>“`</p>
-<p>Create an MCP client and use list_tools() to discover the capabilities exposed by the server. The discovered MCP schema is then converted into the OpenAI-compatible tool format that the model expects.</p>
-<p>“`</p>
-<pre><code>client = Client(mcp)
-
-
-async def discover_tools() -&gt; list[dict]:
-    async with client:
-        mcp_tools = await client.list_tools()
-        return [
-            {
-                &quot;type&quot;: &quot;function&quot;,
-                &quot;function&quot;: {
-                    &quot;name&quot;:        t.name,
-                    &quot;description&quot;: t.description or &quot;&quot;,
-                    &quot;parameters&quot;:  t.inputSchema,
-                },
-            }
-            for t in mcp_tools
-        ]copy</code></pre>
-<p>“`</p>
-<p>Configure the OpenAI client to use DeepInfra’s<a href="https://docs.deepinfra.com/api-reference/introduction"> OpenAI-compatible endpoint</a>. The model receives the discovered tools and can use tool calling to select one and generate its arguments.</p>
-<p>“`</p>
-<pre><code>DEEPINFRA_API_KEY = os.getenv(&quot;DEEPINFRA_API_KEY&quot;, &quot;your_api_key_here&quot;)
-
-
-llm = OpenAI(
-    api_key=DEEPINFRA_API_KEY,
-    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
-)
-
-
-MODEL = &quot;zai-org/GLM-5.2&quot;
-
-
-async def agent(user_message: str, tools: list[dict]) -&gt; str:
-    messages = [
-        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful weather assistant. Use the provided tools to answer questions. Be concise.&quot;},
-        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_message},
-    ]
-
-
-    async with client:
-        while True:
-            response = llm.chat.completions.create(
-                model=MODEL,
-                messages=messages,
-                tools=tools,
-                tool_choice=&quot;auto&quot;,
-            )
-            assistant_msg = response.choices[0].message
-            messages.append(assistant_msg)
-
-
-            if not assistant_msg.tool_calls:
-                return assistant_msg.content
-
-
-            for tc in assistant_msg.tool_calls:
-                tool_name = tc.function.name
-                tool_args = json.loads(tc.function.arguments)
-                result = await client.call_tool(tool_name, tool_args)
-
-
-                result_text = &quot;&quot;
-                if hasattr(result, &quot;content&quot;):
-                    result_text = &quot;\n&quot;.join(
-                        c.text for c in result.content if hasattr(c, &quot;text&quot;)
-                    )
-                else:
-                    result_text = str(result)
-
-
-                messages.append({
-                    &quot;role&quot;: &quot;tool&quot;,
-                    &quot;tool_call_id&quot;: tc.id,
-                    &quot;content&quot;: result_text,
-                })copy</code></pre>
-<p>“`</p>
-<p>When the model returns a tool call, client.call_tool() routes it to the MCP server for execution. The result is added to the conversation with the matching tool_call_id, allowing the model to use it in the next inference step and either make another tool call or return the final answer.</p>
-<p>Finally, discover the available tools and send a request that requires the model to use one of them. asyncio.run() starts the asynchronous MCP workflow.</p>
-<p>“`</p>
-<pre><code>async def main():
-    tools = await discover_tools()
-
-
-    queries = [
-        &quot;What's the weather like in Tokyo?&quot;,
-        &quot;Compare the weather in London and New York. Which city is warmer?&quot;,
-    ]
-
-
-    for q in queries:
-        print(f&quot;Q: {q}&quot;)
-        answer = await agent(q, tools)
-        print(f&quot;A: {answer}\n&quot;)
-
-
-
-
-if __name__ == &quot;__main__&quot;:
-    asyncio.run(main())copy</code></pre>
-<p>“`</p>
-<h2>Tools, Resources, and Prompts: What Should Your Server Expose?</h2>
-<p>An MCP server exposes three primary server-side primitives, each with a different control model. Tools are model-controlled, resources are application-controlled, and prompts are user-controlled.</p>
-<h3>Tools: when the AI needs to do something</h3>
-<p>MCP tools are callable operations that the model can invoke to serve user requests and context. They are appropriate when the model needs to take an action or perform a computation, such as querying a database, retrieving an order, creating an issue, or calling an existing API operation.</p>
-<p>Each tool specifies the available operation and the inputs it accepts through an input schema. When the model chooses a tool, the MCP client sends the request to the server, which executes the operation and returns the result.</p>
-<h3>Resources: when the AI needs context</h3>
-<p>Resources expose information that an AI application can access and share with the model as context. The host decides which available resources to retrieve and how to include their contents in the <a href="https://deepinfra.com/blog/build-a-rag-app-with-deepinfra-and-langchain">model’s context</a>.</p>
-<p>MCP identifies resources through URIs (Uniform Resource Identifiers), allowing the server to expose data from different underlying sources such as a database through a consistent interface.</p>
-<h3>Prompts: when you want reusable interaction patterns</h3>
-<p>Prompts are reusable templates for interactions that users can explicitly select, such as reviewing a code change or analyzing an incident. A prompt can define the messages to send to the model and accept arguments needed to customize the interaction.</p>
-<p>The MCP server defines the prompt, the client makes it available to the user, and the server returns the completed messages when the user invokes it.</p>
-<h2>MCP Server vs. API vs. Function Calling: What Is Actually Different?</h2>
-<p>MCP server, APIs, and function calling can all be involved in the same request, but each serves a different purpose.</p>
-<ul><li>An <strong>API</strong> defines how software interacts with a service. If your CRM already exposes an endpoint for retrieving an account, MCP does not make that endpoint unnecessary.</li><li>An <strong>MCP server</strong> can sit in front of those APIs and expose selected operations using an interface MCP clients understand. The underlying API remains responsible for its actual business logic.</li><li><strong>Function calling</strong> operates closer to the model. The model receives tool definitions, determines whether an operation is required, and produces a tool call with arguments. The application executes the requested operation and returns the result to the model.</li></ul>
-<p>Here’s what each layer controls in the request:</p>
-<table><thead><tr><th><strong>Layer</strong></th><th><strong>What it defines</strong></th><th><strong>Role in the request</strong></th></tr></thead><tbody><tr><td><strong>Function calling</strong></td><td>Which tools the model can request and their argument schemas</td><td>Lets the model select an operation and generate its arguments</td></tr><tr><td><strong>MCP server</strong></td><td>Which external capabilities are exposed through MCP</td><td>Makes tools and context discoverable and accessible to MCP clients</td></tr><tr><td><strong>API</strong></td><td>The service’s endpoints and application contract</td><td>Executes or provides access to the underlying application functionality</td></tr></tbody></table>
-<h2>Local or Remote? Choose How the MCP Server Will Run</h2>
-<p>MCP defines two standard transports, STDIO and Streamable HTTP, which carry the same protocol semantics but create different operating models.</p>
-<h3>Local MCP server: STDIO</h3>
-<p>The MCP client launches the server as a subprocess with STDIO and exchanges newline-delimited JSON-RPC messages through standard input and output. The server reads protocol messages from stdin, writes protocol messages to stdout, and can use stderr for diagnostics. Anything written to stdout that is not a valid MCP message can break the protocol stream.</p>
-<p>STDIO also keeps the deployment boundary small. There is no remote endpoint, TLS termination, multi-tenant routing, or network authorization layer to operate before you can prove the capability works.</p>
-<p>This model works well for local filesystem and source-code operations, developer or desktop tooling, and workflows that need access to locally available credentials or processes.</p>
-<p>STDIO transport lets an MCP client launch a local server process and exchange messages through standard input and output.</p>
-<h3>Remote MCP server: Streamable HTTP</h3>
-<p>With Streamable HTTP, the MCP server runs independently and can serve multiple clients. In the current protocol, clients send messages as HTTP POST requests to a <a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/transports">single MCP endpoint</a>. Responses can return as JSON or through a request-scoped Server-Sent Events (SSE) stream when streaming is needed.</p>
-<p>This makes Streamable HTTP better suited to shared services, SaaS integrations, and production deployments. The trade-off is that you now need to handle standard service concerns such as authentication, authorization, rate limiting, tenant isolation, and monitoring.</p>
-<p>For protected HTTP servers, MCP defines an<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization"> OAuth-based authorization model</a> in which access tokens are validated for the intended MCP resource.</p>
-<h2>What Breaks When an MCP Server Moves Beyond the Demo?</h2>
-<p>A demo shows that a server can provide a capability and return a result. In production, reliability depends on the model choosing appropriate tools, permissions limiting actions, failures being recoverable, and the execution process being observable.</p>
-<ul><li><strong>Too many tools make selection less reliable.</strong> Every tool definition adds to the model’s decision space and input context. Model quality can degrade as more functions are supplied, and function definitions also count toward<a href="https://docs.deepinfra.com/chat/tool-calling?utm_source=chatgpt.com"> input token usage</a>. Keep the available toolset focused on the capabilities required for the workflow, rather than exposing every backend endpoint.</li><li><strong>Ambiguous tool contracts cause incorrect calls.</strong> Similar tools such as search_user and find_user become difficult to distinguish unless their purpose is explicit. Use distinct names, descriptions, and input schemas so the model can determine which operation applies and generate valid arguments.</li><li><strong>Authentication alone does not control actions.</strong> A valid caller should not automatically have permission to invoke every tool. Use least-privilege scopes so clients request only the permissions required for an operation, and add confirmation or policy gates before destructive or high-impact actions.</li><li><strong>Generic errors prevent recovery.</strong> MCP distinguishes protocol failures from tool execution errors. Return specific errors for invalid arguments, authorization failures, upstream failures, or business-rule violations so the model can determine whether and how to retry.</li><li><strong>API-level monitoring does not explain agent failures.</strong> Trace the path from the model’s decision to the tool request, MCP execution, and then to the upstream service and the tool’s output. Capture the tool name, latency, execution status, authorization failures, and retries to identify whether a failure originated from <a href="https://deepinfra.com/blog/deepseek-v4-flash-vs-qwen3-6-vs-glm-4-6-benchmarks">model selection</a>, the MCP server, or the underlying service.</li></ul>
-<h2>When Should You Use MCP and When Is It Overkill?</h2>
-<p>MCP is valuable when the capability boundary itself needs to become reusable.</p>
-<p>If multiple <a href="https://deepinfra.com/blog/hosted-agents">AI hosts</a> require the same integration or if capabilities should be easily discoverable rather than embedded into a single application, an MCP server provides a stable integration surface. Additionally, it allows you to change models and <a href="https://deepinfra.com/blog/frontier-level-agents-on-open-models-langchain-deep-agents-nvidia-nemotron-3-ultra-live-on-deepinfra">agent frameworks</a> without needing to rebuild access to your internal systems.</p>
-<p>It is less compelling when one application owns both sides of a small, static workflow. If an agent needs one private API operation and no other client will reuse it, ordinary function calling may remain simpler.</p>
-<p>A useful test is whether you are standardizing a reusable integration or wrapping a single function in another protocol.</p>
-<h2>Where DeepInfra Fits in an MCP Stack</h2>
-<p>MCP provides standardized access to tools and context, while the model decides which tool to call, what arguments to send, and how to use the result.</p>
-<p>DeepInfra provides that <a href="https://deepinfra.com/blog/how-deepinfra-built-on-nvidias-inference-stack-and-why-it-paid-off">inference layer</a> through its <a href="https://docs.deepinfra.com/api-reference/introduction">OpenAI-compatible API</a>. Its supported models can use <a href="https://docs.deepinfra.com/chat/tool-calling">tool calling</a> to select a function and generate structured arguments. The application invokes the requested tool through the MCP server, returns the result to the model, and runs the next inference step to continue or complete the task. DeepInfra supports automatic tool selection, single tool calls, and parallel tool calls, although parallel-call quality can vary by model.</p>
-<p>Because the MCP integration remains separate from inference, you can compare<a href="https://deepinfra.com/models"> different models</a> for tool-calling reliability, latency, context window, and <a href="https://deepinfra.com/pricing">inference cost</a> without changing the MCP server or its backend integrations. DeepInfra currently provides 100+ open-source models through its inference platform.</p>
-<h2>Conclusion</h2>
-<p>Shipping an MCP server starts with the capability boundary. Decide what the model should be able to do, what the application only needs to read, and whether reusable prompts add value. Keep tools focused and schemas clear.</p>
-<p>Use STDIO for local workflows and switch to Streamable HTTP when serving as shared infrastructure. Before production, treat authorization, error semantics, observability, and tool selection behavior as part of the interface.</p>
-<p>Moreover, keep MCP focused on standardizing access to external capabilities while existing services retain business logic. This separation also lets the inference layer evolve without reworking the MCP integration.</p>
-<p>Explore DeepInfra’s<a href="https://deepinfra.com/models"> open-weight models</a> to find the right model for tool calling, MCP-powered applications, and agentic workflows. For any questions reach out to us at info@deepinfra.com. You can also join the community on <a href="https://discord.gg/deepinfra">Discord</a>, or find us on X at<a href="https://x.com/DeepInfra"> @DeepInfra</a>.</p>
-<p>Related articles</p>
-<p>A Milestone on Our Journey Building DeepInfra and Scaling Open Source AI Infrastructure</p>
-<p>Today we're excited to share that DeepInfra has raised $18 million in Series A funding, led by Felicis and our earliest believer and advisor Georges Harik.</p>
-<p>Best Kimi K2.6 API Providers for Developers (2026)</p>
-<p>&lt;p&gt;Kimi K2.6 is available across a range of hosted API providers, and the right choice depends on what your workload optimizes for — latency, throughput, cost, deployment flexibility, or native feature support. This guide covers the top options by use case. For a detailed cost breakdown across workload types, see the Kimi K2.6 pricing guide. [&amp;hellip;]&lt;/p&gt;</p>
-<p>Best MiMo-V2.5 API Providers Ranked</p>
-<p>&lt;p&gt;Executive Summary: Selecting the right API provider for Xiaomi&amp;#8217;s MiMo-V2.5 is critical for optimizing production workflows. Based on the benchmark research, DeepInfra is the best provider for raw speed and low latency (130+ tokens/second), while Xiaomi&amp;#8217;s first-party API is the most cost-effective, offering unmatched prompt caching discounts. This guide breaks down the model&amp;#8217;s MoE architecture [&amp;hellip;]&lt;/p&gt;</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -431,31 +431,6 @@
 <ul><li>•在 <a href="https://docs.fireworks.ai/deployments/regions">Fireworks 区域目录</a>中探索可用区域与硬件。</li><li>•了解更多多区域部署信息。<a href="https://fireworks.ai/contact">联系我们的销售团队</a>，或联系你的 Fireworks 支持代表，讨论适合你工作负载的正确配置。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>介绍 FireRouter 与 Opus</title>
-      <link>https://fireworks.ai/blog/introducing-firerouter-with-opus/</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/introducing-firerouter-with-opus/</guid>
-      <description>原文标题：Introducing FireRouter with Opus</description>
-      <content:encoded><![CDATA[<p><a href="https://fireworks.ai/nexus">Fireworks Nexus</a> 让工程团队可以把领先的开放模型直接放进他们已经在用的 harness 里，在不牺牲速度与质量的前提下把开销砍掉一半。该方案包含 FireRouter——市面上第一个缓存感知（cache-aware）的路由器，它在速度与成本上带来很大差别。</p>
-<p>今天，我们推出 <a href="https://fireworks.ai/models/fireworks/firerouter-opus">FireRouter with Opus</a>，它针对 Opus 家族做了优化，现在同时出现在我们的 CLI 中，并且首次以独立的路由模型形式提供。任何 Fireworks 账号都可以像使用其他任何模型一样，把它当作无服务器 endpoint 指向使用。</p>
-<p>经过一个多月的内部 A/B 测试，FireRouter with Opus 执行编码任务的准确率达到单独使用 Opus 的 98.1%，而成本降低 57%。</p>
-<h2>FireRouter 是什么</h2>
-<p>目前，FireRouter with Opus 会在 Claude Opus 5.5、GLM 5.3 与 GLM 5.3 Flash 之间路由</p>
-<p>每一次打到 FireRouter 的用户轮次，都会评估集合里每个模型对这项任务的适合程度。然后估算每个模型处理该任务的成本，包括 prompt cache 的成本，以及为了切换到另一个模型而丢掉缓存是否值得。最后，它路由到在质量与成本之间平衡得最好的那个模型。</p>
-<p>目前，一个用户轮次会在 Claude Opus 5.5、GLM 5.3 与 GLM 5.3 Flash 之间路由。随着新模型与版本发布，模型集合会变化。</p>
-<h2>结果</h2>
-<p>我们的内部编码流量随机分配到 FireRouter with Opus 组或仅用 Opus 的对照组，覆盖相同的工作负载与用户。</p>
-<p>每个会话的成本下降 57%（±19 个百分点），从 $15.36 降到 $6.63。</p>
-<p>为了给准确率打分，我们核实了 agent 是否完成了工作、是否得到了正确答案，以及用户是否需要在下一轮做任何纠正。</p>
-<p>FireRouter with Opus 在 78.7% 的评分轮次上得分，而仅用 Opus 为 80.2%，即达到其整体准确率的 98.1%。</p>
-<p>我们的大部分流量来自内部编码工作，开放模型足以处理其中许多例行轮次。FireRouter 的缓存感知路由在切换模型带来的节省与丢失缓存命中的代价之间权衡。结果是 FireRouter with Opus 的缓存命中率为 94.2%，而单独使用 Opus 为 97.8%——一个有意为之的小取舍，却大幅降低了整体成本。</p>
-<h2>两行命令即可试用</h2>
-<p>FireRouter with Opus 现已在多个 harness 中可用，包括 Claude Code、Codex、Cursor IDE 等。用下面的命令开始，更多信息见 <a href="https://docs.fireworks.ai/nexus/firerouter/setup">FireRouter 文档</a>。</p>
-<p>bash</p>
-<p>复制</p>
-<pre><code>12fireconnect loginfireconnect claude --model firerouter/opus</code></pre>
-<p><a href="https://app.fireworks.ai/models/firerouter-opus">登录 Fireworks</a>，查看你团队的 Claude Opus 开销预计能省下多少。</p>]]></content:encoded>
-    </item>
-    <item>
       <title>每个字节都算数：ARCv3 与跨区域 RL 的必要性</title>
       <link>https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl/</link>
       <guid isPermaLink="true">https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl/</guid>
@@ -1007,6 +982,31 @@ restored = delta_decompress(    src=src,    compressed_diff=compressed_diff,    
 <p>reasoning effort 在 system prompt 中以 Reasoning strength: &lt;value&gt; 设置，可选 low、medium、high 和 xhigh——agentic 与 coding 工作请用 high 或 xhigh。上表中所有 benchmark 数字都是在 high 下取得的。</p>
 <p>agentic AI 的时代已经到来。我们鼓励你今天就开始用 Fireworks 上的 Muse Glimmer 模型构建。查看我们的<a href="https://fireworks.ai/models/fireworks/muse-glimmer-30b">文档</a>，开始构建吧！</p>
 <ul><li><a href="https://fireworks.ai/blog?blogTypes=Model%20release">模型发布</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>介绍 FireRouter 与 Opus</title>
+      <link>https://fireworks.ai/blog/introducing-firerouter-with-opus/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/introducing-firerouter-with-opus/</guid>
+      <description>原文标题：Introducing FireRouter with Opus</description>
+      <content:encoded><![CDATA[<p><a href="https://fireworks.ai/nexus">Fireworks Nexus</a> 让工程团队可以把领先的开放模型直接放进他们已经在用的 harness 里，在不牺牲速度与质量的前提下把开销砍掉一半。该方案包含 FireRouter——市面上第一个缓存感知（cache-aware）的路由器，它在速度与成本上带来很大差别。</p>
+<p>今天，我们推出 <a href="https://fireworks.ai/models/fireworks/firerouter-opus">FireRouter with Opus</a>，它针对 Opus 家族做了优化，现在同时出现在我们的 CLI 中，并且首次以独立的路由模型形式提供。任何 Fireworks 账号都可以像使用其他任何模型一样，把它当作无服务器 endpoint 指向使用。</p>
+<p>经过一个多月的内部 A/B 测试，FireRouter with Opus 执行编码任务的准确率达到单独使用 Opus 的 98.1%，而成本降低 57%。</p>
+<h2>FireRouter 是什么</h2>
+<p>目前，FireRouter with Opus 会在 Claude Opus 5.5、GLM 5.3 与 GLM 5.3 Flash 之间路由</p>
+<p>每一次打到 FireRouter 的用户轮次，都会评估集合里每个模型对这项任务的适合程度。然后估算每个模型处理该任务的成本，包括 prompt cache 的成本，以及为了切换到另一个模型而丢掉缓存是否值得。最后，它路由到在质量与成本之间平衡得最好的那个模型。</p>
+<p>目前，一个用户轮次会在 Claude Opus 5.5、GLM 5.3 与 GLM 5.3 Flash 之间路由。随着新模型与版本发布，模型集合会变化。</p>
+<h2>结果</h2>
+<p>我们的内部编码流量随机分配到 FireRouter with Opus 组或仅用 Opus 的对照组，覆盖相同的工作负载与用户。</p>
+<p>每个会话的成本下降 57%（±19 个百分点），从 $15.36 降到 $6.63。</p>
+<p>为了给准确率打分，我们核实了 agent 是否完成了工作、是否得到了正确答案，以及用户是否需要在下一轮做任何纠正。</p>
+<p>FireRouter with Opus 在 78.7% 的评分轮次上得分，而仅用 Opus 为 80.2%，即达到其整体准确率的 98.1%。</p>
+<p>我们的大部分流量来自内部编码工作，开放模型足以处理其中许多例行轮次。FireRouter 的缓存感知路由在切换模型带来的节省与丢失缓存命中的代价之间权衡。结果是 FireRouter with Opus 的缓存命中率为 94.2%，而单独使用 Opus 为 97.8%——一个有意为之的小取舍，却大幅降低了整体成本。</p>
+<h2>两行命令即可试用</h2>
+<p>FireRouter with Opus 现已在多个 harness 中可用，包括 Claude Code、Codex、Cursor IDE 等。用下面的命令开始，更多信息见 <a href="https://docs.fireworks.ai/nexus/firerouter/setup">FireRouter 文档</a>。</p>
+<p>bash</p>
+<p>复制</p>
+<pre><code>12fireconnect loginfireconnect claude --model firerouter/opus</code></pre>
+<p><a href="https://app.fireworks.ai/models/firerouter-opus">登录 Fireworks</a>，查看你团队的 Claude Opus 开销预计能省下多少。</p>]]></content:encoded>
     </item>
     <item>
       <title>Gen-1 Slides：Opus 5 级的演示文稿，成本仅一小部分</title>

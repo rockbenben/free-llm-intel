@@ -398,6 +398,7 @@
       <link>https://www.minimax.cn/blog/sparse-token-forgetting-investigation</link>
       <guid isPermaLink="true">https://www.minimax.cn/blog/sparse-token-forgetting-investigation</guid>
       <pubDate>Sun, 31 May 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：为什么MiniMax大模型不认识&quot;马嘉祺&quot;？MiniMax内部排查稀疏 Token 遗忘问题的记录</description>
       <content:encoded><![CDATA[<h2>背景</h2>
 <p>MiniMax M2 系列受到了开发者社区的广泛关注，不少用户在深度使用中发现了一些 corner case——其中&quot;模型无法说出马嘉祺&quot;这个问题在小红书和知乎上引发了较多讨论。我们也注意到，社区中有不少开发者对这个现象进行了相当严谨的分析和论证，包括 tokenizer 对比、采样参数测试等。</p>
 <p>在内部复现后，我们发现这不是一个孤立的 case——除了&quot;马嘉祺&quot;之外，还有一些其他低频词汇（如&quot;王郸&quot;等）也存在类似现象。社区开发者已经给出了很有价值的分析，但受限于资源，较难进一步深入到模型训练层面进行实验验证。作为模型的开发者，我们认为这个问题背后的原因和机制值得做一次系统的研究，而我们也有条件对比 pretrain 与 SFT 各层参数的变化、分析 lm_head 的退化模式、量化稀疏 token 的遗忘机制，并通过训练实验验证修复方案。</p>

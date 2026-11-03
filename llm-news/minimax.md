@@ -1,6 +1,6 @@
 # MiniMax (稀宇科技) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-31**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-03**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：MiniMax (稀宇科技)（`minimax`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -21,7 +21,7 @@
 8. [MiniMax M3：前沿 Coding 能力，1M上下文，原生多模态，一个模型全给你](https://www.minimax.cn/blog/minimax-m3)（2026-06-09）
 9. [MaxProof: 生成式验证强化学习驱动的数学证明进化系统](https://www.minimax.cn/blog/minimax-maxproof-math-proof-evolution)（2026-06-09）
 10. [MiniMax M3](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-6-%E6%9C%88-1-%E6%97%A5)（2026-06-01） <!--orig:MiniMax M3-->
-11. [为什么MiniMax大模型不认识"马嘉祺"？Minimax内部排查稀疏 Token 遗忘问题的记录](https://www.minimax.cn/blog/sparse-token-forgetting-investigation)（2026-05-31）
+11. [为什么MiniMax大模型不认识"马嘉祺"？Minimax内部排查稀疏 Token 遗忘问题的记录](https://www.minimax.cn/blog/sparse-token-forgetting-investigation)（2026-05-31） <!--orig:为什么MiniMax大模型不认识"马嘉祺"？MiniMax内部排查稀疏 Token 遗忘问题的记录-->
 12. [MiniMax Agent Team: 为长程任务，持续进化而生](https://www.minimax.cn/blog/minimax-agent-team-long-running-1779893521)（2026-05-25）
 13. [MiniMax M2.7: 开启模型的自我进化](https://www.minimax.cn/blog/minimax-m27)（2026-04-27）
 14. [Music-2.6](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-4-%E6%9C%88)（2026-04-01） <!--orig:Music-2.6-->

@@ -7,7 +7,765 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 30 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Prepare web content for Amazon Bedrock Knowledge Bases with…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/prepare-web-content-for-amazon-bedrock-knowledge-bases-with-crawl4ai/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/prepare-web-content-for-amazon-bedrock-knowledge-bases-with-crawl4ai/</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Prepare web content for Amazon Bedrock Knowledge Bases with Crawl4AI</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>使用 Crawl4AI 为 Amazon Bedrock 知识库准备 Web 内容</h1>
+<p>当您构建检索增强生成 (RAG) 应用程序时，答案质量取决于您摄取的数据。 <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock 知识库</a> 是 Amazon Bedrock 的完全托管 RAG 功能。借助 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-build-management.html">Amazon Bedrock 托管知识库</a>，您可以连接数据源，Amazon Bedrock 会为您管理提取、存储、索引和检索。您无需配置或扩展矢量存储，嵌入和重新排名默认使用服务管理模型。</p>
+<p>对于 Web 内容，请从托管知识库的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-management-ds-webcrawler.html">Amazon Bedrock Web Crawler</a> 数据源连接器开始。您向其提供您有权抓取的种子网址或站点地图，它就会在您设置的范围和速率限制内进行抓取。计划同步可在页面更改时使您的知识库保持最新状态，并且连接器可以等待使用 JavaScript 加载的内容。没有可供您构建、托管或操作的爬网程序，因此此连接器是大多数公共网站内容的起点。</p>
+<p>有些来源需要对到达知识库的内容进行更多控制。您可能只想对每个页面的主要内容区域建立索引，删除导航和其他样板文件，或者将您自己的元数据属性附加到每个文档。对于此类源材料，您可以通过使用开源 Python 爬虫程序 <a href="https://github.com/unclecode/crawl4ai">Crawl4AI</a> 构建的准备步骤来扩展知识库的范围。该步骤将每个页面的 Markdown 和元数据 sidecar 写入 Amazon Simple Storage Service (Amazon S3)，知识库通过其 Amazon S3 数据源提取这两者。</p>
+<p>在这篇文章中，我们将向您展示如何选择适当的网络摄取路径并为需要额外处理的内容实施自定义准备。然后，您开始摄取托管知识库并验证检索质量。配套的 <a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base">aws-samples 存储库</a> 提供了完整的工作流程作为示例实现。</p>
+<p>这是对已知 Web 属性的批量摄取，而不是在推理时进行实时 Web 访问，例如使用 Amazon Nova 的 <a href="https://docs.aws.amazon.com/nova/latest/nova2-userguide/web-grounding.html">Web Grounding</a>。</p>
+<h2>解决方案概述</h2>
+<p>当 Amazon Bedrock Web Crawler 能够到达并索引您需要的页面时，开始使用它。它尊重“robots.txt”，并且在第一次完全抓取后，每次同步仅捕获添加、更新和删除的内容。</p>
+<p>当公共源材料在摄取之前需要以下一项或多项时，请使用 Crawl4AI 准备路径：</p>
+<ul><li><strong>结构化 Markdown 准备</strong>：使用带有修剪内容过滤器的“DefaultMarkdownGenerator”来减少导航和其他样板文件，同时保留标题、列表和表格。由于修剪是启发式的，因此请检查站点的代表性输出。</li><li><strong>有界、有针对性的提取</strong>：仅提取可选 CSS 选择器匹配的页面区域。通过种子来源、页面/路径/主机范围、深度和页面上限以及 URL 模式来约束广度优先遍历。</li><li><strong>自定义元数据</strong>：将源 URL、抓取时间戳、内容类型和您自己的属性附加到每个文档，以便您可以过滤它们的检索结果。</li></ul>
+<p>由于托管知识库和客户管理知识库均支持 Amazon S3 数据源，因此 Crawl4AI 路径适用于任一类型。本文使用托管知识库，并指出客户管理知识库的不同之处。</p>
+<p>本文的其余部分遵循配套示例。将其架构和默认设置作为起点，而不是作为 Amazon Bedrock 知识库的要求。</p>
+<p>默认情况下，该示例在公有子网中运行 AWS Fargate 任务，并通过 Internet 网关访问您配置的网站。一旦准备好源文档和元数据 sidecar，Crawl4AI 的角色就结束了。从摄取开始，Amazon Bedrock 知识库就会处理解析、分块、嵌入、索引和检索。下图显示了 Crawl4AI 从计划到检索的路径。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21438-1.png" alt="架构图显示 Amazon EventBridge 计划启动 AWS Fargate 任务，该任务爬取公共网站、将准备好的 Markdown 和元数据写入 Amazon S3，并触发 Amazon Bedrock 知识库摄取到矢量存储中以供生成式 AI 检索应用程序。"></p>
+<p>图 1：Amazon Bedrock 知识库的 Crawl4AI 到 Amazon S3 的提取路径</p>
+<p>图中的编号步骤映射到以下工作流程：</p>
+<ul><li>Amazon EventBridge 按照配置的计划在 AWS Fargate 上启动 Amazon Elastic Container Service (Amazon ECS) 任务。</li><li>该任务会抓取您配置的公共网站，并为每个页面准备带有元数据 sidecar 的 Markdown。</li><li>该任务将准备好的文件上传到支持知识库数据源的 Amazon S3 存储桶。</li><li>该任务启动 Amazon Bedrock 知识库摄取作业。</li><li>Amazon Bedrock 知识库读取新的和更改的对象，解析它们，并应用您选择的分块策略。</li><li>它创建嵌入并在知识库的向量存储中对它们进行索引，Amazon Bedrock 为托管知识库管理该向量存储。</li><li>您的生成式人工智能应用程序在知识库中查询相关块或生成的带有引文的响应。</li></ul>
+<p>该任务在启动时从 AWS Systems Manager Parameter Store 读取其非秘密管道配置。</p>
+<p>该工作流仅处理公共页面，不实现经过身份验证的会话。对于需要登录的站点，请首先评估 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-management-ds-webcrawler.html">Amazon Bedrock Web Crawler 身份验证选项</a>，其中包括基本身份验证、基于表单的身份验证和 SAML 身份验证。使用身份验证扩展示例需要会话处理、AWS Secrets Manager 中的凭证以及安全审查。</p>
+<h2>工作流程如何运作</h2>
+<p>AWS 云开发工具包 (AWS CDK) 应用程序在部署期间将实施打包在容器映像中。当计划触发时，容器运行“scripts/container_entrypoint.py”并按顺序执行爬网、上传和摄取。下面三个步骤解释了核心逻辑。</p>
+<h3>第 1 步：抓取并提取内容</h3>
+<p>爬网步骤执行有界爬网，并为每个成功准备的页面写入带有元数据 sidecar 的 Markdown 文件。以下摘录经过简化。模块 <code>src/crawl4ai_bedrock_kb/crawl.py</code> 包含完整的种子节奏、URL 过滤和范围、页面限制和重定向检查：</p>
+<pre><code>async def crawl_and_prepare(config: PipelineConfig, output_dir: str) -&gt; list[str]:
+    written, seen = [], set()
+    pages_crawled = 0
+    browser_config = BrowserConfig(headless=True, java_script_enabled=True)
+
+    async with AsyncWebCrawler(config=browser_config) as crawler:
+        for seed in config.seed_urls:
+            remaining = config.crawl.max_pages - pages_crawled
+            if remaining &lt;= 0:
+                break
+
+            strategy = BFSDeepCrawlStrategy(
+                max_depth=config.crawl.max_depth,
+                max_pages=remaining,
+                filter_chain=FilterChain([
+                    SeedScopeFilter(seed, config.crawl.scope),
+                    # Optional include/exclude URLPatternFilter objects are added here.
+                ]),
+            )
+            run_config = CrawlerRunConfig(
+                deep_crawl_strategy=strategy,
+                markdown_generator=DefaultMarkdownGenerator(
+                    content_filter=PruningContentFilter()
+                ),
+                css_selector=config.crawl.css_selector,  # Optional page region.
+                check_robots_txt=config.crawl.check_robots_txt,
+                mean_delay=config.crawl.request_delay_seconds,
+                max_range=0,
+                semaphore_count=1,
+            )
+
+            results = await crawler.arun(url=seed, config=run_config)
+            for result in results:
+                if pages_crawled &gt;= config.crawl.max_pages:
+                    break
+                pages_crawled += 1
+                requested_url = result.url
+                source_url = getattr(result, &quot;redirected_url&quot;, None) or requested_url
+                if not SeedScopeFilter(seed, config.crawl.scope).apply(source_url):
+                    continue  # Recheck the effective destination after redirects.
+                canonical = _canonical_url(source_url)
+                if canonical in seen:
+                    continue
+                seen.add(canonical)
+                if not result.success or not result.markdown:
+                    continue
+
+                md_result = result.markdown
+                markdown = (
+                    getattr(md_result, &quot;fit_markdown&quot;, None)
+                    or getattr(md_result, &quot;raw_markdown&quot;, None)
+                    or (md_result if isinstance(md_result, str) else &quot;&quot;)
+                )
+                if not markdown:
+                    continue
+
+                # The complete implementation adds title, crawl timestamps, content
+                # type, and configured custom attributes to this metadata.
+                written.extend(
+                    _write_document(
+                        output_dir,
+                        _base_name(source_url),
+                        markdown,
+                        {&quot;source_url&quot;: source_url},
+                    )
+                )
+    return written</code></pre>
+<p>Amazon Bedrock 知识库支持 Amazon S3 数据源的<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-ds.html">多种文档格式</a>，包括纯文本、HTML、Markdown、PDF 和 DOCX。该工作流程编写 Markdown 是因为它保留了标题、列表和表格，而无需将所有原始 HTML 引入到摄取中。</p>
+<h3>第 2 步：上传到 Amazon S3</h3>
+<p>上传步骤将每个准备好的 Markdown 文档及其匹配的元数据 sidecar 发送到工作流程的“s3Prefix”下配置的 S3 存储桶。对于“page.md”，sidecar 必须命名为“page.md.metadata.json”，即附加“.metadata.json”的完整源文件名。该工作流程将每个 sidecar 存储在与其文档相同的 S3 位置。 Amazon Bedrock 将每个元数据 sidecar 限制为 10 KB。如果 sidecar 超出该限制，则运行会在写入任一文件之前停止并出现错误。</p>
+<p>sidecar 中的每个属性都使用托管知识库和客户管理知识库都接受 Amazon S3 数据源的类型化格式。以下缩写的 sidecar（为了便于阅读而进行了格式化）显示了工作流写入的三个属性：</p>
+<pre><code>{
+  &quot;metadataAttributes&quot;: {
+    &quot;source_url&quot;: {
+      &quot;value&quot;: {&quot;type&quot;: &quot;STRING&quot;, &quot;stringValue&quot;: &quot;https://www.example.com/services/permits&quot;}
+    },
+    &quot;crawled_at_epoch&quot;: {
+      &quot;value&quot;: {&quot;type&quot;: &quot;NUMBER&quot;, &quot;numberValue&quot;: 1790640000}
+    },
+    &quot;content_category&quot;: {
+      &quot;value&quot;: {&quot;type&quot;: &quot;STRING&quot;, &quot;stringValue&quot;: &quot;web&quot;}
+    }
+  }
+}</code></pre>
+<p>管道仅上传当前爬网生成的路径，因此不会发送过时的本地文件。</p>
+<h3>步骤 3：让 Amazon Bedrock 知识库进行分块、嵌入和索引</h3>
+<p>内容进入 S3 后，摄取作业将每个文档交给数据源的摄取管道。默认情况下，托管知识库使用其托管解析器解析每个文件，该解析器会自动为您的内容选择解析方法。您在连接数据源时选择分块策略。您之后无法更改它，因此请在创建生产数据源之前评估选项。托管知识库提供以下分块策略：</p>
+<ul><li><strong>默认分块</strong>使用 300 个标记的固定大小块，重叠率为 20%。</li><li><strong>固定大小分块</strong>按照最大标记计数和您设置的重叠百分比来拆分内容。</li><li><strong>无分块</strong>将每个文件视为单个块，对于您已分割的内容。</li></ul>
+<p>块边界和检索结果取决于内容和所选策略，因此将选项与代表性页面和评估问题进行比较。要稍后更改策略，请创建新的数据源。有关更多信息，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-management-customize-ingestion.html">自定义数据源的提取</a>。客户管理的知识库还提供语义和分层分块以及其他解析选项。有关详细信息，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking.html">内容分块如何适用于知识库</a>。</p>
+<p>然后，工作流程启动摄取作业，以便知识库处理新文档。以下来自“src/crawl4ai_bedrock_kb/ingest.py”的简化摘录显示了该调用：</p>
+<pre><code>def start_ingestion_job(config: PipelineConfig) -&gt; str:
+    # Start an Amazon Bedrock knowledge base ingestion job and return its ID.
+    client = boto3.client(&quot;bedrock-agent&quot;, region_name=config.region)
+    response = client.start_ingestion_job(
+        knowledgeBaseId=config.knowledge_base_id,
+        dataSourceId=config.data_source_id,
+    )
+    return response[&quot;ingestionJob&quot;][&quot;ingestionJobId&quot;]</code></pre>
+<p>相同的“StartIngestionJob”和“GetIngestionJob”调用适用于两种知识库类型，您还可以在控制台上监控进度。</p>
+<h2>部署解决方案</h2>
+<p>在本部分中，您将使用 AWS CDK 将工作流程部署到您的 AWS 账户中。这两种知识库类型之间只有知识库先决条件不同。完成后，请按照清理部分中的步骤删除资源。</p>
+<h3>先决条件</h3>
+<p>在开始之前，请确保您拥有：</p>
+<ul><li>AWS 账户。</li><li>以下知识库之一：<strong>托管知识库</strong>，本文使用的托管知识库位于<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-management-regions.html">可用托管知识库</a> 的 AWS 区域。有关说明，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-management-create.html">创建托管知识库</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-management-ds-s3.html">Amazon S3 连接器</a>。在数据源上，将<strong>元数据文件前缀</strong>留空，因为工作流将每个元数据 sidecar 与其文档一起写入。 <strong>现有客户管理的知识库。</strong> 要添加 Amazon S3 数据源，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/s3-data-source-connector.html">连接到您的知识库的 Amazon S3</a>。该工作流程为每个文档编写一个元数据 sidecar，因此请确认您的矢量存储可以存储和过滤这些属性，如<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-config.html">元数据和过滤</a>中所述。例如，Amazon OpenSearch Serverless 矢量索引必须使用“faiss”引擎。 Amazon Aurora 矢量索引需要自定义元数据列或每个元数据属性的列。借助 Amazon S3 矢量（Amazon S3 的一项功能），您可以将最多 1 KB 的自定义元数据附加到每个矢量，因此请保持您添加的属性简短。</li><li>该知识库中状态为“可用”的 Amazon S3 数据源。它可以是新的数据源，也可以是您已经使用的数据源。它必须使用您为此工作流程配置的 S3 存储桶。如果数据源按前缀或文件模式过滤内容，则过滤器必须允许工作流在其“s3Prefix”（默认“web-content/”）下写入的文件。</li><li>知识库、S3 存储桶和您在一个区域中部署的堆栈。</li><li>授权抓取您配置的公共网站。</li><li>部署工作站，配备 Git、Python 3.10 或更高版本、Node.js、AWS 命令​​行界面 (AWS CLI) 版本 2、AWS CDK CLI v2 以及正在运行的 Docker 兼容容器引擎。 <a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base/blob/main/deploy/README.md">部署指南</a>列出了最低 AWS CDK CLI 版本。</li><li>在部署工作站上配置的 AWS 凭证，有权引导目标环境并部署 CDK 堆栈。</li><li>目标账户和区域中的引导 CDK 环境。部署步骤包括 bootstrap 命令。</li></ul>
+<p>您仅需要工作站来构建和部署。部署后，计划在 AWS 中运行任务。</p>
+<h3>部署预定的工作流程</h3>
+<p>克隆配套存储库并安装部署依赖项：</p>
+<pre><code>git clone https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base.git
+cd sample-crawl4ai-bedrock-knowledge-base/deploy
+python -m venv .venv
+source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt</code></pre>
+<p>保持 Docker 运行。首先将“AWS_DEFAULT_REGION”设置为您的知识库的区域，因为“cdk部署”使用您的环境或AWS配置文件中的区域，而不是引导命令中的区域。如果需要，引导一次目标账户和区域。然后使用您的知识库、数据源、S3 存储桶和授权种子 URL 部署堆栈：</p>
+<pre><code>export AWS_DEFAULT_REGION=REGION  # Windows PowerShell: $env:AWS_DEFAULT_REGION = &quot;REGION&quot;
+cdk bootstrap aws://ACCOUNT_ID/REGION
+
+cdk deploy \
+  -c knowledgeBaseId=ABCDEFGHIJ \
+  -c dataSourceId=KLMNOPQRST \
+  -c s3Bucket=amzn-s3-demo-bucket \
+  -c 'seedUrls=[&quot;https://www.example.com/services&quot;]' \
+  -c maxDepth=1 \
+  -c maxPages=25</code></pre>
+<p>将每个示例值（包括“ACCOUNT_ID”、“REGION”和四个必需的上下文键）替换为您自己的值。示例值在语法上是有效的，因此未经编辑的命令会部署一个指向您不拥有的存储桶的堆栈。您还可以在“cdk.json”中设置这些键。</p>
+<p><code>maxDepth</code> 和 <code>maxPages</code> 值将第一次爬网限制为一个链接级别和 25 个页面。在检查准备好的输出后提高它们。要预览爬网准备的页面，您还可以使用“--dry-run”在本地运行管道，如 <a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base#quick-start">README</a> 中所述。堆栈名称是固定的，因此同一帐户和区域中的另一个“cdk部署”会更新此堆栈。</p>
+<p>该示例默认构建 ARM64 容器映像。如果 x86_64 工作站上的 Docker 无法构建 ARM64 映像，请将“-c cpuArchitecture=X86_64”添加到“cdk deploy”命令中。</p>
+<p>如果您的账户开启了 VPC 阻止公共访问，则任务无法从默认公共子网访问 Internet。要检查模式，请运行“aws ec2 describe-vpc-block-public-access-options”。在仅入口模式下，使用“-c egressMode=nat”进行部署，这会添加按小时收费的 NAT 网关。双向模式也需要排除，如部署指南所述。</p>
+<p>该堆栈不会创建或更改您的知识库或数据源。</p>
+<p>使用默认的“速率（24 小时）”计划，首次运行将在部署创建 Amazon EventBridge 规则时开始。要跟踪该运行，请使用“TailLogsCommand”输出中的命令，“cdk deploy”完成时将打印该命令。成功运行会记录“job_status: COMPLETE”。要在计划之外启动另一次运行，请在当前运行完成后使用“RunTaskCommand”输出中的命令。要稍后列出输出，请运行“aws cloudformation describe-stacks --stack-name Crawl4aiBedrockKbCrawler --region REGION --query &quot;Stacks[0].Outputs&quot;”。</p>
+<p><a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base/blob/main/deploy/README.md">部署指南</a>涵盖了其余配置，包括爬网边界、计划、网络、容器架构、监控和按需运行。</p>
+<h2>验证检索质量</h2>
+<p>摄取后，在添加生成之前使用“检索”测试代表性问题。托管知识库使用混合搜索。当它使用默认的托管嵌入模型时，它还会使用其托管重新排序器对结果进行重新排序。您可以使用 sidecar 中的元数据来缩小结果范围。该示例的默认配置将设置为“web”的“content_category”添加到每个页面。以下示例从过去 7 天内爬网的页面中返回最多 5 个块。它需要适用于 Python (Boto3) 1.43.32 或更高版本的 AWS 开发工具包，您可以使用“python -m pip install &quot;boto3&gt;=1.43.32&quot;”进行安装。将区域和知识库 ID 替换为您自己的值：</p>
+<pre><code>import time
+
+import boto3
+
+client = boto3.client(&quot;bedrock-agent-runtime&quot;, region_name=&quot;us-east-1&quot;)
+week_ago = int(time.time()) - 7 * 24 * 60 * 60
+
+response = client.retrieve(
+    knowledgeBaseId=&quot;ABCDEFGHIJ&quot;,
+    retrievalQuery={&quot;text&quot;: &quot;How do I apply for a building permit?&quot;},
+    retrievalConfiguration={
+        &quot;managedSearchConfiguration&quot;: {
+            &quot;numberOfResults&quot;: 5,
+            &quot;filter&quot;: {
+                &quot;andAll&quot;: [
+                    {&quot;equals&quot;: {&quot;key&quot;: &quot;content_category&quot;, &quot;value&quot;: &quot;web&quot;}},
+                    {&quot;greaterThan&quot;: {&quot;key&quot;: &quot;crawled_at_epoch&quot;, &quot;value&quot;: week_ago}},
+                ]
+            },
+        }
+    },
+)
+
+for result in response[&quot;retrievalResults&quot;]:
+    print(result.get(&quot;metadata&quot;, {}).get(&quot;source_url&quot;), result[&quot;content&quot;][&quot;text&quot;][:200])</code></pre>
+<p>该示例传递一个整数时间戳，两种知识库类型都在数字过滤器中接受该整数时间戳。托管知识库不支持“startsWith”和“stringContains”过滤器。对于客户管理的知识库，请在“vectorSearchConfiguration”而不是“drivenSearchConfiguration”中传递相同的过滤器。它支持的运算符取决于其向量存储。</p>
+<p>元数据过滤可以提高检索精度，但不是授权边界。如果不同的用户应该看到不同的页面，则托管知识库的 Amazon S3 连接器支持使用您提供的访问控制列表 (ACL) 文件进行文档级访问控制。该示例不创建 ACL 文件。</p>
+<p>要从托管知识库生成响应，请使用<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-agentic-retrieve.html">代理检索</a>。 “AgenticRetrieveStream”操作返回检索到的结果以及生成的响应以及对这些结果的引用。对于客户管理的知识库，请使用“RetrieveAndGenerate”。在这两种情况下，每个引用的结果都包含来自其 sidecar 的“source_url”元数据，您的应用程序可以将其呈现为面向用户的源。</p>
+<p>每当您更改内容准备、分块或检索设置时，都要评估检索相关性、源页面覆盖率和引文质量。有关可以调整的检索设置，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-management-test-config.html">配置和自定义托管知识库的查询</a>。</p>
+<h2>重复运行</h2>
+<p>每个计划的事件都会启动一个独立的 Fargate 任务。堆栈不会阻止重叠运行，因此请选择比预期抓取和摄取持续时间更长的间隔。不会宣布失败的运行，因为该示例未添加重试策略、死信队列或警报。当某些文档无法摄取时，摄取作业还可以报告“COMPLETE”，然后任务以代码 0 退出。该任务会记录作业的失败原因。在您依赖计划之前，添加您需要的监控，包括针对这些故障原因发出警报。</p>
+<p>每次运行都会根据配置的任务大小（默认为 2 vCPU 和 4 GB）产生 Fargate 费用。该任务在轮询摄取作业时保持运行长达 30 分钟，因此缓慢的摄取作业会延长计费任务时间。如果摄取时间较长，任务会以非零代码退出，并且摄取作业将继续运行。该堆栈打开集群的 Container Insights 以及它创建的 Amazon Virtual Private Cloud (Amazon VPC) 的流日志。两者都会增加 Amazon CloudWatch 费用。堆栈的 AWS KMS 密钥按月收费，并且任务的公共 IPv4 地址在任务运行时计费。使用“egressMode=nat”或“privateEndpoints=true”，NAT 网关和接口端点按小时计费，即使没有任务运行也是如此。知识库的使用单独计费。有关详细信息，请参阅 <a href="https://aws.amazon.com/vpc/pricing/">Amazon VPC 定价</a> 和 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a>。</p>
+<p>上传是附加的：在以后的抓取过程中删除 URL 或丢失页面不会删除其现有的 S3 对象。要删除陈旧内容，请删除已配置前缀下的过时文档和匹配的 sidecar，然后再次开始提取。如果您为托管知识库数据源打开文档删除保护（删除保护），请检查其阈值。删除超过该百分比的文档的同步会跳过其删除阶段，因此这些文档会保留索引。要在存储桶中的对象发生更改时自动开始提取，请参阅<a href="https://aws.amazon.com/blogs/machine-learning/build-and-deploy-an-automatic-sync-solution-for-amazon-bedrock-knowledge-bases/">为 Amazon Bedrock 知识库构建和部署自动同步解决方案</a>。</p>
+<h2>负责任的人工智能考虑因素</h2>
+<p>检索到的段落成为基础模型用来生成响应的上下文。在生产中运行此工作流程之前应用以下控制：</p>
+<ul><li><strong>Amazon Bedrock Guardrails</strong>：将 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html">guardrail</a> 附加到您的代理检索或“RetrieveAndGenerate”请求，以应用内容过滤器、拒绝的主题、单词过滤器和敏感信息过滤器。代理检索仅支持护栏“BLOCK”操作，不支持“MASK”。</li><li><strong>上下文接地检查</strong>：打开 Guardrails <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-contextual-grounding-check.html">上下文接地检查</a>，根据检索到的段落的接地情况以及与查询的相关性对每个响应进行评分。护栏会阻止分数低于您设置的阈值的响应。对于代理检索，您可以使用“ApplyGuardrail” API 对生成的答案运行检查。该检查支持问题回答和总结，而不是对话式聊天机器人用例。</li><li><strong>将爬网内容视为不可信输入</strong>：准备好的网页成为模型上下文，因此公共页面上的文本可以通过检索尝试提示注入。不要仅依靠护栏来抓住它。将种子 URL 限制为您信任的站点，并在内容到达知识库之前应用下一节中描述的摄取过滤模式。</li><li><strong>引文和人工审核</strong>：在每个生成的响应中返回引文，以便用户可以根据源页面验证声明。对于风险较高的用例，请让人工审核员随时了解情况。</li></ul>
+<h2>安全性和合规性考虑</h2>
+<p>在针对生产内容运行此工作流程之前，请查看以下注意事项：</p>
+<ul><li><strong>使用受信任的公共爬网目标</strong>：种子 URL 和爬网设置是部署配置，Fargate 任务允许出站访问，以便它可以到达公共网站。在示例的默认网络模式下，任务在具有公共 IP 的公共子网中运行。仅配置授权的公共站点。请勿使用此示例来爬网私有或内部端点。在针对其他信任模型调整工作流程之前，请检查网络出口和目的地控制。</li><li><strong>尊重抓取指令</strong>：工作流程默认打开 Crawl4AI 的“robots.txt”检查，并且 CDK 路径将其固定，没有上下文键来禁用它。验证您是否有权抓取目标网站，且符合 <a href="https://aws.amazon.com/aup/">AWS 可接受使用政策</a>。</li><li><strong>速率限制</strong>：配置请求之间的延迟，以避免源网站不堪重负。</li><li><strong>静态加密</strong>：堆栈创建具有自动密钥轮换功能的 AWS Key Management Service (AWS KMS) 客户托管密钥，并用它加密其 CloudWatch 日志组。默认情况下，Amazon S3 使用 Amazon S3 托管密钥 (SSE-S3) 进行服务器端加密来加密新对象。如果您的数据分类需要存储桶的客户管理密钥，请配置存储桶以使用它。然后在 AWS Identity and Access Management (IAM) 和密钥策略中向上传者和知识库服务角色授予所需的 AWS KMS 权限。堆栈的任务角色不包括 AWS KMS 权限。默认情况下，托管知识库使用 AWS 拥有的密钥或您在创建知识库时指定的客户托管密钥对其数据进行加密。对于客户管理的知识库，请检查其矢量存储的加密。</li><li><strong>最低权限 IAM</strong>：CDK 堆栈在配置的存储桶前缀上授予 Fargate 任务角色“s3:PutObject”。它还在目标知识库上授予“bedrock:StartIngestionJob”和“bedrock:GetIngestionJob”，以及其单个配置参数的“ssm:GetParameter”。单独的角色涵盖 Amazon EventBridge 任务启动以及标准容器映像拉取和日志传输。管道不会读取或列出 S3，也不会调用“InvokeModel”或“Retrieve”。</li><li><strong>容器和模板检查</strong>：容器以非 root 用户身份运行，CDK 应用程序通过资源范围的抑制对每个合成运行 cdk-nag AWS 解决方案检查。</li><li><strong>保护部署配置</strong>：CDK 应用程序将非秘密管道设置存储在纯文本 Parameter Store“String”参数中。仅参数名称放置在任务定义中。不要将密码、cookie、令牌或其他机密放入 CDK 上下文或此参数中。</li><li><strong>摄取管道安全性</strong>：请参阅<a href="https://aws.amazon.com/blogs/security/securing-the-rag-ingestion-pipeline-filtering-mechanisms/">保护 RAG 摄取管道：过滤机制</a>，了解在内容到达知识库之前要应用的过滤和验证模式。</li></ul>
+<h2>清理</h2>
+<p>为了避免持续产生费用，请删除本演练期间创建的资源：</p>
+<ul><li>从存储库的“deploy/”目录中，在同一区域中运行“cdk destroy”，并使用传递给“cdk deploy”的四个必需“-c”值。该应用程序会在每个命令上检查它们。这将删除堆栈的 Amazon EventBridge 规则、ECS 集群、任务定义、日志组、IAM 角色、Parameter Store 参数和安全组以及 VPC（如果堆栈创建了它）。它还安排堆栈的 AWS KMS 密钥在 30 天的等待期后删除。它不会删除导入的 VPC、您的知识库、S3 存储桶或工作流程上传的对象。 CDK 还将容器映像和模板保留在其引导资源中。它还保留集群的 Container Insights 日志组，其名称以“/aws/ecs/containerinsights/Crawl4aiBedrockKbCrawler-”开头。</li><li>要删除提取的 Web 内容，请删除 <code>s3://&lt;bucket&gt;/&lt;prefix&gt;</code> 下准备好的对象，然后再次同步数据源。如果托管知识库数据源启用了文档删除保护措施，则删除超过其阈值百分比的文档的同步将跳过其删除阶段。</li><li>仅当您仅为本演练创建托管知识库时才将其删除。托管知识库没有单独的矢量存储可供删除。</li><li>对于客户管理的知识库，仅删除您为本演练创建的 Amazon S3 数据源。其数据删除策略决定 Amazon Bedrock 是否也从矢量存储中删除数据源的矢量嵌入。</li></ul>
+<h2>结论</h2>
+<p>在本文中，您了解了如何将 Amazon Bedrock 知识库扩展到需要在摄取前进行准备的授权公共 Web 内容。计划的 Fargate 任务使用 Crawl4AI 进行有界爬行，使用“page.md.metadata.json” sidecar 准备 Markdown，将它们上传到 Amazon S3 数据源，然后开始摄取。然后，知识库处理解析、分块、嵌入、索引、检索和引用的基础响应。</p>
+<p>从大多数公共网站的托管知识库中的 Amazon Bedrock Web Crawler 开始。当您需要控制每个页面的哪些部分被索引或哪些元数据随页面传输时，请使用 Crawl4AI 路径。首先，从配套的 <a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base">sample-crawl4ai-bedrock-knowledge-base</a> 存储库部署预定的 Fargate 工作流程，然后在扩展之前使用代表性内容验证检索质量和引用。</p>
+<h2>了解更多</h2>
+<p>有关本文中的服务和模式的更多信息，请参阅以下资源：</p>
+<ul><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-build-management.html">构建托管知识库</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-management-ds-webcrawler.html">用于托管知识库的 Amazon Bedrock Web Crawler</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-management-ds-s3.html">用于托管知识库的 Amazon S3 连接器</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-agentic-retrieve.html">使用代理检索查询知识库</a></li><li><a href="https://github.com/unclecode/crawl4ai">GitHub 上的 Crawl4AI</a></li><li><a href="https://github.com/aws-samples/amazon-bedrock-samples/tree/main/rag/knowledge-bases">aws-samples/amazon-bedrock-samples 中的知识库示例</a></li></ul>
+<h2>致谢</h2>
+<p>本产品包含由 <a href="https://x.com/unclecode">UncleCode</a> 开发的软件，作为 <a href="https://github.com/unclecode/crawl4ai">Crawl4AI 项目</a> 的一部分。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>在 Amazon SageMaker AI 上通过知识蒸馏构建高效的代理</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/build-efficient-agents-with-knowledge-distillation-on-amazon-sagemaker-ai/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-efficient-agents-with-knowledge-distillation-on-amazon-sagemaker-ai/</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Build efficient agents with knowledge distillation on Amazon SageMaker AI</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>在 Amazon SageMaker AI 上通过知识蒸馏构建高效的代理</h1>
+<p>您在前沿模型上构建了一个购物助手，并且它有效。一位购物者要求“从一家至少 4.5 星的商店购买一款低于 20 美元的黑色腰包”，代理商会搜索目录、检查候选人、检查限制条件并做出推荐。但这种互动的实际成本是多少？代理助手不是一个模型调用，而是一个循环：搜索、读取结果、细化、验证、决定。一项已完成的任务可以多次调用该前沿模型，并且您需要为每个购物者的每一次调用付费。在生产规模上，每项任务的成本会增加，侵蚀项目的投资回报率，并阻止项目交付。</p>
+<p>提高代理应用程序效率的一种方法是使用更小的模型，这样响应速度更快并且托管成本效益更高。问题在于质量：较小的模型通常无法完成任务，这就是为什么首先选择较大的模型。知识蒸馏通过将较大“教师”模型的行为转移到较小的“学生”中，训练学生重现教师的输出，从而缩小了这一差距，从而以较小模型的速度和成本保持了大部分质量。</p>
+<p>在本文中，您将学习如何使用知识蒸馏，特别是序列级知识蒸馏 (SeqKD)，来微调 <a href="https://aws.amazon.com/sagemaker/ai/">Amazon SageMaker AI</a> 上的购物代理。我们涵盖了如何与前沿教师一起生成高质量的多步骤轨迹并保留解决任务的轨迹，如何对它们进行编码以进行监督微调，如何在无服务器基础设施上运行培训，以及如何根据保留的基准来评估学生。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-1-1.png" alt="代理任务循环图：搜索、读取结果、细化、验证和决定，每一步都是对前沿的单独计费调用型号"></p>
+<p>图 1：一个代理任务是一个循环，而不是单个调用：代理搜索、读取结果、细化、验证和决策，每个步骤都是对前沿模型的单独计费调用。单个已完成的任务可以对每个购物者进行多次调用</p>
+<h2>什么是序列级知识蒸馏（SeqKD）？</h2>
+<p>最简单的蒸馏应用形式是序列级知识蒸馏（SeqKD）。它使用教师模型生成高质量的响应，然后通过监督微调 (SFT) 根据这些响应训练学生模型。 SeqKD 仅需要教师的<em>文本</em>，无法访问教师的逻辑，也没有强化学习基础设施，因此即使是封闭的或仅使用 API 的教师也能工作。与基于 logit 或 on-policy 等其他方法相比，它处于蒸馏谱中最具成本效益和可移植性的一端。老师写下答案，学生根据答案进行微调。由于这些答案作为数据集保留，因此您可以重复使用它们来训练或测试不同的学生，而无需重新生成数据。</p>
+<p>原则上，您希望学生在可能的输出上匹配教师的完整分布。这里需要注意的是你不能。可能序列的空间非常大，因此精确匹配它是不可行的。 SeqKD 通过使用教师实际产生的样本来近似它，从而回避了这一点。</p>
+<p>对于智能体来说，老师产生的序列不是一段散文，而是一条轨迹、推理的有序运行、工具调用以及它们返回的观察结果，其中每一步都以之前的所有内容为条件。对学生进行整个序列的培训，教会他们导致每个行动的推理以及行动本身的多步骤过程，而不是单个答案文本段落。这使得代理任务成为序列级 KD 最清晰的例证之一，因为被复制的序列就是行为本身。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-2-1.png" alt="SeqKD 示意图：教师生成轨迹，学生按照普通监督的方式对其进行训练微调"></p>
+<p>图 2：SeqKD 仅通过教师的文本输出来传输行为：教师生成轨迹，学生对其进行训练，结果以小模型的速度和成本保持了教师的大部分质量。训练期间不需要教师权重、逻辑或梯度，因此它像普通的监督微调一样运行</p>
+<h2>当 SeqKD 是正确的选择时</h2>
+<p>SeqKD 适合一组特定的情况：</p>
+<p><strong>您有输入，但没有高质量的目标输出</strong></p>
+<p>这是 SeqKD 的核心案例，本质上是数据生成。您提供输入，教师编写目标，这样您就可以对没有现有高质量标签的任务或领域进行微调。目标可以像单一答案一样简单，也可以像多轮工具使用轨迹一样复杂。这篇文章采用的是该光谱中最苛刻的一端，即代理轨迹，这是特别难以获取的。一项任务会分成许多部分正确的运行，并且需要可靠的评分者才能区分已解决的运行和失败的运行。程序化评分器的基准测试恰好满足了这一要求，因此您可以让老师生成轨迹并仅保留解决任务的轨迹。</p>
+<p><strong>你的老师是一个前沿模型，你只能通过API联系</strong></p>
+<p>这是前沿模型的正常情况。您无法自行访问权重来托管它，无法读取其逻辑，也无法对其进行微调。这就排除了基于逻辑的蒸馏和基于策略的方法，这些方法都需要内部访问。 SeqKD 只需要老师的文本回复，因此这是一种仍然有效的方法，并且它使您无需在学生接管后为每个请求支付前沿价格。</p>
+<p><strong>您想要一个强有力的、具有成本效益的第一步</strong></p>
+<p>一些最强大的小型推理模型在很大程度上是通过 SeqKD（对教师推理轨迹进行监督微调）构建的，因此当设置正确时，它是推理迁移的有效起点。 <a href="https://arxiv.org/abs/2501.12948">DeepSeek-R1 蒸馏模型</a> 是一个众所周知的例子：通过在教师生成的推理轨迹上进行微调，将大老师的推理提炼成较小的 Qwen 和 Llama 学生。</p>
+<h2>先决条件</h2>
+<p>要运行此示例，您需要：</p>
+<ul><li>具有 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/security-iam.html">SageMaker AI 的 AWS Identity and Access Management (IAM) 角色</a> 的 AWS 账户，该账户拥有对 Amazon Simple Storage Service (Amazon S3) 存储桶的读写访问权限以及调用教师模型的权限。</li><li>用于生成轨迹的前沿教师模型（本演练使用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上的模型）。</li><li>在受支持的 AWS 区域中访问 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/customize-model.html">SageMaker AI 模型自定义</a>。</li><li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-updated.html">Amazon SageMaker Studio</a>（或配置了 <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html">AWS CLI</a> 的本地 IDE），使用 [SageMaker Python SDK] 运行 Python 3.12 或更高版本内核v3](https://sagemaker.readthedocs.io/) 和 <code>boto3</code> （固定您的版本）。对于笔记本环境，至少使用 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/notebooks-available-instance-types.html">ml.m5.4xlarge 实例</a>，因为数据准备和本地评分步骤在其 CPU 上运行。</li><li>Python 的工作知识、监督微调和工具使用代理。</li><li><a href="https://github.com/aws/sagemaker-hyperpod-recipes/tree/main/examples/sequence-distillation">附带的代码存储库</a> 和带有程序化评分器的任务（本演练使用 ShoppingBench 测试集。替换您自己的任务和评分器）。</li></ul>
+<h2>解决方案概述</h2>
+<p>本节从头到尾遍历管道。 Amazon Bedrock 上的前沿教师 GLM-5.3 充当 ShoppingBench 代理来生成轨迹。该基准测试自己的评分器仅保留解决任务的那些，并且这些解决的轨迹通过对 SageMaker AI 模型定制进行无服务器监督微调来微调 Qwen3.5-4B 学生。然后，在保留的 ShoppingBench 拆分上对经过筛选的学生进行评估，并在运行工具循环的 SageMaker AI Inference 实时端点后面提供服务。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-3-1.png" alt="在 SageMaker AI 上提取购物代理的架构图：教师生成轨迹，评分员保留已解决的轨迹，学生进行微调，并根据保留的结果评估结果分割"></p>
+<p>图 3：在 Amazon SageMaker AI 上提取购物代理：Amazon Bedrock 上的前沿教师充当训练问题上的 ShoppingBench 代理，ShoppingBench 自己的评分器仅保留解决任务的轨迹（拒绝采样），每个解决的轨迹按步骤进行编码，学生使用 Amazon SageMaker AI 模型定制进行无服务器微调，并在保留的 ShoppingBench 测试集上评估结果</p>
+<h3>准备数据集</h3>
+<p>寻找值得模仿的轨迹是最困难的部分，而 ShoppingBench 评分器则是区分成功与失败的关键。 ShoppingBench 发布了 750 个综合购物问题，其中每个问题针对产品、商店和优惠券意图 250 个，每个问题都有一个隐藏的黄金答案和定义成功的约束条件。我们将它们分为 426 个训练问题和 324 个保留评估问题（产品 103、商店 105、优惠券 116），作为固定索引，因此两组不重叠。</p>
+<p>对于每个训练问题，前沿教师（Amazon Bedrock 上的 GLM-5.3，推理开启，温度 1.0）充当 ShoppingBench 代理。它搜索约 270 万种产品的目录，检查候选产品，并推荐符合限制的产品。我们对每个问题对老师进行两次采样，给出 850 个轨迹，然后让 ShoppingBench 自己的记分器只保留解决任务的轨迹。温度 1.0 是故意的。采样而不是贪婪解码使这两种尝试探索不同的查询和推理路径，这为更多问题提供了至少一个已解决的轨迹和更多样化的学习集。这种拒绝抽样步骤将一个有能力但不完美的教师变成了一个干净的训练集，因为教师只需足够正确的次数就可以让解决的运行值得模仿。</p>
+<p>每个解决的轨迹都是一个完整的情节：购物者的请求、教师的推理和每一步的工具调用（搜索、检查、推荐、终止）以及环境返回的观察结果。我们将推理与行动结合起来，结果表明，正是行动将学生带到了老师的身边。</p>
+<h3>编码训练轨迹</h3>
+<p>序列级蒸馏是对已经存在的轨迹进行监督学习，因此在训练期间没有任何东西称为工具，并且应用程序只能看到文本。因为这些轨迹是多步骤的工具使用对话，所以我们将每个轨迹编码为聊天轮流的“消息”列表，并让学生自己的聊天模板呈现它，因此培训师看到的标记与代理在推理时生成的标记相匹配。</p>
+<p>每条轨迹成为每一步的一个训练行。 ‘用户’轮到系统提示和对话为止。 “助理”回合承载该步骤的推理，工具调用它导致，一个…块，后跟一个线束原生形式的[{…}]。损失仅发生在“辅助”回合，因此模型学习产生下一个推理和行动，而不是预测环境返回的观察结果。具有多个步骤的轨迹扩展为多行。这里，解决的轨迹在过滤后扩展到大约 2,600 个训练行和 130 个验证行。</p>
+<p>单行将到目前为止的对话（用户）与下一步要学习的内容（助理）配对：</p>
+<pre><code>{
+  &quot;messages&quot;: [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;You are a shopping assistant. ...\n# Task\nFind a black waist bag under $20 from a shop rated 4.5 or higher.\n# Observations so far\n(none yet)&quot;},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&lt;think&gt;Start with a broad search and let the price filter work before I narrow by shop rating.&lt;/think&gt;\n&lt;tool_call&gt;[{\&quot;name\&quot;: \&quot;find_product\&quot;, \&quot;parameters\&quot;: {\&quot;q\&quot;: \&quot;black waist bag\&quot;, \&quot;price\&quot;: \&quot;0-20\&quot;}}]&lt;/tool_call&gt;&quot;}
+  ]
+}</code></pre>
+<p>后面的每个步骤都成为自己的行，新的观察结果附加到用户内容中，下一个推理和工具调用作为“助理”目标，直到最终的“推荐产品”和“终止”调用。使用模型的精确聊天模板渲染每一行。</p>
+<p>按问题而不是按行拆分数据。教师对每个问题进行两次采样，并且每个轨迹扩展为多个步骤，因此许多行共享一个问题，并且行级拆分会在训练和验证中泄漏几乎相同的上下文。保留整个问题（大约百分之五）可以保持验证集的诚实。</p>
+<p>每步编码的成本是重复上下文，因为每一行都重申了不断增长的对话，并且无服务器微调会截断“dataset_max_len”之后的任何内容，因此超过限制的行会丢失其所需的部分内容。不要让限制决定削减什么，而是将行数保持在预算范围内。最有效的解决方法是压缩工具观察结果，这在令牌计数中占主导地位。对于产品搜索结果，仅保留下一个决策所依赖的字段（id、价格、评级和正在检查的约束），删除原始列表文本，并限制每次搜索保留的结果数量。如果轨迹仍然超出预算，请限制每个轨迹的步数。这里“dataset_max_len”是 16,384 个标记，它适合修剪观察值后的大多数轨迹。</p>
+<p>每个分割的 JSONL 位于 S3 中后，使用 SageMaker Python SDK v3 中的“DataSet.create”将每个分割注册为自定义数据集资产，该资产会返回训练作业使用的“train_dataset”和“val_dataset”。</p>
+<h3>微调学生</h3>
+<p>训练使用 <a href="https://aws.amazon.com/sagemaker/ai/model-customization/">SageMaker AI 模型自定义</a> 和无服务器 SFT。您从 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html">模型中心</a> 选择一个基本模型，将作业指向编码的数据集，托管服务会配置计算、运行作业并返回自定义模型，并在 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/mlflow.html">Amazon SageMaker with MLflow</a> 中跟踪指标。由于数据已经采用受支持的格式，因此无需管理训练脚本、容器映像或实例。</p>
+<p>该作业将其输出写入<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-registry-model-group.html">模型包组</a>，该组对它生成的每个模型进行版本控制，因此首先使用“ModelPackageGroup.create”创建该组（如果名称已存在，则重用它）并将其传递给训练器。然后配置<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-open-weight-job.html">自定义作业</a>。选择基本模型和训练类型，将其指向训练和验证数据集以及模型包组，然后命名一个 MLflow 实验，以便在作业运行时指标流式传输到 MLflow。</p>
+<pre><code>from sagemaker.train.sft_trainer import SFTTrainer
+from sagemaker.train.common import TrainingType
+
+sft_trainer = SFTTrainer(
+    model=&quot;huggingface-vlm-qwen3-5-4b&quot;,  # Qwen3.5-4B from the JumpStart model hub
+    training_type=TrainingType.LORA,  # TrainingType.FULL for full fine-tuning
+    training_dataset=train_dataset.arn,
+    validation_dataset=val_dataset.arn,
+    model_package_group=model_package_group,
+    mlflow_experiment_name=&quot;seqkd-shopping-exp&quot;,
+    s3_output_path=&quot;s3://&lt;amzn-s3-demo-bucket&gt;/seqkd/output/&quot;,
+    accept_eula=True,
+)</code></pre>
+<p>训练器从一组记录的默认超参数开始，您可以使用“sft_trainer.hyperparameters.to_dict()”进行检查并在启动之前覆盖它们。对于这次运行，我们提高序列长度以适应多步轨迹，使用 64 的低秩适应 (LoRA) 等级，并在小数据集上训练三个时期：</p>
+<pre><code>sft_trainer.hyperparameters.dataset_max_len = 16384
+sft_trainer.hyperparameters.max_epochs = 3
+sft_trainer.hyperparameters.global_batch_size = 64
+sft_trainer.hyperparameters.learning_rate = 0.0001
+sft_trainer.hyperparameters.lora_rank = 64
+sft_trainer.hyperparameters.lora_alpha = 256  # alpha / rank = 4
+sft_trainer.hyperparameters.lr_warmup_steps_ratio = 0.1
+sft_trainer.hyperparameters.train_val_split_ratio = 0.95</code></pre>
+<p>通过试运行验证配置，然后启动托管作业并在完成时读取注册的模型包 ARN。该 ARN 是评估和服务步骤使用的部署就绪工件：</p>
+<pre><code>from sagemaker.core.resources import TrainingJob
+
+sft_trainer.train(dry_run=True)  # checks the config without launching
+training_job = sft_trainer.train(wait=True)  # launch and wait
+model_package_arn = TrainingJob.get(
+    training_job_name=training_job.training_job_name
+).output_model_package_arn</code></pre>
+<h3>评估学生</h3>
+<p>分两个阶段进行评估，首先是成本最低的。完整的端到端评估既耗费时间又耗费资源。它在数百万个产品上建立了一个搜索服务器，部署端点，并对每个悬而未决的问题运行多步骤代理循环。在运行完整评估之前，使用 SageMaker AI 模型评估运行一项低成本托管预检查，该模型会根据教师的真实操作一次对一个生成的步骤进行评分。</p>
+<p>预检查需要评分功能。模型评估支持您提供的 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-evaluation-preset-custom-scorers.html">自定义评分器</a> 奖励函数，该函数每个样本运行一次，将学生生成的操作与教师生成的操作进行比较。对于工具调用蒸馏，对工具选择进行分级（模型是否按顺序调用了正确的工具，忽略参数格式），因为这是最需要转移的行为蒸馏。为了将重点放在选择而不是语法上，奖励函数从学生的操作和教师的参考中读取工具名称，而不需要精确的格式匹配。</p>
+<pre><code>def reward_function(sample, index):
+    pred = sample.get(&quot;model_response&quot;, &quot;&quot;)
+    ref = sample.get(&quot;reference_answer&quot;, &quot;&quot;) or sample.get(&quot;response&quot;, &quot;&quot;)
+
+    ref_names = tool_names(ref)  # tool names from the teacher's &lt;tool_call&gt;[...]&lt;/tool_call&gt;
+    pred_names = tool_names(pred)  # tool names the student emitted, parsed leniently
+    toolset = 1.0 if (pred_names and pred_names == ref_names) else 0.0
+
+    return {
+        &quot;id&quot;: str(sample.get(&quot;id&quot;, f&quot;sample-{index:03d}&quot;)),
+        &quot;aggregate_reward_score&quot;: toolset,  # the gate metric: tool selection
+        &quot;metrics_list&quot;: [
+            {&quot;name&quot;: &quot;toolset_match&quot;, &quot;value&quot;: toolset, &quot;type&quot;: &quot;Reward&quot;},
+        ],
+    }</code></pre>
+<p>使用 Evaluator.create() 将该函数注册为版本化的 Evaluator，然后调用 evaluate() 为每个任务运行一个自定义评分器作业，与学生一起对基本模型进行评分，以便每个结果都有比较。</p>
+<p>决策规则很简单。学生必须在这项低成本预检查中击败基本模型。如果是这样，那么蒸馏就完成了，值得进行更全面的端到端评估。如果没有，请先修复训练。</p>
+<h3>服务蒸馏剂</h3>
+<p>精炼模型本身并不运行工具。微调教会它在正确的时刻以文本形式发出正确的工具调用，但仍然需要执行该调用并反馈结果。在推理时，您将模型包装在一个小的确定性工具中，该工具提示模型，解析它发出的工具调用，运行工具，附加观察结果，然后再次提示，循环直到模型产生最终答案。这是普通的应用程序代码，或者是现成的服务框架，不是强化学习，也不是策略训练循环。</p>
+<p>学生是一个基于开放权重基础的低阶适应 (LoRA) 适配器，这决定了您的部署方式。不要合并适配器并提供权重的第二个完整副本，而是提供一次基本模型并将学生作为适配器附加到顶部，作为一个实时端点上的两个推理组件。在调用时命名推理组件可以选择哪个答案，因此同一端点可以同时为基础学生和经过精炼的学生提供服务，以进行并排比较。</p>
+<p>我们通过 Deep Java Library Large Model Inference (DJL LMI) 容器为开放权重模型提供服务，该容器捆绑了用于高吞吐量生成的 vLLM 引擎，固定到特定版本而不是“最新”，因此重新部署是可重现的。随附的笔记本将推理组件调用包装在一个小的“kd_serve”帮助程序中，因此部署启用 LoRA 服务的基本组件，然后附加学生适配器可简化为：</p>
+<pre><code>from sagemaker.core import image_uris
+import kd_serve
+
+# DJL LMI container (vLLM engine bundled in); pin the version for reproducible redeploys
+image_uri = image_uris.retrieve(&quot;djl-lmi&quot;, region=region, version=&quot;0.36.0&quot;)
+
+# 1. Deploy the base model as an inference component, with LoRA serving enabled.
+endpoint_name, base_ic = kd_serve.deploy_base_endpoint(
+    endpoint_name=&quot;seqkd-shopping-agent&quot;,
+    role=role,
+    region=region,
+    image_uri=image_uri,
+    base_model_id=&quot;Qwen/Qwen3.5-4B&quot;,
+    instance_types=[&quot;ml.g5.2xlarge&quot;, &quot;ml.g6.2xlarge&quot;, &quot;ml.g6e.2xlarge&quot;],
+    max_lora_rank=64,
+    max_loras=4,
+    max_model_len=131072,
+)
+
+# 2. Resolve the student's adapter artifacts from its Model Package and attach them
+# as a second inference component on the same base.
+adapter_uri = kd_serve.resolve_adapter_uri(model_package_arn, region)
+student_ic = kd_serve.attach_adapter(
+    endpoint_name=endpoint_name,
+    base_ic_name=base_ic,
+    adapter_component_name=f&quot;{endpoint_name}-student&quot;,
+    adapter_s3_uri=adapter_uri,
+    region=region,
+)</code></pre>
+<p><code>instance_types</code> 列表是一个有序的首选项。 SageMaker AI Inference 部署在具有可用容量的第一种类型上，然后回退到列表中，因此学生根据可用性使用“ml.g5.2xlarge”、“ml.g6.2xlarge”或“ml.g6e.2xlarge”。基本权重加载一次，并且两个推理组件共享它们，因此添加适配器会消耗适配器大小的内存，而不是模型的第二个副本。</p>
+<h2>结果</h2>
+<p>我们根据一组参考点，在 ShoppingBench 测试中对经过精炼的学生进行评估，这些参考点包含了良好的外观：</p>
+<ul><li><strong>基础 Qwen3.5-4B：</strong> 现成的学生，无需微调。这是地板。</li><li><strong>蒸馏学生 (SeqKD)：</strong> 在教师轨迹上微调的相同 4B 模型，即本文描述的方法。这才是重要的结果。</li><li><strong>GLM-5.3 教师：</strong> 在 Bedrock 上生成训练数据的前沿模型。我们报告采样（温度 1.0，生成数据的设置）和贪婪（温度 0）。</li><li><strong>中型前沿模型：</strong> 作为代理运行的强大专有模型，包括作为实用上限。</li></ul>
+<p>每个模型都针对三个购物者意图（产品、​​商店和优惠券）运行相同的未经修改的 ShoppingBench 代理循环。我们报告绝对成功率（ASR），即代理解决的未解决问题的比例，对三个意图进行平均，缺少轨迹被视为失败。当推荐的产品满足每个规定的约束时，问题就被视为已解决。以下数字来自 LoRA 学生的单次运行，因此预计运行之间会有一些变化。</p>
+<h3>任务成功</h3>
+<p>总体结果是 324 个未解决问题的绝对成功率，按意图细分并取三者的平均值：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-4-1.png" alt="按购物者意图划分的绝对成功率条形图，显示与 GLM-5.3 教师匹配的精炼 4B 学生和中等大小的边界型号"></p>
+<p>图 4：按购物者意图划分的 ShoppingBench 测试拆分的绝对成功率 (ASR)。蒸馏后的 4B 学生（橙色）在基础模型上平均提高了 24 分，达到生成其数据和中型前沿模型的 GLM-5.3 教师水平</p>
+<table><thead><tr><th><strong>型号</strong></th><th><strong>产品</strong></th><th><strong>商店</strong></th><th><strong>优惠券</strong></th><th><strong>平均</strong></th></tr></thead><tbody><tr><td>基础Qwen3.5-4B（无微调）</td><td>0.456</td><td>0.456 0.314</td><td>0.314 0.121</td><td>0.121 0.297</td><td>0.297</td></tr><tr><td>蒸馏学生（SeqKD）</td><td>0.563</td><td>0.563 0.638</td><td>0.638 0.422</td><td>0.422 0.541</td><td>0.541</td></tr><tr><td>GLM-5.3老师（采样，温度1.0）</td><td>0.553</td><td>0.553 0.619</td><td>0.619 0.362</td><td>0.362 0.511</td><td>0.511</td></tr><tr><td>GLM-5.3老师（贪心，温度0）</td><td>0.544</td><td>0.544 0.638</td><td>0.638 0.439</td><td>0.439 0.540</td><td>0.540</td></tr><tr><td>中型前沿机型</td><td>0.583</td><td>0.583 0.667</td><td>0.667 0.388</td><td>0.388 0.546</td><td>0.546</td></tr></tbody></table>
+<p>总之，4B 模型基本上恢复了所有前沿教师的任务质量，并在运行噪声中进行匹配。我们以两种方式举报老师，因为他们回答了不同的问题。贪婪解码返回单个最可能的轨迹，即当每个模型对每个问题进行一次尝试时（如本次评估）更强的选择，这就是为什么贪婪教师得分为 0.540，而采样教师得分为 0.511。我们以另一种方式生成训练数据，在温度 1.0 下采样，因此重复尝试探索不同的路径，并且记分器可以保留解决任务的路径。这种过滤也是学生能够超越从其学到的样本教师的原因，因为拒绝抽样仅根据教师解决的运行而不是其平均输出来训练它，因此它模仿的是最佳切片而不是尝试的全部传播。</p>
+<h3>目标推理很重要</h3>
+<p>学生从老师的推理及其工具调用中学习，而这种选择对结果负有很大一部分责任。在相同的轨迹上训练同一个学生，并剥离推理，只留下裸露的工具调用，平均 ASR 从 0.541 下降到 0.415：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-5-1.png" alt="基础模型的绝对成功率条形图，仅接受工具调用训练的学生，以及接受推理加工具调用训练的学生"></p>
+<p>图 5：基本模型的绝对成功率，学生仅接受工具调用训练，学生接受教师推理加工具调用训练。坚持推理会增加大约 13 个点的平均 ASR，并且每个意图都会获得收益</p>
+<p>两个学生都清楚了基本模型，因此即使是仅工具调用的版本也是一个真正的改进，但保持推理才是让学生在剩下的路上找到老师的原因。动作之间的推理不是要丢弃的叙述，而是解决任务的行为的一部分。</p>
+<h3>保持一般能力</h3>
+<p>ASR 衡量我们提炼出来的技能。平衡点是学生是否保持了一般的遵循指令的能力，还是过度适应了购物任务。我们使用 <a href="https://github.com/google-research/google-research/tree/master/instruction_following_eval">IFEval</a> 进行检查，这是一个通用的指令跟踪基准，可以对可验证的格式指令进行评分，例如“以三个要点回答”。将其视为回归检查，而不是排行榜。学生的提示严格分数从基础模型的 0.819 下降到 0.741，其教学严格分数从 0.872 下降到 0.813，下降了大约 6 到 8 分（图 6）。这就是专业化的预期成本。这位学生用一些一般性的指导来换取购物任务的巨大收获。大幅下降将是一个警告信号，表明蒸馏将模型缩小得太窄。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-6-1.png" alt="基础模型和蒸馏学生的 IFEval 提示严格和指令严格分数条形图"></p>
+<p>图 6：基本模型和精炼学生的 IFEval 在提示严格和指令严格指标上的一般指令遵循。小幅下降是专门从事购物任务的预期成本</p>
+<h3>优点和权衡</h3>
+<p>成功率本身并不能证明这种转变是合理的。进行蒸馏的原因是，您可以以小模型的成本和速度获得大部分较强模型的质量。这里最明显的证据是，4B 学生达到了其前沿教师和中型前沿模型的任务质量，同时足够小，可以在单个 G 系列实例（本例中为 NVIDIA A10G/L40/L40S）上运行。</p>
+<p>成本差异与形状和尺寸一样重要。通过 API 达到的前沿模型是按令牌在每个任务的每个步骤上计费的，因此成本随着使用而增长并且不会停止，并且每次引入的代理循环都会支付该费用。精炼的学生在您托管的端点上运行，该端点按小时计费，无论它服务于一项任务还是数千项任务，因此在横向扩展之前，增加的流量不会产生更多费用。您正在将可变的每次请求费用换成固定的每小时费用，并且您可以使用的模型越小，固定成本就越小。</p>
+<p>我们在这里不会发布每个任务的成本或延迟数字，因为它取决于您的流量：G 系列实例维持的吞吐量以及因此每个任务摊销的成本是您的请求模式、序列长度和并发性的函数。根据当前的 <a href="https://aws.amazon.com/sagemaker/ai/pricing/">SageMaker AI 定价</a> 和前沿提供商的代币定价，根据您自己的工作负载进行衡量，而不是依赖单一的标题数字。</p>
+<h2>限制和最佳实践</h2>
+<h3>该任务适合学生吗（能力墙）</h3>
+<p>蒸馏传递的是学生已经可以表示的分布，而不是它所缺乏的原始能力。差距太大，学生就抄袭老师的格式，却没有学会解决。在大型教师的思想链上训练的小型模型会产生长而结构良好的推理，其答案仍然是错误的，而以相同方式训练的智能体会发出格式良好的工具调用，但没有取得任何进展，用重新措辞的查询重新搜索，并在不满足约束的情况下运行到其步数限制。两者的症状是相同的，迹线变长，而精度保持不变。当你看到它时，停止添加数据，要么培养学生，要么降低任务难度。</p>
+<p>决定这一点的差距是任务和学生之间的差距，而不是学生和老师之间的差距。只要任务本身在他力所能及的范围内，一个小学生就可以恢复大老师的素质。这就是这里的代购员工作的原因。教师是一个混合专家模型，大约有 400 亿个活跃参数，大约是学生 40 亿个的十倍，但购物任务完全在 4B 模型的能力范围内，因此学生恢复了教师的质量，而不仅仅是延长了其轨迹。</p>
+<h3>SeqKD 不再有帮助的地方</h3>
+<p>SeqKD 解决了简单和中等难度的问题，但在最难的问题上却停滞不前，学生必须从自己的错误中恢复过来。对于代理来说，这比单步任务更清晰。在多步骤循环中，早期错误会复合，因为学生看不到自己的错误导致的状态。缩小这一差距是政策方法的目标，这就是为什么 SeqKD 通常是第一阶段而不是终点线的原因。 SeqKD 对基础设施的要求也最少，因为它仅使用教师的文本，而 Logit 蒸馏需要教师的每个令牌分配，并且策略方法对学生自己的部署进行评分。纯文本 SeqKD 热启动，然后是政策阶段是常见的做法，因此这篇文章涵盖了第一阶段，突破平台期是自然的下一步。</p>
+<h3>带有结果的两个选择</h3>
+<p>首先，将培训目标与您想要的行为相匹配。这里，这意味着在每个工具调用中保留教师的推理，而不是压缩为最终答案，因为推理是解决任务的一部分（结果量化差距），并使用代理在服务时使用的聊天模板渲染每个目标。第二，诚实评价。对模型未见过的数据进行测量，因为泄露的基准会夸大分数，并与学生必然击败的未经训练的基础模型进行比较，将其设置在教师和独立前沿模型旁边，以便数字显示学生与提取结果的接近程度。</p>
+<h2>清理</h2>
+<p>实时推理端点只要运行就会计费，因此在获得结果后拆除您支持服务的端点。由于学生充当基本推理组件之上的适配器推理组件，因此各个部分必须按依赖顺序排列：首先是适配器组件，然后是基本组件，然后是端点及其配置。随附的“kd_serve”帮助程序会为您执行此操作，从结构上查找适配器，以便无论确切的组件名称如何，它都会进行清理：</p>
+<pre><code>import kd_serve
+
+# Deletes the adapter IC, then the base IC, then the endpoint and its configuration
+kd_serve.teardown_endpoint(endpoint_name, region=region)</code></pre>
+<p>训练作业本身不需要清理。无服务器训练会自动计算、运行和发布它，因此完成的作业不是持续的费用。注册的模型包及其组也没有计算成本，因此您可以保留它们以进行沿袭并稍后重新部署。确实会持续增加成本的一件事是 S3 中的数据（编码轨迹和输出工件），只要您保留它，就会产生存储成本，因此请删除不再需要的数据或将其移至成本较低的存储类别。</p>
+<p>＃＃ 结论</p>
+<p>在这篇文章中，我们展示了如何通过序列级知识蒸馏（SeqKD）将代理购物助理提炼为更小、成本更低的学生。我们与 Bedrock 上的前沿教师一起生成了高质量的单轮、多步轨迹，并仅保留使用 ShoppingBench 自己的记分器解决任务的轨迹，将每个步骤编码为聊天格式的消息，以保留教师的推理及其工具调用，使用 SageMaker AI 模型定制在无服务器基础设施上对学生进行微调，使用 MLflow 跟踪训练，使用 SageMaker AI 模型评估运行质量门检查，并将结果提供给运行工具循环。回报是一名 4B 学生基本上恢复了其前沿教师的所有任务质量。由于 SeqKD 仅需要教师的文本输出，因此即使教师是通过 API 访问的封闭前沿模型，它也能发挥作用，并且在学生接管后，您可以停止为每一步支付前沿价格。</p>
+<p>SeqKD 是一个强有力的第一步，但也存在真正的局限性。将学生规模与任务相匹配，根据强参考点而不是仅使用未经训练的基础模型来评估保留套件，并且当问题的最难尾部难以模仿时，遵循 SeqKD，使用此处未涵盖的 on-policy 方法，让学生从自己的部署中学习。</p>
+<p>要亲自尝试此操作，请参阅<a href="https://github.com/aws/sagemaker-hyperpod-recipes/tree/main/examples/sequence-distillation">随附的代码存储库</a> 和 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/customizing-models-distillation.html">SageMaker AI 文档</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>使用 Amazon Nova Multimodal Embeddings 和 Amazon Bedrock AgentC…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/agentic-engineering-intelligence-with-amazon-nova-multimodal-embeddings-and-amazon-bedrock-agentcore/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/agentic-engineering-intelligence-with-amazon-nova-multimodal-embeddings-and-amazon-bedrock-agentcore/</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：使用 Amazon Nova Multimodal Embeddings 和 Amazon Bedrock AgentCore 实现代理工程智能 | 原文标题：Agentic engineering intelligence with Amazon Nova Multimodal Embeddings and Amazon Bedrock AgentCore</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>使用 Amazon Nova Multimodal Embeddings 和 Amazon Bedrock AgentCore 实现代理工程智能</h1>
+<p>当合格的航空航天组件过时或交付周期较长时，工程师会花费数天时间在供应商数据表、接口控制文档 (ICD) 和资格记录中交叉引用规范，然后记录替代理由以供审查。飞行关键组件的错误替换可能会导致任务失败，但每个决定背后的证据线索通常分布在电子邮件和未记录的机构知识中，因此没有正式的、可重复的包供审核人员检查。</p>
+<p>之前的文章<a href="https://aws.amazon.com/blogs/machine-learning/manufacturing-intelligence-with-amazon-nova-multimodal-embeddings/">使用 Amazon Nova 多模态嵌入制造智能</a> 展示了该模型如何检索锁定在纯文本管道错过的工程图、热图和数据表图表中的答案。这篇文章将从检索工作停止的地方开始，将这些功能放入一个多代理系统中，该系统会收集从检索到起草的评估的替代证据。</p>
+<p>在这篇文章中，我们展示了如何构建一个多代理工程助手，使用 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>、<a href="https://docs.aws.amazon.com/nova/latest/nova2-userguide/embeddings.html">Amazon Nova Multimodal Embeddings</a> 和开源 [Strands Agents] 来减少零件替换评估背后的手动交叉引用SDK](https://strandsagents.com/)。规划人员将工作分配给三个专业代理，这些代理搜索多模式知识库、根据确定性公差规则对候选者进行评分、比较零件照片以及实时网络数据中的地面生命周期声明。工程师始终是决策者，因为系统会收集证据并起草文件，而不会自行批准替换。</p>
+<h2>解决方案概述</h2>
+<p>该助手是围绕一个设计规则构建的，即工程师做出每一个决定，系统为其收集证据。该规则决定了我们在哪里使用大型语言模型 (LLM) 以及在哪里使用确定性代码。</p>
+<p>该架构由三大支柱定义：</p>
+<ul><li><strong>确定性规格适合度评估</strong> – 用 Python 编写的公差规则代码根据参考零件和工程师规定的要求对每个候选零件进行评分。由于相同的输入始终会产生相同的通过/标志判决，因此结果可以进入正式的工程审查。</li><li><strong>多代理编排</strong> – 轻量级规划器将每个查询路由到三个专家代理（目录、评估、知识）中的一个或多个，并且仅当超过一名专家做出贡献时，主管才会综合他们的发现。复杂的问题，例如“检查这个轮子是否即将报废，找到替代品，并对其进行评分”，将所有三位专家依次联系起来。</li><li><strong>人机交互决策</strong> – 系统起草理由备忘录和集成影响评估以供工程审查，但不建议或批准替代。每次评估还会编写与 AS9100 第 8.4 节和 8.5.6 节一致的审核跟踪条目。</li></ul>
+<p>下图显示了该架构。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21854-1.png" alt="多智能体助理的架构：规划者在目录、评估和知识专家之间路由工程师查询，并由主管综合结果"></p>
+<p>图 1：Amazon Bedrock AgentCore 上的多代理工程助手的架构</p>
+<p>Amazon Bedrock AgentCore 是一个使用任何框架或模型大规模构建、连接和优化代理的平台。在此解决方案中，来自工程师应用程序的聊天请求流入 AgentCore 运行时托管的多代理图：规划器 (Claude Haiku 5.5) 生成路由计划，专家 (Claude Sonnet 5.5) 执行他们的工具，而主管 (Claude Opus 5.5) 在多个专家运行时综合其结果。专家们使用 Amazon Nova 多模式嵌入从我们通过 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-management-kb.html">Amazon Bedrock 托管知识库</a> 创建的托管知识库进行检索，并通过 AgentCore 网关（Amazon Bedrock AgentCore 的一项功能）以及用于实时 Web 数据的 Web 搜索连接器进行路由。对于图像即查询（上传图表来识别零件），代理直接调用本机 Amazon S3 Vectors 索引，因为托管知识库检索 API 不接受图像输入。 Amazon S3 Vectors 是 Amazon Simple Storage Service (Amazon S3) 的一项功能。一个单独的固定链（知识，然后是评估，然后是主管）生成正式的集成影响评估（IIA）文件。</p>
+<p>Amazon Nova 多模式嵌入有两个不同的角色：</p>
+<ul><li><strong>多模态检索</strong> – 数据表、ICD 和性能图表嵌入 Nova 多模态嵌入，因此文本和视觉内容共享一个语义空间。工程师可以输入“0.06 Nms车轮的扭矩曲线”或上传图表图像，检索将返回带有来源归属的匹配图表。</li><li><strong>视觉相似性评分</strong> – 当比较两个候选部件时，Nova Multimodal Embeddings 会生成它们照片之间的定量余弦相似性，Claude 会分析具体的物理差异（安装模式、连接器放置、外壳几何形状）。该分数为确定性规格比较添加了支持证据，这是适合性判断的基础。</li></ul>
+<h2>先决条件</h2>
+<p>要继续操作，您需要：</p>
+<ul><li>有权访问美国东部（弗吉尼亚北部）AWS 区域的 Amazon Bedrock 的 AWS 账户。</li><li>对 Amazon Bedrock 中的 Amazon Nova Multimodal Embeddings、Claude Haiku 5.5、Claude Sonnet 5.5 和 Claude Opus 5.5 的模型访问。有关各区域的模型可用性，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock 中 AWS 区域的模型支持</a>。</li><li>使用 Amazon Bedrock 托管知识库创建的托管知识库，在您的零件语料库（数据表、ICD、描述）上使用 Amazon Nova Multimodal Embeddings 进行文本和文档检索。</li><li>针对图像即查询路径的零件照片和数据表图表作物的 Amazon S3 矢量索引。</li><li>具有 Web 搜索连接器和托管知识库目标的 Amazon Bedrock AgentCore 网关。</li><li>Python 3.10 或更高版本以及用于运行笔记本的 Jupyter。</li><li>Docker，如果您调整笔记本 03 中的部署方案以在 AgentCore 运行时托管代理。</li><li><a href="https://github.com/aws-samples/amazon-nova-samples/tree/main/multimodal-embeddings/repeatable-patterns/agentic-engineering-intelligence-nova-mme-agentcore">GitHub 存储库</a> 中的示例代码。</li></ul>
+<h2>解决方案演练</h2>
+<p>以下部分按照查询使用的顺序描述系统的每个部分。我们从零件语料库和专业代理开​​始，然后介绍路由、确定性评分、助手使用 Nova 多模态嵌入的两种方式、生成正式文档的固定链以及部署到 AgentCore 运行时。</p>
+<p>完整的代码示例是 <a href="https://github.com/aws-samples/amazon-nova-samples/tree/main/multimodal-embeddings/repeatable-patterns/agentic-engineering-intelligence-nova-mme-agentcore">GitHub 存储库</a> 中的一组五个 Jupyter 笔记本，每个笔记本都单独运行。这些笔记本从“mei_core”导入，“mei_core”是同一文件夹中代理和工具模块的独立副本，并且它们包含自己的零件数据、图表作物和评估查询集。您可以从笔记本运行本文中的每个片段，而无需其他应用程序代码。</p>
+<h3>构建零件语料库</h3>
+<p>示例数据集是来自虚构制造商 (AnyCompany) 的七个反作用轮，动量存储范围为 0.003–5.0 Nms。每个部分都是一个文件夹，将结构化数据与工程师实际阅读的源文档配对，这种组合使得语料库成为多模态。 “specs.json”文件包含驱动确定性评分的机器可读字段，而 ICD、产品照片和渲染的数据表页面则包含结构化字段遗漏的视觉和叙述细节。</p>
+<pre><code>data/synthetic-parts-data/rw_rl_0060/
+├── specs.json # structured specs + lifecycle fields
+├── description.txt # flat text for text retrieval
+├── AC-ICD-00068-RW3-0.06-Interface-Control-Document-v2.2.pdf
+├── datasheet_page.png # rendered datasheet page
+├── datasheet_chart.png # cropped chart region (image-as-query index)
+└── photo.png # product image (visual similarity + chart matching)</code></pre>
+<p>“specs.json”文件捕获工程规范和生命周期配置文件，这使得助手可以标记过时和交付时间风险以及规范匹配。</p>
+<pre><code>{
+  &quot;name&quot;: &quot;AnyCompany RW3 0.06&quot;,
+  &quot;category&quot;: &quot;reaction_wheel&quot;,
+  &quot;vendor&quot;: &quot;AnyCompany&quot;,
+  &quot;model&quot;: &quot;RW3-0.06&quot;,
+  &quot;momentum_storage_nms&quot;: 0.06,
+  &quot;max_torque_mnm&quot;: 20,
+  &quot;mass_g&quot;: 235,
+  &quot;voltage_v&quot;: &quot;28&quot;,
+  &quot;voltage_range_v&quot;: &quot;7.5 to 36&quot;,
+  &quot;operating_temp_c&quot;: &quot;-30 to +70&quot;,
+  &quot;interface&quot;: &quot;RS-422 or Redundant RS-485&quot;,
+  &quot;qual_standard&quot;: &quot;AnyCompany internal (flight heritage qualified)&quot;,
+  &quot;lifecycle&quot;: {
+    &quot;lifecycle_status&quot;: &quot;Active&quot;,
+    &quot;production_status&quot;: &quot;Full production&quot;,
+    &quot;estimated_years_to_eol&quot;: &quot;10+&quot;,
+    &quot;last_time_buy&quot;: &quot;Not announced&quot;,
+    &quot;typical_lead_time_weeks&quot;: 10,
+    &quot;lead_time_risk&quot;: &quot;Low&quot;,
+    &quot;bathtub_region&quot;: &quot;Useful life (highly mature)&quot;,
+    &quot;recommended_screening&quot;: &quot;Standard flight acceptance&quot;
+  }
+}</code></pre>
+<p>每个部分都明确声明了“供应商”字段。由于目录文件夹 ID 和文件名在数据集中重复使用，因此每个专家提示都会将“get_part_specs”返回的结构化“vendor”值视为权威值，并且禁止从 ID、文件名、照片或 Web 搜索结果猜测制造商。从结构化数据中获取制造商可以防止助手将零件归因于错误的供应商，因为模型认为它可以识别硬件。</p>
+<p>每个零件文件夹还包含两个纯文本索引无法使用的资源。产品照片提供视觉相似性评分，渲染的数据表页面包含扭矩箱和扭矩曲线图，可以回答没有 OCR 文本层捕获的性能问题。 Amazon Nova Multimodal Embeddings 将两者嵌入到与文本相同的向量空间中，因此查询可以匹配规范值、段落或绘图。</p>
+<p>以下示例显示了语料库中的四个数据表页面，涵盖动量存储的三个数量级。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21854-2.png" alt="并排的四个反应轮数据表页面，每个页面都有产品照片和性能图，涵盖一系列动量存储"></p>
+<p>图 2：零件语料库中的四个数据表页，涵盖动量存储的三个数量级</p>
+<p>该模板在整个系列中重复，但产品照片和一对性能图随每个部分而变化。 These Regions show the housing geometry, mounting pattern, torque envelope, and power draw, which the spec fields don’t state directly, so we embed them alongside the text.</p>
+<h3>使用范围工具定义专家</h3>
+<p>每个专家都是 Strands 代理，其提示范围很窄，只提供其所需的工具。 Scoping tools per specialist keeps behavior predictable, because the Knowledge specialist has no access to the catalog discovery tools and the Catalog specialist has no access to the evaluation tools.以下代码创建评估专家。</p>
+<pre><code>from strands import Agent
+
+def create_evaluation_specialist() -&gt; Agent:
+    &quot;&quot;&quot;Evaluation Specialist: deterministic spec-by-spec comparison and scoring.&quot;&quot;&quot;
+    return Agent(
+        name=&quot;evaluation_specialist&quot;,
+        system_prompt=&quot;&quot;&quot;You are the Evaluation Specialist. Your job is to run
+deterministic, spec-driven comparisons between parts.
+...
+RULES:
+- Your comparisons are deterministic (code, not opinion)
+- NEVER recommend or approve --- present evidence and flags; the engineer decides
+- Always include the disclaimer that this is evidence only&quot;&quot;&quot;,
+        tools=[score_substitution_fit, compare_parts, visual_similarity_score,
+               check_qualification_status, generate_substitution_memo],
+        model=&quot;us.anthropic.claude-sonnet-5-5&quot;,
+    )</code></pre>
+<p>下图显示了规划人员如何将查询发送给专家以及主管何时综合他们的结果。后面的列表描述了每位专家的职责。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21854-3.png" alt="规划器将查询路由给专家，主管在多个专家运行时综合结果的流程图"></p>
+<p>图 3：规划人员如何将查询发送给专家以及主管何时综合结果</p>
+<ul><li><strong>目录</strong> – 通过知识库搜索和详尽的规格过滤（<code>kb_search</code>、<code>filter_parts_by_spec</code>、<code>get_part_specs</code>、<code>get_substitution_requirements</code>）发现零件。</li><li><strong>评估</strong> – 对候选人进行确定性评分并直观地比较各部分（<code>score_substitution_fit</code>、<code>compare_parts</code>、<code>visual_similarity_score</code>、<code>check_qualification_status</code>、<code>generate_substitution_memo</code>）。</li><li><strong>知识</strong> – 回答数据表和 ICD 中的问题，检查实时报废状态，并检索视觉内容（<code>get_part_specs</code>、<code>web_search_eol</code>、<code>retrieve_visual_content</code>）。</li></ul>
+<h3>使用小模型进行布线，使用大模型进行综合</h3>
+<p>路由是一个分类任务，没有工具调用，因此不需要大型推理模型。基于Haiku的规划器会在几秒钟内返回编号的路由规划。 Opus 管理器仅在两个或更多专家贡献时运行，因为综合单个专家已经完成的答案会增加大约 8 秒的延迟，并且不会提高质量。</p>
+<pre><code># Step 1: Planner (fast model) plans the routing (may be multi-step).
+plan_response = planner(planning_prompt)
+ordered_specialists = _parse_specialist_plan(str(plan_response))
+
+# Step 2: Execute specialists in sequence, passing context forward
+accumulated_context = &quot;&quot;
+for spec_name in ordered_specialists:
+    specialist = specialists[spec_name]
+    specialist_response = specialist(spec_prompt)
+    accumulated_context += f&quot;\n[{spec_name.upper()}]: {specialist_response}\n&quot;
+
+# Step 3: Synthesize only when 2+ specialists ran.
+if len(ordered_specialists) == 1:
+    final_text = steps[0][&quot;response&quot;]
+else:
+    final_text = str(supervisor(synthesis_prompt))</code></pre>
+<p>将工作拆分到三个模型层可以匹配每个阶段的成本和延迟。 Haiku 对查询进行分类，Sonnet 运行工具，Opus 编写组合答案，这是响应质量最重要的步骤。</p>
+<h3>保持评分的确定性</h3>
+<p>规范适合度评估作为普通 Python 代码针对手写的需求模式运行。该模式定义了每个组件类别的关键规格和容差规则，“score_substitution_fit”会比较每个规格，计算通过和标志，并显示生命周期风险。由于工程审查包的结论必须是可重现的，因此此步骤不涉及LLM。</p>
+<pre><code>{
+  &quot;categories&quot;: {
+    &quot;reaction_wheel&quot;: {
+      &quot;critical_specs&quot;: [
+        {&quot;field&quot;: &quot;voltage_v&quot;, &quot;label&quot;: &quot;Bus voltage (V)&quot;,
+         &quot;rule&quot;: &quot;match&quot;, &quot;required_from_user&quot;: true},
+        {&quot;field&quot;: &quot;mass_g&quot;, &quot;label&quot;: &quot;Mass (g)&quot;,
+         &quot;rule&quot;: &quot;candidate_lte_reference_within_pct&quot;, &quot;tolerance_pct&quot;: 20,
+         &quot;required_from_user&quot;: false}
+      ]
+    }
+  }
+}</code></pre>
+<p>该工具返回带有明确免责声明的结构化判决：</p>
+<pre><code>return {
+    &quot;spec_results&quot;: results,  # per-spec pass/flag/review status
+    &quot;counts&quot;: counts,
+    &quot;out_of_tolerance&quot;: out_of_tolerance,
+    &quot;lifecycle&quot;: {...},  # obsolescence and lead-time flags
+    &quot;summary&quot;: summary,
+    &quot;disclaimer&quot;: &quot;Evidence only. This tool does not recommend or approve &quot;
+                  &quot;a substitution; the engineer decides.&quot;,
+}</code></pre>
+<p>专家展示了这个表格并解释了标志，但它不能改变结论。审计跟踪遵循相同的工作分工。每次评估后，编排层都会读取专家的工具调用历史记录并自行写入审核条目，因此日志记录并不依赖于模型记得执行此操作。</p>
+<h3>使用 Amazon Nova Multimodal Embeddings 评分视觉相似度</h3>
+<p>当替代品必须适合现有支架时，外形因素很重要。 “visual_similarity_score”工具使用 Nova Multimodal Embeddings 嵌入两个零件照片并计算余弦相似度，然后要求 Claude 描述具体的可观察到的差异。</p>
+<pre><code>def embed_image(image_bytes):
+    &quot;&quot;&quot;Embed one image with Nova MME (IMAGE_RETRIEVAL) -&gt; 1024-d vector.&quot;&quot;&quot;
+    b64 = base64.b64encode(image_bytes).decode('utf-8')
+    fmt = 'png' if image_bytes[:8] == b'\x89PNG\r\n\x1a\n' else 'jpeg'
+    body = {
+        'taskType': 'SINGLE_EMBEDDING',
+        'singleEmbeddingParams': {
+            'embeddingPurpose': 'IMAGE_RETRIEVAL',
+            'embeddingDimension': 1024,
+            'image': {'detailLevel': 'STANDARD_IMAGE', 'format': fmt,
+                      'source': {'bytes': b64}},
+        },
+    }
+    resp = bedrock.invoke_model(
+        modelId='amazon.nova-2-multimodal-embeddings-v1:0',
+        body=json.dumps(body), accept='application/json',
+        contentType='application/json',
+    )
+    result = json.loads(resp['body'].read())
+    return np.array(result['embeddings'][0]['embedding'])
+
+# cosine similarity of the two photo embeddings
+emb_a, emb_b = embed_image(photo_a_bytes), embed_image(photo_b_bytes)
+similarity = float(np.dot(emb_a, emb_b) /
+                   (np.linalg.norm(emb_a) * np.linalg.norm(emb_b)))</code></pre>
+<p>嵌入相似性是确定性的且可重复的，对于同一产品系列的两个车轮，返回约 0.84，对于不同类别的车轮，返回 0.40 左右。然后，Claude的视觉分析解释了造成差异的原因，例如注意到一个外壳的直径大约是另一个外壳的两倍，并且具有六孔安装模式，而另一个外壳有四个。</p>
+<h3>使用两个检索路径检索图表和图表</h3>
+<p>文本和文档查询通过由 Amazon Nova 多模式嵌入支持的托管知识库，并通过 AgentCore 网关进行路由。图像即查询（上传图表或照片以查找匹配内容）使用直接从代理调用的本机 Amazon S3 Vectors 索引，因为托管知识库检索 API 不接受图像输入。</p>
+<p>知识专家的“retrieve_visual_content”工具为这两种路径提供了一个界面。工程师可以将需求文档中的性能曲线粘贴到聊天中，并询问哪个部分与其匹配，或者改为在文本查询中描述图表。</p>
+<pre><code># Image-as-query: embed the uploaded image with Nova MME, exactly as the
+# datasheet crops and photos were embedded at indexing time.
+def embed_query_image(image_bytes):
+    b64 = base64.b64encode(image_bytes).decode('utf-8')
+    fmt = 'png' if image_bytes[:8] == b'\x89PNG\r\n\x1a\n' else 'jpeg'
+    body = {'taskType': 'SINGLE_EMBEDDING', 'singleEmbeddingParams': {
+        'embeddingPurpose': 'IMAGE_RETRIEVAL', 'embeddingDimension': 1024,
+        'image': {'detailLevel': 'STANDARD_IMAGE', 'format': fmt,
+                  'source': {'bytes': b64}}}}
+    r = bedrock.invoke_model(modelId=NOVA_MME_MODEL_ID, body=json.dumps(body),
+                             accept='application/json', contentType='application/json')
+    return json.loads(r['body'].read())['embeddings'][0]['embedding']</code></pre>
+<p>在图像路径上，使用“IMAGE_RETRIEVAL”目的使用 Nova Multimodal Embeddings 嵌入 1,024 维的上传内容，然后与 S3 矢量索引进行匹配：</p>
+<pre><code># Query the native S3 Vectors index and collapse to the best vector per part.
+emb = embed_query_image(image_bytes)
+s3v = boto3.client('s3vectors', region_name=REGION)
+fetch_k = max(top_k * 6, 12)  # each part has several vectors; dedupe below
+resp = s3v.query_vectors(
+    vectorBucketName=S3_VECTOR_BUCKET, indexName=S3_VECTOR_INDEX,
+    queryVector={'float32': emb}, topK=fetch_k,
+    returnDistance=True, returnMetadata=True,
+)
+
+best = {}
+for v in resp.get('vectors', []):
+    meta = v.get('metadata', {}) or {}
+    pid = meta.get('part_id', '')
+    if not pid:
+        continue
+    sim = 1.0 - v.get('distance', 1.0)  # cosine distance -&gt; similarity
+    if pid not in best or sim &gt; best[pid]['score']:
+        best[pid] = {'part_id': pid, 'score': sim}
+ranked = sorted(best.values(), key=lambda r: r[&quot;score&quot;], reverse=True)[:top_k]</code></pre>
+<p>由于一个零件会贡献多个向量（其照片、整个数据表页面和每个裁剪的图表区域），因此结果在到达模型之前会被删除为每个零件的最佳得分向量。</p>
+<p>我们在构建检索路径时学到了三个实践经验：</p>
+<ul><li><strong>在索引图表之前裁剪图表</strong> – 整个数据表页面的索引条目很差，因为页面的大约 90%（页眉、规格表、页脚）是每个部分共享的样板文件，并且共享内容主导了嵌入。在整页旁边索引裁剪的图表区域解决了这个问题。在我们的测试中，图表上传匹配从整页索引的 7 个部分中的 3 个正确到图表带裁剪的 7 个部分中的 7 个正确。我们将裁剪区域定义为页面的一部分，这使它们在数据表分辨率下保持正确。</li><li><strong>当工程师命名零件时过滤结果</strong> – 跨模式文本到图像的相似性本身并不能可靠地返回正确的零件图表，因为扭矩曲线图像不包含可见的零件名称。当工程师命名特定部件时，该工具仅保留该部件索引内容的结果，它通过从每个结果的 S3 URI 中解析部件文件夹来识别该内容。由于过滤器在工具中运行，因此它无需索引中的自定义元数据即可工作。</li><li><strong>记录图像路径上的每个回退</strong> – 图像路径在出现错误时返回“None”并进行文本检索。这种回退是合理的，但这意味着 AgentCore 运行时执行角色缺少“s3vectors:QueryVectors”权限不会引发错误。图像即查询会在没有警告的情况下停止工作，然后模型会以很高的明显置信度命名错误的部分。这个问题在开发过程中很容易被忽视，因为本地开发人员凭据通常比运行时角色具有更广泛的权限。现在，只要该路径回退，该工具就会记录一个明确的“S3 Vectors 图像查询失败”警告，其中包含存储桶、索引和区域。检测检索路径中的每一个无声回退，因为硬故障比无声故障更容易诊断。</li></ul>
+<h3>通过固定的专家链制作正式文件</h3>
+<p>聊天使用动态路由，因为无法提前知道解决自由形式问题的合适专家。集成影响评估的工作方式有所不同。当工程师请求对参考和候选对进行影响评估时，所需的序列已经已知，因此该服务会按照固定顺序使用专门构建的综合提示来组成相同的专业工厂功能。</p>
+<pre><code># 1. Knowledge Specialist --- ICD/datasheet interface detail for both parts
+knowledge_text = str(knowledge(knowledge_prompt))
+
+# 2. Evaluation Specialist --- structured field delta + qualification check
+evaluation_text = str(evaluation(evaluation_prompt))
+
+# Deterministic structured delta for exact summary stats
+comparison = compare_parts(reference_id, candidate_id)
+
+# 3. Supervisor --- synthesize into the six-section IIA document
+markdown = str(supervisor(synthesis_prompt))</code></pre>
+<p>生成的文档涵盖了接口变更、机械集成、电气集成、热集成、资格增量和供应链影响。叙述部分需要 LLM 综合，因为引脚排列和协议详细信息必须从 ICD 散文中提取。摘要统计数据（匹配、差异、总字段）是直接从“compare_parts”输出计算的，因此与叙述一起显示的数字是准确的。</p>
+<h3>通过 AgentCore Gateway 在实时 Web 数据中地面生命周期声明</h3>
+<p>目录数据已过时，因此知识专家的“web_search_eol”工具通过具有 Web 搜索连接器的 AgentCore 网关检查当前的生命周期终止通知、供应商公告和交付时间。网关将连接器公开为受管理的模型上下文协议 (MCP) 端点。由于网关还处理托管知识库检索，因此您可以将策略和可观察性附加到一处的外部和内部数据访问。</p>
+<h3>部署到 AgentCore 运行时</h3>
+<p>对于生产，您将代理打包为 ARM64 容器，将其推送到 Amazon Elastic Container Registry (Amazon ECR)，AgentCore 运行时通过会话隔离和自动扩展以无服务器方式托管它。 GitHub 存储库中的 Notebook 03 作为参考配方介绍了此部署，涵盖 Dockerfile、构建和推送命令、执行角色权限和 Cedar 策略。笔记本显示这些步骤但不运行它们。它的 Dockerfile 打包了超出示例的应用程序代码，因此在构建之前将其调整为您自己的应用程序布局。下图显示了从代理代码到托管 AgentCore 运行时端点的部署路径。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21854-4.png" alt="部署路径：代理代码打包为 ARM64 容器，推送到 Amazon ECR，在托管的 AgentCore 运行时终端节点上运行"></p>
+<p>图 4：从代理代码到托管 AgentCore 运行时端点的部署路径</p>
+<pre><code>export TAG=mei-$(date +%Y%m%d-%H%M%S)
+export ACCOUNT=&lt;your-account-id&gt;
+export ECR=${ACCOUNT}.dkr.ecr.us-east-1.amazonaws.com/mfg-engineering-intelligence
+
+# Build the container for ARM64 (required by AgentCore Runtime)
+docker buildx build --platform linux/arm64 -f agentcore/Dockerfile \
+  -t mfg-engineering-intelligence:${TAG} --load .
+
+# Push the immutable tag to Amazon ECR
+aws ecr get-login-password --region us-east-1 \
+  | docker login --username AWS --password-stdin ${ACCOUNT}.dkr.ecr.us-east-1.amazonaws.com
+docker tag mfg-engineering-intelligence:${TAG} ${ECR}:${TAG}
+docker push ${ECR}:${TAG}</code></pre>
+<p>给每个图像一个不可变的标签。已经解析了移动“:latest”标签后面的摘要的运行时在您推送新图像后继续提供旧图像。提示符、路由器和工具的更改都需要新的映像和新的运行时版本才能生效。</p>
+<p>运行时角色需要“bedrock:InvokeModel”、“bedrock:Retrieve”、“bedrock-agentcore:InvokeGateway”和“s3vectors:QueryVectors”作为图像查询路径。笔记本 03 中显示的 Cedar 策略对人机交互规则进行了编码，要求在备忘录之前进行事先评估，并对每个替代决策进行审核日志条目。应用程序现在以自己的逻辑强制执行这些规则，下一步是将策略附加到 Cedar 授权引擎。</p>
+<p>Amazon Nova 多模式嵌入<a href="https://aws.amazon.com/about-aws/whats-new/2026/08/amazon-nova-mme-govcloud/">现已在 AWS GovCloud（美国）推出</a>，这对于受数据驻留、ITAR 和 FedRAMP 要求（管理工作负载运行位置）约束的航空航天和国防项目至关重要。本文所依赖的多模式检索和视觉相似性功能可以在 AWS GovCloud（美国）边界内访问。 Amazon Nova 多模式嵌入和 Amazon Bedrock AgentCore 功能的可用性因 AWS 区域而异，因此在规划部署之前请检查 <a href="https://aws.amazon.com/about-aws/global-infrastruct/regional-product-services/">按区域划分的 AWS 服务</a>。</p>
+<h2>评估助手</h2>
+<p>我们通过两种方式衡量质量，通过 AgentCore 评估（Amazon Bedrock AgentCore 的一项功能）进行持续在线评分，以及针对策划的查询集进行离线验证。</p>
+<h3>AgentCore在线评测</h3>
+<p><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">Amazon Bedrock AgentCore 评估</a>，<a href="https://aws.amazon.com/about-aws/whats-new/2026/03/agentcore-evaluations-generally-available/">自 2026 年 3 月起全面推出</a>，使用“LLM-as-a-judge”技术对代理跟踪进行评分。它读取 Strands 代理已经发出的 OpenTelemetry 跟踪，因此检测代理不需要评估应用程序更改。该服务提供两种模式。在线评估不断对实时生产会话进行采样，按需评估运行适合持续集成和持续交付 (CI/CD) 管道的程序化测试。</p>
+<p>我们使用在线评估，并将结果发布到 Amazon CloudWatch 以用于仪表板和警报。 GitHub 存储库中的 Notebook 05 创建在线评估配置，并将测试查询发送到已部署的运行时以生成用于评分的会话。</p>
+<pre><code>config = eval_client.create_online_config(
+    config_name=CONFIG_NAME,
+    agent_id=RUNTIME_ID,
+    sampling_rate=SAMPLING_RATE,
+    evaluator_list=[
+        &quot;Builtin.GoalSuccessRate&quot;,
+        &quot;Builtin.Correctness&quot;,
+        &quot;Builtin.Helpfulness&quot;,
+        &quot;Builtin.Faithfulness&quot;,
+        &quot;Builtin.ResponseRelevance&quot;,
+        &quot;Builtin.ToolSelectionAccuracy&quot;,
+        &quot;Builtin.ToolParameterAccuracy&quot;,
+    ],
+    auto_create_execution_role=True,
+    enable_on_create=True,
+)</code></pre>
+<p>该服务附带 13 个内置评估器，同时支持由提示定义或作为 AWS Lambda 函数托管的自定义评估器。我们启用了七个，涵盖所有三个评分级别：</p>
+<table><thead><tr><th><strong>级别</strong></th><th><strong>评估者</strong></th><th><strong>得分多少</strong></th></tr></thead><tbody><tr><td>会议</td><td>目标成功率</td><td>对话是否端到端地实现了用户的目标？</td></tr><tr><td>追踪</td><td>正确性</td><td>信息是否真实准确？</td></tr><tr><td>追踪</td><td>乐于助人</td><td>回应有用且有价值吗？</td></tr><tr><td>追踪</td><td>诚信</td><td>响应是否忠实于检索到的上下文？</td></tr><tr><td>追踪</td><td>响应相关性</td><td>响应是否解决了用户的实际查询？</td></tr><tr><td>工具调用</td><td>刀具选择精度</td><td>代理是否选择了正确的工具？</td></tr><tr><td>工具调用</td><td>刀具参数精度</td><td>代理提取参数是否正确？</td></tr></tbody></table>
+<p><strong>策划的查询集</strong>包含 6 个类别的 36 个查询：目录发现 (8)、知识和 ICD 检索 (8)、多专家链 (6)、确定性评估 (5)、文本到视觉检索 (5) 以及断言代理拒绝推荐或批准的人机循环安全拒绝 (4)。每个查询都带有其预期的目录部件 ID，但安全查询除外，其预期结果是拒绝。</p>
+<pre><code>export AGENTCORE_RUNTIME_ARN=arn:aws:bedrock-agentcore:us-east-1:ACCOUNT:runtime/YOUR_RUNTIME
+jupyter lab 05_evaluation.ipynb</code></pre>
+<h3>结果</h3>
+<p>AgentCore 会持续对实时会话进行采样，因此每个评估者的分数都是一个不断变化的总分，会随着流量的积累和代理的变化而变化。以下数字是合成数据集运行的快照。使用它们作为设置 CloudWatch 警报阈值的基准，并预计您自己运行的数字会有所不同。</p>
+<table><thead><tr><th><strong>级别</strong></th><th><strong>评估者</strong></th><th><strong>分数（30 天平均）</strong></th></tr></thead><tbody><tr><td>会议</td><td>目标成功率</td><td>0.892</td><td>0.892</td></tr><tr><td>追踪</td><td>正确性</td><td>0.968</td><td>0.968</td></tr><tr><td>追踪</td><td>乐于助人</td><td>0.956</td><td>0.956</td></tr><tr><td>追踪</td><td>诚信</td><td>0.981</td><td>0.981</td></tr><tr><td>追踪</td><td>响应相关性</td><td>0.968</td><td>0.968</td></tr><tr><td>工具调用</td><td>刀具选择精度</td><td>0.861</td><td>0.861</td></tr><tr><td>工具调用</td><td>刀具参数精度</td><td>0.980</td></tr></tbody></table>
+<p>所有跟踪级别质量指标的得分均达到或高于 0.95，工具参数提取的得分接近完美，为 0.980。评估运行之间最显着的改进是工具选择准确性，从 0.809 上升到 0.861。三个变化推动了这一成果：整合到单个托管知识库、修复图像查询路径上缺少的权限（该权限导致无提示地回退到文本搜索）以及收紧规划器的路由以避免链接不必要的专家。</p>
+<p>由于查询集的设计方式，目标成功率较低，为 0.892。查询集包括要求代理推荐或批准替代的安全类别提示。代理正确地拒绝，但评估者将正确的拒绝评分为未实现的目标。我们期望这个结果，因为在人机循环系统中，代理不得自行批准替换。</p>
+<h2>使模式适应您自己的目录</h2>
+<p>该代码是一种可重用的模式，适用于反作用轮之外的其他零件类别。交换域需要三项更改：替换零件数据（“specs.json”、描述、ICD、数据表页面和每个零件的照片），编辑需求架构以定义类别的关键规格和容差规则，并将知识库指向您的 S3 语料库。代理、工具和评分引擎保持不变。由于“mei_core”中的确定性工具是普通的 Python 函数，因此 PLM 或 ERP 集成可以直接调用“score_substitution_fit”，而循环中没有代理。</p>
+<h2>清理</h2>
+<p>为了避免持续产生费用，请删除您创建的资源：</p>
+<ul><li>删除 <a href="https://docs.aws.amazon.com/cli/latest/reference/bedrock-agentcore-control/delete-agent-runtime.html">AgentCore 运行时代理</a> 及其 <a href="https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-delete.html">Amazon ECR 存储库</a>。</li><li>删除 <a href="https://docs.aws.amazon.com/cli/latest/reference/bedrock-agentcore-control/delete-gateway.html">AgentCore Gateway</a> 及其 <a href="https://docs.aws.amazon.com/cli/latest/reference/bedrock-agentcore-control/delete-gateway-target.html">Web 搜索和知识库目标</a>。</li><li>删除您创建的<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/delete-online-evaluations.html">在线评估配置</a>和<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Manage-CloudWatch-Alarm.html">CloudWatch警报</a>。</li><li>删除 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-delete.html">托管知识库</a> 和 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors-index-delete.html">S3 矢量索引</a>。</li><li>删除保存部件语料库的 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html">S3 存储桶</a>。</li></ul>
+<p>＃＃ 结论</p>
+<p>在这篇文章中，我们展示了如何构建一个多智能体工程助手，用自动证据组装取代手动零件替换研究。该架构将 Amazon Nova Multimodal Embeddings（处理纯文本系统错过的视觉相似性评分和图表检索）与 Amazon Bedrock AgentCore（提供运行时托管、网关管理的检索和 Web 搜索以及质量评估的生产支架）配对。三种设计选择最重要。确定性代码会生成每个通过/失败判定，每个任务都在能够很好处理该任务的三个模型层中最小的一个上运行，并且只有工程师才能批准替换。</p>
+<p>首先，克隆 <a href="https://github.com/aws-samples/amazon-nova-samples/tree/main/multimodal-embeddings/repeatable-patterns/agentic-engineering-intelligence-nova-mme-agentcore">GitHub 存储库</a>，使用您自己的 AWS 账户运行笔记本，然后交换您的部件目录和需求架构。要深入了解检索基础，请阅读 <a href="https://aws.amazon.com/blogs/machine-learning/manufacturing-intelligence-with-amazon-nova-multimodal-embeddings/">使用 Amazon Nova Multimodal Embeddings 制造智能</a> 和 <a href="https://aws.amazon.com/blogs/machine-learning/a-practical-guide-to-amazon-nova-multimodal-embeddings/">Amazon Nova Multimodal 实用指南嵌入</a>。有关生产代理模式，请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore 文档</a> 和 <a href="https://strandsagents.com/">Strands Agents SDK</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Circle K 如何使用 Amazon Bedrock 将 DevOps 事件分类速度缩短到 15 分钟以内</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/how-circle-k-accelerated-devops-incident-triage-to-under-15-minutes-with-amazon-bedrock/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-circle-k-accelerated-devops-incident-triage-to-under-15-minutes-with-amazon-bedrock/</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How Circle K accelerated DevOps incident triage to under 15 minutes with Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Circle K 如何使用 Amazon Bedrock 将 DevOps 事件分类速度加快到 15 分钟以内</h1>
+<p><em>本文是与 Circle K 的云 DevOps 工程师 Marek Klatowicz 共同撰写的。</em></p>
+<p>许多 DevOps 团队都知道事件分类模式：警报发出后，在任何人能够解决问题之前，工程师会花 45-60 分钟弄清楚发生了什么。他们通过一些工具提取日志、检查服务运行状况并关联症状。所有这些都发生在修复开始之前。</p>
+<p>在 Circle K，这一挑战随着业务的发展而不断扩大。该公司在 27 个国家经营着 17,200 多家便利和燃料零售店。在店面后面，云原生基础设施支持在 AWS 上运行的销售点系统、忠诚度应用程序和电动汽车 (EV) 充电应用程序。随着公司扩大数字化业务，分类管理费用也随之增加。更多的服务意味着更多的警报，并且每一项都需要相同的手动调查才能开始修复。</p>
+<p>为了解决这个问题，Circle K 使用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 构建了一个自动分类系统，这是一项完全托管的服务，可通过单个 API 提供基础模型 (FM)。有关 AWS 区域的模型可用性，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">Amazon Bedrock 中 AWS 区域支持的模型</a>。该系统使用代理人工智能架构来自主调查每个事件，并在警报触发后几分钟内向 Slack 提供结构化摘要。值班工程师现在收到的是可操作的上下文，而不是原始警报，因此他们可以立即采取行动，而不必花一个小时来弄清楚发生了什么。</p>
+<p>自从部署该系统以来，Circle K 已将平均分类时间缩短至 15 分钟以下，根据团队的内部事件响应指标，缩短了 67%–75%。</p>
+<p>在这篇文章中，我们描述了初始 <a href="https://aws.amazon.com/bedrock/flows/">Amazon Bedrock Flows</a> 实施和迁移到 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 的架构，并分享了从扩展系统中吸取的经验教训。</p>
+<h2>分类开销的挑战</h2>
+<p>Circle K 的 DevOps 团队使用 Grafana 监控多个 AWS 账户的基础设施。通常一天会发出有关容器重新启动、错误率升高、延迟峰值和部署失败的警报。每个警报都是有用的信号，但随着系统的扩展，团队希望帮助值班工程师在正确的上下文中快速查看哪些信号需要注意。</p>
+<p>当警报出现时，分类涉及一系列熟悉的手动步骤：查看 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 中的最新日志、检查 <a href="https://aws.amazon.com/opensearch-service/">Amazon OpenSearch Service</a> 中的应用程序级跟踪、检查 <a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service (Amazon ECS)</a> 任务状态以及将症状与内部交叉引用GitHub 中的操作手册。这为工程师提供了他们所需的信息，但它也显示了随着更多服务的加入，需要多少重复的上下文收集。</p>
+<p>该团队认识到主动投资可以在两个领域有所帮助。首先，将对每个事件重复相同的日志查询、运行状况检查和运行手册查找。其次，分类的深度和速度可能会因待命工程师对受影响服务的熟悉程度而异。随着警报量和服务所有权的增长，每次调查在多个工具之间切换可能会减慢响应速度，并使团队更难一致地应用最佳实践。</p>
+<p>因此，Circle K 的 DevOps 团队启动了一项研发 (R&amp;D) 计划，探索人工智能如何支持监控和事件分类。目标是自动收集重复的上下文并提供结构化的、可操作的发现，同时支持工程师在调查期间的操作判断。</p>
+<h2>为什么 Circle K 选择 Amazon Bedrock</h2>
+<p>该团队在构建之前评估了多种方法，包括自我管理基础设施上的开源代理框架。这种方法意味着拥有模型托管、提示版本控制、工具编排和安全控制。</p>
+<p>借助 Amazon Bedrock，该团队避免了这种开销。他们可以通过单个 API 访问基础模型并交换基础模型，而无需重写代码。由于 Circle K 已在 AWS 上运行，因此 Amazon Bedrock 适合现有的 AWS Identity and Access Management (IAM) 策略、Amazon Virtual Private Cloud (Amazon VPC) 配置和日志记录管道。</p>
+<p>两项托管功能涵盖编排和检索。 Amazon Bedrock 帮助代理编排，让代理可以使用本机工具调用 AWS API、查询数据库和检索文档，而无需自定义编排代码。 Amazon Bedrock 知识库是完全托管的检索增强生成 (RAG) 功能，可处理内部产品卡的摄取和检索，因此团队无需运行单独的矢量数据库。这让 DevOps 团队专注于提示设计和工具定义。</p>
+<p>数据隐私完成了这一切。 Circle K 的事件数据包括运营指标、基础设施详细信息以及可能包含敏感信息的日志。 <a href="https://aws.amazon.com/bedrock/security-privacy-responsible-ai/">Amazon Bedrock 不会与模型提供商共享客户数据或使用其来训练基础模型</a>。对于将生产日志和内部服务详细信息输入系统的团队来说，这种数据处理方法满足了 Circle K 的安全要求。</p>
+<h2>解决方案概述</h2>
+<p>本部分介绍团队在 Amazon Bedrock Flows 上构建的初始架构。后面的部分将介绍向 AgentCore 的迁移。</p>
+<p>该解决方案使用 Amazon Bedrock Flows 作为编排层，协调一组专用代理，每个代理处理分析的不同部分。当 Grafana 警报将通知发布到 <a href="https://aws.amazon.com/sns/">Amazon Simple Notification Service (Amazon SNS)</a> 时，管道就会启动，该通知会将其转发到 <a href="https://aws.amazon.com/sqs/">Amazon Simple Queue Service (Amazon SQS)</a> 队列。 <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 函数轮询队列、提取警报负载并调用流。</p>
+<p>在 Flow 内部，两个代理被并行调用。 “AWSResourceExplorerAgent”跨由 <a href="https://aws.amazon.com/organizations/">AWS Organizations</a> 管理的多个工作负载账户查询基础设施。它检查 Amazon ECS 任务状态、Application Load Balancer 目标运行状况以及 CloudWatch 指标和日志。同时，“OpenSearchExplorerAgent”会查询 Amazon OpenSearch Service 以获取应用程序级日志和分布式跟踪。由于 OpenSearch 返回大量日志数据，因此该代理单独运行。隔离它可以使每个代理的上下文窗口保持可管理性。它还具有对知识库的独占访问权，其中包含描述每个服务及其依赖项的产品卡。</p>
+<p>两个代理返回结果后，“GitHubExplorerAgent”就会运行。它接收前两个代理的输出并查找受影响服务的 GitHub 存储库。然后，它会搜索他们的应用程序代码、基础设施定义和最近的提交，以查明问题的根源并提出具体的解决方案。在并行代理之后运行它意味着它确切地知道要搜索什么而不是执行广泛的查询。</p>
+<p>所有三个输出都会输入“AnalysisPrompt”节点，该节点是不附加任何工具的单个模型调用。它接收 AWS 资源数据、OpenSearch 日志和 GitHub 上下文，然后生成结构化摘要：可能的根本原因、支持证据、受影响的服务和所有者以及建议的修复步骤。提示输出使用一致的格式，待命团队可以在 2 分钟内完成扫描。</p>
+<p>Flow 将此摘要返回给调用 Lambda 函数，该函数将其发布到 Slack 通道。从警报到 Slack 消息的整个过程需要 5-15 分钟，具体取决于事件的复杂性。</p>
+<p>下图端到端地展示了这个架构，从最初的 Grafana 警报到最终的 Slack 摘要。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21514-first-arch-final.jpg" alt="Amazon Bedrock Flows 分类架构：Grafana 警报通过 Amazon SNS、SQS 和 Lambda 流向并行代理，这些代理将摘要发布到Slack"></p>
+<p>图 1：使用 Amazon Bedrock Flows 的 Circle K 自动事件分类架构</p>
+<h3>分类示例</h3>
+<p>Grafana 警报：服务上的 HTTP 5xx 错误率连续 3 分钟超过 5%。</p>
+<p>AWSResourceExplorerAgent 检查目标账户中的 ECS 任务运行状况，发现数据库连接池已耗尽，ECS 服务尝试重新启动。 OpenSearchExplorerAgent 返回应用程序日志，显示从服务到其支持 PostgreSQL 数据库的“连接被拒绝”错误。它还从知识库中检索受影响服务的产品卡，该卡记录了其对该数据库的依赖关系。 GitHubExplorerAgent 搜索服务的存储库和基础设施文件并查找 Amazon Relational Database Service (Amazon RDS) 定义。它看到该服务为每个请求打开一个新的数据库连接，而不是重用现有的数据库连接。</p>
+<p>AnalysisPrompt 接收所有三个结果。它将时间与警报前 10 分钟开始的预定营销活动相关联。它将这一点与 GitHubExplorerAgent 的发现相结合，推荐具体的代码级修复，而不是临时补丁。</p>
+<p>最后的 Slack 消息如下：</p>
+<pre><code>Summary: XYZ Service 5xx errors caused by connection pool exhaustion
+Root cause: Scheduled marketing campaign drove traffic spike; connection pool max (50) insufficient for load
+Evidence: OpenSearch logs show &quot;connection refused&quot; at 14:32 UTC; ECS shows 3 task restarts since 14:30
+Owner: XYZ team (backend)
+Next steps: Add Amazon RDS Proxy to pool connections, or update the service to reuse existing connections instead of opening a new one per request; consider an Auto Scaling rule for future campaigns</code></pre>
+<h2>扩展到 Amazon Bedrock AgentCore</h2>
+<p>Amazon Bedrock Flows 架构连续几个月运行良好，简单事件在 10 分钟内就得到了分类。随着时间的推移，尽管服务集保持不变，但每次调查背后的数据量和背景都在增长。有些事件需要运行时间更长的分析，单个 Flow 节点无法完成。</p>
+<p>该团队首先通过更积极地过滤日志、缩短上下文窗口以及将某些服务拆分为单独的流来在现有设计中进行优化。这些步骤有所帮助，但日志量和知识库不断增长。</p>
+<p>Amazon Bedrock AgentCore 满足了这一需求。 AgentCore 是一个使用任何框架或模型大规模构建、连接和优化 AI 代理的平台。对于此工作负载，关键功能是 AgentCore 运行时：完整的调查在单个会话中运行，因此每个步骤都可以占用其数据所需的时间。 AgentCore Runtime 支持长达 8 小时的会话，远远超出了当前调查的需要。该团队将其代理逻辑容器化并将其部署在 AgentCore Runtime 上。</p>
+<p>下图显示了迁移到 Amazon Bedrock AgentCore 后的生产架构。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21514-second-arch-final.jpg" alt="使用 Amazon Bedrock AgentCore 运行时和网关的生产架构：Lambda 调用发布 Slack 摘要的单个代理"></p>
+<p>图 2：使用 Amazon Bedrock AgentCore Runtime 和 AgentCore Gateway 的生产架构</p>
+<p>分析逻辑保持不变，但运行方式发生了变化。 Flows 版本中的三个专用代理现已合并为在 AgentCore 运行时会话中运行的单个代理。 Lambda 函数启动会话，代理执行与之前相同的步骤。它跨账户查询 AWS 资源、从 Amazon OpenSearch Service 提取日志、搜索 GitHub 并从知识库检索产品卡。代理会在 15 分钟内将其结果返回给 Lambda 函数，这在最大 Lambda 超时范围内。然后，Lambda 函数将结构化摘要发布到 Slack。</p>
+<p>Amazon Bedrock AgentCore Gateway 是 Amazon Bedrock AgentCore 的一项功能，可代理代理对其数据源的访问，包括 Amazon OpenSearch Service、Amazon Bedrock 知识库和 GitHub。网关将每个源公开为代理调用的工具，从而集中访问控制并使团队更轻松地添加或更改数据源。</p>
+<h3>AgentCore Runtime 如何支持团队不断扩大的规模</h3>
+<p>除了运行时间较长的会话之外，Amazon Bedrock AgentCore Runtime 还添加了三项支持团队规模不断扩大的功能：会话持久性、基于 OpenTelemetry 的可观察性和框架灵活性。</p>
+<p><strong>会话持久性：</strong> 代理在整个调查过程中保持中间状态。如果第一次通过日志发现了一些东西，代理可以运行第二次更有针对性的通过，而不会丢失它已经构建的上下文。这适合调查复杂的多服务事件的迭代方式。</p>
+<p><strong>可观察性：</strong> AgentCore 使用 OpenTelemetry 标准和通过 CloudWatch 的表面捕获每个会话的跟踪。团队可以看到每个步骤需要多长时间、代理进行哪个知识库查询以及出现瓶颈的位置。这些见解直接反馈到即时调整中。</p>
+<p><strong>框架灵活性：</strong> 借助 AgentCore Runtime，团队可以部署使用各种框架构建的容器化代理。他们可以迭代代理逻辑、添加分类步骤或根据需求变化重构代理的推理，所有这些都在同一个运行时上进行。</p>
+<p>AgentCore 架构现在在生产中运行并处理全方位的事件，从简单的单一服务警报到大型多服务调查。</p>
+<h2>结果</h2>
+<p>Circle K 于 2026 年 4 月部署了 AgentCore 版本的分流系统。根据团队的内部事件响应指标，平均分流时间从 45-60 分钟降至 15 分钟以下，减少了 67-75%。简单的事件会在 5-8 分钟内收到摘要。复杂的多服务事件以前需要一个多小时才能手动分类，现在只需 15 分钟即可完成。</p>
+<p>工程师现在从摘要开始，而不是自己收集背景信息。该团队发现事件处理方式发生了三项变化：</p>
+<p><strong>一致的分类。</strong> 每个待命工程师都会收到相同的结构化摘要，其中包含相同的日志摘录、知识库参考和建议的后续步骤，无论他们对受影响的服务了解程度如何。</p>
+<p><strong>更快升级。</strong> 当问题需要其他团队的支持时，摘要会为待命工程师提供相关背景信息，以便及时、知情地升级。</p>
+<p><strong>更快地处理错误警报。</strong> 当分析发现服务正常并且没有相关错误时，工程师可以确认警报并继续。</p>
+<h2>经验教训</h2>
+<p>构建这个系统需要多次迭代。有四个经验教训适用于使用 Amazon Bedrock 构建类似解决方案的团队。</p>
+<p>直接在提示中包含日志内容。早期版本仅传递日志组名称和时间范围，然后代理尝试通过操作组查询 CloudWatch。这增加了延迟，并且经常返回太多数据需要处理。 Circle K 通过使用 Lambda 函数预查询日志并将相关行直接传递给代理，获得了更好的结果。当代理可以读取实际的错误消息时，它的推理速度会更快。</p>
+<p>调整用例的检索和生成。检索配置显着影响知识库的结果质量。在测试可用选项后，Circle K 团队发现具有默认配置的 Amazon Bedrock 知识库最适合他们的数据。 Amazon Bedrock 端到端处理嵌入、索引和矢量存储，因此团队需要维护的组件更少。在生成方面，精心设计的系统提示和调整的温度设置在 Slack 中生成了一致的摘要。</p>
+<p>根据日志中的发现缩小代码搜索范围。在没有线索的情况下搜索服务的存储库会返回太多无用的结果。团队在 AWS 资源和日志分析之后运行 GitHub 搜索，因此代理已经知道要查找哪个错误、组件或最近的更改。在示例分类中，代理发现服务为每个请求打开一个新的数据库连接。</p>
+<p>保持分析逻辑独立于编排层。分析时间随着数据量的增加而增加，因此要计划好调查时间会随着时间的推移而延长。该团队将提示、工具定义和分析步骤与流程结构分开。这使得可以将它们合并到 AgentCore Runtime 上的单个代理中，而无需重写分类逻辑。</p>
+<h2>后续步骤</h2>
+<p>今天，分类系统找到了可能的根本原因并建议修复，然后由工程师执行修复。接下来，该团队计划与 <a href="https://aws.amazon.com/devops-agent/">AWS DevOps Agent</a> 集成，以便系统也可以处理简单的修复。示例包括重新启动任务、扩展服务或回滚部署。 Slack 中的每个操作在运行之前都会由工程师批准。</p>
+<p>该团队还计划为代理提供更多的工作背景：</p>
+<ul><li>Jira，将每个事件与相关票证相关联并跟踪后续工作。</li><li>Confluence，将内部文档添加到代码中并记录代理已读取的内容。</li><li>知识库中的操作手册，因此代理可以将症状与已知的故障模式和以前有效的修复相匹配，而不是仅仅依赖产品卡。</li></ul>
+<h2>结论</h2>
+<p>Circle K 团队通过自动化工程师过去手动进行的上下文收集，将 45-60 分钟的手动事件分类缩短到了 15 分钟以内。该系统从日志、AWS 资源和代码中收集数据，让代理对其进行推理，并向 Slack 提供结构化摘要。</p>
+<p>该团队在 Amazon Bedrock Flows 和 Amazon Bedrock 知识库上构建了第一个版本。随着调查规模的扩大，团队转向 Amazon Bedrock AgentCore Runtime 上的单个代理，并通过 AgentCore Gateway 提供对其数据源的访问。</p>
+<p>如果您的团队将大部分事件响应时间用于收集上下文而不是解决问题，则可以直接应用此模式。首先，请探索 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 和 <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock 知识库</a>。如需实践指导或与 AWS 专家讨论您的使用案例，请访问 <a href="https://aws.amazon.com/bedrock/getting-started/">Amazon Bedrock 入门页面</a> 或 <a href="https://aws.amazon.com/contact-us/">联系 AWS</a>。</p>
+<p>我们想听听您如何进行事件分类。在评论中分享您的经验。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
     <item>
       <title>端到端管理 Amazon Bedrock 成本：FinOps 和平台团队的手册</title>
       <link>https://aws.amazon.com/blogs/machine-learning/managing-amazon-bedrock-costs-end-to-end-a-playbook-for-finops-and-platform-teams/</link>
@@ -5715,717 +6473,6 @@ result = execute_sql(payload[&quot;args&quot;][&quot;sql&quot;])</code></pre>
 <p>该架构与框架无关。虽然我们用 AWS Strands Agents SDK 和 FastMCP 进行了演示，但同样的 PKI 模式适用于 LangChain、CrewAI、AutoGen 或任何使用工具协议的其他多 agent 框架。随着 AI agent 的数量不断增加并接触到越来越敏感的操作，agent 身份基础设施正从可选变为必需。</p>
 <p>要开始使用这一参考架构，请参阅<a href="https://github.com/aws-samples/sample-Securing-AI-agent-identity-with-X-509-PKI-on-AWS">配套的 GitHub 仓库</a>。有关所用服务的更多信息，请参阅以下资源：</p>
 <ul><li><a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/">Amazon Bedrock User Guide</a></li><li><a href="https://www.keyfactor.com/products/ejbca-enterprise/">Keyfactor EJBCA Enterprise</a></li><li><a href="https://modelcontextprotocol.io/">MCP Specification</a></li><li><a href="https://github.com/strands-agents/sdk-python">AWS Strands Agents SDK</a></li><li><a href="https://aws.amazon.com/blogs/opensource/introducing-strands-agents-an-open-source-ai-agents-sdk/">Introducing Strands Agents, an Open Source AI Agents SDK（AWS Open Source 博客文章）</a></li></ul>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Eon 如何借助 Amazon Bedrock AgentCore 上的 MCP Gateway 构建多云调查能力</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/how-eon-built-multi-cloud-investigation-with-an-mcp-gateway-on-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-eon-built-multi-cloud-investigation-with-an-mcp-gateway-on-amazon-bedrock-agentcore/</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：How Eon built multi-cloud investigation with an MCP Gateway on Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Eon 如何借助 Amazon Bedrock AgentCore 上的 MCP Gateway 构建多云调查能力</h1>
-<p><em>本文是与 Eon 的 Roei Zavida 合写的客座文章。</em></p>
-<p>构建 AI 驱动产品的独立软件供应商（ISV）需要把智能体和人员连接到数十个跨云运营工具，而每个工具都有不同的身份认证模型、网络边界和访问策略。当这些工具同时横跨 AWS、GCP 和 Azure 时，集成面会成倍扩大。</p>
-<p>本文介绍 Eon 如何使用 Amazon Bedrock AgentCore——一个可以配合任意框架或模型、大规模构建、连接和优化智能体的平台。Eon 用它把每工具一份的凭证和本地 Model Context Protocol（MCP）进程替换为一个经过身份认证的单一网关。结果是，开发者和自主智能体能够统一访问横跨三个云的调查工具。新工程师现在大约两分钟就能接入全部调查工具，而此前配置凭证和本地 MCP 服务器需要两天。</p>
-<h2>关于 Eon</h2>
-<p>Eon 为 AI 时代提供 Autonomous Data Foundation。该平台发现并分类横跨 AWS、Azure 和 GCP 的云资源。它提供持续的、去重的备份，按 Eon 的内部测量可将存储成本降低最多 50%。它还能检测勒索软件和失控智能体造成的损害，并为 AI 智能体提供实时、有依据的上下文。所有这些都运行在单个只读的 AWS Identity and Access Management（IAM）角色下，数据以 Apache Parquet 和 Apache Iceberg 格式存储。Eon 由前 AWS 工程师创立，其软件即服务（SaaS）基础设施运行在 AWS 上。</p>
-<h2>挑战</h2>
-<p>Eon 的内部工程团队要在多个云和数十个运营系统中调查生产事故。一个崩溃的 Kubernetes pod，需要在同一次会话中检查容器日志、Grafana 指标、该部署的 GitHub pull request（PR）以及云服务商的健康状态。</p>
-<p>Eon 需要解决几个关键需求：</p>
-<ul><li><strong>凭证整合</strong> —— 每新增一个工具就多一个需要配置、保护和轮换的集成；随着工具集增长，保持一致变得越来越难。</li><li><strong>消除本地 MCP 进程</strong> —— 每位开发者都在本地运行多个 MCP 服务器，难以标准化并保持最新。</li><li><strong>身份隔离</strong> —— 工程师基于角色的权限访问各个系统，但没有一个统一的地方来决定每个人或每个智能体可以调用哪些工具。</li><li><strong>无需网络开销的跨账户访问</strong> —— 在多个 AWS 账户中托管 MCP 服务器，需要为每个账户配置虚拟私有云（VPC）对等连接或 AWS PrivateLink，使运营成本和搭建时间成倍增加。</li><li><strong>开发者上手</strong> —— 新工程师在调查第一个事故之前，要花大约 2 天配置凭证和本地 MCP 服务器。</li><li><strong>智能体访问</strong> —— Eon 的自主站点可靠性工程（SRE）智能体（在 Amazon Bedrock 上运行 Claude）需要与人类相同的工具访问权限，但权限要不同。</li></ul>
-<p>工程人员规模不断增长，加上快速扩张的 AI 工具和 MCP 集合，使得维护凭证和本地 MCP 服务器变得越来越昂贵。这推动 Eon 走向集中式方案。</p>
-<h2>考虑过的方案</h2>
-<p>在基于 AgentCore 构建之前，Eon 评估了几种替代方案：</p>
-<h3>方案 1：带自定义认证的集中式代理</h3>
-<p>每个执行框架（harness）都有一套包含所有目标的代理配置。也就是用一个反向代理聚合所有工具，并配一层自定义认证。这能解决凭证整合，但只支持远程 MCP，而且需要从零构建和维护工具协议转换、会话管理和授权逻辑。实现和维护负担很重。</p>
-<h3>方案 2：Amazon Bedrock AgentCore Gateway</h3>
-<p><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html">Amazon Bedrock AgentCore Gateway</a> 是 Amazon Bedrock AgentCore 的一项能力，它是一个托管网关，内置身份联合、基于 Cedar 的授权策略，以及能把本地 MCP 服务器转换为远程 HTTP 端点的 Runtime 托管能力。它在无需自定义基础设施的情况下满足了全部需求。</p>
-<p>Eon 选择了方案 2，因为它把身份隔离、跨账户连接和策略执行作为托管能力提供，而不是他们需要自行构建和维护的代码。这两种是当时仅有的备选方案。</p>
-<h2>解决方案概述</h2>
-<p>Eon 部署了完整的 Amazon Bedrock AgentCore 技术栈：AgentCore Gateway、Policy in Amazon Bedrock AgentCore、AgentCore Runtime 和 AgentCore Identity，它们都是 Amazon Bedrock AgentCore 的能力。下图展示了客户端请求如何经过认证层到达单一网关。网关把获授权的工具调用路由到托管在多个 AWS 账户中 AgentCore Runtime 上的目标。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21741-1-1.png" alt="Eon 的集中式网关架构：客户端和 SRE 智能体都访问同一个 AgentCore 网关，该网关把工具调用路由到多个 AWS 账户中的 Runtime"></p>
-<p>图 1：Eon 在 Amazon Bedrock AgentCore 上的集中式网关架构</p>
-<p>该架构分为五层：</p>
-<h3>客户端</h3>
-<p>使用 Claude Code、Cursor 或 OpenAI Codex 的开发者连接同一个 MCP URL。一个在 Amazon Bedrock 上运行 Claude 的自主 SRE 智能体以不同身份连接到同一个网关。</p>
-<h3>身份平面</h3>
-<p>企业单点登录（SSO）通过 Amazon Cognito 进行联合，由 Cognito 签发 JSON Web Token（JWT）并交给网关。Amazon API Gateway 前置作为面向人类的 OAuth 入口点，代理 MCP 会话。智能体则使用 Cognito 的 <code>client_credentials</code> 授权，直接向网关进行身份认证。</p>
-<h3>单一网关，最小权限访问</h3>
-<p>单个 AgentCore MCP Gateway 充当公司范围的前门。ENFORCE 模式下的 Cedar 策略控制哪些主体可以调用哪些工具。读操作仅对选定组开放，而不是对每个已认证用户开放。写操作仅限于低影响的协作动作，例如在 PR 或工单上评论，而生产工具是只读的。</p>
-<h3>Policy in Amazon Bedrock AgentCore</h3>
-<p>Cedar 策略把每个主体映射到允许使用的工具。写操作仅限于低影响的协作动作，例如在 PR 或工单上评论，而生产工具是只读的。网关在转发到目标之前，会用 Cedar 评估每一个 <code>tools/call</code> 请求。</p>
-<h3>目标</h3>
-<p>数十个目标 MCP 服务器在一个网关上暴露数百个工具，由分布在多个 AWS 账户中的 AgentCore Runtime 提供服务。每个 Runtime 把基于本地 stdio 的 MCP 服务器转换为可通过网关访问的 Streamable HTTP 端点。</p>
-<p>开发者打开自己的集成开发环境（IDE），配置一个 MCP URL，通过企业 SSO 完成认证，网关就会把数百个工具聚合到一个 <code>tools/list</code> 响应中。无需本地设置，也没有按工具区分的 token。</p>
-<h2>身份与访问隔离</h2>
-<p>核心的安全决策是在网关层面通过 Cedar 策略强制实施读、写边界。</p>
-<p><strong>单一网关，策略强制的隔离：</strong></p>
-<p>网关同时接受 JWT token（人类通过企业 SSO 和 Cognito）和 <code>client_credentials</code> token（智能体）。Cedar 策略决定每个主体可以做什么。获批组中的人类获得读访问权限。写操作需要显式的 Cedar 许可，且仅授予特定的智能体身份。</p>
-<p><strong>Cedar 强化了逐工具的粒度：</strong></p>
-<pre><code>// Agent &quot;sre-bot&quot; can add comments on GitHub PRs
-permit(
-    principal == Agent::&quot;sre-bot&quot;,
-    action == Action::&quot;tools/call&quot;,
-    resource == Tool::&quot;github_add_pr_comment&quot;
-);
-
-// No human principal can invoke mutation tools
-forbid(
-    principal in Group::&quot;humans&quot;,
-    action == Action::&quot;tools/call&quot;,
-    resource in ResourceGroup::&quot;write-tools&quot;
-);</code></pre>
-<p>Cedar 策略通过带评审评论的 GitHub PR 以代码方式管理，使团队对每一次权限变更都拥有版本控制和审计轨迹。</p>
-<p>在网关内部，Cedar 策略按 SSO 组限定工具访问范围，而组与岗位角色相对应。工程师默认可以访问开发和测试环境。生产环境访问遵循 Eon 的安全与合规控制：它是只读的，通过审批流程即时授予，并接受审计。新团队成员的组也以同样方式按角色来限定，而不是按他恰好负责哪个服务。由于每个智能体动作都会在 ENFORCE 模式下对照 Cedar 检查，并被限定在最小权限的工具集内，自主智能体在安全、受限的范围内运行。它只能调用其身份被明确允许调用的那些工具。</p>
-<blockquote>“以前，我们的内部智能体无法访问开发者使用的那些调查工具。现在，它使用同一个 Gateway，但拥有自己的身份和更严格的工具集。”</blockquote>
-<p>— Roei Zavida，Eon 高级 DevOps 工程师</p>
-<h2>跨账户连接</h2>
-<p>Eon 在多个 AWS 账户中运行 Runtime，按环境或服务边界组织。AgentCore Gateway 通过 IAM 跨账户角色代入访问每个 Runtime。账户 B 中的 Runtime 通过标准 IAM 信任策略信任账户 A 中的 AgentCore Gateway 执行角色。</p>
-<p>这消除了什么：</p>
-<ul><li>跨多个 AWS 账户的 VPC 对等连接配置和路由表管理。</li><li>每个账户的 PrivateLink 端点成本。</li><li>账户之间的安全组协调。</li><li>每新增一个账户要花数天的配置工作（现在被一份 IAM 信任策略取代，几分钟即可部署）。</li></ul>
-<p><strong>目标挂载模式：</strong></p>
-<p>根据每个工具的身份认证和托管模型，Eon 使用两种主要的挂载模式。下表总结了何时使用每种模式，并给出示例。</p>
-<table><thead><tr><th><strong>模式</strong></th><th><strong>何时使用</strong></th><th><strong>示例</strong></th></tr></thead><tbody><tr><td>Runtime + IAM</td><td>工具需要通过 IAM 凭证走一次云内跳转</td><td>Grafana 查询、Kubernetes API 调用</td></tr><tr><td>Runtime 包装远程 MCP</td><td>需要对工具面进行过滤或做凭证转换</td><td>Linear</td></tr></tbody></table>
-<p>大多数目标使用 Runtime + IAM。Eon 只在需要精简工具目录、或需要填入网关无法提供的凭证时，才包装远程 MCP。</p>
-<h2>调查会话流程</h2>
-<p>下面的流程跟踪一位开发者调查生产事故的过程：</p>
-<ul><li><strong>身份认证。</strong> 开发者打开 Claude Code（或 Cursor/Codex），连接到网关的 MCP URL。IDE 通过企业 SSO 发起 OAuth。Cognito 签发携带该开发者身份和组成员关系的 JWT。</li><li><strong>工具发现。</strong> 网关聚合来自数十个已连接目标的 <code>tools/list</code>，并向 IDE 返回包含数百个工具的统一清单。开发者在同一个列表中就能看到所有可用的调查工具。</li><li><strong>工具调用。</strong> 开发者提出：“给我看看过去一小时支付服务的错误率峰值。” IDE 的智能体选择 Grafana 查询工具，并发送一个 <code>tools/call</code> 请求。</li><li><strong>策略评估。</strong> 网关用 Cedar 评估该请求。开发者的组成员关系授予了对 Grafana 工具的访问权限。请求通过。</li><li><strong>Runtime 执行。</strong> 网关把请求转发给托管 Grafana MCP 服务器的 Runtime（运行在另一个 AWS 账户中）。Runtime 使用存储在 AgentCore Identity 保管库中的服务凭证向 Grafana 认证，执行查询并返回结果。</li><li><strong>跨工具关联。</strong> 智能体接着检查 Kubernetes 部署状态和相关的 GitHub PR，它们分别被路由到不同的 Runtime。开发者无需切换工具或重新认证，就能看到相互关联的结果。</li></ul>
-<h2>规模化之后的经验教训</h2>
-<p>部署给 100 多名开发者、约 10,000 次会话，暴露了一些生产环境中的挑战：</p>
-<h3>管理 Cedar 策略大小</h3>
-<p>网关预先索引的每一个工具 schema 都会计入 Cedar 策略大小。当数十个目标暴露大量工具清单时，Eon 的策略增长到了接近大小配额。解决办法是：对工具数量多的目标使用 DYNAMIC 列表模式。在 DYNAMIC 模式下，网关在请求时把 <code>tools/list</code> 调用转发给 MCP 服务器，而不是预先索引 schema，因此对策略大小的贡献为零字节。</p>
-<p>代价是 DYNAMIC 目标无法使用语义工具搜索。Eon 采用混合配置：对需要按用户 OAuth 的目标（工具数量较少、需要预先索引的 schema 来支撑同意流程）使用 DEFAULT 模式，对大型目录目标使用 DYNAMIC 模式。</p>
-<h3>标准 MCP 客户端的 OAuth 会话绑定</h3>
-<p>Claude Code、Cursor 和 Codex 期望使用 OAuth 的 <code>state</code> 参数来防护跨站请求伪造（CSRF）。AgentCore 使用 session-URI 绑定。Eon 构建了一个 Amazon API Gateway 中间层（shim），在两种协议之间做转换，使标准 MCP 客户端无需修改即可完成 OAuth 流程。</p>
-<h3>过滤工具面</h3>
-<p>有些 MCP 服务器会暴露数百个工具。单个开发者只用到其中与其服务相关的一小部分。Eon 构建了一个 Runtime 包装器，在 Runtime 层过滤工具清单，减少 <code>tools/list</code> 响应中的噪音，并防止意外调用无关操作。这种做法还让这些目标保持在 DEFAULT 模式，从而保留语义搜索和嵌入式特性，而这些正是 DYNAMIC 模式所牺牲的。</p>
-<h2>成果</h2>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>使用 AgentCore 之前</strong></th><th><strong>使用 AgentCore 之后</strong></th></tr></thead><tbody><tr><td>每位开发者的凭证集</td><td>每个系统/MCP 服务器一份（GitHub、Grafana、云账户等）</td><td>0（一次 SSO 登录）</td></tr><tr><td>每台机器的本地 MCP 进程</td><td>10</td><td>0</td></tr><tr><td>开发者上手时间</td><td>2 天</td><td>2 分钟</td></tr><tr><td>跨账户网络配置</td><td>每个账户的 VPC 对等连接</td><td>0（仅 IAM）</td></tr><tr><td>工具授权</td><td>按工具分别配置</td><td>一套面向人类和智能体的 Cedar 策略</td></tr><tr><td>平台上的开发者</td><td>—</td><td>100 多名</td></tr><tr><td>通过一个 URL 可访问的工具</td><td>—</td><td>数百个（横跨数十个目标）</td></tr><tr><td>已处理会话数</td><td>—</td><td>约 10,000</td></tr></tbody></table>
-<p>这种单网关架构已经在 Eon 内部工程团队的生产环境中运行了数月。最明显的结果是开发者上手。接入完整工具集的设置时间，从大约两天配置凭证和本地 MCP 服务器，降到约两分钟。新工程师连接一个网关 URL，通过企业 SSO 认证，立刻就能看到其角色允许的工具。</p>
-<p>节省下来的时间大部分归功于内部智能体，因为它通过网关获得了更多上下文，从而提高了调查的准确性。工程师则省下了此前花在 AI 工具设置上的时间，因为他们只需要连接到网关 URL。</p>
-<p>Eon 正在探索如何用同样的模式支撑其自有产品中的 AI 能力。</p>
-<blockquote>“AgentCore 给了我们一个经过认证的 MCP Gateway，取代了按工具区分的 token 和本地 MCP 进程。开发者和我们的内部智能体现在都能从一个 URL 访问 Kubernetes、Grafana、GitHub 和我们的云账户。”</blockquote>
-<p>— Roei Zavida，Eon 高级 DevOps 工程师</p>
-<h2>结论</h2>
-<p>本文介绍了 Eon 如何用单一 Amazon Bedrock AgentCore MCP Gateway 取代按工具区分的凭证和本地 MCP 进程。结果是基于 Cedar 的身份隔离、无需 VPC 对等连接的跨账户连接，以及面向 100 多名开发者和跨三个云的自主智能体的统一工具访问。单网关架构、Cedar 最小权限执行，以及 DEFAULT 与 DYNAMIC 混合策略模式，都是 ISV 把智能体和开发者连接到跨多云工具时可以复用的模式。</p>
-<p>要进一步了解如何基于 Amazon Bedrock AgentCore 构建，请参阅以下资源：</p>
-<ul><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html">Amazon Bedrock AgentCore Gateway 文档</a>。</li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore Runtime 文档</a>。</li><li><a href="https://catalog.workshops.aws/agentcore-getting-started/en-US">Amazon Bedrock AgentCore 入门研讨会</a>。</li></ul>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>使用 Denodo 和 Amazon Bedrock AgentCore 在 AWS 上为 agentic AI 构建语…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-denodo-and-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-denodo-and-amazon-bedrock-agentcore/</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：使用 Denodo 和 Amazon Bedrock AgentCore 在 AWS 上为 agentic AI 构建语义层 | 原文标题：Build a semantic layer for agentic AI on AWS with Denodo and Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 Denodo 和 Amazon Bedrock AgentCore 在 AWS 上为 agentic AI 构建语义层</h1>
-<p>Agentic AI 应用需要对实时企业数据进行受治理的访问，而这些数据可能位于运营系统、分析数仓、SaaS 应用、其他云或本地机房。在本系列的<a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">上一篇文章</a>中，我们使用 Stardog 的知识图谱在 Amazon Aurora 和 Amazon Redshift 之上构建了一个 AWS 上的语义层，并由 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 上的 Strands agent 查询该层。Amazon Bedrock AgentCore 是一个可以用任意框架或模型大规模构建、连接和优化 agent 的平台。本文沿用同样的 customer 360 模式，但换了一种语义层实现，并扩展了数据源组合。</p>
-<p>这里有两处变化。第一，语义层是 Denodo Platform：一个 AI 数据层，提供活动上下文（active context），并以实时、零拷贝的方式访问分布式企业数据。agent 用 Denodo 的 SQL 方言 <a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/vql/introduction/introduction">VQL</a> 与它对话。第二，数据源组合在 Amazon Aurora 和 Amazon Redshift 之外，还包含一个本地 PostgreSQL 数据库，因此联邦查询问题不再受 Amazon Virtual Private Cloud（Amazon VPC）的边界限制。</p>
-<p>其余模式照旧。Amazon Bedrock 上的基础模型负责规划和编写查询。<a href="https://community.denodo.com/docs/html/document/denodoconnects/latest/en/Denodo%20MCP%20Server%20-%20User%20Manual">Denodo MCP Server</a> 通过 Model Context Protocol（MCP）向 agent 暴露受治理的视图。<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html">Amazon Bedrock AgentCore</a> 托管 agent、终止入站身份验证，并管理 agent 向 Denodo 出示的出站凭证。模型推理所依据的一切都不在 prompt 里，而在语义层内：join、指标定义，以及适用于调用者的行级与列级过滤器。</p>
-<p>读完之后，你将了解：</p>
-<ul><li>如何在 Denodo 中把 Amazon Aurora、Amazon Redshift 和一个本地 PostgreSQL 数据库联邦成一个 agent 可以查询的 customer 360 视图。</li><li>如何通过 Denodo MCP Server 把这个语义视图暴露给 AgentCore 托管的 agent，以及如何把 MCP Server 注册为 AgentCore Gateway 的 target。</li><li>最终用户的身份如何从企业身份提供商（IdP）经 AgentCore Identity 的 On-Behalf-Of token 交换流转到 Denodo。</li><li><a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/administration/databases_users_and_access_rights_in_virtual_dataport/global_security_policies/global_security_policies">Global Security Policies</a> 如何在查询时应用行过滤与列过滤。</li><li>Denodo 在 AWS 上的两种部署方式：<a href="https://www.denodo.com/en/denodo-platform/denodo-agora">Agora</a>，完全托管的云服务；以及在 Amazon Elastic Compute Cloud（Amazon EC2）或 Amazon Elastic Kubernetes Service（Amazon EKS）上自管理安装。</li></ul>
-<p>我们假定你已熟悉<a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">上一篇文章</a>中的语义层架构：它是什么、用途是什么、以及为什么模型在不拥有 join 的情况下也能规划查询。如果这些对你来说是新的，上一篇文章已经覆盖了这些内容。</p>
-<h2>示例：数据源位于 AWS 之外的 Customer 360</h2>
-<p>我们沿用上一篇文章里的 customer 360 模式。上一篇文章使用的 <a href="https://github.com/stardog-union/knowledge-kits/tree/main/examples/c360">Stardog C360 Knowledge Kit</a> 为一个电商零售商建模，围绕两个有说服力的用例：理解流失，以及找出可自动加入奖励计划的客户。本文的 schema 不变。变的是某张表的位置：<code>rewards_account</code> 位于一个本地 PostgreSQL 集群，而不再是和其他客户档案数据一起放在 Amazon Aurora 中。</p>
-<p>这个位置安排并不是特例。企业数据源可能位于 AWS 之外：本地机房、CRM 之类的 SaaS 工具，或另一个云。语义层必须能够到达相应位置。我们用本地 PostgreSQL 来做这次演练，用它代表来自第三方应用的数据。当数据源是 SaaS 工具、CRM 或大型机时会有哪些变化，见 <strong>扩展到其他数据源</strong> 一节。那一节也涵盖了 <a href="https://www.denodo.com/system/files/document-attachments/DS-DenodoPlatform-9.5-final.pdf">Denodo 默认支持的数百种其他数据源</a>。</p>
-<h3>Amazon Aurora（兼容 PostgreSQL）：客户档案</h3>
-<table><thead><tr><th><strong>表</strong></th><th><strong>关键列</strong></th></tr></thead><tbody><tr><td>customer</td><td>cid (PK), first_name, last_name, email, ssn, phone, location</td></tr><tr><td>address</td><td>id (PK), city, state, zip, street_name</td></tr><tr><td>credit_card</td><td>id (PK), cid, card_num, card_type</td></tr></tbody></table>
-<h3>Amazon Redshift：订单历史</h3>
-<table><thead><tr><th><strong>表</strong></th><th><strong>关键列</strong></th></tr></thead><tbody><tr><td>order</td><td>id (PK), cid, pid, order_date, quantity, price, card</td></tr><tr><td>product</td><td>id (PK), name, brand, price, dept</td></tr></tbody></table>
-<h3>本地 PostgreSQL：奖励计划</h3>
-<table><thead><tr><th><strong>表</strong></th><th><strong>关键列</strong></th></tr></thead><tbody><tr><td>rewards_account</td><td>id (PK), cid, account_id, create_date</td></tr></tbody></table>
-<p>共享标识符是 <code>cid</code>，一个普通整数，在 Aurora 的 customer 表中作为主键出现。在 Amazon Redshift 的 order 表和本地的 <code>rewards_account</code> 中，它以非外键列的形式出现。在 Aurora 内部，<code>customer.location</code> 列是指向 <code>address.id</code> 的整数外键，客户档案正是借此关联到地址记录。没有任何外键跨越两个引擎，也没有 ETL 任务去建立这样的外键。凡是需要把客户与其购买记录、及其奖励计划加入状态关联起来的回答，都必须在查询时对 <code>cid</code> 做核对与关联。</p>
-<p>这套配置能回答的一个典型问题是：“在我们按终身消费额排名前 20 的客户中，有哪些还没有加入奖励计划？”这就是 Stardog kit 里的自动加入场景，回答它需要来自 Aurora 的档案数据、来自 Amazon Redshift 的终身消费额，以及来自本地集群的加入状态。</p>
-<p>Denodo 在执行时规划这条联邦查询，决定哪些下推到 Aurora、哪些下推到 Amazon Redshift、哪些从本地集群拉取，以及如何合并结果。数据不会在数据源之间移动，语义层只声明一次，供所有消费者复用。</p>
-<h2>本文使用的 Denodo 术语</h2>
-<p>Denodo 以数据虚拟化平台的形式实现语义层。<strong>Denodo Virtual DataPort（VDP）</strong> 是核心的查询引擎：语义层对象存放在这里，VQL 在这里执行，访问策略也在这里评估。<strong>Design Studio</strong> 是 VDP 基于浏览器的建模界面。本文建模的每一个对象都在那里定义。</p>
-<p>有三种对象类型会反复出现。</p>
-<ul><li><strong>base view（基础视图）</strong> 是源系统中物理表、API 或文件与 VDP 中逻辑视图之间的映射。一张 Aurora 表对应一个 base view。</li><li><strong>derived view（派生视图）</strong> 是对一个或多个 base view 或其他 derived view 的 VQL 查询。本文中的 <code>customer_360</code> 视图就是一个 derived view。</li><li><strong>metric view（指标视图）</strong> 只定义一次业务度量（例如 <code>lifetime_customer_value</code>），让其他 derived view 引用它。metric view 把度量的定义与任何使用它的具体查询分离开。</li></ul>
-<p><strong>VQL</strong> 是 Denodo 的 SQL 方言。它是与 ANSI 对齐的 SQL 再加上一组 Denodo 特有的构造，特别是用于表示数据源的 DDL 构造，以及语义 metric view 的语法。在 agentic 场景中，<a href="https://github.com/denodo/denodo-skills">VQL 的具体语法由一个 skill 提供</a>，LLM 在使用 Denodo 工具时会用到它，以确保正确使用 Denodo 的语法。</p>
-<p><strong>Global Security Policy（GSP，全局安全策略）</strong> 是一条运行时访问控制规则，作用于带有特定 tag 的视图或列。行过滤器和列掩码正是通过 GSP 在查询时按调用者逐个评估并执行的。</p>
-<p>更完整的参考见 <a href="https://community.denodo.com/docs/">Denodo Platform 文档</a>。</p>
-<h2>参考架构</h2>
-<p>运行时包含两条流程。入站：客户端通过 Amazon Bedrock AgentCore Gateway 把用户请求发送给 agent。Gateway 用企业身份提供商（IdP）校验标识该人类用户的 JSON Web Token（JWT），然后把请求路由到 Amazon Bedrock AgentCore runtime，后者托管 <a href="https://github.com/strands-agents/sdk-python">Strands</a> agent 进程。agent 调用 Amazon Bedrock 上的基础模型（本次演练中是 Anthropic Claude Sonnet 4.6）来解释 prompt 并规划查询。</p>
-<p>出站：AgentCore Gateway 同时充当 agent 工具调用的出站代理。Denodo MCP Server 在 Gateway 上注册为 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-add-target-cli.html">MCP target</a>，因此 agent 为获取企业数据而发起的工具调用会经 Gateway 路由到 MCP Server。在请求到达 Denodo 之前，AgentCore Identity 执行一次 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">On-Behalf-Of token 交换</a>，把人类用户的入站 token 换成一个作用域受限、以 Denodo 为受众、代表同一用户的访问 token。Denodo MCP Server 把这个交换后的 token 当作 bearer 凭证接收，并通过 JDBC 把 VQL 请求转发给 Denodo Virtual DataPort（VDP）。VDP 独立校验该 token、把调用者解析为一个 Denodo 角色、应用访问策略，并针对 Amazon Aurora、Amazon Redshift 和本地 PostgreSQL 集群规划联邦查询。</p>
-<p>只有 VQL 请求向下传到 VDP，也只有结果集向上返回。任何源数据都不会在引擎之间移动。Aurora、Amazon Redshift 和本地集群响应的是由 VDP 联邦优化器重写后的原生 SQL。后续章节会详细介绍身份传播与策略执行，另外还有章节介绍 MCP Server 注册和 agent 部署步骤。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/ML-21332-1-2.png" alt="图 1. 调用者、Amazon Bedrock AgentCore 各组件、Denodo MCP Server、Denodo Virtual DataPort 和三个数据源之间的入站身份验证路径与出站查询路径。"></p>
-<p>图 1：调用者、Amazon Bedrock AgentCore 各组件、Denodo MCP Server、Denodo Virtual DataPort 和三个数据源之间的入站身份验证路径与出站查询路径</p>
-<h2>构建语义层</h2>
-<p>Denodo 中的语义模型并不是单一产物。它是一组 VDP 中的 base view、derived view、metric view 和 tag，共同向消费者呈现具有业务含义的数据。在本文中构建语义模型，意味着把这些部件逐个创建出来。</p>
-<p>我们分三轮构建：为每张源表建 base view；建一个 derived view（<code>customer_360</code>），在客户粒度上按 <code>cid</code> 关联这些 base view；再建一个 metric view（<code>lifetime_customer_value</code>），定义可复用的消费额聚合，供查询在需要时关联使用。</p>
-<p>在实践中，这些建模工作是在 Denodo Design Studio 中以可视化方式完成的。你把 Aurora、Amazon Redshift 和本地 PostgreSQL 数据源拖到画布上，在它们之间画出 join，并通过表单（而不是手写 DDL）重命名字段或修改字段类型（例如把 <code>cust_ref</code> 映射为 <code>customer_id</code>）。本文后面介绍的安全策略附加，也是在同一个界面里完成的。</p>
-<p>metric view 与其引用的 derived view 放在一起，定义一次、多处复用。如果两个团队在同一份基础数据之上各自构建客户级视图，两者呈现的度量定义是相同的。</p>
-<h2>Base view</h2>
-<p>每张源表都会成为 VDP 中的一个 base view。以 Aurora 的 customer 表为例，这意味着在 Design Studio 中用专门的连接器引入 Aurora、指向相应 schema，并让 VDP 内省列。Design Studio 负责内省。得到的 base view 是物理列与其 VDP 对应物之间的一对一映射，不对源数据做任何转换。</p>
-<p>创建过程中还有两项额外的配置：</p>
-<ul><li><strong>用于治理的列 tag。</strong> customer 的 base view 上的 <code>ssn</code> 会被打上 <code>pii_sensitive</code> tag。<code>credit_card</code> 的 base view 上的 <code>card_num</code> 也会被打上同一个 tag。<strong>受治理的访问</strong> 一节中定义的 Global Security Policy 正是绑定到这些 tag 上。</li><li><strong>主键与 join 字段。</strong> <code>cid</code> 在 <code>aurora_customer</code> 上被标记为主键，在 <code>redshift_order</code> 和 <code>postgres_rewards_account</code> 上被标记为 join 字段。Design Studio 会在源元数据可用时推断主键，否则你在 base view 定义中设置一次即可。</li></ul>
-<p>对前面介绍的源表重复这一过程。最终得到六个 base view：Amazon Aurora 上的 <code>aurora_customer</code>、<code>aurora_address</code> 和 <code>aurora_credit_card</code>；Amazon Redshift 上的 <code>redshift_order</code> 和 <code>redshift_product</code>；以及本地 PostgreSQL 上的 <code>postgres_rewards_account</code>。</p>
-<p>Design Studio 还通过 <a href="https://www.denodo.com/en/solutions/by-capability/denodo-assistant">Denodo Assistant</a> 支持自然语言建模。开发者可以用平实的英语描述一个视图（例如“把 Aurora 的客户档案与 Amazon Redshift 的订单总额按 <code>cid</code> 关联起来”），拿回一份候选 VQL 定义，然后在同一个画布上审阅、细化，再保存。细化是迭代的：后续 prompt 会在定义定稿前调整过滤器、join 或字段映射。本节所述的治理与类型规则同样适用于以这种方式创建的对象。</p>
-<h2>Derived view：Customer 360</h2>
-<p><code>customer_360</code> 是跨三个数据源的客户级视图，每个客户一行。订单明细与聚合单独放在我们接下来定义的 metric view 中。</p>
-<pre><code>CREATE OR REPLACE VIEW customer_360 AS
-SELECT aurora_customer.cid,
-aurora_customer.first_name,
-aurora_customer.last_name,
-aurora_customer.email,
-aurora_customer.ssn,
-aurora_address.city,
-aurora_address.state,
-aurora_credit_card.card_num,
-aurora_credit_card.card_type,
-postgres_rewards_account.account_id,
-postgres_rewards_account.create_date AS rewards_since
-FROM (
-(
-aurora_customer AS aurora_customer
-LEFT OUTER JOIN aurora_address AS aurora_address
-ON aurora_customer.location = aurora_address.id
-)
-LEFT OUTER JOIN aurora_credit_card AS aurora_credit_card
-ON aurora_customer.cid = aurora_credit_card.cid
-)
-LEFT OUTER JOIN postgres_rewards_account AS postgres_rewards_account
-ON aurora_customer.cid = postgres_rewards_account.cid;</code></pre>
-<p>这个定义有两个特性对后面的架构很重要。第一，join 位于 Denodo Platform 中，而不是在一条流水线里。没有任何 ETL 任务去维护一张物化的 <code>customer_360</code> 表。VDP 在执行时解析 join：Aurora 返回档案加上信用卡，本地集群返回奖励计划加入记录，VDP 按 <code>cid</code> 把它们合并。第二，这个 derived view 承载了每一列，包括 <code>ssn</code> 和 <code>card_num</code>。</p>
-<p>为了治理和 AI，我们还添加了元数据：针对个人可识别信息（PII）字段的列 tag，以及记录这个视图和每个字段的说明。Denodo 的 Assistant 可以借助 LLM 来建议这些内容。后面的章节会说明这些元数据为何重要。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/ML-21332-2-1.png" alt="图 2. Denodo Design Studio 中的 customer_360 derived view。画布上出现跨三个数据源的四个 base view，按 cid 和 location 关联。aurora_customer 上的 ssn 列和 aurora_credit_card 上的 card_num 列带有 pii_sensitive tag，该 tag 被受治理的访问一节中的 Global Security Policy 引用。"></p>
-<p>图 2：Denodo Design Studio 中的 customer_360 derived view。画布上出现跨三个数据源的四个 base view，按 cid 和 location 关联。aurora_customer 上的 ssn 列和 aurora_credit_card 上的 card_num 列带有 pii_sensitive tag，该 tag 被 <strong>受治理的访问</strong> 一节中的 Global Security Policy 引用</p>
-<h2>Metric view：客户终身价值</h2>
-<p>metric view 用特定的 SOURCES/DIMENSIONS/METRICS 结构定义可复用的业务度量。完整语法见 VQL 指南中的 <a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/vql/defining_a_derived_view/defining_a_metric_view/defining_a_metric_view">Defining a Metric View</a> 参考。<code>lifetime_customer_value</code> 并不放在 <code>customer_360</code> 里面，而是与它并列，作为独立对象存在：</p>
-<pre><code>CREATE OR REPLACE METRIC VIEW lifetime_customer_value
-(
-first_name, last_name, state, rewards_since, lifetime_spend, order_count, product_id,product_name, product_brand,product_dept, units_sold
-)
-SOURCES (
-customer_360 AS customer_360,
-redshift_order AS redshift_order,
-redshift_product AS redshift_product
-)
-ASSOCIATIONS (
-customer_360 redshift_order assoc_customer360_orders,
-redshift_product redshift_order assoc_product_orders
-)
-DIMENSIONS (
-customer_360(
-first_name AS customer_360.first_name,
-last_name AS customer_360.last_name,
-state AS customer_360.state,
-rewards_since AS customer_360.rewards_since
-),
-product(
-product_id AS redshift_product.id,
-product_name AS redshift_product.name,
-product_brand AS redshift_product.brand,
-product_dept AS redshift_product.dept
-)
-)
-METRICS (
-lifetime_spend AS sum((redshift_order.price*redshift_order.quantity)),
-order_count AS count(redshift_order.id),
-units_sold AS sum(redshift_order.quantity)
-);</code></pre>
-<p>其他视图和外部报表工具可以引用 <code>lifetime_customer_value</code>，方式与它引用其他视图相同。当业务规则变化时（比如 <code>lifetime_spend</code> 应当排除已取消的订单），更新只发生在度量定义这一处。每个消费者在下一次查询时就会采用这一变化，无需改动 derived view 或下游应用。不同团队可以搭建各自的 derived view，表达其业务线看待世界的方式。基础数据保持共享，而语义解释保持独立，因此任一团队的改动都不会打扰另一个团队。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/ML-21332-3.png" alt="图 3. Design Studio 中的 lifetime_customer_value metric view。SOURCES 面板显示 customer_360、redshift_order、redshift_product，DIMENSIONS 面板显示 customer_360 和 product 视图，METRICS 面板显示 lifetime_spend 为 SUM(redshift_order.price * redshift_order.quantity)、order_count 为 count(redshift_order.id)、units_sold 为 sum(redshift_order.quantity)"></p>
-<p>图 3：Design Studio 中的 lifetime_customer_value metric view，展示了定义 lifetime_spend、order_count 和 units_sold 的 SOURCES、DIMENSIONS 和 METRICS 面板</p>
-<h2>VDP 如何执行联邦查询</h2>
-<p>当 agent 执行 <strong>示例</strong> 一节中的自动加入问题时（<em>“在我们按终身消费额排名前 20 的客户中，有哪些还没有加入奖励计划？”</em>），对应的 VQL 会使用 metric view 计算结果集并求出所需度量：</p>
-<pre><code>SELECT first_name, last_name, state, EVALUATE_METRIC(lifetime_spend) AS lifetime_spend
-FROM lifetime_customer_value
-WHERE rewards_since IS NULL
-GROUP BY first_name, last_name, state
-ORDER BY EVALUATE_METRIC(lifetime_spend) DESC
-LIMIT 20;</code></pre>
-<p>尽管这条查询只引用了 metric view，VDP 的基于代价的优化器仍会针对相应数据所在的三个引擎规划联邦执行。得到的执行计划大致如下：</p>
-<ul><li><strong>下推到 Amazon Aurora</strong>：Denodo 把 customer、address 和 <code>credit_card</code> 的 join 下推到 Aurora，返回客户档案字段，包括 <code>first_name</code>、<code>last_name</code>、state 和 <code>cid</code>。</li><li><strong>下推到本地 PostgreSQL</strong>：Denodo 把 <code>rewards_account</code> 的投影下推，返回 <code>cid</code> 和 <code>create_date</code>。</li><li><strong>下推到 Amazon Redshift</strong>：Denodo 把消费额聚合以 <code>SUM(price * quantity)</code> 按 <code>cid</code> 分组的形式下推到 Amazon Redshift。</li><li><strong>在 Denodo 内部合并</strong>：Denodo 把 Aurora 的档案结果与 PostgreSQL 的奖励计划结果按 <code>cid</code> 做左连接，再把该结果与 Amazon Redshift 的聚合消费额按 <code>cid</code> 做右外连接。Denodo 过滤出 <code>rewards_since</code> IS NULL 的行，按 <code>first_name</code>、<code>last_name</code> 和 state 分组，把度量按外层分组聚合（<code>sum(sum) AS lifetime_spend</code>）求出，按 <code>lifetime_spend</code> 降序排序，最多返回 20 行。</li></ul>
-<p>这个计划体现了各数据源的优势。Amazon Redshift 负责聚合，Aurora 负责客户档案 join（因为三张档案表都在那里），本地集群返回一小批奖励计划记录。VDP 处理最后的跨引擎 join 和 top-N 过滤，所操作的是三个紧凑的中间结果集，每个客户一行而不是每个订单一行。手写流水线通常也大致是这个形态，然后必须永远让它保持同步。</p>
-<p>VDP 还会在最划算的地方处理类型对齐。如果同一个标识符在某个源中是整数、在另一个源中是字符串，VDP 会把类型转换下推到那个仍然能基于转换后谓词做过滤的源，而不是跨引擎拉数据、事后再统一类型。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/21332-1.png" alt="图 4. 从 C360 agent 到 Amazon Aurora、Amazon Redshift 和本地 PostgreSQL 再返回的查询流程。VDP 把针对 customer_360 与 lifetime_customer_value 关联的一条 VQL 请求重写成每个引擎的源生 SQL，收集中间结果集，并在 VDP 内部按 cid 关联后再把最终行返回给 agent。"></p>
-<p>图 4：从 C360 agent 到 Amazon Aurora、Amazon Redshift 和本地 PostgreSQL 再返回的查询流程。VDP 把针对 customer_360 与 lifetime_customer_value 关联的一条 VQL 请求重写成每个引擎的源生 SQL，收集中间结果集，并在 VDP 内部按 cid 关联后再把最终行返回给 agent</p>
-<p>除了查询下推和按需联邦，VDP 还提供<a href="https://community.denodo.com/expert-trails/view/document/Expert%20Trail%3A%20Query%20Performance%20Optimization">缓存、聚合感知加速和点对点复制</a>。在需要预先计算复杂转换的用例中，这些技术可以与下推能力互补，同时保留访问控制规则和数据血缘。</p>
-<h2>发布以便被发现</h2>
-<p>一个只以可查询端点形式存在的语义视图会留下可发现性的缺口。下一个需要“<em>客户终身价值</em>”度量的团队无从得知 <code>lifetime_customer_value</code> 已经存在、它建立在什么之上、又有谁在依赖它。把 <code>customer_360</code> 和 <code>lifetime_customer_value</code> 发布到 <a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/data_catalog/index">Denodo Data Marketplace</a>，就把它们变成了可复用、受治理的企业数据产品，从而补上这个缺口：两个对象都会连同其 VQL 定义、归属、业务说明、自定义属性，以及回溯到 base view 的血缘一起呈现。消费者按业务含义搜索，而不必了解 schema。Denodo Data Marketplace 还提供其他面向非技术用户自助使用的功能，包括数据准备向导、管理员给出的认可（endorsement）与弃用（deprecation）说明，以及向数据产品所有者提出请求和问题的能力。</p>
-<p>Denodo 还用 <a href="https://community.denodo.com/docs/html/document/latest/en/vdp/data_catalog/external_elements/360_graph_for_external_elements">360 graph</a> 做了扩展，这是一种围绕业务概念的关系视图。这个图会把已经在使用 <code>customer_360</code> 的报表、仪表板、notebook 或 agent 工具挂上去，同时附上定义表内数据含义或使用条件的词表（glossary）等。消费者可以在编写查询之前查看数据集周边的上下文。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/ML-21332-5-2.png" alt="图 5. Denodo Data Marketplace 中的 customer_360 图视图列表。详情面板显示一个在 Tableau 中使用该视图的 BI 工具，以及链接到该视图的词表定义。"></p>
-<p>图 5：Denodo Data Marketplace 中的 customer_360 图视图列表。详情面板显示一个在 Tableau 中使用该视图的 BI 工具，以及链接到该视图的词表定义</p>
-<h2>关于互操作性的一点说明</h2>
-<p>Denodo 中的语义模型用 VQL 定义，但 Denodo 原生就能通过多种开放协议暴露任意视图。同一个 <code>customer_360</code> 视图可以通过 JDBC、ODBC 或 ADBC 以 SQL 访问，通过 Denodo GraphQL Service 以 GraphQL 访问，通过 Denodo OData Service 以 OData 2.0 或 4.0 访问，或通过 Denodo MCP Server 以 MCP 工具访问。本次演练选择 MCP，是契合 AgentCore 的做法。同一个视图也可以供 Power BI 仪表板、Tableau 工作簿或 Java 应用使用，而无需额外建模。</p>
-<p>Denodo 还在 2026 年 3 月加入了 Apache Ossie（孵化中，前身为 Open Semantic Interchange，OSI），这是一个厂商中立的语义元数据开源规范。Apache Ossie 还处于早期阶段，但其意图是让语义定义能在采用它的应用之间可移植。话虽如此，Denodo 已经通过 Denodo Connects 提供集成，可与其他数据目录共享元数据，例如 SageMaker Catalog、Collibra、Purview 等。</p>
-<h2>受治理的访问：身份传播与运行时执行</h2>
-<p>广泛触达各数据源是企业级语义层的核心特征之一，但如果没有运行时访问控制，这种触达就会带来真实风险。如果按用户过滤的逻辑写在 agent 代码里，那么一次 prompt 注入就可能绕过它。如果它写在 LLM 里，那它其实哪儿都不在。如果只在各个源系统中执行，策略可能不一致，也可能无法顾及跨数据源形成的业务含义。Aurora 不知道语义层里“<em>消费冠军</em>”是什么意思，堡垒机后面的本地 PostgreSQL 集群也不知道。而且很多时候，尤其是在混合了本地与云系统的场景中，让所有系统共享同一批身份提供商甚至都不是一个选项。</p>
-<p>本架构的做法是在语义层执行访问控制，使用发起请求的人类用户的身份，并让该身份从 IdP 一路经 Amazon Bedrock AgentCore 传播到 Denodo Virtual DataPort。</p>
-<h2>身份传播链</h2>
-<p>图 6 放大了图 1 参考架构中的身份部分，把从应用到 Denodo VDP 的出站路径展开成八跳的序列。下面的编号步骤与图中编号箭头一一对应。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/ML-21332-6-1.png" alt="图 6. 从用户登录经 Amazon Bedrock AgentCore 到 Denodo（MCP Server 和 VDP）及底层数据源的身份传播与查询流程。黑色箭头表示出站身份与查询路径。绿色虚线箭头表示带过滤结果集的返回路径。"></p>
-<p>图 6：从用户登录经 Amazon Bedrock AgentCore 到 Denodo（MCP Server 和 VDP）及底层数据源的身份传播与查询流程。黑色箭头表示出站身份与查询路径。绿色虚线箭头表示带过滤结果集的返回路径</p>
-<ul><li>用户在应用上向企业 IdP 完成身份验证。IdP 返回一个 JWT，携带用户身份与属性声明——角色、区域、部门，以及 IdP 配置要发出的其他任何内容。</li><li>应用以用户的 JWT 作为 bearer token，通过 AgentCore Gateway 调用 agent。</li><li>Gateway 把请求路由到 AgentCore runtime，后者托管 Strands agent 进程。</li><li>当 agent 发起出站工具调用时，AgentCore Identity 执行一次 On-Behalf-Of token 交换，返回一个新的访问 token，其 sub 声明是人类用户，aud 声明是 Denodo。</li><li>agent 在 MCP 请求上以 <code>Authorization: Bearer &lt;access_token&gt;</code> 的形式，把新的访问 token 出示给 Denodo MCP Server。</li><li>Denodo VDP 用配置的 JWKS URL 校验该 JWT、检查签发者与受众、提取 scope 声明，并把调用者映射为一个 Denodo 角色。</li><li>VDP 在查询时评估 Global Security Policies，并把过滤后的结果集返回给 agent。</li><li>VDP 查询数据源以满足请求，合并结果后再返回。</li></ul>
-<p>第 2 步的 Gateway JWT 校验是可选的，因为 VDP 会在第 6 步重新校验 token。开启 Gateway 校验后，格式错误的 token 会在请求路径中更早地失败。</p>
-<p>第 4 步的 token 交换根据凭证提供方的配置，使用 RFC 8693 的 token-exchange grant 或 RFC 7523 的 JWT-bearer grant。凭证本身不会进入 agent 代码。AgentCore Identity 在调用时注入它。</p>
-<p>第 8 步的调用者身份透传选项按数据源启用，并要求 Denodo 与该数据源共享同一 IdP。适用时，调用者的身份会被端到端转发，从而在源端获得完整的审计能力。</p>
-<h2>在 Denodo 中应用访问策略</h2>
-<p>Customer 360 数据是受监管的。例如，某些用户（HR、欺诈分析师）可能需要看到 Social Security number（SSN）和完整信用卡号这样的 PII，但大多数用户（市场、分析）绝不能看到。</p>
-<p>Denodo 对此的机制是 <a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/administration/databases_users_and_access_rights_in_virtual_dataport/global_security_policies/global_security_policies">Global Security Policies</a>，配合基于属性和角色的访问控制。Global Security Policy 是一条作用于带特定 tag 的视图或列的规则，在查询时根据调用者的角色和会话属性评估。底层视图的结构不会被改动。</p>
-<p>为了说明这一点，我们在 Aurora 之上的 base view 中把两列（<code>ssn</code> 和 <code>card_num</code>）标记为 PII。我们创建一个 Global Security Policy <code>mask_pii_columns</code>。</p>
-<ul><li>适用对象：调用者的角色不是 <code>hr_user</code>。</li><li>作用元素：作用于带 <code>pii_sensitive</code> tag 的列。</li><li>动作：用星号（<code>****</code>）掩码。</li></ul>
-<p>然后我们定义两个 Denodo 角色。</p>
-<ul><li><code>hr_user</code>：对 <code>customer_360</code> 拥有 Execute 权限。可以看到所有列。</li><li><code>marketing_user</code>：对 <code>customer_360</code> 拥有 Execute 权限。因为策略生效，看到的 <code>ssn</code> 和 <code>card_num</code> 会是 <code>****</code>。</li></ul>
-<p>当 <code>marketing_user</code> 执行下面这条 VQL 查询时：</p>
-<pre><code>SELECT cid, first_name, last_name, state, ssn
-FROM customer_360
-WHERE state = 'WI';</code></pre>
-<p>VDP 在规划查询之前评估 Global Security Policy。它发现 <code>ssn</code> 带有 <code>pii_sensitive</code> tag，而调用者的角色不是 <code>hr_user</code>，于是把投影改写为对 <code>ssn</code> 返回 <code>***</code>。</p>
-<p>对于行级过滤（例如一个只应看到东海岸客户的 US-East 分析师），同样的机制可以扩展适用。策略条件甚至可以依赖从 JWT token 映射来的会话属性，或动态地从外部表拉取。</p>
-<h3>关于 Responsible AI 的一点说明</h3>
-<p>Denodo 的 Global Security Policies 在语义层过滤 PII，因此对于那些不该看到 <code>ssn</code> 或 <code>card_num</code> 的调用者，模型根本看不到这些值。即便如此，agent 的响应仍可能用自然语言复述客户标识符、位置或消费模式。请用你对待底层受监管数据时相同的方式和留存策略来处理 agent 输出：限定日志与对话记录的记录范围，应用 Amazon Bedrock Guardrails 做内容与敏感话题控制，并限制谁可以读取这些响应。更全面的指导见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html">Amazon Bedrock 中的 Responsible AI</a>。</p>
-<h2>跨层审计与可观测性</h2>
-<p>请求路径上的每一层都独立记日志。AgentCore runtime 把调用记录发到 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html">Amazon CloudWatch</a>。AgentCore Gateway 记录入站 MCP 请求，包括调用者的 JWT sub 声明。Denodo MCP Server 把工具调用记录到自己的日志中。Denodo VDP 的审计日志会捕获完整的 VQL 请求、映射到的 Denodo 角色、解析出的联邦计划，以及策略评估结果。</p>
-<p>这些日志也可以<a href="https://community.denodo.com/kb/en/view/document/Monitoring%20Denodo%20with%20Amazon%20CloudWatch">接入 Amazon CloudWatch</a>。当需要按数据源追溯到具体人类用户的审计时（例如出于 HIPAA 或 SOX 合规要求），请为这些数据源的 base view 配置透传会话凭证，让 Denodo 在源系统支持的情况下把调用者身份转发到源系统，而不是依赖服务账号。</p>
-<h2>通过 Denodo MCP Server 暴露语义层</h2>
-<p><a href="https://community.denodo.com/docs/html/document/denodoconnects/latest/en/Denodo%20MCP%20Server%20-%20User%20Manual">Denodo MCP Server</a> 是一个附加组件，位于 MCP 客户端与 VDP 之间：下载分发包、解压、编辑 <code>config/application.properties</code>，然后启动。该服务器在 <code>http://&lt;mcp-host&gt;:8080/&lt;database&gt;/mcp</code> 上监听 streamable HTTP 的 MCP 请求，并通过 JDBC 转发给 VDP。</p>
-<p>本次演练中有三个配置值很重要。</p>
-<ul><li><code>mcp.security.oauth2.enabled=true</code>：在入站 MCP 请求上接受 OAuth 2.0 bearer token。配合 VDP 的 OAuth 认证器配置，token 会被转发给 VDP 做校验和角色解析（另见 <strong>受治理的访问</strong> 一节）。</li><li><code>vdp.datasource.jdbcUrl=jdbc:vdb://&lt;vdp-host&gt;:9999/</code>：访问 VDP 所用的 JDBC URL。每次请求具体针对哪个数据库，来自 MCP 端点路径。</li><li><code>mcp.visibility.tags=mcp</code> 控制 MCP Server 上哪些视图可见。如果定义了，只有带至少一个这些 tag 的视图才可见。</li></ul>
-<p>该服务器实现了 <a href="https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization#authorization-flow">MCP OAuth 2.0 授权</a>流程，包括 RFC 9728 Protected Resource Metadata 和 RFC 7591 Dynamic Client Registration。</p>
-<h3>关于 IdP 兼容性的一点说明</h3>
-<p>Denodo MCP Server 文档中说明支持与 Okta、Ping Identity 和 Keycloak 的自动 Dynamic Client Registration 流程。对于其他身份提供商，MCP Server 也接受手动客户端配置：在带外获取 OAuth token，并把它作为静态 <code>Authorization</code> 头附加在 MCP 请求上，具体做法见 <a href="https://community.denodo.com/docs/html/document/denodoconnects/latest/en/Denodo%20MCP%20Server%20-%20User%20Manual#h.hs7cb89txbqj">Denodo MCP Server 用户手册</a>。</p>
-<h2>用 Application Load Balancer 前置该服务器</h2>
-<p>如果 Denodo MCP Server 运行在与 VDP 同一 VPC 的 Amazon EC2 或 Amazon EKS 上，请通过 <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html">Application Load Balancer</a> 暴露它，配置 HTTPS 监听器和来自 <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html">AWS Certificate Manager</a> 的证书。这样 AgentCore Gateway 就有了稳定的 HTTPS 端点，也把 TLS 终止从 MCP Server 进程中卸载出去。目标组：HTTP，端口 8080。健康检查路径应同时接受 200 和 404 为健康响应，因为根路径返回 404，而当服务器已启动并连接到 VDP 时 <code>/health</code> 返回 200。</p>
-<h2>注册为 AgentCore Gateway target</h2>
-<p>完整的逐步演练（包括 AgentCore Gateway 创建、IAM 服务角色配置以及 Gateway target 校验）见 Denodo 的 <a href="https://community.denodo.com/kb/en/view/document/Integrating%20Amazon%20Bedrock%20AgentCore%20%20with%20Denodo%20via%20MCP%20Server">Integrating Amazon Bedrock AgentCore with Denodo via MCP Server</a> 集成指南。</p>
-<h2>在 harness 中加入 Denodo VQL skill</h2>
-<p><a href="https://github.com/denodo/denodo-skills">Denodo VQL skill</a> 在 agent 框架（例如 Strands 或 Bedrock AgentCore）中充当 LLM 的 system prompt 扩展。在 agent harness 中注册之后，它会指示模型了解 VQL 语法规则，以及如何帮助避免 SQL 错误。</p>
-<h2>部署并运行 agent</h2>
-<p>Denodo 的 AgentCore 文档参考中给出了 <a href="https://community.denodo.com/kb/en/view/document/Integrating%20Amazon%20Bedrock%20AgentCore%20%20with%20Denodo%20via%20MCP%20Server">完整的 agent 代码</a>，位于 Denodo 知识库中。模式很简短：Amazon Bedrock 上的一个基础模型、指向 Denodo MCP Server 的一个 MCP 客户端，以及一个把它们连起来的 AgentCore runtime 入口点。</p>
-<h2>验证</h2>
-<p>为了确认语义层、agent 和身份流转都按预期工作，我们通过 agent 运行了三类查询，另外还做了一次治理重跑，用来演示 <strong>受治理的访问</strong> 一节中“同一查询、两个用户”的特性。我们可以使用 Denodo 的 Data Marketplace assistant——它背后依赖的是等价的工具——来对我们的场景做一次快速验证。</p>
-<h3>查询 1：仅 Aurora</h3>
-<p><em>“列出我们在 Wisconsin 的客户，以及他们所在的城市。”</em></p>
-<p>agent 生成并执行：</p>
-<pre><code>/* The query needs to retrieve first_name, last_name, and city from the customer_360 view where state = 'WI', ordered by last_name. The output will be multiple rows with 3 columns. The table is at customer granularity (one row per customer). No obligatory columns are present, so a simple WHERE filter on state suffices. */
-SELECT &quot;first_name&quot;,
-&quot;last_name&quot;,
-&quot;city&quot;
-FROM &quot;customer_360&quot;.&quot;customer_360&quot;
-WHERE &quot;state&quot; = 'WI'
-ORDER BY &quot;last_name&quot;</code></pre>
-<p>VDP 的优化器判断这次投影和过滤只需要 Aurora 侧的数据，于是把一条查询下推到 Amazon Aurora。基于一次探测查询，agent 可以把“Wisconsin”这个过滤条件翻译成谓词 <code>state = 'WI'</code>。Amazon Redshift 和本地集群都不被触及。</p>
-<h3>查询 2：仅 Redshift</h3>
-<p><em>“按销量排名的前 10 个产品是什么？”</em></p>
-<p>agent 生成：</p>
-<pre><code>/* The user wants top 10 products by total units sold from a metric view. I need to use EVALUATE_METRIC for units_sold, GROUP BY product_name, ORDER BY the metric descending, LIMIT 10. The output will be multiple rows (up to 10) with two columns: product_name and total_units_sold. */
-SELECT &quot;product_name&quot;,
-EVALUATE_METRIC(&quot;units_sold&quot;) AS &quot;total_units_sold&quot;
-FROM &quot;customer_360&quot;.&quot;lifetime_customer_value&quot;
-GROUP BY &quot;product_name&quot;
-ORDER BY &quot;total_units_sold&quot; DESC
-LIMIT 10</code></pre>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/ML-21332-7.png" alt="查询计划视图，显示查询 2 的请求被整体下推到 Amazon Redshift"></p>
-<p>图 7：VDP 把整条查询（join、聚合、排序和 limit）下推到 Amazon Redshift，因为产品数据和订单数据都在那里。Aurora 和本地集群不被触及</p>
-<h3>查询 3：三方联邦</h3>
-<p><em>“在我们按终身价值排名前 20 的客户中，有哪些还没有加入奖励计划？”</em></p>
-<p>agent 生成：</p>
-<pre><code>/* This is a metric view, so I need to use EVALUATE_METRIC for lifetime_spend and order_count. The query needs to: 1. Aggregate by first_name, last_name, state, rewards_since to get total lifetime_spend and order_count 2. Rank top 20 by total lifetime_spend 3. Filter those top 20 where rewards_since IS NULL I'll use a CTE with ROW_NUMBER() to get top 20, then filter for NULL rewards_since in outer query. */
-WITH &quot;ranked_customers&quot; AS (
-SELECT &quot;first_name&quot;,
-&quot;last_name&quot;,
-&quot;state&quot;,
-&quot;rewards_since&quot;,
-EVALUATE_METRIC(&quot;lifetime_spend&quot;) AS &quot;total_lifetime_spend&quot;,
-EVALUATE_METRIC(&quot;order_count&quot;) AS &quot;total_order_count&quot;
-FROM &quot;customer_360&quot;.&quot;lifetime_customer_value&quot;
-GROUP BY &quot;first_name&quot;,
-&quot;last_name&quot;,
-&quot;state&quot;,
-&quot;rewards_since&quot;
-ORDER BY &quot;total_lifetime_spend&quot; DESC
-LIMIT 20
-)
-SELECT &quot;first_name&quot;,
-&quot;last_name&quot;,
-&quot;state&quot;,
-&quot;rewards_since&quot;,
-&quot;total_lifetime_spend&quot;,
-&quot;total_order_count&quot;
-FROM &quot;ranked_customers&quot;
-WHERE &quot;rewards_since&quot; IS NULL
-ORDER BY &quot;total_lifetime_spend&quot; DESC</code></pre>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/ML-21332-8.png" alt="agent 输出，列出按终身价值排名前 20 且尚未加入奖励计划的客户"></p>
-<p>图 8：三方联邦查询的 agent 结果，列出按终身价值排名前列、尚未加入奖励计划的客户</p>
-<p>VDP 按 <strong>构建语义层</strong> 一节所述跨三个引擎规划：来自 Aurora 的档案、来自 Amazon Redshift 的聚合消费额、来自本地集群的加入记录，以及在 VDP 内部完成的最终 join 和 top-N。POC 数据中排名第一的结果是来自 Wisconsin 州 Milwaukee 的 Marcus Chen，终身消费额 47,832 美元，一个高消费却未加入奖励计划的客户，正是 <strong>示例</strong> 一节那个示例问题中的自动加入目标。请注意，LLM 无需自己给出 <code>lifetime_spend</code> 的定义，因为该公式作为 metric view 中定义的语义模型的一部分已经存在。</p>
-<h3>治理重跑</h3>
-<p>我们在投影中加上 <code>ssn</code>，以两个不同的调用者身份运行查询 1：</p>
-<pre><code>SELECT cid, first_name, last_name, state, ssn
-FROM customer_360
-WHERE state = 'WI';</code></pre>
-<p>以 <code>hr_user</code> 身份运行时，结果包含 <code>ssn</code> 的值。以 <code>marketing_user</code> 身份运行时，返回相同的行，但 <code>ssn</code> 是被星号掩码的值。两次运行之间，查询文本、agent 代码、MCP Server、VDP 和 Aurora 都没有任何改动。<strong>受治理的访问</strong> 一节中的 Global Security Policy <code>mask_pii_columns</code> 在查询时按调用者角色评估，VDP 相应地改写投影。同样的行为也适用于 <code>card_num</code>。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/ML-21332-9.png" alt="查询结果，ssn 列对一个角色完整返回，对另一个角色用星号掩码"></p>
-<p>图 9：同一查询的治理重跑，ssn 对 hr_user 完整返回，对 marketing_user 掩码</p>
-<h2>扩展到其他数据源</h2>
-<p>把 AWS 之外的数据源加入 <code>customer_360</code>，无论是用于 CRM 记录的 Salesforce、用于客户服务数据的 ServiceNow，还是用于 ERP 表的 SAP，其建模工作与 Aurora、Amazon Redshift 和本地集群完全相同。创建一个 base view，按 <code>cid</code> 把它 join 进 derived view，并给敏感列打 tag。metric view、Global Security Policy 和 agent 的 VQL 都不变。变的是 VDP 用来访问该数据源的包装器。例如：</p>
-<ul><li><strong>Salesforce</strong> 通过 <a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/administration/creating_data_sources_and_base_views/salesforce_sources/salesforce_sources">Denodo Salesforce 连接器</a>连接，使用 OAuth 2.0 认证，并在 REST 或 Bulk API 上做 <code>VQL-to-SOQL</code> 转换。</li><li><strong>ServiceNow、Microsoft Dynamics 365 和其他 SaaS 工具</strong>使用 Denodo 的 <a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/administration/creating_data_sources_and_base_views/software_as_a_service_wizards/software_as_a_service_wizards">SaaS 向导模板</a>，针对常见 API 做了预配置。</li><li><strong>SAP ERP</strong> 通过 <a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/administration/creating_data_sources_and_base_views/bapi_sources/bapi_sources">BAPI 数据源</a>使用 SAP Java Connector 连接。VDP 调用 SAP RFC 并把响应塑造成行。</li></ul>
-<p>agent 并不知道底下是其中哪一种。它用 VQL 查询 <code>customer_360</code>。Denodo 的包装器处理源生语法转换，而无论数据行来自 JDBC 引擎、REST API 还是 RFC 调用，Denodo 的 Global Security Policy 都会统一生效。</p>
-<p>有一个部署期的决定会因数据源而异：是把调用者身份透传到数据源，还是以服务账号连接。透传在数据源支持时（例如到 SAP 的 Kerberos 或到 Salesforce 的 OAuth）能在源端提供端到端审计。服务账号连接更简单，而源端的审计只会显示查询来自 Denodo。</p>
-<h2>部署：Denodo Agora 与自管理</h2>
-<p>Denodo 在 AWS 上有两种形态。两者使用相同的 Virtual DataPort、相同的 VQL、相同的 Global Security Policies、相同的 MCP Server。选择取决于运维方式。</p>
-<h3>Agora：完全托管</h3>
-<p><a href="https://www.denodo.com/en/denodo-platform/denodo-agora">Denodo Agora</a> 是 Denodo 的完全托管云服务，可在 <a href="https://aws.amazon.com/marketplace/pp/prodview-ze2asxcox56o2?sr=0-3&amp;ref_=beagle&amp;applicationId=AWSMPContessa">AWS Marketplace</a> 上获取。Agora 采用分离平面的架构。<strong>控制平面</strong>（Solution Manager、Design Studio、Scheduler 管理、监控/诊断）运行在 Denodo 的云账号中，<strong>执行平面</strong>（VDP、Scheduler、Data Catalog）运行在客户的 AWS 账号内。接触数据的算力位于客户的 VPC 中。管理界面由 Denodo 运营。</p>
-<p>当你不想自己运维应用、而 Denodo 发布的更新节奏适用于你的组织时，选择 Agora。</p>
-<h3>在 Amazon EC2 或 Amazon EKS 上自管理</h3>
-<p>自管理部署把 Denodo Platform 完全安装在客户的 AWS 账号中。Denodo 在 AWS Marketplace 上发布 VM 镜像，并为 Amazon EKS 提供带 Helm chart 的容器镜像。集群、升级和备份由你负责。</p>
-<p>当合规要求特定的部署姿态、当你希望控制版本节奏，或当参考架构要求在某个特定 VPC 内部署 Denodo 集群时，选择自管理。</p>
-<h2>访问 AWS 之外的数据源</h2>
-<p>两种部署形态都把 VDP 放在客户的 AWS 账号中。访问本地数据源在两种情况下是同一个问题：从托管 VDP 的 VPC 到本地集群之间需要一条网络路径，通过组织已经在用的某种混合连接方案打通。对于 Salesforce 或 ServiceNow 这类 SaaS 数据源，无需额外配置，因为执行平面默认具备出站互联网访问能力，足以完成 OAuth 2.0 认证和 REST API 调用。</p>
-<h2>结论与从哪里开始</h2>
-<p>可靠的 agentic 企业数据访问需要三样东西协同工作：一个能规划和生成查询的基础模型、一个在实时源系统之上呈现业务含义数据的语义层，以及一个托管 agent 并管理身份流转的 runtime。Amazon Bedrock、Denodo Platform 和 Amazon Bedrock AgentCore 各自承担其中一个角色。</p>
-<p>agent 与语义层对话，而不是直接与底层数据库对话。base view、derived view、metric view、tag 和 Global Security Policies 都位于 VDP 中。当源 schema 发生漂移、新数据源上线，或治理规则变化时，更新发生在语义层，每个消费者在下一次查询时就会采用它。语义层携带的额外元数据（文档、说明、度量公式和 360 graph）为模型提供了更多有依据的业务上下文可供推理，而不只是原始 schema。</p>
-<h3>从哪里开始</h3>
-<p>试用 <a href="https://aws.amazon.com/marketplace/pp/prodview-ze2asxcox56o2">AWS 上的 Agora</a> 并按说明部署。Agora 是 Denodo 的完全托管云服务，用于在 AWS 上部署 AI 数据层，提供对分布式企业数据的实时、受治理访问。</p>
-<p>大多数团队都是从小范围起步、再逐步扩展，从而把这套东西跑起来的。</p>
-<ul><li>选择<strong>一个跨两三个不同源系统的 agentic 工作流</strong>，它今天回答起来花的时间过长。</li><li>写下该工作流需要回答的<strong>三到五个具体问题</strong>。这些就是语义层第一天就必须支持的查询。</li><li><strong>连接数据源并创建 base view</strong>，覆盖该工作流涉及的源表。创建时给 PII 列打 tag。</li><li><strong>构建</strong>这些问题所需的 <strong>derived view</strong> 和 <strong>metric view</strong>。</li><li><strong>实施 Global Security Policy</strong>，帮助保护 PII、受保护健康信息（PHI）、支付卡行业（PCI）或其他敏感信息。</li><li><strong>把 Denodo MCP Server 注册为 AgentCore Gateway target</strong>，并按前面章节的模式把 Strands agent 接到它上面。用 <code>agentcore deploy</code> 部署。</li></ul>
-<h3>延伸阅读</h3>
-<ul><li><a href="https://community.denodo.com/kb/en/view/document/Integrating%20Amazon%20Bedrock%20AgentCore%20%20with%20Denodo%20via%20MCP%20Server">Integrating Amazon Bedrock AgentCore with Denodo via MCP Server</a>：Denodo 社区的参考实现。</li><li><a href="https://community.denodo.com/docs/html/document/denodoconnects/latest/en/Denodo%20MCP%20Server%20-%20User%20Manual">Denodo MCP Server 用户手册</a>。</li><li><a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/vql/introduction/introduction">Denodo VQL 指南</a>，其中包括 <a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/vql/defining_a_derived_view/defining_a_metric_view/defining_a_metric_view">Defining a Metric View</a>。</li><li><a href="https://community.denodo.com/docs/html/browse/latest/en/vdp/administration/databases_users_and_access_rights_in_virtual_dataport/global_security_policies/global_security_policies">Denodo Global Security Policies</a>。</li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html">Amazon Bedrock AgentCore 开发者指南</a>。</li></ul>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>使用 Strategy Mosaic 和 Amazon Bedrock AgentCore 在 AWS 上为 agent…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-strategy-mosaic-and-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-strategy-mosaic-and-amazon-bedrock-agentcore/</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：使用 Strategy Mosaic 和 Amazon Bedrock AgentCore 在 AWS 上为 agentic AI 构建语义层 | 原文标题：Build a semantic layer for agentic AI on AWS with Strategy Mosaic and Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 Strategy Mosaic 和 Amazon Bedrock AgentCore 在 AWS 上为 agentic AI 构建语义层</h1>
-<p><em>本文与 Strategy 首席产品经理 Zhili Cheng、AI 工程总监 George Earle 以及销售工程师 Kyler K 合写。</em></p>
-<p>在<a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">本系列的第一篇文章</a>中，我们使用 Stardog 的知识图，在 <a href="https://aws.amazon.com/rds/aurora/">Amazon Aurora</a> 和 <a href="https://aws.amazon.com/redshift/">Amazon Redshift</a> 之上于 AWS 构建了一个语义层，并在 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 上针对该层运行了一个 Strands agent。<a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-denodo-and-amazon-bedrock-agentcore/">第二篇文章</a>保留了相同的 customer 360（C360）模式，换成 Denodo 的数据虚拟化平台，并把数据源组合扩展到包含一个本地 PostgreSQL 集群。本文再次沿用相同的 C360 模式，语义层则换成 Strategy Mosaic。</p>
-<p>Stardog 的语义层是基于本体的：概念和关系建模为 RDF，以 IRI 作为联邦的单位，以 SPARQL 作为查询语言。Denodo 的是数据虚拟化：基础视图和派生视图用 VQL 组合。Mosaic 的则是维度式的：属性、层次结构、事实和度量通过 Strategy 的度量表达式语法组合，以链接模型作为联邦的单位。该模型从一份定义出发，同时对外提供四种原生协议：面向 AI agent 的 Model Context Protocol（MCP）、面向 SQL 客户端的基于 Trino 的 JDBC/ODBC、面向 Power BI 和 Excel 的 XMLA，以及面向自定义应用的 REST。这些协议背后是<a href="https://software.strategy.com/support/drivers-and-connectors">一长串经过认证的数据源</a>。受支持的系统包括 Snowflake、Databricks 等云数据仓库。运营数据库包括 <a href="https://aws.amazon.com/rds/">Amazon Relational Database Service（Amazon RDS）</a>、Oracle 和 SQL Server。分析引擎包括 <a href="https://aws.amazon.com/athena/">Amazon Athena</a>、Trino 和 SAP HANA，软件即服务（SaaS）数据源则包括 Salesforce。链接模型这套模式并不局限于本演练使用的 Amazon Redshift 与 Amazon Aurora 组合。在本演练中，托管在 AgentCore runtime（<a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> AgentCore 的一项能力）上的 Strands agent 通过 MCP 端点访问 Mosaic。连接、度量定义以及按调用者区分的行与列筛选都位于 Mosaic 内部，而不在 agent 的 prompt 里。</p>
-<p>我们假设你已经熟悉本系列第一篇文章中的语义层架构。如果有任何内容对你是新的，<a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">Stardog 那篇</a>已经覆盖了这些基础。</p>
-<p>读完本文，你将了解：</p>
-<ul><li>如何在 Strategy Mosaic 中跨 Amazon Redshift 和 Amazon Aurora 对 C360 域建模，使用两个链接模型，且不需要 ETL。</li><li>Mosaic 的度量语法（基础度量、带具名筛选对象的高级度量、级别限定符和复合度量）如何承载 agent 必须据以推理的业务定义。</li><li>如何通过 Mosaic MCP server 把模型暴露给由 AgentCore 托管的 Strands agent，以及用户身份如何传播，使按用户生效的行级安全（RLS）和对象级安全（OLS）端到端成立。</li><li>针对 agent 流量，如何在实时下推和内存内执行之间做选择。</li><li>如何把同一套受治理的定义发布到 Power BI、Tableau、notebook 和自定义应用，以及如何以 Apache Ossie 格式导出，供 Mosaic 之外的工具使用。</li></ul>
-<p>本演练的事实来源是 <a href="https://www2.microstrategy.com/producthelp/Current/NextGenAI/en-us/Content/agent_MCPServerIntegration.htm">Strategy One（2026 年 3 月）</a>，也就是通过 MCP server 访问 Mosaic 默认可用的那个版本。</p>
-<h2>本文用到的 Strategy Mosaic 术语</h2>
-<p>在进入模型之前，先给一份简短的参考。</p>
-<ul><li><strong><a href="https://software.strategy.com/blog/strategy-mosaic-unlock-decades-of-business-context">Mosaic Schema 与 Mosaic Models</a>。</strong> 同一个通用语义层内的两条建模路径。Mosaic Schema 是集中治理的企业模型。Mosaic Models 是 Mosaic Studio 中自助式、AI 辅助的建模路径。模型可以映射到 Schema 的属性，并继承维度、对象 ACL 和 RLS。本演练使用 Mosaic Models。</li><li><strong><a href="https://www2.microstrategy.com/producthelp/Current/Mosaic/en-us/Content/mosaic_logical_modeling.htm">模型（Model）</a>。</strong> 两条建模路径中的顶层产物。它在物理表之上发布属性、度量、层次结构和安全规则。本演练使用两个 Mosaic Model，一个建在 Amazon Redshift 上，一个建在 Aurora 上，并将二者链接起来。</li><li><strong><a href="https://www2.microstrategy.com/producthelp/Current/Mosaic/en-us/Content/attributes_in_model.htm">属性（Attribute）</a>。</strong> 诸如 Customer 这样的业务实体。它携带多种形式：用于连接的 ID 形式和用于展示的显示形式。Mosaic 用这些形式把 “Carolyn Inworth” 这样的名字解析到底层的 <code>cid</code>。</li><li><strong><a href="https://www2.microstrategy.com/producthelp/Current/Mosaic/en-us/Content/Hierarchy_Editor_in_model.htm">层次结构（Hierarchy）</a>。</strong> 属性之间的父子关系。Category 经 parent 上卷到 Department。Address 上卷到 City，再上卷到 State。</li><li><strong><a href="https://www2.microstrategy.com/producthelp/Current/Mosaic/en-us/Content/advanced_metrics_in_model.htm">事实与度量</a>。</strong> 事实是一个数值列。度量对事实做聚合。<code>Purchase Amount = price * quantity</code> 是一个基础度量。度量也可以是高级度量（由具名条件限定的聚合）或复合度量（对其他度量的公式）。</li><li><strong><a href="https://www2.microstrategy.com/producthelp/Current/FunctionsRef/Content/FuncRef/Filter_expressions.htm">筛选对象</a>。</strong> 一个具名条件，由度量以尖括号引用。<code>[Large Orders]</code> 是一个筛选，其限定条件为 <code>Purchase Amount &gt; 500</code>。度量引用 <code>&lt;[Large Orders]&gt;</code>，而不内联该谓词。</li><li><strong><a href="https://www2.strategy.com/producthelp/Current/AdvancedReportingGuide/WebHelp/Lang_1033/Content/Level_metrics__Modifying_the_context_of_data_calcu.htm">级别限定符</a>。</strong> 一种把聚合粒度钉住的度量表达式语法。<code>{~+, !Customer+}</code> 把粒度设为 Customer，无论查询如何切片。</li><li><strong><a href="https://www2.microstrategy.com/producthelp/Current/Mosaic/en-us/Content/mosaic_time_analytics.htm">模型链接（Model linking）</a>。</strong> 在共享属性（Customer、Time）上跨模型组合。Mosaic 把聚合下推到每个数据源，再在链接属性上连接中间结果。</li><li><strong><a href="https://www2.microstrategy.com/producthelp/Current/NextGenAI/en-us/Content/agent_MCPServerIntegration.htm">认证模型</a>。</strong> 只有认证模型才能通过 MCP server 访问。</li><li><strong><a href="https://www2.microstrategy.com/producthelp/current/workstation/en-us/Content/manage_intelligent_cubes.htm">实时或内存内</a>。</strong> 两种按模型设置的执行模式：实时下推到数据源，或从 Mosaic 驻留的 cube 返回答案。细节见本文后文。</li></ul>
-<h2>示例：跨 Amazon Redshift 与 Amazon Aurora 的 Customer 360</h2>
-<p>前两篇文章中的 C360 模式保持不变。该 schema 改编自 <a href="https://www.stardog.com/blog/stardog-knowledge-kits-your-path-to-mastery-in-knowledge-graphs/">Stardog 的 C360 Knowledge Kit</a>，因此跟随本系列的读者看到的仍是相同的实体、相同的键，以及由另一个语义层回答的同一个锚点问题。一家零售企业的客户记录、地址、信用卡和奖励计划登记位于运营侧，订单、产品和产品类别位于数据仓库中。业务用户希望获得跨越两侧的答案，而无需知道哪个系统持有哪个事实。</p>
-<p>本文的不同之处在于 Mosaic 如何触达这两个数据源。Mosaic 不在查询时跨引擎联邦行数据。它为每个数据源规划一条查询，把原生 SQL 下推，再在 Mosaic 引擎中按模型链接所声明的共享属性连接中间结果集。C360 演练把分析侧建模为建在 Amazon Redshift 上的 Purchase 模型，把运营侧建模为建在 Amazon Aurora PostgreSQL 兼容版上的 Customer 模型。</p>
-<p>两个数据库中的 schema 如下：</p>
-<p><strong>Amazon Aurora PostgreSQL 兼容版（运营）</strong></p>
-<table><thead><tr><th><strong>表</strong></th><th><strong>关键列</strong></th></tr></thead><tbody><tr><td><code>customer</code></td><td><code>cid</code> (PK), <code>first_name</code>, <code>last_name</code>, <code>email</code>, <code>ssn</code>, <code>phone</code>, <code>location</code></td></tr><tr><td><code>address</code></td><td><code>id</code> (PK), <code>city</code>, <code>state</code>, <code>zip</code>, <code>street_name</code></td></tr><tr><td><code>credit_card</code></td><td><code>id</code> (PK), <code>cid</code>, <code>card_num</code>, <code>card_type</code></td></tr><tr><td><code>rewards_account</code></td><td><code>id</code> (PK), <code>cid</code>, <code>account_id</code>, <code>create_date</code></td></tr></tbody></table>
-<p><strong>Amazon Redshift（分析）</strong></p>
-<table><thead><tr><th><strong>表</strong></th><th><strong>关键列</strong></th></tr></thead><tbody><tr><td><code>purchase</code></td><td><code>id</code> (PK), <code>cid</code>, <code>pid</code>, <code>date</code>, <code>quantity</code>, <code>price</code>, <code>card</code></td></tr><tr><td><code>product</code></td><td><code>id</code> (PK), <code>name</code>, <code>brand</code>, <code>price</code>, <code>dept</code></td></tr><tr><td><code>category</code></td><td><code>id</code> (PK), <code>dept_name</code>, <code>parent</code></td></tr><tr><td><code>vendor</code></td><td><code>id</code> (PK), <code>vendor_name</code>, <code>industry</code></td></tr></tbody></table>
-<p>共享的 ID 是 <code>cid</code>，一个整数：它在 Aurora 的 <code>customer</code> 中是主键，在 Amazon Redshift 的 <code>purchase</code> 中则是一个普通列。两者之间没有 SQL 约束，也不可能有，因为它们位于不同的引擎中。任何把客户与其订单连接起来的问题，都必须在某处对齐这个整数。Mosaic 通过模型链接吸收它，而不是靠一个物化的跨引擎连接。</p>
-<p>一个能跑通整个模型的代表性问题是：<em>按生命周期消费额排名前 20 的客户中，哪些还没有加入奖励计划？</em> 这就是 <a href="https://aws.amazon.com/blogs/machine-learning/build-semantic-layer-denodo-amazon-bedrock-agentcore/">Denodo 那篇</a>中的自动注册问题。它需要来自 Aurora 的客户档案、来自 Amazon Redshift 的聚合消费额，以及来自 Aurora 的注册状态，并按语义层中的定义进行排名和筛选。</p>
-<h2>参考架构</h2>
-<p>图 1 展示了端到端运行时。入站认证路径从客户端经 AgentCore Gateway（Amazon Bedrock AgentCore 的一项能力）到 runtime。出站查询路径从 Strands agent 经 Mosaic MCP 端点到 Amazon Redshift 和 Amazon Aurora。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/05/ML-21332-1-1.png" alt="参考架构。客户端、Amazon Bedrock AgentCore 各组件、Strategy Mosaic MCP 端点、Mosaic 引擎以及 Amazon Redshift 与 Amazon Aurora 之间的入站认证路径和出站查询路径。"></p>
-<p>图 1：参考架构。客户端、Amazon Bedrock AgentCore 各组件、Strategy Mosaic MCP 端点、Mosaic 引擎以及 Amazon Redshift 与 Amazon Aurora 之间的入站认证路径和出站查询路径。</p>
-<p>运行时分为入站路径和出站路径。</p>
-<p><strong>入站。</strong> 客户端通过 Amazon Bedrock AgentCore Gateway 发送用户的问题。Gateway 针对企业身份提供商（IdP）校验标识人类用户的 JSON Web Token（JWT），然后把请求路由到 Amazon Bedrock AgentCore runtime，由后者托管 Strands agent。agent 调用 Amazon Bedrock 上的 Anthropic Claude Sonnet 4.6 来解释 prompt 并规划查询。</p>
-<p><strong>出站。</strong> 当 agent 决定查询语义模型时，它的 MCP 工具通过 HTTPS 直接连接 <code>https://&lt;env-domain&gt;/collaboration/mcp/mosaic</code> 处的 Mosaic MCP 端点。agent 在 <code>Authorization: Bearer</code> 头中出示 OAuth 2.0 访问令牌。Mosaic 针对其内置的 OAuth 授权服务器校验该令牌，并把调用者解析为某个 Strategy 用户。随后它应用 <code>Use MCP Server</code> 权限和认证模型闸门，评估该用户的行级与列级安全，并跨链接的 Purchase 和 Customer 模型规划查询。Amazon Redshift 和 Amazon Aurora 响应 Mosaic 引擎按数据源生成的原生 SQL。</p>
-<p>有两个特性对本文后续内容很重要。跨源连接之所以发生，是因为建模者声明了链接，而不是因为两个数据源恰好可达。agent 只能沿模型中存在的链接行走。抵达 Mosaic 的令牌代表人类用户，而不是服务账号，因此 RLS 和 OLS 端到端地按调用者身份评估。<a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a> 在两次调用之间保存调用者的 refresh token，Governed access 一节会完整走一遍身份链路。</p>
-<h2>构建语义层</h2>
-<p>本演练使用两个 Mosaic Model，即 Mosaic Studio 中自助式、AI 辅助的建模路径，并在共享属性上链接。Mosaic Studio 是创作套件，本文的截图来自其 Design Center 建模工作区。共三遍：每侧的 dataset 与连接、属性与层次结构，然后是承载业务逻辑的度量。团队如果已有集中治理的 <a href="https://software.strategy.com/blog/strategy-mosaic-unlock-decades-of-business-context">Mosaic Schema</a>，可以把模型的属性映射到它，并从企业 schema 继承维度、对象 ACL 和 RLS，无需再做一轮平行的安全评审。如果你的数据架构师已经在维护受治理的 schema，这件事要早点做。</p>
-<h3>两个链接模型</h3>
-<p>每个 Mosaic 模型连接一个实时数据源。模型链接把它们组合起来。</p>
-<ul><li><strong>Purchase</strong>：实时连接 Amazon Redshift。事实位于 <code>purchase</code> 表（<code>price * quantity</code>），维度位于 <code>product</code>、<code>category</code>、<code>vendor</code> 以及购买日期。</li><li><strong>Customer</strong>：实时连接 Amazon Aurora PostgreSQL 兼容版。维度位于 <code>customer</code>、<code>address</code>、<code>credit_card</code>、<code>rewards_account</code>。</li></ul>
-<p>在每个模型内部，物理连接只针对源 schema 声明一次。Purchase 模型解析 <code>purchase.pid = product.id</code>、<code>product.dept = category.id</code> 和 <code>product.brand = vendor.id</code>，另外还有 <code>category.parent = category.id</code> 的自引用，用于部门上卷。Customer 模型解析 <code>customer.location = address.id</code>、<code>customer.cid = credit_card.cid</code> 和 <code>customer.cid = rewards_account.cid</code>。这些就是 Mosaic 用来规划并下推原生 SQL 的关系。Purchase 与 Customer 之间没有任何物理对象跨越。</p>
-<p>两个模型在 Customer 和 Time 上链接。当一个问题同时需要两侧时（例如 <em>威斯康星州消费最高的人</em>，从 <code>address</code> 取州、从 <code>purchase</code> 取消费额），Mosaic 把相应的聚合分别下推到各数据源，并在链接属性上合并结果。没有 ETL，也没有第三份副本。</p>
-<p>领域归属跟随模型边界。CRM 团队拥有 Customer，数据系统团队拥有 Purchase。双方都不交出各自的数据源。他们就链接属性达成一致，安全策略会自动从底层模型传播下来。Amazon Redshift 和 Amazon Aurora 之间没有物化的跨引擎连接，也没有共享的物理 schema。连接就是那组链接属性约定。</p>
-<h3>属性与层次结构</h3>
-<p>属性携带多种形式。Customer 以 <code>cid</code> 作为 ID 形式，以 <code>first_name + last_name</code> 作为显示形式，因此 agent 可以问 “Carolyn Inworth”，而 Mosaic 会在链接的两侧把它解析为正确的键。图 2 展示了在 Mosaic Studio 中创作的 Customer 属性，cid 为 ID 形式，Full Name、First Name 和 Last Name 为显示形式。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/05/ML-21332-2-1.png" alt="Design Center 中的 Customer 属性定义。cid 是用于连接底层键的 ID 形式。Full Name、First Name 和 Last Name 是显示形式。"></p>
-<p>图 2：Design Center 中的 Customer 属性定义。cid 是用于连接底层键的 ID 形式。Full Name、First Name 和 Last Name 是显示形式。</p>
-<p>对 C360 而言有两个重要的层次结构：</p>
-<ul><li><strong>Category 层次结构经 parent 上卷到 Department。</strong> <code>category.parent</code> 自引用意味着部门级问题能得到一致的聚合结果。</li><li><strong>Address 以同样的模式经 City 上卷到 State。</strong> 这使得 <code>State = 'WI'</code> 成为单个属性限定条件，而不是 agent 必须自己构造的连接。</li></ul>
-<p>图 3 展示了在 Design Center 中创作的地理层次结构，把 State 经 City 和 ZIP Code 串联到 Customer。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/05/ML-21332-3-1.png" alt="Design Center 中的地理层次结构。属性从 State 经 City、ZIP Code 和 Location 串联到 Customer，Rewards 和电话属性挂在 customer 节点下。"></p>
-<p>图 3：Customer 模型在 Design Center 中的地理层次结构。State 经 City 和 ZIP Code 上卷到 Location，Location 链接到 Customer。</p>
-<p>agent 请求的是 <code>State = 'WI'</code>，而不是 <code>address.state</code>。物理列名不会离开模型。语义层的每个消费者看到的都是属性形式及其显示形式，而层次结构会自动承载上卷。</p>
-<h3>度量：基础、高级、复合、时间智能</h3>
-<p>基础度量把分组函数应用于某个事实。<code>Purchase Amount</code> 是 <code>purchase</code> 表上的 <code>Sum(price * quantity)</code>。</p>
-<p>图 4 展示了在 Mosaic Studio 中创作的 Purchase Amount 基础度量：公式为 Price * Quantity，另有一个描述字段，用来告诉 agent 该度量在业务上意味着什么。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/05/ML-21332-4-1.png" alt="Design Center 中创作的 Purchase Amount 度量。公式为 Price * Quantity。描述告诉 agent 该度量在业务上的含义。"></p>
-<p>图 4：Design Center 中创作的 Purchase Amount 度量。公式把价格与数量相乘，描述告诉 agent 该度量在业务上的含义。</p>
-<p>C360 里有意思的概念是高级度量：由具名条件限定的聚合。在 Strategy 中，条件是对尖括号内筛选对象的引用，而不是内联谓词。筛选对象是拥有自己的名称、描述和权限的模型对象，因此在共享同一组定义的度量之间可复用、可审计。</p>
-<p>把这些筛选定义一次：</p>
-<table><thead><tr><th><strong>筛选对象</strong></th><th><strong>限定条件</strong></th></tr></thead><tbody><tr><td><code>[Large Orders]</code></td><td><code>Purchase Amount &gt; 500</code></td></tr><tr><td><code>[Sports Category]</code></td><td><code>Category = &quot;Sports&quot;</code></td></tr><tr><td><code>[Rewards Members]</code></td><td><code>Rewards Account is not null</code></td></tr><tr><td><code>[Card Present]</code></td><td><code>Purchase Card is not null</code></td></tr><tr><td><code>[Big Spender]</code></td><td><code>Customer Lifetime Spend &gt; 10000</code></td></tr></tbody></table>
-<p>每个筛选对象都带有名称、描述、限定条件和访问权限。建模者为 <code>[Large Orders]</code> 创作或导出的形态大致如下：</p>
-<pre><code>name:          [Large Orders]
-description:   Purchases whose net line amount exceeds $500.
-               Referenced by Large Order Spend and any metric that
-               scopes to high-value transactions.
-qualification: Purchase Amount &gt; 500
-permissions:   read:   Everyone
-               modify: Data Modelers</code></pre>
-<p>然后在度量表达式中引用这些筛选。下面每一个都是高级度量：由具名筛选限定的基础聚合。</p>
-<pre><code>Large Order Spend    Sum([Purchase Amount]) {~+} &lt;[Large Orders]&gt;
-Sports Spend         Sum([Purchase Amount]) {~+} &lt;[Sports Category]&gt;
-Rewards Spend        Sum([Purchase Amount]) {~+} &lt;[Rewards Members]&gt;</code></pre>
-<p>图 5 展示了应用了筛选条件的高级度量在 Design Center 中的视图。它使用的是与前面 <code>Large Order Spend</code> 相同的创作模式。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/05/ML-21332-5-1.png" alt="Design Center 中的高级度量创作，基础公式和筛选条件显示在 Breakdown 标签页上。"></p>
-<p>图 5：Design Center 中的高级度量创作，展示了基础公式以及从 Large Orders 筛选对象引用的筛选条件。</p>
-<p><code>Customer Lifetime Spend</code> 还需要一个级别限定符，因为“生命周期”意味着全部历史，无论当前问题如何切片：</p>
-<pre><code>Customer Lifetime Spend    Sum([Purchase Amount]) {~+, !Customer+}</code></pre>
-<p><code>Customer</code> 前面的 <code>!</code> 把分组设为无，因此该度量在每一行上都返回每个客户的完整总额，而不是折叠成每个客户一行。完整语法见 <a href="https://www2.strategy.com/producthelp/Current/AdvancedReportingGuide/WebHelp/Lang_1033/Content/Level_metrics__Modifying_the_context_of_data_calcu.htm">Strategy Metric Level Symbols</a>。</p>
-<p>注意，筛选表中的 <code>[Big Spender]</code> 是按度量表达式而非属性谓词限定的。筛选对象可以基于二者之一。钱包份额是一个复合度量，由其他度量构建：</p>
-<pre><code>Sports Share of Wallet    [Sports Spend] / [Customer Lifetime Spend]</code></pre>
-<p>级别和条件从组件中原样传递下来。钱包份额是一个比率，因此不能做加法也不能求平均。一个 AWS Region 上的份额并不是每个客户份额的平均值，度量的描述会把这一点告诉 agent。参见 <a href="https://www2.strategy.com/producthelp/Current/AdvancedReportingGuide/WebHelp/Lang_1033/Content/Conditional_metrics.htm">Strategy Conditional Metrics</a>。</p>
-<p>除基础、高级和复合度量之外，Mosaic 还提供受治理的时间智能度量，作为一等表达式。<code>Previous Year</code>、<code>Previous Quarter</code>、<code>Year-to-Date</code> 和 <code>Quarter-to-Date</code> 在模型上声明一次，并在切片过程中保留，因此像 <em>今年 Sports 消费与去年相比如何</em> 这样的问题，变成一次属性挑选和两次度量引用，而不是手写 SQL 日期筛选。自定义日历在模型层挂接，因此同一个同比表达式既能适用于 9 月结束的财年，也能适用于 12 月结束的自然年。参见 <a href="https://software.strategy.com/blog/time-intelligence-metrics-in-mosaic-year-over-year-and-period-to-date-without-the-sql">Governed Time-Intelligence Metrics in Mosaic</a>。</p>
-<p>筛选对象改一次，Power BI 仪表板、SQL 抽取和 agent 就一起变。这正是具名、受治理的模型产物能给你、而内联 SQL 谓词给不了的东西。</p>
-<h2>Mosaic 如何规划与执行查询</h2>
-<p>Mosaic 引擎把每次 MCP <code>query</code> 调用解析为 Trino 方言的 SQL，把维度引用解析到底层的 Purchase 和 Customer 模型，应用调用者所受的 RLS 或 OLS，并按数据源规划物理 SQL。该方言与 Strategy 为 MCP <a href="https://www2.microstrategy.com/producthelp/Current/NextGenAI/en-us/Content/agent_MCPServerIntegration.htm">query 工具</a>发布的方言一致，因此 agent 生成的 SQL 在连接同一认证模型的不同 MCP 客户端之间是可移植的。</p>
-<p>对于自动注册这个问题，规划过程展开如下：</p>
-<ul><li>下推到 Amazon Aurora：在 <code>cid</code> 上连接 <code>customer</code> 和 <code>rewards_account</code>，投影档案字段和 <code>rewards_account.create_date</code>，筛选注册为空的行。每个未注册客户返回一行。</li><li>下推到 Amazon Redshift：按 <code>cid</code> 分组的 <code>SUM(price * quantity)</code>。每个客户返回一行及其消费总额。</li><li>在 Mosaic 内部合并：在 <code>cid</code>（链接属性）上连接两个中间结果集，按生命周期消费额排序，返回前 20 名。</li></ul>
-<p>Aurora 执行的是事务型的档案连接。Amazon Redshift 执行的是事实聚合。Mosaic 在一个很小的中间集上处理跨引擎连接（每个客户一行，而不是每个订单一行）。手写流水线能近似出同样的形状，但之后必须永远保持同步。</p>
-<p>有一个 SQL 细节很重要。度量是受治理的值，但 Trino 把它们当作选中的列，因此当查询使用 <code>GROUP BY</code> 时，度量需要聚合包装，例如 <code>SUM(metric_name)</code>。度量的定义、条件和连接路径仍由 Mosaic 解析。外层的聚合属于调用者。因此像钱包份额这样的非可加比率必须在其描述中说明这一点。</p>
-<h3>实时下推还是内存内</h3>
-<p>每个 Mosaic 模型都以两种模式之一运行。</p>
-<table><thead><tr><th><strong>模式</strong></th><th><strong>行为</strong></th><th><strong>最适合</strong></th></tr></thead><tbody><tr><td>实时（Live）</td><td>查询时下推到 Redshift 或 Aurora</td><td>数据持续最新。数据源安全策略直接生效</td></tr><tr><td>内存内（In-memory）</td><td>从 Mosaic 驻留的 cube 返回答案</td><td>有界的近期窗口。时延可预测。没有按查询的仓库计算开销</td></tr></tbody></table>
-<p>两种模式执行相同的安全规则。RLS 和 OLS 在模型上设置一次，无论答案来自何处都会被评估。这个选择是性能与成本的问题。</p>
-<p>agent 流量是重复且突发的。agent 把 <em>威斯康星州消费最高的人</em> 拆成若干探索性追问时，会在同一个近期切片上发出许多小查询。从内存提供这些答案，可以把按查询波动的仓库开销变成固定的 Mosaic 容量，而且通常更快。对于有界窗口上的交互式 agent 工作负载，内存内模式往往既更快也更省钱。在把模型切换到内存内模式之前，先配置好 Mosaic 侧的配额授权，并在你用来验证数字的同一轮测试中验证它们。</p>
-<h2>一份定义，四种接口</h2>
-<p>上一节构建的度量、属性、层次结构和安全规则，通过原生协议抵达每一个消费者。没有连接器转换，没有度量重实现，也没有漂移。</p>
-<table><thead><tr><th><strong>协议</strong></th><th><strong>典型消费者</strong></th><th><strong>用它来做什么</strong></th></tr></thead><tbody><tr><td>MCP</td><td>AI agent（Strands、Claude、Copilot、ChatGPT、Gemini）</td><td>语义发现 + 受治理查询</td></tr><tr><td>SQL / JDBC / ODBC（Trino）</td><td>Tableau、SQL 客户端、Python notebook</td><td>灵活性与即席分析</td></tr><tr><td>DAX / XMLA</td><td>Power BI、Excel 数据透视表</td><td>BI 的语义保真度</td></tr><tr><td>REST</td><td>自定义应用、数据科学</td><td>程序化访问</td></tr></tbody></table>
-<p>本演练中 Strands agent 所消费的同一个认证 Mosaic 模型，也服务于在 <a href="https://aws.amazon.com/quick/">Amazon Quick</a> 中工作的业务分析师，Amazon Quick 把 Mosaic MCP 注册为一个经过 OAuth 认证的连接器。无需第二套集成。</p>
-<h2>受治理访问：身份传播与运行时强制执行</h2>
-<p>Mosaic 在语义层强制执行访问控制，在查询抵达 Amazon Redshift 或 Aurora 之前。HR 和反欺诈角色可以看到 <code>ssn</code>、<code>card_num</code> 这类个人可识别信息（PII）字段。市场和数据分析角色则不能。无论调用者是经由 MCP 的 Strands agent、经由 XMLA 用 Excel 的分析师，还是经由 JDBC 的 notebook，强制执行都完全相同。一套 RLS 和 OLS 对象、一个认证模型闸门、一次权限检查。标记为敏感的属性与度量还会输入 <a href="https://www2.microstrategy.com/producthelp/Current/Mosaic/en-us/Content/sentinel_risk_management.htm">Mosaic Sentinel Risk Management</a>，它会对触碰被标记对象的查询发出告警，并检测行为异常，作为 OLS 旁边的纵深防御层。</p>
-<p>图 6 展示了跨两条泳道的身份传播链：每个用户执行一次的前门 OAuth 握手，以及每次 agent 工具调用都执行的按请求路径。每条泳道都端到端携带用户身份，使 Mosaic 能针对调用者而非服务账号强制执行 RLS 和 OLS。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/05/ML-21332-6.png" alt="从人类用户经企业 IdP、Amazon Bedrock AgentCore、AWS Secrets Manager 到 Mosaic MCP 端点的身份传播链。前门 OAuth 握手每个用户执行一次（步骤 1-4）。按请求路径在每次 agent 工具调用时执行（步骤 5-10）。"></p>
-<p>图 6：身份传播链。前门 OAuth 握手每个用户执行一次，或在 refresh token 续期时执行（步骤 1-4）。按请求路径在每次 agent 工具调用时执行（步骤 5-10）。链中没有任何环节重新界定为服务账号。Mosaic 按调用者的 Strategy 用户身份评估治理。</p>
-<p>该链沿两条泳道展开。</p>
-<p><strong>前门 OAuth 握手（每个用户一次）。</strong> 人类用户针对企业 IdP 完成认证。应用对 Strategy Library 的 <code>/collaboration/authorize</code> 发起 OAuth 2.0 授权码流程，scope 为 <code>offline_access</code>。Strategy Library 通过 SAML 或 OIDC 联邦到同一个 IdP，在 <code>/collaboration/token</code> 返回 refresh token 与 access token 对。应用把 refresh token 持久化到 AWS Secrets Manager，以用户的 IdP sub 声明为键。</p>
-<p><strong>按请求路径（每次 agent 工具调用）。</strong> AgentCore Gateway 校验 IdP 的 JWT 并路由到 AgentCore runtime，后者托管调用 Amazon Bedrock 上 Claude Sonnet 4.6 的 Strands agent。agent 的 MCP 工具从 Secrets Manager 取回用户的 refresh token，用它换取新的 access token，并向 <code>/collaboration/mcp/mosaic</code> 出示 <code>Authorization: Bearer &lt;access_token&gt;</code>。Mosaic 把令牌解析为某个 Strategy 用户，强制执行 <code>Use MCP Server</code> 权限、认证模型闸门以及 RLS 与 OLS，然后针对 Purchase 和 Customer 规划并执行。市场分析师看不到 <code>ssn</code> 或 <code>card_num</code>。反欺诈分析师能看到。</p>
-<p>链中没有任何环节重新界定为服务账号。治理从 IdP 到 Mosaic 引擎始终按调用者身份评估。</p>
-<h2>通过 Mosaic MCP server 暴露该层</h2>
-<p>Strategy Library 暴露两个 MCP 端点：</p>
-<table><thead><tr><th><strong>端点</strong></th><th><strong>路径</strong></th><th><strong>作用</strong></th></tr></thead><tbody><tr><td>Agents MCP</td><td><code>/collaboration/mcp/agent</code></td><td>把问题路由到一个认证的 Strategy agent，由它用自己的数据和指令作答</td></tr><tr><td>Mosaic MCP</td><td><code>/collaboration/mcp/mosaic</code></td><td>直接查询 Mosaic 模型和启用 AI 的 cube，不需要 Strategy agent</td></tr></tbody></table>
-<p>两者独立工作。本演练使用 <a href="https://www2.microstrategy.com/producthelp/Current/NextGenAI/en-us/Content/agent_MCPServerIntegration.htm">Mosaic MCP</a>。把语义层直接放在 Strands agent 前面，可以省掉一次推理跳转。</p>
-<h3>工具链</h3>
-<p>四个工具，从项目到模型、到语义、再到查询依次串联。</p>
-<table><thead><tr><th><strong>工具</strong></th><th><strong>作用</strong></th><th><strong>参数</strong></th></tr></thead><tbody><tr><td><code>get_projects</code></td><td>列出调用者可访问的 Strategy 项目</td><td>none</td></tr><tr><td><code>get_models</code></td><td>列出某个项目中已认证的 Mosaic 模型和数据集</td><td>project</td></tr><tr><td><code>get_semantics</code></td><td>返回模型的完整定义：属性与度量及其数据类型、描述和度量公式</td><td>model</td></tr><tr><td><code>query</code></td><td>执行只读的 Trino SQL 查询。写入和 DDL 会被拒绝，返回 <code>MOSAIC_SQL_WRITE_REJECTED</code></td><td>sql</td></tr></tbody></table>
-<p>agent 会自动串联这些调用。<code>get_projects</code> 和 <code>get_models</code> 会在 agent 读取列名之前按描述收窄到正确的模型。<code>get_semantics</code> 返回受治理的定义，agent 随后据此针对真实对象名组合 SQL：作为复合度量的 <code>Sports Share of Wallet</code>、限定到 Customer 的 <code>Customer Lifetime Spend</code>、Category 层次结构，以及每个度量的公式。</p>
-<p>有两条 Mosaic 特有的 SQL 约定需要注意。列标识符遵循 <code>&lt;form&gt;__&lt;name&gt;</code> 模式，且必须用双引号包裹（<code>&quot;customer__customer name&quot;</code>）。时间属性既以基础列形式暴露，也以预先分桶的区间列形式暴露（<code>(day interval)</code>、<code>(month interval)</code>），文档明确说明按时间分组的聚合要使用区间列，而不是 <code>date_trunc</code>。</p>
-<h3>元数据才是准确性的来源</h3>
-<p><code>get_semantics</code> 返回定义，但 agent 仍然必须选对度量。没有描述时，<code>Total Spend</code> 和 <code>Customer Lifetime Spend</code> 看起来可以互换，而它们并不是。四类属性承担了大部分工作：对象描述（度量意味着什么、什么时候不该用它，包括非可加度量的聚合行为）、语义定义（复合度量如何组成）、关系（哪些属性是合法的切片维度），以及治理上下文（使 agent 能说明自己看不到什么，而不是把经过筛选的数字当作完整的呈现）。模型描述是 <code>get_models</code> 返回的第一项内容，也是 agent 挑选正确模型的依据。Mosaic 可以从上游目录导入元数据，因此已经在维护的列描述会直接流入，而不必重新录入。</p>
-<h2>部署 agent</h2>
-<p>Strands 是一个用于构建 agent 的小型框架。一个简短的 Python 入口把 Amazon Bedrock 上的 Claude Sonnet 4.6 接到 Mosaic MCP 端点作为工具源。AgentCore runtime 托管该进程。AgentCore Gateway 终止入站请求并转发人类用户的 JWT。</p>
-<p>系统提示词很重要。给 agent 明确的指令，要求在写 SQL 之前遵循三步调用模式：<code>get_projects</code>，然后 <code>get_models</code>，再对目标模型调用 <code>get_semantics</code>。告诉它只引用 <code>get_semantics</code> 返回过的属性和度量名。加入一小节关于目标模型业务术语的说明（<code>Customer Lifetime Spend</code> 是客户全部历史的总计，与当前切片无关。<code>Sports Share of Wallet</code> 是一个比率。以此类推）。这是对准确性回报最大的 prompt 工程。</p>
-<p>为系统提示词中被复用的部分启用 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">Amazon Bedrock prompt caching</a>。<code>get_semantics</code> 的负载达数千 token，且在同一模型版本内不会变化，因此缓存可以降低重复调用时每次调用的 input token 成本。针对稳定语义层的 agent 流量，恰恰是最能从中受益的重复、突发模式。</p>
-<p>在 MCP 路径上有两种效应叠加。第一，<code>get_semantics</code> 返回的是压缩后的业务上下文（度量定义、层次结构、属性形式），而不是原始 schema DDL，因此模型推理的是更小、信噪比更高的负载。Strategy <a href="https://software.strategy.com/blog/your-ai-doesnt-need-more-tokens-it-needs-context">发布的基准测试</a>衡量了提供语义上下文相对于原始 schema 在 input token 和每查询成本上的影响。第二，Bedrock prompt caching 让这份已经压缩的负载在调用之间保持热态。对于重复的 agent 流量，两种效应都在每次调用时生效：模型推理压缩后的上下文，重复调用命中缓存。</p>
-<h2>验证</h2>
-<p>为确认语义层、agent 和身份流按预期工作，我们通过 agent 运行了三类查询，然后以另一个角色对其中一类做了治理复跑。</p>
-<p><strong>查询 1，仅 Aurora。</strong> <em>列出我们在威斯康星州的客户及其所在城市。</em></p>
-<p>agent 针对 Customer 模型生成一条查询，投影 Customer 和 City 的显示形式，并把州筛选为 WI：</p>
-<pre><code>SELECT &quot;customer__customer name&quot;, &quot;city__city name&quot;
-FROM   &quot;Customer&quot;
-WHERE  &quot;state__state name&quot; = 'WI'
-ORDER BY &quot;customer__customer name&quot;</code></pre>
-<p>Mosaic 向 Aurora 下推单条查询并返回这些行。Amazon Redshift 未被触及。</p>
-<p><strong>查询 2，仅 Amazon Redshift。</strong> <em>按销量计算，我们的前 10 个产品是什么？</em></p>
-<pre><code>SELECT &quot;product__product name&quot;, SUM(&quot;Units Sold&quot;) AS &quot;total_units&quot;
-FROM   &quot;Purchase&quot;
-GROUP BY &quot;product__product name&quot;
-ORDER BY &quot;total_units&quot; DESC
-LIMIT 10</code></pre>
-<p>整条查询下推到 Amazon Redshift。Aurora 未被触及。</p>
-<p><strong>查询 3，跨模型。</strong> <em>按生命周期消费额排名前 20 的客户中，哪些还没有加入奖励计划？</em></p>
-<pre><code>SELECT &quot;customer__customer name&quot;,
-       &quot;state__state name&quot;,
-       SUM(&quot;Customer Lifetime Spend&quot;) AS &quot;lifetime_spend&quot;
-FROM   &quot;Customer&quot;
-WHERE  &quot;rewards_account__account_id&quot; IS NULL
-GROUP BY &quot;customer__customer name&quot;, &quot;state__state name&quot;
-ORDER BY &quot;lifetime_spend&quot; DESC
-LIMIT 20</code></pre>
-<p>Mosaic 跨两个模型规划。档案和注册状态来自 Aurora，消费聚合来自 Amazon Redshift，在 Mosaic 引擎内部按 Customer 链接属性连接，然后筛选并取前 N。agent 无需定义 <code>Customer Lifetime Spend</code>。它按名称引用该度量，Mosaic 解析出公式、级别限定符和链接路径。</p>
-<p><strong>治理复跑。</strong> 我们在投影中加入 <code>ssn</code> 运行查询 1，分别以两个调用者身份执行。作为反欺诈分析师，<code>get_semantics</code> 返回了 SSN 属性，查询也返回了这些值。作为市场分析师，<code>get_semantics</code> 返回的 Customer 属性完全不含 <code>ssn</code>，因此 agent 没有可投影的属性。同样的请求、同样的查询文本，一份定义给出两个正确的答案。</p>
-<p><strong>跨接口确认。</strong> 我们通过 Mosaic XMLA 端点在 Excel 中打开同一个认证 Customer 模型，把 <code>State</code> 和 <code>Customer Lifetime Spend</code> 拖到数据透视表上。州级总计与 agent 给出的数字完全一致。</p>
-<p>在运行早期，agent 曾跨客户对钱包份额求平均，这是典型的非可加错误。在度量描述中加一行（<em>“比率型度量。不要跨客户求平均，应基于组件重新计算”</em>）就止住了它。这就是为什么度量描述要写在第一个冲刺而不是最后一个冲刺。</p>
-<h2>扩展到更多数据源</h2>
-<p>同一套链接机制可以扩展到第三个数据源：通过 Amazon Athena 查询存放在 Amazon Simple Storage Service（<a href="https://aws.amazon.com/s3/">Amazon S3</a>）中的点击流事件、<a href="https://aws.amazon.com/s3/features/tables/">Amazon S3 Tables</a>（Amazon S3 的一项能力）上 Apache Iceberg 中的表，或者像 CRM 这样的 SaaS 数据源。在 Mosaic 中对数据源建模，在 Customer 和 Time 上链接它，浏览到购买类的问题就能组合进同一个客户视图，无需第三条流水线。新增数据源不会改变已经存在的度量定义。agent 只能沿建模者声明过的路径行走。<a href="https://aws.amazon.com/lake-formation/">AWS Lake Formation</a> 治理对底层湖表的访问。Mosaic 的 RLS 和 OLS 在其之上叠加生效。</p>
-<p>同一套实时数据源模式适用于 <a href="https://software.strategy.com/support/drivers-and-connectors">Strategy 支持的数据源目录</a>中的每一个系统，涵盖 PostgreSQL、MySQL 这类本地数据库，以及本文已经提到的仓库和引擎。</p>
-<h2>与 Apache Ossie 的互操作性</h2>
-<p>有些工具不会对单一语义层产生依赖。<a href="https://ossie.apache.org/">Apache Ossie（孵化中）</a>正是为这个缺口而设的开放规范，于 2025 年 9 月 23 日以 Open Semantic Interchange 之名发布，现已在 Apache 孵化器中成为 Apache Ossie（孵化中）。它定义了一种厂商中立的格式，用于描述度量、维度、关系和业务概念，使定义可以在工具之间流转而无需重新录入。Strategy 与 Snowflake、Dremio、dbt Labs、Salesforce 等一同参与其中。</p>
-<p>Mosaic 可以导出和导入 Ossie 产物。在 Amazon Redshift 上建模的度量与维度定义可以发布为 Ossie YAML，供支持 Ossie 的工具直接消费，无需 Mosaic 连接器。在别处创作的定义（dbt 中维护的度量、在目录中标准化的维度）则流入 Mosaic，而不是被重新实现。产物是纯文本，因此可以放在 Git 中，像其他代码一样在各个环境之间晋升。</p>
-<p>Apache Ossie 还很早期。在可移植性最重要、保真度要求最低的地方使用它，例如公式、维度、描述和归属元数据，而把治理策略、执行策略和安全配置保留为 Mosaic 原生。</p>
-<h2>部署：Strategy Cloud</h2>
-<p>Mosaic 在 Strategy Cloud 上作为托管服务运行。Strategy 负责运营该应用。到 Amazon Redshift 和 Amazon Aurora 的连接从 Strategy Cloud 的出站网络发起。你在数据源的安全组中将 Strategy Cloud 的 CIDR 加入允许列表。</p>
-<h2>可观测性</h2>
-<p>两个可观测性平面覆盖从问题到答案的整条路径。</p>
-<p><strong>Sentinel 和 Platform Analytics</strong> 覆盖查询侧。Sentinel 捕获近实时的查询时长、慢查询，以及按用户、按工具和按模型的使用情况。</p>
-<p><strong><a href="https://aws.amazon.com/bedrock/agentcore/">AgentCore Observability</a>，Amazon Bedrock AgentCore 的一项能力，</strong> 覆盖 agent 侧：规划步骤、工具调用、每轮时延。Sentinel 和 Platform Analytics 展示请求抵达 Mosaic 之后发生了什么。AgentCore Observability 展示 agent 在抵达之前做了什么。</p>
-<h2>结论</h2>
-<p>可靠的 agentic 分析要把强大的推理、可信的业务上下文和安全的执行结合起来。Amazon Bedrock 提供模型，Strategy Mosaic 提供面向实时数据的受治理语义层，Amazon Bedrock AgentCore 托管 agent 并终止认证。agent 与语义层对话，而不直接与 Amazon Redshift 或 Aurora 对话。schema 演进时，语义模型吸收变更，同一套定义服务于 Power BI、Tableau、notebook、Strands agent 和 Amazon Quick。通过 Apache Ossie，这些定义还能触达不连接 Mosaic 的工具。</p>
-<h3>从哪里入手</h3>
-<ul><li>挑一个当前有争议的度量（NRR、边际贡献、活跃客户是常见候选）。一个在流通中有不止一种定义的度量。</li><li>围绕它写三到五个业务问题。这些就是你的验收测试。</li><li>在 Mosaic 中对你的主数据源建模，让该度量返回一个站得住脚的数字。</li><li>在模型中已有的属性上，一次一个地增量链接更多数据源。</li><li>为 agent 会看到的每一个度量和属性撰写描述。准确性提升最大的地方就在这里。</li><li>通过 Mosaic MCP 接入 Strands agent，运行你的验收问题。</li><li>观察真实查询模式几周，然后把热点部分迁移到内存内。</li><li>把稳定的定义导出为 Apache Ossie 并纳入版本控制。</li></ul>
-<h2>延伸阅读</h2>
-<ul><li><a href="https://software.strategy.com/universal-semantic-layer/mosaic">Strategy Mosaic – Universal Semantic Layer</a></li><li><a href="https://www2.microstrategy.com/producthelp/Current/NextGenAI/en-us/Content/agent_MCPServerIntegration.htm">Interact with Agents, Mosaic Models, and Cubes Using an MCP Server</a></li><li><a href="https://www2.strategy.com/producthelp/Current/AdvancedReportingGuide/WebHelp/Lang_1033/Content/metrics.htm">Strategy Advanced Metrics: Report Data and Calculations</a></li><li><a href="https://www2.strategy.com/producthelp/Current/AdvancedReportingGuide/WebHelp/Lang_1033/Content/Conditional_metrics.htm">Strategy Conditional Metrics</a></li><li><a href="https://www2.strategy.com/producthelp/Current/AdvancedReportingGuide/WebHelp/Lang_1033/Content/Level_metrics__Modifying_the_context_of_data_calcu.htm">Strategy Metric Level Symbols</a></li><li><a href="https://www2.strategy.com/producthelp/Current/AdvancedReportingGuide/WebHelp/Lang_1033/Content/Compound_metrics.htm">Strategy Compound Metrics</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agents-agentcore.html">Amazon Bedrock AgentCore Developer Guide</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">Amazon Bedrock prompt caching</a></li><li><a href="https://ossie.apache.org/">Apache Ossie (incubating)</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">Build a semantic layer for agentic AI on AWS with Stardog and Amazon Bedrock AgentCore</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-semantic-layer-denodo-amazon-bedrock-agentcore/">Build a semantic layer for agentic AI on AWS with Denodo and Amazon Bedrock AgentCore</a></li></ul>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>使用 AtScale 和 Amazon Bedrock AgentCore 在 AWS 上为 agentic AI 构建…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-atscale-and-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-atscale-and-amazon-bedrock-agentcore/</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：使用 AtScale 和 Amazon Bedrock AgentCore 在 AWS 上为 agentic AI 构建语义层 | 原文标题：Build a semantic layer for agentic AI on AWS with AtScale and Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 AtScale 和 Amazon Bedrock AgentCore 在 AWS 上为 agentic AI 构建语义层</h1>
-<p>在<a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">本系列的第一篇文章</a>中，我们使用 Stardog 的知识图，在 <a href="https://aws.amazon.com/rds/aurora/">Amazon Aurora</a> 和 <a href="https://aws.amazon.com/redshift/">Amazon Redshift</a> 之上于 AWS 构建了一个语义层。我们针对该层在 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/">Amazon Bedrock AgentCore</a> 上运行了一个 <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/strands-agents.html">Strands</a> agent。<a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-denodo-and-amazon-bedrock-agentcore/">第二篇文章</a>保留了相同的 customer 360（C360）模式，换成 Denodo 的数据虚拟化平台，并把数据源组合扩展到包含一个本地 PostgreSQL 集群。本文再次沿用相同的 C360 模式，语义层则换成 <a href="https://www.atscale.com/">AtScale</a>。</p>
-<p>AtScale 的形态与前两篇不同。它的语义模型是维度式的（维度、层次结构和度量），而不是三元组图或一组视图。AtScale 用<a href="https://github.com/semanticdatalayer/SML">语义建模语言（Semantic Modeling Language，SML）</a>来创作模型，这是一种在 Git 中做版本控制的、基于 YAML 的开放规范，并从同一个已部署的模型出发，同时通过三种协议对外暴露：SQL、XML for Analysis（XMLA）和 Model Context Protocol（MCP）。Strands agent 与企业已经在用的商业智能（BI）工具，从同一套定义得到同一个计算结果。</p>
-<p>这套模式的其余部分沿袭此前几篇。<a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上的基础模型（本演练使用 Anthropic Claude Sonnet 4.6）负责规划并编写查询。Amazon Bedrock AgentCore 托管 Strands agent，并管理 agent 向 AtScale 出示的出站凭证。适用于调用者的连接、度量定义以及行与列筛选都位于语义层内部，而不是在 prompt 里。</p>
-<p>我们假设你已经熟悉本系列<a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">第一篇文章</a>中的语义层架构：什么是语义层、它用来做什么，以及为什么模型在规划查询时并不拥有那些连接。如果有任何内容对你是新的，第一篇文章已经覆盖了这些基础。</p>
-<p>读完本文，你将了解：</p>
-<ul><li>如何用语义建模语言（SML）对 C360 域建模：数据集、维度与层次结构、事实、度量、计算度量和 perspective，并在 Git 中做版本控制。</li><li>AtScale 如何针对 Amazon Redshift 规划维度查询，以及 AtScale 的自主聚合管理如何加速 agent 生成的查询模式。</li><li>如何通过 AtScale MCP server 把模型暴露给由 AgentCore 托管的 Strands agent，以及如何把该 MCP server 注册到 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html">AgentCore Gateway</a>（Amazon Bedrock AgentCore 的一项能力）。</li><li>人类用户的身份如何从企业身份提供商经 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity.html">AgentCore Identity</a>（Amazon Bedrock AgentCore 的一项能力）传播到 AtScale，以及 AtScale 如何在查询时强制执行基于角色的访问控制（RBAC）、行安全和 perspective。</li><li>如何使用 AtScale Helm chart 和 <a href="https://github.com/AtScaleInc/atscale-k8s-blueprints">AtScale K8S Blueprints</a> 仓库在 <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service（Amazon EKS）</a> 上部署 AtScale。</li></ul>
-<p>本演练的事实来源是 <a href="https://documentation.atscale.com/container/release-notes/C2026.7">AtScale C2026.7 版本</a>。在涉及具体工具名或端点的地方，我们引用 <a href="https://documentation.atscale.com/container/atscale">AtScale 文档</a>。</p>
-<h2>示例：Amazon Redshift 上的 Customer 360</h2>
-<p>前两篇文章中的 customer 360 模式保持不变。一家零售企业的客户记录、订单、产品和奖励计划登记分散在各个系统中，业务用户希望在不了解哪个系统持有哪个事实的前提下提出跨领域问题。我们为本系列第一篇文章改编的 <a href="https://github.com/stardog-union/knowledge-kits/tree/main/examples/c360">Stardog C360 Knowledge Kit</a> 用 Customer、Order、Product 和 Address 实体对这个场景建模，这些实体通过一个整数 <code>cid</code> 连接：它在 customer 表中是主键，在 purchase 表中则是普通列。</p>
-<p>本文与前两篇的不同之处在于数据的物理位置。Stardog 和 Denodo 在查询时跨两个引擎联邦。AtScale 把维度查询规划为原生仓库 SQL，并在每次查询时下推到单个引擎，因此跨引擎数据在上游完成整合。在本演练中，所有分析型 C360 数据都位于 <a href="https://aws.amazon.com/redshift/redshift-serverless/">Amazon Redshift Serverless</a>。Amazon Aurora PostgreSQL 仍是运营侧的记录系统，一条复制路径（<a href="https://aws.amazon.com/dms/">AWS Database Migration Service</a> 或 <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/zero-etl.html">Amazon Aurora 到 Amazon Redshift 的 zero-ETL</a>）让分析副本保持最新。agent 查询的是映射到 Amazon Redshift 表的单个 AtScale 模型。</p>
-<p>Amazon Redshift 中的 schema：</p>
-<table><thead><tr><th><strong>表</strong></th><th><strong>关键列</strong></th></tr></thead><tbody><tr><td>customer</td><td>cid (PK), first_name, last_name, email, ssn, phone, location</td></tr><tr><td>address</td><td>id (PK), city, state, zip, street_name</td></tr><tr><td>credit_card</td><td>id (PK), cid, card_num, card_type</td></tr><tr><td>rewards_account</td><td>id (PK), cid, account_id, create_date</td></tr><tr><td>purchase</td><td>id (PK), pid, purchase_date, quantity, price, cid, card</td></tr><tr><td>product</td><td>id (PK), name, brand, price, dept</td></tr><tr><td>category</td><td>id (PK), dept_name, parent</td></tr><tr><td>vendor</td><td>id (PK), vendor_name, industry</td></tr></tbody></table>
-<p>八张表中九个值得关注的列。<code>cid</code> 把客户记录与购买关联起来。<code>pid</code> 把购买关联到产品。<code>dept</code> 把产品关联到类别。所有分析型数据都在 Amazon Redshift 中，因此连接会下推为原生 SQL，而不在语义层或抽取、转换、加载（ETL）流水线中解析。</p>
-<p>一个能跑通整个模型的代表性问题是：<em>按生命周期消费额排名前 20 的客户中，哪些还没有加入奖励计划？</em> 这就是 Denodo 那篇中的自动注册问题，保留下来是为了让跟随本系列的读者看到同一个请求由不同的语义层作答。它涉及客户档案、地址、购买历史和注册状态：每个客户跨四个逻辑实体一行。</p>
-<h2>本文用到的 AtScale 术语</h2>
-<p>AtScale 把语义层实现为数据仓库之上的维度模型。AtScale 文档和 SML 规范使用一组特定的原语，它们会在本文中反复出现。在我们进入演练之前，一份简短的参考会很有用。</p>
-<ul><li><strong>语义建模语言（SML）–</strong> 一种用于描述语义模型的、基于 YAML 的开放规范。每个 SML 对象（模型、数据集、维度、层次结构、度量、计算、perspective、行安全）都是一个 YAML 文件。规范位于 <a href="https://github.com/semanticdatalayer/SML">github.com/semanticdatalayer/SML</a>。</li><li><strong>模型（Model）–</strong> 顶层产物。模型引用数据集、维度、事实和度量，并通过 AtScale 查询引擎暴露它们。</li><li><strong>维度与层次结构 –</strong> 维度对相关属性（customer、product、date）分组。维度内部的层次结构把这些属性组织成级别（product → category → department，或 year → quarter → month → day）。</li><li><strong>事实与度量 –</strong> 事实是一个数据集，保存可度量的事件，并按键列与维度连接。度量是从事实列聚合出来的量，例如收入用 <code>SUM(price * quantity)</code>。</li><li><strong>计算（Calculation）–</strong> 以针对其他度量的公式表达的派生度量。</li><li><strong><a href="https://documentation.atscale.com/container/creating-and-sharing-cubes/creating-cubes/modeling-perspectives/working-with-perspectives">Perspective</a></strong> – 模型中可发布、暴露给特定角色或组的子集。AtScale 通过 perspective 控制调用者能看到哪些维度和度量。</li><li><strong><a href="https://documentation.atscale.com/container/creating-and-sharing-cubes/creating-cubes/modeling-row-security-objects">行安全（Row security）</a></strong> – 一种模型对象，根据调用者的身份或属性筛选返回给调用者的行。</li><li><strong><a href="https://documentation.atscale.com/container/managing-atscale/managing-aggregates">自主聚合管理</a> –</strong> AtScale 观察各个消费者之间的查询模式，当某种模式的成本高到值得物化时，就在仓库中物化汇总表。后续命中该模式的查询会被透明地路由到聚合。</li><li><strong>Design Center –</strong> AtScale 的创作界面。建模者通过可视化画布或文本编辑器编辑 SML。无论哪种方式，磁盘上的产物都是 Git 中的 SML YAML。</li><li><strong><a href="https://documentation.atscale.com/container/connect-integrate/connecting-with-ai">AtScale MCP server</a></strong> – 产品内置的 MCP 端点，位于 <code>&lt;atscale-host&gt;/mcp</code>，把语义模型暴露给任何 MCP 客户端。</li></ul>
-<p>在需要更多细节的地方，<a href="https://documentation.atscale.com/container/atscale">AtScale 文档</a>和 <a href="https://github.com/semanticdatalayer/SML">SML 规范</a>是权威参考。</p>
-<h2>参考架构</h2>
-<p>运行时分为入站路径和出站路径，形态与 Stardog 和 Denodo 那两篇一致。</p>
-<p><strong>入站。</strong> 客户端通过 AgentCore Gateway 把用户的问题发送给 Strands agent。Gateway 针对企业身份提供商（IdP）校验标识人类用户的 JSON Web Token（JWT），然后把请求路由到 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html">AgentCore runtime</a>（Amazon Bedrock AgentCore 的一项能力），由后者托管 agent 进程。agent 调用 Amazon Bedrock 上的 Claude Sonnet 4.6 来解释 prompt 并规划查询。</p>
-<p><strong>出站。</strong> 当 agent 决定查询语义模型时，它向 AtScale MCP server 发起一次工具调用。AgentCore Gateway 充当出站代理：AtScale MCP server 在 Gateway 上注册为一个 MCP target，因此工具调用经由 Gateway 路由，并由 AgentCore Identity 在这一跳注入凭证。AtScale 的 MCP 端点接受两种凭证：bearer token（用于开发和单一身份场景），或由 AtScale 内置 Keycloak 实例签发的 OAuth 2.0 访问令牌（生产路径）。AtScale 引擎校验令牌，把调用者解析为某个 AtScale 角色，并针对已部署的 C360 模型规划查询。</p>
-<p>查询请求向下穿过 AtScale 引擎，结果再向上返回。没有预先物化跨数据库连接的 ETL 作业。Amazon Redshift 中的分析副本是语义模型的事实来源，由上游复制路径从 Aurora 保持新鲜。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21303-1-1.png" alt="展示客户端、Amazon Bedrock AgentCore、AtScale 与 Amazon Redshift Serverless 之间的入站认证路径和出站查询路径的架构图"></p>
-<p>图 1：客户端、Amazon Bedrock AgentCore 各组件、AtScale MCP server、AtScale 引擎与 Amazon Redshift Serverless 之间的入站认证路径和出站查询路径</p>
-<p>这套架构在身份处理上是刻意有主张的。Gateway 和 Identity 在运行时的边缘持有令牌。agent 看不到它们，只负责编排对话和工具调用。</p>
-<h2>构建语义层</h2>
-<p>AtScale 的语义模型是一组在 Git 中做版本控制的 SML 对象（数据集、维度、事实、度量、计算、perspective、行安全）。一个可用模型具有数据工程师能从星型 schema 认出来的形状，但每个对象都以 YAML 表达而不是数据定义语言（DDL），并且每个对象都是单独的文件。构建 C360 模型分三遍进行：在 Amazon Redshift 表之上的数据集、维度与层次结构及其间的连接，以及表达业务逻辑的度量与计算。</p>
-<p><strong>数据集。</strong> 每张 Amazon Redshift 表都变成一个 SML 数据集。数据集声明物理连接、schema、表，以及 AtScale 要暴露的列。数据集可以在 Design Center 中可视化创作，也可以直接作为 YAML 编辑。两种界面写入的是同一个 SML 文件到 Git。</p>
-<p><strong>维度与层次结构。</strong> C360 模型有七个维度。<code>dim_customer</code> 保存客户档案属性，并通过 location 键连接到 <code>dim_address</code>，通过 <code>cid</code> 连接到 <code>dim_rewards</code>。<code>dim_product</code> 保存产品属性，并通过 <code>dim_category</code> 把它们组织成一个层次结构。<code>dim_date</code> 支持基于日期的分析。<code>dim_vendor</code> 按供应商对产品分组。<code>dim_rewards</code> 为每个已注册客户保存一行，包含 <code>account_id</code> 和 <code>create_date</code>，并从 <code>dim_customer</code> 雪花开出，因此从未注册的客户在注册属性上呈现为空。</p>
-<p>AtScale 的层次结构原语是产品到类别关系的简洁表达。针对模型的查询可以在没有递归 SQL 公共表表达式的情况下遍历 <code>product → category → parent category</code>，大语言模型（LLM）看到的是单条维度路径，而不是一张连接图。</p>
-<p>产品层次结构的一个代表性 SML 片段：</p>
-<pre><code># dim_product.yml
-unique_name: dim_product
-object_type: dimension
-label: Product
-hierarchies:
-  - unique_name: product_category
-    label: Product Category
-    levels:
-      - unique_name: department
-        dataset: category
-        key_columns: [dept_name]
-      - unique_name: category
-        dataset: category
-        key_columns: [id]
-      - unique_name: product
-        dataset: product
-        key_columns: [id]
-secondary_attributes:
-  - unique_name: brand
-  - unique_name: product_name
-    key_column: name</code></pre>
-<p><strong>事实与度量。</strong> C360 的事实表是 <code>fact_purchase</code>，映射到 Amazon Redshift 的 purchase 表。它在 <code>cid</code> 上连接到 <code>dim_customer</code>，在 <code>pid</code> 上连接到 <code>dim_product</code>，在 <code>purchase_date</code> 上连接到 <code>dim_date</code>。度量来自事实：<code>total_revenue</code> 为 <code>SUM(price * quantity)</code>，<code>order_count</code> 为 <code>COUNT(id)</code>，<code>units_sold</code> 为 <code>SUM(quantity)</code>。</p>
-<p><strong>计算度量。</strong> 业务逻辑存在于模型中，而不是查询里。<code>customer_lifetime_value</code> 是在客户粒度上求值的 <code>total_revenue</code>，即同一个公式应用于事实的更粗切片。像 <code>big_spender</code> 和 <code>spend_tier</code> 这样的分段是带条件表达式的计算度量：</p>
-<pre><code># big_spender.yml
-unique_name: big_spender
-object_type: metric
-expression: |
-  CASE WHEN SUM(price * quantity) &gt; 10000
-  THEN 'Yes' ELSE 'No' END</code></pre>
-<p>表达式在查询时求值。一个列只能在一个粒度上保存一个答案。表达式会针对查询所问的任何切片重新计算：按客户、按客户和年份，或按地区。当定义变化时（阈值从 $10,000 变为 $15,000），更新发生在一个 YAML 文件里，作为 pull request 接受评审，并通过 AtScale CI hook 部署。每个消费者在下一次查询时都会取到新定义，无论是 agent、走 XMLA 的 Excel，还是走多维表达式（MDX）的 Tableau。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21303-2.png" alt="AtScale Design Center 中的 C360 模型，维度和 fact_purchase 表通过维度到事实以及雪花关系相连"></p>
-<p>图 2：AtScale Design Center 中的 C360 模型。dim_customer、dim_address、dim_rewards、带产品到类别层次结构的 dim_product、dim_date、dim_vendor 以及 fact_purchase，通过橙色连线相连，表示维度到事实关系和雪花关系。计算度量（customer_lifetime_value、big_spender、spend_tier）作为从事实引用的独立节点出现</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21303-3.png" alt="同一个 C360 模型以并排的 SML YAML 文件呈现，每个维度、度量和计算各一个文件，并在 Git 中做版本控制"></p>
-<p>图 3：同一个模型以并排的 SML YAML 呈现，每个维度、度量和计算各一个文件，在 Git 仓库中做版本控制</p>
-<p>图 3 右侧的产物不是对模型的描述。它<em>就是</em>模型。Design Center 的可视化画布和 YAML 编辑器是同一个文件的两种视图，而 Git diff 是每一次变更的权威记录。这些文件遵循开源 SML 规范，因此仓库在没有引擎的情况下也能读懂。</p>
-<p>部署之后，模型可以同时通过 SQL（面向基于 JDBC 的 BI 工具和 notebook）、XMLA（面向 Excel 和 Power BI）以及 MCP（面向 agent）访问。<code>total_revenue</code> 计算对 Claude Sonnet 4.6 返回的数字，与指向同一个 XMLA 端点的 Excel 数据透视表得到的数字相同。我们在验证一节确认了这一致性。</p>
-<h2>AtScale 如何规划并下推查询</h2>
-<p>当 agent 针对语义模型提问时，由 AtScale 的 AI Computation Engine（ACE）负责规划。无论是来自 MCP <code>run_query</code> 工具的维度 SQL 请求，还是来自 Excel 的 XMLA 请求，查询经过的步骤都相同。只有前端的解析器不同。</p>
-<p>以自动注册问题为例：<em>按生命周期消费额排名前 20 的客户中，哪些还没有加入奖励计划？</em> agent 在 <code>describe_model</code> 返回的模型上下文提示下，针对 C360 模型组合出一条维度 SQL 查询。ACE 把该查询解析为逻辑计划，把维度引用解析到底层的 <code>fact_purchase</code>、<code>dim_customer</code>、<code>dim_address</code> 和 <code>dim_rewards</code> 数据集，应用调用者所受的任何行安全策略，然后针对 Amazon Redshift 规划物理查询。</p>
-<p>在物理规划阶段有两件事发生，使 AtScale 区别于手写流水线。第一，连接作为原生 SQL 连接下推到 Amazon Redshift，而不是在语义层中物化。Amazon Redshift 优化器看到的是一条带筛选和聚合的 SQL 语句，并据此执行。第二，AtScale 的聚合管理器在其注册表中检查是否存在匹配该查询模式的预构建聚合。如果存在按正确粒度以客户分组的购买的汇总表，AtScale 会重写查询去命中该聚合，而不是扫描 <code>fact_purchase</code>。查询返回所需的时间只是针对原始事实表的一小部分，而 agent 和建模者都不需要做任何手工路由工作。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21303-4.png" alt="AtScale 规划器检查其聚合注册表，并把 agent 的查询重写为命中 Amazon Redshift 中的汇总表"></p>
-<p>图 4：agent 的维度查询进入 AtScale 规划器。规划器检查其聚合注册表，找到与该查询模式匹配的聚合，重写查询以命中 Amazon Redshift 中的汇总表，并返回结果。下方路径展示同一个查询在没有匹配聚合时直接命中 fact_purchase</p>
-<p>聚合管理器是让 agent 驱动的工作负载在经济上可行的关键。LLM 驱动的分析发出的查询比人类分析师更多，而像 <em>告诉我一些关于我们销售的有趣发现</em> 这样的开放式 prompt 可能催生十几条查询。AtScale 观察查询模式，在仓库本身（而不是独立的缓存）中物化聚合，并透明地路由匹配的查询。聚合的创建由需求定义，依据的是跨消费者的实际观察流量，而不只是 agent。</p>
-<p>查询的审计记录同时捕获 LLM 写出的维度 SQL 和 AtScale 重写后的仓库原生 SQL，以及是否由聚合服务了该查询。操作者可以通过 Design Center 中的 <a href="https://documentation.atscale.com/container/managing-atscale/monitoring-queries/using-the-queries-tab">AtScale Queries 页面</a>查看该记录，后面的治理一节正是建立在其之上。</p>
-<h2>关于多源与互操作性的一点说明</h2>
-<p>AtScale 通过 JDBC 连接数据仓库。C360 演练针对 Amazon Redshift Serverless。同一个 SML 模型在 Snowflake、Databricks 和 Google BigQuery 上同样可用，AtScale 为每一种都记录了连接方式。换连接时改变的是 AtScale 生成的 SQL 方言，而不是 Git 中的 SML。</p>
-<p>有一个架构特性值得明确说明，因为它与本系列前两篇不同。单条 AtScale 查询只在一个仓库引擎内解析。如果 C360 模型跨两个仓库（比如维度在 Snowflake、事实在 Amazon Redshift），那么一条同时触及两者的查询必须以两种方式之一来调和。第一种是在上游，通过复制路径把分析副本整合到一个仓库中。第二种是借助仓库自身，使用引擎级的联邦能力，例如用 <a href="https://docs.aws.amazon.com/redshift/latest/dg/c-using-spectrum.html">Amazon Redshift Spectrum</a> 查询 <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service（Amazon S3）</a>，或者使用两个引擎都能读取的 <a href="https://iceberg.apache.org/">Apache Iceberg</a> 表。AtScale 规划维度查询并把它下推到一个引擎。跨引擎的故事在更下一层。</p>
-<p>这个选择有利有弊。它排除了 Stardog 和 Denodo 在查询时所做的实时跨引擎联邦，但让 AtScale 的规划器和聚合管理器得以在单引擎执行模型上工作，而这正是聚合这套能力在大规模下承载关键作用的原因。已经采用以仓库为中心、通过变更数据捕获（CDC）流水线从运营系统同步数据的企业，可以直接复用那套架构。而那些答案需要跨引擎实时联邦的企业，更适合前两篇文章中的语义层。</p>
-<h2>受治理访问：身份传播与运行时强制执行</h2>
-<p>Customer 360 数据是受监管的。部分用户（HR、反欺诈）需要看到社会保障号和卡号这类个人可识别信息。大多数用户（市场、数据分析）则不能。行级筛选按地理区域限制分析师，而按用户的审计轨迹必须从人类的浏览器一直保留到仓库。</p>
-<p>AtScale 在语义层强制执行这些要求，在任何查询抵达仓库之前。无论调用者是经由 MCP 的 Strands agent、经由 XMLA 用 Excel 的分析师，还是经由 JDBC 的 notebook，强制执行都完全相同。SML 中的一个行安全对象、一个 perspective、一组角色绑定，应用于模型的每个消费者。</p>
-<h3>从用户到 AtScale 的身份传播</h3>
-<p>这条链的形状与 Denodo 那篇中的一致，只是最后一跳落在 AtScale 引擎而不是继续到仓库。</p>
-<ul><li>人类用户针对企业 IdP 向应用完成认证，并获得一个 JWT。</li><li>应用把该 JWT 作为 bearer token，经 AgentCore Gateway 转发给 Strands agent；Gateway 校验它（签发者、受众、签名）并把请求路由到 AgentCore runtime。</li><li>当 agent 向 AtScale MCP server 发起工具调用时，AgentCore Identity 提供由 AtScale 内置 Keycloak 签发的 OAuth 2.0 访问令牌，并映射到人类用户的身份。AtScale 的凭证不会进入 agent 代码。</li><li>AtScale MCP server 接受该 OAuth token。AtScale 引擎针对 Keycloak 校验它，把调用者解析为某个 AtScale 角色，并在应用调用者的行安全约束和 perspective 绑定的情况下规划查询。访问仓库时使用来自 AWS Secrets Manager 的 AtScale 连接身份。</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21303-5.png" alt="从人类用户经 AgentCore Gateway、Runtime 和 Identity 到 AtScale MCP server 与引擎的身份链"></p>
-<p>图 5：从人类用户经 AgentCore Gateway、AgentCore runtime、AgentCore Identity、AtScale MCP server 到 AtScale 引擎的身份链，终止于语义层的强制执行点。到仓库的一跳是使用 AtScale 凭证的服务账号连接</p>
-<h3>RBAC、行安全与 perspective</h3>
-<p>AtScale 把访问控制表达为三个可组合的原语。RBAC 根据 Keycloak 声明为调用者分配角色。行安全是一个模型对象，根据调用者的身份或属性筛选返回给调用者的行。perspective 是模型中可发布、暴露给特定角色或组的子集。</p>
-<p>对于 C360 演练，我们定义两个角色。</p>
-<ul><li><code>hr_user</code>：可以看到完整的 C360 模型，包括 <code>ssn</code> 和 <code>card_num</code>。</li><li><code>marketing_user</code>：可以看到 Marketing perspective，它在模型层隐藏了 <code>ssn</code> 和 <code>card_num</code>。</li></ul>
-<p>当 <code>marketing_user</code> 提出一个引用 <code>ssn</code> 的问题时，agent 的 <code>describe_model</code> 调用返回 Marketing perspective，其中不包含 <code>ssn</code>。agent 没有可投影的属性。行级筛选以同样的方式组合：一个按州限定客户范围的 SML 行安全对象，即可把调用者限制在特定的行集合内，而 agent 的 prompt 完全不需要改动。</p>
-<h3>审计保真度</h3>
-<p>通过 AtScale 引擎的查询会连同以下信息一起记录：调用者身份、模型、LLM 生成的维度 SQL、Amazon Redshift 实际看到的 AtScale 翻译后的下推 SQL、所应用的安全策略、是否由聚合服务了该查询，以及返回的行数。由于记录同时捕获了模型写出的查询和仓库执行的查询，审计者可以把一个答案从人类的问题一直追溯到产出该数字的 SQL。本系列的第一篇和第二篇都无法在一条记录中同时捕获两种形态的查询。</p>
-<p>一条受治理查询的审计记录大致如下：</p>
-<pre><code>{
-  &quot;timestamp&quot;: &quot;2026-08-31T10:34:56Z&quot;,
-  &quot;user_identity&quot;: &quot;mary_major@example.com&quot;,
-  &quot;user_role&quot;: &quot;marketing_user&quot;,
-  &quot;semantic_model&quot;: &quot;Customer_360&quot;,
-  &quot;question&quot;: &quot;Top 10 customers by revenue in California&quot;,
-  &quot;generated_sql&quot;: &quot;SELECT full_name, total_revenue FROM ...&quot;,
-  &quot;translated_pushdown_sql&quot;: &quot;SELECT ... FROM redshift ...&quot;,
-  &quot;security_policies_applied&quot;: [&quot;regional_row_security&quot;],
-  &quot;served_from&quot;: &quot;aggregate&quot;,
-  &quot;execution_time_ms&quot;: 850,
-  &quot;rows_returned&quot;: 10
-}</code></pre>
-<p><code>generated_sql</code> 和 <code>translated_pushdown_sql</code> 这两个字段是让轨迹完整的关键：审计者既能看到 LLM 针对语义模型组合的查询，也能看到仓库实际执行的查询。</p>
-<h2>通过 AtScale MCP server 暴露该层</h2>
-<p><a href="https://documentation.atscale.com/container/connect-integrate/connecting-with-ai">AtScale MCP server</a>是 AtScale 发行版的一个组件，暴露在 <code>&lt;atscale-host&gt;/mcp</code>。它在 <a href="https://documentation.atscale.com/container/release-notes/C2026.7/new-features-and-improvements">AtScale C2026.7 版本</a>中正式可用，并遵循标准的 <a href="https://modelcontextprotocol.io/">Model Context Protocol</a>。任何兼容 MCP 的客户端（AgentCore runtime 中的 Strands agent、Claude、ChatGPT、Cursor、VS Code）都可以连接到同一个端点、访问同一个已部署模型。</p>
-<p>server 暴露一组限定于查询语义模型的工具。AtScale 文档按版本发布工具参考。对 agent 驱动的工作负载最重要的工具是：</p>
-<ul><li><code>list_models</code>：枚举调用者可见的模型，并列出描述维度如何映射到事实的列组。</li><li><code>describe_model</code>：返回所选模型的维度、层次结构、度量、计算和业务描述。这就是 agent 系统提示词在开始组合查询之前所加载的负载。</li><li><code>search_columns</code>：对模型列做关键词搜索。当完整的 <code>describe_model</code> 负载会占用 LLM 上下文窗口过多时很有用。</li><li><code>validate_query</code>：在不针对仓库执行的情况下，检查一条维度 SQL 语句是否与模型兼容。这让 agent 可以在发出任何会被 Amazon Redshift 计费的东西之前，低成本地迭代查询。</li><li><code>run_query</code>：针对模型执行一条维度 SQL 语句并返回行。</li><li><code>run_queries</code>：批量执行多条语句，适用于 agent 并行发出若干探索性查询的开放式 prompt。</li><li><code>get_version</code>：报告 MCP server 版本，使客户端可以决定是否缓存模型 schema。</li></ul>
-<p>AtScale MCP 端点接受两种认证模式。<strong>bearer-token</strong> 路径使用从 Design Center 铸造的 API token。每个请求都以 token 所有者的身份运行，这条路径适合概念验证或单一身份的服务。<strong>OAuth 2.0</strong> 路径使用 AtScale 内置的 Keycloak，客户端预先配置，其 ID 恰为 <code>atscale-mcp</code>，记载在 AtScale 的 <a href="https://documentation.atscale.com/container/connect-integrate/connecting-with-ai/connect-ai-applications/claude">Connecting with Claude</a> 页面。AgentCore Gateway 代表 agent 出示访问令牌，AtScale 引擎针对 Keycloak 校验它，下游的策略评估使用人类用户的身份。</p>
-<p>把 AtScale MCP server 注册为 AgentCore Gateway target 遵循标准的 Gateway MCP target 流程。前面列出的工具对 agent 来说就是普通工具，由 AgentCore Identity 在 Gateway 这一跳处理凭证。</p>
-<h2>侧栏：用 AI 辅助建模扩展模型</h2>
-<p>AtScale MCP server 暴露的是限定于查询的工具，而 AtScale 一直在用创作侧工具扩展 MCP 面，让 agent 能探查仓库 schema、从源元数据生成候选 SML 模型、按规范校验 SML，并把结果提交到 Git。这种模式——agent 塑造语义模型而不仅仅是读取它——天然适合 Claude Code 和 Cursor 的工作流。在这些工作流中，数据工程师与 LLM 协作，在一个新数据集上引导出模型。</p>
-<p>AtScale 把这一方向归为三项能力。<strong>Semantic Discovery Engine</strong> 扫描仓库 schema、查询历史和血缘，推断候选的连接、层次结构和度量定义。<strong>Model Recommendation System</strong> 根据观察到的查询模式建议维度、度量和关系。<strong>Governed Feedback Loop</strong> 把对 AI 建议的人工评审保留在 <code>SML-and-Git</code> 工作流中，使变更可版本化、可审计。</p>
-<p>发布时点可用的具体工具有 AtScale MCP 工具参考文档记载。请查看<a href="https://documentation.atscale.com/container/release-notes/C2026.7/new-features-and-improvements">当前版本的 release notes</a>以了解哪些已正式可用、哪些仍在预览。本文剩余部分讨论消费侧路径，即 agent 查询已部署的模型，这也是如今生产环境 C360 工作流所依赖的部分。</p>
-<h2>部署并运行 agent</h2>
-<p><a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/strands-agents.html">Strands Agents</a>是一个用于构建 agent 的小型框架。一个简短的 Python 入口把 Amazon Bedrock 上的 Claude Sonnet 4.6 接到 AtScale MCP server 作为工具源。AgentCore runtime 托管该进程。AgentCore Gateway 终止入站请求，并通过 AgentCore Identity 持有出站的 AtScale 凭证。Amazon Bedrock 上基础模型的可用性因 AWS Region 而异。当前列表见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">各模型的区域可用性</a>。</p>
-<p>系统提示词很重要。AtScale 文档和 AtScale 语料中的参考 demo 一致推荐 agent 采用三步调用模式：先 <code>list_models</code> 看有什么可用，再对目标模型调用 <code>describe_model</code> 把维度和度量加载进上下文，然后才 <code>run_query</code>（如果查询迭代成本高，先 <code>validate_query</code>）。理由在于 LLM 不应编造列名或度量名，而只应引用 <code>describe_model</code> 返回过的内容。系统提示词应明确说明这一点，并加入一小节关于目标模型业务术语的说明（<code>total_revenue</code> 指销售金额，不是件数），以便 agent 把用户问题映射到正确的度量。</p>
-<p>为系统提示词中被复用的部分启用 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">Amazon Bedrock prompt caching</a>。<code>describe_model</code> 的负载达数千 token，且在同一模型版本内不会变化，因此缓存它可降低重复调用时每次查询的 input token 成本。缓存点配置是 <code>BedrockModel</code> 对象上的一个请求参数。当前参数名请参见 Strands 文档。</p>
-<h2>验证</h2>
-<p>为确认语义层、agent 和身份流按预期工作，我们通过 agent 运行了三个查询，然后在另一个角色下对其中一个做了治理复跑。以下行为应当能在可用的部署中复现。</p>
-<h3>查询 1，单维度</h3>
-<p><em>列出我们在威斯康星州的客户及其所在城市。</em></p>
-<p>agent 针对 C360 模型生成一条维度 SQL 查询，从 <code>dim_customer</code> 和 <code>dim_address</code> 中选择 <code>first_name</code>、<code>last_name</code> 和 <code>city</code>，条件为 <code>state = 'WI'</code>。AtScale 的规划器把维度路径解析到 Amazon Redshift 中的 <code>customer</code> 和 <code>address</code> 表，下推一条 SQL 语句并返回行。</p>
-<h3>查询 2，带聚合命中的聚合</h3>
-<p><em>按销量计算，我们的前 10 个产品是什么？</em></p>
-<p>agent 按产品聚合 <code>units_sold</code> 并按降序排序。AtScale 的聚合管理器找到一个匹配的<a href="https://documentation.atscale.com/container/managing-atscale/managing-aggregates/about-aggregates/when-the-atscale-engine-creates-demand-defined-aggregates">需求定义聚合</a>，把查询重写为命中 Amazon Redshift 中的汇总表，而不是扫描 <code>fact_purchase</code>。Queries 页面并排显示 LLM 生成的维度 SQL 和聚合路由后的仓库 SQL。</p>
-<h3>查询 3，跨域</h3>
-<p><em>按生命周期消费额排名前 20 的客户中，哪些还没有加入奖励计划？</em></p>
-<p>agent 生成一条连接 <code>dim_customer</code>、<code>dim_address</code>、<code>dim_rewards</code> 和 <code>fact_purchase</code> 的查询，并按客户聚合 <code>customer_lifetime_value</code>。查询限定 <code>dim_rewards.account_id</code> 为空的客户。在 <code>cid</code> 上对 <code>dim_customer</code> 的左连接保留了从未注册的客户，他们在注册记录上呈现为空。agent 返回按生命周期消费额排序的前 20 名。AtScale 的规划器把这些连接解析为针对 Amazon Redshift 的原生 SQL，并返回排名列表。<code>customer_lifetime_value</code> 的公式不是 LLM 需要自己发明的。它是在 <code>customer_lifetime_value.yml</code> 中定义一次、并在查询中按名称引用的计算度量。</p>
-<h3>治理复跑</h3>
-<p>我们以两个不同的调用者身份运行查询 1 的一个变体，在投影中加入 <code>ssn</code>（<em>给我看看我们在威斯康星州的客户及其 SSN</em>）。作为 <code>hr_user</code>，<code>describe_model</code> 返回完整的 C360 模型，agent 组合查询，结果集包含 SSN 值。作为 <code>marketing_user</code>，<code>describe_model</code> 返回 Marketing perspective，其中不暴露 <code>ssn</code>。agent 没有可投影的属性，因此返回一个不含 SSN 的答案。两次运行之间除了调用者身份之外没有任何变化。查询文本、agent 代码、MCP server、AtScale 引擎和 Amazon Redshift 都未被改动。</p>
-<h3>跨消费者确认</h3>
-<p>我们通过 AtScale XMLA 端点在 Excel 中打开同一个 C360 模型，把 <code>Customer.State</code> 和 <code>Total Revenue</code> 拖到数据透视表上。州级总计与 agent 针对等价问题返回的结果完全一致，精确到数字。</p>
-<h2>扩展到更多数据源</h2>
-<p>为 C360 模型新增一个数据源是建模工作，而不是集成工作。假设客户支持团队要求模型包含工单量，以便 agent 能回答 <em>我们的哪些高消费客户在过去 30 天内提交了支持工单？</em> 步骤是：</p>
-<ul><li>使用与运营表相同的复制模式，把支持工单数据落到 Amazon Redshift，与其他 C360 表放在一起。</li><li>新增一个 SML 数据集，把新表映射到一个逻辑对象。</li><li>新增或扩展一个维度（<code>dim_ticket</code>），并在 <code>cid</code> 上加入与 <code>dim_customer</code> 的连接。</li><li>加入模型需要的任何新度量（<code>open_ticket_count</code>、<code>avg_resolution_time</code>）。</li><li>提交 SML 变更，作为 pull request 评审，并通过 AtScale CI hook 部署。</li></ul>
-<p>agent 代码和 AgentCore 配置都不需要改动。agent 下一次调用 <code>describe_model</code> 时，就会看到新的维度和度量，并能针对它们组合问题。同样的模式适用于不同的仓库。如果数据源落在 Snowflake 或 Databricks 而不是 Amazon Redshift，连接就是一个带 Snowflake 或 Databricks 连接的新 SML 数据集，查询会按前面多源说明所述的在该引擎内解析。</p>
-<h2>部署：Amazon EKS 上的 AtScale</h2>
-<p>AtScale 运行在 Kubernetes 上，AWS 上的参考部署是 <a href="https://aws.amazon.com/eks/">Amazon EKS</a>。AtScale 在 <code>oci://docker.io/atscaleinc/atscale</code> 提供<a href="https://documentation.atscale.com/container/installation-guides/kubernetes/installing-atscale">官方 Helm chart</a>，<a href="https://github.com/AtScaleInc/atscale-k8s-blueprints">AtScale K8S Blueprints</a> 仓库则提供基础设施即代码（IaC）脚手架，用于搭起一个包含 AtScale 所需组件的 EKS 集群：一个 ingress controller、一个用于 AtScale 元数据库的持久存储、一个用于查询缓存的 Redis 实例，以及一个为身份联邦配置好的 AtScale Keycloak 实例。</p>
-<p>EKS 上的 AtScale 部署运行在一小组 Kubernetes pod 上。<code>atscale-engine</code> 是核心的查询规划器与执行器。<code>atscale-mcp-server</code> 是 agent 对话的 MCP 端点。<code>atscale-keycloak</code> 是内置的身份提供商，联邦到 Amazon Cognito、Okta、Azure Active Directory 以及其他符合 OpenID Connect（OIDC）的 IdP。辅助 pod 负责 SML API 与 Design Center UI（<code>atscale-sml-api</code>、<code>atscale-sml-web</code>）、PostgreSQL 元数据存储（<code>atscale-db</code>）、查询缓存（<code>atscale-redis</code>）以及 ingress（<code>atscale-ingress</code>，通常前置一个 AWS Network Load Balancer）。</p>
-<p>C360 应用（一个聊天 UI，或调用 agent 的客户端库）可以在同一个 EKS 集群中以自己的 namespace 运行。它使用 <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">IAM role for service account（IRSA）</a>访问 Bedrock 和 <a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a>，而无需内嵌凭证。</p>
-<p>网络是标准做法：AtScale 通过虚拟私有云（VPC）端点或一条允许 AtScale namespace 出站到 Amazon Redshift 的安全组规则访问 Amazon Redshift，人类用户则通过 ingress 负载均衡器访问应用。</p>
-<p>除自管理的 EKS 之外，AtScale 还提供云部署选项。当前的产品与 AWS 可用性请查看 <a href="https://www.atscale.com/">AtScale 网站</a>。本文剩余部分假定采用前面描述的自管理模式。</p>
-<h2>结论</h2>
-<p>agentic 访问企业数据需要三样东西协同工作：一个能规划并生成查询的基础模型、一个在实时仓库之上计算受治理且具业务含义答案的语义层，以及一个托管 agent 并管理身份流的运行时。Amazon Bedrock、AtScale 和 Amazon Bedrock AgentCore 各自承担其中一个角色。</p>
-<p>agent 与语义层对话，而不直接与仓库对话。维度、层次结构、度量、perspective 和行安全都以 SML 存在 Git 中。当 schema 漂移或治理规则变化时，更新发生在一个文件里，每个消费者（agent、Excel、Tableau、Power BI）在下一次查询时就会取到。</p>
-<h3>从哪里入手</h3>
-<p>大多数把这件事做成的团队都是从小处开始，然后扩展。</p>
-<ul><li>挑一个横跨两到三个数据源、如今回答起来比应有的时间更长的流程。</li><li>写下该流程需要回答的 3–5 个问题。这些就是语义层在第一天上必须支持的查询。</li><li>使用 <a href="https://aws.amazon.com/dms/">AWS Database Migration Service</a> 或 <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/zero-etl.html">Amazon Aurora zero-ETL</a> 把运营数据整合进 Amazon Redshift（或你选择的仓库）。</li><li>在 Design Center 中从仓库 schema 引导出 SML，再针对能力问题（competency questions）精炼它。</li><li>用 AtScale Helm chart 和 AtScale K8S Blueprints 在 Amazon EKS 上部署 AtScale，把 AtScale MCP server 注册为 AgentCore Gateway target，并通过它接入一个 Strands agent。</li></ul>
-<h2>延伸阅读</h2>
-<ul><li>AtScale MCP server 文档：<a href="https://documentation.atscale.com/container/connect-integrate/connecting-with-ai">Connect to AtScale with AI</a></li><li>AtScale C2026.7 release notes：<a href="https://documentation.atscale.com/container/release-notes/C2026.7">documentation.atscale.com</a></li><li>AtScale MCP 工具参考（随 AtScale 文档按版本发布）</li><li>AtScale K8S Blueprints：<a href="https://github.com/AtScaleInc/atscale-k8s-blueprints">github.com/AtScaleInc/atscale-k8s-blueprints</a></li><li>语义建模语言规范：<a href="https://github.com/semanticdatalayer/SML">github.com/semanticdatalayer/SML</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/">Amazon Bedrock AgentCore Developer Guide</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">Amazon Bedrock prompt caching</a></li><li><a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/strands-agents.html">Strands Agents on AWS Prescriptive Guidance</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">Build a semantic layer for agentic AI on AWS with Stardog and Amazon Bedrock AgentCore</a>（本系列第一篇文章）</li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-denodo-and-amazon-bedrock-agentcore/">Build a semantic layer for agentic AI on AWS with Denodo and Amazon Bedrock AgentCore</a>（本系列第二篇文章）</li></ul>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
   </channel>
