@@ -474,26 +474,31 @@
       "anchor": "10-商汤-日日新-sensenova",
       "signup": "",
       "tiers": [
-        "permanent",
         "recurring"
       ],
       "in_guide": true,
-      "free_quota": "**Token Plan 公测版免费**即左栏额度（无独立注册赠金）；正式商用定价以官方后续公告为准",
-      "validity": "公测期间滚动有效（每 5 小时自动刷新）",
+      "free_quota": "**Token Plan 公测期免费（¥0/月，限时放量）**：通用积分池滚动 **5 小时 120,000 积分 + 每周 1,200,000 积分**；Flash-Lite 专属池 5 小时 60,000 + 每周 600,000（官方文档 2026-10-27 调整原文）；无独立注册赠金",
+      "validity": "公测期滚动有效（5 小时 / 周双层窗口）；公测结束后付费档位上线，规则以官方公告为准",
       "free_models": [
-        "`SenseNova 6.8 Flash Lite`（轻量文本）、`SenseNova U1 Fast`（多模态）等 —— **Token Plan 公测免费：每 5 小时 60,000 积分**（滚动刷新），单账号可创建 **20 个 API Key**；各模型按积分计量"
+        "**公测期用量免费抵扣，覆盖自研 + 第三方旗舰**（均按积分扣减）：`sensenova-6.8-flash`、`sensenova-6.8-flash-lite`、`sensenova-u1.5-lite` / `u1.5-fast`（图像创作）、`deepseek-v4-flash`（0731）、`deepseek-flash`（V4.1 Flash 1017）、`glm-5.2`、`kimi-k3` —— 单账号最多 **20 个 API Key**",
+        "接入方式：OpenAI 兼容，Base URL `https://token.sensenova.cn/v1`；控制台创建 `sk-` 开头密钥"
       ],
       "tier_caveats": [
-        "免费仅限 **Token Plan 公测期**：每 5 小时 60,000 积分滚动刷新，**正式商用定价待官方公告**——公测结束后现有免费额度可能取消或改规则",
-        "按积分而非 token 计量，不同模型积分单价不同；单账号最多 20 个 API Key"
+        "免费仅限 **Token Plan 公测期**：通用池 5 小时 120,000 / 周 1,200,000 积分，官方明确「当前额度和活动规则属于公测期权益」，后续调整会提前通知——**公测结束后可能取消或改价**",
+        "按积分而非 token 计量，不同模型积分单价不同；5 小时 + 周双层窗口，余额/扣减记录在 TokenPlan 账户页查看",
+        "单账号最多 20 个 API Key；需完成手机号验证"
       ],
-      "preconditions": "注册商汤大装置（SenseCore）开放平台账号",
+      "preconditions": "注册并完成手机号验证，控制台创建 API Key（`sk-` 开头）",
       "promotions": "公测阶段 Token Plan 免费；正式商用定价以官方后续公告为准。",
       "openai_compat": null,
       "links": [
         [
           "Token Plan 官方页",
           "https://www.sensenova.cn/token-plan"
+        ],
+        [
+          "API 文档（积分规则 / 模型总览）",
+          "https://platform.sensenova.cn/docs"
         ],
         [
           "官方主页",
@@ -1063,11 +1068,11 @@
       "free_quota": "**AI Studio 免费层（Free Tier）长期存在**（官方计费文档原文 “New accounts begin on the Free Tier”），仅需 Google 账号、免绑信用卡；注意：**2026 年 3 月起 $300 Google Cloud 试用金不能用于支付 Gemini API / AI Studio 费用**；付费层需关联结算账户并预付最低 **$5**",
       "validity": "免费层按速率限额滚动（RPD 太平洋时间午夜重置）",
       "free_models": [
-        "`Gemini 3.8 / 3.7 / 3.6 Flash`、Gemini 3.5 Flash/Flash-Lite、Gemini 3.1 Flash-Lite、Gemini 3 Flash Preview、`Gemini 2.5 Pro/Flash/Flash-Lite`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置；官方文档已不再公开各模型具体免费层数字，以 AI Studio 内 Rate Limit 页为准）",
+        "`Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；**官方已不公开逐模型免费清单与数值**（2026-11-03 复核：定价页只剩 Free / Paid 两档说明，具体限额只在 AI Studio 内显示），调用前以 AI Studio 的 Rate Limit 页为准",
         "`Gemini 4 Argon`、`Gemini 3.1 Pro Preview` 与 Nano Banana 图像系列 —— **无免费层**"
       ],
       "tier_caveats": [
-        "**不是所有模型都有免费层**：3.x Flash / Gemma 4 / Embedding 系列可用；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、Nano Banana 图像系列**无免费层**，调错模型会直接付费",
+        "**不是所有模型都有免费层**：Flash 级 / Gemma 4 / Embedding 系列可用，但官方不再逐一公示；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、Nano Banana 图像系列**无免费层**，调错模型会直接付费",
         "**隐私代价**：免费层输入/输出数据可能被用于改进 Google 产品；敏感数据不要走免费层",
         "免费层限速官方已不再公开固定数值，以 AI Studio 内 Rate Limit 页为准；RPD 按太平洋时间午夜重置",
         "$300 Google Cloud 试用金**不能**用于 Gemini API / AI Studio（2026 年 3 月起）；付费层需关联结算账户并预付最低 $5"
@@ -1314,7 +1319,7 @@
       "validity": "免费政策长期有效",
       "free_models": [
         "**`:free` 后缀模型**（官方标称 25+ 款免费模型，4 家免费提供商）—— **限速 20 RPM**；每日请求上限 **50 次**（未购满 $10）或 **1,000 次**（账户累计购买至少 $10 credits），失败请求同样计入每日上限",
-        "当前 :free 实例：`google/gemma-4-31b-it:free`、`gemma-4-26b-a4b-it:free`、`nvidia/nemotron-3-super-120b:free`、`nemotron-3-ultra-550b:free`、`thinkingmachines/inkling:free`(-small)、`cohere/north-mini-code:free`、`poolside/laguna-s-2.1:free`、`liquid/lfm-2.5-2.6b:free` 等；旧 llama-3.3-70b / gemini-2.0-flash-exp / deepseek-r1 / qwen-2.5-72b :free ID 均已下架"
+        "当前 :free 实例（2026-11-03 API 实测 17 款 0 价）：`nvidia/nemotron-3-ultra-550b-a55b:free`、`nemotron-3.5-super-vl:free`、`nemotron-3.5-lightning:free`、`google/gemma-4-31b-it:free`、`gemma-4-26b-a4b-it:free`、`thinkingmachines/inkling:free`(-small)、`cohere/north-mini-code:free`、`xingchen-agi/xing4.0-29b-a4b:free`、`liquid/lfm-2.5-2.6b:free` 等；旧 llama-3.3-70b / deepseek-r1 / qwen-2.5-72b / nemotron-3-super-120b :free ID 均已下架"
       ],
       "tier_caveats": [
         "**只有带 `:free` 后缀的模型免费**，同名付费模型照常扣费；官方提供 25+ 款免费模型，随上游变动",
@@ -1456,7 +1461,8 @@
       "free_quota": "免费层长期有效（官网宣传 **“Free inference with leading models”**），注册 NVIDIA 开发者账号即可；受 NVIDIA API Trial Terms 约束，超出促销条款后按标准价计费",
       "validity": "免费层长期有效（以官方试用条款为准）",
       "free_models": [
-        "官网首页代表模型 `nvidia/nemotron-3-ultra-550b-a55b`、`nvidia/nemotron-3.5-super-vl-120b-a12b`、`nvidia/nemotron-3.5-lightning-30b-a3b`、`deepseek-ai/deepseek-v4.1-flash` 等 —— 多数模型限速最高 **40 RPM**，无 token 计费"
+        "免费端点目录（官方 `Free Endpoint` 筛选，实测 **45 个**）：[build.nvidia.com/models（Free Endpoint 筛选）](https://build.nvidia.com/models?filters=nimType%3Anim_type_preview) —— 含 `nvidia/nemotron-3-ultra-550b-a55b`、`nemotron-3.5-super-vl-120b-a12b`、`nemotron-3.5-lightning-30b-a3b`、`deepseek-ai/deepseek-v4.1-flash`、`mistralai/mistral-large-4`、Step 5 Preview 等；单模型限速最高约 **40 RPM**，不按 token 计费",
+        "**免费端点按用户量共享容量**：高峰期排队、响应明显变慢（官方未承诺可用性），适合试用与轻量调用，不建议压生产流量"
       ],
       "tier_caveats": [
         "多数模型限速约 **40 RPM、不按 token 计费**；仅供**开发评估**，官方 Trial Terms 不允许生产环境使用",
@@ -1469,6 +1475,10 @@
         [
           "体验中心",
           "https://build.nvidia.com/"
+        ],
+        [
+          "免费端点目录（Free Endpoint 筛选）",
+          "https://build.nvidia.com/models?filters=nimType%3Anim_type_preview"
         ],
         [
           "API 模型目录",

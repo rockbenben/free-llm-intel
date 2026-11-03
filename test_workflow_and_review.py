@@ -4683,6 +4683,45 @@ class TestGuideRendering(unittest.TestCase):
         # 已过期的限时五折不得出现在任何攻略片段中
         self.assertNotIn("限时五折", text)
 
+    def _all_vendor_intel(self):
+        return [crawler_llm_intel.VendorIntel(vendor_id=v, brand="", homepage="", products=[])
+                for v in provider_profiles.PROVIDER_PROFILES]
+
+    def test_picks_svg_covers_every_pick(self):
+        """顶部速览图必须是「名单的视图」：每家首选都画进去，且没有漏出 Markdown 记号。"""
+        import xml.etree.ElementTree as ET
+        svg = crawler_llm_intel.render_picks_svg(
+            crawler_llm_intel.order_vendor_records(self._all_vendor_intel()))
+        ET.fromstring(svg)  # 非法 XML 的话 GitHub 直接不渲染
+        pick_ids = [vid for vid, meta in provider_profiles.GUIDE_META.items() if meta.get("pick")]
+        self.assertIn(f"先注册这 {len(pick_ids)} 个", svg)
+        for vid in pick_ids:
+            name = provider_profiles.get_provider_profile(vid)["display_name"]
+            head = re.sub(r"[（(][^（）()]*[)）]\s*$", "", name).strip()
+            self.assertIn(head, svg, f"{vid} 没画进速览图")
+        self.assertNotIn("**", svg, "SVG 里漏出了 Markdown 加粗记号")
+        self.assertNotIn("`", svg, "SVG 里漏出了 Markdown 反引号")
+
+    def test_picks_svg_matches_guide_meta(self):
+        """磁盘上的 top-picks.svg 必须与 GUIDE_META 现渲染一致。
+
+        手绘 PNG 时代「改了名单忘了换图」只能靠人记（本期实测漏过一次）；
+        现在图是生成物，改推荐后不跑 `--render-only` 就会被这条钉住。
+        """
+        expected = crawler_llm_intel.render_picks_svg(
+            crawler_llm_intel.order_vendor_records(self._all_vendor_intel()))
+        path = Path(__file__).resolve().parent / "docs" / "images" / "top-picks.svg"
+        self.assertTrue(path.exists(), "docs/images/top-picks.svg 不存在（跑 --render-only 生成）")
+        self.assertEqual(path.read_text(encoding="utf-8"), expected,
+                         "top-picks.svg 与 GUIDE_META 不同步：改完推荐请跑 --render-only")
+
+    def test_readme_uses_generated_picks_svg(self):
+        content = (Path(__file__).resolve().parent / "README.md").read_text(encoding="utf-8")
+        self.assertIn("docs/images/top-picks.svg", content,
+                      "README 顶部速览图应引用自动生成的 SVG")
+        self.assertNotIn("intel-top5.png", content,
+                         "旧的 5 家手绘图已废弃（名单一变就过期）")
+
     def test_tier_rows_value_ordered_not_realname_segmented(self):
         """实名不算门槛：国内永久层进 A，国内一次性进 B；只有绑卡才单列 C。"""
         records = build_records()

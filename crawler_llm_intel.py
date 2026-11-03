@@ -3324,6 +3324,161 @@ def render_guide_block(records: list[tuple[int, VendorIntel, dict]]) -> str:
     return f"{GUIDE_BEGIN}\n{body}\n{GUIDE_END}"
 
 
+# 顶部「懒人首选」速览图：**由 GUIDE_META 生成的 SVG**，不再手绘 PNG。
+# 手绘图的维护成本是「改一次名单就要重做题图」，实测改推荐时最容易漏的就是这张图
+# （README 正文改了、图还停在旧五家）。SVG 是纯文本、可 diff，跟着巡检一起重生成。
+TOP_PICKS_SVG = "docs/images/top-picks.svg"
+
+
+def _svg_escape(text: str) -> str:
+    return (text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            .replace('"', "&quot;"))
+
+
+def _plain_md(text: str) -> str:
+    """去掉 Markdown 记号：SVG 里没有行内加粗/代码样式，留着反引号和 ** 只会漏出来。"""
+    s = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", text)
+    return s.replace("**", "").replace("`", "")
+
+
+def _svg_char_width(ch: str, size: float) -> float:
+    """粗估字宽：CJK / 全角按 1 em，ASCII 按 0.55 em（无字体度量，够用即可）。"""
+    return size if ord(ch) > 0x2E7F else size * 0.55
+
+
+def _svg_tokens(text: str) -> list[str]:
+    """切成可换行单元：CJK 逐字、ASCII 连写词整词不拆（`deepseek-v4.1-flash` 不许断成 fl/ash）。"""
+    tokens: list[str] = []
+    buf = ""
+    for ch in text:
+        if ord(ch) > 0x2E7F:
+            if buf:
+                tokens.append(buf)
+                buf = ""
+            tokens.append(ch)
+        elif ch == " ":
+            if buf:
+                tokens.append(buf)
+                buf = ""
+            tokens.append(" ")
+        else:
+            buf += ch
+    if buf:
+        tokens.append(buf)
+    return tokens
+
+
+def _svg_wrap(text: str, size: float, max_w: float) -> list[str]:
+    lines: list[str] = []
+    cur, width = "", 0.0
+    for tok in _svg_tokens(text):
+        tw = sum(_svg_char_width(c, size) for c in tok)
+        if tok == " ":
+            if cur:
+                cur += tok
+                width += tw
+            continue
+        if cur and width + tw > max_w:
+            lines.append(cur.rstrip())
+            cur, width = "", 0.0
+        cur += tok
+        width += tw
+    if cur.strip():
+        lines.append(cur.rstrip())
+    return lines or [""]
+
+
+def render_picks_svg(records: list[tuple[int, VendorIntel, dict]]) -> str:
+    """把「懒人首选」渲染成自包含 SVG（无外部字体/图片依赖，GitHub 可直接显示）。"""
+    picks = [(idx, intel, prof) for idx, intel, prof in records
+             if get_guide_meta(intel.vendor_id).get("pick")]
+    picks.sort(key=lambda t: t[0])
+
+    W, PAD = 1400, 24
+    name_x, name_w = PAD, 236
+    quota_x = name_x + name_w + 18
+    bind_w = 74
+    bind_x = W - PAD - bind_w
+    quota_w = bind_x - quota_x - 16
+
+    title = f"懒人首选：先注册这 {len(picks)} 个"
+    out: list[str] = []
+    y = 44
+    out.append(f'<text x="{PAD}" y="{y}" font-size="24" font-weight="700" fill="#1f2328">'
+               f'{_svg_escape(title)}</text>')
+    title_w = sum(_svg_char_width(c, 24) for c in title)
+    out.append(f'<text x="{PAD + title_w + 16}" y="{y - 2}" font-size="14.5" fill="#57606a">'
+               f'摘自本仓库「白嫖攻略」· 每次巡检自动生成</text>')
+
+    y = 88
+    out.append(f'<text x="{name_x}" y="{y}" font-size="15" font-weight="700" fill="#1f2328">平台</text>')
+    out.append(f'<text x="{quota_x}" y="{y}" font-size="15" font-weight="700" fill="#1f2328">免费额度（以官方页为准）</text>')
+    out.append(f'<text x="{bind_x}" y="{y}" font-size="15" font-weight="700" fill="#1f2328">绑卡</text>')
+    table_top = y + 14
+    y = table_top
+
+    rows: list[tuple[int, int]] = []  # (row_top, row_bottom)
+    for idx, intel, prof in picks:
+        meta = get_guide_meta(intel.vendor_id)
+        dname = re.sub(r"[（(][^（）()]*[)）]\s*$", "", prof.get("display_name", intel.brand)).strip()
+        head = _plain_md(f"{dname}")
+        quota = _plain_md(meta.get("pick", "")).strip()
+        is_cn = prof.get("category") == "domestic" or meta.get("region") == "cn"
+        tag = "国内" if is_cn else "海外"
+        signup = "需绑卡" if meta.get("signup") == "card" else "无需"
+
+        head_lines = _svg_wrap(head, 17, name_w - 52)  # 留 pill 的位置
+        quota_lines = _svg_wrap(quota, 14.5, quota_w)
+        n_lines = max(len(head_lines), len(quota_lines))
+        row_h = max(58, 26 + n_lines * 22)
+
+        top = y
+        y += row_h
+        rows.append((top, y))
+
+        ty = top + 30
+        out.append(f'<text x="{name_x}" y="{ty}" font-size="17" font-weight="700" fill="#0969da">'
+                   f'{_svg_escape(head_lines[0])}</text>')
+        for extra in head_lines[1:]:
+            ty += 20
+            out.append(f'<text x="{name_x}" y="{ty}" font-size="17" font-weight="700" fill="#0969da">'
+                       f'{_svg_escape(extra)}</text>')
+        # 「国内 / 海外」小胶囊：只做地区标签，不做「首选」这类编辑判断
+        pill_x = name_x + sum(_svg_char_width(c, 17) for c in head_lines[0]) + 10
+        pill_w = 40
+        pill_fill = "#dafbe1" if is_cn else "#ddf4ff"
+        pill_ink = "#116329" if is_cn else "#0550ae"
+        out.append(f'<rect x="{pill_x:.0f}" y="{ty - 15}" width="{pill_w}" height="21" rx="10.5" fill="{pill_fill}"/>')
+        out.append(f'<text x="{pill_x + pill_w / 2:.0f}" y="{ty}" font-size="12" fill="{pill_ink}" '
+                   f'text-anchor="middle">{tag}</text>')
+
+        qy = top + 28
+        for line in quota_lines:
+            out.append(f'<text x="{quota_x}" y="{qy}" font-size="14.5" fill="#24292f">'
+                       f'{_svg_escape(line)}</text>')
+            qy += 22
+        out.append(f'<text x="{bind_x}" y="{top + 28}" font-size="15" fill="#24292f">{signup}</text>')
+
+    footer = (f"{len(picks)} 家均免绑信用卡（国内需手机号实名）· 按用途分工、不是能力排名 · "
+              "无法复核的旧说法一律标注「不予采信」")
+    footer_y = y + 30
+    height = int(footer_y + 16)
+    out.append(f'<text x="{PAD}" y="{footer_y}" font-size="14" fill="#57606a">{_svg_escape(footer)}</text>')
+
+    head_svg = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{height}" '
+        f'viewBox="0 0 {W} {height}" role="img" aria-label="{_svg_escape(title)}">',
+        f'<rect x="0" y="0" width="{W}" height="{height}" fill="#ffffff"/>',
+        f'<rect x="{PAD - 8}" y="{table_top - 2}" width="{W - 2 * PAD + 16}" height="{y - table_top + 2}" '
+        f'fill="none" stroke="#d8dee4"/>',
+    ]
+    body: list[str] = []
+    for top, bottom in rows:
+        body.append(f'<line x1="{PAD - 8}" y1="{bottom}" x2="{W - PAD + 8}" y2="{bottom}" '
+                    f'stroke="#d8dee4"/>')
+    return "\n".join(head_svg + out + body) + "\n</svg>\n"
+
+
 def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
                          records: list[tuple[int, VendorIntel, dict]],
                          feeds_base: str = "") -> str:
@@ -6882,6 +7037,18 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
     print(f"      额度快照 quotas.json {quotas['count']} 家"
         f"（{'已刷新' if wrote_q else '无内容变化，未改写'}）")
 
+    # 顶部「懒人首选」速览图：GUIDE_META 的视图，跟巡检一起重生成（不再手绘 PNG）。
+    # 写成「同内容不落盘」以满足 G5（同一份源连跑两次零改写）。
+    picks_svg_path = root / TOP_PICKS_SVG
+    picks_svg = render_picks_svg(order_vendor_records(intel_list))
+    wrote_picks = not picks_svg_path.exists() or \
+        picks_svg_path.read_text(encoding="utf-8") != picks_svg
+    if wrote_picks:
+        picks_svg_path.parent.mkdir(parents=True, exist_ok=True)
+        picks_svg_path.write_text(picks_svg, encoding="utf-8")
+    print(f"      懒人首选速览图 {TOP_PICKS_SVG}"
+          f"（{'已刷新' if wrote_picks else '无内容变化，未改写'}）")
+
     return {"news_md_changed": bool(news_changed), "rss_files": n_rss,
             "rss_items": n_rss_items, "rss_changed": n_rss_changed,
             "rss_future_excluded": n_future_excluded,
@@ -6889,7 +7056,8 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
             "releases": len(releases),
             "releases_changed": bool(wrote_rel), "changes": n_changes,
             "opml_feeds": n_feeds, "quotas_count": quotas["count"],
-            "quotas_changed": bool(wrote_q)}
+            "quotas_changed": bool(wrote_q),
+            "picks_svg_changed": bool(wrote_picks)}
 
 
 def _changed_corpus_paths(root: Path) -> list[str]:

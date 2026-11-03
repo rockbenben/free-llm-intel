@@ -472,14 +472,14 @@
         "url": "https://ai.google.dev/gemini-api/docs/pricing?hl=zh-cn"
       }
     ],
-    "_summary": "Google 上线新旗舰推理模型 Gemini 4 Argon，官方明确注明其不适用于免费层级",
-    "_updated": "2026-10-14 09:05:53",
+    "_summary": "本地复核：定价页与 billing 文档已不再逐模型公示免费清单/数值（仅 AI Studio 内可见），免费模型清单改为「Flash 级 / Gemma 4 / Embedding」口径",
+    "_updated": "2026-11-04 05:30:00",
     "free_models": [
-      "`Gemini 3.8 / 3.7 / 3.6 Flash`、Gemini 3.5 Flash/Flash-Lite、Gemini 3.1 Flash-Lite、Gemini 3 Flash Preview、`Gemini 2.5 Pro/Flash/Flash-Lite`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置；官方文档已不再公开各模型具体免费层数字，以 AI Studio 内 Rate Limit 页为准）",
+      "`Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；**官方已不公开逐模型免费清单与数值**（2026-11-03 复核：定价页只剩 Free / Paid 两档说明，具体限额只在 AI Studio 内显示），调用前以 AI Studio 的 Rate Limit 页为准",
       "`Gemini 4 Argon`、`Gemini 3.1 Pro Preview` 与 Nano Banana 图像系列 —— **无免费层**"
     ],
     "tier_caveats": [
-      "**不是所有模型都有免费层**：3.x Flash / Gemma 4 / Embedding 系列可用；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、Nano Banana 图像系列**无免费层**，调错模型会直接付费",
+      "**不是所有模型都有免费层**：Flash 级 / Gemma 4 / Embedding 系列可用，但官方不再逐一公示；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、Nano Banana 图像系列**无免费层**，调错模型会直接付费",
       "**隐私代价**：免费层输入/输出数据可能被用于改进 Google 产品；敏感数据不要走免费层",
       "免费层限速官方已不再公开固定数值，以 AI Studio 内 Rate Limit 页为准；RPD 按太平洋时间午夜重置",
       "$300 Google Cloud 试用金**不能**用于 Gemini API / AI Studio（2026 年 3 月起）；付费层需关联结算账户并预付最低 $5"
@@ -840,10 +840,11 @@
         "url": "https://build.nvidia.com/"
       }
     ],
-    "_summary": "官网首页代表性免费模型更新，展示了 Nemotron 3.5 Super VL、Nemotron 3.5 Lightning、DeepSeek V4.1 Flash 等最新模型。",
-    "_updated": "2026-10-20 09:19:18",
+    "_summary": "本地复核：免费端点改为指向官方 Free Endpoint 目录（实测 45 个），并补记「免费池按用户量共享、高峰期会排队变慢」",
+    "_updated": "2026-11-04 05:30:00",
     "free_models": [
-      "官网首页代表模型 `nvidia/nemotron-3-ultra-550b-a55b`、`nvidia/nemotron-3.5-super-vl-120b-a12b`、`nvidia/nemotron-3.5-lightning-30b-a3b`、`deepseek-ai/deepseek-v4.1-flash` 等 —— 多数模型限速最高 **40 RPM**，无 token 计费"
+      "免费端点目录（官方 `Free Endpoint` 筛选，实测 **45 个**）：[build.nvidia.com/models（Free Endpoint 筛选）](https://build.nvidia.com/models?filters=nimType%3Anim_type_preview) —— 含 `nvidia/nemotron-3-ultra-550b-a55b`、`nemotron-3.5-super-vl-120b-a12b`、`nemotron-3.5-lightning-30b-a3b`、`deepseek-ai/deepseek-v4.1-flash`、`mistralai/mistral-large-4`、Step 5 Preview 等；单模型限速最高约 **40 RPM**，不按 token 计费",
+      "**免费端点按用户量共享容量**：高峰期排队、响应明显变慢（官方未承诺可用性），适合试用与轻量调用，不建议压生产流量"
     ]
   },
   "openrouter": {
@@ -869,11 +870,11 @@
         "url": "https://openrouter.ai/docs/api_reference/limits"
       }
     ],
-    "_summary": "官方定价 FAQ 明确免费模型数量为 25+ 款（4 家供应商），并补充失败请求同样计入每日额度上限、账户负余额会阻断免费模型调用等规则。",
-    "_updated": "2026-10-17 11:13:55",
+    "_summary": "本地复核：按 /api/v1/models 实测 0 价模型为 17 款，更新 :free 实例清单（旧 nemotron-3-super-120b、poolside/laguna 等已下架）",
+    "_updated": "2026-11-04 05:30:00",
     "free_models": [
       "**`:free` 后缀模型**（官方标称 25+ 款免费模型，4 家免费提供商）—— **限速 20 RPM**；每日请求上限 **50 次**（未购满 $10）或 **1,000 次**（账户累计购买至少 $10 credits），失败请求同样计入每日上限",
-      "当前 :free 实例：`google/gemma-4-31b-it:free`、`gemma-4-26b-a4b-it:free`、`nvidia/nemotron-3-super-120b:free`、`nemotron-3-ultra-550b:free`、`thinkingmachines/inkling:free`(-small)、`cohere/north-mini-code:free`、`poolside/laguna-s-2.1:free`、`liquid/lfm-2.5-2.6b:free` 等；旧 llama-3.3-70b / gemini-2.0-flash-exp / deepseek-r1 / qwen-2.5-72b :free ID 均已下架"
+      "当前 :free 实例（2026-11-03 API 实测 17 款 0 价）：`nvidia/nemotron-3-ultra-550b-a55b:free`、`nemotron-3.5-super-vl:free`、`nemotron-3.5-lightning:free`、`google/gemma-4-31b-it:free`、`gemma-4-26b-a4b-it:free`、`thinkingmachines/inkling:free`(-small)、`cohere/north-mini-code:free`、`xingchen-agi/xing4.0-29b-a4b:free`、`liquid/lfm-2.5-2.6b:free` 等；旧 llama-3.3-70b / deepseek-r1 / qwen-2.5-72b / nemotron-3-super-120b :free ID 均已下架"
     ],
     "tier_caveats": [
       "**只有带 `:free` 后缀的模型免费**，同名付费模型照常扣费；官方提供 25+ 款免费模型，随上游变动",
