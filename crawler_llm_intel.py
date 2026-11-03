@@ -3140,8 +3140,9 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     if picks:
         L.append(f"### 0. 懒人首选：不知道选谁，先注册这 {len(picks)} 个")
         L.append("")
-        L.append("> 五家都**免绑信用卡**，注册即得（国内的需手机号实名，海外的邮箱即可——都属常规注册）；"
-                 "覆盖日常对话、写代码、向量/重排、画图等绝大多数免费用法。")
+        L.append(f"> 这 {len(picks)} 家都**免绑信用卡**，注册即得（国内的需手机号实名，海外的邮箱即可——都属常规注册）；"
+                 "**按用途分工、不是能力排名**：要对话 / 写代码挑「模型免费」的那家，要向量 / OCR / 画图挑「工具链」那家，"
+                 "同一类需求注册一家就够。")
         L.append("")
         for n, (idx, intel, prof, reason) in enumerate(picks, 1):
             L.append(f"{n}. {link(idx, prof)} —— {reason}")

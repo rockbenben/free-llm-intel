@@ -107,24 +107,24 @@
         "permanent"
       ],
       "in_guide": true,
-      "free_quota": "新用户注册专享 **2000 万免费 Tokens 资源包 + 120 次图像/视频资源包**（官方定价页首页原文：“新用户注册得 2000 万 Tokens，新模型免费”）——资源包只能抵扣**付费模型**，免费模型另算；有效期以券面标注为准",
+      "free_quota": "新用户资源包**以注册后控制台到账为准**：历史官方页曾写「注册得 2000 万 Tokens」，但**现行定价页与特惠区已不再公示该数额**（2026-11-03 复核，只看到 7 折付费资源包与邀请奖励）；免费模型本身不需要资源包",
       "validity": "免费模型长期 0 元但**会换代**：旧版下线后请求自动路由到新版（如 GLM-4.5-Flash 2026-01-30 下线后自动路由至 GLM-4.7-Flash），旧 model id 可能失效",
       "free_models": [
         "**免费的是 4.x 代 Flash，不含 5.x 新旗舰**：`glm-4.7-flash`（30B 级、200K 上下文、Agentic Coding 强化；GLM-4.5-Flash 下线后自动路由至此）、`glm-4-flash-250414`（智谱首个免费大模型 API）、`glm-z1-flash`（推理）—— 0 元",
         "视觉（4.x 代）：`glm-4v-flash`（首个免费图像理解模型）、`glm-4.6v-flash`、`glm-4.1v-thinking-flash` —— 0 元",
         "多模态生成：`CogView-3-Flash`（图像）、`CogVideoX-Flash`（视频）—— 0 元",
-        "**当前旗舰 `glm-5.3-flash`（1M 上下文、原生多模态）是付费模型**，定价为 GLM-5.3 的 1/10，免费层不覆盖；`glm-5.3` / `glm-5.2` 同为付费（可用 2000 万资源包抵扣）"
+        "**当前旗舰 `glm-5.3-flash`（1M 上下文、原生多模态）是付费模型**，定价为 GLM-5.3 的 1/10，免费层不覆盖；`glm-5.3` / `glm-5.2` 同为付费（资源包抵扣以控制台券面为准）"
       ],
       "tier_caveats": [
-        "**版本代差**：0 元只覆盖 4.x 代，最新一代 5.x（GLM-5.3 / GLM-5.3-Flash）全部收费；想要最新模型只能用 2000 万资源包抵扣或付费",
+        "**版本代差**：0 元只覆盖 4.x 代，最新一代 5.x（GLM-5.3 / GLM-5.3-Flash）全部收费；想要最新模型只能付费（新用户资源包是否到账以控制台为准）",
         "**限速按模型独立设置且数值不公开**：官方速率限制文档未给统一 RPM/TPM 数值，需登录控制台「速率限制」页查看本账户额度；触发限流返回错误码 1302、平台过载返回 1305；可申请提并发（10 个工作日审核）",
         "**旧模型会下线**：GLM-4.5-Flash 已于 2026-01-30 下线（自动路由至 4.7-Flash）；调用方不应把免费 model id 写死，需关注官方下线公告",
-        "2000 万资源包与图像/视频 120 次包为一次性新用户福利，**有效期以券面为准**，不是永久额度"
+        "新用户资源包（历史说法「2000 万 Tokens + 120 次图像/视频」）**现行定价页已不再公示**，以注册后控制台到账为准；免费模型本身不消耗资源包"
       ],
       "preconditions": "注册并完成实名认证",
       "promotions": "官方定价页原文：邀好友实名注册得 Tokens，**最高可领取总计 2 亿 Tokens 资源包**（活动规则与奖励以活动页公示为准）。",
       "openai_compat": {
-        "summary": "4.x 代 Flash 0 元（新旗舰 5.3-Flash 付费）+ 2000万券",
+        "summary": "4.x 代 Flash 0 元（5.x 旗舰付费）",
         "api_key_label": "控制台申请",
         "api_key_url": "https://bigmodel.cn/usercenter/apikeys",
         "base_url": "https://open.bigmodel.cn/api/paas/v4",
@@ -1224,7 +1224,7 @@
         "Batch、Flex、更高限额需付费 Developer plan；缓存命中的 token 不计入限速"
       ],
       "preconditions": "邮箱注册即可获取 API Key，免信用卡",
-      "promotions": "Developer plan 按 token 计费（gpt-oss-120b $0.15/$0.60 每百万）；自研 LPU 硬件推理速度快。",
+      "promotions": "**定价页已下线**：`groq.com/pricing` 现跳官方首页（2026-11-03 复核），付费档位与单价改在控制台查看；自研 LPU 硬件推理速度快。",
       "openai_compat": {
         "summary": "30 RPM / 1,000 RPD 高速推理（免绑卡）",
         "api_key_label": "控制台申请",
@@ -1254,8 +1254,8 @@
           "https://console.groq.com/docs/models"
         ],
         [
-          "定价说明",
-          "https://groq.com/pricing/"
+          "控制台限额页（登录后可见本组织额度）",
+          "https://console.groq.com/settings/limits"
         ]
       ],
       "reviewed": "2026-09-27"

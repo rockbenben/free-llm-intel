@@ -4668,6 +4668,10 @@ class TestGuideRendering(unittest.TestCase):
         self.assertEqual(
             len(re.findall(r"^\d+\. \[", picks_block, re.M)), len(pick_ids),
             f"懒人首选数量应与 GUIDE_META 中带 pick 的厂商一致（应为 {len(pick_ids)} 家）")
+        # 导语里的数量必须跟 GUIDE_META 一起变：早先硬编码「五家都免绑信用卡」，
+        # 名单一改就与标题「这 N 个」自相矛盾（改名单的人不会记得回来改这句话）。
+        self.assertIn(f"这 {len(pick_ids)} 家都", picks_block)
+        self.assertNotIn("五家都", picks_block)
         for vid in ("zhipu_glm", "siliconflow", "google_gemini"):
             pick = provider_profiles.get_guide_meta(vid)["pick"]
             self.assertIn(pick[:14], text, f"{vid} 的首选推荐语应出现在攻略中")
