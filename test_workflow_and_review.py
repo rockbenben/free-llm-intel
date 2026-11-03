@@ -2732,11 +2732,12 @@ class TestOpmlAndNewsDocCoverage(unittest.TestCase):
         self.assertLess(ids.index("sensetime_sensenova"), ids.index("siliconflow"))
 
     def test_news_doc_uses_display_name_not_yaml_brand(self):
-        """订阅文档的读者可见名 = display_name（与一览/README 同一展示名），不是 yaml brand。"""
+        """订阅文档的读者可见名 = display_name 的短名（去掉括号限定），不是 yaml brand。"""
         md = crawler_llm_intel.render_news_section(self._scramble_intel(), self.BASE)
-        self.assertIn("### 通义千问 (阿里云) (aliyun_qwen)", md,
-                      "aliyun_qwen 章节头应显示 display_name")
+        self.assertIn("### 通义千问 (aliyun_qwen)", md,
+                      "aliyun_qwen 章节头应显示读者短名（display_name 去掉括号限定）")
         self.assertNotIn("### brand-aliyun_qwen", md, "不得退回 yaml brand")
+        self.assertNotIn("(阿里云) (aliyun_qwen)", md, "章节头不应带括号限定")
 
     def test_opml_orders_by_vendor_rank(self):
         """OPML 是读者真正导入的清单，组内顺序同样要按 VENDOR_RANK。"""
@@ -2750,12 +2751,56 @@ class TestOpmlAndNewsDocCoverage(unittest.TestCase):
                                        key=provider_profiles.vendor_rank_index),
                          "OPML 原生源分组必须按 VENDOR_RANK 排")
 
-    def test_opml_uses_display_name(self):
+    def test_opml_uses_reader_facing_short_name(self):
+        """OPML 用读者认得的短名（与 RSS 频道标题、订阅文档同一口径）。
+
+        Regression: 早先 OPML 用完整 `display_name`、RSS 频道标题用 yaml `brand`，
+        同一家厂商在导入清单和阅读器里显示两个名字（`通义千问 (阿里云)` vs
+        `通义千问 Qwen`）；括号限定在阅读器侧栏里只会被截断，订阅语境里没有增量信息。
+        """
         path = self.out_dir / "llm-news-feeds.opml"
         crawler_llm_intel.write_opml(path, self._scramble_intel(), self.BASE)
         opml = path.read_text(encoding="utf-8")
-        self.assertIn("通义千问 (阿里云)", opml, "OPML 标题须用 display_name")
+        self.assertIn("通义千问 · ", opml, "OPML 标题须用读者短名")
+        self.assertNotIn("(阿里云)", opml, "OPML 标题不应带括号限定")
         self.assertNotIn("brand-aliyun_qwen", opml)
+
+    def test_feed_name_alias_is_exception_only(self):
+        """别名只给「回落名对读者不友好」的例外；清楚的完整名不要简化。
+
+        2026-11-04 用户反馈：把 `Anthropic Claude` 改成 `Claude`、`Cloudflare
+        Workers AI` 改成 `Cloudflare AI` 属于过度简化——完整产品名本身就是读者
+        在侧栏里认的东西，去掉公司名/平台名反而丢信息。
+        """
+        def feed(vid, brand="ignored"):
+            return crawler_llm_intel._feed_name(crawler_llm_intel.VendorIntel(
+                vendor_id=vid, brand=brand, homepage="", products=[]))
+        # 例外：英文品牌 → 中文读者更认的产品名
+        self.assertEqual(feed("streamlake"), "快手万擎")
+        # 默认：回落 display_name 短名（只剥末尾括号，不改写名字本身）
+        self.assertEqual(feed("anthropic"), "Anthropic Claude")
+        self.assertEqual(feed("cloudflare_workers_ai"), "Cloudflare Workers AI")
+        self.assertEqual(feed("meta_llama"), "Meta Llama")
+        self.assertEqual(feed("huggingface"), "Hugging Face")
+        self.assertEqual(feed("aliyun_qwen"), "通义千问")
+        self.assertEqual(feed("no_such_vendor", "Some (Brand)"), "Some",
+                         "未登记厂商也要剥掉括号限定")
+
+    def test_feed_aliases_cover_only_news_vendors(self):
+        """FEED_ALIASES 是例外表：只能给有动态源的厂商配，且名字要短、不带括号。"""
+        root = Path(__file__).resolve().parent
+        vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        known = {v["id"] for v in vendors}
+        news_ids = {s["vendor_id"] for s in sources
+                    if s.get("type") in crawler_llm_intel.NEWS_TYPES}
+        stale = sorted(set(provider_profiles.FEED_ALIASES) - known)
+        self.assertEqual(stale, [], f"FEED_ALIASES 里有不存在的厂商 id：{stale}")
+        no_feed = sorted(set(provider_profiles.FEED_ALIASES) - news_ids)
+        self.assertEqual(no_feed, [], f"这些厂商没有动态源，不该配 feed 名：{no_feed}")
+        for vid, name in provider_profiles.FEED_ALIASES.items():
+            self.assertLessEqual(len(name), 16, f"{vid} 的 feed 名过长：{name}")
+            self.assertNotIn("(", name, f"{vid} 的 feed 名不应带括号限定：{name}")
+            self.assertNotIn("（", name, f"{vid} 的 feed 名不应带括号限定：{name}")
 
     def test_opml_adds_self_hosted_group_for_vendors_without_native_rss(self):
         path = self.out_dir / "llm-news-feeds.opml"

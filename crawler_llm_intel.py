@@ -157,7 +157,7 @@ TYPE_LABELS = {
     "v4_news": "版本动态",
     "research": "研究页",
     "changelog": "变更日志",
-    "feed": "RSS/Atom 订阅源",
+    "feed": "官方 RSS",
     "product": "产品页",
     "api_docs": "API 文档",
     "docs": "文档页",
@@ -3008,6 +3008,7 @@ from provider_profiles import (
     get_guide_meta,
     reload_overrides,
     vendor_rank_index,
+    feed_alias,
 )
 
 
@@ -3665,10 +3666,10 @@ def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
         page_part = f"[网页浏览 / 一键订阅]({site}) ｜ " if site else ""
         lines.append(f"> 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）："
                      f"{page_part}"
-                     f"[中文合并流]({feeds_base}/llm-news-all.xml) ｜ "
-                     f"[英文合并流]({feeds_base}/llm-news-all.en.xml) ｜ "
+                     f"[全部厂商动态（中文）]({feeds_base}/llm-news-all.xml) ｜ "
+                     f"[全部厂商动态（英文）]({feeds_base}/llm-news-all.en.xml) ｜ "
                      f"单厂商源 `{feeds_base}/llm-news-{{vendor_id}}.xml`（英文加 `.en.xml`）。"
-                     "合并流与单厂商都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），"
+                     "全部厂商动态与单厂商源都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），"
                      "阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文"
                      "（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅"
                      "（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。")
@@ -3838,6 +3839,34 @@ def _news_display_name(intel: VendorIntel) -> str:
     return prof.get("display_name") or intel.brand
 
 
+#: 末尾的括号限定（半角/全角都吃）：`通义千问 (阿里云)` / `Modular (原 BentoCloud/BentoML)`。
+_PAREN_SUFFIX_RE = re.compile(r"\s*[（(][^（）()]*[)）]\s*$")
+
+
+def _feed_name(intel: VendorIntel) -> str:
+    """feed / 订阅清单里给**普通读者**看的名字。
+
+    优先用 `FEED_ALIASES` 里人工定的产品名（`Anthropic Claude` → `Claude`、
+    `Cloudflare Workers AI` → `Cloudflare AI`）；没配的厂商回落到 display_name
+    去掉末尾括号限定（`通义千问 (阿里云)` → `通义千问`）。
+
+    README 用完整 display_name 当身份（它解释「这家是谁」），feed 名是读者在阅读器
+    侧栏扫一眼要认出来的标签——公司全名、内部项目名、括号限定在这里都是负资产。
+    四个出口（RSS 频道标题、OPML 条目、`llm-news-feeds.md` 标题、vendors.json）
+    **必须同名**：此前 RSS 用 yaml brand、OPML 用 display_name，同一家厂商在两个
+    列表里叫两个名字。
+    """
+    alias = feed_alias(intel.vendor_id)
+    if alias:
+        return alias
+    name = _news_display_name(intel)
+    prev = None
+    while prev != name:
+        prev = name
+        name = _PAREN_SUFFIX_RE.sub("", name).strip()
+    return name or prev
+
+
 def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
                         merged_limit: int = RSS_MERGED_LIMIT,
                         vendor_limit: int = RSS_VENDOR_LIMIT) -> str:
@@ -3867,17 +3896,17 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
         if site:
             lines.append(f"> - 网页浏览 / 一键订阅：[{site}]({site})"
                          "（可按厂商筛选、搜索，页脚列出**全部有动态源的厂商**单源）")
-        lines.append(f"> - 合并流（聚合全部有动态源的厂商）：[`llm-news-all.xml`]({feeds_base}/llm-news-all.xml)"
+        lines.append(f"> - 全部厂商动态（聚合有动态源的全部厂商）：[`llm-news-all.xml`]({feeds_base}/llm-news-all.xml)"
                      f"（{merged_scope_text(merged_limit)}，带厂商前缀，可按 `category` 过滤）")
-        lines.append(f"> - 英文镜像合并流：[`llm-news-all.en.xml`]({feeds_base}/llm-news-all.en.xml)"
+        lines.append(f"> - 英文镜像（全部厂商动态 · 英文）：[`llm-news-all.en.xml`]({feeds_base}/llm-news-all.en.xml)"
                      "（源语言标题，中文原生源的厂商不出现在这里）")
         lines.append(f"> - 单厂商源：`{feeds_base}/llm-news-{{vendor_id}}.xml`"
                      f"（{vendor_scope_text(vendor_limit)}；把 `{{vendor_id}}` 换成下方括号里的厂商 id，"
                      "如 `llm-news-openai.xml`；英文镜像同名加 `.en.xml`）")
-        lines.append("> - ⚠️ 合并流与各厂商单源**内容重叠**，二选一订阅即可（都订会出现重复条目）；"
+        lines.append("> - ⚠️ 全部厂商动态与各厂商单源**内容重叠**，二选一订阅即可（都订会出现重复条目）；"
                      "中英两版**同时订**会看到同一份新闻各一条（guid 加了 `?li=1` 后缀区分，"
                      "阅读器不会自动去重）。**建议按语言偏好二选一**。")
-        lines.append("> - 合并流只收有日期的条目；要看全量请用浏览页或单厂商源。")
+        lines.append("> - 全部厂商动态只收有日期的条目；要看全量请用浏览页或单厂商源。")
     lines.append("")
 
     vendors_with_news = _order_by_vendor_rank([v for v in intel_list if v.news_pages])
@@ -3887,7 +3916,7 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
     feed_count = 0
     vendors_with_articles = 0
     for intel in vendors_with_news:
-        lines.append(f"### {_news_display_name(intel)} ({intel.vendor_id})")
+        lines.append(f"### {_feed_name(intel)} ({intel.vendor_id})")
         for page in intel.news_pages:
             label = type_label(page.stype)
             if page.stype == "feed":
@@ -4013,8 +4042,8 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
                     continue
                 seen_feeds.add(feed)
                 label = TYPE_LABELS.get(page.stype, page.stype)
-                title = f"{_news_display_name(intel)} - {label}"
-                outlines.append((_news_display_name(intel), title, feed, html_url))
+                title = f"{_feed_name(intel)} · {label}"
+                outlines.append((_feed_name(intel), title, feed, html_url))
 
     def esc(s: str) -> str:
         return (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -4048,14 +4077,14 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
             if intel.vendor_id in native_ids or not _rss_articles(intel, today):
                 continue
             self_hosted.append((
-                f"{_news_display_name(intel)} - 自建源（官方没有原生 RSS）",
+                f"{_feed_name(intel)} · 官方动态",
                 f"{feeds_base}/llm-news-{intel.vendor_id}.xml",
                 site or feeds_base,
             ))
             en_file = _feeds_dir / f"llm-news-{intel.vendor_id}.en.xml" if _feeds_dir else None
             if en_file and en_file.exists():
                 english_self.append((
-                    f"{_news_display_name(intel)} (EN)",
+                    f"{_feed_name(intel)} · English",
                     f"{feeds_base}/llm-news-{intel.vendor_id}.en.xml",
                     site or feeds_base,
                 ))
@@ -4070,28 +4099,28 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
         "  </head>",
         "  <body>",
     ]
-    lines += group("LLM Vendors · 官方原生源", [(t, x, h) for _b, t, x, h in outlines])
+    lines += group("官方原生源（厂商自带 RSS）", [(t, x, h) for _b, t, x, h in outlines])
     if self_hosted:
-        lines += group("LLM Vendors · 自建源（官方没有原生 RSS）", self_hosted)
-        lines += group("LLM Vendors · 聚合流（订阅这一个 = 全部有动态源的厂商）", [(
-            "全部厂商 - 合并流（%s，带厂商前缀）" % merged_scope_text(merged_limit),
+        lines += group("自建源（官方没有原生 RSS）", self_hosted)
+        lines += group("全部厂商 · 一条订完", [(
+            "全部厂商 · 官方动态（%s，带厂商前缀）" % merged_scope_text(merged_limit),
             f"{feeds_base}/llm-news-all.xml",
             site or feeds_base,
         )])
     if english_self:
         # 英文镜像组：给英语读者；同订中英两条源会看到重复条目（guid 不同，阅读器不去重），
         # 建议读者按语言偏好二选一
-        lines += group("LLM Vendors · 英文镜像（源语言，与中文源二选一）", english_self)
-        lines += group("LLM Vendors · 英文聚合流", [(
-            "All vendors — merged English feed (%s)" % merged_scope_text(merged_limit),
+        lines += group("英文镜像（源语言，与中文源二选一）", english_self)
+        lines += group("英文源 · 一条订完", [(
+            "All vendors · official news (%s)" % merged_scope_text(merged_limit),
             f"{feeds_base}/llm-news-all.en.xml",
             site or feeds_base,
         )])
     if feeds_base and changes_feed:
         # 第四组：不是「厂商动态」而是「本仓库情报台账的变化」——新活动、
         # 额度调整（前值→后值），订阅这一个即可跟踪白嫖政策变动。
-        lines += group("情报变化 · 额度 / 活动（本仓库自建）", [(
-            "LLM 免费额度 - 新活动与新额度变化流",
+        lines += group("额度 / 活动变化（本仓库自建）", [(
+            "免费额度 · 新活动与额度变化流",
             f"{feeds_base}/llm-intel-changes.xml",
             site or feeds_base,
         )])
@@ -5785,7 +5814,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
             continue
         with ThreadPoolExecutor(max_workers=6) as pool:
             titles_zh = list(pool.map(article_title_zh, arts))
-        per_vendor.append((intel.brand, intel.vendor_id, arts, titles_zh))
+        per_vendor.append((_feed_name(intel), intel.vendor_id, arts, titles_zh))
 
     if clean_removed:
         present = {v.vendor_id for v in intel_list}
@@ -5863,13 +5892,13 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
             return out
 
         if zh:
-            title = "LLM 厂商动态（合并流）"
+            title = "全部厂商 · 官方动态"
             desc = (f"汇总 {len(per_vendor)} 家 LLM 厂商官方博客 / 更新日志的新文章，标题已汉化；"
                     "官方没有 RSS 的厂商也在这里（由 free-llm-intel 定时巡检官方页面归档生成）。")
             fname = "llm-news-all.xml"
             chan_lang = "zh-cn"
         else:
-            title = "LLM Vendor News (merged, English)"
+            title = "All Vendors · Official News"
             desc = ("Aggregated official blogs / changelogs from "
                     f"{len(per_vendor)} LLM vendors, kept in the source language. "
                     "Vendors whose articles are Chinese-native are excluded here. "
@@ -5897,7 +5926,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
 
         _emit_channel(
             f"llm-news-{vendor_id}.xml",
-            f"{brand} 官方动态",
+            f"{brand} · 官方动态",
             f"{brand} 官方博客 / 更新日志归档（{vendor_scope_text(vendor_limit)}，"
             f"共 {len(cut)} 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。",
             f"{base}/llm-news-{vendor_id}.xml" if base else "",
@@ -5945,7 +5974,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
         vendor_en_emitted.add(vendor_id)
         _emit_channel(
             f"llm-news-{vendor_id}.en.xml",
-            f"{brand} News (English)",
+            f"{brand} · News (English)",
             f"{brand} official blog / changelog in English "
             f"({vendor_scope_text(vendor_limit)}, {len(cut)} items). "
             "Generated by free-llm-intel.",

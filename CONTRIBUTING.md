@@ -183,6 +183,16 @@ python test_workflow_and_review.py           # ④ 门禁
 「限时 / 易变信息」一节无需手工维护——爬虫自动扫描各档案的 `promotions`、`free_models` 等字段中的「截止 / 限量 / 限时 / 爆满 / limited time」关键词；片段中写明的截止/结束日期（`YYYY-MM-DD`、`YYYY年M月D日` 等）若已过当天，该片段自动剔除，因此到期活动应直接从档案字段中删除或改写为无日期表述。
 修改元数据后可用 `python crawler_llm_intel.py --only <vendor_id> --no-browser` 验证单厂商逻辑；提交前运行全量巡检生成完整攻略区块。攻略区块不含时间戳，无内容变化时产物不会被改写。
 
+## 订阅源显示名（FEED_ALIASES）
+
+RSS 频道标题、OPML 条目、`llm-news-feeds.md` 标题、`vendors.json` 四处用的是**同一个名字**：默认取 `display_name` 去掉末尾括号限定（`通义千问 (阿里云)` → `通义千问`），例外才查 `provider_profiles.FEED_ALIASES`。
+
+- **默认不动名字**：`Anthropic Claude`、`Cloudflare Workers AI`、`Meta Llama`、`Groq Cloud` 这类本身已经清楚的完整名保持原样——去掉公司名 / 平台名反而丢信息（2026-11-04 试过批量改，被判定过度简化后回滚）。
+- 只在「回落名对普通读者不友好」时加一条别名，目前只有：`StreamLake` → `快手万擎`（英文品牌，中文读者更认产品名）。
+- 别名**不带括号限定**（阅读器侧栏会截断）；只能是**有动态源**的厂商（守卫 `test_feed_aliases_cover_only_news_vendors`）。
+- 合并流不再叫「合并流」：频道名 / OPML 分别是「全部厂商 · 官方动态」「All Vendors · Official News」「全部厂商 · 一条订完」——读者一眼知道这是「所有厂商的总列表」。
+- 改完跑 `python crawler_llm_intel.py --render-only` 重排四处产物；feed **文件名**（`llm-news-<vendor_id>.xml`）是订阅地址，**不要跟着改名**，否则现有订阅者会断流。
+
 ## 标题汉化与 AI 优化
 
 巡检产出的中文标题按「来源」分两层，规则不同：

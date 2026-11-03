@@ -9,7 +9,7 @@
 - 🎯 不知道先注册谁？直接看下文「[白嫖攻略](#白嫖攻略)」
 - ⚡ 客户端一键接入？直达「[OpenAI 兼容端点速查表](#一键接入)」
 - 📊 免费额度总表：**Part 1–4**（见「快速开始」之后，每次巡检自动生成）
-- 📡 订阅厂商动态：导入 [llm-news-feeds.opml](llm-news-feeds.opml) 一次订全（官方原生源 + 自建源 + 聚合流 + 英文镜像）；[网页一键订阅](https://free-llm-intel.aishort.top/) ｜ [合并流](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [英文合并流](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `…/feeds/llm-news-<厂商 id>.xml`（英文加 `.en.xml`）；博文明细：[llm-news-feeds.md](llm-news-feeds.md)（全量归档在 [`llm-news/`](llm-news/)）
+- 📡 订阅厂商动态：导入 [llm-news-feeds.opml](llm-news-feeds.opml) 一次订全（官方原生源 + 自建源 + 全部厂商动态 + 英文镜像）；[网页一键订阅](https://free-llm-intel.aishort.top/) ｜ [全部厂商动态（中文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [全部厂商动态（英文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `…/feeds/llm-news-<厂商 id>.xml`（英文加 `.en.xml`）；博文明细：[llm-news-feeds.md](llm-news-feeds.md)（全量归档在 [`llm-news/`](llm-news/)）
 - 🛰 订阅额度 / 活动变化（「哪家的白嫖政策刚变了」）：[llm-intel-changes.xml](https://free-llm-intel.aishort.top/feeds/llm-intel-changes.xml)——巡检采纳的额度调整（前值 → 后值）与新活动逐条入流
 - 🤖 自己跑巡检 / 二次开发：`pip install -r requirements.txt && python crawler_llm_intel.py`（详见[快速开始](#快速开始)）
 
@@ -170,7 +170,7 @@ python -m unittest discover
 >
 > 💡 **核心特性**：覆盖 **70 家厂商**（深度抓取 **134 个情报页 + 46 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 35 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
-> 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [中文合并流](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [英文合并流](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（英文加 `.en.xml`）。合并流与单厂商都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。
+> 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [全部厂商动态（中文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [全部厂商动态（英文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（英文加 `.en.xml`）。全部厂商动态与单厂商源都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。
 > 🛰 **额度变化订阅**（新活动 / 额度调整，前值 → 后值）：[llm-intel-changes.xml](https://free-llm-intel.aishort.top/feeds/llm-intel-changes.xml)
 
 ---
