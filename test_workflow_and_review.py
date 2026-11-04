@@ -4997,6 +4997,91 @@ class TestTextSanitization(unittest.TestCase):
         self.assertEqual(bad, set(), f"README.md 含控制字符: {sorted(bad)}")
 
 
+class TestEvidenceQuoteLinks(unittest.TestCase):
+    """巡检证据引文的链接落地口径：相对地址按出处补全 + 截断不切链接。
+
+    厂商发布的 .md 把站内链接写成 `[Active project](/docs/api-key#google-cloud-projects)`；
+    这样的引文原样进 README 既过不了「README 本地链接必须存在」的守卫，读者点了也是 404。
+    """
+
+    BASE = "https://aistudio.google.com/docs/billing.md"
+
+    def test_root_relative_href_becomes_absolute(self):
+        out = provider_profiles.absolutize_md_links(
+            "See [Active project](/docs/api-key#google-cloud-projects) for details.",
+            self.BASE)
+        self.assertEqual(
+            out,
+            "See [Active project](https://aistudio.google.com/docs/api-key"
+            "#google-cloud-projects) for details.")
+
+    def test_relative_forms_all_absolutized(self):
+        cases = {
+            "[a](./pricing)": "https://aistudio.google.com/docs/pricing",
+            "[a](../free)": "https://aistudio.google.com/free",
+            "[a](guide/quickstart)": "https://aistudio.google.com/docs/guide/quickstart",
+            "[a](//cdn.x.io/p.png)": "https://cdn.x.io/p.png",
+            "![a](/img/x.png)": "https://aistudio.google.com/img/x.png",
+        }
+        for md, want in cases.items():
+            got = provider_profiles.absolutize_md_links(f"引文 {md} 结尾", self.BASE)
+            self.assertIn(f"]({want})", got, f"{md} 未按 {self.BASE} 补全: {got}")
+
+    def test_absolute_and_anchor_hrefs_untouched(self):
+        for md in ("[a](https://x.io/p)", "[a](http://x.io/p)",
+                   "[a](mailto:x@y.z)", "[a](#section)"):
+            text = f"前 {md} 后"
+            self.assertEqual(provider_profiles.absolutize_md_links(text, self.BASE),
+                             text, f"{md} 本就不是相对地址，不该被改写")
+        self.assertIn("](https://aistudio.google.com/docs/x)",
+                      provider_profiles.absolutize_md_links("前 [a](/docs/x) 后",
+                                                             self.BASE))
+
+    def test_no_base_or_no_link_is_a_noop(self):
+        text = "[a](/docs/x)"
+        self.assertEqual(provider_profiles.absolutize_md_links(text, ""), text)
+        plain = "免费额度 100 万 tokens"
+        self.assertEqual(provider_profiles.absolutize_md_links(plain, self.BASE), plain)
+
+    def test_trim_never_leaves_split_link_markup(self):
+        quote = ("For the free tier, choose a project and read "
+                 "[Active project](https://aistudio.google.com/docs/api-key"
+                 "#google-cloud-projects) before you claim credits at all.")
+        out = provider_profiles._trim_quote(quote, 120)
+        self.assertLessEqual(len(out), 120)
+        self.assertTrue(out.endswith("…"))
+        # 不许漏出没闭合的链接记号
+        self.assertNotIn("](", out)
+        self.assertEqual(out.count("["), out.count("]"))
+        # 被摘掉 URL 的链接保留文字，事实本体不丢
+        self.assertIn("Active project", out)
+
+    def test_trim_keeps_short_text_intact(self):
+        text = "免费额度 [100 万](https://x.io/p) tokens"
+        self.assertEqual(provider_profiles._trim_quote(text, 120), text)
+
+    def test_rendered_evidence_row_has_no_relative_link(self):
+        """落进 README 的那一行必须只剩可点的绝对地址。"""
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="google_gemini", brand="Gemini", homepage="", products=[])
+        intel.evidence = {"free_tier": [crawler_llm_intel.Snippet(
+            text="See [Active project](/docs/api-key#google-cloud-projects) "
+                 "for the free tier rules.",
+            url=self.BASE, stype="free_quota")]}
+        prof = provider_profiles.get_provider_profile("google_gemini")
+        # 机翻走真网络且会把结果写进缓存；这里只关心链接口径，原文照抄即可
+        with mock.patch.object(provider_profiles, "translate_to_zh",
+                               side_effect=lambda t, **k: t):
+            row = [ln for ln in provider_profiles.render_freellm_table(intel, prof, 1)
+                   if "实时巡检证据" in ln]
+        self.assertEqual(len(row), 1, f"证据行没渲染出来: {row}")
+        self.assertIn("](https://aistudio.google.com/docs/api-key#google-cloud-projects)",
+                      row[0], f"相对地址没补全: {row[0]}")
+        for text, target in re.findall(r"\[([^\]]+)\]\(([^)]+)\)", row[0]):
+            self.assertTrue(target.startswith("http"),
+                            f"证据行漏出非绝对地址: [{text}]({target})")
+
+
 class TestEvidenceKeyContract(unittest.TestCase):
     """巡检证据分组键契约：展示顺序里的键必须真实存在于 KEYWORD_GROUPS。
 

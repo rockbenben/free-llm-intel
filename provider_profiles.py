@@ -13,6 +13,7 @@ import re
 import sys
 from pathlib import Path
 from threading import Lock
+from urllib.parse import urljoin
 
 import requests
 
@@ -2331,6 +2332,50 @@ def get_provider_profile(vendor_id: str, brand: str = "", homepage: str = "") ->
     return _apply_overlay(base, vendor_id)
 
 
+#: 抓来的页面原文（厂商自己发布的 .md 尤其明显，如 `aistudio.google.com/docs/billing.md`）
+#: 把站内链接写成相对地址：`[Active project](/docs/api-key#google-cloud-projects)`。
+#: 证据引文原样抄进 README 后，那条相对地址在仓库里既不是文件也不是页面，
+#: 「README 本地链接必须存在」的守卫判它失效，读者点了也是 404。
+_MD_LINK_RE = re.compile(r"(!?\[[^\]]*\])\(([^)]*)\)")
+
+
+def absolutize_md_links(text: str, base_url: str) -> str:
+    """把 markdown 链接里的相对地址按引文出处补成绝对地址。
+
+    绝对地址（带 scheme）、纯页内锚点没有出处可补，原样返回；`base_url` 为空时不动文本。
+    """
+    if not base_url or "[" not in text:
+        return text
+
+    def _fix(m: re.Match) -> str:
+        href = m.group(2).strip()
+        if not href or href.startswith("#") or re.match(r"^[A-Za-z][A-Za-z0-9+.\-]*:", href):
+            return m.group(0)
+        return f"{m.group(1)}({urljoin(base_url, href)})"
+
+    return _MD_LINK_RE.sub(_fix, text)
+
+
+def _trim_quote(text: str, limit: int) -> str:
+    """按长度截断引文，且不许把 markdown 链接拦腰切断。
+
+    切点落进 `[文字](url)` 时摘掉 URL 只留文字，落进 `[文字` 时丢掉半截中括号——
+    否则 README 表格里漏出的是没闭合的方括号与半条 URL。补全后的绝对地址比相对地址
+    长得多，更容易撞上这条线，所以这条守卫是补全的配套，不是可选。
+    """
+    if len(text) <= limit:
+        return text
+    cut = text[:limit - 1]
+    split_link = re.search(r"!?\[([^\]]*)\]\([^)]*$", cut)
+    if split_link:
+        cut = cut[:split_link.start()] + split_link.group(1)
+    else:
+        open_bracket = re.search(r"!?\[[^\]]*$", cut)
+        if open_bracket:
+            cut = cut[:open_bracket.start()]
+    return cut.rstrip() + "…"
+
+
 def render_freellm_table(intel, profile: dict, index: int) -> list[str]:
     """参考 FreeLLM-API-KeyHub 生成美观、详尽且无状态噪点的 Markdown 规格表。"""
     out: list[str] = []
@@ -2374,11 +2419,13 @@ def render_freellm_table(intel, profile: dict, index: int) -> list[str]:
         for key in EVIDENCE_DISPLAY_ORDER:
             snips = intel.evidence.get(key) or []
             for sn in snips[:1]:  # 每类取 1 条动态
-                # 自动翻译非中文
-                trans = normalize_zh_punct(translate_to_zh(sn.text))
+                # 自动翻译非中文；引文里的相对链接先按出处补成绝对地址，
+                # 再洗标点（标点清洗会保护 https:// 开头的整段）
+                trans = normalize_zh_punct(
+                    absolutize_md_links(translate_to_zh(sn.text), sn.url))
                 # 截断：防单条证据撑爆表格
                 if len(trans) > 120:
-                    trans = trans[:117] + "…"
+                    trans = _trim_quote(trans, 120)
                 live_items.append(f"• {trans}")
     if live_items:
         live_str = "<br>".join(live_items[:3])
