@@ -7,7 +7,436 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 30 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Dharma Field Extractor: Any Document In, Structured Fields i…</title>
+      <link>https://huggingface.co/blog/Dharma-AI/dharma-field-extractor</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/Dharma-AI/dharma-field-extractor?li=1</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Dharma Field Extractor: Any Document In, Structured Fields in JSON Out</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Dharma Field Extractor: Any Document In, Structured Fields in JSON Out</h1>
+<p>Team Article</p>
+<p>Published November 4, 2026</p>
+<p>15</p>
+<ul><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/6c132ab7643ff60274db74de037ebc72.svg" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/892344f02f1be897b751797574cb411b.svg" alt=""></a></li><li><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt=""></a></li><li><a href="https://huggingface.co/LuizLuzDharma"><img src="https://huggingface.co/avatars/398c0d1fecf24937ce0fcf0e271cb0aa.svg" alt=""></a></li><li><a href="https://huggingface.co/luizluz608"><img src="https://huggingface.co/avatars/7b8eed7208bd427fb1591506e7495f24.svg" alt=""></a></li><li><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt="Gabriel Pimenta de Freitas Cardoso's avatar"></a></p>
+<p>Gabriel Pimenta de Freitas Cardoso</p>
+<p>GabrielPimenta99</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI's avatar"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/44b3e37c30f6b7dabee192888d300172.svg" alt="Paulo Henrique de Medeiros Araujo's avatar"></a></p>
+<p>Paulo Henrique de Medeiros Araujo</p>
+<p>Paulo-DharmaAI</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI's avatar"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt="Bruno Duarte's avatar"></a></p>
+<p>Bruno Duarte</p>
+<p>brunoduarte01</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI's avatar"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ff5683e6c5cb66fc0b3aeba439e80206.svg" alt="Francisco de Almeida Rocha Alves's avatar"></a></p>
+<p>Francisco de Almeida Rocha Alves</p>
+<p>falves9101</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI's avatar"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><em>A 2-billion-parameter model that extracts exactly the fields you ask for, from any document type, outperforming every frontier LLM we tested, at a fraction of the cost.</em></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/JIRHcND5LFS_JhgAe-ObV.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/JIRHcND5LFS_JhgAe-ObV.png" alt="cover_combined_1"></a> In April, we released <a href="https://huggingface.co/Dharma-AI/Dharma-OCR-LITE">DharmaOCR-LITE</a>, a model specialized for OCR across a wide range of documents, from contracts and court filings to invoices, IDs and forms. The <a href="https://arxiv.org/abs/2604.14314">paper</a> behind it made a narrow, well-measured case for domain specialization: a smaller model trained closer to its task beating general-purpose frontier APIs on that task.</p>
+<p>OCR gives you the text on a page, faithful to the original formatting. That's exactly what you want when the job is the whole document, like a contract you'll read end to end or a manuscript you're digitizing.</p>
+<p>However, there's a different use case: you don't want the page, you want specific fields out of it, in a shape a system downstream can consume. Every line item on an invoice, as a list. The patient name, exam type and date from a medical requisition, ready to schedule. The fields off an ID, mapped to the columns of an employee record.</p>
+<p>Run that document through OCR and you get back everything printed on it, line by line, with no indication of which string is the exam type, which is the date or which number is the total. Someone still has to write the code that maps each value to the right field before it reaches the database.</p>
+<p>A general-purpose LLM can do this work today, with careful prompting. At frontier API pricing and latency, on a task many businesses need to run at high volume, that quickly becomes the expensive way to solve a well-defined problem.</p>
+<p>So we built a model for it instead. The Field Extractor takes a document image and either a request for everything it can find, or an exact schema to fill, and returns structured JSON: typed, field by field, nested where the document nests. An invoice comes back with every line item as an ordered list, each with its own quantity and value, alongside the totals. An ID comes back as the fields you'll store, under the names your system already uses for them. The same checkpoint handles all of it, with no per-type fine-tuning.</p>
+<p>You can try it yourself <a href="https://ocr-portal.prd-us-east-2.dharma-ai.com/login">here</a>.</p>
+<h2>What the Model Does</h2>
+<p>Say a batch of supplier invoices lands every morning, and you need four things off each one to push into your system: the supplier, the invoice number, the due date, the total. Same story for medical requisitions going into a scheduler, or contracts feeding a compliance system, where what matters is the parties, the term, the penalties and the fine amounts. You don't need the page, you need certain fields. With the Field Extractor there are two ways to ask for them:</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/j-k3pMh-GwLH6bgsRZ-4u.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/j-k3pMh-GwLH6bgsRZ-4u.gif" alt="field-extractor-1280"></a></p>
+<ul><li><strong>Open</strong>: no schema supplied. The model reads the page and works out which parts of it are structured fields (a label followed by a value, a table with a header row over its columns) from context and layout, not from a fixed list of field names, and returns everything it finds as key-value pairs.</li><li><strong>Schema-directed</strong>: you specify the exact shape wanted, field by field, with a type for each one (string, number, or boolean), under the key names your system already uses. Ask for &quot;service_provider&quot; and &quot;client_company&quot;, and those are the exact keys that come back. Ask for a table and it fills it row by row, column by column, matching each cell to the key it belongs under. Ask for a field that isn't on the document, and it returns null instead of inventing a value.</li></ul>
+<p>The choice comes down to what you already know. Send an open request when you don't know what the document holds. Send a schema when the output has to match a shape that already exists somewhere else.</p>
+<p>Either way, what comes back is JSON: the fields as keys, the values typed as requested, and <code>null</code> where the document didn't have what you asked for. When you send a schema, the output follows it exactly, with the same keys and no extra fields, so it can go straight into the next system.</p>
+<h2>How It Was Trained</h2>
+<p>The base model is DharmaOCR-LITE v1.1, a new 2-billion-parameter version optimized from the one in the paper and already specialized for OCR through supervised fine-tuning and DPO. On top of that checkpoint we trained a LoRA adapter on 43,384 training examples covering both request modes.</p>
+<p>The data is organized into three streams:</p>
+<ul><li><strong>English multi-domain data</strong>: diverse documents collected from the public web, spanning many document types.</li><li><strong>Brazilian domain data</strong>: real Brazilian documents sourced internally, in Portuguese.</li><li><strong>Multilingual data</strong>: a smaller share covering other European and Asian languages, for broader generalization beyond English and Portuguese.</li></ul>
+<p>All three streams are annotated at the field level. The mix is deliberately multi-domain: receipts, commercial invoices, forms, bank statements, ID documents and synthetic documents, rather than one filing type.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/SuMRjXc_gcp3LZm3K_mWs.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/SuMRjXc_gcp3LZm3K_mWs.png" alt="03_training_data_mix_v2"></a></p>
+<h2>Where the Benchmark Draws the Line</h2>
+<p>The full benchmark covers 546 documents across three request scenarios, for 1,638 total cases: extracting every field with no schema, a partial schema naming only real fields, and a schema that also includes deliberately nonexistent fields. The score is field-level F1 (matched by path, including position inside a table), multiplied by the Levenshtein similarity on the values that matched and by the share of outputs that come back as valid JSON.</p>
+<p>We ran the same benchmark against four general-purpose frontier configurations.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/rGnjzOfdYJrtG8gG_6kZc.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/rGnjzOfdYJrtG8gG_6kZc.png" alt="image"></a></p>
+<p>Against general-purpose LLMs, the quality gap runs from 1.8 points (Claude Opus 5, the closest) to 9.3 points (GPT-5.6 Luna, the widest).</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/bHPhh4WTqoSI2Aqg0NAii.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/bHPhh4WTqoSI2Aqg0NAii.png" alt="image"></a></p>
+<p>Cost runs from roughly 6 times lower (GPT-5.6 Luna) to roughly 147 times lower (GPT-5.6 Sol). The two sides are priced differently. The frontier figures come from measured average input and output tokens per page, reasoning tokens included, against each provider's published list pricing. Every frontier model ran with reasoning set to low; Claude Opus 5 used adaptive effort, which can skip reasoning on simpler pages while staying at the low level. Ours isn't billed per token: the model runs self-hosted, so the figure is GPU time on a single L40S at $2.24 per hour.</p>
+<p>This is not a sales price. Self-hosted cost depends on the hardware, the volume and the latency each deployment needs. The comparison is here to show that a sovereign SSLM, deployed on your own infrastructure, is a real alternative to frontier APIs.</p>
+<h2>A Test of Generalization</h2>
+<p>SROIE and FUNSD are two public datasets in our benchmark, not used in training. Below is one example from each.</p>
+<p>On a SROIE receipt, we asked for all 18 fields printed on it, with no phantom fields this time, and every one comes back correct: the multi-line, unlabeled billing address captured as a single field, the two blank fields (salesperson and ref) correctly returned as null, and every number on the receipt matching to the cent.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/m3CfHgYlaDZ9srzt2X99_.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/m3CfHgYlaDZ9srzt2X99_.png" alt="sroie_combined"></a></p>
+<p>On a FUNSD photocopying variance form, a checklist of twelve boolean fields with one nested group of five sub-options, the model marks exactly the one box that's checked (poor quality original, with a handwritten &quot;faded&quot; note beside it) as true, and the other eleven as false, matching the form exactly. It also reads the handwritten Bates ID off the page correctly, and returns null for the two fields left blank.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/GRHwR5tiDzDKVUtMotsAb.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/GRHwR5tiDzDKVUtMotsAb.png" alt="funsd_combined"></a></p>
+<h2>Quality and Cost, at the Same Time</h2>
+<p>A 2-billion-parameter model scored 0.834, above every frontier configuration we tested, from Claude Opus 5 at 0.816 to GPT-5.6 Luna at 0.741, while running on a single L40S at a lower cost per extraction than every API in the comparison. Higher quality and lower cost, measured on the same benchmark, in the same run.</p>
+<p>This isn't the first time we've measured it. Our OCR paper put the first DharmaOCR-LITE, a 3-billion-parameter model, above every commercial frontier API tested on Brazilian Portuguese; three months later, newer and better-resourced models arrived, and the gap held. Now a 2-billion-parameter model does it on field extraction. Each result adds evidence for the thesis we started Dharma-AI with: on a bounded task, a small model trained close to that task beats a frontier model asked to do the same thing in general. In this benchmark, it also cost 6 to 147 times less to run.</p>
+<p>Parameter count sets the ceiling; training decides how much of it a model reaches on your task. Your business doesn't need the biggest model available. It needs one trained for your problem.</p>
+<p>Try it on your own documents <a href="https://ocr-portal.prd-us-east-2.dharma-ai.com/login">here</a>. To learn more about Dharma-AI and the specialized models we build, visit <a href="https://dharma-ai.com">dharma-ai.com</a>.</p>
+<h3>Sources</h3>
+<ul><li>BID. Brazilian Identity Document Dataset. Soares, Neves Jr., Bezerra (2020), &quot;BID Dataset: a challenge dataset for document processing tasks,&quot; Anais Estendidos XXXIII SIBGRAPI. <a href="https://github.com/ricardobnjunior/Brazilian-Identity-Document-Dataset">github.com/ricardobnjunior/Brazilian-Identity-Document-Dataset</a></li><li>CORD. Park et al., NAVER CLOVA (2019). <a href="https://huggingface.co/datasets/naver-clova-ix/cord-v2">huggingface.co/datasets/naver-clova-ix/cord-v2</a></li><li>DocVQA. Mathew et al., WACV 2021 (ICDAR 2019). <a href="https://huggingface.co/datasets/lmms-lab/DocVQA">huggingface.co/datasets/lmms-lab/DocVQA</a></li><li>WildReceipt. Sun et al., IJCAI 2021. <a href="https://huggingface.co/datasets/Theivaprakasham/wildreceipt">huggingface.co/datasets/Theivaprakasham/wildreceipt</a></li><li>SROIE (ICDAR 2019). Held out from training, evaluation only. <a href="https://huggingface.co/datasets/darentang/sroie">huggingface.co/datasets/darentang/sroie</a> (mirror); upstream <a href="https://rrc.cvc.uab.es/?ch=13">rrc.cvc.uab.es/?ch=13</a></li><li>FUNSD. Jaume et al. Held out from training, evaluation only. <a href="https://huggingface.co/datasets/nielsr/funsd">huggingface.co/datasets/nielsr/funsd</a> (mirror); <a href="https://guillaumejaume.github.io/FUNSD/">guillaumejaume.github.io/FUNSD</a></li><li>Zenodo Invoices (PT). Cruz &amp; Castelli, NOVA IMS (2022). <a href="https://zenodo.org/records/6371710">zenodo.org/records/6371710</a></li><li>line_items. Sagarjha456, Hugging Face. <a href="https://huggingface.co/datasets/Sagarjha456/line_items">huggingface.co/datasets/Sagarjha456/line_items</a></li><li>Katanaml Invoices (Donut). Kozłowski &amp; Weichbroth (2021), Mendeley Data <a href="https://doi.org/10.17632/tnj49gpmtz.2">doi:10.17632/tnj49gpmtz.2</a>. <a href="https://huggingface.co/datasets/katanaml-org/invoices-donut-data-v1">huggingface.co/datasets/katanaml-org/invoices-donut-data-v1</a></li><li>HumynLabs Brazilian Bills and Invoices. <a href="https://huggingface.co/datasets/HumynLabs/Brazilian_Bills_and_Invoices_Dataset">huggingface.co/datasets/HumynLabs/Brazilian_Bills_and_Invoices_Dataset</a></li><li>Tech4Humans BR-Doc Extraction. <a href="https://huggingface.co/datasets/tech4humans/br-doc-extraction">huggingface.co/datasets/tech4humans/br-doc-extraction</a></li><li>Cardoso, Gabriel Pimenta de Freitas, et al. &quot;DharmaOCR: Specialized Small Language Models for Structured OCR that outperform Open-Source and Commercial Baselines.&quot; arXiv preprint <a href="https://arxiv.org/abs/2604.14314">arXiv:2604.14314</a> (2026).</li></ul>
+<h3>Further Reading</h3>
+<ul><li><a href="https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization">How Specializing the Vocabulary of SLMs Can Cut Inference Cost by 77% in Real Applications</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management-pt2">Same Cluster, 33 Points More Utilization: What Changed Was the Order</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management">GPU Management: Why Idle GPUs Are the New Grounded Aircraft</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/newer-models-same-advantages">Newer Models, Same Advantage</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/why-specialization-is-inevitable">Why Specialization Is Inevitable</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/specialization-beats-scale">Specialization Beats Scale: A Strategic Variable Most AI Procurement Decisions Overlook</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/text-degeneration-a-production-failure-mode">Text Degeneration: A Production Failure Mode That Most Benchmarks Do Not Track</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/direct-preference-optimization-beyond-chatbots">Direct Preference Optimization Beyond Chatbots</a></li></ul>
+<p><em>Explore <a href="https://huggingface.co/Dharma-AI">Dharma AI on Hugging Face</a> to <a href="https://huggingface.co/spaces/Dharma-AI/DharmaOCR-demo">try our interactive demos</a>, <a href="https://huggingface.co/Dharma-AI/Dharma-OCR-LITE">download our open-source models</a>, and discover how specialized AI systems outperform general-purpose models in real enterprise applications.</em></p>
+<h2>Models mentioned in this article 1</h2>
+<h2>Datasets mentioned in this article 8</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2>How Specializing the Vocabulary of SLMs Can Cut Inference Cost by 77% in Real Applications</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
+<p>38</p>
+<p>October 21, 2026</p>
+<h2>Same Cluster, 33 Points More Utilization: What Changed Was the Order</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
+<p>20</p>
+<p>August 17, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FDharma-AI%2Fdharma-field-extractor">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2FDharma-AI%2Fdharma-field-extractor">log in</a> to comment</p>
+<p>15</p>
+<ul><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/6c132ab7643ff60274db74de037ebc72.svg" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/892344f02f1be897b751797574cb411b.svg" alt=""></a></li><li><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt=""></a></li><li><a href="https://huggingface.co/LuizLuzDharma"><img src="https://huggingface.co/avatars/398c0d1fecf24937ce0fcf0e271cb0aa.svg" alt=""></a></li><li><a href="https://huggingface.co/luizluz608"><img src="https://huggingface.co/avatars/7b8eed7208bd427fb1591506e7495f24.svg" alt=""></a></li><li><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kaerez"><img src="https://huggingface.co/avatars/670198b891a28c7ad99d3ac202b8e66e.svg" alt=""></a></li><li><a href="https://huggingface.co/lucas-treuke"><img src="https://huggingface.co/avatars/e9756add45740d6fa3bf450fd9c1ec13.svg" alt=""></a></li><li><a href="https://huggingface.co/limafelipe"><img src="https://huggingface.co/avatars/344abdf81cfc54ca5ac2eba4c7876ac3.svg" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ff5683e6c5cb66fc0b3aeba439e80206.svg" alt=""></a></li><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/2d6f6d36a510a8147fe269c0783ecd7e.svg" alt=""></a></li><li><a href="https://huggingface.co/gustavolucchetti"><img src="https://huggingface.co/avatars/e920392ebf5a3b7c6b677800ec839bdd.svg" alt=""></a></li></ul>
+<h2>Models mentioned in this article 1</h2>
+<h2>Datasets mentioned in this article 8</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>StateBench: Testing how language models track state changes…</title>
+      <link>https://huggingface.co/blog/allenai/statebench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/statebench?li=1</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: StateBench: Testing how language models track state changes over long documents</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>StateBench: Testing how language models track state changes over long documents</h1>
+<p>Enterprise  Article</p>
+<p>Published November 3, 2026</p>
+<p>17</p>
+<ul><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/travisking"><img src="https://huggingface.co/avatars/1165d74c4dbd96297485b4be4446ddb2.svg" alt=""></a></li><li><a href="https://huggingface.co/Belirofon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b834e0636a9b6b45316755/63Ak_8fn4-75yr2ArCope.png" alt=""></a></li><li><a href="https://huggingface.co/sazid63"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6abaa0e17a2746d31739f0d8/T4kTX3ZhR5tjl_iI2Afjo.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers's avatar"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2's avatar"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://allenai.org/papers/statebench">Tech Report</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/state-bench">Data</a> | 💻 <a href="https://github.com/allenai/state-bench">Code</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1792006215-statebench-draft-blog-google-docs-image-1.png"><img src="https://www.datocms-assets.com/64837/1792006215-statebench-draft-blog-google-docs-image-1.png" alt="StateBench illustration showing colored paths changing positions across a sequence."></a></p>
+<p>We’re introducing <a href="https://github.com/allenai/state-bench"><strong>StateBench</strong></a>, a benchmark for <em>long-context</em> <em>state tracking</em>—how well language models keep track of information about entities in long documents as they evolve.</p>
+<p>State tracking underlies tasks from reading code, where variables are assigned and reassigned, to following a story as characters physically move around and objects change hands. For example, if a mystery novel states that “John gave Mary the knife” right before a murder occurs, it’s important to know that the state of each character has changed. However, not all state-tracking problems are created equal: some require only finding the latest update; harder ones require following a chain of changes, where one missed step can throw off the final answer. For example, a harder variant of our mystery state tracking would be if John gave Mary the item in his backpack, with it previously known that Edward put a knife in John’s backpack.</p>
+<p>Transformers have well-documented theoretical limits on hard variants of state tracking with long dependency chains, helping motivate recurrent and hybrid architectures such as Gated DeltaNet that carry a running memory forward. Existing state-tracking tests tend to focus on the hardest cases, but as these designs become more common, researchers need to know which kinds of state tracking each architecture can handle. We would like to understand the differences between architectures not just on the hardest kinds of state tracking, but also on the simpler, potentially more common kinds.</p>
+<p>To this end, we developed the StateBench benchmark to capture state-tracking problems of different complexity, which we used to evaluate the differences between language models with different architectures. We find that recurrent and hybrid models can generalize much farther than transformers when trained directly on these tasks, while frontier models including Gemini 3.8 Flash, Claude Opus 5.5, and GPT-6 Sol and Luna still break down on harder forms of state tracking as inputs grow longer.</p>
+<h2>Four levels of state tracking</h2>
+<p>StateBench consists of four difficulty levels that permit increasingly complex state update operations. For programmers, these levels of state tracking complexity can be understood as allowing different types of variable assignment operations:</p>
+<ul><li><strong>R-trivial problems</strong> use immutable assignment. A variable’s value never changes, so the model only needs to recover what it was first set to. In code, this looks like let x = 4; in everyday life, it’s like a birth date—it stays fixed.</li><li><strong>Aperiodic problems</strong> allow reassignment by value. The model needs to find the most recent value and can ignore earlier ones. In code, this looks like x = 4 followed later by x = 2; in everyday life, it’s like a thermostat, where the latest setting determines the current temperature.</li><li><strong>Soluble problems</strong> add self-referential updates. Each update builds on the current value, so the model has to carry changes forward rather than simply find the latest assignment. In code, this looks like x = x + 5; in everyday life, it’s like a game score, where each point adds to the running total.</li><li><strong>General finite problems</strong> add assignment by reference. One variable can take on another variable’s current value, creating dependencies across updates. In code, this looks like x = y or swapping two variables. Imagine a magician hiding a ball under one of five cups, then repeatedly swapping their positions. Finding the ball means keeping track of how those swaps change its location. This illustrates the S₅ state-tracking problem: following how successive swaps rearrange five objects. It belongs to the hardest of our four levels and is discussed in<a href="https://arxiv.org/html/2404.08819v2#S3.SS1"> previous work on the limits of state tracking</a>.</li></ul>
+<p>These levels can be intuitively understood in terms of variable assignments, but they also represent theoretically motivated distinctions in state tracking rooted in Krohn–Rhodes theory, a branch of algebra that describes how state-tracking problems – which can be viewed as <em>word problems</em> over <em>finite monoids</em> – can be decomposed into atomic primitives. Each level in our hierarchy corresponds to a class of state-tracking problems that can be built out of a different set of primitives.</p>
+<p>To compare the four levels fairly, we start with a general finite sequence of variable assignments and derive three easier versions from it, producing four comparable StateBench problems—one at each difficulty level. All four use the same number of variables and distinct values, with assignments appearing at the same points in the sequence; only the type of assignment changes.</p>
+<h2>What we found</h2>
+<h3>Pretrained models</h3>
+<p>We tested a range of open pretrained models on the r-trivial, aperiodic, and general finite levels of StateBench to see where their state tracking breaks down, and whether different architectures fail where theory predicts. Under standard theoretical assumptions, transformers can handle r-trivial robustly (and soluble and aperiodic to some degree) but are predicted to fail on general problems. In contrast, Gated DeltaNet with a more flexible memory update can, in principle, handle all four levels.</p>
+<p>We started with open pretrained models, where the training data and context lengths are fully documented. These included two 7-billion-parameter models, Olmo 3 (a transformer) and Olmo Hybrid (which adds Gated DeltaNet layers), along with smaller models with 275 million and 2.7 billion parameters. All of these models were pretrained on the same data; none had seen contexts longer than 64,000 tokens during training, and we tested most of them on inputs well beyond that length.</p>
+<p>When we scored each model, almost all performed well on r-trivial problems, lost accuracy on aperiodic ones as inputs grew, and stayed at chance on general finite problems. Problem format mattered here—the 275-million-parameter hybrid and Gated DeltaNet models scored near the ceiling on RULER-style r-trivial problems but were near chance on the same problems framed as spreadsheet edits. That gap is one reason StateBench tests the same underlying problem in several formats.</p>
+<p><a href="https://www.datocms-assets.com/64837/1792006353-statebench-draft-blog-google-docs-image-2.png"><img src="https://www.datocms-assets.com/64837/1792006353-statebench-draft-blog-google-docs-image-2.png" alt="Accuracy of pretrained transformer, hybrid, and Gated DeltaNet models versus input length in tokens; soluble results are not reported."></a></p>
+<h3>Frontier models</h3>
+<p>We then tested four frontier models – Gemini 3.8 Flash, Claude Opus 5.5, and GPT-6 Sol and Luna – asking them to read each sequence of variable assignments and generate the final value of every variable.</p>
+<p>All four performed well on r-trivial and aperiodic problems. But on soluble and general finite problems, accuracy fell sharply as inputs grew longer, dropping to 13% or lower on the longest general finite problems. One likely factor is <em>sensitivity</em>; at these harder levels, many more steps can affect the final answer, leaving less room for a model to miss an update without getting the result wrong.</p>
+<p><a href="https://www.datocms-assets.com/64837/1792006435-statebench-draft-blog-google-docs-image-3.png"><img src="https://www.datocms-assets.com/64837/1792006435-statebench-draft-blog-google-docs-image-3.png" alt="Accuracy of Gemini 3.8 Flash, Claude Opus 5.5, GPT-6 Sol, and GPT-6 Luna across the four StateBench levels versus input length in tokens."></a></p>
+<h2>Models trained directly on the task</h2>
+<p>Next, we investigated whether models’ difficulty with the harder levels reflects limits of the architectures themselves, or whether pretraining simply doesn’t teach models to solve them. Targeted direct training is a more favorable setting that reveals to what degree state-tracking issues come from the underlying architecture and optimizer rather than the data used to pretrain a model.</p>
+<p>We trained several 275-million-parameter models from scratch on StateBench: two transformer variants, two hybrids, and two Gated DeltaNet variants with different memory-update constraints. The models trained on sequences of up to 256 assignments and were tested on sequences as long as 64,000 assignments, or 250 times the maximum training length.</p>
+<p>The architectures began to diverge as sequences grew longer. Gated DeltaNet and hybrid models generalized almost perfectly on r-trivial, aperiodic, and soluble problems out to the longest sequences we tested, tens of thousands of assignments. Transformers learned the easier levels but degraded on longer sequences, and they never learned general finite problems. On the hardest level, the Gated DeltaNet variant with a more flexible memory update generalized the farthest, staying near perfect out to roughly 10 times the length of the longest sequences it saw during training.</p>
+<p>For Gated DeltaNet and hybrid models, the gap points to training rather than architecture; trained directly, they learned to handle state-tracking levels their pretrained counterparts couldn’t. Transformers were different—even trained directly, they could never learn the hardest level.</p>
+<p><a href="https://www.datocms-assets.com/64837/1792006493-statebench-draft-blog-google-docs-image-4.png"><img src="https://www.datocms-assets.com/64837/1792006493-statebench-draft-blog-google-docs-image-4.png" alt="Accuracy of transformer, hybrid, and Gated DeltaNet models trained directly on StateBench across all four levels versus input length in assignments."></a></p>
+<h2>Open questions and the release</h2>
+<p>Some questions remain open. Our new proof shows that Gated DeltaNet with a more limited memory update (non-negative eigenvalues) can solve all aperiodic tasks and certain periodic tasks, such as tracking whether a repeated input has occurred an even or odd number of times, under the paper’s fixed-precision arithmetic with rounding. Its exact placement in the hierarchy remains open, including whether it can solve all soluble tasks and how numerical precision or combining it with attention layers affects its capabilities. StateBench also assumes a fixed number of variables, while real tasks often introduce new entities over time. In a long conversation, for example, new people and objects can appear as it unfolds, and the model has to begin tracking them too. The current framework doesn’t yet cover that setting.</p>
+<p>As new flavors of recurrent and hybrid architectures emerge, understanding which kinds of state tracking each can handle could help guide how future systems are developed and trained. We hope StateBench gives researchers a finer-grained way to find where models break down—and to build training and evaluation data for the capabilities that still fall short. More fundamentally, we hope it serves as a North Star for researchers to develop new architectures with more robust state-tracking abilities compared to current models.</p>
+<h2>Datasets mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2>Can we trust LLMs to judge whether a research idea is novel?</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>18</p>
+<p>October 27, 2026</p>
+<h2>LitPivot: Developing research ideas through dynamic contextualization within the literature landscape</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>39</p>
+<p>October 23, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fstatebench">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fstatebench">log in</a> to comment</p>
+<p>17</p>
+<ul><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/travisking"><img src="https://huggingface.co/avatars/1165d74c4dbd96297485b4be4446ddb2.svg" alt=""></a></li><li><a href="https://huggingface.co/Belirofon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b834e0636a9b6b45316755/63Ak_8fn4-75yr2ArCope.png" alt=""></a></li><li><a href="https://huggingface.co/sazid63"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6abaa0e17a2746d31739f0d8/T4kTX3ZhR5tjl_iI2Afjo.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Karlitos1337"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/D_5e1cD0VZfurrzCmLK0I.png" alt=""></a></li><li><a href="https://huggingface.co/Ropy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/6H8bocfU6eEMXRH4jR_Kh.jpeg" alt=""></a></li><li><a href="https://huggingface.co/TonyDzi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ER2rjTiyO6-00TRMZjELA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lostinlatency"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69441e743e778b598a650301/uC61xgIA2DSNJKuNL92qM.jpeg" alt=""></a></li><li><a href="https://huggingface.co/haidefuren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ae9a1fe0c2573a987f4d496/rKsDX_uFyu13ntE6H_okA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Palette: teaching a small model to build decks in your desig…</title>
+      <link>https://huggingface.co/blog/ibm-research/palette-deck-building</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/palette-deck-building?li=1</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Palette: teaching a small model to build decks in your design language</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Palette: teaching a small model to build decks in your design language</h1>
+<p>Enterprise  Article</p>
+<p>Published November 3, 2026</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/PanchoG10"><img src="https://huggingface.co/avatars/93593a4aa128bb825db07ce3ba7a8b3d.svg" alt=""></a></li><li><a href="https://huggingface.co/motropuk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6876672e54f32c191d12da37/C2rQerP9joLwJGOsmLzr3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/gokondeyo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1665893924398-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prteek"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6480743bc0d3c70316d12657/90EDVFrZw1dWUiSwLAMhJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/praveenv"><img src="https://huggingface.co/avatars/c5ea3adbbb04040b0e9156aa5fc8884a.svg" alt="Praveen Venkateswaran's avatar"></a></p>
+<p>Praveen Venkateswaran</p>
+<p>praveenv</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/0ad0b4c983b7d63b38a40c15f4d7ca3d.svg" alt="Anupama Murthi's avatar"></a></p>
+<p>Anupama Murthi</p>
+<p>anupamamurthi</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/harmedox"><img src="https://huggingface.co/avatars/fae816bfe09bec6732bc4e1611a01a83.svg" alt="Hamid Adebayo's avatar"></a></p>
+<p>Hamid Adebayo</p>
+<p>harmedox</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p>Ask a frontier model for a slide deck and you'll get a good one. Ask for ten and they start to look alike: the same tasteful defaults, the same house style, a faint &quot;AI-generated deck&quot; look. That's fine until you want the deck to look like <em>your</em> template. Frontier models have their own house style, and no amount of prompting stops them drifting back to it. And sometimes the content is confidential and can't leave your systems at all.</p>
+<p>Both of those point to a model you own: open weights, running on your own infrastructure, trained on your own design language. The catch is that small open models, the kind you'd actually self-host, are <em>bad</em> at this. Their decks come out broken: titles that vanish into the background, text running off the slide, shapes stacked on top of each other.</p>
+<p><strong>Palette</strong> tests one bet: that a small open-weight model, trained on synthetic data in your design language and checked by a harness, can compete with frontier systems while you keep ownership of the result. We fine-tuned a 20B model to build decks the way people do: a designer plans the deck and a coder draws each slide. Its training data follows the <a href="https://www.ibm.com/design/language/resources/">IBM Design Language</a>, and on <a href="https://huggingface.co/datasets/PresentBench/PresentBench">PresentBench</a> it ranks first on two of the three domains we measured. This post covers how we synthesized the data, trained the model and built a harness around it.</p>
+<h2>Why decks are hard for small models</h2>
+<p>A slide deck looks simple, but making one asks a model to do three things small models are bad at.</p>
+<p><strong>It lays out the slide without seeing it.</strong> The model doesn't draw slides; it writes code that places every element at an x, y, width and font size. Whether a 75-character title fits on two lines at 56pt is arithmetic the model does in its head, and it only finds out it was wrong after the code renders. Small models get this wrong often, which is where overlapping shapes and text running off the slide come from.</p>
+<p><strong>It makes two kinds of decisions at once.</strong> Deciding what each slide says and how to show it (a chart or a table? what to cut?) is editorial judgment. Placing it precisely is geometry. A single pass has to do both across 10–20 slides, while keeping the palette, type and layout consistent.</p>
+<p><strong>There's no data showing how decks get made.</strong> Plenty of finished decks exist, but not the rationale behind the design choices or the code that produced them.</p>
+<h2>Build it like a human: a designer and a coder</h2>
+<p>Nobody makes a deck in one pass. You decide the story first (how many slides, what each one says, which gets a chart and which gets a table) and only then build each slide. Palette splits the work the same way, into two roles served by a single LoRA adapter:</p>
+<ul><li>The designer reads the plan and writes a structured JSON brief: the palette, the type system, and for each slide its layout, its exact content and a short design rationale.</li><li>The coder takes one slide's spec from the brief and writes the <a href="https://gitbrent.github.io/PptxGenJS/">pptxgenjs</a> JavaScript that draws it, preceded by its reasoning.</li></ul>
+<p>Each role now makes one kind of decision: the designer handles the editorial judgment, and the coder handles the geometry. The brief between them is readable and editable, so a person or an agent can change one slide's layout without regenerating the deck. And because every slide's context is fixed before any code is written, the coder calls run in parallel, one per slide, which makes the coding stage about 6–7× faster.</p>
+<p>We trained the adapter with LoRA rather than full fine-tuning: it teaches a format and a skill on top of a capable base without disturbing what the base already knows, and it made each experiment cheap. One lesson: coder examples are about 5× longer than designer examples, so a naive mix undertrained the designer until we oversampled its examples 5×.</p>
+<h2>Synthesizing decks and their reasoning</h2>
+<p>There's no public corpus of plans, design decisions and slide code, so we generated one with a large open teacher. Each deck starts from a recipe that sets its genre, length, layouts and any user directives, so we control what the data covers. Plans range from tidy outlines to raw content dumps, so the model learns to cut and condense. We generated around 1000 decks covering roughly 10,000 slides.</p>
+<p>Every example also carries the reasoning behind it, written as a counterfactual: the trace weighs an alternative and says why it was rejected, so the model learns the rule behind a choice, not just the choice. The designer reasons about content and form. For example:</p>
+<blockquote>&quot;Revenue for four quarters, with one clear upward trend. I considered a table, but the point of this slide is the trend, not the exact figures, so a bar chart makes it visible at a glance.&quot;</blockquote>
+<p>The coder reasons about geometry:</p>
+<blockquote>&quot;The title is 62 characters. At 44pt it would wrap to three lines and run into the chart below, so I set it at 36pt, which fits on two lines and leaves room above the chart.&quot;</blockquote>
+<p>The teacher alone doesn't make the data good; the loop around it does. Every synthesized deck is rendered and checked for overlaps and overflow by the same checker the harness uses at inference. Broken slides are repaired, and their reasoning is rewritten as the same kind of counterfactual, covering what the original layout got wrong and why the fix works. Each mistake the checker catches becomes a better training example.</p>
+<p>The hardest problem was faithfulness. The worst failure is a slide with facts that weren't in the input, and we found that a prompt rule can't prevent it. If a brief asks for a six-by-five table but carries only three bullets, the coder has to invent the rest.</p>
+<p>What fixed it was reference decks, not the rules: fixing a reference reliably changed the teacher's output, while adding a rule rarely did. The teacher sees a few reference decks in its prompt and copies them far more than it follows instructions.</p>
+<h2>Steering a deck in plain English</h2>
+<p>Users often want finer-grained control over specific design choices: a chart instead of a table, a particular color, a darker cover. Palette lets them ask for these with <em>directives</em>, short instructions written directly in the plan and wrapped in <code>[[ ]]</code>:</p>
+<pre><code>## Rollout plan
+- March: pilot with two teams
+- May: security review complete
+- July: rollout to all of engineering
+- September: company-wide launch
+- November: first adoption review
+[[make this a timeline]]</code></pre>
+<p>The designer builds each directive into the brief, and the coder follows it when drawing the slide. Without the directive, the model would reasonably show these milestones as a table; with it, the model draws a timeline instead.</p>
+<p>The model follows directives because it was trained to. The data recipes include directives from 12 categories, a few of which are shown below, each phrased several different ways, so the model learns the intent rather than a fixed phrase.</p>
+<table><thead><tr><th>Category</th><th>Example directive</th></tr></thead><tbody><tr><td>Layout</td><td><code>[[make this a timeline]]</code></td></tr><tr><td>Tone</td><td><code>[[be candid, no spin]]</code></td></tr><tr><td>Audience</td><td><code>[[this is for the board]]</code></td></tr><tr><td>Order</td><td><code>[[lead with the ask]]</code></td></tr><tr><td>Leaving out</td><td><code>[[no pricing]]</code></td></tr><tr><td>Emphasis</td><td><code>[[highlight the headline number]]</code></td></tr></tbody></table>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/63890e3843d8b0797a0ad606/YTsME8ZIwzzxmo-QmpTQq.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/63890e3843d8b0797a0ad606/YTsME8ZIwzzxmo-QmpTQq.png" alt="The same plan rendered without and with a user directive"></a> <em>Figure 1. An illustration of the same plan without (left) and with (right) the <code>[[make this a timeline]]</code> directive.</em></p>
+<h2>Building a check-and-repair harness</h2>
+<p>Even a well-trained model sometimes produces a broken slide: a title in the same color as the background, or two boxes stacked on top of each other. So Palette doesn't return the model's output directly; every deck goes through a harness first.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/63890e3843d8b0797a0ad606/PZoiyAFg_nrWRryQhjGN_.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/63890e3843d8b0797a0ad606/PZoiyAFg_nrWRryQhjGN_.png" alt="Palette pipeline: plan → designer → coder → check &amp; repair → deck"></a> <em>Figure 2. The designer drafts the brief, the coder writes each slide's code in parallel, and the harness checks and repairs every slide before the deck is returned.</em></p>
+<p>First, simple rules fix known mistakes, such as a malformed color code that would otherwise turn every slide black. Then each slide is rendered and measured: a geometry checker flags text that overlaps, gets clipped or runs off the slide. Flagged slides go to a separate editor model, which rewrites that slide's code.</p>
+<p>The key rule is that a rewrite is kept only if the checker confirms the slide improved; otherwise the original stays. That makes the harness safe to run on every deck. It can fix a slide, but it can't make one worse.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/63890e3843d8b0797a0ad606/iZzBRJXOUxncecFIEgw-B.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/63890e3843d8b0797a0ad606/iZzBRJXOUxncecFIEgw-B.png" alt="Before/after: overlapping cards repaired into a clean grid"></a> <em>Figure 3. An illustration of a repair. As generated (left), each card's title is stacked on top of its description; the harness detects the overlaps and reflows the cards into a 2×2 grid (right).</em></p>
+<p>To measure its effect, we generated each PresentBench deck once and scored it with and without the harness. Across 131 decks, the harness adds 3.5 points on average.</p>
+<h2>Evaluation</h2>
+<p>We evaluate on <a href="https://huggingface.co/datasets/PresentBench/PresentBench">PresentBench</a>, which scores generated decks on five criteria: fundamentals, visual design, completeness, correctness and fidelity. PresentBench provides a source document rather than a plan, so for these runs a separate frontier model drafted each plan from its document, and Palette built the deck from that plan. We report three domains; baseline numbers are from the PresentBench paper.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/63890e3843d8b0797a0ad606/QiWVeHtadoTFYsfdPjkDr.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/63890e3843d8b0797a0ad606/QiWVeHtadoTFYsfdPjkDr.png" alt="PresentBench scores by domain"></a> <em>Figure 4. PresentBench scores by domain. Palette (blue) against NotebookLM, Manus 1.6 and five other systems (gray). Palette ranks first on Economics and Education, third on Talk, and second on the three-domain mean.</em></p>
+<p>Palette does best where structured content and numeric accuracy decide the score, ranking first on Economics and Education. On Talk, where decks are narrative and speech-driven, two closed systems score higher and Palette places third. Across the three domains it places second, 1.1 points behind NotebookLM (59.7 vs 60.8) and ahead of the rest of the field, as a single 20B open-weight model.</p>
+<p>PresentBench measures whether a deck is good, but not whether it follows a specific design language. We're not aware of a benchmark that does, and it's a gap we hope to help close.</p>
+<h2>What's next</h2>
+<p>The harness already computes cheap, verifiable signals: does the slide render, does anything overlap or overflow, does every fact trace back to the brief. Today we use them to repair output after generation. Next, we want to use the same checks as rewards for reinforcement learning, so the model stops making these mistakes in the first place. Because the coder works one slide at a time, each slide is a short, independently checkable rollout, a natural fit for GRPO-style training.</p>
+<p>We also want to close the gap on figure-heavy decks by extracting figures from source documents (e.g. with <a href="https://github.com/docling-project/docling">Docling</a>) and placing them with the harness. And we're exploring a lighter way to bring your own templates: re-skinning output from one or two of your existing <code>.pptx</code> files, without retraining.</p>
+<h2>What we learned</h2>
+<p>Building Palette taught us a few effective methods that extend naturally to other tasks whose output has a structure you can check in code, from charts and diagrams to UI layouts:</p>
+<ul><li>Put the reasoning in the data. Training on why a choice was made, including what was rejected, teaches more than the choice alone.</li><li>Fix the examples before adding a rule. When the teacher got something wrong, our first instinct was to add a rule to its prompt, and that rarely helped. The teacher copied its reference decks far more than it followed instructions, so fixing the reference was what actually changed its output.</li><li>Make repairs safe by default. A fix that's kept only when it measurably helps can run on every output.</li><li>Build the checker first. It's what makes the data trustworthy and the outputs safe to ship.</li></ul>
+<h2>Datasets mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2>Same Model, Different Harness: CUGA, Hermes, and Deep Agents — When to Pick CUGA?</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<p>33</p>
+<p>November 3, 2026</p>
+<h2>Ensemble forecasting with IBM Granite time-series models</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<p>28</p>
+<p>October 22, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Fpalette-deck-building">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Fpalette-deck-building">log in</a> to comment</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/PanchoG10"><img src="https://huggingface.co/avatars/93593a4aa128bb825db07ce3ba7a8b3d.svg" alt=""></a></li><li><a href="https://huggingface.co/motropuk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6876672e54f32c191d12da37/C2rQerP9joLwJGOsmLzr3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/gokondeyo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1665893924398-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prteek"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6480743bc0d3c70316d12657/90EDVFrZw1dWUiSwLAMhJ.png" alt=""></a></li><li><a href="https://huggingface.co/imedwardho"><img src="https://huggingface.co/avatars/07fdb1848ce60ce7c78f9a5e3196884b.svg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li><li><a href="https://huggingface.co/zameeahmad"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/dEVmGg3ZMvvl_pvFxXUIG.png" alt=""></a></li><li><a href="https://huggingface.co/karanjangid80"><img src="https://huggingface.co/avatars/864f6c7ca953635e83329b360790716b.svg" alt=""></a></li><li><a href="https://huggingface.co/jayaramkr"><img src="https://huggingface.co/avatars/b3fd5aeb83c64d2d0b1b25c153f2727d.svg" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>CWE-bench v2: More coverage, quality, and transparency</title>
+      <link>https://huggingface.co/blog/cwe-bench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/cwe-bench?li=1</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>CWE-bench v2: More coverage, quality, and transparency</h1>
+<p>Published November 3, 2026</p>
+<p>Update on GitHub</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pkseeg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1641838809929-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ajayjagan2511"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/pXfqE0bFAf_ZXe7bRo4TX.png" alt=""></a></li><li><a href="https://huggingface.co/nazneen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648508910554-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/chalo2000"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6421d2972143035270db37b9/ftAOTf3AWZE6D8YIykRSJ.png" alt="Gonzalo Gonzalez's avatar"></a></p>
+<p>Gonzalo Gonzalez</p>
+<p>chalo2000</p>
+<p><a href="https://huggingface.co/collinear-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62424000cce0bae7eb45487b/DYrozXHs1-ISs9ZeN2_k_.png" alt="Collinear AI's avatar"></a> <a href="https://huggingface.co/collinear-ai">collinear-ai</a></p>
+<p><a href="https://huggingface.co/ajayjagan2511"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/pXfqE0bFAf_ZXe7bRo4TX.png" alt="Ajay Jagannath's avatar"></a></p>
+<p>Ajay Jagannath</p>
+<p>ajayjagan2511</p>
+<p><a href="https://huggingface.co/collinear-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62424000cce0bae7eb45487b/DYrozXHs1-ISs9ZeN2_k_.png" alt="Collinear AI's avatar"></a> <a href="https://huggingface.co/collinear-ai">collinear-ai</a></p>
+<p><a href="https://huggingface.co/nazneen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648508910554-noauth.jpeg" alt="Nazneen Rajani's avatar"></a></p>
+<p>Nazneen Rajani</p>
+<p>nazneen</p>
+<p><a href="https://huggingface.co/collinear-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62424000cce0bae7eb45487b/DYrozXHs1-ISs9ZeN2_k_.png" alt="Collinear AI's avatar"></a> <a href="https://huggingface.co/collinear-ai">collinear-ai</a></p>
+<p><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt="Nathan Habib's avatar"></a></p>
+<p>Nathan Habib</p>
+<p>SaylorTwift</p>
+<p><a href="https://cwe-bench.com/">CWE-bench</a> is designed to test the limits of frontier cyber capabilities. In our continued pursuit to push the horizon at <a href="https://collinear.ai/">Collinear AI</a>, CWE-bench v2 opens up a <a href="https://huggingface.co/datasets/collinear-ai/cwe-bench">public set of 100 tasks</a> that anyone can run and evaluate their models on. The setup is the same as before. An agent gets a checkout of a real open-source repository and a short instruction, with the goal of finding and fixing a security weakness without breaking existing functionality. Scoring is fully programmatic, so results are deterministic and anyone can reproduce them without extra cost. All our programmatic checks have been curated with the help of LLM judge panels that shape them towards the direction of hardness and fairness. We also maintain a <a href="https://www.cwebench.com">held-out set</a>, so that we can keep tracking progress on tasks no model has seen. To evaluate your model on the held-out set, contact <a href="mailto:cyber@collinear.ai">cyber@collinear.ai</a>.</p>
+<p>Our goal is to be exhaustive. A defender has to anticipate the ways an attacker could get in, and get it right every single time. These 100 tasks cover 91 different CWEs, spanning a wide range of vulnerability classes. A model that does well here has to understand the multiple weakness surfaces that a potential attacker can exploit. Recognising a familiar pattern is not enough.</p>
+<p>As part of our meticulous effort to keep improving quality, for every task we checked that the following questions were true:</p>
+<ul><li>Does the instruction read like a realistic instruction and not an evaluation setting?</li><li>Can every graded behaviour be inferred from the instruction?</li><li>Does the verifier check for correct behaviour and not for specific structure of one fix?</li><li>Does the starter code fail and the reference fix pass?</li><li>Does the original functionality still work with the new fix?</li><li>Do the verifiers fail memorized solutions like the known upstream patch?</li></ul>
+<p>Every task was also reviewed by hand. Open-sourcing the set is part of the same effort to improve quality. We welcome feedback on any task, and contributions to the public set.</p>
+<h2>Results</h2>
+<p>Results are tracked in two places on the Hub. The <a href="https://huggingface.co/datasets/collinear-ai/cwe-bench">leaderboard on the CWE-bench dataset page</a> covers open-weight models and updates on its own: labs and the community add a result by opening a PR on the model's repo with a results file (<a href="https://huggingface.co/docs/hub/eval-results#adding-evaluation-results">how</a>). For the full comparison, including API-only models such as Gemini, Claude and GPT, see the <a href="https://huggingface.co/spaces/collinear-ai/cwe-bench-leaderboard">CWE-bench leaderboard Space</a>, where new models are added through a PR on the Space.</p>
+<p>Open-weight models, from the dataset page:</p>
+<p>All evaluated models, including API-only ones:</p>
+<p>Of the 11 models evaluated, Gemini 4 Argon leads with 67.8% pass@1 and 81.0% pass@4, just ahead of Claude Opus 5.5 (67.3% pass@1, 78.0% pass@4). 95 tasks are solved by at least one model, an indication that the tasks are indeed solvable. However, even the leader fails 19% of the set on every attempt, so the long tail is far from solved. The public set, the grader and the harness are open. Run your model, and tell us where it stands.</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/cwe-bench/pareto.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/cwe-bench/pareto.png" alt="CWE-bench v2: pass@1 against average cost per rollout, with the Pareto frontier"></a></p>
+<p>On cost, DeepSeek V4.1 Flash (1017), Claude Opus 5.5 and Gemini 4 Argon form the Pareto frontier: DeepSeek reaches 57.0% pass@1 at $0.04 per rollout, Opus adds ten points at $1.83, and Gemini edges ahead at $3.92.</p>
+<h2>Run it from the Hub</h2>
+<p>Every task is a self-contained <a href="https://harborframework.com/">Harbor</a> task (a Dockerized environment, an instruction, and a deterministic verifier), and the dataset ships a <code>registry.json</code>. Harbor can therefore run the whole benchmark straight from the Hugging Face repo, without cloning anything yourself:</p>
+<pre><code>harbor run --repo &quot;https://huggingface.co/datasets/collinear-ai/cwe-bench&quot; -d cwe-bench@2.0 -k 4 \
+  --agent &lt;agent&gt; --model &lt;model&gt; --env docker \
+  --allow-agent-host &lt;model API host&gt;</code></pre>
+<p><code>-k 4</code> runs 4 attempts per task, and the reported score is the mean reward over all 400 trials. The dataset is gated: accept its access conditions on the <a href="https://huggingface.co/datasets/collinear-ai/cwe-bench">dataset page</a> first. Harbor fetches the tasks with git, so also save your HF token to git's credential helper once:</p>
+<pre><code>hf auth login --token $HF_TOKEN --add-to-git-credential</code></pre>
+<p>The tasks are also tagged <code>rl-environment</code>: the same environments and verifiers can provide rewards for training defensive agents, not just for evaluating them.</p>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<h3>Community</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6acf9ec0fc571b36cbc7fac9/0cXr4kc4-Viqo8HPo3dFt.png" alt=""></p>
+<p>victimfsfsd</p>
+<p>about 14 hours ago</p>
+<p>This comment has been hidden (marked as Spam)</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6acf9ec0fc571b36cbc7fac9/0cXr4kc4-Viqo8HPo3dFt.png" alt=""></p>
+<p>victimfsfsd</p>
+<p>about 14 hours ago</p>
+<p>This comment has been hidden (marked as Spam)</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6acf9ec0fc571b36cbc7fac9/0cXr4kc4-Viqo8HPo3dFt.png" alt=""></p>
+<p>victimfsfsd</p>
+<p>about 14 hours ago</p>
+<p>This comment has been hidden (marked as Spam)</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6acf9ec0fc571b36cbc7fac9/0cXr4kc4-Viqo8HPo3dFt.png" alt=""></p>
+<p>victimfsfsd</p>
+<p>about 12 hours ago</p>
+<p>X8247 [t1]() [t2]() [t3]() [t4]() [t5]() [t6]() [t7]()</p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fcwe-bench">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fcwe-bench">log in</a> to comment</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pkseeg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1641838809929-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ajayjagan2511"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/pXfqE0bFAf_ZXe7bRo4TX.png" alt=""></a></li><li><a href="https://huggingface.co/nazneen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648508910554-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/mehranmorabbipazoki"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qs_rwl7PMFGUGkTd7SP5r.png" alt=""></a></li><li><a href="https://huggingface.co/chalo2000"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6421d2972143035270db37b9/ftAOTf3AWZE6D8YIykRSJ.png" alt=""></a></li><li><a href="https://huggingface.co/serkanpeker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c234c79e95defcfb16400b/uttyjFBZMBE6q17aSPFYs.jpeg" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Transformers Model Integration Contracts</title>
+      <link>https://huggingface.co/blog/transformers-mic</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/transformers-mic?li=1</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Transformers Model Integration Contracts</h1>
+<p>Published November 3, 2026</p>
+<p>Update on GitHub</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/naolaiduoc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/AhmxDynVKqbgIIwPaLyde.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/Dagdixel"><img src="https://huggingface.co/avatars/27ae8349bfaf1b26e57a1bd224b257e7.svg" alt=""></a></li><li><a href="https://huggingface.co/AntonV"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/630dc8e6ab0894318469dcc5/joJcu4NWpb36zNDsfQm7U.jpeg" alt=""></a></li><li><a href="https://huggingface.co/IlyasMoutawwakil"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1642598610696-noauth.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/tarekziade"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png" alt="Tarek Ziadé's avatar"></a></p>
+<p>Tarek Ziadé</p>
+<p>tarekziade</p>
+<p>On July 30, 2026, Transformers enabled PyTorch's scaled dot-product attention (SDPA) for T5. As a side effect, UMT5's decoder could attend to future tokens. During training, it could peek at the answer it was supposed to predict. Nothing crashed, and the bug stayed in main for almost two months.</p>
+<p>When we later replayed those commits, a small UMT5 model running on CPU flagged it on every one of them. This post is about that model and the tests built around it.</p>
+<h2>Why bugs reach main</h2>
+<p><a href="https://github.com/huggingface/transformers">Transformers</a> supports over 750 model types, and its test suite is big: <strong>88,000+ CPU tests on main, plus 200,000+ GPU tests in a daily run.</strong> Model tests are only part of it: we also test pipelines, training, distributed execution, quantization and attention kernels.</p>
+<p><a href="https://huggingface.co/blog/assets/transformers-mic/ci-test-suite.svg"><img src="https://huggingface.co/blog/assets/transformers-mic/ci-test-suite.svg" alt="Transformers testing: 88,000+ CPU tests on main and 200,000+ GPU tests daily. Hardware includes CPUs, NVIDIA GPUs, AMD GPUs, Intel XPUs and Gaudi 3. PRs run selected tests."></a></p>
+<p>The integration tests load real checkpoints and exercise the model's API on real hardware. Running all of that on every PR would mean keeping a lot of GPUs busy all day long, which isn't practical. By the time a scheduled run finds a regression, it may already be in main.</p>
+<p>Our approach is to shrink the model instead. We build a <strong>fixture</strong>: a small model made from the real checkpoint's configuration, with fewer and narrower layers but every kind of layer it has, and its tokenizer and processor files unchanged. It is published once, then reused. We run &quot;fast integration tests&quot; against it on a cheap CPU runner. In our <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/evidence.md#on-cpu">CPU study</a>, the experimental UMT5 fixture used 66 MB of weights; the source checkpoint is 1,227 MB.</p>
+<p>This also covers very large models: some don't fit on our standard GPU runners, but their fixtures run on CPU.</p>
+<p>Model integrators already build tiny test models (Transformers' <code>tiny-random-*</code> checkpoints). We wanted a common recipe, and checks that go beyond loading the model and running a forward pass. The UMT5 bug would have passed a forward pass just fine.</p>
+<p>Fixtures won't replace full integration tests, but on PRs they give us a chance to catch bugs before they reach main.</p>
+<h2>Introducing Model Integration Contracts</h2>
+<p><a href="https://github.com/huggingface/transformers-mic">transformers-mic</a> is a proposed standard for packaging these tests. A Model Integration Contract (MIC) has three parts:</p>
+<ul><li>a <strong>fixture</strong>: the shrunk model described above, published once and pinned</li><li>a <strong>usage path</strong>: a runnable Markdown example of something people do with the model, such as generating text or running a training step</li><li><strong>baselines</strong>: the outputs recorded when running that example, reviewed by a human</li></ul>
+<p>The contract holds if running the usage path on the fixture still produces the baselines.</p>
+<p>A contract covers an architecture and a usage path, not a single checkpoint: compatible checkpoints can share a fixture, while each keeps its own expected results. We publish them in <a href="https://huggingface.co/huggingface-mic">huggingface-mic</a>.</p>
+<p>For example, the SmolLM contract generates from prompts such as &quot;The capital of France is&quot; and compares its token IDs with a recorded answer. After loading the model and tokenizer, the generation code is, simplified to one prompt:</p>
+<pre><code>inputs = tokenizer(&quot;The capital of France is&quot;, return_tensors=&quot;pt&quot;)
+outputs = model.generate(**inputs, max_new_tokens=4, do_sample=False)
+new_tokens = outputs[:, inputs[&quot;input_ids&quot;].shape[1]:]
+print(tokenizer.batch_decode(new_tokens, skip_special_tokens=True))</code></pre>
+<p>It also compares training loss, checks that gradients are finite and verifies that an optimizer step changes the weights. See the full <a href="https://huggingface.co/huggingface-mic/smollm-mic/blob/main/integrations/transformers/usage.md">usage.md</a>.</p>
+<p>A <a href="https://huggingface.co/datasets/huggingface-mic/transformers-fleet">fleet dataset</a> on the Hub pins each MIC to a frozen revision, along with the package versions used to record its baselines. Each CI run records the fleet revision it used, so we can reproduce it later.</p>
+<p>On a PR, we pick MICs based on the files the patch changes.</p>
+<h2>The UMT5 regression</h2>
+<p>We replayed frozen MICs over five months of Transformers commits. The small UMT5 fixture flagged the regression from its introduction on <a href="https://github.com/huggingface/transformers/commit/560f36cc561fa154d224b7a6dfcba1d57a621d7b">July 30, 2026</a> until its fix on <a href="https://github.com/huggingface/transformers/commit/d7ba937671edb174fd80d33f9ecbd38f6559dfca">September 28</a>. Label log-probabilities differed from the reviewed baseline by 1.22 and training loss by about 0.20.</p>
+<p>One detail mattered: the contract used SDPA, the default attention path. Running only the eager attention variant missed the bug. A fixture only helps if it goes through the same code as the real checkpoint.</p>
+<p>We then reverted the fix on a proof branch in Transformers' CI. The check failed with the same differences, and the selected T5 contract's runner step took 13.4 seconds on CPU, excluding setup.</p>
+<p>The <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/evidence.md#shadow-backfill">replay results</a> and the <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/evidence.md#transformers-ci-proof">CI demo</a> have the measurements and reproduction details.</p>
+<h2>How models are shrunk</h2>
+<p>The first recipe was simple: make the dimensions smaller and keep fewer layers. That wasn't enough for mixed architectures. Keeping two layers is no use if both use sliding attention and the full-attention layers disappear.</p>
+<p>The recipe now has four steps:</p>
+<ul><li><strong>Shrink the configuration.</strong> Start from a real checkpoint and reduce hidden sizes, attention heads and depth. Keep the different layer kinds, including mixtures of sliding and full attention or dense and MoE layers. Some architectures need extra rules to keep their components compatible. We also look at the model's own Transformers tests: the <code>ModelTester</code> in <code>test_modeling_&lt;model&gt;.py</code> already picks a small config by hand, so we take its sizes for any width our generic rule doesn't know by name.</li><li><strong>Keep preprocessing unchanged.</strong> Preserve vocabulary, special tokens and input dimensions, and copy tokenizer and processor files byte for byte. Loading and preprocessing are part of what we want to test.</li><li><strong>Build and validate the weights.</strong> Try seeded random weights and change the inputs to check that the model responds. If it doesn't, try training it on the contract's small batch of examples. Reload the saved model and check that outputs, loss and gradients are finite. Reject failed builds.</li><li><strong>Freeze and record.</strong> Save the accepted weights and measure repeatable outputs on a known-good Transformers build. Review the baselines for each supported platform and precision, then publish a pinned snapshot. CI reuses it; it does not rebuild the fixture for every PR.</li></ul>
+<p>We also keep the original weights file format. Otherwise we would skip the conversion code that runs when a user loads the real checkpoint. <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/fixtures.md#recipe">The full recipe</a> has more detail.</p>
+<p>The <a href="https://huggingface-mic-mic-coverage.static.hf.space/shrink/Llama-4-Scout-17B-16E-Instruct-mic.html">Llama 4 Scout shrink report</a> shows what this looks like on a big model. 108.6 billion parameters become 44.7 million. The vision stack goes from 34 layers to 2 and the language stack from 48 to 4, keeping the checked layer kinds and MoE routing style.</p>
+<h3>Building MICs with agents</h3>
+<p>Our CLI, <code>tmic</code>, creates the contract and builds the fixture. For a new model, an LLM drafts the usage code and manifest, and CPU and GPU runs measure the candidate baselines. The LLM drafts; it doesn't approve. Changed expectations require human review.</p>
+<p>To try it on your machine, use your source checkpoint in place of <code>org/model</code>:</p>
+<pre><code>pip install &quot;transformers-mic[runtime]&quot; &quot;hf-doc-builder @ git+https://github.com/huggingface/doc-builder.git&quot;
+hf auth login
+tmic run org/model --local-only --fixtures-only --no-history --bill-to ''</code></pre>
+<p>It drafts the contract, builds the fixture and records its baselines on your machine, asking you to review each step, and stops before uploading anything. For a new model, the draft comes from an LLM through Inference Providers, billed to your own account (<code>--bill-to ''</code>). The <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/cli.md#automated-mode">CLI docs</a> cover the individual steps.</p>
+<p>We used agents to build MICs across model families. When they hit an edge case, we fixed the recipe itself rather than the one fixture, with help from model experts. The published models and remaining gaps are in the <a href="https://huggingface.co/spaces/huggingface-mic/mic-coverage">coverage space</a>.</p>
+<h2>Random vs Overfit</h2>
+<p>With random weights, our Whisper fixture barely responded to changes in the audio. It ran, but that made it a poor test of the audio path.</p>
+<p>So we trained it on a few tones paired with words such as &quot;red&quot; and &quot;green&quot;. We weren't teaching it speech recognition, just making audio changes visible in its outputs. In our <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/fixtures.md#choosing-the-weights">weight-initialization study</a>, the random Whisper fixtures caught 18 of 24 injected faults. The overfit fixtures caught all 24.</p>
+<p>That gives us two ways to build the weights:</p>
+<ul><li>Start with random weights and a fixed seed.</li><li>Overfit on a few examples, like &quot;The capital of France is&quot; =&gt; &quot;Paris&quot;.</li></ul>
+<p>The Whisper result doesn't settle which is better. Those were synthetic faults, and we haven't found a real regression caught only by the overfit version. Both versions missed an assisted-decoding bug that the real Whisper checkpoint exposed.</p>
+<p>So we keep random weights when they pass the checks, and overfit when we need better sensitivity or readable answers. Training takes seconds, but it is one more step that can fail to converge, and one more thing to maintain. The <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/fixtures.md#overfit-versus-random-what-can-we-conclude">comparison</a> has the results for both.</p>
+<h2>Open questions</h2>
+<p>As of November 1, 2026, the <a href="https://transformers-ci.huggingface.cool/d/mic-failures/mic-failures?from=now-4w&amp;to=now&amp;timezone=browser">MIC job in Transformers CI</a> reports failures without blocking PRs. Whether it should block depends on things we haven't measured yet:</p>
+<ul><li>How many real bugs does it catch on PRs, not just in replays?</li><li>How often does it send us chasing false alarms?</li><li>How much work do baseline reviews take?</li></ul>
+<p>We also don't know how many bugs, like the Whisper assisted-decoding one, only show up with real weights, or whether overfitting catches real bugs that random weights miss.</p>
+<p>Coverage is still partial, across model families and the APIs people use. When a regression slips through, we can add the missing usage path and replay it on the broken and fixed versions. We'll keep existing tests until their coverage is accounted for.</p>
+<p>Finally, we'd like to link original Hub model pages to their MICs, so a developer or an agent using a checkpoint could start from an example tested on that checkpoint, its environment and its expected outputs.</p>
+<p>Want to help? Pick an uncovered model from the <a href="https://huggingface.co/spaces/huggingface-mic/mic-coverage">coverage space</a>, try the <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/cli.md#automated-mode">tmic workflow</a>, and contribute a usage path or review a generated contract.</p>
+<h2>Models mentioned in this article 1</h2>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<p>More Articles from our Blog</p>
+<p>peftloraguide</p>
+<h2>Beyond LoRA: Can you beat the most popular fine-tuning technique?</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1656685953025-62bf03d1e80cec527083cd66.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/upIyVlEpqWqoeFTvNzTf5.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li></ul>
+<p>109</p>
+<p>June 18, 2026</p>
+<p>guidedistributed-trainingaccelerate</p>
+<h2>Ulysses Sequence Parallelism: Training with Million-Token Contexts</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594311341799-5f07383b19cb630495b812cd.jpeg" alt=""></li></ul>
+<p>34</p>
+<p>March 9, 2026</p>
+<h3>Community</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a909a4a17542f9661f9832f/LEj0fw5b8qXb17xN9tnuQ.png" alt=""></p>
+<p>Shofiulalam</p>
+<p>1 day ago</p>
+<p>Good</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60bccec062080d33f875cd0c/KvEhYxx9-Tff_Qb7PsjAL.png" alt=""></p>
+<p>pszemraj</p>
+<p>1 day ago</p>
+<p>edited 1 day ago</p>
+<p>t5/umt5 in a blog post in 2026, never thought I’d see the day 😍</p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftransformers-mic">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Ftransformers-mic">log in</a> to comment</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/naolaiduoc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/AhmxDynVKqbgIIwPaLyde.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/Dagdixel"><img src="https://huggingface.co/avatars/27ae8349bfaf1b26e57a1bd224b257e7.svg" alt=""></a></li><li><a href="https://huggingface.co/AntonV"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/630dc8e6ab0894318469dcc5/joJcu4NWpb36zNDsfQm7U.jpeg" alt=""></a></li><li><a href="https://huggingface.co/IlyasMoutawwakil"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1642598610696-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/RaushanTurganbay"><img src="https://huggingface.co/avatars/5505ecb44a0b1b9eced27104531ff229.svg" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Shofiulalam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a909a4a17542f9661f9832f/LEj0fw5b8qXb17xN9tnuQ.png" alt=""></a></li><li><a href="https://huggingface.co/bennibyx"><img src="https://huggingface.co/avatars/9f57cbcc33bb493538a5eb18b6fb5f5f.svg" alt=""></a></li><li><a href="https://huggingface.co/pszemraj"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60bccec062080d33f875cd0c/KvEhYxx9-Tff_Qb7PsjAL.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>
+<h2>Models mentioned in this article 1</h2>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>nemotron-halloween</title>
       <link>https://huggingface.co/blog/nvidia/nemotron-halloween</link>
@@ -6620,688 +7049,6 @@ tags:
 <ul><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/lhoestq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594214747713-5e9ecfc04957053f60648a3e.png" alt=""></a></li><li><a href="https://huggingface.co/rajivmehtapy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1673701526502-60098a0f460b9e8842d93363.jpeg" alt=""></a></li><li><a href="https://huggingface.co/MadMike477"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b232dcf6027d00161fb46c/FwXMNqgpoXBb2NWJ3X_Pq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Tonic"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a3bb1cd0d8c2c2169f0b88/eT2TS0IlQbZtz-F_zHLz9.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lewtun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/semioz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bbd2b612afb2f119147528/jzr5_RAIkuhFzNmb9HMTc.jpeg" alt=""></a></li><li><a href="https://huggingface.co/xhluca"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1633380224986-5fa9ff3ea13e063b8b2b60cb.jpeg" alt=""></a></li></ul>
 <h2>Datasets mentioned in this article 10</h2>
 <h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>How UK AISI and EvalEval Are Making Benchmark Results Reprod…</title>
-      <link>https://huggingface.co/blog/evaleval-aisi</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/evaleval-aisi?li=1</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: How UK AISI and EvalEval Are Making Benchmark Results Reproducible</description>
-      <content:encoded><![CDATA[<h1>How UK AISI and EvalEval Are Making Benchmark Results Reproducible</h1>
-<p>September 22, 2026</p>
-<p>Update on GitHub</p>
-<p>28</p>
-<ul><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/dariocava"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DVRRK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e691d778f2c37966d1d614/1MJg4zMGny3kmC5TPdjN3.png" alt=""></a></li><li><a href="https://huggingface.co/vzn2auto"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69d94b034b0d592e906bc968/8HDc1xHMRnIlqJDI6CG_4.jpeg" alt=""></a></li></ul>
-<p>Avijit Ghosh</p>
-<p>evijit</p>
-<p>evaleval</p>
-<p>Jenny Chim</p>
-<p>j-chim</p>
-<p>evaleval</p>
-<p>Deep Joshi</p>
-<p>deeplumiere</p>
-<p>evaleval</p>
-<p>Srishti</p>
-<p>srishtiy</p>
-<p>evaleval</p>
-<p>Matt Kennedy</p>
-<p>wmmkennedy</p>
-<p>evaleval</p>
-<p>Irene Solaiman</p>
-<p>irenesolaiman</p>
-<p>evaleval</p>
-<p>Jessica McFadyen</p>
-<p>mcfadyen-aisi</p>
-<p>ai-safety-institute</p>
-<p>Lynn Tan</p>
-<p>lynn-aisi</p>
-<p>ai-safety-institute</p>
-<p>Coz</p>
-<p>coz-aisi</p>
-<p>ai-safety-institute</p>
-<p>The <a href="https://evalevalai.com/">EvalEval Coalition</a> is thrilled to share that the <a href="https://www.aisi.gov.uk/">UK AI Security Institute (AISI)</a> is using EvalEval's infrastructure to openly share evaluation results, supporting more reproducible and verifiable evaluation science.</p>
-<p>AISI and EvalEval have previously collaborated on research that began at a <a href="https://evalevalai.com/events/workshop-2025/">joint workshop alongside NeurIPS 2025</a>, and feedback from the Institute has helped shape the <a href="https://evalevalai.com/projects/every-eval-ever/">Every Eval Ever (EEE) schema</a>. This next phase of the collaboration puts that shared infrastructure into practice.</p>
-<h2>Why reproducible evaluation reporting matters</h2>
-<p>As AI deployment accelerates, evaluations are becoming increasingly important sources of evidence about model and system performance. Yet results are reported across many formats, platforms, and outlets, often without enough information to reproduce them. Running the evaluations again may itself be prohibitively expensive.</p>
-<p>EvalEval's mission is to improve this ecosystem through a shared reporting schema, <a href="https://evalevalai.com/projects/every-eval-ever/">Every Eval Ever</a>, and an open platform, <a href="https://evalcards.evalevalai.com/">Evaluation Cards</a>, that brings evaluation results and the information needed to interpret them into a common structure.</p>
-<p>This builds naturally on AISI's work to make evaluation more efficient through <a href="https://arxiv.org/abs/2608.14425">OptStop</a>, more statistically rigorous through <a href="https://www.aisi.gov.uk/blog/hibayes-improving-llm-evaluation-with-hierarchical-bayesian-modelling">HiBayES</a>, and more standardised in areas including transcript analysis and capability elicitation. Together, AISI and EvalEval are working to diagnose gaps in evaluation reporting and build shared infrastructure to close them.</p>
-<h2>What AISI is sharing</h2>
-<p>Transcript-level transparency matters not only for reproducibility, but also for analysis and diagnosis. In this new phase of the collaboration, AISI is making publicly reported evaluation methods and findings available through Evaluation Cards where appropriate. The release includes verified results, context, and configuration information for the five benchmarks in the paper's main experiment:</p>
-<ul><li>HealthBench</li><li>FrontierMath</li><li>Humanity's Last Exam</li><li>SWE-Bench Pro</li><li>Terminal-Bench 2.0</li></ul>
-<p>These results cover six frontier models: Claude Opus 4, Claude Opus 4.5, Claude Opus 4.6, GPT-5, GPT-5.2, and GPT-5.4. The release also includes results from two related cyber evaluations—Cyber CTFs and The Last Ones—which use a different, partially overlapping set of models. The data accompany AISI's paper, <a href="https://arxiv.org/abs/2606.17930"><em>How Inference Compute Shapes Frontier LLM Evaluation</em></a>, which studies how benchmark performance depends on inference-time compute and evaluation protocol.</p>
-<p><em>Performance on Humanity's Last Exam changes with evaluation protocol and inference compute. Each curve shows the cumulative share of attempted tasks solved within a given token count, using the earliest observed success per task. When models received correctness feedback from an oracle after each attempt, they continued to solve additional tasks as token use increased.</em></p>
-<p>When results are openly released with setup information, researchers and practitioners can examine individual studies more closely and compare findings across the wider ecosystem. Where other reports lack these details, releases like AISI's provide verified reference points for interpreting evaluations in context—for example, by helping researchers understand how setup choices may influence reported performance. As more evaluators adopt EEE, open comparisons like these can support broader and more reliable meta-research.</p>
-<p><em>AISI's Terminal-Bench 2.0 results alongside other reported evaluations for the same models, under different evaluation setups.</em></p>
-<p>We are excited about this adoption and look forward to further standardising and sharing evaluations with AISI and other AI evaluation organisations.</p>
-<h2>Contribute to the shared mission</h2>
-<ul><li><strong>Model developers:</strong> <a href="https://evalcards.evalevalai.com/help/get-verified">Report verified evaluation results</a>.</li><li><strong>Evaluation developers:</strong> Report benchmarks and run data using the <a href="https://github.com/evaleval/every_eval_ever">Every Eval Ever schema</a>.</li><li><strong>Evaluation, governance, and policy researchers:</strong> <a href="https://evalcards.evalevalai.com/">Explore Evaluation Cards</a> by benchmark or model, or use it to examine the state of evaluation reporting as a whole.</li></ul>
-<h2>About the EvalEval Coalition</h2>
-<p>The EvalEval Coalition is a research community developing scientifically grounded research and robust deployment infrastructure for the evaluation ecosystem. Its goal is to improve evaluation science, address the lack of consensus around documenting evaluation applicability and utility, and broaden coverage of the impacts that matter for scientific research and policy analysis.</p>
-<p>The coalition's flagship projects include <a href="https://evalevalai.com/projects/every-eval-ever/">Every Eval Ever</a>, a shared schema and repository for evaluation results, and <a href="https://evalevalai.com/projects/eval-cards/">Evaluation Cards</a>, which combines benchmark metadata, evaluation-run data, and model metadata into interpretable records. Together, they make it easier to understand when apparently similar scores were produced under meaningfully different conditions.</p>
-<h2>About the UK AI Security Institute</h2>
-<p>The <a href="https://www.aisi.gov.uk/">UK AI Security Institute</a> is a research organisation within the UK government's Department for Science, Innovation and Technology. Its mission is to equip governments with a scientific understanding of the risks posed by advanced AI. AISI conducts research and builds infrastructure to understand advanced AI capabilities and impacts, develop and test mitigations, and inform policy.</p>
-<h2>Further reading</h2>
-<ul><li><a href="https://arxiv.org/abs/2606.17930"><em>How Inference Compute Shapes Frontier LLM Evaluation</em></a></li><li><a href="https://www.aisi.gov.uk/blog/hibayes-improving-llm-evaluation-with-hierarchical-bayesian-modelling">HiBayES: Improving LLM evaluation with hierarchical Bayesian modelling</a></li><li><a href="https://arxiv.org/abs/2505.05602">HiBayES paper</a></li><li><a href="https://arxiv.org/abs/2608.14425">OptStop paper</a></li><li><a href="https://evalevalai.com/projects/every-eval-ever/">Every Eval Ever</a></li><li><a href="https://evalcards.evalevalai.com/">Evaluation Cards</a></li></ul>
-<p>More Articles from our Blog</p>
-<p>evaluation</p>
-<p>community</p>
-<p>leaderboard</p>
-<h2>Featuring Every Eval Ever Results on Hugging Face Model Pages</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6238f87f35384c2bcccb3889/vvQDZb934B36xPt_Gokjh.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c7276e0c51bafa5ee8e033/yBl9QsWcQp4XtqUj4Ni_0.jpeg" alt=""></li><li>+3</li></ul>
-<p>54</p>
-<p>June 30, 2026</p>
-<p>nlp</p>
-<p>evaluation</p>
-<p>retrieval</p>
-<h2>Introducing RTEB: A New Standard for Retrieval Evaluation</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61f33092a92c9a858b654991/jFRUSeZ6DnI27dlCAQRHq.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5ff5943752c26e9bc240bada/Exyzf3C_gJ2KdsL4K5_cq.png" alt=""></li><li><img src="https://huggingface.co/avatars/7a4067accdd1005f78c3c4adad3ee0a5.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64cc0e80a257a3212c0c4b24/wqs6WZN8-3OQthcnQXgN7.png" alt=""></li><li>+2</li></ul>
-<p>149</p>
-<p>October 1, 2025</p>
-<h3>Community</h3>
-<p>Nomad-link-id</p>
-<p>11 days ago</p>
-<p>The line that matters for practitioners is quiet: apparently similar scores can be produced under meaningfully different conditions.</p>
-<p>Once you've watched a benchmark move just by changing inference-time compute or the elicitation protocol, &quot;Model A beat Model B on X&quot; without a card is marketing, not comparison. Evaluation Cards that ship verified results <em>with</em> configuration — especially transcript-level context where it's appropriate — are how eval becomes a contract instead of a leaderboard screenshot.</p>
-<p>One ask I'd put to teams adopting EEE: which fields get skipped first under deadline pressure (seed, tool access, attempt budget, oracle feedback), and do you treat a missing field as &quot;do not cite the delta&quot; rather than &quot;assume defaults&quot;?</p>
-<p>Reproducible reporting won't remove disagreement. It will make the disagreement about the right variables.</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fevaleval-aisi">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fevaleval-aisi">log in</a> to comment</p>
-<p>28</p>
-<ul><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/dariocava"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DVRRK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e691d778f2c37966d1d614/1MJg4zMGny3kmC5TPdjN3.png" alt=""></a></li><li><a href="https://huggingface.co/vzn2auto"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69d94b034b0d592e906bc968/8HDc1xHMRnIlqJDI6CG_4.jpeg" alt=""></a></li><li><a href="https://huggingface.co/MikeEliteLLM"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/01iAmRqyak7mlJT6EDgxJ.png" alt=""></a></li><li><a href="https://huggingface.co/irenesolaiman"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62543749b777cd32720675c2/EF_KRZO4hTo8TWXOtvc-n.png" alt=""></a></li><li><a href="https://huggingface.co/Jureko11"><img src="https://huggingface.co/avatars/89ddd33671ed6f23c8b9c33f0674033b.svg" alt=""></a></li><li><a href="https://huggingface.co/birkanoge"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/IWp7GmKqFXZxE8LB2nADg.png" alt=""></a></li><li><a href="https://huggingface.co/enixmeng"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64a99fe3e831371424f583b9/dhKFIea8_zxhLnc2DVQuU.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Transformers now runs llama.cpp quants</title>
-      <link>https://huggingface.co/blog/transformers-llama-cpp-quants</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/transformers-llama-cpp-quants?li=1</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Transformers now runs llama.cpp quants</h1>
-<p>September 22, 2026</p>
-<p>Update on GitHub</p>
-<p>105</p>
-<ul><li><a href="https://huggingface.co/HermitD8"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/bz-OFC3OT3YMUxzMp-da_.png" alt=""></a></li><li><a href="https://huggingface.co/BenjaminB"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1656685953025-62bf03d1e80cec527083cd66.jpeg" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tarekziade"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li></ul>
-<p>Marc Sun</p>
-<p>marcsun13</p>
-<p>Arthur Zucker</p>
-<p>ArthurZ</p>
-<p>Lysandre</p>
-<p>lysandre</p>
-<p><strong>We're adding support for running GGUF models efficiently in transformers</strong>, so you can use checkpoints sized for your laptop's memory through the familiar transformers APIs. Pick a GGUF from the Hub, load it with <code>from_pretrained</code>, and start generating on your own machine.</p>
-<p>Running AI models on your laptop has become much easier, and <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> has been a big part of that. Its inference engine powers local AI tools such as Ollama, LM Studio, and Jan. Alongside projects like <a href="https://github.com/ml-explore/mlx">MLX</a>, it has helped make local inference a practical option for everyday use.</p>
-<p><em>A recent example of what local AI can feel like:</em></p>
-<blockquote>This is where we are right now. And i’m not gonna lie it feels pretty magical 🧙‍♀️Qwen3.6 27B running inside of Pi coding agent via Llama.cpp on the MacBook ProFor non-trivial tasks on the @huggingface codebases, this feels very, very close to hitting the latest Opus in Claude… pic.twitter.com/lsIxLoUneU— Julien Chaumond (@julien_c) April 24, 2026</blockquote>
-<p><strong>GGUF</strong>, developed by the llama.cpp team, is a widely used format for local inference. The team also shares quantized checkpoints under <a href="https://huggingface.co/ggml-org">ggml-org on the Hub</a>. Publishers such as <a href="https://huggingface.co/unsloth">Unsloth</a>, <a href="https://huggingface.co/lmstudio-community">LM Studio Community</a>, and <a href="https://huggingface.co/bartowski">bartowski</a> also provide ready-to-use GGUF checkpoints in a range of quantizations, so users can pick the version that fits their machine. GGUF models have been downloaded millions of times.</p>
-<p>We want to make it easier to run these models locally with transformers, too. Compatibility is only useful if the model is pleasant to run. To bring performance close to llama.cpp, we're reusing its underlying ggml kernels through the <a href="https://huggingface.co/docs/kernels/index"><code>kernels</code></a> library, and reducing overhead in <code>generate</code>. Our initial focus is local inference on Apple Silicon, starting with the Qwen3.5 architecture.</p>
-<h2>What is the GGUF file format?</h2>
-<p><a href="https://github.com/ggml-org/ggml/blob/master/docs/gguf.md">GGUF</a> packages model weights and metadata, including tokenizer information and an optional chat template, in one file. It supports different quantization levels, letting you trade some precision for a smaller memory footprint. Variants such as <code>Q4_K_M</code> mix tensor precisions, using mostly 4-bit weights while keeping sensitive tensors at higher precision.</p>
-<p>Here's how quantization changes the file size of <a href="https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/tree/main">Unsloth's Qwen3.5-4B</a>:</p>
-<table><thead><tr><th>GGUF variant</th><th>File size</th><th>Tradeoff</th></tr></thead><tbody><tr><td><code>BF16</code></td><td>8.42 GB</td><td>Unquantized reference</td></tr><tr><td><code>Q6_K</code></td><td>3.53 GB</td><td>More precision than the smaller variants</td></tr><tr><td><code>Q5_K_M</code></td><td>3.14 GB</td><td>A middle ground between size and precision</td></tr><tr><td><code>Q4_K_M</code></td><td>2.74 GB</td><td>A practical starting point for local inference</td></tr></tbody></table>
-<p>We suggest starting with <code>Q4_K_M</code>, then trying <code>Q5_K_M</code> or <code>Q6_K</code> if you have more memory available. More aggressive quantization can help larger models fit, but the quality tradeoff depends on the model and the task. Evaluate it on the work you actually want the model to do. The <a href="https://huggingface.co/docs/hub/gguf#quantization-types">Hub's GGUF documentation</a> describes the available quantization types.</p>
-<h2>Load GGUF with transformers</h2>
-<p>To get started, you need:</p>
-<ul><li><strong>An Apple Silicon Mac</strong>.</li><li><strong>A PyTorch version supported by the published <a href="https://huggingface.co/kernels/ggml-org/ggml-quantization">ggml-quantization kernel builds</a></strong>, usually the two latest PyTorch releases.</li><li><strong>The latest version of transformers (main for now, until the next release) and a compatible version of <code>kernels</code></strong>.</li></ul>
-<pre><code>pip install -U &quot;git+https://github.com/huggingface/transformers.git&quot; kernels</code></pre>
-<p>To load a GGUF model, pass its Hub <code>model_id</code> and filename as <code>gguf_file</code> to <code>from_pretrained</code>.</p>
-<p>No extra configuration is needed: when the weights stay packed on Metal, transformers automatically loads the compatible ggml/Metal layer kernels and uses <code>ggml-org/ggml-attn</code> as the attention implementation. If that kernel cannot be fetched, the model falls back to <code>&quot;sdpa&quot;</code> with a warning, and you can always force <code>&quot;sdpa&quot;</code> by passing <code>attn_implementation=&quot;sdpa&quot;</code> explicitly. See the <a href="https://huggingface.co/docs/transformers/main/en/quantization/gguf">GGUF documentation</a> for more loading options.</p>
-<pre><code>import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_id = &quot;unsloth/Qwen3.5-4B-GGUF&quot;
-filename = &quot;Qwen3.5-4B-Q4_K_M.gguf&quot;
-
-tokenizer = AutoTokenizer.from_pretrained(model_id, gguf_file=filename)
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    gguf_file=filename
-)</code></pre>
-<p>That is the only GGUF-specific step. Everything after it is the standard transformers API:</p>
-<pre><code>messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain why the sky is blue in a few sentences.&quot;}]
-inputs = tokenizer.apply_chat_template(
-    messages,
-    tokenize=True,
-    add_generation_prompt=True,
-    return_dict=True,
-    return_tensors=&quot;pt&quot;,
-).to(model.device)
-
-with torch.inference_mode():
-    outputs = model.generate(**inputs, max_new_tokens=256)
-
-print(tokenizer.decode(outputs[0], skip_special_tokens=True))</code></pre>
-<blockquote>Without a compatible quantization kernel, the loader falls back to dequantizing the model and uses more memory.</blockquote>
-<h2>Serve GGUF with your preferred interface</h2>
-<p>You can also use the same checkpoint with <a href="https://huggingface.co/docs/transformers/main/en/serve-cli/serving"><code>transformers serve</code></a>, which exposes an OpenAI-compatible API:</p>
-<pre><code>pip install -U &quot;transformers[serving] @ git+https://github.com/huggingface/transformers.git&quot; kernels
-
-transformers serve &quot;unsloth/Qwen3.5-4B-GGUF:Qwen3.5-4B-Q4_K_M.gguf&quot;</code></pre>
-<p>The model argument uses <code>&lt;model_id&gt;:&lt;filename&gt;.gguf</code>: before the colon is the Hub repository (<code>unsloth/Qwen3.5-4B-GGUF</code>), and after it is the file to load (<code>Qwen3.5-4B-Q4_K_M.gguf</code>). This selects a specific quantization from a repository that may contain several.</p>
-<p>For models whose chat template supports thinking, add <code>--reasoning off</code> to skip it or <code>--reasoning on</code> to enable it. The default, <code>--reasoning auto</code>, follows the chat template’s default. See the <a href="https://huggingface.co/docs/transformers/main/en/serve-cli/serving#enable-reasoning-on-the-server">reasoning options</a> for details.</p>
-<p>You can connect a client such as <a href="https://www.jan.ai/docs/desktop/remote-models/custom-endpoint">Jan</a> or <a href="https://pi.dev">Pi</a> by adding a custom OpenAI-compatible provider with these settings:</p>
-<table><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody><tr><td>Base URL</td><td><code>http://localhost:8000/v1</code></td></tr><tr><td>Model ID</td><td><code>unsloth/Qwen3.5-4B-GGUF:Qwen3.5-4B-Q4_K_M.gguf</code></td></tr></tbody></table>
-<p>transformers runs the model on your Mac, while the client provides the conversation interface. The same endpoint can be used by other clients that support this API.</p>
-<h2>Benchmarking against llama.cpp</h2>
-<p>Our reference for local inference performance is llama.cpp. The comparison below focuses on three GGUF checkpoints: a small dense model, a larger dense model, and a mixture-of-experts model.</p>
-<p>The llama.cpp column comes from the <a href="https://github.com/ggml-org/llama.cpp/tree/master/tools/llama-bench"><code>llama-bench</code></a> tool (build <code>5f55650a7</code>, release b10200, Metal backend from ggml 0.18.0), run as <code>llama-bench -m &lt;file&gt; -p 0 -n 128 -r 3</code>, which reports <code>tg128</code>: the token-generation rate over 128 decoded tokens, averaged across three repetitions, with prompt processing excluded. The transformers column is <code>generate</code> producing the same 128 tokens from a 12-token prompt, best of three warmed runs, and it includes prefill.</p>
-<p>Measured on a MacBook Pro M2 Max, 32 GB unified memory, macOS 26.6, PyTorch 2.12.1, kernels 0.17.0, plugged in.</p>
-<p>The benchmark script</p>
-<pre><code>import time
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_id, filename = &quot;unsloth/Qwen3.5-4B-GGUF&quot;, &quot;Qwen3.5-4B-Q4_K_M.gguf&quot;
-
-model = AutoModelForCausalLM.from_pretrained(model_id, gguf_file=filename)
-tokenizer = AutoTokenizer.from_pretrained(model_id, gguf_file=filename)
-inputs = tokenizer(&quot;The capital of France is Paris. The capital of Germany is&quot;, return_tensors=&quot;pt&quot;)
-inputs = inputs.to(model.device)
-
-
-with torch.inference_mode():
-    model.generate(**inputs, max_new_tokens=8, min_new_tokens=8, do_sample=False)  # warm up
-    torch.mps.synchronize()
-    for _ in range(3):
-        time.sleep(90)  # let the machine cool: back-to-back runs decay by 10% or more
-        start = time.perf_counter()
-        model.generate(**inputs, max_new_tokens=128, min_new_tokens=128, do_sample=False)
-        torch.mps.synchronize()
-        print(f&quot;{128 / (time.perf_counter() - start):.1f} tok/s&quot;)</code></pre>
-<p>For the other column:</p>
-<pre><code>llama-bench -hf unsloth/Qwen3.5-4B-GGUF:Q4_K_M -p 0 -n 128 -r 3</code></pre>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/benchmark-comparison.svg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/benchmark-comparison.svg" alt="GGUF generation throughput compared with llama.cpp"></a></p>
-<p>Transformers is close to llama.cpp across all three checkpoints. The chart uses the same measurements described above; it does not imply identical benchmark conditions, since the Transformers measurement includes prefill while <code>llama-bench</code> reports decode-only throughput.</p>
-<h2>transformers and llama.cpp</h2>
-<p>When <a href="https://huggingface.co/blog/ggml-joins-hf">GGML and llama.cpp joined Hugging Face</a>, we described their complementary roles: llama.cpp provides a foundation for local inference, while transformers provides a foundation for model definition. GGUF support brings those two closer together.</p>
-<p><strong>llama.cpp remains our recommended engine when your priority is efficient local inference.</strong> Its dedicated runtime, memory management, and broad hardware support are built around that goal. This integration gives developers a convenient way to work with the same GGUF checkpoints inside transformers:</p>
-<ul><li><strong>Experiment with GGUF in Python and PyTorch.</strong> Inspect intermediate activations with hooks, modify a model's forward pass, or prototype custom layers using familiar PyTorch tools.</li><li><strong>Evaluate GGUF models.</strong> Use your existing transformers evaluation workflows to measure the quality of quantized checkpoints.</li><li><strong>Validate GGUF conversions.</strong> For us as developers, loading the original checkpoint and its GGUF conversion in transformers makes it easier to check that the weights were converted correctly, accounting for quantization error.</li><li><strong>Try new decoding ideas.</strong> Use custom logits processors and stopping criteria with <code>generate</code>, or write your own generation loop in Python.</li><li><strong>Fine-tune from a GGUF checkpoint.</strong> Dequantize the weights and continue with a standard transformers training workflow.</li></ul>
-<p>For that last case, use <code>GgufConfig(dequantize=True)</code>:</p>
-<pre><code>import torch
-from transformers import AutoModelForCausalLM, GgufConfig
-
-model = AutoModelForCausalLM.from_pretrained(
-    &quot;unsloth/Qwen3.5-4B-GGUF&quot;,
-    gguf_file=&quot;Qwen3.5-4B-Q4_K_M.gguf&quot;,
-    quantization_config=GgufConfig(dequantize=True),
-    dtype=torch.bfloat16,
-)</code></pre>
-<h2>Beyond GGUF: ggml kernels for more models</h2>
-<p><strong>The bigger opportunity is bringing ggml's performance to models that llama.cpp does not support.</strong></p>
-<p>transformers already provides the PyTorch implementations of these architectures. With ggml kernels and quantization schemes available in PyTorch, we can work toward accelerating their supported operations without first implementing the entire model in llama.cpp. This is especially useful for new architectures, research models, and custom variants that may never receive a dedicated llama.cpp implementation.</p>
-<p>That opportunity extends beyond the GGUF format itself. A kernel operates on tensors; it does not require the whole model to come from a GGUF file. The same building blocks can be integrated into other transformers models and loading workflows. This also opens a path to other modalities: computer vision models, audio models, and multimodal models could reuse compatible attention, normalization, and matrix multiplication kernels without first having a full implementation in llama.cpp. Each architecture still needs integration and validation; the initial GGUF examples here cover text generation.</p>
-<h2>Fast local inference with Python and PyTorch</h2>
-<p>We also wanted to show how far we can get while keeping the model and generation loop in Python. <strong>With the right kernels and an efficient generation loop, Python and PyTorch can deliver strong local inference performance.</strong> The kernels handle the heavy computation, while the generation loop keeps the GPU busy by avoiding unnecessary synchronization.</p>
-<p>Our focus was to make eager execution fast without requiring <code>torch.compile</code>. For interactive use, we wanted a quick start and a steady stream of tokens, without compilation pauses or recompilation when input shapes change. The two main pieces of that work are the kernels and <code>generate</code> itself.</p>
-<h3>Reusing ggml's Metal kernels</h3>
-<p>A kernel is a small program that performs an operation on the GPU. PyTorch supplies general-purpose implementations; a specialized kernel can do less work, combine several operations, or read quantized weights directly in their stored format.</p>
-<p>The <code>kernels</code> library lets us distribute compatible builds of ggml's Metal kernels on the Hub and call them from transformers. That brings ggml's work into the PyTorch model without replacing the model with a separate inference runtime.</p>
-<table><thead><tr><th>Kernel</th><th>What it does</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/kernels/ggml-org/ggml-quantization"><code>ggml-quantization</code></a></td><td>Reads packed quantized weights for matrix operations, including the selected experts in an MoE model. It avoids expanding the whole weight matrix before each decode operation.</td></tr><tr><td><a href="https://huggingface.co/kernels/ggml-org/ggml-norm"><code>ggml-norm</code></a></td><td>Fuses normalization operations, including the zero-centered RMSNorm used by Qwen3.5 and Qwen3.8.</td></tr><tr><td><a href="https://huggingface.co/kernels/ggml-org/ggml-attn"><code>ggml-attn</code></a></td><td>Provides ggml's Metal flash attention for prompt processing and token decoding.</td></tr><tr><td><a href="https://huggingface.co/kernels/ggml-org/ggml-gated-delta-net"><code>ggml-gated-delta-net</code></a></td><td>Accelerates the gated delta network used in the linear-attention layers of the Qwen3.5 and Qwen3.8 hybrid architectures.</td></tr><tr><td><a href="https://huggingface.co/kernels/transformers-community/topk"><code>topk</code></a></td><td>Selects the experts for each token in an MoE model, combining softmax and top-k routing. This is our own Metal implementation.</td></tr></tbody></table>
-<p>The first four packages build on ggml's kernels; the top-k kernel addresses a separate bottleneck in MoE routing. Together they reduce the GPU work needed for each generated token.</p>
-<p>To show the contribution of the layer kernels, we compare the same packed GGUF checkpoints with and without them. The quantization kernel stays enabled in both configurations: disabling it would also change how weights are represented and would measure a different tradeoff.</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/layer-kernel-benchmark.svg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/layer-kernel-benchmark.svg" alt="Throughput improvement from the layer kernels"></a></p>
-<h3>Keeping the CPU and GPU working together</h3>
-<p>Faster kernels only help if the GPU has work to do. During generation, the CPU schedules GPU operations and controls the loop that produces the next token. Reading a result back from the GPU can force the CPU to wait until queued operations finish. Repeating even a small wait for every token can noticeably reduce throughput.</p>
-<p>Two changes address this in <code>generate</code>, which results in improvements for all transformers models (not just when running GGUF files):</p>
-<ul><li><strong><a href="https://github.com/huggingface/transformers/pull/48814">Drop an unnecessary attention mask early (#48814)</a>.</strong> When a supported decoder-only input has no padding, its all-ones padding mask can be removed at the start of generation. Downstream attention code no longer needs to inspect that mask repeatedly to determine whether it can be skipped. Causal attention is still preserved.</li><li><strong><a href="https://github.com/huggingface/transformers/pull/47975">Defer the stopping check (#47975)</a>.</strong> On supported paths, <code>generate</code> copies the stopping decision asynchronously and consumes it on the following step. The CPU can keep scheduling work while the GPU runs. Streaming tokens use the same approach, and any extra step past the stopping condition is removed from the result.</li></ul>
-<p>These changes improve the generation loop around the model, so their usefulness extends beyond GGUF. They complement the kernel work: kernels reduce the cost of an operation, while fewer synchronization points let CPU scheduling and GPU execution overlap.</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/generation-loop-benchmark.svg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/generation-loop-benchmark.svg" alt="Throughput improvement from the generation loop changes"></a></p>
-<p>These measurements keep all layer kernels enabled; the bars isolate the changes to the generation loop.</p>
-<h2>Current limitations and next steps</h2>
-<p>The initial target is a single interactive conversation on Apple Silicon. There are a few boundaries to keep in mind:</p>
-<ul><li><strong>The packed inference path is MPS-only for now.</strong> GGUF import through dequantization remains a separate option; support for the file format does not imply that packed kernels are available on every device.</li><li><strong>Padding and batching still need work.</strong> Unpadded inputs benefit from the mask optimization described above. Padded batches cannot take the same shortcut and can have lower performance. We want to extend the work to <code>generate_batch</code> on MPS.</li><li><strong>Architecture coverage is limited.</strong> The packed loader currently covers the Qwen3.5 dense and MoE architectures, including compatible Qwen3.8 checkpoints. Adding support for other architectures is relatively straightforward, and we’ll expand coverage gradually.</li></ul>
-<p>If you have a GGUF model you would like to use in transformers, <a href="https://github.com/huggingface/transformers/issues">open an issue</a> with the checkpoint and your use case. That will help us prioritize support for the models people are running locally.</p>
-<h2>Acknowledgments</h2>
-<p>We would like to thank <a href="https://huggingface.co/ArthurZ">Arthur Zucker</a> for initiating this work and reviewing all of my PRs, and <a href="https://huggingface.co/cyrilvallez">Cyril Vallez</a> for the <code>generate</code> PRs. We are grateful to <a href="https://huggingface.co/sayakpaul">Sayak Paul</a>, the <a href="https://github.com/ggml-org/llama.cpp">llama.cpp team</a>, and Bertrand Chevalier for their help integrating the kernels. We also thank <a href="https://huggingface.co/ariG23498">Aritra Roy Gosthipaty</a> and <a href="https://huggingface.co/pcuenq">Pedro Cuenca</a> for reviewing this blog post, and <a href="https://huggingface.co/lysandre">Lysandre Debut</a> for overseeing the project.</p>
-<h2>Models mentioned in this article 1</h2>
-<p>More Articles from our Blog</p>
-<p>announcement</p>
-<p>multimodal</p>
-<p>transformers</p>
-<h2>Welcome Inkling by Thinking Machines</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li>+1</li></ul>
-<p>167</p>
-<p>July 15, 2026</p>
-<p>vllm</p>
-<p>transformers</p>
-<p>inference</p>
-<h2>Native-speed vLLM transformers modeling backend</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ov-55uEKP4mJhavhdQ42x.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li></ul>
-<p>77</p>
-<p>July 8, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftransformers-llama-cpp-quants">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Ftransformers-llama-cpp-quants">log in</a> to comment</p>
-<p>105</p>
-<ul><li><a href="https://huggingface.co/HermitD8"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/bz-OFC3OT3YMUxzMp-da_.png" alt=""></a></li><li><a href="https://huggingface.co/BenjaminB"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1656685953025-62bf03d1e80cec527083cd66.jpeg" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tarekziade"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/moeidghiady"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/HEbUHf0ogtajJsNQvPRSB.jpeg" alt=""></a></li><li><a href="https://huggingface.co/RaushanTurganbay"><img src="https://huggingface.co/avatars/4dc6265e044ee16753f657d86448c655.svg" alt=""></a></li><li><a href="https://huggingface.co/AntonV"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/630dc8e6ab0894318469dcc5/joJcu4NWpb36zNDsfQm7U.jpeg" alt=""></a></li><li><a href="https://huggingface.co/davanstrien"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li></ul>
-<h2>Models mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Jun Kim, oMLX creator and maintainer, joins Hugging Face to…</title>
-      <link>https://huggingface.co/blog/omlx</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/omlx?li=1</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Jun Kim, oMLX creator and maintainer, joins Hugging Face to support the MLX community</description>
-      <content:encoded><![CDATA[<h1>Jun Kim, oMLX creator and maintainer, joins Hugging Face to support the MLX community</h1>
-<p>September 22, 2026</p>
-<p>Update on GitHub</p>
-<p>88</p>
-<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/xAIat"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1675508248117-63de392d10678851bb03371d.png" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rajveer43"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64ca2057214a472dd80a3e32/HRWs0En-CVxrQ6Gn5h-7k.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AdinaY"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63a369d98c0c89dcae3b8329/AiH2zjy1cnt9OADAAZMLD.jpeg" alt=""></a></li></ul>
-<p>Pedro Cuenca</p>
-<p>pcuenq</p>
-<p>Lysandre</p>
-<p>lysandre</p>
-<p>Victor Mustar</p>
-<p>victor</p>
-<p>Julien Chaumond</p>
-<p>julien-c</p>
-<p>Jun Kim</p>
-<p>Jundot</p>
-<p>We are super excited to welcome Jun as our newest team member 🔥. We are completely invested in local AI, and MLX is a central piece of the ecosystem. We are delighted that Jun chose us to set up home and continue contributing to MLX.</p>
-<p>MLX is Apple's framework for local AI, especially optimized for Apple Silicon. We are big MLX supporters since it was the Christmas present from <a href="https://x.com/awnihannun/status/1732184443451019431?s=20">Awni</a> and <a href="https://x.com/angeloskath/status/1732304844403429477?s=20">Angelos</a> in 2023, and proud that Hugging Face is the Hub where people find MLX models and contribute their own. Usage of open, local AI is accelerating, and we believe in a healthy ecosystem where people can find the tools that work for them.</p>
-<h2>What is the impact for oMLX?</h2>
-<p>Stability, and hopefully faster development! Graduating from a side job to a fully maintained and funded project will allow Jun to better guide the contributors and build for the long-term. <a href="https://github.com/jundot/omlx">oMLX</a> stays Apache 2.0, and Jun keeps leading it as before.</p>
-<h2>What is the impact for MLX at large?</h2>
-<p>Our end goal is to unblock the community to run local AI in any shape or form, and provide the tools and building blocks to make that happen. We expect oMLX to serve as a testbed for new ideas, while leveraging the foundational work of the dependencies it already relies upon, such as <a href="https://github.com/ml-explore/mlx-lm">mlx-lm</a> or <a href="https://github.com/Blaizzy/mlx-vlm">mlx-vlm</a>. We believe that strong modeling and inference libraries help the community, so we'd love to upstream work to wherever it makes sense. We have been collaborating with many projects mlx-lm, mlx-vlm, LMStudio, and we hope we can strengthen the relationship with <a href="https://x.com/zcbenz">Cheng</a>, <a href="https://x.com/Prince_Canuma">Prince</a>, <a href="https://x.com/yagilb">Yagil</a>, and their teams to better serve the community together.</p>
-<p>Concretely, one focus area is the quick transition from a transformers model definition to a reference MLX implementation that can be consumed by different engines, so each one can focus on the unique features they provide. The transformers library has become the reference for ML model definitions, we want to streamline the process to make new transformers models run on MLX.</p>
-<p>We are incredibly excited about the future.</p>
-<p>Welcome, Jun! 🙌</p>
-<p>More Articles from our Blog</p>
-<p>announcement</p>
-<p>mlx</p>
-<p>llm</p>
-<h2>The PR you would have opened yourself</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/623c830997ddced06d78699b/ucB8joTPONCnc_Gj0mssR.jpeg" alt=""></li></ul>
-<p>74</p>
-<p>April 16, 2026</p>
-<p>llm</p>
-<p>coreml</p>
-<p>mlx</p>
-<h2>Introducing AnyLanguageModel: One API for Local and Remote LLMs on Apple Platforms</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt=""></li></ul>
-<p>44</p>
-<p>November 20, 2025</p>
-<h3>Community</h3>
-<p>Alkpone</p>
-<p>18 days ago</p>
-<p>The omlx GitHub repository seems deleted. Any new url ?</p>
-<ul><li><a href="https://huggingface.co/Izenflamm"><img src="https://huggingface.co/avatars/0a6999d5e5c601c1e4538223ea7d7a95.svg" alt=""></a></li><li><a href="https://huggingface.co/Jundot"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/P4AE_DXqeRdnfzXp-shec.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alcoveswhoop"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/_OOcmf0zwOdnr7LNmG4-0.png" alt=""></a></li></ul>
-<p>Izenflamm</p>
-<p>18 days ago</p>
-<p>Yep, seeing this too. Just needed a dmg for a friend, but no luck today.</p>
-<p>abe238</p>
-<p>18 days ago</p>
-<p>Kudos!!! Excited for this chapter for ya.</p>
-<p>TRex-face</p>
-<p>18 days ago</p>
-<p>This is going to be great!</p>
-<p>Izenflamm</p>
-<p>18 days ago</p>
-<p>Congratulations!!! Great news! :)</p>
-<p>BTW what happened to GitHub oMLX repo?</p>
-<p>nivong</p>
-<p>18 days ago</p>
-<p>Welcome! Was totally expected and well deserved</p>
-<p>zviratko</p>
-<p>18 days ago</p>
-<p>Jundot replied to me that he likely got autobanned shortly after posting this exact information in the repository Discussions - likely an overzealous github/microslop moderation bot. Let's hope he gets it back soon. I managed to sync my repo with the github fork-network right after it got banned, so you can grab the newest code at zviratko/omlx temporarily until it gets resolved.</p>
-<p>codelion</p>
-<p>18 days ago</p>
-<p>How would it impact supporting other MLX inference engines and tools like mlx-optiq?</p>
-<p>niXta</p>
-<p>18 days ago</p>
-<p>Cool! I love Jundot's stuff!</p>
-<p>Gallardo994</p>
-<p>17 days ago</p>
-<p>Congratulations, well deserved!</p>
-<p>scottlowry</p>
-<p>17 days ago</p>
-<p>Congrats!</p>
-<p>himefei</p>
-<p>17 days ago</p>
-<p>congratz!</p>
-<p>crazyi</p>
-<p>17 days ago</p>
-<p>Congrats!</p>
-<p>openSourcerer9000</p>
-<p>16 days ago</p>
-<p>Great, just like the Groq &quot;acquihire&quot;. Can't beat em? Buy em</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fomlx">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fomlx">log in</a> to comment</p>
-<p>88</p>
-<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/xAIat"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1675508248117-63de392d10678851bb03371d.png" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rajveer43"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64ca2057214a472dd80a3e32/HRWs0En-CVxrQ6Gn5h-7k.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AdinaY"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63a369d98c0c89dcae3b8329/AiH2zjy1cnt9OADAAZMLD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mpuk2000"><img src="https://huggingface.co/avatars/ea116caaebdf6a083d18ac43fe67d676.svg" alt=""></a></li><li><a href="https://huggingface.co/abe238"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/m-h4A7w4V9cP0QLofBErt.png" alt=""></a></li><li><a href="https://huggingface.co/carsenk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639a972fd41d40d1ecadaf6e/1210BBjOpOWIBj7uv9Xvq.webp" alt=""></a></li><li><a href="https://huggingface.co/zviratko"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63179b3533a4e2b5d3ae4a6a/y3TnHSsLtiJQCgdvNFpx9.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jundot"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/P4AE_DXqeRdnfzXp-shec.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kaweees"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67790c1d64085a93fdc94abe/1_5iqGCtbrqQalYrWmWz0.jpeg" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>tokenizers v1: encode, decode and scaling, measured</title>
-      <link>https://huggingface.co/blog/tokenizers-v1</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/tokenizers-v1?li=1</guid>
-      <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>tokenizers v1: encode, decode and scaling, measured</h1>
-<p>September 21, 2026</p>
-<p>Update on GitHub</p>
-<p>89</p>
-<ul><li><a href="https://huggingface.co/LysandreJik"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1624608153440-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/davanstrien"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sergiopaniego"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></a></li></ul>
-<p>Arthur Zucker</p>
-<p>ArthurZ</p>
-<p>Simon Brandeis</p>
-<p>sbrandeis</p>
-<p>Luc Georges</p>
-<p>mcpotato</p>
-<p>Lysandre</p>
-<p>lysandre</p>
-<p>The tokenizer has not historically been the bottleneck within ML workflows. Compute-wise, tokenization is light compared to the heavy modeling happening in the rest of the pipeline. Yet, in some cases, it has rapidly become key to accelerating (or slowing down) your machine learning work.</p>
-<p>As models become faster and workloads scale, that balance begins to shift. Training on massive datasets, serving many concurrent requests, or repeatedly processing long inputs can put enough pressure on the tokenizer that it starves the model of data.</p>
-<p>This is why we have chosen to heavily focus on performance for the upcoming version 1 of tokenizers. Tokenization should be light and should scale with your workflow. Your GPUs should never sit idle waiting for the CPU to complete its tokenization.</p>
-<p>In this article, we look at what makes v1 faster than v0.23, often by tens of times.</p>
-<p>This work was entirely possible thanks to the rest of the ecosystem. Tokenization is a very active area of open source work, and libraries such as <a href="https://github.com/marcelroed/gigatoken">gigatoken</a>, <a href="https://crates.io/crates/tiktoken-rs">tiktoken</a>, <a href="https://crates.io/crates/kitoken">kitoken</a>, <a href="https://crates.io/crates/tokie">tokie</a>, <a href="https://crates.io/crates/fastokens">fastokens</a>, <a href="https://crates.io/crates/wordchipper">wordchipper</a> and <a href="https://www.npmjs.com/package/ai-tokenizer">ai-tokenizer</a>, as well as many others, have each pushed on what a fast tokenizer can be. We read that work, and several of the ideas below reached us because another project showed they were worth trying.</p>
-<p>Before this refactor, tokenizers was nowhere near the performance it could have had, so contributing to it may not have seemed worth it. With this refactor, we hope to make clear that we intend tokenizers to be a library worth contributing to.</p>
-<p>We also thank IBM, NVIDIA, and the ExecuTorch team for contributing patches and helping us test across a wide range of hardware to broaden platform support.</p>
-<h2>Results</h2>
-<p>We showcase results for the release candidate of tokenizers v1 against other widely used alternatives. We go over single-threaded, multi-threaded, scaling across threads, per-model comparison, per-language comparison, latency, decoding throughput, memory heap, as well as crate size.</p>
-<p>We run this from the <a href="https://github.com/huggingface/tokbench">tokbench</a> repository, and add a command to rerun the benchmarks on your hardware if you would like to do so.</p>
-<h2>What V1 Is</h2>
-<p>v1 will produce the same token IDs as v0.23. The goal was to preserve the output, the API, the vocabulary and the merge ranks, and improve everything that <strong>can</strong> be improved. That includes breadth. The library stays general across tokenizer families rather than specialising on BPE, so v1 loads everything v0.23 loaded.</p>
-<p>A tokenizer converts text into the list of integers a model reads. tokenizers runs that conversion in four stages. Normalization applies operations such as lowercasing or Unicode normalization to the raw text. Pre-tokenization splits the text into smaller pieces called pre-tokens. The model turns each pre-token into tokens and maps them to IDs in its vocabulary. Post-processing adds any special tokens the model expects.</p>
-<p>The model stage is where most of the work described here happens. Eight of the ten model families measured in this article use byte pair encoding, or BPE. BPE starts from the bytes of a pre-token and repeatedly joins the highest ranked adjacent pair until no ranked pair remains. The ranking is learned when the tokenizer is trained and ships with it, so the same text always produces the same IDs. A merge never crosses a pre-token boundary. The other two families use WordPiece and Unigram, the two other model types the library supports.</p>
-<p>The <a href="https://huggingface.co/docs/tokenizers/pipeline">tokenization pipeline</a> page documents the four stages. <a href="https://huggingface.co/docs/transformers/tokenizer_summary">Tokenization algorithms</a> documents BPE, WordPiece and Unigram.</p>
-<p>Each stage was worked on. These are the changes that mattered:</p>
-<table><thead><tr><th>change</th><th>what it does</th></tr></thead><tbody><tr><td>workspace split</td><td>one crate became a workspace: <code>tk-encode</code> is the required runtime, and <code>tk-serialize</code>, <code>tk-convert</code> and <code>tk-train</code> are linked only when an application needs them</td></tr><tr><td>no-alloc model</td><td>the merge working set lives in a caller-owned scratch buffer; the loop never touches the allocator</td></tr><tr><td>bitcannon</td><td>the split pattern becomes Boolean operations over bitstreams, using SIMD instructions to find splits instead of a regex engine</td></tr><tr><td>merge-loop rewrite</td><td>the pieces being merged form an intrusive doubly-linked list inside one preallocated buffer, so a merge updates two indices instead of moving data</td></tr><tr><td>word cache</td><td>a thread-local memo from pre-token bytes to finished ids, so a repeated word is merged once</td></tr><tr><td>native parallelism</td><td>one shared tokenizer encodes from many threads at once; each thread draws its scratch buffer and word cache from its own sub-pool, so threads no longer queue on a single lock (<a href="https://github.com/huggingface/tokenizers/pull/2365">#2365</a>)</td></tr></tbody></table>
-<h3>The Split: Bitstreams Instead Of A Regex</h3>
-<p>BPE models use a regular expression to split the input text into smaller, easier to process chunks called pre-tokens. Merges happen inside a pre-token and never across the boundary between two of them, so this split decides what the rest of the pipeline sees.</p>
-<p>That regular expression is a fixed parameter of the model. It ships with the tokenizer and never changes at runtime, so there is no need for a general-purpose regex engine to interpret it on every encode. An equivalent splitting function can be written by hand, once, for the pattern a given model actually uses.</p>
-<p>A hand-written function can then use the SIMD instructions (single instruction, multiple data) of a modern CPU, which apply one operation to many bytes at once and suit UTF-8 text well. bitcannon views the input's bytes as parallel streams of bits, so boundaries fall out of boolean operations across whole registers instead of a scan that advances one character at a time. It decides 64 bytes per register operation. The same idea drives <a href="https://www.cs.sfu.ca/~ashriram/papers/2012_HPCA_Parabix.pdf">Parabix</a> for text processing and <a href="https://arxiv.org/abs/1902.08318">simdjson</a> for JSON.</p>
-<p>This depends on recognising the pattern. A handful of grammars cover most byte-level BPE models, and a tokenizer whose pattern is not among them keeps the regex path and none of this speed-up. That is why the gains above vary as much as they do.</p>
-<h3>The Word Cache</h3>
-<p>Real text contains many repeated words. Because BPE always produces the same token IDs for a given pre-token, v1 can save the result after processing it once. A thread-local cache maps each pre-token's bytes to its token IDs, allowing later occurrences to skip the merge process.</p>
-<p>Naturally, as the input grows, the number of unique words can grow more slowly than the total number of words. Repeated words then account for an increasing share of the input. New words still appear, which accounts for the occasional misses in the animation below.</p>
-<p>Reproduce the shared-prefix result with:</p>
-<pre><code>tokbench measure prefix-sharing \
-  --engine pipeline \
-  --engine hf-tokenizers \
-  --compare-to pipeline-no-cache \
-  --corpus agentic_swe</code></pre>
-<p>Caching works best when the input contains repeated pre-tokens. Input with few repeated pre-tokens can pay for lookups without receiving many hits.</p>
-<h3>The Merge Loop</h3>
-<p>The next major cost comes from the BPE merge loop. For each pre-token, the loop repeatedly finds the highest-priority adjacent pair and merges it. The previous implementation allocated new memory for every call and built a new priority queue for every pre-token.</p>
-<p>v1 reuses a scratch buffer owned by the caller, removing those repeated allocations. It stores symbols in a flat array and links adjacent symbols by their positions in that array, which makes updates during merging cheaper. It also processes a batch of pre-tokens in a single model call.</p>
-<p>Each candidate pair is also packed into a single 64-bit value, with the merge rank in the high bits. Comparing two candidates is then just comparing two integers, and &quot;no merge here&quot; is the largest possible value, so the loop finds its next merge without a branch.</p>
-<h2>Method</h2>
-<p>Small differences in benchmark design can produce large differences in tokenizer performance. We used the following rules to keep the comparison consistent across engines.</p>
-<table><thead><tr><th>rule</th><th>why</th></tr></thead><tbody><tr><td>one timing loop</td><td>every engine runs the identical loop; no per-engine fast path</td></tr><tr><td>load excluded</td><td>vocabulary load is timed separately, never inside encode</td></tr><tr><td>id-hash verified</td><td>FNV-1a over the output ids must match the baseline exactly</td></tr><tr><td>common cells only</td><td>medians are over cells every engine ran and verified</td></tr><tr><td>complete sweep per process</td><td>each repeat starts in a new process and retains every cell</td></tr><tr><td>physical-core pinning</td><td>workers are pinned to eight distinct physical cores, never sibling SMT threads</td></tr><tr><td>independent Jobs</td><td>separate Jobs measure host-to-host variation</td></tr></tbody></table>
-<p>Repeatedly encoding one document can be faster than encoding a stream of distinct documents on the same build. The first approach measures performance when the entire document is already represented in the cache. The second measures performance on new input while allowing previously seen pre-tokens to remain cached.</p>
-<p>Both conditions are sometimes described as &quot;warm,&quot; even though they measure different workloads. Our headline results use distinct documents, and the complete corpus is too large to fit in the cache. Tokenizer benchmarks should identify which workload they use because the choice can dominate the result.</p>
-<h2>What This Adds Up To</h2>
-<p>Across the ten model families v1's encode path covers, it encodes text <strong>3 to 30 times faster</strong> than v0.23 with one thread on an Apple M4 Max. The low end is t5-base, the high end gpt2. It scales at <strong>76%</strong> of linear across eight workers. Throughout these changes, v1 produces exactly the same token IDs as the released library.</p>
-<p>The overall improvement comes from several changes working together: a hand-written splitter in place of a regex engine, a cache that answers a repeated word without merging it again, a merge loop that never touches the allocator, and one model call per batch of pre-tokens instead of one per pre-token. Each reduces the work done at a different point in the pipeline.</p>
-<p>The next priority is support for more model families. We will move additional models onto the new merge loop before <code>1.0.0</code>. Once the release candidates stabilize, the next step will be bringing about the improvements within the transformers library and the rest of the ecosystem which depend on the tokenizers library.</p>
-<p>This post is generated from <a href="https://github.com/huggingface/tokbench">tokbench</a> results and will be updated as support expands.</p>
-<h2>Getting It</h2>
-<p>A release candidate for v1 is on crates.io. The API you call is the one you already call, so the only thing that changes is which build you install.</p>
-<p>It is the ordinary install:</p>
-<pre><code>cargo add tokenizers --pre</code></pre>
-<p>Training is behind a default-on feature that pulls a C++ dependency with it. If you only need to encode, turn it off to exclude the training implementation:</p>
-<pre><code>cargo add tokenizers --pre --no-default-features --features http</code></pre>
-<p>Encoding is unchanged: same call, same ids.</p>
-<pre><code>use tokenizers::tokenizer::{Result, Tokenizer};
-
-fn main() -&gt; Result&lt;()&gt; {
-    let tokenizer = Tokenizer::from_pretrained(&quot;deepseek-ai/DeepSeek-V4-Flash&quot;, None)?;
-
-let encoding = tokenizer.encode(&quot;The tokenizer is no longer the bottleneck.&quot;, false)?; println!(&quot;{:?}&quot;, encoding.get_ids()); // [671, 17840, 9160, 344, 1119, 5827, 270, 111127, 16] println!(&quot;{:?}&quot;, encoding.get_tokens()); // [&quot;The&quot;, &quot;Ġtoken&quot;, &quot;izer&quot;, &quot;Ġis&quot;, &quot;Ġno&quot;, &quot;Ġlonger&quot;, &quot;Ġthe&quot;, &quot;Ġbottleneck&quot;, &quot;.&quot;]
-
-Ok(()) } ```
-
-For a batch, `encode_batch` is what scales across cores. It is the call the scaling view above measures.
-</code></pre>
-<p>let encodings = tokenizer.encode_batch(documents, false)?;</p>
-<pre><code>
-Every figure in this post was measured against this crate. The Python bindings wrap the same code and are built from `bindings/python`, but they add per-call overhead that none of these measurements include.
-
-## Progress Towards V1
-
-The benchmarks in this post cover the completed release-candidate work listed first. The remaining sections show what is still required for `1.0.0` and what we plan to explore afterward.
-
-### Release Candidate: Implemented
-
-This work is in the Rust pre-release on crates.io:
-</code></pre>
-<p>cargo add tokenizers --pre</p>
-<pre><code>
-- workspace split: divide the single crate into `tk-encode`, `tk-serialize`, `tk-convert` and `tk-train`, so an application links only what it uses
-- bitcannon: replace regex splitting on the encoding path with bitstream operations covering GPT-2, cl100k, o200k, Tekken and DeepSeek. This replaced the finite-state machines that shipped first [#2201](https://github.com/huggingface/tokenizers/pull/2201) [#2317](https://github.com/huggingface/tokenizers/pull/2317)
-- WordCache: reuse the token IDs of previously processed pre-tokens [#2262](https://github.com/huggingface/tokenizers/pull/2262), `af5a3e3`
-- faster lookup and merging structures: add FlatCache, MPHF RankStore, incremental merging, and BucketVocabStore [#2190](https://github.com/huggingface/tokenizers/pull/2190) [#2188](https://github.com/huggingface/tokenizers/pull/2188)
-- reusable model memory: move temporary model state into scratch buffers so tokenization does not allocate on each call [#2175](https://github.com/huggingface/tokenizers/pull/2175) [#2183](https://github.com/huggingface/tokenizers/pull/2183)
-- pipeline post-processing: expose post-processing as the `STAGE_POST` pipeline stage [#2182](https://github.com/huggingface/tokenizers/pull/2182)
-- batched model calls: process multiple pre-token spans in one call [#2304](https://github.com/huggingface/tokenizers/pull/2304)
-- faster decoding: write decoded bytes directly into a reusable buffer, avoid intermediate strings and copies, accelerate token lookup, support buffered streaming, and decode batches in parallel
-- `role_to_token` support [#2343](https://github.com/huggingface/tokenizers/pull/2343)
-- Node.js bindings [#2281](https://github.com/huggingface/tokenizers/pull/2281)
-
-### 1.0.0
-
-- one encoding implementation: use `tk-encode` during training validation so training and inference cannot produce different tokenization results
-- optional offsets and masks: compute this metadata only when requested, keeping it off the token-ID-only path
-- rework normalizers
-- bitnorm support, building on atomnorm [#2209](https://github.com/huggingface/tokenizers/pull/2209)
-- spm precompiled
-- simpler Python bindings: reduce locking, wrapper types, and handwritten dispatch code while preserving subclassing, serialization, custom decoders, mutation behavior, and support for free-threaded CPython
-- inference-only C and C++ bindings for ExecuTorch and llama.cpp, with possible JVM, Swift, and Go bindings to follow
-
-### After 1.0.0
-
-- tok-devices: explore GPU encoding and batch decoding while keeping text and token IDs on the device. The decoder would upload the vocabulary once, calculate output positions in parallel, and gather the corresponding bytes on the GPU. This would be an optional component intended for large batches, subject to further prototyping and measurement.
-
-More Articles from our Blog
-
-tokenizers
-
-transformers
-
-open-source
-
-## Tokenization in Transformers v5: Simpler, Clearer, and More Modular
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/658f3fc8c0b1372b2e991992/SZspcJ3Z5S-W5vayJo-vJ.jpeg)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1674683851722-62441cb7456803e95009a08f.jpeg)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg)
-- +2
-
-128
-
-December 18, 2025
-
-guide
-
-hub
-
-optimization
-
-## Learn the Hugging Face Kernel Hub in 5 Minutes
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6452d5ba3f80ad88c77b2f05/yuvfzgqOeK8-bFxEZ2gg9.jpeg)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6310e9a107a76827902421d7/1e0GItqv3A6sOWYz5SXoe.png)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1608285816082-5e2967b819407e3277369b95.png)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)
-- +3
-
-167
-
-June 12, 2025
-
-### Community
-
-not-lain
-
-18 days ago
-
-nice work 🔥
-
-Devistro
-
-18 days ago
-
-Will have to try it out. Data seems real good.
-
-Upload images, audio, and videos by dragging in the text input, pasting, or
-
-clicking here
-
-.
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftokenizers-v1) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftokenizers-v1) to comment
-
-Upvote
-
-89
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1624608153440-noauth.jpeg)](https://huggingface.co/LysandreJik)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png)](https://huggingface.co/sbrandeis)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg)](https://huggingface.co/lysandre)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg)](https://huggingface.co/davanstrien)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg)](https://huggingface.co/sergiopaniego)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg)](https://huggingface.co/regisss)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a15be1b0c5fef54b92c60ab/qOXkTss_QR0gy6dSzXI8T.jpeg)](https://huggingface.co/hf-dwarez)
-- [![](https://huggingface.co/avatars/7eb33d86f5373a4b3c16b72bfbd4cb0d.svg)](https://huggingface.co/rganti)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg)](https://huggingface.co/pagezyhf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/633413b18003819e16aee0aa/CglgixDB95u8ILW8WdxCU.png)](https://huggingface.co/osolmaz)
-- [![](https://huggingface.co/avatars/716b6a7d1094c8036b2a8a7b9063e8aa.svg)](https://huggingface.co/blanchon)</code></pre>]]></content:encoded>
-    </item>
-    <item>
-      <title>Your Agent Aced the Task. Will It Do It Again?</title>
-      <link>https://huggingface.co/blog/ibm-research/altk-evolve-consistency</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/altk-evolve-consistency?li=1</guid>
-      <pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Your Agent Aced the Task. Will It Do It Again?</h1>
-<p>Enterprise</p>
-<p>Article</p>
-<p>September 15, 2026</p>
-<p>119</p>
-<ul><li><a href="https://huggingface.co/gaodan-fang"><img src="https://huggingface.co/avatars/18f132b7a7dabcdf5fb933edb554ea68.svg" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/saurabhiit2011"><img src="https://huggingface.co/avatars/a8e6ed70291c1a54635990fe421f25e1.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li></ul>
-<p>Evelyn Duesterwald</p>
-<p>evduester</p>
-<p>ibm-research</p>
-<p>Lilian Ngweta</p>
-<p>lilianngweta</p>
-<p>ibm-research</p>
-<p>Vatche Isahagian</p>
-<p>Vatche</p>
-<p>ibm-research</p>
-<p>Jayaram Radhakrishnan</p>
-<p>jayaramkr</p>
-<p>ibm-research</p>
-<p>Vinod Muthusamy</p>
-<p>vinodmut</p>
-<p>ibm-research</p>
-<p>Gaodan Fang</p>
-<p>gaodan-fang</p>
-<p>ibm-research</p>
-<p>Ashwath Vaithinathan Aravindan</p>
-<p>ashwath-vaithina</p>
-<p>ibm-research</p>
-<p>Punleuk Oum</p>
-<p>illeatmyhat</p>
-<p>ibm-research</p>
-<p>G Thomas</p>
-<p>gsthomasx</p>
-<p>ibm-research</p>
-<p>Merve Unuvar</p>
-<p>mrvnvr</p>
-<p>ibm-research</p>
-<p>Ayhan Sebin</p>
-<p>ayhansebin</p>
-<p>ibm-research</p>
-<p>Michał Ulewicz</p>
-<p>Michal</p>
-<p>ibm-research</p>
-<p>Your agent works in rehearsal, but during the live demo, it takes a different path and fails the same task.</p>
-<p>That is embarrassing onstage. In production, it is a reliability problem: a workflow that succeeded once may fail the next time a user makes the same request. For mission-critical work, such as reconciling a financial transaction or checking a contract for an obligation, that can be a showstopper.</p>
-<p>Most benchmarks hide this variability behind an average. On AppWorld, a ReAct agent using GPT-4.1 succeeded on <strong>77.4% of runs</strong> across five repetitions. But it succeeded in all five runs for only <strong>53.0% of tasks</strong> — a <strong>24.4-point consistency gap</strong>.</p>
-<p>Most benchmarks report the first number. We built a way to measure the second — and improve it.</p>
-<p>In an earlier post, we introduced <a href="https://huggingface.co/blog/ibm-research/altk-evolve">ALTK-Evolve</a> — a system that turns an agent's own past trajectories into reusable guidelines, distilled automatically and injected back at inference time. It measurably improves task success, but those results only asked the average-case question too. This post introduces <strong>consistency guidelines</strong>, a new guideline type in <a href="https://github.com/AgentToolkit/altk-evolve"><code>altk-evolve</code></a> built on top of a diagnostic tool we call the <strong>Consistency Analyzer</strong>, that targets this gap directly.</p>
-<p><strong>TL;DR</strong></p>
-<ul><li><strong>Accuracy hides an unreliability problem.</strong> A ReAct agent (GPT-4.1 on AppWorld <code>test_normal</code>) that succeeds 77.4% of the time on average succeeds on <em>all 5</em> repeated runs for only 53.0% of tasks — a <strong>24.4-point consistency gap</strong>. On hard tasks it reaches 30 points.</li><li><strong>We built a diagnostic for exactly this.</strong> The Consistency Analyzer resamples an agent's own recorded trajectory to find <em>flip-prone</em> decision points — steps where the model was one token-sample away from doing something different. It needs one trace and no ground truth — it resamples each decision point in that trace with a single call requesting k completions (k=5 by default), rather than re-running the task end-to-end.</li><li><strong>Turning that diagnosis into guidelines halves the gap</strong> — from <strong>24.4pp to 12.0pp</strong> (same-task Pass⁵ +16.0pp, similar-task +13.0pp), without costing anything in average accuracy.</li><li><strong>Full methodology and evaluations</strong> are in the <a href="https://arxiv.org/abs/2609.08832">technical report on arXiv</a>.</li></ul>
-<h2>The Metric Almost Nobody Reports</h2>
-<p>Standard agent evaluation reports <strong>Mean@k</strong>: run a benchmark <em>k</em> times, average the pass rate. Often <em>k</em>=3, sometimes just 1. It's the number on every leaderboard, and it's what &quot;77% accurate&quot; means in practice.</p>
-<p>Mean@k answers &quot;how good is this agent, on average?&quot; It does not answer the question a real user cares about: <strong>will it still be good if I ask this exact question again?</strong> For that you need <strong>Pass^k</strong>: the fraction of tasks where the agent succeeds on <em>all</em> k runs.</p>
-<blockquote>⚠️ Pass^k is not Pass@k. The familiar Pass@k is optimistic — it asks whether at least one of k attempts succeeded, the right question when you can verify and retry. Pass^k is its pessimistic mirror image: every attempt must succeed. Same letters, opposite question. Pass^k ≤ Mean@k ≤ Pass@k, always.</blockquote>
-<p>A ReAct agent backed by GPT-4.1 posts a Mean@5 of <strong>77.4%</strong> — genuinely strong. But Pass^5 is only <strong>53.0%</strong>. Nearly a quarter of the benchmark consists of tasks the agent can <em>sometimes</em> solve and sometimes can't, with nothing about the task changing between runs. We call this gap — Mean@k minus Pass^k — the <strong>consistency gap</strong>.</p>
-<p>This isn't a capability problem you fix with a bigger model. It's an orthogonal axis: <strong>an agent can be capable and inconsistent at the same time.</strong></p>
-<h2>Why Agents Flip: Sharp Decisions vs. Flat Ones</h2>
-<p>Every time an LLM agent decides something — which API to call, what argument to pass, whether to retry — that decision comes out of a probability distribution over next tokens. What matters is the <strong>shape</strong> of that distribution. A <strong>sharp</strong> one puts most of its mass on a single token: the runners-up are far behind, and the same choice comes out run after run. A <strong>flat</strong> one spreads comparable mass across several near-tied tokens, and which one wins is close to a coin flip.</p>
-<p>The shape decides how much noise it takes to change the outcome. Sharp distributions are resilient — GPU floating-point non-associativity, request batching, and other platform-side effects nudge the numbers slightly, but nowhere near enough to reorder a clear winner. Flat distributions are vulnerable to exactly that nudge: near-ties may reorder under small perturbations. And because a trajectory chains dozens of decisions, a small per-step chance of flipping compounds into a large chance that <em>some</em> run goes differently. That's where a 24-point gap comes from.</p>
-<p>This is also why the problem survives your decoding settings. Greedy decoding and a fixed seed both govern <em>how a distribution gets turned into a token</em> — they say nothing about the distribution itself. On a hosted endpoint the probabilities shift slightly from run to run, so the same prompt to the same model at temperature zero can still resolve a near-tie one way today and the other way tomorrow.</p>
-<blockquote>Our setup: the ReAct agent runs at temperature 0.0, so none of the variance above is ordinary sampling.</blockquote>
-<h2>Diagnose, Then Fix</h2>
-<p>Which turns the problem into a search: which steps in a given trajectory were the flat ones — and what do you do about them once you know?</p>
-<p>Consistency guidelines come out of a two-stage pipeline that plugs into ALTK-Evolve's existing machinery — with a new source signal driving what gets written.</p>
-<p><strong>1. Detect — the Consistency Analyzer.</strong> Given one recorded trajectory, the analyzer replays each decision step through controlled resampling, measuring how much the model's output actually varies at that point. Concretely, that's one additional model call per decision step, done once offline — issued with the sampling parameter set to draw k completions at once (k=5 by default) — replayed against the already-recorded context, not new tool calls, not new environment interactions, and not a second end-to-end rollout of the task. This yields a consistency score per decision step that is written into a scorecard to pinpoint exactly which decisions are at risk of flipping on the next run. Detection is fully black-box — no logits, no model internals, no instrumentation beyond the trace you already have.</p>
-<p><strong>2. Generate — targeted guidelines.</strong> Every flagged step becomes a candidate consistency guideline in the standard ALTK-Evolve format, so it slots into the existing storage and retrieval pipeline. Here's a real example, generated by GPT-4.1 from a trajectory of the AppWorld task &quot;How many activities are done in my bucket list as per my SimpleNote note?&quot;:</p>
-<blockquote>[Guideline 1] When counting checkbox-style markers in note content, use a line-anchored regex match rather than a plain substring count — note titles often repeat the marker symbol in a legend line.<br>[Guideline 2] Always verify search results for note queries by checking for multiple matches and confirming the correct note before proceeding.</blockquote>
-<p>Nothing here is task-specific trivia. String-counting bugs and unverified search results are decision points that show up with high uncertainty across many AppWorld tasks. That's the point: the analyzer targets instability, not failure — so it catches steps the agent happened to get right this time but could easily get wrong next time.</p>
-<p><a href="https://www.youtube.com/watch?v=qlp7EzXe8Pg">Watch the 2-minute demo</a> — five parallel runs of the agent split 3-2 on this task because of agent uncertainty about the counting strategy, then run again after these guidelines in context: all five agree.</p>
-<h2>Results: Reducing the Gap Without Losing Accuracy</h2>
-<p>We evaluated on AppWorld <code>test_normal</code> (168 tasks) with a ReAct agent on GPT-4.1, generating consistency guidelines from a single baseline trajectory per task and testing them on 5 fresh runs.</p>
-<p>Mean@5 (%), aggregate — same scale as Pass^5 above.</p>
-<p><strong>The consistency gap is cut roughly in half.</strong> Aggregate Pass^5 rises 53.0% → 69.0% while Mean@5 rises 77.4% → 81.0%, narrowing the gap between &quot;looks capable&quot; and &quot;can be counted on&quot; from <strong>24.4pp to 12.0pp</strong>. Nearly a third of previously-inconsistent tasks become tasks the agent passes on <em>every single run</em>.</p>
-<p><strong>The middle and hard tiers gain most.</strong> Medium +22.9pp (+44% relative), Hard +14.3pp (+45% relative) — effectively tied in relative terms, with Medium ahead absolutely. Easy gains +12.2pp, having had the least room. This is consistency guidelines doing what they're designed to do: finding and stabilizing the specific decision points where an agent's own uncertainty was leaking into the outcome.</p>
-<p><strong>Mean@5 never drops.</strong> Preserving average accuracy was a hard requirement, not a nice-to-have: a system that boosts Pass^5 by trading away Mean@5 would just be shifting unreliability around, not fixing it. Mean accuracy holds or improves at every difficulty level.</p>
-<h3>The guidelines generalize — they aren't patching one trajectory</h3>
-<p>Applied to a <strong>different but related task in the same AppWorld scenario</strong> — another variant of the scenario the guidelines were mined from — consistency guidelines still lift Pass^5 by <strong>+13.0pp</strong>, only 3 points below the same-task number. A guideline derived from one run isn't just patching that run; it's capturing something that transfers.</p>
-<p>The sharper evidence comes from a weaker model, <strong>gpt-oss-120b</strong>. Same-task Pass^5 rose +6.0pp from a much lower baseline (10.1% → 16.1%) — and, interestingly, the similar-task generalization number (+8.7 pp) actually <em>exceeded</em> the same-task gain, suggesting the guidelines were capturing genuinely reusable failure patterns rather than memorizing one trajectory's specifics.</p>
-<h2>If You're Shipping an Agent</h2>
-<ul><li><strong>Report Pass^k next to Mean@k.</strong> Averages can't distinguish a reliable agent from a lucky one; even k=3 will surface a gap you didn't know you had.</li><li><strong>Expect the gap to widen with difficulty.</strong> Your hardest tier is where a single averaged number is most misleading.</li><li><strong>Don't reach for a bigger model first.</strong> Consistency is orthogonal to capability. A stronger model raises Mean@k; it doesn't necessarily reduce the consistency gap.</li><li><strong>Diagnosis needs no grader and no live replay</strong>. One extra LLM call per decision step (sampling k=5 completions by default) is enough — no ground truth, no re-running the task against the environment. That's what makes it usable on production traffic, where you often can't replay a task end-to-end even once.</li></ul>
-<h2>Try It</h2>
-<blockquote>Try the ALTK-Evolve — the open-source repo now includes the Consistency Analyzer and consistency-guideline generation used in these experiments — or read the technical report on arXiv for the complete methodology.</blockquote>
-<p>If accuracy numbers you can't reproduce on your own tasks sound familiar, we'd like to hear about it — concrete examples of flip-prone behavior in your own agents are exactly the kind of feedback that shapes what we build next. <a href="https://github.com/AgentToolkit/altk-evolve">Open an issue or a discussion</a>.</p>
-<h2>Appendix: Understanding the Metrics</h2>
-<ul><li><strong>Mean@k.</strong> Run a task <em>k</em> times, report the average pass rate — what most benchmarks call &quot;accuracy.&quot;</li><li><strong>Pass^k.</strong> The fraction of tasks where the agent succeeds on <strong>all</strong> <em>k</em> independent runs. Always ≤ Mean@k. What a user experiences if they run the same query twice.</li><li><strong>Pass@k</strong> At least <strong>one</strong> of <em>k</em> runs succeeds — the optimistic counterpart, common in code-generation papers.</li><li><strong>Consistency gap.</strong> Mean@k − Pass^k, in percentage points.</li></ul>
-<h2>Linked artifacts / references</h2>
-<ul><li><strong>ALTK-Evolve open source repo</strong> — <a href="https://github.com/AgentToolkit/altk-evolve">github.com/AgentToolkit/altk-evolve</a></li><li><strong>Technical report</strong> — <a href="https://arxiv.org/abs/2609.08832">arXiv</a></li><li><strong>Consistency guideline demo</strong> —<a href="https://www.youtube.com/watch?v=qlp7EzXe8Pg">2 min video</a></li></ul>
-<p>More from this author</p>
-<h2>IBM releases SOTA Granite Time Series PatchTST-FM-r2 model with commercial-friendly license</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>60</p>
-<p>September 9, 2026</p>
-<h2>Real-Time Intelligence with IBM Time Series Models on Confluent</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>53</p>
-<p>September 2, 2026</p>
-<h3>Community</h3>
-<p>Fsecurityturism</p>
-<p>19 days ago</p>
-<p>Great perspective on agent reliability. Measuring consistency alongside accuracy seems especially important as AI agents move into workflows where reproducibility matters. The Consistency Analyzer approach is a fascinating way to identify unstable decisions without requiring full task replays.</p>
-<p>Nomad-link-id</p>
-<p>6 days ago</p>
-<p>The useful split is the one most dashboards still refuse to print: Mean@k answers “how good is this agent on average?” Pass^k answers “will the same request still succeed if I ask again?”</p>
-<p>Once you’ve watched a trajectory chain dozens of near-tied tool choices, a strong average with a wide consistency gap is exactly the demo that fails live. Capability and consistency are orthogonal — buying a bigger model can lift Mean without closing the gap.</p>
-<p>What I want teams to take from the Consistency Analyzer framing is operational, not the guideline machinery itself: treat flip-prone decision steps as first-class eval targets. One offline resample pass over a recorded trace is a cheaper reliability signal than another end-to-end leaderboard screenshot.</p>
-<p>Practical ask for anyone shipping agents from this: do you report Pass^k (even k=3) next to Mean@k in the release gate, and do you refuse the “stable” label when the consistency gap is still large on your hard tier?</p>
-<p>Reproducible reliability will not remove disagreement about which guidelines to inject. It will make the disagreement about the right metric.</p>
-<ul><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li></ul>
-<p>evduester</p>
-<p>Article author</p>
-<p>6 days ago</p>
-<p>Thanks, and you've landed on exactly the operational takeaway we hoped for: flip-prone decision steps should be eval targets in their own right. Beyond that, knowing where they are also turns the eval into a diagnostic: a consistency gap tells you that an agent is unreliable, while the flip-prone steps tell you where and why.</p>
-<p>On your release-gate question: we'd strongly encourage it, and k=3 is a sensible default. A few things we'd suggest to anyone adopting Pass^k as a gate:</p>
-<ul><li><strong>Fix k, and there's no need to push it much past 3</strong>. Pass^k gets stricter as k grows, so &quot;Pass^3 ≥ X&quot; and &quot;Pass^5 ≥ X&quot; are different bars; pick one and keep it across releases. We used k=5 for the study, but for a release gate, the returns diminish quickly beyond k=3. In our experience, most inconsistent tasks show at least one failure within the first three runs, so going further adds cost linearly while adding comparatively little new insight into which tasks are unreliable.</li><li><strong>Mind the sample size</strong>. Pass^k gives each task a single all-or-nothing outcome, so its precision depends mainly on the number of tasks, not on k, and both Pass^k and Mean@k stay noisy on small task sets. Compare releases task by task rather than by aggregate scores, and report task counts or intervals before calling an agent stable or unstable.</li></ul>
-<p>I'd like to understand your closing point better. In our experiments, we didn't choose among individual guidelines: for each new task, we injected the guidelines derived from the most similar task. I'm curious where you see the disagreement about which guidelines to inject arising.</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Faltk-evolve-consistency">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Faltk-evolve-consistency">log in</a> to comment</p>
-<p>119</p>
-<ul><li><a href="https://huggingface.co/gaodan-fang"><img src="https://huggingface.co/avatars/18f132b7a7dabcdf5fb933edb554ea68.svg" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/saurabhiit2011"><img src="https://huggingface.co/avatars/a8e6ed70291c1a54635990fe421f25e1.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lilianngweta"><img src="https://huggingface.co/avatars/fa5834d4282fde8d5affa24e17494590.svg" alt=""></a></li><li><a href="https://huggingface.co/praveenv"><img src="https://huggingface.co/avatars/42b5ec5e3486011219f2bd4620ddb360.svg" alt=""></a></li><li><a href="https://huggingface.co/anubhamidipaty"><img src="https://huggingface.co/avatars/0bf6b07cb6d0cde59a462458f841e224.svg" alt=""></a></li><li><a href="https://huggingface.co/bellatrix2051"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/TnFHKbt90AoIYQalE4ggW.png" alt=""></a></li><li><a href="https://huggingface.co/haroldshipibm"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tbbz59saxTLp2HXZbnHRc.png" alt=""></a></li><li><a href="https://huggingface.co/laredoj"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6487da02c4b44322c124f39f/a59vwxS7l3iylkGXzN6R3.jpeg" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -1,12 +1,12 @@
 # Mistral AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-31**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-05**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Mistral AI（`mistral`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
 - 页面：[新闻 / 更新](https://mistral.ai/news/)
-- 📡 RSS/Atom：[RSS/Atom 订阅源](https://mistral.ai/news/rss)
+- 📡 RSS/Atom：[官方 RSS](https://mistral.ai/news/rss)
 
 ## 全部文章（共 93 篇，按日期倒序；无日期条目列于最后）
 

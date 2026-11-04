@@ -728,6 +728,182 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <ul><li>Fully Connected，旧金山（9 月 29 日 - 10 月 1 日）</li><li>Long Horizon，旧金山（10 月 20 - 21 日）</li><li>PyTorch Conference，圣何塞（10 月 20 - 21 日）</li><li>AI in Drug Discovery &amp; Development Summit（10 月 27 - 29 日）</li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>宣布 Ray 原生沙箱能力</title>
+      <link>https://anyscale.com/blog/announcing-native-sandboxing-in-ray</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/announcing-native-sandboxing-in-ray</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Announcing Native Sandboxing in Ray</description>
+      <content:encoded><![CDATA[<h1>宣布 Ray 原生沙箱能力</h1>
+<p>作者：Philipp Moritz、Andrew Sy Kim（Google）和 Xinyu Zhang | 2026 年 8 月 25 日</p>
+<p>Agentic RL 需要同时运行大量彼此隔离、执行模型生成代码的环境。如今，用 Ray 构建这类负载的团队，要么依赖托管沙箱服务商，要么在 Ray 集群之外自行构建并运维一套独立的沙箱系统。</p>
+<p>从 Ray 2.58 开始，我们引入一个新选项：沙箱作为 Ray 的原生组成部分。</p>
+<p><a href="https://cloud.google.com/blog/products/containers-kubernetes/gvisor-sandboxes-for-ray-clusters-on-gke">我们与 Google 合作</a>，发布一个基于 gVisor 的实验性沙箱库。它允许你从 OCI 容器镜像创建隔离环境、在其中执行命令、进出文件、控制网络访问，并直接用 Ray 既有的原语来调度和扩缩这些环境——与你调度 trainer、rollout worker、evaluator 及其他分布式组件的方式完全一致。</p>
+<p>这一集成在两个层面做了设计。对于只想要隔离执行的用户，Ray 提供高层沙箱 API，由它代管沙箱的放置与生命周期。对于想构建自家沙箱服务的团队，Ray 同时暴露底层运行时原语，可直接创建和管理隔离的 gVisor 环境。这使得 Ray 可以作为自定义沙箱服务之下的分布式控制平面，而无需从零构建调度、资源管理、自动扩缩容与容错。</p>
+<p>职责划分很简单：<strong>Ray 负责编排与扩缩，gVisor 负责隔离。</strong></p>
+<p>由于沙箱作为 Ray 集群的一部分被调度，它们与负载的其余部分共享同一套资源管理和自动扩缩容体系。在 Google Kubernetes Engine 上，我们已经把该架构扩展到跨数千节点、20 秒内创建 10 万个沙箱。</p>
+<h2>沙箱即 Ray 原语</h2>
+<p>Ray 已成为编排后训练（post-training）负载的通用运行时。veRL、NeMo-RL、SLIME、MILES、SkyRL 等框架已在使用 Ray 协调分布式 trainer、推理引擎、rollout worker 及其他组件。</p>
+<p>设计 Ray Sandboxing 时，一个重要目标是让它自然融入现有 Ray 编程模型，而不是为隔离执行引入一套独立抽象。沙箱与 Ray 管理的其他资源有许多相同属性：需要被放置到某台机器、分配资源、创建与销毁、从故障中恢复、并随周边负载一起扩缩。这促使我们用 Ray Actor 来表示每个高层沙箱：</p>
+<p>Ray 调度器决定哪台节点运行某个沙箱，并预留相应的 CPU 与内存资源。沙箱 Actor 管理其生命周期，gVisor 在该节点上提供隔离执行环境。</p>
+<p>因此，框架作者可以用与工作负载其余部分相同的 Ray API 和模式来管理沙箱化环境。例如：</p>
+<pre><code>import ray
+from ray.experimental import sandbox
+
+ray.init()
+# Create a gVisor sandbox environment and return an actor handle for a proxy actor
+sb = sandbox.create(
+    cpu=1.0,
+    memory=&quot;512Mi&quot;,
+    image=&quot;python:3.12-slim&quot;
+)
+# Execute code inside the sandbox
+result = ray.get(sb.exec.remote(&quot;python -c 'import sys; print(sys.version)'&quot;))
+print(result.stdout)</code></pre>
+<p>这会从一个 OCI 兼容镜像创建 gVisor 沙箱并返回一个 Ray Actor 句柄。对 <code>exec</code> 的调用就是普通的 Ray Actor 调用，因此沙箱可以位于集群中的任何地方。创建的 actor 是一个代理，会把操作转发给 gVisor。</p>
+<p><a href="https://docs.ray.io/en/master/ray-core/api/sandboxes.html">sandbox API</a>覆盖了 agentic 负载所需的基本生命周期：</p>
+<ul><li>从 OCI 容器镜像创建环境，</li><li>设置 CPU 与内存限额，</li><li>配置环境变量、工作目录与网络，</li><li>执行命令，</li><li>读取、写入、上传与下载文件，</li><li>查看沙箱状态，以及</li><li>终止或删除环境。</li></ul>
+<p>对于更底层的用法，<code>SandboxRuntime</code> 提供对本地 gVisor 沙箱的直接访问，允许用户在 OCI spec 交给 gVisor 之前修改它。下面是用该 API 在 actor 内部构建本地沙箱池的示例：</p>
+<pre><code>import ray
+from ray.experimental.sandbox.runtime import SandboxRuntime
+
+@ray.remote
+class SandboxPool:
+    def __init__(self, size: int = 3, image: str = &quot;python:3.10-slim&quot;):
+        self.runtime = SandboxRuntime()
+        self.sandboxes = [
+            self.runtime.create(image=image, memory=&quot;512Mi&quot;)
+            for _ in range(size)
+        ]
+
+    def run_command(self, index: int, command: str):
+        return self.runtime.exec(self.sandboxes[index], command)
+
+    def close(self):
+        for sb_id in self.sandboxes:
+            self.runtime.delete(sb_id)
+
+# Deploy an actor managing a pool of local sandboxes
+pool = SandboxPool.remote(size=3)
+result = ray.get(pool.run_command.remote(0, &quot;python3 -c 'print(\&quot;Hello from pool!\&quot;)'&quot;))
+print(result.stdout)
+ray.get(pool.close.remote())</code></pre>
+<h2>扩展到 10 万个沙箱</h2>
+<p>当环境数量增长时，把沙箱集成进 Ray 的价值尤为突出。</p>
+<p>大规模 RL 负载可能需要数千个环境并发运行，且随着 rollout 推进环境不断被创建和销毁。独立的沙箱服务意味着再多一个调度器、再多一个需要与训练系统一同扩展的分布式控制平面。</p>
+<p>有了 Ray Sandboxes，环境放置对 Ray 来说不过是又一个调度问题。</p>
+<p>在 Google Kubernetes Engine 上运行 Ray 时，我们已将系统扩展到 20 秒内在数千个节点上创建 10 万个 gVisor 沙箱。</p>
+<p>沙箱创建时间与规模的对比</p>
+<h2>为什么选 gVisor？</h2>
+<p>运行模型生成的代码，就意味着必须把环境内的代码当作不可信来处理。</p>
+<p>Ray Sandboxing 选用 Google 的开源应用内核 <a href="https://gvisor.dev/">gVisor</a> 作为首个沙箱运行时。gVisor 在用户空间实现了 Linux 系统调用接口的相当大部分，在工作负载与宿主内核之间增设了一道隔离边界。</p>
+<p>它兼容 OCI、可使用标准容器镜像，并且无需向沙箱暴露 Docker daemon 或宿主 Docker socket。</p>
+<p>这一组合对 agentic 负载尤其合适：环境轻到可以动态创建，同时比在普通容器里直接执行生成代码提供更强的隔离。</p>
+<p>gVisor 还提供亚秒级沙箱启动与极低的单沙箱内存开销，使沙箱可以作为粒度相对精细的分布式资源来使用。</p>
+<h2>真实负载的常见模式</h2>
+<p>创建一个隔离进程只是运行真实 agent 负载的一部分。环境往往需要不同的网络策略，文件与产物需要在 agent 与沙箱之间流动，外部系统也需要某种方式调用沙箱内的执行。</p>
+<p>Ray Sandboxing 为每种模式都提供了原语。</p>
+<h3>1. 网络隔离</h3>
+<p>并非每个沙箱都需要同等级别的连通性。agent 可能需要访问互联网来调用 API 或安装软件包，而运行不可信代码的 evaluator 应保持隔离。Ray 支持四种网络模式：</p>
+<ul><li><strong>network=&quot;none&quot;</strong>（默认）：仅回环。最适合隔离的 rollout 与不可信代码。</li><li><strong>network=&quot;public&quot;</strong>：可出公网，并附带可移植的 /etc/resolv.conf。适合 API 调用与软件包安装。</li><li><strong>network=&quot;host&quot;</strong>：共享节点网络命名空间，可访问节点本地服务。</li><li><strong>network=&quot;sandbox&quot;</strong>：使用 gVisor 的隔离网络栈，要求 rootless=False。</li></ul>
+<pre><code>from ray.experimental import sandbox
+
+sb = sandbox.create(
+    image=&quot;python:3.12-slim&quot;,
+    network=&quot;public&quot;,
+    dns=[&quot;10.0.0.2&quot;],
+    readonly=False,
+)
+ray.get(sb.exec.remote(&quot;pip install requests&quot;))</code></pre>
+<h3>2. 移动文件与状态</h3>
+<p>在真实负载中，往往需要向沙箱移动的不只是命令字符串。小文件可以直接通过 Actor 读写字节；更大的目录树则用归档包，以保留权限、符号链接和空目录。由于文件传输经由 Ray，即使沙箱运行在另一台物理节点上也能工作。</p>
+<pre><code>script_source = &quot;print('Training complete')&quot;
+ray.get(sb.write_file.remote(&quot;/app/train.py&quot;, script_source))
+metrics = ray.get(sb.read_file.remote(&quot;/app/metrics.json&quot;))
+
+ray.get(sb.upload_file.remote(&quot;bundle.tar.gz&quot;, &quot;/tmp/bundle.tar.gz&quot;))
+ray.get(
+    sb.exec.remote(
+        &quot;mkdir -p /app &amp;&amp; tar -xzf /tmp/bundle.tar.gz -C /app&quot;
+    )
+)</code></pre>
+<h3>3. 通过 MCP 暴露沙箱化执行</h3>
+<p>Ray Sandboxes 也可以置于 MCP 工具之后，为兼容 MCP 的 agent 提供安全执行不可信代码的途径，而不暴露宿主环境。agent 只与该工具交互，隔离由底下的 Ray 和 gVisor 处理。</p>
+<pre><code>from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP(&quot;sandboxed-python&quot;)
+isolated_sb = sandbox.create(
+    image=&quot;python:3.12-slim&quot;,
+    network=&quot;none&quot;,
+)
+
+@mcp.tool()
+def run_python(code: str) -&gt; str:
+    &quot;&quot;&quot;Run untrusted Python inside a gVisor sandbox.&quot;&quot;&quot;
+    result = ray.get(
+        isolated_sb.exec.remote(
+            [&quot;python&quot;, &quot;-c&quot;, code],
+            timeout=30,
+        )
+    )
+    return result.stdout if result.exit_code == 0 else result.stderr</code></pre>
+<h3>4. 削减沙箱权限</h3>
+<p>需要更严格隔离时，传入 <code>capabilities=[]</code> 以移除沙箱的 Linux capabilities。这样即便沙箱内的 root 用户也无法执行 chown、mknod 或打开原始套接字等操作。若需更低层控制，<code>_oci_spec_transform_fn</code> 允许你在 OCI spec 送达 gVisor 之前修改它。例如移除 capabilities 或强制执行进程数限制：</p>
+<pre><code>from ray.experimental.sandbox.runtime import SandboxRuntime
+
+def harden_spec(spec):
+    # Limit process creation to reduce fork-bomb risk.
+    spec[&quot;process&quot;][&quot;rlimits&quot;] = [
+        {&quot;type&quot;: &quot;RLIMIT_NPROC&quot;, &quot;hard&quot;: 64, &quot;soft&quot;: 64}
+    ]
+    # Remove all Linux capabilities.
+    if &quot;capabilities&quot; in spec[&quot;process&quot;]:
+        for cap_type in spec[&quot;process&quot;][&quot;capabilities&quot;]:
+            spec[&quot;process&quot;][&quot;capabilities&quot;][cap_type] = []
+    return spec
+
+runtime = SandboxRuntime()
+sb_id = runtime.create(
+    image=&quot;python:3.12-slim&quot;,
+    _oci_spec_transform_fn=harden_spec,
+)</code></pre>
+<h2>用 harbor 运行 Ray Sandboxes</h2>
+<p><a href="https://github.com/harbor-framework/harbor">Harbor</a> 是一个在 SWE-Bench、Terminal-Bench 等基准上评测 Claude Code、OpenHands、Codex CLI 等编码 agent 的框架，每次 trial 都在隔离的任务环境中运行。</p>
+<p>Ray Sandbox 已作为<a href="https://github.com/harbor-framework/harbor/pull/2785">原生 Harbor 环境</a>提供。在 Ray 集群中运行 Harbor，各 trial 会在你自己的节点上以 gVisor 运行任务镜像，并由沙箱强制执行任务的网络策略。</p>
+<h3>安装与运行</h3>
+<p>将 Harbor 与 Ray Sandboxing 配合使用需要 Ray 2.58+，并在 Ray 基础镜像上<a href="https://gvisor.dev/docs/user_guide/install/">安装</a><code>runsc</code>。</p>
+<pre><code># Install Harbor with the Ray backend
+pip install 'harbor[ray]'
+
+# Run an evaluation on Ray
+harbor run --dataset terminal-bench@2.0 \
+ --agent claude-code \
+ --model anthropic/claude-opus-4-1 \
+ -e ray \
+ --n-concurrent 32</code></pre>
+<h3>状态与性能</h3>
+<p>带公开 <code>[environment].docker_image</code> 的任务（如 MedAgentBench）开箱即用。Terminal-Bench 或 SWE-Bench 等基准则需要把每个任务的镜像发布到可达的镜像仓库。目前 compose、GPU 或基于 allowlist 的任务会被拒绝。</p>
+<p>单台 14-CPU 开发 VM 上的性能指标：</p>
+<ul><li>单个 trial：29 秒</li><li>8 个 trial、并发 4：8/8 全部 reward 1.0，0 异常，3 分 02 秒（单 trial p50 为 45 秒）</li></ul>
+<p>吞吐通常受每节点内存约束，并通过 Ray autoscaler 在集群维度水平扩展。</p>
+<h3>工作原理</h3>
+<p>Harbor 的环境模型直接映射到 Ray Sandbox：</p>
+<ul><li><strong>权限：</strong> 任务镜像以 Docker 兼容的 capabilities 运行，使现有基准镜像行为符合预期。</li><li><strong>执行：</strong> 字符串命令保留 Harbor 的 bash -c 语义。</li><li><strong>文件传输：</strong> 目录上传被打包为 tar 归档，经沙箱文件 API 传输。</li><li><strong>资源：</strong> Harbor 的资源请求转化为 Ray 调度预留，运行时限制则在沙箱内部强制执行。</li><li><strong>网络：</strong> Harbor 的 no-network 策略映射为 network=&quot;none&quot;。试图用更大权限覆盖它会在沙箱创建前被拒绝。</li></ul>
+<h3>下一步</h3>
+<p>Ray Sandboxing 目前处于<strong>实验阶段</strong>，有许多我们希望与社区共同完善的方面。</p>
+<p><strong>REST API 服务：</strong> 我们计划实现一个 REST API，让用户无需把 Ray 作为依赖即可与沙箱交互，并使训练集群与沙箱集群解耦、把沙箱作为服务运行。原型见<a href="https://github.com/ray-project/ray/pull/65633">这个 PR</a>。</p>
+<p><strong>GPU 支持。</strong> Ray 已被广泛用于调度 CPU/GPU 混合负载，gVisor 也<a href="https://gvisor.dev/docs/user_guide/gpu/">与 GPU 配合良好</a>。随着内核生成与 RSI 等负载日益重要，我们希望带 GPU 的沙箱也能开箱即用。</p>
+<p><strong>沙箱内的 Docker 支持。</strong> 某些 agent 任务本身就期望能访问 Docker。<a href="https://gvisor.dev/docs/tutorials/docker-in-gvisor/">gVisor 支持在沙箱内运行 Docker</a>，我们希望文档化并测试一套与 Ray Sandboxing 自然配合的配置。</p>
+<p><strong>网络与文件系统能力。</strong> 我们计划增加文件系统快照、在沙箱与宿主之间或沙箱彼此之间暴露端口等功能。</p>
+<p><strong>安全指南。</strong> gVisor 提供了<a href="https://gvisor.dev/docs/architecture_guide/intro/">成熟的安全架构</a>，但整个系统的安全属性仍取决于沙箱与周边基础设施的配置。我们希望给出清晰的推荐配置与示例，包括面向&quot;模型可能主动试图逃逸沙箱&quot;的负载配置。</p>
+<p>如果你对这些方向感兴趣或有反馈，非常欢迎联系我们（例如创建 GitHub issue 或 PR）。</p>
+<h2>试用</h2>
+<p><a href="https://docs.ray.io/en/master/ray-core/sandboxes.html">Ray Sandboxing</a>自 <strong>Ray 2.58</strong> 起以实验特性提供。</p>
+<p>如果你正在构建 agentic RL 系统、编码 agent 评测，或其他需要大规模隔离执行的负载，欢迎试用并告诉我们缺什么。</p>
+<p>在 K8s 上上手请参考 <a href="https://docs.ray.io/en/master/cluster/kubernetes/examples/ray-sandboxing.html">Ray Sandboxing Guide</a>。</p>
+<p>反馈、功能请求或贡献，请到 <a href="https://github.com/ray-project/ray/issues/65352">GitHub</a> 参与讨论。</p>
+<p>我们的目标是让沙箱化环境用起来就像 Ray 中任何其他分布式原语：易于创建、易于扩缩、易于与 agentic 负载的其余部分组合。</p>]]></content:encoded>
+    </item>
+    <item>
       <title>将 Ray 的 AI 工作负载扩展至 10k 节点集群</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</guid>
@@ -1253,182 +1429,6 @@ ds.groupby(&quot;band_id&quot;).count()</code></pre>
 <p>Kubernetes 覆盖面也在扩展，将由我们的 Foundations 团队协同，从 K8s 上 Anyscale Operator 管理的环境开始。</p>
 <p>Anyscale Observability 正随 Ray 生态与更广阔的 AI 基础设施格局一起演进，而 GPU Health Observability 是这一方向最清晰的信号。</p>
 <p><a href="https://www.anyscale.com/asset/gpu-health-observability-private-preview-form"><strong>注册私有预览 →</strong></a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>宣布 Ray 原生沙箱能力</title>
-      <link>https://anyscale.com/blog/announcing-native-sandboxing-in-ray</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/announcing-native-sandboxing-in-ray</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Announcing Native Sandboxing in Ray</description>
-      <content:encoded><![CDATA[<h1>宣布 Ray 原生沙箱能力</h1>
-<p>作者：Philipp Moritz、Andrew Sy Kim（Google）和 Xinyu Zhang | 2026 年 8 月 25 日</p>
-<p>Agentic RL 需要同时运行大量彼此隔离、执行模型生成代码的环境。如今，用 Ray 构建这类负载的团队，要么依赖托管沙箱服务商，要么在 Ray 集群之外自行构建并运维一套独立的沙箱系统。</p>
-<p>从 Ray 2.58 开始，我们引入一个新选项：沙箱作为 Ray 的原生组成部分。</p>
-<p><a href="https://cloud.google.com/blog/products/containers-kubernetes/gvisor-sandboxes-for-ray-clusters-on-gke">我们与 Google 合作</a>，发布一个基于 gVisor 的实验性沙箱库。它允许你从 OCI 容器镜像创建隔离环境、在其中执行命令、进出文件、控制网络访问，并直接用 Ray 既有的原语来调度和扩缩这些环境——与你调度 trainer、rollout worker、evaluator 及其他分布式组件的方式完全一致。</p>
-<p>这一集成在两个层面做了设计。对于只想要隔离执行的用户，Ray 提供高层沙箱 API，由它代管沙箱的放置与生命周期。对于想构建自家沙箱服务的团队，Ray 同时暴露底层运行时原语，可直接创建和管理隔离的 gVisor 环境。这使得 Ray 可以作为自定义沙箱服务之下的分布式控制平面，而无需从零构建调度、资源管理、自动扩缩容与容错。</p>
-<p>职责划分很简单：<strong>Ray 负责编排与扩缩，gVisor 负责隔离。</strong></p>
-<p>由于沙箱作为 Ray 集群的一部分被调度，它们与负载的其余部分共享同一套资源管理和自动扩缩容体系。在 Google Kubernetes Engine 上，我们已经把该架构扩展到跨数千节点、20 秒内创建 10 万个沙箱。</p>
-<h2>沙箱即 Ray 原语</h2>
-<p>Ray 已成为编排后训练（post-training）负载的通用运行时。veRL、NeMo-RL、SLIME、MILES、SkyRL 等框架已在使用 Ray 协调分布式 trainer、推理引擎、rollout worker 及其他组件。</p>
-<p>设计 Ray Sandboxing 时，一个重要目标是让它自然融入现有 Ray 编程模型，而不是为隔离执行引入一套独立抽象。沙箱与 Ray 管理的其他资源有许多相同属性：需要被放置到某台机器、分配资源、创建与销毁、从故障中恢复、并随周边负载一起扩缩。这促使我们用 Ray Actor 来表示每个高层沙箱：</p>
-<p>Ray 调度器决定哪台节点运行某个沙箱，并预留相应的 CPU 与内存资源。沙箱 Actor 管理其生命周期，gVisor 在该节点上提供隔离执行环境。</p>
-<p>因此，框架作者可以用与工作负载其余部分相同的 Ray API 和模式来管理沙箱化环境。例如：</p>
-<pre><code>import ray
-from ray.experimental import sandbox
-
-ray.init()
-# Create a gVisor sandbox environment and return an actor handle for a proxy actor
-sb = sandbox.create(
-    cpu=1.0,
-    memory=&quot;512Mi&quot;,
-    image=&quot;python:3.12-slim&quot;
-)
-# Execute code inside the sandbox
-result = ray.get(sb.exec.remote(&quot;python -c 'import sys; print(sys.version)'&quot;))
-print(result.stdout)</code></pre>
-<p>这会从一个 OCI 兼容镜像创建 gVisor 沙箱并返回一个 Ray Actor 句柄。对 <code>exec</code> 的调用就是普通的 Ray Actor 调用，因此沙箱可以位于集群中的任何地方。创建的 actor 是一个代理，会把操作转发给 gVisor。</p>
-<p><a href="https://docs.ray.io/en/master/ray-core/api/sandboxes.html">sandbox API</a>覆盖了 agentic 负载所需的基本生命周期：</p>
-<ul><li>从 OCI 容器镜像创建环境，</li><li>设置 CPU 与内存限额，</li><li>配置环境变量、工作目录与网络，</li><li>执行命令，</li><li>读取、写入、上传与下载文件，</li><li>查看沙箱状态，以及</li><li>终止或删除环境。</li></ul>
-<p>对于更底层的用法，<code>SandboxRuntime</code> 提供对本地 gVisor 沙箱的直接访问，允许用户在 OCI spec 交给 gVisor 之前修改它。下面是用该 API 在 actor 内部构建本地沙箱池的示例：</p>
-<pre><code>import ray
-from ray.experimental.sandbox.runtime import SandboxRuntime
-
-@ray.remote
-class SandboxPool:
-    def __init__(self, size: int = 3, image: str = &quot;python:3.10-slim&quot;):
-        self.runtime = SandboxRuntime()
-        self.sandboxes = [
-            self.runtime.create(image=image, memory=&quot;512Mi&quot;)
-            for _ in range(size)
-        ]
-
-    def run_command(self, index: int, command: str):
-        return self.runtime.exec(self.sandboxes[index], command)
-
-    def close(self):
-        for sb_id in self.sandboxes:
-            self.runtime.delete(sb_id)
-
-# Deploy an actor managing a pool of local sandboxes
-pool = SandboxPool.remote(size=3)
-result = ray.get(pool.run_command.remote(0, &quot;python3 -c 'print(\&quot;Hello from pool!\&quot;)'&quot;))
-print(result.stdout)
-ray.get(pool.close.remote())</code></pre>
-<h2>扩展到 10 万个沙箱</h2>
-<p>当环境数量增长时，把沙箱集成进 Ray 的价值尤为突出。</p>
-<p>大规模 RL 负载可能需要数千个环境并发运行，且随着 rollout 推进环境不断被创建和销毁。独立的沙箱服务意味着再多一个调度器、再多一个需要与训练系统一同扩展的分布式控制平面。</p>
-<p>有了 Ray Sandboxes，环境放置对 Ray 来说不过是又一个调度问题。</p>
-<p>在 Google Kubernetes Engine 上运行 Ray 时，我们已将系统扩展到 20 秒内在数千个节点上创建 10 万个 gVisor 沙箱。</p>
-<p>沙箱创建时间与规模的对比</p>
-<h2>为什么选 gVisor？</h2>
-<p>运行模型生成的代码，就意味着必须把环境内的代码当作不可信来处理。</p>
-<p>Ray Sandboxing 选用 Google 的开源应用内核 <a href="https://gvisor.dev/">gVisor</a> 作为首个沙箱运行时。gVisor 在用户空间实现了 Linux 系统调用接口的相当大部分，在工作负载与宿主内核之间增设了一道隔离边界。</p>
-<p>它兼容 OCI、可使用标准容器镜像，并且无需向沙箱暴露 Docker daemon 或宿主 Docker socket。</p>
-<p>这一组合对 agentic 负载尤其合适：环境轻到可以动态创建，同时比在普通容器里直接执行生成代码提供更强的隔离。</p>
-<p>gVisor 还提供亚秒级沙箱启动与极低的单沙箱内存开销，使沙箱可以作为粒度相对精细的分布式资源来使用。</p>
-<h2>真实负载的常见模式</h2>
-<p>创建一个隔离进程只是运行真实 agent 负载的一部分。环境往往需要不同的网络策略，文件与产物需要在 agent 与沙箱之间流动，外部系统也需要某种方式调用沙箱内的执行。</p>
-<p>Ray Sandboxing 为每种模式都提供了原语。</p>
-<h3>1. 网络隔离</h3>
-<p>并非每个沙箱都需要同等级别的连通性。agent 可能需要访问互联网来调用 API 或安装软件包，而运行不可信代码的 evaluator 应保持隔离。Ray 支持四种网络模式：</p>
-<ul><li><strong>network=&quot;none&quot;</strong>（默认）：仅回环。最适合隔离的 rollout 与不可信代码。</li><li><strong>network=&quot;public&quot;</strong>：可出公网，并附带可移植的 /etc/resolv.conf。适合 API 调用与软件包安装。</li><li><strong>network=&quot;host&quot;</strong>：共享节点网络命名空间，可访问节点本地服务。</li><li><strong>network=&quot;sandbox&quot;</strong>：使用 gVisor 的隔离网络栈，要求 rootless=False。</li></ul>
-<pre><code>from ray.experimental import sandbox
-
-sb = sandbox.create(
-    image=&quot;python:3.12-slim&quot;,
-    network=&quot;public&quot;,
-    dns=[&quot;10.0.0.2&quot;],
-    readonly=False,
-)
-ray.get(sb.exec.remote(&quot;pip install requests&quot;))</code></pre>
-<h3>2. 移动文件与状态</h3>
-<p>在真实负载中，往往需要向沙箱移动的不只是命令字符串。小文件可以直接通过 Actor 读写字节；更大的目录树则用归档包，以保留权限、符号链接和空目录。由于文件传输经由 Ray，即使沙箱运行在另一台物理节点上也能工作。</p>
-<pre><code>script_source = &quot;print('Training complete')&quot;
-ray.get(sb.write_file.remote(&quot;/app/train.py&quot;, script_source))
-metrics = ray.get(sb.read_file.remote(&quot;/app/metrics.json&quot;))
-
-ray.get(sb.upload_file.remote(&quot;bundle.tar.gz&quot;, &quot;/tmp/bundle.tar.gz&quot;))
-ray.get(
-    sb.exec.remote(
-        &quot;mkdir -p /app &amp;&amp; tar -xzf /tmp/bundle.tar.gz -C /app&quot;
-    )
-)</code></pre>
-<h3>3. 通过 MCP 暴露沙箱化执行</h3>
-<p>Ray Sandboxes 也可以置于 MCP 工具之后，为兼容 MCP 的 agent 提供安全执行不可信代码的途径，而不暴露宿主环境。agent 只与该工具交互，隔离由底下的 Ray 和 gVisor 处理。</p>
-<pre><code>from mcp.server.fastmcp import FastMCP
-
-mcp = FastMCP(&quot;sandboxed-python&quot;)
-isolated_sb = sandbox.create(
-    image=&quot;python:3.12-slim&quot;,
-    network=&quot;none&quot;,
-)
-
-@mcp.tool()
-def run_python(code: str) -&gt; str:
-    &quot;&quot;&quot;Run untrusted Python inside a gVisor sandbox.&quot;&quot;&quot;
-    result = ray.get(
-        isolated_sb.exec.remote(
-            [&quot;python&quot;, &quot;-c&quot;, code],
-            timeout=30,
-        )
-    )
-    return result.stdout if result.exit_code == 0 else result.stderr</code></pre>
-<h3>4. 削减沙箱权限</h3>
-<p>需要更严格隔离时，传入 <code>capabilities=[]</code> 以移除沙箱的 Linux capabilities。这样即便沙箱内的 root 用户也无法执行 chown、mknod 或打开原始套接字等操作。若需更低层控制，<code>_oci_spec_transform_fn</code> 允许你在 OCI spec 送达 gVisor 之前修改它。例如移除 capabilities 或强制执行进程数限制：</p>
-<pre><code>from ray.experimental.sandbox.runtime import SandboxRuntime
-
-def harden_spec(spec):
-    # Limit process creation to reduce fork-bomb risk.
-    spec[&quot;process&quot;][&quot;rlimits&quot;] = [
-        {&quot;type&quot;: &quot;RLIMIT_NPROC&quot;, &quot;hard&quot;: 64, &quot;soft&quot;: 64}
-    ]
-    # Remove all Linux capabilities.
-    if &quot;capabilities&quot; in spec[&quot;process&quot;]:
-        for cap_type in spec[&quot;process&quot;][&quot;capabilities&quot;]:
-            spec[&quot;process&quot;][&quot;capabilities&quot;][cap_type] = []
-    return spec
-
-runtime = SandboxRuntime()
-sb_id = runtime.create(
-    image=&quot;python:3.12-slim&quot;,
-    _oci_spec_transform_fn=harden_spec,
-)</code></pre>
-<h2>用 harbor 运行 Ray Sandboxes</h2>
-<p><a href="https://github.com/harbor-framework/harbor">Harbor</a> 是一个在 SWE-Bench、Terminal-Bench 等基准上评测 Claude Code、OpenHands、Codex CLI 等编码 agent 的框架，每次 trial 都在隔离的任务环境中运行。</p>
-<p>Ray Sandbox 已作为<a href="https://github.com/harbor-framework/harbor/pull/2785">原生 Harbor 环境</a>提供。在 Ray 集群中运行 Harbor，各 trial 会在你自己的节点上以 gVisor 运行任务镜像，并由沙箱强制执行任务的网络策略。</p>
-<h3>安装与运行</h3>
-<p>将 Harbor 与 Ray Sandboxing 配合使用需要 Ray 2.58+，并在 Ray 基础镜像上<a href="https://gvisor.dev/docs/user_guide/install/">安装</a><code>runsc</code>。</p>
-<pre><code># Install Harbor with the Ray backend
-pip install 'harbor[ray]'
-
-# Run an evaluation on Ray
-harbor run --dataset terminal-bench@2.0 \
- --agent claude-code \
- --model anthropic/claude-opus-4-1 \
- -e ray \
- --n-concurrent 32</code></pre>
-<h3>状态与性能</h3>
-<p>带公开 <code>[environment].docker_image</code> 的任务（如 MedAgentBench）开箱即用。Terminal-Bench 或 SWE-Bench 等基准则需要把每个任务的镜像发布到可达的镜像仓库。目前 compose、GPU 或基于 allowlist 的任务会被拒绝。</p>
-<p>单台 14-CPU 开发 VM 上的性能指标：</p>
-<ul><li>单个 trial：29 秒</li><li>8 个 trial、并发 4：8/8 全部 reward 1.0，0 异常，3 分 02 秒（单 trial p50 为 45 秒）</li></ul>
-<p>吞吐通常受每节点内存约束，并通过 Ray autoscaler 在集群维度水平扩展。</p>
-<h3>工作原理</h3>
-<p>Harbor 的环境模型直接映射到 Ray Sandbox：</p>
-<ul><li><strong>权限：</strong> 任务镜像以 Docker 兼容的 capabilities 运行，使现有基准镜像行为符合预期。</li><li><strong>执行：</strong> 字符串命令保留 Harbor 的 bash -c 语义。</li><li><strong>文件传输：</strong> 目录上传被打包为 tar 归档，经沙箱文件 API 传输。</li><li><strong>资源：</strong> Harbor 的资源请求转化为 Ray 调度预留，运行时限制则在沙箱内部强制执行。</li><li><strong>网络：</strong> Harbor 的 no-network 策略映射为 network=&quot;none&quot;。试图用更大权限覆盖它会在沙箱创建前被拒绝。</li></ul>
-<h3>下一步</h3>
-<p>Ray Sandboxing 目前处于<strong>实验阶段</strong>，有许多我们希望与社区共同完善的方面。</p>
-<p><strong>REST API 服务：</strong> 我们计划实现一个 REST API，让用户无需把 Ray 作为依赖即可与沙箱交互，并使训练集群与沙箱集群解耦、把沙箱作为服务运行。原型见<a href="https://github.com/ray-project/ray/pull/65633">这个 PR</a>。</p>
-<p><strong>GPU 支持。</strong> Ray 已被广泛用于调度 CPU/GPU 混合负载，gVisor 也<a href="https://gvisor.dev/docs/user_guide/gpu/">与 GPU 配合良好</a>。随着内核生成与 RSI 等负载日益重要，我们希望带 GPU 的沙箱也能开箱即用。</p>
-<p><strong>沙箱内的 Docker 支持。</strong> 某些 agent 任务本身就期望能访问 Docker。<a href="https://gvisor.dev/docs/tutorials/docker-in-gvisor/">gVisor 支持在沙箱内运行 Docker</a>，我们希望文档化并测试一套与 Ray Sandboxing 自然配合的配置。</p>
-<p><strong>网络与文件系统能力。</strong> 我们计划增加文件系统快照、在沙箱与宿主之间或沙箱彼此之间暴露端口等功能。</p>
-<p><strong>安全指南。</strong> gVisor 提供了<a href="https://gvisor.dev/docs/architecture_guide/intro/">成熟的安全架构</a>，但整个系统的安全属性仍取决于沙箱与周边基础设施的配置。我们希望给出清晰的推荐配置与示例，包括面向&quot;模型可能主动试图逃逸沙箱&quot;的负载配置。</p>
-<p>如果你对这些方向感兴趣或有反馈，非常欢迎联系我们（例如创建 GitHub issue 或 PR）。</p>
-<h2>试用</h2>
-<p><a href="https://docs.ray.io/en/master/ray-core/sandboxes.html">Ray Sandboxing</a>自 <strong>Ray 2.58</strong> 起以实验特性提供。</p>
-<p>如果你正在构建 agentic RL 系统、编码 agent 评测，或其他需要大规模隔离执行的负载，欢迎试用并告诉我们缺什么。</p>
-<p>在 K8s 上上手请参考 <a href="https://docs.ray.io/en/master/cluster/kubernetes/examples/ray-sandboxing.html">Ray Sandboxing Guide</a>。</p>
-<p>反馈、功能请求或贡献，请到 <a href="https://github.com/ray-project/ray/issues/65352">GitHub</a> 参与讨论。</p>
-<p>我们的目标是让沙箱化环境用起来就像 Ray 中任何其他分布式原语：易于创建、易于扩缩、易于与 agentic 负载的其余部分组合。</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 KubeRay v1.6 与 v1.7</title>
@@ -2610,6 +2610,88 @@ print(requests.get(f&quot;{POLICY_URL}/stats&quot;).json())</code></pre>
 <p>机器人评估正在演变成一个基础设施问题。随着机器人基础模型越来越大、仿真负载的真实程度越来越高，评估开始变得像现代 AI 服务化：分布式 GPU 推理集群、异构调度、可自动伸缩的服务，以及配合严密的闭环负载。关键的架构转变是分离。策略与仿真器各自独立扩缩，通过 Ray Serve 相连，并由 Ray Core 在整个集群上编排。那些撑住 LLM 推理扩容的分布式系统模式，如今正在成为机器人仿真与评估的必需品。</p>
 <h2>延伸阅读</h2>
 <ul><li><a href="https://developer.nvidia.com/isaac/gr00t">NVIDIA Isaac GR00T</a>：面向人形机器人的基础模型</li><li><a href="https://isaac-sim.github.io/IsaacLab/">NVIDIA Isaac Lab</a>：机器人学习与仿真框架</li><li><a href="https://www.physicalintelligence.company/blog/pi05">Physical Intelligence：π₀.5，一个具备开放世界泛化能力的 VLA</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale">用 LeRobot 数据集与 Ray 优化 VLA 微调性能</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>在 SkyRL 中引入视觉语言强化学习</title>
+      <link>https://anyscale.com/blog/vision-language-model-reinforcement-learning-skyrl</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/vision-language-model-reinforcement-learning-skyrl</guid>
+      <pubDate>Fri, 24 Apr 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Vision-Language Reinforcement Learning in SkyRL</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
+<h1>SkyRL 中视觉语言强化学习简介</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=nithin-chalapathi">Nithin Chalapathi</a>、<a href="https://www.anyscale.com/blog?author=sumanth-hegde">Sumanth Hegde</a>、<a href="https://www.anyscale.com/blog?author=philipp-moritz">Philipp Moritz</a> 和 <a href="https://www.anyscale.com/blog?author=kourosh-hakhamaneshi">Kourosh Hakhamaneshi</a> | 2026 年 4 月 24 日</p>
+<p>今天，我们宣布对 SkyRL 中的视觉语言模型后期训练提供全栈支持。团队现在可以在监督微调和强化学习工作流程中训练多模式模型，使用 SkyRL 中语言模型的相同可扩展后训练基础设施。</p>
+<p>借助开箱即用的可扩展配方，任何人都可以开始构建自定义视觉语言训练后。携带现有的多模式 Tinker 配方？使用 SkyRL 运行它：</p>
+<pre><code># Self-hosted Tinker service
+uv run --extra tinker --extra fsdp -m skyrl.tinker.api \
+--base-model $MODEL
+--backend fsdp 
+
+TINKER_API_KEY=tml-dummy uv run -m your_recipe \
+	base_url=http://localhost:8000</code></pre>
+<p>或者，您还可以通过 SkyRL 基于 python 的入口点训练多模式模型。</p>
+<p>以下是我们在 VisGym Maze2D 上进行代理训练的示例：</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5PgGngbPsNtIhoNIPgsbRj/782ecafb9044ad25f637f75f814bdbd6/image1.gif" alt="训练结束时 Maze2D 代理评估示例。 ">图 1：训练结束时 Maze2D 代理评估示例。智能体（蓝点）学会在迷宫中导航，成功到达红色方块。</p>
+<p>训练结束时 Maze2D 代理评估示例。</p>
+<p><strong>多模式工作负载 </strong>培训后工作负载变得越来越复杂和多模式。计算机使用、机器人技术和其他视觉代理任务等任务需要多步骤视觉推理。智能体处理视觉观察、采取行动并对环境反馈做出反应。在 SkyRL 中，支持这些工作负载意味着将视觉语言模型作为一等公民引入训练后堆栈，跨越监督微调和强化学习工作负载。</p>
+<p><strong>支持的食谱 </strong>SkyRL 现在涵盖了从监督微调到多轮、多图像代理强化学习的进展。尤其：</p>
+<ul><li><a href="https://docs.skyrl.ai/docs/tinker/cookbook#vision-language-vlm_classifier"><strong>VLM SFT 通过 Tinker</strong></a>，实现配方驱动的多模式监督微调。</li><li><a href="https://docs.skyrl.ai/docs/examples/geometry3k"><strong>Agentic VLM RL</strong></a>，用于通过工具调用进行基于图像的多步骤推理任务。</li><li><a href="https://docs.skyrl.ai/docs/examples/visgym"><strong>多图像代理 VLM RL</strong></a>，用于模型必须随着时间的推移观察、行动和适应的交互式视觉环境。</li><li><a href="https://docs.skyrl.ai/docs/examples/geometry3k#lora-support"><strong>异步执行和基于 LoRA 的训练选项</strong></a> 适用于实际的多轮 VLM RL 工作负载，继承了 SkyRL 的可扩展优化。</li></ul>
+<p><strong>调整 VLM RL 的推理和训练 </strong>强化学习的核心挑战是确保推出生成和训练时间评分在序列构造和对数概率上一致。在早期的实现中，我们看到推理和训练之间存在严重的对数概率差异，这是由推理引擎和训练堆栈之间的多模式输入处理和数值精度的差异造成的。与整数值的文本标记相比，像素值的微小变化可能会导致输出出现较大偏差，从而破坏训练的稳定性。</p>
+<p>为了最大限度地减少训练和推理之间的偏差，我们使用推理堆栈（此处为 vLLM）作为标记化和输入准备的事实来源。具体来说，我们帮助实现了分解的多模式<a href="https://github.com/vllm-project/vllm/pull/38405">渲染和生成</a>。在此设计中，客户端首先使用“/v1/chat/completions/render”端点将 OpenAI 聊天输入转换为标记化文本和多模式输出。然后使用“/inference/v1/generate”进行令牌输入令牌输出生成。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/Z7l8xv01r0a3A2nk8tegh/104745be6d1082693f460f3461a56adb/image4.png" alt="不同多模态处理管道对Geometry-3k训练动态的影响。">图2：不同多模态处理管道的效果关于 Geometry-3k 训练动态。</p>
+<p>不同多模态处理流程对 Geometry-3k 训练动态的影响。</p>
+<p>分解方法确保了推出引擎和训练后端之间的一致性。在图 1 中，我们使用 HuggingFace 处理器或重新利用 vLLM 的内部输入处理器抽象来可视化替代方案。两者都会导致对数概率漂移以及奖励崩溃。将模型大小从 2B 缩放到 4B 会使问题变得更糟。 SkyRL 使用在 API 级别分离关注点的分解方法，即使在较大的模型尺寸下也能保持稳定性。</p>
+<p>这种抽象有助于确保部署保持符合策略，同时消除培训人员的标记化和输入处理工作。随着多模式数据处理变得越来越复杂且计算成本越来越高，这允许独立扩展 CPU 工作线程以维持 GPU 吞吐量。</p>
+<p><strong>从 SFT 到多轮代理 RL</strong></p>
+<p><strong>VLM 通过 Tinker 监督微调</strong></p>
+<p>通过 Tinker 界面，用户可以使用 SkyRL 训练后端运行 VLM 的监督微调工作流程。举一个简单的例子，开箱即用的 Tinker 分类 <a href="https://github.com/thinking-machines-lab/tinker-cookbook/tree/main/tinker_cookbook/recipes/vlm_classifier">SFT</a> 配方在 SkyRL 上端到端运行。</p>
+<pre><code># Start a local tinker server with the target base model
+uv run --extra tinker --extra fsdp -m skyrl.tinker.api \
+--base-model &quot;Qwen/Qwen3-VL-2B-Instruct&quot; 
+--backend fsdp 
+--backend-config '{&quot;trainer.use_sample_packing&quot;: false}'
+
+# Clone and run the target Tinker compatible cookbook against the local server.
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git
+cd tinker-cookbook
+
+TINKER_API_KEY=tml-dummy uv run -m recipes.vlm_classifier.train \ 
+dataset=caltech101 \
+renderer_name=qwen3_vl \
+model_name=Qwen/Qwen3-VL-2B-Instruct \
+base_url=http://localhost:8000</code></pre>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3PZB74rCDivgBXdpnnBLPZ/5d6018893b22c5789e4d9b529fc5fc26/image3.png" alt="VLM 通过 Tinker 在 SkyRL 训练后端监督微调。通过训练的 NLL 损失（左）和测试准确性（右）。">图 3. 在 SkyRL 训练中通过 Tinker 进行 VLM 监督微调后端。通过训练，NLL 损失（左）和测试准确性（右）。</p>
+<p>VLM 通过 Tinker 在 SkyRL 训练后端监督微调。通过训练，NLL 损失（左）和测试准确性（右）。</p>
+<p><strong>Agentic VLM RL - 几何 3k</strong></p>
+<p>SkyRL 通过工具调用支持代理视觉语言任务的强化学习。为了证明这一点，我们使用 <a href="https://arxiv.org/abs/2105.04165">Geometry3k</a> [1]，这是一个视觉几何推理数据集，其中模型必须解决几何问题。该模型提供有单个图像，并且必须通过它所看到的内容进行推理。</p>
+<pre><code>./examples/train/geometry3k/run_geometry3k.sh</code></pre>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5vDHvT5JePRFwUKhZZihKC/947c2117f4cb7bfc5225330162781c2e/image2.gif" alt=" 来自 Qwen3-VL 8B Instruct on Geometry-3k 的示例展示。">图 4. 示例展示Qwen3-VL 8B 指导 Geometry-3k。通过训练，代理学习调用工具并在回答时纳入反馈。</p>
+<p>来自 Qwen3-VL 8B Geometry-3k 指导的示例展示。</p>
+<p><strong>多图像代理 VLM RL</strong></p>
+<p>在复杂的用例（例如，计算机使用任务）中，环境响应代理的操作。每一步都会渲染一个新的视觉状态，反映环境的状态。这些任务特别具有挑战性，因为模型将观察历史记录保留在上下文中，并且必须对帧进行空间推理和时间推理。</p>
+<pre><code>./examples/train/visgym/run_mazed2d_sft.sh</code></pre>
+<p>为了演示 SkyRL 中完整的端到端工作流程，我们使用 VisGym，这是一套包含 17 个多步骤视觉交互环境的套件。 VisGym [2] 涵盖的任务包括符号谜题、真实图像理解、导航和操作。该模型必须重复解释视觉状态、采取行动并根据环境反馈适应多个步骤，而不是产生单一响应。这使得 VisGym 环境成为代表更复杂任务的良好测试环境。 VisGym 是 SkyRL 多回合代理 VLM RL 支持的天然测试平台，包括异步执行和基于 LoRA 的训练。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1AaFDRztvA2uXgqHqzqjlw/334b5266f50a7e70d94bc743bd85aceb/image5.png" alt="来自 VisGym 的 Maze2D 奖励曲线。 ">图 5：来自 VisGym 的 Maze2D 奖励曲线。绿色：从 SFT 检查点初始化的模型。红色：Qwen 3-VL 8B 未经 SFT 训练的指导。</p>
+<p>VisGym 的 Maze2D 奖励曲线。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3sPsGjLR7zLMogQgUmnsaB/f5653a2e30edf591ee22f572ffed8ef0/instruct-maze2d.gif" alt="在 Qwen3-VL 8B 指令（无 SFT）中保留的环境种子上推出 Maze2D 示例模型。">图 6：在来自 Qwen3-VL 8B Instruct 的保留环境种子上部署示例 Maze2D（无 SFT）模型。</p>
+<p>在 Qwen3-VL 8B Instruct（无 SFT）模型中保留的环境种子上部署 Maze2D 示例。</p>
+<p><strong>现在尝试一下</strong>： 您可以通过 Tinker 界面或直接从 SkyRL 开始 VLM 训练。我们希望我们的用户社区能够扩大将 SkyRL 应用到视觉语言任务的规模，并向我们提供反馈。您可以开始使用我们的<a href="https://docs.skyrl.ai/docs/tutorials/vision_language_rl">教程和简介</a>。</p>
+<p><strong>未来路线图</strong>： 多模式支持还处于早期阶段，我们计划了几个主要功能，包括序列打包、威震天后端支持、具有上下文并行性的长上下文训练以及逐步训练。现在是参与多式联运培训的好时机，我们欢迎社区贡献！</p>
+<p>[1] 卢鹏、龚瑞、蒋胜、邱立胜、黄胜、梁旭、朱胜胜 (2021)。 Inter-GPS：用形式语言和符号推理解决可解释的几何问题。计算语言学协会第59届年会暨第11届自然语言处理国际联席会议（ACL-ĲCNLP 2021）。</p>
+<p>[2] Wang, Z.、Zhang, J.、Ge, J.、Lian, L.、Fu, L.、Dunlap, L.、Goldberg, K.、Wang, X.、Stoica, I.、Chan, D. M.、Min, S. 和 Gonzalez, J. E. (2026)。 VisGym：针对多模式代理的多样化、可定制、可扩展的环境。 <a href="https://arxiv.org/abs/2601.16973">https://arxiv.org/abs/2601.16973</a></p>
+<p>####分享</p>
+<p>####标签</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-products-best-practices-field.png?w=140" alt="kuberay-products-best-practices-field"></p>
+<h4>生产中的 KubeRay：现场最佳实践</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 在 Google TPU 上支持 PyTorch"></p>
+<h4>宣布 Ray 在 Google TPU 上支持 PyTorch</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
+<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Anyscale Agent Skills：更快构建、更聪明调试、优化运行在 Ray 上的 AI 工作负载</title>
@@ -3839,6 +3921,295 @@ def train_loop_per_worker(config: dict):
 <ul><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Ray 开源文档</a></li><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Anyscale 文档</a></li><li><a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/label-based-scheduling.html">KubeRay 端到端示例</a></li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>Ray 加入 PyTorch 基金会</title>
+      <link>https://anyscale.com/blog/ray-by-anyscale-joins-pytorch-foundation</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-by-anyscale-joins-pytorch-foundation</guid>
+      <pubDate>Wed, 22 Oct 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Ray is Joining The PyTorch Foundation</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
+<h1>Ray 加入 PyTorch 基金会</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=robert-nishihara">Robert Nishihara</a>、<a href="https://www.anyscale.com/blog?author=philipp-moritz">Philipp Moritz</a> 和 <a href="https://www.anyscale.com/blog?author=ion-stoica">Ion Stoica</a> | 2025 年 10 月 22 日</p>
+<p>今天，<a href="https://github.com/ray-project/ray/">Ray</a> 加入了 PyTorch 基金会，该基金会是 Linux 基金会的一部分。 Linux 基金会是基础设施项目的所在地，包括 Kubernetes、PyTorch 和 vLLM。</p>
+<p>去年，Ray 的下载量增长了近 10 倍。</p>
+<p>如今，Ray 每年推动数十亿美元的计算消耗，并为全球范围内的 AI 工作负载提供动力，<a href="https://www.anyscale.com/ray-summit/2025">Ray Summit 2025</a> 展示了来自各公司的用例，包括</p>
+<ul><li>人工智能初创公司：xAI、Thinking Machines、Perplexity</li><li>老牌科技公司：Netflix、字节跳动、苹果、腾讯、阿里巴巴</li><li>主要企业：摩根大通、宝马、桥水、Workday</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3taOf5VUlDYr6PMyZZcLj2/0f72b4839582e4ca757e9f9330c46f87/image_23.png" alt="Ray 每周下载量">Ray 每周下载量</p>
+<p>雷每周下载量</p>
+<h2>链接<strong>早期</strong></h2>
+<p>我们在加州大学伯克利分校创办 Ray 是因为，作为研究 AI 的研究生，我们需要跨 CPU 和 GPU 集群扩展我们的算法，并且我们发现自己花费了大部分时间构建基础设施来解决分布式系统的扩展挑战（可靠性、成本、性能）。</p>
+<p>从一开始，我们就对生产有用的开源软件感兴趣。我们受到实验室上一代学生的启发，他们创建了 <a href="https://github.com/apache/spark">Apache Spark</a>。</p>
+<p>我们于 2019 年成立 Anyscale 来开发 Ray 并将其商业化。然而，当时，只有最早的采用者才需要扩大规模。蚂蚁集团是Ray的第一个主要生产用户。 Uber 和 Pinterest 是紧随其后的。但现实是，当时绝大多数公司不需要扩展人工智能的计算规模。</p>
+<p>随着生成式人工智能、LLM和当今推理模型的出现，所有这一切都发生了变化。到了 2025 年，规模化的需求已经很明显了。如今，围绕扩展 AI 工作负载的软件工程挑战比我们创立 Ray 时要大得多。</p>
+<h2>链接<strong>全圆</strong></h2>
+<p>在某些方面，我们已经回到了原点。从一开始，我们就将 Ray 设想为一个通用框架（Ray 的核心是一个参与者框架），但我们追求的第一个用例是强化学习。我们在<a href="https://arxiv.org/abs/1712.05889">原始 Ray 论文</a> 中使用 RL 来展示 Ray 的优势。我们专注于强化学习，因为我们自己也在研究 RL（<a href="https://arxiv.org/abs/1502.05477">TRPO</a>、<a href="https://arxiv.org/abs/1712.09381">RLlib</a>）。 AI 社区的很大一部分人致力于玩 Atari 游戏并学习 Mujoco 等物理模拟器中的运动控制。然而，围绕强化学习的那股兴奋浪潮相对孤立，并没有转化为广泛的实际应用。</p>
+<p>如今，强化学习因其在构建推理模型和塑造代理行为方面的成功而卷土重来。如今，几乎每个<a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms">用于训练后 LLM 的开源 RL 框架</a> 都是构建在 Ray 之上的。</p>
+<h2>链接<strong>PyTorch 基金会</strong></h2>
+<p>当谈到基础设施软件时，开源获胜。随着<a href="https://www.anyscale.com/blog/ai-compute-open-source-stack-kubernetes-ray-pytorch-vllm">AI软件计算堆栈</a>的出现，堆栈的每一层都将有一个开源标准。 PyTorch 是占主导地位的深度学习框架。 Kubernetes 是占主导地位的容器编排器。我们正在构建 Ray 作为开源分布式计算引擎。</p>
+<p>去年，Ray 的采用呈爆炸式增长。 Ray 现在加入 PyTorch 基金会是因为我们正在发展一个全球贡献者社区。对规模的需求只会不断增长，我们的目的是大力投资并围绕 Ray 建立开源社区，以满足人工智能快速发展的需求。</p>
+<h2>链接<strong>加入 Ray 社区</strong></h2>
+<p>这只是开始。</p>
+<ul><li>11 月 3 日至 5 日在旧金山参加 <a href="https://www.anyscale.com/ray-summit/2025?utm_source=blog&amp;utm_medium=web&amp;utm_campaign=pytorch-donation&amp;utm_content=ray-summit"> Ray Summit 2025</a> 与社区见面</li><li>注册新的[简介雷](https://courses.anyscale.com/bundles/introduction-to-ray?__hstc=143905642.0ab17989225ebf831fe5 00ef059ee2b8.1753208986630.1759787843262.1760983194684.22&amp;__hssc=143905642.15.1760983194684&amp;__hsfp= 1062460436&amp;_gl=1<em>rpuc7f</em>_gcl_au*MTQ1OTU4MDEwOS4xNzYwOTgzMTg5LjE5NDQyMjQ0NzguMTc2MDk4MzgyOS4xNzYwOTg zODI4?utm_source=blog&amp;utm_medium=web&amp;utm_campaign=pytorch-donation&amp;utm_content=intro-to-ray-course)课程</li><li>在 <a href="https://github.com/ray-project/ray"> GitHub</a> 上为 Ray 做出贡献</li><li>加入 Ray<a href="https://www.ray.io/join-slack?utm_source=blog&amp;utm_medium=web&amp;utm_campaign=pytorch-donation&amp;utm_content=slack">Slack</a></li></ul>
+<p>我们将共同继续塑造人工智能基础设施的未来——开放和社区驱动。</p>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/ray-by-anyscale-joins-pytorch-foundation#early-days">早期</a></li><li><a href="https://www.anyscale.com/blog/ray-by-anyscale-joins-pytorch-foundation#full-circle">全圆</a></li><li><a href="https://www.anyscale.com/blog/ray-by-anyscale-joins-pytorch-foundation#pytorch-foundation">PyTorch 基金会</a></li><li><a href="https://www.anyscale.com/blog/ray-by-anyscale-joins-pytorch-foundation#join-the-ray-community">加入 Ray 社区</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-products-best-practices-field.png?w=140" alt="kuberay-products-best-practices-field"></p>
+<h4>生产中的 KubeRay：现场最佳实践</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 在 Google TPU 上支持 PyTorch"></p>
+<h4>宣布 Ray 在 Google TPU 上支持 PyTorch</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
+<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>使用 Tinker 和 Ray 微调文本到 SQL 模型</title>
+      <link>https://anyscale.com/blog/fine-tuning-text-to-sql-model-with-tinker-and-ray</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/fine-tuning-text-to-sql-model-with-tinker-and-ray</guid>
+      <pubDate>Wed, 01 Oct 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Fine-tuning a Text-to-SQL Model with Tinker and Ray</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
+<h1>使用 Tinker 和 Ray 微调文本到 SQL 模型</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=robert-nishihara">罗伯特·西原</a> 和 <a href="https://www.anyscale.com/blog?author=philipp-moritz">菲利普·莫里茨</a> | 2025 年 10 月 1 日</p>
+<p><a href="https://thinkingmachines.ai/">Thinking Machines</a> 刚刚发布了 <a href="https://tinker-docs.thinkingmachines.ai/">Tinker</a>，这是一个面向研究人员和黑客的 LLM 培训 API。 API 提供低级控制，同时消除模型部署挑战。</p>
+<p>我们构建了一个简单的示例，展示如何使用 Ray 和 Tinker 来构建和运行文本到 SQL 模型。</p>
+<p>该用例有两个主要部分：数据生成和模型微调。我们展示了如何使用 <a href="https://docs.ray.io/en/latest/">Ray</a> 生成用于监督微调的数据集。然后，我们展示如何使用数据集使用 Tinker 微调 LLM。</p>
+<h2>链接数据生成</h2>
+<p>我们首先需要生成用于监督微调的数据。其中有两个组成部分：生成和评估。我们通过使用 vLLM 部署 Qwen-8B 以及 Ray Serve 作为 Anyscale 服务来生成查询，以扩展 LLM 推理。然后，我们使用 Ray Core 执行大量并行任务来生成候选 SQL 查询，然后我们在 SQL 环境中评估每个查询并使用 <a href="https://github.com/NovaSky-AI/SkyRL">skyrl-gym</a> 计算奖励。</p>
+<p>以下是将 Qwen-8B 作为服务运行的应用程序代码。这使用 Ray Serve 与 vLLM 的内置集成来部署模型。</p>
+<pre><code>1# deploy_qwen.py
+2
+3from ray.serve.llm import LLMConfig, build_openai_app
+4
+5llm_config = LLMConfig(
+6   model_loading_config=dict(
+7       model_id=&quot;my-qwen-8B&quot;,
+8       model_source=&quot;Qwen/Qwen3-8B&quot;,
+9   ),
+10   accelerator_type=&quot;L40S&quot;,
+11   deployment_config=dict(
+12       autoscaling_config=dict(
+13           min_replicas=4, max_replicas=8,
+14       )
+15   ),
+16   engine_kwargs=dict(
+17       max_model_len=8192,
+18       tensor_parallel_size=1
+19   )
+20)
+21
+22app = build_openai_app({&quot;llm_configs&quot;: [llm_config]})</code></pre>
+<p>可以通过运行来部署此服务</p>
+<pre><code>1anyscale service deploy -f service.yaml</code></pre>
+<p>附录中提供了“service.yaml”文件。</p>
+<p>以下是用于扩展查询模型、评估查询以及过滤掉不成功查询的代码。该代码自然可以以多轮方式扩展，以将不成功查询的输出反馈回模型以生成新的候选查询。</p>
+<pre><code>1# data_generation.py
+2
+3from urllib.parse import urljoin
+4from datasets import load_dataset
+5from skyrl_gym.envs.sql.env import SQLEnv
+6from omegaconf import DictConfig
+7from openai import OpenAI
+8from datasets import load_dataset
+9import json
+10import ray
+11
+12dataset = load_dataset(&quot;NovaSky-AI/SkyRL-SQL-653-data-newfmt&quot;, split=&quot;train&quot;).to_list()
+13
+14token = # &lt;FILL IN APPROPRIATE TOKEN&gt;
+15base_url = # &lt;FILL IN APPROPRIATE BASE URL&gt;
+16
+17@ray.remote(num_cpus=0.1)
+18def generate_sql(messages):
+19    client = OpenAI(api_key=token, base_url=urljoin(base_url, &quot;v1&quot;))
+20    response = client.chat.completions.create(
+21        model=&quot;my-qwen-8B&quot;,
+22        messages=messages
+23    )
+24    return response.choices[0].message.content
+25
+26# Generate SQL queries in parallel
+27object_refs = [generate_sql.remote(record[&quot;prompt&quot;]) for record in dataset]
+28
+29# Fetch the results and filter out the unsuccessful ones
+30object_refs_and_records = dict(zip(object_refs, dataset))
+31successful = []
+32remaining = object_refs
+33while remaining:
+34    [ready_ref], remaining = ray.wait(remaining, num_returns=1)
+35    record = object_refs_and_records[ready_ref]
+36    messages = record[&quot;prompt&quot;]
+37
+38    try:
+39        assistant_response = ray.get(ready_ref)
+40    except Exception as e:
+41        continue
+42
+43    conf = DictConfig({&quot;db_path&quot;: &quot;/home/ray/data&quot;})
+44    env = SQLEnv(conf, record)
+45    env.init(messages)
+46    try:
+47        output = env.step(assistant_response)
+48    except AssertionError as e:
+49        continue
+50
+51    print(&quot;Reward: &quot;, output[&quot;reward&quot;])
+52
+53    if output[&quot;reward&quot;] &gt; 0:
+54        successful.append((record, assistant_response))
+55
+56examples = []
+57for record, assistant_response in successful:
+58    examples.append(record[&quot;prompt&quot;] + [{&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: assistant_response}])
+59
+60with open(&quot;/mnt/shared_storage/successful.json&quot;, &quot;w&quot;) as f:
+61   import json
+62   json.dump(examples, f)</code></pre>
+<p>该作业可以通过运行来提交</p>
+<pre><code>1anyscale job submit -f job.yaml --env HF_TOKEN=$HF_TOKEN</code></pre>
+<p>附录中提供了“job.yaml”文件。这些示例将存储在共享文件系统中，但您可以将它们存储在任何您想要的位置。</p>
+<h2>LinkModel 微调</h2>
+<p>我们使用 Tinker API 来标记数据并微调模型。</p>
+<p>Tinker API 为LLM的培训和微调提供了高水平的控制。</p>
+<p>以下可以在安装了tinker的Anyscale工作区中运行。</p>
+<pre><code>1import tinker
+2from tinker import types
+3import json
+4import numpy as np
+5
+6service_client = tinker.ServiceClient()
+7
+8training_client = service_client.create_lora_training_client(
+9    base_model=&quot;Qwen/Qwen3-8B&quot;, rank=32
+10)
+11tokenizer = training_client.get_tokenizer()
+12
+13def process_example(messages: dict, tokenizer) -&gt; types.Datum:
+14    tokens = tokenizer.apply_chat_template(messages)
+15    weights = [1] * len(tokens)
+16    input_tokens = tokens[:-1]
+17    target_tokens = tokens[1:]
+18    weights = weights[1:]
+19    return types.Datum(
+20        model_input=types.ModelInput.from_ints(tokens=input_tokens),
+21        loss_fn_inputs=dict(weights=weights, target_tokens=target_tokens)
+22    )
+23
+24examples = json.load(open(&quot;/mnt/shared_storage/successful.json&quot;, &quot;r&quot;))
+25processed_examples = [process_example(ex, tokenizer) for ex in examples]
+26
+27# Note: If you are going to train on a larger dataset, you should implement proper minibatch training.
+28for _ in range(6):
+29    fwdbwd_future = training_client.forward_backward(processed_examples, &quot;cross_entropy&quot;)
+30    optim_future = training_client.optim_step(types.AdamParams(learning_rate=1e-4))
+31    # Wait for the results
+32    fwdbwd_result = fwdbwd_future.result()
+33    optim_result = optim_future.result()
+34    # fwdbwd_result contains the logprobs of all the tokens we put in. Now we can compute the weighted
+35    # average log loss per token.
+36    logprobs = np.concatenate([output[&quot;logprobs&quot;].tolist() for output in fwdbwd_result.loss_fn_outputs])
+37    weights = np.concatenate([example.loss_fn_inputs[&quot;weights&quot;].tolist() for example in processed_examples])
+38    print(f&quot;Loss per token: {-np.dot(logprobs, weights) / weights.sum():.4f}&quot;)
+39
+40# Save the weights
+41sampling_client = training_client.save_weights_and_get_sampling_client(name=&quot;sql_model&quot;)
+42print(f&quot;model path: {sampling_client.model_path}&quot;)</code></pre>
+<h2>LinkModel 评估</h2>
+<p>我们现在想要检查模型的表现如何。我们首先下载模型检查点（确保填写上面代码打印的模型路径）。</p>
+<pre><code>1import tinker
+2from urllib.parse import urlparse
+3
+4MODEL_PATH = # &lt;FILL IN THE MODEL PATH PRINTED ABOVE&gt;
+5
+6parsed_url = urlparse(MODEL_PATH)
+7
+8service_client = tinker.ServiceClient()
+9rest_client = service_client.create_rest_client()
+10data = rest_client.download_checkpoint_archive(parsed_url.netloc, parsed_url.path.lstrip('/')).result()
+11
+12with open('output.tar.gz', 'wb') as f:
+13    f.write(data)</code></pre>
+<p>然后，我们使用 mkdir -p /home/ray/sql_lora &amp;&amp; tar xvfz output.tar.gz -C /home/ray/sql_lora` 提取 LoRA 权重，并将权重与基础合并（我们这样做是因为目前修补程序 LoRA 权重与 vLLM 不兼容，无法直接提供服务 - 这将在未来修复）。</p>
+<pre><code>1from peft import PeftModel
+2from transformers import AutoModelForCausalLM, AutoTokenizer
+3base_model = AutoModelForCausalLM.from_pretrained(&quot;Qwen/Qwen3-8B&quot;)
+4tokenizer = AutoTokenizer.from_pretrained(&quot;Qwen/Qwen3-8B&quot;)
+5model = PeftModel.from_pretrained(base_model, &quot;/home/ray/sql_lora&quot;)
+6merged_model = model.merge_and_unload()
+7
+8save_path = &quot;/home/ray/merged_sql_model&quot;
+9merged_model.save_pretrained(save_path)
+10tokenizer.save_pretrained(save_path)</code></pre>
+<h2>LinkAppendix - 附加设置</h2>
+<p>要运行上述代码，需要一些额外的设置步骤。</p>
+<p>我们使用以下 Dockerfile 定义基础镜像。</p>
+<pre><code>1# Dockerfile
+2
+3FROM anyscale/ray:2.48.0-slim-py312-cu128
+4
+5RUN sudo apt-get update -y \
+6   &amp;&amp; sudo apt-get install --no-install-recommends -y build-essential libnuma-dev \
+7   &amp;&amp; sudo rm -f /etc/apt/sources.list.d/*
+8
+9RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+10
+11RUN git clone https://github.com/novasky-ai/SkyRL.git
+12WORKDIR /home/ray/SkyRL/skyrl-gym/
+13RUN uv pip install --system .
+14RUN uv pip install --system &quot;huggingface_hub[cli]&quot; &quot;datasets&quot; &quot;openai&quot; &quot;transformers&quot; &quot;torch&quot; &quot;vllm==0.10.0&quot; &quot;pydantic&quot;</code></pre>
+<p>我们定义服务配置如下。</p>
+<pre><code>1# service.yaml
+2
+3name: deploy-qwen
+4containerfile: ./Dockerfile
+5
+6compute_config:
+7  auto_select_worker_config: true
+8
+9working_dir: .
+10
+11applications:
+12- import_path: deploy_qwen:app</code></pre>
+<p>我们定义作业配置如下。</p>
+<pre><code>1# job.yaml
+2
+3name: data-generation
+4containerfile: ./Dockerfile
+5
+6compute_config:
+7 head_node:
+8   instance_type: c6a.12xlarge
+9 auto_select_worker_config: true
+10
+11working_dir: .
+12
+13entrypoint: |
+14  uv run --with huggingface_hub huggingface-cli download seeklhy/OmniSQL-datasets data.zip --repo-type dataset --local-dir $HOME &amp;&amp; \
+15  unzip $HOME/data.zip -d $HOME &amp;&amp; \
+16  python data_generation.py
+17
+18max_retries: 0</code></pre>
+<h4>目录</h4>
+<ul><li>[数据生成](https://www.anyscale.com/blog/fine-tuning-text-to-sql-model-with-tinker-and-ray#data- Generation)</li><li><a href="https://www.anyscale.com/blog/fine-tuning-text-to-sql-model-with-tinker-and-ray#model-fine-tuning">模型微调</a></li><li><a href="https://www.anyscale.com/blog/fine-tuning-text-to-sql-model-with-tinker-and-ray#model-evaluation">模型评估</a></li><li><a href="https://www.anyscale.com/blog/fine-tuning-text-to-sql-model-with-tinker-and-ray#appendix---additional-setup">附录 - 附加设置</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-products-best-practices-field.png?w=140" alt="kuberay-products-best-practices-field"></p>
+<h4>生产中的 KubeRay：现场最佳实践</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 在 Google TPU 上支持 PyTorch"></p>
+<h4>宣布 Ray 在 Google TPU 上支持 PyTorch</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
+<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>大规模 Ray 任务监控：Anyscale 现已支持 1 万个以上任务的持久化</title>
       <link>https://anyscale.com/blog/ray-task-monitoring-persistent-logs</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-task-monitoring-persistent-logs</guid>
@@ -3892,6 +4263,464 @@ def train_loop_per_worker(config: dict):
 <p><strong>来参加 Ray Summit 2025</strong></p>
 <p>在这场为期两天、由社区主导的大会上，你既能看到真实案例，也能看到 Ray 和 Anyscale 的产品发布——大会汇聚了那些基于开源技术推进 AI 的最优秀的工程师和研究人员。</p>
 <p><strong>旧金山 | 2025 年 11 月 3-5 日。 </strong><a href="https://www.anyscale.com/ray-summit/2025">了解更多</a>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>使用 Ray 进行大规模并行代理模拟</title>
+      <link>https://anyscale.com/blog/massively-parallel-agentic-simulations-with-ray</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/massively-parallel-agentic-simulations-with-ray</guid>
+      <pubDate>Wed, 10 Sep 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Massively Parallel Agentic Simulations with Ray</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
+<h1>使用 Ray 进行大规模并行代理模拟</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=philipp-moritz">Philipp Moritz</a>、<a href="https://www.anyscale.com/blog?author=sumanth-hegde">Sumanth Hegde</a>、<a href="https://www.anyscale.com/blog?author=tyler-griggs">Tyler Griggs</a> 和 <a href="https://www.anyscale.com/blog?author=eric-tang">Eric Tang</a> | 2025 年 9 月 10 日</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7JUCwEieiRvbaHqx1VYRIu/ca861e91b802a5ba8e2919144885bc8f/Screenshot_2025-09-10_at_10.42.26â__AM.png?w=1200" alt="使用 Ray 进行大规模并行代理模拟图片"></p>
+<p>虽然在笔记本电脑上针对托管模型端点（例如 ChatGPT、Claude、Gemini 或 OSS 模型的模型提供商之一）运行单个代理很容易，但在集群上并行运行数千个代理却是一个重大挑战。这也是许多非常有用的LLM和代理用例的重要要求，包括：</p>
+<ul><li><strong>运行评估：</strong>代理评估用于代理应用程序开发的内循环。它们对于帮助构建更好的LLM、为LLM编写更好的提示或改进代理循环本身至关重要。</li><li><strong>迭代数据集：</strong>构建代理取决于问题陈述的数据集和验证解决方案的技术。代理模拟使我们能够迭代这些数据集，过滤和改进它们，并收集解决方案轨迹以进行监督微调。</li><li><strong>运行 RL 训练：</strong> 代理模拟是 RL 训练循环的重要组成部分。它们用于收集轨迹和奖励，用于通过 RL 更新策略。</li></ul>
+<p>当您从在笔记本电脑上运行单个代理扩展到并行运行大量代理时，您可能会遇到以下挑战：</p>
+<ul><li><strong>隔离代理：</strong> 代理需要隔离，以便它们不会相互干扰以及系统的其余部分，并保持在合理的资源限制内。此外，代理需要在定义明确的环境（例如容器）中运行。</li><li><strong>扩展模型推理和工具使用：</strong> 如果您并行运行大量代理，模型提供者的速率限制通常是不够的，因此您需要弄清楚如何扩展推理。您还可以使用常见工具，例如 MCP 服务器，这些工具也需要通过代理进行扩展。</li><li><strong>使用自定义模型：</strong> 如果您正在构建自定义代理，您可能还会训练或微调需要部署的自定义模型。</li></ul>
+<p>大多数此类设置都涉及大量样板代码和复杂的基础设施。</p>
+<p>Ray 允许您使用简单的 Python API 运行大规模并行代理模拟，从而直接解决这些挑战。它处理混合 CPU 和 GPU（或其他加速器）工作负载，并支持推理服务器（例如 vLLM 或 SGLang）等有状态服务。这使得推理能够在与模拟相同的集群上运行，从而能够对模型和代理进行快速联合实验，并进行联合扩展以避免模型的速率限制。 Ray 方便的 Pythonic 开发人员体验使实验设置的迭代变得容易，并无缝扩展到非常大的运行。此外，Ray 的容错功能可以通过使用竞价实例来节省成本。</p>
+<p>以下是您通过阅读博客文章将了解到的内容：</p>
+<ul><li>您将学习如何通过灵活的隔离来运行多个沙盒环境，因此沙盒可以在任何环境（非特权、容器中的容器）中运行，而无需设置单独的沙盒环境。</li><li>您将了解如何在单个 Ray 集群上运行推理和代理执行，以实现代理和 LLM 设置的快速迭代，而不会遇到速率限制，并且可以轻松扩展并行代理的数量。</li><li>您将看到上述所有三个用例（运行评估、迭代数据集、运行 RL 训练）的具体示例，以及有关如何提高它们的效率和更容易迭代的一些技巧。</li></ul>
+<p>我们将在软件工程的背景下演示这些关键点。为此，我们还开源了一个新数据集，其中包含从 <a href="https://github.com/python/cpython">cpython 存储库</a> 中抓取的 5500 个测试用例，并展示了如何并行评估它们。我们展示的技术是通用的，也适用于其他领域，包括通用计算机使用、数据工程或科学研究。</p>
+<h2>Link隔离并行代理模拟</h2>
+<p>执行许多并行代理模拟时的一个核心问题是如何将它们彼此隔离并与系统环境隔离。有不同的选择：</p>
+<ul><li><strong>使用具有完整文件系统隔离的容器：</strong>Docker 是许多软件工程师熟悉的标准，容器非常适合在非对抗性设置中隔离工作负载。这使得 docker 成为一种非常流行的运行代理的方式。使用 docker 也有一些缺点：容器镜像的构建、推送、拉取和存储成本可能很高，而且速率限制可能很烦人。此外，在超级计算机等非特权环境中或在另一个容器内运行可能具有挑战性。其中一些问题可以通过使用不同的容器运行时（例如 podman 或 apptainer）来解决（我们将在下面展示如何执行此操作）。</li><li><strong>将进程与 cgroup 和 chroot 一起使用：</strong>运行代理的一种不太重量级的方法是通过可以使用 Linux cgroup 和 chroot 隔离的进程。在底层，这也是容器的实现方式，但是直接使用原语可以更好地控制隔离如何发生，例如大多数主机文件系统和包都可以在此设置中重用，因此可以在不拉动和推送容器映像的情况下运行代理，但仍然使用良好的隔离。虽然从头开始实现这一点非常复杂，但有一些方便的命令行实用程序，例如 <a href="https://github.com/containers/bubblewrap">bubblewrap</a>，可以使这变得简单（我们再次在下面展示如何执行此操作）。</li><li><strong>使用虚拟机或远程执行：</strong>在某些场景中，需要更重的隔离机制。例如，您可能想在 Mac 上运行 Linux 应用程序，或者在 ARM 上运行 x86_64 应用程序，在这种情况下您需要 VM。在极少数情况下，您需要比容器或 cgroup 提供的更多隔离，在这种情况下，VM 或微型 VM 可能是一个不错的选择。或者您可能希望使用单独的 K8s 集群来执行代理，或使用单独的云提供商。与一些更简单的隔离方法（例如额外的错误处理和通信机制）相比，这些选项通常需要在基础设施级别上进行更多工作。</li></ul>
+<p>容器是最常见、应用最广泛的隔离机制，并且与生态系统融合得很好，因此在很多情况下应该是首选。具有附加机制（例如气泡包装）的过程可能尚未得到充分探索以进行隔离。它们非常轻量级且非常易于迭代，并且可以与 uv 等包管理器、本机 Linux 发行版包管理器或 <a href="https://nixos.org/">NixOS</a> 或 <a href="https://guix.gnu.org/">Guix</a> 等技术结合使用，以灵活定义代理运行的环境。为了能够针对每种情况使用最适合的隔离原语，我们的设置应该在其环境支持方面灵活。</p>
+<h2>用于代理模拟的 LinkAgent 支架</h2>
+<p>代理脚手架实现了LLM周围的结构，这使得它可以有效地解决特定领域的问题，在我们的软件工程案例中。脚手架由以下部分组成：</p>
+<ul><li>向 LLM 提供的提示，通常以模板的形式出现，其中包含占位符，例如 github 问题描述或有关如何在给定软件存储库中操作的具体说明，</li><li>LLM 可用于解决方案的工具，例如 shell 命令、文件编辑工具、Python 解释器、用于收集有关问题和解决方案的更多信息的搜索工具以及可能以 MCP 服务器形式提供的任何其他任意工具，</li><li>代理循环重复查询LLM并执行LLM的操作。它还可以与用户进行交互检查，并允许他们修改LLM提议的行动方案。</li></ul>
+<p>虽然我们在本博客中重点关注软件工程，但该方案非常通用，也适用于任意计算机使用或更专业的领域，例如数据科学工作负载或科学研究。</p>
+<p>一些脚手架支持LLM的操作的各种形式的沙箱​​。有些支架是为最终用户解决特定问题而设计的，有些支架是为了运行大规模实验而优化的（例如用于评估或强化学习训练）。虽然这些用例需要不同的解决方案，但理想情况下它们共享相同的提示和工具调用，因此在实验数据集上进行的任何实验都将直接代表用户体验。以下是我们所知的软件工程代理支架列表：</p>
+<ul><li>最终用户通常以交互方式使用的支架，包括 <a href="https://github.com/anthropics/claude-code">Claude Code</a>、<a href="https://github.com/google-gemini/gemini-cli">Gemini CLI</a>、<a href="https://github.com/QwenLM/qwen-code">Qwen Code</a> 和 <a href="https://github.com/Aider-AI/aider">Aider</a>。它们一次支持一个会话，通常不提供沙箱，但它们可以与实际工作负载环境一起在容器内运行。其中一些还可以用作评估或强化学习设置的一部分。</li><li><a href="https://github.com/All-Hands-AI/OpenHands">OpenHands</a> 是一种流行的全功能代理运行时，旨在供最终用户使用以及用于评估和 RL 设置（它带有评估工具）。 OpenHands 主要基于 docker，并且<a href="https://novasky-ai.notion.site/skyrl-v0">可用</a> 提供基于远程 k8s 的运行时。它对 MCP 服务器、浏览器和自定义工具等不同工具提供非常通用的支持。</li><li><a href="https://github.com/SWE-agent/SWE-agent">SWE-agent</a> 是 SWE-bench 作者的一个代理，可用于解决软件工程问题。它还有一个最小版本，<a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a>，它在隔离方面最灵活，代码非常简单且可修改，因此很容易适应广泛的工作负载。它仅使用 bash 命令即可在软件工程任务中表现良好。</li><li><a href="https://github.com/laude-institute/terminal-bench">Terminal-bench</a> 是针对终端使用任务的代理的基准，它附带一个用于适应其他基准（包括 SWE-Bench）的评估工具和一个名为 Terminus 的内置代理支架。所有任务都打包为 Docker 映像，并且该工具为每个任务启动一个容器化环境。</li><li><a href="https://github.com/R2E-Gym/R2E-Gym">R2E-Gym</a> 提供了一个类似于健身房的环境界面以及围绕它的代理包装器，但针对模拟和 RL 工作负载进行了更优化。它支持文件编辑器、bash 和文件搜索等工具。</li><li><a href="https://github.com/huggingface/smolagents?tab=readme-ov-file">Smolagents</a> 是一个 Huggingface 库，它也注重简约，但也有更多的集成，支持不同的工具调用，并支持通过 Docker 或 E2B 在沙盒环境中执行。</li></ul>
+<p>In this blog post we adopted mini-swe-agent because it is extremely simple and hackable and also gives good performance on software engineering problems without extra complexity, but the same approaches demonstrated below are also applicable to other scaffolds.</p>
+<p>##链接cpython问题数据集</p>
+<p>在这篇博文中，我们使用一个非常简单的数据集，该数据集是从 <a href="https://github.com/python/cpython">cpython</a> 存储库生成的。可以为许多不同的存储库生成类似的数据集。该格式是一种简化的 swebench 格式，针对运行完整测试套件进行验证进行了优化。 We scraped about 5500 issues from the repository, found the associated PRs and extracted the <code>base_commit</code>, which is the parent commit of the PR as well as merge_commit, which is the commit that contains the code of the PR. The dataset is available <a href="https://huggingface.co/datasets/pcmoritz/cpython_dataset">here</a> and the code that was used to scrape the dataset is available <a href="https://gist.github.com/pcmoritz/fa911ee735a5a8f5329ea7a7c8adc47d">here</a>.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1UmeTbGXQTiMaAhWXTyNPO/91d3b6aee67d7c308b1c5c255ed99a3c/Screenshot_2025-09-09_at_3.58.33â__PM.png" alt="使用 Ray Img 进行大规模并行代理模拟 1"></p>
+<p>使用 Ray Img 1 进行大规模并行代理模拟</p>
+<p>给定 LLM 生成的补丁，可以按如下方式验证：</p>
+<ul><li>查看 <code>base_commit</code> 处的 <a href="https://github.com/python/cpython">cpython</a> 存储库</li><li>应用LLM生成的补丁，除了<code>Lib/test/*</code>中的更改（既避免下一步中的冲突，也避免LLM删除或“修复”测试）</li><li>应用“Lib/test/*”中原始 PR 差异“base_commit..merge_commit”的更改（这些是 PR 添加的回归测试）</li><li>现在通过“./configure &amp;&amp; make test”运行完整的测试套件。在实践中，为了使这项工作可靠，我们必须排除一些经常失败的测试。幸运的是，cpython 有一个名为“EXTRATESTOPTS”的环境变量，它允许将额外的参数传递给测试套件。我们使用此机制通过“--ignore”标志排除失败的测试。</li></ul>
+<p>在下一节中，我们将展示如何并行化补丁的生成以及使用 Ray 的验证。</p>
+<h2>链接使用 mini-swe-agent</h2>
+<p>在这篇博文的其余部分中，我们将使用 <a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a> 作为 AI 代理，因为它非常小，易于修改并支持不同的沙箱环境来执行代理操作。由于它的简单性，它也可以轻松地研究和适应软件工程之外的不同问题领域。 “mini-swe-agent”做出的一项设计决策使很多事情变得更容易，即代理的每个操作都是一个简单的“bash”命令，并且不需要<a href="https://mini-swe-agent.com/latest/faq/#why-no-shell-session">持久 shell 会话</a>。此外，“mini-swe-agents”支持各种不同的隔离[环境]（https://github.com/SWE-agent/mini-swe-agent/tree/main/src/minisweagent/environments）：</p>
+<ul><li>本地执行，仅执行“bash”命令中的每个命令，无需特殊隔离。在没有用户交互的情况下运行命令的设置中不建议这样做，但可以用于本地交互式使用，其中每个命令在执行之前都由用户检查。</li><li>通过 <a href="https://www.docker.com/">docker</a>、<a href="https://podman.io/">podman</a> 或 <a href="https://apptainer.org/">apptainer</a> 在容器环境中执行。如果我们想使用容器进行隔离，我们通常会选择podman，因为它不需要守护进程，并且可以配置为在各种环境中运行（包括容器内部以及非特权环境）。 Apptainer 可以成为在超级计算机上运行的良好环境。</li><li>在由 <a href="https://github.com/containers/bubblewrap">bubblewrap</a> 隔离的进程中执行，这允许在隔离的环境中运行，而无需设置和维护容器映像的开销。它通过[此环境]（https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/environments/extra/bubblewrap.py）支持。例如，我们将在下面使用它来运行 cpython 环境，并与<a href="https://github.com/SWE-agent/mini-swe-agent/pull/490">启动命令</a> 结合使用，它可以用于设置更复杂的环境，例如使用 uv 的 Python 虚拟环境，用于在 Python 代码库上工作的软件工程代理。</li></ul>
+<p>要使用 podman 运行“mini-swe-agent”，您可以通过以下方式安装 podman：</p>
+<pre><code>1sudo apt-get -y install podman
+2
+3# The following is required if you want to run podman inside of a container
+4sudo cp /usr/share/containers/containers.conf /etc/containers/containers.conf &amp;&amp; sudo sed -i 's/^#cgroup_manager = &quot;systemd&quot;/cgroup_manager = &quot;cgroupfs&quot;/' /etc/containers/containers.conf &amp;&amp; sudo sed -i 's/^#events_logger = &quot;journald&quot;/events_logger = &quot;file&quot;/' /etc/containers/containers.conf
+5sudo apt-get install containers-storage
+6sudo cp /usr/share/containers/storage.conf /etc/containers/storage.conf
+7sudo sed -i 's/^#ignore_chown_errors = &quot;false&quot;/ignore_chown_errors = &quot;true&quot;/' /etc/containers/storage.conf
+8# Depending on your execution environment (e.g. if some privileges are missing or if you need access to e.g. GPUs), you might also want to add some of the options from https://github.com/containers/podman/issues/20453#issuecomment-1912725982</code></pre>
+<p>然后在签出 <a href="https://github.com/SWE-agent/mini-swe-agent">https://github.com/SWE-agent/mini-swe-agent</a> 的目录中，您可以运行</p>
+<pre><code>1uv run --extra full mini-extra swebench --model openai/gpt-5-nano --subset verified --split test --workers 128 --output &lt;output directory&gt;</code></pre>
+<p>要成功运行此特定基准测试，您应该在 <code>swebench.yaml</code> 中设置以下参数：在 <code>environment</code> 下，添加 <code>executable: &quot;podman&quot;</code> 以及 <code>timeout: 3600</code> 和 <code>pull_timeout: 1200</code>。</p>
+<p>对于此类需要拉取大量容器映像的工作负载，还建议使用具有本地 NVMe 磁盘的计算机。如果您在 Anyscale 上的 AWS 上运行，这些将自动配置为 RAID 阵列，以获得最佳性能。</p>
+<h2>Link使用 Ray 运行并行 SWE 模拟</h2>
+<p>在本节中，我们将向您展示如何使用 Ray 和 <a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a> 运行多个并行模拟。我们将重点关注上面介绍的“cpython”问题数据集上的 SWE-bench 风格的软件工程任务，但这些想法广泛适用于许多不同的模拟环境。</p>
+<h3>Link从代理生成数据</h3>
+<p>在本节中，我们将介绍一个简单而有效的代码示例，用于从代理生成推出数据。使用名为“Engine”的参与者，我们在集群中的每个节点上启动一个“vllm”或“sglang”服务器，并使用 Ray 任务“generate_rollout”（每个问题陈述一个任务）对其运行许多并行模拟。每个任务都使用 <a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a> 中的“swebench-single”脚本来执行部署。这种设置使推理设置变得简单，因为我们可以直接使用 vllm 和 <code>sglang</code> 的 CLI 来启动推理引擎。或者，也可以运行 llm 引擎的集中部署，例如使用 <a href="https://docs.ray.io/en/latest/serve/llm/index.html">Ray Serve LLM</a> 并将模型公开到所有代理连接到的全局端点，或将 <code>sglang</code> 与 <a href="https://docs.sglang.ai/advanced_features/router.html">sglang router</a> 一起使用。</p>
+<pre><code>1import requests
+2import subprocess
+3from pathlib import Path
+4
+5from datasets import load_dataset
+6import ray
+7
+8ENGINE_ADDRESS = &quot;http://127.0.0.1:8000&quot;
+9
+10@ray.remote(num_gpus=8)
+11class Engine:
+12
+13    def __init__(self, model: str):
+14        self.model = model
+15        self.engine_process = subprocess.Popen(
+16            [&quot;/usr/local/bin/uv&quot;, &quot;run&quot;, &quot;--with&quot;, &quot;vllm&quot;,
+17             &quot;vllm&quot;, &quot;serve&quot;, self.model,
+18             &quot;--tensor-parallel-size&quot;, &quot;8&quot;,
+19             &quot;--max-model-len&quot;, &quot;64000&quot;, &quot;--enable-expert-parallel&quot;,
+20             # You can add --data-parallel-size if you want to use
+21             # data parallel replicas in addition to tensor and expert parallel
+22             &quot;--enable-auto-tool-choice&quot;, &quot;--tool-call-parser&quot;, &quot;qwen3_coder&quot;],
+23        )
+24
+25        # If you want to use sglang instead, use the following code:
+26        # self.engine_process = subprocess.Popen(
+27        #     [&quot;/usr/local/bin/uv&quot;, &quot;run&quot;, &quot;--with&quot;, &quot;sglang[all]&quot;,
+28        #      &quot;-m&quot;, &quot;sglang.launch_server&quot;,
+29        #      &quot;--model-path&quot;, self.model, &quot;--tp-size&quot;, &quot;8&quot;,
+30        #      &quot;--enable-ep-moe&quot;, &quot;--host&quot;, &quot;0.0.0.0&quot;, &quot;--port&quot;, &quot;8000&quot;],
+31        # )
+32
+33    def wait_for_engine(self):
+34        while True:
+35            try:
+36                result = requests.get(ENGINE_ADDRESS + &quot;/health&quot;, timeout=10)
+37            except requests.exceptions.ConnectionError:
+38                continue
+39            if result.status_code == 200:
+40                return
+41
+42@ray.remote(num_cpus=1, scheduling_strategy=&quot;SPREAD&quot;)
+43def generate_rollout(model: str, dataset_name: str, instance_id: str, target_dir: str):
+44    model_path = &quot;hosted_vllm/&quot; + model
+45    target_path = Path(target_dir) / instance_id/ f&quot;{instance_id}.traj.json&quot;
+46    result = subprocess.run(
+47        [&quot;/usr/local/bin/uv&quot;, &quot;run&quot;, &quot;mini-extra&quot;, &quot;swebench-single&quot;,
+48         &quot;--model&quot;, model_path, &quot;--subset&quot;, dataset_name,
+49         &quot;--split&quot;, &quot;train&quot;, &quot;--instance&quot;, instance_id,
+50         &quot;--environment-class&quot;, &quot;bubblewrap&quot;,
+51         &quot;--output&quot;, target_path,
+52        ],
+53        env={
+54            &quot;HOSTED_VLLM_API_BASE&quot;: ENGINE_ADDRESS + &quot;/v1&quot;,
+55            &quot;LITELLM_MODEL_REGISTRY_PATH&quot;: &quot;/mnt/shared_storage/pcmoritz/model_registry.json&quot;,
+56        },
+57        capture_output=True,
+58    )
+59    return result
+60
+61# For this example, we use 5 nodes with 8 GPUs each
+62num_shards = 5
+63model = &quot;Qwen/Qwen3-235B-A22B-Instruct-2507-FP8&quot;
+64dataset_name = &quot;pcmoritz/cpython_dataset&quot;
+65dataset = load_dataset(dataset_name, split=&quot;train&quot;)
+66
+67executors = [Engine.remote(model) for i in range(num_shards)]
+68ray.get([executor.wait_for_engine.remote() for executor in executors])
+69
+70results = []
+71for record in dataset:
+72    result = generate_rollout.remote(
+73        model,
+74        dataset_name,
+75        record[&quot;instance_id&quot;],
+76        &quot;/mnt/shared_storage/pcmoritz/rollouts&quot;
+77    )
+78    results.append(result)
+79
+80ray.get(results)</code></pre>
+<p>对于此实验，我们将环境类设置为 <a href="https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/environments/extra/bubblewrap.py">bubblewrap</a>。这将确保同一台计算机上运行的所有代理彼此隔离并与系统环境隔离。我们还将结果写入共享 NFS 卷，以便我们可以在下一步中进行进一步的后处理和过滤。一般来说，将轨迹文件和其他输出文件（如日志）写入 NFS 是一种有用的模式，它还允许我们检查部分运行，并在重新执行生成脚本时从中断处恢复。</p>
+<p>上述设置中有很多参数可以调整：一是vLLM引擎参数，包括各种形式的并行度，参见<a href="https://docs.vllm.ai/en/latest/configuration/optimization.html">vLLM优化指南</a>。最佳设置通常取决于您的硬件以及您正在使用的模型架构。另一个需要调整的参数是每个引擎的代理数量。可以通过增加“generate_rollout”装饰器中的“num_cpus”参数来减少。在实践中，我们发现每个引擎 64 到 128 个代理效果良好。每个引擎的最佳代理数量取决于在环境中花费的时间（CPU 工作）和评估 LLM 所花费的时间（GPU 工作）的比率。该比率越高，需要的代理就越多，因此有足够大的批量大小以使推理引擎饱和。</p>
+<h3>Link对数据运行过滤和后处理</h3>
+<p>在本节中，我们将介绍如何使用 Ray 来过滤和后处理数据集以评估轨迹的质量，例如通过分配奖励。一般来说，每个问题实例运行一个 Ray 任务效果很好。如果使用单独的奖励模型，则可以按照与部署代理 LLM 类似的方式进行部署。对于更复杂的设置，使用 <a href="https://docs.ray.io/en/latest/data/data.html">Ray Data</a> 和 <a href="https://docs.ray.io/en/latest/data/working-with-llms.html">Ray Data LLM</a> 进行数据集准备可能是有意义的，因为评分和过滤是批量数据处理工作负载。</p>
+<p>作为示例，我们将实现“cpython 问题数据集”部分中描述的验证过程。代理轨迹在上一步中生成并写入 NFS。在此步骤中，对于每个问题实例，我们提取代理生成的补丁，并针对完整的 cpython 测试套件进行测试，包括由人类在修复问题的“黄金 PR”中进行的回归测试（原始代理除非作弊，否则看不到）。如果修补后的代码通过了所有测试，则获得奖励 1，否则奖励为 0。根据设置，将验证作为部署过程的一部分或单独运行可能是有意义的。在博客文章的最后一部分中，我们将展示如何将部署和验证过程集成到 RL 框架中。</p>
+<p>这是我们刚刚描述的验证过程的代码：</p>
+<pre><code>1import json
+2from pathlib import Path
+3import re
+4import subprocess
+5import tempfile
+6
+7from datasets import load_dataset
+8import ray
+9
+10TEST_CMD = &quot;&quot;&quot;
+11./configure &amp;&amp; prlimit --as=34359738368 make test TESTOPTS=&quot;\
+12    --ignore test.test_embed.InitConfigTests.test_init_setpythonhome \
+13    --ignore test.test_os.TestScandir.test_attributes \
+14    --ignore test.test_pathlib.test_pathlib.PathSubclassTest.test_is_mount \
+15    --ignore test.test_pathlib.test_pathlib.PathSubclassTest.test_stat \
+16    --ignore test.test_pathlib.test_pathlib.PathTest.test_is_mount \
+17    --ignore test.test_pathlib.test_pathlib.PathTest.test_stat \
+18    --ignore test.test_pathlib.test_pathlib.PosixPathTest.test_is_mount \
+19    --ignore test.test_pathlib.test_pathlib.PosixPathTest.test_stat \
+20    --ignore test.test_pathlib.PathSubclassTest.test_is_mount \
+21    --ignore test.test_pathlib.PathSubclassTest.test_stat \
+22    --ignore test.test_pathlib.PathTest.test_is_mount \
+23    --ignore test.test_pathlib.PathTest.test_stat \
+24    --ignore test.test_pathlib.PosixPathTest.test_is_mount \
+25    --ignore test.test_pathlib.PosixPathTest.test_stat \
+26    --ignore test.test_perf_profiler.* \
+27    --ignore test.test_pdb.PdbTestInline.test_quit \
+28    --ignore test.test_pdb.PdbTestInline.test_quit_after_interact&quot;
+29&quot;&quot;&quot;
+30
+31def safe_subprocess_run(path: Path, command: str | list[str], **kwargs):
+32    &quot;&quot;&quot;Run the command in a subprocess with error handling.&quot;&quot;&quot;
+33    try:
+34        result = subprocess.run(
+35            command,
+36            text=True,
+37            **kwargs
+38        )
+39    except Exception as e:
+40        with open(path / &quot;tests.exception&quot;, &quot;w&quot;) as f:
+41            f.write(str(e))
+42        return None
+43    if result.returncode != 0:
+44        if result.stdout:
+45            with open(path / &quot;tests.out&quot;, &quot;w&quot;) as f:
+46                f.write(result.stdout)
+47        if result.stderr:
+48            with open(path / &quot;tests.err&quot;, &quot;w&quot;) as f:
+49                f.write(result.stderr)
+50        return None
+51    return result
+52
+53def run_tests(path: Path, instance: dict[str, str], trajectory: dict):
+54    with tempfile.TemporaryDirectory() as working_dir:
+55        # check out the repository at the base_commit
+56        if not safe_subprocess_run(
+57            path,
+58            f&quot;git init &amp;&amp; git remote add origin https://github.com/{instance['repo']} &amp;&amp; &quot;
+59            f&quot;git fetch --depth 1 origin {instance['merge_commit']} &amp;&amp; &quot;
+60            f&quot;git fetch --depth 1 origin {instance['base_commit']} &amp;&amp; git checkout FETCH_HEAD &amp;&amp; cd ..&quot;,
+61            shell=True,
+62            cwd=working_dir,
+63            capture_output=True,
+64        ):
+65            return
+66        # apply patch from the submission
+67        if trajectory[&quot;info&quot;][&quot;submission&quot;]
+68            with tempfile.NamedTemporaryFile(mode=&quot;w&quot;, delete=False) as f:
+69                f.write(trajectory[&quot;info&quot;][&quot;submission&quot;])
+70            print(f&quot;wrote submission patch to {f.name}&quot;)
+71            if not safe_subprocess_run(
+72                path,
+73                [&quot;git&quot;, &quot;apply&quot;, &quot;--exclude&quot;, &quot;Lib/test/*&quot;, f.name],
+74                cwd=working_dir,
+75                capture_output=True,
+76            ):
+77                return
+78        # apply patches from the PR merge commit (tests only)
+79        result = safe_subprocess_run(
+80            path,
+81            [&quot;git&quot;, &quot;diff&quot;, instance[&quot;base_commit&quot;], instance[&quot;merge_commit&quot;]],
+82            cwd=working_dir,
+83            capture_output=True,
+84        )
+85        if not result:
+86            return
+87        if result.stdout != &quot;&quot;:
+88            with tempfile.NamedTemporaryFile(mode=&quot;w&quot;, delete=False) as f:
+89                f.write(result.stdout)
+90            print(f&quot;wrote test patch to {f.name}&quot;)
+91            if not safe_subprocess_run(
+92                path,
+93                [&quot;git&quot;, &quot;apply&quot;, &quot;--include&quot;, &quot;Lib/test/*&quot;, f.name],
+94                cwd=working_dir,
+95                capture_output=True,
+96            ):
+97                return
+98        # run full test suite
+99        with open(path / &quot;tests.log&quot;, &quot;w&quot;) as f:
+100            result = safe_subprocess_run(
+101                path,
+102                TEST_CMD,
+103                shell=True,
+104                cwd=working_dir,
+105                stdout=f,
+106                stderr=subprocess.STDOUT,
+107            )
+108            if not result:
+109                return
+110            return {&quot;path&quot;: str(path), &quot;exit_code&quot;: result.returncode}
+111
+112@ray.remote(num_cpus=1)
+113def run_tests_safe(path: Path, instance: dict[str, str], trajectory: dict):
+114    try:
+115        # Note: We don't actually use the return values here, instead we
+116        # parse the test run log file to determine if the tests passed or not
+117        return run_tests(path, instance, trajectory)
+118    except Exception:
+119        return
+120
+121instances = load_dataset(&quot;pcmoritz/cpython_dataset&quot;, split=&quot;train&quot;)
+122results = []
+123
+124for path in Path('/mnt/shared_storage/pcmoritz/rollouts').iterdir():
+125    if path.is_dir():
+126        json_file = path / f&quot;{path.name}.traj.json&quot;
+127        if not json_file.exists():
+128            continue
+129        with open(json_file, 'r') as f:
+130            trajectory = json.load(f)
+131            instance = instances.filter(lambda x: x['instance_id'] == path.name)[0]
+132            if trajectory[&quot;info&quot;][&quot;submission&quot;] and re.search(r'Binary files .+ and .+ differ', trajectory[&quot;info&quot;][&quot;submission&quot;]):
+133                print(f&quot;skipping instance {instance}&quot;)
+134                continue
+135            results.append(run_tests_safe.remote(path, instance, trajectory))
+136
+137ray.get(results)</code></pre>
+<p>我们发现运行模拟时有用的一些技巧：</p>
+<ul><li>将模拟的日志和输出写入 NFS 等分布式文件系统，以便可以检查部分进度，并且如果整个作业被抢占，则可以恢复进度（类似于传统数据处理中的行级检查点）。</li><li>为模拟设置适当的内存限制，这样一个流氓特工就不会拖垮其他特工。如果使用基于轻量级进程的隔离，则可以通过将进程包装在“prlimit --as=&lt;以字节为单位的内存限制&gt; &lt;命令&gt;”中来完成。</li><li>为了避免代理修改共享文件或系统文件，您可以使用容器映像或 bubblewrap 之类的命令，就像我们上面为代理模拟所做的那样。在我们的例子中，这对于评估来说不是必需的，因为“cpython”测试套件的多个实例可以同时运行而不会互相干扰。</li></ul>
+<p>要设置软件工程依赖项（例如，在本示例中用于编译“python3”），您可以使用包含以下命令的容器文件：</p>
+<pre><code>1RUN sudo sed -i 's/# deb-src/deb-src/' /etc/apt/sources.list
+2RUN sudo apt update
+3RUN sudo apt build-dep -y python3</code></pre>
+<ul><li>我们发现以 Huggingface 数据集的形式标准化初始问题陈述的数据集非常有用，然后为每个问题实例在 NFS 上创建一个文件夹，当我们经历不同的处理阶段时，额外的输出会写入其中，在我们的例子中生成和评分推出。</li></ul>
+<p>Anyscale 的任务仪表板为您提供了一种监控代理执行情况的便捷方法：</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/BLyVfRozKV2VlNrQrHJNo/9d5cdea359205b0fe2e048feb26cef05/Screenshot_2025-08-19_at_12.14.46â__PM.png" alt="任意规模仪表板"></p>
+<p>任意规模的仪表板</p>
+<p>使用仪表板的指标页面，您还可以确定哪些资源是执行的瓶颈（例如磁盘吞吐量、网络吞吐量、CPU 或 GPU 内存容量、CPU 或 GPU 计算吞吐量），并选择最适合您的特定工作负载的实例，或超额订阅某些资源（如 CPU）。</p>
+<p>我们现在介绍我们的评估结果。我们首先通过评估每个“base_commit”的完整测试套件来评估测试通过率的上限。这产生了测试通过率，无需LLM建议的任何补丁。请注意，可以通过更细粒度地排除测试或改进测试环境来提高上限。然后，我们运行两个模型：Qwen3 Coder 30B 和 Qwen3 235B，并记录每个模型生成的补丁针对完整测试套件（包括每个 PR 的黄金回归测试）的通过率。如果模型对每个问题实例进行 3 次尝试并且仅计算最成功的尝试，我们还会记录通过率。这些运行的轨迹可用于监督微调，为更多运行和进一步微调生成更好的基线。</p>
+<p>在接下来的实验中，我们使用了 0.7 的温度，因为它对于 qwen3 来说比 <code>mini-swe-agent</code> 使用的默认温度 0.0 更有效。</p>
+<table><thead><tr><th><strong>型号</strong></th><th><strong>通过率</strong></th><th><strong>3 次推出的通过率</strong></th></tr></thead><tbody><tr><td>测试通过率上限</td><td>64.3%</td><td>—</td></tr><tr><td>Qwen/Qwen3-235B-A22B-Instruct-2507-FP8</td><td>46.0%</td><td>50.8%</td></tr><tr><td>Qwen/Qwen3-Coder-30B-A3B-指令</td><td>36.1%</td><td>49.9%</td></tr></tbody></table>
+<p>正如您所看到的，虽然模型在解决这些任务方面相当有效，但仍然有改进的机会。</p>
+<p>我们还展示了系统性能扩展数字——我们使用 c7a.32xlarge 节点来评估完整的 cpython 数据集。正如您所看到的，执行时间与 CPU 数量呈线性关系：</p>
+<table><thead><tr><th><strong>节点数量（CPU 数量）</strong></th><th><strong>执行时间</strong></th></tr></thead><tbody><tr><td>8 个节点（1024 个 CPU）</td><td>2小时31分钟</td></tr><tr><td>4 个节点（512 个 CPU）</td><td>5小时9米</td></tr><tr><td>2 个节点（256 个 CPU）</td><td>10 小时 21 分钟</td></tr></tbody></table>
+<h3>Link使用 SkyRL 运行端到端强化学习</h3>
+<p>在本节中，我们将举例说明如何将此方法与 Ray 上运行的现有 RL 库集成。此类 RL 库有<a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms">许多选项</a>。我们选择 SkyRL 来展示集成，因为它对自定义生成器有很好的支持。</p>
+<p>Mini-SWE-Agent 与 SkyRL 的集成可以在<a href="https://github.com/NovaSky-AI/SkyRL/pull/222">此处</a>找到。使用 SkyRL，训练堆栈以模块化方式设计，具有两个主要组件：<a href="https://skyrl.readthedocs.io/en/latest/getting-started/overview.html">训练器和生成器</a>。在本例中，我们自定义生成器以使用 Mini-SWE-Agent 来生成 SWE-Bench 任务的轨迹。</p>
+<p>在高层次上，我们使用自定义的“generate”方法实现“MiniSweAgentGenerator”来生成一批轨迹：</p>
+<pre><code>1class MiniSweAgentGenerator(SkyRLGymGenerator):
+2	async def generate_trajectory(self, prompt, ...): 
+3		...
+4	async def generate(self, generator_input: GeneratorInput) -&gt; GeneratorOutput:
+5		...
+6		prompts = generator_input[&quot;prompts&quot;]
+7		env_extras = generator_input[&quot;env_extras&quot;]
+8		tasks = []
+9		for i in range(len(prompts)):
+10	           tasks.append(
+11	               self.generate_trajectory(
+12	                  prompts[i],
+13	                  env_extras[i],
+14	               )
+15	           )
+16
+17	       all_outputs = await asyncio.gather(*tasks)</code></pre>
+<p>在“generate_trajectory”中，我们启动 Ray 任务来生成轨迹并针对给定实例对其进行评估。更具体地说，这包括以下内容：</p>
+<ul><li>生成：为实例初始化沙箱/环境，使用 Mini-SWE-Agent 在此环境中生成轨迹。为了进行推理，我们将 Mini-SWE-Agent 配置为使用 SkyRL 提供的 HTTP 端点。生成完成后存储生成的 git 补丁。</li><li>评估：使用给定后端为给定实例初始化一个新环境。将模型的 git 补丁应用到环境中的工作目录。运行实例的评估脚本。如果脚本成功运行，则认为实例已解析，否则视为未解析。</li></ul>
+<p>通过将此工作流程作为 Ray 任务运行，我们还能够在 Ray 集群中的所有节点上扩展生成。</p>
+<p>从较高层次来看，代码如下所示：</p>
+<pre><code>1@ray.remote(num_cpus=0.01)
+2def init_and_run(instance: dict, litellm_model_name: str, sweagent_config: dict, data_source):
+3    model = get_model(litellm_model_name, sweagent_config.get(&quot;model&quot;, {}))
+4    error = None
+5    try:
+6        env = get_sb_environment(sweagent_config, instance, data_source)
+7        agent = DefaultAgent(model, env, **sweagent_config.get(&quot;agent&quot;, {}))
+8        exit_status, model_patch = agent.run(instance[&quot;problem_statement&quot;])
+9        eval_result = evaluate_trajectory(instance, model_patch, sweagent_config, data_source)
+10    except Exception as e:
+11        error = str(e)
+12    return agent.messages, eval_result, error
+13
+14class MiniSweAgentGenerator(SkyRLGymGenerator):
+15    async def generate_trajectory(self, prompt, env_extras, ...):
+16        messages, eval_result, error = init_and_run.remote(
+17            env_extras[&quot;instance&quot;], 
+18            litellm_model_name, 
+19            sweagent_config, 
+20            data_source
+21        )
+22        ...</code></pre>
+<p>请注意，完整的实现有一些用于配置和错误处理的附加逻辑，可以在<a href="https://github.com/NovaSky-AI/SkyRL/pull/222">此处</a>找到。</p>
+<p>有关更多信息，请参阅<a href="https://skyrl.readthedocs.io/en/latest/examples/mini_swe_agent.html">此处的文档</a>。</p>
+<h2>链接结论</h2>
+<p>在这篇博文中，我们展示了如何使用 Ray 大规模运行代理模拟，以生成轨迹、评估和训练代理。 Ray 的灵活性使我们能够在单个集群中运行所有相关工作负载（数据处理、模型服务和训练），这简化了开发和实验设置，并允许我们扩展到大量问题实例。简单高效的沙箱可以轻松大规模运行各种代理工作负载。</p>
+<p>博客文章中显示的所有示例都可以在 <a href="https://www.anyscale.com/">Anyscale</a> 中开箱即用。由于 Ray 的分布式特性，使用 <a href="https://console.anyscale.com/template-preview/mcp-ray-serve">MCP 服务器</a> 等多个组件来部署和评估代理来解决给定问题也很容易。</p>
+<p>本博文中的技术既可以作为管道的单独步骤独立运行，也可以作为不同 <a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms">RL 库</a> 的一部分进行集成。 <a href="https://github.com/NovaSky-AI/SkyRL">SkyRL</a> 由于其灵活的生成器框架而使这变得容易，我们在博客文章中提供了一个示例。</p>
+<p>＃＃＃＃ 目录</p>
+<ul><li><a href="https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#isolated-parallel-agentic-simulations">隔离并行代理模拟</a></li><li><a href="https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#agent-scaffolds-for-agentic-simulations">用于代理模拟的代理支架</a></li><li><a href="https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#the-cpython-issues-dataset">cpython 问题数据集</a></li><li><a href="https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#using-mini-swe-agent">使用 mini-swe-agent</a></li><li><a href="https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#running-parallel-swe-simulations-with-ray">使用 Ray 运行并行 SWE 模拟</a></li><li><a href="https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#generate-data-from-agents">从代理生成数据</a></li><li><a href="https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#running-filtering-and-post-processing-on-the-data">对数据运行过滤和后处理</a></li><li><a href="https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#running-end-to-end-rl-with-skyrl">使用 SkyRL 运行端到端强化学习</a></li><li><a href="https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#conclusion">结论</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3DTHR8PtMcYFYkFUnZVjTH/8aa576362b47aedbce2859583737dca6/image1.png?w=140" alt="LLM Graph 的开源 RL 库">强化学习 (RL) 库的架构分为两个主要组成部分：生成和训练。在生成阶段，LLM 引擎在环境中执行多轮部署以生成数据和奖励信号。然后将该输出输入训练阶段以更新模型的参数。这个过程形成了一个反馈循环，其中逐步改进的模型生成下一次数据迭代以进行持续细化。</p>
+<h4>LLM的开源强化学习库</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-products-best-practices-field.png?w=140" alt="kuberay-products-best-practices-field"></p>
+<h4>生产中的 KubeRay：现场最佳实践</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 在 Google TPU 上支持 PyTorch"></p>
+<h4>宣布 Ray 在 Google TPU 上支持 PyTorch</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>LLM开源强化学习库</title>
+      <link>https://anyscale.com/blog/open-source-rl-libraries-for-llms</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/open-source-rl-libraries-for-llms</guid>
+      <pubDate>Tue, 01 Jul 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Open Source RL Libraries for LLMs</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
+<h1>LLM的开源强化学习库</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=tyler-griggs">Tyler Griggs</a> 和 <a href="https://www.anyscale.com/blog?author=philipp-moritz">Philipp Moritz</a> | 2025 年 7 月 1 日</p>
+<p><em>本博文的内容于 2025 年 9 月 1 日更新，包含每个库的最新信息，并包含新的 </em><a href="https://github.com/THUDM/slime"><em>slime</em></a><em> 库。</em></p>
+<p>强化学习（RL）已成为现代大型语言模型开发不可或缺的一部分。除了传统的训练后使用人类反馈强化学习 (RLHF) 来使模型与人类偏好保持一致之外，基于可验证奖励的强化学习已成为扩展 LLM 能力的强大技术。随着高质量的预训练数据变得越来越稀缺，这种方法变得尤为重要。</p>
+<p>最近的突破证明了这种范式的有效性，包括 OpenAI 的推理模型（<a href="https://openai.com/o1/">o1</a> 和 <a href="https://openai.com/index/introducing-o3-and-o4-mini/">o3</a>）和公开可用的 <a href="https://arxiv.org/abs/2501.12948">DeepSeek R1</a> 模型。最新前沿将 LLM 强化学习扩展到多回合设置，其中模型充当与环境交互的代理以解决复杂任务。这代表着朝着创建可以作为跨不同领域的有效代理人的LLM迈出了重要的一步。</p>
+<p>鉴于强化学习的潜力，开源生态系统经历了快速发展，出现了许多体现不同设计原则和优化选择的库。本分析从技术角度审视了领先的强化学习框架，评估了它们各自的优势和局限性。我们在开发<a href="https://github.com/NovaSky-AI/SkyRL">强化学习库</a>的同时进行了这项研究，系统地分析现有解决方案，以了解每种方法固有的设计决策和架构权衡。通过分享这些见解，我们的目标是帮助研究人员和从业者更有效地驾驭当前的形势，并就哪些工具最适合他们的特定要求和用例做出明智的选择。</p>
+<p>我们承认某些比较点可能是主观的 - 我们尽最大努力尽可能根据客观标准比较库，并提供库中相关代码的链接，以便您获得自己的印象。如果您认为某些内容被歪曲，请告诉我们。另外，请记住，这些库正在以非常快的速度发展，因此请务必查阅不同库的文档和代码以获取最新更新。</p>
+<h2>Link我们比较的库</h2>
+<p>我们选择这些特定的库是基于它们最近的活动、与不同用例的相关性（从 RLHF 到代理 RL）以及它们在开源领域中不同架构哲学的表现。</p>
+<p><strong>TRL：</strong> Hugging Face 的流行库，与 Hugging Face 生态系统紧密集成，专注于 RL 的训练方面。</p>
+<p><strong>Verl：</strong> 来自字节跳动的流行高性能、功能丰富的 RL 堆栈，针对可扩展性和对高级训练技术的支持进行了优化。</p>
+<p><strong>OpenRLHF：</strong>最早流行的开源RLHF库之一，它既易于使用又高性能。与Verl类似，为后续很多框架铺平道路</p>
+<p><strong>RAGEN：</strong> Verl 的一个显着扩展，它扩展了其功能，重点关注多轮对话和多样化的 RL 环境。</p>
+<p><strong>Nemo-RL：</strong> NVIDIA 的综合后训练框架，采用简洁的界面设计，注重结构化数据流，同时也考虑到可扩展性和高性能。</p>
+<p><strong>ROLL：</strong> 阿里巴巴的新库，用于 RLHF、推理和多轮代理训练 - 旨在为研究人员提供灵活性，并可扩展以供大规模生产使用。</p>
+<p><strong>AReaL：</strong> Ant Research 的 RL 库，专注于异步训练，以提高训练吞吐量和可扩展性。</p>
+<p><strong>slime</strong>：来自清华大学和 <a href="http://z.ai">Z.ai</a> 的 RL 库，专注于简单性和高性能，并且可以轻松集成任意自定义数据生成方法。</p>
+<p><strong>验证者：</strong> 该框架基于 TRL 构建，通过可验证的奖励简化了多轮 RL 的实施，优先考虑易用性。</p>
+<p><strong>SkyRL</strong>：来自伯克利的新 RL 库，专注于多轮代理训练，采用简单灵活的设计，允许高性能执行和适应各种场景。</p>
+<h2>Link 强化学习库的用例和组件</h2>
+<p>强化学习库旨在简化能够解决复杂问题的强化学习策略的训练过程。用户定义他们的具体问题以及衡量解决方案质量的奖励函数，而库则处理底层培训机制以制定有效的策略。培训政策的常见问题包括：</p>
+<ul><li><a href="https://github.com/All-Hands-AI/OpenHands">编码</a>，其中奖励是代码是否正确（例如，通过是否通过一套单元测试来衡量），</li><li><a href="https://github.com/OpenInterpreter/open-interpreter">计算机使用</a>（即用计算机解决任务），其中奖励是任务是否成功解决，</li><li><a href="https://github.com/openreasoner/openr">制定数学证明</a>，如果证明是给定命题的有效证明，则奖励为+1，否则奖励为0，并且</li><li><a href="https://github.com/openai/gym">玩游戏</a>，奖励是游戏中最终获得的分数，或者策略是否能够击败游戏。</li></ul>
+<p>正如简介中提到的，LLM 的 RL 库有许多不同的用例：</p>
+<ul><li><strong>来自人类反馈的强化学习 (RLHF)</strong>：这是最初的 RL 训练后用例，并使LLM与人类偏好保持一致。作为其中的一部分，从人类那里收集偏好数据集，从中学习奖励模型，然后使用该模型运行强化学习以适应LLM。</li><li><strong>推理模型：</strong> 该用例使用解决数学或科学问题或编码等任务来提高LLM的推理能力。 LLM 不会立即输出答案，而是首先学习输出“思考”标记，这可以提高模型的性能。思维过程通常是通过运行强化学习来学习的，并对问题进行可验证的奖励。由于LLM在推理过程结束时给出单一答案，因此这通常被称为“单步”强化学习。</li><li><strong>代理和多步骤强化学习：</strong> 在此设置中，LLM 在环境中作为自主代理运行，执行多个连续操作来完成任务。这代表了最复杂的配置，并对支持库提出了最高的要求。图书馆必须协调环境和LLM，同时处理可能需要跨不同实例执行不同数量的步骤的问题。</li></ul>
+<p>强化学习库的核心可以分为两个基本组件：</p>
+<ul><li><strong>生成器</strong>，将LLM设置为与环境交互以解决问题并计算奖励。</li><li><strong>训练器</strong>根据生成阶段给出的奖励反馈更新模型。</li></ul>
+<p>框架的设计和集成这些组件的方式揭示了其核心理念和用例。有些库更专注于 RLHF，有些库针对训练推理模型进行了优化，还有一些库对生成和环境具有更强大的抽象，这使得它们更适合多轮 RL 和训练代理。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3DTHR8PtMcYFYkFUnZVjTH/8aa576362b47aedbce2859583737dca6/image1.png" alt="LLM Graph 的开源 RL 库">强化学习 (RL) 库的架构分为两个主要组件：生成和生成培训。在生成阶段，LLM 引擎在环境中执行多轮部署以生成数据和奖励信号。然后将该输出输入训练阶段以更新模型的参数。这个过程形成了一个反馈循环，其中逐步改进的模型生成下一次数据迭代以进行持续细化。</p>
+<p>LLM开源 RL 库 Graph</p>
+<p>我们将首先更深入地探讨这些组件中可以进行的设计权衡。</p>
+<h3>链接生成器</h3>
+<p>生成阶段通常是计算中最昂贵的部分。它涉及在 LLM 上运行推理以及在环境中执行操作并计算奖励。通常，存在一个问题数据集，其中可能包含问题陈述的初始提示和/或代理应运行的环境参数。在可验证奖励的情况下，还存在问题正确答案的概念。对于每个问题，当前策略都会生成一个轨迹，其中包含由 LLM 生成的令牌序列，这些令牌包含在环境中采取的操作。不同的库以不同的方式表示这些轨迹，但 OpenAI 格式是常见的选择。</p>
+<p>生成可以任意复杂，并在以树状方式探索更大的解决方案空间时使用分支等技术。可以轻松定义用于生成部署的自定义生成函数的库，为自定义采样、分支和搜索提供最大程度的灵活性。</p>
+<p>环境是生成器的重要组成部分。在早期用于 RLHF 或训练推理模型的 RL 库中，通常没有明确的环境。相反，LLM的每个输出都通过奖励模型或自定义奖励函数形式的显式奖励进行评分。后来，添加了更明确的 API，通常类似于 OpenAI 的 Gym 界面，具有 init、step 和 Reset 函数。这允许在轨迹生成期间使用工具，以及 LLM 和环境之间的多步骤交互。在许多情况下，环境的实际执行发生在单独的容器/进程中或远程服务器上，因此可以隔离环境。</p>
+<h3>链接培训师</h3>
+<p>训练器是核心优化循环所在的位置，它获取生成阶段收集的轨迹数据并生成新策略。大多数库都已标准化支持 PPO 和 GRPO 训练算法。就用于在不同 GPU 之间分割模型的分片后端而言，有多种不同的选择，其中 Hugging Face trainer、FSDP、DeepSpeed 和 Megatron 是最受欢迎的。 FSDP 是与 PyTorch 紧密集成的更简单的选择之一，DeepSpeed 具有更积极的参数和优化器卸载，而 Megatron 是更大规模时性能最高的。一些库从 Hugging Face 的 TRL 库中获取训练代码，还有许多库在底层使用 veRL 的训练代码，该代码本身支持 FSDP 和 Megatron。</p>
+<h2>链接比较点</h2>
+<p>我们希望尽可能保持比较客观，因此我们专注于可以从库的代码和文档中客观推断出的比较点。我们链接到相关地方，以便用户形成自己的观点并做出自己的选择。</p>
+<p><strong>采用率：</strong>虽然描述库采用率的任何指标都不完美，但我们包括第一个版本、星星数量、总问题数和贡献者作为每个库采用率的代理。给定一个满足您的用例（例如，RLHF、训练推理模型、训练代理）并具有您需要的功能的库，更广泛采用的库通常更可取，因为它们在更多场景中进行了测试，因此通常更强大，并且更容易找到帮助。</p>
+<p><strong>系统属性：</strong> 除了列出库所针对的用例之外，我们还列出了每个库可以具有的属性：</p>
+<ul><li><strong>效率</strong>：支持推理/训练或异步训练的托管</li><li><strong>可扩展性</strong>：支持集群上多个 GPU 的推理和训练</li><li><strong>Modular</strong>：对于库的各个组件具有清晰的接口，可以实现这些组件来更改库的行为</li><li><strong>灵活性</strong>：尝试支持广泛的功能或可以轻松修改以支持不同的设置 - 在大多数情况下，这将是主观的，因为一些用户喜欢有很多配置选项，而其他用户则喜欢他们可以自行修改的简单实现</li></ul>
+<p><strong>组件：</strong> 我们链接每个库的“强化学习库的组件”部分中描述的训练器、生成器和环境组件。这些组件可能并不总是完全遵循训练器、生成器和环境的划分 - 例如，某些库将生成器和环境统一为组合的多轮环境。我们还包括有关训练后端、推理引擎和环境层的以下信息：</p>
+<p><strong>训练后端</strong>：我们列出了库支持哪些训练后端（Hugging Face 训练器、FSDP、DeepSpeed 或 Megatron）以及不同框架支持哪些开箱即用的算法。</p>
+<p><strong>推理引擎：</strong> 最流行的推理引擎是 vLLM、SGLang、Hugging Face 转换器或通过 OpenAI API 的外部推理引擎。可能的部署模式包括推理引擎和训练引擎共置或单独部署。一些 RL 框架支持不受框架管理的外部推理引擎。共置训练和推理有助于减少 GPU 使用率，但灵活性较差。在涉及落后任务的长范围任务、异步推理工作负载、应使用不同的 GPU 类型进行训练和推理或训练和推理需要独立扩展时，分离训练和推理通常更可取。另一个设计决策是是否支持多个推理引擎以及多个推理引擎之间的负载平衡是在客户端还是服务器端完成。</p>
+<p><strong>异步支持：</strong> 库是否可以通过异步运行这两个活动来重叠训练和生成。这样做可以提高资源利用率，特别是对于落后者的长期部署，但会使学习动态变得复杂并可能不稳定。有多种方法可以将训练引擎更新的权重同步到推理引擎。一些方法需要在一个或多个训练引擎和所有推理引擎之间形成火炬分布式进程组，然后通过 NCCL、gloo 或 CUDA IPC 执行权重同步。这可以快速同步权重，但不灵活。有些方法通过检查模型权重到存储并将其加载到生成器中来实现同步，这更灵活但更慢。</p>
+<p><strong>环境层</strong>：不同的库对环境的支持不同。一些库仅支持单轮交互，没有显式的环境抽象。有些库具有环境抽象，但为了添加自定义环境，需要更改或分叉库本身。一些库支持在库外部实现自定义环境。一般来说，环境与生成过程的耦合越少，并且越容易集成现有环境（例如，以外部远程服务的形式）越好。为了使比较尽可能客观，并承认不同用户有不同的需求和偏好，我们链接了有关如何为每个库集成新环境的示例环境或文档，以便读者可以做出自己的决定。</p>
+<p><strong>编排器：</strong> RL 涉及彼此交互的不同组件（环境、推理引擎、训练引擎），并且可能需要以复杂的方式进行编排，例如，如果生成和训练位于相同的资源上或异步完成。此外，每个组件都由许多必须大规模运行的不同进程或容器组成。因此，拥有一个负责调度、通信、容错和自动扩展的编排器是有益的。由于其灵活性、可扩展性以及对异构计算的支持，许多 RL 库已在 Ray 上进行标准化以进行编排。</p>
+<h2>链接比较概述</h2>
+<p>此表提供了库的总体概述以及不同组件的链接，以便您可以了解接口的编写方式以及它们的灵活性。</p>
+<table><thead><tr><th><strong>框架</strong></th><th><strong>📅 首次发布</strong>****<strong> 星星</strong><strong>📝 总问题</strong><strong>🧑‍💻 贡献者</strong></th><th><strong>目标用例/系统属性</strong></th><th><strong>组件（数据结构）</strong></th><th><strong>训练后端/算法</strong></th><th><strong>推理引擎</strong></th><th><strong>异步支持</strong></th><th><strong>环境层</strong></th><th><strong>编曲家</strong></th></tr></thead><tbody><tr><td><a href="https://github.com/huggingface/trl"><strong>TRL</strong></a>（Hugging Face）</td><td>2023 年 1 月<strong>⭐ </strong>15.3k<strong>📝 </strong>2k<strong>🧑‍💻 </strong>391</td><td>RLHF、推理/灵活性、可扩展性</td><td>[培训师](https://github.com/huggingface/trl/blob/b773a4c1915c6a5a9356507bb1f443e9eeeda51b/trl/trainer/ppo_trainer.py#L98 )<a href="https://github.com/huggingface/trl/blob/15ff54790b42297d2cf569fba6d7dd44c1c269e3/trl/trainer/utils.py#L1398">生成器</a> (<a href="https://github.com/huggingface/trl/blob/8a235a9b71f4c0b77e295afb972fdd7c19a71335/trl/trainer/grpo_trainer.py#L958-L961">推出数据</a>)</td><td>Hugging Face训练器/SFT、DPO、GRPO、PPO 等</td><td>Hugging Face，vLLM</td><td>❌</td><td>❌</td><td>—</td></tr><tr><td><a href="https://github.com/volcengine/verl"><strong>Verl</strong></a>(字节跳动)</td><td>2024 年 11 月<strong>⭐ </strong>12.9k<strong>📝 </strong>1.5k<strong>🧑‍💻 </strong>351</td><td>RLHF、推理、代理/灵活性、效率、可扩展性</td><td><a href="https://github.com/volcengine/verl/blob/9ec260be2338e5ed08f64cf481c25a943d3e486f/verl/trainer/ppo/ray_trainer.py#L877">训练器</a><a href="https://github.com/volcengine/verl/blob/59379539a0305e4948b742262bf1ba2468213674/verl/workers/rollout/vllm_rollout/vllm_rollout.py#L184">生成器</a> (<a href="https://github.com/volcengine/verl/blob/83ebd007e01de29bbe353de112d04245b4820b47/verl/protocol.py#L201-L212">推出数据</a>)</td><td>FSDP、威震天 / SFT、DPO、GRPO、PPO</td><td>Hugging Face，vLLM，SGLang</td><td>🚧RFC <a href="https://github.com/volcengine/verl/issues/1172">BufferDataset</a></td><td>🚧<a href="https://github.com/volcengine/verl/blob/main/verl/tools/gsm8k_tool.py">通过工具自定义环境</a></td><td>雷</td></tr><tr><td><a href="https://github.com/OpenRLHF/OpenRLHF"><strong>OpenRLHF</strong></a></td><td>2023 年 7 月<strong>⭐ </strong>7.8k<strong>📝 </strong>0.7k<strong>🧑‍💻 </strong>79</td><td>RLHF/灵活性、效率、可扩展性</td><td><a href="https://github.com/OpenRLHF/OpenRLHF/blob/d86779bb15acb3187f75f1b5ee71aaa9f975ca9d/openrlhf/trainer/ppo_trainer.py#L433">培训师</a> (<a href="https://github.com/OpenRLHF/OpenRLHF/blob/5974dfe8bded77e90dcdb92f08f3bdba31972ff2/openrlhf/trainer/ppo_utils/experience_maker.py#L32-L46">推出数据</a>)</td><td>DeepSpeed /SFT、DPO、GRPO、PPO 等</td><td>Hugging Face，vLLM</td><td>✅ (--async_train)</td><td>🚧 通过 python 函数</td><td>雷</td></tr><tr><td><a href="https://github.com/RAGEN-AI/RAGEN"><strong>RAGEN</strong></a></td><td>2025 年 1 月<strong>⭐ </strong>2300<strong>📝 </strong>01000<strong>🧑‍💻</strong> 16</td><td>代理/模块化、灵活性、可扩展性、效率</td><td><a href="https://github.com/RAGEN-AI/RAGEN/blob/main/ragen/trainer/agent_trainer.py">训练器</a>[生成器](https://github.com/RAGEN-AI/RAGEN/blob/9fb85277 76a8490f240417bd964e6eac75777fb0/ragen/llm_agent/agent_proxy.py#L143)<a href="https://github.com/RAGEN-AI/RAGEN/blob/main/ragen/env/base.py">环境</a> (<a href="https://github.com/volcengine/verl/blob/83ebd007e01de29bbe353de112d04245b4820b47/verl/protocol.py#L201-L212">推出数据</a>)</td><td>Verl 后端 / GRPO、PPO</td><td>Hugging Face，vLLM，SGLang</td><td>❌</td><td>✅<a href="https://github.com/RAGEN-AI/RAGEN/tree/9fb8527776a8490f240417bd964e6eac75777fb0?tab=readme-ov-file#adding-custom-environments">自定义环境</a></td><td>雷</td></tr><tr><td><a href="https://github.com/inclusionAI/AReaL"><strong>AReaL</strong></a>（蚂蚁集团）</td><td>2025 年 2 月 <strong>⭐ </strong>2.5k<strong>📝 </strong>0.1k<strong>🧑‍💻</strong> 31</td><td>RLHF、推理、代理/效率、可扩展性</td><td><a href="https://github.com/inclusionAI/AReaL/blob/f2f4b67bcd375ded638f6e1a02163b80fa60a99e/realhf/impl/model/interface/ppo_interface.py#L527">培训师</a><a href="https://github.com/inclusionAI/AReaL/blob/f2f4b67bcd375ded638f6e1a02163b80fa60a99e/realhf/impl/agent/math_multi_turn_agent.py#L49">生成器/环境</a> (<a href="https://github.com/inclusionAI/AReaL/blob/b63eea9d0761868148b5f6f22b28c6e50d364719/realhf/api/core/data_api.py#L106">rollout数据</a>)</td><td>DeepSpeed、威震天 / GRPO、PPO</td><td>LLM，SGLang</td><td>✅</td><td>✅<a href="https://inclusionai.github.io/AReaL/customization/agent.html#rollout-and-agentic-rl">自定义环境</a></td><td>雷（可选）</td></tr><tr><td><a href="https://github.com/willccbb/verifiers"><strong>验证者</strong></a></td><td>2025 年 2 月 <strong>⭐ </strong>2.9k<strong>📝 </strong>0.1k<strong>🧑‍💻</strong> 26</td><td>推理、代理/灵活性、模块化</td><td><a href="https://github.com/willccbb/verifiers/blob/a3b7ffcb1d247ab5a557218c8290fdafd82a138d/verifiers/trainers/grpo_trainer.py#L230">培训师</a><a href="https://github.com/willccbb/verifiers/blob/a3b7ffcb1d247ab5a557218c8290fdafd82a138d/verifiers/envs/multiturn_env.py#L32">生成器/环境</a> (<a href="https://github.com/willccbb/verifiers/blob/main/verifiers/trainers/grpo_trainer.py#L699-L701">rollout数据</a>)</td><td>Hugging Face训练器/GRPO</td><td>vLLM，OpenAI</td><td>✅</td><td>✅<a href="https://github.com/willccbb/verifiers/tree/main/verifiers/envs">自定义环境</a></td><td>—</td></tr><tr><td><a href="https://github.com/alibaba/ROLL"><strong>ROLL</strong></a>(阿里巴巴)</td><td>2025 年 5 月<strong>⭐</strong> 1.9k<strong>📝 </strong>0.1k<strong>🧑‍💻 </strong>32</td><td>RLHF、推理、代理/模块化、灵活性、可扩展性、效率</td><td><a href="https://github.com/alibaba/ROLL/blob/b756338442d9d36c1fe4c951bc98ebc913bd95ae/roll/pipeline/agentic/agentic_pipeline.py#L109">训练器</a>[生成器](https://github.com/alibaba/ROLL/blob/b756338442d 9d36c1fe4c951bc98ebc913bd95ae/roll/agentic/rollout/rollout_scheduler.py#L53)[环境](https:// github.com/alibaba/ROLL/blob/b756338442d9d36c1fe4c951bc98ebc913bd95ae/roll/agentic/env/base.py#L5) (<a href="https://github.com/alibaba/ROLL/blob/94637ff15d6ada376f796bb693b5f7abad00cc21/roll/distributed/scheduler/protocol.py#L145">推出数据</a>)</td><td>DeepSpeed、Megatron / GRPO、PPO 等</td><td>LLM，SGLang</td><td>❌（计划中）</td><td>✅<a href="https://alibaba.github.io/ROLL/docs/English/StepByStep/agent_pipeline_start/#environments-baseenv-and-implementations">自定义环境</a></td><td>雷</td></tr><tr><td><a href="https://github.com/NVIDIA/NeMo-RL"><strong>NeMo-RL</strong></a>(Nvidia)</td><td>2025 年 3 月 <strong>⭐</strong> 0.8k<strong>📝 </strong>0.5k<strong>🧑‍💻 </strong>55</td><td>RLHF、推理、代理/模块化、灵活性、可扩展性、效率</td><td><a href="https://github.com/NVIDIA-NeMo/RL/blob/0fee015f03fa959b04a236fb656e4e5f8548e277/nemo_rl/algorithms/grpo.py#L325">训练器</a>[生成器](https://github.com/NVIDIA/NeMo-RL/b lob/99ba9a130e72cbf87a3e20acf43bc01a47adc8ee/docs/design-docs/ Generation.md)<a href="https://github.com/NVIDIA/NeMo-RL/blob/main/nemo_rl/environments/interfaces.py">环境</a> （<a href="https://github.com/NVIDIA-NeMo/RL/blob/ebd35a342a509f6a3ba832e699d440ad08a59ec4/nemo_rl/algorithms/grpo.py#L594-L604">推出数据</a>)</td><td>FSDP、威震天/SFT、DPO、GRPO</td><td>LLM</td><td>✅</td><td>✅<a href="https://github.com/NVIDIA/NeMo-RL/blob/main/nemo_rl/environments/math_environment.py">环境示例</a></td><td>雷</td></tr><tr><td><a href="https://github.com/NovaSky-AI/SkyRL"><strong>SkyRL</strong></a>（加州大学伯克利分校）</td><td>2025 年 6 月<strong>⭐</strong> 0.8k<strong>📝 </strong>0.1k<strong>🧑‍💻</strong> 18</td><td>代理/模块化、灵活性、可扩展性、效率</td><td><a href="https://github.com/NovaSky-AI/SkyRL/blob/b3280d8440f4973fd96229e3e5d3ed2372534812/skyrl-train/skyrl_train/trainer.py#L194">训练器</a><a href="https://github.com/NovaSky-AI/SkyRL/blob/b3280d8440f4973fd96229e3e5d3ed2372534812/skyrl-train/skyrl_train/generators/base.py#L24">Generato r</a>可选： <a href="https://github.com/NovaSky-AI/SkyRL/blob/b3280d8440f4973fd96229e3e5d3ed2372534812/skygym/skygym/core.py#L19">环境</a>(<a href="https://github.com/NovaSky-AI/SkyRL/blob/b3280d8440f4973fd96229e3e5d3ed2372534812/skyrl-train/skyrl_train/training_batch.py#L321">推出数据</a>)</td><td>FSDP、DeepSpeed / GRPO、PPO</td><td>vLLM、SGLang、OpenAI</td><td>✅</td><td>✅ <a href="https://skyrl.readthedocs.io/en/latest/tutorials/new_env.html">自定义环境</a></td><td>雷</td></tr><tr><td><a href="https://github.com/THUDM/slime"><strong>slime</strong></a>(Z.ai)</td><td>2025 年 6 月<strong>⭐ </strong>1.5k<strong>📝 </strong>24<strong>🧑‍💻</strong> 33</td><td>代理/模块化、灵活性、可扩展性、效率</td><td><a href="https://github.com/THUDM/slime/blob/cbe57433fd0f932b28544a55fd13019f085c98d3/slime/backends/megatron_utils/actor.py#L35">培训师</a><a href="https://github.com/THUDM/slime/blob/0b96b53cc412895503b876a01bf6e8f3fe4bab7e/slime/rollout/sglang_rollout.py#L235">G发电机</a>(<a href="https://github.com/THUDM/slime/blob/0b96b53cc412895503b876a01bf6e8f3fe4bab7e/slime/utils/types.py#L9">rollout数据</a>)</td><td>威震天 / GRPO、PPO</td><td>西格朗</td><td>✅</td><td>✅ <a href="https://github.com/THUDM/slime/tree/main/examples/search-r1">示例</a></td><td>雷</td></tr></tbody></table>
+<h2>关于各个库的 LinkNotes</h2>
+<p>在本节中，我们将更详细地讨论上述一些库，并尝试让您了解它们构建的上下文以及它们最有用的用途。其中一些评论必然比上表更加主观，而且许多库正在快速发展，因此对一切都持保留态度。</p>
+<p><strong>TRL：</strong> 针对简单性和集成到 Hugging Face 生态系统进行了优化，例如数据集、变压器、加速器和 PEFT。它是为基于文本的训练后LLM（例如推理、RLHF）而构建的，除了 GRPO 和 PPO 之外，还支持监督微调以及 DPO。如果您对没有环境交互的基于文本的 RL 设置更感兴趣，那么这是一个不错的选择。然而，TRL 本身并不支持具有任意环境和更灵活的生成方案的多轮强化学习，这促使了其他库的开发，例如具有与 TRL 类似设计决策但也支持多轮强化学习和环境的验证器。总体而言，TRL 定义的内部接口比其他一些库少，这使得它更简单，但适应性也较差。</p>
+<p><strong>Verl：</strong> Verl 是为了性能和可扩展性而构建的，它支持所有成熟的训练框架，如 FSDP、DeepSpeed 和 Megatron。与 TRL 类似，它最初是一个用于训练推理模型并在没有环境的情况下进行单轮交互的库，但正在通过工具调用和多轮 RL 进行扩展，并且更灵活的环境/代理支持<a href="https://github.com/volcengine/verl/issues/1172">正在出现</a>。出于性能原因，生成和训练紧密耦合。 Verl 拥有一个庞大的社区，并且开发非常积极，是LLM最成熟的开源 RL 库之一。已经有几个项目正在 Verl 之上构建，并以各种方式对其进行扩展 [[1]](https://github.com/TIGER-AI-Lab/verl-tool) [[2]](https://github.com/agentica-project/verl-pipeline) [[3]](https://github.com/RAGEN-AI/RAGEN)（包含完整列表） <a href="https://github.com/volcengine/verl?tab=readme-ov-file#awesome-work-using-verl">此处</a>)。</p>
+<p><strong>OpenRLHF：</strong> OpenRLHF 是为 RLHF 构建的，对奖励模型和不同的优化算法有很好的支持。它还支持异步训练以及生成和训练的托管。对环境/代理强化学习有一些支持，但没有专用接口。 OpenRLHF 已经成熟，拥有相当大的社区，并且在其之上构建了一些库，将其更多地扩展到<a href="https://github.com/Open-Reasoner-Zero/Open-Reasoner-Zero">推理</a>以及<a href="https://github.com/TsinghuaC3I/MARTI">多智能体训练</a>领域。</p>
+<p><strong>RAGEN：</strong> RAGEN 是一个构建在 Verl 之上的库，它集成了更明确的环境接口，并通过更好的代理和多轮 RL 支持扩展了 verl。它还使得定义自定义环境变得更加容易。</p>
+<p><strong>AReal：</strong> 该库特别关注性能并针对生成和训练的异步执行进行优化。为了实现最大性能，它对 PPO 实施可中断的推出和算法修改，以应对异步执行期间的数据陈旧问题。</p>
+<p><strong>验证器：</strong>解决了 TRL 的一些缺点，并增加了对环境和多轮工具使用的支持。与TRL类似，验证器也是基于Hugging Face Transformers Trainer。框架简单，深受研究人员欢迎。</p>
+<p><strong>ROLL：</strong> ROLL 旨在通过提供大量的接口（https://github.com/alibaba/ROLL/blob/b756338442d9d36c1fe4c951bc98ebc913bd95ae/assets/ROLL_map_high.png）并使库可配置来吸引不同范围的用户（大型人工智能实验室、从业者和研究人员）。</p>
+<p><strong>NeMo-RL：</strong> NeMo-RL 是最新的库之一，它为各种组件提供了明确定义的接口，并为轨迹和其他相关数据提供了清晰的数据表示。它在构建时考虑了多回合强化学习和环境支持。与 verl 类似，它也是为了性能和可扩展性而构建的，但它还不够成熟，生态系统也较少。</p>
+<p><strong>SkyRL：</strong> SkyRL 融合了上述许多库的知识，并提供简单而灵活的界面，旨在支持广泛的设置，并在构建时考虑了多轮代理设置。例如，它提供以下支持：同步或异步一次性流水线、并置或分解生成或训练、外部或集成推理引擎以及不同的权重同步方法。 SkyRL 最近发布，尚未成熟，生态系统也较少，但为代理场景提供了<a href="https://github.com/NovaSky-AI/SkyRL/tree/main/skyrl-train/examples">几个示例脚本</a>。</p>
+<p><strong>slime：</strong> slime 是较新的库之一，它做出非常固执己见的决定，以使一切尽可能简单，但又保持高性能（例如，它在 sglang 和 megatron 上进行标准化，因为它们对大型 MoE 模型具有高性能）。它还包含一个数据缓冲区，可以在中央位置集中处理提示和转出数据。虽然 slime 支持托管，但它主要是为了考虑异步 RL 的解耦训练和生成而构建的。由于它专注于威震天，它的灵活性比其他一些训练框架稍差，但在支持自定义推出数据生成方面非常灵活。</p>
+<h2>链接结论</h2>
+<p>您可能会自然地问自己一个问题：“我应该使用哪个库？”。答案将取决于您所操作的设置和您的用例，您应该自己做出决定（希望本博客文章中的比较点会对您有所帮助）。我们可以提供一些可能有助于指导您做出决定的一般准则：</p>
+<p>如果您正在优化训练大型模型或有严格的性能要求，那么 Verl 无疑是一个不错的选择。它是最成熟的库之一，但它对性能和可扩展性的关注也以牺牲一些灵活性为代价。如果您正在寻找更灵活的环境和代理支持，那么也值得研究 RAGEN（如果您喜欢 Verl）或其他一些框架，如 SkyRL、NeMo-RL、ROLL 或 AReal。</p>
+<p>如果您是一名研究人员，最看重简单性和灵活性（例如，您想尝试不常用的新算法或方法，并花费大量时间更改源代码），那么值得检查验证器。</p>
+<p>最后，如果您正在开发自己的库或对此领域感兴趣，请考虑<a href="https://www.anyscale.com/blog/ray-summit-2025-call-for-proposals-cfp">向 Ray Summit 2025 提交演讲</a>，我们将在其中提供专门的后期培训和强化学习课程。</p>
+<p>如果您有任何问题、意见或反馈，请随时联系 <a href="https://tyler-griggs.github.io/">Tyler</a> 或 <a href="https://www.linkedin.com/in/philipp-moritz-61419682/">Philipp</a>。</p>
+<p>＃＃＃＃ 目录</p>
+<ul><li><a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms#the-libraries-we-compared">我们比较的库</a></li><li><a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms#use-cases-and-components-of-an-rl-library">RL 库的用例和组件</a></li><li><a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms#the-generator">生成器</a></li><li><a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms#the-trainer">培训师</a></li><li><a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms#points-of-comparison">比较点</a></li><li><a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms#comparison-overview">比较概述</a></li><li><a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms#notes-on-individual-libraries">关于单个库的注释</a></li><li><a href="https://www.anyscale.com/blog/open-source-rl-libraries-for-llms#conclusion">结论</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<p>LLM，技术，Ray Core</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/46kLynqjB0NI7BH7FHtrF/639e6aa1698d45b029f2afe2d40bf7fa/stack_blog_thumbnail.png?w=140" alt="开源堆栈博客缩略图"></p>
+<h4>OSS AI：Kubernetes + Ray + PyTorch + vLLM</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-products-best-practices-field.png?w=140" alt="kuberay-products-best-practices-field"></p>
+<h4>生产中的 KubeRay：现场最佳实践</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 在 Google TPU 上支持 PyTorch"></p>
+<h4>宣布 Ray 在 Google TPU 上支持 PyTorch</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
     </item>
     <item>
       <title>阿里云上的 Ray：构建机器学习平台</title>
@@ -4116,6 +4945,130 @@ def train_loop_per_worker(config: dict):
 <h2>今天就试试</h2>
 <p>无论你是在处理海量数据集还是训练复杂模型，Anyscale 的可观测性看板都能给你所需的可见性，让你更有底气、更高效率地构建、优化和扩展你的 AI 系统。</p>
 <p>想看看这些看板能怎么改变你的 AI 工作流？今天就上手 Anyscale 平台。<a href="https://console.anyscale.com/register/ha?utm_source=blog&amp;utm_medium=web&amp;utm_campaign=ray-day">注册即领 $100 免费额度</a>，体验这套专为使用 Ray 的分布式应用的调试与优化设计的可观测性能力。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>uv + Ray：集群中无痛的 Python 依赖关系</title>
+      <link>https://anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters</guid>
+      <pubDate>Thu, 27 Feb 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：uv + Ray: Pain-Free Python Dependencies in Clusters</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
+<h1>uv + Ray：集群中无痛的 Python 依赖关系</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=christina-zhu">Christina Zhu</a> 和 <a href="https://www.anyscale.com/blog?author=philipp-moritz">Philipp Moritz</a> | 2025 年 2 月 27 日</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/2KhO6m2ouQYf5yJ3qF8iN0/cfbb66f0fd3e12d10c8a6323a3a31a65/Illustration_Dark_mode_updated.png?w=1200" alt="uv + 博客文章标题图像 2"></p>
+<p>当我们发现<a href="https://docs.astral.sh/uv">uv包管理器</a>时，我们意识到Python包管理的新时代已经到来。它以一致性和速度解决了 Python 开发人员的依赖问题，同时也实现了快速的开发周期。</p>
+<p>以下是 <a href="http://astral.sh">astral.sh</a> 的人们正确收集的（非详尽的）我们真正喜欢的内容：</p>
+<ul><li><strong>它们打包了整个环境</strong>：您无需担心设置自己的 Python 发行版，这本身就非常麻烦。相反，让 uv <a href="https://docs.astral.sh/uv/concepts/python-versions/">管理 Python 环境</a>。如果您愿意，uv 还支持使用系统安装的 Python。</li><li><strong>他们让 uv 快如闪电：</strong>对于初学者来说，它是用 Rust 编写的<strong>，</strong>就像他们非常成功的 Python linter <a href="https://github.com/astral-sh/ruff">ruff</a>。 uv 的设计考虑到了速度，可以快速下载包，将它们缓存在本地磁盘上，消除环境之间的重复依赖关系，并使用硬链接将它们全部放在一起。</li><li><strong>他们尊重并改进现有的 Python 约定：</strong> 这包括对 <a href="https://docs.astral.sh/uv/guides/projects/#pyprojecttoml">pyproject.toml</a> 的支持、出色的平台独立 <a href="https://docs.astral.sh/uv/concepts/projects/layout/#the-lockfile">lockfile</a> 支持、<a href="https://docs.astral.sh/uv/concepts/projects/dependency/#editable-dependency">可编辑软件包</a>、<a href="https://docs.astral.sh/uv/configuration/files/#env">环境变量</a> 以及更多 - 添加更多功能并修复错误<a href="https://github.com/astral-sh/uv/blob/main/CHANGELOG.md">一直</a>。</li></ul>
+<p>然而，在分布式环境中，管理 Python 依赖关系仍然具有挑战性。集群上有很多进程需要管理，我们需要确保它们所有的依赖关系都相互一致。如果更改单个依赖项，则必须将该更改传播到其他每个节点，因为每个工作进程都需要相同的环境，以便所有代码都以相同的方式执行。如果某个地方存在版本不匹配，您可能会花费大量时间来调试出了什么问题……这绝对不是一个有趣的消磨时间的方式。解决这个问题的传统方法是将所有内容容器化，但这会使开发迭代变慢 - 如果代码和依赖项发生变化，则需要构建新版本的容器并将其推送到所有节点。有时需要重新启动整个集群，这使得速度更慢。</p>
+<p>如果您通过运行“uv run ... script.py”来启动分布式 Python 应用程序，并将动态创建的环境应用于集群中的每个进程，这不是很好吗？ <em>剧透</em>：这正是我们要做的。我们先来看一个使用 Ray 的简单示例。 <a href="https://docs.ray.io/en/latest/">Ray</a> 是一个计算引擎，旨在轻松开发和运行分布式 Python 应用程序，尤其是 AI 应用程序。</p>
+<p>由于这是<a href="https://github.com/ray-project/ray/releases">最新 Ray 2.43 版本</a> 中的新功能，因此您当前需要设置一个功能标志：</p>
+<pre><code>1export RAY_RUNTIME_ENV_HOOK=ray._private.runtime_env.uv_runtime_env_hook.hook</code></pre>
+<p>我们计划在<a href="https://github.com/ray-project/ray/issues/50961">收集更多反馈</a>后将其设为默认值，并在必要时调整行为。</p>
+<p>设置此环境变量后，Ray 将自动检测您的脚本是否在 uv run 内运行，并将在同一环境中运行所有工作进程。我们首先看一个非常简单的例子。创建一个新文件“main.py”：</p>
+<pre><code>1import emoji
+2import ray
+3
+4@ray.remote
+5def f():
+6    return emoji.emojize('Python is :thumbs_up:')
+7# Execute 1000 copies of f across a cluster.
+8
+9print(ray.get([f.remote() for _ in range(1000)]))</code></pre>
+<p>并运行它</p>
+<pre><code>1uv run --with emoji main.py</code></pre>
+<p>这将在 Ray 集群中的多个 Python 工作进程中运行 1000 个“f”函数的副本。 “emoji”依赖项除了可用于主脚本之外，还将可用于所有工作进程。此外，当前工作目录中的源代码将可供所有工作人员使用。</p>
+<p>就是这样！使用 Ray + uv，您可以管理分布式应用程序的 Python 依赖项，就像通常使用 uv 在单机上执行的操作一样。</p>
+<h3>LinkEnd-to-end 使用 uv 的示例</h3>
+<p>现在，让我们通过一个更详细的示例来了解如何使用 uv 并深入了解它的一些方便的功能。我们将创建一个使用 Ray Data 和<a href="https://docs.ray.io/en/latest/data/working-with-llms.html">新的 LLM 集成</a> 运行批量推理的应用程序。让我们首先创建一个具有必要依赖项的 pyproject.toml ：</p>
+<pre><code>1[project]
+2name = &quot;my_llm_batch_inference&quot;
+3version = &quot;0.1&quot;
+4dependencies = [
+5  &quot;numpy&quot;,
+6  &quot;ray[llm]&quot;,
+7]</code></pre>
+<p>您可能需要运行以下命令才能使 vLLM 正常工作：</p>
+<pre><code>1sudo apt-get update &amp;&amp; sudo apt-get install -y build-essential</code></pre>
+<p>以及一个包含以下内容的脚本“batch_inference.py”：</p>
+<pre><code>1import ray
+2from ray.data.llm import vLLMEngineProcessorConfig, build_llm_processor
+3import numpy as np
+4
+5config = vLLMEngineProcessorConfig(
+6    model_source=&quot;unsloth/Llama-3.1-8B-Instruct&quot;,
+7    engine_kwargs={
+8        &quot;enable_chunked_prefill&quot;: True,
+9        &quot;max_num_batched_tokens&quot;: 4096,
+10        &quot;max_model_len&quot;: 16384,
+11    },
+12    concurrency=1,
+13    batch_size=64,
+14)
+15processor = build_llm_processor(
+16    config,
+17    preprocess=lambda row: dict(
+18        messages=[
+19            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a bot that responds with haikus.&quot;},
+20            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: row[&quot;item&quot;]}
+21        ],
+22        sampling_params=dict(
+23            temperature=0.3,
+24            max_tokens=250,
+25        )
+26    ),
+27    postprocess=lambda row: dict(
+28        answer=row[&quot;generated_text&quot;],
+29        **row  # This will return all the original columns in the dataset.
+30    ),
+31)
+32
+33ds = ray.data.from_items([&quot;Start of the haiku is: Complete this for me...&quot;])
+34
+35ds = processor(ds)
+36ds.show(limit=1)</code></pre>
+<p>要运行该应用程序，请将“pyproject.toml”和“batch_inference.py”文件放入同一目录中，并使用“uv run batch_inference.py”执行代码。</p>
+<p>请注vLLM 支持该推理。</p>
+<p>如果您想使用门后面的Hugging Face模型，您可以在工作目录中创建一个“.env”文件，如下所示：</p>
+<pre><code>1HF_TOKEN = your_huggingface_token</code></pre>
+<p>并使用“uv run --env-file .env batch_inference.py”运行代码。</p>
+<p>如果要编辑任何依赖项，可以将它们克隆到相对于“working_dir”的路径“./path/foo”中，然后运行“uv add --editable ./path/foo”。这将在“pyproject.toml”中附加一个部分，指示 uv 使用签出（和编辑）的代码而不是原始包。</p>
+<h3>Link 这在幕后是如何工作的？</h3>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/2rjcTtNwdOmuzfEHsVGTdv/70cdcb1e017635119e0e27f1007a0df3/Managing_Dependency_for_Ray_Applications_with_UV.png" alt="紫外线图1"></p>
+<p>紫外线图1</p>
+<p><strong>图：</strong>如果没有 uv，script.py 在默认的 python 环境中运行，这可能与工作人员运行的运行时环境（左）不同，使用 uv 时，环境通过“uv run”同步，并且环境的创建通过 uv 的缓存加速</p>
+<p>在底层，此集成使用 Ray 的<a href="https://docs.ray.io/en/latest/ray-core/handling-dependency.html">运行时环境</a> 功能，该功能允许在代码中指定环境。我们定义了一个新的低级运行时环境插件，名为 <a href="https://docs.ray.io/en/latest/ray-core/handling-dependency.html#using-uv-for-package-management">py_executable</a>。它允许您指定 Ray 工作程序将在其中启动的 Python 可执行文件（包括参数）。在“uv”的情况下，“py_executable”设置为“uv run”，其参数与运行驱动程序时使用的参数相同。此外，“working_dir”运行时环境用于将驱动程序的工作目录（包括“pyproject.toml”）传播给工作人员。这允许“uv”为工作人员运行设置正确的依赖关系和环境。</p>
+<p>在一些高级用例中，您可能希望直接在程序中使用“py_executable”机制：</p>
+<ul><li><strong>具有异构依赖关系的应用程序：</strong> Ray 支持对不同的任务或参与者使用不同的运行时环境。这对于在不同的 Ray Serve 部署中部署不同的推理引擎、模型或微服务以及 Ray Data 中的异构数据管道非常有用。要实现这一点，您可以为每个不同的运行时环境指定不同的“py_executable”，并为每个环境使用带有不同“--project”参数的“uv run”。请参阅<a href="https://github.com/pcmoritz/ray-isolated-environments">此存储库此处</a> 作为示例。</li><li><strong>自定义工作程序运行的命令：</strong> 在工作程序上，您可能希望使用一些不用于驱动程序的特殊参数来自定义 uv。或者，您可能希望使用诗歌运行、bazel 等构建系统、分析器或调试器来运行进程。在这些情况下，您可以通过“py_executable”显式指定工作线程应运行的可执行文件。如果您尝试以更复杂的方式包装多个进程，它甚至可能是存储在“working_dir”中的 shell 脚本。</li></ul>
+<h3>Link在射线作业中使用 uv</h3>
+<p>要将 uv 与 Ray 作业结合使用，请使用以下命令运行作业：</p>
+<pre><code>1ray job submit --runtime-env-json '{&quot;working_dir&quot;: &quot;.&quot;, &quot;py_executable&quot;: &quot;uv run&quot;}' -- uv run main.py</code></pre>
+<p>这将确保作业的驱动程序和工作人员都在“pyproject.toml”指定的“uv”环境中运行。</p>
+<h3>Link在 Ray 服务中使用 uv</h3>
+<p>要将 uv 与 Ray Serve 一起使用，请像上面一样设置“RAY_RUNTIME_ENV_HOOK”，并使用“uv runserve run app:main”运行服务。</p>
+<h3>Link最佳实践和技巧</h3>
+<ul><li>使用“uv lock”生成锁定文件并确保所有依赖项都被冻结，因此如果发布了新版本的软件包，事情不会以不受控制的方式发生变化。</li><li>如果您有一个“requirements.txt”文件并且不想使用“--with-requirements”标志，则可以使用“uv add -r request.txt”将依赖项添加到您的project.toml，然后将其与uv run一起使用。</li><li>如果需要，您可以通过“UV_SYSTEM_PYTHON=1”使用系统Python</li><li>如果您的“pyproject.toml”位于某个子目录中，您可以使用“uv run --project”从那里使用它。</li><li>如果您使用“uv run”并希望将工作目录重置为当前工作目录以外的目录，请使用“--directory”标志。 Ray uv 集成将确保您的“working_dir”被相应设置。</li></ul>
+<h3>Link我们的 uv x Ray 开源工作亮点</h3>
+<p>与新开源项目的任何热情支持者一样，我们非常幸运，一些 Ray 用户在发布之前就已经使用了此功能并提出了改进建议，谢谢！既然我们在 Ray 2.43 中发布了该功能，我们希望能得到更多反馈。</p>
+<p>非常感谢 uv 维护者与我们讨论集成，并快速<a href="https://github.com/astral-sh/uv/issues/11219">修复了在 Ray 中同时设置 uv 环境时发生的错误</a>。</p>
+<h3>链接结论</h3>
+<p>将 uv 与 Ray 相结合，通过将 uv 的快速环境设置与 Ray 的可扩展编程模型相结合，显着改进了分布式系统的 Python 依赖管理，确保跨集群的工作执行一致。我们努力使 Ray + uv 成为以分布式方式运行代码的最佳解决方案，并且希望您能在 <a href="https://github.com/ray-project/ray/issues/50961">GitHub</a> 或 <a href="https://discuss.ray.io/">Discourse</a> 上提供反馈。</p>
+<p>话虽如此，在某些情况下 uv 并不是一个可行的解决方案——您可能正在开发一个将不同的包管理器、存储库和二进制文件拼接在一起的既定项目。或者，您处于具有非常具体要求的企业环境中。在 Anyscale，我们正在开发基于 OCI 兼容的<a href="https://www.anyscale.com/blog/cloud-infrastruct-for-llm-and-generative-ai-applications#faster-instance-startup-time:-a-step-change-in-performance-for-genai-and-llm-applications">快速容器运行时</a> 的依赖管理解决方案，该解决方案允许非常快速的开发迭代，并支持广泛的依赖需求。如果您对此感兴趣，请尝试一下 <a href="https://www.anyscale.com/">Anyscale Platform</a>。</p>
+<p>＃＃＃＃ 目录</p>
+<ul><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependency-in-clusters#end-to-end-example-for-using-uv">使用 uv 的端到端示例</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependency-in-clusters#how-does-this-work-under-the-hood?">这在幕后是如何工作的？</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependency-in-clusters#using-uv-in-a-ray-job">在 Ray 作业中使用 uv</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependency-in-clusters#using-uv-in-a-ray-service">在 Ray 服务中使用 uv</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependency-in-clusters#best-practices-and-tips">最佳实践和技巧</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependency-in-clusters#highlights-of-our-uv-x-ray-open-source-efforts">我们的 uv x Ray 开源工作亮点</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependency-in-clusters#conclusion">结论</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<p>技术，雷芯</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-products-best-practices-field.png?w=140" alt="kuberay-products-best-practices-field"></p>
+<h4>生产中的 KubeRay：现场最佳实践</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 在 Google TPU 上支持 PyTorch"></p>
+<h4>宣布 Ray 在 Google TPU 上支持 PyTorch</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
+<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化</title>
@@ -4355,214 +5308,6 @@ def train_loop_per_worker(config: dict):
 <p>而我们才刚刚开始——路线图上还有众多关键负载等待覆盖，我们的目标是让 Anyscale Runtime 成为任何 AI 负载的最佳计算引擎。</p>
 <h2>资源</h2>
 <ul><li>通过 <a href="https://github.com/anyscale/rayturbo-benchmarks/tree/main/">GitHub</a>上的配方探索 Anyscale Runtime</li><li><a href="https://www.anyscale.com/contact-sales?utm_source=anyscaleruntime">联系我们</a>，帮你优化工作负载</li><li>查看 Ray Summit 2025 的<a href="https://anyscale.com/blog/ray-summit-2025-anyscale-product-updates">其他公告</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Anyscale 上的批量 LLM 推理可将 AWS Bedrock 成本最多降低 6 倍</title>
-      <link>https://anyscale.com/blog/batch-llm-inference-announcement</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/batch-llm-inference-announcement</guid>
-      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Batch LLM Inference on Anyscale slashes AWS Bedrock costs by up to 6x</description>
-      <content:encoded><![CDATA[<h1>Anyscale 批量 LLM 推理将 AWS Bedrock 成本最多降低 6 倍</h1>
-<p>作者：Cody Yu、Scott Lee、Ricky Xu、William Lin、Praveen Gorthy 和 Richard Liaw | 2024 年 10 月 1 日</p>
-<h2>引言</h2>
-<p>LLM 席卷了整个科技行业。由于 GPU 价格居高不下，大量优化工作聚焦在推理成本上。但这些努力大多集中在面向延迟敏感、7×24 全天候负载的在线推理。</p>
-<p><a href="https://www.anyscale.com/use-case/llm-online-inference">在线推理</a>提供低延迟的实时响应，而 <a href="https://www.anyscale.com/use-case/llm-batch-inference">LLM 批量推理</a>通过优化 GPU 资源利用率，提供更高吞吐与更优成本效益。因此，对无需即时交互的任务，离线推理能更高效、更经济地使用 LLM。</p>
-<p>在某些场景下，通过将批量推理面向吞吐量与成本（而非延迟与可用性）做优化，Anyscale 相比 AWS Bedrock、OpenAI 等在线推理服务商可降低成本至多 <strong>2.9 倍，在共享前缀场景下最多可达 6 倍</strong>。</p>
-<h2>在线推理与批量推理的核心区别是什么？</h2>
-<p>把在线方案改造用于离线批量负载十分常见。但两类用例存在关键差异。</p>
-<p>在线推理通常配置为优化低延迟，而批量推理的配置则优化整体 token 吞吐量。</p>
-<p>因此，两者的配置空间相当不同：</p>
-<ul><li>在线部署常用投机解码（speculative decoding）和高度张量并行等技术，用吞吐换延迟；批量推理则用流水线并行、KV cache 卸载等技术最大化吞吐。</li><li>在线推理为满足 SLA 常部署在高端硬件（H100、A100）上，而批量推理优先考虑每美元吞吐（throughput-per-dollar），可用更经济易得的 GPU（A10G、L4、L40S）实现。</li><li>在线部署还带有 HTTP 与请求处理相关开销，这些在批量场景中可以去除。</li></ul>
-<h2>为什么在 Ray 与 Anyscale 上做 LLM 批量推理？</h2>
-<p>对自托管推理，在优化批量 LLM 推理方面，Ray 与 Anyscale 具有独特优势。Anyscale 上的 LLM 批量推理将使用我们技术栈的关键组件：自研推理引擎、Ray Data、Ray Core 与 <a href="https://www.anyscale.com/platform">Anyscale Platform</a>。</p>
-<p>推理方面，我们使用自研推理引擎实现优化的 LLM 推理。</p>
-<ul><li>该推理引擎基于流行的开源 LLM 推理引擎 vLLM。</li><li>作为开源基础设施的坚定支持者，我们的许多性能改进已回馈给 vLLM 开源项目，如 FP8 支持、chunked prefill 和投机解码。</li></ul>
-<p>Ray Core 与 Ray Data 为数据密集型 AI 负载而生，与其他批处理系统相比提供了一组独特能力。</p>
-<ul><li>Ray Core 灵活的分布式原语（任务、actor）让 Ray 用户可以表达嵌套并行，使不同分布式库易于组合——在本例中就是 vLLM 与 Ray Data。</li><li>Ray Data 支持 Python 异步原语做请求流水线化，从而实现高 GPU 利用率。</li><li>Ray Data 还利用 Ray Core 内建的容错能力，得以有效使用高性价比的 spot 实例。</li></ul>
-<p><a href="https://www.anyscale.com/platform">Anyscale Platform</a> 是完全托管的 Ray 解决方案，专注于为使用 Ray 运行 AI 应用提供出色体验与高性价比。</p>
-<ul><li>Anyscale 的 Smart Instance Manager 支持跨可用区实例搜索与灵活的计算配置，带来经济的硬件利用。</li><li>Anyscale 提供一个加速模型加载的库，让大模型副本快速启动，这对自动扩缩容和应对不稳定计算环境至关重要。</li></ul>
-<p>我们还创建了新的库 RayLLM-Batch，目标就是针对 LLM 批量推理负载优化这套栈。</p>
-<h2>RayLLM-Batch 介绍</h2>
-<p><a href="https://docs.anyscale.com/llms/batching/intro/">RayLLM-Batch</a> 是一个利用 Ray 与 Anyscale 组件、规模化优化 LLM 批量推理的库：</p>
-<ul><li><strong>简化 API</strong>：抽象底层栈的复杂性，让用户在工作负载可以便捷地表达并在批量推理集群上执行。</li><li><strong>优化推理引擎</strong>：融入自研性能特性，同时与开源仓库保持紧密对齐。</li><li><strong>容错</strong>：引入作业级检查点与恢复，提升大规模推理作业的可靠性。</li><li><strong>批量 LLM 推理优化器</strong>：根据负载特征与可用硬件调优和配置底层栈，以降低成本。</li></ul>
-<p>通过结合这些要素，RayLLM-Batch 为大规模批量 LLM 推理提供了强大而经济的解决方案，回应批处理负载独特的挑战与机会。</p>
-<p>RayLLM-Batch 文档见<a href="https://docs.anyscale.com/canary/llms/batching/intro/">这里</a>。</p>
-<h2>用 LLaMA 做基准测试</h2>
-<p>在下面的<a href="https://github.com/anyscale/batch-llm-inference-reproductions/tree/main">实验</a>中，我们在 Anyscale 上以 Llama 3.1 8b Instruct 评估 RayLLM-Batch，并与常见替代方案对比：Bedrock、带批量定价的 Bedrock，以及带批量定价的 OpenAI GPT-4o mini。所有 Anyscale 实验均使用 AWS 上常见可按需供应的 GPU，如 L4 和 L40S。</p>
-<p>我们用 2000 输入 token、100 输出 token、无共享前缀的数据集评估各方案——这是摘要类任务的典型请求形态。我们在 1000 个请求上评估性能，并按请求吞吐计算每 token 价格。对 Anyscale，我们同时评估原始 BF16 模型和 FP8 版本模型；后者在 Open LLM Leaderboard 评测分数上恢复了原 Llama 3.1 8b Instruct 的 99.28%，通常可替代原始 BF16 模型使用。</p>
-<p>我们看到，在这一特定负载上，Anyscale FP8 部署比 OpenAI GPT-4o mini 的批量定价便宜 2.2 倍，比 Amazon Bedrock 便宜 2.9 倍。¹</p>
-<p>在许多离线负载中，请求之间存在共享提示/前缀很常见。这种情况下成本差距可以大得多，因为 Anyscale 能利用前缀缓存（prefix caching），而 OpenAI 和 Bedrock 不能。在同一负载（2000/100，Llama 3.1 8b）、请求间 80% 共享前缀时，Anyscale 方案<strong>比批量定价的 AWS Bedrock 便宜 6.1 倍</strong>，比批量定价的 OpenAI GPT-4o mini 便宜 4.78 倍。</p>
-<p>在下面的实验中，我们在 Anyscale 上以 Llama 3.1 70b Instruct 评估 RayLLM-Batch，并与 Amazon Bedrock 对 Llama 3.1 70b Instruct 模型的定价对比。评估数据集的请求为 2000 输入、100 输出 token，无共享前缀。</p>
-<p>对 Anyscale，我们既评估原始 BF16 模型，也给出 FP8 版本的结果；后者在 Open LLM Leaderboard 评测分数上恢复了原 Llama 3.1 70b Instruct 的 99.88%，通常可替代原始 BF16 模型使用。</p>
-<p>我们看到，在该负载上，Anyscale FP8 批量推理方案比 Amazon Bedrock 方案便宜 22%。</p>
-<p>在请求间 80% 共享前缀时，Anyscale 方案比批量定价的 AWS Bedrock 方案便宜 1.8 倍。</p>
-<p>显然，对所选负载，无论小模型还是大模型场景，Anyscale 都能在性价比上超越其他常见方案。注意，虽然我们尽量选择代表性负载，但用户实际性能会因其负载的具体细节而异。</p>
-<h2>结语</h2>
-<p>通过我们新发布的 <a href="https://console.anyscale.com/v2/template-preview/batch-llm">RayLLM-Batch 模板</a>，你现在就可以在 Anyscale 上开始使用批量推理方案。RayLLM-Batch 文档可<a href="https://docs.anyscale.com/canary/llms/batching/intro/">在此找到</a>。</p>
-<p>欢迎了解 Anyscale 加速其他 AI 负载：<a href="https://www.anyscale.com/">https://www.anyscale.com/</a></p>
-<p><em>如需复现我们的基准，请参考我们的 </em><a href="https://github.com/anyscale/batch-llm-inference-reproductions/tree/main"><em>Github 仓库</em></a><em>。</em></p>
-<p>¹ Anyscale 定价基于自托管计算模型，按 2024 年 9 月的 EC2 列表价计算。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Anyscale 推出弹性分布式训练</title>
-      <link>https://anyscale.com/blog/introducing-elastic-distributed-training</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/introducing-elastic-distributed-training</guid>
-      <pubDate>Mon, 22 Jul 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Elastic Distributed Training on Anyscale</description>
-      <content:encoded><![CDATA[<h1>Anyscale 推出弹性分布式训练</h1>
-<p>作者：<a href="https://www.anyscale.com/blog?author=matthew-deng">Matthew Deng</a> 与 <a href="https://www.anyscale.com/blog?author=justin-yu">Justin Yu</a> | 2024 年 7 月 22 日</p>
-<p>在数据和模型规模不断增长的今天，把机器学习训练任务跑在一组 GPU 节点组成的集群上已经成了必需。分布式机器学习训练让从业者能在可接受的时间内完成训练，但同时也带来了更多在训练过程中出故障的机会。</p>
-<p>此外，为了压低成本而使用 spot 实例的从业者，会因为 spot 抢占而面对更高的故障率。再叠加热门 GPU 节点类型常常一机难求，任务往往被拖延很长时间——这恰恰背离了最初省钱的目的。</p>
-<h2>解决方案：在 Anyscale 上用 Ray 做弹性训练</h2>
-<p>Anyscale 现已支持弹性训练，任务能够无缝适应资源可用性的变化。这保证了即便发生硬件故障或节点被抢占，训练也能持续进行，不会出现空等或时间浪费。当更多节点可用时，集群会动态扩容，用更多 worker 进程加快训练。</p>
-<p>借助 Anyscale 对 spot 实例的支持，以及可配置的按需实例回退，用户可以对任务执行和成本效率做细粒度控制。例如，一个高优先级的训练任务可以配置为优先使用 spot 实例，需要时再回退到按需实例。这种做法既保住尽可能大的集群以确保按时出结果，又兼顾了省钱。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/76yHGZdGgMXMMG7N0Gp1QA/f1ae1a89d6060c0b4f800d3c88f526eb/image1.png" alt="image1"></p>
-<p>image1</p>
-<p>对于不那么关键、或者时间要求宽松的任务，用户可以配置成只在 spot 实例上运行。即便 spot 节点被驱逐，集群也会用更少的节点继续推进，而不是整个停下来。</p>
-<h2>工作原理示例</h2>
-<p>下面的示例展示了一次训练运行，其 Ray Train worker group 可以在 4 到 6 个 GPU worker 之间弹性伸缩。每个节点有 2 块 GPU。</p>
-<ul><li>训练至少从 4 个 worker 起步。如果一开始 3 个节点里只有 2 个可用，那么训练就从 4 个 worker 开始，因为集群里只有 4 块 GPU。</li><li>假设训练成功以全部 6 个 worker 启动。过了一段时间，spot 节点（Spot node 3）被驱逐。有了弹性训练，集群会继续在 4 个 GPU worker 上训练下去。</li><li>如果又有节点可用，集群自动伸缩会扩容并把该节点加进来。注意，非弹性的替代方案在这里可能挂上几分钟甚至几小时——如果 spot 供给一直不放开，而这对于紧俏的 GPU 实例来说并不罕见。此时所有剩下的 GPU 都在空转，白白烧掉本可以用来推进训练的钱和算力。</li></ul>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/4EAMZO7C8NtmMySjkvoEQx/a3bf6036e54dc228feda6531f6b3aee1/elastic_training__1_.png" alt="elastic training"></p>
-<p>弹性训练</p>
-<p><strong>注意在 Anyscale 上用上弹性训练有多容易。</strong> 开发者只需要把 <code>ScalingConfig(num_workers)</code> 改为把 <code>(min_workers, max_workers)</code> 作为元组传入，而不再是固定的 worker group 大小。</p>
-<h2>小结与关键收益</h2>
-<ul><li>更低的成本 —— 在成本更低的 spot 实例上训练，云上开销最多可省 60%</li><li>更快的训练 —— 保证训练期间不间断地持续推进，用更少时间交付模型</li><li>极少的代码改动：在 Anyscale 上实现弹性训练，对你现有代码的改动很小</li></ul>
-<p><a href="https://console.anyscale.com/register/ha?utm_source=blog&amp;utm_content=elastic-training">今天就上手 Anyscale！</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>用 Anyscale Replica Compaction 部署 Ray Serve，节点数最多省 50%</title>
-      <link>https://anyscale.com/blog/new-feature-replica-compaction</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/new-feature-replica-compaction</guid>
-      <pubDate>Mon, 15 Jul 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Deploy Ray Serve with up to 50% fewer nodes using Anyscale Replica Compaction</description>
-      <content:encoded><![CDATA[<h1>用 Anyscale Replica Compaction 部署 Ray Serve，节点数最多省 50%</h1>
-<p>作者：Matt Connor、Akshay Malik 和 Cindy Zhang | 2024 年 7 月 15 日</p>
-<p>拥抱 AI 的公司日益面临资源利用与成本管理的问题。模型服务与推理尤其需要随流量起伏而伸缩。Ray Serve 是构建在 Ray 上的可扩展模型服务库，正好应对这种动态。不过，尽管 Ray Serve 这样的开源系统能帮助管理流量增长，即便是精密的系统，在流量回落后也难以缩<em>容</em>。这类资源碎片化必然导致资源闲置、成本上升。</p>
-<p>Anyscale 的新特性 Replica Compaction（副本压实）通过优化在线推理与模型服务的资源使用，帮助解决资源碎片化。下面看看这个特性如何工作、你在实践中如何使用它。</p>
-<h2>背景：什么是 Ray Serve？</h2>
-<p>Ray Serve 有几个核心概念：</p>
-<ul><li><strong>Deployment（部署）</strong>：一个 deployment 包含处理进来请求的业务逻辑或 ML 模型。</li><li><strong>Replica（副本）</strong>：replica 是 deployment 的一个可处理请求的实例，用 Ray Actor 实现。replica 数量可以扩缩（甚至自动扩缩）以匹配进来的请求负载。</li><li><strong>Application（应用）</strong>：application 是 Ray Serve 集群中的升级单元，由一个或多个 deployment 组成。</li><li><strong>Service（服务）</strong>：Service 是一个 Ray Serve 集群，可以由一个或多个 application 组成。</li></ul>
-<p>各 deployment 独立处理进来的请求，在多数情况下可实现并行处理与高效资源利用。例如，Ray Serve 可以在同一个 Service 上为 Llama-3-8B 与 Llama-3-70B 创建 deployment，并设置不同资源需求（每副本分别为 1 GPU 和 4 GPU）。这两个 deployment 会随各自的流量独立伸缩。</p>
-<h2>资源碎片化问题</h2>
-<p>资源碎片化发生在伸缩活动导致各节点资源利用不均的时候。随着 replica 增加，autoscaler 会启动新节点来承担增长的 deployment 负载。但当流量下降、模型缩容时，当初为高峰负载开的那些节点就变得利用率低下。这是成本升高、集群性能下降最常见的原因之一。</p>
-<p>本质上，当伸缩某个特定 deployment 或模型（比如模型 A）时，Ray Serve 只考虑这一个 deployment 的流量与资源需求，其他 deployment（比如模型 B 和 C）的状态、replica 和流量都不在伸缩过程的考虑之内。由于伸缩一次只看单个 deployment，随着流量起伏、集群扩扩缩缩，资源碎片化不可避免。</p>
-<h2>用 Anyscale Replica Compaction 解决资源碎片化</h2>
-<p>我们很高兴推出 Replica Compaction 来应对资源碎片化。有了它，Anyscale 会自动把 replica 迁移到更少的节点上，以优化资源使用、降低成本。Replica Compaction 特性有三大组件：</p>
-<ul><li><strong>Replica Migration（副本迁移）：</strong> Compaction 持续监视集群，寻找迁移 replica 的机会。若某个节点使用率很低，Anyscale 的 Replica Compaction 会自动把 replica 迁移到容量充足的其他节点。集群中每个节点都会被检查，replica 更少、可被释放的节点优先处理。</li><li><strong>零停机：</strong> 迁移毫不费力。Anyscale Services 会无缝拉起新 replica、监控其健康、切换流量，再移除旧 replica。</li><li><strong>Autoscaler 集成：</strong> Anyscale Autoscaler 在迁移后持续搜寻空闲节点并按需关停，减少节点数——也就是成本。</li></ul>
-<p>再看上面同一个例子，这次加上 Anyscale 的 Replica Compaction。有了 Replica Compaction，Anyscale 能检测到模型 A 缩容，并自动把多余的模型 C replica 迁移进单个节点。</p>
-<p><em>Anyscale Replica Compaction 示例：Replica Compaction 发现资源碎片化正造成不必要的资源占用，随后果断地把 replica 自动转移（不打断生产流量）到单个节点，降低成本、提升利用率。</em></p>
-<h2>Replica Compaction 实战：真实结果</h2>
-<p>为测试新的 Replica Compaction 特性，Anyscale 在一个真实生产负载上运行了数月。看看我们跑了什么——以及 Replica Compaction 如何降本增效。</p>
-<p><strong>案例研究：</strong></p>
-<p>Anyscale 提供调用 LLM 的 serverless API，模型包括 Mistral、Mixtral、Llama3 等。这些模型作为 replica 部署在一个 Anyscale Service 上。该服务已运行数月，以差异巨大的流量模式为大规模用户服务 10 个以上模型。</p>
-<p>发布 Anyscale Replica Compaction 之后，我们从<strong>每 GPU 每秒 token 数</strong>（tokens per GPU second）看到了显著的节省与效率提升。在其他条件不变（不改变张量并行、所服务模型或所用硬件）的情况下，Replica Compaction 之后的整体效率平均提升<strong>约 10%</strong>。启用次日，实例秒数下降 <strong>3.7%</strong>，而同一时期以 token 数计量的流量<strong>增长了 11.2%</strong>。由于我们用 A100、H100 等高端 GPU 服务模型，这转化为可观的成本优势。</p>
-<p>Replica Compaction 的效果与节省幅度，取决于流量分布、deployment 数量与底层实例类型，差异很大。在负载较分散的场景（如上面的示例），成本可降低 50% 甚至更多！</p>
-<h2>Replica Compaction 的下一步</h2>
-<p>团队持续改进 Replica Compaction 算法，包括把节点成本与资源类型纳入考量，以更优化使用与总体成本。未来几个月会有更多精彩更新，敬请期待。</p>
-<h2>开始使用 Anyscale</h2>
-<p>Anyscale 的新 Replica Compaction 特性通过治理资源碎片化，显著改善了分布式集群的资源管理，为 Ray Serve 部署确保高效、经济的基础设施，且持续的增强将带来更智能的资源管理。在 Anyscale Platform 上部署 Ray Serve 应用时，Anyscale Replica Compaction 默认启用。</p>
-<p><a href="https://console.anyscale.com/register/ha?utm_source=blog&amp;utm_content=replica-compaction">立即开始！</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Ray 聚焦：我们如何做到每周发布 Ray</title>
-      <link>https://anyscale.com/blog/ray-spotlight-delivering-weekly-releases</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-spotlight-delivering-weekly-releases</guid>
-      <pubDate>Tue, 25 Jun 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Ray Spotlight: How we delivered Ray weekly releases</description>
-      <content:encoded><![CDATA[<h1>Ray 聚焦：我们如何做到每周发布 Ray</h1>
-<p>作者：Sam Chan | 2024 年 6 月 25 日</p>
-<h2><strong>引言</strong></h2>
-<p>新模型、新加速器、新技术推动的 AI 创新正以惊人的速度演进。为跟上节奏，Anyscale 的 Ray 团队近期改为每周发布，确保修复与增强能更快抵达不断壮大的 Ray 社区。</p>
-<p>本文探讨这次转型中的挑战与成果。</p>
-<h2><strong>变革的必要性</strong></h2>
-<p>在实施每周发布之前，Ray 遵循六周一轮的发布周期。三个主要痛点：</p>
-<ul><li><strong>不稳定测试（flaky tests）：</strong> Ray 的 CI（即合并前后测试）与发布测试常以难以复现的方式失败，给判定那些本应由这些测试捕捉的根本稳定性与可靠性问题引入了噪音。</li><li><strong>发布负担沉重：</strong> 发布频率低导致每次都要赶着合并 PR，造成压力并可能产生疏漏。</li><li><strong>用户挫败感：</strong> 用户要等下一个发布周期才能用上新功能或 bug 修复，或者依赖 nightly 构建。</li></ul>
-<p>为解决这些问题，团队下决心提高发布频率。</p>
-<h2><strong>克服不稳定</strong></h2>
-<p>为此，团队首先要处理 Ray 代码库内部的 instability。包括：</p>
-<ul><li><strong>整治测试失败：</strong> 去年，Ray 团队每周面临约 50-70 个失败测试。其中很多是非确定性、不稳定的，需要一次彻底清理。</li><li><strong>系统性更新：</strong> 团队实施了基础性更新以减少新问题的引入，同时对既有测试失败进行了一次严格的彻底清理。</li><li><strong>文化转变：</strong> 转向每周发布节奏需要公司文化的转变——鼓励更频繁、可控的更新，而不是周期性的高压发布期。</li></ul>
-<p><em>把每周发布的阻塞项压到 0 并维持住。</em></p>
-<h2><strong>结果与影响</strong></h2>
-<p>过去两个月，我们成功地向 Ray 社区交付了每周发布。</p>
-<p>此外，转向每周发布还带来了：</p>
-<ul><li><strong>稳定性增强：</strong> Ray 团队修复了约 <a href="https://github.com/issues?q=is%3Aissue+archived%3Afalse+label%3Aray-test-bot+label%3Astability+is%3Aclosed">350+ 个问题与不稳定测试</a>，使每次周发布的测试通过率显著可靠起来。</li></ul>
-<p>一些重点改进领域：</p>
-<ul><li>修复与主要云和加速器供应商集成点的测试（例如确保 Ray 在 AWS/GCP 上可靠启动，并支持 AMD 等替代加速器厂商）。</li><li>确保大规模批量推理被测试覆盖且可靠，尤其是 GPU 加速场景。</li><li>修复测试基础设施及 Ray Core 基础组件本身的代码，如对象引用计数、内存管理、autoscaler 与调度器。</li><li>修复压测 Ray Data 大规模数据 shuffle 可靠性的测试。</li><li>清理并修复 Windows 平台上的不稳定与失败测试。</li></ul>
-<p>完整分析与已关闭 issue 见：<a href="https://docs.google.com/spreadsheets/d/1w-3QkK07XI8q2baZ2-5dIj_Ow0NMPR1oQP5Er3_3g2c/edit#gid=0">ray-test-bot-stability.csv</a></p>
-<ul><li><strong>发布流程顺畅：</strong> 每周发布已成例行公事，干扰极小。得益于改进的测试基础设施，团队能及早发现性能回退、最大限度减少延误。</li><li><strong>生产力提升：</strong> 压力降低与规律发布节奏营造了更健康的工作环境，让工程师专注于持续改进。</li></ul>
-<p><em>发布间隔天数（我们现在稳定在约 7 天的周发布）。</em></p>
-<h2><strong>挑战与未来计划</strong></h2>
-<p>尽管收益明显，转向每周发布也带来一些挑战：</p>
-<ul><li><strong>升级频繁：</strong> 用户需要更频繁升级才能保持最新，这可能构成运维负担。对 Anyscale 托管 Ray 平台的用户，我们确保新版本经过测试、无缝集成，从而简化了这一过程。</li><li><strong>API 稳定性：</strong> 随着 Ray 走向成熟，团队专注于增强 API 稳定性与文档，让用户更容易适应变更。</li></ul>
-<p>为应对这些挑战，Ray 团队正在探索长期支持（LTS）版本的想法，为偏好更低更新频率的用户提供稳定基座，同时提供托管升级服务以实现平滑过渡。</p>
-<p>向每周发布的转型是 Ray 与 Anyscale 的一个重要里程碑，彰显我们对规模化稳定与可靠的承诺，同时保持与行业分布式机器学习前沿并驾齐驱的增强与创新节奏。</p>
-<p>随着 Ray 演进，我们对健壮测试、精简流程与以用户为中心的功能的坚持，将保持其在分布式计算技术领域的领先地位。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Ray Spotlight 系列：用 Runtime Env 即容器构建多租户 Serve 应用</title>
-      <link>https://anyscale.com/blog/ray-spotlight-series-multitenant-serve-applications-with-runtime-envs-as-containers</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-spotlight-series-multitenant-serve-applications-with-runtime-envs-as-containers</guid>
-      <pubDate>Thu, 13 Jun 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Ray Spotlight Series: Multitenant Serve Applications with Runtime Envs as Containers</description>
-      <content:encoded><![CDATA[<h1>Ray Spotlight 系列：用 Runtime Env 即容器构建多租户 Serve 应用</h1>
-<p>作者：Sam Chan 和 Cindy Zhang | 2024 年 6 月 13 日</p>
-<p>访谈人：</p>
-<p>Sam Chan，技术项目经理</p>
-<h2><strong>概览 ⚡</strong></h2>
-<p>在这场富有启发性的对话中，Sam Chan 与 Cindy Zhang 深入探讨依赖各不相同的多应用 serve 集群的进展与挑战。继续读下去，了解如今如何把不同容器部署到同一个服务集群上。</p>
-<h2><strong>基础概念 🔎</strong></h2>
-<p><strong>Sam Chan：</strong> 能否先大致解释一下什么是多应用支持、为什么它重要？</p>
-<p><strong>Cindy Zhang：</strong> 当然。简单来说，多应用支持让不同的应用运行在同一集群上，每个应用把 runtime environment 当容器用。多应用支持有助于更高效地管理资源，并降低运维复杂度——因为不同应用可以独立升级。</p>
-<p><strong>S：</strong> 我们此前是如何支持同一集群上的多个应用的？有什么缺点吗？</p>
-<p><strong>C：</strong> 去年夏天我们在 Ray Serve 上推出了多应用支持，让你在单个 Ray 集群上服务多个<em>相互独立</em>的应用。然而，许多不愿在运行时用 Ray runtime environments 安装依赖的用户，仍然必须把所有模型依赖打包进一个大 Docker 镜像。一些客户告诉我们这很痛苦，尤其是当他们有许多各自独立的应用想一起跑在同一 Ray 集群上时。</p>
-<p><strong>S：</strong> 用一个大镜像的痛点是什么？</p>
-<p><strong>C：</strong> 它导致镜像膨胀得离谱，所有依赖混在一起，维护起来相当头疼。例如我们的一位客户有许多不同的研究团队各自开发模型，他们希望把每个团队的代码部署进各自干净的小镜像（更好维护、迭代更快等）。</p>
-<p>最重要的是，支持独立镜像能让团队解决不同 Serve 应用依赖互相冲突的情况。</p>
-<p><strong>S：</strong> 我们构建多应用支持时只支持单一容器，是有什么原因吗？我们考虑过不同场景吗？</p>
-<p><strong>C：</strong> 历史上，对多容器的需求并不普遍，训练负载尤其如此。但随着应用变得更动态，我们看到了对这一特性更大的需求。</p>
-<h2><strong>Runtime Env 即容器 🧑‍💻</strong></h2>
-<p><strong>S：</strong> 这个新的&quot;runtime envs as containers&quot;特性如何提供帮助？</p>
-<p><strong>C：</strong> 有了它，现在可以为每个团队的应用指定不同的 Docker 镜像！当 Ray 需要为某应用启动一个 replica 时，它会直接用该应用的镜像起一个容器，在里面运行 worker 进程。应用之间的隔离非常干净。</p>
-<p><strong>S：</strong> 除隔离之外还有什么好处？它如何支撑多个 Serve 应用的多租户？</p>
-<p><strong>C：</strong> 当然有，它真正释放了 Ray 多租户能力的威力。由于应用各自在独立容器中、但仍运行在同一集群上，它们能以高得多的效率共享资源。</p>
-<p>例如，你可以把 8 个应用塞进一台带 8 块 GPU 的大 VM，并把每个 Ray Serve 应用配置为各用一块 GPU。</p>
-<p>这让用户能更细粒度、更精准地利用 GPU 容量，单台 VM 上不留闲置资源。</p>
-<p>运维复杂度也降低了，因为你只需要管理一个 Ray 集群；你现在可以在更多场景使用 Ray Serve 的<a href="https://docs.anyscale.com/preview/platform/services/update-a-service/#:~:text=To%20performance%20an%20in%2Dplace,to%20match%20the%20new%20configuration.&amp;text=You%20can't%20update%20the,using%20an%20in%2Dplace%20update.">原地更新（in-place updates）</a>。</p>
-<h2><strong>技术细节与挑战 ‼️</strong></h2>
-<p><strong>S：</strong> 能讲讲底层发生了什么吗？</p>
-<p><strong>C：</strong> 其实相当直接！我们把 Ray 与 Podman 集成，用于拉取镜像并启动容器。现在，当需要启动新的 Ray Worker 时，Ray 会调用 Podman 来编排相关镜像的拉取与容器的启动。随后 Ray 编排的是在那个容器内运行 Ray Worker 代码，而不是直接在宿主机上运行。为了让 Ray Serve 的生命周期事件正确挂接，我们下了不少功夫。</p>
-<p><strong>S：</strong> 这些好处与增强听起来很棒，但在单个 Ray 集群上使用多个 Docker 镜像有缺点吗？</p>
-<p><strong>C：</strong> 首先提醒一句：该特性很新，仍处于实验阶段。最大的一点是首次拉取镜像时会有启动延迟。我们也还没在超大规模下测试过。</p>
-<p>另一点是，至少目前，container runtime env 不支持其他 runtime env 字段，例如 Python 环境或工作目录。一切都必须在容器内声明好。</p>
-<h2><strong>展望未来 ⏩</strong></h2>
-<p><strong>S：</strong> 接下来这一特性将如何演进？</p>
-<p><strong>C：</strong> 好问题。短期内我们想把容器与其他 runtime env 字段组合的使用体验理顺，例如你希望为每个应用单独解释的特定环境变量。</p>
-<p>我们仍在收集用户反馈，弄清哪些字段该纳入、哪些不该。随着大家开始试用，我们也计划增加更多可扩展性测试，并整体性地收敛用户反馈。</p>
-<h2><strong>开始使用 ✅</strong></h2>
-<p>立即通过 Anyscale 使用多个 Ray Serve 应用与<em>runtime envs</em> 容器：<a href="https://docs.ray.io/en/latest/serve/advanced-guides/multi-app-container.html">Get started</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>用 Ray、NVIDIA Triton Inference Server 与 TensorRT-LLM 实现低延迟生成式…</title>
-      <link>https://anyscale.com/blog/low-latency-generative-ai-model-serving-with-ray-nvidia</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/low-latency-generative-ai-model-serving-with-ray-nvidia</guid>
-      <pubDate>Wed, 13 Mar 2024 00:00:00 +0000</pubDate>
-      <description>完整标题：用 Ray、NVIDIA Triton Inference Server 与 TensorRT-LLM 实现低延迟生成式 AI 模型服务 | 原文标题：Low-latency Generative AI Model Serving with Ray, NVIDIA Triton Inference Server, and NVIDIA TensorRT-LLM</description>
-      <content:encoded><![CDATA[<h1>用 Ray、NVIDIA Triton Inference Server 与 TensorRT-LLM 实现低延迟生成式 AI 模型服务</h1>
-<p>作者：Neelay Shah 和 Akshay Malik | 2024 年 3 月 13 日</p>
-<p>在之前的<a href="https://www.anyscale.com/blog/tackling-the-cost-and-complexity-of-serving-ai-in-production-ray-serve">博客</a>中，我们讲了 <a href="https://docs.ray.io/en/latest/serve/index.html">Ray Serve</a> 的灵活、可扩展与简洁如何帮助你提升硬件利用率、更快把 AI 应用送上生产。随着 AI 模型越来越大、越来越复杂，市场已经认同：优化模型推理以降低 GPU 成本至关重要。现在，Anyscale 与 NVIDIA 联手，把 Ray Serve 与 RayLLM 的开发者生产力，同 <a href="https://www.nvidia.com/en-us/ai-data-science/products/triton-inference-server/">NVIDIA Triton Inference Server</a> 软件与 <a href="https://github.com/NVIDIA/TensorRT-LLM">NVIDIA TensorRT-LLM 库</a>的前沿优化结合起来。</p>
-<h2><strong>用 Ray Serve 与 RayLLM 做模型服务</strong></h2>
-<p>Ray Serve 是构建于 Ray 之上、用于搭建端到端 AI 应用的可扩展模型服务库。它提供简单的 Python API，从 PyTorch 等框架搭建的深度学习神经网络，到任意业务逻辑，都能服务化。Ray Serve 尤其适合<a href="https://docs.ray.io/en/latest/serve/model_composition.html#serve-model-composition">模型组合</a>与多模型服务：你可以构建由多个 ML 模型组成的复杂推理服务，各部分独立自动扩缩，获得最优硬件利用。2023 年，Anyscale 在用户体验与性价比上大力投入，服务着 LinkedIn、<a href="https://raysummit.anyscale.com/agenda/sessions/233">Samsara</a>、<a href="https://raysummit.anyscale.com/agenda/sessions/146">DoorDash</a> 这样的 Ray Serve 用户（<a href="https://youtu.be/JqpefcQS1a4?feature=shared">LinkedIn 演讲</a>）。开发者们注意到了这一点——去年采用量增长 10 倍，无论初创还是大企业都在寻找更快更省地服务 AI 模型的方式。</p>
-<p><a href="https://github.com/ray-project/ray-llm">RayLLM</a> 是构建在 Ray Serve 上的 LLM 服务方案，让部署与管理各种开源 LLM 变得轻松。它提供大量经过优化、开箱即用的预配置开源 LLM，也支持自带模型。它还提供完全兼容 OpenAI 的 API，让你可以轻松迁移并接入 LangChain、LlamaIndex 等现有 LLM 工具链。由于构建在 Ray Serve 之上，自动扩缩、多 GPU 支持与多节点推理一应俱全。</p>
-<h2><strong>用 NVIDIA Triton Inference Server 与 TensorRT-LLM 部署 AI</strong></h2>
-<p>Triton Inference Server 是 NVIDIA 开发的开源软件平台，用于在生产环境中部署和服务 AI 模型。它帮助企业降低模型服务基础设施的复杂度、缩短新 AI 模型上生产的时间、扩大 AI 推理与预测容量。Triton Inference Server 支持 TensorFlow、PyTorch、ONNX 等多种深度学习框架，提供加速 GPU 与 CPU 推理的优化，被 <a href="https://resources.nvidia.com/en-us-inference-customer-story/nvidia-amazon-custom">Amazon</a>、<a href="https://resources.nvidia.com/en-us-inference-customer-story/ai-for-dev-solution">Microsoft</a>、<a href="https://blogs.nvidia.com/blog/ai-inference-oci-triton/">Oracle</a>、<a href="https://resources.nvidia.com/en-us-inference-customer-story/Amazon-accelerates-customer">Siemens</a>、<a href="https://resources.nvidia.com/en-us-inference-customer-story/american-express-prevents-fraud">American Express</a> 等大量企业用于规模化部署高效的深度学习模型。</p>
-<p><a href="https://github.com/NVIDIA/TensorRT-LLM">TensorRT-LLM</a> 是一个用于定义、优化并执行 LLM 推理的开源库。它保留了 FasterTransformer 的核心功能，配合 TensorRT 深度学习编译器，并以开源 Python API 快速支持新模型与定制。量化、in-flight batching、注意力优化等特性都收纳在简化的 Python API 之后，用以优化 LLM 的延迟与吞吐。</p>
-<h2><strong>发挥最大潜力：Ray Serve 与 RayLLM 结合 Triton Inference Server 和 TensorRT-LLM</strong></h2>
-<p><em>Ray Serve 与 NVIDIA Triton Inference Server。</em></p>
-<p>在 23.12 版本中，Triton Inference Server 提供了 <a href="https://github.com/triton-inference-server/tutorials/tree/main/Triton_Inference_Server_Python_API">Python API</a>，让开发者可以把 Triton Inference Server 的优化无缝嵌入运行在 Ray Serve 上的 Python 应用。对 Ray Serve 用户，这意味着 ML 模型性能的提升——下文的基准就是证明；也意味着能用上 NVIDIA Triton Inference Server 的高级推理服务能力，例如 <a href="https://github.com/triton-inference-server/model_analyzer">Model Analyzer</a>——它根据指定的应用 SLA 推荐最优模型配置。Ray Serve 用户还受益于 Triton Inference Server 的高可靠性——在 <a href="https://www.nvidia.com/en-us/case-studies/machine-learning-models-and-inference/">WealthSimple</a> 等客户处达到 99.999% 的可用性。Triton Inference Server 用户现在也可以用 Ray Serve 构建包含业务逻辑、多模型且自动扩缩的复杂应用，用 Python 简化 AI 开发。</p>
-<p><em>NVIDIA 吞吐与延迟对比。</em></p>
-<p>RayLLM v0.5 同时支持 TensorRT-LLM 与 vLLM，让开发者为 LLM 部署选择最优后端。</p>
-<p>请查阅<a href="https://docs.ray.io/en/master/serve/tutorials/triton-server-integration.html">这份指南</a>在 Ray Serve 上试用 Triton Inference Server。从<a href="https://github.com/ray-project/ray-llm">这里</a>开始使用 Ray LLM，部署经 TensorRT-LLM 优化的模型。</p>
-<p><strong>作者：</strong> <a href="https://www.linkedin.com/in/neelay-shah-75b5781/">Neelay Shah</a>，NVIDIA <a href="https://www.linkedin.com/in/akshay-malik-a47a1416/">Akshay Malik</a>，Anyscale</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

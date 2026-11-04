@@ -1,11 +1,11 @@
 # Kimi (月之暗面) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-31**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-05**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Kimi (月之暗面)（`moonshot_kimi`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
-- 页面：[变更日志](https://platform.kimi.com/docs/changelog/changelog/changelog)
+- 页面：[变更日志](https://platform.kimi.com/docs/changelog)
 
 ## 全部文章（共 27 篇，按日期倒序；无日期条目列于最后）
 

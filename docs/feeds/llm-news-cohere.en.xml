@@ -7,7 +7,223 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-cohere.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Embed 5 and Rerank 5 now on OpenRouterAccess Cohere’s state-…</title>
+      <link>https://cohere.com/blog/embed-rerank-5-openrouter</link>
+      <guid isPermaLink="true">https://cohere.com/blog/embed-rerank-5-openrouter?li=1</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Embed 5 and Rerank 5 now on OpenRouterAccess Cohere’s state-of-the-art retrieval models through a single API, with unified billing and no additional SDKs.</description>
+      <content:encoded><![CDATA[<p>Nov 04, 2026</p>
+<p>6 minute read</p>
+<h1>Embed 5 and Rerank 5 now on OpenRouter</h1>
+<p>Access Cohere’s state-of-the-art retrieval models through a single API, with unified billing and no additional SDKs.</p>
+<p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/2bf7ca0269bb95916830cc2a5116d517ddf6353f-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130" alt="Promotional graphic announcing Cohere Embed 5 and Rerank 5 availability on OpenRouter, featuring white text and logos against an abstract black, blue, and purple gradient background."></p>
+<p><a href="https://openrouter.ai/cohere/embed-5-pro">Embed 5</a> and <a href="https://openrouter.ai/cohere/rerank-5-pro">Rerank 5</a> are now live on OpenRouter. Here’s how to turn them into a working RAG pipeline in a few dozen lines of Python code through a <a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/rag">single API</a>.</p>
+<p>There are Cohere’s most powerful retrieval models yet, delivering leading performance on enterprise documents and complex retrieval tasks. If you’re already using OpenRouter, you can get started immediately - using the same API key and credits as your existing models, with no additional setup.</p>
+<p>RAG grounds an LLM's answer in your own data by fetching relevant chunks before it writes. Embedding search provides a fast and effective first-stage approximation. A reranker then reads the query and each candidate together, adding precision to what’s been retrieved.</p>
+<p>Two features of the Cohere models shape this design:</p>
+<ul><li><strong>Embed 5 Pro and Fast share one embedding space.</strong> Index with <code>embed-5-pro</code> for quality, then query with <code>embed-5-fast</code> for latency.</li><li><strong>Rerank 5 scores are calibrated.</strong> A score means the same thing across queries and domains, so one relevance threshold can filter out weak context before it reaches the LLM.</li></ul>
+<p>By the end you'll have a short Python script that answers questions over your docs with scored citations. This same approach can be applied to virtually any retrieval use case, from enterprise search and customer support to knowledge management and document discovery.</p>
+<p>A RAG pipeline has two halves: an offline job that builds a searchable index, and an online path that runs for every question. Knowing which calls happen once and which happen per request help explain most of the pipeline's cost and latency. Indexing runs once per corpus. Each question then costs one Embed 5 Fast call, one Rerank 5 call and one chat call, all through OpenRouter's API.</p>
+<h3>Setup</h3>
+<p>You’ll need Python 3.10 or newer, an <a href="https://openrouter.ai/docs/api/api-reference/api-keys/create-a-new-api-key">OpenRouter API key</a>, the <a href="https://openrouter.ai/docs/client-sdks/overview">OpenRouter Python SDK</a>, and NumPy for an in-memory vector store.</p>
+<pre><code>pip install openrouter numpy
+export OPENROUTER_API_KEY=&quot;sk-or-...&quot;</code></pre>
+<pre><code>import os
+import numpy as np
+from openrouter import OpenRouter
+
+client = OpenRouter(api_key=os.environ[&quot;OPENROUTER_API_KEY&quot;])
+
+EMBED_INDEX_MODEL = &quot;cohere/embed-5-pro&quot;   # indexing: highest quality
+EMBED_QUERY_MODEL = &quot;cohere/embed-5-fast&quot;  # queries: lowest latency
+RERANK_MODEL      = &quot;cohere/rerank-5-pro&quot;  # or cohere/rerank-5-fast
+CHAT_MODEL        = &quot;deepseek/deepseek-v4.1-flash-1017&quot;       # any chat model on OpenRouter
+DIMS = 1024                                    # 256 | 512 | 768 | 1024 | 1536 | 2048</code></pre>
+<p>Embed 5 returns Matryoshka vectors at six sizes, 2048 by default. We <a href="https://cohere.com/blog/embed-5">suggest</a> 1,024-dim int8 vectors as the best quality-to-cost point; OpenRouter's <a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">embeddings API</a> returns floats, so this post uses 1,024-dim floats.</p>
+<p>The NumPy store keeps this demo simple. For production, replace it with your preferred vector database, such as pgvector, Qdrant, Pinecone, or Weaviate.</p>
+<h3>Indexing</h3>
+<p>Indexing turns each chunk of text into a vector, a list of numbers where similar meanings sit close together. It runs once per corpus, so it's the step where the highest-quality model pays off.</p>
+<p>Split each document into chunks, embed them with Embed 5 Pro as <code>search_document</code>, and normalize the vectors so a dot product equals cosine similarity.</p>
+<p>The sample corpus is a fictional API's docs, with a few near-misses on purpose:</p>
+<pre><code>docs = [
+    {&quot;title&quot;: &quot;Rotating API keys&quot;,
+     &quot;text&quot;: &quot;To rotate a key without downtime, create a second key, deploy it to every service, &quot;
+             &quot;confirm traffic on the new key in the usage dashboard, then revoke the old key.&quot;},
+    {&quot;title&quot;: &quot;Creating API keys&quot;,
+     &quot;text&quot;: &quot;Create keys under Settings &gt; API Keys. Each key can be scoped to read or write and to one project.&quot;},
+    {&quot;title&quot;: &quot;Revoking API keys&quot;,
+     &quot;text&quot;: &quot;Revoking a key takes effect immediately. Requests with a revoked key return 401 Unauthorized.&quot;},
+    {&quot;title&quot;: &quot;Webhook signing secrets&quot;,
+     &quot;text&quot;: &quot;Rotate your webhook signing secret from the Webhooks page. The old secret stays valid &quot;
+             &quot;for 24 hours so you can update your verifier.&quot;},
+    {&quot;title&quot;: &quot;Log rotation&quot;,
+     &quot;text&quot;: &quot;Request logs rotate daily and are kept for 30 days. Export them to S3 for longer retention.&quot;},
+    {&quot;title&quot;: &quot;Rate limits&quot;,
+     &quot;text&quot;: &quot;Each API key is limited to 600 requests per minute. Going over returns 429 Too Many Requests.&quot;},
+]</code></pre>
+<pre><code>def chunk(doc, max_chars=1500):
+    &quot;&quot;&quot;Split on blank lines, packing paragraphs up to ~max_chars.&quot;&quot;&quot;
+    out, buf = [], &quot;&quot;
+    for para in doc[&quot;text&quot;].split(&quot;\n\n&quot;):
+        if buf and len(buf) + len(para) &gt; max_chars:
+            out.append({&quot;title&quot;: doc[&quot;title&quot;], &quot;text&quot;: buf.strip()})
+            buf = &quot;&quot;
+        buf += para + &quot;\n\n&quot;
+    if buf.strip():
+        out.append({&quot;title&quot;: doc[&quot;title&quot;], &quot;text&quot;: buf.strip()})
+    return out
+
+def embed(texts, model, input_type, batch=96):
+    vecs = []
+    for i in range(0, len(texts), batch):
+        res = client.embeddings.generate(
+            model=model,
+            input=texts[i:i + batch],   # one request per batch
+            input_type=input_type,      # &quot;search_document&quot; | &quot;search_query&quot;
+            dimensions=DIMS,
+        )
+        vecs += [d.embedding for d in res.data]
+    v = np.array(vecs, dtype=np.float32)
+    return v / np.linalg.norm(v, axis=1, keepdims=True)
+
+chunks = [c for d in docs for c in chunk(d)]
+doc_vecs = embed([c[&quot;text&quot;] for c in chunks], EMBED_INDEX_MODEL, &quot;search_document&quot;)</code></pre>
+<p>Three key details to point out:</p>
+<ul><li><code>input_type<strong>:</strong></code> tells Embed 5 which side of the search a text is on. OpenRouter passes it through to Cohere.</li><li><strong>Batching:</strong> sends many chunks per request, which cuts round trips and speeds up indexing. It doesn't change the cost, since embeddings are priced per token.</li><li><strong>Chunk size:</strong> packing whole paragraphs follows the by-paragraph strategy in <a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/rag">OpenRouter's guide</a>, and 1,500 characters is roughly 300–400 tokens of English. Embed 5 accepts up to 128k tokens, but every chunk also goes through Rerank 5, which reads up to 32k tokens of query and chunk combined and splits anything longer into several passes.</li></ul>
+<h3>Retrieval</h3>
+<p>Retrieval finds the chunks whose vectors sit closest to the question's vector. This acts as a representation of semantic similarity between the two pieces of content.</p>
+<p>Embed the question with Embed 5 Fast as <code>search_query</code>, then pull a wide candidate set of 20 chunks by cosine similarity.</p>
+<pre><code>def retrieve(query, k=20):
+    q = embed([query], EMBED_QUERY_MODEL, &quot;search_query&quot;)[0]
+    scores = doc_vecs @ q                 # cosine, since both sides are normalized
+    top = np.argsort(-scores)[:k]
+    return [(chunks[i], float(scores[i])) for i in top]</code></pre>
+<p>Querying a Pro-built index with Fast works because the two models <a href="http://www.cohere.com/blog/embed-5">share an embedding space</a>, as long as both sides use the same <code>dimensions</code>. It's the split we recommend: in <a href="https://cohere.com/blog/embed-5">Cohere's tests</a> across 40 datasets, Fast queries on a Pro index kept 98.4% of all-Pro retrieval quality, against 96.6% for Fast on both sides. With any other model family, you’d have to use the same model on both sides.</p>
+<p>Let’s cast a wide net at this stage: recall is the retriever's job, precision is Rerank’s. OpenRouter's guide suggests 10–20 candidates feeding a top 3–5 rerank.</p>
+<h3>Reranking</h3>
+<p>Reranking re-scores the shortlist by reading the question and each chunk together. That's too slow to run over a whole index but more accurate than vector similarity, so it runs only on the top candidates. Rerank doesn’t require Embed - or any embedding model. It works as a simple second stage with your existing semantic, keyword, or hybrid search system.</p>
+<p>Send the query and the 20 candidates to Rerank 5, keep the top 5, and drop anything under a relevance threshold.</p>
+<pre><code>MIN_SCORE = 0.3
+
+def rerank(query, candidates, top_n=5):
+    res = client.rerank.rerank(
+        model=RERANK_MODEL,
+        query=query,
+        documents=[c[&quot;text&quot;] for c, _ in candidates],
+        top_n=top_n,
+    )
+    return [
+        (candidates[r.index][0], r.relevance_score)
+        for r in res.results          # sorted by relevance, highest first
+        if r.relevance_score &gt;= MIN_SCORE
+    ]</code></pre>
+<p>Each result carries the candidate's position in your list (<code>index</code>) and a <code>relevance_score</code>, per the <a href="https://openrouter.ai/docs/sdks/typescript/api-reference/operations/creatererankresponsebody">rerank response schema</a>.</p>
+<p>What <a href="https://docs.cohere.com/changelog/rerank-v5">Rerank 5</a> adds at this step:</p>
+<ul><li><strong>Calibrated scores.</strong> Scores stay consistent across queries and domains, so a single <code>MIN_SCORE</code> decides what reaches the LLM.</li><li><strong>32k-token context.</strong> Long chunks are scored whole.</li><li><strong>Semi-structured data.</strong> JSON records and tables rerank well when formatted as YAML strings.</li><li><strong>No re-indexing to upgrade.</strong> Rerank reads raw text at query time, so switching models is a one-line change.</li></ul>
+<p>Use <code>rerank-5-pro</code> for reasoning-heavy queries and long or domain-specific documents. Use <code>rerank-5-fast</code> for high-volume search and agents that search many times per task. One thing to note: <a href="https://docs.cohere.com/docs/rerank">Rerank 5</a> is text-only, but will work for parsed pdfs.</p>
+<h3>Generation</h3>
+<p>Generation hands the best chunks to an LLM as numbered sources and asks it to answer from those alone. That keeps answers grounded in your docs and gives readers citations they can check. If nothing clears the threshold, skip the LLM call entirely.</p>
+<pre><code>SYSTEM = (
+    &quot;Answer using only the numbered sources. &quot;
+    &quot;Cite them inline like [1]. &quot;
+    &quot;If the sources don't contain the answer, say you don't know.&quot;
+)
+
+def answer(query):
+    hits = rerank(query, retrieve(query))
+    if not hits:
+        return &quot;I couldn't find that in the docs.&quot;
+
+    sources = &quot;\n\n&quot;.join(
+        f&quot;[{i}] {c['title']}\n{c['text']}&quot; for i, (c, _) in enumerate(hits, 1)
+    )
+    res = client.chat.send(
+        model=CHAT_MODEL,
+        messages=[
+            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: SYSTEM},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;Sources:\n\n{sources}\n\nQuestion: {query}&quot;},
+        ],
+    )
+    return res.choices[0].message.content
+
+print(answer(&quot;How do I rotate an API key without downtime?&quot;))</code></pre>
+<p>Sending each chunk's title with its text lets the model cite something readable; add URLs too if your docs have them. OpenRouter's guide uses the Responses API for this step instead. To follow it, call <code>client.responses.send</code> with the system prompt as <code>instructions</code> and the sources and question as <code>input</code>, then read the answer from the message item in <code>res.output</code> rather than from <code>choices</code>.</p>
+<h3>Results</h3>
+<p>Here we’ll validate whether the steps we implemented improved our responses.</p>
+<p>Reranking earns its extra call when it confidently picks the right chunk and drops near-misses that embedding search ranks just below it.</p>
+<pre><code>q = &quot;How do I rotate an API key without downtime?&quot;
+
+cands = retrieve(q)
+hits = rerank(q, cands)
+
+print(&quot;Embedding only (top 3):&quot;)
+for c, s in cands[:3]:
+    print(f&quot;  {s:.3f}  {c['title']}&quot;)
+
+print(&quot;After Rerank 5:&quot;)
+for c, s in hits:
+    print(f&quot;  {s:.3f}  {c['title']}&quot;)</code></pre>
+<table><thead><tr><th>Rank</th><th>Embed 5 only</th><th>Embed 5 + Rerank 5</th></tr></thead><tbody><tr><td>1</td><td>Rotating API keys · 0.522</td><td>Rotating API keys · 0.808</td></tr><tr><td>2</td><td>Webhook signing secrets · 0.337</td><td><em>below 0.3 cutoff</em></td></tr><tr><td>3</td><td>Creating API keys · 0.316</td><td><em>below 0.3 cutoff</em></td></tr></tbody></table>
+<h3>Wrap-up</h3>
+<p>Everything in this pipeline ran through one API key and one client. Embed 5 Pro built the index, Embed 5 Fast and Rerank 5 handled each question, and a chat model wrote the answer, with no separate SDKs, accounts or bills to juggle.</p>
+<p>That single surface is also what makes the pipeline easy to evolve. Every model is just a string, so trying <code>rerank-5-fast</code> instead of <code>rerank-5-pro</code>, or a different chat model, is a one-line change.</p>
+<p>Start with the sample corpus, swap in your own docs, and see what Rerank 5 moves to the top.</p>
+<p>Where to take it next:</p>
+<ul><li><strong>Hybrid search.</strong> Add keyword (BM25) hits beside the vector hits. Rerank reads raw text, so it scores both lists in one call.</li><li><strong>A smaller index.</strong> Drop to 512 or 256 dimensions, or use int8 or binary vectors through Cohere's own API.</li><li><strong>Images and PDFs.</strong> Embed 5 embeds images and mixed text-and-image inputs such as PDF pages, and OpenRouter's embeddings API accepts <code>image_url</code> content parts. Rerank 5 is text-only, so rerank those results on their text, such as parsed page text or captions, or skip reranking for them.</li><li><strong>Evaluation.</strong> Label a small set of real queries, compare hit rate at 5 with and without rerank, and tune <code>MIN_SCORE</code> on the same set.</li><li><strong>Explore <a href="http://www.cohere.com/compass">Compass</a></strong>. Cohere’s enterprise search and retrieval platform brings Embed and Rerank together in a single solution, making it easier to build powerful search and AI applications across enterprise data. Now available to <a href="http://www.cohere.com/blog/compass-cloud-beta">cloud customers</a>.</li></ul>
+<h3>Useful links</h3>
+<ul><li><a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">OpenRouter embeddings API</a></li><li><a href="https://openrouter.ai/docs/client-sdks/python/sdks/rerank">OpenRouter Python SDK rerank</a></li><li><a href="http://www.cohere.com/blog/embed-5">Embed 5 announcement blog</a></li><li><a href="http://www.cohere.com/blog/rerank-5">Rerank 5 announcement blog</a></li><li><a href="https://docs.google.com/spreadsheets/d/1HLj1KOjJdFh9bTAc6lbWxG7VfjkRMeE7V11Q0eojtAA/edit?gid=0#gid=0">Embed 5 benchmark results</a></li><li><a href="https://docs.google.com/spreadsheets/d/1FYXax6vFdKE4ph3eXj935jCl7mpeczvYe5jye2h1f9U/edit?gid=0#gid=0">Rerank 5 benchmark results</a></li></ul>
+<h2>Read this next</h2>
+<ul><li><a href="https://cohere.com/blog/open-source-model-vault"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/94683ad16fe28268fa577a6c84a3556bb7fc1a43-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="An abstract image with words overlayed reading &quot;World's leading open models, under your control. Available in Model Vault&quot;"></a><a href="https://cohere.com/blog/tag/product-launch">Product Launch</a><a href="https://cohere.com/blog/open-source-model-vault">The world's leading open models, fully under your controlNov 03, 20264 min read</a></li><li><a href="https://cohere.com/blog/cohere-canada-commitment"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/6f3e91a2db90382d96ee92b134a8b86b62d94417-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/company-news">Company News</a><a href="https://cohere.com/blog/cohere-canada-commitment">Cohere advances C$4 billion commitment to strengthen Canada’s AI leadership and significantly expand its national workforceOct 30, 20263 min read</a></li><li><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/a9f5cf4c07f32484927a5f451a4763453a1cd062-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/enterprise-ai">Enterprise AI</a><a href="https://cohere.com/blog/tag/ai-for-developers">AI for Developers</a><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws">Build a financial research assistant with Cohere on AWSOct 29, 202617 min read</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>The world&apos;s leading open models, fully under your controlThe…</title>
+      <link>https://cohere.com/blog/open-source-model-vault</link>
+      <guid isPermaLink="true">https://cohere.com/blog/open-source-model-vault?li=1</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: The world&apos;s leading open models, fully under your controlThe right model for the right job, all under your jurisdiction.</description>
+      <content:encoded><![CDATA[<p>Nov 03, 2026</p>
+<p>4 minute read</p>
+<h1>The world's leading open models, fully under your control</h1>
+<p>The right model for the right job, all under your jurisdiction.</p>
+<p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/94683ad16fe28268fa577a6c84a3556bb7fc1a43-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130" alt="An abstract image with words overlayed reading &quot;World's leading open models, under your control. Available in Model Vault&quot;"></p>
+<p>Key takeaways</p>
+<ul><li><strong>Open models are now available on Model Vault</strong>: Enterprises can run both Cohere's models and leading open models (such as DeepSeek V4.1 Flash, Gemma 4, GPT-OSS, and Phi) on a fully managed, encrypted inference platform.</li><li><strong>Zero data retention by default: </strong>Neither prompts nor outputs are retained in Model Vault, providing a strong baseline of security.</li><li><strong>Sovereign inference: </strong>You retain control over four key elements: where your data lives (data residency and regulatory compliance), who can access it (isolated tenant with full privacy in Encrypted), which models you can use (the right model for each task rather than just one provider's offerings), and how your AI runs (not dictated by the provider).</li><li><strong>Regional availability:</strong> Model Vault is live in the United States, European Union, and Canada; Model Vault Encrypted is live in the US with EU and Canada support coming soon.</li></ul>
+<p>Sovereignty in AI means customers can choose, inspect, and deploy the models that best serve their needs without surrendering control to a single vendor, but that freedom should never come at the expense of security or privacy. Adding leading open models from Cohere and other providers across the globe inside of Model Vault gives our customers the flexibility they need to use the right tool for the job without sacrificing the standards that govern their business.</p>
+<p>Every organization wants to use the best AI models available for the task at hand but many cannot. For a bank, a hospital or a government department, sending sensitive data to a shared API is often off the table. At the same time, managing inference for open or on-premise models may also not be possible due to capability or capacity constraints. Teams end up choosing between the model they want, the control they need, and the capacity they have to manage them.</p>
+<p>They shouldn't have to. Today we're launching third party models inside Model Vault and Model Vault Encrypted, allowing Enterprises to run both Cohere’s models and leading open models on a fully managed and encrypted inference platform. Zero data retention of prompts and outputs is implemented by default in Model Vault.</p>
+<h3><strong>Two levels of protection</strong></h3>
+<p>Model Vault provides the full inference stack managed through an isolated instance dedicated to your organization alone. Model Vault Encrypted goes further, keeping your data encrypted even while the model processes it.</p>
+<p><strong>Model Vault:</strong> Your models and workloads run on single tenant infrastructure. You choose the region, and your prompts and outputs stay there. Cohere manages the infrastructure so you get production-grade serving without building and running your own cluster.</p>
+<p><strong>Model Vault Encrypted:</strong> For your most sensitive work, Model Vault Encrypted protects data in use, not just at rest and in transit. Prompts and outputs are processed inside isolated environments and stay encrypted throughout using confidential computing. Not even Cohere can see what you send to a model or what it sends back. Neither can any cloud provider.</p>
+<table><thead><tr><th>Model family*</th><th>Developer</th><th>Model Vault</th><th>Model Vault Encrypted</th></tr></thead><tbody><tr><td>Command</td><td>Cohere</td><td>Yes</td><td>No</td></tr><tr><td>Embed</td><td>Cohere</td><td>Yes</td><td>Yes</td></tr><tr><td>Rerank</td><td>Cohere</td><td>Yes</td><td>Yes</td></tr><tr><td>Parse</td><td>Cohere</td><td>Yes</td><td>Yes</td></tr><tr><td>Transcribe</td><td>Cohere</td><td>Yes</td><td>Yes</td></tr><tr><td>Translate</td><td>Cohere</td><td>Yes</td><td>Yes</td></tr><tr><td>DeepSeek</td><td>DeepSeek</td><td>Yes</td><td>No</td></tr><tr><td>GLM</td><td>Z.ai</td><td>Yes</td><td>No</td></tr><tr><td>MiMo</td><td>Xiaomi</td><td>Yes</td><td>No</td></tr><tr><td>Gemma</td><td>Google</td><td>Yes</td><td>Yes</td></tr><tr><td>Nemotron</td><td>NVIDIA</td><td>Yes</td><td>No</td></tr><tr><td>GPT-OSS</td><td>OpenAI</td><td>Yes</td><td>Yes</td></tr><tr><td>Phi</td><td>Microsoft</td><td>Yes</td><td>Yes</td></tr><tr><td>Hy3</td><td>Tencent</td><td>Yes</td><td>No</td></tr></tbody></table>
+<h3><strong>What sovereign inference means</strong></h3>
+<p>Sovereign inference means you decide how your AI runs, not your provider. It comes down to four things:</p>
+<ul><li><strong>Where your data lives.</strong> Run inference workloads in your preferred supported region to help meet your organization’s data residency and regulatory requirements.</li><li><strong>Who can access it.</strong> Model Vault keeps your workloads in a separate, isolated tenant. With Model Vault Encrypted, no one but you can see your prompts or outputs, including Cohere.</li><li><strong>Which models you can use.</strong> The model that best fits the task, not just the one that happens to be available through a single provider.</li></ul>
+<h3><strong>What customers are saying</strong></h3>
+<blockquote>“Security is at the heart of what Language Weaver offers to our customers, whether that pertains to zero data retention, data residency requirements, or simply having more control over their AI model. Our customers around the globe trust us with some of their most sensitive content. Cohere Model Vault lets Language Weaver run models - including the LW Pro model - securely and efficiently, while ensuring our customers are in control over where their data goes. It’s fast and reliable, and because Cohere handles the hosting and scaling, our teams can stay focused on what we do best: delivering for our customers.”Dragos Munteanu, VP Research and Product Development, RWS</blockquote>
+<h3><strong>The right model for every job</strong></h3>
+<p>No single model is best at everything. Model Vault lets you pick the right one for each task, and run every one of them with the same protections.</p>
+<p><strong>Cohere's models.</strong> Command for generative and agentic work, Embed and Rerank for search and retrieval, Parse for documents, Transcribe for speech and Translate for multilingual workflows.</p>
+<p><strong>High performing open models.</strong> Alongside our own models, Model Vault runs the most-used open models, including DeepSeek V4.1 Flash (the most-used open model on OpenRouter), GLM 5.3 Flash, MiMo V2.6 Pro, Gemma 4, and NVIDIA Nemotron. GPT-OSS and Phi models are available too.</p>
+<p>With Model Vault you can choose the best model for each task and run it within a unified, production inference stack.</p>
+<p><a href="https://vault.cohere.com/">Explore Model Vault</a></p>
+<p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/2fb862f2c83bbb989a895b6745fe989f6d40b26f-1440x656.png?auto=format&amp;fit=max&amp;q=80&amp;w=800" alt=""></p>
+<h3><strong>Where it's available</strong></h3>
+<p>Model Vault is live today with regional serving available in the United States, the European Union and Canada. Model Vault Encrypted is live in the US, with regional EU and Canada serving coming soon.</p>
+<p>This is the start. Over the coming months we'll bring sovereign inference to more places and more workloads:</p>
+<ul><li><strong>New regions,</strong> so more organizations can run models in their preferred region.</li><li><strong>Model Vault Encrypted with regional supported for Canada and the EU.</strong></li><li><strong>Larger models in Model Vault Encrypted,</strong> extending confidential compute to more demanding workloads.</li><li><strong>More models in every region,</strong> as new open models are released and adopted.</li></ul>
+<table><thead><tr><th>Region</th><th>Model Vault</th><th>Model Vault Encrypted</th></tr></thead><tbody><tr><td>United States</td><td>Available</td><td>Available</td></tr><tr><td>European Union</td><td>Available</td><td>Coming soon</td></tr><tr><td>Canada</td><td>Available</td><td>Coming soon</td></tr></tbody></table>
+<h3><strong>FAQ</strong></h3>
+<p><strong>Which option is right for me?</strong> Model Vault suits most regulated workloads that need an isolated tenant and in-region processing with a wide model catalogue. Choose Model Vault Encrypted for data sensitive workloads, when no one outside your organization, including Cohere, should be able to see your data.</p>
+<p><strong>Can I run open models in Model Vault Encrypted?</strong> Yes. Models like Gemma, GPT-OSS and Phi models run in Model Vault Encrypted today, alongside Cohere's Embed, Rerank, Transcribe and Translate. See the table above for the full list.</p>
+<p><strong>How is Model Vault priced?</strong> Pricing is by GPU type. Please visit <a href="http://cohere.com/pricing">cohere.com/pricing</a> for details including on-demand (hourly) pricing and promotions. Reach out to sales for reserved capacity; monthly and annual commit pricing is available.</p>
+<h3><strong>Get started</strong></h3>
+<p>Model Vault and Model Vault Encrypted are available today. <a href="https://vault.cohere.com/">Sign up</a>, or talk to our team about the right setup for your organization.</p>
+<h2>Read this next</h2>
+<ul><li><a href="https://cohere.com/blog/embed-rerank-5-openrouter"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/2bf7ca0269bb95916830cc2a5116d517ddf6353f-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="Promotional graphic announcing Cohere Embed 5 and Rerank 5 availability on OpenRouter, featuring white text and logos against an abstract black, blue, and purple gradient background."></a><a href="https://cohere.com/blog/tag/ai-for-developers">AI for Developers</a><a href="https://cohere.com/blog/embed-rerank-5-openrouter">Embed 5 and Rerank 5 now on OpenRouterNov 04, 20266 min read</a></li><li><a href="https://cohere.com/blog/cohere-canada-commitment"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/6f3e91a2db90382d96ee92b134a8b86b62d94417-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/company-news">Company News</a><a href="https://cohere.com/blog/cohere-canada-commitment">Cohere advances C$4 billion commitment to strengthen Canada’s AI leadership and significantly expand its national workforceOct 30, 20263 min read</a></li><li><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/a9f5cf4c07f32484927a5f451a4763453a1cd062-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/enterprise-ai">Enterprise AI</a><a href="https://cohere.com/blog/tag/ai-for-developers">AI for Developers</a><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws">Build a financial research assistant with Cohere on AWSOct 29, 202617 min read</a></li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>Build a financial research assistant with Cohere on AWS</title>
       <link>https://cohere.com/blog/financial-research-assistant-cohere-aws</link>
@@ -151,11 +367,10 @@
 <ul><li><a href="https://cohere.com/blog/pitchbook-integration"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/bd462488492399f45500e9b3b04295d8f1d23f06-3840x2160.jpg?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="A purple banner showing a connected North and PitchBook."></a><a href="https://cohere.com/blog/tag/partner">Partner</a><a href="https://cohere.com/blog/tag/financial-services">Financial Services</a><a href="https://cohere.com/blog/tag/product-launch">Product Launch</a><a href="https://cohere.com/blog/pitchbook-integration">PitchBook in North: Private market intelligence for enterprise teamsOct 26, 20262 min read</a></li><li><a href="https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/975a9a31956f1e99e4a83aadce188b1d2f867789-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="Abstract imagery"></a><a href="https://cohere.com/blog/tag/company-news">Company News</a><a href="https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model">Concerning behavior from a popular open-weight AI modelOct 26, 202612 min read</a></li><li><a href="https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/fc96d67622cfc9c2b113f533f1385f1ceedb9638-1920x1080.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/technology">Technology</a><a href="https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference">Inside Cohere Model Vault: Building a verifiable confidential AI inferenceOct 22, 20268 min read</a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>Who Gets to Build the Frontier for AIWhy the democratic worl…</title>
+      <title>Who Gets to Build the Frontier for AI</title>
       <link>https://cohere.com/blog/who-gets-to-build-the-frontier-for-ai</link>
       <guid isPermaLink="true">https://cohere.com/blog/who-gets-to-build-the-frontier-for-ai?li=1</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Who Gets to Build the Frontier for AIWhy the democratic world needs more frontier AI builders and how we intend to compete.</description>
       <content:encoded><![CDATA[<p>Oct 29, 2026</p>
 <p>11 minute read</p>
 <h1>Who Gets to Build the Frontier for AI</h1>
@@ -3209,110 +3424,6 @@ make sure the test CohereLabs/cohere-transcribe-03-2026 passes
 <p><em><strong>Key contributors:</strong> Julian Mack (Member of Technical Staff), Ekagra Ranjan (Member of Technical Staff), Cassie Cao (Product Manager), Bharat Venkitesh (Manager of Technical Staff), Pierre Harvey Richemond (Manager of Technical Staff).</em></p>
 <h2>Read this next</h2>
 <ul><li><a href="https://cohere.com/blog/rcp-ndcg"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/ef9d5d5c1ab3414923df1fa97e3754ecc0a8f393-2912x1630.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="Logo depicting RCP-DCG"></a><a href="https://cohere.com/blog/tag/technology">Technology</a><a href="https://cohere.com/blog/tag/ai-for-developers">AI for Developers</a><a href="https://cohere.com/blog/tag/research">Research</a><a href="https://cohere.com/blog/rcp-ndcg">RCP-nDCG@10: A more complete way to measure retrieval relevanceSep 30, 20267 min read</a></li><li><a href="https://cohere.com/blog/embed-5"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/707e10f3b1b953018b94864b0a4b9e99a8843cde-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="Embed 5 logo on an abstract blue and black background."></a><a href="https://cohere.com/blog/tag/product-launch">Product Launch</a><a href="https://cohere.com/blog/tag/company-news">Company News</a><a href="https://cohere.com/blog/embed-5">Introducing Embed 5—A new family of frontier embedding modelsSep 30, 20267 min read</a></li><li><a href="https://cohere.com/blog/compass-cloud-beta"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/3ff9058d77d0a46ac36c66e586eecb01128c3bba-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="Compass cloud logo"></a><a href="https://cohere.com/blog/tag/product-launch">Product Launch</a><a href="https://cohere.com/blog/tag/ai-for-developers">AI for Developers</a><a href="https://cohere.com/blog/compass-cloud-beta">Compass is coming to the cloudSep 25, 20265 min read</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Future(s) of WorkHow will AI change the way we work?</title>
-      <link>https://cohere.com/research/futures-of-work</link>
-      <guid isPermaLink="true">https://cohere.com/research/futures-of-work?li=1</guid>
-      <content:encoded><![CDATA[<p>Future(s) of Work</p>
-<h1>Navigating AI’s impact on work</h1>
-<p>By examining how jobs and technology are transforming, we aim to enable pathways to build meaningful futures of work.</p>
-<p>Read our latest</p>
-<p>new release</p>
-<h3>Introducing the Agentic Task Ecosystem: A dataset illustrating the MCP landscape</h3>
-<p>By mapping AI tools to real occupational tasks, ATE makes automation's workplace impact searchable and actionable.</p>
-<ul><li>694,000+ executable tools analyzed across public MCP directories</li><li>Built from 123,000 public MCP servers across 7 directories</li></ul>
-<p>Explore the ecosystem</p>
-<p>Read the blog</p>
-<p>RESEArch paper</p>
-<h3>The Future of Work has an evidence problem</h3>
-<p>Is AI coming for your job? We investigated the numbers to reveal their accuracy and understand how we can fill in the gaps.</p>
-<p>Read the blog</p>
-<p>Read the paper</p>
-<h3>Investigate the landscape</h3>
-<p>We are all a part of the future of work. Explore our interactive articles to understand how your occupation could transform.</p>
-<h3>Labor map</h3>
-<p>Explore O*Net, the main dataset used to understand US labor, and how you’re reflected in it.</p>
-<h3>The MCP landscape</h3>
-<p>Discover where work automation tools exist, and how they’re distributed in the real world.</p>
-<h3>Understanding expertise</h3>
-<p>See the parts of your job connected to automation, and understand how that could transform your work.</p>
-<h3>Our approach</h3>
-<p>Through multidisciplinary research we bridge theory and practice to ensure our research becomes a catalyst for action.</p>
-<p>Multidisciplinary</p>
-<p>The future of work is multi-dimensional, requiring a multidisciplinary approach. Our team combines ML, economics, design, and ethics expertise to tackle this challenge.</p>
-<p>Impact-Focused</p>
-<p>The artifacts we release empower people to shape AI in the workplace through creating tools and evidence that give them agency.</p>
-<p>Collaborative</p>
-<p>To deliver meaningful action, we bridge researchers, policymakers, and developers to shape better AI decisions.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Aya ModelsMultilingual AI at scale</title>
-      <link>https://cohere.com/research/aya</link>
-      <guid isPermaLink="true">https://cohere.com/research/aya?li=1</guid>
-      <content:encoded><![CDATA[<p>MEET AYA</p>
-<h1>Unlocking AI's potential,</h1>
-<p>one language at a time</p>
-<p>Aya, a global open-science initiative from Cohere Labs, unites researchers to push the frontier of multilingual AI, bridging gaps between people and cultures worldwide.</p>
-<p>Try Tiny Aya</p>
-<p>NEW RELEASE</p>
-<h3>Introducing Tiny Aya</h3>
-<p>A compact multilingual AI model family that runs locally on any device. Our 3.35B-parameter base model supports 70+ languages with specialized variants for different regions, delivering strong performance without cloud dependency. Choose from globally balanced or region-specialized models designed for real-world scenarios.</p>
-<p>Try Tiny Aya now</p>
-<p>Tiny Aya model weights</p>
-<h5>Tiny Aya variants</h5>
-<p>Tiny Aya Global</p>
-<p>Optimized for balanced multilingual performance.</p>
-<p>Try the model</p>
-<p>Tiny Aya Earth</p>
-<p>Strongest for languages across Africa and West Asia regions.</p>
-<p>Try the model</p>
-<p>Tiny Aya Fire</p>
-<p>Strongest for South Asian languages.</p>
-<p>Try the model</p>
-<p>Tiny Aya Water</p>
-<p>Strongest for the Asia-Pacific and Europe regions.</p>
-<p>Try the model</p>
-<h5>Other Aya models</h5>
-<ul><li>Aya Vision is a research model advancing in multilingual multimodal AI through innovative synthetic data generation, cross-modal model merging, and a comprehensive benchmark suite. It achieves state-of-the-art performance across 23 languages, surpassing larger models while efficiently addressing data scarcity and catastrophic forgetting by reducing computational overhead up to 40% via optimized training techniques.<a href="https://huggingface.co/CohereLabs/aya-vision-8b">Try Aya Vision 8B</a><a href="https://huggingface.co/CohereLabs/aya-vision-32b">Try Aya Vision 32B</a></li><li>Aya Expanse redefines multilingual AI as a research model mastering 101 languages through innovative instruction tuning and cross-lingual transfer techniques. By combining a curated open-source dataset with compute-efficient pretraining, it achieves unparalleled performance across low- and high-resource languages while reducing infrastructure costs by up to 30%—setting a new benchmark for scalable, inclusive language modeling.<a href="https://huggingface.co/CohereLabs/aya-expanse-8b">Try Aya Expanse 8B</a><a href="https://huggingface.co/CohereLabs/aya-expanse-32b">Try Aya Expanse 32B</a></li><li>Aya 101 is a groundbreaking research model delivering instruction-tuned proficiency across 101 languages, developed through a global collaborative effort involving 3,000+ researchers. As the cornerstone of Cohere Labs’ multilingual initiative, it establishes a new standard for inclusive AI by achieving state-of-the-art performance on diverse benchmarks while maintaining efficiency across low- and high-resource languages—all released as an open-source framework to accelerate equitable language technology worldwide.<a href="https://huggingface.co/CohereLabs/aya-101">Try Aya 101</a></li></ul>
-<p>Aya began as the largest open science collaboration in ML, bringing together a community of researchers from around the world to create a powerful foundation for future innovation. This initial effort laid the groundwork for subsequent research initiatives and the development of additional models, pushing the boundaries of what is possible and expanding the world that AI sees.</p>
-<p>101</p>
-<p>languages contributed</p>
-<p>3,000</p>
-<p>independent researchers</p>
-<p>119</p>
-<p>countries</p>
-<p>5</p>
-<p>models</p>
-<p>Under the hood</p>
-<h3>A step forward for multilingual generative AI</h3>
-<p>Open collaboration and transparency</p>
-<p>Aya’s models and datasets are openly licensed, fostering global collaboration and enabling researchers to audit, extend, and innovate responsibly. This transparency accelerates collective progress in multilingual AI while ensuring accessibility for all.</p>
-<p>Resource-efficient innovation</p>
-<p>Aya leverages modular training and lean model designs to minimize computational costs without sacrificing performance. This efficiency democratizes advanced AI development, making cutting-edge research feasible for diverse communities.</p>
-<p>High quality datasets</p>
-<p>Aya prioritizes diverse data and adaptive architectures to deliver equitable performance across high- and low-resource languages. Its instruction-tuned pipelines ensure seamless cross-lingual task generalization, breaking barriers in global AI utility.</p>
-<h4>Read the papers</h4>
-<ul><li>multilingualEfficiency<a href="https://cohere.com/research/papers/tiny-aya-bridging-scale-and-multilingual-depth-2026-02-17">Tiny Aya: Bridging Scale and Multilingual Depth</a>multilingualEfficiency2月 17, 2026</li><li>multilingualLanguage Models<a href="https://cohere.com/research/papers/aya-vision-2025-05-14">Aya Vision: Multilingual Multimodal AI Advancements</a>multilingualLanguage Models5月 14, 2025</li><li>multilingualLanguage Models<a href="https://cohere.com/research/papers/aya-expanse-combining-research-breakthroughs-for-a-new-multilingual-frontier-2024-12-06">Aya Expanse: Advancing Multilingual AI Research</a>multilingualLanguage Models12月 06, 2024</li><li>multilingualScholars<a href="https://cohere.com/research/papers/aya-command-23-8b-and-35b-technical-report-2024-05-23">Aya 23: Open Weight Releases to Further Multilingual Progress</a>multilingualScholars5月 23, 2024</li><li>multilingualScholars<a href="https://cohere.com/research/papers/aya-model-paper-2024-02-13">Aya Model: Open-Access Multilingual Language Model</a>multilingualScholars2月 13, 2024</li><li>multilingualScholars<a href="https://cohere.com/research/papers/aya-dataset-paper-2024-02-13">Aya Dataset: An Open-Access Collection for Multilingual Instruction Tuning</a>multilingualScholars2月 13, 2024</li></ul>
-<h4>Featured videos</h4>
-<p>Watch more videos</p>
-<p>Introducing Tiny Aya</p>
-<p>Making Multilingual AI Accessible</p>
-<p>The Aya Vision Challenge</p>
-<p>Who will triumph - Aya Vision or its creators?</p>
-<p>Aya Expanse connects our world</p>
-<p>Aya Expanse can be used to develop and deepen connections between people worldwide 🌎</p>
-<h4>Recognition for Aya</h4>
-<p>Stanford University HAI</p>
-<h3>Featured releases of 2024</h3>
-<p>For “Aya Dataset: An Open-Access Collection for Multilingual Instruction Tuning”</p>
-<p>ACL 2024</p>
-<h3>Best Paper Award</h3>
-<p>For “Aya Model: An Instruction Finetuned Open-Access Multilingual Language Model”</p>
-<h2>Try Tiny Aya</h2>
-<p>Run multilingual AI locally with 3.35B-parameter models covering 70+ languages and specialized regional performance.</p>
-<p>Try Tiny Aya</p>
-<p>Sign up for our newsletter</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

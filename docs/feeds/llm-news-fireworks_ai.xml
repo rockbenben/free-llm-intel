@@ -3,7 +3,7 @@
   <channel>
     <title>Fireworks AI · 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>Fireworks AI 官方博客 / 更新日志归档（最近 50 条，共 28 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>Fireworks AI 官方博客 / 更新日志归档（最近 50 条，共 29 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml" rel="self" type="application/rss+xml"/>
@@ -201,6 +201,51 @@
 <p><strong>关于成本。</strong> 本分析中的所有成本数据都来自 DeepSWE 排行榜公布的按模型数值。公开 trials 文件里的原始 cost_usd 与榜单显示的数值并不一致，对 DeepSeek 家族来说相差数倍，因此我们对每个模型的单任务成本做了缩放，使其均值与公布数值一致。准确率来自每个任务-模型对的四次原始 rollout，成本则来自榜单。</p>
 <p>来源：DeepSWE v1.1 trials，2026 年 9 月 17 日刷新。113 个任务，18 个模型各自采用其可得的最佳配置，2,034 个模型-任务单元。</p>
 <ul><li><a href="https://fireworks.ai/blog?blogTypes=Perspective">观点</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Fireworks 在 Forge 上推出新产品，帮助企业打造专业智能</title>
+      <link>https://fireworks.ai/blog/fireworks-unveils-new-products-at-forge-to-help-companies-build-specialized-intelligence/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/fireworks-unveils-new-products-at-forge-to-help-companies-build-specialized-intelligence/</guid>
+      <description>原文标题：Fireworks unveils new products at Forge to help companies build specialized intelligence</description>
+      <content:encoded><![CDATA[<p>未来有两种愿景：一个所有情报都由少数封闭的前沿实验室拥有的世界。或者，在这个世界中，每家公司都拥有使其组织独一无二的情报。</p>
+<p><a href="https://fireworks.ai/forge">Fireworks Forge</a> 是为人们打造第二个未来而设计的。我们的首届年度会议今天开幕，来自人工智能原生初创公司、全球企业、开放权重模型实验室等的领导者齐聚一堂。</p>
+<p>Fireworks 上提供的开放权重模型（包括来自 NVIDIA、Meta 和 Reflection AI 的模型）的进步为公司在构建 AI 的方式上提供了更多选择。在会议上，我们推出了新产品，帮助企业将开放模型的进步转化为围绕自己的专业知识、数据和任务构建的智能。</p>
+<p>这些发布解决了团队在将人工智能应用到日常工作中时面临的实际障碍：代理响应时间过长、模型需要在公司特定任务上表现更好，以及基础设施必须满足企业对成本、控制和安全的要求。</p>
+<h2>更快的代理，成本适合工作负载</h2>
+<p>人工智能代理通常会调用多个模型来完成一项任务。每次呼叫都会增加客户或员工等待结果的时间，同时运行更多代理会增加容量压力和成本。团队需要速度来完成对时间敏感的工作，并需要更经济的选择来完成可以等待的任务。</p>
+<p>Fireworks Ultra-fast 由 NVIDIA Blackwell GPU 提供支持，可加速这些时间敏感的工作负载。它现已推出公共预览版，速度高达每秒 1,500 个令牌，如 <a href="https://fireworks.ai/blog/deepseek-v4-1-flash-vs-astra-benchmarks">DeepSeek V4.1 Flash</a> 所示。当延迟在多个步骤中累积时，这种速度尤其有价值：在基准 30 轮代理任务中，超快的完成时间从 1 分钟降至 8 秒。</p>
+<p>对于成本比立即完成更重要的工作负载，后台模式为团队提供了半价的低成本运行时选项。此模式降低了可以等待的合格工作的每项任务的成本，例如用于评估和隔夜研究的数据生成。多日提示缓存降低了重复上下文的成本，而更高的速率限制支持更多并发代理。</p>
+<p>![多天提示缓存和后台模式如何减少代理成本](https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2 Fhorizon%2F2d8ddf4821e259fb68070ea79fb66d05cb4a4adf-1650x584.png%3Fauto%3Dformat&amp;w=3840&amp;q=75)</p>
+<p>图 1：持久代理每次在暂停后恢复时都会为重新处理上下文付费，而后台代理则为可以等待的工作支付最高价格。多日提示缓存和后台模式可降低各项成本。</p>
+<p>专业模型还可以提高推理经济学。 <a href="https://fireworks.ai/blog/ember-1">Ember-1</a> 是一种可用于无服务器和专用部署的 Fireworks 模型，在我们的评估中，使用的令牌减少了约 40%，同时保持了与 Kimi K3 相当的质量。</p>
+<p>![Ember-1 位于五个行业的质量成本前沿基准](https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn %2Fhorizon%2Fc84e8456511cd438fd0f96e0aa04263f5d17fe32-1570x1066.png%3Fauto%3Dformat&amp;w=3840&amp;q=75)</p>
+<p>图 2：Ember-1 在五个行业基准中处于质量成本前沿，得分约为 Claude Opus 5 的一个百分点，每项任务的成本约为 Claude Opus 5 的五分之一。来源：Ember-1 博客介绍</p>
+<p>这些功能共同帮助团队将推理性能和支出与每个工作负载的需求相匹配。</p>
+<h2>Fireworks Nexus：员工已使用的工具中有更多模型选择</h2>
+<p>员工越来越依赖人工智能进行编码和日常工作，但切换模型可能意味着离开熟悉的工具或添加另一个订阅来管理。公司需要为人们提供更多的车型选择，同时保持支出的可见性。</p>
+<p><a href="https://fireworks.ai/product/nexus">Fireworks Nexus</a> 将开放模型引入人们已经使用的 AI 编码和协作工具以及现有的 AI 订阅中。它将开放式和封闭式模型与个性化模型选择和缓存感知相结合，帮助人们使用适合其工作的模型，同时为组织提供集中的支出可见性和控制。</p>
+<p>图 3：Fireworks Nexus 按模型跟踪每月每一天的支出，并将其与估计的全 Opus 5.5 基线进行比较，以便财务人员可以了解每一美元的去向以及节省了哪些路由。</p>
+<p>今天我们推出了 <a href="https://docs.fireworks.ai/nexus/desktop">Nexus Desktop</a>，加入了 Nexus CLI。 Nexus 现在在 Codex 应用程序、Claude Desktop 和 OpenCode 中运行，将个性化模型选择从编码扩展到日常知识工作。新的 Pro 计划起价为每月 8 美元，Teams 计划起价为每个席位每月 10 美元。企业计划添加了 SSO、治理、共享预算和访问控制。</p>
+<p>图 4：Nexus Desktop 将您每天使用的工具连接到 Nexus，每个工具使用一个交换机，因此团队无需接触终端即可获得模型路由。</p>
+<p>随着工作负载的增长，更高的无服务器速率限制现已普遍可用，让团队可以同时运行更多工作，而无需预留专用容量。 <a href="https://docs.fireworks.ai/serverless/rate-limits#elastic-burst">Elastic Burst</a> 也普遍可用，允许客户在有空闲容量时超出正常使用上限，而无需更改代码或价格。</p>
+<h2>培训：将您的专业知识转化为更好的模型</h2>
+<p>选择正确的模型可以改善结果并降低成本。培训更进一步，教授模型对于您的特定任务来说什么是好的。这可能意味着超越现有模型的质量，或者从更小、更快的模型中获得您所需的性能。通常两者都是。在 Forge，我们让交付这些成果并将其投入生产变得更加容易。</p>
+<p>首先要知道要改进什么。 No Eval 现在处于私人预览阶段，有助于将生产跟踪和产品信号转化为特定于任务的评估，因此团队可以识别模型的不足之处并衡量培训是否可以缩小差距。这解决了训练自己的模型的最大障碍之一，因为编写自己的评估可能需要数周的数据标记和评分。</p>
+<p>![生产反馈流入培训循环](https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2 Fhorizon%2F0fe201239ae331ba8481f60d70bdf60c47b21957-1360x696.png%3Fauto%3Dformat&amp;w=3840&amp;q=75)</p>
+<p>图 5：将生产反馈转化为培训循环。</p>
+<p><a href="https://docs.fireworks.ai/serverless/specialized-model-inference/overview">专业模型推理</a><strong>,</strong> 现在处于公共预览版，从 GLM 5.3 Flash 开始，扩展了无服务器方法来服务 LoRA 适配器。团队可以评估经过训练的模型，并通过 Fireworks Serverless API 提供服务，按令牌定价，无需按规模进行专门部署，并且闲置时无需支付服务费用。他们可以在试验下一个版本时保留使用的模型。</p>
+<p>团队可以在 11 月 30 日之前开始 <a href="https://fireworks.ai/blog/train-muse-glimmer-for-free">Muse Glimmer 30B 上的免费培训</a>，包括监督微调、直接偏好优化和强化学习。</p>
+<h2>企业控制，模型需要运行的地方</h2>
+<p>随着人工智能进入关键业务工作流程，企业需要管理模型的使用、控制支出并维护活动记录。有些人还需要更好地控制人工智能基础设施的运行位置以及数据的保护方式。</p>
+<p>Fireworks 现在提供普遍可用的模型治理、支出控制和可导出的审核日志。集中帐户管理、区域数据控制和客户管理加密的预览版为具有更严格运营要求的组织扩展了这些功能。</p>
+<p>对于想要利用自己的基础设施的企业来说，<a href="https://fireworks.ai/product/sovereign">Fireworks Sovereign</a> 目前处于私人预览版，可将公司的推理引擎引入客户的云、neocloud 或数据中心。它将每 GPU 美元的代币数量增加一倍或更多的技术与降低总拥有成本的专家管理相结合，帮助客户在其选择的基础设施中运行开放模型。</p>
+<p>推理和培训在客户环境内运行，并根据其已实施的安全和变更控制策略进行。受监管的企业可以满足其管理的基础设施的数据驻留和模型访问要求，并且人工智能容量保留在他们选择的管辖范围内。由于客户拥有基础设施并选择模型，因此提供商的价格变化或模型退役无法设定他们的路线图。 Fireworks 已在客户环境中管理超过 25,000 个 GPU。</p>
+<p>!【Fireworks Sovereign内统一Fireworks控制飞机](https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2 Fhorizon%2F89b42161fdd68be9d17437ab94bd7392c2ce1313-1872x718.png%3Fauto%3Dformat&amp;w=3840&amp;q=75)</p>
+<p>图 6：Fireworks Sovereign 在 GPU 上和周边内部运行推理，通过与无服务器和超大规模市场部署相同的控制平面进行管理。</p>
+<h2>开辟你自己的边界</h2>
+<p>总之，Forge 的推出使专业智能的构建、改进和部署更加实用。更快的推理支持响应代理； Nexus将模型选择带入员工的日常工作中；培训能力帮助公司提高其自身任务的绩效；企业控制支持大规模部署。</p>
+<p>要虚拟加入 Fireworks Forge，请<a href="https://fireworks.ai/forge">注册直播</a>。</p>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=公告">公告</a></li><li><a href="https://fireworks.ai/blog?topics=Inference">推理</a></li><li><a href="https://fireworks.ai/blog?topics=Training">培训</a></li><li><a href="https://fireworks.ai/blog?topics=Routing">路由</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Fireworks 上线 Muse Spark Open：Meta 的开放权重模型，跑在美国 serverless 上</title>

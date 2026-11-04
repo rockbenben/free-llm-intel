@@ -7,7 +7,166 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>MiMo-V2.6-Pro: Model Documentation &amp; Integration Guide</title>
+      <link>https://deepinfra.com/blog/mimo-v2-6-pro-model-documentation-integration-guide</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/mimo-v2-6-pro-model-documentation-integration-guide</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>MiMo-V2.6-Pro：模型文档和集成指南</h1>
+<p>DeepInfra 发布于 2026.11.04</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/MiMo-V2.6-Pro-Integration-Guide.png" alt="MiMo-V2.6-Pro：模型文档和集成指南"></p>
+<p><a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro</a> 是一款旗舰稀疏专家混合 (MoE) 模型，专为全模态智能和自主代理工作流程而构建。它拥有 1.02 万亿个参数，其中 420 亿个在推理过程中被激活，并且本身就是为了在单个统一架构中处理文本、图像、视频和音频而构建的。</p>
+<p>MiMo-V2.6-Pro 具有 1,048,576 个令牌 (1M) 上下文窗口，并通过大规模混合强化学习进行优化，专为要求苛刻的技术任务而设计，包括长范围编码、复杂的多工具交互和企业级网络安全分析。</p>
+<h2>关键创新和最新更新</h2>
+<p>小米将MiMo-V2.6-Pro定位为V2.6系列旗舰，推出了多种针对AI自我提升和多模态推理的方法论。</p>
+<h3>混合强化学习：“你只能强化学习一次”</h3>
+<p>MiMo-V2.6-Pro 的核心是小米称之为“You Only RL Once”的训练方法。该模型不是针对不同领域运行单独的强化学习 (RL) 通道，而是使用跨编码、一般代理任务、视觉处理和网络安全的单一混合 RL 运行进行训练。这使得能力相互增强，目标是将策略转移到训练期间未直接覆盖的场景。</p>
+<p>这与小米称为“Groupwise Agentic Grading”的自我改进循环相结合，该循环使用完全异步的组相对策略优化（GRPO）。该系统对模型自身的轨迹进行评估和排名，引导其走向更有效的问题解决路径，同时应用对抗性筛选进行对齐。</p>
+<h3>全模式功能</h3>
+<p>MiMo-V2.6-Pro 包括专用的 6.81 亿参数 MiMo Vision Transformer (ViT) 和独立的音频编码器，允许同时分析多种数据类型。与 1M 令牌上下文窗口相结合，该模型可以接受整个代码存储库、长工具跟踪和多会话代理运行，而不会丢失上下文。</p>
+<h3>生态系统整合</h3>
+<p>Hugging Face 和 ModelScope 上提供了权重。该模型集成到小米自己的AI Studio和MiMo Code中，并支持通过SGLang和vLLM服务框架进行部署。</p>
+<h2>性能基准</h2>
+<p>下表反映了小米自己发布的与 Claude Opus 5 和 GPT-5.6 Sol 的基准比较；这些是供应商报告的数字，而不是独立复制的第三方结果，应相应阅读。</p>
+<table><thead><tr><th><strong>基准（类别）</strong></th><th><strong>MiMo-V2.6-Pro</strong></th><th><strong>Claude Opus 5</strong></th><th><strong>GPT-5.6 Sol</strong></th></tr></thead><tbody><tr><td>DeepSWE v1.1（编码）</td><td>71.9</td><td>71.9 74.0</td><td>74.0 73.0</td><td>73.0</td></tr><tr><td>AutomationBench v1.0.6（总代理）</td><td>53.1</td><td>53.1 50.3</td><td>50.3 45.8</td><td>45.8</td></tr><tr><td>OSWorld 验证（总代理）</td><td>82.0</td><td>83.4</td><td>83.4 83.0</td></tr><tr><td>GDPVal 2.1 — AA（推理、Elo）</td><td>1673</td><td>1673 1708</td><td>1708 1588</td><td>1588</td></tr><tr><td>Terminal Bench 2.1（终端/操作系统）</td><td>89.9</td><td>89.9 89.1</td><td>89.1 88.8</td></tr><tr><td>MiMo 视觉编码（视觉代理）</td><td>72.3</td><td>72.3 70.0</td><td>70.0 73.4</td><td>73.4</td></tr></tbody></table>
+<h3>专业优势</h3>
+<p>以下也是小米公布的数据：</p>
+<ul><li>网络安全：CyberGym 上为 94.0，MiMo Cyber Bench 上为 80.2，旨在利用验证和自主威胁缓解。</li><li>科学研究：在“联合科学家”用例中，小米报告称该模型已用于帮助设计用于环境吸附的金属有机框架，包括文献综述和假设生成。</li><li>创意工程：原生支持 MIDI 生成、管弦乐创作和端到端视频创作，包括节拍同步编辑。</li></ul>
+<h2>技术架构</h2>
+<p>尽管规模庞大，但为了保持推理速度快，MiMo-V2.6-Pro 使用了多项架构优化：</p>
+<ul><li>稀疏 MoE：总共 70 层（60 个滑动窗口注意力/10 个全局注意力），平衡效率与远程依赖建模。</li><li>多令牌预测 (MTP)：5 层推测解码器每次前向传递最多预测 7 个令牌，从而提高吞吐量。</li><li>推测解码：EAGLE 风格的算法并行验证多个令牌以减少延迟。</li></ul>
+<h2>API 入门</h2>
+<p>MiMo-V2.6-Pro API 使用标准<a href="https://docs.deepinfra.com/quickstart">OpenAI 兼容的 HTTP POST 端点</a>，因此它可以轻松集成到现有工作流程中。</p>
+<h3>身份验证</h3>
+<p>请求需要通过标准 HTTP 授权标头传递的 API 密钥。</p>
+<table><thead><tr><th>授权：承载&lt;YOUR_API_KEY&gt;内容类型：application/json</th></tr></thead><tbody></tbody></table>
+<h3>API 端点</h3>
+<ul><li>托管（DeepInfra）：https://api.deepinfra.com/v1/openai/chat/completions</li><li>自托管 (SGLang/vLLM)：http://&lt;主机&gt;:&lt;端口&gt;/v1/chat/completions</li><li>模型标识符：XiaomiMiMo/MiMo-V2.6-Pro 或XiaomiMiMo/MiMo-V2.6-Pro-RL，与 <a href="https://docs.deepinfra.com/models">DeepInfra 模型目录</a> 中的所有其他托管模型一起列出</li></ul>
+<h3>实现示例（Python）</h3>
+<pre><code>import os
+import requests
+ 
+api_key = os.environ.get(&quot;DEEPINFRA_API_KEY&quot;)
+url = &quot;https://api.deepinfra.com/v1/openai/chat/completions&quot;
+ 
+payload = {
+    &quot;model&quot;: &quot;XiaomiMiMo/MiMo-V2.6-Pro&quot;,
+    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain the role of sparse MoE in LLMs.&quot;}],
+    &quot;temperature&quot;: 1.0,
+    &quot;top_p&quot;: 0.95
+}
+ 
+response = requests.post(url, headers={&quot;Authorization&quot;: f&quot;Bearer {api_key}&quot;}, json=payload)
+print(response.json())copy</code></pre>
+<h3>常用参数</h3>
+<table><thead><tr><th><strong>参数</strong></th><th><strong>类型</strong></th><th><strong>描述</strong></th></tr></thead><tbody><tr><td>留言</td><td>数组</td><td>必需的。支持文本、图像、视频和音频输入。</td></tr><tr><td>温度</td><td>浮动</td><td>推荐：1.0。</td></tr><tr><td>工具</td><td>数组</td><td>代理工作流程的可调用函数列表 - 请参阅 DeepInfra 的<a href="https://deepinfra.com/blog/deepinfra-function-calling-guide">函数调用指南</a>。</td></tr><tr><td>最大令牌数</td><td>整数</td><td>1M 上下文窗口内的最大令牌数。</td></tr></tbody></table>
+<h2>定价和使用</h2>
+<p>定价与消耗量成比例，并按每 100 万个代币计费，<a href="https://docs.deepinfra.com/chat/prompt-caching">缓存输入代币有大幅折扣</a>。 MiMo-V2.6-Pro 和所有其他托管型号的完整当前费率位于 <a href="https://deepinfra.com/pricing">DeepInfra 定价页面</a>。</p>
+<table><thead><tr><th><strong>型号变体</strong></th><th><strong>输入（缓存未命中）</strong></th><th><strong>输入（缓存命中）</strong></th><th><strong>输出</strong></th></tr></thead><tbody><tr><td>MiMo-V2.6-Pro</td><td>0.435 美元/100 万代币</td><td>$0.0036 / 100 万代币</td><td>0.87 美元/100 万代币</td></tr><tr><td>专业超高速</td><td>4.35 美元/100 万代币</td><td>$0.036 / 100 万代币</td><td>8.70 美元/100 万代币</td></tr></tbody></table>
+<ul><li>基于使用量的计费：定价直接与消耗量相关，按每 100 万个代币计费。</li><li>UltraSpeed 模式：通过 MiMo Desktop 和 API 提供，为实时交互提供更快的输出速度。确认您的工作负载的当前吞吐量数据，因为服务模式性能可能因提供商而异。</li></ul>
+<p>＃＃ 结论</p>
+<p>MiMo-V2.6-Pro 将万亿参数 MoE 架构与本机全模式支持和 1M 代币上下文窗口相结合，为开发人员提供了长期代理应用程序和安全工具的构建块。无论工作负载是复杂的软件工程还是高级科学研究，MiMo-V2.6-Pro 都是为生产规模的推理深度和吞吐量而构建的。</p>
+<p>要更深入地了解它与其他最新版本在成本和基准方面的比较，请参阅我们对 <a href="https://deepinfra.com/blog/deepseek-v4-pro-pricing-guide-2026-providers-cost-analysis">DeepSeek V4 Pro 的定价和提供商</a> 的报道。有关更多技术细节，请参阅 MiMo-V2.6 技术报告或 Discord 和 Telegram 上的开发者社区。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/glm-5-3-flash-documentation-integration-guide"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-flash-docs.png" alt="GLM-5.3-Flash 文档和集成指南"></a><a href="https://deepinfra.com/blog/glm-5-3-flash-documentation-integration-guide">GLM-5.3-Flash 文档和集成指南</a>&lt;p&gt;GLM-5.3-Flash 是由 Z.ai 开发并托管在 DeepInfra 上的前沿级原生多模态模型。它采用混合专家 (MoE) 架构，总参数为 3200 亿个，其中只有 180 亿个参数在推理过程中处于活动状态。该模型是为复杂的长期任务而构建的——高级软件工程、代理工作流程和多模式推理——具有上下文[...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/glm-5-1-api-benchmarks-latency-throughput-cost"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/glm-5.1-cost.png" alt="GLM-5.1 API 基准：延迟、吞吐量和成本"></a><a href="https://deepinfra.com/blog/glm-5-1-api-benchmarks-latency-throughput-cost">GLM-5.1 API 基准：延迟、吞吐量和成本</a>&lt;p&gt;Z.ai 的 GLM-5.1 是一个 2026 年 4 月为长期代理工程构建的开放权重推理模型 - 有效访问它意味着导航真正广泛的提供商选项。在 10 个基准 API 提供商中，混合定价范围为每 100 万个代币 0.74 至 1.70 美元，输出速度为 33.8 至 175.2 t/s，最快的提供商为 5.2 倍 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/llama-boxer.webp">！[免费比较 Llama2 与 OpenAI 模型。</a>](https://deepinfra.com/blog/compare-models)<a href="https://deepinfra.com/blog/compare-models">免费比较 Llama2 与 OpenAI 模型。</a>在 DeepInfra，我们托管最好的开源 LLM 模型。我们一直在努力让我们的 API 变得简单易用。今天，我们很高兴地宣布一种非常简单的方法来快速尝试我们的模型，如 Llama2 70b 和 [Mistral 7b](/mistralai/Mistral-7B-Instruct...</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>MiMo-V2.6-Pro Guide: Performance, Pricing &amp; Providers</title>
+      <link>https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>MiMo-V2.6-Pro 指南：性能、定价和提供商</h1>
+<p>DeepInfra 发布于 2026.11.03</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/MiMo-V2.6-Pro_-AI-Guide.png" alt="MiMo-V2.6-Pro 指南：性能、定价和提供商"></p>
+<h2>API 审核摘要（2026 年 10 月）</h2>
+<table><thead><tr><th><strong>属性</strong></th><th><strong>价值</strong></th></tr></thead><tbody><tr><td>开发商</td><td>小米</td></tr><tr><td>发布日期</td><td>2026 年 9 月 21 日</td></tr><tr><td>型号类型</td><td>推理模型（开放权重）</td></tr><tr><td>人工智能分析智能指数</td><td>30 — 在 AA 的“大”（&gt;150B 参数）类别中的 21 个模型中排名第 3，类别中位数为 23</td></tr><tr><td>速度</td><td>53.4 输出令牌/秒（类别中位数：73.9 t/s）</td></tr><tr><td>延迟 (TTFT)</td><td>3.16 秒（班级中位数：1.67 秒）</td></tr><tr><td>上下文窗口</td><td>1M 代币（约 1,500 个 A4 页）</td></tr><tr><td>方式</td><td>文本/图像/语音/视频输入→文本输出</td></tr><tr><td>型号尺寸</td><td>1.02T 总参数，42B 活动 (MoE)</td></tr><tr><td>许可证</td><td>麻省理工学院（允许商业用途）</td></tr><tr><td>定价</td><td>$0.435/1M 输入，$0.87/1M 输出（列表）； <a href="https://deepinfra.com/pricing">DeepInfra 目前的折扣率</a> 为 $0.387/1M 输入，$0.783/1M 输出</td></tr><tr><td>缓存折扣</td><td>99%</td></tr><tr><td>每个情报指数任务的成本</td><td>0.26 美元</td></tr><tr><td>供应商</td><td>在 <a href="https://docs.deepinfra.com/models">DeepInfra 模型目录</a> 和 models.dev 等聚合器中列出了 27 多个提供商；由 4 家提供商（小米、DeepInfra、PrimaLabs、GMI）的人工分析独立进行基准测试；通过 OpenRouter 上的 5 个提供商进行路由</td></tr></tbody></table>
+<p><a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro</a>是小米在大语言模型市场的旗舰产品，也是Artificial Analysis目前跟踪的更强的开放权重模型之一。这种稀疏的专家混合 (MoE) 模型于 2026 年 9 月发布，总共包含 1.02 万亿个参数，而在推理过程中仅激活 420 亿个参数，这种设计平衡了原始能力与实际部署成本。</p>
+<p>在Artificial Analysis当前的智能指数方法（v5.0）中，MiMo-V2.6-Pro得分为30，在“大型”（超过1500亿个参数）大小类别的21个模型中排名第3，其中中位数得分为23——明显高于类别中位数，尽管不是该类别中得分最高的模型。该模型支持原生多模式输入（文本、图像、视频和音频），具有 100 万个令牌上下文窗口，所有这些都在允许商业使用的 MIT 许可证下。</p>
+<p><em>注：人工分析在添加或交换评估时会定期重新调整智力指数（当前版本 v5.0，借鉴了 AA-Briefcase v1.1、Terminal-Bench 4.0 和 HLE-Diamond 等九个评估）。不同指数版本的分数不可直接比较，因此本指南中的任何跨模型比较都反映了相同的当前方法。</em></p>
+<p>本指南从对生产部署至关重要的维度评估 MiMo-V2.6-Pro：智能基准、定价经济性、速度和延迟、提供商选项和实际用例。</p>
+<h2>模型功能和提供商比较</h2>
+<h3>MiMo-V2.6-Pro 与竞争对手相比如何</h3>
+<p>MiMo-V2.6-Pro 以专有模型成本的一小部分提供强大的代理和工具使用性能，这使其对大容量代理和编码工作负载具有吸引力。下面的基准数据是小米自己发布的比较结果，而不是独立复制的人工分析结果，应视为供应商报告。</p>
+<table><thead><tr><th><strong>基准</strong></th><th><strong>MiMo-V2.6-Pro</strong></th><th><strong>Claude Opus 5</strong></th><th><strong>GPT-5.6 Sol</strong></th><th><strong>GPT-6 阿斯特拉</strong></th></tr></thead><tbody><tr><td>DeepSWE v1.1</td><td>71.9</td><td>71.9 74.0</td><td>74.0 73.0</td><td>73.0 74.0</td><td>74.0</td></tr><tr><td>自动化基准 v1.0.6</td><td>53.1</td><td>53.1 50.3</td><td>50.3 45.8</td><td>45.8 52.0</td><td>52.0</td></tr><tr><td>终端工作台2.1</td><td>89.9</td><td>89.9 89.1</td><td>89.1 88.8</td><td>89.9</td><td>89.9</td></tr><tr><td>终端工作台4.0</td><td>34.9</td><td>34.9 49.0</td><td>49.0 39.9</td><td>39.9 59.6</td><td>59.6</td></tr><tr><td>工具马拉松验证</td><td>76.9</td><td>76.9 80.6</td><td>80.6 74.9</td><td>74.9 —</td></tr><tr><td>漏洞利用基准</td><td>47.9</td><td>47.9 70.0</td><td>70.0 78.5</td><td>78.5 —</td></tr><tr><td>网络健身房</td><td>94.0</td><td>94.0 —</td><td>—</td><td>—</td></tr><tr><td>工作台</td><td>62.0</td><td>62.0 65.7</td><td>65.7 45.4</td><td>45.4 —</td></tr></tbody></table>
+<h3>要点</h3>
+<ul><li>优点：MiMo-V2.6-Pro 在一般代理任务、工具使用和自动化基准测试中表现良好 - 根据小米的数据，在其中几个方面，它匹配或超过 Claude Opus 5 和 GPT-5.6 Sol。</li><li>弱点：它落后于最苛刻的长期编码基准（Terminal Bench 4.0）和安全利用（ExploitBench）。</li><li>价值主张：它的性能接近多个前沿模型，且成本显着降低，并且是人工分析当前智能指数中得分较强的开放权重选项之一，但不是排名最高的选项。</li></ul>
+<p>从小米自己的数据来看，从 V2.5 到 V2.6 的跳跃是相当大的：DeepSWE v1.1 从 19.0 提高到 71.9，Terminal Bench 4.0 从 1.5 提高到 34.9。</p>
+<h2>模型架构、权重和开放性</h2>
+<h3>模型大小：总参数和活动参数</h3>
+<p>MiMo-V2.6-Pro 使用稀疏的 Mixture-of-Experts 架构：</p>
+<table><thead><tr><th><strong>规格</strong></th><th><strong>价值</strong></th></tr></thead><tbody><tr><td>总参数</td><td>1.02万亿</td></tr><tr><td>活动参数</td><td>420 亿（每个前向传递）</td></tr><tr><td>建筑</td><td>稀疏 MoE 变压器</td></tr><tr><td>路由专家</td><td>总共 384 个，每个令牌激活 8 个</td></tr><tr><td>层</td><td>总共 70 个（60 个滑动窗口注意力 + 10 个全局注意力）</td></tr><tr><td>隐藏尺寸</td><td>6,144</td><td>6,144</td></tr><tr><td>视觉编码器</td><td>681M 参数（MiMo ViT，28 层）</td></tr><tr><td>音频编码器</td><td>308M参数</td></tr></tbody></table>
+<h3>开放权重与专有权重</h3>
+<p>MiMo-V2.6-Pro 是完全开放的权重，Hugging Face 上的检查点为XiaomiMiMo/MiMo-V2.6-Pro-RL。</p>
+<table><thead><tr><th><strong>型号</strong></th><th><strong>重量</strong></th><th><strong>许可证</strong></th><th><strong>商业用途</strong></th></tr></thead><tbody><tr><td>MiMo-V2.6-Pro</td><td>打开</td><td>麻省理工学院</td><td>允许</td></tr><tr><td>Claude Opus 5</td><td>专有</td><td>关闭</td><td>仅通过 API</td></tr><tr><td>GPT-6 阿斯特拉</td><td>专有</td><td>关闭</td><td>仅通过 API</td></tr><tr><td>Grok 4.7</td><td>专有</td><td>关闭</td><td>仅通过 API</td></tr></tbody></table>
+<h3>许可证和型号重量</h3>
+<ul><li>许可证：MIT（完全允许商业和研究用途）</li><li>重量位置：Hugging Face (XiaomiMiMo/MiMo-V2.6-Pro-RL)</li><li>下载大小：~573 GB（打包的 8 位容器，其中 FP8/BF16 用于选择张量）</li><li>自托管要求：Q4 级构建将需要大约 612 GB 的 VRAM — 超出任何消费类计算机，并且实际上需要多 GPU 服务器或 API 访问。</li></ul>
+<h3>开放性简介</h3>
+<ul><li>权重是公开的</li><li>麻省理工学院许可证允许商业用途</li><li>提供型号卡和技术文档</li><li>可通过多个第三方 API 提供商获取</li><li>已发布的检查点中使用的确切量化方案未完全公开</li></ul>
+<h2>上下文窗口和令牌使用</h2>
+<table><thead><tr><th><strong>型号</strong></th><th><strong>上下文窗口</strong></th><th><strong>同等</strong></th></tr></thead><tbody><tr><td>MiMo-V2.6-Pro</td><td>1,048,576 个代币（约 100 万）</td><td>约 1,500 张 A4 页</td></tr><tr><td>MiMo-V2.6-闪存</td><td>1,048,576 个代币（约 100 万）</td><td>约 1,500 张 A4 页</td></tr><tr><td>最大输出</td><td>131,072 个代币（~128K）</td><td>—</td></tr></tbody></table>
+<p>1M 令牌上下文窗口可在单次调用、长视频脚本和多轮代理跟踪以及扩展文档处理或 RAG 工作流程中实现完整的代码库分析。</p>
+<p>MiMo-V2.6-Pro 使用针对多语言文本（强大的中文和英文支持）、跨多种编程语言的代码以及多模式内容编码进行优化的自定义标记器。 Artificial Analysis 将其输出的冗长程度评为 3 分（满分 4 分）——比 Intelligence Index 基准套件上的同类模型更冗长，这值得考虑到推理繁重工作负载的成本估算中。</p>
+<h2>定价和成本指标</h2>
+<h3>提供商和定价概述</h3>
+<table><thead><tr><th><strong>提供商</strong></th><th><strong>输入（每1M）</strong></th><th><strong>输出（每 1M）</strong></th><th><strong>背景</strong></th></tr></thead><tbody><tr><td>小米API</td><td>0.435 美元</td><td>0.87 美元</td><td>1M</td></tr><tr><td>克莱恩通行证</td><td>0.43 美元</td><td>0.87 美元</td><td>1M</td></tr><tr><td>LLM网关</td><td>0.43 美元</td><td>0.87 美元</td><td>1M</td></tr><tr><td>AIHubMix</td><td>0.48 美元</td><td>0.96 美元</td><td>1M</td></tr><tr><td>上面.dev</td><td>0.51 美元</td><td>1.02 美元</td><td>1M</td></tr><tr><td>神经瓦特</td><td>0.87 美元</td><td>1.74 美元</td><td>1M</td></tr></tbody></table>
+<p><em>提供商定价经常变化，并且本指南中的上述数字并未经过独立重新验证 - 在依赖每个提供商之前，请直接与每个提供商确认当前费率。</em></p>
+<h3>每个情报指数任务的成本</h3>
+<table><thead><tr><th><strong>公制</strong></th><th><strong>MiMo-V2.6-Pro</strong></th></tr></thead><tbody><tr><td>每个情报指数任务的成本</td><td>0.26 美元</td></tr><tr><td>混合价格（7:2:1 缓存:输入:输出比率）</td><td>每 100 万个代币 0.18 美元</td></tr></tbody></table>
+<p>MiMo-V2.6-Pro 的每个智能指数任务的成本明显低于几个专有的前沿模型，人工分析通常将每个任务的成本控制在大约 1-6 美元的范围内——尽管这种比较取决于您所比较的特定模型和推理工作设置。要了解它如何与最近的另一个大型推理模型相比较，请参阅我们的<a href="https://deepinfra.com/blog/deepseek-v4-pro-pricing-guide-2026-providers-cost-analysis">DeepSeek V4 Pro 定价和提供商细分</a>。</p>
+<h3>定价：缓存命中输入和输出</h3>
+<table><thead><tr><th><strong>定价类型</strong></th><th><strong>率</strong></th></tr></thead><tbody><tr><td>标准输入</td><td>0.435 美元/100 万代币</td></tr><tr><td>缓存输入</td><td>$0.0036 / 1M 代币 — 了解<a href="https://docs.deepinfra.com/chat/prompt-caching">提示缓存</a> 的工作原理</td></tr><tr><td>缓存折扣</td><td>99%</td></tr><tr><td>输出</td><td>0.87 美元/100 万代币</td></tr></tbody></table>
+<h2>速度、延迟和响应时间</h2>
+<h3>输出速度</h3>
+<table><thead><tr><th><strong>公制</strong></th><th><strong>MiMo-V2.6-Pro</strong></th><th><strong>班级中位数</strong></th></tr></thead><tbody><tr><td>输出速度</td><td>53.4 个令牌/秒</td><td>73.9 个令牌/秒</td></tr></tbody></table>
+<p>人工分析将 MiMo-V2.6-Pro 的吞吐量评为低于其尺寸级别的平均水平。</p>
+<h3>延迟：第一个令牌的时间 (TTFT)</h3>
+<table><thead><tr><th><strong>公制</strong></th><th><strong>MiMo-V2.6-Pro</strong></th><th><strong>班级中位数</strong></th></tr></thead><tbody><tr><td>薄膜晶体管</td><td>3.16 秒</td><td>1.67 秒</td></tr><tr><td>p95 TTFT（小米 API，7 天跟踪）</td><td>5.31 秒</td><td>—</td></tr></tbody></table>
+<p>由于模型的规模（1.02T 参数），端到端响应时间比较小模型更长。这种延迟权衡实际上就是以开放权重定价访问这种级别的代理能力的成本 - 如果延迟是一个硬约束，那么值得根据您自己的工作负载进行基准测试。</p>
+<h2>智力评估</h2>
+<p>根据Artificial Analysis当前的智能指数方法（v5.0），MiMo-V2.6-Pro得分为30，在“大”（&gt;150B参数）尺寸类别的21个模型中排名第3，其中中位数为23。由于该指数会定期重新调整，因此我们故意不在此处复制较旧的跨模型比较表 - 从以前的指数版本中提取的分数与当前指数版本下的分数无法比较，除非两者都使用相同的方法进行测量。</p>
+<h3>专业和知识基准</h3>
+<p>小米报告的两个数据反映了专业和业务相关任务的表现：</p>
+<ul><li>GDPVal 2.1（AA、Elo）：1,673，而 Claude Opus 5 为 1,708</li><li>工作台：62.0</li></ul>
+<p>一般知识检索 (AA-Omniscience) 结果未针对本指南进行独立验证，因此此处省略，而不是从早期草案中重述。</p>
+<h3>能力指数</h3>
+<table><thead><tr><th><strong>能力</strong></th><th><strong>MiMo-V2.6-Pro 支持</strong></th></tr></thead><tbody><tr><td>工具调用</td><td>是的 - 请参阅<a href="https://deepinfra.com/blog/deepinfra-function-calling-guide">函数调用指南</a></td></tr><tr><td>推理</td><td>是的</td></tr><tr><td>结构化输出</td><td>是（因提供商而异）</td></tr><tr><td>多模式输入</td><td>文本、图像、音频、视频</td></tr><tr><td>温度控制</td><td>是的</td></tr></tbody></table>
+<h2>MiMo-V2.6-Pro：提供商选择标准</h2>
+<table><thead><tr><th><strong>买家标准</strong></th><th><strong>模型事实</strong></th><th><strong>为什么 DeepInfra 是一个强大的选择</strong></th></tr></thead><tbody><tr><td>自由重量友好度</td><td>开放式举重、麻省理工学院许可证、Hugging Face 上的举重</td><td>DeepInfra 专注于托管开放权重消费，与自托管相比可减轻运营负担，同时保持灵活性</td></tr><tr><td>长上下文准备</td><td>1M 代币上下文窗口</td><td>DeepInfra 为大环境工作负载提供了一个生产 API 层，具有速率限制、可靠性和简单集成</td></tr><tr><td>多模式输入支持</td><td>输入：文本、图像、语音、视频；输出：文本</td><td>将多模态推理整合到单一提供商集成模式背后</td></tr><tr><td>成本敏感性</td><td>输入 0.435 美元/月，输出 0.87 美元/月； 99%缓存折扣；每个智力指数任务 0.26 美元</td><td>DeepInfra 优化开放模型的性价比，无需 GPU 配置开销</td></tr><tr><td>吞吐量和延迟权衡</td><td>53.4吨/秒产量； 3.16s TTFT（均低于类别中位数）</td><td>强大的基础设施（路由、硬件可用性、扩展）可以帮助抵消模型的基线速度</td></tr><tr><td>开发者体验和可移植性</td><td>列出超过 27 个聚合提供商； OpenRouter 上有 5 个； 4 人工分析独立基准</td><td>API 提供商方法提供快速入门以及为开放模型切换提供商的能力</td></tr><tr><td>自托管后备</td><td>Hugging Face 上可用的重量； MoE：总计约 1T / 42B 活动</td><td>开始使用 DeepInfra 进行托管，并在需求发生变化时保留可靠的自托管路径</td></tr></tbody></table>
+<h2>MiMo V2.6 型号系列</h2>
+<table><thead><tr><th><strong>型号</strong></th><th><strong>架构</strong></th><th><strong>总参数</strong></th><th><strong>活动参数</strong></th><th><strong>背景</strong></th><th><strong>最适合</strong></th></tr></thead><tbody><tr><td>小米V2.6 Pro</td><td>稀疏教育部</td><td>1.02吨</td><td>42B</td><td>42B 1M</td><td>要求高、长期的代理工作</td></tr><tr><td>MiMo V2.6 闪存</td><td>稀疏教育部</td><td>309B</td><td>309B 15B</td><td>15B 1M</td><td>智能、速度和成本的最佳平衡</td></tr><tr><td>MiMo V2.6 Pro 超高速</td><td>同Pro检查点</td><td>〜1T</td><td>42B</td><td>42B 1M</td><td>当输出速度很重要时，提供专业级质量</td></tr><tr><td>MiMo V2.6 Distill-Qwen-9B</td><td>MiMo V2.6 Distill-Qwen-9B</td><td>MiMo V2.6 Distill-Qwen-9B密集（SFT）</td><td>9B</td><td>9B</td><td>—</td><td>单 GPU 和开放代理强化学习研究</td></tr></tbody></table>
+<h2>常见问题</h2>
+<h3>哪个提供商提供最佳的情报与成本比？</h3>
+<p>在 DeepInfra 跟踪的提供商中，每个智能指数任务的成本是最明显的同类比较：MiMo-V2.6-Pro 目前每个任务的成本约为 0.26 美元，与几个专有的前沿模型相比具有竞争力，同时在 Artificial Analysis 的当前智能指数上得分为 30 — 在 &gt;150B 参数类别中排名第三。</p>
+<h3>总参数和活动参数有什么区别？</h3>
+<p>MiMo-V2.6-Pro 拥有 1.02 万亿个总参数，但每次前向传递仅激活 420 亿个参数。这种专家混合设计为模型提供了大容量的知识存储，同时保持推理成本可控——您无需付费在每个代币上运行全部万亿个参数。</p>
+<h3>提示缓存如何影响 LLM API 定价？</h3>
+<p>MiMo-V2.6-Pro 提供 99% 的缓存折扣，将缓存输入成本从 0.435 美元/M 降低到 0.0036 美元/M 令牌。 DeepInfra 的<a href="https://docs.deepinfra.com/chat/prompt-caching">提示缓存文档</a> 介绍了如何检测缓存命中和计费。对于具有重复上下文的应用程序（RAG 系统、多轮对话、批处理），这可以大幅降低成本。</p>
+<h3>我可以在本地运行MiMo-V2.6-Pro吗？</h3>
+<p>权重是公开的，但在 1.02T 总参数（42B 活动）下，Q4 级构建需要大约 612 GB 的 VRAM——超出任何消费类机器。在发布较小的官方版本之前，API 访问或多 GPU 服务器是实用的路径。</p>
+<h3>MiMo-V2.6-Pro 与其他开放重量型号相比如何？</h3>
+<p>MiMo-V2.6-Pro 是 Artificial Analysis 目前跟踪的得分较高的开放权重模型之一，尽管它不是排名最高的模型 - 它在 &gt;150B 参数类别中的 21 个模型中排名第 3。本指南没有独立验证与其他开放模型（例如与 Kimi K3）的具体头对头比较，因此我们将这些排除在外，而不是重复未经验证的数字。</p>
+<h3>MiMo-V2.6-Pro 支持哪些模式？</h3>
+<p>MiMo-V2.6-Pro 是“原生全模式”，接受文本、图像、视频和音频作为输入，并具有文本输出。这是通过专用视觉（681M 参数）和音频（308M 参数）编码器内置到架构中的。</p>
+<h3>MiMo-V2.6-Pro 的推荐配置是什么？</h3>
+<p>小米建议温度=1.0和top_p=0​​.95以获得最佳结果。</p>
+<h2>结论</h2>
+<p>MiMo-V2.6-Pro 是开放权重 LLM 领域的可靠入门产品：即使不是顶级的，也具有强大的智力指数分数、积极的定价以及完全获得麻省理工学院许可的权重。</p>
+<h3>要点</h3>
+<ul><li>强，但不是顶级：当前人工智能分析智能指数得分为 30 — 在 &gt;150B 参数类别中排名第 3（共 21 分），远高于类别中位数 23。</li><li>成本效益高：每个情报指数任务的价格约为 0.26 美元，按每个任务的成本计算，其价格远低于几个专有的前沿模型。</li><li>完全开放：具有 Hugging Face 权重的 MIT 许可证可实现商业用途、微调和自托管（有足够的硬件）。</li><li>多模式原生：使用 1M 令牌上下文窗口处理文本、图像、视频和音频输入。</li><li>权衡：比类中位数慢（53.4 与 73.9 代币/秒）和更高的延迟（3.16 秒与 1.67 秒 TTFT）。</li></ul>
+<h3>谁应该使用 MiMo-V2.6-Pro</h3>
+<ul><li>在成本很重要的情况下运行大量代理和编码工作负载的团队</li><li>需要开放权重以实现合规性、定制或自托管选项的组织</li><li>开发人员构建具有长上下文需求的多模式应用程序</li><li>任何寻求强大、经济高效的性能且无需前沿模型定价的人</li></ul>
+<p>对于生产部署，像 DeepInfra 这样的提供商提供托管访问，可以平衡开放权重的灵活性与托管基础设施的便利性。从<a href="https://docs.deepinfra.com/quickstart">快速入门指南</a>开始运行您的第一个调用，并在需求发生变化时保持可靠的自托管路径。</p>
+<p>开放模型和专有模型之间的差距持续缩小，MiMo-V2.6-Pro 是这个方向上的一个明确的数据点——一个强大的、具有成本效益的开放权重模型，即使不是当前情报指数中得分最高的模型。要了解它与最近的另一个代理版本相比如何，请参阅我们的<a href="https://deepinfra.com/blog/kimi-k3-vs-claude-opus-4-8-vs-gpt-5-6-sol">Kimi K3 vs. Claude Opus 4.8 vs. GPT-5.6 Sol 比较</a>。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/kimi-k3-vs-claude-opus-4-8-vs-gpt-5-6-sol"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/kimi-close-source.png" alt="Kimi K3 vs Claude Opus 4.8 vs GPT-5.6 Sol：实用的 AI 模型比较"></a><a href="https://deepinfra.com/blog/kimi-k3-vs-claude-opus-4-8-vs-gpt-5-6-sol">Kimi K3 vs Claude Opus 4.8 vs GPT-5.6 Sol：实用的人工智能模型比较</a>&lt;p&gt;自该比较首次运行以来发生了什么变化此处比较的三个模型中的两个已经成功，并且 GPT-5.6 Sol 的定价发生了重大变化。目前 DeepInfra 上可用的三个最强大的模型并不能按功能层完全分开。 Kimi K3（通过 DeepInfra 提供）、Claude Opus 4.8 和 GPT-5.6 Sol 的得分均在 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/gpu-instances"><img src="https://deepinfra.com/blog/gpu-instances.jpg" alt="GPU 实例简介：AI 工作负载的按需 GPU 计算"></a><a href="https://deepinfra.com/blog/gpu-instances">GPU 实例简介：AI 工作负载的按需 GPU 计算</a>使用我们的新产品在几分钟内启动专用 GPU 容器GPU 实例功能，专为机器学习训练、推理和计算密集型工作负载而设计。</p>
+<p><a href="https://deepinfra.com/blog/nvidia-nemotron-3-nano-omni-release"><img src="https://deepinfra.com/blog/nvidia-nemotron-3-nano-omni-release.png" alt="在 DeepInfra 上介绍 NVIDIA Nemotron 3 Nano Omni"></a><a href="https://deepinfra.com/blog/nvidia-nemotron-3-nano-omni-release">在 DeepInfra 上介绍 NVIDIA Nemotron 3 Nano Omni DeepInfra</a>DeepInfra 是 NVIDIA Nemotron 3 Nano Omni 的官方发布合作伙伴，Nemotron 3 Nano Omni 是 Nemotron 3 系列中的第一个多模态模型 - 一个单一的开放模型，可以在一个统一的推理过程中理解图像、视频、音频、文档和文本。</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>MiMo-V2.6-Pro 定价指南：开发者成本拆解</title>
       <link>https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide</link>
@@ -4282,111 +4441,6 @@ Below the hero, [components: N cards / a chart / a photo grid].
   -H &quot;Content-Type: application/json&quot; \
   -d '{&quot;prompt&quot;: &quot;Landing page for a productivity app called Flow...&quot;, &quot;aspect_ratio&quot;: &quot;16:9&quot;}'</code></pre>
 <p>用 AI 设计网站，从来不是敲一句&quot;给我做个网站&quot;然后祈祷，而是写出一份精确到模型只能画出一件东西的简报——那件你心里早就有的东西。把提示词写对，空白画布就不再是项目卡住的地方，而成了它们开始的地方。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>双层 AI 智能体：为什么你需要两个模型</title>
-      <link>https://deepinfra.com/blog/two-tier-agent-two-models</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/two-tier-agent-two-models</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Two-Tier AI Agents: Why You Need Two Models</description>
-      <content:encoded><![CDATA[<h1>双层 AI 智能体：为什么你需要两个模型</h1>
-<p>看一个长时间运行的编码或运维智能体的 trace，你会看到同一个模式。相当大比例的步骤是机械性的：构造一个工具调用、检查输出格式、在瞬时错误上重试、摘要一段日志、给结果分类。这些都不需要前沿推理，都不需要一个 GPQA Diamond 考到 90% 的模型。它们需要的是一个能可靠遵循指令、响应快、单次调用不贵的模型。</p>
-<p>问题在于：大多数团队把这些步骤全部路由给他们用在规划步骤上的那个昂贵模型——只因为已经有它的 API key。NVIDIA 在 8 月 11 日发布 <a href="https://deepinfra.com/nvidia/NVIDIA-Nemotron-3.5-Lightning">Nemotron 3.5 Lightning</a> 时直接点出了这个做法：对智能体实际所做的大部分工作来说，前沿推理模型是错误的工具。这个论点值得认真对待——不是因为 Nemotron 3.5 Lightning 是唯一值得考虑的执行力模型，而是因为 NVIDIA 围绕这一前提构建了一整个模型类别加一个路由库，这本身就是一个信号：业界已经收敛到同一个结构性结论。</p>
-<p>本文为双层智能体架构（two-tier agent）做出论证，解释单模型技术栈的成本究竟流向何处，并展示路由切分在实践中长什么样。</p>
-<h2>token 都去了哪里</h2>
-<p>多数前沿模型部署背后的直觉是：模型靠&quot;聪明&quot;挣回自己的成本。对规划步骤这是真的，对智能体 token 预算的大头却不是。</p>
-<p>2025 到 2026 年间 token 价格降了很多，多数企业仍然在超 AI 预算。原因是：智能体工作流把 token 消耗乘了倍，而这种乘法不是单轮定价直觉能捕捉的。用户向聊天机器人问一个问题，产生一次推理调用；一个智能体完成等价任务，可能产生三十次：规划步骤、工具调用、结果读取、验证循环、子智能体委派、错误处理、上下文压缩，最后再加一遍综合。每一项都是独立的推理调用，每一项都按输出费率计费。</p>
-<p>随 Nemotron 3.5 Lightning 发布一同公布的 <a href="https://blogs.nvidia.com/blog/nemotron-lightning-switchyard-rtx-dgx/">LangChain 基准</a>把这一点讲得很具体。在 145 个多轮智能体任务上，用一个升级路由器在 Lightning 与 <a href="https://deepinfra.com/anthropic/claude-opus-4-8">Claude Opus 4.8</a> 之间路由，成本比纯前沿基线降低了 74%。只有 7% 的调用去了前沿模型，其余 93% 由执行模型处理。准确率的代价大约是 6 个百分点。</p>
-<p>这个 7% 值得停下来想一想。如果一个真实多轮基准中 93% 的调用都能由一个便宜的执行模型处理、只付出 6 个百分点的准确率代价，那么问题已经不是双层路由值不值得做，而是&quot;一个模型包打一切&quot;为什么还是默认。</p>
-<h2>什么该给前沿模型，什么不该</h2>
-<p>这道切分比乍看之下更符合直觉。执行层不是质量上的妥协，而是一个认知：智能体所做的大部分事情，压根不是质量问题。</p>
-<table><thead><tr><th><strong>任务类型</strong></th><th><strong>示例</strong></th><th><strong>路由到</strong></th><th><strong>原因</strong></th></tr></thead><tbody><tr><td>规划与编排</td><td>分解一个目标、决定调用哪些工具、综合互相冲突的结果、应对意外失败</td><td>前沿模型</td><td>需要真正的推理、判断力，以及贯穿整个任务的上下文</td></tr><tr><td>工具调用格式化</td><td>构造 JSON payload、填充函数 schema、组织一条搜索 query</td><td>执行模型</td><td>结构是确定性的；正确性可验证；不需要推理</td></tr><tr><td>结果校验</td><td>工具返回了错误吗？输出在预期范围内吗？格式匹配吗？</td><td>执行模型</td><td>模式匹配与 schema 检查；可重复且快</td></tr><tr><td>重试逻辑</td><td>重发失败的 API 调用、在瞬时错误上调整参数</td><td>执行模型</td><td>不含判断的条件逻辑，更适合交给代码或一个小模型</td></tr><tr><td>上下文摘要</td><td>把一长段工具输出压缩后再传回规划器</td><td>执行模型</td><td>抽取任务；不需要前沿级理解力</td></tr><tr><td>分类与路由决策</td><td>这个工具输出是错误还是结果？下一步该走哪个？</td><td>执行模型</td><td>边界明确、结果可枚举的决策，可靠地跑起来很便宜</td></tr><tr><td>最终综合与输出</td><td>基于累积的结果产出面向用户的答复</td><td>前沿模型</td><td>输出的质量与连贯性要紧；这就是用户看到的东西</td></tr></tbody></table>
-<p>画这条线有个好用的启发式：只要你能用程序校验输出——schema、格式、区间、已知错误码——这个任务就不需要前沿模型。校验是便宜的；只要生成空间被良好约束，生成一个能通过校验的东西不需要前沿级推理。</p>
-<p>真正需要前沿模型的任务，是那些正确性无法低成本校验的：从多个工具输出中综合互相冲突的信息、在真正含糊的下一步之间做抉择、产出必须连贯且说理充分的用户可见输出。而这些任务在一条长智能体循环里是稀疏的：一个设计良好的智能体在一个复杂任务里可能发起上百次工具调用，而只做出五个真正的规划决策。</p>
-<h2>Paul Gauthier 在 2025 年跑过的那个实证</h2>
-<p>这套架构的实证案例并不是从 Nemotron 3.5 Lightning 才开始的。2025 年 1 月，Aider 创始人 Paul Gauthier 发布了<a href="https://x.com/paulgauthier/status/1882833360567095682">结果</a>：用 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-R1-0528">DeepSeek R1</a> 做推理与规划、Claude Sonnet 做代码编辑，在 Aider 的 polyglot 基准上命中 SOTA，成本只有单用 OpenAI o1 的十四分之一。</p>
-<p>架构很简单。R1 负责思考：分析代码库、判定哪些文件相关、起草实现计划。Sonnet 负责精确编辑：拿一份清晰的规格，在代码里执行它。R1 的推理按 token 算便宜，Sonnet 的编辑按步骤算精准，谁都不替谁干活。结果胜过单一前沿模型，花费只是零头。</p>
-<p>这个模式已经被推广。UC Berkeley、Anyscale 和 Canva 发表在 ICLR 2025 的研究显示，经过训练的路由系统在混合复杂度工作负载上带来 85% 的成本削减，同时保持 GPT-4 性能的 95%。核心发现是：一个小分类器就能把大多数流量路由给更小的模型，且在这些任务上没有可测量的质量退化。这正是 Gauthier 当年手动在生产里跑通的同一个洞见。</p>
-<h2>执行模型需要成为什么</h2>
-<p>不是每个小模型都适合执行层。它的要求和通用模型不同。</p>
-<p><strong>指令遵循重于推理广度。</strong> 执行模型的职责是被精确且一致地指哪打哪。它不需要推理&quot;这条指令对不对&quot;——规划器已经定过了。它需要遵守 schema、正确调用工具、返回结构化输出。为智能体 harness 蒸馏或微调过的模型，常常在这类任务上胜过更大的通用模型，尽管激活参数少得多。Nemotron 3.5 Lightning 专门针对 OpenClaw 和 Hermes Agent 做过训练，正是出于这个原因。</p>
-<p><strong>延迟。</strong> 在一条长智能体循环里，执行模型的响应时间会累积。每个工具调用多花 2 秒的模型，在 100 步的智能体上就是多花 200 秒。Nemotron 3.5 Lightning 对同规模模型的 4 倍速度优势在这里特别相关。它的 Mamba-2 + MoE + Attention 混合架构在预训练阶段就内建了多 token 预测，为吞吐而设计，而不是为最大推理深度。</p>
-<p><strong>可预测性。</strong> 执行模型需要以优雅且可预期的方式失败。一个时而产出正确 JSON、时而产出结构不同的东西的模型，比一个能力稍弱但以已知方式失败的模型更难绕。执行模型的失败模式应当可枚举、可被校验步骤捕获，进而触发向前沿模型的升级。</p>
-<p><strong>可微调性。</strong> 执行模型的任务足够窄、足够重复，领域定制微调是可行的。客服智能体的工具调用格式、编码智能体的错误分类 schema、运维智能体的日志解析模式——这些都能由一个在几百个样本上微调过的小模型学会。Nemotron 3.5 Lightning 随附通过 NeMo Automodel 的 LoRA 与全量 SFT 支持，正是为了促成这一点。一个在你具体任务分布上微调过的执行模型，几乎总会以同样成本胜过通用小模型。</p>
-<h2>实践中行得通的模型搭配</h2>
-<p>执行模型的选择，与其说取决于抽象能力排名，不如说取决于你现有的基础设施，以及执行任务长什么样。</p>
-<table><thead><tr><th><strong>规划器（前沿）</strong></th><th><strong>执行器（便宜）</strong></th><th><strong>成本占比（估算）</strong></th><th><strong>适合</strong></th></tr></thead><tbody><tr><td>Claude Opus 4.8</td><td>Nemotron 3.5 Lightning</td><td>约 10% 调用给前沿 / 约 90% 给执行</td><td>综合质量至关重要的复杂推理智能体</td></tr><tr><td>DeepSeek V4 Pro</td><td>DeepSeek V4 Flash</td><td>约 15% 调用给前沿 / 约 85% 给执行</td><td>成本敏感的流水线；两个模型共享同一 API 格式</td></tr><tr><td>Kimi K3</td><td>Qwen3 30B-A3B</td><td>约 10% 调用给前沿 / 约 90% 给执行</td><td>要求执行层可自托管的纯开放权重栈</td></tr><tr><td>GPT-5.6 Sol</td><td>Nemotron 3.5 Lightning 或 GPT-5.6 Luna</td><td>约 7% 调用给前沿 / 约 93% 给执行</td><td>OpenAI 原生流水线；Luna 与 Sol 共享同一 API 面</td></tr></tbody></table>
-<p><a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4-Pro-0813">V4 Pro</a> 与 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4-Flash-0731">V4 Flash</a> 这对搭配值得专门一说。两个模型在 DeepInfra 上共享同一 API 格式：同样的端点结构、同样的参数接口、同样的 function calling schema。实现路由切分是一行模型名的改动，不是集成改动：规划调用指向 deepseek-v4-pro，执行调用指向 deepseek-v4-flash，其余代码原封不动。对已经在跑 DeepSeek 的团队，这是通往双层架构摩擦最低的路径。</p>
-<p>Opus 4.8 配 Lightning 则是有 LangChain 基准数据背书的那对。145 个多轮任务上 74% 的成本削减，是这个特定架构可获得的最严谨的公开结果。约 6 个百分点的准确率代价有分量，但对多数生产工作负载可控——毕竟要紧的决策仍然由前沿模型处理。</p>
-<h2>NeMo Switchyard 如何框定路由问题</h2>
-<p>NVIDIA 随 Nemotron 3.5 Lightning 发布了 NeMo Switchyard。它是一个开源路由库，把智能体的每一步分派给可用的最划算模型。这个设计值得理解，因为它把多数团队目前临时处理的东西变成了显式结构。</p>
-<p>Switchyard 把路由当作智能体架构里的一等关注点，而不是部署细节。智能体循环中的每一步按类型分类——规划、工具执行、校验、委派——并路由到相应的模型层级。规划器和执行器不需要意识到彼此存在，交接由路由器处理。该库被设计成可与 LangGraph、LlamaIndex 等主流智能体框架组合，路由层坐在框架与模型 API 之间，而不是嵌在任何一边。</p>
-<p>Switchyard 点明的关键架构论点：路由策略是与智能体逻辑分离的独立制品。智能体做什么——它的工具、目标、prompts——定义一次；每一步由哪个模型处理，则是一个可以独立更改、实验和监控的配置决策。正是这个分离，让调成本-质量权衡变成调路由阈值，而不是改写智能体代码。</p>
-<p>实现这套架构不必非用 Switchyard。LangGraph 的条件边、LlamaIndex 的路由抽象、或对任务分类的简单 if-else 都行得通。Switchyard 多给的是路由问题的一套结构化词汇，以及与 Nemotron 模型家族的预制集成。底层模式——给每一步分类、路由到能可靠处理它的最便宜模型、失败时升级——与框架无关。</p>
-<h2>升级路径与路由本身同等重要</h2>
-<p>一个正常情况路由正确、却在执行模型能力不及时装死的双层架构，比单模型栈更糟。从执行器到规划器的升级路径需要显式、快速、可观测。</p>
-<p>实用模式：执行模型的输出伴随一个置信信号返回。可以是一个显式分数、一个结构化的不确定性字段，或者就是响应 schema 里的一个标志。路由器在把输出交给下一步之前先检查该信号。如果执行模型标了低置信，或输出没通过格式校验，路由器就把同一步重新路由给前沿模型。前沿模型的输出替换掉执行模型失败的尝试，智能体循环继续。</p>
-<p>不要做什么：让失败静默累积；仅凭输出结构推断置信度；把每次校验失败都升级给前沿模型。第一条产出悄悄劣化的结果而账单上毫无信号；第二条在结构合法但语义错误的输出上制造虚假信心；第三条则抹掉这套架构本该带来的大部分成本节省。</p>
-<p>可观测的路由，是让这套架构可持续维护的运营要求。记录每一步由哪个模型处理、执行模型的置信信号、以及是否发生过升级。这份 trace 会告诉你：路由阈值校准得对不对、哪类任务升级得超出预期、执行模型在哪里需要微调。没有它，你就是在盲飞——飞越这套架构本应优化的成本-质量权衡。</p>
-<h2>这对单任务成本意味着什么</h2>
-<p>一旦路由切分定下来，实际的算术很直白。以一个在复杂任务上发出 80 次模型调用的编码智能体为例：6 个规划决策路由给 Opus 4.8，74 个执行步骤路由给 Nemotron 3.5 Lightning 或 V4 Flash。按 Opus 4.8 每百万输出 $25、Lightning 每百万 $0.40 计，规划步骤平均 500 输出 token、执行步骤平均 200：</p>
-<p><strong>单模型</strong>（全部 Opus 4.8）：80 次调用 × 平均 200 token × $25/M = 每任务 $0.40</p>
-<p><strong>双层</strong>（6 前沿 + 74 执行）：6 × 500 × $25/M + 74 × 200 × $0.40/M = $0.075 + $0.006 = 每任务 $0.081</p>
-<p>这是模型账单上 80% 的成本削减。按每月 100,000 个任务算，单模型栈花 $40,000，双层栈花 $8,100。质量上的取舍完全取决于那 74 个执行步骤是否被正确分类——它们是否确实是执行模型能可靠处理的结构化、可验证的工作。把分类做对，就是这套架构要求你做的工程。</p>
-<p>单价在跌、账单在涨，这中间的落差几乎全可以用智能体工作流对 token 消耗的乘数效应来解释。双层架构是缩小这一落差的最直接可用的杠杆——不是削减智能体做的事，而是把它做的大部分事情，跑在与任务实际体量相称的基础设施上。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Kimi K3 可以投入生产了吗？真实场景分析</title>
-      <link>https://deepinfra.com/blog/kimi-k3-production-ready</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/kimi-k3-production-ready</guid>
-      <pubDate>Thu, 17 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Is Kimi K3 Production Ready? Real-World Analysis</description>
-      <content:encoded><![CDATA[<h1>Kimi K3 准备好上生产了吗？真实世界分析</h1>
-<p><a href="https://deepinfra.com/moonshotai/Kimi-K3">Kimi K3</a> 于 2026 年 7 月发布后，迅速成为 AI 圈讨论度最高的模型之一。它一路爬到 <a href="https://artificialanalysis.ai/models/kimi-k3">Artificial Analysis Intelligence Index</a> 的榜首，跑赢了好几个运行成本高得多的闭源模型。对一个<a href="https://deepinfra.com/blog/open-vs-closed-source-ai-models">开放权重</a>模型——尤其还是一个 2.8 万亿参数这么大的模型——这是重要里程碑。开发者们自然开始问：多久能把它放进生产？</p>
-<p>这份关注是正当的。K3 的基准成绩是真实的，有独立测试背书，让它成为当今最强的开放权重模型之一。但强劲的基准表现并不自动意味着它适合每一种生产工作负载。重要的是它在你的具体用例、基础设施、延迟要求和预算下表现如何。</p>
-<p>本文就从这个务实角度审视 Kimi K3：它在生产中表现如何、部署要花多少钱、以及它在哪儿交付最大的价值。</p>
-<h1><strong>Kimi K3 速览</strong></h1>
-<p>在看 K3 于真实工作负载下的表现之前，先快速了解一下它提供了什么。</p>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>数值</strong></th><th><strong>为何重要</strong></th></tr></thead><tbody><tr><td><a href="https://artificialanalysis.ai/models/kimi-k3">Intelligence Index</a></td><td>60</td><td>开放权重梯队之首</td></tr><tr><td><a href="https://artificialanalysis.ai/models/kimi-k3">上下文窗口</a></td><td>1M tokens</td><td>能一次装下整个代码库或大型文档集</td></tr><tr><td>输入</td><td>文本 + 图像</td><td>不止处理文本，截图、图表、日志都行</td></tr><tr><td><a href="https://deepinfra.com/moonshotai/Kimi-K3">输出价</a></td><td>$14.25 / 1M</td><td>低于 Moonshot 自家 <a href="https://artificialanalysis.ai/models/kimi-k3">$15 挂牌价</a></td></tr></tbody></table>
-<p>底层上，Kimi K3 采用 <a href="https://deepinfra.com/blog/mixture-of-experts-llm-economics-price-drop">Mixture-of-Experts</a> 架构。总参数 2.8 万亿，但每个 token 只有约 1,040 亿处于激活状态。正是这一点让如此规模的模型可以被实际服务：它能调用一个大得多的模型的能力，而单 token 成本更接近小模型。</p>
-<p>表格只讲了故事的一部分。真正的问题是 K3 如何做到这些顶级分数，以及这份表现能否在真实工作负载中站得住。</p>
-<h2><strong>排行榜没有测量的 Kimi K3 部分</strong></h2>
-<p>基准在受控条件下测试模型：一次一个任务、没有真实成本约束、没有来自真实用户的压力。生产是另一回事。对 K3 而言，你在实践中看到的大部分现象，最终都归结为模型工作方式上的一个核心决定：<strong>它在给出答案之前永远先推理。</strong></p>
-<h3><strong>思考永远开启</strong></h3>
-<p>许多模型对简单 prompt 直接作答，只在难题上<a href="https://docs.deepinfra.com/chat/reasoning">进行推理</a>。K3 走了另一条路：没有非思考模式，每个请求都会得到模型全部的推理强度。这让它难题上有优势，也解释了它在高要求任务上的表现。代价是简单请求也享受同样待遇——在你也许并不需要更深推理的时候，用的仍是深度推理。</p>
-<h3><strong>更多推理意味着更多输出</strong></h3>
-<p>更多的推理也意味着更多的 token。在某次评测中，K3 生成了<a href="https://artificialanalysis.ai/models/kimi-k3">1.3 亿输出 token</a>，而中位数是 9,900 万。估算成本时请记住这一点，尤其因为输出占了账单的大头。不过额外输出不一定浪费：在复杂任务上，它正是 K3 拆解问题、抵达更强结果的机制的一部分。</p>
-<h3><strong>它偏深度而非原始速度</strong></h3>
-<p>K3 不是奔着速度优先设计的。Artificial Analysis 测得<a href="https://artificialanalysis.ai/models/kimi-k3">每秒 41.2 token</a>，而<a href="https://deepinfra.com/blog/deepseek-v4-pro-max-api-benchmarks-latency-throughput-cost">首 token 时间</a>也可能更长，因为模型要先推理再回答。对延迟敏感的应用这可能是问题，但对更长的任务，这个权衡更容易说得通——尤其是在 K3 于<a href="https://deepinfra.com/blog/introducing-kimi-k3-on-deepinfra">其对比组中领跑 SWE-Marathon</a> 的持续编码工作上。</p>
-<h3><strong>关键是单任务成本</strong></h3>
-<p>因为 K3 永远推理，单 token 成本讲不了完整的故事。更有用的数字是&quot;真正把活干完要花多少钱&quot;。按这个口径 K3 表现出色：Artificial Analysis 给出<a href="https://artificialanalysis.ai/?models=kimi-k3%2Cclaude-opus-4-8#cost-tabs">约 $0.84/任务</a>，而 Opus 4.8 约 $2.03。所以尽管 K3 生成更多输出，它完成真实任务的成本却不到一个头部闭源模型的的一半。</p>
-<p>这就是 K3 的基本权衡：你牺牲一些速度、多用一些 token，换来更深的推理。对简单请求，这是不必要的开销；对复杂工作，无论技术还是财务上，这都是一笔真正划算的交易。</p>
-<h2><strong>运行 K3 需要什么</strong></h2>
-<p>上面一切都默认 K3 只是一个触手可及的 API。但运行这么大的模型需要真正的基础设施，值得了解其中门道。</p>
-<h3><strong>自托管是严肃的承诺</strong></h3>
-<p>规模是你撞上的第一堵墙。K3 有 2.8 万亿参数，自己运行意味着要配置一个至少 <a href="https://deepinfra.com/blog/kimi-k3-vs-deepseek-v4-pro-vs-glm-5-2">64 颗加速卡</a>的超节点。这超出了大多数团队现实能攒起来的基础设施。</p>
-<p>Mixture-of-Experts 架构在这里并不像看上去那样救你。MoE 让每 token 计算量保持低位，因为每个输入只激活一部分专家。但那是计算的效率，不是内存的。全部专家仍得常驻内存，硬件需求照样高企。</p>
-<p>发布时间线让问题雪上加霜。K3 先以 API 发布，开放权重随后。这意味着自托管这条路从未被模型自己的创造者在规模上实战验证过。选择自托管，吞吐、扩展与可靠性就全压在你身上。</p>
-<h3><strong>托管访问卸掉这个包袱</strong></h3>
-<p>DeepInfra 完全绕开了硬件问题。K3 <a href="https://deepinfra.com/moonshotai/Kimi-K3">已经上架</a>，每百万输出 token $14.25，低于 Moonshot 自己的 $15 费率，缓存输入低至 $0.285。这个差距比看上去重要——缓存输入定价通常正是重复调用或长上下文调用上真实节省显现的地方。</p>
-<p>你从普通 API 起步：不需要超节点、不需要采购加速卡、不需要预先做容量规划。日后用量增长，可以迁移到私有端点而不必重新架构你的集成，因为两者的接口保持一致。迁移路径存在，只是你不必在第一天就走。</p>
-<p>生产工作需要的不只是裸模型访问，这些全都覆盖了。<a href="https://docs.deepinfra.com">API 与 OpenAI 兼容</a>，替换进现有基于 OpenAI 的流水线不需要重写集成层。结构化 JSON 输出与 function calling 开箱可用，多模态输入同样支持。没有任何一项需要定制集成工作。</p>
-<h2><strong>它在哪儿合适，在哪儿不合适</strong></h2>
-<p>K3 并不打算当万金油的默认模型。它的强项更适合高要求、多步骤、更深推理能真正起作用的工作负载。</p>
-<h3><strong>长周期智能体编码</strong></h3>
-<p>K3 <a href="https://deepinfra.com/moonshotai/Kimi-K3">为长工程会话而生</a>——那种需要在大型仓库中穿行、在有限监督下运行终端工具的会话。更轻的模型在这类任务上往往丢失上下文或过早放弃。K3 生来就能在这更长的赛程里撑住，而不是中途劣化。</p>
-<p>这一说法经得起测试。在衡量持续自主软件工程的 <a href="https://deepinfra.com/blog/introducing-kimi-k3-on-deepinfra">SWE-Marathon</a> 上，K3 领先其对比组中的每一个模型，包括 Claude Fable 5 和 GPT-5.6 Sol。对一个以&quot;长时间保持连贯&quot;定义的任务，在这里胜出是有分量的信号。</p>
-<h3><strong>智能体知识工作与工具使用</strong></h3>
-<p>深度研究、仪表板、多步分析共享同一个形状：为了抵达答案而串联起的重复工具调用。那个在简单查询上显得多余的额外推理，一旦任务需要好几步才能得到可靠结果，就开始回本。</p>
-<p>K3 的工具使用表现直接背书了这一点。它在围绕工具调用构建的 MCPMark-Verified 上<a href="https://deepinfra.com/blog/kimi-k3-2-8t">得 94.5 分</a>，领先对比组中的闭源模型。对于一次处理不当的调用就能带崩整条链的任务，这不是一个小差距。</p>
-<h3><strong>大上下文上的多模态推理</strong></h3>
-<p>K3 横跨文本、图像与视频工作，并与<a href="https://deepinfra.com/moonshotai/Kimi-K3">百万 token 上下文窗口</a>相配。实际意义上，这足够在单个任务里装下整个代码库或一大批文档，而不会在中途丢失早期上下文。</p>
-<p>文档理解是这一能力具体落地的地方。K3 在版式分析基准 OmniDocBench 上<a href="https://deepinfra.com/blog/kimi-k3-2-8t">得 91.1 分</a>，说明它对结构化、视觉复杂的文档处理良好，而不只是纯文本。</p>
-<p>不过这份强项并不覆盖所有工作负载。对短对话、分类、抽取或其他大批量、延迟敏感的任务，K3 不是显而易见的选择。如果任务不能从&quot;大上下文上的深度推理&quot;中获益，一个更快更便宜的模型通常更说得通。</p>
-<h2><strong>最终结论</strong></h2>
-<p><a href="https://deepinfra.com/moonshotai/Kimi-K3">Kimi K3</a> 是一款货真价实的前沿级模型，让它成名的基准分数经得起独立测试。对它生来应对的工作——长周期编码、大型仓库项目、跨文本图像与海量上下文的推理——它是一个很容易推荐的模型。而当你看&quot;把任务真正做完&quot;的成本时，它可能比其竞争的闭源模型更便宜。</p>
-<p>需要记住的主要点是：K3 在回答前永远推理，所以最好把它看作一个专才，而非日常默认。把困难、高价值的工作交给它，多花的时间和成本可以很值。对简单、大批量的任务，更轻的模型通常更快也更经济。</p>
-<p>判断 K3 是否适合你的用例的最好办法是亲自测它。用你自己的负载跑一个小规模试点，跟踪每完成一个任务的成本。它会告诉你任何排行榜都告诉不了的东西。对真正能从其能力中获益的任务，K3 是当今最强的开放权重模型之一。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

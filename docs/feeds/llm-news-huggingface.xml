@@ -7,7 +7,439 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 30 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Dharma 字段提取器：任何文档输入，JSON 输出中的结构化字段</title>
+      <link>https://huggingface.co/blog/Dharma-AI/dharma-field-extractor</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/Dharma-AI/dharma-field-extractor</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Dharma Field Extractor: Any Document In, Structured Fields in JSON Out</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>Dharma 字段提取器：任何文档输入，JSON 输出中的结构化字段</h1>
+<p>团队文章</p>
+<p>发布于 2026 年 11 月 4 日</p>
+<p>15</p>
+<ul><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/6c132ab7643ff60274db74de037ebc72.svg" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/892344f02f1be897b751797574cb411b.svg" alt=""></a></li><li><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt=""></a></li><li><a href="https://huggingface.co/LuizLuzDharma"><img src="https://huggingface.co/avatars/398c0d1fecf24937ce0fcf0e271cb0aa.svg" alt=""></a></li><li><a href="https://huggingface.co/luizluz608"><img src="https://huggingface.co/avatars/7b8eed7208bd427fb1591506e7495f24.svg" alt=""></a></li><li><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt="Gabriel Pimenta de Freitas Cardoso 的头像"></a></p>
+<p>加布里埃尔·皮门塔·德·弗雷塔斯·卡多佐</p>
+<p>加布里埃尔·皮门塔99</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/44b3e37c30f6b7dabee192888d300172.svg" alt="Paulo Henrique de Medeiros Araujo 的头像"></a></p>
+<p>保罗·恩里克·德·梅代罗斯·阿劳若</p>
+<p>保罗达玛人工智能</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt="布鲁诺·杜阿尔特的阿凡达"></a></p>
+<p>布鲁诺·杜阿尔特</p>
+<p>布鲁诺杜阿尔特01</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ff5683e6c5cb66fc0b3aeba439e80206.svg" alt="Francisco de Almeida Rocha Alves 的头像"></a></p>
+<p>弗朗西斯科·德·阿尔梅达·罗查·阿尔维斯</p>
+<p>法尔维斯9101</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><em>一个 20 亿个参数模型，可以从任何文档类型中准确提取您要求的字段，其性能优于我们测试过的每个前沿LLM，而成本仅为其一小部分。 </em></p>
+<p>[![cover_combined_1](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/JIRHcND5LFS_JhgA e-ObV.png)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/JIRHcND5LFS_JhgAe-ObV.png) 4 月份，我们发布了 <a href="https://huggingface.co/Dharma-AI/Dharma-OCR-LITE">DharmaOCR-LITE</a>，这是一个专门用于 OCR 的模型，涵盖从合同和法庭文件到发票、ID 和表格等各种文档。其背后的<a href="https://arxiv.org/abs/2604.14314">论文</a>为领域专业化提出了一个狭窄的、经过精心衡量的案例：一个更接近其任务的较小模型在该任务上击败了通用前沿 API。</p>
+<p>OCR 为您提供页面上的文本，忠实于原始格式。当工作是整个文档时，这正是您想要的，例如您将从头到尾阅读的合同或您正在数字化的手稿。</p>
+<p>然而，有一个不同的用例：您不需要页面，您想要其中的特定字段，以下游系统可以使用的形状。发票上的每个行项目，作为列表。医疗申请中的患者姓名、检查类型和日期，已准备好安排。 ID 的字段映射到员工记录的列。</p>
+<p>通过 OCR 运行该文档，您将逐行返回打印在文档上的所有内容，但不会指示哪个字符串是考试类型、哪个是日期或哪个数字是总数。在每个值到达数据库之前，仍然需要有人编写将每个值映射到正确字段的代码。</p>
+<p>如今，只要仔细提示，通用LLM就可以完成这项工作。在前沿 API 定价和延迟方面，许多企业需要大量运行任务，这很快就会成为解决明确定义的问题的昂贵方法。</p>
+<p>所以我们为它建立了一个模型。字段提取器获取文档图像以及对其能找到的所有内容的请求，或者要填充的精确模式，然后返回结构化 JSON：类型化、逐个字段、嵌套在文档嵌套的位置。发票以有序列表的形式返回每个行项目，每个项目都有自己的数量和价值以及总计。 ID 作为您将存储的字段返回，并使用您的系统已使用的名称。相同的检查点处理所有这些，无需针对每种类型进行微调。</p>
+<p>您可以自己尝试一下<a href="https://ocr-portal.prd-us-east-2.dharma-ai.com/login">此处</a>。</p>
+<h2>模型的作用</h2>
+<p>假设每天早上收到一批供应商发票，您需要将每张发票中的四项信息推入系统：供应商、发票编号、到期日、总计。对于进入调度程序的医疗申请或为合规系统提供合同的情况也是如此，重要的是当事人、期限、处罚和罚款金额。您不需要页面，您需要某些字段。使用字段提取器，有两种方法可以获取它们：</p>
+<p>[![field-extractor-1280](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/j-k3pMh-GwLH6b gsRZ-4u.gif)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/j-k3pMh-GwLH6bgsRZ-4u.gif)</p>
+<ul><li><strong>打开</strong>：未提供架构。该模型读取页面并从上下文和布局而不是从固定的字段名称列表中找出其中的哪些部分是结构化字段（一个标签后跟一个值，一个在其列上有标题行的表格），并将它找到的所有内容作为键值对返回。</li><li><strong>架构导向</strong>：您可以在系统已使用的键名称下逐个字段指定所需的确切形状，并为每个字段指定一个类型（字符串、数字或布尔值）。询问“service_provider”和“client_company”，这些就是返回的确切密钥。请求一个表格，它会逐行、逐列地填充它，将每个单元格与其所属的键相匹配。请求一个不在文档中的字段，它会返回 null 而不是发明一个值。</li></ul>
+<p>选择取决于您已经知道的内容。当您不知道文档包含什么内容时，请发送开放请求。当输出必须与其他地方已经存在的形状匹配时发送模式。</p>
+<p>无论哪种方式，返回的是 JSON：字段作为键，根据请求键入的值，以及“null”（如果文档没有您所要求的内容）。当您发送模式时，输出完全遵循它，具有相同的键并且没有额外的字段，因此它可以直接进入下一个系统。</p>
+<h2>它是如何训练的</h2>
+<p>基本模型是 DharmaOCR-LITE v1.1，这是一个新的 20 亿参数版本，在论文中的模型的基础上进行了优化，并且已经通过监督微调和 DPO 专门用于 OCR。在该检查点之上，我们在涵盖两种请求模式的 43,384 个训练示例上训练了 LoRA 适配器。</p>
+<p>数据被组织成三个流：</p>
+<ul><li><strong>英语多域数据</strong>：从公共网络收集的各种文档，涵盖多种文档类型。</li><li><strong>巴西域名数据</strong>：内部来源的真实巴西文档，采用葡萄牙语。</li><li><strong>多语言数据</strong>：覆盖其他欧洲和亚洲语言的较小份额，用于英语和葡萄牙语以外的更广泛的概括。</li></ul>
+<p>所有三个流都在字段级别进行注释。这种混合是有意的多领域：收据、商业发票、表格、银行对账单、身份证件和综合文件，而不是一种归档类型。</p>
+<p>[![03_training_data_mix_v2](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/SuMRjXc_gcp3L Zm3K_mWs.png)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/SuMRjXc_gcp3LZm3K_mWs.png)</p>
+<h2>基准的界限在哪里</h2>
+<p>完整的基准测试涵盖了三个请求场景中的 546 个文档，总共 1,638 个案例：提取没有模式的每个字段、仅命名真实字段的部分模式以及还包含故意不存在的字段的模式。分数是字段级 F1（按路径匹配，包括表内的位置），乘以匹配值的 Levenshtein 相似度以及作为有效 JSON 返回的输出份额。</p>
+<p>我们针对四种通用前沿配置运行了相同的基准测试。</p>
+<p>[![图片](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/rGnjzOfdYJrtG8gG_6kZc。 png)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/rGnjzOfdYJrtG8gG_6kZc.png)</p>
+<p>与通用LLM相比，质量差距从 1.8 分（Claude Opus 5，最接近）到 9.3 分（GPT-5.6 Luna，最宽）。</p>
+<p>[![图片](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/bHPhh4WTqoSI2Aqg0NAii。 png)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/bHPhh4WTqoSI2Aqg0NAii.png)</p>
+<p>成本从大约低 6 倍 (GPT-5.6 Luna) 到大约低 147 倍 (GPT-5.6 Sol)。两侧的价格不同。前沿数据来自测量的每页平均输入和输出令牌（包括推理令牌），以及每个提供商发布的定价列表。每个前沿模型都在推理设置为低的情况下运行。 Claude Opus 5 使用了自适应努力，可以跳过较简单页面上的推理，同时保持较低水平。我们的模型不按代币计费：该模型运行自托管，因此该数字是单个 L40S 上的 GPU 时间，每小时 2.24 美元。</p>
+<p>这不是销售价格。自托管成本取决于每个部署所需的硬件、数量和延迟。此处的比较表明，部署在您自己的基础设施上的主权 SSLM 是前沿 API 的真正替代方案。</p>
+<h2>泛化测试</h2>
+<p>SROIE 和 FUNSD 是我们基准测试中的两个公共数据集，未在训练中使用。下面是每个例子的一个例子。</p>
+<p>在 SROIE 收据上，我们要求提供打印在其上的所有 18 个字段，这次没有虚拟字段，并且每个字段都正确返回：作为单个字段捕获的多行、未标记的帐单地址、两个空白字段（销售人员和参考人）正确返回为 null，并且收据上的每个数字都与分相匹配。</p>
+<p>[![sroie_combined](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/m3CfHgYlaDZ9srzt2 X99_.png)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/m3CfHgYlaDZ9srzt2X99_.png)</p>
+<p>在 FUNSD 复印差异表单（包含 12 个布尔字段的清单，其中包含五个子选项的嵌套组）上，模型将选中的一个框（质量较差的原件，旁边有手写的“褪色”注释）准确标记为 true，将其他 11 个框标记为 false，与表单完全匹配。它还可以正确读取页面上的手写 Bates ID，并为留空的两个字段返回 null。</p>
+<p>[![funsd_combined](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/GRHwR5tiDzDKVUtMo tsAb.png)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/GRHwR5tiDzDKVUtMotsAb.png)</p>
+<h2>同时兼顾质量和成本</h2>
+<p>20 亿参数模型的得分为 0.834，高于我们测试的所有前沿配置，从 Claude Opus 5 的 0.816 到 GPT-5.6 Luna 的 0.741，同时在单个 L40S 上运行，每次提取的成本低于比较中的每个 API。在相同的基准、相同的运行中测量，质量更高，成本更低。</p>
+<p>这不是我们第一次测量它。我们的 OCR 论文将第一个 DharmaOCR-LITE（一个 30 亿参数模型）置于在巴西葡萄牙语上测试的所有商业前沿 API 之上；三个月后，更新、资源更丰富的型号问世，差距依然存在。现在，一个 20 亿参数的模型可以通过字段提取来实现这一点。每个结果都为我们开始 Dharma-AI 的论点提供了证据：在有界任务上，接近该任务训练的小型模型通常会击败要求做同样事情的前沿模型。在此基准测试中，运行成本也降低了 6 至 147 倍。</p>
+<p>参数count设置上限；训练决定了模型能完成多少任务。您的企业不需要最大的型号。它需要一位针对您的问题进行过培训的人员。</p>
+<p>在您自己的文档上尝试一下<a href="https://ocr-portal.prd-us-east-2.dharma-ai.com/login">此处</a>。要了解有关 Dharma-AI 和我们构建的专业模型的更多信息，请访问 <a href="https://dharma-ai.com">dharma-ai.com</a>。</p>
+<h3>来源</h3>
+<ul><li>出价。巴西身份证件数据集。 Soares, Neves Jr., Bezerra (2020)，“BID 数据集：文档处理任务的挑战数据集”Anais Estendidos XXXIII SIBGRAPI。 <a href="https://github.com/ricardobnjunior/Brazilian-Identity-Document-Dataset">github.com/ricardobnjunior/Brazilian-Identity-Document-Dataset</a></li><li>电线。 Park 等人，NAVER CLOVA (2019)。 <a href="https://huggingface.co/datasets/naver-clova-ix/cord-v2">huggingface.co/datasets/naver-clova-ix/cord-v2</a></li></ul>
+<p>-VQA 文档。 Mathew 等人，WACV 2021 (ICDAR 2019)。 <a href="https://huggingface.co/datasets/lmms-lab/DocVQA">huggingface.co/datasets/lmms-lab/DocVQA</a></p>
+<ul><li>野生收据。 Sun 等人，IJCAI 2021。 <a href="https://huggingface.co/datasets/Theivaprakasham/wildreceipt">huggingface.co/datasets/Theivaprakasham/wildreceipt</a></li><li>SROIE（ICDAR 2019）。仅排除培训和评估。 <a href="https://huggingface.co/datasets/darentang/sroie">huggingface.co/datasets/darentang/sroie</a>（镜像）；上游 <a href="https://rrc.cvc.uab.es/?ch=13">rrc.cvc.uab.es/?ch=13</a></li><li>FUNSD。豪梅等人。仅排除培训和评估。 <a href="https://huggingface.co/datasets/nielsr/funsd">huggingface.co/datasets/nielsr/funsd</a>（镜像）； <a href="https://guillaumejaume.github.io/FUNSD/">guillaumejaume.github.io/FUNSD</a></li><li>Zenodo 发票 (PT)。 Cruz 和 Castelli，NOVA IMS (2022)。 <a href="https://zenodo.org/records/6371710">zenodo.org/records/6371710</a></li><li>行_项目。 Sagarjha456，Hugging Face。 <a href="https://huggingface.co/datasets/Sagarjha456/line_items">huggingface.co/datasets/Sagarjha456/line_items</a></li><li>Katanaml 发票（甜甜圈）。 Kozłowski 和 Weichbroth (2021)，Mendeley 数据 <a href="https://doi.org/10.17632/tnj49gpmtz.2">doi:10.17632/tnj49gpmtz.2</a>。 <a href="https://huggingface.co/datasets/katanaml-org/invoices-donut-data-v1">huggingface.co/datasets/katanaml-org/invoices-donut-data-v1</a></li><li>HumynLabs 巴西票据和发票。 <a href="https://huggingface.co/datasets/HumynLabs/Brazilian_Bills_and_Invoices_Dataset">huggingface.co/datasets/HumynLabs/Brazilian_Bills_and_Invoices_Dataset</a></li><li>Tech4Humans BR-Doc 提取。 <a href="https://huggingface.co/datasets/tech4humans/br-doc-extraction">huggingface.co/datasets/tech4humans/br-doc-extraction</a></li><li>卡多佐、加布里埃尔·皮门塔·德·弗雷塔斯等人。 “DharmaOCR：用于结构化 OCR 的专用小语言模型，其性能优于开源和商业基线。” arXiv 预印本 <a href="https://arxiv.org/abs/2604.14314">arXiv:2604.14314</a> (2026)。</li></ul>
+<h3>进一步阅读</h3>
+<ul><li><a href="https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization">SLM 词汇专业化如何在实际应用中将推理成本降低 77%</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management-pt2">相同集群，利用率提高 33 点：改变的是顺序</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management">GPU 管理：为什么空闲 GPU 是新的停飞飞机</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/newer-models-same-advantages">新型号，相同优势</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/why-specialization-is-inevitable">为什么专业化是不可避免的</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/specialization-beats-scale">专业化战胜规模：大多数人工智能采购决策忽视的战略变量</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/text-degenesis-a-product-failure-mode">文本退化：大多数基准测试不跟踪的生产故障模式</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/direct-preference-optimization-beyond-chatbots">超越聊天机器人的直接偏好优化</a></li></ul>
+<p><em>探索 <a href="https://huggingface.co/Dharma-AI">Hugging Face 上的 Dharma AI</a>，<a href="https://huggingface.co/spaces/Dharma-AI/DharmaOCR-demo">尝试我们的交互式演示</a>，<a href="https://huggingface.co/Dharma-AI/Dharma-OCR-LITE">下载我们的开源模型</a>，并了解专业人工智能系统如何在实际企业中胜过通用模型应用程序。</em></p>
+<h2>本文提到的型号1</h2>
+<h2>本文提到的数据集8</h2>
+<h2>本文提到的空间1</h2>
+<p>该作者的更多内容</p>
+<h2>SLM 词汇专业化如何在实际应用中将推理成本降低 77%</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
+<p>38</p>
+<p>2026 年 10 月 21 日</p>
+<h2>相同的集群，利用率增加 33 个点：改变的是顺序</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
+<p>20</p>
+<p>2026 年 8 月 17 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FDharma-AI%2Fdharma-field-extractor">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2FDharma-AI%2Fdharma-field-extractor">登录</a> 发表评论</p>
+<p>15</p>
+<ul><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/6c132ab7643ff60274db74de037ebc72.svg" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/892344f02f1be897b751797574cb411b.svg" alt=""></a></li><li><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt=""></a></li><li><a href="https://huggingface.co/LuizLuzDharma"><img src="https://huggingface.co/avatars/398c0d1fecf24937ce0fcf0e271cb0aa.svg" alt=""></a></li><li><a href="https://huggingface.co/luizluz608"><img src="https://huggingface.co/avatars/7b8eed7208bd427fb1591506e7495f24.svg" alt=""></a></li><li><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kaerez"><img src="https://huggingface.co/avatars/670198b891a28c7ad99d3ac202b8e66e.svg" alt=""></a></li><li><a href="https://huggingface.co/lucas-treuke"><img src="https://huggingface.co/avatars/e9756add45740d6fa3bf450fd9c1ec13.svg" alt=""></a></li><li><a href="https://huggingface.co/limafelipe"><img src="https://huggingface.co/avatars/344abdf81cfc54ca5ac2eba4c7876ac3.svg" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ff5683e6c5cb66fc0b3aeba439e80206.svg" alt=""></a></li><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/2d6f6d36a510a8147fe269c0783ecd7e.svg" alt=""></a></li><li><a href="https://huggingface.co/gustavolucchetti"><img src="https://huggingface.co/avatars/e920392ebf5a3b7c6b677800ec839bdd.svg" alt=""></a></li></ul>
+<h2>本文提到的型号1</h2>
+<h2>本文提到的数据集8</h2>
+<h2>本文提到的空间1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>StateBench：测试语言模型如何跟踪长文档的状态变化</title>
+      <link>https://huggingface.co/blog/allenai/statebench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/statebench</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：StateBench: Testing how language models track state changes over long documents</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>StateBench：测试语言模型如何跟踪长文档的状态变化</h1>
+<p>企业文章</p>
+<p>发布于 2026 年 11 月 3 日</p>
+<p>17 号</p>
+<ul><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/travisking"><img src="https://huggingface.co/avatars/1165d74c4dbd96297485b4be4446ddb2.svg" alt=""></a></li><li><a href="https://huggingface.co/Belirofon"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68b834e0636a9b6b45316755/63Ak_8fn4-75yr2ArCope.png" alt=""></a></li><li><a href="https://huggingface.co/sazid63"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6abaa0e17a2746d31739f0d8/T4kTX3ZhR5tjl_iI2Afjo.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="凯尔·威格斯的头像"></a></p>
+<p>凯尔威格斯</p>
+<p>爱通信</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://allenai.org/papers/statebench">技术报告</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/state-bench">数据</a> | 💻 <a href="https://github.com/allenai/state-bench">代码</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1792006215-statebench-draft-blog-google-docs-image-1.png"><img src="https://www.datocms-assets.com/64837/1792006215-statebench-draft-blog-google-docs-image-1.png" alt="StateBench 插图显示彩色路径在整个区域中改变位置序列。"></a></p>
+<p>我们正在推出 <a href="https://github.com/allenai/state-bench"><strong>StateBench</strong></a>，这是<em>长上下文</em> <em>状态跟踪</em>的基准——语言模型在长文档中跟踪实体信息的能力如何。</p>
+<p>状态跟踪是从读取代码（分配和重新分配变量）到跟踪角色移动和对象易手等任务的基础。例如，如果一本悬疑小说在谋杀发生前说“约翰把刀给了玛丽”，那么了解每个角色的状态已经改变就很重要。然而，并不是所有的状态跟踪问题都是一样的：有些只需要找到最新的更新；有些则需要找到最新的更新。更困难的任务需要遵循一系列的变化，其中一个步骤的失误可能会导致最终的答案失败。例如，我们的神秘状态跟踪的一个更难的变体是，如果约翰把背包里的物品给了玛丽，而之前已知爱德华在约翰的背包里放了一把刀。</p>
+<p>Transformer 对具有长依赖链的状态跟踪的硬变体有详细记录的理论限制，有助于激发循环和混合架构，例如向前运行内存的门控 DeltaNet。现有的状态跟踪测试往往侧重于最困难的情况，但随着这些设计变得越来越普遍，研究人员需要知道每种架构可以处理哪种类型的状态跟踪。我们希望不仅了解最难的状态跟踪类型之间的差异，还希望了解更简单、可能更常见的类型之间的差异。</p>
+<p>为此，我们开发了 StateBench 基准来捕获不同复杂度的状态跟踪问题，用它来评估不同架构的语言模型之间的差异。我们发现，当直接在这些任务上进行训练时，循环模型和混合模型可以比 Transformer 泛化得更远，而随着输入变长，包括 Gemini 3.8 Flash、Claude Opus 5.5 以及 GPT-6 Sol 和 Luna 在内的前沿模型在更困难的状态跟踪形式上仍然会出现故障。</p>
+<h2>四个级别的状态跟踪</h2>
+<p>StateBench 包含四个难度级别，允许日益复杂的状态更新操作。对于程序员来说，这些级别的状态跟踪复杂性可以理解为允许不同类型的变量赋值操作：</p>
+<ul><li><strong>R-琐碎问题</strong> 使用不可变赋值。变量的值永远不会改变，因此模型只需要恢复它最初设置的值。在代码中，这看起来像 let x = 4;在日常生活中，它就像出生日期一样——它是固定的。</li><li><strong>非周期性问题</strong>允许按值重新分配。该模型需要找到最新的值并且可以忽略较早的值。在代码中，这看起来像 x = 4 后面跟着 x = 2；在日常生活中，它就像一个恒温器，最新的设置决定了当前的温度。</li><li><strong>可解决的问题</strong>添加自引用更新。每次更新都建立在当前值的基础上，因此模型必须继续进行更改，而不是简单地查找最新的分配。在代码中，这看起来像 x = x + 5;在日常生活中，这就像一场比赛得分，每一分都会累加到总分中。</li><li><strong>一般有限问题</strong> 通过引用添加赋值。一个变量可以采用另一个变量的当前值，从而在更新之间创建依赖关系。在代码中，这看起来像 x = y 或交换两个变量。想象一下，一位魔术师将球藏在五个杯子之一下面，然后反复交换位置。找到球意味着跟踪这些交换如何改变它的位置。这说明了 S₅ 状态跟踪问题：遵循连续交换如何重新排列五个对象。它属于我们四个级别中最难的一个，并在<a href="https://arxiv.org/html/2404.08819v2#S3.SS1">之前关于状态跟踪限制的工作</a>中进行了讨论。</li></ul>
+<p>这些级别可以通过变量分配来直观地理解，但它们也代表了根植于克罗恩-罗德理论的状态跟踪的理论上的区别，克罗恩-罗德理论是代数的一个分支，描述了状态跟踪问题（可以被视为“有限幺半群*上的“文字问题”）如何分解为原子原语。我们的层次结构中的每个级别都对应于一类状态跟踪问题，这些问题可以由一组不同的原语构建。</p>
+<p>为了公平地比较这四个级别，我们从变量分配的一般有限序列开始，并从中派生出三个更简单的版本，产生四个可比较的 StateBench 问题 - 每个难度级别都有一个。所有四个都使用相同数量的变量和不同的值，赋值出现在序列中的相同点；仅分配类型发生变化。</p>
+<h2>我们发现了什么</h2>
+<h3>预训练模型</h3>
+<p>我们在 StateBench 的 r-平凡、非周期和一般有限级别上测试了一系列开放式预训练模型，以了解它们的状态跟踪在哪里出现故障，以及不同的架构是否在理论预测的情况下失败。在标准理论假设下，变压器可以稳健地处理 r-trivial（并且在某种程度上是可解的和非周期性的），但预计在一般问题上会失败。相比之下，具有更灵活内存更新的 Gated DeltaNet 原则上可以处理所有四个级别。</p>
+<p>我们从开放的预训练模型开始，其中训练数据和上下文长度都有完整记录。其中包括两个 70 亿参数模型，Olmo 3（变压器）和 Olmo Hybrid（添加了门控 DeltaNet 层），以及具有 2.75 亿和 27 亿参数的较小模型。所有这些模型都是基于相同的数据进行预训练的；在训练期间，没有人见过超过 64,000 个标记的上下文，并且我们在远远超出该长度的输入上测试了其中的大多数。</p>
+<p>当我们对每个模型进行评分时，几乎所有模型都在 r-琐碎问题上表现良好，但随着输入的增长，在非周期性问题上表现不佳，而在一般有限问题上则保持机会。问题格式在这里很重要——2.75 亿个参数的混合和门控 DeltaNet 模型在 RULER 式的 r-琐碎问题上得分接近上限，但在电子表格编辑的相同问题上几乎没有机会。这种差距是 StateBench 以多种格式测试相同的根本问题的原因之一。</p>
+<p><a href="https://www.datocms-assets.com/64837/1792006353-statebench-draft-blog-google-docs-image-2.png">！[预训练 Transformer、混合和门控 DeltaNet 模型与令牌输入长度的准确性；不报告可溶结果。</a>](https://www.datocms-assets.com/64837/1792006353-statebench-draft-blog-google-docs-image-2.png)</p>
+<h3>前沿模型</h3>
+<p>然后，我们测试了四个前沿模型 - Gemini 3.8 Flash、Claude Opus 5.5 以及 GPT-6 Sol 和 Luna - 要求它们读取每个变量赋值序列并生成每个变量的最终值。</p>
+<p>所有四个人在 r-琐碎和非周期性问题上都表现良好。但对于可解的一般有限问题，随着输入变长，精度急剧下降，在最长的一般有限问题上，精度下降到 13% 或更低。一个可能的因素是<em>敏感性</em>；在这些更难的级别上，更多的步骤可能会影响最终的答案，从而为模型错过更新而不会得到错误结果的空间留下更少的空间。</p>
+<p><a href="https://www.datocms-assets.com/64837/1792006435-statebench-draft-blog-google-docs-image-3.png"><img src="https://www.datocms-assets.com/64837/1792006435-statebench-draft-blog-google-docs-image-3.png" alt="Gemini 3.8 Flash、Claude Opus 5.5、GPT-6 Sol 和 GPT-6 Luna 在四个 StateBench 级别上的准确度与输入长度的关系令牌。"></a></p>
+<h2>直接针对任务训练的模型</h2>
+<p>接下来，我们调查了模型在较难级别上的难度是否反映了架构本身的限制，或者预训练是否根本不教模型解决这些问题。有针对性的直接训练是一种更有利的设置，它揭示了状态跟踪问题在多大程度上来自底层架构和优化器，而不是用于预训练模型的数据。</p>
+<p>我们在 StateBench 上从头开始训练了几个包含 2.75 亿个参数的模型：两个 Transformer 变体、两个混合模型以及两个具有不同内存更新约束的 Gated DeltaNet 变体。这些模型在多达 256 个任务的序列上进行训练，并在长达 64,000 个任务（即最大训练长度的 250 倍）的序列上进行测试。</p>
+<p>随着序列变长，架构开始出现分歧。门控 DeltaNet 和混合模型几乎完美地概括了 r-琐碎、非周期性和可解决的问题，扩展到我们测试的最长序列（数万个任务）。变形金刚学习了更简单的关卡，但在更长的序列上性能下降，而且它们从未学习过一般的有限问题。在最难的级别上，具有更灵活的内存更新的门控 DeltaNet 变体概括得最远，保持近乎完美，大约是训练期间看到的最长序列长度的 10 倍。</p>
+<p>对于门控 DeltaNet 和混合模型，差距在于训练而不是架构；经过直接训练，他们学会了处理经过预训练的同行无法处理的状态跟踪水平。变形金刚则不同，即使是直接训练，也永远学不到最难的关卡。</p>
+<p><a href="https://www.datocms-assets.com/64837/1792006493-statebench-draft-blog-google-docs-image-4.png">！[在所有四个级别上直接在 StateBench 上训练的变压器、混合和门控 DeltaNet 模型的准确度与输入长度的关系作业。</a>](https://www.datocms-assets.com/64837/1792006493-statebench-draft-blog-google-docs-image-4.png)</p>
+<h2>开放问题和发布</h2>
+<p>有些问题仍然悬而未决。我们的新证明表明，具有更有限的内存更新（非负特征值）的门控 DeltaNet 可以解决所有非周期性任务和某些周期性任务，例如在论文的固定精度四舍五入算法下跟踪重复输入是否出现偶数或奇数次。它在层次结构中的确切位置仍然是开放的，包括它是否可以解决所有可解决的任务，以及数值精度或将其与注意力层相结合如何影响其能力。 StateBench 还假设变量数量固定，而实际任务通常会随着时间的推移引入新的实体。例如，在一次长时间的对话中，随着对话的展开，新的人和物体可能会出现，模型也必须开始跟踪它们。当前的框架尚未涵盖该设置。</p>
+<p>随着新的循环和混合架构的出现，了解每种架构可以处理哪种类型的状态跟踪可以帮助指导未来系统的开发和训练方式。我们希望 StateBench 为研究人员提供一种更细粒度的方法来查找模型出现故障的位置，并为仍然存在缺陷的功能构建训练和评估数据。更根本的是，我们希望它成为研究人员开发新架构的北极星，与当前模型相比，具有更强大的状态跟踪能力。</p>
+<h2>本文提到的数据集1</h2>
+<p>该作者的更多内容</p>
+<h2>我们可以信任LLM来判断一个研究想法是否新颖吗？</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>18</p>
+<p>2026 年 10 月 27 日</p>
+<h2>LitPivot：通过文学景观中的动态情境化发展研究思路</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>39</p>
+<p>2026 年 10 月 23 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fstatebench">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fstatebench">登录</a> 发表评论</p>
+<p>17 号</p>
+<ul><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/travisking"><img src="https://huggingface.co/avatars/1165d74c4dbd96297485b4be4446ddb2.svg" alt=""></a></li><li><a href="https://huggingface.co/Belirofon"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68b834e0636a9b6b45316755/63Ak_8fn4-75yr2ArCope.png" alt=""></a></li><li><a href="https://huggingface.co/sazid63"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6abaa0e17a2746d31739f0d8/T4kTX3ZhR5tjl_iI2Afjo.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Karlitos1337"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/D_5e1cD0VZfurrzCmLK0I.png" alt=""></a></li><li><a href="https://huggingface.co/Ropy"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/6H8bocfU6eEMXRH4jR_Kh.jpeg" alt=""></a></li><li><a href="https://huggingface.co/TonyDzi"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/ER2rjTiyO6-00TRMZjELA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lostinlatency"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69441e743e778b598a650301/uC61xgIA2DSNJKuNL92qM.jpeg" alt=""></a></li><li><a href="https://huggingface.co/haidefuren"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6ae9a1fe0c2573a987f4d496/rKsDX_uFyu13ntE6H_okA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
+<h2>本文提到的数据集1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Palette：教一个小模型用你的设计语言构建牌组</title>
+      <link>https://huggingface.co/blog/ibm-research/palette-deck-building</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/palette-deck-building</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Palette: teaching a small model to build decks in your design language</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>Palette：教一个小模型用你的设计语言构建牌组</h1>
+<p>企业文章</p>
+<p>发布于 2026 年 11 月 3 日</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/PanchoG10"><img src="https://huggingface.co/avatars/93593a4aa128bb825db07ce3ba7a8b3d.svg" alt=""></a></li><li><a href="https://huggingface.co/motropuk"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6876672e54f32c191d12da37/C2rQerP9joLwJGOsmLzr3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/gokondeyo"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1665893924398-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prteek"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6480743bc0d3c70316d12657/90EDVFrZw1dWUiSwLAMhJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/praveenv"><img src="https://huggingface.co/avatars/c5ea3adbbb04040b0e9156aa5fc8884a.svg" alt="Praveen Venkateswaran 的头像"></a></p>
+<p>普拉文·文卡特斯瓦兰</p>
+<p>普拉韦恩夫</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/0ad0b4c983b7d63b38a40c15f4d7ca3d.svg" alt="Anupama Murthi 的头像"></a></p>
+<p>阿努帕玛穆尔蒂</p>
+<p>阿努帕马穆尔蒂</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/harmedox"><img src="https://huggingface.co/avatars/fae816bfe09bec6732bc4e1611a01a83.svg" alt="哈米德·阿德巴约的头像"></a></p>
+<p>哈米德·阿德巴约</p>
+<p>去甲氧根</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p>向前沿模型询问幻灯片，你会得到一个很好的幻灯片。如果要十个，它们就会开始看起来很相似：相同的雅致默认设置、相同的房屋风格、淡淡的“人工智能生成的牌组”外观。这很好，直到您希望这套牌看起来像“您的”模板。前沿模特有自己的风格，再多的提示也无法阻止他们回归这种风格。有时内容是机密的，根本无法离开您的系统。</p>
+<p>这两者都指向您拥有的模型：开放权重，在您自己的基础设施上运行，使用您自己的设计语言进行训练。问题是小型开放模型（实际上是自我托管的那种）在这方面“很糟糕”。他们的幻灯片被破坏了：标题消失在背景中，文本从幻灯片上消失，形状堆叠在一起。</p>
+<p><strong>Palette</strong> 测试了一个赌注：一个小型开放权重模型，用您的设计语言对合成数据进行训练并通过线束进行检查，可以与前沿系统竞争，同时您保留对结果的所有权。我们对 20B 模型进行了微调，以按照人们的方式构建幻灯片：设计师规划幻灯片，编码员绘制每张幻灯片。其训练数据遵循 <a href="https://www.ibm.com/design/language/resources/">IBM 设计语言</a>，并且在 <a href="https://huggingface.co/datasets/PresentBench/PresentBench">PresentBench</a> 上，它在我们测量的三个领域中的两个领域排名第一。这篇文章介绍了我们如何合成数据、训练模型并围绕它构建一个工具。</p>
+<h2>为什么套牌对于小模型来说很难</h2>
+<p>幻灯片看起来很简单，但制作幻灯片需要模型完成小模型不擅长的三件事。</p>
+<p><strong>它在看不到幻灯片的情况下布置幻灯片。</strong> 模型不绘制幻灯片；而是绘制幻灯片。它编写的代码将每个元素放置在 x、y、宽度和字体大小处。 75 个字符的标题是否适合 56 磅的两行是模型在其头脑中进行的算术运算，只有在代码渲染后才发现它是错误的。小模型经常会犯这个错误，这就是幻灯片上重叠的形状和文本的来源。</p>
+<p><strong>它同时做出两种决定。</strong> 决定每张幻灯片的内容以及如何显示它（图表还是表格？要剪切什么？）是编辑判断。精确地放置它是几何学。一次传递必须完成 10-20 张幻灯片，同时保持调色板、类型和布局一致。</p>
+<p><strong>没有数据显示套牌是如何制作的。</strong> 存在大量成品套牌，但没有设计选择背后的基本原理或生成它们的代码。</p>
+<h2>像人一样构建它：设计师和编码员</h2>
+<p>没有人能够一次性完成一副牌。您首先决定故事（多少张幻灯片，每张讲什么，哪张有图表，哪张有表格），然后才构建每张幻灯片。 Palette 以同样的方式将工作拆分为由单个 LoRA 适配器服务的两个角色：</p>
+<ul><li>设计师阅读计划并编写结构化 JSON 简介：调色板、类型系统以及每张幻灯片的布局、确切内容和简短的设计原理。</li><li>编码员从简报中获取一张幻灯片的规格，并编写绘制它的 <a href="https://gitbrent.github.io/PptxGenJS/">pptxgenjs</a> JavaScript，然后是其推理。</li></ul>
+<p>现在，每个角色都做出一种决定：设计师处理编辑判断，编码员处理几何。它们之间的摘要是可读和可编辑的，因此人员或代理可以更改幻灯片的布局，而无需重新生成幻灯片。由于每张幻灯片的上下文在编写任何代码之前都是固定的，因此编码器调用并行运行，每张幻灯片一个，这使得编码阶段速度提高了约 6-7 倍。</p>
+<p>我们使用 LoRA 来训练适配器，而不是完全微调：它在有能力的基础上教授一种格式和技能，而不会干扰基础已经知道的内容，并且它使每个实验都很便宜。一个教训：编码器示例比设计器示例长大约 5 倍，因此天真的混合对设计器的训练不足，直到我们对其示例进行了 5 倍过采样。</p>
+<h2>综合牌组及其推理</h2>
+<p>没有计划、设计决策和幻灯片代码的公共语料库，因此我们用一位大型开放教师生成了一个语料库。每套牌都从一个配方开始，该配方设置了其类型、长度、布局和任何用户指令，因此我们可以控制数据涵盖的内容。计划范围从整洁的轮廓到原始内容转储，因此模型学习剪切和压缩。我们生成了大约 1000 个幻灯片，涵盖大约 10,000 张幻灯片。</p>
+<p>每个示例都带有其背后的推理，以反事实的形式编写：跟踪权衡了一个替代方案并说明了它被拒绝的原因，因此模型学习了选择背后的规则，而不仅仅是选择。设计师对内容和形式进行推理。例如：</p>
+<blockquote>“四个季度的收入，有明显的上升趋势。我考虑了一张表格，但这张幻灯片的重点是趋势，而不是确切的数字，所以条形图使其一目了然。”</blockquote>
+<p>编码员关于几何的原因：</p>
+<blockquote>“标题有 62 个字符。在 44 磅时，它会换行成三行并进入下面的图表，因此我将其设置为 36 磅，适合两行并在图表上方留出空间。”</blockquote>
+<p>仅靠老师的力量是无法让数据变得良好的。它周围的循环确实如此。每个合成的牌组都会由线束在推理时使用的同一检查器进行渲染和检查是否有重叠和溢出。损坏的幻灯片被修复，它们的推理被重写为同一种反事实，涵盖了原始布局的错误以及修复的原因。检查员发现的每个错误都会成为更好的训练示例。</p>
+<p>最困难的问题是忠诚。最严重的失败是幻灯片中包含的事实不在输入中，我们发现提示规则无法阻止它。如果简报要求六乘五的表格，但只包含三个项目符号，则编码人员必须发明其余部分。</p>
+<p>修复它的是参考资料库，而不是规则：修复参考资料可以可靠地改变教师的输出，而添加规则则很少能改变教师的输出。老师在提示中看到一些参考资料，并复制它们，远远多于遵循指示。</p>
+<h2>用简单的英语指导牌组</h2>
+<p>用户通常希望对特定的设计选择进行更细粒度的控制：图表而不是表格、特定的颜色、较暗的封面。 Palette 允许他们通过<em>指令</em>来请求这些，直接写在计划中并包含在“[[ ]]”中的简短指令：</p>
+<pre><code>## Rollout plan
+- March: pilot with two teams
+- May: security review complete
+- July: rollout to all of engineering
+- September: company-wide launch
+- November: first adoption review
+[[make this a timeline]]</code></pre>
+<p>设计师将每个指令构建到摘要中，编码员在绘制幻灯片时遵循它。如果没有该指令，模型将合理地将这些里程碑显示为表格；有了它，模型就会绘制一条时间线。</p>
+<p>该模型遵循指令，因为它经过了训练。数据配方包括来自 12 个类别的指令，其中一些如下所示，每个类别都有几种不同的表达方式，因此模型学习的是意图而不是固定的短语。</p>
+<table><thead><tr><th>类别</th><th>指令示例</th></tr></thead><tbody><tr><td>布局</td><td><code>[[将此作为时间线]]</code></td></tr><tr><td>语气</td><td><code>[[坦白，不要旋转]]</code></td></tr><tr><td>观众</td><td><code>[[这是给董事会的]]</code></td></tr><tr><td>订单</td><td><code>[[以询问开头]]</code></td></tr><tr><td>遗漏</td><td><code>[[无定价]]</code></td></tr><tr><td>强调</td><td><code>[[突出显示标题编号]]</code></td></tr></tbody></table>
+<p>[！[在没有用户和有用户的情况下呈现相同的计划指令](https://cdn-uploads.huggingface.co/product/uploads/63890e3843d8b0797a0ad606/YTsME8ZIwzzxmo-QmpTQq .png)](https://cdn-uploads.huggingface.co/product/uploads/63890e3843d8b0797a0ad606/YTsME8ZIwzzxmo-QmpTQq.png) <em>图 1. 不带（左）和带（右）“[[使其成为时间线]]”指令的同一计划的图示。</em></p>
+<h2>构建检查和维修线束</h2>
+<p>即使训练有素的模型有时也会产生损坏的幻灯片：标题与背景颜色相同，或者两个盒子堆叠在一起。所以 Palette 不会直接返回模型的输出；每个甲板首先经过安全带。</p>
+<p>[！[调色板管道：计划→设计器→编码器→检查和修复→甲板]（https://cdn-uploads.huggingface.co/product/uploads/63890e3843d8b0797a0ad606/PZoiyAFg_nrWRryQhjGN_.pn g)](https://cdn-uploads.huggingface.co/product/uploads/63890e3843d8b0797a0ad606/PZoiyAFg_nrWRryQhjGN_.png) <em>图 2。设计人员起草概要，编码人员并行编写每张幻灯片的代码，而线束在返回幻灯片之前检查并修复每张幻灯片。</em></p>
+<p>首先，简单的规则可以修复已知的错误，例如格式错误的颜色代码，否则会使每张幻灯片变成黑色。然后对每张幻灯片进行渲染和测量：几何检查器标记重叠、被剪切或脱离幻灯片的文本。标记的幻灯片会转到单独的编辑器模型，该模型会重写该幻灯片的代码。</p>
+<p>关键规则是只有当检查人员确认幻灯片得到改进时才保留重写；否则原件将保留。这使得安全带可以在每个甲板上安全运行。它可以修复幻灯片，但不能使幻灯片变得更糟。</p>
+<p>[！[之前/之后：重叠的卡片修复成干净的网格](https://cdn-uploads.huggingface.co/product/uploads/63890e3843d8b0797a0ad606/iZzBRJXOUxncecFIEgw-B.pn g)](https://cdn-uploads.huggingface.co/product/uploads/63890e3843d8b0797a0ad606/iZzBRJXOUxncecFIEgw-B.png) <em>图 3. 修复示意图。生成后（左），每张卡的标题都堆叠在其描述之上；线束检测重叠并将卡片回流成 2×2 网格（右）。</em></p>
+<p>为了测量其效果，我们生成了每个 PresentBench 套牌一次，并在使用和不使用安全带的情况下对其进行评分。在 131 个牌组中，安全带平均增加 3.5 分。</p>
+<h2>评价</h2>
+<p>我们在 <a href="https://huggingface.co/datasets/PresentBench/PresentBench">PresentBench</a> 上进行评估，它根据五个标准对生成的牌组进行评分：基础知识、视觉设计、完整性、正确性和保真度。 PresentBench 提供源文档而不是计划，因此对于这些运行，一个单独的前沿模型根据其文档起草了每个计划，而 Palette 根据该计划构建了平台。我们报告三个领域；基线数字来自 PresentBench 论文。</p>
+<p>[![PresentBench 得分域名](https://cdn-uploads.huggingface.co/product/uploads/63890e3843d8b0797a0ad606/QiWVeHtadoTFYsfdPjkDr.p ng）]（https://cdn-uploads.huggingface.co/product/uploads/63890e3843d8b0797a0ad606/QiWVeHtadoTFYsfdPjkDr.png） <em>图 4. 按领域划分的 PresentBench 分数。调色板（蓝色）与 NotebookLM、Manus 1.6 和其他五个系统（灰色）相对应。 Palette 在经济和教育方面排名第一，在 Talk 方面排名第三，在三领域平均值方面排名第二。</em></p>
+<p>Palette 在结构化内容和数字准确性决定分数的方面做得最好，在经济和教育方面排名第一。在 Talk 中，套牌是叙事和语音驱动的，两个封闭系统得分更高，Palette 排名第三。作为单一 20B 开放重量模型，它在这三个领域中排名第二，落后 NotebookLM（59.7 比 60.8）1.1 分，领先于该领域的其他产品。</p>
+<p>PresentBench衡量一套牌是否好，但不衡量它是否遵循特定的设计语言。我们不知道有哪个基准可以做到这一点，我们希望帮助缩小这一差距。</p>
+<h2>接下来是什么</h2>
+<p>该工具已经计算出廉价的、可验证的信号：幻灯片是否渲染，是否有任何重叠或溢出，是否每个事实都可以追溯到摘要。今天我们用它们来修复一代又一代的输出。接下来，我们希望使用相同的检查作为强化学习的奖励，以便模型首先停止犯这些错误。由于编码员一次只处理一张幻灯片，因此每张幻灯片都是一个简短的、可独立检查的卷展栏，非常适合 GRPO 式训练。</p>
+<p>我们还希望通过从源文档中提取图形（例如使用 <a href="https://github.com/docling-project/docling">Docling</a>）并将其与线束放在一起来缩小图形密集的甲板上的差距。我们正在探索一种更轻松的方式来引入您自己的模板：从一个或两个现有的“.pptx”文件重新设计输出，而无需重新训练。</p>
+<h2>我们学到了什么</h2>
+<p>构建调色板教会了我们一些有效的方法，这些方法可以自然地扩展到其他任务，这些任务的输出具有可以在代码中检查的结构，从图表和图表到 UI 布局：</p>
+<ul><li>将推理放入数据中。关于为什么做出选择（包括拒绝什么）的培训所教的不仅仅是选择本身。</li><li>在添加规则之前修复示例。当老师出错时，我们的第一反应是在提示中添加一条规则，但这几乎没有帮助。老师复制参考资料的次数远多于遵循指示的次数，因此修复参考资料才是真正改变其输出的原因。</li><li>默认情况下确保维修安全。仅当修复有明显帮助时才保留，可以在每个输出上运行。</li><li>首先构建检查器。这使得数据值得信赖，输出可以安全运输。</li></ul>
+<h2>本文提到的数据集1</h2>
+<p>该作者的更多内容</p>
+<h2>相同模型，不同装备：CUGA、Hermes 和 Deep Agent — 何时选择 CUGA？</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<p>33</p>
+<p>2026 年 11 月 3 日</p>
+<h2>使用 IBM Granite 时间序列模型进行集合预测</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<p>28</p>
+<p>2026 年 10 月 22 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Fpalette-deck-building">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Fpalette-deck-building">登录</a> 发表评论</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/PanchoG10"><img src="https://huggingface.co/avatars/93593a4aa128bb825db07ce3ba7a8b3d.svg" alt=""></a></li><li><a href="https://huggingface.co/motropuk"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6876672e54f32c191d12da37/C2rQerP9joLwJGOsmLzr3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/gokondeyo"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1665893924398-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prteek"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6480743bc0d3c70316d12657/90EDVFrZw1dWUiSwLAMhJ.png" alt=""></a></li><li><a href="https://huggingface.co/imedwardho"><img src="https://huggingface.co/avatars/07fdb1848ce60ce7c78f9a5e3196884b.svg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li><li><a href="https://huggingface.co/zameeahmad"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/dEVmGg3ZMvvl_pvFxXUIG.png" alt=""></a></li><li><a href="https://huggingface.co/karanjangid80"><img src="https://huggingface.co/avatars/864f6c7ca953635e83329b360790716b.svg" alt=""></a></li><li><a href="https://huggingface.co/jayaramkr"><img src="https://huggingface.co/avatars/b3fd5aeb83c64d2d0b1b25c153f2727d.svg" alt=""></a></li></ul>
+<h2>本文提到的数据集1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>CWE-bench v2: More coverage, quality, and transparency</title>
+      <link>https://huggingface.co/blog/cwe-bench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/cwe-bench</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>CWE-bench v2：更大的覆盖范围、质量和透明度</h1>
+<p>发布于 2026 年 11 月 3 日</p>
+<p>GitHub 上更新</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pkseeg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1641838809929-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ajayjagan2511"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/pXfqE0bFAf_ZXe7bRo4TX.png" alt=""></a></li><li><a href="https://huggingface.co/nazneen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1648508910554-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/chalo2000"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6421d2972143035270db37b9/ftAOTf3AWZE6D8YIykRSJ.png" alt="Gonzalo Gonzalez 的头像"></a></p>
+<p>冈萨洛·冈萨雷斯</p>
+<p>查洛2000</p>
+<p><a href="https://huggingface.co/colliner-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62424000cce0bae7eb45487b/DYrozXHs1-ISs9ZeN2_k_.png" alt="Collinear AI 头像"></a> <a href="https://huggingface.co/colliner-ai">colliner-ai</a></p>
+<p><a href="https://huggingface.co/ajayjagan2511"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/pXfqE0bFAf_ZXe7bRo4TX.png" alt="Ajay Jagannath 的头像"></a></p>
+<p>阿杰·贾格纳特</p>
+<p>ajayjagan2511</p>
+<p><a href="https://huggingface.co/colliner-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62424000cce0bae7eb45487b/DYrozXHs1-ISs9ZeN2_k_.png" alt="Collinear AI 头像"></a> <a href="https://huggingface.co/colliner-ai">colliner-ai</a></p>
+<p><a href="https://huggingface.co/nazneen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1648508910554-noauth.jpeg" alt="Nazneen Rajani 的头像"></a></p>
+<p>纳兹宁·拉加尼</p>
+<p>纳兹尼恩</p>
+<p><a href="https://huggingface.co/colliner-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62424000cce0bae7eb45487b/DYrozXHs1-ISs9ZeN2_k_.png" alt="Collinear AI 头像"></a> <a href="https://huggingface.co/colliner-ai">colliner-ai</a></p>
+<p><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt="Nathan Habib 的头像"></a></p>
+<p>内森·哈比卜</p>
+<p>塞勒·特威夫特</p>
+<p><a href="https://cwe-bench.com/">CWE-bench</a> 旨在测试前沿网络能力的极限。 In our continued pursuit to push the horizon at <a href="https://collinear.ai/">Collinear AI</a>, CWE-bench v2 opens up a <a href="https://huggingface.co/datasets/collinear-ai/cwe-bench">public set of 100 tasks</a> that anyone can run and evaluate their models on.设置与以前相同。 An agent gets a checkout of a real open-source repository and a short instruction, with the goal of finding and fixing a security weakness without breaking existing functionality.评分是完全程序化的，因此结果是确定性的，任何人都可以重现它们，而无需额外成本。我们所有的程序性检查都是在LLM评审小组的帮助下策划的，这些评审小组将它们朝着硬度和公平的方向发展。我们还维护一个<a href="https://www.cwebench.com">held-out set</a>，以便我们可以持续跟踪模型未见过的任务的进度。要在保留集上评估您的模型，请联系 <a href="mailto:cyber@collinear.ai">cyber@collinear.ai</a>。</p>
+<p>我们的目标是详尽无遗。防守者必须预测攻击者可能进入的方式，并每次都做到正确。这 100 项任务涵盖 91 个不同的 CWE，涵盖广泛的漏洞类别。在这里表现良好的模型必须了解潜在攻击者可以利用的多个弱点。仅仅认识到熟悉的模式是不够的。</p>
+<p>作为我们不断提高质量的不懈努力的一部分，对于每项任务，我们都会检查以下问题是否正确：</p>
+<ul><li>该说明读起来是否像真实的说明而不是评估设置？</li><li>每个分级行为都可以从指令中推断出来吗？</li><li>验证者是否检查行为是否正确，而不是检查某个修复的特定结构？</li><li>起始代码是否失败而参考修复是否通过？</li><li>原始功能在新修复后是否仍然有效？</li><li>验证者是否会失败记忆的解决方案，例如已知的上游补丁？</li></ul>
+<p>每项任务也都经过手工审核。开源该套件也是提高质量努力的一部分。我们欢迎对任何任务的反馈以及对公共集的贡献。</p>
+<h2>结果</h2>
+<p>结果在 Hub 上的两个位置进行跟踪。 <a href="https://huggingface.co/datasets/colliner-ai/cwe-bench">CWE-bench 数据集页面上的排行榜</a> 涵盖开放权重模型并自行更新：实验室和社区通过在模型的存储库上使用结果文件打开 PR 来添加结果 (<a href="https://huggingface.co/docs/hub/eval-results#adding-evaluation-results">how</a>)。如需完整比较，包括 Gemini、Claude 和 GPT 等仅 API 模型，请参阅 <a href="https://huggingface.co/spaces/collinear-ai/cwe-bench-leaderboard">CWE-bench 排行榜空间</a>，其中通过空间上的 PR 添加新模型。</p>
+<p>开放权重模型，来自数据集页面：</p>
+<p>所有评估的模型，包括仅 API 的模型：</p>
+<p>在评估的 11 个模型中，Gemini 4 Argon 以 67.8% pass@1 和 81.0% pass@4 领先，仅领先于 Claude Opus 5.5（67.3% pa​​ss@1、78.0% pass@4）。 95 个任务至少由一个模型解决，这表明这些任务确实是可解决的。然而，即使是领先者每次尝试也会失败 19%，因此长尾问题还远未得到解决。公共设施、平地机和安全带均开放。运行您的模型，并告诉我们它的情况。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/cwe-bench/pareto.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/cwe-bench/pareto.png" alt="CWE-bench v2：通过帕累托前沿平均每次部署成本 pass@1"></a></p>
+<p>在成本方面，DeepSeek V4.1 Flash (1017)、Claude Opus 5.5 和 Gemini 4 Argon 形成帕累托前沿：DeepSeek 以每次推出 0.04 美元的价格达到 57.0% pass@1，Opus 以 1.83 美元的价格增加 10 分，Gemini 以 3.92 美元的价格领先。</p>
+<h2>从集线器运行它</h2>
+<p>每个任务都是一个独立的 <a href="https://harborframework.com/">Harbor</a> 任务（一个 Docker 化环境、一条指令和一个确定性验证器），并且数据集附带一个 <code>registry.json</code>。因此，Harbor 可以直接从 Hugging Face 存储库运行整个基准测试，而无需自己克隆任何内容：</p>
+<pre><code>harbor run --repo &quot;https://huggingface.co/datasets/collinear-ai/cwe-bench&quot; -d cwe-bench@2.0 -k 4 \
+  --agent &lt;agent&gt; --model &lt;model&gt; --env docker \
+  --allow-agent-host &lt;model API host&gt;</code></pre>
+<p><code>-k 4</code> 每个任务运行 4 次尝试，报告的分数是所有 400 次试验的平均奖励。数据集是门控的：首先在<a href="https://huggingface.co/datasets/collinear-ai/cwe-bench">数据集页面</a>上接受其访问条件。 Harbor 使用 git 获取任务，因此也将您的 HF 令牌保存到 git 的凭证助手一次：</p>
+<pre><code>hf auth login --token $HF_TOKEN --add-to-git-credential</code></pre>
+<p>这些任务也被标记为“rl-environment”：相同的环境和验证者可以为训练防御代理提供奖励，而不仅仅是评估它们。</p>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空间1</h2>
+<h3>社区</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6acf9ec0fc571b36cbc7fac9/0cXr4kc4-Viqo8HPo3dFt.png" alt=""></p>
+<p>受害者fsfsd</p>
+<p>大约 14 小时前</p>
+<p>该评论已被隐藏（标记为垃圾邮件）</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6acf9ec0fc571b36cbc7fac9/0cXr4kc4-Viqo8HPo3dFt.png" alt=""></p>
+<p>受害者fsfsd</p>
+<p>大约 14 小时前</p>
+<p>该评论已被隐藏（标记为垃圾邮件）</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6acf9ec0fc571b36cbc7fac9/0cXr4kc4-Viqo8HPo3dFt.png" alt=""></p>
+<p>受害者fsfsd</p>
+<p>大约 14 小时前</p>
+<p>该评论已被隐藏（标记为垃圾邮件）</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6acf9ec0fc571b36cbc7fac9/0cXr4kc4-Viqo8HPo3dFt.png" alt=""></p>
+<p>受害者fsfsd</p>
+<p>大约 12 小时前</p>
+<p>X8247 [t1]() [t2]() [t3]() [t4]() [t5]() [t6]() [t7]()</p>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fcwe-bench">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fcwe-bench">登录</a> 发表评论</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pkseeg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1641838809929-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ajayjagan2511"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/pXfqE0bFAf_ZXe7bRo4TX.png" alt=""></a></li><li><a href="https://huggingface.co/nazneen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1648508910554-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/mehranmorabbipazoki"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/qs_rwl7PMFGUGkTd7SP5r.png" alt=""></a></li><li><a href="https://huggingface.co/chalo2000"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6421d2972143035270db37b9/ftAOTf3AWZE6D8YIykRSJ.png" alt=""></a></li><li><a href="https://huggingface.co/serkanpeker"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67c234c79e95defcfb16400b/uttyjFBZMBE6q17aSPFYs.jpeg" alt=""></a></li></ul>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空间1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Transformers 模型集成合约</title>
+      <link>https://huggingface.co/blog/transformers-mic</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/transformers-mic</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Transformers Model Integration Contracts</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>Transformers 模型集成合约</h1>
+<p>发布于 2026 年 11 月 3 日</p>
+<p>GitHub 上更新</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/naolaiduoc"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/AhmxDynVKqbgIIwPaLyde.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/Dagdixel"><img src="https://huggingface.co/avatars/27ae8349bfaf1b26e57a1bd224b257e7.svg" alt=""></a></li><li><a href="https://huggingface.co/AntonV"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/630dc8e6ab0894318469dcc5/joJcu4NWpb36zNDsfQm7U.jpeg" alt=""></a></li><li><a href="https://huggingface.co/IlyasMoutawwakil"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1642598610696-noauth.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/tarekziade"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png" alt="Tarek Ziadé 的头像"></a></p>
+<p>塔里克·齐亚德</p>
+<p>塔雷克齐亚德</p>
+<p>2026 年 7 月 30 日，Transformers 为 T5 启用了 PyTorch 的扩展点积注意力 (SDPA)。作为副作用，UMT5 的解码器可能会关注未来的代币。在训练期间，它可以查看它应该预测的答案。没有发生任何崩溃，并且该错误在 main 中停留了近两个月。</p>
+<p>当我们后来重放这些提交时，在 CPU 上运行的一个小型 UMT5 模型在每个提交上都标记了它。这篇文章是关于该模型以及围绕它构建的测试的。</p>
+<h2>为什么 bug 会到达 main</h2>
+<p><a href="https://github.com/huggingface/transformers">Transformers</a> 支持超过 750 种模型类型，其测试套件很大：<strong>主线程上有 88,000 多个 CPU 测试，加上每天运行的 200,000 多个 GPU 测试。</strong> 模型测试只是其中的一部分：我们还测试管道、训练、分布式执行、量化和注意力内核。</p>
+<p><a href="https://huggingface.co/blog/assets/transformers-mic/ci-test-suite.svg">！[变形金刚测试：每天对主处理器进行 88,000 多项 CPU 测试，以及 200,000 多项 GPU 测试。硬件包括 CPU、NVIDIA GPU、AMD GPU、Intel XPU 和 Gaudi 3。PR 运行选定的测试。</a>](https://huggingface.co/blog/assets/transformers-mic/ci-test-suite.svg)</p>
+<p>集成测试加载真实的检查点并在真实的硬件上运行模型的 API。在每个 PR 上运行所有这些意味着让大量 GPU 整天忙碌，这是不切实际的。当计划的运行发现回归时，它可能已经在 main 中了。</p>
+<p>我们的方法是缩小模型。我们构建一个<strong>夹具</strong>：一个由真实检查点配置制成的小模型，层数更少且更窄，但它拥有的每种层，其标记器和处理器文件保持不变。它发布一次，然后重复使用。我们在廉价的 CPU 运行器上对其运行“快速集成测试”。在我们的 <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/evidence.md#on-cpu">CPU 研究</a> 中，实验性 UMT5 夹具使用了 66 MB 的权重；源检查点为 1,227 MB。</p>
+<p>这还涵盖非常大的模型：有些模型不适合我们的标准 GPU 运行器，但它们的装置在 CPU 上运行。</p>
+<p>模型集成商已经构建了微型测试模型（变形金刚的“微型随机*”检查点）。我们想要一个通用的配方，并检查超出加载模型和运行前向传递的范围。 UMT5 bug 可以很好地通过前向传球。</p>
+<p>Fixtures 不会取代完整的集成测试，但在 PR 上，它们让我们有机会在 bug 到达 main 之前捕获它们。</p>
+<h2>引入模型集成合约</h2>
+<p><a href="https://github.com/huggingface/transformers-mic">transformers-mic</a> 是打包这些测试的拟议标准。模型集成合约 (MIC) 包含三个部分：</p>
+<ul><li><strong>固定装置</strong>：上述缩小的模型，发布一次并固定</li><li><strong>使用路径</strong>：可运行的 Markdown 示例，说明人们使用模型执行的操作，例如生成文本或运行训练步骤</li><li><strong>基线</strong>：运行该示例时记录的输出，由人工审核</li></ul>
+<p>如果在装置上运行使用路径仍然产生基线，则合同成立。</p>
+<p>合约涵盖架构和使用路径，而不是单个检查点：兼容的检查点可以共享固定装置，而每个检查点都保留自己的预期结果。我们将它们发布在 <a href="https://huggingface.co/huggingface-mic">huggingface-mic</a> 中。</p>
+<p>例如，SmolLM 合约根据“法国的首都是”等提示生成，并将其代币 ID 与记录的答案进行比较。加载模型和分词器后，生成代码被简化为一个提示：</p>
+<pre><code>inputs = tokenizer(&quot;The capital of France is&quot;, return_tensors=&quot;pt&quot;)
+outputs = model.generate(**inputs, max_new_tokens=4, do_sample=False)
+new_tokens = outputs[:, inputs[&quot;input_ids&quot;].shape[1]:]
+print(tokenizer.batch_decode(new_tokens, skip_special_tokens=True))</code></pre>
+<p>它还比较训练损失，检查梯度是否有限，并验证优化器步骤是否改变了权重。请参阅完整的 <a href="https://huggingface.co/huggingface-mic/smollm-mic/blob/main/integrations/transformers/usage.md">usage.md</a>。</p>
+<p>Hub 上的 <a href="https://huggingface.co/datasets/huggingface-mic/transformers-fleet">fleet 数据集</a> 将每个 MIC 固定到冻结版本，以及用于记录其基线的软件包版本。每次 CI 运行都会记录它使用的机群修订版本，以便我们稍后可以重现它。</p>
+<p>在 PR 中，我们根据补丁更改的文件选择 MIC。</p>
+<h2>UMT5 回归</h2>
+<p>我们重播了五个月以来 Transformers 提交中冻结的 MIC。小型 UMT5 装置标记了从 <a href="https://github.com/huggingface/transformers/commit/560f36cc561fa154d224b7a6dfcba1d57a621d7b">2026 年 7 月 30 日</a> 推出以来的回归，直到 [9 月] 修复28]（https://github.com/huggingface/transformers/commit/d7ba937671edb174fd80d33f9ecbd38f6559dfca）。标签对数概率与审查的基线相差 1.22，训练损失约为 0.20。</p>
+<p>有一个细节很重要：合约使用了 SDPA，即默认的注意力路径。仅运行急切注意变体错过了该错误。固定装置只有在与真实检查点执行相同的代码时才会有帮助。</p>
+<p>然后我们恢复了对 Transformers CI 中的一个证明分支的修复。检查失败，但存在同样的差异，所选 T5 合约的运行步骤在 CPU 上花费了 13.4 秒（不包括设置）。</p>
+<p><a href="https://github.com/huggingface/transformers-mic/blob/main/docs/evidence.md#shadow-backfill">重播结果</a> 和 <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/evidence.md#transformers-ci-proof">CI 演示</a> 具有测量和再现详细信息。</p>
+<h2>模型如何缩小</h2>
+<p>第一个秘诀很简单：缩小尺寸并减少层数。对于混合架构来说这还不够。如果都使用滑动注意力并且全注意力层消失，那么保留两层是没有用的。</p>
+<p>该配方现在有四个步骤：</p>
+<ul><li><strong>缩小配置。</strong> 从真实的检查点开始，减少隐藏尺寸、注意力头和深度。保留不同的层类型，包括滑动层和充分注意层或密集层和 MoE 层的混合。某些架构需要额外的规则来保持其组件兼容。我们还查看了模型自己的 Transformers 测试：“test_modeling_&lt;model&gt;.py”中的“ModelTester”已经手动选择了一个小配置，因此我们采用通用规则不知道名称的任何宽度的尺寸。</li><li><strong>保持预处理不变。</strong> 保留词汇、特殊标记和输入维度，并逐字节复制标记器和处理器文件。加载和预处理是我们想要测试的一部分。</li><li><strong>构建并验证权重。</strong> 尝试种子随机权重并更改输入以检查模型是否响应。如果没有，请尝试在合同的小批量示例上对其进行训练。重新加载保存的模型并检查输出、损失和梯度是否有限。拒绝失败的构建。</li><li><strong>冻结并记录。</strong> 保存接受的重量并在已知良好的 Transformers 构建上测量可重复的输出。查看每个支持的平台和精度的基线，然后发布固定快照。 CI 重用它；它不会为每个 PR 重建固定装置。</li></ul>
+<p>我们还保留原始权重文件格式。否则，我们将跳过用户加载真实检查点时运行的转换代码。 <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/fixtures.md#recipe">完整配方</a> 有更多细节。</p>
+<p><a href="https://huggingface-mic-mic-coverage.static.hf.space/shrink/Llama-4-Scout-17B-16E-Instruct-mic.html">Llama 4 Scout 缩小报告</a> 显示了大模型上的情况。 1086 亿个参数变为 4470 万个。视觉堆栈从 34 层变为 2 层，语言堆栈从 48 层变为 4 层，保留检查的层类型和 MoE 路由样式。</p>
+<h3>与代理一起构建 MIC</h3>
+<p>我们的 CLI“tmic”创建合约并构建固定装置。对于新模型，LLM起草使用代码和清单，CPU 和 GPU 运行测量候选基线。 LLM草稿；它不同意。改变的期望需要人工审查。</p>
+<p>要在您的计算机上尝试它，请使用源检查点代替“org/model”：</p>
+<pre><code>pip install &quot;transformers-mic[runtime]&quot; &quot;hf-doc-builder @ git+https://github.com/huggingface/doc-builder.git&quot;
+hf auth login
+tmic run org/model --local-only --fixtures-only --no-history --bill-to ''</code></pre>
+<p>它起草合同，构建夹具并在您的机器上记录其基线，要求您检查每个步骤，并在上传任何内容之前停止。对于新模型，草稿来自LLM通过推理提供商，记入您自己的帐户（<code>--bill-to ''</code>）。 <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/cli.md#automated-mode">CLI 文档</a> 涵盖了各个步骤。</p>
+<p>我们使用代理来跨模型系列构建 MIC。当他们遇到边缘情况时，我们在模型专家的帮助下修复了配方本身，而不是单个固定装置。已发布的模型和剩余的空白位于<a href="https://huggingface.co/spaces/huggingface-mic/mic-coverage">覆盖空间</a>。</p>
+<h2>随机与过度拟合</h2>
+<p>在随机权重的情况下，我们的 Whisper 灯具几乎无法响应音频的变化。它运行了，但这使得它成为对音频路径的一个糟糕的测试。</p>
+<p>因此，我们用一些与“红色”和“绿色”等单词配对的音调来训练它。我们并没有教它语音识别，只是让音频变化在其输出中可见。在我们的<a href="https://github.com/huggingface/transformers-mic/blob/main/docs/fixtures.md#choosing-the-weights">权重初始化研究</a>中，随机 Whisper 装置捕获了 24 个注入故障中的 18 个。过拟合的装置捕获了全部 24 个。</p>
+<p>这为我们提供了两种构建权重的方法：</p>
+<ul><li>从随机权重和固定种子开始。</li><li>在一些例子上过度拟合，例如“法国的首都是”=&gt;“巴黎”。</li></ul>
+<p>Whisper 结果并没有决定哪个更好。这些都是综合错误，我们还没有发现仅由过拟合版本捕获的真正回归。两个版本都错过了真正的 Whisper 检查点暴露的辅助解码错误。</p>
+<p>因此，当它们通过检查时，我们保留随机权重，当我们需要更好的灵敏度或可读答案时，我们会过度拟合。训练需要几秒钟，但这又是一个可能无法收敛的步骤，也是一件需要维护的事情。 <a href="https://github.com/huggingface/transformers-mic/blob/main/docs/fixtures.md#overfit-versus-random-what-c​​an-we-conclusion">比较</a> 具有两者的结果。</p>
+<h2>开放式问题</h2>
+<p>自 2026 年 11 月 1 日起，<a href="https://transformers-ci.huggingface.cool/d/mic-failures/mic-failures?from=now-4w&amp;to=now&amp;timezone=browser">Transformers CI 中的 MIC 作业</a> 会报告故障，但不会阻止 PR。它是否应该阻塞取决于我们尚未测量的事情：</p>
+<ul><li>它在 PR 中发现了多少真正的错误，而不仅仅是在重播中？</li><li>我们多久会遇到一次误报？</li><li>基线审查需要做多少工作？</li></ul>
+<p>我们也不知道有多少错误（例如 Whisper 辅助解码错误）仅在真实权重时出现，也不知道过度拟合是否捕获了随机权重错过的真实错误。</p>
+<p>跨模型系列和人们使用的 API 的覆盖范围仍然是部分的。当回归发生时，我们可以添加缺失的使用路径，并在损坏和修复的版本上重放它。我们将保留现有测试，直到考虑到其覆盖范围。</p>
+<p>最后，我们希望将原始 Hub 模型页面链接到其 MIC，以便使用检查点的开发人员或代理可以从在该检查点、其环境及其预期输出上测试的示例开始。</p>
+<p>想帮忙吗？从<a href="https://huggingface.co/spaces/huggingface-mic/mic-coverage">覆盖空间</a>中选择一个未覆盖的模型，尝试<a href="https://github.com/huggingface/transformers-mic/blob/main/docs/cli.md#automated-mode">tmic工作流程</a>，并贡献使用路径或查看生成的合约。</p>
+<h2>本文提到的型号1</h2>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空间1</h2>
+<p>我们博客的更多文章</p>
+<p>佩夫特洛拉指南</p>
+<h2>超越 LoRA：你能打败最流行的微调技术吗？</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1656685953025-62bf03d1e80cec527083cd66.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/upIyVlEpqWqoeFTvNzTf5.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li></ul>
+<p>109</p>
+<p>2026 年 6 月 18 日</p>
+<p>指南分布式训练加速</p>
+<h2>Ulysses 序列并行性：使用百万令牌上下文进行训练</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1594311341799-5f07383b19cb630495b812cd.jpeg" alt=""></li></ul>
+<p>34</p>
+<p>2026 年 3 月 9 日</p>
+<h3>社区</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a909a4a17542f9661f9832f/LEj0fw5b8qXb17xN9tnuQ.png" alt=""></p>
+<p>绍菲拉拉姆</p>
+<p>1 天前</p>
+<p>好</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60bccec062080d33f875cd0c/KvEhYxx9-Tff_Qb7PsjAL.png" alt=""></p>
+<p>普塞姆拉吉</p>
+<p>1 天前</p>
+<p>编辑于 1 天前</p>
+<p>t5/umt5 在 2026 年的博客文章中，没想到我会看到这一天😍</p>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftransformers-mic">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Ftransformers-mic">登录</a> 发表评论</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/naolaiduoc"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/AhmxDynVKqbgIIwPaLyde.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/Dagdixel"><img src="https://huggingface.co/avatars/27ae8349bfaf1b26e57a1bd224b257e7.svg" alt=""></a></li><li><a href="https://huggingface.co/AntonV"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/630dc8e6ab0894318469dcc5/joJcu4NWpb36zNDsfQm7U.jpeg" alt=""></a></li><li><a href="https://huggingface.co/IlyasMoutawwakil"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1642598610696-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/RaushanTurganbay"><img src="https://huggingface.co/avatars/5505ecb44a0b1b9eced27104531ff229.svg" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Shofiulalam"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a909a4a17542f9661f9832f/LEj0fw5b8qXb17xN9tnuQ.png" alt=""></a></li><li><a href="https://huggingface.co/bennibyx"><img src="https://huggingface.co/avatars/9f57cbcc33bb493538a5eb18b6fb5f5f.svg" alt=""></a></li><li><a href="https://huggingface.co/pszemraj"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60bccec062080d33f875cd0c/KvEhYxx9-Tff_Qb7PsjAL.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>
+<h2>本文提到的型号1</h2>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空间1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Nemotron 万圣节</title>
       <link>https://huggingface.co/blog/nvidia/nemotron-halloween</link>
@@ -6475,685 +6907,6 @@ tags:
 <p>第一版会为每个框架生成一个 <code>default</code> 代码片段。接下来是按配置生成片段，这样一个包含多个任务集的仓库就能为每个任务集展示对应的命令。之后我们会考虑为布局严格的框架做结构化检测。此外，构建自定义任务 UI 也会非常酷，我们已经在这里做了一些实验：</p>
 <p>更大的目标是让框架打标在各处都自动化。OpenEnv 已经在上传环节自动做了这件事。如果你维护 Harbor、Verifiers、Nemo Gym 或任何其他环境框架，把打标签加进你的 push 流程。只需几行代码，你的用户发布的每一个环境就能被其他所有人看到。</p>
 <p>如果你训练 agent，去<a href="https://huggingface.co/datasets?other=rl-environment">过滤器</a>里逛逛。如果你构建环境，就把它们发布出来并打上标签，无论它们覆盖的是编程、工具使用、游戏、机器人还是别的任务。请把文件、一条能跑通的运行命令、以及产出 reward 的规则一起提供，好让其他人也能用。如果你的框架还没被收录，欢迎把它贡献到<a href="https://github.com/huggingface/huggingface.js/blob/main/packages/tasks/src/dataset-libraries.ts">受支持库列表</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>UK AISI 与 EvalEval 如何让基准测试结果可复现</title>
-      <link>https://huggingface.co/blog/evaleval-aisi</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/evaleval-aisi</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：How UK AISI and EvalEval Are Making Benchmark Results Reproducible</description>
-      <content:encoded><![CDATA[<h1>UK AISI 与 EvalEval 如何让基准测试结果可复现</h1>
-<p>发布于</p>
-<p>2026 年 9 月 22 日</p>
-<p>在 GitHub 上更新此内容</p>
-<ul><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/dariocava"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DVRRK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e691d778f2c37966d1d614/1MJg4zMGny3kmC5TPdjN3.png" alt=""></a></li><li><a href="https://huggingface.co/vzn2auto"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69d94b034b0d592e906bc968/8HDc1xHMRnIlqJDI6CG_4.jpeg" alt=""></a></li></ul>
-<p>Avijit Ghosh</p>
-<p>evijit</p>
-<p>evaleval</p>
-<p>Jenny Chim</p>
-<p>j-chim</p>
-<p>evaleval</p>
-<p>Deep Joshi</p>
-<p>deeplumiere</p>
-<p>evaleval</p>
-<p>Srishti</p>
-<p>srishtiy</p>
-<p>evaleval</p>
-<p>Matt Kennedy</p>
-<p>wmmkennedy</p>
-<p>evaleval</p>
-<p>Irene Solaiman</p>
-<p>irenesolaiman</p>
-<p>evaleval</p>
-<p>Jessica McFadyen</p>
-<p>mcfadyen-aisi</p>
-<p>ai-safety-institute</p>
-<p>Lynn Tan</p>
-<p>lynn-aisi</p>
-<p>ai-safety-institute</p>
-<p>Coz</p>
-<p>coz-aisi</p>
-<p>ai-safety-institute</p>
-<p><a href="https://evalevalai.com/">EvalEval Coalition</a> 很高兴地分享，<a href="https://www.aisi.gov.uk/">UK AI Security Institute（AISI）</a>正在使用 EvalEval 的基础设施来公开分享评测结果，支持更可复现、更可验证的评测科学。</p>
-<p>AISI 与 EvalEval 此前已在一项研究的成果上合作，这项工作始于 <a href="https://evalevalai.com/events/workshop-2025/">NeurIPS 2025 期间的一场联合 workshop</a>，来自该研究所的反馈也帮助塑造了 <a href="https://evalevalai.com/projects/every-eval-ever/">Every Eval Ever（EEE）schema</a>。这次合作的下一阶段是把这套共享基础设施真正投入使用。</p>
-<h2>为什么可复现的评测报告很重要</h2>
-<p>随着 AI 部署加速，评测正越来越重要地成为关于模型与系统性能的证据来源。但结果分散在众多格式、平台和渠道上，而且常常缺少足以复现的信息。而重新跑一遍这些评测本身可能就贵得令人却步。</p>
-<p>EvalEval 的使命是通过一套共享的报告 schema <a href="https://evalevalai.com/projects/every-eval-ever/">Every Eval Ever</a>，以及一个开放平台 <a href="https://evalcards.evalevalai.com/">Evaluation Cards</a> 来改善这个生态——后者把评测结果与解读它所需的信息收进一个共同的结构里。</p>
-<p>这自然承接了 AISI 在评测效率方向上的工作 <a href="https://arxiv.org/abs/2608.14425">OptStop</a>，在统计严谨性方向上的工作 <a href="https://www.aisi.gov.uk/blog/hibayes-improving-llm-evaluation-with-hierarchical-bayesian-modelling">HiBayES</a>，以及在 transcript 分析与能力激发等方向上推动的标准化。AISI 与 EvalEval 正在一起诊断评测报告中的缺口，并构建共享基础设施来填补它们。</p>
-<h2>AISI 分享了什么</h2>
-<p>transcript 级别的透明度不只对可复现性重要，对分析和诊断同样重要。在这次合作的这个阶段，AISI 在合适的情况下，通过 Evaluation Cards 公开其对外报告的评测方法与结论。这次发布包含论文主实验中五个基准的已验证结果、上下文与配置信息：</p>
-<ul><li>HealthBench</li><li>FrontierMath</li><li>Humanity's Last Exam</li><li>SWE-Bench Pro</li><li>Terminal-Bench 2.0</li></ul>
-<p>这些结果覆盖六个前沿模型：Claude Opus 4、Claude Opus 4.5、Claude Opus 4.6、GPT-5、GPT-5.2 和 GPT-5.4。发布内容还包含两项相关 cyber 评测的结果——Cyber CTFs 与 The Last Ones——它们使用一组不同、部分重叠的模型。这些数据伴随 AISI 的论文<a href="https://arxiv.org/abs/2606.17930"><em>How Inference Compute Shapes Frontier LLM Evaluation</em></a>，该论文研究基准表现如何依赖 inference 阶段的算力与评测协议。</p>
-<p><em>Humanity's Last Exam 上的表现会随评测协议与 inference 算力而变化。每条曲线展示在给定 token 数之内已尝试任务中被解出部分的累计占比，每个任务取最早观测到的那次成功。当模型在每次尝试后收到来自 oracle 的正确性反馈时，随着 token 用量增加，它们仍会持续解出更多任务。</em></p>
-<p>当结果连同设置信息一起公开发布时，研究者和从业者就能更细致地检视单项研究，并在更大的生态范围内横向比较结论。当其他报告缺少这些细节时，像 AISI 这样的发布提供了已验证的参照点，用于在具体情境中解读评测——例如帮助研究者理解设置上的选择可能如何影响报告出来的性能。随着更多评测方采用 EEE，这类开放比较能够为更广泛、更可靠的元研究（meta-research）提供支撑。</p>
-<p><em>AISI 的 Terminal-Bench 2.0 结果，与同一批模型在其他评测设置下报告的其他评测结果并列。</em></p>
-<p>我们对这一采纳感到兴奋，也期待与 AISI 及其他 AI 评测机构进一步标准化并共享评测。</p>
-<h2>为共同使命出力</h2>
-<ul><li><strong>模型开发者：</strong><a href="https://evalcards.evalevalai.com/help/get-verified">报告已验证的评测结果</a>。</li><li><strong>评测开发者：</strong>使用 <a href="https://github.com/evaleval/every_eval_ever">Every Eval Ever schema</a> 报告基准与 run 数据。</li><li><strong>评测、治理与政策研究者：</strong>按基准或模型<a href="https://evalcards.evalevalai.com/">浏览 Evaluation Cards</a>，或用它来考察评测报告的整体现状。</li></ul>
-<h2>关于 EvalEval Coalition</h2>
-<p>EvalEval Coalition 是一个研究社区，为评测生态发展与科学立足的研究以及稳健的部署基础设施。其目标是改进评测科学、回应「在记录评测的适用性与效用方面缺乏共识」这一问题，并扩大对那些关乎科学研究与政策分析的影响的覆盖。</p>
-<p>该联盟的旗舰项目包括 <a href="https://evalevalai.com/projects/every-eval-ever/">Every Eval Ever</a>——一套用于评测结果的共享 schema 与仓库，以及 <a href="https://evalevalai.com/projects/eval-cards/">Evaluation Cards</a>——它把基准元数据、评测 run 数据与模型元数据组合成可解读的记录。两者一起，让人更容易判断那些看起来相近的分数实际上是在有实质差异的条件下产生的。</p>
-<h2>关于 UK AI Security Institute</h2>
-<p><a href="https://www.aisi.gov.uk/">UK AI Security Institute</a> 是英国政府科学、创新与技术部（Department for Science, Innovation and Technology）旗下的一个研究组织。它的使命是为政府配备对先进 AI 所构成风险的科学理解。AISI 开展研究并建设基础设施，以理解先进 AI 的能力与影响、开发并测试缓解措施、为政策提供依据。</p>
-<h2>延伸阅读</h2>
-<ul><li><a href="https://arxiv.org/abs/2606.17930"><em>How Inference Compute Shapes Frontier LLM Evaluation</em></a></li><li><a href="https://www.aisi.gov.uk/blog/hibayes-improving-llm-evaluation-with-hierarchical-bayesian-modelling">HiBayES: Improving LLM evaluation with hierarchical Bayesian modelling</a></li><li><a href="https://arxiv.org/abs/2505.05602">HiBayES 论文</a></li><li><a href="https://arxiv.org/abs/2608.14425">OptStop 论文</a></li><li><a href="https://evalevalai.com/projects/every-eval-ever/">Every Eval Ever</a></li><li><a href="https://evalcards.evalevalai.com/">Evaluation Cards</a></li></ul>
-<p>我们博客的其他文章</p>
-<p>evaluation</p>
-<p>community</p>
-<p>leaderboard</p>
-<h2>在 Hugging Face 的 Model Pages 上展示 Every Eval Ever 的结果</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6238f87f35384c2bcccb3889/vvQDZb934B36xPt_Gokjh.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c7276e0c51bafa5ee8e033/yBl9QsWcQp4XtqUj4Ni_0.jpeg" alt=""></li><li>+3</li></ul>
-<p>54</p>
-<p>2026 年 6 月 30 日</p>
-<p>nlp</p>
-<p>evaluation</p>
-<p>retrieval</p>
-<h2>推出 RTEB：检索评测的新标准</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61f33092a92c9a858b654991/jFRUSeZ6DnI27dlCAQRHq.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5ff5943752c26e9bc240bada/Exyzf3C_gJ2KdsL4K5_cq.png" alt=""></li><li><img src="https://huggingface.co/avatars/7a4067accdd1005f78c3c4adad3ee0a5.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64cc0e80a257a3212c0c4b24/wqs6WZN8-3OQthcnQXgN7.png" alt=""></li><li>+2</li></ul>
-<p>149</p>
-<p>2025 年 10 月 1 日</p>
-<h3>社区</h3>
-<p>Nomad-link-id</p>
-<p>11 天前</p>
-<p>对从业者真正要紧的那句话很平静：看起来相近的分数，可能是在有实质差异的条件下产生的。</p>
-<p>一旦你亲眼看过一个基准仅仅因为改变 inference 阶段的算力或激发协议就发生移动，那么「模型 A 在 X 上胜过了模型 B」而没有一张 card，那就是营销，不是比较。随附已验证结果<em>以及</em>配置的 Evaluation Cards——在合适的时候还包括 transcript 级别的上下文——正是让评测从一张排行榜截图变成一份契约的方式。</p>
-<p>我想问采用 EEE 的团队一个问题：在截止日期压力下，哪些字段最先是被动跳过（seed、工具访问、尝试预算、oracle 反馈），而当某个字段缺失时，你们是把它当作「不要引用这个差值」，还是「假定用的是默认值」？</p>
-<p>可复现的报告不会消除分歧。它会让分歧落在正确的变量上。</p>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者</p>
-<p>点击这里</p>
-<p>。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fevaleval-aisi">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fevaleval-aisi">登录</a> 即可评论</p>
-<ul><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/dariocava"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DVRRK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e691d778f2c37966d1d614/1MJg4zMGny3kmC5TPdjN3.png" alt=""></a></li><li><a href="https://huggingface.co/vzn2auto"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69d94b034b0d592e906bc968/8HDc1xHMRnIlqJDI6CG_4.jpeg" alt=""></a></li><li><a href="https://huggingface.co/MikeEliteLLM"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/01iAmRqyak7mlJT6EDgxJ.png" alt=""></a></li><li><a href="https://huggingface.co/irenesolaiman"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62543749b777cd32720675c2/EF_KRZO4hTo8TWXOtvc-n.png" alt=""></a></li><li><a href="https://huggingface.co/Jureko11"><img src="https://huggingface.co/avatars/89ddd33671ed6f23c8b9c33f0674033b.svg" alt=""></a></li><li><a href="https://huggingface.co/birkanoge"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/IWp7GmKqFXZxE8LB2nADg.png" alt=""></a></li><li><a href="https://huggingface.co/enixmeng"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64a99fe3e831371424f583b9/dhKFIea8_zxhLnc2DVQuU.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Transformers 现在可以直接运行 llama.cpp 量化模型</title>
-      <link>https://huggingface.co/blog/transformers-llama-cpp-quants</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/transformers-llama-cpp-quants</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Transformers now runs llama.cpp quants</description>
-      <content:encoded><![CDATA[<h1>Transformers 现在可以直接运行 llama.cpp 量化模型</h1>
-<p>发布 September 22, 2026</p>
-<p>在 GitHub 上更新</p>
-<ul><li><a href="https://huggingface.co/HermitD8"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/bz-OFC3OT3YMUxzMp-da_.png" alt=""></a></li><li><a href="https://huggingface.co/BenjaminB"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1656685953025-62bf03d1e80cec527083cd66.jpeg" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tarekziade"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li></ul>
-<p>Marc Sun</p>
-<p>marcsun13</p>
-<p>Arthur Zucker</p>
-<p>ArthurZ</p>
-<p>Lysandre</p>
-<p>lysandre</p>
-<p><strong>我们正在加入在 transformers 中高效运行 GGUF 模型的支持</strong>，这样你就能通过熟悉的 transformers API 使用按笔记本内存大小挑选的 checkpoint。从 Hub 上挑一个 GGUF，用 <code>from_pretrained</code> 加载它，就能在你自己的机器上开始生成。</p>
-<p>在笔记本上跑 AI 模型已经容易了很多，<a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> 在其中扮演着重要角色。它的推理引擎为 Ollama、LM Studio、Jan 这类本地 AI 工具提供支撑。和 <a href="https://github.com/ml-explore/mlx">MLX</a> 这样的项目一起，它们让本地推理成了日常可用的一种务实选择。</p>
-<p><em>一个最近的例子，看看本地 AI 用起来是什么感觉：</em></p>
-<blockquote>事情已经到这个地步了。说实话，这感觉挺魔幻的 🧙‍♀️ Qwen3.6 27B 在 MacBook Pro 上通过 Llama.cpp 跑在 Pi coding agent 里。对于 @huggingface 代码库上的非平凡任务，这感觉非常、非常接近 Claude 里最新的 Opus 了…… pic.twitter.com/lsIxLoUneU— Julien Chaumond (@julien_c) April 24, 2026</blockquote>
-<p><strong>GGUF</strong> 由 llama.cpp 团队开发，是本地推理中使用广泛的格式。该团队也在 Hub 上以 <a href="https://huggingface.co/ggml-org">ggml-org</a> 的名义分享量化 checkpoint。<a href="https://huggingface.co/unsloth">Unsloth</a>、<a href="https://huggingface.co/lmstudio-community">LM Studio Community</a> 和 <a href="https://huggingface.co/bartowski">bartowski</a> 等发布者也提供覆盖多种量化程度、开箱即用的 GGUF checkpoint，用户可以挑出适合自己机器的那个版本。GGUF 模型已被下载数百万次。</p>
-<p>我们也想让「用 transformers 在本地跑这些模型」同样轻松。只有跑起来顺手的模型，兼容性才有意义。为了把性能做到接近 llama.cpp，我们通过 <a href="https://huggingface.co/docs/kernels/index"><code>kernels</code></a> 库复用它底层的 ggml kernel，并降低 <code>generate</code> 的开销。我们最初的重心是 Apple Silicon 上的本地推理，从 Qwen3.5 架构起步。</p>
-<h2>GGUF 文件格式是什么</h2>
-<p><a href="https://github.com/ggml-org/ggml/blob/master/docs/gguf.md">GGUF</a> 把模型权重和元数据——包括 tokenizer 信息以及一个可选的 chat template——打包进一个文件。它支持不同的量化等级，让你用一部分精度换取更小的内存占用。<code>Q4_K_M</code> 这类变体会混合张量精度，大部分权重用 4-bit，同时把敏感的张量保留在更高精度。</p>
-<p>量化对 <a href="https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/tree/main">Unsloth 的 Qwen3.5-4B</a> 文件大小的影响如下：</p>
-<table><thead><tr><th>GGUF 变体</th><th>文件大小</th><th>取舍</th></tr></thead><tbody><tr><td><code>BF16</code></td><td>8.42 GB</td><td>未量化的参照</td></tr><tr><td><code>Q6_K</code></td><td>3.53 GB</td><td>精度高于更小的变体</td></tr><tr><td><code>Q5_K_M</code></td><td>3.14 GB</td><td>大小与精度之间的折中</td></tr><tr><td><code>Q4_K_M</code></td><td>2.74 GB</td><td>本地推理一个实用的起点</td></tr></tbody></table>
-<p>我们建议从 <code>Q4_K_M</code> 起步，如果你有更多可用内存，再试 <code>Q5_K_M</code> 或 <code>Q6_K</code>。更激进的量化能让更大的模型塞得下，但质量上的取舍取决于模型和任务。请在你的模型实际要做的工作上评测它。<a href="https://huggingface.co/docs/hub/gguf#quantization-types">Hub 的 GGUF 文档</a>描述了可用的量化类型。</p>
-<h2>用 transformers 加载 GGUF</h2>
-<p>开始之前你需要：</p>
-<ul><li><strong>一台 Apple Silicon Mac</strong>。</li><li><strong>一个被已发布的 <a href="https://huggingface.co/kernels/ggml-org/ggml-quantization">ggml-quantization kernel 构建</a> 所支持的 PyTorch 版本</strong>，通常是最近的两个 PyTorch 发行版。</li><li><strong>最新版本的 transformers（在下一次发布之前暂时用 main 分支）以及兼容版本的 <code>kernels</code></strong>。</li></ul>
-<pre><code>pip install -U &quot;git+https://github.com/huggingface/transformers.git&quot; kernels</code></pre>
-<p>要加载一个 GGUF 模型，把它的 Hub <code>model_id</code> 和文件名作为 <code>gguf_file</code> 传给 <code>from_pretrained</code>。</p>
-<p>不需要额外配置：当权重以打包形式留在 Metal 上时，transformers 会自动加载兼容的 ggml/Metal 层 kernel，并用 <code>ggml-org/ggml-attn</code> 作为 attention 实现。如果那个 kernel 拉取不到，模型会带警告地退回 <code>&quot;sdpa&quot;</code>；你也始终可以通过显式传入 <code>attn_implementation=&quot;sdpa&quot;</code> 来强制使用 <code>&quot;sdpa&quot;</code>。更多加载选项见 <a href="https://huggingface.co/docs/transformers/main/en/quantization/gguf">GGUF 文档</a>。</p>
-<pre><code>import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_id = &quot;unsloth/Qwen3.5-4B-GGUF&quot;
-filename = &quot;Qwen3.5-4B-Q4_K_M.gguf&quot;
-
-tokenizer = AutoTokenizer.from_pretrained(model_id, gguf_file=filename)
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    gguf_file=filename
-)</code></pre>
-<p>这是唯一一步 GGUF 特有的操作。之后的都是标准 transformers API：</p>
-<pre><code>messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain why the sky is blue in a few sentences.&quot;}]
-inputs = tokenizer.apply_chat_template(
-    messages,
-    tokenize=True,
-    add_generation_prompt=True,
-    return_dict=True,
-    return_tensors=&quot;pt&quot;,
-).to(model.device)
-
-with torch.inference_mode():
-    outputs = model.generate(**inputs, max_new_tokens=256)
-
-print(tokenizer.decode(outputs[0], skip_special_tokens=True))</code></pre>
-<blockquote>若没有兼容的量化 kernel，加载器会退回到把模型反量化，从而占用更多内存。</blockquote>
-<h2>用你偏好的接口对外提供 GGUF 服务</h2>
-<p>你也可以用 <a href="https://huggingface.co/docs/transformers/main/en/serve-cli/serving"><code>transformers serve</code></a> 使用同一个 checkpoint，它对外暴露一个 OpenAI 兼容的 API：</p>
-<pre><code>pip install -U &quot;transformers[serving] @ git+https://github.com/huggingface/transformers.git&quot; kernels
-
-transformers serve &quot;unsloth/Qwen3.5-4B-GGUF:Qwen3.5-4B-Q4_K_M.gguf&quot;</code></pre>
-<p>模型参数使用 <code>&lt;model_id&gt;:&lt;filename&gt;.gguf</code> 形式：冒号之前是 Hub 仓库（<code>unsloth/Qwen3.5-4B-GGUF</code>），之后是要加载的文件（<code>Qwen3.5-4B-Q4_K_M.gguf</code>）。这用于在可能含有多个量化版本的仓库里选定某一个具体量化。</p>
-<p>对于 chat template 支持 thinking 的模型，加上 <code>--reasoning off</code> 可跳过它，加上 <code>--reasoning on</code> 可启用它。默认值 <code>--reasoning auto</code> 沿用 chat template 的默认设置。细节见 <a href="https://huggingface.co/docs/transformers/main/en/serve-cli/serving#enable-reasoning-on-the-server">reasoning 选项</a>。</p>
-<p>你可以把 <a href="https://www.jan.ai/docs/desktop/remote-models/custom-endpoint">Jan</a> 或 <a href="https://pi.dev">Pi</a> 这类客户端连上来：新增一个自定义的 OpenAI 兼容 provider，并使用这些设置：</p>
-<table><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody><tr><td>Base URL</td><td><code>http://localhost:8000/v1</code></td></tr><tr><td>Model ID</td><td><code>unsloth/Qwen3.5-4B-GGUF:Qwen3.5-4B-Q4_K_M.gguf</code></td></tr></tbody></table>
-<p>transformers 在你的 Mac 上运行模型，客户端则提供对话界面。其他支持这一 API 的客户端也可以用同一个 endpoint。</p>
-<h2>与 llama.cpp 的基准对比</h2>
-<p>本地推理性能的参照对象是 llama.cpp。下面的对比聚焦三个 GGUF checkpoint：一个小的 dense 模型、一个更大的 dense 模型，以及一个 mixture-of-experts 模型。</p>
-<p>llama.cpp 那一列来自 <a href="https://github.com/ggml-org/llama.cpp/tree/master/tools/llama-bench"><code>llama-bench</code></a> 工具（构建 <code>5f55650a7</code>，发行版 b10200，Metal backend 来自 ggml 0.18.0），以 <code>llama-bench -m &lt;file&gt; -p 0 -n 128 -r 3</code> 运行，报告的是 <code>tg128</code>：在 128 个解码 token 上的 token 生成速率，取三次重复的平均值，不含 prompt 处理。transformers 那一列是 <code>generate</code> 从一个 12 token 的 prompt 生成同样 128 个 token，取三次预热运行中最好的一次，并且包含 prefill。</p>
-<p>测量环境：MacBook Pro M2 Max，32 GB 统一内存，macOS 26.6，PyTorch 2.12.1，kernels 0.17.0，插电运行。</p>
-<p>基准脚本</p>
-<pre><code>import time
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_id, filename = &quot;unsloth/Qwen3.5-4B-GGUF&quot;, &quot;Qwen3.5-4B-Q4_K_M.gguf&quot;
-
-model = AutoModelForCausalLM.from_pretrained(model_id, gguf_file=filename)
-tokenizer = AutoTokenizer.from_pretrained(model_id, gguf_file=filename)
-inputs = tokenizer(&quot;The capital of France is Paris. The capital of Germany is&quot;, return_tensors=&quot;pt&quot;)
-inputs = inputs.to(model.device)
-
-
-with torch.inference_mode():
-    model.generate(**inputs, max_new_tokens=8, min_new_tokens=8, do_sample=False)  # warm up
-    torch.mps.synchronize()
-    for _ in range(3):
-        time.sleep(90)  # let the machine cool: back-to-back runs decay by 10% or more
-        start = time.perf_counter()
-        model.generate(**inputs, max_new_tokens=128, min_new_tokens=128, do_sample=False)
-        torch.mps.synchronize()
-        print(f&quot;{128 / (time.perf_counter() - start):.1f} tok/s&quot;)</code></pre>
-<p>另一列则用：</p>
-<pre><code>llama-bench -hf unsloth/Qwen3.5-4B-GGUF:Q4_K_M -p 0 -n 128 -r 3</code></pre>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/benchmark-comparison.svg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/benchmark-comparison.svg" alt="与 llama.cpp 对比的 GGUF 生成吞吐量"></a></p>
-<p>在全部三个 checkpoint 上，Transformers 都与 llama.cpp 十分接近。图表使用上文描述的同一批测量结果；它并不表示两边的基准条件完全相同，因为 Transformers 的测量包含 prefill，而 <code>llama-bench</code> 报告的是仅解码的吞吐量。</p>
-<h2>transformers 与 llama.cpp</h2>
-<p>在 <a href="https://huggingface.co/blog/ggml-joins-hf">GGML 与 llama.cpp 加入 Hugging Face</a> 时，我们描述过两者互补的角色：llama.cpp 为本地推理提供底座，transformers 为模型定义提供底座。GGUF 支持让这两者靠得更近。</p>
-<p><strong>当你的首要目标是高效的本地推理时，llama.cpp 仍然是我们推荐的引擎。</strong>它专属的 runtime、内存管理以及对广泛硬件的支持都是围绕这个目标构建的。这次集成为开发者提供了一条在 transformers 里使用同一批 GGUF checkpoint 的便捷途径：</p>
-<ul><li><strong>在 Python 和 PyTorch 里试验 GGUF。</strong>用 hook 检查中间激活，修改模型的 forward pass，或者用熟悉的 PyTorch 工具为自定义 layer 做原型。</li><li><strong>评测 GGUF 模型。</strong>用你现有的 transformers 评测流程来度量量化 checkpoint 的质量。</li><li><strong>校验 GGUF 转换。</strong>对我们这些开发者来说，在 transformers 里同时加载原始 checkpoint 和它转换出的 GGUF，更容易确认权重被正确转换，并把量化误差算在内。</li><li><strong>尝试新的解码思路。</strong>给 <code>generate</code> 配上自定义的 logits processor 和停止准则，或者用 Python 写你自己的生成循环。</li><li><strong>从 GGUF checkpoint 开始 fine-tuning。</strong>把权重反量化，然后按标准 transformers 训练流程继续。</li></ul>
-<p>最后这种情况，使用 <code>GgufConfig(dequantize=True)</code>：</p>
-<pre><code>import torch
-from transformers import AutoModelForCausalLM, GgufConfig
-
-model = AutoModelForCausalLM.from_pretrained(
-    &quot;unsloth/Qwen3.5-4B-GGUF&quot;,
-    gguf_file=&quot;Qwen3.5-4B-Q4_K_M.gguf&quot;,
-    quantization_config=GgufConfig(dequantize=True),
-    dtype=torch.bfloat16,
-)</code></pre>
-<h2>走出 GGUF：用 ggml kernel 覆盖更多模型</h2>
-<p><strong>更大的机会在于把 ggml 的性能带给 llama.cpp 并不支持的模型。</strong></p>
-<p>transformers 已经提供了这些架构的 PyTorch 实现。有了在 PyTorch 中可用的 ggml kernel 和量化方案，我们可以着手加速它们已支持的操作，而不必先把整个模型在 llama.cpp 里实现一遍。这对新架构、研究模型和自定义变体尤其有用——它们也许永远不会有一个专门的 llama.cpp 实现。</p>
-<p>这个机会并不局限于 GGUF 格式本身。kernel 作用在张量上，它并不要求整个模型都来自一个 GGUF 文件。同样的积木可以被集成进其他 transformers 模型和加载流程。这也为其他模态开出了一条路：计算机视觉模型、音频模型和多模态模型都可以复用兼容的 attention、normalization 与矩阵乘法 kernel，而不必先在 llama.cpp 里有完整实现。每个架构仍然需要集成与验证；本文最初这些 GGUF 示例覆盖的是文本生成。</p>
-<h2>用 Python 和 PyTorch 做快速的本地推理</h2>
-<p>我们还想展示：在把模型和生成循环都留在 Python 里的前提下，我们能走多远。<strong>配上合适的 kernel 和高效的生成循环，Python 和 PyTorch 也能给出很强的本地推理性能。</strong>kernel 承担繁重的计算，生成循环则通过避免不必要的同步让 GPU 一直有活可干。</p>
-<p>我们的重心是让 eager 执行在不要求 <code>torch.compile</code> 的情况下也足够快。就交互式使用而言，我们希望启动快、token 稳定流出，没有编译造成的停顿，也没有输入形状变化时的重新编译。这项工作主要有两块：kernel，以及 <code>generate</code> 本身。</p>
-<h3>复用 ggml 的 Metal kernel</h3>
-<p>kernel 就是在 GPU 上执行某个操作的小程序。PyTorch 提供的是通用实现；一个专门的 kernel 可以做更少的工作、把若干操作合并，或者按存储格式直接读取量化后的权重。</p>
-<p><code>kernels</code> 库让我们把 ggml 的 Metal kernel 的兼容构建分发在 Hub 上，并从 transformers 调用它们。这就把 ggml 的成果带进 PyTorch 模型，而不需要用一套独立的推理 runtime 把模型替换掉。</p>
-<table><thead><tr><th>Kernel</th><th>作用</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/kernels/ggml-org/ggml-quantization"><code>ggml-quantization</code></a></td><td>为矩阵运算读取打包的量化权重，包括 MoE 模型中选中的 expert。它避免了在每次解码操作之前把整个权重矩阵展开。</td></tr><tr><td><a href="https://huggingface.co/kernels/ggml-org/ggml-norm"><code>ggml-norm</code></a></td><td>融合 normalization 操作，包括 Qwen3.5 与 Qwen3.8 使用的零居中 RMSNorm。</td></tr><tr><td><a href="https://huggingface.co/kernels/ggml-org/ggml-attn"><code>ggml-attn</code></a></td><td>为 prompt 处理和 token 解码提供 ggml 的 Metal flash attention。</td></tr><tr><td><a href="https://huggingface.co/kernels/ggml-org/ggml-gated-delta-net"><code>ggml-gated-delta-net</code></a></td><td>加速 Qwen3.5 与 Qwen3.8 混合架构中 linear-attention 层所用的 gated delta network。</td></tr><tr><td><a href="https://huggingface.co/kernels/transformers-community/topk"><code>topk</code></a></td><td>为 MoE 模型中每个 token 挑选 expert，把 softmax 与 top-k 路由合为一体。这是我们自己的 Metal 实现。</td></tr></tbody></table>
-<p>前四个包都建立在 ggml 的 kernel 之上；top-k kernel 处理的是 MoE 路由中另一个独立的瓶颈。它们一起降低了每生成一个 token 所需的 GPU 工作量。</p>
-<p>为了说明层 kernel 的贡献，我们在启用与不启用它们两种情况下对比同一批打包的 GGUF checkpoint。量化 kernel 在两种配置里都保持启用：把它关掉同时也会改变权重的表示方式，那测量的就是另一种取舍了。</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/layer-kernel-benchmark.svg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/layer-kernel-benchmark.svg" alt="层 kernel 带来的吞吐量提升"></a></p>
-<h3>让 CPU 和 GPU 持续协同工作</h3>
-<p>只有当 GPU 有活可干时，更快的 kernel 才有帮助。生成过程中，CPU 负责调度 GPU 操作，并控制产出下一个 token 的循环。从 GPU 读回结果可能迫使 CPU 等待到排队的操作完成。哪怕每个 token 只多等很小一会儿，也会明显拉低吞吐量。</p>
-<p><code>generate</code> 里有两处改动针对这一点，它们给所有 transformers 模型都带来提升（不只是在跑 GGUF 文件时）：</p>
-<ul><li><strong><a href="https://github.com/huggingface/transformers/pull/48814">尽早丢弃多余的 attention mask（#48814）</a>。</strong>当某个受支持的 decoder-only 输入不含 padding 时，那份全 1 的 padding mask 可以在生成开始时就移除。下游 attention 代码不再需要反复检查这份 mask 来判断它是否可以跳过。causal attention 依然保留。</li><li><strong><a href="https://github.com/huggingface/transformers/pull/47975">推迟停止检查（#47975）</a>。</strong>在受支持的路径上，<code>generate</code> 异步复制停止判定，并在下一步消费它。GPU 运行时 CPU 可以继续调度工作。流式输出 token 采用同样的做法，越过停止条件的那一步会从结果中被剔除。</li></ul>
-<p>这些改动改善的是模型外围的生成循环，所以它们的用处不限于 GGUF。它们与 kernel 工作互为补充：kernel 降低一次操作的成本，而更少的同步点让 CPU 调度与 GPU 执行得以重叠。</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/generation-loop-benchmark.svg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/transformers-llama-cpp-quants/generation-loop-benchmark.svg" alt="生成循环改动带来的吞吐量提升"></a></p>
-<p>这些测量把所有层 kernel 都保持在启用状态；图中的柱形只隔离出生成循环那部分的改动。</p>
-<h2>当前限制与后续步骤</h2>
-<p>最初的目标是 Apple Silicon 上的单场交互式对话。有几个边界需要留意：</p>
-<ul><li><strong>打包推理路径目前仅支持 MPS。</strong>通过反量化导入 GGUF 仍然是一个独立的选项；支持这个文件格式，并不意味着打包 kernel 在每种设备上都可得。</li><li><strong>padding 与批量处理仍有待改进。</strong>未做 padding 的输入能受益于上文描述的 mask 优化。带 padding 的批次无法走同样的捷径，性能可能更低。我们希望把这项工作扩展到 MPS 上的 <code>generate_batch</code>。</li><li><strong>架构覆盖有限。</strong>打包加载器目前覆盖 Qwen3.5 的 dense 与 MoE 架构，包括兼容的 Qwen3.8 checkpoint。为其他架构添加支持相对直接，我们会逐步扩大覆盖面。</li></ul>
-<p>如果你有一个想在 transformers 里使用的 GGUF 模型，请<a href="https://github.com/huggingface/transformers/issues">提一个 issue</a>，附上该 checkpoint 和你的使用场景。这会帮助我们安排优先级，先支持人们正在本地运行的那些模型。</p>
-<h2>致谢</h2>
-<p>我们要感谢 <a href="https://huggingface.co/ArthurZ">Arthur Zucker</a> 发起这项工作并审阅了我所有的 PR，感谢 <a href="https://huggingface.co/cyrilvallez">Cyril Vallez</a> 的那些 <code>generate</code> PR。我们同样感激 <a href="https://huggingface.co/sayakpaul">Sayak Paul</a>、<a href="https://github.com/ggml-org/llama.cpp">llama.cpp 团队</a> 和 Bertrand Chevalier 在集成 kernel 上给予的帮助。也感谢 <a href="https://huggingface.co/ariG23498">Aritra Roy Gosthipaty</a> 与 <a href="https://huggingface.co/pcuenq">Pedro Cuenca</a> 审阅了这篇博客，以及 <a href="https://huggingface.co/lysandre">Lysandre Debut</a> 统筹该项目。</p>
-<h2>本文提及的模型 1</h2>
-<p>来自我们博客的其他文章</p>
-<p>announcement</p>
-<p>multimodal</p>
-<p>transformers</p>
-<h2>欢迎 Thinking Machines 的 Inkling</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li>+1</li></ul>
-<p>167</p>
-<p>July 15, 2026</p>
-<p>vllm</p>
-<p>transformers</p>
-<p>inference</p>
-<h2>速度接近原生的 vLLM transformers 建模后端</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ov-55uEKP4mJhavhdQ42x.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li></ul>
-<p>77</p>
-<p>July 8, 2026</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进输入框、粘贴，或</p>
-<p>点击此处</p>
-<p>.</p>
-<p>点击或在此粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftransformers-llama-cpp-quants">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Ftransformers-llama-cpp-quants">登录</a> 后可发表评论</p>
-<ul><li><a href="https://huggingface.co/HermitD8"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/bz-OFC3OT3YMUxzMp-da_.png" alt=""></a></li><li><a href="https://huggingface.co/BenjaminB"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1656685953025-62bf03d1e80cec527083cd66.jpeg" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tarekziade"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/moeidghiady"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/HEbUHf0ogtajJsNQvPRSB.jpeg" alt=""></a></li><li><a href="https://huggingface.co/RaushanTurganbay"><img src="https://huggingface.co/avatars/4dc6265e044ee16753f657d86448c655.svg" alt=""></a></li><li><a href="https://huggingface.co/AntonV"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/630dc8e6ab0894318469dcc5/joJcu4NWpb36zNDsfQm7U.jpeg" alt=""></a></li><li><a href="https://huggingface.co/davanstrien"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li></ul>
-<h2>本文提及的模型 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>oMLX 创建者与维护者 Jun Kim 加入 Hugging Face，支持 MLX 社区</title>
-      <link>https://huggingface.co/blog/omlx</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/omlx</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Jun Kim, oMLX creator and maintainer, joins Hugging Face to support the MLX community</description>
-      <content:encoded><![CDATA[<h1>oMLX 创建者与维护者 Jun Kim 加入 Hugging Face，支持 MLX 社区</h1>
-<p>发布于</p>
-<p>2026 年 9 月 22 日</p>
-<p>在 GitHub 上更新此内容</p>
-<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/xAIat"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1675508248117-63de392d10678851bb03371d.png" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rajveer43"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64ca2057214a472dd80a3e32/HRWs0En-CVxrQ6Gn5h-7k.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AdinaY"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63a369d98c0c89dcae3b8329/AiH2zjy1cnt9OADAAZMLD.jpeg" alt=""></a></li></ul>
-<p>Pedro Cuenca</p>
-<p>pcuenq</p>
-<p>Lysandre</p>
-<p>lysandre</p>
-<p>Victor Mustar</p>
-<p>victor</p>
-<p>Julien Chaumond</p>
-<p>julien-c</p>
-<p>Jun Kim</p>
-<p>Jundot</p>
-<p>我们无比兴奋地欢迎 Jun 成为我们最新的团队成员 🔥。我们完全投入到 local AI 之中，而 MLX 是这个生态系统的核心一环。我们很高兴 Jun 选择了我们作为落脚之地，并继续为 MLX 做贡献。</p>
-<p>MLX 是 Apple 面向 local AI 的框架，针对 Apple Silicon 做了特别优化。自它在 2023 年作为 <a href="https://x.com/awnihannun/status/1732184443451019431?s=20">Awni</a> 和 <a href="https://x.com/angeloskath/status/1732304844403429477?s=20">Angelos</a> 的圣诞礼物出现以来，我们就是 MLX 的大力支持者；我们也引以为豪的是，Hugging Face 正是人们找到 MLX 模型并贡献自己模型的那个 Hub。开放的、本地的 AI 的使用正在加速，我们相信一个健康的生态系统应当让人们找到适合自己的工具。</p>
-<h2>对 oMLX 有什么影响？</h2>
-<p>稳定性，也希望是更快的开发节奏！从一个业余副业「毕业」，成为一个有完整维护与资金支持的项目，将让 Jun 能更好地引导贡献者，并为长期做建设。<a href="https://github.com/jundot/omlx">oMLX</a> 仍然是 Apache 2.0，Jun 也像以前一样继续领导它。</p>
-<h2>对整个 MLX 有什么影响？</h2>
-<p>我们的最终目标是帮社区打通堵点，以任何形式运行 local AI，并提供实现这一点所需的工具与构建块。我们期望 oMLX 充当新想法的 testbed，同时利用它已经依赖的那些依赖项的基础性工作，例如 <a href="https://github.com/ml-explore/mlx-lm">mlx-lm</a> 或 <a href="https://github.com/Blaizzy/mlx-vlm">mlx-vlm</a>。我们相信强大的建模与 inference 库对社区有益，因此我们很乐意把工作 upstream 到任何合适的地方。我们已经与许多项目在协作——mlx-lm、mlx-vlm、LMStudio——也希望我们能加强与 <a href="https://x.com/zcbenz">Cheng</a>、<a href="https://x.com/Prince_Canuma">Prince</a>、<a href="https://x.com/yagilb">Yagil</a> 以及他们团队的关系，一起更好地服务社区。</p>
-<p>具体而言，一个重点方向是把一个 transformers 模型定义快速转换成一份可被不同 engine 消费的参考 MLX 实现，这样每一方都能专注于自己提供的独特功能。transformers 库已经成为 ML 模型定义的参照标准，我们想把这个流程梳理得更顺畅，让新的 transformers 模型能跑在 MLX 上。</p>
-<p>我们对未来感到无比兴奋。</p>
-<p>欢迎，Jun！🙌</p>
-<p>我们博客的其他文章</p>
-<p>announcement</p>
-<p>mlx</p>
-<p>llm</p>
-<h2>那件你自己本来也会提的 PR</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/623c830997ddced06d78699b/ucB8joTPONCnc_Gj0mssR.jpeg" alt=""></li></ul>
-<p>74</p>
-<p>2026 年 4 月 16 日</p>
-<p>llm</p>
-<p>coreml</p>
-<p>mlx</p>
-<h2>推出 AnyLanguageModel：Apple 平台上本地与远程 LLM 的一个 API</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt=""></li></ul>
-<p>44</p>
-<p>2025 年 11 月 20 日</p>
-<h3>社区</h3>
-<p>Alkpone</p>
-<p>18 天前</p>
-<p>omlx 的 GitHub 仓库好像被删了。有新的 url 吗？</p>
-<ul><li><a href="https://huggingface.co/Izenflamm"><img src="https://huggingface.co/avatars/0a6999d5e5c601c1e4538223ea7d7a95.svg" alt=""></a></li><li><a href="https://huggingface.co/Jundot"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/P4AE_DXqeRdnfzXp-shec.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alcoveswhoop"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/_OOcmf0zwOdnr7LNmG4-0.png" alt=""></a></li></ul>
-<p>Izenflamm</p>
-<p>18 天前</p>
-<p>是的，我也看到了这事。只是想给朋友拿一个 dmg，但今天没戏。</p>
-<p>abe238</p>
-<p>18 天前</p>
-<p>致敬！！！为你开启的这一章感到兴奋。</p>
-<p>TRex-face</p>
-<p>18 天前</p>
-<p>这会非常棒！</p>
-<p>Izenflamm</p>
-<p>18 天前</p>
-<p>恭喜！！！ 好消息！:)</p>
-<p>顺便问一下，GitHub 上的 oMLX 仓库怎么了？</p>
-<p>nivong</p>
-<p>18 天前</p>
-<p>欢迎！这完全是意料之中，也当之无愧</p>
-<p>zviratko</p>
-<p>18 天前</p>
-<p>Jundot 回复我说，他很可能是在仓库的 Discussions 里发出这段一模一样的信息后不久就被自动封号了——大概是个过度热心的 github/microslop 审核机器人。希望他能尽快把它拿回来。 我赶在它被封之后马上把我的仓库和 github 的 fork-network 同步了，所以在问题解决之前，你可以暂时从 zviratko/omlx 取到最新的代码。</p>
-<p>codelion</p>
-<p>18 天前</p>
-<p>这对支持其他 MLX inference 引擎和 mlx-optiq 这类工具会有什么影响？</p>
-<p>niXta</p>
-<p>18 天前</p>
-<p>酷！我喜欢 Jundot 做的东西！</p>
-<p>Gallardo994</p>
-<p>17 天前</p>
-<p>恭喜，当之无愧！</p>
-<p>scottlowry</p>
-<p>17 天前</p>
-<p>恭喜！</p>
-<p>himefei</p>
-<p>17 天前</p>
-<p>恭喜！</p>
-<p>crazyi</p>
-<p>17 天前</p>
-<p>恭喜！</p>
-<p>openSourcerer9000</p>
-<p>16 天前</p>
-<p>很好，就像 Groq 那次「acquihire」。打不过他们？那就买下他们</p>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者</p>
-<p>点击这里</p>
-<p>。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fomlx">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fomlx">登录</a> 即可评论</p>
-<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/xAIat"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1675508248117-63de392d10678851bb03371d.png" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rajveer43"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64ca2057214a472dd80a3e32/HRWs0En-CVxrQ6Gn5h-7k.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AdinaY"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63a369d98c0c89dcae3b8329/AiH2zjy1cnt9OADAAZMLD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mpuk2000"><img src="https://huggingface.co/avatars/ea116caaebdf6a083d18ac43fe67d676.svg" alt=""></a></li><li><a href="https://huggingface.co/abe238"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/m-h4A7w4V9cP0QLofBErt.png" alt=""></a></li><li><a href="https://huggingface.co/carsenk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639a972fd41d40d1ecadaf6e/1210BBjOpOWIBj7uv9Xvq.webp" alt=""></a></li><li><a href="https://huggingface.co/zviratko"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63179b3533a4e2b5d3ae4a6a/y3TnHSsLtiJQCgdvNFpx9.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jundot"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/P4AE_DXqeRdnfzXp-shec.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kaweees"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67790c1d64085a93fdc94abe/1_5iqGCtbrqQalYrWmWz0.jpeg" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>tokenizers v1：编码、解码与扩展性的实测</title>
-      <link>https://huggingface.co/blog/tokenizers-v1</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/tokenizers-v1</guid>
-      <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：tokenizers v1: encode, decode and scaling, measured</description>
-      <content:encoded><![CDATA[<h1>tokenizers v1：encode、decode 与 scaling，实测数据</h1>
-<p>发布于 September 21, 2026</p>
-<p>在 GitHub 上更新</p>
-<ul><li><a href="https://huggingface.co/LysandreJik"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1624608153440-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/davanstrien"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sergiopaniego"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></a></li></ul>
-<p>Arthur Zucker</p>
-<p>ArthurZ</p>
-<p>Simon Brandeis</p>
-<p>sbrandeis</p>
-<p>Luc Georges</p>
-<p>mcpotato</p>
-<p>Lysandre</p>
-<p>lysandre</p>
-<p>从历史上看，tokenizer 并不是 ML 工作流里的瓶颈。就计算量而言，与流水线其余环节里繁重的建模相比，tokenization 很轻。但在某些情况下，它已经迅速成为加速（或拖慢）你机器学习工作的关键。</p>
-<p>随着模型变得更快、工作负载不断扩展，这种平衡开始发生变化。在海量数据集上训练、服务大量并发请求，或反复处理长输入，都可能给 tokenizer 施加足够大的压力，以至于它让模型因为拿不到数据而空等。</p>
-<p>这正是我们在即将到来的 tokenizers version 1 中把重心大量压在性能上的原因。tokenization 应当是轻量的，并且应当随你的工作流一起扩展。你的 GPU 绝不该因为 CPU 还在完成 tokenization 而闲置等待。</p>
-<p>在本文中，我们来看是什么让 v1 比 v0.23 更快——而且往往快上数十倍。</p>
-<p>这项工作完全得益于生态系统的其余部分。tokenization 是一个非常活跃的开源领域，<a href="https://github.com/marcelroed/gigatoken">gigatoken</a>、<a href="https://crates.io/crates/tiktoken-rs">tiktoken</a>、<a href="https://crates.io/crates/kitoken">kitoken</a>、<a href="https://crates.io/crates/tokie">tokie</a>、<a href="https://crates.io/crates/fastokens">fastokens</a>、<a href="https://crates.io/crates/wordchipper">wordchipper</a> 和 <a href="https://www.npmjs.com/package/ai-tokenizer">ai-tokenizer</a> 等库，以及许多其他项目，各自都在推进&quot;一个快速的 tokenizer 究竟能有多快&quot;这件事。我们读过这些工作，下面有好几个想法之所以来到我们面前，是因为另一个项目已经证明它们值得一试。</p>
-<p>在这次重构之前，tokenizers 远没有达到它本可达到的性能，所以为它贡献代码看起来可能并不划算。通过这次重构，我们希望清楚地表明：我们打算让 tokenizers 成为一个值得贡献的库。</p>
-<p>我们还要感谢 IBM、NVIDIA 以及 ExecuTorch 团队贡献补丁，并帮助我们在很宽的硬件范围内进行测试，以拓宽平台支持。</p>
-<h2>结果</h2>
-<p>我们展示 tokenizers v1 的 release candidate 相对其他广泛使用的替代方案的结果。内容涵盖单线程、多线程、跨线程扩展、逐模型对比、逐语言对比、延迟、decode 吞吐、内存堆，以及 crate 体积。</p>
-<p>这些是在 <a href="https://github.com/huggingface/tokbench">tokbench</a> 仓库里跑出来的，我们还提供了一条命令，如果你愿意，可以在自己的硬件上重新运行这些 benchmark。</p>
-<h2>V1 是什么</h2>
-<p>v1 会产出与 v0.23 完全相同的 token ID。目标是保留输出、API、词表和 merge rank，并把一切<strong>能够</strong>改进的地方都改进。这也包括覆盖面。这个库在各个 tokenizer 家族之间保持通用，而不是只针对 BPE 做特化，所以 v0.23 能加载的东西 v1 都能加载。</p>
-<p>tokenizer 把文本转换成模型所读取的整数列表。tokenizers 分四个阶段完成这一转换。Normalization 对原始文本应用小写化或 Unicode normalization 之类的操作。Pre-tokenization 把文本切分为更小的片段，称为 pre-token。model 阶段把每个 pre-token 变成 token，并把它们映射到词表里的 ID。Post-processing 补上模型所期望的任何 special token。</p>
-<p>本文所描述的绝大部分工作都发生在 model 阶段。本文测量的十个 model 家族里，有八个使用 byte pair encoding，也就是 BPE。BPE 从一个 pre-token 的字节出发，反复合并 rank 最高的相邻 pair，直到不再存在带 rank 的 pair。这个排序在 tokenizer 训练时学得，并随它一起分发，所以同样的文本永远产出同样的 ID。一次 merge 绝不会跨越 pre-token 的边界。剩下两个家族使用 WordPiece 和 Unigram，即这个库支持的另外两种 model 类型。</p>
-<p><a href="https://huggingface.co/docs/tokenizers/pipeline">tokenization pipeline</a> 页面记录了这四个阶段。<a href="https://huggingface.co/docs/transformers/tokenizer_summary">Tokenization algorithms</a> 记录了 BPE、WordPiece 和 Unigram。</p>
-<p>每个阶段都被动过。以下是真正起作用的改动：</p>
-<table><thead><tr><th>改动</th><th>作用</th></tr></thead><tbody><tr><td>workspace 拆分</td><td>一个 crate 变成一个 workspace：<code>tk-encode</code> 是必需的运行时，而 <code>tk-serialize</code>、<code>tk-convert</code> 和 <code>tk-train</code> 只在应用需要时才链接</td></tr><tr><td>无分配的 model</td><td>merge 的工作集存放在调用方持有的 scratch buffer 里；循环完全不触碰分配器</td></tr><tr><td>bitcannon</td><td>切分模式变成对位流（bitstreams）的布尔运算，用 SIMD 指令来找切分点，而不是靠 regex 引擎</td></tr><tr><td>merge 循环重写</td><td>参与合并的各个 piece 在一块预分配缓冲区内组成一条侵入式双向链表，于是一次合并只需更新两个索引，而不必搬动数据</td></tr><tr><td>word cache</td><td>一份线程本地的 memo，从 pre-token 的字节映射到最终的 ids，于是重复出现的词只合并一次</td></tr><tr><td>原生并行</td><td>一个共享的 tokenizer 可以同时被许多线程 encode；每个线程从自己的子池里取用它的 scratch buffer 和 word cache，于是线程不再在单一把锁上排队（<a href="https://github.com/huggingface/tokenizers/pull/2365">#2365</a>）</td></tr></tbody></table>
-<h3>切分：用位流取代 regex</h3>
-<p>BPE model 使用一条正则表达式把输入文本切分成更小、更易处理的块，称为 pre-token。合并发生在 pre-token 内部，绝不跨越两个 pre-token 之间的边界，所以这次切分决定了流水线其余部分看到什么。</p>
-<p>那条正则表达式是 model 的一个固定参数。它随 tokenizer 一起分发，运行时从不改变，因此没必要在每次 encode 时都让一个通用 regex 引擎去解释它。针对某个 model 实际使用的那条模式，人工手写一个等价的切分函数就可以了，而且只需写一次。</p>
-<p>手写函数随后可以利用现代 CPU 的 SIMD 指令（single instruction, multiple data），它们一次就把同一个操作施加在许多字节上，很适合 UTF-8 文本。bitcannon 把输入的字节看作并行的比特流，于是边界是从对整个寄存器的布尔运算里直接得出的，而不是一次只前进一个字符的扫描。它每个寄存器操作就能判定 64 个字节。同样的思路也驱动着用于文本处理的 <a href="https://www.cs.sfu.ca/~ashriram/papers/2012_HPCA_Parabix.pdf">Parabix</a> 和用于 JSON 的 <a href="https://arxiv.org/abs/1902.08318">simdjson</a>。</p>
-<p>这取决于能否识别出那条模式。少数几种语法就覆盖了大多数 byte-level BPE model，而模式不在其中的 tokenizer 会保留 regex 路径，这份加速一点都得不到。这正是上面的收益为何差异如此之大。</p>
-<h3>Word Cache</h3>
-<p>真实文本里有大量重复的词。由于 BPE 对给定的 pre-token 永远产出相同的 token ID，v1 可以在处理一次之后就把结果存下来。一份线程本地缓存把每个 pre-token 的字节映射到它的 token ID，让后来再次出现的同一个词跳过整个合并过程。</p>
-<p>很自然，随着输入变长，唯一词的数量可能比词的总数增长得更慢。于是重复词在输入中所占的比重不断上升。但仍然会有新词出现，这也解释了下面动画里偶尔的未命中。</p>
-<p>用这条命令复现 shared-prefix 的结果：</p>
-<pre><code>tokbench measure prefix-sharing \
-  --engine pipeline \
-  --engine hf-tokenizers \
-  --compare-to pipeline-no-cache \
-  --corpus agentic_swe</code></pre>
-<p>缓存最适合包含重复 pre-token 的输入。重复 pre-token 很少的输入可能付出了查找的开销，却换不来多少次命中。</p>
-<h3>merge 循环</h3>
-<p>下一个主要开销来自 BPE 的 merge 循环。对每个 pre-token，循环反复找出优先级最高的相邻 pair 并把它合并。此前的实现每次调用都要分配新的内存，并为每个 pre-token 建一个新的优先队列。</p>
-<p>v1 复用由调用方持有的 scratch buffer，去掉了那些重复分配。它把符号存放在一个扁平数组里，并用符号在该数组中的位置来链接相邻符号，这使得合并过程中的更新更便宜。它还把一批 pre-token 放在一次 model 调用里处理。</p>
-<p>每个候选 pair 也被打包进单个 64 位值中，merge rank 放在高位。于是比较两个候选就是比较两个整数，而&quot;这里没有可合并的&quot;就是最大可能值，所以循环不需要分支就能找到下一次合并。</p>
-<h2>方法</h2>
-<p>benchmark 设计上的细小差别，就可能让 tokenizer 的性能表现出现巨大差异。我们用以下规则来保持各引擎之间比较的一致性。</p>
-<table><thead><tr><th>规则</th><th>原因</th></tr></thead><tbody><tr><td>一条计时循环</td><td>每个引擎跑完全相同的循环；不给任何引擎单独准备 fast path</td></tr><tr><td>不计入加载</td><td>词表加载单独计时，绝不放进 encode 里面计时</td></tr><tr><td>id 哈希校验</td><td>对输出 ids 做 FNV-1a，必须与基线完全一致</td></tr><tr><td>只取公共单元格</td><td>中位数只在每个引擎都跑过并校验过的单元格上计算</td></tr><tr><td>每个进程跑完整扫描</td><td>每次 repeat 都在新进程里开始，并保留所有单元格</td></tr><tr><td>物理核心绑核</td><td>worker 绑定在八个不同的物理核心上，绝不使用同一核心的 SMT 兄弟线程</td></tr><tr><td>独立 Jobs</td><td>用分开的 Jobs 来测量主机之间的波动</td></tr></tbody></table>
-<p>在同一个 build 上，反复 encode 同一份文档可能比 encode 一串各不相同的文档更快。第一种做法测量的是整份文档已经存在于缓存中时的性能。第二种测量的是在新输入上的性能，同时允许此前见过的 pre-token 留在缓存里。</p>
-<p>这两种条件有时都被描述为&quot;暖机（warm）&quot;，尽管它们测量的是不同的工作负载。我们的头条结果使用的是各不相同的文档，而且完整语料太大，装不进缓存。tokenizer benchmark 应当说明自己用的是哪种工作负载，因为这个选择可能完全左右结果。</p>
-<h2>这些加起来意味着什么</h2>
-<p>在 v1 的 encode 路径所覆盖的十个 model 家族上，单线程在 Apple M4 Max 上 encode 文本比 v0.23 快 <strong>3 到 30 倍</strong>。低端是 t5-base，高端是 gpt2。八个 worker 时它扩展到线性加速的 <strong>76%</strong>。贯穿所有这些改动，v1 产出的 token ID 与已发布的库完全一致。</p>
-<p>整体提升来自若干改动的协同：一个取代 regex 引擎的手写切分器，一个能在重复词出现时直接给出答案而不必重新合并它的缓存，一个绝不触碰分配器的 merge 循环，以及对每批 pre-token 发起一次 model 调用而不是每个 pre-token 一次。每一项都在流水线的不同位置减少所做的事。</p>
-<p>下一个优先级是支持更多 model 家族。我们会在 <code>1.0.0</code> 之前把更多 model 迁到新的 merge 循环上。一旦 release candidate 稳定下来，下一步就是把这份改进带到依赖 tokenizers 库的 transformers 库以及其余生态中。</p>
-<p>本文根据 <a href="https://github.com/huggingface/tokbench">tokbench</a> 的结果生成，并会随着支持范围的扩大而更新。</p>
-<h2>如何获取</h2>
-<p>v1 的 release candidate 已经在 crates.io 上。你调用的 API 就是你已经在调用的那一个，所以唯一变化的是你安装哪个 build。</p>
-<p>就是寻常的安装方式：</p>
-<pre><code>cargo add tokenizers --pre</code></pre>
-<p>训练功能藏在一个默认开启的 feature 之后，它还会连带拉进一个 C++ 依赖。如果你只需要 encode，把它关掉即可排除训练实现：</p>
-<pre><code>cargo add tokenizers --pre --no-default-features --features http</code></pre>
-<p>encode 没有任何变化：同样的调用，同样的 ids。</p>
-<pre><code>use tokenizers::tokenizer::{Result, Tokenizer};
-
-fn main() -&gt; Result&lt;()&gt; {
-    let tokenizer = Tokenizer::from_pretrained(&quot;deepseek-ai/DeepSeek-V4-Flash&quot;, None)?;
-
-let encoding = tokenizer.encode(&quot;The tokenizer is no longer the bottleneck.&quot;, false)?; println!(&quot;{:?}&quot;, encoding.get_ids()); // [671, 17840, 9160, 344, 1119, 5827, 270, 111127, 16] println!(&quot;{:?}&quot;, encoding.get_tokens()); // [&quot;The&quot;, &quot;Ġtoken&quot;, &quot;izer&quot;, &quot;Ġis&quot;, &quot;Ġno&quot;, &quot;Ġlonger&quot;, &quot;Ġthe&quot;, &quot;Ġbottleneck&quot;, &quot;.&quot;]
-
-Ok(()) } ```
-
-对于批量数据，`encode_batch` 才是跨核心扩展的那个调用。上面那个扩展性视图测量的就是它。
-</code></pre>
-<p>let encodings = tokenizer.encode_batch(documents, false)?;</p>
-<pre><code>
-本文里的每一个数字都是针对这个 crate 测量的。Python bindings 封装的是同一套代码，从 `bindings/python` 构建，但它们会带来每次调用的额外开销，而这些测量都不包含这部分开销。
-
-## 迈向 V1 的进展
-
-本文的 benchmark 覆盖前面列出的已完成的 release-candidate 工作。其余小节说明 `1.0.0` 还需要做什么，以及我们之后打算探索什么。
-
-### Release Candidate：已实现
-
-这些工作都在 crates.io 上的 Rust 预发布版本里：
-</code></pre>
-<p>cargo add tokenizers --pre</p>
-<pre><code>
-- workspace 拆分：把单个 crate 拆成 `tk-encode`、`tk-serialize`、`tk-convert` 和 `tk-train`，于是应用只链接它用到的东西
-- bitcannon：用位流运算取代 encode 路径上的 regex 切分，覆盖 GPT-2、cl100k、o200k、Tekken 和 DeepSeek。这取代了最初随版本发布的有限状态机 [#2201](https://github.com/huggingface/tokenizers/pull/2201) [#2317](https://github.com/huggingface/tokenizers/pull/2317)
-- WordCache：复用此前已处理过的 pre-token 的 token ID [#2262](https://github.com/huggingface/tokenizers/pull/2262)，`af5a3e3`
-- 更快的查找与合并结构：加入 FlatCache、MPHF RankStore、增量式合并，以及 BucketVocabStore [#2190](https://github.com/huggingface/tokenizers/pull/2190) [#2188](https://github.com/huggingface/tokenizers/pull/2188)
-- 可复用的 model 内存：把临时的 model 状态挪进 scratch buffer，于是 tokenization 不必每次调用都分配 [#2175](https://github.com/huggingface/tokenizers/pull/2175) [#2183](https://github.com/huggingface/tokenizers/pull/2183)
-- 流水线 post-processing：把 post-processing 作为 `STAGE_POST` 流水线阶段暴露出来 [#2182](https://github.com/huggingface/tokenizers/pull/2182)
-- 批量 model 调用：在一次调用中处理多个 pre-token span [#2304](https://github.com/huggingface/tokenizers/pull/2304)
-- 更快的 decode：把解码出的字节直接写入一个可复用的缓冲区，避免中间字符串和拷贝，加速 token 查找，支持带缓冲的流式输出，并并行 decode 批量数据
-- `role_to_token` 支持 [#2343](https://github.com/huggingface/tokenizers/pull/2343)
-- Node.js bindings [#2281](https://github.com/huggingface/tokenizers/pull/2281)
-
-### 1.0.0
-
-- 单一的 encode 实现：在训练校验期间使用 `tk-encode`，让训练和推理不可能产出不同的 tokenization 结果
-- 可选的 offsets 和 masks：只有被请求时才计算这份元数据，把它挡在只取 token ID 的路径之外
-- 重做 normalizer
-- bitnorm 支持，建立在 atomnorm 之上 [#2209](https://github.com/huggingface/tokenizers/pull/2209)
-- spm 预编译
-- 更简洁的 Python bindings：减少加锁、包装类型和手写的 dispatch 代码，同时保留子类化、序列化、自定义 decoder、mutating 行为，以及对 free-threaded CPython 的支持
-- 仅供推理的 C 与 C++ bindings，面向 ExecuTorch 和 llama.cpp，之后可能跟进 JVM、Swift 和 Go 的 bindings
-
-### 1.0.0 之后
-
-- tok-devices：探索 GPU encode 与批量 decode，同时把文本和 token ID 留在设备上。decoder 会一次性上传词表，并行计算输出位置，并在 GPU 上收集对应的字节。这将是一个可选组件，面向大批量场景，还需进一步做原型和测量。
-
-我们博客的更多文章
-
-tokenizers
-
-transformers
-
-open-source
-
-## Transformers v5 中的 Tokenization：更简单、更清晰、更模块化
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/658f3fc8c0b1372b2e991992/SZspcJ3Z5S-W5vayJo-vJ.jpeg)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1674683851722-62441cb7456803e95009a08f.jpeg)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg)
-- +2
-
-128
-
-December 18, 2025
-
-guide
-
-hub
-
-optimization
-
-## 5 分钟学会 Hugging Face Kernel Hub
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6452d5ba3f80ad88c77b2f05/yuvfzgqOeK8-bFxEZ2gg9.jpeg)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6310e9a107a76827902421d7/1e0GItqv3A6sOWYz5SXoe.png)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1608285816082-5e2967b819407e3277369b95.png)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)
-- +3
-
-167
-
-June 12, 2025
-
-### 社区
-
-not-lain
-
-18 天前
-
-干得漂亮 🔥
-
-Devistro
-
-18 天前
-
-得找机会试一试。数据看起来真的很不错。
-
-上传：把图片、音频和视频拖进文本输入框、粘贴，或
-
-点击此处
-
-.
-
-在此轻点或粘贴即可上传图片
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Ftokenizers-v1)或[登录](https://huggingface.co/login?next=%2Fblog%2Ftokenizers-v1)以发表评论
-
-点赞
-
-89
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1624608153440-noauth.jpeg)](https://huggingface.co/LysandreJik)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png)](https://huggingface.co/sbrandeis)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg)](https://huggingface.co/lysandre)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg)](https://huggingface.co/davanstrien)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg)](https://huggingface.co/sergiopaniego)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg)](https://huggingface.co/regisss)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a15be1b0c5fef54b92c60ab/qOXkTss_QR0gy6dSzXI8T.jpeg)](https://huggingface.co/hf-dwarez)
-- [![](https://huggingface.co/avatars/7eb33d86f5373a4b3c16b72bfbd4cb0d.svg)](https://huggingface.co/rganti)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg)](https://huggingface.co/pagezyhf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/633413b18003819e16aee0aa/CglgixDB95u8ILW8WdxCU.png)](https://huggingface.co/osolmaz)
-- [![](https://huggingface.co/avatars/716b6a7d1094c8036b2a8a7b9063e8aa.svg)](https://huggingface.co/blanchon)</code></pre>]]></content:encoded>
-    </item>
-    <item>
-      <title>你的智能体出色完成了任务，还能再现吗？</title>
-      <link>https://huggingface.co/blog/ibm-research/altk-evolve-consistency</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/altk-evolve-consistency</guid>
-      <pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Your Agent Aced the Task. Will It Do It Again?</description>
-      <content:encoded><![CDATA[<p>返回文章列表</p>
-<h1>你的智能体出色完成了任务，还能再现吗？</h1>
-<p>企业</p>
-<p>文章</p>
-<p>发布于 2026 年 9 月 15 日</p>
-<ul><li><a href="https://huggingface.co/gaodan-fang"><img src="https://huggingface.co/avatars/18f132b7a7dabcdf5fb933edb554ea68.svg" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/saurabhiit2011"><img src="https://huggingface.co/avatars/a8e6ed70291c1a54635990fe421f25e1.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li></ul>
-<p>Evelyn Duesterwald</p>
-<p>evduester</p>
-<p>ibm-research</p>
-<p>Lilian Ngweta</p>
-<p>lilianngweta</p>
-<p>ibm-research</p>
-<p>Vatche Isahagian</p>
-<p>Vatche</p>
-<p>ibm-research</p>
-<p>Jayaram Radhakrishnan</p>
-<p>jayaramkr</p>
-<p>ibm-research</p>
-<p>Vinod Muthusamy</p>
-<p>vinodmut</p>
-<p>ibm-research</p>
-<p>Gaodan Fang</p>
-<p>gaodan-fang</p>
-<p>ibm-research</p>
-<p>Ashwath Vaithinathan Aravindan</p>
-<p>ashwath-vaithina</p>
-<p>ibm-research</p>
-<p>Punleuk Oum</p>
-<p>illeatmyhat</p>
-<p>ibm-research</p>
-<p>G Thomas</p>
-<p>gsthomasx</p>
-<p>ibm-research</p>
-<p>Merve Unuvar</p>
-<p>mrvnvr</p>
-<p>ibm-research</p>
-<p>Ayhan Sebin</p>
-<p>ayhansebin</p>
-<p>ibm-research</p>
-<p>Michał Ulewicz</p>
-<p>Michal</p>
-<p>ibm-research</p>
-<p>你的智能体在彩排时运行正常，可到了现场演示，它走了另一条路，把同一个任务搞砸了。</p>
-<p>这在台上非常尴尬。在生产环境里，这就是可靠性问题：一次成功的工作流，下一次用户提出同样请求时可能就失败了。对于关键任务——比如核对一笔金融交易、检查合同中的某项义务——这可能是致命的。</p>
-<p>大多数基准把这种波动性藏在平均值后面。在 AppWorld 上，一个用 GPT-4.1 的 ReAct 智能体在五次重复运行中的平均成功率是 <strong>77.4%</strong>。但对五个运行全部成功的任务只占 <strong>53.0%</strong>——存在 <strong>24.4 个百分点的一致性差距</strong>。</p>
-<p>大多数基准报告的是第一个数字。我们构建了测量第二个数字——并改进它——的方法。</p>
-<p>在之前的文章中，我们介绍了 <a href="https://huggingface.co/blog/ibm-research/altk-evolve">ALTK-Evolve</a>——一个把智能体自身历史轨迹自动蒸馏成可复用指南、并在推理时注入回系统的机制。它能可度量地提升任务成功率，但那些结果同样只回答了平均值问题。本文介绍 <strong>一致性指南（consistency guidelines）</strong>——<a href="https://github.com/AgentToolkit/altk-evolve"><code>altk-evolve</code></a> 中的一种新指南类型，构建在我们称为 <strong>一致性分析器（Consistency Analyzer）</strong>的诊断工具之上，直接针对这个差距。</p>
-<p><strong>太长不看</strong></p>
-<ul><li><strong>准确率掩盖了一个不可靠问题。</strong> 一个 ReAct 智能体（GPT-4.1，AppWorld <code>test_normal</code>）平均成功率 77.4%，但 5 次重复运行全部成功的任务只有 53.0%——<strong>一致性差距 24.4 个百分点</strong>；在困难任务上达到 30 个百分点。</li><li><strong>我们为这个问题量身打造了诊断工具。</strong> 一致性分析器重采样智能体自己记录的轨迹，找出<em>易翻转</em>的决策点——那些只差一次 token 采样就会做出不同选择的步骤。它只需要一条轨迹、不需要标准答案——它对轨迹中每个决策点重采样，一次调用请求 k 个补全（默认 k=5），而不是端到端重跑任务。</li><li><strong>把诊断变成指南，差距减半</strong>——从 <strong>24.4pp 降到 12.0pp</strong>（同任务 Pass⁵ +16.0pp，相似任务 +13.0pp），并且不损失任何平均准确率。</li><li><strong>完整方法和评估</strong>见 <a href="https://arxiv.org/abs/2609.08832">arXiv 技术报告</a>。</li></ul>
-<h2>几乎没人报告的指标</h2>
-<p>标准智能体评估报告的是 <strong>Mean@k</strong>：把基准跑 <em>k</em> 次，对通过率取平均。通常 <em>k</em>=3，有时干脆是 1。这是每个排行榜上的数字，也就是“准确率 77%”的实际含义。</p>
-<p>Mean@k 回答的是“这个智能体平均有多好？”它没有回答真实用户关心的问题：<strong>我再问一遍同样的问题，它还能做好吗？</strong> 要回答这个问题需要 <strong>Pass^k</strong>：智能体在 <em>全部</em> k 次运行中都成功的任务比例。</p>
-<blockquote>⚠️ Pass^k 不是 Pass@k。大家熟悉的 Pass@k 是乐观的——它问的是 k 次尝试中是否至少有一次成功，这在你可以验证并重试时是正确的问题。Pass^k 是它的悲观镜像：每一次尝试都必须成功。同样的字母，相反的问题。恒有 Pass^k ≤ Mean@k ≤ Pass@k。</blockquote>
-<p>一个由 GPT-4.1 驱动的 ReAct 智能体 Mean@5 达到 <strong>77.4%</strong>——确实很强。但 Pass^5 只有 <strong>53.0%</strong>。近四分之一的基准任务，智能体<em>有时</em>能解决、有时不能，而任务本身在两次运行之间没有任何变化。我们把这个差距——Mean@k 减去 Pass^k——称为<strong>一致性差距（consistency gap）</strong>。</p>
-<p>这不是换个更大模型就能解决的能力问题。它是一条正交的维度：<strong>智能体可以既强大又不稳定。</strong></p>
-<h2>智能体为什么会翻转：锋利的决策 vs 平坦的决策</h2>
-<p>LLM 智能体每做一个决定——调用哪个 API、传什么参数、要不要重试——这个决定都来自下一 token 的概率分布。关键在于分布的<strong>形状</strong>。<strong>陡峭（sharp）</strong>的分布把大部分质量放在单个 token 上：第二名差得很远，一次次的运行都会给出同样的选择。<strong>平坦（flat）</strong>的分布把相当的质量分散在几个几乎并列的 token 上，谁胜出基本就是抛硬币。</p>
-<p>形状决定了需要多大的噪声才能改变结果。陡峭分布很有韧性——GPU 浮加法不满足结合律、请求批处理等平台侧效应会让数字轻微抖动，但远不足以让明确的赢家变位。平坦分布恰恰怕这种抖动：势均力敌的选项在微小扰动下就可能重排。而一条轨迹串联了几十个决策，单步的小翻转概率会复合成“<em>某次</em>运行走岔”的大概率。24 个百分点的差距就是这么来的。</p>
-<p>这也是为什么这个问题躲得过你的解码设置。贪心解码和固定随机种子管的都是<em>分布如何变成 token</em>——它们管不了分布本身。在托管端点上，概率逐次运行会有轻微变化，所以同一个提示发给同一个模型、即使温度为 0，今天的毫厘之差可能这样判、明天就那样判。</p>
-<blockquote>我们的设置：ReAct 智能体以温度 0.0 运行，所以上述波动都不是普通的采样造成的。</blockquote>
-<h2>先诊断，再修复</h2>
-<p>于是问题变成一场搜索：给定轨迹里哪些步骤是平坦的——知道之后又该怎么办？</p>
-<p>一致性指南出自一条两阶段流水线，它接入 ALTK-Evolve 现有的机制——只是用新的信号来驱动写入的内容。</p>
-<p><strong>1. 检测——一致性分析器。</strong> 给定一条记录的轨迹，分析器通过受控重采样逐步骤回放每个决策，测量模型输出在该点的实际变化幅度。具体来说，就是每个决策步骤额外一次模型调用，离线做一次——用采样参数设置一次抽取 k 个补全（默认 k=5）——在已记录的上下文上回放，不发新的工具调用、不与环境新交互，也不第二次端到端运行任务。这会为每个决策步骤产出一个一致性分数，写入记分卡，精确指出哪些决策在下次运行中有翻转风险。检测完全是黑盒的——不用 logits、不用模型内部信息，除了你已有的轨迹外不需要任何埋点。</p>
-<p><strong>2. 生成——针对性指南。</strong> 每个被标记的步骤都会变成一条标准 ALTK-Evolve 格式的候选一致性指南，直接纳入现有的存储和检索流水线。这是一个真实示例，由 GPT-4.1 从 AppWorld 任务 &quot;How many activities are done in my bucket list as per my SimpleNote note?&quot; 的轨迹生成：</p>
-<blockquote>[指南 1] 统计笔记内容中的复选框标记时，使用行锚定的正则匹配，而不是简单的子串计数——笔记标题经常在图例行里重复标记符号。<br>[指南 2] 始终核验笔记查询的搜索结果：检查是否有多个匹配，确认找到正确的笔记后再继续。</blockquote>
-<p>这里没有任何任务专属的琐碎信息。字符串计数错误和未核验的搜索结果，是在许多 AppWorld 任务中都以高不确定性出现的决策点。这正是重点：分析器针对的是不稳定性，而不是失败——所以它能抓住那些智能体这次碰巧做对、但下次很容易做错的步骤。</p>
-<p><a href="https://www.youtube.com/watch?v=qlp7EzXe8Pg">观看 2 分钟 demo</a>——五个并行的智能体运行在这个任务上因为对计数策略的不确定而分裂成 3-2；把这些指南放进上下文后再跑：五次全部一致。</p>
-<h2>结果：缩小差距而不损失准确率</h2>
-<p>我们在 AppWorld <code>test_normal</code>（168 个任务）上用 GPT-4.1 的 ReAct 智能体评估：每个任务从一条基线轨迹生成一致性指南，然后在 5 次全新运行上测试。</p>
-<p>Mean@5 (%)，汇总——与上文 Pass^5 同一尺度。</p>
-<p><strong>一致性差距约减半。</strong> 汇总 Pass^5 从 53.0% 升到 69.0%，Mean@5 从 77.4% 升到 81.0%，“看起来能干”与“靠得住”之间的差距从 <strong>24.4pp 缩到 12.0pp</strong>。近三分之一的原本不稳定任务，变成了智能体<em>每一次运行</em>都能通过的任务。</p>
-<p><strong>中等和困难档获益最大。</strong> Medium +22.9pp（相对 +44%）、Hard +14.3pp（相对 +45%）——相对幅度基本打平，Medium 在绝对值上领先。Easy 提升 +12.2pp，因为它空间最小。这正是一致性指南设计要做的事：找到并稳住那些智能体自身不确定性泄漏到结果中的具体决策点。</p>
-<p><strong>Mean@5 从未下降。</strong> 保住平均准确率是硬性要求，不是锦上添花：一个靠牺牲 Mean@5 来抬升 Pass^5 的系统只是在挪移不可靠性，而不是修复它。在每个难度级别上，平均准确率都保持或提升。</p>
-<h3>指南是可泛化的——它们不是在修补一条轨迹</h3>
-<p>应用到<strong>同一 AppWorld 场景中不同但相关的任务</strong>——指南挖掘来源场景的另一个变体——一致性指南仍把 Pass^5 提升 <strong>+13.0pp</strong>，只比同任务数字低 3 个百分点。从一次运行导出的指南不只是在修补那次运行；它们捕捉到了某种可迁移的东西。</p>
-<p>更有力的证据来自较弱的模型 <strong>gpt-oss-120b</strong>。同任务 Pass^5 从低得多的基线上升 +6.0pp（10.1% → 16.1%）——而且有趣的是，相似任务的泛化数字（+8.7pp）实际上<em>超过</em>了同任务增益，说明指南捕捉到的是真正可复用的失败模式，而不是记住了某条轨迹的细节。</p>
-<h2>如果你在上线智能体</h2>
-<ul><li><strong>在 Mean@k 旁边报告 Pass^k。</strong> 平均值分不清一个智能体是可靠还是侥幸；即使 k=3 也会暴露你可能不自知的差距。</li><li><strong>预期差距随难度扩大。</strong> 最难的那一档，单个平均值最具误导性。</li><li><strong>别先想到换更大的模型。</strong> 一致性与能力正交。更强的模型抬高 Mean@k；未必缩小一致性差距。</li><li><strong>诊断不需要判分器也不需要实时回放。</strong> 每个决策步一次额外 LLM 调用（默认采样 k=5 个补全）就够了——不需要 ground truth，不需要对着环境重跑任务。这正是它能用于生产流量的原因——在很多生产场景里，你连一次端到端重放都做不到。</li></ul>
-<h2>试一试</h2>
-<blockquote>试试 ALTK-Evolve——开源仓库现已包含这些实验用到的一致性分析器和一致性指南生成——或阅读 arXiv 技术报告了解完整方法。</blockquote>
-<p>如果你也熟悉那种“在自己任务上复现不出来的准确率数字”，我们很想听听你的经历——你自己的智能体中易翻转行为的具体例子，恰恰是塑造我们下一步方向的最佳反馈。<a href="https://github.com/AgentToolkit/altk-evolve">提 issue 或开 discussion</a>。</p>
-<h2>附录：理解这些指标</h2>
-<ul><li><strong>Mean@k。</strong> 把一个任务跑 <em>k</em> 次，报告平均通过率——即大多数基准口中的“准确率”。</li><li><strong>Pass^k。</strong> 智能体在<strong>全部</strong> <em>k</em> 次独立运行中都成功的任务比例。恒 ≤ Mean@k。用户把同一个查询问两遍时体验到的就是它。</li><li><strong>Pass@k。</strong> <em>k</em> 次运行中至少<strong>一次</strong>成功——乐观版的对应物，常见于代码生成论文。</li><li><strong>一致性差距。</strong> Mean@k − Pass^k，以百分点计。</li></ul>
-<h2>相关产物 / 参考文献</h2>
-<ul><li><strong>ALTK-Evolve 开源仓库</strong> — <a href="https://github.com/AgentToolkit/altk-evolve">github.com/AgentToolkit/altk-evolve</a></li><li><strong>技术报告</strong> — <a href="https://arxiv.org/abs/2609.08832">arXiv</a></li><li><strong>一致性指南 demo</strong> —<a href="https://www.youtube.com/watch?v=qlp7EzXe8Pg">2 分钟视频</a></li></ul>
-<p>该作者的更多文章</p>
-<h2>IBM 发布 SOTA Granite 时间序列 PatchTST-FM-r2 模型，附带商用友好许可证</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>60</p>
-<p>2026 年 9 月 9 日</p>
-<h2>用 IBM 时间序列模型在 Confluent 上实现实时智能</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>53</p>
-<p>2026 年 9 月 2 日</p>
-<h3>社区</h3>
-<p>Fsecurityturism</p>
-<p>19 天前</p>
-<p>关于智能体可靠性的精彩视角。在 AI 智能体进入可复现性至关重要的工作流之际，与准确率一起度量一致性尤其重要。一致性分析器的思路很迷人——不需要完整任务回放就能识别不稳定的决策。</p>
-<p>Nomad-link-id</p>
-<p>6 天前</p>
-<p>有用的那组拆分，恰恰是大多数仪表盘至今仍拒绝打印的：Mean@k 回答“这个智能体平均有多好？”，Pass^k 回答“我再问一遍，同样的请求还能成功吗？”</p>
-<p>一旦你看过一条轨迹串联了几十个几乎并列的工具选择，你就会明白：强平均值配上宽一致性差距，正是那种会在直播演示里翻车的场景。能力与一致性是正交的——买更大的模型能抬高 Mean，却未必能缩小差距。</p>
-<p>我希望团队从一致性分析器的框架里拿走的是操作层面的东西，而不是指南机制本身：把易翻转的决策步骤当作一等公民的评估目标。对录制轨迹做一次离线重采样，是比再来一张端到端排行榜截图更廉价的可靠性信号。</p>
-<p>给从这个项目出发上线智能体的朋友的实际请求：你们会在发布门禁里把 Pass^k（哪怕 k=3）与 Mean@k 并排报告吗？当你的困难档一致性差距还很大时，你们会拒绝贴上“稳定”标签吗？</p>
-<p>可复现的可靠性不会消除“该注入哪些指南”的分歧。它会让分歧回到正确的指标上。</p>
-<ul><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li></ul>
-<p>evduester</p>
-<p>本文作者</p>
-<p>6 天前</p>
-<p>谢谢，你恰恰落在了我们期望的操作要点上：易翻转的决策步骤本身就应是评估目标。进一步说，知道它们在哪里，还能把评估变成诊断：一致性差距告诉你智能体不可靠，而易翻转步骤告诉你发生在哪、为什么发生。</p>
-<p>关于你的发布门禁问题：我们强烈鼓励，k=3 是合理的默认值。给任何想把 Pass^k 作为门禁的人几条建议：</p>
-<ul><li><strong>固定 k，也不必把 k 推得远高于 3</strong>。Pass^k 随 k 增大而更严格，所以“Pass^3 ≥ X”和“Pass^5 ≥ X”是不同的门槛；选一个并在各版本间保持一致。我们研究用了 k=5，但作为发布门禁，超过 k=3 之后收益递减很快。按我们的经验，多数不稳定任务在前三个运行内至少失败一次，再往后成本线性增长，而对“哪些任务不可靠”的新洞察相对很少。</li><li><strong>注意样本量</strong>。Pass^k 给每个任务一个全有或全无的结果，所以其精度主要取决于任务数量而非 k；在小任务集上，Pass^k 和 Mean@k 都会很嘈杂。比较版本时逐任务对比，而不是只看汇总分数；在给智能体贴上稳定/不稳定标签前先报告任务数量或区间。</li></ul>
-<p>我想更好地理解你结尾那句话。在我们的实验中，我们没有在单条指南之间做选择：对每个新任务，我们注入来自最相似任务导出的指南。很好奇你说的“该注入哪些指南的分歧”会从哪儿产生。</p>
-<p>将图片、音频和视频拖到输入框、粘贴，或</p>
-<p>点击这里</p>
-<p>上传。</p>
-<p>点击或粘贴到这里上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Faltk-evolve-consistency">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Faltk-evolve-consistency">登录</a>即可评论</p>
-<ul><li><a href="https://huggingface.co/gaodan-fang"><img src="https://huggingface.co/avatars/18f132b7a7dabcdf5fb933edb554ea68.svg" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/saurabhiit2011"><img src="https://huggingface.co/avatars/a8e6ed70291c1a54635990fe421f25e1.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lilianngweta"><img src="https://huggingface.co/avatars/fa5834d4282fde8d5affa24e17494590.svg" alt=""></a></li><li><a href="https://huggingface.co/praveenv"><img src="https://huggingface.co/avatars/42b5ec5e3486011219f2bd4620ddb360.svg" alt=""></a></li><li><a href="https://huggingface.co/anubhamidipaty"><img src="https://huggingface.co/avatars/0bf6b07cb6d0cde59a462458f841e224.svg" alt=""></a></li><li><a href="https://huggingface.co/bellatrix2051"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/TnFHKbt90AoIYQalE4ggW.png" alt=""></a></li><li><a href="https://huggingface.co/haroldshipibm"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tbbz59saxTLp2HXZbnHRc.png" alt=""></a></li><li><a href="https://huggingface.co/laredoj"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6487da02c4b44322c124f39f/a59vwxS7l3iylkGXzN6R3.jpeg" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

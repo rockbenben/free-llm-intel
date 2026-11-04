@@ -7,7 +7,110 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sun, 25 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>培训后案例研究：与 Deel 一起获得全球薪资的前沿情报</title>
+      <link>https://www.ai21.com/blog/ai21-deel-case-study/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/ai21-deel-case-study/</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Post-training case study: Reaching frontier-level intelligence on global payroll with Deel</description>
+      <content:encoded><![CDATA[<p><em>本文由 Eran Goldstein、Asaf Karnieli、Shaked Meirom 和 Joanna Kramer 与 Deel 的 Abhijit Mehta 和 Anthony Li 合作撰写。</em></p>
+<p>建立一个能够可靠、真实地回答世界各地员工问题的全球薪资模型，每个模型都遵循高度个性化的雇佣条款和当地监管环境，这并不是一项简单的任务。</p>
+<p>然而，在为期三周的参与过程中，AI21 的前沿部署研究人员 (FDR) 与 Deel 的 AI 实验室 Emet 的团队合作进行模型评估和训练，对最近发布的 <a href="https://blogs.nvidia.com/blog/nemotron-3-5-super-vl/">NVIDIA Nemotron 3.5 Super VL</a> 进行后期训练，以极低的成本提供了一个超越前沿的模型：</p>
+<ul><li><strong>与基础模型相比质量提高了 20.7 点</strong></li><li><strong>比 Claude Opus 5.5 质量提高 8 点</strong></li><li><strong>比 Opus 5.5 便宜 50 倍</strong>l（以每 100 万代币的成本衡量）</li></ul>
+<p><em>图 1：我们的训练方案将 Nemotron 3.5 Super VL 在全球薪资用例的质量方面比 Claude Opus 5.5 高出 8 个点，同时每 100 万个代币的成本降低了 50 倍。</em></p>
+<p>之所以能取得这些结果，得益于 Emet by Deel 制定的专家标准和基准，其国内薪资专家定义了完整答案的内容，以及 AI21 FDR 团队依次使用 SFT 和 SDPO（自蒸馏策略优化）来训练模型。这篇文章详细介绍了这些结果背后的方法。</p>
+<h2>为什么全球薪资问题对模型来说具有挑战性</h2>
+<h3>域名</h3>
+<p><a href="https://www.deel.com/">Deel</a> 是全球人力资源和薪资平台，为 150 多个国家/地区的 45,000 多家公司提供支持，回答跨越多个国家和司法管辖区的薪资问题。正确答案取决于当地税务规则、雇佣合同和公司政策——而这三者都会定期变化。一个典型的问题（通常长约 20 个字）可能是：<em>“作为法国的 EOR 员工：我们在法国有一名员工于 8 月 14 日开始休产假。我的理解是 CPAM 将为此提供资金。资金和雇主的部分如何运作？”</em></p>
+<p>除了得到正确的答案之外，模型还需要根据迪尔的术语、策略和风格来表达它。</p>
+<p>为了对模型的答案进行评分，我们依靠 EmBench Payroll，<a href="https://emet.deel.com/payroll/">Emet 的公共工资基准</a>。每个问题都有 3-6 个标题断言。有些是事实性的（“规定 CPAM 津贴的每日上限为 101.94 欧元”），而另一些则检查答案涵盖的内容或如何描述情况。答案根据两个指标进行评分，GPT-6 Sol 作为 LLM 评委：</p>
+<ul><li><strong>满足标准：</strong>答案满足问题断言的平均比例</li><li><strong>满足所有标准：</strong>满足每个断言的问题比例</li></ul>
+<p>虽然前沿模型可以很好地处理该领域——例如，Opus 5.5 满足 64.0% 的标准并完全回答了 26.3% 的开发问题——但它们也很昂贵。相比之下，开放型号要便宜得多，但通常质量较低——Nemotron 3.5 Super 的基本版本得分仅为 51.3%。</p>
+<p>迪尔一直在寻找一种开放模型，能够以极低的前沿成本自动给出完整的答案。培训后可以达到所需的成本质量操作点。</p>
+<h2>方法论</h2>
+<h3>基础模型的不足之处</h3>
+<p>我们首先评估基础 Nemotron 3.5 Super 并对其推出进行错误分析。大多数失败的部署都是不完整的，而不是错误的。例如，他们在法律明确的地方进行对冲，没有给出具体数字，或者跳过事实框架并混淆相关概念。这些模式表明该模型大多具备必要的知识，但需要引导以获得完整的答案。</p>
+<p>下图（图2）显示了一个典型示例。当一名美国员工询问到 4 月底他们将有多少病假时，基本模型认识到答案取决于州法律，但对冲并将用户转介给人力资源部门，而不是说明规则和相关数据。结果，答案不符合三个标题标准，并且该问题的八个样本答案中没有一个是完全正确的。</p>
+<p><em>图 2：基本 Nemotron 3.5 Super 模型如何处理非典型全球薪资问题（按照 Deel 的评分标准衡量）的示例。</em></p>
+<h3>将行为训练到权重中</h3>
+<h4>步骤 1：近策略 SFT</h4>
+<p>为了改进模型，同时避免灾难性遗忘，我们尽可能按照策略进行训练。这意味着从模型自己的推出中学习，而不是从另一个模型编写的答案中学习，因为接近策略自身分布的数据更容易学习，并且会导致更少的遗忘 [3]。然而，基本模型很少能产生足够好的值得学习的成果。它只完全回答了 10% 的开发问题。</p>
+<p>为了在不离开其分布的情况下提高其推出的质量（训练“近策略”），我们在生成过程中为模型提供了提示。我们通过错误分析迭代地完善提示。他们涵盖了模型的角色和任务对其的期望、工资单答案所需的详细程度、Deel 的术语和答案结构，以及用户往往模糊的区别。这些提示没有添加新的领域知识。他们只是引导模型使用它已经知道的东西。</p>
+<p>然后，我们在开启推理的情况下对 Nemotron 3.5 Super 中的提示引导推出进行了采样。我们只保留满足每个标题断言的首次展示，包括它们的推理痕迹，这些形成了我们精心策划的训练集：只有 412 个示例，按照训练后标准来看很小。最后，我们在该集合上使用 SFT 训练模型，但保留了提示。</p>
+<p>近策略 SFT 将开发集的性能从 0.513 / 0.100 提升到 0.657 / 0.229（满足标准/满足所有标准）。</p>
+<p>重新审视病假问题可以看出此步骤的效果。如下图所示，经过训练的模型陈述了联邦规则，给出了最有可能申请的州的数字，并询问了所需的详细信息，将这个问题的满足标准从 0.13 提高到 0.79。</p>
+<p><em>图 3：示例显示 Nemotron 3.5 Super 基本模型如何回答图 2 中的同一问题，然后是使用 SFT 进行后训练的 Nemotron 3.5 Super 模型。 </em></p>
+<h4>第 2 步：SDPO 与特权老师一起</h4>
+<p>一旦我们使用 SFT 建立了更强大的检查点，我们就转向 SDPO（自蒸馏策略优化）[1,2]，这是一种最近的策略方法，使用自蒸馏来训练模型。学生（经过训练的模型）回答简单的问题，然后老师（同一模型可以访问每个问题的特权信息）然后对学生自己的标记进行评分。</p>
+<p>我们给老师的信息与上面注入的提示相同。</p>
+<p>然而，SDPO 具有超越 SFT 训练的优势。首先，SDPO是一种on-policy训练方法，即rollout是由最新的策略模型生成的。此外，这种方法是一种细粒度的方法，通过奖励所需的响应特征（并惩罚不需要的响应特征）来引导学生的行为，而不是依靠模型仅从演示中推断出这些特征。</p>
+<p>经过 SDPO 训练后，模型的性能得到了显着提高：</p>
+<ul><li><strong>当直接使用 SDPO 训练基本模型时：</strong> 开发集结果从 0.513 / 0.100 上升到 0.638 / 0.183，接近没有任何策划数据的 SFT 训练分数 (0.657 / 0.229)。</li><li><strong>当从 SFT 检查点启动 SDPO 时（SFT → SDPO）：</strong> 产生了我们最好的 Nemotron 3.5 Super 结果：0.720 / 0.339。</li></ul>
+<p>值得注意的是，我们通过一个小型训练集达到了这些结果：SFT 的 412 个问题和 SDPO 的 698 个问题（SFT 问题的超集）。这是可能的，因为我们使这两个步骤尽可能接近策略。在 SFT 中，我们根据模型自身的提示引导补全进行训练，因此精心设计的训练集与模型自身的分布保持接近。在 SDPO 中，训练完全符合策略：每次通过一个问题都会产生当前策略的新部署，并随之产生新的训练信号，而不是模型可以记住的固定目标。 SDPO 也不需要黄金答案，因此它可以从模型仍然出错的问题中学习。这表明可以使用小数据集有效地完成针对特定任务的模型的后训练。</p>
+<p>该案例研究提供了自蒸馏管道的绝佳示例。与 GRPO 类似，我们依靠学生的能力来引导表现并创建飞轮，SDPO 也这样做。另一方面是，在策略训练只能放大学生已经产生的结果：当基本模型本身很少产生好的答案时，就没有什么信号可供学习。因此，在政策培训开始之前，标准做法是首先从教师那里进行提炼，或者以其他方式改进基本模型。我们与 Deel 的合作说明了一种情况，即来自自学教师的离策略蒸馏，模型本身由提示引导，可以很好地作为 SDPO 的先驱，这样两种方法的组合就可以分别改进它们。</p>
+<h2>结果</h2>
+<p><em>图 4：培训后流程每个阶段的两个核心指标（满足标准和满足所有标准）的最终结果。</em></p>
+<p>顺序使用 SFT，然后是 SDPO，产生了我们在这两个指标上最强的模型，超过了 Claude-Opus-5.5 约 8 个点。</p>
+<h2>通过 SFT 和 SDPO 达到前沿质量</h2>
+<p>通过实施同时利用 SFT 和 SDPO 的顺序训练过程，AI21 的 FDR 团队将 Nemotron 3.5 Super 在 Deel 全球薪资任务上的性能与基础模型相比提高了 20.7 分，与 Claude Opus 5.5 相比提高了 8 分。</p>
+<p>AI21 的 FDR 团队在全球薪资这样复杂的领域工作，从事实和风格上都定义了正确的答案，他们利用近政策 SFT 和 SDPO 来引导模型的行为并极大地提高了质量。</p>
+<p>AI21 和 Deel 共同证明，只要配备了正确的数据和培训方案，公司就无需在前沿模型的质量和开放模型的价格之间进行选择。通过 Nemotron 3.5 Super VL 训练后，Deel 现在可以使用质量超过 Claude Opus 5.5 的模型为其全球薪资提供支持，同时成本降低 50 倍。</p>
+<p><em>在 Deel 的</em> <em>博客上了解有关该项目的更多信息。</em></p>
+<h2>参考文献</h2>
+<ul><li>赵思燕、谢志辉、刘梦晨、黄静、庞冠、陈飞宇、Aditya Grover。自蒸馏推理器：大型语言模型的策略自蒸馏。 arXiv：2601.18734，2026。</li><li>Jonas Hübotter、Frederike Lübeck、Lejs Behric、Anton Baumann、Marco Bagatella、Daniel Marta、Ido Hakimi、Idan Shenfeld、Thomas Kleine Buening、Carlos Guestrin、Andreas Krause。通过自蒸馏强化学习。 arXiv：2601.20802，2026。</li><li>杨兆瑞、庞天宇、冯浩哲、王涵、陈伟、朱民峰、刘谦。自蒸馏弥补了语言模型微调中的分布差距。 ACL 2024，arXiv：2402.13669。</li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>培训后案例研究：与 Alice 一起达到前沿级攻击弹性</title>
+      <link>https://www.ai21.com/blog/ai21-alice-case-study/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/ai21-alice-case-study/</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Post-training case study: Reaching frontier-level attack resilience with Alice</description>
+      <content:encoded><![CDATA[<p><em>本博客由 Assaf Gerner、Guy Rephaeli、Asaf Karnieli、Guy Freund、Shaked Meirom 和 Joanna Kramer 与 Alice 的 Liran Cohen 和 Dadi Atar 合作撰写。</em></p>
+<p>在短短三周内，我们的前向部署研究人员 (FDR) 团队与 Alice 的研究团队合作，对最近发布的 <a href="https://blogs.nvidia.com/blog/nemotron-3-5-super-vl/">NVIDIA Nemotron 3.5 Super VL</a> 进行后训练，以提高其对间接提示注入和恶意请求等攻击的恢复能力。结果表明，专门的开放模型如何能够以极低的成本超越前沿水平的质量：</p>
+<ul><li>与基本模型相比，攻击弹性<strong>41点</strong>改进**</li><li><strong>与 GPT-6.1 Sol 相比提高了 10 点</strong></li><li><strong>比 GPT-6.1 Sol 便宜 25 倍</strong>（每 100 万个代币的成本）</li></ul>
+<p><strong>图 1：我们的训练方案将 Nemotron 3.5 Super VL 从质量和成本与 GPT-6.1 Luna 相当的水平提升到在质量上超越 GPT-6.1 Sol，而成本仅为 GPT-6.1 Sol 的一小部分。 </strong></p>
+<p>这篇文章详细介绍了 Alice 的用例，并介绍了我们开发的自定义训练配方，以在 Alice 的用例上实现前沿水平的结果。</p>
+<h2>提高代理对 Alice 攻击的抵御能力</h2>
+<p><a href="https://alice.io/">Alice</a> 是一家 AI 安全和安保公司，为后期培训构建 RL 环境，该环境由有关威胁行为者行为（“兔子洞”）的真实世界情报以及 150 多名安全研究人员和专家网络成员的输入提供信息。他们为 AI21 提供了一套 RL 健身房，以训练代理防御整个企业环境中的安全威胁，包括平台、系统、工具、数据和工作流程，例如 Slack 和 GitHub。我们的目标是生产在抵抗攻击和完成任务方面都得分很高的智能体，这样一个方面就不会以牺牲另一个方面为代价。</p>
+<p><em>图 2：Alice 健身房的 Slack 任务示例。公司名称和域名均为虚构。</em></p>
+<p>其中一种攻击是间接提示注入——将恶意指令植入代理使用工具读取的信息中。例如，可能会提示代理向 Slack 上的员工发送密码重置提醒，但重置链接已损坏，存在暴露员工登录凭据的风险。在 Alice 的 RL 健身房中接受培训的代理将学会检测这种违规行为并防止其发生，同时仍然完成其最初的任务：通知员工重置密码（图 2）。</p>
+<p>随着越来越多的企业将代理集成到其核心工作空间（这需要对敏感信息进行高级别访问，以及对员工的广泛访问），确保这些代理能够发现和阻止攻击变得至关重要。我们在 Alice 的 RL 健身房上对 Nemotron 3.5 Super VL 进行训练后的工作证明，智能体可以在完成任务的同时保持高攻击弹性。</p>
+<h2>挑战</h2>
+<p>为了成功地对 Nemotron 3.5 Super 进行后训练，使其在该用例中表现出色，我们的 FDR 必须解决两个核心挑战。</p>
+<p>第一个挑战是如何在不影响常规良性任务完成任务的情况下提高攻击弹性。就拿上面的例子来说，如果Slack代理在检测到恶意重置链接后拒绝停止工作，那么它就成功地保卫了公司——但最终并不是一个非常有用的代理。</p>
+<p>第二个挑战是数据方面的。鉴于训练数据集包含数百个示例，团队需要找到一种训练方法，而不会过度拟合模型与训练数据。</p>
+<p>他们设计了培训后流程来解决这些挑战。</p>
+<h2>方法论</h2>
+<h3>在 Alice 的 RL 健身房内训练智能体</h3>
+<p>解决这两个挑战意味着要按照实际使用的方式训练 Nemotron 3.5 Super：作为在实时环境中运行的代理，而不是作为回答孤立提示的模型。 Alice 的健身房被打包为 Harbor 任务 [1]，每个任务都带有自己的容器映像，其中包含一个模拟工作区，例如 Slack 或 GitHub。</p>
+<p>对于每次部署，AI21 训练平台都会从该映像中启动一个全新的、隔离的沙箱。然后，模型完成沙箱内的任务：读取消息、调用工具并采取操作。当剧集结束时，健身房会对结果进行评分。为每个部署提供自己的沙箱可以保证训练的安全，因为代理响应攻击所做的任何事情都会保留在沙箱内。它还允许我们并行运行数百个部署。我们自始至终都使用相同的设置：生成 SFT 轨迹、生成 GRPO 实时部署以及评估每个检查点。</p>
+<h3>通过近策略 SFT 进行热启动</h3>
+<p>在线强化学习已成为训练后语言模型的标准方法。由于它是符合策略的，因此该模型从训练期间生成的 rollout 中学习，而不是从提前收集的数据集中学习。对自己的输出进行培训可以提高质量并降低灾难性遗忘的风险。最广泛使用的在线 RL 方法 GRPO 对每个提示的一组 rollout 进行采样并进行比较，以便模型了解如何区分更好的输出和更差的输出。这意味着 GRPO 仅当组中的部署获得不同的奖励时才能学习。如果组中的每次推出都获得相同的分数，则每个优势都为零，该组不会贡献任何梯度，并且不会学到任何东西。</p>
+<p>然而，在这种情况下，当我们对 Nemotron 3.5 Super VL 进行初步评估时，我们发现该模型产生的首次展示多样性得分非常低。因此，在我们转向 RL 之前，他们首先运行一个监督微调 (SFT) 阶段，以提高组内奖励方差非零的任务比例 [2]。 SFT 后，训练集中具有非零奖励标准差的任务比例从 35% 上升到 66%。</p>
+<p>我们从几个开放模型中成功地在健身房中进行了推广，但按原样对它们进行训练存在两个问题。首先，其中一些模型以非常长的链进行推理，有时会陷入重复循环（图 4），这是我们不希望 Nemotron 3.5 养成的习惯。其次，SFT 数据应该教导安全行为，而不是其他模型的写作风格。更广泛地说，接近策略本身分布的数据更容易学习，并且遗忘更少[3]，因此即使在 SFT 阶段，我们也努力保持训练数据尽可能符合策略（图 3）。为此，他们让 Nemotron 3.5 Super 用自己的语言重写了每个轨迹中的推理，从而缩短了长链，同时保持每个动作不变 [3,4]。</p>
+<p>图3展示了效果。按原样，开放模型的推出对基本模型的惊喜几乎是其自身推出的两倍（困惑度×1.99）。对它们进行微调的政策漂移至 ×1.40，而对重新措辞的推出进行微调的政策则保持更接近，为 ×1.23。重新措辞将增加的困惑度从 40% 减少到 23%。</p>
+<p><strong>图 3：基本模型对每个模型的推出感到多么惊讶。我们根据 Nemotron 基础模型下的困惑度对每组部署进行评分。较低的困惑度意味着推出更接近基本模型本身的分布。值是相对于基础模型自身的卷展栏的困惑度来显示的（参考）。平均操作系统模型：开源模型的部署平均值，其部署作为 SFT 数据。原始 SFT：策略的推出按原样对这些推出进行了微调。重新措辞的 SFT：在重新措辞的版本上微调策略的推出。误差线显示 95% CI。</strong></p>
+<p>解决办法是让 Nemotron 3.5 Super 用自己的语言重写每个轨迹中的推理。这样做可以缩短长链，同时保持每个动作不变[3,4]。</p>
+<p><strong>图 4：重新表述 SFT 数据可将检查点的推理长度减半，并几乎消除最常见的重复填充符（例如，“嗯。好的”）。</strong></p>
+<p>在重写数据上训练的 SFT 检查点与在原始数据上训练的 SFT 检查点的质量相匹配，同时生成的令牌少得多，并且在其他任务中不会出现退化。</p>
+<h3>在线强化学习中的奖励塑造</h3>
+<p>一旦我们建立了一个经过良好 SFT 训练的 Nemotron-3.5-Super VL 检查点，并且结果有所改善且推出更加多样化，我们就能够继续第二阶段：使用 GRPO 进行在线 RL 训练。</p>
+<p>Vanilla GRPO 分两步计算每次推出的优势：减去该组的平均奖励，然后除以该组的标准差。我们很快发现第二步不太适合 Alice 的 RL 健身房，因为它使用密集、连续的奖励。除以群体的差距就可以排除奖励差距的大小。例如，奖励为 [0.49, 0.51] 的组和奖励为 [0, 1] 的组最终都具有优势 [−1, +1]。排名得以保留，但规模却消失了。对于密集的奖励，这意味着微小且可能有噪音的差异（例如LLM法官分数的轻微变化）会被放大为全强度梯度[6,9]。因此，我们放弃了标准差归一化，仅保留组均值基线（图 5）。</p>
+<p>需要进行另一项奖励修改以控制响应长度。强化学习期间响应长度通常会增长 [5,6]。然而，在这个用例中，它急剧增长，并且一些推出循环直到耗尽上下文窗口。为了解决这个问题，我们取消了两个额外的奖励项：(1) 组相对长度惩罚，它惩罚每个组内最长的 rollout [7,8]，以及 (2) n-gram 重复惩罚，它惩罚推理多次重复相同 n-gram 的 rollout [5]。事实上，这三种修改的组合产生了最好的结果——达到最高的质量，同时产生最短的响应长度。 （图5）。</p>
+<p><em>图 5：从同一个 SFT 检查点一次添加一个奖励变化：删除 STD 标准化将奖励提升到单独的重复惩罚之上，而添加长度惩罚会阻止推理在达到最高奖励时增长</em></p>
+<h2>结果</h2>
+<p><em>图 6：从基础模型到 SFT 到 GRPO，验证集及其 GitHub 和 Slack 子集在每个训练阶段的分布内分数。</em></p>
+<p>在两个不同的集合上评估训练后的模型。使用两个可以让我们检查其增益是否反映了真实的安全行为，而不是过度拟合训练环境。第一个是验证集，它使用相同的 GitHub 和 Slack 环境作为训练并测量分发内的性能。第二个是 CHASM，Alice 的企业间接提示注入 (IPI) 基准，被设计为一个分布式健身房，包含跨企业工作流程的 117 个攻击任务，涵盖财务、人力资源、法律和客户支持等领域，以及从医疗保健到电信等行业。</p>
+<p>CHASM 不与 RL 健身房共享任何任务或应用程序，因此它测试这种行为是否具有普遍性。它的攻击主要是间接即时注入和中毒记录，试图迫使特工窃取数据、破坏机密或转移付款。</p>
+<p>在验证集上，每个阶段都建立在最后一个阶段的基础上（图 6）。 SFT 得分几乎翻倍，从 35.19 升至 65.28，GRPO 将其提升至 76.2。 GRPO 的增长大部分来自 GitHub (66.48 → 85.17)，而 Slack 的提升幅度很小 (64.08 → 67.22)。</p>
+<p>在 CHASM 上，基本模型得分仅为 7.54。 SFT 将其提高到 34.58，主要是通过教导模型避免有害动作。 GRPO 保留该增益，但不会增加该增益。在 SFT 中学到的安全行为会延续到未见过的环境和攻击类型，而 GRPO 的收益则保持在训练分布范围内。</p>
+<h2>通过定制的训练后配方达到前沿级别的攻击弹性</h2>
+<p>AI21 和 Alice 共同将 Nemotron 3.5 Super VL 的攻击弹性提高了 41 个点，比基本模型高出 41 个点，比 GPT-6.1 Sol 高出 10 个点，而不会损害整体任务性能，同时成本比前沿模型低 25 倍。为了实现这些结果，AI21 的 FDR 团队依次应用了同策略 SFT，然后是改进的 GRPO（在线 RL）技术。</p>
+<p>他们的工作表明，公司可以训练开放模型，将其核心安全和安保策略整合为核心行为原则，确保他们完成分配的任务，同时发现和抵御威胁，例如即时注入攻击。</p>
+<p>＃ 参考</p>
+<ul><li>港口框架团队。 Harbor：用于评估和优化容器环境中的代理和模型的框架。泽诺多，doi：10.5281/zenodo.20953922，2026。</li><li>DeepSeek-AI。 DeepSeek-R1：通过强化学习激励LLM的推理能力。 arXiv：2501.12948，2025。</li><li>杨兆瑞、庞天宇、冯浩哲、王涵、陈伟、朱民峰、刘谦。自蒸馏弥补了语言模型微调中的分布差距。 ACL 2024，arXiv：2402.13669。</li><li>Eric Zelikman、吴玉怀、Jesse Mu、Noah D. Goodman。 STAR：用推理引导推理。 NeurIPS 2022，arXiv：2203.14465。</li><li>Edward Yeo、童宇轩、Morry Niu、Graham Neubig、Xiang Yue。揭秘LLM的长链思维推理。 arXiv：2502.03373，2025。</li><li>Zichen Liu、Changyu Chen、Wenjun Li、Penghui Qi、Tianyu Pang、Chao Du、Wee Sun Lee、Min Lin。了解 R1 类零训练：批判性视角。 arXiv：2503.20783，2025。</li><li>基米团队。 Kimi k1.5：通过LLM扩展强化学习。 arXiv：2501.12599，2025。</li><li>余启英、张正、朱若飞等DAPO：大规模开源LLM强化学习系统。 arXiv：2503.14476，2025。</li><li>Arash Ahmadian、Chris Cremer、Matthias Gallé、Marzieh Fadaee、Julia Kreutzer、Olivier Pietquin、Ahmet Üstün、Sara Hooker。回归基础：重新审视LLM中从人类反馈中学习的强化风格优化。 arXiv：2402.14740，2024。</li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>为什么我们在训练前先构建指令遵循基准</title>
       <link>https://www.ai21.com/blog/lift-bench-blog/</link>
@@ -2945,101 +3048,6 @@ WHERE
 <p><strong>了解更多，并<a href="https://www.ai21.com/contact-sales/">预约 AI21 Maestro 演示</a>。</strong></p>
 <ul><li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027">https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027</a></li></ul>
 <p><a href="https://www.ai21.com/blog/maestro-putting-knowledge-to-work/#243774bf-30a2-4abd-bab8-2ebb8937309a-link">↩︎</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>AI21 Maestro：为企业知识工作而生的 AI</title>
-      <link>https://www.ai21.com/blog/maestro-ai-enterprise-knowledge-work/</link>
-      <guid isPermaLink="true">https://www.ai21.com/blog/maestro-ai-enterprise-knowledge-work/</guid>
-      <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：AI21 Maestro: AI Built for Enterprise Knowledge Work</description>
-      <content:encoded><![CDATA[<p>今年早些时候，我们<a href="https://www.ai21.com/blog/maestro-ai-planning-orchestration/">发布了 Maestro</a>：一种全新的 agentic AI 系统，旨在以精准方式应对复杂、数据密集型的任务。自那以来，我们见证了企业各团队——从法务到财务——日益增长的兴趣，他们准备超越原型聊天机器人，迈入真正的自动化。</p>
-<p>今天，我们向企业客户开放 Maestro。</p>
-<p>企业 AI 的采用陷入僵局。尽管 LLM 和 agent 框架炒作火热，真实世界的部署却一直滞后——尤其是在自动化财务分析、回复 RFP、监管合规审查这类高价值、数据密集的业务任务时。原因很简单：今天的多数&quot;agent&quot;要么不可靠——依赖 LLM 在无护栏的情况下做运行时决策；要么耗工——要求团队把工作流的每一步都硬编码出来。</p>
-<p>我们正在改变这一点。</p>
-<h2>Agentic AI 的新标准</h2>
-<p>Maestro 不是又一个框架。它是一个构建可靠知识智能体的系统。它理解企业上下文、实时适应，并以准确性、透明和速度执行任务。它动态地把复杂任务拆解为可执行的步骤，选择最优的工具和模型，遵守你的成本与延迟约束，并对照你的要求校验每一步。</p>
-<p>这就是 AI21 Maestro 与众不同之处——也是企业选择它来规模化自动化知识工作的原因。</p>
-<h2>为什么大多数 Agent 在起跑线上就熄火</h2>
-<p>尽管 AI agent 令人兴奋，现实是大多数进不了真实使用场景。它们产生幻觉、忘记上下文、脆弱不堪，而且没有针对你的用例和数据做定制。</p>
-<p>问题不在愿景有缺陷，而在执行有缺陷。传统 agent 要么遵循僵化而费工的硬编码路径，要么把太多东西交给运气——把推理甩给 LLM——没有结构、没有监督，在复杂多步任务中累积错误的风险不断攀升。</p>
-<p>更糟的是，它们常常与公司真实数据脱节——所以它们不知道什么重要、为什么重要。而让它们对齐你的数据环境、用例和工作流，可能要花上数月研发才能起步。</p>
-<p>结果？信任流失。影响为零。没有自动化——只有永不上线的无尽试点。</p>
-<h2>精度靠设计，而不仅靠提示</h2>
-<p>AI21 Maestro 不是框架，也不是工具箱。它是一个内建智能、理解真实企业工作结构的 AI 系统。</p>
-<p><strong>AI21 Maestro 的核心是一种新型的 agent 智能，其设计目标是：</strong></p>
-<ul><li><strong>交付高质量结果</strong>——运用高级检索、推理和自校验技术——在每一步选择最佳工具（文件搜索、网页搜索、LLM），校验中间结果，必要时并行运行流程。</li><li><strong>加速部署时间</strong>——为每个任务自动生成独一无二的动态计划——基于输入、目标和延迟或成本等约束实时适应。</li><li><strong>让你对结果有完全的可见性</strong>——通过可视化执行图和置信分数——你可以追溯每个决策是如何做出的。</li><li><strong>针对你的数据和用例定制性能</strong>——通过离线仿真优化准确性、速度和资源效率——在生产环境运行任何东西之前完成。</li></ul>
-<p>这一切都自主发生，无需数月的研发工作——不必手工硬编码决策逻辑或错误处理流程。</p>
-<h2>你能用 Maestro 做什么</h2>
-<p>AI21 Maestro 专为企业级知识工作打造——那种需要跨多数据源检索、分析和综合数据的任务，从金融研究、合同分析到 RFP 应答。</p>
-<h3>在监管变化影响你之前追踪它</h3>
-<p>合规团队可以把新法规、历史备案文件和内部政策文档的混合体交给 Maestro。Maestro 会浮现出变化所在，将其与你现有的治理框架对齐，并标记需要更新之处——自动生成符合你要求的合规影响摘要。</p>
-<h3>无需随时待命的分析师，加速客户洞察报告</h3>
-<p>市场团队可以问 Maestro：&quot;第二季度欧洲客户最关注的问题是什么？&quot;它从 CRM 笔记、支持工单和反馈表中提取信息——然后把最高频的问题、区域模式和产品缺口提炼为一份结构化的管理层摘要。不需要仪表盘，不需要打标规则，不需要等待。</p>
-<p>这只是两个例子。只要你的团队深陷混乱、多源、数据密集的工作流——Maestro 就能进场。在下方视频中，你可以看到 Maestro 在一个合规用例中的应用。</p>
-<h2>为什么 Maestro 能在别人失手处交付</h2>
-<p>Maestro 给你一个真正可用的端到端系统。</p>
-<p>它：</p>
-<ul><li><strong>准确</strong>：校验每一步和每个输出——让你可以放心信任结果。</li><li><strong>自主</strong>：没有僵化流程。Maestro 实时规划、适应并自我纠错。</li><li><strong>适应</strong>：它学习你的数据环境，并为你的用例定制性能。</li><li><strong>透明</strong>：你看到它做了什么、为什么——细到每一步。</li></ul>
-<h3>为构建者而生，被业务信赖</h3>
-<p>如果你是开发者，Maestro 让你定义目标、输入和约束——其余交给它。你掌控模型、工具和规则，Maestro 端到端执行工作流。</p>
-<p>如果你是业务领导者，Maestro 让你的团队自动化高价值、数据密集的工作流——不需要通常要求的大量研发、编排或技术专长。它快速交付你的业务可以信赖的可靠结果。</p>
-<h2>开工吧</h2>
-<p>Maestro 现已向准备好跨过试点、进入生产环境的企业团队开放。</p>
-<p><a href="https://www.ai21.com/maestro/">预约定制演示</a>，看看 Maestro 能以怎样的准确性、透明和速度处理你最复杂的工作流。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>企业知识智能体解决方案：如何选择</title>
-      <link>https://www.ai21.com/blog/rag-agent-solutions/</link>
-      <guid isPermaLink="true">https://www.ai21.com/blog/rag-agent-solutions/</guid>
-      <pubDate>Sun, 15 Jun 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Knowledge Agent Solutions for Enterprises: How to Choose One</description>
-      <content:encoded><![CDATA[<p>随着<a href="https://www.ai21.com/glossary/retrieval-augmented-generation-rag/">检索增强生成（RAG）</a>的采用不断加速——<a href="https://www.forrester.com/blogs/predictions-2025-cloud/">Forrester</a>预测 2025 年每一家主要超大规模云厂商都将推出原生 RAG agent 解决方案——相关各方正面临选择正确 agent 平台的巨大压力。在评估 agentic RAG 解决方案时，企业决策者必须在性能、治理和运营复杂度之间权衡取舍。</p>
-<p>本指南带你梳理稳健 RAG agent 系统的核心支柱——准确性（Accuracy）、可观测性（Observability）、适应性（Adaptability）、价值实现时间（Time-to-Value）与企业就绪度（Enterprise-Readiness）——指导你向供应商提出正确的问题，确保成功、可扩展的部署。</p>
-<h2>1. 准确性：确保可信的输出</h2>
-<h3>为什么重要</h3>
-<p>在财务分析或合同审查这类高风险场景中，哪怕一点<a href="https://www.ai21.com/knowledge/ai-hallucinations/">幻觉</a>都可能导致代价高昂的错误或合规风险。在多步检索与推理场景中，<a href="https://www.ai21.com/glossary/large-language-models-llms/">LLM</a>和信息检索工具产生的错误会跨步骤累积，使高准确率变得难以企及。</p>
-<h3>该问的关键问题</h3>
-<ul><li><strong>自我校验：</strong>Agent 在继续推进前是否会验证中间结果？</li><li><strong>置信指标：</strong>结果是否带有清晰的置信分数或不确定性估计？</li><li><strong>领域定制：</strong>用你自己的专有数据和用例做<a href="https://www.ai21.com/glossary/fine-tuning/">微调</a>或仿真系统有多简便？</li></ul>
-<h3>实操建议</h3>
-<ul><li>要求供应商演示一个多步骤任务，展示系统如何发现并纠正自身错误。</li><li>坚持查看不同查询类型下的置信分布样例，判断哪些地方仍需人工复核。</li></ul>
-<h2>2. 可观测性：从黑箱到玻璃箱</h2>
-<h3>为什么重要</h3>
-<p>在受监管的领域，&quot;相信我&quot;行不通。透明是强制要求，每个响应都必须随时可审计——记录所查询的来源、检索顺序，以及导向结论的每一个推理步骤。</p>
-<h3>该问的关键问题</h3>
-<ul><li><strong>执行轨迹：</strong>能否访问每次检索和推理步骤的详细日志？</li><li><strong>可视化工作流：</strong>是否有图形界面展示 agent 的决策树或执行图？</li><li><strong>告警与监控：</strong>失败或低置信输出如何被标记，以便你的应用妥善处理？</li></ul>
-<h3>实操建议</h3>
-<ul><li>评估供应商是否提供可视化工具来观察 agent 的工作并审查中间结果。</li><li>检查解决方案能否为它产生的每个输出报告 grounding 和指令遵循的成功或失败。</li></ul>
-<h2>3. 适应性：处理独特的数据与用例</h2>
-<h3>为什么重要</h3>
-<p>每个用例都是独特的，你组织的数据无疑不同于通用语言模型训练时所见的东西。如果没有内建的自动适应能力，把一个 RAG agent 定制到你的独特需求和数据上可能耗时数月。</p>
-<h3>该问的关键问题</h3>
-<ul><li><strong>自动化训练：</strong>解决方案是否自动生成训练样例并运行仿真，以 bootstrap 领域专业能力？</li><li><strong>动态规划：</strong>当新信息出现时，agent 能否即时调整其检索和推理策略？</li><li><strong>成本-性能权衡：</strong>系统如何实时平衡模型复杂度、推理成本和延迟？</li></ul>
-<h3>实操建议</h3>
-<ul><li>用你最不规整文档的一个子集来测试——例如扫描件 PDF、内嵌文字的图片——确认检索引擎的健壮性。</li><li>寻找能让你&quot;把玩&quot;预算和延迟旋钮、实时看到性能变化的平台。</li></ul>
-<h2>4. 价值实现时间：从试点到生产</h2>
-<h3>为什么重要</h3>
-<p>拖上数月的试点会耗尽预算、消磨干系人的热情，让关键用例悬在半空。一个在数天内——而不是数个季度——就展现可衡量价值的 RAG agent，会更早赢得高管支持、加速后续拨款，并解放工程团队去聚焦更高影响的工作。</p>
-<h3>该问的关键问题</h3>
-<ul><li><strong>低代码集成：</strong>连接你的数据源需要多少行自定义代码？</li><li><strong>预置连接器：</strong>供应商是否为常见存储库（如 Drive、S3、SharePoint）提供开箱即用的支持？</li><li><strong>模板库：</strong>是否有可复用的 agent 配置，用于 RFP 应答或合同分析等任务？</li></ul>
-<h3>实操建议</h3>
-<ul><li>给接入过程计时——从&quot;点击连接&quot;到&quot;首次成功运行&quot;，应该按小时计，而不是按天。</li><li>要求一个沙箱环境，让你能在承诺更大 PoC 之前用真实数据测试概念验证。</li></ul>
-<h2>5. 企业就绪度</h2>
-<h3>为什么重要</h3>
-<p>宕机伤害营收，延迟惹恼用户，一次合规泄露就可能触发七位数罚款。企业 IT 期望 24/7 可用、峰值负载下的可预测性能，以及铁板般的数据处理保证。如果 RAG agent 达不到这些基线，它永远过不了安全评审——更别提上生产。</p>
-<h3>该问的关键问题</h3>
-<ul><li><strong>SLA 承诺：</strong>供应商提供怎样的可用性、延迟和吞吐保证？</li><li><strong>部署灵活性：</strong>能否在本地或纯 VPC 环境运行以获得最大安全性？</li><li><strong>安全与合规：</strong>解决方案是否满足 SOC-2、GDPR、HIPAA 或其他相关标准？</li></ul>
-<h3>实操建议</h3>
-<ul><li>核实审计日志不可篡改且带时间戳，可用于事后分析。</li><li>确保平台支持在你的企业环境中交钥匙式部署。</li></ul>
-<h2>融会贯通</h2>
-<p>聚焦这五大支柱，你就拥有了评估任何 RAG agent 解决方案的清晰框架：</p>
-<ul><li><strong>准确性</strong>：可信、经自我校验的输出</li><li><strong>可观测性</strong>：透明、可追溯的工作流</li><li><strong>适应性</strong>：灵活应对现实世界的复杂性，自动定制</li><li><strong>价值实现时间</strong>：快速原型与部署</li><li><strong>企业就绪度</strong>：企业级 SLA 与安全</li></ul>
-<h2>聚焦 AI21 Maestro</h2>
-<p>套用这个框架后，有一个解决方案在每项上都能打勾：<a href="https://www.ai21.com/maestro/"><strong>AI21 Maestro</strong></a>。它专为解决金融、医药、科技、法律和制造领域的高价值检索与推理用例而设计。</p>
-<p>有了 Maestro 你可以：</p>
-<ul><li><strong>自动化多步检索与推理任务</strong>，带自我校验和置信打分。</li><li><strong>审视每一个决策</strong>，通过可视化执行图和详细运行日志。</li><li><strong>自动适应</strong>，通过自动训练仿真和动态计划优化。</li><li><strong>数小时内部署</strong>，配置简单、样例引导的接入。</li><li><strong>可靠地扩展</strong>，跨 SaaS 或本地环境，具备企业级 SLA 与安全。</li></ul>
-<p><a href="https://www.ai21.com/blog/maestro-ai-planning-orchestration/"><strong>了解更多</strong></a>或<a href="https://www.ai21.com/contact-sales/"><strong>预约演示</strong></a>，观看 AI21 Maestro 的实机表现。</p>
-<h2>结语</h2>
-<p>RAG agent 只有在跨过五支柱门槛时才有回报：审计级的准确性、玻璃箱式的可见性、领域的敏捷性、当日的 ROI，以及你的 CISO 敢签字的安全性。让每家供应商都过一遍这道炼阵，要求拿出证据，无视 PPT 空谈。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -1,11 +1,11 @@
 # Modular (原 BentoCloud/BentoML) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-23**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-05**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Modular (原 BentoCloud/BentoML)（`modular_cloud`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
-- 📡 RSS/Atom：[RSS/Atom 订阅源](https://www.modular.com/blog/rss.xml)
+- 📡 RSS/Atom：[官方 RSS](https://www.modular.com/blog/rss.xml)
 
 ## 全部文章（共 103 篇，按日期倒序；无日期条目列于最后）
 

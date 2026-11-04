@@ -1,12 +1,12 @@
 # Meta Llama (开源权重) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-29**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-05**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Meta Llama (开源权重)（`meta_llama`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
 - 页面：[官方博客](https://ai.meta.com/blog/)
-- 📡 RSS/Atom：[RSS/Atom 订阅源](https://about.fb.com/news/tag/ai/feed/)
+- 📡 RSS/Atom：[官方 RSS](https://about.fb.com/news/tag/ai/feed/)
 
 ## 全部文章（共 25 篇，按日期倒序；无日期条目列于最后）
 

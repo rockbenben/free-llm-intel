@@ -1,11 +1,11 @@
 # OpenRouter (模型统一网关) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-03**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-05**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：OpenRouter (模型统一网关)（`openrouter`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
-- 📡 RSS/Atom：[RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)
+- 📡 RSS/Atom：[官方 RSS](https://openrouter.ai/blog/feed.xml)
 
 ## 全部文章（共 169 篇，按日期倒序；无日期条目列于最后）
 
@@ -40,8 +40,8 @@
 29. [Qwen 3.8 是什么](https://openrouter.ai/blog/insights/qwen-3-8)（2026-09-28） <!--orig:What Is Qwen 3.8-->
 30. [Seedance 是开源的吗？权重、许可证与调用方式](https://openrouter.ai/blog/insights/seedance-2-5-open-source/)（2026-09-25） <!--orig:Is Seedance Open Source? Weights, License, and How to Call It-->
 31. [Kimi K3 是开源的吗？权重、许可证与调用方式](https://openrouter.ai/blog/insights/kimi-k3-open-source)（2026-09-24） <!--orig:Is Kimi K3 Open Source? Weights, License, and How to Call It-->
-32. [2026 年最佳 Embedding 模型](https://openrouter.ai/blog/insights/best-embedding-models-2026/)（2026-09-23） <!--orig:Best Embedding Models in 2026-->
-33. [如何使用 Jev：在 TypeScript 中使用 Jev API 进行审核](https://openrouter.ai/blog/tutorials/how-to-use-jev/)（2026-09-23） <!--orig:How to Use Jev: Moderation with the Jev API in TypeScript-->
+32. [如何使用 Jev：在 TypeScript 中使用 Jev API 进行审核](https://openrouter.ai/blog/tutorials/how-to-use-jev/)（2026-09-23） <!--orig:How to Use Jev: Moderation with the Jev API in TypeScript-->
+33. [2026 年最佳 Embedding 模型](https://openrouter.ai/blog/insights/best-embedding-models-2026/)（2026-09-23） <!--orig:Best Embedding Models in 2026-->
 34. [Batch API：打包请求实现半价推理](https://openrouter.ai/blog/announcements/batch-api/)（2026-09-22） <!--orig:Batch API: half-price inference by bundling requests-->
 35. [在分类任务上 Jev 能与前沿模型同样准确吗？](https://openrouter.ai/blog/insights/jev-vs-claude-opus-5-classification/)（2026-09-22） <!--orig:Is Jev as Accurate as Frontier Models at Classification?-->
 36. [什么是 Nemotron 3.5 Lightning](https://openrouter.ai/blog/insights/nemotron-3-5-lightning/)（2026-09-22） <!--orig:What Is Nemotron 3.5 Lightning-->
