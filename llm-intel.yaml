@@ -786,9 +786,14 @@ sources:
     url: https://docs.siliconflow.com/cn/userguide/rate-limits/rate-limit-and-upgradation
   # 更新公告（实测 8 条）：内容是「模型上下线 / 价格调整 / 接口服务调整」——
   # 与「免费额度·模型·定价」的主题高度对口，是本仓库最想要的那种源。
+  # locale_cookie：这站（fumadocs）选语言只看 cookie，实测 `FD_LOCALE=cn` 压得过
+  # `Accept-Language: en-US`；不带它时按访客出语言（本机中文页、CI 海外英文页），
+  # 而它的**锚点 slug 也随语言变**（同一条公告两种 URL），51 条公告因此攒出 101 行归档，
+  # 中文那份隔天被英文快照覆盖、本地精译白做。钉住 cookie = 只留厂商官方中文那一份。
   - vendor_id: siliconflow
     type: updates
     lang: zh
+    locale_cookie: FD_LOCALE=cn
     url: https://docs.siliconflow.cn/docs/release-notes/overview
 
   # MiniMax

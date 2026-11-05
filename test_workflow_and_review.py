@@ -2358,6 +2358,154 @@ class TestDeclaredSourceLanguage(unittest.TestCase):
                                                "changelog", (5.0, 5.0), 0)
         self.assertEqual(seen["al"], "", "没声明就不该覆盖会话默认头")
 
+    def test_locale_cookie_table_and_lookup(self):
+        """`locale_cookie` 与 `lang` 同表同键：只有动态源声明的才收，查找按 host+首段。"""
+        srcs = [{"vendor_id": "v", "type": "updates", "locale_cookie": "FD_LOCALE=cn",
+                 "url": "https://docs.v.cn/docs/release-notes/overview"},
+                # 情报页（非 NEWS_TYPES）声明了也不收 —— 它不进动态源的语言通路
+                {"vendor_id": "v", "type": "pricing", "locale_cookie": "X=1",
+                 "url": "https://docs.v.cn/pricing"},
+                # 没 URL / 没声明的都不进表
+                {"vendor_id": "v", "type": "blog", "url": "https://v.io/blog"},
+                {"vendor_id": "v", "type": "blog", "locale_cookie": "  ",
+                 "url": "https://v.io/news"}]
+        table = crawler_llm_intel.news_source_locale_cookies(srcs)
+        self.assertEqual(table, {"docs.v.cn/docs": "FD_LOCALE=cn"}, table)
+        # 条目 URL 与源 URL 首段一致即可命中（锚点、深浅路径都不该影响语言）
+        self.assertEqual(crawler_llm_intel.declared_source_cookie(
+            "https://docs.v.cn/docs/release-notes/overview#%E4%B8%AD%E6%96%87", table),
+            "FD_LOCALE=cn")
+        # locale cookie 是**站点级**的（一个 cookie 管全站语言），所以同 host 其它路径
+        # 也照带 —— 与 `lang` 的「host 上只有一种声明才退到 host 级」同一条规则。
+        self.assertEqual(crawler_llm_intel.declared_source_cookie(
+            "https://docs.v.cn/pricing", table), "FD_LOCALE=cn")
+        self.assertEqual(crawler_llm_intel.declared_source_cookie(
+            "https://other.host/docs", table), "", "别的 host 不该被带上")
+        self.assertEqual(crawler_llm_intel.declared_source_cookie("", table), "")
+
+    def test_host_level_cookie_only_when_unambiguous(self):
+        """同一个 host 上声明不一致时宁可返回空串，不猜语言。"""
+        table = {"a.cn/docs": "FD_LOCALE=cn", "a.cn/blog": "OTHER=1"}
+        self.assertEqual(crawler_llm_intel.declared_source_cookie(
+            "https://a.cn/docs/x", table), "FD_LOCALE=cn")
+        self.assertEqual(crawler_llm_intel.declared_source_cookie(
+            "https://a.cn/other/path", table), "", "host 上有两种声明时不该挑一个")
+        single = {"a.cn/docs": "FD_LOCALE=cn"}
+        self.assertEqual(crawler_llm_intel.declared_source_cookie(
+            "https://a.cn/somewhere/else", single), "FD_LOCALE=cn",
+            "host 上只有一种声明时可以退到 host 级")
+
+    def test_fetch_sends_declared_locale_cookie(self):
+        """requests 通路：声明了就发 Cookie；与 lang 同时声明就两个都发；没声明不许带上。"""
+        seen = {}
+
+        class _Resp:
+            status_code = 200
+            url = "https://docs.sf.cn/docs/release-notes/overview"
+            text = "<html><body>" + ("模型上下线与价格调整公告。 " * 40) + "</body></html>"
+            content = text.encode()
+            headers = {"Content-Type": "text/html"}
+
+            def raise_for_status(self):
+                pass
+
+        class _Session:
+            headers = {}
+
+            def get(self, url, timeout=None, allow_redirects=True, headers=None):
+                seen["cookie"] = (headers or {}).get("Cookie", "")
+                seen["al"] = (headers or {}).get("Accept-Language", "")
+                return _Resp()
+
+        crawler_llm_intel._fetch_with_requests(
+            _Session(), "https://docs.sf.cn/docs/release-notes/overview", "updates",
+            (5.0, 5.0), 0, lang="zh", locale_cookie="FD_LOCALE=cn")
+        self.assertEqual(seen["cookie"], "FD_LOCALE=cn",
+                         "只看 cookie 的站，中文头压不住它：%s" % seen["cookie"])
+        self.assertTrue(seen["al"].startswith("zh"), seen["al"])
+        crawler_llm_intel._fetch_with_requests(
+            _Session(), "https://docs.sf.cn/docs/release-notes/overview", "updates",
+            (5.0, 5.0), 0)
+        self.assertEqual(seen["cookie"], "", "没声明就不该发 Cookie 头")
+        self.assertEqual(seen["al"], "", "没声明就不该覆盖会话默认头")
+
+    def test_browser_fallback_sends_locale_cookie(self):
+        """浏览器兜底通路也要带 cookie —— 它自己维护 cookie jar，光发头没用。"""
+        added = []
+
+        class _Ctx:
+            def add_cookies(self, pairs):
+                added.append(pairs)
+
+        class _Page:
+            context = _Ctx()
+
+            def set_extra_http_headers(self, headers):
+                pass
+
+        bs = crawler_llm_intel.BrowserSession(enabled=False)
+        bs._page = _Page()
+        bs._ensure = lambda: True
+        bs._render_once = lambda url: ("<html></html>", url, 200)
+        bs.render("https://docs.sf.cn/docs/release-notes/overview", "zh", "FD_LOCALE=cn")
+        self.assertEqual(added, [[{"name": "FD_LOCALE", "value": "cn",
+                                   "url": "https://docs.sf.cn/docs/release-notes/overview"}]])
+        added.clear()
+        bs.render("https://docs.sf.cn/docs/release-notes/overview", "zh")
+        self.assertEqual(added, [], "源没声明 cookie 时不该往上下文里塞")
+
+    def test_every_fetch_call_site_carries_locale(self):
+        """每个抓取调用点都要把 locale cookie 传下去 —— 漏一个入口，那个入口就照旧按访客语言抓。
+
+        扫描器自己先证形状：按行找调用、向后拼到括号平衡，并数出调用点个数当证人
+        （只数到 0 个 = 正则失配，不许当成通过）。
+        """
+        lines = (Path(__file__).resolve().parent / "crawler_llm_intel.py").read_text(
+            encoding="utf-8").splitlines()
+        sites = []
+        for i, ln in enumerate(lines):
+            s = ln.strip()
+            if s.startswith("def ") or s.startswith("#"):
+                continue
+            if "fetch_url(" not in s and "browser.render(" not in s:
+                continue
+            buf, depth = "", 0
+            for cont in lines[i:]:
+                buf += cont.strip() + " "
+                depth += cont.count("(") - cont.count(")")
+                if depth <= 0:
+                    break
+            sites.append(buf.strip())
+        self.assertGreaterEqual(len(sites), 5,
+                                f"只扫到 {len(sites)} 个抓取调用点，疑似扫描器失配：{sites}")
+        missing = [s for s in sites if "locale_cookie" not in s]
+        self.assertEqual(missing, [], "这些调用点没带 locale_cookie：%s" % missing)
+
+    def test_shipped_locale_cookie_reaches_the_fetching_path(self):
+        """实产物扫描：`llm-intel.yaml` 里声明的每个 locale_cookie 都必须真的生效。
+
+        守卫的是「写了不生效」这一类静默失效 —— 非 NEWS_TYPES 的源、或 URL 形状对不上
+        `_lang_match_key`，都会让声明凭空蒸发，而页面照旧按访客语言出，双份条目继续长。
+        """
+        repo = Path(__file__).resolve().parent
+        data = yaml.safe_load((repo / "llm-intel.yaml").read_text(encoding="utf-8"))
+        srcs = data.get("sources") or []
+        declared = [(s.get("vendor_id"), s.get("url"), (s.get("locale_cookie") or "").strip())
+                    for s in srcs if (s.get("locale_cookie") or "").strip()]
+        self.assertGreaterEqual(len(declared), 1, "扫描没读到任何声明，疑似 yaml 结构变了")
+        table = crawler_llm_intel.news_source_locale_cookies(srcs)
+        self.assertEqual(len(table), len(declared),
+                         "有声明没进表（源不是 NEWS_TYPES 或 URL 解析不出键）：%s vs %s"
+                         % (declared, table))
+        for vid, url, cookie in declared:
+            self.assertEqual(crawler_llm_intel.declared_source_cookie(url, table), cookie,
+                             f"{vid} 声明的 {cookie} 在自己的源 URL 上都没命中")
+        # 决定性证人：siliconflow 那条公告条目（带中文锚点）要拿到 cookie
+        hit = crawler_llm_intel.declared_source_cookie(
+            "https://docs.siliconflow.cn/docs/release-notes/overview#%E4%BB%B7%E6%A0%BC",
+            table)
+        self.assertEqual(hit, "FD_LOCALE=cn", "锚点条目 URL 拿不到 cookie，双份条目会回来")
+
 
 class TestSelfHostedRss(unittest.TestCase):
     """自建 RSS 订阅源：日期规则、标题清洗、确定性与旧源清理。"""
@@ -7404,6 +7552,54 @@ class TestAnchorSectionSlicing(unittest.TestCase):
 
     def test_no_fragment_is_a_no_op(self):
         self.assertEqual(ft._slice_anchor_section(self.PAGE, ""), self.PAGE)
+
+    #: siliconflow 形状：条目是 `### [标题](同页#锚点)`，而页面 DOM **末尾**挂着
+    #: 「On this page」目录标题 + 一整行目录链接（真实页面是 51 个链接 6,333 字符）。
+    TOC_TAIL = (
+        "### [【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线]"
+        "(https://docs.sf.cn/docs/release-notes/overview#模型服务调整wan22)\n"
+        "\n"
+        "平台将于 2026-11-10 下线 Wan2.2 系列模型，同日上线 MiniMax-H3。\n"
+        "\n"
+        "### [【价格调整】Vendor-A/Qwen2-72B 模型开始计费]"
+        "(https://docs.sf.cn/docs/release-notes/overview#价格调整vendor-aqwen2-72b)\n"
+        "\n"
+        "为了提供更加稳定、优质、可持续的服务，Vendor-A/Qwen/Qwen2-72B-Instruct 限时免费"
+        "模型将于 2024 年 10 月 17 日开始计费。计费价格如下：\n"
+        "\n"
+        "- 限时折扣价：¥ 1.00 / M tokens\n"
+        "- 原价：¥ 4.13 / M tokens（恢复原价时间另行通知）\n"
+        "\n"
+        "### On this page\n"
+        "\n"
+        "[【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线]"
+        "(https://docs.sf.cn/docs/release-notes/overview#模型服务调整wan22)"
+        "[【价格调整】Vendor-A/Qwen2-72B 模型开始计费]"
+        "(https://docs.sf.cn/docs/release-notes/overview#价格调整vendor-aqwen2-72b)\n"
+    )
+
+    def test_last_entry_does_not_swallow_the_page_toc(self):
+        """页面**最后一条**的切片要止于「本页目录」，不许把目录链接块吞进正文。
+
+        真实代价：链接密度一起来 `detect_index_page` 就把这条判成目录页，正文留空 ——
+        实测 siliconflow 最后一条切出 6,673 字符（其中 6,333 是一行 51 个目录链接），
+        读者点开什么都没有。
+        """
+        title = "【价格调整】Vendor-A/Qwen2-72B 模型开始计费"
+        sec = ft._slice_anchor_section(self.TOC_TAIL, "价格调整vendor-aqwen2-72b", title)
+        self.assertIn("2024 年 10 月 17 日开始计费", sec, "本条正文一个字不许少")
+        self.assertIn("限时折扣价", sec)
+        self.assertNotIn("On this page", sec, "页面级目录标题不属于条目正文")
+        self.assertNotIn("系列下线，MiniMax-H3 上线](https://docs.sf.cn/docs", sec,
+                         "目录链接块被吞进来，这条就被判成目录页")
+        self.assertFalse(ft.detect_index_page(sec),
+                         "带目录链接的切片被判 index_page → 正文永久留空，且没有回访路径")
+        # 上一条（非页尾）不受影响：仍按下一个条目起点收尾
+        prev = ft._slice_anchor_section(
+            self.TOC_TAIL, "模型服务调整wan22",
+            "【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线")
+        self.assertIn("2026-11-10 下线", prev)
+        self.assertNotIn("On this page", prev)
 
     #: groq changelog 形状：条目标题自带指向本页锚点的链接，正文里有粗体小标题与 bullet。
     GROQ = (

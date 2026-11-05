@@ -1617,6 +1617,16 @@ def _trim_entry_tail(lines: list[str], end: int) -> int:
     return i
 
 
+#: 页面级「本页目录」标题。fumadocs / GitBook 这类单页文档站把它渲染在 DOM **末尾**，
+#: 于是「页面上最后一条」的切片会把整块目录吞进正文：实测 siliconflow 最后一条切出
+#: 6,673 字符，其中 6,333 是一行 51 个目录链接 —— 链接密度一起来，`detect_index_page`
+#: 就把这一条判成目录页、正文留空，读者点开什么都没有。目录是页面家具而不是条目内容，
+#: 所以切片遇到它就收尾。中文 locale 的页面里这个标题也仍是英文（实测 `### On this page`），
+#: 两种写法都认；它只在「带 fragment 的单页变更日志」这条路径上生效，普通文章不受影响。
+_TOC_HEADING_RE = re.compile(r"^#{1,6}\s*(?:On this page|在此页面上|在本页上|本页目录)\s*$",
+                             re.IGNORECASE)
+
+
 def _slice_anchor_section(md: str, frag: str, title: str = "", siblings=(), date: str = "") -> str:
     """从整页 markdown 里切出 `frag` 锚点那一条的段落；找不到就原样返回整页。
 
@@ -1653,6 +1663,10 @@ def _slice_anchor_section(md: str, frag: str, title: str = "", siblings=(), date
     end = len(lines)
     visible = _visible_lines(lines)
     for j in range(start + 1, len(lines)):
+        if _TOC_HEADING_RE.match(lines[j].strip()):
+            # 页面级「本页目录」：吞掉它和它下面整块目录链接（见常量注释）
+            end = j
+            break
         if _heading_level(lines[j]) > level:
             continue     # 更深的标题是本条内部结构
         if _is_entry_start(lines, j, visible):

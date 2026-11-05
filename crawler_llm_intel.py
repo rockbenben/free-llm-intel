@@ -707,19 +707,54 @@ def _lang_match_key(url: str) -> str:
 
 
 def declared_source_lang(url: str, langs: dict[str, str]) -> str:
-    """这一条属于哪个源、那个源声明什么语言。命中不了返回空串。
+    """这一条属于哪个源、那个源声明什么语言。命中不了返回空串。"""
+    return _declared_by_host(url, langs)
+
+
+def _declared_by_host(url: str, table: dict[str, str]) -> str:
+    """按「host+首段 → 退到 host 级」查源声明值；host 上声明不一致就返回空串（不猜）。
 
     先按 host+首段精确匹配（区分 locale 根），退到 host 级；host 级只有当该 host 上
-    所有已声明源同一种语言时才敢用 —— 否则宁可返回空串，不猜。
+    所有已声明同一种值时才敢用。
     """
-    if not url or not langs:
+    if not url or not table:
         return ""
     key = _lang_match_key(url)
-    if key in langs:
-        return langs[key]
+    if key in table:
+        return table[key]
     host = key.split("/", 1)[0]
-    on_host = {v for k, v in langs.items() if k.split("/", 1)[0] == host}
+    on_host = {v for k, v in table.items() if k.split("/", 1)[0] == host}
     return on_host.pop() if len(on_host) == 1 else ""
+
+
+def news_source_locale_cookies(sources: list[dict]) -> dict[str, str]:
+    """`{host+首要路径段: locale cookie}` —— 只收 NEWS_TYPES 且声明了 `locale_cookie` 的动态源。
+
+    为什么需要它：有些站选语言看的是**会话 cookie**，既不是 URL 也不是 `Accept-Language`。
+    siliconflow 文档站（fumadocs）实测：不带 cookie 时按访客出语言（本机中文、CI 海外英文），
+    而 `Cookie: FD_LOCALE=cn` 压得过 `Accept-Language: en-US`。后果不是「今天读到哪种语言」
+    这么简单 —— 它的**锚点 slug 也随语言变**（同一条公告两种 URL），于是同一页变更日志
+    在语料与归档里长成两份（实测 51 条公告攒出 101 行归档），中文那份隔天被英文快照覆盖，
+    本地精译白做一遍。源里声明 cookie 是把语言钉死的唯一手段。
+    """
+    out: dict[str, str] = {}
+    for s in sources or []:
+        if (s.get("type") or "") not in NEWS_TYPES:
+            continue
+        cookie = (s.get("locale_cookie") or "").strip()
+        u = (s.get("url") or "").strip()
+        if not cookie or not u:
+            continue
+        key = _lang_match_key(u)
+        if key:
+            out[key] = cookie
+    return out
+
+
+def declared_source_cookie(url: str, cookies: dict[str, str] | None = None) -> str:
+    """这一条 URL 该带哪个 locale cookie（源声明，命中不了返回空串）。"""
+    table = news_locale_cookie_table() if cookies is None else cookies
+    return _declared_by_host(url, table)
 
 
 def build_session() -> requests.Session:
@@ -839,13 +874,18 @@ class BrowserSession:
                 pass
         return page.content(), page.url, (resp.status if resp else None)
 
-    def render(self, url: str, lang: str = "") -> tuple[str, str, int | None] | None:
+    def render(self, url: str, lang: str = "",
+               locale_cookie: str = "") -> tuple[str, str, int | None] | None:
         """返回 (最终HTML, 最终URL, HTTP状态码)；失败时重建页面重试一次，再失败返回 None。
 
         `lang` 是这条**源声明的语言**：浏览器上下文建好就不能改 locale，但它谈判
         语言实际看的是 `Accept-Language`，所以这里逐页覆盖请求头，跟 requests 通路
         用同一张 `_LANG_HEADERS` 表 —— 两条路子的语言必须一致，否则同一篇文章
         走 requests 拿到中文、走浏览器兜底拿到英文。
+
+        `locale_cookie` 是源声明的**语言 cookie**（只看 cookie 的站，见
+        `news_source_locale_cookies`）：浏览器通路要把它写进上下文，光发头没用 ——
+        浏览器自己维护 cookie jar，会覆盖手写的 Cookie 头。
         """
         if not self._ensure():
             return None
@@ -855,6 +895,14 @@ class BrowserSession:
                 self._page.set_extra_http_headers({"Accept-Language": want})
             except Exception:
                 pass    # 覆盖失败就用上下文默认头，不该让整页渲染因此放弃
+        if locale_cookie and self._page is not None:
+            pairs = [{"name": kv.split("=", 1)[0].strip(),
+                      "value": kv.split("=", 1)[1].strip(), "url": url}
+                     for kv in locale_cookie.split(";") if "=" in kv]
+            try:
+                self._page.context.add_cookies(pairs)
+            except Exception:
+                pass    # 同上：加不上就退回上下文现状，不因此放弃整页渲染
         for attempt in range(2):
             try:
                 return self._render_once(url)
@@ -890,15 +938,22 @@ JSON_NEWS_BODY_LIMIT = 8_000_000
 
 def _fetch_with_requests(session: requests.Session, url: str, stype: str,
                          timeout: tuple[float, float], retries: int,
-                         lang: str = "") -> PageResult:
+                         lang: str = "", locale_cookie: str = "") -> PageResult:
     """用 requests 抓取，任何异常都封装进 PageResult，不向上抛出。
 
     `lang` 是这条**源自己声明的语言**：给定就按它发 `Accept-Language`，
     不给则用 session 默认头。语言写进身份的方式只有一种——由源决定，
     不让站点拿我们的请求头猜。
+    `locale_cookie` 是源声明的**语言 cookie**（只看 cookie 的站，见
+    `news_source_locale_cookies`），与 `lang` 一起发：谁说了算由站点定，我们两边都给。
     """
     result = PageResult(url=url, stype=stype, final_url=url)
-    headers = {"Accept-Language": _LANG_HEADERS[lang]} if lang in _LANG_HEADERS else None
+    headers: dict[str, str] = {}
+    if lang in _LANG_HEADERS:
+        headers["Accept-Language"] = _LANG_HEADERS[lang]
+    if locale_cookie:
+        headers["Cookie"] = locale_cookie
+    headers = headers or None
     last_err = ""
     for attempt in range(retries + 1):
         try:
@@ -982,12 +1037,18 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
 def fetch_url(session: requests.Session, url: str, stype: str,
               browser: "BrowserSession | None" = None,
               timeout: tuple[float, float] = (10.0, 30.0),
-              retries: int = 1, lang: str = "") -> PageResult:
+              retries: int = 1, lang: str = "",
+              locale_cookie: str = "") -> PageResult:
     """
     抓取单个 URL：优先 requests；若被反爬拦截（401/403/429 等）或抓到 JS 空壳，
     且提供了 browser，则用真实浏览器重渲染兜底。任何异常都不向上抛出。
+
+    `lang` / `locale_cookie` 是这条源声明的语言与语言 cookie，requests 与浏览器
+    **两条通路、每一次重试都要带上**：漏一处，同一篇文章就会在不同通路上拿到
+    不同语言（正文与锚点跟着变），这正是 siliconflow 双份条目的来路。
     """
-    result = _fetch_with_requests(session, url, stype, timeout, retries, lang)
+    result = _fetch_with_requests(session, url, stype, timeout, retries, lang,
+                                  locale_cookie)
 
     if LOGIN_PATTERNS.search(result.final_url):
         result.is_login = True
@@ -997,7 +1058,7 @@ def fetch_url(session: requests.Session, url: str, stype: str,
         time.sleep(2.0)
         was_login = result.is_login
         result = _fetch_with_requests(session, url, stype, timeout, retries=0,
-                                              lang=lang)
+                                              lang=lang, locale_cookie=locale_cookie)
         # 首抓已判定的登录跳转不得因重试丢失：重试结果若是失败壳（final_url 回落
         # 到原 url），LOGIN_PATTERNS 判不出来，is_login 会静默变回 False
         if was_login or LOGIN_PATTERNS.search(result.final_url):
@@ -1021,7 +1082,7 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     if not needs_browser:
         return result
 
-    rendered = browser.render(url, lang)
+    rendered = browser.render(url, lang, locale_cookie=locale_cookie)
     if not rendered:
         if req_blocked:  # requests 拿到的就是拦截页
             result.ok = False
@@ -2876,7 +2937,8 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
             # api_docs / docs / console / hf_org 等入口：不深度抓取
             intel.skipped_sources.append(src)
             continue
-        page = fetch_url(session, url, stype, browser=browser, timeout=timeout)
+        page = fetch_url(session, url, stype, browser=browser, timeout=timeout,
+                         locale_cookie=(src.get("locale_cookie") or "").strip())
         # 源是数据接口时，yaml 的 `page` 给出人类可读地址：产出物（归档 /
         # llm-news-feeds.md 的「订阅入口」）印它，不印接口长串。
         page.display_url = src.get("page") or ""
@@ -2929,7 +2991,8 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
             # 定价页误当作该厂商的页面
             if intel.homepage and not _same_site(url, intel.homepage):
                 return None
-            page = fetch_url(session, url, stype, browser=browser, timeout=timeout)
+            page = fetch_url(session, url, stype, browser=browser, timeout=timeout,
+                             locale_cookie=declared_source_cookie(url))
             fetched.add(_norm_url(url))
             if page.final_url:
                 fetched.add(_norm_url(page.final_url))
@@ -2963,7 +3026,8 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
         if candidates:
             print(f"    [discovery] 自动发现 {len(candidates)} 个候选定价/免费页")
         for cu in candidates:
-            page = fetch_url(session, cu, "discovered", browser=browser, timeout=timeout)
+            page = fetch_url(session, cu, "discovered", browser=browser, timeout=timeout,
+                             locale_cookie=declared_source_cookie(cu))
             _log_page(page)
             if delay:
                 time.sleep(delay)
@@ -5621,6 +5685,22 @@ def news_lang_table(path: Path | None = None) -> dict[str, str]:
     return _NEWS_LANG_CACHE
 
 
+_NEWS_COOKIE_CACHE: dict | None = None
+
+
+def news_locale_cookie_table(path: Path | None = None) -> dict[str, str]:
+    """读 `llm-intel.yaml` 里动态源声明的 locale cookie（进程内缓存；给 path 则强制重读）。"""
+    global _NEWS_COOKIE_CACHE
+    if _NEWS_COOKIE_CACHE is None or path is not None:
+        p = path or (_repo_root() / "llm-intel.yaml")
+        try:
+            data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+            _NEWS_COOKIE_CACHE = news_source_locale_cookies(data.get("sources") or [])
+        except Exception:
+            _NEWS_COOKIE_CACHE = {}
+    return _NEWS_COOKIE_CACHE
+
+
 def _english_eligible(art: Article, bodies: dict, vendor: str,
                       langs: dict[str, str] | None = None) -> bool:
     """这条文章能不能进英文 feed —— **只看它所属源声明的语言**。
@@ -7415,7 +7495,10 @@ def main(argv: list[str] | None = None) -> int:
         today = datetime.now().strftime("%Y-%m-%d")
 
         def _fetch_body(u: str):
-            page = fetch_url(session, u, "news", browser=browser, timeout=timeout)
+            # 正文抓取按 URL 反查源声明的 locale cookie：CI 与本机跑的必须是**同一种
+            # 语言**的页面，否则同一条公告按锚点各存一份（见 news_source_locale_cookies）
+            page = fetch_url(session, u, "news", browser=browser, timeout=timeout,
+                             locale_cookie=declared_source_cookie(u))
             return (page.raw or "", page.ok, page.status_code or 0, page.final_url or u)
 
         def _refetch_body(u: str):
@@ -7425,7 +7508,7 @@ def main(argv: list[str] | None = None) -> int:
             这里直接调 `browser.render` 补上那一档，只在真的读不出来时才多付这一次渲染。"""
             if not browser.enabled:
                 return ("", False, 0, u)
-            rendered = browser.render(u, "")
+            rendered = browser.render(u, "", locale_cookie=declared_source_cookie(u))
             if not rendered:
                 return ("", False, 0, u)
             html, final_url, code = rendered
