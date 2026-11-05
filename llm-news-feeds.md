@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-05 10:43:56**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-05 22:07:05**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,7 +26,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
-  1. [Claude Marketplace 上用于安全、生产力和创造性工作的新代理和产品](https://claude.com/resources/articles/new-agents-and-products-claude-marketplace)（2026-11-04）
+  1. [Claude Marketplace 上新增的安全、生产力与创意类 agent 和产品](https://claude.com/resources/articles/new-agents-and-products-claude-marketplace)（2026-11-04）
   2. [用 message threads 让长时间运行的 agent 更快](https://claude.com/resources/articles/message-threads)（2026-11-02）
   3. [Claude Enterprise 的智能报告、调查与共享群组预算](https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets)（2026-10-28）
   4. [IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude](https://claude.com/resources/articles/idc-brings-quanta-into-claude-and-adopts-claude-across-the-company)（2026-10-28）
@@ -194,11 +194,11 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
-  1. [Dharma 字段提取器：任何文档输入，JSON 输出中的结构化字段](https://huggingface.co/blog/Dharma-AI/dharma-field-extractor)（2026-11-04）
-  2. [StateBench：测试语言模型如何跟踪长文档的状态变化](https://huggingface.co/blog/allenai/statebench)（2026-11-03）
-  3. [Palette：教一个小模型用你的设计语言构建牌组](https://huggingface.co/blog/ibm-research/palette-deck-building)（2026-11-03）
-  4. [CWE-bench v2: More coverage, quality, and transparency](https://huggingface.co/blog/cwe-bench)（2026-11-03）
-  5. [Transformers 模型集成合约](https://huggingface.co/blog/transformers-mic)（2026-11-03）
+  1. [Dharma Field Extractor：任意文档进，结构化 JSON 字段出](https://huggingface.co/blog/Dharma-AI/dharma-field-extractor)（2026-11-04）
+  2. [StateBench：测语言模型如何跟踪长文档里的状态变化](https://huggingface.co/blog/allenai/statebench)（2026-11-03）
+  3. [Palette：教小模型用你的设计语言做幻灯片](https://huggingface.co/blog/ibm-research/palette-deck-building)（2026-11-03）
+  4. [CWE-bench v2：覆盖率、质量与透明度](https://huggingface.co/blog/cwe-bench)（2026-11-03）
+  5. [Transformers 模型集成契约](https://huggingface.co/blog/transformers-mic)（2026-11-03）
   - 📄 完整文章归档（共 917 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (openrouter)
@@ -226,8 +226,8 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-cohere.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
-  1. [现在可通过单个 API 在 OpenRouterAccess Cohere 最先进的检索模型上嵌入 5 和 Rerank 5，并进行统一计费，无需额外的 SDK。](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04）
-  2. [全球领先的开放模式，完全由您掌控正确的模式适合正确的工作，一切都在您的管辖之下。](https://cohere.com/blog/open-source-model-vault)（2026-11-03）
+  1. [Embed 5 与 Rerank 5 现已上线 OpenRouter](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04）
+  2. [全球领先的开放模型，完全由你掌控](https://cohere.com/blog/open-source-model-vault)（2026-11-03）
   3. [在 AWS 上用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29）
   4. [谁来建设 AI 前沿：民主世界为何需要更多前沿 AI 建设者，以及我们打算如何竞争](https://cohere.com/blog/who-gets-to-build-the-frontier-for-ai)（2026-10-29）
   5. [North 的 PitchBook：面向企业团队的私募市场情报](https://cohere.com/blog/pitchbook-integration)（2026-10-26）
@@ -274,12 +274,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-siliconflow.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-siliconflow.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
-  1. [[Model Service Adjustment] Wan2.2 Series Retirement and MiniMax-H3 Launch](https://docs.siliconflow.cn/docs/release-notes/overview#model-service-adjustment-wan22-series-retirement-and-minimax-h3-launch)（2026-11-03）
-  2. [[Model Service Adjustment] Qwen3-Coder-30B-A3B-Instruct, GLM-4.5V and Other Models to Be Retired](https://docs.siliconflow.cn/docs/release-notes/overview#model-service-adjustment-qwen3-coder-30b-a3b-instruct-glm-45v-and-other-models-to-be-retired)（2026-11-03）
-  3. [【新模型发布】OpenMOSS-Team/MOSS-Image 现已上线](https://docs.siliconflow.cn/docs/release-notes/overview#new-model-release-openmoss-teammoss-image-now-available)（2026-11-03）
-  4. [[Model Upgrade] DeepSeek-V4.1-Flash Upgraded to DeepSeek-V4.1-Flash-1017](https://docs.siliconflow.cn/docs/release-notes/overview#model-upgrade-deepseek-v41-flash-upgraded-to-deepseek-v41-flash-1017)（2026-11-03）
-  5. [【模型服务调整】systemone API中的diffusiongemma模型将停止使用](https://docs.siliconflow.cn/docs/release-notes/overview#model-service-adjustment-diffusiongemma-model-in-the-systemone-api-to-be-discontinued)（2026-10-21）
-  - 📄 完整文章归档（共 101 篇）：[siliconflow.md](llm-news/siliconflow.md)
+  1. [【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF)（2026-11-03）
+  2. [【模型服务调整】Qwen3-Coder-30B-A3B-Instruct、GLM-4.5V 等模型将下线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4qwen3-coder-30b-a3b-instructglm-45v-%E7%AD%89%E6%A8%A1%E5%9E%8B%E5%B0%86%E4%B8%8B%E7%BA%BF)（2026-11-03）
+  3. [【新模型上线】OpenMOSS-Team/MOSS-Image 上线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%96%B0%E6%A8%A1%E5%9E%8B%E4%B8%8A%E7%BA%BFopenmoss-teammoss-image-%E4%B8%8A%E7%BA%BF)（2026-11-03）
+  4. [【模型升级】DeepSeek-V4.1-Flash 升级至 DeepSeek-V4.1-Flash-1017](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E5%8D%87%E7%BA%A7deepseek-v41-flash-%E5%8D%87%E7%BA%A7%E8%87%B3-deepseek-v41-flash-1017)（2026-10-21）
+  5. [【模型服务调整】systemone 接口 diffusiongemma 模型将停止服务](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4systemone-%E6%8E%A5%E5%8F%A3-diffusiongemma-%E6%A8%A1%E5%9E%8B%E5%B0%86%E5%81%9C%E6%AD%A2%E6%9C%8D%E5%8A%A1)（2026-10-16）
+  - 📄 完整文章归档（共 51 篇）：[siliconflow.md](llm-news/siliconflow.md)
 
 ### 快手万擎 (streamlake)
 - 页面：[更新日志](https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd)
@@ -308,11 +308,11 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
-  1. [将决策模型与 Amazon Bedrock AgentCore 评估结合使用](https://aws.amazon.com/blogs/machine-learning/use-decision-models-with-amazon-bedrock-agentcore-evaluations/)（2026-11-04）
-  2. [Amazon Quick 中的智能审批：重要的人工监督](https://aws.amazon.com/blogs/machine-learning/smart-approvals-in-amazon-quick-human-oversight-where-it-matters/)（2026-11-04）
-  3. [生产型 AI 代理的四层上下文工程：Deep Insight 如何将它们应用到工作代码中](https://aws.amazon.com/blogs/machine-learning/four-layers-of-context-engineering-for-production-ai-agents-how-deep-insight-applies-them-in-working-code/)（2026-11-04）
-  4. [Indegene 如何实现生命科学领域企业数据质量的现代化和扩展](https://aws.amazon.com/blogs/machine-learning/how-indegene-is-modernizing-and-scaling-enterprise-data-quality-in-life-sciences/)（2026-11-04）
-  5. [U Mobile 如何使用 Amazon Bedrock AgentCore 构建代理电信运营](https://aws.amazon.com/blogs/machine-learning/how-u-mobile-built-agentic-telco-operations-with-amazon-bedrock-agentcore/)（2026-11-04）
+  1. [在 Amazon Bedrock AgentCore Evaluations 中使用决策模型](https://aws.amazon.com/blogs/machine-learning/use-decision-models-with-amazon-bedrock-agentcore-evaluations/)（2026-11-04）
+  2. [Amazon Quick 的智能审批：把人工监督用在真正要紧的地方](https://aws.amazon.com/blogs/machine-learning/smart-approvals-in-amazon-quick-human-oversight-where-it-matters/)（2026-11-04）
+  3. [生产级 AI agent 的四层上下文工程：Deep Insight 如何把它们写进工作代码](https://aws.amazon.com/blogs/machine-learning/four-layers-of-context-engineering-for-production-ai-agents-how-deep-insight-applies-them-in-working-code/)（2026-11-04）
+  4. [Indegene 如何实现生命科学领域企业数据质量的现代化与规模化](https://aws.amazon.com/blogs/machine-learning/how-indegene-is-modernizing-and-scaling-enterprise-data-quality-in-life-sciences/)（2026-11-04）
+  5. [U Mobile 如何用 Amazon Bedrock AgentCore 构建 agentic 电信运营](https://aws.amazon.com/blogs/machine-learning/how-u-mobile-built-agentic-telco-operations-with-amazon-bedrock-agentcore/)（2026-11-04）
   - 📄 完整文章归档（共 158 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)
@@ -330,8 +330,8 @@
 ### Together AI (together_ai)
 - 📡 [官方 RSS](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
-  1. [Together Compiler：AI推理的持续编译](https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference)（2026-11-04）
-  2. [多态推理：开放模型的自调整推理](https://www.together.ai/blog/polymorphic-inference)（2026-11-04）
+  1. [Together Compiler：面向 AI 推理的持续编译](https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference)（2026-11-04）
+  2. [Polymorphic Inference：面向开放模型的自动调优推理](https://www.together.ai/blog/polymorphic-inference)（2026-11-04）
   3. [Together GPU 集群自动修复：从 GPU 故障到健康节点](https://www.together.ai/blog/auto-repair-for-together-gpu-clusters)（2026-10-27）
   4. [Together Post-Training 上线：按你的方式做前沿级模型后训练](https://www.together.ai/blog/together-post-training)（2026-10-19）
   5. [Meta Muse Spark Open 已在 Together AI 上线](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15）
@@ -354,9 +354,9 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
-  1. [MiMo-V2.6-Pro: Model Documentation & Integration Guide](https://deepinfra.com/blog/mimo-v2-6-pro-model-documentation-integration-guide)（2026-11-04）
+  1. [MiMo-V2.6-Pro：模型文档与集成指南](https://deepinfra.com/blog/mimo-v2-6-pro-model-documentation-integration-guide)（2026-11-04）
   2. [通过 NVIDIA 启动计划支持下一波 AI 初创公司](https://deepinfra.com/blog/nvidia-inception-deepstart)（2026-11-04）
-  3. [MiMo-V2.6-Pro Guide: Performance, Pricing & Providers](https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide)（2026-11-03）
+  3. [MiMo-V2.6-Pro 指南：性能、价格与提供商](https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide)（2026-11-03）
   4. [MiMo-V2.6-Pro 定价指南：开发者成本拆解](https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide)（2026-11-02）
   5. [MiMo-V2.6-Pro 现已登陆 DeepInfra](https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra)（2026-11-01）
   - 📄 完整文章归档（共 54 篇）：[deepinfra.md](llm-news/deepinfra.md)
@@ -376,8 +376,8 @@
   - 🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-ai21_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
-  1. [培训后案例研究：与 Deel 一起获得全球薪资的前沿情报](https://www.ai21.com/blog/ai21-deel-case-study/)（2026-11-04）
-  2. [培训后案例研究：与 Alice 一起达到前沿级攻击弹性](https://www.ai21.com/blog/ai21-alice-case-study/)（2026-11-02）
+  1. [后训练案例研究：与 Deel 一起把全球薪资情报做到前沿级](https://www.ai21.com/blog/ai21-deel-case-study/)（2026-11-04）
+  2. [后训练案例研究：与 Alice 一起达到前沿级攻击韧性](https://www.ai21.com/blog/ai21-alice-case-study/)（2026-11-02）
   3. [为什么我们在训练前先构建指令遵循基准](https://www.ai21.com/blog/lift-bench-blog/)（2026-10-25）
   4. [我们如何将 GitLab Duo Code Review 的成本降低 98%](https://www.ai21.com/blog/gitlab-case-study/)（2026-10-22）
   5. [与 NVIDIA、Gong、Deel 和 Alice 合作，后训练 Nemotron 3.5 Super](https://www.ai21.com/blog/ai21-post-trains-nvidia-nemotron-35-super-vl/)（2026-10-15）

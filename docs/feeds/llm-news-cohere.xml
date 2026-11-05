@@ -9,25 +9,25 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>现在可通过单个 API 在 OpenRouterAccess Cohere 最先进的检索模型上嵌入 5 和 Rerank…</title>
+      <title>Embed 5 与 Rerank 5 现已上线 OpenRouter</title>
       <link>https://cohere.com/blog/embed-rerank-5-openrouter</link>
       <guid isPermaLink="true">https://cohere.com/blog/embed-rerank-5-openrouter</guid>
       <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：现在可通过单个 API 在 OpenRouterAccess Cohere 最先进的检索模型上嵌入 5 和 Rerank 5，并进行统一计费，无需额外的 SDK。 | 原文标题：Embed 5 and Rerank 5 now on OpenRouterAccess Cohere’s state-of-the-art retrieval models through a single API, with unified billing and no additional SDKs.</description>
+      <description>原文标题：Embed 5 and Rerank 5 now on OpenRouterAccess Cohere’s state-of-the-art retrieval models through a single API, with unified billing and no additional SDKs.</description>
       <content:encoded><![CDATA[<p>2026 年 11 月 4 日</p>
 <p>6 分钟阅读</p>
-<h1>现在在 OpenRouter 上嵌入 5 并重新排序 5</h1>
-<p>通过单一 API 访问 Cohere 最先进的检索模型，统一计费，无需额外的 SDK。</p>
-<p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/2bf7ca0269bb95916830cc2a5116d517ddf6353f-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130" alt="宣布 Cohere Embed 5 和 Rerank 5 在 OpenRouter 上可用的宣传图片，以白色文本和徽标与抽象的黑色、蓝色和紫色渐变为特色背景。"></p>
-<p><a href="https://openrouter.ai/cohere/embed-5-pro">Embed 5</a> 和 <a href="https://openrouter.ai/cohere/rerank-5-pro">Rerank 5</a> 现已在 OpenRouter 上上线。以下是如何通过一个 <a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/rag">单一 API</a> 将它们变成一个工作的 RAG 管道，只需几十行 Python 代码。</p>
-<p>Cohere 拥有迄今为止最强大的检索模型，可为企业文档和复杂的检索任务提供领先的性能。如果您已经在使用 OpenRouter，则可以立即开始 - 使用与现有模型相同的 API 密钥和积分，无需额外设置。</p>
-<p>RAG 通过在写入之前获取相关块，将 LLM 的答案建立在您自己的数据中。嵌入搜索提供了快速有效的第一阶段近似。然后，重新排序器会一起读取查询和每个候选，从而增加检索到的内容的精度。</p>
-<p>Cohere 模型的两个特点塑造了这种设计：</p>
-<ul><li><strong>Embed 5 Pro 和 Fast 共享一个嵌入空间。</strong> 使用“embed-5-pro”建立索引以获取质量，然后使用“embed-5-fast”查询延迟。</li><li><strong>Rerank 5 分数经过校准。</strong> 分数在查询和领域中意味着相同的事情，因此一个相关性阈值可以在达到 LLM 之前过滤掉弱上下文。</li></ul>
-<p>最后，您将获得一个简短的 Python 脚本，该脚本可以通过评分引用来回答有关文档的问题。这种方法几乎可以应用于任何检索用例，从企业搜索和客户支持到知识管理和文档发现。</p>
-<p>RAG 管道有两部分：一个构建可搜索索引的离线作业，以及一个针对每个问题运行的在线路径。了解哪些调用发生一次以及每个请求发生哪些调用有助于解释管道的大部分成本和延迟。每个语料库索引运行一次。然后，每个问题都需要一次 Embed 5 Fast 调用、一次 Rerank 5 调用和一次聊天调用，全部通过 OpenRouter 的 API 进行。</p>
+<h1>Embed 5 与 Rerank 5 现已上线 OpenRouter</h1>
+<p>通过单一 API 接入 Cohere 最先进的检索模型，统一计费，无需额外的 SDK。</p>
+<p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/2bf7ca0269bb95916830cc2a5116d517ddf6353f-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130" alt="宣布 Cohere Embed 5 与 Rerank 5 登陆 OpenRouter 的宣传图：黑、蓝、紫三色构成的抽象渐变背景上排布着白色文字与 logo。"></p>
+<p><a href="https://openrouter.ai/cohere/embed-5-pro">Embed 5</a> 与 <a href="https://openrouter.ai/cohere/rerank-5-pro">Rerank 5</a> 现已在 OpenRouter 上线。下面说明如何通过<a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/rag">单一 API</a>，用几十行 Python 代码把它们搭成一条可用的 RAG 流水线。</p>
+<p>这是 Cohere 迄今最强大的检索模型，在企业文档与复杂检索任务上提供领先的表现。如果你已经在使用 OpenRouter，就能马上开始——用的是与现有模型相同的 API key 和额度，不需要任何额外设置。</p>
+<p>RAG 在 LLM 落笔之前先取回相关的 chunk，把它的回答扎根在你自己的数据里。嵌入搜索提供一个快速而有效的第一阶段近似；reranker 随后把 query 与每个候选放在一起读取，为已经检索到的内容补上精度。</p>
+<p>Cohere 模型的两个特征塑造了这一设计：</p>
+<ul><li><strong>Embed 5 Pro 与 Fast 共享同一个嵌入空间。</strong> 用 <code>embed-5-pro</code> 建索引换取质量，再用 <code>embed-5-fast</code> 做查询换取低延迟。</li><li><strong>Rerank 5 的分数经过校准。</strong> 同一个分数在不同查询、不同领域里含义一致，因此一个相关性阈值就能在弱上下文抵达 LLM 之前把它筛掉。</li></ul>
+<p>读到最后，你会拿到一个简短的 Python 脚本，它能针对你的文档回答问题，并给出带分数的引用。同样的做法几乎可以用在任何检索用例上，从企业搜索、客户支持到知识管理与文档发现。</p>
+<p>一条 RAG 流水线分成两半：一个离线作业，构建可搜索的索引；一条在线路径，每一次提问都要走它。弄清哪些调用只发生一次、哪些调用每个请求都发生，就能解释这条流水线大部分的成本与延迟。索引对每个语料库只运行一次。此后每个问题的开销是一次 Embed 5 Fast 调用、一次 Rerank 5 调用和一次 chat 调用，全部经由 OpenRouter 的 API。</p>
 <h3>设置</h3>
-<p>您需要 Python 3.10 或更高版本、<a href="https://openrouter.ai/docs/api/api-reference/api-keys/create-a-new-api-key">OpenRouter API 密钥</a>、<a href="https://openrouter.ai/docs/client-sdks/overview">OpenRouter Python SDK</a> 以及用于内存向量存储的 NumPy。</p>
+<p>你需要 Python 3.10 或更新的版本、一个 <a href="https://openrouter.ai/docs/api/api-reference/api-keys/create-a-new-api-key">OpenRouter API key</a>、<a href="https://openrouter.ai/docs/client-sdks/overview">OpenRouter Python SDK</a>，以及用于内存向量存储的 NumPy。</p>
 <pre><code>pip install openrouter numpy
 export OPENROUTER_API_KEY=&quot;sk-or-...&quot;</code></pre>
 <pre><code>import os
@@ -41,12 +41,12 @@ EMBED_QUERY_MODEL = &quot;cohere/embed-5-fast&quot;  # queries: lowest latency
 RERANK_MODEL      = &quot;cohere/rerank-5-pro&quot;  # or cohere/rerank-5-fast
 CHAT_MODEL        = &quot;deepseek/deepseek-v4.1-flash-1017&quot;       # any chat model on OpenRouter
 DIMS = 1024                                    # 256 | 512 | 768 | 1024 | 1536 | 2048</code></pre>
-<p>Embed 5 返回六种大小的俄罗斯套娃向量，默认为 2048。我们<a href="https://cohere.com/blog/embed-5">建议</a> 1,024-dim int8 向量作为最佳质量成本点； OpenRouter 的 <a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">embeddings API</a> 返回浮点数，因此本文使用 1,024-dim 浮点数。</p>
-<p>NumPy 商店使这个演示变得简单。对于生产，请将其替换为您首选的载体数据库，例如 pgvector、Qdrant、Pinecone 或 Weaviate。</p>
-<h3>索引</h3>
-<p>索引将每个文本块转换为一个向量，即相似含义紧密相连的数字列表。它每个语料库运行一次，因此这是最高质量模型获得回报的步骤。</p>
-<p>将每个文档分割成块，使用 Embed 5 Pro 将它们嵌入为“search_document”，并对向量进行归一化，使点积等于余弦相似度。</p>
-<p>示例语料库是一个虚构的 API 文档，其中有一些故意的错误：</p>
+<p>Embed 5 返回 Matryoshka 向量，共有六档尺寸，默认为 2048。我们<a href="https://cohere.com/blog/embed-5">建议</a>使用 1,024 维的 int8 向量，那是质量与成本之间的最佳平衡点；OpenRouter 的 <a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">embeddings API</a> 返回的是浮点数，所以本文使用 1,024 维的浮点向量。</p>
+<p>用 NumPy 做存储能让这个 demo 保持简单。上生产环境时，把它换成你自己的向量数据库，例如 pgvector、Qdrant、Pinecone 或 Weaviate。</p>
+<h3>建立索引</h3>
+<p>建索引把每一个 chunk 的文本变成一个向量——一串数字，语义相近的内容在其中彼此靠得很近。它对每个语料库只运行一次，因此是最能体现最高质量模型价值的环节。</p>
+<p>把每篇文档切成若干 chunk，以 <code>search_document</code> 类型用 Embed 5 Pro 对它们做嵌入，并把向量归一化，让点积就等于余弦相似度。</p>
+<p>示例语料库是一个虚构 API 的文档，其中故意放进了几条差一点才相关的干扰项：</p>
 <pre><code>docs = [
     {&quot;title&quot;: &quot;Rotating API keys&quot;,
      &quot;text&quot;: &quot;To rotate a key without downtime, create a second key, deploy it to every service, &quot;
@@ -90,21 +90,21 @@ def embed(texts, model, input_type, batch=96):
 
 chunks = [c for d in docs for c in chunk(d)]
 doc_vecs = embed([c[&quot;text&quot;] for c in chunks], EMBED_INDEX_MODEL, &quot;search_document&quot;)</code></pre>
-<p>需要指出的三个关键细节：</p>
-<ul><li><code>input_type<strong>:</strong></code> 告诉 Embed 5 文本位于搜索的哪一侧。 OpenRouter 将其传递给 Cohere。</li><li><strong>批处理：</strong>每个请求发送许多块，这减少了往返并加快了索引速度。它不会改变成本，因为嵌入是按代币定价的。</li><li><strong>块大小：</strong>打包整个段落遵循<a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/rag">OpenRouter指南</a>中的逐段落策略，1,500个字符大约是300-400个英语标记。 Embed 5 接受最多 128k 个令牌，但每个块也会经过 Rerank 5，它读取查询和块组合的最多 32k 个令牌，并将更长的内容拆分为多个通道。</li></ul>
+<p>有三个关键细节值得点出：</p>
+<ul><li><code>input_type<strong>:</strong></code> 告诉 Embed 5 一段文本处在搜索的哪一侧。OpenRouter 会把它透传给 Cohere。</li><li><strong>批量处理：</strong> 一次请求发送多个 chunk，减少往返、加快建索引。它不改变成本，因为嵌入按 token 计价。</li><li><strong>chunk 大小：</strong> 把整段整段的段落打包进一个 chunk，遵循 <a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/rag">OpenRouter 的指南</a>里的按段落切分策略；1,500 个字符大约相当于 300–400 个英文 token。Embed 5 最多接受 128k token，但每个 chunk 还要经过 Rerank 5，而它一次读取的 query 与 chunk 合计上限是 32k token，更长的内容会被拆成多趟处理。</li></ul>
 <h3>检索</h3>
-<p>检索找到向量最接近问题向量的块。这充当两个内容之间的语义相似性的表示。</p>
-<p>使用 Embed 5 Fast 将问题嵌入为“search_query”，然后通过余弦相似度拉取包含 20 个块的广泛候选集。</p>
+<p>检索找出那些向量与问题的向量靠得最近的 chunk，这充当两段内容之间语义相似度的表示。</p>
+<p>用 Embed 5 Fast 以 <code>search_query</code> 类型对问题做嵌入，然后按余弦相似度拉出一个撒得较宽的候选集，取 20 个 chunk。</p>
 <pre><code>def retrieve(query, k=20):
     q = embed([query], EMBED_QUERY_MODEL, &quot;search_query&quot;)[0]
     scores = doc_vecs @ q                 # cosine, since both sides are normalized
     top = np.argsort(-scores)[:k]
     return [(chunks[i], float(scores[i])) for i in top]</code></pre>
-<p>使用 Fast 查询 Pro-built 索引是可行的，因为只要双方使用相同的“维度”，两个模型就会<a href="http://www.cohere.com/blog/embed-5">共享嵌入空间</a>。这是我们建议的划分：在 <a href="https://cohere.com/blog/embed-5">Cohere 的测试</a> 中，在 40 个数据集上，Pro 索引上的快速查询保持了全 Pro 检索质量的 98.4%，而两侧的 Fast 检索质量为 96.6%。对于任何其他型号系列，您必须在两侧使用相同的型号。</p>
-<p>让我们在这个阶段撒一张大网：召回率是检索器的工作，精确度是重新排序的工作。 OpenRouter 的指南建议 10-20 个候选者提供前 3-5 名的重新排名。</p>
-<h3>重新排名</h3>
-<p>重新排名通过一起阅读问题和每个块来重新对入围名单进行评分。这对于运行整个索引来说太慢了，但比向量相似度更准确，因此它只在最重要的候选者上运行。 Rerank 不需要 Embed - 或任何嵌入模型。它可以作为现有语义、关键字或混合搜索系统的简单第二阶段。</p>
-<p>将查询和 20 个候选者发送到 Rerank 5，保留前 5 个，并删除相关性阈值以下的任何内容。</p>
+<p>用 Fast 去查询由 Pro 建好的索引之所以可行，是因为这两个模型<a href="http://www.cohere.com/blog/embed-5">共享同一个嵌入空间</a>，只要两侧使用相同的 <code>dimensions</code>。这正是我们推荐的拆分方式：在 <a href="https://cohere.com/blog/embed-5">Cohere 的测试</a>中，跨 40 个数据集，Pro 索引配 Fast 查询保住了全 Pro 检索质量的 98.4%，而两侧都用 Fast 只剩 96.6%。换成任何其他模型系列，你就必须在两侧使用同一个模型。</p>
+<p>在这个阶段先把网撒宽一些：召回是检索器的职责，精度则是 Rerank 的职责。OpenRouter 的指南建议用 10–20 个候选，喂给一次取 top 3–5 的重排。</p>
+<h3>重排</h3>
+<p>重排给候选短名单重新打分，做法是把问题和每个 chunk 放在一起读。它的速度慢到没法跑遍整个索引，但比向量相似度更准，所以只用在排名靠前的候选上。Rerank 并不要求有 Embed——也不要求任何嵌入模型。作为一个简单的第二阶段，它能直接配合你现有的语义搜索、关键词搜索或混合搜索系统工作。</p>
+<p>把 query 和这 20 个候选发给 Rerank 5，保留 top 5，并把低于相关性阈值的一切都丢弃。</p>
 <pre><code>MIN_SCORE = 0.3
 
 def rerank(query, candidates, top_n=5):
@@ -119,12 +119,12 @@ def rerank(query, candidates, top_n=5):
         for r in res.results          # sorted by relevance, highest first
         if r.relevance_score &gt;= MIN_SCORE
     ]</code></pre>
-<p>每个结果都包含候选人在列表中的位置（“index”）和一个“relevance_score”，根据<a href="https://openrouter.ai/docs/sdks/typescript/api-reference/operations/creatererankresponsebody">重新排名响应架构</a>。</p>
-<p><a href="https://docs.cohere.com/changelog/rerank-v5">Rerank 5</a> 在这一步添加了什么：</p>
-<ul><li><strong>校准分数。</strong> 分数在查询和域之间保持一致，因此单个“MIN_SCORE”决定了达到 LLM 的内容。</li><li><strong>32k-token 上下文。</strong> 长块被整体评分。</li><li><strong>半结构化数据。</strong> JSON 记录和表在格式化为 YAML 字符串时可以很好地重新排名。</li><li><strong>无需重新索引即可升级。</strong> Rerank 在查询时读取原始文本，因此切换模型只需一行更改。</li></ul>
-<p>使用“rerank-5-pro”进行大量推理查询和长文档或特定领域文档。使用“rerank-5-fast”进行大容量搜索和每个任务搜索多次的代理。需要注意的一件事是：<a href="https://docs.cohere.com/docs/rerank">Rerank 5</a> 仅为文本，但适用于已解析的 pdf。</p>
-<p>###一代</p>
-<p>Generation 将最好的部分作为编号来源交给LLM，并要求其仅从这些来源中回答。这样可以使答案扎根于您的文档，并为读者提供可以检查的引用。如果没有任何东西可以清除阈值，则完全跳过 LLM 调用。</p>
+<p>按照 <a href="https://openrouter.ai/docs/sdks/typescript/api-reference/operations/creatererankresponsebody">rerank 响应结构说明</a>，每条结果都带着该候选在你列表中的位置（<code>index</code>）以及一个 <code>relevance_score</code>。</p>
+<p><a href="https://docs.cohere.com/changelog/rerank-v5">Rerank 5</a> 在这一步带来的是：</p>
+<ul><li><strong>经过校准的分数。</strong> 分数在各次查询和各领域之间保持一致，于是单个 <code>MIN_SCORE</code> 就能决定什么内容可以抵达 LLM。</li><li><strong>32k token 上下文。</strong> 长 chunk 可以整篇打分。</li><li><strong>半结构化数据。</strong> JSON 记录和表格格式化成 YAML 字符串后，重排表现很好。</li><li><strong>升级无需重建索引。</strong> Rerank 在查询时读取原始文本，所以换模型只是一行改动。</li></ul>
+<p>推理密集的查询，以及篇幅长或领域专用的文档，用 <code>rerank-5-pro</code>。大批量的搜索，以及单个任务里要搜索许多次的 agents，用 <code>rerank-5-fast</code>。有一点要注意：<a href="https://docs.cohere.com/docs/rerank">Rerank 5</a> 只处理文本，但对解析过的 pdf 可以工作。</p>
+<h3>生成</h3>
+<p>生成环节把最好的几个 chunk 作为编号的来源交给 LLM，并要求它只依据这些来源作答。这样回答就扎根在你的文档里，读者也能拿到可供核对的引用。如果没有任何候选越过阈值，就彻底跳过这次 LLM 调用。</p>
 <pre><code>SYSTEM = (
     &quot;Answer using only the numbered sources. &quot;
     &quot;Cite them inline like [1]. &quot;
@@ -149,10 +149,10 @@ def answer(query):
     return res.choices[0].message.content
 
 print(answer(&quot;How do I rotate an API key without downtime?&quot;))</code></pre>
-<p>发送每个块的标题及其文本可以让模型引用可读的内容；如果您的文档有 URL，也请添加它们。 OpenRouter 的指南使用响应 API 来执行此步骤。要遵循它，请调用“client.responses.send”，其中系统提示符为“instructions”，源和问题为“input”，然后从“res.output”中的消息项而不是从“choices”中读取答案。</p>
+<p>把每个 chunk 的标题连同它的正文一起发送，模型就能引用出可读的东西；如果你的文档里有 URL，也一并加上。OpenRouter 的指南在这一步改用 Responses API。要跟着它做，就调用 <code>client.responses.send</code>，把 system prompt 作为 <code>instructions</code>、把来源和问题作为 <code>input</code>，然后从 <code>res.output</code> 里的 message 条目读取回答，而不是从 <code>choices</code> 读取。</p>
 <h3>结果</h3>
-<p>在这里，我们将验证我们实施的步骤是否改善了我们的响应。</p>
-<p>当重新排名自信地选择正确的块并放弃险些错过的嵌入搜索排名时，它就会获得额外的关注。</p>
+<p>这里我们要验证自己实现的这些步骤是否真的改善了回答。</p>
+<p>当重排有把握地挑出正确的那个 chunk，并把嵌入搜索只排在它稍后位置的差一点相关的候选筛掉时，这次额外调用就物有所值。</p>
 <pre><code>q = &quot;How do I rotate an API key without downtime?&quot;
 
 cands = retrieve(q)
@@ -165,64 +165,64 @@ for c, s in cands[:3]:
 print(&quot;After Rerank 5:&quot;)
 for c, s in hits:
     print(f&quot;  {s:.3f}  {c['title']}&quot;)</code></pre>
-<table><thead><tr><th>排名</th><th>仅限嵌入 5</th><th>嵌入 5 + 重新排序 5</th></tr></thead><tbody><tr><td>1</td><td>轮换 API 密钥 · 0.522</td><td>轮换 API 密钥 · 0.808</td></tr><tr><td>2</td><td>Webhook 签名秘密 · 0.337</td><td><em>低于 0.3 截止值</em></td></tr><tr><td>3</td><td>创建 API 密钥 · 0.316</td><td><em>低于 0.3 截止值</em></td></tr></tbody></table>
+<table><thead><tr><th>排名</th><th>仅用 Embed 5</th><th>Embed 5 + Rerank 5</th></tr></thead><tbody><tr><td>1</td><td>Rotating API keys · 0.522</td><td>Rotating API keys · 0.808</td></tr><tr><td>2</td><td>Webhook signing secrets · 0.337</td><td><em>低于 0.3 阈值</em></td></tr><tr><td>3</td><td>Creating API keys · 0.316</td><td><em>低于 0.3 阈值</em></td></tr></tbody></table>
 <h3>总结</h3>
-<p>Everything in this pipeline ran through one API key and one client. Embed 5 Pro 构建索引，Embed 5 Fast 和 Rerank 5 处理每个问题，聊天模型编写答案，无需处理单独的 SDK、帐户或账单。</p>
-<p>That single surface is also what makes the pipeline easy to evolve. Every model is just a string, so trying <code>rerank-5-fast</code> instead of <code>rerank-5-pro</code>, or a different chat model, is a one-line change.</p>
-<p>Start with the sample corpus, swap in your own docs, and see what Rerank 5 moves to the top.</p>
-<p>接下来去哪里：</p>
-<ul><li><strong>混合搜索。</strong> 在矢量命中旁边添加关键字 (BM25) 命中。 Rerank 读取原始文本，因此它可以在一次调用中对两个列表进行评分。</li><li><strong>较小的索引。</strong> 降至 512 或 256 维，或通过 Cohere 自己的 API 使用 int8 或二进制向量。</li><li><strong>图像和 PDF。</strong> Embed 5 嵌入图像和混合文本和图像输入，例如 PDF 页面，并且 OpenRouter 的嵌入 API 接受 <code>image_url</code> 内容部分。重新排名 5 仅限文本，因此对这些结果的文本（例如解析的页面文本或标题）重新排名，或者跳过对它们的重新排名。</li><li><strong>评估。</strong> 标记一小组真实查询，比较有和没有重新排名的情况下 5 的命中率，并在同一组上调整“MIN_SCORE”。</li><li><strong>探索<a href="http://www.cohere.com/compass">指南针</a></strong>。 Cohere 的企业搜索和检索平台将 Embed 和 Rerank 整合到一个解决方案中，从而更轻松地跨企业数据构建强大的搜索和 AI 应用程序。现在可供<a href="http://www.cohere.com/blog/compass-cloud-beta">云客户</a>使用。</li></ul>
-<h3>有用的链接</h3>
-<ul><li><a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">OpenRouter 嵌入 API</a></li><li><a href="https://openrouter.ai/docs/client-sdks/python/sdks/rerank">OpenRouter Python SDK 重新排名</a></li><li><a href="http://www.cohere.com/blog/embed-5">Embed 5公告博客</a></li><li><a href="http://www.cohere.com/blog/rerank-5">Rerank 5公告博客</a></li><li><a href="https://docs.google.com/spreadsheets/d/1HLj1KOjJdFh9bTAc6lbWxG7VfjkRMeE7V11Q0eojtAA/edit?gid=0#gid=0">嵌入 5 个基准测试结果</a></li><li><a href="https://docs.google.com/spreadsheets/d/1FYXax6vFdKE4ph3eXj935jCl7mpeczvYe5jye2h1f9U/edit?gid=0#gid=0">重新排名 5 个基准测试结果</a></li></ul>
-<h2>接下来阅读此内容</h2>
-<ul><li>[！[抽象图像，上面覆盖着文字“世界领先的开放模型，在您的控制之下。可在模型中找到”保险库”](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/94683ad16fe28268fa577a6c84a3556bb7fc1a43-384 0x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/open-source-model-vault)<a href="https://cohere.com/blog/tag/product-launch">产品发布</a><a href="https://cohere.com/blog/open-source-model-vault">世界领先的开放模型，完全由您掌控 20264 年 11 月 3 日分钟阅读</a></li><li>[![](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/6f3e91a2db90382d96ee92b134a8b86b62d94417-3840x 2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/cohere-canada-commitment)<a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/cohere-canada-commitment">Cohere 承诺投入 40 亿加元，以加强加拿大的人工智能领导地位并大幅扩大其国家劳动力 20263 年 10 月 30 日分钟阅读</a></li><li>[![](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/a9f5cf4c07f32484927a5f451a4763453a1cd062-3840x2160.png? auto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/financial-research-assistant-cohere-aws)<a href="https://cohere.com/blog/tag/enterprise-ai">企业AI</a><a href="https://cohere.com/blog/tag/ai-for-developers">面向开发人员的 AI</a><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws">在 AWS 上使用 Cohere 构建金融研究助理，202617 年 10 月 29 日阅读分钟</a></li></ul>]]></content:encoded>
+<p>这条流水线里的一切，都只经过一个 API key 和一个 client。Embed 5 Pro 建好索引，Embed 5 Fast 与 Rerank 5 处理每一次提问，最后由一个 chat 模型写出回答——不必再同时应付分开的 SDK、分开的账号和分开的账单。</p>
+<p>正因为它只有这一个入口，这条流水线才容易演进。每个模型不过就是一个字符串，所以想用 <code>rerank-5-fast</code> 换掉 <code>rerank-5-pro</code>，或者换一个 chat 模型，都是一行改动。</p>
+<p>先从示例语料库开始，换上你自己的文档，看看 Rerank 5 会把什么挪到最前面。</p>
+<p>接下来可以往哪里走：</p>
+<ul><li><strong>混合搜索。</strong> 在向量命中旁边加上关键词（BM25）命中。Rerank 读的是原始文本，所以一次调用就能给两份列表打分。</li><li><strong>更小的索引。</strong> 降到 512 或 256 维，或者通过 Cohere 自己的 API 使用 int8 或二进制向量。</li><li><strong>图片与 PDF。</strong> Embed 5 能对图片，以及 PDF 页面这类文本与图片混合的输入做嵌入，OpenRouter 的 embeddings API 也接受 <code>image_url</code> 内容片段。Rerank 5 只处理文本，所以对这些结果要基于它们的文本去重排，例如解析出来的页面文字或图注，或者干脆对它们跳过重排。</li><li><strong>评估。</strong> 给一小批真实查询打上标注，对比有无重排时前 5 名的命中率，并在同一批数据上调整 <code>MIN_SCORE</code>。</li><li><strong>了解 <a href="http://www.cohere.com/compass">Compass</a></strong>。Cohere 的企业搜索与检索平台把 Embed 和 Rerank 收进一个解决方案，让人更容易在整片企业数据上构建强大的搜索与 AI 应用。现已面向<a href="http://www.cohere.com/blog/compass-cloud-beta">云客户</a>开放。</li></ul>
+<h3>有用链接</h3>
+<ul><li><a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">OpenRouter embeddings API</a></li><li><a href="https://openrouter.ai/docs/client-sdks/python/sdks/rerank">OpenRouter Python SDK rerank</a></li><li><a href="http://www.cohere.com/blog/embed-5">Embed 5 发布公告博客</a></li><li><a href="http://www.cohere.com/blog/rerank-5">Rerank 5 发布公告博客</a></li><li><a href="https://docs.google.com/spreadsheets/d/1HLj1KOjJdFh9bTAc6lbWxG7VfjkRMeE7V11Q0eojtAA/edit?gid=0#gid=0">Embed 5 基准测试结果</a></li><li><a href="https://docs.google.com/spreadsheets/d/1FYXax6vFdKE4ph3eXj935jCl7mpeczvYe5jye2h1f9U/edit?gid=0#gid=0">Rerank 5 基准测试结果</a></li></ul>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://cohere.com/blog/open-source-model-vault"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/94683ad16fe28268fa577a6c84a3556bb7fc1a43-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="一张抽象意象图，上面叠印着文字「世界领先的开放模型，由你掌控。现已登陆 Model Vault」"></a><a href="https://cohere.com/blog/tag/product-launch">产品发布</a><a href="https://cohere.com/blog/open-source-model-vault">全球领先的开放模型，完全由你掌控2026 年 11 月 3 日4 分钟阅读</a></li><li><a href="https://cohere.com/blog/cohere-canada-commitment"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/6f3e91a2db90382d96ee92b134a8b86b62d94417-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/cohere-canada-commitment">Cohere 推进 40 亿加元投入，巩固加拿大的 AI 领先地位并大幅扩充本国员工队伍2026 年 10 月 30 日3 分钟阅读</a></li><li><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/a9f5cf4c07f32484927a5f451a4763453a1cd062-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/enterprise-ai">企业 AI</a><a href="https://cohere.com/blog/tag/ai-for-developers">面向开发者的 AI</a><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws">在 AWS 上用 Cohere AI 构建金融研究助理2026 年 10 月 29 日17 分钟阅读</a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>全球领先的开放模式，完全由您掌控正确的模式适合正确的工作，一切都在您的管辖之下。</title>
+      <title>全球领先的开放模型，完全由你掌控</title>
       <link>https://cohere.com/blog/open-source-model-vault</link>
       <guid isPermaLink="true">https://cohere.com/blog/open-source-model-vault</guid>
       <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：The world&apos;s leading open models, fully under your controlThe right model for the right job, all under your jurisdiction.</description>
       <content:encoded><![CDATA[<p>2026 年 11 月 3 日</p>
 <p>4 分钟阅读</p>
-<h1>全球领先的开放模式，完全由你掌控</h1>
-<p>正确的模型适合正确的工作，一切都在您的管辖范围内。</p>
-<p>！<a href="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/94683ad16fe28268fa577a6c84a3556bb7fc1a43-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130">抽象图像，上面覆盖着文字“世界领先的开放模型，在您的控制之下。可在模型中找到”保险库”</a></p>
-<p>要点</p>
-<ul><li><strong>开放模型现已在 Model Vault 上可用</strong>：企业可以在完全托管的加密推理平台上运行 Cohere 模型和领先的开放模型（例如 DeepSeek V4.1 Flash、Gemma 4、GPT-OSS 和 Phi）。</li><li><strong>默认情况下零数据保留：</strong>提示和输出都不会保留在 Model Vault 中，从而提供强大的安全基线。</li><li><strong>主权推论：</strong>您保留对四个关键要素的控制：数据所在的位置（数据驻留和监管合规性）、谁可以访问它（加密中具有完全隐私的隔离租户）、您可以使用哪些模型（每项任务的正确模型而不仅仅是一个提供商的产品）以及您的 AI 运行方式（不是由提供商决定）。</li><li><strong>区域可用性：</strong> Model Vault 在美国、欧盟和加拿大上线； Model Vault Encrypted 在美国上线，欧盟和加拿大的支持即将推出。</li></ul>
-<p>人工智能的主权意味着客户可以选择、检查和部署最能满足其需求的模型，而无需将控制权交给单个供应商，但这种自由决不应该以牺牲安全或隐私为代价。在 Model Vault 中添加来自 Cohere 和全球其他提供商的领先开放模型，为我们的客户提供了所需的灵活性，让他们可以使用正确的工具来完成工作，而无需牺牲管理其业务的标准。</p>
-<p>每个组织都希望使用最好的人工智能模型来完成手头的任务，但许多组织却做不到。对于银行、医院或政府部门来说，将敏感数据发送到共享 API 通常是不可能的。同时，由于能力或容量的限制，管理开放或本地模型的推理也可能无法实现。团队最终需要在他们想要的模型、他们需要的控制以及他们必须管理的能力之间进行选择。</p>
-<p>他们不应该这样做。今天，我们在 Model Vault 和 Model Vault Encrypted 中推出第三方模型，允许企业在完全托管和加密的推理平台上运行 Cohere 模型和领先的开放模型。默认情况下，Model Vault 中会实现提示和输出的零数据保留。</p>
-<h3><strong>两级保护</strong></h3>
-<p>Model Vault 提供了通过专用于您的组织的隔离实例进行管理的完整推理堆栈。 Model Vault Encrypted 更进一步，即使在模型处理数据时也能保持数据加密。</p>
-<p><strong>模型库：</strong> 您的模型和工作负载在单租户基础架构上运行。您选择区域，您的提示和输出就会保留在那里。 Cohere 管理基础设施，因此您无需构建和运行自己的集群即可获得生产级服务。</p>
-<p><strong>Model Vault Encrypted：</strong> 对于您最敏感的工作，Model Vault Encrypted 可以保护正在使用的数据，而不仅仅是静态和传输中的数据。提示和输出在隔离环境中进行处理，并在整个过程中使用机密计算保持加密状态。即使 Cohere 也无法看到您发送给模型的内容或模型发回的内容。任何云提供商也不能。</p>
-<table><thead><tr><th>模范家庭*</th><th>开发商</th><th>模型库</th><th>模型库加密</th></tr></thead><tbody><tr><td>命令</td><td>连贯</td><td>是的</td><td>没有</td></tr><tr><td>嵌入</td><td>连贯</td><td>是的</td><td>是的</td></tr><tr><td>重新排名</td><td>连贯</td><td>是的</td><td>是的</td></tr><tr><td>解析</td><td>连贯</td><td>是的</td><td>是的</td></tr><tr><td>转录</td><td>连贯</td><td>是的</td><td>是的</td></tr><tr><td>翻译</td><td>连贯</td><td>是的</td><td>是的</td></tr><tr><td>深度搜索</td><td>深度搜索</td><td>是的</td><td>没有</td></tr><tr><td>GLM</td><td>Z.ai</td><td>是的</td><td>没有</td></tr><tr><td>小米</td><td>小米</td><td>是的</td><td>没有</td></tr><tr><td>杰玛</td><td>谷歌</td><td>是的</td><td>是的</td></tr><tr><td>内动管</td><td>英伟达</td><td>是的</td><td>没有</td></tr><tr><td>GPT-OSS</td><td>OpenAI</td><td>是的</td><td>是的</td></tr><tr><td>披</td><td>微软</td><td>是的</td><td>是的</td></tr><tr><td>Hy3</td><td>腾讯</td><td>是的</td><td>没有</td></tr></tbody></table>
-<h3><strong>主权推论意味着什么</strong></h3>
-<p>主权推理意味着您决定人工智能的运行方式，而不是您的提供商。归结为四件事：</p>
-<ul><li><strong>您的数据所在的位置。</strong> 在您首选的支持区域运行推理工作负载，以帮助满足您组织的数据驻留和监管要求。</li><li><strong>谁可以访问它。</strong> Model Vault 将您的工作负载保存在单独、隔离的租户中。通过 Model Vault Encrypted，除了您之外，没有人可以看到您的提示或输出，包括 Cohere。</li><li><strong>您可以使用哪些模型。</strong> 最适合任务的模型，而不仅仅是碰巧通过单个提供商提供的模型。</li></ul>
-<h3><strong>客户的评价</strong></h3>
-<blockquote>“无论是零数据保留、数据驻留要求，还是只是对他们的 AI 模型有更多的控制，安全性是 Language Weaver 提供服务的核心。我们遍布全球的客户信任我们，将他们的一些最敏感的内容交给我们。Cohere Model Vault 让 Language Weaver 安全高效地运行模型（包括 LW Pro 模型），同时确保我们的客户控制他们的数据去向。它快速可靠，而且由于 Cohere 负责托管和扩展，我们的团队可以专注于我们最擅长的是：为我们的客户提供服务。”Dragos Munteanu，RWS 研究和产品开发副总裁</blockquote>
-<h3><strong>适合每项工作的正确模型</strong></h3>
-<p>没有一个模型在所有方面都是最好的。 Model Vault 可让您为每项任务选择正确的任务，并使用相同的保护来运行每一项任务。</p>
-<p><strong>Cohere 的模型。</strong> 用于生成和代理工作的命令、用于搜索和检索的嵌入和重新排序、用于文档的解析、用于语音的转录和用于多语言工作流程的翻译。</p>
-<p><strong>高性能开放模型。</strong> 除了我们自己的模型之外，Model Vault 还运行最常用的开放模型，包括 DeepSeek V4.1 Flash（OpenRouter 上最常用的开放模型）、GLM 5.3 Flash、MiMo V2.6 Pro、Gemma 4 和 NVIDIA Nemotron。 GPT-OSS 和 Phi 模型也可用。</p>
-<p>使用 Model Vault，您可以为每个任务选择最佳模型，并在统一的生产推理堆栈中运行它。</p>
-<p><a href="https://vault.cohere.com/">探索模型库</a></p>
+<h1>全球领先的开放模型，完全由你掌控</h1>
+<p>为每个任务配上合适的模型，一切都在你的管辖之下。</p>
+<p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/94683ad16fe28268fa577a6c84a3556bb7fc1a43-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130" alt="一张抽象意象图，上面叠印着文字「世界领先的开放模型，由你掌控。已在 Model Vault 上线」"></p>
+<p>核心要点</p>
+<ul><li><strong>开放模型现已登陆 Model Vault</strong>：企业可以在一个完全托管、加密的推理平台上，同时运行 Cohere 的模型与领先的开放模型（例如 DeepSeek V4.1 Flash、Gemma 4、GPT-OSS 和 Phi）。</li><li><strong>默认零数据保留： </strong>Model Vault 既不保留 prompts，也不保留输出，由此提供一条坚实的安全基线。</li><li><strong>主权推理： </strong>你保留对四个关键要素的控制权：你的数据存放在哪里（数据驻留与监管合规）、谁能访问它（在 Encrypted 中是享有完全隐私的隔离租户）、你能使用哪些模型（为每个任务挑合适的模型，而不是只有一家供应商的产品可选），以及你的 AI 如何运行（不由供应商说了算）。</li><li><strong>区域可用性：</strong> Model Vault 已在美国、欧盟和加拿大上线；Model Vault Encrypted 已在美国上线，欧盟和加拿大的支持即将推出。</li></ul>
+<p>AI 上的主权，意味着客户能够选择、审查并部署最贴合自身需求的模型，而不必把控制权交给某一家供应商；但这份自由绝不该以牺牲安全或隐私为代价。把 Cohere 以及来自全球其他供应商的领先开放模型加进 Model Vault，让我们的客户拿到了按需选用合适工具的灵活性，同时不必牺牲那些约束其业务的标准。</p>
+<p>每个组织都想为手头的任务用上能拿到的最好 AI 模型，但许多组织做不到。对一家银行、一所医院或一个政府部门而言，把敏感数据发往共享 API 往往根本不用谈。与此同时，受能力或容量所限，自行管理开放模型或 on-premise 模型的推理也可能行不通。于是团队最终要在自己想要的模型、自己需要的控制力，以及自己用来管理它们的容量三者之间做取舍。</p>
+<p>他们本不该被逼到这一步。今天我们宣布第三方模型在 Model Vault 与 Model Vault Encrypted 内上线，让企业能够在一个完全托管且加密的推理平台上，同时运行 Cohere 的模型和领先的开放模型。对 prompts 与输出的零数据保留，在 Model Vault 中是默认实现的。</p>
+<h3><strong>两档防护</strong></h3>
+<p>Model Vault 提供完整的推理技术栈，经由一个只专属于你所在组织的隔离实例来托管。Model Vault Encrypted 走得更远：即使模型正在处理你的数据，数据也始终保持加密。</p>
+<p><strong>Model Vault：</strong> 你的模型与工作负载运行在单租户基础设施上。区域由你来选，你的 prompts 和输出就留在该区域。基础设施由 Cohere 管理，因此你不必搭建和运维自己的集群，也能获得生产级的服务。</p>
+<p><strong>Model Vault Encrypted：</strong> 面向你最敏感的工作，Model Vault Encrypted 保护的是使用中的数据，而不仅仅是静态数据与传输中的数据。prompts 与输出在隔离环境内部处理，并借助机密计算全程保持加密。连 Cohere 也无法看到你发给模型的内容或模型返回的内容。任何云服务商同样不能。</p>
+<table><thead><tr><th>模型系列*</th><th>开发方</th><th>Model Vault</th><th>Model Vault Encrypted</th></tr></thead><tbody><tr><td>Command</td><td>Cohere</td><td>是</td><td>否</td></tr><tr><td>Embed</td><td>Cohere</td><td>是</td><td>是</td></tr><tr><td>Rerank</td><td>Cohere</td><td>是</td><td>是</td></tr><tr><td>Parse</td><td>Cohere</td><td>是</td><td>是</td></tr><tr><td>Transcribe</td><td>Cohere</td><td>是</td><td>是</td></tr><tr><td>Translate</td><td>Cohere</td><td>是</td><td>是</td></tr><tr><td>DeepSeek</td><td>DeepSeek</td><td>是</td><td>否</td></tr><tr><td>GLM</td><td>Z.ai</td><td>是</td><td>否</td></tr><tr><td>MiMo</td><td>Xiaomi</td><td>是</td><td>否</td></tr><tr><td>Gemma</td><td>Google</td><td>是</td><td>是</td></tr><tr><td>Nemotron</td><td>NVIDIA</td><td>是</td><td>否</td></tr><tr><td>GPT-OSS</td><td>OpenAI</td><td>是</td><td>是</td></tr><tr><td>Phi</td><td>Microsoft</td><td>是</td><td>是</td></tr><tr><td>Hy3</td><td>Tencent</td><td>是</td><td>否</td></tr></tbody></table>
+<h3><strong>主权推理意味着什么</strong></h3>
+<p>主权推理意味着由你决定你的 AI 如何运行，而不是由你的供应商决定。它落在四件事上：</p>
+<ul><li><strong>你的数据存放在哪里。</strong> 在你偏好的受支持区域内运行推理工作负载，帮助你满足所在组织的数据驻留与监管要求。</li><li><strong>谁能访问它。</strong> Model Vault 把你的工作负载放在一个独立、隔离的租户中。而用 Model Vault Encrypted，除了你没有人能看到你的 prompts 或输出，Cohere 也不行。</li><li><strong>你能使用哪些模型。</strong> 用最适合这个任务的那个模型，而不是只挑某一家供应商恰好提供的那一个。</li></ul>
+<h3><strong>客户怎么说</strong></h3>
+<blockquote>「安全是 Language Weaver 向客户所提供的价值的核心，无论它涉及零数据保留、数据驻留要求，还是仅仅意味着对自己的 AI 模型有更多掌控。我们在全球各地的客户把一些最为敏感的内容托付给我们。Cohere Model Vault 让 Language Weaver 能够安全而高效地运行模型——包括 LW Pro 模型——同时确保客户对自己数据的去向保有控制权。它快速可靠，而且托管与扩容都由 Cohere 承担，我们的团队就能专注于自己最擅长的事：为客户交付成果。」Dragos Munteanu，RWS 研究与产品开发副总裁</blockquote>
+<h3><strong>给每个任务都配上合适的模型</strong></h3>
+<p>没有任何一个模型样样皆优。Model Vault 让你为每个任务挑出合适的那一个，并让它们在完全相同的保护下运行。</p>
+<p><strong>Cohere 的模型。</strong> Command 用于生成式与 agentic 工作，Embed 和 Rerank 用于搜索与检索，Parse 用于文档，Transcribe 用于语音，Translate 用于多语言工作流。</p>
+<p><strong>高性能的开放模型。</strong> 除了我们自己的模型，Model Vault 还运行着使用量最大的那些开放模型，包括 DeepSeek V4.1 Flash（OpenRouter 上使用量最大的开放模型）、GLM 5.3 Flash、MiMo V2.6 Pro、Gemma 4 和 NVIDIA Nemotron。GPT-OSS 与 Phi 系列模型也同样可用。</p>
+<p>有了 Model Vault，你可以为每个任务挑选最好的模型，并在一个统一的、生产级的推理栈内运行它们。</p>
+<p><a href="https://vault.cohere.com/">了解 Model Vault</a></p>
 <p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/2fb862f2c83bbb989a895b6745fe989f6d40b26f-1440x656.png?auto=format&amp;fit=max&amp;q=80&amp;w=800" alt=""></p>
-<h3><strong>哪里可用</strong></h3>
-<p>Model Vault 现已上线，并在美国、欧盟和加拿大提供区域服务。 Model Vault Encrypted 已在美国上线，欧盟地区和加拿大也即将推出服务。</p>
-<p>这就是开始。在接下来的几个月里，我们将把主权推理带到更多的地方和更多的工作负载：</p>
-<ul><li><strong>新区域</strong>，以便更多组织可以在其首选区域运行模型。</li><li><strong>模型库加密，并支持加拿大和欧盟的区域。</strong></li><li><strong>Model Vault 中的更大模型已加密，</strong>将机密计算扩展到要求更高的工作负载。</li><li><strong>随着新的开放模型的发布和采用，每个地区都会有更多模型</strong>。</li></ul>
-<table><thead><tr><th>地区</th><th>模型库</th><th>模型库加密</th></tr></thead><tbody><tr><td>美国</td><td>可用</td><td>可用</td></tr><tr><td>欧盟</td><td>可用</td><td>即将推出</td></tr><tr><td>加拿大</td><td>可用</td><td>即将推出</td></tr></tbody></table>
-<h3><strong>常见问题解答</strong></h3>
-<p><strong>哪个选项适合我？</strong> Model Vault 适合大多数受监管的工作负载，这些工作负载需要隔离租户和具有广泛模型目录的区域内处理。当组织外部的任何人（包括 Cohere）都无法看到您的数据时，请为数据敏感工作负载选择 Model Vault Encrypted。</p>
-<p><strong>我可以在加密的 Model Vault 中运行开放模型吗？</strong> 可以。如今，Gemma、GPT-OSS 和 Phi 模型等模型以及 Cohere 的嵌入、重新排序、转录和翻译都在 Model Vault Encrypted 中运行。完整列表请参见上表。</p>
-<p><strong>Model Vault 如何定价？</strong> 定价按 GPU 类型计算。请访问 <a href="http://cohere.com/pricing">cohere.com/pricing</a> 了解包括按需（每小时）定价和促销活动在内的详细信息。联系销售人员以获取预留容量；提供每月和每年的承诺定价。</p>
-<h3><strong>开始吧</strong></h3>
-<p>Model Vault 和 Model Vault Encrypted 现已上市。 <a href="https://vault.cohere.com/">注册</a>，或与我们的团队讨论适合您组织的正确设置。</p>
-<h2>接下来阅读此内容</h2>
-<ul><li>[![宣布 Cohere Embed 5 和 Rerank 5 在 OpenRouter 上可用的宣传图片，以白色文本和徽标与抽象的黑色、蓝色和紫色渐变为特色背景。](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/2bf7ca0269bb95916830cc2a5116d517ddf6353f -3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/embed-rerank-5-openrouter)<a href="https://cohere.com/blog/tag/ai-for-developers">AI对于开发人员</a><a href="https://cohere.com/blog/embed-rerank-5-openrouter">Embed 5 和 Rerank 5 现已在 OpenRouterNov 04, 20266 分钟阅读</a></li><li>[![](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/6f3e91a2db90382d96ee92b134a8b86b62d94417-3840x 2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/cohere-canada-commitment)<a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/cohere-canada-commitment">Cohere 承诺投入 40 亿加元，以加强加拿大的人工智能领导地位并大幅扩大其国家劳动力 20263 年 10 月 30 日分钟阅读</a></li><li>[![](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/a9f5cf4c07f32484927a5f451a4763453a1cd062-3840x2160.png? auto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/financial-research-assistant-cohere-aws)<a href="https://cohere.com/blog/tag/enterprise-ai">企业AI</a><a href="https://cohere.com/blog/tag/ai-for-developers">面向开发人员的 AI</a><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws">在 AWS 上使用 Cohere 构建金融研究助理，202617 年 10 月 29 日阅读分钟</a></li></ul>]]></content:encoded>
+<h3><strong>在哪些区域可用</strong></h3>
+<p>Model Vault 现已上线，区域服务可在美国、欧盟和加拿大使用。Model Vault Encrypted 已在美国上线，欧盟与加拿大的区域服务即将推出。</p>
+<p>这只是一个开端。未来几个月，我们会把主权推理带到更多地方、覆盖更多工作负载：</p>
+<ul><li><strong>新的区域，</strong>让更多组织能在自己偏好的区域运行模型。</li><li><strong>Model Vault Encrypted 增加对加拿大和欧盟的区域支持。</strong></li><li><strong>Model Vault Encrypted 中上线更大的模型，</strong>把机密计算扩展到要求更高的工作负载。</li><li><strong>每个区域都有更多模型，</strong>随着新的开放模型发布并被采用。</li></ul>
+<table><thead><tr><th>区域</th><th>Model Vault</th><th>Model Vault Encrypted</th></tr></thead><tbody><tr><td>美国</td><td>已上线</td><td>已上线</td></tr><tr><td>欧盟</td><td>已上线</td><td>即将推出</td></tr><tr><td>加拿大</td><td>已上线</td><td>即将推出</td></tr></tbody></table>
+<h3><strong>常见问题</strong></h3>
+<p><strong>哪个选项适合我？</strong> Model Vault 适合大多数受监管的工作负载——它们需要一个隔离租户、区域内的处理，以及覆盖面广的模型目录。数据敏感的工作负载请选择 Model Vault Encrypted：此时组织之外的任何人都不能看到你的数据，Cohere 也不例外。</p>
+<p><strong>我能在 Model Vault Encrypted 里运行开放模型吗？</strong> 能。Gemma、GPT-OSS 和 Phi 这类模型如今就运行在 Model Vault Encrypted 中，Cohere 的 Embed、Rerank、Transcribe 和 Translate 也是如此。完整清单见上文表格。</p>
+<p><strong>Model Vault 如何定价？</strong> 定价按 GPU 类型计。请访问 <a href="http://cohere.com/pricing">cohere.com/pricing</a> 了解详情，其中包括按需（按小时）计费与促销活动。需要预留容量请联系销售；月度与年度承诺用量的价格同样提供。</p>
+<h3><strong>开始使用</strong></h3>
+<p>Model Vault 与 Model Vault Encrypted 现已可用。<a href="https://vault.cohere.com/">注册</a>，或者与我们的团队沟通，为你的组织找到合适的配置。</p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://cohere.com/blog/embed-rerank-5-openrouter"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/2bf7ca0269bb95916830cc2a5116d517ddf6353f-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="宣布 Cohere Embed 5 与 Rerank 5 登陆 OpenRouter 的宣传图：黑、蓝、紫三色构成的抽象渐变背景上排布着白色文字与 logo。"></a><a href="https://cohere.com/blog/tag/ai-for-developers">面向开发者的 AI</a><a href="https://cohere.com/blog/embed-rerank-5-openrouter">Embed 5 与 Rerank 5 现已上线 OpenRouter2026 年 11 月 4 日6 分钟阅读</a></li><li><a href="https://cohere.com/blog/cohere-canada-commitment"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/6f3e91a2db90382d96ee92b134a8b86b62d94417-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/cohere-canada-commitment">Cohere 推进 40 亿加元投入，巩固加拿大的 AI 领先地位并大幅扩充本国员工队伍2026 年 10 月 30 日3 分钟阅读</a></li><li><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/a9f5cf4c07f32484927a5f451a4763453a1cd062-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/enterprise-ai">企业 AI</a><a href="https://cohere.com/blog/tag/ai-for-developers">面向开发者的 AI</a><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws">在 AWS 上用 Cohere AI 构建金融研究助理2026 年 10 月 29 日17 分钟阅读</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>在 AWS 上用 Cohere AI 构建金融研究助理</title>
