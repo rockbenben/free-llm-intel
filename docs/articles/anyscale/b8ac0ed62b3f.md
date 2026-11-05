@@ -1,106 +1,105 @@
 ---
 vendor: anyscale
-title: 使用 Ray 进行大规模并行代理模拟
+title: 用 Ray 做大规模并行 agent 模拟
 original_title: 
 url: https://anyscale.com/blog/massively-parallel-agentic-simulations-with-ray
 date: 2025-09-10
 lang: zh
 captured: 2026-11-05
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: d1354358f30a
+body_sha: ef7a8361c5f4
 ---
 
-[主页](https://www.anyscale.com/)[博客](https://www.anyscale.com/blog)博客详细信息
-
-# 使用 Ray 进行大规模并行代理模拟
+# 用 Ray 做大规模并行 agent 模拟
 
 作者：[Philipp Moritz](https://www.anyscale.com/blog?author=philipp-moritz)、[Sumanth Hegde](https://www.anyscale.com/blog?author=sumanth-hegde)、[Tyler Griggs](https://www.anyscale.com/blog?author=tyler-griggs) 和 [Eric Tang](https://www.anyscale.com/blog?author=eric-tang) | 2025 年 9 月 10 日
 
-![使用 Ray 进行大规模并行代理模拟图片](https://images.ctfassets.net/xjan103pcp94/7JUCwEieiRvbaHqx1VYRIu/ca861e91b802a5ba8e2919144885bc8f/Screenshot_2025-09-10_at_10.42.26â__AM.png?w=1200)
+![用 Ray 做大规模并行 agent 模拟（题图）](https://images.ctfassets.net/xjan103pcp94/7JUCwEieiRvbaHqx1VYRIu/ca861e91b802a5ba8e2919144885bc8f/Screenshot_2025-09-10_at_10.42.26â__AM.png?w=1200)
 
-虽然在笔记本电脑上针对托管模型端点（例如 ChatGPT、Claude、Gemini 或 OSS 模型的模型提供商之一）运行单个代理很容易，但在集群上并行运行数千个代理却是一个重大挑战。这也是许多非常有用的LLM和代理用例的重要要求，包括：
+在自己的笔记本上跑单个 agent、对接一个托管的 model endpoint（比如 ChatGPT、Claude、Gemini，或者某家开源模型的服务商）很容易，但在一个集群上并行跑上万个 agent 则是一大挑战。而对许多少见却非常有用的 LLM 与 agentic 用例来说，它同时也是一项重要前提，包括：
 
-- **运行评估：**代理评估用于代理应用程序开发的内循环。它们对于帮助构建更好的LLM、为LLM编写更好的提示或改进代理循环本身至关重要。
-- **迭代数据集：**构建代理取决于问题陈述的数据集和验证解决方案的技术。代理模拟使我们能够迭代这些数据集，过滤和改进它们，并收集解决方案轨迹以进行监督微调。
-- **运行 RL 训练：** 代理模拟是 RL 训练循环的重要组成部分。它们用于收集轨迹和奖励，用于通过 RL 更新策略。
+- **跑评测：** agentic 评测处在 agentic 应用开发的内循环里。无论是想造出更好的 LLM、给 LLM 写出更好的 prompt，还是改进 agent loop 本身，它都至关重要。
+- **迭代数据集：** 构建 agent 取决于「问题描述数据集」和「验证解法的技术」。agentic 模拟让我们能在这些数据集上迭代、筛选并改进它们，还能收集解答轨迹用于监督微调。
+- **跑 RL 训练：** agentic 模拟是 RL 训练循环中必不可少的一环，用来收集轨迹与奖励，再用 RL 据这些更新策略。
 
-当您从在笔记本电脑上运行单个代理扩展到并行运行大量代理时，您可能会遇到以下挑战：
+当你从在笔记本上跑单个 agent，扩展到并行跑大量 agent 时，大概率会撞上下面这些挑战：
 
-- **隔离代理：** 代理需要隔离，以便它们不会相互干扰以及系统的其余部分，并保持在合理的资源限制内。此外，代理需要在定义明确的环境（例如容器）中运行。
-- **扩展模型推理和工具使用：** 如果您并行运行大量代理，模型提供者的速率限制通常是不够的，因此您需要弄清楚如何扩展推理。您还可以使用常见工具，例如 MCP 服务器，这些工具也需要通过代理进行扩展。
-- **使用自定义模型：** 如果您正在构建自定义代理，您可能还会训练或微调需要部署的自定义模型。
+- **隔离 agent：** agent 需要被隔离，让它们互不干扰、也不干扰系统的其余部分，并且待在合理的资源限制之内。此外，agent 需要运行在一个定义清楚的环境里，比如容器。
+- **扩展模型推理与工具使用：** 并行跑大量 agent 时，模型服务商的 rate limit 通常不够用，所以你得想清楚怎么扩展推理。你可能还会用到 MCP server 这类常见工具，它们也得跟着 agent 一起扩上去。
+- **使用自定义模型：** 如果你在构建定制化的 agent，很可能你自己也训练或微调了模型，而这些模型还需要被部署起来。
 
-大多数此类设置都涉及大量样板代码和复杂的基础设施。
+大多数这类方案都要写大量样板代码、搭复杂的基础设施。
 
-Ray 允许您使用简单的 Python API 运行大规模并行代理模拟，从而直接解决这些挑战。它处理混合 CPU 和 GPU（或其他加速器）工作负载，并支持推理服务器（例如 vLLM 或 SGLang）等有状态服务。这使得推理能够在与模拟相同的集群上运行，从而能够对模型和代理进行快速联合实验，并进行联合扩展以避免模型的速率限制。 Ray 方便的 Pythonic 开发人员体验使实验设置的迭代变得容易，并无缝扩展到非常大的运行。此外，Ray 的容错功能可以通过使用竞价实例来节省成本。
+Ray 直接回应了这些挑战：它让你用一个简单、Pythonic 的 API 就能跑大规模并行的 agentic 模拟。它能处理 CPU 与 GPU（或其他加速器）混合的负载，也支持像推理服务器（例如 vLLM 或 SGLang）这样的有状态服务。这样一来，推理就能和模拟跑在同一个集群上，既能对模型与 agent 做快速的联合实验，也能联合扩缩以避免撞上模型的 rate limit。Ray 顺手的 Pythonic 开发体验让实验配置的迭代变得容易，也能平滑扩展到非常大的运行规模。此外，Ray 的容错能力让你可以用 spot 实例来节省成本。
 
-以下是您通过阅读博客文章将了解到的内容：
+读这篇博客你会学到：
 
-- 您将学习如何通过灵活的隔离来运行多个沙盒环境，因此沙盒可以在任何环境（非特权、容器中的容器）中运行，而无需设置单独的沙盒环境。
-- 您将了解如何在单个 Ray 集群上运行推理和代理执行，以实现代理和 LLM 设置的快速迭代，而不会遇到速率限制，并且可以轻松扩展并行代理的数量。
-- 您将看到上述所有三个用例（运行评估、迭代数据集、运行 RL 训练）的具体示例，以及有关如何提高它们的效率和更容易迭代的一些技巧。
+- 你会学到如何用灵活的隔离方式运行大量沙箱环境，让沙箱能跑在任何环境里（无特权环境、容器套容器），而不必再单独搭一套沙箱环境。
+- 你会学到如何让推理与 agent 执行都跑在同一个 Ray 集群上，从而在不撞 rate limit 的前提下同时快速迭代 agent 与 LLM 的设置，也让并行 agent 的数量更容易往上扩。
+- 你会看到上文三种用例（跑评测、迭代数据集、跑 RL 训练）的具体例子，以及许多让它们更高效、更好迭代的技巧。
 
-我们将在软件工程的背景下演示这些关键点。为此，我们还开源了一个新数据集，其中包含从 [cpython 存储库](https://github.com/python/cpython) 中抓取的 5500 个测试用例，并展示了如何并行评估它们。我们展示的技术是通用的，也适用于其他领域，包括通用计算机使用、数据工程或科学研究。
+我们将在软件工程的场景下演示这些要点。为此，我们还开源了一个新数据集，其中包含从 [cpython 仓库](https://github.com/python/cpython)抓取来的 5500 个测试用例，并展示如何并行地评测它们。我们演示的技术是通用的，同样适用于其他领域，包括通用的计算机操作、数据工程或科学研究。
 
-## Link隔离并行代理模拟
+## 隔离并行的 agentic 模拟
 
-执行许多并行代理模拟时的一个核心问题是如何将它们彼此隔离并与系统环境隔离。有不同的选择：
+做大量并行 agentic 模拟时，一个核心问题是如何把它们彼此隔离、并与系统环境隔离。可选项有几种：
 
-- **使用具有完整文件系统隔离的容器：**Docker 是许多软件工程师熟悉的标准，容器非常适合在非对抗性设置中隔离工作负载。这使得 docker 成为一种非常流行的运行代理的方式。使用 docker 也有一些缺点：容器镜像的构建、推送、拉取和存储成本可能很高，而且速率限制可能很烦人。此外，在超级计算机等非特权环境中或在另一个容器内运行可能具有挑战性。其中一些问题可以通过使用不同的容器运行时（例如 podman 或 apptainer）来解决（我们将在下面展示如何执行此操作）。
-- **将进程与 cgroup 和 chroot 一起使用：**运行代理的一种不太重量级的方法是通过可以使用 Linux cgroup 和 chroot 隔离的进程。在底层，这也是容器的实现方式，但是直接使用原语可以更好地控制隔离如何发生，例如大多数主机文件系统和包都可以在此设置中重用，因此可以在不拉动和推送容器映像的情况下运行代理，但仍然使用良好的隔离。虽然从头开始实现这一点非常复杂，但有一些方便的命令行实用程序，例如 [bubblewrap](https://github.com/containers/bubblewrap)，可以使这变得简单（我们再次在下面展示如何执行此操作）。
-- **使用虚拟机或远程执行：**在某些场景中，需要更重的隔离机制。例如，您可能想在 Mac 上运行 Linux 应用程序，或者在 ARM 上运行 x86_64 应用程序，在这种情况下您需要 VM。在极少数情况下，您需要比容器或 cgroup 提供的更多隔离，在这种情况下，VM 或微型 VM 可能是一个不错的选择。或者您可能希望使用单独的 K8s 集群来执行代理，或使用单独的云提供商。与一些更简单的隔离方法（例如额外的错误处理和通信机制）相比，这些选项通常需要在基础设施级别上进行更多工作。
+- **用带完整文件系统隔离的容器：** Docker 是许多软件工程师都熟悉的标准，容器很适合在非对抗性场景里隔离负载，这也让 docker 成了跑 agent 的一种非常流行的方式。但用 docker 也有一些缺点：容器镜像的构建、推送、拉取和存储都可能代价高昂，rate limit 也让人烦躁。此外，在超级计算机这类无特权环境里、或在另一个容器内部运行容器都会比较棘手。其中一些问题可以通过换用别的容器运行时（如 podman 或 apptainer）来解决（下面我们会演示怎么做）。
+- **用配合 cgroups 与 chroot 的进程：** 一种更轻量的跑 agent 的方式是用进程，靠 Linux cgroups 和 chroot 来隔离。容器底层其实也是这么实现的，但直接使用这些原语能让你更多地掌控隔离是如何发生的。例如在这种设定下，主机上大部分文件系统和包都能复用，于是不必推拉容器镜像也能跑 agent，同时仍然有不错的隔离效果。虽然从零实现这套东西非常复杂，但像 [bubblewrap](https://github.com/containers/bubblewrap) 这样好用的命令行工具能让它变得简单（同样，下面我们会演示）。
+- **用虚拟机或远程执行：** 有些场景需要更重的隔离机制。例如你可能想在 mac 上跑一个 linux 应用，或者在 ARM 上跑一个 x86_64 应用，这种情况下你就需要 VM。少数情况下，你需要比容器或 cgroups 所能提供的更强的隔离，这时 VM 或 micro VM 会是个好选择。又或者你想用一个独立的 K8s 集群来执行 agent，或者使用另一家云服务商。与一些更简单的隔离方法相比，这些选项通常需要在基础设施层面做更多工作，比如额外的错误处理和通信机制。
 
-容器是最常见、应用最广泛的隔离机制，并且与生态系统融合得很好，因此在很多情况下应该是首选。具有附加机制（例如气泡包装）的过程可能尚未得到充分探索以进行隔离。它们非常轻量级且非常易于迭代，并且可以与 uv 等包管理器、本机 Linux 发行版包管理器或 [NixOS](https://nixos.org/) 或 [Guix](https://guix.gnu.org/) 等技术结合使用，以灵活定义代理运行的环境。为了能够针对每种情况使用最适合的隔离原语，我们的设置应该在其环境支持方面灵活。
+容器是最常见、适用范围也最广的隔离机制，而且与生态集成得很好，所以很多情况下应当是首选。带 bubblewrap 这类额外机制的进程隔离，用来做隔离大概还被低估着：它们极其轻量、迭代起来非常容易，还可以和包管理器（如 uv、Linux 发行版自带的包管理器）或 [NixOS](https://nixos.org/)、[Guix](https://guix.gnu.org/) 这类技术组合，灵活地定义 agent 运行于其中的环境。为了让每种情形都能用上最合适的隔离原语，我们的方案在环境支持上应当保持灵活。
 
-## 用于代理模拟的 LinkAgent 支架
+## agentic 模拟的 agent scaffold
 
-代理脚手架实现了LLM周围的结构，这使得它可以有效地解决特定领域的问题，在我们的软件工程案例中。脚手架由以下部分组成：
+agent scaffold 实现的是 LLM 外围的那层结构，让它能在某个特定领域——在我们这里是软件工程——有效地解决问题。scaffold 由以下部分组成：
 
-- 向 LLM 提供的提示，通常以模板的形式出现，其中包含占位符，例如 github 问题描述或有关如何在给定软件存储库中操作的具体说明，
-- LLM 可用于解决方案的工具，例如 shell 命令、文件编辑工具、Python 解释器、用于收集有关问题和解决方案的更多信息的搜索工具以及可能以 MCP 服务器形式提供的任何其他任意工具，
-- 代理循环重复查询LLM并执行LLM的操作。它还可以与用户进行交互检查，并允许他们修改LLM提议的行动方案。
+- 给 LLM 的 prompt，通常是带占位符的模板，比如占位符是一个 github issue 的描述，或是在给定软件仓库里该如何行事的具体指令，
+- LLM 在解题时可用的 tools，比如 shell 命令、文件编辑工具、一个 python 解释器、用来收集问题与解法更多信息的搜索工具，以及任何其他以 MCP server 形式提供的工具，
+- agent loop，它反复调用 LLM 并执行 LLM 给出的动作；它也可能与用户交互式确认，让用户能修改 LLM 提出的行动方案。
 
-虽然我们在本博客中重点关注软件工程，但该方案非常通用，也适用于任意计算机使用或更专业的领域，例如数据科学工作负载或科学研究。
+虽然本文聚焦软件工程，但这套结构非常通用，同样适用于任意计算机操作，或数据科学负载、科学研究这类更专门的领域。
 
-一些脚手架支持LLM的操作的各种形式的沙箱​​。有些支架是为最终用户解决特定问题而设计的，有些支架是为了运行大规模实验而优化的（例如用于评估或强化学习训练）。虽然这些用例需要不同的解决方案，但理想情况下它们共享相同的提示和工具调用，因此在实验数据集上进行的任何实验都将直接代表用户体验。以下是我们所知的软件工程代理支架列表：
+一些 scaffold 支持对 LLM 的动作做各种形式的沙箱。一些 scaffold 是为终端用户解决具体问题设计的，一些则为跑大规模实验做了优化（例如用于评测或 RL 训练）。这些用例虽然需要不同的解法，但理想情况下它们共享同样的 prompt 和 tool call，这样在实验数据集上做的任何实验都能直接代表真实用户体验。以下是我们所知的面向软件工程的 agentic scaffold 清单：
 
-- 最终用户通常以交互方式使用的支架，包括 [Claude Code](https://github.com/anthropics/claude-code)、[Gemini CLI](https://github.com/google-gemini/gemini-cli)、[Qwen Code](https://github.com/QwenLM/qwen-code) 和 [Aider](https://github.com/Aider-AI/aider)。它们一次支持一个会话，通常不提供沙箱，但它们可以与实际工作负载环境一起在容器内运行。其中一些还可以用作评估或强化学习设置的一部分。
-- [OpenHands](https://github.com/All-Hands-AI/OpenHands) 是一种流行的全功能代理运行时，旨在供最终用户使用以及用于评估和 RL 设置（它带有评估工具）。 OpenHands 主要基于 docker，并且[可用](https://novasky-ai.notion.site/skyrl-v0) 提供基于远程 k8s 的运行时。它对 MCP 服务器、浏览器和自定义工具等不同工具提供非常通用的支持。
-- [SWE-agent](https://github.com/SWE-agent/SWE-agent) 是 SWE-bench 作者的一个代理，可用于解决软件工程问题。它还有一个最小版本，[mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent)，它在隔离方面最灵活，代码非常简单且可修改，因此很容易适应广泛的工作负载。它仅使用 bash 命令即可在软件工程任务中表现良好。
-- [Terminal-bench](https://github.com/laude-institute/terminal-bench) 是针对终端使用任务的代理的基准，它附带一个用于适应其他基准（包括 SWE-Bench）的评估工具和一个名为 Terminus 的内置代理支架。所有任务都打包为 Docker 映像，并且该工具为每个任务启动一个容器化环境。
-- [R2E-Gym](https://github.com/R2E-Gym/R2E-Gym) 提供了一个类似于健身房的环境界面以及围绕它的代理包装器，但针对模拟和 RL 工作负载进行了更优化。它支持文件编辑器、bash 和文件搜索等工具。
-- [Smolagents](https://github.com/huggingface/smolagents?tab=readme-ov-file) 是一个 Huggingface 库，它也注重简约，但也有更多的集成，支持不同的工具调用，并支持通过 Docker 或 E2B 在沙盒环境中执行。
+- 通常由终端用户使用、多为交互式的 scaffold 包括 [Claude Code](https://github.com/anthropics/claude-code)、[Gemini CLI](https://github.com/google-gemini/gemini-cli)、[Qwen Code](https://github.com/QwenLM/qwen-code) 和 [Aider](https://github.com/Aider-AI/aider)。它们一次只支持一个会话，通常也不提供沙箱，但可以和实际的工作负载环境一起放在容器里运行。其中一些也可以加以改造，用于评测或 RL 场景。
+- [OpenHands](https://github.com/All-Hands-AI/OpenHands) 是一个流行的功能完整的 agent 运行时，既可以为终端用户所用，也可以用于评测与 RL 场景（它自带一个评测 harness）。OpenHands 主要以 docker 为基础，另有一个基于远程 k8s 的运行时[可用](https://novasky-ai.notion.site/skyrl-v0)。它对 MCP server、浏览器、自定义工具等各种工具有非常通用的支持。
+- [SWE-agent](https://github.com/SWE-agent/SWE-agent) 是 SWE-bench 的作者们做的一个 agent，可以用来解决软件工程问题。它还有一个极简版本 [mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent)，在隔离方面最灵活，代码也非常简单、好改，因此很容易适配各种各样的负载。它只用 bash 命令，在软件工程任务上就表现得不错。
+- [Terminal-bench](https://github.com/laude-institute/terminal-bench) 是一个针对终端使用类任务的 agent 基准，附带一个可用来适配其他基准（包括 SWE-Bench）的评测 harness，以及一个名为 Terminus 的内置 agent scaffold。所有任务都打包成 Docker 镜像，harness 会为每个任务启动一个容器化环境。
+- [R2E-Gym](https://github.com/R2E-Gym/R2E-Gym) 为环境提供类 gym 的接口，并在外面包了一层 agent wrapper，但它更偏向为模拟和 RL 负载做优化。它支持文件编辑器、bash 和文件搜索等工具。
+- [Smolagents](https://github.com/huggingface/smolagents?tab=readme-ov-file) 是 huggingface 的一个库，同样主打极简，但还有更多集成、对不同 tool call 的支持，以及通过 Docker 或 E2B 在沙箱环境中执行的支持。
 
-In this blog post we adopted mini-swe-agent because it is extremely simple and hackable and also gives good performance on software engineering problems without extra complexity, but the same approaches demonstrated below are also applicable to other scaffolds.
+在这篇博客里我们采用了 mini-swe-agent，因为它极其简单、好改，并且在没有额外复杂度的情况下也能在软件工程问题上给出不错的表现；但下面演示的同样思路也适用于其他 scaffold。
 
-##链接cpython问题数据集
+## cpython issues 数据集
 
-在这篇博文中，我们使用一个非常简单的数据集，该数据集是从 [cpython](https://github.com/python/cpython) 存储库生成的。可以为许多不同的存储库生成类似的数据集。该格式是一种简化的 swebench 格式，针对运行完整测试套件进行验证进行了优化。 We scraped about 5500 issues from the repository, found the associated PRs and extracted the `base_commit`, which is the parent commit of the PR as well as merge_commit, which is the commit that contains the code of the PR. The dataset is available [here](https://huggingface.co/datasets/pcmoritz/cpython_dataset) and the code that was used to scrape the dataset is available [here](https://gist.github.com/pcmoritz/fa911ee735a5a8f5329ea7a7c8adc47d).
+本文使用一个非常简单的数据集，它由 [cpython](https://github.com/python/cpython) 仓库生成。同样的方法可以为许多不同的仓库生成数据集。格式是一个简化版的 swebench 格式，为「跑完整测试套件来做验证」做了优化。我们从仓库里抓取了约 5500 个 issue，找到与之对应的 PR，并抽取出 `base_commit`（即 PR 的父提交）以及 merge_commit（即包含该 PR 代码的那个提交）。数据集在[这里](https://huggingface.co/datasets/pcmoritz/cpython_dataset)，用来抓取数据集的代码在[这里](https://gist.github.com/pcmoritz/fa911ee735a5a8f5329ea7a7c8adc47d)。
 
-![使用 Ray Img 进行大规模并行代理模拟 1](https://images.ctfassets.net/xjan103pcp94/1UmeTbGXQTiMaAhWXTyNPO/91d3b6aee67d7c308b1c5c255ed99a3c/Screenshot_2025-09-09_at_3.58.33â__PM.png)
+![用 Ray 做大规模并行 agent 模拟 图 1](https://images.ctfassets.net/xjan103pcp94/1UmeTbGXQTiMaAhWXTyNPO/91d3b6aee67d7c308b1c5c255ed99a3c/Screenshot_2025-09-09_at_3.58.33â__PM.png)
 
-使用 Ray Img 1 进行大规模并行代理模拟
+用 Ray 做大规模并行 agent 模拟 图 1
 
-给定 LLM 生成的补丁，可以按如下方式验证：
+给定 LLM 生成的一个 patch，可以按下面这样验证：
 
-- 查看 `base_commit` 处的 [cpython](https://github.com/python/cpython) 存储库
-- 应用LLM生成的补丁，除了`Lib/test/*`中的更改（既避免下一步中的冲突，也避免LLM删除或“修复”测试）
-- 应用“Lib/test/*”中原始 PR 差异“base_commit..merge_commit”的更改（这些是 PR 添加的回归测试）
-- 现在通过“./configure && make test”运行完整的测试套件。在实践中，为了使这项工作可靠，我们必须排除一些经常失败的测试。幸运的是，cpython 有一个名为“EXTRATESTOPTS”的环境变量，它允许将额外的参数传递给测试套件。我们使用此机制通过“--ignore”标志排除失败的测试。
+- 把 [cpython](https://github.com/python/cpython) 仓库检出到 `base_commit`
+- 应用 LLM 生成的 patch，但 `Lib/test/*` 里的改动除外（既是为了避免下一步产生冲突，也是为了避免 LLM 删除或「修好」测试）
+- 应用原始 PR diff `base_commit..merge_commit` 中 `Lib/test/*` 的改动（这些就是该 PR 新增的回归测试）
+- 然后通过 `./configure && make test` 跑完整测试套件。实践中，为了让它稳定可用，我们不得不排除一些经常失败的测试。好在 cpython 有一个叫 `EXTRATESTOPTS` 的环境变量，允许往测试套件传额外参数。我们就是用这个机制通过 `--ignore` 旗标来排除失败测试的。
 
-在下一节中，我们将展示如何并行化补丁的生成以及使用 Ray 的验证。
+下一节我们会展示如何用 Ray 把 patch 的生成和验证都并行化。
 
-## 链接使用 mini-swe-agent
+## 使用 mini-swe-agent
 
-在这篇博文的其余部分中，我们将使用 [mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent) 作为 AI 代理，因为它非常小，易于修改并支持不同的沙箱环境来执行代理操作。由于它的简单性，它也可以轻松地研究和适应软件工程之外的不同问题领域。 “mini-swe-agent”做出的一项设计决策使很多事情变得更容易，即代理的每个操作都是一个简单的“bash”命令，并且不需要[持久 shell 会话](https://mini-swe-agent.com/latest/faq/#why-no-shell-session)。此外，“mini-swe-agents”支持各种不同的隔离[环境]（https://github.com/SWE-agent/mini-swe-agent/tree/main/src/minisweagent/environments）：
+本文余下的部分我们使用 [mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent) 作为 AI agent，因为它非常精简、容易修改，并且支持把 agent 动作执行在多种沙箱环境里。也正因为简单，它很容易被研究并改造到软件工程之外的不同问题域。`mini-swe-agent` 有一个让很多事情都变容易的设计决策：agent 的每个动作就是一条简单的 `bash` 命令，不需要[持久的 shell 会话](https://mini-swe-agent.com/latest/faq/#why-no-shell-session)。此外，`mini-swe-agents` 支持多种不同的隔离[环境](https://github.com/SWE-agent/mini-swe-agent/tree/main/src/minisweagent/environments)：
 
-- 本地执行，仅执行“bash”命令中的每个命令，无需特殊隔离。在没有用户交互的情况下运行命令的设置中不建议这样做，但可以用于本地交互式使用，其中每个命令在执行之前都由用户检查。
-- 通过 [docker](https://www.docker.com/)、[podman](https://podman.io/) 或 [apptainer](https://apptainer.org/) 在容器环境中执行。如果我们想使用容器进行隔离，我们通常会选择podman，因为它不需要守护进程，并且可以配置为在各种环境中运行（包括容器内部以及非特权环境）。 Apptainer 可以成为在超级计算机上运行的良好环境。
-- 在由 [bubblewrap](https://github.com/containers/bubblewrap) 隔离的进程中执行，这允许在隔离的环境中运行，而无需设置和维护容器映像的开销。它通过[此环境]（https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/environments/extra/bubblewrap.py）支持。例如，我们将在下面使用它来运行 cpython 环境，并与[启动命令](https://github.com/SWE-agent/mini-swe-agent/pull/490) 结合使用，它可以用于设置更复杂的环境，例如使用 uv 的 Python 虚拟环境，用于在 Python 代码库上工作的软件工程代理。
+- 本地执行，即每条命令就在一个 `bash` 命令里执行，没有任何特殊隔离。在「命令不经用户确认就执行」的设定下不推荐这么用，但它可以用于本地交互式使用——每条命令在执行前由用户检查一遍。
+- 在容器环境里执行，可以通过 [docker](https://www.docker.com/)、[podman](https://podman.io/) 或 [apptainer](https://apptainer.org/)。如果我们想用容器做隔离，通常会选 podman，因为它不需要 daemon，而且可以配置成在各种环境里运行（包括容器内部以及无特权环境）。在超级计算机上运行时，apptainer 会是个不错的选择。
+- 在由 [bubblewrap](https://github.com/containers/bubblewrap) 隔离的进程里执行，这样就能在隔离环境中运行，又没有设置和维护容器镜像的开销。它通过[这个环境](https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/environments/extra/bubblewrap.py)得到支持。例如下面我们会用它来跑 cpython 环境；再配合一个[启动命令](https://github.com/SWE-agent/mini-swe-agent/pull/490)，它就能用来搭建更复杂的环境，比如为处理 Python 代码库的 agent 准备带 uv 的 Python 虚拟环境。
 
-要使用 podman 运行“mini-swe-agent”，您可以通过以下方式安装 podman：
+要在 podman 下运行 `mini-swe-agent`，你可以这样安装 podman：
+
 ```
 1sudo apt-get -y install podman
 2
@@ -111,21 +110,25 @@ In this blog post we adopted mini-swe-agent because it is extremely simple and h
 7sudo sed -i 's/^#ignore_chown_errors = "false"/ignore_chown_errors = "true"/' /etc/containers/storage.conf
 8# Depending on your execution environment (e.g. if some privileges are missing or if you need access to e.g. GPUs), you might also want to add some of the options from https://github.com/containers/podman/issues/20453#issuecomment-1912725982
 ```
-然后在签出 [https://github.com/SWE-agent/mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent) 的目录中，您可以运行
+
+然后在一个检出了 [https://github.com/SWE-agent/mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent) 的目录里，你可以运行
+
 ```
 1uv run --extra full mini-extra swebench --model openai/gpt-5-nano --subset verified --split test --workers 128 --output <output directory>
 ```
-要成功运行此特定基准测试，您应该在 `swebench.yaml` 中设置以下参数：在 `environment` 下，添加 `executable: "podman"` 以及 `timeout: 3600` 和 `pull_timeout: 1200`。
 
-对于此类需要拉取大量容器映像的工作负载，还建议使用具有本地 NVMe 磁盘的计算机。如果您在 Anyscale 上的 AWS 上运行，这些将自动配置为 RAID 阵列，以获得最佳性能。
+要顺利跑通这个特定基准，你应该在 `swebench.yaml` 里设置下面这些参数：在 `environment` 下加上 `executable: "podman"`，以及 `timeout: 3600` 和 `pull_timeout: 1200`。
 
-## Link使用 Ray 运行并行 SWE 模拟
+对于这类需要拉取大量容器镜像的负载，还建议使用带本地 NVMe 磁盘的机器。如果你在 AWS 上的 Anyscale 运行，这些磁盘会被自动[配置](https://docs.anyscale.com/configuration/compute/aws#nvme-configuration)成 RAID 阵列以获得最佳性能。
 
-在本节中，我们将向您展示如何使用 Ray 和 [mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent) 运行多个并行模拟。我们将重点关注上面介绍的“cpython”问题数据集上的 SWE-bench 风格的软件工程任务，但这些想法广泛适用于许多不同的模拟环境。
+## 用 Ray 运行并行的 SWE 模拟
 
-### Link从代理生成数据
+本节展示如何用 Ray 和 [mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent) 运行大量并行模拟。我们会聚焦 SWE-bench 风格、跑在上面介绍的 `cpython` issues 数据集上的软件工程任务，但这些思路可以广泛适用于许多不同的模拟环境。
 
-在本节中，我们将介绍一个简单而有效的代码示例，用于从代理生成推出数据。使用名为“Engine”的参与者，我们在集群中的每个节点上启动一个“vllm”或“sglang”服务器，并使用 Ray 任务“generate_rollout”（每个问题陈述一个任务）对其运行许多并行模拟。每个任务都使用 [mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent) 中的“swebench-single”脚本来执行部署。这种设置使推理设置变得简单，因为我们可以直接使用 vllm 和 `sglang` 的 CLI 来启动推理引擎。或者，也可以运行 llm 引擎的集中部署，例如使用 [Ray Serve LLM](https://docs.ray.io/en/latest/serve/llm/index.html) 并将模型公开到所有代理连接到的全局端点，或将 `sglang` 与 [sglang router](https://docs.sglang.ai/advanced_features/router.html) 一起使用。
+### 从 agent 生成数据
+
+本节给出一个简单却有效的代码示例，用于从 agent 生成 rollout 数据。我们用一个名为 `Engine` 的 actor，在集群里每个节点起一个 `vllm` 或 `sglang` 服务器，然后用 Ray 任务 `generate_rollout`——每个问题描述一个任务——并行地对它跑大量模拟。每个任务都使用来自 [mini-swe-agent](https://github.com/SWE-agent/mini-swe-agent) 的 `swebench-single` 脚本来执行 rollout。这样的设定让推理这一侧保持简单，因为我们直接可以用 vllm 和 `sglang` 的 CLI 来启动推理引擎。另一种做法是用 [Ray Serve LLM](https://docs.ray.io/en/latest/serve/llm/index.html) 中心化地部署 llm engine，把模型暴露成一个所有 agent 都连过去的全局 endpoint；或者用 `sglang` 配 [sglang router](https://docs.sglang.ai/advanced_features/router.html)。
+
 ```
 1import requests
 2import subprocess
@@ -208,17 +211,19 @@ In this blog post we adopted mini-swe-agent because it is extremely simple and h
 79
 80ray.get(results)
 ```
-对于此实验，我们将环境类设置为 [bubblewrap](https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/environments/extra/bubblewrap.py)。这将确保同一台计算机上运行的所有代理彼此隔离并与系统环境隔离。我们还将结果写入共享 NFS 卷，以便我们可以在下一步中进行进一步的后处理和过滤。一般来说，将轨迹文件和其他输出文件（如日志）写入 NFS 是一种有用的模式，它还允许我们检查部分运行，并在重新执行生成脚本时从中断处恢复。
 
-上述设置中有很多参数可以调整：一是vLLM引擎参数，包括各种形式的并行度，参见[vLLM优化指南](https://docs.vllm.ai/en/latest/configuration/optimization.html)。最佳设置通常取决于您的硬件以及您正在使用的模型架构。另一个需要调整的参数是每个引擎的代理数量。可以通过增加“generate_rollout”装饰器中的“num_cpus”参数来减少。在实践中，我们发现每个引擎 64 到 128 个代理效果良好。每个引擎的最佳代理数量取决于在环境中花费的时间（CPU 工作）和评估 LLM 所花费的时间（GPU 工作）的比率。该比率越高，需要的代理就越多，因此有足够大的批量大小以使推理引擎饱和。
+在这个实验里，我们把 environment class 设成了 [bubblewrap](https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/environments/extra/bubblewrap.py)。这会确保跑在同一台机器上的所有 agent 彼此隔离、也与系统环境隔离。我们还把结果写入一个共享的 NFS 卷，以便下一步做进一步的后处理和筛选。总的来说，把轨迹文件和其他输出文件（比如日志）写到 NFS 是一种有用的模式，它还让我们能对部分运行做 checkpoint，如果生成脚本被重新执行，就能从上次中断的地方接着跑。
 
-### Link对数据运行过滤和后处理
+上面的设定里有若干参数可以调。其一是 vLLM 引擎参数，包括各种形式的并行，见 [vLLM 优化指南](https://docs.vllm.ai/en/latest/configuration/optimization.html)。最佳设置通常取决于你的硬件以及你所使用的模型架构。另一个要调的参数是每个引擎承载的 agent 数量；把 `generate_rollout` 装饰器里的 `num_cpus` 参数调大就能降低它。实践中我们发现每个引擎 64 到 128 个 agent 效果不错。每个引擎的最优 agent 数，取决于在环境里花费的时间（CPU 工作）与评测 LLM 花费的时间（GPU 工作）之比；这个比值越高，需要的 agent 就越多，这样才有足够大的 batch size 把推理引擎喂饱。
 
-在本节中，我们将介绍如何使用 Ray 来过滤和后处理数据集以评估轨迹的质量，例如通过分配奖励。一般来说，每个问题实例运行一个 Ray 任务效果很好。如果使用单独的奖励模型，则可以按照与部署代理 LLM 类似的方式进行部署。对于更复杂的设置，使用 [Ray Data](https://docs.ray.io/en/latest/data/data.html) 和 [Ray Data LLM](https://docs.ray.io/en/latest/data/working-with-llms.html) 进行数据集准备可能是有意义的，因为评分和过滤是批量数据处理工作负载。
+### 对数据做筛选与后处理
 
-作为示例，我们将实现“cpython 问题数据集”部分中描述的验证过程。代理轨迹在上一步中生成并写入 NFS。在此步骤中，对于每个问题实例，我们提取代理生成的补丁，并针对完整的 cpython 测试套件进行测试，包括由人类在修复问题的“黄金 PR”中进行的回归测试（原始代理除非作弊，否则看不到）。如果修补后的代码通过了所有测试，则获得奖励 1，否则奖励为 0。根据设置，将验证作为部署过程的一部分或单独运行可能是有意义的。在博客文章的最后一部分中，我们将展示如何将部署和验证过程集成到 RL 框架中。
+本节介绍如何用 Ray 对数据集做筛选与后处理，以评估轨迹的质量，例如给每条轨迹分配一个奖励。一般每个问题实例跑一个 Ray 任务就够用了。如果要用一个独立的奖励模型，可以按部署 agent LLM 的类似方式把它部署起来。在更复杂的设定下，用 [Ray Data](https://docs.ray.io/en/latest/data/data.html) 和 [Ray Data LLM](https://docs.ray.io/en/latest/data/working-with-llms.html) 来做数据准备可能更合适，因为打分和筛选属于批处理式的数据负载。
 
-这是我们刚刚描述的验证过程的代码：
+作为例子，我们会实现「cpython issues 数据集」一节描述的那个验证流程。agent 轨迹已在上一步生成并写到了 NFS 上。在这一步，针对每个问题实例，我们抽出 agent 生成的 patch，并在完整的 cpython 测试套件上测试它，其中包含人类在「修复该 issue 的 golden PR」里提交的回归测试（除非原始 agent 作弊，否则它是看不到这些测试的）。如果打过补丁的代码通过了全部测试，就得到 1 的奖励，否则奖励为 0。视具体设定而定，把验证作为 rollout 流程的一部分、或者把它单独跑，都可能更合适。在本文最后一节，我们会展示如何把 rollout 与验证两个流程都集成进一个 RL 框架。
+
+下面是我们刚描述的验证流程的代码：
+
 ```
 1import json
 2from pathlib import Path
@@ -358,55 +363,59 @@ In this blog post we adopted mini-swe-agent because it is extremely simple and h
 136
 137ray.get(results)
 ```
-我们发现运行模拟时有用的一些技巧：
 
-- 将模拟的日志和输出写入 NFS 等分布式文件系统，以便可以检查部分进度，并且如果整个作业被抢占，则可以恢复进度（类似于传统数据处理中的行级检查点）。
-- 为模拟设置适当的内存限制，这样一个流氓特工就不会拖垮其他特工。如果使用基于轻量级进程的隔离，则可以通过将进程包装在“prlimit --as=<以字节为单位的内存限制> <命令>”中来完成。
-- 为了避免代理修改共享文件或系统文件，您可以使用容器映像或 bubblewrap 之类的命令，就像我们上面为代理模拟所做的那样。在我们的例子中，这对于评估来说不是必需的，因为“cpython”测试套件的多个实例可以同时运行而不会互相干扰。
+我们发现在跑这些模拟时，有几个技巧很有用：
 
-要设置软件工程依赖项（例如，在本示例中用于编译“python3”），您可以使用包含以下命令的容器文件：
+- 把模拟的日志和输出写到 NFS 这类分布式文件系统里，这样部分进度可以被查看，整个作业被抢占后也能接着跑（类似于传统数据处理里的行级 checkpoint）。
+- 给模拟设置合适的内存上限，这样一个失控的 agent 不会把别的 agent 一起带崩。如果用的是轻量的、基于进程的隔离，可以把进程包在 `prlimit --as=<memory limit in bytes> <command>.` 里来实现。
+- 要避免共享文件或系统文件被 agent 改掉，你可以用容器镜像，或者像我们上面为 agent 模拟做的那样用 bubblewrap 这类命令。在我们的例子里，评估阶段并不需要这样做，因为 `cpython` 测试套件的多个实例可以同时运行而不互相干扰。
+
+要准备软件工程的依赖（例如本例里编译 `python3` 所需的依赖），你可以用一个 container file，里面写这样的命令：
+
 ```
 1RUN sudo sed -i 's/# deb-src/deb-src/' /etc/apt/sources.list
 2RUN sudo apt update
 3RUN sudo apt build-dep -y python3
 ```
-- 我们发现以 Huggingface 数据集的形式标准化初始问题陈述的数据集非常有用，然后为每个问题实例在 NFS 上创建一个文件夹，当我们经历不同的处理阶段时，额外的输出会写入其中，在我们的例子中生成和评分推出。
 
-Anyscale 的任务仪表板为您提供了一种监控代理执行情况的便捷方法：
+- 我们发现，把初始问题描述用一个 huggingface dataset 的形式标准化非常有用；然后为每个问题实例在 NFS 上建一个文件夹，随着处理推进到不同阶段（在我们的例子里是生成 rollout 与给 rollout 打分），把额外的输出陆续写进去。
 
-![任意规模仪表板](https://images.ctfassets.net/xjan103pcp94/BLyVfRozKV2VlNrQrHJNo/9d5cdea359205b0fe2e048feb26cef05/Screenshot_2025-08-19_at_12.14.46â__PM.png)
+Anyscale 的任务 dashboard 为你提供了一种便捷的方式来监控 agent 的执行：
 
-任意规模的仪表板
+![Anyscale dashboard](https://images.ctfassets.net/xjan103pcp94/BLyVfRozKV2VlNrQrHJNo/9d5cdea359205b0fe2e048feb26cef05/Screenshot_2025-08-19_at_12.14.46â__PM.png)
 
-使用仪表板的指标页面，您还可以确定哪些资源是执行的瓶颈（例如磁盘吞吐量、网络吞吐量、CPU 或 GPU 内存容量、CPU 或 GPU 计算吞吐量），并选择最适合您的特定工作负载的实例，或超额订阅某些资源（如 CPU）。
+Anyscale dashboard
 
-我们现在介绍我们的评估结果。我们首先通过评估每个“base_commit”的完整测试套件来评估测试通过率的上限。这产生了测试通过率，无需LLM建议的任何补丁。请注意，可以通过更细粒度地排除测试或改进测试环境来提高上限。然后，我们运行两个模型：Qwen3 Coder 30B 和 Qwen3 235B，并记录每个模型生成的补丁针对完整测试套件（包括每个 PR 的黄金回归测试）的通过率。如果模型对每个问题实例进行 3 次尝试并且仅计算最成功的尝试，我们还会记录通过率。这些运行的轨迹可用于监督微调，为更多运行和进一步微调生成更好的基线。
+借助 dashboard 的 metrics 页面，你还能判断是哪类资源成了执行的瓶颈（例如磁盘吞吐、网络吞吐、CPU 或 GPU 的显存容量、CPU 或 GPU 的计算吞吐），从而为你的具体负载挑选最合适的实例类型，或者对 CPU 这类资源做超额订阅。
 
-在接下来的实验中，我们使用了 0.7 的温度，因为它对于 qwen3 来说比 `mini-swe-agent` 使用的默认温度 0.0 更有效。
+下面给出我们评测的结果。我们首先评测测试通过率的天花板：对每个 `base_commit` 跑一遍完整测试套件，得到在没有任何 LLM 提出补丁时的测试通过率。注意这个天花板可以通过更细粒度地排除测试、或改进测试环境来抬高。然后我们跑两个模型，Qwen3 Coder 30B 和 Qwen3 235B，并记录每个模型生成的补丁在完整测试套件（包含每个 PR 的 golden 回归测试）上的通过率。我们还记录了「每个问题实例给模型 3 次机会、只算最成功的那一次」时的通过率。这些运行的轨迹可以用于监督微调，从而生成一个更好的基线，供更多轮运行和进一步微调使用。
 
-| **型号** | **通过率** | **3 次推出的通过率** |
-| ---| ---| ---|
-|测试通过率上限| 64.3% | — |
+在下面的实验中，我们把 temperature 设为 0.7，因为对 qwen3 而言它比 `mini-swe-agent` 默认使用的 0.0 更有效。
+
+| **模型** | **通过率** | **3 次 rollout 的通过率** |
+| --- | --- | --- |
+| 测试通过率天花板 | 64.3% | — |
 | Qwen/Qwen3-235B-A22B-Instruct-2507-FP8 | 46.0% | 50.8% |
-| Qwen/Qwen3-Coder-30B-A3B-指令 | 36.1% | 49.9% |
+| Qwen/Qwen3-Coder-30B-A3B-Instruct | 36.1% | 49.9% |
 
-正如您所看到的，虽然模型在解决这些任务方面相当有效，但仍然有改进的机会。
+可以看到，虽然这些模型解决这类任务已经相当有效，但仍有提升的空间。
 
-我们还展示了系统性能扩展数字——我们使用 c7a.32xlarge 节点来评估完整的 cpython 数据集。正如您所看到的，执行时间与 CPU 数量呈线性关系：
+我们也给出系统性能的扩展数据——评测完整 cpython 数据集时我们用的是 c7a.32xlarge 节点。可以看到执行时间随 CPU 数量线性扩展：
 
-| **节点数量（CPU 数量）** | **执行时间** |
-| ---| ---|
-| 8 个节点（1024 个 CPU）| 2小时31分钟 |
-| 4 个节点（512 个 CPU）| 5小时9米|
-| 2 个节点（256 个 CPU）| 10 小时 21 分钟 |
+| **节点数（CPU 数）** | **执行时间** |
+| --- | --- |
+| 8 个节点（1024 个 CPU） | 2 小时 31 分 |
+| 4 个节点（512 个 CPU） | 5 小时 9 分 |
+| 2 个节点（256 个 CPU） | 10 小时 21 分 |
 
-### Link使用 SkyRL 运行端到端强化学习
+### 用 SkyRL 跑端到端 RL
 
-在本节中，我们将举例说明如何将此方法与 Ray 上运行的现有 RL 库集成。此类 RL 库有[许多选项](https://www.anyscale.com/blog/open-source-rl-libraries-for-llms)。我们选择 SkyRL 来展示集成，因为它对自定义生成器有很好的支持。
+本节给出一个例子，说明这套方法如何与运行在 Ray 上的现有 RL 库集成。这样的 RL 库[有很多可选](https://www.anyscale.com/blog/open-source-rl-libraries-for-llms)。我们选 SkyRL 来演示集成，因为它对自定义 generator 的支持很好。
 
-Mini-SWE-Agent 与 SkyRL 的集成可以在[此处](https://github.com/NovaSky-AI/SkyRL/pull/222)找到。使用 SkyRL，训练堆栈以模块化方式设计，具有两个主要组件：[训练器和生成器](https://skyrl.readthedocs.io/en/latest/getting-started/overview.html)。在本例中，我们自定义生成器以使用 Mini-SWE-Agent 来生成 SWE-Bench 任务的轨迹。
+Mini-SWE-Agent 与 SkyRL 的集成可以在[这里](https://github.com/NovaSky-AI/SkyRL/pull/222)找到。在 SkyRL 里，训练栈是模块化设计的，有两个主要组件：[训练器与生成器](https://skyrl.readthedocs.io/en/latest/getting-started/overview.html)。在这个例子里，我们定制 generator，改用 Mini-SWE-Agent 来为 SWE-Bench 任务生成轨迹。
 
-在高层次上，我们使用自定义的“generate”方法实现“MiniSweAgentGenerator”来生成一批轨迹：
+从整体上看，我们实现了一个 `MiniSweAgentGenerator`，用一个自定义的 `generate` 方法来生成一批轨迹：
+
 ```
 1class MiniSweAgentGenerator(SkyRLGymGenerator):
 2	async def generate_trajectory(self, prompt, ...): 
@@ -426,14 +435,16 @@ Mini-SWE-Agent 与 SkyRL 的集成可以在[此处](https://github.com/NovaSky-A
 16
 17	       all_outputs = await asyncio.gather(*tasks)
 ```
-在“generate_trajectory”中，我们启动 Ray 任务来生成轨迹并针对给定实例对其进行评估。更具体地说，这包括以下内容：
 
-- 生成：为实例初始化沙箱/环境，使用 Mini-SWE-Agent 在此环境中生成轨迹。为了进行推理，我们将 Mini-SWE-Agent 配置为使用 SkyRL 提供的 HTTP 端点。生成完成后存储生成的 git 补丁。
-- 评估：使用给定后端为给定实例初始化一个新环境。将模型的 git 补丁应用到环境中的工作目录。运行实例的评估脚本。如果脚本成功运行，则认为实例已解析，否则视为未解析。
+在 `generate_trajectory` 里，我们启动一个 Ray 任务，为给定的实例生成一条轨迹并做评估。更具体地说，它包括以下内容：
 
-通过将此工作流程作为 Ray 任务运行，我们还能够在 Ray 集群中的所有节点上扩展生成。
+- 生成：为该实例初始化一个沙箱 / 环境用 Mini-SWE-Agent 在该环境里生成一条轨迹。推理方面，我们把 Mini-SWE-Agent 配置成使用 SkyRL 提供的 HTTP endpoint。生成完成后保存所生成的 git patch。
+- 评估：使用给定的 backend 为该实例初始化一个全新的环境。把模型的 git patch 应用到环境中的工作目录。运行该实例的评估脚本。如果脚本运行成功，就认为该实例已被解决，否则视为未解决。
 
-从较高层次来看，代码如下所示：
+把这套工作流作为 Ray 任务来跑，也让我们能够把所有节点上的生成能力都扩上去。
+
+从整体上看，代码大致如下：
+
 ```
 1@ray.remote(num_cpus=0.01)
 2def init_and_run(instance: dict, litellm_model_name: str, sweagent_config: dict, data_source):
@@ -458,52 +469,15 @@ Mini-SWE-Agent 与 SkyRL 的集成可以在[此处](https://github.com/NovaSky-A
 21        )
 22        ...
 ```
-请注意，完整的实现有一些用于配置和错误处理的附加逻辑，可以在[此处](https://github.com/NovaSky-AI/SkyRL/pull/222)找到。
 
-有关更多信息，请参阅[此处的文档](https://skyrl.readthedocs.io/en/latest/examples/mini_swe_agent.html)。
+请注意，完整实现还包含一些用于配置和错误处理的额外逻辑，可以在[这里](https://github.com/NovaSky-AI/SkyRL/pull/222)找到。
 
-## 链接结论
+更多信息请参阅[这里的文档](https://skyrl.readthedocs.io/en/latest/examples/mini_swe_agent.html)。
 
-在这篇博文中，我们展示了如何使用 Ray 大规模运行代理模拟，以生成轨迹、评估和训练代理。 Ray 的灵活性使我们能够在单个集群中运行所有相关工作负载（数据处理、模型服务和训练），这简化了开发和实验设置，并允许我们扩展到大量问题实例。简单高效的沙箱可以轻松大规模运行各种代理工作负载。
+## 结论
 
-博客文章中显示的所有示例都可以在 [Anyscale](https://www.anyscale.com/) 中开箱即用。由于 Ray 的分布式特性，使用 [MCP 服务器](https://console.anyscale.com/template-preview/mcp-ray-serve) 等多个组件来部署和评估代理来解决给定问题也很容易。
+本文展示了如何用 Ray 大规模运行 agentic 模拟，来生成轨迹、评估 agent 并训练 agent。Ray 的灵活性让我们能把所有相关负载（数据处理、模型服务与训练）跑在同一个集群里，这简化了开发与实验的搭建，也让我们能把问题实例的数量扩到非常大的规模。简单高效的沙箱机制，让各种各样的 agentic 负载都能轻松地在规模化环境里运行。
 
-本博文中的技术既可以作为管道的单独步骤独立运行，也可以作为不同 [RL 库](https://www.anyscale.com/blog/open-source-rl-libraries-for-llms) 的一部分进行集成。 [SkyRL](https://github.com/NovaSky-AI/SkyRL) 由于其灵活的生成器框架而使这变得容易，我们在博客文章中提供了一个示例。
+本文展示的所有示例都能在 [Anyscale](https://www.anyscale.com/) 上开箱即用。由于 Ray 的分布式特性，部署和评估由多个组件构成的 agent（例如用 [MCP servers](https://console.anyscale.com/template-preview/mcp-ray-serve) 来解决某个问题）也很容易。
 
-＃＃＃＃ 目录
-
-- [隔离并行代理模拟](https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#isolated-parallel-agentic-simulations)
-- [用于代理模拟的代理支架](https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#agent-scaffolds-for-agentic-simulations)
-- [cpython 问题数据集](https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#the-cpython-issues-dataset)
-- [使用 mini-swe-agent](https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#using-mini-swe-agent)
-- [使用 Ray 运行并行 SWE 模拟](https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#running-parallel-swe-simulations-with-ray)
-- [从代理生成数据](https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#generate-data-from-agents)
-- [对数据运行过滤和后处理](https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#running-filtering-and-post-processing-on-the-data)
-- [使用 SkyRL 运行端到端强化学习](https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#running-end-to-end-rl-with-skyrl)
-- [结论](https://www.anyscale.com/blog/massively-parallel-agentic-simulations-with-ray#conclusion)
-
-####分享
-
-####标签
-
-#### 注册产品更新
-
-####推荐内容
-
-![LLM Graph 的开源 RL 库](https://images.ctfassets.net/xjan103pcp94/3DTHR8PtMcYFYkFUnZVjTH/8aa576362b47aedbce2859583737dca6/image1.png?w=140)强化学习 (RL) 库的架构分为两个主要组成部分：生成和训练。在生成阶段，LLM 引擎在环境中执行多轮部署以生成数据和奖励信号。然后将该输出输入训练阶段以更新模型的参数。这个过程形成了一个反馈循环，其中逐步改进的模型生成下一次数据迭代以进行持续细化。
-
-#### LLM的开源强化学习库
-
-![kuberay-products-best-practices-field](https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-products-best-practices-field.png?w=140)
-
-#### 生产中的 KubeRay：现场最佳实践
-
-![宣布 Ray 在 Google TPU 上支持 PyTorch](https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140)
-
-#### 宣布 Ray 在 Google TPU 上支持 PyTorch
-
-## 立即探索 Anyscale
-
-使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。
-
-[免费开始](https://authkit.anyscale.com/?utm_source=anyscale&utm_content=exploreblock&utm_medium=website&utm_campaign=cta)[与专家交谈](https://www.anyscale.com/book/demo?utm_source=anyscale&utm_content=exploreblock&utm_medium=website&utm_campaign=cta)
+本文的这些技术既可以作为流水线中各自独立的步骤来跑，也可以集成为不同 [RL 库](https://www.anyscale.com/blog/open-source-rl-libraries-for-llms)的一部分。[SkyRL](https://github.com/NovaSky-AI/SkyRL) 凭借其灵活的 generator 框架让这件事变得简单，我们在本文里给出了一个相应的例子。

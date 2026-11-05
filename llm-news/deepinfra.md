@@ -9,9 +9,9 @@
 
 ## 全部文章（共 54 篇，按日期倒序；无日期条目列于最后）
 
-1. [MiMo-V2.6-Pro: Model Documentation & Integration Guide](https://deepinfra.com/blog/mimo-v2-6-pro-model-documentation-integration-guide)（2026-11-04）
+1. [MiMo-V2.6-Pro：模型文档与集成指南](https://deepinfra.com/blog/mimo-v2-6-pro-model-documentation-integration-guide)（2026-11-04） <!--orig:MiMo-V2.6-Pro: Model Documentation & Integration Guide-->
 2. [通过 NVIDIA 启动计划支持下一波 AI 初创公司](https://deepinfra.com/blog/nvidia-inception-deepstart)（2026-11-04） <!--orig:Supporting the Next Wave of AI Startups with the NVIDIA Inception Program-->
-3. [MiMo-V2.6-Pro Guide: Performance, Pricing & Providers](https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide)（2026-11-03）
+3. [MiMo-V2.6-Pro 指南：性能、价格与提供商](https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide)（2026-11-03） <!--orig:MiMo-V2.6-Pro Guide: Performance, Pricing & Providers-->
 4. [MiMo-V2.6-Pro 定价指南：开发者成本拆解](https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide)（2026-11-02） <!--orig:MiMo-V2.6-Pro Pricing Guide: Developer Cost Breakdown-->
 5. [MiMo-V2.6-Pro 现已登陆 DeepInfra](https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra)（2026-11-01） <!--orig:MiMo-V2.6-Pro Is Now Available on DeepInfra-->
 6. [开放模型为什么在发布数周后才提速](https://deepinfra.com/blog/why-open-models-get-faster)（2026-10-31） <!--orig:Why Open Models Get Faster Weeks After Launch-->

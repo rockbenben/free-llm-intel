@@ -14,7 +14,7 @@
 3. [专业智力指数简介](https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks) <!--orig:Introducing the Specialized Intelligence Index-->
 4. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/llm-model-routing-deepswe) <!--orig:The frontier isn’t a model. It’s a router.-->
 5. [Kimi K3.1 Pro is live on Fireworks](https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/)
-6. [Fireworks 在 Forge 上推出新产品，帮助企业打造专业智能](https://fireworks.ai/blog/fireworks-unveils-new-products-at-forge-to-help-companies-build-specialized-intelligence/) <!--orig:Fireworks unveils new products at Forge to help companies build specialized intelligence-->
+6. [Fireworks 在 Forge 发布新产品，帮企业构建专用智能](https://fireworks.ai/blog/fireworks-unveils-new-products-at-forge-to-help-companies-build-specialized-intelligence/) <!--orig:Fireworks unveils new products at Forge to help companies build specialized intelligence-->
 7. [Fireworks 上线 Muse Spark Open：Meta 的开放权重模型，跑在美国 serverless 上](https://fireworks.ai/blog/meta-muse-spark-open/) <!--orig:Muse Spark Open on Fireworks: Meta’s open weights model, available on US serverless-->
 8. [Fireworks 上的 Kimi K3：前沿规模的高速 RL](https://fireworks.ai/research/kimi-k3-on-fireworks-fast-rl-at-frontier-scale/) <!--orig:Kimi K3 on Fireworks: Fast RL at frontier scale-->
 9. [强化学习：为什么数值与 MoE 路由的对齐如此重要](https://fireworks.ai/blog/reinforcement-learning-why-alignment-of-numerics-and-MoE-routing-matter/) <!--orig:Reinforcement learning: Why alignment of numerics and MoE routing matter-->

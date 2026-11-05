@@ -9,8 +9,8 @@
 
 ## 全部文章（共 96 篇，按日期倒序；无日期条目列于最后）
 
-1. [Together Compiler：AI推理的持续编译](https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference)（2026-11-04） <!--orig:Together Compiler: Continual Compilation for AI inference-->
-2. [多态推理：开放模型的自调整推理](https://www.together.ai/blog/polymorphic-inference)（2026-11-04） <!--orig:Polymorphic Inference: self-tuning inference for open models-->
+1. [Together Compiler：面向 AI 推理的持续编译](https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference)（2026-11-04） <!--orig:Together Compiler: Continual Compilation for AI inference-->
+2. [Polymorphic Inference：面向开放模型的自动调优推理](https://www.together.ai/blog/polymorphic-inference)（2026-11-04） <!--orig:Polymorphic Inference: self-tuning inference for open models-->
 3. [Together GPU 集群自动修复：从 GPU 故障到健康节点](https://www.together.ai/blog/auto-repair-for-together-gpu-clusters)（2026-10-27） <!--orig:Auto repair for Together GPU Clusters: from GPU fault to healthy node-->
 4. [Together Post-Training 上线：按你的方式做前沿级模型后训练](https://www.together.ai/blog/together-post-training)（2026-10-19） <!--orig:Together Post-Training: frontier-grade model shaping, the way that fits you-->
 5. [Meta Muse Spark Open 已在 Together AI 上线](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15） <!--orig:Meta Muse Spark Open is live on Together AI-->

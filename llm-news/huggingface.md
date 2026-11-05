@@ -10,11 +10,11 @@
 
 ## 全部文章（共 917 篇，按日期倒序；无日期条目列于最后）
 
-1. [Dharma 字段提取器：任何文档输入，JSON 输出中的结构化字段](https://huggingface.co/blog/Dharma-AI/dharma-field-extractor)（2026-11-04） <!--orig:Dharma Field Extractor: Any Document In, Structured Fields in JSON Out-->
-2. [StateBench：测试语言模型如何跟踪长文档的状态变化](https://huggingface.co/blog/allenai/statebench)（2026-11-03） <!--orig:StateBench: Testing how language models track state changes over long documents-->
-3. [Palette：教一个小模型用你的设计语言构建牌组](https://huggingface.co/blog/ibm-research/palette-deck-building)（2026-11-03） <!--orig:Palette: teaching a small model to build decks in your design language-->
-4. [CWE-bench v2: More coverage, quality, and transparency](https://huggingface.co/blog/cwe-bench)（2026-11-03）
-5. [Transformers 模型集成合约](https://huggingface.co/blog/transformers-mic)（2026-11-03） <!--orig:Transformers Model Integration Contracts-->
+1. [Dharma Field Extractor：任意文档进，结构化 JSON 字段出](https://huggingface.co/blog/Dharma-AI/dharma-field-extractor)（2026-11-04） <!--orig:Dharma Field Extractor: Any Document In, Structured Fields in JSON Out-->
+2. [StateBench：测语言模型如何跟踪长文档里的状态变化](https://huggingface.co/blog/allenai/statebench)（2026-11-03） <!--orig:StateBench: Testing how language models track state changes over long documents-->
+3. [Palette：教小模型用你的设计语言做幻灯片](https://huggingface.co/blog/ibm-research/palette-deck-building)（2026-11-03） <!--orig:Palette: teaching a small model to build decks in your design language-->
+4. [CWE-bench v2：覆盖率、质量与透明度](https://huggingface.co/blog/cwe-bench)（2026-11-03） <!--orig:CWE-bench v2: More coverage, quality, and transparency-->
+5. [Transformers 模型集成契约](https://huggingface.co/blog/transformers-mic)（2026-11-03） <!--orig:Transformers Model Integration Contracts-->
 6. [Nemotron 万圣节](https://huggingface.co/blog/nvidia/nemotron-halloween)（2026-10-30） <!--orig:nemotron-halloween-->
 7. [Granite Switch 4.1.1 — 像更新软件一样更新模型](https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1)（2026-10-29） <!--orig:Granite Switch 4.1.1 — Update models like you update software-->
 8. [宣布 ProtoStar 项目：让公共资助的科研 AI 做好准备](https://huggingface.co/blog/announcing-project-protostar)（2026-10-29） <!--orig:Announcing Project ProtoStar: Making Publicly Funded Science AI-Ready-->

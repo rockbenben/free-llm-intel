@@ -9,8 +9,8 @@
 
 ## 全部文章（共 74 篇，按日期倒序；无日期条目列于最后）
 
-1. [培训后案例研究：与 Deel 一起获得全球薪资的前沿情报](https://www.ai21.com/blog/ai21-deel-case-study/)（2026-11-04） <!--orig:Post-training case study: Reaching frontier-level intelligence on global payroll with Deel-->
-2. [培训后案例研究：与 Alice 一起达到前沿级攻击弹性](https://www.ai21.com/blog/ai21-alice-case-study/)（2026-11-02） <!--orig:Post-training case study: Reaching frontier-level attack resilience with Alice-->
+1. [后训练案例研究：与 Deel 一起把全球薪资情报做到前沿级](https://www.ai21.com/blog/ai21-deel-case-study/)（2026-11-04） <!--orig:Post-training case study: Reaching frontier-level intelligence on global payroll with Deel-->
+2. [后训练案例研究：与 Alice 一起达到前沿级攻击韧性](https://www.ai21.com/blog/ai21-alice-case-study/)（2026-11-02） <!--orig:Post-training case study: Reaching frontier-level attack resilience with Alice-->
 3. [为什么我们在训练前先构建指令遵循基准](https://www.ai21.com/blog/lift-bench-blog/)（2026-10-25） <!--orig:Why we built a benchmark before training for instruction following-->
 4. [我们如何将 GitLab Duo Code Review 的成本降低 98%](https://www.ai21.com/blog/gitlab-case-study/)（2026-10-22） <!--orig:How we cut GitLab Duo Code Review’s cost by 98%-->
 5. [与 NVIDIA、Gong、Deel 和 Alice 合作，后训练 Nemotron 3.5 Super](https://www.ai21.com/blog/ai21-post-trains-nvidia-nemotron-35-super-vl/)（2026-10-15） <!--orig:AI21 Partners with Gong, Deel and Alice to Post-Train Specialized Models on NVIDIA Nemotron 3.5 Super VL-->

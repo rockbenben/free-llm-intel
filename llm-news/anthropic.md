@@ -10,7 +10,7 @@
 
 ## 全部文章（共 136 篇，按日期倒序；无日期条目列于最后）
 
-1. [Claude Marketplace 上用于安全、生产力和创造性工作的新代理和产品](https://claude.com/resources/articles/new-agents-and-products-claude-marketplace)（2026-11-04） <!--orig:New agents and products for security, productivity, and creative work on Claude Marketplace-->
+1. [Claude Marketplace 上新增的安全、生产力与创意类 agent 和产品](https://claude.com/resources/articles/new-agents-and-products-claude-marketplace)（2026-11-04） <!--orig:New agents and products for security, productivity, and creative work on Claude Marketplace-->
 2. [用 message threads 让长时间运行的 agent 更快](https://claude.com/resources/articles/message-threads)（2026-11-02） <!--orig:Make long-running agents faster with message threads-->
 3. [Claude Enterprise 的智能报告、调查与共享群组预算](https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets)（2026-10-28） <!--orig:Smart reports, surveys, and pooled group budgets for Claude Enterprise-->
 4. [IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude](https://claude.com/resources/articles/idc-brings-quanta-into-claude-and-adopts-claude-across-the-company)（2026-10-28） <!--orig:IDC brings Quanta into Claude and adopts Claude across the company-->

@@ -9,8 +9,8 @@
 
 ## 全部文章（共 55 篇，按日期倒序；无日期条目列于最后）
 
-1. [现在可通过单个 API 在 OpenRouterAccess Cohere 最先进的检索模型上嵌入 5 和 Rerank 5，并进行统一计费，无需额外的 SDK。](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04） <!--orig:Embed 5 and Rerank 5 now on OpenRouterAccess Cohere’s state-of-the-art retrieval models through a single API, with unified billing and no additional SDKs.-->
-2. [全球领先的开放模式，完全由您掌控正确的模式适合正确的工作，一切都在您的管辖之下。](https://cohere.com/blog/open-source-model-vault)（2026-11-03） <!--orig:The world's leading open models, fully under your controlThe right model for the right job, all under your jurisdiction.-->
+1. [Embed 5 与 Rerank 5 现已上线 OpenRouter](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04） <!--orig:Embed 5 and Rerank 5 now on OpenRouterAccess Cohere’s state-of-the-art retrieval models through a single API, with unified billing and no additional SDKs.-->
+2. [全球领先的开放模型，完全由你掌控](https://cohere.com/blog/open-source-model-vault)（2026-11-03） <!--orig:The world's leading open models, fully under your controlThe right model for the right job, all under your jurisdiction.-->
 3. [在 AWS 上用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29） <!--orig:Build a financial research assistant with Cohere on AWS-->
 4. [谁来建设 AI 前沿：民主世界为何需要更多前沿 AI 建设者，以及我们打算如何竞争](https://cohere.com/blog/who-gets-to-build-the-frontier-for-ai)（2026-10-29） <!--orig:Who Gets to Build the Frontier for AI-->
 5. [North 的 PitchBook：面向企业团队的私募市场情报](https://cohere.com/blog/pitchbook-integration)（2026-10-26） <!--orig:PitchBook in North: Private market intelligence for enterprise teams-->
