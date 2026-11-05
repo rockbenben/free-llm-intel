@@ -10469,6 +10469,22 @@ class TestTranslationQc(unittest.TestCase):
         self.assertEqual(res["hard"], 1, res["files"])
         self.assertIn("品牌被机翻", res["files"][0]["hard"][0])
 
+    def test_brand_word_boundary_skips_longer_plain_word(self):
+        # `Modularity` 是普通名词，不是厂商 Modular：中文「模块化」没错，不该报 HARD。
+        # 实测 anyscale/9cfca6565da1.md 的表格有 7 处 `modularity`，子串匹配全被误报。
+        brand = (("Modular", re.compile(r"模块化")),)
+        res = self._run("Modularity, flexibility and scalability matter.",
+                        "模块化、灵活性与可扩展性很重要。", brand_patterns=brand)
+        self.assertEqual(res["hard"], 0, res["files"])
+
+    def test_brand_word_boundary_still_catches_standalone_brand(self):
+        # 反向夹具：词边界没把真正的品牌漏掉，别为了消误报把检出能力一起关了。
+        brand = (("Modular", re.compile(r"模块化")),)
+        res = self._run("Modular is a vendor.", "模块化是一家厂商。",
+                        brand_patterns=brand)
+        self.assertEqual(res["hard"], 1, res["files"])
+        self.assertIn("品牌被机翻", res["files"][0]["hard"][0])
+
     def test_replacement_character_is_hard(self):
         res = self._run("Intro.", "介绍\ufffd。")
         self.assertEqual(res["hard"], 1, res["files"])

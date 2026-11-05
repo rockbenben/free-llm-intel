@@ -2202,7 +2202,11 @@ def translation_qc_pair(root: Path, zh_rel: str, *, brand_patterns=()) -> dict:
 
     covered: list[tuple[int, int]] = []
     for brand, pat in brand_patterns:
-        if brand not in en:
+        # 用词边界而不是子串：`Modularity` 里的 `Modular` 是普通词，子串匹配会把
+        # 正确的「模块化」判成品牌音译（实测 anyscale 一篇全是 `modularity` 的表格
+        # 被误报 HARD，7 处普通名词一一对应 7 处「模块化」）。代价是复数形态
+        # （如 `LLMs`）不再命中 —— 宁可漏报，也不能把正确译文判坏、逼人改错。
+        if not re.search(r"\b%s\b" % re.escape(brand), en):
             continue
         for m in pat.finditer(zh):
             if any(not (m.end() <= a or m.start() >= b) for a, b in covered):

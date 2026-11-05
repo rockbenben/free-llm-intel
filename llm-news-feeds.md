@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-05 22:07:05**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-05 22:48:19**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -346,7 +346,7 @@
   2. [Ember-1 发布](https://fireworks.ai/blog/ember-1)
   3. [专业智力指数简介](https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks)
   4. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/llm-model-routing-deepswe)
-  5. [Kimi K3.1 Pro is live on Fireworks](https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/)
+  5. [Kimi K3.1 Pro 上线 Fireworks](https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/)
   - 📄 完整文章归档（共 39 篇）：[fireworks_ai.md](llm-news/fireworks_ai.md)
 
 ### DeepInfra (deepinfra)
@@ -355,7 +355,7 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
   1. [MiMo-V2.6-Pro：模型文档与集成指南](https://deepinfra.com/blog/mimo-v2-6-pro-model-documentation-integration-guide)（2026-11-04）
-  2. [通过 NVIDIA 启动计划支持下一波 AI 初创公司](https://deepinfra.com/blog/nvidia-inception-deepstart)（2026-11-04）
+  2. [借助 NVIDIA Inception 计划支持下一波 AI 初创公司](https://deepinfra.com/blog/nvidia-inception-deepstart)（2026-11-04）
   3. [MiMo-V2.6-Pro 指南：性能、价格与提供商](https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide)（2026-11-03）
   4. [MiMo-V2.6-Pro 定价指南：开发者成本拆解](https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide)（2026-11-02）
   5. [MiMo-V2.6-Pro 现已登陆 DeepInfra](https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra)（2026-11-01）
