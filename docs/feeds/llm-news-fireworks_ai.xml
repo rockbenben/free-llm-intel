@@ -3,7 +3,7 @@
   <channel>
     <title>Fireworks AI · 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>Fireworks AI 官方博客 / 更新日志归档（最近 50 条，共 29 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>Fireworks AI 官方博客 / 更新日志归档（最近 50 条，共 30 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml" rel="self" type="application/rss+xml"/>
@@ -201,6 +201,75 @@
 <p><strong>关于成本。</strong> 本分析中的所有成本数据都来自 DeepSWE 排行榜公布的按模型数值。公开 trials 文件里的原始 cost_usd 与榜单显示的数值并不一致，对 DeepSeek 家族来说相差数倍，因此我们对每个模型的单任务成本做了缩放，使其均值与公布数值一致。准确率来自每个任务-模型对的四次原始 rollout，成本则来自榜单。</p>
 <p>来源：DeepSWE v1.1 trials，2026 年 9 月 17 日刷新。113 个任务，18 个模型各自采用其可得的最佳配置，2,034 个模型-任务单元。</p>
 <ul><li><a href="https://fireworks.ai/blog?blogTypes=Perspective">观点</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Kimi K3.1 Pro is live on Fireworks</title>
+      <link>https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/</guid>
+      <content:encoded><![CDATA[<p>Moonshot AI 的 <a href="https://fireworks.ai/models/fireworks/kimi-k3p1-pro">Kimi K3.1 Pro</a> 在 Fireworks 上推出。您可以在无服务器上以按令牌付费的定价方式使用它，也可以在预留容量的专用部署上运行它。</p>
+<h2>K3.1 Pro 的新功能</h2>
+<p>在我们的 <a href="https://fireworks.ai/specialized-intelligence-index/">专业智能指数</a> 评估中，K3.1 Pro 是 Legacy Bench 和 CorporateBench 上最快的型号，在 ORCA 上排名第二。 Moonshot 对 K3 的 K3.1 Pro 进行了后训练，并将 K3 的全注意力层替换为稀疏注意力层，这使得长上下文的服务效率更高。主要规格：</p>
+<p>规格</p>
+<p>基米K3.1 Pro</p>
+<p>方式</p>
+<p>文字与视觉</p>
+<p>总参数</p>
+<p>2.78吨</p>
+<p>有效参数</p>
+<p>104B</p>
+<p>输入上下文长度</p>
+<p>1040k 代币</p>
+<p>专家</p>
+<p>896（每个代币 16 个活跃）</p>
+<p>注意</p>
+<p>Kimi Delta Attention + Gated DeepSeek Sparse Attention</p>
+<h2>它在专业智力指数上的表现如何</h2>
+<p>我们在 Fireworks <a href="https://fireworks.ai/specialized-intelligence-index/">专业智能指数</a> (SII) 上评估了 K3.1 Pro：由 Sierra、Harvey 和 Rogo 等公司构建的基准，以选择他们在生产中运行的模型。</p>
+<p>K3.1 Pro 在其中五项基准测试中处于质量与成本前沿：没有一款型号在不增加成本的情况下得分更高。</p>
+<p>![Sierra τ³-Banking 上的 Kimi K3.1 Pro，得分与成本试用](https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2 Fhorizon%2F93ec1e20bba65b3443d63b82dde4edbd420b1e08-3600x2325.png%3Fauto%3Dformat&amp;w=3840&amp;q=75)</p>
+<p>图 1：Kimi K3.1 Pro 在 Sierra 的 τ³-Banking 上的得分与每次试验的成本，来自 Fireworks 的专业情报指数。</p>
+<ul><li><strong>客户支持（<a href="https://fireworks.ai/specialized-intelligence-index/benchmarks/customer-support/tau3-banking">Sierra 的 τ³-Banking</a>）：</strong> 代理使用数据库工具解决银行请求，同时遵循银行政策。 K3.1 Pro 以 64.7% 在 19 款产品中排名第一，领先 Claude Opus 5.5 8.7 个百分点。</li><li><strong>遗留代码（[Factory’s Legacy Bench](https://fireworks.ai/specialized-intelligence-index/benchmarks/code- Generation/legacy-bench)）：</strong>维护 COBOL、Fortran 和 Java 7 代码库。 K3.1 Pro 得分为 61.0%，在 14 款机型中排名第三，也是得分最高的开放机型。</li><li><strong>法律（<a href="https://fireworks.ai/specialized-intelligence-index/benchmarks/legal/lab">哈维实验室</a>)：</strong>工作通常由一年级助理处理。 K3.1 Pro 以 15.4% 在 13 款产品中排名第二，落后于 Grok 4.6。</li><li><strong>金融（<a href="https://fireworks.ai/specialized-intelligence-index/benchmarks/finance/big-finance-benchmark">Rogo 的大金融基准</a>)：</strong> 来自金融研究工作流程的 928 个问题。 K3.1 Pro 与 Claude Opus 5.5 持平，为 48.2%。</li><li><strong>事件响应（<a href="https://fireworks.ai/specialized-intelligence-index/benchmarks/site-reliability-engineering/traversal-orca-benchmark">Traversal 的 ORCA</a>）：</strong> 从跟踪、日志和指标中查找生产事件的根本原因。 K3.1 Pro 得分为 32.9%，在 13 个模型中排名第三，是顶级开放模型，其每项任务的成本不到其前面任一模型的五分之一。</li><li><strong>企业法律（<a href="https://fireworks.ai/specialized-intelligence-index/benchmarks/legal/epiq-laer-corporatebench">Epiq 的 CorporateBench</a>）：</strong> K3.1 Pro 得分 76.9，12 项中的第四名，也是顶级开放型号。</li></ul>
+<p>以下是 K3.1 Pro 与 Kimi K3 在五个基准测试中的比较：</p>
+<p>基准测试</p>
+<p>域名</p>
+<p>基米K3</p>
+<p>基米K3.1 Pro</p>
+<p>改变</p>
+<p>τ³-银行业（塞拉利昂）</p>
+<p>客户支持</p>
+<p>51.5%</p>
+<p>64.7%</p>
+<p>+13.2 页</p>
+<p>传统长凳（工厂）</p>
+<p>遗留代码</p>
+<p>52.7%</p>
+<p>61.0%</p>
+<p>+8.3 分</p>
+<p>大金融基准（Rogo）</p>
+<p>金融</p>
+<p>41.3%</p>
+<p>48.2%</p>
+<p>+6.9分</p>
+<p>CorporateBench (Epiq)</p>
+<p>企业法律</p>
+<p>72.4</p>
+<p>76.9</p>
+<p>+4.5 分</p>
+<p>ORCA（穿越）</p>
+<p>事件响应</p>
+<p>31.2%</p>
+<p>32.9%</p>
+<p>+1.7 个百分点</p>
+<p>变化以百分比 (pp) 为单位，CorporateBench 除外，它使用分数。</p>
+<h2>Kimi K3.1 Pro 在 Moonshot 的评测中得分如何</h2>
+<p>Moonshot 在最大推理努力下报告以下结果：</p>
+<ul><li><strong>长视野编码：</strong> SWE Marathon v1.1 为 51.7，领先于 Claude Opus 5.5 (46.3)、Claude Fable 5.1 (45.6) 和 GPT-6 Astra (42.5)。</li><li><strong>代理研究：</strong> Humanity’s Last Exam with tools 获得 70.0 分，BrowseComp 获得 92.1 分，在 Moonshot 的比较中获得最高分。</li><li><strong>办公室工作：</strong> OfficeQA Pro v2 上为 64.4，Artificial Analysis’ Automation Bench 上为 73.3，均领先于 Claude Opus 5.5（62.2 和 69.5）。</li></ul>
+<p>Moonshot 使用包括 Claude Code 在内的工具进行编码来评估 K3.1 Pro，并从已发布的报告和排行榜中获取大多数竞争对手的分数。</p>
+<h2>定价</h2>
+<p>每百万代币的标准无服务器定价：2.00 美元的未缓存输入、0.20 美元的缓存输入和 10.00 美元的输出。</p>
+<h2>开始吧</h2>
+<p>在 <a href="https://app.fireworks.ai/playground?model=accounts/fireworks/models/kimi-k3p1-pro">Fireworks Playground</a> 中尝试 Kimi K3.1 Pro，或使用模型 ID account/fireworks/models/kimi-k3p1-pro 调用它。</p>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=Model%20release">模型发布</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Fireworks 在 Forge 上推出新产品，帮助企业打造专业智能</title>

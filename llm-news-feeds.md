@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-05 06:55:30**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-05 10:43:56**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -43,9 +43,9 @@
   1. [OpenAI 将收购 Pierre Computer Company, Inc.](https://openai.com/index/openai-to-acquire-pierre)（2026-11-04）
   2. [Daybreak Red 现已在 AWS GovCloud（美国东部）推出](https://openai.com/index/daybreak-red-aws-govcloud)（2026-11-04）
   3. [减少一千条通往根的路径](https://openai.com/index/a-thousand-fewer-paths-to-root)（2026-11-04）
-  4. [DevRev 使用 GPT-6.1 Sol 提供自主自助服务](https://openai.com/index/devrev-enterprise-self-service)（2026-11-04）
-  5. [加速物理世界的工程](https://openai.com/index/accelerating-engineering-for-the-physical-world)（2026-11-03）
-  - 📄 完整文章归档（共 1355 篇）：[openai.md](llm-news/openai.md)
+  4. [Introducing Images 2.6](https://openai.com/index/introducing-images-2-6)（2026-11-04）
+  5. [DevRev 使用 GPT-6.1 Sol 提供自主自助服务](https://openai.com/index/devrev-enterprise-self-service)（2026-11-04）
+  - 📄 完整文章归档（共 1356 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[变更日志](https://aistudio.google.com/docs/changelog)
@@ -346,8 +346,8 @@
   2. [Ember-1 发布](https://fireworks.ai/blog/ember-1)
   3. [专业智力指数简介](https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks)
   4. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/llm-model-routing-deepswe)
-  5. [Fireworks 在 Forge 上推出新产品，帮助企业打造专业智能](https://fireworks.ai/blog/fireworks-unveils-new-products-at-forge-to-help-companies-build-specialized-intelligence/)
-  - 📄 完整文章归档（共 38 篇）：[fireworks_ai.md](llm-news/fireworks_ai.md)
+  5. [Kimi K3.1 Pro is live on Fireworks](https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/)
+  - 📄 完整文章归档（共 39 篇）：[fireworks_ai.md](llm-news/fireworks_ai.md)
 
 ### DeepInfra (deepinfra)
 - 页面：[官方博客](https://deepinfra.com/blog)
@@ -355,11 +355,11 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-05，标题自动汉化）：
   1. [MiMo-V2.6-Pro: Model Documentation & Integration Guide](https://deepinfra.com/blog/mimo-v2-6-pro-model-documentation-integration-guide)（2026-11-04）
-  2. [MiMo-V2.6-Pro Guide: Performance, Pricing & Providers](https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide)（2026-11-03）
-  3. [MiMo-V2.6-Pro 定价指南：开发者成本拆解](https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide)（2026-11-02）
-  4. [MiMo-V2.6-Pro 现已登陆 DeepInfra](https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra)（2026-11-01）
-  5. [开放模型为什么在发布数周后才提速](https://deepinfra.com/blog/why-open-models-get-faster)（2026-10-31）
-  - 📄 完整文章归档（共 53 篇）：[deepinfra.md](llm-news/deepinfra.md)
+  2. [通过 NVIDIA 启动计划支持下一波 AI 初创公司](https://deepinfra.com/blog/nvidia-inception-deepstart)（2026-11-04）
+  3. [MiMo-V2.6-Pro Guide: Performance, Pricing & Providers](https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide)（2026-11-03）
+  4. [MiMo-V2.6-Pro 定价指南：开发者成本拆解](https://deepinfra.com/blog/mimo-v2-6-pro-pricing-guide)（2026-11-02）
+  5. [MiMo-V2.6-Pro 现已登陆 DeepInfra](https://deepinfra.com/blog/mimo-v2-6-pro-deepinfra)（2026-11-01）
+  - 📄 完整文章归档（共 54 篇）：[deepinfra.md](llm-news/deepinfra.md)
 
 ### Modular (modular_cloud)
 - 📡 [官方 RSS](https://www.modular.com/blog/rss.xml)：`https://www.modular.com/blog/rss.xml`

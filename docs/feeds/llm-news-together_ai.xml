@@ -14,6 +14,63 @@
       <guid isPermaLink="true">https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference</guid>
       <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Together Compiler: Continual Compilation for AI inference</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>发布日期：2026 年 11 月 4 日</p>
+<h1>Together Compiler：AI推理持续编译</h1>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aead70e52653f2e9b22da01_2026-11-03-together-compiler.jpg" alt=""></p>
+<ul><li>作者Reyna Abhyankar、Dylan Lim 和 Simran Arora</li><li>目录<a href="https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference">40+ 个用于生产的模型...40+ 个用于生产的模型...40+ 个用于生产的模型...</a></li><li>本文链接<a href="https://www.together.ai/blog/polymorphic-inference">多态推理</a><a href="http://www.together.ai/together-compiler-paper">论文</a></li></ul>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aead70e52653f2e9b22da01_2026-11-03-together-compiler.jpg" alt=""></p>
+<p>AI 推理工作负载是动态的。有数千种涵盖新模型、硬件平台、客户、用例和流量形状的体系。手动优化这些机制不再具有可扩展性。</p>
+<ul><li>架构变化很大：Transformer 诞生已经大约 11 年了。我们可能以为会有更多的整合，但 OpenRouter 上排名前 10 的开源 LLM 都没有使用相同的架构！</li><li>工作负载高度可变：每天为数千名客户提供数万亿个代币，每个客户都有不同的流量形状（批量大小、序列长度、MoE 专家不平衡、注意力稀疏性、会话持续时间、域）。</li><li>硬件变化很大：H100、B200、B300、NVL72、VR、Groq 等都需要不同的策略。</li></ul>
+<p>从理论上讲，代理非常适合解决这个问题。他们可以适应新的工作负载并搜索可能的优化空间，而无需依赖困扰人类专家和传统机器学习编译器的固定规则或启发式方法。然而，当今的代理系统受到实验速度的瓶颈。</p>
+<h3>**我们推出Together Compiler (TKCC)，这是第一个<em>真正</em>持续*的优化循环，利用高吞吐量代理来优化不同的推理工作负载**</h3>
+<p>在不到 24 小时的时间内，TKCC 在前沿开源模型（Kimi K3、GLM 5.3、MiniMax M3.1-Flash、DeepSeek v4.1-Flash）中实现了高达 2.6 倍的 TPS，在 SemiAnalysis 的 InferenceX 低延迟基准上创下了最先进的记录，MiniMax M3.1-Flash 上的 TPS 为 1111 TPS，DeepSeek 上的 TPS 为 1205 TPS v4.1-Flash，在其主力 Llama 1B 批量大小 1 设置上比可用的开源巨型内核高出 1.7 倍。此外，TKCC 还扩展到语言模型推理之外的领域（天气建模、偏微分方程、时间序列和生物学）。与基准代理性能优化系统相比，TKCC 的实验吞吐量提高了 252 倍，从而实现了性能的提升。 Together Compiler 如今正在为数万亿代币提供服务。</p>
+<h2>流量不断变化</h2>
+<p>作为推理提供商，我们看到基于区域模式、新模型发布和突发性的各种用户行为。</p>
+<ul><li><strong>区域模式：</strong>世界各地的用户可能有不同的模型偏好。我们观察到，一个国家/地区工作时间的流量提示比另一个国家/地区长 1.4 倍（97,000 比 70,000）。</li><li><strong>模型发布：</strong>用户需要时间来弄清楚如何将新模型发布集成到他们的工作流程中。首先，他们倾向于选择基于聊天的交互和评估。随着用户转向代理工作负载，发布后仅两周，提示长度很快就增加了 80%。</li><li><strong>突发性：</strong>客户可能会在一天中的随机时间发送突发请求。如果处理不当，提示长度可能会突然加倍，缓存命中率可能会下降。</li></ul>
+<p>显然，我们必须通过针对每个新部署进行专门优化来适应不断变化的用户行为。</p>
+<h2>Together 编译器概述</h2>
+<p>TKCC 将流量形状、模型和硬件作为输入。 TKCC 使用代理为推理引擎生成一系列优化。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aeaef19bddbf4ee964def1a_02-compiler-loop%402x.png" alt=""></p>
+<p>图 1：Together Compiler 在流量变化时重新编译，其中包含代理、持久引擎和循环中的集成。</p>
+<h3>TKCC的核心见解如下：</h3>
+<p><strong>1. TKCC 在代理优化期间最大限度地提高实验吞吐量并最大限度地减少 GPU 空闲时间</strong></p>
+<p>******大多数现有的代理推理优化系统都需要代理启动和拆卸 VLLM、SGLang 或 TRT-LLM 等引擎来测试每个新实验。然而，发动机启动时间为数十“分钟”，极大地阻碍了实验吞吐量（见下表）。相反，TKCC 提出了一种新的“持久引擎”范例，其中引擎启动一次，可以热重载任何候选前向传递，而无需重新启动。为了确保持久引擎不断有新的优化可供测试，TKCC 产生了多个代理，这些代理不断产生想法并通过留言板进行交流，以并行其工作。</p>
+<table><thead><tr><th>相</th><th>现状</th><th>一起编译器</th></tr></thead><tbody><tr><td>进程+工人初始化。</td><td>93</td><td>93 –</td></tr><tr><td>重量装载</td><td>50</td><td>50 –</td></tr><tr><td>KV 缓存大小</td><td>21</td><td>21 –</td></tr><tr><td>JIT 内核预热</td><td>93</td><td>93 –</td></tr><tr><td>自动调谐</td><td>193</td><td>193 –</td></tr><tr><td>API 服务器准备就绪</td><td>10</td><td>10 –</td></tr><tr><td>RPC 调用 + Together 编译器设置</td><td>–</td><td>1.7</td><td>1.7</td></tr><tr><td>CUDA 图形捕获</td><td>7</td><td>7.3</td><td>7.3</td></tr><tr><td><strong>服务总时间</strong></td><td><strong>467</strong></td><td><strong>9.0</strong></td></tr></tbody></table>
+<p>表 1：发动机启动成本高昂</p>
+<p><strong>2. TKCC 平衡测量吞吐量和测量保真度之间的权衡</strong></p>
+<p>******现有的代理优化系统要么迭代地重新启动推理引擎，因为实验吞吐量低，要么在推理引擎之外单独优化独立内核，因为测量保真度差。优化独立内核的系统通常使用随机输入数据来评估它们。然而，随着现代架构使用数据相关原语（如 MoE 和稀疏 k 注意力），输入数据分布对优化策略可能获胜有直接影响（见下图）。高保真输入对于有效优化非常重要。 TKCC 使用一层持久引擎来平衡吞吐量与保真度的权衡：“快速引擎”加载几层，非常适合快速迭代和低方差时序，而“较慢引擎”加载许多层，非常适合测试优化是否会影响真实数据分布。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aeaef2d1206e619f3a5d43a_03-expert-routing%402x.png" alt=""></p>
+<p>图 2：输入数据改变优化策略。</p>
+<p>![](https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aeaf460fa0a101900e9d9ca_04%20%C2%B7 %20two-tier%20gate%20vs%20alternatives%20(图%202%2C%20faithful)%20%C2%B7%20on-brand%20%23151630.png)</p>
+<p>图 3：Together Compiler 的两层架构优于替代方案。</p>
+<p><strong>3. TKCC 利用自定义成本模型为代理选择并行策略（例如 TP、EP、DCP 等）以实现最高性能</strong></p>
+<p>现有系统具有复杂的方法来根据 SLA 要求选择推理配置。然而，选择理想的配置面临着同样的吞吐量与保真度权衡：测量每个并行配置是很困难的，特别是因为软件实现还不成熟。一种简单的方法是根据原始硬件规格或微基准来选择并行策略。然而，这不足以捕获数据相关的流量属性，例如 MoE 专家不平衡或提示长度分布不均匀。我们设计了一个成本模型，该模型使用涉及硬件规格、微基准测试和测量前向传递的分层测量策略来构建高保真表示，同时快速修剪配置搜索空间以支持持续的流量漂移。</p>
+<p>![](https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aeaf47a09cf3ea5aafc9c29_05%20%C2%B7%20cost%20per%20reques t%20vs%20解码%20TPS%20SLA%20%C2%B7%20attention%20split%20%2B%20measured%20vs%20spec%20%C2%B7%20on-brand%20%23151630.png)</p>
+<p>图 4：测量的布局优于硬件规格的选择，并且最佳布局随并发性而变化。</p>
+<p>＃＃ 结果</p>
+<p>我们根据三种不同类型的基线评估 TKCC：手动调整的巨型内核、InferenceX 引擎配置以及来自天气建模、PDE、时间序列和生物模型等不同领域的流行 AI 代码库。</p>
+<h3>MegaKernel 工作负载</h3>
+<p>我们首先评估典型的 MegaKernel 工作负载：批量大小为 1 的 Llama 1B。该模型架构已被人类专家和传统机器学习编译器充分优化。 TKCC 生成的 TPS 提高了 1.7 倍，并且随着序列长度的增加而继续运行。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aeaef70ecac1390b3de6711_06-fig5-h100-b200%402x.png" alt=""></p>
+<p>图 5：Together Compiler 在 H100 和 B200 上的性能均优于巨型内核和 CUDA 图形基线</p>
+<h3>InferenceX AgentX 工作负载</h3>
+<p>我们在 SemiAnalysis 的 AgentX 基准测试上评估 TKCC。我们从跨推理引擎和硬件平台的前沿模型的最佳报道的开源引擎配置开始。 TKCC 在所有设置中一致设定了性能前沿，其 TPS 比高度优化的基准高出 2.6 倍。1</p>
+<p>我们还专门评估了批量大小为 1 的低延迟用例，并在 MiniMax M3.1-Flash 上设置了 1111 TPS，在 DeepSeek v4.1-Flash 上设置了 1205 TPS。对于这些结果，我们使用成本模型来选择并行配置，而不是使用 InferenceX 配置。我们观察到这种方法的加速效果。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aeaef8992165a8ccbf9ce66_07-fig6-throughput-vs-interactivity%402x.png" alt=""></p>
+<p>图 6：在大多数模型上，Together Compiler 以每个用户相同的速度为每个 GPU 提供更多令牌。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aeaefa0e488f686e9121fd9_08-p50-p90-tps-per-user%402x.png" alt=""></p>
+<p>图 7：在所有六个模型和芯片对上，Together Compiler 的每个用户速度都比最佳 InferenceX 配置更快</p>
+<h3>跨人工智能工作负载</h3>
+<p>我们选择天气建模、偏微分方程、时间序列和生物学领域的流行开源代码库。我们展示了 TKCC 相对于仅使用 Claude 代码和 /goal 命令的几何平均加速，说明 TKCC 的原理可以跨领域推广。我们一直使用 TKCC 作为超越 LLM 推理的通用 AI 编译器。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aeaefb354179420173fa067_09-tkcc-vs-claude-code%402x.png" alt=""></p>
+<p>图 8：Together Compiler 在四个模型中的三个上发现比 Claude Code 更大的加速</p>
+<h2>多态人工智能系统是下一个前沿</h2>
+<p>对于Together AI来说，最令人兴奋的系统挑战是<a href="https://www.together.ai/blog/polymorphic-inference">多态推理</a>。推理不再是针对单一硬件平台和模型的单一流量形状进行优化，流量不断动态地发展，就像金融市场一样，这种动态性提出了一系列新的研究问题。</p>
+<p>查看我们的<a href="http://www.together.ai/together-compiler-paper">论文以了解更多信息</a>。</p>
+<p>如果人工智能系统的这些前沿领域让您感到兴奋，请随时<a href="https://www.together.ai/contact-sales">联系我们</a>！</p>
+<p><em>1 Trainium2 在合成多轮数据集（70k ISL、3.5k 新 ISL 95% 缓存、700 OSL）而不是 AgentX 上运行，因为我们的实现尚不支持有限 HBM 容量上的更高并发性。</em></p>
+<h2>相关文章</h2>]]></content:encoded>
     </item>
     <item>
       <title>多态推理：开放模型的自调整推理</title>
@@ -21,6 +78,58 @@
       <guid isPermaLink="true">https://www.together.ai/blog/polymorphic-inference</guid>
       <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Polymorphic Inference: self-tuning inference for open models</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>公司简介</p>
+<p>发布日期：2026 年 11 月 4 日</p>
+<h1>从静态到多态推理：生产开源推理系统的新时代</h1>
+<p>截至今天，您通过 Together AI 端点运行的许多模型都已由 AI 代理完全优化：世界上第一个生产规模的递归自我改进 (RSI) 推理系统。</p>
+<ul><li>作者：Simran Arora（人工智能系统研究高级副总裁）和 Dan Fu（研究创始高级副总裁）</li><li>目录<a href="https://www.together.ai/blog/polymorphic-inference">40+ 模型选择用于生产...40+ 模型选择用于生产...40+ 模型选择用于生产...</a></li><li>本文链接<a href="https://www.together.ai/blog/together-compiler-continuous-compilation-for-ai-inference">Together Compiler</a></li></ul>
+<p>总结</p>
+<p><em>在Together AI，我们致力于让每个个人用户和组织都能充分利用人工智能。我们的研究团队——FlashAttention、ThunderKittens、ThunderAgent 等背后的研究人员——一直是我们卓越推理背后的关键驱动力。随着推理市场呈指数级增长，我们一直专注于如何扩展我们的研究能力，为所有人提供丰富的情报。</em></p>
+<p>*这需要我们的思维从静态推理转向**<strong>多态推理</strong><strong>——这是我们对新模型发布速度、模型架构多样性、快速变化的工作负载和快速变化的硬件平台的回应。在这篇博客中，我们将重点介绍多态推理时代的研究议程，以及我们如何持续使用人工智能代理通过</strong><strong>持续编译</strong>**来优化自己的推理。*</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aea54db4fccbad434ce3972_together-ai-polymorphic-inference-1.png" alt=""></p>
+<h3>什么是多态推理？</h3>
+<p>在过去的一年里，开源模型的多样性以及这些模型在生产环境中的部署方式发生了显着的变化。我们认为这一步骤的变化需要一种新的方法，我们称之为<strong>多态推理</strong>。</p>
+<p>多态推理（希腊语中的“多种形状”的推理）是对我们在整个行业中看到的许多变化的回应，对我们来说主要由几个趋势的融合来定义：</p>
+<ul><li>提高模型发布的<strong>速度</strong>。开源模型的出现速度比以往任何时候都更快，而且更加多样化。 OpenRouter 上 80% 的流量流向<strong>过去三个月</strong>发布的型号。</li><li>增加模型架构的<strong>多样性</strong>。目前使用的所有前十名最流行的 OSS 模型都使用<strong>不同的架构</strong>（更不用说我们的合作伙伴提供的许多闭源架构）。</li><li><strong>不断演变的交通形态。 </strong>我们每天为各种工作负载形状和 SLA 的新用户、组织和地区提供服务。线束中的产品或算法变化、开源模型的后期训练都可能导致流量形状的变化（例如，新的后期训练会增加模型花费思考以换取更高质量的代币数量）。</li><li>硬件的变化<strong>更快、更频繁</strong>。我们已经看到推理服务能力从 B200 到 GB300 的重大变化，并且即将看到第一个 Vera Rubin 部署（更不用说 CPU 级优化、高级存储系统和替代推理芯片）。</li></ul>
+<p><strong>多态推理</strong>是我们对这些变化的反应——改变并适应这些快速变化的环境的推理。</p>
+<p>我们将其与 OSS 推理爆发之前的世界状态进行了对比——我们追溯称其为“静态推理”时代。现代多态推理具有无限不同的形状，而静态推理是由封闭模型、传统 Transformer 架构、单用户和单硬件平台推理定义的。</p>
+<h3>从静态推理到多态推理</h3>
+<p>我们撰写这篇博文的动机之一是，围绕推理系统的许多讨论仍然非常关注传统的静态推理范式。</p>
+<ul><li>例如，典型的 vLLM、SGLang 或 InferenceX / AgentX 在线配方是通过静态超参数调整的推理引擎配置启动的。针对一种设置优化的配置不一定是另一种设置的最佳配置。</li><li>开源内核经常发布，假设一些静态流量形状和设计决策可能会根据实际生产流量进行错误校准。一个典型的例子是 MoE 内核；能够很好地应对随机令牌的 MoE 内核可能无法转移到实际的生产环境中。</li></ul>
+<p>我们在这里承担一些责任！长期以来，编写适合各种设置的最佳内核是可能的。 FlashAttention 深受我们喜爱，仍然是运行训练工作负载和许多预填充工作负载的最佳方法之一。</p>
+<p>大约两年前，我们写了一篇关于人工智能推理的巨型内核的文章，这是一个围绕单个静态形状（例如，批量大小为 1 Lla​​ma 1B）精心设计的单个内核。但通过去年为客户将一些首批巨型内核投入生产的经验，我们学到了一个有趣的教训：<strong>巨型内核融合实际上并不是现代多态推理的正确设计目标！</strong>在多态推理时代，每一种变化——从模型架构（例如 MoE）到工作负载（大于批量大小 1 的动态工作负载）——都需要不同的技术方法。</p>
+<h3>针对多样化、快速变化的条件优化多态推理</h3>
+<p>在Together，我们本质上是系统和人工智能研究人员——因此我们认为这是一个令人难以置信的激动人心的时刻，为这个光明的新未来重新思考我们的研究议程。</p>
+<p>‍<em>那么，当您的生产流量变得越来越多样化时，解决方案是什么？让人工智能代理自我优化。这是 OSS 模型的 RSI 时刻！</em></p>
+<p>实现多态推理需要解决我们如何服务模型的许多技术挑战。理想的多态推理体验是能够响应快速变化的模型架构和工作负载的环境。</p>
+<p>例如：</p>
+<ul><li>如果您的流量形状发生变化（无论是通过产品变化还是用户行为变化），您应该期望您的推理系统能够快速适应。</li><li>如果您在新模型上部署工作负载 – 您应该期望您的推理提供程序尽快接近理想的手动调整基线。</li><li>如果您拥有具有稳定用户流量的现有产品，并将其部署在新的硬件平台上 - 您应该期望性能尽快接近硬件极限。</li></ul>
+<p>这些都是崇高的目标，但我们相信它们值得为之奋斗。对我们来说，实现这些目标的关键之一是<strong>让人工智能代理帮助优化自身</strong>。 RSI 循环适用于 OSS 模型！</p>
+<h3>使用 Together 编译器进行连续编译</h3>
+<p>我们今天宣布的项目之一是 <a href="https://www.together.ai/blog/together-compiler-continuous-compilation-for-ai-inference"><strong>Together Compiler</strong></a><strong>，这是实现多态推理目标的第一步，</strong>是一个快速的 AI 驱动的性能优化 RSI 循环。如今，Together Compiler 为我们许多顶级生产推理工作负载提供<strong>连续编译</strong>优化循环。</p>
+<p>Together Compiler 应对优化推理工作负载的经典挑战，并将其从传统的编译器翻译问题重新改造为代理搜索问题。 Together Compiler 识别出一组核心的关键优化模式，并将一群代理与高保真持久引擎配对以实现快速迭代。这项工作是 Together 的 Frontier Performance 团队（尤其是 Reyna Abhyankar 和 Dylan Lim）几个月的工作成果！</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aea55328b7e50ebb2c957d8_together-ai-polymorphic-inference-2.png" alt=""></p>
+<p>Together Compiler 目前正在我们一些最流行的无服务器端点上<strong>生产</strong>运行，在已经高度优化的代码之上，它发现了进一步的收益。</p>
+<p>令人兴奋的是，Together Compiler 使我们能够<strong>快速适应</strong>快速变化的模型架构和流量工作负载。我们将此功能称为<strong>持续编译</strong>。以前的新工作负载需要新的手写内核和优化集，而由 Together Compiler 驱动的持续编译意味着我们可以<strong>自动</strong>适应新的流量形状和工作负载。</p>
+<h3>Together AI 研究团队的下一步计划</h3>
+<p>我们已经学到了大量的可扩展 Together AI 的知识，每天可提供数万亿个代币（甚至首次在 10 月初提供的代币数量超过了 OpenRouter 上的闭源模型实验室！）。这为我们多态推理时代的愿景和研究议程提供了信息。以下是我们研究议程中即将发生的一些事情的一些预览：</p>
+<p><strong>使用Together Compiler进行自助连续编译</strong>‍</p>
+<p>性能优化需要成为工作负载部署的函数：模型、引擎、流量形状和客户用例。很快，我们的客户将能够使用 Together Compiler，只需单击一个按钮即可针对其独特的工作负载优化其专用端点。</p>
+<p>Together Compiler 现已向最终客户提供有限测试版 – 如果您想尽早访问，请联系我们！</p>
+<p><strong>变形推测解码</strong></p>
+<p>开源存储库中提出的推理引擎配置，VLLM、InferenceX、AgentX 启动具有固定推测解码草稿模型和前瞻参数的引擎。推测性解码需要适应每个域、每个请求、每个令牌并作为流量负载的函数。</p>
+<p><strong>ThunderAgent 路由器：跨异构部署路由</strong></p>
+<p>无服务器推理端点为大量用户提供服务，每个用户都有自己的流量形状和 SLA。这种异构性要求我们在工作线程之间动态路由请求，并在集群之间动态路由部署配置。我们将 ThunderAgent 作为 ICML 2026 聚焦论文发布，以分享一些早期见解，并在生产中扩展了这些基础。</p>
+<p><strong>培训后一起</strong></p>
+<p>现在，一些客户希望将开源模型后端合并到他们的人工智能应用程序中。这需要选择一个开源模型，根据客户的特定工具调用和用例选择和定制线束，并对模型进行后期训练以与该线束良好交互。我们与 Moonshot、Minimax 等模型实验室的密切合作使我们能够帮助客户根据自己的用例定制开源模型，并真正拥有自己的智能堆栈。</p>
+<p><strong>TogetherLink：工作负载感知模型路由</strong></p>
+<p>随着 OSS 模型的改进，关键是将它们交到每个人的手中。人们普遍认为像 Opus 5.5 这样的闭源模型总是最好的。但是，正如人工智能的历史一再向我们表明的那样，如果以正确的方式组合的话，集成几个相当好的模型绝对可以优于使用单一的优秀模型。这建立在我们斯坦福大学模糊研究实验室的弱监督基础上（<a href="https://arxiv.org/abs/2210.02441">Ask Me Anything</a>）以及我们自己在组合模型方面的工作（<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/5434be94e82c54327bb9dcaf7fca52b6-Paper-Conference.pdf">混合剂</a>，ICLR 2025)。</p>
+<h3>为所有人提供丰富的情报</h3>
+<p>推理是人工智能系统中最令人着迷的问题之一，我们通过我们服务的规模解锁了一系列新的见解。为了实现让人工智能惠及“每个人”的目标，我们需要推理系统在多态推理时代不断针对每个用户和每个工作负载进行定制。我们很高兴能够帮助关闭循环并在使人工智能系统真正递归地自我改进方面发挥小小的作用。</p>
+<p>如果多态推理背后的想法适合您的组织或用例，<a href="https://www.together.ai/contact-sales">请尽早访问</a> – 我们很乐意帮助您应对这些新的复杂性。</p>
+<p>最后 – 如果您想帮助我们共同应对多态推理的挑战，请查看我们的<a href="https://www.together.ai/careers">职业页面</a> – 我们正在招聘！</p>
+<h2>相关文章</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together GPU 集群自动修复：从 GPU 故障到健康节点</title>

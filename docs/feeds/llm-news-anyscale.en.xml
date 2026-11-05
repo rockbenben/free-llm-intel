@@ -869,203 +869,6 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
-      <title>Announcing Native Sandboxing in Ray</title>
-      <link>https://anyscale.com/blog/announcing-native-sandboxing-in-ray</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/announcing-native-sandboxing-in-ray?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Announcing Native Sandboxing in Ray</h1>
-<p>By</p>
-<p>Philipp Moritz</p>
-<p>,</p>
-<p>Andrew Sy Kim (Google)</p>
-<p>and</p>
-<p>Xinyu Zhang</p>
-<p>|</p>
-<p>August 25, 2026</p>
-<p>Agentic RL requires running large numbers of isolated environments that execute model-generated code. Today, teams building these workloads with Ray typically either rely on a hosted sandbox provider or build and operate a separate sandboxing system alongside their Ray cluster.</p>
-<p>Starting with Ray 2.58, we introduce a new option: Sandboxing as a native part of Ray.</p>
-<p><a href="https://cloud.google.com/blog/products/containers-kubernetes/gvisor-sandboxes-for-ray-clusters-on-gke">In partnership with Google</a>, we are releasing an experimental sandboxing library built on gVisor. It lets you create isolated environments from OCI container images, execute commands inside them, move files in and out, control network access, and schedule and scale those environments using the same Ray primitives already used for trainers, rollout workers, evaluators, and other distributed components.</p>
-<p>The integration is designed at two levels. For users who simply want isolated execution, Ray provides a high-level sandbox API that manages sandbox placement and lifecycle for you. For teams that want to build their own sandboxing service, Ray also exposes the underlying runtime primitives for creating and managing isolated gVisor environments directly. This makes it possible to use Ray as the distributed control plane underneath a custom sandbox service without having to build scheduling, resource management, autoscaling, and fault tolerance from scratch.</p>
-<p>The division of responsibilities is simple: <strong>Ray handles orchestration and scaling. gVisor handles isolation.</strong></p>
-<p>Because sandboxes are scheduled as part of a Ray cluster, they participate in the same resource management and autoscaling system as the rest of the workload. On Google Kubernetes Engine, we have scaled this architecture to 100,000 sandboxes in 20 seconds across thousands of nodes.</p>
-<h2>LinkSandboxes as Ray Primitives</h2>
-<p>Ray has become a common runtime for orchestrating post-training workloads. Frameworks including veRL, NeMo-RL, SLIME, MILES, and SkyRL already use Ray to coordinate distributed trainers, inference engines, rollout workers, and other components.</p>
-<p>When we designed Ray Sandboxing, an important goal was to make it fit naturally into the existing Ray programming model rather than introduce a separate abstraction for isolated execution. A sandbox has many of the same properties as other resources managed by Ray: it needs to be placed on a machine, assigned resources, created and destroyed, recovered from failures, and scaled with the surrounding workload. This led us to represent each high-level sandbox through a Ray Actor:</p>
-<p>Ray Cluster</p>
-<p>The Ray scheduler decides which node should run a sandbox and reserves the corresponding CPU and memory resources. The sandbox Actor manages its lifecycle, while gVisor provides the isolated execution environment on that node.</p>
-<p>As a result, framework authors can manage sandboxed environments using the same Ray APIs and patterns they already use for the rest of their workload. For example:</p>
-<pre><code>import ray
-from ray.experimental import sandbox
-
-ray.init()
-# Create a gVisor sandbox environment and return an actor handle for a proxy actor
-sb = sandbox.create(
-    cpu=1.0,
-    memory=&quot;512Mi&quot;,
-    image=&quot;python:3.12-slim&quot;
-)
-# Execute code inside the sandbox
-result = ray.get(sb.exec.remote(&quot;python -c 'import sys; print(sys.version)'&quot;))
-print(result.stdout)</code></pre>
-<p>This creates a gVisor sandbox from an OCI-compatible image and returns a Ray Actor handle. Calls to <code>exec</code> are normal Ray Actor calls, so the sandbox can live anywhere in the cluster. The created actor is a proxy that will forward the operations to gVisor.</p>
-<p>The <a href="https://docs.ray.io/en/master/ray-core/api/sandboxes.html">sandbox API</a> covers the basic lifecycle needed by agentic workloads:</p>
-<ul><li>create environments from OCI container images,</li><li>set CPU and memory limits,</li><li>configure environment variables, working directories, and networking,</li><li>execute commands,</li><li>read, write, upload, and download files,</li><li>inspect sandbox state, and</li><li>terminate or delete environments.</li></ul>
-<p>For lower-level use cases, <code>SandboxRuntime</code> provides direct access to local gVisor sandboxes and lets users modify the OCI specification before it is handed to gVisor. Here is an example how this API can be used to build a pool of local sandboxes inside of an actor:</p>
-<pre><code>import ray
-from ray.experimental.sandbox.runtime import SandboxRuntime
-
-@ray.remote
-class SandboxPool:
-    def __init__(self, size: int = 3, image: str = &quot;python:3.10-slim&quot;):
-        self.runtime = SandboxRuntime()
-        self.sandboxes = [
-            self.runtime.create(image=image, memory=&quot;512Mi&quot;)
-            for _ in range(size)
-        ]
-
-    def run_command(self, index: int, command: str):
-        return self.runtime.exec(self.sandboxes[index], command)
-
-    def close(self):
-        for sb_id in self.sandboxes:
-            self.runtime.delete(sb_id)
-
-# Deploy an actor managing a pool of local sandboxes
-pool = SandboxPool.remote(size=3)
-result = ray.get(pool.run_command.remote(0, &quot;python3 -c 'print(\&quot;Hello from pool!\&quot;)'&quot;))
-print(result.stdout)
-ray.get(pool.close.remote())</code></pre>
-<h2>LinkScaling to 100,000 Sandboxes</h2>
-<p>Integrating sandboxing into Ray becomes especially useful when the number of environments grows.</p>
-<p>Large-scale RL workloads may need thousands of environments running concurrently, with environments continually being created and destroyed as rollouts progress. A separate sandbox service introduces another scheduler and another distributed control plane that needs to scale alongside the training system.</p>
-<p>With Ray Sandboxes, environment placement is simply another scheduling problem for Ray.</p>
-<p>When running Ray on Google Kubernetes Engine, we have scaled the system to 100,000 gVisor sandboxes in 20 seconds, distributed across thousands of nodes.</p>
-<p>Sandbox Creation Time vs. Scale</p>
-<h2>LinkWhy gVisor?</h2>
-<p>Running model-generated code means treating the code inside the environment as untrusted.</p>
-<p>Ray Sandboxing uses <a href="https://gvisor.dev/">gVisor</a>, Google's open-source application kernel, as its initial sandbox runtime. gVisor implements a substantial portion of the Linux system-call interface in userspace, putting an additional isolation boundary between workloads and the host kernel.</p>
-<p>It is OCI-compatible, works with standard container images, and does not require exposing a Docker daemon or host Docker socket to the sandbox.</p>
-<p>This combination is particularly useful for agentic workloads: environments remain lightweight enough to create dynamically while providing stronger isolation than executing generated code directly in ordinary containers.</p>
-<p>gVisor also provides sub-second sandbox startup and low per-sandbox memory overhead, making it possible to use sandboxes as relatively fine-grained distributed resources.</p>
-<h2>LinkCommon Patterns for Real-World Workloads</h2>
-<p>Creating an isolated process is only one part of running real agent workloads. Environments often need different network policies, files and artifacts need to move between the agent and the sandbox, and external systems need a way to invoke sandboxed execution.</p>
-<p>Ray Sandboxing includes primitives for each of these patterns.</p>
-<h3>Link1. Network isolation</h3>
-<p>Not every sandbox needs the same level of connectivity. An agent may need internet access to call APIs or install packages, while an evaluator running untrusted code should stay isolated. Ray supports four network modes:</p>
-<ul><li><strong>network=&quot;none&quot;</strong> (default): Loopback only. Best for isolated rollouts and untrusted code.</li><li><strong>network=&quot;public&quot;</strong>: Internet egress with a portable /etc/resolv.conf. Useful for API calls and package installation.</li><li><strong>network=&quot;host&quot;</strong>: Shares the node's network namespace, allowing access to node-local services.</li><li><strong>network=&quot;sandbox&quot;</strong>: Uses gVisor's isolated network stack and requires rootless=False.</li></ul>
-<pre><code>from ray.experimental import sandbox
-
-sb = sandbox.create(
-    image=&quot;python:3.12-slim&quot;,
-    network=&quot;public&quot;,
-    dns=[&quot;10.0.0.2&quot;],
-    readonly=False,
-)
-ray.get(sb.exec.remote(&quot;pip install requests&quot;))</code></pre>
-<h3>Link2. Move files and state</h3>
-<p>In real workloads, you usually need to move more than command strings into a sandbox. For small files, you can read and write bytes directly through the Actor. For larger directory trees, use an archive to preserve permissions, symlinks, and empty directories. Because file transfers go through Ray, they work even when the sandbox runs on a different physical node.</p>
-<pre><code>script_source = &quot;print('Training complete')&quot;
-ray.get(sb.write_file.remote(&quot;/app/train.py&quot;, script_source))
-metrics = ray.get(sb.read_file.remote(&quot;/app/metrics.json&quot;))
-
-ray.get(sb.upload_file.remote(&quot;bundle.tar.gz&quot;, &quot;/tmp/bundle.tar.gz&quot;))
-ray.get(
-    sb.exec.remote(
-        &quot;mkdir -p /app &amp;&amp; tar -xzf /tmp/bundle.tar.gz -C /app&quot;
-    )
-)</code></pre>
-<h3>Link3. Expose sandboxed execution through MCP</h3>
-<p>Ray Sandboxes can also sit behind an MCP tool, giving MCP-compatible agents a safe way to execute untrusted code without exposing the host environment. The agent only interacts with the tool. Ray and gVisor handle the isolation underneath.</p>
-<pre><code>from mcp.server.fastmcp import FastMCP
-
-mcp = FastMCP(&quot;sandboxed-python&quot;)
-isolated_sb = sandbox.create(
-    image=&quot;python:3.12-slim&quot;,
-    network=&quot;none&quot;,
-)
-
-@mcp.tool()
-def run_python(code: str) -&gt; str:
-    &quot;&quot;&quot;Run untrusted Python inside a gVisor sandbox.&quot;&quot;&quot;
-    result = ray.get(
-        isolated_sb.exec.remote(
-            [&quot;python&quot;, &quot;-c&quot;, code],
-            timeout=30,
-        )
-    )
-    return result.stdout if result.exit_code == 0 else result.stderr</code></pre>
-<h3>Link4. Reduce sandbox privileges</h3>
-<p>For stricter isolation, pass <code>capabilities=[]</code> to remove Linux capabilities from the sandbox. Even a root user inside it will then be unable to perform operations such as chown, mknod, or opening raw sockets. If you need lower-level control, <code>_oci_spec_transform_fn</code> lets you modify the OCI spec before it reaches gVisor. For example, to remove capabilities or enforce process limits:</p>
-<pre><code>from ray.experimental.sandbox.runtime import SandboxRuntime
-
-def harden_spec(spec):
-    # Limit process creation to reduce fork-bomb risk.
-    spec[&quot;process&quot;][&quot;rlimits&quot;] = [
-        {&quot;type&quot;: &quot;RLIMIT_NPROC&quot;, &quot;hard&quot;: 64, &quot;soft&quot;: 64}
-    ]
-    # Remove all Linux capabilities.
-    if &quot;capabilities&quot; in spec[&quot;process&quot;]:
-        for cap_type in spec[&quot;process&quot;][&quot;capabilities&quot;]:
-            spec[&quot;process&quot;][&quot;capabilities&quot;][cap_type] = []
-    return spec
-
-runtime = SandboxRuntime()
-sb_id = runtime.create(
-    image=&quot;python:3.12-slim&quot;,
-    _oci_spec_transform_fn=harden_spec,
-)</code></pre>
-<h2>LinkRun Ray Sandboxes with harbor</h2>
-<p><a href="https://github.com/harbor-framework/harbor">Harbor</a> is a framework for evaluating coding agents such as Claude Code, OpenHands, and Codex CLI on benchmarks including SWE-Bench and Terminal-Bench. Each trial runs inside an isolated task environment.</p>
-<p>Ray Sandbox is available as a <a href="https://github.com/harbor-framework/harbor/pull/2785">native Harbor environment</a>. Run Harbor in a Ray cluster, and trials run their task images under gVisor on your own nodes, with the task's network policy enforced by the sandbox.</p>
-<h3>LinkInstall and Run</h3>
-<p>Using Harbor with Ray Sandboxing requires Ray 2.58+ and <code>runsc</code> <a href="https://gvisor.dev/docs/user_guide/install/">installed</a> on the Ray base image.</p>
-<pre><code># Install Harbor with the Ray backend
-pip install 'harbor[ray]'
-
-# Run an evaluation on Ray
-harbor run --dataset terminal-bench@2.0 \
- --agent claude-code \
- --model anthropic/claude-opus-4-1 \
- -e ray \
- --n-concurrent 32</code></pre>
-<h3>LinkStatus and Performance</h3>
-<p>Tasks with a public <code>[environment].docker_image</code> (e.g., MedAgentBench) work out of the box. Benchmarks like Terminal-Bench or SWE-Bench require per-task images to be published to a reachable registry. Compose, GPU, or allowlist-based tasks are currently rejected.</p>
-<p>Performance metrics on a single 14-CPU dev VM:</p>
-<ul><li>Single trial: 29s</li><li>8 trials at concurrency 4: 8/8 reward 1.0, 0 exceptions, 3m02s (per-trial p50 45s)</li></ul>
-<p>Throughput is typically memory-bound per node and scales horizontally via the Ray autoscaler per cluster.</p>
-<h3>LinkHow it works</h3>
-<p>Harbor's environment model maps directly onto Ray Sandbox:</p>
-<ul><li><strong>Permissions:</strong> Task images run with Docker-compatible capabilities so existing benchmark images behave as expected.</li><li><strong>Execution:</strong> String commands preserve Harbor's bash -c semantics.</li><li><strong>File transfer:</strong> Directory uploads are packaged as tar archives and transferred through the sandbox file APIs.</li><li><strong>Resources:</strong> Harbor resource requests become Ray scheduling reservations, while runtime limits are enforced inside the sandbox.</li><li><strong>Networking:</strong> Harbor's no-network policy maps to network=&quot;none&quot;. Attempts to override it with broader access are rejected before sandbox creation.</li></ul>
-<h3>LinkWhat's Next</h3>
-<p>Ray Sandboxing is currently <strong>experimental</strong>, and there are several areas we would like to develop further with the community.</p>
-<p><strong>REST API Service:</strong> We are planning to implement a REST API so users can interact with sandboxes without requiring Ray as a dependency, and enable separating training and sandboxing clusters and run sandboxes as a service. A prototype is available in <a href="https://github.com/ray-project/ray/pull/65633">this PR</a>.</p>
-<p><strong>GPU support. </strong>Ray is already widely used for scheduling mixed CPU and GPU workloads and gVisor <a href="https://gvisor.dev/docs/user_guide/gpu/">works well with GPUs</a>. We would like GPU-backed sandboxes to work out of the box as workloads such as kernel generation and RSI become increasingly important.</p>
-<p><strong>Docker support inside the sandbox.</strong> Some agent tasks themselves expect access to Docker. <a href="https://gvisor.dev/docs/tutorials/docker-in-gvisor/">gVisor supports running Docker</a> inside a sandbox, and we would like to document and test a configuration that works naturally with Ray Sandboxing.</p>
-<p><strong>Network and filesystem capabilities.</strong> We would like to add functionality including filesystem snapshots and exposing ports between a sandbox and its host, or between sandboxes.</p>
-<p><strong>Security guidelines.</strong> gVisor provides a <a href="https://gvisor.dev/docs/architecture_guide/intro/">mature security architecture</a>, but the security properties of the overall system still depend on how the sandbox and surrounding infrastructure are configured. We would like to develop clear recommended configurations and examples, including configurations intended for workloads in which models may actively attempt to escape the sandbox.</p>
-<p>If you are interested in any of these projects or have feedback about them, we would love to hear from you (e.g. by creating a github issue or PR).</p>
-<h2>LinkTry it</h2>
-<p><a href="https://docs.ray.io/en/master/ray-core/sandboxes.html">Ray Sandboxing</a> is available experimentally starting with <strong>Ray 2.58</strong>.</p>
-<p>If you are building agentic RL systems, coding-agent evaluations, or other workloads that need large-scale isolated execution, we would love for you to try it and tell us what is missing.</p>
-<p>See the <a href="https://docs.ray.io/en/master/cluster/kubernetes/examples/ray-sandboxing.html">Ray Sandboxing Guide</a> to get started on K8s.</p>
-<p>For feedback, feature requests, or contributions, join the discussion on <a href="https://github.com/ray-project/ray/issues/65352">GitHub</a>.</p>
-<p>Our goal is to make sandboxed environments feel like any other distributed primitive in Ray: easy to create, easy to scale, and easy to compose with the rest of an agentic workload.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#sandboxes-as-ray-primitives">Sandboxes as Ray Primitives</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#scaling-to-100,000-sandboxes">Scaling to 100,000 Sandboxes</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#why-gvisor?">Why gVisor?</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#common-patterns-for-real-world-workloads">Common Patterns for Real-World Workloads</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#1.-network-isolation">1. Network isolation</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#2.-move-files-and-state">2. Move files and state</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#3.-expose-sandboxed-execution-through-mcp">3. Expose sandboxed execution through MCP</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#4.-reduce-sandbox-privileges">4. Reduce sandbox privileges</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#run-ray-sandboxes-with-harbor">Run Ray Sandboxes with harbor</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#install-and-run">Install and Run</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#status-and-performance">Status and Performance</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#how-it-works">How it works</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#what's-next">What's Next</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#try-it">Try it</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
       <title>Scaling Ray for AI workloads to 10k node clusters</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters?li=1</guid>
@@ -1794,6 +1597,203 @@ ds.groupby(&quot;band_id&quot;).count()</code></pre>
 <p><a href="https://www.anyscale.com/asset/gpu-health-observability-private-preview-form"><strong>Sign up for private preview →</strong></a></p>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#why-we-need-this-level-of-observability">Why we need this level of observability</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#creating-a-single-pane-of-glass-at-the-source">Creating a single pane of glass at the source</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#how-does-it-work?">How does it work?</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#fleet-level-view:-for-platform-operators">Fleet-level view: for platform operators</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#job-level-view:-for-ml-engineers">Job-level view: for ML engineers</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#beyond-jobs-and-workspaces:-the-same-lens-for-inference">Beyond jobs and workspaces: the same lens for inference</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#what's-coming-next">What's Coming Next</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
+<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
+<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Announcing Native Sandboxing in Ray</title>
+      <link>https://anyscale.com/blog/announcing-native-sandboxing-in-ray</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/announcing-native-sandboxing-in-ray?li=1</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Blog Detail</p>
+<h1>Announcing Native Sandboxing in Ray</h1>
+<p>By</p>
+<p>Philipp Moritz</p>
+<p>,</p>
+<p>Andrew Sy Kim (Google)</p>
+<p>and</p>
+<p>Xinyu Zhang</p>
+<p>|</p>
+<p>August 25, 2026</p>
+<p>Agentic RL requires running large numbers of isolated environments that execute model-generated code. Today, teams building these workloads with Ray typically either rely on a hosted sandbox provider or build and operate a separate sandboxing system alongside their Ray cluster.</p>
+<p>Starting with Ray 2.58, we introduce a new option: Sandboxing as a native part of Ray.</p>
+<p><a href="https://cloud.google.com/blog/products/containers-kubernetes/gvisor-sandboxes-for-ray-clusters-on-gke">In partnership with Google</a>, we are releasing an experimental sandboxing library built on gVisor. It lets you create isolated environments from OCI container images, execute commands inside them, move files in and out, control network access, and schedule and scale those environments using the same Ray primitives already used for trainers, rollout workers, evaluators, and other distributed components.</p>
+<p>The integration is designed at two levels. For users who simply want isolated execution, Ray provides a high-level sandbox API that manages sandbox placement and lifecycle for you. For teams that want to build their own sandboxing service, Ray also exposes the underlying runtime primitives for creating and managing isolated gVisor environments directly. This makes it possible to use Ray as the distributed control plane underneath a custom sandbox service without having to build scheduling, resource management, autoscaling, and fault tolerance from scratch.</p>
+<p>The division of responsibilities is simple: <strong>Ray handles orchestration and scaling. gVisor handles isolation.</strong></p>
+<p>Because sandboxes are scheduled as part of a Ray cluster, they participate in the same resource management and autoscaling system as the rest of the workload. On Google Kubernetes Engine, we have scaled this architecture to 100,000 sandboxes in 20 seconds across thousands of nodes.</p>
+<h2>LinkSandboxes as Ray Primitives</h2>
+<p>Ray has become a common runtime for orchestrating post-training workloads. Frameworks including veRL, NeMo-RL, SLIME, MILES, and SkyRL already use Ray to coordinate distributed trainers, inference engines, rollout workers, and other components.</p>
+<p>When we designed Ray Sandboxing, an important goal was to make it fit naturally into the existing Ray programming model rather than introduce a separate abstraction for isolated execution. A sandbox has many of the same properties as other resources managed by Ray: it needs to be placed on a machine, assigned resources, created and destroyed, recovered from failures, and scaled with the surrounding workload. This led us to represent each high-level sandbox through a Ray Actor:</p>
+<p>Ray Cluster</p>
+<p>The Ray scheduler decides which node should run a sandbox and reserves the corresponding CPU and memory resources. The sandbox Actor manages its lifecycle, while gVisor provides the isolated execution environment on that node.</p>
+<p>As a result, framework authors can manage sandboxed environments using the same Ray APIs and patterns they already use for the rest of their workload. For example:</p>
+<pre><code>import ray
+from ray.experimental import sandbox
+
+ray.init()
+# Create a gVisor sandbox environment and return an actor handle for a proxy actor
+sb = sandbox.create(
+    cpu=1.0,
+    memory=&quot;512Mi&quot;,
+    image=&quot;python:3.12-slim&quot;
+)
+# Execute code inside the sandbox
+result = ray.get(sb.exec.remote(&quot;python -c 'import sys; print(sys.version)'&quot;))
+print(result.stdout)</code></pre>
+<p>This creates a gVisor sandbox from an OCI-compatible image and returns a Ray Actor handle. Calls to <code>exec</code> are normal Ray Actor calls, so the sandbox can live anywhere in the cluster. The created actor is a proxy that will forward the operations to gVisor.</p>
+<p>The <a href="https://docs.ray.io/en/master/ray-core/api/sandboxes.html">sandbox API</a> covers the basic lifecycle needed by agentic workloads:</p>
+<ul><li>create environments from OCI container images,</li><li>set CPU and memory limits,</li><li>configure environment variables, working directories, and networking,</li><li>execute commands,</li><li>read, write, upload, and download files,</li><li>inspect sandbox state, and</li><li>terminate or delete environments.</li></ul>
+<p>For lower-level use cases, <code>SandboxRuntime</code> provides direct access to local gVisor sandboxes and lets users modify the OCI specification before it is handed to gVisor. Here is an example how this API can be used to build a pool of local sandboxes inside of an actor:</p>
+<pre><code>import ray
+from ray.experimental.sandbox.runtime import SandboxRuntime
+
+@ray.remote
+class SandboxPool:
+    def __init__(self, size: int = 3, image: str = &quot;python:3.10-slim&quot;):
+        self.runtime = SandboxRuntime()
+        self.sandboxes = [
+            self.runtime.create(image=image, memory=&quot;512Mi&quot;)
+            for _ in range(size)
+        ]
+
+    def run_command(self, index: int, command: str):
+        return self.runtime.exec(self.sandboxes[index], command)
+
+    def close(self):
+        for sb_id in self.sandboxes:
+            self.runtime.delete(sb_id)
+
+# Deploy an actor managing a pool of local sandboxes
+pool = SandboxPool.remote(size=3)
+result = ray.get(pool.run_command.remote(0, &quot;python3 -c 'print(\&quot;Hello from pool!\&quot;)'&quot;))
+print(result.stdout)
+ray.get(pool.close.remote())</code></pre>
+<h2>LinkScaling to 100,000 Sandboxes</h2>
+<p>Integrating sandboxing into Ray becomes especially useful when the number of environments grows.</p>
+<p>Large-scale RL workloads may need thousands of environments running concurrently, with environments continually being created and destroyed as rollouts progress. A separate sandbox service introduces another scheduler and another distributed control plane that needs to scale alongside the training system.</p>
+<p>With Ray Sandboxes, environment placement is simply another scheduling problem for Ray.</p>
+<p>When running Ray on Google Kubernetes Engine, we have scaled the system to 100,000 gVisor sandboxes in 20 seconds, distributed across thousands of nodes.</p>
+<p>Sandbox Creation Time vs. Scale</p>
+<h2>LinkWhy gVisor?</h2>
+<p>Running model-generated code means treating the code inside the environment as untrusted.</p>
+<p>Ray Sandboxing uses <a href="https://gvisor.dev/">gVisor</a>, Google's open-source application kernel, as its initial sandbox runtime. gVisor implements a substantial portion of the Linux system-call interface in userspace, putting an additional isolation boundary between workloads and the host kernel.</p>
+<p>It is OCI-compatible, works with standard container images, and does not require exposing a Docker daemon or host Docker socket to the sandbox.</p>
+<p>This combination is particularly useful for agentic workloads: environments remain lightweight enough to create dynamically while providing stronger isolation than executing generated code directly in ordinary containers.</p>
+<p>gVisor also provides sub-second sandbox startup and low per-sandbox memory overhead, making it possible to use sandboxes as relatively fine-grained distributed resources.</p>
+<h2>LinkCommon Patterns for Real-World Workloads</h2>
+<p>Creating an isolated process is only one part of running real agent workloads. Environments often need different network policies, files and artifacts need to move between the agent and the sandbox, and external systems need a way to invoke sandboxed execution.</p>
+<p>Ray Sandboxing includes primitives for each of these patterns.</p>
+<h3>Link1. Network isolation</h3>
+<p>Not every sandbox needs the same level of connectivity. An agent may need internet access to call APIs or install packages, while an evaluator running untrusted code should stay isolated. Ray supports four network modes:</p>
+<ul><li><strong>network=&quot;none&quot;</strong> (default): Loopback only. Best for isolated rollouts and untrusted code.</li><li><strong>network=&quot;public&quot;</strong>: Internet egress with a portable /etc/resolv.conf. Useful for API calls and package installation.</li><li><strong>network=&quot;host&quot;</strong>: Shares the node's network namespace, allowing access to node-local services.</li><li><strong>network=&quot;sandbox&quot;</strong>: Uses gVisor's isolated network stack and requires rootless=False.</li></ul>
+<pre><code>from ray.experimental import sandbox
+
+sb = sandbox.create(
+    image=&quot;python:3.12-slim&quot;,
+    network=&quot;public&quot;,
+    dns=[&quot;10.0.0.2&quot;],
+    readonly=False,
+)
+ray.get(sb.exec.remote(&quot;pip install requests&quot;))</code></pre>
+<h3>Link2. Move files and state</h3>
+<p>In real workloads, you usually need to move more than command strings into a sandbox. For small files, you can read and write bytes directly through the Actor. For larger directory trees, use an archive to preserve permissions, symlinks, and empty directories. Because file transfers go through Ray, they work even when the sandbox runs on a different physical node.</p>
+<pre><code>script_source = &quot;print('Training complete')&quot;
+ray.get(sb.write_file.remote(&quot;/app/train.py&quot;, script_source))
+metrics = ray.get(sb.read_file.remote(&quot;/app/metrics.json&quot;))
+
+ray.get(sb.upload_file.remote(&quot;bundle.tar.gz&quot;, &quot;/tmp/bundle.tar.gz&quot;))
+ray.get(
+    sb.exec.remote(
+        &quot;mkdir -p /app &amp;&amp; tar -xzf /tmp/bundle.tar.gz -C /app&quot;
+    )
+)</code></pre>
+<h3>Link3. Expose sandboxed execution through MCP</h3>
+<p>Ray Sandboxes can also sit behind an MCP tool, giving MCP-compatible agents a safe way to execute untrusted code without exposing the host environment. The agent only interacts with the tool. Ray and gVisor handle the isolation underneath.</p>
+<pre><code>from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP(&quot;sandboxed-python&quot;)
+isolated_sb = sandbox.create(
+    image=&quot;python:3.12-slim&quot;,
+    network=&quot;none&quot;,
+)
+
+@mcp.tool()
+def run_python(code: str) -&gt; str:
+    &quot;&quot;&quot;Run untrusted Python inside a gVisor sandbox.&quot;&quot;&quot;
+    result = ray.get(
+        isolated_sb.exec.remote(
+            [&quot;python&quot;, &quot;-c&quot;, code],
+            timeout=30,
+        )
+    )
+    return result.stdout if result.exit_code == 0 else result.stderr</code></pre>
+<h3>Link4. Reduce sandbox privileges</h3>
+<p>For stricter isolation, pass <code>capabilities=[]</code> to remove Linux capabilities from the sandbox. Even a root user inside it will then be unable to perform operations such as chown, mknod, or opening raw sockets. If you need lower-level control, <code>_oci_spec_transform_fn</code> lets you modify the OCI spec before it reaches gVisor. For example, to remove capabilities or enforce process limits:</p>
+<pre><code>from ray.experimental.sandbox.runtime import SandboxRuntime
+
+def harden_spec(spec):
+    # Limit process creation to reduce fork-bomb risk.
+    spec[&quot;process&quot;][&quot;rlimits&quot;] = [
+        {&quot;type&quot;: &quot;RLIMIT_NPROC&quot;, &quot;hard&quot;: 64, &quot;soft&quot;: 64}
+    ]
+    # Remove all Linux capabilities.
+    if &quot;capabilities&quot; in spec[&quot;process&quot;]:
+        for cap_type in spec[&quot;process&quot;][&quot;capabilities&quot;]:
+            spec[&quot;process&quot;][&quot;capabilities&quot;][cap_type] = []
+    return spec
+
+runtime = SandboxRuntime()
+sb_id = runtime.create(
+    image=&quot;python:3.12-slim&quot;,
+    _oci_spec_transform_fn=harden_spec,
+)</code></pre>
+<h2>LinkRun Ray Sandboxes with harbor</h2>
+<p><a href="https://github.com/harbor-framework/harbor">Harbor</a> is a framework for evaluating coding agents such as Claude Code, OpenHands, and Codex CLI on benchmarks including SWE-Bench and Terminal-Bench. Each trial runs inside an isolated task environment.</p>
+<p>Ray Sandbox is available as a <a href="https://github.com/harbor-framework/harbor/pull/2785">native Harbor environment</a>. Run Harbor in a Ray cluster, and trials run their task images under gVisor on your own nodes, with the task's network policy enforced by the sandbox.</p>
+<h3>LinkInstall and Run</h3>
+<p>Using Harbor with Ray Sandboxing requires Ray 2.58+ and <code>runsc</code> <a href="https://gvisor.dev/docs/user_guide/install/">installed</a> on the Ray base image.</p>
+<pre><code># Install Harbor with the Ray backend
+pip install 'harbor[ray]'
+
+# Run an evaluation on Ray
+harbor run --dataset terminal-bench@2.0 \
+ --agent claude-code \
+ --model anthropic/claude-opus-4-1 \
+ -e ray \
+ --n-concurrent 32</code></pre>
+<h3>LinkStatus and Performance</h3>
+<p>Tasks with a public <code>[environment].docker_image</code> (e.g., MedAgentBench) work out of the box. Benchmarks like Terminal-Bench or SWE-Bench require per-task images to be published to a reachable registry. Compose, GPU, or allowlist-based tasks are currently rejected.</p>
+<p>Performance metrics on a single 14-CPU dev VM:</p>
+<ul><li>Single trial: 29s</li><li>8 trials at concurrency 4: 8/8 reward 1.0, 0 exceptions, 3m02s (per-trial p50 45s)</li></ul>
+<p>Throughput is typically memory-bound per node and scales horizontally via the Ray autoscaler per cluster.</p>
+<h3>LinkHow it works</h3>
+<p>Harbor's environment model maps directly onto Ray Sandbox:</p>
+<ul><li><strong>Permissions:</strong> Task images run with Docker-compatible capabilities so existing benchmark images behave as expected.</li><li><strong>Execution:</strong> String commands preserve Harbor's bash -c semantics.</li><li><strong>File transfer:</strong> Directory uploads are packaged as tar archives and transferred through the sandbox file APIs.</li><li><strong>Resources:</strong> Harbor resource requests become Ray scheduling reservations, while runtime limits are enforced inside the sandbox.</li><li><strong>Networking:</strong> Harbor's no-network policy maps to network=&quot;none&quot;. Attempts to override it with broader access are rejected before sandbox creation.</li></ul>
+<h3>LinkWhat's Next</h3>
+<p>Ray Sandboxing is currently <strong>experimental</strong>, and there are several areas we would like to develop further with the community.</p>
+<p><strong>REST API Service:</strong> We are planning to implement a REST API so users can interact with sandboxes without requiring Ray as a dependency, and enable separating training and sandboxing clusters and run sandboxes as a service. A prototype is available in <a href="https://github.com/ray-project/ray/pull/65633">this PR</a>.</p>
+<p><strong>GPU support. </strong>Ray is already widely used for scheduling mixed CPU and GPU workloads and gVisor <a href="https://gvisor.dev/docs/user_guide/gpu/">works well with GPUs</a>. We would like GPU-backed sandboxes to work out of the box as workloads such as kernel generation and RSI become increasingly important.</p>
+<p><strong>Docker support inside the sandbox.</strong> Some agent tasks themselves expect access to Docker. <a href="https://gvisor.dev/docs/tutorials/docker-in-gvisor/">gVisor supports running Docker</a> inside a sandbox, and we would like to document and test a configuration that works naturally with Ray Sandboxing.</p>
+<p><strong>Network and filesystem capabilities.</strong> We would like to add functionality including filesystem snapshots and exposing ports between a sandbox and its host, or between sandboxes.</p>
+<p><strong>Security guidelines.</strong> gVisor provides a <a href="https://gvisor.dev/docs/architecture_guide/intro/">mature security architecture</a>, but the security properties of the overall system still depend on how the sandbox and surrounding infrastructure are configured. We would like to develop clear recommended configurations and examples, including configurations intended for workloads in which models may actively attempt to escape the sandbox.</p>
+<p>If you are interested in any of these projects or have feedback about them, we would love to hear from you (e.g. by creating a github issue or PR).</p>
+<h2>LinkTry it</h2>
+<p><a href="https://docs.ray.io/en/master/ray-core/sandboxes.html">Ray Sandboxing</a> is available experimentally starting with <strong>Ray 2.58</strong>.</p>
+<p>If you are building agentic RL systems, coding-agent evaluations, or other workloads that need large-scale isolated execution, we would love for you to try it and tell us what is missing.</p>
+<p>See the <a href="https://docs.ray.io/en/master/cluster/kubernetes/examples/ray-sandboxing.html">Ray Sandboxing Guide</a> to get started on K8s.</p>
+<p>For feedback, feature requests, or contributions, join the discussion on <a href="https://github.com/ray-project/ray/issues/65352">GitHub</a>.</p>
+<p>Our goal is to make sandboxed environments feel like any other distributed primitive in Ray: easy to create, easy to scale, and easy to compose with the rest of an agentic workload.</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#sandboxes-as-ray-primitives">Sandboxes as Ray Primitives</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#scaling-to-100,000-sandboxes">Scaling to 100,000 Sandboxes</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#why-gvisor?">Why gVisor?</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#common-patterns-for-real-world-workloads">Common Patterns for Real-World Workloads</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#1.-network-isolation">1. Network isolation</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#2.-move-files-and-state">2. Move files and state</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#3.-expose-sandboxed-execution-through-mcp">3. Expose sandboxed execution through MCP</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#4.-reduce-sandbox-privileges">4. Reduce sandbox privileges</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#run-ray-sandboxes-with-harbor">Run Ray Sandboxes with harbor</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#install-and-run">Install and Run</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#status-and-performance">Status and Performance</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#how-it-works">How it works</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#what's-next">What's Next</a></li><li><a href="https://www.anyscale.com/blog/announcing-native-sandboxing-in-ray#try-it">Try it</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>
