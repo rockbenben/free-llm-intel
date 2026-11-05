@@ -3,9 +3,9 @@ vendor: siliconflow
 title: 【模型服务调整】DeepSeek-V3.1 模型停止服务
 original_title: 
 url: https://docs.siliconflow.cn/docs/release-notes/overview
-date: 2025-11-07
+date: 2025-09-29
 lang: zh
-captured: 2026-10-08
+captured: 2026-11-05
 extractor: readability-v1
 translator: native
 status: translated

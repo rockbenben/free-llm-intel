@@ -3,9 +3,9 @@ vendor: siliconflow
 title: 【模型升级】DeepSeek-V3.2-Exp 升级至 V3.2
 original_title: 
 url: https://docs.siliconflow.cn/docs/release-notes/overview
-date: 2025-11-30
+date: 2025-12-04
 lang: zh
-captured: 2026-10-08
+captured: 2026-11-05
 extractor: readability-v1
 translator: native
 status: translated
