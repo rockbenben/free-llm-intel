@@ -4542,6 +4542,15 @@ def verify_feed_bodies(root: Path) -> list:
 #: 单次回填最多访问的文章页数（礼貌抓取：0.5s 间隔；只补缺日期的历史条目）
 DATE_BACKFETCH_LIMIT = 150
 
+#: 归档条目行 = 序号 + 链接 + 可选日期括号 + 行尾可选的 HTML 注释。
+#: 行尾注释（`<!--orig:-->` / `<!--url:-->` 等）是标题冻结与展示链接回填的元数据，
+#: 不能因为多了它就把整行判成「非条目」：实测 136 条无日期归档里 120 条带 orig 注释，
+#: 旧判据结尾写死 `\s*$`，`--backfill-dates` 因此只够得着 16 条。
+_ARCHIVE_DATE_LINE_RE = re.compile(
+    r"^(?P<head>\d+\.\s+\[.+\]\(https?://[^)]+\))"
+    r"(?P<date>（[^）]*）)?"
+    r"(?P<tail>\s*(?:<!--.*?-->\s*)*)$")
+
 
 def resolve_article_date(html: str) -> str:
     """从文章页 HTML 里解发布日期：JSON-LD datePublished / OG 时间戳 / <time>。
@@ -4574,7 +4583,8 @@ def backfill_archive_dates(news_dir: Path, fetch,
     """给归档里无日期的条目回填发布日期（visit 文章页取 meta）。
 
     fetch: url -> HTML 文本（注入以便测试；网络错误抛异常按「解不出」处理）。
-    返回 (访问数, 回填数)。条目按原顺序处理，回填后重写日期括号。
+    返回 (访问数, 回填数)。条目按原顺序处理，回填后重写日期括号；行尾的
+    `<!--orig:-->` 等注释原样保留（见 _ARCHIVE_DATE_LINE_RE）。
     """
     import time as _time
     visited = fixed = 0
@@ -4586,12 +4596,13 @@ def backfill_archive_dates(news_dir: Path, fetch,
         lines = text.splitlines(keepends=True)
         dirty = False
         for i, line in enumerate(lines):
-            m = re.match(r"^(\d+\.\s+\[.+\]\(https?://[^)]+\))(（[^）]*）)?\s*$", line)
-            if not m or m.group(2):
+            m = _ARCHIVE_DATE_LINE_RE.match(line)
+            if not m or m.group("date"):
                 continue  # 非条目行 / 已有日期后缀
             if visited >= limit:
                 break
-            url = re.search(r"\]\((https?://[^)]+)\)", m.group(1)).group(1)
+            head = m.group("head")
+            url = re.search(r"\]\((https?://[^)]+)\)", head).group(1)
             try:
                 html = fetch(url)
             except Exception:
@@ -4600,7 +4611,12 @@ def backfill_archive_dates(news_dir: Path, fetch,
             day = resolve_article_date(html or "")
             if not day:
                 continue
-            lines[i] = m.group(1) + f"（{day}）\n"
+            # 只重建「链接 + 日期」不够：整行重写会把 <!--orig:--> 一起抹掉，注释丢了
+            # 标题冻结就退化成「还没汉化」，下一轮机翻会把中文标题改坏。注释原样拼回。
+            tail = (m.group("tail") or "").strip()
+            suffix = (" " + tail) if tail else ""
+            eol = "\r\n" if line.endswith("\r\n") else ("\n" if line.endswith("\n") else "")
+            lines[i] = head + f"（{day}）" + suffix + eol
             fixed += 1
             dirty = True
             _time.sleep(delay)

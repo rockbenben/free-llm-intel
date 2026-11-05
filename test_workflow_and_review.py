@@ -1363,6 +1363,63 @@ class TestDateBackfill(unittest.TestCase):
         self.assertEqual(visited, 3, "不得超过单次访问上限")
         self.assertEqual(filled, 2, "抓取失败按解不出处理，不写日期")
 
+    def test_backfill_fills_comment_line_and_preserves_orig(self):
+        """行尾带 <!--orig:--> 的缺日期条目也要能回填，且注释必须原样保住。
+
+        实测 136 条无日期归档里 120 条带注释，旧判据 `\s*$` 让它们全部漏掉；
+        而整行重写会把注释抹掉，标题冻结退化后下轮机翻会改坏中文标题。
+        """
+        (self.news / "v.md").write_text(
+            "## 全部文章（共 2 篇）\n\n"
+            "1. [Kimi K3.1 Pro 上线 Fireworks](https://x.com/a) <!--orig:Kimi K3.1 Pro is live on Fireworks-->\n"
+            "2. [无注释文章](https://x.com/b)\n", encoding="utf-8")
+        calls = []
+
+        def fetch(url):
+            calls.append(url)
+            return '{"datePublished":"2026-11-04T00:00:00Z"}'
+
+        visited, filled = crawler_llm_intel.backfill_archive_dates(
+            self.news, fetch, delay=0)
+        self.assertEqual(calls, ["https://x.com/a", "https://x.com/b"])
+        self.assertEqual((visited, filled), (2, 2))
+        content = (self.news / "v.md").read_text(encoding="utf-8")
+        self.assertIn(
+            "1. [Kimi K3.1 Pro 上线 Fireworks](https://x.com/a)（2026-11-04） "
+            "<!--orig:Kimi K3.1 Pro is live on Fireworks-->", content)
+        self.assertIn("2. [无注释文章](https://x.com/b)（2026-11-04）", content)
+
+    def test_backfill_skips_dated_line_with_comment(self):
+        """已有日期 + 注释的行不访问、不改写（重复回填不能把冻结元数据弄坏）。"""
+        line = "1. [已冻结的文章](https://x.com/a)（2026-01-01） <!--orig:Already here-->\n"
+        (self.news / "v.md").write_text("## 全部文章\n\n" + line, encoding="utf-8")
+        calls = []
+
+        def fetch(url):
+            calls.append(url)
+            return '{"datePublished":"2026-11-04"}'
+
+        visited, filled = crawler_llm_intel.backfill_archive_dates(
+            self.news, fetch, delay=0)
+        self.assertEqual((visited, filled), (0, 0))
+        self.assertEqual(calls, [], "已有日期的条目不该被访问")
+        self.assertEqual((self.news / "v.md").read_text(encoding="utf-8"),
+                         "## 全部文章\n\n" + line, "整份文件不得被改写")
+
+    def test_backfill_unresolved_date_leaves_comment_intact(self):
+        """解不出日期时不写文件，注释也不能因为走了一趟就被改掉。"""
+        line = "1. [解不出日期](https://x.com/a) <!--orig:No date here-->\n"
+        original = "## 全部文章\n\n" + line
+        (self.news / "v.md").write_text(original, encoding="utf-8")
+
+        def fetch(url):
+            return "<p>页面里没有 datePublished</p>"
+
+        visited, filled = crawler_llm_intel.backfill_archive_dates(
+            self.news, fetch, delay=0)
+        self.assertEqual((visited, filled), (1, 0))
+        self.assertEqual((self.news / "v.md").read_text(encoding="utf-8"), original)
+
     def test_resolve_article_original_english_vs_native(self):
         self.assertEqual(
             crawler_llm_intel.resolve_article_original(
