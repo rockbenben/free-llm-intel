@@ -10,7 +10,7 @@
 
 ## 全部文章（共 26 篇，按日期倒序；无日期条目列于最后）
 
-1. [给你的缪斯一个声音](https://about.fb.com/news/2026/11/introducing-muse-ai-voice-expressive-avatars/)（2026-11-05） <!--orig:Give Your Muse a Voice-->
+1. [给你的 Muse 一个声音](https://about.fb.com/news/2026/11/introducing-muse-ai-voice-expressive-avatars/)（2026-11-05） <!--orig:Give Your Muse a Voice-->
 2. [Meta 与五所美国大学合作，加速医学和科学突破](https://about.fb.com/news/2026/10/meta-partners-with-five-us-universities-to-accelerate-medical-and-scientific-breakthroughs/)（2026-10-28） <!--orig:Meta Partners With Five US Universities to Accelerate Medical and Scientific Breakthroughs-->
 3. [隆重推出 Muse Wonder 和 Muse Wonder Full：面向智能体的前沿模型](https://about.fb.com/news/2026/10/introducing-muse-wonder-models/)（2026-10-12） <!--orig:Introducing Muse Wonder and Muse Wonder Full: Frontier Models for Agents-->
 4. [辟谣：关于数据中心的最大迷思](https://about.fb.com/news/2026/10/debunking-the-biggest-data-center-myths/)（2026-10-08） <!--orig:Debunking the Biggest Data Center Myths-->

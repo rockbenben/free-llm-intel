@@ -9,56 +9,55 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-modular_cloud.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Modular：LLVM 开发会议 2026：代理时代的耐用基础设施</title>
+      <title>LLVM 开发者大会 2026：agentic 时代的持久基础设施</title>
       <link>https://www.modular.com/blog/llvm-dev-meeting-2026-durable-infrastructure-in-the-agentic-era</link>
       <guid isPermaLink="true">https://www.modular.com/blog/llvm-dev-meeting-2026-durable-infrastructure-in-the-agentic-era</guid>
       <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Modular: LLVM Dev Meeting 2026: Durable Infrastructure in the Agentic Era</description>
-      <content:encoded><![CDATA[<p>2026 年 11 月 4 日</p>
-<h1>LLVM 开发会议 2026：代理时代的耐用基础设施</h1>
-<p>迈克尔·邓恩-奥康纳</p>
+      <content:encoded><![CDATA[<h1>LLVM 开发者大会 2026：agentic 时代的持久基础设施</h1>
+<p>Michael Dunn-OConnor</p>
 <p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aeb932a7c8fed75ff9caae5_LLVM-CoverImg.jpeg" alt=""></p>
 <p>社区</p>
-<p>我参加了今年的 <a href="https://llvm.swoogo.com/2026devmtg/12144109">LLVM 开发会议</a>，会谈不断回到同样的问题：加速器代码的倍增速度比周围的共享工具更快。正如周二的主题演讲所说，代理开发是房间里的大象。团队可以快速生成代码以针对特定设备进行优化，而这种速度可以使架构感觉是一次性的。虽然当前的步伐将团队拉向一次性解决方案，但持久的软件基础设施仍然依赖于共享的标准、工具和抽象。像 LLVM 这样的社区需要在未来几年克服这种紧张局势，继续建设持久的基础设施。最近领域特定语言 (DSL) 的激增就是这种紧张关系的一个症状，并且为 <a href="https://max.modular.com/">MAX</a> 和 <a href="https://mojolang.org/">Mojo</a> 提供了重大机遇。</p>
-<p>Weiwei Chen 在 2026 年 LLVM 开发者会议 MAX 和 Mojo 研讨会上发表演讲</p>
-<h3><strong>在代理时代维护开源软件项目</strong></h3>
-<p>Kristof Beyls 的主题演讲询问代理工程对编译器的未来意味着什么。借鉴 Daniel Kahneman 的<a href="https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow"><em>思考，快与慢</em></a> 中系统 1 和系统 2 的区别，Kristof 将智能体与系统 1 的思维进行了比较：快速、直观且多产。在他的比较中，编译器属于系统 2：缓慢、深思熟虑且受规则约束。从这个角度来看，代理不会降低编译器的相关性。它们使经过深思熟虑的、可验证的层变得更加重要，因为快速代码生成只有在有可靠的支持时才有用。</p>
-<p>Kristof 对这个问题的探索也揭示了很多关于开源软件项目的未来。 Kristof 认为持久的开源项目取决于三件事：沟通意图、保持认知和支持贡献者。如果贡献是为了维持核心维护者期望的架构愿景和质量标准，那么项目需要更刻意地记录和共享该意图。</p>
-<p>传统上，贡献者通过提交和修改问题、提案和拉取请求来有机地内部化项目的架构和标准。 Kristof 强调了“贡献者扑克”的持续重要性：押注新的贡献者将为项目带来有价值的补充，即使他们的第一个 PR 需要维护者的努力才能落地。如果代理商正在消除此过程中的生产性摩擦，则必须通过沟通（以及更好地验证提交）来加强它。观众更加怀疑贡献者认知与代理贡献是否兼容，理由是“路过”的 PR 和新贡献者缺乏沟通（正是出于这个原因，Zig <a href="https://kristoff.it/blog/contributor-poker-and-ai/">禁止人工智能贡献</a>）。在代理时代投资贡献者的一个关键步骤是，即使项目规模扩大，也要保持人类可以理解的程度，以阻止热心的贡献者将自己的想法交给代理。</p>
-<h3><strong>减少重复工作</strong></h3>
-<p>周三的主题演讲（来自 Google 的 Nick Desaulniers、Anshul Nigham 和 Jordan Rupprecht）重点讨论了维护 LLVM 树尖分支的机遇和挑战。一个突出的发现是：随着重大变化的复合，延迟更新会导致更多的延迟。维护人员发现，团队在同一个单一存储库中独立应用 LLVM 和 MLIR 更新，从而重复了维护工作。演讲者的解决方案是更好的共享工具，以实现更高效、更协调的工作。这些结论呼应了前一天主题演讲的要点。一次性创可贴解决方案比以往任何时候都更容易，但跨团队共享架构和工具的偏离会导致重复工作，并使代码更难以理解和维护。</p>
-<h3><strong>通过 DSL 的速度</strong></h3>
-<p>新的加速器不断涌现，而早期的加速器仍在使用，因此工作假设是新硬件必须与现有硬件一起运行，而不是取代它。 NVIDIA 的 Rajat Bajpai 介绍了更新界面，以便开发人员可以使用新的硬件功能，同时保持向后兼容性。在走廊谈话中，工程师们从另一方描述了同样的紧张局势：如何在支持多种架构的同时编写可读的、特定于加速器的代码。最常见的答案似乎是创建越来越多的领域特定语言（DSL）。</p>
-<p>Maksim Levental、Guray Ozen 和 Amir Mohammad Tavakkoli 关于 NVIDIA BaseDSL 项目的演讲表明，团队正在寻求更高效地创建新的 DSL。 BaseDSL 是一个平台，用于通过一系列插件在 MLIR 之上构建自定义 Python DSL，从而减少团队启动自己的 DSL 时的重复工作。即使使用共享框架，团队最终仍然会遇到不兼容的 DSL 和没有共享工具，并且每一个都必须维护。 BaseDSL 目前属于 NVIDIA 内部，但观众对开源的疑问表明更广泛的社区希望有一种更简单的方法来创建 DSL。</p>
-<p>然而 DSL 的传播与主题演讲所确立的原则相冲突。克里斯托夫认为，持久的项目需要共同的意图和人类可读的抽象。谷歌的主题演讲展示了重复维护的成本。越来越多的 DSL 将团队拉向另一个方向。每个 DSL 都提供了必要的优化，但它们一起增加了必须理解、记录和维护的内容。另一种前进的道路是像 Mojo 这样的语言，它可以在不影响性能的情况下跨加速器共享抽象和工具。</p>
-<h3><strong>Mojo 提供的（实际上不是）独特的机会</strong></h3>
-<p>今年，Modular 主持了为期一天的关于 Mojo 和 MAX 的会前研讨会。在研讨会结束时，我认为 Mojo 在不同团队和硬件之间创建共享生态系统的机会是独一无二的。 Chris Lattner 向我指出，Mojo 的处境与 MLIR 八年前的处境相同。</p>
-<p>当时 Chris 在 Google，支持五种不同芯片的人工智能编译器开发，每种芯片都有自己的堆栈。每个团队都在构建自己的基于 SSA 的优化器，无法共享架构或工具。 MLIR 通过将这些编译器的实现细节统一到一个标准中解决了这个问题。团队可以在更高的抽象级别上工作并更有效地进行互操作。</p>
-<p>Mojo 提供了一个统一层，与 MLIR 的方式相同，是堆栈的上一层。它是一种通过 MLIR 降低的完整语言，因此它构建在 LLVM 贡献者已经知道的基础架构上。 DSL 正在解决的问题需要开发人员在不同的加速器上实现高度控制和性能，而 Mojo 就是围绕这些要求而设计的，具有可读的语法和强大的元编程。 <a href="https://www.modular.com/structed-mojo-kernels">有关 Mojo 与 Triton 等 DSL 的比较的更多背景信息，请参阅 Fabio 的 [结构化 Mojo 内核</a> 系列。]</p>
-<p>MAX 在 Mojo 上分层以完成统一。 MAX 以 Mojo 作为编程接口提供加速器支持。硬件支持在 MAX 中构建一次并通过单一语言进行优化，而不是使用每个团队的 DSL 和堆栈进行重建。统一的 MAX 和 Mojo 生态系统还可以实现协作，使大型项目与架构愿景保持一致。 <a href="https://www.modular.com/alliance">Modular硬件联盟</a> 正在通过协调硬件启动模式来推进这项工作。该联盟将 LLVM 模型应用于人工智能计算：跨硬件供应商构建的通用软件层，并通过一致性测试来保持生态系统兼容。</p>
-<h3><strong>建立社区</strong></h3>
-<p>Kristof 的主题演讲结束后，一位观众（和 LLVM 维护者）排队参加问答，并描述了因提交大量由 AI 生成的 PR 而感到沮丧和沮丧，而没有人类开发人员愿意接受反馈并完成它们。整个房间里都可以看到共识和同理心。这个问题不仅限于对开源的外部贡献。在代理时代维护关键软件将需要共享工具、标准和抽象。它还需要一个愿意投入人力时间进行协作、制定共同愿景和指导新贡献者的社区。我看到 Mojo 社区中出现了这些做法，并得到了 <a href="https://mojolang.org/community/contributing/">Mojo 贡献者指南</a> 和 <a href="https://github.com/modular/modular/blob/7e509d8d281a7fe8354e838a3d19245bbc27d175/AI_TOOL_POLICY.md">Modular AI 工具使用政策</a> 等资源的支持（受到 <a href="https://llvm.org/docs/AIToolPolicy.html">LLVM AI 工具使用政策</a> 的启发）。离开今年的 LLVM 开发会议时，我确信这种社区仍然是可能的。</p>
-<h2>阅读《Modular》的更多内容</h2>
-<p>查看所有博客</p>
+<p>我参加了今年的 <a href="https://llvm.swoogo.com/2026devmtg/12144109">LLVM 开发者大会</a>，一场场演讲绕来绕去都回到同一个问题上：加速器代码的增长速度已经超过它周围共享工具的建设速度。agentic 开发，正如周二的主题演讲所说，是那头房间里的大象。团队可以为特定设备快速生成优化代码，而这种速度会让人感觉架构是可以随便扔的。当下的节奏在把团队推向一次性方案，但持久的软件基础设施仍然依赖共享的标准、工具和抽象。像 LLVM 这样的社区，未来几年要处理的正是这层紧张关系，才能继续造得出留得住的基础设施。近期 Domain-Specific Languages（DSL）的爆发式增长就是这层紧张关系的一个症状，也是给 <a href="https://max.modular.com/">MAX</a> 和 <a href="https://mojolang.org/">Mojo</a> 送来的一次重大机会。</p>
+<p>Weiwei Chen 在 2026 LLVM 开发者大会 MAX 与 Mojo Workshop 上做演讲</p>
+<h3><strong>在 agentic 时代维护开源软件项目</strong></h3>
+<p>Kristof Beyls 的主题演讲提出的问题是：agentic 工程对编译器的未来意味着什么。他借用 Daniel Kahneman 那本 <a href="https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow"><em>《思考，快与慢》</em></a> 里 System 1 与 System 2 的划分，把 agents 比作 System 1 思维：快、直觉、产出量大；在他这套类比里，编译器属于 System 2：慢、审慎、按规则办事。从这个视角看，agents 并没有让编译器变得不那么重要，反而让那层审慎、可验证的东西更重要——因为快速的代码生成，只有在背后有靠得住的东西撑着时才有用。</p>
+<p>Kristof 对这一问题的追问，同时也透露了很多关于开源软件项目未来的东西。Kristof 认为，持久的开源项目依赖三件事：把意图传达清楚、把认知维持住、把贡献者扶持好。如果贡献要延续核心维护者所期待的架构愿景和质量标准，项目就得更刻意地把那份意图写下来、传出去。</p>
+<p>传统上，贡献者是通过提 issue、提提案、提 pull request，再一轮轮修订，自然而然地把项目的架构和规范内化进自己脑子里的。Kristof 强调 &quot;contributor poker&quot; 至今仍然重要：赌一个新贡献者会给项目带来价值，哪怕他第一个 PR 还得靠维护者费力气才落得下去。如果 agents 正在把这个过程里那些有生产力的摩擦力磨掉，那就得靠沟通把它补回来（以及更好的提交校验）。现场听众对&quot;贡献者认知能否与 agentic 贡献相容&quot;要更怀疑一些，理由是&quot;drive-by&quot;式的 PR 以及新贡献者根本不沟通（Zig 就正因这一点<a href="https://kristoff.it/blog/contributor-poker-and-ai/">禁止了 AI 贡献</a>）。在 agentic 时代投入贡献者，一个关键动作是让项目即便规模变大也依然让人读得懂，从而拦住那些急切的贡献者把思考交给 agent。</p>
+<h3><strong>减少重复劳动</strong></h3>
+<p>周三的主题演讲来自 Google 的 Nick Desaulniers、Anshul Nigham 和 Jordan Rupprecht，聚焦在维护一份 LLVM tip-of-tree fork 的机会与挑战上。其中一个发现很扎眼：更新拖一次就会拖更多次，因为 breaking change 会累积。维护者们发现，同一个 monorepo 里各个团队都在各自独立地应用 LLVM 和 MLIR 的更新，重复做维护工作。演讲者给出的方案是更好的共享工具，让协作更高效、更协调。这些结论和前一天主题演讲的要点相互呼应。一次性贴膏药的方案比以往任何时候都容易做，但各个团队脱离共享架构与共享工具，就是在重复投入，最后留下越来越难懂、越来越难维护的代码。</p>
+<h3><strong>借 DSL 提速</strong></h3>
+<p>新一代加速器不断到来，老一代仍在服役，所以工作假设是新硬件必须和现有硬件并行跑，而不是取而代之。NVIDIA 的 Rajat Bajpai 讲了怎么更新接口，让开发者能用上新硬件特性、同时保住向后兼容。在走廊里聊天时，工程师们从另一面描述着同一种张力：既要写针对具体加速器的可读代码，又要同时支持多种架构。最常见的答案似乎是——造越来越多的 Domain-Specific Languages（DSL）。</p>
+<p>Maksim Levental、Guray Ozen 和 Amir Mohammad Tavakkoli 关于 NVIDIA 的 BaseDSL 项目的演讲说明，团队正在设法更高效地造新 DSL。BaseDSL 是一个平台，通过一系列插件在 MLIR 之上搭建自定义 Python DSL，让各团队起自己 DSL 的时候少做重复劳动。但即便有了共享框架，团队最后拿到的仍然是互不兼容的 DSL、仍然没有共享工具，而且每一条都得单独维护。BaseDSL 目前仅在 NVIDIA 内部使用，但现场关于要不要开源的提问说明，更广泛的社区希望有一种更省事的方式来造 DSL。</p>
+<p>然而 DSL 的扩散和主题演讲立起来的原则是冲突的。Kristof 说，持久的项目需要共享的意图和给人看得懂的抽象。Google 的主题演讲展示了重复维护的成本。越来越多的 DSL 却把团队往反方向拉。每一条 DSL 都提供了必要的优化，但它们合在一起，就把需要被理解、被写文档、被维护的东西乘了好多倍。另一条向前走去的路，是像 Mojo 这样的语言——在不同加速器之间带来共享的抽象和工具，同时在性能上不妥协。</p>
+<h3><strong>Mojo 所带来的（其实并不）独一无二的机会</strong></h3>
+<p>今年，Modular 主持了一整天的会前 workshop，主题是 Mojo 和 MAX。workshop 结束的时候，我心里在想：Mojo 有机会在不同团队、不同硬件之间造出一个共享生态，这份机会是独一无二的。Chris Lattner 提醒我，Mojo 现在所处的局面，正是八年前的 MLIR。</p>
+<p>那时候 Chris 还在 Google，要给五种不同的芯片支撑 AI 编译器开发，每一种都有自己的技术栈。各团队都在自己造基于 SSA 的优化器，架构和工具没法共享。MLIR 的做法是把这些编译器的实现细节统一到一个标准里，团队可以在更高的抽象层级上工作，互操作也高效得多。</p>
+<p>Mojo 提供的是一个统一层，做法和 MLIR 一样，只是往上抬了一层。它是一门完整的语言，通过 MLIR 做 lowering，所以它建立在 LLVM 贡献者已经熟悉的那套基础设施之上。这些 DSL 正在解决的那些问题，要求给开发者很高的控制权、要求跨各种加速器都拿到性能，Mojo 就是围绕这些需求设计的，语法可读、metaprogramming 也够强。<a href="https://www.modular.com/structured-mojo-kernels">关于 Mojo 与 Triton 这类 DSL 相比如何的更多背景，看 Fabio 的 [Structured Mojo Kernels</a> 系列。]</p>
+<p>MAX 叠在 Mojo 之上，把这份统一做完。MAX 提供加速器支持，Mojo 就是它的编程接口。硬件支持在 MAX 里造一次，用同一门语言来调优，而不是让每个团队带着自己的 DSL 和技术栈重来一遍。MAX 与 Mojo 生态合流之后，也让那种协作成为可能——正是这种协作把大项目的方向和架构愿景绑在一起。<a href="https://www.modular.com/alliance">Modular hardware alliance</a> 正在推进这件事，通过协调硬件 bring-up 的模式来落地。这个联盟把 LLVM 那套模式应用到 AI 计算上：由多家硬件厂商共建同一层软件，用一致性测试让整个生态保持兼容。</p>
+<h3><strong>建设一个社区</strong></h3>
+<p>Kristof 的主题演讲之后，一位听众（本身也是 LLVM 的维护者）去排队做 Q&amp;A，说自己被大批 drive-by、AI 生成的 PR 磨到既挫败又灰心，因为根本没有一个人类开发者愿意接反馈、把 PR 一路推到底。整个会场都能看出那种共鸣。问题并不限于开源的外部贡献。在 agentic 时代维护关键软件，需要共享的工具、标准和抽象。还需要一个愿意把人的时间投到协作、投到塑造共享愿景、投到带新贡献者上的社区。我在 Mojo 社区里看到这些实践正在长出来，也有像 <a href="https://mojolang.org/community/contributing/">Mojo 贡献者指南</a> 和 <a href="https://github.com/modular/modular/blob/7e509d8d281a7fe8354e838a3d19245bbc27d175/AI_TOOL_POLICY.md">Modular AI Tool Use Policy</a>（灵感来自 <a href="https://llvm.org/docs/AIToolPolicy.html">LLVM AI Tool Use Policy</a>）这样的资源在支撑着它。离开今年的 LLVM 开发者大会时，我确信这样的社区仍然是做得出来的。</p>
+<h2>阅读更多来自 Modular 的文章</h2>
+<p>查看全部博客</p>
 <p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aa8a1beed382b82d8230724_communitybp.jpeg" alt=""></p>
-<p>培育Modular生态系统：Modular社区资助计划</p>
+<p>培育 Modular 生态：Modular Community Grant Program</p>
 <p>2026 年 10 月 9 日</p>
 <p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a29a395aea53c6eac963763_MAXMojo-Hyperdrive-Extend_%25281%2529.png" alt=""></p>
-<p>Modverse #55：Mojo 1.0 Beta、社区 Mojo 库和由 MAX 提供支持的实时患者对话</p>
+<p>Modverse #55：Mojo 1.0 Beta、社区 Mojo 库，以及由 MAX 驱动的实时患者对话</p>
 <p>2026 年 6 月 10 日</p>
 <p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a0cb809579ab02bab8be182_Option02.jpeg" alt=""></p>
-<p>我如何使用 AI 代理构建纯 Mojo 应用程序（和 10 个库）</p>
+<p>我如何用 AI agents 构建一个纯 Mojo 应用（以及 10 个库）</p>
 <p>2026 年 5 月 19 日</p>
-<p>用Modular构建人工智能的未来</p>
+<p>和 Modular 一起构建 AI 的未来</p>
 <p>开始使用 - 免费</p>
-<p>查看版本</p>
-<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="金发的人使用带有 Apple 徽标的笔记本电脑。">立即注册立即注册我们的云平台即可轻松开始。<a href="https://docs.modular.com/max/get-started">签名上</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="带有黑色手柄和圆形透明镜片的放大镜表情符号。">浏览打开的模型浏览我们的模型目录，或部署您自己的自定义模型<a href="https://www.modular.com/models">浏览模型</a></li></ul>
-<h2>订阅我们的时事通讯</h2>
-<p>将我们所有的最新新闻、公告和更新直接发送到您的收件箱。随时取消订阅。</p>
-<p>感谢您订阅我们的时事通讯！ 🚀</p>
-<p>谢谢你，</p>
-<p>Modular销售团队</p>
-<p>哎呀！提交表单时出现问题。</p>]]></content:encoded>
+<p>查看 Editions</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="一位金发人物在使用一台带苹果 logo 的笔记本电脑。">立即注册今天就注册我们的 Cloud Platform，轻松开始。<a href="https://docs.modular.com/max/get-started">注册</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="一只带黑色手柄、圆形透明镜片的放大镜 emoji。">浏览开放模型浏览我们的模型目录，或部署你自己的自定义模型<a href="https://www.modular.com/models">浏览模型</a></li></ul>
+<h2>订阅我们的 newsletter</h2>
+<p>把我们最新的消息、公告和动态直接送到你的收件箱。随时可退订。</p>
+<p>感谢订阅我们的 newsletter！🚀</p>
+<p>谢谢，</p>
+<p>Modular 销售团队</p>
+<p>哎呀！提交表单时出了点问题。</p>]]></content:encoded>
     </item>
     <item>
       <title>Modular：MAX 现在源码可用，向所有人开放</title>

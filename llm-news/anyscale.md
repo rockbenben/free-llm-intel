@@ -9,7 +9,7 @@
 
 ## 全部文章（共 99 篇，按日期倒序；无日期条目列于最后）
 
-1. [How Lila Sciences and Anyscale Scaled GLM-5.3-Flash Training to 1M tokens](https://anyscale.com/blog/lila-sciences-anyscale-glm-training-one-million-tokens)（2026-11-05）
+1. [Lila Sciences 与 Anyscale 如何把 GLM-5.3-Flash 训练扩展到 100 万 token](https://anyscale.com/blog/lila-sciences-anyscale-glm-training-one-million-tokens)（2026-11-05） <!--orig:How Lila Sciences and Anyscale Scaled GLM-5.3-Flash Training to 1M tokens-->
 2. [KubeRay 生产实践：来自一线的最佳实践](https://anyscale.com/blog/kuberay-best-practices)（2026-10-26） <!--orig:KubeRay in production: best practices from the field-->
 3. [宣布 Ray 支持 Google TPU 上的 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20） <!--orig:Announcing Ray support for PyTorch on Google TPUs-->
 4. [宣布成立 Ray on Accelerators 特别兴趣小组（SIG）](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20） <!--orig:Announcing the Special Interest Group (SIG) for Ray on Accelerators-->

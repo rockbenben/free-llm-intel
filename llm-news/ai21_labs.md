@@ -9,7 +9,7 @@
 
 ## 全部文章（共 75 篇，按日期倒序；无日期条目列于最后）
 
-1. [隆重推出 Teel – 用于代理的涡轮高效执行库（但不仅仅是）](https://www.ai21.com/blog/teel-turbo-efficient-execution-library/)（2026-11-05） <!--orig:Introducing Teel – Turbo-Efficient Execution Library for Agents (but not only)-->
+1. [隆重推出 Teel – 面向 agent 的涡轮高效执行库（但不仅仅是）](https://www.ai21.com/blog/teel-turbo-efficient-execution-library/)（2026-11-05） <!--orig:Introducing Teel – Turbo-Efficient Execution Library for Agents (but not only)-->
 2. [后训练案例研究：与 Deel 一起把全球薪资情报做到前沿级](https://www.ai21.com/blog/ai21-deel-case-study/)（2026-11-04） <!--orig:Post-training case study: Reaching frontier-level intelligence on global payroll with Deel-->
 3. [后训练案例研究：与 Alice 一起达到前沿级攻击韧性](https://www.ai21.com/blog/ai21-alice-case-study/)（2026-11-02） <!--orig:Post-training case study: Reaching frontier-level attack resilience with Alice-->
 4. [为什么我们在训练前先构建指令遵循基准](https://www.ai21.com/blog/lift-bench-blog/)（2026-10-25） <!--orig:Why we built a benchmark before training for instruction following-->

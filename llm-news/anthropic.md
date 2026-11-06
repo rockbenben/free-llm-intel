@@ -10,7 +10,7 @@
 
 ## 全部文章（共 138 篇，按日期倒序；无日期条目列于最后）
 
-1. [Claude介绍个人理财](https://claude.com/resources/articles/introducing-personal-finance-in-claude)（2026-11-05） <!--orig:Introducing Personal Finance in Claude-->
+1. [在 Claude 中推出个人理财](https://claude.com/resources/articles/introducing-personal-finance-in-claude)（2026-11-05） <!--orig:Introducing Personal Finance in Claude-->
 2. [为安全团队提供对 Claude Enterprise 的更多可见性和控制](https://claude.com/resources/articles/claude-enterprise-security-updates)（2026-11-05） <!--orig:More visibility and control over Claude Enterprise for security teams-->
 3. [Claude Marketplace 上新增的安全、生产力与创意类 agent 和产品](https://claude.com/resources/articles/new-agents-and-products-claude-marketplace)（2026-11-04） <!--orig:New agents and products for security, productivity, and creative work on Claude Marketplace-->
 4. [用 message threads 让长时间运行的 agent 更快](https://claude.com/resources/articles/message-threads)（2026-11-02） <!--orig:Make long-running agents faster with message threads-->

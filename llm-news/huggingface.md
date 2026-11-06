@@ -11,7 +11,7 @@
 ## 全部文章（共 919 篇，按日期倒序；无日期条目列于最后）
 
 1. [用于交互式世界模拟的全新 NVIDIA Cosmos 3 开放模型](https://huggingface.co/blog/nvidia/cosmos-interactive-world-simulation)（2026-11-05） <!--orig:New NVIDIA Cosmos 3 Open Models for Interactive World Simulation-->
-2. [仔细观察声子 TTS。推出领先基准的高质量设备语音。](https://huggingface.co/blog/phonon-tts)（2026-11-05） <!--orig:A Closer Look at Phonon TTS. Launching High-Quality On-Device Speech That Tops the Benchmarks.-->
+2. [深入了解 Phonon TTS：推出在基准测试上领先的高质量端侧语音](https://huggingface.co/blog/phonon-tts)（2026-11-05） <!--orig:A Closer Look at Phonon TTS. Launching High-Quality On-Device Speech That Tops the Benchmarks.-->
 3. [Dharma Field Extractor：任意文档进，结构化 JSON 字段出](https://huggingface.co/blog/Dharma-AI/dharma-field-extractor)（2026-11-04） <!--orig:Dharma Field Extractor: Any Document In, Structured Fields in JSON Out-->
 4. [StateBench：测语言模型如何跟踪长文档里的状态变化](https://huggingface.co/blog/allenai/statebench)（2026-11-03） <!--orig:StateBench: Testing how language models track state changes over long documents-->
 5. [Palette：教小模型用你的设计语言做幻灯片](https://huggingface.co/blog/ibm-research/palette-deck-building)（2026-11-03） <!--orig:Palette: teaching a small model to build decks in your design language-->

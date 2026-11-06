@@ -9,7 +9,7 @@
 
 ## 全部文章（共 104 篇，按日期倒序；无日期条目列于最后）
 
-1. [Modular：LLVM 开发会议 2026：代理时代的耐用基础设施](https://www.modular.com/blog/llvm-dev-meeting-2026-durable-infrastructure-in-the-agentic-era)（2026-11-04） <!--orig:Modular: LLVM Dev Meeting 2026: Durable Infrastructure in the Agentic Era-->
+1. [LLVM 开发者大会 2026：agentic 时代的持久基础设施](https://www.modular.com/blog/llvm-dev-meeting-2026-durable-infrastructure-in-the-agentic-era)（2026-11-04） <!--orig:Modular: LLVM Dev Meeting 2026: Durable Infrastructure in the Agentic Era-->
 2. [Modular：MAX 现在源码可用，向所有人开放](https://www.modular.com/blog/max-license)（2026-10-22） <!--orig:Modular: MAX is now source available and open to everyone-->
 3. [Modular：Modular 26.7 开放 MAX](https://www.modular.com/blog/26-7)（2026-10-22） <!--orig:Modular: Modular 26.7: Opening up MAX-->
 4. [培育 Modular 生态：Modular 社区资助计划](https://www.modular.com/blog/nurturing-the-modular-ecosystem-the-modular-community-grant-program)（2026-10-09） <!--orig:Modular: Nurturing the Modular ecosystem: the Modular Community Grant Program-->

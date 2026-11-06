@@ -9,7 +9,7 @@
 
 ## 全部文章（共 57 篇，按日期倒序；无日期条目列于最后）
 
-1. [来自我们的首席执行官：打造晶圆级需要什么，以及它为何能持续下去 — 阅读更多 >](https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts) <!--orig:From our CEO: What It Took to Build Wafer Scale, and Why It Lasts — read more >-->
+1. [来自我们的 CEO：打造晶圆级需要什么，以及它为何能持续下去](https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts) <!--orig:From our CEO: What It Took to Build Wafer Scale, and Why It Lasts — read more >-->
 2. [发布 Cerebras CS-4：最快的 AI 再次提速](https://www.cerebras.ai/blog/introducing-cerebras-cs-4) <!--orig:Introducing Cerebras CS-4: The Fastest AI Just Got Faster-->
 3. [MoE 规模化：让稀疏模型在真实硬件上跑得快](https://www.cerebras.ai/blog/moe-guide-scale) <!--orig:MoE at Scale: Making Sparse Models Fast on Real Hardware-->
 4. [我们如何在 Cerebras 上部署万亿参数前沿模型](https://www.cerebras.ai/blog/how-we-deploy-trillion-parameter-frontier-models-on-cerebras) <!--orig:How we deploy Trillion-parameter frontier models on Cerebras-->

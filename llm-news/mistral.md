@@ -10,7 +10,7 @@
 
 ## 全部文章（共 94 篇，按日期倒序；无日期条目列于最后）
 
-1. [Le Chonk 带来了大脑。 Studio 让它发挥作用。](https://mistral.ai/news/build-with-studio/)（2026-11-05） <!--orig:Le Chonk brings the brains. Studio puts it to work.-->
+1. [Le Chonk 带来智能。Studio 让它派上用场。](https://mistral.ai/news/build-with-studio/)（2026-11-05） <!--orig:Le Chonk brings the brains. Studio puts it to work.-->
 2. [Le Chonk：为程序员打造，受防御者信赖](https://mistral.ai/news/mistral-large-4-oss/)（2026-10-29） <!--orig:Le Chonk: Built for Coders, Trusted by Defenders.-->
 3. [Mistral 与 NVIDIA 合作推进工程领域的 AI](https://mistral.ai/news/mistral-nvidia-ai-for-industrial-engineering/)（2026-10-21） <!--orig:Mistral Advances AI for Engineering with NVIDIA-->
 4. [Voxtral 3](https://mistral.ai/news/voxtral-3/)（2026-10-20）
