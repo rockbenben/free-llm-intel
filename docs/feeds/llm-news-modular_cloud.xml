@@ -7,7 +7,59 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-modular_cloud.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Modular：LLVM 开发会议 2026：代理时代的耐用基础设施</title>
+      <link>https://www.modular.com/blog/llvm-dev-meeting-2026-durable-infrastructure-in-the-agentic-era</link>
+      <guid isPermaLink="true">https://www.modular.com/blog/llvm-dev-meeting-2026-durable-infrastructure-in-the-agentic-era</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Modular: LLVM Dev Meeting 2026: Durable Infrastructure in the Agentic Era</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 4 日</p>
+<h1>LLVM 开发会议 2026：代理时代的耐用基础设施</h1>
+<p>迈克尔·邓恩-奥康纳</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aeb932a7c8fed75ff9caae5_LLVM-CoverImg.jpeg" alt=""></p>
+<p>社区</p>
+<p>我参加了今年的 <a href="https://llvm.swoogo.com/2026devmtg/12144109">LLVM 开发会议</a>，会谈不断回到同样的问题：加速器代码的倍增速度比周围的共享工具更快。正如周二的主题演讲所说，代理开发是房间里的大象。团队可以快速生成代码以针对特定设备进行优化，而这种速度可以使架构感觉是一次性的。虽然当前的步伐将团队拉向一次性解决方案，但持久的软件基础设施仍然依赖于共享的标准、工具和抽象。像 LLVM 这样的社区需要在未来几年克服这种紧张局势，继续建设持久的基础设施。最近领域特定语言 (DSL) 的激增就是这种紧张关系的一个症状，并且为 <a href="https://max.modular.com/">MAX</a> 和 <a href="https://mojolang.org/">Mojo</a> 提供了重大机遇。</p>
+<p>Weiwei Chen 在 2026 年 LLVM 开发者会议 MAX 和 Mojo 研讨会上发表演讲</p>
+<h3><strong>在代理时代维护开源软件项目</strong></h3>
+<p>Kristof Beyls 的主题演讲询问代理工程对编译器的未来意味着什么。借鉴 Daniel Kahneman 的<a href="https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow"><em>思考，快与慢</em></a> 中系统 1 和系统 2 的区别，Kristof 将智能体与系统 1 的思维进行了比较：快速、直观且多产。在他的比较中，编译器属于系统 2：缓慢、深思熟虑且受规则约束。从这个角度来看，代理不会降低编译器的相关性。它们使经过深思熟虑的、可验证的层变得更加重要，因为快速代码生成只有在有可靠的支持时才有用。</p>
+<p>Kristof 对这个问题的探索也揭示了很多关于开源软件项目的未来。 Kristof 认为持久的开源项目取决于三件事：沟通意图、保持认知和支持贡献者。如果贡献是为了维持核心维护者期望的架构愿景和质量标准，那么项目需要更刻意地记录和共享该意图。</p>
+<p>传统上，贡献者通过提交和修改问题、提案和拉取请求来有机地内部化项目的架构和标准。 Kristof 强调了“贡献者扑克”的持续重要性：押注新的贡献者将为项目带来有价值的补充，即使他们的第一个 PR 需要维护者的努力才能落地。如果代理商正在消除此过程中的生产性摩擦，则必须通过沟通（以及更好地验证提交）来加强它。观众更加怀疑贡献者认知与代理贡献是否兼容，理由是“路过”的 PR 和新贡献者缺乏沟通（正是出于这个原因，Zig <a href="https://kristoff.it/blog/contributor-poker-and-ai/">禁止人工智能贡献</a>）。在代理时代投资贡献者的一个关键步骤是，即使项目规模扩大，也要保持人类可以理解的程度，以阻止热心的贡献者将自己的想法交给代理。</p>
+<h3><strong>减少重复工作</strong></h3>
+<p>周三的主题演讲（来自 Google 的 Nick Desaulniers、Anshul Nigham 和 Jordan Rupprecht）重点讨论了维护 LLVM 树尖分支的机遇和挑战。一个突出的发现是：随着重大变化的复合，延迟更新会导致更多的延迟。维护人员发现，团队在同一个单一存储库中独立应用 LLVM 和 MLIR 更新，从而重复了维护工作。演讲者的解决方案是更好的共享工具，以实现更高效、更协调的工作。这些结论呼应了前一天主题演讲的要点。一次性创可贴解决方案比以往任何时候都更容易，但跨团队共享架构和工具的偏离会导致重复工作，并使代码更难以理解和维护。</p>
+<h3><strong>通过 DSL 的速度</strong></h3>
+<p>新的加速器不断涌现，而早期的加速器仍在使用，因此工作假设是新硬件必须与现有硬件一起运行，而不是取代它。 NVIDIA 的 Rajat Bajpai 介绍了更新界面，以便开发人员可以使用新的硬件功能，同时保持向后兼容性。在走廊谈话中，工程师们从另一方描述了同样的紧张局势：如何在支持多种架构的同时编写可读的、特定于加速器的代码。最常见的答案似乎是创建越来越多的领域特定语言（DSL）。</p>
+<p>Maksim Levental、Guray Ozen 和 Amir Mohammad Tavakkoli 关于 NVIDIA BaseDSL 项目的演讲表明，团队正在寻求更高效地创建新的 DSL。 BaseDSL 是一个平台，用于通过一系列插件在 MLIR 之上构建自定义 Python DSL，从而减少团队启动自己的 DSL 时的重复工作。即使使用共享框架，团队最终仍然会遇到不兼容的 DSL 和没有共享工具，并且每一个都必须维护。 BaseDSL 目前属于 NVIDIA 内部，但观众对开源的疑问表明更广泛的社区希望有一种更简单的方法来创建 DSL。</p>
+<p>然而 DSL 的传播与主题演讲所确立的原则相冲突。克里斯托夫认为，持久的项目需要共同的意图和人类可读的抽象。谷歌的主题演讲展示了重复维护的成本。越来越多的 DSL 将团队拉向另一个方向。每个 DSL 都提供了必要的优化，但它们一起增加了必须理解、记录和维护的内容。另一种前进的道路是像 Mojo 这样的语言，它可以在不影响性能的情况下跨加速器共享抽象和工具。</p>
+<h3><strong>Mojo 提供的（实际上不是）独特的机会</strong></h3>
+<p>今年，Modular 主持了为期一天的关于 Mojo 和 MAX 的会前研讨会。在研讨会结束时，我认为 Mojo 在不同团队和硬件之间创建共享生态系统的机会是独一无二的。 Chris Lattner 向我指出，Mojo 的处境与 MLIR 八年前的处境相同。</p>
+<p>当时 Chris 在 Google，支持五种不同芯片的人工智能编译器开发，每种芯片都有自己的堆栈。每个团队都在构建自己的基于 SSA 的优化器，无法共享架构或工具。 MLIR 通过将这些编译器的实现细节统一到一个标准中解决了这个问题。团队可以在更高的抽象级别上工作并更有效地进行互操作。</p>
+<p>Mojo 提供了一个统一层，与 MLIR 的方式相同，是堆栈的上一层。它是一种通过 MLIR 降低的完整语言，因此它构建在 LLVM 贡献者已经知道的基础架构上。 DSL 正在解决的问题需要开发人员在不同的加速器上实现高度控制和性能，而 Mojo 就是围绕这些要求而设计的，具有可读的语法和强大的元编程。 <a href="https://www.modular.com/structed-mojo-kernels">有关 Mojo 与 Triton 等 DSL 的比较的更多背景信息，请参阅 Fabio 的 [结构化 Mojo 内核</a> 系列。]</p>
+<p>MAX 在 Mojo 上分层以完成统一。 MAX 以 Mojo 作为编程接口提供加速器支持。硬件支持在 MAX 中构建一次并通过单一语言进行优化，而不是使用每个团队的 DSL 和堆栈进行重建。统一的 MAX 和 Mojo 生态系统还可以实现协作，使大型项目与架构愿景保持一致。 <a href="https://www.modular.com/alliance">Modular硬件联盟</a> 正在通过协调硬件启动模式来推进这项工作。该联盟将 LLVM 模型应用于人工智能计算：跨硬件供应商构建的通用软件层，并通过一致性测试来保持生态系统兼容。</p>
+<h3><strong>建立社区</strong></h3>
+<p>Kristof 的主题演讲结束后，一位观众（和 LLVM 维护者）排队参加问答，并描述了因提交大量由 AI 生成的 PR 而感到沮丧和沮丧，而没有人类开发人员愿意接受反馈并完成它们。整个房间里都可以看到共识和同理心。这个问题不仅限于对开源的外部贡献。在代理时代维护关键软件将需要共享工具、标准和抽象。它还需要一个愿意投入人力时间进行协作、制定共同愿景和指导新贡献者的社区。我看到 Mojo 社区中出现了这些做法，并得到了 <a href="https://mojolang.org/community/contributing/">Mojo 贡献者指南</a> 和 <a href="https://github.com/modular/modular/blob/7e509d8d281a7fe8354e838a3d19245bbc27d175/AI_TOOL_POLICY.md">Modular AI 工具使用政策</a> 等资源的支持（受到 <a href="https://llvm.org/docs/AIToolPolicy.html">LLVM AI 工具使用政策</a> 的启发）。离开今年的 LLVM 开发会议时，我确信这种社区仍然是可能的。</p>
+<h2>阅读《Modular》的更多内容</h2>
+<p>查看所有博客</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aa8a1beed382b82d8230724_communitybp.jpeg" alt=""></p>
+<p>培育Modular生态系统：Modular社区资助计划</p>
+<p>2026 年 10 月 9 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a29a395aea53c6eac963763_MAXMojo-Hyperdrive-Extend_%25281%2529.png" alt=""></p>
+<p>Modverse #55：Mojo 1.0 Beta、社区 Mojo 库和由 MAX 提供支持的实时患者对话</p>
+<p>2026 年 6 月 10 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a0cb809579ab02bab8be182_Option02.jpeg" alt=""></p>
+<p>我如何使用 AI 代理构建纯 Mojo 应用程序（和 10 个库）</p>
+<p>2026 年 5 月 19 日</p>
+<p>用Modular构建人工智能的未来</p>
+<p>开始使用 - 免费</p>
+<p>查看版本</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="金发的人使用带有 Apple 徽标的笔记本电脑。">立即注册立即注册我们的云平台即可轻松开始。<a href="https://docs.modular.com/max/get-started">签名上</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="带有黑色手柄和圆形透明镜片的放大镜表情符号。">浏览打开的模型浏览我们的模型目录，或部署您自己的自定义模型<a href="https://www.modular.com/models">浏览模型</a></li></ul>
+<h2>订阅我们的时事通讯</h2>
+<p>将我们所有的最新新闻、公告和更新直接发送到您的收件箱。随时取消订阅。</p>
+<p>感谢您订阅我们的时事通讯！ 🚀</p>
+<p>谢谢你，</p>
+<p>Modular销售团队</p>
+<p>哎呀！提交表单时出现问题。</p>]]></content:encoded>
+    </item>
     <item>
       <title>Modular：MAX 现在源码可用，向所有人开放</title>
       <link>https://www.modular.com/blog/max-license</link>
@@ -3731,29 +3783,6 @@ max_output = compile_model(input)</code></pre>
 <p>我们在 <a href="https://www.modular.com/democratizing-ai-compute">Modular 的使命</a>始终不变：让 AI 硬件启用<strong>快速、可移植且普适</strong>——无论它运行在谁的芯片上。</p>
 <p>感谢 <a href="https://tensorwave.com/">TensorWave</a> 与我们合作并提供 MI355X 系统，感谢 <a href="https://www.amd.com/">AMD</a> 邀请我们参加其媒体技术日活动。</p>
 <p>敬请关注更多更新——以及关于促成这一里程碑的 kernel 优化的深度解析文章。也欢迎随时联系我们安排演示，聊聊你的 AI 用例。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Modular 融资 2.5 亿美元以扩展 AI 统一计算层</title>
-      <link>https://www.modular.com/blog/modular-raises-250m-to-scale-ais-unified-compute-layer</link>
-      <guid isPermaLink="true">https://www.modular.com/blog/modular-raises-250m-to-scale-ais-unified-compute-layer</guid>
-      <pubDate>Wed, 24 Sep 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Modular: Modular Raises $250M to scale AI&apos;s Unified Compute Layer</description>
-      <content:encoded><![CDATA[<h1>Modular 融资 2.5 亿美元以扩展 AI 统一计算层</h1>
-<p>Modular 在其第三轮融资中筹集了 2.5 亿美元，继续推进其&quot;构建 AI 统一计算层——AI 的 hypervisor&quot;的使命。本轮由 Thomas Tull 的 <a href="https://usitfund.com/">US Innovative Technology 基金</a>领投，<a href="https://dfjgrowth.com/">DFJ Growth</a>加入，<a href="https://www.gv.com/">GV</a>（Google Ventures）、<a href="https://www.generalcatalyst.com/">General Catalyst</a> 和 <a href="https://greylock.com/">Greylock Ventures</a> 等所有现有投资人参投。这使其自 2022 年创立以来的三轮总融资额达到 3.8 亿美元，Modular 估值达 16 亿美元——较上轮融资几乎翻了三倍。这笔投资反映了 Modular 惊人的势头，并巩固了它作为世界上唯一真正统一的 AI 基础设施平台、为 AI 超级智能未来提供动力的地位。</p>
-<blockquote>&quot;战略性地落地 AI 是当今经济中最关键的竞争因素，随着公共和私营部门加大力度以维持竞争力，处理这些繁重工作负载的算力需求空前高涨。Modular 是这多元 AI 基础设施新纪元中的奠基性力量，提供最大化效率、韧性与降本的统一 AI 计算层——而它的平台已经受到企业、云和开发者的高度需求。我们很自豪支持这个团队，以及他们可移植 AI、为美国乃至全球经济提供动力的愿景。&quot; —— Thomas Tull，USIT 董事长</blockquote>
-<blockquote>&quot;Modular 正在应对 AI 中最紧迫的挑战：统一计算层，使多样化的处理硬件与软件能够协同运作。Modular 的平台有望成为 AI 系统的支柱，解锁可移植性、性能与效率，加速通往超级智能的道路。&quot; —— Sam Fort，DFJ Growth 合伙人</blockquote>
-<h2><strong>为每个人构建 AI 基础设施的未来</strong></h2>
-<p>世界对算力的胃口是贪得无厌的。随着 AI 改变一切，CPU 让位于 GPU 和 ASIC，数据中心以前所未有的速度崛起以满足需求。超级智能不会只住在服务器农场——它会来到每一台设备，每一颗芯片都成为 AI 赋能的智能体。随着推理模型驱动用量爆炸式增长，推理成本暴跌，而训练成本却一味攀升。悖论愈发深刻：在这场计算复兴之中，巨大的低利用率困扰着我们的现有产能——被每个硬件厂商对专有软件栈的执着切割得支离破碎。这个使命优雅而不留情面：追逐每一次浮点运算，让每一次都算数——因为决定这场革命是腾飞还是停滞的，是软件，而非硅片。</p>
-<p>Modular 过去 <a href="https://www.modular.com/blog/the-case-for-a-next-generation-ai-developer-platform">3 年多在构建基础基础设施</a>，为全世界<a href="https://www.modular.com/blog/the-future-of-ai-depends-on-modularity">解决这个问题</a>。Modular 从底层重塑了世界的加速计算编程模型，并正快速扩展以满足来自先进企业和硬件合作伙伴的巨大需求。Modular 如今已增长到 130 多人，总部设在旧金山湾区，并在北美、英国和欧洲拥有全球布局。</p>
-<p><a href="https://www.youtube.com/watch?v=-3Kf2ZZU-dg">自 2023 年发布其平台以来</a>，Modular 重新定义了全球 CPU 和 GPU 硅片上异构编程与 AI 的可能性。它的平台每月被下载数万次、月环比增长 75%，赢得了 <a href="http://www.github.com/modular/modular">24K+ GitHub star</a>，每天在生产中为数十万亿 token 的服务提供动力，并在其生态中拥有来自 100 多个国家的数十万开发者。Modular 现已发布<a href="http://github.com/modular/modular">超过 60 万行开源代码</a>，拥有来自全球开发者的<a href="https://github.com/modular/modular">数千次贡献</a>，在 <a href="https://www.modular.com/blog/modular-25-4-one-container-amd-and-nvidia-gpus-no-lock-in">NVIDIA 和 AMD 上以单一统一技术栈</a>取得业界领先性能，并为其<a href="http://www.modular.com/customers">合作伙伴与客户</a>交付了最高<a href="https://www.modular.com/case-studies/inworld">降低 70% 延迟和 80% 成本</a>的成果。Modular 正与一支新兴的共同架构师联盟一起构建 AI 的未来——包括 <a href="https://www.modular.com/case-studies/inworld">Inworld</a>、<a href="https://www.modular.com/case-studies/san-francisco-compute">SF Compute</a> 等企业，<a href="https://signalsandthreads.com/why-ml-needs-a-new-programming-language/">Jane Street</a> 等研究团队，<a href="https://www.youtube.com/watch?v=OiSMQUOXaH4">Oracle</a>、<a href="https://www.modular.com/case-studies/aws">AWS</a>、<a href="https://www.modular.com/blog/modular-hack-weekend">Lambda Labs</a> 和 <a href="https://tensorwave.com/blog/save-up-to-70-with-max-the-fastest-inference-engine-on-amd-compute?utm_source=modular&amp;utm_medium=blog&amp;utm_campaign=inferencecasestudy">TensorWave</a> 等云服务商，以及 <a href="https://www.modular.com/case-studies/amd">AMD</a> 和 <a href="https://www.modular.com/blog/modular-partners-with-nvidia-to-bring-gpus-to-the-max-platform">NVIDIA</a> 等硬件领军企业——每家都在凝聚并推动一个更简单、更开放、更具创新的 AI 硬件生态的愿景。</p>
-<h2><strong>Modular 平台</strong></h2>
-<p><a href="http://www.modular.com">Modular 平台</a>是首个抽象掉硬件复杂性的企业级 AI 推理栈。它用一个统一的底层取代 CUDA、ROCm 等厂商专用运行时，消除了那些从未为现代生成式 AI 推理而开发、因此被拖住后腿的现有 AI 框架的碎片化。该平台包括以下组件，从云编排层一直延伸到硬件编程模型（<a href="https://www.modular.com/blog/how-is-modular-democratizing-ai-compute">更多细节</a>）：</p>
-<ul><li>🦣<a href="https://www.modular.com/mammoth">Mammoth</a>：一个 Kubernetes 原生的控制面、路由器和底层基座，专为大规模分布式 AI 服务而设计。它支持多模型管理、prefill 感知路由、计算与缓存解耦，以及其他先进的规模化 AI 优化。</li><li>🧑🏻‍🚀<a href="https://www.modular.com/max">MAX</a>：一个高性能 GenAI 服务框架，开箱即用地交付业界领先优化——如投机解码和算子级融合。它暴露一个 OpenAI 兼容 endpoint，可在 GPU 和 CPU 上无缝运行 MAX 原生模型与 PyTorch 模型，并在模型和 kernel 层面提供深度定制，以获得最大性能与灵活性。</li><li>🔥<a href="https://www.modular.com/mojo">Mojo</a>：一门以 kernel 为核心的系统编程语言，实现高性能 GPU 与 CPU 编程，将 Pythonic 语法与 C/C++ 的性能、Rust 的安全性融为一体。MAX 中所有 kernel 都用 Mojo 编写，它还可用于以新算法扩展 MAX 模型。</li></ul>
-<p>而在<a href="https://www.modular.com/blog/modular-25-6-unifying-the-latest-gpus-from-nvidia-amd-and-apple">最新发布 25.6</a>中，Modular 在 NVIDIA B200、AMD MI355 等下一代硬件上，相比最新 vLLM 和 SGLang 交付了 <strong>20-50% 的性能提升</strong>。同时，Modular 正在把支持扩展到 Apple GPU 及许多其他消费级 GPU 等新硅片，以及众多即将问世的 ASIC。</p>
-<h2><strong>使命与未来</strong></h2>
-<p>这一轮新融资将让 Modular 能在云上原生地激进扩展 Modular 平台、把支持延伸到云和边缘硬件平台，并为世界最先进的 AI 工作负载提供动力——交付任何其他推理公司都无法匹敌的吞吐量、延迟、成本和精度收益。这一切都是为了赋予开发者一个他们可以依托、可以信赖的单一、统一 AI 基础设施。</p>
-<blockquote>&quot;当我们创立 Modular 时，我们相信世界需要一个统一的 AI 平台，而今天，那个愿景比以往任何时候都更重要。这笔融资将使我们能为全球开发者、企业和硬件公司实现这个愿景。&quot;Modular CEO Chris Lattner 说。</blockquote>
-<p>Modular 正在北美和欧洲广泛招聘各类岗位。如果你想塑造 AI 基础设施的未来，并与这个领域最聪明的一些头脑协作，<a href="https://www.modular.com/company/careers">请访问 Modular 的招聘页面</a>。AI 基础设施的前途一片光明！<a href="http://docs.modular.com">下载</a>、<a href="http://www.github.com/modular/modular">贡献</a>，今天就在开放环境中帮助 Modular 为 AI 的未来提供动力。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

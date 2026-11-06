@@ -7,7 +7,237 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 05 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Amazon Bedrock AgentCore 上的 Web Answer 入门</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/getting-started-with-web-answer-on-amazon-bedrock-agentcore/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/getting-started-with-web-answer-on-amazon-bedrock-agentcore/</guid>
+      <pubDate>Thu, 05 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Getting started with Web Answer on Amazon Bedrock AgentCore</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Amazon Bedrock AgentCore 上的 Web Answer 入门</h1>
+<p>今天，我们宣布 Web Answer 在 Amazon Bedrock AgentCore 上全面可用。借助 Web Answer，代理构建者只需调用一次工具即可获得自然语言问题的综合、引用来源的答案。他们不再自己构建搜索、检索、综合和引用管道。</p>
+<p>如果您构建了需要回答当前网络资源问题的代理，那么您就知道该模式：调用搜索 API、决定信任哪些结果、检索和清理页面内容、提示模型进行合成以及设计引文提取，以便输出可追溯到源。每一步都是您维护的代码，每一步都是可能出错的另一个地方：证据不足时产生幻觉，索引移动时内容陈旧，声明及其来源偏离时归因失效。</p>
+<p>Web Answer 将整个管道折叠成一个请求。您发送一个问题。您可以在几秒钟内得到引用的答案。在这篇文章中，我们将解释 Web Answer 的作用，将其与 AgentCore 上的 Web 搜索进行比较，展示其工作原理及其返回的内容，并演练将 Web Answer 添加到网关并从代理调用它。</p>
+<h2>Web Answer 的作用</h2>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/04/ML-22248-1.png" alt="Web Answer 请求的架构图：代理调用网关，网关对请求进行身份验证并调用 Web Answer 连接器，该连接器计划并运行并行 Web 搜索，验证关键页面上的事实，并通过网关返回引用的答案。网关"></p>
+<p>图 1：从代理通过网关到 Web 应答并返回的请求流</p>
+<p>您的代理将问题发送到您的 AgentCore 网关，这是 Amazon Bedrock AgentCore 的一项功能。网关使用 AWS Identity and Access Management (AWS IAM) 或 JSON Web 令牌 (JWT) 对调用进行身份验证。网关使用自己的服务角色调用 Web Answer，这是 AWS 拥有的托管连接器。 Web Answer 计划其搜索，并行运行多个搜索，并读取关键页面以检查事实。当证据不足时，它会再次搜索。然后，它会编写一个答案，将每个声明与其源 URL 联系起来。网关将答案及其引用作为模型上下文协议 (MCP) 工具结果返回给您的代理。</p>
+<p>Web Answer 是一种托管 AgentCore Gateway 工具，它接受自然语言问题，并在几秒钟内返回基于当前 Web 资源的综合答案。这是您得到的返回结果：</p>
+<ul><li>一个有根据的、被引用的答案，其中每个有根据的声明都映射到一个引文，并带有可用的源 URL。</li><li>当前来源。 Web Answer 会对每个问题运行新的搜索，其模型会给出今天的日期，以便它可以搜索最新信息。</li><li>代理搜索：Web Answer 计划自己的搜索，并行运行多个搜索，读取页面以验证事实，并决定何时有足够的证据来回答。</li><li>负责任的人工智能保障措施：Web Answer 是根据负责任的人工智能保障措施进行设计和测试的。</li></ul>
+<p><em>图 2：演示视频展示了如何将 Web Answer 添加到 AgentCore 网关，从设置到完成的引用答案</em></p>
+<h2>它与网络搜索有何不同</h2>
+<p>Web Answer 和 Web Search 工具都支持检索用例，具有不同级别的集成复杂性。分界线是谁运行模型：</p>
+<ul><li><strong>网络搜索：</strong> 返回排名的 URL、标题、片段和元数据。您保留自己的模型并控制合成。当您想要完全控制结果的处理方式时，请使用 Web 搜索。</li><li><strong>网络答案：</strong> 为您运行模型、代理检索循环、合成和归因。您会得到一个完整的、被引用的答案。当问题是较大代理内的子任务并且您不想为其拥有检索管道时，请使用 Web Answer。</li></ul>
+<p>许多客户都会同时使用两者。代理可能会使用 Web 搜索来执行需要原始结果的广泛研究任务，并使用 Web Answer 来执行需要快速引用的答案的特定事实问题。</p>
+<h2>设置并调用 Web Answer</h2>
+<p>Web Answer 是 AWS 拥有的连接器。您可以通过 ID 引用它，网关会处理工具架构、参数治理、端点解析和后端身份验证。在本演练中，您将授予网关的服务角色调用 Web Answer 的权限、添加 Web Answer 目标并从 Strands 代理调用它。</p>
+<h3>开始使用</h3>
+<p>开始需要几分钟。网关管理员将 Web Answer 添加为现有 AgentCore 网关上的目标，并且该工具通过“tools/list”和“tools/call”向通过 MCP 连接的任何代理显示。</p>
+<h3>先决条件</h3>
+<ul><li>具有 AgentCore 网关访问权限的 AWS 账户。</li><li>us-east-1 中使用 IAM (<code>AWS_IAM</code>) 入站身份验证的 AgentCore 网关。要创建网关，请参阅开发人员指南中的<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-create.html">创建 Amazon Bedrock AgentCore 网关</a>。</li><li>在网关上具有“bedrock-agentcore:InvokeGateway”的身份的 AWS 凭证，以及对您的代理使用的模型的 Amazon Bedrock 访问权限。</li><li>Python 3.10 或更高版本，带有所需的软件包：<code>pip install boto3strides-agents mcp mcp-proxy-for-aws</code></li></ul>
+<p>注意：执行这些步骤将创建会产生费用的 AWS 资源。网关和 Web 应答调用是计费的。有关详细信息，请参阅下面的定价部分，完成后，删除您创建的资源（请参阅“清理资源”）。</p>
+<h3>步骤 1：授予网关服务角色对 Web Answer 的访问权限</h3>
+<p>网关使用其<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-prerequirements-permissions.html#gateway-service-role-permissions">服务角色</a>代表您执行操作。该角色的信任策略允许“bedrock-agentcore.amazonaws.com”代入该角色，范围仅限于您的账户。对于 Web Answer，该角色需要：</p>
+<ul><li><code>bedrock-agentcore:InvokeWebAnswer</code>，调用 Web Answer。网关针对 AWS 拥有的 ARN“arn:aws:bedrock-agentcore:us-east-1:aws:tool/web-answer.v1”的每个请求检查此权限。</li></ul>
+<p>将策略作为内联策略附加到服务角色：</p>
+<pre><code>import json
+import boto3
+
+iam = boto3.client(&quot;iam&quot;)
+
+iam.put_role_policy(
+    RoleName=&quot;&lt;gateway-service-role&gt;&quot;,
+    PolicyName=&quot;WebAnswerGuide&quot;,
+    PolicyDocument=json.dumps({
+        &quot;Version&quot;: &quot;2012-10-17&quot;,
+        &quot;Statement&quot;: [
+            {
+                &quot;Sid&quot;: &quot;InvokeWebAnswer&quot;,
+                &quot;Effect&quot;: &quot;Allow&quot;,
+                &quot;Action&quot;: &quot;bedrock-agentcore:InvokeWebAnswer&quot;,
+                &quot;Resource&quot;: &quot;arn:aws:bedrock-agentcore:us-east-1:aws:tool/web-answer.v1&quot;,
+            }
+        ],
+    }),
+)</code></pre>
+<p>该角色仅控制网关的呼出。谁可以呼叫您的网关由其入站授权者设置。该角色也不需要“bedrock:InvokeModel”：您的代理的模型在您的代理自己的身份下运行。</p>
+<h3>步骤 2：创建 Web Answer 目标</h3>
+<p>添加 Web Answer 作为连接器目标。 “connectorId”告诉网关要配置哪个管理集成：在本例中，是一个搜索网络并写入引用答案的代理。</p>
+<pre><code>import boto3
+
+gateway_client = boto3.client(&quot;bedrock-agentcore-control&quot;, region_name=&quot;us-east-1&quot;)
+
+target_response = gateway_client.create_gateway_target(
+    name=&quot;web-answer-tool&quot;,
+    gatewayIdentifier=gateway_id,
+    targetConfiguration={
+        &quot;mcp&quot;: {
+            &quot;connector&quot;: {
+                &quot;source&quot;: {&quot;connectorId&quot;: &quot;web-answer&quot;},
+                &quot;configurations&quot;: [{&quot;name&quot;: &quot;WebAnswer&quot;, &quot;parameterValues&quot;: {}}],
+            }
+        }
+    },
+    credentialProviderConfigurations=[
+        {&quot;credentialProviderType&quot;: &quot;GATEWAY_IAM_ROLE&quot;}
+    ],
+)
+target_id = target_response[&quot;targetId&quot;]</code></pre>
+<p>连接器的出站身份验证是自动的。通过“GATEWAY_IAM_ROLE”，网关使用步骤 1 中的服务角色调用 Web Answer 后端，因此您无需为该工具创建或存储任何凭据。等到“get_gateway_target”将目标状态报告为“READY”后再调用它。</p>
+<p>作为网关管理员，您还可以在目标上设置域过滤器。该过滤器适用于通过目标的每个调用。要将目标限制为一组域，请将 <code>parameterValues</code> 设置为 <code>{&quot;domainFilter&quot;: {&quot;include&quot;: [&quot;bis.org&quot;], &quot;exclude&quot;: [&quot;unreliable-source.net&quot;]}}</code>。</p>
+<h3>步骤 3：从 Strands 代理调用 Web Answer</h3>
+<p>您的代理通过网关的“tools/list”发现 Web Answer，并使用“tools/call”调用它，就像任何其他 MCP 工具一样。这适用于 Strands Agents、LangChain、LangGraph、CrewAI 或任何其他 MCP 兼容客户端。</p>
+<pre><code>from strands import Agent
+from strands.models.bedrock import BedrockModel
+from strands.tools.mcp import MCPClient
+from mcp_proxy_for_aws.client import aws_iam_streamablehttp_client
+
+gateway_url = &quot;https://gateway-&lt;id&gt;.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp&quot;
+
+mcp_client = MCPClient(lambda: aws_iam_streamablehttp_client(
+    endpoint=gateway_url,
+    aws_region=&quot;us-east-1&quot;,
+    aws_service=&quot;bedrock-agentcore&quot;,
+    aws_profile=&quot;&lt;aws-profile-id&gt;&quot;,  # identity with bedrock-agentcore:InvokeGateway on the Gateway
+))
+
+model = BedrockModel(model_id=&quot;us.anthropic.claude-sonnet-5&quot;, max_tokens=1024)
+
+with mcp_client:
+    tools = mcp_client.list_tools_sync()  # Web Answer tool discovered from the Gateway
+    agent = Agent(model=model, tools=tools)
+
+    result = agent(&quot;What are the Basel III minimum requirements for Tier 1 capital?&quot;)
+    print(result.message)</code></pre>
+<p>当问题需要当前信息时，您的客服人员会调用 Web Answer 工具 (<code>web-answer-tool___WebAnswer</code>)。 Web Answer 运行代理搜索并返回带有引文的最终答案。</p>
+<p>除了问题之外，Web Answer 工具还采用您的代理可以在每次呼叫中设置的可选参数：用于包含或排除网站的域过滤器、发布日期范围以及用于本地化结果的国家/地区。代理的域过滤器与目标的过滤器相结合。代理可以排除更多域，或将结果限制为目标包含的某些域，但它无法添加目标过滤器阻止的域。</p>
+<h3>响应格式</h3>
+<p>Web Answer 返回包含内容和结构化内容字段的 MCP 工具结果。答案是带有内联引用标记的 Markdown 文本，例如 <a href="https://aws.amazon.com/cn/blogs/machine-learning/getting-started-with-web-answer-on-amazon-bedrock-agentcore/url">[1</a>]，并且 StructuredContent.answer 带有相同的文本以及结构化引用列表：</p>
+<pre><code>{
+  &quot;content&quot;: [
+    {
+      &quot;type&quot;: &quot;text&quot;,
+      &quot;text&quot;: &quot;Under Basel III, banks must hold Common Equity Tier 1 capital of at least 4.5% of risk-weighted assets [[1](https://www.bis.org/...)]...&quot;
+    }
+  ],
+  &quot;structuredContent&quot;: {
+    &quot;answer&quot;: [
+      {
+        &quot;text&quot;: &quot;Under Basel III, banks must hold Common Equity Tier 1 capital of at least 4.5% of risk-weighted assets [[1](https://www.bis.org/...)]...&quot;,
+        &quot;citations&quot;: [
+          { &quot;domain&quot;: &quot;bis.org&quot;, &quot;url&quot;: &quot;https://www.bis.org/...&quot; }
+        ]
+      }
+    ]
+  },
+  &quot;isError&quot;: false,
+  &quot;_meta&quot;: {
+    &quot;latencyMs&quot;: 5210
+  }
+}</code></pre>
+<p>StructuredContent.answer 通常包含一个块。每个引文都带有源 URL 和域（如果有）。</p>
+<h3>清理资源</h3>
+<p>当您不再需要 Web Answer 目标时将其删除：</p>
+<pre><code>gateway_client.delete_gateway_target(gatewayIdentifier=gateway_id, targetId=target_id)</code></pre>
+<p>如果您仅为本演练创建了网关，请先删除其目标，然后删除网关 (delete_gateway)，最后删除服务角色及其策略。除了这些资源之外，AWS 端没有持久的基础设施。删除它们后，您将不再产生费用。</p>
+<h2>企业控件，内置</h2>
+<p>Web Answer 继承了与其他 AgentCore 工具相同的企业控件：</p>
+<ul><li><strong>网关身份验证。</strong> 无需为 Web Answer 提供、轮换或管理单独的 API 密钥。调用者使用您配置的入站方法（例如 AWS IAM (SigV4) 或来自身份提供商的 JSON Web 令牌）对网关进行身份验证。然后，网关使用自己的服务角色调用 Web Answer，该角色需要“bedrock-agentcore:InvokeWebAnswer”权限。</li><li><strong>VPC 和 AWS PrivateLink。</strong> 您的代理可以通过接口虚拟私有云 (VPC) 终端节点 (<code>com.amazonaws.us-east-1.bedrock-agentcore.gateway</code>) 调用网关，因此流量不会与公共互联网连接。</li><li><strong>零数据流出。</strong> 您的查询和结果保留在您的 AWS 环境中。</li><li><strong>Amazon CloudWatch 指标。</strong> 操作指标从第一次调用就发布到 CloudWatch。</li><li><strong>每个账户的速率限制。</strong> 自发布起强制实施，美国东部（弗吉尼亚北部）(us-east-1) 的每个账户每秒 10 笔交易。要请求增加，请联系 AWS Support。</li><li><strong>管理时策略范围。</strong> 网关管理员在目标设置时设置域过滤器范围。代理可以缩小每次调用的过滤范围，但不能扩大范围。</li><li><strong>查询保留在 AWS 内。</strong> Web Answer 搜索 Amazon 运营的 Web 索引和 Amazon 的知识图，并且不会将您的问题发送到第三方搜索引擎或外部网站。</li></ul>
+<h2>用例</h2>
+<p>Web Answer 帮助客服人员检索当前引用的信息，以支持一系列知识密集型工作流程。示例场景包括：</p>
+<ul><li><strong>金融服务。</strong> 监管问答代理回答有关合规要求、市场监管和政策变化的问题，每个答案都必须追溯到权威来源。</li><li><strong>医疗保健。</strong> 临床支持代理根据当前医学文献和网络上发布的治疗指南做出反应。</li><li><strong>客户服务。</strong> 支持代理实时回答产品和政策问题，其中十个排名链接没有用，引用的答案有用。</li><li><strong>法律与合规性。</strong> 研究助理回答有关判例法、监管文件和政策解释以及可审计引文的问题。</li><li><strong>企业知识工作者。</strong> 内部副驾驶可以根据当前公共信息回答问题，无需员工构建自己的搜索和综合工作流程。</li></ul>
+<h2>可用性</h2>
+<p>Web Answer 已在美国东部（弗吉尼亚北部）(us-east-1) 推出，更多 AWS 区域即将推出。</p>
+<h2>定价</h2>
+<p>Amazon Bedrock AgentCore 上的 Web Answer 的价格为每 1,000 次工具调用 10 美元。</p>
+<p>＃＃ 结论</p>
+<p>在这篇文章中，我们展示了 Web Answer 如何通过代理搜索为您的代理提供最新的引用答案，而无需您构建或维护搜索管道。我们授予网关服务角色对 Web Answer 的访问权限，添加 Web Answer 目标，从 Strands 代理调用它，并从响应中读取答案及其引用。当您自己的模型应该对原始结果进行推理时，请使用 AgentCore 上的 Web 搜索，而当您的代理需要完成的引用答案时，请使用 Web Answer。</p>
+<p>要开始使用，请参阅：</p>
+<ul><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-answer-tool.html">Amazon Bedrock AgentCore 文档上的 Web Answer</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-answer-tool.html#gateway-target-connector-web-answer-tool-response-format">Web Answer 结构化输出架构</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-add-target-api-target-config.html#gateway-add-target-api-connector-web-answer">向 Amazon Bedrock AgentCore 网关添加 Web 应答</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agentcore-regions.html">支持的区域</a></li></ul>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Amazon Marketplace 如何使用 Amazon SageMaker AI 评估内容质量</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/how-amazon-marketplace-evaluates-content-quality-with-amazon-sagemaker-ai/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-amazon-marketplace-evaluates-content-quality-with-amazon-sagemaker-ai/</guid>
+      <pubDate>Thu, 05 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How Amazon Marketplace evaluates content quality with Amazon SageMaker AI</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Amazon Marketplace 如何使用 Amazon SageMaker AI 评估内容质量</h1>
+<p>A+ Content 是亚马逊产品详细信息页面上的富媒体小部件。通过视觉资产，品牌传达独特的产品和品牌价值，帮助客户做出明智的购买决策。与没有使用高质量 A+ 内容的销售合作伙伴相比，使用高质量 A+ 内容的销售合作伙伴的销售额提高了 8-20%。各种各样的品牌，从拥有大型内部设计团队的知名品牌到资源有限的自力更生品牌，都使用 A+ 内容，导致内容质量不一致。典型的 A+ 内容项目将文本、图像和视频组合成一个有凝聚力的产品故事。孤立地评估每项资产会忽略这些资产如何协同工作所产生的质量。当您的内容跨越多个异构模块并且您需要整体质量信号而不是每个资产检查时，本文中描述的多模型融合方法可以提供帮助。在这篇文章中，我们在 A+ 内容的背景下研究这个问题。</p>
+<p>A+ Content 为销售合作伙伴提供了创作自由，让他们可以在产品详情页面上表达真实的自我，而无需严格的内容规范，例如图像比例和文本字数。</p>
+<p>尽管这种灵活性可以讲述引人入胜的品牌故事，但它也造成内容构成和质量的巨大变化。</p>
+<p>通过质量评估和改进建议，品牌可以将平均内容转化为更加连贯、相关和有用的高质量内容。这些改进的内容可帮助客户做出更明智的购买决策并与品牌建立持久的关系，从而提高销售合作伙伴的收入。</p>
+<p>为了实现这一目标，评估系统必须评估完整的内容体验，提供除数字分数之外的可行建议，并反映不同产品类别的细微差别。现有的方法很难同时满足所有这些要求，因此在这篇文章中，您将看到一种使用视觉语言模型 (VLM) 来全面理解和评估内容的新方法，以及一种基于扩散的生成组件，该组件可以根据生成的质量信号生成改进的视觉资产。</p>
+<p>在这篇文章中，您将学习如何：</p>
+<ul><li>将完整的电子商务内容呈现为单个快照，并使用 VLM 对其进行整体评估。</li><li>在经过专家注释训练的轻量级 CatBoost 分类器中将 VLM 语义分数与 OCR 可读性信号相结合。</li><li>使用 SHAP 解释质量决策并为销售合作伙伴生成可行的改进建议。</li><li>在 Amazon SageMaker AI 上实施端到端管道，从数据提取和注释到模型托管、可解释性和生产监控。</li></ul>
+<h2>基于 VLM 的评估的机遇和挑战</h2>
+<p>视觉语言模型 (VLM) 将图像编码器与大型语言模型 (LLM) 配对。编码器通常是[视觉变换器（ViT）]（https://arxiv.org/abs/2010.11929），将图像分割成补丁并将它们转换为嵌入，并且一个小连接器将这些嵌入映射到语言模型的输入空间（[Flamingo]（https://arxiv.org/abs/2204.14198）， <a href="https://arxiv.org/abs/2304.08485">LLaVA</a>)。许多 VLM 重用 <a href="https://arxiv.org/abs/2103.00020">CLIP</a> 中的图像编码器，它学会了将图像与其标题进行匹配。由于 VLM 接受过遵循指令的培训，因此您可以向人们提供一张图像以及评估标准，并获得书面评估，而无需进行特定于任务的培训。当您需要与人工审阅者达成更密切的一致时，您可以根据标记的示例微调模型。这使得 VLM 成为根据内容指南大规模检查产品图像的实用起点。</p>
+<p>传统的计算机视觉模型已经可以对单个资产进行评分，例如在项目符号列表中标记模糊图像或语法错误。使用 VLM 对每个资产单独进行评分除此之外几乎没有什么好处。然而，产品详细信息页面将图像、文本和布局模块组合成一个故事，其质量取决于这些部分如何协同工作。我们的方法将整个页面呈现为单个快照，并要求 VLM 在客户看到时对其进行评估。</p>
+<p>考虑一个带有英雄图像的搅拌机页面、突出显示刀片速度和容量的项目符号功能列表以及现代厨房中搅拌机的生活方式照片。经过一一检查，每项资产均通过：图像清晰、要点符合语法、照片光线充足。综合来看，问题就出现了。子弹可能会宣传 64 盎司的水罐，而生活方式照片则显示单份模型，或者生活方式照片可能位于英雄图像上方，以便顾客在产品之前看到厨房。由于资产的含义取决于它出现的位置及其周围的内容，因此这些问题仅在对页面进行整体评估时才会出现。快照为 VLM 提供了完整的视图。在生产中使用它增加了三个要求：分数必须符合专家质量标准，评估必须在规模上准确且高效，每个结果必须解释要修复的内容。</p>
+<p>如图 1 所示，我们通过围绕适应性、性能和可解释性设计的基于 VLM 的多模型融合架构来解决这些考虑因素。以下部分描述了每个组件。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-20598-1.png" alt="带有 VLM、OCR 和分类器组件的基于 VLM 的多模型融合方法的框图"></p>
+<p>图 1：基于 VLM 的多模型融合方法的框图，包括 VLM、OCR 和分类器模型</p>
+<h2>带有专家注释的自适应 VLM 内容评估</h2>
+<p>经过预训练的 VLM 会根据其常识对内容进行评分，但这些分数并不总是符合电子商务质量标准。微调 VLM 以缩小这一差距需要 GPU 训练基础设施，并且只有几千个标记示例，存在过度拟合的真正风险。相反，我们保持 VLM 和标题提示固定，使用 VLM 的结构化输出作为特征，并在其上训练 CatBoost 分类器来预测专家质量标签。 CatBoost 是一种梯度增强决策树库，在像这样的小型表格数据集上表现良好。由于仅重新训练分类器，因此随着注释累积或标准更改而更新系统需要一个简短的仅 CPU 作业，而不是基础模型微调运行。</p>
+<p>VLM 接收页面快照和涵盖四个质量维度的标题提示：视觉故事讲述、功能演示、A+ 布局和转化优化。每个维度都有明确的标准和扣分规则。对于每个维度，VLM 返回从 0 到 10 的分数、置信度值和自然语言基本原理。例如，当页面缺乏多样化的模块或生活方式图像或重复信息时，它会降低分数并解释原因。分数和置信度值成为分类器的特征，其基本原理可以帮助销售合作伙伴理解结果。</p>
+<p>为了构建培训标签，一名电子商务营销专家和四名专业注释员使用相同的标准，独立对 10 个产品类别的 5,478 个产品详细信息页面进行高质量或低质量评级。我们评估了他们的评级并获得了多数票来创建一个共识标签。这些类别几乎是平衡的（49.6% 的高质量），因此分类器无法通过预测多数类别来获得良好的分数。为了衡量标签的可靠性，我们使用了科恩的 kappa，它衡量两个评估者在考虑了他们偶然达成的协议后达成一致的频率。 0 分表示一致性并不比偶然好，1 表示完全一致，高于 0.8 的值通常被认为是强一致性。与共识标签相比，每个注释者的得分在 0.845 到 0.915 之间。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-20598-2.png" alt="评分者之间的注释器性能和内容难度分布"></p>
+<p>图 2：注释器性能和内容难度分布。接近均匀的类别划分排除了多数类别偏差（左），难度分布解释了剩余分歧（右）</p>
+<p>我们将分类器与 20% 保留集（约 1,100 页）的基线进行了比较。基线对四个 VLM 分数进行平均并应用固定阈值，因此每个维度都同等重要。高质量类别的基线准确率达到 0.80，F1 分数达到 0.84。 CatBoost 分类器在相同分数上进行训练，准确率达到 0.89，F1 分数为 0.90。由于分类器了解每个维度的重要性以及这些维度如何相互作用，因此它的预测更符合专家的决策。</p>
+<h2>使用 OCR 进行高性能 VLM 内容评估</h2>
+<p>VLM 可以很好地捕捉页面的整体含义和视觉构成，但它们在细粒度的可读性问题上不太可靠，例如文本有多拥挤或行之间有多少空间。由于他们的语言模型基础，他们也可以喜欢长而详细的描述，即使客户更喜欢他们可以快速浏览的简洁文本。在文本较多的页面上，VLM 可能会将密集的产品信息评为有用，而客户则难以阅读挤在小区域中的长句子。为了解决这些问题，我们使用 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html">SageMaker AI Inference</a> 上托管的光学字符识别 (OCR) 模型来提取每个文本块及其位置，然后计算四个定量信号：文本密度、字符密度、间距和整体可读性。将这些 OCR 分数与 VLM 的语义和视觉评估相结合，可添加补充信息，从而提高分类质量。</p>
+<p>根据该输出，我们计算出四个可读性分数：</p>
+<ul><li><strong>文本密度：</strong> 文本覆盖的页面区域的份额。</li><li><strong>字符密度：</strong> 每单位页面区域的字符数。</li><li><strong>间距：</strong> 单词、行和段落之间的空白是否一致和充足。</li><li><strong>整体可读性：</strong> 前面三个分数的组合信号。</li></ul>
+<p>由于这些分数取决于布局而不是措辞，因此具有相同文本的两个页面可能会获得不同的分数。</p>
+<p>该融合模型将四个 VLM 评分和四个 OCR 评分组合成八个特征，并在相同的专家标签上训练 CatBoost 分类器。表 1 将其与使用相同的 20% 保留集单独训练每个特征集的模型进行了比较。</p>
+<p>在相同的 20% 保留集上，仅使用 OCR 功能的 CatBoost 模型实现了 0.82 的准确度和 0.83 F1 分数，而仅使用 VLM 功能的模型实现了 0.89 和 0.90。融合的“OCR-VLM-CatBoost”模型优于两个独立模型，达到 0.94 的准确率和 0.95 F1 分数。与仅 VLM 模型相比，这两个指标均提高了 0.05，这表明 OCR 并不是替代信号。它通过细粒度的文本可读性信息补充了 VLM 的整体判断。</p>
+<table><thead><tr><th><strong>配置</strong></th><th><strong>准确度</strong></th><th><strong>F1 得分</strong></th></tr></thead><tbody><tr><td>基线（平均 VLM 分数 + 阈值）</td><td>0.80</td><td>0.84</td><td>0.84</td></tr><tr><td>仅限 OCR CatBoost</td><td>0.82</td><td>0.82 0.83</td><td>0.83</td></tr><tr><td>仅 VLM CatBoost</td><td>0.89</td><td>0.89 0.90</td><td>0.90</td></tr><tr><td>融合 OCR-VLM CatBoost</td><td><strong>0.94</strong></td><td><strong>0.95</strong></td></tr></tbody></table>
+<h2>使用 SHAP 进行可解释的 VLM 内容评估</h2>
+<p>质量标签本身并不能告诉销售合作伙伴首先要解决什么问题。为了找到推动每个决策的维度，我们使用 SHapley Additive exPlanations (SHAP)，它为每个特征分配一个值，显示它在多大程度上推动了预测的高质量或低质量。由于 VLM 和 OCR 分数提供相同的分类器，因此 SHAP 在共同的尺度上衡量两者。原始分数无法做到这一点：6 分的视觉叙事分数和高角色密度并不能告诉您哪一个对决策更重要。</p>
+<p>在保留集中，最有影响力的特征是 OCR 字符密度（平均绝对 SHAP 值 1.1）、OCR 整体可读性 (1.0) 和 VLM 视觉叙事 (1.0)。其次是 A+ 布局 (0.8)、功能演示 (0.6) 和转化优化 (0.4)。 OCR 和 VLM 功能均排名靠前，因此分类器取决于这两个来源。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-20598-3.png" alt="所有 VLM 和 OCR 功能的全局 SHAP 值分布"></p>
+<p>图 3：所有 VLM 和 OCR 功能的全局 SHAP 值分布</p>
+<p>对于单个页面，SHAP 显示哪些功能降低了决策。对于每个被分类为低质量的页面，我们根据 SHAP 值对八个特征进行排名，然后将最负面的特征、产品类别和电子商务最佳实践以及 VLM 的基本原理传递给 LLM，LLM 将它们转化为优先的具体行动。</p>
+<p>图 4 显示了低质量和高质量 A+ 内容样本的两个局部 SHAP 图，其中 LLM 推理基于 SHAP 结果。例如，如果 A+ 布局的 SHAP 值为 -1.2，视觉讲故事的 SHAP 值为 -0.3，则系统会优先考虑重构布局并重新平衡文本和图像，然后改进图像。</p>
+<table><thead><tr><th>[![低质量 A+ 内容样本的本地 SHAP 分发，其中大多数功能都贡献了消极](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-20598-4 .png)](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-20598-4.png)</th><th>[![高质量 A+ 内容示例的本地 SHAP 分发，其中大多数功能都贡献了积极]（https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-20598-5 .png)](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-20598-5.png)</th></tr></thead><tbody></tbody></table>
+<p><em>图 4：所有 VLM 和 OCR 功能的两个局部 SHAP 值分布：(a) 低质量案例，其中大多数功能产生负面影响并推动改进请求的建议； (b) 高质量案例，其中大多数功能都做出积极贡献</em></p>
+<p>我们通过在销售合作伙伴修改其内容后测量质量分数来验证这些基于解释的建议的有效性。在统计上显着的样本中，修订后的平均质量得分提高了 1.4 分（满分 10 分）。因此，SHAP 的贡献可以从决策解释转化为可操作的改进优先事项和方法。因此，可解释性不仅仅是理解模型的辅助能力。它起到反馈机制的作用，可以实质性地提高内容质量。</p>
+<h2>结果</h2>
+<p>完整的系统使用 VLM 和 OCR 对每个页面快照进行评分，将四个 VLM 分数和四个 OCR 分数组合成一个特征向量，并将其传递给经过专家标签训练的 CatBoost 分类器。然后，SHAP 确定哪些特征推动了每个决策。为了衡量每个组件添加的内容，我们在相同的 20% 保留集上比较了四种配置。该保留集来自 10 个产品类别的 5,478 个产品详细信息页面，包括家具、鞋类、杂货、美容和服装。</p>
+<p>基线对四个 VLM 分数进行平均并应用固定阈值，因此每个维度都同等重要。准确率达到0.80，F1分数达到0.84。在相同分数上训练 CatBoost 分类器可以让模型了解哪些维度最重要以及它们如何相互作用，从而将准确度提高到 0.89，将 F1 提高到 0.90。仅根据 OCR 分数训练的分类器就达到了 0.82 的准确度和 0.83 的 F1 分数。结合 VLM 和 OCR 分数得出最佳结果，准确度为 0.94，F1 分数为 0.95。与基线相比，准确度高出 14 个百分点，F1 高出 11 个百分点。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-20598-6.png" alt="比较 VLM 和 OCR 评估配置的准确度和 F1 的条形图"></p>
+<p>图 5：VLM 和 OCR 评估配置的准确度和 F1 比较</p>
+<p>单独检查每个性能增益可以使集成方法的价值更加清晰。 CatBoost 校准首先通过学习特定维度的权重和非线性决策边界来减少固定阈值的限制。添加 OCR 功能可以提供 VLM 可能会错过的文本可读性信号。总体而言，最终的融合模型比基线精度提高了 0.14，F1 提高了 0.11。</p>
+<p>我们还在包含 499 个内容项目的单类别数据集的附加实验中更改了 VLM 主干。使用较轻的 VLM 变体，基线达到了 0.74 的准确度和 0.72 F1 分数，而“OCR-VLM-CatBoost”模型的两个指标都达到了 0.90。使用功能更强大的 VLM 变体，基线实现了 0.79 的准确度和 0.84 F1 分数，而融合模型实现了 0.94 和 0.95。融合方法将两个 VLM 的准确度分别提高了 0.16 和 0.15，这表明互补的 OCR 功能可以在不依赖于特定基础模型的情况下提供一致的增益。</p>
+<p>为了降低开发成本，同时保留对高性能基础模型的访问，系统冻结了 VLM 并仅训练低开销分类器。在生产中，一项全球 A/B 实验根据模型的质量决策调整了低质量 A+ 内容的可见性，从而在订购产品销售 (OPS) 方面产生了具有统计意义的改善。除了与专家判断紧密结合之外，集成系统还提供了可以大规模支持客户体验和业务决策的质量信号。</p>
+<h2>在 Amazon SageMaker AI 上的实施</h2>
+<p>本节介绍如何在 Amazon SageMaker AI 上端到端实施该架构。从内容渲染和专家注释到 VLM 评分、OCR 提取、特征聚合、分类器训练、基于 SHAP 的可解释性和生产监控的管道的每个阶段都映射到托管的 SageMaker AI 功能。这种设计使运营开销保持在较低水平。以下步骤将介绍如何在生产中部署、连接和维护每个组件。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-20598-7.png" alt="Amazon SageMaker AI 上内容质量系统的端到端架构"></p>
+<p>图 6：Amazon SageMaker AI 上的内容质量系统的架构</p>
+<p><strong>1.内容快照渲染和数据摄取：</strong> 渲染完整的 A+ 内容体验，捕获客户实际查看页面的方式。</p>
+<p><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/processing-job.html">SageMaker 处理</a> 作业大规模运行容器化渲染作业，将数据准备与训练和推理计算解耦。</p>
+<p><strong>2. VLM 评分和模型托管：</strong> 注释者使用质量标准独立标记内容。他们聚合的共识标签成为训练目标。冻结的 VLM 接收每个快照以及一个标题提示，并输出从 0 到 10 的四个分数（视觉故事讲述、功能演示、A+ 布局、转化优化），每个分数都有一个置信值和理由。 SageMaker AI Inference 通过适合工作负载的部署选项托管 VLM：</p>
+<ul><li>实时端点，用于对单个列表进行同步、低延迟评分。</li><li>用于高分辨率快照等大型有效负载的异步端点，其中轻微的延迟是可以接受的。</li><li>批量转换，用于目录规模的离线批量评分。</li></ul>
+<p>这些选项支持自动扩展、托管基础设施和 GPU 实例选择。</p>
+<p>如果团队需要专门的低延迟变体，可以选择使用 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html">SageMaker 训练作业</a> 进一步调整或提炼 VLM（例如，低阶适应 (LoRA) 适配器、将知识提炼为更小的模型）。避免这种情况，以保持重新校准的成本效益和与 VLM 无关。</p>
+<p><strong>3. OCR 可读性提取：</strong> 同时，OCR 从每个快照中提取文本和边界框位置，并计算四个可读性信号：文本密度、字符密度、间距和整体可读性。</p>
+<p><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html">SageMaker JumpStart</a> 从其模型中心提供预训练的单操作可部署模型，无需从头开始获取、打包和基准测试模型。团队选择一个模型，可以选择在电子商务内容上使用 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/customize-model.html">SageMaker 无服务器模型自定义</a> 管理基础设施来对其进行微调，然后直接部署。然后，<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html">SageMaker AI Inference</a> 将选定的 OCR 模型托管为端点。</p>
+<p><strong>4.特征聚合和存储：</strong></p>
+<p><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/feature-store.html">SageMaker Feature Store</a> 提供对相同功能的在线（低延迟推理）和离线（批量训练）访问，避免训练服务偏差。团队可以在整个组织内共享功能，因此下游消费者可以重用相同的精选功能。</p>
+<p><strong>5.分类器训练：</strong> CatBoost 分类器根据专家注释在八维特征向量上进行训练，以学习非均匀维度权重和非线性决策边界。 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html">SageMaker 培训作业</a> 可以再次在此处使用。您可以将经过训练的模型直接注册到 SageMaker Model Registry，以进行版本控制、审批工作流程和生产部署。</p>
+<p><strong>6。 SHAP 可解释性和建议：</strong> <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/processing-job.html">SageMaker 处理</a> 作业支持<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/processing-container-run-scripts.html">自带 (BYO) 处理代码</a>，您可以使用它来派生 SHAP 值和模型可解释性指标。</p>
+<p><strong>7.生产监控和再培训：</strong> 在生产中，ML 模型会随着时间的推移而自然退化。客户审美观的转变、新 A+ 模块类型的推出、产品类别的演变以及卖家行为的变化。分类器从历史注释中学到的评分模式逐渐与当今质量的含义脱节，如果不加以控制，就会导致准确性悄然下降。持续监控通过检测实时数据分布或模型预测何时偏离训练基线足够远以保证重新校准来缩小这一差距。</p>
+<p>SageMaker AI ModelOps 提供<a href="https://github.com/aws-samples/sample-aiops-on-amazon-sagemakerai/tree/main">示例集合</a> 和资源，帮助您在 SageMaker AI 上操作生成式 AI 和机器学习工作负载。</p>
+<p><a href="https://github.com/aws-samples/sample-aiops-on-amazon-sagemakerai/tree/main">SageMaker AIOps</a> 提供了跟踪数据质量、模型质量和特征归因漂移的工具。 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html">SageMaker Pipelines</a> 还会在突破漂移阈值时自动执行端到端的重新训练工作流程。</p>
+<p><strong>8.基于扩散的内容生成：</strong> 闭环、质量评分和 SHAP 派生的推荐条件是生成改进的 A+ 图像资产的扩散模型。该系统不会让卖家解释建议并从头开始创建新内容，而是生成即用型视觉资产（升级的生活方式图像、重新平衡的布局或增强的产品镜头），直接解决 SHAP 标记为最具负面影响的维度。这些生成的资产和自然语言改进建议会呈现给卖家，以便他们可以升级其在 amazon.com 上的列表。</p>
+<p>＃＃ 结论</p>
+<p>在这篇文章中，我们展示了如何在客户看到产品详细信息页面时对其进行评估，方法是将每个页面呈现为单个快照并使用 VLM 对其进行评分。我们还演练了在 Amazon SageMaker AI 上实施该系统。我们围绕三个目标构建了该系统。为了提高适应性，我们保持 VLM 固定，并根据其评分标准训练 CatBoost 分类器，因此系统符合专家判断，并且可以通过简短的仅 CPU 作业进行更新。为了提高性能，我们添加了 OCR 可读性分数，以捕获 VLM 错过的密集或间距较差的文本。为了便于解释，SHAP 确定哪些功能推动了每个决策，LLM将这些结果转化为针对销售合作伙伴的优先建议。</p>
+<p>在 10 个产品类别的 5,478 个产品详细信息页面上，融合模型达到了 0.94 的准确率和 0.95 F1 分数，分别比平均分数基线高出 14 和 11 个百分点。使用建议修改的页面的质量得分平均提高了 1.4 分（满分 10 分）。</p>
+<p>内容质量标准因产品类别、语言和市场而异，我们的专家注释无法完全代表每个上下文。接下来，我们计划评估更高效的 VLM 主干和推理方法，以便在全局目录上运行系统。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
     <item>
       <title>在 Amazon Bedrock AgentCore Evaluations 中使用决策模型</title>
       <link>https://aws.amazon.com/blogs/machine-learning/use-decision-models-with-amazon-bedrock-agentcore-evaluations/</link>
@@ -5973,372 +6203,6 @@ vpce-001122def=CorporateVpcEndpoint</code></pre>
 <p>这套架构建立了四项互补的控制：VPC 终端节点让用户流量保持私有，VPC 连接为 Quick 提供通往数据源的私有路径，身份联合决定谁能访问什么，VPC 终端节点限制则让私有路径成为强制要求。每一层都可以独立审计，并对应到具体的合规要求（参见「合规映射」）。</p>
 <p>把这些就位之后，Quick Agents 可以查询你的本地数据库，Quick Research 可以研究防火墙后的企业源，Quick Sight 仪表板可以可视化敏感数据，Quick Flows 可以编排内部系统，而你的数据全程都不穿越公网。AI 能力没有变化，暴露面被消除了。</p>
 <p>要实施这套方案，请先做面向用户与 API 访问的 VPC 终端节点，并在推进到面向数据源访问的 VPC 连接之前先验证用户访问。只有确认所有访问模式都能经私有路径正常工作之后，再启用 VPC 终端节点限制。关于身份联合的设置和高级 RLS/CLS 配置，请参考 <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/getting-started.html">IAM Identity Center 文档</a>。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>多智能体系统的 5 个生产挑战，以及 Deep Insight 如何解决它们</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/5-production-challenges-in-multi-agent-systems-and-how-deep-insight-solved-them/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/5-production-challenges-in-multi-agent-systems-and-how-deep-insight-solved-them/</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：5 production challenges in multi-agent systems and how Deep Insight solved them</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>多智能体系统的 5 个生产挑战，以及 Deep Insight 如何解决它们</h1>
-<p>构建一个多智能体系统如今已经相当直接。真正的挑战始于把它投入生产。得益于开源框架和云服务，你可以在几天内搭好一个智能体。几次工具调用、几行提示词，你就有了看起来令人印象深刻的东西。但一旦团队试图走出试点、进入真实业务应用，就会撞上一堵熟悉的墙。如果你曾经尝试把智能体投入生产，这些挫败感听起来会很熟悉：</p>
-<p><em>为什么智能体不遵循我们的业务逻辑、跳过校验步骤，或者捕捉不到边界情况？</em></p>
-<p>你调整提示词、添加更多示例、更换模型。同样的问题反复出现。这是因为智能体并不会遵照固定的指令序列行事。它们根据上下文自行做出判断。仅有指令是不够的。你需要设计智能体如何思考、何时验证，以及出错时该怎么做。这正是为什么仅仅做提示词工程已经不够，必须设计智能体的整个认知架构与执行流程。</p>
-<p>为了正面应对这些挑战，AWS Solutions Architecture 团队构建了 <a href="https://github.com/aws-samples/sample-deep-insight">Deep Insight</a>，一个生产级的多智能体系统。在本系列博文中，我们将分三篇分享团队在构建 Deep Insight 过程中的第一手经验。我们会讲解如何把 Anthropic 提出的 Context Engineering 技巧（多智能体架构、结构化笔记、人在环中等等）应用到真实生产环境中。我们还会介绍过程中遇到的权衡（附代码），以及将这个智能体部署并运行在 AWS 上所获得的运维洞察。</p>
-<h2>博文系列概览</h2>
-<ul><li>第 1 部分：多智能体系统的 5 个生产挑战，以及 Deep Insight 如何解决它们。</li><li>第 2 部分：超越上下文窗口：Context Engineering 技巧以及 Deep Insight 如何应用它们。</li><li>第 3 部分：实践中的 harness 工程：把 Deep Insight 从开发环境推进到生产环境。</li></ul>
-<p>这是三篇系列中的第 1 部分。它定义了任何生产级多智能体系统都必须解决的五个核心挑战，并展示技术栈的每一层如何应对它们——从 <a href="https://strandsagents.com/">Strands Agents SDK</a> 和 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 到 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>、<a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-application-load-balancer.html">Application Load Balancer</a> 和 <a href="https://aws.amazon.com/fargate/">AWS Fargate</a>。第 2、3 部分将讲解 Context Engineering 与生产部署。</p>
-<h2>Deep Insight 简介</h2>
-<p>Deep Insight 是一个多智能体系统，把复杂的数据分析转化为自动化洞察。给定一个 CSV 文件和一段自然语言提示词，一组分层的专职智能体（Coordinator、Planner、Supervisor、Coder、Validator、Reporter 和 Tracker）会协作完成分析。它们一起加载数据、运行分析、生成图表、校验计算，并产出一份带引用的专业报告（.docx）。</p>
-<p>我们稍后会详细探讨架构。先看看它的实际运行。在演示中，我们喂入一家虚构食品公司 Yummy Food 的广告数据（<code>yummy-food-market.csv</code>）以及一个列定义文件（<code>column_definitions.json</code>），并提供这样一段提示词：<em>从销售与营销的角度分析这份数据，生成图表和洞察，并产出一份 .docx 报告。</em> Deep Insight 会生成分析计划，呈交给用户批准，一旦获批就执行分析。</p>
-<table><thead><tr><th></th><th><strong>内容</strong></th></tr></thead><tbody><tr><td>输入</td><td>CSV 数据文件（<code>yummy-food-market.csv</code>）+ 列定义文件（<code>column_definitions.json</code>）</td></tr><tr><td>示例提示词</td><td>“从销售与营销的角度分析这份数据，生成图表和洞察，并产出一份 .docx 报告。”</td></tr><tr><td>输出</td><td>DOCX 报告（两个版本，一份带引用、一份不带引用）以及图表图片（PNG）</td></tr></tbody></table>
-<p>接下来的 <a href="https://www.youtube.com/watch?v=tMN29C4nam0">Deep Insight Web 演示视频</a>展示了完整工作流，从上传数据和审阅分析计划，到实时流式输出并下载完成的报告。</p>
-<h2>我如何试用？</h2>
-<p>Deep Insight 已在 <a href="https://github.com/aws-samples/sample-deep-insight">GitHub</a> 上开源，配有完整的安装指南，并提供三种覆盖从开发到生产的部署选项。</p>
-<p>第一种是<a href="https://github.com/aws-samples/sample-deep-insight/tree/main/self-hosted">自托管版本</a>，通过 CLI 在本地运行。它针对快速迭代做了优化，可以完整访问每个智能体、提示词和工作流的代码。大约 10 分钟即可完成安装，因此很适合开发阶段。（自托管版本的演示视频见 <a href="https://www.youtube.com/watch?v=pnyvBo98E1k">YouTube</a>。）</p>
-<p>第二种是 <a href="https://github.com/aws-samples/sample-deep-insight/tree/main/deep-insight-web">Web 版本</a>，一个基于浏览器的界面，用于上传数据、审阅分析计划（Human-in-the-Loop，即 HITL）和下载报告，全程无需写代码，因此非开发人员也能使用。（前面的演示视频展示的就是 Web 版本的实际运行。）</p>
-<p>第三种是 <a href="https://github.com/aws-samples/sample-deep-insight/tree/main/managed-agentcore">Managed AgentCore 版本</a>，一个由 Amazon Bedrock AgentCore 驱动的生产部署选项，后者是一个可用任意框架或模型大规模构建、连接和优化智能体的平台。该版本把智能体部署在 AgentCore runtime 上，这是 Amazon Bedrock AgentCore 的一项能力。系统完全运行在私有虚拟私有云（VPC）中，自定义 Code Interpreter 单独托管在 AWS Fargate 上，智能体在按用户隔离的环境中并发运行。当你需要会话隔离和私有 VPC 部署时，这是正确的选择。第 3 部分会详细介绍它的部署与运维。</p>
-<p>三者共享同一套多智能体架构，因此在开发阶段验证过的智能体可以原样部署到生产环境。</p>
-<h2>方案概览</h2>
-<p>构建生产级多智能体系统，光有好提示词远远不够。你需要正确的技术栈和基础设施，来解决智能体如何协作、如何推理、如何部署、在哪里安全地执行代码，以及如何监控运行状况。Deep Insight 在以下五个关键领域解决问题。由于智能体既生成代码又生成报告内容，我们还会在方案细节 2 中介绍生产环境的负责任 AI 控制措施。</p>
-<table><thead><tr><th><strong>挑战</strong></th><th><strong>技术</strong></th><th><strong>做法</strong></th></tr></thead><tbody><tr><td>“我们如何控制多个智能体之间的执行流程？”</td><td>Strands Agents SDK</td><td>使用 Strands 的 Graph 模式定义智能体之间的执行顺序，并实现人在环中的分支。使用 Strands 的 Agents as Tools 模式，让 Supervisor 按需把专职智能体（Coder、Validator、Reporter、Tracker）当作工具调用。</td></tr><tr><td>“每个智能体应该用哪个大语言模型（LLM）？”</td><td>Amazon Bedrock</td><td>为每个角色选择合适的 Claude 模型：Haiku 用于基础路由，Opus 用于规划，Sonnet 用于执行。</td></tr><tr><td>“我们如何可靠地在生产环境运维一个已完成的智能体？”</td><td>Amazon Bedrock AgentCore</td><td>带监控、会话隔离和私有 VPC 部署的托管运行时。</td></tr><tr><td>“我们如何缓解执行 AI 生成代码带来的安全问题？”</td><td>AWS Fargate + Application Load Balancer (ALB)</td><td>通过自定义 Code Interpreter，在按会话的临时沙箱容器中隔离执行代码。</td></tr><tr><td>“我们如何监控和管理这个系统？”</td><td>Amazon DynamoDB + Amazon Simple Notification Service (Amazon SNS) + Amazon Cognito</td><td>管理仪表盘和故障告警系统。</td></tr></tbody></table>
-<p>下面的架构图（图 1）一目了然地展示了这一点。绿色方框代表 Strands Agents 的多智能体结构，它应对上表中的挑战 1 和 2。我们将在后面的方案细节 1：多智能体系统设计一节中详细讲解。图中其余的基础设施组件应对挑战 3、4 和 5，我们将在方案细节 2：生产部署与运维中逐一介绍。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21081-1-1.png" alt="Deep Insight architecture: the Strands Agents multi-agent layer on Amazon Bedrock AgentCore, with an Application Load Balancer routing code execution to AWS Fargate containers in a private VPC"></p>
-<p>图 1：方案架构</p>
-<h2>方案细节 1：多智能体系统设计</h2>
-<p>Deep Insight 采用多智能体架构，八个智能体协作产出单一的高质量交付物。每个智能体在自己的独立上下文中工作，只执行自己的专项任务，并且只把压缩后的结果往下传递。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21081-2-1.png" alt="Hierarchical multi-agent structure where the Coordinator and Planner feed the Supervisor, which orchestrates the Coder, Validator, Reporter, and Tracker agents"></p>
-<p>图 2：多智能体结构</p>
-<p>Coordinator 负责路由用户请求，Planner 把任务拆解成离散步骤，Plan Reviewer 收集用户反馈，Supervisor 按照计划调用相应的专职智能体。Coder 编写并执行数据分析代码，Validator 校验计算，Reporter 生成最终报告，Tracker 跟踪进度。我们分三层来说明：</p>
-<ul><li>【第 1 层】Coordinator → Planner → Plan Reviewer：请求分析并创建执行计划。</li><li>【第 2 层】Supervisor：专职智能体的编排。</li><li>【第 3 层】Coder、Validator、Reporter、Tracker：专项任务的执行。</li></ul>
-<p>来自 Strands Agents SDK 的两个关键模式被结合起来，用于控制这些智能体之间的执行流程。首先，<a href="https://strandsagents.com/docs/user-guide/concepts/multi-agent/graph/">Graph 模式</a>把智能体的执行顺序和流程定义为一张有向图。请求依次流经 Coordinator、Planner、Plan Reviewer，然后是 Supervisor，并带有一条在收到修改请求时回到 Planner 的条件分支。通过条件决定下一步，使 HITL 和错误处理这类复杂工作流变得直接了当。其次，<a href="https://strandsagents.com/docs/user-guide/concepts/multi-agent/agents-as-tools/">Agents-as-Tools 模式</a>让 Supervisor 仅在需要时把专职智能体（Coder、Validator、Reporter、Tracker）当作工具调用。每个智能体在独立上下文中工作、只返回结果，从而在保留领域专业能力的同时把上下文用量降到最低。</p>
-<p>本节展示该架构如何解决路由、规划和编排。</p>
-<h3>【第 1 层】Coordinator → Planner → Plan Reviewer</h3>
-<p>这一层把用户请求转化为一份获批的执行计划。</p>
-<h4>1.1 Coordinator（路由）：并非每个请求都需要昂贵的编排</h4>
-<p>Coordinator 是用户请求的入口。它直接处理基本的问候语，并通过 <code>handoff_to_planner</code> 标记把数据分析这类复杂任务交给 Planner。</p>
-<p>关键的设计决策是模型选择：由于 Coordinator 只做分类，它使用轻量的 Claude Haiku，避免在基本问候上付 Opus 级别的成本，同时提供快速响应。</p>
-<pre><code># builder.py: conditional edges for routing decisions
-builder.set_entry_point(&quot;coordinator&quot;)
-builder.add_edge(&quot;coordinator&quot;, &quot;planner&quot;, condition=should_handoff_to_planner)</code></pre>
-<p>路由条件来自 Coordinator 的提示词：任何需要工具、推理或多步思考的请求都交给 Planner。</p>
-<h4>1.2 Planner（创建计划）：复杂分析需要先分解再执行</h4>
-<p>在 Deep Insight 的多智能体结构中，Planner 智能体承担着把任务分配到各智能体的关键角色。在实质性工作开始之前，它把大任务拆成更小的步骤，各专职智能体一次执行一个，使每个智能体的上下文保持精简。</p>
-<p>Planner 使用开启 Extended Thinking 的 Claude Opus 模型来制定分析计划。它把计划组织成 <code>[ ]</code> 清单格式，指明分配给每个智能体的具体任务，并存储在 <code>full_plan</code> 变量中。它把请求拆成 5–10 个清晰步骤，如下例所示：</p>
-<pre><code>## title
-Yummy Food Consumer Purchase Patterns and Advertising Effectiveness Analysis Report
-
-## steps
-
-### 1. Coder: Comprehensive Data Analysis and Insight Generation
-- [ ] Load all data files from './data/*' path and understand structure
-- [ ] Analyze consumer purchase history (patterns, preferences, customer segments)
-- [ ] Analyze advertising data by channel (cost, effectiveness, channel comparison)
-- [ ] Category-level analysis (fresh food, convenience food, health food ad effectiveness)
-- [ ] Calculate key business metrics (conversion rate, CPA, ROAS, etc.)
-- [ ] Generate visualizations (5+ charts, consumer segment charts)
-- [ ] Derive strategic marketing insights
-- [ ] Generate calculation metadata (for validation)
-
-### 2. Validator: Calculation Verification and Citation Metadata Generation
-- [ ] Identify verification targets and extract filter calculations
-- [ ] Load data files directly and perform recalculations
-- [ ] Verify accuracy of per-channel performance metrics
-- [ ] Validate data consistency of visuals and graphs
-- [ ] Generate citation metadata (reference numbers for verified items)
-
-### 3. Reporter: Marketing Analysis Report Generation
-- [ ] Write report overview
-- [ ] Create structured report using verified analysis results
-- [ ] Insert visualizations and analysis sections
-- [ ] Present marketing strategy recommendations and improvement proposals
-- [ ] Generate professional marketing report in DOCX format</code></pre>
-<h4>1.3 Plan Reviewer</h4>
-<p>Plan Reviewer 是一个 HITL 节点，把计划呈现给用户并收集<em>批准或修改反馈</em>。如果有反馈，它会回到 Planner 修改计划。如果获批，它就把任务交给 Supervisor。设置了最大修改次数（<code>MAX_PLAN_REVISIONS</code>）以防止无限循环。</p>
-<pre><code># builder.py: Plan Reviewer's bidirectional conditional edges
-builder.add_edge(&quot;plan_reviewer&quot;, &quot;planner&quot;, condition=should_revise_plan)
-builder.add_edge(&quot;plan_reviewer&quot;, &quot;supervisor&quot;, condition=should_proceed_to_supervisor)
-builder.set_max_node_executions(25)</code></pre>
-<p>在 Web 版本中，Plan Reviewer 会显示一个浏览器弹窗，用户在其中阅读计划并批准它或输入修改反馈。如果 300 秒内没有响应，倒计时结束后会自动批准计划。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21081-3-1.png" alt="Deep Insight web UI showing the Plan Reviewer modal where the user approves or revises the generated analysis plan"></p>
-<p>图 3：Web UI 中 Plan Reviewer 智能体的执行</p>
-<p>如果不做规划，智能体就在运行时决定一切，一次中途纠偏会让之前的工作作废，而用户对进度毫无可见性。有了 Planner 和 Plan Reviewer，用户可以审阅并修改计划、实时监控进度，并且只重新执行失败的那一步。</p>
-<h3>【第 2 层】Supervisor（编排器）：专职智能体需要一位指挥</h3>
-<p>Supervisor 按顺序执行 Planner 的 <code>full_plan</code>，通过 Tool Use 调用注册在它上面的第 3 层智能体（Coder、Validator、Reporter、Tracker）工具。</p>
-<pre><code># nodes.py: registering sub-agents as tools on the Supervisor
-agent = strands_utils.get_agent(
-    agent_name=&quot;supervisor&quot;,
-    system_prompts=apply_prompt_template(prompt_name=&quot;supervisor&quot;, prompt_context={}),
-    model_id=os.getenv(&quot;SUPERVISOR_MODEL_ID&quot;, os.getenv(&quot;DEFAULT_MODEL_ID&quot;)),
-    prompt_cache_info=(True, &quot;default&quot;),
-    tool_cache=True,
-    tools=[coder_agent_tool, reporter_agent_tool, tracker_agent_tool, validator_agent_tool],
-    streaming=True,
-)</code></pre>
-<p>Supervisor 的系统提示词定义了严格的工作流规则：</p>
-<ul><li>强制执行顺序：Coder、Tracker、Validator、Tracker、Reporter、Tracker：每个智能体运行后都会调用 Tracker 跟踪进度，让 Supervisor 管理整体任务状态。</li><li>小节完成规则：在当前智能体的所有清单项被标记为 [x] 之前，Supervisor 不会进入下一个智能体。</li><li>上下文保留：Supervisor 把 clues 和 full_plan 变量传给每个工具智能体，保持完整上下文并防止信息丢失。</li></ul>
-<h3>【第 3 层】Coder、Validator、Reporter、Tracker：分工决定质量</h3>
-<p>每个第 3 层智能体（Coder、Validator、Reporter、Tracker）都被封装为一个 <code>PythonAgentTool</code>，接收来自 Supervisor 的 Tool Use 调用。每个都在 Strands SDK 中创建为独立的 <code>Agent()</code> 实例，拥有自己的系统提示词、模型 ID 和工具集。</p>
-<table><thead><tr><th><strong>智能体</strong></th><th><strong>角色</strong></th><th><strong>工具</strong></th><th><strong>关键输出</strong></th></tr></thead><tbody><tr><td>Coder</td><td>数据分析、图表生成、洞察推导</td><td>write_and_execute_tool, bash_tool, file_read, skill_tool</td><td>*.png 图表、<code>calculation_metadata.json</code></td></tr><tr><td>Validator</td><td>数值计算复验、引用生成</td><td>write_and_execute_tool, bash_tool, file_read</td><td><code>citations.json</code>、validation_report.txt</td></tr><tr><td>Reporter</td><td>DOCX 报告生成</td><td>write_and_execute_tool, bash_tool, file_read</td><td>final_report.docx、final_report_with_citations.docx</td></tr><tr><td>Tracker</td><td>清单进度状态更新</td><td>无（仅 LLM 推理）</td><td>更新后的 full_plan</td></tr></tbody></table>
-<p>Supervisor 依据 Planner 的清单，按以下顺序发起 Tool Use 调用：</p>
-<ul><li>Coder —— 加载数据、编写并运行分析代码、生成 PNG 图表、把结果累积到 all_results.txt，并留下 <code>calculation_metadata.json</code> 供校验。</li><li>Tracker（第 1 轮）—— 把已完成的清单项从 [ ] 更新为 [x]，Supervisor 据此判断是否继续。</li><li>Validator —— 从源数据重新执行 <code>calculation_metadata.json</code> 中的每一项计算。误差在 0.01 以内的判为通过，不匹配的会被标记。通过校验的计算写入 <code>citations.json</code>，供 Reporter 引用。</li><li>Tracker（第 2 轮）—— 在清单中反映 Validator 的完成状态。</li><li>Reporter —— 读取 all_results.txt 和 <code>citations.json</code>，生成两个版本的最终 DOCX 报告，一份带引用、一份不带引用。</li><li>Tracker（第 3 轮）—— 反映所有任务的最终完成状态。</li></ul>
-<p>Tracker 在每个智能体之后运行，这样 Supervisor 就能跟踪进度并强制执行完成规则（在全部条目变为 [x] 之前不往下走）。由于它仅靠 LLM 推理更新清单、不使用工具，因此带来的开销很小。</p>
-<h3>每个智能体的 LLM 模型配置</h3>
-<p>Deep Insight 为每个智能体的角色量身定制模型和设置。这不是模型选型，而是一项优化成本与质量的架构决策。</p>
-<table><thead><tr><th><strong>智能体</strong></th><th><strong>模型</strong></th><th><strong>Extended Thinking</strong></th><th><strong>Prompt Caching</strong></th><th><strong>角色</strong></th></tr></thead><tbody><tr><td>Coordinator</td><td>Haiku</td><td>禁用</td><td>否</td><td>快速路由：成本最小化</td></tr><tr><td>Planner</td><td>Opus</td><td>启用（约 8,192 个 token）</td><td>否</td><td>深度思考：高质量规划</td></tr><tr><td>Supervisor</td><td>Sonnet</td><td>禁用</td><td>是</td><td>执行编排：用缓存节省成本</td></tr><tr><td>Coder</td><td>Sonnet</td><td>禁用</td><td>是</td><td>代码生成/执行：缓存对重复调用有效</td></tr><tr><td>Validator</td><td>Sonnet</td><td>禁用</td><td>否</td><td>数值校验：每次数据不同，缓存无用</td></tr><tr><td>Reporter</td><td>Sonnet</td><td>禁用</td><td>是</td><td>报告生成：缓存对长提示词有效</td></tr><tr><td>Tracker</td><td>Sonnet</td><td>禁用</td><td>否</td><td>状态更新：轻量任务，缓存无用</td></tr></tbody></table>
-<p>Supervisor、Coder 和 Reporter 智能体使用 Prompt Caching 缓存它们的系统提示词和工具定义，在重复调用时把输入 token 成本最多降低 90%。Coordinator 只运行一次，Validator 和 Tracker 每次运行时的上下文都不同，因此缓存对它们无效，保持禁用。这种有选择性的缓存策略是一个深思熟虑的成本/性能权衡。</p>
-<h2>方案细节 2：生产部署与运维</h2>
-<p>如果说方案细节 1 定义的是<em>系统做什么</em>，那么本节定义的是它在哪里、如何安全运行。从这里开始，内容全部是生产运维的基础设施决策。具体来说，本节涵盖 LLM 生成代码的安全执行环境，以及团队的运维可见性。</p>
-<h3>1. 代码执行：LLM 生成的代码需要安全的执行环境</h3>
-<p>Coder 智能体编写并运行 Python 来做数据分析。在自托管版本中，它通过 <code>subprocess.run()</code> 在本地运行；但在生产环境（AgentCore）中，安全和隔离至关重要。直接在生产服务器上运行 LLM 生成的代码风险极高：模型可能删除系统文件、在死循环中耗尽资源，或者触及其他用户的分析数据。Deep Insight 用 AWS Fargate 上按会话的临时容器加上 ALB 来解决这个问题。这些组件并不是孤立运行的。如图 1 所示，AgentCore runtime、ALB 和 Fargate 任务都运行在同一个私有 VPC 内。VPC 端点把它们连接到 Amazon Simple Storage Service (Amazon S3)、Amazon Bedrock 和 Amazon Elastic Container Registry (Amazon ECR)，无需经过公共互联网。安全组限制哪些组件可以访问 Code Interpreter 容器。AWS Identity and Access Management (IAM) 角色把每个组件的作用范围限定在它所需的 AWS 资源上。Amazon CloudWatch 收集来自 AgentCore Observability（Amazon Bedrock AgentCore 的一项能力）的容器日志和可观测性数据。</p>
-<ul><li>自定义容器 Docker 镜像：一个预先优化好的沙箱，带有多智能体系统所需的字体、系统库和 Python 包。</li><li>容器隔离：每个分析会话都会在私有 VPC 子网中分到一个独立的 Fargate 容器，无法直接访问互联网。</li><li>两步执行：LLM 生成的代码先做 base64 编码，通过 HTTP 发送，写入文件（第 1 步），然后通过 subprocess 执行（第 2 步）。</li><li>会话亲和性：即使智能体多次执行代码，ALB 的粘性会话 cookie 也会把它路由回同一个容器。</li><li>产物管理：分析完成时，图表、报告和日志上传到 Amazon S3。容器在一小时后自动终止。</li></ul>
-<p>容器隔离保护了基础设施，但它并不约束智能体生成的内容。Validator 智能体会复验计算，但它检测不出上传数据中隐藏的提示注入指令，也不会筛查 LLM 生成的文本是否含有有害或无依据的内容。对于生产部署，我们建议增加 Amazon Bedrock Guardrails 作为负责任 AI 控制：对用户提示词和上传数据应用内容过滤和提示攻击检测，并对智能体输出应用上下文 grounding 检查，使报告文本始终有源数据和已校验计算作为依据。</p>
-<h3>2. 运维与监控：团队需要可见性</h3>
-<p>一个生产系统光有代码并不完整。团队必须评估系统健康状况、诊断问题并审阅结果，因此 Deep Insight 提供了 Web UI 和一个 Ops 仪表盘。</p>
-<h4>Web UI（deep-insight-web）</h4>
-<p>一个基于 FastAPI 的 Web 界面，通过 AgentCore Native Protocol（<code>boto3.invoke_agent_runtime()</code>）与后端通信。用户上传数据并输入提示词，然后通过 Server-Sent Events (SSE) 流式输出监控进度。计划生成后，弹窗让用户批准或给出修改反馈（HITL）。完成的报告可以直接下载。同时支持韩语和英语。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21081-4-1.png" alt="Deep Insight web interface for uploading data, entering a prompt, and downloading the generated report"></p>
-<p>图 4：Deep Insight Web 版本截图</p>
-<h4>Ops 仪表盘（deep-insight-web/ops）</h4>
-<p>Ops 仪表盘是可选的。没有它 Deep Insight 也能正常工作，但它为需要的团队增加了这些功能：</p>
-<ul><li>任务跟踪：所有分析任务的指标，包括状态、token 用量和耗时，都记录在 Amazon DynamoDB 中。</li><li>故障告警：分析失败时，立即通过 Amazon SNS 向管理员发送电子邮件。</li><li>管理仪表盘：一个专用的管理仪表盘，通过 Amazon Cognito 的 JSON Web Token (JWT) 认证保护，用于安全的任务监控。</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21081-5-1.png" alt="Deep Insight Ops dashboard listing analysis tasks with status, token usage, and elapsed time"></p>
-<p>图 5：Deep Insight Ops 仪表盘截图</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ml-21081-6.png" alt="Deep Insight Ops dashboard detail view showing metrics for a single analysis task"></p>
-<p>图 6：Deep Insight Ops 仪表盘详情视图</p>
-<h2>扩展 Deep Insight 架构</h2>
-<p>Deep Insight 的多智能体架构并不局限于数据分析报告生成这一个领域。下面两个例子表明，这种分层编排的设计原则在完全不同的领域依然有效。</p>
-<h3>案例 1：LG Electronics：由 Agentic AI 驱动的营销洞察提取系统</h3>
-<p>LG Electronics 韩国销售事业部基于与 Deep Insight 相同的多智能体架构构建了 ChatInsight，在那之前，数据分析请求需要 2–3 周，而且营销人员和数据科学家之间的意图会走样。Coordinator 按复杂度路由，Planner 跟踪任务，Supervisor 编排 Coder 和 Reporter，智能体之间的状态通过 all_results.txt 文件累积传递。原本需要 3 天的分析现在只需 30 分钟，生产力提升 288 倍。不懂 SQL 的营销人员也可以让智能体探索数据并提出策略（参见 <a href="https://aws.amazon.com/ko/blogs/tech/lge-agentic-report-automation/">AWS Tech Blog 上的 LG Electronics Agentic AI Insight Extraction System</a>）。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21081-7-1.png" alt="LG Electronics ChatInsight architecture using the same Coordinator, Planner, Supervisor, Coder, and Reporter multi-agent pattern as Deep Insight"></p>
-<p>图 7：LG Electronics Agentic AI 营销洞察系统架构</p>
-<h3>案例 2：TechRecon：AI 驱动的技术侦察智能体（re:Invent 2025）</h3>
-<p>TechRecon 在 AWS re:Invent 2025 上做了展示（session SNR203），把 Deep Insight 的架构应用于技术战略。给定一家公司和所属行业，Researcher 收集技术趋势，Coder 进行分析，Validator 进行校验，Reporter 产出 Landscape Analysis 和 Technical Position Paper。该架构与 Deep Insight 几乎完全相同，使用 Strands Agents SDK 的 Graph 模式、Extended Thinking 和 Prompt Caching 构建，只是由 Researcher 取代 Coder 成为主要的执行智能体。这表明该设计是一个通用模式：替换智能体的角色和提示词，同样的编排结构就能解决完全不同的问题。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21081-8-1.png" alt="TechRecon output showing a Landscape Analysis and a Technical Position Paper produced by the reconnaissance agent"></p>
-<p>图 8：TechRecon 的成果</p>
-<p>（延伸阅读：<a href="https://github.com/aws-samples/sample-tech-recon">TechRecon GitHub</a> | <a href="https://www.youtube.com/watch?v=NwkH_F3yUiY">AWS re:Invent 会议视频</a>）</p>
-<h2>结论</h2>
-<p>构建一个能在生产环境运行的智能体，不是模型能力的问题，而是架构的问题。Deep Insight 提供了一个经过验证的答案：</p>
-<ul><li>工作流管理：Strands Agents SDK 的 Graph 模式定义智能体之间的执行顺序并实现 HITL 分支，而 Agents-as-Tools 模式让 Supervisor 仅在需要时调用专职智能体。</li><li>推理引擎：我们按角色从 Amazon Bedrock 分配 Claude 模型（先是 Haiku，再是 Opus，然后是 Sonnet），以优化成本与质量。</li><li>部署：Amazon Bedrock AgentCore 提供带会话隔离、私有 VPC 部署和 OpenTelemetry 可观测性的托管运行时。</li><li>代码执行：Application Load Balancer 加上 Fargate 上的 Amazon Elastic Container Service (Amazon ECS)，把 LLM 生成的代码执行隔离在按会话的临时沙箱容器中，防止访问系统文件、资源耗尽和意外数据泄露等安全问题。</li><li>运维：Web UI 的 SSE 流式输出和 Ops 仪表盘（DynamoDB + Cognito + SNS）为整个团队提供可见性。</li></ul>
-<p>LG Electronics 的营销洞察系统和 re:Invent 2025 上的 TechRecon 案例验证了这些设计原则。</p>
-<p>在第 2 部分中，我们将在此架构之上考察四层 Context Engineering 技巧，用来克服上下文窗口的限制，从架构级隔离到提示词设计、工具优化和校验保障，并把我们的做法与 Anthropic 的工程研究进行对比。</p>
-<p>Deep Insight 是开源的。欢迎探索代码，并将其扩展到你的领域。</p>
-<ul><li><a href="https://github.com/aws-samples/sample-deep-insight">GitHub</a></li><li>Workshop：Deep Insight Workshop（<a href="https://catalog.us-east-1.prod.workshops.aws/workshops/ee17ba6e-edc4-4921-aaf6-ca472841c49b/en-US">英文</a> | <a href="https://catalog.us-east-1.prod.workshops.aws/workshops/ee17ba6e-edc4-4921-aaf6-ca472841c49b/ko-KR">韩文</a>）</li></ul>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>使用 Strands Agents 构建自适应 agentic 智能框架</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/adaptive-agentic-intelligence-framework-using-strands-agents/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/adaptive-agentic-intelligence-framework-using-strands-agents/</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Adaptive agentic intelligence framework using Strands Agents</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>使用 Strands Agents 构建自适应 agentic 智能框架</h1>
-<p>构建 AI agent 的组织面临一个共同的挑战：每一个请求，无论是例行的状态检查还是复杂的分析，通常都会被路由到单个大型、昂贵的模型。这种一刀切的做法会推高 API 成本、引入不可预测的延迟，并使离线运行成为不可能。即便是本可在本地解决的例行查询，最终也要经历一次到云端托管的 large language model（LLM）的完整网络往返。</p>
-<p>用 Strands Agents 构建的 Adaptive Agentic Intelligence Framework（AAIF）采取了不同的做法。AAIF 不把所有请求都路由到单个大型模型，而是用 small language model（SLM）在本地处理例行任务。更复杂的请求则通过 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 路由到云端托管的模型。这一做法建立在 <a href="https://arxiv.org/abs/2506.02153">NVIDIA 的 Belcak 等人</a>提出的研究立场之上。他们认为，small language model“对 agentic 系统中的许多调用而言已经足够强大、本质上更合适，而且必然更经济”。该框架基于 Strands Agents 构建，展示了智能模型编排如何帮助降低成本，同时为本地操作维持低延迟。</p>
-<p>在本文中，我们逐步介绍 AAIF 的关键组件：通过 Ollama 使用本地 SLM，并通过 Amazon Bedrock 使用云端模型。我们以物联网（IoT）监控场景作为参考实现。</p>
-<h2>解决方案概览</h2>
-<p>AAIF 将 AI 处理组织为三个层，每一层针对不同的任务类型进行优化，如图 1 所示：</p>
-<ul><li>智能编排使用一个轻量级 SLM（llama3.2:1b）作为决策层。该编排器对传入的请求进行分类，并将它们路由到合适的处理层，而无需硬编码规则。</li><li>本地处理使用通过 <a href="https://ollama.com/">Ollama</a> 运行在本地硬件上的 SLM，处理设备遥测数据获取和图像分析等例行任务。这些任务以低延迟完成，且不依赖云端。</li><li>云端处理通过 Amazon Bedrock 中的前沿模型处理复杂的模式分析和战略建议。这些请求需要更广泛的上下文和多步推理，而 SLM 无法可靠地提供。</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-19699-1.png" alt="AAIF three-layer architecture with an SLM orchestrator routing requests to local processing tools or to Amazon Bedrock cloud processing"></p>
-<p>图 1：AAIF 用于智能编排、本地处理和云端处理的三个处理层</p>
-<p>图 1 展示了完整的 AAIF 系统架构。位于中心的是 Strands agent，它连接到 Ollama 运行时，该运行时同时托管 1B 参数的编排器模型和视觉模型。该 agent 暴露了三个工具：用于获取本地传感器数据的 get_device_telemetry、用于通过 llama3.2-vision 进行设备端视觉处理的 analyze_camera_feed，以及通过 boto3 调用 Amazon Bedrock 以完成复杂分析的 get_expert_insights。传入的用户请求流经 SLM 编排器，由它分类每个请求，并根据任务复杂度将其分派到本地工具或云端端点。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-19699-2.jpg" alt="Strands agent connected to an Ollama runtime and three tools, with get_expert_insights calling Amazon Bedrock"></p>
-<p>图 2：完整的 AAIF 系统架构，展示了 Strands agent、Ollama 运行时、工具集成以及 Amazon Bedrock 连接</p>
-<p>该框架会适应你的部署约束，而不是要求你围绕它重构基础设施。这一架构可以运行在诸如 8 GB 内存的 Raspberry Pi 之类的边缘设备上，可以运行在所有推理都打到 Amazon Bedrock 的完整云部署中，也可以运行在把本地速度与云端推理相结合的混合配置中。这种灵活性来自把路由逻辑（SLM 编排器）与处理工具分离，你可以根据可用的硬件和网络连接情况，独立地替换或重新配置这些工具。</p>
-<h2>先决条件</h2>
-<p>在本次演练中，你应具备以下先决条件：</p>
-<ul><li>一个 <a href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html">AWS 账户</a>。</li><li>在所需 Region 中配置好 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 模型访问权限。</li><li>已安装 <a href="https://www.python.org/downloads/">Python 3.10+</a>。</li><li>已安装 <a href="https://ollama.com/">Ollama</a>，并拉取以下模型： <code>ollama pull llama3.2:1b</code>（编排器）。<code>ollama pull llama3.2-vision</code>（视觉分析）。</li><li>已安装 <a href="https://strandsagents.com/latest/">Strands Agents</a>：<code>pip install strands-agents strands-agents-tools</code>。</li><li>已配置好合适凭证的 <a href="https://aws.amazon.com/cli/">AWS Command Line Interface（AWS CLI）</a>。</li><li>已安装 <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/index.html">Boto3</a>：<code>pip install boto3</code>。</li></ul>
-<h2>搭建环境</h2>
-<p>创建项目目录并启动 Ollama 服务器：</p>
-<pre><code>mkdir aaif-demo &amp;&amp; cd aaif-demo
-ollama serve</code></pre>
-<p>拉取所需的模型：</p>
-<pre><code>ollama pull llama3.2:1b
-ollama pull llama3.2-vision</code></pre>
-<p>创建一个名为 <code>aaif_agent.py</code> 的文件，并添加以下组件。</p>
-<h2>实现本地处理工具</h2>
-<p>Strands Agents 使用 <code>@tool</code> 装饰器来定义 agent 可以调用的能力。首先创建用于本地处理的工具。</p>
-<p>第一个工具用于获取设备遥测数据。在生产环境中，它会连接到实际的 IoT 传感器。在本次演练中，它使用的是模拟的设备数据：</p>
-<pre><code>from strands import Agent, tool
-import random
-
-DEVICE_TELEMETRY = {
-    &quot;sensor-001&quot;: {
-        &quot;device_type&quot;: &quot;Temperature Sensor&quot;,
-        &quot;location&quot;: &quot;Building A - Floor 2&quot;,
-        &quot;temperature&quot;: 72.5,
-        &quot;humidity&quot;: 45.2,
-        &quot;status&quot;: &quot;normal&quot;
-    },
-    &quot;camera-001&quot;: {
-        &quot;device_type&quot;: &quot;Security Camera&quot;,
-        &quot;location&quot;: &quot;Main Entrance&quot;,
-        &quot;fps&quot;: 30,
-        &quot;resolution&quot;: &quot;1080p&quot;,
-        &quot;status&quot;: &quot;recording&quot;
-    },
-    &quot;hvac-001&quot;: {
-        &quot;device_type&quot;: &quot;HVAC Controller&quot;,
-        &quot;location&quot;: &quot;Building A - Central&quot;,
-        &quot;set_temp&quot;: 71.0,
-        &quot;current_temp&quot;: 72.5,
-        &quot;mode&quot;: &quot;cooling&quot;,
-        &quot;status&quot;: &quot;active&quot;
-    }
-}
-
-@tool
-def get_device_telemetry() -&gt; str:
-    &quot;&quot;&quot;Retrieve current telemetry data from connected IoT devices.&quot;&quot;&quot;
-    device_id = random.choice(list(DEVICE_TELEMETRY.keys()))
-    device_data = DEVICE_TELEMETRY[device_id]
-
-    report = f&quot;Device: {device_id} ({device_data['device_type']})\n&quot;
-    report += f&quot;Location: {device_data['location']}\n&quot;
-    report += f&quot;Status: {device_data['status']}\n&quot;
-    for key, value in device_data.items():
-        if key not in ['device_type', 'location', 'status']:
-            report += f&quot;{key}: {value}\n&quot;
-    return report</code></pre>
-<p>第二个工具使用本地 SLM 执行视觉分析。llama3.2-vision 模型完全运行在本地硬件上，这意味着敏感的摄像头画面不会离开设备：</p>
-<pre><code>import ollama
-
-@tool
-def analyze_camera_feed(image_path: str) -&gt; str:
-    &quot;&quot;&quot;Analyze visual data from cameras using local vision model.&quot;&quot;&quot;
-    stream = ollama.chat(
-        model='llama3.2-vision',
-        messages=[{
-            'role': 'user',
-            'content': 'Describe this image in one sentence. '
-            'What are the 3 most important things you see?',
-            'images': [image_path]
-        }],
-        stream=True,
-    )
-
-    full_response = &quot;&quot;
-    for chunk in stream:
-        chunk_content = chunk['message']['content']
-        print(chunk_content, end='', flush=True)
-        full_response += chunk_content
-
-    return f&quot;Object Detection Report:\n{full_response}&quot;</code></pre>
-<h2>实现云端处理</h2>
-<p>对于需要更广泛推理的复杂分析，创建一个调用 Amazon Bedrock 的工具。只有当编排器判定本地模型无法处理该请求时，才会调用这个工具：</p>
-<pre><code>import boto3
-
-@tool
-def get_expert_insights(context_data: str, question: str) -&gt; str:
-    &quot;&quot;&quot;Get advanced analysis and expert recommendations
-    for complex questions via Amazon Bedrock.&quot;&quot;&quot;
-    client = boto3.client(&quot;bedrock-runtime&quot;, region_name=&quot;us-east-1&quot;)
-
-    conversation = [
-        {
-            &quot;role&quot;: &quot;user&quot;,
-            &quot;content&quot;: [
-                {&quot;text&quot;: f&quot;Context: {context_data}\n\nQuestion: {question}&quot;}
-            ],
-        }
-    ]
-
-    response = client.converse(
-        modelId=&quot;&lt;&lt;model_id&gt;&quot;, //Refer model id [details](https://docs.aws.amazon.com/bedrock/latest/userguide/foundation-models-reference.html)
-        messages=conversation,
-        inferenceConfig={
-            &quot;maxTokens&quot;: 512,
-            &quot;temperature&quot;: 0.5,
-            &quot;topP&quot;: 0.9
-        }
-    )
-
-    response_text = response[&quot;output&quot;][&quot;message&quot;][&quot;content&quot;][0][&quot;text&quot;]
-    return f&quot;Expert Analysis:\n{response_text}&quot;</code></pre>
-<h2>配置具备智能编排能力的 Strands agent</h2>
-<p>AAIF 的核心是 Strands agent 的配置。该 agent 使用本地 SLM（llama3.2:1b）作为其编排器。Strands Agents 支持多种模型提供方，这里我们使用 Ollama 提供方在本地运行编排器：</p>
-<pre><code>from strands.models.ollama import OllamaModel
-
-model = OllamaModel(
-    model_id=&quot;llama3.2:1b&quot;,
-    host=&quot;http://localhost:11434&quot;,
-    params={
-        &quot;max_tokens&quot;: 300,
-        &quot;temperature&quot;: 0.3,
-    },
-)
-
-system_prompt = &quot;&quot;&quot;You are a monitoring assistant for operational facilities.
-You have access to device telemetry tools, analysis capabilities,
-and expert insights to help monitor operations effectively.
-
-When users ask for:
-- Device status or telemetry: use get_device_telemetry
-- Image or data analysis: use analyze_camera_feed
-- Expert advice or complex questions: use get_expert_insights
-
-Always return the complete tool results directly to the user.&quot;&quot;&quot;
-
-agent = Agent(
-    model=model,
-    system_prompt=system_prompt,
-    tools=[
-        get_device_telemetry,
-        analyze_camera_feed,
-        get_expert_insights,
-    ],
-)</code></pre>
-<p>由 SLM 驱动的编排器会分析每个请求，并将其路由到合适的工具，而无需硬编码的关键词匹配。路由是通过模型对请求的理解来完成的：</p>
-<table><thead><tr><th><strong>请求</strong></th><th><strong>路由</strong></th><th><strong>延迟</strong></th></tr></thead><tbody><tr><td>“检查设备状态”</td><td>本地 SLM</td><td>低（本地推理）</td></tr><tr><td>“分析这张图像”</td><td>本地视觉 AI</td><td>低（本地推理）</td></tr><tr><td>“你推荐哪些优化策略？”</td><td>云端（Amazon Bedrock）</td><td>较高（网络往返）</td></tr></tbody></table>
-<p><em>表 1：本地推理与云端推理的请求、路由和延迟估计</em></p>
-<h2>运行 agent</h2>
-<p>配置好 agent 之后，你可以直接与它交互：</p>
-<pre><code># Local processing - device telemetry
-response = agent(&quot;What's the current status of our devices?&quot;)
-print(response)
-
-# Local processing - vision analysis
-response = agent(&quot;Analyze the camera feed from camera-001&quot;)
-print(response)
-
-# Cloud processing - complex analysis
-response = agent(
-    &quot;Based on current telemetry patterns, &quot;
-    &quot;what optimization strategies do you recommend?&quot;
-)
-print(response)</code></pre>
-<p>agent 会自动对每个请求进行分类，并将其路由到合适的处理层。无需任何显式的路由规则。</p>
-<h2>适应不同的部署场景</h2>
-<p>AAIF 架构通过更改模型配置来适应不同的基础设施需求：</p>
-<p>当你的工作负载完全运行在云端、且没有可用的边缘硬件时，可将 Ollama 模型配置替换为 Amazon Bedrock 来处理所有任务。这样每个请求都会走托管的云端推理，让你无需本地 GPU 资源即可获得自动扩缩容能力。拥有可靠的低延迟连接且不受数据驻留限制的团队最能从这种配置中受益：</p>
-<pre><code>from strands.models import BedrockModel
-
-model = BedrockModel(
-    model_id=&quot;&lt;&lt;model_id&gt;&quot;, //Refer model id [details](https://docs.aws.amazon.com/bedrock/latest/userguide/foundation-models-reference.html)
-    region_name=&quot;us-east-1&quot;
-)</code></pre>
-<p>混合配置在保留本地 SLM 编排器的同时，为超出本地模型能力的请求增加云端模型。这就是本次演练中展示的默认 AAIF 配置。它适合这样的环境：大多数请求足够常规，可以在本地解决，但有些请求需要更大模型进行更广泛的推理。成本节省可以来自大约 80% 不会打到付费 API 端点的流量。</p>
-<p>对于完全物理隔离（air-gapped）或具有严格数据主权要求的环境，可将云端工具替换为一个更大的本地模型，并在设备上运行所有处理。一个 3B 参数模型运行在内存充足的硬件上，可以处理 1B 编排器原本会升级到云端的中等复杂度任务。代价是在最困难的查询上推理深度有所降低，但好处是数据不会离开本地：</p>
-<pre><code>model = OllamaModel(
-    model_id=&quot;llama3.2:3b&quot;, # Larger local model for complex tasks
-    host=&quot;http://localhost:11434&quot;,
-)</code></pre>
-<h2>展望未来：通过 MCP server 实现集中式工具调用</h2>
-<p>本文中的实现使用的是直接在 agent 代码中定义的本地工具调用。对于有多个 agent 跨服务共享工具的生产部署，可将这些工具暴露为 Model Context Protocol（MCP）server。MCP 提供了用于工具发现和调用的标准化接口，因此你可以集中管理工具，并在不同的 agent 和环境之间复用工具。在图 3 中，我们展示了如何把 AAIF 的工具转换为 MCP server，以实现分布式的集中式工具调用。</p>
-<p>如图 3 所示的分布式配置中，Device 1 充当编排中枢，运行带有 SLM 路由器和本地遥测工具的 Strands agent。它通过 MCP 协议连接到 Device 2，后者运行着一个带 llama3.2-vision 的边缘视觉处理服务器。Device 3 充当连接到 Amazon Bedrock 的云端分析网关。从编排器的角度看，所有远程工具都表现为本地函数调用，因为 MCP 传输层会透明地处理序列化和网络通信。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-19699-3.jpg" alt="Distributed AAIF deployment with a Device 1 orchestrator connected through MCP to a Device 2 vision server and a Device 3 Amazon Bedrock analytics gateway"></p>
-<p>图 3：使用 MCP server 的分布式智能</p>
-<h2>清理</h2>
-<p>为避免产生未来费用，请完成以下清理步骤：</p>
-<ul><li>禁用 Amazon Bedrock 模型访问权限：打开 Amazon Bedrock 控制台，选择 <strong>Model access</strong>，并撤销对 Amazon Nova Lite 的访问权限。详细步骤请参阅 Amazon Bedrock 用户指南中的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html#model-access-modify">Manage model access</a>。</li><li>停止 Ollama 服务器并移除模型以释放本地磁盘空间（约 2 GB）： <code>ollama stop ollama rm llama3.2:1b ollama rm llama3.2-vision</code></li><li>如果你不再需要示例代码，请删除项目目录： <code>rm -rf aaif-demo</code></li></ul>
-<h2>结论</h2>
-<p>我们展示了如何使用 Adaptive Agentic Intelligence Framework 和 Strands Agents 构建高性价比的 AI agent。通过把例行请求路由到本地 SLM，并把 Amazon Bedrock 上的云端模型保留给复杂分析，AAIF 可以帮助降低 API 成本，同时为例行操作维持低延迟。</p>
-<p>在生产环境中运行这一模式之前，请为云端推理路径添加负责任的 AI 控制措施，因为这些请求会携带工具输出、检索到的数据和用户输入。你可以通过 guardrail ID 和版本，把 <a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 挂到 Strands BedrockModel 上。它随后会应用针对有害类别的内容过滤器、提示注入过滤器和上下文 grounding 检查，阻止缺乏源数据支撑的响应。若要对本地 SLM 层应用同样的策略，可对其输入和输出调用独立的 ApplyGuardrail API。这样一来，无论由哪个模型处理，每个请求都遵循同一套安全标准。</p>
-<p>这一架构模式并不限于 IoT 监控。一家医疗健康机构可以在本地运行患者监控，同时把诊断支持路由到云端模型。一家金融服务公司可以在本地处理交易，并把云端容量保留给风险分析。一个制造团队可以在边缘运行质量控制视觉模型，同时把优化请求发送到云端。</p>
-<p>要了解有关使用 Strands Agents 构建 agent 的更多信息，请访问 <a href="https://strandsagents.com/docs/user-guide/quickstart/overview/">Strands Agents documentation</a>。有关可用基础模型的信息，请参阅 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
   </channel>

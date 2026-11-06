@@ -7,7 +7,56 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 26 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 05 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>How Lila Sciences and Anyscale Scaled GLM-5.3-Flash Training…</title>
+      <link>https://anyscale.com/blog/lila-sciences-anyscale-glm-training-one-million-tokens</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/lila-sciences-anyscale-glm-training-one-million-tokens</guid>
+      <pubDate>Thu, 05 Nov 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：How Lila Sciences and Anyscale Scaled GLM-5.3-Flash Training to 1M tokens</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
+<h1>Lila Sciences 和 Anyscale 如何将 GLM-5.3-Flash 训练扩展到 100 万个代币</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=skyrl-team">SkyRL 团队</a> 和 <a href="https://www.anyscale.com/blog?author=lila-sciences-ai-research-team">Lila Sciences 人工智能研究团队</a> | 2026 年 11 月 5 日</p>
+<p><a href="https://www.lila.ai/">Lila Sciences</a> 和 Anyscale 使用 64 个 B200 GPU 对每个序列 100 万个令牌进行开放模型 GLM-5.3-Flash 的训练。这比我们开始时训练堆栈可以处理的时间长 64 倍，并且每个更改都是 <a href="https://blog.skyrl.ai/blog/1m-context-glm-5-3-flash">SkyRL</a> 中的开源代码。 Anyscale 的 SkyRL 团队与 Lila Science 研究人员在开源堆栈上的基础设施上密切合作，探索增加此特定模型的上下文长度的研究路径。</p>
+<p>科学数据本质上是很长的。基因组、相关蛋白质或 RNA 序列家族，或者持续数天的实验记录，在被切割成几千个标记时，就会失去重要的结构。与自主实验室一起在闭环中运行科学的人工智能也有同样的需求：经过几轮假设、协议和仪器读数，其上下文增长到数十万个令牌。</p>
+<p>许多开放模型现在支持 1M-token 上下文，但对于大上下文值下的目标任务，它们可能不具有开箱即用的性能。缩小这一差距意味着对任务本身的数据进行完整的训练，而无需削减或严重压缩上下文。这项工作旨在通过开放模型和开放训练堆栈来实现这一目标。</p>
+<p>结果一目了然：</p>
+<ul><li><strong>每个序列 1M 个令牌</strong> 每个 GPU 适合 144.5 GiB，低于 B200 的 178 GiB。</li><li>在 64 个 B200 上，1M 时 <strong>13.7k 令牌/秒</strong>，256k 时峰值 24.9k 令牌/秒。</li><li><strong>该模型使用上下文：</strong> 在人类基因组上进行了微调，其损失在令牌上得到了最大程度的改善，在它们之前有数十万个上下文令牌。</li><li><strong>开源：</strong> 配方位于 <a href="https://github.com/NovaSky-AI/SkyRL/issues/2487">SkyRL</a>，并且一些修复正在向上游传送到 Megatron-LM。</li></ul>
+<h3>Link我们如何在 GLM 5.3 Flash 上达到 1M 代币上下文？</h3>
+<p>GLM-5.3-Flash是一个混合模型：其45层中有34层使用线性注意力（Kimi Delta Attention），11层使用DeepSeek Sparse Attention（DSA）。它还使用比平常宽 4 倍的残差流和专家混合 (MoE) 层。其中每一个都需要自己的工作。记忆随着每一层中的序列长度而增长，而在注意力中，它随着长度的平方而增长，因此每次优化只会将限制推向极限，直到达到下一个优化为止。我们做了一些优化，所有这些都在原始<a href="https://blog.skyrl.ai/blog/1m-context-glm-5-3-flash">帖子</a>中通过他们自己的实验和 PR 进行了详细介绍。</p>
+<p>!【每一次优化都是承载的】(https://images.ctfassets.net/xjan103pcp94/1QDUX3BpCgXskRSHurQaFd/79f63912a43155992842ebff49660b07/image2.png)</p>
+<p>每一次优化都是承重的</p>
+<p>我们遇到的大部分问题并不特定于 GLM，并且可以应用于共享相同类型组件的模型：</p>
+<ul><li><strong>检查每一层是否运行您认为的内核：</strong> GLM 的稀疏注意力层默默地回落到密集注意力，因为融合内核只接受 DeepSeek 的精确张量形状。没有发生任何错误；运行在 16k 时每个 GPU 仅使用 114 GiB，在 32k 时内存不足。填充张量以适应稀疏内核，使内存减半。</li><li><strong>稀疏注意力会导致二次成本；它不会删除它。</strong> DSA 每个查询仅处理 2,048 个标记，但选择这些标记意味着根据整个序列对每个查询进行评分。一次计算数百个查询的评分矩阵可使其大小低于 2 GiB，并且将评分分散到多个 GPU，而不是在每个 GPU 上重复评分，使得整个训练步骤在 256k 速度下速度提高了 2.1 倍。</li><li><strong>每次内存修复都会消耗吞吐量，因此仅使用所需的长度。</strong> 完全重新计算、CPU 卸载和上下文并行性都会购买更多上下文以获得一定的速度。例如，卸载可将 256k 的峰值内存从 142 GiB 削减至 98 GiB，但步骤时间增加 21%。我们只在训练时不使用它时才打开它们。</li><li><strong>随机令牌的基准低估了 MoE 模型的内存。</strong> 专家之间的真实文本分布路线不均匀：在真实的长上下文数据集上，最繁忙的 GPU 收到的令牌数量约为平均数量的 4 倍，并且 512k 耗尽了内存，而随机令牌运行很容易适应。对序列上的 MoE 层进行分块处理修复了这个问题。在调整集群大小之前测试实际数据的内存。</li><li><strong>规划主机内存，而不仅仅是 GPU 内存。</strong> 在 1M 令牌下，在上下文并行之前，卸载到 CPU 的层输入约为每个 GPU 180 GB，每个 8-GPU 节点超过 1 TB，并且它们与优化器状态共享主机 RAM。使用固定内存进行副本（它们比可分页内存快 22%）并在每一步释放它。</li><li><strong>将正确性与速度分开验证。</strong> 速度和内存数字可以来自随机权重，但正确性不能。在使用实际权重的 RL 运行中，训练器的对数概率将 vLLM 与 128k 到 1M 令牌的匹配范围在 0.04 - 0.07（平均绝对差）内，并且过拟合测试在 20 个步骤中将损失从 1.65 驱动到 0.17。</li></ul>
+<p>通过结合这些想法，我们能够在不同的上下文长度上保持良好的吞吐量</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4gGobuzkwK2ktrHpRLQ9Mq/ba473240976ad26ad28ddd782edf7897/image1.png" alt="训练吞吐量，16k -&gt; 1M 代币"></p>
+<p>训练吞吐量，16k -&gt; 1M 代币</p>
+<h2>LinkTraining 结果</h2>
+<p>我们以每个序列 512k 个标记对人类基因组进行后训练，模型的保留损失在 80 个步骤中下降了 4.8%，并且在其之前上下文最多的标记上增益最大。最后一部分是它学会使用长上下文而不仅仅是局部模式的证据。</p>
+<p>我们对人类参考基因组 (hg38) 的 1 号和 2 号染色体进行了训练，并对模型从未见过的 22 号染色体进行了评估。 DNA 是一种很好的测试，因为它具有各种尺度的结构，从短的图案到跨越很长一段距离的图案。</p>
+<p>为了将远程学习与本地学习分开，我们将保留的损失按令牌位置划分在 32k 个令牌桶中，并在微调之前和之后进行比较：</p>
+<ul><li><strong>早期的标记</strong>在它们之前几乎没有背景，因此任何改进都来自局部模式，例如短主题和基本组成。</li><li><strong>迟到的标记</strong> 在它们之前最多有 500k 个上下文标记。</li><li>本地学习对每个职位都有同等的帮助，因此<strong>后期职位的更大进步</strong>必须来自只有他们拥有的长期背景。</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/42pXw7McGTgH7VaNZo0nLJ/87586cc517a2705ca9173ef651e6c3a6/image3.png" alt="微调前后的损失"></p>
+<p>微调前后的损失</p>
+<h2>Link在任何规模上运行</h2>
+<p>本文中的每个实验都在由 Anyscale 平台管理的 Ray 上运行，位于 Lila 云中的 64-GPU B200 集群上。 SkyRL 使用 Ray 来放置和协调其训练和推理工作人员，因此相同的设置对随机令牌运行内存基准测试，对真实数据进行微调，并根据 vLLM 检查训练器的 RL 运行。</p>
+<p>要更深入地了解用于支持长上下文的具体技术，请参阅此<a href="https://blog.skyrl.ai/blog/1m-context-glm-5-3-flash">详细博客文章</a>。</p>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/lila-sciences-anyscale-glm-training-one-million-tokens#how-do-we-reach-1m-tokens-context-on-glm-5.3-flash?-">我们如何在 GLM 5.3 Flash 上达到 1M 代币上下文？ </a></li><li><a href="https://www.anyscale.com/blog/lila-sciences-anyscale-glm-training-one-million-tokens#training-results">训练结果</a></li><li><a href="https://www.anyscale.com/blog/lila-sciences-anyscale-glm-training-one-million-tokens#running-on-anyscale">在 Anyscale 上运行</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-products-best-practices-field.png?w=140" alt="kuberay-products-best-practices-field"></p>
+<h4>生产中的 KubeRay：现场最佳实践</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 在 Google TPU 上支持 PyTorch"></p>
+<h4>宣布 Ray 在 Google TPU 上支持 PyTorch</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
+<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>KubeRay 生产实践：来自一线的最佳实践</title>
       <link>https://anyscale.com/blog/kuberay-best-practices</link>
@@ -5191,56 +5240,6 @@ def train_loop_per_worker(config: dict):
 <p><a href="https://www.anyscale.com/platform">Anyscale Platform</a> 实现了全栈优化，带来极速的自动扩缩容。对 Meta-Llama-3-70B-Instruct 而言，与使用 KubeRay 在 Amazon EKS 上运行同一应用相比，这带来了<strong>最快 5.1 倍的自动扩缩提速</strong>。</p>
 <p>这些优化让 AI 从业者更高效，也让推理服务的运营成本更低。</p>
 <p>今天就免费上手 Anyscale 平台：<a href="https://www.anyscale.com/">https://www.anyscale.com/</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>发布 Anyscale Runtime：由 Ray 驱动，让 AI 更快、更便宜、更具弹性</title>
-      <link>https://anyscale.com/blog/announcing-anyscale-rayturbo</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/announcing-anyscale-rayturbo</guid>
-      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Announcing RayTurbo</description>
-      <content:encoded><![CDATA[<h1>发布 Anyscale Runtime：由 Ray 驱动，让 AI 更快、更便宜、更具弹性</h1>
-<p>作者：Richard Liaw 和 Philip Wang | 2025 年 11 月 4 日</p>
-<p>现代 AI 工作负载——从多模态数据处理到分布式训练和高吞吐推理——正在把基础设施推向极限。这些负载处理日益复杂的数据集（文本、视频、图像），依赖更大的、以 GPU 为主的先进模型，同时仍然依赖 CPU 完成解码、文件缩放等预处理任务。要大规模运行它们，需要在异构算力上的高效编排、高性能执行，以及硬件故障后的快速恢复。</p>
-<p>开源分布式计算框架 Ray 提供了把 AI 与 Python 应用从单机扩展到数千台机器的必要基础——在异构（CPU + GPU）集群上进行任务并行与基于 actor 的计算。随着 AI 工作负载的规模与多样性持续增长，团队往往需要更强的可靠性保证，以及针对吞吐量、延迟、成本等具体负载需求调优的更高性能——若无分布式系统或云基础设施的深厚专长，这些挑战很难解决。</p>
-<p><strong>Anyscale Runtime</strong> 解决了全部这些问题。该 runtime <strong>完全兼容 Ray API</strong>，你可以直接带入现有应用——无需重写代码，没有锁定——同时获得：</p>
-<ul><li><strong>更高的故障韧性</strong>，减少算力浪费、提升大规模流水线的稳定性。支撑特性包括作业检查点（暂停/恢复批量推理处理）、epoch 中途恢复（暂停/恢复训练作业中的分布式数据加载）以及动态内存管理，可减少训练与推理负载的溢出和 OOM 错误。</li><li><strong>相比运行开源 Ray 更快的性能与更低的计算成本</strong>，覆盖大量目标负载——包括图像批量推理、特征处理、强化学习等。</li></ul>
-<p>与 <a href="https://www.anyscale.com/product/platform">Anyscale platform</a> 的其他组件组合使用，团队能更快、更经济地构建和部署 AI 工作负载。Geotab——一个用于分析驾驶行为、提升道路安全的 AI 驱动远程信息处理平台——在在线（低延迟）视频处理上取得了 43 倍吞吐量提升与 4 倍 GPU 利用率改善。同样，AI 行程规划领域的领先者 TripAdvisor 借助 Anyscale 为其批量嵌入处理流水线节省了 70% 的成本。</p>
-<p>想亲自验证 Anyscale Runtime 的能力，请查看我们的 <a href="https://github.com/anyscale/rayturbo-benchmarks/tree/main/">GitHub 仓库</a>，探索并复现基准测试负载——我们将持续更新新数据集与配方。</p>
-<h2><strong>Anyscale Runtime 提供为生产级 AI 优化的韧性与恢复能力</strong></h2>
-<p>想象一下——你在十块高端 GPU 上跑了 19 个小时的长训练，然后崩溃了。数万美元的算力——没了。你被迫从零重启，钱和时间都在燃烧。除成本之外，这类故障延误进度、推迟交付日期，侵蚀你的 AI 投资回报。如果因此丧失竞争优势，这种低效的代价更为高昂。</p>
-<p>Anyscale Runtime 引入了若干为规模化的韧性与快速恢复而设计的特性，让团队专注于推进模型，而不是重做工作：</p>
-<ul><li><strong>Ray Data 中的动态内存管理</strong> —— 自动调整内存用量，减少训练与推理过程中的溢出与 OOM 错误。</li><li><strong>作业检查点（Job Checkpointing）</strong> —— 让长时间运行的推理负载可以暂停并恢复而不丢失进度。</li><li><strong>Epoch 中途恢复（Mid-Epoch Resume）</strong> —— 当使用 Ray Data 加载数据时，允许大规模训练作业从保存状态中途重启，避免时间和算力的浪费。</li></ul>
-<h2><strong>Anyscale Runtime 带来更快性能与更低的单次运行成本</strong></h2>
-<p>Anyscale Runtime 跨多种负载优化执行：更快更便宜的数据处理作业、更可靠的训练运行、更高吞吐的服务。我们的可复现基准显示：</p>
-<ul><li>图像批量推理快 2 倍、成本效率提升 6 倍</li><li>特征处理（编码、归一化等）快 10 倍</li><li>结构化数据处理快 2.5 倍</li><li>强化学习可扩展性提升 8 倍</li><li>高吞吐服务的 QPS 提升 7 倍</li><li>在线推理应用中的视频处理快 40%</li></ul>
-<p>以下是各负载的简要总结。想直接查看代码与数据配方、检验基准，请访问我们的 <a href="https://github.com/anyscale/runtime-benchmarks/tree/main/">GitHub 仓库</a>。</p>
-<h3><strong>图像批量推理</strong></h3>
-<p>流水线读取 JSONL——用 CPU 解码并变换图像批次，然后在 GPU 上用视觉 Transformer 模型推理，最后再用 CPU 将结果写回 JSONL。使用的数据集约 10TB。</p>
-<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/image-batch-inference">GitHub</a></p>
-<p><strong>性能：</strong> 固定集群规模下，开源 Ray 用时 772 秒，Anyscale Runtime 用时 431 秒<strong>（约快 2 倍）</strong></p>
-<p><strong>成本：</strong> 固定集群下 $63 对 $170（便宜 2.7 倍）；自动扩缩容运行下 $23 对 $142<strong>（便宜 6 倍）</strong></p>
-<h3><strong>特征预处理</strong></h3>
-<p>特征预处理——如编码和归一化——是 ML 中最反复迭代的环节之一。通常从小数据集实验开始，但在生产中迅速扩展到成百上千倍的数据。为评估这种增长模式下的性能，我们在 <strong>OrdinalEncoder</strong> 负载上以 <strong>1GB 到 1TB 的数据集规模</strong>对比了 Anyscale Runtime 与开源 Ray。</p>
-<p>可复现基准配方及按数据集规模的性能：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/preprocessors">GitHub</a></p>
-<p><strong>性能：</strong> 随着负载规模增大，Anyscale Runtime 始终取得 10 倍或更好的性能，同时保持执行稳定。</p>
-<h3><strong>结构化数据处理</strong></h3>
-<p>尽管文本、视频、图像等非结构化数据日益重要，结构化数据处理仍是现代数据与 AI 流水线的关键部分。涉及 join、聚合与过滤的负载常因序列化开销与大量 shuffle 而遇到性能瓶颈——使用 Python UDF 时尤甚。为评估这些常见条件下的性能，我们运行了 <strong>TPC-H Q1 基准</strong>。</p>
-<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/tpch">GitHub</a></p>
-<p><strong>性能：</strong> 在 Scale Factor（SF）1000、128 个 CPU 的基准下，Anyscale Runtime 以 99.1 秒完成任务，Ray 约需 913 秒（10 倍加速）</p>
-<h3><strong>高吞吐服务</strong></h3>
-<p>高吞吐服务对推荐引擎、欺诈与异常检测等实时系统至关重要。这类负载必须应对突发流量——每秒数千查询（QPS）——同时保持低延迟与一致性能，还不能过度配置资源。</p>
-<p>Ray 可跨副本和节点动态扩缩，在负载下维持吞吐。Anyscale Runtime 在此基础上扩展了直接入口（direct ingress），精简请求到推理的路径，使服务更快更高效。为测试 QPS 扩展能力，我们基准测试了一个推荐模型，包含两个 Ray Serve 部署：一个负责请求处理与候选生成的 Ingress 服务，一个在 GPU 上运行深度学习推荐模型的 Ranker 服务。</p>
-<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/serve-throughput">GitHub</a></p>
-<p><strong>性能：</strong> 使用 locust 模拟用户请求，在最大的运行（4 个 GPU 副本——Ranker 与 Ingress 部署副本保持 1:2 比例）中，Anyscale Runtime 支持 6300 req/s，Ray 为 900 req/s（提升 7 倍）</p>
-<h3><strong>在线（延迟敏感）视频处理</strong></h3>
-<p>实时视频处理极具挑战，因为它把需要大量计算的大型数据集与严苛的延迟约束结合在一起——而从目标检测到自主系统这类&quot;能看&quot;的多模态应用日益需要它。这些负载运行横跨 CPU 与 GPU 阶段的复杂异构流水线——流程类似：视频输入 → 分块 → 抽帧 → 目标检测 → 结果。</p>
-<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/serve-video-perf">GitHub</a></p>
-<p><strong>性能：</strong> 实现了两种推理场景：<em>分块推理</em>（每个 chunk 独立处理）与<em>合并推理</em>（对需要合并整段视频的应用把所有帧一起处理）。两种场景下，Anyscale Runtime 相比开源 Ray 均有<strong>约 40% 的提升</strong>。</p>
-<h2>下一步</h2>
-<p>从多模态数据预处理到大规模训练和高吞吐服务，这些基准展示了 Anyscale Runtime 如何为任意 AI 负载拓展性能、可靠性与效率的极限。</p>
-<p>而我们才刚刚开始——路线图上还有众多关键负载等待覆盖，我们的目标是让 Anyscale Runtime 成为任何 AI 负载的最佳计算引擎。</p>
-<h2>资源</h2>
-<ul><li>通过 <a href="https://github.com/anyscale/rayturbo-benchmarks/tree/main/">GitHub</a>上的配方探索 Anyscale Runtime</li><li><a href="https://www.anyscale.com/contact-sales?utm_source=anyscaleruntime">联系我们</a>，帮你优化工作负载</li><li>查看 Ray Summit 2025 的<a href="https://anyscale.com/blog/ray-summit-2025-anyscale-product-updates">其他公告</a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -3,7 +3,7 @@
   <channel>
     <title>Jina AI · 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>Jina AI 官方博客 / 更新日志归档（最近 50 条，共 6 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>Jina AI 官方博客 / 更新日志归档（最近 50 条，共 8 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-jina_ai.xml" rel="self" type="application/rss+xml"/>
@@ -121,7 +121,7 @@ similarity = model.similarity(text_emb, img_emb)</code></pre>
       <link>https://jina.ai/news/bootstrapping-audio-embeddings-from-multimodal-llms</link>
       <guid isPermaLink="true">https://jina.ai/news/bootstrapping-audio-embeddings-from-multimodal-llms</guid>
       <pubDate>Wed, 11 Mar 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：7 minutes readBootstrapping Audio Embeddings from Multimodal LLMsTurn any multimodal LLM into a small audio embedding model that beats CLAP with 25x less data.</description>
+      <description>原文标题：7 min readBootstrapping Audio Embeddings from Multimodal LLMsTurn any multimodal LLM into a small audio embedding model that beats CLAP with 25x less data.</description>
       <content:encoded><![CDATA[<h1>从多模态 LLM 引导出音频 embedding</h1>
 <p>把任意多模态 LLM 变成一个小型音频 embedding 模型，用少 25 倍的数据就能超过 CLAP。</p>
 <p>Han Xiao · 7 分钟阅读</p>
@@ -201,7 +201,7 @@ similarity = model.similarity(text_emb, img_emb)</code></pre>
       <link>https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values</link>
       <guid isPermaLink="true">https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values</guid>
       <pubDate>Fri, 06 Mar 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：6 minutes readIdentifying Embedding Models from Raw Numerical ValuesA tiny transformer that fingerprints embedding models by reading raw numerical digits. No feature engineering.</description>
+      <description>原文标题：6 min readIdentifying Embedding Models from Raw Numerical ValuesA tiny transformer that fingerprints embedding models by reading raw numerical digits. No feature engineering.</description>
       <content:encoded><![CDATA[<h1>从原始数值识别 Embedding 模型</h1>
 <p>一个只需读取原始数字位就能为 embedding 模型「指纹识别」的小型 transformer，无需特征工程。</p>
 <p>作者：Han Xiao · 6 分钟阅读</p>
@@ -244,11 +244,145 @@ similarity = model.similarity(text_emb, img_emb)</code></pre>
 <p>这对若干实际场景有价值：在来源模型未知时审计向量数据库、核实某个 API 是否真的用了它声称的模型、检测模型版本变更。更根本地，它告诉我们：embedding 模型以结构上互不相同的方式编码语义，即使产出相同维度的向量也是如此。</p>]]></content:encoded>
     </item>
     <item>
+      <title>7 min readjina-embeddings-v5-text: New SOTA Small Multilingu…</title>
+      <link>https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings</link>
+      <guid isPermaLink="true">https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings</guid>
+      <pubDate>Thu, 19 Feb 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：7 min readjina-embeddings-v5-text: New SOTA Small Multilingual EmbeddingsTwo sub-1B multilingual embeddings with best-in-class performance, available on Elastic Inference Service, Llama.cpp and MLX.</description>
+      <content:encoded><![CDATA[<p>明星</p>
+<p>新闻稿</p>
+<p>2026 年 2 月 19 日</p>
+<h1>jina-embeddings-v5-text：新的 SOTA 小型多语言嵌入</h1>
+<p>两个具有一流性能的 sub-1B 多语言嵌入，可在 Elastic Inference Service、Llama.cpp 和 MLX 上使用。</p>
+<p>！<a href="https://jina.ai/blog-banner/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings.gif">黑白抽象数字艺术作品，以分散的点形成半色调效果的字母。中心信</a></p>
+<p><img src="https://cms.jina.ai/content/images/2022/08/Jjqb-JeY_400x400.jpg" alt="吉娜艾"></p>
+<p>吉娜·艾•7 分钟阅读</p>
+<p>jina-embeddings-v5-text：任务目标嵌入蒸馏</p>
+<p>文本嵌入模型广泛用于语义相似性任务，包括信息检索、聚类和分类。通用模型通常使用对比损失函数通过单阶段或多阶段过程进行训练。我们引入了一种新颖的训练方案，它将模型蒸馏技术与特定任务的对比损失相结合，以生成紧凑的高性能嵌入模型。我们的研究结果表明，这种方法对于训练小型模型比纯粹的对比或基于蒸馏的训练范例更有效。所得模型 jina-embeddings-v5-text-small 和 jina-embeddings-v5-text-nano 的基准分数超过或匹配类似大小模型的最新水平。 jina-embeddings-v5-text 模型还支持多种语言的长文本（small 最多 32K token，nano 最多 8K），并生成在截断和二进制量化下保持稳健的嵌入。模型权重是公开的，希望能够激发嵌入模型开发的进一步进步。</p>
+<p><img src="https://cms.jina.ai/content/images/icon/apple-touch-icon-49.png" alt="">arXiv.orgMohammad Kalim Akram</p>
+<p><img src="https://cms.jina.ai/content/images/thumbnail/arxiv-logo-fb-43.png" alt=""></p>
+<p>jina-embeddings-v5-text - jinaai 集合</p>
+<p>我们的第五代嵌入：两个轻量级多语言模型，在检索、匹配、聚类和分类方面具有 SOTA 性能。</p>
+<p><img src="https://cms.jina.ai/content/images/icon/favicon-50.ico" alt="">jinaai 收藏</p>
+<p><img src="https://cms.jina.ai/content/images/thumbnail/jina-embeddings-v5-text-698a0a5b809aa96a2ff39cdd.png" alt=""></p>
+<p>我们正在发布“jina-embeddings-v5-text”，这是我们嵌入模型系列的第五代，推动了 1B 以下多语言嵌入的质量效率前沿：</p>
+<ul><li><a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-small">jina-embeddings-v5-text-small</a> (<strong>677M</strong> 参数): <strong>67.0</strong> 在 MMTEB 上，<strong>71.7</strong> 在 MTEB 英语上</li><li><a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-nano">jina-embeddings-v5-text-nano</a>（<strong>239M</strong>参数）：MMTEB 上<strong>65.5</strong>，MTEB 英语<strong>71.0</strong></li></ul>
+<p>小模型支持 <strong>32K 令牌上下文（nano 为 8K）</strong>、<strong>4 个特定于任务的 LoRA 适配器</strong>（检索、文本匹配、分类、聚类）以及 <strong>Matryoshka 维度截断</strong>（从 1024 降至 32）。在 239M 参数下，nano 模型的检索质量与参数数量是其两倍的模型相当。</p>
+<p>与我们的前几代相比：v5-text-small 在检索方面与 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a> (3.8B) 匹配，同时小 5.6 倍，并且在所有方面优于 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v3">jina-embeddings-v3</a> (572M)具有相似参数数量的任务。</p>
+<table><thead><tr><th>特色</th><th>v5-文本小</th><th>v5-文本-纳米</th></tr></thead><tbody><tr><td>基本型号</td><td><code>Qwen3-0.6B-Base</code></td><td><code>EuroBERT-210m</code></td></tr><tr><td>参数</td><td><strong>677M</strong></td><td><strong>239M</strong></td></tr><tr><td>嵌入尺寸</td><td>1024</td><td>1024 768</td><td>768</td></tr><tr><td>上下文长度</td><td>32,768</td><td>8,192</td><td>8,192</td></tr><tr><td>语言</td><td>119（Qwen3 分词器）</td><td>15+（EuroBERT 分词器）</td></tr><tr><td>汇集</td><td>最后一个令牌</td><td>最后一个令牌</td></tr><tr><td>LoRA 适配器</td><td>4（检索、文本匹配、分类、聚类）</td><td></td></tr><tr><td>俄罗斯套娃 Dims</td><td>32-1024</td><td>32-1024 32-768</td><td>32-768</td></tr><tr><td>MMTEB 分数</td><td><strong>67.0</strong></td><td><strong>65.5</strong></td></tr><tr><td>MTEB 英语</td><td><strong>71.7</strong></td><td><strong>71.0</strong></td></tr><tr><td>许可证</td><td>CC BY-NC 4.0</td><td></td></tr></tbody></table>
+<p><code>v5-text-small</code> 在 MMTEB 上达到**<strong>67.0</strong><strong>（在 9 种任务类型的 131 个任务中平均），比次佳的 sub-1B 模型（Qwen3-0.6B，指令为 64.3）高出</strong><strong>+2.7 分</strong>**。具有 239M 个参数的纳米模型得分为 65.5，击败了具有两倍参数的模型。</p>
+<p>在纯英语评估中，“v5-text-small”以 **<strong>71.7</strong>** 领先所有 sub-1B 多语言模型（7 种任务类型的 41 个任务的平均值），紧随其后的是“KaLM-mini-v2.5”（71.3）和“v5-text-nano”（71.0）。 239M 纳米模型在不到一半的尺寸下实现了与 494M KaLM 的同等性能。</p>
+<p><code>v5-text-small</code> 在 sub-4B 模型中的五个检索基准（MTEB Multilingual、MTEB English、RTEB、BEIR 和 LongEmbed）中实现了最高的任务级别平均值 (**<strong>63.28</strong><strong>)，与 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a> (3.8B, 63.62) 匹配，同时</strong><strong>小 5.6 倍</strong>**。</p>
+<p>根据 2026 年 2 月 21 日的 <a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB 排行榜</a>，“jina-embeddings-v5-small”（0.6B 参数，排名第 8）是 MTEB Multilingual v2 上 1B 参数下最强的嵌入模型，在每个指标上都优于 Qwen3-Embedding-0.6b。 “jina-embeddings-v5-nano”（0.2B 参数，排名第 11）以一小部分大小提供了前 11 名的性能，此参数类中没有其他模型可以与之相媲美。</p>
+<h2><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#architecture"><em>tag</em></a>架构</h2>
+<p><img src="https://cms.jina.ai/content/images/2026/02/v5_architecture_1771470917.png" alt="&lt;code&gt;jina-embeddings-v5-text&lt;/code&gt; 架构"></p>
+<p>v5-text 使用仅解码器主干和最后令牌池而不是均值池。每个变压器层注入四个轻量级 LoRA 适配器，独立处理检索、文本匹配、分类和聚类。用户在推理时选择适当的适配器。对于检索，查询将获得“查询：”前缀，文档将获得“文档：”。 Small 的上下文长度为 32K token（nano 为 8K），比 v3 增加了 4 倍。</p>
+<h2><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#getting-started"><em>tag</em></a>开始使用</h2>
+<h3><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#elastic-inference-service"><em>tag</em></a>弹性推理服务</h3>
+<p>在生产中使用 v5-text 的最快方法。 Elastic 推理服务 (EIS) 提供具有内置扩展功能的托管嵌入推理，因此您可以直接在 Elastic 部署中生成嵌入，而无需管理基础设施。</p>
+<pre><code>PUT _inference/text_embedding/jina-v5
+{
+  &quot;service&quot;: &quot;elastic&quot;,
+  &quot;service_settings&quot;: {
+    &quot;model_id&quot;: &quot;jina-embeddings-v5-text-small&quot;
+  }
+}</code></pre>
+<p>有关设置详细信息，请参阅 <a href="https://www.elastic.co/docs/explore-analyze/elastic-inference/eis">EIS 文档</a>。</p>
+<h3><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#jina-embedding-api"><em>tag</em></a>Jina 嵌入 API</h3>
+<p>我们的托管 API 具有按代币付费的定价。支持开箱即用的任务选择、维度截断和批处理。无需 GPU。</p>
+<pre><code>curl https://api.jina.ai/v1/embeddings \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer YOUR_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;jina-embeddings-v5-text-small&quot;,
+    &quot;task&quot;: &quot;retrieval.query&quot;,
+    &quot;dimensions&quot;: 1024,
+    &quot;input&quot;: [&quot;What is knowledge distillation?&quot;]
+  }'</code></pre>
+<p>在 <a href="https://jina.ai/embeddings">jina.ai/embeddings</a> 获取 API 密钥。</p>
+<h3><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#hugging-face-sentence-transformers"><em>tag</em></a>Hugging Face + 句子转换器</h3>
+<p>在本地运行并完全控制推理。 Hugging Face 上提供了权重，并具有开箱即用的句子转换器集成。</p>
+<pre><code>from sentence_transformers import SentenceTransformer
+import torch
+
+model = SentenceTransformer(
+    &quot;jinaai/jina-embeddings-v5-text-small-retrieval&quot;,
+    model_kwargs={&quot;dtype&quot;: torch.bfloat16},
+)
+
+query_emb = model.encode(&quot;What is knowledge distillation?&quot;, prompt_name=&quot;query&quot;)
+doc_embs = model.encode([&quot;Knowledge distillation transfers...&quot;, &quot;Venus is...&quot;], prompt_name=&quot;document&quot;)
+similarity = model.similarity(query_emb, doc_embs)</code></pre>
+<h3><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#vllm"><em>标签</em></a>vLLM</h3>
+<p>为生产工作负载提供高吞吐量服务。 vLLM 原生支持带有最后令牌池的 v5-text。</p>
+<pre><code>from vllm import LLM
+from vllm.config.pooler import PoolerConfig
+
+model = LLM(
+    model=&quot;jinaai/jina-embeddings-v5-text-small-retrieval&quot;,
+    dtype=&quot;float16&quot;,
+    runner=&quot;pooling&quot;,
+    pooler_config=PoolerConfig(seq_pooling_type=&quot;LAST&quot;, normalize=True),
+)
+outputs = model.encode([&quot;Query: climate change impacts&quot;], pooling_task=&quot;embed&quot;)</code></pre>
+<p>为了通过 llama.cpp 和 MLX 优化本地推理，每个任务适配器的 LoRA 权重都会合并到基本模型中以生成独立的权重文件。这就是为什么您会看到每个任务都有单独的存储库（检索、文本匹配、分类、聚类）——每个存储库都包含可供直接加载的完整合并权重，在推理时没有 LoRA 开销。</p>
+<h3><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#llamacpp-gguf"><em>标签</em></a>llama.cpp (GGUF)</h3>
+<p>在 CPU 或边缘设备上运行量化模型。我们为每个模型提供 14 种 GGUF 量化变体，从 F16 到 IQ1_S。</p>
+<pre><code>llama-server -hf jinaai/jina-embeddings-v5-text-small-retrieval-GGUF:Q4_K_M \
+  --embedding --pooling last -ub 32768</code></pre>
+<h3><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#mlx"><em>标签</em></a>MLX</h3>
+<p>通过 MLX 进行原生 Apple Silicon 推理。可为所有任务适配器提供全精度、4 位和 8 位量化。</p>
+<pre><code>import mlx.core as mx
+from tokenizers import Tokenizer
+from model import JinaEmbeddingModel
+import json
+
+with open(&quot;config.json&quot;) as f:
+    config = json.load(f)
+
+model = JinaEmbeddingModel(config)
+weights = mx.load(&quot;model-4bit.safetensors&quot;)  # or model.safetensors, model-8bit.safetensors
+model.load_weights(list(weights.items()))
+
+tokenizer = Tokenizer.from_file(&quot;tokenizer.json&quot;)
+texts = [&quot;Query: What is machine learning?&quot;]
+embeddings = model.encode(texts, tokenizer)</code></pre>
+<p>从 Hugging Face 下载：“jinaai/jina-embeddings-v5-text-small-retrieval-mlx”（也可用于文本匹配、分类和聚类适配器）。</p>
+<h2><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#training"><em>tag</em></a>训练</h2>
+<p>这两个模型都是从“<strong>Qwen3-Embedding-4B</strong>”中提炼出来的，这是一个更大的经过训练的嵌入模型。小型变体使用“Qwen3-0.6B-Base”作为其主干，而 Nano 使用 EuroBERT-210m。我们的训练结合了两个互补的信号：</p>
+<ul><li><strong>嵌入蒸馏</strong>来自 4B 老师通过余弦相似性损失。学生无需指令式提示即可学习近似教师的嵌入空间。这对于标记数据稀缺的语言和任务特别有效。</li><li><strong>特定于任务的对比损失</strong>（<code>InfoNCE</code>）在带有硬负挖掘和批内负的标记查询文档对上。冻结蒸馏后的骨干网后，我们为每个任务类别训练单独的 LoRA 适配器。</li></ul>
+<p>我们的消融研究表明，这种组合方法始终优于单独使用任何一种方法。在 MTEB 英语检索中，组合方法在同一主干上实现了<strong>60.1 <code>nDCG@10</code></strong>，而仅蒸馏的结果为 58.6，仅对比的结果为 54.3。</p>
+<p>我们还在训练期间应用<strong>GOR（广义正交正则化）</strong>，这鼓励嵌入组件更加均匀地分布。这不会显着提高标准基准测试分数，但它使二进制量化几乎无损，这是内存受限部署的关键属性。</p>
+<p>训练中的一些值得注意的观察结果：</p>
+<ul><li>蒸馏和对比学习以我们最初没有想到的方式互补。</li><li>从我们的损耗混合物中删除任何单个组件都会降低整体性能。</li><li>特定于任务的 LoRA 适配器在参数开销可以忽略不计的情况下优于多任务训练。</li><li>GOR 正则化使二进制量化几乎无损，这对于部署来说比边际全精度增益更重要。</li></ul>
+<h2><a href="https://jina.ai/news/jina-embeddings-v5-text-distilling-4b-quality-into-sub-1b-multilingual-embeddings/#conclusion"><em>标签</em></a>结论</h2>
+<p>嵌入模型越来越多地用作大型系统中的工具链组件。 LLM 代理调用嵌入 API 来进行检索、记忆和分类，作为代理工作流程的一部分。 OpenClaw 和 OpenViking 等项目将嵌入视为代理上下文管理的核心基础设施层，而不是独立的搜索端点。在这种情况下，每次调用的推理成本和延迟与基准分数一样重要，紧凑模型成为自然选择。</p>
+<p>更小的嵌入模型的趋势反映了更广泛的转变。设备上检索、基于浏览器的搜索和边缘部署都需要适合有限内存预算的模型。 Matryoshka 维度支持让单个模型无需重新训练即可服务于高精度和超快速近似搜索。与低至 1-2 位的 GGUF 量化相结合，生产嵌入服务的有效内存占用量下降了一个数量级。</p>
+<p>我们正在研究“jina-embeddings-v5-multimodal”，将相同的架构扩展到视觉和跨模态检索。早期结果表明，将视觉编码器与微调的文本嵌入模型对齐是可能的，而不会降低文本性能。敬请关注。</p>
+<p>类别：</p>
+<p>明星</p>
+<p>精选</p>
+<p>新闻稿</p>
+<p><a href="https://jina.ai/feed.rss"><em>rss_feed</em></a></p>
+<p>2026 年 9 月 14 日 • 阅读时间 9 分钟</p>
+<p>jina-ocr-v1：在低预算 GPU 上加快文档解析速度</p>
+<p><img src="https://cms.jina.ai/content/images/2022/08/Jjqb-JeY_400x400.jpg" alt="吉娜艾"></p>
+<p><img src="https://jina.ai/blog-banner/jina-ocr-v1-faster-document-parsing-on-low-budget-gpus.gif" alt="jina-ocr-v1"></p>
+<p>2026 年 8 月 3 日 • 阅读时间 11 分钟</p>
+<p>jina-reranker-v3.5：通过混合注意力和自蒸馏实现更快的列表重排序</p>
+<p><img src="https://cms.jina.ai/content/images/2022/08/Jjqb-JeY_400x400.jpg" alt="吉娜艾"></p>
+<p><img src="https://jina.ai/blog-banner/jina-reranker-v3-5-faster-listwise-reranking-hybrid-attention-self-distillation.gif" alt=""></p>
+<p>2026 年 5 月 12 日 • 阅读 7 分钟</p>
+<p>jina-embeddings-v5-omni：文本、图像、音频和视频的嵌入</p>
+<p><img src="https://cms.jina.ai/content/images/2022/08/Jjqb-JeY_400x400.jpg" alt="吉娜艾"></p>
+<p><img src="https://jina.ai/blog-banner/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video.gif" alt=""></p>]]></content:encoded>
+    </item>
+    <item>
       <title>Jina-VLM：小型多语言视觉语言模型：全新 2B 视觉语言模型在多语言 VQA 上达到 SOTA，纯文本任务不出现灾…</title>
       <link>https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model</link>
       <guid isPermaLink="true">https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model</guid>
       <pubDate>Thu, 04 Dec 2025 00:00:00 +0000</pubDate>
-      <description>完整标题：Jina-VLM：小型多语言视觉语言模型：全新 2B 视觉语言模型在多语言 VQA 上达到 SOTA，纯文本任务不出现灾难性遗忘 | 原文标题：7 minutes readJina-VLM: Small Multilingual Vision Language ModelNew 2B vision language model achieves SOTA on multilingual VQA, no catastrophic forgetting on text-only tasks.</description>
+      <description>完整标题：Jina-VLM：小型多语言视觉语言模型：全新 2B 视觉语言模型在多语言 VQA 上达到 SOTA，纯文本任务不出现灾难性遗忘 | 原文标题：7 min readJina-VLM: Small Multilingual Vision Language ModelNew 2B vision language model achieves SOTA on multilingual VQA, no catastrophic forgetting on text-only tasks.</description>
       <content:encoded><![CDATA[<h1>Jina-VLM：小型多语言视觉语言模型</h1>
 <p>全新的 2B 视觉语言模型在多语言 VQA 上达到 SOTA，且在纯文本任务上没有灾难性遗忘。</p>
 <p>Jina AI · 7 分钟阅读</p>
@@ -400,11 +534,165 @@ print(response)</code></pre>
 <p>未来的工作可以探索更高效的分辨率处理、针对计数和空间任务的定向改进，并研究我们的多语言训练方案能否迁移到更大的模型规模。</p>]]></content:encoded>
     </item>
     <item>
+      <title>7 min readJina Reranker v3: 0.6B Listwise Reranker for SOTA…</title>
+      <link>https://jina.ai/news/jina-reranker-v3-0-6b-listwise-reranker-for-sota-multilingual-retrieval</link>
+      <guid isPermaLink="true">https://jina.ai/news/jina-reranker-v3-0-6b-listwise-reranker-for-sota-multilingual-retrieval</guid>
+      <pubDate>Fri, 03 Oct 2025 00:00:00 +0000</pubDate>
+      <description>完整标题：7 min readJina Reranker v3: 0.6B Listwise Reranker for SOTA Multilingual RetrievalNew 0.6B-parameter listwise reranker that considers the query and all candidate documents in a single context window.</description>
+      <content:encoded><![CDATA[<p>明星</p>
+<p>新闻稿</p>
+<p>2025 年 10 月 3 日</p>
+<h1>Jina Reranker v3：用于 SOTA 多语言检索的 0.6B Listwise Reranker</h1>
+<p>新的 0.6B 参数列表重排序器在单个上下文窗口中考虑查询和所有候选文档。</p>
+<p><img src="https://jina.ai/blog-banner/jina-reranker-v3-0-6b-listwise-reranker-for-sota-multilingual-retrieval.gif" alt="浅蓝色背景，中心有风格化文本，由小点或方块组成，唤起现代简约的感觉"></p>
+<p><img src="https://cms.jina.ai/content/images/2022/08/Jjqb-JeY_400x400.jpg" alt="吉娜艾"></p>
+<p>吉娜·艾•7 分钟阅读</p>
+<p>jinaai/jina-reranker-v3 · Hugging Face</p>
+<p>我们正在通过开源和开放科学推进人工智能并使之民主化。</p>
+<p><img src="https://cms.jina.ai/content/images/icon/favicon-48.ico" alt=""></p>
+<p><img src="https://cms.jina.ai/content/images/thumbnail/jina-reranker-v3.png" alt=""></p>
+<p><a href="https://huggingface.co/jinaai/jina-reranker-v3-GGUF">GGUF 量化</a> 和 <a href="https://huggingface.co/jinaai/jina-reranker-v3-mlx">MLX 支持</a> 可用。</p>
+<p>jina-reranker-v3：文档重新排名的最后但并非迟到的交互</p>
+<p>jina-reranker-v3 是一个 0.6B 参数的多语言文档重新排序器，它引入了一种新颖的最后但不是迟到的交互。与 ColBERT 等后期交互模型不同，ColBERT 执行单独编码，然后进行多向量匹配，我们的方法在同一上下文窗口内的查询和文档之间进行因果自注意力，从而在从每个文档的最后一个标记中提取上下文嵌入之前实现丰富的跨文档交互。这种紧凑的架构以 61.94 nDCG@10 实现了最先进的 BEIR 性能，同时比生成列表重排序器小十倍。</p>
+<p><img src="https://cms.jina.ai/content/images/icon/apple-touch-icon-47.png" alt="">arXiv.org王峰</p>
+<p><img src="https://cms.jina.ai/content/images/thumbnail/arxiv-logo-fb-41.png" alt=""></p>
+<p>我们很高兴发布 <a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a>，这是我们最新一代的重新排序器，可在多语言检索基准测试中提供最先进的性能。这个 0.6B 参数的文档重新排序器引入了一种新颖的“最后但不是迟到”交互，它采用了与现有方法根本不同的方法。 <a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a> 工作<strong>listwise</strong>：它在单个上下文窗口内的查询和<em>所有</em>候选文档之间应用因果注意力，在从每个文档的最终标记中提取上下文嵌入之前实现丰富的跨文档交互。我们的新模型在 BEIR 上达到了 61.94 nDCG@10，优于“Qwen3-Reranker-4B”，同时尺寸缩小了 6 倍。</p>
+<table><thead><tr><th>型号</th><th>尺寸</th><th>贝尔</th><th>奇迹</th><th>MKQA</th><th>科尔</th></tr></thead><tbody><tr><td><a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a></td><td>0.6B</td><td><strong>61.94</strong></td><td>66.83</td><td>67.92</td><td>67.92 70.64</td></tr><tr><td>jina-reranker-v2</td><td>0.3B</td><td>57.06</td><td>57.06 63.65</td><td>63.65 67.90</td><td>67.90 56.14</td><td>56.14</td></tr><tr><td><a href="https://jina.ai/?sui&amp;model=jina-reranker-m0">jina-reranker-m0</a></td><td>2.4B</td><td>58.95</td><td>58.95 66.75</td><td><strong>68.19</strong></td><td>63.55</td><td>63.55</td></tr><tr><td>bge-reranker-v2-m3</td><td>bge-reranker-v2-m3</td><td>0.6B</td><td>56.51</td><td>56.51 <strong>69.32</strong></td><td>67.88</td><td>36.28</td></tr><tr><td>mxbai-rerank-base-v2</td><td>mxbai-rerank-base-v2</td><td>mxbai-rerank-base-v2</td><td>mxbai-rerank-base-v2 0.5B</td><td>58.40</td><td>55.32</td><td>64.24</td><td>65.71</td><td>65.71</td></tr><tr><td>mxbai-rerank-large-v2</td><td>mxbai-rerank-large-v2</td><td>mxbai-rerank-large-v2 1.5B</td><td>1.5B 61.44</td><td>57.94</td><td>57.94 67.06</td><td>67.06 70.87</td></tr><tr><td>Qwen3-Reranker-0.6B</td><td>0.6B</td><td>56.28</td><td>57.70</td><td>57.70 65.34</td><td>65.34 65.18</td></tr><tr><td>Qwen3-Reranker-4B</td><td>4.0B</td><td>61.16</td><td>67.52</td><td>67.52</td><td>73.91</td></tr><tr><td><a href="https://jina.ai/?sui&amp;model=jina-code-embeddings-0.5b">jina-code-embeddings-0.5b</a></td><td>0.5B</td><td>-</td><td>-</td><td>-</td><td><strong>73.94</strong></td></tr></tbody></table>
+<p>BEIR 上的英语检索性能，由 nDCG@10 衡量。所有分数都是我们基于 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v3">jina-embeddings-v3</a> 作为第一阶段检索器的前 100 个结果的运行结果。我们评估 <a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a> 的三个变体：按相关性分数降序、分数升序和随机排列排序的文档。评估表明，v3 在不同的输入顺序中保持相对稳定的性能，这表明强大的自注意力机制可以有效地处理文档，无论其初始排列如何。</p>
+<p>尽管架构紧凑，但 MIRACL 对 18 种不同语言的评估证明了 <a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a> 的跨语言一致性。我们评估的语言包括英语、中文、西班牙语、阿拉伯语、法语、俄语、德语、日语、印度尼西亚语、印地语、孟加拉语、韩语、斯瓦希里语、泰卢固语、泰语、波斯语/波斯语、约鲁巴语和芬兰语。</p>
+<p>MKQA 上的多语言检索性能，由 Recall@10 衡量。我们评估的语言包括英语、中文（简体）、西班牙语、阿拉伯语、葡萄牙语、俄语、日语、德语、法语、韩语、越南语、意大利语、土耳其语、波兰语、泰语、荷兰语、马来语、中文（繁体）、瑞典语、希伯来语、匈牙利语、中文（香港）、丹麦语、挪威语、芬兰语和高棉语。</p>
+<h2><a href="https://jina.ai/news/jina-reranker-v3-0-6b-listwise-reranker-for-sota-multilingual-retrieval/#model-architecture"><em>tag</em></a>模型架构</h2>
+<p><a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a> 建立在 <a href="https://huggingface.co/Qwen/Qwen3-0.6B">Qwen3-0.6B</a> 主干之上，这是一个具有因果自注意力的仅解码器变压器模型。该模型同时处理多个文档和查询，在指定标记位置提取上下文嵌入以进行高效的相似性计算。</p>
+<p><a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a> 的架构显示了具有用于嵌入提取的特殊令牌位置的变压器主干。该模型在一个上下文窗口中处理多个文档和查询，在指定标记位置提取上下文嵌入以进行相似性计算。</p>
+<table><thead><tr><th>参数</th><th>价值</th></tr></thead><tbody><tr><td>总参数</td><td>0.6B</td></tr><tr><td>非嵌入参数</td><td>0.44B</td><td>0.44B</td></tr><tr><td>隐藏尺寸</td><td>1,024</td><td>1,024</td></tr><tr><td>层数</td><td>28</td><td>28</td></tr><tr><td>注意头 (Q/KV)</td><td>16/8 (GQA)</td></tr><tr><td>上下文长度</td><td>131,072</td></tr><tr><td>MLP投影仪</td><td>1024→512→256</td></tr><tr><td>最终嵌入尺寸</td><td>256</td><td>256</td></tr></tbody></table>
+<p>给定一个查询和一组候选文档，<a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a> 使用专门的提示模板处理重新排序任务，该提示模板可以在单个前向传递中实现跨文档交互。输入结构遵循特定的格式：</p>
+<pre><code>&lt;|im_start|&gt;system
+You are a search relevance expert who can determine
+a ranking of passages based on their relevance to the query.
+&lt;|im_end|&gt;
+
+&lt;|im_start|&gt;user
+I will provide you with k passages, each indicated by a numerical identifier.
+Rank the passages based on their relevance to query: [QUERY]
+
+&lt;passage id=&quot;1&quot;&gt;
+[DOCUMENT_1]&lt;|doc_emb|&gt;
+&lt;/passage&gt;
+&lt;passage id=&quot;2&quot;&gt;
+[DOCUMENT_2]&lt;|doc_emb|&gt;
+&lt;/passage&gt;
+...
+&lt;passage id=&quot;k&quot;&gt;
+[DOCUMENT_k]&lt;|doc_emb|&gt;
+&lt;/passage&gt;
+
+&lt;query&gt;
+[QUERY]&lt;|query_emb|&gt;
+&lt;/query&gt;
+&lt;|im_end|&gt;
+
+&lt;|im_start|&gt;assistant
+&lt;think&gt;&lt;/think&gt;</code></pre>
+<p>每个文档都包含在带有连续 ID 的段落标签中，从而在共享上下文窗口中实现清晰的文档边界。该模型在其 131K 令牌上下文容量内同时处理多达 64 个文档。对于较大的文档集合，处理是分批进行的，同时保持各批次之间的查询一致性。</p>
+<p>查询在输入结构中出现<strong>两次</strong> - 一次在任务指令的开头，一次在最终注意处理的结尾。这种双重放置使得最终查询位置能够通过因果注意来关注所有先前的文档。两个关键的特殊标记标记嵌入提取位置：“&lt;|doc_emb|&gt;”标记放置在每个文档之后以标记文档嵌入提取点，而“&lt;|query_emb|&gt;”标记放置在最终查询之后以标记查询嵌入提取点。这些嵌入通过共享因果自注意力机制捕获本地文档语义和全局跨文档上下文。</p>
+<p><strong>我们称这种查询-文档交互为“最后但不晚”。</strong> 它是“最后”，因为 <code>&lt;|doc_emb|&gt;</code> 被放置为每个文档的最终标记。它“不晚”，因为与在多向量匹配之前单独编码文档的后期交互模型（例如 ColBERT）不同，我们在前向传递过程中在同一上下文窗口中启用查询文档和文档文档交互。</p>
+<p>最后，具有 ReLU 激活功能的两层 MLP 投影仪将 1024 维隐藏状态映射到 256 维排序空间。相关性评分是使用投影查询嵌入和每个投影文档嵌入之间的余弦相似度来计算的。这会为输入集中的每个文档生成一个相关性分数。</p>
+<h2><a href="https://jina.ai/news/jina-reranker-v3-0-6b-listwise-reranker-for-sota-multilingual-retrieval/#getting-started"><em>tag</em></a>开始使用</h2>
+<h3><a href="https://jina.ai/news/jina-reranker-v3-0-6b-listwise-reranker-for-sota-multilingual-retrieval/#via-api"><em>tag</em></a>通过 API</h3>
+<p>使用 <a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a> 的最简单方法是通过我们的 Search Foundation API。</p>
+<pre><code>curl -X POST \
+  https://api.jina.ai/v1/rerank \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer JINA_API_KEY&quot; \
+  -d '{
+  &quot;model&quot;: &quot;jina-reranker-v3&quot;,
+  &quot;query&quot;: &quot;slm markdown&quot;,
+  &quot;documents&quot;: [
+    ...
+  ],
+  &quot;return_documents&quot;: false
+}'</code></pre>
+<pre><code>{
+  &quot;model&quot;:&quot;jina-reranker-v3&quot;,
+  &quot;usage&quot;: {
+    &quot;total_tokens&quot;:2813
+  },
+  &quot;results&quot;:[
+    {
+      &quot;index&quot;:1,
+      &quot;relevance_score&quot;:0.9310624287463884
+    },
+    {
+      &quot;index&quot;:4,
+      &quot;relevance_score&quot;:0.8982678574191957
+    },
+    {
+      &quot;index&quot;:0,
+      &quot;relevance_score&quot;:0.890233167219021
+    },
+    ...
+  ]
+}</code></pre>
+<p>“relevance_score”字段表示每个文档与查询的相关性，分数越高表示相关性越高。</p>
+<h3><a href="https://jina.ai/news/jina-reranker-v3-0-6b-listwise-reranker-for-sota-multilingual-retrieval/#via-transformers"><em>tag</em></a>通过 <code>transformers</code></h3>
+<pre><code>from transformers import AutoModel
+
+model = AutoModel.from_pretrained(
+    'jinaai/jina-reranker-v3',
+    dtype=&quot;auto&quot;,
+    trust_remote_code=True,
+)
+model.eval()</code></pre>
+<p>现在，您可以使用模型的“rerank”函数来计算查询和文档列表的相关性分数：</p>
+<pre><code>query = &quot;What are the health benefits of green tea?&quot;
+documents = [
+    &quot;Green tea contains antioxidants called catechins that may help reduce inflammation and protect cells from damage.&quot;,
+    &quot;El precio del café ha aumentado un 20% este año debido a problemas en la cadena de suministro.&quot;,
+    &quot;Studies show that drinking green tea regularly can improve brain function and boost metabolism.&quot;,
+    &quot;Basketball is one of the most popular sports in the United States.&quot;,
+    &quot;绿茶富含儿茶素等抗氧化剂，可以降低心脏病风险，还有助于控制体重。&quot;,
+    &quot;Le thé vert est riche en antioxydants et peut améliorer la fonction cérébrale.&quot;,
+]
+
+# Rerank documents
+results = model.rerank(query, documents)
+
+# Results are sorted by relevance score (highest first)
+for result in results:
+    print(f&quot;Score: {result['relevance_score']:.4f}&quot;)
+    print(f&quot;Document: {result['document'][:100]}...&quot;)
+    print()</code></pre>
+<h2><a href="https://jina.ai/news/jina-reranker-v3-0-6b-listwise-reranker-for-sota-multilingual-retrieval/#conclusion"><em>tag</em></a>结论</h2>
+<p><a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a> 是一个新的 0.6B 参数多语言列表重排序器，它引入了<em>最后但不是迟到</em>交互来实现高效的文档重排序。文档在编码过程中可以相互关注，建立影响最终排名的交互。</p>
+<p>主要问题之一是这种交互是否能够适应输入排列，也就是说，如果我们打乱输入顺序，排名会保持不变吗？我们使用随机排列对 110 个候选文档进行查询来测试这一点，并在下图中绘制了每个排名位置的方差。</p>
+<p>排名稳定性图直观地显示了文档在 1,000 个随机输入排列中出现在特定排名位置的一致性。 y 轴以百分比形式表示稳定性方差，其中 0% 表示完美稳定性（完全相同的文档始终出现在该排名中），100% 表示最大方差（几乎所有文档在排列中都出现在该排名中）。 x 轴显示从 1 到 110 的排名位置。</p>
+<p>关键的发现是排名靠前的位置表现出极好的稳定性。排名 1-10 的方差最小，无论输入顺序如何，最相关的文档始终排名靠前。这对于 nDCG@10 和类似的 top-k 指标至关重要。不相关的文档始终位于底部，从而在相关内容和不相关内容之间形成清晰的分离。</p>
+<p>中间部分显示了显着的位置交换，这是预期且可以接受的。该模型使用因果自注意力，并根据序列中出现在它们之前的内容对不同的上下文信息进行编码。</p>
+<p>在实践中，当我们关心最重要的结果时，这种行为是完全可以接受的。我们的评估显示 <a href="https://jina.ai/?sui&amp;model=jina-reranker-v3">jina-reranker-v3</a> 优于我们的前几代产品，包括 <a href="https://jina.ai/?sui&amp;model=jina-reranker-v2-base-multilingual">jina-reranker-v2-base-multilingual</a> 和<a href="https://jina.ai/?sui&amp;model=jina-colbert-v2">jina-colbert-v2</a>，以及更大的替代品，例如 <code>Qwen3-Reranker-4B</code> 和 <a href="https://jina.ai/?sui&amp;model=jina-reranker-m0">jina-reranker-m0</a> 进一步证实了这一点。</p>
+<p>类别：</p>
+<p>明星</p>
+<p>精选</p>
+<p>新闻稿</p>
+<p><a href="https://jina.ai/feed.rss"><em>rss_feed</em></a></p>
+<p>2026 年 9 月 14 日 • 阅读时间 9 分钟</p>
+<p>jina-ocr-v1：在低预算 GPU 上加快文档解析速度</p>
+<p><img src="https://cms.jina.ai/content/images/2022/08/Jjqb-JeY_400x400.jpg" alt="吉娜艾"></p>
+<p><img src="https://jina.ai/blog-banner/jina-ocr-v1-faster-document-parsing-on-low-budget-gpus.gif" alt="jina-ocr-v1"></p>
+<p>2026 年 8 月 3 日 • 阅读时间 11 分钟</p>
+<p>jina-reranker-v3.5：通过混合注意力和自蒸馏实现更快的列表重排序</p>
+<p><img src="https://cms.jina.ai/content/images/2022/08/Jjqb-JeY_400x400.jpg" alt="吉娜艾"></p>
+<p><img src="https://jina.ai/blog-banner/jina-reranker-v3-5-faster-listwise-reranking-hybrid-attention-self-distillation.gif" alt=""></p>
+<p>2026 年 5 月 12 日 • 阅读 7 分钟</p>
+<p>jina-embeddings-v5-omni：文本、图像、音频和视频的嵌入</p>
+<p><img src="https://cms.jina.ai/content/images/2022/08/Jjqb-JeY_400x400.jpg" alt="吉娜艾"></p>
+<p><img src="https://jina.ai/blog-banner/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video.gif" alt=""></p>]]></content:encoded>
+    </item>
+    <item>
       <title>在 Llama.cpp 与 GGUF 中实现多模态 embedding</title>
       <link>https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf</link>
       <guid isPermaLink="true">https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf</guid>
       <pubDate>Tue, 09 Sep 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：11 minutes readMultimodal Embeddings in Llama.cpp and GGUFWe brought multimodal embeddings to llama.cpp and GGUF, and uncovered a few surprising issues along the way.</description>
+      <description>原文标题：11 min readMultimodal Embeddings in Llama.cpp and GGUFWe brought multimodal embeddings to llama.cpp and GGUF, and uncovered a few surprising issues along the way.</description>
       <content:encoded><![CDATA[<h1>在 Llama.cpp 与 GGUF 中实现多模态 embedding</h1>
 <p>我们把多模态 embedding 带进了 llama.cpp 和 GGUF，并在此过程中发现了一些出人意料的问题。</p>
 <p>Andrei Ungureanu、Alex C-G · 11 分钟阅读</p>

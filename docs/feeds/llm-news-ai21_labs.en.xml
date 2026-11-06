@@ -7,7 +7,95 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 05 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Introducing Teel – Turbo-Efficient Execution Library for Age…</title>
+      <link>https://www.ai21.com/blog/teel-turbo-efficient-execution-library/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/teel-turbo-efficient-execution-library/?li=1</guid>
+      <pubDate>Thu, 05 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing Teel – Turbo-Efficient Execution Library for Agents (but not only)</description>
+      <content:encoded><![CDATA[<p><strong>In Brief</strong></p>
+<p><em>Teel is an open source Python runtime that overlaps independent IO-bound calls in code you wrote sequentially. No</em> *<code>async</code>**, no<em> </em><code>await</code>**, no <code>futures</code>, no<em> </em><code>gather</code>**. Mark expensive functions with<em> </em><code>@cacheable</code>**, mark orchestration with<em> </em><code>@jit</code>**, and a magic shadow interpreter reads ahead through your bytecode, finds calls whose arguments are already known, and dispatches them on background threads before the main thread arrives. On Princeton’s Tree of Thoughts, unmodified: 83% less runtime on average, and 8.07x on the longest run. 19% faster on average than LLM-generated <code>async</code> JavaScript inside a Deep Agents coding agent. Check the repo:<em> <a href="https://github.com/AI21Labs/teel"></em>github.com/AI21Labs/teel*</a></p>
+<p><em>Figure 1: Same code, different schedule. In plain Python, each search waits for the one before it. With Teel, the three independent searches run at once, and summarize and check start as soon as their inputs are ready.</em></p>
+<h2><strong>Why this matters for agents</strong></h2>
+<p>Agent quality right now comes mostly from <a href="https://arxiv.org/abs/2408.03314">spending more compute at inference</a>. Run an ensemble. <a href="https://arxiv.org/abs/2407.21787">Generate five candidate patches instead of one</a>. <a href="https://www.anthropic.com/research/multi-agent-research-system">Split a task across N subagents and merge what they come back with</a>. Different techniques, one execution shape underneath: fan out a lot of independent, IO-bound work, then join it back.</p>
+<p>Our recent results on <a href="https://www.ai21.com/blog/maestro-deep-research-agents/">BrowseComp-Plus</a>, <a href="https://www.ai21.com/blog/first-scale-then-enrich-how-the-right-execution-strategy-helped-us-reach-state-of-the-art-on-swe-rebench/">SWE-rebench</a> and <a href="https://www.ai21.com/blog/merging-weak-agents-into-a-state-of-the-art-deep-researcher/">DeepResearch Bench II</a> came from three unrelated techniques and drew the same picture at the compute level: many independent rollouts, retrievals, tool calls or whole agent runs, overlapping, then merged.</p>
+<p>And more and more, the agent writes that orchestration itself. In LangChain’s Deep Agents, the model <a href="https://www.langchain.com/blog/introducing-dynamic-subagents-in-deep-agents">writes a short script that dispatches its own subagents</a>, instead of calling them one tool call at a time. Whoever writes it, all that fan-out comes with a price. Agent swarms take it furthest: Moonshot’s <a href="https://www.kimi.com/help/agent/agent-swarm">Kimi Agent Swarm</a> runs up to 300 sub-agents in parallel and reports finishing tasks about 4.5x faster than a single agent.</p>
+<h2><strong>The problem</strong></h2>
+<p>When we profiled our agents’ runs, most of the wall clock was a thread sitting on a socket: model calls, retrievals, tool calls, a shell exec in a sandbox. Shaving the main agent code barely moved the total. The leverage is in the waits that do not depend on each other.</p>
+<p>In Python, overlapping those waits means rewriting your code first. To run two calls at once you make them <code>async</code>. Then every function that calls them has to become <code>async</code> too, and so does every function that calls those. A change you wanted in one place climbs the whole call chain, until orchestration logic and concurrency plumbing are the same lines of code. Every new fan-out means doing it again. And when a model writes that code, it has to get all of it right on every run.</p>
+<p>Here’s a small code-review agent three ways: as written, rewritten with <code>asyncio</code>, and as written plus Teel’s decorators. It asks a model for the worst bug in each changed file, asks whether those findings should block the merge, then either requests changes or approves.</p>
+<p><em>Figure 2: One code-review agent written three ways: plain Python (7.1s), rewritten with asyncio (3.0s), and the original code with Teel’s decorators (2.9s). The asyncio version needs three tasks, two cancellations and a finally block to match what Teel does on its own.</em></p>
+<p>Versions 2 and 3 finish in about the same time, 3.0s and 2.9s against 7.1s sequential. Both get there the same way: they start both possible follow-ups before the verdict is in, and keep whichever one it picks. Teel does that on its own, by following both branches of the if while the verdict is still pending. The <code>asyncio</code> version does it by hand, with three tasks, two cancellations, a finally block, and an <code>async</code> twin of every function it calls. The difference isn’t the concurrency. It’s who has to find it and manage it.</p>
+<p>That’s why we built Teel. Concurrency shouldn’t have to be part of the code a developer, or an agent, writes. It can be the runtime’s job. You write the sequential version. Teel reads your function’s bytecode ahead of the line currently running, spots calls that aren’t waiting on anything, and starts them early on background threads. By the time your code reaches them, the results are already there or on their way.</p>
+<h2><strong>Results</strong></h2>
+<table><thead><tr><th><strong>Workload</strong></th><th><strong>Baseline</strong></th><th><strong>With Teel</strong></th><th><strong>Speedup</strong></th></tr></thead><tbody><tr><td><a href="https://github.com/princeton-nlp/tree-of-thought-llm">Tree-of-thoughts-llm</a> (longest run)</td><td>307s</td><td>38s</td><td><strong>8.07x</strong></td></tr><tr><td><a href="https://www.langchain.com/blog/introducing-dynamic-subagents-in-deep-agents">RLM in LangChain Deep Agents</a> (sync Python)</td><td>150s</td><td>58s</td><td><strong>2.58x</strong></td></tr><tr><td><a href="https://www.langchain.com/blog/introducing-dynamic-subagents-in-deep-agents">RLM in LangChain Deep Agents</a> (async JS)</td><td>71s</td><td>58s</td><td><strong>1.22x</strong></td></tr></tbody></table>
+<p><strong>Tree of Thoughts, unmodified.</strong> We ran Princeton’s tree-of-thoughts-llm on Game of 24 samples with GPT-4 without editing the repo: <code>@jit</code>, <code>@cacheable</code> and <code>@inline</code> were applied from the outside. It is a textbook fan-out written as textbook sequential code (generate candidates, evaluate, keep the best, recurse), and the original walks independent siblings one at a time. Average runtime reduction was 83%, from 148s down to 24s at the low end and 307s down to 38s at the high end.</p>
+<p><strong>Code the model writes at runtime.</strong> LangChain’s Deep Agents ships a dcode agent with a <code>js_eval</code> tool: the model solves a task by emitting a snippet that runs in a QuickJS sandbox. The snippet can call <code>tools.web_search()</code> and spawn subagents via <code>task()</code>, so the model is authoring a fan-out on the fly. But it authors it in <code>async</code> JavaScript, which hands the concurrency model to the model itself, and models are inconsistent at reaching for Promise.all.</p>
+<p>We forked Deep Agents and swapped the snippet language for synchronous Python under Teel, expecting simpler generated code at some cost in speed. It came out faster instead: across ten mixed web-search-and-LLM prompts, <strong>58s average against 71s for the <code>async</code> JS and 150s for the same Python run sequentially.</strong> Teel parallelizes the independent calls the model forgot to overlap, and speculatively runs fallback branches ahead of the decision that needs them. (The same prompt yields different code each time, so this compares distributions of generated programs, not two implementations of one.) Our fork is at <a href="https://github.com/AI21Labs/deepagents">github.com/AI21Labs/deepagents</a>.</p>
+<h2><strong>The API</strong></h2>
+<p>There are three decorators and a context manager. Teel currently needs Python 3.12.13 exactly; Known limits explains why.</p>
+<pre><code>1from teel import cacheable, jit, Teel
+2
+3@cacheable                     # a discrete, expensive, parallelizable step:
+4def fetch(url): ...            # an LLM call, an HTTP request, a retrieval
+5
+6@cacheable
+7def summarize(text): ...
+8
+9@jit                           # orchestration Teel is allowed to analyze
+10def research(a, b):
+11    pa = fetch(a)              # no dependency between these two
+12    pb = fetch(b)              # Teel runs them at the same time
+13    return summarize(pa + pb)  # waits only for what it truly needs
+14
+15with Teel():                             # inside this context, independent
+16    answer = research(&quot;a.txt&quot;, &quot;b.txt&quot;)  # calls overlap - no async in sight</code></pre>
+<p><code>@cacheable</code> marks the heavy functions worth dispatching early. Results are memoized on a key built from <code>json.dumps</code> of the arguments, so keep those arguments JSON-serializable and boring.</p>
+<p><code>@jit</code> marks the functions Teel is allowed to look inside. This is your orchestration layer.</p>
+<p><code>@inline</code> is optional. It marks cheap helpers (string formatting, dict digging) that Teel may actually execute during lookahead, which usually uncovers more <code>@cacheable</code> calls to dispatch ahead of time.</p>
+<p><code>with Teel():</code> turns it on. Outside the context every decorated function runs as plain Python, untouched.</p>
+<h2><strong>How it works</strong></h2>
+<p><strong>Why bytecode?</strong> Teel’s implementation is strange enough that the path there is worth 30 seconds, because each step explains the next. Every step kept the same execution idea, independent calls running in parallel, and changed only the interface you wrote orchestration in.</p>
+<p>The first version ran orchestration on Celery. Canvas signatures gave us a real DAG the cluster could schedule: utilization up, runs resumable, orchestration finally separate from computation. It was also miserable to write, because orchestration is business logic and Celery makes you write business logic in a pipe-and-signature dialect that is not quite Python.</p>
+<p>So we brought it back into Python, or into a restricted subset of Python. We parsed that subset with <code>ast</code>, compiled it into an execution graph and wrote our own executor. The graph paid off on its own terms: independent functions ran in parallel, if bodies could be entered speculatively before the test resolved, and a call like func(x, y) could push into its subcalls while x and y were still pending. All of it available only for the slice of the language we were willing to parse.</p>
+<p>Giving up the restriction meant giving up <code>ast</code>. Bytecode is the level at which every Python program looks the same.</p>
+<p><strong>How does a runtime know what you are about to call?</strong> When a <code>@jit</code> function runs, Teel duplicates the execution state into a limited shadow interpreter and steps through the bytecode your main thread hasn’t reached yet. It works on its own copy, so your program’s state is left alone.</p>
+<p><strong>Does Teel build a dependency graph?</strong> No. The <code>ast</code> version did. Teel never needs the whole graph, only one answer per call: <em>are this call’s arguments ready yet?</em> Any value it can’t compute yet, like the result of a <code>@cacheable</code> call still in flight, is marked pending, and anything computed from a pending value is pending too:</p>
+<pre><code>1pa  = fetch(a)        # arguments known: dispatched now, pa is pending
+2pb  = fetch(b)        # arguments known: dispatched now, pb is pending
+3s   = pa + pb         # built from pending values: pending
+4out = summarize(s)    # pending argument: not dispatched yet</code></pre>
+<p>When lookahead reaches a <code>@cacheable</code> call with no pending arguments, Teel dispatches it to a <code>ThreadPoolExecutor</code> and memoizes the result. When your code reaches that line for real, the answer is already there or on its way. Two calls that don’t consume each other’s results never wait on each other, which is why fan-out needs no special support: <code>[answer(q) for q in sub_questions]</code> dispatches every <code>answer(q)</code> whose question is already known. Parallelism is the default, and you opt out by creating a real data dependency.</p>
+<p><strong>How does it get at your program’s state?</strong> Teel grabs the frame stack with <code>sys._getframe()</code>, uses a small C extension (<code>frameinspect</code>) to pull each frame’s full value stack out of CPython, and reads <code>f_lasti</code> to find the last instruction that was actually executed. That’s where the shadow interpreter starts stepping forward.</p>
+<p>Getting to that state is a cursed operation. Reading a live frame’s value stack is not something CPython offers you, which is why <code>frameinspect</code> compiles against CPython’s internal headers and the whole thing is pinned to one exact interpreter version. The full walkthrough, opcode by opcode, is in the <a href="https://github.com/AI21Labs/teel/blob/main/README.md#under-the-hood">README’s Under the hood section</a>.</p>
+<h2>The contract</h2>
+<p><strong>What you promise.</strong> Teel does three things a normal interpreter never does: it runs a function earlier than your code would, sometimes runs one your code would never reach, and hands back a saved result instead of running it again. Each is only legal if the function does not care when it runs or how often. Picture a <code>@cacheable</code> function that sends an email or charges a card: Teel might run it for a branch your program never takes, and nothing unsends the email. That is the <code>@cacheable</code> contract, and it is on you: no database writes, no reading the clock, no hidden state, and JSON-serializable arguments, because <code>json.dumps</code> of them is the memo key. <code>@jit</code> promises nothing. It is permission to read your bytecode, not a claim about what the function does.</p>
+<p><strong>What Teel promises.</strong> The same call runs once: pending and finished tasks are keyed by function plus arguments, so a second lookahead that discovers the same <code>fetch(url)</code> attaches to the first instead of firing another request. Failed calls are dropped rather than cached, on the assumption the failure was transient.</p>
+<p><strong>And a wrong guess costs time and tokens, not correctness.</strong> The shadow interpreter never produces your answer. CPython still executes your function to completion, instruction for instruction, exactly as it would without Teel, and the only difference is that some calls find their result already in the cache. Guess wrong and you burned a background call, plus its tokens if it was an LLM call. Guess nothing and you pay full sequential price. Break the purity contract, though, and you own the result. That is the one failure mode Teel cannot protect you from.</p>
+<h2><strong>Observability: where the wall clock actually went</strong></h2>
+<p>When the runtime decides what runs early, you need a way to see what it decided. Give the context a path and Teel records the run:</p>
+<pre><code>1with Teel(trace_path=&quot;teel-trace.json&quot;):
+2    research(&quot;a.txt&quot;, &quot;b.txt&quot;)
+3
+4# open teel-trace.json at https://ui.perfetto.dev/</code></pre>
+<p>The output is a Chrome trace-event file, so Perfetto renders it as a timeline: one bar per <code>@cacheable</code> call, on the thread that ran it, with start time and duration, and overlapping work showing up as bars side by side.</p>
+<p>Per-call is the granularity that starts to matter once you dial test-time compute up and down. A result on a hard agentic benchmark is rarely a single number anymore: our BrowseComp-Plus work reported a frontier of accuracy against cost and latency, so a team can read off the quality it can afford. You cannot chart a latency frontier you can only measure end to end.</p>
+<p>To measure the speedup, run the same code twice. A <code>@cacheable</code> function runs untouched with no active context, so the baseline is not a separate sequential implementation, it is the identical program.</p>
+<pre><code>1# timed(label) runs research(&quot;a.txt&quot;, &quot;b.txt&quot;) and prints its wall clock
+2
+3baseline = timed(&quot;sequential&quot;)       # no context, plain Python
+4
+5with Teel():
+6    optimized = timed(&quot;with Teel&quot;)   # same code, now overlapped
+7
+8assert baseline == optimized         # same answer, different clock</code></pre>
+<p><strong>Where this goes</strong></p>
+<p>Parallelism and observability both follow from one decision: the run is a set of calls keyed by their arguments. Take that one step further and an agent run stops being a disposable process and becomes reusable data. Persist the results and a later run can be served from them: unchanged calls are hits, and any call an edited input flows into gets a new key and re-runs. That gives you crash resume, debugging against pinned outputs, and iterating on orchestration without re-paying for every tool call. It also gives you human-in-the-loop: an agent freezes its state at a decision point, a person reviews, and the run resumes hours later on a different host.</p>
+<h2>Known limits</h2>
+<p>This is a proof of concept with two sharp edges. It’s pinned to Python 3.12.13 exactly, because <code>frameinspect</code> compiles against CPython’s internal headers. And the GIL still applies: background calls run on a <code>ThreadPoolExecutor</code>, so IO, network calls and GIL-free work like NumPy overlap fine, but for CPU-bound, GIL-constrained work, no dice.</p>
+<p>Clone it, decorate your own functions, wrap your entry point, and start with the README: <a href="https://github.com/AI21Labs/teel">github.com/AI21Labs/teel</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Post-training case study: Reaching frontier-level intelligen…</title>
       <link>https://www.ai21.com/blog/ai21-deel-case-study/</link>
@@ -3118,50 +3206,6 @@ WHERE
 <p>As regulatory pressure intensifies, the organizations that succeed won’t be the ones with the largest legal departments. They’ll be the ones who’ve operationalized compliance — treating it as an always-on system that scales with complexity, adapts to change, and earns trust through transparency.</p>
 <p>And with the right AI architecture behind it, that shift is now within reach.</p>
 <p><strong>Looking to automate your compliance operations? </strong>Explore how AI21’s solutions could automate your regulatory environment. <em><a href="https://www.ai21.com/contact-sales/">Get a demo</a>.</em></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>The Power of AI Is Putting Knowledge to Work</title>
-      <link>https://www.ai21.com/blog/maestro-putting-knowledge-to-work/</link>
-      <guid isPermaLink="true">https://www.ai21.com/blog/maestro-putting-knowledge-to-work/?li=1</guid>
-      <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Enterprise leaders have been overwhelmed with hype about autonomous AI agents revolutionizing business. Major vendors are touting “agentic AI” systems that can supposedly handle complex tasks with minimal human input. Yet on the ground, true adoption of AI agents in enterprises is stalling. In fact, Gartner predicts that over<strong> 40% of AI agent projects will be canceled by 2027</strong> due to soaring costs and unclear value<a href="https://www.ai21.com/blog/maestro-putting-knowledge-to-work/#243774bf-30a2-4abd-bab8-2ebb8937309a">1</a>. Despite rising investments, most deployments remain stuck in pilot mode, delivering little real ROI. The reality simply hasn’t matched the promise.</p>
-<p>Why are so many enterprise AI agent initiatives faltering? It’s not because the idea is flawed, but because current approaches are targeting the wrong problems. Many efforts have been caught up in building agent frameworks, tool integrations, or flexible pipelines—without getting clear on where the real value lies.</p>
-<h2>Where the Real Value Lies: Knowledge Work—Not Just Knowledge Retrieval</h2>
-<p>The word “agent” already implies that the work is cognitive in nature. But too often, what’s being built are glorified retrieval wrappers—basic RAG chatbots that answer questions by pulling up snippets from documentation. These systems can be useful, but they’re not doing <em>knowledge work</em>. They’re doing <strong>knowledge lookup</strong>.</p>
-<p>And that’s the distinction we must get sharper about.</p>
-<p>The real opportunity isn’t in helping a support rep get a snippet from a policy document. It’s in <strong>automating the kind of work that today only a trained, context-aware human knowledge worker can do</strong>—work that involves retrieving information from multiple sources, reasoning through ambiguities, making judgments, synthesizing evidence, and ultimately producing structured, high-value outputs like a report, summary, or recommendation.</p>
-<p>Peter Drucker coined the term knowledge work in the 1950s to describe this class of work: where the core task is to think, analyze, and produce with information. In the 1950s, only around 15% of workers fit that category. Today, that number is upwards of 70% in modern economies. And yet, most of the automation we’ve seen—AI-based or otherwise—still centers around physical tasks or rote administrative processes.</p>
-<p>If AI agents are to become core to enterprise operations, they must be built for knowledge work at enterprise scale. That means handling high-stakes, multi-step tasks—like producing an M&amp;A diligence summary, a strategic vendor evaluation report, or a compliance risk report—not just answering FAQs or querying a database.</p>
-<p>This is where generative AI is meant to shine—not just because it understands language, but because it can generate and evaluate ideas, perform reasoning, and interface fluently with the tools and formats that knowledge work depends on. But despite all the promise, this transformation has yet to materialize in practice.</p>
-<h2>Why Isn’t This Happening?</h2>
-<h3>1. Errors Multiply with Every Step</h3>
-<p>The first barrier is reliability across multiple reasoning steps. Knowledge work isn’t one-shot—it’s a sequence of actions, often with dependencies and evolving instructions. But today’s agents still rely on probabilistic models that lose coherence over long chains. A single misinterpretation or hallucination early on can snowball into outputs that are incomplete or flat-out wrong.</p>
-<p>This is well documented in research: LLM performance decays as task length increases, and most existing frameworks offer little in the way of runtime self-correction. In short, agents that try to “figure it out as they go” often go astray.</p>
-<h3>2. They Lack the Right Context—and the Ability to Use It</h3>
-<p>Even more limiting is the absence of enterprise-specific context. Performing high-value knowledge work in a business environment requires understanding where to find information, how to navigate a workflow, what’s relevant to the task, and how to decide between multiple possible approaches.</p>
-<p>This is not the kind of context that out-of-the-box LLMs “know” and not the type you can simply fit into a prompt.</p>
-<p>Take the example of a team preparing a major customer proposal. A human analyst knows where past proposals live, which ones are similar, which success metrics matter to this specific client, and how to adjust the messaging based on internal pricing policies or previous win-loss analysis. They also carry organizational memory—understanding how similar deals have evolved, what messaging resonated in past negotiations, and which approaches the company has moved away from and why. Today’s agents don’t know any of this unless it is explicitly encoded—often manually—into the prompt or code. They lack this institutional knowledge and learning from experience. They don’t know where to look, why certain inputs matter more than others, or how to tailor outputs to organizational norms.</p>
-<p>This is the current ceiling: agents can retrieve facts, but they can’t yet execute workflows that require judgment, synthesis, and planning with live, proprietary enterprise knowledge.</p>
-<h2>The Real Opportunity: Trustworthy Agents for Complex Knowledge Work</h2>
-<p>Imagine what’s possible if we could trust AI agents to perform high-stakes knowledge work end to end.</p>
-<h3>Example 1: End-to-End M&amp;A Due Diligence</h3>
-<p>A corporate development team needs to evaluate an acquisition target. The process involves reading through contracts, NDAs, board decks, financial models, cap tables, and regulatory filings. It requires extracting key terms, identifying inconsistencies, generating a data request list, performing financial ratio analysis, and summarizing risks.</p>
-<p>Today, this takes a team of analysts and days of manual effort. With the right agent, the entire pipeline could be handled autonomously—from document ingestion and information extraction, to synthesis and report generation. What once took a week could be completed in under an hour, with full auditability and traceability of every step.</p>
-<h3>Example 2: Drafting an AI Regulation Compliance Memo</h3>
-<p>A legal team is asked to assess whether a new internal AI system complies with the latest EU AI Act provisions. This requires reviewing documentation about the system’s capabilities, cross-referencing it with legal obligations, identifying potential non-compliance areas, and drafting a memo that summarizes findings and recommended mitigations.</p>
-<p>A knowledge agent built for this task would first locate and extract relevant details about the system, retrieve up-to-date regulatory guidelines, run comparative analysis, and produce a structured, legally accurate recommendation memo—freeing the legal team to focus on edge cases, not groundwork.</p>
-<p>In both cases, the value isn’t in retrieving the right snippet. It’s in doing the work: navigating the workflow, evaluating the information, and delivering a product with structure, rationale, and relevance. That’s the frontier we need to reach.</p>
-<h2>The Way Forward — AI21 Maestro</h2>
-<p>At AI21, we’ve spent the last year focused on one question: What would it take to build agents you can actually trust with enterprise-grade knowledge work?</p>
-<p>Today, we’re proud to introduce<strong> AI21 Maestro,</strong> now available to enterprise customers.</p>
-<p>Maestro is a system for building and deploying <strong>knowledge agents </strong>– AI systems purpose-built to perform multi-step reasoning and synthesis across company-specific data. It’s designed not to guess at the next step like typical agents, but to methodically plan and execute complex workflows: choosing the right retrieval strategies, validating intermediate results, and producing structured, accurate outputs.</p>
-<p>Unlike generic agent frameworks that leave planning to chance or require months of hardcoded logic, <strong>Maestro dynamically plans each task</strong>, balances tradeoffs like cost and latency, and self-corrects as it works—producing clear, transparent outputs that you can trace and trust.</p>
-<p>And unlike simple RAG pipelines, Maestro doesn’t stop at retrieval. It performs the full arc of knowledge work: breaking down a goal, identifying what information is needed, retrieving it, interpreting it, and composing a coherent, valuable result—whether that’s a diligence memo, a compliance summary, or a multi-page research document.</p>
-<p>We believe this is what agents were always meant to be: not vague chat interfaces, but systems that can <strong>do actual work</strong> in enterprise environments. Work that requires precision, structure, and reasoning.</p>
-<p>With AI21 Maestro, that future is no longer theoretical.</p>
-<p><strong>Learn more and <a href="https://www.ai21.com/contact-sales/">book a demo</a> of AI21 Maestro.</strong></p>
-<ul><li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027">https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027</a></li></ul>
-<p><a href="https://www.ai21.com/blog/maestro-putting-knowledge-to-work/#243774bf-30a2-4abd-bab8-2ebb8937309a-link">↩︎</a></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

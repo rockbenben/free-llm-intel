@@ -1,6 +1,6 @@
 # Fireworks AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-05**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-06**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Fireworks AI（`fireworks_ai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,11 +9,11 @@
 
 ## 全部文章（共 39 篇，按日期倒序；无日期条目列于最后）
 
-1. [免费训练 Muse Glimmer：我们如何押赢 Jev](https://fireworks.ai/blog/train-muse-glimmer-for-free) <!--orig:Train Muse Glimmer for free: Our recipe for out-betting Jev-->
-2. [Ember-1 发布](https://fireworks.ai/blog/ember-1) <!--orig:Introducing Ember-1-->
-3. [专业智力指数简介](https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks) <!--orig:Introducing the Specialized Intelligence Index-->
-4. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/llm-model-routing-deepswe) <!--orig:The frontier isn’t a model. It’s a router.-->
-5. [Kimi K3.1 Pro 上线 Fireworks](https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/)（2026-11-04） <!--orig:Kimi K3.1 Pro is live on Fireworks-->
+1. [Kimi K3.1 Pro 上线 Fireworks](https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/)（2026-11-04） <!--orig:Kimi K3.1 Pro is live on Fireworks-->
+2. [免费训练 Muse Glimmer：我们如何押赢 Jev](https://fireworks.ai/blog/train-muse-glimmer-for-free) <!--orig:Train Muse Glimmer for free: Our recipe for out-betting Jev-->
+3. [Ember-1 发布](https://fireworks.ai/blog/ember-1) <!--orig:Introducing Ember-1-->
+4. [专业智力指数简介](https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks) <!--orig:Introducing the Specialized Intelligence Index-->
+5. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/llm-model-routing-deepswe) <!--orig:The frontier isn’t a model. It’s a router.-->
 6. [Fireworks 在 Forge 发布新产品，帮企业构建专用智能](https://fireworks.ai/blog/fireworks-unveils-new-products-at-forge-to-help-companies-build-specialized-intelligence/) <!--orig:Fireworks unveils new products at Forge to help companies build specialized intelligence-->
 7. [Fireworks 上线 Muse Spark Open：Meta 的开放权重模型，跑在美国 serverless 上](https://fireworks.ai/blog/meta-muse-spark-open/) <!--orig:Muse Spark Open on Fireworks: Meta’s open weights model, available on US serverless-->
 8. [Fireworks 上的 Kimi K3：前沿规模的高速 RL](https://fireworks.ai/research/kimi-k3-on-fireworks-fast-rl-at-frontier-scale/) <!--orig:Kimi K3 on Fireworks: Fast RL at frontier scale-->
