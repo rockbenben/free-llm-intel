@@ -9,7 +9,7 @@
 
 ## 全部文章（共 170 篇，按日期倒序；无日期条目列于最后）
 
-1. [介绍新的自动和自动代码路由器](https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/)（2026-11-06） <!--orig:Introducing the New Auto and Auto Code Routers-->
+1. [推出全新 Auto 与 Auto Code 路由器](https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/)（2026-11-06） <!--orig:Introducing the New Auto and Auto Code Routers-->
 2. [用 OpenRouter 构建 AI 代码审查器](https://openrouter.ai/blog/tutorials/ai-code-review/)（2026-11-01） <!--orig:Build an AI Code Reviewer with OpenRouter-->
 3. [如何构建你自己的常驻 AI agent](https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/)（2026-10-31） <!--orig:How to Build Your Own Always-On AI Agent-->
 4. [开放权重模型与闭源权重模型：有什么区别？](https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/)（2026-10-31） <!--orig:Open-Weight vs Closed-Weight Models: What's the Difference?-->

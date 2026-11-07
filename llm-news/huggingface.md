@@ -10,8 +10,8 @@
 
 ## 全部文章（共 921 篇，按日期倒序；无日期条目列于最后）
 
-1. [ToyBlocks：用于机器人学习和评估的受控世界](https://huggingface.co/blog/allenai/toyblocks)（2026-11-06） <!--orig:ToyBlocks: A controlled world for robot learning and evaluation-->
-2. [埃及语和尼日利亚英语加入 Open ASR 排行榜](https://huggingface.co/blog/open-asr-leaderboard-liva)（2026-11-06） <!--orig:Egyptian and Nigerian English join the Open ASR Leaderboard-->
+1. [ToyBlocks：用于机器人学习与评估的受控世界](https://huggingface.co/blog/allenai/toyblocks)（2026-11-06） <!--orig:ToyBlocks: A controlled world for robot learning and evaluation-->
+2. [埃及英语与尼日利亚英语加入 Open ASR 排行榜](https://huggingface.co/blog/open-asr-leaderboard-liva)（2026-11-06） <!--orig:Egyptian and Nigerian English join the Open ASR Leaderboard-->
 3. [用于交互式世界模拟的全新 NVIDIA Cosmos 3 开放模型](https://huggingface.co/blog/nvidia/cosmos-interactive-world-simulation)（2026-11-05） <!--orig:New NVIDIA Cosmos 3 Open Models for Interactive World Simulation-->
 4. [深入了解 Phonon TTS：推出在基准测试上领先的高质量端侧语音](https://huggingface.co/blog/phonon-tts)（2026-11-05） <!--orig:A Closer Look at Phonon TTS. Launching High-Quality On-Device Speech That Tops the Benchmarks.-->
 5. [Dharma Field Extractor：任意文档进，结构化 JSON 字段出](https://huggingface.co/blog/Dharma-AI/dharma-field-extractor)（2026-11-04） <!--orig:Dharma Field Extractor: Any Document In, Structured Fields in JSON Out-->

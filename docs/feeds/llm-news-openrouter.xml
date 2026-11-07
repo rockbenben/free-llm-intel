@@ -9,50 +9,50 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Fri, 06 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>介绍新的自动和自动代码路由器</title>
+      <title>推出全新 Auto 与 Auto Code 路由器</title>
       <link>https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/</guid>
       <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing the New Auto and Auto Code Routers</description>
-      <content:encoded><![CDATA[<h1>介绍新的自动和自动代码路由器</h1>
-<p>布莱恩·托马斯 ·11/6/2026</p>
-<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers.png" alt="介绍新的自动和自动代码路由器"></p>
-<p>今天我们推出下一代自动路由器。借鉴过去 3 年运行 Auto Router 所学到的一切，我们在全新的技术基础上从头开始重建了它，根据基准测试，其性能比旧路由器高出 4 倍，在我们的实时测试中，p90 的路由步骤快了 3 倍（0.65 秒对 1.96 秒）。</p>
-<p>路由器在基准测试中取得好成绩比在实践中表现良好更容易。 Auto Router 每月会收到来自超过 10 万人的超过 2.5T 代币，因此它必须在现实世界中保持稳定。</p>
-<p>此次发布包括一款专门用于编码工作的全新路由器，<a href="https://openrouter.ai/openrouter/auto-code">自动代码</a> (<code>openrouter/auto-code</code>)，以及我们的旗舰通用<a href="https://openrouter.ai/openrouter/auto">自动路由器</a> (<code>openrouter/auto</code>)。</p>
-<p>现在就尝试一下，在任何请求中将“model”设置为“openrouter/auto”或“openrouter/auto-code”，或者打开<a href="https://openrouter.ai/chat?models=openrouter%2Fauto">聊天室中的自动路由器</a>。查看 <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">自动路由器文档</a> 了解所有详细信息。</p>
-<h2>这一代有什么新鲜事</h2>
-<p>以前的自动路由器依赖于一些不精确的信号（例如任务类型）来驱动模型选择、保持低延迟和判断一致所需的限制。新的自动路由器和自动代码通过权衡每个请求的 11 个因素并将其与实时定价、提供商运行状况和缓存状态相结合来选择模型。</p>
-<p>这个新流程让自动布线器可以与任何模型集配合使用。您可以应用任何治理策略，包括护栏、零数据保留要求、提供商限制、允许的模型列表和 BYOK 密钥。自动路由器可以从可用的型号中进行有效的选择。</p>
-<p>我们根据有关在编码工具中使用通用路由器的反馈，推出了新的自动编码路由器。该路由器通过包含更高层的编码模型并优化延迟来从头开始调整编码性能。在以下五个基准测试中，Auto Code 的得分与 Claude Opus 5.5 一致，同时每项任务的成本降低了 74%。</p>
-<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/benchmark-comparison-light.png" alt="热图比较了 Deep SWE、SWE-Atlas QA、Terminal Bench 4.0、τ³-bench Banking 和 MMMU Pro Vision 中默认层的新自动路由器、自动代码和默认层的先前自动路由器。每个基准测试都会显示每个任务的分数和成本，以及之前的自动路由器的倍数；分数单元格呈绿色或红色阴影，较大变化则更深（浅色模式）"></p>
-<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/benchmark-comparison-dark.png" alt="热图比较了 Deep SWE、SWE-Atlas QA、Terminal Bench 4.0、τ³-bench Banking 和 MMMU Pro Vision 中默认层的新自动路由器、自动代码和默认层的先前自动路由器。每个基准测试都会显示每个任务的分数和成本，以及之前的自动路由器的倍数；分数单元格呈绿色或红色阴影，较大变化则更深（深色模式）"></p>
-<p>在上一代中，我们还观察到最低成本模型的显着效率导致自动路由器每任务的成本降低，从而遗漏了许多特殊模型。我们决定在此版本中恢复更接近汽车几个月前的定价，以便推出更多种类的车型。如果您更喜欢以前的行为，则可以将 cost_tier 设置为低以获得类似的性价比。</p>
-<h2>在聊天室中查看路由决策背后的推理</h2>
-<p>开始学习这些新路由器如何工作的最简单方法是在<a href="https://openrouter.ai/chat?models=openrouter%2Fauto">聊天室</a>中选择自动路由器或自动代码。每个回复旁边都会出现一个路由见解面板，显示路由器选择该模型的原因。当您启用<a href="https://openrouter.ai/docs/guides/features/router-metadata#enabling-router-metadata">路由器元数据</a>时，可以通过API进行相同的分析。</p>
-<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/chat-routing-insights.png" alt="选择了自动路由器的 OpenRouter 聊天室。 DeepSeek V4.1 Flash 在 InferenceNet 上回答了 Python RecursionError 问题。路由洞察面板显示任务（调试，98%）、候选模型的选择份额以及难度、精度和更大模型效益判断。"></p>
-<h2>观看每个模型页面上的实时路由组合</h2>
-<p><a href="https://openrouter.ai/openrouter/auto">自动路由器</a> 和<a href="https://openrouter.ai/openrouter/auto-code">自动代码</a> 模型页面现在显示每个路由器最常选择哪些模型，按会话类型划分，以及随着难度的增加混合如何变化。</p>
-<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/router-page-live-routing.png" alt="自动路由器模型页面的实时路由部分：过去一天按模型划分的请求条形图，带有代理和非代理选项卡以及成本层过滤器、以 GPT-6.1 Sol 为主导的请求份额列表（占 33.8%），以及当前路由组合的堆叠面积图（适用于从琐碎到极端的所有任务）难度。"></p>
-<h2>与其他路由器和单一型号的性能比较</h2>
-<p>自动路由器和自动代码基准测试结果与 OpenRouter 上的其他路由器和单模型基准一起发布在<a href="https://openrouter.ai/benchmarks/routers">模型路由基准测试</a> 页面上。我们定期重新运行它们，以便您可以跟踪每个路由器在新型号发布时的最新情况。</p>
-<h2>基于多年运行自动路由器的经验教训</h2>
-<p>Auto Router 即将迎来其三岁生日。如果您几年前在代理中设置了“openrouter/auto”，那么今天您仍然可以获得最新的成本最优选择。我们已经了解了很多关于自动模型选择出错的地方，并构建了新一代模型来避免这些问题。一些例子：</p>
-<p><strong>我们分离出自动代码来优化线束。</strong> 对以前版本的自动布线器最常见的抱怨是它在编码线束中的表现。 Auto Code 偏爱稍贵一点的模型，其优点与编码工作相匹配。它更注重速度，因为在构建时响应能力很重要。它还对失败的惩罚更加严厉，因此在成功和失败明确的工作中，它的纠正速度会更快。</p>
-<p><strong>为了保护缓存优势，切换受到限制。</strong> 当新模型重建输入令牌缓存时，切换模型会产生额外成本。当足够时，自动路由器倾向于改变推理工作，并且仅当增益值得其放弃的缓存时才进行切换。在我们的测试期间，每十个代理轮换中有近九个都保持相同的模型。</p>
-<p><strong>它适应失败。</strong> 当会话以指向模型的方式出错时，例如返回相同的错误或编辑后测试失败，这些信号会增加切换的可能性。这使得会话不太可能陷入早期选择错误的模型。</p>
-<p><strong>它根据实际使用情况和基准进行调整。</strong> 自动路由器随着每次基准运行和它看到的每个实际路由决策而变得更好。通过“typesafe/jev-router”和“openrouter/auto-beta”，我们已经在生产工作负载上对其进行了验证，同时始终保持零数据保留。在我们的测试版中，与之前的路由器相比，无效工具调用减少了 4 倍，代理响应被切断的频率减少了一半。</p>
-<h2>基于领先的提供商路由基础构建的模型路由</h2>
-<p><strong>模型路由器</strong>（例如自动路由器和自动代码）选择哪个模型将处理请求。 <strong>提供商路由</strong>选择谁将为该模型提供服务。 OpenRouter 从一开始就对每个请求执行此操作：一旦选择了模型，<a href="https://openrouter.ai/docs/guides/routing/provider-selection">provider router</a> 就会使用您的提供商首选项、实时正常运行时间和延迟、价格以及提供商是否已保存您的提示缓存来在托管它的提供商中进行选择。</p>
-<p>模型路由器只能与底层提供商路由器一样好。我们构建自动路由器是为了了解我们的整个目录，因此它可以适应治理限制、基准测试结果以及新模型发布时发出的市场信号。 OpenRouter 上的 600 多个模型中的每一个模型在添加之日都会进入考虑范围，基准和流行度信号决定它是否在成本最优模型中赢得一席之地。</p>
-<h2>请求如何通过自动路由器移动</h2>
-<ul><li>自动路由器缩小了模型池。护栏、零数据保留、模型功能、提供商限制、BYOK 密钥以及任何允许或排除的模型列表决定了考虑哪些模型。</li><li>快速决策模型处理请求。在一项调查中，它对十一项进行了评估，例如这是什么类型的任务，任务是否刚刚改变，任务有多困难，速度是否重要，是否需要代码库的愿景或知识，以及更大的模型、更多的思考或更便宜的模型是否能更好地服务于它。</li><li>路由策略选择模型。它权衡实时价格、缓存状态和基准性能来选择模型和推理工作。</li><li>请求通过同一个提供商，将直接请求路由到该模型，因此它会到达该模型的最佳提供商。</li><li>每轮的结果告知下一轮的模型选择。路由器携带诸如模型是否陷入困境以及已缓存到下一个决策中的信号等信号。</li></ul>
-<h2>路由器与单一型号</h2>
-<p>基准测试一致表明，市场上没有任何路由器在成本和质量曲线上的每个点上都击败了单一最佳前沿模型。新的自动路由器也不例外，我们发布了它的基准测试以清楚地展示它的优点和缺点。</p>
-<p>当工作多样化时，当组织需要保持成本稳定时，以及对于那些没有时间或兴趣跟上持续不断的模型发布流的人来说，路由器就会赢得一席之地。在单一模型上选择自动路由器或自动代码会牺牲一点峰值性能，以换取随着时间的推移保持一致、经济高效的性能。</p>
-<p>如果您知道最适合您的特定工作的模型，请继续使用它。如果您宁愿选择一次并专注于工作本身，那么路由器就是您的最佳选择。</p>
-<h2>开始吧</h2>
-<p>无论您在何处放置模型字符串，自动路由器和自动代码都可以工作：</p>
+      <content:encoded><![CDATA[<h1>推出全新 Auto 与 Auto Code 路由器</h1>
+<p>Brian Thomas · 2026-11-06</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers.png" alt="推出全新 Auto 与 Auto Code 路由器"></p>
+<p>今天，我们正式推出下一代 Auto Router。基于过去 3 年运营 Auto Router 积累的所有经验，我们采用全新的技术底座从零重构了它：根据不同的基准测试，新路由器的性能最多超越旧版 4 倍；在线上实测中，其 p90 路由耗时加快了 3 倍（从 1.96 秒降至 0.65 秒）。</p>
+<p>对于路由器而言，在基准测试中拿高分往往比在实际业务中表现良好更容易。Auto Router 每月承载来自超过 10 万用户的逾 2.5T token，因此它必须经受住真实场景的考验。</p>
+<p>本次发布不仅包含旗舰通用型 <a href="https://openrouter.ai/openrouter/auto">Auto Router</a>（<code>openrouter/auto</code>），还新增了一款专门针对编程任务调优的全新路由器 <a href="https://openrouter.ai/openrouter/auto-code">Auto Code</a>（<code>openrouter/auto-code</code>）。</p>
+<p>现在即可在任意请求中将 <code>model</code> 设为 <code>openrouter/auto</code> 或 <code>openrouter/auto-code</code> 进行体验，也可以在<a href="https://openrouter.ai/chat?models=openrouter%2Fauto">聊天室中打开 Auto Router</a>。完整详情请参阅 <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">Auto Router 文档</a>。</p>
+<h2>新一代路由器的更新亮点</h2>
+<p>上一代 Auto Router 依赖任务类型等少数粗粒度信号来驱动模型选择，这一限制此前是为了保持低延迟和判定一致性。而全新的 Auto Router 和 Auto Code 会全面权衡每个请求的 11 项维度，并结合实时价格、提供商健康状况以及缓存状态来挑选模型。</p>
+<p>这一新流程使 Auto Router 能够协同任意模型集合工作。你可以应用各类治理策略，包括安全护栏（guardrails）、零数据保留（ZDR）要求、提供商限制、允许的模型列表以及 BYOK 自带密钥。Auto Router 会在你可用的模型范围内做出高性价比的选择。</p>
+<p>我们推出全新的 Auto Code 路由器，源于大家在代码测试框架（coding harness）中使用通用路由器的真实反馈。该路由器针对编程性能进行了彻底调优，纳入了更高层级的代码模型并专门针对延迟做了优化。在下方展示的 5 项基准测试中，Auto Code 的得分与 Claude Opus 5.5 相当，而单次任务成本却降低了 74%。</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/benchmark-comparison-light.png" alt="热力图对比了默认层级的新版 Auto Router、Auto Code 以及默认层级的旧版 Auto Router 在 Deep SWE、SWE-Atlas QA、Terminal Bench 4.0、τ³-bench Banking 和 MMMU Pro Vision 上的表现。每项基准测试均显示了得分以及单任务成本相对于上一代 Auto Router 的倍数；得分单元格以绿色或红色着色，变化越大颜色越深（浅色模式）"></p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/benchmark-comparison-dark.png" alt="热力图对比了默认层级的新版 Auto Router、Auto Code 以及默认层级的旧版 Auto Router 在 Deep SWE、SWE-Atlas QA、Terminal Bench 4.0、τ³-bench Banking 和 MMMU Pro Vision 上的表现。每项基准测试均显示了得分以及单任务成本相对于上一代 Auto Router 的倍数；得分单元格以绿色或红色着色，变化越大颜色越深（深色模式）"></p>
+<p>在上一代中，我们还观察到极低成本模型的惊人效率导致 Auto Router 的单任务成本不断向低价漂移，从而错过了许多优秀的模型。在本次发布中，我们决定将默认定价区间回调到 Auto 几个月前的水平，以便引入更多样化的模型。如果你更青睐之前的策略，可以将 <code>cost_tier</code> 设为 <code>low</code>，即可获得相近的成本表现。</p>
+<h2>在聊天室中直观查看路由决策的推理过程</h2>
+<p>了解这些新路由器工作机制的最简单方式，是在<a href="https://openrouter.ai/chat?models=openrouter%2Fauto">聊天室</a>中选择 Auto Router 或 Auto Code。每条回复旁边都会显示一个路由洞察面板，解释路由器选择该模型的原因。当你启用 <a href="https://openrouter.ai/docs/guides/features/router-metadata#enabling-router-metadata">router metadata</a> 时，也可以通过 API 获取同样的分析数据。</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/chat-routing-insights.png" alt="选中 Auto Router 的 OpenRouter 聊天室。一个 Python RecursionError 问题由 InferenceNet 上的 DeepSeek V4.1 Flash 作答。路由洞察面板展示了任务类型（Debugging，98%）、各候选模型的选择份额，以及难度、精度和更强模型收益等评估指标。"></p>
+<h2>在各模型页面查看实时路由分布</h2>
+<p><a href="https://openrouter.ai/openrouter/auto">Auto Router</a> 与 <a href="https://openrouter.ai/openrouter/auto-code">Auto Code</a> 模型页面现在会展示各路由器最常调用的模型分布（按会话类型细分），以及该组合如何随任务难度的上升而动态调整。</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/router-page-live-routing.png" alt="Auto Router 模型页面的实时路由板块：按模型展示过去一天请求量的柱状图（包含 Agentic 和 Non-agentic 标签页及成本层级筛选），GPT-6.1 Sol 以 33.8% 位居榜首的请求份额列表，以及从极简到极难所有任务当前路由组合的堆叠面积图。"></p>
+<h2>与其他路由器及单一模型对比性能</h2>
+<p>Auto Router 与 Auto Code 的基准测试结果已发布在<a href="https://openrouter.ai/benchmarks/routers">模型路由基准测试</a>页面，与 OpenRouter 上的其他路由器及单一模型基线并列呈现。我们会定期重跑测试，以便大家追踪各个路由器在持续发布新模型时的表现动态。</p>
+<h2>沉淀数年运营 Auto Router 的宝贵经验</h2>
+<p>Auto Router 即将迎来三岁生日。如果你几年前在 agent 中配置了 <code>openrouter/auto</code>，直到今天你依然能获得当前最新、成本最优的模型选择。在自动化模型选择容易踩坑的环节上，我们积累了深厚经验，并在新一代设计中针对性地规避了这些问题。举几个例子：</p>
+<p><strong>单独剥离 Auto Code，针对测试框架定向优化。</strong> 用户对上一代 Auto Router 最集中的抱怨就是它在代码测试框架中的表现。Auto Code 倾向于选择成本稍高但能力更契合编程任务的模型梯队。它给予速度更高的权重，因为在编写代码时响应速度至关重要；同时它对失败施加更严厉的惩罚，从而在成功与失败界限分明的任务中更快完成航向校正。</p>
+<p><strong>审慎切换模型，守护缓存收益。</strong> 切换模型会带来额外开销，因为新模型需要重新构建输入 token 缓存。当仅调整推理力度（reasoning effort）即可满足需求时，Auto Router 会优先调整力度，仅在收益足以抵消放弃缓存的代价时才执行模型切换。在测试阶段，近十分之九的 agent 轮次都稳定保持在同一模型上。</p>
+<p><strong>自适应故障应对。</strong> 当会话中出现归咎于模型的问题时（例如反复出现同一报错，或修改后测试依然失败），这些信号会提升切换模型的概率。这大幅降低了会话长时间被困在最初选错的模型上的可能性。</p>
+<p><strong>融合真实流量与基准测试双重微调。</strong> Auto Router 会在每一次基准测试运行和每一次真实的路由决策中持续进化。通过 <code>typesafe/jev-router</code> 与 <code>openrouter/auto-beta</code>，我们已在生产环境中对其进行了验证，且全程严格遵守零数据保留原则。在测试阶段，相比上一代路由器，无效工具调用（invalid tool calls）降低了 4 倍，agent 响应意外截断的频率减少了一半。</p>
+<h2>依托业内领先的提供商路由底座打造模型路由</h2>
+<p>像 Auto Router 和 Auto Code 这样的<strong>模型路由器</strong>负责挑选由哪个模型处理请求；而<strong>提供商路由（Provider routing）</strong>则负责挑选由哪家服务商来承载该模型。自诞生之初，OpenRouter 的每一个请求就都在运行这一机制：一旦选定模型，<a href="https://openrouter.ai/docs/guides/routing/provider-selection">提供商路由器</a>就会综合你的提供商偏好、实时在线率与延迟、价格，以及提供商是否已命中你的 Prompt 缓存，在托管该模型的所有服务商中挑选最优解。</p>
+<p>模型路由器的上限取决于底层提供商路由器的实力。我们在设计 Auto Router 时让其能够感知 OpenRouter 的完整模型目录，使其能实时适应治理限制、基准测试结果以及新模型发布带来的市场信号。OpenRouter 上的 600 多种模型自接入当天起就会进入候选池，由基准测试与热度信号共同决定其是否能跻身成本最优模型集。</p>
+<h2>请求在 Auto Router 中的流转过程</h2>
+<ul><li>Auto Router 缩小候选模型池：安全护栏策略、零数据保留、模型能力、提供商限制、BYOK 密钥以及任何允许或排除模型名单共同决定哪些模型进入候选范围。</li><li>快速决策模型处理请求：通过单次调用评估 11 项要素，例如当前任务类型、任务是否刚刚切换、任务难度、对速度的要求、是否需要视觉或代码库理解，以及更大模型、更多思考还是更低成本模型能更好地处理该任务。</li><li>路由策略决策最终模型：综合权衡实时价格、缓存状态与基准测试表现，选定最佳模型及推理力度。</li><li>走提供商路由分发请求：该请求将经历与直接请求该模型完全相同的提供商路由流程，确保分发至该模型最具性价比的服务商。</li><li>各轮次结果指导下一轮选择：路由器会将模型是否处理吃力以及哪些内容已被缓存等信号带入下一轮决策。</li></ul>
+<h2>路由器与单一模型的对比</h2>
+<p>各项基准测试一致表明，市面上没有任何一款路由器能在成本与质量曲线的每一个点位上都击败最顶尖的前沿单模型。新版 Auto Router 也不例外，我们公开基准测试正是为了清晰展示它的优势与不足。</p>
+<p>路由器的真正价值体现在：任务类型高度多样、组织需要严格控制成本，或者用户没有精力去追踪源源不断推出的新模型。相比固定选择单一模型，选用 Auto Router 或 Auto Code 是以极小的峰值性能折损换取长期稳定、极高性价比的表现。</p>
+<p>如果你明确知道哪个模型最适合你的特定工作，请继续使用它；但如果你希望一劳永逸、专注于业务本身，路由器无疑是最佳之选。</p>
+<h2>即刻开始使用</h2>
+<p>在任何可以传入模型名称的地方，都可以直接填入 Auto Router 与 Auto Code：</p>
 <pre><code>curl https://openrouter.ai/api/v1/chat/completions \
   -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
   -H &quot;Content-Type: application/json&quot; \
@@ -60,20 +60,20 @@
     &quot;model&quot;: &quot;openrouter/auto-code&quot;,
     &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Add a retry with backoff to fetchUser in api/users.ts&quot;}]
   }'</code></pre>
-<p>阅读 <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">自动路由器文档</a> 了解完整设置，或打开 <a href="https://openrouter.ai/chat?models=openrouter%2Fauto">聊天室中的自动路由器</a> 并向其发送您通常手动选择型号的提示。请在 Discord 上的 <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> 中告诉我们哪些是对的，哪些是错的。</p>
+<p>阅读 <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">Auto Router 文档</a>了解完整配置项，或者在<a href="https://openrouter.ai/chat?models=openrouter%2Fauto">聊天室中打开 Auto Router</a> 发送你平时会手动挑模型的提示词。欢迎在 Discord 的 <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> 频道告诉我们它的判定得失。</p>
 <h2>常见问题</h2>
-<h3>我需要更改什么才能从旧的自动路由器切换？</h3>
-<p>什么都没有。 slug 仍然是 <code>openrouter/auto</code> 并且 <code>auto-router</code> 插件设置 <code>cost_tier</code>、<code>allowed_models</code> 和 <code>excluded_models</code> 仍然有效。</p>
-<h3>自动路由器和自动代码有什么区别？</h3>
-<p>两者都运行在相同的路由引擎上。自动路由器是用于混合流量和一般代理的通用路由器，并且支持经济高效的模型层。 Auto Code 专门用于编码代理和工具，从较高的成本层开始，并权衡模型和推理工作中每个已解决任务的测量通过率、速度和成本。</p>
-<h3>模型路由与提供者路由相同吗？</h3>
-<p>否。模型路由选择哪个模型处理请求；提供者路由选择哪个提供者为该模型提供服务。自动路由器和自动代码执行第一个操作，然后 OpenRouter 的提供商路由使用您的提供商首选项、正常运行时间数据和提示缓存状态执行第二个操作。</p>
-<h3>路由器是否尊重我的护栏和数据策略？</h3>
-<p>是的。 Guardrail 策略、零数据保留要求、提供商限制、允许和排除的模型列表以及 BYOK 密钥定义模型池，路由器会在其中选择成本最优模型。</p>
-<h3>路由器需要额外付费吗？</h3>
-<p>不会。您只需支付满足请求的型号的标准价格，响应的“型号”字段就会告诉您是哪一款。</p>
-<h3>什么是 openrouter/auto-beta？</h3>
-<p>Auto Router Beta 是下一版本 Auto Router 的发布渠道。新的路由更改首先发布到“openrouter/auto-beta”，一旦验证成功，就会升级到“openrouter/auto”，因此请使用它来提前查看即将发生的情况。如果您尝试一下，请在 Discord 上的 <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> 中告诉我们哪些是对的，哪些是错的。</p>]]></content:encoded>
+<h3>从旧版 Auto Router 切换需要做哪些改动？</h3>
+<p>完全不需要改动。模型标识依旧是 <code>openrouter/auto</code>，而且 <code>auto-router</code> 插件设置中的 <code>cost_tier</code>、<code>allowed_models</code> 和 <code>excluded_models</code> 均可正常生效。</p>
+<h3>Auto Router 与 Auto Code 有何区别？</h3>
+<p>两者基于同一套路由引擎运行。Auto Router 是面向混合流量和通用 agent 的通用型路由器，倾向于选择极具性价比的模型梯队；Auto Code 则专为编程 agent 与代码测试框架打造，起步于更高的成本层级，并在不同模型与推理力度之间综合考量实测通过率、速度以及解决每个任务的成本。</p>
+<h3>模型路由与提供商路由是一回事吗？</h3>
+<p>不是。模型路由决定由哪个模型处理请求；提供商路由则决定由哪家服务商来运行该模型。Auto Router 与 Auto Code 负责前者，随后 OpenRouter 的提供商路由机制会结合你的提供商偏好、服务正常运行时间数据以及 Prompt 缓存状态来执行后者。</p>
+<h3>路由器是否遵循我的安全护栏和数据策略？</h3>
+<p>是的。安全护栏策略、零数据保留要求、提供商限制、允许与排除模型名单以及 BYOK 密钥共同界定了模型池边界，路由器仅在该边界内挑选性价比最优的模型。</p>
+<h3>使用路由器需要额外付费吗？</h3>
+<p>不需要。你只需按实际处理请求的模型的标准价格付费，响应结果中的 <code>model</code> 字段会明确告知最终调用的模型。</p>
+<h3>openrouter/auto-beta 是什么？</h3>
+<p>Auto Router Beta 是下一代 Auto Router 的预发布通道。新的路由升级会先部署至 <code>openrouter/auto-beta</code>，在验证稳定后再并入 <code>openrouter/auto</code>。因此你可以通过它提前预览新特性。如果你进行了尝试，欢迎在 Discord 的 <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> 频道分享你的反馈。</p>]]></content:encoded>
     </item>
     <item>
       <title>用 OpenRouter 构建 AI 代码审查器</title>
