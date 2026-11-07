@@ -58,13 +58,13 @@ python -m unittest discover
 git diff README.md
 ```
 
-- **测试集有两个，别搞混**：本地用 `unittest discover`（全部）；CI 用
-  `test_workflow_and_review.ci_suite()`（全部 − `CI_EXCLUDED_CLASSES`，排除集是否为空以该常量为准，
-  空集即 CI 跑全部用例）。白名单机制保留着，是为了以后真有「会破坏 CI 自身状态」的用例时有地方写，
-  而不是临时去改 workflow。历史上唯一进过白名单的是 `TestCrawlerCleanup`：它会删除仓库根目录的
-  `.ai-changed`（workflow「Decide commit path」的判据），后来把仓库根改成可注入的
-  `crawler_llm_intel._repo_root()`、该测试改在临时目录里跑，就不再需要排除。
-  取集是**从全量推导**的，新增测试类会自动进 CI。
+- **本地复现 CI** 用 `python -m unittest -v test_workflow_and_review.ci_suite`。它从仓库根按
+  `unittest discover` 发现测试，再排除 `CI_EXCLUDED_CLASSES`（当前为空）。安装 Node.js
+  后，这条命令也会运行 `docs/app.test.mjs` 的浏览页测试。
+- 面向 `main` 的 PR 和常规推送由 [CI](.github/workflows/ci.yml) 以只读权限校验提交中的产物。
+  [每日巡检](.github/workflows/refresh-intel.yml) 在同一个工作目录内依次更新归档、正文和视图，
+  运行同一套测试后一次提交。若推送因 `main` 在巡检期间前进而被拒绝，请在 Actions 的
+  **Run workflow** 选择最新 `main` 发起新一轮。
 - **新用例不要依赖真实仓库根**：要读写仓库文件时，把落点做成可注入（照 `_repo_root()` 的样子），
   测试里 patch 到临时目录 —— 否则这个用例只能被排除在 CI 之外，等于 CI 里零覆盖。
 - **新增产物或新增守卫时，顺手确认它在 CI 里真的会跑**（`ci_suite()` 取到即可）——
@@ -72,7 +72,7 @@ git diff README.md
 - **失败源冷却**：单个情报源连续抓取失败达 `SOURCE_SKIP_FAILS` 次后进入 `SOURCE_RETRY_DAYS` 天的跳过窗口（日志 `[source-skip]`，计数存在 `llm-intel-state.json` 的 `failures`），到期自动放行重试一次、成功即清零；确要强制抓取用 `--force-sources`。别把它和上面 AI 核查的 `[ai-cooldown]` 混淆：前者管抓取失败，后者管核查失败。
 
 - **不要手工编辑 README 的两个自动生成区块**：`LLM-GUIDE:BEGIN/END`（项目介绍后的白嫖攻略）与 `LLM-INTEL:BEGIN/END`（「快速开始」之后的厂商总表），也不要手工编辑 `llm-news-feeds.md` / `llm-news-feeds.opml` / `llm-news/` / `docs/feeds/` 的生成内容——它们在完整运行时会被自动重新渲染。`llm-intel-changelog.md`（AI 采纳变更日志）同样只由脚本追加、CI 随巡检提交，不要手改；首次 AI 采纳之前它不存在是常态。标记块之外（含文末的开发者章节与 365 页脚）人工维护，巡检会**原样保留**（旧版「END 之后一律丢弃」的行为已移除）。
-- `llm-news-feeds.opml` 的**自建源**分组只在能推导出 Pages 前缀时（CI 注入 `GITHUB_REPOSITORY`）才会写；本地跑推不出前缀，只写「官方原生源」一组——别把本地生成的 OPML 当成线上形态。厂商**官网自带** RSS 的判断（`_native_feed_vendors`）被 OPML 与 `llm-news-feeds.md` 共用，改一处即可，不要在两处各写一遍判断。
+- `llm-news-feeds.opml` 的自建源分组需要可用的订阅前缀。本地渲染同样会读取 `docs/CNAME`。厂商官网自带 RSS 的判断（`_native_feed_vendors`）由 OPML 与 `llm-news-feeds.md` 共用。
 - `docs/feeds/*.xml` 与 `docs/feeds/vendors.json`、`docs/feeds/articles.json`、`docs/feeds/model-releases.json`、`docs/feeds/quotas.json`、`docs/feeds/intel-changes.json` 是自建 RSS 订阅源、厂商索引、**全量文章索引**、模型发布雷达（从归档标题抽取「日期+厂商+模型」事件）、「免费额度与活动一览」的机读镜像与变化流伴生 JSON（GitHub Pages 从这里发布），**只由脚本生成**。注意 `--no-news` 会跳过整条新闻链路（发布雷达也在内），因此也不会刷新它们；改动了归档相关的抓取 / 排序 / 清洗逻辑时，请跑一次**不带 `--no-news`** 的巡检确认产物。新增厂商后订阅源会自动多一个 `llm-news-<vendor_id>.xml`、各机读索引随之同步增减，已下线厂商的旧源会被清理。
 - `docs/index.html` 是自建 RSS 的**浏览页**（读 `docs/feeds/articles.json` 列出**全部**条目，可筛选、可搜索；选中某厂商时订阅地址自动切成该家单源），**人工维护、不参与巡检**，改它不会与脚本产物冲突。页面里的厂商清单来自 `feeds/vendors.json`，**不要在页面里硬编码厂商列表**（会随厂商增删而漂移）；`docs/.nojekyll` 关闭 Jekyll，不要删除。
 - **合并流默认不限制**（`RSS_MERGED_LIMIT = 0`，收录全部有日期的条目）。曾经限 200 条，理由是「全量约 1.2 MB 会让阅读器吃力」—— **那个理由站不住**：GitHub Pages 用 gzip 传输，当初决策时线上实测过 `Content-Encoding: gzip`，那份全量 XML 压缩后只剩约八分之一（历史观测值，不代表现状体积）。当时的判断看的是未压缩体积，别再照它把上限加回来。要限流可用 `--rss-limit N`。
@@ -97,14 +97,9 @@ git diff README.md
   3. 若 `main` 分支开启了 Branch Protection，需将 `github-actions[bot]` 加为允许直推或 bypass 的用户；
   4. 未配置 Key 时新闻更新仍直接原子性提交 main，事实变化保留旧快照等待重试。
 
-- **订阅源地址（`FEEDS_BASE`）**：自建 RSS 的对外前缀由 `default_feeds_base()` 按
-  `GITHUB_REPOSITORY` 推导为 `https://<owner>.github.io/<repo>/feeds`，**fork 后无需任何配置**。
-  但若仓库配了**自定义域名**，GitHub Pages 会把 github.io 上的请求 301 到自定义域名 ——
-  于是 feed 自己声明的 `<atom:link rel="self">` 与 `<source url>`（都取这个前缀）会与
-  浏览页顶部显示的地址不一致，且每个订阅多一跳。此时在
-  **Settings → Secrets and variables → Actions → Variables** 加一个 `FEEDS_BASE`
-  （值形如 `https://<你的域名>/feeds`）即可，workflow 会把它传给 `--feeds-base`；
-  留空则退回自动推导。改完等下一次巡检生效（产物是生成的，不要手工改 XML）。
+- 自建 RSS 的订阅前缀由 `default_feeds_base()` 先读 `docs/CNAME`，缺省时再按
+  `GITHUB_REPOSITORY` 推导 Pages 地址。需要覆盖这两项时，在 Actions 仓库变量中设置
+  `FEEDS_BASE`（形如 `https://<你的域名>/feeds`），下一次巡检和同轮渲染都会使用它。
 
 人工基线在 `provider_profiles.py`，AI 补丁在 `profile_overrides.json`（同名字段整体覆盖，`_evidence` 累积保留最近 20 条证据）。
 
@@ -248,7 +243,7 @@ python crawler_llm_intel.py --translation-qc --qc-path docs/articles/openai/xxx.
 
 CI 在爬虫**之前**跑这一步（当天回填的原文当轮就进产物），失败不阻断巡检（`continue-on-error`）。
 
-**新增条目的机翻标题**：巡检带 `--ai-titles`（CI 已默认开启）时，首次收录的文章标题会交给 LLM 按「信达雅」润色一次，结果写进归档后随沿用机制冻结；LLM 失败 / 缺 key 时自动回落 Google 机翻，预算内分批调用。
+巡检启用 `--ai-titles` 时，首次收录的英文标题按预算分批润色，模型以编号文本返回译文，写进归档后冻结。事实核查已熔断，或标题润色遇到整批限流、服务故障时，本轮剩余标题直接回落 Google 机翻。已经成功的批次保留译文。
 
 两个已知取舍：官方日后改文章标题，我们停在旧译文（改归档那一行即可跟进）；Google 刚机翻出来的新标题同样会被冻结——不过 CI 的 `--ai-titles` 已在冻结前先润色一轮，只有 LLM 不可用的日子才需要人工补。
 

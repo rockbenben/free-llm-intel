@@ -1526,9 +1526,10 @@ python -m unittest discover
   - 未配置 Key 或网络不可用时：跳过 AI 核查并**保留旧快照**，该变化在下次巡检自动重试，事实字段不会被改写；
   - **本地 AI 核查通道（不依赖任何 API Key）**：`python crawler_llm_intel.py --review-export` 会把排队厂商组卷导出到 `.ai-review/packets/<vid>.prompt.md`（与远端模型完全相同的核查 prompt，页面快照指纹登记在 `.ai-review/manifest.json`）；本地 AI agent（Claude Code / Qoder 等）按包尾输出格式填 `<vid>.json`，再 `--review-apply` —— 补丁过的就是远端那套**逐字证据闸门**（页面自导包后未变时快进复用包内语料、免重抓；变了则重新实抓校验），通过后写 overlay、追加变更日志、快照前进。导出 ≠ 核查：未被 apply 的厂商保留旧哈希、继续排队。
 - **人工回退手段**：① 不认可某次 AI 更新就 **`git revert` 那次巡检提交**（提交信息以 `chore(ai):` 开头，一眼可辨）——AI 只能改 `profile_overrides.json`，从未触碰人工基线 `provider_profiles.py`；② 也可直接删除（或编辑）`profile_overrides.json` 中对应厂商的键即恢复人工基线，证据留痕在 `_evidence`；③ 想临时停用 AI：本地不带 `--ai-review` 运行，CI 删除 `GEMINI_API_KEY` Secret 后新闻更新照常、事实变化只标记不核查。
-- **定时自动更新**：GitHub Actions（`.github/workflows/refresh-intel.yml`）默认**每天北京时间 11:19** 全量抓取（时段不是随便挑的：必须落在**北京 08:00–24:00**，否则 runner 的 UTC 日期会比北京早一天，国内厂商当天发的文章会被判为「未来日期」而丢日期；11:19 同时已过美国工作日结束点、避开整点排队、且 Gemini 额度桶是满的。改 cron 前请读 workflow 头部注释）：
+- **提交检查**：面向 `main` 的 PR 和常规推送会触发 [CI](.github/workflows/ci.yml)，校验提交中的代码、浏览页和生成产物。
+- **定时自动更新**：[巡检工作流](.github/workflows/refresh-intel.yml) 计划于每天北京时间 **06:19** 启动，实际时间取决于 GitHub 调度。手动巡检在 Actions 页面选择 `main` 发起。
   0. 抓取完成后先跑**产物与不变量校验**（全部用例由 `ci_suite()` 自动纳入，新增用例即进 CI）——失败即拦住提交，不让坏产物进 main；
-  1. 页面快照无变化 → 不写产物、零提交；
+  1. 待提交文件均无变化时跳过提交；
   2. 仅新闻 / 证据引文变化 → 机器人直接提交 main；
   3. 额度等事实页文本变化（快照 hash 改变）→ 用仓库 Secret **`GEMINI_API_KEY`** 调用 Gemini 核查。通过证据闸门后**与快照 / 新闻一起原子提交到 main**（2026-09-22 起不再开 PR 等人工审核）：
      - 档案更新、快照、新闻、README **一次提交**——避免"先开 PR、成功后再推快照"两段式在中间失败时静默丢失事实变更；
@@ -1541,7 +1542,7 @@ python -m unittest discover
   3. 若 `main` 分支开启了 Branch Protection，需将 `github-actions[bot]` 设为允许直推或 bypass；
   4. 定时任务需 workflow 位于默认分支才会被 GitHub 调度；
   5. **Settings → Pages**：Source 选 **Deploy from a branch**，Branch 选 `main`、目录选 **`/docs`** —— 这是[自建 RSS 浏览页](https://free-llm-intel.aishort.top/)与订阅源的托管方式（`docs/.nojekyll` 已关闭 Jekyll，保证 XML 原样输出）。订阅地址按仓库自动推导，fork 后无需改代码；不配置则订阅地址 404，其余产物不受影响。
-  6. （可选，**配了自定义域名才需要**）**Settings → Secrets and variables → Actions → Variables** 加一个 `FEEDS_BASE`，值填 `https://<你的域名>/feeds`。留空时订阅源地址按 `GITHUB_REPOSITORY` 推导为 `https://<owner>.github.io/<repo>/feeds`；配了自定义域名后，GitHub Pages 会把 github.io 上的请求 301 到自定义域名，于是 feed 自己声明的 `rel=self` 与 `<source url>` 会与浏览页顶部显示的地址不一致，且每个订阅多一跳。填上它即可让两者都指向规范地址。
+  6. 订阅源前缀优先取 Actions 仓库变量 `FEEDS_BASE`。留空时脚本先读 `docs/CNAME` 中的自定义域名，再按 `GITHUB_REPOSITORY` 推导 Pages 地址。
 - **可信度原则**：只采信官方页面且保留原文证据；查不到的旧额度 / 旧模型名显式标注「无法复核，不予采信」，不转述第三方说法。
 
 ## 新增 / 修正厂商

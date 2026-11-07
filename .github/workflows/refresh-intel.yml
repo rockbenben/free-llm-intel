@@ -32,7 +32,7 @@ name: refresh-intel
 #     刚重置过几小时的桶，一天一趟不与其它消费者争额度。
 #
 # 流程：脚本抓取全部官方页并与 llm-intel-state.json 中的文本快照比对——
-#   1. 页面无变化：不重写产物、不产生提交；
+#   1. 待提交文件均无变化：跳过提交；
 #   2. 仅新闻 / 博客变化：直接原子性提交到 main；
 #   3. 免费额度等事实字段可能变化（快照 hash 改变）：调用 Google AI Studio 的
 #      Gemini API（默认模型见 ai_review.GEMINI_DEFAULT_MODEL，免费层 Key）阅读变化页面，
@@ -48,17 +48,14 @@ name: refresh-intel
 #   （曾有过的「同步遗留 ai/intel-update 分支」步骤已随最后一条遗留分支的清理退役，
 #    测试里有守卫防止复活——旧分支会把过期补丁灌回 main。）
 #
-# 提交流程的 git 顺序固定为 add -> commit -> pull --rebase -> push，不可调换：
-# crawler 跑完后工作区必然是脏的（快照 / 新闻 / README 都已重写），此时先执行
-# pull --rebase 会被 git 直接拒绝——"cannot pull with rebase: You have unstaged
-# changes"，以 exit 128 中断，push 根本没机会运行。
+# 产物基于触发时的 main 生成并校验。巡检期间若 main 前进，普通 push 会拒绝旧结果；
+# 此时从最新 main 新发起一次 workflow_dispatch，按新源重算。
 #
 # 自建 RSS：脚本把 llm-news/ 归档同时写成 docs/feeds/ 下的产物——RSS 2.0 XML
 # （含全厂商合并流与每厂商单源）、多个 JSON 索引（核心为 vendors / articles /
 # model-releases 模型发布雷达，另有变更日志与额度索引），与新闻产物在同一次提交里落盘。
 # docs/ 就是 GitHub Pages 的
-# 发布目录，订阅地址形如 https://<owner>.github.io/<repo>/feeds/llm-news-all.xml；
-# 该地址由脚本按 Actions 注入的 GITHUB_REPOSITORY 自动推导，fork 后无需改代码。
+# 发布目录，订阅前缀依次取 FEEDS_BASE、docs/CNAME 和 GITHUB_REPOSITORY 推导值。
 # docs/.nojekyll 关闭 Jekyll 处理，保证 XML 原样输出。官方没有 RSS/Atom 的厂商
 # （见 llm-news-feeds.md 里的「未发现 RSS/Atom 链接」）正是靠这个源自建订阅。
 #
@@ -87,25 +84,26 @@ permissions:
   contents: write
 
 concurrency:
-  group: refresh-intel
+  group: refresh-intel-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   crawl:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     # 把整个 job 的进程时区钉成北京，「今天」才是北京今天（判据与后果见文件头第 1 条）。
     # 必须是 job 级而不是某个 step 级：产出层与下面的 Verify 都拿 `date.today()` 做判据，
     # 只给爬取那一步设 TZ 会让两边的「今天」差一天。
     env:
       TZ: Asia/Shanghai
+      PYTHONIOENCODING: utf-8
+      PYTHONUNBUFFERED: "1"
     # 首次运行是冷启动：翻译缓存未命中需冷译归档全量标题 + 全量深度抓取 + 浏览器内核安装，
     # 比缓存命中的常规巡检慢一个量级；timeout 按冷启动上限留余量，别按常规耗时判断。
     timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v7
@@ -114,7 +112,10 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        id: deps
+        run: |
+          python -m pip install -r requirements.txt
+          python -c 'from importlib.metadata import version; print("playwright=" + version("playwright"))' >> "$GITHUB_OUTPUT"
 
       # Chromium 仅对 requests 抓到 JS 空壳 / 403 的部分入口页面兜底，
       # 用于保证 README「实时巡检证据」列的质量与本地带浏览器巡检一致。
@@ -124,7 +125,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('requirements.txt') }}
+          key: playwright-${{ runner.os }}-${{ runner.arch }}-${{ steps.deps.outputs.playwright }}
       - name: Install Playwright Chromium
         run: playwright install --with-deps chromium
 
@@ -155,8 +156,6 @@ jobs:
       # continue-on-error：回填是增强项，它挂了不该挡掉当天的巡检产物提交。
       - name: Backfill article originals
         continue-on-error: true
-        env:
-          PYTHONIOENCODING: utf-8
         run: python crawler_llm_intel.py --backfill-orig
 
       # 灾难性失败护栏：情报页失败占比 ≥ INTEL_FAIL_ABORT_RATIO（多数失败）时，
@@ -165,7 +164,6 @@ jobs:
       # 健康巡检失败率近零，偶发单源反爬够不着这条线（阈值与理由见 crawler 常量注释）。
       - name: Run intel crawler
         env:
-          PYTHONIOENCODING: utf-8
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # 可用 repository variable 覆盖模型；未设置时走代码默认（见 ai_review）
           AI_REVIEW_MODEL: ${{ vars.AI_REVIEW_MODEL }}
@@ -184,8 +182,6 @@ jobs:
       # README/新闻提交；写坏的产物由紧随其后的 Verify「实产物 schema 守卫」兜底拦提交。
       - name: Fetch article bodies (incremental)
         continue-on-error: true
-        env:
-          PYTHONIOENCODING: utf-8
         run: python crawler_llm_intel.py --fetch-bodies
 
       # 中文正文增量翻译：pending（英文已抓到、中文待译）→ Google 机器翻译 → .md。
@@ -198,8 +194,8 @@ jobs:
       - name: Translate new bodies (machine)
         continue-on-error: true
         env:
-          PYTHONIOENCODING: utf-8
-        run: python crawler_llm_intel.py --mt-bodies --mt-bodies-limit "${{ vars.MT_BODIES_LIMIT || 80 }}"
+          MT_BODIES_LIMIT: ${{ vars.MT_BODIES_LIMIT || '80' }}
+        run: python crawler_llm_intel.py --mt-bodies --mt-bodies-limit "$MT_BODIES_LIMIT"
 
       # 产出层重排：RSS 与各类索引都是归档 + 语料的视图，正文步骤之后必须再渲染一次，
       # 否则当天新译的正文进不了 feed（实测合并流里新条目只有 title/link/guid、456 字节）。
@@ -210,36 +206,15 @@ jobs:
       # 因为它们是增强层，挂了不该挡掉当天巡检——两种角色别照抄。
       - name: Render outputs
         env:
-          PYTHONIOENCODING: utf-8
           FEEDS_BASE: ${{ vars.FEEDS_BASE }}
         run: python crawler_llm_intel.py --render-only --feeds-base "$FEEDS_BASE"
 
       # 产物与不变量校验：跑**全部**用例。
       # 测试集由 test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：
       # 以后新增用例自动进 CI，不需要谁记得回来改这里（手写类清单必然漂移）。
-      # 排除集以 CI_EXCLUDED_CLASSES 为准 —— 曾经排除 TestCrawlerCleanup（它会删掉仓库根的 .ai-changed，
-      # 而那是下一步 Decide commit path 的判据），后来把仓库根改成可注入的
-      # `crawler_llm_intel._repo_root()`，该测试改在临时目录里跑，就不再需要排除。
       # 放在抓取之后：校验的是本次即将提交的新产物，失败即拦住提交。
       - name: Verify generated artifacts and invariants
-        run: python -c "import sys, unittest, test_workflow_and_review as t; sys.exit(0 if unittest.TextTestRunner(verbosity=2).run(t.ci_suite()).wasSuccessful() else 1)"
-
-      - name: Decide commit path
-        id: route
-        run: |
-          if [ -f .ai-changed ]; then
-            echo "kind=pr" >> "$GITHUB_OUTPUT"
-            echo "检测到档案更新：将以 chore(ai) 提交，与快照 / 新闻一次原子推送到 main。"
-            cat .ai-changed
-          else
-            echo "kind=direct" >> "$GITHUB_OUTPUT"
-          fi
-
-      # 2026-09-22：原先这里用 create-pull-request 开 PR 等人工审核，
-      # 现改为与快照 / 新闻一起原子提交（见下方 "Commit all updates" 步骤）。
-
-      # 2026-09-22：原先这里是"PR 创建成功后再直推快照"的第二段，
-      # 现已合并进下方 "Commit all updates"，不再分两段（分两段时中间失败会丢变更）。
+        run: python -m unittest -v test_workflow_and_review.ci_suite
 
       # 快照、新闻、README、档案覆盖层、情报变更日志**单次原子提交**并推送到 main。
       # 2026-09-22 起不再区分「有 AI 档案更新」与「无」—— 原先前者要开 PR 等审核，
@@ -260,18 +235,13 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ "${{ steps.route.outputs.kind }}" = "pr" ]; then
+          if [ -f .ai-changed ]; then
+            cat .ai-changed
             git commit -m "chore(ai): 依据官方页面变化更新免费额度档案并刷新巡检产物"
           else
             git commit -m "chore: 定时巡检刷新官方情报与博客动态"
           fi
-          # 必须先 commit 再 rebase，原因见文件头「提交流程的 git 顺序」说明。
-          if ! git pull --rebase origin main; then
-            echo "::error::rebase 到最新 main 失败：远端在巡检期间有新提交，且与本次产物冲突。请手动 rebase 后重跑。"
-            exit 1
-          fi
-          # push 失败时 GitHub 只回一个 exit 128，看不出原因，这里显式翻译成排查指引。
           if ! git push origin HEAD:main; then
-            echo "::error::推送被拒绝。请检查：① Settings -> Actions -> General -> Workflow permissions 是否已选 Read and write permissions；② 若 main 开启了 Branch Protection，规则中是否允许 github-actions[bot] bypass。"
+            echo "::error::推送失败。若日志提示 non-fast-forward 或 fetch first，请在最新 main 上新发起巡检；权限错误请检查 contents: write 与分支保护规则。"
             exit 1
           fi

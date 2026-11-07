@@ -286,8 +286,7 @@ def call_llm(prompt: str, api_key: str = "", model: str = "",
              timeout: float = 180.0, backend: str | None = None) -> str:
     """按后端分发。prompt 为用户消息（系统提示由各 API 的 system 字段承载）。
 
-    强制 JSON 输出 + 情报核查 system 提示，供 --ai-review / --ai-titles 用。
-    要拿纯文本（如整篇正文翻译）走 call_llm_text。
+    --ai-review 使用核查 system 提示和 JSON 输出。标题润色与正文翻译走 call_llm_text。
     """
     backend = resolve_backend(backend)
     if not model:
@@ -342,7 +341,7 @@ def call_llm_gemini(prompt: str, api_key: str, model: str = GEMINI_DEFAULT_MODEL
                     timeout: float = 180.0, *, system: str = SYSTEM_PROMPT,
                     max_tokens: int = MAX_TOKENS,
                     response_mime_type: str = "application/json") -> str:
-    """Gemini API（AI Studio 免费层 Key）：generateContent，强制 JSON 输出。
+    """通过 Gemini generateContent 调用模型，按调用方指定的 MIME 类型返回内容。
 
     免费层回退策略：
     - 429 且判定为当日额度（RPD，按项目共享，太平洋时间午夜重置）→ AiQuotaExhausted，

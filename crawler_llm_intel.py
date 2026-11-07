@@ -428,25 +428,30 @@ def make_llm_title_polisher(budget: int = TITLE_POLISH_RUN_BUDGET,
     一篇只花一次调用。失败不抛异常（调用方回落 Google 机翻）。
     """
     import ai_review
-    remaining = [budget]
+    remaining = budget
 
     def polish(brand: str, titles: list[str]) -> dict[str, str]:
+        nonlocal remaining
         out: dict[str, str] = {}
         for i in range(0, len(titles), batch):
-            chunk = titles[i:i + batch]
-            chunk = chunk[:max(remaining[0], 0)]
-            remaining[0] -= len(chunk)
-            if not chunk:
+            if remaining <= 0:
                 break
+            chunk = titles[i:i + min(batch, remaining)]
+            remaining -= len(chunk)
             lines = "\n".join(f"{n}\t{t}" for n, t in enumerate(chunk, 1))
-            prompt = (
-                "你是科技资讯标题译者。下面每行是「编号<TAB>英文原标题」，请逐行译成中文标题。\n"
+            system = (
+                "你是科技资讯标题译者。输入每行是「编号<TAB>英文原标题」，请逐行译成中文标题。\n"
                 "要求：品牌 / 模型 / 术语保留原文（如 Claude、GPT-6、LoRA、MCP）；忠实原意，"
                 "不加原文没有的营销词与感叹号；原标题本身就是型号标识时原样返回该行。\n"
-                "输出格式：一行一条「编号<TAB>中文标题」，不要解释、不要引号、不要 Markdown。\n\n"
-                + lines)
+                "输出格式：一行一条「编号<TAB>中文标题」，不要解释、不要引号、不要 Markdown。")
             try:
-                out.update(parse_polish_response(ai_review.call_llm(prompt), chunk))
+                reply = ai_review.call_llm_text(lines, system=system, max_tokens=ai_review.MAX_TOKENS,
+                                                model=os.environ.get("AI_REVIEW_MODEL", ""))
+                out.update(parse_polish_response(reply, chunk))
+            except ai_review.AiReviewAbort as exc:
+                remaining = 0
+                print(f"      [ai-titles] {brand}：{exc}；本轮剩余标题回落机翻。", file=sys.stderr)
+                break
             except Exception as exc:
                 print(f"      [ai-titles] {brand}：润色失败，回落机翻"
                       f"（{type(exc).__name__}: {exc}）", file=sys.stderr)
@@ -7846,6 +7851,7 @@ def main(argv: list[str] | None = None) -> int:
             changed_map[vid] = []
             forced_review.add(vid)
     ai_patches: dict[str, dict] = {}
+    ai_aborted = False
     if changed_map:
         n_change = len(changed_map) - len(forced_review)
         bits = []
@@ -7921,7 +7927,6 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"      AI 核查后端：{backend}（模型 {model}）")
                 intel_by_id = {v.vendor_id: v for v in intel_list}
                 pending = list(changed_map.items())
-                ai_aborted = False
                 consecutive_errors = 0
                 ai_max_consecutive_errors = 3
                 for pos, (vid, changed_pages) in enumerate(pending):
@@ -7979,7 +7984,7 @@ def main(argv: list[str] | None = None) -> int:
                     else:
                         print(f"      [ai-ok] {intel.brand}：页面变化不构成事实更新")
                 if ai_aborted:
-                    print("      本次 AI 核查提前终止：README / 博客照常生成，事实档案未被改写。")
+                    print("      AI 核查提前终止，未完成核查的厂商保留旧快照。")
                 if ai_patches:
                     adopt_patches(root, ai_patches, intel_by_id)
                     reload_overrides()
@@ -8020,7 +8025,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[4/4] 整理博客 / 动态订阅源 ...")
     opml_path = (root / args.news_opml) if not Path(args.news_opml).is_absolute() else Path(args.news_opml)
     title_polish = None
-    if args.ai_titles:
+    if args.ai_titles and ai_aborted:
+        print("      [ai-titles] 本轮 AI 核查已熔断，新增标题回落机翻。", file=sys.stderr)
+    elif args.ai_titles:
         import ai_review
         try:
             polish_backend = ai_review.resolve_backend()

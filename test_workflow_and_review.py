@@ -72,8 +72,9 @@ class TestWorkflowYaml(unittest.TestCase):
                          "不再开 PR 就不该申请 pull-requests 写权限")
 
         concurrency = data.get("concurrency", {})
-        self.assertEqual(concurrency.get("group"), "refresh-intel")
+        self.assertEqual(concurrency.get("group"), "refresh-intel-${{ github.ref }}")
         self.assertFalse(concurrency.get("cancel-in-progress", True))
+        self.assertEqual(data["jobs"]["crawl"]["if"], "github.ref == 'refs/heads/main'")
 
     def test_beijing_tz_anchor_and_morning_slot(self):
         """爬取必须跑在「北京今天」的时钟上，槽位定为北京 06:19（2026-10-17 定）。
@@ -157,15 +158,10 @@ class TestWorkflowYaml(unittest.TestCase):
                          "留着它反而会把过期补丁灌回 main（2026-09-26 手动清理遗留分支后移除）")
         self.assertIn("Restore translate cache", step_names)
         self.assertIn("Run intel crawler", step_names)
-        self.assertIn("Decide commit path", step_names)
         # 2026-09-22：不再开 PR 等人工审核 —— 档案更新与快照 / 新闻走同一条提交路径
         self.assertIn("Commit all updates", step_names)
         self.assertNotIn("Open PR for AI-reviewed profile updates", step_names,
                          "档案更新已改为自动采纳，不应再有开 PR 的步骤")
-
-        # 检查 checkout 是否配置了 fetch-depth: 0
-        checkout_step = next(s for s in steps if s.get("name") == "Checkout")
-        self.assertEqual(checkout_step.get("with", {}).get("fetch-depth"), 0)
 
         crawl_step = next(s for s in steps if s.get("name") == "Run intel crawler")
         self.assertNotIn("--no-browser", crawl_step.get("run", ""),
@@ -236,6 +232,10 @@ class TestWorkflowYaml(unittest.TestCase):
         by_name = {s.get("name", ""): s for s in data["jobs"]["crawl"]["steps"]}
 
         commit = by_name["Commit all updates"]["run"]
+        self.assertIn("if [ -f .ai-changed ]", commit)
+        self.assertIn("git push origin HEAD:main", commit)
+        self.assertNotRegex(commit, r"git (?:pull|rebase|merge)\b|git push .*--force",
+                            "只推本轮校验过的提交；main 前进后须重新生成产物")
         self.assertIn("profile_overrides.json", commit,
                       "AI 采纳的档案补丁必须随巡检提交进 main")
         self.assertIn("README.md", commit, "README 按新档案重渲染，也要一起提交")
@@ -291,24 +291,22 @@ class TestWorkflowYaml(unittest.TestCase):
                          "仓库初始化（首次 AI 档案更新前）时该文件不存在")
 
     def test_ci_verifies_with_ci_safe_suite(self):
-        """CI 的校验步骤必须跑「全部 − 白名单」，且不得把 TestCrawlerCleanup 带进去。
-
-        Regression: 该步骤曾只跑 TestNewsSectionCountConsistency 一个类，于是订阅源
-        文件名漂移、OPML 分组、归档日期完整性、README 链接失效等守卫全都不在 CI 里，
-        得等提交之后才发现；而反过来无脑跑全量（`unittest discover`）又会因为
-        TestCrawlerCleanup 删掉 .ai-changed 而踩坏 PR 路由。
-        """
+        """PR 和 main 推送检查已提交的产物；巡检在提交前用同一套守卫检查新产物。"""
+        ci = yaml.safe_load((self.workflow_path.parent / "ci.yml").read_text(encoding="utf-8"))
+        self.assertEqual(ci["on"], {"pull_request": {"branches": ["main"]},
+                                    "push": {"branches": ["main"]}})
+        self.assertEqual(ci["permissions"], {"contents": "read"})
+        verify = ci["jobs"]["verify"]
+        self.assertEqual(verify["env"]["TZ"], "Asia/Shanghai")
         with open(self.workflow_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
         steps = data["jobs"]["crawl"]["steps"]
         step = next((s for s in steps
                      if str(s.get("name", "")).startswith("Verify generated artifacts")), None)
         self.assertIsNotNone(step, "必须保留产物校验步骤")
-        run = step.get("run", "")
-        self.assertIn("ci_suite()", run, "校验步骤必须用 ci_suite() 取测试集")
-        self.assertNotIn("discover", run,
-                         "不得用 unittest discover 全量跑 —— 会带上 TestCrawlerCleanup")
-        self.assertNotIn("TestCrawlerCleanup", run)
+        command = "python -m unittest -v test_workflow_and_review.ci_suite"
+        self.assertEqual(step["run"], command)
+        self.assertIn(command, [s.get("run") for s in verify["steps"]])
 
 
 class TestAiReviewApplyPatches(unittest.TestCase):
@@ -657,9 +655,7 @@ class TestDiffFocusedReviewAndSourceCooldown(unittest.TestCase):
 class TestCrawlerCleanup(unittest.TestCase):
     """爬虫启动时清理历史残留的 `.ai-changed` 标记。
 
-    在**临时目录**里跑（把 `_repo_root` patch 过去），因此不会碰真实仓库根的标记 ——
-    那是 workflow「Decide commit path」判定走 PR 还是直提的判据，CI 里删掉它会把 PR 路由
-    踩坏（本类此前因此只能被排除在 CI 之外）。改注入后，同一个代码路径可以在 CI 里跑。
+    在临时目录里跑。巡检提交步骤要读取真实仓库根的标记来识别 AI 档案更新。
     """
 
     def setUp(self):
@@ -687,12 +683,7 @@ class TestCrawlerCleanup(unittest.TestCase):
         self.assertFalse(stale_marker.exists(), "爬虫启动时必须清理历史残留的 .ai-changed 标记")
 
     def test_repo_root_is_redirected_to_temp(self):
-        """守卫：本类的 setUp 必须把 `_repo_root` 指到临时目录。
-
-        否则 `main()` 会去删**真实仓库根**的 `.ai-changed` —— 那是 workflow「Decide commit
-        path」判定走 PR 还是直提的判据，CI 里删掉它会把 PR 路由踩坏（本类此前正因此被排除
-        在 CI 之外）。这里**只读不写**，绝不去碰真实文件。
-        """
+        """setUp 必须把标记清理限定在临时目录。"""
         resolved = crawler_llm_intel._repo_root()
         self.assertEqual(resolved, self.fake_root,
                          "setUp 必须替换 _repo_root，否则会动到真实仓库根")
@@ -704,6 +695,9 @@ class TestOnlyFlagSafeguard(unittest.TestCase):
     """测试局部运行 --only 时对全局归档文件的保护机制"""
 
     def setUp(self):
+        translate = mock.patch.object(crawler_llm_intel, "translate_to_zh", lambda title: title)
+        translate.start()
+        self.addCleanup(translate.stop)
         self.temp_dir = tempfile.TemporaryDirectory()
         self.news_dir = Path(self.temp_dir.name) / "llm-news"
         self.news_dir.mkdir(parents=True)
@@ -1232,16 +1226,56 @@ class TestAiTitlePolish(unittest.TestCase):
         calls: list[int] = []
 
         def fake_call_llm(prompt, **kw):
+            self.assertIn("编号<TAB>中文标题", kw["system"])
             n = prompt.count("\t")
             calls.append(n)
             idxs = re.findall(r"(?m)^(\d+)\t", prompt)
             return "\n".join(f"{i}\t标题{i}" for i in idxs)
 
-        with mock.patch.object(ai_review, "call_llm", side_effect=fake_call_llm):
+        with mock.patch.object(ai_review, "call_llm_text", side_effect=fake_call_llm):
             polish = crawler_llm_intel.make_llm_title_polisher(budget=50, batch=40)
             out = polish("Brand", titles)
         self.assertEqual(calls, [40, 10], "应按 batch 切分且总预算封顶 50")
         self.assertEqual(len(out), 50)
+
+    def test_title_abort_preserves_completed_titles_and_skips_later_vendors(self):
+        for reason in (ai_review.AiServiceOutage, ai_review.AiQuotaExhausted):
+            with self.subTest(reason=reason), mock.patch.object(
+                    ai_review, "call_llm_text", side_effect=["1\t甲", reason("停止")]) as call:
+                polish = crawler_llm_intel.make_llm_title_polisher(batch=1)
+                self.assertEqual(polish("A", ["First", "Second", "Third"]), {"First": "甲"})
+                self.assertEqual(polish("B", ["Fourth"]), {})
+                self.assertEqual(call.call_count, 2)
+
+    def test_review_outage_skips_title_ai_but_still_archives_news(self):
+        root = self.news_dir.parent
+        url = "https://a.com/pricing"
+        key = f"vendor_a|pricing|{url}"
+        state = root / crawler_llm_intel.SNAPSHOT_STATE
+        state.write_text(json.dumps({"sources": {key: {"sha256": "old"}}}), encoding="utf-8")
+        (root / "llm-intel.yaml").write_text(yaml.safe_dump({
+            "vendors": [{"id": "vendor_a", "brand": "Vendor A", "homepage": "https://a.com"}],
+            "sources": [{"vendor_id": "vendor_a", "type": "pricing", "url": url}],
+        }), encoding="utf-8")
+        page = crawler_llm_intel.PageResult(url=url, stype="pricing", ok=True, text="Free tier: 10 RPM",
+                                            snapshot_ok=True, snapshot_text="Free tier: 10 RPM")
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="vendor_a", brand="Vendor A", homepage="https://a.com", products=[],
+            intel_pages=[page], all_news_articles=[crawler_llm_intel.Article("New release", "https://a.com/new")])
+        with (
+            mock.patch.object(crawler_llm_intel, "_repo_root", return_value=root),
+            mock.patch.object(crawler_llm_intel, "crawl_vendor", return_value=intel),
+            mock.patch.dict(os.environ, {"GEMINI_API_KEY": "test", "AI_REVIEW_BACKEND": "gemini"}),
+            mock.patch.object(ai_review, "review_vendor", side_effect=ai_review.AiServiceOutage("503")) as review,
+            mock.patch.object(ai_review, "call_llm_text") as title_call,
+            mock.patch.object(crawler_llm_intel, "translate_to_zh", return_value="新版发布"),
+        ):
+            rc = crawler_llm_intel.main(["--ai-review", "--ai-titles", "--no-browser", "--only", "vendor_a"])
+        self.assertEqual(rc, 0)
+        review.assert_called_once()
+        title_call.assert_not_called()
+        self.assertEqual(json.loads(state.read_text(encoding="utf-8"))["sources"][key]["sha256"], "old")
+        self.assertIn("新版发布", (self.news_dir / "vendor_a.md").read_text(encoding="utf-8"))
 
 
 class TestModelReleaseRadar(unittest.TestCase):
@@ -1268,7 +1302,7 @@ class TestModelReleaseRadar(unittest.TestCase):
 
     def test_english_intro_word_stripped(self):
         ev = crawler_llm_intel.extract_model_releases([self._intel(
-            [crawler_llm_intel.Article(title="Introducing GPT-5.5",
+            [crawler_llm_intel.Article(title="Introducing GPT-5.5", zh_title="GPT-5.5 发布",
                                        url="https://a.com/y", date="2026-04-23")])])
         self.assertEqual([e["model"] for e in ev], ["GPT-5.5"],
                          "发布引导词不能落在型号开头")
@@ -4267,7 +4301,7 @@ class TestPartialRoundGuardrails(unittest.TestCase):
         (self.news_dir / "vendor_gone.md").write_text("old", encoding="utf-8")
         vendor_a = self._intel(
             "vendor_a",
-            [crawler_llm_intel.Article(title="New A", url="https://a.com/new")])
+            [crawler_llm_intel.Article(title="新文章", url="https://a.com/new")])
         crawler_llm_intel.write_news_archives(self.news_dir, [vendor_a],
                                               clean_removed=True)
         self.assertFalse((self.news_dir / "vendor_gone.md").exists(),
@@ -5528,7 +5562,7 @@ class TestCallLlmTextChannel(unittest.TestCase):
                          "你是译者", "system 必须是调用方给的译者提示，而非情报核查员")
 
     def test_json_channel_still_forces_json_and_reviewer_system(self):
-        """反向维持：call_llm（标题/档案）仍是 JSON + 核查 system，别被文本通路带偏。"""
+        """档案核查仍走带核查 system 的 JSON 通路。"""
         captured = self._capture_post(text_out='{"ok": true}')
         ai_review.call_llm("prompt", api_key="k", backend="gemini")
         gen = captured["body"]["generationConfig"]
@@ -5656,11 +5690,7 @@ class TestEvidenceQualityGuards(unittest.TestCase):
             self.assertTrue(crawler_llm_intel._is_fact_line(line), line[:30])
 
 
-# CI 里必须排除的测试类。**只有「会破坏 CI 自身状态」的类才配进这个白名单**，目前为空：
-# `TestCrawlerCleanup` 曾经在此（它会删掉仓库根的 `.ai-changed`，而那是 workflow
-# 「Decide commit path」判定走 PR 还是直提的判据）—— 后来把仓库根改成可注入的
-# `crawler_llm_intel._repo_root()`，该测试改在临时目录里跑，就不再需要排除了。
-# 保留这个机制是为了以后真有必须排除的用例时有地方写，而不是临时改 workflow。
+# 仅允许排除会破坏 CI 自身状态的测试类。TestCrawlerCleanup 已隔离到临时目录。
 CI_EXCLUDED_CLASSES: tuple[str, ...] = ()
 
 
@@ -5680,7 +5710,7 @@ def ci_suite() -> unittest.TestSuite:
                 out.addTest(item)
         return out
 
-    return walk(unittest.TestLoader().loadTestsFromName(__name__))
+    return walk(unittest.TestLoader().discover(str(Path(__file__).resolve().parent)))
 
 
 class TestCiSuite(unittest.TestCase):
@@ -5700,34 +5730,17 @@ class TestCiSuite(unittest.TestCase):
                 out.append(item.id())
         return out
 
-    def test_covers_every_test_class(self):
-        """`ci_suite()` 必须覆盖除白名单外的每个测试类（白名单现为空 = 全覆盖）。
-
-        取集失配是**静默**的：少跑一批守卫不会有任何提示，直到某天回归溜到提交之后才发现。
-        """
+    def test_covers_discovered_tests(self):
+        """逐条对账本地 discovery，新增 test_*.py 也要进入 CI。"""
         ids = self._ids(ci_suite())
-        self.assertTrue(ids, "ci_suite 不能为空 —— 取集失配会让 CI 静默跳过全部测试")
-        # 覆盖面：除白名单外的每个测试类都必须被取到。
-        # 用 globals() 而非 `import 本模块` —— 本模块没有（也不该有）自引用。
-        defined = {
-            name for name, obj in globals().items()
-            if isinstance(obj, type) and issubclass(obj, unittest.TestCase)
-            and obj is not unittest.TestCase
-            and obj.__module__ == __name__
-        }
-        self.assertTrue(defined, "没解析到测试类 —— 解析失配，先修测试本身")
-        covered = {i.split(".")[1] for i in ids}
-        self.assertEqual(defined - covered, set(CI_EXCLUDED_CLASSES),
-                         "CI 测试集必须覆盖除白名单外的全部测试类")
+        discovered = unittest.TestLoader().discover(str(Path(__file__).resolve().parent))
+        expected = [i for i in self._ids(discovered)
+                    if i.rsplit(".", 2)[-2] not in CI_EXCLUDED_CLASSES]
+        self.assertTrue(ids, "CI 测试集不能为空")
+        self.assertCountEqual(ids, expected)
 
     def test_cleanup_test_is_ci_safe(self):
-        """`TestCrawlerCleanup` 不该再被排除 —— 它已改为在临时目录里跑。
-
-        Regression: 该测试曾在**真实仓库根**建 / 删 `.ai-changed`（workflow「Decide commit
-        path」判定走 PR 还是直提的判据），于是只能被排除在 CI 之外，那段清理逻辑在 CI 里
-        零覆盖。改成注入 `_repo_root()` 后不再需要排除；行为层面的守卫见
-        `TestCrawlerCleanup.test_repo_root_is_redirected_to_temp`。
-        """
+        """清理标记的测试已隔离到临时目录，CI 应当覆盖它。"""
         self.assertNotIn("TestCrawlerCleanup", CI_EXCLUDED_CLASSES,
                          "该测试已改为在临时目录里跑，不该再被排除")
         ids = self._ids(ci_suite())
@@ -9342,7 +9355,8 @@ class TestIndexHasSlug(unittest.TestCase):
         v = crawler_llm_intel.VendorIntel(vendor_id="v", brand="V", homepage="", products=[])
         v.all_news_articles = [
             crawler_llm_intel.Article(
-                title=f"post {i}", url=f"https://v.test/blog/{i}", date=f"2026-01-{i:02d}")
+                title=f"post {i}", zh_title=f"文章 {i}",
+                url=f"https://v.test/blog/{i}", date=f"2026-01-{i:02d}")
             for i in range(1, n + 1)
         ]
         return v
@@ -11032,18 +11046,11 @@ class TestRenderOutputs(unittest.TestCase):
             json.dumps({"count": 1, "bodies": bodies}, ensure_ascii=False, indent=2),
             encoding="utf-8", newline="\n")
 
-    def _intel(self):
-        arts = crawler_llm_intel.parse_archived_articles(
-            self.root / "llm-news" / "vendor_a.md")
-        intel = crawler_llm_intel.VendorIntel(
-            vendor_id="vendor_a", brand="Vendor A", homepage="https://a.com",
-            products=[], all_news_articles=arts)
-        return [intel]
-
     def _render(self):
+        vendors = [{"id": "vendor_a", "brand": "Vendor A", "homepage": "https://a.com"}]
+        intel = crawler_llm_intel.rebuild_intel_from_disk(vendors, {}, {}, self.root / "llm-news")
         return crawler_llm_intel.render_outputs(
-            self.root, self._intel(), feeds_base="https://x.test/feeds",
-            all_vendors=[{"id": "vendor_a", "brand": "Vendor A"}], reviews={})
+            self.root, intel, feeds_base="https://x.test/feeds", all_vendors=vendors, reviews={})
 
     def test_writes_views_and_returns_counts(self):
         self._fixture_tree()
