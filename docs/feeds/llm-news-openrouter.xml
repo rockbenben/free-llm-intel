@@ -7,7 +7,74 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sun, 01 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 06 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>介绍新的自动和自动代码路由器</title>
+      <link>https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/</guid>
+      <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing the New Auto and Auto Code Routers</description>
+      <content:encoded><![CDATA[<h1>介绍新的自动和自动代码路由器</h1>
+<p>布莱恩·托马斯 ·11/6/2026</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers.png" alt="介绍新的自动和自动代码路由器"></p>
+<p>今天我们推出下一代自动路由器。借鉴过去 3 年运行 Auto Router 所学到的一切，我们在全新的技术基础上从头开始重建了它，根据基准测试，其性能比旧路由器高出 4 倍，在我们的实时测试中，p90 的路由步骤快了 3 倍（0.65 秒对 1.96 秒）。</p>
+<p>路由器在基准测试中取得好成绩比在实践中表现良好更容易。 Auto Router 每月会收到来自超过 10 万人的超过 2.5T 代币，因此它必须在现实世界中保持稳定。</p>
+<p>此次发布包括一款专门用于编码工作的全新路由器，<a href="https://openrouter.ai/openrouter/auto-code">自动代码</a> (<code>openrouter/auto-code</code>)，以及我们的旗舰通用<a href="https://openrouter.ai/openrouter/auto">自动路由器</a> (<code>openrouter/auto</code>)。</p>
+<p>现在就尝试一下，在任何请求中将“model”设置为“openrouter/auto”或“openrouter/auto-code”，或者打开<a href="https://openrouter.ai/chat?models=openrouter%2Fauto">聊天室中的自动路由器</a>。查看 <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">自动路由器文档</a> 了解所有详细信息。</p>
+<h2>这一代有什么新鲜事</h2>
+<p>以前的自动路由器依赖于一些不精确的信号（例如任务类型）来驱动模型选择、保持低延迟和判断一致所需的限制。新的自动路由器和自动代码通过权衡每个请求的 11 个因素并将其与实时定价、提供商运行状况和缓存状态相结合来选择模型。</p>
+<p>这个新流程让自动布线器可以与任何模型集配合使用。您可以应用任何治理策略，包括护栏、零数据保留要求、提供商限制、允许的模型列表和 BYOK 密钥。自动路由器可以从可用的型号中进行有效的选择。</p>
+<p>我们根据有关在编码工具中使用通用路由器的反馈，推出了新的自动编码路由器。该路由器通过包含更高层的编码模型并优化延迟来从头开始调整编码性能。在以下五个基准测试中，Auto Code 的得分与 Claude Opus 5.5 一致，同时每项任务的成本降低了 74%。</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/benchmark-comparison-light.png" alt="热图比较了 Deep SWE、SWE-Atlas QA、Terminal Bench 4.0、τ³-bench Banking 和 MMMU Pro Vision 中默认层的新自动路由器、自动代码和默认层的先前自动路由器。每个基准测试都会显示每个任务的分数和成本，以及之前的自动路由器的倍数；分数单元格呈绿色或红色阴影，较大变化则更深（浅色模式）"></p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/benchmark-comparison-dark.png" alt="热图比较了 Deep SWE、SWE-Atlas QA、Terminal Bench 4.0、τ³-bench Banking 和 MMMU Pro Vision 中默认层的新自动路由器、自动代码和默认层的先前自动路由器。每个基准测试都会显示每个任务的分数和成本，以及之前的自动路由器的倍数；分数单元格呈绿色或红色阴影，较大变化则更深（深色模式）"></p>
+<p>在上一代中，我们还观察到最低成本模型的显着效率导致自动路由器每任务的成本降低，从而遗漏了许多特殊模型。我们决定在此版本中恢复更接近汽车几个月前的定价，以便推出更多种类的车型。如果您更喜欢以前的行为，则可以将 cost_tier 设置为低以获得类似的性价比。</p>
+<h2>在聊天室中查看路由决策背后的推理</h2>
+<p>开始学习这些新路由器如何工作的最简单方法是在<a href="https://openrouter.ai/chat?models=openrouter%2Fauto">聊天室</a>中选择自动路由器或自动代码。每个回复旁边都会出现一个路由见解面板，显示路由器选择该模型的原因。当您启用<a href="https://openrouter.ai/docs/guides/features/router-metadata#enabling-router-metadata">路由器元数据</a>时，可以通过API进行相同的分析。</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/chat-routing-insights.png" alt="选择了自动路由器的 OpenRouter 聊天室。 DeepSeek V4.1 Flash 在 InferenceNet 上回答了 Python RecursionError 问题。路由洞察面板显示任务（调试，98%）、候选模型的选择份额以及难度、精度和更大模型效益判断。"></p>
+<h2>观看每个模型页面上的实时路由组合</h2>
+<p><a href="https://openrouter.ai/openrouter/auto">自动路由器</a> 和<a href="https://openrouter.ai/openrouter/auto-code">自动代码</a> 模型页面现在显示每个路由器最常选择哪些模型，按会话类型划分，以及随着难度的增加混合如何变化。</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/router-page-live-routing.png" alt="自动路由器模型页面的实时路由部分：过去一天按模型划分的请求条形图，带有代理和非代理选项卡以及成本层过滤器、以 GPT-6.1 Sol 为主导的请求份额列表（占 33.8%），以及当前路由组合的堆叠面积图（适用于从琐碎到极端的所有任务）难度。"></p>
+<h2>与其他路由器和单一型号的性能比较</h2>
+<p>自动路由器和自动代码基准测试结果与 OpenRouter 上的其他路由器和单模型基准一起发布在<a href="https://openrouter.ai/benchmarks/routers">模型路由基准测试</a> 页面上。我们定期重新运行它们，以便您可以跟踪每个路由器在新型号发布时的最新情况。</p>
+<h2>基于多年运行自动路由器的经验教训</h2>
+<p>Auto Router 即将迎来其三岁生日。如果您几年前在代理中设置了“openrouter/auto”，那么今天您仍然可以获得最新的成本最优选择。我们已经了解了很多关于自动模型选择出错的地方，并构建了新一代模型来避免这些问题。一些例子：</p>
+<p><strong>我们分离出自动代码来优化线束。</strong> 对以前版本的自动布线器最常见的抱怨是它在编码线束中的表现。 Auto Code 偏爱稍贵一点的模型，其优点与编码工作相匹配。它更注重速度，因为在构建时响应能力很重要。它还对失败的惩罚更加严厉，因此在成功和失败明确的工作中，它的纠正速度会更快。</p>
+<p><strong>为了保护缓存优势，切换受到限制。</strong> 当新模型重建输入令牌缓存时，切换模型会产生额外成本。当足够时，自动路由器倾向于改变推理工作，并且仅当增益值得其放弃的缓存时才进行切换。在我们的测试期间，每十个代理轮换中有近九个都保持相同的模型。</p>
+<p><strong>它适应失败。</strong> 当会话以指向模型的方式出错时，例如返回相同的错误或编辑后测试失败，这些信号会增加切换的可能性。这使得会话不太可能陷入早期选择错误的模型。</p>
+<p><strong>它根据实际使用情况和基准进行调整。</strong> 自动路由器随着每次基准运行和它看到的每个实际路由决策而变得更好。通过“typesafe/jev-router”和“openrouter/auto-beta”，我们已经在生产工作负载上对其进行了验证，同时始终保持零数据保留。在我们的测试版中，与之前的路由器相比，无效工具调用减少了 4 倍，代理响应被切断的频率减少了一半。</p>
+<h2>基于领先的提供商路由基础构建的模型路由</h2>
+<p><strong>模型路由器</strong>（例如自动路由器和自动代码）选择哪个模型将处理请求。 <strong>提供商路由</strong>选择谁将为该模型提供服务。 OpenRouter 从一开始就对每个请求执行此操作：一旦选择了模型，<a href="https://openrouter.ai/docs/guides/routing/provider-selection">provider router</a> 就会使用您的提供商首选项、实时正常运行时间和延迟、价格以及提供商是否已保存您的提示缓存来在托管它的提供商中进行选择。</p>
+<p>模型路由器只能与底层提供商路由器一样好。我们构建自动路由器是为了了解我们的整个目录，因此它可以适应治理限制、基准测试结果以及新模型发布时发出的市场信号。 OpenRouter 上的 600 多个模型中的每一个模型在添加之日都会进入考虑范围，基准和流行度信号决定它是否在成本最优模型中赢得一席之地。</p>
+<h2>请求如何通过自动路由器移动</h2>
+<ul><li>自动路由器缩小了模型池。护栏、零数据保留、模型功能、提供商限制、BYOK 密钥以及任何允许或排除的模型列表决定了考虑哪些模型。</li><li>快速决策模型处理请求。在一项调查中，它对十一项进行了评估，例如这是什么类型的任务，任务是否刚刚改变，任务有多困难，速度是否重要，是否需要代码库的愿景或知识，以及更大的模型、更多的思考或更便宜的模型是否能更好地服务于它。</li><li>路由策略选择模型。它权衡实时价格、缓存状态和基准性能来选择模型和推理工作。</li><li>请求通过同一个提供商，将直接请求路由到该模型，因此它会到达该模型的最佳提供商。</li><li>每轮的结果告知下一轮的模型选择。路由器携带诸如模型是否陷入困境以及已缓存到下一个决策中的信号等信号。</li></ul>
+<h2>路由器与单一型号</h2>
+<p>基准测试一致表明，市场上没有任何路由器在成本和质量曲线上的每个点上都击败了单一最佳前沿模型。新的自动路由器也不例外，我们发布了它的基准测试以清楚地展示它的优点和缺点。</p>
+<p>当工作多样化时，当组织需要保持成本稳定时，以及对于那些没有时间或兴趣跟上持续不断的模型发布流的人来说，路由器就会赢得一席之地。在单一模型上选择自动路由器或自动代码会牺牲一点峰值性能，以换取随着时间的推移保持一致、经济高效的性能。</p>
+<p>如果您知道最适合您的特定工作的模型，请继续使用它。如果您宁愿选择一次并专注于工作本身，那么路由器就是您的最佳选择。</p>
+<h2>开始吧</h2>
+<p>无论您在何处放置模型字符串，自动路由器和自动代码都可以工作：</p>
+<pre><code>curl https://openrouter.ai/api/v1/chat/completions \
+  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;model&quot;: &quot;openrouter/auto-code&quot;,
+    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Add a retry with backoff to fetchUser in api/users.ts&quot;}]
+  }'</code></pre>
+<p>阅读 <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">自动路由器文档</a> 了解完整设置，或打开 <a href="https://openrouter.ai/chat?models=openrouter%2Fauto">聊天室中的自动路由器</a> 并向其发送您通常手动选择型号的提示。请在 Discord 上的 <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> 中告诉我们哪些是对的，哪些是错的。</p>
+<h2>常见问题</h2>
+<h3>我需要更改什么才能从旧的自动路由器切换？</h3>
+<p>什么都没有。 slug 仍然是 <code>openrouter/auto</code> 并且 <code>auto-router</code> 插件设置 <code>cost_tier</code>、<code>allowed_models</code> 和 <code>excluded_models</code> 仍然有效。</p>
+<h3>自动路由器和自动代码有什么区别？</h3>
+<p>两者都运行在相同的路由引擎上。自动路由器是用于混合流量和一般代理的通用路由器，并且支持经济高效的模型层。 Auto Code 专门用于编码代理和工具，从较高的成本层开始，并权衡模型和推理工作中每个已解决任务的测量通过率、速度和成本。</p>
+<h3>模型路由与提供者路由相同吗？</h3>
+<p>否。模型路由选择哪个模型处理请求；提供者路由选择哪个提供者为该模型提供服务。自动路由器和自动代码执行第一个操作，然后 OpenRouter 的提供商路由使用您的提供商首选项、正常运行时间数据和提示缓存状态执行第二个操作。</p>
+<h3>路由器是否尊重我的护栏和数据策略？</h3>
+<p>是的。 Guardrail 策略、零数据保留要求、提供商限制、允许和排除的模型列表以及 BYOK 密钥定义模型池，路由器会在其中选择成本最优模型。</p>
+<h3>路由器需要额外付费吗？</h3>
+<p>不会。您只需支付满足请求的型号的标准价格，响应的“型号”字段就会告诉您是哪一款。</p>
+<h3>什么是 openrouter/auto-beta？</h3>
+<p>Auto Router Beta 是下一版本 Auto Router 的发布渠道。新的路由更改首先发布到“openrouter/auto-beta”，一旦验证成功，就会升级到“openrouter/auto”，因此请使用它来提前查看即将发生的情况。如果您尝试一下，请在 Discord 上的 <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> 中告诉我们哪些是对的，哪些是错的。</p>]]></content:encoded>
+    </item>
     <item>
       <title>用 OpenRouter 构建 AI 代码审查器</title>
       <link>https://openrouter.ai/blog/tutorials/ai-code-review/</link>
@@ -8134,160 +8201,6 @@ resp = client.chat.send(
 <p>能。请求体里的参数优先于 preset 值。合并是浅合并：请求字段替换 preset 对应字段，未发送的保留。工具则合并，同名时请求工具替换 preset 工具。</p>
 <h3>Preset 走 API 还是只能在 Chatroom 里用？</h3>
 <p>Preset 通过 OpenAI 兼容 API 工作。model 字段里用 <code>@preset/slug</code>，或用独立的 <code>preset</code> 字段填 <code>@preset/slug</code>，或合并形态 <code>model@preset/slug</code>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Nano Banana API：在代码中使用 Gemini 编辑图像</title>
-      <link>https://openrouter.ai/blog/tutorials/nano-banana/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/nano-banana/</guid>
-      <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Nano Banana API: Edit Images with Gemini in Code</description>
-      <content:encoded><![CDATA[<h1>Nano Banana API：在代码中使用 Gemini 编辑图像</h1>
-<p>OpenRouter ·9/9/2026 · 更新于 9/24/2026</p>
-<p>本指南演示如何在代码里用文本提示词编辑图像：把源图和一条编辑指令通过 OpenRouter API 发给 <code>google/gemini-3.1-flash-image</code>，编辑后的图片在响应里回来。&quot;Nano Banana&quot;是 Google Gemini 图像模型的绰号，这个 slug 是 Nano Banana 2——该家族默认的快速模型。因为你是通过<a href="https://openrouter.ai/blog/announcements/image-api/">一个 API</a>访问它，以后想换别的编辑模型，改一个字段就行。</p>
-<p>图像编辑是修改已有图片，图像生成是从文本创建新图。本指南讲编辑，所以这里的每个请求都带一张源图。从文本创建图片请看<a href="https://openrouter.ai/docs/guides/overview/multimodal/image-generation">图像生成文档</a>或<a href="https://openrouter.ai/blog/tutorials/image-generation/">图像生成教程</a>。</p>
-<p><img src="https://openrouter.ai/blog/images/nano-banana-before-after.png" alt="自然语言图像编辑的前后对比：一张人像照片，提示词 &quot;Add a red wool scarf around the person's neck. Keep everything else the same.&quot;，以及编辑后的结果——围巾加上去了，其余保持原样"></p>
-<h2>太长不看</h2>
-<ul><li>编辑只需一个请求：源图放 <code>input_references</code>，指令放 <code>prompt</code>，从 <code>data[0].b64_json</code> 读出编辑后的图、解码存盘。</li><li><code>google/gemini-3.1-flash-image</code> 就是 Nano Banana 2，Gemini 图像的默认快速模型。用之前确认模型接受图像输入——编辑支持因模型而异。</li><li>本地或私密文件用 base64 data URL 发送；托管图片用普通 HTTP(S) URL。</li><li>小步编辑：每次把返回的图再发回来当下一步的源图，一次调用一个指令，让改动可叠加。</li><li>换编辑模型就是改一个字段。</li></ul>
-<h2>前置条件</h2>
-<p>三样东西：</p>
-<ul><li>从 <a href="https://openrouter.ai/keys">keys 页面</a>拿的 OpenRouter API key，和 base URL <code>https://openrouter.ai/api/v1</code>。</li><li>一个 HTTP 客户端。示例用 Python <code>requests</code> 和 TypeScript <code>fetch</code>。也可以用 curl 或 OpenRouter SDK——任何能发带 Authorization 头的 JSON POST 的客户端都行。</li><li>一张源图：本地文件或公开 URL。</li></ul>
-<h3>用哪个模型</h3>
-<p>本指南默认 <code>google/gemini-3.1-flash-image</code>，即 Nano Banana 2。它接受图像输入、返回编辑后的图像。Nano Banana 家族目前有四个成员：Nano Banana 2（<code>google/gemini-3.1-flash-image</code>，本指南默认）、Nano Banana 2 Lite（<code>google/gemini-3.1-flash-lite-image</code>，最便宜最快）、Nano Banana Pro（<code>google/gemini-3-pro-image</code>，更慢但质量更高），以及最初的 Nano Banana（<code>google/gemini-2.5-flash-image</code>，这个绰号当年就是从它开始的）。</p>
-<p>图像目录变化很快：模型不断上架、弃用、改价，今天钉住的 slug 以后可能下架。基于某个模型动工之前，先确认它接受图像输入并支持你要的编辑特性。可编辑模型可以在<a href="https://openrouter.ai/collections/image-models">图像模型合集</a>浏览，目录走查见<a href="https://openrouter.ai/blog/tutorials/image-generation-models/">图像生成模型</a>。</p>
-<p>下面的示例都用请求里显示的 slug，可以照原样跑、以后再换模型。key 请放环境变量，不要写进代码：</p>
-<pre><code>export OPENROUTER_API_KEY=&quot;sk-or-...&quot;</code></pre>
-<h2>第一次图像编辑</h2>
-<p>编辑图像，就是在单个请求里发出源图和一条文本指令，编辑结果在响应里回来。这是一个能跑的 Python 请求，编码本地文件：</p>
-<pre><code>import base64, os, requests
-
-api_key = os.environ[&quot;OPENROUTER_API_KEY&quot;]
-
-# Encode a local source image as a base64 data URL.
-with open(&quot;portrait.jpg&quot;, &quot;rb&quot;) as f:
-    encoded = base64.b64encode(f.read()).decode()
-source = f&quot;data:image/jpeg;base64,{encoded}&quot;
-
-resp = requests.post(
-    &quot;https://openrouter.ai/api/v1/images&quot;,
-    headers={&quot;Authorization&quot;: f&quot;Bearer {api_key}&quot;},
-    json={
-        &quot;model&quot;: &quot;google/gemini-3.1-flash-image&quot;,
-        &quot;prompt&quot;: &quot;Add a red wool scarf around the person's neck. Keep everything else the same.&quot;,
-        &quot;input_references&quot;: [
-            {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: source}}
-        ],
-    },
-)
-resp.raise_for_status()</code></pre>
-<p>TypeScript 版同一请求：</p>
-<pre><code>import { readFileSync } from &quot;node:fs&quot;;
-
-const apiKey = process.env.OPENROUTER_API_KEY!;
-const encoded = readFileSync(&quot;portrait.jpg&quot;).toString(&quot;base64&quot;);
-const source = `data:image/jpeg;base64,${encoded}`;
-
-const resp = await fetch(&quot;https://openrouter.ai/api/v1/images&quot;, {
-  method: &quot;POST&quot;,
-  headers: {
-    Authorization: `Bearer ${apiKey}`,
-    &quot;Content-Type&quot;: &quot;application/json&quot;,
-  },
-  body: JSON.stringify({
-    model: &quot;google/gemini-3.1-flash-image&quot;,
-    prompt: &quot;Add a red wool scarf around the person's neck. Keep everything else the same.&quot;,
-    input_references: [{ type: &quot;image_url&quot;, image_url: { url: source } }],
-  }),
-});</code></pre>
-<p>两种语言的请求体相同：参考图放 <code>input_references</code>，指令放 <code>prompt</code>，请求就这么多。</p>
-<h3>输入图的编码方式：base64 还是 URL</h3>
-<p><code>input_references</code> 接受 base64 data URL 或 HTTP(S) URL。上面的例子编码了本地文件。图片已公开托管的话，直接传链接、跳过编码：</p>
-<pre><code>&quot;input_references&quot;: [
-  {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: &quot;https://example.com/portrait.jpg&quot;}}
-]</code></pre>
-<p>图片是公开托管的用 URL，请求体更小；本地或私密文件用 base64。Gemini 接受 <code>image/png</code>、<code>image/jpeg</code>、<code>image/webp</code>、<code>image/heic</code> 和 <code>image/heif</code> 输入。支持格式因模型而异，发送前先查模型页。</p>
-<h3>从响应里取回编辑后的图像</h3>
-<p>API 在 <code>data</code> 数组里以 base64 返回编辑后的图。解码 <code>b64_json</code> 值、写到文件：</p>
-<pre><code>data = resp.json()[&quot;data&quot;][0]
-with open(&quot;edited.png&quot;, &quot;wb&quot;) as out:
-    out.write(base64.b64decode(data[&quot;b64_json&quot;]))</code></pre>
-<p>TypeScript 版：</p>
-<pre><code>import { writeFileSync } from &quot;node:fs&quot;;
-
-const { data } = await resp.json();
-writeFileSync(&quot;edited.png&quot;, Buffer.from(data[0].b64_json, &quot;base64&quot;));</code></pre>
-<p>打开 <code>edited.png</code> 看结果。不想要裸 HTTP、想用类型化客户端的话，OpenRouter SDK 有个 images 资源，调的是同一个端点：</p>
-<pre><code>from openrouter import OpenRouter
-
-client = OpenRouter(api_key=api_key)
-result = client.images.generate(
-    model=&quot;google/gemini-3.1-flash-image&quot;,
-    prompt=&quot;Add a red wool scarf around the person's neck. Keep everything else the same.&quot;,
-    input_references=[{&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: source}}],
-)</code></pre>
-<p>用 <code>pip install openrouter</code> 安装 SDK。它复用前面定义的 <code>api_key</code>，没有额外配置。</p>
-<h2>写编辑提示词</h2>
-<p>生成提示词描述一整张新图；编辑提示词说什么该变、什么别动。先说改动，再点名哪些必须保持不变：</p>
-<ul><li>换物体：&quot;Replace the coffee mug with a glass of orange juice. Keep the hand position and background unchanged.&quot;</li><li>换背景：&quot;Change the background to a snowy street at night. Keep the subject exactly as is.&quot;</li><li>风格迁移：&quot;Render this photo as a watercolor painting. Preserve the composition and the subject's pose.&quot;</li><li>修文字：&quot;Change the sign text to read 'OPEN'. Match the original font and color.&quot;</li></ul>
-<p>也可以把提示词写成一小段 JSON 文本：</p>
-<pre><code>&quot;prompt&quot;: &quot;{\&quot;edit\&quot;: \&quot;add sunglasses\&quot;, \&quot;preserve\&quot;: [\&quot;face\&quot;, \&quot;hair\&quot;, \&quot;lighting\&quot;], \&quot;style\&quot;: \&quot;photorealistic\&quot;}&quot;</code></pre>
-<p>API 把它当普通文本，这不是什么特殊模式。这个结构能帮模型分清&quot;变的&quot;和&quot;留的&quot;。在你的图上把句子版和 JSON 版都试一遍，留效果好的那个。</p>
-<h2>对结果再编辑</h2>
-<p>一次编辑未必到位。要再来一遍，把返回的图作为下一个源图发回去：取响应里的 <code>b64_json</code> 值、转成 data URL、传进下一次 <code>input_references</code>：</p>
-<pre><code>def edit(source_data_url, prompt):
-    resp = requests.post(
-        &quot;https://openrouter.ai/api/v1/images&quot;,
-        headers={&quot;Authorization&quot;: f&quot;Bearer {api_key}&quot;},
-        json={
-            &quot;model&quot;: &quot;google/gemini-3.1-flash-image&quot;,
-            &quot;prompt&quot;: prompt,
-            &quot;input_references&quot;: [
-                {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: source_data_url}}
-            ],
-        },
-    )
-    resp.raise_for_status()
-    item = resp.json()[&quot;data&quot;][0]
-    media_type = item.get(&quot;media_type&quot;, &quot;image/png&quot;)
-    return f&quot;data:{media_type};base64,{item['b64_json']}&quot;
-
-step1 = edit(source, &quot;Add a red wool scarf. Keep everything else the same.&quot;)
-step2 = edit(step1, &quot;Now make the scarf navy blue instead of red.&quot;)
-step3 = edit(step2, &quot;Add soft morning light coming from the left.&quot;)</code></pre>
-<p>每次调用编辑的是上一个结果，之前的改动会保留下来。一次调用只给一条指令。小步编辑好检查，错了也好回炉。模型不记得你之前的提示词，所以每条新提示词里都要重复它该保持不动的部分。</p>
-<h2>更换编辑模型</h2>
-<p>同一编辑请求发给别的模型，改 <code>model</code> 字段即可。源图、提示词和处理响应的代码都不动：</p>
-<pre><code>json={
-    &quot;model&quot;: &quot;openai/gpt-5-image&quot;,  # was google/gemini-3.1-flash-image
-    &quot;prompt&quot;: &quot;Add a red wool scarf. Keep everything else the same.&quot;,
-    &quot;input_references&quot;: [
-        {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: source}}
-    ],
-},</code></pre>
-<p><code>google/gemini-3.1-flash-image</code> 当快速默认；要最低价用 <code>google/gemini-3.1-flash-lite-image</code>；要更高质量、能接受更多延迟，用 <code>google/gemini-3-pro-image</code>。最初的 <code>google/gemini-2.5-flash-image</code> 用同样的请求形态仍然能跑，但上面这些更新的模型是更好的默认。想在你自己的图上<a href="https://openrouter.ai/blog/announcements/image-benchmarks/">比较质量、成本或速度</a>，可以换其他提供商的模型，例如 <code>openai/gpt-5-image</code>。这一字段改动只对接受图像输入且支持相同 <code>input_references</code> 形态的模型有效，切换前先确认该模型有编辑能力。</p>
-<p>想按环境而不是按代码设定模型及其选项，用 OpenRouter <a href="https://openrouter.ai/docs/guides/features/presets">Presets</a>。</p>
-<h2>错误与成本</h2>
-<p>以下几种失败常见到值得提前规划：</p>
-<ul><li>输入不受支持。模型可能拒绝它不支持的图片格式，也可能拒绝它访问不了的 URL。发送前先查文件类型和 URL。</li><li>图片过大。大文件可能超时或失败。先缩小——多数编辑并不需要 4,000 万像素的源图。</li><li>返回文本而不是图片。像 &quot;what's in this photo?&quot; 这种提问会让模型用文字回答而不产出图片。API 会以 <code>400</code> 错误返回（例如 <code>Gemini could not generate an image (STOP)</code>），而不是空响应。把提问改成指令，解码之前先检查 HTTP 状态。</li></ul>
-<p>有 usage 数据时，响应会以美元报告每个请求的成本。记下来跟踪支出：</p>
-<pre><code>usage = resp.json().get(&quot;usage&quot;)
-if usage:
-    print(f&quot;This edit cost ${usage['cost']}&quot;)</code></pre>
-<p>批处理任务要控制在<a href="https://openrouter.ai/docs/api_reference/limits">速率限制</a>内。429 和 5xx 用递增间隔重试，并限制同时进行的编辑数。每张返回的图先落盘再开始它的下一次编辑，一次失败不致丢掉已完成的工作。</p>
-<h2>下一步</h2>
-<p>复制第一个请求、换成你自己的图、跑一次编辑。想从文本创建图片，看<a href="https://openrouter.ai/docs/guides/overview/multimodal/image-generation">图像生成文档</a>。找当前的可编辑模型，浏览<a href="https://openrouter.ai/collections/image-models">图像模型合集</a>。</p>
-<h2>常见问题</h2>
-<h3>能用 Gemini API 编辑图像吗？</h3>
-<p>能。通过 OpenRouter API 向 <code>google/gemini-3.1-flash-image</code> 发一个请求，带源图和文本指令，编辑后的图以 base64 在响应中返回。这个模型就是 Nano Banana 2。整个请求一屏放得下，Python、TypeScript 或 curl 都能跑。</p>
-<h3>图像生成和图像编辑有什么区别？</h3>
-<p>图像编辑修改已有图片，图像生成从文本创建新图。每个编辑请求都在 <code>input_references</code> 里带一张源图，指令说什么该变、什么该留。请求没有源图、只靠文本提示词工作，那就是生成。</p>
-<h3>图怎么发给 API：URL 还是 base64？</h3>
-<p><code>input_references</code> 字段接受本地或私密文件的 base64 data URL，也接受公开托管图片的 HTTP(S) URL。图已经在线就用 URL 形态保持请求小巧，文件在本机就用 base64。Gemini 接受 png、jpeg、webp、heic、heif 输入（<code>image/png</code>、<code>image/jpeg</code>、<code>image/webp</code>、<code>image/heic</code>、<code>image/heif</code>）。支持格式因模型而异，发送前查模型页。</p>
-<h3>能用非 Gemini 的模型编辑图像吗？</h3>
-<p>能。改 <code>model</code> 字段，其余不动。先查<a href="https://openrouter.ai/collections/image-models">图像模型合集</a>——编辑支持、价格和速度因模型而异。</p>
-<h3>怎么提示 AI 模型编辑图像？</h3>
-<p>先描述改动，再点名要保留什么，例如 &quot;Change the background to a snowy street at night. Keep the subject exactly as is.&quot;。一个请求一条指令效果最好。要精准结果，就小步编辑，把每张返回的图作为下一个提示词的源图再发回去。</p>
-<h2>参考资料</h2>
-<ul><li><a href="https://openrouter.ai/keys">OpenRouter API keys</a>：创建管理每个请求用到的 key。</li><li><a href="https://openrouter.ai/collections/image-models">图像模型合集</a>：可编辑模型的完整清单及其输入支持。</li><li><a href="https://openrouter.ai/docs/guides/overview/multimodal/image-generation">图像生成文档</a>：从文本创建图片的姊妹指南。</li><li><a href="https://openrouter.ai/docs/guides/features/presets">Presets 指南</a>：按环境而非代码钉住模型及其选项。</li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

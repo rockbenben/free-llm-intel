@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-07 06:27:48**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-07 10:16:07**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -35,29 +35,30 @@
 
 ### OpenAI (openai)
 - 页面：[官方博客](https://openai.com/news/)
-  - 📡 RSS/Atom：https://openai.com/news/rss.xml
-- 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
   - ❌ 抓取失败：（可直接访问页面查看）
+- 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
+  - 📡 RSS/Atom：https://openai.com/news/rss.xml
+  - 📡 RSS/Atom：https://openai.com/zh-Hans-CN/news/rss.xml
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-07，标题自动汉化）：
-  1. [澳大利亚大学正在培养人工智能本土毕业生](https://openai.com/index/australian-universities-ai-native-graduates)（2026-11-05）
-  2. [Cult.fit 通过 Codex 增强运营能力](https://openai.com/index/cultfit-builds-with-codex)（2026-11-05）
-  3. [GPT-6 Cyber​​：推进一致的网络安全代理的前沿](https://openai.com/index/introducing-gpt-6-cyber)（2026-11-05）
-  4. [Merge 利用 OpenAI 技术构建产品和业务工具](https://openai.com/index/merge-builds-with-openai)（2026-11-05）
-  5. [为负责任的人工智能基础设施设定新标准](https://openai.com/index/setting-new-standard-responsible-ai-infrastructure)（2026-11-05）
-  - 📄 完整文章归档（共 1363 篇）：[openai.md](llm-news/openai.md)
+  1. [与 Hacktron 合作寻找 OpenAI 系统中的漏洞](https://openai.com/index/partnering-with-hacktron)（2026-11-06）
+  2. [衡量人工智能代理如何处理日常湿实验室科学](https://openai.com/index/measuring-how-ai-agents-handle-wet-lab-science)（2026-11-06）
+  3. [澳大利亚大学正在培养人工智能本土毕业生](https://openai.com/index/australian-universities-ai-native-graduates)（2026-11-05）
+  4. [Cult.fit 通过 Codex 增强运营能力](https://openai.com/index/cultfit-builds-with-codex)（2026-11-05）
+  5. [GPT-6 Cyber​​：推进一致的网络安全代理的前沿](https://openai.com/index/introducing-gpt-6-cyber)（2026-11-05）
+  - 📄 完整文章归档（共 1365 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[变更日志](https://aistudio.google.com/docs/changelog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-google_gemini.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-google_gemini.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-07，标题自动汉化）：
-  1. [Gemini Omni 1.2 Flash 全面上市 (GA)：发布了 Gemini Omni 1.2 Flash (gemini-omni-1.2-flash)，具有长达 15 秒的视频生成和对话式编辑（首次为 3 到 10 秒……](https://aistudio.google.com/docs/changelog#11-05-2026)（2026-11-05）
-  2. [Gemini 3.8 TTS 的语音混音：发布了语音混音，可让您使用自然语言指令修改现有的预构建或设计的语音，以创建新的独立存储语音。...](https://aistudio.google.com/docs/changelog#11-04-2026)（2026-11-04）
-  3. [Gemini 2.5 Pro 弃用：gemini-2.5-pro 已弃用，并且不再可供在 Google AI Studio 中选择。自 2026 年 12 月 1 日起，所有对 gemini-2.5-pro 的 API 请求将自动路由...](https://aistudio.google.com/docs/changelog#11-02-2026)（2026-11-02）
-  4. [计算机使用全面可用 (GA)：将计算机使用工具发布为跨交互和生成内容 API 的全面可用 (GA)。](https://aistudio.google.com/docs/changelog#10-30-2026)（2026-10-30）
-  5. [Computer Use 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-30-2026)（2026-10-30）
-  - 📄 完整文章归档（共 153 篇）：[google_gemini.md](llm-news/google_gemini.md)
+  1. [Gemini Embedding 2 预览版已弃用：gemini-embedding-2-preview 已弃用。自 2026 年 11 月 6 日起，对 Gemini-embedding-2-preview 的 API 请求将路由至 Gemini Embeddin 上的 gemini-embedding-2…](https://aistudio.google.com/docs/changelog#11-06-2026)（2026-11-06）
+  2. [Gemini Omni 1.2 Flash 全面上市 (GA)：发布了 Gemini Omni 1.2 Flash (gemini-omni-1.2-flash)，具有长达 15 秒的视频生成和对话式编辑（首次为 3 到 10 秒……](https://aistudio.google.com/docs/changelog#11-05-2026)（2026-11-05）
+  3. [Gemini 3.8 TTS 的语音混音：发布了语音混音，可让您使用自然语言指令修改现有的预构建或设计的语音，以创建新的独立存储语音。...](https://aistudio.google.com/docs/changelog#11-04-2026)（2026-11-04）
+  4. [Gemini 2.5 Pro 弃用：gemini-2.5-pro 已弃用，并且不再可供在 Google AI Studio 中选择。自 2026 年 12 月 1 日起，所有对 gemini-2.5-pro 的 API 请求将自动路由...](https://aistudio.google.com/docs/changelog#11-02-2026)（2026-11-02）
+  5. [计算机使用全面可用 (GA)：将计算机使用工具发布为跨交互和生成内容 API 的全面可用 (GA)。](https://aistudio.google.com/docs/changelog#10-30-2026)（2026-10-30）
+  - 📄 完整文章归档（共 154 篇）：[google_gemini.md](llm-news/google_gemini.md)
 
 ### DeepSeek (deepseek)
 - 页面：[更新日志](https://api-docs.deepseek.com/zh-cn/updates/)
@@ -194,22 +195,22 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-07，标题自动汉化）：
-  1. [用于交互式世界模拟的全新 NVIDIA Cosmos 3 开放模型](https://huggingface.co/blog/nvidia/cosmos-interactive-world-simulation)（2026-11-05）
-  2. [深入了解 Phonon TTS：推出在基准测试上领先的高质量端侧语音](https://huggingface.co/blog/phonon-tts)（2026-11-05）
-  3. [Dharma Field Extractor：任意文档进，结构化 JSON 字段出](https://huggingface.co/blog/Dharma-AI/dharma-field-extractor)（2026-11-04）
-  4. [StateBench：测语言模型如何跟踪长文档里的状态变化](https://huggingface.co/blog/allenai/statebench)（2026-11-03）
-  5. [Palette：教小模型用你的设计语言做幻灯片](https://huggingface.co/blog/ibm-research/palette-deck-building)（2026-11-03）
-  - 📄 完整文章归档（共 919 篇）：[huggingface.md](llm-news/huggingface.md)
+  1. [ToyBlocks：用于机器人学习和评估的受控世界](https://huggingface.co/blog/allenai/toyblocks)（2026-11-06）
+  2. [埃及语和尼日利亚英语加入 Open ASR 排行榜](https://huggingface.co/blog/open-asr-leaderboard-liva)（2026-11-06）
+  3. [用于交互式世界模拟的全新 NVIDIA Cosmos 3 开放模型](https://huggingface.co/blog/nvidia/cosmos-interactive-world-simulation)（2026-11-05）
+  4. [深入了解 Phonon TTS：推出在基准测试上领先的高质量端侧语音](https://huggingface.co/blog/phonon-tts)（2026-11-05）
+  5. [Dharma Field Extractor：任意文档进，结构化 JSON 字段出](https://huggingface.co/blog/Dharma-AI/dharma-field-extractor)（2026-11-04）
+  - 📄 完整文章归档（共 921 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (openrouter)
 - 📡 [官方 RSS](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-07，标题自动汉化）：
-  1. [用 OpenRouter 构建 AI 代码审查器](https://openrouter.ai/blog/tutorials/ai-code-review/)（2026-11-01）
-  2. [如何构建你自己的常驻 AI agent](https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/)（2026-10-31）
-  3. [开放权重模型与闭源权重模型：有什么区别？](https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/)（2026-10-31）
-  4. [Claude Code 要多少钱？按模型划分的实际会话成本](https://openrouter.ai/blog/insights/claude-code-cost/)（2026-10-30）
-  5. [Claude Opus vs Sonnet vs Haiku：你该用哪个？](https://openrouter.ai/blog/insights/claude-opus-vs-sonnet-vs-haiku/)（2026-10-30）
-  - 📄 完整文章归档（共 169 篇）：[openrouter.md](llm-news/openrouter.md)
+  1. [介绍新的自动和自动代码路由器](https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/)（2026-11-06）
+  2. [用 OpenRouter 构建 AI 代码审查器](https://openrouter.ai/blog/tutorials/ai-code-review/)（2026-11-01）
+  3. [如何构建你自己的常驻 AI agent](https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/)（2026-10-31）
+  4. [开放权重模型与闭源权重模型：有什么区别？](https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/)（2026-10-31）
+  5. [Claude Code 要多少钱？按模型划分的实际会话成本](https://openrouter.ai/blog/insights/claude-code-cost/)（2026-10-30）
+  - 📄 完整文章归档（共 170 篇）：[openrouter.md](llm-news/openrouter.md)
 
 ### Cloudflare Workers AI (cloudflare_workers_ai)
 - 📡 [官方 RSS](https://developers.cloudflare.com/workers-ai/changelog/index.xml)：`https://developers.cloudflare.com/workers-ai/changelog/index.xml`
@@ -250,12 +251,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 [官方 RSS](https://about.fb.com/news/tag/ai/feed/)：`https://about.fb.com/news/tag/ai/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-07，标题自动汉化）：
-  1. [给你的 Muse 一个声音](https://about.fb.com/news/2026/11/introducing-muse-ai-voice-expressive-avatars/)（2026-11-05）
-  2. [Meta 与五所美国大学合作，加速医学和科学突破](https://about.fb.com/news/2026/10/meta-partners-with-five-us-universities-to-accelerate-medical-and-scientific-breakthroughs/)（2026-10-28）
-  3. [隆重推出 Muse Wonder 和 Muse Wonder Full：面向智能体的前沿模型](https://about.fb.com/news/2026/10/introducing-muse-wonder-models/)（2026-10-12）
-  4. [辟谣：关于数据中心的最大迷思](https://about.fb.com/news/2026/10/debunking-the-biggest-data-center-myths/)（2026-10-08）
-  5. [为什么数据中心是 Meta AI 战略的重要一环](https://about.fb.com/news/2026/10/meta-data-centers-ai-approach/)（2026-10-07）
-  - 📄 完整文章归档（共 26 篇）：[meta_llama.md](llm-news/meta_llama.md)
+  1. [专为您设计 Muse 应用程序](https://about.fb.com/news/2026/11/introducing-spaces-customize-muse-app/)（2026-11-06）
+  2. [给你的 Muse 一个声音](https://about.fb.com/news/2026/11/introducing-muse-ai-voice-expressive-avatars/)（2026-11-05）
+  3. [Meta 与五所美国大学合作，加速医学和科学突破](https://about.fb.com/news/2026/10/meta-partners-with-five-us-universities-to-accelerate-medical-and-scientific-breakthroughs/)（2026-10-28）
+  4. [隆重推出 Muse Wonder 和 Muse Wonder Full：面向智能体的前沿模型](https://about.fb.com/news/2026/10/introducing-muse-wonder-models/)（2026-10-12）
+  5. [辟谣：关于数据中心的最大迷思](https://about.fb.com/news/2026/10/debunking-the-biggest-data-center-myths/)（2026-10-08）
+  - 📄 完整文章归档（共 27 篇）：[meta_llama.md](llm-news/meta_llama.md)
 
 ### 美团 LongCat (longcat_meituan)
 - 页面：[更新日志](https://longcat.chat/platform/docs/zh/ChangeLog.html)
@@ -308,12 +309,12 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-07，标题自动汉化）：
-  1. [Amazon Bedrock AgentCore 上的 Web Answer 入门](https://aws.amazon.com/blogs/machine-learning/getting-started-with-web-answer-on-amazon-bedrock-agentcore/)（2026-11-05）
-  2. [Amazon Marketplace 如何使用 Amazon SageMaker AI 评估内容质量](https://aws.amazon.com/blogs/machine-learning/how-amazon-marketplace-evaluates-content-quality-with-amazon-sagemaker-ai/)（2026-11-05）
-  3. [在 Amazon Bedrock AgentCore Evaluations 中使用决策模型](https://aws.amazon.com/blogs/machine-learning/use-decision-models-with-amazon-bedrock-agentcore-evaluations/)（2026-11-04）
-  4. [Amazon Quick 的智能审批：把人工监督用在真正要紧的地方](https://aws.amazon.com/blogs/machine-learning/smart-approvals-in-amazon-quick-human-oversight-where-it-matters/)（2026-11-04）
-  5. [生产级 AI agent 的四层上下文工程：Deep Insight 如何把它们写进工作代码](https://aws.amazon.com/blogs/machine-learning/four-layers-of-context-engineering-for-production-ai-agents-how-deep-insight-applies-them-in-working-code/)（2026-11-04）
-  - 📄 完整文章归档（共 160 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [SageMaker Inference 现在支持多实例 GPU，以最大限度地提高模型端点的 GPU 利用率](https://aws.amazon.com/blogs/machine-learning/sagemaker-inference-now-supports-multi-instance-gpu-to-maximize-gpu-utilization-for-model-endpoints/)（2026-11-06）
+  2. [Amazon Quick 中代理基元的分类](https://aws.amazon.com/blogs/machine-learning/taxonomy-of-agentic-primitives-in-amazon-quick/)（2026-11-06）
+  3. [用于 Amazon ECS Fargate 上的 AI 代理数据湖访问的无服务器 MCP 服务器](https://aws.amazon.com/blogs/machine-learning/serverless-mcp-server-for-ai-agent-data-lake-access-on-amazon-ecs-fargate/)（2026-11-06）
+  4. [使用 Okta Cross App Access 和 Amazon Bedrock AgentCore 管理 AI 代理访问 – 第 2 部分](https://aws.amazon.com/blogs/machine-learning/govern-ai-agent-access-with-okta-cross-app-access-and-amazon-bedrock-agentcore-part-2/)（2026-11-06）
+  5. [使用 Okta Cross App Access 和 Amazon Bedrock AgentCore 管理 AI 代理访问 – 第 1 部分](https://aws.amazon.com/blogs/machine-learning/govern-ai-agent-access-with-okta-cross-app-access-and-amazon-bedrock-agentcore-part-1/)（2026-11-06）
+  - 📄 完整文章归档（共 168 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
@@ -441,6 +442,6 @@
   - 📄 完整文章归档（共 10 篇）：[inference_net.md](llm-news/inference_net.md)
 
 ---
-共整理 35 个厂商的动态入口（其中 35 个成功提取最新文章），RSS/Atom 源 14 个。
+共整理 35 个厂商的动态入口（其中 35 个成功提取最新文章），RSS/Atom 源 15 个。
 
 <!-- LLM-NEWS:END -->

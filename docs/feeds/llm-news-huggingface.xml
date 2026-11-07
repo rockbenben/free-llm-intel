@@ -7,7 +7,182 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 05 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 06 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>ToyBlocks：用于机器人学习和评估的受控世界</title>
+      <link>https://huggingface.co/blog/allenai/toyblocks</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/toyblocks</guid>
+      <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：ToyBlocks: A controlled world for robot learning and evaluation</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>ToyBlocks：用于机器人学习和评估的受控世界</h1>
+<p>企业文章</p>
+<p>发表于 2026 年 11 月 6 日</p>
+<p>5</p>
+<ul><li><a href="https://huggingface.co/wookute221"><img src="https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg" alt=""></a></li><li><a href="https://huggingface.co/SmokeyPete"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/XcLxZc6CL6VO7tOlh0T0g.jpeg" alt=""></a></li><li><a href="https://huggingface.co/arahul2k2"><img src="https://huggingface.co/avatars/35af30f8a3713e3eda81ac4b9be515f5.svg" alt=""></a></li><li><a href="https://huggingface.co/rapidum"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/DPzSLPCg9RvVBvkD3Mcys.png" alt=""></a></li><li><a href="https://huggingface.co/sebast242"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67953e11098348e24ae7f316/ZNT-1c2NOyhugYrzK5Vyf.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="凯尔·威格斯的头像"></a></p>
+<p>凯尔威格斯</p>
+<p>爱通信</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>💻 <a href="https://github.com/allenai/ToyBlocks">代码</a> | 📊 <a href="https://huggingface.co/datasets/allenai/toyblocks-data">数据</a> | 🤖 <a href="https://huggingface.co/collections/allenai/toyblocks">模型</a> | 📖 <a href="https://allenai.github.io/ToyBlocks/docs/user_guide/index.html">文档</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1793826687-david-thumbnail-download-1.jpg"><img src="https://www.datocms-assets.com/64837/1793826687-david-thumbnail-download-1.jpg" alt="ToyBlocks 等距机器人插图"></a></p>
+<p>机器人正在学习叠衣服、分类零件以及处理不熟悉的物体。但这些演示往往相当狭隘，无法解释机器人学到了什么或为什么会失败。</p>
+<p>为了研究复杂的系统，科学家通常从一个小的受控环境开始，例如培养皿或玻璃容器，在那里他们可以改变条件并观察效果。机器人技术需要使这种调查成为可能的环境——研究人员应该能够更改训练数据或模型设计、重复测试并追踪故障原因。</p>
+<p>今天我们将介绍一个用于创建这些环境的框架；我们称它们为基金会世界。每一个都配对一个受控的模拟世界，旨在研究特定环境中的机器人技术，并配备自动生成任务和训练演示的工具，以及测量机器人随时间变化的行为的指标。它们共同为研究问题提供了一个环境，例如随着更多训练数据的出现，模型如何改进，以及如何最好地将高级推理与精确的物理控制结合起来。</p>
+<p>我们的第一个基础世界是 <a href="https://github.com/allenai/ToyBlocks">ToyBlocks</a>：一个围绕机器人手臂和桌面上的块构建的开放模拟框架。设置故意很简单，但机器人仍然必须推理积木如何相互作用以及如何在推动、翻转和堆叠时排列它们。</p>
+<p>ToyBlocks 自动生成演示，这是机器人在模拟中完成任务的记录，无需耗时的远程操作（即人远程控制机器人）。研究人员可以轻松改变这些培训体验。例如，团队可以生成更多的推动或翻转演示，然后评估未进行培训的任务的表现。</p>
+<p>从 ToyBlocks 作为我们的第一个 FoundationWorld 开始，我们的目标是将这种方法扩展到日益复杂的环境。</p>
+<h2>ToyBlocks 的工作原理</h2>
+<p>基于我们早期在开放机器人学习方面的工作，包括 <a href="https://allenai.org/blog/molmoact2">MolmoAct 2</a>、<a href="https://allenai.org/blog/molmobot-robot-manipulation">MolmoBot</a> 和 <a href="https://allenai.org/blog/molmospaces">MolmoSpaces</a>，ToyBlocks 为研究人员提供了一种在故意限制的领域中研究机器人问题的方法。</p>
+<p>作为 FoundationWorld，ToyBlocks 的设计围绕四个要求：(1) 真实的物理和外观，(2) 自动生成大规模任务和演示，(3) 将推理与灵活性相结合的挑战，以及 (4) 广泛覆盖某个领域内可能完成的任务。</p>
+<p>开放式领域需要对广泛的对象和交互进行建模，因此不可能满足所有这些要求。另一方面，ToyBlocks 的狭窄范围使其有可能实现所有这些目标。</p>
+<p>在 ToyBlocks 的较小环境中，研究人员可以致力于研究机器人如何学习执行任何合理的任务，同时确信模拟手臂和积木的行为与其物理对应物非常相似。</p>
+<p>[！[ToyBlocks 中木块上方的物理机器人夹具设置](https://cdn-uploads.huggingface.co/product/uploads/638e39b249de7ae552d977b5/ov2i4rZoAkJw4z9FBaGfm.jp例如）]（https://cdn-uploads.huggingface.co/product/uploads/638e39b249de7ae552d977b5/ov2i4rZoAkJw4z9FBaGfm.jpeg）</p>
+<p><em>ToyBlocks 设置中木块上方的物理机器人抓手。</em></p>
+<p>ToyBlocks 不仅仅是拾取和堆叠积木：积木表面的图片和字母允许搜索、排序和安排任务。机器人可能需要转动一个方块才能看到隐藏的面孔，然后才能决定它属于哪里。域随机化 - 不同场景的块大小、桌子高度和其他物理属性 - 测试模型随着几何形状变化的概括程度。</p>
+<p><a href="https://www.datocms-assets.com/64837/1793917318-toyblocks-framework-current.png"><img src="https://www.datocms-assets.com/64837/1793917318-toyblocks-framework-current.png" alt="ToyBlocks 框架架构"></a></p>
+<p><em>ToyBlocks 自动生成技能（短期任务的行为）和任务演示，可用于训练模型或通过额外训练（微调）调整先前训练的模型。高级推理模型决定做什么；低级动作模型控制机器人的运动。该框架还可用于轻松设计实验和验证假设。</em></p>
+<p>ToyBlocks 使用强化学习 (RL) 和运动规划（计算机器人应如何移动）来生成短期任务的技能，这些任务涉及简短的动作序列。技能培训在 Isaac Lab 中进行，Isaac Lab 是 Nvidia 用于模拟机器人学习的开源框架。通过反复试验，这些策略（选择机器人动作的模型）学习非抓取技能，例如将一个块推过桌子或将其翻转到另一张脸上而不拿起它。技能生成可以利用特权信息（模拟器可以直接提供但真实机器人无法提供的值，例如块的精确位置和方向），而不是根据相机图像进行估计。这使得能够自动生成现实世界中需要远程操作的技能。</p>
+<p>为了生成演示数据，任务和运动规划器 (TAMP) 自动选择和排序解决任务所需的技能，并规划机器人在它们之间的运动。在模拟中运行每个计划都会生成记录演示的数据集以及描述机器人执行的任务或技能的标签。 ToyBlocks 通过在单个图形处理单元 (GPU) 上并行生成和执行数百个此类计划来扩展数据生成，实时性能高达 24 倍。</p>
+<p>根据传感器观察采取行动会增加一个感知问题：模型必须估计一个块的姿势（其位置和方向），模拟器可以直接提供该姿势。为了反映现实世界的情况，ToyBlocks 训练将原始传感器观察结果映射到操作的模型。</p>
+<p><em>执行在 ToyBlocks 中训练的 Molmo 2（高级模型）和 ManiFlow（低级模型）。 Molmo 2 选择旋转和翻转等技能，通过指向界面指示相关块，而 ManiFlow 控制模拟手臂执行命令的技能。</em></p>
+<p>ToyBlocks 的可控数据生成器允许用户创建强调特定技能或填补现有数据集中空白的训练混合物。研究人员可以研究模型需要多少数据以及哪些经验可以帮助其推广到看不见的任务。例如，他们可以测试添加旋转和拾取放置演示是否可以改善翻转，或者改变定义的工作区域内部和外部示例的平衡 - 评估他们对未进行培训的任务的选择。重要的是，对经过训练的模型的评估会产生超出成功率的指标；它提供诸如执行速度、施加在对象上的力以及通过规划模块使用的相同规范测量的任务进度等信息。</p>
+<p>网页界面可让用户连接 Claude 或另一个前沿模型，并使用自然语言来指导机器人或尝试任务，从而提供了一种探索模型如何计划和行动的方法，而无需机器人专业知识。</p>
+<h2>基于 ToyBlocks 的研究</h2>
+<p>下面的评估使用 ToyBlocks 来研究训练数据和方法如何影响性能、空间推理、新字母和块外观的泛化、多步骤规划、转移到物理机器人以及通过工具起作用的前沿模型。用户可以轻松设计自己的任务和措施来调查其他问题，例如，模型通过指向或发出“选择黄色块”等文本命令来选择对象时是否表现更好。</p>
+<h3>低级动作模型：VLA 空间泛化</h3>
+<p>低级动作模型，例如视觉语言动作模型 (VLA)、地图语言指令和对机器人动作的视觉观察。</p>
+<p>VLA 的前提是，通过对大规模数据集进行预训练，它们可以快速泛化到不同的场景或特定的工作空间。然而，关于这些行动模型的推广效果如何的证据仍然相互矛盾。一些研究报告称，这些动作模型对于输入的变化很脆弱，例如不同的对象布局和照明，而其他研究则表明 VLA 具有良好的泛化能力。我们认为这些研究通常依赖于空间变化灵活性有限的现实世界数据集。 ToyBlocks 使我们能够测试动作模型在简单、易于重现且具有有意义的任务空间多样性的环境中的泛化能力。</p>
+<p>我们设计的泛化测试会改变完成指令所需的技能序列、块上的字母或颜色以及场景中块的数量。堆叠研究可以从训练中保留四块堆叠，然后测试模型是否可以结合熟悉的动作来构建它们。工作空间研究将训练区域内新位置的表现与模型必须进行推断的边界之外的表现区分开来。我们在下面说明了研究设置和结果。</p>
+<p><em>我们考虑四个任务：堆叠、取消堆叠、翻转和旋转。对于这些任务，我们研究插值（训练范围内的新配置）和外推（超出该范围的配置）。例如，我们通过对对象仅在左侧区域（绿色）生成的场景进行训练并在右侧区域（橙色）进行测试来评估泛化能力，或者通过对 2 和 5 块的堆叠高度进行训练并在高度 3 和 4 上进行测试来评估泛化能力。</em></p>
+<p><a href="https://www.datocms-assets.com/64837/1793904303-toyblocks-visual-08-ai2.png"><img src="https://www.datocms-assets.com/64837/1793904303-toyblocks-visual-08-ai2.png" alt="空间泛化结果"></a></p>
+<p><em>VLA 模型的空间泛化研究（结果基于 <a href="https://arxiv.org/abs/2509.01819">ManiFlow</a>、<a href="https://arxiv.org/abs/2504.16054">π0.5</a> 和 MolmoAct 2）。尽管进行了大规模的预训练，这些流行的动作模型在最初的结果中泛化性很差。我们改进泛化并分析每种技术的贡献。该图表的 LoRA 标签代表低秩适应，这是一种通过一小组可训练权重更新来微调模型的方法。我们相信行动模型的泛化还远未得到解决； ToyBlocks 为系统地探索泛化技术提供了一个有价值的测试平台。</em></p>
+<h3>高级推理：视觉语言模型</h3>
+<p>长期任务需要许多步骤，使我们能够衡量模型规划一系列行动来解决这些问题的能力。我们的框架使我们能够创建此类长期任务，并在高级别和低级别创建预言机（提供正确计划或行动的参考组件）。当模型在任务中失败时，这使我们能够隔离高级计划或低级执行是否失败。一个长期任务的例子可能是用块堆栈拼写“Ai2”；由于字母可能不会立即可见，因此代理必须首先选择显示信息的操作，然后计划并执行一系列操作来构建堆栈。</p>
+<p>我们通过明确的高层规划和低层执行模型来评估分层模型。在本例中，我们选择 Molmo 2（一种视觉语言模型 (VLM)）作为高级规划器，并选择 ManiFlow 作为低级策略。 Molmo 2 选择要执行的技能和执行该技能的块，而低级模型则执行指令。我们训练低级模型（例如 ManiFlow）在完成执行后暂停，并查询高级模型以获取下一条指令。我们在三种难度逐渐增加的场景中评估模型的规划能力。最简单的场景是在每个角色直立并面向镜头的情况下初始化。中等场景中的角色可能不是直立的，最难的场景中包含在剧集开始时不可见的角色。</p>
+<p><a href="https://www.datocms-assets.com/64837/1793904303-toyblocks-visual-09-ai2.png"><img src="https://www.datocms-assets.com/64837/1793904303-toyblocks-visual-09-ai2.png" alt="Molmo 2 和 ManiFlow 块拼写结果"></a></p>
+<p><em>使用 Molmo 2 作为高级推理模型并使用 ManiFlow 或运动规划器进行低级操作的三字母块拼写任务的成功率。一个示例任务是“Stack Ai2”。 Molmo 2 和 ManiFlow 在 ToyBlocks 上进行训练，并在三种难度设置和两种泛化条件下进行评估。</em></p>
+<h3>高级推理：代理系统</h3>
+<p>我们对代理系统的实验测试了前沿模型如何通过工具调用进行计划和行动。我们使用 Claude Opus 5.5 研究三种设置。在搜索和拼写设置中，我们通过 <a href="https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro">模型上下文协议 (MCP)</a> 公开 ToyBlocks 技能，该协议是将 AI 应用程序连接到工具的标准。代理通过摄像头图像查看场景，通过指向像素调用拾取、翻转或旋转等技能，并决定何时搜索、构建或宣布任务完成或不可能。相同的 MCP 工具可以执行生成 ToyBlocks 演示的脚本技能（运动规划的拾取和放置，以及基于 RL 的旋转和翻转）或学习的 ManiFlow 技能。 ToyBlocks 包含这些实验背后的框架，该框架也为前面描述的自然语言 Web 界面提供支持。</p>
+<p><em>前沿模型（Claude寓言 5.1）控制玩具积木世界中的机器人搜索积木并将其堆叠到拼写为“Ai2”的塔中。在这一集中，特工沉思道：“我需要弄清楚拾放是否会自然地拉直方向，或者是否需要手动纠正……我还剩下 63 个呼叫，足够进行受控测试”(0:06)。该代理后来假设：“……也许抓手的偏航是径向的——从机器人底座指向方块”（0:15），并最终在建造三块塔之前证实了这一假设（0:26），但“A”是侧面的（1:11）。令人惊讶的是，当前的前沿模型经常会犯类似的感知错误（见下图），尽管它们具有令人印象深刻的规划、空间推理和搜索能力。</em></p>
+<p>对于经典规划，代理（我们的系统使用 Claude Opus 5.5 来规划和选择操作）解决了一组块堆叠任务中的所有 30 个任务，类似于前沿模型在几年内努力解决的任务前](https://proceedings.neurips.cc/paper_files/paper/2023/hash/7a92bcdede88c7afd108072faf5485c8-Abstract-Datasets_and_Benchmarks.html)，使用文本描述。它还可以解决 30 题中的 30 题，同时反复观察摄像机图像并在闭环中选择下一步动作。</p>
+<p>在搜索和拼写设置中，代理必须生成拼写出三个字母单词的堆栈。它必须在场景中最多八个块中找到具有相应字母的块。重要的是，50% 的场景没有包含所有所需字母的块，导致任务不可行。在这种情况下，我们要求代理人声明该任务不可行。我们发现，在这个实验中，智能体能够成功解决或正确声明 63% 的任务不可行。错误主要是由于代理将字母与相似的字母混淆（13%）或为堆栈中的字母选择了错误的方向（15%）造成的。</p>
+<p>我们的结果还表明，当块具有语义规则或模式时，代理能够更有效地解决任务，利用这些模式来推理被遮挡的面部。例如，在大多数不可行的场景中，当块没有模式时，代理在声明不可行性之前正确地查看了所有块的面，而当块具有语义模式时，它能够更快地声明不可行性。</p>
+<p>我们的第三个实验设置询问智能体是否可以像科学家一样使用实验来了解其技能的表现。当一项技能的表现出乎意料时，代理会形成一个假设，设计一个小测试，并根据结果修改其理解。我们通过让代理运行自己的实验并编写自己的<a href="https://openreview.net/forum?id=gxEC7M0oZj">根据发现的内容编写技能描述</a>来扩展这个想法。这些学习到的描述将成功率从默认描述的 24% 提高到 63%，超过了人类专家编写的描述所达到的 36%。</p>
+<p>[![搜索和拼写结果以及暴露的面孔](https://www.datocms-assets.com/64837/1793911236-toyblocks-visual-10a- Corrected.png)](https://www.datocms-assets.com/64837/1793911236-toyblocks-visual-10a- Corrected.png)</p>
+<p><em>特工在每个“搜索和拼写”剧集结束时暴露的字母块面孔的比例（平均超过 20 集的条形图；每集一个标记，按结果设计）。在可行任务中，三字母目标单词的每个字母都存在；在一项不可行的任务中，缺少一封信，代理人应该如此说。每个图案块都包含字母的大写和小写实例，以及以该字母开头的图像（例如，A 块：苹果、蚂蚁、A、1、飞机、a）；无图案块的六个面是随机且互不相关的。正确：塔拼写了这个词，或者对于不可行的任务，特工正确地宣布任务不可能。字母被旋转或看起来很相似：特工建造了塔，但一个字母被翻转或被一个相似的字母取代，其中包括五个不可行的任务，声明在丢失的字母的位置上用一个相似的字母解决了。块跌落到够不到的地方；报道称：所需的方块被推到手臂够不到的地方，因此特工报告称其任务已变得不可能。没有报告：特工用完了其运动技能预算并停止了，没有声明任何结果。有了图案块，智能体就可以看到更少的面孔，因为它可以推断出隐藏的面孔必须描绘什么，而不是检查每一张面孔。</em></p>
+<h3>作为模拟器的动作条件世界模型</h3>
+<p>动作条件世界模型经过训练可以预测场景如何响应机器人的动作而变化。使用它们作为基于模型的模拟器的替代品来训练和评估机器人策略是一个活跃的研究领域。它们实现这一目的的效果取决于它们预测物理交互的准确程度，而在不知道场景真实状态的情况下很难测量。 ToyBlocks 提供了这一基本事实 - 实际的模拟场景状态 - 能够对最近开发的世界模型在低级对象操作中的执行情况进行高度受控的测试。在这里，手臂的末端执行器是它的夹具。</p>
+<p>具体来说，我们测试了动作条件世界模型在接受示例执行训练后是否能够预测块的运动或技能执行的结果。为此，我们选择了四种不同的技能（拾放、翻转、旋转和混合任务），并为每种技能生成 900 个轨迹——机器人状态和动作随时间的序列。其中 50% 的轨迹是成功的技能演示，50% 的轨迹由于空间配置的微小变化而失败。在成功和不成功执行次数相同的情况下，始终预测成功的模型只有一半的正确率。这些模型在这些演示中进行了微调，然后测试了它们预测相同技能的动作序列结果的能力。</p>
+<p><a href="https://www.datocms-assets.com/64837/1793904303-toyblocks-visual-11-ai2.png"><img src="https://www.datocms-assets.com/64837/1793904303-toyblocks-visual-11-ai2.png" alt="世界模型比较"></a></p>
+<p><em>我们发现 Wan 2.2 预测块运动和任务结果最准确。 Astra 很好地跟踪了夹具，但很难模拟接触。尽管 LeWM 在整个轨迹上会发生漂移，但它在短交互段上速度更快且更准确。在其他实验中，我们还表明，在姿势和成功预测方面得分较高的模型也会产生更好的训练数据：从最佳视频生成模型中添加 100 个模型生成的轨迹（推出），可以将策略在看不见的区域中的成功率从 19% 提高到 78%。</em></p>
+<p>我们测试了三种类型的模型：具有 50 亿个参数的视频预测模型 (<a href="https://arxiv.org/abs/2503.20314">Wan 2.2</a>)、<a href="https://openai.com/index/gpt-6-astra/">创建自己的物理模拟器并调整以匹配演示数据 (Astra)</a> 和 [潜在世界模型] （LeWM）]（https://arxiv.org/abs/2603.19312）。在测试期间，每个经过训练的模型必须根据初始图像和一系列动作分别预测未来图像、模拟器状态或潜在状态（学习的内部表示）。对于完整的轨迹，模型使用初始图像作为唯一观察到的图像以及动作序列。对于短交互片段（单个拾取、放置、翻转或旋转），模型从交互之前的真实图像开始。完整的轨迹显示了错误如何在长期范围内累积，而交互片段则隔离了单个交互（例如夹具与块接触），并显示了模型预测它的效果。为了公平地比较模型，我们探究每个模型的预测，读出它期望块和夹具在轨迹中不同点的位置，以及它是否期望任务最终成功。</p>
+<h3>使用高级和低级模型进行真实世界实验</h3>
+<p>模拟到真实的评估测试在执行块操作任务的物理机器人上进行模拟训练的策略。通过比较模拟和现实世界的执行，我们评估模拟中观察到的行为和故障模式是否为现实世界的性能提供了有意义的指示。例如，研究人员可以评估长期任务中的个人技能及其构成，以确定失败发生的位置以及这些模式是否会延续到物理部署中。</p>
+<p>我们测试完全在 ToyBlocks 模拟数据集上训练的模型是否可以在现实世界中零样本部署，而无需对现实世界的示例进行训练。我们单独评估 ManiFlow 和每个低级技能（拾取、放置、翻转和旋转）。我们测试分层系统（Molmo 2 + ManiFlow）是否可以完成需要这些动作序列的长范围三块拼写任务。真实世界的实验使用 Franka FR3 手臂和 Robotiq 夹具，跨越 30 个场景配置。每个场景包含训练期间看到的 4-10 个块。仅当相关块移动到目标姿势而不发生碰撞时，情节才会成功。如果操作员在一次事件中由于不安全的动作而干预停止机器人，则被标记为失败。</p>
+<p>ManiFlow 的原子技能成功率在模拟和现实世界中相似（80.0% 和 81.1%）。分层 Molmo 2 + ManiFlow 系统成功完成了 55.5% 的模拟场景 (111/200) 和 50.0% 的真实场景 (15/30)；需要进一步的试验来建立跨任务的统计置信度。</p>
+<p><a href="https://www.datocms-assets.com/64837/1793919269-toyblocks-visual-12a-30-trials.png"><img src="https://www.datocms-assets.com/64837/1793919269-toyblocks-visual-12a-30-trials.png" alt="模拟和现实世界的成功率"></a></p>
+<p><em>ManiFlow 低级模型和分层 Molmo 2–ManiFlow 系统在模拟和现实世界中的成功率。对于 ManiFlow，总计数代表个人技能执行（拾取、放置、翻转和旋转），而对于 Molmo 2–ManiFlow，它代表块拼写任务片段。 Molmo 2–ManiFlow 评估使用模拟评估中定义的最简单的场景配置，块字符可见且直立。</em></p>
+<p><em>使用相同的高级规划器并行执行现实世界和模拟的块堆叠执行。粉色环标记了规划者每项技能的目标点。场景使用不同的块标签，并且模拟回放被重新定时，以将抓取和释放与真实的机器人对齐。</em></p>
+<p>为了将 Molmo 2 和 ManiFlow（两者都专门在 ToyBlocks 数据上进行训练）转移到物理机器人上，我们分三个阶段解决了模拟与现实之间的差异。</p>
+<p>在数据生成之前，我们通过调整模拟机器人参数（包括关节摩擦力和电枢（关节处反映的电机和变速箱惯性））来执行系统识别，以匹配真实的机器人轨迹。在数据生成过程中，我们随机化物理属性（对象大小、摩擦力和桌子高度）和视觉属性（照明、背景、材料和相机参数）。在推理时，使用前置 ZED 摄像头和腕式 ZED Mini 捕获观察结果。对于使用深度图像的策略，我们使用 <a href="https://arxiv.org/abs/2512.11130">FastFoundationStereo</a> 从成对的红-绿-蓝 (RGB) 相机图像生成干净的深度图，估计每个像素的距离，而不是依赖于嘈杂的深度传感器测量。</p>
+<p><a href="https://www.datocms-assets.com/64837/1793811059-image2.jpg?ts=ae95e598">！[物理玩具块设置有机械臂、木块和相机</a>](https://www.datocms-assets.com/64837/1793811059-image2.jpg?ts=ae95e598)</p>
+<p><em>ToyBlocks 的物理设置：机械臂、木块和相机。</em></p>
+<h2>打开进一步研究的工具</h2>
+<p>ToyBlocks 在一种受控环境中将数据生成、训练和评估连接起来，因此研究人员可以研究机器人如何随着时间的推移进行学习，并测试模型或其训练数据的变化如何影响机器人的行为。我们将发布模拟资产、程序任务和演示生成器、自动生成的演示、两个展示框架功能的经过训练的模型（一个基于 <a href="https://huggingface.co/allenai/Molmo2-4B-tb">Molmo 2</a>，一个基于 <a href="https://huggingface.co/allenai/maniflow-tb">ManiFlow</a>）、训练代码以及评估代码和验证集。这使得其他团队能够构建自己的训练混合物并研究超出我们初始实验涵盖的故障模式。</p>
+<p>我们最初发布的数据是 85,336 个长期演示的证据，每个演示包含大约 6-12 个技能演示，具体取决于设置。初始数据集涵盖近 1,600 小时的机器人执行数据和 1.44 亿帧。几周后，我们的目标是发布第二个版本，其中包含更大规模的数据集、更多技能和更全面的基准测试。我们还将添加当前软件包中未包含的完全集成的强化学习训练功能。</p>
+<p>ToyBlocks 的其他方向包括双手（双臂）操作和灵巧的机器人手，配备力和触摸传感器，用于研究涉及频繁身体接触的运动和任务。我们还在探索玩非结构化的积木堆，作为收集数据和研究如何通过交互出现新行为和任务的一种方式。</p>
+<p><em>未来方向：基于强化学习的桩操纵。</em></p>
+<p><em>未来方向：双手块操作。</em></p>
+<p>通过 ToyBlocks，我们希望推动机器人学习科学的发展，让机器人能够可靠地将它们所学到的知识应用到不熟悉的任务和环境中。我们鼓励研究社区探索 ToyBlocks 以进行自己的调查，甚至作为构建自己的 FoundationWorlds 的基础。</p>
+<h2>本文提到的型号2</h2>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的集合1</h2>
+<p>该作者的更多内容</p>
+<h2>StateBench：测试语言模型如何跟踪长文档的状态变化</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>18</p>
+<p>2026 年 11 月 3 日</p>
+<h2>我们可以信任LLM来判断一个研究想法是否新颖吗？</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>18</p>
+<p>2026 年 10 月 27 日</p>
+<h3>社区</h3>
+<p><img src="https://huggingface.co/avatars/26fa040c7f334785b26ae42de24ab4dc.svg" alt=""></p>
+<p>恩特玛奇</p>
+<p>大约10小时前</p>
+<p>我喜欢这个概念，我想看看实际应用我们如何将人工智能纳入 PLC 和 OBD 系统改造现有应用利基收入</p>
+<p><img src="https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg" alt=""></p>
+<p>乌库特221</p>
+<p>大约 7 小时前</p>
+<p>selona 我喜欢这个概念，我想看看实际应用我们如何将人工智能纳入 PLC 和 OBD 系统改造现有应用利基收入</p>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Ftoyblocks">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Ftoyblocks">登录</a> 发表评论</p>
+<p>5</p>
+<ul><li><a href="https://huggingface.co/wookute221"><img src="https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg" alt=""></a></li><li><a href="https://huggingface.co/SmokeyPete"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/XcLxZc6CL6VO7tOlh0T0g.jpeg" alt=""></a></li><li><a href="https://huggingface.co/arahul2k2"><img src="https://huggingface.co/avatars/35af30f8a3713e3eda81ac4b9be515f5.svg" alt=""></a></li><li><a href="https://huggingface.co/rapidum"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/DPzSLPCg9RvVBvkD3Mcys.png" alt=""></a></li><li><a href="https://huggingface.co/sebast242"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67953e11098348e24ae7f316/ZNT-1c2NOyhugYrzK5Vyf.png" alt=""></a></li></ul>
+<h2>本文提到的型号2</h2>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的集合1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>埃及语和尼日利亚英语加入 Open ASR 排行榜</title>
+      <link>https://huggingface.co/blog/open-asr-leaderboard-liva</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/open-asr-leaderboard-liva</guid>
+      <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Egyptian and Nigerian English join the Open ASR Leaderboard</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>埃及和尼日利亚英语加入 Open ASR 排行榜</h1>
+<p>发表于 2026 年 11 月 6 日</p>
+<p>GitHub 上更新</p>
+<p>5</p>
+<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt="Eric Bezzam 的头像"></a></p>
+<p>埃里克·贝扎姆</p>
+<p>贝扎姆</p>
+<p><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt="Ashley Mo 的头像"></a></p>
+<p>莫施礼</p>
+<p>阿什利莫2025</p>
+<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI 头像"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
+<p><a href="https://huggingface.co/aonorii"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64d5eff05900b6d111c9e1ad/hGnt9yx6LyQP5a2MBpXGg.jpeg" alt="大谷葵的头像"></a></p>
+<p>大谷葵</p>
+<p>青苔</p>
+<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI 头像"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
+<p>几个月前，我们将私有数据添加到 <a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">开放 ASR 排行榜</a>：来自 Appen 和 DataOceanAI 的 11 个分割，涵盖五种口音的脚本和会话语音 (<a href="https://huggingface.co/blog/open-asr-leaderboard-private-data">博客</a>)。社区反响热烈，许多人<strong>强调了保留集对于可信评估的重要性</strong>。从那时起，我们又通过 Voice Arena 添加了一项针对印度口音英语的私人拆分（<a href="https://huggingface.co/blog/open-asr-leaderboard-global-south">博客</a>）。</p>
+<p>我们很高兴宣布与 <a href="https://huggingface.co/liva-ai">Liva AI</a> 开展新合作，以两种新口音添加更多​​私人数据：<strong>埃及语</strong> 🇪🇬 和 <strong>尼日利亚语</strong> 🇳🇬。</p>
+<table><thead><tr><th>数据集</th><th>口音</th><th>持续时间 [h]</th><th>风格</th><th>转录</th></tr></thead><tbody><tr><td>Liva AI 对话 EG</td><td>埃及</td><td>1.34</td><td>1.34对话式、自发式</td><td>断断续续、格格不入、不连贯。</td></tr><tr><td>Liva AI 对话式NG</td><td>尼日利亚</td><td>1.55</td><td>1.55对话式、自发式</td><td>断断续续、格格不入、不连贯。</td></tr></tbody></table>
+<p>这是我们持续努力的一部分，旨在提高 ASR 评估的代表性（更多口音和更多语言）并提高信任度（新的私有数据以最大限度地减少基准优化，以及新的数据提供者）。我们很高兴看到社区继续为世界推动 ASR 性能 🤗</p>
+<h2>私人选项卡中更丰富的口音细分</h2>
+<p>有了这些新的口音，我们现在可以基于 <a href="https://en.wikipedia.org/wiki/World_Englishes#Kachru%27s_Three_Circles_of_English">Kachru 的三个圆圈</a> 呈现更丰富的口音细分（在 <a href="https://huggingface.co/spaces/HumeAI/asr-leaderboard">排行榜</a> 中向 Hume AI 致敬）。 Open ASR 排行榜现在将报告：</p>
+<ul><li>美国与非美国（<em>英国、澳大利亚、加拿大、印度、尼日利亚、埃及</em>）</li><li>内圈（<em>美国、英国、澳大利亚、加拿大</em>）与外圈和扩展圈（<em>印度、尼日利亚、埃及</em>）</li></ul>
+<p>随着更多口音的加入，我们将拆分外圈和扩展圈。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/open_asr_leaderboard/private_data_accent_breakdown.png" alt="缩略图"></p>
+<h2>关于 Liva AI</h2>
+<p>Liva AI 通过真人使用的消费产品收集多模态交互数据。由于 Liva 拥有收集环境和分发，因此它可以围绕跨领域、行业、语言、模式和交互类型的特定模型差距来设计产品。这使它能够访问通过实际产品使用而出现的自然的、高情境的行为，而不是人为引发的或基于任务的交互。</p>
+<h2>本文提到的空格2</h2>
+<p>我们博客的更多文章</p>
+<p>音频语音排行榜</p>
+<h2>开放 TTS 排行榜：多语言文本转语音和语音克隆的可扩展评估</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png" alt=""></li></ul>
+<p>80</p>
+<p>2026 年 9 月 30 日</p>
+<p>音频语音排行榜</p>
+<h2>开放 ASR 排行榜添加了第一个全球南方语言</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://huggingface.co/avatars/56ce7e0fea0166a14997e7876fb23621.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67bc3e2f4b9d3615a6e2c982/8x33LQ0fwbnUtIn9CAwv2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6673251287330d7378e6b5e3/VVvuAsOUMiAPNgsdoRZjM.png" alt=""></li><li>+6</li></ul>
+<p>61</p>
+<p>2026 年 8 月 28 日</p>
+<h3>社区</h3>
+<p><img src="https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg" alt=""></p>
+<p>乌库特221</p>
+<p>大约 7 小时前</p>
+<p>干草</p>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopen-asr-leaderboard-liva">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fopen-asr-leaderboard-liva">登录</a> 发表评论</p>
+<p>5</p>
+<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
+<h2>本文提到的空格2</h2>]]></content:encoded>
+    </item>
     <item>
       <title>用于交互式世界模拟的全新 NVIDIA Cosmos 3 开放模型</title>
       <link>https://huggingface.co/blog/nvidia/cosmos-interactive-world-simulation</link>
@@ -339,69 +514,6 @@ processor.save_audio(audio, &quot;phonon.wav&quot;)</code></pre>
 <h2>本文提到的 Space 1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>StateBench：测语言模型如何跟踪长文档里的状态变化</title>
-      <link>https://huggingface.co/blog/allenai/statebench</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/allenai/statebench</guid>
-      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：StateBench: Testing how language models track state changes over long documents</description>
-      <content:encoded><![CDATA[<h1>StateBench：测语言模型如何跟踪长文档里的状态变化</h1>
-<p>企业  文章</p>
-<p>发布于 2026 年 11 月 3 日</p>
-<p>17</p>
-<ul><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/travisking"><img src="https://huggingface.co/avatars/1165d74c4dbd96297485b4be4446ddb2.svg" alt=""></a></li><li><a href="https://huggingface.co/Belirofon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b834e0636a9b6b45316755/63Ak_8fn4-75yr2ArCope.png" alt=""></a></li><li><a href="https://huggingface.co/sazid63"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6abaa0e17a2746d31739f0d8/T4kTX3ZhR5tjl_iI2Afjo.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
-<p>Kyle Wiggers</p>
-<p>Ai2Comms</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
-<p>📄 <a href="https://allenai.org/papers/statebench">技术报告</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/state-bench">数据</a> | 💻 <a href="https://github.com/allenai/state-bench">代码</a></p>
-<p><a href="https://www.datocms-assets.com/64837/1792006215-statebench-draft-blog-google-docs-image-1.png"><img src="https://www.datocms-assets.com/64837/1792006215-statebench-draft-blog-google-docs-image-1.png" alt="StateBench 示意图：彩色的路径在一段序列中不断改变位置。"></a></p>
-<p>我们推出 <a href="https://github.com/allenai/state-bench"><strong>StateBench</strong></a>，一个考察<em>长上下文</em> <em>状态跟踪</em>的基准——也就是语言模型在长文档中跟踪有关实体信息的能力，以及这种能力如何随内容演变。</p>
-<p>状态跟踪是很多任务的底层能力：从读代码（变量被赋值又被重新赋值），到跟着故事走（人物在空间里移动、物件换了主人）。举个例子，如果一本悬疑小说在谋杀发生前写道“John 把刀交给了 Mary”，那么知道每个角色的状态已经改变就很要紧。然而，状态跟踪问题并非都同级：有些只需要找出最后一次更新；更难的一些要跟进一整串变化，其中漏掉一步就能把最终答案带偏。比如我们那道悬疑状态跟踪题的一个更难变体：John 把他背包里的东西交给了 Mary，而此前已知是 Edward 把一把刀放进了 John 的背包。</p>
-<p>对于带长依赖链的状态跟踪难题变体，Transformers 有被充分记录的理论局限，这也推动人们去提出把一份持续更新的记忆向前携带的循环与混合架构，例如 Gated DeltaNet。已有的状态跟踪测试往往盯着最难的那一类情形，但随着这些设计越来越常见，研究人员需要知道每种架构能处理哪几种状态跟踪。我们想搞清楚的，不只是最难的那几种状态跟踪上各架构之间的差异，也包括更简单、可能也更常见的几种。</p>
-<p>为此我们开发了 StateBench 基准，用来刻画不同复杂度的状态跟踪问题，并用它来评估不同架构语言模型之间的差异。我们发现，直接在这些任务上训练时，循环模型和混合模型的泛化能力远比 Transformers 走得更远；而包括 Gemini 3.8 Flash、Claude Opus 5.5 以及 GPT-6 Sol 和 Luna 在内的前沿模型，随着输入变长，在更难的状态跟踪形式上仍然会崩掉。</p>
-<h2>状态跟踪的四个层级</h2>
-<p>StateBench 由四个难度层级构成，依次允许越来越复杂的状态更新操作。对程序员来说，这些状态跟踪的复杂度层级可以理解为允许不同类型的变量赋值操作：</p>
-<ul><li><strong>R-trivial 问题</strong>使用不可变赋值。变量的值从不改变，所以模型只需要还原它最初被设成什么。放到代码里，这就是 let x = 4；放到日常生活里，它像出生日期——始终固定不变。</li><li><strong>Aperiodic 问题</strong>允许按值重新赋值。模型需要找到最新的值，早先的那些可以忽略。放到代码里，这是先 x = 4、随后又 x = 2；放到日常生活里，它像恒温器，最后一次设定决定当前的温度。</li><li><strong>Soluble 问题</strong>增加了自指更新。每次更新都建立在当前值之上，所以模型必须把变化一路带下去，而不是简单地找出最后一次赋值。放到代码里，这是 x = x + 5；放到日常生活里，它像比赛得分，每一分都加到累计总分上。</li><li><strong>General finite 问题</strong>增加了按引用赋值。一个变量可以取走另一个变量的当前值，从而在多次更新之间制造依赖。放到代码里，这是 x = y，或者交换两个变量。想象一位魔术师把一个小球藏在五个杯子之一的下面，然后反复交换杯子的位置。找到小球，就意味着跟踪这些交换如何改变它的位置。这就是 S₅ 状态跟踪问题：跟踪连续的交换把五个对象重排成了什么样子。它属于我们四个层级里最难的那一档，在<a href="https://arxiv.org/html/2404.08819v2#S3.SS1">此前关于状态跟踪局限的工作</a>中有讨论。</li></ul>
-<p>这些层级可以用变量赋值来直观理解，但它们同样代表状态跟踪里有理论依据的区分，其根基是 Krohn–Rhodes 理论——代数的一个分支，描述状态跟踪问题（可以视作<em>有限 monoid</em> 上的<em>word problem</em>）如何被分解成原子原语。我们这套层级里的每一级，都对应一类能用另一组原语搭建出来的状态跟踪问题。</p>
-<p>为了公平地比较四个层级，我们从一个 general finite 的变量赋值序列出发，从中导出三个更简单的版本，得到四道可比的 StateBench 题目——每个难度层级各一道。四道题都用相同数量的变量和互不相同的取值，赋值出现在序列中的相同位置；变的只有赋值的类型。</p>
-<h2>我们发现了什么</h2>
-<h3>预训练模型</h3>
-<p>我们在 StateBench 的 r-trivial、aperiodic 和 general finite 三个层级上测试了一批开放预训练模型，看它们的状态跟踪在哪里崩掉，也看不同架构是否恰好在理论预测的地方失效。在标准理论假设下，Transformers 能稳健地处理 r-trivial（soluble 和 aperiodic 也能处理到某种程度），但被预测会在 general 问题上失败。相反，内存更新更灵活的 Gated DeltaNet 原则上可以处理全部四个层级。</p>
-<p>我们从开放预训练模型起步，因为它们的训练数据和上下文长度都有完整记录。其中包括两个 70 亿参数的模型，Olmo 3（一个 Transformer）和 Olmo Hybrid（加入了 Gated DeltaNet 层），另有 2.75 亿和 27 亿参数的更小模型。这些模型都在同样的数据上完成预训练；训练时没有一个见过超过 64,000 token 的上下文，而我们测试时给大多数模型的输入远超那个长度。</p>
-<p>逐个打分之后，几乎所有模型在 r-trivial 问题上都表现良好，在 aperiodic 问题上随着输入变长而丢失准确率，在 general finite 问题上则停留在随机水平。问题的呈现格式在这里有影响——2.75 亿参数的 hybrid 和 Gated DeltaNet 模型在 RULER 风格的 r-trivial 问题上几乎顶到天花板，但同一批问题换成电子表格改写的形式后，它们就接近随机了。这道差距正是 StateBench 用多种形式测试同一个底层问题的原因之一。</p>
-<p><a href="https://www.datocms-assets.com/64837/1792006353-statebench-draft-blog-google-docs-image-2.png"><img src="https://www.datocms-assets.com/64837/1792006353-statebench-draft-blog-google-docs-image-2.png" alt="预训练 Transformer、hybrid 与 Gated DeltaNet 模型的准确率随输入长度（以 token 计）的变化；soluble 层级的结果未报告。"></a></p>
-<h3>前沿模型</h3>
-<p>接着我们测试了四个前沿模型——Gemini 3.8 Flash、Claude Opus 5.5 以及 GPT-6 Sol 和 Luna——要求它们读取每一段变量赋值序列，并生成每个变量的最终值。</p>
-<p>四个模型在 r-trivial 和 aperiodic 问题上都表现良好。但在 soluble 和 general finite 问题上，随着输入变长，准确率急剧下滑，在最长的 general finite 问题上一路跌到 13% 或更低。一个可能的因素是<em>敏感度</em>；在这些更难的层级上，有更多步骤能影响最终答案，模型漏掉一次更新却仍不出错的余地就更小了。</p>
-<p><a href="https://www.datocms-assets.com/64837/1792006435-statebench-draft-blog-google-docs-image-3.png"><img src="https://www.datocms-assets.com/64837/1792006435-statebench-draft-blog-google-docs-image-3.png" alt="Gemini 3.8 Flash、Claude Opus 5.5、GPT-6 Sol 和 GPT-6 Luna 在 StateBench 四个层级上的准确率随输入长度（以 token 计）的变化。"></a></p>
-<h2>直接在该任务上训练的模型</h2>
-<p>接下来我们追问：模型在更难层级上的困难，反映的是架构本身的局限，还是预训练压根没教会它们解这些题。有针对性的直接训练是一种对模型更有利的设定，它能揭示状态跟踪的问题在多大程度上来自底层架构和优化器，而不是来自预训练模型所用的数据。</p>
-<p>我们在 StateBench 上从零训练了若干 2.75 亿参数的模型：两个 Transformer 变体、两个 hybrid，以及两个带不同内存更新约束的 Gated DeltaNet 变体。这些模型在最长 256 次赋值的序列上训练，却在长达 64,000 次赋值的序列上测试，也就是训练最大长度的 250 倍。</p>
-<p>随着序列变长，各架构开始分化。Gated DeltaNet 和 hybrid 模型在 r-trivial、aperiodic 和 soluble 问题上几乎完美地泛化，一直延伸到我们测试的最长序列——上万次赋值。Transformers 学会了较简单的层级，但在更长的序列上退化，而且始终没学会 general finite 问题。在最难的层级上，内存更新更灵活的那个 Gated DeltaNet 变体泛化得最远，几乎完美的表现一直维持到训练时所见最长序列约 10 倍的长度。</p>
-<p>对 Gated DeltaNet 和 hybrid 模型来说，这道差距指向的是训练而非架构；直接训练之后，它们学会了处理自己的预训练版本应付不了的状态跟踪层级。Transformers 则不同——即便直接训练，它们也永远学不会最难的那一层级。</p>
-<p><a href="https://www.datocms-assets.com/64837/1792006493-statebench-draft-blog-google-docs-image-4.png"><img src="https://www.datocms-assets.com/64837/1792006493-statebench-draft-blog-google-docs-image-4.png" alt="直接在 StateBench 上训练的 Transformer、hybrid 与 Gated DeltaNet 模型在全部四个层级上的准确率随输入长度（以赋值次数计）的变化。"></a></p>
-<h2>未解决的问题与发布</h2>
-<p>有些问题仍然悬而未决。我们的新证明显示，内存更新更受限（非负特征值）的 Gated DeltaNet 可以解出全部 aperiodic 任务和某些 periodic 任务——比如跟踪一个重复出现的输入发生了偶数次还是奇数次——前提是论文里那套带舍入的定点算术。它在这套层级中的确切位置仍未定，包括它能否解出所有 soluble 任务，以及数值精度、或与 attention 层组合会如何影响它的能力。StateBench 还假设变量数量是固定的，而真实任务往往会随时间引入新的实体。例如在一场长对话里，随着对话展开会出现新的人物和新的对象，模型也得开始跟踪它们。当前的框架还没有覆盖这种设定。</p>
-<p>随着新的循环与混合架构不断出现，弄清每一种能处理哪几类状态跟踪，或许能帮助引导未来系统如何开发与训练。我们希望 StateBench 能给研究人员一种更细粒度的办法，去找到模型在哪里崩掉——并为那些仍然不足的能力构建训练与评估数据。更根本地说，我们希望它成为研究人员的北极星，去推动开发比当前模型状态跟踪能力更稳健的新架构。</p>
-<h2>本文提到的数据集 1</h2>
-<p>来自该作者的更多文章</p>
-<h2>我们能信任 LLM 来判断一个研究想法是否新颖吗？</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>18</p>
-<p>2026 年 10 月 27 日</p>
-<h2>LitPivot：在文献版图之中通过动态情境化来发展研究想法</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>39</p>
-<p>2026 年 10 月 23 日</p>
-<h3>社区</h3>
-<p>在文本输入框中拖拽、粘贴或点击此处上传图片、音频和视频。</p>
-<p>点按或粘贴此处以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fstatebench">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fstatebench">登录</a>后发表评论</p>
-<p>17</p>
-<ul><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/travisking"><img src="https://huggingface.co/avatars/1165d74c4dbd96297485b4be4446ddb2.svg" alt=""></a></li><li><a href="https://huggingface.co/Belirofon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b834e0636a9b6b45316755/63Ak_8fn4-75yr2ArCope.png" alt=""></a></li><li><a href="https://huggingface.co/sazid63"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6abaa0e17a2746d31739f0d8/T4kTX3ZhR5tjl_iI2Afjo.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Karlitos1337"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/D_5e1cD0VZfurrzCmLK0I.png" alt=""></a></li><li><a href="https://huggingface.co/Ropy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/6H8bocfU6eEMXRH4jR_Kh.jpeg" alt=""></a></li><li><a href="https://huggingface.co/TonyDzi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ER2rjTiyO6-00TRMZjELA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lostinlatency"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69441e743e778b598a650301/uC61xgIA2DSNJKuNL92qM.jpeg" alt=""></a></li><li><a href="https://huggingface.co/haidefuren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ae9a1fe0c2573a987f4d496/rKsDX_uFyu13ntE6H_okA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
-<h2>本文提到的数据集 1</h2>]]></content:encoded>
-    </item>
-    <item>
       <title>Palette：教小模型用你的设计语言做幻灯片</title>
       <link>https://huggingface.co/blog/ibm-research/palette-deck-building</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/palette-deck-building</guid>
@@ -670,6 +782,69 @@ tmic run org/model --local-only --fixtures-only --no-history --bill-to ''</code>
 <h2>本文提到的模型 1</h2>
 <h2>本文提到的数据集 1</h2>
 <h2>本文提到的 Space 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>StateBench：测语言模型如何跟踪长文档里的状态变化</title>
+      <link>https://huggingface.co/blog/allenai/statebench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/statebench</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：StateBench: Testing how language models track state changes over long documents</description>
+      <content:encoded><![CDATA[<h1>StateBench：测语言模型如何跟踪长文档里的状态变化</h1>
+<p>企业  文章</p>
+<p>发布于 2026 年 11 月 3 日</p>
+<p>17</p>
+<ul><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/travisking"><img src="https://huggingface.co/avatars/1165d74c4dbd96297485b4be4446ddb2.svg" alt=""></a></li><li><a href="https://huggingface.co/Belirofon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b834e0636a9b6b45316755/63Ak_8fn4-75yr2ArCope.png" alt=""></a></li><li><a href="https://huggingface.co/sazid63"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6abaa0e17a2746d31739f0d8/T4kTX3ZhR5tjl_iI2Afjo.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://allenai.org/papers/statebench">技术报告</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/state-bench">数据</a> | 💻 <a href="https://github.com/allenai/state-bench">代码</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1792006215-statebench-draft-blog-google-docs-image-1.png"><img src="https://www.datocms-assets.com/64837/1792006215-statebench-draft-blog-google-docs-image-1.png" alt="StateBench 示意图：彩色的路径在一段序列中不断改变位置。"></a></p>
+<p>我们推出 <a href="https://github.com/allenai/state-bench"><strong>StateBench</strong></a>，一个考察<em>长上下文</em> <em>状态跟踪</em>的基准——也就是语言模型在长文档中跟踪有关实体信息的能力，以及这种能力如何随内容演变。</p>
+<p>状态跟踪是很多任务的底层能力：从读代码（变量被赋值又被重新赋值），到跟着故事走（人物在空间里移动、物件换了主人）。举个例子，如果一本悬疑小说在谋杀发生前写道“John 把刀交给了 Mary”，那么知道每个角色的状态已经改变就很要紧。然而，状态跟踪问题并非都同级：有些只需要找出最后一次更新；更难的一些要跟进一整串变化，其中漏掉一步就能把最终答案带偏。比如我们那道悬疑状态跟踪题的一个更难变体：John 把他背包里的东西交给了 Mary，而此前已知是 Edward 把一把刀放进了 John 的背包。</p>
+<p>对于带长依赖链的状态跟踪难题变体，Transformers 有被充分记录的理论局限，这也推动人们去提出把一份持续更新的记忆向前携带的循环与混合架构，例如 Gated DeltaNet。已有的状态跟踪测试往往盯着最难的那一类情形，但随着这些设计越来越常见，研究人员需要知道每种架构能处理哪几种状态跟踪。我们想搞清楚的，不只是最难的那几种状态跟踪上各架构之间的差异，也包括更简单、可能也更常见的几种。</p>
+<p>为此我们开发了 StateBench 基准，用来刻画不同复杂度的状态跟踪问题，并用它来评估不同架构语言模型之间的差异。我们发现，直接在这些任务上训练时，循环模型和混合模型的泛化能力远比 Transformers 走得更远；而包括 Gemini 3.8 Flash、Claude Opus 5.5 以及 GPT-6 Sol 和 Luna 在内的前沿模型，随着输入变长，在更难的状态跟踪形式上仍然会崩掉。</p>
+<h2>状态跟踪的四个层级</h2>
+<p>StateBench 由四个难度层级构成，依次允许越来越复杂的状态更新操作。对程序员来说，这些状态跟踪的复杂度层级可以理解为允许不同类型的变量赋值操作：</p>
+<ul><li><strong>R-trivial 问题</strong>使用不可变赋值。变量的值从不改变，所以模型只需要还原它最初被设成什么。放到代码里，这就是 let x = 4；放到日常生活里，它像出生日期——始终固定不变。</li><li><strong>Aperiodic 问题</strong>允许按值重新赋值。模型需要找到最新的值，早先的那些可以忽略。放到代码里，这是先 x = 4、随后又 x = 2；放到日常生活里，它像恒温器，最后一次设定决定当前的温度。</li><li><strong>Soluble 问题</strong>增加了自指更新。每次更新都建立在当前值之上，所以模型必须把变化一路带下去，而不是简单地找出最后一次赋值。放到代码里，这是 x = x + 5；放到日常生活里，它像比赛得分，每一分都加到累计总分上。</li><li><strong>General finite 问题</strong>增加了按引用赋值。一个变量可以取走另一个变量的当前值，从而在多次更新之间制造依赖。放到代码里，这是 x = y，或者交换两个变量。想象一位魔术师把一个小球藏在五个杯子之一的下面，然后反复交换杯子的位置。找到小球，就意味着跟踪这些交换如何改变它的位置。这就是 S₅ 状态跟踪问题：跟踪连续的交换把五个对象重排成了什么样子。它属于我们四个层级里最难的那一档，在<a href="https://arxiv.org/html/2404.08819v2#S3.SS1">此前关于状态跟踪局限的工作</a>中有讨论。</li></ul>
+<p>这些层级可以用变量赋值来直观理解，但它们同样代表状态跟踪里有理论依据的区分，其根基是 Krohn–Rhodes 理论——代数的一个分支，描述状态跟踪问题（可以视作<em>有限 monoid</em> 上的<em>word problem</em>）如何被分解成原子原语。我们这套层级里的每一级，都对应一类能用另一组原语搭建出来的状态跟踪问题。</p>
+<p>为了公平地比较四个层级，我们从一个 general finite 的变量赋值序列出发，从中导出三个更简单的版本，得到四道可比的 StateBench 题目——每个难度层级各一道。四道题都用相同数量的变量和互不相同的取值，赋值出现在序列中的相同位置；变的只有赋值的类型。</p>
+<h2>我们发现了什么</h2>
+<h3>预训练模型</h3>
+<p>我们在 StateBench 的 r-trivial、aperiodic 和 general finite 三个层级上测试了一批开放预训练模型，看它们的状态跟踪在哪里崩掉，也看不同架构是否恰好在理论预测的地方失效。在标准理论假设下，Transformers 能稳健地处理 r-trivial（soluble 和 aperiodic 也能处理到某种程度），但被预测会在 general 问题上失败。相反，内存更新更灵活的 Gated DeltaNet 原则上可以处理全部四个层级。</p>
+<p>我们从开放预训练模型起步，因为它们的训练数据和上下文长度都有完整记录。其中包括两个 70 亿参数的模型，Olmo 3（一个 Transformer）和 Olmo Hybrid（加入了 Gated DeltaNet 层），另有 2.75 亿和 27 亿参数的更小模型。这些模型都在同样的数据上完成预训练；训练时没有一个见过超过 64,000 token 的上下文，而我们测试时给大多数模型的输入远超那个长度。</p>
+<p>逐个打分之后，几乎所有模型在 r-trivial 问题上都表现良好，在 aperiodic 问题上随着输入变长而丢失准确率，在 general finite 问题上则停留在随机水平。问题的呈现格式在这里有影响——2.75 亿参数的 hybrid 和 Gated DeltaNet 模型在 RULER 风格的 r-trivial 问题上几乎顶到天花板，但同一批问题换成电子表格改写的形式后，它们就接近随机了。这道差距正是 StateBench 用多种形式测试同一个底层问题的原因之一。</p>
+<p><a href="https://www.datocms-assets.com/64837/1792006353-statebench-draft-blog-google-docs-image-2.png"><img src="https://www.datocms-assets.com/64837/1792006353-statebench-draft-blog-google-docs-image-2.png" alt="预训练 Transformer、hybrid 与 Gated DeltaNet 模型的准确率随输入长度（以 token 计）的变化；soluble 层级的结果未报告。"></a></p>
+<h3>前沿模型</h3>
+<p>接着我们测试了四个前沿模型——Gemini 3.8 Flash、Claude Opus 5.5 以及 GPT-6 Sol 和 Luna——要求它们读取每一段变量赋值序列，并生成每个变量的最终值。</p>
+<p>四个模型在 r-trivial 和 aperiodic 问题上都表现良好。但在 soluble 和 general finite 问题上，随着输入变长，准确率急剧下滑，在最长的 general finite 问题上一路跌到 13% 或更低。一个可能的因素是<em>敏感度</em>；在这些更难的层级上，有更多步骤能影响最终答案，模型漏掉一次更新却仍不出错的余地就更小了。</p>
+<p><a href="https://www.datocms-assets.com/64837/1792006435-statebench-draft-blog-google-docs-image-3.png"><img src="https://www.datocms-assets.com/64837/1792006435-statebench-draft-blog-google-docs-image-3.png" alt="Gemini 3.8 Flash、Claude Opus 5.5、GPT-6 Sol 和 GPT-6 Luna 在 StateBench 四个层级上的准确率随输入长度（以 token 计）的变化。"></a></p>
+<h2>直接在该任务上训练的模型</h2>
+<p>接下来我们追问：模型在更难层级上的困难，反映的是架构本身的局限，还是预训练压根没教会它们解这些题。有针对性的直接训练是一种对模型更有利的设定，它能揭示状态跟踪的问题在多大程度上来自底层架构和优化器，而不是来自预训练模型所用的数据。</p>
+<p>我们在 StateBench 上从零训练了若干 2.75 亿参数的模型：两个 Transformer 变体、两个 hybrid，以及两个带不同内存更新约束的 Gated DeltaNet 变体。这些模型在最长 256 次赋值的序列上训练，却在长达 64,000 次赋值的序列上测试，也就是训练最大长度的 250 倍。</p>
+<p>随着序列变长，各架构开始分化。Gated DeltaNet 和 hybrid 模型在 r-trivial、aperiodic 和 soluble 问题上几乎完美地泛化，一直延伸到我们测试的最长序列——上万次赋值。Transformers 学会了较简单的层级，但在更长的序列上退化，而且始终没学会 general finite 问题。在最难的层级上，内存更新更灵活的那个 Gated DeltaNet 变体泛化得最远，几乎完美的表现一直维持到训练时所见最长序列约 10 倍的长度。</p>
+<p>对 Gated DeltaNet 和 hybrid 模型来说，这道差距指向的是训练而非架构；直接训练之后，它们学会了处理自己的预训练版本应付不了的状态跟踪层级。Transformers 则不同——即便直接训练，它们也永远学不会最难的那一层级。</p>
+<p><a href="https://www.datocms-assets.com/64837/1792006493-statebench-draft-blog-google-docs-image-4.png"><img src="https://www.datocms-assets.com/64837/1792006493-statebench-draft-blog-google-docs-image-4.png" alt="直接在 StateBench 上训练的 Transformer、hybrid 与 Gated DeltaNet 模型在全部四个层级上的准确率随输入长度（以赋值次数计）的变化。"></a></p>
+<h2>未解决的问题与发布</h2>
+<p>有些问题仍然悬而未决。我们的新证明显示，内存更新更受限（非负特征值）的 Gated DeltaNet 可以解出全部 aperiodic 任务和某些 periodic 任务——比如跟踪一个重复出现的输入发生了偶数次还是奇数次——前提是论文里那套带舍入的定点算术。它在这套层级中的确切位置仍未定，包括它能否解出所有 soluble 任务，以及数值精度、或与 attention 层组合会如何影响它的能力。StateBench 还假设变量数量是固定的，而真实任务往往会随时间引入新的实体。例如在一场长对话里，随着对话展开会出现新的人物和新的对象，模型也得开始跟踪它们。当前的框架还没有覆盖这种设定。</p>
+<p>随着新的循环与混合架构不断出现，弄清每一种能处理哪几类状态跟踪，或许能帮助引导未来系统如何开发与训练。我们希望 StateBench 能给研究人员一种更细粒度的办法，去找到模型在哪里崩掉——并为那些仍然不足的能力构建训练与评估数据。更根本地说，我们希望它成为研究人员的北极星，去推动开发比当前模型状态跟踪能力更稳健的新架构。</p>
+<h2>本文提到的数据集 1</h2>
+<p>来自该作者的更多文章</p>
+<h2>我们能信任 LLM 来判断一个研究想法是否新颖吗？</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>18</p>
+<p>2026 年 10 月 27 日</p>
+<h2>LitPivot：在文献版图之中通过动态情境化来发展研究想法</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>39</p>
+<p>2026 年 10 月 23 日</p>
+<h3>社区</h3>
+<p>在文本输入框中拖拽、粘贴或点击此处上传图片、音频和视频。</p>
+<p>点按或粘贴此处以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fstatebench">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fstatebench">登录</a>后发表评论</p>
+<p>17</p>
+<ul><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/travisking"><img src="https://huggingface.co/avatars/1165d74c4dbd96297485b4be4446ddb2.svg" alt=""></a></li><li><a href="https://huggingface.co/Belirofon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b834e0636a9b6b45316755/63Ak_8fn4-75yr2ArCope.png" alt=""></a></li><li><a href="https://huggingface.co/sazid63"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6abaa0e17a2746d31739f0d8/T4kTX3ZhR5tjl_iI2Afjo.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Karlitos1337"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/D_5e1cD0VZfurrzCmLK0I.png" alt=""></a></li><li><a href="https://huggingface.co/Ropy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/6H8bocfU6eEMXRH4jR_Kh.jpeg" alt=""></a></li><li><a href="https://huggingface.co/TonyDzi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ER2rjTiyO6-00TRMZjELA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lostinlatency"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69441e743e778b598a650301/uC61xgIA2DSNJKuNL92qM.jpeg" alt=""></a></li><li><a href="https://huggingface.co/haidefuren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ae9a1fe0c2573a987f4d496/rKsDX_uFyu13ntE6H_okA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
+<h2>本文提到的数据集 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>Nemotron 万圣节</title>
@@ -6718,200 +6893,6 @@ accept or retry</code></pre>
 <p>新的训练栈让我们在超越以往 MoE 工作的同时，拥有更大的灵活性，随模型和硬件演进调整训练。而且它完全开放——研究者和开发者可以用 Olmo-core 3 训练自己的 MoE、适配不同硬件，并在路由、并行及系统其他部件上做实验。</p>
 <p>这正是我们思考开放模型开发的方式之一：当模型权重背后的基础设施与训练决策同样开放时，权重才更有价值。</p>
 <p>想更深入地了解系统设计、实验、ablation 以及我们一路测试过的方法，请阅读我们的技术报告，并在 <a href="https://github.com/allenai/olmo-core">GitHub 上探索 Olmo-core 3</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Open TTS 排行榜：面向多语言 Text-to-Speech 与 Voice Cloning 的可扩展评测</title>
-      <link>https://huggingface.co/blog/open-tts-leaderboard</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/open-tts-leaderboard</guid>
-      <pubDate>Wed, 30 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning</description>
-      <content:encoded><![CDATA[<h1>Open TTS 排行榜：面向多语言 Text-to-Speech 与 Voice Cloning 的可扩展评测</h1>
-<p>发布于 September 30, 2026</p>
-<p>在 GitHub 上更新</p>
-<ul><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/eustlb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Shree10"><img src="https://huggingface.co/avatars/e82173f983066af324262d2126b4dd6a.svg" alt=""></a></li><li><a href="https://huggingface.co/mrfakename"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png" alt=""></a></li><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kiekdi"><img src="https://huggingface.co/avatars/d4dd7d3d38e478f69e881852b5896eee.svg" alt=""></a></li></ul>
-<p>Eric Bezzam</p>
-<p>bezzam</p>
-<p>Steven Zheng</p>
-<p>Steveeeeeeen</p>
-<p>Eustache Le Bihan</p>
-<p>eustlb</p>
-<p>mrfakename</p>
-<p>mrfakename</p>
-<p>客座作者</p>
-<h3>TLDR 👉 一个新的 <a href="https://huggingface.co/spaces/hf-audio/open_tts_leaderboard">TTS 排行榜</a>，聚焦 open-source 与 multilingual</h3>
-<p>开源 text-to-speech（TTS）模型的发布速度一直在惊人地推进。在 Hugging Face Hub 上（截至 Sep 30, 2026）已经有多于 <a href="https://huggingface.co/models?pipeline_tag=text-to-speech">8K TTS 模型</a>可以取用 🚀</p>
-<p><strong>但评测并没有跟上：它仍然是碎片化、没有标准化的。</strong> 金标准是人类偏好分数，例如 MOS 或 MUSHRA（关于<a href="https://picovoice.ai/blog/measuring-tts-quality/">指标</a>的更多内容）。为此，几个 arena 式的排行榜已经成为对社区有用的参照点：</p>
-<ul><li><a href="https://huggingface.co/spaces/TTS-AGI/TTS-Arena-V2">TTS Arena v2</a></li><li><a href="https://artificialanalysis.ai/text-to-speech/leaderboard/provider-voice">Artificial Analysis</a></li><li><a href="https://voicearena.com/tts-leaderboard">Voice Arena</a></li></ul>
-<p>这些 arena 比较模型的方式，是向用户呈现两个模型的 TTS 输出，请用户二选一。收集到足够多的投票之后，会算出一个 <a href="https://en.wikipedia.org/wiki/Elo_rating_system">Elo 分数</a>来给模型排名，通常用 Bradley–Terry 模型（参见 <a href="https://voicearena.com/tts-methodology">Voice Arena methodology</a>）。</p>
-<p>人类偏好当然是最终的裁断者，但 <strong>arena 无法扩展以跟上 TTS 发布的节奏</strong>。这或许部分解释了为什么 open-source 模型在 arena 式排行榜上代表性不足：截至 Sep 30, 2026，<a href="https://artificialanalysis.ai/text-to-speech/leaderboard/provider-voice">Artificial Analysis</a> 上的 92 个模型里只有 16 个是 open-weights，<a href="https://voicearena.com/tts-leaderboard">Voice Arena</a> 上也有类似的偏向。这大概反映的是现实因素：接入一个 API 模型几乎只需要一个 API key，而一个 open 模型必须由 arena 运营方自己托管并提供服务，并且商业提供方比 open-source 作者更有理由去争取一个上榜位置。arena 式评测的另一个局限是投票者的一致性：没有任何 arena 能够保证同一批投票者带着同一套&quot;更好&quot;的标准，在时间推移中始终一致地评估模型。甚至同一个人的偏好也会随时间变化（正如 Heraclitus 那句名言所说：&quot;人不能两次踏进同一条河流&quot;）。</p>
-<p>为此，我们做出了 <a href="https://huggingface.co/spaces/hf-audio/open_tts_leaderboard">Open TTS Leaderboard</a>，它用客观指标来评估模型在若干互补的性能维度上的表现：</p>
-<ul><li><strong>Intelligibility（可理解度）</strong>：prompt 与生成音频转写之间的词错误率/字符错误率（WER 与 CER），使用 <a href="https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf">Qwen3 ASR</a>（<a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">Open ASR Leaderboard</a> 上排名最高的 open-source 模型）。</li><li><strong>Speed</strong>：在 H200 GPU 上做批量离线推理时的 inverse real-time factor（RTFx），以及用来量化 H200 GPU 和 CPU 上 streaming batch size 1 延迟的 time-to-first-audio（TTFA）。</li><li><strong>Speaker similarity</strong>：计算生成音频与参考片段各自的 <a href="https://huggingface.co/bezzam/wavlm_large_finetune_seed_tts_eval">WavLM speaker embeddings</a> 之间的余弦相似度（SIM）。</li></ul>
-<p>依靠客观指标，<strong>评估一个模型从几周（收集投票所需）降到了几个小时</strong> ⚡</p>
-<p>重要的是，Open TTS Leaderboard 并不取代人类偏好排名。基于 ASR 的 WER 提供的是 intelligibility 的一个代理指标，而 speaker similarity 估计的是音色身份的保留程度。两者都不直接度量 naturalness、表现力或听众偏好。尽管如此，它们甚至能够为投票式排行榜提供依据，告诉它们该把哪些模型纳入评测。</p>
-<p>我们做这个排行榜的意图，是让它由<strong>社区来塑造</strong>；我们希望听到你的反馈，让评测保持有用且有洞察。接下来几个小节概览 Open TTS Leaderboard 的主要功能。</p>
-<h2>多语言 + voice cloning 评测</h2>
-<p>在排行榜的默认视图里，模型按 macro-average WER 排名，这个指标来自 <a href="https://github.com/BytedanceSpeech/seed-tts-eval">Seed TTS Eval</a>（<a href="https://huggingface.co/papers/2406.02430">paper</a>）和 <a href="https://github.com/QwenAudio/CV3-Eval">CV3 Eval</a>（zero shot）（<a href="https://huggingface.co/papers/2505.17589">paper</a>）的英文 split。</p>
-<p><a href="https://huggingface.co/hexgrad/Kokoro-82M">hexgrad/Kokoro-82M</a>、<a href="https://huggingface.co/Supertone/supertonic-3">Supertone/supertonic-3</a> 和 <a href="https://huggingface.co/fishaudio/s2-pro">fishaudio/s2-pro</a> 在这两个 split 上取平均后的英文 WER 领先，而 Pareto 图把在 WER、批量推理（RTFx）与体积之间取得良好平衡的模型可视化出来。</p>
-<p>英文上的表现未必能迁移到其他语言。可以切换多种语言，按多语言表现给模型排名。Seed TTS Eval 只有英文和中文的音频，所以其他语言就直接是 CV3 Eval（zero shot）上的分数。注意中文、日文和韩文是字符型语言，因此报告的是字符错误率（CER），而跨语言的&quot;Average WER&quot;是跨各语言的 macro-average。</p>
-<p><a href="https://huggingface.co/k2-fsa/OmniVoice">k2-fsa/OmniVoice</a>、<a href="https://huggingface.co/fishaudio/s2-pro">fishaudio/s2-pro</a> 和 <a href="https://huggingface.co/FunAudioLLM/Fun-CosyVoice3-0.5B-2512">FunAudioLLM/Fun-CosyVoice3-0.5B-2512</a> 都是很强的多语言模型。</p>
-<p>打开&quot;Voice cloning&quot;开关后，就可以比较那些（在所选定语言上）支持这一功能的模型。</p>
-<p>此外，表格里会多出一列 SIM 表示 speaker similarity，还会多出两张 Pareto 图，用来可视化 SIM、批量推理与体积之间的取舍。</p>
-<p>一些模型的平均 WER 在 voice cloning 条件下——也就是提供了参考音频时——会变好，例如 <a href="https://huggingface.co/bosonai/higgs-tts-3-4b">bosonai/higgs-tts-3-4b</a> 和 <a href="https://huggingface.co/openbmb/VoxCPM2">openbmb/VoxCPM2</a>。</p>
-<h2>比较 TTS 输出并投票</h2>
-<p>数字只讲了故事的一部分，而如前所述，<strong>人类偏好才是最终的裁断者</strong>。在&quot;Listen&quot;标签页里，你可以比较那些指标背后的生成输出，看看自己更偏好哪些模型！</p>
-<p>挑你感兴趣的<strong>语言/数据集</strong>，选择是否要比较 <strong>voice cloning</strong>，并可以（也可不）指定模型，或直接听一组随机挑选的输出。</p>
-<p><strong>&quot;Listen&quot;标签页填补了现有 TTS 排行榜上一块重要的空白：一个可以试听各种模型输出的地方。</strong></p>
-<p>你甚至可以对这些生成输出给出反馈。随着我们从社区收集到更多投票，我们可能会把这份数据纳入排行榜。<strong>所以来投票吧！但请用你的 HF 账号登录，好帮我们滤掉 spam/bot。</strong></p>
-<h2>Streaming 性能</h2>
-<p>&quot;Streaming&quot;标签页比较各模型的 streaming 能力。模型按 TTFA（time-to-first-audio）排名，它量化的是：用户请求一个模型之后，要多久才能拿到可以播放的音频。这对 voice agent 和其他交互式应用很重要。</p>
-<p>对支持 streaming 的模型（在&quot;Streaming API&quot;下打了 ✅ 的那些），它是直到第一个音频 chunk 到达的时间。对不支持 streaming 的模型，它是直到整句话生成完的时间，因为播放不可能更早开始。每个模型一次只跑一条音频（batch size 1），都用来自 CV3-Eval 的同一组 50 条英文 prompt，在同一台硬件上、用它默认的音色。我们把前 3 次运行作为预热丢掉，报告其余运行的 TTFA 中位数。</p>
-<p>默认视图比较的是在 H200 GPU 上的性能。对于一小部分（但正在增长的）模型，也提供 CPU 的结果！</p>
-<p><a href="https://huggingface.co/kyutai/pocket-tts">kyutai/pocket-tts</a> 是一款在 GPU 和 CPU 上都非常适合 streaming 的好模型！</p>
-<h2>结论</h2>
-<p>Open TTS Leaderboard 的目标不仅是跟上 TTS 模型发布那惊人的节奏，更是要由社区来塑造；我们希望听到你的反馈，让评测保持有用且有洞察。请告诉我们你想看到哪些数据集、模型和指标！</p>
-<p>目前我们聚焦于：</p>
-<ul><li><strong>open-source 模型</strong>，把许多被 arena 式评测忽略的优秀模型推到台前。</li><li><strong>多语言</strong>，因为英文表现并不是其他语言的合适代理指标。</li></ul>
-<p>我们很快就会把评测脚本 open-source，就像 Open ASR Leaderboard 的 <a href="https://github.com/huggingface/open_asr_leaderboard">repo</a> 那样，这样你就能直接通过 GitHub Issues 和 PR 提供反馈与建议！一起来塑造 TTS 评测吧 🤗</p>
-<h2>本文提到的模型 10</h2>
-<h2>本文提到的 Spaces 3</h2>
-<h2>本文提到的论文 2</h2>
-<p>我们博客的更多文章</p>
-<p>audio</p>
-<p>speech</p>
-<p>leaderboard</p>
-<h2>Open ASR Leaderboard 加入它的第一门 Global South 语言</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://huggingface.co/avatars/82ecee27d4b68fd5df3d3b3506600e7a.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bc3e2f4b9d3615a6e2c982/8x33LQ0fwbnUtIn9CAwv2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6673251287330d7378e6b5e3/VVvuAsOUMiAPNgsdoRZjM.png" alt=""></li><li>+6</li></ul>
-<p>60</p>
-<p>August 28, 2026</p>
-<p>audio</p>
-<p>speech</p>
-<p>benchmark</p>
-<h2>推出 Real World VoiceEQ：度量 voice AI 的人类品质</h2>
-<ul><li><img src="https://huggingface.co/avatars/e5663d6740afc5aa42d6cfb6360ef084.svg" alt=""></li><li><img src="https://huggingface.co/avatars/a7a92c5f9e01577dd7bcebe5a345f2f7.svg" alt=""></li><li><img src="https://huggingface.co/avatars/5ddb29b461d38a9edc9a985fd15ce534.svg" alt=""></li><li><img src="https://huggingface.co/avatars/62e4f62d21f3ad9b314819f9c45161d3.svg" alt=""></li><li>+9</li></ul>
-<p>34</p>
-<p>July 15, 2026</p>
-<h3>社区</h3>
-<p>EducitoEc</p>
-<p>9 天前</p>
-<p>非常有意思</p>
-<p>Nomad-link-id</p>
-<p>9 天前</p>
-<p>很高兴这个榜把多语言 TTS 质量与 voice-cloning 的音色身份分开来评，而不是给出一个笼统的总绿灯。</p>
-<p>我会继续留意的一项检验是：当你把语言/domain 固定住时排名是否依然成立，与把 cloning 当作那条变化轴时相比又如何。否则各团队会去优化那个更容易的子量表，然后依然把结果称作&quot;SOTA TTS&quot;。</p>
-<p>eltonwilliams</p>
-<p>9 天前</p>
-<blockquote>英文上的表现未必能迁移到其他语言。可以切换多种语言，按多语言表现给模型排名。Seed TTS Eval 只有英文和中文的 movie box 音频，所以其他语言就直接是 CV3 Eval（zero shot）上的分数。注意中文、日文和韩文是字符型语言，因此报告的是字符错误率（CER），而跨语言的&quot;Average WER&quot;是跨各语言的 macro-average。</blockquote>
-<p>Open TTS Leaderboard 是一个开放的评测平台，旨在让多语言 text-to-speech 与 voice-cloning 模型更容易在规模化的条件下相互比较。传统的 TTS arena 通常让用户听两个模型的输出并选出自己更偏好的那一个。这些投票随后可以用来计算一个 Elo 式的分数，通常借助 Bradley–Terry 模型一类的方法，从而给用户一个简单的途径，基于人类偏好来理解不同系统的表现。</p>
-<p>人类反馈仍然是评估语音质量的重要一环，但在新 TTS 模型以极快节奏发布的当下，只依赖 arena 式投票会很困难。open-source 模型也可能遇到实际障碍，因为它们一般需要由评测平台自己托管和提供服务，而基于 API 的商业模型接入起来更容易。这会导致 open-weight 系统在公开排行榜上不那么显眼。另一个挑战是一致性：人们的偏好和评判标准会随时间变化，这意味着相隔数月收集的投票未必代表同一套标准。</p>
-<p>Open TTS Leaderboard 希望通过提供一个可扩展且透明的空间，来评估多语言 TTS 与 voice-cloning 系统，从而应对这些挑战。目标是让比较更容易复现、扩大对 open 模型的覆盖，并在人类偏好之外提供有用的评测信号。把可扩展的测试与社区反馈结合起来，这个项目能帮助研究者、开发者和用户更好地理解语音模型在不同语言、不同音色与不同用例下的表现。</p>
-<p>bezzam</p>
-<p>文章作者</p>
-<p>约 17 小时前</p>
-<p>放着 eval 脚本的 GitHub repo 已经公开了！<a href="https://github.com/huggingface/open-tts-leaderboard">https://github.com/huggingface/open-tts-leaderboard</a></p>
-<p>上传：把图片、音频和视频拖进文本输入框、粘贴，或</p>
-<p>点击此处</p>
-<p>.</p>
-<p>在此轻点或粘贴即可上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopen-tts-leaderboard">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fopen-tts-leaderboard">登录</a>以发表评论</p>
-<ul><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/eustlb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Shree10"><img src="https://huggingface.co/avatars/e82173f983066af324262d2126b4dd6a.svg" alt=""></a></li><li><a href="https://huggingface.co/mrfakename"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png" alt=""></a></li><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kiekdi"><img src="https://huggingface.co/avatars/d4dd7d3d38e478f69e881852b5896eee.svg" alt=""></a></li><li><a href="https://huggingface.co/blanchon"><img src="https://huggingface.co/avatars/716b6a7d1094c8036b2a8a7b9063e8aa.svg" alt=""></a></li><li><a href="https://huggingface.co/kaustuk000"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69c2bf314b49420b596506a3/RmvwOTqQLqh2wU17wvGJE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bogdanraduta"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/i2hbLslEOmg7_O1H1ovch.png" alt=""></a></li><li><a href="https://huggingface.co/mgokg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1gegD0pvTaV4PJR_D9z8P.png" alt=""></a></li><li><a href="https://huggingface.co/EducitoEc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xAez-XvIUIr0j3GpPB55Y.png" alt=""></a></li><li><a href="https://huggingface.co/MatiasDrejer"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/aH7oiM_HKMLq-03uVn6DO.png" alt=""></a></li></ul>
-<h2>本文提到的模型 10</h2>
-<h2>本文提到的 Spaces 3</h2>
-<h2>本文提到的论文 2</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>把来源弄对，而不只是把事实弄对：面向 MCP Agent 的 source-aware 校验</title>
-      <link>https://huggingface.co/blog/MultiverseComputingCAI/getting-the-source-right-not-just-the-fact-source</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/MultiverseComputingCAI/getting-the-source-right-not-just-the-fact-source</guid>
-      <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Getting the Source Right, Not Just the Fact: Source-Aware Verification for MCP Agents</description>
-      <content:encoded><![CDATA[<h1>把来源弄对，而不只是把事实弄对：面向 MCP Agent 的 source-aware 校验</h1>
-<p>团队</p>
-<p>文章</p>
-<p>发布于 September 29, 2026</p>
-<ul><li><a href="https://huggingface.co/AntonioTN"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ander-alvarez"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AlexDGenu"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1iQUUZFQh6BZXCgGY7zJT.png" alt=""></a></li><li><a href="https://huggingface.co/DuckDuckDown"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QU3ijZPXiAWJKJQTof3nF.png" alt=""></a></li><li><a href="https://huggingface.co/AlgoEnergy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tGmQJzeT9SYL_sK839ifI.png" alt=""></a></li><li><a href="https://huggingface.co/fakoor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/3xs4KD-K8_TSwUNSbWp9o.png" alt=""></a></li></ul>
-<p>Antonio Tiene</p>
-<p>AntonioTN</p>
-<p>MultiverseComputingCAI</p>
-<p>Ander Alvarez Sanz</p>
-<p>ander-alvarez</p>
-<p>MultiverseComputingCAI</p>
-<p>Oliver Wirjadi</p>
-<p>oliverwirjadi</p>
-<p>MultiverseComputingCAI</p>
-<p>Alessandro Genuardi</p>
-<p>AlexDGenu</p>
-<p>MultiverseComputingCAI</p>
-<p>使用工具的 LLM agent 不再只从单篇检索到的段落里取信息。借助 <a href="https://modelcontextprotocol.io">Model Context Protocol (MCP)</a>，一个 agent 可以调用搜索工具、查看结构化的患者或账户记录、查询数据库、拉取元数据，然后把这一切编织进同一个回答。这让那个关于事实性的老问题比看上去更微妙。为核查 LLM 回答而建立的绝大多数系统，从 <a href="https://github.com/explodinggradients/ragas">RAGAS faithfulness</a> 到 MiniCheck、AlignScore、SummaC 这类细粒度检查器，问的都是：一旦可用证据被汇总到一处，某条论断是否被这些证据支撑。在它们的常见形态里，这些系统并不告诉我们每条论断是由哪个 MCP 工具输出支撑的，也不告诉我们那是不是回答里所点名的来源。</p>
-<p>我们最新的论文 <em>ProvenanceGuard: Source-Aware Factuality Verification for MCP-Based LLM Agents</em>（可在 <a href="https://huggingface.co/blog/MultiverseComputingCAI/%5BHF-PAPER-LINK%5D">Hugging Face</a> 上阅读，在此期间也可读 <a href="https://arxiv.org/abs/2606.18037">arXiv</a> 版）正是冲着这一空白去的。我们在意的失败模式，我们称之为 cross-source conflation（跨来源混同）：某条论断在证据中的某处是真的，却被归到了错误的来源上。一个 source-blind（对来源无感知）的校验器可能放它通过，因为这个事实在汇总池里确实存在。而一个 source-aware 的校验器不应该放行。</p>
-<h2>问题：在某处被支撑，不等于被正确的来源支撑</h2>
-<p>设想一个客服 agent 回答：&quot;根据账户记录，这个套餐包含 30 天退款窗口。&quot; 这个退款窗口可能完全真实，但它是写在政策文档里的，而不是写在回答所指的那份账户记录里。把两者合并到一起，这条论断看起来就有支撑；把它们分开保留，归属就是错的——而在数据敏感的场景里，错误的归属和错误的事实一样有害。同样的模式也出现在临床 agent 上：一条来自病史工具、针对特定患者的用药细节，一旦回答把它呈现成来自医学文献的发现，就会造成误导。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/668e37fd9c9aa124a3c867e8/svnUpzhFgTpLqOF_bRDHl.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/668e37fd9c9aa124a3c867e8/svnUpzhFgTpLqOF_bRDHl.png" alt="一张对比图：用一条由政策文档支撑却被归到账户记录名下的退款窗口论断，对照展示 source-blind 的汇总支撑与 source-aware 的校验。"></a></p>
-<p><em>一条论断可以由某个 MCP 来源支撑，而回答却把它归到另一个来源上。source-blind 打分在汇总后的证据里看到支撑，于是放行；ProvenanceGuard 则另外检查提供支撑的来源是否与回答所述或所暗示的那个来源一致。来源：论文 Figure 1。</em></p>
-<p>这正是为什么 faithfulness 分数尽管有用，对 MCP agent 来说仍然不够。一个回答自带来源信息（provenance），有时是显式的（&quot;根据账户记录&quot;），有时是隐含的。ProvenanceGuard 把论断与来源之间的这层关联保留下来，供人检视。</p>
-<h2>ProvenanceGuard 做了什么</h2>
-<p>ProvenanceGuard 是一个生成后（post-generation）校验层，架在一个黑箱 MCP agent 之上。它在 agent 产出回答之后运行，并且绝不把证据坍缩成一份匿名的 context。相反，它把来源标识一路贯穿整条流水线。它读取捕获到的 MCP trace，包括各工具输出及其 source ID，而无需重新训练 agent。然后它依次做五件事：把回答拆解成一条条具体的论断，为每条论断找出最相关的来源，检查那个来源是否真的支撑它，把该来源与回答所点名或所暗示的来源做比较，最后同时给出逐条论断的来源判定，以及一个全局的、回答层面的放行或拦截决定。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/668e37fd9c9aa124a3c867e8/nDchWzRhBSmscjaa8w5G5.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/668e37fd9c9aa124a3c867e8/nDchWzRhBSmscjaa8w5G5.png" alt="流水线示意图：agent 产出回答草稿与 trace，随后 ProvenanceGuard 拆解论断、路由到来源、用 NLI 检查支撑、做校准、检查归属，最终要么放行回答，要么把它送去修复。"></a></p>
-<p><em>校验流程。来源标识在拆解、路由、支撑打分、归属检查与修复的全程都得以保留，而不是被汇总成一池。被拦截的回答可以走 RARR 风格的修复，然后重新校验。来源：论文 Figure 2。</em></p>
-<p>有几个设计选择值得单独说明。在论文的实验中，我们使用本地模型，以便在受控的离线环境里处理捕获到的 trace：<a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2">MiniLM</a> 帮助找到相关来源，一个 <a href="https://huggingface.co/MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli">DeBERTa NLI verifier model</a> 检查那个来源是否支撑该论断，一个本地语言模型帮助把回答拆成论断。校验器还会仔细核查字面值：源里没有的数字、日期或标识符，不能仅仅因为句子读起来合理就通过。一个经过校准的决定步骤把这些信号合在一起。如果某条回答被拦截，一个 <a href="https://arxiv.org/abs/2210.08726">RARR</a> 风格的修复步骤可以尝试基于来源的改写，或者一个安全的兜底回答，随后校验器再对它检查一遍。</p>
-<p>这些被点名的模型是我们评测所用的配置，并不是 ProvenanceGuard 的硬性要求。同样的论断拆解、来源匹配与决定步骤可以改造到托管模型上，供更偏好云服务的团队使用；但新的配置需要它自己的测试和校准。我们报告的结果来自这套本地配置。它保守的决定策略适合数据敏感的审查场合，在那里，把来源弄对比给出尽可能快的回答更重要。</p>
-<h2>结果</h2>
-<p>我们在一个医疗 agent 的回答上测试了 ProvenanceGuard，这个 agent 用过了患者病历、研究文章以及其他工具。这让我们得到 281 条真实 trace 可供研究。医学是一个有用的试验场，因为来自某个患者病历的事实和来自一般研究的事实不能算作同一个来源。当 agent 保存了它的工具输出与 source ID 的记录时，这套方法也能用在其他领域。在主测试里，人类专家核查了 361 条论断，它们来自 40 条回答，这些回答是从开发该系统所用数据中留出的一部分。</p>
-<p>最直接的结果是这个：专家判定有 139 条论断不该通过，而 ProvenanceGuard 抓到了其中的 138 条，只放过 1 条。它另外扣下了 67 条专家认为有支撑的论断，把它们送去复审或修复。这反映了我们所测试的谨慎设置：对某些其实有支撑的论断多看一眼，也好过让没有支撑的论断溜过去。对于来源可识别的论断，在这次测试里它也在大约 86% 的情况下选对了来源。</p>
-<p>我们在同样的论断上跑了另外四个支撑检查器。按论文中那个衡量标准——系统在抓到该被拦截的论断与避免不必要拦截之间做得多好——ProvenanceGuard 得分最高。这轮比较里的其他检查器都没有告诉我们每条论断是由哪个工具输出支撑的。ProvenanceGuard 把这层关联记录下来，因此复审者能看到每条论断所核查的来源以及由此得出的决定。</p>
-<table><thead><tr><th>校验器</th><th>Reject/block F1</th><th>是否输出论断到 source ID 的映射</th></tr></thead><tbody><tr><td>ProvenanceGuard（我们的）</td><td><strong>0.802</strong></td><td>是</td></tr><tr><td>MiniCheck</td><td>0.783</td><td>否</td></tr><tr><td>RAGAS Faithfulness</td><td>0.758</td><td>否</td></tr><tr><td>AlignScore</td><td>0.662</td><td>否</td></tr><tr><td>SummaC-ZS</td><td>0.436</td><td>否</td></tr></tbody></table>
-<p><em>在同一份留出的论断包上计算的二元支撑指标。在拦截这件事上，ProvenanceGuard 追平或超过了 source-blind 基线，同时还给出逐条论断的来源判定。来源：论文摘要与 Table III。</em></p>
-<h2>当来源彼此很像时如何核查论断</h2>
-<p>在另一个更难、包含多个相似来源的独立测试中，ProvenanceGuard 在决定拦截哪些论断上拿到 0.846 的 F1，但在 50.3% 的论断上正确识别出了确切的来源。把相似来源区分开来仍然是一个重要的改进方向。</p>
-<p>我们还跑了一个聚焦于错误归属的受控测试：在 50 个案例里我们改动被点名的来源，同时保持支撑证据不变。ProvenanceGuard 抓到了全部 50 次替换。这说明它能够检出明确的来源错误，而那个更难的测试则说明了在多个貌似合理的来源之间做选择的难度。</p>
-<h2>修复被拦截的回答</h2>
-<p>只有当被拦截的回答还有后续可做时，拦截才有意义。接入 RARR 风格的修复循环后，完整 trace 的那一轮运行处理掉了全部 173 条被拦截的回答，尽管其中 144 条最终落到兜底文本而不是实质性的改写——这是系统在选择不给出一个无法校验的回答，而不是编造一个。在重建的多来源测试 trace 上，一次全新的修复运行解决了最初被拦截的全部 59 条回答，只有两次以兜底收尾。作为一个离线关卡，它的开销不大，在所报告的本地配置上大约每条回答半秒，而 NLI 与路由调用本身只有几十毫秒。</p>
-<h2>为什么这契合 Multiverse Computing</h2>
-<p>当 agent 从单段落 RAG 走向多工具的 MCP 配置，&quot;某个事实究竟来自哪个来源&quot;这个问题就不再是脚注，而成为事实性含义的一部分。ProvenanceGuard 把这条来源关联逐论断地显现出来。对 Multiverse Computing 而言，这意味着一种检查现有 agent 的办法，并能在需要时把敏感 trace 留在受控环境里。医疗研究只是其中一个用例；只要 agent 的 trace 保留了它的工具与来源，同样的思路就能改造适用。</p>
-<p>这种改造已经能在 <a href="https://github.com/NVIDIA/nvflow/pull/9">NVIDIA NVFlow</a> 上看到：它合并了一个可选的 grounding 校验阶段，用于其金融 agent。该阶段把已经完成的回答对照 agent 检索到的 SEC 摘录做检查，并单独保存各项决定，而不改动原本的 rollout 或训练数据。NVFlow 的这项贡献用的是 ProvenanceGuard 的 source-aware 校验思路；上文讨论的修复循环属于更宽泛的研究系统。</p>
-<p>ProvenanceGuard 还以海报形式在 <a href="https://github.com/aalvsz/provenanceguard/blob/main/poster/ProvenanceGuard_Agentic_AI_Summit_2026_Berkeley.pdf">UC Berkeley 举办的 Agentic AI Summit 2026 上做过展示</a>。</p>
-<p>想要完整的技术细节吗——包括路由与 NLI 的推导、校准的消融实验、多来源的压力切片，以及完整的结果表格？请在 <a href="https://huggingface.co/papers/2606.18037">Hugging Face</a> 上阅读完整论文，或者联系我们团队，聊聊把 source-aware 校验用到你自己的 agent 上。</p>
-<h2>本文提及的模型 2</h2>
-<h2>本文提及的论文 1</h2>
-<p>该作者的更多内容</p>
-<h2>像物理学家一样剪枝 LLM：把 Block 移除当作 Ising 优化问题</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6835694d56d5a69517655698/C3QUBARPGF4kbzJzZaT29.png" alt=""></li></ul>
-<p>34</p>
-<p>September 21, 2026</p>
-<h2>为谁做安全？拒绝某个主题中恰当的那部分，而不是整个主题</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6835694d56d5a69517655698/C3QUBARPGF4kbzJzZaT29.png" alt=""></li></ul>
-<p>31</p>
-<p>September 8, 2026</p>
-<h3>社区</h3>
-<p>Nomad-link-id</p>
-<p>10 天前</p>
-<p>对 MCP agent 真正要紧的失败模式比&quot;幻觉&quot;更安静：某条论断在汇总后的工具输出里的<em>某处</em>是真的，却被归到了错误的来源。</p>
-<p>那种情况下，source-blind 的 faithfulness 依旧可以亮绿灯——这个事实在那锅汤里存在着。source-aware 校验是契约层面的升级：在论断拆解、支撑检查和归属检查的全程保留 tool/source ID，然后给出放行或拦截，并附上复审者真能检视的逐条论断来源判定。</p>
-<p>给正在接入 MCP 的团队一个实际的追问：当你的 eval 说&quot;grounded&quot;时，它指的是被任意一个工具输出支撑，还是被回答所点名的那个来源支撑？这是两道不同的发布关卡。在多工具配置里，只有后者能在人类相信这条引用之前抓到跨来源混同。</p>
-<ul><li><a href="https://huggingface.co/ander-alvarez"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg" alt=""></a></li></ul>
-<p>ander-alvarez</p>
-<p>文章作者</p>
-<p>10 天前</p>
-<p>你好，谢谢你的评论。你把问题的要害抓得很准。对 ProvenanceGuard 来说，一条论断是&quot;grounded&quot;意味着它被回答所点名或所暗示的那个来源支撑。在工具输出里的别处找到这个事实并不够。在退款窗口那个例子里，政策文档支撑了这个事实，但回答把它记在账户记录名下，所以我们标出这处不一致，并给出来源判定。</p>
-<p>mghwaz</p>
-<p>10 天前</p>
-<p>编辑于 10 天前</p>
-<p>我粗读了一遍论文，但没找到任何与&quot;用更便宜的 llm agent 来做 source aware judge&quot;的对比。以下是我对论文的理解；</p>
-<ul><li>一个 LLM 调用多个工具，并用它们的输出生成回答，其中可能陈述许多条论断</li><li>一条论断可以由（一个或多个）工具的输出支撑，却被错误地归到另一个来源上。</li><li>基本上是把回答拆成论断，并用 embeddings 为每条找到一个可能的支撑来源。</li><li>用 NLI 与 random forest 检查所选来源是否支撑该论断；</li><li>同时在回答里检查该论断是否被归到了正确的来源。</li></ul>
-<p>看起来，(2 - 5) 这几步似乎能在 lifecycle 里用基本的 prompts 就完成，前提是你拥有那个执行 agent。如果不是，也可以通过 harness 里的 hooks 以插件形式实现。你们有没有这方面的对比。说到底，random forest 以及这一整套 eng/plumbing，相比&quot;对 traces+ans 再做一次 llm 调用&quot;到底买到了多少东西？</p>
-<ul><li><a href="https://huggingface.co/ander-alvarez"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mghwaz"><img src="https://huggingface.co/avatars/72f6f613035501a07c402999e7718f5f.svg" alt=""></a></li></ul>
-<p>ander-alvarez</p>
-<p>文章作者</p>
-<p>9 天前</p>
-<p>你好，这个问题很合理。一个 source-aware 的 LLM judge 可以完成这些检查，而我们在论文里没有报告与某个更便宜方案的直接对比。</p>
-<p>不过，我们的部分动机在于：引入一个 LLM judge 本身就可能给出不一致的判定，或者把来源搞混（正是我们想要抓的那一类错误）。因此第二次 LLM 调用会引入它自己的新错误。ProvenanceGuard 用显式的来源追踪和经过校准的支撑检查，来减少对另一次生成式判断的依赖。你建议的这个对比确实是一项有用的后续研究，可以量化在 accuracy、延迟和成本上的收益。</p>
-<p>上传：把图片、音频和视频拖进文本输入框、粘贴，或</p>
-<p>点击此处</p>
-<p>.</p>
-<p>在此轻点或粘贴即可上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source">登录</a>以发表评论</p>
-<ul><li><a href="https://huggingface.co/AntonioTN"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ander-alvarez"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AlexDGenu"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1iQUUZFQh6BZXCgGY7zJT.png" alt=""></a></li><li><a href="https://huggingface.co/DuckDuckDown"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QU3ijZPXiAWJKJQTof3nF.png" alt=""></a></li><li><a href="https://huggingface.co/AlgoEnergy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tGmQJzeT9SYL_sK839ifI.png" alt=""></a></li><li><a href="https://huggingface.co/fakoor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/3xs4KD-K8_TSwUNSbWp9o.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li><li><a href="https://huggingface.co/asepsafrudin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jzzvCtkAVcFuwfuh2k_va.png" alt=""></a></li><li><a href="https://huggingface.co/kbommasani"><img src="https://huggingface.co/avatars/327b3a9c4c54e49640d52651c6a8428b.svg" alt=""></a></li><li><a href="https://huggingface.co/kamal24h"><img src="https://huggingface.co/avatars/5f3f1a55b0878bbca0cd10ae8fdf2ed4.svg" alt=""></a></li><li><a href="https://huggingface.co/abdullahashraf122"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/Ft9XaIrp9M75oRHfxtCbi.png" alt=""></a></li></ul>
-<h2>本文提及的模型 2</h2>
-<h2>本文提及的论文 1</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

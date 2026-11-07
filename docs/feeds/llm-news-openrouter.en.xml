@@ -7,7 +7,73 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sun, 01 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 06 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Introducing the New Auto and Auto Code Routers</title>
+      <link>https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/?li=1</guid>
+      <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Introducing the New Auto and Auto Code Routers</h1>
+<p>Brian Thomas ·11/6/2026</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers.png" alt="Introducing the New Auto and Auto Code Routers"></p>
+<p>Today we’re launching the next generation of Auto Router. Taking all we’ve learned from running Auto Router for the past 3 years, we rebuilt it from the ground up on an entirely new technical foundation that outperforms the old router by up to 4× depending on the benchmark, with a routing step that is 3× faster at the p90 in our live test (0.65s against 1.96s).</p>
+<p>It’s easier for a router to score well on benchmarks than to perform well in practice. Auto Router sees over 2.5T tokens from over 100k people every month, so it has to hold up in the real world.</p>
+<p>This launch includes a brand new router specialized for coding work, <a href="https://openrouter.ai/openrouter/auto-code">Auto Code</a> (<code>openrouter/auto-code</code>), alongside our flagship general purpose <a href="https://openrouter.ai/openrouter/auto">Auto Router</a> (<code>openrouter/auto</code>).</p>
+<p>Try it now by setting <code>model</code> to <code>openrouter/auto</code> or <code>openrouter/auto-code</code> in any request, or open <a href="https://openrouter.ai/chat?models=openrouter%2Fauto">Auto Router in the chatroom</a>. Check out the <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">Auto Router docs</a> for all the details.</p>
+<h2>What’s new in this generation</h2>
+<p>The previous Auto Router relied on a couple of imprecise signals, such as task type, to drive model selection, a limit required to keep latency low and judgments consistent. The new Auto Router and Auto Code choose models by weighing eleven factors about each request and combining them with live pricing, provider health, and cache status.</p>
+<p>This new process lets Auto Router work with any set of models. You can apply any governance policies, including guardrails, zero data retention requirements, provider restrictions, allowed model lists, and BYOK keys. Auto Router makes efficient choices from the models available to you.</p>
+<p>We introduced the new Auto Code router based on feedback about what it was like to use a general purpose router in a coding harness. This router is tuned from the ground up for coding performance by including a higher tier of coding models and optimizing for latency. Across the five benchmarks below, Auto Code scores in line with Claude Opus 5.5 while costing 74% less per task.</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/benchmark-comparison-light.png" alt="Heatmap comparing the new Auto Router at its default tier, Auto Code, and the previous Auto Router at its default tier across Deep SWE, SWE-Atlas QA, Terminal Bench 4.0, τ³-bench Banking, and MMMU Pro Vision. Each benchmark shows a score and a cost per task with the multiple of the previous Auto Router; score cells are shaded green or red, deeper for larger changes (light mode)"></p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/benchmark-comparison-dark.png" alt="Heatmap comparing the new Auto Router at its default tier, Auto Code, and the previous Auto Router at its default tier across Deep SWE, SWE-Atlas QA, Terminal Bench 4.0, τ³-bench Banking, and MMMU Pro Vision. Each benchmark shows a score and a cost per task with the multiple of the previous Auto Router; score cells are shaded green or red, deeper for larger changes (dark mode)"></p>
+<p>In the previous generation, we also observed that the remarkable efficiency of the lowest cost models had caused Auto router to drift lower on cost per task, leaving out many exceptional models. We made a decision with this release to return to pricing closer to where Auto was a few months ago in order to introduce a greater variety of models. If you preferred the previous behavior, you can set the cost_tier to low to get similar cost performance.</p>
+<h2>See the reasoning behind routing decisions in the chatroom</h2>
+<p>The easiest way to start learning how these new routers work is to pick Auto Router or Auto Code in the <a href="https://openrouter.ai/chat?models=openrouter%2Fauto">chatroom</a>. A routing insights panel appears beside each reply showing why the router picked that model. The same analysis is available via the API when you enable <a href="https://openrouter.ai/docs/guides/features/router-metadata#enabling-router-metadata">router metadata</a>.</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/chat-routing-insights.png" alt="The OpenRouter chatroom with Auto Router selected. A Python RecursionError question was answered by DeepSeek V4.1 Flash on InferenceNet. The routing insights panel shows the task (Debugging, 98%), the selection share across the candidate models, and the difficulty, precision, and larger-model-benefit judgments."></p>
+<h2>Watch the live routing mix on each model page</h2>
+<p>The <a href="https://openrouter.ai/openrouter/auto">Auto Router</a> and <a href="https://openrouter.ai/openrouter/auto-code">Auto Code</a> model pages now show which models each router picks most often, split by session type, and how the mix shifts as difficulty rises.</p>
+<p><img src="https://openrouter.ai/blog/images/auto-and-auto-code-routers/router-page-live-routing.png" alt="Live routing section of the Auto Router model page: a bar chart of requests in the past day by model with Agentic and Non-agentic tabs and cost tier filters, a share-of-requests list led by GPT-6.1 Sol at 33.8%, and a stacked area chart of the current routing mix for all tasks from trivial to extreme difficulty."></p>
+<h2>Compare performance against other routers and single models</h2>
+<p>Auto Router and Auto Code benchmark results are published on the <a href="https://openrouter.ai/benchmarks/routers">model routing benchmarks</a> page alongside the other routers on OpenRouter and single-model baselines. We rerun them periodically, so you can track how each router keeps up as new models are released.</p>
+<h2>Built upon years of lessons from running Auto Router</h2>
+<p>Auto Router is coming up on its third birthday. If you set <code>openrouter/auto</code> in an agent years ago, you’re still getting the latest cost-optimal choice today. We’ve learned a lot about where automatic model selection goes wrong, and built the new generation to avoid those problems. Some examples:</p>
+<p><strong>We separated out Auto Code to optimize for harnesses.</strong> The most common complaint about previous versions of Auto Router was how it performed in coding harnesses. Auto Code favors a slightly more expensive tier of models whose strengths match coding work. It weighs speed more heavily because responsiveness matters while you build. It also penalizes failures more harshly, so it course corrects faster on work where success and failure are clear cut.</p>
+<p><strong>It’s restrained about switching to protect caching benefits.</strong> Switching models costs extra while the new model rebuilds the input token cache. Auto Router favors a change in reasoning effort when that’s enough, and switches only when the gain is worth the cache it gives up. In our beta period it stayed on the same model for nearly nine of every ten agent turns.</p>
+<p><strong>It adapts to failures.</strong> When a session is going wrong in ways that point at the model, such as the same error coming back or tests failing after an edit, those signals raise the odds of a switch. That makes it much less likely a session stays stuck with a model that was the wrong pick early on.</p>
+<p><strong>It’s tuned based on both real usage as well as benchmarks.</strong> Auto Router gets better with every benchmark run and every real routing decision it sees. Through <code>typesafe/jev-router</code> and <code>openrouter/auto-beta</code> we have already verified it on production workloads, while respecting zero data retention throughout. In our beta, against the previous router, invalid tool calls were 4× lower and agentic responses were cut off half as often.</p>
+<h2>Model Routing built upon the leading Provider Routing foundation</h2>
+<p><strong>Model routers</strong> like Auto Router and Auto Code pick which model will process the request. <strong>Provider routing</strong> picks who will serve that model. OpenRouter has done this for every request since the beginning: once the model is picked, the <a href="https://openrouter.ai/docs/guides/routing/provider-selection">provider router</a> chooses among the providers hosting it using your provider preferences, live uptime and latency, price, and whether a provider already holds your prompt cache.</p>
+<p>A model router can only be as good as the underlying provider router. We built Auto Router to be aware of our entire catalog, so it adapts to governance restrictions, benchmark results, and market signal from new model releases as they happen. Every one of the 600+ models on OpenRouter enters the consideration set the day it’s added, and benchmarks and popularity signals decide whether it earns a place in the cost-optimal set.</p>
+<h2>How a request moves through Auto Router</h2>
+<ul><li>Auto Router narrows the model pool. Guardrails, zero data retention, model capabilities, provider restrictions, BYOK keys, and any allowed or excluded model lists decide which models are considered.</li><li>A fast decision model processes the request. In one call it rates eleven things, such as what kind of task this is, whether the task just changed, how hard it is, whether speed matters, whether it needs vision or knowledge of a codebase, and whether a bigger model, more thinking, or a cheaper model would serve it better.</li><li>The routing policy chooses the model. It weighs live prices, cache status, and benchmark performance to pick both the model and the reasoning effort.</li><li>The request goes through the same provider routing a direct request to that model would, so it lands on the best provider for that model.</li><li>The results of each turn inform the next turn’s model selection. The router carries signals like whether the model is struggling and what’s already cached into the next decision.</li></ul>
+<h2>Routers versus single models</h2>
+<p>Benchmarks consistently show that no router on the market beats the single best frontier model at every point on the cost and quality curve. The new Auto Router is no exception, and we publish its benchmarks to show its strengths and weaknesses plainly.</p>
+<p>Routers earn their place when the work is varied, when an organization needs to hold costs steady, and for people who don’t have the time or interest to keep up with the constant stream of model releases. Choosing Auto Router or Auto Code over a single model trades a little peak performance for consistent, cost efficient performance over time.</p>
+<p>If you know the model that works best for your specific work, keep using it. If you’d rather choose once and stay focused on the work itself, a router is the way to do that.</p>
+<h2>Get started</h2>
+<p>Auto Router and Auto Code work wherever you’d put a model string:</p>
+<pre><code>curl https://openrouter.ai/api/v1/chat/completions \
+  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;model&quot;: &quot;openrouter/auto-code&quot;,
+    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Add a retry with backoff to fetchUser in api/users.ts&quot;}]
+  }'</code></pre>
+<p>Read the <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">Auto Router docs</a> for the full settings, or open <a href="https://openrouter.ai/chat?models=openrouter%2Fauto">Auto Router in the chatroom</a> and send it the prompt you’d normally hand-pick a model for. Tell us what it gets right and wrong in <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> on Discord.</p>
+<h2>Frequently asked questions</h2>
+<h3>What do I need to change to switch from the old Auto Router?</h3>
+<p>Nothing at all. The slug is still <code>openrouter/auto</code> and the <code>auto-router</code> plugin settings <code>cost_tier</code>, <code>allowed_models</code>, and <code>excluded_models</code> still work.</p>
+<h3>What is the difference between Auto Router and Auto Code?</h3>
+<p>Both run on the same routing engine. Auto Router is the general purpose router for mixed traffic and general agents, and favors a cost-efficient tier of models. Auto Code is specialized for coding agents and harnesses, starts in a higher cost tier, and weighs measured pass rate, speed, and cost per solved task across models and reasoning efforts.</p>
+<h3>Is model routing the same as provider routing?</h3>
+<p>No. Model routing picks which model handles a request; provider routing picks which provider serves that model. Auto Router and Auto Code do the first, then OpenRouter’s provider routing does the second with your provider preferences, uptime data, and prompt cache state.</p>
+<h3>Do the routers respect my guardrails and data policies?</h3>
+<p>Yes. Guardrail policies, zero data retention requirements, provider restrictions, allowed and excluded model lists, and BYOK keys define the model pool, and the router picks the cost optimal model inside it.</p>
+<h3>Does a router cost extra?</h3>
+<p>No. You pay the standard price of whichever model serves the request, and the response’s <code>model</code> field tells you which one it was.</p>
+<h3>What is openrouter/auto-beta?</h3>
+<p>Auto Router Beta is the release channel for the next version of Auto Router. New routing changes ship to <code>openrouter/auto-beta</code> first and graduate to <code>openrouter/auto</code> once they prove out, so use it to see what is coming in advance. If you try it, tell us what it gets right and wrong in <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> on Discord.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Build an AI Code Reviewer with OpenRouter</title>
       <link>https://openrouter.ai/blog/tutorials/ai-code-review/</link>
@@ -8152,159 +8218,6 @@ resp = client.chat.send(
 <p>Yes. Parameters in the request body win over preset values. The merge is shallow, so request fields replace matching preset fields, and we keep any preset fields you leave out. Tools are combined, with request tools replacing preset tools of the same name.</p>
 <h3>Do presets work through the API or only in the Chatroom?</h3>
 <p>Presets work through the OpenAI-compatible API. You can use <code>@preset/slug</code> in the model field, a separate <code>preset</code> field set to <code>@preset/slug</code>, or the combined <code>model@preset/slug</code> form.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Nano Banana API: Edit Images with Gemini in Code</title>
-      <link>https://openrouter.ai/blog/tutorials/nano-banana/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/nano-banana/?li=1</guid>
-      <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Nano Banana API: Edit Images with Gemini in Code</h1>
-<p>OpenRouter ·9/9/2026 · Updated 9/24/2026</p>
-<p>This guide shows how to edit an image with a text prompt in code. You send the source image and an edit prompt to <code>google/gemini-3.1-flash-image</code> through the OpenRouter API, and the edited image comes back in the response. “Nano Banana” is the nickname for Google’s Gemini image models. This slug is Nano Banana 2, the default fast model in that family. Because you reach it through <a href="https://openrouter.ai/blog/announcements/image-api/">one API</a>, you can use a different editing model later by changing one field.</p>
-<p>Image editing changes an existing image. Image generation creates a new image from text. This guide covers editing, so every request here includes a source image. For creating images from text, see the <a href="https://openrouter.ai/docs/guides/overview/multimodal/image-generation">image generation docs</a> or the <a href="https://openrouter.ai/blog/tutorials/image-generation/">image generation tutorial</a>.</p>
-<p><img src="https://openrouter.ai/blog/images/nano-banana-before-after.png" alt="Before-and-after example of a natural-language image edit: a portrait photo, the prompt &quot;Add a red wool scarf around the person's neck. Keep everything else the same.&quot;, and the edited result with the scarf added and everything else intact"></p>
-<h2>Tl;dr</h2>
-<ul><li>Editing takes one request. Put the source image in <code>input_references</code> and the instruction in <code>prompt</code>, then read the edited image from <code>data[0].b64_json</code> and decode it to disk.</li><li><code>google/gemini-3.1-flash-image</code> is Nano Banana 2, the default fast Gemini image model. Check that a model accepts image input before you use it, because editing support varies.</li><li>Send the input as a base64 data URL for local or private files, or a plain HTTP(S) URL for a hosted image.</li><li>Edit in small steps. Send each returned image back in as the next source, one instruction per call, so changes stack.</li><li>Change the editing model by editing one field.</li></ul>
-<h2>Prerequisites</h2>
-<p>You need three things:</p>
-<ul><li>An OpenRouter API key from the <a href="https://openrouter.ai/keys">keys page</a> and the base URL <code>https://openrouter.ai/api/v1</code>.</li><li>An HTTP client. The samples use Python <code>requests</code> and TypeScript <code>fetch</code>. You can also use curl or the OpenRouter SDK. Any client that sends a JSON POST with an Authorization header works.</li><li>A source image, either a local file or a public URL.</li></ul>
-<h3>Which model to use</h3>
-<p>The default in this guide is <code>google/gemini-3.1-flash-image</code>, Nano Banana 2. It takes an image as input and returns an edited image. The Nano Banana family has four current members: Nano Banana 2 (<code>google/gemini-3.1-flash-image</code>) is the default in this guide, Nano Banana 2 Lite (<code>google/gemini-3.1-flash-lite-image</code>) is the cheapest and fastest, Nano Banana Pro (<code>google/gemini-3-pro-image</code>) is slower and higher quality, and the original Nano Banana (<code>google/gemini-2.5-flash-image</code>) is the older model the nickname started with.</p>
-<p>The image catalog changes often. Models are added, deprecated, and repriced, so a slug you pin today may be retired later. Before you build on a model, check that it accepts image input and supports the editing features you need. You can browse the editing-capable models in the <a href="https://openrouter.ai/collections/image-models">image model collection</a>. For a walkthrough of the catalog, see <a href="https://openrouter.ai/blog/tutorials/image-generation-models/">image generation models</a>.</p>
-<p>The samples below use the slug shown in each request, so you can run them as written and change the model later. Keep your key in an environment variable, not in your code:</p>
-<pre><code>export OPENROUTER_API_KEY=&quot;sk-or-...&quot;</code></pre>
-<h2>Your first image edit</h2>
-<p>To edit an image, send the source image and a text instruction in a single request. The edited image comes back in the response. Here is a working request in Python that encodes a local file:</p>
-<pre><code>import base64, os, requests
-
-api_key = os.environ[&quot;OPENROUTER_API_KEY&quot;]
-
-# Encode a local source image as a base64 data URL.
-with open(&quot;portrait.jpg&quot;, &quot;rb&quot;) as f:
-    encoded = base64.b64encode(f.read()).decode()
-source = f&quot;data:image/jpeg;base64,{encoded}&quot;
-
-resp = requests.post(
-    &quot;https://openrouter.ai/api/v1/images&quot;,
-    headers={&quot;Authorization&quot;: f&quot;Bearer {api_key}&quot;},
-    json={
-        &quot;model&quot;: &quot;google/gemini-3.1-flash-image&quot;,
-        &quot;prompt&quot;: &quot;Add a red wool scarf around the person's neck. Keep everything else the same.&quot;,
-        &quot;input_references&quot;: [
-            {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: source}}
-        ],
-    },
-)
-resp.raise_for_status()</code></pre>
-<p>The same request in TypeScript:</p>
-<pre><code>import { readFileSync } from &quot;node:fs&quot;;
-
-const apiKey = process.env.OPENROUTER_API_KEY!;
-const encoded = readFileSync(&quot;portrait.jpg&quot;).toString(&quot;base64&quot;);
-const source = `data:image/jpeg;base64,${encoded}`;
-
-const resp = await fetch(&quot;https://openrouter.ai/api/v1/images&quot;, {
-  method: &quot;POST&quot;,
-  headers: {
-    Authorization: `Bearer ${apiKey}`,
-    &quot;Content-Type&quot;: &quot;application/json&quot;,
-  },
-  body: JSON.stringify({
-    model: &quot;google/gemini-3.1-flash-image&quot;,
-    prompt: &quot;Add a red wool scarf around the person's neck. Keep everything else the same.&quot;,
-    input_references: [{ type: &quot;image_url&quot;, image_url: { url: source } }],
-  }),
-});</code></pre>
-<p>The request body is the same in both languages. Put the reference image in <code>input_references</code> and the instruction in <code>prompt</code>. That is the whole request.</p>
-<h3>Encoding the input image: base64 or URL</h3>
-<p>The <code>input_references</code> field takes either a base64 data URL or an HTTP(S) URL. The examples above encode a local file. If your image is already hosted publicly, pass the link directly and skip the encoding:</p>
-<pre><code>&quot;input_references&quot;: [
-  {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: &quot;https://example.com/portrait.jpg&quot;}}
-]</code></pre>
-<p>Use a URL when the image is public and hosted, because it keeps the request body small. Use base64 for local or private files. Gemini accepts <code>image/png</code>, <code>image/jpeg</code>, <code>image/webp</code>, <code>image/heic</code>, and <code>image/heif</code> inputs. Supported formats vary by model, so check the model page before you send.</p>
-<h3>Retrieving the edited image from the response</h3>
-<p>The API returns the edited image as base64 data in the <code>data</code> array. Decode the <code>b64_json</code> value and write it to a file:</p>
-<pre><code>data = resp.json()[&quot;data&quot;][0]
-with open(&quot;edited.png&quot;, &quot;wb&quot;) as out:
-    out.write(base64.b64decode(data[&quot;b64_json&quot;]))</code></pre>
-<p>The TypeScript version:</p>
-<pre><code>import { writeFileSync } from &quot;node:fs&quot;;
-
-const { data } = await resp.json();
-writeFileSync(&quot;edited.png&quot;, Buffer.from(data[0].b64_json, &quot;base64&quot;));</code></pre>
-<p>Open <code>edited.png</code> to see the result. If you want a typed client instead of raw HTTP, the OpenRouter SDK has an images resource that calls the same endpoint:</p>
-<pre><code>from openrouter import OpenRouter
-
-client = OpenRouter(api_key=api_key)
-result = client.images.generate(
-    model=&quot;google/gemini-3.1-flash-image&quot;,
-    prompt=&quot;Add a red wool scarf around the person's neck. Keep everything else the same.&quot;,
-    input_references=[{&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: source}}],
-)</code></pre>
-<p>Install the SDK with <code>pip install openrouter</code>. It reuses the <code>api_key</code> defined earlier, so no extra setup is needed.</p>
-<h2>Writing edit prompts</h2>
-<p>A generation prompt describes a whole new image. An edit prompt says what to change and what to leave alone. State the change first, then name what must stay the same:</p>
-<ul><li>Object swap: “Replace the coffee mug with a glass of orange juice. Keep the hand position and background unchanged.”</li><li>Background change: “Change the background to a snowy street at night. Keep the subject exactly as is.”</li><li>Style transfer: “Render this photo as a watercolor painting. Preserve the composition and the subject’s pose.”</li><li>Text fix: “Change the sign text to read ‘OPEN’. Match the original font and color.”</li></ul>
-<p>You can also write the prompt as a small block of JSON text:</p>
-<pre><code>&quot;prompt&quot;: &quot;{\&quot;edit\&quot;: \&quot;add sunglasses\&quot;, \&quot;preserve\&quot;: [\&quot;face\&quot;, \&quot;hair\&quot;, \&quot;lighting\&quot;], \&quot;style\&quot;: \&quot;photorealistic\&quot;}&quot;</code></pre>
-<p>The API treats this as plain text, so it is not a special mode. The structure can help the model separate what changes from what stays. Try both the sentence form and the JSON form on your own images and keep whichever works better.</p>
-<h2>Editing the result again</h2>
-<p>One edit will not always give you what you want. To run another pass, send the returned image back in as the next source. Take the <code>b64_json</code> value from the response, turn it into a data URL, and pass it in the next <code>input_references</code>:</p>
-<pre><code>def edit(source_data_url, prompt):
-    resp = requests.post(
-        &quot;https://openrouter.ai/api/v1/images&quot;,
-        headers={&quot;Authorization&quot;: f&quot;Bearer {api_key}&quot;},
-        json={
-            &quot;model&quot;: &quot;google/gemini-3.1-flash-image&quot;,
-            &quot;prompt&quot;: prompt,
-            &quot;input_references&quot;: [
-                {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: source_data_url}}
-            ],
-        },
-    )
-    resp.raise_for_status()
-    item = resp.json()[&quot;data&quot;][0]
-    media_type = item.get(&quot;media_type&quot;, &quot;image/png&quot;)
-    return f&quot;data:{media_type};base64,{item['b64_json']}&quot;
-
-step1 = edit(source, &quot;Add a red wool scarf. Keep everything else the same.&quot;)
-step2 = edit(step1, &quot;Now make the scarf navy blue instead of red.&quot;)
-step3 = edit(step2, &quot;Add soft morning light coming from the left.&quot;)</code></pre>
-<p>Each call edits the last result, so earlier changes carry forward. Give one instruction per call. Small edits are easier to check and easier to redo when they come back wrong. The model does not remember your earlier prompts, so repeat the parts it should leave alone in each new prompt.</p>
-<h2>Changing the editing model</h2>
-<p>To send the same edit request to a different model, change the <code>model</code> field. The source image, the prompt, and the response-handling code stay the same:</p>
-<pre><code>json={
-    &quot;model&quot;: &quot;openai/gpt-5-image&quot;,  # was google/gemini-3.1-flash-image
-    &quot;prompt&quot;: &quot;Add a red wool scarf. Keep everything else the same.&quot;,
-    &quot;input_references&quot;: [
-        {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: source}}
-    ],
-},</code></pre>
-<p>Use <code>google/gemini-3.1-flash-image</code> as a fast default. Use <code>google/gemini-3.1-flash-lite-image</code> when you want the lowest price. Use <code>google/gemini-3-pro-image</code> when you want higher quality and can accept more latency. The original <code>google/gemini-2.5-flash-image</code> still works with the same request shape, but the newer models above are the better default. Use a model from another provider, such as <code>openai/gpt-5-image</code>, when you want to <a href="https://openrouter.ai/blog/announcements/image-benchmarks/">compare quality, cost, or speed</a> on your own images. This one-field change only works for models that accept image input and support the same <code>input_references</code> shape, so check that a model is editing-capable before you switch to it.</p>
-<p>To set a model and its options per environment instead of in code, use OpenRouter <a href="https://openrouter.ai/docs/guides/features/presets">Presets</a>.</p>
-<h2>Errors and cost</h2>
-<p>These failures are common enough to plan for:</p>
-<ul><li>Unsupported input. A model may reject an image format it does not support, and it may reject a URL it cannot reach. Check the file type and the URL before you send.</li><li>Oversized images. Large files can time out or fail. Shrink the image first, because most edits do not need a 40-megapixel source.</li><li>Text instead of an image. A question like “what’s in this photo?” can make the model answer in text instead of producing an image. The API returns this as a <code>400</code> error, such as <code>Gemini could not generate an image (STOP)</code>, not as an empty response. Write an instruction instead of a question, and check the HTTP status before you decode.</li></ul>
-<p>The response reports the cost of each request in USD when usage data is available. Log it to track spend:</p>
-<pre><code>usage = resp.json().get(&quot;usage&quot;)
-if usage:
-    print(f&quot;This edit cost ${usage['cost']}&quot;)</code></pre>
-<p>For batch jobs, stay within <a href="https://openrouter.ai/docs/api_reference/limits">rate limits</a>. Retry 429 and 5xx responses with growing delays between tries, and limit how many edits run at once. Save each returned image before starting its next edit, so one failure does not lose finished work.</p>
-<h2>Next steps</h2>
-<p>Copy the first request, use your own image, and run an edit. To create images from text instead, see the <a href="https://openrouter.ai/docs/guides/overview/multimodal/image-generation">image generation docs</a>. To find current editing-capable models, browse the <a href="https://openrouter.ai/collections/image-models">image model collection</a>.</p>
-<h2>Frequently asked questions</h2>
-<h3>Can I edit an image with the Gemini API?</h3>
-<p>Yes. Send the source image and a text instruction in one request to <code>google/gemini-3.1-flash-image</code> through the OpenRouter API, and the edited image comes back as base64 in the response. That model is Nano Banana 2. The full request fits on one screen, and you can run it in Python, TypeScript, or curl.</p>
-<h3>What’s the difference between image generation and image editing?</h3>
-<p>Image editing changes an existing image. Image generation creates a new image from text. Every editing request includes a source image in <code>input_references</code> and an instruction that says what to change and what to keep. If your request has no source image and works from a text prompt alone, that is generation.</p>
-<h3>How do I send an image to the API, URL or base64?</h3>
-<p>The <code>input_references</code> field takes a base64 data URL for a local or private file, or a plain HTTP(S) URL for a public hosted image. Use the URL form to keep the request small when the image is already online, and the base64 form when the file is on your machine. Gemini accepts png, jpeg, webp, heic, and heif inputs (<code>image/png</code>, <code>image/jpeg</code>, <code>image/webp</code>, <code>image/heic</code>, <code>image/heif</code>). Supported formats vary by model, so check the model page before you send.</p>
-<h3>Can I use a model other than Gemini to edit images?</h3>
-<p>Yes. Change the <code>model</code> field and keep the rest of the request the same. Check the <a href="https://openrouter.ai/collections/image-models">image model collection</a> first, because editing support, price, and speed vary by model.</p>
-<h3>How do I prompt an AI model to edit an image?</h3>
-<p>Describe the change first, then name what to preserve, for example “Change the background to a snowy street at night. Keep the subject exactly as is.” One instruction per request works best. For precise results, edit in small steps and send each returned image back in as the source for the next prompt.</p>
-<h2>References</h2>
-<ul><li><a href="https://openrouter.ai/keys">OpenRouter API keys</a>: Create and manage the key used in every request.</li><li><a href="https://openrouter.ai/collections/image-models">Image model collection</a>: The full set of editing-capable models and their input support.</li><li><a href="https://openrouter.ai/docs/guides/overview/multimodal/image-generation">Image generation docs</a>: The sibling guide for creating images from text.</li><li><a href="https://openrouter.ai/docs/guides/features/presets">Presets guide</a>: Pin a model and its options per environment instead of setting them in code.</li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>
