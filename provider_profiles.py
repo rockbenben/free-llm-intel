@@ -447,10 +447,14 @@ VENDOR_RANK: tuple[str, ...] = (
     "modal", "modular_cloud", "stability_ai", "ai21_labs", "jina_ai",
     "morph_labs", "relace", "poolside", "mancer", "anyscale",
     "digitalocean_genai", "inception_labs", "inference_net", "ncompass", "mara",
+    # 2026-11-07 新增：海外云 / 推理 / 数据 API
+    "akamai_cloud", "lightning_ai", "regolo_ai", "onkernel", "novita_ai", "parallel_ai", "zilliz_cloud",
     # 第六梯队：AI 编程 / Agent 工具（Part 4，内置模型免费额度；须连排放，
     # 生成器按相邻同类分组渲染 Part 标题）
     "qoder", "codebuddy_workbuddy", "trae", "tongyi_lingma", "comate",
     "github_copilot", "cursor_ide", "kiro", "zed",
+    # 2026-11-07 新增（官方页核实后反哺）
+    "arcade_dev", "crewai", "dify", "nango", "portkey", "v0_vercel",
 )
 
 
@@ -626,6 +630,43 @@ GUIDE_META: dict[str, dict] = {
                 "short": "新账户试用额度（官方未公开金额，以控制台为准）",
                 "tip": "试用额度**金额未公开**，以注册后控制台显示为准；Startup Program（最高 $25,000 算力 + $2,500 Model APIs）"
                        "需申请审核，非注册即得。"},
+    # ---- 2026-11-07 新增：公众号《今日AI羊毛 第13期》逐条对官方页核实后反哺 ----
+    "akamai_cloud": {"tiers": ["onetime"], "signup": "card", "scenarios": ["credit"],
+                     "short": "新客 $100 云抵扣额度 / 60 天（需绑卡）",
+                     "tip": "超额计入绑卡账单；GPU 套餐与 Marketplace 不参与；窗口结束后仍在运行的服务照标准价扣费"},
+    "lightning_ai": {"tiers": ["permanent", "onetime"], "signup": "email", "scenarios": ["deploy"],
+                     "short": "Free 档起步 30 credits（官方口径约 50 GPU 小时）+ 1 个常驻 Studio",
+                     "tip": "免费 Studio 每 4 小时需重启；外部清单常写的「80 免费 GPU 小时」有误，官方页数值全为 50"},
+    "regolo_ai": {"tiers": ["onetime"], "signup": "email", "scenarios": ["code"],
+                  "short": "30 天试用：每日 100 万 tokens，全部 Core Chat 模型",
+                  "tip": "30 天后不订阅即无法按试用条件调用；试用档带更严限速与 fair usage throttling"},
+    "arcade_dev": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"],
+                   "short": "Free $0/月：每月 2,000 次 tool calls（Agent 工具层，非模型 token）"},
+    "crewai": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"],
+               "short": "Basic 免费：每月 50 次 workflow executions（编排执行次数，模型 token 另算）"},
+    "dify": {"tiers": ["onetime"], "signup": "email", "scenarios": ["code"],
+             "short": "Sandbox 免费：200 message credits + 5 Apps + 50 知识库文档",
+             "tip": "200 条不带 / month（同页付费档才写 / month）——是体验额度，别按月领理解"},
+    "onkernel": {"tiers": ["recurring"], "signup": "email", "scenarios": ["deploy"],
+                 "short": "free $0/月：每月 $5 用量额度 + 5 并发云浏览器（免绑卡）",
+                 "tip": "浏览器时长/算力按用量计费，$5 用尽即产生费用"},
+    "nango": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"],
+              "short": "Free $0/月：10 connections + 10 小时计算 + 10GB 传输/月（集成同步算力，非模型额度）"},
+    "novita_ai": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
+                  "short": "Apodex 1.1 Mini 输入/输出均 Free（256K 上下文）",
+                  "tip": "免费只覆盖 apodex/apodex-1.1-mini 这一个 id，切换其它模型即按价表计费"},
+    "parallel_ai": {"tiers": ["recurring", "onetime"], "signup": "card",
+                    "short": "Developer：每月 5,000 次免费请求 + $5 额度（留卡才发）+ 注册最高 $80",
+                    "tip": "Task/Responses/FindAll 属高价处理器（单次约 $0.1–$2.4），深度研究场景消耗很快"},
+    "portkey": {"tiers": ["permanent"], "signup": "email",
+                "short": "Developer Free Forever：10K 请求 + 10K recorded logs/月",
+                "tip": "网关自己不提供免费 token，转发到谁的模型就按谁的价计费；超出只停记日志不影响请求"},
+    "v0_vercel": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"],
+                  "short": "Free $0/月：每天 7 条消息（按天重置），含部署到 Vercel",
+                  "tip": "「每天 7 条」是档位长期限制非促销；部署产物的流量/函数按 Vercel Hobby 档另计"},
+    "zilliz_cloud": {"tiers": ["recurring"], "signup": "email", "scenarios": ["embed"],
+                     "short": "Serverless Free $0/月：5GB 存储 + 2.5M vCU/月 + 5 collections",
+                     "tip": "vCU 是计算单元，向量检索密集时消耗快；Dedicated 档另算"},
 }
 
 # ---------------------------------------------------------------------------
@@ -2224,6 +2265,263 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "notes": "该条目来源存疑，可能是名字混淆或上游情报库的幻觉条目；建议回溯源数据核对。保留条目作为反例留痕，**不应作为可用免费额度来源**。",
         "links": [
             ("MARA Holdings（比特币矿企，非 LLM）", "https://www.mara.com/"),
+        ],
+    },    # ------------------------------------------------------------------
+    # 2026-11-07 新增 13 家：来源为公众号《今日AI羊毛 第13期》18 条优惠的
+    # 逐条官方页核实（17 条一致、1 条不一致已按官方口径修正）。
+    # 证据层级：除 akamai_cloud（官方域反爬 403，取官方域页面正文快照）外，
+    # 均为直接抓取的官方定价页原文。
+    # ------------------------------------------------------------------
+    "akamai_cloud": {
+        "category": "cloud",
+        "display_name": "Akamai Cloud (原 Linode)",
+        "free_quota": "**新客 US$100 云服务抵扣额度，60 天窗口**；可用于 Compute 套餐、Object Storage、Block Storage、NodeBalancers（GPU 套餐不参与本促销）",
+        "validity": "额度自激活起 **60 天**后失效，未用额度不自动续期；属常设新客促销，官方未公布统一领取截止日",
+        "free_models": [
+            "**无模型级免费层**——$100 为账户级云服务抵扣额度（Compute / Object Storage / Block Storage / NodeBalancers），不是 LLM token 额度",
+        ],
+        "tier_caveats": [
+            "**需绑卡**（Visa/Mastercard/PayPal）：超额部分计入绑卡账单；试用窗口结束后仍在运行的服务继续按标准价扣费——先用完额度再删实例",
+            "GPU 套餐不可用本额度；额度不可用于 Marketplace 与第三方服务",
+            "仅限新客户",
+        ],
+        "preconditions": "新客户 + 有效支付方式（Visa/Mastercard/PayPal）；支持 Google/GitHub 单点登录或邮箱注册",
+        "promotions": "常设新客 $100/60 天试用促销，官方未公布统一截止日。",
+        "notes": "官方域 www.akamai.com 对自动化直连回 403（反爬）；$100/60 天/绑卡三条口径取自官方域名的试用活动页正文与北美定价页 FAQ。",
+        "links": [
+            ("试用活动页（官方域，中文）", "https://www.akamai.com/zh/lp/akamai-cloud-computing-freetrial"),
+            ("北美定价页（FAQ 含 $100/60 天口径）", "https://www.akamai.com/cloud/pricing/north-america"),
+            ("注册入口", "https://login.linode.com/signup"),
+        ],
+    },
+    "lightning_ai": {
+        "category": "cloud",
+        "display_name": "Lightning AI (GPU 云 / Studio)",
+        "free_quota": "Free $0 档：**起步最多 30 credits**（官方口径 “30 free credits gets you ~50 GPU hours on interruptible machines”）；1 个免费常驻 Studio（24/7 运行、每 4 小时需重启一次）；最多 2 席、2 张并发 GPU、50GB 持久存储、32 核 CPU Studio",
+        "validity": "credits 为一次性起步额度，官方未公布其有效期与免费档结束日期；额度用尽后按秒计费",
+        "free_models": [
+            "**无模型级免费层**——免费的是 GPU 算力：30 credits 起步额度，官方折算约 50 GPU 小时（interruptible 机器）",
+            "免费常驻 Studio —— 24/7 运行但**每 4 小时需重启一次**；Pro 及以上才不限会话时长",
+        ],
+        "tier_caveats": [
+            "**外部清单常写「约 80 免费 GPU 小时」——照抄即错**：官方定价页带数值的 GPU hours 共 5 处、值全为 50（“Get up to 50 free GPU hours” / FAQ “~50 GPU hours” 等），全页「80」与「GPU hours」共现 0 次",
+            "免费 Studio 每 4 小时重启，长任务会被打断",
+            "「等于多少小时」随卡型差一个数量级（T4 $0.55–0.88/h、A100 $2.19/h、H100 $5.45/h），任何小时数都是折算而非官方面值",
+        ],
+        "preconditions": "注册账号即可，Free 档明写 No credit card、No commitments；注册环节含手机号验证",
+        "notes": "2026-11-07 核实：公众号卡片标题写 80 小时、正文写 75 小时，均与官方页（50）不符，本档案按官方口径收录。",
+        "links": [
+            ("定价页（含 Free 档与价目表）", "https://www.lightning.ai/pricing"),
+        ],
+    },
+    "regolo_ai": {
+        "category": "international",
+        "display_name": "Regolo.ai (欧盟托管推理)",
+        "openai_compat": {
+            "summary": "30 天试用：每日 100 万 tokens（免绑卡）",
+            "api_key_label": "官网注册开通",
+            "api_key_url": "https://regolo.ai/",
+            "base_url": "https://api.regolo.ai/v1",
+            "models": "glm5.2、qwen3.8-27b、qwen3.5-122b、qwen3.5-9b、mistral-small-4-119b、gemma4-31b、apertus-70b 等（价表 Subscription 列标 Included）",
+        },
+        "free_quota": "**30 天免费试用：每日 100 万 tokens 上限，可用全部 Core Chat 模型**；官方明确 No credit card required、no commitment",
+        "validity": "试用期 **30 天自开通起算**；每日 100 万 tokens 按日重置；官方未公布报名截止日，不能视为长期免费档",
+        "free_models": [
+            "Core Chat 全模型 —— 试用期内 `glm5.2`、`qwen3.8-27b`、`qwen3.5-122b`、`qwen3.5-9b`、`mistral-small-4-119b` 等（价表 Subscription 列均标 Included），**每日 100 万 tokens**",
+        ],
+        "tier_caveats": [
+            "30 天后若不订阅则无法继续以试用条件调用；Core 档 €39.00/月（前 3 个月 70% 折扣），另有 0 月费按量 Pay-as-you-go",
+            "试用档带 Stricter rate limits 与 Fair usage throttling——「每日 100 万 tokens」不等于可高速跑满",
+            "站方自述 European AI Inference API Provider、zero-retention（GDPR 口径）；属供应商自述，未经独立核实",
+        ],
+        "preconditions": "注册账号即开试用，免信用卡；是否需要企业邮箱、有无地区限制官方页面未说明",
+        "links": [
+            ("定价与试用页", "https://regolo.ai/pricing"),
+        ],
+    },
+    "arcade_dev": {
+        "category": "tools",
+        "display_name": "Arcade (Agent 工具调用层)",
+        "free_quota": "Free $0/月：**每月 2,000 次 tool calls**（$0 platform fee, no credit card required），带社区支持（Discord/GitHub）",
+        "validity": "免费档按月发放；官方定价页未标注结束日期",
+        "free_models": [
+            "**无免费模型层**——免费的是 Agent 工具调用配额（每月 2,000 次 tool calls），不是模型 token 额度；模型调用走用户自己的 Key",
+        ],
+        "tier_caveats": [
+            "这是 Agent 工具调用配额，**不是模型 token 额度**，不能当免费对话模型来源",
+        ],
+        "preconditions": "注册 app.arcade.dev 账号即可，免绑卡",
+        "links": [
+            ("定价页", "https://www.arcade.dev/pricing"),
+            ("注册入口", "https://app.arcade.dev/register"),
+        ],
+    },
+    "crewai": {
+        "category": "tools",
+        "display_name": "CrewAI (多 Agent 编排)",
+        "free_quota": "Basic 免费：$0、**每月 50 次 workflow executions**，含可视化编辑器与 AI copilot、GitHub 集成",
+        "validity": "按月发放；官方定价页未标注免费档结束日期",
+        "free_models": [
+            "**无免费模型层**——免费的是编排执行次数（每月 50 次 workflow executions），模型 token 另算",
+        ],
+        "tier_caveats": [
+            "每月 50 次是**编排执行次数**，模型 token 另算；不是模型腿",
+            "对比表里 Basic 与 Enterprise 之间不留中间档",
+        ],
+        "preconditions": "注册 app.crewai.com 账号即可",
+        "links": [
+            ("定价页", "https://www.crewai.com/pricing"),
+            ("控制台", "https://app.crewai.com/"),
+        ],
+    },
+    "dify": {
+        "category": "tools",
+        "display_name": "Dify (云版 Sandbox)",
+        "free_quota": "Sandbox 免费：**200 message credits**、5 Apps、1 Member、50 知识库文档、50MB 知识库存储",
+        "validity": "**Sandbox 的 200 条不带「/ month」**（同页 Professional 写 5,000 message credits / month、Team 写 10,000 / month）——按官方措辞是一次性体验额度，不是月度额度",
+        "free_models": [
+            "Sandbox message credits —— 200 条一次性体验额度，按模型类型消耗（不同模型消耗速率不同）；用尽后可切自己的 API Key 继续",
+        ],
+        "tier_caveats": [
+            "200 条不带 / month，别按月领的理解它",
+            "知识库命中测试有限速：一分钟内连续 10 次 hit test 会临时限制该工作区后续动作",
+        ],
+        "preconditions": "注册 cloud.dify.ai 账号即可",
+        "links": [
+            ("定价页", "https://dify.ai/pricing"),
+            ("云版控制台", "https://cloud.dify.ai/"),
+        ],
+    },
+    "onkernel": {
+        "category": "cloud",
+        "display_name": "Kernel (托管云浏览器)",
+        "free_quota": "free $0/月 + 用量费：**每月 $5 免费额度**、5 并发浏览器、live view、stealth mode（含验证码求解与代理）、managed auth（3 connections）、session replay",
+        "validity": "每月 $5 额度；官方 FAQ 另写 “Your first $5 in usage is free”",
+        "free_models": [
+            "**无免费模型层**——免费的是云浏览器用量额度（每月 $5），浏览器时长/算力按用量计费",
+        ],
+        "tier_caveats": [
+            "$5 额度用尽即产生费用",
+            "hobbyist $30/月起才升到 $10/月额度与 10 并发",
+        ],
+        "preconditions": "免绑卡注册（FAQ：“You can sign up without a credit card”）",
+        "links": [
+            ("定价页", "https://onkernel.com/pricing"),
+            ("注册入口", "https://dashboard.onkernel.com/sign-up"),
+        ],
+    },
+    "nango": {
+        "category": "tools",
+        "display_name": "Nango (第三方集成 / API 连接)",
+        "free_quota": "Free $0/月：10 个 connections、**10 hours 计算/月**、10GB 数据传输/月、不限 environments",
+        "validity": "按月发放；官方定价页未标注结束日期",
+        "free_models": [
+            "**无免费模型层**——免费的是集成同步算力（10 小时计算/月 + 10GB 传输/月），与模型额度无关",
+        ],
+        "tier_caveats": [
+            "免费档的 10 小时计算是**集成同步算力**，不是模型 token",
+            "Pay-as-you-go 档为 $50/月",
+        ],
+        "preconditions": "注册 app.nango.dev 账号即可",
+        "links": [
+            ("定价页", "https://nango.dev/pricing"),
+            ("注册入口", "https://app.nango.dev/signup"),
+        ],
+    },
+    "novita_ai": {
+        "category": "international",
+        "display_name": "Novita AI (Apodex 免费档)",
+        "openai_compat": {
+            "summary": "Apodex 1.1 Mini 输入/输出均 Free（256K 上下文）",
+            "api_key_label": "控制台 Key 管理",
+            "api_key_url": "https://novita.ai/settings/key-management",
+            "base_url": "https://api.novita.ai/openai/v1",
+            "models": "`apodex/apodex-1.1-mini`（价表显示名 Apodex 1.1 Mini，上下文 256K，输入/输出两列均 Free）",
+        },
+        "free_quota": "**Apodex 1.1 Mini：上下文 256K，Input Free、Output Free**（官方价表两列均写 Free）；同表其它模型仍按每百万 tokens 计费",
+        "validity": "官方未公布该免费模型的额度上限、有效期与是否按月重置；价格表随时可能调整",
+        "free_models": [
+            "`apodex/apodex-1.1-mini` —— **输入/输出两列均 Free**，上下文 256K；同页付费对照：Ling 3.1 Flash 等约 $0.3/$0.9 每百万 tokens",
+        ],
+        "tier_caveats": [
+            "**免费只覆盖 Apodex 1.1 Mini 这一个 id**，切换其它模型即产生费用",
+            "官方未公布额度上限与有效期，价格表随时可能调整",
+        ],
+        "preconditions": "注册 Novita AI 账号并创建 API Key 即可调用；官方价格页未写是否限新用户、是否需绑卡或有无地区限制",
+        "links": [
+            ("模型 API 定价表", "https://novita.ai/pricing"),
+        ],
+    },
+    "parallel_ai": {
+        "category": "international",
+        "display_name": "Parallel Web API (数据 / 搜索 API)",
+        "free_quota": "Developer：每月最多 **5,000 次免费请求**（覆盖全部 API）+ **每月 $5 免费额度**（需在账户留卡才发）；注册时最高再得 **$80**（官方写 up to，分档条件未公布）",
+        "validity": "每月循环发放 5,000 次与 $5；未用额度是否结转官方未说明；无公开截止日，属常规免费档",
+        "free_models": [
+            "**无免费模型层**——免费的是 Web 数据/搜索 API 请求量（每月 5,000 次）与 $5 用量额度",
+        ],
+        "tier_caveats": [
+            "免费额度只覆盖请求量、不计 token 深度：Search/Extract 限速 600 次/分钟，但 Task/Responses/FindAll 属高价处理器（单次约 $0.1–$2.4），**深度研究场景消耗很快**",
+            "$80 注册赠金随时可能调整，以官方定价页为准",
+        ],
+        "preconditions": "需绑卡（官方写法 “with a card on file”）才能拿到每月 $5 与最高 $80 注册赠金",
+        "links": [
+            ("定价页", "https://parallel.ai/pricing"),
+            ("控制台", "https://platform.parallel.ai/"),
+        ],
+    },
+    "portkey": {
+        "category": "tools",
+        "display_name": "Portkey (AI 网关 / 可观测)",
+        "free_quota": "Developer **Free Forever**：每月 10K 请求 + **10K recorded logs/月**；日志保留 3 天、指标 30 天；不允许超额计费（No Overage Allowed）——超出只停记日志，不影响请求",
+        "validity": "标 Free Forever，官方未标注结束日期",
+        "free_models": [
+            "**无免费模型层**——网关自己不提供免费 token，转发到谁的模型就按谁的价计费；免费的是网关请求与日志配额",
+        ],
+        "tier_caveats": [
+            "**网关不是模型厂**：把它当「免费模型腿」是范畴错误",
+            "10K 请求/月与 10K logs/月是两个独立上限，别合并理解",
+            "官方定位适合 prototyping/测试，不适合生产负载",
+        ],
+        "preconditions": "注册 app.portkey.ai 账号即可",
+        "links": [
+            ("定价页", "https://portkey.ai/pricing"),
+            ("控制台", "https://app.portkey.ai/"),
+        ],
+    },
+    "v0_vercel": {
+        "category": "tools",
+        "display_name": "v0 by Vercel (生成式前端)",
+        "free_quota": "Free $0/月：**每天 7 条消息（7 message/day limit，按天重置）**，含 v0 访问、部署到 Vercel、Design Mode、GitHub 同步",
+        "validity": "常设免费计划，官方未标试用期或结束日期；额度用尽无当日重置通道，需等次日或升级",
+        "free_models": [
+            "v0 生成 —— **每天 7 条消息**，按天重置；Plus $30/人/月才含 $30 月度额度 + 每日登录 $2，免费档两者都没有",
+        ],
+        "tier_caveats": [
+            "「每天 7 条」是档位长期限制，非促销；按 7×30 折算约每月 210 次生成——折算值，官方没写过月度数",
+            "部署产物跑在 Vercel 侧，流量/函数用量按 Vercel 自己的 Hobby 档计，不在这 7 条里",
+        ],
+        "preconditions": "注册 Vercel/v0 账号即可；官方定价页未写需要邀请或企业资质，是否需绑卡官方未说明",
+        "links": [
+            ("定价页", "https://v0.app/pricing"),
+        ],
+    },
+    "zilliz_cloud": {
+        "category": "cloud",
+        "display_name": "Zilliz Cloud (托管 Milvus 向量库)",
+        "free_quota": "Serverless Free $0/月：**5GB 存储 + 每月 2.5M vCU** + 最多 5 个 collection",
+        "validity": "官方写 per month included；未标结束日期",
+        "free_models": [
+            "**无免费模型层**——免费的是托管向量库资源（5GB 存储 + 2.5M vCU/月 + 5 collections）",
+        ],
+        "tier_caveats": [
+            "vCU 是计算单元，向量检索密集时消耗快",
+            "5GB/250 万 vCU 是 Serverless 档口径，Dedicated 档另算",
+        ],
+        "preconditions": "注册 cloud.zilliz.com 账号即可",
+        "links": [
+            ("定价页", "https://zilliz.com/pricing"),
+            ("注册入口", "https://cloud.zilliz.com/signup"),
         ],
     },
 }
