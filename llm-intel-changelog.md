@@ -3,6 +3,19 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-11-08
+### Google Gemini（`google_gemini`）
+- 摘要：官方限速文档新增 Gemini Omni Flash (gemini-omni-1.2-flash) 限速表，明确标注该模型在 Free 层不受支持（Not supported）。
+- `free_models`：`Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；**官方已不公开逐模型免费清单与数值**（2026-11-03 复核：定价页只剩 Free / Paid 两档说明，具体限额只在 AI Studio… → `Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；**官方已不公开逐模型免费清单与数值**（定价页只剩 Free / Paid 两档说明，具体限额只在 AI Studio 内显示），调用前以 AI …
+- `tier_caveats`：**不是所有模型都有免费层**：Flash 级 / Gemma 4 / Embedding 系列可用，但官方不再逐一公示；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、Nano Banana 图像系列**无免费层**，调错模型会直接付费、**隐私代价**：免费层输入/输出数据可能… → **不是所有模型都有免费层**：Flash 级部分模型 / Gemma 4 / Embedding 系列可用，但官方不再逐一公示；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、`Gemini Omni Flash` (`gemini-omni-1.2-flash`)、Nano B…
+### 月之暗面 Kimi（`moonshot_kimi`）
+- 摘要：新用户认证赠送的 15 元代金券规则调整：现已支持用于 Kimi K3.1 Pro 和 Kimi K3，但不可用于高速版 Kimi K3.1 Pro Highspeed。
+- `free_quota`：实名认证赠送 **15 元代金券**（官方账号与财务文档原文：“认证成功后会为您赠送 15 元代金券，可用于支持该代金券的模型（Kimi K3.1 Pro、Kimi K3 不支持使用新用户代金券，详见下方说明）”）；有效期官方未载明，以券面标注为准 → 实名认证赠送 **15 元代金券**（官方问答明确：“国内新用户注册并完成认证后获赠的 15 元代金券可用于 Kimi K3.1 Pro 和 Kimi K3，不可用于高速版 Kimi K3.1 Pro Highspeed”）；有效期官方未载明，以券面标注为准
+- `free_models`：`kimi-k2.7-code`、`kimi-k2.6`（256K）—— 付费模型，**可用 15 元代金券抵扣**；官方提示将于 2026 年 10 月 31 日起停止向新注册用户开放，计划 12 月底下线、`kimi-k3.1-pro`、`kimi-k3`（1,048,576 tokens 上下文）—— 付费模型… → `kimi-k3.1-pro`、`kimi-k3`（1,048,576 tokens 上下文）—— 付费模型，**可用 15 元代金券抵扣**；不可用于高速版 `Kimi K3.1 Pro Highspeed`、`kimi-k2.7-code`、`kimi-k2.6`（256K）—— 付费模型；官方提示将于 2026…
+- `tier_caveats`：送的是 **15 元代金券而非免费模型**；`kimi-k3.1-pro` 与 `kimi-k3` 官方明确**不支持使用新用户代金券**，必须充值后解锁使用、K2 系列模型将于 2026 年 10 月 31 日起停止向新注册用户开放，并计划于 12 月底下线、代金券有效期官方文档未载明，以券面标注为准 → 送的是 **15 元代金券而非免费模型**；可抵扣 `kimi-k3.1-pro` 与 `kimi-k3`，但**不可用于高速版 Kimi K3.1 Pro Highspeed**、K2 系列模型将于 2026 年 10 月 31 日起停止向新注册用户开放，并计划于 12 月底下线、代金券有效期官方文档未载明，以券面…
+- `promotions`：官方原文：**“获赠的 15 元代金券不可用于体验 Kimi K3.1 Pro 和 Kimi K3，请充值后解锁使用”**；充值返券活动在官方财务文档中无记载。 → 官方问答明确：**国内新用户注册并完成认证后获赠的 15 元代金券可用于 Kimi K3.1 Pro 和 Kimi K3，不可用于高速版 Kimi K3.1 Pro Highspeed**。
+- `openai_compat`：{"summary": "实名送 15 元券（1M 长上下文）", "api_key_label": "控制台申请", "api_key_url": "https://platform.kimi.com/console/api-keys", "base_url": "https://api.moonshot.cn/v… → {"summary": "实名送 15 元券（1M 长上下文，支持 K3.1 Pro）", "api_key_label": "控制台申请", "api_key_url": "https://platform.kimi.com/console/api-keys", "base_url": "https://api.m…
+
 ## 2026-11-04
 ### DeepSeek（`deepseek`）
 - 摘要：经 DeepSeek Harness/Claude Code/Codex 的 Server 端工具调用访问的 Search/Fetch 接口，官方标注的免费期已于北京时间 2026-11-01 00:00 结束；网页搜索与抓取按次计费，每 1,000 次成功请求 5 元。

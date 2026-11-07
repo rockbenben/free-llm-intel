@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-08 04:28:42**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-08 06:58:14**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -415,7 +415,7 @@
   3. [宣布 Ray 支持 Google TPU 上的 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20）
   4. [宣布成立 Ray on Accelerators 特别兴趣小组（SIG）](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20）
   5. [用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://anyscale.com/blog/kuberay)（2026-10-15）
-  - 📄 完整文章归档（共 99 篇）：[anyscale.md](llm-news/anyscale.md)
+  - 📄 完整文章归档（共 100 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)
 - 页面：[官方博客](https://www.inceptionlabs.ai/blog)

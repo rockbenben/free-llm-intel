@@ -474,16 +474,24 @@
       {
         "quote": "注意： Gemini 4 Argon 不适用于免费层级或 Google AI Pro 方案。",
         "url": "https://ai.google.dev/gemini-api/docs/pricing?hl=zh-cn"
+      },
+      {
+        "quote": "The following standard interactive rate limits apply to\n[`gemini-omni-1.2-flash`](/docs/models/gemini-omni-flash):",
+        "url": "https://aistudio.google.com/docs/rate-limits.md"
+      },
+      {
+        "quote": "  * Free\n  * Not supported\n  * Not supported",
+        "url": "https://aistudio.google.com/docs/rate-limits.md"
       }
     ],
-    "_summary": "本地复核：定价页与 billing 文档已不再逐模型公示免费清单/数值（仅 AI Studio 内可见），免费模型清单改为「Flash 级 / Gemma 4 / Embedding」口径",
-    "_updated": "2026-11-04 05:30:00",
+    "_summary": "官方限速文档新增 Gemini Omni Flash (gemini-omni-1.2-flash) 限速表，明确标注该模型在 Free 层不受支持（Not supported）。",
+    "_updated": "2026-11-08 06:57:43",
     "free_models": [
-      "`Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；**官方已不公开逐模型免费清单与数值**（2026-11-03 复核：定价页只剩 Free / Paid 两档说明，具体限额只在 AI Studio 内显示），调用前以 AI Studio 的 Rate Limit 页为准",
-      "`Gemini 4 Argon`、`Gemini 3.1 Pro Preview` 与 Nano Banana 图像系列 —— **无免费层**"
+      "`Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；**官方已不公开逐模型免费清单与数值**（定价页只剩 Free / Paid 两档说明，具体限额只在 AI Studio 内显示），调用前以 AI Studio 的 Rate Limit 页为准",
+      "`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、`Gemini Omni Flash` (`gemini-omni-1.2-flash`) 与 Nano Banana 图像系列 —— **无免费层**（Free tier 明确标注 Not supported）"
     ],
     "tier_caveats": [
-      "**不是所有模型都有免费层**：Flash 级 / Gemma 4 / Embedding 系列可用，但官方不再逐一公示；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、Nano Banana 图像系列**无免费层**，调错模型会直接付费",
+      "**不是所有模型都有免费层**：Flash 级部分模型 / Gemma 4 / Embedding 系列可用，但官方不再逐一公示；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、`Gemini Omni Flash` (`gemini-omni-1.2-flash`)、Nano Banana 图像系列**无免费层**，调错模型会直接付费或报错",
       "**隐私代价**：免费层输入/输出数据可能被用于改进 Google 产品；敏感数据不要走免费层",
       "免费层限速官方已不再公开固定数值，以 AI Studio 内 Rate Limit 页为准；RPD 按太平洋时间午夜重置",
       "$300 Google Cloud 试用金**不能**用于 Gemini API / AI Studio（2026 年 3 月起）；付费层需关联结算账户并预付最低 $5"
@@ -726,28 +734,44 @@
       {
         "quote": "K3 系列模型均支持 1,048,576 tokens 上下文窗口。",
         "url": "https://platform.kimi.com/docs/pricing/chat"
+      },
+      {
+        "quote": "认证成功后会为您赠送 15 元代金券，具体适用模型见下方说明。",
+        "url": "https://platform.kimi.com/docs/guide/account-and-payments"
+      },
+      {
+        "quote": "可以。国内新用户注册并完成认证后获赠的 15 元代金券可用于 Kimi K3.1 Pro 和 Kimi K3，不可用于高速版 Kimi K3.1 Pro Highspeed。",
+        "url": "https://platform.kimi.com/docs/guide/account-and-payments"
       }
     ],
-    "_summary": "新上线 Kimi K3.1 Pro 且明确与 K3 均不支持使用新用户 15 元代金券；公布 K2 系列模型将于 2026 年 10 月 31 日起停止向新用户开放并计划 12 月底下线",
-    "_updated": "2026-10-24 12:34:51",
+    "_summary": "新用户认证赠送的 15 元代金券规则调整：现已支持用于 Kimi K3.1 Pro 和 Kimi K3，但不可用于高速版 Kimi K3.1 Pro Highspeed。",
+    "_updated": "2026-11-08 06:57:43",
     "free_models": [
-      "`kimi-k2.7-code`、`kimi-k2.6`（256K）—— 付费模型，**可用 15 元代金券抵扣**；官方提示将于 2026 年 10 月 31 日起停止向新注册用户开放，计划 12 月底下线",
-      "`kimi-k3.1-pro`、`kimi-k3`（1,048,576 tokens 上下文）—— 付费模型，官方明确**不支持使用新用户代金券**，必须充值后解锁使用",
+      "`kimi-k3.1-pro`、`kimi-k3`（1,048,576 tokens 上下文）—— 付费模型，**可用 15 元代金券抵扣**；不可用于高速版 `Kimi K3.1 Pro Highspeed`",
+      "`kimi-k2.7-code`、`kimi-k2.6`（256K）—— 付费模型；官方提示将于 2026 年 10 月 31 日起停止向新注册用户开放，计划 12 月底下线",
       "旧 `moonshot-v1` 全系列与 `kimi-k2.5` 已下线"
     ],
-    "free_quota": "实名认证赠送 **15 元代金券**（官方账号与财务文档原文：“认证成功后会为您赠送 15 元代金券，可用于支持该代金券的模型（Kimi K3.1 Pro、Kimi K3 不支持使用新用户代金券，详见下方说明）”）；有效期官方未载明，以券面标注为准",
+    "free_quota": "实名认证赠送 **15 元代金券**（官方问答明确：“国内新用户注册并完成认证后获赠的 15 元代金券可用于 Kimi K3.1 Pro 和 Kimi K3，不可用于高速版 Kimi K3.1 Pro Highspeed”）；有效期官方未载明，以券面标注为准",
     "guide_meta": {
       "scenarios": [
-        "longctx"
+        "longctx",
+        "flagship"
       ],
-      "short": "实名送 15 元代金券（K3/K3.1 Pro 不可用，可抵 K2 系列）",
+      "short": "实名送 15 元代金券（可抵扣 K3/K3.1 Pro，不可用于高速版）",
       "tiers": [
         "onetime"
       ]
     },
-    "promotions": "官方原文：**“获赠的 15 元代金券不可用于体验 Kimi K3.1 Pro 和 Kimi K3，请充值后解锁使用”**；充值返券活动在官方财务文档中无记载。",
+    "openai_compat": {
+      "api_key_label": "控制台申请",
+      "api_key_url": "https://platform.kimi.com/console/api-keys",
+      "base_url": "https://api.moonshot.cn/v1",
+      "models": "`kimi-k3.1-pro`, `kimi-k3`, `kimi-k2.7-code`, `kimi-k2.6`",
+      "summary": "实名送 15 元券（1M 长上下文，支持 K3.1 Pro）"
+    },
+    "promotions": "官方问答明确：**国内新用户注册并完成认证后获赠的 15 元代金券可用于 Kimi K3.1 Pro 和 Kimi K3，不可用于高速版 Kimi K3.1 Pro Highspeed**。",
     "tier_caveats": [
-      "送的是 **15 元代金券而非免费模型**；`kimi-k3.1-pro` 与 `kimi-k3` 官方明确**不支持使用新用户代金券**，必须充值后解锁使用",
+      "送的是 **15 元代金券而非免费模型**；可抵扣 `kimi-k3.1-pro` 与 `kimi-k3`，但**不可用于高速版 Kimi K3.1 Pro Highspeed**",
       "K2 系列模型将于 2026 年 10 月 31 日起停止向新注册用户开放，并计划于 12 月底下线",
       "代金券有效期官方文档未载明，以券面标注为准"
     ]
