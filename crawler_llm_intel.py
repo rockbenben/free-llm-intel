@@ -7440,8 +7440,6 @@ def main(argv: list[str] | None = None) -> int:
     disk_only = args.rebuild_only or args.render_only
 
     root = _repo_root()
-    if not disk_only:
-        (root / ".ai-changed").unlink(missing_ok=True)
 
     # 维护模式（正文语料层，不巡检）：先于爬虫分派，读现有 articles.json 逐篇抓正文。
     if args.mark_translated:
@@ -7658,6 +7656,9 @@ def main(argv: list[str] | None = None) -> int:
                   "锚点行与台账已记过的 URL 不发请求。")
         print("      请随后运行 --rebuild-only 重排归档并刷新产物。")
         return 0
+    # 正文维护与视图渲染接在巡检之后，必须保留本轮档案更新的提交标记。
+    if not disk_only and not args.guide_render and not args.picks_audit:
+        (root / ".ai-changed").unlink(missing_ok=True)
     yaml_path = (root / args.yaml).resolve() if not Path(args.yaml).is_absolute() else Path(args.yaml)
     if not yaml_path.exists():
         print(f"[fatal] 找不到 {yaml_path}", file=sys.stderr)

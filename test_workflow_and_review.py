@@ -682,6 +682,18 @@ class TestCrawlerCleanup(unittest.TestCase):
         self.assertEqual(self._run_main(), 1, "yaml 不存在时应以 1 退出")
         self.assertFalse(stale_marker.exists(), "爬虫启动时必须清理历史残留的 .ai-changed 标记")
 
+    def test_post_crawl_maintenance_preserves_ai_commit_marker(self):
+        marker = self.fake_root / ".ai-changed"
+        marker.write_text("gemini: updated\n", encoding="utf-8")
+        (self.fake_root / "llm-intel.yaml").write_text(
+            "vendors: []\nsources: []\n", encoding="utf-8")
+        with mock.patch.object(provider_profiles, "translate_body_to_zh",
+                               side_effect=AssertionError("空语料无需翻译")):
+            for mode in ("--fetch-bodies", "--mt-bodies", "--render-only"):
+                with self.subTest(mode=mode), contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(crawler_llm_intel.main([mode]), 0)
+                    self.assertEqual(marker.read_text(encoding="utf-8"), "gemini: updated\n")
+
     def test_repo_root_is_redirected_to_temp(self):
         """setUp 必须把标记清理限定在临时目录。"""
         resolved = crawler_llm_intel._repo_root()
@@ -1398,7 +1410,7 @@ class TestDateBackfill(unittest.TestCase):
         self.assertEqual(filled, 2, "抓取失败按解不出处理，不写日期")
 
     def test_backfill_fills_comment_line_and_preserves_orig(self):
-        """行尾带 <!--orig:--> 的缺日期条目也要能回填，且注释必须原样保住。
+        r"""行尾带 <!--orig:--> 的缺日期条目也要能回填，且注释必须原样保住。
 
         实测 136 条无日期归档里 120 条带注释，旧判据 `\s*$` 让它们全部漏掉；
         而整行重写会把注释抹掉，标题冻结退化后下轮机翻会改坏中文标题。
