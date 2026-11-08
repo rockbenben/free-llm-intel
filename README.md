@@ -178,9 +178,9 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-08 06:57:43**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-08 09:40:19**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
-> 💡 **核心特性**：覆盖 **83 家厂商**（深度抓取 **151 个情报页 + 46 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
+> 💡 **核心特性**：覆盖 **83 家厂商**（深度抓取 **150 个情报页 + 46 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 35 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
 > 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [全部厂商动态（中文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [全部厂商动态（英文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（英文加 `.en.xml`）。全部厂商动态与单厂商源都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。
 > 🛰 **额度变化订阅**（新活动 / 额度调整，前值 → 后值）：[llm-intel-changes.xml](https://free-llm-intel.aishort.top/feeds/llm-intel-changes.xml)
@@ -490,6 +490,7 @@ python -m unittest discover
 | **额度有效期** | 以资源包标注为准 |
 | **前置条件 / 限制** | 360 账号注册并完成实名认证 |
 | **邀请 / 特惠活动** | 集成 360 搜索增强能力；模型与价格以 /open/models 页面实时列表为准。 |
+| **实时巡检证据** | • 输入价格：¥0 / 1K times |
 | **官方直达** | [模型与定价页](https://ai.360.com/open/zh/models) ｜ [开发者文档](https://ai.360.com/docs) |
 | **特别说明** | 自研模型与第三方托管模型同页计费，注意区分。 |
 
@@ -961,7 +962,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册账号即开试用，免信用卡；是否需要企业邮箱、有无地区限制官方页面未说明 |
 | **免费层限制 / 注意事项** | • 30 天后若不订阅则无法继续以试用条件调用；Core 档 €39.00/月（前 3 个月 70% 折扣），另有 0 月费按量 Pay-as-you-go<br>• 试用档带 Stricter rate limits 与 Fair usage throttling——「每日 100 万 tokens」不等于可高速跑满<br>• 站方自述 European AI Inference API Provider、zero-retention（GDPR 口径）；属供应商自述，未经独立核实 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • Tracing and evaluating open-weight models on Regolo with Langfuse: a practical guide<br>• START YOUR 30-DAY FREE TRIAL<br>• Core (up to 20 M tokens/day) is best for startups, researchers, PoC projects and is available with 70% discount for the… |
+| **实时巡检证据** | • 使用 Langfuse 在 Regolo 上跟踪和评估开放权重模型：实用指南<br>• 开始 30 天免费试用<br>• Core（每天最多 2000 万代币）最适合初创公司、研究人员、PoC 项目，前 3 个月可享受 70% 的折扣。 |
 | **官方直达** | [定价与试用页](https://regolo.ai/pricing) |
 
 ### 53. Novita AI (Apodex 免费档)
@@ -975,7 +976,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 Novita AI 账号并创建 API Key 即可调用；官方价格页未写是否限新用户、是否需绑卡或有无地区限制 |
 | **免费层限制 / 注意事项** | • **免费只覆盖 Apodex 1.1 Mini 这一个 id**，切换其它模型即产生费用<br>• 官方未公布额度上限与有效期，价格表随时可能调整 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • Batch inference is available at an introductory 50% discount on input and output tokens for supported models. Learn More |
+| **实时巡检证据** | • 对于支持的模型，批量推理可在输入和输出令牌上享受 50% 的介绍性折扣。了解更多 |
 | **官方直达** | [模型 API 定价表](https://novita.ai/pricing) |
 
 ### 54. Parallel Web API (数据 / 搜索 API)
@@ -989,7 +990,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 需绑卡（官方写法 “with a card on file”）才能拿到每月 $5 与最高 $80 注册赠金 |
 | **免费层限制 / 注意事项** | • 免费额度只覆盖请求量、不计 token 深度：Search/Extract 限速 600 次/分钟，但 Task/Responses/FindAll 属高价处理器（单次约 $0.1–$2.4），**深度研究场景消耗很快**<br>• $80 注册赠金随时可能调整，以官方定价页为准 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • Qualified startups can receive up to $250 in free credits from Parallel<br>• New accounts get a signup credit, and every account gets a recurring free monthly allowance of $5. Free credit is alway…<br>• Business monthly credits expire at the end of each paid month. Annual credits are drawn down over 12 months. Enterprise… |
+| **实时巡检证据** | • 符合条件的初创公司可以从 Parallel 获得高达 250 美元的免费积分<br>• 新帐户可获得注册积分，每个帐户每月可获得 5 美元的定期免费津贴。免费积分始终在任何已付余额之前支出，因此您只需支付一次...<br>• 商业月度积分在每个付费月末到期。年度积分在 12 个月内提取。企业项目按合同设定。 |
 | **官方直达** | [定价页](https://parallel.ai/pricing) ｜ [控制台](https://platform.parallel.ai/) |
 
 ---
@@ -1156,7 +1157,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 新客户 + 有效支付方式（Visa/Mastercard/PayPal）；支持 Google/GitHub 单点登录或邮箱注册 |
 | **免费层限制 / 注意事项** | • **需绑卡**（Visa/Mastercard/PayPal）：超额部分计入绑卡账单；试用窗口结束后仍在运行的服务继续按标准价扣费——先用完额度再删实例<br>• GPU 套餐不可用本额度；额度不可用于 Marketplace 与第三方服务<br>• 仅限新客户 |
 | **邀请 / 特惠活动** | 常设新客 $100/60 天试用促销，官方未公布统一截止日。 |
-| **实时巡检证据** | • Sign up today and unlock AI compute, storage, and managed K8s, built for your business.<br>• Your credit card gets charged after you have exhausted the promotional credit amount or after the promotional credit wi… |
+| **实时巡检证据** | • 企业级 K8s 集群：免收控制平面费用。一键部署与扩容，实现 0 成本、高可靠的大规模容器编排。<br>• 仅限新客户使用。信用额度自激活之日起 60 天后失效<br>• 在您用完促销积分金额或促销积分窗口到期后，您的信用卡将被扣款。例如，如果您收到了 100 美元的信用额... |
 | **官方直达** | [试用活动页（官方域，中文）](https://www.akamai.com/zh/lp/akamai-cloud-computing-freetrial) ｜ [北美定价页（FAQ 含 $100/60 天口径）](https://www.akamai.com/cloud/pricing/north-america) ｜ [注册入口](https://login.linode.com/signup) |
 | **特别说明** | 官方域 www.akamai.com 对自动化直连回 403（反爬）；$100/60 天/绑卡三条口径取自官方域名的试用活动页正文与北美定价页 FAQ。 |
 
@@ -1171,7 +1172,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册账号即可，Free 档明写 No credit card、No commitments；注册环节含手机号验证 |
 | **免费层限制 / 注意事项** | • **外部清单常写「约 80 免费 GPU 小时」——照抄即错**：官方定价页带数值的 GPU hours 共 5 处、值全为 50（“Get up to 50 free GPU hours” / FAQ “~50 GPU hours” 等），全页「80」与「GPU hours」共现 0 次<br>• 免费 Studio 每 4 小时重启，长任务会被打断<br>• 「等于多少小时」随卡型差一个数量级（T4 $0.55–0.88/h、A100 $2.19/h、H100 $5.45/h），任何小时数都是折算而非官方面值 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • Start on the free tier with 50* free GPU hours. Pay as you go for more hours. Upgrade for enterprise features like brin…<br>• Up to 2 concurrent GPUs |
+| **实时巡检证据** | • Start on the free tier with 50* free GPU hours. Pay as you go for more hours. Upgrade for enterprise features like brin…<br>• 最多 2 个并发 GPU |
 | **官方直达** | [定价页（含 Free 档与价目表）](https://www.lightning.ai/pricing) |
 | **特别说明** | 2026-11-07 核实：公众号卡片标题写 80 小时、正文写 75 小时，均与官方页（50）不符，本档案按官方口径收录。 |
 
@@ -1186,7 +1187,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 免绑卡注册（FAQ：“You can sign up without a credit card”） |
 | **免费层限制 / 注意事项** | • $5 额度用尽即产生费用<br>• hobbyist $30/月起才升到 $10/月额度与 10 并发 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • $5 / month free credits<br>• Nope. You can sign up without a credit card and get started right away, no strings attached. Your first $5 in usage is…<br>• 5 concurrent browsers |
+| **实时巡检证据** | • 每月 5 美元免费积分<br>• 没有。您无需信用卡即可注册并立即开始，没有任何附加条件。您的前 5 美元使用是免费的。<br>• 5 个并发浏览器 |
 | **官方直达** | [定价页](https://onkernel.com/pricing) ｜ [注册入口](https://dashboard.onkernel.com/sign-up) |
 
 ### 68. Zilliz Cloud (托管 Milvus 向量库)
@@ -1200,7 +1201,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 cloud.zilliz.com 账号即可 |
 | **免费层限制 / 注意事项** | • vCU 是计算单元，向量检索密集时消耗快<br>• 5GB/250 万 vCU 是 Serverless 档口径，Dedicated 档另算 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • Start 30-day Free Trial<br>• Ideal for real-time applications requiring instant search results and high concurrent traffic. |
+| **实时巡检证据** | • 开始 30 天免费试用<br>• 非常适合需要即时搜索结果和高并发流量的实时应用程序。 |
 | **官方直达** | [定价页](https://zilliz.com/pricing) ｜ [注册入口](https://cloud.zilliz.com/signup) |
 
 ---
@@ -1357,7 +1358,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 app.arcade.dev 账号即可，免绑卡 |
 | **免费层限制 / 注意事项** | • 这是 Agent 工具调用配额，**不是模型 token 额度**，不能当免费对话模型来源 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • Pay for what your agents actually do, not per seat. Get started for free.<br>• $0 platform fee, no credit card required |
+| **实时巡检证据** | • 为您的代理实际所做的事情付费，而不是按席位付费。免费开始使用。<br>• $0平台费，无需信用卡 |
 | **官方直达** | [定价页](https://www.arcade.dev/pricing) ｜ [注册入口](https://app.arcade.dev/register) |
 
 ### 79. CrewAI (多 Agent 编排)
@@ -1412,7 +1413,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 app.portkey.ai 账号即可 |
 | **免费层限制 / 注意事项** | • **网关不是模型厂**：把它当「免费模型腿」是范畴错误<br>• 10K 请求/月与 10K logs/月是两个独立上限，别合并理解<br>• 官方定位适合 prototyping/测试，不适合生产负载 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • Role-Based Access Control, SSO, Granular Budget & Rate Limits |
+| **实时巡检证据** | • 基于角色的访问控制、SSO、精细预算和速率限制 |
 | **官方直达** | [定价页](https://portkey.ai/pricing) ｜ [控制台](https://app.portkey.ai/) |
 
 ### 83. v0 by Vercel (生成式前端)
@@ -1426,10 +1427,11 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 Vercel/v0 账号即可；官方定价页未写需要邀请或企业资质，是否需绑卡官方未说明 |
 | **免费层限制 / 注意事项** | • 「每天 7 条」是档位长期限制，非促销；按 7×30 折算约每月 210 次生成——折算值，官方没写过月度数<br>• 部署产物跑在 Vercel 侧，流量/函数用量按 Vercel 自己的 Hobby 档计，不在这 7 条里 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • $5 in one-time credits for new users<br>• $30 of included monthly credits per user |
+| **实时巡检证据** | • 新用户可获得 5 美元的一次性积分<br>• 每个用户包含 30 美元的每月积分 |
 | **官方直达** | [定价页](https://v0.app/pricing) |
 
 <!-- LLM-INTEL:END -->
+
 
 
 
