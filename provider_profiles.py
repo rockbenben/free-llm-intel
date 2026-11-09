@@ -451,6 +451,9 @@ VENDOR_RANK: tuple[str, ...] = (
     "akamai_cloud", "lightning_ai", "regolo_ai", "onkernel", "novita_ai", "parallel_ai", "zilliz_cloud",
     # 第六梯队：AI 编程 / Agent 工具（Part 4，内置模型免费额度；须连排放，
     # 生成器按相邻同类分组渲染 Part 标题）
+    # 2026-11-09 新增 4 家（ModelScope/SambaNova/Typhoon/StepFun）：官方页逐条核实后反哺；
+    # 未与既有梯队比较名次，暂列尾部（未登记厂商本来就排在最后，登记在这里不改变既有 81 家的排序）
+    "modelscope", "stepfun", "sambanova", "typhoon",
     "qoder", "codebuddy_workbuddy", "trae", "tongyi_lingma", "comate",
     "github_copilot", "cursor_ide", "kiro", "zed",
     # 2026-11-07 新增（官方页核实后反哺）
@@ -504,6 +507,9 @@ GUIDE_META: dict[str, dict] = {
     "zed": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
             "short": "Personal 档 $0 forever：2,000 次 accepted edit predictions；自带 Key 不限次",
             "tip": "内置模型免费只覆盖编辑预测额度；跑对话/Agent 需 Pro 试用（$5 / 14 天）或 BYOK"},
+    "modelscope": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
+                  "short": "魔粒制：每日登录 +200 魔粒（当日有效）+ 绑阿里云 +50 魔粒/日；按次扣减 0.5/1/2 魔粒",
+                  "tip": "魔粒是按次消耗的积分、每日登录奖励当日有效不累计；必须绑阿里云账号并实名（否则 401），勿按「每天 2000 次」旧口径排期"},
     # ---- 国内 ----
     "zhipu_glm": {"tiers": ["permanent"], "scenarios": ["code", "image", "referral", "student"],
                   "short": "4.x 代 Flash 0 元（新旗舰 5.3 付费）",
@@ -2483,6 +2489,103 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "links": [
             ("定价页", "https://zilliz.com/pricing"),
             ("注册入口", "https://cloud.zilliz.com/signup"),
+        ],
+    },
+    # ------------------------------------------------------------------
+    # 2026-11-09 新增 4 家：来源为公众号「科技插班生」《11 月免费大模型清单｜25 个入口，
+    # 哪些真能接进工具？》（2026-11-09）所列 25 入口中、本档案尚未覆盖且符合收录标准
+    # （自研模型或自有推理设施）的 4 家，逐条官方页核实。
+    # 证据层级：ModelScope=一手官方文档+官方公告；SambaNova=官方页（部分占位符未渲染）；
+    # Typhoon=官方站三路均不可达，二手聚合读数标注未证实；StepFun=一手官方定价页。
+    # ------------------------------------------------------------------
+    "modelscope": {
+        "category": "domestic",
+        "display_name": "ModelScope 魔搭社区",
+        "free_quota": "魔粒制：每日登录 +200 魔粒（短期、当日有效）；绑定阿里云账号 +50 魔粒/日（短期、每日最多 1 次）；收藏/喜欢 +2 魔粒/次（短期、每日最多 10 次）；验证邮箱、编辑个人介绍、配置个人主页各 +50 魔粒（长期、首次发放）；发布 AIGC 作品 +10 魔粒/次（每日最多 10 次）、发布 AIGC 模型 +10 魔粒/次（每日最多 5 次）；影响力激励 20–50 魔粒/次。",
+        "validity": "魔粒分短期（生效时长 24 小时）与长期（生效时长 90 天），过期时间自发放时刻起算；使用时效期内发放与此前攒下的魔粒等价，系统自动优先扣减最临近过期的。API-Inference 按次扣减魔粒（平均）：轻量 0.5 魔粒/次、主流 1 魔粒/次、旗舰 2 魔粒/次。",
+        "free_models": [
+            "API-Inference 共享池在架模型按魔粒按次计费（轻量约 0.5 魔粒/次、主流 1、旗舰 2）",
+        ],
+        "tier_caveats": [
+            "旧口径「每天 2000 次免费调用」已作废（2026-08 魔粒制上线），第三方文档仍在流传——勿按 2000 次/天排期",
+            "魔粒是按次消耗的积分：每日登录奖励当日（短期魔粒 24 小时）有效、不累计；勿按固定调用次数或累计余额排期，余额随每次调用下降",
+            "必须绑定阿里云账号并实名，否则 API 返回 401（please bind your alibaba cloud account before use）",
+            "官方警告：勿用于需要高并发与 SLA 保障的线上任务；并发为动态限流，无公开 RPM/TPM 数字（以控制台为准）",
+            "老模型会从 API-Inference 下架；魔粒余额与 AIGC 生图、模型训练共用",
+            "系统原因导致的推理/训练失败全额返还魔粒；用户主动取消：训练仍扣、推理返还",
+            "国际站入口 https://api-inference.modelscope.ai/ ，token 页 https://modelscope.ai/my/myaccesstoken",
+            "收录依据：ModelScope 平台自身提供 API-Inference 推理服务（官方文档称免费推理由阿里云提供算力支持），服务对象是平台托管的开源模型——非转售上游闭源模型 API 的中转站",
+        ],
+        "preconditions": "需绑定阿里云账号并完成实名",
+        "openai_compat": {
+            "summary": "OpenAI 兼容（API-Inference 共享池）",
+            "api_key_label": "ModelScope SDK 令牌",
+            "api_key_url": "https://modelscope.cn/my/myaccesstoken",
+            "base_url": "https://api-inference.modelscope.cn/v1",
+            "models": ["Qwen/Qwen3.5-35B-A3B", "Qwen/Qwen2.5-Coder-32B-Instruct"],
+        },
+        "links": [
+            ("魔粒计费文档", "https://modelscope.cn/docs/magicube/intro"),
+            ("魔粒公告", "https://modelscope.cn/headlines/detail/342"),
+        ],
+    },
+    "sambanova": {
+        "category": "international",
+        "display_name": "SambaNova Cloud",
+        "free_quota": "Free 卡含 $5 注册赠金（官方页读数：signupAmount=5、expiryDays=3650 天）；Free 卡可跑 Production 模型。",
+        "validity": "赠金有效期 3650 天（官方页读数）。",
+        "free_models": [
+            "Free 卡可跑 Production 模型（具体 token 数与 RPM/TPM 官方页未公开，以控制台为准）",
+        ],
+        "tier_caveats": [
+            "官方页部分占位符未渲染，页面文案自相矛盾：一处称需绑卡购买 credits 才能跑首次请求，另一处称有 $5 注册赠金——以控制台实际为准",
+            "官方页未给免费档 token 数与 RPM/TPM 读数——勿引用聚合站数字当作官方口径",
+            "Preview 模型仅 Developer/Enterprise 卡可见，Free 卡只有 Production 模型",
+            "收录依据：SambaNova 自有 RDU（Reconfigurable Dataflow Unit）推理硬件、自有 Cloud 推理设施——按「自有/租用 GPU 的推理平台」可收，非转售上游模型 API 的中转站",
+        ],
+        "preconditions": "注册 cloud.sambanova.ai 账号即可（Free 卡是否需绑卡官方页表述矛盾）",
+        "links": [
+            ("Plans 页", "https://cloud.sambanova.ai/plans"),
+        ],
+    },
+    "typhoon": {
+        "category": "international",
+        "display_name": "Typhoon (OpenTyphoon)",
+        "free_quota": "无账户级注册赠金（官方页不可达，未获证实）。",
+        "validity": "research showcase 长期免费（二手口径，官方页不可达）。",
+        "free_models": [
+            "typhoon-v2.5-30b-a3b-instruct（二手口径：5 请求/秒、200 请求/分钟/模型，未获官方页证实）",
+            "typhoon-ocr-preview（同上次级口径）",
+            "typhoon-asr-realtime（同上次级口径）",
+        ],
+        "tier_caveats": [
+            "官方三路均不可达：opentyphoon.ai/pricing 404、docs.opentyphoon.ai 只回重定向壳、/en/ 404（2026-11-09 实测）",
+            "以上额度数字来自聚合站 tools321.com（2026-10-25 更新），属二手，未获官方页证实",
+            "SCB 10X 自研泰语模型（自有推理设施）——一手账号锚点：GitHub scb-10x（typhoon-ocr 等官方仓库）、Hugging Face typhoon-ai（typhoon2.5-qwen3-4b）；opentyphoon.ai 自称「东南亚首个开源推理模型 Typhoon T1 3B」",
+        ],
+        "preconditions": "二手口径称无需信用卡（官方页不可达，未证实）",
+        "links": [
+            ("官方站（不可达）", "https://opentyphoon.ai"),
+            ("聚合站读数（二手）", "https://tools321.com/ai/ai-model-free-list/"),
+        ],
+    },
+    "stepfun": {
+        "category": "domestic",
+        "display_name": "阶跃星辰 StepFun",
+        "free_quota": "无通用免费档（无账户级注册赠金）。",
+        "validity": "限时免费：StepAudio 3 限免至北京时间 2026-11-17 11:59:59（12:00:00 起恢复计费）。",
+        "free_models": [
+            "StepAudio 3（限免至 2026-11-17 11:59:59 北京时间，之后恢复计费）",
+        ],
+        "tier_caveats": [
+            "StepAudio 3 限免窗口 2026-11-17 截止，之后无免费档——勿把限免当长期额度排期",
+            "Step 5 Preview 对改价前按量付费的老用户保留 0.35 元/百万 tokens 旧价（grandfathering），新用户不适用",
+            "RPM/TPM 无公开数字（以控制台为准）",
+            "收录依据：阶跃星辰自研 Step 系列与 StepAudio 语音模型（自研模型厂商），无转售闭源模型 API 的业务",
+        ],
+        "preconditions": "注册 platform.stepfun.com 账号即可",
+        "links": [
+            ("定价详情", "https://platform.stepfun.com/docs/zh/pricing/details"),
         ],
     },
 }
