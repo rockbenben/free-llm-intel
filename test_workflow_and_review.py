@@ -3321,6 +3321,40 @@ class TestTableAndAdjacentHeadingExtraction(unittest.TestCase):
         self.assertNotIn("release-202507", {a.title for a in arts},
                          "分节标题（release-YYYYMM）不得变成条目名")
 
+    def test_adjacent_heading_uses_publication_date_after_body_deadline(self):
+        """SiliconFlow：上一条正文的生效日不能抢占下一条标题前的发布日期。"""
+        html = """
+        <div>2026.11.03</div><h3 id="wan">Wan2.2 系列下线，MiniMax-H3 上线</h3>
+        <p>请在 2026-11-10 前切换到新模型。</p>
+        <div>2026.11.03</div>
+        <h3 id="qwen">【模型服务调整】Qwen3-Coder-30B-A3B-Instruct、GLM-4.5V 等模型将下线</h3>
+        <p>以下模型将在 2026-11-16 停止服务。</p>
+        <div>2026.11.03</div><h3 id="moss">OpenMOSS-Team/MOSS-Image 上线</h3>
+        """
+        clock = mock.Mock(wraps=datetime)
+        clock.now.return_value = datetime(2026, 11, 9, 10)
+        with mock.patch.object(crawler_llm_intel, "datetime", clock):
+            arts = self._extract(html, "https://docs.example/release-notes")
+        self.assertEqual(len(arts), 3)
+        self.assertEqual([a.date for a in arts], ["2026-11-03"] * 3)
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="siliconflow", brand="SiliconFlow", homepage="", products=[],
+            all_news_articles=arts)
+        kept = crawler_llm_intel._rss_articles(intel, "2026-11-09")
+        self.assertEqual({a.url for a in kept}, {a.url for a in arts},
+                         "已发布公告不能被正文里的未来生效日挡在索引之外")
+
+    def test_adjacent_heading_deduplicates_time_attribute_and_label(self):
+        """同一 time 的属性和显示文字各有一份日期，只生成一条且保留顺序。"""
+        html = "".join(
+            f'<time datetime="2025-07-{day:02d}">Jul {day}, 2025</time>'
+            f'<h2>Model release number {day}</h2>'
+            for day in (23, 22, 21))
+        arts = self._extract(html, "https://docs.example/changelog")
+        self.assertEqual([a.date for a in arts],
+                         ["2025-07-23", "2025-07-22", "2025-07-21"])
+        self.assertEqual(len({a.url for a in arts}), 3)
+
 
 class TestChineseDateFormat(unittest.TestCase):
     """「2026 年 7 月 31 日」这种**单位两侧都有空格**的写法，所有日期解析处都要认。

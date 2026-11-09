@@ -2217,25 +2217,25 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
     if not articles:
         rows6: list[Article] = []
         seen6: set[str] = set()
-        last_date_pos = -10_000
         # 日期只在可见标记里找：脚本正文（JSON-LD dateModified、RSC flight 数据等）
         # 里的日期不是条目日期，见 _blank_script_bodies。抹白后偏移不变，下面的
         # 标题定位与 _enclosing_anchor_url 仍按原串偏移取值。
         scan6 = _blank_script_bodies(raw)
         for dm in _INLINE_DATE_RE.finditer(scan6):
-            # 同一处日期常被匹配**两次**（`<time datetime="2026-09-22">Sep 22, 2026</time>`
-            # 里 ISO 与英文写法各命中一次），不去重就会产出两条一模一样的条目，
-            # 而条数一旦够 3 条就会顶掉后面链接分支的正确结果。
-            if dm.start() - last_date_pos < 60:
-                continue
-            last_date_pos = dm.start()
-            norm6 = _drop_future_date(normalize_feed_date(dm.group(0)))
-            if not norm6:
-                continue
             # 日期之后 2000 字符内最近的标题元素 —— 再远就不是同一条了
             hm = re.search(r"<(h[1-4])([^>]*)>(.*?)</\1>", scan6[dm.end():dm.end() + 2000],
                            re.S | re.I)
             if not hm:
+                continue
+            # 同一标题前有多个日期时只认最近的一处。上一条正文里的生效日
+            # 也可能落在 2000 字符内，不能先占住标题、让真正的发布日期被 seen6 丢掉
+            # （SiliconFlow 的 11/03 公告曾因此被标成 11/10，从当日索引里消失）。
+            # 这也合并了 <time datetime="…">日期文字</time> 的两份日期；按标题关联，
+            # 不用字符间距猜重复，以免相邻两条真公告的日期也被 60 字符阈值吃掉。
+            if _INLINE_DATE_RE.search(scan6, dm.end(), dm.end() + hm.start()):
+                continue
+            norm6 = _drop_future_date(normalize_feed_date(dm.group(0)))
+            if not norm6:
                 continue
             attrs6, inner6 = hm.group(2), hm.group(3)
             title6 = html_mod.unescape(re.sub(r"<[^>]+>", "", inner6))
