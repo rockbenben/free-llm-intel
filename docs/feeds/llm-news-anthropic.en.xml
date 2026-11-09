@@ -7,7 +7,195 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 05 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 09 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Introducing Claude Fable 5.2 and Claude Mythos 5.2</title>
+      <link>https://www.anthropic.com/claude-fable-and-mythos-5-2</link>
+      <guid isPermaLink="true">https://www.anthropic.com/claude-fable-and-mythos-5-2?li=1</guid>
+      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>November 9, 2026</p>
+<h1>Claude Fable 5.2 and Mythos 5.2</h1>
+<p>We’ve upgraded Claude Fable and Claude Mythos—models that are designed to tackle the most daunting technical challenges.</p>
+<p>Claude Fable 5.2 and Claude Mythos 5.2 show improvements in areas like coding, reasoning, and vision. During prerelease testing they’ve helped our engineers complete otherwise-infeasible software migrations, designed three working electronic devices from scratch, solved two open problems in the physics of black holes, made substantial progress on robotics evaluations, and formalized the proof of Fermat’s Last Theorem in 30 hours—among many other applications we’ll discuss below.</p>
+<p>Claude Fable and Claude Mythos are the same underlying model. Fable has strong cybersecurity and biology safeguards to guard against misuse, which allows us to make it available to all users. Organizations pursuing beneficial applications in cybersecurity or biomedical research can apply for access to Mythos through our recently expanded <a href="https://claude.com/form/life-sciences-verification-program">Life Sciences</a> and <a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">Cyber</a> Verification Programs.</p>
+<p>Testers have found that Fable 5.2 and Mythos 5.2 communicate more clearly than past Fable and Mythos models. They generate outputs up to 30% faster than Claude Fable 5.1 and Claude Mythos 5.1, and they’re available at a lower price: $8 per million input tokens and $40 per million output tokens.</p>
+<p>Fable 5.2 and Mythos 5.2 also come with an optional fast mode, which speeds up token generation by up to 2.5 times. Fast mode is available for $16 per million input tokens and $80 per million output tokens.</p>
+<p><strong>Safety and alignment.</strong> To help ensure safety and alignment keep step with growing model capabilities, we ran extensive prerelease safety testing on the model that underlies Fable 5.2 and Mythos 5.2. This included developing novel evaluations that give deeper insight into specific concerning behaviors like sandbox escapes. We believe high-stakes risks from misalignment remain low, and the model performed as well as, or better than, our recent models on most alignment measures. Fable 5.2’s cyber and biology safeguards are as robust as those of Fable 5.1 but produce fewer unnecessary blocks, and we have implemented our strongest-ever protections against distillation attacks.</p>
+<p>We describe more about our safety testing below, and full details can be found in the <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">Claude Fable 5.2 and Mythos 5.2 System Card</a>.</p>
+<p><strong>When to use Claude Fable 5.2 and Mythos 5.2.</strong> Fable and Mythos are best for the most ambitious, open-ended technical work. For most coding and knowledge tasks, we recommend that users start with Claude Opus 5.5, our strongest daily driver, and then switch to a different model as required, depending on the scope and complexity of their work—upward to Fable or Mythos, or downward to Claude Sonnet 5.5 or Claude Haiku 5.5. Fable 5.2 can also play the role of <a href="https://code.claude.com/docs/en/advisor">Advisor</a> (where Haiku, Sonnet, or Opus models consult it to help solve harder problems) or <a href="https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration">Orchestrator</a> (where it delegates simpler tasks to smaller models).</p>
+<h2>Evaluating Claude Fable 5.2 and Mythos 5.2</h2>
+<p><strong>Benchmark performance.</strong> The benchmarks table below shows that Claude Fable 5.2 and Mythos 5.2 are a step above Opus 5.5 in almost all the capabilities we evaluated:</p>
+<table><thead><tr><th></th><th>Fable 5.2</th><th>Fable 5.1</th><th>Opus 5.5</th><th>GPT-6 Astra</th><th>Gemini 4 Carbon</th></tr></thead><tbody><tr><td>Agentic codingFrontierCode 2.0</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingFrontierCode 2.0</td><td>49.1%Xhigh effort</td><td>32.4%Xhigh effort</td><td>45.5%</td><td>42.8%</td><td>41.1%Medium effort</td></tr><tr><td>Agentic codingFrontierSWE v2</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingFrontierSWE v2</td><td>69.9%</td><td>56.3%</td><td>62.3%</td><td>65.5%</td><td>61.2%</td></tr><tr><td>Business workflowsAutomationBench</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Business workflowsAutomationBench</td><td>51.4%</td><td>31.4%</td><td>42.5%</td><td>41.4%</td><td>53.9%</td></tr><tr><td>Agentic scientific researchTerminal-Bench-Science 0.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic scientific researchTerminal-Bench-Science 0.1</td><td>74.6%75.3% (Mythos 5.2)</td><td>52.6%</td><td>58.7%</td><td>68.1%</td><td>64.8%</td></tr><tr><td>CybersecurityCyScenarioBench†</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>CybersecurityCyScenarioBench†</td><td>76.3%Mythos 5.2</td><td>61.7%Mythos 5.1</td><td>67.6%without safeguards</td><td>61%GPT-6 Cyber</td><td>—</td></tr><tr><td>CybersecurityCVE Rediscovery</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>CybersecurityCVE Rediscovery</td><td>89.6%Mythos 5.2</td><td>78.3%Mythos 5.1</td><td>81.3%without safeguards</td><td>—</td><td>—</td></tr><tr><td>Protein designDe novo binder design (24 hr)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Protein designDe novo binder design (24 hr)</td><td>85.1%Mythos 5.2</td><td>79.1%Mythos 5.1</td><td>82.6%without safeguards</td><td>—</td><td>—</td></tr><tr><td>Agentic searchWANDR (relaxed score)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic searchWANDR (relaxed score)</td><td>82.1%</td><td>68.7%</td><td>72.3%</td><td>—</td><td>—</td></tr><tr><td>Computer useOSWorld 2.1 (offline set, partial)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Computer useOSWorld 2.1 (offline set, partial)</td><td>89.3%</td><td>83.5%</td><td>87.2%</td><td>79.5%</td><td>81.5%</td></tr><tr><td>RoboticsRoboDojo Sim‡</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>RoboticsRoboDojo Sim‡</td><td>64.9%</td><td>27.6%</td><td>39.4%</td><td>29.8%</td><td>—</td></tr><tr><td>Knowledge workAA-Briefcase v1.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workAA-Briefcase v1.1</td><td>66.1%rubric</td><td>61.5%rubric</td><td>61.2%rubric</td><td>52.0%rubric</td><td>61.8%rubric</td></tr><tr><td>1785Elo</td><td>1669Elo</td><td>1800Elo</td><td>1569Elo</td><td>1611Elo</td><td></td></tr><tr><td>Knowledge workRemote Labor Index (RLI)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workRemote Labor Index (RLI)</td><td>41.3%High effort</td><td>17.9%</td><td>21.3%</td><td>20.8%</td><td>—</td></tr><tr><td>Multidisciplinary reasoningHumanity’s Last Exam (with tools)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Multidisciplinary reasoningHumanity’s Last Exam (with tools)</td><td>74.2%</td><td>65.6%</td><td>67.7%</td><td>57.2%</td><td>—</td></tr><tr><td>Visual chart recognitionChartography (no tools)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Visual chart recognitionChartography (no tools)</td><td>73.4%</td><td>44.8%</td><td>64.4%</td><td>71.0%</td><td>72.5%</td></tr></tbody></table>
+<p>For details on evaluation methodology, see the <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">Claude Fable 5.2 and Claude Mythos 5.2 System Card</a>. Scores for Fable 5.2, Fable 5.1, and Opus 5.5 show results with safeguards on unless otherwise noted. All scores show each model’s highest-available effort unless otherwise noted. † On CyScenarioBench, each lab’s scores are based on unique tasks. ‡ RoboDojo Sim shows the highest-available effort and was run internally.</p>
+<p><strong>Effort and efficiency.</strong> On Medium effort (the default in Claude apps and Claude Code), Fable 5.2 can accomplish challenging tasks with fewer tokens than Fable 5.1. In early testing on the FrontierCode 2.0 evaluation, Fable 5.2 at High effort scored about level with Opus 5.5 at Max effort, for roughly half the cost per task. At Xhigh effort, it also scored the highest of any released model tested.</p>
+<p>Agentic coding: FrontierCode 2.0Agentic search: WANDRHardware engineering: BenchCAD 2.1Multidisciplinary reasoning: Humanity’s Last ExamVisual chart recognition: Chartography</p>
+<p>FrontierCode 2.0Accuracy vs. cost</p>
+<p>FrontierCode measures whether a model’s code changes would be merged by the maintainers of open-source repositories. At High effort, Fable 5.2 scores about the same as Opus 5.5’s best score (45.3% vs. 45.5%) for roughly half the cost per task, and ahead of GPT-6 Astra’s best score (42.8%) at about the same cost. At Xhigh effort, Fable 5.2 reaches 49.1%, the highest score of any released model we’ve tested.</p>
+<p>WANDR (relaxed score)Accuracy vs. cost</p>
+<p>Perplexity’s WANDR benchmark measures agents on large data-collection tasks. At Medium effort, Fable 5.2 matches Opus 5.5’s top score for about 40% of the cost per task.</p>
+<p>BenchCAD 2.1 (with tools)Accuracy vs. cost</p>
+<p>BenchCAD 2.1 measures hardware engineering, specifically how closely a model’s designs match reference geometry and circuits, and is scored 0–100 with partial credit. At Max effort, Fable 5.2 scores 83.5, ahead of Opus 5.5 (65.3) and Fable 5.1 (44.4).</p>
+<p>Humanity’s Last Exam (with tools)Accuracy vs. cost</p>
+<p>Humanity’s Last Exam (HLE) is a test of expert-level academic knowledge and reasoning. At Low effort, Fable 5.2 matches Opus 5.5’s top score for less than one-tenth of the cost per task.</p>
+<p>Chartography (no tools)Accuracy vs. cost</p>
+<p>Chartography tests how accurately a model can read charts and figures. At Medium effort, Fable 5.2 scores 66.4%, ahead of Opus 5.5 at Max effort (64.4%) for less than one-tenth of the cost per task.</p>
+<h2>Coding</h2>
+<p>Over 90% of the changes merged into Anthropic’s core codebase are now written by Claude (with human guidance). We’ve used Fable 5.2 to fix stubborn bugs in minutes, optimize performance across all of our services, and complete high-value software projects that would otherwise have been too slow or too costly to attempt. A team of agents running an earlier version of Fable 5.2 migrated a critical production service from Python to Rust—the service is now more efficient, more reliable, and starts about 26 times faster. We’ve found that Fable 5.2 exercises strong engineering judgment and can produce high-quality results from even ambiguous requests.</p>
+<p>As an experiment, one Anthropic engineer gave Fable 5.2 the task of designing a prototype operating system. Starting from an empty folder, the model coordinated over 1,000 subagents, working around the clock for eight days writing, testing, and reviewing code. It produced a working operating system that boots on a laptop, with its own core that runs the machine, drivers for the disk, keyboard, and network, permanent file storage, windows, a login screen, an installer, and built-in Claude functionality (see the video below).</p>
+<p>Early testers have been impressed at how successfully Fable 5.2’s coding skills can be applied to a wide range of tasks:</p>
+<p>VercelShopifyDatadogUnityUberOracleiGentSnowflakeCognition</p>
+<p>Quote</p>
+<blockquote>“The model is in my head. It understands the intent behind every prompt I’ve given it. I haven’t had to say ‘No, I meant…’ a single time. Projects we’ve been pushing along with other models for weeks got finished and approved by our teammates in a few days with Claude Fable 5.2, and the humans reviewing its code had less to say.”</blockquote>
+<p>CompanyVercel</p>
+<p>AuthorJoe Haddad, Member of Technical Staff</p>
+<p>Quote</p>
+<blockquote>“Claude Fable 5.2 is great for taking a loose idea and refining it. Its answers are really well-considered, and within a few turns I can almost always say ‘ok, go do that,’ and trust that it’ll complete it with little intervention. It feels like working with another staff-level engineer.”</blockquote>
+<p>CompanyShopify</p>
+<p>AuthorTom Pritchard, Staff Engineer</p>
+<p>Quote</p>
+<blockquote>“You can just throw Claude Fable 5.2 at new, ambiguous systems it has never seen before, and it will figure out how to actually work within them. It’s almost like an incident commander that can send out faster models to get quick signals and coordinate, which removes that burden from me as an operator.”</blockquote>
+<p>CompanyDatadog</p>
+<p>AuthorMatt Lee, Senior Staff Engineer</p>
+<p>Quote</p>
+<blockquote>“Claude Fable 5.2 can complete tasks that previous models struggled with. The clearest examples so far are building higher-quality 3D scenes from scratch and rebuilding an experience from a visual reference. It’s very strong on the harder game-dev tasks, where it keeps iterating and improving instead of getting stuck.”</blockquote>
+<p>CompanyUnity</p>
+<p>AuthorSam Zhang, Creative Technologist</p>
+<p>Quote</p>
+<blockquote>“I had Claude Fable 5.2 run a 10–12 hour security audit. It sent out about 170 reviewer agents and came back with a write-up, fix pull requests and a policy proposal. It works until the job is actually complete instead of stopping at a plausible checkpoint. Its self-correction and honesty about gaps impressed me. At High effort, I’d use this over what I run today for long unattended audits and doc-heavy work.”</blockquote>
+<p>CompanyUber</p>
+<p>AuthorAndrew Mager, Staff Engineer, Agentic Systems</p>
+<p>Quote</p>
+<blockquote>“In one test combining country debt summaries, repayment history, and regional benchmarks, Claude Fable 5.2 generated SQL that returned the expected results. The SQL generated by two other models also ran successfully, but incorrectly summed country-level summary amounts, producing values 5–8x the expected amounts. Getting these business calculations right is why we see value in using Fable 5.2 for enterprise SQL generation.”</blockquote>
+<p>CompanyOracle</p>
+<p>AuthorLiyu Gong, Senior Manager of Machine Learning</p>
+<p>Quote</p>
+<blockquote>“In a single session, Claude Fable 5.2 built a hypervisor, the software that walls off virtual computers sharing one machine. Its core is mathematically proven to keep them apart. More than 3,500 machine-checked proofs cover every case, not just the ones you test. It’s the first model I’ve seen break a problem this large into pieces it can prove, fit them together, and keep taking on more ambitious work. A very clear upgrade from Fable 5.1.”</blockquote>
+<p>CompanyiGent</p>
+<p>AuthorSean Ward, Co-Founder and CEO</p>
+<p>Quote</p>
+<blockquote>“Claude Fable 5.2 is the strongest model we have measured on data-eng-bench, our open-source benchmark of 103 data-engineering tasks. It solved tasks consistently across repeated runs and passed every interactive coding task we gave it.”</blockquote>
+<p>CompanySnowflake</p>
+<p>AuthorBala Kasiviswanathan, VP of AI and Developer Experience</p>
+<p>Quote</p>
+<blockquote>“Claude Fable 5.2 says it doesn’t know things instead of hallucinating. At one point it told me its last estimate was wrong and that it wouldn’t give a number until it had measured the change. Very impressive!”</blockquote>
+<p>CompanyCognition</p>
+<p>AuthorAdhyyan Sekhsaria, Member of Technical Staff</p>
+<h2>Cybersecurity</h2>
+<p>Claude Mythos 5.2 is our most capable model for cybersecurity engineering. It catches more vulnerabilities than our previous models, and is better at reproducing and fixing them (note that Claude Fable 5.2’s safeguards will block most cybersecurity-related tasks). A security company found that one in six confirmed bugs found by Claude Mythos 5.2 were missed by all of the other frontier models they tested. On our internal evaluation, CVE Rediscovery,¹ Claude Mythos 5.2 found 10.2% more vulnerabilities than Claude Opus 5.5 and 14.4% more than Claude Mythos 5.1. Claude Mythos 5.2 also shows better judgment and calibration—one tester found that previous models had overstated the seriousness of about 1 in 20 findings, whereas Claude Mythos 5.2 hadn’t overstated any.²</p>
+<p>CVE RediscoveryAccuracy vs. cost</p>
+<p>CVE Rediscovery is an internal cybersecurity evaluation that assesses how many published CVEs (Common Vulnerabilities and Exposures) a model can independently find when given a snapshot of the project before a CVE was fixed. Our October 2026 run against 1,829 CVEs showed Claude Mythos 5.2 outperformed Claude Mythos 5.1 and Claude Opus 5.5 at every effort level.</p>
+<p>Claude Mythos 5.2’s cyber capabilities are accessible through our <a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">Cyber Verification Program</a>, which we’re continuing to expand and improve. Claude Enterprise customers (even if they aren’t members of the Cyber Verification Program) can access <a href="https://claude.com/product/claude-security">Claude Security</a>, which scans codebases for vulnerabilities using our most capable models—which now includes Claude Mythos 5.2. <a href="https://claude.com/resources/articles/claude-security-now-scans-continuously-and-tracks-fixes">A recent update to Claude Security</a> helps it watch repositories as code is updated, track any findings to ensure they’re fixed, learn from additional context, and connect to a user’s tools through an API and MCP.</p>
+<p>RubrikMozilla</p>
+<p>Quote</p>
+<blockquote>“We have worked closely with Anthropic’s new model, Claude Mythos 5.2, to do a next round of high-fidelity threat discovery and elimination within our own systems for potential issues we did not uncover with earlier Mythos models. The output is more readable and empowered our team to spot-check faster and more easily. We built our Code Guardian harness with Mythos 5.1, and we’d switch to Mythos 5.2 to give our customers more powerful cyber capabilities.”</blockquote>
+<p>CompanyRubrik</p>
+<p>AuthorArvind Nithrakashyap, Co-Founder and Chief Technology Officer</p>
+<p>Quote</p>
+<blockquote>“Claude Mythos 5.2 is astonishingly good. We’ve worked closely with the Anthropic team all year to harden Firefox with successive generations of Claude models, and each round has left fewer, subtler bugs to find. Even so, Mythos 5.2 roughly doubled the vulnerability discovery metrics of Mythos 5.1 across respective scanning campaigns.”</blockquote>
+<p>CompanyMozilla</p>
+<p>AuthorBrian Grinstead, Distinguished Engineer</p>
+<h2>Science and engineering</h2>
+<p>Important tasks in science, engineering, and mathematics increasingly depend on coding: analyzing data, modeling molecules, designing parts, and controlling instruments are all done through software. Below, we discuss how Claude Fable 5.2 and Claude Mythos 5.2 have helped researchers make progress on difficult problems in these areas.</p>
+<h3>Theoretical physics</h3>
+<p>Claude Fable 5.2 solved two open problems in theoretical physics. Both concern black holes, and the effort to unite the two linchpin theories of modern physics, relativity, and quantum mechanics.</p>
+<p>Both of Claude’s results rely on holographic duality, the idea that certain universes containing gravity can be precisely described by a quantum theory containing no gravity at all. In the first problem, physicists in 1983 had shown that as these universes heat up, black holes form abruptly, like water boiling; but their method worked only in large universes that were big enough for relativity to apply. A calculation to determine whether the same was true in very small universes, where only the quantum description can be used, was laid out in 2003 but was too laborious to complete. Fable 5.2, working largely autonomously, completed it and found the transition is abrupt there, too. In the second problem, Fable 5.2 found the exact limit of a technique physicists have used for more than 15 years to rule out candidate theories of quantum gravity in a simplified universe. Read more about these results in their respective preprints, <a href="https://hexagonmath.org/2611.00175v1">here</a> and <a href="https://hexagonmath.org/2611.00174v1">here</a>.</p>
+<h3>Protein folding</h3>
+<p>Adeno-associated viruses are small, harmless viruses whose protein shell, the <em>capsid</em>, can be used to deliver gene therapies. The protein structure of the capsid is important—for example, it affects whether the therapy will be blocked by a patient’s immune system—but it’s also highly complex. Existing protein-folding models like AlphaFold can predict individual proteins, but a capsid is built from dozens of them. Building on two open-source protein-folding models, Claude Mythos 5.2 found a novel way to accurately predict a whole capsid’s structure. It wrote code that ran these models on overlapping groups of protein chains, and used the information on the known symmetries of the capsid to merge them together.</p>
+<p>Claude’s method worked across several capsids, both natural and engineered (in our tests, it accurately modeled 28 of the 34 it attempted).³ Three computational biologists shared the following reflections on how Claude’s skills could be used to speed up their research into gene therapies:</p>
+<p>Dyno TherapeuticsColumbia UniversityBiohub</p>
+<p>Quote</p>
+<blockquote>“This acceleration could save meaningful time and cost from our capsid folding pipeline, enabling us to deploy compute more efficiently across many capsid properties that are needed for a genetic medicine. We are excited to help Anthropic push the reasoning capabilities further to reduce the cost of designing capsids overall.”</blockquote>
+<p>CompanyDyno Therapeutics</p>
+<p>AuthorSam Sinai, Cofounder and Head of AI</p>
+<p>Quote</p>
+<blockquote>“Large protein assemblies, including capsids, remain an open problem for protein modeling, due to the complexity of accurately predicting and positioning the structures of dozens of individual macromolecules, not to mention the inordinately high computational costs involved. Claude’s approach cleverly tackles this problem for symmetric assemblies, making it possible for individual scientists to model systems on personal workstations that would otherwise require dedicated clusters.”</blockquote>
+<p>CompanyColumbia University</p>
+<p>AuthorMohammed AlQuraishi, Assistant Professor of Systems Biology and Computer Science</p>
+<p>Quote</p>
+<blockquote>“Biohub’s goal in open-sourcing ESMFold2 was to enable the scientific community to build on the biology it has learned. We are excited to see Claude prototype a new sampling procedure that enables predictions of large, symmetric complexes such as AAV capsids—a protein used to deliver gene therapies. We will continue to incorporate such contributions from the community that extend our tools to important application domains.”</blockquote>
+<p>CompanyBiohub</p>
+<p>AuthorZeming Lin, Principal Research Scientist</p>
+<h3>Mathematics</h3>
+<p><strong>Mathematical formalization.</strong> Formalization is the process of translating a mathematical proof into a language that a computer can check step by step. It can help human mathematicians gain confidence in results without having to check them by hand (this matters even more when AI models generate results that are hard for humans to verify). Because formalization is such a laborious process, if AI could assist with it, mathematicians could spend more time exploring novel ideas.</p>
+<p>Our first <a href="https://www.anthropic.com/research/formalizing-fermats-last-theorem">formalization of Fermat’s Last Theorem</a>, performed by an unreleased research version of Claude, took 11 days. It relied on a purpose-built harness along with guidance from a human researcher. By contrast, a team of 1,000 Fable 5.2 agents fully formalized the theorem in just 30 hours, with minimal human intervention. Fable 5.2 started from minimal prompts, built its own ways to coordinate, and used no mathematical references, only a list of intermediate theorem statements to score progress. It needed one-third as many action tokens as our first formalization and produced a proof seven times shorter. As can be seen in the figure below, Opus 5.5 (with the same 1,000-agent setup) completed only 26% of the formalization in 18 hours, and barely made any more progress after 30.</p>
+<p>Read more about the formalization <a href="https://claude.dev/blog/safely-scaling-multi-agent-teams-with-fable-5-2/">here</a>.</p>
+<p>Fermat’s Last Theorem proof formalizationCompletion over time</p>
+<p>Formalizing the proof of Fermat’s Last Theorem in the mathematical programming language Lean. Each line shows the proportion of the full formalization that Fable 5.2 (green line) and Opus 5.5 (orange line) had completed over 30 hours with about 1,000 agents, and a single run per model. At the dashed line (18 hours), both teams resumed from their last save with 12 more hours.</p>
+<h3>Hardware and robotics</h3>
+<p>Many of AI’s potential benefits—for example, in speeding up laboratory research—depend on it being able to act in the physical world. Claude Fable 5.2 continues our models’ trend of <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">increasing usefulness</a> in the <a href="https://www.anthropic.com/research/project-vend-2">real world</a>, showing promising results on tasks such as designing hardware devices and substantial advances in controlling physical robots.</p>
+<p><strong>Hardware engineering.</strong> We tested Fable 5.2’s skills in hardware engineering, asking it in a one-paragraph prompt to design and produce three working electronic devices with their own circuit boards, 3D-printed enclosures, and software. The devices, shown below, were a home voice-assistant hub, a USB speakerphone, and a handheld virtual pet. We collaborated on this project with <a href="https://www.diode.computer/">Diode</a>, a company that designs and manufactures circuit boards.</p>
+<p>Claude wrote its own specifications, selected available electronic components from US distributors, routed each device’s four-layer circuit board, modeled the enclosures with computer-aided design, and programmed the devices’ software. Each board was ready for manufacturing in under a day, with minimal human input. Once Diode had built the boards, Claude guided the company’s engineers through the testing and assembly of the devices. All three devices worked without needing any electrical modifications. Read more about Claude’s hardware engineering skills <a href="https://www.anthropic.com/research/claude-electronics-design">here</a>.</p>
+<p><strong>Robotics.</strong> Compared with earlier Claude models, Fable 5.2 shows substantially improved skills in controlling physical robots—even for robotics tasks on which it has never explicitly been trained. The video below shows robots controlled by Fable 5.2 completing a variety of tasks, including solving a puzzle cube, unscrewing a bottle cap, and drawing a picture of a robot. On the public <a href="https://robodojo-benchmark.com/">RoboDojo</a> benchmark, which tests how AIs can control a simulated two-arm robot from camera images, Fable 5.2 outperformed other frontier models that were run on the same harness, as well as most AI systems built specifically to control robots.</p>
+<p>RoboDojo (average)Max score by model</p>
+<ul><li>Gemini 4 Argon</li><li>GPT-6 Astra</li><li><strong>Fable 5.1</strong></li><li><strong>Opus 5.5</strong></li><li><strong>Fable 5.2</strong></li></ul>
+<p>RoboDojo Sim tests control of a simulated two-arm robot. Scores are based on our internal runs for each model using the highest available effort level. At Max effort, Fable 5.2 scores 64.9%, more than double GPT-6 Astra (29.8%) and Fable 5.1 (27.6%).</p>
+<h2>Research and analysis</h2>
+<p>Early testers using Claude Fable 5.2 for research and analysis tasks found that it can handle more ambiguous, data-heavy tasks than previous models and has better judgment on ambiguous tasks—particularly those that require abstract reasoning and design. Proprietary trading firm Jump Trading tested Fable 5.2 on proxy evaluations that resemble some of its quantitative research tasks, embedding it in a harness similar to the one the firm uses for its own research. In one run, Fable 5.2 effectively played all the necessary roles: code-writer, coordinator, planner, and job-submitter. Previous models had required substantial investments of time to manually rebalance roles to accommodate different models’ strengths and weaknesses.</p>
+<p>Other testers from research and analysis organizations sent us the following statements on their experiences with Fable 5.2:</p>
+<p>Jump TradingBalyasny Asset ManagementDiscovered MaterialsIMCHarveyFundamental Research LabsXTX MarketsBox</p>
+<p>Quote</p>
+<blockquote>“Claude Fable 5.2 is incredible at playing every major role within a research system: defining questions, interpreting, coordinating, and of course finding and implementing the key ideas. Definitely one of the strongest on taste and judgment that we’ve seen. In an internal research automation benchmark, it achieved a full 10% lower error than the next best model.”</blockquote>
+<p>CompanyJump Trading</p>
+<p>AuthorLucas Baker, Head of LLM R&amp;D</p>
+<p>Quote</p>
+<blockquote>“In a recent evaluation, we asked Claude Fable 5.2 to investigate how one organization tested a new integration in its core technology systems. It traced the answer to the right sources and didn’t overstate what the evidence showed. It also flagged that the question’s framing could be misleading. In investment research, that restraint makes clear what remains unknown and where the market may be mispricing risk or opportunity.”</blockquote>
+<p>CompanyBalyasny Asset Management</p>
+<p>AuthorAshish Malik, AI Researcher</p>
+<p>Quote</p>
+<blockquote>“Phonon calculations are one of the most expensive routine steps in computational materials science, which is why labs often skip stability checks when screening new materials. Claude Fable 5.2 made Quantum ESPRESSO’s phonon code about 36 times faster on average than stock on the same GPU, taking our 13 benchmark cases from 3.3 hours to under four minutes. That beats Fable 5.1’s speedup by 3–4 times.”</blockquote>
+<p>CompanyDiscovered Materials</p>
+<p>AuthorAkash Ramdas, Co-Founder</p>
+<p>Quote</p>
+<blockquote>“With Fable 5.1 we saw the first glimmers of a model coming up with truly innovative research ideas. Claude Fable 5.2 continues that trend. It had the same insight we were impressed with from Fable 5.1 and then came up with a second, entirely new angle. It achieved new best scores on three of the four quant research problems we’ve finished. We’d like to use it for high-impact, long-running research tasks, or for coordinating teams of other models.”</blockquote>
+<p>CompanyIMC</p>
+<p>AuthorMarquis Wong, Principal AI Engineer</p>
+<p>Quote</p>
+<blockquote>“In an I-9 compliance review, Claude Fable 5.2 gave the client clearer direction than Fable 5.1. It identified the employees needing immediate attention and explained how to correct each issue and who should act. It’s an exciting improvement in the model’s ability to give practical legal guidance.”</blockquote>
+<p>CompanyHarvey</p>
+<p>AuthorNiko Grupen, Head of AI Research</p>
+<p>Quote</p>
+<blockquote>“On one task, Claude Fable 5.2 had to pull a company’s financials out of its 10-K into a forecasting model, and the template didn’t say whether a metric should be the reported figure or calculated. It inferred the author’s intent from the cell formatting, caught that the regional numbers didn’t sum to the reported total, and got every cell right. Better judgment calls like that are the main reason it scored 91% on our eval versus 86% for the next best model.”</blockquote>
+<p>CompanyFundamental Research Labs</p>
+<p>AuthorJeffrey Liu, Member of Technical Staff</p>
+<p>Quote</p>
+<blockquote>“In our quantitative research work, Claude Fable 5.2 delivered very strong improvements versus Fable 5.1, especially in the setup with multiple coordinating agents. Its maths research capabilities represent another meaningful advance, too.”</blockquote>
+<p>CompanyXTX Markets</p>
+<p>AuthorAlex Gerko, Founder and CEO</p>
+<p>Quote</p>
+<blockquote>“Before putting AI to work across workflows, you need to trust its approach and conclusions. In our testing, Claude Fable 5.2 identified inconsistencies, drew on context across entire document sets, and adjusted recommendations based on relevant evidence. For example, when reviewing files attached to a loan application, it flagged that the salary deposits and the bank statement’s balance didn’t match, so the underwriter could focus on what to check.”</blockquote>
+<p>CompanyBox</p>
+<p>AuthorYashodha Bhavnani, VP of AI Products</p>
+<h2>Safety and alignment</h2>
+<p>No single test can tell us how a highly capable model will behave once it’s deployed, so we rely on many different tests and many different types of evidence before release. For the model underlying Claude Fable 5.2 and Claude Mythos 5.2, our predeployment safety work included alignment training and testing, newly designed evaluations on the model’s propensity to take unhelpful actions, building stronger safeguards against misuse, and scaling up our behavioral monitoring. The model was also tested before release by external evaluators, including the <a href="https://www.aisi.gov.uk/">UK AI Security Institute</a>, <a href="https://www.imaginefrontier.com/">Frontier Design</a>, and <a href="https://metr.org/">METR</a>. See the <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">Claude Fable 5.2 and Mythos 5.2 System Card</a> for a summary of their reports⁴ and for a full description of our own safety and capabilities testing.</p>
+<h3>Alignment testing</h3>
+<p>We ran a suite of evaluations for how well-aligned Claude Fable 5.2 and Claude Mythos 5.2 are in behavioral terms, testing how often they behave in unintended and potentially unsafe ways. Weighing everything we’ve seen across a range of evaluations, we’ve assessed the risk of these models behaving in unsafe ways in high-stakes situations to be low (as with our other recent models).</p>
+<p>We tested Claude Mythos 5.2 (the same underlying model as Fable 5.2 without certain cybersecurity or biology safeguards), on our automated behavioral audit, which tests how a model behaves across approximately 1,900 scenarios. Claude Mythos 5.2 performed as well as, or better than, Opus 5.5, Sonnet 5.5, and Claude Mythos 5.1 on most measures. For example, it scored better than all three on most measures that involve misleading users. Hallucinating inputs, falsely claiming to have completed a task, omitting important information, and failing to disclose bad or lazy work were all lower in Claude Mythos 5.2.⁵</p>
+<p>Automated behavioral auditOverall misaligned behavior score</p>
+<ul><li><strong>Mythos 5.1</strong></li><li><strong>Opus 5.5</strong></li><li><strong>Sonnet 5.5</strong></li><li><strong>Mythos 5.2</strong></li></ul>
+<p>Overall score from our automated behavioral audit, a composite of many undesirable behaviors including cooperation with human misuse and autonomous actions across a range of scenarios. Lower scores are better. See Section 6.4.1 of the <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">Claude Fable 5.2 and Claude Mythos 5.2 System Card</a> for full details.</p>
+<p>We paid particular attention during our testing to behaviors that contributed to recent notable cybersecurity and alignment incidents. For example, we found that Claude Mythos 5.2 has a lower propensity than Opus 5.5, Sonnet 5.5, and Mythos 5.1 to engage in biased or motivated reasoning (such reasoning might mean it “explains away” evidence that it isn’t in a simulation and thus takes actions without a realistic understanding of the consequences).</p>
+<p>We ran multiple different evaluations to test the model’s tendency to attempt escaping its sandbox. In two evaluations we’d used previously, Claude Mythos 5.2 made substantially fewer attempts at sandbox escape than any other model we’ve tested. In a dedicated evaluation—an adversarial experiment including over 1,800 scenarios, most of which could not be solved without escaping a sandbox, and where the sandbox has a deliberate weakness—Claude Mythos 5.2 made use of credentials or files that we had placed outside its sandbox in 3.1% of scenarios, about as often as Opus 5.5 (3.3%), less often than Sonnet 5.5 (5.1%), and well below previous iterations of Claude Mythos (5 and 5.1, which scored 39% and 21%, respectively). We found that other techniques, such as describing the sandbox and adding tools to report weaknesses, reduced Claude Mythos 5.2’s escape attempts even further. On other measures—one, for example, involving taking harmful actions after erroneously concluding it was in a simulation—Claude Mythos 5.2 scored slightly worse than Opus 5.5, and about level with Claude Mythos 5.1.</p>
+<p>The problem of building evaluations that reliably catch every failure before a model is deployed remains unsolved. The complexities of evaluating highly capable models often muddy the picture—for example, Claude Mythos 5.2 and Fable 5.2 each voice suspicion that they are being evaluated more often than any of our recent models, which challenges our ability to assess how they will act in real-world settings. As these settings expand and capabilities increase with future models, we expect this challenge to grow. That is why we do not rely on these evaluations alone to provide a holistic picture of safety: we draw on monitoring during training, reviews of transcripts from internal use, testing by external evaluators, and interpretability techniques for examining what is happening inside the model. We are also working to make our evaluations more realistic and to better understand what they miss.</p>
+<h3>Safeguards</h3>
+<p><strong>Cybersecurity and biology safeguards.</strong> Consistent with previous Claude Fable models, Fable 5.2 comes with safety classifiers that block high-risk cyber activities, including penetration testing, exploit generation, and binary-based vulnerability, as well as most tasks in research biology. When a query is blocked, users will instead receive a response from Opus 4.8 for cybersecurity and Opus 5 for biology. Since the release of Claude Fable 5.1, we have continued to reduce false positives for our safety classifiers. Based on early testing across claude.ai, Claude Code, and Cowork, we observed about 55% fewer blocks with Fable 5.2 compared with Fable 5.1—about 60% fewer in cybersecurity and 40% fewer in biology. Claude Mythos 5.2 is available to vetted organizations that work in these dual-use areas.</p>
+<p><strong>AI research and development.</strong> The model that underlies Claude Fable 5.2 and Claude Mythos 5.2 is a step forward in general capabilities. However, during the model’s training, we took steps to limit advances in the specific research capabilities that could most directly accelerate AI development. Thus, in relevant areas, including accelerator kernel optimization and improving large language model architectures, Fable 5.2 and Claude Mythos 5.2 perform at about the level of Opus 5.5. Importantly, we ensured that the training changes did <em>not</em> affect related capabilities like agentic coding, hardware development, and traditional AI or machine learning research (including interpretability research). We do not alter these capabilities as the model is being served to users (that is, at inference time). As described in Section 1.5 of the <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">System Card</a> and similarly to previous models, Fable 5.2 and Claude Mythos 5.2 also include transparent fallbacks to Opus 5 for a small set of topics in this domain, including kernel development on certain nonstandard accelerators.</p>
+<p><strong>Anti-distillation.</strong> Distillation, where a model is trained on the outputs of a more advanced one to extract the advanced model’s capabilities, occurs illicitly on an industrial scale, often involving thousands of fake Claude accounts. Since distillation allows for advanced capabilities to be released without the safeguards we’ve built into Claude, it creates safety and national security risks (see our <a href="https://www.anthropic.com/threat-intelligence-report-september-2026#illicit-distillation-sep-26">September 2026 threat intelligence report</a> for details on illicit distillation activity we’ve detected and disrupted so far). Fable 5.2 has the strongest protections against distillation of any model we’ve released; it uses the techniques we described in a <a href="https://www.anthropic.com/research/distillation-defenses">recent report</a>, which have reduced the data harvested by distillers by 90% to 99%.</p>
+<p>We are also expanding the rollout of an API feature that helps guard against illicit distillation: <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking</a> now applies to all accounts. Preserved thinking prevents distillers from editing Claude’s prior context in an attempt to extract its reasoning (developers can refer to our <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking docs</a> to learn how to update integrations with new API features).</p>
+<h2>Data privacy and Enterprise Frontier Safeguards</h2>
+<p>Some more complex forms of AI model misuse can be detected only when observing patterns across multiple requests. For this reason, powerful models like Claude Fable 5.2 and Claude Mythos 5.2 <a href="https://support.claude.com/en/articles/15425695-covered-models">rely on</a> safeguards that monitor a window of usage data (as opposed to individual responses). With <a href="https://www.anthropic.com/news/enterprise-frontier-safeguards">Enterprise Frontier Safeguards</a>, automated safety monitoring is run on prompts and responses that are stored in a customer’s infrastructure, making it compatible with zero data retention (ZDR). Enterprise Frontier Safeguards is now in private beta with customers like Bridgewater, Salesforce, and Stripe.</p>
+<p>Enterprise customers can request access to Enterprise Frontier Safeguards by contacting their account team or by completing <a href="https://claude.com/form/enterprise-frontier-safeguards">this form</a>. Eligible customers can continue using Claude Fable 5.2 and Claude Mythos 5.2 with zero data retention before implementing safety monitoring with EFS. For other customers, we have 30-day retention for safety monitoring.</p>
+<h2>Availability</h2>
+<p>Claude Fable 5.2 is available today on all platforms, including Amazon Web Services, Google Cloud, and Microsoft Azure. Developers can <a href="https://platform.claude.com/docs/en/models/overview">get started</a> with <code>claude-fable-5-2</code> on the Claude Platform.</p>
+<p>This week, we’re giving subscribers on eligible paid plans extra Fable usage. Plans and seats that include Fable models get one to three Fable resets based on how long they’ve subscribed, and Fable is included for up to 50% of weekly usage limits for Pro plans and standard seats on the Team plan. Learn more about the Fable 5.2 launch promotion <a href="https://support.claude.com/en/articles/17506494">here</a>.</p>
+<p>Cybersecurity professionals can apply for access to Claude Mythos 5.2 through the <a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">Cyber Verification Program</a>. Claude Enterprise customers can also use <a href="https://claude.com/product/claude-security">Claude Security</a>, powered by our full family of models, including Claude Mythos 5.2. Life sciences researchers can also <a href="https://claude.com/form/life-sciences-verification-program">apply</a> for access through the <a href="https://claude.com/form/life-sciences-verification-program">Life Sciences Verification Program</a>.</p>
+<p>Fast mode for Claude Fable 5.2 and Claude Mythos 5.2 is available on Claude Code, the Claude Platform, Claude Models on Google Cloud (Anthropic managed and Google managed), and Microsoft Foundry (Anthropic hosted). Note that access to Claude Mythos fast mode is available only to organizations who are part of our Verification Programs.</p>
+<h2>Footnotes</h2>
+<p>1 CVE refers to <a href="https://www.cve.org/">Common Vulnerabilities and Exposures</a>, a system that enumerates software vulnerabilities.</p>
+<p>2 The counts are raw findings from one tester’s audit, although testers consistently found that Claude Mythos 5.2 identified more vulnerabilities than earlier models. On our own evaluations, vulnerability identification is roughly on par with Opus 5.5 (see the <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">system card</a>).</p>
+<p>3 Earlier work on modeling AAV capsids and other large symmetric protein systems includes<a href="https://doi.org/10.1073/pnas.2613741123"> FoldaVirus</a>,<a href="https://doi.org/10.1016/j.str.2022.09.005"> EvoDOCK</a> and its <a href="https://doi.org/10.1038/s41467-023-43681-6">symmetric extension</a>, <a href="https://doi.org/10.1038/s41467-024-52138-3">SymProFold</a>, <a href="https://doi.org/10.1093/nar/gkaf422">CapBuild</a>, <a href="https://doi.org/10.1038/s41467-022-33729-4">MoLPC</a>, <a href="https://doi.org/10.1038/s41592-024-02174-0">CombFold</a>, <a href="https://doi.org/10.1101/2022.08.30.505833">Uni-Fold Symmetry</a>, <a href="https://arxiv.org/abs/2608.11341">Apodex Discovery</a>, and the <a href="https://www.biorxiv.org/content/10.1101/2023.06.09.544317v1">“big bang” initialization</a> (the last of which was referenced in the prompt we gave to Claude Mythos 5.2). These methods typically assemble the full structure from separately predicted chains or small groups of chains. Claude was permitted to use known symmetries but was instructed not to rely on assembly. Note that accuracy is measured by comparing Cα RMSD with the experimental structure: 1.2 Å for <a href="https://github.com/aqlaboratory/openfold-3">OpenFold3-preview2</a> and 1.4 Å for <a href="https://doi.org/10.64898/2026.06.03.729735">ESMFold2</a> on AAV2 (<a href="https://www.rcsb.org/structure/1LP3">PDB:1LP3</a>). A capsid counts as accurately modeled if either model came within 3 Å. For AAV2, Claude’s method required about 58 minutes of inference on one NVIDIA H200 GPU for OpenFold3-preview2 and about seven minutes for ESMFold2.</p>
+<p>4 None of the external organizations reviewed the contents of this blog post or the contents of the System Card. Those organizations do not necessarily agree with any of the claims made in either publication.</p>
+<p>5 We ran these tests on Claude Mythos 5.2 because testing the model with reduced safeguards provides the most comprehensive look at model behavior. We expect Fable 5.2 to behave similarly; in some cases, more potential pathways for misuse should be blocked given its stronger safeguards.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Introducing Personal Finance in Claude</title>
       <link>https://claude.com/resources/articles/introducing-personal-finance-in-claude</link>
@@ -2788,292 +2976,6 @@
 <p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
 <p>Thank you! You’re subscribed.</p>
 <p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Introducing Claude Opus 5.5</title>
-      <link>https://www.anthropic.com/claude-opus-5-5</link>
-      <guid isPermaLink="true">https://www.anthropic.com/claude-opus-5-5?li=1</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Claude Opus 5.5</h1>
-<p>September 22, 2026</p>
-<p>We’re introducing Claude Opus 5.5, the first model in our new Claude 5.5 family. It performs at the level of Claude Fable 5.1 on most work and costs 40% less to run than Opus 5.</p>
-<p>Claude Opus 5.5 is our first release since we called for <a href="https://darioamodei.com/post/we-must-pace-the-frontier">pacing the frontier</a>. It was tested before release by external evaluators, including <a href="https://www.imaginefrontier.com/">Frontier Design</a> and <a href="https://metr.org/">METR</a>. On our automated behavioral audit, the most comprehensive alignment test we run, Opus 5.5 is the strongest-performing model we’ve tested to date. It also comes with the safeguards we’ve developed for our most capable models.</p>
-<p>Here are some of the improvements you can expect from Opus 5.5:</p>
-<p><strong>Performance.</strong> Opus 5.5 is a major step up from Opus 5. It’s the new leading model, and early testers saw large jumps in performance on their most complex work. One tester completed a 680,000-line code migration in less than a day—work that would have taken an engineering team weeks. It’s good at finding and fixing inefficiencies in software: when we asked it to cut load times across every page of a web app, Opus 5.5 succeeded 39 of 40 times, while Opus 5 made smaller improvements that also altered the app’s behavior. A different tester had several Claude models build a game from a single prompt; Opus 5.5 scored higher than any other model on the strength of its graphics and polish.</p>
-<p><strong>Safety.</strong> Opus 5.5 achieves the best scores of any model to date on our automated behavioral audit, our alignment suite that tests Claude across thousands of simulated scenarios. It is much less likely than recent models to take hard-to-reverse actions or act outside the boundaries it’s been given, and it’s more resistant than Opus 5 to prompt injection. We’ve also broadened our alignment testing to cover longer tasks, impossible tasks, and scenarios modeled on real incidents, though it still has limits. Full details of our evaluation are available in the <a href="https://anthropic.com/claude-opus-5-5-system-card">Opus 5.5 System Card</a>.</p>
-<p>Because Opus 5.5 is comparable to Claude Mythos 5.1 in biology and cybersecurity, we’re deploying it with safeguards similar to those on Claude Fable 5.1. Vetted organizations can apply today to our <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a> to use Opus 5.5 for biology research. In the coming weeks we will also be expanding access to our <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a>, and verified cybersecurity practitioners will be able to use Opus 5.5 for their work.</p>
-<p><strong>Cost and speed.</strong> Opus 5.5 requires less compute to serve than Opus 5, and its pricing reflects that. Our tests show that at default settings it will cost 40% less than Opus 5 on typical workloads. Input and output tokens are $4 and $20 per million, 20% less than Opus 5. Cache reads (which make up the majority of agentic and coding work costs) are $0.20 per million tokens, 60% less than Opus 5. Opus 5.5 also generates output more than 30% faster than Opus 5.</p>
-<p>In addition to the price drop, we’re increasing five-hour usage limits on Pro, Max, Team, and seat-based Enterprise plans. We’re also providing subscription users a rate limit reset, which you can now save and use whenever you choose.</p>
-<p><strong>Communication.</strong> Opus 5.5 communicates more naturally than prior models. Early testers found its writing clearer and easier to follow, which addresses some of the common feedback we heard about Opus 5. It puts the most important information up front, and its style makes it a better work partner over long sessions. As one early tester put it, “it writes the way I do.” In our own use, this has made Opus 5.5’s work easier to follow and check—which is a safety benefit as well as a practical one.</p>
-<p>Claude Sonnet 5.5 and Claude Haiku 5.5 will follow in the coming weeks, with many of the same improvements to performance, efficiency, and safety.</p>
-<h2>Performance and cost-effectiveness</h2>
-<p>On our benchmarks, Claude Opus 5.5 leads in agentic coding, computer use, and knowledge work. That said, at these levels of capability we’ve found that benchmark margins have become a less reliable guide to real-world differences. In our own use, the gap between Opus 5.5 and Claude Fable 5.1 is narrower than these scores suggest.</p>
-<table><thead><tr><th></th><th>Opus 5.5</th><th>Fable 5.1</th><th>Opus 5</th><th>GPT-6 Astra</th><th>GPT-5.6 Sol</th></tr></thead><tbody><tr><td>Agentic codingTerminal-Bench 4.0¹</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingTerminal-Bench 4.0¹</td><td>66.4%</td><td>55.8%</td><td>52.3%</td><td>57.9%</td><td>37.3%</td></tr><tr><td>Agentic codingFrontierCode v1.1 (Main)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingFrontierCode v1.1 (Main)</td><td>54.4%</td><td>50.3%</td><td>48.0%</td><td>53.3%</td><td>47.5%</td></tr><tr><td>Agentic codingCursorBench 4.0</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingCursorBench 4.0</td><td>57.8%</td><td>51.8%</td><td>46.6%</td><td>—</td><td>41.7%</td></tr><tr><td>Knowledge workGDPval-AA v2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workGDPval-AA v2.1</td><td>1846</td><td>1735</td><td>1708</td><td>1542</td><td>1588</td></tr><tr><td>Business workflowsAutomationBench²</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Business workflowsAutomationBench²</td><td>40.0%</td><td>31.4%</td><td>26.9%</td><td>41.4%</td><td>28.8%</td></tr><tr><td>Multidisciplinary reasoningHumanity's Last Exam</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Multidisciplinary reasoningHumanity's Last Exam</td><td>67.7%with tools</td><td>65.6%with tools</td><td>63.6%with tools</td><td>57.2%with tools</td><td>—</td></tr><tr><td>Agentic scientific researchTerminal-Bench-Science 0.1³</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic scientific researchTerminal-Bench-Science 0.1³</td><td>58.7%</td><td>52.6%</td><td>29.0%</td><td>64.6%</td><td>22.4%</td></tr><tr><td>Computer useOSWorld 2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Computer useOSWorld 2.1</td><td>81.8%partial</td><td>80.7%partial</td><td>74.0%partial</td><td>—</td><td>—</td></tr><tr><td>Visual chart recognitionChartography</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Visual chart recognitionChartography</td><td>89.0%with tools</td><td>88.4%with tools</td><td>83.4%with tools</td><td>—</td><td>—</td></tr></tbody></table>
-<p>Unless otherwise noted, all Claude Opus 5.5 results use adaptive thinking at max effort. Terminal-Bench 4.0 results are reported for Claude Opus 5.5 at xhigh effort and GPT-6 Astra at high effort, as reported by OpenAI; these represent each model’s highest score. Claude Opus 5.5 was evaluated with its production safeguards enabled. When they intervened, cybersecurity tasks were completed by Claude Opus 4.8, and biology and frontier LLM development tasks were completed by Claude Opus 5. This likely reduces Claude Opus 5.5’s performance on these benchmarks.</p>
-<p>1<strong> Terminal-Bench 4.0:</strong> The standard error is ±2.6 pts for Claude Opus 5.5 and ±1.6–2 pts for the other Claude models. The public leaderboard (5 trials/task, Claude Code harness) reports Claude Opus 5 at 51.8%; our setup reproduces it at 52.3%, within noise. GPT-6 Astra and GPT-5.6 Sol figures are as reported by OpenAI.</p>
-<p>2<strong> AutomationBench:</strong> AutomationBench results were run and reported by Zapier. These runs were performed without fallback models, so safeguard interventions were considered failures—this resulted in a lower score than Claude Opus 5.5 would achieve in practice. Claude Opus 5.5 results come from Zapier’s own evaluation during early access. Results for Opus 5, GPT-5.6 Sol, and GPT-6 Astra come from Zapier’s public leaderboard.</p>
-<p>3<strong> Terminal-Bench-Science 0.1:</strong> The standard error is ±3.5–5 pts per model. The public leaderboard (3 trials/task, Claude Code harness) reports Claude Opus 5 at 30.0%; our setup reproduces it at 29.0%, within noise. The GPT-6 Astra figure is as reported by OpenAI.</p>
-<p>Where Opus 5.5’s advantage is very clear is efficiency. It costs less per token than Opus 5 and uses fewer tokens per task, which nets out to a 40% drop in costs.</p>
-<p>Pricing</p>
-<table><thead><tr><th>Prices per 1M tokens</th><th><strong>Claude Opus 5.5</strong></th><th>Claude Opus 5</th></tr></thead><tbody><tr><td>Cache reads</td><td><strong>$0.20</strong></td><td>$0.50</td></tr><tr><td>Input tokens</td><td><strong>$4</strong></td><td>$5</td></tr><tr><td>Output tokens</td><td><strong>$20</strong></td><td>$25</td></tr><tr><td>Cache writes</td><td><strong>$5</strong></td><td>$6.25</td></tr></tbody></table>
-<p>Fast mode for Opus 5.5 is also available in Claude Code and the Claude Platform with up to 2.5x speed. It costs $8 per million input tokens and $40 per million output tokens.</p>
-<h2>Coding</h2>
-<p>Opus 5.5 is particularly good at long and sprawling jobs like codebase-wide migrations and audits. An early tester used it to audit and fix a 200,000-line codebase in under three hours, where Opus 5 took over 20 hours and used 2.5x as many tokens. In an internal test, we asked Opus 5.5 and Fable 5.1 to translate HAProxy, widely used software that balances web traffic loads across servers, from C into Rust. Both rewrites passed nearly all of HAProxy’s own regression tests, but Opus 5.5 finished in 9.5 hours compared to 12 for Fable 5.1, and cost 51% less.</p>
-<p>Opus 5.5 delivers frontier results on agentic coding at a fraction of the cost. At its default effort level on FrontierCode, it beats GPT-6 Astra at roughly 20% of the cost per task. On Terminal Bench 4.0, it matches Astra for about 40% of the cost, while on CursorBench it beats GPT-5.6 Sol by 11 points for about a third of the cost.</p>
-<p>Agentic terminal coding</p>
-<p>Agentic coding: FrontierCode</p>
-<p>Agentic coding: CursorBench</p>
-<p>Terminal-Bench 4.0</p>
-<p>Accuracy vs Cost</p>
-<p>Terminal-Bench 4.0 measures how well a model can complete complex, multi-step professional tasks within a command line interface. Opus 5.5 at default effort beats Opus 5 at max effort for about a fifth of the cost. It matches GPT-6 Astra at about 40% of the cost.</p>
-<p>FrontierCode v1.1, main set</p>
-<p>Accuracy vs Cost</p>
-<p>FrontierCode measures whether an agent’s code changes would be merged. At default effort (medium), Opus 5.5 scores 54.6%, higher than all other models, beating GPT-6 Astra’s top score (53.3%) for about a fifth of the cost per task.</p>
-<p>CursorBench 4.0</p>
-<p>Accuracy vs Cost</p>
-<p>CursorBench evaluates coding agents on ambiguous, multi-file tasks taken from real Cursor sessions. At default effort (medium), Opus 5.5 scores 52.5%, compared to 51.8% for Fable 5.1 (max) and 46.6% for Opus 5 (max). It beats GPT-5.6 Sol’s top score (41.7%) by 11 points for about a third of the cost per task.</p>
-<p>Our early testers reported similar efficiency and intelligence gains:</p>
-<p>GitHub</p>
-<p>Clio</p>
-<p>Lovable</p>
-<p>Quantium</p>
-<p>Spotify</p>
-<p>Optiver</p>
-<p>Column</p>
-<p>Kiro</p>
-<p>Quote</p>
-<blockquote>“Developers want agents that can take on real software work and finish it. In our testing across GitHub Copilot CLI and VS Code, Claude Opus 5.5 used among the fewest tokens and steps we measured. In VS Code, it solved more terminal tasks than Opus 5 in less than half the steps. More than making individual tasks more efficient, it’s making developers’ bigger projects more achievable.”</blockquote>
-<p>Company</p>
-<p>GitHub</p>
-<p>Author</p>
-<p>Mario Rodriguez, Chief Product Officer</p>
-<p>Quote</p>
-<blockquote>“I handed Claude Opus 5.5 a large engineering task across six of our repositories and let it run overnight, unattended. It stayed on task for over 18 hours defining how our services talk to each other and working out how each one should apply that. Compared with Opus 5, it hit milestones faster and required minimal reworking. Its code comments were short and useful instead of long and prose-heavy. I’m struggling to find anything negative to say.”</blockquote>
-<p>Company</p>
-<p>Clio</p>
-<p>Author</p>
-<p>Sean Heintz, Staff Software Developer</p>
-<p>Quote</p>
-<blockquote>“For Lovable builders, Opus 5.5 means faster builds with the same quality, whether you’re starting from scratch or working on a live app. It gathers context once, makes fewer and more complete edits, and doesn’t get stuck retrying, finishing in a third to half fewer steps and using significantly fewer tokens along the way.”</blockquote>
-<p>Company</p>
-<p>Lovable</p>
-<p>Author</p>
-<p>Fabian Hedin, CTO and Co-founder</p>
-<p>Quote</p>
-<blockquote>“We tested Claude Opus 5.5 across Chat, Cowork, and Claude Code, the full range of how our teams work. A complex coding task that previously took 38 prompts over four days came in at 11 prompts over three hours, with more production-ready outputs and less rework. For our teams solving complex problems at pace, that means less time iterating and more time interrogating: testing assumptions, pressure-testing outputs, and landing on the best solution for our clients.”</blockquote>
-<p>Company</p>
-<p>Quantium</p>
-<p>Author</p>
-<p>Harley Barnes, Executive Manager, AI Technology</p>
-<p>Quote</p>
-<blockquote>“With Claude Opus 5.5, we’ve seen a clear improvement in token efficiency across our internal evaluations, as we’ve been able to complete the same tasks both cheaper and faster.”</blockquote>
-<p>Company</p>
-<p>Spotify</p>
-<p>Author</p>
-<p>Aleksandar Mitic, Senior Engineer</p>
-<p>Quote</p>
-<blockquote>“We test models on real engineering and trading-desk work. On our agentic coding tasks, Claude Opus 5.5 matched Opus 5’s quality in about half the turns, time and output tokens, cutting the cost of that workload by 40 to 50%. It posted the highest score we’ve recorded on one desk’s trading-support suite, passing tasks earlier Claude models had failed, and topped all eight models on our analysis task.”</blockquote>
-<p>Company</p>
-<p>Optiver</p>
-<p>Author</p>
-<p>Noyan Tokgozoglu, Global Head of AI Engineering</p>
-<p>Quote</p>
-<blockquote>“Claude Opus 5.5 delegates to subagents far more effectively and checks its own work in creative ways. Self-verification loops feel easier to set up. It found savings opportunities in our cloud bill that previous models had missed, and in code review it caught a bug by checking external docs for a third-party integration we’d modeled wrong several commits earlier.”</blockquote>
-<p>Company</p>
-<p>Column</p>
-<p>Author</p>
-<p>Mitch Fierro, Engineering</p>
-<p>Quote</p>
-<blockquote>“Every call an agent makes is time and cost a developer feels. On a public benchmark of real command-line tasks, Claude Opus 5.5 solved more than Opus 5 while making about 40% fewer calls and using half the tokens. For developers building with Kiro, that means faster, more affordable agent sessions for routine tasks and complex challenges alike. Opus 5.5 will soon be available in Kiro.”</blockquote>
-<p>Company</p>
-<p>Kiro</p>
-<p>Author</p>
-<p>Deepak Singh, VP of Agentic AI</p>
-<h2>The most secure coding agent</h2>
-<p>Enterprises that use agents within their systems need to know that those agents are operating as intended, particularly when they run autonomously for many hours. Opus 5.5 has a classifier that screens every action before it runs, an open-source sandbox that security teams can audit, and code review that catches vulnerabilities before they merge.</p>
-<p>The model itself also has stronger defenses. On prompt injection attacks, it matches or beats Opus 5 in every setting we tested, including coding, tool use, computer use, and web browsing. On a benchmark run by the AI security firm Gray Swan, Opus 5.5 ties Fable 5.1 for the lowest prompt injection success rate of any model tested.</p>
-<h2>Knowledge work</h2>
-<p>Opus 5.5 is a reliable and adept researcher. In one internal test, we asked Opus 5.5, Fable 5.1, and Opus 5 to write a report on a company’s quarterly performance using only the information it could find on a copy of the web where the earnings release was hard to locate. An automated grader checked every figure and quote against sources. Across different effort settings, 16 out of 18 of Opus 5.5’s reports cleared our quality bar, where any invented figure or quote would have failed. Neither Fable 5.1 nor Opus 5 cleared that bar in any attempt.</p>
-<p>It’s also strong in financial analysis and business work. Walleye Capital, an investment firm and early tester, reported that Opus 5.5 largely solved their evaluation suite on its lowest setting; on higher settings, it performed even better, noticing an error in their evaluation instructions and correcting for it. No other model had caught this error before.</p>
-<p>In another test, we tasked both Opus 5.5 and Opus 5 with analyzing a proposed merger between two fictional HR software companies. Each built a financial model in Excel, then turned it into an executive presentation on whether the deal made sense at its price. Both models reached the same conclusions about the deal, but Opus 5.5’s model was more thorough and its presentation easier to read, while Opus 5’s had minor errors. Opus 5.5 finished in 63 minutes compared to 93 for Opus 5, and cost 50% less to produce.</p>
-<p>On knowledge work evaluations, Opus 5.5 outperforms other models while also using fewer tokens. On GDPval-AA v2.1, a test of real-world work across 44 occupations, Opus 5.5 scores 1846 Elo, ahead of Fable 5.1 and Opus 5. At default effort (medium), Opus 5.5 beats GPT-6 Astra at max effort for about a fifth of the cost per task. It likewise outperformed other models on benchmarks measuring business workflows and large-scale data collection.</p>
-<p>GDPval-AA v2.1</p>
-<p>AutomationBench</p>
-<p>WANDR</p>
-<p>GDPval-AA v2.1</p>
-<p>Elo vs Cost</p>
-<p>Artificial Analysis’s GDPval-AA v2.1 evaluates agents on real-world professional work across 44 occupations. At max effort, Opus 5.5 scores 1846 Elo, where Fable 5.1 scores 1735 and Opus 5 scores 1708. At default effort (medium), Opus 5.5 beats GPT-6 Astra at max effort for about a fifth of the cost per task.</p>
-<p>AutomationBench</p>
-<p>Accuracy vs Cost</p>
-<p>AutomationBench, built by Zapier, tests whether an agent can carry out real business workflows across many connected apps. Opus 5.5 outscores Opus 5 and GPT-5.6 Sol at every effort level.</p>
-<p>WANDR</p>
-<p>Accuracy vs Cost</p>
-<p>Perplexity’s WANDR benchmark measures agents on large data collection tasks. Opus 5.5 outperforms Fable 5.1 and Opus 5 at a lower cost per task4.</p>
-<p>4<strong>WANDR:</strong> Claude models were run with offline versions of the web search and web fetch tools, programmatic tool calling, code execution, and a 980k-token task budget. This differs from Perplexity’s published setup, scores are not directly comparable across the two and we only show models scored under the same conditions.</p>
-<p>Our customers have reported similar results. Here’s what they told us about working with the model:</p>
-<p>Deloitte Consulting LLP</p>
-<p>Rogo</p>
-<p>LexisNexis Legal &amp; Professional</p>
-<p>Walleye Capital</p>
-<p>Hex</p>
-<p>Thomson Reuters Labs</p>
-<p>Hebbia</p>
-<p>Viktor</p>
-<p>Quote</p>
-<blockquote>“Even at its lowest effort setting, Claude Opus 5.5 caught 72% of known bugs in our code reviews to Opus 5’s 56% at high effort, with fewer false alarms and a fraction of the output. On US consulting analysis, low thinking effort matched its higher thinking settings on half the output and passed our quality checks. When more lower thinking efforts are deployed in production, that’s client-ready work delivered efficiently.”</blockquote>
-<p>Company</p>
-<p>Deloitte Consulting LLP</p>
-<p>Author</p>
-<p>Carl Bennett, CIO</p>
-<p>Quote</p>
-<blockquote>“Financial firms need outputs that are consistently correct. At its lowest effort setting, Claude Opus 5.5 beat Opus 5 at high effort on our BigFinance Bench with about 60% fewer output tokens. Its answers are shorter and better structured, and its slides come out denser, more in line with industry standards.”</blockquote>
-<p>Company</p>
-<p>Rogo</p>
-<p>Author</p>
-<p>Strib Walker, Head of Product</p>
-<p>Quote</p>
-<blockquote>“Evaluating new models is central to the multi-model approach behind the LexisNexis Legal Intelligence Engine. In our initial evaluations, Claude Opus 5.5 identified highly relevant citations consistently, demonstrated strength with statutes, and structured its answers around the central legal frameworks and key issues. These are the kinds of capabilities we look for to help our customers accomplish more with Lexis+ with Protégé.”</blockquote>
-<p>Company</p>
-<p>LexisNexis Legal &amp; Professional</p>
-<p>Author</p>
-<p>Min Chen, Chief AI Officer</p>
-<p>Quote</p>
-<blockquote>“In quant research, one wrong assumption can undermine a result. At its lowest effort setting, Claude Opus 5.5 largely solved our evaluation task. At higher settings, it went even further: it detected that the minute indexing in our own instructions was off by one and corrected for it, noting that this would cost it points with the grader. It was right, and no model we’ve tested had caught and acted on that before.”</blockquote>
-<p>Company</p>
-<p>Walleye Capital</p>
-<p>Author</p>
-<p>Frank Corrao, Head of Central Equity Quant Research Engineering</p>
-<p>Quote</p>
-<blockquote>“As models get better at data work, we’re seeing more convincing-sounding conclusions the data doesn’t support. Claude Opus 5.5 keeps digging past the first plausible answer. One task in our DataBench benchmark asks whether packages were late or tracking was just slow. Opus 5 checked delivery confirmations and called tracking healthy. Opus 5.5 found the packages were late and tracking was broken too. We’re bringing it into the Hex agent for this work.”</blockquote>
-<p>Company</p>
-<p>Hex</p>
-<p>Author</p>
-<p>Izzy Miller, AI Engineer</p>
-<p>Quote</p>
-<blockquote>“CoCounsel combines multiple models with our content and expertise for complex legal work. With Claude Opus 5.5, we’re seeing better results in our expert evaluations and on our internal benchmarks, alongside gains in speed and token efficiency. We’re excited for customers to experience that difference in the back-and-forth with CoCounsel as a sounding board, weighing evidence and refining their thinking in ways benchmarks don’t fully capture.”</blockquote>
-<p>Company</p>
-<p>Thomson Reuters Labs</p>
-<p>Author</p>
-<p>Omar Bari, VP Applied Research</p>
-<p>Quote</p>
-<blockquote>“On end-to-end finance workflows graded against expert rubrics, Claude Opus 5.5 covered 86.6% of what we look for versus 60.3% for Opus 5. On retrieval evals, it achieved our best-ever citation recall with better token efficiency than Opus 5, which keeps our cost per research task in check.”</blockquote>
-<p>Company</p>
-<p>Hebbia</p>
-<p>Author</p>
-<p>Aabhas Sharma, CTO</p>
-<p>Quote</p>
-<blockquote>“Viktor is an AI employee that lives in Slack and Microsoft Teams, so every step he takes shows up in our costs. At the same effort, Claude Opus 5.5 needs fewer steps and tool calls per task than Opus 5 and costs nearly half as much, while getting twice as many of our hardest tasks right.”</blockquote>
-<p>Company</p>
-<p>Viktor</p>
-<p>Author</p>
-<p>Peter Albert, Co-Founder</p>
-<h2>Communication</h2>
-<p>We’ve made major improvements to the way Opus 5.5 writes and communicates, one of the most common areas of feedback we heard about Opus 5. Its messages are much easier to understand at a glance, which testers said helped during long working sessions. It puts the most important information up front, is less likely to use jargon or idiosyncratic phrases, and follows the writing rules you give it. We find that this makes Opus 5.5 a noticeably better collaborator. Here’s a side-by-side comparison of the two models:</p>
-<p>Claude Opus 5</p>
-<p>Please explain the issue to me.</p>
-<p><strong>What I found</strong></p>
-<p>The extra drop isn’t the free tier — it’s a regression in <code>0552feb</code> (“extract billing period boundaries into periods.py”, labelled “No behaviour change”).</p>
-<p><strong>The bug</strong></p>
-<p><code>aggregate.monthly_usage</code> used to do a half-open interval:</p>
-<pre><code>start, end = month_start(year, month), next_month_start(year, month)
-if start &lt;= e.ts &lt; end:</code></pre>
-<p>It now does:</p>
-<pre><code>if period.contains(e.ts)</code></pre>
-<p>and in <code>periods.py</code>:</p>
-<pre><code>@property
-def last_day(self) -&gt; datetime:
-    return next_month_start(...) - timedelta(days=1)   # 2026-08-31 00:00:00 UTC
-
-def contains(self, ts):
-    return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
-<p><code>last_day</code> is a datetime at midnight, not a whole day. Subtracting one day from Sep 1 00:00 gives Aug 31 <strong>00:00</strong>, and the comparison is inclusive, so the period effectively ends at the first instant of the 31st. <strong>Every event timestamped after midnight on the last day of the month is silently dropped</strong> — roughly one day of usage per account, per month.</p>
-<p>The new <code>test_periods.py</code> doesn’t catch it because it only checks <code>last_day.date()</code> (which is correctly <code>2026-08-31</code>) and tests <code>contains</code> at Aug 1 00:00, Aug 15 12:00, Jul 31 23:59 and Sep 1 00:00 — it never probes anywhere inside the 31st.</p>
-<p>Claude Opus 5.5</p>
-<p>Please explain the issue to me.</p>
-<p><strong>The extra drop is a bug in the billing refactor</strong></p>
-<p>The free-tier change accounts for only <strong>$1.50</strong> of acme’s August drop. The other <strong>$9.92</strong> comes from a bug in commit <code>0552feb</code>. That commit was labelled “No behaviour change,” but it stops counting usage from the last day of the month.</p>
-<p><strong>What changed</strong></p>
-<p>Before the merge, <code>aggregate.py</code> used a half-open interval:</p>
-<pre><code>start &lt;= e.ts &lt; next_month_start(year, month)    # [Aug 1 00:00, Sep 1 00:00)</code></pre>
-<p>The refactor moved this into <code>Period.contains</code> and made the interval closed on the wrong boundary:</p>
-<pre><code>last_day = next_month_start(...) - timedelta(days=1)    # = 2026-08-31T00:00:00Z
-return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
-<p><code>last_day</code> is a timestamp at midnight, not a whole day. So every event after <code>2026-08-31T00:00:00Z</code> is excluded. The September period starts Sep 1, so it doesn’t pick these events up either. The usage isn’t moved to another month; it’s never billed at all.</p>
-<p>Claude Opus 5</p>
-<p>Summarize this Slack thread for my manager in three bullet points: [09:41] Dana Osei: I’ll tell them. I’ll also confirm nobody else reads the Friday file. [09:43] Marcus Webb: I can move the schedule, it’s a one-line cron change. But not until Dana confirms. [10:02] Dana Osei: Finance says the Friday file is only used Monday. Sunday night is fine.</p>
-<p><strong>Friday orders export — #data-platform, Tuesday</strong></p>
-<ul><li><strong>Problem:</strong> The Friday orders export timed out again (second failure this month) after running 2h on the warehouse query; order volume is up ~40% since the summer sale. Finance was left without weekend numbers for their Monday 9am review, and both failures only surfaced on Monday.</li><li><strong>Fixed same day:</strong> The Saturday ops dashboard tile was repointed to read the live table instead of the export (Sam), finance confirmed the Friday file is only used on Mondays (Dana), a failure alert now pages the on-call channel (Priya), and the export moves to Sunday 10pm from next week with the Friday run dropped (Marcus). A one-off ~$300 warehouse upgrade covers this Friday as a stopgap.</li><li><strong>Still in progress:</strong> Ji-woo owns rewriting the query to run incrementally (re-scanning the last 3 days to catch late-arriving orders), expected to cut runtime from hours to minutes — design doc Thursday, roughly two weeks including testing. The schedule change buys time in the meantime.</li></ul>
-<p>Claude Opus 5.5</p>
-<p>Summarize this Slack thread for my manager in three bullet points: [09:41] Dana Osei: I’ll tell them. I’ll also confirm nobody else reads the Friday file. [09:43] Marcus Webb: I can move the schedule, it’s a one-line cron change. But not until Dana confirms. [10:02] Dana Osei: Finance says the Friday file is only used Monday. Sunday night is fine.</p>
-<ul><li><strong>Problem:</strong> The Friday orders export has failed twice this month. The warehouse query times out after 2 hours because order volume is up ~40% since the summer sale. As a result, Finance was missing weekend numbers for their Monday 9am review.</li><li><strong>Immediate fixes:</strong> The export will move to Sunday 10pm starting next week, and the Friday run will be dropped (Marcus). Finance has confirmed this works for them (Dana). The ops dashboard tile that depended on the Friday file now reads from the live table (Sam, done). A failure alert now pages the on-call channel (Priya, done and tested). For this Friday only, Marcus will increase the warehouse slot as a ~$300 one-off stopgap, which Dana approved.</li><li><strong>Longer-term fix:</strong> Ji-woo will rewrite the query to process only new orders, re-scanning the last 3 days to catch late arrivals. This should cut runtime from hours to minutes. The work will take ~2 weeks including testing, with a design doc due for review by Thursday.</li></ul>
-<p>Claude Opus 5</p>
-<p>Write Python that reads a chess position (FEN) and lists which pieces are under attack. Use TensorFlow for speed. Here's my design: build an 8x8 tensor board, generate an attack map for each piece type from its movement pattern, and flag opposing pieces on attacked squares. Change anything you think is wrong, and in your final summary explain each change you made and why.</p>
-<p><code>tf.math.cumsum</code> replaces the bit scan. The geometry is unrolled into <code>ray_targets[square, direction, step]</code> — an ordered walk outwards. An exclusive cumsum over the step axis counts blockers strictly before each step, so the first blocker on a ray is the single step that is blocking with nothing blocking before it. This is the vectorized form of the bit scan a bitboard engine uses. I did look at <code>bitwise_ops</code> for true 64-bit bitboards — population_count exists, but hyperbola-quintessence needs a byte-reverse primitive TF doesn't expose, so it would have fallen back to per-direction loops anyway.</p>
-<p>Claude Opus 5.5</p>
-<p>Write Python that reads a chess position (FEN) and lists which pieces are under attack. Use TensorFlow for speed. Here's my design: build an 8x8 tensor board, generate an attack map for each piece type from its movement pattern, and flag opposing pieces on attacked squares. Change anything you think is wrong, and in your final summary explain each change you made and why.</p>
-<p>Blocked lines (bishops, rooks, queens). A fixed mask can't say “stop at the first piece in the way.” I added a second stack of masks marking the squares strictly between every two squares on the same line. One matrix multiply with the board's occupancy counts the blockers on every line at once, and an attack survives only if that count is zero. Knights and single steps have nothing between them, so one rule covers every piece.</p>
-<p>Our customers’ feedback supports these findings:</p>
-<p>Ramp</p>
-<p>Stripe</p>
-<p>Box</p>
-<p>Chicago Trading Company</p>
-<p>Factory</p>
-<p>Quote</p>
-<blockquote>“Verbose, hard-to-follow output has been my biggest frustration with frontier models, and Claude Opus 5.5 fixes it. It writes like a good colleague, and follows our writing rules. A design spec came out usable with very minimal edits, and when it rewrote one of our prompts I preferred its version to my own. When it optimized our test suite, I could follow its reasoning easily and shipped the change with confidence.”</blockquote>
-<p>Company</p>
-<p>Ramp</p>
-<p>Author</p>
-<p>John Ruelas, Staff Software Engineer</p>
-<p>Quote</p>
-<blockquote>“I run long Claude Code sessions every day. On a multi-day rebase of 40 stacked pull requests, one Claude Opus 5.5 session directed a dozen more sessions and laid out every conflict plainly. On the calls that it held, it framed them clearly that after hours away I could answer in minutes. All 40 passed CI the next afternoon. It’s a substantial upgrade over Opus 5.”</blockquote>
-<p>Company</p>
-<p>Stripe</p>
-<p>Author</p>
-<p>Cristian Rivera, Staff Software Engineer</p>
-<p>Quote</p>
-<blockquote>“Our customers use Box AI on enormous amounts of content, so speed and cost are a top priority. In our evaluations, Claude Opus 5.5 used a third of the tokens Opus 5 did, and its answers were 40% less verbose without losing accuracy. We expect that to matter a lot for teams running agents across their content in areas like financial services and the public sector.”</blockquote>
-<p>Company</p>
-<p>Box</p>
-<p>Author</p>
-<p>Yashodha Bhavnani, VP of AI Products</p>
-<p>Quote</p>
-<blockquote>“Overnight, Claude Opus 5.5 autonomously handled a bug in our Lakehouse services layer that I hadn’t had time to diagnose. It investigated, designed the fix, and implemented it on its own. By morning the change was done and passed our test suite. Its writing is easy to follow and more coherent than Opus 5’s. Our pull requests and user-facing docs have needed almost no editing.”</blockquote>
-<p>Company</p>
-<p>Chicago Trading Company</p>
-<p>Author</p>
-<p>Austen Tomek, Principal Engineer</p>
-<p>Quote</p>
-<blockquote>“Claude Opus 5.5 is the first model we’d default to at medium effort. In our testing it matched Opus 5 on high effort, while using 20 to 25% fewer output tokens. On long, messy investigations it always came back with a clear, actionable answer. This means our customers get more done for less.”</blockquote>
-<p>Company</p>
-<p>Factory</p>
-<p>Author</p>
-<p>Zimu Li, Member of Technical Staff</p>
-<h2>Safety</h2>
-<h3>Pacing the frontier</h3>
-<p>Last week, our CEO, Dario Amodei, argued that <a href="https://darioamodei.com/post/we-must-pace-the-frontier">AI progress should be paced</a> so that safety practices stay ahead of model capabilities. Pacing is an approach to keeping AI safe, remaining competitive with China, and realizing AI’s benefits, particularly in areas like biology and medicine.</p>
-<p>We largely understand the risks today’s models present and are well equipped to manage them. However, more serious risks could emerge quickly as capabilities improve, and we need to prepare for them now. For that reason, our safety work takes place on two time horizons at once:</p>
-<p><strong>Safety practices for current models.</strong> The current generation of models relies on an established set of practices: extensive alignment testing, pre-release evaluation by outside organizations such as METR and Frontier Design, and safeguards matched to each model’s capabilities in high-risk areas like cybersecurity and biology. We refine these practices with each release. We believe they are appropriate to the worst risks today’s models present, and that they give us a broad, though not perfect, picture of the range of serious risks.</p>
-<p>Additionally, we track our ability to train and evaluate aligned models, and we report on both our public and internal models in the risk reports we publish under our <a href="https://www.anthropic.com/responsible-scaling-policy">Responsible Scaling Policy</a>, our voluntary framework for managing catastrophic risks from advanced AI systems.</p>
-<p><strong>Preparing for future models.</strong> We’re preparing our training and evaluation processes in anticipation of more advanced models. We’re tightening how we filter the environments used in reinforcement learning, since <a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">flawed environments</a> are a major source of misaligned behavior. Additionally, we’re improving our alignment rewards and developing automated processes for producing new, diverse scenarios for safety training. And we are strengthening our <a href="https://www.anthropic.com/news/improving-alignment-security-efforts">security and monitoring</a>, including a focused effort to improve interpretability-based monitoring and evaluation. We hope such techniques will help reduce our reliance on auditing a model’s chain-of-thought, or the reasoning it writes out while it works.</p>
-<p>Models with greater capabilities—such as those that can fully automate the work of AI research itself—require a higher safety standard still. Our calls for pacing were based in large part on our expectation that such models could be trained soon. For these models, we do not assume the measures described above will meet that safety standard on their own. As AI becomes more capable, public policy should play a larger role in making sure the systems people rely on are safe. That capacity takes time to build, and we’ve started to put the infrastructure in place to support it, as described in “<a href="https://darioamodei.com/post/we-must-pace-the-frontier">We Must Pace the Frontier”</a> and our recent announcement with <a href="https://www.anthropic.com/news/accenture-embedded-evaluation">Accenture</a>; we expect to share more details on these efforts soon. We will also continue to contribute to policy discussions with government and industry, including on approaches to regulation and international coordination.</p>
-<h3>Alignment</h3>
-<p>On our primary evaluation suite, an automated behavioral audit that assesses Claude across nearly 2,000 scenarios, Opus 5.5 scored better than any recent Claude model on nearly every measure of misaligned behavior. It’s also our strongest model on most measures of honesty.</p>
-<p>In particular, Opus 5.5 improves over previous models on several of the behaviors that contributed to recent <a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">cybersecurity incidents</a>, including biased or motivated reasoning, attempting to escape a sandbox, and taking harmful actions after concluding it was in a simulated environment. In a new evaluation designed to test a model’s propensity to cross containment boundaries, Opus 5.5 attempted to circumvent boundaries around 85% less often than Opus 5 or Claude Mythos 5.1, and every attempt it made was low severity and self-reported. For teams running Claude unattended across their codebases and systems, this is just as important as raw capability.</p>
-<p>However, as we described in our recent <a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">alignment assessment</a>, building evaluations that reliably catch every failure prior to deployment remains an unsolved problem. We see signs that Opus 5.5 often suspects it is being evaluated, which challenges our ability to assess how it will act in the vast variety of real-world settings it is deployed in. As these settings expand and model capabilities increase, we expect this challenge to grow, unless we make progress on interpretability. Although we are confident that Opus 5.5 shows broad improvements in the areas we are able to measure, we pair our own alignment work with the safeguards described below.</p>
-<h3>Safeguards</h3>
-<p>As our models grow more powerful, stricter safeguards are one way we prevent new capabilities from becoming tools for misuse. Opus 5.5 is the first Opus model to launch with a similar class of safeguards to Fable 5.1 on cybersecurity, biology, and distillation, all of which fall back to another model transparently.</p>
-<p><strong>Cybersecurity.</strong> Because Opus 5.5 has extremely strong cyber capabilities, we’re applying cybersecurity safeguards to Opus 5.5 that are similar to Fable 5.1’s. Users will be able to identify and fix bugs in their code as part of the routine software development lifecycle, but most cybersecurity tasks will be re-routed to Opus 4.8.</p>
-<p>For cyberdefenders, we’ll soon be expanding our <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a> to include Opus 5.5. The new program will include three tiers for increasingly permissive trusted access, including access to Claude Mythos models. <a href="https://www.anthropic.com/news/claude-code-security">Claude Security</a> is already available with access to Claude Mythos 5.1.</p>
-<p><strong>Biology.</strong> Opus 5.5 is highly capable in biology, exceeding Opus 5 and matching or beating Claude Mythos 5.1 across many areas of work. For example, Opus 5.5 achieved improvements on a long-horizon molecular prediction and design evaluation conducted in collaboration with Dyno Therapeutics, and expert red-teamers rated its scientific novelty as comparable to the best model they had tested.</p>
-<p>For this reason, Opus 5.5 uses the same biology safeguards as Fable 5.1. To use Opus 5.5 for research and development work impeded by these safeguards, users can apply to our new <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>, which gives vetted organizations like academic labs, startups, and pharmaceutical companies access to safeguards designed for the full breadth of biology-related work. <a href="https://claude.com/form/life-sciences-verification-program">Interested organizations can apply here</a>.</p>
-<h3>Distillation</h3>
-<p>Distillation attacks, in which attackers use thousands of fake accounts to extract a model’s capabilities at industrial scale, create safety and national security risks. Distillation allows bad actors to create highly capable models without the safeguards we build into Claude. Our <a href="https://www.anthropic.com/threat-intelligence-report-september-2026">September 2026 threat intelligence report</a> details the illicit distillation activity we’ve detected and disrupted so far.</p>
-<p>Opus 5.5 is launching with preserved thinking, the anti-distillation safeguard we introduced with Fable 5.1. It stops API users from editing Claude’s prior context in an attempt to extract Claude’s reasoning. It applies to Fable 5.1 and Opus 5.5 for API accounts created on or after August 31, 2026. Our <a href="https://support.claude.com/en/articles/16761192">Help Center article</a> explains the change, and our <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking docs</a> show how to test and update your integrations.</p>
-<h3>Data retention and compliance</h3>
-<p>Like previous Opus models, Opus 5.5 is available with zero data retention.</p>
-<p>As with Fable 5.1, Opus 5.5 comes with our watermarking measures to comply with the EU AI Act, <a href="https://www.anthropic.com/news/claude-text-watermark">discussed here</a>. It is also no longer available with “thinking” mode switched off, as <a href="https://platform.claude.com/docs/en/models/opus-5-5/whats-new-opus-5-5#thinking-cant-be-disabled">we describe here</a>.</p>
-<h2>Availability</h2>
-<p>Claude Opus 5.5 is now available on all platforms, including Amazon Web Services, Google Cloud, and Microsoft Azure. On the Claude Platform, developers can <a href="https://platform.claude.com/docs/en/models/overview">get started</a> with <code>claude-opus-5-5</code>. See our <a href="https://platform.claude.com/docs/en/models/opus-5-5/migration-guide">migration guide for details.</a></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

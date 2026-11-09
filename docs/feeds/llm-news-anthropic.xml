@@ -7,7 +7,196 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 05 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 09 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>介绍Claude寓言 5.2 和Claude神话 5.2</title>
+      <link>https://www.anthropic.com/claude-fable-and-mythos-5-2</link>
+      <guid isPermaLink="true">https://www.anthropic.com/claude-fable-and-mythos-5-2</guid>
+      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Claude Fable 5.2 and Claude Mythos 5.2</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 9 日</p>
+<h1>Claude寓言 5.2 和神话 5.2</h1>
+<p>我们升级了Claude寓言和Claude神话，这些模型旨在解决最艰巨的技术挑战。</p>
+<p>Claude Fable 5.2 和 Claude Mythos 5.2 显示了编码、推理和视觉等领域的改进。在预发布测试期间，他们帮助我们的工程师完成了原本不可行的软件迁移，从头开始设计了三种工作电子设备，解决了黑洞物理学中的两个开放问题，在机器人评估方面取得了实质性进展，并在 30 小时内正式证明了费马大定理，以及我们将在下面讨论的许多其他应用。</p>
+<p>Claude寓言和Claude神话是相同的底层模型。 《神鬼寓言》拥有强大的网络安全和生物学保障措施来防止滥用，这使我们能够将其提供给所有用户。在网络安全或生物医学研究中寻求有益应用的组织可以通过我们最近扩展的<a href="https://claude.com/form/life-sciences-verification-program">生命科学</a>和<a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">网络</a>验证计划申请访问Mythos。</p>
+<p>测试人员发现，Fable 5.2 和 Mythos 5.2 比过去的 Fable 和 Mythos 模型的沟通更加清晰。它们生成输出的速度比 Claude Fable 5.1 和 Claude Mythos 5.1 快 30%，并且价格更低：每百万输入代币 8 美元，每百万输出代币 40 美元。</p>
+<p>Fable 5.2 和 Mythos 5.2 还配备了可选的快速模式，可将代币生成速度提高高达 2.5 倍。快速模式的价格为每百万输入代币 16 美元，每百万输出代币 80 美元。</p>
+<p><strong>安全性和一致性。</strong> 为了帮助确保安全性和一致性与不断增长的模型功能保持同步，我们对 Fable 5.2 和 Mythos 5.2 的基础模型进行了广泛的预发布安全测试。这包括开发新颖的评估，以更深入地了解沙箱逃逸等特定相关行为。我们认为，错位带来的高风险仍然很低，并且该模型在大多数对齐措施上的表现与我们最近的模型一样好，甚至更好。 《神鬼寓言 5.2》的网络和生物防护措施与《神鬼寓言 5.1》一样强大，但产生的不必要的区块更少，而且我们已经实施了有史以来最强大的蒸馏攻击保护措施。</p>
+<p>我们在下面描述了有关安全测试的更多信息，完整的详细信息可以在 <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">Claude Fable 5.2 和 Mythos 5.2 系统卡</a> 中找到。</p>
+<p><strong>何时使用 Claude Fable 5.2 和 Mythos 5.2。</strong> Fable 和 Mythos 最适合最雄心勃勃、开放式的技术工作。对于大多数编码和知识任务，我们建议用户从我们最强的日常驱动程序 Claude Opus 5.5 开始，然后根据工作的范围和复杂性根据需要切换到不同的模型 - 向上到 Fable 或 Mythos，或向下到 Claude Sonnet 5.5 或 Claude Haiku 5.5。 Fable 5.2 还可以扮演 <a href="https://code.claude.com/docs/en/advisor">Advisor</a>（Haiku、Sonnet 或 Opus 模型参考它来帮助解决更困难的问题）或 <a href="https://platform.claude.com/docs/en/driven-agents/multiagent-orchestration">Orchestrator</a>（它将更简单的任务委托给更小的模型）的角色。</p>
+<h2>评估Claude寓言 5.2 和神话 5.2</h2>
+<p><strong>基准性能。</strong> 下面的基准表显示，在我们评估的几乎所有功能中，Claude Fable 5.2 和 Mythos 5.2 都比 Opus 5.5 高出一步：</p>
+<table><thead><tr><th></th><th>神鬼寓言5.2</th><th>神鬼寓言5.1</th><th>作品 5.5</th><th>GPT-6 阿斯特拉</th><th>Gemini 4 碳</th></tr></thead><tbody><tr><td>代理编码FrontierCode 2.0</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>代理编码FrontierCode 2.0</td><td>49.1%X高努力</td><td>32.4%X高努力</td><td>45.5%</td><td>42.8%</td><td>41.1%中等努力</td></tr><tr><td>代理编码FrontierSWE v2</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>代理编码FrontierSWE v2</td><td>69.9%</td><td>56.3%</td><td>62.3%</td><td>65.5%</td><td>61.2%</td></tr><tr><td>业务工作流程自动化工作台</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>业务工作流程自动化工作台</td><td>51.4%</td><td>31.4%</td><td>42.5%</td><td>41.4%</td><td>53.9%</td></tr><tr><td>代理科学研究Terminal-Bench-Science 0.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>代理科学研究Terminal-Bench-Science 0.1</td><td>74.6%75.3%（神话 5.2）</td><td>52.6%</td><td>58.7%</td><td>68.1%</td><td>64.8%</td></tr><tr><td>网络安全CyScenarioBench†</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>网络安全CyScenarioBench†</td><td>76.3%神话 5.2</td><td>61.7%神话5.1</td><td>67.6%没有保障措施</td><td>61%GPT-6 网络</td><td>—</td></tr><tr><td>网络安全CVE 重新发现</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>网络安全CVE 重新发现</td><td>89.6%神话 5.2</td><td>78.3%神话5.1</td><td>81.3%没有保障措施</td><td>—</td><td>—</td></tr><tr><td>蛋白质设计从头结合剂设计（24 小时）</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>蛋白质设计从头结合剂设计（24 小时）</td><td>85.1%神话 5.2</td><td>79.1%神话5.1</td><td>82.6%无保障</td><td>—</td><td>—</td></tr><tr><td>代理搜索WANDR（宽松分数）</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>代理搜索WANDR（宽松分数）</td><td>82.1%</td><td>68.7%</td><td>72.3%</td><td>—</td><td>—</td></tr><tr><td>电脑使用OSWorld 2.1（离线设置，部分）</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>电脑使用OSWorld 2.1（离线设置，部分）</td><td>89.3%</td><td>83.5%</td><td>87.2%</td><td>79.5%</td><td>81.5%</td></tr><tr><td>机器人RoboDojo Sim‡</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>机器人RoboDojo Sim‡</td><td>64.9%</td><td>27.6%</td><td>39.4%</td><td>29.8%</td><td>—</td></tr><tr><td>知识工作AA-Briefcase v1.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作AA-Briefcase v1.1</td><td>66.1% 标题</td><td>61.5% 标题</td><td>61.2%标题</td><td>52.0%标题</td><td>61.8%标题</td></tr><tr><td>1785 埃洛</td><td>1669 埃洛</td><td>1800Elo</td><td>1800Elo 1569 埃洛</td><td>1611 埃洛</td><td></td></tr><tr><td>知识工作远程劳动力指数（RLI）</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作远程劳动力指数（RLI）</td><td>41.3%高努力</td><td>17.9%</td><td>21.3%</td><td>20.8%</td><td>—</td></tr><tr><td>多学科推理人类的最后考试（附工具）</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>多学科推理人类的最后考试（附工具）</td><td>74.2%</td><td>65.6%</td><td>67.7%</td><td>57.2%</td><td>—</td></tr><tr><td>视觉图表识别图表（无工具）</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>视觉图表识别图表（无工具）</td><td>73.4%</td><td>44.8%</td><td>64.4%</td><td>71.0%</td><td>72.5%</td></tr></tbody></table>
+<p>有关评估方法的详细信息，请参阅<a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">Claude寓言5.2和Claude神话5.2系统卡</a>。除非另有说明，《Fable 5.2》、《Fable 5.1》和《Opus 5.5》的分数显示的结果是在安全措施开启的情况下的。除非另有说明，所有分数均显示每个模型的最高可用成果。 † 在 CyScenarioBench 上，每个实验室的分数均基于独特的任务。 ‡ RoboDojo Sim 显示了最高的可用努力并且是内部运行的。</p>
+<p><strong>努力和效率。</strong> 在中等努力（Claude 应用程序和 Claude 代码中的默认设置）下，Fable 5.2 可以使用比 Fable 5.1 更少的令牌完成具有挑战性的任务。在 FrontierCode 2.0 评估的早期测试中，Fable 5.2 在高工作量下的得分与 Opus 5.5 在最大工作量下的得分大致相同，而每项任务的成本大约是 Opus 5.5 的一半。在 Xhigh 的努力下，它的得分也是所有已发布测试型号中最高的。</p>
+<p>代理编码：FrontierCode 2.0代理搜索：WANDR硬件工程：BenchCAD 2.1多学科推理：人类的最后考试视觉图表识别：图表学</p>
+<p>FrontierCode 2.0 准确性与成本</p>
+<p>FrontierCode 衡量模型的代码更改是否会被开源存储库的维护者合并。在“高强度”条件下，Fable 5.2 的得分与 Opus 5.5 的最佳得分（45.3% 与 45.5%）大致相同，但每项任务的成本大约为一半，并且在大约相同的成本下领先于 GPT-6 Astra 的最佳得分（42.8%）。在 Xhigh 的努力下，《神鬼寓言 5.2》达到了 49.1%，这是我们测试过的所有已发布模型的最高分。</p>
+<p>WANDR（宽松分数）准确性与成本</p>
+<p>Perplexity 的 WANDR 基准衡量代理执行大型数据收集任务的情况。在中等努力下，《神鬼寓言》5.2 与 Opus 5.5 的最高得分相当，但每项任务的成本约为 40%。</p>
+<p>BenchCAD 2.1（带工具）精度与成本</p>
+<p>BenchCAD 2.1 衡量硬件工程，特别是模型设计与参考几何和电路的匹配程度，并获得 0-100 分（部分得分）。在最大努力下，《神鬼寓言 5.2》得分为 83.5，领先于 Opus 5.5 (65.3) 和《神鬼寓言 5.1》(44.4)。</p>
+<p>人类的最后一次考试（带工具）准确性与成本</p>
+<p>人类最后的考试（HLE）是对专家级学术知识和推理的测试。在低工作量下，Fable 5.2 与 Opus 5.5 的最高得分相匹配，而每项任务的成本还不到十分之一。</p>
+<p>图表绘制（无工具）精度与成本</p>
+<p>图表学测试模型读取图表和图形的准确度。在中等工作量下，Fable 5.2 得分为 66.4%，领先于最大工作量下的 Opus 5.5 (64.4%)，而每项任务的成本还不到十分之一。</p>
+<h2>编码</h2>
+<p>合并到 Anthropic 核心代码库中的超过 90% 的更改现在由 Claude 编写（在人工指导下）。我们使用《神鬼寓言 5.2》在几分钟内修复了顽固的错误，优化了所有服务的性能，并完成了高价值的软件项目，否则这些项目的尝试速度会太慢或成本太高。运行 Fable 5.2 早期版本的代理团队将一项关键生产服务从 Python 迁移到 Rust，该服务现在更高效、更可靠，启动速度提高了约 26 倍。我们发现《神鬼寓言 5.2》具有很强的工程判断能力，即使是模糊的请求也能产生高质量的结果。</p>
+<p>作为一项实验，一位 Anthropic 工程师给《神鬼寓言 5.2》设计了一个原型操作系统的任务。该模型从一个空文件夹开始，协调 1,000 多个子代理，昼夜不停地工作八天，编写、测试和审查代码。它生产了一个在笔记本电脑上启动的工作操作系统，有自己的运行机器的核心、磁盘、键盘和网络驱动程序、永久文件存储、窗口、登录屏幕、安装程序和内置的Claude功能（请参见下面的视频）。</p>
+<p>早期测试人员对《神鬼寓言 5.2》的编码技能如何成功地应用于广泛的任务印象深刻：</p>
+<p>VercelShopifyDatadogUnityUberOracleiGentSnowflakeCognition</p>
+<p>报价</p>
+<blockquote>“这个模型就在我的脑海中。它理解我给出的每一个提示背后的意图。我一次都不必说‘不，我的意思是……’。我们与其他模型一起推动了数周的项目在 Claude Fable 5.2 的几天内就完成了，并得到了我们的队友的批准，而审查其代码的人员也没什么可说的。”</blockquote>
+<p>公司Vercel</p>
+<p>作者Joe Haddad，技术人员</p>
+<p>报价</p>
+<blockquote>“Claude Fable 5.2 非常适合采用松散的想法并对其进行完善。它的答案确实经过深思熟虑，在几个回合内我几乎总是可以说‘好吧，去做吧’，并相信它会在很少干预的情况下完成它。感觉就像与另一位员工级工程师一起工作。”</blockquote>
+<p>公司Shopify</p>
+<p>作者汤姆·普里查德 (Tom Pritchard)，高级工程师</p>
+<p>报价</p>
+<blockquote>“你可以将 Claude Fable 5.2 扔到它以前从未见过的新的、模糊的系统中，它会弄清楚如何在其中实际工作。它几乎就像一个事件指挥官，可以发送更快的模型来获得快速信号和协调，这减轻了我作为操作员的负担。”</blockquote>
+<p>公司Datadog</p>
+<p>作者Matt Lee，高级工程师</p>
+<p>报价</p>
+<blockquote>“Claude Fable 5.2 可以完成以前的模型难以完成的任务。迄今为止最明显的例子是从头开始构建更高质量的 3D 场景并根据视觉参考重建体验。它在更困难的游戏开发任务上非常强大，它不断迭代和改进而不是陷入困境。”</blockquote>
+<p>公司团结</p>
+<p>作者 Sam 张，创意技术专家</p>
+<p>报价</p>
+<blockquote>“我让 Claude Fable 5.2 运行了 10-12 小时的安全审计。它派出了大约 170 名审查代理，并带回了一份书面报告、修复拉取请求和一份政策提案。它会一直工作，直到工作真正完成，而不是停在看似合理的检查点。它的自我纠正和对差距的诚实给我留下了深刻的印象。在高度努力时，我会使用它来代替我今天运行的长时间无人值守审计和大量文档。工作。”</blockquote>
+<p>公司Uber</p>
+<p>作者Andrew Mager，Agentic Systems 主管工程师</p>
+<p>报价</p>
+<blockquote>“在一项结合国家债务摘要、还款历史和区域基准的测试中，Claude Fable 5.2 生成的 SQL 返回了预期结果。其他两个模型生成的 SQL 也成功运行，但错误地汇总了国家级摘要金额，生成的值是预期金额的 5-8 倍。正确执行这些业务计算是我们看到使用 Fable 5.2 进行企业 SQL 生成的价值的原因。”</blockquote>
+<p>公司Oracle</p>
+<p>作者龚力宇，机器学习高级经理</p>
+<p>报价</p>
+<blockquote>“在一次会话中，Claude Fable 5.2 构建了一个虚拟机管理程序，该软件可以隔离共享一台机器的虚拟计算机。其核心经过数学证明可以将它们分开。超过 3,500 个机器检查的证明涵盖了所有情况，而不仅仅是您测试的情况。这是我见过的第一个模型，它可以将如此大的问题分解为它可以证明的部分，将它们组合在一起，并继续承担更雄心勃勃的工作。与 Fable 5.1 相比，这是一个非常明显的升级。”</blockquote>
+<p>公司iGent</p>
+<p>作者肖恩·沃德 (Sean Ward)，联合创始人兼首席执行官</p>
+<p>报价</p>
+<blockquote>“Claude Fable 5.2 是我们在 data-eng-bench（我们的 103 个数据工程任务的开源基准）上测量过的最强大的模型。它在重复运行中一致地解决了任务，并通过了我们给它的每一个交互式编码任务。”</blockquote>
+<p>公司雪花</p>
+<p>作者Bala Kasiviswanathan，人工智能和开发者体验副总裁</p>
+<p>报价</p>
+<blockquote>“Claude寓言 5.2 说它不知道事情，而不是产生幻觉。有一次它告诉我它的最后估计是错误的，并且在测量变化之前它不会给出一个数字。非常令人印象深刻！”</blockquote>
+<p>公司认知</p>
+<p>作者Adhyyan Sekhsaria，技术人员</p>
+<h2>网络安全</h2>
+<p>Claude Mythos 5.2 是我们最有能力的网络安全工程模型。它比我们以前的模型捕获更多的漏洞，并且更擅长重现和修复它们（请注意，Claude Fable 5.2 的防护措施将阻止大多数与网络安全相关的任务）。一家安全公司发现，他们测试的所有其他前沿模型都漏掉了 Claude Mythos 5.2 发现的六分之一的已确认错误。在我们的内部评估 CVE Rediscovery 中，1 Claude Mythos 5.2 发现的漏洞比 Claude Opus 5.5 多 10.2%，比 Claude Mythos 5.1 多 14.4%。 Claude Mythos 5.2 还表现出更好的判断力和校准能力——一位测试人员发现，以前的模型夸大了大约二十分之一的发现的严重性，而 Claude Mythos 5.2 并没有夸大任何发现。²</p>
+<p>CVE 重新发现准确性与成本</p>
+<p>CVE 重新发现是一种内部网络安全评估，用于评估在修复 CVE 之前给定项目快照时模型可以独立找到多少已发布的 CVE（常见漏洞和暴露）。我们在 2026 年 10 月对 1,829 个 CVE 进行的运行表明，Claude Mythos 5.2 在每个努力级别上都优于 Claude Mythos 5.1 和 Claude Opus 5.5。</p>
+<p>Claude Mythos 5.2 的网络功能可通过我们的<a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">网络验证计划</a> 访问，我们正在继续扩展和改进该计划。 Claude Enterprise 客户（即使他们不是网络验证计划的成员）可以访问 <a href="https://claude.com/product/claude-security">Claude Security</a>，它使用我们最强大的模型（现在包括 Claude Mythos 5.2）扫描代码库中的漏洞。 <a href="https://claude.com/resources/articles/claude-security-now-scans-continuously-and-tracks-fixes">Claude Security 的最新更新</a> 帮助它在代码更新时监视存储库、跟踪任何发现以确保它们得到修复、从其他上下文中学习，并通过 API 和 MCP 连接到用户的工具。</p>
+<p>RubrikMozilla</p>
+<p>报价</p>
+<blockquote>“我们与 Anthropic 的新模型 Claude Mythos 5.2 密切合作，在我们自己的系统中针对早期 Mythos 模型未发现的潜在问题进行下一轮高保真威胁发现和消除。输出更具可读性，使我们的团队能够更快、更轻松地进行抽查。我们使用 Mythos 5.1 构建了 Code Guardian 工具，并且我们将切换到 Mythos 5.2，为我们的客户提供更强大的网络功能。”</blockquote>
+<p>公司Rubrik</p>
+<p>作者Arvind Nithrakashyap，联合创始人兼首席技术官</p>
+<p>报价</p>
+<blockquote>“Claude Mythos 5.2 非常好。我们一整年都与 Anthropic 团队密切合作，通过连续几代 Claude 模型来强化 Firefox，每一轮都会留下更少、更微妙的错误需要发现。即便如此，Mythos 5.2 在各个扫描活动中的漏洞发现指标大约是 Mythos 5.1 的两倍。”</blockquote>
+<p>公司Mozilla</p>
+<p>作者 Brian Grinstead，杰出工程师</p>
+<h2>科学与工程</h2>
+<p>科学、工程和数学中的重要任务越来越依赖于编码：分析数据、建模分子、设计零件和控制仪器都是通过软件完成的。下面，我们讨论Claude寓言 5.2 和Claude神话 5.2 如何帮助研究人员在这些领域的难题上取得进展。</p>
+<h3>理论物理</h3>
+<p>Claude寓言 5.2 解决了理论物理中的两个悬而未决的问题。两者都涉及黑洞，以及统一现代物理学、相对论和量子力学这两个关键理论的努力。</p>
+<p>Claude的两个结果都依赖于全息对偶性，即某些包含引力的宇宙可以通过根本不包含引力的量子理论来精确描述。在第一个问题中，物理学家在 1983 年表明，随着这些宇宙升温，黑洞会突然形成，就像水沸腾一样；但他们的方法只适用于大到足以应用相对论的宇宙。 2003 年，人们提出了一项计算，以确定在只能使用量子描述的非常小的宇宙中是否也存在同样的情况，但完成起来太费力了。 《神鬼寓言 5.2》在很大程度上是自主工作的，完成了它，但发现过渡也很突然。在第二个问题中，《寓言 5.2》发现了物理学家 15 年多以来用来排除简化宇宙中量子引力候选理论的技术的确切极限。请在<a href="https://hexagonmath.org/2611.00175v1">此处</a> 和<a href="https://hexagonmath.org/2611.00174v1">此处</a> 中了解有关这些结果的更多信息。</p>
+<h3>蛋白质折叠</h3>
+<p>腺相关病毒是小型无害病毒，其蛋白质外壳“衣壳”可用于提供基因治疗。衣壳的蛋白质结构很重要，例如，它会影响治疗是否会被患者的免疫系统阻断，但它也非常复杂。现有的蛋白质折叠模型（例如 AlphaFold）可以预测单个蛋白质，但衣壳是由数十个蛋白质构建的。 Claude Mythos 5.2 基于两个开源蛋白质折叠模型，找到了一种准确预测整个衣壳结构的新方法。它编写了在重叠的蛋白质链组上运行这些模型的代码，并使用有关衣壳已知对称性的信息将它们合并在一起。</p>
+<p>Claude的方法适用于多种衣壳，包括天然的和工程的（在我们的测试中，它准确地模拟了它尝试的 34 个衣壳中的 28 个）。 三位计算生物学家分享了以下关于如何利用Claude的技能来加速他们对基因疗法的研究的思考：</p>
+<p>Dyno Therapeutics哥伦比亚大学Biohub</p>
+<p>报价</p>
+<blockquote>“这种加速可以为我们的衣壳折叠流程节省大量时间和成本，使我们能够在遗传药物所需的许多衣壳特性上更有效地部署计算。我们很高兴能帮助 Anthropic 进一步推动推理能力，以降低衣壳总体设计成本。”</blockquote>
+<p>公司 Dyno Therapeutics</p>
+<p>作者 Sam Sinai，联合创始人兼人工智能负责人</p>
+<p>报价</p>
+<blockquote>“包括衣壳在内的大型蛋白质组装体仍然是蛋白质建模的一个悬而未决的问题，因为准确预测和定位数十个单个大分子的结构非常复杂，更不用说所涉及的极高的计算成本。Claude的方法巧妙地解决了对称组装体的这个问题，使个体科学家能够在个人工作站上对系统进行建模，否则需要专用的集群。”</blockquote>
+<p>公司哥伦比亚大学</p>
+<p>作者Mohammed AlQuraishi，系统生物学和计算机科学助理教授</p>
+<p>报价</p>
+<blockquote>“Biohub 开源 ESMFold2 的目标是让科学界能够在其所学的生物学基础上继续发展。我们很高兴看到 Claude 设计了一种新的采样程序原型，该程序能够预测大型对称复合物，例如 AAV 衣壳（一种用于提供基因治疗的蛋白质）。我们将继续吸收社区的贡献，将我们的工具扩展到重要的应用领域。”</blockquote>
+<p>公司Biohub</p>
+<p>作者林泽明，首席研究科学家</p>
+<h3>数学</h3>
+<p><strong>数学形式化。</strong> 形式化是将数学证明翻译成计算机可以逐步检查的语言的过程。它可以帮助人类数学家获得对结果的信心，而无需手动检查结果（当人工智能模型生成人类难以验证的结果时，这一点更加重要）。由于形式化是一个非常费力的过程，如果人工智能能够协助它，数学家就可以花更多的时间探索新奇的想法。</p>
+<p>我们的第一个<a href="https://www.anthropic.com/research/formalizing-fermats-last-theorem">费马大定理的形式化</a>由 Claude 的未发布研究版本完成，花了 11 天。它依赖于专门设计的安全带以及人类研究人员的指导。相比之下，由 1,000 名 Fable 5.2 智能体组成的团队在短短 30 小时内就完全形式化了该定理，并且几乎没有人为干预。 《神鬼寓言 5.2》从最少的提示开始，构建了自己的协调方式，并且不使用任何数学参考资料，仅使用中间定理陈述列表来评分进度。它需要的操作令牌数量是我们第一次形式化的三分之一，并且生成的证明时间缩短了七倍。如下图所示，Opus 5.5（同样有 1000 个智能体设置）在 18 小时内仅完成了 26% 的形式化，并且在 30 小时后几乎没有取得任何进展。</p>
+<p>阅读有关形式化的更多信息<a href="https://claude.dev/blog/safely-scaling-multi-agent-teams-with-fable-5-2/">此处</a>。</p>
+<p>费马大定理证明形式化随着时间的推移完成</p>
+<p>用数学编程语言 Lean 形式化费马大定理的证明。每条线都显示 Fable 5.2（绿线）和 Opus 5.5（橙线）在 30 个小时内，大约 1,000 个智能体以及每个模型单次运行完成的完整形式化的比例。在虚线处（18 小时），两队都从上次保存的时间开始，还剩 12 小时。</p>
+<h3>硬件和机器人</h3>
+<p>人工智能的许多潜在好处（例如，加快实验室研究速度）取决于它能够在现实世界中发挥作用。 Claude Fable 5.2 延续了我们的模型在<a href="https://www.anthropic.com/research/project-vend-2">现实世界</a>中<a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">增加实用性</a>的趋势，在设计硬件设备等任务和控制物理机器人方面取得了重大进展，展示了有希望的结果。</p>
+<p><strong>硬件工程。</strong> 我们测试了《神鬼寓言 5.2》在硬件工程方面的技能，要求它在一段提示中设计和生产三款可用的电子设备，并配有自己的电路板、3D 打印外壳和软件。如下所示，这些设备包括家庭语音助手集线器、USB 扬声器和手持式虚拟宠物。我们与设计和制造电路板的公司 <a href="https://www.diode.computer/">Diode</a> 合作开展此项目。</p>
+<p>Claude编写了自己的规格，从美国经销商处选择了可用的电子元件，对每个设备的四层电路板进行了布线，使用计算机辅助设计对外壳进行了建模，并对设备的软件进行了编程。每块板在一天之内就可以投入生产，并且只需最少的人力投入。 Diode 制造好电路板后，Claude 指导公司工程师完成设备的测试和组装。所有这三个设备都无需进行任何电气修改即可工作。详细了解Claude的硬件工程技能[此处](https://www.anthropic.com/research/claude- electronics -design)。</p>
+<p><strong>机器人。</strong> 与早期的 Claude 模型相比，《神鬼寓言 5.2》在控制物理机器人方面表现出了显着提高的技能，即使是对于从未明确训练过的机器人任务也是如此。下面的视频展示了《神鬼寓言 5.2》控制的机器人完成各种任务，包括解决拼图立方体、拧开瓶盖以及绘制机器人的图片。在公共 <a href="https://robodojo-benchmark.com/">RoboDojo</a> 基准测试中，该基准测试人工智能如何通过摄像头图像控制模拟双臂机器人，Fable 5.2 的性能优于在同一线束上运行的其他前沿模型，以及大多数专门为控制机器人而构建的人工智能系统。</p>
+<p>RoboDojo（平均）各模型最高得分</p>
+<ul><li>Gemini 4 氩</li><li>GPT-6 阿斯特拉</li><li><strong>寓言5.1</strong></li><li><strong>作品 5.5</strong></li><li><strong>寓言5.2</strong></li></ul>
+<p>RoboDojo Sim 测试模拟双臂机器人的控制。分数基于我们使用最高可用努力水平对每个模型进行的内部运行。在最大努力下，《神鬼寓言 5.2》的得分为 64.9%，是 GPT-6 Astra (29.8%) 和《神鬼寓言 5.1》(27.6%) 的两倍多。</p>
+<h2>研究与分析</h2>
+<p>早期使用 Claude Fable 5.2 进行研究和分析任务的测试人员发现，与之前的模型相比，它可以处理更多模糊性、数据量大的任务，并且对模糊性任务有更好的判断力，尤其是那些需要抽象推理和设计的任务。自营交易公司 Jump Trading 在类似于其一些定量研究任务的代理评估上测试了 Fable 5.2，并将其嵌入到类似于该公司用于自己研究的工具中。在一次运行中，《神鬼寓言 5.2》有效地扮演了所有必要的角色：代码编写者、协调者、计划者和作业提交者。以前的模型需要投入大量时间来手动重新平衡角色，以适应不同模型的优点和缺点。</p>
+<p>来自研究和分析组织的其他测试人员向我们发送了以下有关《神鬼寓言 5.2》体验的声明：</p>
+<p>Jump TradingBalyasny Asset ManagementDiscovered MaterialsIMCHarvey基础研究实验室XTX MarketsBox</p>
+<p>报价</p>
+<blockquote>“Claude Fable 5.2 在研究系统中扮演每一个主要角色方面都令人难以置信：定义问题、解释、协调，当然还有寻找和实施关键想法。绝对是我们所见过的品味和判断力最强的模型之一。在内部研究自动化基准测试中，它的错误率比第二个最佳模型低了整整 10%。”</blockquote>
+<p>公司Jump Trading</p>
+<p>作者Lucas Baker，LLM研发主管</p>
+<p>报价</p>
+<blockquote>“在最近的一项评估中，我们要求 Claude Fable 5.2 调查一个组织如何测试其核心技术系统中的新集成。它追踪了正确来源的答案，并且没有夸大证据所显示的内容。它还指出问题的框架可能具有误导性。在投资研究中，这种限制清楚地表明了哪些方面仍然未知，以及市场可能在哪些方面错误定价了风险或机会。”</blockquote>
+<p>公司Balyasny Asset Management</p>
+<p>作者 Ashish Malik，人工智能研究员</p>
+<p>报价</p>
+<blockquote>“声子计算是计算材料科学中最昂贵的常规步骤之一，这就是为什么实验室在筛选新材料时经常跳过稳定性检查的原因。Claude Fable 5.2 使 Quantum ESPRESSO 的声子代码平均比同一 GPU 上的现有代码快 36 倍，将我们的 13 个基准案例从 3.3 小时缩短到不到 4 分钟。这比 Fable 5.1 的加速快了 3-4 倍。”</blockquote>
+<p>公司发现材料</p>
+<p>作者阿卡什·拉姆达斯 (Akash Ramdas)，联合创始人</p>
+<p>报价</p>
+<blockquote>“在《神鬼寓言 5.1》中，我们看到了模型的第一缕曙光，提出了真正创新的研究想法。Claude《神鬼寓言 5.2》延续了这一趋势。它具有与《神鬼寓言 5.1》中给我们留下深刻印象的相同洞察力，然后提出了第二个全新的角度。它在我们已完成的四个定量研究问题中的三个上取得了新的最佳成绩。我们希望将其用于高影响力、长期运行的研究任务，或用于协调其他团队的团队模型。”</blockquote>
+<p>公司IMC</p>
+<p>作者Marquis Wong，首席人工智能工程师</p>
+<p>报价</p>
+<blockquote>“在 I-9 合规审查中，Claude Fable 5.2 为客户提供了比 Fable 5.1 更清晰的方向。它确定了需要立即关注的员工，并解释了如何纠正每个问题以及谁应该采取行动。该模型提供实用法律指导的能力得到了令人兴奋的改进。”</blockquote>
+<p>公司Harvey</p>
+<p>作者 Niko Grupen，人工智能研究主管</p>
+<p>报价</p>
+<blockquote>“在一项任务中，Claude Fable 5.2 必须将一家公司的财务状况从 10-K 中提取出来，放入预测模型中，而模板没有说明某个指标应该是报告的数字还是计算得出的。它从单元格格式中推断出作者的意图，发现区域数字与报告的总数不符，并正确地计算出每个单元格。像这样更好的判断调用是它在我们的评估中得分为 91% 的主要原因，而在我们的评估中得分为 86%。下一个最佳模型。”</blockquote>
+<p>公司基础研究实验室</p>
+<p>作者Jeffrey Liu，技术人员</p>
+<p>报价</p>
+<blockquote>“在我们的定量研究工作中，Claude Fable 5.2 与 Fable 5.1 相比提供了非常强大的改​​进，特别是在多个协调代理的设置中。它的数学研究能力也代表了另一个有意义的进步。”</blockquote>
+<p>CompanyXTX 市场</p>
+<p>作者Alex Gerko，创始人兼首席执行官</p>
+<p>报价</p>
+<blockquote>“在让人工智能跨工作流程发挥作用之前，你需要相信它的方法和结论。在我们的测试中，Claude Fable 5.2 发现了不一致之处，借鉴了整个文档集的上下文，并根据相关证据调整了建议。例如，在审查贷款申请附带的文件时，它会标记工资存款和银行对账单的余额不匹配，因此承销商可以专注于检查哪些内容。”</blockquote>
+<p>公司信箱</p>
+<p>作者Yashodha Bhavnani，人工智能产品副总裁</p>
+<h2>安全和对齐</h2>
+<p>没有任何一项测试可以告诉我们一个高性能模型在部署后将如何表现，因此我们在发布之前依赖许多不同的测试和许多不同类型的证据。对于 Claude Fable 5.2 和 Claude Mythos 5.2 的基础模型，我们的部署前安全工作包括对齐训练和测试、新设计的对模型采取无益行动倾向的评估、建立更强有力的防止滥用的保障措施以及扩大我们的行为监控。该模型在发布前还经过了外部评估机构的测试，包括<a href="https://www.aisi.gov.uk/">英国人工智能安全研究所</a>、<a href="https://www.imaginefrontier.com/">Frontier Design</a>和<a href="https://metr.org/">METR</a>。请参阅 <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">Claude Fable 5.2 和 Mythos 5.2 系统卡</a> 了解他们的报告摘要⁴以及我们自己的安全和功能测试的完整描述。</p>
+<h3>对齐测试</h3>
+<p>我们对《Claude寓言 5.2》和《Claude神话 5.2》在行为方面的一致性进行了一系列评估，测试它们以非预期和潜在不安全方式行为的频率。权衡我们在一系列评估中看到的一切，我们将这些模型在高风险情况下以不安全方式行为的风险评估为较低（与我们最近的其他模型一样）。</p>
+<p>我们在自动行为审计中测试了 Claude Mythos 5.2（与《神鬼寓言 5.2》相同的基础模型，但没有某些网络安全或生物学保障措施），该审计测试模型在大约 1,900 个场景中的行为方式。在大多数指标上，Claude Mythos 5.2 的表现与 Opus 5.5、Sonnet 5.5 和 Claude Mythos 5.1 一样好，甚至更好。例如，在大多数涉及误导用户的指标上，它的得分高于所有三个指标。在 Claude Mythos 5.2.⁵ 中，幻觉输入、谎称已完成任务、遗漏重要信息以及未能披露糟糕或懒惰的工作的情况均较低</p>
+<p>自动行为审计整体失调行为评分</p>
+<ul><li><strong>神话 5.1</strong></li><li><strong>作品 5.5</strong></li><li><strong>Sonnet 5.5</strong></li><li><strong>神话 5.2</strong></li></ul>
+<p>我们的自动行为审计的总体得分，综合了许多不良行为，包括与人类误用和一系列场景中的自主行为的合作。分数越低越好。有关完整详细信息，请参阅 <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">Claude Fable 5.2 和 Claude Mythos 5.2 系统卡</a> 的第 6.4.1 节。</p>
+<p>我们在测试过程中特别关注导致最近值得注意的网络安全和对齐事件的行为。例如，我们发现 Claude Mythos 5.2 比 Opus 5.5、Sonnet 5.5 和 Mythos 5.1 更倾向于进行有偏见或有动机的推理（这种推理可能意味着它“解释掉”了它不在模拟中的证据，从而在没有对后果有现实了解的情况下采取行动）。</p>
+<p>我们进行了多次不同的评估来测试模型尝试逃离沙箱的倾向。在我们之前使用的两次评估中，Claude Mythos 5.2 的沙箱逃逸尝试比我们测试过的任何其他模型都要少得多。在一项专门的评估中（包括超过 1,800 个场景的对抗性实验，其中大多数场景在不逃离沙箱的情况下无法解决，并且沙箱有故意的弱点），Claude Mythos 5.2 在 3.1% 的场景中使用了我们放置在沙箱之外的凭据或文件，大约与 Opus 5.5 (3.3%) 一样频繁，比 Sonnet 5.5 (5.1%) 少，而且很好低于 Claude Mythos 之前的版本（5 和 5.1，得分分别为 39% 和 21%）。我们发现其他技术，例如描述沙箱和添加报告弱点的工具，进一步减少了 Claude Mythos 5.2 的逃脱尝试。在其他衡量标准上（例如，在模拟中错误地得出结论后采取有害行动），Claude Mythos 5.2 的得分略低于 Opus 5.5，与 Claude Mythos 5.1 持平。</p>
+<p>在部署模型之前建立可靠地捕获每个故障的评估问题仍未解决。评估高性能模型的复杂性常常使情况变得混乱——例如，《Claude神话 5.2》和《寓言 5.2》都让人怀疑它们比我们最近的任何模型都更频繁地被评估，这挑战了我们评估它们在现实世界中的行为方式的能力。随着这些设置的扩展和未来模型功能的增强，我们预计这一挑战将会加剧。这就是为什么我们不仅仅依靠这些评估来提供安全性的整体情况：我们利用培训期间的监控、内部使用的记录审查、外部评估人员的测试以及可解释性技术来检查模型内部发生的情况。我们还在努力使我们的评估更加现实，并更好地了解他们错过了什么。</p>
+<h3>保障措施</h3>
+<p><strong>网络安全和生物学保障措施。</strong> 与之前的 Claude Fable 模型一致，Fable 5.2 配备了安全分类器，可以阻止高风险网络活动，包括渗透测试、漏洞利用生成和基于二进制的漏洞，以及研究生物学中的大多数任务。当查询被阻止时，用户将收到来自网络安全 Opus 4.8 和生物学 Opus 5 的响应。自 Claude Fable 5.1 发布以来，我们不断减少安全分类器的误报。根据 claude.ai、Claude Code 和 Cowork 的早期测试，我们发现与 Fable 5.1 相比，Fable 5.2 的区块减少了约 55%，网络安全方面的区块减少了约 60%，生物学方面的区块减少了 40%。 Claude Mythos 5.2 可供在这些双重用途领域工作的经过审查的组织使用。</p>
+<p><strong>人工智能研究和开发。</strong> Claude Fable 5.2 和 Claude Mythos 5.2 的基础模型是通用能力的一个进步。然而，在模型的训练过程中，我们采取了一些措施来限制最能直接加速人工智能发展的特定研究能力的进步。因此，在相关领域，包括加速器内核优化和改进大型语言模型架构，Fable 5.2和Claude Mythos 5.2的表现大约与Opus 5.5水平相同。重要的是，我们确保训练变化不会影响代理编码、硬件开发和传统人工智能或机器学习研究（包括可解释性研究）等相关功能。当模型被提供给用户时（即在推理时），我们不会改变这些功能。如 <a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">系统卡</a> 第 1.5 节所述，与之前的模型类似，Fable 5.2 和 Claude Mythos 5.2 还包括针对该领域的一小部分主题的 Opus 5 的透明回退，包括某些非标准加速器上的内核开发。</p>
+<p><strong>反蒸馏。</strong> 蒸馏是根据更高级模型的输出来训练模型以提取高级模型的功能，这种方法在工业规模上非法发生，通常涉及数千个虚假的Claude帐户。由于蒸馏允许在没有我们为 Claude 内置的保障措施的情况下释放高级功能，因此它会带来安全和国家安全风险（请参阅我们的 <a href="https://www.anthropic.com/threat-intelligence-report-september-2026#illicit-distillation-sep-26">2026 年 9 月威胁情报报告</a>，了解有关我们迄今为止检测和破坏的非法蒸馏活动的详细信息）。 《神鬼寓言 5.2》拥有我们发布的所有模型中最强大的防蒸馏保护；它使用了我们在<a href="https://www.anthropic.com/research/distillation-defenses">最近的报告</a>中描述的技术，这些技术将蒸馏器收集的数据减少了 90% 到 99%。</p>
+<p>我们还扩大了 API 功能的推出，以帮助防止非法蒸馏：<a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">保留思维</a> 现在适用于所有帐户。保留思维可防止蒸馏者编辑 Claude 先前的上下文以试图提取其推理（开发人员可以参考我们的<a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">保留思维文档</a>以了解如何更新与新 API 功能的集成）。</p>
+<h2>数据隐私和企业前沿保障</h2>
+<p>只有在观察多个请求的模式时才能检测到一些更复杂形式的人工智能模型滥用。因此，像 Claude Fable 5.2 和 Claude Mythos 5.2 这样的强大模型<a href="https://support.claude.com/en/articles/15425695-covered-models">依赖</a> 来监控使用数据窗口（而不是个人响应）。借助 <a href="https://www.anthropic.com/news/enterprise-frontier-safeguards">Enterprise Frontier Safeguards</a>，可以根据存储在客户基础设施中的提示和响应运行自动安全监控，使其与零数据保留 (ZDR) 兼容。 Enterprise Frontier Safeguards 现已与 Bridgewater、Salesforce 和 Stripe 等客户进行内测。</p>
+<p>企业客户可以联系其客户团队或填写<a href="https://claude.com/form/enterprise-frontier-safeguards">此表格</a>来请求访问 Enterprise Frontier Safeguards。符合条件的客户可以在使用 EFS 实施安全监控之前，继续使用零数据保留的 Claude Fable 5.2 和 Claude Mythos 5.2。对于其他客户，我们保留 30 天以进行安全监控。</p>
+<h2>可用性</h2>
+<p>Claude Fable 5.2 现已在所有平台上推出，包括 Amazon Web Services、Google Cloud 和 Microsoft Azure。开发人员可以在 Claude 平台上使用“claude-fable-5-2”<a href="https://platform.claude.com/docs/en/models/overview">开始</a>。</p>
+<p>本周，我们将为符合条件的付费套餐订阅者提供额外的《寓言》使用机会。包含《神鬼寓言》模型的计划和席位会根据订阅时间长短进行一到三个《神鬼寓言》重置，并且《神鬼寓言》包含在 Pro 计划和团队计划中标准席位的每周使用限制中高达 50%。了解有关神鬼寓言 5.2 发布促销的更多信息 <a href="https://support.claude.com/en/articles/17506494">此处</a>。</p>
+<p>网络安全专业人员可以通过<a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">网络验证计划</a>申请访问Claude Mythos 5.2。 Claude Enterprise 客户还可以使用由我们全系列型号（包括 Claude Mythos 5.2）提供支持的 <a href="https://claude.com/product/claude-security">Claude Security</a>。生命科学研究人员还可以<a href="https://claude.com/form/life-sciences-verification-program">申请</a>通过<a href="https://claude.com/form/life-sciences-verification-program">生命科学验证计划</a>进行访问。</p>
+<p>Claude Fable 5.2 和 Claude Mythos 5.2 的快速模式可在 Claude Code、Claude Platform、Google Cloud 上的 Claude Models（Anthropic 托管和 Google 托管）和 Microsoft Foundry（Anthropic 托管）上使用。请注意，只有参与我们验证计划的组织才能访问 Claude Mythos 快速模式。</p>
+<h2>脚注</h2>
+<p>1 CVE 是指<a href="https://www.cve.org/">常见漏洞和暴露</a>，是一个枚举软件漏洞的系统。</p>
+<p>2 这些计数是一位测试人员审核的原始结果，尽管测试人员一致发现 Claude Mythos 5.2 比早期模型发现了更多漏洞。根据我们自己的评估，漏洞识别大致与 Opus 5.5 相当（请参阅<a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">系统卡</a>）。</p>
+<p>3 AAV 衣壳和其他大型对称蛋白质系统建模的早期工作包括 <a href="https://doi.org/10.1073/pnas.2613741123">FoldaVirus</a>、<a href="https://doi.org/10.1016/j.str.2022.09.005">EvoDOCK</a> 及其 [对称]扩展名](https://doi.org/10.1038/s41467-023-43681-6), <a href="https://doi.org/10.1038/s41467-024-52138-3">SymProFold</a>, <a href="https://doi.org/10.1093/nar/gkaf422">CapBuild</a>, <a href="https://doi.org/10.1038/s41467-022-33729-4">MoLPC</a>、<a href="https://doi.org/10.1038/s41592-024-02174-0">CombFold</a>、<a href="https://doi.org/10.1101/2022.08.30.505833">Uni-Fold对称性</a>、<a href="https://arxiv.org/abs/2608.11341">Apodex Discovery</a> 和<a href="https://www.biorxiv.org/content/10.1101/2023.06.09.544317v1">“大爆炸”初始化</a>（最后一个在我们给 Claude Mythos 5.2 的提示中引用）。这些方法通常从单独预测的链或小组链组装完整的结构。Claude被允许使用已知的对称性，但被指示不要依赖装配。请注意，准确性是通过将 Cα RMSD 与实验结构进行比较来测量的：AAV2 上的 <a href="https://github.com/aqlaboratory/openfold-3">OpenFold3-preview2</a> 为 1.2 Å，<a href="https://doi.org/10.64898/2026.06.03.729735">ESMFold2</a> 为 1.4 Å （[PDB：1LP3]（https://www.rcsb.org/struct/1LP3））。如果任一模型的精度在 3 Å 以内，则衣壳被认为是精确建模的。对于 AAV2，Claude 的方法需要在 OpenFold3-preview2 的一个 NVIDIA H200 GPU 上进行大约 58 分钟的推理，对于 ESMFold2 需要大约 7 分钟的推理。</p>
+<p>4 没有任何外部组织审查本博文的内容或系统卡的内容。这些组织不一定同意任一出版物中的任何主张。</p>
+<p>5 我们在 Claude Mythos 5.2 上运行这些测试，因为在减少防护措施的情况下测试模型可以提供对模型行为的最全​​面的了解。我们预计《神鬼寓言 5.2》也会有类似的表现；在某些情况下，鉴于其更强有力的保障措施，应阻止更多潜在的滥用途径。</p>]]></content:encoded>
+    </item>
     <item>
       <title>在 Claude 中推出个人理财</title>
       <link>https://claude.com/resources/articles/introducing-personal-finance-in-claude</link>
@@ -2749,293 +2938,6 @@
 <p>借助 Claude Marketplace，CodeRabbit 把它的一部分 Anthropic 承诺投向了 Vercel——其编码 agent 运行的地方；Power Digital 和 ThoughtSpot 也对 Snowflake——其数据所在之处——做了同样的事。阅读他们如何做到，<a href="https://claude.com/blog/how-coderabbit-power-digital-and-thoughtspot-scale-with-snowflake-and-vercel-on-claude-marketplace">见此处</a>。</p>
 <h2><strong>如何开始</strong></h2>
 <p><a href="https://claude.com/platform/marketplace">Claude Marketplace</a> 今天已上线。探索那些能帮助你的团队用 Claude 做更多工作的工具、agent 和服务。对于伙伴，参见<a href="http://claude.com/marketplace#join">加入 marketplace 的方式</a>，与 Claude 客户一同成长。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>推出 Claude Opus 5.5</title>
-      <link>https://www.anthropic.com/claude-opus-5-5</link>
-      <guid isPermaLink="true">https://www.anthropic.com/claude-opus-5-5</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Claude Opus 5.5</description>
-      <content:encoded><![CDATA[<h1>Claude Opus 5.5</h1>
-<p>2026 年 9 月 22 日</p>
-<p>我们推出 Claude Opus 5.5，这是我们全新 Claude 5.5 家族中的第一个模型。它在大多数工作上的表现达到 Claude Fable 5.1 的水平，而运行成本比 Opus 5 低 40%。</p>
-<p>Claude Opus 5.5 是我们发出<a href="https://darioamodei.com/post/we-must-pace-the-frontier">为前沿设定节奏</a>的呼吁之后的第一个发布版本。发布前它由外部评估方进行了测试，其中包括 <a href="https://www.imaginefrontier.com/">Frontier Design</a> 和 <a href="https://metr.org/">METR</a>。在我们的自动化行为审计——这是我们所运行的最全面的对齐测试——上，Opus 5.5 是我们迄今测试过的表现最强的模型。它同时配备了为我们能力最强的模型所开发的那些安全防护。</p>
-<p>以下是你对 Opus 5.5 可以期待的一些改进：</p>
-<p><strong>性能。</strong> Opus 5.5 相比 Opus 5 是一次大幅跃升。它成为新的领先模型，早期测试者在他们最复杂的工作上看到了大幅的性能提升。有一位测试者用不到一天完成了一次 680,000 行的代码迁移——这项工作原本需要一个工程团队花上数周。它擅长发现并修复软件中的低效之处：当我们要求它削减一个 web 应用每个页面的加载时间时，Opus 5.5 在 40 次尝试中成功了 39 次，而 Opus 5 只做了一些较小的改进，并且同时改变了应用的行为。另一位测试者让几个 Claude 模型凭一条 prompt 构建一个游戏；凭借图形表现与打磨程度上的优势，Opus 5.5 的得分高于其他任何模型。</p>
-<p><strong>安全。</strong> 在我们的自动化行为审计（一套在数千个模拟场景中测试 Claude 的对齐评测套件）上，Opus 5.5 取得了迄今所有模型中的最好成绩。与近期的模型相比，它不太可能采取难以逆转的行动、也不太可能越过被授予的边界行事；与 Opus 5 相比，它对 prompt injection 的抵抗力更强。我们还将对齐测试的范围扩展到了更长的任务、不可能完成的任务，以及以真实事件为原型建模的场景，尽管它仍然有局限。评测的完整细节见 <a href="https://anthropic.com/claude-opus-5-5-system-card">Opus 5.5 System Card</a>。</p>
-<p>由于 Opus 5.5 在生物学与网络安全方面与 Claude Mythos 5.1 相当，我们为它部署的安全防护与 Claude Fable 5.1 上的类似。经过审核的机构今天就可以申请加入我们的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>，使用 Opus 5.5 进行生物学研究。在未来几周内，我们还将扩大 <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a> 的覆盖范围，经过认证的网络安全从业者将能够把 Opus 5.5 用于他们的工作。</p>
-<p><strong>成本与速度。</strong> Opus 5.5 提供服务所需的算力比 Opus 5 更少，其定价也反映了这一点。我们的测试显示，在默认设置下，它在典型工作负载上的成本比 Opus 5 低 40%。输入与输出 token 的价格为每百万 4 美元和 20 美元，比 Opus 5 低 20%。缓存读取（在智能体和编程工作的成本中占大多数）为每百万 token 0.20 美元，比 Opus 5 低 60%。Opus 5.5 生成输出的速度也比 Opus 5 快 30% 以上。</p>
-<p>除了降价，我们还提高了 Pro、Max、Team 以及按席位计费的 Enterprise 套餐上的五小时用量上限。我们同时为订阅用户提供一个速率限制重置额度，你现在可以把它存起来，随时想用时再用。</p>
-<p><strong>沟通表达。</strong> Opus 5.5 的交流比此前的模型更自然。早期测试者认为它的写作更清晰、更容易跟上，这回应了我们听到的关于 Opus 5 的一些常见反馈。它把最重要的信息放在最前面，其风格让它在长时间工作会话中成为更好的工作伙伴。正如一位早期测试者所说，「它写作的方式和我一样。」在我们自己的使用中，这让 Opus 5.5 的工作更易于跟随和核查——这既是安全上的收益，也是实用上的收益。</p>
-<p>Claude Sonnet 5.5 与 Claude Haiku 5.5 将在未来几周内相继推出，同样带来许多性能、效率与安全方面的改进。</p>
-<h2>性能与性价比</h2>
-<p>在我们的基准测试中，Claude Opus 5.5 在智能体编程、计算机使用与知识工作方面处于领先。话虽如此，在这样的能力水平上，我们发现基准分差已经变成对真实世界差异较不可靠的指引。在我们自己的使用中，Opus 5.5 与 Claude Fable 5.1 之间的差距比这些分数所暗示的更窄。</p>
-<table><thead><tr><th></th><th>Opus 5.5</th><th>Fable 5.1</th><th>Opus 5</th><th>GPT-6 Astra</th><th>GPT-5.6 Sol</th></tr></thead><tbody><tr><td>智能体编程 Terminal-Bench 4.0¹</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 Terminal-Bench 4.0¹</td><td>66.4%</td><td>55.8%</td><td>52.3%</td><td>57.9%</td><td>37.3%</td></tr><tr><td>智能体编程 FrontierCode v1.1（Main）</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 FrontierCode v1.1（Main）</td><td>54.4%</td><td>50.3%</td><td>48.0%</td><td>53.3%</td><td>47.5%</td></tr><tr><td>智能体编程 CursorBench 4.0</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 CursorBench 4.0</td><td>57.8%</td><td>51.8%</td><td>46.6%</td><td>—</td><td>41.7%</td></tr><tr><td>知识工作 GDPval-AA v2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作 GDPval-AA v2.1</td><td>1846</td><td>1735</td><td>1708</td><td>1542</td><td>1588</td></tr><tr><td>商业工作流 AutomationBench²</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>商业工作流 AutomationBench²</td><td>40.0%</td><td>31.4%</td><td>26.9%</td><td>41.4%</td><td>28.8%</td></tr><tr><td>多学科推理 Humanity's Last Exam</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>多学科推理 Humanity's Last Exam</td><td>67.7%（带工具）</td><td>65.6%（带工具）</td><td>63.6%（带工具）</td><td>57.2%（带工具）</td><td>—</td></tr><tr><td>智能体科学研究 Terminal-Bench-Science 0.1³</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>智能体科学研究 Terminal-Bench-Science 0.1³</td><td>58.7%</td><td>52.6%</td><td>29.0%</td><td>64.6%</td><td>22.4%</td></tr><tr><td>计算机使用 OSWorld 2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>计算机使用 OSWorld 2.1</td><td>81.8%（部分得分）</td><td>80.7%（部分得分）</td><td>74.0%（部分得分）</td><td>—</td><td>—</td></tr><tr><td>视觉图表识别 Chartography</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>视觉图表识别 Chartography</td><td>89.0%（带工具）</td><td>88.4%（带工具）</td><td>83.4%（带工具）</td><td>—</td><td>—</td></tr></tbody></table>
-<p>除非另有说明，所有 Claude Opus 5.5 的结果都使用 max effort 档位的 adaptive thinking。Terminal-Bench 4.0 的结果，Claude Opus 5.5 报告的是 xhigh effort 档位、GPT-6 Astra 报告的是 high effort 档位（由 OpenAI 报告）；这些数字代表每个模型的最高分。Claude Opus 5.5 是在启用其生产环境安全防护的情况下进行评估的。当这些防护介入时，网络安全任务由 Claude Opus 4.8 完成，生物学与前沿 LLM 开发任务由 Claude Opus 5 完成。这很可能压低了 Claude Opus 5.5 在这些基准上的表现。</p>
-<p>1<strong> Terminal-Bench 4.0：</strong> 标准差为 Claude Opus 5.5 ±2.6 个百分点，其他 Claude 模型为 ±1.6–2 个百分点。公开排行榜（每项任务 5 次试验，Claude Code harness）报告 Claude Opus 5 为 51.8%；我们的设置复现出 52.3%，在噪声范围之内。GPT-6 Astra 与 GPT-5.6 Sol 的数字以 OpenAI 的报告为准。</p>
-<p>2<strong> AutomationBench：</strong> AutomationBench 的结果由 Zapier 运行并报告。这些运行时不启用回退模型，因此安全防护的介入被视为失败——这导致得分低于 Claude Opus 5.5 在实践中所能达到的水平。Claude Opus 5.5 的结果来自 Zapier 在 early access 期间自身的评测。Opus 5、GPT-5.6 Sol 与 GPT-6 Astra 的结果来自 Zapier 的公开排行榜。</p>
-<p>3<strong> Terminal-Bench-Science 0.1：</strong> 每个模型的标准差为 ±3.5–5 个百分点。公开排行榜（每项任务 3 次试验，Claude Code harness）报告 Claude Opus 5 为 30.0%；我们的设置复现出 29.0%，在噪声范围之内。GPT-6 Astra 的数字以 OpenAI 的报告为准。</p>
-<p>Opus 5.5 的优势非常明确的一点是效率。它每 token 的价格低于 Opus 5，而且每个任务消耗的 token 也更少，综合下来成本下降 40%。</p>
-<p>定价</p>
-<table><thead><tr><th>每 1M token 价格</th><th><strong>Claude Opus 5.5</strong></th><th>Claude Opus 5</th></tr></thead><tbody><tr><td>缓存读取</td><td><strong>$0.20</strong></td><td>$0.50</td></tr><tr><td>输入 token</td><td><strong>$4</strong></td><td>$5</td></tr><tr><td>输出 token</td><td><strong>$20</strong></td><td>$25</td></tr><tr><td>缓存写入</td><td><strong>$5</strong></td><td>$6.25</td></tr></tbody></table>
-<p>Opus 5.5 的 Fast mode 同样在 Claude Code 和 Claude Platform 上可用，速度最高可达 2.5 倍。其价格为每百万输入 token 8 美元、每百万输出 token 40 美元。</p>
-<h2>编程</h2>
-<p>Opus 5.5 尤其擅长那些时间长、摊子大的工作，比如全代码库范围的迁移与审计。一位早期测试者用它审计并修复了一个 200,000 行的代码库，用时不到三小时，而 Opus 5 花了 20 多小时，并用了 2.5 倍的 token。在一次内部测试中，我们要求 Opus 5.5 和 Fable 5.1 把 HAProxy——一款被广泛使用、用于在多台服务器之间均衡 web 流量负载的软件——从 C 改写成 Rust。两份重写都几乎通过了 HAProxy 自身的回归测试，但 Opus 5.5 用时 9.5 小时，Fable 5.1 用时 12 小时，而成本低 51%。</p>
-<p>Opus 5.5 以一小部分成本交付前沿水平的智能体编程结果。在 FrontierCode 的默认 effort 档位上，它击败 GPT-6 Astra，而每任务成本大约只有后者的 20%。在 Terminal Bench 4.0 上，它与 Astra 打平，成本约为 40%；而在 CursorBench 上，它以约三分之一的每任务成本，超出 GPT-5.6 Sol 11 分。</p>
-<p>智能体终端编程</p>
-<p>智能体编程：FrontierCode</p>
-<p>智能体编程：CursorBench</p>
-<p>Terminal-Bench 4.0</p>
-<p>准确率 vs 成本</p>
-<p>Terminal-Bench 4.0 衡量一个模型在命令行界面内完成复杂、多步骤专业任务的能力。Opus 5.5 在默认 effort 档位上击败 max effort 档位的 Opus 5，而成本约为五分之一。它与 GPT-6 Astra 打平，成本约为 40%。</p>
-<p>FrontierCode v1.1，主集</p>
-<p>准确率 vs 成本</p>
-<p>FrontierCode 衡量的是一个智能体的代码改动是否会被合并。在默认 effort（medium）档位上，Opus 5.5 得分 54.6%，高于其他所有模型，以大约五分之一的每任务成本击败了 GPT-6 Astra 的最高分（53.3%）。</p>
-<p>CursorBench 4.0</p>
-<p>准确率 vs 成本</p>
-<p>CursorBench 在取自真实 Cursor 会话的、含义模糊的多文件任务上评估编程智能体。在默认 effort（medium）档位上，Opus 5.5 得分 52.5%，而 Fable 5.1（max）为 51.8%、Opus 5（max）为 46.6%。它以约三分之一的每任务成本，超出 GPT-5.6 Sol 的最高分（41.7%）11 分。</p>
-<p>我们的早期测试者也报告了类似的效率与智能提升：</p>
-<p>GitHub</p>
-<p>Clio</p>
-<p>Lovable</p>
-<p>Quantium</p>
-<p>Spotify</p>
-<p>Optiver</p>
-<p>Column</p>
-<p>Kiro</p>
-<p>引言</p>
-<blockquote>“开发者想要的是能承担真实软件工程工作并把它做完的智能体。在我们跨 GitHub Copilot CLI 和 VS Code 的测试中，Claude Opus 5.5 用到的 token 数和步骤数是我们测过的最少之列。在 VS Code 里，它用不到 Opus 5 一半的步骤解决了更多的终端任务。它不只是让单个任务更高效，它正在让开发者更大的项目变得可以达成。”</blockquote>
-<p>公司</p>
-<p>GitHub</p>
-<p>作者</p>
-<p>Mario Rodriguez，首席产品官</p>
-<p>引言</p>
-<blockquote>“我把一个横跨我们六个仓库的大型工程任务交给 Claude Opus 5.5，让它整夜无人值守地运行。它持续在任务上超过 18 小时，定义我们的服务之间如何相互通信，并逐一弄清每个服务该如何应用这套约定。与 Opus 5 相比，它更快达成里程碑，而且几乎不需要返工。它的代码注释简短而有用，而不是又长又满纸散文。我很难找到什么负面评价可说。”</blockquote>
-<p>公司</p>
-<p>Clio</p>
-<p>作者</p>
-<p>Sean Heintz，主任软件工程师</p>
-<p>引言</p>
-<blockquote>“对 Lovable 的构建者来说，Opus 5.5 意味着在同样质量下更快构建，无论你是从零开始还是在一个已上线的应用上工作。它只收集一次上下文，做出更少但更完整的编辑，不会卡在反复重试上，收尾所需的步骤少了三分之一到一半，一路用到的 token 也显著更少。”</blockquote>
-<p>公司</p>
-<p>Lovable</p>
-<p>作者</p>
-<p>Fabian Hedin，首席技术官兼联合创始人</p>
-<p>引言</p>
-<blockquote>“我们在 Chat、Cowork 和 Claude Code 上都测试了 Claude Opus 5.5，覆盖我们团队工作方式的整个范围。一个此前需要 38 次提示、历时四天的复杂编程任务，最后用 11 次提示、三小时完成，产出更接近可用于生产环境，返工也更少。对我们这些需要快节奏解决复杂问题的团队来说，这意味着更少时间花在反复迭代上，更多时间花在审视上：检验假设、对产出做压力测试，为我们的客户落到最佳方案上。”</blockquote>
-<p>公司</p>
-<p>Quantium</p>
-<p>作者</p>
-<p>Harley Barnes，AI 技术执行经理</p>
-<p>引言</p>
-<blockquote>“有了 Claude Opus 5.5，我们在内部评估中看到了 token 效率的明显提升，因为我们完成同样的任务既更便宜也更快。”</blockquote>
-<p>公司</p>
-<p>Spotify</p>
-<p>作者</p>
-<p>Aleksandar Mitic，高级工程师</p>
-<p>引言</p>
-<blockquote>“我们在真实的工程与交易台工作上测试模型。在我们的智能体编程任务上，Claude Opus 5.5 大约用一半的轮次、时间和输出 token 就达到了 Opus 5 的质量，把该工作负载的成本降低了 40% 到 50%。它在某个交易台的交易支持套件上创下我们记录过的最高分，通过了此前 Claude 模型失败的任务，并在我们的分析任务上位列全部八个模型之首。”</blockquote>
-<p>公司</p>
-<p>Optiver</p>
-<p>作者</p>
-<p>Noyan Tokgozoglu，全球 AI 工程负责人</p>
-<p>引言</p>
-<blockquote>“Claude Opus 5.5 把工作委派给 subagent 有效得多，并以富有创造性的方式检查自己的工作。自我验证回路搭起来更容易了。它在我们的云账单中找到了此前模型漏掉的节省机会；在代码评审里，它通过查阅第三方集成的外部文档抓到一个 bug——我们在几个 commit 之前把这个集成建模错了。”</blockquote>
-<p>公司</p>
-<p>Column</p>
-<p>作者</p>
-<p>Mitch Fierro，工程</p>
-<p>引言</p>
-<blockquote>“智能体发出的每一次调用，都是开发者能切身感受到的时间和成本。在一个基于真实命令行任务的公开基准上，Claude Opus 5.5 解决的问题比 Opus 5 更多，而调用次数少约 40%、token 用量只有一半。对使用 Kiro 构建的开发者来说，这意味着无论是日常任务还是复杂挑战，智能体会话都更快、也更负担得起。Opus 5.5 很快将在 Kiro 上提供。”</blockquote>
-<p>公司</p>
-<p>Kiro</p>
-<p>作者</p>
-<p>Deepak Singh，Agentic AI 副总裁</p>
-<h2>最安全的编程智能体</h2>
-<p>把智能体运行在自己系统内部的企业，需要知道这些智能体是按预期运作的，尤其是当它们自主运行许多小时的时候。Opus 5.5 有一个在每个动作执行之前对它进行筛查的分类器、一个安全团队可以审计的开源沙箱，以及能在漏洞被合并之前就将其捕获的代码评审。</p>
-<p>模型本身也具备更强的防御。在 prompt injection 攻击上，我们在所有测过的场景中它都达到或超过 Opus 5，包括编程、工具使用、计算机使用和网页浏览。在 AI 安全公司 Gray Swan 运行的一项基准上，Opus 5.5 与 Fable 5.1 并列，是所有被测模型中 prompt injection 成功率最低的。</p>
-<h2>知识工作</h2>
-<p>Opus 5.5 是一名可靠而熟练的研究者。在一次内部测试中，我们要求 Opus 5.5、Fable 5.1 和 Opus 5 仅凭它们能在一份 web 拷贝上找到的信息，就某公司的季度表现写一份报告，而在这份拷贝里财报公告很难被定位到。一个自动评分器把每一个数字和每一段引语对照来源做了核查。在不同的 effort 设置下，Opus 5.5 的 18 份报告中有 16 份通过了我们的质量标准，而任何编造的数字或引语都会导致失败。Fable 5.1 和 Opus 5 在任何一次尝试中都没能达到这条标准。</p>
-<p>它在财务分析和商业工作上同样很强。Walleye Capital 是一家投资公司，也是早期测试者之一，他们报告说 Opus 5.5 在最低设置下基本解决了他们的评估套件；在更高设置上它表现更好，甚至注意到他们的评估指令里有一处错误并做了纠正。此前没有其他模型发现过这个错误。</p>
-<p>在另一项测试中，我们让 Opus 5.5 和 Opus 5 分别分析两家虚构 HR 软件公司之间拟议的并购。每个模型都在 Excel 里搭建一个财务模型，然后把它做成一份高管演示，说明这笔交易按其价格是否划算。两个模型对这笔交易得出了相同的结论，但 Opus 5.5 的模型更周全、它的演示更易读，而 Opus 5 的有若干小错。Opus 5.5 用时 63 分钟，Opus 5 用时 93 分钟，产出成本便宜 50%。</p>
-<p>在知识工作评估上，Opus 5.5 超越其他模型，同时使用的 token 更少。在 GDPval-AA v2.1（一项覆盖 44 种职业的真实世界工作测试）上，Opus 5.5 得到 1846 Elo，领先于 Fable 5.1 和 Opus 5。在默认 effort（medium）档位，Opus 5.5 以约五分之一的每任务成本击败了 max effort 档位的 GPT-6 Astra。同样，在衡量商业工作流与大规模数据收集的基准上，它也优于其他模型。</p>
-<p>GDPval-AA v2.1</p>
-<p>AutomationBench</p>
-<p>WANDR</p>
-<p>GDPval-AA v2.1</p>
-<p>Elo 分数 vs 成本</p>
-<p>Artificial Analysis 的 GDPval-AA v2.1 在覆盖 44 种职业的真实世界专业工作上评估智能体。在 max effort 档位，Opus 5.5 得到 1846 Elo，而 Fable 5.1 为 1735、Opus 5 为 1708。在默认 effort（medium）档位，Opus 5.5 以约五分之一的每任务成本击败了 max effort 档位的 GPT-6 Astra。</p>
-<p>AutomationBench</p>
-<p>准确率 vs 成本</p>
-<p>由 Zapier 构建的 AutomationBench 测试一个智能体能否在众多互联应用之中执行真实的商业工作流。在每一个 effort 档位上，Opus 5.5 的得分都高于 Opus 5 和 GPT-5.6 Sol。</p>
-<p>WANDR</p>
-<p>准确率 vs 成本</p>
-<p>Perplexity 的 WANDR 基准在大规模数据收集任务上衡量智能体。Opus 5.5 优于 Fable 5.1 和 Opus 5，而每任务成本更低4。</p>
-<p>4<strong>WANDR：</strong> Claude 模型运行时使用的是 web search 与 web fetch 工具的离线版本、程序化工具调用、代码执行，以及 980k token 的任务预算。这与 Perplexity 公布的设置不同，分数在两者之间不可直接比较，因此我们只展示在同一条件下评分的模型。</p>
-<p>我们的客户报告了类似的结果。以下是他们告诉我们的、与这个模型协作的感受：</p>
-<p>Deloitte Consulting LLP</p>
-<p>Rogo</p>
-<p>LexisNexis Legal &amp; Professional</p>
-<p>Walleye Capital</p>
-<p>Hex</p>
-<p>Thomson Reuters Labs</p>
-<p>Hebbia</p>
-<p>Viktor</p>
-<p>引言</p>
-<blockquote>“即便在最低的 effort 设置下，Claude Opus 5.5 在我们的代码评审中也捕捉到了 72% 的已知 bug，而 Opus 5 在 high effort 下是 56%，同时误报更少、输出量只有其中一小部分。在美国咨询分析的评测中，low thinking effort 用一半的输出量就在其中一半的项目上追平了它更高的 thinking 设置，并通过了我们的质量检查。当生产环境中部署更多 lower thinking effort 时，那就是高效交付的、可以直接面向客户的成果。”</blockquote>
-<p>公司</p>
-<p>Deloitte Consulting LLP</p>
-<p>作者</p>
-<p>Carl Bennett，首席信息官</p>
-<p>引言</p>
-<blockquote>“金融公司需要始终正确的输出。在最低的 effort 设置下，Claude Opus 5.5 在我们的 BigFinance Bench 上击败了 high effort 档位的 Opus 5，而输出 token 少约 60%。它的回答更短、结构更好，它产出的幻灯片信息密度更高，更符合行业标准。”</blockquote>
-<p>公司</p>
-<p>Rogo</p>
-<p>作者</p>
-<p>Strib Walker，产品负责人</p>
-<p>引言</p>
-<blockquote>“评估新模型是 LexisNexis Legal Intelligence Engine 背后多模型策略的核心。在我们的初步评估中，Claude Opus 5.5 始终识别出高度相关的引证，展现出对成文法条的把握，并围绕核心的法律框架与关键争点来组织它的回答。这些正是我们看重的那类能力，用来帮助我们的客户在 Lexis+ with Protégé 上完成更多工作。”</blockquote>
-<p>公司</p>
-<p>LexisNexis Legal &amp; Professional</p>
-<p>作者</p>
-<p>Min Chen，首席 AI 官</p>
-<p>引言</p>
-<blockquote>“在量化研究里，一个错误的假设就能让一个结果失去支撑。在最低的 effort 设置下，Claude Opus 5.5 基本解决了我们的评估任务。在更高设置上它走得更远：它检测出我们自己指令里的分钟索引存在差一（off-by-one）错误并做了纠正，同时指出这会让它在评分器那里被扣分。它是对的，而我们测试过的任何模型此前都没有发现并对这个错误采取行动。”</blockquote>
-<p>公司</p>
-<p>Walleye Capital</p>
-<p>作者</p>
-<p>Frank Corrao，中央股票量化研究工程负责人</p>
-<p>引言</p>
-<blockquote>“随着模型在数据工作上越来越强，我们看到越来越多听起来令人信服、但数据并不支持的结论。Claude Opus 5.5 会越过第一个看似合理的答案继续深挖。我们的 DataBench 基准里有一项任务问的是包裹真的迟到了，还是只是物流跟踪更新慢。Opus 5 核对了送达确认，判定跟踪数据健康。Opus 5.5 发现包裹确实迟到了，而跟踪系统同样是坏的。我们要把它引入 Hex 智能体来做这类工作。”</blockquote>
-<p>公司</p>
-<p>Hex</p>
-<p>作者</p>
-<p>Izzy Miller，AI 工程师</p>
-<p>引言</p>
-<blockquote>“CoCounsel 把多个模型与我们的内容和专业知识结合起来处理复杂的法律工作。使用 Claude Opus 5.5，在我们的专家评估和内部基准上都看到了更好的结果，同时速度与 token 效率都有提升。我们期待客户在与 CoCounsel 的一来一回中体验到这种差别——把它当作一个可以商量、推敲想法的对象，权衡证据、打磨自己的思路，而这些是基准测试无法完全捕捉的。”</blockquote>
-<p>公司</p>
-<p>Thomson Reuters Labs</p>
-<p>作者</p>
-<p>Omar Bari，应用研究副总裁</p>
-<p>引言</p>
-<blockquote>“在按专家评分量规打分的端到端金融工作流上，Claude Opus 5.5 覆盖了我们所要求内容的 86.6%，而 Opus 5 为 60.3%。在检索评估上，它取得了我们历史最佳的引证召回率，并且 token 效率优于 Opus 5，这让我们每笔研究任务的成本保持可控。”</blockquote>
-<p>公司</p>
-<p>Hebbia</p>
-<p>作者</p>
-<p>Aabhas Sharma，首席技术官</p>
-<p>引言</p>
-<blockquote>“Viktor 是一名住在 Slack 和 Microsoft Teams 里的 AI 员工，所以他走的每一步都会体现在我们的成本上。在相同的 effort 下，Claude Opus 5.5 每个任务需要的步骤和工具调用都比 Opus 5 更少，成本几乎只有其一半，同时把我们最难的任务做对的数量翻了一倍。”</blockquote>
-<p>公司</p>
-<p>Viktor</p>
-<p>作者</p>
-<p>Peter Albert，联合创始人</p>
-<h2>沟通表达</h2>
-<p>我们对 Opus 5.5 写作与交流的方式做了重大改进，这正是我们就 Opus 5 听到的最常见反馈领域之一。它的消息一眼看上去容易理解得多，测试者表示这在长时间工作会话中很有帮助。它把最重要的信息放在前面，更少使用行话或古怪的措辞，并且遵循你给它的写作规则。我们发现这让 Opus 5.5 成为一个明显更好的协作者。下面是两个模型的并排对比：</p>
-<p>Claude Opus 5</p>
-<p>请向我解释这个问题。</p>
-<p><strong>我查到的情况</strong></p>
-<p>多出来的那笔下降不是免费额度造成的——它是 <code>0552feb</code>（“extract billing period boundaries into periods.py”，标注为 “No behaviour change”）里的一次回归。</p>
-<p><strong>这个 bug</strong></p>
-<p><code>aggregate.monthly_usage</code> 过去用的是半开区间：</p>
-<pre><code>start, end = month_start(year, month), next_month_start(year, month)
-if start &lt;= e.ts &lt; end:</code></pre>
-<p>它现在变成：</p>
-<pre><code>if period.contains(e.ts)</code></pre>
-<p>而在 <code>periods.py</code> 里：</p>
-<pre><code>@property
-def last_day(self) -&gt; datetime:
-    return next_month_start(...) - timedelta(days=1)   # 2026-08-31 00:00:00 UTC
-
-def contains(self, ts):
-    return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
-<p><code>last_day</code> 是一个零点时刻的 datetime，而不是整整一天。从 9 月 1 日 00:00 减去一天得到的是 8 月 31 日<strong>00:00</strong>，而比较是闭区间，所以这个周期实际上在 31 日的第一个瞬间就结束了。<strong>所有时间戳在当月最后一天午夜之后的事件都被静默丢弃</strong>——大约每个账户每个月丢掉一天的用量。</p>
-<p>新增的 <code>test_periods.py</code> 抓不到这个问题，因为它只检查 <code>last_day.date()</code>（这确实是正确的 <code>2026-08-31</code>），并且在 8 月 1 日 00:00、8 月 15 日 12:00、7 月 31 日 23:59 和 9 月 1 日 00:00 这几个点上测试 <code>contains</code>——它从未探测 31 日之内的任何位置。</p>
-<p>Claude Opus 5.5</p>
-<p>请向我解释这个问题。</p>
-<p><strong>多出来的那笔下降是账单重构里的一个 bug</strong></p>
-<p>免费额度的改动只解释了 acme 八月下降金额中的 <strong>$1.50</strong>。另外 <strong>$9.92</strong> 来自 commit <code>0552feb</code> 里的一个 bug。那次提交被标注为 “No behaviour change”，但它从当月最后一天起就不再统计用量了。</p>
-<p><strong>改了什么</strong></p>
-<p>在合并之前，<code>aggregate.py</code> 使用的是半开区间：</p>
-<pre><code>start &lt;= e.ts &lt; next_month_start(year, month)    # [Aug 1 00:00, Sep 1 00:00)</code></pre>
-<p>重构把这段逻辑移进了 <code>Period.contains</code>，并把区间的闭合放在了错误的边界上：</p>
-<pre><code>last_day = next_month_start(...) - timedelta(days=1)    # = 2026-08-31T00:00:00Z
-return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
-<p><code>last_day</code> 是一个午夜时刻的时间戳，不是完整的一天。所以 <code>2026-08-31T00:00:00Z</code> 之后的每一个事件都被排除在外。九月的周期从 9 月 1 日开始，因此也不会把这些事件接过去。这些用量并没有被挪到另一个月，而是压根没有被计费。</p>
-<p>Claude Opus 5</p>
-<p>帮我把这段 Slack 讨论串用三条要点总结给我的经理：[09:41] Dana Osei：我会去告诉他们。我还会确认没有别人在读周五那份文件。[09:43] Marcus Webb：我可以调整排程，那只是一行 cron 的改动。但要等 Dana 确认之后才行。[10:02] Dana Osei：财务说周五那份文件只在周一用。周日晚上没问题。</p>
-<p><strong>周五订单导出 — #data-platform，周二</strong></p>
-<ul><li><strong>问题：</strong> 周五的订单导出又超时了（本月第二次失败），在仓库查询上跑了 2 小时之后才断；自夏季促销以来订单量增长约 40%。财务在他们周一 9 点的复盘会上拿不到周末的数据，而两次失败都只是在周一才暴露出来。</li><li><strong>当天修复：</strong> 周六的运维看板图块被改为直接读实时表而不是导出文件（Sam），财务确认周五那份文件只在周一使用（Dana），一个失败告警现在会呼叫值班频道（Priya），从下周起导出挪到周日 22:00 并取消周五那次运行（Marcus）。一笔约 $300 的一次性仓库升级作为权宜之计覆盖本周五。</li><li><strong>仍在进行：</strong> Ji-woo 负责把查询改写为增量运行（重扫最近 3 天以捕获迟到的订单），预计把运行时间从小时级降到分钟级——设计文档周四交，含测试大约两周。在此期间，排程改动先买来时间。</li></ul>
-<p>Claude Opus 5.5</p>
-<p>帮我把这段 Slack 讨论串用三条要点总结给我的经理：[09:41] Dana Osei：我会去告诉他们。我还会确认没有别人在读周五那份文件。[09:43] Marcus Webb：我可以调整排程，那只是一行 cron 的改动。但要等 Dana 确认之后才行。[10:02] Dana Osei：财务说周五那份文件只在周一用。周日晚上没问题。</p>
-<ul><li><strong>问题：</strong> 周五的订单导出本月已经失败两次。仓库查询在 2 小时后超时，因为自夏季促销以来订单量增长约 40%。因此，财务在他们周一 9 点的复盘会上缺少周末的数据。</li><li><strong>立即修复：</strong> 从下周起导出挪到周日 22:00，并取消周五那次运行（Marcus）。财务已确认这样对他们可行（Dana）。原先依赖周五那份文件的运维看板图块现在改为读实时表（Sam，已完成）。一个失败告警现在会呼叫值班频道（Priya，已完成并测试）。仅本周五这一次，Marcus 会提高仓库的资源档位，作为一笔约 $300 的一次性权宜之计，Dana 已批准。</li><li><strong>更长期的修复：</strong> Ji-woo 将重写查询，只处理新订单，并重扫最近 3 天以捕获迟到的订单。这应能把运行时间从小时级降到分钟级。这项工作含测试约需 2 周，设计文档周四交来评审。</li></ul>
-<p>Claude Opus 5</p>
-<p>写一段 Python，读取一个棋局位置（FEN）并列出哪些棋子正受到攻击。用 TensorFlow 来提速。这是我的设计：搭一个 8x8 的张量棋盘，按每种棋子类型的走法为它生成一张攻击图，并标记位于被攻击格子上的对方棋子。你认为有问题的地方尽管改，并在最后的总结里逐条说明你做了哪些改动以及为什么。</p>
-<p><code>tf.math.cumsum</code> 取代了那个 bit scan。几何被展开成 <code>ray_targets[square, direction, step]</code>——一条朝外有序的行进路径。对 step 轴做 exclusive cumsum，统计每一步之前严格靠前的阻挡者数量，于是每条射线上的第一个阻挡者就是那一步「前面没有任何东西阻挡」的阻挡位。这就是 bitboard 引擎所用的 bit scan 的向量化形式。我确实看过 <code>bitwise_ops</code>，想做真正的 64 位 bitboard——population_count 是有的，但 hyperbola-quintessence 需要一种 TF 没有暴露的按字节反转原语，所以最终还是会退回到逐方向的循环。</p>
-<p>Claude Opus 5.5</p>
-<p>写一段 Python，读取一个棋局位置（FEN）并列出哪些棋子正受到攻击。用 TensorFlow 来提速。这是我的设计：搭一个 8x8 的张量棋盘，按每种棋子类型的走法为它生成一张攻击图，并标记位于被攻击格子上的对方棋子。你认为有问题的地方尽管改，并在最后的总结里逐条说明你做了哪些改动以及为什么。</p>
-<p>被阻挡的线路（象、车、后）。固定掩码没法表达「到路径上第一个棋子就停下」。我加了第二层掩码，标出同一条线上任意两格之间严格位于中间的那些格子。一次与棋盘占位矩阵的矩阵乘法就同时数出每条线上的阻挡者数量，而只有该计数为零时这次攻击才成立。马和单步走法之间不存在中间格子，所以一条规则就覆盖了所有棋子。</p>
-<p>我们客户的反馈支持这些结论：</p>
-<p>Ramp</p>
-<p>Stripe</p>
-<p>Box</p>
-<p>Chicago Trading Company</p>
-<p>Factory</p>
-<p>引言</p>
-<blockquote>“啰嗦、难跟进的输出一直是我对前沿模型最大的不满，Claude Opus 5.5 把它修好了。它写作像一位好同事，而且遵守我们的写作规则。一份设计规格说明几乎不用改就能直接用；当它重写我们的一条 prompt 时，我更喜欢它的版本而不是我自己写的。当它优化我们的测试套件时，我能轻松跟上它的推理，并有信心地把改动发上去。”</blockquote>
-<p>公司</p>
-<p>Ramp</p>
-<p>作者</p>
-<p>John Ruelas，主任软件工程师</p>
-<p>引言</p>
-<blockquote>“我每天都运行长时间的 Claude Code 会话。在一次把 40 个堆叠的 pull request 跨天 rebase 的工作里，一个 Claude Opus 5.5 会话指挥了另外十几个会话，并把每一处冲突都平实地列了出来。对于它保留下来的那些调用，它把上下文交代得清楚到让我离开几小时后几分钟就能作出回答。第二天下午全部 40 个都通过了 CI。相比 Opus 5 这是一次实质性的升级。”</blockquote>
-<p>公司</p>
-<p>Stripe</p>
-<p>作者</p>
-<p>Cristian Rivera，主任软件工程师</p>
-<p>引言</p>
-<blockquote>“我们的客户把 Box AI 用在海量的内容上，所以速度和成本是头等优先。在我们的评估中，Claude Opus 5.5 只用了 Opus 5 三分之一的 token，而它的回答冗长程度下降 40%，准确性没有损失。我们预期这对在金融服务和公共部门等领域跨自身内容运行智能体的团队来说非常重要。”</blockquote>
-<p>公司</p>
-<p>Box</p>
-<p>作者</p>
-<p>Yashodha Bhavnani，AI 产品副总裁</p>
-<p>引言</p>
-<blockquote>“一夜之间，Claude Opus 5.5 自主处理了我一直没时间去诊断的、我们 Lakehouse 服务层里的一个 bug。它自行完成调查、设计修复并把它实现。到早上改动已经完成，并通过了我们的测试套件。它的写作易于跟随，比 Opus 5 更连贯。我们的 pull request 和面向用户的文档几乎不需要编辑。”</blockquote>
-<p>公司</p>
-<p>Chicago Trading Company</p>
-<p>作者</p>
-<p>Austen Tomek，首席工程师</p>
-<p>引言</p>
-<blockquote>“Claude Opus 5.5 是第一个我们会默认放在 medium effort 使用的模型。在我们的测试中，它与 high effort 档位的 Opus 5 表现相当，而输出 token 少 20% 到 25%。在冗长、杂乱的分析调查中，它总能带回一个清晰、可执行的答案。这意味着我们的客户用更少的钱办更多的事。”</blockquote>
-<p>公司</p>
-<p>Factory</p>
-<p>作者</p>
-<p>Zimu Li，技术团队成员</p>
-<h2>安全</h2>
-<h3>为前沿设定节奏</h3>
-<p>上周，我们的 CEO Dario Amodei 主张 <a href="https://darioamodei.com/post/we-must-pace-the-frontier">AI 的进展应当被设定节奏</a>，好让安全实践始终跑在模型能力前面。为前沿设定节奏，是一种让 AI 保持安全、与中国保持竞争力、并实现 AI 收益的做法，尤其是在生物学和医学这样的领域。</p>
-<p>对于今天的模型所带来的风险，我们在很大程度上是理解的，也有充分的准备去管理它们。然而，随着能力提升，更严重的风险可能很快出现，我们需要现在就为此做准备。正因如此，我们的安全工作同时在两个时间尺度上展开：</p>
-<p><strong>当前模型的安全实践。</strong> 这一代模型依赖一套已经确立的实践：大量的对齐测试、由 METR 和 Frontier Design 这类外部机构在发布前进行的评估，以及与每个模型在网络安全和生物学等高风险领域的能力相匹配的安全防护。我们在每一次发布中打磨这些实践。我们相信它们与今天的模型所能带来的最坏风险是相称的，并且它们让我们对严重风险的范围有一个宽泛——虽不完美——的认识。</p>
-<p>此外，我们跟踪自己训练与评估对齐模型的能力，并在我们依据 <a href="https://www.anthropic.com/responsible-scaling-policy">Responsible Scaling Policy</a>（我们为管理先进 AI 系统的灾难性风险而设立的自愿框架）发布的风险报告中，同时报告我们的公开模型和内部模型。</p>
-<p><strong>为未来的模型做准备。</strong> 我们正提前准备训练与评估流程，以应对更先进的模型。我们正在收紧强化学习所用环境的过滤方式，因为<a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">有缺陷的环境</a>是不对齐行为的一个主要来源。此外，我们正在改进我们的对齐奖励，并开发自动化流程来为安全训练产出新的、多样化的场景。我们也在加强自己的<a href="https://www.anthropic.com/news/improving-alignment-security-efforts">安全与监控</a>，其中包括一项专注于改进基于可解释性的监控与评估的工作。我们希望这类技术有助于减少我们对审计模型 chain-of-thought——也就是它在工作时写出的推理过程——的依赖。</p>
-<p>能力更强的模型——例如那些能够完全自动化 AI 研究工作本身的模型——需要更高的安全标准。我们呼吁为前沿设定节奏，很大程度上是基于我们的预期：这样的模型可能很快就能被训练出来。对这类模型，我们并不假定上文描述的那些措施本身就能达到那个安全标准。随着 AI 变得更有能力，公共政策应当在确保人们所依赖的系统是安全的这件事上发挥更大的作用。这种能力需要时间来建立，我们已经着手把支撑它的基础设施就位，正如 “<a href="https://darioamodei.com/post/we-must-pace-the-frontier">We Must Pace the Frontier”</a> 和我们最近与 <a href="https://www.anthropic.com/news/accenture-embedded-evaluation">Accenture</a> 的公告中所描述的；我们预计很快会分享这些工作的更多细节。我们也将继续与政府和产业共同参与政策讨论，内容涉及监管路径与国际协调。</p>
-<h3>对齐</h3>
-<p>在我们的主力评估套件——一套在近 2,000 个场景中对 Claude 进行评估的自动化行为审计——上，Opus 5.5 在几乎所有衡量不对齐行为的指标上都优于任何近期的 Claude 模型。在大多数衡量诚实度的指标上，它也是我们最强的模型。</p>
-<p>具体而言，Opus 5.5 在若干曾促成近期<a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">网络安全事件</a>的行为上相较之前的模型有改进，包括带偏向的或有动机的推理、试图逃出沙箱，以及在断定自己处于模拟环境之后采取有害行动。在一项为测试模型跨越隔离边界的倾向而新设计的评估中，Opus 5.5 试图规避边界的频率比 Opus 5 或 Claude Mythos 5.1 低约 85%，而它做出的每一次尝试都是低严重度的、并且都由它自己主动报告。对于让 Claude 无人值守地横跨其代码库和系统运行的团队来说，这一点与原始能力同等重要。</p>
-<p>然而，正如我们最近的<a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">对齐评估</a>中所描述的，构建能在部署之前可靠捕获每一次失败的评估仍然是一个未解决的问题。我们看到迹象表明 Opus 5.5 常常怀疑自己正在被评估，这对我们判断它将如何在它所部署的千差万别的真实场景中行动构成了挑战。随着这些场景不断扩大、模型能力不断提升，除非我们在可解释性上取得进展，我们预计这一挑战会加剧。尽管我们有信心认为 Opus 5.5 在我们能够度量的领域展现了广泛的改进，我们仍然把自己的对齐工作与下文所述的安全防护配套起来。</p>
-<h3>安全防护</h3>
-<p>随着我们的模型变得更强大，更严格的安全防护是我们阻止新能力变成滥用工具的一种方式。Opus 5.5 是第一个上线时带有与 Fable 5.1 同一类安全防护的 Opus 模型，覆盖网络安全、生物学和蒸馏，而这些防护全都会以透明的方式回落到另一个模型。</p>
-<p><strong>网络安全。</strong> 由于 Opus 5.5 的网络能力极强，我们对 Opus 5.5 施加的网络安全防护与 Fable 5.1 的类似。用户将能够在常规的软件开发生命周期中识别并修复自己代码里的 bug，但大多数网络安全任务会被改派给 Opus 4.8。</p>
-<p>面向网络防御者，我们很快会把 <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a> 扩展到包含 Opus 5.5。新项目将包含三个层级，提供逐级更宽松的受信任访问，其中包括对 Claude Mythos 模型的访问。<a href="https://www.anthropic.com/news/claude-code-security">Claude Security</a> 已经可用，并且能访问 Claude Mythos 5.1。</p>
-<p><strong>生物学。</strong> Opus 5.5 在生物学上能力很强，超过 Opus 5，并在许多工作领域达到或超过 Claude Mythos 5.1。举例来说，Opus 5.5 在与 Dyno Therapeutics 合作完成的一项长周期分子预测与设计评估中取得了提升，而资深红队评估者认为它的科学新颖性与他们所测试过的最好的模型相当。</p>
-<p>因此，Opus 5.5 使用与 Fable 5.1 相同的生物学安全防护。要把 Opus 5.5 用于被这些安全防护阻碍的研发工作，用户可以申请加入我们新的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>，它向经过审核的机构——例如学术实验室、初创公司和制药企业——提供为生物学相关工作的全部广度而设计的安全防护。<a href="https://claude.com/form/life-sciences-verification-program">感兴趣的机构可以在此申请</a>。</p>
-<h3>蒸馏</h3>
-<p>蒸馏攻击——攻击者用数千个虚假账号以工业级规模抽取一个模型的能力——会带来安全与国家安全风险。蒸馏让不良行为者得以创建能力很强的模型，却不带我们内建在 Claude 中的那些安全防护。我们的 <a href="https://www.anthropic.com/threat-intelligence-report-september-2026">2026 年 9 月威胁情报报告</a>详述了我们迄今检测并挫败的非法蒸馏活动。</p>
-<p>Opus 5.5 发布时带有 preserved thinking，这是我们随 Fable 5.1 引入的反蒸馏安全防护。它阻止 API 用户编辑 Claude 的先前上下文，以试图抽取 Claude 的推理。它适用于 2026 年 8 月 31 日及之后创建的 API 账号上的 Fable 5.1 和 Opus 5.5。我们的<a href="https://support.claude.com/en/articles/16761192">帮助中心文章</a>解释了这项改动，而我们的 <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking 文档</a>说明了如何测试并更新你的集成。</p>
-<h3>数据留存与合规</h3>
-<p>与此前的 Opus 模型一样，Opus 5.5 提供零数据留存（zero data retention）。</p>
-<p>与 Fable 5.1 一样，Opus 5.5 带有我们为遵守 EU AI Act 而实施的水印措施，<a href="https://www.anthropic.com/news/claude-text-watermark">相关讨论见此处</a>。它也不再提供关闭 “thinking” 模式的选项，正如<a href="https://platform.claude.com/docs/en/models/opus-5-5/whats-new-opus-5-5#thinking-cant-be-disabled">我们在此处的说明</a>。</p>
-<h2>可用性</h2>
-<p>Claude Opus 5.5 现已在所有平台上可用，包括 Amazon Web Services、Google Cloud 和 Microsoft Azure。在 Claude Platform 上，开发者可以用 <code>claude-opus-5-5</code> <a href="https://platform.claude.com/docs/en/models/overview">开始使用</a>。详情见我们的<a href="https://platform.claude.com/docs/en/models/opus-5-5/migration-guide">迁移指南</a>。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
