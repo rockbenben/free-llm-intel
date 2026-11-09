@@ -449,6 +449,8 @@ VENDOR_RANK: tuple[str, ...] = (
     "digitalocean_genai", "inception_labs", "inference_net", "ncompass", "mara",
     # 2026-11-07 新增：海外云 / 推理 / 数据 API
     "akamai_cloud", "lightning_ai", "regolo_ai", "onkernel", "novita_ai", "parallel_ai", "zilliz_cloud",
+    # 2026-11-09 新增：免费模型聚合 API（free/ 前缀零价模型，知名度低，列在长尾末位）
+    "apinex",
     # 第六梯队：AI 编程 / Agent 工具（Part 4，内置模型免费额度；须连排放，
     # 生成器按相邻同类分组渲染 Part 标题）
     "qoder", "codebuddy_workbuddy", "trae", "tongyi_lingma", "comate",
@@ -667,6 +669,9 @@ GUIDE_META: dict[str, dict] = {
     "zilliz_cloud": {"tiers": ["recurring"], "signup": "email", "scenarios": ["embed"],
                      "short": "Serverless Free $0/月：5GB 存储 + 2.5M vCU/月 + 5 collections",
                      "tip": "vCU 是计算单元，向量检索密集时消耗快；Dedicated 档另算"},
+    "apinex": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"],
+               "short": "free/ 前缀模型单价 $0.00/1M（in+out），官方开发者文档（Token 计费页）确认存在每日免费模型额度",
+               "tip": "每日额度的具体 token 数官方未给数值，只写明按模型 weight 扣减；「每日 1000 万 tokens」未获证实；Airdrop 页的签到是 XP 机制、非额度解锁，API 侧 /check-in 返回 404；api 子域在国内出口被 Cloudflare 前置 403，测活须换出口网络"},
 }
 
 # ---------------------------------------------------------------------------
@@ -2522,6 +2527,38 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "links": [
             ("定价页", "https://zilliz.com/pricing"),
             ("注册入口", "https://cloud.zilliz.com/signup"),
+        ],
+    },
+    "apinex": {
+        "category": "international",
+        "display_name": "APInex (免费模型聚合 API)",
+        "free_quota": "官方开发者文档（Token 计费页）写明存在**每日免费模型额度**（daily free-model allowance）：免费模型不计入钱包，改按 `allowance_tokens = ceil((input_tokens + output_tokens) * weight)` 扣减该额度（文档示例：`weight: 3` 的模型，50,000 输入 + 1,000 输出 = 消耗 153,000 额度 token，钱包不扣费）；**具体每日额度 token 数官方页未给数值**。免费模型以 `free/` 前缀区分，单价 $0.00/1M（输入与输出均 $0）",
+        "validity": "官方文档只写明额度按权重扣减、钱包不计费，未载明每日重置的具体数值；推广文所称「每日 1000 万 tokens」未获官方证实",
+        "free_models": [
+            "`free/qwen-3.8-max`（上下文 1M，支持 tool calling / vision / SSE）——单价 $0.00/1M（in+out）",
+            "官方模型目录列 **21 个 `free/` 前缀模型**（2026 年 11 月 9 日实测）；推广文（2026 年 10 月 11 日）记 18 个，期间新增 `glm-5.3` / `glm-5.3-flashx` / `jev-1.13`，清单以目录页为准",
+        ],
+        "tier_caveats": [
+            "每日免费额度的**具体 token 数官方未公布**，只给了按 `weight` 扣减的公式，无法据「每日 N 万 tokens」规划用量；Airdrop 文档的每日签到是 XP 机制（25–120 XP / 连续 1→7 天），未见与额度解锁的关联，API 侧 `/check-in` 端点返回 404",
+            "`api.apinex.bond` 在国内出口 IP 会被 Cloudflare WAF 前置拦截：未鉴权 GET `/v1/models` 即返回 403（Ray ID a5789b35591f27d8），拦截发生在鉴权之前，持有 key 同样连不上——连通性测试须换出口网络",
+            "免费层以 `free/` 前缀区分，非免费模型按价表计费",
+        ],
+        "preconditions": "在 https://apinex.bond/register 注册账号并创建 API key（形态 `sk-apx…`，文档载明鉴权头 `Authorization: Bearer`）；是否需绑卡维持额度未证实",
+        "promotions": "无其他活动记载。",
+        "notes": "信息源是公众号推广文（2026 年 10 月发布，原文带返利注册码，与平台可用性无关）；免费模型数量以官方目录页为准。官方另提供 Anthropic 协议端点 `/v1/messages`。定价页 `/pricing` 对无 JS 的抓取只返回 SPA 外壳（约 320 字符），`/faq` 对爬虫返回 404，故巡检源取开发者文档的机器可读 `.md` 变体（每个文档页都有）。",
+        "openai_compat": {
+            "summary": "OpenAI 兼容 `/v1/chat/completions`；另有 Anthropic 协议 `/v1/messages`",
+            "api_key_label": "控制台创建（sk-apx…）",
+            "api_key_url": "https://apinex.bond/register",
+            "base_url": "https://api.apinex.bond/v1",
+            "models": "`free/qwen-3.8-max`",
+        },
+        "links": [
+            ("模型目录（21 个 free/ 模型）", "https://apinex.bond/developers/models"),
+            ("官方 Token 计费文档（每日免费额度与 weight 扣减公式）", "https://apinex.bond/developers/models/billing"),
+            ("官方 FAQ", "https://apinex.bond/faq"),
+            ("模型规格 llms.txt 示例", "https://apinex.bond/models/free-qwen-3-8-max/llms.txt"),
+            ("官方主页", "https://apinex.bond"),
         ],
     },
 }

@@ -1,5 +1,5 @@
 {
-  "count": 83,
+  "count": 84,
   "vendors": [
     {
       "rank": 1,
@@ -2303,11 +2303,67 @@
     },
     {
       "rank": 55,
+      "id": "apinex",
+      "name": "APInex (免费模型聚合 API)",
+      "part": 2,
+      "homepage": "https://apinex.bond",
+      "anchor": "55-apinex-免费模型聚合-api",
+      "signup": "email",
+      "tiers": [
+        "recurring"
+      ],
+      "in_guide": true,
+      "free_quota": "官方开发者文档（Token 计费页）写明存在**每日免费模型额度**（daily free-model allowance）：免费模型不计入钱包，改按 `allowance_tokens = ceil((input_tokens + output_tokens) * weight)` 扣减该额度（文档示例：`weight: 3` 的模型，50,000 输入 + 1,000 输出 = 消耗 153,000 额度 token，钱包不扣费）；**具体每日额度 token 数官方页未给数值**。免费模型以 `free/` 前缀区分，单价 $0.00/1M（输入与输出均 $0）",
+      "validity": "官方文档只写明额度按权重扣减、钱包不计费，未载明每日重置的具体数值；推广文所称「每日 1000 万 tokens」未获官方证实",
+      "free_models": [
+        "`free/qwen-3.8-max`（上下文 1M，支持 tool calling / vision / SSE）——单价 $0.00/1M（in+out）",
+        "官方模型目录列 **21 个 `free/` 前缀模型**（2026 年 11 月 9 日实测）；推广文（2026 年 10 月 11 日）记 18 个，期间新增 `glm-5.3` / `glm-5.3-flashx` / `jev-1.13`，清单以目录页为准"
+      ],
+      "tier_caveats": [
+        "每日免费额度的**具体 token 数官方未公布**，只给了按 `weight` 扣减的公式，无法据「每日 N 万 tokens」规划用量；Airdrop 文档的每日签到是 XP 机制（25–120 XP / 连续 1→7 天），未见与额度解锁的关联，API 侧 `/check-in` 端点返回 404",
+        "`api.apinex.bond` 在国内出口 IP 会被 Cloudflare WAF 前置拦截：未鉴权 GET `/v1/models` 即返回 403（Ray ID a5789b35591f27d8），拦截发生在鉴权之前，持有 key 同样连不上——连通性测试须换出口网络",
+        "免费层以 `free/` 前缀区分，非免费模型按价表计费"
+      ],
+      "preconditions": "在 https://apinex.bond/register 注册账号并创建 API key（形态 `sk-apx…`，文档载明鉴权头 `Authorization: Bearer`）；是否需绑卡维持额度未证实",
+      "promotions": "无其他活动记载。",
+      "openai_compat": {
+        "summary": "OpenAI 兼容 `/v1/chat/completions`；另有 Anthropic 协议 `/v1/messages`",
+        "api_key_label": "控制台创建（sk-apx…）",
+        "api_key_url": "https://apinex.bond/register",
+        "base_url": "https://api.apinex.bond/v1",
+        "models": "`free/qwen-3.8-max`"
+      },
+      "links": [
+        [
+          "模型目录（21 个 free/ 模型）",
+          "https://apinex.bond/developers/models"
+        ],
+        [
+          "官方 Token 计费文档（每日免费额度与 weight 扣减公式）",
+          "https://apinex.bond/developers/models/billing"
+        ],
+        [
+          "官方 FAQ",
+          "https://apinex.bond/faq"
+        ],
+        [
+          "模型规格 llms.txt 示例",
+          "https://apinex.bond/models/free-qwen-3-8-max/llms.txt"
+        ],
+        [
+          "官方主页",
+          "https://apinex.bond"
+        ]
+      ],
+      "reviewed": ""
+    },
+    {
+      "rank": 56,
       "id": "infini_ai",
       "name": "无问芯穹 Infini AI (GenStudio)",
       "part": 3,
       "homepage": "https://infini-ai.com/",
-      "anchor": "55-无问芯穹-infini-ai-genstudio",
+      "anchor": "56-无问芯穹-infini-ai-genstudio",
       "signup": "email",
       "tiers": [
         "permanent"
@@ -2345,12 +2401,12 @@
       "reviewed": "2026-10-11"
     },
     {
-      "rank": 56,
+      "rank": 57,
       "id": "aws_bedrock",
       "name": "Amazon Bedrock (AWS Free Tier)",
       "part": 3,
       "homepage": "https://aws.amazon.com/bedrock/",
-      "anchor": "56-amazon-bedrock-aws-free-tier",
+      "anchor": "57-amazon-bedrock-aws-free-tier",
       "signup": "card",
       "tiers": [
         "onetime"
@@ -2382,12 +2438,12 @@
       "reviewed": "2026-11-08"
     },
     {
-      "rank": 57,
+      "rank": 58,
       "id": "azure_openai",
       "name": "Azure OpenAI / Azure AI Foundry",
       "part": 3,
       "homepage": "https://azure.microsoft.com/en-us/products/ai/",
-      "anchor": "57-azure-openai--azure-ai-foundry",
+      "anchor": "58-azure-openai--azure-ai-foundry",
       "signup": "card",
       "tiers": [
         "onetime"
@@ -2419,12 +2475,12 @@
       "reviewed": "2026-11-02"
     },
     {
-      "rank": 58,
+      "rank": 59,
       "id": "gcp_vertex_ai",
       "name": "Google Gemini Enterprise Agent Platform",
       "part": 3,
       "homepage": "https://cloud.google.com/products/gemini-enterprise-agent-platform",
-      "anchor": "58-google-gemini-enterprise-agent-platform",
+      "anchor": "59-google-gemini-enterprise-agent-platform",
       "signup": "card",
       "tiers": [
         "onetime"
@@ -2456,12 +2512,12 @@
       "reviewed": "2026-11-08"
     },
     {
-      "rank": 59,
+      "rank": 60,
       "id": "oracle_oci_ai",
       "name": "Oracle OCI Generative AI",
       "part": 3,
       "homepage": "https://www.oracle.com/artificial-intelligence/generative-ai/",
-      "anchor": "59-oracle-oci-generative-ai",
+      "anchor": "60-oracle-oci-generative-ai",
       "signup": "card",
       "tiers": [
         "onetime"
@@ -2493,12 +2549,12 @@
       "reviewed": "2026-11-08"
     },
     {
-      "rank": 60,
+      "rank": 61,
       "id": "ibm_watsonx",
       "name": "IBM watsonx.ai (Free Toolbox)",
       "part": 3,
       "homepage": "https://www.ibm.com/watsonx/",
-      "anchor": "60-ibm-watsonxai-free-toolbox",
+      "anchor": "61-ibm-watsonxai-free-toolbox",
       "signup": "email",
       "tiers": [
         "permanent"
@@ -2529,12 +2585,12 @@
       "reviewed": "2026-10-12"
     },
     {
-      "rank": 61,
+      "rank": 62,
       "id": "baseten",
       "name": "Baseten",
       "part": 3,
       "homepage": "https://baseten.co/",
-      "anchor": "61-baseten",
+      "anchor": "62-baseten",
       "signup": "email",
       "tiers": [
         "onetime"
@@ -2570,12 +2626,12 @@
       "reviewed": "2026-11-02"
     },
     {
-      "rank": 62,
+      "rank": 63,
       "id": "modal",
       "name": "Modal (Serverless AI 云平台)",
       "part": 3,
       "homepage": "https://modal.com/",
-      "anchor": "62-modal-serverless-ai-云平台",
+      "anchor": "63-modal-serverless-ai-云平台",
       "signup": "email",
       "tiers": [
         "recurring"
@@ -2610,12 +2666,12 @@
       "reviewed": "2026-11-02"
     },
     {
-      "rank": 63,
+      "rank": 64,
       "id": "modular_cloud",
       "name": "Modular (原 BentoCloud/BentoML)",
       "part": 3,
       "homepage": "https://www.modular.com/",
-      "anchor": "63-modular-原-bentocloudbentoml",
+      "anchor": "64-modular-原-bentocloudbentoml",
       "signup": "",
       "tiers": [
         "permanent",
@@ -2651,12 +2707,12 @@
       "reviewed": "2026-10-14"
     },
     {
-      "rank": 64,
+      "rank": 65,
       "id": "digitalocean_genai",
       "name": "DigitalOcean Inference Engine",
       "part": 3,
       "homepage": "https://www.digitalocean.com/",
-      "anchor": "64-digitalocean-inference-engine",
+      "anchor": "65-digitalocean-inference-engine",
       "signup": "card",
       "tiers": [
         "onetime"
@@ -2689,12 +2745,12 @@
       "reviewed": "2026-09-27"
     },
     {
-      "rank": 65,
+      "rank": 66,
       "id": "akamai_cloud",
       "name": "Akamai Cloud (原 Linode)",
       "part": 3,
       "homepage": "https://www.akamai.com/cloud",
-      "anchor": "65-akamai-cloud-原-linode",
+      "anchor": "66-akamai-cloud-原-linode",
       "signup": "card",
       "tiers": [
         "onetime"
@@ -2730,12 +2786,12 @@
       "reviewed": ""
     },
     {
-      "rank": 66,
+      "rank": 67,
       "id": "lightning_ai",
       "name": "Lightning AI (GPU 云 / Studio)",
       "part": 3,
       "homepage": "https://lightning.ai",
-      "anchor": "66-lightning-ai-gpu-云--studio",
+      "anchor": "67-lightning-ai-gpu-云--studio",
       "signup": "email",
       "tiers": [
         "permanent",
@@ -2765,12 +2821,12 @@
       "reviewed": ""
     },
     {
-      "rank": 67,
+      "rank": 68,
       "id": "onkernel",
       "name": "Kernel (托管云浏览器)",
       "part": 3,
       "homepage": "https://onkernel.com",
-      "anchor": "67-kernel-托管云浏览器",
+      "anchor": "68-kernel-托管云浏览器",
       "signup": "email",
       "tiers": [
         "recurring"
@@ -2801,12 +2857,12 @@
       "reviewed": ""
     },
     {
-      "rank": 68,
+      "rank": 69,
       "id": "zilliz_cloud",
       "name": "Zilliz Cloud (托管 Milvus 向量库)",
       "part": 3,
       "homepage": "https://zilliz.com",
-      "anchor": "68-zilliz-cloud-托管-milvus-向量库",
+      "anchor": "69-zilliz-cloud-托管-milvus-向量库",
       "signup": "email",
       "tiers": [
         "recurring"
@@ -2837,12 +2893,12 @@
       "reviewed": ""
     },
     {
-      "rank": 69,
+      "rank": 70,
       "id": "qoder",
       "name": "Qoder (Agentic Coding Platform · 国际版)",
       "part": 4,
       "homepage": "https://qoder.com/",
-      "anchor": "69-qoder-agentic-coding-platform--国际版",
+      "anchor": "70-qoder-agentic-coding-platform--国际版",
       "signup": "email",
       "tiers": [
         "recurring",
@@ -2881,12 +2937,12 @@
       "reviewed": "2026-11-02"
     },
     {
-      "rank": 70,
+      "rank": 71,
       "id": "codebuddy_workbuddy",
       "name": "腾讯云 CodeBuddy / WorkBuddy (AI 编程 · 应用构建 Agent)",
       "part": 4,
       "homepage": "https://www.codebuddy.cn/",
-      "anchor": "70-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent",
+      "anchor": "71-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent",
       "signup": "email",
       "tiers": [
         "recurring",
@@ -2929,12 +2985,12 @@
       "reviewed": ""
     },
     {
-      "rank": 71,
+      "rank": 72,
       "id": "trae",
       "name": "Trae (字节跳动 AI IDE · 中国版为主)",
       "part": 4,
       "homepage": "https://www.trae.cn/",
-      "anchor": "71-trae-字节跳动-ai-ide--中国版为主",
+      "anchor": "72-trae-字节跳动-ai-ide--中国版为主",
       "signup": "email",
       "tiers": [
         "recurring"
@@ -2971,12 +3027,12 @@
       "reviewed": ""
     },
     {
-      "rank": 72,
+      "rank": 73,
       "id": "tongyi_lingma",
       "name": "通义灵码 / Qoder CN (阿里云)",
       "part": 4,
       "homepage": "https://lingma.aliyun.com/",
-      "anchor": "72-通义灵码--qoder-cn-阿里云",
+      "anchor": "73-通义灵码--qoder-cn-阿里云",
       "signup": "email",
       "tiers": [
         "recurring",
@@ -3010,12 +3066,12 @@
       "reviewed": "2026-11-02"
     },
     {
-      "rank": 73,
+      "rank": 74,
       "id": "comate",
       "name": "文心快码 Comate (百度智能云)",
       "part": 4,
       "homepage": "https://comate.baidu.com/",
-      "anchor": "73-文心快码-comate-百度智能云",
+      "anchor": "74-文心快码-comate-百度智能云",
       "signup": "email",
       "tiers": [
         "permanent",
@@ -3048,12 +3104,12 @@
       "reviewed": "2026-10-11"
     },
     {
-      "rank": 74,
+      "rank": 75,
       "id": "github_copilot",
       "name": "GitHub Copilot Free",
       "part": 4,
       "homepage": "https://github.com/features/copilot",
-      "anchor": "74-github-copilot-free",
+      "anchor": "75-github-copilot-free",
       "signup": "email",
       "tiers": [
         "permanent"
@@ -3085,12 +3141,12 @@
       "reviewed": ""
     },
     {
-      "rank": 75,
+      "rank": 76,
       "id": "cursor_ide",
       "name": "Cursor (AI 代码编辑器 · Hobby 免费层)",
       "part": 4,
       "homepage": "https://cursor.com/",
-      "anchor": "75-cursor-ai-代码编辑器--hobby-免费层",
+      "anchor": "76-cursor-ai-代码编辑器--hobby-免费层",
       "signup": "email",
       "tiers": [
         "permanent",
@@ -3124,12 +3180,12 @@
       "reviewed": "2026-10-14"
     },
     {
-      "rank": 76,
+      "rank": 77,
       "id": "kiro",
       "name": "Kiro (AWS 背景 Agentic IDE)",
       "part": 4,
       "homepage": "https://kiro.dev/",
-      "anchor": "76-kiro-aws-背景-agentic-ide",
+      "anchor": "77-kiro-aws-背景-agentic-ide",
       "signup": "email",
       "tiers": [
         "recurring"
@@ -3161,12 +3217,12 @@
       "reviewed": ""
     },
     {
-      "rank": 77,
+      "rank": 78,
       "id": "zed",
       "name": "Zed (编辑器 · AI 托管额度)",
       "part": 4,
       "homepage": "https://zed.dev/",
-      "anchor": "77-zed-编辑器--ai-托管额度",
+      "anchor": "78-zed-编辑器--ai-托管额度",
       "signup": "email",
       "tiers": [
         "permanent"
@@ -3198,12 +3254,12 @@
       "reviewed": "2026-10-11"
     },
     {
-      "rank": 78,
+      "rank": 79,
       "id": "arcade_dev",
       "name": "Arcade (Agent 工具调用层)",
       "part": 4,
       "homepage": "https://www.arcade.dev",
-      "anchor": "78-arcade-agent-工具调用层",
+      "anchor": "79-arcade-agent-工具调用层",
       "signup": "email",
       "tiers": [
         "recurring"
@@ -3233,12 +3289,12 @@
       "reviewed": ""
     },
     {
-      "rank": 79,
+      "rank": 80,
       "id": "crewai",
       "name": "CrewAI (多 Agent 编排)",
       "part": 4,
       "homepage": "https://www.crewai.com",
-      "anchor": "79-crewai-多-agent-编排",
+      "anchor": "80-crewai-多-agent-编排",
       "signup": "email",
       "tiers": [
         "recurring"
@@ -3269,12 +3325,12 @@
       "reviewed": ""
     },
     {
-      "rank": 80,
+      "rank": 81,
       "id": "dify",
       "name": "Dify (云版 Sandbox)",
       "part": 4,
       "homepage": "https://dify.ai",
-      "anchor": "80-dify-云版-sandbox",
+      "anchor": "81-dify-云版-sandbox",
       "signup": "email",
       "tiers": [
         "onetime"
@@ -3305,12 +3361,12 @@
       "reviewed": ""
     },
     {
-      "rank": 81,
+      "rank": 82,
       "id": "nango",
       "name": "Nango (第三方集成 / API 连接)",
       "part": 4,
       "homepage": "https://nango.dev",
-      "anchor": "81-nango-第三方集成--api-连接",
+      "anchor": "82-nango-第三方集成--api-连接",
       "signup": "email",
       "tiers": [
         "recurring"
@@ -3341,12 +3397,12 @@
       "reviewed": ""
     },
     {
-      "rank": 82,
+      "rank": 83,
       "id": "portkey",
       "name": "Portkey (AI 网关 / 可观测)",
       "part": 4,
       "homepage": "https://portkey.ai",
-      "anchor": "82-portkey-ai-网关--可观测",
+      "anchor": "83-portkey-ai-网关--可观测",
       "signup": "email",
       "tiers": [
         "permanent"
@@ -3378,12 +3434,12 @@
       "reviewed": ""
     },
     {
-      "rank": 83,
+      "rank": 84,
       "id": "v0_vercel",
       "name": "v0 by Vercel (生成式前端)",
       "part": 4,
       "homepage": "https://v0.app",
-      "anchor": "83-v0-by-vercel-生成式前端",
+      "anchor": "84-v0-by-vercel-生成式前端",
       "signup": "email",
       "tiers": [
         "recurring"
