@@ -439,7 +439,7 @@ VENDOR_RANK: tuple[str, ...] = (
     # 第三梯队：国内其他厂商
     "longcat_meituan", "siliconflow", "streamlake", "unisound_shanhai", "mthreads_coding",
     "infini_ai", "ppio", "china_telecom_tianyi", "china_mobile_moma",
-    "zhinao_360", "dataeye", "dmxapi",
+    "zhinao_360",
     # 第四梯队：海外云厂商的托管服务
     "aws_bedrock", "azure_openai", "gcp_vertex_ai", "oracle_oci_ai", "ibm_watsonx",
     # 第五梯队：海外推理 / 部署平台与长尾
@@ -527,8 +527,6 @@ GUIDE_META: dict[str, dict] = {
                       "short": "实名送 15 元代金券（可抵 kimi-k3，上下文 1,048,576）"},
     "longcat_meituan": {"tiers": ["onetime"], "scenarios": ["longctx", "referral"],
                         "short": "LongCat-2.0 资源包（1M 上下文，30 天有效）"},
-    "dataeye": {"tiers": ["onetime"],
-                "short": "注册即领 50 万 tokens（第三方中转，注意风险）"},
     "unisound_shanhai": {"tiers": ["onetime"], "scenarios": ["embed"],
                          "short": "OCR/U2 各 500 万、ASR 5 小时、TTS 5 万字"},
     "china_telecom_tianyi": {"tiers": ["onetime"], "scenarios": ["credit"],
@@ -1292,23 +1290,6 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("大装置控制台", "https://console.sensecore.cn/"),
         ],
     },
-    "dmxapi": {
-        "category": "domestic",
-        "display_name": "DMXAPI (大模型聚合转发)",
-        "free_quota": "新用户注册后可能发放测试额度，**数额未公开**，以账户内实际到账为准（历史“$1/8 元”说法无法在当前官方页复核，不予采信）；为非官方第三方中转，额度不属模型厂商承诺",
-        "validity": "测试额度用完即止",
-        "free_models": [
-            "**无公开免费模型层**：第三方聚合转发，模型清单随上游更新，当前文档列出 GPT-5.x、Claude 4.5、Gemini 3、DeepSeek 等系列（以文档站模型列表为准）",
-        ],
-        "preconditions": "邮箱或手机号注册",
-        "promotions": "支持人民币结算，多节点故障转移；为非官方第三方中转，额度与稳定性不属官方承诺。",
-        "notes": "聚合中转服务，适合统一接口调试；生产用途请评估上游合规性。",
-        "links": [
-            ("官方文档站（模型列表）", "https://doc.dmxapi.cn/"),
-            ("人民币价格表", "https://www.dmxapi.cn/rmb"),
-            ("官方主页", "https://www.dmxapi.cn/"),
-        ],
-    },
     "zhinao_360": {
         "category": "domestic",
         "display_name": "360 智脑",
@@ -1363,26 +1344,6 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("快速入门（新人礼包说明）", "https://maas.unisound.com/docs/guide/quickstart"),
             ("平台文档总览", "https://maas.unisound.com/docs/guide/overview"),
             ("Token Hub 主页", "https://maas.unisound.com/"),
-        ],
-    },
-    "dataeye": {
-        "category": "domestic",
-        "display_name": "数眼智能 (数言 AI / ShuyanAI)",
-        "free_quota": "**注册即领 50 万免费 Tokens**（官方价格页 shuyanai.com/price 原文），用完即止；为非官方第三方中转，额度不属模型厂商承诺",
-        "validity": "免费 tokens 用完即止（有效期以账户标注为准）",
-        "free_models": [
-            "聚合转发模型（价格页列出 `kimi-k3`、`deepseek-v4-pro`、`qwen3.8-max`、`glm-5.3-flash` 等，以站点实时列表为准）—— 共享新用户 **50 万免费 tokens**",
-        ],
-        "tier_caveats": [
-            "**第三方聚合中转，不是模型厂商官方平台**：50 万 tokens 的额度与稳定性都不属厂商承诺，存在跑路 / 改版风险",
-            "只建议放低敏测试流量，不要充大额余额；模型清单随上游调整",
-        ],
-        "preconditions": "手机号或微信注册",
-        "promotions": "聚合 API 转发与按量计费；为非官方第三方中转，额度不属模型厂商承诺。",
-        "notes": "与 dataeye.com（营销数据分析公司）无关，官方域名为 shuyanai.com。",
-        "links": [
-            ("价格页（50 万 tokens 说明）", "https://www.shuyanai.com/price"),
-            ("官方主页", "https://www.shuyanai.com/"),
         ],
     },
     "mthreads_coding": {

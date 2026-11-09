@@ -3357,7 +3357,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     L.append(f"{tip_no}. 所有绑卡平台（见第 2 节名单）注册后立刻设置 **Budget 预算与用量告警**，"
              "记下赠金到期日，到期前关停资源、删除计费实例。")
     L.append(f"{tip_no + 1}. 永久免费层 RPM 普遍只有个位数到几十，批量任务请走大额试用金 / 月度重置额度或错峰。")
-    L.append(f"{tip_no + 2}. 第三方聚合中转（DMXAPI、数眼智能等非官方平台）存在跑路风险，"
+    L.append(f"{tip_no + 2}. 站外遇到的第三方聚合中转（非官方转售平台）存在跑路风险，"
              "只放低敏测试流量，不要充大额余额。")
     L.append("")
 

@@ -4857,7 +4857,7 @@ class TestGuideRendering(unittest.TestCase):
             # 存疑：不应作为可用免费额度来源（README 已如实标注）
             "ncompass", "mara",
             # 免费权益无法从官方公开页核实（宁缺毋假）
-            "china_mobile_moma", "zhinao_360", "dmxapi",
+            "china_mobile_moma", "zhinao_360",
             # 官方称「新用户有少量免费测试额度」但**金额不公开**，暂不列（待定，见项目记忆）
             "anthropic",
         }
