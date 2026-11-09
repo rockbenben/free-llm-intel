@@ -10,7 +10,7 @@
 
 ## 全部文章（共 140 篇，按日期倒序；无日期条目列于最后）
 
-1. [介绍Claude寓言 5.2 和Claude神话 5.2](https://www.anthropic.com/claude-fable-and-mythos-5-2)（2026-11-09） <!--orig:Introducing Claude Fable 5.2 and Claude Mythos 5.2-->
+1. [推出 Claude Fable 5.2 和 Claude Mythos 5.2](https://www.anthropic.com/claude-fable-and-mythos-5-2)（2026-11-09） <!--orig:Introducing Claude Fable 5.2 and Claude Mythos 5.2-->
 2. [代理记忆的组成部分](https://claude.com/resources/articles#d-2026-11-06-1)（2026-11-06） <!--orig:The components of agent memory-->
 3. [在 Claude 中推出个人理财](https://claude.com/resources/articles/introducing-personal-finance-in-claude)（2026-11-05） <!--orig:Introducing Personal Finance in Claude-->
 4. [为安全团队提供对 Claude Enterprise 的更多可见性和控制](https://claude.com/resources/articles/claude-enterprise-security-updates)（2026-11-05） <!--orig:More visibility and control over Claude Enterprise for security teams-->

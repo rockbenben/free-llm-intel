@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-10 05:46:46**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-10 06:32:45**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,7 +26,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-10，标题自动汉化）：
-  1. [介绍Claude寓言 5.2 和Claude神话 5.2](https://www.anthropic.com/claude-fable-and-mythos-5-2)（2026-11-09）
+  1. [推出 Claude Fable 5.2 和 Claude Mythos 5.2](https://www.anthropic.com/claude-fable-and-mythos-5-2)（2026-11-09）
   2. [代理记忆的组成部分](https://claude.com/resources/articles#d-2026-11-06-1)（2026-11-06）
   3. [在 Claude 中推出个人理财](https://claude.com/resources/articles/introducing-personal-finance-in-claude)（2026-11-05）
   4. [为安全团队提供对 Claude Enterprise 的更多可见性和控制](https://claude.com/resources/articles/claude-enterprise-security-updates)（2026-11-05）
@@ -195,8 +195,8 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-10，标题自动汉化）：
-  1. [Nemotron-Personas-Finance-Japan：捕捉日本人口统计和金融背景的综合数据集](https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan)（2026-11-09）
-  2. [您的专家有合作伙伴。让他们在一起是有希望的](https://huggingface.co/blog/amazon/higher-order-pruning-experts)（2026-11-09）
+  1. [Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集](https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan)（2026-11-09）
+  2. [你的专家有搭档。HOPE 让它们继续在一起](https://huggingface.co/blog/amazon/higher-order-pruning-experts)（2026-11-09）
   3. [ToyBlocks：用于机器人学习与评估的受控世界](https://huggingface.co/blog/allenai/toyblocks)（2026-11-06）
   4. [埃及英语与尼日利亚英语加入 Open ASR 排行榜](https://huggingface.co/blog/open-asr-leaderboard-liva)（2026-11-06）
   5. [深入了解 Phonon TTS：推出在基准测试上领先的高质量端侧语音](https://huggingface.co/blog/phonon-tts)（2026-11-05）
@@ -297,11 +297,11 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-10，标题自动汉化）：
-  1. [使用 Amazon Bedrock 托管知识库进行单次和代理检索](https://aws.amazon.com/blogs/machine-learning/single-shot-and-agentic-retrieval-with-amazon-bedrock-managed-knowledge-base/)（2026-11-09）
-  2. [在 AWS 上推出Claude寓言 5.2](https://aws.amazon.com/blogs/machine-learning/introducing-claude-fable-5-2-on-aws/)（2026-11-09）
+  1. [使用 Amazon Bedrock Managed Knowledge Base 进行单次与 agentic 检索](https://aws.amazon.com/blogs/machine-learning/single-shot-and-agentic-retrieval-with-amazon-bedrock-managed-knowledge-base/)（2026-11-09）
+  2. [在 AWS 上推出 Claude Fable 5.2](https://aws.amazon.com/blogs/machine-learning/introducing-claude-fable-5-2-on-aws/)（2026-11-09）
   3. [NVIDIA Nemotron 3.5 Super VL 现已在 Amazon SageMaker JumpStart 中提供](https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-super-vl-is-now-available-in-amazon-sagemaker-jumpstart/)（2026-11-09）
-  4. [可插拔代理 AI 框架：Amazon Bedrock AgentCore 上的七层可组合企业代理 AI 参考架构](https://aws.amazon.com/blogs/machine-learning/pluggable-agentic-ai-framework-a-seven-layer-composable-enterprise-agentic-ai-reference-architecture-on-amazon-bedrock-agentcore/)（2026-11-09）
-  5. [CrossnoKaye 如何通过 Amazon Bedrock AgentCore 奠定物理 AI 基础](https://aws.amazon.com/blogs/machine-learning/how-crossnokaye-grounds-physical-ai-with-amazon-bedrock-agentcore/)（2026-11-09）
+  4. [可插拔 agentic AI 框架：Amazon Bedrock AgentCore 上的七层可组合企业级 agentic AI 参考架构](https://aws.amazon.com/blogs/machine-learning/pluggable-agentic-ai-framework-a-seven-layer-composable-enterprise-agentic-ai-reference-architecture-on-amazon-bedrock-agentcore/)（2026-11-09）
+  5. [CrossnoKaye 如何用 Amazon Bedrock AgentCore 让物理 AI 落地](https://aws.amazon.com/blogs/machine-learning/how-crossnokaye-grounds-physical-ai-with-amazon-bedrock-agentcore/)（2026-11-09）
   - 📄 完整文章归档（共 174 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)

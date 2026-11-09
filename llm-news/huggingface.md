@@ -10,8 +10,8 @@
 
 ## 全部文章（共 923 篇，按日期倒序；无日期条目列于最后）
 
-1. [Nemotron-Personas-Finance-Japan：捕捉日本人口统计和金融背景的综合数据集](https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan)（2026-11-09） <!--orig:Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan's Demographics and Financial Context-->
-2. [您的专家有合作伙伴。让他们在一起是有希望的](https://huggingface.co/blog/amazon/higher-order-pruning-experts)（2026-11-09） <!--orig:Your Experts Have Partners. There's HOPE for Keeping Them Together-->
+1. [Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集](https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan)（2026-11-09） <!--orig:Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan's Demographics and Financial Context-->
+2. [你的专家有搭档。HOPE 让它们继续在一起](https://huggingface.co/blog/amazon/higher-order-pruning-experts)（2026-11-09） <!--orig:Your Experts Have Partners. There's HOPE for Keeping Them Together-->
 3. [ToyBlocks：用于机器人学习与评估的受控世界](https://huggingface.co/blog/allenai/toyblocks)（2026-11-06） <!--orig:ToyBlocks: A controlled world for robot learning and evaluation-->
 4. [埃及英语与尼日利亚英语加入 Open ASR 排行榜](https://huggingface.co/blog/open-asr-leaderboard-liva)（2026-11-06） <!--orig:Egyptian and Nigerian English join the Open ASR Leaderboard-->
 5. [深入了解 Phonon TTS：推出在基准测试上领先的高质量端侧语音](https://huggingface.co/blog/phonon-tts)（2026-11-05） <!--orig:A Closer Look at Phonon TTS. Launching High-Quality On-Device Speech That Tops the Benchmarks.-->
