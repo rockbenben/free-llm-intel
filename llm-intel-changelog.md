@@ -3,6 +3,15 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-11-09
+### Morph Labs（`morph_labs`）
+- 摘要：初创企业扶持额度（Startup Credits）由最高 $5K 调整为最高 $1K
+- `promotions`：面向 AI 编程与智能体场景优化推理延迟，兼容 OpenAI SDK；新用户首次充值送 $5（First top-up +$5 free）；另有面向初创公司的 **Startup Credits**（Up to $5K in API credits for startups）。 → 面向 AI 编程与智能体场景优化推理延迟，兼容 OpenAI SDK；新用户首次充值送 $5（First top-up +$5 free）；另有面向初创公司的 **Startup Credits**（Up to $1K in API credits for startups）。
+### GitHub Copilot（`github_copilot`）
+- 摘要：GitHub Copilot 移除了 Free 层固定 50 次聊天请求的表述，更新为受限的聊天与 Agent 用量（Limited chat and agent usage）并提供 Haiku 4.5、GPT-5 mini 等入门级模型访问，代码补全维持每月 2,000 次。
+- `free_quota`：**长期免费层**：官方定价页 FAQ 原文 “GitHub Copilot Free users are limited to 2000 completions and 50 chat requests (including Copilot Edits)”（每月 2,000 次补全 + 50 次聊天请求） → **长期免费层**：每月 2,000 次代码补全（2,000 completions per month），受限的聊天与 Agent 用量（Limited chat and agent usage），支持访问 Haiku 4.5、GPT-5 mini 等入门级模型（entry level models）及 Copil…
+- `free_models`：代码补全 —— 2,000 次/月（免费）、Copilot Chat / Edits —— 50 次/月（免费） → 代码补全 —— 2,000 次/月、Copilot Chat / Agent Mode（Haiku 4.5、GPT-5 mini 等入门级模型） —— 受限聊天与 Agent 用量（Limited chat and agent usage）、Copilot CLI —— 免费层已包含
+
 ## 2026-11-08
 ### Google Gemini（`google_gemini`）
 - 摘要：官方限速文档新增 Gemini Omni Flash (gemini-omni-1.2-flash) 限速表，明确标注该模型在 Free 层不受支持（Not supported）。

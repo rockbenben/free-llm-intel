@@ -1,6 +1,6 @@
 # Mistral AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-06**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-09**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Mistral AI（`mistral`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -89,7 +89,7 @@
 77. [AI 丰沛时代](https://mistral.ai/news/september-24-release/)（2024-09-17） <!--orig:AI in abundance-->
 78. [发布 Pixtral 12B](https://mistral.ai/news/pixtral-12b/)（2024-09-17） <!--orig:Announcing Pixtral 12B-->
 79. [构建、调优、迭代](https://mistral.ai/news/build-tweak-repeat/)（2024-08-07） <!--orig:Build, tweak, repeat-->
-80. [够大即好](https://mistral.ai/news/mistral-large-2407/)（2024-07-24） <!--orig:Large Enough-->
+80. [够大即好](https://mistral.ai/news/mistral-large-2407/)（2024-07-24） <!--orig:[Deprecated] Large Enough-->
 81. [Mistral NeMo](https://mistral.ai/news/mistral-nemo/)（2024-07-18）
 82. [MathΣtral](https://mistral.ai/news/mathstral/)（2024-07-16）
 83. [Codestral Mamba](https://mistral.ai/news/codestral-mamba/)（2024-07-16）
@@ -98,7 +98,7 @@
 86. [Codestral](https://mistral.ai/news/codestral/)（2024-05-29）
 87. [Mistral AI 非生产许可证](https://mistral.ai/news/mistral-ai-non-production-license-mnpl/)（2024-05-29） <!--orig:The Mistral Non-Production License-->
 88. [更便宜、更好、更快、更强](https://mistral.ai/news/mixtral-8x22b/)（2024-04-17） <!--orig:Cheaper, Better, Faster, Stronger-->
-89. [Mistral Large 登场](https://mistral.ai/news/mistral-large/)（2024-02-26） <!--orig:Au Large-->
+89. [Mistral Large 登场](https://mistral.ai/news/mistral-large/)（2024-02-26） <!--orig:[Deprecated] Au Large-->
 90. [Le Chat](https://mistral.ai/news/le-chat-mistral/)（2024-02-26）
 91. [专家混合模型 Mixtral](https://mistral.ai/news/mixtral-of-experts/)（2023-12-11） <!--orig:Mixtral of experts-->
 92. [La Plateforme 平台](https://mistral.ai/news/la-plateforme/)（2023-12-11） <!--orig:La Plateforme-->
