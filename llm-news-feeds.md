@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-09 13:04:04**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-09 16:03:59**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -294,18 +294,6 @@
   5. [【优化】推理监控输入输出token卡片增加影响因子数据，用户可直接查看因子维度token消耗](https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd#t2026-06-30-4)（2026-06-30）
   - 📄 完整文章归档（共 23 篇）：[streamlake.md](llm-news/streamlake.md)
 
-### 数眼智能 (dataeye)
-- 页面：[官方博客](https://www.shuyanai.com/blogs)
-  - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
-- 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-dataeye.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-dataeye.xml)
-- 📰 **最新文章**（官方源抓取于 2026-11-09，标题自动汉化）：
-  1. [电商带货视频怎么拍？用数眼智能AI生成商品宣传片与探店Vlog全攻略（2026实操教程）](https://www.shuyanai.com/blogs/33)（2026-10-30）
-  2. [从开发验证到核心生产：数眼智能如何以 ≧99.95% 可用率与多级 SLA 通道护航企业 AI 业务？](https://www.shuyanai.com/blogs/32)（2026-10-15）
-  3. [数眼智能完成数千万元天使轮融资，加速企业级大模型部署能力建设](https://www.shuyanai.com/blogs/31)（2026-09-21）
-  4. [数眼智能AI漫剧教程：从脚本、AI生图到Seedance 2.5生视频](https://www.shuyanai.com/blogs/30)（2026-09-17）
-  5. [数眼智能 AI 视频生成教程：如何用智能体生成第一条视频？](https://www.shuyanai.com/blogs/29)（2026-09-16）
-  - 📄 完整文章归档（共 18 篇）：[dataeye.md](llm-news/dataeye.md)
-
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-09，标题自动汉化）：
@@ -442,6 +430,6 @@
   - 📄 完整文章归档（共 10 篇）：[inference_net.md](llm-news/inference_net.md)
 
 ---
-共整理 35 个厂商的动态入口（其中 35 个成功提取最新文章），RSS/Atom 源 15 个。
+共整理 34 个厂商的动态入口（其中 34 个成功提取最新文章），RSS/Atom 源 15 个。
 
 <!-- LLM-NEWS:END -->
