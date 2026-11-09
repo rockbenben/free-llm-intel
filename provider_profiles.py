@@ -449,11 +449,10 @@ VENDOR_RANK: tuple[str, ...] = (
     "digitalocean_genai", "inception_labs", "inference_net", "ncompass", "mara",
     # 2026-11-07 新增：海外云 / 推理 / 数据 API
     "akamai_cloud", "lightning_ai", "regolo_ai", "onkernel", "novita_ai", "parallel_ai", "zilliz_cloud",
-    # 第六梯队：AI 编程 / Agent 工具（Part 4，内置模型免费额度；须连排放，
-    # 生成器按相邻同类分组渲染 Part 标题）
     # 2026-11-09 新增 4 家（ModelScope/SambaNova/Typhoon/StepFun）：官方页逐条核实后反哺；
-    # 未与既有梯队比较名次，暂列尾部（未登记厂商本来就排在最后，登记在这里不改变既有 81 家的排序）
+    # 暂列各自 Part 尾部；既有厂商相对顺序不变，后续章节编号随新增条目顺延。
     "modelscope", "stepfun", "sambanova", "typhoon",
+    # 第六梯队：AI 编程 / Agent 工具（Part 4）
     "qoder", "codebuddy_workbuddy", "trae", "tongyi_lingma", "comate",
     "github_copilot", "cursor_ide", "kiro", "zed",
     # 2026-11-07 新增（官方页核实后反哺）
@@ -510,6 +509,9 @@ GUIDE_META: dict[str, dict] = {
     "modelscope": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
                   "short": "魔粒制：每日登录 +200 魔粒（当日有效）+ 绑阿里云 +50 魔粒/日；按次扣减 0.5/1/2 魔粒",
                   "tip": "魔粒是按次消耗的积分、每日登录奖励当日有效不累计；必须绑阿里云账号并实名（否则 401），勿按「每天 2000 次」旧口径排期"},
+    "typhoon": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
+                "short": "research showcase 免费：文本 5 RPS / 200 RPM，OCR 20 RPM，ASR 100 RPM",
+                "tip": "beta 服务无正式支持或 SLA；官方收集调用数据用于改进模型与 API，敏感内容先核对隐私条款"},
     # ---- 国内 ----
     "zhipu_glm": {"tiers": ["permanent"], "scenarios": ["code", "image", "referral", "student"],
                   "short": "4.x 代 Flash 0 元（新旗舰 5.3 付费）",
@@ -2496,7 +2498,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     # 哪些真能接进工具？》（2026-11-09）所列 25 入口中、本档案尚未覆盖且符合收录标准
     # （自研模型或自有推理设施）的 4 家，逐条官方页核实。
     # 证据层级：ModelScope=一手官方文档+官方公告；SambaNova=官方页（部分占位符未渲染）；
-    # Typhoon=官方站三路均不可达，二手聚合读数标注未证实；StepFun=一手官方定价页。
+    # Typhoon=官方英文文档/FAQ/限速表；StepFun=官方定价与限速页。
     # ------------------------------------------------------------------
     "modelscope": {
         "category": "domestic",
@@ -2532,60 +2534,66 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "sambanova": {
         "category": "international",
         "display_name": "SambaNova Cloud",
-        "free_quota": "Free 卡含 $5 注册赠金（官方页读数：signupAmount=5、expiryDays=3650 天）；Free 卡可跑 Production 模型。",
-        "validity": "赠金有效期 3650 天（官方页读数）。",
+        "free_quota": "未核实到当前有效的注册赠金；页面脚本中的 $5 配置不能证明实际发放，不予采信。",
+        "validity": "未核实到赠金及其有效期；不采用脚本中的 3650 天配置。",
         "free_models": [
-            "Free 卡可跑 Production 模型（具体 token 数与 RPM/TPM 官方页未公开，以控制台为准）",
+            "**未核实到可免付费调用的模型层**：Free 计划可访问 Production 模型，但官方要求添加付款方式并购买 credits 后发起首次请求",
         ],
         "tier_caveats": [
-            "官方页部分占位符未渲染，页面文案自相矛盾：一处称需绑卡购买 credits 才能跑首次请求，另一处称有 $5 注册赠金——以控制台实际为准",
-            "官方页未给免费档 token 数与 RPM/TPM 读数——勿引用聚合站数字当作官方口径",
-            "Preview 模型仅 Developer/Enterprise 卡可见，Free 卡只有 Production 模型",
-            "收录依据：SambaNova 自有 RDU（Reconfigurable Dataflow Unit）推理硬件、自有 Cloud 推理设施——按「自有/租用 GPU 的推理平台」可收，非转售上游模型 API 的中转站",
+            "Free 是计划名称，不代表模型调用免费；Plans 页明确要求添加付款方式并购买 credits",
+            "页面脚本含赠金配置与模板文案，但不足以证明当前注册权益；调用前以实际账单和账户权益为准",
+            "Preview 模型仅 Developer/Enterprise 计划可见，Free 计划只有 Production 模型",
+            "收录依据：SambaNova 自有 RDU 推理硬件与 Cloud 推理设施，非转售上游模型 API 的中转站",
         ],
-        "preconditions": "注册 cloud.sambanova.ai 账号即可（Free 卡是否需绑卡官方页表述矛盾）",
-        "links": [
-            ("Plans 页", "https://cloud.sambanova.ai/plans"),
-        ],
+        "preconditions": "注册账号；官方 Plans 页要求添加付款方式并购买 credits 后发起首次请求",
+        "links": [("Plans 页", "https://cloud.sambanova.ai/plans")],
     },
     "typhoon": {
         "category": "international",
         "display_name": "Typhoon (OpenTyphoon)",
-        "free_quota": "无账户级注册赠金（官方页不可达，未获证实）。",
-        "validity": "research showcase 长期免费（二手口径，官方页不可达）。",
+        "free_quota": "官方提供免费的 research showcase API，非账户级注册赠金。",
+        "validity": "research showcase 当前免费；beta 服务，官方未承诺永久可用或 SLA。",
         "free_models": [
-            "typhoon-v2.5-30b-a3b-instruct（二手口径：5 请求/秒、200 请求/分钟/模型，未获官方页证实）",
-            "typhoon-ocr-preview（同上次级口径）",
-            "typhoon-asr-realtime（同上次级口径）",
+            "`typhoon-v2.5-30b-a3b-instruct`、`typhoon-v2.1-12b-instruct` —— 免费，各 5 RPS / 200 RPM",
+            "`typhoon-ocr` —— 免费，2 RPS / 20 RPM",
+            "`typhoon-asr-realtime` —— 免费，100 RPM（官方未列 RPS 数值）",
         ],
         "tier_caveats": [
-            "官方三路均不可达：opentyphoon.ai/pricing 404、docs.opentyphoon.ai 只回重定向壳、/en/ 404（2026-11-09 实测）",
-            "以上额度数字来自聚合站 tools321.com（2026-10-25 更新），属二手，未获官方页证实",
-            "SCB 10X 自研泰语模型（自有推理设施）——一手账号锚点：GitHub scb-10x（typhoon-ocr 等官方仓库）、Hugging Face typhoon-ai（typhoon2.5-qwen3-4b）；opentyphoon.ai 自称「东南亚首个开源推理模型 Typhoon T1 3B」",
+            "免费 research showcase，由 SCB 10X 开发维护；处于 beta，按现状提供，无正式支持或 SLA",
+            "官方收集 API 使用数据以改进模型和 API，并称不向第三方分享；发送敏感内容前请先核对数据使用条款",
+            "按模型执行 RPS / RPM 限流，超限返回 429；生产级服务建议使用官方合作的付费推理平台",
         ],
-        "preconditions": "二手口径称无需信用卡（官方页不可达，未证实）",
+        "preconditions": "在 Typhoon Playground 注册并创建 API Key",
+        "openai_compat": {
+            "summary": "research showcase 免费，文本 5 RPS / 200 RPM",
+            "api_key_label": "Typhoon Playground", "api_key_url": "https://playground.opentyphoon.ai/",
+            "base_url": "https://api.opentyphoon.ai/v1",
+            "models": ["typhoon-v2.5-30b-a3b-instruct", "typhoon-v2.1-12b-instruct"],
+        },
         "links": [
-            ("官方站（不可达）", "https://opentyphoon.ai"),
-            ("聚合站读数（二手）", "https://tools321.com/ai/ai-model-free-list/"),
+            ("官方文档", "https://docs.opentyphoon.ai/en/"),
+            ("免费政策与数据使用", "https://docs.opentyphoon.ai/en/faq/"),
+            ("模型限速", "https://docs.opentyphoon.ai/en/rate-limits/"),
         ],
     },
     "stepfun": {
         "category": "domestic",
         "display_name": "阶跃星辰 StepFun",
         "free_quota": "无通用免费档（无账户级注册赠金）。",
-        "validity": "限时免费：StepAudio 3 限免至北京时间 2026-11-17 11:59:59（12:00:00 起恢复计费）。",
+        "validity": "仅适用限免政策的 StepAudio 3 模型限免至北京时间 2026-11-17 11:59:59（12:00:00 起恢复计费）。",
         "free_models": [
-            "StepAudio 3（限免至 2026-11-17 11:59:59 北京时间，之后恢复计费）",
+            "StepAudio 3 中适用限时免费政策的模型（具体范围以控制台为准；限免至 2026-11-17 11:59:59 北京时间，之后恢复计费）",
         ],
         "tier_caveats": [
-            "StepAudio 3 限免窗口 2026-11-17 截止，之后无免费档——勿把限免当长期额度排期",
-            "Step 5 Preview 对改价前按量付费的老用户保留 0.35 元/百万 tokens 旧价（grandfathering），新用户不适用",
-            "RPM/TPM 无公开数字（以控制台为准）",
+            "仅适用限免政策的模型限免至 2026-11-17 11:59:59；已收费模型继续原价计费，勿将整个系列视为免费",
+            "Step 5 Preview 仅缓存命中输入价格：2026-10-14 00:30 前已按量调用该模型的用户保留 0.35 元/百万 tokens；其他用户为 0.70 元，非缓存输入与输出另计费",
+            "个人账户 V0（累计现金充值不足 ¥100）：并发 5、100 RPM、500,000 TPM；随充值档位提升，容量不足时官方可能临时调整",
             "收录依据：阶跃星辰自研 Step 系列与 StepAudio 语音模型（自研模型厂商），无转售闭源模型 API 的业务",
         ],
-        "preconditions": "注册 platform.stepfun.com 账号即可",
+        "preconditions": "注册 platform.stepfun.com 账号，个人账户需完成实名认证",
         "links": [
-            ("定价详情", "https://platform.stepfun.com/docs/zh/pricing/details"),
+            ("定价详情", "https://platform.stepfun.com/docs/zh/guides/pricing/details"),
+            ("实名要求与限速", "https://platform.stepfun.com/docs/zh/guides/pricing/rate-limits"),
         ],
     },
 }

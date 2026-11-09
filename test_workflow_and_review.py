@@ -4860,12 +4860,8 @@ class TestGuideRendering(unittest.TestCase):
             "china_mobile_moma", "zhinao_360",
             # 官方称「新用户有少量免费测试额度」但**金额不公开**，暂不列（待定，见项目记忆）
             "anthropic",
-            # 2026-11-09 新增（3 家）：有免费能力但口径不足以进攻略
-            # SambaNova：Free 卡存在，但官方页占位符未渲染、文案自相矛盾（一处称需绑卡购 credits 才能跑首次请求，
-            #   另一处称有 $5 注册赠金），免费档具体数值无法核实——宁缺毋假
+            # SambaNova：Plans 页要求付款方式并购买 credits，脚本赠金配置不作为实际权益依据
             "sambanova",
-            # Typhoon：官方站三路均不可达（/pricing 404、docs 只回重定向壳、/en/ 404），额度只有聚合站二手口径
-            "typhoon",
             # StepFun：无通用免费档，仅 StepAudio 3 限时免（至 2026-11-17 11:59:59）——限免不构成长期额度
             "stepfun",
         }

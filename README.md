@@ -43,7 +43,7 @@
 
 | 类型 | 特点与正确用法 | 代表平台（点击跳下方档案） |
 |---|---|---|
-| **A. 无条件 · 长期可用** | 注册即得（邮箱 / GitHub / Google 或手机号实名均可，**无需付款方式**），不过期或按日/月滚动重置；可当长期主力，注意 RPM/RPD 限速与商用条款 | 国内：[智谱 GLM](#3-智谱-glm)（4.x 代 Flash 0 元（新旗舰 5.3 付费））、[商汤 日日新](#10-商汤-日日新-sensenova)（Token Plan 公测免费：5 小时 12 万 + 每周 120 万积分）、[科大讯飞星火](#11-科大讯飞星火-spark-api)（Spark-X2.5-1.7B 免费、4B 限时免费，需在产品页领取）、[硅基流动](#13-硅基流动-siliconflow)（bge/OCR/画图等 0 元模型 + 注册送 14 元券）、[云知声 Token Hub](#15-云知声-token-hub)（U Plan Free 档免费领：含 U2-Flash、U2-Med、ASR、TTS、OCR 权益，需专属 Key）、[ModelScope 魔搭社区](#21-modelscope-魔搭社区)（魔粒制：每日登录 +200 魔粒（当日有效）+ 绑阿里云 +50 魔粒/日；按次扣减 0.5/1/2 魔粒）、[腾讯云 CodeBuddy / WorkBuddy](#72-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent)（国内体验版 0 元：500 积分/月 + 限免全模型；国际版 Free $0：100 积分/月 + 每日 30 积分 + 注册送 250）、[Trae](#73-trae-字节跳动-ai-ide--中国版为主)（免费版每月 500 积分、所有功能均可免费使用（云端任务并发限 2））、[通义灵码 / Qoder CN](#74-通义灵码--qoder-cn-阿里云)（个人体验版免费：有限体验额度（含 2 周 Pro 试用 + 300 Credits））、[文心快码 Comate](#75-文心快码-comate-百度智能云)（个人标准版长期免费：智能补全免费 + 首次赠 5000 积分（7天有效））<br>海外：[Google Gemini](#25-google-gemini-google-ai-studio)（AI Studio：Gemini 3.x Flash 免费层）、[Mistral AI](#27-mistral-ai)（免费**端点**：Mistral Moderation 2（Free）+ Labs 实验模型（无新用户赠金））、[Groq Cloud](#28-groq-cloud-lpu-推理)（gpt-oss 免费层 30 RPM / 1,000 RPD）、[OpenRouter](#30-openrouter-模型统一网关)（:free 模型 20 RPM / 50 RPD（充值 $10 升至 1,000 RPD））、[Cloudflare Workers AI](#31-cloudflare-workers-ai)（每日 1 万 Neurons（kimi / GLM-5 / DeepSeek-V4 等前沿模型需付费））、[Cohere](#32-cohere)（Trial Key 免费（每月 1,000 次，限非商用））、[NVIDIA NIM](#33-nvidia-nim-api-catalog)（45 个 Free Endpoint，40 RPM 上限（高峰期会排队变慢））、[Jina AI](#42-jina-ai-reader--embeddings--reranker)（每 Key 1,000 万 tokens，GitHub 登录免卡）、[Morph Labs](#43-morph-labs)（每月 200 次请求 + 工具附带 $10/月算力）、[Relace](#44-relace)（编程 Agent 专用模型免费套餐）、[Poolside](#45-poolside)（代码模型限时免费（官方未公布截止日））、[Mancer](#46-mancer)（页面标 FREE 的角色扮演向模型 0 元调用）、[Novita AI](#53-novita-ai-apodex-免费档)（Apodex 1.1 Mini 输入/输出均 Free（256K 上下文））、[无问芯穹 Infini AI](#57-无问芯穹-infini-ai-genstudio)（嵌入 / 重排接口长期免费 + 网页 Playground 全模型免费体验）、[IBM watsonx.ai](#62-ibm-watsonxai-free-toolbox)（Free Toolbox/Lite 免卡：30 万 tokens + 20 CUH/月）、[Modal](#64-modal-serverless-ai-云平台)（$30 / 月免费算力，按月重置）、[Modular](#65-modular-原-bentocloudbentoml)（共享端点免费测试 + 开源自托管永久免费）、[Lightning AI](#68-lightning-ai-gpu-云--studio)（Free 档起步 30 credits（官方口径约 50 GPU 小时）+ 1 个常驻 Studio）、[Kernel](#69-kernel-托管云浏览器)（free $0/月：每月 $5 用量额度 + 5 并发云浏览器（免绑卡））、[Zilliz Cloud](#70-zilliz-cloud-托管-milvus-向量库)（Serverless Free $0/月：5GB 存储 + 2.5M vCU/月 + 5 collections）、[Qoder](#71-qoder-agentic-coding-platform--国际版)（每日可领 100 Credits + 2 周 Pro 试用送 300 Credits，Free 层不限时用基础模型）、[GitHub Copilot Free](#76-github-copilot-free)（Free 层每月 2,000 次代码补全，受限聊天与 Agent 用量（支持 Haiku 4.5、GPT-5 mini 等入门模型及 CLI））、[Cursor](#77-cursor-ai-代码编辑器--hobby-免费层)（免费层：智能体与 Grok 聊天/Imagine 请求次数有限，额度每周重置）、[Kiro](#78-kiro-aws-背景-agentic-ide)（官方明写长期 Free 层：每月 50 Credits，可用开源模型 + Claude Sonnet 4.5）、[Zed](#79-zed-编辑器--ai-托管额度)（Personal 档 $0 forever：2,000 次 accepted edit predictions；自带 Key 不限次）、[Arcade](#80-arcade-agent-工具调用层)（Free $0/月：每月 2,000 次 tool calls（Agent 工具层，非模型 token））、[CrewAI](#81-crewai-多-agent-编排)（Basic 免费：每月 50 次 workflow executions（编排执行次数，模型 token 另算））、[Nango](#83-nango-第三方集成--api-连接)（Free $0/月：10 connections + 10 小时计算 + 10GB 传输/月（集成同步算力，非模型额度））、[Portkey](#84-portkey-ai-网关--可观测)（Developer Free Forever：10K 请求 + 10K recorded logs/月）、[v0 by Vercel](#85-v0-by-vercel-生成式前端)（Free $0/月：每天 7 条消息（按天重置），含部署到 Vercel） |
+| **A. 无条件 · 长期可用** | 注册即得（邮箱 / GitHub / Google 或手机号实名均可，**无需付款方式**），不过期或按日/月滚动重置；可当长期主力，注意 RPM/RPD 限速与商用条款 | 国内：[智谱 GLM](#3-智谱-glm)（4.x 代 Flash 0 元（新旗舰 5.3 付费））、[商汤 日日新](#10-商汤-日日新-sensenova)（Token Plan 公测免费：5 小时 12 万 + 每周 120 万积分）、[科大讯飞星火](#11-科大讯飞星火-spark-api)（Spark-X2.5-1.7B 免费、4B 限时免费，需在产品页领取）、[硅基流动](#13-硅基流动-siliconflow)（bge/OCR/画图等 0 元模型 + 注册送 14 元券）、[云知声 Token Hub](#15-云知声-token-hub)（U Plan Free 档免费领：含 U2-Flash、U2-Med、ASR、TTS、OCR 权益，需专属 Key）、[ModelScope 魔搭社区](#21-modelscope-魔搭社区)（魔粒制：每日登录 +200 魔粒（当日有效）+ 绑阿里云 +50 魔粒/日；按次扣减 0.5/1/2 魔粒）、[腾讯云 CodeBuddy / WorkBuddy](#72-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent)（国内体验版 0 元：500 积分/月 + 限免全模型；国际版 Free $0：100 积分/月 + 每日 30 积分 + 注册送 250）、[Trae](#73-trae-字节跳动-ai-ide--中国版为主)（免费版每月 500 积分、所有功能均可免费使用（云端任务并发限 2））、[通义灵码 / Qoder CN](#74-通义灵码--qoder-cn-阿里云)（个人体验版免费：有限体验额度（含 2 周 Pro 试用 + 300 Credits））、[文心快码 Comate](#75-文心快码-comate-百度智能云)（个人标准版长期免费：智能补全免费 + 首次赠 5000 积分（7天有效））<br>海外：[Google Gemini](#25-google-gemini-google-ai-studio)（AI Studio：Gemini 3.x Flash 免费层）、[Mistral AI](#27-mistral-ai)（免费**端点**：Mistral Moderation 2（Free）+ Labs 实验模型（无新用户赠金））、[Groq Cloud](#28-groq-cloud-lpu-推理)（gpt-oss 免费层 30 RPM / 1,000 RPD）、[OpenRouter](#30-openrouter-模型统一网关)（:free 模型 20 RPM / 50 RPD（充值 $10 升至 1,000 RPD））、[Cloudflare Workers AI](#31-cloudflare-workers-ai)（每日 1 万 Neurons（kimi / GLM-5 / DeepSeek-V4 等前沿模型需付费））、[Cohere](#32-cohere)（Trial Key 免费（每月 1,000 次，限非商用））、[NVIDIA NIM](#33-nvidia-nim-api-catalog)（45 个 Free Endpoint，40 RPM 上限（高峰期会排队变慢））、[Jina AI](#42-jina-ai-reader--embeddings--reranker)（每 Key 1,000 万 tokens，GitHub 登录免卡）、[Morph Labs](#43-morph-labs)（每月 200 次请求 + 工具附带 $10/月算力）、[Relace](#44-relace)（编程 Agent 专用模型免费套餐）、[Poolside](#45-poolside)（代码模型限时免费（官方未公布截止日））、[Mancer](#46-mancer)（页面标 FREE 的角色扮演向模型 0 元调用）、[Novita AI](#53-novita-ai-apodex-免费档)（Apodex 1.1 Mini 输入/输出均 Free（256K 上下文））、[Typhoon](#56-typhoon-opentyphoon)（research showcase 免费：文本 5 RPS / 200 RPM，OCR 20 RPM，ASR 100 RPM）、[无问芯穹 Infini AI](#57-无问芯穹-infini-ai-genstudio)（嵌入 / 重排接口长期免费 + 网页 Playground 全模型免费体验）、[IBM watsonx.ai](#62-ibm-watsonxai-free-toolbox)（Free Toolbox/Lite 免卡：30 万 tokens + 20 CUH/月）、[Modal](#64-modal-serverless-ai-云平台)（$30 / 月免费算力，按月重置）、[Modular](#65-modular-原-bentocloudbentoml)（共享端点免费测试 + 开源自托管永久免费）、[Lightning AI](#68-lightning-ai-gpu-云--studio)（Free 档起步 30 credits（官方口径约 50 GPU 小时）+ 1 个常驻 Studio）、[Kernel](#69-kernel-托管云浏览器)（free $0/月：每月 $5 用量额度 + 5 并发云浏览器（免绑卡））、[Zilliz Cloud](#70-zilliz-cloud-托管-milvus-向量库)（Serverless Free $0/月：5GB 存储 + 2.5M vCU/月 + 5 collections）、[Qoder](#71-qoder-agentic-coding-platform--国际版)（每日可领 100 Credits + 2 周 Pro 试用送 300 Credits，Free 层不限时用基础模型）、[GitHub Copilot Free](#76-github-copilot-free)（Free 层每月 2,000 次代码补全，受限聊天与 Agent 用量（支持 Haiku 4.5、GPT-5 mini 等入门模型及 CLI））、[Cursor](#77-cursor-ai-代码编辑器--hobby-免费层)（免费层：智能体与 Grok 聊天/Imagine 请求次数有限，额度每周重置）、[Kiro](#78-kiro-aws-背景-agentic-ide)（官方明写长期 Free 层：每月 50 Credits，可用开源模型 + Claude Sonnet 4.5）、[Zed](#79-zed-编辑器--ai-托管额度)（Personal 档 $0 forever：2,000 次 accepted edit predictions；自带 Key 不限次）、[Arcade](#80-arcade-agent-工具调用层)（Free $0/月：每月 2,000 次 tool calls（Agent 工具层，非模型 token））、[CrewAI](#81-crewai-多-agent-编排)（Basic 免费：每月 50 次 workflow executions（编排执行次数，模型 token 另算））、[Nango](#83-nango-第三方集成--api-连接)（Free $0/月：10 connections + 10 小时计算 + 10GB 传输/月（集成同步算力，非模型额度））、[Portkey](#84-portkey-ai-网关--可观测)（Developer Free Forever：10K 请求 + 10K recorded logs/月）、[v0 by Vercel](#85-v0-by-vercel-生成式前端)（Free $0/月：每天 7 条消息（按天重置），含部署到 Vercel） |
 | **B. 无条件 · 一次性限时** | 注册即到账、**无需付款方式**，但有有效期、不可重置；先想好用量再开通，薅完即走 | 国内：[通义千问](#2-通义千问-阿里云)（大部分模型各 100 万 Token / 90 天（部分模型额度已下架，以权益页为准））、[Kimi](#4-kimi-月之暗面)（实名送 15 元代金券（可抵扣 K3/K3.1 Pro，不可用于高速版））、[小米 MiMo](#7-小米-mimo)（TTS 系列限时免费 + 新用户注册赠金（40 天））、[文心 ERNIE](#9-文心-ernie-百度千帆)（17 个模型各 100 万 / 3 个月 + 20 元券）、[美团 LongCat](#12-美团-longcat)（LongCat-2.0 资源包（1M 上下文，30 天有效））、[StreamLake](#14-streamlake-快手万擎)（注册开通后分批送免费调用次数（仅基础模型推理））、[中国电信](#18-中国电信-天翼云--息壤智算)（实名最高 2,000 元试用体验金）<br>海外：[Fireworks AI](#37-fireworks-ai)（Muse Glimmer 30B SFT 限时免费训练（新号 $1 额度已下线））、[Stability AI](#40-stability-ai)（新号 25 积分；开源权重年营收 < $100 万免费）、[AI21 Labs](#41-ai21-labs)（$10 credits，邮箱注册免卡）、[InceptionLabs](#48-inceptionlabs)（新号 1 亿 free tokens，免信用卡）、[Regolo.ai](#52-regoloai-欧盟托管推理)（30 天试用：每日 100 万 tokens，全部 Core Chat 模型）、[Baseten](#63-baseten)（新账户试用额度（官方未公开金额，以控制台为准））、[Dify](#82-dify-云版-sandbox)（Sandbox 免费：200 message credits + 5 Apps + 50 知识库文档） |
 | **C. 需绑卡 · 大额云试用金** | 需信用卡或身份验证（可能有验证扣款）；额度最大，但**注册后立刻设预算告警**，记下到期日并主动关停 | 国内：[腾讯云混元](#8-腾讯云混元-tokenhub)（8款模型共享 100万 tokens + Embedding 100万）<br>海外：[Cerebras Inference](#35-cerebras-inference-晶圆级推理)（$5 赠金 / 30 天（需添加付款方式后发放））、[Nebius](#39-nebius-token-factory--ai-cloud)（无自动赠送；绑卡扣 $25 且转为余额，并非赠金）、[Anyscale](#47-anyscale)（$100 注册额度（需工作邮箱；无独立免费层，抵扣 Ray 算力））、[Parallel Web API](#54-parallel-web-api-数据--搜索-api)（Developer：每月 5,000 次免费请求 + $5 额度（留卡才发）+ 注册最高 $80）、[Amazon Bedrock](#58-amazon-bedrock-aws-free-tier)（开户立得 $100，6 个月内最高合计 $200 抵扣金（需信用卡））、[Azure OpenAI / Azure AI Foundry](#59-azure-openai--azure-ai-foundry)（$200 / 30 天（需信用卡或身份验证））、[Google Gemini Enterprise Agent Platform](#60-google-gemini-enterprise-agent-platform)（$300 / 90 天 + Always Free（需绑卡））、[Oracle OCI Generative AI](#61-oracle-oci-generative-ai)（$300 / 30 天 + Always Free（需信用卡验证））、[DigitalOcean Inference Engine](#66-digitalocean-inference-engine)（$5 / 90 天通用试用金（非 LLM 免费层，需绑卡））、[Akamai Cloud](#67-akamai-cloud-原-linode)（新客 $100 云抵扣额度 / 60 天（需绑卡）） |
 | **D. 开源权重 / 自托管** | 没有「额度」概念，自己出算力；也可走 A 类平台免费托管调用 | 国内：[小米 MiMo](#7-小米-mimo)（TTS 系列限时免费 + 新用户注册赠金（40 天））<br>海外：[Meta Llama](#34-meta-llama-开源权重)（Llama 4 Scout/Maverick 免版税权重（可经 Groq/Cloudflare 免费托管调用））、[Stability AI](#40-stability-ai)（新号 25 积分；开源权重年营收 < $100 万免费）、[Modular](#65-modular-原-bentocloudbentoml)（共享端点免费测试 + 开源自托管永久免费） |
@@ -56,7 +56,7 @@
 
 ### 3. 按场景选
 
-- **写代码 / 编程 Agent**：[智谱 GLM](#3-智谱-glm)（4.x 代 Flash 0 元（新旗舰 5.3 付费））、[StreamLake](#14-streamlake-快手万擎)（注册开通后分批送免费调用次数（仅基础模型推理））、[ModelScope 魔搭社区](#21-modelscope-魔搭社区)（魔粒制：每日登录 +200 魔粒（当日有效）+ 绑阿里云 +50 魔粒/日；按次扣减 0.5/1/2 魔粒）、[Groq Cloud](#28-groq-cloud-lpu-推理)（gpt-oss 免费层 30 RPM / 1,000 RPD）、[OpenRouter](#30-openrouter-模型统一网关)（:free 模型 20 RPM / 50 RPD（充值 $10 升至 1,000 RPD））、[Cloudflare Workers AI](#31-cloudflare-workers-ai)（每日 1 万 Neurons（kimi / GLM-5 / DeepSeek-V4 等前沿模型需付费））、[Relace](#44-relace)（编程 Agent 专用模型免费套餐）、[Poolside](#45-poolside)（代码模型限时免费（官方未公布截止日））、[Regolo.ai](#52-regoloai-欧盟托管推理)（30 天试用：每日 100 万 tokens，全部 Core Chat 模型）、[Novita AI](#53-novita-ai-apodex-免费档)（Apodex 1.1 Mini 输入/输出均 Free（256K 上下文））、[Qoder](#71-qoder-agentic-coding-platform--国际版)（每日可领 100 Credits + 2 周 Pro 试用送 300 Credits，Free 层不限时用基础模型）、[腾讯云 CodeBuddy / WorkBuddy](#72-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent)（国内体验版 0 元：500 积分/月 + 限免全模型；国际版 Free $0：100 积分/月 + 每日 30 积分 + 注册送 250）、[Trae](#73-trae-字节跳动-ai-ide--中国版为主)（免费版每月 500 积分、所有功能均可免费使用（云端任务并发限 2））、[通义灵码 / Qoder CN](#74-通义灵码--qoder-cn-阿里云)（个人体验版免费：有限体验额度（含 2 周 Pro 试用 + 300 Credits））、[文心快码 Comate](#75-文心快码-comate-百度智能云)（个人标准版长期免费：智能补全免费 + 首次赠 5000 积分（7天有效））、[GitHub Copilot Free](#76-github-copilot-free)（Free 层每月 2,000 次代码补全，受限聊天与 Agent 用量（支持 Haiku 4.5、GPT-5 mini 等入门模型及 CLI））、[Cursor](#77-cursor-ai-代码编辑器--hobby-免费层)（免费层：智能体与 Grok 聊天/Imagine 请求次数有限，额度每周重置）、[Kiro](#78-kiro-aws-背景-agentic-ide)（官方明写长期 Free 层：每月 50 Credits，可用开源模型 + Claude Sonnet 4.5）、[Zed](#79-zed-编辑器--ai-托管额度)（Personal 档 $0 forever：2,000 次 accepted edit predictions；自带 Key 不限次）、[Arcade](#80-arcade-agent-工具调用层)（Free $0/月：每月 2,000 次 tool calls（Agent 工具层，非模型 token））、[CrewAI](#81-crewai-多-agent-编排)（Basic 免费：每月 50 次 workflow executions（编排执行次数，模型 token 另算））、[Dify](#82-dify-云版-sandbox)（Sandbox 免费：200 message credits + 5 Apps + 50 知识库文档）、[Nango](#83-nango-第三方集成--api-连接)（Free $0/月：10 connections + 10 小时计算 + 10GB 传输/月（集成同步算力，非模型额度））、[v0 by Vercel](#85-v0-by-vercel-生成式前端)（Free $0/月：每天 7 条消息（按天重置），含部署到 Vercel）。
+- **写代码 / 编程 Agent**：[智谱 GLM](#3-智谱-glm)（4.x 代 Flash 0 元（新旗舰 5.3 付费））、[StreamLake](#14-streamlake-快手万擎)（注册开通后分批送免费调用次数（仅基础模型推理））、[ModelScope 魔搭社区](#21-modelscope-魔搭社区)（魔粒制：每日登录 +200 魔粒（当日有效）+ 绑阿里云 +50 魔粒/日；按次扣减 0.5/1/2 魔粒）、[Groq Cloud](#28-groq-cloud-lpu-推理)（gpt-oss 免费层 30 RPM / 1,000 RPD）、[OpenRouter](#30-openrouter-模型统一网关)（:free 模型 20 RPM / 50 RPD（充值 $10 升至 1,000 RPD））、[Cloudflare Workers AI](#31-cloudflare-workers-ai)（每日 1 万 Neurons（kimi / GLM-5 / DeepSeek-V4 等前沿模型需付费））、[Relace](#44-relace)（编程 Agent 专用模型免费套餐）、[Poolside](#45-poolside)（代码模型限时免费（官方未公布截止日））、[Regolo.ai](#52-regoloai-欧盟托管推理)（30 天试用：每日 100 万 tokens，全部 Core Chat 模型）、[Novita AI](#53-novita-ai-apodex-免费档)（Apodex 1.1 Mini 输入/输出均 Free（256K 上下文））、[Typhoon](#56-typhoon-opentyphoon)（research showcase 免费：文本 5 RPS / 200 RPM，OCR 20 RPM，ASR 100 RPM）、[Qoder](#71-qoder-agentic-coding-platform--国际版)（每日可领 100 Credits + 2 周 Pro 试用送 300 Credits，Free 层不限时用基础模型）、[腾讯云 CodeBuddy / WorkBuddy](#72-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent)（国内体验版 0 元：500 积分/月 + 限免全模型；国际版 Free $0：100 积分/月 + 每日 30 积分 + 注册送 250）、[Trae](#73-trae-字节跳动-ai-ide--中国版为主)（免费版每月 500 积分、所有功能均可免费使用（云端任务并发限 2））、[通义灵码 / Qoder CN](#74-通义灵码--qoder-cn-阿里云)（个人体验版免费：有限体验额度（含 2 周 Pro 试用 + 300 Credits））、[文心快码 Comate](#75-文心快码-comate-百度智能云)（个人标准版长期免费：智能补全免费 + 首次赠 5000 积分（7天有效））、[GitHub Copilot Free](#76-github-copilot-free)（Free 层每月 2,000 次代码补全，受限聊天与 Agent 用量（支持 Haiku 4.5、GPT-5 mini 等入门模型及 CLI））、[Cursor](#77-cursor-ai-代码编辑器--hobby-免费层)（免费层：智能体与 Grok 聊天/Imagine 请求次数有限，额度每周重置）、[Kiro](#78-kiro-aws-背景-agentic-ide)（官方明写长期 Free 层：每月 50 Credits，可用开源模型 + Claude Sonnet 4.5）、[Zed](#79-zed-编辑器--ai-托管额度)（Personal 档 $0 forever：2,000 次 accepted edit predictions；自带 Key 不限次）、[Arcade](#80-arcade-agent-工具调用层)（Free $0/月：每月 2,000 次 tool calls（Agent 工具层，非模型 token））、[CrewAI](#81-crewai-多-agent-编排)（Basic 免费：每月 50 次 workflow executions（编排执行次数，模型 token 另算））、[Dify](#82-dify-云版-sandbox)（Sandbox 免费：200 message credits + 5 Apps + 50 知识库文档）、[Nango](#83-nango-第三方集成--api-连接)（Free $0/月：10 connections + 10 小时计算 + 10GB 传输/月（集成同步算力，非模型额度））、[v0 by Vercel](#85-v0-by-vercel-生成式前端)（Free $0/月：每天 7 条消息（按天重置），含部署到 Vercel）。
 - **免费体验旗舰通用模型**：[通义千问](#2-通义千问-阿里云)（大部分模型各 100 万 Token / 90 天（部分模型额度已下架，以权益页为准））、[Kimi](#4-kimi-月之暗面)（实名送 15 元代金券（可抵扣 K3/K3.1 Pro，不可用于高速版））、[文心 ERNIE](#9-文心-ernie-百度千帆)（17 个模型各 100 万 / 3 个月 + 20 元券）、[Google Gemini](#25-google-gemini-google-ai-studio)（AI Studio：Gemini 3.x Flash 免费层）。
 - **超长上下文（约 1M tokens）**：[Kimi](#4-kimi-月之暗面)（实名送 15 元代金券（可抵扣 K3/K3.1 Pro，不可用于高速版））、[科大讯飞星火](#11-科大讯飞星火-spark-api)（Spark-X2.5-1.7B 免费、4B 限时免费，需在产品页领取）、[美团 LongCat](#12-美团-longcat)（LongCat-2.0 资源包（1M 上下文，30 天有效））。
 - **图像 / 视频生成**：[智谱 GLM](#3-智谱-glm)（4.x 代 Flash 0 元（新旗舰 5.3 付费））、[腾讯云混元](#8-腾讯云混元-tokenhub)（8款模型共享 100万 tokens + Embedding 100万）、[Stability AI](#40-stability-ai)（新号 25 积分；开源权重年营收 < $100 万免费）、[Cursor](#77-cursor-ai-代码编辑器--hobby-免费层)（免费层：智能体与 Grok 聊天/Imagine 请求次数有限，额度每周重置）。
@@ -90,26 +90,27 @@
 20. [Regolo.ai](#52-regoloai-欧盟托管推理)：30 天后不订阅即无法按试用条件调用；试用档带更严限速与 fair usage throttling
 21. [Novita AI](#53-novita-ai-apodex-免费档)：免费只覆盖 apodex/apodex-1.1-mini 这一个 id，切换其它模型即按价表计费
 22. [Parallel Web API](#54-parallel-web-api-数据--搜索-api)：Task/Responses/FindAll 属高价处理器（单次约 $0.1–$2.4），深度研究场景消耗很快
-23. [无问芯穹 Infini AI](#57-无问芯穹-infini-ai-genstudio)：免费的是**嵌入 / 重排接口**与**网页体验**；GenStudio **API 推理不设试用额度**、按量付费（官方计费文档已明确），「注册送 200 万 token」是旧说法，不予采信。
-24. [Baseten](#63-baseten)：试用额度**金额未公开**，以注册后控制台显示为准；Startup Program（最高 $25,000 算力 + $2,500 Model APIs）需申请审核，非注册即得。
-25. [Akamai Cloud](#67-akamai-cloud-原-linode)：超额计入绑卡账单；GPU 套餐与 Marketplace 不参与；窗口结束后仍在运行的服务照标准价扣费
-26. [Lightning AI](#68-lightning-ai-gpu-云--studio)：免费 Studio 每 4 小时需重启；外部清单常写的「80 免费 GPU 小时」有误，官方页数值全为 50
-27. [Kernel](#69-kernel-托管云浏览器)：浏览器时长/算力按用量计费，$5 用尽即产生费用
-28. [Zilliz Cloud](#70-zilliz-cloud-托管-milvus-向量库)：vCU 是计算单元，向量检索密集时消耗快；Dedicated 档另算
-29. [Qoder](#71-qoder-agentic-coding-platform--国际版)：每日 Credits 需**手动领取**（漏领当天作废）；领到手后 30 天内有效、未过期会结转；高级额度用尽自动降级基础模型而非断供
-30. [腾讯云 CodeBuddy / WorkBuddy](#72-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent)：「限免」条目（全模型 / 无限补全 / 99 任务）随时可能回收，以页面「限免生效中」标注为准
-31. [通义灵码 / Qoder CN](#74-通义灵码--qoder-cn-阿里云)：已并入 Qoder CN 品牌（原通义灵码）；VSC 插件停止演进，团队版覆盖范围与个人版不同
-32. [文心快码 Comate](#75-文心快码-comate-百度智能云)：首次赠送的 5000 积分仅 7 天有效；个人版额度体系已由代金券调整为积分制
-33. [GitHub Copilot Free](#76-github-copilot-free)：无需信用卡；已验证学生可使用 Student plan，教师及热门开源维护者可申请免费 Copilot Pro
-34. [Cursor](#77-cursor-ai-代码编辑器--hobby-免费层)：定价页仅标明「有限」未公布具体数值，用尽后可等待额度每周重置
-35. [Kiro](#78-kiro-aws-背景-agentic-ide)：访问受速率限制；部分模型并非所有地区可用
-36. [Zed](#79-zed-编辑器--ai-托管额度)：内置模型免费只覆盖编辑预测额度；跑对话/Agent 需 Pro 试用（$5 / 14 天）或 BYOK
-37. [Dify](#82-dify-云版-sandbox)：200 条不带 / month（同页付费档才写 / month）——是体验额度，别按月领理解
-38. [Portkey](#84-portkey-ai-网关--可观测)：网关自己不提供免费 token，转发到谁的模型就按谁的价计费；超出只停记日志不影响请求
-39. [v0 by Vercel](#85-v0-by-vercel-生成式前端)：「每天 7 条」是档位长期限制非促销；部署产物的流量/函数按 Vercel Hobby 档另计
-40. 所有绑卡平台（见第 2 节名单）注册后立刻设置 **Budget 预算与用量告警**，记下赠金到期日，到期前关停资源、删除计费实例。
-41. 永久免费层 RPM 普遍只有个位数到几十，批量任务请走大额试用金 / 月度重置额度或错峰。
-42. 站外遇到的第三方聚合中转（非官方转售平台）存在跑路风险，只放低敏测试流量，不要充大额余额。
+23. [Typhoon](#56-typhoon-opentyphoon)：beta 服务无正式支持或 SLA；官方收集调用数据用于改进模型与 API，敏感内容先核对隐私条款
+24. [无问芯穹 Infini AI](#57-无问芯穹-infini-ai-genstudio)：免费的是**嵌入 / 重排接口**与**网页体验**；GenStudio **API 推理不设试用额度**、按量付费（官方计费文档已明确），「注册送 200 万 token」是旧说法，不予采信。
+25. [Baseten](#63-baseten)：试用额度**金额未公开**，以注册后控制台显示为准；Startup Program（最高 $25,000 算力 + $2,500 Model APIs）需申请审核，非注册即得。
+26. [Akamai Cloud](#67-akamai-cloud-原-linode)：超额计入绑卡账单；GPU 套餐与 Marketplace 不参与；窗口结束后仍在运行的服务照标准价扣费
+27. [Lightning AI](#68-lightning-ai-gpu-云--studio)：免费 Studio 每 4 小时需重启；外部清单常写的「80 免费 GPU 小时」有误，官方页数值全为 50
+28. [Kernel](#69-kernel-托管云浏览器)：浏览器时长/算力按用量计费，$5 用尽即产生费用
+29. [Zilliz Cloud](#70-zilliz-cloud-托管-milvus-向量库)：vCU 是计算单元，向量检索密集时消耗快；Dedicated 档另算
+30. [Qoder](#71-qoder-agentic-coding-platform--国际版)：每日 Credits 需**手动领取**（漏领当天作废）；领到手后 30 天内有效、未过期会结转；高级额度用尽自动降级基础模型而非断供
+31. [腾讯云 CodeBuddy / WorkBuddy](#72-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent)：「限免」条目（全模型 / 无限补全 / 99 任务）随时可能回收，以页面「限免生效中」标注为准
+32. [通义灵码 / Qoder CN](#74-通义灵码--qoder-cn-阿里云)：已并入 Qoder CN 品牌（原通义灵码）；VSC 插件停止演进，团队版覆盖范围与个人版不同
+33. [文心快码 Comate](#75-文心快码-comate-百度智能云)：首次赠送的 5000 积分仅 7 天有效；个人版额度体系已由代金券调整为积分制
+34. [GitHub Copilot Free](#76-github-copilot-free)：无需信用卡；已验证学生可使用 Student plan，教师及热门开源维护者可申请免费 Copilot Pro
+35. [Cursor](#77-cursor-ai-代码编辑器--hobby-免费层)：定价页仅标明「有限」未公布具体数值，用尽后可等待额度每周重置
+36. [Kiro](#78-kiro-aws-背景-agentic-ide)：访问受速率限制；部分模型并非所有地区可用
+37. [Zed](#79-zed-编辑器--ai-托管额度)：内置模型免费只覆盖编辑预测额度；跑对话/Agent 需 Pro 试用（$5 / 14 天）或 BYOK
+38. [Dify](#82-dify-云版-sandbox)：200 条不带 / month（同页付费档才写 / month）——是体验额度，别按月领理解
+39. [Portkey](#84-portkey-ai-网关--可观测)：网关自己不提供免费 token，转发到谁的模型就按谁的价计费；超出只停记日志不影响请求
+40. [v0 by Vercel](#85-v0-by-vercel-生成式前端)：「每天 7 条」是档位长期限制非促销；部署产物的流量/函数按 Vercel Hobby 档另计
+41. 所有绑卡平台（见第 2 节名单）注册后立刻设置 **Budget 预算与用量告警**，记下赠金到期日，到期前关停资源、删除计费实例。
+42. 永久免费层 RPM 普遍只有个位数到几十，批量任务请走大额试用金 / 月度重置额度或错峰。
+43. 站外遇到的第三方聚合中转（非官方转售平台）存在跑路风险，只放低敏测试流量，不要充大额余额。
 
 ### 5. 限时 / 易变信息（最容易过期，看到请先核对官方页）
 
@@ -119,7 +120,7 @@
 - [云知声 Token Hub](#15-云知声-token-hub)：页面顶部横幅标注：U Plan 正式上线，Free 档免费领，套餐升级限时 5 折，低至 29.5 元/月
 - [摩尔线程 MUSA Coding Plan](#16-摩尔线程-musa-coding-plan)：Free Trial 即左栏 30 天免费试用（每日限量 100 名），无独立注册赠金
 - [中国电信](#18-中国电信-天翼云--息壤智算)：另有编程 Token Plan 3000/10000/25000/50000/100000 积分套餐（29–699 元/月，均为付费限时特惠）
-- [阶跃星辰 StepFun](#22-阶跃星辰-stepfun)：限时免费：StepAudio 3 限免至北京时间 2026-11-17 11:59:59（12:00:00 起恢复计费）
+- [阶跃星辰 StepFun](#22-阶跃星辰-stepfun)：StepAudio 3 中适用限时免费政策的模型（具体范围以控制台为准
 - [Mistral AI](#27-mistral-ai)：Leanstral（Labs，labs-leanstral-2603，限时开放收集反馈）—— 免费端点
 - [Fireworks AI](#37-fireworks-ai)：Muse Glimmer 30B SFT 限时免费（至 11/30，免信用卡）
 - [Poolside](#45-poolside)：已从申请制转为开放注册，官方标注 “Free to use for a limited time”（限时免费，截止时间未公布，以官方后续公告为准）
@@ -154,6 +155,7 @@
 | **InceptionLabs** | 新号 1 亿 free tokens，免信用卡 | [Dashboard 申请](https://platform.inceptionlabs.ai/dashboard/api-keys) | `https://api.inceptionlabs.ai/v1` | `mercury-3` |
 | **Regolo.ai** | 30 天试用：每日 100 万 tokens（免绑卡） | [官网注册开通](https://regolo.ai/) | `https://api.regolo.ai/v1` | glm5.2、qwen3.8-27b、qwen3.5-122b、qwen3.5-9b、mistral-small-4-119b、gemma4-31b、apertus-70b 等（价表 Subscription 列标 Included） |
 | **Novita AI** | Apodex 1.1 Mini 输入/输出均 Free（256K 上下文） | [控制台 Key 管理](https://novita.ai/settings/key-management) | `https://api.novita.ai/openai/v1` | `apodex/apodex-1.1-mini`（价表显示名 Apodex 1.1 Mini，上下文 256K，输入/输出两列均 Free） |
+| **Typhoon** | research showcase 免费，文本 5 RPS / 200 RPM | [Typhoon Playground](https://playground.opentyphoon.ai/) | `https://api.opentyphoon.ai/v1` | ['typhoon-v2.5-30b-a3b-instruct', 'typhoon-v2.1-12b-instruct'] |
 
 <!-- LLM-GUIDE:END -->
 
@@ -504,7 +506,7 @@ python -m unittest discover
 | **注册福利 / 账户赠送** | 魔粒制：每日登录 +200 魔粒（短期、当日有效）；绑定阿里云账号 +50 魔粒/日（短期、每日最多 1 次）；收藏/喜欢 +2 魔粒/次（短期、每日最多 10 次）；验证邮箱、编辑个人介绍、配置个人主页各 +50 魔粒（长期、首次发放）；发布 AIGC 作品 +10 魔粒/次（每日最多 10 次）、发布 AIGC 模型 +10 魔粒/次（每日最多 5 次）；影响力激励 20–50 魔粒/次。 |
 | **额度有效期** | 魔粒分短期（生效时长 24 小时）与长期（生效时长 90 天），过期时间自发放时刻起算；使用时效期内发放与此前攒下的魔粒等价，系统自动优先扣减最临近过期的。API-Inference 按次扣减魔粒（平均）：轻量 0.5 魔粒/次、主流 1 魔粒/次、旗舰 2 魔粒/次。 |
 | **前置条件 / 限制** | 需绑定阿里云账号并完成实名 |
-| **免费层限制 / 注意事项** | • 旧口径「每天 2000 次免费调用」已作废（2026-08 魔粒制上线），第三方文档仍在流传——勿按 2000 次/天排期<br>• 魔粒是按次消耗的积分：每日登录奖励当日（短期魔粒 24 小时）有效、不累计；勿按固定调用次数或累计余额排期，余额随每次调用下降<br>• 必须绑定阿里云账号并实名，否则 API 返回 401（please bind your alibaba cloud account before use）<br>• 官方警告：勿用于需要高并发与 SLA 保障的线上任务；并发为动态限流，无公开 RPM/TPM 数字（以控制台为准）<br>• 老模型会从 API-Inference 下架；魔粒余额与 AIGC 生图、模型训练共用<br>• 系统原因导致的推理/训练失败全额返还魔粒；用户主动取消：训练仍扣、推理返还<br>• 国际站入口 https://api-inference.modelscope.ai/ ，token 页 https://modelscope.ai/my/myaccesstoken |
+| **免费层限制 / 注意事项** | • 旧口径「每天 2000 次免费调用」已作废（2026-08 魔粒制上线），第三方文档仍在流传——勿按 2000 次/天排期<br>• 魔粒是按次消耗的积分：每日登录奖励当日（短期魔粒 24 小时）有效、不累计；勿按固定调用次数或累计余额排期，余额随每次调用下降<br>• 必须绑定阿里云账号并实名，否则 API 返回 401（please bind your alibaba cloud account before use）<br>• 官方警告：勿用于需要高并发与 SLA 保障的线上任务；并发为动态限流，无公开 RPM/TPM 数字（以控制台为准）<br>• 老模型会从 API-Inference 下架；魔粒余额与 AIGC 生图、模型训练共用<br>• 系统原因导致的推理/训练失败全额返还魔粒；用户主动取消：训练仍扣、推理返还<br>• 国际站入口 https://api-inference.modelscope.ai/ ，token 页 https://modelscope.ai/my/myaccesstoken<br>• 收录依据：ModelScope 平台自身提供 API-Inference 推理服务（官方文档称免费推理由阿里云提供算力支持），服务对象是平台托管的开源模型——非转售上游闭源模型 API 的中转站 |
 | **邀请 / 特惠活动** | — |
 | **官方直达** | [魔粒计费文档](https://modelscope.cn/docs/magicube/intro) ｜ [魔粒公告](https://modelscope.cn/headlines/detail/342) |
 
@@ -513,14 +515,14 @@ python -m unittest discover
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [阶跃星辰 StepFun](https://platform.stepfun.com) |
-| **免费模型与额度** | • StepAudio 3（限免至 2026-11-17 11:59:59 北京时间，之后恢复计费） |
+| **免费模型与额度** | • StepAudio 3 中适用限时免费政策的模型（具体范围以控制台为准；限免至 2026-11-17 11:59:59 北京时间，之后恢复计费） |
 | **注册福利 / 账户赠送** | 无通用免费档（无账户级注册赠金）。 |
-| **额度有效期** | 限时免费：StepAudio 3 限免至北京时间 2026-11-17 11:59:59（12:00:00 起恢复计费）。 |
-| **前置条件 / 限制** | 注册 platform.stepfun.com 账号即可 |
-| **免费层限制 / 注意事项** | • StepAudio 3 限免窗口 2026-11-17 截止，之后无免费档——勿把限免当长期额度排期<br>• Step 5 Preview 对改价前按量付费的老用户保留 0.35 元/百万 tokens 旧价（grandfathering），新用户不适用<br>• RPM/TPM 无公开数字（以控制台为准） |
+| **额度有效期** | 仅适用限免政策的 StepAudio 3 模型限免至北京时间 2026-11-17 11:59:59（12:00:00 起恢复计费）。 |
+| **前置条件 / 限制** | 注册 platform.stepfun.com 账号，个人账户需完成实名认证 |
+| **免费层限制 / 注意事项** | • 仅适用限免政策的模型限免至 2026-11-17 11:59:59；已收费模型继续原价计费，勿将整个系列视为免费<br>• Step 5 Preview 仅缓存命中输入价格：2026-10-14 00:30 前已按量调用该模型的用户保留 0.35 元/百万 tokens；其他用户为 0.70 元，非缓存输入与输出另计费<br>• 个人账户 V0（累计现金充值不足 ¥100）：并发 5、100 RPM、500,000 TPM；随充值档位提升，容量不足时官方可能临时调整<br>• 收录依据：阶跃星辰自研 Step 系列与 StepAudio 语音模型（自研模型厂商），无转售闭源模型 API 的业务 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • 10.00 元／个音色<br>• 【价格说明】：StepAudio 3 系列模型及相关服务自北京时间 2026 年 11 月 17 日 中午12:00:00 起按下表新价格计费。生效前，已收费的模型及服务继续按原有标准计费，适用限时免费政策的模型限免至北京时间 2026… |
-| **官方直达** | [定价详情](https://platform.stepfun.com/docs/zh/pricing/details) |
+| **实时巡检证据** | • 10.00 元／个音色<br>• 【价格说明】：StepAudio 3 系列模型及相关服务自北京时间 2026 年 11 月 17 日 中午12:00:00 起按下表新价格计费。生效前，已收费的模型及服务继续按原有标准计费，适用限时免费政策的模型限免至北京时间 2026…<br>• 按量付费 API 按账户累计充值金额分档限速，累计充值金额只统计现金充值，代金券不计入。Step Plan 用量由所订阅套餐的月度 Credit 额度管理，不按累计充值金额分档。资源达到容量上限时，我们可能临时调整各档限速。 |
+| **官方直达** | [定价详情](https://platform.stepfun.com/docs/zh/guides/pricing/details) ｜ [实名要求与限速](https://platform.stepfun.com/docs/zh/guides/pricing/rate-limits) |
 
 ---
 
@@ -988,11 +990,11 @@ python -m unittest discover
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [SambaNova Cloud](https://cloud.sambanova.ai) |
-| **免费模型与额度** | • Free 卡可跑 Production 模型（具体 token 数与 RPM/TPM 官方页未公开，以控制台为准） |
-| **注册福利 / 账户赠送** | Free 卡含 $5 注册赠金（官方页读数：signupAmount=5、expiryDays=3650 天）；Free 卡可跑 Production 模型。 |
-| **额度有效期** | 赠金有效期 3650 天（官方页读数）。 |
-| **前置条件 / 限制** | 注册 cloud.sambanova.ai 账号即可（Free 卡是否需绑卡官方页表述矛盾） |
-| **免费层限制 / 注意事项** | • 官方页部分占位符未渲染，页面文案自相矛盾：一处称需绑卡购买 credits 才能跑首次请求，另一处称有 $5 注册赠金——以控制台实际为准<br>• 官方页未给免费档 token 数与 RPM/TPM 读数——勿引用聚合站数字当作官方口径<br>• Preview 模型仅 Developer/Enterprise 卡可见，Free 卡只有 Production 模型 |
+| **免费模型与额度** | • **未核实到可免付费调用的模型层**：Free 计划可访问 Production 模型，但官方要求添加付款方式并购买 credits 后发起首次请求 |
+| **注册福利 / 账户赠送** | 未核实到当前有效的注册赠金；页面脚本中的 $5 配置不能证明实际发放，不予采信。 |
+| **额度有效期** | 未核实到赠金及其有效期；不采用脚本中的 3650 天配置。 |
+| **前置条件 / 限制** | 注册账号；官方 Plans 页要求添加付款方式并购买 credits 后发起首次请求 |
+| **免费层限制 / 注意事项** | • Free 是计划名称，不代表模型调用免费；Plans 页明确要求添加付款方式并购买 credits<br>• 页面脚本含赠金配置与模板文案，但不足以证明当前注册权益；调用前以实际账单和账户权益为准<br>• Preview 模型仅 Developer/Enterprise 计划可见，Free 计划只有 Production 模型<br>• 收录依据：SambaNova 自有 RDU 推理硬件与 Cloud 推理设施，非转售上游模型 API 的中转站 |
 | **邀请 / 特惠活动** | — |
 | **官方直达** | [Plans 页](https://cloud.sambanova.ai/plans) |
 
@@ -1001,13 +1003,14 @@ python -m unittest discover
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [Typhoon (OpenTyphoon)](https://opentyphoon.ai) |
-| **免费模型与额度** | • typhoon-v2.5-30b-a3b-instruct（二手口径：5 请求/秒、200 请求/分钟/模型，未获官方页证实）<br>• typhoon-ocr-preview（同上次级口径）<br>• typhoon-asr-realtime（同上次级口径） |
-| **注册福利 / 账户赠送** | 无账户级注册赠金（官方页不可达，未获证实）。 |
-| **额度有效期** | research showcase 长期免费（二手口径，官方页不可达）。 |
-| **前置条件 / 限制** | 二手口径称无需信用卡（官方页不可达，未证实） |
-| **免费层限制 / 注意事项** | • 官方三路均不可达：opentyphoon.ai/pricing 404、docs.opentyphoon.ai 只回重定向壳、/en/ 404（2026-11-09 实测）<br>• 以上额度数字来自聚合站 tools321.com（2026-10-25 更新），属二手，未获官方页证实<br>• SCB 10X 自研泰语模型（自有推理设施） |
+| **免费模型与额度** | • `typhoon-v2.5-30b-a3b-instruct`、`typhoon-v2.1-12b-instruct` —— 免费，各 5 RPS / 200 RPM<br>• `typhoon-ocr` —— 免费，2 RPS / 20 RPM<br>• `typhoon-asr-realtime` —— 免费，100 RPM（官方未列 RPS 数值） |
+| **注册福利 / 账户赠送** | 官方提供免费的 research showcase API，非账户级注册赠金。 |
+| **额度有效期** | research showcase 当前免费；beta 服务，官方未承诺永久可用或 SLA。 |
+| **前置条件 / 限制** | 在 Typhoon Playground 注册并创建 API Key |
+| **免费层限制 / 注意事项** | • 免费 research showcase，由 SCB 10X 开发维护；处于 beta，按现状提供，无正式支持或 SLA<br>• 官方收集 API 使用数据以改进模型和 API，并称不向第三方分享；发送敏感内容前请先核对数据使用条款<br>• 按模型执行 RPS / RPM 限流，超限返回 429；生产级服务建议使用官方合作的付费推理平台 |
 | **邀请 / 特惠活动** | — |
-| **官方直达** | [官方站（不可达）](https://opentyphoon.ai) ｜ [聚合站读数（二手）](https://tools321.com/ai/ai-model-free-list/) |
+| **实时巡检证据** | • Typhoon API 是一个研究展示，可免费使用。<br>• "message": "Rate limit exceeded. Please retry after 2024-01-01T12:00:00Z", |
+| **官方直达** | [官方文档](https://docs.opentyphoon.ai/en/) ｜ [免费政策与数据使用](https://docs.opentyphoon.ai/en/faq/) ｜ [模型限速](https://docs.opentyphoon.ai/en/rate-limits/) |
 
 ---
 
