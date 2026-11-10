@@ -9,7 +9,7 @@
 
 ## 全部文章（共 175 篇，按日期倒序；无日期条目列于最后）
 
-1. [技能和代理如何在 AWS Quick 中发挥作用](https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/)（2026-11-10） <!--orig:How skills and agents work in AWS Quick-->
+1. [AWS Quick 中的 skills 和 agents 是如何工作的](https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/)（2026-11-10） <!--orig:How skills and agents work in AWS Quick-->
 2. [使用 Amazon Bedrock Managed Knowledge Base 进行单次与 agentic 检索](https://aws.amazon.com/blogs/machine-learning/single-shot-and-agentic-retrieval-with-amazon-bedrock-managed-knowledge-base/)（2026-11-09） <!--orig:Single-shot and agentic retrieval with Amazon Bedrock Managed Knowledge Base-->
 3. [在 AWS 上推出 Claude Fable 5.2](https://aws.amazon.com/blogs/machine-learning/introducing-claude-fable-5-2-on-aws/)（2026-11-09） <!--orig:Introducing Claude Fable 5.2 on AWS-->
 4. [NVIDIA Nemotron 3.5 Super VL 现已在 Amazon SageMaker JumpStart 中提供](https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-super-vl-is-now-available-in-amazon-sagemaker-jumpstart/)（2026-11-09） <!--orig:NVIDIA Nemotron 3.5 Super VL is now available in Amazon SageMaker JumpStart-->

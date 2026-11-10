@@ -37,7 +37,7 @@
 26. [推出 Anyscale Physical AI Skill](https://anyscale.com/blog/introducing-the-anyscale-physical-ai-skill)（2026-07-23） <!--orig:Introducing the Anyscale Physical AI Skill-->
 27. [Ray Data 2.56：提升 AI 数据流水线的可靠性](https://anyscale.com/blog/ray-data-256-updates)（2026-06-30） <!--orig:Ray Data 2.56: Improving Reliability for AI Data Pipelines-->
 28. [使用 Ray 进行规模机器人策略评估](https://anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale)（2026-06-26） <!--orig:Scale Robot Policy Evaluation with Ray-->
-29. [使用 Anyscale 上完全持久的集群和 Actor 仪表板监控和调试 Ray 工作负载](https://anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard)（2026-05-15） <!--orig:Monitor and debug Ray workloads with fully persisted Cluster and Actor dashboards on Anyscale-->
+29. [用 Anyscale 上全量持久化的 Cluster 和 Actor Dashboards 监控、调试 Ray 工作负载](https://anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard)（2026-05-15） <!--orig:Monitor and debug Ray workloads with fully persisted Cluster and Actor dashboards on Anyscale-->
 30. [SkyRL 引入视觉语言强化学习](https://anyscale.com/blog/vision-language-model-reinforcement-learning-skyrl)（2026-04-24） <!--orig:Introducing Vision-Language Reinforcement Learning in SkyRL-->
 31. [推出 Anyscale Agent Skills：更快构建、更聪明调试、优化运行在 Ray 上的 AI 工作负载](https://anyscale.com/blog/announcing-anyscale-agent-skills-ray)（2026-04-22） <!--orig:Introducing Anyscale Agent Skills: Build faster, debug smarter, and optimize AI workloads running on Ray-->
 32. [Ray Serve 重大升级：在线推理延迟降低 88%、吞吐量提升 11.1 倍](https://anyscale.com/blog/ray-serve-inference-lower-latency-higher-throughput-haproxy)（2026-03-24） <!--orig:Major upgrades to Ray Serve: Online Inference with 88% lower latency and 11.1x higher throughput-->

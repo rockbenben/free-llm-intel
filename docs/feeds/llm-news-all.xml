@@ -9,7 +9,7 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-all.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 10 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>[Amazon Bedrock] 技能和代理如何在 AWS Quick 中发挥作用</title>
+      <title>[Amazon Bedrock] AWS Quick 中的 skills 和 agents 是如何工作的</title>
       <link>https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
@@ -17,40 +17,40 @@
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
       <description>原文标题：How skills and agents work in AWS Quick</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>技能和代理如何在 AWS Quick 中发挥作用</h1>
-<p>如果您使用人工智能代理，您可能不止一次地解释过同一任务。您可能会描述如何构建每周状态更新、编写发行说明、管理项目或创建票证。这些都是可重复的任务，您可以通过代理和技能使用 <a href="https://aws.amazon.com/quick/">AWS Quick</a> 进行编码。 AWS Quick 是一项人工智能驱动的服务，用于自动执行任务、分析数据、构建 Web 应用程序和进行研究。您可以使用自然语言来使用它，Quick 使用 AI 代理来处理您针对连接的数据源和应用程序的请求。</p>
-<p>在这篇文章中，我们将介绍代理、技能和您的数据如何在 AWS Quick 中组合在一起，以及如何构建和分享适合您的团队的技能。我们还展示了官方目录和定制代理如何帮助您运用这些技能。</p>
-<h2>理解基本概念</h2>
-<p>在本部分中，我们将解释一些基本概念，帮助您了解与代理、技能和数据相关的 AWS Quick。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/04/ML-22266-1.png" alt="中心辐射图，以 Quick 代理为中心，连接到其指令、技能、连接器和数据源"></p>
-<p>图 1：Quick 代理如何遵循其指令、加载任务所需的技能、通过连接器执行操作并将其答案基于您的数据</p>
-<p>代理位于图 1 的中心。它遵循指令，加载任务所需的技能，通过连接器采取行动，并将其答案基于您的数据：空间、知识库、数据集和仪表板。</p>
-<h3>与代理合作</h3>
-<p>AWS Quick 中的<a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html">代理</a> 是一个可配置的 AI，具有自己的指令、知识源（空间）和连接器，用于回答问题并为您完成工作。您可以在聊天中使用代理，或者使用<a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html">例程</a>让它自行运行。代理只能访问您可以访问的资源和服务，并且您可以决定允许每个代理执行哪些操作。</p>
-<p><strong>Quick</strong> 是每个用户都可以访问的默认内置代理。它没有固定的范围，因此在每次对话中，它都可以使用您有权访问的任何资源，例如您的空间、知识库、仪表板、连接器和技能。您无需提前决定请求需要哪些数据或工具，因此您可以使用 Quick 开始大部分工作。</p>
-<p><strong>自定义代理</strong>是您或您团队中的某人为特定作业配置的代理。一个例子是人力资源 (HR) 入职助理，他在人力资源团队的空间中回答新员工的问题。您可以为其提供自己的说明，并将其限制为您的用例所需的空间、连接器和技能。测试并发布后，您可以与 AWS Quick 账户中的其他用户和组共享。有关构建一个的演练，请参阅<a href="https://aws.amazon.com/blogs/machine-learning/build-ai-powered-employee-onboarding-agents-with-amazon-quick/">使用 AWS Quick 构建由 AI 驱动的员工入职代理</a>。</p>
-<h3>处理数据</h3>
-<p>客服人员根据您连接到 Quick 的数据给出答案。 <strong>空间</strong> 是代理用作信息源的文档和 AWS Quick 资源的精选集合。您可以为自己、您的团队或组织中的其他小组创建一个。您可以将文件和文件夹上传到空间，或添加仪表板、知识库、操作连接器和数据集等资产。当您与 Quick 开始对话时，您可以附加一个空格来缩小 Quick 用于该对话的数据范围。当您向代理添加空间时，该空间将成为代理配置的一部分，并且代理会在请求需要时利用它。</p>
-<p><strong>知识库</strong>是来自数据源的文档或内容的有组织的、索引的集合，针对检索和问题回答进行了优化。快速同步来自 Google Drive、Microsoft OneDrive、Confluence、Microsoft SharePoint、Amazon Simple Storage Service (Amazon S3)、网络爬虫或 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock 托管知识库</a> 等来源的知识库。快速让他们了解最新的同步时间表。</p>
-<p>数据集和控制面板来自 <a href="https://docs.aws.amazon.com/quick/latest/userguide/quick-bi.html">AWS Quick Sight</a>，这是 Quick 中的商业智能功能，可在通过 AWS 管理控制台配置的账户中使用。 <strong>数据集</strong>是准备好的数据集合，可用于分析和仪表板。 <strong>仪表板</strong>是您与其他 Quick 用户共享的分析的发布版本。借助数据集，您可以在结构化数据（例如数据库表）上构建语义丰富的元数据，这样您就可以使用自然语言完成复杂的分析用例。</p>
-<p>最后，<strong>连接器</strong> 将 AWS Quick 连接到外部应用程序或本机工具，以便代理可以读取数据并代表您采取操作。 <strong>云连接器</strong> 将 Quick 连接到 Microsoft Outlook、Slack、Jira、Asana 和 Salesforce 等服务，以及远程托管的模型上下文协议 (MCP) 服务器。它们可在您使用 Quick 的每台设备上使用。 <strong>本地连接器</strong> 在您自己的计算机上运行，​​例如您自己托管的 MCP 服务器，因此它们的工具仅在该计算机打开并连接时才可用。有关连接器类型的完整列表，请参阅 AWS 快速用户指南中的<a href="https://docs.aws.amazon.com/quick/latest/userguide/connections-desktop.html">连接器</a> 和<a href="https://docs.aws.amazon.com/quick/latest/userguide/integration-guides.html">集成特定指南</a>。</p>
-<p>这些共同使您的数据、文档和应用程序可以通过自然语言访问，因此您可以在连接的源中提出问题并采取行动。</p>
-<h3>运用技能工作</h3>
-<p><a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html">技能</a> 是一组可重复使用的指令，用于指导代理如何执行特定任务。技能也是客服人员在 Quick 中表现和完成工作的基础。与其他代理一样，Quick 中的代理在遵循推理和行动 (ReAct) 模式的线束（托管代理循环）中运行。当您向 AWS Quick 提供提示时，代理会使用其可用的工具和指令来实现其目标并向您提供响应。 <a href="https://strandsagents.com/">Strands Agents SDK</a> 等代理框架是围绕相同的模型驱动循环构建的。</p>
-<p>Quick 默认情况下所做的大部分工作都来自<strong>系统技能</strong>。例如，您可以要求 Quick 生成 Word 文档、PowerPoint 演示文稿、Excel 电子表格或 PDF。然后，系统技能可以使用带有技能包脚本的代码来创建或编辑文档。其他系统技能浏览网页、运行代码、执行深入研究、转录音频和视频以及生成图像。有些管理 Quick 本身，例如构建 <a href="https://docs.aws.amazon.com/quick/latest/userguide/using-amazon-quick-flows.html">AWS Quick Flows</a>、安排例程、将工作交给 Kiro 等编码代理、管理您的记忆和知识图或跟踪您的待办事项。在 Quick 中，您可以打开或关闭系统技能，但无法编辑、复制、导出、发布、共享或删除它们。</p>
-<p>由于 AWS Quick 提供的功能和工具，技能可以完成多种工作。例如，一项技能可以产生可交付成果，例如根据模板构建的每周状态更新。另一个可以自动化连接器之间的工作流程，例如收集本周的 Jira 更新并将摘要发布到 Slack。技能还可以在 Python 脚本中运行计算并使用 JavaScript 将结果绘制成图表。</p>
-<h2>什么是技能？</h2>
-<p>快速技能遵循 <a href="https://agentskills.io/">Agent Skills</a> 规范，该规范最初由 Anthropic 开发并作为开放标准发布。桌面版 AWS Quick，于 <a href="https://aws.amazon.com/about-aws/whats-new/2026/04/amazon-quick-macos-windows-preview/">2026 年 4 月预览</a> 推出，并<a href="https://aws.amazon.com/blogs/machine-learning/amazon-quick-is-now-generally-available-on-desktop/">于 9 月全面推出2026</a>，使用此规范。</p>
-<p>技能是一个文件夹，其根目录下有一个 Markdown 文件“SKILL.md”，以及其说明使用的任何可选脚本或其他参考文件。文件的 frontmatter（两个“---”行之间的属性）包含名称、描述以及与您的技能相关的任何其他元数据。请参阅以下名为“release-notes-generator”的技能的简短示例。</p>
+<h1>AWS Quick 中的 skills 和 agents 是如何工作的</h1>
+<p>如果你用过 AI agents，多半不止一次解释过同一个任务：怎样整理每周状态汇报、写版本说明、管理项目，或者创建工单。这些都是可重复的任务，可以借助 <a href="https://aws.amazon.com/quick/">AWS Quick</a> 通过 agents 和 skills 固化下来。AWS Quick 是一项 AI 驱动的服务，用来自动化任务、分析数据、构建 Web 应用、开展调研。你用自然语言与它交互，Quick 则用 AI agents 对照你接入的数据源和应用来处理你的请求。</p>
+<p>本文会讲清 agents、skills 和你的数据在 AWS Quick 里如何配合，以及如何构建并分享适合团队的 skills。我们还会展示官方目录和 custom agents 怎样帮你把这些 skills 用起来。</p>
+<h2>理解基础概念</h2>
+<p>这一节先解释几个基础概念，帮你理解 AWS Quick 与 agents、skills 以及你的数据之间的关系。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/04/ML-22266-1.png" alt="中心辐射式示意图：Quick agent 位于中央，连接着它的指令、skills、connectors 和数据源"></p>
+<p>图 1：Quick agent 如何遵循指令、加载任务所需的 skills、通过 connectors 执行操作，并以你的数据为依据给出回答</p>
+<p>agent 位于图 1 的中央。它遵循指令、加载任务所需的 skills、通过 connectors 执行操作，并以你的数据为依据给出回答——这些数据包括 spaces、knowledge bases、datasets 和 dashboards。</p>
+<h3>使用 agents</h3>
+<p>AWS Quick 中的 <a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html">agent</a> 是一个可配置的 AI，有自己的指令、知识来源（spaces）和 connectors，用来回答问题、为你完成工作。你可以在聊天里与 agent 协作，也可以借 <a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html">routine</a> 让它自行运行。Agents 只能访问你本人能访问的资源和服务，每个 agent 可以做什么，由你决定。</p>
+<p><strong>Quick</strong> 是每个用户都能用的默认内置 agent。它没有固定范围，每轮对话里都能调用你有权访问的任何资源，比如你的 spaces、knowledge bases、dashboards、connectors 和 skills。你不必事先判断一个请求需要哪些数据或工具，所以多数工作都可以从 Quick 起步。</p>
+<p><strong>custom agent</strong> 是你或团队里某人为某项具体工作配置的 agent，例如一个人力资源（HR）入职助手，依据 HR 团队的 space 回答新员工的问题。你给它单独的指令，把它限定在用例所需的 spaces、connectors 和 skills 内。测试并发布之后，就能分享给 AWS Quick 账户里的其他用户和群组。构建过程的逐步演示，参见 <a href="https://aws.amazon.com/blogs/machine-learning/build-ai-powered-employee-onboarding-agents-with-amazon-quick/">使用 AWS Quick 构建 AI 驱动的员工入职 agents</a>。</p>
+<h3>使用数据</h3>
+<p>Agents 的回答以你接入 Quick 的数据为依据。<strong>space</strong> 是经过整理的文档与 AWS Quick 资源集合，agent 把它当作信息来源。你可以为自己、团队或组织里其他小组创建一个 space，往里上传文件和文件夹，或加入 dashboards、knowledge bases、action connectors、datasets 这类资产。与 Quick 开始对话时，可以挂上一个 space，把 Quick 这轮对话用到的数据收窄。把 space 加进 agent 后，它就成了 agent 配置的一部分，请求需要时 agent 会从中取用。</p>
+<p><strong>knowledge base</strong> 是把数据源里的文档或内容组织好、建好索引的集合，专为检索和问答优化。Quick 会从 Google Drive、Microsoft OneDrive、Confluence、Microsoft SharePoint、Amazon Simple Storage Service (Amazon S3)、网页爬虫，以及 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Managed Knowledge Bases</a> 等来源同步 knowledge bases，并按同步计划保持更新。</p>
+<p>Datasets 和 dashboards 来自 <a href="https://docs.aws.amazon.com/quick/latest/userguide/quick-bi.html">AWS Quick Sight</a>，也就是 Quick 里的商业智能功能；通过 AWS Management Console 开通的账户才能用它。<strong>dataset</strong> 是备好的一组数据，可直接用于分析和 dashboards。<strong>dashboard</strong> 是分析的发布版本，用来分享给其他 Quick 用户。借助 datasets，你可以在结构化数据（比如数据库表）之上建立语义丰富的元数据，从而用自然语言完成复杂的分析用例。</p>
+<p>最后，<strong>connector</strong> 把 AWS Quick 连到外部应用或原生工具，让 agents 能读取数据、代你执行操作。<strong>Cloud connectors</strong> 把 Quick 接到 Microsoft Outlook、Slack、Jira、Asana、Salesforce 等服务，以及远程托管的 Model Context Protocol (MCP) 服务器；你使用 Quick 的每台设备上都能用。<strong>Local connectors</strong> 跑在你自己的机器上，比如你自己托管的 MCP 服务器，因此只有这台机器开机且联网时，它们的工具才可用。connector 类型的完整清单，参见 AWS Quick User Guide 中的 <a href="https://docs.aws.amazon.com/quick/latest/userguide/connections-desktop.html">Connectors</a> 和 <a href="https://docs.aws.amazon.com/quick/latest/userguide/integration-guides.html">Integration-specific guides</a>。</p>
+<p>这些合在一起，让你的数据、文档和应用都能通过自然语言访问，于是你可以在已连接的来源里提问、执行操作。</p>
+<h3>使用 skills</h3>
+<p><a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html">skill</a> 是一组可复用的指令，教 agent 完成某项具体任务。Skills 也是 Quick 里的 agent 行为方式与完成工作的基础。和其他 agents 一样，Quick 中的 agent 运行在 harness（一个托管的 agent 循环）里，遵循推理与行动（ReAct）模式。你给 AWS Quick 一个 prompt 时，agent 会用可用的工具和指令达成目标，再给你回复。<a href="https://strandsagents.com/">Strands Agents SDK</a> 这类 agent 框架，也是围绕同一个模型驱动的循环构建的。</p>
+<p>Quick 默认能做的大部分事情，来自 <strong>system skills</strong>。比如你可以让 Quick 生成 Word 文档、PowerPoint 演示文稿、Excel 表格或 PDF，随后某个 system skill 便借助自带的脚本、用代码创建或编辑这份文档。另一些 system skills 负责浏览网页、运行代码、做深度调研、转录音频和视频、生成图像。还有一些管理 Quick 本身：构建 <a href="https://docs.aws.amazon.com/quick/latest/userguide/using-amazon-quick-flows.html">AWS Quick Flows</a>、安排 routines、把工作交给 Kiro 这类 coding agent、管理你的记忆和知识图谱，或者跟踪待办事项。在 Quick 里，system skills 可以开关，但不能编辑、复制、导出、发布、分享或删除。</p>
+<p>AWS Quick 提供的能力和工具，让 skills 能干很多种活。比如一个 skill 可以产出交付物，像按你的模板生成的每周状态汇报；另一个可以跨 connectors 自动化一条工作流，比如汇总本周的 Jira 动态、把摘要发到 Slack；skill 还能在 Python 脚本里做计算，再用 JavaScript 把结果画成图表。</p>
+<h2>什么是 skill？</h2>
+<p>Quick skills 遵循 <a href="https://agentskills.io/">Agent Skills</a> 规范，它最早由 Anthropic 开发，并作为开放标准发布。桌面版 AWS Quick 用的就是这一规范：它于 <a href="https://aws.amazon.com/about-aws/whats-new/2026/04/amazon-quick-macos-windows-preview/">2026 年 4 月进入预览</a>，并在 <a href="https://aws.amazon.com/blogs/machine-learning/amazon-quick-is-now-generally-available-on-desktop/">2026 年 9 月正式可用</a>。</p>
+<p>一个 skill 就是一个文件夹，根目录下放一个 Markdown 文件 <code>SKILL.md</code>，外加指令会用到的可选脚本或其他参考文件。这个文件的 frontmatter（两条 <code>---</code> 之间的属性）里写着 name、description，以及与这个 skill 相关的其他元数据。下面看一个删减过的示例，skill 名叫 <code>release-notes-generator</code>。</p>
 <pre><code>---
 name: release-notes-generator
 description: &quot;Generates human-readable release notes from merged pull requests, commits, or changelogs ... Use when asked to 'generate release notes', 'write changelog', ...&quot;
 ---</code></pre>
-<p>描述和名称是触发技能的两个最重要的方面。当快速将您的技能加载到代理的提示中时，它会使用<strong>渐进式披露</strong>。代理仅读取每个技能的名称和描述，直到请求调用该技能为止。然后，它会加载技能的完整说明，如<a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-how-quick-loads-skills">代理如何加载技能</a>所述。这意味着某些短语可以帮助触发该技能，例如“生成 2.3 版本的发行说明”。该规范将“名称”的上限限制为 64 个字符，将“描述”的上限限制为 1,024 个字符，并建议技能中的指令少于 5,000 个字符。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/04/ML-22266-2.png" alt="名为release-notes-generator的技能文件夹，其中包含SKILL.md文件以及可选脚本和引用文件夹"></p>
-<p>图 2：release-notes-generator 技能文件夹，其中包含必需的 SKILL.md 文件以及可选的脚本和引用文件夹</p>
-<h2>建立并分享 Quick 技能</h2>
-<p>您可以通过聊天、文件（.md 或 .zip 文件）或根目录下有“SKILL.md”文件的文件夹创建技能。这篇文章主要讨论聊天。首先，在聊天中快速描述您的任务。例如，您可以从此模板开始（将 &lt;&gt; 括号之间的内容替换为您的要求）：</p>
+<p>description 和 name 是触发一个 skill 最关键的两项。Quick 把 skills 加载进 agent 的 prompt 时，用的是 <strong>progressive disclosure</strong>：agent 只读每个 skill 的 name 和 description，直到某个请求需要这个 skill，才把它的完整指令加载进来，具体见 <a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-how-quick-loads-skills">How agents load skills</a>。这意味着某些说法能帮着触发 skill，比如「生成 2.3 版本的版本说明」。规范把 <code>name</code> 限制在 64 个字符以内、<code>description</code> 限制在 1,024 个字符以内，并建议 skill 里的指令不超过 5,000 tokens。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/04/ML-22266-2.png" alt="名为 release-notes-generator 的 skill 文件夹，内含一个 SKILL.md 文件以及可选的 scripts 和 references 文件夹"></p>
+<p>图 2：release-notes-generator skill 文件夹，含必需的 SKILL.md 文件以及可选的 scripts 和 references 文件夹</p>
+<h2>在 Quick 中构建并分享 skill</h2>
+<p>创建 skill 可以从聊天开始，也可以从文件（.md 或 .zip）或根目录下带 <code>SKILL.md</code> 的文件夹导入。本文只讲聊天这种方式。起步时，在聊天里把任务描述给 Quick。比如可以用下面这个模板（把 &lt;&gt; 里的内容换成你的要求）：</p>
 <pre><code>Every &lt;specify your cadence e.g. every day, on monday, or none at all&gt;, I have to grab data from the following sources:
 - &lt;List your sources and how you want to query them&gt;
 ...
@@ -60,34 +60,34 @@ And do &lt;describe how you want to transform the data and the exact sequence of
 Once I am finished, I have to create a report &lt;describe your report format or provide an example&gt; and send to the following stakeholders &lt;describe your recipients&gt; using the following connector &lt;describe your connector&gt;.
 
 Create a skill from this requirement, and help me come up with testing scenarios to test the skill. </code></pre>
-<p>这就是您开始培养自己的技能所需的全部内容。或者，您也可以进行之前为完成任务而互动过的多轮对话，并要求 Quick 从中生成技能。当您对最终结果感到满意后，发布并分享您的技能：</p>
-<ul><li>选择<strong>自定义</strong>，然后选择<strong>技能</strong>。</li><li>在草稿中找到你的技能，然后打开其详细信息面板。</li><li>选择<strong>发布</strong>。</li><li>选择 <strong>共享</strong>，然后选择要共享的人员或群组。</li></ul>
-<p>发布和共享是独立的步骤，因此仅发布并不能让任何人获得该技能。您与之共享的人从 <strong>添加到快速</strong> 中的 <strong>与我共享</strong> 下添加它，并且每次您再次发布时，他们的版本都会保持同步。有关当前步骤，请参阅 AWS 快速用户指南中的<a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-skill-draft-published">草稿和已发布版本</a>和<a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-sharing-skills">分享您的技能</a>。</p>
-<h3>通过最佳实践提高您的技能</h3>
-<p>通过快速描述或对话构建的技能可能对您来说始终有效，但在构建与团队共享的生产技能时必须考虑许多注意事项。技能就像代码，许多工程最佳实践可以帮助任何知识工作者构建它们。</p>
-<ul><li>“它可以在我的机器上运行”是软件工程师的常用短语。它描述了为构建它的人运行但在其他人安装或使用它时崩溃的软件。在培养技能时，您必须考虑您的环境。技能指令可以使用代理来查询数据源或调用连接器或工具。软件工程师通常通过记录使用软件的先决条件来解决此限制。例如，如果您要单独共享一项技能，您可能需要使用您的技能创建一个自述文件来记录这些要求。如果您共享使用您的技能的代理，还要共享它连接到的源，或者与您共享它的人只能从他们已经可以访问的源中获取答案。</li><li>为失败做好计划。代理使用依赖于第三方和第一方服务的连接源。当工程师编写代码时，他们需要了解如果某个软件出现故障该怎么办。如果您将这些场景纳入您的技能说明中，您的代理可以根据具体说明进行调整。您不需要成为下游服务的专家，因为代理会朝着目标努力，并且可以在步骤失败时重试或尝试其他方法。您确实需要列出当故障影响您的任务或业务流程时该怎么做。从技能中的工作流程中获取以下片段，如果失败可能会产生后果。</li></ul>
+<p>有这些就够你动手做自己的 skills 了。另一种做法是：拿一段你此前为完成某任务而进行的多轮对话，让 Quick 据此生成一个 skill。对最终结果满意之后，发布并分享：</p>
+<ul><li>选择 <strong>Customize</strong>，再选择 <strong>Skills</strong>。</li><li>在草稿中找到你的 skill，打开其详情面板。</li><li>选择 <strong>Publish</strong>。</li><li>选择 <strong>Share</strong>，再选定要分享给的人员或群组。</li></ul>
+<p>发布和分享是两步，光发布并不会把 skill 开放给任何人。被分享的人从 <strong>Shared with me</strong> 下的 <strong>Add to Quick</strong> 添加它，此后你每次重新发布，他们那边的版本都会同步更新。当前步骤参见 AWS Quick User Guide 中的 <a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-skill-draft-published">Draft and published versions</a> 和 <a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-sharing-skills">Sharing your skills</a>。</p>
+<h3>用最佳实践打磨 skills</h3>
+<p>凭一段简短描述或一次对话搭出来的 skill，也许在你自己手上一直好用；但要做与团队共享的生产级 skills，就得把很多因素考虑进去。Skills 很像代码，不少工程上的最佳实践，能帮任何知识工作者把它们建好。</p>
+<ul><li>「在我机器上是好的」是软件工程师常说的一句话，说的是软件在作者那儿跑得通，换个人安装或使用就崩。做 skills 时，你必须考虑运行环境：skill 的指令可以让 agents 去查数据源、调 connectors 或工具。软件工程师通常靠写明使用前提来绕开这个限制。比如你要单独分享一个 skill，不妨随附一个 README，把这些要求写清楚。如果你分享的是用了这个 skill 的 agent，记得把它连接的来源一并分享，否则拿到的人只能从自己本来就能访问的来源里得到答案。</li><li>为失败做好预案。Agents 用的连接来源，依赖第三方和第一方服务。工程师写代码时得想清楚：软件某处挂了该怎么办。把这些情形写进 skill 的指令，agents 就能照着明确的指示应变。你不必是下游服务的专家——agent 会朝目标推进，某一步失败时它可以重试或换条路子。但你必须写清楚：一旦故障影响到任务或业务流程，该怎么做。看下面这段从某 skill 工作流里摘出来的片段，它一旦失败可能牵连不小。</li></ul>
 <pre><code>[Agent] Send the report to {{recipient}} over email.</code></pre>
-<p>如果发送邮件失败，代理应该怎么办？您可能想要添加有关在该场景中要做什么的说明。</p>
+<p>万一邮件发送失败，agent 该怎么做？你大概要把这种情形下的处理方式补进指令里。</p>
 <pre><code>[Agent] Send the report to {{recipient}} over email.
 Validate: The report appears in your Sent folder.
 If fails: Stop, and tell the user that the report wasn't sent and why, so they can send it themselves.</code></pre>
-<p>当按计划执行代理且无人参与循环时，处理故障场景甚至更为重要。</p>
-<ul><li>测试每一个变化。软件工程师编写多种形式的测试，例如单元测试和集成测试，以帮助他们测试软件。这些测试会在每次更改时运行。有了技能，为各种场景生成自己的测试用例并在做出更改时继续添加新测试也同样重要。有多种方法可以做到这一点，但最好使用您希望下游用户使用的环境进行测试。</li></ul>
-<p>培养生产技能时还有很多方面需要考虑：</p>
-<ul><li>为每个更改添加发行说明。</li><li>将发生变化的硬编码值（例如“/Users/me/notes”或“#my-team”）保留在步骤之外，并将它们声明为每个人提供的输入。</li><li>用人类可读的日期记录技能何时发生变化。</li><li>记录每个参考文件的来源，以便如果来源发生变化，您也可以更新您的技能说明。</li><li>存储校验和，即技能文件的指纹，当副本与检查的版本不同时显示。</li><li>每次更改后检查结构，就像检查代码之前 linter 捕获错误的方式一样。</li><li>以一致的方式培养技能，以便您的团队可以贡献更改并更快地审查它们。</li></ul>
-<p>对于任何用户来说，这是一个需要考虑的事情。这就是为什么 <a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/">AWS Quick 官方目录</a> 提供了预先构建的资源，例如根据这些最佳实践构建的技能。</p>
-<h3>AWS Quick 官方目录</h3>
-<p>该目录是代理资源的集合，您可以按原样安装和使用它们，也可以将其作为起点并适应您自己的工作。该目录指出，其中的每个资源在发布之前都经过质量、安全性和其他因素的测试和扫描。这些技能涵盖日常生产力和销售、营销、人力资源、法律、项目管理、客户成功和软件工程等团队的工作。它们还涵盖金融、医疗保健和生命科学、能源和公用事业、酒店、供应链和物流等行业。</p>
-<p>该目录包括 <strong>Skill Architect</strong> 技能，这是一项为您应用这些工程最佳实践的预构建技能，如<a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/build-skills/">使用 AWS Quick 中的软件工程实践构建技能</a> 所述。要安装它，请选择“<strong>自定义</strong>”、“<strong>技能</strong>”、“<strong>浏览全部</strong>”，然后选择“<strong>官方</strong>”。在搜索框中输入“技能架构师”，然后选择“<strong>安装</strong>”。有关当前步骤，请参阅<a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/install/">在桌面版 AWS Quick 中安装技能</a>。</p>
-<h3>将技能与您的代理联系起来</h3>
-<p>创建代理时，您可以配置其名称、描述和说明，并选择其读取的空间、可以使用的连接器以及可以加载的技能。有关详细信息，请参阅 AWS 快速用户指南中的<a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html#desktop-agent-configuration">代理配置</a>。代理在解决特定用例（例如回答新员工问题或准备每周状态报告）并将其世界限制在用例所需的空间、技能和连接器时效果最佳。默认情况下，代理可以使用您的所有技能，当您添加特定技能时，代理将仅限于这些技能。当您共享代理时，这会成为问题，因为它在使用它的人的访问权限下运行。同一请求可能会为每个人提供不同的数据和技能，并且当它需要只有您可以访问的来源时，可能会返回不完整的答案。</p>
-<p>如果您想将它们全部（代理、技能和空间）联系在一起，请尝试<a href="https://catalog.us-east-1.prod.workshops.aws/workshops/a8484e57-2e30-40ee-bd98-0122f0d05acc/en-US/2000-build-your-personal-setup/2100-run-personal-agent-architect">个人代理架构师模块</a>在链接的研讨会中。</p>
-<h2>结论</h2>
-<p>在这篇文章中，我们展示了代理如何在 AWS Quick 中使用技能和数据，以及如何构建和分享适合您的团队的技能。我们还展示了官方目录和定制代理如何帮助您运用这些技能。</p>
-<p>要了解更多信息、查找活动或分享您使用 AWS Quick 取得的成功，请访问 <a href="https://community.amazonquick.com/">AWS Quick 社区</a>。 AWS 快速社区提供学习材料、功能公告、活动和其他用户的示例。您还可以在其问答论坛中提问。</p>
-<p>有关本文主题的录制会议，请观看 <a href="https://www.youtube.com/watch?v=m9gN2GapOps">在 AWS Quick 上使用代理和技能对您的企业进行编码</a>。该会议涵盖了技能的结构和加载方式、技能如何与代理、空间和连接器配合使用，以及构建您共享的技能的最佳实践。最后是官方目录和技能架构师技能的演示。</p>
-<p>以下是由每天使用 AWS Quick 的专家设计的一些额外资源：</p>
-<ul><li><a href="https://catalog.workshops.aws/amazon-quick-suite-workshop">AWS Quick 完整指南：代理 AI 业务工作区</a>。</li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/8724e6e3-1115-4f40-9770-8a24199ce308/en-US">AWS Quick：具有丰富集成的端到端业务用例</a>。</li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/767bc5b8-1d33-40e2-8969-f8653db64756/en-US">AWS 快速管理研讨会</a>。</li><li><a href="https://catalog.workshops.aws/quicksight/en-US">深入了解 AWS Quick Sight</a>。</li><li><a href="https://aws-samples.github.io/sample-amazon-quick-suite-knowledge-hub/">AWS Quick Knowledge Hub – 官方代码示例和解决方案</a>。</li><li><a href="https://aws.amazon.com/search/?searchQuery=Amazon%20Quick&amp;filters=((id:provider,value:(blogs">关于 AWS Quick 的 AWS 博客文章</a>))&amp;sort=(id:relevance,direction:desc))。</li></ul>
+<p>按计划定时运行 agents、又没有人在回路中时，处理失败情形就更要紧了。</p>
+<ul><li>每次改动都要测。软件工程师会写多种测试，比如单元测试、集成测试，用来检验软件；每改一次就跑一遍。对 skills 来说，同样要自己为各种场景生成测试用例，并随着改动不断补上新测试。做法不止一种，但最好在你预期下游用户会用的环境里测。</li></ul>
+<p>做生产级 skills 时，要考虑的还有很多：</p>
+<ul><li>每次改动都附上版本说明。</li><li>把会变的硬编码值（比如 <code>/Users/me/notes</code> 或 <code>#my-team</code>）从步骤里拿出去，改成由每个人自行提供的输入。</li><li>用易读的日期记下 skill 的改动时间。</li><li>记下每个参考文件的来源，这样来源一变，你也能同步更新 skill 的指令。</li><li>存一份 checksum——skill 文件的指纹，用来看出某个副本与当初校验过的版本是否不同。</li><li>每次改动后都检查结构，就像 linter 在代码送审之前先把错误挑出来。</li><li>用一致的方式构建 skills，团队就能更快地提交改动、完成评审。</li></ul>
+<p>对任何用户来说，要考虑的都不少。正因如此，<a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/">AWS Quick official catalog</a> 才提供了预建好的资源，比如按这些最佳实践做出来的 skills。</p>
+<h3>AWS Quick official catalog</h3>
+<p>这个 catalog 是一组 agent 资源，既可以原样安装使用，也可以拿它当起点、改成贴合自己工作的版本。目录称，其中每个资源在发布前都经过质量、安全等方面的测试和扫描。这些 skills 覆盖日常办公效率，也覆盖销售、市场、HR、法务、项目管理、客户成功、软件工程等团队的工作；还覆盖金融、医疗与生命科学、能源与公用事业、酒店业、供应链与物流等行业。</p>
+<p>目录里有一个 <strong>Skill Architect</strong> skill，是替你把这些工程最佳实践用起来的预建 skill，具体见 <a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/build-skills/">Build skills with software engineering practices in AWS Quick</a>。安装时依次选择 <strong>Customize</strong>、<strong>Skills</strong>、<strong>Browse all</strong>，再选 <strong>Official</strong>；在搜索框里输入 <code>skill architect</code>，然后选 <strong>Install</strong>。当前步骤参见 <a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/install/">Install skills in AWS Quick on desktop</a>。</p>
+<h3>把 skills 连接到你的 agents</h3>
+<p>创建 agent 时，你要配置它的 name、description 和 instructions，选定它读取哪些 spaces、能用哪些 connectors、可以加载哪些 skills。详见 AWS Quick User Guide 里的 <a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html#desktop-agent-configuration">Agent configuration</a>。让 agent 专注一个具体用例，比如回答新员工问题、准备每周状态报告，并把它的世界<strong>限定</strong>在该用例所需的 spaces、skills 和 connectors 内，效果最好。默认情况下，agent 能使用你全部的 skills；一旦你指定了具体的 skills，它就只能用这些。分享 agent 时这会出问题：它按使用者本人的权限运行，同一个请求在不同人那里可能触达不同的数据和 skills；要是需要某个只有你能访问的来源，回答就会不完整。</p>
+<p>想把这几样（agents、skills 和 spaces）串起来，可以试试所链接 workshop 里的 <a href="https://catalog.us-east-1.prod.workshops.aws/workshops/a8484e57-2e30-40ee-bd98-0122f0d05acc/en-US/2000-build-your-personal-setup/2100-run-personal-agent-architect">personal agent architect module</a>。</p>
+<h2>结语</h2>
+<p>本文讲了 agents 在 AWS Quick 里如何使用 skills 和你的数据，也讲了如何构建、分享适合团队的 skills。我们还展示了官方目录和 custom agents 怎样帮你把这些 skills 用起来。</p>
+<p>想进一步了解、查找活动，或分享你用 AWS Quick 做出的成果，可以访问 <a href="https://community.amazonquick.com/">AWS Quick Community</a>。AWS Quick Community 里有学习资料、功能公告、活动，以及其他用户的示例；你也可以在它的 Q&amp;A 论坛提问。</p>
+<p>本文相关主题有一场录播，可看 <a href="https://www.youtube.com/watch?v=m9gN2GapOps">Encode Your Enterprise with Agents &amp; Skills on AWS Quick</a>。这场分享讲了一个 skill 如何组织、如何加载，skills 如何与 agents、spaces、connectors 配合，以及构建要分享的 skills 的最佳实践。最后还演示了官方目录和 Skill Architect skill。</p>
+<p>下面这些额外资源，出自每天与 AWS Quick 打交道的专家之手：</p>
+<ul><li><a href="https://catalog.workshops.aws/amazon-quick-suite-workshop">AWS Quick 完整指南：agentic AI 业务工作区</a>。</li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/8724e6e3-1115-4f40-9770-8a24199ce308/en-US">AWS Quick：具备丰富集成的端到端业务用例</a>。</li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/767bc5b8-1d33-40e2-8969-f8653db64756/en-US">AWS Quick 管理 Workshop</a>。</li><li><a href="https://catalog.workshops.aws/quicksight/en-US">深入了解 AWS Quick Sight</a>。</li><li><a href="https://aws-samples.github.io/sample-amazon-quick-suite-knowledge-hub/">AWS Quick Knowledge Hub – 官方代码示例与解决方案</a>。</li><li><a href="https://aws.amazon.com/search/?searchQuery=Amazon%20Quick&amp;filters=((id:provider,value:(blogs">关于 AWS Quick 的 AWS 博客文章</a>))&amp;sort=(id:relevance,direction:desc))。</li></ul>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -127,53 +127,53 @@ If fails: Stop, and tell the user that the report wasn't sent and why, so they c
       <description>原文标题：Kuken Industries searches 70 years of drawings in minutes</description>
     </item>
     <item>
-      <title>[Anthropic Claude] 摩根大通将 Claude Code 扩展到公司更多员工</title>
+      <title>[Anthropic Claude] 摩根大通将 Claude Code 推广到全公司更多员工</title>
       <link>https://claude.com/resources/articles/jpmorganchase-expands-claude-code</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/jpmorganchase-expands-claude-code</guid>
       <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：JPMorganChase expands Claude Code to more employees across the firm</description>
-      <content:encoded><![CDATA[<p>摩根大通正在全公司范围内向工程师以外的更多员工推广Claude。在商业和投资银行，工作更快地投入生产，并且公司根据其业务优先事项重新部署能力。</p>
-<p>团队正在对其他遗留系统进行现代化改造，工程师正在构建自己的代理，包括拉取请求审查和自我修复代理，并分享有效的方法。</p>
-<p>基础设施和运营团队使用 <a href="https://claude.com/product/claude-code">Claude Code（在新选项卡中打开）</a> 进行监控、警报和根本原因分析。该公司的安全团队使用我们的前沿模型来更快地查找和修复漏洞，我们首先在 <a href="https://www.anthropic.com/glasswing">Project Glasswing（在新选项卡中打开）</a> 中描述了这项工作。</p>
-<h2><strong>联系产品团队和顾问</strong></h2>
-<p>与业务关系最密切的人也在与Claude一起建设。产品团队将需求直接转化为工程积压工作，其他团队使用Claude Code进行风险和控制评估以及项目规划。</p>
-<p>知识工作已经在进行中。产品开发生命周期的大部分发生在代码之外：研究、需求、设计和规划。</p>
-<p>在资产和财富管理业务中，摩根大通将具有最深刻的业务洞察力和最大胆的想法的人员与技术和产品专家一起组成了小型、授权的团队。这有助于他们更轻松地大规模构建和提供定制的客户投资解决方案。 Claude Code 现在已成为他们工程工作流程的一部分，团队的行动速度更快，同时在每项更改到达客户之前都经过更严格的测试。</p>
-<p>上个月，摩根大通资产管理公司宣布推出一款连接器，将 55ip 的 ActiveTax Technology® 引入 <a href="https://claude.com/resources/articles/claude-for-financial-advisors">Claude for Financial Advisors（在新选项卡中打开）</a>，将税务意识投资组合过渡分析纳入顾问的日常工作中。</p>
-<h2><strong>专为受监管的公司打造</strong></h2>
-<p>Claude Code 在受控环境中运行，包括在其自己的基础设施上的公司容器化开发平台 Devspace。目的是防止代理直接访问员工凭据或内部系统。访问范围分阶段扩大，新的Claude模型要经过公司自己的批准流程，然后任何人都可以使用它们。</p>
-<p>代码遵循相同的规则。数千个自动化测试和批准门会检查每一个更改，并且自动门会返回管道强制执行的硬通过或停止，因此 Claude 无法批准自己的工作。人们对每一次生产变更负责。</p>
-<p>在过去的一年里，摩根大通对Claude的使用已经从软件工程扩展到网络防御，再到财务顾问的工具，摩根大通对我们的要求是塑造我们为其他受监管机构构建的产品。Claude在世界上最大的金融机构之一的控制下工作是我们的目标。</p>
+      <content:encoded><![CDATA[<p>摩根大通正在全公司推广 Claude，把使用范围从工程师扩大到更多员工。在商业与投资银行部门，各项工作更快进入生产，腾出的产能被重新投向业务优先事项。</p>
+<p>各团队在对其余遗留系统做现代化改造，工程师也在搭建自己的 agent，包括 pull request 审查 agent 和自愈 agent，并把行之有效的方法分享出来。</p>
+<p>基础设施与运维团队用 <a href="https://claude.com/product/claude-code">Claude Code</a> 做监控、告警和根因分析。公司的安全团队则借助我们的前沿模型更快地发现并修复漏洞——这项工作我们最早在 <a href="https://www.anthropic.com/glasswing">Project Glasswing</a> 中介绍过。</p>
+<h2><strong>触达产品团队与顾问</strong></h2>
+<p>离业务最近的人也在用 Claude 构建东西。产品团队把需求直接转成工程 backlog，其他团队用 Claude Code 做风险与控制评估、项目规划。</p>
+<p>知识类工作已经展开。产品开发生命周期里很大一部分发生在代码之外：调研、需求、设计和规划。</p>
+<p>在资产与财富管理业务中，摩根大通把业务洞察最深、想法最大胆的人，与技术专家、产品专家编进规模不大却充分授权的小团队。这让他们更容易大规模构建并交付定制化的客户投资方案。Claude Code 如今已是他们工程工作流的一部分，团队推进得更快，同时每一项变更在交付客户前都要经过更严格的测试。</p>
+<p>上个月，J.P. Morgan Asset Management 发布了一款 connector，把 55ip 的 ActiveTax Technology® 接入 <a href="https://claude.com/resources/articles/claude-for-financial-advisors">Claude for Financial Advisors</a>，让兼顾税务因素的组合迁移分析进入顾问的日常工作。</p>
+<h2><strong>为受监管的机构而建</strong></h2>
+<p>Claude Code 运行在受控环境中，包括公司自有基础设施上的容器化开发平台 Devspace。这样设计是为了防止 agent 直接接触员工凭据或内部系统。使用范围分阶段放开，新的 Claude 模型必须先通过公司自己的审批流程，员工才用得上。</p>
+<p>代码上线也守同一套规矩。数千项自动化测试和审批关卡会检查每一次变更，自动化关卡给出非此即彼的「放行」或「中止」，由流水线强制执行，因此 Claude 没法给自己的工作签字放行。每一次生产变更仍由人负责。</p>
+<p>过去一年，摩根大通对 Claude 的使用从软件工程延伸到网络防御，再到面向财务顾问的工具；他们向我们提出的需求，也正在塑造我们为其他受监管机构构建的产品。让 Claude 在全球最大金融机构之一既有的管控框架内运转，正是我们努力的方向。</p>
 <p>文章</p>
 <p>2026 年 10 月 28 日</p>
-<h3>IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude</h3>
-<p>IDC 将 Claude 整合为其 Quanta 平台的一部分，并将 Claude 推广到自己的业务中</p>
-<p>Claude·科沃克</p>
-<p>Claude·科德</p>
+<h3>IDC 将 Quanta 接入 Claude，并在全公司推广 Claude</h3>
+<p>IDC 把 Claude 集成为 Quanta 平台的一部分，并在自身业务中全面推广 Claude</p>
+<p>Claude Cowork</p>
+<p>Claude Code</p>
 <p>还有 1 个</p>
-<p>：Claude·企业</p>
-<p>Claude·恩企业</p>
+<p>：Claude Enterprise</p>
+<p>Claude Enterprise</p>
 <p>文章</p>
 <p>2026 年 10 月 21 日</p>
-<h3>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</h3>
+<h3>HCLTech 以 Global Premier 合作伙伴身份加入 Claude Partner Network</h3>
 <p>HCLTech 将把 Claude 引入其为银行、医院、电信公司和制造商提供的解决方案中。</p>
 <p>文章</p>
 <p>2026 年 9 月 28 日</p>
-<h3>使用 Claude Managed Agents 和 NVIDIA 实现代理安全的新方法</h3>
-<p>注意：此博客已从其原始版本更新为包含有关 Claude Managed Agents 的其他技术详细信息。</p>
-<p>Claude·平台</p>
+<h3>用 Claude Managed Agents 与 NVIDIA 探索 agent 安全的新思路</h3>
+<p>注：本文在初版基础上更新，补充了关于 Claude Managed Agents 的更多技术细节。</p>
+<p>Claude Platform</p>
 <p>文章</p>
 <p>2026 年 9 月 23 日</p>
-<h3>CodeRabbit、Power Digital 和 ThoughtSpot 如何在 Claude Marketplace 上通过 Snowflake 和 Vercel 进行扩展</h3>
-<p>CodeRabbit 通过 Claude Marketplace 扩展了其 Vercel 计划，Power Digital 和 ThoughtSpot 利用其现有的 Anthropic 承诺扩展了其 Snowflake 容量。</p>
-<p>Claude·平台</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
-<h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<h3>CodeRabbit、Power Digital 和 ThoughtSpot 如何借 Claude Marketplace 上的 Snowflake 与 Vercel 扩容</h3>
+<p>CodeRabbit 通过 Claude Marketplace 扩充了 Vercel 套餐，Power Digital 和 ThoughtSpot 则用既有的 Anthropic 承诺额度扩大了 Snowflake 容量。</p>
+<p>Claude Platform</p>
+<h2>用 Claude 改变组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区精选等内容，每月寄到你的收件箱。</p>
+<p>如需接收每月的开发者通讯，请留下邮箱地址；随时可以取消订阅。</p>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] 推出 Claude Fable 5.2 和 Claude Mythos 5.2</title>

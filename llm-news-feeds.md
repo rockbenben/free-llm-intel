@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-10 12:21:11**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-10 19:52:57**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,7 +26,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-10，标题自动汉化）：
-  1. [摩根大通将 Claude Code 扩展到公司更多员工](https://claude.com/resources/articles/jpmorganchase-expands-claude-code)（2026-11-09）
+  1. [摩根大通将 Claude Code 推广到全公司更多员工](https://claude.com/resources/articles/jpmorganchase-expands-claude-code)（2026-11-09）
   2. [Claude寓言 5.2 和神话 5.2](https://claude.com/resources/articles#d-2026-11-09-2)（2026-11-09）
   3. [Claude可以从头到尾设计电子原型](https://claude.com/resources/articles#d-2026-11-09-3)（2026-11-09）
   4. [使用 Claude Fable 5.2 安全扩展多代理团队](https://claude.com/resources/articles#d-2026-11-09-4)（2026-11-09）
@@ -297,7 +297,7 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-10，标题自动汉化）：
-  1. [技能和代理如何在 AWS Quick 中发挥作用](https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/)（2026-11-10）
+  1. [AWS Quick 中的 skills 和 agents 是如何工作的](https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/)（2026-11-10）
   2. [使用 Amazon Bedrock Managed Knowledge Base 进行单次与 agentic 检索](https://aws.amazon.com/blogs/machine-learning/single-shot-and-agentic-retrieval-with-amazon-bedrock-managed-knowledge-base/)（2026-11-09）
   3. [在 AWS 上推出 Claude Fable 5.2](https://aws.amazon.com/blogs/machine-learning/introducing-claude-fable-5-2-on-aws/)（2026-11-09）
   4. [NVIDIA Nemotron 3.5 Super VL 现已在 Amazon SageMaker JumpStart 中提供](https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-super-vl-is-now-available-in-amazon-sagemaker-jumpstart/)（2026-11-09）

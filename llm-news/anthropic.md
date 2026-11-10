@@ -10,7 +10,7 @@
 
 ## 全部文章（共 145 篇，按日期倒序；无日期条目列于最后）
 
-1. [摩根大通将 Claude Code 扩展到公司更多员工](https://claude.com/resources/articles/jpmorganchase-expands-claude-code)（2026-11-09） <!--orig:JPMorganChase expands Claude Code to more employees across the firm-->
+1. [摩根大通将 Claude Code 推广到全公司更多员工](https://claude.com/resources/articles/jpmorganchase-expands-claude-code)（2026-11-09） <!--orig:JPMorganChase expands Claude Code to more employees across the firm-->
 2. [Claude寓言 5.2 和神话 5.2](https://claude.com/resources/articles#d-2026-11-09-2)（2026-11-09） <!--orig:Claude Fable 5.2 and Mythos 5.2-->
 3. [Claude可以从头到尾设计电子原型](https://claude.com/resources/articles#d-2026-11-09-3)（2026-11-09） <!--orig:Claude can design electronic prototypes from start to finish-->
 4. [使用 Claude Fable 5.2 安全扩展多代理团队](https://claude.com/resources/articles#d-2026-11-09-4)（2026-11-09） <!--orig:Safely scaling multi-agent teams with Claude Fable 5.2-->
