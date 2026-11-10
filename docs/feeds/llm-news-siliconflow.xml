@@ -9,16 +9,16 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-siliconflow.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 03 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线</title>
-      <link>https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</link>
-      <guid isPermaLink="true">https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</guid>
+      <title>【模型服务调整】Wan2.2 系列、GLM-5.1 下线，MiniMax-H3 上线</title>
+      <link>https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97glm-51-%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</link>
+      <guid isPermaLink="true">https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97glm-51-%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</guid>
       <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#模型服务调整wan22-系列下线minimax-h3-上线">【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线</a></h3>
-<p>平台将于 <strong>2026-11-10</strong> 下线 Wan2.2 系列模型，并同步上线 MiniMax-H3：</p>
-<ul><li>下线模型：<code>Wan-AI/Wan2.2-T2V-A14B</code>（文生视频）、<code>Wan-AI/Wan2.2-I2V-A14B</code>（图生视频）。自 2026-11-10 起，上述模型不再接收新请求，不保留过渡期，请于该日期前完成切换。</li><li>上线模型：<code>MiniMaxAI/MiniMax-H3</code>，支持文生视频、首帧生视频、尾帧生视频、首尾帧生视频。</li></ul>
+      <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#模型服务调整wan22-系列glm-51-下线minimax-h3-上线">【模型服务调整】Wan2.2 系列、GLM-5.1 下线，MiniMax-H3 上线</a></h3>
+<p>平台将于 <strong>2026-11-10</strong> 下线 Wan2.2 系列模型与 <code>Pro/zai-org/GLM-5.1</code>，并同步上线 MiniMax-H3：</p>
+<ul><li>下线模型：<code>Wan-AI/Wan2.2-T2V-A14B</code>（文生视频）、<code>Wan-AI/Wan2.2-I2V-A14B</code>（图生视频）、<code>Pro/zai-org/GLM-5.1</code>（对话模型）。自 2026-11-10 起，上述模型不再接收新请求，不保留过渡期，请于该日期前完成切换。</li><li>上线模型：<code>MiniMaxAI/MiniMax-H3</code>，支持文生视频、首帧生视频、尾帧生视频、首尾帧生视频。</li></ul>
 <p>视频生成 API（<code>/v1/video/submit</code>）同日更新：</p>
 <ul><li>新增 <code>duration</code>（生成时长，单位：秒，可选 5 到 15，缺省 5）、<code>resolution</code>（分辨率，<code>480p</code> / <code>768p</code>）、<code>ratio</code>（画面比例）、<code>images</code>（参考图片列表，通过 <code>role</code> 指定首帧 <code>first_frame</code> 或尾帧 <code>last_frame</code>）。</li><li>按请求中的 <code>duration</code> 计费；<code>negative_prompt</code>、<code>image_size</code> 不再生效，传入不会报错但会被忽略。</li><li>参数说明与示例参见<a href="https://docs.siliconflow.cn/docs/api/video-submit-post">视频生成 API</a>。</li></ul>
-<p>若您正在使用 Wan2.2 系列模型，请务必在 2026-11-10 前切换到 MiniMax-H3 或其他模型。完整可用模型列表请查看<a href="https://cloud.siliconflow.cn/models?types=to-video">模型广场</a>。</p>]]></content:encoded>
+<p>若您正在使用上述模型，请务必在 2026-11-10 前完成切换：Wan2.2 系列可切换到 MiniMax-H3 或其他视频生成模型，<code>Pro/zai-org/GLM-5.1</code> 可切换到其他对话模型。完整可用模型列表请查看<a href="https://cloud.siliconflow.cn/models">模型广场</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>【模型服务调整】Qwen3-Coder-30B-A3B-Instruct、GLM-4.5V 等模型将下线</title>
@@ -38,6 +38,18 @@
       <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#新模型上线openmoss-teammoss-image-上线">【新模型上线】OpenMOSS-Team/MOSS-Image 上线</a></h3>
 <p>平台已于 <strong>2026-11-03</strong> 上线生图模型 <code>OpenMOSS-Team/MOSS-Image</code>，适用于海报、信息图、插画和写实图像创作。</p>
 <p>模型按张计费，价格为 <strong>¥0.30 / 图片</strong>。可通过 <code>/v1/images/generations</code> 调用，使用方式参见<a href="https://docs.siliconflow.cn/docs/userguide/capabilities/images">图片生成</a>。完整可用模型列表请查看<a href="https://cloud.siliconflow.cn/models?types=to-image">模型广场</a>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线</title>
+      <link>https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</link>
+      <guid isPermaLink="true">https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#模型服务调整wan22-系列下线minimax-h3-上线">【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线</a></h3>
+<p>平台将于 <strong>2026-11-10</strong> 下线 Wan2.2 系列模型，并同步上线 MiniMax-H3：</p>
+<ul><li>下线模型：<code>Wan-AI/Wan2.2-T2V-A14B</code>（文生视频）、<code>Wan-AI/Wan2.2-I2V-A14B</code>（图生视频）。自 2026-11-10 起，上述模型不再接收新请求，不保留过渡期，请于该日期前完成切换。</li><li>上线模型：<code>MiniMaxAI/MiniMax-H3</code>，支持文生视频、首帧生视频、尾帧生视频、首尾帧生视频。</li></ul>
+<p>视频生成 API（<code>/v1/video/submit</code>）同日更新：</p>
+<ul><li>新增 <code>duration</code>（生成时长，单位：秒，可选 5 到 15，缺省 5）、<code>resolution</code>（分辨率，<code>480p</code> / <code>768p</code>）、<code>ratio</code>（画面比例）、<code>images</code>（参考图片列表，通过 <code>role</code> 指定首帧 <code>first_frame</code> 或尾帧 <code>last_frame</code>）。</li><li>按请求中的 <code>duration</code> 计费；<code>negative_prompt</code>、<code>image_size</code> 不再生效，传入不会报错但会被忽略。</li><li>参数说明与示例参见<a href="https://docs.siliconflow.cn/docs/api/video-submit-post">视频生成 API</a>。</li></ul>
+<p>若您正在使用 Wan2.2 系列模型，请务必在 2026-11-10 前切换到 MiniMax-H3 或其他模型。完整可用模型列表请查看<a href="https://cloud.siliconflow.cn/models?types=to-video">模型广场</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>【模型升级】DeepSeek-V4.1-Flash 升级至 DeepSeek-V4.1-Flash-1017</title>
@@ -477,17 +489,6 @@
       <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#模型服务调整deepseek-v2-chat-等模型停止服务">【模型服务调整】DeepSeek-V2-Chat 等模型停止服务</a></h3>
 <p><strong>1. 模型下线通知</strong> 为了提供更稳定、高质量、可持续的服务，以下模型将于 <strong>2024 年 12 月 19 日</strong>下线：</p>
 <ul><li>deepseek-ai/DeepSeek-V2-Chat</li><li>Qwen/Qwen2-72B-Instruct</li><li>Vendor-A/Qwen/Qwen2-72B-Instruct</li><li>OpenGVLab/InternVL2-Llama3-76B</li></ul>
-<p>如果您有使用上述模型，建议尽快迁移至平台上的其他模型。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>【模型服务调整】Qwen2.5-Math、Hunyuan-A52B 等模型停止服务</title>
-      <link>https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4qwen25-mathhunyuan-a52b-%E7%AD%89%E6%A8%A1%E5%9E%8B%E5%81%9C%E6%AD%A2%E6%9C%8D%E5%8A%A1</link>
-      <guid isPermaLink="true">https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4qwen25-mathhunyuan-a52b-%E7%AD%89%E6%A8%A1%E5%9E%8B%E5%81%9C%E6%AD%A2%E6%9C%8D%E5%8A%A1</guid>
-      <pubDate>Thu, 05 Dec 2024 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#模型服务调整qwen25-mathhunyuan-a52b-等模型停止服务">【模型服务调整】Qwen2.5-Math、Hunyuan-A52B 等模型停止服务</a></h3>
-<p><strong>1. 模型下线通知</strong> 为了提供更稳定、高质量、可持续的服务，以下模型将于 <strong>2024 年 12 月 13 日</strong>下线：</p>
-<ul><li>Qwen/Qwen2.5-Math-72B-Instruct</li><li>Tencent/Hunyuan-A52B-Instruct</li></ul>
-<p>如果您有使用上述模型，建议尽快迁移至平台上的其他模型。</p>
 <p>如果您有使用上述模型，建议尽快迁移至平台上的其他模型。</p>]]></content:encoded>
     </item>
   </channel>

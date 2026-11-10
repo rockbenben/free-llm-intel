@@ -3269,6 +3269,137 @@ print(requests.get(f&quot;{POLICY_URL}/stats&quot;).json())</code></pre>
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
+      <title>Monitor and debug Ray workloads with fully persisted Cluster…</title>
+      <link>https://anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard?li=1</guid>
+      <pubDate>Fri, 15 May 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Monitor and debug Ray workloads with fully persisted Cluster and Actor dashboards on Anyscale</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Monitor and debug Ray workloads with fully persisted Cluster and Actor dashboards on Anyscale</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=carolyn-wang">Carolyn Wang</a>, <a href="https://www.anyscale.com/blog?author=alan-guo">Alan Guo</a>, <a href="https://www.anyscale.com/blog?author=geetanjali-garg">Geetanjali Garg</a> and <a href="https://www.anyscale.com/blog?author=philip-wang">Philip Wang</a> | May 15, 2026</p>
+<p>Today we’re excited to announce the <strong>Anyscale Cluster and Actor Dashboards</strong>, completing the rollout of the <strong>fully persisted Ray Dashboard</strong> on Anyscale. Together with the <a href="https://www.anyscale.com/blog/ray-train-data-dashboard"><strong>Train</strong>, <strong>Data</strong></a>, and <a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs"><strong>Task</strong></a> dashboards, this release provides end-to-end monitoring, debugging, and optimization tools for Ray workloads, from infrastructure-level monitoring to workload-level insights, all persisted for historical analysis after the workload has completed.</p>
+<table><thead><tr><th><strong>Dashboard</strong></th><th><strong>Focus</strong></th><th><strong>What You Can Do</strong></th></tr></thead><tbody><tr><td><strong>Train</strong></td><td>Model training</td><td>Monitor progress, errors, and profiling data</td></tr><tr><td><strong>Data</strong></td><td>Data pipelines</td><td>Identify bottlenecks via operator metrics</td></tr><tr><td><strong>Task</strong></td><td>Distributed workloads</td><td>Analyze millions of distributed tasks</td></tr><tr><td><strong>Actor</strong></td><td>Distributed stateful workloads</td><td>Track actor lifecycles and performance</td></tr><tr><td><strong>Cluster</strong></td><td>Infrastructure</td><td>Monitor node health and utilization</td></tr></tbody></table>
+<h2>LinkIntroducing Cluster and Actor Dashboards</h2>
+<p>The Ray dashboard has long been an essential tool for understanding the current state of distributed workloads – what your application is doing (tasks, actors) and how it’s running (nodes, hardware utilization). However, the Ray dashboard has important limitations:</p>
+<ul><li><strong>Ephemeral data</strong>: Once a Ray cluster shut down, all dashboard data was lost. Without access to that data, post-mortem investigations are difficult and often require reproducing the issue from scratch, an expensive and time-consuming process for long-running or large-scale jobs.</li><li><strong>Limited scale / Short retention</strong>: To avoid impacting running workloads, the ​​Ray cluster dashboard stored only a subset of data. Dead node data is kept for only 10 minutes, and only the most recent 100,000 killed actors are retained.</li></ul>
+<p>As workloads scale to hundreds of nodes and millions of tasks, these limitations become insufficient for modern AI and data workloads.</p>
+<p>The new <strong>Anyscale</strong> <strong>Cluster and Actor Dashboards</strong> address these limitations as well as improve the overall observability experience for Ray workloads. Powered by the <a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#ray-event-export-framework"><strong>Ray Event Export Framework</strong></a>, these dashboards stream and persist cluster events off-cluster into Anyscale-managed storage and query engines for long-term analysis. This allows developers to debug failures, analyze performance, and compare workloads even after clusters have terminated, without maintaining their own infrastructure.</p>
+<h4>LinkKey Improvements include:</h4>
+<ul><li><strong>Full persistence</strong> – Data remains available for post-mortem debugging even after cluster shutdown.</li><li><strong>Scalability</strong> – Designed to handle large-scale Ray deployments with thousands of nodes and millions of actors.</li><li><strong>Enhanced UX</strong> – Faster filtering, search, and aggregation, plus new visualizations and historical information to understand cluster topology and actor lifecycles over time.</li><li><strong>Unified and interactive</strong> – Seamless navigation between workload dashboards (Train, Data) and system dashboards (Cluster, Task, Actor), providing a unified debugging journey from high-level overview to node-level details.</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4poOpOAhgiegkFiYyMSSKb/6b2b8011ad6aecaf944f8bdbee7a8dbe/image11.png" alt="Cluster dashboard overview page. Shows a list of all the cluster nodes, with each row expandable to show the workers on the node.">Figure 1: Cluster dashboard overview page. Shows a list of all the cluster nodes, with each row expandable to show the workers on the node.</p>
+<p>Cluster dashboard overview page. Shows a list of all the cluster nodes, with each row expandable to show the workers on the node.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5KdjjPRviOvUtNwUvjAakP/1990f8d26d5d8fc9ca5af4a505ac6566/image9.png" alt="Cluster dashboard node detail page. A zoomed in view of a single node, with more detailed metadata and metrics, task, and actor events scoped to the node.">Figure 2: Cluster dashboard node detail page. A zoomed in view of a single node, with more detailed metadata and metrics, task, and actor events scoped to the node.</p>
+<p>Cluster dashboard node detail page. A zoomed in view of a single node, with more detailed metadata and metrics, task, and actor events scoped to the node.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7dro2xigjjaDDcKkwSrtc5/50954a0d50a874b2ea7e2438399ccfaf/image3.png" alt="Actor dashboard overview page. Provides a high level view of the actors in each state, aggregate views, and a table listing all actors.">Figure 3: Actor dashboard overview page. Provides a high level view of the actors in each state, aggregate views, and a table listing all actors.</p>
+<p>Actor dashboard overview page. Provides a high level view of the actors in each state, aggregate views, and a table listing all actors.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5GaoCNXao6ZaD20WMyYzO3/be9064fa005d6a8e036416097f9fc43c/image10.png" alt="Actor detail page. Show metadata, logs, and tasks from a given actor.">Figure 4: Actor detail page. Show metadata, logs, and tasks from a given actor.</p>
+<p>Actor detail page. Show metadata, logs, and tasks from a given actor.</p>
+<p>See the <strong>Anyscale docs</strong> for more details on the <a href="https://docs.anyscale.com/monitoring/cluster-dashboard"><strong>Cluster dashboard</strong></a> and the <a href="https://docs.anyscale.com/monitoring/actor-dashboard"><strong>Actor dashboard</strong></a>.</p>
+<h2>LinkDebugging a Ray Data embeddings pipeline end to end</h2>
+<p>Let's walk through a debugging scenario to see how the workload-level Data and Train dashboards, the system-level Cluster dashboard, and the core-level Task and Actor dashboards work together in practice. For this scenario, a Ray Data pipeline takes far longer than expected to finish, and we use the persisted dashboards to figure out why – after the job has already completed.</p>
+<p>Ray Data simplifies distributed data processing by providing a high-level dataset API built on top of Ray. Developers typically start debugging in the Data dashboard, which provides job-level context before drilling down into system-level details.</p>
+<h3>LinkThe Pipeline</h3>
+<p>We're building a two-stage audio embedding pipeline with Ray Data. The first stage uses librosa on CPU to convert raw audio clips into spectrograms, visual representations of sound that show how frequencies change over time. When working with audio data at scale, the raw audio must be decoded, resampled to a consistent sample rate, and transformed into a format suitable for ML models. This spectrogram conversion is computationally expensive (CPU-heavy) and is the standard preprocessing step for audio ML – similar to how images need resizing and normalization before being fed to a vision model. The second stage uses ViT-B/16 on GPU to extract embeddings from these spectrogram images, which can be used for downstream tasks like similarity search, clustering, and genre classification.</p>
+<pre><code>ds = ray.data.from_huggingface(hf_dataset)  # lewtun/music_genres
+ds = ds.limit(19_000)
+ds = ds.repartition(128)
+ds = ds.random_shuffle()
+
+# Stage 1: mel spectrogram extraction on CPU (8 actors, librosa + mel filterbank)
+ds = ds.map_batches(SpectrogramExtractor, batch_size=16,
+                    compute=ray.data.ActorPoolStrategy(size=8))
+
+# Stage 2: ViT-B/16 embedding on GPU (1 actor, ~330 MB model)
+ds = ds.map_batches(SpectrogramViTEmbedder, batch_size=64,
+                    compute=ray.data.ActorPoolStrategy(size=1), num_gpus=1)
+ds.write_parquet(&quot;/mnt/cluster_storage/audio_demo/output/&quot;)</code></pre>
+<p>The cluster has 1 CPU worker node (m5.2xlarge: 8 CPU, 32 GB RAM) and 1 GPU worker node (g4dn.xlarge: 4 CPU, 16 GB RAM, 1× T4). We set the spectrogram extraction stage’s actor concurrency to 8 to keep throughput high on the CPU-heavy work.</p>
+<p>We submit the job with 19,000 music clips. Based on existing benchmarks, we expect it to finish in about 10 minutes. Instead, it takes over an hour. The job succeeded with all embeddings written, yet something clearly went wrong. What happened?</p>
+<h3>Link<strong>Step 1: Data Dashboard - When did the pipeline actually produce output?</strong></h3>
+<p>We start in the Data dashboard for the completed job, which provides a Ray library-level overview of the workload and sets the context before drilling further into system and core-level dashboards. Because the Anyscale dashboards persist data beyond cluster lifetime, all metrics are still available even though the job has finished.</p>
+<p>Looking at the operator metrics over time, the pattern is immediately suspicious:</p>
+<ul><li><code>MapBatches(SpectrogramExtractor):</code> active throughput from the start, processing audio clips steadily throughout the run.</li><li><code>MapBatches(SpectrogramViTEmbedder):</code> 0 output rows for over an hour, then a sudden burst of activity in the last five minutes. Input queue size steadily increased until the last five minutes. All the embeddings were produced right at the end.</li><li><code>Write:</code> same pattern - nothing written until the very end.</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/i9GtzBKyrzJ7lLV2tzbvQ/95f8750e808aacf3fd85a121360de97a/image1.png" alt="Metrics view scoped to the SpectrogramExtractor data operator in the Data dashboard.">Figure 5: Metrics view scoped to the SpectrogramExtractor data operator in the Data dashboard.</p>
+<p>Metrics view scoped to the SpectrogramExtractor data operator in the Data dashboard.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/2BhAodCjw0JpOSMJJKu8JB/652a926f4a54692c455160ff464d50ec/image2.png" alt="Metrics view scoped to the SpectrogramViTEmbedder data operator in the Data dashboard.">Figure 6: Metrics view scoped to the SpectrogramViTEmbedder data operator in the Data dashboard.</p>
+<p>Metrics view scoped to the SpectrogramViTEmbedder data operator in the Data dashboard.</p>
+<p>While the spectrogram extraction stage ran for the vast majority of the job, the embedding stage only started producing output at the tail end. This means the GPU, the most expensive resource in the cluster, sat completely idle for over an hour. This translated directly to wasted spend, since the GPU node was running and accruing cost the entire time while contributing nothing until the final few minutes. The embedding stage was starved of resources until the extraction actors released their CPU slots on the GPU node, so the pipeline effectively serialized – first all CPU work, then all GPU work – losing all the pipelining benefits that Ray is designed to provide.</p>
+<h3>LinkStep 2: Task Dashboard - Why is there no Embedding progress?</h3>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/45M9DK9R23PPmbecc6NBNi/d99a404c139ecc7336c7b0642eaf7c84/image4.png" alt="Task view scoped to the SpectrogramViTEmbedder data operator in the Data dashboard. ">Figure 7: Task view scoped to the SpectrogramViTEmbedder data operator in the Data dashboard.</p>
+<p>Task view scoped to the SpectrogramViTEmbedder data operator in the Data dashboard.</p>
+<p>Looking into the Tasks tab within the Data dashboard for the <code>SpectrogramViTEmbedder</code> operator, we can see that the first embedding task started executing only a few minutes before the job ended, confirming what the metrics showed. No embedding work happened for the majority of the run.</p>
+<p>To see aggregate data about the tasks, we go to the <strong>Task dashboard</strong> and see that:</p>
+<ul><li><code>SpectrogramExtractor</code> tasks ran with an average execution time of 20s.</li><li><code>SpectrogramViTEmbedder</code> tasks ran with an average execution time less than 1s.</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4tFZ3nUtll4NFEihuuUPBa/07ecf88f6dac01dd9f9eae110c4f8a84/image8.png" alt="Task aggregate view in the Task dashboard.">Figure 8: Task aggregate view in the Task dashboard.</p>
+<p>Task aggregate view in the Task dashboard.</p>
+<p>The tasks themselves ran without issue once they started, with normal execution times and no errors logged. Since execution wasn't the problem, the bottleneck had to be earlier in the process: the actor hadn't been scheduled yet. Why?</p>
+<h3>LinkStep 3: Actor Dashboard - Why was the embedding actor delayed?</h3>
+<p>Our next step takes us to the Actor dashboard, where we can find actors for the SpectrogramViTEmbedder operator. Clicking through to the actor detail page, we see the Actor Events timeline:</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/193kd6ipbhjzLbXrJxD2Nf/c76bbe3dc40291ca987e69b85d9030cd/image6.png" alt="Actor detail page for the SpectrogramViTEmbedder actor.">Figure 9: Actor detail page for the SpectrogramViTEmbedder actor.</p>
+<p>Actor detail page for the SpectrogramViTEmbedder actor.</p>
+<p>The actor was waiting to schedule for over an hour. The actor wasn't failing or crashing at all; it was simply waiting for a CPU slot to open up before it could be scheduled. Once the actor was finally scheduled at 14:09, it ran for just a few minutes and successfully completed all the embedding work.</p>
+<p>The required resources show <code>{&quot;CPU&quot;: 1.0, &quot;GPU&quot;: 1.0}</code>. The GPU was free the entire time (nothing else would have used it). So the GPU wasn't the constraint – the CPU was. The actor couldn't find a free CPU slot on the GPU node.</p>
+<h3>LinkStep 4: Cluster Dashboard - Where did the CPU slots go?</h3>
+<p>From the actor detail page, we click the Node ID link, which takes us to the node detail view in the Cluster dashboard for the GPU node (g4dn.xlarge).</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5ozS9nZuGCO53mq0bkdPR5/df1bdd11057561fe64e13658ff7faea8/image5.png" alt="Node detail page for the GPU node.">Figure 10: Node detail page for the GPU node.</p>
+<p>Node detail page for the GPU node.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/67YQYyzofPQxGG9oOCc3nt/3ff257c6e28c477639d434120f2f6143/image12.png" alt="Figure 11: Actor table scoped to the GPU node.">Actor table scoped to the GPU node.</p>
+<p>Figure 11: Actor table scoped to the GPU node.</p>
+<p>The GPU node has 4 CPUs and 1 GPU, and checking the actors tab reveals exactly where things went wrong. Four <code>SpectrogramExtractor</code> actors had been scheduled onto this node, each claiming one CPU slot, making all four slots fully occupied. Because the embedding actor also required a CPU to launch, it had nowhere to start.</p>
+<p>The timestamps confirm the chain of events: those 4 extraction actors were alive until ~14:09, and the moment the extraction actors finished and released their CPU slots, the embedding actor was scheduled.</p>
+<p>From the Anyscale dashboards, we have investigated and identified the core issue: with <code>concurrency=8</code> extraction actors each requesting 1 CPU, Ray distributed them evenly across available CPU slots in the cluster: four on the CPU node (8 CPUs), four on the GPU node (4 CPUs). By the time the GPU actor tried to start, there were no free CPU slots on the only node with a GPU. The embedding actor waited nearly an hour for the extraction stage to complete and release its CPU slots before it was finally scheduled on the node.</p>
+<h3>LinkThe Fix</h3>
+<p>The root cause was Ray scheduling four <code>SpectrogramExtractor</code> actors onto the GPU node, consuming every available CPU slot in the process and preventing the embedding actor from ever getting off the ground. There are several recommended options to fix this:</p>
+<p><strong>1. Reduce preprocess concurrency:</strong></p>
+<pre><code>ds = ds.map_batches(
+    SpectrogramExtractor,
+    batch_size=32, 
+    compute=ray.data.ActorPoolStrategy(size=6),
+)</code></pre>
+<p>Ray will distribute actors so that there are three on the CPU node and three on the GPU node. Then, the <code>SpectrogramExtractor</code> actors will consume only three out of four CPUs on the GPU node.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7ySbj9RLLryGW6Cvkh7PxU/362d0290ca8989e665559fc36a6274f2/image7.png" alt="Data dashboard view for the fixed spectrogram embedding pipeline.">Figure 12: Data dashboard view for the fixed spectrogram embedding pipeline.</p>
+<p>Data dashboard view for the fixed spectrogram embedding pipeline.</p>
+<p><strong>2. Use scheduling labels to separate workloads:</strong></p>
+<pre><code># In the Anyscale cluster config, label the CPU node with {&quot;workload&quot;: &quot;cpu-extraction&quot;} 
+
+.map_batches(
+    SpectrogramExtractor,
+    batch_size=32,
+    compute=ray.data.ActorPoolStrategy(size=6),
+    label_selectors={&quot;workload&quot;: &quot;cpu-extraction&quot;},
+)</code></pre>
+<p>This approach explicitly pins extraction actors to the CPU node, preventing them from landing on the GPU node regardless of available capacity, so the GPU node is guaranteed to have free CPU slots. Strongest guarantee, but rigid – extraction can never use any GPU-node CPU even if it's idle.</p>
+<p>Once placement is explicit, concurrency becomes an independent tuning knob. We keep the number of extraction actors at 6 here to leave CPU headroom for other tasks on the node, but it should be tuned for throughput.</p>
+<p><strong>3. Use resources to target workloads:</strong></p>
+<pre><code># In the Anyscale cluster config, add resources to the CPU node with {&quot;extraction-cpu&quot;: 8} and to the GPU node with {&quot;extraction-cpu&quot;: 2}
+
+ds = ds.map_batches(
+    SpectrogramExtractor,
+    batch_size=32,
+    compute=ray.data.ActorPoolStrategy(size=6),
+    resources={&quot;extraction-cpu&quot;: 1},
+)</code></pre>
+<p>This sets an explicit placement budget for how many extraction actors can run on each node. CPU extraction is capped at 2 CPUs on the GPU node, leaving 2 CPUs reserved for the GPU actor. This is more flexible than labels – the GPU node can still pitch in on extraction up to a bounded amount.</p>
+<h3>LinkKey Takeaway</h3>
+<p>What makes this bug particularly tricky is that nothing looks wrong in isolation. The pipeline code is correct, the cluster has sufficient total resources, and each individual configuration choice is reasonable on its own. The problem only surfaces from the interaction between actor placement, per-actor CPU requests, and the GPU node's limited CPU capacity, which is exactly the kind of systemic issue that's nearly impossible to diagnose without proper observability tooling.</p>
+<p>The Anyscale dashboards made post-mortem debugging not just possible but methodical. The Data dashboard identified when the embedding stage went idle, the Task and Actor dashboards explained why it stalled for nearly an hour, and the Cluster dashboard pinpointed where those CPU slots had gone. Critically, all of this analysis was available after the cluster had already shut down, with no need to reproduce the issue from scratch.</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#introducing-cluster-and-actor-dashboards">Introducing Cluster and Actor Dashboards</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#debugging-a-ray-data-embeddings-pipeline-end-to-end">Debugging a Ray Data embeddings pipeline end to end</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#the-pipeline">The Pipeline</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#step-1:-data-dashboard---when-did-the-pipeline-actually-produce-output?">Step 1: Data Dashboard - When did the pipeline actually produce output?</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#step-2:-task-dashboard---why-is-there-no-embedding-progress?">Step 2: Task Dashboard - Why is there no Embedding progress?</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#step-3:-actor-dashboard---why-was-the-embedding-actor-delayed?">Step 3: Actor Dashboard - Why was the embedding actor delayed?</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#step-4:-cluster-dashboard---where-did-the-cpu-slots-go?">Step 4: Cluster Dashboard - Where did the CPU slots go?</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#the-fix">The Fix</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#key-takeaway">Key Takeaway</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnfGrZlZyKRBMsd2jSreK/05b0b3cd8d2c9ad962448365782fb980/Lila_x_SkyRL.png?w=140" alt="Lila x SkyRL"></p>
+<h4>How Lila Sciences and Anyscale Scaled GLM-5.3-Flash Training to 1M tokens</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-production-best-practices-field.png?w=140" alt="kuberay-production-best-practices-field"></p>
+<h4>KubeRay in production: best practices from the field</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="Announcing Ray support for PyTorch on Google TPUs"></p>
+<h4>Announcing Ray support for PyTorch on Google TPUs</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>Introducing Vision-Language Reinforcement Learning in SkyRL</title>
       <link>https://anyscale.com/blog/vision-language-model-reinforcement-learning-skyrl</link>
       <guid isPermaLink="true">https://anyscale.com/blog/vision-language-model-reinforcement-learning-skyrl?li=1</guid>
@@ -6175,77 +6306,6 @@ def train_loop_per_worker(config: dict):
 <ul><li>Join <a href="https://www.ray.io/join-slack">ray.slack.com</a> and join the #ray-accelerated-dag channel</li><li>Checkout what we’re working on in <a href="https://github.com/ray-project/ray/issues?q=is%3Aissue+is%3Aopen+label%3Aaccelerated-dag">Github</a>.</li></ul>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#introduction">Introduction</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#introducing-compiled-graphs-in-ray">Introducing Compiled Graphs in Ray</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#benchmarks">Benchmarks</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#use-cases">Use Cases</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#faster-model-parallel-inference">Faster model-parallel inference</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#state-of-the-art-distributed-training">State of the art distributed training</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Autoscaling Large AI Models up to 5.1x Faster on Anyscale</title>
-      <link>https://anyscale.com/blog/autoscale-large-ai-models-faster</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/autoscale-large-ai-models-faster?li=1</guid>
-      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Autoscaling Large AI Models up to 5.1x Faster on Anyscale</h1>
-<p>By</p>
-<p>Christopher Chou</p>
-<p>,</p>
-<p>Austin Kuo</p>
-<p>,</p>
-<p>Richard Liaw</p>
-<p>,</p>
-<p>Edward Oakes</p>
-<p>and</p>
-<p>Chris Sivanich</p>
-<p>|</p>
-<p>October 1, 2024</p>
-<p>State of the art AI models are getting larger by the month, GPUs remain wildly expensive, and AI practitioners’ time is scarce. When you put these factors together, it becomes clear that efficiency is key for AI applications, both in development and production.</p>
-<p>Unfortunately, a common experience for AI practitioners is to spend a lot of time waiting around for instances to boot, containers to pull, and models to load. As we’ll discuss below, it can take up to 10-12 minutes to provision a replica of <a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a> for inference using a typical setup of Ray Serve on Kubernetes.</p>
-<p>image3</p>
-<p>At Anyscale, we’ve optimized scale-up speed across the entire stack, leading to <strong>up to 5.1x faster autoscaling for Meta-Llama-3-70B-Instruct</strong> on the Anyscale platform when compared to running the same application using KubeRay on Amazon Elastic Kubernetes Service (EKS).</p>
-<p>image4</p>
-<p>Faster scale-up is a force multiplier for AI engineers and researchers using the Anyscale platform. They’re able to iterate quickly and avoid idle time in development and autoscale to meet workloads’ demands and avoid idle resources in production.</p>
-<h2>LinkThe Problem: Large Containers, Large Models, and Pricey GPUs</h2>
-<p>Take the example of trying to run a popular open source large language model (LLM), <a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a>, on Kubernetes using <a href="https://github.com/vllm-project/vllm">vLLM</a>. The typical startup sequence looks something like:</p>
-<ul><li>Pod is created, Kubernetes cluster autoscaler adds a new node with a GPU: <strong>1-1.5min</strong></li><li>Container image (~12 GB including CUDA and vLLM dependencies) is pulled from container registry: <strong>4-5min</strong></li><li>Container starts, vLLM loads the model (~140 GB in FP16) from cloud storage: <strong>4-5min</strong></li></ul>
-<p>Summed up, this means waiting up to <strong>10-12 minutes</strong> for a copy of the model to come online. Of course, there are various levels of caching that might speed up subsequent runs on the same hardware, but with sky-high GPU prices, it’s critical to relinquish GPU machines when they’re not actively in use.</p>
-<p>In development, this drains the productivity of AI practitioners who find themselves waiting around for their instance to spin up, container to pull, and model to download.</p>
-<p>In production, slow upscaling speeds lead to overprovisioning. Often, autoscaling policies are configured to handle variable incoming traffic patterns; the number of serving replicas is scaled up when traffic increases and scaled down when it decreases. However, if it takes too long to scale up in response to increased traffic, existing replicas can be overloaded, resulting in high response latencies or even failures.</p>
-<p>A simple and common solution to this problem is to add more replicas in steady state to accommodate higher load while waiting for new replicas to come online and upscale more aggressively as traffic increases. However, when each replica of a model requires expensive GPUs to run, this can quickly become expensive.</p>
-<p>Ideally, an online serving system can upscale quickly and be more responsive to incoming traffic, avoiding idle GPU resources.</p>
-<h2>LinkAnyscale Autoscaling: Full-Stack Optimization</h2>
-<p>The <a href="https://www.anyscale.com/platform">Anyscale Platform</a> is a fully-managed Ray solution. Every part of the infrastructure is tailored to provide the best user experience, high performance, and cost effectiveness to run AI applications using Ray. For upscaling speed, this manifests as a few key benefits:</p>
-<ul><li>The Anyscale control plane is directly integrated with the Ray autoscaler, allowing it to react quickly to resource requests and make intelligent autoscaling decisions.</li><li>The machine image and startup sequence have been tuned to optimize instance boot times.</li><li>When pulling container images, Anyscale uses a custom container image format and client to reduce image pull times.</li><li>Anyscale provides a library for fast model loading, streaming tensors directly from cloud storage onto the GPU.</li></ul>
-<p>To demonstrate the effect of these optimizations, we ran an experiment to measure the time taken to scale up a single <a href="https://www.anyscale.com/library/ray-serve">Ray Serve</a> replica to host an LLM model for inference using <a href="https://github.com/vllm-project/vllm">vLLM</a> on AWS. We repeated this experiment for two representative models:</p>
-<ul><li>Mistral-7B-Instruct-v0.1 on a single NVIDIA A10G GPU (1x AWS g5.8xlarge instance). Model weights are about 14 GB in FP16.</li><li>Meta-Llama-70B-Instruct on four NVIDIA L40S GPUs using tensor parallelism (1x AWS g6e.12xlarge instance). Model weights are about 140 GB in FP16.</li></ul>
-<p>On Anyscale, the application is run as a <a href="https://docs.anyscale.com/platform/services/">Service</a> and on KubeRay, it’s run as a <a href="https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html">RayService</a>. In both cases, there is no local caching involved; a new instance needs to be booted, the container pulled from a registry, and the model weights loaded from remote cloud storage.</p>
-<p>image5</p>
-<p>Anyscale is able to scale up a new replica end-to-end in only <strong>75 seconds for Mistral-7B-Instruct-v0.1 </strong>and <strong>107 seconds for Meta-Llama-70B-Instruct</strong>. This represents a <strong>4.3x</strong> and <strong>5.1x</strong> improvement when compared to KubeRay running on Amazon EKS for this workload, respectively.</p>
-<h3>LinkCustom Container Format and Client</h3>
-<p>One of the key differences that enables this speedup is Anyscale’s custom container image format and runtime. The first time a new container image is used by a customer on the Anyscale platform, the image is converted and stored in an optimized format that is used to make subsequent runs with the same image in the same region lightning fast.</p>
-<p>To show the benefit of this optimized format in isolation, we ran an experiment to test the time that it takes to pull a container image and start a container on a freshly-booted g5.8xlarge instance on Amazon EKS and the Anyscale platform.</p>
-<ul><li>The two images used are a ray:2.34.0 default image (~6.2 GB) and a custom image that uses ray:2.34.0 as its base and installs vLLM and its required dependencies (~12.8 GB).</li><li>On Anyscale and EKS, the instances are running in the us-west-2 region and the source container images are hosted in an Amazon Elastic Container Registry in the same region and same AWS account.</li><li>The Amazon EKS node group is configured to use GP3 EBS volumes with 3,000 provisioned IOPs.</li></ul>
-<p>image7</p>
-<p>In this experiment, Anyscale is able to pull the container image up to <strong>30x</strong> faster than AWS EKS for a 6GB image and up to <strong>14x</strong> faster for a 13GB image.</p>
-<h3>LinkOptimized Direct-to-GPU Loading</h3>
-<p>Anyscale also provides an optimized client to load model weights in the <a href="https://github.com/huggingface/safetensors">safetensors</a> format from remote storage directly onto a GPU. This technique leverages pipeline parallelism, avoiding a synchronous copy of the full model weights to disk, followed by loading them to CPU memory, and finally loading to GPU memory. Instead, model weights are streamed chunk-by-chunk from remote storage to CPU memory to GPU memory. You can read more about the technical details in this <a href="https://www.anyscale.com/blog/loading-llama-2-70b-20x-faster-with-anyscale-endpoints">previous blog post</a> and read the latest documentation <a href="https://docs.anyscale.com/platform/services/fast-loading">here</a>.</p>
-<p>To show the benefit of this faster model loading technique in isolation, we measured the time that it takes vLLM to start up and load a model for inference. The models and hardware used are the same as the above end-to-end experiment:</p>
-<ul><li>Mistral-7B-Instruct-v0.1 on a single NVIDIA A10G GPU (1x AWS g5.8xlarge instance). Model weights are about 14 GB in FP16.</li><li>Meta-Llama-70B-Instruct on four NVIDIA L40S GPUs using tensor parallelism (1x AWS g6e.12xlarge instance). Model weights are about 140 GB in FP16.</li></ul>
-<p>image1</p>
-<p>When compared to a typical workflow of using the AWS S3 CLI to download to local disk (with configuration options configured to maximize throughput) and the <a href="https://github.com/huggingface/safetensors">safetensors</a> library to load from local disk to GPU, Anyscale improves the startup and model loading time of vLLM by up to <strong>2x for Mistral-7B-Instruct-v0.1 </strong>and up to <strong>4.8x for Meta-Llama-70B-Instruct</strong>.</p>
-<h2>LinkConclusion</h2>
-<p>The <a href="https://www.anyscale.com/platform">Anyscale Platform</a> implements full-stack optimizations to enable blazing fast autoscaling. For Meta-Llama-3-70B-Instruct, this leads to <strong>up to 5.1x faster autoscaling</strong> when compared to running the same application using KubeRay on Amazon EKS.</p>
-<p>These optimizations make AI practitioners more effective and inference services less expensive to operate.</p>
-<p>Get started on the Anyscale platform for free today at: <a href="https://www.anyscale.com/">https://www.anyscale.com/</a>.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#the-problem:-large-containers,-large-models,-and-pricey-gpus">The Problem: Large Containers, Large Models, and Pricey GPUs</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#anyscale-autoscaling:-full-stack-optimization">Anyscale Autoscaling: Full-Stack Optimization</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#custom-container-format-and-client">Custom Container Format and Client</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#optimized-direct-to-gpu-loading">Optimized Direct-to-GPU Loading</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#conclusion">Conclusion</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>

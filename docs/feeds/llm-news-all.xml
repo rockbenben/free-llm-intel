@@ -7,7 +7,89 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-all.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 09 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 10 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>[Amazon Bedrock] 技能和代理如何在 AWS Quick 中发挥作用</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/</guid>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Amazon Bedrock</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
+      <description>原文标题：How skills and agents work in AWS Quick</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>技能和代理如何在 AWS Quick 中发挥作用</h1>
+<p>如果您使用人工智能代理，您可能不止一次地解释过同一任务。您可能会描述如何构建每周状态更新、编写发行说明、管理项目或创建票证。这些都是可重复的任务，您可以通过代理和技能使用 <a href="https://aws.amazon.com/quick/">AWS Quick</a> 进行编码。 AWS Quick 是一项人工智能驱动的服务，用于自动执行任务、分析数据、构建 Web 应用程序和进行研究。您可以使用自然语言来使用它，Quick 使用 AI 代理来处理您针对连接的数据源和应用程序的请求。</p>
+<p>在这篇文章中，我们将介绍代理、技能和您的数据如何在 AWS Quick 中组合在一起，以及如何构建和分享适合您的团队的技能。我们还展示了官方目录和定制代理如何帮助您运用这些技能。</p>
+<h2>理解基本概念</h2>
+<p>在本部分中，我们将解释一些基本概念，帮助您了解与代理、技能和数据相关的 AWS Quick。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/04/ML-22266-1.png" alt="中心辐射图，以 Quick 代理为中心，连接到其指令、技能、连接器和数据源"></p>
+<p>图 1：Quick 代理如何遵循其指令、加载任务所需的技能、通过连接器执行操作并将其答案基于您的数据</p>
+<p>代理位于图 1 的中心。它遵循指令，加载任务所需的技能，通过连接器采取行动，并将其答案基于您的数据：空间、知识库、数据集和仪表板。</p>
+<h3>与代理合作</h3>
+<p>AWS Quick 中的<a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html">代理</a> 是一个可配置的 AI，具有自己的指令、知识源（空间）和连接器，用于回答问题并为您完成工作。您可以在聊天中使用代理，或者使用<a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html">例程</a>让它自行运行。代理只能访问您可以访问的资源和服务，并且您可以决定允许每个代理执行哪些操作。</p>
+<p><strong>Quick</strong> 是每个用户都可以访问的默认内置代理。它没有固定的范围，因此在每次对话中，它都可以使用您有权访问的任何资源，例如您的空间、知识库、仪表板、连接器和技能。您无需提前决定请求需要哪些数据或工具，因此您可以使用 Quick 开始大部分工作。</p>
+<p><strong>自定义代理</strong>是您或您团队中的某人为特定作业配置的代理。一个例子是人力资源 (HR) 入职助理，他在人力资源团队的空间中回答新员工的问题。您可以为其提供自己的说明，并将其限制为您的用例所需的空间、连接器和技能。测试并发布后，您可以与 AWS Quick 账户中的其他用户和组共享。有关构建一个的演练，请参阅<a href="https://aws.amazon.com/blogs/machine-learning/build-ai-powered-employee-onboarding-agents-with-amazon-quick/">使用 AWS Quick 构建由 AI 驱动的员工入职代理</a>。</p>
+<h3>处理数据</h3>
+<p>客服人员根据您连接到 Quick 的数据给出答案。 <strong>空间</strong> 是代理用作信息源的文档和 AWS Quick 资源的精选集合。您可以为自己、您的团队或组织中的其他小组创建一个。您可以将文件和文件夹上传到空间，或添加仪表板、知识库、操作连接器和数据集等资产。当您与 Quick 开始对话时，您可以附加一个空格来缩小 Quick 用于该对话的数据范围。当您向代理添加空间时，该空间将成为代理配置的一部分，并且代理会在请求需要时利用它。</p>
+<p><strong>知识库</strong>是来自数据源的文档或内容的有组织的、索引的集合，针对检索和问题回答进行了优化。快速同步来自 Google Drive、Microsoft OneDrive、Confluence、Microsoft SharePoint、Amazon Simple Storage Service (Amazon S3)、网络爬虫或 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock 托管知识库</a> 等来源的知识库。快速让他们了解最新的同步时间表。</p>
+<p>数据集和控制面板来自 <a href="https://docs.aws.amazon.com/quick/latest/userguide/quick-bi.html">AWS Quick Sight</a>，这是 Quick 中的商业智能功能，可在通过 AWS 管理控制台配置的账户中使用。 <strong>数据集</strong>是准备好的数据集合，可用于分析和仪表板。 <strong>仪表板</strong>是您与其他 Quick 用户共享的分析的发布版本。借助数据集，您可以在结构化数据（例如数据库表）上构建语义丰富的元数据，这样您就可以使用自然语言完成复杂的分析用例。</p>
+<p>最后，<strong>连接器</strong> 将 AWS Quick 连接到外部应用程序或本机工具，以便代理可以读取数据并代表您采取操作。 <strong>云连接器</strong> 将 Quick 连接到 Microsoft Outlook、Slack、Jira、Asana 和 Salesforce 等服务，以及远程托管的模型上下文协议 (MCP) 服务器。它们可在您使用 Quick 的每台设备上使用。 <strong>本地连接器</strong> 在您自己的计算机上运行，​​例如您自己托管的 MCP 服务器，因此它们的工具仅在该计算机打开并连接时才可用。有关连接器类型的完整列表，请参阅 AWS 快速用户指南中的<a href="https://docs.aws.amazon.com/quick/latest/userguide/connections-desktop.html">连接器</a> 和<a href="https://docs.aws.amazon.com/quick/latest/userguide/integration-guides.html">集成特定指南</a>。</p>
+<p>这些共同使您的数据、文档和应用程序可以通过自然语言访问，因此您可以在连接的源中提出问题并采取行动。</p>
+<h3>运用技能工作</h3>
+<p><a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html">技能</a> 是一组可重复使用的指令，用于指导代理如何执行特定任务。技能也是客服人员在 Quick 中表现和完成工作的基础。与其他代理一样，Quick 中的代理在遵循推理和行动 (ReAct) 模式的线束（托管代理循环）中运行。当您向 AWS Quick 提供提示时，代理会使用其可用的工具和指令来实现其目标并向您提供响应。 <a href="https://strandsagents.com/">Strands Agents SDK</a> 等代理框架是围绕相同的模型驱动循环构建的。</p>
+<p>Quick 默认情况下所做的大部分工作都来自<strong>系统技能</strong>。例如，您可以要求 Quick 生成 Word 文档、PowerPoint 演示文稿、Excel 电子表格或 PDF。然后，系统技能可以使用带有技能包脚本的代码来创建或编辑文档。其他系统技能浏览网页、运行代码、执行深入研究、转录音频和视频以及生成图像。有些管理 Quick 本身，例如构建 <a href="https://docs.aws.amazon.com/quick/latest/userguide/using-amazon-quick-flows.html">AWS Quick Flows</a>、安排例程、将工作交给 Kiro 等编码代理、管理您的记忆和知识图或跟踪您的待办事项。在 Quick 中，您可以打开或关闭系统技能，但无法编辑、复制、导出、发布、共享或删除它们。</p>
+<p>由于 AWS Quick 提供的功能和工具，技能可以完成多种工作。例如，一项技能可以产生可交付成果，例如根据模板构建的每周状态更新。另一个可以自动化连接器之间的工作流程，例如收集本周的 Jira 更新并将摘要发布到 Slack。技能还可以在 Python 脚本中运行计算并使用 JavaScript 将结果绘制成图表。</p>
+<h2>什么是技能？</h2>
+<p>快速技能遵循 <a href="https://agentskills.io/">Agent Skills</a> 规范，该规范最初由 Anthropic 开发并作为开放标准发布。桌面版 AWS Quick，于 <a href="https://aws.amazon.com/about-aws/whats-new/2026/04/amazon-quick-macos-windows-preview/">2026 年 4 月预览</a> 推出，并<a href="https://aws.amazon.com/blogs/machine-learning/amazon-quick-is-now-generally-available-on-desktop/">于 9 月全面推出2026</a>，使用此规范。</p>
+<p>技能是一个文件夹，其根目录下有一个 Markdown 文件“SKILL.md”，以及其说明使用的任何可选脚本或其他参考文件。文件的 frontmatter（两个“---”行之间的属性）包含名称、描述以及与您的技能相关的任何其他元数据。请参阅以下名为“release-notes-generator”的技能的简短示例。</p>
+<pre><code>---
+name: release-notes-generator
+description: &quot;Generates human-readable release notes from merged pull requests, commits, or changelogs ... Use when asked to 'generate release notes', 'write changelog', ...&quot;
+---</code></pre>
+<p>描述和名称是触发技能的两个最重要的方面。当快速将您的技能加载到代理的提示中时，它会使用<strong>渐进式披露</strong>。代理仅读取每个技能的名称和描述，直到请求调用该技能为止。然后，它会加载技能的完整说明，如<a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-how-quick-loads-skills">代理如何加载技能</a>所述。这意味着某些短语可以帮助触发该技能，例如“生成 2.3 版本的发行说明”。该规范将“名称”的上限限制为 64 个字符，将“描述”的上限限制为 1,024 个字符，并建议技能中的指令少于 5,000 个字符。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/04/ML-22266-2.png" alt="名为release-notes-generator的技能文件夹，其中包含SKILL.md文件以及可选脚本和引用文件夹"></p>
+<p>图 2：release-notes-generator 技能文件夹，其中包含必需的 SKILL.md 文件以及可选的脚本和引用文件夹</p>
+<h2>建立并分享 Quick 技能</h2>
+<p>您可以通过聊天、文件（.md 或 .zip 文件）或根目录下有“SKILL.md”文件的文件夹创建技能。这篇文章主要讨论聊天。首先，在聊天中快速描述您的任务。例如，您可以从此模板开始（将 &lt;&gt; 括号之间的内容替换为您的要求）：</p>
+<pre><code>Every &lt;specify your cadence e.g. every day, on monday, or none at all&gt;, I have to grab data from the following sources:
+- &lt;List your sources and how you want to query them&gt;
+...
+
+And do &lt;describe how you want to transform the data and the exact sequence of steps&gt;. 
+
+Once I am finished, I have to create a report &lt;describe your report format or provide an example&gt; and send to the following stakeholders &lt;describe your recipients&gt; using the following connector &lt;describe your connector&gt;.
+
+Create a skill from this requirement, and help me come up with testing scenarios to test the skill. </code></pre>
+<p>这就是您开始培养自己的技能所需的全部内容。或者，您也可以进行之前为完成任务而互动过的多轮对话，并要求 Quick 从中生成技能。当您对最终结果感到满意后，发布并分享您的技能：</p>
+<ul><li>选择<strong>自定义</strong>，然后选择<strong>技能</strong>。</li><li>在草稿中找到你的技能，然后打开其详细信息面板。</li><li>选择<strong>发布</strong>。</li><li>选择 <strong>共享</strong>，然后选择要共享的人员或群组。</li></ul>
+<p>发布和共享是独立的步骤，因此仅发布并不能让任何人获得该技能。您与之共享的人从 <strong>添加到快速</strong> 中的 <strong>与我共享</strong> 下添加它，并且每次您再次发布时，他们的版本都会保持同步。有关当前步骤，请参阅 AWS 快速用户指南中的<a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-skill-draft-published">草稿和已发布版本</a>和<a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-sharing-skills">分享您的技能</a>。</p>
+<h3>通过最佳实践提高您的技能</h3>
+<p>通过快速描述或对话构建的技能可能对您来说始终有效，但在构建与团队共享的生产技能时必须考虑许多注意事项。技能就像代码，许多工程最佳实践可以帮助任何知识工作者构建它们。</p>
+<ul><li>“它可以在我的机器上运行”是软件工程师的常用短语。它描述了为构建它的人运行但在其他人安装或使用它时崩溃的软件。在培养技能时，您必须考虑您的环境。技能指令可以使用代理来查询数据源或调用连接器或工具。软件工程师通常通过记录使用软件的先决条件来解决此限制。例如，如果您要单独共享一项技能，您可能需要使用您的技能创建一个自述文件来记录这些要求。如果您共享使用您的技能的代理，还要共享它连接到的源，或者与您共享它的人只能从他们已经可以访问的源中获取答案。</li><li>为失败做好计划。代理使用依赖于第三方和第一方服务的连接源。当工程师编写代码时，他们需要了解如果某个软件出现故障该怎么办。如果您将这些场景纳入您的技能说明中，您的代理可以根据具体说明进行调整。您不需要成为下游服务的专家，因为代理会朝着目标努力，并且可以在步骤失败时重试或尝试其他方法。您确实需要列出当故障影响您的任务或业务流程时该怎么做。从技能中的工作流程中获取以下片段，如果失败可能会产生后果。</li></ul>
+<pre><code>[Agent] Send the report to {{recipient}} over email.</code></pre>
+<p>如果发送邮件失败，代理应该怎么办？您可能想要添加有关在该场景中要做什么的说明。</p>
+<pre><code>[Agent] Send the report to {{recipient}} over email.
+Validate: The report appears in your Sent folder.
+If fails: Stop, and tell the user that the report wasn't sent and why, so they can send it themselves.</code></pre>
+<p>当按计划执行代理且无人参与循环时，处理故障场景甚至更为重要。</p>
+<ul><li>测试每一个变化。软件工程师编写多种形式的测试，例如单元测试和集成测试，以帮助他们测试软件。这些测试会在每次更改时运行。有了技能，为各种场景生成自己的测试用例并在做出更改时继续添加新测试也同样重要。有多种方法可以做到这一点，但最好使用您希望下游用户使用的环境进行测试。</li></ul>
+<p>培养生产技能时还有很多方面需要考虑：</p>
+<ul><li>为每个更改添加发行说明。</li><li>将发生变化的硬编码值（例如“/Users/me/notes”或“#my-team”）保留在步骤之外，并将它们声明为每个人提供的输入。</li><li>用人类可读的日期记录技能何时发生变化。</li><li>记录每个参考文件的来源，以便如果来源发生变化，您也可以更新您的技能说明。</li><li>存储校验和，即技能文件的指纹，当副本与检查的版本不同时显示。</li><li>每次更改后检查结构，就像检查代码之前 linter 捕获错误的方式一样。</li><li>以一致的方式培养技能，以便您的团队可以贡献更改并更快地审查它们。</li></ul>
+<p>对于任何用户来说，这是一个需要考虑的事情。这就是为什么 <a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/">AWS Quick 官方目录</a> 提供了预先构建的资源，例如根据这些最佳实践构建的技能。</p>
+<h3>AWS Quick 官方目录</h3>
+<p>该目录是代理资源的集合，您可以按原样安装和使用它们，也可以将其作为起点并适应您自己的工作。该目录指出，其中的每个资源在发布之前都经过质量、安全性和其他因素的测试和扫描。这些技能涵盖日常生产力和销售、营销、人力资源、法律、项目管理、客户成功和软件工程等团队的工作。它们还涵盖金融、医疗保健和生命科学、能源和公用事业、酒店、供应链和物流等行业。</p>
+<p>该目录包括 <strong>Skill Architect</strong> 技能，这是一项为您应用这些工程最佳实践的预构建技能，如<a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/build-skills/">使用 AWS Quick 中的软件工程实践构建技能</a> 所述。要安装它，请选择“<strong>自定义</strong>”、“<strong>技能</strong>”、“<strong>浏览全部</strong>”，然后选择“<strong>官方</strong>”。在搜索框中输入“技能架构师”，然后选择“<strong>安装</strong>”。有关当前步骤，请参阅<a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/install/">在桌面版 AWS Quick 中安装技能</a>。</p>
+<h3>将技能与您的代理联系起来</h3>
+<p>创建代理时，您可以配置其名称、描述和说明，并选择其读取的空间、可以使用的连接器以及可以加载的技能。有关详细信息，请参阅 AWS 快速用户指南中的<a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html#desktop-agent-configuration">代理配置</a>。代理在解决特定用例（例如回答新员工问题或准备每周状态报告）并将其世界限制在用例所需的空间、技能和连接器时效果最佳。默认情况下，代理可以使用您的所有技能，当您添加特定技能时，代理将仅限于这些技能。当您共享代理时，这会成为问题，因为它在使用它的人的访问权限下运行。同一请求可能会为每个人提供不同的数据和技能，并且当它需要只有您可以访问的来源时，可能会返回不完整的答案。</p>
+<p>如果您想将它们全部（代理、技能和空间）联系在一起，请尝试<a href="https://catalog.us-east-1.prod.workshops.aws/workshops/a8484e57-2e30-40ee-bd98-0122f0d05acc/en-US/2000-build-your-personal-setup/2100-run-personal-agent-architect">个人代理架构师模块</a>在链接的研讨会中。</p>
+<h2>结论</h2>
+<p>在这篇文章中，我们展示了代理如何在 AWS Quick 中使用技能和数据，以及如何构建和分享适合您的团队的技能。我们还展示了官方目录和定制代理如何帮助您运用这些技能。</p>
+<p>要了解更多信息、查找活动或分享您使用 AWS Quick 取得的成功，请访问 <a href="https://community.amazonquick.com/">AWS Quick 社区</a>。 AWS 快速社区提供学习材料、功能公告、活动和其他用户的示例。您还可以在其问答论坛中提问。</p>
+<p>有关本文主题的录制会议，请观看 <a href="https://www.youtube.com/watch?v=m9gN2GapOps">在 AWS Quick 上使用代理和技能对您的企业进行编码</a>。该会议涵盖了技能的结构和加载方式、技能如何与代理、空间和连接器配合使用，以及构建您共享的技能的最佳实践。最后是官方目录和技能架构师技能的演示。</p>
+<p>以下是由每天使用 AWS Quick 的专家设计的一些额外资源：</p>
+<ul><li><a href="https://catalog.workshops.aws/amazon-quick-suite-workshop">AWS Quick 完整指南：代理 AI 业务工作区</a>。</li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/8724e6e3-1115-4f40-9770-8a24199ce308/en-US">AWS Quick：具有丰富集成的端到端业务用例</a>。</li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/767bc5b8-1d33-40e2-8969-f8653db64756/en-US">AWS 快速管理研讨会</a>。</li><li><a href="https://catalog.workshops.aws/quicksight/en-US">深入了解 AWS Quick Sight</a>。</li><li><a href="https://aws-samples.github.io/sample-amazon-quick-suite-knowledge-hub/">AWS Quick Knowledge Hub – 官方代码示例和解决方案</a>。</li><li><a href="https://aws.amazon.com/search/?searchQuery=Amazon%20Quick&amp;filters=((id:provider,value:(blogs">关于 AWS Quick 的 AWS 博客文章</a>))&amp;sort=(id:relevance,direction:desc))。</li></ul>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
     <item>
       <title>[OpenAI] ChatGPT Enterprise 现已在 AWS Marketplace 中提供</title>
       <link>https://openai.com/index/chatgpt-enterprise-aws-marketplace</link>
@@ -18,6 +100,24 @@
       <description>原文标题：ChatGPT Enterprise now available in AWS Marketplace</description>
     </item>
     <item>
+      <title>[OpenAI] 控制室：一个中央系统，用于跟踪和停止我们研究基础设施中的模型工作负载</title>
+      <link>https://openai.com/index/control-room</link>
+      <guid isPermaLink="true">https://openai.com/index/control-room</guid>
+      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：Control Room: A central system to track and stop model workloads across our research infrastructure</description>
+    </item>
+    <item>
+      <title>[OpenAI] CodeRabbit scales agentic software development and ships 20x…</title>
+      <link>https://openai.com/index/coderabbit-codex-daybreak</link>
+      <guid isPermaLink="true">https://openai.com/index/coderabbit-codex-daybreak</guid>
+      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>完整标题：CodeRabbit scales agentic software development and ships 20x more</description>
+    </item>
+    <item>
       <title>[OpenAI] Kuken Industries 在几分钟内搜索 70 年的图纸</title>
       <link>https://openai.com/index/kuken</link>
       <guid isPermaLink="true">https://openai.com/index/kuken</guid>
@@ -25,6 +125,55 @@
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
       <description>原文标题：Kuken Industries searches 70 years of drawings in minutes</description>
+    </item>
+    <item>
+      <title>[Anthropic Claude] 摩根大通将 Claude Code 扩展到公司更多员工</title>
+      <link>https://claude.com/resources/articles/jpmorganchase-expands-claude-code</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/jpmorganchase-expands-claude-code</guid>
+      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Anthropic Claude</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
+      <description>原文标题：JPMorganChase expands Claude Code to more employees across the firm</description>
+      <content:encoded><![CDATA[<p>摩根大通正在全公司范围内向工程师以外的更多员工推广Claude。在商业和投资银行，工作更快地投入生产，并且公司根据其业务优先事项重新部署能力。</p>
+<p>团队正在对其他遗留系统进行现代化改造，工程师正在构建自己的代理，包括拉取请求审查和自我修复代理，并分享有效的方法。</p>
+<p>基础设施和运营团队使用 <a href="https://claude.com/product/claude-code">Claude Code（在新选项卡中打开）</a> 进行监控、警报和根本原因分析。该公司的安全团队使用我们的前沿模型来更快地查找和修复漏洞，我们首先在 <a href="https://www.anthropic.com/glasswing">Project Glasswing（在新选项卡中打开）</a> 中描述了这项工作。</p>
+<h2><strong>联系产品团队和顾问</strong></h2>
+<p>与业务关系最密切的人也在与Claude一起建设。产品团队将需求直接转化为工程积压工作，其他团队使用Claude Code进行风险和控制评估以及项目规划。</p>
+<p>知识工作已经在进行中。产品开发生命周期的大部分发生在代码之外：研究、需求、设计和规划。</p>
+<p>在资产和财富管理业务中，摩根大通将具有最深刻的业务洞察力和最大胆的想法的人员与技术和产品专家一起组成了小型、授权的团队。这有助于他们更轻松地大规模构建和提供定制的客户投资解决方案。 Claude Code 现在已成为他们工程工作流程的一部分，团队的行动速度更快，同时在每项更改到达客户之前都经过更严格的测试。</p>
+<p>上个月，摩根大通资产管理公司宣布推出一款连接器，将 55ip 的 ActiveTax Technology® 引入 <a href="https://claude.com/resources/articles/claude-for-financial-advisors">Claude for Financial Advisors（在新选项卡中打开）</a>，将税务意识投资组合过渡分析纳入顾问的日常工作中。</p>
+<h2><strong>专为受监管的公司打造</strong></h2>
+<p>Claude Code 在受控环境中运行，包括在其自己的基础设施上的公司容器化开发平台 Devspace。目的是防止代理直接访问员工凭据或内部系统。访问范围分阶段扩大，新的Claude模型要经过公司自己的批准流程，然后任何人都可以使用它们。</p>
+<p>代码遵循相同的规则。数千个自动化测试和批准门会检查每一个更改，并且自动门会返回管道强制执行的硬通过或停止，因此 Claude 无法批准自己的工作。人们对每一次生产变更负责。</p>
+<p>在过去的一年里，摩根大通对Claude的使用已经从软件工程扩展到网络防御，再到财务顾问的工具，摩根大通对我们的要求是塑造我们为其他受监管机构构建的产品。Claude在世界上最大的金融机构之一的控制下工作是我们的目标。</p>
+<p>文章</p>
+<p>2026 年 10 月 28 日</p>
+<h3>IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude</h3>
+<p>IDC 将 Claude 整合为其 Quanta 平台的一部分，并将 Claude 推广到自己的业务中</p>
+<p>Claude·科沃克</p>
+<p>Claude·科德</p>
+<p>还有 1 个</p>
+<p>：Claude·企业</p>
+<p>Claude·恩企业</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</h3>
+<p>HCLTech 将把 Claude 引入其为银行、医院、电信公司和制造商提供的解决方案中。</p>
+<p>文章</p>
+<p>2026 年 9 月 28 日</p>
+<h3>使用 Claude Managed Agents 和 NVIDIA 实现代理安全的新方法</h3>
+<p>注意：此博客已从其原始版本更新为包含有关 Claude Managed Agents 的其他技术详细信息。</p>
+<p>Claude·平台</p>
+<p>文章</p>
+<p>2026 年 9 月 23 日</p>
+<h3>CodeRabbit、Power Digital 和 ThoughtSpot 如何在 Claude Marketplace 上通过 Snowflake 和 Vercel 进行扩展</h3>
+<p>CodeRabbit 通过 Claude Marketplace 扩展了其 Vercel 计划，Power Digital 和 ThoughtSpot 利用其现有的 Anthropic 承诺扩展了其 Snowflake 容量。</p>
+<p>Claude·平台</p>
+<h2>与 Claude 一起改变您的组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<h3>获取开发者通讯</h3>
+<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
+<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] 推出 Claude Fable 5.2 和 Claude Mythos 5.2</title>
@@ -4399,18 +4548,18 @@ print(response.json())copy</code></pre>
       <description>原文标题：OpenAI appoints Jill Hazelbaker as Chief Corporate Affairs Officer</description>
     </item>
     <item>
-      <title>[硅基流动] 【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线</title>
-      <link>https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</link>
-      <guid isPermaLink="true">https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</guid>
+      <title>[硅基流动] 【模型服务调整】Wan2.2 系列、GLM-5.1 下线，MiniMax-H3 上线</title>
+      <link>https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97glm-51-%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</link>
+      <guid isPermaLink="true">https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97glm-51-%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</guid>
       <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
       <category>硅基流动</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-siliconflow.xml">硅基流动</source>
-      <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#模型服务调整wan22-系列下线minimax-h3-上线">【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线</a></h3>
-<p>平台将于 <strong>2026-11-10</strong> 下线 Wan2.2 系列模型，并同步上线 MiniMax-H3：</p>
-<ul><li>下线模型：<code>Wan-AI/Wan2.2-T2V-A14B</code>（文生视频）、<code>Wan-AI/Wan2.2-I2V-A14B</code>（图生视频）。自 2026-11-10 起，上述模型不再接收新请求，不保留过渡期，请于该日期前完成切换。</li><li>上线模型：<code>MiniMaxAI/MiniMax-H3</code>，支持文生视频、首帧生视频、尾帧生视频、首尾帧生视频。</li></ul>
+      <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#模型服务调整wan22-系列glm-51-下线minimax-h3-上线">【模型服务调整】Wan2.2 系列、GLM-5.1 下线，MiniMax-H3 上线</a></h3>
+<p>平台将于 <strong>2026-11-10</strong> 下线 Wan2.2 系列模型与 <code>Pro/zai-org/GLM-5.1</code>，并同步上线 MiniMax-H3：</p>
+<ul><li>下线模型：<code>Wan-AI/Wan2.2-T2V-A14B</code>（文生视频）、<code>Wan-AI/Wan2.2-I2V-A14B</code>（图生视频）、<code>Pro/zai-org/GLM-5.1</code>（对话模型）。自 2026-11-10 起，上述模型不再接收新请求，不保留过渡期，请于该日期前完成切换。</li><li>上线模型：<code>MiniMaxAI/MiniMax-H3</code>，支持文生视频、首帧生视频、尾帧生视频、首尾帧生视频。</li></ul>
 <p>视频生成 API（<code>/v1/video/submit</code>）同日更新：</p>
 <ul><li>新增 <code>duration</code>（生成时长，单位：秒，可选 5 到 15，缺省 5）、<code>resolution</code>（分辨率，<code>480p</code> / <code>768p</code>）、<code>ratio</code>（画面比例）、<code>images</code>（参考图片列表，通过 <code>role</code> 指定首帧 <code>first_frame</code> 或尾帧 <code>last_frame</code>）。</li><li>按请求中的 <code>duration</code> 计费；<code>negative_prompt</code>、<code>image_size</code> 不再生效，传入不会报错但会被忽略。</li><li>参数说明与示例参见<a href="https://docs.siliconflow.cn/docs/api/video-submit-post">视频生成 API</a>。</li></ul>
-<p>若您正在使用 Wan2.2 系列模型，请务必在 2026-11-10 前切换到 MiniMax-H3 或其他模型。完整可用模型列表请查看<a href="https://cloud.siliconflow.cn/models?types=to-video">模型广场</a>。</p>]]></content:encoded>
+<p>若您正在使用上述模型，请务必在 2026-11-10 前完成切换：Wan2.2 系列可切换到 MiniMax-H3 或其他视频生成模型，<code>Pro/zai-org/GLM-5.1</code> 可切换到其他对话模型。完整可用模型列表请查看<a href="https://cloud.siliconflow.cn/models">模型广场</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>[硅基流动] 【模型服务调整】Qwen3-Coder-30B-A3B-Instruct、GLM-4.5V 等模型将下线</title>
@@ -4434,6 +4583,20 @@ print(response.json())copy</code></pre>
       <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#新模型上线openmoss-teammoss-image-上线">【新模型上线】OpenMOSS-Team/MOSS-Image 上线</a></h3>
 <p>平台已于 <strong>2026-11-03</strong> 上线生图模型 <code>OpenMOSS-Team/MOSS-Image</code>，适用于海报、信息图、插画和写实图像创作。</p>
 <p>模型按张计费，价格为 <strong>¥0.30 / 图片</strong>。可通过 <code>/v1/images/generations</code> 调用，使用方式参见<a href="https://docs.siliconflow.cn/docs/userguide/capabilities/images">图片生成</a>。完整可用模型列表请查看<a href="https://cloud.siliconflow.cn/models?types=to-image">模型广场</a>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[硅基流动] 【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线</title>
+      <link>https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</link>
+      <guid isPermaLink="true">https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF</guid>
+      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
+      <category>硅基流动</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-siliconflow.xml">硅基流动</source>
+      <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#模型服务调整wan22-系列下线minimax-h3-上线">【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线</a></h3>
+<p>平台将于 <strong>2026-11-10</strong> 下线 Wan2.2 系列模型，并同步上线 MiniMax-H3：</p>
+<ul><li>下线模型：<code>Wan-AI/Wan2.2-T2V-A14B</code>（文生视频）、<code>Wan-AI/Wan2.2-I2V-A14B</code>（图生视频）。自 2026-11-10 起，上述模型不再接收新请求，不保留过渡期，请于该日期前完成切换。</li><li>上线模型：<code>MiniMaxAI/MiniMax-H3</code>，支持文生视频、首帧生视频、尾帧生视频、首尾帧生视频。</li></ul>
+<p>视频生成 API（<code>/v1/video/submit</code>）同日更新：</p>
+<ul><li>新增 <code>duration</code>（生成时长，单位：秒，可选 5 到 15，缺省 5）、<code>resolution</code>（分辨率，<code>480p</code> / <code>768p</code>）、<code>ratio</code>（画面比例）、<code>images</code>（参考图片列表，通过 <code>role</code> 指定首帧 <code>first_frame</code> 或尾帧 <code>last_frame</code>）。</li><li>按请求中的 <code>duration</code> 计费；<code>negative_prompt</code>、<code>image_size</code> 不再生效，传入不会报错但会被忽略。</li><li>参数说明与示例参见<a href="https://docs.siliconflow.cn/docs/api/video-submit-post">视频生成 API</a>。</li></ul>
+<p>若您正在使用 Wan2.2 系列模型，请务必在 2026-11-10 前切换到 MiniMax-H3 或其他模型。完整可用模型列表请查看<a href="https://cloud.siliconflow.cn/models?types=to-video">模型广场</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>[Cohere] 全球领先的开放模型，完全由你掌控</title>
@@ -6092,27 +6255,6 @@ print(response.choices[0].message.content)</code></pre>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] 筹备我们的下一次安全冲刺，加固 OpenAI</title>
-      <link>https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai</link>
-      <guid isPermaLink="true">https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：Preparing our next security sprint to harden OpenAI</description>
-      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
-<p>安全</p>
-<h1>筹备我们的下一次安全冲刺，加固 OpenAI</h1>
-<p>我们正在规划 OpenAI 的下一次内部安全冲刺（security sprint），把新的研究者和安全伙伴与我们自己的团队聚到一起，用我们自己的模型来检验并加固我们的系统。我们与 Cathedral 达成合作，对方的研究者将和我们团队并肩使用 OpenAI 的模型来挑战我们的防线，为发现弱点带来差异化的专业能力与方法，帮助我们保护自己的平台。</p>
-<blockquote>「OpenAI 正在树立一个重要的范例：与外部安全公司合作，并用自己的模型持续检验和加固自身的防线。每一家公司都应该思考如何把这些能力用起来。我们很高兴能与 OpenAI 的团队协作，把他们的模型与安全专业能力同我们的研究结合起来，去发现弱点、验证修复，并把这种持续防御的思路做得更扎实。」</blockquote>
-<p><strong>Gavin Kliger，Cathedral 首席执行官兼联合创始人</strong></p>
-<p>我们同时也在对自家的<a href="https://openai.com/index/security-on-the-path-to-agi/">安全 Bug Bounty 项目</a><a href="https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties/">做出改进</a>，其中包括把 critical 级发现的赏金提高到原来的四倍多。我们希望研究者挑战我们的假设，帮助我们既加固自己的系统，也加固我们用来防御这些系统的 methods。</p>
-<p>这是我们持续用 AI 发现和修复自身系统弱点这项长期工作的一部分。上一次冲刺已经表明这套做法能交付什么。我们把 25% 的产品工程师投入到发现和修复系统弱点上。工程师们借助 Codex 调查各项发现、在隔离环境中复现漏洞，并准备好补丁供评审。</p>
-<p>我们在那份工作之上继续推进，因为仅靠传统的网络防御已经不再够用。近期行业里的一起起事件说明威胁可以出现得多快，也说明构建连续的防御闭环、赶在攻击者之前发现并修复弱点有多重要。</p>
-<p>让 <a href="https://openai.com/index/the-defenders-window/">defender’s window</a>（防御者窗口）保持敞开，要求各组织用前沿的网络能力来加固自己的系统。我们正在用我们最有能力的模型来强化自身防线，并把这些能力开放给 <a href="https://openai.com/daybreak/">Daybreak</a> 客户。我们已承诺投入 <a href="https://openai.com/index/daybreak-for-frontline-defenders/">$1 billion</a>，在 6 个月内为保护关键服务和数字基础设施的一线防御者提供带补贴的访问。我们同时也在分享上一次冲刺积累的<a href="https://openai.com/the-defense-factory/">架构与经验</a>，以及我们面向业界与政府、赋能网络防御者的<a href="https://openai.com/index/empowering-cyber-defenders/">蓝图</a>。</p>
-<p>我们会继续推进模型能力、用它们加固自己的系统，并为可信赖的防御者扩大访问范围。让防御者的窗口保持敞开需要整个行业一起行动，而这些工作必须从现在开始。</p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
       <title>[OpenAI] 用更高的 bug bounty 奖励防御者</title>
       <link>https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties</link>
       <guid isPermaLink="true">https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties</guid>
@@ -6143,6 +6285,27 @@ print(response.choices[0].message.content)</code></pre>
 <h2>来 Oakland 找我们</h2>
 <p>11 月 20–21 日，我们的安全团队会出现在 Oakland 的 <a href="https://p2p.nahamcon.com/">PROMPT2PWN</a>，研究者可以在现场实测目标。如果你也会到场，我们很想听听你最近在做什么、以及我们怎样与你合作。</p>
 <p>感谢每一位花时间追查线索并把结果报告给我们的人。我们希望 OpenAI 成为那个你发现了我们遗漏之处时会一再回来的团队。</p>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>[OpenAI] 筹备我们的下一次安全冲刺，加固 OpenAI</title>
+      <link>https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai</link>
+      <guid isPermaLink="true">https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：Preparing our next security sprint to harden OpenAI</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
+<p>安全</p>
+<h1>筹备我们的下一次安全冲刺，加固 OpenAI</h1>
+<p>我们正在规划 OpenAI 的下一次内部安全冲刺（security sprint），把新的研究者和安全伙伴与我们自己的团队聚到一起，用我们自己的模型来检验并加固我们的系统。我们与 Cathedral 达成合作，对方的研究者将和我们团队并肩使用 OpenAI 的模型来挑战我们的防线，为发现弱点带来差异化的专业能力与方法，帮助我们保护自己的平台。</p>
+<blockquote>「OpenAI 正在树立一个重要的范例：与外部安全公司合作，并用自己的模型持续检验和加固自身的防线。每一家公司都应该思考如何把这些能力用起来。我们很高兴能与 OpenAI 的团队协作，把他们的模型与安全专业能力同我们的研究结合起来，去发现弱点、验证修复，并把这种持续防御的思路做得更扎实。」</blockquote>
+<p><strong>Gavin Kliger，Cathedral 首席执行官兼联合创始人</strong></p>
+<p>我们同时也在对自家的<a href="https://openai.com/index/security-on-the-path-to-agi/">安全 Bug Bounty 项目</a><a href="https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties/">做出改进</a>，其中包括把 critical 级发现的赏金提高到原来的四倍多。我们希望研究者挑战我们的假设，帮助我们既加固自己的系统，也加固我们用来防御这些系统的 methods。</p>
+<p>这是我们持续用 AI 发现和修复自身系统弱点这项长期工作的一部分。上一次冲刺已经表明这套做法能交付什么。我们把 25% 的产品工程师投入到发现和修复系统弱点上。工程师们借助 Codex 调查各项发现、在隔离环境中复现漏洞，并准备好补丁供评审。</p>
+<p>我们在那份工作之上继续推进，因为仅靠传统的网络防御已经不再够用。近期行业里的一起起事件说明威胁可以出现得多快，也说明构建连续的防御闭环、赶在攻击者之前发现并修复弱点有多重要。</p>
+<p>让 <a href="https://openai.com/index/the-defenders-window/">defender’s window</a>（防御者窗口）保持敞开，要求各组织用前沿的网络能力来加固自己的系统。我们正在用我们最有能力的模型来强化自身防线，并把这些能力开放给 <a href="https://openai.com/daybreak/">Daybreak</a> 客户。我们已承诺投入 <a href="https://openai.com/index/daybreak-for-frontline-defenders/">$1 billion</a>，在 6 个月内为保护关键服务和数字基础设施的一线防御者提供带补贴的访问。我们同时也在分享上一次冲刺积累的<a href="https://openai.com/the-defense-factory/">架构与经验</a>，以及我们面向业界与政府、赋能网络防御者的<a href="https://openai.com/index/empowering-cyber-defenders/">蓝图</a>。</p>
+<p>我们会继续推进模型能力、用它们加固自己的系统，并为可信赖的防御者扩大访问范围。让防御者的窗口保持敞开需要整个行业一起行动，而这些工作必须从现在开始。</p>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -6209,6 +6372,29 @@ print(response.choices[0].message.content)</code></pre>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
+      <title>[OpenAI] OpenAI 任命 Dan Driscoll 为国家安全现代化高级顾问</title>
+      <link>https://openai.com/index/dan-driscoll-joins-openai</link>
+      <guid isPermaLink="true">https://openai.com/index/dan-driscoll-joins-openai</guid>
+      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
+<p>公司动态</p>
+<p>全球事务</p>
+<h1>OpenAI 任命 Dan Driscoll 为国家安全现代化高级顾问</h1>
+<p>Dan Driscoll 将加入 OpenAI，出任国家安全现代化高级顾问（Senior Counselor for National Security Modernization），与高层领导团队和外部伙伴合作，就先进 AI 如何强化国家安全与网络安全提供建议，重点之一是与美国的盟友共同推进其负责任的使用。</p>
+<p>在这个新设立的岗位上，Dan 将与 OpenAI 的团队以及来自各国政府、产业界、学术界和盟友机构的负责人合作，推进务实的现代化举措，支持民主 AI 的建设。他也会帮助 OpenAI 内部团队理解全球国家安全机构在实际运作中的需求。</p>
+<p>Dan 此前担任第 26 任美国陆军部长（Secretary of the Army），统筹该军种的运营、现代化建设以及资源。他的经历横跨军旅服役、政府高层领导与私营部门。</p>
+<p>在任上，Dan 将为我们的公共部门和私营部门伙伴提供建议，帮助他们现代化政策与战略选择，释放 AI 在改善国家安全方面的实际用途，并帮助确保世界正在建设的 AI 支撑民主原则。他会致力于找出运营需求、机构变革与新兴 AI 能力交汇的地方。Dan 的任命体现了我们的承诺——帮助民主机构负责任地使用先进 AI，以强化共同安全；它也建立在 OpenAI 与盟友和合作伙伴的工作之上，即通过其 <a href="https://openai.com/daybreak/">Daybreak </a>项目强化网络韧性、保护关键服务。</p>
+<blockquote>「AI 应当让人对自己的生活拥有更多主导权，人们也应当对它如何被开发有发言权。美国有一个非同寻常的机会，可以与其他国家合作，把民主 AI 的采用推广开去。我很高兴欢迎 Dan Driscoll 加入 OpenAI，来强化美国的领先地位，并帮助我们做到这一点。」</blockquote>
+<p>Sam Altman</p>
+<blockquote>「我的职业生涯大部分时间都在公共服务中度过，起初是一名军人，最近则担任陆军部长以及 ATF 代理局长。那些正在服役的人，值得我们把能交到他们手上的最好工具给他们。国家安全需求的变化速度，比过去五十年里的任何时期都快。这项技术会通过削减文书工作、梳理更多的信息、把正确答案更快送到对的人手上，帮助他们跟上节奏。我加入 OpenAI，是想帮助美国和我们的盟友负责任地把这项技术用起来，为了那些守护我们安全的人。」</blockquote>
+<p>Dan Driscoll</p>
+<p><strong>Dan Driscoll</strong> 曾任第 26 任美国陆军部长。作为部长，他为近 100 万名现役、国民警卫队和预备役军人，以及超过 265,000 名陆军文职人员统筹运营、现代化和资源分配。他推动陆军转型，重点是加快新技术列装、改革采办体系、建设一支更有能力的部队。Dan 曾是陆军军官，也做过企业领导者，经历横跨军旅服役、法律与私营部门。</p>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>[OpenAI] Qodo 借助 Codex 把上下文带进 AI 代码评审</title>
       <link>https://openai.com/index/qodo-codex-plugin</link>
       <guid isPermaLink="true">https://openai.com/index/qodo-codex-plugin</guid>
@@ -6252,29 +6438,6 @@ print(response.choices[0].message.content)</code></pre>
 <p>Qodo 正与 OpenAI 一起构建这样一个未来：coding agents 把一家公司积累的经验更多地调动起来，而开发者可以把自己的判断力集中在最要紧的地方。</p>
 <h2>OpenAI &lt;3 初创公司</h2>
 <p><a href="https://openai.com/leads/startup/">加入社区</a><a href="https://openai.com/startups">开始构建</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] OpenAI 任命 Dan Driscoll 为国家安全现代化高级顾问</title>
-      <link>https://openai.com/index/dan-driscoll-joins-openai</link>
-      <guid isPermaLink="true">https://openai.com/index/dan-driscoll-joins-openai</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization</description>
-      <content:encoded><![CDATA[<p>2026 年 11 月 2 日</p>
-<p>公司动态</p>
-<p>全球事务</p>
-<h1>OpenAI 任命 Dan Driscoll 为国家安全现代化高级顾问</h1>
-<p>Dan Driscoll 将加入 OpenAI，出任国家安全现代化高级顾问（Senior Counselor for National Security Modernization），与高层领导团队和外部伙伴合作，就先进 AI 如何强化国家安全与网络安全提供建议，重点之一是与美国的盟友共同推进其负责任的使用。</p>
-<p>在这个新设立的岗位上，Dan 将与 OpenAI 的团队以及来自各国政府、产业界、学术界和盟友机构的负责人合作，推进务实的现代化举措，支持民主 AI 的建设。他也会帮助 OpenAI 内部团队理解全球国家安全机构在实际运作中的需求。</p>
-<p>Dan 此前担任第 26 任美国陆军部长（Secretary of the Army），统筹该军种的运营、现代化建设以及资源。他的经历横跨军旅服役、政府高层领导与私营部门。</p>
-<p>在任上，Dan 将为我们的公共部门和私营部门伙伴提供建议，帮助他们现代化政策与战略选择，释放 AI 在改善国家安全方面的实际用途，并帮助确保世界正在建设的 AI 支撑民主原则。他会致力于找出运营需求、机构变革与新兴 AI 能力交汇的地方。Dan 的任命体现了我们的承诺——帮助民主机构负责任地使用先进 AI，以强化共同安全；它也建立在 OpenAI 与盟友和合作伙伴的工作之上，即通过其 <a href="https://openai.com/daybreak/">Daybreak </a>项目强化网络韧性、保护关键服务。</p>
-<blockquote>「AI 应当让人对自己的生活拥有更多主导权，人们也应当对它如何被开发有发言权。美国有一个非同寻常的机会，可以与其他国家合作，把民主 AI 的采用推广开去。我很高兴欢迎 Dan Driscoll 加入 OpenAI，来强化美国的领先地位，并帮助我们做到这一点。」</blockquote>
-<p>Sam Altman</p>
-<blockquote>「我的职业生涯大部分时间都在公共服务中度过，起初是一名军人，最近则担任陆军部长以及 ATF 代理局长。那些正在服役的人，值得我们把能交到他们手上的最好工具给他们。国家安全需求的变化速度，比过去五十年里的任何时期都快。这项技术会通过削减文书工作、梳理更多的信息、把正确答案更快送到对的人手上，帮助他们跟上节奏。我加入 OpenAI，是想帮助美国和我们的盟友负责任地把这项技术用起来，为了那些守护我们安全的人。」</blockquote>
-<p>Dan Driscoll</p>
-<p><strong>Dan Driscoll</strong> 曾任第 26 任美国陆军部长。作为部长，他为近 100 万名现役、国民警卫队和预备役军人，以及超过 265,000 名陆军文职人员统筹运营、现代化和资源分配。他推动陆军转型，重点是加快新技术列装、改革采办体系、建设一支更有能力的部队。Dan 曾是陆军军官，也做过企业领导者，经历横跨军旅服役、法律与私营部门。</p>
-<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] 用 message threads 让长时间运行的 agent 更快</title>
@@ -6331,823 +6494,6 @@ print(response.choices[0].message.content)</code></pre>
       <category>Google Gemini</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-google_gemini.xml">Google Gemini</source>
       <description>完整标题：Gemini 2.5 Pro 弃用：gemini-2.5-pro 已弃用，并且不再可供在 Google AI Studio 中选择。自 2026 年 12 月 1 日起，所有对 gemini-2.5-pro 的 API 请求将自动路由... | 原文标题：Gemini 2.5 Pro deprecation: gemini-2.5-pro is deprecated and is no longer available to select in Google AI Studio. Effective December 1, 2026, all API requests to gemini-2.5-pro will automatically ro…</description>
-    </item>
-    <item>
-      <title>[xAI Grok] 用 Grok Bot 给每个团队配一位数据科学家</title>
-      <link>https://x.ai/news/data-bot</link>
-      <guid isPermaLink="true">https://x.ai/news/data-bot</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
-      <category>xAI Grok</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml">xAI Grok</source>
-      <description>原文标题：Giving every team a data scientist with Grok Bot</description>
-      <content:encoded><![CDATA[<h1>用 Grok Bot 给每个团队配一位数据科学家</h1>
-<p>作者：Sally Xu</p>
-<p>Data Bot 是 Grok Bot 里的一个 Team Bot，由数据科学团队亲自调教，好让每个团队都能像数据科学家那样查询数据仓库、跑分析并拿到答案。</p>
-<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">下载 macOS 版</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售</a></p>
-<p>在 SpaceXSI，我们的数据科学团队服务于全公司，帮助各个团队回答难题，也在寻找把数据融入我们产品的新方式。日积月累，我们对自家的数据形成了一种直觉，知道该怎么解读它、它的局限又落在哪里。</p>
-<p>但我们这支小团队不可能回答一家快速成长的公司里冒出的每一个问题。一整天都有人来问问题，这些问题听上去也许并不复杂，可要答准仍然需要我们的专业能力。这很容易就让我们变成瓶颈。</p>
-<p>几个月前，我们开始探索 AI agent 能怎样改变这种关系。我们想给每个人配一位全天候可用的数据科学家，它能调用我们共同积累的知识；与此同时，让我们自己更多的工作转向打造和改进这位 AI 队友。</p>
-<p>我们做出了 Data Bot——Grok Bot 里的一个 Team Bot，我们教会了它数据科学团队的工作方式。它能查询我们的数据仓库、开展分析，并以每个人偏好的形式返回结果。personal bot 只能靠它主人知道的东西来教，Data Bot 不一样，它依靠的是一整套共享的 skills，由我们的数据团队为所有人共同维护和打磨。</p>
-<p>团队还可以把 Data Bot 加进自己的 Slack 频道，它在那里回答问题，也主动参与正在进行的工作。我们每改进它的一分 skills，所有人就都能从同一份不断增长的专门知识里受益。</p>
-<h2><a href="https://x.ai/news/data-bot#teaching-data-bot-how-the-data-team-works">教会 Data Bot 数据团队的工作方式</a></h2>
-<p>Data Bot 需要足够的上下文，才能像我们团队那样去处理一个问题。我们通过 skills 把这些上下文给它，覆盖以下几个主要方面：</p>
-<ul><li><strong>指标与分析。</strong> 我们定义了业务各处使用的核心指标，例如活跃用户和营收，并找出它们背后的源表和查询逻辑。这些 skills 还会指导 Data Bot 去调查这些指标的变动：既可以把一次尖峰或下跌按用户分群或地区拆开来看，也可以在把它归结为某次产品改动之前，先检查节假日或埋点日志的变化。</li><li><strong>实验。</strong> 这部分覆盖我们如何搭建 A/B test、做功效分析、检查曝光均衡与样本偏差、规划放量、深挖那些不符合直觉的结果，以及在实验达到所需功效之后撰写结论报告。</li><li><strong>图表与仪表盘。</strong> 我们给 Data Bot 配上数据可视化的最佳实践，比如用折线图看随时间变化的趋势、用横向条形图比较类别，还有我们团队的图表主题和风格指南。另有 skills 指导 Data Bot 创建仪表盘，让它能把聊天里的一张图表变成人人可用的 Databricks 或 Hex 仪表盘。</li><li><strong>数据工程。</strong> 这部分覆盖我们编写和评审 dbt model 的最佳实践、我们对自动化 pipeline 告警的约定，以及如何添加分析事件埋点，好在新功能上线的那一刻起就能衡量人们怎么使用它。</li></ul>
-<h2><a href="https://x.ai/news/data-bot#data-bot-learns-from-experience">Data Bot 从经验中学习</a></h2>
-<p>我们还给 Data Bot 配了共享 memory，让它把日常使用中沉淀出来的知识留住。举例来说，它可能记住了某位同事负责哪一条 pipeline，或者上一次某个重要指标下跌其实只是一个地区的节假日。下次再调查类似的变动时，它就能用上这段经验，在把下跌归结为产品改动之前先去查一查节假日日历。</p>
-<p>作为这个 Team Bot 的管理者，我们可以审阅这些它提议写入 memory 的新增内容，在 Data Bot 把这份知识分享给所有使用它的人之前，决定批准还是驳回。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/editor-bot_v2-ca9e6ea6.png" alt="一位管理者正在审阅 Data Bot 提出的一条 memory，可以在它被分享出去之前选择批准或驳回"></p>
-<h2><a href="https://x.ai/news/data-bot#helping-pms-better-understand-their-products">帮助 PM 更好地理解自己的产品</a></h2>
-<p>产品经理会源源不断地冒出关于「人们到底怎么用我的产品」的问题，其中很多超出了他们现有仪表盘能够告诉他们的范围。过去要回答这些问题，只能自己扎进数据里刨，或者请数据团队的同事帮忙。</p>
-<p>Data Bot 让 PM 能在这些问题出现的那一刻就去探索它们。</p>
-<p>Kevin Niparko 是 SpaceXSI 的一位 PM，他在 Grok Bot 里给 Data Bot 发消息，就像给一位同事发消息那样，几分钟内拿到答案，还能接着追问，而不必重开一次分析。他把这种体验形容为口袋里装了一位数据科学家。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/message-1_v4-2757a6b6.png" alt="Kevin Niparko 在 Grok Bot 里问 Data Bot 人们如何使用某个产品，答案以一句结论配一张图表的形式呈现"></p>
-<p>问起来如此轻松，意味着 PM 一天里可以去调查的问题多了很多。以前光是打开一个仪表盘、或者在 Cursor 里起一次分析，那点摩擦就足以让一些疑问被放弃。现在 Kevin 可以去探索那些他本来会放下的事情，不必再向数据科学家求助。</p>
-<p>Data Bot 还会适应人们偏好的信息消费方式。Kevin 喜欢一句简洁的结论配上一张图表，Data Bot 就按那种格式呈现它的发现，让他能快速地从一个问题走到一个可以直接用的答案。</p>
-<h2><a href="https://x.ai/news/data-bot#helping-marketers-understand-what-their-campaigns-accomplish">帮助市场团队看清自己的活动做成了什么</a></h2>
-<p>市场团队需要了解客户在收到一次营销活动之后做了什么。邮件平台会统计打开和点击，但这些指标并不总能说明活动是否达成了它的目标。</p>
-<p>Jon Brenner 在 SpaceXSI 做生命周期营销，他把 Data Bot 当成一位随叫随到的分析师。他可以直接给它一个 Braze 活动 ID，问收件人后来做了什么。Data Bot 会查询数据仓库，看那些点击了的人是否接着用起了相应的功能。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/slack-2_v3-26d03ac8.png" alt="Jon Brenner 在 Slack 里问 Data Bot：一个 Braze 活动的收件人在点击之后做了什么"></p>
-<p>在我们最近<a href="https://x.ai/news/x-subscription">发布 The X Subscription</a>时，Jon 想知道究竟有多少邮件收件人真的转换了套餐。Braze 内置的转化指标答不了这个问题，于是 Data Bot 去查询数据仓库，追踪有多少收件人收到了这封邮件、又有多少人随后转换了套餐。</p>
-<p>Katy Abbaszadeh 是我们的营收增长总监，她用 Data Bot 衡量各类活动对销售的影响。她会跟踪活动贡献了多少 pipeline 生成、有没有帮助加速已有的交易。她还用 Data Bot 监控每周相对目标的进度、调查可能拖慢进度的原因，并把结果做成汇报用的图表。</p>
-<p>有了 Data Bot，我们的市场团队现在能自己回答更多的问题，不必等数据团队，同时依旧用得上这个团队的专业能力。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/slack-1_v3-0e82404f.png" alt="Katy Abbaszadeh 在 Slack 里用 Data Bot 衡量一场活动对 pipeline 的影响，并把每周进度画成图表"></p>
-<h2><a href="https://x.ai/news/data-bot#letting-data-bot-handle-entire-analytics-workflows">让 Data Bot 接手整条分析工作流</a></h2>
-<p>Data Bot 能接下的工作远不止回答一个个问题。数据团队给了它做更扎实分析的工具，包括那些通常要和数据科学家来回协作好几轮才能完成的项目。</p>
-<p>举例来说，一位正在调查产品采用度变化的 PM，可以让 Data Bot 去弄明白发生了什么。Data Bot 能规划这次分析、查询数据仓库、探索各种可能的解释，然后产出一份带图表的成文报告，或者在 Hex 里搭一个团队可以持续使用的仪表盘。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/message-2_v5-0f61ccb4.png" alt="Data Bot 在 Grok Bot 里逐步完成一份产品采用度分析，并返回一份带图表的成文报告"></p>
-<h2><a href="https://x.ai/news/data-bot#data-bot-joins-team-channels-and-contributes-proactively">Data Bot 加入团队频道并主动贡献</a></h2>
-<p>团队可以把 Data Bot 加进自己的 Slack 频道，把持续汇报这件事交给它负责。比如，团队可以让它跟踪一个关键指标并按周发布更新，遵循我们数据科学团队定下的汇报规范。</p>
-<p>Data Bot 能按计划定时跑完这条工作流，把更新直接发到群组的讨论里。同事们随后可以在下面追问，也可以让它去调查一个出乎意料的变动，就像对待另一位队友那样。</p>
-<h2><a href="https://x.ai/news/data-bot#data-science-expertise-for-all">人人可用的数据科学专业能力</a></h2>
-<p>Data Bot 在 SpaceXSI 内部的采用增长得很快。仅上周，我们估计它接下了大约 70 小时原本会落到数据科学团队头上的工作。</p>
-<p>我们仍然在处理那些需要更多判断的复杂分析，也还在学习 Data Bot 在哪些地方需要额外的指引。我们的目标是给全公司的同事一位 AI 队友，让他们随时都能调用我们的专业能力，同时给数据科学团队留出更多时间，专注在那些需要我们亲自过问的问题上。</p>
-<h2>今天就试试 Grok Bot</h2>
-<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">下载 macOS 版</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] 用 Crawl4AI 为 Amazon Bedrock Knowledge Bases 准备网页内容</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/prepare-web-content-for-amazon-bedrock-knowledge-bases-with-crawl4ai/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/prepare-web-content-for-amazon-bedrock-knowledge-bases-with-crawl4ai/</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：Prepare web content for Amazon Bedrock Knowledge Bases with Crawl4AI</description>
-      <content:encoded><![CDATA[<h1>用 Crawl4AI 为 Amazon Bedrock Knowledge Bases 准备网页内容</h1>
-<p>在构建检索增强生成（Retrieval Augmented Generation，RAG）应用时，回答质量取决于你摄入的数据。<a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a> 是 Amazon Bedrock 的 fully managed（全托管）RAG 能力。借助 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-build-managed.html">Amazon Bedrock Managed Knowledge Base</a>，你只要连接好数据源，Amazon Bedrock 就会代你管理摄入、存储、索引与检索。你无需预置或扩缩向量存储，嵌入和重排序默认使用服务托管的模型。</p>
-<p>对于网页内容，请从面向托管知识库的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-ds-webcrawler.html">Amazon Bedrock Web Crawler</a> 数据源连接器开始。你把有权爬取的种子 URL 或站点地图交给它，它就会在你设定的范围和速率限制内爬取。按计划同步会在页面变化时让知识库保持最新，连接器还能等待由 JavaScript 加载的内容。没有需要你构建、托管或运维的爬虫，所以这个连接器是大多数公开网站内容的起点。</p>
-<p>有些数据源需要对进入知识库的内容有更多的控制。你可能只想索引每个页面的正文主区域、移除导航和其他模板化内容，或者给每份文档挂上你自己的元数据属性。针对这一类素材，你可以用 <a href="https://github.com/unclecode/crawl4ai">Crawl4AI</a>（一个开源 Python 爬虫）搭建一个准备步骤，从而延伸知识库的触达范围。该步骤会为每个页面把 Markdown 和元数据 sidecar 写入 Amazon Simple Storage Service（Amazon S3），知识库再通过它的 Amazon S3 数据源把两者一起摄入。</p>
-<p>在本文中，我们会说明如何选择合适的网页摄入路径，并为需要额外处理的内容实现自定义准备。随后你会启动向托管知识库的摄入，并校验检索质量。配套的 <a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base">aws-samples 仓库</a>以示例实现的形式提供了完整的工作流。</p>
-<p>这是对已知网站资产的批量摄入，不是推理时的实时网页访问（例如结合 Amazon Nova 的 <a href="https://docs.aws.amazon.com/nova/latest/nova2-userguide/web-grounding.html">Web Grounding</a>）。</p>
-<h2>方案总览</h2>
-<p>当 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-ds-webcrawler.html">Amazon Bedrock Web Crawler</a> 能够触达并索引你需要的页面时，就从它开始。它会遵守 <code>robots.txt</code>，并且首次完整爬取之后，每次同步只捕获新增、更新和删除的内容。</p>
-<p>当公开素材在摄入前需要下面一项或几项控制时，请使用 Crawl4AI 准备路径：</p>
-<ul><li><strong>结构化的 Markdown 准备</strong>：使用 <code>DefaultMarkdownGenerator</code> 配合剪枝内容过滤器，在保留标题、列表和表格的同时减少导航和其他模板化内容。由于剪枝是启发式的，请审查来自你站点的有代表性的输出。</li><li><strong>有界、定向的抽取</strong>：只抽取由可选的 CSS 选择器命中的页面区域。用种子来源、页面/路径/主机范围、深度与页数上限以及 URL 模式来约束广度优先遍历。</li><li><strong>自定义元数据</strong>：把来源 URL、爬取时间戳、内容类型以及你自己的属性挂到每份文档上，这样你就能据此过滤检索结果。</li></ul>
-<p>由于托管知识库与客户托管知识库都支持 Amazon S3 数据源，Crawl4AI 路径两种类型都能用。本文使用托管知识库，并在有差异的地方说明客户托管知识库的不同。</p>
-<p>本文余下部分跟随配套的示例。请把它的架构和默认值当作一个起点，而不是 Amazon Bedrock Knowledge Bases 的要求。</p>
-<p>默认情况下，示例在公有子网中运行 AWS Fargate 任务，通过互联网网关访问你所配置的网站。Crawl4AI 的职责在准备好源文档和元数据 sidecar 之后就结束了。从摄入往后，由 Amazon Bedrock Knowledge Bases 负责解析、分块、嵌入、索引和检索。下图展示了从计划任务一直到检索的 Crawl4AI 路径。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21438-1.png" alt="架构图：Amazon EventBridge 计划触发一个运行在 AWS Fargate 上的 Amazon Elastic Container Service 任务，该任务爬取公开网站，把准备好的 Markdown 和元数据写入 Amazon S3，并触发 Amazon Bedrock Knowledge Bases 将内容摄入向量存储，供生成式 AI 应用检索。"></p>
-<p>图 1：面向 Amazon Bedrock Knowledge Bases 的 Crawl4AI 到 Amazon S3 摄入路径</p>
-<p>图中的编号步骤对应以下工作流：</p>
-<ul><li>Amazon EventBridge 按配置的计划启动运行在 AWS Fargate 上的 Amazon Elastic Container Service（Amazon ECS）任务。</li><li>任务爬取你所配置的公开网站，为每个页面准备好 Markdown 和元数据 sidecar。</li><li>任务把准备好的文件上传到支撑该知识库数据源的 Amazon S3 桶。</li><li>任务启动一个 Amazon Bedrock Knowledge Bases 摄入作业。</li><li>Amazon Bedrock Knowledge Bases 读取新增和变更的对象，对其进行解析，并应用你所选择的分块策略。</li><li>它创建 embedding 向量并在知识库的向量存储中建立索引；对托管知识库而言，该向量存储由 Amazon Bedrock 托管。</li><li>你的生成式 AI 应用向知识库查询相关的分块，或者索取带引用的生成回答。</li></ul>
-<p>任务在启动时从 AWS Systems Manager Parameter Store 读取非机密的流水线配置。</p>
-<p>该工作流只处理公开页面，不实现已登录的会话。对于需要登录的站点，请先评估 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-ds-webcrawler.html">Amazon Bedrock Web Crawler 的身份验证选项</a>，其中包含基本认证、表单认证和 SAML 认证。要为示例加上身份验证，就需要会话处理、存放在 AWS Secrets Manager 里的凭据，以及一次安全评审。</p>
-<h2>工作流如何运作</h2>
-<p>AWS Cloud Development Kit（AWS CDK）应用在部署期间把实现打包进容器镜像。计划触发时，容器运行 <code>scripts/container_entrypoint.py</code>，依次执行爬取、上传和摄入。下面三个步骤解释核心逻辑。</p>
-<h3>步骤 1：爬取并抽取内容</h3>
-<p>爬取步骤执行有界爬取，并为每个成功准备好的页面写出一个 Markdown 文件和一个元数据 sidecar。下面的摘录经过简化。模块 <code>src/crawl4ai_bedrock_kb/crawl.py</code> 中包含完整的种子节奏控制、URL 过滤与范围约束、页数限制以及重定向检查：</p>
-<pre><code>async def crawl_and_prepare(config: PipelineConfig, output_dir: str) -&gt; list[str]:
-    written, seen = [], set()
-    pages_crawled = 0
-    browser_config = BrowserConfig(headless=True, java_script_enabled=True)
-
-    async with AsyncWebCrawler(config=browser_config) as crawler:
-        for seed in config.seed_urls:
-            remaining = config.crawl.max_pages - pages_crawled
-            if remaining &lt;= 0:
-                break
-
-            strategy = BFSDeepCrawlStrategy(
-                max_depth=config.crawl.max_depth,
-                max_pages=remaining,
-                filter_chain=FilterChain([
-                    SeedScopeFilter(seed, config.crawl.scope),
-                    # Optional include/exclude URLPatternFilter objects are added here.
-                ]),
-            )
-            run_config = CrawlerRunConfig(
-                deep_crawl_strategy=strategy,
-                markdown_generator=DefaultMarkdownGenerator(
-                    content_filter=PruningContentFilter()
-                ),
-                css_selector=config.crawl.css_selector,  # Optional page region.
-                check_robots_txt=config.crawl.check_robots_txt,
-                mean_delay=config.crawl.request_delay_seconds,
-                max_range=0,
-                semaphore_count=1,
-            )
-
-            results = await crawler.arun(url=seed, config=run_config)
-            for result in results:
-                if pages_crawled &gt;= config.crawl.max_pages:
-                    break
-                pages_crawled += 1
-                requested_url = result.url
-                source_url = getattr(result, &quot;redirected_url&quot;, None) or requested_url
-                if not SeedScopeFilter(seed, config.crawl.scope).apply(source_url):
-                    continue  # Recheck the effective destination after redirects.
-                canonical = _canonical_url(source_url)
-                if canonical in seen:
-                    continue
-                seen.add(canonical)
-                if not result.success or not result.markdown:
-                    continue
-
-                md_result = result.markdown
-                markdown = (
-                    getattr(md_result, &quot;fit_markdown&quot;, None)
-                    or getattr(md_result, &quot;raw_markdown&quot;, None)
-                    or (md_result if isinstance(md_result, str) else &quot;&quot;)
-                )
-                if not markdown:
-                    continue
-
-                # The complete implementation adds title, crawl timestamps, content
-                # type, and configured custom attributes to this metadata.
-                written.extend(
-                    _write_document(
-                        output_dir,
-                        _base_name(source_url),
-                        markdown,
-                        {&quot;source_url&quot;: source_url},
-                    )
-                )
-    return written</code></pre>
-<p>Amazon Bedrock Knowledge Bases 为 Amazon S3 数据源支持<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-ds.html">多种文档格式</a>，包括纯文本、HTML、Markdown、PDF 和 DOCX。本工作流写出 Markdown，因为它能在不把全部原始 HTML 带入摄入的情况下保留标题、列表和表格。</p>
-<h3>步骤 2：上传到 Amazon S3</h3>
-<p>上传步骤把每份准备好的 Markdown 文档及其匹配的元数据 sidecar 发送到所配置的 S3 桶，放在工作流的 <code>s3Prefix</code> 之下。对于 <code>page.md</code>，sidecar 必须命名为 <code>page.md.metadata.json</code>，也就是完整源文件名后面追加 <code>.metadata.json</code>。工作流把每个 sidecar 存放在与其文档相同的 S3 位置。Amazon Bedrock 将每个元数据 sidecar 限制在 10 KB。如果某个 sidecar 会超出该上限，运行会在写入任何一个文件之前以错误终止。</p>
-<p>sidecar 中的每个属性都采用托管知识库与客户托管知识库对 Amazon S3 数据源都能接受的类型化格式。下面这个为便于阅读而排版的简化 sidecar，展示了工作流写出的三个属性：</p>
-<pre><code>{
-  &quot;metadataAttributes&quot;: {
-    &quot;source_url&quot;: {
-      &quot;value&quot;: {&quot;type&quot;: &quot;STRING&quot;, &quot;stringValue&quot;: &quot;https://www.example.com/services/permits&quot;}
-    },
-    &quot;crawled_at_epoch&quot;: {
-      &quot;value&quot;: {&quot;type&quot;: &quot;NUMBER&quot;, &quot;numberValue&quot;: 1790640000}
-    },
-    &quot;content_category&quot;: {
-      &quot;value&quot;: {&quot;type&quot;: &quot;STRING&quot;, &quot;stringValue&quot;: &quot;web&quot;}
-    }
-  }
-}</code></pre>
-<p>流水线只上传本次爬取产出的那些路径，因此陈旧的本地文件不会被发送。</p>
-<h3>步骤 3：让 Amazon Bedrock Knowledge Bases 完成分块、嵌入与索引</h3>
-<p>内容进入 S3 之后，摄入作业会把每份文档交给数据源的摄入流水线。默认情况下，托管知识库用它的托管解析器解析每个文件，该解析器会为内容自动选择合适的解析方式。你在连接数据源时就要选定分块策略，此后无法更改，因此在创建生产数据源之前要评估这些选项。托管知识库提供以下分块策略：</p>
-<ul><li><strong>默认分块</strong>使用 300 token 的固定大小分块，重叠 20%。</li><li><strong>固定大小分块</strong>按你设定的最大 token 数与重叠百分比来切分内容。</li><li><strong>不分块</strong>把每个文件当作一个单独的分块，适用于你已经切分好的内容。</li></ul>
-<p>分块边界和检索结果取决于内容与所选策略，所以要用有代表性的页面和评测问题来对比这些选项。要更换策略，请新建一个数据源。更多信息见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-customize-ingestion.html">为数据源自定义摄入</a>。客户托管知识库还提供语义分块与层级分块，以及更多解析选项。细节见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking.html">知识库的内容分块如何工作</a>。</p>
-<p>随后工作流启动一个摄入作业，让知识库处理这些新文档。下面是 <code>src/crawl4ai_bedrock_kb/ingest.py</code> 中经过简化的摘录，展示了这个调用：</p>
-<pre><code>def start_ingestion_job(config: PipelineConfig) -&gt; str:
-    # Start an Amazon Bedrock knowledge base ingestion job and return its ID.
-    client = boto3.client(&quot;bedrock-agent&quot;, region_name=config.region)
-    response = client.start_ingestion_job(
-        knowledgeBaseId=config.knowledge_base_id,
-        dataSourceId=config.data_source_id,
-    )
-    return response[&quot;ingestionJob&quot;][&quot;ingestionJobId&quot;]</code></pre>
-<p>同样的 <code>StartIngestionJob</code> 和 <code>GetIngestionJob</code> 调用对两种知识库类型都适用，你也可以在控制台监控进度。</p>
-<h2>部署方案</h2>
-<p>在本节中，你用 AWS CDK 把工作流部署到你的 AWS 账户。两种知识库类型之间只有知识库的前置条件不同。完成后，请按照「清理」一节的步骤移除资源。</p>
-<h3>前置条件</h3>
-<p>开始之前，请确认你已经具备：</p>
-<ul><li>一个 AWS 账户。</li><li>下面两种知识库之一：  <strong>托管知识库</strong>，也就是本文所使用的类型，需位于<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-regions.html">已提供托管知识库</a>的 AWS 区域。操作说明见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-create.html">创建托管知识库</a>和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-ds-s3.html">Amazon S3 连接器</a>。在数据源上把 <strong>Metadata files prefix</strong> 留空，因为工作流会把每个元数据 sidecar 写到它的文档旁边。<strong>已有的客户托管知识库。</strong>要添加 Amazon S3 数据源，见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/s3-data-source-connector.html">为你的知识库连接 Amazon S3</a>。工作流会为每份文档写出一个元数据 sidecar，因此请确认你的向量存储能够存储并过滤这些属性，如<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-config.html">元数据与过滤</a>所述。例如，Amazon OpenSearch Serverless 向量索引必须使用 <code>faiss</code> 引擎。Amazon Aurora 向量索引需要一个自定义元数据列，或者为每个元数据属性各建一列。使用 Amazon S3 Vectors（Amazon S3 的一项能力）时，你可以为每个向量<a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors-bedrock-kb.html">附加最多 1 KB 的自定义元数据</a>，所以你新增的属性要保持简短。</li><li>该知识库中状态为 <code>AVAILABLE</code> 的 Amazon S3 数据源。它可以是一个新建的数据源，也可以是你已经在用的数据源。它必须使用你为本工作流配置的那个 S3 桶。如果该数据源按前缀或文件模式过滤内容，那么这些过滤条件必须允许工作流在其 <code>s3Prefix</code>（默认 <code>web-content/</code>）下写出的文件。</li><li>知识库、S3 桶以及你部署的 stack 全部位于同一个区域。</li><li>爬取你所配置的公开网站的授权。</li><li>一台部署工作站，装有 Git、Python 3.10 或更高版本、<code>Node.js</code>、AWS Command Line Interface（AWS CLI）第 2 版、AWS CDK CLI v2，以及一个运行中的、与 Docker 兼容的容器引擎。<a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base/blob/main/deploy/README.md">部署指南</a>列出了 AWS CDK CLI 的最低版本要求。</li><li>部署工作站上已配置好 AWS 凭据，并有权限为目标环境执行 bootstrap 以及部署该 CDK stack。</li><li>目标账户和区域中已完成 bootstrap 的 CDK 环境。部署步骤中包含了 bootstrap 命令。</li></ul>
-<p>你只需要这台工作站来构建和部署。部署完成后，计划任务会在 AWS 中运行。</p>
-<h3>部署计划任务工作流</h3>
-<p>克隆配套仓库并安装部署依赖：</p>
-<pre><code>git clone https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base.git
-cd sample-crawl4ai-bedrock-knowledge-base/deploy
-python -m venv .venv
-source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt</code></pre>
-<p>请保持 Docker 处于运行状态。先设置 <code>AWS_DEFAULT_REGION</code> 为你知识库所在的区域，因为 <code>cdk deploy</code> 使用的是你的环境或 AWS profile 中的区域，而不是 bootstrap 命令里的那个。如有必要，为目标账户和区域执行一次 bootstrap。然后用你的知识库、数据源、S3 桶以及已获授权的种子 URL 部署 stack：</p>
-<pre><code>export AWS_DEFAULT_REGION=REGION  # Windows PowerShell: $env:AWS_DEFAULT_REGION = &quot;REGION&quot;
-cdk bootstrap aws://ACCOUNT_ID/REGION
-
-cdk deploy \
-  -c knowledgeBaseId=ABCDEFGHIJ \
-  -c dataSourceId=KLMNOPQRST \
-  -c s3Bucket=amzn-s3-demo-bucket \
-  -c 'seedUrls=[&quot;https://www.example.com/services&quot;]' \
-  -c maxDepth=1 \
-  -c maxPages=25</code></pre>
-<p>请把每一个示例值都替换成你自己的，包括 <code>ACCOUNT_ID</code>、<code>REGION</code> 以及四个必需的 context key。这些示例值在语法上是合法的，所以一条未经修改的命令会部署出一个指向不属于你的桶的 stack。你也可以在 <code>cdk.json</code> 中设置这些 key。</p>
-<p><code>maxDepth</code> 和 <code>maxPages</code> 的取值把首次爬取限制为一层链接和 25 个页面。在你审查过准备好的输出之后再调高它们。要想预览某次爬取会准备哪些页面，你也可以按 <a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base#quick-start">README</a> 的说明，用 <code>--dry-run</code> 在本地运行流水线。stack 的名称是固定的，所以在同一账户和区域再次执行 <code>cdk deploy</code> 会更新这个 stack。</p>
-<p>示例默认构建 ARM64 容器镜像。如果你 x86_64 工作站上的 Docker 无法构建 ARM64 镜像，请在 <code>cdk deploy</code> 命令中追加 <code>-c cpuArchitecture=X86_64</code>。</p>
-<p>如果你的账户开启了 VPC Block Public Access，任务就无法从默认的公有子网访问互联网。要检查其模式，请运行 <code>aws ec2 describe-vpc-block-public-access-options</code>。在仅入站（ingress-only）模式下，请用 <code>-c egressMode=nat</code> 部署，这会添加一个按小时计费的 NAT 网关。双向模式还需要一项排除配置，部署指南中有说明。</p>
-<p>该 stack 不会创建或修改你的知识库或数据源。</p>
-<p>在默认的 <code>rate(24 hours)</code> 计划下，首次运行会在部署创建 Amazon EventBridge 规则时启动。要跟踪这次运行，请使用 <code>TailLogsCommand</code> 输出中的命令，<code>cdk deploy</code> 结束时会把它打印出来。成功的运行会记录 <code>job_status: COMPLETE</code>。要在计划之外启动另一次运行，请在当前运行结束后使用 <code>RunTaskCommand</code> 输出中的命令。要稍后列出各项输出，请运行 <code>aws cloudformation describe-stacks --stack-name Crawl4aiBedrockKbCrawler --region REGION --query &quot;Stacks[0].Outputs&quot;</code>。</p>
-<p><a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base/blob/main/deploy/README.md">部署指南</a>涵盖了其余配置，包括爬取边界、计划、网络、容器架构、监控以及按需运行。</p>
-<h2>校验检索质量</h2>
-<p>摄入完成后，在加入生成环节之前，先用 <code>Retrieve</code> 测试一批有代表性的问题。托管知识库使用混合搜索。当它使用默认的托管 embedding 模型时，还会用其托管重排序器对结果做重排。你可以用 sidecar 中的元数据来收窄结果。示例的默认配置会给每个页面都加上取值为 <code>web</code> 的 <code>content_category</code>。下面的示例返回最近七天内爬取的这些页面中最多五个分块。它需要 AWS SDK for Python（Boto3）1.43.32 或更高版本，你可以用 <code>python -m pip install &quot;boto3&gt;=1.43.32&quot;</code> 安装。请把区域和知识库 ID 换成你自己的值：</p>
-<pre><code>import time
-
-import boto3
-
-client = boto3.client(&quot;bedrock-agent-runtime&quot;, region_name=&quot;us-east-1&quot;)
-week_ago = int(time.time()) - 7 * 24 * 60 * 60
-
-response = client.retrieve(
-    knowledgeBaseId=&quot;ABCDEFGHIJ&quot;,
-    retrievalQuery={&quot;text&quot;: &quot;How do I apply for a building permit?&quot;},
-    retrievalConfiguration={
-        &quot;managedSearchConfiguration&quot;: {
-            &quot;numberOfResults&quot;: 5,
-            &quot;filter&quot;: {
-                &quot;andAll&quot;: [
-                    {&quot;equals&quot;: {&quot;key&quot;: &quot;content_category&quot;, &quot;value&quot;: &quot;web&quot;}},
-                    {&quot;greaterThan&quot;: {&quot;key&quot;: &quot;crawled_at_epoch&quot;, &quot;value&quot;: week_ago}},
-                ]
-            },
-        }
-    },
-)
-
-for result in response[&quot;retrievalResults&quot;]:
-    print(result.get(&quot;metadata&quot;, {}).get(&quot;source_url&quot;), result[&quot;content&quot;][&quot;text&quot;][:200])</code></pre>
-<p>该示例传入的是一个整数时间戳，两种知识库类型在数字过滤中都接受它。托管知识库不支持 <code>startsWith</code> 和 <code>stringContains</code> 过滤。对于客户托管知识库，请把同样的过滤条件传给 <code>vectorSearchConfiguration</code>，而不是 <code>managedSearchConfiguration</code>。它支持的运算符取决于它的向量存储。</p>
-<p>元数据过滤可以提升检索精度，但它不是授权边界。如果不同用户应当看到不同的页面，面向托管知识库的 Amazon S3 连接器支持由你提供访问控制列表（ACL）文件的<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-ds-s3-acl.html">文档级访问控制</a>。示例不会创建 ACL 文件。</p>
-<p>要从托管知识库生成回答，请使用<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-agentic-retrieve.html">智能体检索</a>。<code>AgenticRetrieveStream</code> 操作会返回检索到的结果，以及一份带引用的生成回答。对于客户托管知识库，请使用 <code>RetrieveAndGenerate</code>。两种情况下，每个被引用的结果都包含来自其 sidecar 的 <code>source_url</code> 元数据，你的应用可以把它作为面向用户的来源呈现出来。</p>
-<p>每当你改动内容准备、分块或检索设置时，都要评估检索相关性、来源页面覆盖率和引用质量。关于你可以调整的检索设置，见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-test-config.html">为托管知识库配置和自定义查询</a>。</p>
-<h2>反复运行它</h2>
-<p>每次计划事件都会启动一个独立的 Fargate 任务。该 stack 不会阻止运行相互重叠，所以请选择一个长于预期爬取与摄入耗时的间隔。失败的运行不会被通报，因为示例没有添加重试策略、死信队列或告警。即使某些文档摄入失败，摄入作业也可能报告 <code>COMPLETE</code>，此时任务会以退出码 0 结束。任务会记录该作业的失败原因。在你依赖这个计划之前，请补上你需要的监控，包括针对这些失败原因的告警。</p>
-<p>每次运行都会按配置的任务规格产生 Fargate 费用，默认规格是 2 vCPU 和 4 GB。任务在最长 30 分钟内轮询摄入作业期间会一直运行，因此一个缓慢的摄入作业会拉长计费的任务时长。如果摄入耗时超过这个上限，任务会以非零退出码结束，而摄入作业仍在继续运行。该 stack 会为集群开启 Container Insights，并为其创建的 Amazon Virtual Private Cloud（Amazon VPC）开启 flow logs。两者都会增加 Amazon CloudWatch 费用。stack 的 AWS KMS 密钥有按月收取的费用，任务的公有 IPv4 地址在任务运行期间也会计费。使用 <code>egressMode=nat</code> 或 <code>privateEndpoints=true</code> 时，NAT 网关和接口端点按小时计费，即使没有任务在运行也一样。知识库的用量单独计费。详情见 <a href="https://aws.amazon.com/vpc/pricing/">Amazon VPC 定价</a>和 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a>。</p>
-<p>上传是累加的：在后续爬取中移除某个 URL 或漏掉某个页面，并不会删除它已有的 S3 对象。要移除陈旧内容，请删除所配置前缀下那份过期文档及其匹配的 sidecar，然后再次启动摄入。如果你为托管知识库数据源开启了文档删除保护（deletion protection），请检查它的阈值。当某次同步将删除的文档比例超过该百分比时，它会跳过自己的删除阶段，于是这些文档仍留在索引里。要在桶中的对象发生变化时自动启动摄入，见<a href="https://aws.amazon.com/blogs/machine-learning/build-and-deploy-an-automatic-sync-solution-for-amazon-bedrock-knowledge-bases/">为 Amazon Bedrock Knowledge Bases 构建并部署自动同步方案</a>。</p>
-<h2>负责任的 AI 方面的考量</h2>
-<p>检索到的段落会成为 foundation model（基础模型）用来生成回答的上下文。在生产环境运行本工作流之前，请落实以下控制：</p>
-<ul><li><strong>Amazon Bedrock Guardrails</strong>：把 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html">guardrail</a> 附加到你的智能体检索或 <code>RetrieveAndGenerate</code> 请求上，以启用内容过滤器、禁止主题、词过滤器和敏感信息过滤器。智能体检索只支持 guardrail 的 <code>BLOCK</code> 动作，不支持 <code>MASK</code>。</li><li><strong>上下文 grounding 检查</strong>：开启 Guardrails 的<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-contextual-grounding-check.html">上下文 grounding 检查</a>，为每个回答分别打分：相对于检索到的段落的 grounding 程度，以及相对于查询的相关性。guardrail 会拦截低于你所设阈值的回答。对于智能体检索，你可以用 <code>ApplyGuardrail</code> API 对生成的答案执行该检查。该检查支持问答和摘要，不支持对话式聊天机器人这类用例。</li><li><strong>把爬取到的内容当作不可信输入</strong>：准备好的网页会变成模型上下文，因此公开页面上的文字可能借检索实施 prompt injection。不要只依赖 guardrails 来发现它。把种子 URL 限制在你信任的站点，并在内容进入知识库之前应用下一节所述的摄入过滤模式。</li><li><strong>引用与人工复核</strong>：让每个生成的回答都带上引用，以便用户对照来源页面核实其中的说法。对于风险较高的用例，请保留人工审核环节。</li></ul>
-<h2>安全与合规方面的考量</h2>
-<p>在针对生产内容运行本工作流之前，请审阅以下各项：</p>
-<ul><li><strong>使用可信的公开爬取目标</strong>：种子 URL 和爬取设置属于部署配置，而 Fargate 任务允许出站访问，这样才能触达公开网站。在示例的默认网络模式下，任务运行在带公有 IP 的公有子网中。请只配置已获授权的公开站点。不要用这个示例去爬取私有或内部端点。在为其他信任模型改造本工作流之前，请先审阅出站网络和目的地控制。</li><li><strong>尊重爬取指令</strong>：工作流默认开启 Crawl4AI 的 <code>robots.txt</code> 检查，并且 CDK 路径把它钉死为开启，没有可供禁用的 context key。请确认你拥有爬取目标站点的授权，并与 <a href="https://aws.amazon.com/aup/">AWS 可接受使用政策</a>保持一致。</li><li><strong>速率限制</strong>：配置请求之间的延迟，避免把源网站压垮。</li><li><strong>静态加密</strong>：该 stack 会创建一个带自动密钥轮转的 AWS Key Management Service（AWS KMS）客户管理密钥，并用它加密自己的 CloudWatch 日志组。Amazon S3 默认使用 Amazon S3 托管密钥的服务端加密（SSE-S3）来加密新对象。如果你的数据分级要求桶使用客户管理密钥，请为桶配置好该密钥，然后在 AWS Identity and Access Management（IAM）和密钥策略中都授予上传方与知识库服务角色所需的 AWS KMS 权限。该 stack 的任务角色并不包含 AWS KMS 权限。托管知识库默认使用 AWS 拥有的密钥加密其数据，也可以在创建时指定一个由你管理的客户管理密钥。对于客户托管知识库，请审阅其向量存储的加密方式。</li><li><strong>最小权限的 IAM</strong>：CDK stack 在所配置的桶前缀上授予 Fargate 任务角色 <code>s3:PutObject</code> 权限。它还授予目标知识库上的 <code>bedrock:StartIngestionJob</code> 和 <code>bedrock:GetIngestionJob</code>，以及为它的单个配置参数授予 <code>ssm:GetParameter</code>。另有独立的角色负责 Amazon EventBridge 启动任务，以及标准的容器镜像拉取与日志投递。该流水线不会读取或列举 S3，也不会调用 <code>InvokeModel</code> 或 <code>Retrieve</code>。</li><li><strong>容器与模板检查</strong>：容器以非 root 用户身份运行，并且 CDK 应用在每次合成（synthesis）时都会运行 cdk-nag 的 AWS Solutions 检查，抑制项按资源粒度声明。</li><li><strong>保护部署配置</strong>：CDK 应用把非机密的流水线设置存放在一个明文的 Parameter Store <code>String</code> 参数中。任务定义里只放参数的名称。不要把密码、cookie、token 或其他机密放进 CDK context 或这个参数。</li><li><strong>摄入流水线安全</strong>：参见<a href="https://aws.amazon.com/blogs/security/securing-the-rag-ingestion-pipeline-filtering-mechanisms/">保护 RAG 摄入流水线：过滤机制</a>，了解在内容进入知识库之前应当应用的过滤与校验模式。</li></ul>
-<h2>清理</h2>
-<p>为避免持续产生费用，请删除本次演练过程中创建的资源：</p>
-<ul><li>在仓库的 <code>deploy/</code> 目录下，于同一区域运行 <code>cdk destroy</code>，并带上你传给 <code>cdk deploy</code> 的那四个相同且必需的 <code>-c</code> 值。应用在每条命令上都会校验它们。这会移除该 stack 的 Amazon EventBridge 规则、ECS 集群、任务定义、日志组、IAM 角色、Parameter Store 参数和安全组，如果 VPC 是由该 stack 创建的，也会一并移除。它还会把 stack 的 AWS KMS 密钥安排在 30 天等待期之后删除。它不会删除导入的 VPC、你的知识库、你的 S3 桶，或工作流上传的那些对象。CDK 也会保留其 bootstrap 资源中的容器镜像和模板。它还留下集群的 Container Insights 日志组，其名称以 <code>/aws/ecs/containerinsights/Crawl4aiBedrockKbCrawler-</code> 开头。</li><li>要移除已摄入的网页内容，请删除 <code>s3://&lt;bucket&gt;/&lt;prefix&gt;</code> 下准备好的那些对象，然后再次同步数据源。如果某个托管知识库数据源开启了文档删除保护，那么当某次同步将删除的文档比例超过其阈值时，它会跳过自己的删除阶段。</li><li>只有当你完全只是为了本次演练才创建了托管知识库时，才删除它。托管知识库没有需要另行删除的向量存储。</li><li>对于客户托管知识库，只有当你为本次演练才创建了 Amazon S3 数据源时，才删除它。它的数据删除策略决定了 Amazon Bedrock 是否会同时从你的向量存储中删除该数据源的 embedding 向量。</li></ul>
-<h2>结语</h2>
-<p>在本文中，你了解了如何把 Amazon Bedrock Knowledge Bases 扩展到那些在摄入前需要准备的、已获授权的公开网页内容。一个按计划在 AWS Fargate 上运行的任务用 Crawl4AI 做有界爬取，准备好 Markdown 及 <code>page.md.metadata.json</code> sidecar，把它们上传到 Amazon S3 数据源，然后启动摄入。知识库随后负责解析、分块、embedding、索引、检索，以及带引用的、有依据的回答。</p>
-<p>对大多数公开网站，请从托管知识库中的 Amazon Bedrock Web Crawler 开始。当你需要控制每个页面的哪一部分被索引、或者哪些元数据要随之一起流转时，就使用 Crawl4AI 这条路径。要开始动手，请从配套的 <a href="https://github.com/aws-samples/sample-crawl4ai-bedrock-knowledge-base">sample-crawl4ai-bedrock-knowledge-base</a> 仓库部署这个计划任务 Fargate 工作流，然后用有代表性的内容校验检索质量与引用，之后再逐步扩大规模。</p>
-<h2>了解更多</h2>
-<p>关于本文涉及的服务和模式的更多信息，请参考以下资源：</p>
-<ul><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-build-managed.html">构建托管知识库</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-ds-webcrawler.html">面向托管知识库的 Amazon Bedrock Web Crawler</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-ds-s3.html">面向托管知识库的 Amazon S3 连接器</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-agentic-retrieve.html">使用智能体检索查询知识库</a></li><li><a href="https://github.com/unclecode/crawl4ai">GitHub 上的 Crawl4AI</a></li><li><a href="https://github.com/aws-samples/amazon-bedrock-samples/tree/main/rag/knowledge-bases">aws-samples/amazon-bedrock-samples 中的 Knowledge Bases 示例</a></li></ul>
-<h2>致谢</h2>
-<p>本产品包含 <a href="https://x.com/unclecode">UncleCode</a> 作为 <a href="https://github.com/unclecode/crawl4ai">Crawl4AI 项目</a>的一部分开发的软件。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] 在 Amazon SageMaker AI 上用知识蒸馏构建高效 agent</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/build-efficient-agents-with-knowledge-distillation-on-amazon-sagemaker-ai/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-efficient-agents-with-knowledge-distillation-on-amazon-sagemaker-ai/</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：Build efficient agents with knowledge distillation on Amazon SageMaker AI</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>在 Amazon SageMaker AI 上用知识蒸馏构建高效 agent</h1>
-<p>你基于一个前沿模型（frontier model）搭了一个购物助手，它确实能跑通。有顾客提出「找一个 20 美元以下、来自评分至少 4.5 星店铺的黑色腰包」，agent 就会搜索商品目录、逐个查看候选商品、核对约束条件，并最终给出一个明确的推荐。但这一次交互的实际成本是多少？一个 agentic 助手不是一次模型调用，而是一个循环：搜索、读取结果、细化、验证、决策。一个完成的任务可能是对那个前沿模型的多次调用，而每一次都要付费，每一位顾客都要付费。到了生产规模，这种按任务累积的成本会不断放大、侵蚀项目的 ROI，最终让项目无法上线。</p>
-<p>让一个 agentic 应用更高效的一条路是使用更小的模型——它响应更快，托管起来也更划算。难点在质量：小模型通常在这类任务上达不到要求，而这正是当初选择更大模型的原因。知识蒸馏（knowledge distillation）补上了这个缺口：它把更大的「教师」模型的行为迁移进更小的「学生」模型，训练学生去复现教师的输出，从而在小模型的速度和成本下保住大部分质量。</p>
-<p>在这篇文章里，你将了解如何使用知识蒸馏，特别是 sequence-level knowledge distillation（SeqKD，序列级知识蒸馏），在 <a href="https://aws.amazon.com/sagemaker/ai/">Amazon SageMaker AI</a> 上微调一个购物 agent。我们会讲到：如何用前沿的教师模型生成高质量的多步轨迹（trajectory）并只保留解开任务的那些，如何把它们编码以用于监督微调（SFT），如何在 serverless 基础设施上运行训练，以及如何在留出的 benchmark 上评测学生模型。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-1-1.png" alt="agentic 任务的循环示意图：搜索、读取结果、细化、验证、决策，每一步都是对前沿模型的一次单独计费调用"></p>
-<p>图 1：一个 agentic 任务是一个循环，不是单次调用——agent 搜索、读取结果、细化、验证、决策，而每一步都是对前沿模型的一次单独计费调用。一个完成的任务可能是多次调用，而且发生在每一位顾客身上</p>
-<h2>什么是 sequence-level knowledge distillation（SeqKD）？</h2>
-<p>最简单可用的蒸馏形式就是 sequence-level knowledge distillation（SeqKD）。它用教师模型生成高质量回答，然后用监督微调（SFT）在这些回答上训练学生模型。SeqKD 只需要教师的<em>文本</em>，既不需要访问教师的 logits，也不需要强化学习基础设施，所以即使教师是闭源的、或者只能通过 API 访问，它也照样可用。和 logit-based、on-policy 等其他方案相比，它处在蒸馏谱系里最具成本效益、也最容易移植的那一端。教师写下答案，学生在这些答案上做微调。因为这些答案会以数据集的形式留存下来，你可以反复用它们来训练或测试不同的学生，而不必重新生成数据。</p>
-<p>原则上，你会希望学生去匹配教师在整个可能输出空间上的完整分布。这里的问题是：你做不到。可能的序列空间大得离谱，精确匹配并不可行。SeqKD 的绕法是用教师实际产出的样本来近似那个分布。</p>
-<p>对一个 agent 来说，教师产出的「序列」不是一段成文的回答，而是一条轨迹：推理、工具调用（tool call）以及这些调用返回的 observation 按顺序连成的一整段运行，其中每一步都以它之前的全部内容作为条件。把学生放在这整段序列上训练，教给它的既有导向每个动作的推理，也有多步行动方案本身，而不只是一段答案文字。这让 agentic 任务成为序列级 KD 最干净的例证之一，因为被复制的那段序列本身就是行为。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-2-1.png" alt="SeqKD 示意图：教师生成轨迹，学生把这些轨迹当作普通的监督微调来训练"></p>
-<p>图 2：SeqKD 只通过教师的文本输出来迁移行为：教师生成轨迹，学生在这些轨迹上训练，结果是在小模型的速度和成本下保住教师的大部分质量。训练期间不需要教师的权重、logits 或梯度，所以它就以普通的监督微调方式运行</p>
-<h2>什么时候 SeqKD 是正确选择</h2>
-<p>SeqKD 适配下面这一组特定情形：</p>
-<p><strong>你有输入，但没有高质量的目标输出</strong></p>
-<p>这是 SeqKD 的核心场景，它本质上就是数据生成：你来提供输入，教师来写 targets，于是你可以在一个没有现成高质量标签的任务或领域上做微调。targets 可以简单到单个回答，也可以复杂到多轮工具使用轨迹。本文取的是这个谱系里要求最高的一端——agentic 轨迹——它尤其难以获得。同一个任务会派生出许多部分正确的运行，而要把解开的运行和失败的运行区分开，需要一个可靠的 grader。一个带程序化打分器（scorer）的 benchmark 正好提供这一点，于是你可以让教师去生成轨迹，只保留解开任务的那些。</p>
-<p><strong>你的教师是只能通过 API 访问的前沿模型</strong></p>
-<p>这是前沿模型的常态。你访问不到它的权重、无法自己托管它，读不到它的 logits，也无法对它做微调。这就排除了 logit-based 蒸馏和 on-policy 方法，它们都需要那种内部访问权限。SeqKD 只需要教师的文本回答，所以它是唯一仍然可行的那条路；而且一旦学生接管，你就不必再为每个请求支付前沿模型的价格。</p>
-<p><strong>你想要一个既强又划算的第一步</strong></p>
-<p>一些最强的小型推理模型，很大程度上就是用 SeqKD（在教师推理轨迹上做监督微调）构建出来的，所以在条件合适时，它是迁移推理能力的有效起点。<a href="https://arxiv.org/abs/2501.12948">DeepSeek-R1 蒸馏模型</a>就是一个众所周知的例子：一个大教师的推理能力被蒸馏进了更小的 Qwen 和 Llama 学生模型——方法就是在教师生成的推理轨迹上对它们做微调。</p>
-<h2>前置条件</h2>
-<p>要运行这个示例，你需要：</p>
-<ul><li>一个 AWS 账号，并有一个供 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/security-iam.html">SageMaker AI 使用的 AWS Identity and Access Management（IAM）角色</a>，它对某个 Amazon Simple Storage Service（Amazon S3）存储桶有读写权限，也有调用你的教师模型的权限。</li><li>一个用于生成轨迹的前沿教师模型（本文的走查使用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上的一个模型）。</li><li>在受支持的 AWS Region 中拥有 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/customize-model.html">SageMaker AI model customization</a> 的访问权限。</li><li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-updated.html">Amazon SageMaker Studio</a>（或一个本地 IDE，并<a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html">配置好 AWS CLI</a>），运行 Python 3.12 或更高版本的 kernel，并装有 <a href="https://sagemaker.readthedocs.io/">SageMaker Python SDK v3</a> 和 <code>boto3</code>（请锁定你的版本）。notebook 环境至少要用一个 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/notebooks-available-instance-types.html">ml.m5.4xlarge 实例</a>，因为数据准备和本地打分步骤都跑在它的 CPU 上。</li><li>具备 Python、监督微调，以及使用工具的 agent 方面的工作知识。</li><li><a href="https://github.com/aws/sagemaker-hyperpod-recipes/tree/main/examples/sequence-distillation">配套的代码仓库</a>，以及一个带程序化打分器的任务（本文的走查使用 ShoppingBench 测试集。请换成你自己的任务和 grader）。</li></ul>
-<h2>方案总览</h2>
-<p>本节把整条 pipeline 从头走到尾。一个前沿教师——Amazon Bedrock 上的 GLM-5.3——充当 ShoppingBench 的 agent 来生成轨迹。这个 benchmark 自带的打分器只保留解开任务的那些，而这些解开的轨迹用来微调一个 Qwen3.5-4B 学生，采用 SageMaker AI model customization 上的 serverless 监督微调。随后在留出的 ShoppingBench 划分（split）上评测蒸馏出的学生，并通过一个运行工具循环的 SageMaker AI Inference 实时端点（endpoint）把它对外服务。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-3-1.png" alt="在 SageMaker AI 上蒸馏购物 agent 的架构图：教师生成轨迹，打分器保留解开的那些，学生被微调，结果在留出划分上评测"></p>
-<p>图 3：在 Amazon SageMaker AI 上蒸馏一个购物 agent：Bedrock 上的一个前沿教师在训练题目上充当 ShoppingBench 的 agent，ShoppingBench 自带的打分器只保留解开任务的轨迹（rejection sampling），每条解开的轨迹按步骤编码，学生在 Amazon SageMaker AI model customization 上以 serverless 方式微调，最终在留出的 ShoppingBench 测试划分上评测结果</p>
-<h3>准备数据集</h3>
-<p>找到值得模仿的轨迹是最难的一环，而 ShoppingBench 的打分器正是把成功的运行和失败的运行分开的那把尺子。ShoppingBench 发布了 750 道合成的购物题目，product、shop、voucher 三种意图各 250 道，每一题都带一个隐藏的 gold answer 和定义「成功」的约束条件。我们把它们一次性划分为 426 道训练题和 324 道留出的评测题（product 103、shop 105、voucher 116），用的是固定索引，所以两个集合不会重叠。</p>
-<p>对每一道训练题，一个前沿教师——Amazon Bedrock 上开启推理、temperature 设为 1.0 的 GLM-5.3——充当 ShoppingBench 的 agent。它在约 270 万商品的目录里搜索、查看候选商品，并推荐那些满足约束的。每一题我们把教师采样两次，得到 850 条轨迹，然后让 ShoppingBench 自带的打分器只保留解开任务的那些。temperature 取 1.0 是有意的。用采样而不是 greedy 解码，会让两次尝试去探索不同的查询和推理路径，从而让更多题目至少有一条解开的轨迹，可学习的样本集也更丰富。这个 rejection sampling 步骤把一个「能干但不完美」的教师变成一份干净的训练集，因为教师只要对得足够频繁，解开的运行就值得模仿。</p>
-<p>每条解开的轨迹都是一个完整的 episode：顾客请求、教师在每一步的推理和工具调用（search、inspect、recommend、terminate），以及环境返回的 observation。我们把推理和行动一起保留下来，后文的 Results 表明，正是这一点把学生送完了通往教师的大半程。</p>
-<h3>为训练编码轨迹</h3>
-<p>序列级蒸馏就是在已经存在的轨迹上做监督学习，所以训练期间不会有任何工具被真正调用，应用看到的只有文本。因为这些轨迹是多步的工具使用对话，我们把每条轨迹编码成由若干 chat 轮次组成的 <code>messages</code> 列表，并让学生自己的 chat template 去渲染它，这样训练器看到的 token 就和 agent 在推理时产出的 token 一致。</p>
-<p>每条轨迹按步骤展开，每一步生成一行训练数据。<code>user</code> 轮带着 system prompt 和此前的对话。<code>assistant</code> 轮带着这一步的推理以及它所导向的那个工具调用，即一个 … 块后面跟一个 [{…}]，按 harness 的原生形式来。loss 只落在 <code>assistant</code> 轮上，所以模型学的是产出下一个「推理加动作」，而不是去预测环境返回的 observation。一条轨迹有若干步就展开成若干行。这里，解开的轨迹经过滤后展开成约 2,600 行训练数据和 130 行验证数据。</p>
-<p>一行数据把此前的对话（user）和要学习的那一个下一步（assistant）配成一对：</p>
-<pre><code>{
-  &quot;messages&quot;: [
-    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;You are a shopping assistant. ...\n# Task\nFind a black waist bag under $20 from a shop rated 4.5 or higher.\n# Observations so far\n(none yet)&quot;},
-    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&lt;think&gt;Start with a broad search and let the price filter work before I narrow by shop rating.&lt;/think&gt;\n&lt;tool_call&gt;[{\&quot;name\&quot;: \&quot;find_product\&quot;, \&quot;parameters\&quot;: {\&quot;q\&quot;: \&quot;black waist bag\&quot;, \&quot;price\&quot;: \&quot;0-20\&quot;}}]&lt;/tool_call&gt;&quot;}
-  ]
-}</code></pre>
-<p>之后的每一步都各自成一行：把新的 observation 追加到 user 内容里，把下一个「推理加工具调用」作为 <code>assistant</code> 的 target，一直到最后的 <code>recommend_product</code> 和 <code>terminate</code> 调用。每一行都要用你模型的确切 chat template 来渲染。</p>
-<p>划分数据要按题目划分，而不是按行划分。教师每题采样两次，每条轨迹又展开成多步，所以许多行共用同一道题目；按行划分会让几乎相同的上下文泄漏到训练集和验证集之间。整题留出（约百分之五）才能让验证集保持诚实。</p>
-<p>按步编码的代价是重复的上下文，因为每一行都把不断变长的对话重述一遍，而 serverless 微调会把超过 <code>dataset_max_len</code> 的内容截断，所以越过上限的那一行会丢掉它需要的一部分内容。与其让上限决定切掉什么，不如把每一行控制在预算之内。最有效的办法是压缩工具的 observation，它们在 token 总数里占大头。对商品搜索结果，只保留下一步决策要用的那些字段（id、price、rating，以及正在核对的约束），丢掉原始的商品文案，并限制每次搜索保留多少条结果。如果轨迹仍然超出预算，就限制每条轨迹的步数。这里 <code>dataset_max_len</code> 是 16,384 个 token，在把 observation 修剪之后能装下大多数轨迹。</p>
-<p>每个划分的 JSONL 进入 S3 之后，用 SageMaker Python SDK v3 的 <code>DataSet.create</code> 把每个文件注册为一个 customization <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-open-weight-create-assets-ui.html">dataset asset</a>，它返回训练任务要消费的 <code>train_dataset</code> 和 <code>val_dataset</code>。</p>
-<h3>微调学生模型</h3>
-<p>训练使用 <a href="https://aws.amazon.com/sagemaker/ai/model-customization/">SageMaker AI model customization</a> 搭配 serverless SFT。你从 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html">model hub</a> 里选一个基础模型，把任务指向编码好的数据集，托管服务就会准备好算力、运行任务并返回定制后的模型，指标记录在 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/mlflow.html">Amazon SageMaker with MLflow</a> 里。因为数据已经是受支持的格式，你不用管理训练脚本、容器镜像或实例。</p>
-<p>这个任务会把输出写进一个 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-registry-model-group.html">model package group</a>，它为它产出的每一个模型做版本管理，所以先用 <code>ModelPackageGroup.create</code> 创建这个组（如果同名已经存在就直接复用它），再把它传给 trainer。然后配置 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-open-weight-job.html">customization job</a>：选定基础模型和训练类型，指向训练集与验证集以及 model package group，再指定一个 MLflow experiment 的名字，这样任务运行期间指标就会流向 MLflow。</p>
-<pre><code>from sagemaker.train.sft_trainer import SFTTrainer
-from sagemaker.train.common import TrainingType
-
-sft_trainer = SFTTrainer(
-    model=&quot;huggingface-vlm-qwen3-5-4b&quot;,  # Qwen3.5-4B from the JumpStart model hub
-    training_type=TrainingType.LORA,  # TrainingType.FULL for full fine-tuning
-    training_dataset=train_dataset.arn,
-    validation_dataset=val_dataset.arn,
-    model_package_group=model_package_group,
-    mlflow_experiment_name=&quot;seqkd-shopping-exp&quot;,
-    s3_output_path=&quot;s3://&lt;amzn-s3-demo-bucket&gt;/seqkd/output/&quot;,
-    accept_eula=True,
-)</code></pre>
-<p>trainer 从一组有文档记录的默认超参数出发，你可以用 <code>sft_trainer.hyperparameters.to_dict()</code> 查看它们，并在启动任务之前覆盖它们。本次运行我们把序列长度调高以容纳多步轨迹，Low-Rank Adaptation（LoRA）的 rank 用 64，并在这个不大的数据集上训练三个 epoch：</p>
-<pre><code>sft_trainer.hyperparameters.dataset_max_len = 16384
-sft_trainer.hyperparameters.max_epochs = 3
-sft_trainer.hyperparameters.global_batch_size = 64
-sft_trainer.hyperparameters.learning_rate = 0.0001
-sft_trainer.hyperparameters.lora_rank = 64
-sft_trainer.hyperparameters.lora_alpha = 256  # alpha / rank = 4
-sft_trainer.hyperparameters.lr_warmup_steps_ratio = 0.1
-sft_trainer.hyperparameters.train_val_split_ratio = 0.95</code></pre>
-<p>先用一次 dry run 校验配置，然后启动托管任务，结束后读出注册好的 Model Package ARN。这个 ARN 就是可直接部署的产物，评测和服务两步都消费它：</p>
-<pre><code>from sagemaker.core.resources import TrainingJob
-
-sft_trainer.train(dry_run=True)  # checks the config without launching
-training_job = sft_trainer.train(wait=True)  # launch and wait
-model_package_arn = TrainingJob.get(
-    training_job_name=training_job.training_job_name
-).output_model_package_arn</code></pre>
-<h3>评测学生模型</h3>
-<p>评测分两个阶段，成本低的先做。完整的端到端评测既耗时又耗资源：它要在数百万商品之上架起一个搜索服务、部署端点，并在每一道留出题目上跑一个多步的 agent 循环。在跑完整评测之前，先用 SageMaker AI model evaluation 跑一次低成本的托管预检，它每次只针对一个生成的步骤打分，和教师的 ground-truth 动作做比对。</p>
-<p>预检需要一个打分函数。Model evaluation 支持你自己提供的一个 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-evaluation-preset-custom-scorers.html">Custom Scorer</a> reward function，它对每个样本运行一次，把学生生成的动作和教师的动作做比较。对工具调用蒸馏，要给工具选择打分（模型是否按顺序调用了正确的工具，忽略参数的格式），因为那正是蒸馏最需要迁移的行为。为了让关注点留在「选择」而不是「语法」上，这个 reward function 分别从学生的动作和教师的参考动作里读出工具名，并不要求格式完全匹配。</p>
-<pre><code>def reward_function(sample, index):
-    pred = sample.get(&quot;model_response&quot;, &quot;&quot;)
-    ref = sample.get(&quot;reference_answer&quot;, &quot;&quot;) or sample.get(&quot;response&quot;, &quot;&quot;)
-
-    ref_names = tool_names(ref)  # tool names from the teacher's &lt;tool_call&gt;[...]&lt;/tool_call&gt;
-    pred_names = tool_names(pred)  # tool names the student emitted, parsed leniently
-    toolset = 1.0 if (pred_names and pred_names == ref_names) else 0.0
-
-    return {
-        &quot;id&quot;: str(sample.get(&quot;id&quot;, f&quot;sample-{index:03d}&quot;)),
-        &quot;aggregate_reward_score&quot;: toolset,  # the gate metric: tool selection
-        &quot;metrics_list&quot;: [
-            {&quot;name&quot;: &quot;toolset_match&quot;, &quot;value&quot;: toolset, &quot;type&quot;: &quot;Reward&quot;},
-        ],
-    }</code></pre>
-<p>用 <code>Evaluator.create()</code> 把这个函数注册为一个带版本的 <code>Evaluator</code>，然后调用 <code>evaluate()</code>，为每个任务跑一个 Custom Scorer 任务，并且把基础模型和学生模型一起打分，这样每个结果都有一份对照。</p>
-<p>决策规则很直接。学生必须在这次低成本的预检上打败基础模型。做到了，说明蒸馏生效了，值得再跑更全面的端到端评测；做不到，就先回去修训练。</p>
-<h3>服务蒸馏后的 agent</h3>
-<p>蒸馏出来的模型自己不会执行工具。微调教会它在正确的时机以文本形式发出正确的工具调用，但仍然要有东西去执行这个调用并把结果喂回去。在推理时，你把模型包进一个小的、确定性的 harness 里：给模型提示、解析它发出的工具调用、运行工具、追加 observation、再次提示，如此循环直到模型给出最终答案。这就是普通的应用代码，或者一个现成的 serving 框架，不是强化学习，也不是 on-policy 训练循环。</p>
-<p>学生是一个建在开放权重基础模型之上的 Low-Rank Adaptation（LoRA）adapter，这会影响你部署它的方式。与其把 adapter 合并进去、再托管第二份完整的权重，不如只托管一次基础模型，把学生作为 adapter 挂在它上面——也就是同一个实时端点上的两个 inference component。调用时指定 inference component 的名字来选择由哪一个作答，所以同一个端点既能为基础模型服务，也能为蒸馏出的学生服务，方便你并排比较。</p>
-<p>我们用 Deep Java Library Large Model Inference（DJL LMI）容器来服务这个开放权重模型，它内置打包了 vLLM 引擎以实现高吞吐生成，并锁定到具体版本而不是 <code>latest</code>，这样重新部署就是可复现的。配套的 notebook 把 inference component 的调用包进了一个小的 <code>kd_serve</code> helper，于是「先启用 LoRA serving 部署基础 component，再挂上学生的 adapter」这一步就简化为：</p>
-<pre><code>from sagemaker.core import image_uris
-import kd_serve
-
-# DJL LMI container (vLLM engine bundled in); pin the version for reproducible redeploys
-image_uri = image_uris.retrieve(&quot;djl-lmi&quot;, region=region, version=&quot;0.36.0&quot;)
-
-# 1. Deploy the base model as an inference component, with LoRA serving enabled.
-endpoint_name, base_ic = kd_serve.deploy_base_endpoint(
-    endpoint_name=&quot;seqkd-shopping-agent&quot;,
-    role=role,
-    region=region,
-    image_uri=image_uri,
-    base_model_id=&quot;Qwen/Qwen3.5-4B&quot;,
-    instance_types=[&quot;ml.g5.2xlarge&quot;, &quot;ml.g6.2xlarge&quot;, &quot;ml.g6e.2xlarge&quot;],
-    max_lora_rank=64,
-    max_loras=4,
-    max_model_len=131072,
-)
-
-# 2. Resolve the student's adapter artifacts from its Model Package and attach them
-# as a second inference component on the same base.
-adapter_uri = kd_serve.resolve_adapter_uri(model_package_arn, region)
-student_ic = kd_serve.attach_adapter(
-    endpoint_name=endpoint_name,
-    base_ic_name=base_ic,
-    adapter_component_name=f&quot;{endpoint_name}-student&quot;,
-    adapter_s3_uri=adapter_uri,
-    region=region,
-)</code></pre>
-<p><code>instance_types</code> 这个列表是一个有序偏好。SageMaker AI Inference 会在第一个有可用容量的实例类型上部署，并按列表依次回退，所以学生会视可用性跑在 <code>ml.g5.2xlarge</code>、<code>ml.g6.2xlarge</code> 或 <code>ml.g6e.2xlarge</code> 上。基础权重只加载一次，两个 inference component 共享它们，因此多挂一个 adapter 花掉的是 adapter 量级的内存，而不是模型的第二份副本。</p>
-<h2>结果</h2>
-<p>我们在留出的 ShoppingBench 测试划分上评测蒸馏出的学生，对照的是一组能框定「什么才算好」的参照点：</p>
-<ul><li><strong>基础 Qwen3.5-4B：</strong> 开箱即用、没有做过微调的同一个学生模型。这是下限。</li><li><strong>蒸馏后的学生（SeqKD）：</strong> 同一个 4B 模型，在教师的轨迹上做了微调，也就是本文描述的方法。这才是重点结果。</li><li><strong>GLM-5.3 教师：</strong> 生成了训练数据的那个前沿模型，跑在 Bedrock 上。我们既报告它采样时的结果（temperature 1.0，也就是产出那批数据的设置），也报告 greedy 时的结果（temperature 0）。</li><li><strong>中等尺寸的前沿模型：</strong> 一个强的专有模型作为 agent 运行，作为一个实际可达的上限纳入对照。</li></ul>
-<p>每个模型都跑同一个未做修改的 ShoppingBench agent 循环，覆盖三种顾客意图（product、shop 和 voucher）。我们报告 Absolute Success Rate（ASR，绝对成功率），即 agent 解开的留出题目占比，对三种意图取平均，缺失的轨迹按失败计入。当推荐的一个或多个商品满足所有给出的约束时，这道题算解开。下面的数字来自 LoRA 学生的单次运行，所以运行之间的波动会有几个点。</p>
-<h3>任务成功率</h3>
-<p>核心结果是 324 道留出题目上的 Absolute Success Rate，按意图拆分，并对三者取平均：</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-4-1.png" alt="按顾客意图拆分的 Absolute Success Rate 柱状图，显示蒸馏后的 4B 学生与 GLM-5.3 教师和一个中等尺寸前沿模型持平"></p>
-<p>图 4：留出的 ShoppingBench 测试划分上的 Absolute Success Rate（ASR），按顾客意图拆分。蒸馏后的 4B 学生（橙色）平均比基础模型提高 24 个点，达到了为它生成数据的 GLM-5.3 教师以及一个中等尺寸前沿模型的水平</p>
-<table><thead><tr><th><strong>模型</strong></th><th><strong>product</strong></th><th><strong>shop</strong></th><th><strong>voucher</strong></th><th><strong>平均值</strong></th></tr></thead><tbody><tr><td>基础 Qwen3.5-4B（未微调）</td><td>0.456</td><td>0.314</td><td>0.121</td><td>0.297</td></tr><tr><td>蒸馏后的学生（SeqKD）</td><td>0.563</td><td>0.638</td><td>0.422</td><td>0.541</td></tr><tr><td>GLM-5.3 教师（采样，temperature 1.0）</td><td>0.553</td><td>0.619</td><td>0.362</td><td>0.511</td></tr><tr><td>GLM-5.3 教师（greedy，temperature 0）</td><td>0.544</td><td>0.638</td><td>0.439</td><td>0.540</td></tr><tr><td>中等尺寸的前沿模型</td><td>0.583</td><td>0.667</td><td>0.388</td><td>0.546</td></tr></tbody></table>
-<p>概括来说，一个 4B 模型几乎把它前沿教师的全部任务质量都恢复了出来，在运行之间的噪声范围内与教师打平。我们用两种方式报告教师，因为它们回答的是不同的问题。Greedy 解码返回单条最可能的轨迹，在每个模型每道题只有一次尝试的场合（本次评测就是这样）它是更强的选择，这也是 greedy 教师拿到 0.540、而采样教师只有 0.511 的原因。我们生成训练数据时用的是另一种方式：在 temperature 1.0 下采样，让重复的尝试去探索不同的路径，再由打分器把解开任务的那些保留下来。这层过滤也正是学生能略微超过它所学习的采样教师的原因——rejection sampling 让学生只在教师的解开运行上训练，而不是它的平均输出，所以它模仿的是一个 best-of 的切片，而不是全部尝试的完整分布。</p>
-<h3>保留 target 里的推理很重要</h3>
-<p>学生既从教师的推理里学习，也从它的工具调用里学习，而这个选择承担了结果里很大的一部分。把同一个学生放在同样的轨迹上训练、但把推理剥掉，只留下赤裸裸的工具调用，平均 ASR 就从 0.541 掉到 0.415：</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-5-1.png" alt="基础模型、只用工具调用训练的学生、以及用推理加工具调用训练的学生三者的 Absolute Success Rate 柱状图"></p>
-<p>图 5：基础模型、只用工具调用训练的学生，以及用教师的推理加工具调用训练的学生三者的 Absolute Success Rate。保留推理能带来约 13 个点的平均 ASR 提升，而且这个增益在每一种意图上都成立</p>
-<p>两个学生都超过了基础模型，所以即使只用工具调用那一版也是实实在在的改进；但把推理保留下来，才是把学生送到教师那个水平的最后一段路。动作之间的推理不是可以丢掉的旁白，它就是解开任务的那个行为的一部分。</p>
-<h3>保住通用能力</h3>
-<p>ASR 衡量的是我们为之做蒸馏的那项技能。而与之制衡的问题是：学生到底保住了它通用的 instruction-following 能力，还是对购物任务过拟合了。我们用 <a href="https://github.com/google-research/google-research/tree/master/instruction_following_eval">IFEval</a> 来检查——这是一个通用指令遵循 benchmark，对「用恰好三个 bullet 来回答」这类可验证的格式指令打分。把它当成一次回归检查，而不是排行榜。学生的 prompt-strict 分数从基础模型的 0.819 降到 0.741，instruction-strict 分数从 0.872 降到 0.813，跌幅大约 6 到 8 个点（图 6）。这正是专业化的预期代价：学生拿一部分通用指令遵循能力，换来了购物任务上的大幅提升。如果跌幅远大于此，那才是蒸馏把模型收窄得太厉害的警讯。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22281-6-1.png" alt="基础模型与蒸馏后学生在 IFEval 的 prompt-strict 和 instruction-strict 两项指标上的柱状图"></p>
-<p>图 6：基础模型与蒸馏后学生在 prompt-strict 和 instruction-strict 两项指标上的 IFEval 通用指令遵循得分。这处小幅下降是在购物任务上做专业化所带来的预期代价</p>
-<h3>收益与代价</h3>
-<p>单看一个成功率并不能为「换掉模型」这件事提供理由。做蒸馏的理由是：你用更小模型的成本和速度，拿到了更强模型的大部分质量。这里最清楚的证据就是，这个 4B 学生达到了它前沿教师以及一个中等尺寸前沿模型的任务质量，同时又小到可以在单个 G 系列实例上服务（本例是 NVIDIA A10G/L40/L40S）。</p>
-<p>成本上的差别不仅关乎大小，也关乎形状。通过 API 访问的前沿模型按 token 计费，在每个任务的每一步上都计费，所以成本随用量增长、永不停止，而开头提到的那个 agentic 循环每一次都要付这笔过路费。蒸馏出的学生跑在你自己托管的端点上，按小时为实例计费，无论它服务一个任务还是一千个任务都一样，所以在扩容之前额外的流量不需要再多付一分钱。你是在把一笔可变的按请求费用，换成一笔固定的按小时费用，而你能够将就用的模型越小，这笔固定成本就越小。</p>
-<p>这里我们不公布单任务的成本或延迟数字，因为它取决于你的流量：一个 G 系列实例能撑起的吞吐、以及由此摊到每个任务上的成本，都是你的请求模式、序列长度和并发度的函数。请在你自己真实的工作负载上，对照当前的 <a href="https://aws.amazon.com/sagemaker/ai/pricing/">SageMaker AI 定价</a> 和你那家前沿模型供应商的 token 定价来测量，而不是依赖一个笼统的宣传数字。</p>
-<h2>局限与最佳实践</h2>
-<h3>任务是否装得下学生（那堵容量墙）</h3>
-<p>蒸馏迁移的是学生本来就能表示的那个分布，而不是它本来就缺的能力。当差距过大时，学生只会照抄教师的格式，却学不会解题。一个小模型在大教师的思维链上训练，会产出很长、结构很规整的推理，但答案仍然是错的；一个用同样方式训练的 agent 会发出格式正确的工具调用，却毫无进展——换个措辞反复搜索，一路跑到步数上限也没能满足约束。两种情况的症状是一样的：轨迹越来越长，准确率原地不动。看到这种现象就停止继续加数据，要么把学生做大，要么降低任务难度。</p>
-<p>决定这件事的那个差距，是在任务和模型之间，而不是在学生和教师之间。只要任务本身够得着，一个小学生完全可以恢复一个大得多的教师的质量。这也正是这里的购物 agent 能成的原因：教师是一个 mixture-of-experts 模型，激活参数约 400 亿，大约是学生 40 亿的十倍，但购物这个任务远在 4B 模型的能力范围之内，所以学生恢复的是教师的质量，而不是只把自己的轨迹拉长。</p>
-<h3>SeqKD 在哪里就不再有帮助了</h3>
-<p>SeqKD 能抬高简单题目和中等难度题目的表现，但在最难的题目上会进入平台期——那些需要学生从自己的错误里恢复过来的题。对 agent 来说，这一点比单步任务更明显：在多步循环里，一个早期的错误会不断复利放大，因为学生看不到「自己的错误会通向的那些状态」。而补上这个缺口正是 on-policy 方法所针对的目标，所以 SeqKD 通常是第一阶段，而不是终点线。SeqKD 对你基础设施的要求也是最低的，因为它只用教师的文本；而 logit 蒸馏需要教师的逐 token 分布，on-policy 方法则要给学生的自我 rollout 打分。先用纯文本的 SeqKD 做一个 warm start，再接一个 on-policy 阶段，是一种常见的配方，所以本文讲的是第一阶段；而要越过平台期，下一步自然就是它。</p>
-<h3>两个决定成败的选择</h3>
-<p>第一，把训练 target 和你想要的行为对齐。在这里，这意味着把教师的推理和每个工具调用一起保留，而不是压缩成最终答案——因为推理本身就是解开任务的一部分（Results 量化了这个差距），并且每一个 target 都要用 agent 在服务时使用的那个 chat template 来渲染。第二，诚实地评测。在模型没见过的数据上测量，因为泄漏的 benchmark 会把分数抬高；而且不要只跟没训练过的基础模型比——那是学生必然超过的对象——要把教师和一个独立的前沿模型摆在旁边一起比，这样这个数字才能说明学生离它的蒸馏来源有多近。</p>
-<h2>清理资源</h2>
-<p>实时推理端点只要还在运行就持续计费，所以在拿到你的结果之后，把为服务而架起来的那个端点拆掉。因为学生是作为 adapter inference component 挂在基础 inference component 之上的，这些部件必须按依赖顺序往下拆：先 adapter component，再基础 component，然后才是端点和它的配置。配套的 <code>kd_serve</code> helper 会替你做这件事，它按结构找出那个 adapter，所以无论 component 的具体名字是什么都能清理干净：</p>
-<pre><code>import kd_serve
-
-# Deletes the adapter IC, then the base IC, then the endpoint and its configuration
-kd_serve.teardown_endpoint(endpoint_name, region=region)</code></pre>
-<p>训练任务本身不需要清理。Serverless 训练会准备好算力、运行、然后自动释放，所以一个已完成的任务不会留下持续的费用。注册好的 model package 和它的组也不产生计算成本，你可以为了 lineage 把它们留着，以后再重新部署。真正一直在花钱的只有你在 S3 里的数据（编码后的轨迹和输出产物），只要你保留着，就会有存储成本，所以删掉不再需要的部分，或者把它们移到成本更低的存储类别。</p>
-<h2>结论</h2>
-<p>在这篇文章里，我们展示了如何用 sequence-level knowledge distillation（SeqKD）把一个 agentic 购物助手蒸馏进一个更小、成本更低的学生模型。我们用 Bedrock 上的前沿教师生成了高质量的单轮、多步轨迹，并用 ShoppingBench 自带的打分器只保留解开任务的那些；把每一步编码成 chat 格式的消息，让教师的推理和它的工具调用一起保留；在 SageMaker AI model customization 的 serverless 基础设施上对学生做微调，用 MLflow 追踪训练，用 SageMaker AI model evaluation 跑一次质量门禁检查，最后把结果服务在一个运行工具循环的推理端点之后。回报是一个 4B 学生，它恢复了自己前沿教师几乎全部的任务质量。因为 SeqKD 只需要教师的文本输出，即使教师是你只能通过 API 访问的闭源前沿模型，它也照样可用；而一旦学生接管，你就不必再在每一步上支付前沿模型的价格。</p>
-<p>SeqKD 是一个很强的第一步，也有真实的边界。让学生的尺寸和任务相匹配；在留出的测试套件上、对照强的参照点来评测，而不是只跟没训练过的基础模型比；当最难的那批题目难以靠模仿拿下时，就在 SeqKD 之后接上本文没有覆盖的 on-policy 方法，让学生从自己的 rollout 里学习。</p>
-<p>想自己动手试试，参见<a href="https://github.com/aws/sagemaker-hyperpod-recipes/tree/main/examples/sequence-distillation">配套的代码仓库</a>和 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/customizing-models-distillation.html">SageMaker AI 文档</a>。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] 用 Amazon Nova Multimodal Embeddings 与 Amazon Bedrock AgentCo…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/agentic-engineering-intelligence-with-amazon-nova-multimodal-embeddings-and-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/agentic-engineering-intelligence-with-amazon-nova-multimodal-embeddings-and-amazon-bedrock-agentcore/</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>完整标题：用 Amazon Nova Multimodal Embeddings 与 Amazon Bedrock AgentCore 打造 Agentic 工程智能 | 原文标题：Agentic engineering intelligence with Amazon Nova Multimodal Embeddings and Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>用 Amazon Nova Multimodal Embeddings 与 Amazon Bedrock AgentCore 打造 Agentic 工程智能</h1>
-<p>当一个已通过认证的航天器件停产或交付周期拉长时，工程师往往要花上几天时间，在厂商数据手册、接口控制文档（ICD）和认证记录之间交叉核对规格，之后才能把替代论证整理成文档供评审。飞行关键部件上的一次错误替代可能导致任务失败，而每个决策背后的证据链却常常散落在邮件和从未成文的组织知识里，评审人员因此拿不到一份正式、可复现的材料包。</p>
-<p>此前的一篇博文 <a href="https://aws.amazon.com/blogs/machine-learning/manufacturing-intelligence-with-amazon-nova-multimodal-embeddings/">Manufacturing intelligence with Amazon Nova Multimodal Embeddings</a> 展示了模型如何检索出那些锁在工程图纸、热分布图和数据手册图表里、纯文本流水线会漏掉的答案。本文沿着那条检索工作的路线继续往前走，把这些能力装进一个多 agent 系统，由它来组装替代论证的证据——从检索一直到起草评估。</p>
-<p>在这篇文章里，我们展示如何用 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>、<a href="https://docs.aws.amazon.com/nova/latest/nova2-userguide/embeddings.html">Amazon Nova Multimodal Embeddings</a> 和开源的 <a href="https://strandsagents.com/">Strands Agents SDK</a> 构建一个多 agent 工程助手，砍掉部件替代评估背后的人工交叉核对。一个 planner 把任务分派给三个 specialist agent：它们检索多模态知识库、按确定性容差规则给候选打分、比对部件照片，并用实时 web 数据支撑生命周期相关的论断。工程师自始至终都是决策者，因为系统只组装证据、起草文档，从不自行批准任何替代。</p>
-<h2>方案总览</h2>
-<p>整个助手围绕一条设计规则搭建：所有决策由工程师做出，系统负责为这些决策组装证据。这条规则决定了我们在哪些地方使用大语言模型（LLM），又在哪些地方改用确定性代码。</p>
-<p>架构由三大支柱构成：</p>
-<ul><li><strong>确定性的规格适配评估</strong> —— 用 Python 编写的容差规则代码，把每个候选部件与参照部件、工程师提出的要求逐项打分。同样的输入总能产出同样的通过/标记判定，结果因此可以进入正式工程评审。</li><li><strong>多 agent 编排</strong> —— 一个轻量的 planner 把每条查询路由给三个 specialist agent（Catalog、Evaluation、Knowledge）中的一个或几个，只有当多个 specialist 都参与时，supervisor 才会综合它们的结论。诸如「查一下这个飞轮是不是快停产了，找出替代品并打分」这类复杂问题，会把三个 specialist 依次串起来。</li><li><strong>人在环路（human-in-the-loop）决策</strong> —— 系统会为工程评审起草论证备忘录和集成影响评估（Integration Impact Assessment），但不推荐、也不批准任何替代方案。每次评估还会写入一条与 AS9100 第 8.4 节和 8.5.6 节对齐的审计记录。</li></ul>
-<p>下图展示了整体架构。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21854-1.png" alt="多 agent 助手的架构图：planner 将工程师的查询路由到 Catalog、Evaluation 和 Knowledge 三个 specialist，由 supervisor 综合结果"></p>
-<p>图 1：基于 Amazon Bedrock AgentCore 的多 agent 工程助手架构</p>
-<p>Amazon Bedrock AgentCore 是一个用任意框架、任意模型大规模构建、连接和优化 agent 的平台。在这套方案里，来自工程师应用的聊天请求会流入托管在 AgentCore runtime 上的一个多 agent 图：planner（Claude Haiku 5.5）产出路由计划，specialist（Claude Sonnet 5.5）执行各自的工具，当有多个 specialist 运行时，supervisor（Claude Opus 5.5）综合它们的结果。specialist 从一个托管知识库中检索——该知识库是我们用 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-managed-kb.html">Amazon Bedrock Managed Knowledge Bases</a>、以 Amazon Nova Multimodal Embeddings 创建的，检索经由 AgentCore Gateway（Amazon Bedrock AgentCore 的一项能力）路由，与获取实时 web 数据的 Web Search 连接器同走这一入口。对于 image-as-query（上传一张图表来识别部件），agent 会直接调用原生的 Amazon S3 Vectors 索引，因为托管知识库的检索 API 不接受图片输入。Amazon S3 Vectors 是 Amazon Simple Storage Service（Amazon S3）的一项能力。另有一条独立的固定链路（先 Knowledge，再 Evaluation，最后 Supervisor）用来生成正式的集成影响评估（IIA）文档。</p>
-<p>Amazon Nova Multimodal Embeddings 在这里扮演两种不同的角色：</p>
-<ul><li><strong>多模态检索</strong> —— 数据手册、ICD 和性能图表都用 Nova Multimodal Embeddings 做 embedding，让文本与视觉内容共享同一个语义空间。工程师可以输入「0.06 Nms 飞轮的扭矩曲线」，也可以上传一张图表图片，检索都会返回匹配的图示并附上来源出处。</li><li><strong>视觉相似度打分</strong> —— 比较两个候选部件时，Nova Multimodal Embeddings 会给出两者照片之间的量化余弦相似度，再由 Claude 分析具体的物理差异（安装孔位布局、连接器位置、外壳几何）。这个分数为确定性的规格比对补充佐证，而适配结论始终以规格比对为准。</li></ul>
-<h2>前置条件</h2>
-<p>要跟着做，你需要：</p>
-<ul><li>一个 AWS 账号，且可在美国东部（弗吉尼亚北部）AWS Region 访问 Amazon Bedrock。</li><li>在 Amazon Bedrock 中开通 Amazon Nova Multimodal Embeddings、Claude Haiku 5.5、Claude Sonnet 5.5 和 Claude Opus 5.5 的模型访问权限。各 Region 的模型可用性见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock 中按 AWS Region 的模型支持</a>。</li><li>一个用 Amazon Bedrock Managed Knowledge Bases 创建的托管知识库，以 Amazon Nova Multimodal Embeddings 覆盖你的部件语料（数据手册、ICD、描述文本），用于文本和文档检索。</li><li>一个覆盖部件照片和数据手册图表裁剪区的 Amazon S3 Vectors 索引，供 image-as-query 路径使用。</li><li>一个 Amazon Bedrock AgentCore Gateway，配好 Web Search 连接器和一个托管知识库 target。</li><li>Python 3.10 或更高版本，以及用于运行 notebook 的 Jupyter。</li><li>如果你要把 notebook 03 里的部署配方改造为把 agent 托管到 AgentCore runtime，还需要 Docker。</li><li><a href="https://github.com/aws-samples/amazon-nova-samples/tree/main/multimodal-embeddings/repeatable-patterns/agentic-engineering-intelligence-nova-mme-agentcore">GitHub 仓库</a> 里的示例代码。</li></ul>
-<h2>方案详解</h2>
-<p>下面的小节按一条查询实际经过的顺序介绍系统的各个部分。我们先讲部件语料和 specialist agent，再依次覆盖路由、确定性打分、助手使用 Nova Multimodal Embeddings 的两种方式、生成正式文档的固定链路，以及部署到 AgentCore runtime。</p>
-<p>完整代码示例是 <a href="https://github.com/aws-samples/amazon-nova-samples/tree/main/multimodal-embeddings/repeatable-patterns/agentic-engineering-intelligence-nova-mme-agentcore">GitHub 仓库</a> 里的一组五个 Jupyter notebook，每个 notebook 都能独立运行。这些 notebook 从 <code>mei_core</code> 导入——那是 agent 与工具模块在同一文件夹下的自包含副本——并且自带部件数据、图表裁剪区和评估查询集。本文里的每一段代码都可以直接从 notebook 运行，不需要其它应用代码。</p>
-<h3>组织部件语料</h3>
-<p>示例数据集是虚构厂商 AnyCompany 的七款反作用飞轮，动量存储覆盖 0.003–5.0 Nms。每个部件是一个文件夹，把结构化数据与工程师实际会读的原始文档配对存放，正是这种混合让语料成了多模态。<code>specs.json</code> 存放驱动确定性打分的机器可读字段，而 ICD、产品照片和渲染出的数据手册页面则承载了结构化字段没写到的视觉与叙述细节。</p>
-<pre><code>data/synthetic-parts-data/rw_rl_0060/
-├── specs.json # structured specs + lifecycle fields
-├── description.txt # flat text for text retrieval
-├── AC-ICD-00068-RW3-0.06-Interface-Control-Document-v2.2.pdf
-├── datasheet_page.png # rendered datasheet page
-├── datasheet_chart.png # cropped chart region (image-as-query index)
-└── photo.png # product image (visual similarity + chart matching)</code></pre>
-<p><code>specs.json</code> 同时记录工程规格和生命周期档案，正因如此，助手才能在检查规格适配的同时，标记停产与交付周期风险。</p>
-<pre><code>{
-  &quot;name&quot;: &quot;AnyCompany RW3 0.06&quot;,
-  &quot;category&quot;: &quot;reaction_wheel&quot;,
-  &quot;vendor&quot;: &quot;AnyCompany&quot;,
-  &quot;model&quot;: &quot;RW3-0.06&quot;,
-  &quot;momentum_storage_nms&quot;: 0.06,
-  &quot;max_torque_mnm&quot;: 20,
-  &quot;mass_g&quot;: 235,
-  &quot;voltage_v&quot;: &quot;28&quot;,
-  &quot;voltage_range_v&quot;: &quot;7.5 to 36&quot;,
-  &quot;operating_temp_c&quot;: &quot;-30 to +70&quot;,
-  &quot;interface&quot;: &quot;RS-422 or Redundant RS-485&quot;,
-  &quot;qual_standard&quot;: &quot;AnyCompany internal (flight heritage qualified)&quot;,
-  &quot;lifecycle&quot;: {
-    &quot;lifecycle_status&quot;: &quot;Active&quot;,
-    &quot;production_status&quot;: &quot;Full production&quot;,
-    &quot;estimated_years_to_eol&quot;: &quot;10+&quot;,
-    &quot;last_time_buy&quot;: &quot;Not announced&quot;,
-    &quot;typical_lead_time_weeks&quot;: 10,
-    &quot;lead_time_risk&quot;: &quot;Low&quot;,
-    &quot;bathtub_region&quot;: &quot;Useful life (highly mature)&quot;,
-    &quot;recommended_screening&quot;: &quot;Standard flight acceptance&quot;
-  }
-}</code></pre>
-<p>每个部件都显式写明 <code>vendor</code> 字段。由于目录文件夹 ID 和文件名会在不同数据集之间重复使用，每个 specialist 的 prompt 都把 <code>get_part_specs</code> 返回的结构化 <code>vendor</code> 值当作权威来源，并且禁止从 ID、文件名、照片或 web 搜索结果去猜制造商。让制造商信息取自结构化数据，可以避免助手因为模型自认为认得这块硬件，而把部件安到错误的供应商头上。</p>
-<p>每个部件文件夹还带着两份纯文本索引用不上的资产：产品照片供视觉相似度打分使用；渲染出的数据手册页面带着扭矩框图和扭矩曲线图，能回答 OCR 文本层根本抓不到的性能问题。Amazon Nova Multimodal Embeddings 把这两类资产与文本 embed 进同一个向量空间，于是一条查询既能命中规格数值，也能命中一段文字或一张图。</p>
-<p>下面的示例展示语料中的四页数据手册，其动量存储横跨三个数量级。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21854-2.png" alt="四页反作用飞轮的数据手册并排展示，每页都有产品照片和性能图，覆盖不同的动量存储量级"></p>
-<p>图 2：部件语料中的四页数据手册，动量存储横跨三个数量级</p>
-<p>整个产品系列的模板是统一的，但产品照片和那一对性能图每个部件都不同。这些区域展示了外壳几何、安装孔位布局、扭矩包络和功耗——规格字段并不会直接写明这些，所以我们把它们与文本一起 embed。</p>
-<h3>用限定范围的工具定义 specialist</h3>
-<p>每个 specialist 都是一个 Strands agent，prompt 范围很窄，只带自己需要的工具。按 specialist 限定工具能让行为可预期：Knowledge specialist 摸不到目录发现类工具，Catalog specialist 也碰不到评估类工具。下面的代码创建 Evaluation specialist。</p>
-<pre><code>from strands import Agent
-
-def create_evaluation_specialist() -&gt; Agent:
-    &quot;&quot;&quot;Evaluation Specialist: deterministic spec-by-spec comparison and scoring.&quot;&quot;&quot;
-    return Agent(
-        name=&quot;evaluation_specialist&quot;,
-        system_prompt=&quot;&quot;&quot;You are the Evaluation Specialist. Your job is to run
-deterministic, spec-driven comparisons between parts.
-...
-RULES:
-- Your comparisons are deterministic (code, not opinion)
-- NEVER recommend or approve --- present evidence and flags; the engineer decides
-- Always include the disclaimer that this is evidence only&quot;&quot;&quot;,
-        tools=[score_substitution_fit, compare_parts, visual_similarity_score,
-               check_qualification_status, generate_substitution_memo],
-        model=&quot;us.anthropic.claude-sonnet-5-5&quot;,
-    )</code></pre>
-<p>下图展示 planner 如何把查询路由给各个 specialist，以及 supervisor 何时综合它们的结果。图后的列表说明每个 specialist 的职责。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21854-3.png" alt="流程图：planner 将查询路由给 specialist，当有多个 specialist 运行时由 supervisor 综合结果"></p>
-<p>图 3：planner 如何把查询路由给 specialist，以及 supervisor 何时综合结果</p>
-<ul><li><strong>Catalog</strong> —— 通过知识库检索和穷举式规格筛选来发现部件（<code>kb_search</code>、<code>filter_parts_by_spec</code>、<code>get_part_specs</code>、<code>get_substitution_requirements</code>）。</li><li><strong>Evaluation</strong> —— 对候选做确定性打分，并对部件做视觉比对（<code>score_substitution_fit</code>、<code>compare_parts</code>、<code>visual_similarity_score</code>、<code>check_qualification_status</code>、<code>generate_substitution_memo</code>）。</li><li><strong>Knowledge</strong> —— 回答数据手册和 ICD 里的问题，核实实时的停产（end-of-life）状态，并检索视觉内容（<code>get_part_specs</code>、<code>web_search_eol</code>、<code>retrieve_visual_content</code>）。</li></ul>
-<h3>路由用小模型，综合用大模型</h3>
-<p>路由是一个不做工具调用的分类任务，不需要大的推理模型。基于 Haiku 的 planner 几秒钟就能返回一份编号的路由计划。Opus supervisor 只在两个以上 specialist 参与时才运行，因为对单个 specialist 已经完整的回答再做一次综合，只会多花大约 8 秒延迟，质量毫无提升。</p>
-<pre><code># Step 1: Planner (fast model) plans the routing (may be multi-step).
-plan_response = planner(planning_prompt)
-ordered_specialists = _parse_specialist_plan(str(plan_response))
-
-# Step 2: Execute specialists in sequence, passing context forward
-accumulated_context = &quot;&quot;
-for spec_name in ordered_specialists:
-    specialist = specialists[spec_name]
-    specialist_response = specialist(spec_prompt)
-    accumulated_context += f&quot;\n[{spec_name.upper()}]: {specialist_response}\n&quot;
-
-# Step 3: Synthesize only when 2+ specialists ran.
-if len(ordered_specialists) == 1:
-    final_text = steps[0][&quot;response&quot;]
-else:
-    final_text = str(supervisor(synthesis_prompt))</code></pre>
-<p>把工作拆到三档模型上，让每个阶段的成本与延迟相匹配：Haiku 给查询分类，Sonnet 执行工具，Opus 撰写合并后的答案——响应质量最要紧的正是最后这一步。</p>
-<h3>让打分保持确定性</h3>
-<p>规格适配评估就是普通 Python 代码，跑的是一份手写的 requirements schema。schema 为每个部件类别定义了关键规格和容差规则；<code>score_substitution_fit</code> 逐项比对规格，统计通过和被标记的项，并呈现生命周期风险。评审包要求结论必须可复现，所以这一步完全不涉及 LLM。</p>
-<pre><code>{
-  &quot;categories&quot;: {
-    &quot;reaction_wheel&quot;: {
-      &quot;critical_specs&quot;: [
-        {&quot;field&quot;: &quot;voltage_v&quot;, &quot;label&quot;: &quot;Bus voltage (V)&quot;,
-         &quot;rule&quot;: &quot;match&quot;, &quot;required_from_user&quot;: true},
-        {&quot;field&quot;: &quot;mass_g&quot;, &quot;label&quot;: &quot;Mass (g)&quot;,
-         &quot;rule&quot;: &quot;candidate_lte_reference_within_pct&quot;, &quot;tolerance_pct&quot;: 20,
-         &quot;required_from_user&quot;: false}
-      ]
-    }
-  }
-}</code></pre>
-<p>该工具返回一个结构化的判定，附带一条明确的免责声明：</p>
-<pre><code>return {
-    &quot;spec_results&quot;: results,  # per-spec pass/flag/review status
-    &quot;counts&quot;: counts,
-    &quot;out_of_tolerance&quot;: out_of_tolerance,
-    &quot;lifecycle&quot;: {...},  # obsolescence and lead-time flags
-    &quot;summary&quot;: summary,
-    &quot;disclaimer&quot;: &quot;Evidence only. This tool does not recommend or approve &quot;
-                  &quot;a substitution; the engineer decides.&quot;,
-}</code></pre>
-<p>specialist 负责呈现这张表格、解释各个被标记项，但它改不了任何判定。审计记录也遵循同样的分工：每次评估结束后，由编排层读取 specialist 的工具调用历史并亲自写入审计条目，日志因此不依赖模型「记得」去做。</p>
-<h3>用 Amazon Nova Multimodal Embeddings 给视觉相似度打分</h3>
-<p>当替代品必须装到既有支架上时，外形尺寸就很关键。<code>visual_similarity_score</code> 工具用 Nova Multimodal Embeddings 对两张部件照片做 embedding 并计算余弦相似度，然后让 Claude 描述具体看得见的差异。</p>
-<pre><code>def embed_image(image_bytes):
-    &quot;&quot;&quot;Embed one image with Nova MME (IMAGE_RETRIEVAL) -&gt; 1024-d vector.&quot;&quot;&quot;
-    b64 = base64.b64encode(image_bytes).decode('utf-8')
-    fmt = 'png' if image_bytes[:8] == b'\x89PNG\r\n\x1a\n' else 'jpeg'
-    body = {
-        'taskType': 'SINGLE_EMBEDDING',
-        'singleEmbeddingParams': {
-            'embeddingPurpose': 'IMAGE_RETRIEVAL',
-            'embeddingDimension': 1024,
-            'image': {'detailLevel': 'STANDARD_IMAGE', 'format': fmt,
-                      'source': {'bytes': b64}},
-        },
-    }
-    resp = bedrock.invoke_model(
-        modelId='amazon.nova-2-multimodal-embeddings-v1:0',
-        body=json.dumps(body), accept='application/json',
-        contentType='application/json',
-    )
-    result = json.loads(resp['body'].read())
-    return np.array(result['embeddings'][0]['embedding'])
-
-# cosine similarity of the two photo embeddings
-emb_a, emb_b = embed_image(photo_a_bytes), embed_image(photo_b_bytes)
-similarity = float(np.dot(emb_a, emb_b) /
-                   (np.linalg.norm(emb_a) * np.linalg.norm(emb_b)))</code></pre>
-<p>embedding 相似度是确定性、可复现的：同一产品系列里的两个飞轮大约返回 0.84，不同档次的飞轮则约 0.40。随后 Claude 的视觉分析会解释差异从何而来，比如指出其中一个外壳的直径约为另一个的两倍，且采用六孔安装布局，而另一个是四孔。</p>
-<h3>用两条检索路径找回图表与图示</h3>
-<p>文本和文档类查询走由 Amazon Nova Multimodal Embeddings 支撑、经 AgentCore Gateway 路由的托管知识库。image-as-query（上传图表或照片来找匹配内容）则用原生 Amazon S3 Vectors 索引，由 agent 直接调用，因为托管知识库的检索 API 不接受图片输入。</p>
-<p>Knowledge specialist 的 <code>retrieve_visual_content</code> 工具把两条路径收进同一个接口。工程师可以把需求文档里的一条性能曲线贴进聊天框，问哪个部件与它匹配，也可以改用文本查询来描述那张图表。</p>
-<pre><code># Image-as-query: embed the uploaded image with Nova MME, exactly as the
-# datasheet crops and photos were embedded at indexing time.
-def embed_query_image(image_bytes):
-    b64 = base64.b64encode(image_bytes).decode('utf-8')
-    fmt = 'png' if image_bytes[:8] == b'\x89PNG\r\n\x1a\n' else 'jpeg'
-    body = {'taskType': 'SINGLE_EMBEDDING', 'singleEmbeddingParams': {
-        'embeddingPurpose': 'IMAGE_RETRIEVAL', 'embeddingDimension': 1024,
-        'image': {'detailLevel': 'STANDARD_IMAGE', 'format': fmt,
-                  'source': {'bytes': b64}}}}
-    r = bedrock.invoke_model(modelId=NOVA_MME_MODEL_ID, body=json.dumps(body),
-                             accept='application/json', contentType='application/json')
-    return json.loads(r['body'].read())['embeddings'][0]['embedding']</code></pre>
-<p>在图片路径上，上传的图片先用 Nova Multimodal Embeddings 以 <code>IMAGE_RETRIEVAL</code> 用途 embed 成 1,024 维向量，再去 S3 Vectors 索引里匹配：</p>
-<pre><code># Query the native S3 Vectors index and collapse to the best vector per part.
-emb = embed_query_image(image_bytes)
-s3v = boto3.client('s3vectors', region_name=REGION)
-fetch_k = max(top_k * 6, 12)  # each part has several vectors; dedupe below
-resp = s3v.query_vectors(
-    vectorBucketName=S3_VECTOR_BUCKET, indexName=S3_VECTOR_INDEX,
-    queryVector={'float32': emb}, topK=fetch_k,
-    returnDistance=True, returnMetadata=True,
-)
-
-best = {}
-for v in resp.get('vectors', []):
-    meta = v.get('metadata', {}) or {}
-    pid = meta.get('part_id', '')
-    if not pid:
-        continue
-    sim = 1.0 - v.get('distance', 1.0)  # cosine distance -&gt; similarity
-    if pid not in best or sim &gt; best[pid]['score']:
-        best[pid] = {'part_id': pid, 'score': sim}
-ranked = sorted(best.values(), key=lambda r: r[&quot;score&quot;], reverse=True)[:top_k]</code></pre>
-<p>由于一个部件会贡献多条向量（它的照片、整页数据手册、以及每块裁剪出的图表区域），结果在送进模型之前会按部件去重，只保留得分最高的那条向量。</p>
-<p>在搭建这两条检索路径时，我们总结出三个实战教训：</p>
-<ul><li><strong>先裁剪图表，再入库索引</strong> —— 整页数据手册是很差的索引条目：一页里约 90% 的内容（页眉、规格表、页脚）是所有部件共享的样板，这部分共享内容会主导 embedding。把裁剪出的图表区域与整页一起索引解决了这个问题。在我们的测试中，图表上传匹配从整页索引时的 7 中 3 对，提升为图表条带裁剪后的 7 中 7 对。裁剪区域按页面占比定义，因此在不同分辨率的数据手册上都能保持正确。</li><li><strong>工程师点名部件时过滤结果</strong> —— 单靠跨模态的文本到图片相似度，没法稳定返回正确部件的图表，因为一张扭矩曲线图里看不到部件名称。当工程师指名某个部件时，工具只保留来自该部件索引内容的结果——它通过解析每条结果 S3 URI 里的部件文件夹来识别归属。由于过滤在工具内部完成，索引里不需要任何自定义元数据。</li><li><strong>图片路径上的每次回退都要记日志</strong> —— 图片路径出错时返回 <code>None</code>，然后回落到文本检索。这个回退本身合理，但它意味着：如果 AgentCore runtime 的执行角色缺了 <code>s3vectors:QueryVectors</code> 权限，也不会报任何错。image-as-query 会在毫无预警的情况下失效，模型接着会表现得非常有把握地说出一个错误的部件。这种问题在开发阶段很容易被漏掉，因为本地开发者凭证的权限通常比 runtime 角色宽得多。现在每当这条路径发生回退，工具都会记录一条明确的 <code>S3 Vectors image query FAILED</code> 警告，附上 bucket、索引和 Region。检索路径上的每一处静默回退都要埋点打日志，因为硬失败远比无声的失败好诊断。</li></ul>
-<h3>用固定的 specialist 链路产出正式文档</h3>
-<p>聊天走动态路由，因为开放式问题需要哪些 specialist 无法预先知道。集成影响评估则不然：当工程师为某个参照件与候选件的组合请求影响评估时，所需的顺序是已知的，于是服务把同一批 specialist 工厂函数按固定顺序组装起来，配上专门定制的 synthesis prompt。</p>
-<pre><code># 1. Knowledge Specialist --- ICD/datasheet interface detail for both parts
-knowledge_text = str(knowledge(knowledge_prompt))
-
-# 2. Evaluation Specialist --- structured field delta + qualification check
-evaluation_text = str(evaluation(evaluation_prompt))
-
-# Deterministic structured delta for exact summary stats
-comparison = compare_parts(reference_id, candidate_id)
-
-# 3. Supervisor --- synthesize into the six-section IIA document
-markdown = str(supervisor(synthesis_prompt))</code></pre>
-<p>产出的文档涵盖接口变更、机械集成、电气集成、热集成、认证差异和供应链影响。叙述性章节需要 LLM 综合，因为引脚定义和协议细节必须从 ICD 的行文里提取。汇总统计（一致项、差异项、字段总数）直接由 <code>compare_parts</code> 的输出算出，所以与叙述并列展示的数字都是精确的。</p>
-<h3>经由 AgentCore Gateway 用实时 web 数据支撑生命周期论断</h3>
-<p>目录数据会过时，所以 Knowledge specialist 的 <code>web_search_eol</code> 工具会通过带 Web Search 连接器的 AgentCore Gateway，去核对当前的停产公告、厂商动态和交付周期。Gateway 把该连接器以一个受治理的 Model Context Protocol（MCP）端点的形式暴露出来。由于托管知识库的检索也走 Gateway，你可以在同一个地方为外部和内部的数据访问统一挂上策略与可观测性。</p>
-<h3>部署到 AgentCore runtime</h3>
-<p>上生产时，你把 agent 打包成 ARM64 容器，推到 Amazon Elastic Container Registry（Amazon ECR），AgentCore runtime 便以 serverless 方式托管它，并自带会话隔离与自动扩缩容。GitHub 仓库里的 Notebook 03 把这条部署走成了一份参考配方，涵盖 Dockerfile、构建与推送命令、执行角色权限和 Cedar 策略。notebook 只展示这些步骤、并不实际执行。它的 Dockerfile 打包的是超出示例范围的应用代码，所以构建前先按你自己的应用布局做适配。下图展示了从 agent 代码到托管的 AgentCore runtime 端点的部署路径。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21854-4.png" alt="部署路径：agent 代码打包为 ARM64 容器，推送到 Amazon ECR，运行在托管的 AgentCore runtime 端点上"></p>
-<p>图 4：从 agent 代码到托管 AgentCore runtime 端点的部署路径</p>
-<pre><code>export TAG=mei-$(date +%Y%m%d-%H%M%S)
-export ACCOUNT=&lt;your-account-id&gt;
-export ECR=${ACCOUNT}.dkr.ecr.us-east-1.amazonaws.com/mfg-engineering-intelligence
-
-# Build the container for ARM64 (required by AgentCore Runtime)
-docker buildx build --platform linux/arm64 -f agentcore/Dockerfile \
-  -t mfg-engineering-intelligence:${TAG} --load .
-
-# Push the immutable tag to Amazon ECR
-aws ecr get-login-password --region us-east-1 \
-  | docker login --username AWS --password-stdin ${ACCOUNT}.dkr.ecr.us-east-1.amazonaws.com
-docker tag mfg-engineering-intelligence:${TAG} ${ECR}:${TAG}
-docker push ${ECR}:${TAG}</code></pre>
-<p>给每个镜像打一个不可变的 tag。一个已经解析过浮动 <code>:latest</code> tag 背后 digest 的 runtime，在你推送新镜像之后仍会继续用旧镜像服务。prompt、路由器和工具的改动，都要靠新镜像加新 runtime 版本才能生效。</p>
-<p>runtime 角色需要 <code>bedrock:InvokeModel</code>、<code>bedrock:Retrieve</code>、<code>bedrock-agentcore:InvokeGateway</code>，以及供 image-as-query 路径使用的 <code>s3vectors:QueryVectors</code>。notebook 03 展示的 Cedar 策略把 human-in-the-loop 规则编码了进去：生成备忘录之前必须先有一次评估，每一个替代决策都要写入一条审计日志。目前这些规则由应用在自己的逻辑里强制执行，把策略接入 Cedar 授权引擎是下一步。</p>
-<p>Amazon Nova Multimodal Embeddings <a href="https://aws.amazon.com/about-aws/whats-new/2026/08/amazon-nova-mme-govcloud/">现已在 AWS GovCloud (US) 可用</a>，这对受数据驻留、ITAR 和 FedRAMP 要求约束的航空航天与国防项目意义重大——这些要求规定工作负载可以在哪里运行。本文依赖的多模态检索与视觉相似度能力，在 AWS GovCloud (US) 边界内都可使用。Amazon Nova Multimodal Embeddings 与 Amazon Bedrock AgentCore 各功能的可用性因 AWS Region 而异，规划部署前请先查阅 <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/">按 Region 划分的 AWS 服务</a>。</p>
-<h2>评估这个助手</h2>
-<p>我们用两种方式衡量质量：通过 AgentCore Evaluations（Amazon Bedrock AgentCore 的一项能力）做持续在线打分，以及对着精选查询集做离线验证。</p>
-<h3>AgentCore 在线评估</h3>
-<p><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">Amazon Bedrock AgentCore Evaluations</a><a href="https://aws.amazon.com/about-aws/whats-new/2026/03/agentcore-evaluations-generally-available/">自 2026 年 3 月起正式可用</a>，用 <code>LLM-as-a-judge</code> 技术给 agent trace 打分。它读取 Strands agent 本来就在发出的 OpenTelemetry trace，所以已完成埋点的 agent 无需改动应用代码就能被评估。该服务提供两种模式：在线评估持续采样生产环境的真实会话；按需评估运行可编程的测试，可以嵌进持续集成与持续交付（CI/CD）流水线。</p>
-<p>我们用的是在线评估，结果发布到 Amazon CloudWatch 用于看板与告警。GitHub 仓库里的 Notebook 05 创建一份在线评估配置，并向已部署的 runtime 发送测试查询，生成供打分的会话。</p>
-<pre><code>config = eval_client.create_online_config(
-    config_name=CONFIG_NAME,
-    agent_id=RUNTIME_ID,
-    sampling_rate=SAMPLING_RATE,
-    evaluator_list=[
-        &quot;Builtin.GoalSuccessRate&quot;,
-        &quot;Builtin.Correctness&quot;,
-        &quot;Builtin.Helpfulness&quot;,
-        &quot;Builtin.Faithfulness&quot;,
-        &quot;Builtin.ResponseRelevance&quot;,
-        &quot;Builtin.ToolSelectionAccuracy&quot;,
-        &quot;Builtin.ToolParameterAccuracy&quot;,
-    ],
-    auto_create_execution_role=True,
-    enable_on_create=True,
-)</code></pre>
-<p>该服务内置 13 个评估器，同时支持自定义评估器——可以用一段 prompt 定义，也可以托管成 AWS Lambda 函数。我们启用了其中 7 个，覆盖全部三个打分层级：</p>
-<table><thead><tr><th><strong>层级</strong></th><th><strong>评估器</strong></th><th><strong>打分内容</strong></th></tr></thead><tbody><tr><td>会话</td><td>Goal Success Rate</td><td>整场对话是否端到端达成了用户的目标？</td></tr><tr><td>Trace</td><td>Correctness</td><td>信息在事实层面是否准确？</td></tr><tr><td>Trace</td><td>Helpfulness</td><td>回答是否有用、有价值？</td></tr><tr><td>Trace</td><td>Faithfulness</td><td>回答是否忠实于检索到的上下文？</td></tr><tr><td>Trace</td><td>Response Relevance</td><td>回答是否针对用户的实际查询？</td></tr><tr><td>工具调用</td><td>Tool Selection Accuracy</td><td>agent 是否选对了工具？</td></tr><tr><td>工具调用</td><td>Tool Parameter Accuracy</td><td>agent 是否正确提取了参数？</td></tr></tbody></table>
-<p><strong>精选查询集</strong>收录 36 条查询，分六类：目录发现（8）、Knowledge 与 ICD 检索（8）、多 specialist 链路（6）、确定性评估（5）、文本到视觉检索（5），以及 human-in-the-loop 安全拒绝（4）——后者断言 agent 会拒绝推荐或批准。除安全类查询的预期结果是「拒绝」外，每条查询都带着预期命中的目录部件 ID。</p>
-<pre><code>export AGENTCORE_RUNTIME_ARN=arn:aws:bedrock-agentcore:us-east-1:ACCOUNT:runtime/YOUR_RUNTIME
-jupyter lab 05_evaluation.ipynb</code></pre>
-<h3>结果</h3>
-<p>AgentCore 会持续采样真实会话，所以每个评估器的分数都是一个滚动聚合值，随流量积累和 agent 变化而变动。下面的数字是合成数据集那次运行的快照。可以把它们当作设定 CloudWatch 告警阈值的基线，但你自己跑出来的数字理应不同。</p>
-<table><thead><tr><th><strong>层级</strong></th><th><strong>评估器</strong></th><th><strong>分数（30 天均值）</strong></th></tr></thead><tbody><tr><td>会话</td><td>Goal Success Rate</td><td>0.892</td></tr><tr><td>Trace</td><td>Correctness</td><td>0.968</td></tr><tr><td>Trace</td><td>Helpfulness</td><td>0.956</td></tr><tr><td>Trace</td><td>Faithfulness</td><td>0.981</td></tr><tr><td>Trace</td><td>Response Relevance</td><td>0.968</td></tr><tr><td>工具调用</td><td>Tool Selection Accuracy</td><td>0.861</td></tr><tr><td>工具调用</td><td>Tool Parameter Accuracy</td><td>0.980</td></tr></tbody></table>
-<p>trace 层的各项质量指标全部在 0.95 及以上，工具参数提取近乎完美，达到 0.980。两次评估运行之间最显眼的提升是 Tool Selection Accuracy，从 0.809 升到 0.861。有三项改动带来了这个提升：合并为单一托管知识库；修复 image-as-query 路径上一个缺失的权限——此前它导致无声回退到文本搜索；收紧 planner 的路由，避免串上不必要的 specialist。</p>
-<p>Goal Success Rate 偏低，只有 0.892，这是查询集的设计使然。查询集里包含安全类的 prompt，会让 agent 去推荐或批准某个替代方案。agent 正确地拒绝了，但评估器会把一次正确的拒绝打分为目标未达成。这个结果在我们预料之中，因为在 human-in-the-loop 系统里，agent 本就不该自行批准替代。</p>
-<h2>把这套模式适配到你自己的目录</h2>
-<p>这套代码是可复用的模式，除反作用飞轮外也适用于其他部件类别。换领域只需要三处改动：替换部件数据（每个部件一份 <code>specs.json</code>、描述文本、ICD、数据手册页和照片）；编辑 requirements schema，定义你的类别的关键规格与容差规则；把知识库指向你自己的 S3 语料。agent、工具和打分引擎原样沿用。由于 <code>mei_core</code> 里的确定性工具就是普通 Python 函数，PLM 或 ERP 集成可以直接调用 <code>score_substitution_fit</code>，链路里不需要任何 agent。</p>
-<h2>清理</h2>
-<p>为避免持续产生费用，请删除你创建的资源：</p>
-<ul><li>删除 <a href="https://docs.aws.amazon.com/cli/latest/reference/bedrock-agentcore-control/delete-agent-runtime.html">AgentCore runtime agent</a> 及其 <a href="https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-delete.html">Amazon ECR 仓库</a>。</li><li>删除 <a href="https://docs.aws.amazon.com/cli/latest/reference/bedrock-agentcore-control/delete-gateway.html">AgentCore Gateway</a> 及它的 <a href="https://docs.aws.amazon.com/cli/latest/reference/bedrock-agentcore-control/delete-gateway-target.html">Web Search 与知识库 target</a>。</li><li>删除<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/delete-online-evaluations.html">在线评估配置</a>和你创建的 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Manage-CloudWatch-Alarm.html">CloudWatch 告警</a>。</li><li>删除<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-delete.html">托管知识库</a>和 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vectors-index-delete.html">S3 Vectors 索引</a>。</li><li>删除存放部件语料的 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html">S3 bucket</a>。</li></ul>
-<h2>总结</h2>
-<p>在这篇文章里，我们展示了如何构建一个多 agent 工程助手，用自动化的证据组装取代人工的部件替代研究。这套架构把 Amazon Nova Multimodal Embeddings 与 Amazon Bedrock AgentCore 搭配起来：前者负责纯文本系统做不到的视觉相似度打分和图表检索，后者提供 runtime 托管、由 Gateway 治理的检索与 web 搜索、质量评估这些生产级底座。三个设计选择最为要紧：每一条通过/不通过的判定都由确定性代码产出；每个任务都落在三档模型里能把它做好的最小一档；只有工程师可以批准替代。</p>
-<p>上手方式是：克隆 <a href="https://github.com/aws-samples/amazon-nova-samples/tree/main/multimodal-embeddings/repeatable-patterns/agentic-engineering-intelligence-nova-mme-agentcore">GitHub 仓库</a>，用自己的 AWS 账号跑这些 notebook，换上你自己的部件目录和 requirements schema。想深入检索的地基部分，可以读 <a href="https://aws.amazon.com/blogs/machine-learning/manufacturing-intelligence-with-amazon-nova-multimodal-embeddings/">Manufacturing intelligence with Amazon Nova Multimodal Embeddings</a> 和 <a href="https://aws.amazon.com/blogs/machine-learning/a-practical-guide-to-amazon-nova-multimodal-embeddings/">A practical guide to Amazon Nova Multimodal Embeddings</a>。要了解生产级 agent 模式，见 <a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore 文档</a> 和 <a href="https://strandsagents.com/">Strands Agents SDK</a>。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] Circle K 如何用 Amazon Bedrock 把 DevOps 事故分诊压到 15 分钟以内</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/how-circle-k-accelerated-devops-incident-triage-to-under-15-minutes-with-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-circle-k-accelerated-devops-incident-triage-to-under-15-minutes-with-amazon-bedrock/</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：How Circle K accelerated DevOps incident triage to under 15 minutes with Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Circle K 如何用 Amazon Bedrock 把 DevOps 事故分诊压到 15 分钟以内</h1>
-<p><em>本文与 Circle K 的云 DevOps 工程师 Marek Klatowicz 联合撰写。</em></p>
-<p>很多 DevOps 团队都熟悉事故分诊的这个套路：告警触发，可在任何人着手修复问题之前，工程师得先花 45–60 分钟搞清楚到底发生了什么。他们拉取日志、检查服务健康状态，还在好几个工具之间把症状相互关联起来。这一切都发生在能够开始修复之前。</p>
-<p>在 Circle K，这个挑战是跟着业务一起扩张的。公司在 27 个国家运营着超过 17,200 家便利店与燃油零售门店。店面背后，一套云原生基础设施支撑着跑在 AWS 上的销售终端（POS）系统、会员忠诚度应用和电动汽车（EV）充电应用。随着公司数字业务的扩张，分诊开销也同步增长。服务更多意味着告警更多，而每一条告警在开始修复之前，都需要同样的人工调查。</p>
-<p>为了应对它，Circle K 用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 搭建了一套自动化分诊系统——这是一项完全托管的服务，通过单一 API 提供基础模型（FM）。有关各 AWS 区域的模型可用性，参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">Amazon Bedrock 中按 AWS 区域划分的受支持模型</a>。这套系统采用 agentic AI 架构，自主调查每一起事故，并在告警触发后的几分钟内把一份结构化摘要交付到 Slack。值班工程师收到的不再是原始告警，而是可据以行动的上下文，所以他们能立刻动手，而不是花上一个小时去弄清发生了什么。</p>
-<p>自部署这套系统以来，Circle K 已把平均分诊时间降到 15 分钟以内——按团队内部的事故响应指标计算，降幅为 67–75%。</p>
-<p>在本文中，我们既描述最初的 <a href="https://aws.amazon.com/bedrock/flows/">Amazon Bedrock Flows</a> 实现的架构，也描述向 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 的迁移，并分享系统在扩展过程中总结的经验教训。</p>
-<h2>分诊开销这一挑战</h2>
-<p>Circle K 的 DevOps 团队用 Grafana 监控横跨多个 AWS 账户的基础设施。平常的一天里，会有容器重启、错误率升高、延迟尖峰和部署失败的告警。每条告警都是有用的信号，但随着系统不断扩张，团队希望帮助值班工程师带着恰当的上下文，快速看出哪些信号需要关注。</p>
-<p>告警进来时，分诊就是一串大家都熟悉的重复步骤：在 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 里查看近期日志，在 <a href="https://aws.amazon.com/opensearch-service/">Amazon OpenSearch Service</a> 里检查应用级 trace，查看 <a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service (Amazon ECS)</a> 的任务状态，再把症状与 GitHub 上内部 runbook 相互对照。这些信息确实是工程师需要的，但它同时也说明：随着更多服务接入，需要重复收集的上下文会有多少。</p>
-<p>团队识别出两个方面，提前投入能够带来帮助。第一，同样的日志查询、健康检查和 runbook 检索，每一起事故都要重复一遍。第二，分诊的深度和速度会随着值班工程师对受影响服务的熟悉程度而变化。当告警量和服务归属范围都增长起来，每次调查都在多个工具之间来回切换会拖慢响应，也让团队的最佳实践更难一致地落地。</p>
-<p>因此，Circle K 的 DevOps 团队启动了一项研发（R&amp;D）专项，探索 AI 能如何支撑监控与事故分诊。目标是把重复的上下文收集自动化，给出结构化、可据以行动的结论，同时在调查过程中支撑工程师的运维判断。</p>
-<h2>Circle K 为什么选择 Amazon Bedrock</h2>
-<p>在动手构建之前，团队评估了几种方案，包括在自管基础设施上使用开源 agent 框架。那条路意味着要自己承担模型托管、prompt 版本管理、工具编排和安全控制。</p>
-<p>有了 Amazon Bedrock，团队避开了这些开销。他们可以通过单一 API 访问基础模型，还能不重写代码就更换基础模型。由于 Circle K 本来就运行在 AWS 上，Amazon Bedrock 能够顺理成章地嵌进现有的 AWS Identity and Access Management (IAM) 策略、Amazon Virtual Private Cloud (Amazon VPC) 配置和日志流水线。</p>
-<p>两项托管能力覆盖了编排与检索。Amazon Bedrock 帮团队承担 agent 编排，让 agent 原生具备 tool use，可以调用 AWS API、查询数据库、检索文档，而不必写自定义的编排代码。Amazon Bedrock Knowledge Bases 是完全托管的检索增强生成（RAG）能力，负责内部产品卡（product card）的摄取与检索，团队因此不需要再单独运维一个向量数据库。这让 DevOps 团队得以专注于 prompt 设计和工具定义。</p>
-<p>数据隐私补全了整幅图景。Circle K 的事故数据包含运维指标、基础设施细节，以及可能含有敏感信息的日志。<a href="https://aws.amazon.com/bedrock/security-privacy-responsible-ai/">Amazon Bedrock 不会把客户数据分享给模型提供商，也不会用它来训练基础模型</a>。对一个把生产日志和内部服务细节喂进系统的团队来说，这种数据处理方式满足了 Circle K 的安全要求。</p>
-<h2>解决方案总览</h2>
-<p>本节描述团队最初构建在 Amazon Bedrock Flows 上的架构。后文另一节会讲向 AgentCore 的迁移。</p>
-<p>该方案把 Amazon Bedrock Flows 用作编排层，协调一组专用 agent，各自负责分析的不同部分。流水线的起点是一条 Grafana 告警把通知发布到 <a href="https://aws.amazon.com/sns/">Amazon Simple Notification Service (Amazon SNS)</a>，SNS 再把它转发进一个 <a href="https://aws.amazon.com/sqs/">Amazon Simple Queue Service (Amazon SQS)</a> 队列。一个 <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 函数轮询该队列，提取告警负载，并调用这个 Flow。</p>
-<p>在 Flow 内部，两个 agent 会被并行调用。<code>AWSResourceExplorerAgent</code> 查询由 <a href="https://aws.amazon.com/organizations/">AWS Organizations</a> 管理的多个工作负载账户中的基础设施。它检查 Amazon ECS 任务状态、Application Load Balancer 目标健康状态，以及 CloudWatch 的指标和日志。与此同时，<code>OpenSearchExplorerAgent</code> 查询 Amazon OpenSearch Service，获取应用级日志和分布式 trace。这个 agent 单独运行，因为 OpenSearch 会返回海量的日志数据。把它隔离开来能让每个 agent 的上下文窗口保持在可控范围内。它也是唯一能访问知识库的 agent，知识库里存放着描述每个服务及其依赖关系的产品卡。</p>
-<p>两个 agent 都返回结论之后，<code>GitHubExplorerAgent</code> 才开始运行。它接收前两个 agent 的输出，找到受影响服务的 GitHub 仓库，然后搜索其中的应用代码、基础设施定义和近期 commit，以定位问题根源并提出一个具体的修复方案。把它排在并行 agent 之后运行，意味着它确切知道该搜什么，而不是执行一次宽泛的查询。</p>
-<p>三份输出全部汇入一个 <code>AnalysisPrompt</code> 节点，那是一次不带任何工具的单独模型调用。它接收 AWS 资源数据、OpenSearch 日志和 GitHub 上下文，然后产出一份结构化摘要：可能的根因、支撑证据、受影响服务及其负责人，以及建议的修复步骤。prompt 的输出使用统一的格式，值班团队不到 2 分钟就能扫完。</p>
-<p>Flow 把这份摘要返回给调用它的 Lambda 函数，Lambda 再把它发到一个 Slack 频道。从告警到 Slack 消息的整个过程耗时 5–15 分钟，取决于事故的复杂程度。</p>
-<p>下图端到端地展示了这套架构，从最初的 Grafana 告警到最后的 Slack 摘要。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21514-first-arch-final.jpg" alt="Amazon Bedrock Flows 分诊架构：一条 Grafana 告警流经 Amazon SNS、SQS 和 Lambda，到达并行的各个 agent，最终把摘要发到 Slack"></p>
-<p>图 1：Circle K 使用 Amazon Bedrock Flows 的自动化事故分诊架构</p>
-<h3>分诊示例</h3>
-<p>一条 Grafana 告警：某服务的 HTTP 5xx 错误率连续 3 分钟超过 5%。</p>
-<p>AWSResourceExplorerAgent 检查目标账户里的 ECS 任务健康状态，发现数据库连接池已被耗尽，且 ECS 服务正在尝试重启。OpenSearchExplorerAgent 返回的应用日志显示，该服务向其作为后端的 PostgreSQL 数据库发起连接时出现 &quot;connection refused&quot; 错误。它还从知识库里检索到受影响服务的产品卡，其中记录了该服务对这个数据库的依赖。GitHubExplorerAgent 搜索该服务的仓库和基础设施文件，找到了 Amazon Relational Database Service (Amazon RDS) 的定义。它看到这个服务每处理一个请求都会新开一个数据库连接，而不是复用已有的连接。</p>
-<p>AnalysisPrompt 收到这三份结果。它把发生时间与一场在告警前 10 分钟启动的预定市场活动关联起来，再把它和 GitHubExplorerAgent 的发现结合到一起，从而推荐一个代码层面的具体修复，而不是临时打补丁。</p>
-<p>最终发到 Slack 的消息是这样的：</p>
-<pre><code>Summary: XYZ Service 5xx errors caused by connection pool exhaustion
-Root cause: Scheduled marketing campaign drove traffic spike; connection pool max (50) insufficient for load
-Evidence: OpenSearch logs show &quot;connection refused&quot; at 14:32 UTC; ECS shows 3 task restarts since 14:30
-Owner: XYZ team (backend)
-Next steps: Add Amazon RDS Proxy to pool connections, or update the service to reuse existing connections instead of opening a new one per request; consider an Auto Scaling rule for future campaigns</code></pre>
-<h2>扩展到 Amazon Bedrock AgentCore</h2>
-<p>Amazon Bedrock Flows 架构平稳运行了好几个月，简单事故能在 10 分钟以内完成分诊。随着时间推移，尽管服务集合本身没变，每次调查的数据量和背后的上下文却在增长。有些事故需要的分析运行时长，已经不是单个 Flow 节点能够完成的了。</p>
-<p>团队首先在既有设计内部做优化：更激进地过滤日志、缩短上下文窗口、把某些服务拆分到独立的 Flow。这些举措有帮助，但日志量和知识库仍在持续膨胀。</p>
-<p>Amazon Bedrock AgentCore 满足了这一需求。AgentCore 是一个平台，可以用任意框架或模型来规模化地构建、连接和优化 AI agent。对这类工作负载而言，关键能力是 AgentCore Runtime：整次调查在单个 session 内完成，因此每一步都可以花上它的数据所需要的时间。AgentCore Runtime 支持长达 8 小时的 session，远远超过当前调查所需。团队把他们的 agent 逻辑容器化，部署到 AgentCore Runtime 上。</p>
-<p>下图展示了迁移到 Amazon Bedrock AgentCore 之后的生产架构。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21514-second-arch-final.jpg" alt="使用 Amazon Bedrock AgentCore Runtime 和 Gateway 的生产架构：Lambda 调用单个 agent，该 agent 把一份摘要发到 Slack"></p>
-<p>图 2：使用 Amazon Bedrock AgentCore Runtime 和 AgentCore Gateway 的生产架构</p>
-<p>分析逻辑保持不变，但运行方式变了。Flows 版本里的三个专用 agent 现在合并成一个 agent，在一个 AgentCore Runtime session 中运行。Lambda 函数启动这个 session，agent 执行和以前相同的步骤。它跨账户查询 AWS 资源，从 Amazon OpenSearch Service 拉取日志，搜索 GitHub，并从知识库检索产品卡。agent 在 15 分钟内把结论返回给 Lambda 函数，仍在 Lambda 的最大超时时间内。随后 Lambda 函数把结构化摘要发到 Slack。</p>
-<p>Amazon Bedrock AgentCore Gateway 是 Amazon Bedrock AgentCore 的一项能力，负责居中调度 agent 对其数据源的访问，这些数据源包括 Amazon OpenSearch Service、Amazon Bedrock Knowledge Bases 和 GitHub。Gateway 把每个数据源暴露成 agent 可调用的工具，由此把访问控制集中起来，也让团队添加或更换数据源更简单。</p>
-<h3>AgentCore Runtime 如何支撑团队不断增长的规模</h3>
-<p>除了运行时长更久的 session，Amazon Bedrock AgentCore Runtime 还带来三项支撑团队规模增长的能力：session 持久化、基于 OpenTelemetry 的可观测性，以及框架灵活性。</p>
-<p><strong>Session 持久化：</strong> agent 在整个调查过程中保留中间状态。如果第一轮扫日志发现了什么，agent 可以再跑一轮更有针对性的扫描，而不丢失它已经建立的上下文。这契合复杂多服务事故那种迭代式的调查方式。</p>
-<p><strong>可观测性：</strong> AgentCore 用 OpenTelemetry 标准采集每个 session 的 trace，并通过 CloudWatch 呈现出来。团队可以看到每一步耗时多久、agent 发起了哪些知识库查询、瓶颈出现在哪里。这些洞察可以直接用于 prompt 调优。</p>
-<p><strong>框架灵活性：</strong> 有了 AgentCore Runtime，团队可以部署用范围很广的框架构建的容器化 agent。他们可以在同一个 Runtime 上迭代 agent 逻辑、增加分诊步骤，或随着需求变化重构 agent 的推理方式。</p>
-<p>AgentCore 架构如今已在生产环境运行，承接从简单的单服务告警到大规模多服务调查的全谱事故。</p>
-<h2>成效</h2>
-<p>Circle K 在 2026 年 4 月部署了 AgentCore 版本的分诊系统。按团队内部的事故响应指标计算，平均分诊时间从 45–60 分钟降到 15 分钟以内，降幅为 67–75%。比较直接的事故在 5–8 分钟内就会得到摘要。复杂的多服务事故，过去人工分诊要一个多小时，现在在 15 分钟内完成。</p>
-<p>工程师现在从一份摘要开始工作，而不是自己去收集上下文。团队看到事故处理方式上有三个变化：</p>
-<p><strong>分诊一致。</strong> 每位值班工程师收到的都是同一份结构化摘要，里面有相同的日志摘录、知识库引用和建议的后续步骤，不论他对受影响服务有多熟悉。</p>
-<p><strong>升级更快。</strong> 当问题需要其他团队支持时，摘要能为值班工程师提供相关上下文，让升级既及时又有依据。</p>
-<p><strong>误报处理更快。</strong> 当分析发现服务健康、也没有相关联的错误时，工程师可以确认这条告警然后继续别的事。</p>
-<h2>经验教训</h2>
-<p>构建这套系统经历了好几轮迭代。有四条经验特别突出，适用于用 Amazon Bedrock 构建类似方案的团队。</p>
-<p>把日志内容直接放进 prompt。早期版本只传入日志组名称和时间范围，然后由 agent 尝试通过 action group 查询 CloudWatch。这增加了延迟，而且常常返回多到无法处理的数据。Circle K 后来改为让 Lambda 函数预先查询日志、把相关行直接传给 agent，结果更好。当 agent 能读到实际的错误信息时，它的推理更快。</p>
-<p>针对用例调优检索与生成。检索配置会显著影响知识库的结果质量。在测试过可用的选项之后，Circle K 团队发现采用默认配置的 Amazon Bedrock Knowledge Base 最适合他们的数据。Amazon Bedrock 端到端地负责 embedding、索引和向量存储，团队需要维护的组件因此更少。在生成侧，一个设计良好的 system prompt 加上一套调优过的 temperature 设置，就能在 Slack 产出格式一致的摘要。</p>
-<p>用日志里的发现来收窄代码搜索范围。没有线索就去搜索服务的仓库，返回的结果多到没法用。团队把 GitHub 搜索放在 AWS 资源分析和日志分析之后，这样 agent 已经知道该找哪个错误、哪个组件或哪次近期改动。在前面那个分诊示例里，agent 正是这样发现该服务每个请求都新开一个数据库连接的。</p>
-<p>让分析逻辑独立于编排层。分析耗时随数据量增长，所以要预先考虑到调查会越来越久。团队把它的 prompts、工具定义和分析步骤与 flow 结构分离开来。这让他们能在不重写分诊逻辑的情况下，把这些内容合并成 AgentCore Runtime 上的单个 agent。</p>
-<h2>后续计划</h2>
-<p>如今，分诊系统负责找出可能的根因并推荐一个修复方案，由工程师来执行修复。接下来，团队计划与 <a href="https://aws.amazon.com/devops-agent/">AWS DevOps Agent</a> 集成，让系统也能处理简单的修复动作。例子包括重启一个任务、给服务扩容或回滚一次部署。每个动作在执行之前都会由工程师在 Slack 里批准。</p>
-<p>团队还计划给 agent 更多的上下文可用：</p>
-<ul><li>Jira，把每起事故关联到相关工单，并跟踪后续工作。</li><li>Confluence，在 agent 已经读取的代码和日志之外补上内部文档。</li><li>知识库里的 runbook，让 agent 能把症状对应到已知的故障模式和过去行之有效的修复方案，而不是只依赖产品卡。</li></ul>
-<h2>结语</h2>
-<p>Circle K 团队把 45–60 分钟的人工事故分诊压到了 15 分钟以内，做法是把工程师过去手工完成的上下文收集自动化。系统从日志、AWS 资源和代码中收集数据，让 agent 在其上推理，并把一份结构化摘要交付到 Slack。</p>
-<p>团队的第一版构建在 Amazon Bedrock Flows 和 Amazon Bedrock Knowledge Bases 之上。随着调查规模越来越大，团队转向 Amazon Bedrock AgentCore Runtime 上的单个 agent，由 AgentCore Gateway 提供对其数据源的访问。</p>
-<p>如果你的团队把大部分事故响应时间都花在收集上下文而不是解决问题上，这套模式可以直接套用。要开始上手，可以了解 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 和 <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a>。想要实操指导，或与 AWS 专家讨论你的用例，请访问 <a href="https://aws.amazon.com/bedrock/getting-started/">Amazon Bedrock 入门页面</a> 或<a href="https://aws.amazon.com/contact-us/">联系 AWS</a>。</p>
-<p>我们想听听你们是如何做事故分诊的。欢迎在评论区分享你的经验。</p>
-<h2>关于作者</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

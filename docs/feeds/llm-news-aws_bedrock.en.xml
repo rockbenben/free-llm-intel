@@ -7,7 +7,86 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 09 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 10 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>How skills and agents work in AWS Quick</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/?li=1</guid>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>How skills and agents work in AWS Quick</h1>
+<p>If you use AI agents, you’ve probably explained the same task more than once. You might describe how to build your weekly status update, write release notes, manage a project, or create tickets. These are all repeatable tasks that you can encode using <a href="https://aws.amazon.com/quick/">AWS Quick</a> through agents and skills. AWS Quick is an AI-powered service for automating tasks, analyzing data, building web applications, and conducting research. You work with it in natural language, and Quick uses AI agents to process your requests against your connected data sources and applications.</p>
+<p>In this post, we cover how agents, skills, and your data fit together in AWS Quick, and how to build and share skills that work for your team. We also show how the official catalog and custom agents help you put those skills to use.</p>
+<h2>Understanding foundational concepts</h2>
+<p>In this section, we explain the foundational concepts that help you understand AWS Quick in relation to agents, skills, and your data.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/04/ML-22266-1.png" alt="Hub-and-spoke diagram with the Quick agent at the center, connected to its instructions, skills, connectors, and data sources"></p>
+<p>Figure 1: How a Quick agent follows its instructions, loads the skills a task needs, acts through connectors, and grounds its answers in your data</p>
+<p>The agent sits at the center of Figure 1. It follows its instructions, loads the skills that a task calls for, takes action through connectors, and grounds its answers in your data: spaces, knowledge bases, datasets, and dashboards.</p>
+<h3>Working with agents</h3>
+<p>An <a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html">agent</a> in AWS Quick is a configurable AI with its own instructions, knowledge sources (spaces), and connectors, which it uses to answer questions and get work done for you. You can work with an agent in chat, or let it run on its own using a <a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html">routine</a>. Agents can only reach the resources and services that you can, and you decide what each agent is allowed to do.</p>
+<p><strong>Quick</strong> is the default built-in agent that every user has access to. It has no fixed scope, so in each conversation it works with whatever resources you have access to, such as your spaces, knowledge bases, dashboards, connectors, and skills. You don’t need to decide in advance which data or tools a request needs, so you can start most work with Quick.</p>
+<p>A <strong>custom agent</strong> is one that you or someone on your team configures for a specific job. An example is a human resources (HR) onboarding assistant that answers new-hire questions from the HR team’s space. You give it its own instructions and limit it to the spaces, connectors, and skills that your use case requires. After you test and publish it, you can share it with other users and groups within your AWS Quick account. For a walkthrough of building one, see <a href="https://aws.amazon.com/blogs/machine-learning/build-ai-powered-employee-onboarding-agents-with-amazon-quick/">Build AI-powered employee onboarding agents with AWS Quick</a>.</p>
+<h3>Working with data</h3>
+<p>Agents ground their answers in the data you connect to Quick. A <strong>space</strong> is a curated collection of documents and AWS Quick resources that an agent uses as a source of information. You can create one for yourself, your team, or another group in your organization. You can upload files and folders to a space, or add assets such as dashboards, knowledge bases, action connectors, and datasets. When you start a conversation with Quick, you can attach a space to narrow the data that Quick uses for that conversation. When you add a space to an agent, the space becomes part of the agent’s configuration, and the agent draws on it when a request needs it.</p>
+<p>A <strong>knowledge base</strong> is an organized, indexed collection of documents or content from data sources, optimized for retrieval and question answering. Quick syncs knowledge bases from sources such as Google Drive, Microsoft OneDrive, Confluence, Microsoft SharePoint, Amazon Simple Storage Service (Amazon S3), web crawler, or <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Managed Knowledge Bases</a>. Quick keeps them up to date on a sync schedule.</p>
+<p>Datasets and dashboards come from <a href="https://docs.aws.amazon.com/quick/latest/userguide/quick-bi.html">AWS Quick Sight</a>, the business intelligence feature in Quick, which is available in accounts provisioned through the AWS Management Console. A <strong>dataset</strong> is a prepared collection of data ready for use in analyses and dashboards. A <strong>dashboard</strong> is the published version of an analysis that you share with other Quick users. With datasets, you can build semantically rich metadata over your structured data, such as database tables, so you can accomplish complex analytical use cases with natural language.</p>
+<p>Lastly, a <strong>connector</strong> links AWS Quick to an external application or a native tool, so agents can read data and take action on your behalf. <strong>Cloud connectors</strong> connect Quick to services such as Microsoft Outlook, Slack, Jira, Asana, and Salesforce, and to remotely hosted Model Context Protocol (MCP) servers. They’re available on every device where you use Quick. <strong>Local connectors</strong> run on your own machine, such as an MCP server that you host yourself, so their tools are available only when that machine is on and connected. For the full list of connector types, see <a href="https://docs.aws.amazon.com/quick/latest/userguide/connections-desktop.html">Connectors</a> and <a href="https://docs.aws.amazon.com/quick/latest/userguide/integration-guides.html">Integration-specific guides</a> in the AWS Quick User Guide.</p>
+<p>Together, these make your data, documents, and applications available through natural language, so you can ask questions and take actions in your connected sources.</p>
+<h3>Working with skills</h3>
+<p>A <a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html">skill</a> is a reusable set of instructions that teaches an agent how to do a specific task. Skills are also the foundation of how an agent in Quick behaves and completes work. Like other agents, an agent in Quick runs in a harness (a managed agent loop) that follows the reasoning and acting (ReAct) pattern. When you supply AWS Quick with a prompt, the agent uses its available tools and instructions to accomplish its goal and supply you with a response. Agent frameworks such as the <a href="https://strandsagents.com/">Strands Agents SDK</a> are built around the same model-driven loop.</p>
+<p>Much of what Quick does by default comes from <strong>system skills</strong>. For example, you can ask Quick to generate a Word document, a PowerPoint presentation, an Excel spreadsheet, or a PDF. A system skill can then create or edit the document using code with scripts the skill bundles. Other system skills browse the web, run code, execute deep research, transcribe audio and video, and generate images. Some manage Quick itself, such as building <a href="https://docs.aws.amazon.com/quick/latest/userguide/using-amazon-quick-flows.html">AWS Quick Flows</a>, scheduling routines, handing work to a coding agent such as Kiro, managing your memories and knowledge graph, or tracking your to-dos. Within Quick, you can turn system skills on or off, but you can’t edit, duplicate, export, publish, share, or delete them.</p>
+<p>Skills can do many kinds of work because of the capabilities and tools that AWS Quick supplies. For example, one skill can produce a deliverable, such as a weekly status update built from your template. Another can automate a workflow across your connectors, such as gathering the week’s Jira updates and posting a summary to Slack. A skill can also run calculations in Python scripts and chart the results with JavaScript.</p>
+<h2>What is a skill?</h2>
+<p>Quick skills follow the <a href="https://agentskills.io/">Agent Skills</a> specification, which Anthropic originally developed and released as an open standard. AWS Quick on desktop, which launched in <a href="https://aws.amazon.com/about-aws/whats-new/2026/04/amazon-quick-macos-windows-preview/">preview in April 2026</a> and became <a href="https://aws.amazon.com/blogs/machine-learning/amazon-quick-is-now-generally-available-on-desktop/">generally available in September 2026</a>, uses this specification.</p>
+<p>A skill is a folder with a Markdown file <code>SKILL.md</code> at its root, plus any optional scripts or other reference files its instructions use. The file’s frontmatter, the attributes between two <code>---</code> lines, holds the name, description, and any other metadata relevant to your skill. See the following shortened example of a skill named <code>release-notes-generator</code>.</p>
+<pre><code>---
+name: release-notes-generator
+description: &quot;Generates human-readable release notes from merged pull requests, commits, or changelogs ... Use when asked to 'generate release notes', 'write changelog', ...&quot;
+---</code></pre>
+<p>The description and name are the two most important aspects to triggering a skill. Quick uses <strong>progressive disclosure</strong> when it loads your skills into the agent’s prompt. The agent reads only each skill’s name and description until a request calls for that skill. It then loads the skill’s full instructions, as <a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-how-quick-loads-skills">How agents load skills</a> describes. This means certain phrases can help trigger the skill, such as “generate my release notes for version 2.3.” The specification caps <code>name</code> at 64 characters and <code>description</code> at 1,024, and recommends instructions within the skill to be under 5,000 tokens.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/04/ML-22266-2.png" alt="Skill folder named release-notes-generator containing a SKILL.md file alongside optional scripts and references folders"></p>
+<p>Figure 2: The release-notes-generator skill folder, with a required SKILL.md file plus optional scripts and references folders</p>
+<h2>Build and share a skill in Quick</h2>
+<p>You can create a skill from chat, from a file (a .md or .zip file), or from a folder that has a <code>SKILL.md</code> file at its root. This post focuses on chat. To start, describe your task to Quick in chat. For example, you can start with this template (replace the content between &lt;&gt; brackets with your requirements):</p>
+<pre><code>Every &lt;specify your cadence e.g. every day, on monday, or none at all&gt;, I have to grab data from the following sources:
+- &lt;List your sources and how you want to query them&gt;
+...
+
+And do &lt;describe how you want to transform the data and the exact sequence of steps&gt;. 
+
+Once I am finished, I have to create a report &lt;describe your report format or provide an example&gt; and send to the following stakeholders &lt;describe your recipients&gt; using the following connector &lt;describe your connector&gt;.
+
+Create a skill from this requirement, and help me come up with testing scenarios to test the skill. </code></pre>
+<p>This is all you need to start building your own skills. Alternatively, you also can take a multi-turn conversation that you previously interacted with to accomplish a task and ask Quick to generate a skill from it. After you are satisfied with the final result, publish and share your skill:</p>
+<ul><li>Choose <strong>Customize</strong>, and then choose <strong>Skills</strong>.</li><li>Find your skill in draft, and open its detail panel.</li><li>Choose <strong>Publish</strong>.</li><li>Choose <strong>Share</strong>, and then choose the people or groups to share it with.</li></ul>
+<p>Publishing and sharing are separate steps, so publishing alone doesn’t give anyone access to the skill. The people you share it with add it from <strong>Add to Quick</strong> under <strong>Shared with me</strong>, and their version stays in sync each time you publish again. For the current steps, see <a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-skill-draft-published">Draft and published versions</a> and <a href="https://docs.aws.amazon.com/quick/latest/userguide/skills-desktop.html#desktop-sharing-skills">Sharing your skills</a> in the AWS Quick User Guide.</p>
+<h3>Improve your skills with best practices</h3>
+<p>A skill that you build from a quick description or conversation might work consistently for you, but there are many considerations you must take into account when building production skills that you share with your team. Skills are like code, and many engineering best practices can help any knowledge worker build them.</p>
+<ul><li>“It works on my machine” is a common phrase among software engineers. It describes software that runs for the person who built it but breaks when someone else installs or uses it. When building skills, you must consider your environment. Skill instructions can use agents to query data sources or invoke connectors or tools. Software engineers typically work around this limitation by documenting the prerequisites to using software. For example, if you are sharing a skill in isolation, you might want to create a README with your skill documenting these requirements. If you share an agent that uses your skill, also share the sources it connects to, or the people you share it with get answers only from the sources they can already access.</li><li>Plan for failures. Agents use connected sources that depend on third- and first-party services. When engineers write code, they need to understand what to do if a piece of software fails. If you incorporate these scenarios into your skill instructions, your agents can adapt based on concrete instructions. You don’t need to be an expert in the downstream service, because an agent works toward the goal and can retry or try another approach when a step fails. You do need to list what to do when a failure affects your task or business process. Take the following snippet from a workflow in a skill that might have ramifications if it fails.</li></ul>
+<pre><code>[Agent] Send the report to {{recipient}} over email.</code></pre>
+<p>What should the agent do if sending the email fails? You might want to add instructions on what to do in that scenario.</p>
+<pre><code>[Agent] Send the report to {{recipient}} over email.
+Validate: The report appears in your Sent folder.
+If fails: Stop, and tell the user that the report wasn't sent and why, so they can send it themselves.</code></pre>
+<p>Handling failure scenarios is even more important when executing agents on a schedule without a human in the loop.</p>
+<ul><li>Test every change. Software engineers write multiple forms of tests, such as unit and integration tests, that help them test software. These tests are run on every change. With skills, it is equally important that you generate your own test cases for various scenarios and continue to add new tests as you make changes. There are multiple ways to do this, but it’s best to test using the environment you expect your downstream users to use.</li></ul>
+<p>There are many more aspects to consider when building production skills:</p>
+<ul><li>Add release notes to each change.</li><li>Keep hardcoded values that change, such as <code>/Users/me/notes</code> or <code>#my-team</code>, out of the steps, and declare them as inputs that each person provides.</li><li>Record when the skill changed with human-readable dates.</li><li>Record where each reference file came from, so that if the source changes, you can update your skill instructions too.</li><li>Store a checksum, a fingerprint of the skill’s files that shows when a copy differs from the version that was checked.</li><li>Check the structure after every change, the way a linter catches mistakes before anyone reviews the code.</li><li>Build skills in a consistent way, so your team can contribute changes and review them faster.</li></ul>
+<p>For any user, this is a lot to consider. That’s why the <a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/">AWS Quick official catalog</a> provides pre-built resources, such as skills, built with these best practices in mind.</p>
+<h3>AWS Quick official catalog</h3>
+<p>The catalog is a collection of agent resources that you can install and use as they are, or take as a starting point and adapt to your own work. The catalog states that every resource in it is tested and scanned for quality, security, and other factors before it’s published. The skills cover everyday productivity and the work of teams such as sales, marketing, HR, legal, project management, customer success, and software engineering. They also cover industries such as finance, healthcare and life sciences, energy and utilities, hospitality, and supply chain and logistics.</p>
+<p>The catalog includes the <strong>Skill Architect</strong> skill, a pre-built skill that applies these engineering best practices for you, as <a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/build-skills/">Build skills with software engineering practices in AWS Quick</a> describes. To install it, choose <strong>Customize</strong>, <strong>Skills</strong>, <strong>Browse all</strong>, and then <strong>Official</strong>. Enter <code>skill architect</code> in the search box, and then choose <strong>Install</strong>. For the current steps, see <a href="https://amazon-quick.github.io/Amazon-Quick-official-catalog/install/">Install skills in AWS Quick on desktop</a>.</p>
+<h3>Connect skills to your agents</h3>
+<p>When you create an agent, you configure its name, description, and instructions, and you choose the spaces it reads from, the connectors it can use, and the skills it can load. For details, see <a href="https://docs.aws.amazon.com/quick/latest/userguide/agents-desktop.html#desktop-agent-configuration">Agent configuration</a> in the AWS Quick User Guide. An agent works best when it solves a particular use case, such as answering new-hire questions or preparing a weekly status report, and <strong>bounding</strong> its world to the spaces, skills, and connectors that use case requires. By default, an agent can use all of your skills, and when you add specific skills, the agent is limited to those. That becomes problematic when you share the agent, because it runs with the access of the person using it. The same request can reach different data and skills for each person, and can return incomplete answers when it needs a source that only you can access.</p>
+<p>If you want to tie them all (agents, skills, and spaces) together, try out the <a href="https://catalog.us-east-1.prod.workshops.aws/workshops/a8484e57-2e30-40ee-bd98-0122f0d05acc/en-US/2000-build-your-personal-setup/2100-run-personal-agent-architect">personal agent architect module</a> in the linked workshop.</p>
+<h2>Conclusion</h2>
+<p>In this post, we showed how agents use skills and your data in AWS Quick, and how to build and share skills that work for your team. We also showed how the official catalog and custom agents help you put those skills to use.</p>
+<p>To learn more, find events, or share your success with AWS Quick, visit the <a href="https://community.amazonquick.com/">AWS Quick Community</a>. The AWS Quick Community has learning material, feature announcements, events, and examples from other users. You can also ask questions in its Q&amp;A forum.</p>
+<p>For a recorded session on the topics in this post, watch <a href="https://www.youtube.com/watch?v=m9gN2GapOps">Encode Your Enterprise with Agents &amp; Skills on AWS Quick</a>. The session covers how a skill is structured and loaded, how skills work with agents, spaces, and connectors, and best practices for building skills that you share. It ends with a demo of the official catalog and the Skill Architect skill.</p>
+<p>Here are some additional resources designed by the specialists who work on AWS Quick every day:</p>
+<ul><li><a href="https://catalog.workshops.aws/amazon-quick-suite-workshop">A Complete Guide to AWS Quick: The Agentic AI Business Workspace</a>.</li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/8724e6e3-1115-4f40-9770-8a24199ce308/en-US">AWS Quick: End-to-End Business Use Cases with Rich Integrations</a>.</li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/767bc5b8-1d33-40e2-8969-f8653db64756/en-US">AWS Quick Administration Workshop</a>.</li><li><a href="https://catalog.workshops.aws/quicksight/en-US">Deep dive into AWS Quick Sight</a>.</li><li><a href="https://aws-samples.github.io/sample-amazon-quick-suite-knowledge-hub/">AWS Quick Knowledge Hub – Official Code Samples and Solutions</a>.</li><li><a href="https://aws.amazon.com/search/?searchQuery=Amazon%20Quick&amp;filters=((id:provider,value:(blogs">AWS blog posts about AWS Quick</a>))&amp;sort=(id:relevance,direction:desc)).</li></ul>
+<h2>About the author</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Single-shot and agentic retrieval with Amazon Bedrock Manage…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/single-shot-and-agentic-retrieval-with-amazon-bedrock-managed-knowledge-base/</link>
@@ -5443,296 +5522,6 @@ cdk deploy --all                                        # pipeline + orchestrati
 <p>In this post, I showed a working SageMaker SDK v3 reference architecture for the fleet-scale computer vision lifecycle. The architecture includes a dual-branch training pipeline where every model is quality-gated on its exported ONNX artifact, compiled with SageMaker Neo, and only then registered. A Model Registry layout uses camera metadata to turn shared package groups into per-camera warm-startable history, and a Step Functions orchestration layer paces fleet training within account quotas. For teams whose needs are met by managed options such as Amazon Lookout for Vision, that is the simpler path. This pattern targets the per-camera, fleet-scale constraint that managed options do not cover. The design rules transfer beyond computer vision: gate on balanced accuracy plus minority-class recall rather than accuracy, evaluate and compile the artifact you ship, and make operational failures notify rather than terminate silently.</p>
 <p>The sample deploys in minutes and a full validation run costs about seven cents of compute, so a low-cost next step is to clone the <a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">repository</a> and run it. From there, point the BCCD downloader at a real bucket, set <code>NeoTargetDevice</code> for your hardware, or size the orchestration bounds to your fleet. For the SDK v3 migration itself, the <a href="https://sagemaker.readthedocs.io/">SageMaker Python SDK documentation</a> and the two-part series announcing the new SDK are the references I kept open throughout.</p>
 <p>If you want help adapting this pattern to your production environment, reach out to your AWS account team.</p>
-<h2>About the author</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Groundhog Day for AI agents: Prompt caching patterns for usi…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/groundhog-day-for-ai-agents-prompt-caching-patterns-for-using-openai-models-on-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/groundhog-day-for-ai-agents-prompt-caching-patterns-for-using-openai-models-on-amazon-bedrock/?li=1</guid>
-      <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Groundhog Day for AI agents: Prompt caching patterns for using OpenAI models on Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Groundhog Day for AI agents: Prompt caching patterns for using OpenAI models on Amazon Bedrock</h1>
-<p><em>Every time you spin off your agent, it has to re-read its whole life story before performing an action. Here’s how to make it remember without having to feed it the same context again.</em></p>
-<p>In the movie <em>Groundhog Day</em>, Bill Murray’s character re-lives the same February 2 every day. He wakes up to the same song playing on the radio, in the same inn, and the same small town, again and again for what some movie fans estimate to be 34 years.</p>
-<p>Nothing he accomplished the day before carries over unless he works it out again from scratch. AI agents live in a version of Groundhog Day. Every time an agent takes a step (calls a tool, reads the result, decides what to do next), it has to send the model its entire story so far to maintain continuity: the tool definitions, the instructions, every previous tool call, and every result. The model only predicts the next token based on the input you provide. It has no internal memory between requests, so it must read all of it again. By turn 20 of a coding session, the model re-reads turns 1–19, and it’s you who pays for every one of those tokens, again and again.</p>
-<p>Prompt caching breaks the cycle. The service stores your input prompt (instructions, tools, and content) and reuses it on the next request, at a fraction of the input price.</p>
-<p>In this post, I walk you through an agent’s life, from its first turn to when it gets new tools and spawns helpers. Along the way, I show you how prompt caching keeps costs down and keeps agents responsive and consistent.</p>
-<h2>What an agent sends to its LLM</h2>
-<p>Before talking about caching, it helps to look at what a typical agent’s first invocation to the large language model (LLM) contains:</p>
-<ul><li><strong>Tool list</strong> – The definitions of every function the agent can call. Changes when you ship a new release.</li><li><strong>Instructions</strong> – The developer prompt: rules, persona, policies, examples. Also changes per release.</li><li><strong>History</strong> – Everything that happened in this session so far: the task, the model’s tool calls, and the tool results (which grows every turn).</li><li><strong>New turn</strong> – The latest tool result or user message (which might be different every time).</li></ul>
-<p><strong>What an agent sends to the model, turn after turn if you don’t set up caching:</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-1-1.png" alt="Five growing agent requests, with tools, instructions, and earlier history marked in red and each new turn in yellow."></p>
-<p>Figure 1: What an agent sends to the model on every turn</p>
-<h2>How prompt caching works under the hood</h2>
-<p>When a model reads a prompt, it first does a write called <em>prefill</em>. During prefill, it processes every input token and builds its key and value vectors (also known as key-value, or KV), which form the model’s working state. This happens before the model writes its first token.</p>
-<p>Prompt caching saves that state, which contains the system prompt, tools, content, history, and so on. When a later request starts with the same input tokens (that is, the same text), the prompt caching service loads the saved state instead of computing it again. It then processes only what is new in the next payload to the model. Prompt caching can be implicit, where Amazon Bedrock selects where the reusable prefix ends, or explicit, where your code marks that endpoint using <code>prompt_cache_breakpoint</code>. You can use both approaches together, and we recommend doing so.</p>
-<p><strong>Turn 1 compared to turn 2</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-2-1.png" alt="Turn 1 writes the tools and instructions through a breakpoint. Turn 2 reads that same prefix from cache and processes its new question."></p>
-<p>Figure 2: Turn 1 saves the prompt prefix up to the breakpoint, and turn 2 reuses it and pays full price only for the new question</p>
-<p><strong>Implicit or explicit, and why do we need both?</strong></p>
-<p>For agentic workloads, implicit caching lets Bedrock choose what to cache as the conversation grows. With explicit caching, you can mark shared content, such as tools and instructions, for reuse across sessions and when spinning up helper agents. You don’t always need both forms of caching, but combining them gives you a reusable starting point while Bedrock manages the growing conversation automatically.</p>
-<p>New sessions can also reuse that shared starting point while each conversation builds on its own cached history. In this post, we start with the first turn, then show how to carry cached content through later turns, new tools, and across subagents.</p>
-<h2>Hello cached world</h2>
-<p>The first win is to cache the static part of the prompt: the tools and instructions that stay the same across requests. These examples use your existing Amazon Bedrock client, <code>TOOLS</code>, and <code>task</code>. Replace the shortened <code>INSTRUCTIONS</code> string with your real policies and examples. The reusable prefix must reach 1,024 tokens to qualify.</p>
-<p>When caching static content, use explicit mode: choose where the saved prefix ends.</p>
-<pre><code>KEY = &quot;support-agent:v7:gpt-6-astra&quot;
-INSTRUCTIONS = &quot;Your full support policies and examples...&quot;
-
-# Rendered context: [provider context][TOOLS][INSTRUCTIONS] | [task]
-# Cache starts at the beginning; the marker below chooses its end.
-resp = client.responses.create(
-    model=&quot;us.openai.gpt-6-astra&quot;,
-    store=False,  # Response storage; prompt caching still works.
-    include=[&quot;reasoning.encrypted_content&quot;],
-    prompt_cache_key=KEY,
-    prompt_cache_options={&quot;mode&quot;: &quot;explicit&quot;, &quot;ttl&quot;: &quot;30m&quot;},
-    tools=TOOLS,  # Rendered before instructions; keep order stable.
-    input=[
-        {
-            &quot;role&quot;: &quot;developer&quot;,
-            &quot;content&quot;: [{
-                &quot;type&quot;: &quot;input_text&quot;,
-                &quot;text&quot;: INSTRUCTIONS,
-                # Save through this whole block, including TOOLS.
-                &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
-            }],
-        },
-        # User message is processed but not cached.
-        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task},
-    ],
-)</code></pre>
-<p>The <code>prompt_cache_key</code> tells the service which requests are meant to share a cache. We come back to how to use it when we get to reading the cache in new sessions. In one of our tests using explicit caching, the roughly 4,000-token tools-and-instructions prefix wrote 4,120 tokens on the first request and read those 4,120 tokens on later requests. The <code>task</code> (or user request) comes after the cache boundary, so this doesn’t trigger a write to the cache.</p>
-<p>Keep in mind that prompt caching works only when you pass exactly the same text. Make sure that the agent’s instructions and tool lists are serialized the same way every time. Model Context Protocol (MCP) servers and other forms of tool delivery need to be indexed to make sure they stay consistent. Keep anything that varies, such as the date, the user’s name, or a request ID, after the cached instructions.</p>
-<p>As the content grows and varies (different tools and content), use implicit mode to let the service follow the conversation. Here, the first request has no explicit marker. Its latest eligible message is the user’s task, so the automatic breakpoint comes after that task and covers the tools, instructions, and task together. The mode is shown explicitly in the following example for clarity, even though implicit is the default. Setting <code>store=False</code> leaves conversation history in your application. It doesn’t disable caching.</p>
-<pre><code>def ask_with_implicit_cache(history):
-    return client.responses.create(
-        model=&quot;us.openai.gpt-6-astra&quot;,
-        store=False,
-        include=[&quot;reasoning.encrypted_content&quot;],
-        prompt_cache_key=KEY,
-        prompt_cache_options={&quot;mode&quot;: &quot;implicit&quot;, &quot;ttl&quot;: &quot;30m&quot;},
-        tools=TOOLS,
-        input=history,  # Everything gets cached
-    )
-
-history = [
-    {&quot;role&quot;: &quot;developer&quot;, &quot;content&quot;: INSTRUCTIONS},
-    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task},
-]
-# Automatic endpoint: the end of the user message.
-resp = ask_with_implicit_cache(history)</code></pre>
-<p>This is useful when the next turn continues the same task. A different task doesn’t match the prefix through the old task, and the implicit write doesn’t necessarily create a separate entry for only the tools and instructions. Use an explicit marker there when you need that shorter shared prefix to be reusable across tasks.</p>
-<p>Use both when the agent needs a shared starting point and a growing history. Start with the marked developer block in the following code example and call the function <code>ask_with_implicit_cache</code>. The request-level mode stays implicit. The block-level marker adds an explicit save point after the instructions. The service can also save through the latest eligible message. This keeps the shared prefix available while the conversation grows.</p>
-<pre><code>history = [
-    {
-        &quot;role&quot;: &quot;developer&quot;,
-        &quot;content&quot;: [{
-            &quot;type&quot;: &quot;input_text&quot;,
-            &quot;text&quot;: INSTRUCTIONS,
-            &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;}, 
-        }],
-    },
-    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task},
-]
-# Still implicit mode, now with an explicit startup save point in the history.
-resp = ask_with_implicit_cache(history)</code></pre>
-<h2>Caching conversation history and tool results</h2>
-<p>The model requests tools by name and supplies their arguments. Your application must execute them. <code>execute_function</code> is a helper you build to route those requests to the matching Python functions and return their results. The following loop uses this helper to run each requested tool. It appends the model’s output and all tool results to the <code>history</code> list, then sends that list again until the model returns a final answer. In implicit mode, Amazon Bedrock can reuse the unchanged prefix and cache the added content through the last tool result. Keep earlier messages and the initial <code>TOOLS</code> unchanged.</p>
-<pre><code>import json
-
-# Map tool names to their Python implementations.
-TOOL_HANDLERS = {
-    &quot;get_owner&quot;: get_owner,
-    # Register your other initial tools here.
-}
-
-def execute_function(name, arguments):
-    &quot;&quot;&quot;Run the requested tool and return its result.&quot;&quot;&quot;
-    handler = TOOL_HANDLERS.get(name)
-    if handler is None:
-        return {&quot;error&quot;: f&quot;Unknown tool: {name}&quot;}
-    return handler(**arguments)
-
-while True:
-    # Preserve all output items, including encrypted reasoning.
-    history.extend(resp.output)
-    calls = [x for x in resp.output if x.type == &quot;function_call&quot;]
-    if not calls:
-        break
-    for call in calls:
-        result = execute_function(call.name, json.loads(call.arguments))
-        history.append({
-            &quot;type&quot;: &quot;function_call_output&quot;,
-            &quot;call_id&quot;: call.call_id,
-            &quot;output&quot;: json.dumps(result),
-        })
-    # The last result in this group supplies the automatic endpoint.
-    resp = ask_with_implicit_cache(history)</code></pre>
-<p>For follow-ups, append a new user message and call the helper again. Keep earlier messages unchanged so their cached endpoints remain available.</p>
-<p><strong>Rolling breakpoints: Each turn reads everything before it</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-3-1.png" alt="Rolling breakpoints, where each turn reads all earlier turns and writes only its own tool result."></p>
-<p>Figure 3: Rolling breakpoints, where each turn reads everything before it and writes only its own tool result</p>
-<p>For a separate explicit-only run, recreate the two-message history from the combined Hello cached world example. This loop wraps tool results in <code>input_text</code> blocks and marks the final result in each batch. Earlier markers stay in <code>history</code>. See the <a href="https://developers.openai.com/api/docs/guides/prompt-caching">current lookup rules</a> for long conversations.</p>
-<pre><code>import json
-
-while True:
-    resp = client.responses.create(
-        model=&quot;us.openai.gpt-6-astra&quot;, store=False,
-        include=[&quot;reasoning.encrypted_content&quot;],
-        tools=TOOLS, prompt_cache_key=KEY, input=history,
-        prompt_cache_options={&quot;mode&quot;: &quot;explicit&quot;, &quot;ttl&quot;: &quot;30m&quot;},
-    )
-    d = resp.usage.input_tokens_details
-    print(&quot;read&quot;, d.cached_tokens, &quot;write&quot;, d.cache_write_tokens)
-    history.extend(resp.output)  # Includes encrypted reasoning.
-    calls = [x for x in resp.output if x.type == &quot;function_call&quot;]
-    if not calls:
-        break
-    batch = []
-    for call in calls:
-        result = execute_function(call.name, json.loads(call.arguments))
-        batch.append({
-            &quot;type&quot;: &quot;function_call_output&quot;, &quot;call_id&quot;: call.call_id,
-            &quot;output&quot;: [{&quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: json.dumps(result)}],
-        })
-    # Add the newest boundary; retain every earlier marker.
-    batch[-1][&quot;output&quot;][-1][&quot;prompt_cache_breakpoint&quot;] = {&quot;mode&quot;: &quot;explicit&quot;}
-    history.extend(batch)</code></pre>
-<p>GPT-6 Astra tied for the best implicit result in this six-turn workload: about 62 percent lower input cost than running without caching. Explicit rolling breakpoints saved about 61 percent on the same model. Both reused more history as the conversation grew. These are workload results. Measure your own agent’s savings.</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-4-1.png" alt="Bar chart comparing the input cost of each caching setup on GPT-6 Astra, relative to no caching."></p>
-<p>Figure 4: Input cost of every caching setup on GPT-6 Astra, relative to no caching</p>
-<p><strong>Watch out for:</strong></p>
-<ul><li><strong>Only a static breakpoint in explicit-only mode</strong> – The tools and instructions are cached, but the growing history is processed again on every turn (0.61). This limitation doesn’t apply to the combined example, which also saves through eligible conversation endings.</li><li><strong>Moving a single breakpoint</strong> can prevent cache reuse and cause repeated writes in explicit-only mode. Keep the previous turn’s breakpoint too.</li><li><strong>Only an implicit write through a changing task</strong> – A new task might share the tools and instructions but not the previously saved endpoint. Add an explicit marker after the shared instructions if different tasks need to reuse that shorter prefix.</li></ul>
-<h2>When tools change</h2>
-<p>Sometimes an agent’s tool list changes, or new tools get added. Keep the initial list stable: adding, removing, or reordering definitions can invalidate the cached prefix. Choose the approach that fits how the tool becomes available.</p>
-<p><strong>When known tools are invoked in different steps of the agent’s flow:</strong> Send the same sorted <code>TOOLS</code> and use <code>allowed_tools</code> to limit what the model can call. With <code>allowed_tools</code>, <code>&quot;mode&quot;: &quot;auto&quot;</code> lets the model decide whether to call an allowed tool, and <code>&quot;mode&quot;: &quot;required&quot;</code> requires at least one allowed tool call. Pass this as <code>tool_choice</code>. The restriction doesn’t change the cached catalog:</p>
-<pre><code>tool_choice={&quot;type&quot;: &quot;allowed_tools&quot;, &quot;mode&quot;: &quot;auto&quot;,
-             &quot;tools&quot;: [{&quot;type&quot;: &quot;function&quot;, &quot;name&quot;: &quot;get_owner&quot;}]}</code></pre>
-<p><strong>New tools during a session.</strong> Both Amazon Bedrock Runtime and Amazon Bedrock Mantle endpoints accept an input item type called <code>additional_tools</code> for GPT-6 Astra, GPT-6.1 Sol, and GPT-5.6 Luna. For model availability by AWS Region, see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">Supported models by AWS Region in Amazon Bedrock</a>. Register the new tool <code>get_due_date</code> in the helper function <code>execute_function</code>, then append its schema to the completed history from the agent loop. Keep the initial <code>TOOLS</code> unchanged:</p>
-<pre><code>TOOL_HANDLERS[&quot;get_due_date&quot;] = get_due_date
-NEW_TOOL = {
-    &quot;type&quot;: &quot;function&quot;, &quot;name&quot;: &quot;get_due_date&quot;,
-    &quot;description&quot;: &quot;Return the due date for a support case.&quot;,
-    &quot;strict&quot;: True,
-    &quot;parameters&quot;: {
-        &quot;type&quot;: &quot;object&quot;,
-        &quot;properties&quot;: {&quot;case_id&quot;: {&quot;type&quot;: &quot;string&quot;}},
-        &quot;required&quot;: [&quot;case_id&quot;], &quot;additionalProperties&quot;: False,
-    },
-}
-history.append({
-    &quot;type&quot;: &quot;additional_tools&quot;, &quot;role&quot;: &quot;developer&quot;,
-    &quot;tools&quot;: [NEW_TOOL],
-})
-history.append({
-    &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Find the due date for case C-123.&quot;,
-})
-# Implicit mode saves through this new user message, including NEW_TOOL.
-resp = ask_with_implicit_cache(history)
-d = resp.usage.input_tokens_details
-print(&quot;old prefix read&quot;, d.cached_tokens, &quot;new write&quot;, d.cache_write_tokens)
-
-# Example output:
-# old prefix read 2048 new write 256</code></pre>
-<p><strong>A new tool arrives mid-session</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-5-1.png" alt="Native additional_tools loading preserves the earlier cached prefix. The GPT-6 Astra Runtime test reads 2,068 tokens and writes a 145-token extension. Editing the initial catalog causes a cache miss."></p>
-<p>Figure 5: Appending a tool keeps the earlier prefix reusable, with example counts from GPT-6 Astra on Amazon Bedrock Runtime</p>
-<p>Continue the tool-execution loop with the new response. The loop adds the model’s output to <code>history</code>, runs any requested tools, and appends their results. Keep the <code>additional_tools</code> item in later requests so the new tool remains available. In implicit mode, Amazon Bedrock can cache through the new user message, including the tool definitions that precede it. In explicit-only mode, retain earlier breakpoints and add one to an <code>input_text</code> block in that user message. The <code>additional_tools</code> item itself can’t hold a breakpoint.</p>
-<p><strong>Different roles, different catalogs.</strong> When different agent roles need different tools, choose a stable tool profile, such as support or billing, at the start of each session. Each profile gets its own cached prefix. Mark the shared instructions so later tasks with that profile can reuse them, then use either mode as the conversation grows.</p>
-<p><strong>Cached tool profiles</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-6-1.png" alt="Support and billing sessions each reuse the cache for their fixed tool profile."></p>
-<p>Figure 6: Each tool profile has its own cached prefix, reusable by matching sessions</p>
-<h2>Subagents and side calls</h2>
-<p>Delegating shouldn’t make every helper reread the same background. Share the prefix, then add each helper’s task at the end. Be aware that when you use caching with AI agents, tools and system prompts can be leaked or exploited. Establish responsible AI practices that include your prompt caching implementation as part of that governance.</p>
-<p><strong>Warm once, then fan out.</strong> Send an ordinary request first and wait for it to finish before launching helpers. Mark the shared context explicitly in every request, even when the mode is implicit:</p>
-<pre><code>shared = {&quot;role&quot;: &quot;developer&quot;, &quot;content&quot;: [{
-    &quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: INSTRUCTIONS,
-    &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
-}]}
-warm = client.responses.create(
-    model=&quot;us.openai.gpt-6-astra&quot;, store=False,
-    tools=TOOLS, prompt_cache_key=KEY,
-    prompt_cache_options={&quot;mode&quot;: &quot;implicit&quot;, &quot;ttl&quot;: &quot;30m&quot;},
-    max_output_tokens=16,
-    input=[shared, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Reply READY.&quot;}],
-)
-d = warm.usage.input_tokens_details
-if not (d.cache_write_tokens or d.cached_tokens):
-    raise RuntimeError(&quot;Shared prefix was not cached.&quot;)
-from concurrent.futures import ThreadPoolExecutor
-
-# helper_tasks contains the task text for each helper.
-helper_inputs = [
-    [shared, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task}]
-    for task in helper_tasks
-]
-with ThreadPoolExecutor(max_workers=4) as pool:
-    helpers = list(pool.map(ask_with_implicit_cache, helper_inputs))</code></pre>
-<p>The helpers use the same <code>TOOLS</code>, model, and <code>KEY</code> as the warm-up. A warm-up that ends at the output cap can still populate the cache. The usage check confirms cache activity before the helpers start.</p>
-<p><strong>Subagents: Warm the shared prefix once, then fan out</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-7-1.png" alt="An ordinary warm-up request populates the shared prefix before four subagents start."></p>
-<p>Figure 7: Warm the shared prefix before launching helpers, and each helper then adds its own task</p>
-<p><strong>Give side calls the same beginning.</strong> The agent loop builds <code>history</code> by appending every <code>resp.output</code> and its matching tool results, including encrypted reasoning. After the parent finishes, copy that complete list for a summarizer or judge. The same helper keeps the tools, model, and key unchanged:</p>
-<pre><code>from copy import deepcopy
-
-# history is the completed history built by the agent loop above.
-# Copy it so the helper can add instructions without changing the parent.
-helper_history = deepcopy(history)
-helper_history.append({
-    &quot;role&quot;: &quot;developer&quot;,
-    &quot;content&quot;: &quot;Summarize this conversation in one sentence. Do not call tools.&quot;,
-})
-summary = ask_with_implicit_cache(helper_history)
-d = summary.usage.input_tokens_details
-print(&quot;history read&quot;, d.cached_tokens, &quot;write&quot;, d.cache_write_tokens)
-print(summary.output_text)
-
-# Example output (assumed values and conversation):
-# history read 4096 write 32
-# Case C-123 is due on October 31, 2026.</code></pre>
-<p>The helper can reuse the cached portion of <code>history</code>, but the appended developer message doesn’t automatically extend the cache to include the summary instruction. If later requests reuse the same history and instruction, place the instruction in an <code>input_text</code> block with <code>prompt_cache_breakpoint</code>. For a one-time summary, no additional marker is needed.</p>
-<h2>Pauses, restarts, and the cache key</h2>
-<p><strong>Pauses.</strong> Cached prefixes have a minimum 30-minute time to live (TTL), refreshed by successful reuse, and might remain longer. If a session resumes soon, an ordinary warm-up can refresh the prefix before it expires. Compare that request’s cost with letting the cache expire. For the TTL rules, see the Amazon Bedrock documentation.</p>
-<p><strong>New sessions.</strong> Keep <code>prompt_cache_key</code> stable for requests that are meant to share a prefix. A session-specific key isolates sessions even when their prompts match. In the following example, switching to a shared key let sessions reuse the prefix.</p>
-<p><strong>New sessions reuse the cache only if they share the key</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-8-1.png" alt="The original experiment compares per-session cache keys with a stable shared key."></p>
-<p>Figure 8: A session-specific key separates cache entries, and a shared key lets matching sessions reuse them</p>
-<p>Reuse of existing cache content requires the same model, AWS account, and Region, and an available matching prefix. The following example combines an explicit startup marker with implicit mode. Each session starts with the same instructions and its own task. Both use the same computed key:</p>
-<pre><code>import hashlib
-
-def cache_key(app, model, prompt_version, instructions):
-    digest = hashlib.sha256(instructions.encode()).hexdigest()[:12]
-    return f&quot;{app}:{prompt_version}:{model}:{digest}&quot;
-
-KEY = cache_key(&quot;support-agent&quot;, &quot;us.openai.gpt-6-astra&quot;, &quot;v7&quot;, INSTRUCTIONS)
-prefix = {&quot;role&quot;: &quot;developer&quot;, &quot;content&quot;: [{
-    &quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: INSTRUCTIONS,
-    &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
-}]}
-for label, question in [
-    (&quot;session A&quot;, &quot;Explain the refund policy without calling tools.&quot;),
-    (&quot;session B&quot;, &quot;Explain the escalation policy without calling tools.&quot;),
-]:
-    # A fresh conversation for each session; the startup prefix matches.
-    session_history = [prefix, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question}]
-    result = ask_with_implicit_cache(session_history)
-    d = result.usage.input_tokens_details
-    print(label, &quot;read&quot;, d.cached_tokens, &quot;write&quot;, d.cache_write_tokens)</code></pre>
-<p>On a cold start, session 1 writes the shared prefix. Session 2 can read it even though its task can be different. Each task can also be cached implicitly. Check the usage counters: matching keys and markers make reuse possible, but a cache entry still has to be available.</p>
-<h2>What prompt caching delivers</h2>
-<p><strong>Cost.</strong> For a GPT-6 Astra powered agent with an 8,000-token startup prefix and six turns adding 2,000 tokens each, one-time static caching reduced cost to $0.50, and rolling breakpoints reduced modeled input cost by 64 percent: from $0.87 to $0.32 per session.</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-9-1.png" alt="Line chart of cumulative input cost per session for the support-agent example on GPT-6 Astra."></p>
-<p>Figure 9: Cumulative input cost per session for the support-agent example, using Amazon Bedrock on-demand prices for GPT-6 Astra</p>
-<h2>How to tell caching is working</h2>
-<p>Start with response usage. <code>cached_tokens</code> reports input read from the cache, and <code>cache_write_tokens</code> reports input written to it. As the conversation grows, check that later turns reuse earlier history and that new writes reflect the content being added.</p>
-<p>For production monitoring on the Amazon Bedrock Runtime endpoint, use the <code>CacheReadInputTokenCount</code> and <code>CacheWriteInputTokenCount</code> metrics in Amazon CloudWatch. Enable model invocation logging when you need individual request records, then query them with Amazon CloudWatch Logs Insights. For the Amazon Bedrock Mantle endpoint, record the response usage fields in your application logs. Its Amazon CloudWatch namespace currently has no separate cache counters.</p>
-<p>To check costs, filter <strong>AWS Cost Explorer</strong> to Amazon Bedrock and group by <strong>Usage type</strong>. Cache reads, cache writes, and uncached input appear as separate entries per model. Exclude output-token entries when calculating their shares of input cost.</p>
-<h2>A short checklist</h2>
-<ul><li><strong>Keep the reusable prefix stable.</strong> Put shared tools and instructions first, then append conversation history and new turns. Changing a timestamp, message, or tool definition prevents reuse beyond that change. A shorter prefix can still be reused if it has its own saved endpoint.</li><li><strong>Choose boundaries around content you want to reuse.</strong> Use implicit caching for growing history, explicit markers for shared prefixes, or both. Explicit-only mode avoids writing disposable suffixes. When extending an explicit-only conversation, retain earlier markers so later requests can find the saved prefixes.</li><li><strong>Keep the initial tool catalog unchanged.</strong> Use <code>allowed_tools</code> to restrict which tools are callable. Append known definitions with <code>additional_tools</code>, or discover them through namespaced client-side <code>tool_search</code>. Choose a stable tool profile when different agent roles need different catalogs.</li><li><strong>Check prefix size and lifetime.</strong> A cacheable prefix must contain at least 1,024 tokens. Cached prefixes remain eligible for reuse for at least 30 minutes after their latest write or successful reuse.</li><li><strong>Warm shared content before launching helpers.</strong> Mark the shared prefix in both the warm-up and helper requests, including when using implicit mode. Finish the warm-up request before starting parallel calls.</li><li><strong>Keep cache keys stable within each sharing group.</strong> Requests intended to reuse a prefix must use the same key. Separate keys can keep cache accounting distinct between customers or users.</li><li><strong>Measure savings across the workflow.</strong> Cache writes cost 1.25 times the normal input rate. Read prices depend on the model. Track write costs alongside read savings, using response usage during development and monitoring and billing data in production.</li></ul>
-<h2>Waking up on February 3rd</h2>
-<p>Bill Murray only escapes Groundhog Day once he stops repeating the same mistakes and starts carrying what he learned from one day to the next. Agents get there in a similar, if less romantic, way: by keeping the start of their prompt byte-for-byte stable and using automatic or explicit cache boundaries as the history grows.</p>
-<p>In this post, we covered how to cache shared tools and instructions, grow the cache across agent turns, and preserve reuse when adding tools, launching helpers, or starting new sessions. Keep the shared prefix stable and append new information as the workflow progresses. Use implicit caching for growing conversations and explicit breakpoints for shared content. Combine them when you need both, or choose explicit-only mode when a changing suffix is unlikely to be reused. Compare cache reads, writes, total input cost, and latency to find what works best for your agent. To apply these patterns, follow the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-openai">Amazon Bedrock prompt caching documentation for OpenAI models</a> and check <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">model availability by AWS Region and endpoint</a>. Start with one workflow and measure the savings as your conversations grow.</p>
 <h2>About the author</h2>]]></content:encoded>
     </item>
   </channel>

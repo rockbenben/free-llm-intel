@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-10 06:32:45**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-10 12:21:11**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,27 +26,27 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-10，标题自动汉化）：
-  1. [推出 Claude Fable 5.2 和 Claude Mythos 5.2](https://www.anthropic.com/claude-fable-and-mythos-5-2)（2026-11-09）
-  2. [代理记忆的组成部分](https://claude.com/resources/articles#d-2026-11-06-1)（2026-11-06）
-  3. [在 Claude 中推出个人理财](https://claude.com/resources/articles/introducing-personal-finance-in-claude)（2026-11-05）
-  4. [为安全团队提供对 Claude Enterprise 的更多可见性和控制](https://claude.com/resources/articles/claude-enterprise-security-updates)（2026-11-05）
-  5. [Claude Marketplace 上新增的安全、生产力与创意类 agent 和产品](https://claude.com/resources/articles/new-agents-and-products-claude-marketplace)（2026-11-04）
-  - 📄 完整文章归档（共 140 篇）：[anthropic.md](llm-news/anthropic.md)
+  1. [摩根大通将 Claude Code 扩展到公司更多员工](https://claude.com/resources/articles/jpmorganchase-expands-claude-code)（2026-11-09）
+  2. [Claude寓言 5.2 和神话 5.2](https://claude.com/resources/articles#d-2026-11-09-2)（2026-11-09）
+  3. [Claude可以从头到尾设计电子原型](https://claude.com/resources/articles#d-2026-11-09-3)（2026-11-09）
+  4. [使用 Claude Fable 5.2 安全扩展多代理团队](https://claude.com/resources/articles#d-2026-11-09-4)（2026-11-09）
+  5. [您应该使用哪种Claude模型进行构建？](https://claude.com/resources/articles#d-2026-11-09-5)（2026-11-09）
+  - 📄 完整文章归档（共 145 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### OpenAI (openai)
 - 页面：[官方博客](https://openai.com/news/)
+  - ❌ 抓取失败：（可直接访问页面查看）
+- 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
   - 📡 RSS/Atom：https://openai.com/zh-Hans-CN/news/rss.xml
-- 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
-  - ❌ 抓取失败：（可直接访问页面查看）
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-10，标题自动汉化）：
   1. [ChatGPT Enterprise 现已在 AWS Marketplace 中提供](https://openai.com/index/chatgpt-enterprise-aws-marketplace)（2026-11-09）
-  2. [Kuken Industries 在几分钟内搜索 70 年的图纸](https://openai.com/index/kuken)（2026-11-09）
-  3. [与 Hacktron 合作寻找 OpenAI 系统中的漏洞](https://openai.com/index/partnering-with-hacktron)（2026-11-06）
-  4. [衡量人工智能代理如何处理日常湿实验室科学](https://openai.com/index/measuring-how-ai-agents-handle-wet-lab-science)（2026-11-06）
-  5. [澳大利亚大学正在培养人工智能本土毕业生](https://openai.com/index/australian-universities-ai-native-graduates)（2026-11-05）
-  - 📄 完整文章归档（共 1367 篇）：[openai.md](llm-news/openai.md)
+  2. [控制室：一个中央系统，用于跟踪和停止我们研究基础设施中的模型工作负载](https://openai.com/index/control-room)（2026-11-09）
+  3. [CodeRabbit scales agentic software development and ships 20x more](https://openai.com/index/coderabbit-codex-daybreak)（2026-11-09）
+  4. [Kuken Industries 在几分钟内搜索 70 年的图纸](https://openai.com/index/kuken)（2026-11-09）
+  5. [与 Hacktron 合作寻找 OpenAI 系统中的漏洞](https://openai.com/index/partnering-with-hacktron)（2026-11-06）
+  - 📄 完整文章归档（共 1369 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[变更日志](https://aistudio.google.com/docs/changelog)
@@ -275,12 +275,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-siliconflow.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-siliconflow.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-10，标题自动汉化）：
-  1. [【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF)（2026-11-03）
+  1. [【模型服务调整】Wan2.2 系列、GLM-5.1 下线，MiniMax-H3 上线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97glm-51-%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF)（2026-11-03）
   2. [【模型服务调整】Qwen3-Coder-30B-A3B-Instruct、GLM-4.5V 等模型将下线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4qwen3-coder-30b-a3b-instructglm-45v-%E7%AD%89%E6%A8%A1%E5%9E%8B%E5%B0%86%E4%B8%8B%E7%BA%BF)（2026-11-03）
   3. [【新模型上线】OpenMOSS-Team/MOSS-Image 上线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%96%B0%E6%A8%A1%E5%9E%8B%E4%B8%8A%E7%BA%BFopenmoss-teammoss-image-%E4%B8%8A%E7%BA%BF)（2026-11-03）
-  4. [【模型升级】DeepSeek-V4.1-Flash 升级至 DeepSeek-V4.1-Flash-1017](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E5%8D%87%E7%BA%A7deepseek-v41-flash-%E5%8D%87%E7%BA%A7%E8%87%B3-deepseek-v41-flash-1017)（2026-10-21）
-  5. [【模型服务调整】systemone 接口 diffusiongemma 模型将停止服务](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4systemone-%E6%8E%A5%E5%8F%A3-diffusiongemma-%E6%A8%A1%E5%9E%8B%E5%B0%86%E5%81%9C%E6%AD%A2%E6%9C%8D%E5%8A%A1)（2026-10-16）
-  - 📄 完整文章归档（共 53 篇）：[siliconflow.md](llm-news/siliconflow.md)
+  4. [【模型服务调整】Wan2.2 系列下线，MiniMax-H3 上线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4wan22-%E7%B3%BB%E5%88%97%E4%B8%8B%E7%BA%BFminimax-h3-%E4%B8%8A%E7%BA%BF)（2026-11-03）
+  5. [【模型升级】DeepSeek-V4.1-Flash 升级至 DeepSeek-V4.1-Flash-1017](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E5%8D%87%E7%BA%A7deepseek-v41-flash-%E5%8D%87%E7%BA%A7%E8%87%B3-deepseek-v41-flash-1017)（2026-10-21）
+  - 📄 完整文章归档（共 54 篇）：[siliconflow.md](llm-news/siliconflow.md)
 
 ### 快手万擎 (streamlake)
 - 页面：[更新日志](https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd)
@@ -297,12 +297,12 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-10，标题自动汉化）：
-  1. [使用 Amazon Bedrock Managed Knowledge Base 进行单次与 agentic 检索](https://aws.amazon.com/blogs/machine-learning/single-shot-and-agentic-retrieval-with-amazon-bedrock-managed-knowledge-base/)（2026-11-09）
-  2. [在 AWS 上推出 Claude Fable 5.2](https://aws.amazon.com/blogs/machine-learning/introducing-claude-fable-5-2-on-aws/)（2026-11-09）
-  3. [NVIDIA Nemotron 3.5 Super VL 现已在 Amazon SageMaker JumpStart 中提供](https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-super-vl-is-now-available-in-amazon-sagemaker-jumpstart/)（2026-11-09）
-  4. [可插拔 agentic AI 框架：Amazon Bedrock AgentCore 上的七层可组合企业级 agentic AI 参考架构](https://aws.amazon.com/blogs/machine-learning/pluggable-agentic-ai-framework-a-seven-layer-composable-enterprise-agentic-ai-reference-architecture-on-amazon-bedrock-agentcore/)（2026-11-09）
-  5. [CrossnoKaye 如何用 Amazon Bedrock AgentCore 让物理 AI 落地](https://aws.amazon.com/blogs/machine-learning/how-crossnokaye-grounds-physical-ai-with-amazon-bedrock-agentcore/)（2026-11-09）
-  - 📄 完整文章归档（共 174 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [技能和代理如何在 AWS Quick 中发挥作用](https://aws.amazon.com/blogs/machine-learning/how-skills-and-agents-work-in-aws-quick/)（2026-11-10）
+  2. [使用 Amazon Bedrock Managed Knowledge Base 进行单次与 agentic 检索](https://aws.amazon.com/blogs/machine-learning/single-shot-and-agentic-retrieval-with-amazon-bedrock-managed-knowledge-base/)（2026-11-09）
+  3. [在 AWS 上推出 Claude Fable 5.2](https://aws.amazon.com/blogs/machine-learning/introducing-claude-fable-5-2-on-aws/)（2026-11-09）
+  4. [NVIDIA Nemotron 3.5 Super VL 现已在 Amazon SageMaker JumpStart 中提供](https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-super-vl-is-now-available-in-amazon-sagemaker-jumpstart/)（2026-11-09）
+  5. [可插拔 agentic AI 框架：Amazon Bedrock AgentCore 上的七层可组合企业级 agentic AI 参考架构](https://aws.amazon.com/blogs/machine-learning/pluggable-agentic-ai-framework-a-seven-layer-composable-enterprise-agentic-ai-reference-architecture-on-amazon-bedrock-agentcore/)（2026-11-09）
+  - 📄 完整文章归档（共 175 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
@@ -403,7 +403,7 @@
   3. [宣布 Ray 支持 Google TPU 上的 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20）
   4. [宣布成立 Ray on Accelerators 特别兴趣小组（SIG）](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20）
   5. [用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://anyscale.com/blog/kuberay)（2026-10-15）
-  - 📄 完整文章归档（共 100 篇）：[anyscale.md](llm-news/anyscale.md)
+  - 📄 完整文章归档（共 101 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)
 - 页面：[官方博客](https://www.inceptionlabs.ai/blog)
