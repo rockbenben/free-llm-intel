@@ -11500,6 +11500,10 @@ class TestIndexCoverageIndependent(unittest.TestCase):
     逐条归类后是 63 条 `NEWS_CANONICAL_ONLY_VENDORS` 的合成锚点 + 14 条同标题折叠，
     **零条无解释**。所以本闸断言的是「无解释的缺失必须为 0」，而不是去复算收录条数上限
     （复算上限会把截窗规则抄第二遍，两边一起错就查不出来）。
+
+    源站提前刊出的明日文章也属合法排除：入口为时区容差保留明日日期，归档照存，
+    索引与 RSS 则等到发布日期才收录。2026-11-11 OpenAI RSS 的 Gilbert + Tobin
+    条目触发过这类误报；到发布当天仍缺失时，本闸必须重新报警。
     """
 
     def _missing_without_explanation(self, repo):
@@ -11511,7 +11515,7 @@ class TestIndexCoverageIndependent(unittest.TestCase):
         rows = []
         for arch in sorted((repo / "llm-news").glob("*.md")):
             for art in crawler_llm_intel.parse_archived_articles(arch):
-                rows.append((arch.stem, art.url, art.zh_title or art.title, art.title))
+                rows.append((arch.stem, art.url, art.zh_title or art.title, art.title, art.date))
 
         def alias(s: str) -> str:
             # 产出层的折叠键是「空白折叠 + casefold」（见 _dedup_same_title 的 aliases）；
@@ -11521,14 +11525,17 @@ class TestIndexCoverageIndependent(unittest.TestCase):
 
         # 已索引行的「显示标题」与「英文原文」两个别名集合：产出层按标题折叠时
         # 两个别名任一命中即同一篇（见 _dedup_same_title 与 _rss_articles 的说明）。
-        indexed_disp = {(vid, alias(disp)) for vid, _u, disp, _en in rows
+        indexed_disp = {(vid, alias(disp)) for vid, _u, disp, _en, _date in rows
                         if disp and crawler_llm_intel._article_key(_u) in have}
-        indexed_en = {(vid, alias(en)) for vid, _u, _disp, en in rows
+        indexed_en = {(vid, alias(en)) for vid, _u, _disp, en, _date in rows
                       if en and crawler_llm_intel._article_key(_u) in have}
         bad = []
-        for vid, url, disp, en in rows:
+        today = datetime.now().strftime("%Y-%m-%d")
+        for vid, url, disp, en, day in rows:
             if crawler_llm_intel._article_key(url) in have:
                 continue
+            if day and day > today:
+                continue                      # 归档保留未来日期，索引等到发布日期才收录
             if "#" in url and vid in crawler_llm_intel.NEWS_CANONICAL_ONLY_VENDORS:
                 continue                      # 这几家只收规范直链（源码里明写的口径）
             if (vid, alias(disp)) in indexed_disp or (en and (vid, alias(en)) in indexed_en):
@@ -11612,6 +11619,59 @@ class TestIndexCoverageIndependent(unittest.TestCase):
             write_arch("A Different Index")
             bad, _, _ = self._missing_without_explanation(root)
             self.assertTrue(any("A Different Index" in b for b in bad), bad)
+
+    def test_future_dated_archive_waits_until_publication_day(self):
+        """RSS 提前一天刊出：归档保留、索引暂缓；到当天仍缺失就必须报警。"""
+        class Clock(datetime):
+            current = datetime(2026, 11, 11, 10)
+
+            @classmethod
+            def now(cls, tz=None):
+                return cls.current
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            title = "Gilbert + Tobin rethinks the business of law with AI"
+            url = "https://openai.com/index/gilbert-tobin-sam-nickless"
+            xml = (f"<rss><channel><item><title>{title}</title><link>{url}</link>"
+                   "<pubDate>Thu, 12 Nov 2026 00:00:00 GMT</pubDate>"
+                   "</item></channel></rss>")
+            with mock.patch.object(crawler_llm_intel, "datetime", Clock), \
+                    mock.patch(f"{__name__}.datetime", Clock), \
+                    mock.patch.object(crawler_llm_intel, "_repo_root", return_value=root), \
+                    mock.patch.object(crawler_llm_intel, "_LAST_ORIG_INDEX", {}), \
+                    mock.patch.object(crawler_llm_intel, "translate_to_zh", side_effect=lambda s: s):
+                v = crawler_llm_intel.VendorIntel(
+                    vendor_id="openai", brand="OpenAI", homepage="", products=[],
+                    all_news_articles=crawler_llm_intel.parse_feed_xml(xml, url))
+                crawler_llm_intel.write_news_archives(root / "llm-news", [v])
+                feeds = root / "docs" / "feeds"
+                crawler_llm_intel.write_rss_feeds(feeds, [v])
+                bad, n_index, n_arch = self._missing_without_explanation(root)
+                self.assertEqual((n_index, n_arch), (0, 1))
+                self.assertEqual(bad, [], "明天发布的归档行暂不入索引是合法排除")
+
+                # 日期一到，旧索引的缺失必须重新报出，不能永久豁免这条文章。
+                Clock.current = datetime(2026, 11, 12, 10)
+                bad, _, _ = self._missing_without_explanation(root)
+                self.assertEqual(len(bad), 1, bad)
+                self.assertIn(title[:36], bad[0])
+                crawler_llm_intel.write_rss_feeds(feeds, [v])
+                bad, n_index, n_arch = self._missing_without_explanation(root)
+                self.assertEqual((bad, n_index, n_arch), ([], 1, 1))
+
+                # 已发布和无日期条目均须入索引；真实丢失不能借未来日期豁免。
+                for day in ("2026-11-11", "2026-11-12", ""):
+                    with self.subTest(date=day):
+                        (root / "llm-news" / "openai.md").write_text(
+                            f"1. [{title}]({url})" + (f"（{day}）" if day else "") + "\n",
+                            encoding="utf-8", newline="\n")
+                        (feeds / "articles.json").write_text(json.dumps({
+                            "fields": ["title", "url", "vendor", "date", "original_title"],
+                            "articles": [],
+                        }), encoding="utf-8", newline="\n")
+                        bad, _, _ = self._missing_without_explanation(root)
+                        self.assertEqual(len(bad), 1, bad)
 
 
 class TestEveryArchiveLineParses(unittest.TestCase):
