@@ -10,11 +10,11 @@
 
 ## 全部文章（共 150 篇，按日期倒序；无日期条目列于最后）
 
-1. [Claude白板、Claude表格和Claude数据简介](https://claude.com/resources/articles/sheets-whiteboards-data)（2026-11-10） <!--orig:Introducing Claude Whiteboards, Claude Sheets, and Claude Data-->
-2. [您的应用程序现在可以在 Claude 中打开，并且 Claude 可以在其中工作](https://claude.com/resources/articles/interactive-connectors-full-tool)（2026-11-10） <!--orig:Your apps can now open in Claude, and Claude can work in them-->
-3. [Curative 如何与 Claude 代理商建立全国性供应商网络](https://claude.com/resources/articles/how-curative-is-building-a-national-provider-network-with-agents-on-claude)（2026-11-10） <!--orig:How Curative is building a national provider network with agents on Claude-->
-4. [与 Claude 合作的更多方式：表格、白板和交互式连接器](https://claude.com/resources/articles/more-ways-to-work-with-claude-sheets-whiteboards-and-interactive-connectors)（2026-11-10） <!--orig:More ways to work with Claude: Sheets, Whiteboards, and Interactive Connectors-->
-5. [Anthropic 为拟议的首次公开募股启动路演](https://www.anthropic.com/news/roadshow-launch)（2026-11-10） <!--orig:Anthropic launches roadshow for proposed initial public offering-->
+1. [推出 Claude Whiteboards、Claude Sheets 和 Claude Data](https://claude.com/resources/articles/sheets-whiteboards-data)（2026-11-10） <!--orig:Introducing Claude Whiteboards, Claude Sheets, and Claude Data-->
+2. [你的应用现在可以在 Claude 中打开，Claude 也能在其中工作](https://claude.com/resources/articles/interactive-connectors-full-tool)（2026-11-10） <!--orig:Your apps can now open in Claude, and Claude can work in them-->
+3. [Curative 如何用 Claude 上的 agent 构建全国性供应商网络](https://claude.com/resources/articles/how-curative-is-building-a-national-provider-network-with-agents-on-claude)（2026-11-10） <!--orig:How Curative is building a national provider network with agents on Claude-->
+4. [与 Claude 协作的更多方式：Sheets、Whiteboards 和交互式 connectors](https://claude.com/resources/articles/more-ways-to-work-with-claude-sheets-whiteboards-and-interactive-connectors)（2026-11-10） <!--orig:More ways to work with Claude: Sheets, Whiteboards, and Interactive Connectors-->
+5. [Anthropic 启动拟议首次公开募股的路演](https://www.anthropic.com/news/roadshow-launch)（2026-11-10） <!--orig:Anthropic launches roadshow for proposed initial public offering-->
 6. [摩根大通将 Claude Code 推广到全公司更多员工](https://claude.com/resources/articles/jpmorganchase-expands-claude-code)（2026-11-09） <!--orig:JPMorganChase expands Claude Code to more employees across the firm-->
 7. [Claude寓言 5.2 和神话 5.2](https://claude.com/resources/articles#d-2026-11-09-2)（2026-11-09） <!--orig:Claude Fable 5.2 and Mythos 5.2-->
 8. [Claude可以从头到尾设计电子原型](https://claude.com/resources/articles#d-2026-11-09-3)（2026-11-09） <!--orig:Claude can design electronic prototypes from start to finish-->

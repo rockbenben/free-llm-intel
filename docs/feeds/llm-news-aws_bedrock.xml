@@ -9,25 +9,26 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Wed, 11 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Introducing Kimi K3.1 Pro on Amazon Bedrock</title>
+      <title>在 Amazon Bedrock 上推出 Kimi K3.1 Pro</title>
       <link>https://aws.amazon.com/blogs/machine-learning/introducing-kimi-k3-1-pro-on-amazon-bedrock/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/introducing-kimi-k3-1-pro-on-amazon-bedrock/</guid>
       <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Kimi K3.1 Pro on Amazon Bedrock</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
 <h1>在 Amazon Bedrock 上推出 Kimi K3.1 Pro</h1>
-<p><a href="https://www.kimi.ai/blog/kimi-k3-1-pro">Moonshot AI</a> 的 Kimi K3.1 Pro Highspeed 现已在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上提供。作为 Moonshot AI 新 K3.1 系列的一部分，它是 Kimi K3 的后训练版本，具有相同的 3T 级开放权重架构和 100 万个令牌上下文窗口，并使用更多的后训练计算进行训练。据 Moonshot AI 称，额外的训练目标是长期代理工作和减少事实错误。它还改进了专业任务，例如财务建模和办公文档，以及游戏引擎、3D 场景和计算机辅助设计 (CAD) 脚本的编码。 Kimi K3.1 Pro Highspeed 以更高的速率生成输出令牌，Moonshot AI 报告的速度是 Kimi K3.1 Pro 的 2-3 倍。</p>
-<p>Kimi K3.1 Pro Highspeed 使用与 Amazon Bedrock 上的 Kimi K3 相同的终端节点、API 和功能。如果您已经使用 Kimi K3 进行构建，则可以通过更改现有代码中的模型 ID 来尝试。</p>
-<p>Kimi K3.1 Pro Highspeed支持工具调用、结构化输出、可配置推理、图像输入和流媒体。您可以采用 Kimi K3.1 Pro Highspeed，而无需改变您的安全状况。您的数据在 AWS 数据边界内进行处理，不会与 Moonshot AI 共享，也不用于训练模型。推理请求始终启用零数据保留，并且通过零操作员访问，AWS 操作员无法在推理期间查看您的提示和完成情况。</p>
-<p>在这篇文章中，我们向您展示如何开始在 Amazon Bedrock 上使用 Kimi K3.1 Pro Highspeed。我们还介绍了如何使用 Flex 层降低成本、重复上下文的显式提示缓存，以及如何使用该模型作为 OpenCode 中的编码助手。</p>
+<p><a href="https://www.kimi.ai/blog/kimi-k3-1-pro">Moonshot AI</a> 的 Kimi K3.1 Pro Highspeed 现已在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上线。它是 Moonshot AI 新 K3.1 系列的一员，是 Kimi K3 的后训练版本，沿用同样的 3T 级开放权重架构和 100 万 token 上下文窗口，但用了多得多的后训练算力。据 Moonshot AI 说，这些额外训练针对的是长周期 agentic 工作和更少的事实错误，也改进了财务建模、办公文档等专业任务，以及游戏引擎、3D 场景和计算机辅助设计（CAD）脚本的编码。Kimi K3.1 Pro Highspeed 生成输出 token 的速率更高，Moonshot AI 称其速度是 Kimi K3.1 Pro 的 2–3 倍。</p>
+<p>Kimi K3.1 Pro Highspeed 使用与 Amazon Bedrock 上 Kimi K3 相同的 endpoint、API 和功能。如果你已经在用 Kimi K3 构建，只需改掉现有代码里的模型 ID 就能试用。</p>
+<p>Kimi K3.1 Pro Highspeed 支持工具调用、结构化输出、可配置推理、图像输入和流式输出。采用 Kimi K3.1 Pro Highspeed 无需改动你的安全态势。你的数据在 AWS 数据边界内处理，不会与 Moonshot AI 共享，也不会用于训练模型。推理请求始终启用零数据保留；再加上零操作员访问，AWS 操作员在推理期间无法查看你的 prompt 和补全内容。</p>
+<p>本文展示如何在 Amazon Bedrock 上开始使用 Kimi K3.1 Pro Highspeed，还会讲到如何用 Flex tier 降低成本、如何用显式 prompt caching 处理重复上下文，以及如何把这个模型用作 OpenCode 里的编码助手。</p>
 <h2>在 Amazon Bedrock 上开始使用 Kimi K3.1 Pro Highspeed</h2>
-<p>要在不编写代码的情况下尝试该模型，请打开 <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock 控制台</a>，选择 <strong>Test</strong>，然后选择 <strong>Playground</strong>，然后选择 <strong>Kimi K3.1</strong>。</p>
-<p>从代码来看，Kimi K3.1 Pro Highspeed 可通过 OpenAI 兼容的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-chat-completions.html">Chat Completions</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-responses-api.html">Responses</a> API 在“bedrock-runtime”端点上使用，并通过Amazon Bedrock <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html">Converse</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-invoke.html">Invoke</a> API。我们推荐使用聊天完成 API。您可以通过跨区域推理配置文件到达模型：</p>
-<ul><li><code>global.moonshotai.kimi-k3.1</code> 将请求路由到任何受支持的商业 AWS 区域，并且每个令牌的成本低于地理配置文件。我们建议对大多数工作负载使用它。</li><li>对于具有数据驻留要求的工作负载，“us.moonshotai.kimi-k3.1”继续在美国区域内进行处理，而“in.moonshotai.kimi-k3.1”则将其保留在印度区域内。</li></ul>
+<p>不想写代码就想试用模型，打开 <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock 控制台</a>，依次选择 <strong>Test</strong>、<strong>Playground</strong>，再选中 <strong>Kimi K3.1</strong>。</p>
+<p>在代码里，Kimi K3.1 Pro Highspeed 可通过 <code>bedrock-runtime</code> endpoint 上的 OpenAI 兼容 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-chat-completions.html">Chat Completions</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-responses-api.html">Responses</a> API 调用，也可通过 Amazon Bedrock 的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html">Converse</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-invoke.html">Invoke</a> API 调用。我们推荐 Chat Completions API。你通过跨区域推理配置文件访问模型：</p>
+<ul><li><code>global.moonshotai.kimi-k3.1</code> 把请求路由到任何受支持的商业 AWS 区域，每个 token 的成本低于按地理划分的配置文件。多数工作负载我们都推荐用它。</li><li>对有数据驻留要求的工作负载，<code>us.moonshotai.kimi-k3.1</code> 把处理限制在美国区域内，<code>in.moonshotai.kimi-k3.1</code> 则限制在印度区域内。</li></ul>
 <h3>先决条件</h3>
-<p>要遵循示例，您需要：</p>
-<ul><li>有权访问 Amazon Bedrock 的 AWS 账户。</li><li>Python 3.11 或更高版本，安装了 <a href="https://pypi.org/project/openai/">OpenAI SDK</a>、<a href="https://pypi.org/project/aws-bedrock-token-generator/">aws-bedrock-token-generator</a> 和 <a href="https://pypi.org/project/boto3/">boto3</a> (<code>pip install -U openai aws-bedrock-token-generator博托3</code>）。</li><li>允许在 Kimi K3.1 Pro 高速推理配置文件上调用“bedrock:InvokeModel”和“bedrock:InvokeModelWithResponseStream”的 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 身份。如果您使用不记名令牌进行身份验证，请添加“bedrock:CallWithBearerToken”。</li></ul>
-<h3>使用聊天完成 API 调用 Kimi K3.1 Pro Highspeed</h3>
-<p>如果您的应用程序已使用 OpenAI SDK，请将其指向 Amazon Bedrock 终端节点并更改模型名称。以下示例根据您的 AWS 凭证创建一个短期不记名令牌并发送一个请求：</p>
+<p>跟随本文的示例，你需要：</p>
+<ul><li>一个可访问 Amazon Bedrock 的 AWS 账户。</li><li>Python 3.11 或更高版本，并装好 <a href="https://pypi.org/project/openai/">OpenAI SDK</a>、<a href="https://pypi.org/project/aws-bedrock-token-generator/">aws-bedrock-token-generator</a> 和 <a href="https://pypi.org/project/boto3/">boto3</a>（<code>pip install -U openai aws-bedrock-token-generator boto3</code>）。</li><li>一个 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 身份，允许对 Kimi K3.1 Pro Highspeed 的推理配置文件调用 <code>bedrock:InvokeModel</code> 和 <code>bedrock:InvokeModelWithResponseStream</code>。如果用 bearer token 认证，再加上 <code>bedrock:CallWithBearerToken</code>。</li></ul>
+<h3>用 Chat Completions API 调用 Kimi K3.1 Pro Highspeed</h3>
+<p>如果你的应用已经在用 OpenAI SDK，把它指向 Amazon Bedrock endpoint 并改掉模型名即可。下面的例子用 AWS 凭证生成一个短期 bearer token，然后发出一次请求：</p>
 <pre><code>from openai import OpenAI
 from aws_bedrock_token_generator import provide_token
 
@@ -49,17 +50,17 @@ completion = client.chat.completions.create(
     reasoning_effort=&quot;high&quot;,
 )
 print(completion.choices[0].message.content)</code></pre>
-<p>Kimi K3.1 Pro Highspeed 总是先推理再回答。通过“reasoning_effort”，您可以控制多少：“low”、“high”或“max”。如果不设置它，模型将使用“max”，因此较低的值是减少较简单任务的延迟和输出令牌的最直接方法。</p>
-<h3>使用响应 API 调用 Kimi K3.1 Pro Highspeed</h3>
-<p>同一个客户端使用 Responses API，它使用 <code>reasoning.effort</code> 进行相同的设置：</p>
+<p>Kimi K3.1 Pro Highspeed 总是先推理再作答。用 <code>reasoning_effort</code> 控制推理量：<code>low</code>、<code>high</code> 或 <code>max</code>。不设置时模型默认用 <code>max</code>，因此在较简单的任务上，调低它是减少延迟和输出 token 最直接的办法。</p>
+<h3>用 Responses API 调用 Kimi K3.1 Pro Highspeed</h3>
+<p>同一个客户端也适用于 Responses API，它用 <code>reasoning.effort</code> 表示同一设置：</p>
 <pre><code>response = client.responses.create(
     model=MODEL_ID,
     input=&quot;Summarize the trade-offs between optimistic and pessimistic locking.&quot;,
     reasoning={&quot;effort&quot;: &quot;low&quot;},
 )
 print(response.output_text)</code></pre>
-<h3>使用 Converse API 调用 Kimi K3.1 Pro Highspeed</h3>
-<p>如果您已使用 Amazon Bedrock Converse API，则更改为模型 ID：</p>
+<h3>用 Converse API 调用 Kimi K3.1 Pro Highspeed</h3>
+<p>如果你已经在用 Amazon Bedrock Converse API，要改的只是模型 ID：</p>
 <pre><code>import boto3
 
 bedrock = boto3.client(&quot;bedrock-runtime&quot;, region_name=&quot;us-west-2&quot;)
@@ -71,9 +72,9 @@ response = bedrock.converse(
 # The model can return a reasoning block before the answer, so pick the text block
 content = response[&quot;output&quot;][&quot;message&quot;][&quot;content&quot;]
 print(next(block[&quot;text&quot;] for block in content if &quot;text&quot; in block))</code></pre>
-<h2>使用 Flex 层降低成本</h2>
-<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/service-tiers-inference.html">Flex 层</a> 以标准价格的一半为 Kimi K3.1 Pro Highspeed 提供服务，以换取可能更长的响应时间。它非常适合成本效率比响应时间更重要的工作负载，例如模型评估、内容摘要和代理工作流程中的后台任务。由于您为每个请求选择层，因此一个应用程序可以混合层。例如，同一应用程序可以使用 Priority 处理延迟关键型请求，使用 Standard 处理日常流量，使用 Flex 处理成本敏感的工作。您的按需配额在标准层、优先层和弹性层之间共享。</p>
-<p>要使用 Flex，请将“service_tier”设置为“flex”。以下示例重用了之前的聊天完成客户端：</p>
+<h2>用 Flex tier 降低成本</h2>
+<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/service-tiers-inference.html">Flex tier</a> 以 Standard 价格的一半提供 Kimi K3.1 Pro Highspeed，代价是响应时间可能更长。它很适合那些把成本效率看得比响应时间更重的工作负载，比如模型评估、内容摘要，以及 agentic 工作流里的后台任务。由于档位是按每次请求选的，一个应用可以混用不同档位。例如，同一个应用可以用 Priority 处理延迟敏感的请求、用 Standard 承载日常流量、用 Flex 做成本敏感的工作。你的按需配额在 Standard、Priority 和 Flex 之间共享。</p>
+<p>要用 Flex，把 <code>service_tier</code> 设为 <code>flex</code>。下面的例子复用前面的 Chat Completions 客户端：</p>
 <pre><code>completion = client.chat.completions.create(
     model=MODEL_ID,
     messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;List edge cases to test in a function that parses ISO 8601 dates.&quot;}],
@@ -81,12 +82,12 @@ print(next(block[&quot;text&quot;] for block in content if &quot;text&quot; in b
 )
 print(completion.choices[0].message.content)
 print(completion.service_tier)  # The tier that served the request</code></pre>
-<p>在 Converse API 上，将 <code>serviceTier</code> 设置为 <code>{&quot;type&quot;: &quot;flex&quot;}</code>。要查看每个层提供的流量量，请使用 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 中的“ServiceTier”和“ResolvedServiceTier”维度。我们建议您从 Flex 上的一小部分流量开始，比较延迟和成本，然后再移动更多流量。</p>
-<h2>通过显式提示缓存优化推理</h2>
-<p>代理和编码助手每次都会重新发送相同的大前缀：系统指令、工具定义、存储库约定和参考文档。 Kimi K3.1 Pro Highspeed会自动缓存重复的前缀，并且通过显式提示缓存，您可以标记稳定前缀的结束位置，以提高缓存命中率。稍后的请求会重用该前缀，而不是再次处理它，这会降低长时间重复上下文的延迟和输入成本。</p>
-<p>一些规则适用：</p>
-<ul><li>显式缓存适用于聊天完成、响应和调用 API，但不适用于 Converse。</li><li><code>prompt_cache_breakpoint</code> 必须遵循至少 256 个稳定内容标记。</li><li>缓存内容至少保留 30 分钟。</li><li>缓存写入的计费费率高于标准输入的费率。缓存读取按折扣费率计费，并且不计入您的每分钟输入令牌配额。</li></ul>
-<p>以下示例缓存较长的系统提示并在用户内容后添加第二个断点，因此同一文档的后续问题可以重用这两个层：</p>
+<p>在 Converse API 上，则把 <code>serviceTier</code> 设为 <code>{&quot;type&quot;: &quot;flex&quot;}</code>。想知道每个档位承接了多少流量，可以看 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 里的 <code>ServiceTier</code> 和 <code>ResolvedServiceTier</code> 维度。我们建议先拿一小部分流量试 Flex，比较延迟和成本，再逐步加大。</p>
+<h2>用显式 prompt caching 优化推理</h2>
+<p>Agents 和编码助手每一轮都会重发同一大段前缀：系统指令、工具定义、仓库约定和参考文档。Kimi K3.1 Pro Highspeed 会自动缓存重复的前缀；而借助显式 prompt caching，你可以标出稳定前缀在哪里结束，以提高缓存命中率。后续请求会复用这段前缀，不再重复处理，从而降低长而重复的上下文带来的延迟和输入成本。</p>
+<p>有几条规则：</p>
+<ul><li>显式缓存适用于 Chat Completions、Responses 和 Invoke API，但不适用于 Converse。</li><li><code>prompt_cache_breakpoint</code> 必须跟在至少 256 个 token 的稳定内容之后。</li><li>缓存内容至少保留 30 分钟。</li><li>缓存写入按高于标准输入的费率计费；缓存读取按折扣费率计费，且不计入每分钟输入 token 配额。</li></ul>
+<p>下面的例子缓存了一段长系统 prompt，并在用户内容之后加了第二个断点，这样针对同一文档的追问就能复用这两层：</p>
 <pre><code>from pathlib import Path
 
 LONG_STATIC_PROMPT = Path(&quot;repo_guidelines.md&quot;).read_text()  # stable content, at least 256 tokens
@@ -106,10 +107,10 @@ response = client.responses.create(
 )
 details = response.usage.input_tokens_details
 print(f&quot;Cache read: {details.cached_tokens} tokens&quot;)  # greater than 0 on a cache hit</code></pre>
-<p>有关更多信息，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">提示缓存以加快模型推理速度</a>。</p>
-<h2>Kimi K3.1 Pro Highspeed 实践：使用 OpenCode 进行编码</h2>
-<p><a href="https://opencode.ai/">OpenCode</a> 是一个在您的终端中运行的开源、与模型无关的编码代理。您可以使用 OpenCode 的 <a href="https://opencode.ai/docs/providers/">OpenAI 兼容提供商</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html">Amazon Bedrock API 密钥</a>，通过 Amazon Bedrock Chat Completions API 将其连接到 Kimi K3.1 Pro Highspeed。要创建密钥，请在“baseURL”中设置的 AWS 区域中打开 Amazon Bedrock 控制台，然后选择 <strong>API 密钥</strong>。短期密钥可持续长达 12 小时，仅在您生成它们的区域中有效，建议用于生产用途。长期密钥用于探索。</p>
-<p>将以下内容添加到 <code>~/.config/opencode/opencode.json</code> 中，将 <code>baseURL</code> 中的区域替换为您自己的区域：</p>
+<p>有关更多信息，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">通过 prompt caching 加快模型推理</a>。</p>
+<h2>Kimi K3.1 Pro Highspeed 实战：用 OpenCode 编码</h2>
+<p><a href="https://opencode.ai/">OpenCode</a> 是一个开源、与模型无关、跑在终端里的编码 agent。借助 OpenCode 的 <a href="https://opencode.ai/docs/providers/">OpenAI 兼容 provider</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html">Amazon Bedrock API key</a>，你可以通过 Amazon Bedrock Chat Completions API 把它连到 Kimi K3.1 Pro Highspeed。要创建密钥，在 <code>baseURL</code> 里设定的 AWS 区域打开 Amazon Bedrock 控制台，选择 <strong>API keys</strong>。短期密钥最长有效 12 小时，只在生成它的区域可用，推荐用于生产；长期密钥则用于探索。</p>
+<p>把下面这段加到 <code>~/.config/opencode/opencode.json</code>，把 <code>baseURL</code> 里的区域换成你自己的：</p>
 <pre><code>{
   &quot;$schema&quot;: &quot;https://opencode.ai/config.json&quot;,
   &quot;providers&quot;: {
@@ -131,51 +132,51 @@ print(f&quot;Cache read: {details.cached_tokens} tokens&quot;)  # greater than 0
   },
   &quot;model&quot;: &quot;amazon-bedrock-chat-completions/global.moonshotai.kimi-k3.1&quot;
 }</code></pre>
-<p>在项目目录中启动 OpenCode，输入 <code>/connect</code>，选择 <strong>Amazon Bedrock (Chat Completions)</strong>，然后粘贴您的 API 密钥，如图 1 所示。OpenCode 存储密钥，因此每个密钥连接一次。要在会话期间在 Kimi K3.1 Pro Highspeed 和其他型号之间切换，请输入“/models”。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/11/ml-22229-opencode-connect-dialog.png" alt="将 OpenCode 连接到 Amazon Bedrock（聊天完成）提供商"></p>
-<p>图 1：将 OpenCode 连接到 Amazon Bedrock（聊天完成）提供商</p>
-<p>配置中的“capability”条目列出了模型支持的推理工作级别，因此 OpenCode 提供“low”、“high”和“max”作为模型的变体，如图 2 所示：</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/11/ml-22229-opencode-select-variant.png" alt="OpenCode 中 Kimi K3.1 Pro Highspeed 的推理工作变体"></p>
-<p>图 2：OpenCode 中 Kimi K3.1 Pro Highspeed 的推理工作变体</p>
-<p>输出速度在代理编码中最重要。为了完成一项任务，编码代理会连续进行多次模型调用。它读取文件、计划更改、编辑代码、运行测试并修复失败的问题。每个调用都必须在下一个调用开始之前完成，并且大部分时间都花在生成推理和代码上。较高的输出令牌率会缩短每个步骤，因此整个编辑-测试-修复循环会更快完成，并且迭代之间的等待时间也会更少。</p>
+<p>在项目目录里启动 OpenCode，输入 <code>/connect</code>，选择 <strong>Amazon Bedrock (Chat Completions)</strong>，按图 1 粘贴你的 API key。OpenCode 会保存密钥，因此每个密钥只需连接一次。想在一次会话里在 Kimi K3.1 Pro Highspeed 和其他模型之间切换，输入 <code>/models</code>。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/11/ml-22229-opencode-connect-dialog.png" alt="把 OpenCode 连接到 Amazon Bedrock (Chat Completions) provider"></p>
+<p>图 1：把 OpenCode 连接到 Amazon Bedrock (Chat Completions) provider</p>
+<p>配置里的 <code>capabilities</code> 项列出了模型支持的推理力度级别，因此 OpenCode 会把 <code>low</code>、<code>high</code> 和 <code>max</code> 作为该模型的变体提供出来，如图 2 所示：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/11/ml-22229-opencode-select-variant.png" alt="OpenCode 中 Kimi K3.1 Pro Highspeed 的推理力度变体"></p>
+<p>图 2：OpenCode 中 Kimi K3.1 Pro Highspeed 的推理力度变体</p>
+<p>在 agentic 编码里，输出速度最要紧。为完成一个任务，编码 agent 会连续发起很多次模型调用：读文件、规划改动、编辑代码、跑测试、修复失败的地方。每一次调用都得等前一次结束，而其中大部分时间花在生成推理和代码上。更高的输出 token 速率会缩短每一步，于是整个“编辑—测试—修复”循环更快结束，迭代之间的等待也更少。</p>
 <h2>可用性</h2>
-<p>Kimi K3.1 Pro Highspeed 可通过“global.moonshotai.kimi-k3.1”、“us.moonshotai.kimi-k3.1”和“in.moonshotai.kimi-k3.1”跨区域推理配置文件在 Amazon Bedrock 上使用。有关支持的区域和型号详细信息，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3-1-highspeed.html">Kimi K3.1 Pro Highspeed 型号卡</a> 和<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">区域可用性</a>。有关定价，请参阅 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a>。</p>
-<p>要开始使用，请在 <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock 控制台</a> 上尝试 Kimi K3.1 Pro Highspeed。要与 Amazon Bedrock 团队讨论您的使用案例，请<a href="https://pages.awscloud.com/Amazon-Bedrock-Contact-Us.html">与我们联系</a>。</p>
+<p>Kimi K3.1 Pro Highspeed 通过 <code>global.moonshotai.kimi-k3.1</code>、<code>us.moonshotai.kimi-k3.1</code> 和 <code>in.moonshotai.kimi-k3.1</code> 这些跨区域推理配置文件在 Amazon Bedrock 上提供。支持的区域和模型细节，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3-1-highspeed.html">Kimi K3.1 Pro Highspeed 模型卡</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">区域可用性</a>。定价请参阅 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a>。</p>
+<p>想上手，就在 <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock 控制台</a> 试用 Kimi K3.1 Pro Highspeed。想和 Amazon Bedrock 团队聊聊你的用例，请<a href="https://pages.awscloud.com/Amazon-Bedrock-Contact-Us.html">与我们联系</a>。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>使用 LangGraph 和 Amazon Bedrock AgentCore Web 搜索构建每日依赖性观察器</title>
+      <title>使用 LangGraph 和 Amazon Bedrock AgentCore Web 搜索构建每日依赖项监视器</title>
       <link>https://aws.amazon.com/blogs/machine-learning/build-a-daily-dependency-watcher-with-langgraph-and-amazon-bedrock-agentcore-web-search/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-a-daily-dependency-watcher-with-langgraph-and-amazon-bedrock-agentcore-web-search/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Build a daily dependency watcher with LangGraph and Amazon Bedrock AgentCore web search</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 LangGraph 和 Amazon Bedrock AgentCore 网络搜索构建每日依赖性观察器</h1>
-<p>人工智能代理越来越多地处理取决于当前变化的工作，例如安全建议、产品发布、价格和法规。模型的训练数据无法回答这些问题，因此代理需要网络搜索。对于生产用途，团队还需要可以引用的结果，并控制哪些来源重要。他们希望搜索查询保留在云环境中，因为这些查询通常会泄露内部工作。</p>
-<p><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/web-search-api.html">Amazon Bedrock AgentCore</a> 中的 Web 搜索 API 现已推出。它通过单个 API 调用为代理和应用程序提供当前的 Web 结果，并使用他们已使用的 AWS 凭证进行签名。 AWS 为来自 Amazon 运营的网络索引的每个查询提供服务，并且不会将其发送到第三方搜索引擎。</p>
-<p>每个结果都包括页面标题、URL、发布日期以及与查询相关的摘录。请求可以包含或排除域，并将结果限制在发布日期范围内。在 <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>、<a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service (Amazon ECS)</a> 或 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore 运行时</a> 上，您的代理使用其执行角色调用 API。没有可存储或轮换的搜索 API 密钥。 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html">Amazon Bedrock AgentCore 上的 Web 搜索</a> 也可通过 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html">AgentCore Gateway</a> 进行，这是 Amazon Bedrock AgentCore 的一项功能。在那里，一个管理员源策略涵盖每个代理和[模型上下文协议（MCP）]（https://modelcontextprotocol.io/）客户端。</p>
-<p>对于LangChain开发者来说，LangChain的AWS集成中的AgentCore Web搜索工具现在调用Web搜索API。一个函数调用可为代理提供当前引用的搜索结果。该工具还可以保存模型无法更改的规则，例如日期窗口、源阻止列表和搜索预算。它将结果作为您的代码可以检查的数据返回。它可与 LangChain 代理、运行它们的编排框架 <a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph</a> 以及 <a href="https://docs.langchain.com/oss/python/deepagents/overview">Deep Agents</a> 配合使用，后者添加了子代理、虚拟文件系统和上下文压缩。</p>
-<p>在这篇文章中，您将在 Web Search API 上为安全团队构建一个每日依赖性监视作为 LangGraph 图。每天早上，手表都会检查是否有任何新内容影响团队发布的开源包和容器基础镜像。它并行研究三个包生态系统，而您的代码使日期窗口、阻止列表和搜索预算不受模型的控制。它会根据其引用的来源检查每项发现，并记住其已报告的内容。然后，您在 AgentCore 运行时上运行手表，并通过 AgentCore Gateway 跨团队提供它。在我们的测试中，三个分支的完成时间为 36 秒，而之前的分支则为 99 秒。</p>
-<h2>解决方案概述</h2>
-<p>模型决定搜索内容并记录结果。无论模型做什么，必须遵守的每条规则都保留在代码中：日期窗口、阻止列表、搜索预算以及对每个发现的检查。图 1 显示了当您从笔记本电脑运行手表时这些部件如何组合在一起。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-1.png" alt="依赖观察架构：一次运行分散到三个并行的研究分支，每个分支调用 Claude 模型和 Web 搜索 API，然后合并到引用的报告"></p>
-<p>图 1：使用 LangGraph 和 Web 搜索 API 进行的日常依赖性观察，从笔记本运行</p>
-<p>编号步骤：</p>
-<ul><li>运行以监视列表和监视窗口开始图形。</li><li><code>fan_out</code> 为每个生态系统启动一个研究分支：npm、PyPI 和容器基础镜像。 LangGraph 并行运行三个分支。</li><li>在每个分支内，代理调用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 中的 <a href="https://aws.amazon.com/bedrock/anthropic/">Anthropic Claude</a> 模型。该模型决定要搜索什么，并最终产生结构化的结果。</li><li>分支机构的搜索工具将日期窗口和阻止列表添加到每个查询中。它使用使用 <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html">AWS 签名版本 4 (SigV4)</a> 签名的请求调用 Web Search API。重复步骤 3 和 4，每个分支最多同时在每个分支中进行四次搜索。</li><li>每个分支仅保留其来源支持且属于窗口范围内的发现。当所有三个分支完成后，LangGraph 会合并他们的发现并运行一次“keep_new”。</li><li><code>keep_new</code> 检查 <a href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 存储</a> 并记录新的发现，因此不会报告两次。</li><li>报告为安全团队建立了新发现的引用表。</li></ul>
-<h2>先决条件</h2>
-<p>在开始之前，您需要满足以下条件：</p>
-<ul><li>在提供 Web 搜索 API 的 AWS 区域中工作的 AWS 账户。这些示例使用美国东部（弗吉尼亚北部）区域 (us-east-1)。对于其他区域，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agentcore-regions.html">支持的 AWS 区域</a>。</li><li>Python 3.10 或更高版本。</li><li>运行笔记本的身份的 AWS 凭证，来自环境变量或 <a href="https://aws.amazon.com/cli/">AWS 命令​​行界面 (AWS CLI)</a> 配置文件。该身份需要步骤 1 中的 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 权限以及对 Amazon Bedrock 中的 Anthropic Claude 模型的访问权限。</li><li>以下 Python 软件包：boto3 1.43.127 或更高版本、AgentCore Python SDK (bedrock-agentcore) 1.26.0 或更高版本以及 langchain-aws 1.9.3 或更高版本。使用以下<code>pip</code>命令安装它们：<code>pip install -U &quot;boto3&gt;=1.43.127&quot; &quot;bedrock-agentcore&gt;=1.26.0&quot; &quot;langchain-aws[tools]&gt;=1.9.3&quot; langchain langgraph</code></li></ul>
-<p>网络搜索和模型调用按使用次数计费。有关详细信息，请参阅 <a href="https://aws.amazon.com/bedrock/agentcore/pricing/">Amazon Bedrock AgentCore 定价</a>。手表运行一次最多进行 12 次搜索。</p>
-<p>完整的代码在此<a href="https://github.com/langchain-ai/langchain-aws/blob/main/samples/agents/agentcore_web_search_supply_chain_watch.ipynb">笔记本</a>中。笔记本运行每个单元，包括设置。以下步骤涵盖了与搜索相关的部分。</p>
+<h1>使用 LangGraph 和 Amazon Bedrock AgentCore Web 搜索构建每日依赖项监视器</h1>
+<p>AI agent 越来越多地承担这类工作：结果取决于当天发生了什么变化，比如安全公告、产品发布、价格和法规。模型的训练数据回答不了这些问题，所以 agent 需要网页搜索。用于生产时，团队还需要能引用的结果，以及决定哪些来源算数的控制权。他们希望搜索查询留在自己的云环境里，因为这些查询往往会暴露内部工作。</p>
+<p><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/web-search-api.html">Amazon Bedrock AgentCore</a> 中的 Web Search API 现已可用。它通过一次 API 调用，为 agent 和应用程序提供最新的网页结果，请求用它们已在使用的 AWS 凭证签名。AWS 用 Amazon 自己运营的网页索引来响应每次查询，不会把查询转给第三方搜索引擎。</p>
+<p>每条结果都包含页面标题、URL、发布日期，以及与查询相关的摘录。请求可以指定包含或排除某些域名，也能把结果限定在某个发布日期范围内。在 <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>、<a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service (Amazon ECS)</a> 或 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore runtime</a> 上，agent 用自己的执行角色调用该 API，不需要存储或轮换搜索 API 密钥。<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html">Amazon Bedrock AgentCore 上的 Web Search</a> 也可通过 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html">AgentCore Gateway</a> 使用，后者是 Amazon Bedrock AgentCore 的一项能力。在那里，一条管理员来源策略就能覆盖所有 agent 和 <a href="https://modelcontextprotocol.io/">Model Context Protocol (MCP)</a> 客户端。</p>
+<p>对 <a href="https://docs.langchain.com/oss/python/langchain/overview">LangChain</a> 开发者来说，<a href="https://docs.langchain.com/oss/python/integrations/tools/bedrock_agentcore_web_search">LangChain 的 AWS 集成</a> 里的 AgentCore 网页搜索工具现在会调用 Web Search API。一次函数调用就能给 agent 最新的、带引用的搜索结果。这个工具还能固化一些模型改不了的规则，比如时间窗口、来源屏蔽列表和搜索预算。它把结果作为数据返回，方便代码核验。它既能配合 LangChain agent 使用，也能配合 <a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph</a>（运行这些 agent 的编排框架）和 <a href="https://docs.langchain.com/oss/python/deepagents/overview">Deep Agents</a>（增加了子 agent、虚拟文件系统和上下文压缩）使用。</p>
+<p>本文会把 Web Search API 上的一张 LangGraph 图，做成供安全团队使用的每日依赖项监视。每天早上，这套监视会检查团队交付的开源包和容器基础镜像有没有受到新情况影响。它并行调研三个包生态系统，而时间窗口、屏蔽列表和搜索预算都由代码掌管，不交给模型控制。它拿每条发现项对照其引用的来源核验，并记住已经报告过的内容。随后你在 AgentCore runtime 上运行这套监视，再通过 AgentCore Gateway 提供给多个团队。在我们的测试里，三个分支 36 秒就跑完了，逐个串行执行则要 99 秒。</p>
+<h2>方案概览</h2>
+<p>模型决定搜索什么、撰写发现项。无论模型怎么做，都必须成立的规则一律留在代码里：时间窗口、屏蔽列表、搜索预算，以及对每条发现项的检查。图 1 展示了从 notebook 运行这套监视时，这些部分如何配合。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-1.png" alt="依赖项监视架构：一次运行分出三个并行调研分支，各分支分别调用 Claude 模型和 Web Search API，最后汇总成一份带引用的报告"></p>
+<p>图 1：用 LangGraph 和 Web Search API 实现的每日依赖项监视，从 notebook 运行</p>
+<p>编号步骤如下：</p>
+<ul><li>一次运行以监视清单和监视窗口启动这张图。</li><li><code>fan_out</code> 为每个生态系统启动一个调研分支：npm、PyPI 和容器基础镜像。LangGraph 并行运行这三个分支。</li><li>每个分支内，agent 调用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 中的 <a href="https://aws.amazon.com/bedrock/anthropic/">Anthropic Claude</a> 模型。模型决定搜索内容，最后产出结构化的发现项。</li><li>分支的搜索工具把时间窗口和屏蔽列表加到每次查询上，再用经 <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html">AWS Signature Version 4 (SigV4)</a> 签名的请求调用 Web Search API。步骤 3 和步骤 4 会重复，每个分支最多搜索四次，各分支同时进行。</li><li>每个分支只保留有来源支撑、且落在窗口内的发现项。三个分支全部完成后，LangGraph 合并它们的发现项，并运行一次 <code>keep_new</code>。</li><li><code>keep_new</code> 检查 <a href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 存储</a>，记录新的发现项，保证同一内容不会报告两次。</li><li>report 为安全团队生成新发现项的带引用表格。</li></ul>
+<h2>前提条件</h2>
+<p>开始前，需要准备好以下几项：</p>
+<ul><li>一个 AWS 账户，且所用 AWS 区域提供 Web Search API。示例使用美国东部（弗吉尼亚北部）区域 (us-east-1)。其他区域见<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agentcore-regions.html">支持的 AWS 区域</a>。</li><li>Python 3.10 或更高版本。</li><li>运行 notebook 的身份所用的 AWS 凭证，来自环境变量或 <a href="https://aws.amazon.com/cli/">AWS Command Line Interface (AWS CLI)</a> 配置文件。该身份需要第 1 步中的 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 权限，以及访问 Amazon Bedrock 中某个 Anthropic Claude 模型的权限。</li><li>以下 Python 包：boto3 1.43.127 或更高版本、AgentCore Python SDK (bedrock-agentcore) 1.26.0 或更高版本、langchain-aws 1.9.3 或更高版本。用下面这条 <code>pip</code> 命令安装：  <code>pip install -U &quot;boto3&gt;=1.43.127&quot; &quot;bedrock-agentcore&gt;=1.26.0&quot; &quot;langchain-aws[tools]&gt;=1.9.3&quot; langchain langgraph</code></li></ul>
+<p>Web Search 和模型调用按次计费。详情见 <a href="https://aws.amazon.com/bedrock/agentcore/pricing/">Amazon Bedrock AgentCore 定价</a>。这套监视运行一次最多发起 12 次搜索。</p>
+<p>完整代码在这个 <a href="https://github.com/langchain-ai/langchain-aws/blob/main/samples/agents/agentcore_web_search_supply_chain_watch.ipynb">notebook</a> 里。notebook 会运行每一个单元格，包括设置部分。下面的步骤只讲与搜索相关的部分。</p>
 <h2>第 1 步：授予权限</h2>
-<p>首先，授予您运行的身份作为搜索权限。 Web 搜索 API 需要对 AWS 拥有的一项资源执行一项 IAM 操作，因此每个账户中的语句都是相同的。 （有关完整设置，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/web-search-api-get-started.html#web-search-api-permissions">授予调用 API 的权限</a>。）这使用与网关服务角色用于 Web 搜索的相同权限：</p>
+<p>首先，给你运行任务时所用的身份授予搜索权限。Web Search API 只需要对 AWS 自有的一项资源执行一个 IAM 操作，因此每个账户里的这条语句都一样。（完整设置见<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/web-search-api-get-started.html#web-search-api-permissions">授予调用 API 的权限</a>。）这里用的权限，与网关服务角色做网页搜索时所用的是同一个：</p>
 <pre><code>{
   &quot;Effect&quot;: &quot;Allow&quot;,
   &quot;Action&quot;: &quot;bedrock-agentcore:InvokeWebSearch&quot;,
   &quot;Resource&quot;: &quot;arn:aws:bedrock-agentcore:us-east-1:aws:tool/web-search.v1&quot;
 }</code></pre>
-<h2>第二步：构建一个有固定规则的搜索工具</h2>
-<p>现在构建每个研究分支使用的搜索工具。手表无法让模型选择日期窗口、可信来源或搜索次数。该图还需要返回的源作为数据，以便稍后检查结果。 <a href="https://github.com/langchain-ai/langchain-aws">langchain-aws 包</a> 中的网络搜索工具包涵盖了所有这些及其选项：</p>
+<h2>第 2 步：构建一个带固定规则的搜索工具</h2>
+<p>接下来构建各调研分支使用的搜索工具。这套监视不能让模型自行决定时间窗口、可信来源或搜索次数；图还需要把返回的来源当作数据留存，以便稍后据此核验发现项。<a href="https://github.com/langchain-ai/langchain-aws">langchain-aws 包</a> 里的网页搜索工具包用一组选项覆盖了这些需求：</p>
 <pre><code>toolkit, tools = create_web_search_toolkit(
     region=&quot;us-east-1&quot;,
     exclude_domains=BLOCKLIST,
@@ -184,106 +185,105 @@ print(f&quot;Cache read: {details.cached_tokens} tokens&quot;)  # greater than 0
     max_searches=4,
     return_sources=True,
 )</code></pre>
-<p>如果没有网关参数，该工具将调用 Web 搜索 API。每次搜索都带有阻止列表和日期层，而模型自己的论点只能缩小它们的范围。使用 model_filters=False 时，模型仅看到查询参数。该工具在四次搜索后停止，并返回两次结果：作为模型的文本，以及作为图形的工件。每个分支都会创建自己的工具包，因此分支可以并行搜索。您可以为 Deep Agents 子代理提供相同的工具。</p>
-<h2>步骤 3：定义结果模式</h2>
-<p>使用搜索工具后，定义每个分支返回的内容。每个分支都是一个 <a href="https://docs.langchain.com/oss/python/langchain/agents">create_agent</a> 代理，其响应格式为 Pydantic 模式，因此它返回结果而不是散文。调查结果包含包、单行标题以及 CVE 或咨询 ID（如果来源提供）。它还具有消息来源声明的严重性、消息来源是否表示它已被利用、建议的操作以及源 URL。该笔记本具有完整的架构和提示。</p>
-<h2>步骤 4：构建图表及其证据检查</h2>
-<p>现在组装图表。 “fan_out”使用 LangGraph 中的 Send API 向每个生态系统发送一个分支，因此这些分支是并行运行的。</p>
-<p>在分支返回之前，代码会对每个发现运行四次检查。检查将结果与该分支自己的搜索返回的结果进行比较：</p>
-<ul><li>所引用的 URL 来自该分支机构的一项搜索。</li><li>来源的标题或文本将包命名为整个单词。</li><li>结果中的任何 CVE 或咨询 ID 都会出现在该文本中。</li><li>来源的发布日期位于观察窗口内。该工件包含已解析的每个日期，并且丢失的日期被视为外部日期。</li></ul>
-<p>所有分支完成后，“keep_new”将幸存的结果与 LangGraph 存储进行比较，并报告构建表。这些检查会捕获不受支持的 URL、未命名包的源、发明的 ID 和窗口外源。他们不确认严重性、利用状态、受影响的版本或建议的操作。他们也无法证明问题首次披露的时间：索引日期为本周的页面可以描述较早的事件。对于生产安全工作流程，根据权威漏洞源验证结果。在任何人采取行动之前，让某人审查发现的结果。</p>
-<h2>步骤 5：运行手表</h2>
-<p>您已准备好在 7 天的窗口内运行手表。在我们的运行中，三个分支机构进行了 12 次搜索并返回了 80 个来源。他们用了 36 秒的墙时间完成了比赛，而树枝加起来的时间为 99 秒。证据检查发现了两项结果：一项的来源未命名该软件包，另一项的 CVE ID 未出现在其来源中。没有任何来源来自被阻止的域。</p>
-<p>有四个结果通过了检查，“keep_new”报告了其中两个。早些时候的测试已经报告了另外两个，所以商店阻止了它们。图 2 显示了在 LangGraph 的可视化调试器 <a href="https://docs.langchain.com/langsmith/quick-start-studio">LangGraph Studio</a> 中的运行情况。报告的每一行都链接到其源，这是 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/web-search-api.html#web-search-api-acceptable-use">Web 搜索可接受使用条款</a> 向用户显示的任何输出所要求的。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-2.png" alt="LangGraph Studio 运行显示了三个并行研究分支和一份仅新的、经过证据检查的发现的报告，每个发现都与其来源相关联"></p>
-<p>图 2：LangGraph Studio 中依赖关系监视的运行。右边的三个研究条目是三个生态系统分支，LangGraph 并行运行。该报告仅列出了通过证据检查且之前未报告过的发现，每项都与其来源相关联</p>
-<h2>步骤 6：再次运行手表以仅查看新发现</h2>
-<p>最后，第二次运行手表以查看商店的工作情况。计划的监视每天都会运行，团队不应该两次看到相同的建议。在我们的第二次调查中，分支机构再次进行了搜索，并保留了两项结果，并且商店之前已经报告过这两项结果。因此该报告没有什么新内容，如图 3 所示。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-3.png" alt="LangGraph Studio 第二次运行，keep_new 发现存储中已有所有结果，因此报告没有显示新的发现"></p>
-<p>图 3：使用相同输入进行第二次运行。分支再次搜索，但 keep_new 找到 LangGraph 存储中已有的所有结果，因此报告没有任何新内容</p>
-<p>对于计划作业，将“InMemoryStore”交换为具有精确键查找的持久存储，例如来自 <a href="https://github.com/langchain-ai/langchain-aws/tree/main/libs/langgraph-checkpoint-aws">langgraph-checkpoint-aws</a> 的“DynamoDBStore”。</p>
-<h2>将网络搜索添加到现有的 LangChain 或 Deep Agents 应用程序中</h2>
-<p>如果您已经有 LangChain 代理，添加网络搜索需要进行一些更改。在部署之前检查这些：</p>
-<ul><li>权限：将步骤 1 语句添加到您的应用程序已运行的身份或执行角色。不需要创建其他任何东西。</li><li>区域：工具包的区域必须提供 Web 搜索 API，它可以与您的模型或应用程序的其余部分的区域不同。</li><li>工具名称：该工具名为“web_search”。如果您的代理已经有同名的工具（例如另一个搜索提供程序），请在添加该工具之前设置不同的名称。</li><li>规则和预算：每个工具包都有自己的过滤器和搜索预算。为需要单独规则或自己预算的每个代理或分支机构创建一个工具包。</li><li>吞吐量：帐户中的所有代理共享其 Web 搜索配额，因此并行分支会增加。默认情况下，一个账户在每个区域每秒可以发送 10 个请求。有关详细信息，请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/bedrock-agentcore-limits.html#web-search-service-limits">Amazon Bedrock AgentCore 配额</a>。</li></ul>
-<p>使用 Deep Agents，您可以使用“create_deep_agent”定义代理：模型、工具、系统提示和子代理。将工具包的工具传递到子代理的工具列表中。将规则设置为工具包选项，因为无论模型要求什么，该工具都会将它们应用于每次搜索。要根据来源检查结果，如步骤 4 所示，请对代理的输出运行该检查或将其添加为中间件。在我们的测试中，深度代理协调员将这些工具委托给研究人员子代理，并在大约一分钟内返回引用的答案。</p>
-<h2>在 AgentCore 运行时上将其投入生产</h2>
-<p>当您准备好每天在没有笔记本的情况下运行手表时，请将其托管在 AgentCore 运行时上。运行时运行使用任何框架（包括 LangGraph）构建的代理，无需重写。它在相同的 API 背后提供两种计算类型。默认情况下，MicroVM 为每个会话提供自己独立的 microVM，因此一次运行无法看到另一次运行的数据。实例在您自己的账户中 AWS 托管的 <a href="https://aws.amazon.com/ec2/">Amazon Elastic Compute Cloud (Amazon EC2)</a> 实例上运行您的代理。它们适合多天会话、GPU 工作负载或共享一个实例的多个代理。</p>
-<p>有关各自的限制，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-sessions.html">对代理使用隔离会话</a> 和<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-instances.html">运行时实例和容量提供程序</a>。笔记本旁边的 <a href="https://github.com/langchain-ai/langchain-aws/tree/main/samples/agents/agentcore_web_search_supply_chain_runtime">运行时示例</a> 包含与运行时入口点相同的图表。其策略授予运行时执行角色步骤 1 权限，但没有更广泛的访问权限。其自述文件逐步介绍了在任一计算类型上使用 <a href="https://github.com/aws/agentcore-cli">AgentCore CLI</a> 创建、部署和调用项目。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-4.png" alt="AgentCore 运行时上的依赖关系监视架构，每个 Web 搜索均由运行时执行角色签名，运行时返回报告"></p>
-<p>图 4：AgentCore 运行时上托管的相同依赖项监视。步骤 2 到 7 与图 1 匹配，每个搜索均由运行时执行角色签名。在步骤 1，调用者调用运行时，例如使用 agentcore invoke。在第8步，运行时返回报告</p>
-<p>运行时会话状态是短暂的，因此内存中的存储仅持续与会话一样长的时间。日常工作需要按计划调用第 6 步中的持久存储。</p>
-<h2>使用 AgentCore Gateway 跨团队扩展监视</h2>
-<p>AgentCore Gateway 上的 Web 搜索 API 和 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html">Web 搜索工具</a> 搜索相同的索引，并且相同的图表适用于两者。选择谁执行规则以及谁调用搜索：</p>
-<ul><li>当您自己的应用程序调用搜索并强制执行其自己的规则时，请使用 Web 搜索 API，如步骤 1 至 6 中所示。它只需要一个 IAM 权限。</li><li>当平台团队向许多代理或团队提供搜索并希望 AWS 对每次搜索应用一个管理员源策略时，请使用 AgentCore Gateway。该策略位于网关目标上，对代理隐藏，代理无法解除它。</li><li>当 Claude 等 MCP 客户端需要搜索时，或者当您希望在一个 MCP 端点后面的其他工具旁边进行 Web 搜索时，请使用 AgentCore Gateway。</li></ul>
-<p>笔记本电脑的可选 Step 7 通过网关运行手表。它创建一个将阻止列表作为管理员策略的 Web 搜索目标，因此搜索客户端不再添加它。此路由需要针对两个不同主体的两个 IAM 授权。网关的服务角色需要Web搜索工具上的bedrock-agentcore:InvokeWebSearch。您的代理签署的凭据需要网关上的 bedrock-agentcore:InvokeGateway 。图 5 显示了流程。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-5.png" alt="使用 SigV4 通过 MCP 调用 AgentCore Gateway 的依赖关系监视架构，其中 Web 搜索目标在调用 AgentCore Web 之前应用阻止列表搜索"></p>
-<p>图 5：通过 AgentCore Gateway 进行相同的依赖关系监视。该图与图 1 相同。在步骤 4 中，搜索工具通过 MCP 调用使用 SigV4 签名的 AgentCore Gateway。在步骤 5 中，Web 搜索目标应用管理员阻止列表并调用 AgentCore Web 搜索</p>
-<p>要为每个团队提供自己的策略，请为每个团队添加一个 Web 搜索目标，每个目标都有自己的阻止列表。此<a href="https://github.com/langchain-ai/langchain-aws/blob/main/samples/agents/agentcore_web_search_langgraph_walkthrough.ipynb">演练笔记本</a> 显示了该模式。有关此路线的更多信息，请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html">Web 搜索工具</a>。</p>
+<p>不传网关参数时，工具会调用 Web Search API。每次搜索都带上屏蔽列表和起始日期，模型自带的参数只能把它们收得更窄。设置 <code>model_filters=False</code> 后，模型只看得到一个查询参数。工具在四次搜索后停止，并把结果返回两份：一份作为给模型的文本，一份作为给图的工件。每个分支都创建自己的工具包，因此各分支可以并行搜索。你也可以把同一套工具交给 Deep Agents 的子 agent。</p>
+<h2>第 3 步：定义发现项的结构</h2>
+<p>搜索工具就位后，定义每个分支返回什么。每个分支都是一个 <a href="https://docs.langchain.com/oss/python/langchain/agents">create_agent</a> agent，以 Pydantic schema 作为响应格式，因此返回的是发现项，而不是一段散文。一条发现项包含包名、一行标题，以及来源若给出就一并带上的 CVE 或公告 ID；还包含来源标明的严重级别、来源是否称其已被利用、建议的处置措施，以及来源 URL。notebook 里有完整的 schema 和 prompt。</p>
+<h2>第 4 步：构建图与证据核验</h2>
+<p>现在把图组装起来。<code>fan_out</code> 用 LangGraph 的 Send API 为每个生态系统发出一个分支，让它们并行运行。</p>
+<p>分支返回前，代码会对每条发现项做四项检查，把发现项与该分支自己搜索返回的内容逐一比对：</p>
+<ul><li>所引用的 URL 确实来自该分支的某次搜索。</li><li>来源的标题或正文以完整单词的形式提到该包。</li><li>发现项里的任何 CVE 或公告 ID 都出现在该正文中。</li><li>来源的发布日期落在监视窗口内。工件里带着已解析好的各个日期，缺日期一律视为窗口外。</li></ul>
+<p>所有分支完成后，<code>keep_new</code> 把通过检查的发现项与 LangGraph 存储比对，report 则生成表格。这些检查能拦下没有来源支撑的 URL、没提到包名的来源、编造的 ID，以及落在窗口外的来源。它们不核实严重级别、利用状态、受影响版本或建议的处置措施；也不能证明问题最初是何时披露的——索引把某个页面标为本周，它讲的却可能是更早的事件。用于生产安全流程时，请拿权威漏洞源再核验一遍发现项；任何人据此采取行动前，先让人审一遍。</p>
+<h2>第 5 步：运行监视</h2>
+<p>现在可以用 7 天窗口跑这套监视了。在我们的这次运行里，三个分支发起了 12 次搜索，取回 80 个来源，实际耗时 36 秒，而各分支耗时相加是 99 秒。证据核验剔除了两条发现项：一条的来源没提到包名，另一条的 CVE ID 没出现在它的来源里。没有任何来源来自被屏蔽的域名。</p>
+<p>有四条发现项通过了检查，<code>keep_new</code> 只报告了其中两条。另外两条在更早的测试运行里已经报过，所以被存储拦下了。图 2 展示的是在 <a href="https://docs.langchain.com/langsmith/quick-start-studio">LangGraph Studio</a>（LangGraph 的可视化调试器）中的这次运行。报告每一行都链向它的来源——<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/web-search-api.html#web-search-api-acceptable-use">Web Search 可接受使用条款</a> 要求，凡展示给用户的内容都必须做到这一点。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-2.png" alt="LangGraph Studio 中的一次运行，显示三个并行调研分支，以及一份只含新增、经过证据核验且各自链接到来源的发现项的报告"></p>
+<p>图 2：LangGraph Studio 里一次依赖项监视的运行。右侧三条调研记录就是三个生态系统分支，由 LangGraph 并行执行。报告只列出通过证据核验、且此前未报告过的发现项，每条都链接到它的来源</p>
+<h2>第 6 步：再跑一次，只看新增发现项</h2>
+<p>最后再跑一次，看看存储是怎么起作用的。定时监视每天运行，团队不该把同一条公告看两遍。第二次运行时，各分支重新搜索并留下两条发现项，而存储此前已经报过这两条，于是报告里没有新内容，如图 3 所示。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-3.png" alt="LangGraph Studio 的第二次运行：keep_new 发现所有结果都已在存储中，因此报告没有新增发现项"></p>
+<p>图 3：用相同输入再跑一次。各分支重新搜索，但 keep_new 发现每个结果都已在 LangGraph 存储中，因此报告没有新内容</p>
+<p>对于定时任务，把 <code>InMemoryStore</code> 换成支持精确键查找的持久存储，比如 <a href="https://github.com/langchain-ai/langchain-aws/tree/main/libs/langgraph-checkpoint-aws">langgraph-checkpoint-aws</a> 里的 <code>DynamoDBStore</code>。</p>
+<h2>为现有的 LangChain 或 Deep Agents 应用添加网页搜索</h2>
+<p>如果你已经有 LangChain agent，加上网页搜索只需改几处。部署前先核对这几项：</p>
+<ul><li>权限：把第 1 步的语句加到应用当前所用的身份或执行角色上，无需另建任何东西。</li><li>区域：工具包所在的区域必须提供 Web Search API，它可以与模型或应用其他部分所在的区域不同。</li><li>工具名称：该工具名为 <code>web_search</code>。如果 agent 里已有同名工具（比如另一家搜索服务），添加前先给它换个名字。</li><li>规则与预算：每个工具包都带自己的过滤器和搜索预算。凡是规则或预算需要独立的 agent 或分支，就各配一个工具包。</li><li>吞吐量：一个账户里的所有 agent 共用该账户的 Web Search 配额，并行分支会累加。默认情况下，账户在每个区域每秒可发 10 个请求。详情见 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/bedrock-agentcore-limits.html#web-search-service-limits">Amazon Bedrock AgentCore 配额</a>。</li></ul>
+<p>用 Deep Agents 时，你通过 <code>create_deep_agent</code> 定义 agent：一个模型、一组工具、一段 system prompt 和若干子 agent。把工具包里的工具放进某个子 agent 的工具列表。规则要设在工具包选项上，因为无论模型怎么要求，工具每次搜索都会套用这些规则。要像第 4 步那样拿来源核验发现项，可以在 agent 的输出上跑这道检查，或者把它加成中间件。在我们的测试里，Deep Agents 的协调 agent 把这些工具交给一个负责调研的子 agent，大约一分钟后返回了带引用的答案。</p>
+<h2>在 AgentCore runtime 上投入生产</h2>
+<p>当你不想依赖 notebook、打算每天运行这套监视时，就把它托管到 AgentCore runtime 上。Runtime 能运行用任意框架构建的 agent，包括 LangGraph，无需重写。它在同一套 API 背后提供两种计算类型。默认的 MicroVM 给每个会话分配一台独立的 microVM，一次运行看不到另一次的数据。Instances 则在自己账户里由 AWS 托管的 <a href="https://aws.amazon.com/ec2/">Amazon Elastic Compute Cloud (Amazon EC2)</a> 实例上运行 agent，适合持续数天的会话、GPU 工作负载，或多个 agent 共用一台实例。</p>
+<p>两者的限制分别见<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-sessions.html">为 agent 使用隔离会话</a> 和 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-instances.html">Runtime Instances 与容量提供程序</a>。notebook 旁边的 <a href="https://github.com/langchain-ai/langchain-aws/tree/main/samples/agents/agentcore_web_search_supply_chain_runtime">Runtime 示例</a> 把同一张图作为 Runtime 入口。它的策略只授予 Runtime 执行角色第 1 步的权限，没有更宽的访问权限。README 逐步演示如何用 <a href="https://github.com/aws/agentcore-cli">AgentCore CLI</a> 在任一种计算类型上创建、部署和调用这个项目。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-4.png" alt="AgentCore runtime 上的依赖项监视架构：每次网页搜索都由 Runtime 执行角色签名，Runtime 返回报告"></p>
+<p>图 4：托管在 AgentCore runtime 上的同一套依赖项监视。步骤 2 到 7 与图 1 一致，只是每次搜索都由 Runtime 执行角色签名。步骤 1 由调用方发起调用，例如用 agentcore invoke；步骤 8 由 Runtime 返回报告</p>
+<p>Runtime 的会话状态是临时的，内存存储只在会话期间存在。每日任务需要第 6 步里的持久存储，并按计划定时调用。</p>
+<h2>用 AgentCore Gateway 把监视扩展到多个团队</h2>
+<p>Web Search API 和 AgentCore Gateway 上的 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html">Web Search Tool</a> 搜的是同一个索引，同一张图在两边都能跑。按谁来执行规则、谁来发起搜索来选：</p>
+<ul><li>自己的应用发起搜索、自己执行规则时（如第 1 到 6 步），用 Web Search API，它只需要一条 IAM 权限。</li><li>平台团队要把搜索提供给许多 agent 或团队，并希望由 AWS 对每次搜索套用同一条管理员来源策略时，用 AgentCore Gateway。这条策略挂在网关目标上，对 agent 不可见，agent 也无法解除。</li><li>Claude 之类的 MCP 客户端需要搜索，或者想让网页搜索与其他工具一起挂在同一个 MCP endpoint 后面时，用 AgentCore Gateway。</li></ul>
+<p>notebook 里可选的第 7 步会经网关运行这套监视。它创建一个网页搜索目标，把屏蔽列表作为管理员策略带上去，于是搜索客户端不再自己添加。这条路径需要给两个不同的主体各授一条 IAM 权限：网关的服务角色需要在网页搜索工具上有 bedrock-agentcore:InvokeWebSearch；agent 签名所用的凭证需要在网关上有 bedrock-agentcore:InvokeGateway。图 5 展示了这一流程。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-22037-5.png" alt="依赖项监视经 MCP、用 SigV4 调用 AgentCore Gateway 的架构：网页搜索目标先套用屏蔽列表，再调用 AgentCore Web Search"></p>
+<p>图 5：经 AgentCore Gateway 运行的同一套依赖项监视。图与图 1 相同。步骤 4 中，搜索工具通过 MCP 调用经 SigV4 签名的 AgentCore Gateway；步骤 5 中，网页搜索目标套用管理员屏蔽列表并调用 AgentCore Web Search</p>
+<p>要让每个团队各有自己的策略，就给每个团队加一个网页搜索目标，各带自己的屏蔽列表。这个<a href="https://github.com/langchain-ai/langchain-aws/blob/main/samples/agents/agentcore_web_search_langgraph_walkthrough.ipynb">演练 notebook</a> 演示了这种模式。想进一步了解这条路径，见 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html">Web Search Tool</a>。</p>
 <h2>清理</h2>
-<p>步骤 1–6 不创建 AWS 资源。如果您仅为此帖子添加了第 1 步权限，请将其从您附加的身份中删除。如果您运行了步骤 7，请删除目标和网关以避免持续产生费用。当您设置“DELETE_GATEWAY = True”时，笔记本的最后一个单元格会执行此操作：</p>
+<p>第 1 到 6 步不创建任何 AWS 资源。如果第 1 步的权限只是为本文加的，就把它从所挂的身份上移除。如果跑了第 7 步，删掉目标和网关，以免持续计费。把 <code>DELETE_GATEWAY = True</code> 设好，notebook 的最后一个单元格就会做这件事：</p>
 <pre><code>target = gateway_client.get_gateway_target_by_name(GATEWAY_ID, &quot;security-sources&quot;)
 gateway_client.delete_gateway_target_and_wait(gatewayIdentifier=GATEWAY_ID, targetId=target[&quot;targetId&quot;])
 gateway_client.delete_gateway_and_wait(gatewayIdentifier=GATEWAY_ID)</code></pre>
-<p>笔记本保留网关的服务角色，以便其他网关可以使用它。当您不再需要它时，请在 IAM 控制台中将其删除。如果部署到运行时，请从项目文件夹运行“agentcore remove all”，然后运行“agentcore deploy -y”。</p>
-<h2>结论</h2>
-<p>Amazon Bedrock AgentCore 中的 Web 搜索 API 为 LangChain 代理提供当前引用的 Web 结果以及他们已使用的 AWS 凭证。依赖性观察展示了如何超越单一工具调用。遵守模型不得在代码中更改的规则，并将返回的源作为数据保留在模型上下文之外。检查可以检查的内容，并将引文保留在用户看到的所有内容中。当更多团队需要相同的搜索时，AgentCore Gateway 会对所有团队应用一项策略。</p>
-<p>首先，打开 <a href="https://github.com/langchain-ai/langchain-aws/blob/main/samples/agents/agentcore_web_search_supply_chain_watch.ipynb">notebook</a>。有关参考，请参阅 LangChain 文档中的 <a href="https://docs.langchain.com/oss/python/integrations/tools/bedrock_agentcore_web_search">Amazon Bedrock AgentCore Web 搜索集成页面</a> 和 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/web-search-api.html">使用 Amazon Bedrock AgentCore Web 搜索搜索 Web</a>。</p>
+<p>notebook 会保留网关的服务角色，供其他网关复用；不再需要时，到 IAM 控制台删掉它。如果部署到了 Runtime，在项目目录里先运行 <code>agentcore remove all</code>，再运行 <code>agentcore deploy -y</code>。</p>
+<h2>结语</h2>
+<p>Amazon Bedrock AgentCore 中的 Web Search API 用现成的 AWS 凭证，为 LangChain agent 提供最新、带引用的网页结果。这套依赖项监视展示了如何不止于一次工具调用：把模型不能改的规则留在代码里，把返回的来源作为数据留在模型上下文之外；能核验的都核验，用户看到的每处内容都保留引用。当更多团队需要同一套搜索时，AgentCore Gateway 用一条策略覆盖所有团队。</p>
+<p>想上手，打开这个 <a href="https://github.com/langchain-ai/langchain-aws/blob/main/samples/agents/agentcore_web_search_supply_chain_watch.ipynb">notebook</a>。参考资料见 LangChain 文档里的 <a href="https://docs.langchain.com/oss/python/integrations/tools/bedrock_agentcore_web_search">Amazon Bedrock AgentCore Web Search 集成页面</a>，以及<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/web-search-api.html">使用 Amazon Bedrock AgentCore Web Search 搜索网页</a>。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>代理评估手册：Amazon Bedrock AgentCore 评估上的内置、DeepEval 和 AutoEval</title>
+      <title>agent 评估手册：Amazon Bedrock AgentCore Evaluations 上的内置、DeepEva…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/the-agent-evaluation-playbook-built-in-deepeval-and-autoeval-on-agentcore/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/the-agent-evaluation-playbook-built-in-deepeval-and-autoeval-on-agentcore/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：The agent evaluation playbook: Built-in, DeepEval, and AutoEval on Amazon Bedrock AgentCore Evaluations</description>
+      <description>完整标题：agent 评估手册：Amazon Bedrock AgentCore Evaluations 上的内置、DeepEval 和 AutoEval | 原文标题：The agent evaluation playbook: Built-in, DeepEval, and AutoEval on Amazon Bedrock AgentCore Evaluations</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>代理评估手册：Amazon Bedrock AgentCore 评估上的内置、DeepEval 和 AutoEval</h1>
-<p>当您将代理部署到生产环境时，最困难的问题之一是它是否真正有效？酒吧不在于它是否运行。关键在于它是否能够大规模满足业务需求。许多团队会告诉你他们并不能真正看到这一点。他们抽查输出，观察延迟，并在可以获得时收集用户反馈。这些都无法告诉您代理是否完成了用户的任务、在长时间的会话中停留在主题上、泄露了个人身份信息 (PII)，或者悄悄地跳过了应该遵循的一半步骤。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-1.png" alt="冰山图，将团队观察到的表面信号与决定水线以下成功的隐藏代理行为进行对比"></p>
-<p>图 1：团队通常关注表面信号，但业务成果由水线以下的代理行为决定</p>
-<p>代理评估解决了这个问题。这项工作之所以具有挑战性，是因为一项指标的高分可能会掩盖另一项指标的失败。支持代理可以解决每张票证，并且仍然在其回复中公开个人信息。在这种情况下，尽管代理的完成率很高，但它还是失败了。为了获得正确的评估，请以正确的详细程度衡量对每个代理而言重要的行为。</p>
-<p>本文展示了如何在 Amazon Bedrock AgentCore 上执行此操作。我们将 AgentCore 内置评估器与直接来自 AgentCore 评估的 DeepEval 和 AutoEval 评估器一起使用。</p>
-<h2>从业务成果开始，而不是指标名称</h2>
-<p>最常见的错误是从指标列表开始，然后选择听起来正确的名称。 “乐于助人听起来不错，所以我们就利用它。”结果运行并产生数字，但它几乎没有提供有用的见解。该指标符合其标签，而不是成功对代理意味着什么。</p>
-<p>相反，从三个步骤开始。</p>
-<ul><li><strong>用业务术语定义成功。</strong> 对于客户支持代理来说，这可能是首次联系解决方案。对于研究代理来说，它可能会产生一个完整的、来源良好的答案，完全基于检索到的文档。对于内容审核助理来说，这意味着标记所有应该标记的内容，并且仅标记应该标记的内容。</li><li><strong>将结果分解为可观察的行为。</strong> 实现首次联系解决方案的客户支持代理通常会完成用户既定的目标，在问题需要澄清时保持一致，将响应保持在合规范围内，并正确调用后端工具，例如工单创建或订单查找。</li><li><strong>将每个行为映射到正确级别的评估器。</strong> 跟踪级别指标涵盖每轮或每工具调用的行为。会话级指标涵盖的结果只有在您查看整个对话时才有意义。</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-2.png" alt="从业务成功到可观察行为再到评估者的三步流程，以客户支持映射示例进行说明"></p>
-<p>图 2：将业务成果转化为可观察的行为，然后转化为跟踪或会话级别的特定评估器</p>
-<p>这个三步过程是使评估变得有用的心智模型。这篇文章的其余部分是关于 AgentCore 为您提供执行它的内容。</p>
+<h1>agent 评估手册：Amazon Bedrock AgentCore Evaluations 上的内置、DeepEval 和 AutoEval</h1>
+<p>把 agent 部署到生产环境后，最难回答的问题之一是：它到底有没有在正常工作？衡量标准不是它能不能跑起来，而是它能否在规模化的情况下完成业务需要的事。很多团队会说，这一点他们其实看不见。他们抽查输出、盯着延迟、能拿到时就收集用户反馈。可这些都回答不了：agent 是否完成了用户的任务、在长会话里有没有跑题、有没有泄露个人身份信息（PII），或者悄悄跳过了本该执行的一半步骤。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-1.png" alt="冰山图：把团队关注的表面信号，与水线之下决定成败的隐藏 agent 行为作对比"></p>
+<p>图 1：团队通常盯着表面信号，但业务结果由水线之下的 agent 行为决定</p>
+<p>agent 评估就是为解决这个问题的。难点在于：某一项指标得分高，可能掩盖另一项上的失败。一个支持 agent 可以解决每一张工单，却仍在回复里泄露个人信息。这种情况下，尽管完成率很高，agent 其实是失败的。要把评估做对，就得在合适的粒度上，衡量对每个 agent 真正重要的行为。</p>
+<p>本文展示如何在 Amazon Bedrock AgentCore 上做到这一点。我们把 AgentCore 内置评估器，与直接来自 AgentCore Evaluations 的 DeepEval、AutoEval 评估器结合使用。</p>
+<h2>从业务结果出发，而不是从指标名称出发</h2>
+<p>最常见的错误是从指标清单入手，挑几个名字听起来顺眼的。“Helpfulness 听着不错，就用它。”结果跑起来、也产出了数字，却几乎给不出有用的洞察。这个指标贴合的是它的名字，而不是成功对这个 agent 意味着什么。</p>
+<p>换个做法，从三步开始。</p>
+<ul><li><strong>用业务语言定义成功。</strong> 对客户支持 agent 来说，可能是首次接触即解决；对研究 agent 来说，可能是给出完整、来源充分、且完全基于检索文档的答案；对内容审核助手来说，则是该标记的都标记、且只标记该标记的。</li><li><strong>把结果拆成可观察的行为。</strong> 一个实现首次接触即解决的客户支持 agent，通常会完成用户明确提出的目标、在问题需要澄清时跨轮次保持连贯、把回复控制在合规边界内，并正确调用后端工具，比如创建工单或查询订单。</li><li><strong>把每个行为映射到合适层级的评估器。</strong> trace 级指标覆盖逐轮或逐次工具调用的行为；session 级指标覆盖只有通看整段对话才有意义的结果。</li></ul>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-2.png" alt="从业务成功到可观察行为再到评估器的三步流程，以客户支持映射示例说明"></p>
+<p>图 2：把业务结果转化为可观察行为，再转化为 trace 或 session 级的具体评估器</p>
+<p>这个三步流程，正是让评估变得有用的心智模型。本文余下部分讲 AgentCore 提供了哪些能力来落地它。</p>
 <h2>评估器目录</h2>
-<p>AgentCore 拥有来自三个来源的广泛评估者目录：</p>
-<ul><li><strong>内置评估器</strong>由 AWS 编写和质量测试。您可以通过 ID（“Builtin.GoalSuccessRate”、“Builtin.Helpativity”等 13 个）来引用它们，该服务会处理其他所有事情。它们以可靠性为基准并涵盖常见尺寸，因此它们是直接的起点。</li><li><strong>第三方托管评估器</strong>来自 <a href="https://deepeval.com/">DeepEval</a> 和 <a href="https://www.braintrust.dev/docs/evaluate/autoevals">AutoEval</a>，这是两个已建立的开源评估库。当您在托管模式下使用它们时，AgentCore 托管代码，选择判断模型，并根据自己的能力运行推理，就像内置评估器一样。如果您的团队已在开发中使用这些库之一，则您可以在生产中运行相同的指标，而无需单独的评估服务。</li><li><strong>自定义评估器</strong> 以内置或第三方评估器为基础，因此您可以交换自己的模型并修改提示或评分标准。</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-3.png" alt="通过评分逻辑、判断模型和 AWS 质量比较 AgentCore 内置、第三方托管和自定义派生评估器层的表格测试"></p>
-<p>图 3：三个评估器层以 AWS 质量保证为代价来增强对运行推理的模型和账户的控制</p>
-<p>创建后，自定义派生评估器的使用方式与其他评估器完全相同。</p>
-<h2>评估者情况</h2>
-<p>AgentCore 附带了广泛的评估器目录，因此您很少从空白页开始。在编写自定义判断之前，请检查是否已经测量了您关心的行为。下图展示了整个景观。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-4.png" alt="AgentCore 评估器的来源目录：内置 AWS 评估器和轨迹检查、DeepEval、AutoEval 和自定义LLM作为法官"></p>
-<p>图 4：AgentCore 上跨内置、DeepEval、AutoEval 和自定义源的完整评估器环境</p>
+<p>AgentCore 拥有来自三个来源的庞大评估器目录：</p>
+<ul><li><strong>内置评估器</strong>由 AWS 编写并做过质量测试。你按 ID 引用它们（<code>Builtin.GoalSuccessRate</code>、<code>Builtin.Helpfulness</code> 等另外 13 个），其余都由服务处理。它们经过可靠性基准测试、覆盖常见维度，是最直接的起点。</li><li><strong>第三方托管评估器</strong>来自 <a href="https://deepeval.com/">DeepEval</a> 和 <a href="https://www.braintrust.dev/docs/evaluate/autoevals">AutoEval</a> 这两个成熟的开源评估库。以托管模式使用时，AgentCore 托管代码、挑选 judge 模型，并在自有算力上运行推理，和内置评估器完全一样。如果你的团队在开发里已经用了其中之一，就能在生产中跑同样的指标，不必另建评估服务。</li><li><strong>自定义评估器</strong>以某个内置或第三方评估器为基础，可以换成自己的模型，并修改 prompt 或评分标准。</li></ul>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-3.png" alt="按评分逻辑、judge 模型和 AWS 质量测试，对比 AgentCore 内置、第三方托管和自定义派生评估器三层的表格"></p>
+<p>图 3：三层评估器以 AWS 质量保证为代价，换取对运行推理的模型和账户越来越强的控制</p>
+<p>创建之后，自定义派生评估器的用法与其他评估器完全一致。</p>
+<h2>评估器全景</h2>
+<p>AgentCore 自带庞大的评估器目录，所以你很少需要从一张白纸开始。在动手写自定义 judge 之前，先看看是否已经有一个在衡量你关心的行为。下图展示了完整全景。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-4.png" alt="按来源划分的 AgentCore 评估器目录：内置 AWS 评估器与轨迹检查、DeepEval、AutoEval，以及自定义 LLM-as-a-judge"></p>
+<p>图 4：AgentCore 上跨内置、DeepEval、AutoEval 和自定义来源的完整评估器全景</p>
 <p><strong>内置 AWS 评估器</strong>分为五组：</p>
-<ul><li><strong>响应质量</strong>涵盖答案是否准确、有根据和格式良好：“正确性”、“忠实性”、“有帮助性”、“响应相关性”、“简洁性”、“连贯性”、“遵循指令”和“拒绝”。</li><li><strong>任务和目标完成</strong>有“GoalSuccessRate”，它查看整个会话并询问用户的目标是否达到。</li><li><strong>工具使用</strong>具有“ToolSelectionAccuracy”和“ToolParameterAccuracy”，它们检查代理是否选择了正确的工具并向其传递了正确的参数。</li><li><strong>技能</strong>具有“SkillSelectionAccuracy”和“SkillInstructionFollowing”，对于加载技能的代理：是否调用了正确的技能，是否遵循了其步骤？</li><li><strong>安全</strong>有“有害性”和“刻板印象”。</li></ul>
-<p>接下来是三个真实轨迹检查：“TrajectoryExactOrderMatch”、“TrajectoryInOrderMatch”和“TrajectoryAnyOrderMatch”。他们将代理的实际刀具路径与您预期的路径进行比较。当代理如何到达那里与它产生的结果一样重要时，就去接触它们。</p>
-<p><strong>DeepEval</strong> 提供四组托管开源指标：</p>
-<ul><li>任务和目标完成情况：“TaskCompletion”、“GoalAccuracy”和“ConversationCompleteness”。</li><li>对话质量：“回合相关性”、“知识保留”和“摘要”。</li><li>工具使用：<code>ToolUse</code>。</li><li>安全性：“偏差”、“毒性”和“PIILeakage”。</li></ul>
-<p>这些指标对于多轮代理特别有用。 “ConversationCompleteness”捕获代理回复最新消息但悄悄丢弃较早的请求。 “KnowledgeRetention”捕获了一个忘记用户三回合前说过的话的代理。</p>
-<p><strong>AutoEval</strong> 提供更专业的信号：</p>
-<p>-“安全”标记恶意输出，例如尝试注入指令或显示系统提示。</p>
-<ul><li>“可能”捕获过度谨慎的代理，错误地声明有效任务不可能。</li><li>“幽默”对于面向消费者的代理商来说很重要，因为个性是产品的一部分。</li></ul>
-<p><strong>自定义评估器</strong>。当目录中没有适合的评估者时，您可以编写自定义的LLM作为法官。</p>
-<p>每个评估者的确切定义、评分标准和输入要求均位于 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/prompt-templates-builtin.html">AgentCore 文档</a> 中的提示模板库中。这包括它使用的判断提示、运行的跟踪或会话级别，以及是否需要参考答案或预期轨迹。您可以调用“ListEvaluators” API 在一个响应中获取完整目录和您自己的自定义评估器。</p>
+<ul><li><strong>响应质量</strong>衡量答案是否准确、有依据、组织良好：<code>Correctness</code>、<code>Faithfulness</code>、<code>Helpfulness</code>、<code>ResponseRelevance</code>、<code>Conciseness</code>、<code>Coherence</code>、<code>InstructionFollowing</code>、<code>Refusal</code>。</li><li><strong>任务与目标完成</strong>有 <code>GoalSuccessRate</code>，它通看整个 session，判断用户的目标是否达成。</li><li><strong>工具使用</strong>有 <code>ToolSelectionAccuracy</code> 和 <code>ToolParameterAccuracy</code>，检查 agent 是否选对了工具、传入了正确的参数。</li><li><strong>Skills</strong> 有 <code>SkillSelectionAccuracy</code> 和 <code>SkillInstructionFollowing</code>，面向加载 skills 的 agents：是否调用了正确的 skill，是否遵循了其步骤？</li><li><strong>安全</strong>有 <code>Harmfulness</code> 和 <code>Stereotyping</code>。</li></ul>
+<p>除此之外，还有三项基于 ground truth 的轨迹检查：<code>TrajectoryExactOrderMatch</code>、<code>TrajectoryInOrderMatch</code> 和 <code>TrajectoryAnyOrderMatch</code>。它们把 agent 实际的工具路径与你预期的路径对比。当“怎么走到结果”和“产出了什么”同样重要时，就用它们。</p>
+<p><strong>DeepEval</strong> 提供四组托管的开源指标：</p>
+<ul><li>任务与目标完成：<code>TaskCompletion</code>、<code>GoalAccuracy</code>、<code>ConversationCompleteness</code>。</li><li>对话质量：<code>TurnRelevancy</code>、<code>KnowledgeRetention</code>、<code>Summarization</code>。</li><li>工具使用：<code>ToolUse</code>。</li><li>安全：<code>Bias</code>、<code>Toxicity</code>、<code>PIILeakage</code>。</li></ul>
+<p>这些指标对多轮 agents 尤其有用。<code>ConversationCompleteness</code> 能抓出那种只回最新一条消息、却悄悄丢掉早先请求的 agent；<code>KnowledgeRetention</code> 能抓出忘了用户三轮前说过什么的 agent。</p>
+<p><strong>AutoEval</strong> 提供更专门的信号：</p>
+<ul><li><code>Security</code> 标记恶意输出，比如试图注入指令或泄露系统 prompt。</li><li><code>Possible</code> 抓出过度谨慎、把有效任务误判为无法完成的 agents。</li><li><code>Humor</code> 对面向消费者的 agents 有意义，因为个性本身就是产品的一部分。</li></ul>
+<p><strong>自定义评估器</strong>。当目录里没有合适的评估器时，可以自己写一个自定义 LLM-as-a-judge。</p>
+<p>每个评估器的确切定义、评分刻度和输入要求，都在 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/prompt-templates-builtin.html">AgentCore 文档</a>的 prompt 模板库里，包括它使用的 judge prompt、运行在 trace 还是 session 级，以及是否需要参考答案或预期轨迹。你可以调用 <code>ListEvaluators</code> API，在一次响应里拿到完整目录和自己账号下的自定义评估器。</p>
 <h3>多维度评估器</h3>
-<p>到目前为止，每个评估者都会为每个跟踪或会话返回一个分数。当你衡量一种行为时，这是有效的。但结果映射的第 2 步很少为每个评估者提供一种行为。支持回复必须解决问题、遵循退款和数据政策并保持专业。一位法官权衡所有三者后，会返回一个数字，而你无法判断是哪个标准驱动了它。</p>
-<p>多维度评估器是一种定制的LLM作为法官，具有一系列维度而不是一个尺度。每个维度都有自己的名称、说明以及数字或分类尺度。法官读取一次轨迹并在同一次呼叫中对每个维度进行评分。 AgentCore 对每个维度返回一个结果。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-5.png" alt="多维度评估器图：一个判断调用读取一次跟踪，并为每个评分维度返回一个单独的结果"></p>
-<p>图 5：多维度评估器根据单个判断调用对多个维度进行评分，并为每个维度返回一个结果，没有综合分数</p>
-<p>当您的成功标准可能单独失败时，请使用多维度评估器，例如答案准确但不合规，或已解决但粗鲁。它还需要每个标准都可以根据相同的证据进行判断，以便一个判断呼叫可以取代几个几乎相同的评估者重新读取相同的痕迹。当您单独对标准进行评分时，您可以对每一项进行门控。改进语气但降低政策合规性的版本会失败，而单一的混合分数会掩盖这一点。</p>
-<p>当已建立的内置或第三方指标已经涵盖标准时，将标准保留在单独的评估器中，例如“Builtin.Correctness”或“ThirdParty.DeepEval.PIILeakage”。当需要不同的级别或判断模型时，也要将它们分开，因为一个评估器中的维度共享单个级别和模型。当某些标准需要基本事实（例如“{expected_response}”或“{assertions}”）时，请执行相同的操作。在自己的评估器中保留无参考标准意味着它仍然可以在实时流量上运行。</p>
-<h2>按代理类型划分的堆栈示例</h2>
-<p>以下每个堆栈都以两个或三个最适合业务成果的评估者开始。当您发现第一组未命中的故障模式时，请添加其他模式。标记为“需要真实情况”的评估者仅在批量评估中运行，因为实时流量没有参考答案或预期路径。</p>
-<table><thead><tr><th></th><th><strong>客户支持</strong></th><th><strong>多步骤研究</strong></th><th><strong>领域内容（医疗、法律、金融）</strong></th></tr></thead><tbody><tr><td>业务成果</td><td>问题一次解决，无下游风险</td><td>通过定义的工作流程提供完整、来源丰富的答案</td><td>领域内正确、公正、安全的答案</td></tr><tr><td>主要风险</td><td>丢弃的请求、不安全或不合规的回复</td><td>通过错误的刀具路径获得正确答案，或在长时间会话中丢失上下文</td><td>一个错误的答案。错误的答案比没有答案更糟糕。</td></tr><tr><td>以</td><td>开头<code>Builtin.GoalSuccessRate</code>（锚点）<code>ThirdParty.DeepEval.ConversationCompleteness</code><code>ThirdParty.DeepEval.PIILeakage</code></td><td><code>Builtin.TrajectoryAnyOrderMatch</code>（需要基本事实）<code>ThirdParty.DeepEval.GoalAccuracy</code><code>ThirdParty.DeepEval.KnowledgeRetention</code></td><td><code>Builtin.Correctness</code>（需要基本事实）<code>ThirdParty.DeepEval.PIILeakage</code><code>ThirdParty.AutoEval.Security</code></td></tr><tr><td>需要时添加</td><td><code>ThirdParty.DeepEval.Toxicity</code> <code>ThirdParty.AutoEval.Security</code>（敏感帐户数据）<code>Builtin.Helpativity</code></td><td><code>Builtin.SkillInstructionFollowing</code> <code>ThirdParty.AutoEval.Possible</code></td><td><code>ThirdParty.DeepEval.Bias</code> <code>Builtin.Helpativity</code></td><td><code>ThirdParty.DeepEval.Bias</code></td></tr><tr><td>派生评估器</td><td>可选</td><td>如果推理必须保留在您的帐户中，则用于轨迹和技能指标</td><td>几乎总是如此，所以每个法官的电话都在您的数据治理之下</td></tr></tbody></table>
+<p>到目前为止，每个评估器对每条 trace 或每个 session 只返回一个分数。衡量单一行为时这没问题，但结果映射的第 2 步很少能给每个评估器只配一种行为。一条支持回复既要解决问题、又要遵守退款和数据政策、还得保持专业。让一个 judge 同时权衡三者，只会返回一个数字，你根本看不出是哪条标准在起作用。</p>
+<p>多维度评估器是一种自定义 LLM-as-a-judge，用一组维度取代单一刻度。每个维度都有自己的名称、指令，以及数值或分类刻度。judge 只读一次 trace，就在同一次调用里给所有维度打分。AgentCore 对每个维度各返回一个结果。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21893-5.png" alt="多维度评估器示意图：一次 judge 调用只读一遍 trace，为每个评分维度各返回一个结果"></p>
+<p>图 5：多维度评估器用单次 judge 调用为多个维度打分，每个维度各返回一个结果，没有综合分</p>
+<p>当成功标准可能各自独立失败时，就用多维度评估器，比如答案准确却不合规，或者问题解决了但语气很冲。它还要求每条标准都能依据同一份证据来评判，这样一次 judge 调用就能取代好几个几乎一样、反复读同一条 trace 的评估器。把标准分开打分后，你可以逐条设卡。一个改善了语气却让政策合规倒退的发布就该被拦下，而单一混合分数会把这一点掩盖掉。</p>
+<p>如果某个现成的内置或第三方指标已经覆盖了某条标准，比如 <code>Builtin.Correctness</code> 或 <code>ThirdParty.DeepEval.PIILeakage</code>，就把标准留在单独的评估器里。当不同标准需要不同级别或不同 judge 模型时，也要分开——因为一个评估器里的所有维度共用同一个级别和模型。有些标准需要 ground truth（如 <code>{expected_response}</code> 或 <code>{assertions}</code>）时同样如此。把不依赖参考答案的标准单独放在自己的评估器里，它才能继续跑在实时流量上。</p>
+<h2>按 agent 类型给出的示例组合</h2>
+<p>下面每个组合都从两三个最贴合业务结果的评估器起步。当你发现第一组漏掉了某种失败模式时，再补上其余的。标有“需要 ground truth”的评估器只能在批量评估中运行，因为实时流量没有参考答案或预期路径。</p>
+<table><thead><tr><th></th><th><strong>客户支持</strong></th><th><strong>多步骤研究</strong></th><th><strong>领域内容（医疗、法律、金融）</strong></th></tr></thead><tbody><tr><td>业务结果</td><td>一次会话内解决问题，且无后续风险</td><td>通过既定工作流给出完整、来源充分的答案</td><td>领域内正确、无偏见、安全的答案</td></tr><tr><td>主要风险</td><td>请求被丢弃、不安全或不合规的回复</td><td>工具路径不对却答对了，或长会话中丢失上下文</td><td>一个错误答案。错误答案比没有答案更糟。</td></tr><tr><td>起步用</td><td><code>Builtin.GoalSuccessRate</code>（锚点）<code>ThirdParty.DeepEval.ConversationCompleteness</code> <code>ThirdParty.DeepEval.PIILeakage</code></td><td><code>Builtin.TrajectoryAnyOrderMatch</code>（需要 ground truth）<code>ThirdParty.DeepEval.GoalAccuracy</code> <code>ThirdParty.DeepEval.KnowledgeRetention</code></td><td><code>Builtin.Correctness</code>（需要 ground truth）<code>ThirdParty.DeepEval.PIILeakage</code> <code>ThirdParty.AutoEval.Security</code></td></tr><tr><td>按需添加</td><td><code>ThirdParty.DeepEval.Toxicity</code> <code>ThirdParty.AutoEval.Security</code>（敏感账户数据）<code>Builtin.Helpfulness</code></td><td><code>Builtin.SkillInstructionFollowing</code> <code>ThirdParty.AutoEval.Possible</code></td><td><code>ThirdParty.DeepEval.Bias</code> <code>Builtin.Helpfulness</code></td></tr><tr><td>派生评估器</td><td>可选</td><td>若推理必须留在自己的账户内，用于轨迹和 skill 指标</td><td>几乎总是需要，让每次 judge 调用都处于自己的数据治理之下</td></tr></tbody></table>
 <h2>运行评估：三种模式</h2>
-<p>AgentCore支持三种评估模式。</p>
-<p>按需评估是最快的反馈循环。在开发或调试期间将会话直接传递给“client.evaluate()”。系统中的每个评估员（包括第三方）都在这里工作。</p>
+<p>AgentCore 支持三种评估模式。</p>
+<p>按需评估是最快的反馈闭环。开发或调试时，把 session 直接传给 <code>client.evaluate()</code>。系统里所有评估器（包括第三方）都能在这里用。</p>
 <pre><code>import boto3
 
 client = boto3.client('bedrock-agentcore')
@@ -296,192 +296,192 @@ response = client.evaluate(
 for result in response[&quot;evaluationResults&quot;]:
     print(f&quot;Value: {result.get('value')}&quot;)
     print(f&quot;Explanation: {result.get('explanation', '')}&quot;)</code></pre>
-<p>在线评估附加到您的实时代理运行时，并以配置的速率对实际流量进行采样。这是您的生产健康信号。内置和第三方评估器可以在单个在线评估配置中自由混合。</p>
-<p>批量评估针对一组固定的会话运行定义的评估器堆栈：发布前用于回归测试的黄金数据集。用它来确认即时更改或模型升级是否在您关心的每个维度上保持了质量。</p>
-<p>所有三种模式都使用相同的评估者 ID。从按需开发测试切换到生产在线评估是配置更改，而不是代码重写。</p>
-<h2>把它放在一起</h2>
-<p>越来越困难的部分是选择评估者。选择最能表明您是否达到业务成果的两到三种行为，并首先衡量这些行为。当您发现当前设置遗漏的故障时，添加评估员。</p>
-<p>要查看完整目录，请调用“ListEvaluators” API。它会在一次响应中返回内置、DeepEval 和 AutoEval 评估器以及您帐户中的任何自定义评估器。在您选择其中任何一个之前，请回答两个问题：“该代理的成功是什么样的？”以及“跟踪中的哪些行为表明它发生了？”</p>
+<p>在线评估挂到实时的 agent runtime 上，按设定的比例对真实流量采样。这是你的生产健康信号。内置与第三方评估器可以在同一份在线评估配置里自由混用。</p>
+<p>批量评估针对一组固定的 session 运行既定的评估器组合：也就是发布前做回归测试的黄金数据集。用它来确认 prompt 改动或模型升级没有让你关心的任何一个维度掉质量。</p>
+<p>三种模式用的是同一套评估器 ID。从开发期的按需测试切到生产期的在线评估，只是改配置，不用重写代码。</p>
+<h2>综合运用</h2>
+<p>越来越难的反倒是选哪些评估器。挑出最能说明你是否达成业务结果的两三种行为，先量它们；等发现当前组合漏掉了某类失败，再补一个评估器。</p>
+<p>想看完整目录，调用 <code>ListEvaluators</code> API：它会在一次响应里返回内置、DeepEval、AutoEval 评估器，以及你账号下的所有自定义评估器。在挑任何一个之前，先回答两个问题：“对这个 agent 来说，成功长什么样？”以及“trace 里的哪种行为能说明它确实发生了？”</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>自主财务代理：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生解决方案</title>
+      <title>自主财资 agents：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/autonomous-treasury-agents-how-trovata-built-an-ai-native-solution-on-amazon-bedrock-and-agentcore/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/autonomous-treasury-agents-how-trovata-built-an-ai-native-solution-on-amazon-bedrock-and-agentcore/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Autonomous treasury agents: How Trovata built an AI-native solution on Amazon Bedrock and AgentCore</description>
+      <description>完整标题：自主财资 agents：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生解决方案 | 原文标题：Autonomous treasury agents: How Trovata built an AI-native solution on Amazon Bedrock and AgentCore</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>自主财务代理：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生解决方案</h1>
-<p>企业财务团队面临着持续的挑战：分散在数十个银行门户中的零散银行数据、电子表格中的手动报告以及无法扩展以满足现代企业需求的遗留财务管理系统 (TMS)。对于财务团队来说，这些手动流程会造成延迟、错误，并且无法在最重要的时候做出实时现金决策。</p>
-<p>Trovata 是一个人工智能原生现金和流动性管理平台，与 10,000 多家银行直接连接，通过单一云平台为全球企业提供服务。 2023 年，Trovata 推出了首款专为财务部门打造的生成式人工智能。现在，随着 Trovata 最新的人工智能原生更新，他们已经从提供见解发展到部署代表财务团队行事的自主代理。</p>
-<p>Trovata 的客户已经看到了可衡量的结果：年度成本节省超过 100 万美元，每个会计团队每天节省超过 5 个小时的时间，年度 TMS 成本降低 77%，财务报告从几小时或几天减少到不到一分钟。</p>
-<p>在这篇文章中，我们将探讨 Trovata 如何在 Amazon Bedrock 和 Amazon Bedrock AgentCore 上构建自主财务代理，该架构通过支持银行品牌 AI 部署的基于角色的访问控制 (RBAC) 进行保护，以及代理工作流程如何将企业财务从手动操作转变为企业规模的实时决策。</p>
+<h1>自主财资 agents：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生解决方案</h1>
+<p>企业财资团队长期面临一个难题：银行数据零散分布在数十个银行门户里，报表困在电子表格中靠手工整理，遗留的财资管理系统（TMS）又无法扩展以满足现代企业的需求。对财资团队而言，这些手工流程带来延误和差错，也让他们在最关键的时刻无法做出实时的现金决策。</p>
+<p>Trovata 是一个 AI 原生的现金与流动性管理平台，直连 10,000 多家银行，通过单一云平台服务全球企业。2023 年，Trovata 推出了首个专为财资打造的生成式 AI。如今，随着 Trovata 最新的 AI 原生更新，他们已从输出洞察，演进到部署代表财资团队行事的自主 agents。</p>
+<p>Trovata 的客户已经看到了可量化的成效：年化成本节省 100 万美元以上，每个会计团队每天节省 5 小时以上，年度 TMS 成本降低 77%，财资报表从数小时或数天缩短到不到一分钟。</p>
+<p>在本文中，我们将探讨 Trovata 如何在 Amazon Bedrock 和 Amazon Bedrock AgentCore 上构建自主财资 agents、这套架构如何借助支持银行品牌 AI 部署的基于角色的访问控制（RBAC）来保障安全，以及 agentic 工作流如何把企业财资从手工操作转变为企业级的实时决策。</p>
 <h2>解决方案概述</h2>
-<p>Trovata 作为人工智能原生财务操作系统运行，通过单一系统提供与 10,000 多家银行的直接连接，用于现金报告、预测、分析和资金流动。</p>
-<p>如今，财务团队面临着三个压力问题：</p>
-<ul><li><strong>分散的银行数据</strong>跨多个门户，需要手动聚合和对账。</li><li><strong>手动报告和对账</strong>耗费熟练团队成员数小时甚至数天的时间。</li><li><strong>传统 TMS 应用程序</strong>缺乏现代运营所需的云原生架构和 AI 功能。</li></ul>
-<p>Trovata 从 2023 年推出的首款财务生成人工智能发展到具有自主代理的人工智能原生功能，这代表了根本性的转变。该解决方案从静态洞察转变为代表财务团队持续运行的持久代理工作流程。至关重要的是，Trovata AI 直接内置于财务操作系统中。它不是一个位于顶层的通用聊天机器人，而是与真实的金库对象绑定的嵌入式智能，并通过代理实现自动化的受控路径。</p>
-<p>Trovata 选择 AWS 进行此次转型有以下三个原因。其无服务器、云原生基础设施支持实时执行，Amazon Bedrock 为自然语言查询和 AI 功能提供大型语言模型 (LLM) 推理，Amazon Bedrock AgentCore 通过 RBAC 安全性、快速部署和全球规模来处理代理编排。</p>
-<p>为 Trovata 的 AI 原生解决方案提供支持的核心 AWS 服务包括：</p>
-<ul><li><strong>Amazon Bedrock</strong> – 用于自然语言理解和生成的LLM推理。</li><li><strong>Amazon Bedrock AgentCore</strong> – 代理编排、代理工作流程和 RBAC 安全性。</li><li><strong>无服务器 AWS 基础设施</strong> – 企业规模的实时执行。</li></ul>
+<p>Trovata 作为一套 AI 原生的财资操作系统运行，通过单一系统直连 10,000 多家银行，支撑现金报告、预测、分析和资金划转。</p>
+<p>如今，财资团队面临三重压力：</p>
+<ul><li><strong>分散的银行数据</strong>散落在多个门户，需要手工汇总与对账。</li><li><strong>手工报表与对账</strong>耗费熟练团队成员数小时甚至数天的时间。</li><li><strong>遗留的 TMS 应用</strong>缺乏现代运营所需的云原生架构和 AI 能力。</li></ul>
+<p>Trovata 从 2023 年的首款财资生成式 AI，演进到具备自主 agents 的 AI 原生能力，代表着一次根本性的转变。解决方案从静态洞察转向代替财资团队持续运行的常驻 agentic 工作流。关键在于，Trovata AI 直接内建于财资操作系统之中。它不是叠加在上层的通用聊天机器人，而是与真实财资对象绑定的嵌入式智能，并经由 agents 提供一条受治理的自动化路径。</p>
+<p>Trovata 选择 AWS 来完成这次转型，有三个原因：其 serverless、云原生基础设施支持实时执行；Amazon Bedrock 为自然语言查询和 AI 功能提供大型语言模型（LLM）推理；Amazon Bedrock AgentCore 则负责 agent 编排，并带来 RBAC 安全、快速部署和全球规模。</p>
+<p>支撑 Trovata AI 原生解决方案的核心 AWS 服务包括：</p>
+<ul><li><strong>Amazon Bedrock</strong> – 用于自然语言理解与生成的 LLM 推理。</li><li><strong>Amazon Bedrock AgentCore</strong> – agent 编排、agentic 工作流与 RBAC 安全。</li><li><strong>Serverless AWS 基础设施</strong> – 企业级的实时执行。</li></ul>
 <h2>架构图</h2>
-<p>Trovata AI 架构以在银行品牌、RBAC 安全框架内运行的自主财务代理为中心。该解决方案由几个协同工作的关键组件组成：</p>
-<ul><li><strong>Trovata AI Chat</strong> – 多银行财务数据的自然语言查询，因此用户可以提出诸如*“昨天我们所有账户的净现金头寸是多少？”之类的问题，并收到即时、准确的答复。</li><li><strong>人工智能洞察</strong> – 自动异常检测、方差解释和趋势分析，主动显示关键信息。</li><li><strong>人工智能代理</strong> – 按计划、触发器或规则运行的持久工作流程，以监控活动、解释差异、检测异常并自动提供更新，无需人工干预。</li><li><strong>代理生成器配置器</strong> – 用于构建和配置财务代理的管理控制台，使团队能够完全控制代理行为和范围。</li><li><strong>企业 RBAC</strong> – 基于角色的访问控制保护代理工作流程，确保代理在与人类用户相同的权限边界内运行。</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-22181-1.png" alt="Amazon Bedrock 和 AgentCore 上的 Trovata AI 架构，将银行品牌门户和超过 10,000 家银行连接到 AI Chat、AI Insights 和 AI Agents层"></p>
-<p>图 1：Amazon Bedrock AgentCore 上的 Trovata AI 架构，从银行品牌门户到多银行连接</p>
+<p>Trovata AI 架构以运行在银行品牌、受 RBAC 保护的框架内的自主财资 agents 为核心。该解决方案由若干协同工作的关键组件构成：</p>
+<ul><li><strong>Trovata AI Chat</strong> – 对多银行财资数据做自然语言查询，用户可以提出诸如 <em>“昨天我们所有账户的净现金头寸是多少？”</em> 之类的问题，并立即得到准确的回答。</li><li><strong>AI Insights</strong> – 自动异常检测、差异解释和趋势分析，主动把关键信息呈现出来。</li><li><strong>AI Agents</strong> – 按计划、触发器或规则运行的常驻工作流，用于监控活动、解释差异、检测异常并自动推送更新，无需人工干预。</li><li><strong>Agent Builder-Configurator</strong> – 用于构建和配置财资 agents 的管理控制台，让团队完全掌控 agent 的行为与范围。</li><li><strong>Enterprise RBAC</strong> – 基于角色的访问控制保护 agentic 工作流，确保 agents 在与人类用户相同的权限边界内运行。</li></ul>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-22181-1.png" alt="Amazon Bedrock 和 AgentCore 上的 Trovata AI 架构：把银行品牌门户与 10,000 多家银行连接到 AI Chat、AI Insights 和 AI Agents 各层"></p>
+<p>图 1：Amazon Bedrock AgentCore 上的 Trovata AI 架构，从银行品牌门户一直到多银行连接</p>
 <h2>技术实现</h2>
-<p>Trovata 在 Amazon Bedrock AgentCore 上构建了其 AI 原生解决方案，结合了自主代理、自然语言查询和企业访问控制。以下部分描述了团队构建的内容、主要用例及其背后的 AgentCore 功能。</p>
+<p>Trovata 在 Amazon Bedrock AgentCore 上构建其 AI 原生解决方案，把自主 agents、自然语言查询和企业访问控制结合起来。后续小节介绍团队构建了什么、主要用例，以及背后的 AgentCore 能力。</p>
 <h3>Trovata 构建了什么：AI 原生解决方案</h3>
-<p>Trovata AI 提供直接嵌入 Trovata 金库操作系统中的自主金库管理代理。这些人工智能代理将可重复的操作工作转变为持续运行的持久工作流程。这项工作需要耗费熟练专业人员数小时的时间。</p>
-<p>代理按照计划、触发器或规则进行操作，以监控活动、解释差异、检测异常并自动提供更新。整个系统在 Amazon Bedrock AgentCore 上运行，这是一个专为企业 AI 构建的安全、隔离的环境。当用户提出问题时，人工智能会通过 Trovata 自己的经过验证的 API 层检索数据，对其进行分析，并在该安全基础设施中提供响应。</p>
+<p>Trovata AI 提供直接内嵌于 Trovata 财资操作系统中的自主财资管理 agents。这些 AI agents 把可重复的运营工作变成持续运行的常驻工作流。正是这类工作，耗掉了熟练专业人员大量时间。</p>
+<p>Agents 按计划、触发器或规则运行，监控活动、解释差异、检测异常并自动推送更新。整个系统运行在 Amazon Bedrock AgentCore 上——一个专为企业 AI 打造的安全、隔离环境。当用户提问时，AI 通过 Trovata 自己的、经过验证的 API 层检索数据、加以分析，并在这套安全基础设施内给出回答。</p>
 <h3>主要用例</h3>
-<ul><li><strong>现金预测</strong> – 通过场景建模跨多银行环境自动进行现金流预测，取代基于电子表格的手动预测。</li><li><strong>自然语言查询</strong> – 企业用户用简单的英语查询银行数据。例如：<em>“昨天我们所有账户的净现金头寸是多少？”</em>。</li><li><strong>异常检测</strong> – 实时检测可能表明错误、欺诈或操作问题的异常交易、余额变化或现金流模式。</li><li><strong>自动对账</strong> – 数百个账户的人工智能驱动的对账摘要，将以前需要几小时的时间减少到几秒钟。</li><li><strong>代理工作流程</strong> – 通过持续监控、分析和报告来自主运行的持久代理，无需人工干预。</li></ul>
-<h3>来自真实客户部署的十种代理模式</h3>
-<p>财务团队已经开始在生产环境中构建人工智能代理。 Trovata 的 AI Agents Playbook 提供了一个包含十种代理模式的工作库，这些模式取自真实的客户部署，涵盖了最常见和高价值的财务工作流程。大多数财务团队都有 5-15 个工作流程可供当今的 AI 代理使用。</p>
-<h3>AgentCore 功能 Trovata 使用</h3>
-<p>Trovata 的实施利用了 Amazon Bedrock AgentCore 的多项关键功能：</p>
-<ul><li><strong>代理编排</strong> – 需要顺序推理和操作的复杂财务操作的多步骤代理工作流程。</li><li><strong>RBAC 安全</strong> – 基于角色的访问控制保护代理操作，确保代理尊重组织权限边界。</li><li><strong>实时执行</strong> – 无服务器基础设施，可在数百个银行账户中提供亚分钟的财务报告。</li><li><strong>银行品牌部署</strong> – 代理嵌入银行品牌工具中，因此银行可以提供人工智能驱动的财务功能，而无需自行构建人工智能。</li></ul>
-<h3>安全和治理架构</h3>
-<table><thead><tr><th><strong>控制</strong></th><th><strong>实施</strong></th></tr></thead><tbody><tr><td><strong>企业 RBAC</strong></td><td>基于角色的访问控制保护代理工作流程和数据访问</td></tr><tr><td><strong>经过验证的 API 层</strong></td><td>AI 仅通过 Trovata 自己的经过验证的 API 层检索数据 - 不直接访问数据库</td></tr><tr><td><strong>安全隔离环境</strong></td><td>AgentCore 为 AI 代理执行提供安全、隔离的运行时</td></tr><tr><td><strong>银行品牌部署</strong></td><td>代理在银行品牌的应用程序中运行，维护企业安全并支持合规工作</td></tr><tr><td><strong>多银行数据治理</strong></td><td>直接连接超过 10,000 家银行</td></tr><tr><td><strong>审计追踪</strong></td><td>记录人工智能查询和代理操作以进行合规审查</td></tr></tbody></table>
-<p>＃＃ 结果</p>
-<table><thead><tr><th><strong>公制</strong></th><th><strong>结果</strong></th><th><strong>背景</strong></th></tr></thead><tbody><tr><td><strong>每年节省的成本</strong></td><td>100 万美元以上</td><td>基于客户案例研究</td></tr><tr><td><strong>每个会计团队节省的时间</strong></td><td>每天 5 小时以上</td><td>避免手动报告和对账</td></tr><tr><td><strong>年度 TMS 成本降低</strong></td><td>77%</td><td>与传统 TMS 工具相比</td></tr><tr><td><strong>财务报告时间</strong></td><td>小时/天 → &lt;1 分钟</td><td>数百个账户的实时现金可见性</td></tr><tr><td><strong>银行连接</strong></td><td>100+企业； 2,000+ 企业</td><td>直接连接——单一系统</td></tr><tr><td><strong>生产状况</strong></td><td>直播</td><td>生产中具有自主代理的人工智能</td></tr><tr><td><strong>可用代理模式</strong></td><td>10</td><td>10来自真实的客户部署（代理手册）</td></tr></tbody></table>
-<h3>关键区别</h3>
-<table><thead><tr><th><strong>差异化因素</strong></th><th><strong>详细</strong></th></tr></thead><tbody><tr><td><strong>首个财务生成人工智能</strong></td><td>2023 年推出。通过最新的 AI 更新演变成自主代理</td></tr><tr><td><strong>嵌入式，非螺栓固定</strong></td><td>人工智能直接内置于财政部操作系统中，而不是通用的聊天机器人层</td></tr><tr><td><strong>银行品牌部署</strong></td><td>银行以自己的品牌部署人工智能代理，而不自行构建人工智能</td></tr><tr><td><strong>经过验证的 API 层</strong></td><td>AI 仅通过 Trovata 验证的 API 访问数据 — 不直接访问数据库</td></tr><tr><td><strong>十大生产代理模式</strong></td><td>来自真实客户部署的工作库</td></tr><tr><td><strong>大规模多银行</strong></td><td>单一系统上超过 10,000 家银行</td></tr></tbody></table>
+<ul><li><strong>现金预测</strong> – 借助情景建模，在多银行环境中自动完成现金流预测，取代基于电子表格的手工预测。</li><li><strong>自然语言查询</strong> – 企业用户用日常英语查询银行数据。例如：<em>“昨天我们所有账户的净现金头寸是多少？”</em>。</li><li><strong>异常检测</strong> – 实时检测异常交易、余额变动或现金流模式，这些可能意味着错误、欺诈或运营问题。</li><li><strong>自动对账</strong> – 由 AI 生成跨数百个账户的对账摘要，把过去要花数小时的工作缩短到几秒。</li><li><strong>Agentic workflows</strong> – 持续自主运行、无需人工干预即可监控、分析和报告的常驻 agents。</li></ul>
+<h3>来自真实客户部署的十种 agent 模式</h3>
+<p>财资团队已经开始在生产环境中构建 AI agents。Trovata 的 AI Agents Playbook 提供了一个可用的库，收录从真实客户部署中提炼的十种 agent 模式，覆盖最常见、价值最高的财资工作流。如今，多数财资团队都有 5–15 个工作流可以直接交给 AI agents。</p>
+<h3>Trovata 使用的 AgentCore 能力</h3>
+<p>Trovata 的实现用到了 Amazon Bedrock AgentCore 的几项关键能力：</p>
+<ul><li><strong>agent 编排</strong> – 面向需要顺序推理与行动的复杂财资操作的多步 agentic 工作流。</li><li><strong>RBAC 安全</strong> – 基于角色的访问控制保护 agent 的操作，确保 agents 遵守组织的权限边界。</li><li><strong>实时执行</strong> – Serverless 基础设施，可在数百个银行账户上实现亚分钟级的财资报表。</li><li><strong>银行品牌部署</strong> – agents 内嵌于银行品牌工具中，银行无需自己构建 AI 就能提供 AI 驱动的财资能力。</li></ul>
+<h3>安全与治理架构</h3>
+<table><thead><tr><th><strong>控制</strong></th><th><strong>实施</strong></th></tr></thead><tbody><tr><td><strong>企业 RBAC</strong></td><td>基于角色的访问控制保护 agentic 工作流和数据访问</td></tr><tr><td><strong>经过验证的 API 层</strong></td><td>AI 仅通过 Trovata 自己的、经过验证的 API 层检索数据 — 不直接访问数据库</td></tr><tr><td><strong>安全隔离环境</strong></td><td>AgentCore 为 AI agent 执行提供安全、隔离的运行时</td></tr><tr><td><strong>银行品牌部署</strong></td><td>agents 在银行品牌应用内运行，保持企业安全性并支持合规工作</td></tr><tr><td><strong>多银行数据治理</strong></td><td>直连 10,000 多家银行</td></tr><tr><td><strong>审计追踪</strong></td><td>记录 AI 查询与 agent 操作，供合规审查</td></tr></tbody></table>
+<h2>结果</h2>
+<table><thead><tr><th><strong>指标</strong></th><th><strong>结果</strong></th><th><strong>背景</strong></th></tr></thead><tbody><tr><td><strong>年化成本节省</strong></td><td>100 万美元以上</td><td>基于客户案例研究</td></tr><tr><td><strong>每个会计团队节省的时间</strong></td><td>5+ 小时/天</td><td>免去手工报表与对账</td></tr><tr><td><strong>年度 TMS 成本降低</strong></td><td>77%</td><td>与遗留 TMS 工具相比</td></tr><tr><td><strong>财资报表耗时</strong></td><td>数小时/数天 → &lt;1 分钟</td><td>跨数百个账户的实时现金可视性</td></tr><tr><td><strong>银行连接</strong></td><td>100+ 家企业客户；2,000+ 家商业客户</td><td>直连 — 单一系统</td></tr><tr><td><strong>生产状态</strong></td><td>已上线</td><td>具备自主 agents 的 AI 已在生产环境运行</td></tr><tr><td><strong>可用 agent 模式</strong></td><td>10</td><td>来自真实客户部署（Agents Playbook）</td></tr></tbody></table>
+<h3>关键差异化优势</h3>
+<table><thead><tr><th><strong>差异化因素</strong></th><th><strong>说明</strong></th></tr></thead><tbody><tr><td><strong>首个财资生成式 AI</strong></td><td>2023 年推出。随最新 AI 更新演进为自主 agents</td></tr><tr><td><strong>内嵌，而非外挂</strong></td><td>AI 直接内建于财资操作系统，而非通用聊天机器人层</td></tr><tr><td><strong>银行品牌部署</strong></td><td>银行以自有品牌部署 AI agents，无需自己构建 AI</td></tr><tr><td><strong>经过验证的 API 层</strong></td><td>AI 仅通过 Trovata 经过验证的 API 访问数据 — 不直接访问数据库</td></tr><tr><td><strong>十种生产级 agent 模式</strong></td><td>来自真实客户部署的可用库</td></tr><tr><td><strong>大规模多银行</strong></td><td>单一系统上超过 10,000 家银行</td></tr></tbody></table>
 <h2>先决条件</h2>
-<p>要探索类似的架构，您将需要：</p>
-<ul><li>有权访问 Amazon Bedrock 和 Amazon Bedrock AgentCore 的 AWS 账户。</li><li>熟悉财务管理操作（现金预测、对账、多银行连接）</li><li>了解代理人工智能架构和企业 RBAC 模型。</li><li>了解金融服务合规要求。</li></ul>
+<p>要探索类似的架构，你需要：</p>
+<ul><li>一个可访问 Amazon Bedrock 和 Amazon Bedrock AgentCore 的 AWS 账户。</li><li>熟悉财资管理操作（现金预测、对账、多银行连接）</li><li>了解 agentic AI 架构和企业 RBAC 模型。</li><li>了解金融服务合规要求。</li></ul>
 <h2>清理</h2>
-<p>如果您在探索此架构时部署了任何示例资源，请记住将其删除，以避免产生未来成本。删除任何为测试目的而创建的 Bedrock 代理、AgentCore 配置和相关基础设施。</p>
+<p>如果你在探索这套架构时部署过任何示例资源，记得删除它们，以免产生后续费用。清理为测试而创建的 Bedrock agents、AgentCore 配置及相关基础设施。</p>
 <h2>结论</h2>
-<p>Trovata 从手动财务操作到人工智能驱动的自主财务管理的历程展示了代理人工智能在金融服务领域的变革潜力。每年节省的成本超过 100 万美元，每个会计团队每天节省超过 5 个小时的时间，年度 TMS 成本减少 77%，报告时间从几小时或几天减少到不到一分钟，其影响是可衡量的。</p>
-<p>银行品牌的部署模型尤其有效。银行和企业无需自行构建即可获得生产就绪的人工智能。 Trovata AI 展示了独立软件供应商 (ISV) 如何利用 Amazon Bedrock AgentCore 将受监管的自主 AI 代理直接嵌入到垂直软件即服务 (SaaS) 应用程序中，从而提供具有金融服务所需的安全性和合规意识的 AI。</p>
-<p>展望未来，Trovata 计划扩大其代理模式，深化企业资源规划 (ERP) 集成，并扩展全球银行连接。公司不断推进自主财务管理所能实现的目标。</p>
-<h3>开始吧</h3>
-<ul><li><a href="https://trovata.io/trovata-ai">Trovata AI</a> – 探索 Trovata 的 AI 驱动的财务解决方案。</li><li><a href="https://trovata.io/guides/ai-agents-playbook">Trovata AI Agents Playbook</a> – 来自真实客户部署的十种代理模式。</li><li><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> – 了解 AWS 上的代理编排。</li><li><a href="https://aws.amazon.com/marketplace">AWS Marketplace 上的 Trovata</a> – 从 AWS Marketplace 部署 Trovata。</li></ul>
+<p>Trovata 从手工财资操作走向自主、AI 驱动的财资管理，这条路径展示了 agentic AI 在金融服务中的变革潜力。年化成本节省超过 100 万美元、每个会计团队每天省下 5 小时以上、年度 TMS 成本降低 77%、报表从数小时或数天缩短到不到一分钟——成效是可以量化的。</p>
+<p>银行品牌的部署模式尤其有效。银行和企业无需自行构建，就能拿到生产就绪的 AI。Trovata AI 展示了独立软件供应商（ISV）如何借助 Amazon Bedrock AgentCore，把受治理的自主 AI agents 直接嵌入垂直软件即服务（SaaS）应用，交付具备金融服务所要求的安全性与合规意识的 AI。</p>
+<p>展望未来，Trovata 计划扩充 agent 模式、深化企业资源规划（ERP）集成，并扩展全球银行连接。公司持续推进自主财资管理的能力边界。</p>
+<h3>开始使用</h3>
+<ul><li><a href="https://trovata.io/trovata-ai">Trovata AI</a> – 了解 Trovata 的 AI 驱动财资解决方案。</li><li><a href="https://trovata.io/guides/ai-agents-playbook">Trovata AI Agents Playbook</a> – 来自真实客户部署的十种 agent 模式。</li><li><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> – 了解 AWS 上的 agent 编排。</li><li><a href="https://aws.amazon.com/marketplace">AWS Marketplace 上的 Trovata</a> – 从 AWS Marketplace 部署 Trovata。</li></ul>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>TCS 如何使用 Amazon Bedrock AgentCore 构建代理测试编排器</title>
+      <title>TCS 如何使用 Amazon Bedrock AgentCore 构建 Agentic Test Orchestrat…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/how-tcs-built-an-agentic-test-orchestrator-with-amazon-bedrock-agentcore/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-tcs-built-an-agentic-test-orchestrator-with-amazon-bedrock-agentcore/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：How TCS built an agentic test orchestrator with Amazon Bedrock AgentCore</description>
+      <description>完整标题：TCS 如何使用 Amazon Bedrock AgentCore 构建 Agentic Test Orchestrator | 原文标题：How TCS built an agentic test orchestrator with Amazon Bedrock AgentCore</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>TCS 如何使用 Amazon Bedrock AgentCore 构建代理测试编排器</h1>
-<p><em>这篇文章是与塔塔咨询服务公司 (TCS) 的 Varun Valsan 共同撰写的。</em></p>
-<p>塔塔咨询服务 (TCS) 为银行、金融服务和保险 (BFSI) 客户进行大规模测试，其中发布中最慢的部分很少是编写应用程序代码。更大的约束是接下来的工作链：解释需求、设计场景、编写和维护自动化、准备执行环境、调查故障以及收集证据以供审查。</p>
-<p>BFSI 客户需要提高测试吞吐量，同时保留金融服务中预期的控制。目标不是取代质量工程师。它是为了消除重复的翻译和执行工作，以便工程师可以将更多时间花在风险分析、探索性测试和发布决策上。这些行业需求对 TCS 提出了四项具体要求。首先，每个测试都必须基于项目特定的上下文，而不是通用的提示。其次，它必须涵盖 API 和基于浏览器的 UI 测试，以匹配 BFSI 应用程序的构建方式。第三，安全性至关重要，因此每个租户的数据和知识存储都必须隔离。最后，它必须提供从需求获取到测试证据和报告的可重复路径，以便跨团队和发布保持收益。在这篇文章中，我们展示了 TCS 如何构建一个代理测试编排器，将需求转化为可执行的、受管理的测试，以及它为其 BFSI 测试团队带来的变化。</p>
-<h2>为什么传统的自动化和系统还不够</h2>
-<p>TCS 已经为其客户使用传统的测试自动化，并且确实提高了执行速度。但它让缓慢的工作保持不变：团队仍然必须创建场景，将其转换为脚本，维护定位器和依赖项，并诊断故障。当链接的用户故事发生变化时，为早期故事生成的脚本可能很快就会变得过时。单个生成人工智能提示也无法提供多阶段工程工作流程所需的控制。</p>
-<p>因此，TCS 设计了 ​​Agentic Test Orchestrator，将测试分解为专门的任务。每个任务都有自己的代理、工具、验证规则和上下文。确定性主管路由工作，而执行工作流控制重试、错误分类、持久性和报告。</p>
-<p>为了运行这些代理，TCS 选择了 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>，这是一种使用任何框架或模型大规模构建、连接和优化代理的服务。三个能力推动了这一决定。首先，<a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 提供模型选择，因此每个代理都使用适合其任务的模型，例如场景设计或代码生成，并且 TCS 可以在更新的模型可用时采用它们。其次，AgentCore 运行时是 Amazon Bedrock AgentCore 的一项功能，可根据需求进行扩展，因此多个租户的测试人员可以同时运行生成和执行会话，而无需配置 TCS 或调整代理服务器。第三，运行时在其自己的隔离 microVM 中运行每个会话，这为其多租户平台提供了 TCS 会话级分离，而无需自行构建该层。这些功能共同使 TCS 将其工程工作重点放在测试逻辑而不是代理基础设施上，从而缩短了将该平台交付给 BFSI 客户的时间。</p>
+<h1>TCS 如何使用 Amazon Bedrock AgentCore 构建 Agentic Test Orchestrator</h1>
+<p><em>本文与来自 Tata Consultancy Services (TCS) 的 Varun Valsan 共同撰写。</em></p>
+<p>Tata Consultancy Services (TCS) 为银行、金融服务和保险（BFSI）客户开展大规模测试。在这类工作中，一次发布里最慢的环节很少是编写应用代码。更大的制约是紧随其后的一连串工作：解读需求、设计场景、编写并维护自动化、准备执行环境、排查故障，以及汇总证据供评审。</p>
+<p>BFSI 客户需要在保留金融服务应有管控的前提下提高测试吞吐量。目标不是取代质量工程师，而是去掉重复的转换与执行工作，让工程师能把更多时间花在风险分析、探索性测试和发布决策上。这些行业需求给 TCS 带来了四项具体要求。第一，每个测试都必须以项目特定的上下文为依据，而不是通用 prompts。第二，必须同时覆盖 API 测试和基于浏览器的 UI 测试，以贴合 BFSI 应用的构建方式。第三，安全至上，因此每个租户的数据和知识库都必须隔离。最后，必须提供一条从需求摄取到测试证据与报告的可重复路径，让收益能跨团队、跨发布保持住。本文将展示 TCS 如何构建 Agentic Test Orchestrator，把需求转化为可执行、受治理的测试，以及它给 BFSI 测试团队带来了哪些改变。</p>
+<h2>为什么传统自动化和既有系统还不够</h2>
+<p>TCS 已经为客户使用传统测试自动化，它确实能提升执行速度。但那些耗时的活儿一点没变：团队仍得自己创建场景、把场景转成脚本、维护定位器和依赖、诊断故障。一旦关联的用户故事发生变化，为早先故事生成的脚本很快就会过时。单条生成式 AI prompt 也无法提供多阶段工程工作流所需的控制。</p>
+<p>因此，TCS 设计了 Agentic Test Orchestrator，把测试拆解成专门的任务。每个任务都有自己的 agent、工具、校验规则和上下文。一个确定性的 supervisor 负责路由工作，而执行工作流控制重试、错误分类、持久化和报告。</p>
+<p>为了运行这些 agents，TCS 选择了 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>——一项可使用任意框架或模型、大规模构建、连接和优化 agents 的服务。有三项能力促成了这个决定。第一，<a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 提供多种模型可选，每个 agent 都能用上契合其任务的模型，比如场景设计或代码生成，而且模型更新时 TCS 可以随时采用。第二，AgentCore runtime（Amazon Bedrock AgentCore 的一项能力）随需求弹性扩展，多个租户的测试人员可以同时运行生成与执行会话，TCS 无需自行配置或调优 agent 服务器。第三，该 runtime 把每个会话放在各自隔离的 microVM 中运行，为 TCS 的多租户平台提供了 session 级隔离，不必自己再搭这一层。这些能力合在一起，让 TCS 把工程精力集中在测试逻辑而非 agent 基础设施上，从而缩短了平台交付给 BFSI 客户的时间。</p>
 <h2>解决方案概述</h2>
-<p>下图显示了该平台跨五个阶段的端到端流程，下面是每个租户的安全层。来自 Jira、业务需求文档 (BRD) 和 GitLab 的输入进入在 <a href="https://aws.amazon.com/cloudfront/">Amazon CloudFront</a> 后面的 <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (Amazon EKS)</a> 上运行的租户 Web 应用程序，并通过 <a href="https://aws.amazon.com/cognito/">Amazon Cognito</a> 登录。 TCS 使用 Amazon Bedrock AgentCore 运行时来托管平台的专用代理，这些代理是使用 <a href="https://strandsagents.com/">Strands Agents SDK</a> 构建的。这些代理生成测试，与测试人员一起完善它们，并管理它们的执行。 <a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service (Amazon ECS)</a> 运行生成的测试。 <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service (Amazon S3)</a> 和 <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a> 存储结果，<a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 捕获日志。在整个过程中，<a href="https://aws.amazon.com/waf/">AWS WAF</a>、Amazon Cognito、<a href="https://aws.amazon.com/kms/">AWS Key Management Service (AWS KMS)</a> 和 <a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a> 强制执行每个租户的安全和隔离。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-20381-1.png" alt="TCS Agentic Test Orchestrator 的架构，显示 AWS 上的五阶段流程和每租户安全层"></p>
-<p>图 1：高级解决方案架构</p>
-<p>TCS Agentic Test Orchestrator 是基于 AWS 构建的多租户软件即服务 (SaaS) 解决方案。测试人员通过 Jira 故事、业务需求文档 (BRD)、Swagger 规范、上传的文档、GitLab 源文件夹或捕获的 UI 流来提供需求。然后，平台根据这些输入生成测试场景、Gherkin 功能文件以及可执行的 Java 或 Python 测试。它在 Amazon ECS 上运行这些测试，存储工件和结果，并在每个租户的 Web 应用程序中显示进度和报告。以下部分描述了平台的每个部分如何满足 TCS 设定的四个要求之一。</p>
+<p>下图展示了平台跨五个阶段的端到端流程，底层是每租户的安全层。来自 Jira、业务需求文档（BRDs）和 GitLab 的输入进入租户 Web 应用，该应用运行在 <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (Amazon EKS)</a> 上，前面挂着 <a href="https://aws.amazon.com/cloudfront/">Amazon CloudFront</a>，登录通过 <a href="https://aws.amazon.com/cognito/">Amazon Cognito</a>。TCS 用 Amazon Bedrock AgentCore runtime 托管平台的专用 agents，这些 agents 使用 <a href="https://strandsagents.com/">Strands Agents SDK</a> 构建，负责生成测试、与测试人员一起打磨测试，并管理测试的执行。<a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service (Amazon ECS)</a> 运行生成的测试。<a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service (Amazon S3)</a> 和 <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a> 存储结果，<a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 采集日志。全程由 <a href="https://aws.amazon.com/waf/">AWS WAF</a>、Amazon Cognito、<a href="https://aws.amazon.com/kms/">AWS Key Management Service (AWS KMS)</a> 和 <a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a> 落实每租户的安全与隔离。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-20381-1.png" alt="TCS Agentic Test Orchestrator 的架构，展示 AWS 上的五阶段流程和每租户安全层"></p>
+<p>图 1：高层解决方案架构</p>
+<p>TCS Agentic Test Orchestrator 是一套基于 AWS 构建的多租户软件即服务（SaaS）解决方案。测试人员通过 Jira 故事、业务需求文档（BRDs）、Swagger 规范、上传的文档、GitLab 源文件夹或捕获的 UI 流程来提供需求。平台据此生成测试场景、Gherkin feature 文件，以及可执行的 Java 或 Python 测试。它在 Amazon ECS 上运行这些测试，存储工件与结果，并在每租户的 Web 应用中展示进度和报告。接下来的小节逐一说明平台的每个部分如何满足 TCS 设定的四项要求之一。</p>
 <h2>1. 将控制平面与每个租户应用平面分离</h2>
-<p>TCS 要求严格隔离每个租户的身份、数据和密钥，因此该平台使用具有孤立数据和身份的池化计算。共享控制平面提供 Amazon EKS 集群、容器注册表、管理门户、租户注册表、加入自动化、Amazon CloudFront 分发和 AWS WAF 保护。每个租户应用程序平面都会收到自己的 Kubernetes 命名空间、Amazon Cognito 用户池、AWS KMS 密钥、Amazon S3 存储桶、Amazon DynamoDB 表和 <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock 知识库</a>。这种分离为每个 BFSI 租户提供了金融服务控制需求的数据和关键边界。</p>
-<p>租户入职是事件驱动的。管理 API 写入待处理租户记录，通过 <a href="https://aws.amazon.com/eventbridge/">Amazon EventBridge</a> 发出事件，并启动 <a href="https://aws.amazon.com/codebuild/">AWS CodeBuild</a> 项目，该项目使用 AWS 云开发套件 (<a href="https://aws.amazon.com/cdk/">AWS CDK</a>) 部署租户基础设施。此模式使租户配置可重复，同时保留 TCS 所需的特定于租户的身份和数据边界。</p>
-<h2>2. 让每个代理都融入项目环境</h2>
-<p>TCS 的第一个要求是生成反映每个项目的领域而不是通用提示，因此平台内置了基础。该平台将上传的需求和生成的工件存储在 Amazon S3 中，并将会话元数据存储在 Amazon DynamoDB 中。项目文档和同步源文件使用矢量嵌入在 Amazon Bedrock 知识库中建立索引。在材料到达代理之前，检索会按租户、项目和会话上下文进行过滤，因此一个客户端的上下文不会影响另一个客户端的测试。</p>
-<p>该上下文层支持 BFSI 团队表达需求的多种方式：Jira 故事和链接的故事链、BRD、Swagger 定义、参考代码、定位器文档、设置模块、测试数据和 GitLab 源文件夹。对于 UI 自动化，单独的捕获服务使用 Puppeteer 将 URL 和自然语言目标转换为 UI 流文档和 XPath 定位器文档。</p>
-<h2>3. 使用专门的代理而不是一大堆提示</h2>
-<p>由于单个提示无法为受监管的工作流程提供所需的控制，因此该平台将工作分配给专用代理，这些代理使用 Strands Agents SDK 在 Amazon Bedrock AgentCore 运行时中作为容器化服务运行。生成运行时将请求路由到专用场景、Gherkin、代码生成和验证工具。其他运行时支持对话细化、BRD 到故事的转换、跨链接的 Jira 故事的增量生成以及测试执行。每个代理都拥有生命周期的一个阶段。以下是每个专业代理的简要概述：</p>
-<p><strong>生成代理：</strong> 创建结构化场景，将其转换为 Gherkin，生成 Java 或 Python 自动化，并验证生成的代码。</p>
-<p><strong>聊天代理：</strong> 将请求分类为信息查询或更新请求，然后回答或修改活动工件。</p>
-<p><strong>动态任务代理：</strong> 检索 BRD 上下文并生成包含需求和验收标准的结构化用户故事。</p>
-<p><strong>增量代理：</strong> 在链接的 Jira 故事链上扩展场景、Gherkin 或代码，而不是从头开始。</p>
-<p><strong>执行代理：</strong>获取工件、选择执行环境、运行测试、对故障进行分类、应用受控修复并保存最终结果。</p>
-<h2>4. 将 API 和 UI 测试路由到正确的执行环境</h2>
-<p>TCS 需要涵盖 API 和基于浏览器的 UI 测试，这对基础设施提出了不同的要求，因此执行代理从生成的代码中检测测试类型并相应地路由它。 API 测试路由到 <a href="https://aws.amazon.com/fargate/">AWS Fargate</a> 上的 Amazon ECS。 Selenium UI 测试被路由到由 <a href="https://aws.amazon.com/ec2/">Amazon Elastic Compute Cloud (Amazon EC2)</a> 支持的 Amazon ECS 集群，其中执行器可以使用虚拟显示器运行 Chrome。</p>
-<p>对于 UI 运行，执行器可以使用 FFmpeg 捕获虚拟显示，并将 HTTP Live Streaming (HLS) 流发布到 Amazon S3，以便通过 Amazon CloudFront 进行传输。测试日志发送到 Amazon CloudWatch，生成的 Cucumber 报告存储在 Amazon S3 中，并且具有有时限的访问权限。</p>
-<h2>5.控制执行和修正循环</h2>
-<p>为了保证 BFSI 管道的自动校正足够安全，执行代理将其获取、执行、修复和保存步骤定义为 <a href="https://www.langchain.com/langgraph">LangGraph</a> 工作流程。 LangGraph 的显式状态图为 TCS 提供了固定的步骤顺序和有界重试循环，而 AgentCore 运行时则托管、扩展和隔离运行它的代理。获取节点检索测试项目和生成的资产、清理文件并检测框架。执行节点启动选定的 ECS 任务、监控状态、检索日志并解析结果。</p>
-<p>当故障被分类为代码错误并且重试策略允许时，修复代理会接收受约束的错误上下文并提出有针对性的纠正。安全检查拒绝空文件、意外的新文件或文件大小的极端变化。连接或身份验证失败等环境错误不会发送到代码修复程序。保存节点保存最终代码、状态、尝试、日志、解析结果和报告位置。</p>
-<h2>6. 安全和操作控制</h2>
-<p>由于该解决方案为受监管的 BFSI 租户提供服务，因此它在身份、网络、数据和应用程序层应用控制。对于身份，单独的 Amazon Cognito 用户池为平台管理员和每个租户提供服务，并提供后端 JSON Web 令牌 (JWT) 验证和基于角色的授权。对于数据，每个租户都有自己的 AWS KMS 密钥和加密的 Amazon S3 存储，DynamoDB 访问仅限于租户范围，AWS Secrets Manager 保存 Jira 和 GitLab 凭证。在 Amazon EKS 上的工作负载级别，Kubernetes 命名空间、NetworkPolicy 和 ResourceQuota 单独的租户以及容器以非 root 身份运行，并删除了 Linux 功能。在网络边缘，AWS WAF 托管规则和请求率控制可以保护平台。流量通过 Amazon CloudFront 和 <a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/">Application Load Balancer</a> 通过 HTTPS 传输，并且响应携带限制性安全标头。在所有这些中，OpenTelemetry 跟踪捕获代理活动，而 Amazon CloudWatch 日志和 Container Insights 提供应用程序和执行的可观察性。</p>
-<h2>结果</h2>
-<p>TCS 在生产环境中为其 BFSI 客户端运行 Agentic Test Orchestrator。为了量化节省的工作量，TCS 在大约 100 个测试场景的代表性 BFSI 工作负载上对照其现有流程测量了该解决方案。在手动流程中，每个场景大约需要工程师两个小时的时间来设计、编写脚本和执行，或者全套场景需要大约 200 小时。使用 Agentic Test Orchestrator，每个场景的平均工作量约为 14 分钟，相同的工作负载大约需要 24 小时。相比之下，这意味着工作量减少了 88%。 （<em>这些数字来自 TCS 在大约 100 个场景中运行的受控内部基准。实际结果因工作负载、应用程序复杂性和团队而异。）</em></p>
-<p>对于 TCS 来说，工作量的多少比其背后的运营模式更重要。需求摄取、生成、执行、纠正和报告现在形成一个可追踪的工作流程，而不是一系列互不相连的交接链。质量工程师审查和管理人工智能生成的工件，而不是手工构建它们，这将他们的时间投入到风险分析、探索性测试和发布决策上，而手动流程则挤掉了这些时间。这就是 TCS 想要达到的结果。</p>
-<p>＃＃ 结论</p>
-<p>TCS 想要解决的问题不仅仅是缓慢的测试执行。这是从业务需求到值得信赖的测试证据的支离破碎的手动路径。这是 BFSI 版本的一部分，会消耗工程时间而不会增加保证。在这篇文章中，我们展示了 TCS 如何在 AWS 上构建 Agentic Test Orchestrator，通过结合上下文检索、专用代理、工作负载感知执行、隔离的每租户服务和可观察基础设施来缩小这一差距。</p>
-<p>结果是一种可重用的模式，可将生成式人工智能应用于软件质量工程，而无需将测试减少到单个提示。 Amazon Bedrock AgentCore 托管和扩展代理，Amazon Bedrock 和 Amazon Bedrock 知识库提供 AI 功能和项目上下文，Amazon EKS 托管每租户应用程序层，Amazon ECS 提供适合用途的执行，AWS 安全、存储、集成和可观察性服务支持整个生命周期。对于 TCS 的 BFSI 团队来说，回报是更快、更一致的测试流程，让工程师有时间做出风险、质量和发布决策。</p>
-<p>要了解更多信息并在您自己的环境中部署该解决方案，请访问 <a href="https://aws.amazon.com/marketplace/pp/prodview-ivev3fu5js5bu">AWS Marketplace 中的 TCS Agentic Test Orchestrator</a>。如果您需要帮助将此模式应用到您自己的测试工作流程中，请<a href="https://aws.amazon.com/contact-us/">联系 AWS 团队</a>。有疑问或类似的用例吗？在评论中分享它们。</p>
+<p>TCS 要求严格隔离每个租户的身份、数据和密钥，因此平台采用计算资源池化、数据与身份各自独立的模式。共享的控制平面提供 Amazon EKS 集群、容器镜像仓库、管理门户、租户注册表、入驻自动化、Amazon CloudFront 分发和 AWS WAF 防护。每个租户应用平面都有专属的 Kubernetes 命名空间、Amazon Cognito 用户池、AWS KMS 密钥、Amazon S3 存储桶、Amazon DynamoDB 表，以及 <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a>。这种分离为每个 BFSI 租户划出了金融服务业管控所要求的数据与密钥边界。</p>
+<p>租户入驻由事件驱动。管理 API 写入一条待处理租户记录，通过 <a href="https://aws.amazon.com/eventbridge/">Amazon EventBridge</a> 发出事件，并启动一个 <a href="https://aws.amazon.com/codebuild/">AWS CodeBuild</a> 项目，用 AWS Cloud Development Kit（<a href="https://aws.amazon.com/cdk/">AWS CDK</a>）部署租户基础设施。这一模式让租户配置可重复执行，同时保留 TCS 所需的租户级身份与数据边界。</p>
+<h2>2. 让每个 agent 都基于项目上下文</h2>
+<p>TCS 的第一项要求是：生成结果要反映每个项目的领域，而不是套用通用 prompt，所以 grounding 被内建进平台。平台把上传的需求和生成的工件存到 Amazon S3，把会话元数据存到 Amazon DynamoDB。项目文档和同步的源文件通过向量嵌入在 Amazon Bedrock Knowledge Bases 中建立索引。资料送达 agent 之前，检索会按租户、项目和会话上下文过滤，因此一个客户的上下文不会进入另一个客户的测试。</p>
+<p>这层上下文支持 BFSI 团队表达需求的各种方式：Jira 故事及关联的故事链、BRDs、Swagger 定义、参考代码、定位器文档、设置模块、测试数据和 GitLab 源文件夹。对于 UI 自动化，一个独立的捕获服务用 Puppeteer 把 URL 和自然语言目标转换成 UI 流程文档和 XPath 定位器文档。</p>
+<h2>3. 用专用 agents 取代单个大 prompt</h2>
+<p>单条 prompt 无法给受监管工作流所需的控制，因此平台把工作分给多个专用 agents：它们用 Strands Agents SDK 以容器化服务的形式运行在 Amazon Bedrock AgentCore runtime 中。生成 runtime 把请求路由到专用的场景、Gherkin、代码生成和校验工具。其他 runtime 负责对话式打磨、BRD 到故事的转换、跨关联 Jira 故事的增量生成，以及测试执行。每个 agent 负责生命周期中的一个阶段。下面是各专用 agent 的简要说明：</p>
+<p><strong>Generation agent：</strong> 创建结构化场景，转换为 Gherkin，生成 Java 或 Python 自动化代码，并校验生成的代码。</p>
+<p><strong>Chat agent：</strong> 把请求归类为信息查询或更新请求，然后作答或修改当前工件。</p>
+<p><strong>Dynamic task agent：</strong> 检索 BRD 上下文，生成包含需求与验收标准的结构化用户故事。</p>
+<p><strong>Incremental agent：</strong> 沿关联的 Jira 故事链扩展场景、Gherkin 或代码，而不是从头开始。</p>
+<p><strong>Execution agent：</strong> 取回工件、选择执行环境、运行测试、对故障分类、施加受控修复，并保存最终结果。</p>
+<h2>4. 把 API 和 UI 测试路由到正确的执行环境</h2>
+<p>TCS 需要同时覆盖 API 测试和基于浏览器的 UI 测试，两者对基础设施的要求不同，因此执行 agent 会从生成的代码中识别测试类型，据此路由。API 测试被路由到 <a href="https://aws.amazon.com/fargate/">AWS Fargate</a> 上的 Amazon ECS。Selenium UI 测试被路由到由 <a href="https://aws.amazon.com/ec2/">Amazon Elastic Compute Cloud (Amazon EC2)</a> 支撑的 Amazon ECS 集群，执行器可以在其中用虚拟显示器运行 Chrome。</p>
+<p>对于 UI 运行，执行器可以用 FFmpeg 捕获虚拟显示器，把 HTTP Live Streaming（HLS）流发布到 Amazon S3，再经 Amazon CloudFront 分发。测试日志送到 Amazon CloudWatch，生成的 Cucumber 报告存放在 Amazon S3 中，并设有有时限的访问。</p>
+<h2>5. 管控执行与修正循环</h2>
+<p>为了让自动修正对 BFSI 流水线足够安全，执行 agent 把取回、执行、修复、保存这几步定义成一个 <a href="https://www.langchain.com/langgraph">LangGraph</a> 工作流。LangGraph 显式状态图为 TCS 提供固定的步骤顺序和有界重试循环，而 AgentCore runtime 负责托管、扩展并隔离运行它的 agent。取回节点拿到测试项目和生成的资产、清理文件、识别框架。执行节点启动选定的 ECS 任务、监控状态、取回日志并解析结果。</p>
+<p>当故障被判定为代码错误、且重试策略允许时，修复 agent 会收到受限的错误上下文，给出有针对性的修正。安全检查会拒绝空文件、意外出现的新文件，或文件大小变化过大的情况。连接或认证失败这类环境错误不会交给代码修复程序。保存节点把最终代码、状态、尝试次数、日志、解析结果和报告位置持久化下来。</p>
+<h2>6. 安全与运营管控</h2>
+<p>由于这套解决方案服务的是受监管的 BFSI 租户，它在身份、网络、数据和应用各层都施加了管控。身份层面，独立的 Amazon Cognito 用户池分别服务平台管理员和每个租户，并在后端做 JSON Web Token（JWT）校验和基于角色的授权。数据层面，每个租户拥有自己的 AWS KMS 密钥和加密的 Amazon S3 存储，DynamoDB 访问限定在租户范围内，Jira 与 GitLab 凭证由 AWS Secrets Manager 保管。在 Amazon EKS 的工作负载层面，Kubernetes 命名空间、NetworkPolicy 和 ResourceQuota 把租户隔开，容器以非 root 运行并丢弃 Linux capabilities。在网络边缘，AWS WAF 托管规则和请求速率控制保护平台。流量经 Amazon CloudFront 和 <a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/">Application Load Balancer</a> 以 HTTPS 交付，响应携带严格的安全标头。贯穿所有这些环节，OpenTelemetry traces 采集 agent 活动，Amazon CloudWatch 日志与 Container Insights 提供应用和执行的可观测性。</p>
+<h2>成果</h2>
+<p>TCS 已在生产环境中为 BFSI 客户运行 Agentic Test Orchestrator。为量化节省的工作量，TCS 在一个约含 100 个测试场景的代表性 BFSI 工作负载上，把该方案与既有流程做了对比。手工流程里，每个场景大约要花工程师两小时来设计、编写脚本和执行，全套约 200 小时。使用 Agentic Test Orchestrator 后，每个场景平均约 14 分钟，同一工作负载降到约 24 小时。这一对比中，工作量减少了 88%。（<em>这些数字来自 TCS 在约 100 个场景上运行的一次受控内部基准测试。实际结果会因工作负载、应用复杂度和团队而异。</em>）</p>
+<p>对 TCS 来说，工作量这个数字不如它背后的运营模式重要。需求摄取、生成、执行、修正和报告如今汇成一条可追溯的工作流，而不再是一串彼此脱节的交接。质量工程师审核并治理 AI 生成的工件，而不是亲手搭建，于是时间重新回到风险分析、探索性测试和发布决策上——这些正是过去被手工流程挤掉的部分。这才是 TCS 一开始想达到的结果。</p>
+<h2>结论</h2>
+<p>TCS 想解决的问题不只是测试执行慢，而是从业务需求到可信测试证据之间那条支离破碎、全靠手工的路径。这正是 BFSI 发布中最耗工程时间、却又不增加保障的环节。本文展示了 TCS 如何在 AWS 上构建 Agentic Test Orchestrator，用上下文检索、专用 agents、感知工作负载的执行、隔离的每租户服务和可观测的基础设施来填上这道缺口。</p>
+<p>结果是一套可复用的模式：把生成式 AI 用于软件质量工程，又不把测试简化成单条 prompt。Amazon Bedrock AgentCore 托管并扩展 agents，Amazon Bedrock 与 Amazon Bedrock Knowledge Bases 提供 AI 能力和项目上下文，Amazon EKS 承载每租户应用层，Amazon ECS 提供按需适配的执行，AWS 的安全、存储、集成和可观测性服务支撑整个生命周期。对 TCS 的 BFSI 团队而言，回报是更快、更一致的测试流程，让工程师的时间回到风险、质量和发布决策上。</p>
+<p>想进一步了解并在自己的环境中部署这套方案，请访问 <a href="https://aws.amazon.com/marketplace/pp/prodview-ivev3fu5js5bu">AWS Marketplace 中的 TCS Agentic Test Orchestrator</a>。如果希望获得帮助、把这一模式用到自己的测试工作流中，请<a href="https://aws.amazon.com/contact-us/">联系 AWS 团队</a>。有疑问或类似的用例？欢迎在评论区分享。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Amazon Bedrock 代币经济学数据湖</title>
+      <title>Amazon Bedrock tokenomics 数据湖</title>
       <link>https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-tokenomics-data-lake/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-tokenomics-data-lake/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Amazon Bedrock tokenomics data lake</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Amazon Bedrock 代币经济学数据湖</h1>
-<p>如果您需要为您的 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 工作负载提供可观测性数据湖，那么您并不孤单。当您每天在多个帐户中运行数千次模型调用时，发送请求后您可能会想，发生了什么？您可以看到总账单，但无法查看每个通话中发生的情况。</p>
-<p>您可能会开始问问题：发送了什么提示，模型返回什么，使用了多少令牌，哪个模型处理了它，以及响应是否良好！如果您是一名平台或机器学习 (ML) 工程师，需要跨团队管理一组 Amazon Bedrock 工作负载，那么这确实是一个问题。您无法调试尖峰，无法发现浪费的提示，也无法区分一个团队和另一个团队的使用情况。</p>
-<p>我们构建了一些可以提供帮助的东西：用于您的 Amazon Bedrock 调用的集中式可观测性数据湖。在这篇文章中，我将介绍您拥有的本地数据以及我们如何设计该湖。我还展示了如何使用它来查看提示并得出每次调用的成本。 <a href="https://docs.aws.amazon.com/cloudformation/">AWS CloudFormation</a> 模板、<a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 代码和 SQL 查询均位于 <a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">AWS 示例 Bedrock 调用数据湖 GitHub 存储库</a>。这篇文章将介绍架构和部署步骤。该存储库包含部署它所需的一切。</p>
-<h2>您今天的 Amazon Bedrock 可见度如何？</h2>
-<p>Amazon Bedrock 提供<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-inspiration-logging.html">模型调用日志记录</a>，而且它确实非常强大。您可以在<a href="https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/settings">您使用 Bedrock 的每个 AWS 账户中的设置</a> 中打开调用日志。它向 <a href="https://aws.amazon.com/pm/serv-s3/">Amazon Simple Storage Service (Amazon S3)</a> 或 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 提供请求和响应的完整记录。</p>
-<p>数据存在，但被锁定在个人账户内。您真正想要的是整个组织中每次调用的单一、快速、可查询的视图。这就是数据湖为您提供的。</p>
+<h1>Amazon Bedrock tokenomics 数据湖</h1>
+<p>如果你需要为 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 工作负载建一个可观测性数据湖，有这想法的不止你一个。当每天跨多个账户发起数千次模型调用时，请求发出去之后你可能会纳闷：到底发生了什么？你能看到汇总账单，却看不到每次调用内部发生了什么。</p>
+<p>你可能会开始追问：发出去的 prompt 是什么，模型返回了什么，用了多少 token，是哪个模型处理的，响应质量到底怎么样！如果你是平台工程师或机器学习 (ML) 工程师，要照看跨团队的一大批 Amazon Bedrock 工作负载，这就是个实打实的问题：用量突增没法排查，浪费的 prompt 找不出来，也分不清哪个团队用了多少。</p>
+<p>我们做了一套东西来帮忙：一个集中式的 Amazon Bedrock 调用可观测性数据湖。本文会讲你手头有哪些原生数据、我们是怎么设计这个数据湖的，也会演示怎么用它查看 prompt、算出每次调用的成本。<a href="https://docs.aws.amazon.com/cloudformation/">AWS CloudFormation</a> 模板、<a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 代码和 SQL 查询都放在 <a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">AWS Sample Bedrock Invocation Data Lake GitHub 仓库</a> 里。本文梳理架构和部署步骤，仓库里则有部署所需的全部内容。</p>
+<h2>目前 Amazon Bedrock 能提供哪些可见性？</h2>
+<p>Amazon Bedrock 提供<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html">模型调用日志记录</a>，功能确实强大。你在<a href="https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/settings">每个使用 Bedrock 的 AWS 账户的设置</a> 里打开调用日志，它就会把请求和响应的完整记录投递到 <a href="https://aws.amazon.com/pm/serv-s3/">Amazon Simple Storage Service (Amazon S3)</a> 或 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a>。</p>
+<p>数据是在，只是被锁在各自的账户里。你真正想要的是整个组织里每次调用的一个统一、快速、可查询的视图。这正是数据湖能给的。</p>
 <h2>什么是 Amazon Bedrock 可观测性数据湖？</h2>
-<p>集中式 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-inspiration-logging.html">Amazon Bedrock 调用日志</a> 数据湖将原始模型调用日志从链接账户提取到 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a>。订阅日志过滤器然后将这些记录转发到您的中央帐户。中央账户通过 <a href="https://aws.amazon.com/firehose/">Amazon Data Firehose</a> 处理数据，并通过 <a href="https://aws.amazon.com/athena/">Amazon Athena</a> 将它们公开为一张干净的表，您可以在整个组织中查询。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-21645-1.jpg" alt="跨越链接源帐户和中央帐户的Bedrock调用数据湖的架构"></p>
-<p>图 1：跨中央账户和链接账户的 Amazon Bedrock 调用可观测性数据湖架构</p>
-<p>所有内容均使用两个 <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">AWS CloudFormation</a> 模板部署为基础设施即代码，因此您可以在组织中的每个账户中重复部署。这可以在 <a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">AWS 示例 Bedrock 调用数据湖 GitHub 存储库</a> 中找到。</p>
-<h2>每个 Amazon Bedrock 调用日志捕获什么？</h2>
-<p>运行此解决方案后，您将在部署到的链接帐户中获得一组组合数据，以便您可以使用 Athena 进行查询。将日志平铺到处理后的表中后，每次调用会得到什么：</p>
-<ul><li><strong>用户或应用程序发送的提示</strong>。</li><li><strong>返回的模型响应</strong>。</li><li><strong>输入和输出令牌计数</strong>，因此您可以测量每次调用的真实权重。</li><li><strong>使用的模型</strong>，因此您可以了解跨团队的模型利用率。</li><li><strong>停止原因</strong>（例如，<code>max_tokens</code>），它告诉您响应何时被切断。</li><li><strong>帐户和时间戳</strong>，因此您可以对所有内容进行属性和时间切片。</li><li>****[AWS 身份和访问管理 (IAM)角色](https://aws.amazon.com/iam/?trk=40032cd2-744c-4b2c-ad0c-cf60894e0921&amp;sc_channel=ps&amp;ef_id=CjwKCAjws_DTBhB_EiwAXZknGfru 2_JWQb1nqidRQ4APsbkaGf1W2ywetPh_unJq1IEvVAlNJfLWzRoCpg4QAvD_BwE&amp;gads_camp=23528572748&amp;gads_ag=198422384371&amp;gads_ad=795811958 070&amp;gads_kw=iam&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=9198785&amp;gad_campaignid=23528572748&amp;gbraid=0AAAAADjHt p-pAfh6ucw0EYbg13-jUO8NM&amp;gclid=CjwKCAjws_DTBhB_EiwAXZknGfru2_JWQb1nqidRQ4APsbkaGf1W2ywetPh_unJq1IEvVAlNJfLWzRoCpg4QAvD_BwE),这样您就可以看到是谁发送了提示。</li></ul>
-<p>像这样捕获每次调用后，您就会从“我们在 Amazon Bedrock 上使用了 X 代币”变为“这正是每个模型所调用的内容以及它的效率。”这就是可见性平台和机器学习团队所缺少的。</p>
-<h2>Amazon Bedrock 数据湖是如何设计的？</h2>
-<p>数据湖将每次调用经历五个阶段，从 Amazon Bedrock 写入日志到您可以在 Athena 中查询日志。</p>
-<h3>1. Amazon Bedrock 写入调用日志</h3>
-<p>每次应用程序调用 Amazon Bedrock 模型时，Amazon Bedrock 都可以记录发生的情况：哪个模型、哪个账户、哪个 IAM 身份进行了调用、使用了多少个输入和输出令牌以及提示和响应文本。您可以通过单个 API 调用为每个账户启用一次此功能，将 Amazon Bedrock 指向 CloudWatch 日志组并为其赋予可以在其中写入的角色。</p>
-<h3>2. CloudWatch 将日志转发到中央账户</h3>
-<p>每个源账户都会在其 Amazon Bedrock 日志组上获得一个订阅过滤器。将其视为永久转发规则，即“将每个新事件发送到此地址”。该地址是您中央账户中的 Amazon CloudWatch Logs 目标。源帐户没有获得中央管道的权限。他们将事件传递到目的地，中央帐户自己的角色从那里接收事件。</p>
-<h3>3. 一个小的 Lambda 整理每条记录</h3>
-<p>CloudWatch 不会移交干净的 JSON。它将事件捆绑成批次，并对它们进行压缩和编码，因此到达的内容看起来像是乱码，直到您打开它。一个小型 Lambda 函数可以完成三项工作：</p>
-<ul><li>将批次解包回单独的日志记录。</li><li>消除噪音。 CloudWatch 偶尔会发送内务消息和简单的英语通知，例如“Amazon Bedrock 日志的权限已正确设置”。这些不是调用数据，让它们通过下一阶段的中断。</li><li>平整一个尴尬的领域。调用者的身份到达下一层嵌套。 Lambda 将其提升到顶部，以便稍后查询。</li></ul>
-<h3>4. Amazon Data Firehose 转换为 Parquet 并写入 S3</h3>
-<p>Amazon Data Firehose 缓冲记录并将其写入 Amazon S3 存储桶，并在此过程中从 JSON 转换为 Parquet。 Firehose 还将每个对象归档在日期路径下 (<code>year=2026/month=08/day=27/</code>)。</p>
-<h3>5.使用Athena查询数据并连接成本数据</h3>
-<p><a href="https://aws.amazon.com/glue/">AWS Glue</a> 表告诉 Athena 如何读取这些文件，以便您可以使用普通 SQL 查询数据湖。您可以看到哪些用户使用最多的代币、哪些模型被普遍选择以及人们在提示什么。如果需要，您还可以将其连接到 <a href="https://aws.amazon.com/aws-cost-management/aws-cost-and-usage-reporting/">AWS 成本和使用情况报告</a> (CUR) 以获取每日用户提示的支出。</p>
-<h2>开始之前您需要什么？</h2>
-<p>部署之前需要做好以下几件事：</p>
-<ul><li><a href="https://aws.amazon.com/cli/">AWS 命令​​行界面 (AWS CLI)</a> 配置了每个账户的凭证。</li><li><strong>CloudFormation</strong> <code>CAPABILITY_IAM</code> 和 <code>CAPABILITY_NAMED_IAM</code> 权限。</li><li><strong>至少一个链接账户</strong>（运行 Amazon Bedrock 工作负载的账户）和<strong>一个中央账户</strong>用于接收复制日志（这些账户可以是同一账户）。</li><li><strong>Python 3 with Boto3</strong> (<code>pip install boto3</code>)，用于端到端测试脚本。</li><li><a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">克隆存储库</a> 及其中的所有资源。</li></ul>
-<h2>你如何部署它？</h2>
-<p><strong>这里的顺序很重要。</strong> 中央帐户堆栈必须先存在，然后链接的帐户堆栈才能引用它。</p>
-<h3>第 1 阶段：部署中央数据湖堆栈</h3>
-<p>首先将中央 CloudFormation 堆栈部署到将拥有管道的帐户中。在继续之前，请注意堆栈输出中的两个值：CloudWatch Logs 目标 ARN（每个源账户都需要）和 [AWS Quick视线](https://aws.amazon.com/quick/?trk=cb69a790-31b4-4f3f-ab38-8c131506ae2b&amp;sc_channel=ps&amp;ef_id=Cj0KCQjw2OnUBhC2ARIsACKyfaHOyr I2BSqC3eo7DZbbj0Ks030dwANVC-ITwsJaw_YzyJqknqgei6IaAm3WEALw_wcB:G:s&amp;gads_camp=23528573981&amp;gads_ag=191423962694&amp;gads_ad=8069675641 54&amp;gads_kw=amazon%20quick&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=1006993&amp;gad_campaignid=23528573981&amp;gbraid=0AAAA ADjHtp_o1ijSErUcY81biixQPaoFW&amp;gclid=Cj0KCQjw2OnUBhC2ARISACKyfaHOyrI2BSqC3eo7DZbbj0Ks030dwANVC-ITwsJaw_YzyJqknqgei6IaAm3WEALw_wcB)角色 ARN（如果您部署仪表板，稍后需要）。</p>
-<h3>第 2 阶段：在每个源帐户中部署日志记录堆栈</h3>
-<p>部署关联帐户 CloudFormation。对运行 Amazon Bedrock 工作负载的每个账户重复此操作。源堆栈很小，并且采用单个输入：来自阶段 1 的目标 ARN。</p>
-<h3>第 3 阶段：打开 Amazon Bedrock 模型调用日志记录</h3>
-<p>部署堆栈不会启动日志记录。 Amazon Bedrock 日志记录是账户级别设置，而不是 CloudFormation 资源。每个源账户激活一次，将 Amazon Bedrock 指向日志组和第 2 阶段的日志记录角色。仅启用 CloudWatch 传输。</p>
-<h3>第 4 阶段：验证数据是否到达</h3>
-<p>在源账户中运行测试调用，等待 Amazon Data Firehose 刷新其缓冲区（<a href="https://docs.aws.amazon.com/firehose/latest/dev/basic-deliver.html#Frequency">大约一分钟，有时更长</a>），然后确认 Parquet 对象已出现在数据湖的“data/”前缀下。最后，检查您的 S3 存储桶以查看数据。</p>
-<h3>第 5 阶段：创建 Athena 视图并查询数据</h3>
-<p>中央堆栈将视图定义保存为命名的 Athena 查询，但不运行它。执行一次保存的查询以创建平面视图。在专用 Athena 工作组中针对原始表或扁平视图运行查询。该视图很简单：令牌计数、缓存令牌、停止原因和提示/响应预览已经是平面列。</p>
-<h2>您如何查看 Amazon Bedrock 代币的成本？</h2>
-<p>当您想要针对所有这些的美元数字时，请将处理后的表连接到您的 CUR 2.0 数据。加入密钥是 IAM ARN。您可以在 <a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation/blob/main/Bedrock%20Data%20Lake%20SQL.md">Bedrock Data Lake SQL</a> 文件中使用以下示例查询。</p>
-<p>这一连接也将可观察性湖转变为成本归因：这会提示成本最高、每个团队或帐户每天的成本，以及效率最低的调用实际上给您带来的成本。这是一个很棒的补充，但数据湖在您到达那里之前就已经得到了很好的维护。</p>
-<h2>什么是代币经济学以及为什么这个数据湖对其很重要？</h2>
-<p>Tokenomics 是管理人工智能 (AI) 代币消费经济的实践，在 2026 年 FinOps 基金会会议上宣布为正式的 FinOps 领域。它建立在与云财务管理相同的“查看”、“保存”、“运行”和“计划”支柱之上，但应用于代币而不是基础设施。挑战在于您无法优化无法衡量的内容。如今，大多数组织都缺乏回答基本代币经济学问题所需的精细数据：哪些团队消耗的代币最多，哪些提示是浪费的。通过每次调用令牌和成本可见性，团队可以将每个工作负载与适合它的模型相匹配。这正是这个数据湖为您提供的。通过对每次调用的提示、响应、令牌计数、模型和 IAM 身份的可见性，您可以为开始运行令牌经济学实践而不仅仅是跟踪 Amazon Bedrock 账单奠定基础。</p>
+<p>集中式 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html">Amazon Bedrock 调用日志</a> 数据湖把各关联账户里的原始模型调用日志汇聚到 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a>，再由订阅日志过滤器把这些记录转发到中央账户。中央账户通过 <a href="https://aws.amazon.com/firehose/">Amazon Data Firehose</a> 处理数据，并借助 <a href="https://aws.amazon.com/athena/">Amazon Athena</a> 把它们呈现为一张干净的表，供你在整个组织范围内查询。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-21645-1.jpg" alt="跨越关联源账户与中央账户的 Bedrock 调用数据湖架构"></p>
+<p>图 1：跨中央账户与关联账户的 Amazon Bedrock 调用可观测性数据湖架构</p>
+<p>所有组件都用两个 <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">AWS CloudFormation</a> 模板以基础设施即代码的方式部署，因此可以在组织里的每个账户中反复铺开。这些内容可在 <a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">AWS Sample Bedrock Invocation Data Lake GitHub 仓库</a> 找到。</p>
+<h2>每条 Amazon Bedrock 调用日志会捕获什么？</h2>
+<p>部署并运行这套方案后，你会在所部署的关联账户里得到一份汇总数据，可以用 Athena 查询。日志被展平进处理后的表之后，每次调用你能拿到：</p>
+<ul><li>用户或应用发出的 <strong>prompt</strong>。</li><li>返回的<strong>模型响应</strong>。</li><li><strong>输入与输出 token 数</strong>，用来衡量每次调用的真实分量。</li><li><strong>所用的模型</strong>，用来了解各团队对模型的使用情况。</li><li><strong>停止原因</strong>（例如 <code>max_tokens</code>），它告诉你响应是在哪里被截断的。</li><li><strong>账户和时间戳</strong>，用来对一切做归属划分和时间切片。</li><li><strong>该</strong> <a href="https://aws.amazon.com/iam/?trk=40032cd2-744c-4b2c-ad0c-cf60894e0921&amp;sc_channel=ps&amp;ef_id=CjwKCAjws_DTBhB_EiwAXZknGfru2_JWQb1nqidRQ4APsbkaGf1W2ywetPh_unJq1IEvVAlNJfLWzRoCpg4QAvD_BwE&amp;gads_camp=23528572748&amp;gads_ag=198422384371&amp;gads_ad=795811958070&amp;gads_kw=iam&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=9198785&amp;gad_campaignid=23528572748&amp;gbraid=0AAAAADjHtp-pAfh6ucw0EYbg13-jUO8NM&amp;gclid=CjwKCAjws_DTBhB_EiwAXZknGfru2_JWQb1nqidRQ4APsbkaGf1W2ywetPh_unJq1IEvVAlNJfLWzRoCpg4QAvD_BwE">AWS Identity and Access Management (IAM) 角色</a>，用来查看是谁发出了 prompt。</li></ul>
+<p>像这样把每次调用都记录下来之后，你的认知会从&quot;我们在 Amazon Bedrock 上用了 X 个 token&quot;变成&quot;每次模型调用里到底是什么内容、效率有多高，一清二楚&quot;。这正是平台团队和 ML 团队一直缺的可见性。</p>
+<h2>Amazon Bedrock 数据湖是怎么设计的？</h2>
+<p>数据湖让每次调用走五个阶段：从 Amazon Bedrock 写出日志，到你能用 Athena 查询为止。</p>
+<h3>1. Amazon Bedrock 写出调用日志</h3>
+<p>应用每次调用 Amazon Bedrock 模型时，Amazon Bedrock 都能记录下发生的事：用了哪个模型、哪个账户、哪个 IAM 身份发起调用、消耗了多少输入和输出 token，以及 prompt 和响应文本。这个功能每个账户通过一次 API 调用就能开启：把 Amazon Bedrock 指向一个 CloudWatch 日志组，并给它一个能在其中写入的角色。</p>
+<h3>2. CloudWatch 把日志转发到中央账户</h3>
+<p>每个源账户会在自己的 Amazon Bedrock 日志组上挂一个订阅过滤器。可以把它理解成一条常驻的转发规则：把每条新事件都发到这个地址。这个地址就是中央账户里的一个 Amazon CloudWatch Logs 目标。源账户拿不到中央管道的权限，它们只管把事件交给目标，之后由中央账户自己的角色接手。</p>
+<h3>3. 一个小型 Lambda 整理每条记录</h3>
+<p>CloudWatch 交出来的不是干净的 JSON。它把事件打成批次，压缩并编码包起来，所以到达时看着像一堆乱码，拆开才看得懂。一个小型 Lambda 函数做三件事：</p>
+<ul><li>把批次拆回一条条独立的日志记录。</li><li>丢掉噪音。CloudWatch 偶尔会发一些内务消息和英文提示，比如&quot;Amazon Bedrock 日志的权限已设置妥当&quot;。这些不是调用数据，放它们过去会打断下一阶段。</li><li>展平一个别扭的字段。调用方的身份原本嵌在下一层，Lambda 把它提到顶层，之后查询就直观了。</li></ul>
+<h3>4. Amazon Data Firehose 转成 Parquet 并写入 S3</h3>
+<p>Amazon Data Firehose 先缓冲记录，再把它们写入 Amazon S3 存储桶，途中把 JSON 转成 Parquet。Firehose 还会按日期路径归档每个对象（<code>year=2026/month=08/day=27/</code>）。</p>
+<h3>5. 用 Athena 查询数据并关联成本数据</h3>
+<p><a href="https://aws.amazon.com/glue/">AWS Glue</a> 表告诉 Athena 怎么读这些文件，于是用普通 SQL 就能查询数据湖。你能看到哪些用户用的 token 最多、哪些模型最常被选中、大家都在 prompt 些什么。需要的话，还可以把它接到 <a href="https://aws.amazon.com/aws-cost-management/aws-cost-and-usage-reporting/">AWS Cost and Usage Report</a> (CUR) 上，按天算出用户 prompt 的花费。</p>
+<h2>开始前需要准备什么？</h2>
+<p>部署前需要备好几样东西：</p>
+<ul><li>为 <a href="https://aws.amazon.com/cli/">AWS Command Line Interface (AWS CLI)</a> 配好每个账户的凭证。</li><li><strong>CloudFormation</strong> 的 <code>CAPABILITY_IAM</code> 和 <code>CAPABILITY_NAMED_IAM</code> 权限。</li><li><strong>至少一个关联账户</strong>（运行 Amazon Bedrock 工作负载的账户）和<strong>一个中央账户</strong>，用来接收复制过来的日志（两者可以是同一个账户）。</li><li><strong>Python 3 与 Boto3</strong>（<code>pip install boto3</code>），用于端到端测试脚本。</li><li><a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">克隆好的仓库</a>，里面包含全部资源。</li></ul>
+<h2>怎么部署？</h2>
+<p><strong>这里的顺序很关键。</strong> 中央账户的堆栈必须先存在，关联账户的堆栈才能引用它。</p>
+<h3>阶段 1：部署中央数据湖堆栈</h3>
+<p>先把中央 CloudFormation 堆栈部署到将要承载管道的账户里。继续之前，记下堆栈输出中的两个值：CloudWatch Logs 目标 ARN（每个源账户都要用），以及 <a href="https://aws.amazon.com/quick/?trk=cb69a790-31b4-4f3f-ab38-8c131506ae2b&amp;sc_channel=ps&amp;ef_id=Cj0KCQjw2OnUBhC2ARIsACKyfaHOyrI2BSqC3eo7DZbbj0Ks030dwANVC-ITwsJaw_YzyJqknqgei6IaAm3WEALw_wcB:G:s&amp;gads_camp=23528573981&amp;gads_ag=191423962694&amp;gads_ad=806967564154&amp;gads_kw=amazon%20quick&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=1006993&amp;gad_campaignid=23528573981&amp;gbraid=0AAAAADjHtp_o1ijSErUcY81biixQPaoFW&amp;gclid=Cj0KCQjw2OnUBhC2ARIsACKyfaHOyrI2BSqC3eo7DZbbj0Ks030dwANVC-ITwsJaw_YzyJqknqgei6IaAm3WEALw_wcB">AWS Quick Sight</a> 角色 ARN（如果之后要部署仪表板会用到）。</p>
+<h3>阶段 2：在每个源账户部署日志记录堆栈</h3>
+<p>部署关联账户的 CloudFormation。每个运行 Amazon Bedrock 工作负载的账户都要来一遍。源堆栈很小，只接收一个输入：阶段 1 里的目标 ARN。</p>
+<h3>阶段 3：开启 Amazon Bedrock 模型调用日志记录</h3>
+<p>部署堆栈并不会启动日志记录。Amazon Bedrock 的日志记录是账户级设置，不是 CloudFormation 资源。每个源账户激活一次，把 Amazon Bedrock 指向阶段 2 里的日志组和日志记录角色，并且只开启 CloudWatch 投递。</p>
+<h3>阶段 4：确认数据已到达</h3>
+<p>在源账户里跑一次测试调用，等 Amazon Data Firehose 把缓冲区刷出去（<a href="https://docs.aws.amazon.com/firehose/latest/dev/basic-deliver.html#frequency">大约一分钟，有时更久</a>），再确认数据湖的 <code>data/</code> 前缀下已经出现 Parquet 对象。最后到 S3 存储桶里看看数据。</p>
+<h3>阶段 5：创建 Athena 视图并查询数据</h3>
+<p>中央堆栈把视图定义存成一条具名的 Athena 查询，但不会执行它。手动跑一次这条保存的查询，就生成了展平视图。查询都在专用的 Athena 工作组里跑，可以针对原始表，也可以针对展平视图。视图很直白：token 数、缓存 token、停止原因，以及 prompt/响应预览，都已经是平铺的列。</p>
+<h2>怎么看 Amazon Bedrock 的 token 成本？</h2>
+<p>想给这一切算出美元金额时，把处理后的表与 CUR 2.0 数据做关联，关联键是 IAM ARN。可用的示例查询在 <a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation/blob/main/Bedrock%20Data%20Lake%20SQL.md">Bedrock Data Lake SQL</a> 文件里。</p>
+<p>就这一次关联，把可观测性数据湖也变成了成本归因工具：哪些 prompt 最花钱、各团队或账户每天的成本、效率最低的那些调用究竟在烧掉多少钱。这是很棒的补充，但早在你走到这一步之前，数据湖本身就已经值回票价了。</p>
+<h2>什么是 tokenomics，这个数据湖为什么对它重要？</h2>
+<p>tokenomics 指的是管理人工智能 (AI) token 消耗经济性的实践，在 2026 年 FinOps Foundation 大会上被宣布为一个正式的 FinOps 领域。它建立在与 Cloud Financial Management 相同的 See、Save、Run、Plan 四大支柱之上，只是把对象从基础设施换成了 token。难点在于，无法衡量的东西就没法优化。如今大多数组织都缺少回答基本 tokenomics 问题所需的细粒度数据：哪些团队消耗的 token 最多，哪些 prompt 在浪费。有了每次调用的 token 与成本可见性，团队就能把每个工作负载配到合适的模型上——这正是这个数据湖给你的东西。对每次调用的 prompt、响应、token 数、模型和 IAM 身份都能看见，你就有了开展 tokenomics 实践的基础，而不只是盯着一张 Amazon Bedrock 账单。</p>
 <h2>创建 Amazon Bedrock 调用日志仪表板</h2>
-<p>如果您想可视化您的令牌消耗情况，我们有一个 <a href="https://aws.amazon.com/quicksight/">AWS Quick Sight</a> 仪表板。这会显示表中一段时间​​内的数据，以便您可以与组织中的利益相关者共享。使用 AWS Quick Sight，您可以自定义仪表板并添加团队信息等组织元数据，使其成为您自己的仪表板。要部署它，请使用 <a href="https://github.com/aws-solutions-library-samples/cloud-intelligence-dashboards-framework/blob/main/CID-CMD.md">cid-cmd deploy</a> CLI 命令。完整的分步部署说明位于 <a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">存储库自述文件</a>，包括 AWS Quick Sight 角色配置和数据源设置。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-21645-2.png" alt="Amazon Quick Sight 仪表板显示 Bedrock 令牌随时间的使用情况"></p>
+<p>想把 token 消耗可视化，我们准备了 <a href="https://aws.amazon.com/quicksight/">AWS Quick Sight</a> 仪表板。它按时间展示表中的数据，方便你分享给组织里的相关方。用 AWS Quick Sight 可以自定义仪表板，加上团队信息等组织元数据，做成自己的版本。部署时用 <a href="https://github.com/aws-solutions-library-samples/cloud-intelligence-dashboards-framework/blob/main/CID-CMD.md">cid-cmd deploy</a> CLI 命令即可。完整的分步部署说明在<a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">仓库 README</a> 里，包括 AWS Quick Sight 角色配置和数据源设置。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-21645-2.png" alt="Amazon Quick Sight 仪表板展示 Bedrock token 用量随时间的变化"></p>
 <p>图 2：AWS Quick Sight Amazon Bedrock 仪表板</p>
-<h2>您现在可以使用 Amazon Bedrock 调用日志做什么？</h2>
-<p>通过在一个快速、可查询的表中进行每次调用，您终于可以回答曾经很痛苦的问题：</p>
-<ul><li><strong>调试和审核调用 –</strong> 在帐户中提取特定调用的准确提示和响应，而无需挖掘原始日志文件。</li><li><strong>衡量代币效率 –</strong> 将“input_tokens”与“output_tokens”进行比较，并跨团队选择模型，以找出您无缘无故燃烧代币的地方。</li><li><strong>发现提示工程机会 –</strong> 查找响应被切断的请求（<code>stop_reason = max_tokens</code>），这是提示或配置需要工作的好迹象。</li><li><strong>查看模型系列 –</strong> 数据显示哪个模型服务于每种模式，以便团队可以确认每个模型与其工作负载相匹配。</li><li><strong>管理跨团队的使用情况 –</strong> 每次调用都与一个帐户绑定，以便您知道谁在运行什么。</li></ul>
+<h2>有了 Amazon Bedrock 调用日志，现在能做什么？</h2>
+<p>每次调用都落在一张快速可查询的表里，过去那些让人头疼的问题终于能回答了：</p>
+<ul><li><strong>调试与审计调用 –</strong> 在某个账户里调出指定调用的确切 prompt 和响应，不必翻原始日志文件。</li><li><strong>衡量 token 效率 –</strong> 把 <code>input_tokens</code> 与 <code>output_tokens</code> 对比，再结合各团队的模型选择，找出白白烧 token 的地方。</li><li><strong>发现 prompt 优化机会 –</strong> 找出响应被截断的请求（<code>stop_reason = max_tokens</code>），这往往说明 prompt 或配置需要调整。</li><li><strong>审视模型系列 –</strong> 数据能显示每种模式由哪个模型承接，团队可据此确认模型与工作负载是否匹配。</li><li><strong>管理跨团队用量 –</strong> 每次调用都关联到一个账户，谁在跑什么一目了然。</li></ul>
 <h2>数据治理</h2>
-<p>由于该解决方案将每个团队的完整提示和完成情况集中到单个 Amazon S3 存储桶中，因此安全性和治理从一开始就内置于该架构中。该存储桶受 AWS Key Management Service (AWS KMS) 的服务器端加密保护，因此默认情况下数据会进行静态加密。对存储桶和 Amazon Athena 查询结果的访问是通过 AWS Identity and Access Management (IAM) 策略控制的。您可以将权限范围限定到需要它们的团队和角色。提示可能包含个人身份信息 (PII)，具体取决于您的用户与 Amazon Bedrock 交互的方式。我们建议检查您的 IAM 策略和 Amazon S3 存储桶策略，以确认只有授权委托人才能访问数据。</p>
+<p>这套方案把各团队完整的 prompt 和补全结果集中到单个 Amazon S3 存储桶里，因此安全与治理从一开始就内建在架构中。存储桶由 AWS Key Management Service (AWS KMS) 的服务器端加密保护，数据默认静态加密。对存储桶和 Amazon Athena 查询结果的访问，由 AWS Identity and Access Management (IAM) 策略控制，你可以把权限收窄到确实需要的团队和角色。prompt 里可能带有个人身份信息 (PII)，取决于用户怎么与 Amazon Bedrock 交互。建议检查一下 IAM 策略和 Amazon S3 存储桶策略，确认只有获得授权的主体能接触到这些数据。</p>
 <h2>清理</h2>
-<p>如果您希望删除创建的资源，请清空对象存储桶，然后删除 CloudFormation 模板。请注意在删除之前清空 S3 存储桶并手动删除 Athena Workgroup。</p>
+<p>想删掉创建的资源，先清空存储桶里的对象，再删除 CloudFormation 模板。注意删除前要把 S3 存储桶清空，Athena Workgroup 需要手动删除。</p>
 <h2>总结</h2>
-<p>现在，您可以将来自 Amazon Bedrock 的原始调用日志转换为单个、快速、组织范围内的可观察层。您可以清楚地了解帐户中的每个提示、响应、代币计数和模型选择，而不是封闭的系统。当您需要时，您还可以直接了解每件产品的成本。</p>
-<p>与任何系统项目一样，不要试图让海洋沸腾。从一两个链接帐户开始，舒适地查询调用表，然后扩展到整个组织。您的 Amazon Bedrock 使用量只会增加，因此您越早建立这种可见性，未来的每次调试、效率和成本对话就会变得越简单。</p>
-<p>如果您有任何疑问，或者想要分享如何在自己的工作负载中构建可观察性，请访问 <a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">AWS 示例 Bedrock 调用数据湖 GitHub 存储库</a>。</p>
-<h2>About the authors</h2>]]></content:encoded>
+<p>现在你有办法把 Amazon Bedrock 的原始调用日志，变成一层统一、快速、覆盖整个组织的可观测能力。不再是封闭的系统，各账户里每次 prompt、响应、token 数和模型选择都看得清清楚楚；想看成本时，还能直接对上每一笔。</p>
+<p>和所有系统项目一样，别想着一口吃成胖子。先从一两个关联账户开始，把查询调用表练熟，再推广到整个组织。你的 Amazon Bedrock 用量只会越来越大，越早建好这层可见性，日后每次谈调试、效率和成本就越省事。</p>
+<p>如果有疑问，或者想分享你怎么在自己的工作负载里做可观测性，欢迎到 <a href="https://github.com/aws-samples/sample-bedrock-token-cost-allocation">AWS Sample Bedrock Invocation Data Lake GitHub 仓库</a> 看看。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>AWS Quick 中的 skills 和 agents 是如何工作的</title>

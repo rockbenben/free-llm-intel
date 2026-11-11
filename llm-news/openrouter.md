@@ -9,12 +9,12 @@
 
 ## 全部文章（共 176 篇，按日期倒序；无日期条目列于最后）
 
-1. [LLM API 速率限制：如何修复 OpenAI 和 Claude 429 错误](https://openrouter.ai/blog/tutorials/llm-api-rate-limits/)（2026-11-11） <!--orig:LLM API Rate Limits: How to Fix OpenAI and Claude 429 Errors-->
-2. [LLM Quantization: What fp8 and fp4 Do to Quality and Price](https://openrouter.ai/blog/insights/llm-quantization/)（2026-11-11）
-3. [MCP、CLI 与技能：各自的具体成本](https://openrouter.ai/blog/insights/mcp-vs-cli-vs-skills/)（2026-11-11） <!--orig:MCP vs CLI vs Skills: What Each Costs in Context-->
-4. [测量的扫描文档的最佳 OCR 模型](https://openrouter.ai/blog/insights/best-ocr-model/)（2026-11-10） <!--orig:Best OCR Model for Scanned Documents, Measured-->
-5. [如何构建语音 AI 代理](https://openrouter.ai/blog/tutorials/build-voice-ai-agent/)（2026-11-10） <!--orig:How to Build a Voice AI Agent-->
-6. [如何从任何 LLM 获取结构化输出：JSON 架构、工具调用或决策模型](https://openrouter.ai/blog/tutorials/structured-output-llm/)（2026-11-10） <!--orig:How to Get Structured Output from Any LLM: JSON Schema, Tool Calls, or a Decision Model-->
+1. [LLM API 速率限制：如何修复 OpenAI 和 Claude 的 429 错误](https://openrouter.ai/blog/tutorials/llm-api-rate-limits/)（2026-11-11） <!--orig:LLM API Rate Limits: How to Fix OpenAI and Claude 429 Errors-->
+2. [LLM 量化：fp8 和 fp4 对质量与价格的影响](https://openrouter.ai/blog/insights/llm-quantization/)（2026-11-11） <!--orig:LLM Quantization: What fp8 and fp4 Do to Quality and Price-->
+3. [MCP、CLI 与 skills：各自在上下文中的成本](https://openrouter.ai/blog/insights/mcp-vs-cli-vs-skills/)（2026-11-11） <!--orig:MCP vs CLI vs Skills: What Each Costs in Context-->
+4. [扫描文档最佳 OCR 模型实测](https://openrouter.ai/blog/insights/best-ocr-model/)（2026-11-10） <!--orig:Best OCR Model for Scanned Documents, Measured-->
+5. [如何构建语音 AI agent](https://openrouter.ai/blog/tutorials/build-voice-ai-agent/)（2026-11-10） <!--orig:How to Build a Voice AI Agent-->
+6. [如何从任何 LLM 获取结构化输出：JSON Schema、工具调用或决策模型](https://openrouter.ai/blog/tutorials/structured-output-llm/)（2026-11-10） <!--orig:How to Get Structured Output from Any LLM: JSON Schema, Tool Calls, or a Decision Model-->
 7. [推出全新 Auto 与 Auto Code 路由器](https://openrouter.ai/blog/announcements/auto-and-auto-code-routers/)（2026-11-06） <!--orig:Introducing the New Auto and Auto Code Routers-->
 8. [用 OpenRouter 构建 AI 代码审查器](https://openrouter.ai/blog/tutorials/ai-code-review/)（2026-11-01） <!--orig:Build an AI Code Reviewer with OpenRouter-->
 9. [如何构建你自己的常驻 AI agent](https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/)（2026-10-31） <!--orig:How to Build Your Own Always-On AI Agent-->

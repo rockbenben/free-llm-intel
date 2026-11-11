@@ -9,24 +9,24 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Wed, 11 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>LLM API 速率限制：如何修复 OpenAI 和 Claude 429 错误</title>
+      <title>LLM API 速率限制：如何修复 OpenAI 和 Claude 的 429 错误</title>
       <link>https://openrouter.ai/blog/tutorials/llm-api-rate-limits/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/llm-api-rate-limits/</guid>
       <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：LLM API Rate Limits: How to Fix OpenAI and Claude 429 Errors</description>
-      <content:encoded><![CDATA[<h1>LLM API 速率限制：如何修复 OpenAI 和 Claude 429 错误</h1>
-<p>开放路由器 ·11/11/2026</p>
-<p><img src="https://openrouter.ai/blog/images/llm-api-rate-limits.png" alt="LLM API 速率限制：如何修复 OpenAI 和 Claude 429 错误"><img src="https://openrouter.ai/blog/images/llm-api-rate-limits-dark.png" alt="LLM API 速率限制：如何修复 OpenAI 和 Claude 429 错误"></p>
-<p>429 Too Many Requests 错误意味着您发送的请求或令牌数量超出了当前时间窗口允许的限制。 OpenAI、Anthropic 和 <a href="https://openrouter.ai/docs/api_reference/limits">OpenRouter</a> 都会返回它，并且它通常会在应用程序首次在实际负载下运行或批处理作业分散到多个工作人员时显示。</p>
-<p>大多数人都会尝试重试，而默认设置通常是不够的。当我们通过 OpenAI Python SDK 针对每分钟的限制运行 60 个提示批处理时，在 SDK 重试后，仍有 23 个请求失败。 SDK 放弃每个窗口后 4 到 8 秒，窗口会重置。</p>
-<p>本指南从真正的 429 开始，读取其标头，并通过三种方式修复它：在错误给您的重置时间重试，将溢出发送到后备模型，并让另一个提供者提供相同的模型。我们针对 OpenRouter API 运行了每个示例，每个代码块下的输出就是我们得到的。</p>
-<h2>Tl;博士</h2>
-<ul><li>429 表示您达到了当前窗口的限制。在 OpenRouter 上，error.metadata.limit_source 告诉您它是谁的限制。</li><li>使用默认设置，OpenAI Python SDK 会重试每个 429 两次，并在大约 2 秒内放弃。相对于每分钟的限制，我们批次中的 60 个请求中有 23 个仍然失败。</li><li>等待 Retry-After 或 X-RateLimit-Reset 的重试在每次运行中完成全部 60 次，在 Python 中需要 89 到 92 秒，在 TypeScript 中需要 106 到 218 秒。</li><li>模型后备在 13 秒内完成全部 60 场比赛，费用为 0.000066 美元，无需等待。</li><li>固定到一个提供程序并关闭故障转移，每次运行 150 个请求中最多有 32 个失败。启用故障转移后，每次运行 150 次都成功。</li></ul>
-<h2>429 速率限制错误是什么样的？</h2>
-<p>我们一次向 poolside/laguna-s-2.1:free 发送 40 个请求，这是一个免费模型，每分钟限制 20 个请求。 38 次成功，其中 2 次从为模型提供服务的提供商返回 429：</p>
+      <content:encoded><![CDATA[<h1>LLM API 速率限制：如何修复 OpenAI 和 Claude 的 429 错误</h1>
+<p>OpenRouter ·11/11/2026</p>
+<p><img src="https://openrouter.ai/blog/images/llm-api-rate-limits.png" alt="LLM API 速率限制：如何修复 OpenAI 和 Claude 的 429 错误"><img src="https://openrouter.ai/blog/images/llm-api-rate-limits-dark.png" alt="LLM API 速率限制：如何修复 OpenAI 和 Claude 的 429 错误"></p>
+<p>429 Too Many Requests 错误表示你在当前时间窗口内发送的请求数或 token 数超出了限额。OpenAI、Anthropic 和 <a href="https://openrouter.ai/docs/api_reference/limits">OpenRouter</a> 都会返回它，而且通常是在应用第一次承受真实负载、或批处理作业分散到多个 worker 上时首次出现。</p>
+<p>大多数人第一反应是重试，但在默认设置下这往往不够。我们用 OpenAI Python SDK 对着每分钟限额跑了一批 60 个 prompt 的任务，SDK 重试之后仍有 23 个请求失败。每次 SDK 放弃后的 4 到 8 秒，窗口才重置。</p>
+<p>本指南从一个真实的 429 出发，读取它的响应头，再用三种办法修复：按错误给出的重置时间重试、把溢出的请求转给后备模型、让另一个 provider 来提供同一个模型。每个例子我们都对着 OpenRouter API 跑过，每个代码块下面的输出就是我们实际拿到的结果。</p>
+<h2>Tl;dr</h2>
+<ul><li>429 表示你在当前窗口里撞上了限额。在 OpenRouter 上，error.metadata.limit_source 会告诉你是谁的限额。</li><li>按默认设置，OpenAI Python SDK 对每个 429 重试两次，约 2 秒内就放弃。对着每分钟限额，我们这批 60 个请求里仍有 23 个失败。</li><li>等待 Retry-After 或 X-RateLimit-Reset 再重试的做法，每次运行都跑完了全部 60 个，在 Python 里耗时 89 到 92 秒，在 TypeScript 里是 106 到 218 秒。</li><li>用 models 做后备，13 秒内跑完 60 个，花费 $0.000066，完全不用等待。</li><li>固定到单一 provider 且关闭故障转移时，每轮 150 个请求里最多有 32 个失败；开启故障转移后，每轮 150 个全部成功。</li></ul>
+<h2>429 速率限制错误长什么样？</h2>
+<p>我们一次性向 poolside/laguna-s-2.1:free 发了 40 个请求，这是一个每分钟限 20 个请求的免费模型。38 个成功，2 个由提供该模型的 provider 返回 429：</p>
 <pre><code>200: 38  429: 2  other: 0
 429 limit_source: {'upstream_provider_shared_pool': 2}</code></pre>
-<p>我们自己的免费套餐限制中的 429 带有不同的 limit_source。这是单独运行的一个：</p>
+<p>来自我们免费层限额的 429，limit_source 不一样。下面是另一次运行里的一条：</p>
 <pre><code>{
   &quot;message&quot;: &quot;Rate limit exceeded: free-models-per-min. &quot;,
   &quot;code&quot;: 429,
@@ -41,24 +41,24 @@
     &quot;provider_name&quot;: null
   }
 }</code></pre>
-<p>标头包含您需要的数字。 X-RateLimit-Limit 是上限，X-RateLimit-Remaining 是剩下的内容，X-RateLimit-Reset 是重试可以成功的最早时间，以毫秒为单位的 Unix 时间戳。正文添加了 limit_source ，它表示您达到了谁的限制，以及为阅读日志的人编写的remediate_hint 。在代码中的 limit_source 上分支，而不是在提示文本上分支。</p>
-<p>OpenAI 和 Anthropic 以不同的名称发送相同的信息。 <a href="https://developers.openai.com/api/docs/guides/rate-limits">OpenAI 的</a> x-ratelimit-reset-requests 是一个持续时间，例如 1 秒，并且<a href="https://platform.claude.com/docs/en/api/rate-limits">两个提供商</a> 可以发送重试后的秒数。</p>
-<h2>为什么速率限制会在不同的请求计数时触发？</h2>
-<p>40 个请求中的 38 个超过了 20 的限制。限制器可以接受在计数赶上之前同一时刻到达的请求，并且大多数限制器不会在每分钟结束时完全重置。 Anthropic 使用不断补充的令牌桶。当您的流量增长过快时，即使您低于每分钟限制，<a href="https://developers.openai.com/docs/guides/error-codes">OpenAI 也会返回 429</a>，代码为 Slow_down。</p>
-<p>为了了解我们的免费模型限制如何计算，我们以不同的模式发送了 161 个请求。以下是其中三个：</p>
-<table><thead><tr><th><strong>测试</strong></th><th><strong>那一刻就成功了</strong></th></tr></thead><tbody><tr><td>连续，空闲两分钟后</td><td>30</td></tr><tr><td>连续的，紧接</td><td>之后的一分钟30</td></tr><tr><td>30个并发</td><td>29</td><td>29</td></tr></tbody></table>
-<p>由此产生了两件事。我们测试的每分钟都有超过 20 个请求成功，因此将 20 视为 429 可以开始的点，而不是精确的计数。当我们在窗口还剩 58 秒时在 poolside/laguna-s-2.1:free 上点击它时，对 minimax/minimax-m3.1-flash:free 的五个请求立即通过，而 Laguna 仍然被阻止。但这并不构成每个型号的上限。 OpenRouter 对帐户上的所有免费模型应用一个每分钟限制器，因此对不同免费模型的请求可以获得相同的 429。</p>
-<h2>第 1 步：了解您达到了谁的限制</h2>
-<p>仅当限制按计划重置时，等待才能修复 429，因此在选择修复之前请检查 limit_source：</p>
-<table><thead><tr><th><strong>限制来源</strong></th><th><strong>状态</strong></th><th><strong>谁的限制</strong></th><th><strong>什么解决了这个问题</strong></th></tr></thead><tbody><tr><td>openrouter_free_tier_per_分钟</td><td>429</td><td>429我们的免费模型帽子</td><td>等待 X-RateLimit-Reset（第 2 步），或退回到付费模式（第 3 步）</td></tr><tr><td>上游供应商共享池</td><td>429</td><td>429为模型提供服务的提供商</td><td>另一个提供商（步骤 4）或后备模型（步骤 3）</td></tr><tr><td>openrouter_in_flight_budget</td><td>openrouter_in_flight_budget</td><td>402</td><td>402您的机上消费预算</td><td>等待 Retry-After 并重试</td></tr><tr><td>openrouter_key_limit、openrouter_credits</td><td>402</td><td>402您钥匙的信用额度或余额</td><td>提高密钥限制或添加积分</td></tr></tbody></table>
-<p><img src="https://openrouter.ai/blog/images/llm-api-rate-limits-1.png" alt="429 决策流程：读取 error.metadata.limit_source。 openrouter_free_tier_per_minute (429)：等待 X-RateLimit-Reset 或回退到付费模型。 upload_provider_shared_pool (429)：让 OpenRouter 路由到另一个提供商或添加后备模型。 openrouter_in_flight_budget (402)：等待Retry-After并重试。 openrouter_key_limit 或 openrouter_credits (402)：提高密钥的限制或添加积分。"></p>
-<p>上游 429 意味着为该模型提供服务的提供商已超出容量。提供商没有说明该容量何时会释放，因此这些错误在我们的运行中没有携带重置标头。 Gemma 4 31B 的免费版本返回以下内容：</p>
+<p>响应头里带着你需要的数字。X-RateLimit-Limit 是上限，X-RateLimit-Remaining 是剩余量，X-RateLimit-Reset 是重试最早能成功的时间，以毫秒为单位的 Unix 时间戳给出。响应体还加了 limit_source，说明你撞上的是谁的限额，以及一条面向看日志的人写的 remedy_hint。代码里要按 limit_source 分支，别按提示文字分支。</p>
+<p>OpenAI 和 Anthropic 用不同的名字送同样的信息。<a href="https://developers.openai.com/api/docs/guides/rate-limits">OpenAI</a> 的 x-ratelimit-reset-requests 是一段时长，比如 1s；<a href="https://platform.claude.com/docs/en/api/rate-limits">两家 provider</a> 也都可以用 retry-after 给出秒数。</p>
+<h2>为什么速率限制会在不同的请求数上触发？</h2>
+<p>40 个请求里有 38 个通过了 20 的限额。限流器可能在计数跟上之前就把同一瞬间到达的请求收下，而且多数限流器并不会在每分钟整点干净地重置。Anthropic 用的是持续补充的 token 桶。当流量爬升太快时，即便你还没到每分钟限额，<a href="https://developers.openai.com/docs/guides/error-codes">OpenAI 也会返回 429</a>，代码是 slow_down。</p>
+<p>为了看清免费模型限额是怎么计数的，我们又按不同模式发了 161 个请求。下面是其中三种：</p>
+<table><thead><tr><th><strong>测试</strong></th><th><strong>该分钟内成功的请求数</strong></th></tr></thead><tbody><tr><td>空闲两分钟后，顺序发送</td><td>30</td></tr><tr><td>紧接着的下一分钟，顺序发送</td><td>30</td></tr><tr><td>30 个并发</td><td>29</td></tr></tbody></table>
+<p>这里看出两件事。我们测的每一分钟里都有超过 20 个请求成功，所以该把 20 当成 429 开始出现的临界点，而不是一个精确数字。当我们在窗口还剩 58 秒时于 poolside/laguna-s-2.1:free 上撞到限额，发往 minimax/minimax-m3.1-flash:free 的五个请求立刻就通过了，而 Laguna 仍被挡着。不过这并不说明限额是按模型算的。OpenRouter 对一个账户下所有免费模型只用一个每分钟限流器，所以请求另一个免费模型也可能拿到同样的 429。</p>
+<h2>第 1 步：读懂你撞上的是谁的限额</h2>
+<p>只有限额按固定节奏重置时，等待才能修复 429，所以选办法之前先看 limit_source：</p>
+<table><thead><tr><th><strong>limit_source</strong></th><th><strong>状态</strong></th><th><strong>谁的限额</strong></th><th><strong>怎么解决</strong></th></tr></thead><tbody><tr><td>openrouter_free_tier_per_minute</td><td>429</td><td>我们的免费模型上限</td><td>等待 X-RateLimit-Reset（第 2 步），或回退到付费模型（第 3 步）</td></tr><tr><td>upstream_provider_shared_pool</td><td>429</td><td>提供该模型的 provider</td><td>换一个 provider（第 4 步），或用后备模型（第 3 步）</td></tr><tr><td>openrouter_in_flight_budget</td><td>402</td><td>你在途消费预算</td><td>等待 Retry-After 后重试</td></tr><tr><td>openrouter_key_limit, openrouter_credits</td><td>402</td><td>你 key 的额度上限或余额</td><td>提高 key 的限额或充值</td></tr></tbody></table>
+<p><img src="https://openrouter.ai/blog/images/llm-api-rate-limits-1.png" alt="429 决策流程：读取 error.metadata.limit_source。openrouter_free_tier_per_minute (429)：等待 X-RateLimit-Reset，或回退到付费模型。upstream_provider_shared_pool (429)：让 OpenRouter 路由到另一个 provider，或加一个后备模型。openrouter_in_flight_budget (402)：等待 Retry-After 后重试。openrouter_key_limit 或 openrouter_credits (402)：提高 key 的限额或充值。"></p>
+<p>上游 429 表示提供该模型的 provider 已经没有余量。provider 不会说明余量何时释放，所以在我们的运行里这类错误都不带重置响应头。Gemma 4 31B 的免费版本返回的是：</p>
 <pre><code>google/gemma-4-31b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits.</code></pre>
-<p>使用付费变体作为后备的相同请求使用了不同提供商的容量，并在 DeepInfra 上以 0.0000037 美元的价格成功。</p>
-<p>一些看起来像速率限制的错误与金钱有关。当您达到每月支出上限时，OpenAI 和 Anthropic 都会返回 429，并且在上限重置之前重试不会修复该问题。在 OpenRouter 上，信用问题返回为 <a href="https://openrouter.ai/docs/api_reference/errors-and-debugging">402</a>。</p>
-<h2>步骤 2：在错误提示的重置时间重试</h2>
-<p>OpenAI 和 Anthropic Python SDK 默认重试 429 两次，并有一个从 0.5 秒开始的短暂退避，并且永远不会等待超过 8 秒。当服务器发送 429 时，它们会遵循 Retry-After 标头。</p>
-<p>我们的免费套餐 429 发送的是 X-RateLimit-Reset，而 SDK 不会读取该内容，因此两次重试都在同一整分钟内完成。以下是使用默认设置通过 OpenAI SDK (openai 3.26.1) 进行的 60 个提示批次，一次 10 个：</p>
+<p>把付费版本设为后备后，同样的请求用了另一家 provider 的余量，在 DeepInfra 上以 $0.0000037 成功。</p>
+<p>有些看起来像速率限制的错误其实跟钱有关。达到每月消费上限时，OpenAI 和 Anthropic 都会返回 429，在上限重置之前重试也没用。在 OpenRouter 上，额度问题则是<a href="https://openrouter.ai/docs/api_reference/errors-and-debugging">返回 402</a>。</p>
+<h2>第 2 步：在错误给出的重置时间重试</h2>
+<p>OpenAI 和 Anthropic 的 Python SDK 默认对 429 重试两次，退避很短，从 0.5 秒起步，最多不超过 8 秒。服务端若发了 Retry-After 响应头，它们会照着做。</p>
+<p>我们免费层的 429 发的是 X-RateLimit-Reset，SDK 不读这个，所以两次重试都落在同一个已经占满的分钟里。下面是用默认设置的 OpenAI SDK (openai 3.26.1) 跑的一批 60 个 prompt、每次 10 个：</p>
 <pre><code>openai 3.26.1 | max_retries default: 2
 finished in 12s  (HTTP requests sent: 112)
 succeeded: 37  RateLimitError after retries: 23
@@ -68,7 +68,7 @@ message: Rate limit exceeded: free-models-per-min.  | limit_source: openrouter_f
   limit_source=openrouter_free_tier_per_minute  x-ratelimit-reset: 1792444980000  retry-after: None  window reset 7s after the SDK gave up
   ...
   limit_source=openrouter_free_tier_per_minute  x-ratelimit-reset: 1792444980000  retry-after: None  window reset 4s after the SDK gave up</code></pre>
-<p>SDK 发送了 112 个 HTTP 请求，出现了 60 条提示，仍有 23 条失败。提高 max_retries 最终会通过，但只能通过每 8 秒向整个窗口发送一个请求，并且 <a href="https://developers.openai.com/api/docs/guides/rate-limits">OpenAI 的文档说明</a> 失败的请求仍然计入每分钟的限制。更好的重试方法是等待服务器给您的时间。要运行所有 60 个提示，请使用当天至少剩余 60 个免费模型请求的帐户，因为未购买 10 个积分的帐户每天会获得 50 个积分：</p>
+<p>60 个 prompt，SDK 发出了 112 个 HTTP 请求，仍有 23 个失败。调高 max_retries 最终也能跑完，但只能靠每 8 秒往已经占满的窗口里塞一个请求，而且 <a href="https://developers.openai.com/api/docs/guides/rate-limits">OpenAI 的文档指出</a>，失败的请求仍然计入每分钟限额。更好的重试是等到服务端给出的时间点。要跑完全部 60 个 prompt，得用当天至少还剩 60 次免费模型请求的账户，因为没买够 10 credits 的账户每天只有 50 次：</p>
 <pre><code>import email.utils
 import os
 import random
@@ -138,11 +138,11 @@ if __name__ == &quot;__main__&quot;:
 429 (openrouter_free_tier_per_minute), attempt 2: waiting 60.1s
 429 (openrouter_free_tier_per_minute), attempt 2: waiting 57.8s
 60 of 60 completed in 89s</code></pre>
-<p>所有 60 个请求均已完成，但该批处理花费了 89 秒而不是 12 秒。这种方法不会失败，并且每个达到限制的请求都会等待到窗口之外。</p>
-<p>retry_delay 首先检查 Retry-After，因为它是服务器的直接指令，而 X-RateLimit-Reset 仅标记窗口何时滚动。随机的 1 到 5 秒可以防止 10 个工作人员同时重试并立即填充新窗口。</p>
-<p>即便如此，这次运行中的四个请求在新窗口填满后重试，因此他们第二次等待。如果您将 SDK 调用包装在这样的循环中，请在客户端上设置 max_retries=0，否则每次尝试都会变成三个请求。</p>
-<h3>在 TypeScript 中进行相同的重试</h3>
-<p>retry.ts 遵循相同的顺序：Retry-After，然后 X-RateLimit-Reset，然后退避。它使用内置的 fetch，因此不需要包。我们使用 npx tsx retry.ts 在节点 24 上运行它：</p>
+<p>60 个请求全部完成，但这批任务花了 89 秒，而不是 12 秒。用这个办法不会失败，每个撞上限额的请求都会等过整个窗口。</p>
+<p>retry_delay 先查 Retry-After，因为那是服务端的直接指令，而 X-RateLimit-Reset 只标记窗口何时翻篇。随机 1 到 5 秒能避免 10 个 worker 在同一瞬间一起重试、把新窗口立刻填满。</p>
+<p>即便如此，这次运行里还是有四个请求在新窗口已经填满后才重试，于是又等了一轮。如果你把 SDK 调用包在这样的循环里，记得在客户端设 max_retries=0，否则你每次尝试都会变成三个请求。</p>
+<h3>在 TypeScript 里做同样的重试</h3>
+<p>retry.ts 遵循同样的顺序：Retry-After，然后 X-RateLimit-Reset，最后退避。它用内置的 fetch，不需要装任何包。我们在 Node 24 上用 npx tsx retry.ts 运行：</p>
 <pre><code>const URL = &quot;https://openrouter.ai/api/v1/chat/completions&quot;;
 const HEADERS = {
   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
@@ -223,9 +223,9 @@ main();</code></pre>
 429 (openrouter_free_tier_per_minute), attempt 2: waiting 58.6s
 429 (openrouter_free_tier_per_minute), attempt 2: waiting 60.6s
 60 of 60 completed in 106s</code></pre>
-<p>总时间取决于批处理开始时窗口的位置以及模型提供者的繁忙程度。我们的两次 TypeScript 运行花费了 218 和 106 秒，我们的两次 Python 运行花费了 92 和 89 秒。所有四个人都完成了每个请求。</p>
-<h2>步骤 3：将溢出发送到后备模型</h2>
-<p>如果第二个模型的答案可以接受，那么您根本不必等待。提供商速率限制适用于一个提供商的一种模型，因此不同的模型使用单独的容量。免费套餐上限是一个例外，因为您帐户上的每个 :free 模型都共享它。使用 models 参数，我们按顺序尝试每个模型，并在出现任何错误（包括 429）时移至下一个模型，<a href="https://openrouter.ai/docs/guides/routing/model-fallbacks">在任何内容到达您的代码之前</a>：</p>
+<p>总耗时取决于批处理开始时窗口走到哪儿，以及该模型的 provider 有多忙。我们两次 TypeScript 运行分别用了 218 秒和 106 秒，两次 Python 运行是 92 秒和 89 秒。四次都跑完了每一个请求。</p>
+<h2>第 3 步：把溢出的请求转给后备模型</h2>
+<p>如果能接受第二个模型给出的答案，你根本不用等。provider 的速率限制只作用于该 provider 上的某一个模型，换个模型就用的是另一份余量。免费层上限是例外，因为你账户里每个 :free 模型都共享它。用 models 参数，我们按顺序试每个模型，一旦出错（包括 429）就切到下一个，<a href="https://openrouter.ai/docs/guides/routing/model-fallbacks">这一切都发生在请求到达你的代码之前</a>：</p>
 <pre><code>import os
 import time
 from collections import Counter
@@ -255,14 +255,14 @@ print(f&quot;total cost: ${sum(cost for *_, cost in results):.6f}&quot;)</code><
 <pre><code>finished in 13s
 Counter({(200, 'poolside/laguna-s-2.1:free'): 52, (200, 'deepseek/deepseek-v4.1-flash'): 8})
 total cost: $0.000066</code></pre>
-<p>免费模型服务了 52 个请求，付费模型服务了另外 8 个请求。没有请求等待，您只需为付费请求付费。响应的模型字段记录了哪个模型进行了回答，这就是您需要付费的模型。</p>
-<p>选择具有自身容量的后备。您帐户上的每个 :free 模型都共享免费模型上限，因此当该上限是原因时，另一个免费模型并不是可靠的后备方案。免费模型也经常会耗尽提供商的容量，因此付费后备方案是更可靠的选择。</p>
-<p>以下是同一批次的三个并排运行：</p>
-<table><thead><tr><th><strong>运行</strong></th><th><strong>已完成</strong></th><th><strong>时间</strong></th><th><strong>成本</strong></th></tr></thead><tbody><tr><td>OpenAI SDK，默认重试</td><td>37 共 60</td><td>12 秒</td><td>0 美元</td></tr><tr><td>等待重置重试</td><td>60 共 60</td><td>89 年代</td><td>0 美元</td></tr><tr><td>模型后备</td><td>60 共 60</td><td>13 秒</td><td>$0.000066</td></tr></tbody></table>
-<p>如果作业可以等待，请重试重置。如果不能，并且第二个模型的答案足够好，请添加后备。</p>
-<h2>步骤 4：让另一个提供商提供相同的模型</h2>
-<p>第 2 步和第 3 步处理我们的自由模型上限。付费模式遇到了另一种限制：为它们提供服务的提供商的容量。 OpenRouter 上的大多数模型由多个提供商提供服务，每个提供商都有自己的速率限制。当一个提供商返回 429 时，我们会在错误到达您之前在下一个提供商处重试请求。默认情况下此功能处于启用状态。</p>
-<p>我们向 google/gemma-4-31b-it 发送了 300 个请求，一次 50 个，并检查每个请求的 GET /api/v1/ Generation 记录中的provider_responses 列表，其中显示了我们尝试过的每个提供程序：</p>
+<p>免费模型处理了 52 个请求，付费模型处理了另外 8 个。没有任何请求等待，而且你只为付费的那些付钱。响应里的 model 字段记下是哪个模型回答的，计费也按那个模型算。</p>
+<p>后备要选有独立余量的。你账户里每个 :free 模型都共享免费模型上限，所以当问题出在这个上限时，换另一个免费模型并不可靠。免费模型还经常耗尽 provider 的余量，因此付费后备是更稳妥的选择。</p>
+<p>下面是同一批任务的三次运行，并列对比：</p>
+<table><thead><tr><th><strong>运行</strong></th><th><strong>完成数</strong></th><th><strong>耗时</strong></th><th><strong>费用</strong></th></tr></thead><tbody><tr><td>OpenAI SDK，默认重试</td><td>60 个中 37 个</td><td>12 s</td><td>$0</td></tr><tr><td>等到重置再重试</td><td>60 个中 60 个</td><td>89 s</td><td>$0</td></tr><tr><td>models 后备</td><td>60 个中 60 个</td><td>13 s</td><td>$0.000066</td></tr></tbody></table>
+<p>如果任务能等，就在重置时重试；如果等不了，而第二个模型的答案也够用，就加个后备。</p>
+<h2>第 4 步：让另一个 provider 提供同一个模型</h2>
+<p>第 2 步和第 3 步解决的是免费模型上限。付费模型碰到的是另一种限制：正在服务它的那个 provider 的余量。OpenRouter 上大多数模型由多个 provider 提供，各有各的速率限制。当某个 provider 返回 429 时，我们会在错误传到你这里之前，到下一个 <a href="https://openrouter.ai/docs/guides/routing/provider-selection">provider</a> 重试该请求。这个行为默认开启。</p>
+<p>我们向 google/gemma-4-31b-it 发了 300 个请求，每次 50 个，并检查每个请求的 GET /api/v1/generation 记录里的 provider_responses 列表，它会列出我们试过的每一个 provider：</p>
 <pre><code>300 requests, 50 at a time, in 11s
 status codes: Counter({200: 300})
 generation records read: 300 of 300
@@ -270,7 +270,7 @@ served by: {'CoreWeave': 177, 'DeepInfra': 118, 'Novita': 1, 'Venice': 1, 'Model
 requests that needed more than one provider: 0
 failed attempts, by provider and status: []
 total cost: $0.00130</code></pre>
-<p>Spread across six providers, no request needed a second try. Then we pinned the same model to Crusoe with “provider”: {“order”: [“crusoe”]} and sent 150 requests, 50 at a time.这是一个带有后备的运行：</p>
+<p>分散到六家 provider 之后，没有一个请求需要第二次尝试。接着我们用 “provider”: {“order”: [“crusoe”]} 把同一个模型固定到 Crusoe，发了 150 个请求，每次 50 个。下面是开启回退时的一次运行：</p>
 <pre><code>150 requests, 50 at a time, in 5s
 status codes: Counter({200: 150})
 generation records read: 150 of 150
@@ -278,74 +278,74 @@ served by: {'CoreWeave': 79, 'Crusoe': 71}
 requests that needed more than one provider: 79
 failed attempts, by provider and status: [(('Crusoe', 429), 79)]
 total cost: $0.00056</code></pre>
-<p>Crusoe 对 79 个请求进行了速率限制，CoreWeave 回答了全部 79 个请求，客户看到了 150 个成功。我们在allow_fallbacks关闭和打开的情况下重复固定运行几次：</p>
-<table><thead><tr><th><strong>允许回退</strong></th><th><strong>运行</strong></th><th><strong>每次运行成功</strong></th><th><strong>每次运行 429 秒</strong></th></tr></thead><tbody><tr><td>假</td><td>4</td><td>150、147、118、136</td><td>0、3、32、14</td></tr><tr><td>真实</td><td>3</td><td>150, 150, 150</td><td>150, 150, 150</td><td>0</td></tr></tbody></table>
-<p>Crusoe 的容量每分钟都在变化，因此关闭回退的失败次数从无到 32 不等。打开回退后，Crusoe 在这三次运行中将请求限制为 21、41 和 79 个，而客户端从未看到过其中一个。任何缩小提供者可以服务请求的范围都会导致吸收突发的能力减少。如果您仍然在 OpenRouter 上看到提供商 429，请检查 allowed_fallbacks: false、简短的列表或严格的 max_price。要在不丢失故障转移的情况下首选一个提供程序，请设置顺序并将allow_fallbacks 保留为默认值。</p>
-<p>同样的 300 个请求突发到 anthropic/claude-haiku-5.5 和 openai/gpt-6-luna 没有失败的尝试。当封闭模型自己的 API 耗尽容量时，错误通常是 529 而不是 429，<a href="https://openrouter.ai/blog/tutorials/claude-529-overloaded/">Claude 529 重载指南</a> 涵盖了这一点。</p>
-<h2>如何避免达到速率限制？</h2>
-<p>上面的修复可以在 429 发生后进行处理。这些习惯会降低以下可能性：</p>
-<ul><li><strong>将并发限制在限制允许的范围内。</strong> 并发是我们的第一个测试超出限制的原因。与在 429 后等待整个窗口相比，调整刚好低于限制的请求所损失的时间要少。</li><li><strong>将 max_tokens 设置为接近您期望的答案长度。</strong> OpenAI 将 max_tokens 计入您的每分钟令牌限制，因此慷慨的值会比答案更快地耗尽限制。</li><li><strong>在进行大型作业之前检查您的密钥。</strong> GET /api/v1/key 报告每日自由模型计数器。在这些运行之后，我们的读数为 {‘used’: 585, ‘limit’: 1000, ‘remaining’: 415}。在您购买至少 10 个积分之前，每日限制为 50 个免费模型请求，之后为 1,000 个。</li><li><strong>在生产中使用付费变体。</strong> 每分钟 20 次的上限仅适用于 :free <a href="https://openrouter.ai/docs/api_reference/limits">models</a>。</li></ul>
+<p>Crusoe 对 79 个请求做了速率限制，CoreWeave 接下了全部 79 个，客户端看到的是 150 次成功。我们把固定 provider 的运行在 allow_fallbacks 关闭和开启两种情况下各重复了几次：</p>
+<table><thead><tr><th><strong>allow_fallbacks</strong></th><th><strong>运行次数</strong></th><th><strong>每轮成功数</strong></th><th><strong>每轮 429 数</strong></th></tr></thead><tbody><tr><td>false</td><td>4</td><td>150, 147, 118, 136</td><td>0, 3, 32, 14</td></tr><tr><td>true</td><td>3</td><td>150, 150, 150</td><td>0</td></tr></tbody></table>
+<p>Crusoe 的余量每分钟都在变，所以关闭回退时失败数从 0 到 32 不等。开启回退后，三次运行里 Crusoe 分别限了 21、41 和 79 个请求，客户端一次都没看到。凡是收窄「哪些 provider 能服务请求」的设置，都会削弱吸收突发流量的余量。如果你在 OpenRouter 上仍看到 provider 的 429，检查是不是设了 allow_fallbacks: false、太短的 only 列表，或太紧的 max_price。想偏好某家 provider 又不丢掉故障转移，就设 order，并让 allow_fallbacks 保持默认。</p>
+<p>同样 300 个请求的突发流量打到 anthropic/claude-haiku-5.5 和 openai/gpt-6-luna 上，没有任何失败尝试。闭源模型自己的 API 耗尽余量时，错误通常是 529 而不是 429，<a href="https://openrouter.ai/blog/tutorials/claude-529-overloaded/">Claude 529 过载指南</a> 讲的就是这个。</p>
+<h2>怎样彻底避免撞上速率限制？</h2>
+<p>上面的办法都是在 429 发生之后补救。下面这些习惯能降低它出现的概率：</p>
+<ul><li><strong>把并发压到限额允许的范围内。</strong> 第一个测试就是被并发推过限额的。把请求节奏控制在略低于限额，比 429 之后等一整个窗口损失的时间更少。</li><li><strong>把 max_tokens 设得接近你预期的答案长度。</strong> OpenAI 会把 max_tokens 计入每分钟 token 限额，所以给得太宽裕，限额消耗得比答案本身还快。</li><li><strong>跑大任务前先查一下 key。</strong> GET /api/v1/key 会报出每日免费模型计数。这些运行之后，我们这边读到 {‘used’: 585, ‘limit’: 1000, ‘remaining’: 415}。在买够至少 10 credits 之前，每日限额是 50 次免费模型请求，之后是 1,000 次。</li><li><strong>生产环境用付费版本。</strong> 每分钟 20 次的上限只适用于 :free <a href="https://openrouter.ai/docs/api_reference/limits">models</a>。</li></ul>
 <h2>常见问题</h2>
-<h3>如何提高 OpenAI API 速率限制？</h3>
-<p>当您组织的信用购买总额超过每个使用层阈值时，OpenAI 会自动提高您的限制。您可以在 OpenAI 仪表板中的“设置”&gt;“组织”&gt;“限制”下查看当前限制。通过 OpenRouter，提供商路由将模型的流量分散到为其提供服务的每个提供商，因此单个提供商的限制不会限制您。</p>
-<h3>为什么Claude说“达到速率限制”？</h3>
-<p>在 Claude API 上，这意味着您的组织用完该模型每分钟的请求或令牌，并且 retry-after 标头表示要等待多少秒。如果 429 来自您的每月支出上限，则没有重试标头，并且在访问恢复之前重试不会有帮助。在订阅的 Claude Code 中，该消息通常表示该计划的使用限制。请参阅<a href="https://openrouter.ai/blog/tutorials/claude-code-usage-limit/">达到您的Claude Code使用限制？</a>。</p>
-<h3>更多 API 密钥是否可以绕过速率限制？</h3>
-<p>不会。在 OpenRouter 上，额外的 API 密钥或帐户不会改变您的速率限制，因为我们在全球范围内管理容量。提供商限制适用于每个模型，这就是后备模型起作用的原因，但您帐户上的每个 :free 模型共享一个免费套餐上限。使用 <a href="https://openrouter.ai/docs/guides/overview/auth/byok">BYOK</a>，使用您自己的提供商密钥的请求将计入​​该提供商的限制。</p>
-<h3>Retry-After 是以秒还是毫秒为单位？</h3>
-<p>秒或 HTTP 日期。我们的 X-RateLimit-Reset 是不同的。这是一个以毫秒为单位的 Unix 时间戳。步骤 2 中的 retry_delay 函数处理所有三种形式。</p>
+<h3>怎样提高我的 OpenAI API 速率限制？</h3>
+<p>随着组织的累计充值金额越过每个用量档位的门槛，OpenAI 会自动提高你的限额。当前限额可以在 OpenAI 控制台的 Settings &gt; Organization &gt; Limits 下查看。通过 OpenRouter，provider 路由会把一个模型的流量摊到所有提供它的 provider 上，因此单家 provider 的限额卡不住你。</p>
+<h3>为什么 Claude 提示 “rate limit reached”？</h3>
+<p>在 Claude API 上，这表示你的组织用完了该模型每分钟的请求数或 token 数，retry-after 响应头会给出要等多少秒。如果 429 来自每月消费上限，就没有 retry-after 响应头，在访问恢复之前重试也没用。在订阅版 Claude Code 里，这条消息通常指的是套餐的用量上限。参见<a href="https://openrouter.ai/blog/tutorials/claude-code-usage-limit/">达到 Claude Code 用量上限了？</a>。</p>
+<h3>多用几个 API key 能绕过速率限制吗？</h3>
+<p>不能。在 OpenRouter 上，多开 API key 或多开账号都不会改变你的速率限制，因为我们是全局管控容量的。provider 的限制是按模型算的，这正是后备模型能奏效的原因；但你账户里每个 :free 模型共享同一个免费层上限。用 <a href="https://openrouter.ai/docs/guides/overview/auth/byok">BYOK</a> 时，使用你自带 provider key 的请求会占用你在那家 provider 处的限额。</p>
+<h3>Retry-After 的单位是秒还是毫秒？</h3>
+<p>秒，或者一个 HTTP 日期。我们的 X-RateLimit-Reset 不一样，它是以毫秒为单位的 Unix 时间戳。第 2 步里的 retry_delay 函数能处理这三种形式。</p>
 <h2>后续步骤</h2>
-<ul><li><a href="https://openrouter.ai/docs/api_reference/limits">限制</a>：自由模型上限、X-RateLimit-* 标头以及如何处理 402 和 429 错误。</li><li><a href="https://openrouter.ai/docs/guides/routing/provider-selection">提供商路由</a>：顺序、allow_fallbacks、仅和排序。</li><li><a href="https://openrouter.ai/docs/guides/routing/model-fallbacks">模型回退</a>：模型参数以及回退请求如何计费。</li><li><a href="https://openrouter.ai/blog/tutorials/free-llm-apis-compared/">免费 LLM API 比较</a>：跨提供商的免费层限制。</li></ul>]]></content:encoded>
+<ul><li><a href="https://openrouter.ai/docs/api_reference/limits">限额</a>：免费模型上限、X-RateLimit-* 响应头，以及如何处理 402 和 429 错误。</li><li><a href="https://openrouter.ai/docs/guides/routing/provider-selection">provider 路由</a>：order、allow_fallbacks、only 和排序。</li><li><a href="https://openrouter.ai/docs/guides/routing/model-fallbacks">模型后备</a>：models 参数，以及后备请求如何计费。</li><li><a href="https://openrouter.ai/blog/tutorials/free-llm-apis-compared/">免费 LLM API 对比</a>：各家 provider 的免费层限额。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>LLM Quantization: What fp8 and fp4 Do to Quality and Price</title>
+      <title>LLM 量化：fp8 和 fp4 对质量与价格的影响</title>
       <link>https://openrouter.ai/blog/insights/llm-quantization/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/insights/llm-quantization/</guid>
       <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>LLM 量化：fp8 和 fp4 对质量和价格的影响</h1>
-<p>开放路由器 ·11/11/2026</p>
-<p><img src="https://openrouter.ai/blog/images/llm-quantization.png" alt="LLM 量化：fp8 和 fp4 对质量和价格的影响"><img src="https://openrouter.ai/blog/images/llm-quantization-dark.png" alt="LLM 量化：fp8 和 fp4 对质量和价格的影响"></p>
-<p>当您通过 API 调用开放权重模型时，多个提供程序可能会以不同的精度提供服务，例如 16 位 bf16、8 位 fp8 或 4 位 fp4。精度会影响答案和价格。 LLM 量化通过以更少的位数存储模型的权重来创建这些版本，因此模型需要更少的内存和硬件，但会牺牲一定的准确性。</p>
-<p>这篇文章解释了我们于 2026 年 10 月 20 日在 OpenRouter 上测量的格式和报告，涵盖 1,455 个提供商端点和服务 <a href="https://openrouter.ai/qwen/qwen3.8-27b">Qwen3.8 27B</a> 的六个端点。在我们的测试中，我们没有检测到 fp8、fp4 和 fp16 之间的准确度差异，因此仅靠精度标签并不能预测准确度。较低的精度通常会更便宜，但并非适用于所有型号。</p>
-<h2>长篇大论；博士</h2>
-<ul><li>在 240 个评分任务中，我们没有检测到 fp8、fp4 和 fp16 之间的准确度差异。所有六个终点的得分都在 98.3% 到 99.2% 之间。</li><li>在 40 多个乘法任务中，一个 fp4 端点得分最低，差距太小，无法排除偶然性。</li><li>两家公司提供的 24 款型号中，有 14 款的 8 位比 16 位便宜，7 款更贵。33 款中的 26 款，4 位比 8 位便宜。</li></ul>
-<p>-provider.quantizations 固定您获得的精度。列出您可接受的每一项精度，以便路由器有多个端点可供回退。</p>
-<p>##什么是LLM量化？</p>
-<p><a href="https://www.actian.com/blog/developer/which-quantization-level-should-you-use-for-edge-llm-deployment/">LLM 量化</a> 意味着用比训练时更少的位数来存储大型语言模型的数字。 <a href="https://openrouter.ai/docs/guides/routing/provider-selection#quantization">当今大多数 LLM 使用 FP16 或 BF16</a>，它们是 16 位格式。 fp8 将每个权重占用的内存减半，而 fp4 或 int4 将其四分之一，因此同一 GPU 可以容纳更大的模型或服务更多的请求。成本是准确性，因为每个权重都会四舍五入到较小格式可以存储的最接近的值。</p>
-<table><thead><tr><th><strong>格式</strong></th><th><strong>每重量位数</strong></th><th><strong>27B 型号的重量</strong></th><th><strong>你在哪里看到它</strong></th></tr></thead><tbody><tr><td>bf16 / fp16</td><td>16</td><td>16 54GB</td><td>大多数型号发布的精度</td></tr><tr><td>FP8</td><td>8</td><td>27GB</td><td>OpenRouter 上最常见的标注精度</td></tr><tr><td>fp4、nvfp4、mxfp4、int4</td><td>4</td><td>13.5 GB</td><td>13.5 GB更便宜的端点、本地运行、一些实验室版本</td></tr></tbody></table>
-<p>这些数字仅涵盖重量。正在运行的模型还需要用于 KV 缓存的内存，即上下文中每个标记的存储注意力状态。</p>
-<p>量化有两种主要类型。训练后量化会转换最终模型的权重。它可以是动态的，在运行时计算每个激活的范围，也可以是静态的，通过在模型中传递样本数据来提前计算这些范围。量化感知训练模拟训练期间的舍入，以便权重学会容忍它。 <a href="https://huggingface.co/docs/optimum/concept_guides/quantization">Hugging Face Optimum 概念指南</a> 对两者进行了解释，<a href="https://huggingface.co/docs/transformers/main/en/quantization/overview">Transformers 量化概述</a> 涵盖了您可以自己运行的量化方法。</p>
+      <description>原文标题：LLM Quantization: What fp8 and fp4 Do to Quality and Price</description>
+      <content:encoded><![CDATA[<h1>LLM 量化：fp8 和 fp4 对质量与价格的影响</h1>
+<p>OpenRouter ·11/11/2026</p>
+<p><img src="https://openrouter.ai/blog/images/llm-quantization.png" alt="LLM 量化：fp8 和 fp4 对质量与价格的影响"><img src="https://openrouter.ai/blog/images/llm-quantization-dark.png" alt="LLM 量化：fp8 和 fp4 对质量与价格的影响"></p>
+<p>通过 API 调用开放权重模型时，多个 provider 可能以不同精度提供该模型，例如 16 位 bf16、8 位 fp8 或 4 位 fp4。精度既影响回答，也影响价格。LLM 量化通过用更少的位数存储模型权重来生成这些版本，让模型所需的内存和硬件更少，代价是准确率略有损失。</p>
+<p>本文介绍这些格式，并给出我们于 2026 年 10 月 20 日在 OpenRouter 上的测量结果：覆盖 1,455 个 provider endpoint，以及提供 <a href="https://openrouter.ai/qwen/qwen3.8-27b">Qwen3.8 27B</a> 的六个 endpoint。测试中，我们没有发现 fp8、fp4 与 fp16 之间的准确率差异，因此单凭精度标签无法预测准确率。较低精度通常更便宜，但并非每个模型都如此。</p>
+<h2>TL;DR</h2>
+<ul><li>在 240 个计分任务中，我们没有发现 fp8、fp4 与 fp16 的准确率差异。六个 endpoint 的得分都在 98.3% 到 99.2% 之间。</li><li>在另外 40 个乘法任务里，有一个 fp4 endpoint 得分最低，但差距太小，无法排除偶然因素。</li><li>在同时提供 8 位和 16 位的 24 个模型中，8 位更便宜的有 14 个，更贵的有 7 个；在 33 个模型里，4 位比 8 位更便宜的有 26 个。</li><li>provider.quantizations 会锁定你拿到的精度。把你可接受的每种精度都列出来，让 router 有不止一个 endpoint 可以回退。</li></ul>
+<h2>什么是 LLM 量化？</h2>
+<p><a href="https://www.actian.com/blog/developer/which-quantization-level-should-you-use-for-edge-llm-deployment/">LLM 量化</a> 指用比训练时更少的位数来存储大语言模型的数值。<a href="https://openrouter.ai/docs/guides/routing/provider-selection#quantization">如今大多数 LLM 使用 FP16 或 BF16</a>，它们都是 16 位格式。fp8 把每个权重占用的内存减半，fp4 或 int4 则降到四分之一，于是同一块 GPU 能装下更大的模型，或处理更多请求。代价是准确率下降，因为每个权重都要舍入到较小格式能表示的最接近的值。</p>
+<table><thead><tr><th><strong>格式</strong></th><th><strong>每个权重的位数</strong></th><th><strong>27B 模型的权重大小</strong></th><th><strong>常见场景</strong></th></tr></thead><tbody><tr><td>bf16 / fp16</td><td>16</td><td>54 GB</td><td>大多数模型发布时采用的精度</td></tr><tr><td>fp8</td><td>8</td><td>27 GB</td><td>OpenRouter 上最常见的标注精度</td></tr><tr><td>fp4、nvfp4、mxfp4、int4</td><td>4</td><td>13.5 GB</td><td>更便宜的 endpoint、本地运行、部分实验室发布的版本</td></tr></tbody></table>
+<p>这些数字只算权重。运行中的模型还需要内存来放 KV cache，也就是上下文中每个 token 的注意力状态。</p>
+<p>量化主要有两类。训练后量化直接转换已训练好的模型权重：可以是动态的，在运行时计算每个激活的取值范围；也可以是静态的，事先把样本数据过一遍模型来算好这些范围。量化感知训练则在训练过程中模拟舍入，让权重学会适应它。<a href="https://huggingface.co/docs/optimum/concept_guides/quantization">Hugging Face Optimum 概念指南</a> 对两者都有解释，<a href="https://huggingface.co/docs/transformers/main/en/quantization/overview">Transformers 量化概览</a> 介绍了可以自己动手运行的量化方法。</p>
 <h2>fp8 与 bf16：有什么区别？</h2>
-<p>浮点格式将其位分为符号、指数和尾数。指数设置值的范围，尾数设置该范围内值的解析精度。</p>
-<p><img src="https://openrouter.ai/blog/images/llm-quantization-1.png" alt="位布局：bf16 有 1 个符号位、8 个指数位和 7 个尾数位； fp16有1、5和10； fp8（E4M3）有1、4和3； fp4 (E2M1) 有 1、2 和 1。"></p>
-<p><a href="https://cloud.google.com/tpu/docs/bfloat16">bf16</a> 有 1 个符号位、8 个指数位和 7 个尾数位，因此它的范围与 32 位 fp32 相同，但精度较低。 fp16 将其 16 位拆分为 5 个指数位和 10 个尾数位。 <a href="https://www.opencompute.org/documents/ocp-8-bit-floating-point-specification-ofp8-revision-1-0-2023-12-01-pdf-1">OCP 8 位浮点规范</a> 定义了两种 fp8 编码：E4M3（4 个指数位，3 个尾数位）和 E5M2（5 个指数位，2 个尾数位）。 fp8 放弃了范围和精度，因此量化模型存储每个张量或每个权重块的比例因子。 <a href="https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf">MXFP4</a> 在每个 32 个值块中共享一个比例，而 [NVFP4](https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low- precision-inference/) 每 16 个值使用一个 fp8 比例。</p>
-<p>对于 API 用户来说，fp8 与 bf16 在同一型号上显示为不同的标签和价格。在我们的测试中，我们没有检测到三个 fp8 端点和 fp16 端点之间的差异。</p>
-<h2>fp8 和 fp4 的质量损失有多大？</h2>
-<p>在我们的测试中，我们没有检测到 fp8 或 fp4 的质量损失。所有六个端点的得分都在 98.3% 到 99.2% 之间，这种规模的测试不能排除一两分的差距。</p>
-<p>我们通过 qwen/qwen3.8-27b 运行了 280 个任务，并提供了准确的答案，固定到六个端点。 Cerebras 的价格为 fp16。 Parasail、CoreWeave 和 AkashML 在 fp8 上提供服务，Darkbloom 和 ModelRun 在 fp4 上提供服务。每个请求都设置了provider.only、quantizations和allow_fallbacks: false，因此它只能在温度为0且推理关闭的情况下到达我们命名的端点。这些任务包括正在运行的多步算术、要跟踪的 Python 程序、要排序的 20 到 30 个数字的列表、在 240 或 1,200 个条目（大约 4,000 到 20,000 个标记）中查找的键，以及通过大约 9,000 个标记的四步查找链。我们生成了每个任务，因此每个任务都有准确的答案，不需要判断。另外 40 项任务要求计算两个四位数的乘积，但没有成功，单独评分。</p>
-<table><thead><tr><th><strong>任务系列</strong></th><th><strong>任务</strong></th><th><strong>fp16 大脑</strong></th><th><strong>fp8 滑翔伞</strong></th><th><strong>fp8 CoreWeave</strong></th><th><strong>fp8 AkashML</strong></th><th><strong>fp4 暗花</strong></th><th><strong>fp4 模型运行</strong></th></tr></thead><tbody><tr><td>算术与工作</td><td>50</td><td>50 48</td><td>48 49</td><td>49 48</td><td>48 49</td><td>49 49</td><td>49 50</td><td>50</td></tr><tr><td>短代码痕迹</td><td>50</td><td>50 50</td><td>50 50</td><td>50 50</td><td>50 50</td><td>50 50</td><td>50 50</td><td>50</td></tr><tr><td>长代码痕迹</td><td>30</td><td>30</td><td>29</td><td>29 29</td><td>29 29</td><td>29 29</td><td>29 28</td><td>28</td></tr><tr><td>对 20 到 30 个数字进行排序</td><td>30</td><td>30</td><td>29</td><td>29 29</td><td>29 29</td><td>29 29</td><td>29 30</td></tr><tr><td>召回 4,000 个代币</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td></tr><tr><td>召回 20,000 个代币</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td></tr><tr><td>四跳召回</td><td>40</td><td>39</td><td>39 40</td><td>40</td><td>40</td><td>39</td><td>39 40</td></tr><tr><td><strong>总计</strong></td><td><strong>240</strong></td><td><strong>98.8%</strong></td><td><strong>98.8%</strong></td><td><strong>98.3%</strong></td><td><strong>98.8%</strong></td><td><strong>98.3%</strong></td><td><strong>99.2%</strong></td></tr><tr><td>乘法，不起作用</td><td>40</td><td>30</td><td>33</td><td>33 31</td><td>32</td><td>32 26</td><td>26 30</td></tr></tbody></table>
-<p>Source: OpenRouter, Qwen3.8 27B, October 20, 2026. The 95% confidence intervals on the totals run from 95.8% to 99.8%, and all six overlap.</p>
-<p>没有任务系列将精度分开。 Each endpoint missed at most two tasks in any family, and the misses were ordinary slips, such as a number dropped from a sorted list.在 240 个任务中，fp8 端点在 2 到 5 个任务上意见不一致，两个 fp4 端点在 4 个任务上意见不一致。Darkbloom 在 7 或 8 个任务上最常与 fp16 和 fp8 端点意见不一致，但其总数与 fp16 相差不到半个百分点。</p>
-<p>差距显示的唯一一个地方是乘法不起作用。 fp4 上的 Darkbloom 在 40 个产品中获得了 26 个完全正确的结果，而其他五个端点上只有 30 到 33 个产品完全正确，其中包括 fp4 上的 ModelRun 上的 30 个。针对最佳终点 (33) 的两比例 z 检验（我们在看到结果后选择的比较）显示，出现如此大差距但没有真正差异的可能性约为 7.5%，因此我们不能将其称为精确效应。错误产品在每个精度上都很接近，中值偏差小于 0.01%。</p>
-<p>我们在 Cerebras 上运行了所有 280 个任务两次，并且两次运行都在每个任务上返回了相同的文本。端点之间的微小差异可能来自精度、每个提供商的硬件和推理软件，或者来自其他端点的运行间差异，在这种规模下，我们无法将它们分开。 Cerebras 是唯一的 fp16 端点，因此 fp16 没有第二个端点可以与之比较。</p>
-<p>该测试一天涵盖一个模型、280 个任务和 6 个端点。它并不表明 4 位对于每个模型或工作负载都是安全的，因此在将流量移动到 4 位端点之前测试您自己的提示。</p>
-<h2>API 提供商提供哪些精度服务？</h2>
-<p>fp8 是最常见的标记精度，大多数端点根本不报告精度。我们从 <a href="https://openrouter.ai/docs/api/api-reference/endpoints/list-all-endpoints-for-a-model">endpoints API</a> 中提取每个模型的端点，该 API 返回了 470 个模型的 1,455 个端点。</p>
-<table><thead><tr><th><strong>报告精度</strong></th><th><strong>端点</strong></th><th><strong>全部分享</strong></th><th><strong>标记的份额</strong></th></tr></thead><tbody><tr><td>未知</td><td>865</td><td>865 59.5%</td><td></td></tr><tr><td>FP8</td><td>343</td><td>343 23.6%</td><td>58.1%</td></tr><tr><td>FP4</td><td>123</td><td>123 8.5%</td><td>20.8%</td></tr><tr><td>BF16</td><td>70</td><td>70 4.8%</td><td>11.9%</td></tr><tr><td>int4</td><td>20</td><td>1.4%</td><td>3.4%</td></tr><tr><td>NVFP4</td><td>13</td><td>0.9%</td><td>2.2%</td></tr><tr><td>MXFP4</td><td>12</td><td>12 0.8%</td><td>2.0%</td></tr><tr><td>FP16</td><td>8</td><td>0.5%</td><td>1.4%</td></tr><tr><td>FP32</td><td>1</td><td>0.1%</td><td>0.2%</td></tr></tbody></table>
+<p>浮点格式把位数分给符号位、指数位和尾数位。指数位决定数值范围，尾数位决定该范围内数值的精细程度。</p>
+<p><img src="https://openrouter.ai/blog/images/llm-quantization-1.png" alt="位布局：bf16 有 1 个符号位、8 个指数位和 7 个尾数位；fp16 是 1、5、10；fp8 (E4M3) 是 1、4、3；fp4 (E2M1) 是 1、2、1。"></p>
+<p><a href="https://cloud.google.com/tpu/docs/bfloat16">bf16</a> 有 1 个符号位、8 个指数位和 7 个尾数位，因此范围与 32 位 fp32 相同，但精度更低。fp16 把 16 位拆成 5 个指数位和 10 个尾数位。<a href="https://www.opencompute.org/documents/ocp-8-bit-floating-point-specification-ofp8-revision-1-0-2023-12-01-pdf-1">OCP 8 位浮点规范</a> 定义了两种 fp8 编码：E4M3（4 个指数位、3 个尾数位）和 E5M2（5 个指数位、2 个尾数位）。fp8 同时牺牲了范围和精度，所以量化模型会为每个张量或每块权重存一个缩放因子。<a href="https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf">MXFP4</a> 每 32 个值共享一个缩放因子，<a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">NVFP4</a> 则每 16 个值用一个 fp8 缩放因子。</p>
+<p>对 API 用户来说，fp8 与 bf16 的区别就体现在同一个模型上不同的标签和价格。在我们的测试里，三个 fp8 endpoint 和那个 fp16 endpoint 之间没有发现差异。</p>
+<h2>fp8 和 fp4 会损失多少质量？</h2>
+<p>测试中没有发现 fp8 或 fp4 带来质量损失。六个 endpoint 的得分都在 98.3% 到 99.2% 之间，而这个规模的测试无法排除一两分之内的差距。</p>
+<p>我们通过 qwen/qwen3.8-27b 跑了 280 道有确定答案的题目，并固定到六个 endpoint。Cerebras 以 fp16 提供该模型，Parasail、CoreWeave 和 AkashML 以 fp8 提供，Darkbloom 和 ModelRun 以 fp4 提供。每个请求都设置了 provider.only、quantizations 和 allow_fallbacks: false，因此只能到达我们指定的 endpoint，温度为 0，关闭推理。题目包括带演算过程的多步算术、需要跟踪的 Python 程序、20 到 30 个数字的排序、在 240 或 1,200 个条目中找出指定键（约 4,000 和 20,000 token），以及一条约 9,000 token 的四步查找链。每道题都是我们生成的，所以都有确定答案，不需要评判模型。另外 40 道题要求直接给出两个四位数的乘积、不写演算过程，单独计分。</p>
+<table><thead><tr><th><strong>任务类别</strong></th><th><strong>任务数</strong></th><th><strong>fp16 Cerebras</strong></th><th><strong>fp8 Parasail</strong></th><th><strong>fp8 CoreWeave</strong></th><th><strong>fp8 AkashML</strong></th><th><strong>fp4 Darkbloom</strong></th><th><strong>fp4 ModelRun</strong></th></tr></thead><tbody><tr><td>带演算过程的算术</td><td>50</td><td>48</td><td>49</td><td>48</td><td>49</td><td>49</td><td>50</td></tr><tr><td>短代码跟踪</td><td>50</td><td>50</td><td>50</td><td>50</td><td>50</td><td>50</td><td>50</td></tr><tr><td>长代码跟踪</td><td>30</td><td>30</td><td>29</td><td>29</td><td>29</td><td>29</td><td>28</td></tr><tr><td>排序 20 到 30 个数字</td><td>30</td><td>30</td><td>29</td><td>29</td><td>29</td><td>29</td><td>30</td></tr><tr><td>4,000 token 下的召回</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td></tr><tr><td>20,000 token 下的召回</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td><td>20</td></tr><tr><td>四跳召回</td><td>40</td><td>39</td><td>40</td><td>40</td><td>40</td><td>39</td><td>40</td></tr><tr><td><strong>总计</strong></td><td><strong>240</strong></td><td><strong>98.8%</strong></td><td><strong>98.8%</strong></td><td><strong>98.3%</strong></td><td><strong>98.8%</strong></td><td><strong>98.3%</strong></td><td><strong>99.2%</strong></td></tr><tr><td>不带演算过程的乘法</td><td>40</td><td>30</td><td>33</td><td>31</td><td>32</td><td>26</td><td>30</td></tr></tbody></table>
+<p>来源：OpenRouter，Qwen3.8 27B，2026 年 10 月 20 日。总计的 95% 置信区间从 95.8% 到 99.8%，六个区间互相重叠。</p>
+<p>没有任何一类题目能把不同精度区分开。在每一类里，每个 endpoint 最多错两道，而且都是常见的小失误，比如排序列表里漏了一个数字。几个 fp8 endpoint 彼此在 240 道题中的 2 到 5 道上给出不同答案，两个 fp4 endpoint 之间相差 4 道。Darkbloom 与 fp16、fp8 endpoint 不一致的时候最多，相差 7 到 8 道，但它的总分与 fp16 相差不到半分。</p>
+<p>唯一显出差距的地方是不带演算过程的乘法。fp4 下的 Darkbloom 在 40 个乘积里算对 26 个，其余五个 endpoint 是 30 到 33 个，其中 fp4 下的 ModelRun 是 30 个。以表现最好的 endpoint（33 个）做两比例 z 检验——这是看到结果之后才选定的对比——得出在并无真实差异时出现这么大差距的概率约为 7.5%，因此不能把它归因于精度。各精度下算错的乘积都很接近，中位误差不到 0.01%。</p>
+<p>我们在 Cerebras 上把所有 280 道题跑了两遍，两遍在每道题上返回的文本完全一致。endpoint 之间的细微差异可能来自精度，也可能来自各家 provider 的硬件和推理软件，或其他 endpoint 每次运行的波动；在这个规模下我们无法把它们区分开。Cerebras 是唯一的 fp16 endpoint，所以 fp16 没有第二个 endpoint 可比。</p>
+<p>这次测试只覆盖一天里的一个模型、280 道题和六个 endpoint。它并不能说明 4 位对每个模型或每种负载都安全，所以在把流量切到 4 位 endpoint 之前，先用自己的 prompt 测一测。</p>
+<h2>各家 API provider 提供哪些精度？</h2>
+<p>fp8 是最常见的标注精度，而大多数 endpoint 根本不报告精度。我们从 <a href="https://openrouter.ai/docs/api/api-reference/endpoints/list-all-endpoints-for-a-model">endpoints API</a> 拉取了每个模型的 endpoint，共得到 470 个模型下的 1,455 个 endpoint。</p>
+<table><thead><tr><th><strong>报告的精度</strong></th><th><strong>endpoint 数</strong></th><th><strong>占全部 endpoint</strong></th><th><strong>占已标注 endpoint</strong></th></tr></thead><tbody><tr><td>unknown</td><td>865</td><td>59.5%</td><td></td></tr><tr><td>fp8</td><td>343</td><td>23.6%</td><td>58.1%</td></tr><tr><td>fp4</td><td>123</td><td>8.5%</td><td>20.8%</td></tr><tr><td>bf16</td><td>70</td><td>4.8%</td><td>11.9%</td></tr><tr><td>int4</td><td>20</td><td>1.4%</td><td>3.4%</td></tr><tr><td>nvfp4</td><td>13</td><td>0.9%</td><td>2.2%</td></tr><tr><td>mxfp4</td><td>12</td><td>0.8%</td><td>2.0%</td></tr><tr><td>fp16</td><td>8</td><td>0.5%</td><td>1.4%</td></tr><tr><td>fp32</td><td>1</td><td>0.1%</td><td>0.2%</td></tr></tbody></table>
 <p>来源：OpenRouter（<a href="http://openrouter.ai/api/v1/models/%7Bauthor%7D/%7Bslug%7D/endpoints">openrouter.ai/api/v1/models/{author}/{slug}/endpoints</a>），截至 2026 年 10 月 20 日。</p>
-<p>865 个未知端点中的 610 个属于完全没有标记端点的封闭权重模型，包括每个 Claude 和 Gemini 模型以及除 gpt-oss 之外的每个 OpenAI 模型。在其他 255 个模型中，有 253 个采用开放重量模型，其提供商没有标注精度。具有标记端点的 163 个模型中只有 54 个具有 16 位端点，因此对于大多数开放权重模型，8 位或 4 位是唯一的标记选项。</p>
-<h2>量化端点更便宜吗？</h2>
-<p>通常，但并非总是如此。对于每个模型，我们以三个输入令牌与一个输出令牌的混合价格比较每个精度的最便宜端点。</p>
-<table><thead><tr><th><strong>比较</strong></th><th><strong>型号</strong></th><th>**较低的精度更便宜​​*</th><th><strong>2%以内</strong></th><th><strong>精度越低，成本越高</strong></th><th><strong>中位价格比率</strong></th></tr></thead><tbody><tr><td>8 位与 16 位</td><td>24</td><td>14</td><td>14 3</td><td>7</td><td>0.94</td><td>0.94</td></tr><tr><td>4 位与 8 位</td><td>33</td><td>33 26</td><td>26 3</td><td>4</td><td>0.76</td><td>0.76</td></tr><tr><td>4 位与 16 位</td><td>11</td><td>11 9</td><td>0</td><td>2</td><td>0.73</td><td>0.73</td></tr></tbody></table>
-<p>来源：OpenRouter 端点 API，列出价格，包括提供商折扣，截至 2026 年 10 月 20 日。</p>
-<p>这是五个模型的每种精度下最便宜的端点，以每百万混合代币为单位。有两个是例外。 gpt-oss-120b 在 8 位上的成本高于 16 位，MiniMax M3 在 4 位上的成本高于 8 位。</p>
-<table><thead><tr><th><strong>型号</strong></th><th><strong>16 位</strong></th><th><strong>8 位</strong></th><th><strong>4 位</strong></th></tr></thead><tbody><tr><td><a href="https://openrouter.ai/qwen/qwen3.8-27b">Qwen3.8 27B</a></td><td>0.581 美元</td><td>0.342 美元</td><td>0.140 美元</td></tr><tr><td><a href="https://openrouter.ai/moonshotai/kimi-k2.6">Kimi K2.6</a></td><td>1.400 美元</td><td>1.079 美元</td><td>0.825 美元</td></tr><tr><td><a href="https://openrouter.ai/google/gemma-4-31b-it">杰玛 4 31B</a></td><td>0.205 美元</td><td>0.200 美元</td><td>0.160 美元</td></tr><tr><td><a href="https://openrouter.ai/openai/gpt-oss-120b">gpt-oss-120b</a></td><td>0.067 美元</td><td>0.100 美元</td><td>0.060 美元</td></tr><tr><td><a href="https://openrouter.ai/minimax/minimax-m3">MiniMax M3</a></td><td>无</td><td>0.388 美元</td><td>0.412 美元</td></tr></tbody></table>
-<p>来源：OpenRouter 端点 API，截至 2026 年 10 月 20 日。</p>
-<p>提供商对价格的影响大于对精度的影响。如果一个模型具有相同精度的多个端点，则最昂贵的中位数是最便宜的 1.72 倍。对于 Qwen3.8 27B，十个 fp8 端点的价格范围为每百万混合代币 0.342 美元到 1.137 美元。要将请求发送到通过精度过滤器的最便宜端点，请将 :floor 添加到模型段，如我们的<a href="https://openrouter.ai/blog/tutorials/how-to-get-the-lowest-cost-llm-inference-on-openrouter/">最低成本推理指南</a> 所解释的。通过量化：[“fp8”]，qwen/qwen3.8-27b:floor 在我们的两次尝试中都转到了 Chutes，这是最便宜的 fp8 端点。</p>
-<p>在我们的测试中，最便宜的完整 280 任务运行是在 fp4 上，最昂贵的是在 fp16 上，但两者之间的顺序并不遵循精度。一次运行在 Darkbloom (fp4) 上花费 0.58 美元，在 AkashML (fp8) 上花费 0.72 美元，在 ModelRun (fp4) 上花费 0.77 美元，在 Parasail (fp8) 上花费 0.81 美元，在 CoreWeave (fp8) 上花费 1.19 美元，在 Cerebras (fp16) 上花费 1.24 美元。速度也不追随精度。 Cerebras (fp16) 和 ModelRun (fp4) 的回答时间中位数为 1.3 和 2.4 秒，而其他四个的回答时间为 8.4 到 15.0 秒。在所有端点中，每个标记精度的 24 小时正常运行时间中位数均为 99.8% 或更高，但 fp32 除外，它有一个端点。</p>
-<h2>如何选择获得的精度？</h2>
-<p>检查模型的端点提供什么服务，然后根据您的请求设置provider.quantizations。对 <a href="https://openrouter.ai/api/v1/models/qwen/qwen3.8-27b/endpoints">https://openrouter.ai/api/v1/models/qwen/qwen3.8-27b/endpoints</a> 的 GET 返回每个端点的一个条目及其量化、价格、上下文长度和正常运行时间。当我们调用它时，它的响应没有 API 密钥，并且模型的 <a href="https://openrouter.ai/qwen/qwen3.8-27b/providers">providers 选项卡</a> 显示相同的列表。对于 Qwen3.8 27B，它列出了 21 个端点，其中 1 个 bf16、1 个 fp16、10 个 fp8、3 个 fp4 和 6 个未知。在固定之前检查计数是否达到您想要的精度，因为该计数是指当一个端点发生故障时可以接管的端点数量。</p>
-<p>要将请求保持在 8 位或更高位，请列出您接受的精度。</p>
+<p>865 个 unknown endpoint 里有 610 个属于完全没有标注 endpoint 的闭权重模型，包括所有 Claude、Gemini 模型，以及除 gpt-oss 外的所有 OpenAI 模型。剩下 255 个中，253 个落在开放权重模型上，其 provider 没有标注精度。在 163 个带标注 endpoint 的模型里，只有 54 个有 16 位 endpoint，因此对大多数开放权重模型来说，8 位或 4 位是仅有的标注选项。</p>
+<h2>量化后的 endpoint 更便宜吗？</h2>
+<p>通常是，但不总是。对每个模型，我们按三份输入 token 对一份输出 token 的混合价格，比较各精度下最便宜的 endpoint。</p>
+<table><thead><tr><th><strong>对比</strong></th><th><strong>模型数</strong></th><th><strong>低精度更便宜</strong></th><th><strong>差距在 2% 以内</strong></th><th><strong>低精度更贵</strong></th><th><strong>价格比中位数</strong></th></tr></thead><tbody><tr><td>8 位对 16 位</td><td>24</td><td>14</td><td>3</td><td>7</td><td>0.94</td></tr><tr><td>4 位对 8 位</td><td>33</td><td>26</td><td>3</td><td>4</td><td>0.76</td></tr><tr><td>4 位对 16 位</td><td>11</td><td>9</td><td>0</td><td>2</td><td>0.73</td></tr></tbody></table>
+<p>来源：OpenRouter endpoints API，所列价格含 provider 折扣，截至 2026 年 10 月 20 日。</p>
+<p>下面是五个模型在各精度下最便宜的 endpoint，单位为每百万混合 token 的美元数。其中有两个例外：gpt-oss-120b 在 8 位下比 16 位更贵，MiniMax M3 在 4 位下比 8 位更贵。</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>16 位</strong></th><th><strong>8 位</strong></th><th><strong>4 位</strong></th></tr></thead><tbody><tr><td><a href="https://openrouter.ai/qwen/qwen3.8-27b">Qwen3.8 27B</a></td><td>$0.581</td><td>$0.342</td><td>$0.140</td></tr><tr><td><a href="https://openrouter.ai/moonshotai/kimi-k2.6">Kimi K2.6</a></td><td>$1.400</td><td>$1.079</td><td>$0.825</td></tr><tr><td><a href="https://openrouter.ai/google/gemma-4-31b-it">Gemma 4 31B</a></td><td>$0.205</td><td>$0.200</td><td>$0.160</td></tr><tr><td><a href="https://openrouter.ai/openai/gpt-oss-120b">gpt-oss-120b</a></td><td>$0.067</td><td>$0.100</td><td>$0.060</td></tr><tr><td><a href="https://openrouter.ai/minimax/minimax-m3">MiniMax M3</a></td><td>None</td><td>$0.388</td><td>$0.412</td></tr></tbody></table>
+<p>来源：OpenRouter endpoints API，截至 2026 年 10 月 20 日。</p>
+<p>provider 对价格的影响比精度更大。同一个模型在同一精度下有多个 endpoint 时，最贵的中位数是最便宜的 1.72 倍。对 Qwen3.8 27B，十个 fp8 endpoint 的价格从每百万混合 token $0.342 到 $1.137 不等。想把请求发给通过精度筛选的最便宜 endpoint，就在模型 slug 后加 :floor，我们的<a href="https://openrouter.ai/blog/tutorials/how-to-get-the-lowest-cost-llm-inference-on-openrouter/">最低成本推理指南</a> 有说明。配合 quantizations: [“fp8”]，qwen/qwen3.8-27b:floor 在我们两次尝试中都路由到了 Chutes，也就是最便宜的 fp8 endpoint。</p>
+<p>在我们的测试里，完整跑完 280 道题最便宜的是 fp4，最贵的是 fp16，但中间的顺序并不按精度排列。一次运行在 Darkbloom (fp4) 上花费 $0.58，AkashML (fp8) $0.72，ModelRun (fp4) $0.77，Parasail (fp8) $0.81，CoreWeave (fp8) $1.19，Cerebras (fp16) $1.24。速度同样不随精度变化。Cerebras (fp16) 和 ModelRun (fp4) 的回答时间中位数分别是 1.3 秒和 2.4 秒，其余四个是 8.4 到 15.0 秒。在所有 endpoint 中，除只有一个 endpoint 的 fp32 外，每种标注精度的 24 小时可用率中位数都在 99.8% 以上。</p>
+<h2>如何选定你拿到的精度？</h2>
+<p>先查看一个模型的各个 endpoint 提供什么，再在请求里设置 provider.quantizations。对 <a href="https://openrouter.ai/api/v1/models/qwen/qwen3.8-27b/endpoints">https://openrouter.ai/api/v1/models/qwen/qwen3.8-27b/endpoints</a> 发起 GET，会为每个 endpoint 返回一条记录，含量化方式、价格、上下文长度和可用率。我们调用时它无需 API key 就能响应，模型的 <a href="https://openrouter.ai/qwen/qwen3.8-27b/providers">providers 选项卡</a> 显示的也是同一份列表。对 Qwen3.8 27B，它列出了 21 个 endpoint：1 个 bf16、1 个 fp16、10 个 fp8、3 个 fp4 和 6 个 unknown。锁定某个精度之前，先查一下想要精度的 endpoint 数量，因为这个数量就是某个 endpoint 出故障时可以接管的备选个数。</p>
+<p>要把请求保持在 8 位或更高精度，把你接受的精度列出来。</p>
 <pre><code>import os
 import requests
 
@@ -364,51 +364,51 @@ data = response.json()
 if &quot;error&quot; in data:
     raise RuntimeError(data[&quot;error&quot;])
 print(data[&quot;provider&quot;], data[&quot;choices&quot;][0][&quot;message&quot;][&quot;content&quot;], f'${data[&quot;usage&quot;][&quot;cost&quot;]:.6f}')</code></pre>
-<p>我们运行了三次，每次运行都打印相同的行。</p>
-<p>雷卡堪培拉 $0.000007</p>
-<p><a href="https://openrouter.ai/docs/guides/routing/provider-selection#quantization">提供商路由量化文档</a> 列出了每个接受的值，并解释了量化如何与 only、order 和 sort 相结合。</p>
-<p>量化过滤端点列表。我们删除精度不在列表中的每个端点，然后<a href="https://openrouter.ai/docs/guides/routing/provider-selection">其余端点之间的负载平衡</a>，加权到最低价格，如果提供者失败，则回退到下一个端点。过滤器中的任何内容都不能保证每次都使用相同的提供程序，因此如果您跟踪质量，请记录响应的提供程序字段。文档还指出，fp4 包括 mxfp4 和 nvfp4，fp8 包括 mxfp8。</p>
-<p><img src="https://openrouter.ai/blog/images/llm-quantization-2.png" alt="路由流程：模型的所有端点都通过允许的提供者（仅）进行过滤，然后通过量化（量化），如果没有留下任何端点，则返回 404 No端点。其余端点是负载平衡的，并且在出现错误时 OpenRouter 会尝试下一个端点 (allow_fallbacks)。"></p>
-<h3>精密过滤器的常见问题及其解决方法</h3>
-<p>该过滤器在联系任何提供者之前运行，因此空的候选列表很快就会失败。向 Qwen3.8 27B 请求 int8（没有端点提供服务）会在 0.4 秒内返回 404。</p>
+<p>我们运行了三次，每次都打印出同一行。</p>
+<p>Reka Canberra $0.000007</p>
+<p><a href="https://openrouter.ai/docs/guides/routing/provider-selection#quantization">provider 路由量化文档</a> 列出了所有可接受的值，并说明 quantizations 如何与 only、order 和 sort 配合。</p>
+<p>quantizations 会过滤 endpoint 列表：我们去掉所有精度不在列表里的 endpoint，然后<a href="https://openrouter.ai/docs/guides/routing/provider-selection">在剩下的 endpoint 之间做负载均衡</a>，按最低价格加权；如果某个 provider 失败，就回退到下一个 endpoint。这个过滤器并不保证每次都用同一个 provider，所以如果你要跟踪质量，记得记录响应里的 provider 字段。文档还提到，fp4 包含 mxfp4 和 nvfp4，fp8 包含 mxfp8。</p>
+<p><img src="https://openrouter.ai/blog/images/llm-quantization-2.png" alt="路由流程：模型的所有 endpoint 先按允许的 provider 过滤 (only)，再按量化精度过滤 (quantizations)，若一个都不剩就返回 404 No endpoints found。剩下的 endpoint 做负载均衡，出错时 OpenRouter 会尝试下一个 endpoint (allow_fallbacks)。"></p>
+<h3>精度过滤器的常见问题与解决办法</h3>
+<p>过滤发生在联系任何 provider 之前，所以候选列表为空时会很快失败。向 Qwen3.8 27B 请求 int8（没有 endpoint 提供该精度）在 0.4 秒内就返回了 404。</p>
 <pre><code>{&quot;error&quot;:{&quot;message&quot;:&quot;No endpoints found for the request with quantization: int8. To learn more about provider routing, visit: https://openrouter.ai/docs/guides/routing/provider-selection&quot;,&quot;code&quot;:404,&quot;metadata&quot;:{&quot;routing_funnel&quot;:[{&quot;step&quot;:&quot;Initial Endpoints&quot;,&quot;endpoint_count&quot;:21}],&quot;failed_routing_step&quot;:&quot;Filter by Quantization&quot;}}}</code></pre>
-<p>routing_funnel 字段显示每个步骤有多少个端点幸存下来，failed_routing_step 命名没有留下任何端点的步骤。 {“quantizations”: [“fp8”], “only”: [“cerebras”]} 返回与 quantization: fp8 相同的 404，因为 Cerebras 提供 fp16，因此漏斗从 21 个端点变为 1 个端点，再到无端点。</p>
-<p>当只有一个端点匹配时，会发生较慢的失败。 Cerebras 是 Qwen3.8 27B 的唯一 fp16 端点。在我们使用allow_fallbacks: false 固定 Cerebras 的测试中，前 280 个请求中有 93 个连续失败了 3 次并出现此错误（已删节）。</p>
+<p>routing_funnel 字段显示每一步之后剩下多少 endpoint，failed_routing_step 指出是哪一步把列表清空了。{“quantizations”: [“fp8”], “only”: [“cerebras”]} 同样返回带 quantization: fp8 的 404，因为 Cerebras 提供的是 fp16，于是漏斗从 21 个 endpoint 变成 1 个，再变成 0 个。</p>
+<p>更慢的失败发生在只有一个 endpoint 匹配时。Cerebras 是 Qwen3.8 27B 唯一的 fp16 endpoint。在我们的测试中，用 allow_fallbacks: false 固定到 Cerebras，前 280 个请求里有 93 个连续三次失败，报的是这个错误（已删节）。</p>
 <pre><code>{&quot;message&quot;:&quot;Provider returned error&quot;,&quot;code&quot;:429,&quot;metadata&quot;:{&quot;raw&quot;:&quot;qwen/qwen3.8-27b is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations&quot;,&quot;provider_name&quot;:&quot;Cerebras&quot;,&quot;limit_source&quot;:&quot;upstream_provider_shared_pool&quot;,&quot;retry_after_seconds&quot;:59}}</code></pre>
-<p>我们重试，直到 280 个全部完成。量化：[“fp16”] 本身留下相同的单个候选者，因此速率限制无处可去。将列表扩大到 [“fp16”, “bf16”] 为路由器提供了第二个候选者，相同的请求发送到 DeepInfra。</p>
-<p>提供程序失败也可能<a href="https://openrouter.ai/docs/api_reference/errors-and-debugging#mid-stream-errors">带有 HTTP 200 状态</a>，因为我们在提供程序接受请求后立即发送状态。检查主体是否有错误，而不仅仅是状态代码。</p>
-<h3>使用 Exacto 按质量信号对端点进行排序</h3>
-<p>量化质量取决于<a href="https://openrouter.ai/docs/guides/routing/provider-selection#quantization">“取决于所使用的方法”</a>，并且每个提供商都运行自己的推理软件，因此不能保证具有相同标签的两个端点匹配。对于使用工具的请求，<a href="https://openrouter.ai/docs/guides/routing/auto-exacto">Auto Exacto</a> 已经将吞吐量、工具调用成功率和基准分数较低的端点移至列表后面。要将该顺序应用于没有工具的请求，请将 <a href="https://openrouter.ai/docs/guides/routing/model-variants/exacto">:exacto</a> 添加到模型段中。 Exacto 根据工具调用信号对端点进行排名，而不是根据任务的准确性进行排名，因此针对您正在考虑的端点运行您自己的提示。 <a href="https://openrouter.ai/blog/insights/evaluate-llm-provider-performance/">如何评估 LLM 提供商的性能</a> 介绍了如何比较其延迟、吞吐量和正常运行时间。</p>
+<p>我们不断重试，直到 280 个请求全部完成。单独用 quantizations: [“fp16”] 仍只留下同一个候选，所以一旦触发速率限制就无处可转。把列表放宽到 [“fp16”, “bf16”] 后，router 有了第二个候选，同一个请求就发到了 DeepInfra。</p>
+<p>provider 的失败也可能<a href="https://openrouter.ai/docs/api_reference/errors-and-debugging#mid-stream-errors">带着 HTTP 200 状态返回</a>，因为 provider 一接受请求我们就把状态码发出去了。要检查响应体里有没有 error，而不只是看状态码。</p>
+<h3>用 Exacto 按质量信号给 endpoint 排序</h3>
+<p>量化后的质量<a href="https://openrouter.ai/docs/guides/routing/provider-selection#quantization">“取决于所用的方法”</a>，而每个 provider 都跑自己的推理软件，所以同样标签的两个 endpoint 不一定表现一致。对于带 tools 的请求，<a href="https://openrouter.ai/docs/guides/routing/auto-exacto">Auto Exacto</a> 已经会把吞吐量、工具调用成功率和基准分数较低的 endpoint 挪到列表后面。想把这套排序用到不带 tools 的请求上，就在模型 slug 后加 <a href="https://openrouter.ai/docs/guides/routing/model-variants/exacto">:exacto</a>。Exacto 是按工具调用信号给 endpoint 排名，而不是按你在具体任务上的准确率，所以要拿自己的 prompt 去测准备选用的 endpoint。<a href="https://openrouter.ai/blog/insights/evaluate-llm-provider-performance/">如何评估 LLM provider 性能</a> 讲了怎么比较它们的延迟、吞吐量和可用率。</p>
 <h2>常见问题</h2>
-<h3>量化越高还是越低越好？</h3>
-<p>更多位可以保留更多原始模型的精度并占用更多内存。在我们于 2026 年 10 月 20 日对 Qwen3.8 27B 进行的测试中，我们没有检测到 240 个具有确切答案的任务中 fp8、fp4 和 fp16 端点之间的准确性差异。这涵盖了一天的一种模型，因此在您投入使用之前先在您自己的工作负载上测试 4 位。</p>
-<h3>为什么量化不会破坏LLM的准确性？</h3>
-<p>并非所有重量都同等重要。 <a href="https://arxiv.org/abs/2306.00978">AWQ</a> 发现，保护大约 1% 的最重要权重可以大大降低量化误差，并且 <a href="https://arxiv.org/abs/2208.07339">LLM.int8()</a> 使用混合精度，将离群值保持在 16 位，同时将超过 99.9% 的值乘以 8 位。我们对 Qwen3.8 27B 的测试无法显示提供程序使用哪些方法，但 fp16 端点错过了 240 个任务中的 3 个，而 fp8 和 fp4 端点错过了 2 到 4 个任务。</p>
-<h3>什么时候应该量化模型？</h3>
-<p>当模型不适合您的 16 位硬件时，或者当您需要相同 GPU 的更高吞吐量时，请进行量化。在我们的测试中，我们没有检测到 fp8 处的损失，并且 fp8 对每个权重的舍入小于 4 位，因此这是较小的步长。首先在您自己的任务中测试其中一个。通过 API，您无需自行量化模型。您可以使用provider.quantizations 在 OpenRouter 上选择一个提供您想要的精度的端点。</p>
-<h3>“未知”量化对提供商意味着什么？</h3>
-<p>这意味着提供商尚未报告该端点的精度。在 OpenRouter 上，2026 年 10 月 20 日，1,455 个端点中的 865 个端点未知，其中 610 个属于 Claude 和 Gemini 等封闭权重模型。未知也是provider.quantizations中可接受的值，因此您可以包含或排除这些端点。</p>]]></content:encoded>
+<h3>量化位数高好还是低好？</h3>
+<p>位数越多，保留的原始模型精度越高，占用的内存也越大。在 2026 年 10 月 20 日对 Qwen3.8 27B 的测试里，240 道有确定答案的题目上，我们没有发现 fp8、fp4 与 fp16 endpoint 之间的准确率差异。这只覆盖一天中的一个模型，所以在正式采用 4 位之前，先在自己的负载上测一测。</p>
+<h3>为什么量化没有毁掉 LLM 的准确率？</h3>
+<p>并非所有权重都同等重要。<a href="https://arxiv.org/abs/2306.00978">AWQ</a> 发现，只要保护约 1% 最关键的权重，就能大幅降低量化误差；<a href="https://arxiv.org/abs/2208.07339">LLM.int8()</a> 则采用混合精度，把离群值保留在 16 位，而让超过 99.9% 的数值用 8 位参与乘法。我们对 Qwen3.8 27B 的测试无法看出各家 provider 用了哪些方法，但 fp16 endpoint 在 240 道题里错了 3 道，fp8 和 fp4 endpoint 错了 2 到 4 道。</p>
+<h3>什么时候该量化模型？</h3>
+<p>当模型在 16 位下装不进你的硬件，或你需要用同样的 GPU 挤出更高吞吐量时，就该量化。测试里我们没有发现 fp8 有损失，而且 fp8 对每个权重的舍入比 4 位更小，是更稳妥的一小步。不管选哪个，先在自己的任务上测过再说。通过 API 时，你不需要自己量化模型，而是用 provider.quantizations 在 OpenRouter 上挑一个提供所需精度的 endpoint。</p>
+<h3>provider 上的 “unknown” 量化是什么意思？</h3>
+<p>意思是该 provider 没有为这个 endpoint 报告精度。在 OpenRouter 上，2026 年 10 月 20 日的 1,455 个 endpoint 里有 865 个是 unknown，其中 610 个属于 Claude、Gemini 这类闭权重模型。unknown 也是 provider.quantizations 里可接受的值，所以你可以把这些 endpoint 纳入或排除。</p>]]></content:encoded>
     </item>
     <item>
-      <title>MCP、CLI 与技能：各自的具体成本</title>
+      <title>MCP、CLI 与 skills：各自在上下文中的成本</title>
       <link>https://openrouter.ai/blog/insights/mcp-vs-cli-vs-skills/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/insights/mcp-vs-cli-vs-skills/</guid>
       <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：MCP vs CLI vs Skills: What Each Costs in Context</description>
-      <content:encoded><![CDATA[<h1>MCP、CLI 与技能：各自的成本</h1>
-<p>开放路由器 ·11/11/2026</p>
-<p><img src="https://openrouter.ai/blog/images/mcp-vs-cli-vs-skills.png" alt="MCP vs CLI vs Skills: 在上下文中各自的成本"><img src="https://openrouter.ai/blog/images/mcp-vs-cli-vs-skills-dark.png" alt="MCP vs CLI vs Skills: 在上下文中各自的成本"></p>
-<p>您为代理提供的每个工具都会根据每个请求将其定义发送到模型，并且您将其作为输入令牌进行支付。 <a href="https://modelcontextprotocol.io/specation/2026-07-28/server/tools">模型上下文协议</a> (MCP) 服务器可以向上下文窗口添加数万个令牌。通常的替代方案是命令行工具 (CLI) 或 <a href="https://agentskills.io/specification">skill</a>。</p>
-<p>我们在 <a href="https://openrouter.ai/anthropic/claude-haiku-5.5">Claude Haiku 5.5</a>、[Claude Sonnet] 上使用 <a href="https://github.com/github/github-mcp-server">GitHub MCP 服务器</a>、<a href="https://cli.github.com/manual/">gh CLI</a> 和 gh 技能在一项 GitHub 任务上进行了测量5.5](https://openrouter.ai/anthropic/claude-sonnet-5.5)、<a href="https://openrouter.ai/openai/gpt-6-luna">GPT-6 Luna</a>和<a href="https://openrouter.ai/google/gemini-3.8-flash">Gemini 3.8 Flash</a>。在 Sonnet 5.5 上，三个人都回答正确，但他们使用的输入标记却截然不同。 CLI 使用了 1,421 个，技能使用了 3,315 个，MCP 服务器在加载默认工具的情况下使用了 59,417 个。这是令牌的去向以及如何使用我们的<a href="https://openrouter.ai/docs/guides/features/server-tools/tool-search">工具搜索</a>服务器工具来切割它们。</p>
-<h2>长篇大论；博士</h2>
-<ul><li>The GitHub MCP server’s 46 default tools add 19,436 tokens to every request on Claude Sonnet 5.5.</li><li>在 Sonnet 5.5 上，一个工具结果（GitHub 的发布对象）花费了约 20,400 个代币，超过了所有 46 个定义。</li><li>Tool Search cut the up-front cost of 46 tools to under 600 tokens.在整个任务中，它将 Sonnet 5.5 的成本减少了一半，并在 Claude Haiku 5.5 上提高了成本。</li></ul>
-<h2>What is the difference between MCP, a CLI, and a skill?</h2>
-<p>这三者都赋予模型一种能力。 They differ in what the model reads before it can use it.</p>
-<table><thead><tr><th></th><th><strong>模型预先看到的内容</strong></th><th><strong>当它行动时它看到什么</strong></th></tr></thead><tbody><tr><td>MCP服务器</td><td>Every tool’s name, description, and JSON schema, on every request</td><td>The tool’s result, in whatever shape the server returns</td></tr><tr><td>命令行</td><td>一个 shell 工具和一行表示 CLI 存在</td><td>命令的输出，您可以使用诸如 —json</td><td>之类的标志来调整输出</td></tr><tr><td>技能</td><td>每项技能的一行描述</td><td>技能的 SKILL.md 文件，一次，然后命令输出</td></tr></tbody></table>
-<p>A CLI relies on the model already knowing the tool. A skill teaches the model how to use a tool, and the model loads the full instructions only when a task needs them.</p>
-<h2>How many tokens does an MCP server add to every request?</h2>
-<p>计算它们的可靠方法是询问模型。每个提供者在计算标记之前都以自己的格式将工具定义写入提示中，而本地标记生成器会忽略这一点。使用和不使用工具发送相同的请求，usage.prompt_tokens 的差异是工具每次的成本。</p>
-<p>将其保存为 mcp_cost.py。它使用 GitHub 服务器接受的 MCP <a href="https://modelcontextprotocol.io/specation/2025-06-18/basic/lifecycle">2025-06-18 版本</a>。</p>
+      <content:encoded><![CDATA[<h1>MCP、CLI 与 skills：各自在上下文中的成本</h1>
+<p>OpenRouter ·11/11/2026</p>
+<p><img src="https://openrouter.ai/blog/images/mcp-vs-cli-vs-skills.png" alt="MCP、CLI 与 skills：各自在上下文中的成本"><img src="https://openrouter.ai/blog/images/mcp-vs-cli-vs-skills-dark.png" alt="MCP、CLI 与 skills：各自在上下文中的成本"></p>
+<p>你给 agent 的每一个工具，都会在每次请求时把定义发给模型，并按输入 token 计费。一个 <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools">Model Context Protocol</a> (MCP) server 可能给上下文窗口增加数万个 token。常见的替代方案是命令行工具 (CLI)，或一个 <a href="https://agentskills.io/specification">skill</a>。</p>
+<p>我们用一个 GitHub 任务做了测量：分别用 <a href="https://github.com/github/github-mcp-server">GitHub MCP server</a>、<a href="https://cli.github.com/manual/">gh CLI</a> 和一个 gh skill，跑在 <a href="https://openrouter.ai/anthropic/claude-haiku-5.5">Claude Haiku 5.5</a>、<a href="https://openrouter.ai/anthropic/claude-sonnet-5.5">Claude Sonnet 5.5</a>、<a href="https://openrouter.ai/openai/gpt-6-luna">GPT-6 Luna</a> 和 <a href="https://openrouter.ai/google/gemini-3.8-flash">Gemini 3.8 Flash</a> 上。在 Sonnet 5.5 上，三种方式都答对了，但用掉的输入 token 差别很大：CLI 用了 1,421，skill 用了 3,315，加载默认 tools 的 MCP server 用了 59,417。下面说明这些 token 花在了哪里，以及如何用我们的 <a href="https://openrouter.ai/docs/guides/features/server-tools/tool-search">Tool Search</a> server 工具把它们降下来。</p>
+<h2>TL;DR</h2>
+<ul><li>GitHub MCP server 的 46 个默认 tools 在 Claude Sonnet 5.5 上给每次请求增加 19,436 个 token。</li><li>在 Sonnet 5.5 上，光是一条工具结果（GitHub 的 release 对象）就花了约 20,400 个 token，比全部 46 个定义还多。</li><li>Tool Search 把 46 个 tools 的前置开销压到 600 个 token 以内。放到整个任务看，它让 Sonnet 5.5 的成本减半，却让 Claude Haiku 5.5 的成本上升。</li></ul>
+<h2>MCP、CLI 和 skill 之间有什么区别？</h2>
+<p>三者都给模型增加一种能力，区别在于模型在使用它之前要先读到什么。</p>
+<table><thead><tr><th></th><th><strong>模型预先看到什么</strong></th><th><strong>模型行动时看到什么</strong></th></tr></thead><tbody><tr><td>MCP server</td><td>每次请求里每个 tool 的名称、描述和 JSON schema</td><td>该 tool 的结果，形状由 server 返回什么决定</td></tr><tr><td>CLI</td><td>一个 shell 工具，加一行说明该 CLI 存在</td><td>命令的输出，可用 —json 这类 flag 调整形状</td></tr><tr><td>Skill</td><td>每个 skill 的一行描述</td><td>该 skill 的 SKILL.md 文件（读一次），然后是命令输出</td></tr></tbody></table>
+<p>CLI 依赖模型本来就认识这个工具；skill 则教模型怎么用某个工具，而且只在任务需要时才把完整指令加载进来。</p>
+<h2>一个 MCP server 会给每次请求增加多少 token？</h2>
+<p>可靠的数法是直接问模型。每家 provider 在计数之前，会按自己的格式把工具定义写进 prompt，本地 tokenizer 算不到这部分。把同一个请求分别带上和不带 tools 各发一次，usage.prompt_tokens 的差值就是这些 tools 每一轮的开销。</p>
+<p>把下面这段存成 mcp_cost.py。它用的是 MCP 的 <a href="https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle">2025-06-18 版本</a>，GitHub server 接受这个版本。</p>
 <pre><code>&quot;&quot;&quot;How many prompt tokens does an MCP server add to every request? Ask the model.&quot;&quot;&quot;
 import json
 import os
@@ -469,35 +469,35 @@ if __name__ == &quot;__main__&quot;:
     for model in [&quot;anthropic/claude-haiku-5.5&quot;, &quot;openai/gpt-6-luna&quot;, &quot;google/gemini-3.8-flash&quot;]:
         added = prompt_tokens(model, tools) - prompt_tokens(model)
         print(f&quot;{model:30} +{added:,} prompt tokens on every request&quot;)</code></pre>
-<p>将服务器的启动命令作为参数传递，如此处的 GitHub MCP 服务器 v2.0.2 所示。</p>
+<p>把 server 的启动命令作为参数传进去，就像这里针对 GitHub MCP server v2.0.2 的做法。</p>
 <pre><code>$ python mcp_cost.py github-mcp-server stdio --toolsets=default
 46 tools
 anthropic/claude-haiku-5.5     +19,436 prompt tokens on every request
 openai/gpt-6-luna              +8,903 prompt tokens on every request
 google/gemini-3.8-flash        +8,525 prompt tokens on every request</code></pre>
-<p>成本随着您添加的每个工具而增加。在 Haiku 5.5 上，问题工具集有 10 个工具并添加了 5,801 个标记。用户工具集有一个工具，并添加了 619 个工具。</p>
-<p>您使用的模型也会改变计数。同样的 46 个工具在 Haiku 5.5 上花费 19,436 个代币，但在 GPT-6 Luna 上花费 8,903 个代币，因此请根据您计划运行的模型进行衡量。</p>
-<p>即使是为模型提供服务的提供商也可以更改它。在 Gemini 3.8 Flash 上，这 46 个工具通过 Google Vertex 花费了 8,525 个代币，通过 Google AI Studio 花费了 13,010 个代币。这就是为什么脚本总是向 Google Vertex 发送 Gemini 请求。</p>
-<h2>使用 CLI、技能和 MCP 执行相同任务的成本是多少？</h2>
-<p>我们询问每个模型，“GitHub 存储库 cli/cli 的最新版本是什么，该存储库中最近打开的带有标签 bug 的三个未解决问题是什么？”每种方法都作为工具调用循环在我们的 <a href="https://openrouter.ai/docs/api_reference/responses/overview">Responses API</a> 上运行，并且我们在请求之间添加了 use.input_tokens。</p>
-<ul><li><strong>CLI。</strong> 一个 run_shell 工具和“GitHub CLI gh 已安装并经过身份验证”这一行。</li><li><strong>技能。</strong> 相同的工具，加上指向 gh 食谱的 1,492 个字符的 SKILL.md 的单行索引。</li><li><strong>MCP.</strong> 服务器的工具，范围为任务需要的 2 个，默认 46 个，或全部 91 个。</li></ul>
-<p>我们于 2026 年 10 月 20 日对每个组合运行了 3 次，并显示了中位数。 Haiku 5.5 与 Sonnet 5.5 一样计算提示，但在某些运行中需要额外的轮次，因此我们展示了 Sonnet 更稳定的标记和计费成本。</p>
-<table><thead><tr><th><strong>方法</strong></th><th><strong>Sonnet 5.5 代币</strong></th><th><strong>Sonnet 5.5 每任务成本</strong></th><th><strong>GPT-6 Luna 代币</strong></th><th><strong>Gemini 3.8 Flash 代币</strong></th></tr></thead><tbody><tr><td>命令行</td><td>1,421</td><td>1,421 0.0075 美元</td><td>627</td><td>627 5,292</td><td>5,292</td></tr><tr><td>技能</td><td>3,315</td><td>3,315 0.0118 美元</td><td>1,542</td><td>1,542 6,107</td><td>6,107</td></tr><tr><td>MCP，2 个工具</td><td>23,228</td><td>23,228 0.0552 美元</td><td>14,479</td><td>14,479 17,267</td><td>17,267</td></tr><tr><td>MCP，46 个默认工具</td><td>59,417</td><td>59,417 0.1274 美元</td><td>116,282</td><td>116,282 35,409</td><td>35,409</td></tr><tr><td>MCP，全部 91 种工具</td><td>101,351</td><td>101,351 0.2113 美元</td><td>135,238</td><td>135,238 53,289</td><td>53,289</td></tr><tr><td>MCP，2 个工具，结果上限为 4,000 个字符</td><td>5,357</td><td>5,357 0.0191 美元</td><td>2,726</td><td>2,726 2,943</td><td>2,943</td></tr></tbody></table>
-<p>此表中的每次运行都正确回答。失败来自工具搜索，如下所述。在 Sonnet 5.5 上，默认 MCP 服务器使用了 CLI 输入令牌的 42 倍，成本是其 17 倍，即每 1,000 个任务 127 美元，而每 1,000 个任务则为 7.50 美元。在 Sonnet 5.5 上，输出令牌的成本是输入的五倍，CLI 运行的 463 个输出令牌的成本为 0.0046 美元，其中 0.0075 美元。</p>
-<p><img src="https://openrouter.ai/blog/images/mcp-vs-cli-vs-skills-1.png" alt="整个任务的输入标记条形图，分为工具定义和指令与任务、工具结果和回复：CLI 1,421、技能 3,315、带有 2 个工具的 MCP 上限为 5,357、带有 2 个工具的 MCP 23,228、带有 46 个工具的 MCP 59,417、带有 91 个工具的 MCP 101,351。"></p>
-<p>该技能比纯粹的 CLI 成本更高，因为一旦模型读取文件，文件就会保留在对话中。对于模型熟悉的 CLI 工具，技能是可选的。对于您自己的 CLI，技能是模型如何学习命令。</p>
-<h2>为什么 MCP 工具结果的成本与定义的成本一样高？</h2>
-<p>get_latest_release 返回了 GitHub 的完整发布对象，42,182 个字符，其中 87% 描述了 22 个下载文件。该模型需要标签和日期，这些都是 gh 发布视图返回的。</p>
+<p>每加一个 tool，成本都会上涨。在 Haiku 5.5 上，issues toolset 有 10 个 tool，增加 5,801 个 token；users toolset 只有一个 tool，增加 619 个。</p>
+<p>用哪个模型也会改变数字。同样 46 个 tools，在 Haiku 5.5 上是 19,436 个 token，在 GPT-6 Luna 上却是 8,903 个，所以要在你打算实际运行的模型上测。</p>
+<p>连提供模型的 provider 也会改变它。在 Gemini 3.8 Flash 上，这 46 个 tools 经 Google Vertex 是 8,525 个 token，经 Google AI Studio 是 13,010 个。这就是脚本始终把 Gemini 请求发给 Google Vertex 的原因。</p>
+<h2>同一个任务用 CLI、skill 和 MCP 各要花多少？</h2>
+<p>我们向每个模型提问：“GitHub 仓库 cli/cli 的最新版本是什么？该仓库里带 bug 标签、最近新开的三个 issue 是哪几个？”每种方式都作为工具调用循环跑在我们的 <a href="https://openrouter.ai/docs/api_reference/responses/overview">Responses API</a> 上，再把各请求里的 usage.input_tokens 加起来。</p>
+<ul><li><strong>CLI。</strong> 一个 run_shell 工具，外加一行说明“GitHub CLI gh 已安装并完成认证。”</li><li><strong>Skill。</strong> 同样的工具，再加一个一行索引，指向一份 1,492 字符、写着 gh 用法的 SKILL.md。</li><li><strong>MCP。</strong> server 的 tools，范围限定为任务需要的 2 个、默认的 46 个，或全部 91 个。</li></ul>
+<p>2026 年 10 月 20 日，我们把每种组合各跑了三次，下表取中位数。Haiku 5.5 对 prompt 的计数和 Sonnet 5.5 完全一样，但某些运行里它多绕了几轮，所以我们展示 Sonnet 更稳定的 token 数和计费成本。</p>
+<table><thead><tr><th><strong>方式</strong></th><th><strong>Sonnet 5.5 token 数</strong></th><th><strong>Sonnet 5.5 每任务成本</strong></th><th><strong>GPT-6 Luna token 数</strong></th><th><strong>Gemini 3.8 Flash token 数</strong></th></tr></thead><tbody><tr><td>CLI</td><td>1,421</td><td>$0.0075</td><td>627</td><td>5,292</td></tr><tr><td>Skill</td><td>3,315</td><td>$0.0118</td><td>1,542</td><td>6,107</td></tr><tr><td>MCP，2 个 tools</td><td>23,228</td><td>$0.0552</td><td>14,479</td><td>17,267</td></tr><tr><td>MCP，46 个默认 tools</td><td>59,417</td><td>$0.1274</td><td>116,282</td><td>35,409</td></tr><tr><td>MCP，全部 91 个 tools</td><td>101,351</td><td>$0.2113</td><td>135,238</td><td>53,289</td></tr><tr><td>MCP，2 个 tools，结果上限 4,000 字符</td><td>5,357</td><td>$0.0191</td><td>2,726</td><td>2,943</td></tr></tbody></table>
+<p>这张表里的每次运行都答对了。失败出在下面要讲的 Tool Search 上。在 Sonnet 5.5 上，默认 MCP server 用掉的输入 token 是 CLI 的 42 倍，成本是它的 17 倍：每 1,000 个任务 $127 对 $7.50。在 Sonnet 5.5 上输出 token 的单价是输入的五倍，CLI 那次运行的 463 个输出 token 占了 $0.0075 里的 $0.0046。</p>
+<p><img src="https://openrouter.ai/blog/images/mcp-vs-cli-vs-skills-1.png" alt="整个任务输入 token 的条形图，按「工具定义与指令」对「任务、工具结果与回复」拆分：CLI 1,421，Skill 3,315，2 个 tools 且设上限的 MCP 5,357，2 个 tools 的 MCP 23,228，46 个 tools 的 MCP 59,417，91 个 tools 的 MCP 101,351。"></p>
+<p>skill 比纯 CLI 更贵，是因为模型读过那份文件后，它会一直留在对话里。对于模型已经很熟的 CLI 工具，skill 可有可无；如果是你自己的 CLI，skill 就是模型学会这些命令的途径。</p>
+<h2>为什么 MCP 的工具结果和定义一样贵？</h2>
+<p>get_latest_release 返回了 GitHub 完整的 release 对象，有 42,182 个字符，其中 87% 在描述那 22 个下载文件。模型其实只需要 tag 和日期，而 gh release view 返回的就是这些。</p>
 <pre><code>$ gh release view -R cli/cli --json tagName,publishedAt
 {&quot;publishedAt&quot;:&quot;2026-09-30T02:40:02Z&quot;,&quot;tagName&quot;:&quot;v2.102.0&quot;}</code></pre>
-<p>该对象保留在上下文窗口中，并在以后的每个请求中重新发送，在 Sonnet 5.5 上它添加了大约 20,400 个标记。将服务器范围限定为两个工具将第一个请求从 19,487 个令牌减少到 1,406 个。整个任务还是花费了23,228。</p>
-<p>该表显示了两个修复。首先，仅公开代理所需的工具，使用 —tools=get_latest_release,list_issues 或 —toolsets=issues,repos。其次，在模型看到结果之前缩小客户的结果。 4,000 个字符的上限使每次运行正确时范围路由达到 5,357 个令牌，因为 GitHub 将标签和日期放在顶部附近。</p>
-<p>帽子之所以起作用，只是因为田地恰好位于这里。结合工具搜索，这一上限使得 Gemini 3.8 Flash 和 Haiku 5.5 在 3 次运行中各有一个正确答案，并且 Gemini 在重试时一度达到了 12 个请求的限制。</p>
-<p>而是保留整个字段，就像 CLI 中的 —json 所做的那样。 GitHub 服务器的 list_issues 采用 fields 参数，并且仅要求编号、标题和创建日期，将其结果从 8,336 个字符减少到 714 个。没有它，模型将决定大小。在加载了 46 或 91 个工具的六次运行中的四次中，GPT-6 Luna 要求提供 100 个问题及其全文，并返回 281,963 个字符。</p>
-<h2>Tool Search 是否解决了 MCP 的上下文问题？</h2>
-<p>工具搜索消除了工具定义的大部分成本。您将工具标记为 defer_loading: true 并添加 {“type”: “openrouter:tool_search”}。我们保留延迟的定义并发送搜索工具以及您留下加载的任何工具。该模型使用正则表达式搜索工具名称和描述，并在下一轮调用匹配。它处于测试阶段，可在响应和消息 API 上与<a href="https://openrouter.ai/docs/guides/features/server-tools/tool-search">任何模型和提供商</a> 配合使用。</p>
-<p>由于所有 46 个 GitHub 工具都被推迟，因此在 Claude 模型上进行任何搜索之前的成本为 578 个代币，在 GPT-6 Luna 上为 144 个代币，在 Gemini 3.8 Flash 上为 130 个代币。</p>
-<p>该脚本发送一个问题，并加载所有 46 个工具，然后推迟。将其保存在 mcp_cost.py 旁边，因为它重用了 list_mcp_tools。</p>
+<p>这个对象会留在上下文窗口里，之后每次请求都要重发一遍；在 Sonnet 5.5 上，它多占了约 20,400 个 token。把 server 限定到两个 tools，首个请求从 19,487 个 token 降到 1,406 个，但整个任务仍花了 23,228 个。</p>
+<p>表格里给出两个办法。第一，只暴露 agent 需要的 tools，用 —tools=get_latest_release,list_issues 或 —toolsets=issues,repos。第二，在模型看到之前，先在客户端把结果压小。设 4,000 字符上限后，限定范围的那条路径降到 5,357 个 token，而且每次运行都答对——因为 GitHub 把 tag 和日期放在靠前的位置。</p>
+<p>这个上限能奏效，只是因为那些字段恰好排在前面。再叠加 Tool Search 后，Gemini 3.8 Flash 和 Haiku 5.5 在三次运行里各自只答对一次，Gemini 还有一次在重试时撞到了我们设的 12 次请求上限。</p>
+<p>更稳妥的是保留完整字段，就像 CLI 里的 —json 那样。GitHub server 的 list_issues 接受 fields 参数，只取 number、title 和创建日期，就能把结果从 8,336 个字符压到 714 个。没有它，大小就由模型自己决定：在加载了 46 或 91 个 tools 的六次运行里，有四次 GPT-6 Luna 要了 100 个 issue 的全文，拿回 281,963 个字符。</p>
+<h2>Tool Search 能解决 MCP 的上下文问题吗？</h2>
+<p>Tool Search 去掉了工具定义的大部分开销。你把 tools 标成 defer_loading: true，再加上 {“type”: “openrouter:tool_search”}。我们会扣住延迟加载的定义，只发送搜索工具和你保留加载的那些 tools。模型用正则表达式去搜工具名称和描述，在下一轮调用命中的那个。它目前是 beta，在 Responses 和 Messages API 上可配合<a href="https://openrouter.ai/docs/guides/features/server-tools/tool-search">任意模型和 provider</a> 使用。</p>
+<p>把 46 个 GitHub tools 全部延迟加载后，任何搜索开始之前的开销，在 Claude 系列模型上是 578 个 token，GPT-6 Luna 上是 144 个，Gemini 3.8 Flash 上是 130 个。</p>
+<p>这个脚本把同一个问题分别在加载全部 46 个 tools 和延迟加载两种情况下各发一次。把它放在 mcp_cost.py 旁边，因为它会复用 list_mcp_tools。</p>
 <pre><code>&quot;&quot;&quot;Send the same MCP tools with defer_loading and openrouter:tool_search, and compare prompt tokens.&quot;&quot;&quot;
 import os
 import sys
@@ -533,61 +533,61 @@ anthropic/claude-haiku-5.5   all loaded   19,464 input tokens  call get_latest_r
 anthropic/claude-haiku-5.5   tool search   7,069 input tokens  search 'github|release' -&gt; search 'latest release|list_releases|get_latest_release' -&gt; call get_latest_release
 openai/gpt-6-luna            all loaded    8,923 input tokens  call get_latest_release
 openai/gpt-6-luna            tool search   4,453 input tokens  search 'github repository latest release cli cli' -&gt; search 'github' -&gt; search 'search web internet browser' -&gt; search 'release' -&gt; call get_latest_release</code></pre>
-<p>要在您的代理上尝试，请将您的 MCP 工具标记为 defer_loading: true，添加 {“type”: “openrouter:tool_search”}，并比较前后的 use.input_tokens。</p>
-<p>工具搜索行随模型搜索方式的不同而变化。在该脚本的五次单独运行中，Haiku 5.5 使用了 2,134 到 13,225 个标记，并且随着每次搜索而增加。 GPT-6 Luna 编写了短语而不是模式，进行了三到六次搜索，并一度放弃而没有调用该工具。 <a href="https://openrouter.ai/docs/guides/features/server-tools/tool-search">我们的文档</a>建议保持三到五个最常用的工具加载。</p>
-<p>在整个任务中，结果取决于模型。</p>
-<table><thead><tr><th><strong>型号</strong></th><th><strong>MCP，已加载 46 个工具</strong></th><th><strong>工具搜索，46 延期</strong></th><th><strong>工具搜索，91 推迟</strong></th></tr></thead><tbody><tr><td>Claude Sonnet 5.5</td><td>59,417</td><td>59,417 30,334</td><td>31,615</td><td>31,615</td></tr><tr><td>GPT-6 露娜</td><td>116,282</td><td>116,282 25,544</td><td>25,544 57,975</td></tr><tr><td>Gemini3.8闪存</td><td>35,409</td><td>35,409 37,568</td><td>38,445</td><td>38,445</td></tr><tr><td>Claude Haiku 5.5</td><td>99,319</td><td>99,319 154,623</td><td>154,623 31,781</td></tr></tbody></table>
-<p>GPT-6 Luna 的加载数据包括上述 100 个问题的请求。</p>
-<p>在 Sonnet 5.5 上，91 个延迟工具比 46 个工具花费了 1,281 个代币，其中加载所有 91 个工具花费了大约 42,000 个代币。工具搜索不会缩小工具结果，并且发布对象仍然满足了 Sonnet 的第二个请求的大部分。</p>
-<p>Haiku 5.5 包含 46 个延迟工具的成本比全部加载的成本更高。在所有三次运行中，它都会向 list_issues 询问该工具未提供的字段，然后使用错误类型的参数重试三到四次，例如标签作为字符串而不是数组。加载所有工具后，Haiku 在三次运行中有两次犯了同样的错误，并在下一次调用时修复了该错误。限制循环中的请求，并在运行成本跳跃时检查工具错误。</p>
-<p>工具搜索通过扩大 tool_choice 来显示工具，因此强制工具调用的请求也会失败。</p>
-<p>400 <code>tool_choice</code> 与 <code>openrouter:tool_search</code> 冲突。延迟工具通过“tool_choice”显示，因此必须省略或设置为“{“type”：“allowed_tools”，...}”。删除“tool_choice”，或从工具中删除“defer_loading”以按原样使用它。</p>
-<p>聊天完成不接受 openrouter:tool_search 并返回 400，因此首先将该代理移至响应或消息 API。</p>
-<h2>MCP、CLI 与技能：您应该使用哪个？</h2>
-<p>如果存在 CLI 并且您的代理可以运行命令，请使用 CLI。如果不能，请使用 MCP，范围有限且结果较小。</p>
-<table><thead><tr><th><strong>您的情况</strong></th><th><strong>使用</strong></th><th><strong>来自我们在 Sonnet 5.5 上的运行</strong></th></tr></thead><tbody><tr><td>存在众所周知的 CLI，代理可以运行命令</td><td>CLI</td><td>每个任务 1,421 个代币</td></tr><tr><td>您自己的 CLI，或者模型使用不一致的 CLI</td><td>CLI 加一项技能</td><td>3,315 个令牌，每次运行都使用相同的命令</td></tr><tr><td>没有 CLI，没有 shell，或者您需要服务器的身份验证和权限</td><td>MCP，涵盖您需要的工具</td><td>使用 2 种工具可获取 23,228 个代币，而使用 46 个工具可获取 59,417 个代币</td></tr><tr><td>跨多台服务器的大型工具库</td><td>带工具搜索的 MCP</td><td>在 Sonnet 5.5 上，91 个延迟工具的成本与 46 个工具的成本相当</td></tr><tr><td>任何 MCP 路线</td><td>将工具结果修剪为您需要的字段</td><td>23,228 个代币减少至 5,357 个代币</td></tr></tbody></table>
-<p>如果您的代理没有 shell，我们的 <a href="https://openrouter.ai/docs/guides/features/server-tools/shell">Shell 服务器工具</a> 会为任何模型提供沙盒模型。在我们的 Agent SDK 中，<a href="https://openrouter.ai/docs/agent-sdk/call-model/mcp-tools">MCP 工具</a> 连接远程 MCP 服务器，<a href="https://openrouter.ai/docs/agent-sdk/call-model/examples/skills-loader">技能加载示例</a> 仅在模型要求后添加技能指令。</p>
-<p>我们在一项任务上测试了一台服务器，因此在您做出决定之前，请在您的服务器上运行 mcp_cost.py。</p>
+<p>想在自己的 agent 上试，就把 MCP tools 标成 defer_loading: true，加上 {“type”: “openrouter:tool_search”}，再比较前后的 usage.input_tokens。</p>
+<p>Tool Search 那几行会随模型的搜索方式变化。这个脚本单独跑五次，Haiku 5.5 用了 2,134 到 13,225 个 token，每多搜一次就往上涨。GPT-6 Luna 写的是短语而不是模式，搜了三到六次，还有一次没调用工具就放弃了。<a href="https://openrouter.ai/docs/guides/features/server-tools/tool-search">我们的文档</a> 建议把最常用的三到五个 tools 保持加载。</p>
+<p>放到整个任务看，结果取决于用的是哪个模型。</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>MCP，加载 46 个 tools</strong></th><th><strong>Tool Search，延迟 46 个</strong></th><th><strong>Tool Search，延迟 91 个</strong></th></tr></thead><tbody><tr><td>Claude Sonnet 5.5</td><td>59,417</td><td>30,334</td><td>31,615</td></tr><tr><td>GPT-6 Luna</td><td>116,282</td><td>25,544</td><td>57,975</td></tr><tr><td>Gemini 3.8 Flash</td><td>35,409</td><td>37,568</td><td>38,445</td></tr><tr><td>Claude Haiku 5.5</td><td>99,319</td><td>154,623</td><td>31,781</td></tr></tbody></table>
+<p>GPT-6 Luna 那一列的加载数据包含上面提到的 100 个 issue 请求。</p>
+<p>在 Sonnet 5.5 上，延迟加载 91 个 tools 只比 46 个多花 1,281 个 token，而全部加载 91 个要多花约 42,000 个。Tool Search 不会压缩工具结果，那个 release 对象仍占满了 Sonnet 第二次请求的大半。</p>
+<p>Haiku 5.5 延迟加载 46 个 tools 时反而比全部加载更贵。三次运行里，它每次都向 list_issues 要一个该工具并不提供的字段，接着用类型不对的参数重试三到四次，比如把 labels 传成字符串而不是数组。全部加载时，Haiku 三次里有两次犯了同样的错，但下一次调用就改对了。给循环里的请求设个上限，一旦某次运行的成本突然跳高，就去查工具报错。</p>
+<p>Tool Search 是靠放宽 tool_choice 来暴露 tools 的，所以如果请求同时还强制发起工具调用，就会失败。</p>
+<p>400：<code>tool_choice</code> 与 <code>openrouter:tool_search</code> 冲突。延迟加载的 tools 通过 <code>tool_choice</code> 暴露，所以必须省略它，或设为 <code>{“type”: “allowed_tools”, …}</code>。要么去掉 <code>tool_choice</code>，要么从 tools 里移除 <code>defer_loading</code> 按原样使用。</p>
+<p>Chat Completions 不接受 openrouter:tool_search，会返回 400，所以先把那个 agent 迁到 Responses 或 Messages API。</p>
+<h2>MCP、CLI 和 skills：该用哪个？</h2>
+<p>如果有现成的 CLI、agent 也能跑命令，就用 CLI；做不到就用 MCP，但要限定范围、把结果压小。</p>
+<table><thead><tr><th><strong>你的情况</strong></th><th><strong>用哪个</strong></th><th><strong>我们在 Sonnet 5.5 上的运行结果</strong></th></tr></thead><tbody><tr><td>有广为人知的 CLI，且 agent 能跑命令</td><td>CLI</td><td>每任务 1,421 个 token</td></tr><tr><td>你自己的 CLI，或模型用得不太稳的 CLI</td><td>CLI 加一个 skill</td><td>3,315 个 token，每次运行命令都一样</td></tr><tr><td>没有 CLI、没有 shell，或需要 server 的鉴权与权限</td><td>MCP，限定到需要的 tools</td><td>2 个 tools 时 23,228 个 token，46 个时 59,417 个</td></tr><tr><td>跨多台 server 的大型工具库</td><td>带 Tool Search 的 MCP</td><td>在 Sonnet 5.5 上，延迟加载 91 个 tools 的成本与 46 个相当</td></tr><tr><td>任何 MCP 路线</td><td>把工具结果裁剪到需要的字段</td><td>从 23,228 降到 5,357 个 token</td></tr></tbody></table>
+<p>如果 agent 没有 shell，我们的 <a href="https://openrouter.ai/docs/guides/features/server-tools/shell">Shell server tool</a> 能给任何模型一个沙箱里的 shell。在我们的 Agent SDK 里，<a href="https://openrouter.ai/docs/agent-sdk/call-model/mcp-tools">MCP Tools</a> 负责连接远程 MCP server，<a href="https://openrouter.ai/docs/agent-sdk/call-model/examples/skills-loader">skills loader 示例</a> 则只在模型主动要求后才把 skill 的指令加进来。</p>
+<p>我们只在一个任务上测了一台 server，所以做决定之前，先在你自己的 server 上跑一遍 mcp_cost.py。</p>
 <h2>常见问题</h2>
-<h3>AI 代理上下文中的 CLI 是什么？</h3>
-<p>CLI（命令行界面）是使用键入命令运行的程序。代理获取 shell 工具并自行编写命令。在我们的测试中，gh CLI 在 GitHub 任务上使用了 1,421 个输入令牌，而 GitHub MCP 服务器则使用了 59,417 个输入令牌。</p>
-<h3>MCP 服务器和连接器有什么区别？</h3>
-<p>MCP 服务器通过模型上下文协议公开工具。连接器是 Claude 等应用程序所称的到<a href="https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp">远程 MCP 服务器</a> 的链接。我们的 Agent SDK 可以通过 MCP Tools 连接远程 MCP 服务器。</p>
-<h3>技能会取代 MCP 吗？</h3>
-<p>不。技能是指令，通常用于 CLI，仅在任务需要时加载。 MCP 为类型化工具提供了自己的身份验证，并且无需 shell 即可工作。在 OpenRouter 上，工具搜索可让您保留 MCP 并仅在需要时加载每个工具。</p>
-<h3>提示缓存是否可以修复 MCP 的代币成本？</h3>
-<p>它降低了这些代币的价格，但并没有删除它们。截至 2026 年 10 月，根据我们的<a href="https://openrouter.ai/api/v1/models">实时模型价格</a>，在 OpenRouter 上，<a href="https://openrouter.ai/docs/guides/best-practices/prompt-caching">缓存输入</a> 的成本是 Claude Haiku 5.5 和 GPT-6 Luna 正常费率的十分之一，并且仍然填充上下文窗口。</p>
-<h3>多少个 MCP 工具才算太多？</h3>
-<p>我们的工具搜索文档建议，一旦定义传递了大约 10,000 个标记或大约 10 个工具，就推迟使用工具。 GitHub MCP 服务器的 46 个默认工具在 Claude 上获得了 19,436 个代币。</p>
+<h3>AI agent 语境里的 CLI 是什么？</h3>
+<p>CLI（命令行界面）是用键入的命令来运行的程序。agent 拿到一个 shell 工具，自己写命令。在我们的测试里，gh CLI 在 GitHub 任务上用了 1,421 个输入 token，而 GitHub MCP server 用了 59,417 个。</p>
+<h3>MCP server 和 connector 有什么区别？</h3>
+<p>MCP server 通过 Model Context Protocol 暴露 tools。connector 则是 Claude 这类应用对「连到某台<a href="https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp">远程 MCP server</a>」的叫法。我们的 Agent SDK 可以通过 MCP Tools 连接远程 MCP server。</p>
+<h3>skills 会取代 MCP 吗？</h3>
+<p>不会。skill 是指令，通常针对某个 CLI，只在任务需要时才加载。MCP 提供带类型的 tools、自带鉴权，而且不需要 shell 就能工作。在 OpenRouter 上，Tool Search 让你既保留 MCP，又只在需要时加载每个 tool。</p>
+<h3>prompt caching 能解决 MCP 的 token 开销吗？</h3>
+<p>它降低了这些 token 的单价，但没有把它们消掉。截至 2026 年 10 月，在 OpenRouter 上，<a href="https://openrouter.ai/docs/guides/best-practices/prompt-caching">cached input</a> 按我们的<a href="https://openrouter.ai/api/v1/models">实时模型价格</a> 只算 Claude Haiku 5.5 和 GPT-6 Luna 正常费率的十分之一，且仍会占满上下文窗口。</p>
+<h3>MCP tools 多到什么程度算太多？</h3>
+<p>我们的 Tool Search 文档建议，当定义超过约 10,000 个 token、或大约 10 个 tools 时，就改为延迟加载。GitHub MCP server 的 46 个默认 tools 在 Claude 上是 19,436 个 token。</p>
 <h2>后续步骤</h2>
-<ul><li><a href="https://openrouter.ai/docs/guides/features/server-tools/tool-search">工具搜索</a>涵盖了每个选项，包括max_results。</li><li><a href="https://openrouter.ai/blog/tutorials/build-tool-calling-agent-loop/">构建可靠的工具调用代理循环</a> 显示了我们运行时使用的循环类型，并具有迭代上限。</li><li><a href="https://openrouter.ai/blog/tutorials/prompt-caching-sticky-routing/">OpenRouter 提示缓存</a> 解释了缓存令牌的成本。</li></ul>]]></content:encoded>
+<ul><li><a href="https://openrouter.ai/docs/guides/features/server-tools/tool-search">Tool Search</a> 覆盖所有选项，包括 max_results。</li><li><a href="https://openrouter.ai/blog/tutorials/build-tool-calling-agent-loop/">构建可靠的工具调用 agent 循环</a> 展示了我们运行用的那类循环，带迭代上限。</li><li><a href="https://openrouter.ai/blog/tutorials/prompt-caching-sticky-routing/">OpenRouter Prompt Caching</a> 讲清了缓存 token 的成本。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>测量的扫描文档的最佳 OCR 模型</title>
+      <title>扫描文档最佳 OCR 模型实测</title>
       <link>https://openrouter.ai/blog/insights/best-ocr-model/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/insights/best-ocr-model/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Best OCR Model for Scanned Documents, Measured</description>
-      <content:encoded><![CDATA[<h1>测量的扫描文档的最佳 OCR 模型</h1>
-<p>肯尼·罗杰斯 ·11/10/2026</p>
-<p><img src="https://openrouter.ai/blog/images/best-ocr-model.jpg" alt="扫描文档的最佳 OCR 模型，测量"><img src="https://openrouter.ai/blog/images/best-ocr-model-dark.jpg" alt="扫描文档的最佳 OCR 模型，测量"></p>
-<p>将扫描文档转换为可靠的文本很困难。 Tesseract 等经典 OCR 引擎无法处理褪色的打印、手写和传真。视觉模型可以很好地读取这些页面，但有时会写入页面上没有的值。我们根据自己编写的文本制作了 8 个测试页，以便可以检查每个字符，并通过 OpenRouter 上的 15 个视觉模型和 Mistral OCR 以及 Tesseract 来运行它们。</p>
-<p>我们测试中最好的 OCR 模型是 Claude Opus 5.5，具有 264 个键值中的 262 个，每 1,000 页价格为 16.42 美元。 Mistral OCR 性价比最高：264 个中的 258 个，售价 2.02 美元。这篇文章展示了结果、需要注意的错误以及捕获这些错误的代码。</p>
-<p>这些结果是一个起点。我们的八页不是您的文档，因此了解哪种模型最适合您的工作流程的唯一真正方法是在您自己的扫描中测试候选模型。</p>
-<h2>Tl;博士</h2>
-<ul><li>最准确：“anthropic/claude-opus-5.5”。最佳价值：“mistral-ocr”。最便宜的好结果：“inclusionai/ling-3.0-flash-vl”，推理关闭，264 个中的 254 个，每 1,000 页 0.04 美元。</li><li>在一张褪色的收据上，GPT-6 Luna 和 GPT-6.1 Sol 组成了卡号、wifi 密码和服务器名称。错误率不会显示这一点，因此请检查您实际使用的值。</li><li>关闭推理使我们测试的五个模型中的四个更快、更便宜，并且没有丢失关键值。</li><li>标记来自不同实验室的两个廉价模型不一致的单词，捕获 35 个错误单词中的 34 个，每 1,000 页 0.62 美元。</li></ul>
-<h2>我们如何测试</h2>
-<p>我们根据已知文本渲染每个页面，然后像扫描一样对其进行降级：小幅旋转、模糊、噪声和 JPEG 压缩。五页很普通：一张收据、一封有两个故意拼写错误的信、一张带有勾选框的表格、一份两栏的时事通讯和一张工整的手写便条。其中三个是很困难的：褪色的热敏收据、快速狭窄的手写体和由 12 个由相似字符（0/O、1/I/L、5/S、8/B）组成的序列号的低分辨率传真，因此模型无法从上下文中猜测它们。</p>
-<p><img src="https://openrouter.ai/blog/images/best-ocr-model-faded-receipt-scan.jpg" alt="Cafe Verdigris 的扫描热敏收据，向底部褪色，卡号和 wifi 密码几乎难以辨认"></p>
-<p>我们以两种方式对每个成绩单进行评分。字符错误率 (CER) 是与真实文本的编辑距离除以其长度，忽略换行符和 Markdown。键值是管道将使用的 88 个字符串，每页 10 到 15 个，例如总计、日期、卡号、序列号和拼写错误的单词。每个模型都必须在 3 次运行中准确出现，这为每个模型提供了 264 次检查。成本是每个请求的计费“usage.cost”。模型来自截至 2026 年 10 月 8 日的 OpenRouter 目录。</p>
-<h2>哪种 OCR 模型对扫描文档最准确？</h2>
-<p>该表按键值正确排序。</p>
-<table><thead><tr><th>路线</th><th>关键值正确</th><th>CER，所有页面</th><th>CER，3 个硬页</th><th>每 1,000 页成本</th><th>中位秒</th></tr></thead><tbody><tr><td><code>人类/克劳德-opus-5.5</code></td><td>262 / 264</td><td>262 / 264 0.02%</td><td>0.06%</td><td>16.42 美元</td><td>7.2</td></tr><tr><td><code>mistral-ocr</code>（PDF 引擎）</td><td>258 条，共 264 条0.14%</td><td>0.26%</td><td>2.02 美元</td><td>3.8</td></tr><tr><td><code>人类/克劳德-sonnet-5.5</code></td><td>256 共 264</td><td>1.34%</td><td>3.49%</td><td>7.68 美元</td><td>4.2</td></tr><tr><td><code>google/gemini-3.8-flash</code></td><td>254 条，共 264 条0.15%</td><td>0.28%</td><td>7.50 美元</td><td>9.3</td><td>9.3</td></tr><tr><td><code>stepfun/step-5-预览</code></td><td>254 条，共 264 条0.42%</td><td>1.11%</td><td>5.48 美元</td><td>9.3</td><td>9.3</td></tr><tr><td><code>inclusionai/ling-3.0-flash-vl</code></td><td>254 条，共 264 条1.05%</td><td>2.56%</td><td>0.12 美元</td><td>7.2</td></tr><tr><td><code>人类/克劳德-俳句-5.5</code></td><td>253 条，共 264 条1.19%</td><td>2.89%</td><td>0.46 美元</td><td>3.8</td></tr><tr><td><code>x-ai/grok-4.7</code></td><td>252 共 264</td><td>0.13%</td><td>0.35%</td><td>12.85 美元</td><td>11.3</td><td>11.3</td></tr><tr><td><code>z-ai/glm-5.3-flashx</code></td><td>252 共 264</td><td>0.33%</td><td>0.86%</td><td>1.45 美元</td><td>5.5</td><td>5.5</td></tr><tr><td><code>openai/gpt-6.1-sol</code></td><td>252 共 264</td><td>0.65%</td><td>1.74%</td><td>6.03 美元</td><td>8.4</td></tr><tr><td><code>deepseek/deepseek-v4.1-flash</code></td><td>248 共 264</td><td>0.20%</td><td>0.48%</td><td>0.20 美元</td><td>4.8</td></tr><tr><td><code>qwen/qwen3.8-flash</code></td><td>248 共 264</td><td>0.74%</td><td>1.49%</td><td>0.29 美元</td><td>8.1</td></tr><tr><td><code>qwen/qwen3.8-27b</code></td><td>246 共 264</td><td>0.92%</td><td>2.31%</td><td>1.54 美元</td><td>10.8</td><td>10.8</td></tr><tr><td><code>xiaomi/mimo-v2.6-flash</code></td><td>246 共 264</td><td>2.02%</td><td>5.34%</td><td>0.58 美元</td><td>3.1</td></tr><tr><td><code>米斯特拉莱/米斯特拉尔-大-4-0</code></td><td>240 / 264</td><td>240 / 264 4.61%</td><td>12.19%</td><td>6.80 美元</td><td>47.9</td><td>47.9</td></tr><tr><td><code>openai/gpt-6-luna</code></td><td>232 共 264</td><td>1.49%</td><td>3.95%</td><td>0.54 美元</td><td>7.8</td></tr><tr><td>Tesseract 5.5（本地，1 次运行）</td><td>46 / 88</td><td>26.06%</td><td>64.39%</td><td>0 美元</td><td>58.1</td><td>58.1</td></tr></tbody></table>
-<p>在 5 个普通页面上，每个视觉模型的 CER 得分都低于 0.3%，并且所有 15 个页面都完美地转录了整齐的笔迹。大部分价差来自褪色的收据。 Opus 5.5 和 Mistral OCR 获得了全部 33 项检查，而 GPT-6 Luna 获得了 16 项检查。模型对图像标记的计数方式不同（DeepSeek 的中间页提示标记为 1,070 个，Grok 的提示标记为 3,314 个），因此请在您自己的页面上衡量成本。</p>
-<h2>哪种 OCR 模型适合您的工作</h2>
-<table><thead><tr><th>如果你的大部分工作是</th><th>以</th><th>开头为什么</th></tr></thead><tbody><tr><td>每个值都很重要的硬扫描</td><td><a href="https://openrouter.ai/anthropic/claude-opus-5.5">Claude Opus 5.5</a></td><td>264 个键值中的 262 个，每 1,000 页 16.42 美元</td></tr><tr><td>产量大，价格公道</td><td>Mistral OCR（‘mistral-ocr’ PDF 引擎）</td><td>264 个键值中的 258 个，每 1,000 页 2.02 美元</td></tr><tr><td>成本最低</td><td><a href="https://openrouter.ai/inclusionai/ling-3.0-flash-vl">Ling 3.0 Flash VL</a> 推理关闭</td><td>264 个键值中的 254 个，每 1,000 页 0.04 美元</td></tr><tr><td>具有相似字符的序列号和 ID</td><td><a href="https://openrouter.ai/anthropic/claude-haiku-5.5">Claude Haiku 5.5</a> 由 <a href="https://openrouter.ai/deepseek/deepseek-v4.1-flash">DeepSeek V4.1 Flash</a> 检查</td><td>两人标记了 35 个错误单词中的 34 个，每 1,000 页 0.62 美元</td></tr><tr><td>离线清理打字页面</td><td>超立方体 5.5</td><td>信件和时事通讯完美无缺，而且免费，但对于褪色的收据没有任何回报</td></tr></tbody></table>
-<h2>当视觉模型读取硬扫描时会出现什么问题？</h2>
-<p>最严重的错误是一个看起来合理但不在页面上的值。这是打印的褪色收据底部，后面是一次 GPT-6 Luna 运行：</p>
+      <content:encoded><![CDATA[<h1>扫描文档最佳 OCR 模型实测</h1>
+<p>Kenny Rogers ·11/10/2026</p>
+<p><img src="https://openrouter.ai/blog/images/best-ocr-model.jpg" alt="扫描文档最佳 OCR 模型实测"><img src="https://openrouter.ai/blog/images/best-ocr-model-dark.jpg" alt="扫描文档最佳 OCR 模型实测"></p>
+<p>把扫描文档转成可靠的文本并不容易。Tesseract 这类经典 OCR 引擎遇到褪色打印、手写和传真就会失灵。视觉模型能把这些页面读得很准，但有时会写出页面上根本没有的值。我们用自己写的文本做了 8 个测试页，每个字符都能核对，再把它们交给 OpenRouter 上的 15 个视觉模型和 Mistral OCR，以及 Tesseract 各跑一遍。</p>
+<p>我们测试中表现最好的 OCR 模型是 Claude Opus 5.5，264 个键值里对了 262 个，每 1,000 页 $16.42。Mistral OCR 性价比最高：264 个里对了 258 个，只要 $2.02。这篇文章给出结果、需要留意的错误，以及用来抓出这些错误的代码。</p>
+<p>这些结果只是个起点。我们的 8 页不是你的文档，所以真要知道哪个模型最适合你的工作流，唯一的办法就是在自己的扫描件上把候选模型跑一遍。</p>
+<h2>TL;DR</h2>
+<ul><li>最准的是 <code>anthropic/claude-opus-5.5</code>。性价比最高的是 <code>mistral-ocr</code>。最便宜又好用的结果是关闭 reasoning 的 <code>inclusionai/ling-3.0-flash-vl</code>，264 个里对了 254 个，每 1,000 页 $0.04。</li><li>在一张褪色的收据上，GPT-6 Luna 和 GPT-6.1 Sol 凭空编出了卡号、wifi 密码和服务器名。错误率反映不出这一点，所以要核对那些你真正会用到的值。</li><li>关闭 reasoning 让我们测试的 5 个模型里有 4 个更快、更便宜，而且没丢键值。</li><li>把来自不同实验室的两个便宜模型读数不一致的词标出来，35 个错词里抓到了 34 个，每 1,000 页 $0.62。</li></ul>
+<h2>测试方法</h2>
+<p>我们用已知文本渲染出每一页，再按扫描件的样子把它做旧：轻微旋转、模糊、噪点和 JPEG 压缩。其中 5 页很普通：一张收据、一封故意带两处拼写错误的信、一张勾了选项的表单、一份双栏简报，以及一张字迹工整的手写便条。另外 3 页是特意做难的：一张褪色的热敏收据、写得又急又挤的手写体，还有一张低分辨率传真，上面 12 个序列号全用形近字符拼成(0/O, 1/I/L, 5/S, 8/B)，模型没法靠上下文猜出来。</p>
+<p><img src="https://openrouter.ai/blog/images/best-ocr-model-faded-receipt-scan.jpg" alt="Cafe Verdigris 的扫描热敏收据，越往底部越褪色，卡号和 wifi 密码几乎难以辨认"></p>
+<p>我们用两种方式给每份转录文本打分。字符错误率（CER）是与正确文本之间的编辑距离除以文本长度，忽略换行和 Markdown。键值是流水线真正会用到的 88 个字符串，每页 10 到 15 个，比如金额合计、日期、卡号、序列号和那些拼错的词。每个字符串都必须在 3 次运行里原样出现，这样每个模型就有 264 项检查。成本取每次请求计费的 <code>usage.cost</code>。模型取自截至 2026 年 10 月 8 日的 OpenRouter 目录。</p>
+<h2>扫描文档上哪种 OCR 模型最准？</h2>
+<p>下表按键值正确数排序。</p>
+<table><thead><tr><th>路由</th><th>键值正确数</th><th>CER，全部页面</th><th>CER，3 张难页</th><th>每 1,000 页成本</th><th>中位秒数</th></tr></thead><tbody><tr><td><code>anthropic/claude-opus-5.5</code></td><td>262 / 264</td><td>0.02%</td><td>0.06%</td><td>$16.42</td><td>7.2</td></tr><tr><td><code>mistral-ocr</code>（PDF 引擎）</td><td>258 / 264</td><td>0.14%</td><td>0.26%</td><td>$2.02</td><td>3.8</td></tr><tr><td><code>anthropic/claude-sonnet-5.5</code></td><td>256 / 264</td><td>1.34%</td><td>3.49%</td><td>$7.68</td><td>4.2</td></tr><tr><td><code>google/gemini-3.8-flash</code></td><td>254 / 264</td><td>0.15%</td><td>0.28%</td><td>$7.50</td><td>9.3</td></tr><tr><td><code>stepfun/step-5-preview</code></td><td>254 / 264</td><td>0.42%</td><td>1.11%</td><td>$5.48</td><td>9.3</td></tr><tr><td><code>inclusionai/ling-3.0-flash-vl</code></td><td>254 / 264</td><td>1.05%</td><td>2.56%</td><td>$0.12</td><td>7.2</td></tr><tr><td><code>anthropic/claude-haiku-5.5</code></td><td>253 / 264</td><td>1.19%</td><td>2.89%</td><td>$0.46</td><td>3.8</td></tr><tr><td><code>x-ai/grok-4.7</code></td><td>252 / 264</td><td>0.13%</td><td>0.35%</td><td>$12.85</td><td>11.3</td></tr><tr><td><code>z-ai/glm-5.3-flashx</code></td><td>252 / 264</td><td>0.33%</td><td>0.86%</td><td>$1.45</td><td>5.5</td></tr><tr><td><code>openai/gpt-6.1-sol</code></td><td>252 / 264</td><td>0.65%</td><td>1.74%</td><td>$6.03</td><td>8.4</td></tr><tr><td><code>deepseek/deepseek-v4.1-flash</code></td><td>248 / 264</td><td>0.20%</td><td>0.48%</td><td>$0.20</td><td>4.8</td></tr><tr><td><code>qwen/qwen3.8-flash</code></td><td>248 / 264</td><td>0.74%</td><td>1.49%</td><td>$0.29</td><td>8.1</td></tr><tr><td><code>qwen/qwen3.8-27b</code></td><td>246 / 264</td><td>0.92%</td><td>2.31%</td><td>$1.54</td><td>10.8</td></tr><tr><td><code>xiaomi/mimo-v2.6-flash</code></td><td>246 / 264</td><td>2.02%</td><td>5.34%</td><td>$0.58</td><td>3.1</td></tr><tr><td><code>mistralai/mistral-large-4-0</code></td><td>240 / 264</td><td>4.61%</td><td>12.19%</td><td>$6.80</td><td>47.9</td></tr><tr><td><code>openai/gpt-6-luna</code></td><td>232 / 264</td><td>1.49%</td><td>3.95%</td><td>$0.54</td><td>7.8</td></tr><tr><td>Tesseract 5.5（本地，1 次运行）</td><td>46 / 88</td><td>26.06%</td><td>64.39%</td><td>$0</td><td>58.1</td></tr></tbody></table>
+<p>在那 5 页普通页面上，每个视觉模型的 CER 都低于 0.3%，15 个模型全把工整的手写便条转录得一字不差。差距大多出在那张褪色收据上：Opus 5.5 和 Mistral OCR 拿满了它的 33 项检查，GPT-6 Luna 只对 16 项。各模型对图像 token 的计数方式不一样（一页的中位数，DeepSeek 是 1,070 个 prompt token，Grok 是 3,314 个），所以成本要在自己的页面上量。</p>
+<h2>哪种 OCR 模型适合你的工作</h2>
+<table><thead><tr><th>如果你的工作主要是</th><th>先用</th><th>理由</th></tr></thead><tbody><tr><td>每个值都不能错的难扫描件</td><td><a href="https://openrouter.ai/anthropic/claude-opus-5.5">Claude Opus 5.5</a></td><td>264 个键值中对 262 个，每 1,000 页 $16.42</td></tr><tr><td>量大、价格又要公道</td><td>Mistral OCR（<code>mistral-ocr</code> PDF 引擎）</td><td>264 个键值中对 258 个，每 1,000 页 $2.02</td></tr><tr><td>成本压到最低</td><td><a href="https://openrouter.ai/inclusionai/ling-3.0-flash-vl">Ling 3.0 Flash VL</a>，关闭 reasoning</td><td>264 个键值中对 254 个，每 1,000 页 $0.04</td></tr><tr><td>带形近字符的序列号和 ID</td><td><a href="https://openrouter.ai/anthropic/claude-haiku-5.5">Claude Haiku 5.5</a>，由 <a href="https://openrouter.ai/deepseek/deepseek-v4.1-flash">DeepSeek V4.1 Flash</a> 复核</td><td>这一对抓出 35 个错词里的 34 个，每 1,000 页 $0.62</td></tr><tr><td>干净的打印页、离线用</td><td>Tesseract 5.5</td><td>信和简报都完美，而且免费，但褪色收据它什么都没返回</td></tr></tbody></table>
+<h2>视觉模型读难扫描件时会出什么错？</h2>
+<p>最严重的错误，是写出一个看着合理、页面上却根本没有的值。下面是那张褪色收据底部的印刷内容，接着是 GPT-6 Luna 的一次运行输出：</p>
 <pre><code>CONTACTLESS 32.95
 CARD ****9026
 SERVED BY: PRIYA
@@ -599,11 +599,11 @@ CARD **** 9027
 
 SERVED BY: SHEVA
 WIFI: verdigris_guest / 1freecoffee</code></pre>
-<p>收据上没有“NET”行。该卡以9026结尾，名称和密码已发明。 GPT-6 Luna 在所有三轮运行中更改了服务器的名称和年份。 GPT-6.1 Sol 在每次运行中编写了不同的虚构密码（“flatwhite24”、“flat9am！”、“flatleaf”）。我们还要求模型写“[?]”而不是猜测。但这并没有帮助：七个模型中有四个从未使用过标记。</p>
-<p>重复出现的其他错误：</p>
-<ul><li>O 和 0：15 个型号中的 13 个型号中至少有一个运行中两个传真序列是错误的。只有 Claude Sonnet 5.5 和 GPT-6.1 Sol 每次都能正确读取它们。</li><li>拼写修复：这封信的签名是“Senior Assosiate”，提示要求准确复制拼写。不管怎样，45 份记录中有 16 份“纠正”了它。</li><li>勾选框：Claude Sonnet 5.5 和 Haiku 5.5 复制了表单的复选框标签，但删除了勾选的框。</li></ul>
-<h2>步骤 1：将扫描发送到视觉模型</h2>
-<p>视觉模型生成文本的方式与语言模型生成任何文本的方式相同，因此它倾向于写出文本通常所说的内容，而不是准确地打印出的内容。提示要求它准确复制。这减少了问题，但并没有消除它：45 份记录中的 16 份仍然纠正了这封信故意的拼写错误。您需要<code>OPENROUTER_API_KEY</code>中的<a href="https://openrouter.ai/docs/quickstart">OpenRouter API密钥</a>。图像作为 base64 <code>image_url</code> 部分输入（请参阅<a href="https://openrouter.ai/docs/guides/overview/multimodal/image-understanding">图像输入</a>），因此 OpenRouter 上的每个视觉模型都会接受相同的请求。将其保存为 <code>transcribe.py</code>，因为步骤 3 和 4 是从其中导入的：</p>
+<p>收据上并没有 <code>NET</code> 这一行。卡号尾数是 9026，服务员名字和密码都是编出来的。GPT-6 Luna 在 3 次运行里都改了服务员名字和年份。GPT-6.1 Sol 每次运行都编出一个不同的密码（<code>flatwhite24</code>、<code>flat9am!</code>、<code>flatleaf</code>）。我们还让模型遇到拿不准的地方写 <code>[?]</code> 而不要猜。没用：7 个模型里有 4 个从头到尾没用过这个标记。</p>
+<p>反复出现的其他错误：</p>
+<ul><li>O 和 0：15 个模型里有 13 个，至少一次运行把两个传真序列号读错了。只有 Claude Sonnet 5.5 和 GPT-6.1 Sol 每次都读对。</li><li>自作主张改拼写：那封信的署名是“Senior Assosiate”，prompt 要求原样照抄拼写。45 份转录里仍有 16 份把它“纠正”了。</li><li>勾选框：Claude Sonnet 5.5 和 Haiku 5.5 照抄了表单里复选框的文字，却漏掉了到底是哪个框被勾上。</li></ul>
+<h2>步骤 1：把扫描件发给视觉模型</h2>
+<p>视觉模型生成转录文本的方式，和语言模型生成任何文本一样，所以它容易写出“这类文本通常长什么样”，而不是页面上印的原字。prompt 要求它原样照抄，这能缓解问题，却消不掉：45 份转录里还是有 16 份把信里那个故意拼错的词改了。你需要一个 <a href="https://openrouter.ai/docs/quickstart">OpenRouter API 密钥</a>，放在 <code>OPENROUTER_API_KEY</code> 里。图片以 base64 的 <code>image_url</code> 部分传入（见<a href="https://openrouter.ai/docs/guides/overview/multimodal/image-understanding">图像输入</a>），所以 OpenRouter 上的每个视觉模型都接受这同一份请求。把它存成 <code>transcribe.py</code>，因为步骤 3 和 4 要从它导入：</p>
 <pre><code>import base64
 import mimetypes
 import os
@@ -655,15 +655,15 @@ AUTH 08813C
 ...
 
 $0.00022</code></pre>
-<p>每个角色都正确返回，费用约为百分之二美分。数据 URL 从文件扩展名中获取其类型，因此 PNG 和 WebP 扫描也可以工作。要比较模型，请仅更改“model”字符串，并为步骤 2 中无法关闭推理的模型传递“reasoning=None”。</p>
-<p>之所以存在“finish_reason”检查，是因为推理标记会根据“max_tokens”进行计数。由于限制为 4,000，Gemini 3.8 Flash 在每次运行时都花费了 3,841 个令牌来推理传真，并在序列号 4 的中途停止。请求仍然返回“200 OK”和“finish_reason: &quot;length&quot;”，因此在没有检查的情况下，管道会在没有注意到的情况下存储简短的记录。</p>
-<h2>步骤 2：关闭转录推理</h2>
-<p>当模型必须计划答案时，推理会有所帮助。从页面复制文本不需要计划，因此额外的标记主要会增加成本和时间。这就是为什么 <code>transcribe</code> 默认发送 <code>&quot;reasoning&quot;: {&quot;effort&quot;: &quot;none&quot;}</code> （参见 <a href="https://openrouter.ai/docs/guides/best-practices/reasoning-tokens">reasoning tokens</a>）。我们重新运行完整的测试，并对每个允许它的模型进行推理：</p>
-<table><thead><tr><th>型号</th><th>键值，开 → 关</th><th>CER，开 → 关</th><th>每 1,000 页成本，开启 → 关闭</th><th>中位秒，开 → 关</th></tr></thead><tbody><tr><td><code>米斯特拉莱/Mistral-大-4-0</code></td><td>240 → 249</td><td>4.61% → 0.15%</td><td>6.80 美元 → 1.68 美元</td><td>47.9 → 5.6</td></tr><tr><td><code>inclusionai/ling-3.0-flash-vl</code></td><td>254 → 254</td><td>1.05% → 0.19%</td><td>0.12 美元 → 0.04 美元</td><td>7.2 → 4.0</td></tr><tr><td><code>openai/gpt-6-luna</code></td><td>232 → 232</td><td>1.49% → 1.08%</td><td>0.54 美元 → 0.22 美元</td><td>7.8 → 3.8</td></tr><tr><td><code>deepseek/deepseek-v4.1-flash</code></td><td>248 → 249</td><td>0.20% → 0.23%</td><td>0.20 美元 → 0.16 美元</td><td>4.8 → 4.5</td></tr><tr><td><code>qwen/qwen3.8-27b</code></td><td>246 → 244</td><td>0.92% → 2.28%</td><td>1.54 美元 → 0.77 美元</td><td>10.8 → 8.9</td></tr></tbody></table>
-<p>在推理开启的情况下，一个 Mistral Large 4 请求推理了 626 秒并且没有返回任何文本（“finish_reason：“错误””）。 Qwen3.8 27B 在推理方面表现更好，因此请测试您自己的页面。 Gemini 3.8 Flash、Grok 4.7 和 GLM 5.3 FlashX 不允许关闭推理，因此通过 <code>reasoning=None</code> 来忽略该字段。否则请求失败并显示：</p>
+<p>每个字符都没错，花费大约百分之二美分。data URL 的类型取自文件扩展名，所以 PNG 和 WebP 扫描件也能用。要比较模型，只改 <code>model</code> 字符串就行；步骤 2 里那些关不掉 reasoning 的模型，传 <code>reasoning=None</code>。</p>
+<p>之所以要查 <code>finish_reason</code>，是因为 reasoning token 会算进 <code>max_tokens</code>。上限设成 4,000 时，Gemini 3.8 Flash 每次运行都花 3,841 个 token 对那张传真做推理，写到第 4 个序列号就停了。请求照样返回 <code>200 OK</code>、<code>finish_reason: &quot;length&quot;</code>，所以不做这个检查，流水线会不知不觉把残缺的转录存下来。</p>
+<h2>步骤 2：转录时关掉 reasoning</h2>
+<p>模型需要规划答案时，reasoning 才有帮助。从页面上抄字不需要规划，多出来的 token 主要只是增加成本和时间。所以 <code>transcribe</code> 默认发送 <code>&quot;reasoning&quot;: {&quot;effort&quot;: &quot;none&quot;}</code>（见 <a href="https://openrouter.ai/docs/guides/best-practices/reasoning-tokens">reasoning tokens</a>）。我们对每个允许关掉 reasoning 的模型，都把整套测试重跑了一遍：</p>
+<table><thead><tr><th>模型</th><th>键值，开 → 关</th><th>CER，开 → 关</th><th>每 1,000 页成本，开 → 关</th><th>中位秒数，开 → 关</th></tr></thead><tbody><tr><td><code>mistralai/mistral-large-4-0</code></td><td>240 → 249</td><td>4.61% → 0.15%</td><td>$6.80 → $1.68</td><td>47.9 → 5.6</td></tr><tr><td><code>inclusionai/ling-3.0-flash-vl</code></td><td>254 → 254</td><td>1.05% → 0.19%</td><td>$0.12 → $0.04</td><td>7.2 → 4.0</td></tr><tr><td><code>openai/gpt-6-luna</code></td><td>232 → 232</td><td>1.49% → 1.08%</td><td>$0.54 → $0.22</td><td>7.8 → 3.8</td></tr><tr><td><code>deepseek/deepseek-v4.1-flash</code></td><td>248 → 249</td><td>0.20% → 0.23%</td><td>$0.20 → $0.16</td><td>4.8 → 4.5</td></tr><tr><td><code>qwen/qwen3.8-27b</code></td><td>246 → 244</td><td>0.92% → 2.28%</td><td>$1.54 → $0.77</td><td>10.8 → 8.9</td></tr></tbody></table>
+<p>开着 reasoning 时，有一次 Mistral Large 4 请求推理了 626 秒，一个字也没返回（<code>finish_reason: &quot;error&quot;</code>）。Qwen3.8 27B 反而是开着 reasoning 表现更好，所以要拿自己的页面试。Gemini 3.8 Flash、Grok 4.7 和 GLM 5.3 FlashX 不允许关掉 reasoning，传 <code>reasoning=None</code> 把这个字段省掉即可。否则请求会失败，报：</p>
 <pre><code>400 {&quot;error&quot;:{&quot;message&quot;:&quot;Reasoning is mandatory for this endpoint and cannot be disabled.&quot;,&quot;code&quot;:400,&quot;metadata&quot;:{&quot;provider_name&quot;:null}}}</code></pre>
-<h2>步骤 3：交叉检查来自不同实验室的两个模型</h2>
-<p>O 和 0 等相似字符在模糊图像中很难区分。每个模型都根据自己的训练做出决定，因此来自不同实验室的两个模型很少会做出相同的错误选择。他们的文字记录不同的地方通常是图像不清楚的地方。我们测试了六种型号中的每一对。最好的是由 DeepSeek V4.1 Flash 检查的 Claude Haiku 5.5。 Haiku 在 2,964 个单词中出现了 35 个单词错误，而 DeepSeek 按照步骤 2 中的推理，对其中 34 个单词产生了分歧，其中有 10 个错误警报。该对的成本为每 1,000 页 0.62 美元，是 Mistral OCR 的三分之一。两者都使用相同的 API，因此检查是一次额外的调用。 Haiku 被称为“reasoning=None”，因为它在我们的表中是这样运行的：</p>
+<h2>步骤 3：用不同实验室的两个模型交叉核对</h2>
+<p>O 和 0 这类形近字符，在模糊图像里很难分清。每个模型都按自己训练出来的判断走，所以不同实验室的两个模型很少犯同一个错。两份转录对不上的地方，往往就是图像不清楚的地方。我们把 6 个模型两两配对都试了，最好的是 Claude Haiku 5.5 配 DeepSeek V4.1 Flash 复核。Haiku 在 2,964 个词里错了 35 个词，DeepSeek 按步骤 2 关掉 reasoning 后，对其中的 34 个给出了不同读法，另有 10 次误报。这一对每 1,000 页 $0.62，是 Mistral OCR 的三分之一。两者用同一个 API，所以核对只多一次调用。Haiku 调用时传 <code>reasoning=None</code>，因为它在我们的表格里就是这么跑的：</p>
 <pre><code>import difflib
 
 from transcribe import transcribe  # the function from step 1
@@ -676,9 +676,9 @@ for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).g
         print(&quot;check:&quot;, &quot; &quot;.join(a[i1:i2]), &quot;vs&quot;, &quot; &quot;.join(b[j1:j2]))</code></pre>
 <pre><code>check: 8LI5-QS0B5O vs 8LI5-QS0B50
 check: 30HY-1OHLG7 vs 30HY-10HLG7</code></pre>
-<p>这是大多数模型出错的两个系列。如果两个模型以相同的方式误读字符，则不会标记任何内容。这种情况在我们的运行中发生过一次，O 都读取为零，因此请尽可能根据列表或校验和验证 ID。该比较还假设两个模型以相同的顺序读取页面。在三轮运行中的一次中，模型以不同的顺序列出了传真的两列，并且每个序列都显示为不一致。</p>
-<h2>步骤4：使用Mistral OCR作为专用引擎</h2>
-<p>Mistral OCR 是仅针对文档 OCR 训练的模型。在 OpenRouter 上，它作为文件解析器插件中的引擎运行，该插件接受 PDF，每 1,000 页 2 美元。该插件会在模型看到文件之前对其进行 OCR。它返回文本作为响应的文件注释，因此您命名的模型只需回复。将扫描件封装在一页 PDF 中，然后使用任何便宜的型号发送：</p>
+<p>这正是多数模型读错的那两个序列号。如果两个模型把同一个字符错成一样，就不会被标出来。我们的运行里出过一次：两者都把一个 O 读成了 0，所以只要能，就拿名单或校验和去核对 ID。这个比对还有个前提：两个模型按相同顺序读页面。3 次运行里有 1 次，两个模型把传真两列的顺序列反了，结果每个序列号都成了不一致。</p>
+<h2>步骤 4：把 Mistral OCR 当专用引擎用</h2>
+<p>Mistral OCR 是只针对文档 OCR 训练的模型。在 OpenRouter 上，它作为 <a href="https://openrouter.ai/docs/guides/overview/multimodal/pdfs">file-parser 插件</a> 里的一个引擎运行，该插件接收 PDF，每 1,000 页 $2。插件会在你的模型看到文件之前先做 OCR，并把文本作为响应里的文件注释返回，所以你指定的模型只需要回一句话。把扫描件包进一页 PDF，用任意便宜的模型发出去：</p>
 <pre><code>import base64
 import html
 import io
@@ -736,53 +736,52 @@ SERVED BY: PRIYA
 WIFI: verdigris-guest / tide2026
 
 $0.00202</code></pre>
-<p>褪色的收据上的每个值都正确显示，包括卡号和密码。 Mistral OCR 旨在保持布局，因此其输出为 Markdown：收据行变为表格，标题为“##”，“&amp;”返回为“&amp;”。这就是该函数对 HTML 实体进行转义的原因。如果您需要纯文本，则删除 Markdown，或者如果LLM接下来读取结果，则保留它。</p>
-<h2>在 OCR 方面，LLM 比 Tesseract 更好吗？</h2>
-<p>是的，除了干净的打字页面。 Tesseract 5.5 逐行读取字符形状，因此它可以保持清晰的打印效果，并消除噪音和手写体。它完美地转录了这封信和时事通讯。对于褪色的收据，它没有返回任何内容，凌乱的笔迹返回了 11 个值中的 1 个，传真上返回了 15 个值中的 4 个。</p>
+<p>那张褪色收据上的每个值都对了，卡号和密码也在内。Mistral OCR 天生要保留版式，所以输出是 Markdown：收据行变成表格，标题带上 <code>##</code>，<code>&amp;</code> 会回来成 <code>&amp;amp;</code>。所以这个函数才要把 HTML 实体反转义。要纯文本就把 Markdown 去掉；如果接下来由 LLM 读结果，留着就好。</p>
+<h2>做 OCR，LLM 比 Tesseract 更强吗？</h2>
+<p>是，干净的打印页除外。Tesseract 5.5 逐行辨认字形，清晰印刷还撑得住，一遇到噪点和手写就垮了。那封信和简报它转得一字不差；褪色收据则什么都没返回，潦草手写的 11 个值只对 1 个，传真的 15 个值只对 4 个。</p>
 <h2>常见问题</h2>
-<h3>哪个LLM最适合 OCR？</h3>
-<p>我们的测试中使用的是 Claude Opus 5.5。 Gemini 3.8 Flash 和 Grok 4.7 的错误率几乎一样低，但错过了更多连续剧。 DeepSeek V4.1 Flash 和 Ling 3.0 Flash VL 的价格接近每 1,000 页不到 0.20 美元。</p>
-<h3>如何 OCR 扫描的 PDF？</h3>
-<p>如步骤 4 中所示，使用“mistral-ocr”引擎发送它。或者，将每个页面渲染为视觉模型的图像，或将 PDF 直接发送到读取 PDF 的模型。自由文本解析器不适用于扫描，因为扫描没有文本层。</p>
-<h3>最准确的 OCR 模型是什么？</h3>
-<p>Claude Opus 5.5 在 264 个键值中有 262 个正确，并且在我们的八次扫描中字符错误率为 0.02%。 Mistral OCR 排名第二，共 264 项，占 258 项，成本仅为其八分之一。</p>
-<h3>LLM的 OCR 费用是多少？</h3>
-<p>在我们的测试中，其价格从每 1,000 页 0.04 美元（Ling 3.0 Flash VL，推理关闭）到 16.42 美元（Claude Opus 5.5）不等。 Mistral OCR 每 1,000 页的成本为 2 美元。模型对图像令牌的计数方式不同，因此请在您自己的页面上衡量成本。</p>
+<h3>做 OCR 哪个 LLM 最好？</h3>
+<p>我们的测试里是 Claude Opus 5.5。Gemini 3.8 Flash 和 Grok 4.7 的错误率几乎一样低，但漏掉更多序列号。DeepSeek V4.1 Flash 和 Ling 3.0 Flash VL 很接近，每 1,000 页还不到 $0.20。</p>
+<h3>怎么对扫描 PDF 做 OCR？</h3>
+<p>按步骤 4，用 <code>mistral-ocr</code> 引擎发出去。也可以把每页渲染成图片交给视觉模型，或者把 PDF 直接发给能读 PDF 的模型。免费的文本解析器对扫描件没用，因为扫描件没有文本层。</p>
+<h3>最准的 OCR 模型是哪个？</h3>
+<p>Claude Opus 5.5 在 264 个键值里对了 262 个，8 张扫描件上的字符错误率是 0.02%。Mistral OCR 以 258 / 264 排第二，成本只有它的八分之一。</p>
+<h3>用 LLM 做 OCR 要花多少钱？</h3>
+<p>我们的测试里，从每 1,000 页 $0.04（关掉 reasoning 的 Ling 3.0 Flash VL）到 $16.42（Claude Opus 5.5）不等。Mistral OCR 是每 1,000 页 $2。各模型对图像 token 的计数方式不同，成本要在自己的页面上量。</p>
 <h3>Mistral OCR 比视觉模型更好吗？</h3>
-<p>这是我们测试中的最佳价值：264 个键值中的 258 个，每 1,000 页 2.02 美元，仅落后于 Claude Opus 5.5。它返回保留布局的 Markdown，而视觉模型返回您要求的任何格式。</p>
-<h3>LLM可以阅读笔迹吗？</h3>
-<p>是的。所有 15 个视觉模型都完美地记录了我们简洁的笔记。在凌乱的笔迹上，大多数字符准确度都保持在 99% 以上，而漏写的大多是名字（“Ackterberg”代表“Achterberg”）。</p>
+<p>它在我们的测试里性价比最高：每 1,000 页 $2.02，264 个键值里对 258 个，只输给 Claude Opus 5.5。它返回保留版式的 Markdown，视觉模型则你要什么格式就给什么格式。</p>
+<h3>LLM 能读手写吗？</h3>
+<p>能。15 个视觉模型都把那张工整便条转得一字不差。潦草手写上，大多数模型的字符准确率仍在 99% 以上，错的主要是名字（把“Achterberg”写成“Ackterberg”）。</p>
 <h2>后续步骤</h2>
-<ul><li><a href="https://openrouter.ai/docs/guides/overview/multimodal/image-understanding">图像输入</a>涵盖通过URL或base64发送图像，我们的<a href="https://openrouter.ai/blog/tutorials/send-image-to-llm/">vision API指南</a>涵盖细节级别。</li><li><a href="https://openrouter.ai/docs/guides/overview/multimodal/pdfs">PDF 输入</a> 列出了 PDF 引擎并解释了如何重用解析的结果。</li><li><a href="https://openrouter.ai/collections/vision-models">视觉模型集合</a> 列出了每个拍摄图像的模型。</li><li>要将转录文本转换为键入字段，请参阅<a href="https://openrouter.ai/docs/guides/features/structured-outputs">结构化输出</a>。</li></ul>]]></content:encoded>
+<ul><li><a href="https://openrouter.ai/docs/guides/overview/multimodal/image-understanding">图像输入</a> 讲怎么用 URL 或 base64 传图，我们的 <a href="https://openrouter.ai/blog/tutorials/send-image-to-llm/">vision API 指南</a> 讲细节级别。</li><li><a href="https://openrouter.ai/docs/guides/overview/multimodal/pdfs">PDF 输入</a> 列出各个 PDF 引擎，并说明怎么复用解析结果。</li><li><a href="https://openrouter.ai/collections/vision-models">视觉模型集合</a> 列出所有能接图片的模型。</li><li>要把转录文本变成带类型的字段，见<a href="https://openrouter.ai/docs/guides/features/structured-outputs">结构化输出</a>。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>如何构建语音 AI 代理</title>
+      <title>如何构建语音 AI agent</title>
       <link>https://openrouter.ai/blog/tutorials/build-voice-ai-agent/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/build-voice-ai-agent/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How to Build a Voice AI Agent</description>
-      <content:encoded><![CDATA[<h1>如何构建语音 AI 代理</h1>
-<p>开放路由器 ·11/10/2026</p>
-<p><img src="https://openrouter.ai/blog/images/build-voice-ai-agent.png" alt="如何构建语音 AI 代理"><img src="https://openrouter.ai/blog/images/build-voice-ai-agent-dark.png" alt="如何构建语音 AI 代理"></p>
-<p>语音代理需要做的不仅仅是生成一个好的答案。它必须理解某人所说的内容，决定要做什么，调用任何需要的工具，并在停顿变得尴尬之前再次开始说话。</p>
-<p>在本教程中，我们将在 Python 中构建完整的循环。我们的示例是餐厅预订代理，它会转录呼叫者的内容，使用工具检查餐桌可用性，然后将响应转回语音。语音转文本、LLM 和文本转语音都通过一个 <a href="https://openrouter.ai/docs/api_reference/authentication">OpenRouter API 密钥</a> 运行，我们将每个完整的句子流式传输到 TTS，而不是等待整个回复。</p>
-<p>在 3 个测试对话的所有 12 个回合中，服务器端首次发出音频的总体中位时间为 1.9 秒，而按 10 月 8 日测试期间提供的促销价格计算，四回合对话每分钟处理语音的成本约为 0.013 美元。</p>
-<h2>长篇大论；博士</h2>
-<ul><li>文本到语音转换约占测量模型成本的 90%，这使得语音响应长度成为该代理的重要成本因素。</li><li>在我们的测试中，按每轮一个 LLM 请求计算，服务器端发出第一个音频的时间估计为普通转弯为 1.4 秒，工具转弯为 2.4 秒。示例代码会发出额外的 LLM 请求，并且网络和播放会增加时间。</li><li>姓名比电话号码更难转录。让来电者在采取行动之前确认重要细节。</li><li>将完整的句子发送到文本转语音 (TTS) 可以减少语音输出的等待，但实时播放和中断需要额外的编排。</li></ul>
-<h2>语音 AI 代理的工作原理</h2>
-<p>语音代理接收呼叫者的语音，将其转换为文本，将其传递给LLM决定要做什么，然后将响应转回语音。该过程的工作原理如下：</p>
-<p><img src="https://openrouter.ai/blog/images/build-voice-ai-agent-1.png" alt="一个语音 AI 代理轮流图：呼叫者音频进入语音转文本，然后是 LLM、句子分割器、文本转语音和代理音频。 LLM 可以调用预订工具 check_availability 和 book_table 并继续使用工具结果。"></p>
-<p>例如，当有人打电话给我们的餐厅预订餐桌时，LLM可能需要在回复之前调用 check_availability。您的应用程序执行该函数，将可用时间发送回模型，并等待它生成响应。这种额外的往返会增加呼叫者的等待时间。</p>
-<p>为了减少等待时间，我们可以在 LLM 完成其整个响应之前开始生成语音。我们不会等待全文，而是会传输响应，将其分割成句子，并将每个完整的句子发送到 TTS，同时模型继续生成其余句子。</p>
-<p>对于此构建，我们将使用我们的<a href="https://openrouter.ai/docs/guides/overview/multimodal/stt">语音转文本 API</a> 来转录呼叫者，<a href="https://openrouter.ai/docs/guides/features/tool-calling">使用工具调用完成聊天</a> 来处理对话和预订，以及我们的[文本转语音] API](https://openrouter.ai/docs/guides/overview/multimodal/tts) 生成语音响应。</p>
-<p>转录 API 以 JSON 形式返回文本，而语音 API 返回音频字节。我们的 Python 示例将生成的音频保存为 WAV 文件，稍后我们将使用 LiveKit 来处理实时音频和中断。</p>
-<h2>用 Python 构建语音代理</h2>
-<p>让我们使用三个模型构建餐厅预订代理：用于转录的 elevenlabs/scribe-v2、用于对话和工具调用的 openai/gpt-6-luna 以及用于生成语音的 elevenlabs/eleven-flash-v2.5。</p>
-<p>您需要 Python 3.10 或更高版本以及 <a href="https://openrouter.ai/settings/keys">OpenRouter API 密钥</a>。安装 requests 库并将 API 密钥设置为环境变量：</p>
+      <content:encoded><![CDATA[<p>OpenRouter ·11/10/2026</p>
+<p><img src="https://openrouter.ai/blog/images/build-voice-ai-agent.png" alt="如何构建语音 AI agent"><img src="https://openrouter.ai/blog/images/build-voice-ai-agent-dark.png" alt="如何构建语音 AI agent"></p>
+<p>语音 agent 要做的远不止给出一句漂亮回答。它得听懂对方说了什么，决定该做什么，调用需要的工具，还要在停顿变得尴尬之前重新开口。</p>
+<p>在本教程里，我们用 Python 把这套完整闭环搭出来。示例是一个餐厅预订 agent：把来电者的话转成文字，用工具查空桌，再把回复变回语音。语音转文本、LLM 和文本转语音都走同一个 <a href="https://openrouter.ai/docs/api_reference/authentication">OpenRouter API 密钥</a>，而且我们把每个成句流式送给 TTS，不必等整段回复生成完。</p>
+<p>在三次测试对话的全部 12 个回合里，服务器端首个音频的总体中位时间是 1.9 秒；按 10 月 8 日测试时的促销价计算，四回合对话每分钟处理语音约需 $0.013。</p>
+<h2>TL;DR</h2>
+<ul><li>文本转语音约占实测模型成本的 90%，因此语音回复的长度是这个 agent 一个重要的成本因素。</li><li>在我们的测试里，按每回合一次 LLM 请求计算，服务器端首个音频的时间估计普通回合为 1.4 秒、工具回合为 2.4 秒。示例代码会多发出几次 LLM 请求，网络传输和播放也会额外耗时。</li><li>姓名比电话号码更难转录准确。在采取行动之前，让来电者确认重要细节。</li><li>把成句直接送给文本转语音（TTS）能缩短语音输出的等待，但实时播放和打断还需要额外的编排。</li></ul>
+<h2>语音 AI agent 的一轮如何工作</h2>
+<p>语音 agent 接住来电者的语音，转成文本，交给 LLM 决定下一步，再把回复变回语音。整个流程是这样的：</p>
+<p><img src="https://openrouter.ai/blog/images/build-voice-ai-agent-1.png" alt="语音 AI agent 一个回合的示意图：来电者音频先到语音转文本，再经过 LLM、句子切分、文本转语音，最后成为 agent 音频。LLM 可以调用预订工具 check_availability 和 book_table，并带着工具结果继续。"></p>
+<p>比如有人打电话到餐厅订位时，LLM 可能需要先调用 check_availability 再作答。你的应用执行这个函数，把可订时间回传给模型，等它生成回复。这多出来的一来一回，会拉长来电者的等待。</p>
+<p>要缩短这段等待，可以在 LLM 写完整个回复之前就开始生成语音。不必等全文：我们流式读取回复、按句切分，在模型继续生成余下内容的同时，把每个成句送给 TTS。</p>
+<p>这次构建里，我们用<a href="https://openrouter.ai/docs/guides/overview/multimodal/stt">语音转文本 API</a>转录来电者，用<a href="https://openrouter.ai/docs/guides/features/tool-calling">带工具调用的 Chat Completions</a>处理对话和订位，再用<a href="https://openrouter.ai/docs/guides/overview/multimodal/tts">文本转语音 API</a>生成语音回复。</p>
+<p>转录 API 返回 JSON 文本，语音 API 返回音频字节。我们的 Python 示例会把生成的音频存成 WAV 文件，稍后再用 LiveKit 处理实时音频和打断。</p>
+<h2>用 Python 构建语音 agent</h2>
+<p>我们用三个模型来搭这个餐厅预订 agent：elevenlabs/scribe-v2 负责转录，openai/gpt-6-luna 负责对话和工具调用，elevenlabs/eleven-flash-v2.5 负责生成语音。</p>
+<p>你需要 Python 3.10 或更高版本，以及一个 <a href="https://openrouter.ai/settings/keys">OpenRouter API 密钥</a>。安装 requests 库，并把 API 密钥设成环境变量：</p>
 <pre><code>python -m pip install requests
 export OPENROUTER_API_KEY=&quot;your-api-key&quot;</code></pre>
-<p>为了使示例易于重现，我们将使用第二个 TTS 语音来模拟四个呼叫者回合，而不是连接麦克风。我们还将使用模拟预订数据，以便代理可以在没有真正的预订系统的情况下检查可用性并返回预订详细信息。</p>
-<p>将以下代码保存为voice_agent.py：</p>
+<p>为了让示例容易复现，我们不接麦克风，而是用第二个 TTS 语音模拟四轮来电。预订数据也用模拟的，这样 agent 无需真实预订系统就能查空桌、返回订位详情。</p>
+<p>把下面这段代码存为 voice_agent.py：</p>
 <pre><code>import base64
 import io
 import json
@@ -1053,12 +1052,12 @@ if __name__ == &quot;__main__&quot;:
         with open(f&quot;agent_{turn}.wav&quot;, &quot;wb&quot;) as file:
             file.write(reply)
         print(f&quot;caller: {heard}\nagent:  {said}\n&quot;)</code></pre>
-<p>该脚本通过 run_turn() 连接三个 API，它会转录每个调用者消息，将转录文本传递给 LLM，并处理响应。如果 LLM 请求一个工具，该函数会执行该工具，将结果添加到对话历史记录中，并发出另一个请求，以便模型可以继续。</p>
-<p>看看stream_reply()如何处理工具调用。模型以片段形式传输函数名称和参数，因此我们在执行工具之前将它们组装起来。对于口头回复，我们通过线程池将完整的句子发送到 TTS，从而允许语音生成与剩余的 LLM 输出重叠。</p>
-<p>然后，我们按句子顺序组合音频并将其保存为 WAV 文件。当我们引入 LiveKit 时，我们将处理实际的播放和中断。</p>
-<p>您可以使用以下命令运行该脚本：</p>
+<p>脚本通过 run_turn() 把三个 API 串起来：转录每条来电消息，把转录文本交给 LLM，再处理回复。如果 LLM 请求调用工具，这个函数就执行它、把结果加进对话历史，然后再次发起请求让模型接着走。</p>
+<p>看看 stream_reply() 怎么处理工具调用。模型把函数名和参数按片段流式吐出，所以要先拼完整再执行工具。至于语音回复，我们通过线程池把成句送给 TTS，让语音生成和 LLM 余下的输出重叠进行。</p>
+<p>随后按句子顺序把音频拼起来，存成 WAV 文件。真正的播放和打断，等引入 LiveKit 时再处理。</p>
+<p>用这条命令运行脚本：</p>
 <pre><code>python voice_agent.py</code></pre>
-<p>它应该创建四个音频文件（agent_1.wav 到 agent_4.wav），并打印对话。这是我们的一次测试的摘录。呼叫者线路显示转录的音频，因此数字可能与所说的不同。</p>
+<p>它会生成四个音频文件，agent_1.wav 到 agent_4.wav，并打印整段对话。下面是我们某次测试的片段。caller 那几行是转录出来的音频内容，所以数字可能和当时说的不一样。</p>
 <pre><code>caller: Hi, do you have a table for six this Saturday at 7:30?
 
 agent:  We don't have seven-thirty available for six,
@@ -1077,59 +1076,59 @@ agent:  I can't send texts from here, but your
         reservation is confirmed under Siobhan Okafor
         for six at eight fifteen this Saturday,
         reference XJ47Q.</code></pre>
-<p>该示例显示代理在提供另一个时间之前检查可用性，然后在调用者接受后调用 book_table。它还拒绝承诺短信确认，因为我们没有提供发送短信的工具。</p>
-<h2>为什么这个设计有效，以及它的失败之处</h2>
-<p>回复在聊天窗口中看起来非常好，但在大声朗读时听起来很奇怪。时间、电话号码和降价就是很好的例子。这就是为什么我们的系统提示要求LLM保持简短的回答，避免格式化，并将时间写成口语，例如“八点十五分”而不是 8:15。</p>
-<p>同样的问题也可能反过来发生。在我们的测试中，语音转文本将“八点十五分”转换为 815，但LLM正确理解了呼叫者的响应，因为它有之前的对话作为上下文。我们在消息中维护该历史记录并随每个请求一起发送，因为聊天完成不会自动保留之前的回合。结果，提示从第一轮的大约 290 个令牌增加到第四轮的 490 个令牌。</p>
-<p>另一个重要的考虑因素是确保代理仅确认实际发生的操作。在没有 book_table 的早期版本中，代理可以告诉呼叫者他们的预订已确认，即使应用程序尚未创建预订。</p>
-<p>这就是为什么预订工具需要做的不仅仅是返回响应。当连接到真实的预订系统时，它应该验证可用性，保存预订，并仅在操作成功时返回确认。</p>
-<h2>语音 AI 代理的速度有多快？</h2>
-<p>在所有 12 个回合中，服务器端发出第一个音频的时间中位数为 1.9 秒。按回合类型计算，在没有工具的情况下，中位时间为 1.4 秒，而在代理需要调用工具时，中位时间为 2.4 秒。</p>
-<p>我们测量了三个完整的对话，涵盖 12 个回合，使用我们的[生成元数据](https://openrouter.ai/docs/api/api-reference/ Generations/get- Generation) 来估计每个阶段的服务器端延迟。这使我们能够将模型处理时间与测试环境中的额外网络开销分开。</p>
-<p>结果比较如下：</p>
-<table><thead><tr><th><strong>舞台</strong></th><th><strong>通过工具调用</strong></th><th><strong>无需工具</strong></th></tr></thead><tbody><tr><td>语音转文本 (Scribe v2)</td><td>549 毫秒</td><td>391 毫秒</td></tr><tr><td>LLM选择工具</td><td>736 毫秒</td><td>—</td></tr><tr><td>LLM 答案，第一个令牌</td><td>685 毫秒</td><td>706 毫秒</td></tr><tr><td>文本转语音，第一个字节</td><td>262 毫秒</td><td>208 毫秒</td></tr><tr><td><strong>首次播放音频的预计时间</strong></td><td><strong>2.4 秒</strong></td><td><strong>1.4 秒</strong></td></tr></tbody></table>
-<p>额外的LLM申请是造成这一差异的主要原因。当代理需要检查可用性时，它必须等待工具结果才能生成答案。</p>
-<p>这些数字反映了服务器端处理，而不是呼叫者经历的全部时间。网络传输、检测呼叫者何时结束讲话以及音频播放会带来额外的延迟。各个阶段的中位数也不一定等于总体中位数。该估计还计算了每轮一个LLM请求。下面的示例代码每次都会生成两个，一个检查工具调用的非流式请求，然后是一个用于回复的流式请求，工具运行后会生成另一个，因此预计它需要比这些数字更长的时间。</p>
-<p>下面的模型比较使用单独的测试运行和输入，因此它们报告的延迟与此处显示的完整对话测量结果不同。</p>
-<h2>语音 AI 代理要多少钱？</h2>
-<p>在五次运行中，我们四轮餐厅对话的成本在 <strong>0.0069 美元到 0.0087 美元</strong>之间。每个通话包含大约 38 秒的语音，按照 2026 年 10 月 8 日的可用价格，我们估计每分钟处理语音的成本为 <strong>0.013 美元</strong>。</p>
-<p>大部分成本来自生成代理的声音。</p>
-<table><thead><tr><th><strong>舞台</strong></th><th><strong>占总成本的份额</strong></th><th><strong>测试期间的价格</strong></th></tr></thead><tbody><tr><td>文字转语音（十一Flash v2.5）</td><td>90%</td><td>20 美元/百万字符</td></tr><tr><td>语音转文本 (Scribe v2)</td><td>6%</td><td>0.11 美元/音频小时</td></tr><tr><td>LLM (GPT-6 Luna)</td><td>4%</td><td>每百万输入/输出代币 0.10 美元 / 0.50 美元</td></tr></tbody></table>
-<p>上述 ElevenLabs 价格包括截至 2026 年 10 月 19 日的 50% 发布折扣。按照常规列出的价格，<a href="https://openrouter.ai/elevenlabs/eleven-flash-v2.5">Eleven Flash v2.5</a> 的价格为每百万字符 40 美元，而 <a href="https://openrouter.ai/elevenlabs/scribe-v2">Scribe v2</a> 的价格约为每音频小时 0.22 美元。假设使用相同的情况，我们的对话每分钟处理语音的成本约为 0.025 美元。这是根据我们 10 月 8 日的测量结果进行的计算，而不是单独的计费测试。</p>
-<p>成本明细还是有用的。在本次对话中，TTS 约占我们支出的 90%，因此保持代理的口头响应简短会对成本产生比小幅减少 LLM 代币使用量更大的影响。</p>
-<p>您还可以跟踪各个请求的实际成本。转录响应包括 use.cost，而语音响应提供 X-Generation-Id 标头，您可以使用该标头通过我们的[生成元数据 API](https://openrouter.ai/docs/api/api-reference/ Generations/get- Generation) 检索成本。</p>
-<h2>您应该使用哪种语音到文本模型？</h2>
-<p>对于餐厅预订代理来说，当呼叫者提及代理需要采取行动的详细信息（例如姓名、日期、电话号码和预订时间）时，转录准确性最为重要。</p>
-<p>为了比较模型，我们使用三种合成声音生成了九条呼叫线路，然后为每个录音创建了清晰的电话质量版本。这为我们提供了 54 个音频剪辑，在整个测试中每个模型得分为 90 个事实。</p>
-<p>我们评估了十个 STT 模型。下表显示了五个，说明了我们观察到的准确性和延迟的范围。</p>
-<table><thead><tr><th><strong>型号</strong></th><th><strong>保留的事实（共 90 条）</strong></th><th><strong>服务器延迟中值</strong></th><th><strong>测试日期每小时成本</strong></th></tr></thead><tbody><tr><td>微软/mai-transcribe-2</td><td>89</td><td>89 1,740 毫秒</td><td>0.11 美元</td></tr><tr><td>十一实验室/ scribe-v2</td><td>88</td><td>88 379 毫秒</td><td>0.11 美元</td></tr><tr><td>openai/whisper-large-v3</td><td>openai/whisper-large-v3</td><td>88</td><td>88 517 毫秒</td><td>0.17 美元</td></tr><tr><td>x-ai/grok-stt-1.0</td><td>86</td><td>86 264 毫秒</td><td>0.10 美元</td></tr><tr><td>Deepgram/nova-3</td><td>83</td><td>83 83 毫秒</td><td>0.26 美元</td></tr></tbody></table>
-<p>MAI-Transcribe 2 保留了最多的事实，但 Scribe v2 的速度要快得多，但仅保留了较少的事实。 Whisper Large V3 与 Scribe 的得分相当，但响应时间较长。对于我们的预订代理来说，Scribe v2 提供了准确性和速度的良好平衡，因此我们选择它来进行 Python 实现。</p>
-<p>每个识别器都会在不常见的名字上犯错误，即使它正确地保存了电话号码。例如，“Siobhan Okafor”在成绩单中出现为“Shioban Okafor”、“Siobhan O’Keefe”和“Siobhan Akhefer”。</p>
-<p>不要假设转录的姓名是正确的，而是让代理与来电者确认或要求他们在完成预订之前拼写该姓名。</p>
-<p>请记住，这些结果来自合成英语录音，而不是不同口音和环境下的实际客户通话。您可以探索<a href="https://openrouter.ai/models?output_modalities=transcription">可用的转录模型</a>，但值得使用反映您自己的用例的音频来测试您入围的模型。</p>
-<h2>您应该使用哪种 LLM 和文本转语音模型？</h2>
-<p>对于LLM，我们研究了工具调用的准确性、响应时间以及生成的文本的发音是否自然。</p>
-<p>我们比较中的每个LLM在所有五次运行中都要求使用预期的预订工具。差异归结于响应速度和答案格式。</p>
-<table><thead><tr><th><strong>型号</strong></th><th><strong>将时间写成数字</strong></th><th><strong>首次回答令牌的时间（中位数）</strong></th><th><strong>每转成本</strong></th></tr></thead><tbody><tr><td>DeepSeek V4.1 闪存</td><td>0/5</td><td>1.9 秒（1.4 秒，无推理）</td><td>0.00017 美元</td></tr><tr><td>GPT-6 露娜</td><td>0/5</td><td>2.3 秒（1.6 秒，无推理）</td><td>0.00008 美元</td></tr><tr><td>Claude Haiku 5.5</td><td>5/5</td><td>2.6 秒</td><td>0.00026 美元</td></tr><tr><td>Gemini3.8闪存</td><td>0/5</td><td>4.0 秒</td><td>$0.00129</td><td>$0.00129</td></tr><tr><td>MiMo V2.6 闪存</td><td>2/5</td><td>2/5 6.4 秒</td><td>0.00006 美元</td></tr></tbody></table>
-<p>一个区别是模型处理说话时间的方式。 Claude Haiku 5.5 在每次运行中都写了 7:30，而不是要求的口头形式，并且在一种配置中，它还在可见响应中包含了日期计算。当响应直接进入 TTS 时，这两种行为都很重要。</p>
-<p>这些结果来自单独的五次运行模型比较，而不是上面完整的对话测量。他们测量在测试的模型设置下到达第一个答案标记的时间。</p>
-<p>推理也会影响延迟。在我们的 GPT-6 Luna 比较中，禁用推理将测试工具转动中第一个答案标记的时间从 2.3 秒减少到 1.6 秒。如果模型继续调用正确的工具，这对于相对受限的预订任务很有用。</p>
+<p>这个例子里，agent 先查空桌再报出别的时间，等来电者接受后才调用 book_table。它也不肯承诺发短信确认，因为我们没有提供发短信的工具。</p>
+<h2>这套设计为什么成立，又会在哪里失效</h2>
+<p>一段回复在聊天窗口里看着挺正常，读出来却可能很别扭，时间、电话号码和 markdown 都是典型。所以我们的 system prompt 要求 LLM 把回复压短、不用格式、把时间写成口语词，比如用 “eight fifteen” 而不用 8:15。</p>
+<p>同样的问题也会反过来出现。在我们的测试里，语音转文本把 “eight fifteen” 转成了 815，但 LLM 还是正确理解了来电者的回答，因为它有前面的对话作上下文。我们把这段历史放在 messages 里，随每次请求一起发送——Chat Completions 不会自动保留之前的回合。结果 prompt 从第一回合约 290 个 token 涨到第四回合的 490 个 token。</p>
+<p>另一个要点是：确保 agent 只确认真实发生过的操作。早期没有 book_table 的版本里，应用根本没建预订，agent 却会告诉来电者订位已确认。</p>
+<p>所以预订工具不能只是返回一个响应。接上真实预订系统后，它应该先核实空桌、保存订位，只有操作成功才返回确认。</p>
+<h2>语音 AI agent 有多快？</h2>
+<p>全部 12 个回合里，服务器端首个音频的时间中位数是 1.9 秒。按回合类型分开看，不调用工具时中位数 1.4 秒，agent 需要调工具时 2.4 秒。</p>
+<p>我们测量了三段完整对话、共 12 个回合，借助<a href="https://openrouter.ai/docs/api/api-reference/generations/get-generation">生成元数据</a>估算每个阶段的服务器端延迟。这样就能把模型处理时间和测试环境里额外的网络开销分开。</p>
+<p>结果对比如下：</p>
+<table><thead><tr><th><strong>阶段</strong></th><th><strong>有工具调用</strong></th><th><strong>无工具调用</strong></th></tr></thead><tbody><tr><td>语音转文本 (Scribe v2)</td><td>549 ms</td><td>391 ms</td></tr><tr><td>LLM 选择工具</td><td>736 ms</td><td>—</td></tr><tr><td>LLM 回答，首个 token</td><td>685 ms</td><td>706 ms</td></tr><tr><td>文本转语音，首个字节</td><td>262 ms</td><td>208 ms</td></tr><tr><td><strong>首个音频的预计时间</strong></td><td><strong>2.4 s</strong></td><td><strong>1.4 s</strong></td></tr></tbody></table>
+<p>多出来的那次 LLM 请求是差距的主要来源。agent 要查空桌时，必须等工具结果回来才能生成回答。</p>
+<p>这些数字反映的是服务器端处理，不是来电者感受到的完整耗时。网络传输、判断来电者是否说完、音频播放都会再添延迟；各阶段的中位数也未必能加总出总体中位数。估算还按每回合一次 LLM 请求计算。下面的示例代码每回合会发两次——先一次非流式请求查工具调用，再一次流式请求取回复；工具回合在工具跑完后还会再发一次，所以实际会比这些数字更慢。</p>
+<p>下面的模型对比用的是另外的测试运行和输入，因此报告里的延迟与这里整段对话的测量结果不一样。</p>
+<h2>语音 AI agent 要花多少钱？</h2>
+<p>五次运行里，四回合的餐厅对话成本在 <strong>$0.0069 到 $0.0087</strong> 之间。每通通话约含 38 秒语音，按 2026 年 10 月 8 日的价格估算，成本为 <strong>每分钟处理语音 $0.013</strong>。</p>
+<p>这笔成本大头在生成 agent 的语音。</p>
+<table><thead><tr><th><strong>阶段</strong></th><th><strong>占总成本的比例</strong></th><th><strong>测试期间的价格</strong></th></tr></thead><tbody><tr><td>文本转语音 (Eleven Flash v2.5)</td><td>90%</td><td>$20 / million characters</td></tr><tr><td>语音转文本 (Scribe v2)</td><td>6%</td><td>$0.11 / audio hour</td></tr><tr><td>LLM (GPT-6 Luna)</td><td>4%</td><td>$0.10 / $0.50 per million input/output tokens</td></tr></tbody></table>
+<p>上面的 ElevenLabs 价格含 50% 首发折扣，折扣已于 2026 年 10 月 19 日结束。按常规标价，<a href="https://openrouter.ai/elevenlabs/eleven-flash-v2.5">Eleven Flash v2.5</a> 是每百万字符 $40，<a href="https://openrouter.ai/elevenlabs/scribe-v2">Scribe v2</a> 约为每音频小时 $0.22。按同样的用量算，这段对话每分钟处理语音约需 $0.025。这是依据 10 月 8 日的测量结果推算的，不是另做了一次计费测试。</p>
+<p>成本明细依然有用。这段对话里 TTS 占了约 90% 的开销，所以把 agent 的语音回复压短，比小幅削减 LLM 的 token 用量更能省成本。</p>
+<p>你也可以查每条请求的实际花费。转录响应里带 usage.cost，语音响应则提供 X-Generation-Id 标头，可以借此通过我们的<a href="https://openrouter.ai/docs/api/api-reference/generations/get-generation">生成元数据 API</a>取回成本。</p>
+<h2>该用哪款语音转文本模型？</h2>
+<p>对餐厅预订 agent 来说，来电者报出 agent 要据此行动的细节时，转录准确度最关键，比如姓名、日期、电话号码和预订时间。</p>
+<p>为了对比模型，我们用三种合成语音生成了九条来电台词，再给每条录音做出清晰版和电话音质版。这样一共得到 54 段音频，整个测试里每个模型评分 90 条事实。</p>
+<p>我们评估了十款 STT 模型。下表列出其中五款，用来展示观察到的准确度和延迟区间。</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>保留的事实（共 90 条）</strong></th><th><strong>服务器延迟中位数</strong></th><th><strong>测试日每小时成本</strong></th></tr></thead><tbody><tr><td>microsoft/mai-transcribe-2</td><td>89</td><td>1,740 ms</td><td>$0.11</td></tr><tr><td>elevenlabs/scribe-v2</td><td>88</td><td>379 ms</td><td>$0.11</td></tr><tr><td>openai/whisper-large-v3</td><td>88</td><td>517 ms</td><td>$0.17</td></tr><tr><td>x-ai/grok-stt-1.0</td><td>86</td><td>264 ms</td><td>$0.10</td></tr><tr><td>deepgram/nova-3</td><td>83</td><td>83 ms</td><td>$0.26</td></tr></tbody></table>
+<p>MAI-Transcribe 2 保住的事实最多，但 Scribe v2 只少一条，速度却快得多。Whisper Large V3 得分和 Scribe 持平，响应却更慢。对我们的预订 agent 来说，Scribe v2 在准确度和速度上平衡得不错，所以 Python 实现选了它。</p>
+<p>每款识别器都会在少见姓名上出错，即便电话号码转对了。比如 “Siobhan Okafor” 在转录里变成了 “Shioban Okafor”、“Siobhan O’Keefe” 和 “Siobhan Akhefer”。</p>
+<p>别默认转录出来的姓名就是对的，让 agent 跟来电者核对，或者请对方拼一遍，再完成预订。</p>
+<p>要记住，这些结果来自合成的英语录音，不是各种口音和环境下的真实客户来电。你可以去翻<a href="https://openrouter.ai/models?output_modalities=transcription">可用的转录模型</a>，但更值得用贴合自己场景的音频，把候选模型实测一遍。</p>
+<h2>该用哪款 LLM 和文本转语音模型？</h2>
+<p>挑 LLM 时，我们看的是工具调用准确度、响应时间，以及生成的文字读起来是否自然。</p>
+<p>对比里的每款 LLM 在五次运行中都请求了预期的预订工具。差别落在响应速度和答案格式上。</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>把时间写成数字</strong></th><th><strong>首个回答 token 的时间（中位数）</strong></th><th><strong>每回合成本</strong></th></tr></thead><tbody><tr><td>DeepSeek V4.1 Flash</td><td>0/5</td><td>1.9 s（无推理时 1.4 s）</td><td>$0.00017</td></tr><tr><td>GPT-6 Luna</td><td>0/5</td><td>2.3 s（无推理时 1.6 s）</td><td>$0.00008</td></tr><tr><td>Claude Haiku 5.5</td><td>5/5</td><td>2.6 s</td><td>$0.00026</td></tr><tr><td>Gemini 3.8 Flash</td><td>0/5</td><td>4.0 s</td><td>$0.00129</td></tr><tr><td>MiMo V2.6 Flash</td><td>2/5</td><td>6.4 s</td><td>$0.00006</td></tr></tbody></table>
+<p>一个差别在于各模型怎么处理口语时间。Claude Haiku 5.5 每次运行都写成 7:30，而不是要求的口语形式；在某种配置下，它还把日期计算写进了可见回复。回复要直接送进 TTS 时，这两种行为都有影响。</p>
+<p>这些结果来自另一次五轮模型对比，不是上面整段对话的测量。它们量的是在测试用模型设置下，到首个回答 token 的时间。</p>
+<p>推理也会影响延迟。在 GPT-6 Luna 的对比里，关掉推理把测试工具回合上首个回答 token 的时间从 2.3 秒降到 1.6 秒。对订位这种相对受限的任务，这挺有用，前提是模型仍能正确发起工具调用。</p>
 <h3>选择文本转语音模型</h3>
-<p>对于 TTS，我们重点关注每个模型开始返回音频的速度。我们向 12 个模型发送了相同的 101 个字符的响应，每个模型重复该请求五次。</p>
-<p>六种有代表性的结果如下所示：</p>
-<table><thead><tr><th><strong>型号</strong></th><th><strong>第一个字节的平均服务器时间</strong></th><th><strong>测试日期成本/百万字符</strong></th></tr></thead><tbody><tr><td>Grok 语音 TTS 1.0</td><td>80 毫秒</td><td>15 美元</td></tr><tr><td>心82M</td><td>98 毫秒</td><td>0.62 美元</td></tr><tr><td>Deepgram Aura-2</td><td>236 毫秒</td><td>30 美元</td></tr><tr><td>十一闪客 v2.5</td><td>275 毫秒</td><td>20 美元促销</td></tr><tr><td>11 v4 涡轮</td><td>1,245 毫秒</td><td>20 美元促销</td></tr><tr><td>Gemini 3.8 Flash TTS</td><td>2,561 毫秒</td><td>不可直接比较（代币定价）</td></tr></tbody></table>
-<p>Gemini 的定价使用不同的计费单位，因此我们将其排除在每个字符的成本比较之外，而不是将估计转化视为报价费率。</p>
-<p>Grok Voice 和 Kokoro 在服务器端测量中返回第一个音频字节的速度最快，而 Eleven Flash v2.5 也表现良好。</p>
-<p>然而，服务器报告的时间并不总是与我们的应用程序经历的时间相符。 Kokoro 记录的平均服务器延迟低于 100 毫秒，但其音频需要三到八秒才能到达我们的测试环境。</p>
-<p>这就是为什么您应该测量自己的应用程序中的延迟，尤其是在构建会话式应用程序时。在选择仅基于速度的模型之前，您还需要聆听生成的语音并检查发音。</p>
-<p>对于此实现，我们使用了 Eleven Flash v2.5。您可以浏览<a href="https://openrouter.ai/models?output_modalities=speech">可用的语音模型</a>，并使用模型 slug 将其替换为其他选项。</p>
-<h2>使用 LiveKit Agents 运行相同的代理</h2>
-<p>我们的 Python 脚本处理转录、工具调用和语音生成，但它不支持与代理的实时对话。为此，我们还需要处理麦克风输入、检测呼叫者何时结束讲话以及管理中断。</p>
-<p>为此，我们可以使用<a href="https://docs.livekit.io/agents/start/voice-ai/">LiveKit Agents</a>。它处理实时音频连接和对话流，同时让我们通过 OpenRouter 继续使用相同的三个模型。</p>
-<p>首先，使用 OpenAI 插件安装 LiveKit Agents：</p>
+<p>挑 TTS 时，我们主要看每款模型多快开始返回音频。把同一段 101 字符的回复发给 12 款模型，每款重复请求五次。</p>
+<p>下面列出六款有代表性的结果：</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>服务器返回首个字节的时间中位数</strong></th><th><strong>测试日成本 / 百万字符</strong></th></tr></thead><tbody><tr><td>Grok Voice TTS 1.0</td><td>80 ms</td><td>$15</td></tr><tr><td>Kokoro 82M</td><td>98 ms</td><td>$0.62</td></tr><tr><td>Deepgram Aura-2</td><td>236 ms</td><td>$30</td></tr><tr><td>Eleven Flash v2.5</td><td>275 ms</td><td>$20（促销价）</td></tr><tr><td>Eleven v4 Turbo</td><td>1,245 ms</td><td>$20（促销价）</td></tr><tr><td>Gemini 3.8 Flash TTS</td><td>2,561 ms</td><td>无法直接比较（按 token 计价）</td></tr></tbody></table>
+<p>Gemini 的计价用的是另一种计费单位，所以我们把它排除在按字符计的成本对比之外，没有把估算换算当成报价。</p>
+<p>按服务器端测量，Grok Voice 和 Kokoro 返回首个音频字节最快，Eleven Flash v2.5 表现也不错。</p>
+<p>不过服务器上报的时间，并不总和我们应用实际感受到的一致。Kokoro 记下的服务器延迟中位数不到 100 毫秒，音频却要三到八秒才抵达我们的测试环境。</p>
+<p>所以该在自己的应用里量延迟，做对话式产品时尤其如此。只按速度挑模型之前，也最好先听听生成的语音、检查发音。</p>
+<p>这次实现用的是 Eleven Flash v2.5。你可以浏览<a href="https://openrouter.ai/models?output_modalities=speech">可用的语音模型</a>，用模型 slug 换成别的选项。</p>
+<h2>用 LiveKit Agents 跑同一个 agent</h2>
+<p>我们的 Python 脚本管转录、工具调用和语音生成，但还撑不起跟 agent 的实时对话。要做到这点，还得处理麦克风输入、判断来电者何时说完，以及管理打断。</p>
+<p>这可以交给 <a href="https://docs.livekit.io/agents/start/voice-ai/">LiveKit Agents</a>。它负责实时音频连接和对话流转，同时让我们继续通过 OpenRouter 用同样这三个模型。</p>
+<p>先装上带 OpenAI 插件的 LiveKit Agents：</p>
 <pre><code>python -m pip install &quot;livekit-agents[openai]~=1.8&quot;</code></pre>
-<p>您还需要 LiveKit 项目中的 LIVEKIT_URL、LIVEKIT_API_KEY 和 LIVEKIT_API_SECRET，以及我们之前配置的 OPENROUTER_API_KEY。如果您尚未设置项目，请按照 <a href="https://docs.livekit.io/agents/start/voice-ai/">LiveKit 快速入门</a> 进行操作。</p>
-<p>将以下内容与 voice_agent.py 一起保存为 livekit_agent.py。我们将重用上一个示例中的餐厅说明和预订功能。</p>
+<p>你还需要从 LiveKit 项目里拿到 LIVEKIT_URL、LIVEKIT_API_KEY 和 LIVEKIT_API_SECRET，加上前面配好的 OPENROUTER_API_KEY。如果还没建项目，照 <a href="https://docs.livekit.io/agents/start/voice-ai/">LiveKit 快速入门</a>走一遍。</p>
+<p>把下面这段和 voice_agent.py 放在一起，存成 livekit_agent.py。我们会复用上一个例子里的餐厅说明和预订函数。</p>
 <pre><code>import os
 
 from livekit import agents
@@ -1205,13 +1204,13 @@ async def luigis_session(ctx: agents.JobContext):
 
 if __name__ == &quot;__main__&quot;:
     agents.cli.run_app(server)</code></pre>
-<p>AgentSession 连接三个模型，而 Silero 语音活动检测 (VAD) 有助于识别呼叫者何时停止说话，以便 LiveKit 可以发送音频进行转录。 LiveKit 还管理语音播放和中断。</p>
-<p>请注意，预订功能没有改变。 LiveKit 的 @function_tool 装饰器使它们可供 LLM 使用，并且每个函数将调用者的详细信息传递给同一个模拟预订服务。</p>
-<p>您可以使用麦克风在本地测试代理：</p>
+<p>AgentSession 把三个模型接起来，Silero 语音活动检测（VAD）负责判断来电者什么时候停口，好让 LiveKit 把音频送去转录。语音播放和打断也由 LiveKit 管理。</p>
+<p>注意预订函数没动。LiveKit 的 @function_tool 装饰器把它们暴露给 LLM，每个函数依旧把来电者的信息传给同一个模拟预订服务。</p>
+<p>可以用麦克风在本地测试这个 agent：</p>
 <pre><code>python livekit_agent.py console</code></pre>
-<p>要将其连接到 LiveKit 项目以通过代理控制台进行测试，请运行：</p>
+<p>要把它接到 LiveKit 项目、通过 Agent Console 测试，运行：</p>
 <pre><code>python livekit_agent.py dev</code></pre>
-<p>尝试在七点三十分预订一张六人桌，然后在八点十五分接受。在我们之前的文本驱动的 LiveKit 测试中，这产生了以下工具调用：</p>
+<p>试着订一张七点半的六人桌，再接受八点十五分。在我们早先那次文本驱动的 LiveKit 测试里，产生了下面这些工具调用：</p>
 <pre><code>check_availability(
     date=&quot;2026-10-10&quot;,
     time=&quot;19:30&quot;,
@@ -1224,57 +1223,57 @@ book_table(
     party_size=6,
     name=&quot;Siobhan Okafor&quot;
 )</code></pre>
-<p>此设置将预订工具连接到 LiveKit 音频会话，因此您可以使用麦克风测试相同的对话。您还可以使用我们的<a href="https://openrouter.ai/docs/guides/community/livekit">LiveKit集成指南</a>来探索模型回退和提供者路由。</p>
-<h2>你可能会遇到的错误</h2>
-<p>在测试过程中，我们遇到了一些由于缺少参数或不受支持的模型设置而导致的错误。所有三个都返回 HTTP 400 响应：</p>
-<table><thead><tr><th><strong>问题</strong></th><th><strong>API 响应</strong></th><th><strong>如何修复它</strong></th></tr></thead><tbody><tr><td>ElevenLabs TTS 模型省略了语音</td><td>此 TTS 提供商需要明确的语音。</td><td>指定支持的语音，例如 sarah。</td></tr><tr><td>发送数据：audio/wav;base64,... URI 到 STT</td><td>提供程序无法处理音频输入（不受支持或格式错误的音频）。</td><td>使用正确的音频格式发送原始 Base64 数据。</td></tr><tr><td>在强制推理的情况下禁用推理</td><td>推理对于该端点是强制性的，并且不能被禁用。</td><td>删除不支持的推理设置。</td></tr></tbody></table>
-<p>我们的 <a href="https://openrouter.ai/docs/guides/overview/multimodal/stt">speech-to-text API</a> 期望在 input_audio.data 中将音频字节编码为 base64，而不带 data:audio/…;base64, 前缀。您还必须指定音频格式，例如 wav 或 mp3。</p>
-<p>语音名称也因提供商而异。例如，合金等 OpenAI 语音不会自动与 ElevenLabs 配合使用。您可以在我们的<a href="https://openrouter.ai/docs/guides/overview/multimodal/tts">文本转语音文档</a> 或通过模型 API 检查每个模型支持的语音。</p>
-<p>我们遇到的另一个问题是空的 TTS 输入返回了一个简短的音频剪辑。在发出语音请求之前过滤掉空字符串是值得的。</p>
-<h2>您需要语音到语音模型吗？</h2>
-<p>不适用于本示例。我们构建的单独的语音到文本、LLM 和文本到语音管道足以处理我们的餐厅预订工作流程。</p>
-<p>我们还测试了将呼叫者的音频直接发送到四个支持音频的 LLM：Gemini 3.8 Flash、Qwen3.8 Omni Flash、MiMo V2.6 Flash 和 GPT Audio Mini。他们在所有 12 次测试中都选择了预期的预订工具。</p>
-<p>这表明这些模型可以处理我们示例中的工具调用部分，而无需单独的转录请求。然而，我们没有测量完整的语音到语音对话，因此这些结果并不能告诉我们该方法是否会更快或产生更好的口头响应。</p>
-<p>通过三阶段方法，我们可以检查转录，识别发生错误的位置，并独立更改转录、语言或语音模型。直接处理音频输入和输出的模型可以简化管道，但在选择模型之前值得比较完整的响应时间、音频质量和中断处理。</p>
+<p>这套配置把预订工具接进了 LiveKit 音频会话，于是你能用麦克风把同一段对话走一遍。也可以看我们的 <a href="https://openrouter.ai/docs/guides/community/livekit">LiveKit 集成指南</a>，了解模型回退和 provider 路由。</p>
+<h2>你可能会碰到的错误</h2>
+<p>测试时我们撞上几个由缺参数或模型设置不受支持引起的错误，三者都返回 HTTP 400 响应：</p>
+<table><thead><tr><th><strong>问题</strong></th><th><strong>API 响应</strong></th><th><strong>修复办法</strong></th></tr></thead><tbody><tr><td>给 ElevenLabs TTS 模型漏传了 voice</td><td>该 TTS provider 要求显式指定 voice。</td><td>指定受支持的 voice，比如 sarah。</td></tr><tr><td>把 data:audio/wav;base64,… URI 发给 STT</td><td>provider 无法处理该音频输入（音频不受支持或格式有误）。</td><td>用正确的音频格式发送原始 base64 数据。</td></tr><tr><td>在强制要求推理的地方关掉了推理</td><td>该 endpoint 强制要求推理，无法关闭。</td><td>去掉这个不受支持的推理设置。</td></tr></tbody></table>
+<p>我们的<a href="https://openrouter.ai/docs/guides/overview/multimodal/stt">语音转文本 API</a>要求把音频字节以 base64 编码放进 input_audio.data，不带 data:audio/…;base64, 前缀。还必须指定音频格式，比如 wav 或 mp3。</p>
+<p>voice 名称也因 provider 而异。比如 OpenAI 的 alloy 这类 voice，不会自动能在 ElevenLabs 上用。你可以在我们的<a href="https://openrouter.ai/docs/guides/overview/multimodal/tts">文本转语音文档</a>里，或通过 models API，查每款模型支持哪些 voice。</p>
+<p>还遇到过一个问题：空的 TTS 输入会返回一小段音频。发语音请求前把空字符串过滤掉比较稳妥。</p>
+<h2>你需要语音到语音模型吗？</h2>
+<p>这个例子不需要。我们搭的语音转文本、LLM、文本转语音分开的三段流水线，足够跑通餐厅预订流程。</p>
+<p>我们也试过把来电者音频直接喂给四款支持音频的 LLM：Gemini 3.8 Flash、Qwen3.8 Omni Flash、MiMo V2.6 Flash 和 GPT Audio Mini。12 次测试里，它们都选对了预期的预订工具。</p>
+<p>这说明这些模型不单独发转录请求，也能扛下示例里的工具调用环节。不过我们没有测完整的语音到语音对话，所以这些结果说明不了这条路是否更快、语音回复是否更好。</p>
+<p>用三段式，我们能检查转录文本、定位错在哪，再单独换转录、语言或语音模型。直接处理音频输入输出的模型也许能简化流水线，但选它之前，值得把完整响应时间、音频质量和打断处理都比一比。</p>
 <h2>结论</h2>
-<p>我们的 Python 示例是一个起点。在将代理连接到真正的呼叫者之前，用您自己的后端替换模拟预订功能，并用实际语音进行测试。只有系统提示才会让代理等待调用者同意才调用 book_table，所以让你的后端在写入之前确认预订。测量完整的响应时间，包括网络传输和播放，而不是仅依赖服务器端延迟。</p>
-<p>如果您需要实时音频和中断处理，请使用 LiveKit，同时通过 OpenRouter 保持相同的模型。</p>
+<p>我们的 Python 示例只是个起点。把 agent 接到真实来电者之前，先用自己的后端替掉模拟预订函数，拿真实语音测一遍。目前只有 system prompt 让 agent 等来电者同意后才调 book_table，所以要让后端在写入之前确认订位。测完整响应时间，把网络传输和播放算进去，别只盯服务器端延迟。</p>
+<p>如果需要实时音频和打断处理，就用 LiveKit，模型仍通过 OpenRouter 保持同一套。</p>
 <h2>常见问题</h2>
-<h3>如何将语音 AI 代理连接到真实的电话号码？</h3>
-<p>您可以使用 LiveKit 的电话集成将语音 AI 代理连接到电话号码。 LiveKit 通过其电话号码服务或 SIP 提供商支持入站呼叫。配置所需的中继和调度规则，将传入呼叫路由到 LiveKit 房间，您的客服人员可以在其中加入对话。有关设置步骤，请参阅 <a href="https://docs.livekit.io/telephony/accepting-calls/">LiveKit 电话文档</a>。</p>
-<h3>语音人工智能代理可以处理中断吗？</h3>
-<p>是的。像 LiveKit 这样的框架可以检测到有人在代理响应时开始说话，暂停代理的语音，并使用新的输入继续对话。</p>
-<p>请记住，打断语音不会自动取消已经运行的工具。对于预订或支付等操作，您的应用程序应谨慎处理取消和确认。</p>
-<h3>我可以使用自己的声音作为人工智能语音代理吗？</h3>
-<p>是的，如果您选择支持语音克隆的文本转语音模型。 OpenRouter 上的某些模型通过 input_references 参数接受参考音频，并使用该语音生成语音，而不需要单独的语音训练过程。</p>
-<p>语音克隆支持因模型和提供商端点而异，因此在选择模型之前请检查 <a href="https://openrouter.ai/docs/guides/overview/multimodal/tts">TTS 文档</a>。仅使用您有权复制的录音。</p>
-<h3>我可以将语音代理连接到真实的预订系统或其他 API 吗？</h3>
-<p>是的。我们示例中的 check_availability 和 book_table 函数使用模拟数据，但您可以将它们的实现替换为对预订 API 或数据库的请求。</p>
-<p>LLM 仍然决定何时调用每个函数，而您的应用程序则处理实际操作并返回结果。对于预订餐桌或发送确认等操作，请确保操作成功，然后再告诉呼叫者操作已完成。</p>]]></content:encoded>
+<h3>怎么把语音 AI agent 接到真实电话号码？</h3>
+<p>可以用 LiveKit 的电话集成，把语音 AI agent 接到电话号码上。LiveKit 通过它的电话号码服务或 SIP 提供商支持呼入。配置好所需的 trunk 和 dispatch rule，把呼入路由到 LiveKit 房间，你的 agent 就能加入对话。具体设置步骤见 <a href="https://docs.livekit.io/telephony/accepting-calls/">LiveKit 电话文档</a>。</p>
+<h3>语音 AI agent 能处理打断吗？</h3>
+<p>能。像 LiveKit 这样的框架可以检测到有人在 agent 说话时开口，暂停 agent 的语音，再带着新输入把对话接下去。</p>
+<p>要注意，打断语音并不会自动取消已经在跑的工具。像订位、支付这类操作，应用得谨慎处理取消和确认。</p>
+<h3>能给 AI 语音 agent 用自己的声音吗？</h3>
+<p>可以，前提是选支持声音克隆的文本转语音模型。OpenRouter 上有些模型通过 input_references 参数接收参考音频，用那个声音生成语音，不用另做声音训练。</p>
+<p>声音克隆的支持情况因模型和 provider endpoint 而异，选模型前先查 <a href="https://openrouter.ai/docs/guides/overview/multimodal/tts">TTS 文档</a>。只用你有权复制的录音。</p>
+<h3>能把语音 agent 接到真实预订系统或其他 API 吗？</h3>
+<p>可以。示例里的 check_availability 和 book_table 用的是模拟数据，你可以把它们的实现换成对预订 API 或数据库的请求。</p>
+<p>什么时候调哪个函数仍由 LLM 决定，实际操作和结果返回由你的应用负责。像订桌、发确认这类动作，务必先确认操作成功，再告诉来电者已经办妥。</p>]]></content:encoded>
     </item>
     <item>
-      <title>如何从任何 LLM 获取结构化输出：JSON 架构、工具调用或决策模型</title>
+      <title>如何从任何 LLM 获取结构化输出：JSON Schema、工具调用或决策模型</title>
       <link>https://openrouter.ai/blog/tutorials/structured-output-llm/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/structured-output-llm/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How to Get Structured Output from Any LLM: JSON Schema, Tool Calls, or a Decision Model</description>
-      <content:encoded><![CDATA[<h1>如何从任何 LLM 获取结构化输出：JSON 模式、工具调用或决策模型</h1>
-<p>开放路由器 ·11/10/2026</p>
-<p><img src="https://openrouter.ai/blog/images/structured-output-llm.png" alt="如何从任何 LLM 获取结构化输出：JSON 架构、工具调用或决策模型"><img src="https://openrouter.ai/blog/images/structed-output-llm-dark.png" alt="如何从任何 LLM 获取结构化输出：JSON 架构、工具调用或决策模型"></p>
-<p>当您的代码从模型的回复中读取字段（例如订单 ID 或退款金额）时，它每次都期望干净的 JSON。大多数时候，它得到了它。但有时，模型会将 JSON 包装在代码围栏中，添加您不需要的字段，或者将数字作为文本发送，然后您的代码就会崩溃。如果您使用多个模型，则一次修复无法涵盖所有​​模型，因为每个模型和提供程序都以自己的方式处理结构化输出。</p>
-<p>有三种方法可以获得可靠的 LLM 结构化输出，正确的方法取决于模型支持的内容。如果它支持结构化输出，请向其发送严格的 JSON 模式。如果它仅支持工具，请使其调用使用您的架构的工具。如果您只需要一个标签，例如“退款”或“换货”，请改用决策模型。在 OpenRouter 上，这三者都使用一个 API 密钥和一种请求格式。</p>
-<p>为了了解每种方式的效果如何，我们在支持结构化输出的 9 个模型以及仅支持工具的 GLM 5.3 FlashX 上使用 24 条杂乱的支持消息对其进行了测试。在这 9 份回复中，216 条回复中有 209 条与严格模式匹配，所有 7 条回复均来自一个忽略该模式的提供商。当我们只在提示中请求 JSON 时，有 18 个回复失败，每次都是因为代码围栏。</p>
-<h2>长篇大论；博士</h2>
-<ul><li>以response_format发送严格的模式并设置require_parameters：true，因此当没有端点支持时请求会失败。</li><li>如果模型只有工具，则将模式放入一个工具中并强制调用。</li><li>对损坏的 JSON 保持响应修复，并亲自验证每个回复。一些端点接受严格的模式，但仍然破坏它。</li><li>如果您只需要一个标签，则 Jev 等决策模型会返回您的选项的概率，因此无需解析任何内容。</li></ul>
-<h2>步骤 1：编写每个提供商都接受的模式</h2>
-<p>当提供程序具有严格模式时，模型只能编写使输出针对您的架构有效的文本。这就是为什么代码围栏和额外文本不会出现在严格模式输出中。</p>
-<p>为此，OpenAI 的严格模式需要提前知道每个密钥。每个属性都必须在 required 中列出，并且每个对象都必须设置 extraProperties: false。如果某个值可能会丢失，则可以将 null 添加到其类型中，而不是忽略该键。</p>
-<p>这些是我们发现的最严格的规则，遵循这些规则的模式适用于我们尝试的每个模型。当我们添加可选注释字段时，GPT-6 Luna 拒绝了带有此错误的请求。</p>
-<p>response_format ‘ticket’ 的模式无效：在 context=() 中，需要提供 ‘required’ 并且是一个包含属性中每个键的数组。缺少“注释”。</p>
-<p>Claude Haiku 5.5 和 Mistral Large 4 接受相同的模式并填写注释。 Gemini 3.8 Flash 接受了它并留下了注释。因此，如果某个字段是可选的，请将其设为必填且可为空。</p>
-<h2>第 2 步：发送架构，或强制调用一个工具</h2>
-<p>您可以通过两种方式为模型提供相同的架构。在response_format中，它控制消息文本。作为工具的参数，它控制工具调用的参数，并且具有严格工具调用的提供者在那里应用相同的限制。因此，如果您强制模型调用该工具并保留其参数，那么您将从具有工具但没有结构化输出的模型中获得结构化输出。您的代码永远不会运行该工具。</p>
-<p>下面的脚本执行这两项操作并使用 jsonschema 检查每个结果。然后它显示了 GLM 5.3 FlashX 上的两个失败，该模型具有工具但没有结构化输出。</p>
+      <content:encoded><![CDATA[<h1>如何从任何 LLM 获取结构化输出：JSON Schema、工具调用或决策模型</h1>
+<p>OpenRouter ·11/10/2026</p>
+<p><img src="https://openrouter.ai/blog/images/structured-output-llm.png" alt="如何从任何 LLM 获取结构化输出：JSON Schema、工具调用或决策模型"><img src="https://openrouter.ai/blog/images/structured-output-llm-dark.png" alt="如何从任何 LLM 获取结构化输出：JSON Schema、工具调用或决策模型"></p>
+<p>当你的代码从模型回复里读字段，比如订单 ID 或退款金额时，它每次都指望拿到干净的 JSON。大多数时候确实能拿到，但时不时模型会把 JSON 裹进代码围栏、多塞一个你没要的字段，或者把数字当文本发过来，代码就崩了。如果你用好几个模型，一处补丁盖不住全部，因为每个模型和 provider 处理结构化输出的方式都不一样。</p>
+<p>拿到可靠的 LLM 结构化输出有三条路，选哪条取决于模型支持什么。如果它<a href="https://openrouter.ai/docs/guides/features/structured-outputs">支持结构化</a>输出，就发一份严格的 JSON Schema；如果只支持工具，就让它调用一个用你 schema 的工具；如果只需要一个标签，比如“refund”或“exchange”，改用决策模型。在 OpenRouter 上，这三条路共用一个 API key、一种请求格式。</p>
+<p>为了看每条路到底多灵，我们用 24 条乱糟糟的客服消息，在 9 个支持结构化输出的模型外加只支持工具的 GLM 5.3 FlashX 上测了一遍。这 9 个模型合计 216 条回复里有 209 条符合严格 schema，7 条没对上的全部来自同一个无视 schema 的 provider。只在 prompt 里要求返回 JSON 时，有 18 条回复失败，每一次都栽在代码围栏上。</p>
+<h2>TL;DR</h2>
+<ul><li>把严格 schema 放进 response_format，并设 require_parameters: true，这样没有 endpoint 支持时请求会直接失败。</li><li>如果模型只有工具，就把 schema 塞进一个工具里并强制调用。</li><li>遇到坏掉的 JSON，保持 Response Healing 开着，而且每条回复都自己校验。有些 endpoint 收下严格 schema，转头又把它破掉。</li><li>如果只需要一个标签，Jev 这类决策模型会对你列出的选项给出概率，根本不用解析。</li></ul>
+<h2>步骤 1：写一份所有 provider 都接受的 schema</h2>
+<p>provider 开了严格模式后，模型只能写出让输出仍符合你 schema 的文本。这就是为什么严格模式的输出里不会出现代码围栏和多余文字。</p>
+<p>为此，OpenAI 的严格模式要求提前知道每一个 key。每个 property 都必须列进 required，每个 object 都要设 additionalProperties: false。某个值可能缺失时，往它的 type 里加 null，而不是把这个 key 省掉。</p>
+<p>这是我们找到的最严格的一套规则，照它写的 schema 在我们试过的每个模型上都能用。加了一个可选的 note 字段后，GPT-6 Luna 用下面这个错误拒绝了请求：</p>
+<p>Invalid schema for response_format ‘ticket’: In context=(), ‘required’ is required to be supplied and to be an array including every key in properties. Missing ‘note’.</p>
+<p>Claude Haiku 5.5 和 Mistral Large 4 收下了同一份 schema，还把 note 填上了。Gemini 3.8 Flash 也收下了，却把 note 留空。所以字段要是可选，就把它设成必填且可为空。</p>
+<h2>步骤 2：发送 schema，或强制调用一次工具</h2>
+<p>同一份 schema 有两种给法。放在 response_format 里，它约束消息文本；作为某个工具的 parameters，它约束工具调用的 arguments，支持严格工具调用的 provider 也会在那里套用同样的限制。所以只要强制模型调用那一个工具、留下它的 arguments，就能从只有工具、没有结构化输出的模型拿到结构化输出。你的代码根本不会执行这个工具。</p>
+<p>下面的脚本两条路都走，并用 jsonschema 校验每个结果。然后它展示 GLM 5.3 FlashX 上的两次失败——这个模型有工具，但没有结构化输出。</p>
 <pre><code>import json
 import os
 
@@ -1376,45 +1375,45 @@ print(extract(&quot;deepseek/deepseek-v4.1-flash&quot;, message, route=&quot;too
 print(extract(&quot;z-ai/glm-5.3-flashx&quot;, message, provider={&quot;require_parameters&quot;: True}))
 print(extract(&quot;z-ai/glm-5.3-flashx&quot;, message, route=&quot;tool&quot;))
 print(extract(&quot;z-ai/glm-5.3-flashx&quot;, message, route=&quot;tool&quot;, tool_choice=&quot;required&quot;))</code></pre>
-<p>这是我们在 2026 年 10 月 20 日运行它时打印的内容。</p>
+<p>这是 2026 年 10 月 20 日跑它时打印出来的结果：</p>
 <pre><code>({'order_id': 'ORD-482913', 'intent': 'refund', 'items': [{'sku': 'BLN-900', 'quantity': 1}], 'refund_amount_usd': 1249.5, 'needs_human': True}, None)
 ({'order_id': 'ORD-482913', 'intent': 'refund', 'items': [{'sku': 'BLN-900', 'quantity': 1}], 'refund_amount_usd': 1249.5, 'needs_human': True}, None)
 (None, '404 No endpoints found that can handle the requested parameters. To learn more about provider routing, visit: https://openrouter.ai/docs/guides/routing/provider-selection')
 (None, '400 Tool choice must be auto, none, or required')
 ({'intent': 'refund', 'items': [{'quantity': 1, 'sku': 'BLN-900'}], 'needs_human': True, 'order_id': 'ORD-482913', 'refund_amount_usd': 1249.5}, None)</code></pre>
-<p>这两种方法都将 #482913 转换为 ORD-482913，并将 $1,249.50 转换为数字。不过，意图可能会在运行之间发生变化。在早期的运行中，GPT-6 Luna 选择了 Damaged_item 而不是退款，因为这个简短的提示从未说明每个意图的含义。模式控制答案的形状，而您的指令控制值。</p>
-<p>如果您在工具上使用 “strict”: true 调用 Claude 模型，还需发送 x-anthropic-beta: Structured-outputs-2025-11-13 标头。如果没有它，我们就会剥离 strict，并且提供程序不会在工具参数上强制执行模式。您不需要response_format 的标头，因为我们已为您添加了该标头。</p>
-<p>即使在强制模式的模型上也保留检查步骤。本指南后面的失败全部返回为 200 OK，并带有 finish_reason:“stop”，并且只有验证器捕获了它们。</p>
-<h2>步骤 3：让不受支持的模式大声失败</h2>
-<p>对结构化输出的支持属于每个端点，这意味着为模型提供服务的每个提供者，而不是模型本身。 <a href="https://openrouter.ai/docs/guides/features/structured-outputs">结构化输出文档</a> 也说了同样的事情。 2026 年 10 月 8 日，我们的模型 API 中的 469 个模型 ID 中，有 386 个在支持的参数中列出了结构化输出，401 个列出了工具，55 个有工具但没有结构化输出。</p>
-<p>当模型有一些端点支持response_format而另一些端点不支持时，我们已经将请求发送到支持response_format的端点。 DeepSeek V4.1 Flash 有 31 个结构化输出端点中的 23 个，我们运行中的每个 json_schema 请求都落在这 23 个端点之一上。</p>
-<p>问题在于没有端点支持的模型。默认情况下，请求仍然会通过并且架构会被忽略。 GLM 5.3 FlashX 通过这种方式返回 24 个有效输出中的 0 个。每个回复都被包裹在代码围栏中，其中一些回复包含架构不允许的字段。</p>
-<p>要停止这种情况，请在提供程序对象中设置 require_parameters: true 。然后，我们仅使用支持您发送的每个参数的端点。如果没有，请求会失败并显示 404（上面的第三行输出），并且您的代码可以尝试其他模型。</p>
-<h2>步骤 4：以提供商接受的方式强制工具调用</h2>
-<p>强制调用工具的常用方法是命名为 tool_choice。一些提供商拒绝它，如上面 GLM 的 400 错误所示。 tool_choice：“必需”意味着“调用任何工具”。请求中只有一个工具，它会强制执行相同的调用。</p>
-<p>GLM 通过这种方式返回 24 个有效输出中的 22 个。两次失败的 order_id 中都有字符串“null”，而模式的模式不允许这种情况。这意味着该提供程序不会在工具参数上强制执行架构。</p>
-<p>您可以通过 GET /api/v1/models/{author}/{slug}/endpoints 查看端点在supports_tool_choice 中接受哪些tool_choice 值。不过，该字段可能是错误的。 10 月 20 日，GLM 的端点将 required 列为不受支持，但上述“required”调用在当天的每次运行中仍然有效。因此，请使用该字段作为指导并亲自测试调用。</p>
-<p>如果回复没有 tool_calls，则模型以纯文本形式回复。第 5 步预览在 24 次强制调用中执行了一次此操作，并且脚本为此返回“无输出”。</p>
-<p>工具定义还添加输入标记。我们将脚本的请求以每种方式发送给九个模型五次。在其中 8 个上，强制工具调用使用了更多提示令牌，从 Mistral Large 4 上的 23 个提示令牌到 DeepSeek V4.1 Flash 上的 440 个提示令牌。 Gemini 3.8 Flash 是唯一使用较少的一款。</p>
-<p>不过，额外的投入并不能决定成本。大多数模型在通过工具应答时写入的令牌较少，因此在九个模型中的六个模型上强制工具调用更便宜。模型的写入量在每次运行时都会发生变化，因此请根据您自己的请求检查成本。</p>
-<p><img src="https://openrouter.ai/blog/images/structed-output-llm-1.png" alt="9 个模型的提示令牌和每 1,000 个 json_schema 请求与强制工具调用的成本表，于 2026 年 10 月 20 日运行。强制工具调用在除 google/gemini-3.8-flash 之外的每个模型上使用更多的提示令牌，并且是九个模型中的六个模型的更便宜的路线。"></p>
-<p>有关完整的工具循环，请参阅<a href="https://openrouter.ai/blog/tutorials/tool-calling/">跨任何模型的工具调用</a>。</p>
-<h2>步骤 5：针对语法错误保持响应修复</h2>
-<p><a href="https://openrouter.ai/docs/guides/features/plugins/response-healing">响应修复插件</a> 在模型完成后修复 LLM JSON 输出。它删除了代码围栏并修复了损坏的 JSON，例如缺少括号或尾随逗号。它不会读取您的架构。</p>
-<p>在 GLM 上，它采用 json_schema 从 0 个有效输出到 24 个有效输出中的 19 个，并且所有 24 个回复都解析为 JSON。其他五个仍然有一个架构不允许的字段。只有强制执行该模式的提供者或您自己的验证器才能捕获该情况。</p>
-<p>该插件有一些您应该了解的限制。</p>
-<ul><li>仅当请求将response_format设置为json_schema或json_object时才运行。这就是它知道回复应该是 JSON 的方式。当我们仅将模式放入提示中时，代码栅栏原封不动地返回。</li><li>它仅适用于未流式传输的请求。</li><li>它不涉及工具调用参数。</li><li>它无法修复 max_tokens 切断的回复。这就是脚本首先检查 finish_reason 的“长度”的原因。</li></ul>
-<p>在强制执行模式的模型上，它没有什么需要修复的，因此没有理由将其关闭。</p>
-<h2>JSON 模式和工具调用哪个更可靠？</h2>
-<p>在强制模式的端点上，两种方式几乎总是返回有效的输出。下面的每个单元格是 24 个有效输出的数量，每次运行一次，使用定义了每个意图的提示。</p>
-<p><img src="https://openrouter.ai/blog/images/structed-output-llm-2.png" alt="截至 2026 年 10 月 8 日，每个模型和路线的 24 个有效输出表（仅提示、JSON 模式、json_schema、具有修复功能的 json_schema、强制工具、需要 tool_choice）。JSON 模式在每个模型上返回 24 个有效输出。 qwen/qwen3.8-omni-flash 在 schema 和工具路由上下降到 14 到 17，并为需要 tool_choice 返回 400 错误，而没有结构化输出的 z-ai/glm-5.3-flashx 在 json_schema 上返回 0，对于强制工具返回 400 错误。"></p>
-<p>如果省略 Qwen，则 json_schema 在 192 次中有效 192 次，强制工具调用在 192 次中有效 191 次。JSON 模式（“type”：“json_object”，提示中的模式）在 216 次中有效 216 次。JSON 模式仅承诺输出为 JSON。正确的形状来自于遵循提示的模型，而不是来自任何强制。</p>
-<p>Qwen 3.8 Omni Flash 展示了不强制实施架构的端点的样子。它唯一的提供者列出了结构化输出，但将架构视为建议。七个回复将票证包装在一个数组中，强制工具调用在每张退款票证上以字符串形式返回refund_amount_usd（“89.98”）。 “required”因此错误而被拒绝。</p>
-<p>tool_choice参数不支持在思考模式下设置为required或object。</p>
-<p>JSON 模式在 Qwen 上的 24 次中有 24 次有效。因此对于这个模型，在提示中使用 schema 的 JSON 模式比 json_schema 效果更好。</p>
-<h2>当输出是标签时，使用决策模型</h2>
-<p>有些字段，例如意图和需求人类，是决策。一个是从固定列表中选择，另一个是是或否。聊天模型将这些答案写为文本，这就是为什么它们需要模式和验证器。</p>
-<p>像 Jev 这样的决策模型不会写任何东西。它会对您列出的选项进行评分，并使用您自己的密钥返回每个选项的概率，因此它的答案不会以错误的形式返回。您可以通过 <a href="https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request">Decisions API</a> 调用它，输入作为状态以及条件中每个选项的简短描述。</p>
+<p>两条路都把 #482913 变成 ORD-482913，把 $1,249.50 变成数字。不过 intent 在几次运行之间会变。早先一次运行里，GPT-6 Luna 选了 damaged_item 而不是 refund，因为这段短 prompt 从没说明每个 intent 是什么意思。schema 管答案的形状，你的指令管里面的值。</p>
+<p>如果在工具上带“strict”: true 调 Claude 模型，还要一并发送 x-anthropic-beta: structured-outputs-2025-11-13 这个 header。没有它，我们会把 strict 去掉，provider 也就不会在工具 arguments 上强制 schema。response_format 不需要这个 header，那边我们已经替你加好了。</p>
+<p>即便模型会强制 schema，也别省掉校验那一步。本指南后面那些失败，全都是 200 OK、finish_reason: “stop” 回来的，只有校验器抓得住。</p>
+<h2>步骤 3：让不受支持的 schema 明明白白地失败</h2>
+<p>对结构化输出的支持属于每个 endpoint，也就是为模型提供服务的每个 provider，而不是模型本身。<a href="https://openrouter.ai/docs/guides/features/structured-outputs">结构化输出文档</a> 也是这么说的。2026 年 10 月 8 日，我们 models API 里 469 个模型 ID 中，386 个在 supported_parameters 里列了 structured_outputs，401 个列了 tools，55 个有 tools 却没有结构化输出。</p>
+<p>一个模型若有些 endpoint 支持 response_format、有些不支持，我们已经会把请求发到支持的那个上。DeepSeek V4.1 Flash 的 31 个 endpoint 里有 23 个支持结构化输出，我们运行中的每个 json_schema 请求都落在这 23 个之一上。</p>
+<p>麻烦出在没有任何 endpoint 支持的模型上。默认情况下请求照样放行，schema 被无视。GLM 5.3 FlashX 这样跑，24 次里 0 个有效输出。每条回复都裹着代码围栏，还有几条带了 schema 不允许的字段。</p>
+<p>要拦住它，在 provider 对象里设 require_parameters: true。这样我们只用支持你所发全部参数的 endpoint；一个都没有时，请求以 404 失败（上面输出的第三行），你的代码就能换别的模型试。</p>
+<h2>步骤 4：用 provider 接受的方式强制工具调用</h2>
+<p>强制工具调用通常靠具名的 tool_choice。有些 provider 会拒绝，上面 GLM 的 400 错误就是例子。tool_choice: “required” 的意思是“调用任意一个工具”。请求里只有一个工具时，它同样会强制那一次调用。</p>
+<p>GLM 这样跑，24 次里拿到 22 个有效输出。两次失败都是 order_id 里出现了字符串“null”，schema 的 pattern 不允许它。也就是说，这个 provider 不在工具 arguments 上强制 schema。</p>
+<p>一个 endpoint 接受哪些 tool_choice 值，可以在 supports_tool_choice 里看到，来自 GET /api/v1/models/{author}/{slug}/endpoints。不过这个字段可能不准。10 月 20 日，GLM 的 endpoint 把 required 列为不支持，可上面那次“required”调用在当天每次运行都成功了。所以拿这个字段当参考，调用还是自己测。</p>
+<p>回复里没有 tool_calls，就说明模型用纯文本答了。Step 5 Preview 在 24 次强制调用里出过一次，脚本对它返回“no output”。</p>
+<p>工具定义还会增加输入 token。我们把脚本的请求按两种方式各向 9 个模型发了 5 次。其中 8 个上，强制工具调用用了更多 prompt token：Mistral Large 4 多 23 个，DeepSeek V4.1 Flash 多 440 个。只有 Gemini 3.8 Flash 用得更少。</p>
+<p>不过多出来的输入并不决定成本。多数模型通过工具作答时写出的 token 更少，所以 9 个模型里有 6 个，强制工具调用反而更便宜。模型每次写多少会变，成本要在自己的请求上核。</p>
+<p><img src="https://openrouter.ai/blog/images/structured-output-llm-1.png" alt="9 个模型上 json_schema 与强制工具调用的 prompt token 数及每 1,000 次请求成本表，2026 年 10 月 20 日运行。除 google/gemini-3.8-flash 外，强制工具调用在每个模型上用了更多 prompt token；9 个模型里有 6 个，它是更便宜的路线。"></p>
+<p>完整的工具循环见<a href="https://openrouter.ai/blog/tutorials/tool-calling/">跨任意模型的工具调用</a>。</p>
+<h2>步骤 5：为语法错误保持 Response Healing 开启</h2>
+<p><a href="https://openrouter.ai/docs/guides/features/plugins/response-healing">Response Healing 插件</a> 在模型输出完之后修 LLM 的 JSON：去掉代码围栏，补好坏掉的 JSON，比如少个括号或多个尾逗号。它不读你的 schema。</p>
+<p>在 GLM 上，它把 json_schema 的有效输出从 0 个提到 24 个里的 19 个，24 条回复全都能解析成 JSON。剩下 5 条仍带着 schema 不允许的字段。只有强制 schema 的 provider，或者你自己的校验器，才抓得住。</p>
+<p>这个插件有几条限制值得知道。</p>
+<ul><li>只有请求把 response_format 设成 json_schema 或 json_object 时才运行。它靠这个知道回复该是 JSON。我们只把 schema 放进 prompt 时，代码围栏原封不动地回来了。</li><li>只对非流式请求生效。</li><li>不碰工具调用的 arguments。</li><li>修不了被 max_tokens 截断的回复。所以脚本先查 finish_reason 是不是“length”。</li></ul>
+<p>在会强制 schema 的模型上，它没什么可修，也就没理由关掉。</p>
+<h2>JSON schema 和工具调用，哪个更可靠？</h2>
+<p>在强制 schema 的 endpoint 上，两条路几乎总能返回有效输出。下面每个格子都是 24 次里的有效输出数，每次各跑一轮，用的 prompt 把每个 intent 都定义清楚了。</p>
+<p><img src="https://openrouter.ai/blog/images/structured-output-llm-2.png" alt="截至 2026 年 10 月 8 日，10 个模型按模型和路线（仅 prompt、JSON mode、json_schema、带 healing 的 json_schema、强制工具、tool_choice required）统计的 24 次中有效输出数表。JSON mode 在每个模型上都返回 24 个有效输出。qwen/qwen3.8-omni-flash 在 schema 和工具路线上掉到 14 到 17，tool_choice required 返回 400 错误；没有结构化输出的 z-ai/glm-5.3-flashx 在 json_schema 上返回 0，强制工具返回 400 错误。"></p>
+<p>把 Qwen 撇开，json_schema 是 192 次里有效 192 次，强制工具调用 192 次里有效 191 次。JSON mode（“type”: “json_object”，schema 放在 prompt 里）216 次里有效 216 次。JSON mode 只保证输出是 JSON；形状对不对，靠的是模型照 prompt 行事，不是谁在强制。</p>
+<p>Qwen 3.8 Omni Flash 让我们看到不强制 schema 的 endpoint 是什么样。它唯一的 provider 列了结构化输出，却把 schema 当建议。7 条回复把 ticket 包进了数组；强制工具调用在每张有退款的工单上都把 refund_amount_usd 当字符串返回（“89.98”）。“required”被拒，报的是这个错：</p>
+<p>The tool_choice parameter does not support being set to required or object in thinking mode.</p>
+<p>JSON mode 在 Qwen 上 24 次里 24 次有效。所以对这个模型，把 schema 放进 prompt 的 JSON mode 比 json_schema 更好用。</p>
+<h2>输出是标签时，用决策模型</h2>
+<p>有些字段其实是决策，比如 intent 和 needs_human：一个是从固定列表里挑，另一个是是或否。聊天模型把这些答案写成文本，所以才需要 schema 和校验器。</p>
+<p>Jev 这样的决策模型什么都不写。它给你列出的选项打分，用你自己的 key 逐个返回概率，答案不可能以错误的形状回来。你通过 <a href="https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-request">Decisions API</a> 调它，输入放在 state 里，每个选项的简短描述放在 criteria 里。</p>
 <pre><code>import os
 
 import requests
@@ -1460,30 +1459,30 @@ print(intent[&quot;choice&quot;], intent[&quot;confidence&quot;], data[&quot;ans
 print(data[&quot;usage&quot;])</code></pre>
 <pre><code>refund 1 0.79
 {'input_tokens': 525, 'output_tokens': 81, 'cost': 2.205e-05}</code></pre>
-<p>noul 是答案是肯定的概率。您选择与之比较的截止值，该截止值决定向某人发送消息的频率。在这里，尽管退款仅为 120 美元，但退款威胁仍将 need_ human 推至 0.8 左右。它在两次运行之间移动了一点，从 0.77 到 0.83，因此在截止点周围留出一些空间。</p>
-<p>我们对所有 24 条消息提出了同样的两个问题，并将 Jev 与返回两个字段严格模式的两个聊天模型进行了比较。</p>
-<p><img src="https://openrouter.ai/blog/images/structed-output-llm-3.png" alt="Jev 与 24 个支持消息的意图和需求_人类标签上的两个聊天模型的表。 typesafe/jev-1.13：24 条中的 24 条正确，每 1,000 条消息 0.025 美元，中值延迟 1.2 秒。 openai/gpt-6-luna 具有两字段严格模式：24 of 24，$0.048，2.3 s。 anthropic/claude-haiku-5.5 具有两字段严格模式：24 个，共 24 个，$0.072，2.4 s。"></p>
-<p>这三个人都在这个小套装上正确地标记了所有标签，而 Jev 的成本大约是 GPT-6 Luna 的一半。延迟来自我们的设置，一次有六个请求。我们首先将一条消息标记为“damage_item”，然后在每个模型都回答“发送替换件”后将其更改为“交换”。</p>
-<p>Jev 不会提取 ID 或项目，因此在模式调用旁边使用它，或者当您只需要标签时代替它。 Jev 的算术能力也很弱，因此请先在自己的数据上测试“退款超过 200 美元”之类的规则。 <a href="https://openrouter.ai/blog/tutorials/jev-vs-llm-when-to-use-each/">Jev vs LLM</a> 在更大的集合上比较它们。</p>
-<h2>使用哪种方式</h2>
-<p>根据您需要返回的内容和模型端点支持的内容来选择方式。</p>
-<table><thead><tr><th><strong>您需要什么</strong></th><th><strong>使用什么</strong></th></tr></thead><tbody><tr><td>字段和模型支持结构化输出</td><td>json_schema 具有 strict: true 和 require_parameters: true。保持响应治疗并验证。</td></tr><tr><td>字段和模型只支持工具</td><td>一种以架构作为参数的工具，强制使用命名的 tool_choice。如果提供商拒绝指定的选择，请使用“必需”。</td></tr><tr><td>固定列表中的标签、是或否或分数</td><td>通过决策 API 的决策模型，例如 Jev。</td></tr><tr><td>字段，并且模型都不支持</td><td>JSON 模式，提示中包含架构，响应修复打开，以及您自己的验证器。</td></tr></tbody></table>
-<p>您可以在<a href="https://openrouter.ai/models?supported_pa​​rameters=structed_outputs">模型页面</a> 或模型 API 中的supported_pa​​rameters 中找到哪些模型支持每个选项。</p>
+<p>noul 是答案为“是”的概率。阈值由你定，拿它去比，阈值就决定了多少消息要转给人。这里虽然退款只有 $120，chargeback 的威胁还是把 needs_human 推到 0.8 左右。几次运行之间它会小幅浮动，从 0.77 到 0.83，所以阈值周围留点余量。</p>
+<p>我们拿同样两个问题问了全部 24 条消息，把 Jev 和两个返回双字段严格 schema 的聊天模型比了比。</p>
+<p><img src="https://openrouter.ai/blog/images/structured-output-llm-3.png" alt="Jev 与两个聊天模型在 24 条客服消息的 intent、needs_human 标签上的对比表。typesafe/jev-1.13：24 条中 24 条正确，每 1,000 条消息 $0.025，中位延迟 1.2 s。openai/gpt-6-luna 配双字段严格 schema：24 中 24，$0.048，2.3 s。anthropic/claude-haiku-5.5 配双字段严格 schema：24 中 24，$0.072，2.4 s。"></p>
+<p>在这一小批数据上，三者把每个标签都判对了，Jev 的成本大约是 GPT-6 Luna 的一半。延迟数据来自我们的环境，一次并发 6 个请求。我们起初把一条消息标成 damaged_item，后来看到每个模型对“send replacements”都答 exchange，就把它改成了 exchange。</p>
+<p>Jev 不抽取 ID，也不抓 items，所以要么把它放在 schema 调用旁边一起用，要么在只需要标签时直接替掉 schema 调用。Jev 算术也弱，像“a refund over $200”这种规则，先拿自己的数据试。<a href="https://openrouter.ai/blog/tutorials/jev-vs-llm-when-to-use-each/">Jev vs LLM</a> 在更大的集合上做了对比。</p>
+<h2>该用哪种方式</h2>
+<p>按你要拿回什么、模型的 endpoint 支持什么来选。</p>
+<table><thead><tr><th><strong>需要拿回什么</strong></th><th><strong>用什么</strong></th></tr></thead><tbody><tr><td>字段，且模型支持结构化输出</td><td>json_schema 配 strict: true 和 require_parameters: true。保持 Response Healing 开启，并做校验。</td></tr><tr><td>字段，且模型只支持工具</td><td>一个把 schema 当作 parameters 的工具，用具名 tool_choice 强制调用。provider 拒绝具名选择时，改用“required”。</td></tr><tr><td>固定列表里的一个标签、是或否，或一个分数</td><td>决策模型，比如通过 Decisions API 调 Jev。</td></tr><tr><td>字段，且模型两者都不支持</td><td>JSON mode，schema 放在 prompt 里，Response Healing 开启，再加自己的校验器。</td></tr></tbody></table>
+<p>哪些模型支持哪种方式，可以在<a href="https://openrouter.ai/models?supported_parameters=structured_outputs">模型页面</a> 查，也可以看 models API 里的 supported_parameters。</p>
 <h2>常见问题</h2>
 <h3>结构化 JSON 输出是什么意思？</h3>
-<p>这意味着模型每次都会返回具有相同键和值类型的 JSON，因此您的代码可以直接读取字段。</p>
-<h3>JSON 模式与结构化输出相同吗？</h3>
-<p>不可以。JSON 模式（“type”：“json_object”）仅承诺有效的 JSON。结构化输出（“type”：“json_schema”）发送您的架构，并且具有严格模式的提供程序使输出遵循它。</p>
-<h3>严格模式是否保证模式有效的输出？</h3>
-<p>仅在提供商强制执行的情况下。一些提供商将架构视为强提示，在我们的测试中，一个端点在 24 个请求中的 7 个上忽略了 strict: true。</p>
-<h3>函数调用和结构化输出之间有什么区别？</h3>
-<p>结构化输出将您的架构应用于消息文本。函数调用，也称为工具调用，将其应用于工具调用的参数。</p>
-<h3>你可以流式传输结构化输出吗？</h3>
-<p>是的。将stream: true 添加到 json_schema 请求。响应修复不会在流式请求上运行，因此请在流结束时验证完整回复。</p>
-<h3>如何从不支持它的模型中获取结构化输出？</h3>
-<p>如果模型有工具，则强制使用您的架构作为其参数来调用一个工具。如果没有，请使用 JSON 模式以及提示中的架构、响应修复和您自己的验证器。</p>
+<p>意思是模型每次都返回键和值类型一致的 JSON，代码可以直接读字段。</p>
+<h3>JSON mode 和结构化输出是一回事吗？</h3>
+<p>不是。JSON mode（“type”: “json_object”）只保证 JSON 合法。结构化输出（“type”: “json_schema”）会把你的 schema 发出去，有严格模式的 provider 会让输出照它来。</p>
+<h3>严格模式能保证输出符合 schema 吗？</h3>
+<p>只有在 provider 真的强制时才保证。有些 provider 把 schema 当成很强的提示；我们测试里有一个 endpoint，24 次请求中有 7 次无视了 strict: true。</p>
+<h3>函数调用和结构化输出有什么区别？</h3>
+<p>结构化输出把你的 schema 套在消息文本上。函数调用（也叫工具调用）把它套在工具调用的 arguments 上。</p>
+<h3>结构化输出能流式传输吗？</h3>
+<p>能。给 json_schema 请求加 stream: true。Response Healing 不在流式请求上运行，所以流结束时校验完整回复。</p>
+<h3>怎么从不支持结构化输出的模型拿到结构化输出？</h3>
+<p>模型有工具，就强制一次工具调用，把你的 schema 当作它的 parameters。没有，就用 JSON mode：schema 放在 prompt 里，配上 Response Healing 和自己的校验器。</p>
 <h2>后续步骤</h2>
-<ul><li>我们的<a href="https://openrouter.ai/docs/guides/features/structured-outputs">结构化输出文档</a>涵盖了请求格式和流。</li><li><a href="https://openrouter.ai/docs/guides/routing/provider-selection">提供商路由</a> 解释了严格工具的 require_parameters 和 Anthropic 标头。</li><li><a href="https://openrouter.ai/docs/guides/community/jev-tutorial">Jev 教程</a> 涵盖 Choice、Noul 和 Score 问题类型。</li></ul>]]></content:encoded>
+<ul><li>我们的<a href="https://openrouter.ai/docs/guides/features/structured-outputs">结构化输出文档</a> 讲请求格式和流式传输。</li><li><a href="https://openrouter.ai/docs/guides/routing/provider-selection">提供商路由</a> 讲 require_parameters，以及严格工具要用的 Anthropic header。</li><li><a href="https://openrouter.ai/docs/guides/community/jev-tutorial">Jev 教程</a> 讲 Choice、Noul 和 Score 这几种问题类型。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>推出全新 Auto 与 Auto Code 路由器</title>

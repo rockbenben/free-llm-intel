@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-11 16:40:54**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-11 17:19:52**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,11 +26,11 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-11，标题自动汉化）：
-  1. [Claude白板、Claude表格和Claude数据简介](https://claude.com/resources/articles/sheets-whiteboards-data)（2026-11-10）
-  2. [您的应用程序现在可以在 Claude 中打开，并且 Claude 可以在其中工作](https://claude.com/resources/articles/interactive-connectors-full-tool)（2026-11-10）
-  3. [Curative 如何与 Claude 代理商建立全国性供应商网络](https://claude.com/resources/articles/how-curative-is-building-a-national-provider-network-with-agents-on-claude)（2026-11-10）
-  4. [与 Claude 合作的更多方式：表格、白板和交互式连接器](https://claude.com/resources/articles/more-ways-to-work-with-claude-sheets-whiteboards-and-interactive-connectors)（2026-11-10）
-  5. [Anthropic 为拟议的首次公开募股启动路演](https://www.anthropic.com/news/roadshow-launch)（2026-11-10）
+  1. [推出 Claude Whiteboards、Claude Sheets 和 Claude Data](https://claude.com/resources/articles/sheets-whiteboards-data)（2026-11-10）
+  2. [你的应用现在可以在 Claude 中打开，Claude 也能在其中工作](https://claude.com/resources/articles/interactive-connectors-full-tool)（2026-11-10）
+  3. [Curative 如何用 Claude 上的 agent 构建全国性供应商网络](https://claude.com/resources/articles/how-curative-is-building-a-national-provider-network-with-agents-on-claude)（2026-11-10）
+  4. [与 Claude 协作的更多方式：Sheets、Whiteboards 和交互式 connectors](https://claude.com/resources/articles/more-ways-to-work-with-claude-sheets-whiteboards-and-interactive-connectors)（2026-11-10）
+  5. [Anthropic 启动拟议首次公开募股的路演](https://www.anthropic.com/news/roadshow-launch)（2026-11-10）
   - 📄 完整文章归档（共 150 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### OpenAI (openai)
@@ -194,9 +194,9 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-11，标题自动汉化）：
-  1. [BotPsy：具有数十亿参数代理语言模型的设备上个人助理](https://huggingface.co/blog/qvac/botpsy)（2026-11-11）
-  2. [使用您的 Google Cloud 帐户支付 Hugging Face Hub 费用](https://huggingface.co/blog/hub-gcp-marketplace)（2026-11-10）
-  3. [拥抱决策模型](https://huggingface.co/blog/decision)（2026-11-10）
+  1. [BotPsy：基于十亿参数以下 agentic 语言模型的端侧个人助理](https://huggingface.co/blog/qvac/botpsy)（2026-11-11）
+  2. [用 Google Cloud 账号支付 Hugging Face Hub 费用](https://huggingface.co/blog/hub-gcp-marketplace)（2026-11-10）
+  3. [Hugging Face 的决策模型](https://huggingface.co/blog/decision)（2026-11-10）
   4. [Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集](https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan)（2026-11-09）
   5. [你的专家有搭档。HOPE 让它们继续在一起](https://huggingface.co/blog/amazon/higher-order-pruning-experts)（2026-11-09）
   - 📄 完整文章归档（共 926 篇）：[huggingface.md](llm-news/huggingface.md)
@@ -204,11 +204,11 @@
 ### OpenRouter (openrouter)
 - 📡 [官方 RSS](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-11，标题自动汉化）：
-  1. [LLM API 速率限制：如何修复 OpenAI 和 Claude 429 错误](https://openrouter.ai/blog/tutorials/llm-api-rate-limits/)（2026-11-11）
-  2. [LLM Quantization: What fp8 and fp4 Do to Quality and Price](https://openrouter.ai/blog/insights/llm-quantization/)（2026-11-11）
-  3. [MCP、CLI 与技能：各自的具体成本](https://openrouter.ai/blog/insights/mcp-vs-cli-vs-skills/)（2026-11-11）
-  4. [测量的扫描文档的最佳 OCR 模型](https://openrouter.ai/blog/insights/best-ocr-model/)（2026-11-10）
-  5. [如何构建语音 AI 代理](https://openrouter.ai/blog/tutorials/build-voice-ai-agent/)（2026-11-10）
+  1. [LLM API 速率限制：如何修复 OpenAI 和 Claude 的 429 错误](https://openrouter.ai/blog/tutorials/llm-api-rate-limits/)（2026-11-11）
+  2. [LLM 量化：fp8 和 fp4 对质量与价格的影响](https://openrouter.ai/blog/insights/llm-quantization/)（2026-11-11）
+  3. [MCP、CLI 与 skills：各自在上下文中的成本](https://openrouter.ai/blog/insights/mcp-vs-cli-vs-skills/)（2026-11-11）
+  4. [扫描文档最佳 OCR 模型实测](https://openrouter.ai/blog/insights/best-ocr-model/)（2026-11-10）
+  5. [如何构建语音 AI agent](https://openrouter.ai/blog/tutorials/build-voice-ai-agent/)（2026-11-10）
   - 📄 完整文章归档（共 176 篇）：[openrouter.md](llm-news/openrouter.md)
 
 ### Cloudflare Workers AI (cloudflare_workers_ai)
@@ -296,11 +296,11 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-11，标题自动汉化）：
-  1. [Introducing Kimi K3.1 Pro on Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/introducing-kimi-k3-1-pro-on-amazon-bedrock/)（2026-11-11）
-  2. [使用 LangGraph 和 Amazon Bedrock AgentCore Web 搜索构建每日依赖性观察器](https://aws.amazon.com/blogs/machine-learning/build-a-daily-dependency-watcher-with-langgraph-and-amazon-bedrock-agentcore-web-search/)（2026-11-10）
-  3. [代理评估手册：Amazon Bedrock AgentCore 评估上的内置、DeepEval 和 AutoEval](https://aws.amazon.com/blogs/machine-learning/the-agent-evaluation-playbook-built-in-deepeval-and-autoeval-on-agentcore/)（2026-11-10）
-  4. [自主财务代理：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生解决方案](https://aws.amazon.com/blogs/machine-learning/autonomous-treasury-agents-how-trovata-built-an-ai-native-solution-on-amazon-bedrock-and-agentcore/)（2026-11-10）
-  5. [TCS 如何使用 Amazon Bedrock AgentCore 构建代理测试编排器](https://aws.amazon.com/blogs/machine-learning/how-tcs-built-an-agentic-test-orchestrator-with-amazon-bedrock-agentcore/)（2026-11-10）
+  1. [在 Amazon Bedrock 上推出 Kimi K3.1 Pro](https://aws.amazon.com/blogs/machine-learning/introducing-kimi-k3-1-pro-on-amazon-bedrock/)（2026-11-11）
+  2. [使用 LangGraph 和 Amazon Bedrock AgentCore Web 搜索构建每日依赖项监视器](https://aws.amazon.com/blogs/machine-learning/build-a-daily-dependency-watcher-with-langgraph-and-amazon-bedrock-agentcore-web-search/)（2026-11-10）
+  3. [agent 评估手册：Amazon Bedrock AgentCore Evaluations 上的内置、DeepEval 和 AutoEval](https://aws.amazon.com/blogs/machine-learning/the-agent-evaluation-playbook-built-in-deepeval-and-autoeval-on-agentcore/)（2026-11-10）
+  4. [自主财资 agents：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生解决方案](https://aws.amazon.com/blogs/machine-learning/autonomous-treasury-agents-how-trovata-built-an-ai-native-solution-on-amazon-bedrock-and-agentcore/)（2026-11-10）
+  5. [TCS 如何使用 Amazon Bedrock AgentCore 构建 Agentic Test Orchestrator](https://aws.amazon.com/blogs/machine-learning/how-tcs-built-an-agentic-test-orchestrator-with-amazon-bedrock-agentcore/)（2026-11-10）
   - 📄 完整文章归档（共 181 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)

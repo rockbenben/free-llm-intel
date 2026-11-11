@@ -10,9 +10,9 @@
 
 ## 全部文章（共 926 篇，按日期倒序；无日期条目列于最后）
 
-1. [BotPsy：具有数十亿参数代理语言模型的设备上个人助理](https://huggingface.co/blog/qvac/botpsy)（2026-11-11） <!--orig:BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model-->
-2. [使用您的 Google Cloud 帐户支付 Hugging Face Hub 费用](https://huggingface.co/blog/hub-gcp-marketplace)（2026-11-10） <!--orig:Pay for Hugging Face Hub with your Google Cloud Account-->
-3. [拥抱决策模型](https://huggingface.co/blog/decision)（2026-11-10） <!--orig:Decision Models in Hugging Face-->
+1. [BotPsy：基于十亿参数以下 agentic 语言模型的端侧个人助理](https://huggingface.co/blog/qvac/botpsy)（2026-11-11） <!--orig:BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model-->
+2. [用 Google Cloud 账号支付 Hugging Face Hub 费用](https://huggingface.co/blog/hub-gcp-marketplace)（2026-11-10） <!--orig:Pay for Hugging Face Hub with your Google Cloud Account-->
+3. [Hugging Face 的决策模型](https://huggingface.co/blog/decision)（2026-11-10） <!--orig:Decision Models in Hugging Face-->
 4. [Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集](https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan)（2026-11-09） <!--orig:Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan's Demographics and Financial Context-->
 5. [你的专家有搭档。HOPE 让它们继续在一起](https://huggingface.co/blog/amazon/higher-order-pruning-experts)（2026-11-09） <!--orig:Your Experts Have Partners. There's HOPE for Keeping Them Together-->
 6. [ToyBlocks：用于机器人学习与评估的受控世界](https://huggingface.co/blog/allenai/toyblocks)（2026-11-06） <!--orig:ToyBlocks: A controlled world for robot learning and evaluation-->
