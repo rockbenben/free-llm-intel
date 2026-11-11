@@ -8,50 +8,6 @@
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-cerebras.xml" rel="self" type="application/rss+xml"/>
     <item>
-      <title>来自我们的 CEO：打造晶圆级需要什么，以及它为何能持续下去</title>
-      <link>https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts</guid>
-      <description>原文标题：From our CEO: What It Took to Build Wafer Scale, and Why It Lasts — read more &gt;</description>
-      <content:encoded><![CDATA[<h1>来自我们的 CEO：打造晶圆级需要什么，以及它为何能持续下去</h1>
-<p><a href="https://www.cerebras.ai/author/andrewcerebras-net">Andrew Feldman</a></p>
-<p>上周，做空机构 Culper Research 发布了一份报告，主张 Cerebras 的晶圆大约两年就会磨损失效。那份报告里几乎每一条财务结论，从我们的利润率到我们与 OpenAI 协议的价值，都取决于这一个数字。</p>
-<p>这个数字是错的。</p>
-<p>我们的系统能用多久，对客户和股东来说都是一个正当的问题，所以我们想把这个话题讲明白。</p>
-<h3><strong>这个问题很难</strong></h3>
-<p>几十年来，业界一直认为晶圆级计算无法规模化，尤其是在 Gene Amdahl 的 Trilogy Systems——那个时代资金最充裕的初创公司之一——于 1980 年代放弃这一尝试之后。一块餐盘大小的处理器，必须在不开裂的前提下完成供电、散热和连接。</p>
-<p>最难的部分是机械层面。硅和它下方的电路板在升温与降温时以不同速率膨胀。在晶圆尺度上，如果不加管控，这种失配大到足以拉断连接，甚至毁掉晶圆本身。</p>
-<p>报告说这件事很难，这一点没错。我们花了好几年才把它解决。但我们从每一次失败中吸取教训，与客户一起协作，一路改进设计，如今已是第三代，正在向第四代过渡。我们拥有的是一款可靠性极高的产品，它的寿命将不是受热致失效所限制，而是受制于争夺它所消耗的电力与空间的未来几代 Cerebras 芯片。</p>
-<p>我们开发过程的一部分，就是搞清楚哪些做法行不通。报告断言我们的系统使用一种叫 PariPoser 的第三方材料作为连接器。由此，报告得出结论：Cerebras 没有创新，没有解决对晶圆级可靠性至关重要的热膨胀问题。</p>
-<p>这是报告中众多失实之处里的一条。说清楚一点：我们不使用 PariPoser，也从未交付过任何一台使用它的系统。</p>
-<h3><strong>我们是怎么解决的</strong></h3>
-<p>解决晶圆级的答案从来不是一种单一材料。它是一套自 2019 年起就持有专利的组件装配，运行在一条首要操作规则之下：缓和晶圆上急剧的温度变化，既包括时间上的，也包括其表面各处的。这让它能够长时间可靠运行，同时实现行业领先的性能。</p>
-<ul><li><strong>功率变化是渐进的。</strong> 当我们的系统上电或断电时，每一个 core 上的电路都会平滑电流的突然波动。因此功率是渐进变化的，以避免造成破坏的尖峰。报告描述的那些“dummy operations”，就是做这件事的工具之一；受控取电是我们这个行业一项成熟的工程手段（NVIDIA 的 B300 设计包含一个“power burner”模式，当有效工作减少时它维持 GPU 的功耗，然后再把它降下来以平滑用电）。</li><li><strong>温度在整个晶圆上保持一致。</strong> 报告发现我们让晶圆维持在稳定的温度上。这一点属实，也是刻意为之。恒温正是防止机械疲劳的办法，其道理与发电厂避免频繁冷启动相同。Culper 的错误在于以为恒温就等于高温。事实并非如此。</li></ul>
-<p>冷却水经过许多短回路抵达晶圆的每一个区域，计算负载的分布也经过安排，使没有任何区域明显比它的邻居更凉。这些创新保护晶圆免受不均匀热膨胀的影响，并由硬件强制执行，因此即使是有缺陷的软件也无法损坏晶圆。</p>
-<ul><li><strong>每一处与晶圆的连接都是柔性的</strong>。与电路板的电连接会弯曲形变，与冷板的接触面可以滑动，因此在温度升高或下降时，晶圆与电路板各自移动而不会相互拉扯。就像悬索桥的关节一样，我们系统里的“mechanical flex”防范的是应力导致的失效。</li></ul>
-<h3><strong>我们的芯片数据到底说明了什么</strong></h3>
-<p>硅的退役只有三种原因：它在机械上失效，热量把它磨坏了，或者继续用它已经不再经济。</p>
-<p><strong>机械性。 </strong>Cerebras 之所以实现了一系列确保温度平稳、均匀的技术，正是为了降低由剧烈、突发的温度波动带来的机械风险。</p>
-<p><strong>热量。 </strong>芯片运行得越热，老化得越快。报告假定 Cerebras 的晶圆运行很热，并用两种方式得出了两年寿命的结论。两种都是错的。</p>
-<p>报告作者取 GPU 五到七年的经济寿命，再按他们估计的“我们的晶圆工作强度高出多少”把这个数字缩放。但 GPU 之所以退役，是因为更新的芯片让它变得不经济，而不是因为它磨坏了。用一个物理比例去缩放一项经济寿命，是逻辑错误，得出的数字什么也描述不了。</p>
-<p>报告作者还试图套用 Arrhenius 方程，来估算一块晶圆在热致失效之前的使用寿命。方程本身是对的，但报告用的输入是错的。</p>
-<p>Arrhenius 方程需要：(1) 在某个已知参考温度下的有效寿命，以及 (2) 实际运行温度。这两样报告一样都没有用。</p>
-<p>Cerebras 晶圆由其制造商 TSMC 认证，可在 105°C 下连续运行 10 年，而该温度比我们的最高值高出二十度。在我们已部署的 CS-3 机群中，晶圆的平均结温低于 65°C，且从不超过 85°C。两个数字都远在行业常态之内。</p>
-<p>用这些输入，Arrhenius 模型显示，一块晶圆若每天每时每刻都保持在 85°C 的最高温度上，会在被热量磨坏之前坚持 <strong>33 年</strong>。而一块晶圆若保持在 65°C 的平均结温上，能用超过一个世纪。</p>
-<p>没人会让一台 CS-3 运行 33 年。要点在于：热致失效并不是让它退役的原因。</p>
-<p>这与我们的现场数据一致——自 2024 年 CS-3 推出以来，已部署的 CS-3 晶圆中被退役的不到半个百分点。</p>
-<p>报告的几乎所有结论都建立在晶圆寿命很短这一假设之上。但晶圆的寿命不短，它很长。抽掉这个假设，报告的那些结论就站不住了。</p>
-<p><strong>经济性</strong>。 大多数硅是因经济原因退役——新一代硅每一美元、每一瓦特能做更多的事。我们相信，和 GPU、CPU 以及市场上几乎所有硅一样，我们的方案会在出现更高效地利用它们所占电力与空间的办法时退役。</p>
-<p>这与会计师衡量折旧和可用寿命的概念是两回事。</p>
-<p>可用寿命的会计处理反映的是 Cerebras 能从我们的固定资产中获得价值多久。我们提交第一份 S-1 时，内部使用的计算设备主要用于研发实验室。我们的工程师拿到最新一代芯片，编写软件，并进行高强度的性能测试。我们对可用寿命的估计，一部分依据实验室测试带来的磨损，但更重要的是依据我们的工程师何时切换过去、开始测试下一代产品：CS-1 于 2020 年推出，CS-2 于 2022 年，CS-3 于 2024 年。据此，我们估计为 1-3 年。</p>
-<p>到下一次更新 S-1 时，我们已经着手建设私有云；原因是 AI 原生客户和开发者要求我们这么做。其结果之一是，我们内部使用的固定资产构成发生了变化，纳入了我们为云业务自有并运营的生产系统。因此我们把折旧周期修改为 3-5 年，同时反映我们内部使用的实验室设备，以及自有自运营的云生产资产的经济寿命。目前多数云厂商对 AI 设备报告的可用寿命是 5-6 年，相形之下我们处在更保守的一端。最后，所有这些管理层估计，包括可用寿命，都在 KPMG 开展的年度审计范围之内。</p>
-<h3><strong>十年的工作</strong></h3>
-<p>晶圆级计算曾被认为不可能，因为那些技术难关是真实存在的。我们花了十年去解决它们，我们最早的客户也陪我们一起走过了那段学习曲线的一部分。每一代都在性能、功能和可靠性上有所提升。今天的系统运行平稳、温度低，而且其设计目标是比经济寿命多活很多年。</p>
-<p>随着快速推理在 AI 工作负载中占据越来越大的份额，我们理解人们想要为 Cerebras 的产品寿命建模的诉求。我们也承认，和任何新的、开创性的技术一样，并不存在几十年的数据积累。也和所有全新的、根本不同的架构一样，围绕我们做出的那些取舍存在一条学习曲线。对于大家对我们技术的好奇与关注，我们深表感谢。</p>
-<p>我们热爱造芯片，也很乐意与社区就这个话题、或快速推理相关的其他话题展开技术讨论。</p>
-<p>Andrew Feldman CEO 兼联合创始人</p>
-<p>披露：我持有 Cerebras 股票多头。</p>]]></content:encoded>
-    </item>
-    <item>
       <title>发布 Cerebras CS-4：最快的 AI 再次提速</title>
       <link>https://www.cerebras.ai/blog/introducing-cerebras-cs-4</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/introducing-cerebras-cs-4</guid>
@@ -104,6 +60,56 @@
 <p>首批 CS-4 本季度发货。最快的 AI 再次提速——携无可匹敌的 token 经济学，和一套为超大规模而建的系统架构。</p>
 <p>在 <a href="https://www.cerebras.ai/cs4">cerebras.ai/cs4</a> 了解更多 CS-4 信息</p>
 <p>联系我们开始使用</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>如何实现晶圆级良率</title>
+      <link>https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale</guid>
+      <description>原文标题：How to Yield at Wafer Scale</description>
+    </item>
+    <item>
+      <title>来自我们的 CEO：打造晶圆级需要什么，以及它为何能持续下去</title>
+      <link>https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts</guid>
+      <description>原文标题：What It Took to Build Wafer-Scale, and Why It Lasts</description>
+      <content:encoded><![CDATA[<h1>来自我们的 CEO：打造晶圆级需要什么，以及它为何能持续下去</h1>
+<p><a href="https://www.cerebras.ai/author/andrewcerebras-net">Andrew Feldman</a></p>
+<p>上周，做空机构 Culper Research 发布了一份报告，主张 Cerebras 的晶圆大约两年就会磨损失效。那份报告里几乎每一条财务结论，从我们的利润率到我们与 OpenAI 协议的价值，都取决于这一个数字。</p>
+<p>这个数字是错的。</p>
+<p>我们的系统能用多久，对客户和股东来说都是一个正当的问题，所以我们想把这个话题讲明白。</p>
+<h3><strong>这个问题很难</strong></h3>
+<p>几十年来，业界一直认为晶圆级计算无法规模化，尤其是在 Gene Amdahl 的 Trilogy Systems——那个时代资金最充裕的初创公司之一——于 1980 年代放弃这一尝试之后。一块餐盘大小的处理器，必须在不开裂的前提下完成供电、散热和连接。</p>
+<p>最难的部分是机械层面。硅和它下方的电路板在升温与降温时以不同速率膨胀。在晶圆尺度上，如果不加管控，这种失配大到足以拉断连接，甚至毁掉晶圆本身。</p>
+<p>报告说这件事很难，这一点没错。我们花了好几年才把它解决。但我们从每一次失败中吸取教训，与客户一起协作，一路改进设计，如今已是第三代，正在向第四代过渡。我们拥有的是一款可靠性极高的产品，它的寿命将不是受热致失效所限制，而是受制于争夺它所消耗的电力与空间的未来几代 Cerebras 芯片。</p>
+<p>我们开发过程的一部分，就是搞清楚哪些做法行不通。报告断言我们的系统使用一种叫 PariPoser 的第三方材料作为连接器。由此，报告得出结论：Cerebras 没有创新，没有解决对晶圆级可靠性至关重要的热膨胀问题。</p>
+<p>这是报告中众多失实之处里的一条。说清楚一点：我们不使用 PariPoser，也从未交付过任何一台使用它的系统。</p>
+<h3><strong>我们是怎么解决的</strong></h3>
+<p>解决晶圆级的答案从来不是一种单一材料。它是一套自 2019 年起就持有专利的组件装配，运行在一条首要操作规则之下：缓和晶圆上急剧的温度变化，既包括时间上的，也包括其表面各处的。这让它能够长时间可靠运行，同时实现行业领先的性能。</p>
+<ul><li><strong>功率变化是渐进的。</strong> 当我们的系统上电或断电时，每一个 core 上的电路都会平滑电流的突然波动。因此功率是渐进变化的，以避免造成破坏的尖峰。报告描述的那些“dummy operations”，就是做这件事的工具之一；受控取电是我们这个行业一项成熟的工程手段（NVIDIA 的 B300 设计包含一个“power burner”模式，当有效工作减少时它维持 GPU 的功耗，然后再把它降下来以平滑用电）。</li><li><strong>温度在整个晶圆上保持一致。</strong> 报告发现我们让晶圆维持在稳定的温度上。这一点属实，也是刻意为之。恒温正是防止机械疲劳的办法，其道理与发电厂避免频繁冷启动相同。Culper 的错误在于以为恒温就等于高温。事实并非如此。</li></ul>
+<p>冷却水经过许多短回路抵达晶圆的每一个区域，计算负载的分布也经过安排，使没有任何区域明显比它的邻居更凉。这些创新保护晶圆免受不均匀热膨胀的影响，并由硬件强制执行，因此即使是有缺陷的软件也无法损坏晶圆。</p>
+<ul><li><strong>每一处与晶圆的连接都是柔性的</strong>。与电路板的电连接会弯曲形变，与冷板的接触面可以滑动，因此在温度升高或下降时，晶圆与电路板各自移动而不会相互拉扯。就像悬索桥的关节一样，我们系统里的“mechanical flex”防范的是应力导致的失效。</li></ul>
+<h3><strong>我们的芯片数据到底说明了什么</strong></h3>
+<p>硅的退役只有三种原因：它在机械上失效，热量把它磨坏了，或者继续用它已经不再经济。</p>
+<p><strong>机械性。 </strong>Cerebras 之所以实现了一系列确保温度平稳、均匀的技术，正是为了降低由剧烈、突发的温度波动带来的机械风险。</p>
+<p><strong>热量。 </strong>芯片运行得越热，老化得越快。报告假定 Cerebras 的晶圆运行很热，并用两种方式得出了两年寿命的结论。两种都是错的。</p>
+<p>报告作者取 GPU 五到七年的经济寿命，再按他们估计的“我们的晶圆工作强度高出多少”把这个数字缩放。但 GPU 之所以退役，是因为更新的芯片让它变得不经济，而不是因为它磨坏了。用一个物理比例去缩放一项经济寿命，是逻辑错误，得出的数字什么也描述不了。</p>
+<p>报告作者还试图套用 Arrhenius 方程，来估算一块晶圆在热致失效之前的使用寿命。方程本身是对的，但报告用的输入是错的。</p>
+<p>Arrhenius 方程需要：(1) 在某个已知参考温度下的有效寿命，以及 (2) 实际运行温度。这两样报告一样都没有用。</p>
+<p>Cerebras 晶圆由其制造商 TSMC 认证，可在 105°C 下连续运行 10 年，而该温度比我们的最高值高出二十度。在我们已部署的 CS-3 机群中，晶圆的平均结温低于 65°C，且从不超过 85°C。两个数字都远在行业常态之内。</p>
+<p>用这些输入，Arrhenius 模型显示，一块晶圆若每天每时每刻都保持在 85°C 的最高温度上，会在被热量磨坏之前坚持 <strong>33 年</strong>。而一块晶圆若保持在 65°C 的平均结温上，能用超过一个世纪。</p>
+<p>没人会让一台 CS-3 运行 33 年。要点在于：热致失效并不是让它退役的原因。</p>
+<p>这与我们的现场数据一致——自 2024 年 CS-3 推出以来，已部署的 CS-3 晶圆中被退役的不到半个百分点。</p>
+<p>报告的几乎所有结论都建立在晶圆寿命很短这一假设之上。但晶圆的寿命不短，它很长。抽掉这个假设，报告的那些结论就站不住了。</p>
+<p><strong>经济性</strong>。 大多数硅是因经济原因退役——新一代硅每一美元、每一瓦特能做更多的事。我们相信，和 GPU、CPU 以及市场上几乎所有硅一样，我们的方案会在出现更高效地利用它们所占电力与空间的办法时退役。</p>
+<p>这与会计师衡量折旧和可用寿命的概念是两回事。</p>
+<p>可用寿命的会计处理反映的是 Cerebras 能从我们的固定资产中获得价值多久。我们提交第一份 S-1 时，内部使用的计算设备主要用于研发实验室。我们的工程师拿到最新一代芯片，编写软件，并进行高强度的性能测试。我们对可用寿命的估计，一部分依据实验室测试带来的磨损，但更重要的是依据我们的工程师何时切换过去、开始测试下一代产品：CS-1 于 2020 年推出，CS-2 于 2022 年，CS-3 于 2024 年。据此，我们估计为 1-3 年。</p>
+<p>到下一次更新 S-1 时，我们已经着手建设私有云；原因是 AI 原生客户和开发者要求我们这么做。其结果之一是，我们内部使用的固定资产构成发生了变化，纳入了我们为云业务自有并运营的生产系统。因此我们把折旧周期修改为 3-5 年，同时反映我们内部使用的实验室设备，以及自有自运营的云生产资产的经济寿命。目前多数云厂商对 AI 设备报告的可用寿命是 5-6 年，相形之下我们处在更保守的一端。最后，所有这些管理层估计，包括可用寿命，都在 KPMG 开展的年度审计范围之内。</p>
+<h3><strong>十年的工作</strong></h3>
+<p>晶圆级计算曾被认为不可能，因为那些技术难关是真实存在的。我们花了十年去解决它们，我们最早的客户也陪我们一起走过了那段学习曲线的一部分。每一代都在性能、功能和可靠性上有所提升。今天的系统运行平稳、温度低，而且其设计目标是比经济寿命多活很多年。</p>
+<p>随着快速推理在 AI 工作负载中占据越来越大的份额，我们理解人们想要为 Cerebras 的产品寿命建模的诉求。我们也承认，和任何新的、开创性的技术一样，并不存在几十年的数据积累。也和所有全新的、根本不同的架构一样，围绕我们做出的那些取舍存在一条学习曲线。对于大家对我们技术的好奇与关注，我们深表感谢。</p>
+<p>我们热爱造芯片，也很乐意与社区就这个话题、或快速推理相关的其他话题展开技术讨论。</p>
+<p>Andrew Feldman CEO 兼联合创始人</p>
+<p>披露：我持有 Cerebras 股票多头。</p>]]></content:encoded>
     </item>
     <item>
       <title>MoE 规模化：让稀疏模型在真实硬件上跑得快</title>
@@ -2656,47 +2662,6 @@
 <p>我们继续兑现对主权 AI 的承诺，推出了 <a href="https://www.cerebras.ai/company/news#:~:text=Cerebras%20Systems%20Launches,PRESS%20RELEASE">Cerebras for Nations</a>，并与 MBZUAI 和 Inception 共同发布了 <a href="https://www.cerebras.ai/press-release/cerebras-delivers-end-to-end-training-and-inference-for-jais-2-the-world-s-leading-open-arabic">JAIS2</a>。我们以对美国能源部 <a href="https://www.cerebras.ai/press-release/cerebras-systems-and-u-s-department-of-energy-sign-mou-to-accelerate-the-genesis-mission-and-u-s">Genesis Mission</a> 的新承诺为这一年收官，并且荣获 <a href="https://www.cerebras.ai/press-release/cerebras-ai-inference-wins-demo-of-the-year-award-at-tsmc-north-america-technology-symposium">TSMC 年度演示</a>奖。</p>
 <p>把去年的种种事件放在一起，讲述的是一个简单的故事：世界上最优秀的构建者能立刻感受到快与慢之间的差距，而他们想要的是 Cerebras。节奏已经改变。</p>
 <p>2025 年是证明。 2026 年是我们找到节奏的一年。 舞池已敞开。让我们起舞。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>在框内思考：用于高效状态追踪的隐式链式 Transformer</title>
-      <link>https://www.cerebras.ai/blog/thinking-inside-the-box-the-implicit-chain-transformer-for-efficient-state-tracking</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/thinking-inside-the-box-the-implicit-chain-transformer-for-efficient-state-tracking</guid>
-      <description>原文标题：Thinking Inside the Box: The Implicit Chain Transformer for Efficient State Tracking</description>
-      <content:encoded><![CDATA[<p>Dec 12 2025</p>
-<h1>在框内思考：用于高效状态追踪的隐式链式 Transformer</h1>
-<p>Jayadeep More</p>
-<p>Arun Kumar Patil</p>
-<p>Ganesh Venkatesh</p>
-<h3>动机</h3>
-<p>大语言模型（LLM）解码器在开放式生成、推理与人机交互上展示了非凡能力。然而，标准自回归公式存在一个<strong>表征瓶颈</strong>：为生成下一个 token，模型必须通过对全部历史施加注意力，隐式地重新推导出底层语义语境。这种<strong>无状态性</strong>让标准 Transformer 在需要维护滚动状态的任务上出奇地脆弱——例如计算一列数对 X 取模的和，或执行图遍历。</p>
-<p>在这项工作中，我们提出 <strong>Implicit Chain Transformer（ICT）</strong>——一个旨在弥合这一鸿沟的新架构。通过让一个可学习的&quot;意图&quot;（intent）潜变量沿时间步向前传播，我们的方法使模型能够显式地<strong>更新并语境化</strong>一个滚动状态，而不是只依赖对历史注意力模式的重新推导。早期评估显示，ICT 在状态密集的玩具任务上取得了强劲准确率——这些任务此前被研究认定为 Transformer 的难点——且<strong>不引入 Chain-of-Thought（CoT）prompting 相伴的推理延迟成本</strong>。这项工作是我们更大目标的基础性一步：让 Transformer 完全在潜空间内完成高效、稳健的推理。</p>
-<h3>挑战：无状态瓶颈</h3>
-<p>标准 Transformer 受制于一个根本的<strong>表征瓶颈</strong>：它们是无状态的。要生成 token t，模型必须通过关注所有先前 token 重新推导当前语境。它不能简单地&quot;记住&quot;当前状态（比如&quot;和是 5&quot;），而必须在每一步隐式地重算。这让它们在需要深层顺序依赖的任务上很脆弱，并随着上下文增长产生幻构。</p>
-<h3>任务设置：模运算与图遍历</h3>
-<p>我们选定了两项 prior work 指出的&quot;'近似'注意力会遇到困难&quot;的任务 [1]：</p>
-<ul><li><strong>Sum Modulo X（对 X 取模的求和）：</strong>需要维护一个精确的滚动累加值。一次进位错误就会污染整个后续序列。理论上这是一个并行归约任务——每个 token 都可以独立算出答案，而不必在前面的部分结果上叠加。但随着序列变长，这种每个 token 都重算的方式对模型来说变得过于昂贵。</li><li><strong>Graph Traversal（图遍历）：</strong>需要追踪穿过网络的一条路径。模型必须尊重连通性，在 token 间形成严格顺序依赖。鉴于时间步之间的紧耦合，这项任务对状态追踪与传播的质量要求高得多。</li></ul>
-<h3>提议：Implicit Chain Transformer</h3>
-<p>我们提出 <strong>Implicit Chain Transformer（ICT）</strong>。不同于把信息流动限制在垂直方向（层层传递）的标准模型，ICT 让一个可学习的 <strong>&quot;Intent Vector&quot;（zt）</strong>沿时间步水平传播。这个向量扮演压缩版工作记忆：模型把当前逻辑状态&quot;写入&quot; zt 并传递给 t+1，无需重新处理整个历史就维持了连续性。我们研究两种不同的状态传播策略：</p>
-<ol><li><strong>自回归意图传播（Dense）</strong> 在这种公式下，状态被持续更新。每一个 token 生成步，我们都取 token t <em>最后</em>一层的潜变量，注入 token t+1 的<em>早期</em>层。这与标准自回归解码相仿，但在 token 流旁增加了一条持续的&quot;记忆流&quot;，让模型能在词一级微管理状态。</li></ol>
-<ol><li><strong>周期性意图传播（Sparse）</strong> 这里我们把状态更新与 token 生成解耦。我们在输入流的固定间隔注入特殊 &lt;THINK&gt; token。</li></ol>
-<ul><li><strong>机制：</strong>我们限定意图传播<em>只</em>在这些 &lt;THINK&gt; 边界发生。</li><li><strong>直觉：</strong>这迫使模型把这些 token 当作&quot;语义检查点&quot;——先把前面的语境聚合进一个连贯的摘要，再继续前进。由于状态更新只发生在模型明确构建高层概念之处，意图传播的架构就与数据的逻辑结构（而非随意的 token 序列）对齐了。这种方式还为推理优化带来显著优势，我们将在后续文章详述。</li></ul>
-<p><strong>用&quot;迭代式潜反馈&quot;训练</strong> 递归的首要挑战是：它通常会破坏让 Transformer 可扩展的并行训练效率。为了在不退回 RNN 那种缓慢串行训练的前提下实现意图传播，我们引入<strong>多趟近似</strong>：</p>
-<ul><li><strong>并行趟：</strong>我们以标准 Transformer 模式并行处理整个序列，生成初始潜表征。</li><li><strong>反馈注入：</strong>取第一趟<em>最后</em>一层的潜向量，经一个 MLP 投影，融合为<em>早期</em>层的&quot;意图&quot;输入。</li><li><strong>精炼趟：</strong>用这份融合后的上下文做第二次前向传播，计算最终损失。</li></ul>
-<p>这虽然引入固定计算开销（需要额外前向趟），但成本与序列长度无关，是<strong>恒定的</strong>。这保住了 Transformer 训练 O(1) 的顺序复杂度，避免了 RNN 中 Backpropagation Through Time（BPTT）带来的 O(N) 训练时间之痛。</p>
-<h3>早期评估</h3>
-<p>我们在上述任务上用一个标准 GPT-2 风格的 decoder-only 模型评估。评估采用如下网络配置：</p>
-<p><strong>Implicit Chain Transformer 的变体：</strong>我们在基线模型上按如下方式叠加修改：</p>
-<p><strong>1. Intent Vector</strong>：一个新的专职 MLP 网络 <strong>GenMLP</strong> 读取 LLM 中间层（8 层解码器模型取倒数第 2 层）或最终层（3 层解码器模型）的输出。</p>
-<p><strong>2. Intent Propagation</strong>：意图向量由一个专职的 <strong>Fuse-Intent</strong> 网络与第一个解码器层的输出融合。</p>
-<p><strong>3. GenMLP 网络：</strong>该网络处理中间输出以生成 <strong>Intent Vector</strong>。架构如下</p>
-<ul><li>num_hidden_layers=2</li><li>expansion_factor=4</li><li>activation=gelu</li><li>norm_type=layernorm</li><li>use_residual=True</li></ul>
-<p><strong>4. Fuse-Intent 网络：</strong>该网络通过把第一层输出与 Intent Vector 融合来完成意图传播。架构描述如下</p>
-<h3><strong>早期评估结论</strong></h3>
-<p>我们观察到 ICT 在所有任务上一致且显著超越基线。我们绘制准确率随 token 位置（或块索引）变化的曲线，实际衡量的是模型在计算深度增加时维持状态的能力。</p>
-<ul><li><strong>基线的局限：</strong>基线模型（粉线）显示标准 Transformer 如何依任务复杂度以不同方式失败。在 <strong>Modulo 37</strong> 和 <strong>Permutation Prediction</strong> 上，我们看到<strong>灾难性崩塌</strong>：模型在固定窗口内维持完美准确率（大概是落在其有效注意力跨度之内），随后几乎瞬间跌到接近零。在 <strong>Modulo 97</strong> 上，我们观察到<strong>平滑渐进的退化</strong>。随着更大模数的难度累积，模型对全部历史的注意力能力是稳步流失，而非骤然断裂。这值得进一步调查渐进下滑的原因。</li><li><strong>Modulo Addition（取模加法）：</strong> <strong>ICT-Dense</strong> 与 <strong>ICT-Sparse</strong> 两种变体都把高准确率维持得远比基线久。这验证了核心假设：传播一个潜向量，避免了困扰标准 Transformer 的状态重算。</li><li><strong>图遍历（Permutation）：</strong>在排列任务上，两种 ICT 变体的分野更清晰。两者都优于基线，但 <strong>ICT-Dense</strong>（绿色）比 <strong>ICT-Sparse</strong>（紫色）在更多的块数上保持稳定。<em>假设：</em>我们把这一差距归因于压缩的挑战。由于我们的原型是相对较浅的网络（三层），<strong>Sparse</strong> 模型可能难以把完整块表征有效地压进周期性的 &quot;think&quot; token。<strong>Dense</strong> 模型因为每一步都更新状态，避开了这个信息瓶颈，在更长序列上维持准确率。</li></ul>
-<h3>未来工作</h3>
-<p>尽管这些早期结果令人鼓舞，它们只是迈向稳健潜推理的第一步。我们计划沿几条关键线拓展这项工作：</p>
-<ul><li><strong>推理公式与优化：</strong>当前评估聚焦准确率，但 ICT 的架构收益——尤其 sparse 公式——大幅延伸到速度。我们目前正在起草对推理机制与延迟权衡的详细分析，将在后续文章分享。</li><li><strong>扩展 Sparse 公式：</strong>我们相信 <strong>ICT-Sparse</strong> 路线在表征丰富度与计算成本之间提供了最佳平衡。但它目前在排列任务上的性能差距提示我们还需要更多消融实验来理解其扩展定律——特别是它在更深网络、以及更多样推理任务上的表现。</li><li><strong>训练动力学与稳定性：</strong>一个关键的开放问题是长程依赖训练的稳定性。我们计划严格研究鼓励更丰富潜表征的方法，包括对比完整 Backpropagation Through Time（BPTT）与梯度截断技术（如 MuZero 所用或标准 RNN 的 detach 手法），以在梯度稳定性与状态的多步迭代之间取得平衡。</li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

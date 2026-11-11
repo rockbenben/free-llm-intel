@@ -7,7 +7,227 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 09 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 11 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>BotPsy：具有数十亿参数代理语言模型的设备上个人助理</title>
+      <link>https://huggingface.co/blog/qvac/botpsy</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/qvac/botpsy</guid>
+      <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>BotPsy：具有数十亿参数代理语言模型的设备上个人助理</h1>
+<p>团队文章</p>
+<p>Published November 11, 2026</p>
+<p>2</p>
+<ul><li><a href="https://huggingface.co/joooon"><img src="https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg" alt=""></a></li><li><a href="https://huggingface.co/milangritta"><img src="https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/milangritta"><img src="https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg" alt="Milan Gritta 的头像"></a></p>
+<p>米兰·格里塔</p>
+<p>米兰格利塔</p>
+<p><a href="https://huggingface.co/qvac"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png" alt="QVAC 的头像"></a> <a href="https://huggingface.co/qvac">qvac</a></p>
+<p><a href="https://huggingface.co/happy-jihye"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a623353aff6ad7c083e882/biFOfePqURZW0snJHfy_Y.jpeg" alt="Jihye Back 的头像"></a></p>
+<p>智惠回来</p>
+<p>快乐智惠</p>
+<p><a href="https://huggingface.co/qvac"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png" alt="QVAC 的头像"></a> <a href="https://huggingface.co/qvac">qvac</a></p>
+<p><a href="https://huggingface.co/jucho2725"><img src="https://huggingface.co/avatars/1299f5cd3558e75571711d544f4a6d29.svg" alt="JinUk, Cho 的头像"></a></p>
+<p>曹镇旭</p>
+<p>朱乔2725</p>
+<p><a href="https://huggingface.co/qvac"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png" alt="QVAC 的头像"></a> <a href="https://huggingface.co/qvac">qvac</a></p>
+<p><a href="https://huggingface.co/joooon"><img src="https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg" alt="Ohjoon Kwon 的头像"></a></p>
+<p>权五俊</p>
+<p>珠云</p>
+<p><a href="https://huggingface.co/qvac"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png" alt="QVAC 的头像"></a> <a href="https://huggingface.co/qvac">qvac</a></p>
+<p><a href="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/Pmar3VJzQzgT4gdO8dpwt.png">！[帕特里克·兰伯特头像</a>](https://huggingface.co/patrik-lambert)</p>
+<p>帕特里克·兰伯特</p>
+<p>帕特里克-兰伯特</p>
+<p><a href="https://huggingface.co/qvac"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png" alt="QVAC 的头像"></a> <a href="https://huggingface.co/qvac">qvac</a></p>
+<p><a href="https://huggingface.co/mafintosh"><img src="https://huggingface.co/avatars/04b3527ef6ff1d6feebcad80e5c0e5c6.svg" alt="Mathias Buus 的头像"></a></p>
+<p>马蒂亚斯·布什</p>
+<p>马芬托什</p>
+<p><a href="https://huggingface.co/qvac"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png" alt="QVAC 的头像"></a> <a href="https://huggingface.co/qvac">qvac</a></p>
+<p><a href="https://huggingface.co/Nurman"><img src="https://huggingface.co/avatars/321662b676b3141ce8410614e581e2c.svg" alt="Amril Nurman 的头像"></a></p>
+<p>阿姆里尔·努曼</p>
+<p>努曼</p>
+<p><a href="https://huggingface.co/qvac"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png" alt="QVAC 的头像"></a> <a href="https://huggingface.co/qvac">qvac</a></p>
+<p>前沿云LLM的运营成本可能会出现意外波动，而且依赖此类第三方模型会带来漏洞，因为提供商可以随时修改、拒绝或废弃访问。此外，专有模型为特定工作流程提供有限的定制，同时给隐私、数据控制和透明度带来风险。此外，并非每项任务都需要前沿级别的智能：小型、专业的代理同样能够完成特定任务，而且运行成本显着降低，因为许多常规或较小的工作负载可以在设备上高效处理。随着每个参数的智能不断快速提高，我们的目标是站在向高性能、注重隐私的自托管模型转变的最前沿。</p>
+<p>Tether AI Research 推出 <strong>BotPsy</strong>，这是一个 0.8B 参数模型 介绍 <strong>BotPsy</strong>，这是一个专为函数调用和代理工作流程而设计的 0.8B 参数模型，构建于 Qwen3.5-0.8B 之上，适合设备上部署。 BotPsy 是一款“个人助理”，它使用工具为用户执行各种简单的任务，涉及的领域包括网络搜索和研究、旅行和生活方式、商业和金融、企业和客户运营、设备和车辆控制、文件和文档、日历以及电子邮件和消息传递。由于其参数数量较少，它最适合低到中等难度的任务。 BotPsy 在其规模内实现了最先进 (SOTA) 的工具使用和代理性能，优于我们测试的每个参数高达 1.2B 的模型（图 1 和 2）。它专为安全的设备上工作流程而设计，提供卓越的指令遵循可靠性和效率，同时保持用户数据的私密性。作为一个小模型，BotPsy 仍然会犯错误，并且不适合高风险使用；请阅读<a href="https://huggingface.co/blog/qvac/botpsy#intended-use-and-limitations">预期用途和限制</a> 了解更多信息。</p>
+<p>🤗 <a href="https://huggingface.co/qvac/BotPsy-0.8B">模型（安全张量）</a> | 📦 <a href="https://huggingface.co/qvac/BotPsy-0.8B-GGUFs">GGUF（bf16、Q8、Q4）</a></p>
+<p><strong>图 1：</strong> BotPsy-0.8B 显着优于其基本模型，并在六个工具使用和代理基准测试中领先于五个，包括相对于 Qwen3.5-2B-Think（其大小的 2.5 倍）；仅在 Claw-Eval 上，Qwen3.5-2B-Think 才领先。</p>
+<p><strong>图 2：</strong> <em>知识：</em> 与类似大小的模型相比，工具使用训练保留并改进了 BotPsy 的一般知识，尽管整体知识仍然主要随参数计数而变化。 <em>指令遵循：</em> BotPsy 擅长遵循显式指令和多轮任务，但其性能会随着指令的积累而下降，并且在资源较低的语言中会出现滞后。</p>
+<h3>版权投诉</h3>
+<p>我们将针对侵犯版权的通知采取适当的行动。如果您认为您的作品被以侵犯您知识产权的方式使用或复制，请发送电子邮件至 <a href="mailto:data-apps@tether.io">data-apps@tether.io</a>，识别并描述受版权保护的作品和涉嫌侵权的内容，以提交侵权通知。</p>
+<h2>主要亮点</h2>
+<h3>基准测试结果</h3>
+<ul><li><strong>其基本模型的性能提高了一倍：</strong> BotPsy 在关键基准上将 Qwen3.5-0.8B-Think 的代理能力大致提高了一倍：BFCL v4 从 23.4 升至 44.0，ACEBench 从 30.1 升至 58.7，τ-bench 从 23.2 升至 51.5（零售、电信和银行子集的平均值）。</li><li><strong>同类中最佳智能体：</strong> BotPsy 在所有六个工具使用和智能体基准测试中均优于 ≤1.2B 参数权重等级（Qwen3.5-0.8B-Think、LFM2.5-1.2B-Think、MiniCPM5-1B-Think）的领先模型：BFCL v4、ACEBench、τ-bench、ToolSandbox、Claw-Eval 和BrowseComp-Plus。</li><li><strong>优于其较大的兄弟：</strong> BotPsy 在六个基准测试中的五个上测试的所有模型中得分最高，在 BFCL v4（44.0 vs 37.7）、ACEBench（58.7 vs 55.4）、τ-bench（51.5 vs 46.5）、ToolSandbox（64.6）上击败了 Qwen3.5-2B-Think（一个 2.5 倍大小的模型）与 41.2）和 BrowseComp-Plus（4.5 与 2.8）。仅在 Claw-Eval 上，Qwen3.5-2B-Think 领先（48.9 vs 46.5）。</li></ul>
+<h3>模型能力</h3>
+<ul><li><strong>在多轮工作流程中更可靠：</strong> 在 τ²-bench 上，代理必须与客户进行长时间对话，遵循严格的策略并代表客户行事，它在电信方面的得分为 82.5，领先于 Qwen3.5-2B-Think (69.3)。在 BFCL v4 的多回合任务中，它比基准值从 7.5 上升到 46.1，几乎是 Qwen3.5-2B-Think (23.8) 的两倍。按应用程序分组，其多步分数领先于商业和服务领域（58.3 vs 47.4，次之，Qwen3.5-2B-Think）以及设备和系统管理领域（46.1 vs 31.9）的所有模型。</li><li><strong>知道何时（不）调用工具：</strong> 行动的代理也必须知道何时不行动。在 BFCL v4 的幻觉测试中，BotPsy 的得分为 86.1，是所有测试模型中最高的，该测试检查模型在不存在适当工具时是否会下降。在 ACEBench 的特殊情况下，即请求不完整、包含错误参数或给定工具无法提供服务的情况下，它的得分为 51.3，高于其基本模型的 13.7。</li><li><strong>遵循说明，同时保留知识：</strong> BotPsy 专注于工具使用，同时保留一般技能。指令跟随能力大幅提升，IFEval 从 59.7 升至 90.8，IFBench 从 22.0 升至 55.9，是所有测试模型中 IFBench 得分最高的。常识也有所提高，GPQA Diamond 从 33.2 升至 38.1，MMLU-Pro 从 41.6 升至 48.9。在所有四个基准测试中，BotPsy 都优于我们测试的所有其他 1.2B 参数或更少的模型。</li></ul>
+<h3>安全、效率和部署</h3>
+<ul><li><strong>比同类中的领先模型更安全：</strong> 在跨越六个危害类别的自动红队中，BotPsy 在 21% 的时间内产生不安全响应，而其基本模型的这一比例为 36%。这是所有参数高达 1.2B 的模型中比率最低的（LFM2.5-1.2B-Think：35%；MiniCPM5-1B-Think：47%）。对于读取不受信任工具输出的代理来说最重要的提示注入攻击，不安全率从其基本模型的 46% 下降到 31%。</li><li><strong>更高效的推理和更少的循环：</strong> 对于所有五个模型均正确回答的问题，BotPsy 得出答案的推理标记比 GPQA Diamond 上的基本模型少约 3 倍（3,690 vs 11,563），在 MMLU-Pro 上则少 2.7 倍（1,912 vs 5,105）。在所有 IFBench 尝试中，陷入重复推理循环的比率从 22.9% 下降到 1.4%，达到 32k 代币限制的运行率从 28.3% 下降到 0.2%。更短、更果断的推理应该可以减少设备上的延迟。</li><li><strong>开源且随时可用：</strong> BotPsy 将在 Apache 2.0 许可证下以开放权重发布，用于研究和教育用途。它将提供三种精度（bf16、Q8、Q4）、Hugging Face 安全张量以及 QVAC SDK 和 llama.cpp 的 GGUF 文件。</li></ul>
+<h2>更广阔的视野</h2>
+<p>在 BotPsy 的基础上，Tether Data, S.A. de C.V. 的未来开发将在 BotPsy 的基础上进行。 （“Tether AI Research”、“我们”、“我们的”）将专注于扩展设备上的代理功能，以与更广泛的硬件和本地服务无缝集成。 Tether 的 Hypersearch 将发展为支持更强大的去中心化点对点 (P2P) 查询，进一步确保绕过企业跟踪器的私密、加密的网络搜索。 QVAC Fabric 本地微调机制将得到优化，以更深入地适应个人用户偏好、工作流程和专用工具环境。未来的迭代将允许智能手机界面在离线到在线转换期间顺利地将繁重的计算任务委托给家庭 PC 或可信的安全 P2P 节点。隐私协议将不断加强，以保证所有个人数据、凭证和决策严格保留在本地硬件上。将引入协作功能，以允许跨受信任的本地网络进行安全的代理间通信，而不会损害用户的机密性。最终，这些进步将巩固 BotPsy 作为一个完全自主、功能强大的个人人工智能生态系统，让用户完全掌控自己的数字生活。</p>
+<h2>方法论</h2>
+<p>BotPsy 基于 Qwen3.5-0.8B，并经过四个连续阶段的后训练：监督微调（SFT）、多教师按策略蒸馏（MOPD）和两轮强化学习（RL）。每个阶段都使用前一阶段的最佳检查点作为起点，并受益于不同的学习信号：参考轨迹的模仿、更大教师模型的令牌分布以及基于规则的工具调用奖励（见图 3）。</p>
+<p><strong>图 3：</strong> BotPsy 训练配方。学生经历四个阶段。三名 Qwen3.5-4B 专业教师（每人都接受过一项技能的 RL 培训）在蒸馏阶段进行指导。</p>
+<h3>训练过程：四个阶段，三种反馈</h3>
+<p>我们的方法采用四个阶段的培训，从三种类型的信号中学习：演示、专业教师和可验证的奖励。</p>
+<p><strong>从演示中学习 (SFT)</strong></p>
+<p>我们首先对工具使用对话进行全参数监督微调。其中包括来自模拟环境的多轮代理轨迹、重放的单步、并行和多步调用，以及不应调用工具的情况。</p>
+<p><strong>向老师学习（MOPD）</strong></p>
+<p>接下来，学生接受在策略蒸馏（OPD）的训练：它生成自己的响应，并且专业教师使用每个令牌的反向 KL 散度作为训练信号提供每个令牌的反馈。为了培养教师，我们首先对三个 Qwen3.5-4B 模型进行强化学习训练，专门用于工具使用、一般推理和指令遵循。在培训期间，每个提示都会发送给其中一位老师。该阶段主要旨在恢复在 SFT 阶段退化的知识和指令遵循，尽管工具使用指标也有所增加（见图 4）。</p>
+<p><strong>图 4：</strong> 每个训练阶段后每个能力组的平均得分。 SFT 促进了工具的使用，但将知识和指令推到了基础模型以下；蒸馏使两者都回到基础之上，RL 阶段进一步增加了这三者的收益。</p>
+<p><strong>从规则和环境中学习（强化学习阶段）</strong></p>
+<p>最后，该模型使用 DAPO [1] 进行强化学习训练，仅从规则和验证者计算的奖励中学习。第一轮侧重于工具调用，并伴有指令跟随和 STEM 选择题。与 Tool-N1 [2] 一样，工具调用奖励首先检查推理和工具调用格式。然而，它不是 Tool-N1 的二元正确性奖励，而是本着 ToolRL [3] 的精神提供细粒度的部分信用，将预测的工具名称、参数名称和参数值与基本事实进行匹配。</p>
+<p>第二轮将培训组合扩大到一般领域可验证的​​任务：数学、代码、知识（多项选择）问题、指令遵循、结构化输出以及在模拟工作环境中使用多步骤工具。虽然这种组合不包含多轮对话，但它进一步改进了多轮函数调用。</p>
+<h3>数据构成</h3>
+<p>训练的每个阶段都使用不同的数据混合（图 5）。 SFT阶段主要关注工具的使用，为后续阶段做好准备。 MOPD 混合物结合了工具使用、知识和指令跟踪数据，既可以进一步改进函数调用，又可以从 SFT 阶段恢复通用域回归。第一个强化学习阶段同样主要关注工具的使用，而第二个强化学习阶段则将平衡转向通用领域数据（指令跟踪、知识、数学和代码），保持工具使用的较小份额。</p>
+<p><strong>图 5：</strong> 每个阶段的近似训练数据组成，按功能分组。</p>
+<h2>结果</h2>
+<h3>工具使用和代理</h3>
+<p>BotPsy 的工具使用性能大约是其 Qwen3.5-0.8B 基础的两倍，并且在六个代理基准中的五个上是五个模型中最强的：BFCL v4（44.0 vs 23.4）、ACEBench（58.7 vs 30.1）、τ-bench（51.5 vs 23.2）、BrowseComp-Plus（4.5 vs 1.9）和 ToolSandbox （64.6 比 30.5）。在所有五个方面，它还领先于 Qwen3.5-2B-Think，后者是其尺寸的 2.5 倍（分别为 37.7、55.4、46.5、2.8 和 41.2；参见表 1）。在 Claw-Eval 上，Qwen3.5-2B-Think 领先（48.9 vs 46.5）。</p>
+<table><thead><tr><th>基准</th><th><strong>BotPsy-0.8B</strong> 我们的</th><th>Qwen3.5-0.8B-思考底座·1×</th><th>Qwen3.5-2B-Think 2.5×</th><th>LFM2.5-1.2B-思考1.5×</th><th>MiniCPM5-1B-Think 1.25×</th></tr></thead><tbody><tr><td>BFCL v4</td><td></td><td>BFCL v4 <strong>44.0</strong></td><td>23.4</td><td>23.4 37.7</td><td>37.7 28.1</td><td>28.1 22.8</td><td>22.8</td></tr><tr><td>ACEBench²</td><td><strong>58.7</strong></td><td>30.1</td><td>30.1 55.4</td><td>55.4 39.4</td><td>39.4 24.5</td><td>24.5</td></tr><tr><td>τ-长凳³</td><td><strong>51.5</strong></td><td>23.2</td><td>23.2 46.5</td><td>46.5 6.5</td><td>6.5 28.8</td><td>28.8</td></tr><tr><td>爪评估⁴</td><td>46.5</td><td>46.5 39.3</td><td>39.3 <strong>48.9</strong></td><td>31.6</td><td>31.6 31.0</td><td>31.0</td></tr><tr><td>BrowseComp-Plus⁵</td><td><strong>4.5</strong></td><td>1.9</td><td>1.9 2.8</td><td>2.8 0.2</td><td>0.2 0.8</td><td>0.8</td></tr><tr><td>工具沙箱⁶</td><td><strong>64.6</strong></td><td>30.5</td><td>30.5 41.2</td><td>41.2 45.7</td><td>45.7 28.1</td><td>28.1</td></tr><tr><td><em>平均</em></td><td><em><strong>45.0</strong></em></td><td><em>24.7</em></td><td><em>38.8</em></td><td><em>25.3</em></td><td><em>22.7</em></td></tr></tbody></table>
+<p><strong>表 1：</strong> 工具使用和代理基准（0-100，越高越好）。每行的最佳得分<strong>粗体</strong>，第二好的下划线；乘数给出相对于 BotPsy-0.8B 的参数计数。平均值是六个基准的未加权平均值。有关评估设置的详细信息，请参阅<a href="https://huggingface.co/blog/qvac/botpsy#evaluation-footnotes">评估脚注</a>。</p>
+<p>＃＃＃ 知识</p>
+<p>工具使用培训不需要常识：GPQA Diamond 从 33.2 上升到 38.1，MMLU-Pro 从 41.6 上升到 48.9，是 1.2B 参数或以下参数下最好的模型（LFM2.5-1.2B-Think：35.0 和 39.4；MiniCPM5-1B-Think：15.8 和 40.0）。知识仍然主要与参数数量相关，Qwen3.5-2B-Think 得分远高于（59.9 和 65.5）。因此，BotPsy 旨在为它不知道的事实调用工具，而不是充当知识模型。</p>
+<table><thead><tr><th>基准</th><th><strong>BotPsy-0.8B</strong> 我们的</th><th>Qwen3.5-0.8B-思考底座·1×</th><th>Qwen3.5-2B-Think 2.5×</th><th>LFM2.5-1.2B-思考1.5×</th><th>MiniCPM5-1B-Think 1.25×</th></tr></thead><tbody><tr><td>GPQA 钻石⁷</td><td>38.1</td><td>38.1 33.2</td><td>33.2 <strong>59.9</strong></td><td>35.0</td><td>35.0 15.8</td><td>15.8</td></tr><tr><td>MMLU-Pro⁸</td><td>48.9</td><td>48.9 41.6</td><td>41.6 <strong>65.5</strong></td><td>39.4</td><td>39.4 40.0</td><td>40.0</td></tr></tbody></table>
+<p><strong>表 2：</strong> 一般知识基准（0-100，越高越好）。每行的最佳得分以 <strong> 粗体 </strong> 表示，第二好的得分用下划线表示。有关评估设置的详细信息，请参阅<a href="https://huggingface.co/blog/qvac/botpsy#evaluation-footnotes">评估脚注</a>。</p>
+<h3>遵循说明</h3>
+<p>BotPsy 在以下明确指令方面是五种中最好的：IFEval 90.8（base 59.7；Qwen3.5-2B-Think 80.0）和 IFBench 55.9（base 22.0；Qwen3.5-2B-Think 40.9）。 Multi-IF 以八种语言测试了三轮以上的指令，得分为 67.2，与 Qwen3.5-2B-Think (66.9) 和 LFM2.5-1.2B-Think (68.2) 持平。它一开始最强（第 1 回合为 84.3，五个模型中最高），但随着指令的累积下降得更快（第 3 回合为 51.0，这两个模型为 56.5 和 56.2）。资源较少的语言仍然是一个弱点：印地语 (24.5) 和俄语 (57.6) 远远低于英语、中文、法语、西班牙语、意大利语和葡萄牙语的 72-80 分。</p>
+<table><thead><tr><th>基准</th><th><strong>BotPsy-0.8B</strong> 我们的</th><th>Qwen3.5-0.8B-思考底座·1×</th><th>Qwen3.5-2B-Think 2.5×</th><th>LFM2.5-1.2B-思考1.5×</th><th>MiniCPM5-1B-Think 1.25×</th></tr></thead><tbody><tr><td>IFEval⁹</td><td><strong>90.8</strong></td><td>59.7</td><td>59.7 80.0</td><td>85.6</td><td>85.6 78.4</td><td>78.4</td></tr><tr><td>IFBench⁹</td><td><strong>55.9</strong></td><td>22.0</td><td>22.0 40.9</td><td>40.9 33.9</td><td>33.9 40.6</td><td>40.6</td></tr><tr><td>多中频 1⁰</td><td>67.2</td><td>67.2 43.2</td><td>43.2 66.9</td><td>66.9 <strong>68.2</strong></td><td>53.4</td><td>53.4</td></tr></tbody></table>
+<p><strong>表 3：</strong> 指令遵循基准（0-100，越高越好）。每行的最佳得分以 <strong> 粗体 </strong> 表示，第二好的得分用下划线表示。有关评估设置的详细信息，请参阅<a href="https://huggingface.co/blog/qvac/botpsy#evaluation-footnotes">评估脚注</a>。</p>
+<h3>多轮对话</h3>
+<p>最大的相对收益来自多轮、有状态交互，其中 BotPsy 领先五个多轮基准中的四个（图 6）。在 BFCL v4 多圈上，它从 7.5 上升到 46.1，几乎是 Qwen3.5-2B-Think (23.8) 的两倍，在 ACEBench Agent 上从 7.9 上升到 28.3（Qwen3.5-2B-Think：16.2）。在 τ²-bench 上，它在零售领域的基数翻了一番（67.8 vs 33.9，以微弱优势领先于 Qwen3.5-2B-Think（65.5）），并在电信领域达到 82.5，在电信领域，代理必须指导用户进行多次故障排除（MiniCPM5-1B-Think：74.0；Qwen3.5-2B-Think：69.3）。在单次调用（BFCL 非实时：83.0）和在不合适时不调用工具（BFCL 幻觉：86.1）方面，它也是五种工具中最可靠的。</p>
+<p><strong>图 6：</strong> 多轮代理任务：BFCL v4 多轮、ACEBench Agent、τ²-bench（零售、电信）和 τ³-bench（银行）。 BotPsy 在五个基准测试中领先四个；在 τ³-banking 上，每个模型都保持在 5 以下。</p>
+<h3>弱点</h3>
+<p>BotPsy 的弱点是开放式搜索以及 Qwen3.5-2B-Think 仍然领先的一些领域。 BotPsy 的 BrowseComp-Plus 得分为 4.5，是五个中最好的，但绝对值较低，并且在 BFCL 网络搜索 (14.0) 和内存 (16.3) 上它落后于 Qwen3.5-2B-Think（19.8 和 26.1）。在 Claw-Eval 上，BotPsy 在其基础上有明显改善（46.5 vs 39.3），但仍略低于 Qwen3.5-2B-Think（48.9）。在 ACEBench 的特殊情况（不完整或错误的请求）上，Qwen3.5-2B-Think 也领先（58.0 vs 51.3），尽管 BotPsy 远远高于其基础（13.7）。 τ³-banking 是 BotPsy 不领先的一个多轮基准：没有模型超过 5（BotPsy 4.1，与其基础没有变化；Qwen3.5-2B-Think 4.8）。</p>
+<h2>作用所在：应用程序级性能细分</h2>
+<p>BotPsy 可以处理各种用例和场景。图 7 按应用程序组细分了基准测试场景，将简单场景（单轮、一个工具调用）与复杂场景（多轮或多工具）分开。本节引用的总分是所有场景的平均分；图 7 的底行是七组的未加权平均值，因此其数字有所不同。</p>
+<h3>单一工具调用在任何地方都可以正常工作</h3>
+<p>简单场景在每个具有有意义样本的应用组中得分为 70-79（通信和社交只有 6）。总体而言，BotPsy 得分为 75，比其基本模型 (54) 高出约 21 分，略高于 Qwen3.5-2B-Think (70)。</p>
+<p><strong>图 7：</strong> 按应用程序组划分的每个场景的平均得分（0-100，越高越好），适用于简单（左）和复杂（右）场景。 n给出每组中简单/复杂场景的数量；底行是七组的未加权平均值。</p>
+<h3>最大的收获是多步骤任务</h3>
+<p>在复杂场景中，BotPsy 的总体得分为 39.5，而其基础得分为 17.9，Qwen3.5-2B-Think 得分为 30.8。涨幅最大的是通信和社交（基础 61 比 13）、商业和服务（58 比 27）以及设备和系统管理（46 比 15）。 Qwen3.5-2B-Think 仅在个人生产力和工作方面领先（64 vs 58，38 个场景，主要是 Claw-Eval），而 MiniCPM5-1B-Think 在沟通和社交方面略有领先（61.5 vs 60.5）。多步骤任务的得分仍然低于单次调用，这仍然是较难任务的主要限制。</p>
+<h3>多步骤信息检索是弱点</h3>
+<p>复杂信息检索和研究场景得分 15（单次调用：79）。大多数是 BrowseComp-Plus 深度研究问题，对于该尺寸范围内的每个模型来说都很难（基数：9；Qwen3.5-2B-Think：14）。</p>
+<h2>推理效率</h2>
+<p>BotPsy 比它的基础推理要少得多，并且在多轮代理任务上轮次更少，才能得出正确的答案。这与我们在整个训练过程中明确关注推理效率是一致的。下面的所有比较都是针对相同的问题或任务（所有五个模型都正确回答或解决的问题或任务）进行的，因此难度差异不会影响数字。推理标记是使用每个模型自己的标记生成器进行计数的。</p>
+<p><strong>图 8：</strong> GPQA Diamond、MMLU-Pro、IFEval 和 IFBench 上每个正确答案的推理标记的准确性。令牌是根据所有五个模型都正确回答的问题来衡量的；准确性高于所有问题。左上角更好；虚线是帕累托边界。</p>
+<p><strong>推理更短，准确度更高。</strong> 与其基础相比，BotPsy 在 GPQA Diamond（3,690 vs 11,563）、MMLU-Pro（1,912 vs 5,105）、IFEval（3,148 vs 4,433）和 IFBench（4,204 vs 11,576），同时在所有四项上得分都更高（图 8）。它并不是所有地方都是最短的模型：LFM2.5-1.2B-Think 在 MMLU-Pro、IFEval 和 IFBench 上编写较短的推理，而 MiniCPM5-1B-Think 在 IFEval 和 IFBench 上编写，但精度低于 BotPsy。</p>
+<p><strong>图 9：</strong> τ² 基准零售和电信中每个已解决任务的助理轮次通过率。轮流是根据所有五个模型解决的任务来测量的；通过率高于所有任务。左上角更好；虚线是帕累托边界。</p>
+<p><strong>在多轮代理任务中，轮数比基础轮数少。</strong> 在所有五个模型都解决的 τ² 工作台任务中，BotPsy 需要的辅助轮数比其基础轮数少（图 9）：</p>
+<ul><li>τ²-零售：10.7 回合，而基础版为 11.7 回合（减少 9%），Qwen3.5-2B-Think 为 10.6 回合。</li><li>τ²-电信：13.1 回合，而基础版为 17.6 回合（减少 26%），Qwen3.5-2B-Think 为 13.8 回合（减少 5%）。</li></ul>
+<p>它同时传递的任务数量是基础的 2.0 倍（零售）和 2.6 倍（电信）。 MiniCPM5-1B-Think 在零售上使用较少的回合 (8.7)，但仅通过了 9.9% 的零售任务。</p>
+<h2>预期用途和限制</h2>
+<p>BotPsy 的开发是为了推进最先进的技术并支持研究和教育用途。基于我们的工作开发的模型可能适用于设备和系统管理（设置、文件和文档、时钟和闹钟）、个人生产力和工作（日历和任务、电子邮件、协作工具）、通信（消息传递）、信息检索和研究（网络搜索、天气、新闻）、媒体和生活方式（视频、音乐、食谱和健身、照片）以及商业和服务（地图和旅行、金融、购物和交付）等领域的任务。由于其参数数量较少，它<strong>最适合低到中等难度的任务</strong>。</p>
+<p>BotPsy 主要使用英语进行训练和测试，这是推荐的语言。它还在 Multi-IF 上进行了评估，其中涵盖了另外七种语言（中文、法语、印地语、意大利语、葡萄牙语、俄语和西班牙语）：它在大多数语言中表现良好，但在印地语和俄语中得分低得多。 BotPsy 是一个小型语言模型，它会犯错误。它不适用于安全关键或高风险的自动化决策，也不适用于涉及金钱、个人信息、健康和其他敏感主题的应用。</p>
+<h2>引文</h2>
+<pre><code>@misc{botpsy2026,
+  title  = {BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model},
+  author = {{Tether Data, S.A. de C.V. d.b.a. Tether AI Research}},
+  year   = {2026},
+  note   = {Hugging Face blog}
+}</code></pre>
+<h2>参考文献</h2>
+<p>[1] 于其英, 等. “DAPO：大规模开源LLM强化学习系统。” <em>神经信息处理系统的进展</em> 38 (2025): 113222–113244。</p>
+<p>[2] 张少坤，等． “Nemotron-Research-Tool-N1：通过强化推理探索工具使用语言模型。” <em>学习表征国际会议</em>（2026 年）。</p>
+<p>[3] 钱程，等。 “ToolRL：奖励是所有工具学习需求。” <em>神经信息处理系统的进展</em> 38 (2025)。</p>
+<h2>评估脚注</h2>
+<ul><li>所有分数均为百分比（越高越好）。</li><li>所有模型均以思维（推理）模式进行评估。</li><li>所有使用外部 API 的基准测试均于 <strong>2026 年 11 月 3 日</strong>运行。</li><li>1 BFCL v4：使用官方加权公式（40% Agentic、30% Multi-Turn、10% Live、10% Non-Live 和 10% Hallucination）计算的总分，3 次运行的平均值。</li><li>² ACEBench：总体准确度。所有模型均在函数调用（FC）模式下进行评估； 2 次运行的平均值。</li><li>³ τ-bench：τ²-bench（零售、电信）和 τ³-bench（银行）的平均值，不包括航空公司； 3 次运行的平均值。</li><li>⁴ Claw-Eval：官方平均任务得分，其中每个任务得分安全性×（0.8×完成度+0.2×鲁棒性）； 3 次运行的平均值。</li><li>⁵ BrowseComp-Plus：准确性，所有模型最多 30 个步骤。</li><li>⁶ ToolSandbox：8 个设置的平均相似度得分。</li><li>⁷ GPQA 钻石级：所有 198 个问题的准确性，3 次运行的平均值，启用思考。</li><li>⁸ MMLU-Pro：准确性。</li><li>⁹ IFEval、IFBench：提示级严格精度。</li><li>1⁰ 多重 IF：3 次运行的平均值。</li></ul>
+<p>该作者的更多内容</p>
+<h2>QVAC TranscribePsy：最先进的设备上多语言语音识别</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png" alt=""></li></ul>
+<p>8</p>
+<p>2026 年 10 月 14 日</p>
+<h2>QVAC Genesis III：大规模、高质量的开放式合成STEM语料库，用于高效语言模型预训练</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png" alt=""></li></ul>
+<p>2026 年 9 月 23 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fqvac%2Fbotpsy">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fqvac%2Fbotpsy">登录</a> 发表评论</p>
+<p>2</p>
+<ul><li><a href="https://huggingface.co/joooon"><img src="https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg" alt=""></a></li><li><a href="https://huggingface.co/milangritta"><img src="https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg" alt=""></a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>使用您的 Google Cloud 帐户支付 Hugging Face Hub 费用</title>
+      <link>https://huggingface.co/blog/hub-gcp-marketplace</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/hub-gcp-marketplace</guid>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Pay for Hugging Face Hub with your Google Cloud Account</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>使用您的 Google Cloud 帐户支付 Hugging Face Hub 费用</h1>
+<p>发布于 2026 年 11 月 10 日</p>
+<p>GitHub 上更新</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/madhusankha-dev"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/ebNzoQDt4IJ8bHQ2LKWqe.png" alt=""></a></li><li><a href="https://huggingface.co/boubkersd"><img src="https://huggingface.co/avatars/711aaec8bedaf105426aa59588d610e9.svg" alt=""></a></li><li><a href="https://huggingface.co/zaid-alhadad"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/697480d7ce43f259ee0838be/Ft3JXoULuwHiR8rXnjHjB.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AbderrahmenBadr"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/XTO89uEkfG9yDrMF86ixZ.png" alt=""></a></li><li><a href="https://huggingface.co/hunsao"><img src="https://huggingface.co/avatars/dcbe51753ea6f4ccbbcbadc5bf7b4fbb.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/zaid-alhadad"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/697480d7ce43f259ee0838be/Ft3JXoULuwHiR8rXnjHjB.jpeg" alt="Zaïd Alhadad 的头像"></a></p>
+<p>扎伊德·阿尔哈达</p>
+<p>扎伊德哈达德</p>
+<p><a href="https://huggingface.co/pierric"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1624630689857-5e67de201009063689407481.jpeg" alt="Pierric Cistac 的头像"></a></p>
+<p>皮尔里克·西斯塔克</p>
+<p>皮尔里克</p>
+<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy 的头像"></a></p>
+<p>西蒙·佩吉兹</p>
+<p>页面Zhf</p>
+<p><a href="https://huggingface.co/michellehbn"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62175099ae3a893ac7ce86a7/ZSFoej_60rG-hT-gmo3Pr.jpeg" alt="Michelle Habonneau 的头像"></a></p>
+<p>米歇尔·哈博诺</p>
+<p>米歇尔本</p>
+<p>现在，您可以将 Hugging Face 组织关联到您的 Google Cloud 帐号，这样您的 Hugging Face 使用情况就会显示在您的 Google Cloud 账单上，而不是从信用卡中扣除。开始使用<a href="https://console.cloud.google.com/marketplace/product/huggingface-public/hugging-face-hub">在 Google Cloud Marketplace 上</a>。</p>
+<h2>为什么通过 Google Cloud 付款？</h2>
+<p>Hugging Face 是团队查找、构建和运行开放模型的地方：从托管私有模型和数据集，到使用 <a href="https://huggingface.co/docs/hub/jobs-overview">Jobs</a> 运行 GPU 工作负载、使用 <a href="https://huggingface.co/docs/inference-endpoints">Inference Endpoints</a> 部署模型、通过 <a href="https://huggingface.co/docs/inference-providers">Inference Providers</a> 调用数千个模型，或在 GPU <a href="https://huggingface.co/docs/hub/spaces-overview">Spaces</a> 上托管演示。</p>
+<p>如果您的公司已经在 Google Cloud 上运行，那么仅仅为了使用这些服务而添加新供应商和公司信用卡可能会减慢速度。通过 Google Cloud Marketplace 关联您的组织：</p>
+<ul><li><strong>一张账单</strong>：您的 Hugging Face 使用情况会显示在您现有的 Google Cloud 发票上，位于其余云支出旁边。</li><li><strong>没有新供应商加入</strong>：购买将通过您现有的 Google Cloud 结算帐号和采购流程进行。</li><li><strong>一切都涵盖</strong>：将您的组织升级到 <a href="https://huggingface.co/enterprise">团队或企业</a> 订阅、即用即付计算（作业、推理端点、推理提供商、GPU 空间、ZeroGPU 配额扩展）以及 <a href="https://huggingface.co/pricing">公共 Hugging Face 定价</a> 的额外存储。</li></ul>
+<p>如果您是 Hugging Face 组织的管理员，请按照以下步骤进行设置。</p>
+<h3>1. 在 Google Cloud Marketplace 上订阅 Hugging Face</h3>
+<p>前往 Google Cloud Marketplace 上的 <a href="https://console.cloud.google.com/marketplace/product/huggingface-public/hugging-face-hub">Hugging Face Hub 列表</a>，选择您要使用的 Google Cloud 项目，然后点击“订阅”。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/marketplace-product-listing.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/marketplace-product-listing.png" alt="Hugging Face Hub 在 Google Cloud Marketplace 上列出"></a></p>
+<p>您现在位于订阅页面。选择要收费的计费帐户，查看并接受条款，然后单击“订阅”。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/marketplace-subscribe-page.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/marketplace-subscribe-page.png" alt="包含计费帐户选择和条款的订阅页面"></a></p>
+<p>下订单后，Google Cloud 会要求您完成 Hugging Face 帐户的设置。点击“注册Hugging Face”即可重定向到Hugging Face。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/marketplace-order-sent-signup.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/marketplace-order-sent-signup.png" alt="订单请求已发送至 Hugging Face，并带有“通过 Hugging Face 注册”按钮"></a></p>
+<h3>2. 链接您的 Hugging Face 组织</h3>
+<p>您现在位于 Hugging Face，可以在其中选择要链接到您的 Google Cloud 帐户的组织。仅列出您作为管理员的组织。选择它并确认。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/select-organization-to-link.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/select-organization-to-link.png" alt="选择 Hugging Face 组织链接到 Google Cloud帐户"></a></p>
+<p>然后，您将被重定向到您组织的计费设置。付款方式部分现在显示关联的 Google Cloud 帐户，且状态为待处理。</p>
+<p>[![组织结算设置将关联的 Google Cloud 帐户显示为待定](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/billing- payment-method-pending.png)](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/billing- payment-method-pending.png)</p>
+<p>每个云市场订阅都经过 Hugging Face 团队的审核，然后才开始通过 Hugging Face 计费。在订阅待处理期间，使用量将继续按组织现有的付款方式（如果有）计费。</p>
+<h3>3. 订阅已批准</h3>
+<p>您的订阅获得批准后，您将收到一封电子邮件，确认您的 Google Cloud 帐户与 Hugging Face 组织已关联。已存档信用卡的组织会在下一个计费周期开始时切换到云市场计费。没有信用卡备案的免费层组织通常会立即切换，因此他们的付费使用会立即通过云市场进行计费。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/approval-confirmation-email.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/approval-confirmation-email.png" alt="确认 Marketplace 帐户已被批准作为付款的电子邮件方法"></a></p>
+<p>要进行确认，请打开<a href="https://huggingface.co/settings/organizations">您的组织</a> 的结算设置：Google Cloud 帐号现在显示为组织的有效付款方式。</p>
+<p>[![组织结算设置显示 Google Cloud 帐号作为有效付款方法](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/billing- payment-method-active.png)](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hub-gcp-marketplace/billing- payment-method-active.png)</p>
+<h3>恭喜！</h3>
+<p>您的组织现在通过您的 Google Cloud 帐号进行计费。您组织的所有成员都可以使用 Hugging Face 计算服务，并且使用情况将显示在您的 Google Cloud 账单上。</p>
+<p>有几件事值得了解：</p>
+<ul><li><strong>Google Cloud 取代信用卡</strong> 作为组织的付款方式。使用情况会进行计量并向 Google Cloud 报告，因此当组织通过市场进行计费时，无法添加积分。</li><li><strong>包含的积分仍然适用</strong>：如果您的组织有团队或企业订阅，则在向 Google Cloud 报告任何即用即付使用情况之前，会应用每月包含的积分。</li><li><strong>随时从<a href="https://huggingface.co/settings/organizations">组织设置</a>的结算部分监控您的使用情况</strong>，并在 Google Cloud 控制台的<a href="https://console.cloud.google.com/billing">结算报告</a>中查找费用。</li><li><strong>链接和取消链接都会经过审核</strong>：这两个操作都会记录在您组织的<a href="https://huggingface.co/docs/hub/audit-logs">审核日志</a>中。</li></ul>
+<p>感谢您的阅读！您可以在<a href="https://huggingface.co/docs/hub/billing#cloud-providers-partnerships">计费文档</a>中找到更多详细信息。如果您有任何疑问，请通过 <a href="mailto:billing@huggingface.co">billing@huggingface.co</a> 与我们联系。</p>
+<p>我们博客的更多文章</p>
+<p>tpu谷歌gcp</p>
+<h2>Hugging Face❤️ TorchTPU：TPU，原生</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></li><li>+1</li></ul>
+<p>56</p>
+<p>2026 年 10 月 20 日</p>
+<p>llmsinference-providersbaseten</p>
+<h2>Baseten Hugging Face推理提供商 🔥</h2>
+<ul><li><img src="https://huggingface.co/avatars/03669abbb72c99a299d0d24dae76ce43.svg" alt=""></li><li><img src="https://huggingface.co/avatars/4f997bf5afe1840c4c6e57319b0bed73.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1667348060565-noauth.png" alt=""></li><li><img src="https://huggingface.co/avatars/547c30b7a5a6d53ca44a8e5b7f3b5b56.svg" alt=""></li><li>+4</li></ul>
+<p>35</p>
+<p>2026 年 8 月 6 日</p>
+<h3>社区</h3>
+<p><img src="https://huggingface.co/avatars/4cd3e9ca1f8a0f21448954f869311d37.svg" alt=""></p>
+<p>受害者822872</p>
+<p>大约 6 小时前</p>
+<p>此评论已被隐藏</p>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fhub-gcp-marketplace">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fhub-gcp-marketplace">登录</a> 发表评论</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/madhusankha-dev"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/ebNzoQDt4IJ8bHQ2LKWqe.png" alt=""></a></li><li><a href="https://huggingface.co/boubkersd"><img src="https://huggingface.co/avatars/711aaec8bedaf105426aa59588d610e9.svg" alt=""></a></li><li><a href="https://huggingface.co/zaid-alhadad"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/697480d7ce43f259ee0838be/Ft3JXoULuwHiR8rXnjHjB.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AbderrahmenBadr"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/XTO89uEkfG9yDrMF86ixZ.png" alt=""></a></li><li><a href="https://huggingface.co/hunsao"><img src="https://huggingface.co/avatars/dcbe51753ea6f4ccbbcbadc5bf7b4fbb.svg" alt=""></a></li><li><a href="https://huggingface.co/timeo-rxl"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/mKEXRZDTySjHYa2LewUAW.jpeg" alt=""></a></li><li><a href="https://huggingface.co/halfikzzz"><img src="https://huggingface.co/avatars/8d0bf92e0cbecbea990c1f119a1ad22c.svg" alt=""></a></li><li><a href="https://huggingface.co/PASVKJ"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/ud6uDZIEA3g-ZBoij_AUf.png" alt=""></a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>拥抱决策模型</title>
+      <link>https://huggingface.co/blog/decision</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/decision</guid>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Decision Models in Hugging Face</description>
+    </item>
     <item>
       <title>Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集</title>
       <link>https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan</link>
@@ -6535,390 +6755,6 @@ hermes config set agent.tool_use_enforcement true</code></pre>
 <ul><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/Lord-Kinburg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QZUCtnUduwETYAKYdKZ4k.png" alt=""></a></li><li><a href="https://huggingface.co/Nekodimos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/699afccd584d08e09c0108c7/WYdoOTolDS7sFJDs_WmqS.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sadeghasgarilou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/K4jIazK1mAx5VNdySMF7-.png" alt=""></a></li><li><a href="https://huggingface.co/zakariarafi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/9S21lFJeatwLLH_7_dKus.png" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jayshah5696"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6410e376a8d20679261db5b5/GcO-95nv5fJwXpdIXTvwf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hiepnh"><img src="https://huggingface.co/avatars/15720cf8cd69a7fecfc749f5524c2500.svg" alt=""></a></li><li><a href="https://huggingface.co/robertsganj"><img src="https://huggingface.co/avatars/88cf8627b6f773bfd266b71167f459c3.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>
 <h2>本文中提到的模型 1</h2>
 <h2>本文中提到的合集 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>面向边缘端的 open d1 多模态决策模型</title>
-      <link>https://huggingface.co/blog/LiquidAI/open-d1</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/open-d1</guid>
-      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Multimodal open d1 decision models for the edge</description>
-      <content:encoded><![CDATA[<h1>面向边缘侧的多模态开源 d1 决策模型</h1>
-<p>团队</p>
-<p>文章</p>
-<p>发布于</p>
-<p>2026 年 10 月 7 日</p>
-<ul><li><a href="https://huggingface.co/tuliren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67084eb99ae661eabe5c4dd9/j9IN851gG47eEg1HtGCaC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/FlameF0X"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp" alt=""></a></li><li><a href="https://huggingface.co/Aurelien-Lac"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a8f24b4adaa29ed09b8632/yvzQ7iDcUBwtg2rnkZ1e2.png" alt=""></a></li></ul>
-<p>Aurelien Lac</p>
-<p>Aurelien-Lac</p>
-<p>LiquidAI</p>
-<p>Fernando Fernandes Neto</p>
-<p>fernandofernandes</p>
-<p>LiquidAI</p>
-<p>Edoardo Mosca</p>
-<p>EdoardoMosca</p>
-<p>LiquidAI</p>
-<p>Maxime Labonne</p>
-<p>mlabonne</p>
-<p>LiquidAI</p>
-<p>Leonie Monigatti</p>
-<p>iamleonie</p>
-<p>LiquidAI</p>
-<p>今天，我们在 <a href="https://www.liquid.ai/blog/d1-decision-model">d1 决策模型家族</a>中发布两个开源决策模型：<a href="https://huggingface.co/LiquidAI/d1-3b">d1-3B</a> 和 <a href="https://huggingface.co/LiquidAI/d1-omni-600M">d1-omni-600M</a>（实验性）。</p>
-<ul><li><strong>Decision Index 0.2.1 上 10B 以下最佳决策模型：</strong> d1-3B 得分 48.57，领先于所有 4B 和 9B 模型，也领先于 Decider 35B-A3B（47.11）。</li><li><strong>多模态：</strong> d1-3B 支持文本与图像，而 d1-omni-600M 支持文本与图像，或文本与音频</li><li><strong>快：</strong> d1-3B 回答一个问题在 NVIDIA Jetson AGX Thor 上耗时 16 ms，在 Jetson AGX Orin 上耗时 26 ms，在 Jetson Orin Nano 上耗时 50ms</li></ul>
-<h2>我们如何为边缘侧构建决策模型</h2>
-<p>这些开源 d1 决策模型构建在我们的 Liquid Foundation Models（LFM）之上。与我们的生成式模型不同，决策模型不产出 tokens，而是在一次前向传播中给出答案。</p>
-<p>d1-3B 与 d1-omni-600M 是从两个差异很大的 backbone 训练出来的：</p>
-<ul><li><strong>d1-3B</strong> 从 <a href="https://huggingface.co/LiquidAI/LFM2.5-VL-3B">LFM2.5-VL-3B</a> 训练而来，这是我们最新的 VLM，为 decoder-only 结构。它接受文本和图像作为输入。</li><li><strong>d1-omni-600M</strong> 从 <a href="https://huggingface.co/LiquidAI/LFM2.5-Encoder-350M">LFM2.5-Encoder-350M</a> 训练而来，那是一个双向 encoder。它额外加了视觉与音频 encoder 以处理这三种模态。它接受文本加图像，或文本加音频作为输入。这个模型目前处于早期研究发布阶段，仍在继续开发。</li></ul>
-<h2>基准测试结果</h2>
-<p>我们在七个公开数据集上对 d1-3B 与 d1-omni-600M 做了基准测试，覆盖阅读理解、毒性检测、意图分类、医学 QA 与跨语言理解。d1-3B 取得 82.9 的平均分，是表中最高的，并超过 Decider 4B。d1-omni-600M 得分 78.4，以四分之一的参数量超过了 Decider 2B（77.1）。</p>
-<table><thead><tr><th>基准</th><th>d1-omni-600M</th><th>d1-3B</th><th>Decider 2B</th><th>Decider 4B</th></tr></thead><tbody><tr><td>SQuAD 2.0</td><td>74.0</td><td><strong>83.3</strong></td><td>67.7</td><td>76.0</td></tr><tr><td>Civil Comments</td><td><strong>95.8</strong></td><td>93.3</td><td>93.6</td><td>92.8</td></tr><tr><td>MASSIVE intent</td><td>86.1</td><td>86.9</td><td>81.1</td><td><strong>88.3</strong></td></tr><tr><td>PubMedQA</td><td>61.3</td><td><strong>68.3</strong></td><td>65.7</td><td>63.3</td></tr><tr><td>BoolQ</td><td>77.7</td><td>86.3</td><td>87.3</td><td><strong>89.0</strong></td></tr><tr><td>XNLI</td><td>74.7</td><td>85.6</td><td>85.0</td><td><strong>88.6</strong></td></tr><tr><td>PAWS-X</td><td><strong>79.5</strong></td><td><strong>76.4</strong></td><td>59.5</td><td>69.8</td></tr><tr><td><strong>平均</strong></td><td>78.4</td><td><strong>82.9</strong></td><td>77.1</td><td>81.1</td></tr></tbody></table>
-<p>我们验证了 d1-3B 在其 LFM2.5-VL-3B backbone 的视觉能力上得以保留（在标准视觉基准上），也验证了 d1-omni-600M 能处理这三种模态。我们不在这里报告任何视觉或音频基准，因为 Decision Index v0.3 只包含一个私有的视觉分区，而音频决策基准目前仍是一个未解问题。</p>
-<h2>速度</h2>
-<p>我们与 NVIDIA 合作，在 NVIDIA 技术栈上评测了 d1-3B，覆盖 NVIDIA GeForce RTX 4090、NVIDIA Jetson AGX Thor、Jetson AGX Orin 64 GB 与 Jetson Orin Nano。由于 d1-omni-600M 还是早期研究发布版本，本次发布我们不报告它的任何速度数字。</p>
-<p><strong>边缘推理。</strong> d1-3B 在每一台被测设备上都能在 50 ms 内回答一个问题。三个问题只耗费单个问题 1.3x 的时间，其中 AGX Thor 从 16 ms 变为 20 ms。</p>
-<table><thead><tr><th></th><th>一个问题</th><th>三个问题</th><th>3.4K-token 状态</th><th>384px 图像</th><th>64 个状态，打包</th></tr></thead><tbody><tr><td>Apple M5 Pro</td><td>30 ms</td><td>41 ms</td><td>640 ms</td><td>62 ms</td><td>78 / s</td></tr><tr><td>Jetson AGX Thor</td><td>16 ms</td><td>20 ms</td><td>220 ms</td><td>35 ms</td><td>262 / s</td></tr><tr><td>Jetson AGX Orin 64 GB</td><td>26 ms</td><td>35 ms</td><td>560 ms</td><td>83 ms</td><td>110 / s</td></tr><tr><td>Jetson Orin Nano</td><td>50 ms</td><td>73 ms</td><td>1,640 ms</td><td>202 ms</td><td>38 / s</td></tr></tbody></table>
-<p><strong>GPU 推理。</strong> 在 GPU 上，d1-3B 在两个平台上都能在 10 ms 内回答一个问题，并在 18 ms 内处理一张 384px 图像。</p>
-<table><thead><tr><th></th><th>一个问题</th><th>三个问题</th><th>3.4K-token 状态</th><th>384px 图像</th><th>64 个状态，打包</th></tr></thead><tbody><tr><td>NVIDIA RTX 4090</td><td>8 ms</td><td>21 ms</td><td>102 ms</td><td>17 ms</td><td>475 / s</td></tr><tr><td>AMD MI325X</td><td>9 ms</td><td>14 ms</td><td>44 ms</td><td>18 ms</td><td>1,106 / s</td></tr></tbody></table>
-<h2>如何使用开源 d1 决策模型</h2>
-<p>当你需要快速、结构化的决策，包括多模态输入时，就用 d1 决策模型。d1-3B 在它的尺寸上提供最高的决策质量，而 d1-omni-600M 适合那些占用空间（footprint）要紧的场景。</p>
-<p>安装依赖（需要 <code>transformers&gt;=5.14</code>）：</p>
-<pre><code>pip install &quot;transformers&gt;=5.14&quot; torch torchvision pillow</code></pre>
-<p>这些模型自带各自的代码，因此要用 <code>trust_remote_code=True</code> 来加载它：</p>
-<pre><code>import io
-import urllib.request
-
-import torch
-from PIL import Image
-from transformers import AutoModel
-
-device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;mps&quot; if torch.backends.mps.is_available() else &quot;cpu&quot;
-model = AutoModel.from_pretrained(&quot;LiquidAI/d1-3B&quot;, trust_remote_code=True,
-                                  dtype=torch.float32 if device == &quot;cpu&quot; else torch.bfloat16).to(device)
-
-# Several named questions over one text state, answered in one pass
-questions = {
-    &quot;refund&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Is the customer asking for a refund?&quot;},
-    &quot;team&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;Which team should handle this?&quot;,
-             &quot;criteria&quot;: {&quot;billing&quot;: &quot;Charges, refunds, invoices&quot;, &quot;technical&quot;: &quot;App or site faults&quot;,
-                          &quot;fraud&quot;: &quot;Suspected unauthorised use&quot;}},
-    &quot;urgency&quot;: {&quot;type&quot;: &quot;score&quot;, &quot;instructions&quot;: &quot;How urgent is this?&quot;,
-                &quot;criteria&quot;: [&quot;Can wait&quot;, &quot;Today&quot;, &quot;Blocking the customer now&quot;]},
-}
-print(model.system_one(&quot;I was charged twice this month, please refund one of them.&quot;, questions))
-
-# An image as the whole state
-url = &quot;http://images.cocodataset.org/val2017/000000039769.jpg&quot;  # two cats on a sofa
-photo = Image.open(io.BytesIO(urllib.request.urlopen(url).read()))
-print(model.system_one(None, {&quot;cats&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;How many cats are there?&quot;,
-                                       &quot;criteria&quot;: {&quot;one&quot;: &quot;One&quot;, &quot;two&quot;: &quot;Two&quot;, &quot;more&quot;: &quot;Three or more&quot;}}},
-                       images=[photo]))
-
-# Many requests, packed together with no padding
-tickets = [&quot;Where is my parcel? It was due Monday.&quot;, &quot;The app crashes when I open settings.&quot;]
-print(model.system_one_batch([(t, {&quot;team&quot;: questions[&quot;team&quot;]}) for t in tickets]))</code></pre>
-<p>为篇幅所限，我们只收录 d1-3B 的示例。如何运行 d1-omni-600M 请看 <a href="https://huggingface.co/LiquidAI/d1-omni-600M">d1-omni-600M 的 model card</a>。</p>
-<h2>开始使用开源 d1 决策模型</h2>
-<p>这两个决策模型都是 open-weight，今天已在 Hugging Face 上可用：</p>
-<ul><li><strong>下载：</strong> 在 Hugging Face 上获取 <a href="https://huggingface.co/LiquidAI/d1-3b">d1-3B</a> 与 <a href="https://huggingface.co/LiquidAI/d1-omni-600M">d1-omni-600M</a>。</li><li><strong>试用：</strong> 在我们的 <a href="https://huggingface.co/spaces/LiquidAI/system-one-arcade">System One Arcade</a> Hugging Face Space 中运行演示。</li></ul>
-<p>我们等不及想看到你会做出什么。</p>
-<h2>引用</h2>
-<p>如果你使用这项工作，请引用本次发布的博客：</p>
-<pre><code>@article{liquidAI2026opend1,
-  author  = {Liquid AI},
-  title   = {Open d1: Edge decision models for text, vision, and audio},
-  journal = {Liquid AI Blog},
-  year    = {2026},
-  note    = {www.liquid.ai/blog/open-d1},
-}</code></pre>
-<h2>本文中提到的模型 3</h2>
-<h2>本文中提到的 Spaces 1</h2>
-<p>这位作者的其他文章</p>
-<h2>用 LFM2.5-VL-DSpark 加速视觉-语言模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
-<p>51</p>
-<p>2026 年 9 月 24 日</p>
-<h2>用 LFM2.5-DSpark 把 inference 提速最多 3.2x</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
-<p>58</p>
-<p>2026 年 8 月 20 日</p>
-<h3>社区</h3>
-<p>liamanderson85</p>
-<p>2 天前</p>
-<p>有意思的工作</p>
-<p>liamanderson85</p>
-<p>2 天前</p>
-<p>这条评论已被隐藏（标记为 Spam）</p>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者</p>
-<p>点击这里</p>
-<p>。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FLiquidAI%2Fopen-d1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2FLiquidAI%2Fopen-d1">登录</a> 即可评论</p>
-<ul><li><a href="https://huggingface.co/tuliren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67084eb99ae661eabe5c4dd9/j9IN851gG47eEg1HtGCaC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/FlameF0X"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp" alt=""></a></li><li><a href="https://huggingface.co/Aurelien-Lac"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a8f24b4adaa29ed09b8632/yvzQ7iDcUBwtg2rnkZ1e2.png" alt=""></a></li><li><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt=""></a></li><li><a href="https://huggingface.co/adityatadimeti"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662b14788e855c7c010c03c9/UWRzvG0YwSj5o7NxiYC6G.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tilgasergey"><img src="https://huggingface.co/avatars/3975dca73d0941898f637d16e3115872.svg" alt=""></a></li><li><a href="https://huggingface.co/EdoardoMosca"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63f389fda096536aeaae0a66/RaY_JmWJTXtDPq5IsPDM-.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Arzenic"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6720246671d10b163beec025/GBOo_8OfSMZ2lfh-h6OMy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Ishikava11"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/6FCBvZ76GjYBFpWaY178M.png" alt=""></a></li></ul>
-<h2>本文中提到的模型 3</h2>
-<h2>本文中提到的 Spaces 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Falcon-Emirati：当 LLM 学会方言、文化与微妙之处</title>
-      <link>https://huggingface.co/blog/tiiuae/falcon-emirati</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/tiiuae/falcon-emirati</guid>
-      <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance</description>
-      <content:encoded><![CDATA[<h1>Falcon-Emirati：当 LLM 学会方言、文化与微妙之处</h1>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/Wq7IUqy86uY6JcIpgCwJx.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/Wq7IUqy86uY6JcIpgCwJx.png" alt="image"></a></p>
-<p><a href="https://chat.falconllm.tii.ae/?model=Falcon-Emirati-7B">试用 Falcon Emirati →</a></p>
-<p>阿拉伯语实际上是共用同一个名称的一整个语系。现代标准阿拉伯语（Modern Standard Arabic，MSA）是你在新闻或教科书里读到的那种，但它很少是人们日常交流时真正说的话。在阿联酋（UAE），日常对话、幽默、谈判和讲故事用的都是阿联酋阿拉伯语（Emirati Arabic），这是一种海湾方言，有自己的词汇、自己的节奏，还有紧紧包裹其周围的文化。阿联酋诗歌，尤其是纳巴蒂诗歌（nabati poetry），连同谚语和短小轶事，承载着无法通过逐字直译存活下来的含义。一个只懂 MSA 的模型，可以把一句阿联酋语逐词翻译出来，却仍然错过它真正表达的意思。</p>
-<p>这正是 Falcon-Emirati-7B 要填补的缺口。它是一个在 Falcon-H1-Arabic 之上做方言专精的模型，目标是像母语者那样理解和生成阿联酋阿拉伯语：包括词汇、语气，以及背后的文化语境。</p>
-<h2>基于 Falcon-H1-Arabic 构建</h2>
-<p>我们并非从零开始。Falcon-Emirati-7B 构建在 Falcon-H1-Arabic 之上，那是我们的阿拉伯语模型家族，今年早些时候已经为这门语言树立了新的标杆。Falcon-H1-Arabic 采用 Falcon-H1 混合架构：状态空间模型（State Space Models，Mamba）与 Transformer 注意力在每个 block 内部并行运行，它们的输出在每个 block 的投影（projection）之前被融合。这种组合让它在长序列上享有 Mamba 的线性时间效率，同时保留了注意力机制对长程依赖的精确处理——这对阿拉伯语这样形态丰富的语言至关重要。该家族横跨三个规模（3B、7B 和 34B 参数），上下文窗口最高达 128K 和 256K tokens，并且已经在 MSA 与多种方言阿拉伯语（海湾、黎凡特、埃及、马格里布）连同英语及多语言数据的广泛混合体上完成训练。</p>
-<p>这给了我们一个强大的起点：一个已经广泛理解阿拉伯语、能良好处理长上下文、并已内置一定方言接触经验的模型。Falcon-Emirati-7B 在这一基础上，专门向阿联酋方言推进——那些词汇、语法，以及文化常识，是再强的通用阿拉伯语模型也无法自行习得的。</p>
-<p>我们专门选择 7B 这一变体来构建 Falcon-Emirati-7B。它是该家族中的最佳平衡点：足够大，能承载方言适配所需的微妙之处；又足够小，使训练和推理都保持切实可行。34B 模型或许能把质量再推高一点，但其训练和服务成本对于一款方言专精的对话模型来说并不划算；而 3B 模型没有为我们要追求的那种文化与语言理解的深度留足余量。7B 在质量与训练/推理成本之间给了我们最好的平衡。</p>
-<h2>为什么方言适配如此困难</h2>
-<p>把一个通用阿拉伯语模型变成阿联酋方言专精模型，听起来像是比构建底层基础模型更轻松的活儿。其实不然。几件事让它真正变得困难：</p>
-<ul><li><strong>阿联酋语主要是一种口语方言。</strong> 它在网上书面的出现频率远低于 MSA，甚至低于其他海湾和黎凡特方言，因此可供学习的原始文本本就没那么多。</li><li><strong>含义往往不是字面的。</strong> 习语、谚语和诗歌用典依赖的是共享的文化语境，而非表面词汇。</li><li><strong>没有既定的操作手册。</strong> 对于多少方言数据才算够、如何将其与 MSA 和通用阿拉伯语配比、以及哪个训练阶段（继续预训练、SFT 还是偏好优化）对方言习得起决定性作用，都没有一份记载清晰的配方。</li></ul>
-<p>最后这一点塑造了我们的工作方式。构建 Falcon-Emirati-7B 的很大一部分靠的是反复试错：测试不同的数据配比、训练阶段和监督策略，同时借助人工判断和基准分数来搞明白究竟什么才真正起到了作用。</p>
-<h2>我们对数据的处理方式</h2>
-<p>我们在 Falcon-H1-Arabic 预训练之上搭建了一条专用的阿联酋数据流水线，利用三类互补的数据源。</p>
-<h3>1. 真实的阿联酋方言网络数据</h3>
-<p>我们从阿联酋的网站和论坛抓取并整理了以该方言原生书写的内容，而非从 MSA 翻译或转写而来。这是我们获取事实依据（ground truth）的地方：阿联酋人在线上和线下实际如何书写和说话，日常的表达方式，口头俗语，以及真实使用中阿联酋语与 MSA 之间那种自然的来回切换。</p>
-<h3>2. 关于阿联酋文化与身份的 MSA 数据</h3>
-<p>除了方言文本，我们还引入了专门讲述阿联酋文化、传统和语言的 MSA 语料：关于本地习俗、价值观、历史和社会规范（包括外界如何看待和给阿联酋人贴标签）的文章和参考资料。这并不会教模型用方言书写，但它教会模型：当阿联酋话题被提及时，模型到底在谈些什么——诸如传统、礼仪，以及母语者天生就知道的那些背景。</p>
-<h3>3. 由词汇表和风格规则引导的合成数据</h3>
-<p>仅有真实的方言文本，并不足以覆盖一款对话模型日常实际需要处理的各类主题。于是我们生成了大量阿联酋方言的合成数据来填补空白。我们并没有让生成模型即兴用一种&quot;海湾味&quot;的阿拉伯语乱写。我们用严格规则、以及专为阿联酋词汇和语法构建的词汇表与词典来约束它。正是这些护栏，决定了合成输出究竟读起来是地道的阿联酋语，还是虽然语法无误、但在真正说这种方言的人听来却不对劲。</p>
-<h2>寻找合适的适配配方</h2>
-<p>既然 MSA 到方言的适配没有标准配方，我们就把训练策略本身当作一个要靠实验来搞明白的东西。我们针对以下问题做了消融实验：注入多少方言数据、在训练的哪个阶段注入，如何权衡真实抓取数据与合成数据以免模型过拟合到合成模式上，以及到底需要多少 MSA 文化语境才能让它真正扎根于文化、而不只是表面流畅。每一步我们都依赖自动评分与母语者评审的混合，因为仅靠自动指标无法充分刻画自然度、语气或文化契合度，不足以单独采信。</p>
-<h2>评测方法</h2>
-<p>我们在整个训练过程中用两种互补的方式追踪进展：</p>
-<h3>母语者人工评估</h3>
-<p>阿联酋母语者直接审阅模型输出，评判的不只是答案是否正确，还有它是否&quot;听起来对&quot;：自然度、语气、文化得体性。这些是基准分数不会告诉你、但母语者的耳朵一眼就能捕捉到的东西。</p>
-<h3>基于 Alyah 的自动评测</h3>
-<p>在定量追踪上，我们使用了 <a href="https://huggingface.co/datasets/tiiuae/alyah-emirati-benchmark"><strong>Alyah</strong></a>（الياه，意为&quot;北极星&quot;），这是我们的团队和社区专门发布、用于评测阿拉伯语 LLM 阿联酋方言能力的一个基准。Alyah 是一个完全原生的多选题基准，包含 1,173 个样本，由阿联酋母语者手工采集，覆盖从日常问候与礼仪，到修辞语言、传统知识，再到阿联酋诗歌等类别——正是方言与文化最为关键、通用阿拉伯语模型往往力不从心的那些类别。关于 Alyah 的构建与类别细分的完整细节见我们的 <a href="https://huggingface.co/blog/tiiuae/emirati-benchmarks">基准博客文章</a>，关于底层模型家族的背景见 <a href="https://huggingface.co/blog/tiiuae/falcon-h1-arabic">Falcon-H1-Arabic 发布说明</a>。</p>
-<h2>结果</h2>
-<p>Falcon-Emirati-7B 在 Alyah 上取得 <strong>84.83%</strong>，领先于我们与之对比的所有其他阿拉伯语和多语言模型，其中包括若干个体量数倍于它的模型。下面的图表展示了它在 Alyah 排行榜上、与一组具有代表性的领先指令微调模型相比所处的位置。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/UL3Uy6LFKWEj5fALZ0Sg4.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/UL3Uy6LFKWEj5fALZ0Sg4.png" alt="Falcon-Emirati-7B vs. leading Arabic and multilingual models on Alyah"></a></p>
-<p><em>Alyah 准确率（%），指令微调模型。由于 Falcon-Emirati-7B 构建于 Falcon-H1-Arabic 家族之上，该家族的模型被排除在本次对比之外。</em></p>
-<h2>结果告诉我们什么</h2>
-<p>从这组对比中有几点尤其显眼。仅凭规模并不能换来方言能力。这里一些最大的多语言模型得分明显低于更小、对方言更敏感的模型，这告诉你阿联酋语能力必须刻意去训练，而不是靠规模顺带获得的副产品。表现最好的模型往往本身就是阿拉伯语原生或以阿拉伯语为重点的，这与我们自己在消融实验中看到的一致：通用的阿拉伯语与方言覆盖是一个必要的起点，但要弥合剩下的差距，仍然需要针对性的、方言专项的工作，尤其是在 Alyah 最难的部分——比如诗歌、传统知识，以及语言与方言这一类别本身。</p>
-<p>这也与 Alyah 基准发布所揭示的更广泛结论相符：一旦进入真正的方言化、深深植根于文化的内容，即便是强模型也会出现明显的性能退化。这个差距不会随着模型变大就自行弥合，它需要专门为该方言构建的数据和评测。</p>
-<h2>超越多选题：LLM 作为评审（LLM-as-Judge）评测</h2>
-<p>多选题准确率告诉你的是：模型能否在四个选项中识别出正确答案。它并不能告诉你：当有人直接和它说话时，模型是否会自己真正产出阿联酋阿拉伯语。所以在 Alyah 之外，我们做了第二轮评测：在同一批 1,173 个 Alyah 问题上进行开放式生成，由一个 LLM 评审（Gemini 3.7 Flash）针对五个模型打分——Falcon-Emirati-7B、ALLaM-7B-Instruct-preview、gemma-3-27b-it、Jais-2-8B-Chat 和 Fanar-2-27B-Instruct，它们是从 Alyah 排行榜上挑选出的最强竞争对手。</p>
-<p>评审从两个独立维度为每个答案打分：内容是否正确，以及（相互独立地）答案是否真的以阿联酋方言而非 MSA 给出。我们同时报告一个部分得分版本（评审的分级评估）和一个更严格的通过/失败版本，外加每个模型拒答（不作答）的频率。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/uc4Lj0T23SxjZVaV1w5bU.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/uc4Lj0T23SxjZVaV1w5bU.png" alt="LLM-judged correctness on open-ended Emirati questions"></a></p>
-<p><em>在 1,173 个 Alyah 问题上由 LLM 评审判定的正确性，开放式生成，评审为 Gemini 3.7。</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/Q1ArWubn7hwUco5ldt7Xo.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/Q1ArWubn7hwUco5ldt7Xo.png" alt="LLM-judged dialect fidelity"></a></p>
-<p><em>在同一批问题上由 LLM 评审判定的方言保真度：答案究竟是真正以阿联酋语给出，还是模型默认退回 MSA？</em></p>
-<p>Falcon-Emirati-7B 在正确性上领先，但真正的差距体现在第二张图。在方言保真度上，Falcon-Emirati-7B 得 0.52（部分得分），而 ALLaM 为 0.05、gemma-3-27b-it 为 0.03、Jais-2-8B-Chat 为 0.02、Fanar-2-27B-Instruct 实际上为 0.00。这不是一个小优势，在低端它接近两个数量级。实际意味着：其他模型往往知道正确答案，但默认用现代标准阿拉伯语说出来，即便有人直接用阿联酋语问它。Falcon-Emirati-7B 是这五个中唯一一个能稳定地以被提问时所用的方言作答的模型。</p>
-<p>Fanar-2-27B-Instruct 因第二个原因同样引人注目：它比其他任何模型都更频繁地拒答，26.2% 的情况下拒绝作答，而对比组中其余每个模型都低于 5%。再加上它 0.27（部分得分）的正确性——五个里最低——这描绘出一个既不愿、也不能就阿联酋专属内容进行应答的模型，而不只是一个用了错误语域的模型。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/sklbQUT3s8CXmcse-BPln.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/sklbQUT3s8CXmcse-BPln.png" alt="Dialect fidelity by category"></a></p>
-<p><em>按 Alyah 类别划分的方言保真度，部分得分。Falcon-Emirati-7B 是唯一一个稳定切换到阿联酋语的模型；其余模型在几乎所有类别里都停留在 MSA。</em></p>
-<p>把方言保真度按类别拆开，这一规律就更清楚了。它在 Alyah 的每一个类别里都成立，从日常问候到诗歌，这说明它不是为某几类问题学来的一个小把戏，而是模型在阿联酋语作为预期语域时默认转向何种语域的一次整体转变。竞争对手模型表现相对较好的唯一一处——问候与日常用语——也正是阿联酋语与 MSA 重叠最多的类别，所以它是最容易让一个通用阿拉伯语模型碰巧听起来正确无比的地方。</p>
-<h3>逐类别的两两对比</h3>
-<p>作为审视同一问题的第三个视角，我们做了面对面的两两评审：对每个 Alyah 问题，评审（Gemini 3.7 Flash）会同时看到 Falcon-Emirati-7B 的答案和一个竞争对手模型的答案（不知道哪个是哪个），并被要求挑出更好的那一个。下面的雷达图展示了按类别得到的、针对三个竞争对手模型——Jais-2-8B-Chat、ALLaM-7B-Instruct-preview 和 Fanar-2-27B-Instruct——的胜率。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/ruWwB7xCdfiETIgD4wmyy.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/659bc8a7b0f43ed69f0b2300/ruWwB7xCdfiETIgD4wmyy.png" alt="pairwise_combined"></a></p>
-<p><em>按类别的两两胜率，Falcon-Emirati-7B 对阵 Jais-2-8B-Chat、ALLaM-7B-Instruct-preview 和 Fanar-2-27B-Instruct，由 Gemini 3.7 面对面评审。</em></p>
-<p>Falcon-Emirati-7B 在三个对手面前都赢下了多数类别，在最依赖方言与文化流畅度的类别里更是以悬殊优势取胜。对阵 Jais-2-8B-Chat，差距最大的是诗歌与创意表达（0.69 对 0.31）和语言与方言（0.62 对 0.38）。对阵 ALLaM-7B-Instruct-preview，同样是这两个类别差距最大：诗歌与创意表达（0.66 对 0.34）和语言与方言（0.58 对 0.42）。对阵 Fanar-2-27B-Instruct，差距是三者对决中最宽的，且 Falcon-Emirati-7B 赢下每一个类别，在诗歌与创意表达（0.88 对 0.12）以及宗教与社交敏感度（0.80 对 0.20）上达到顶点。</p>
-<p>竞争对手模型能稳住阵脚的唯一类别是问候与日常用语：Falcon-Emirati-7B 以微弱劣势输给 Jais-2-8B-Chat（0.46 对 0.54），与 ALLaM-7B-Instruct-preview 打成 0.50 平手，但对阵 Fanar-2-27B-Instruct 仍以明显优势取胜（0.70 对 0.30）。这与上面方言保真度细分所呈现的结论大体一致——问候是阿联酋语与 MSA 重叠最多的类别，所以它是最容易让通用阿拉伯语模型即便没有专门方言训练也听起来像母语者的地方。在方言更鲜明的各处——诗歌、修辞语言、传统知识——Falcon-Emirati-7B 的优势在我们测试过的每一个竞争对手模型面前都稳固成立。</p>
-<h2>理解阿联酋文化</h2>
-<p>语言也关乎理解对话背后的文化。我们在 <a href="https://huggingface.co/datasets/Almheiri/ArabCulture-Dialogue">ArabCulture-Dialogue</a> 的阿联酋部分上评测了 Falcon-Emirati-7B，那是一个用于阿拉伯语文化理解的基准。在其多选题任务中，模型要从三个选项里选出在文化上最得体的回应。更多内容见 <a href="https://aclanthology.org/2026.acl-long.963/">研究论文</a>。</p>
-<p>我们在同样这 <strong>283 个阿联酋场景</strong>上测试了全部四个模型，分别用阿联酋阿拉伯语和现代标准阿拉伯语，并配以不同程度的位置信息。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/65b79f63d919aa79555d17e1/78dgJaRrFACpGTBJkSuTE.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/65b79f63d919aa79555d17e1/78dgJaRrFACpGTBJkSuTE.png" alt="Cultural understanding accuracy: Falcon-Emirati-7B 85.57%, ALLaM 83.39%, Jais-2 73.79%, Fanar-2 71.50%."></a></p>
-<p><em>阿联酋多选题任务上的总体准确率，在两种语言变体和所有位置设置上取平均。这些是我们的评测结果。</em></p>
-<p><strong>Falcon-Emirati-7B 得 85.57%，为四个被测模型中最高</strong>，领先于 ALLaM-7B（83.39%）、Jais-2-8B（73.79%）和 Fanar-2-27B（71.50%）。这些结果凸显了它在阿联酋对话中识别文化得体回应的能力。</p>
-<h2>眼见为实</h2>
-<p>数字只讲了故事的一部分，所以下面是一个实时的交互式对比：五个真实的阿联酋提示（prompt），把 Falcon-Emirati-7B 与 Fanar-2-27B-Instruct、ALLaM-7B-Instruct-preview 并排运行。可用滑动或箭头在提示间切换，并展开任意一条回应来阅读全文。</p>
-<p><em>交互式对比：Falcon-Emirati-7B、Fanar-2-27B-Instruct 与 ALLaM-7B-Instruct-preview 在五个阿联酋提示上的表现，涵盖开斋节问候、本地历史、诗歌和传统知识。输出按原样展示，可能包含错误；高亮标出的是我们的模型，并非事实性评分。</em></p>
-<h2>试用 Falcon-Emirati-7B</h2>
-<p>Falcon-Emirati-7B 已上线我们的对话平台。🚀 <strong>立即试用：</strong> <a href="https://chat.falconllm.tii.ae/?model=Falcon-Emirati-7B">https://chat.falconllm.tii.ae/?model=Falcon-Emirati-7B</a></p>
-<h2>负责任的 AI 与局限</h2>
-<p>和任何语言模型一样，Falcon-Emirati-7B 会反映其训练数据中的偏见，有时会出错，尤其是在罕见表达、高度本地化的指涉，或我们数据很少的边缘情况上。方言与文化微妙之处在某些地方是主观的，即便是母语者，也未必总在&quot;正确&quot;答案上达成一致。我们建议在你自己的具体用例上先评估模型，再把它用于任何敏感、官方或高风险的场景；我们也诚挚欢迎来自阿联酋社区的反馈，帮助我们持续改进模型和 Alyah。</p>
-<h2>致谢</h2>
-<p>我们谨向 Mikhail Lubinets 和 Matthieu Berjon 致以诚挚感谢，感谢他们在算力基础设施上给予的持续支持；并向 Jatin Mittal 致谢，感谢他帮助通过 Falcon Chat 应用让模型得以访问。</p>
-<h2>引用</h2>
-<pre><code>@misc{falcon_emirati_7b_2026,
-  title = {Falcon-Emirati-7B: A Dialect-Specialized Arabic LLM for the Emirati Dialect},
-  author = {Shaikha Alsuwaidi, Omar Alkaabi, Maitha Alhammadi, Hamza Alobeidli, Ahmed Alzubaidi, Mohammed Alyafeai, Leen AlQadi, Basma Boussaha, Hakim Hacid}, 
-  organization = {Technology Innovation Institute},
-  year = {2026}
-}</code></pre>]]></content:encoded>
-    </item>
-    <item>
-      <title>Agent 说它做完了，数据库却不同意</title>
-      <link>https://huggingface.co/blog/microsoft/thinkingbox</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/microsoft/thinkingbox</guid>
-      <pubDate>Sat, 03 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：The Agent Said It Was Done. The Database Disagreed.</description>
-      <content:encoded><![CDATA[<h1>Agent 说它做完了，数据库却不同意</h1>
-<p>企业级</p>
-<p>文章</p>
-<p>发布 October 3, 2026</p>
-<ul><li><a href="https://huggingface.co/tuhink"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png" alt=""></a></li><li><a href="https://huggingface.co/Hectozar"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a27ffbf0ea26227e43a0d29/Hk8XoWHT5braavBTjifaw.jpeg" alt=""></a></li><li><a href="https://huggingface.co/youngko"><img src="https://huggingface.co/avatars/821997acf79b7113de576661b1111109.svg" alt=""></a></li><li><a href="https://huggingface.co/IronTech-Studios"><img src="https://huggingface.co/avatars/1462091a632d06d8b3bdf28a8007f621.svg" alt=""></a></li><li><a href="https://huggingface.co/bedesign62"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/YtxawKNmLmMd5dkoGXX6j.png" alt=""></a></li><li><a href="https://huggingface.co/geminiomnidev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/0K6rX9DTE_L7C_ktLloT7.jpeg" alt=""></a></li></ul>
-<p>Tuhin Kundu</p>
-<p>tuhink</p>
-<p>microsoft</p>
-<p><em>Microsoft ThinkingBox 给 AI agent 打分，看的是它们留下的记录，而不是它们生成的句子，并且进一步追问：它们能不能连续二十次都做对。该基准现已通过 Hugging Face 提供。</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/Dzuml_9K2lfRq4hZi17EY.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/Dzuml_9K2lfRq4hZi17EY.png" alt="Figure-1"></a></p>
-<p><em>图 1：ThinkingBox 让一个 agent 在隔离的 MCP tool 会话中运行，然后对它留下的最终 backend 状态和副作用进行打分。出自我们的 <a href="https://arxiv.org/abs/2608.19741">ThinkingBox 论文</a>。</em></p>
-<h4>这是 Microsoft 与 Hugging Face 的联合博客，特别感谢 Tommy Guy（Enderis AI 创始人，曾任职于 Microsoft）、来自 Hugging Face 的 Sergio Paniego，以及我们此前的实习生 Zhuochun Li（University of Pittsburgh）、Ali Keramati（UC Irvine）、Youngmin Ko（Northwestern）在共同撰写与评审上付出的努力。</h4>
-<p>一位客户来信。她那台 $745 的厨房电器卡在 Nashville 配送中心的快递「异常」状态里，已经比预计送达日期晚了十五天。</p>
-<p>这个 AI agent 做得很细致。九次 tool call：它调出订单、查询物流、检索她的客户档案、两次搜索退款政策、确认没有已存在的工单、新建了一个、记录了时间线，并且把政策读对了；她的账户分层确实不符合延迟送达补偿的条件。</p>
-<p>然后它把工单以 <strong>resolved</strong> 关闭，并回复“ <em>既然您的问题已经解决，还有什么我可以帮您的吗？</em> ”</p>
-<p>有两点是错的。承运方的异常状态仍然未关闭，所以要求的目标终态应是 <strong>on hold</strong>，等待处理。而客户始终没有得到她真正所问问题的实际答复。</p>
-<p>如果 AI 评分器检查的是 tool call，它会看到九次格式良好的调用。检查 agent 是否写入了数据库的评分器同样会看到这些。真正<strong>不同意</strong>的是数据库。</p>
-<p>ThinkingBox 度量的正是这道落差。它在 507 个有状态的业务流程上、针对多个 LLM 模型各运行 20 次，依据最终的 backend 状态与副作用为 agent 打分。本文介绍我们的发现、一致性要付出什么代价，以及如何通过 <a href="https://github.com/huggingface/OpenEnv/tree/main/envs/thinkingbox_env">OpenEnv</a> 自己运行这个基准。</p>
-<p><strong>你也可以亲自跑这一条：</strong>上面的例子改编自某个基准任务 <a href="https://github.com/microsoft/thinkingbox-data/blob/thinkingbox-bench-v1.0/dataset/test_case/sandbox_external_retail/sandbox_external_retail_group1.py#L984-L1223">sandbox_external_retail_group1.py:test_case_ST003_006</a>，而失败的那条可执行检查只涉及一个字段：工单状态是 solved，而要求的目标终态是 hold。完整 trace 见<a href="https://arxiv.org/pdf/2608.19741">我们论文的附录 D.4，Case 3</a>。</p>
-<p><strong>目录</strong></p>
-<ul><li><a href="https://huggingface.co/blog/microsoft/thinkingbox#a-tool-call-is-not-an-outcome">tool call 不等于结果</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox#one-success-is-not-reliability">一次成功不等于可靠</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox#can-you-depend-on-the-model-behind-your-agent">你能依赖 agent 背后的那个模型吗？</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox#what-consistency-costs">一致性要付出什么</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox#failure-signatures">失败特征</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox#how-it-works">它是怎么工作的</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox#run-it-yourself">自己跑一遍</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox#where-this-goes-next">下一步往哪走</a></li></ul>
-<blockquote>想在读结果之前先试一手？直接跳到「自己跑一遍」一节。</blockquote>
-<h2>tool call 不等于结果</h2>
-<p>最终回复和合法的 tool call 只是替代指标。一个 agent 可以听起来完全正确，同时留下错误的取值、改错了记录，或多造出一个副作用。只有它留下的记录能给出定论。</p>
-<p>这道落差相当大。在一项覆盖 12 个 LLM 模型、121,680 次有效试次的同集合消融实验中，79,853 次尝试未通过可执行检查。在这些失败里，67.24% 依然是干净终止、调用过会改变状态的工具、且没有上报最终的 tool 错误。但可执行检查仍在其中 77.61% 上发现字段取值错误，43.30% 发现非预期的多余副作用，25.36% 发现缺失必需的副作用。这些状态检查的结论之间存在重叠。</p>
-<blockquote>轨迹是一句声明。数据库状态才是证据。重复才是信任的检验。</blockquote>
-<h2>一次成功不等于可靠</h2>
-<p>一个 agent 处理退款第一次做对了、后面四次都做错，那它不能算一个能用的退款 agent。所以每个任务都<strong>独立运行 20 次</strong>，每次都从一个完全相同的干净 backend 出发，我们报告三个不同的指标：</p>
-<p><em>表 1：我们报告的三个数字，以及它们各自回答的问题。</em></p>
-<table><thead><tr><th>指标</th><th>衡量什么</th><th>回答什么问题</th></tr></thead><tbody><tr><td>pass@1</td><td>所有尝试中成功的比例</td><td>它通常表现如何？</td></tr><tr><td>pass@20</td><td>20 次尝试中<strong>至少成功一次</strong>的任务占比</td><td>它<em>能不能</em>做到这件事？讲的是广度。</td></tr><tr><td>Observed 20/20</td><td>在实际记录的 20 次尝试中<strong>全部</strong>通过的任务</td><td>它能不能<em>每一次</em>都正确？</td></tr></tbody></table>
-<p>本博客里的 <strong>observed 20/20</strong> 就是字面计数：507 个任务中有多少个做到了 20 次全过。不做估计，不做平滑。</p>
-<p>先从大家熟悉的视角看起。下表报告 pass@1，也就是单次尝试得分的估计值，并按业务域拆分。这正是大多数排行榜公布的数字，单看它，就像一份普通的能力排名。</p>
-<p><em>表 2：ThinkingBox-Bench 各业务域的 pass@1（%）。每个模型都在每个任务上重复评测 20 次。加粗标注组内第一，下划线标注第二。单次尝试得分估计的标准误见 <a href="https://arxiv.org/abs/2608.19741">ThinkingBox 论文中的表 4</a>。</em></p>
-<table><thead><tr><th>模型</th><th>零售 (98)</th><th>车险 (100)</th><th>旅行 (104)</th><th>新银行 (104)</th><th>咨询 (101)</th><th>总体，按任务加权 (507)</th></tr></thead><tbody><tr><td><em>专有模型</em></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Claude Opus 5.5</td><td><strong>80.97</strong></td><td><strong>68.40</strong></td><td>54.28</td><td><strong>71.25</strong></td><td>61.58</td><td><strong>67.16</strong></td></tr><tr><td>Claude Opus 5</td><td>80.71</td><td>65.80</td><td>49.95</td><td>70.62</td><td><strong>66.19</strong></td><td>66.50</td></tr><tr><td>GPT-5.4</td><td>76.33</td><td>62.65</td><td><strong>68.12</strong></td><td>65.34</td><td>54.60</td><td>65.36</td></tr><tr><td>GPT-5.6 Sol</td><td>67.65</td><td>65.30</td><td>60.34</td><td>59.09</td><td>57.52</td><td>61.91</td></tr><tr><td>Claude Sonnet 4.6</td><td>72.35</td><td>54.40</td><td>58.94</td><td>56.39</td><td>54.31</td><td>59.19</td></tr><tr><td>GPT-6 Astra</td><td>71.73</td><td>46.55</td><td>55.87</td><td>60.87</td><td>56.83</td><td>58.31</td></tr><tr><td>GPT-5.2</td><td>70.20</td><td>22.40</td><td>53.70</td><td>51.15</td><td>34.06</td><td>46.28</td></tr><tr><td>Claude Opus 4.6</td><td>68.62</td><td>8.30</td><td>21.11</td><td>35.67</td><td>27.82</td><td>32.09</td></tr><tr><td>o3-pro</td><td>37.70</td><td>2.95</td><td>17.31</td><td>24.28</td><td>14.60</td><td>19.31</td></tr><tr><td>Grok-4.3</td><td>43.93</td><td>2.60</td><td>15.14</td><td>1.78</td><td>9.55</td><td>14.38</td></tr><tr><td><em>开放权重模型</em></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Kimi-K3</td><td><strong>82.24</strong></td><td><strong>50.80</strong></td><td><strong>61.83</strong></td><td>41.35</td><td><strong>51.63</strong></td><td><strong>57.37</strong></td></tr><tr><td>Qwen3.8-27B</td><td>64.03</td><td>47.85</td><td>53.41</td><td><strong>47.88</strong></td><td>45.69</td><td>51.70</td></tr><tr><td>DeepSeek-V4-Pro</td><td>68.21</td><td>29.65</td><td>43.13</td><td>44.86</td><td>31.04</td><td>43.26</td></tr><tr><td>Kimi-K2.6</td><td>53.72</td><td>24.50</td><td>39.52</td><td>33.65</td><td>37.33</td><td>37.66</td></tr><tr><td>GLM-5.1</td><td>58.67</td><td>25.70</td><td>35.43</td><td>13.27</td><td>34.06</td><td>33.19</td></tr><tr><td>Qwen3.6-27B</td><td>43.11</td><td>29.00</td><td>46.39</td><td>27.84</td><td>18.37</td><td>32.94</td></tr><tr><td>Qwen3.5-9B</td><td>19.90</td><td>0.70</td><td>4.71</td><td>1.15</td><td>2.33</td><td>5.65</td></tr><tr><td>Mistral-Large-3</td><td>11.28</td><td>1.30</td><td>8.99</td><td>1.15</td><td>0.74</td><td>4.66</td></tr></tbody></table>
-<p>Claude Opus 5.5 以 67.16% <strong>领跑</strong>总成绩，比 Claude Opus 5 高三分之二个点。Kimi-K3 是最强的<strong>开放权重模型</strong>，与 GPT-6-Astra 相差不到一个点。<strong>业务域同样关键</strong>：Claude Opus 4.6 在零售上拿到 68.62%，在车险上却只有 8.30%。</p>
-<blockquote>一次漂亮的运行只能告诉你模型有能力做这件事，不能告诉你它会不会每次都做到。所以把每个任务跑 20 次，再看那份得分能剩下多少。</blockquote>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/DjaLNZKNeU--Xy2WFCvVX.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/DjaLNZKNeU--Xy2WFCvVX.png" alt="Figure-2"></a></p>
-<p><em>图 2：每个模型的单次尝试得分，在重复 20 次之后还剩下多少。</em></p>
-<p><strong>只有三个</strong>模型守住了自己 pass@1 得分的大部分：GPT-6 Astra 保留了单次成功率的 78%，Claude Opus 5.5 和 Claude Opus 5 各保留 71%。另一端的 GLM-5.1、Kimi-K2.6 和 DeepSeek-V4-Pro 各自只保住约 8%。</p>
-<p>模型<strong>一次能做到</strong>什么与它<strong>每一次都做了什么</strong>之间的差距，就是这件事的全部。</p>
-<h2>你能依赖 agent 背后的那个模型吗</h2>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/NONd2WGm4vtGpsVgs-CIq.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/NONd2WGm4vtGpsVgs-CIq.png" alt="Figure-3"></a></p>
-<p><em>图 3：广度与一致性是分开的两件事。十八个模型中展示了十二个；pass@1 低于 33% 的六个出于可读性被省略。</em></p>
-<p><strong>Kimi-K3 的覆盖广度在我们测过的所有模型中最宽。</strong>它至少一次性解决了基准中 <strong>93.89%</strong> 的任务：507 个里 476 个。只有 31 个任务完全难住它，是全场最低。在零售流程上它以 82.24% 的 pass@1 直接领先，超过所有专有模型。</p>
-<p><strong>Kimi-K3 同时也属于最不稳定的一档。</strong>507 个任务里只有 68 个、即 13.41%，在 20 次尝试中全部成功。</p>
-<p>Claude Opus 5 正好相反。它至少一次解决的任务更少（79.09%；有 106 个完全难住它），但在每一次尝试中都完成了 <strong>47.53%</strong> 的基准。</p>
-<p><strong>换个更新的模型也解决不了这一点。</strong>Claude Opus 5.5 在每次尝试的平均分上高于 Claude Opus 5，67.16% 对 66.50%，至少一次解决的任务也更多。但它在 20 次尝试中全部通过的任务数完全相同：241 个。标题上浮的半个点准确率，没有换来任何额外的可靠性。</p>
-<ul><li>Kimi-K3 比 Opus 5 多<strong>至少一次解决了 75 个任务</strong>。</li><li>Opus 5 比 Kimi-K3 多<strong>稳定解决了 173 个任务</strong>。</li></ul>
-<p>如果你选模型是为了承担会动真实记录的工作，pass@20 并不是你该看的那一列。</p>
-<h2>一致性要付出什么</h2>
-<p>能力对比通常止步于得分。对任何要真正部署的人来说，相关的问题是：一次成功的工作单元要花费多少。我们把它度量成「每次成功任务尝试的成本」。之所以说任务尝试，是因为基准里的每个任务都会被反复运行、成本按每次尝试发生，所以 pass@1 就是与之匹配的质量分母。</p>
-<p>我们从每个模型完整的 507 × 20 跑批中取出记录到的 token 用量，按 <a href="https://openrouter.ai/">OpenRouter</a>+ 上无折扣的公开列表价计费，还原了促销折扣，并排除了声明采用量化的 endpoint。输入、输出与缓存价格都取自每个模型对应的那一个 provider endpoint。</p>
-<p>然后把一次运行的成本除以<strong>成功</strong>的尝试次数：</p>
-<blockquote>每次成功任务尝试的成本 = 507 次尝试（每个任务一次）的估算成本 ÷ (507 × pass@1)</blockquote>
-<p>这是一个用于相互比较的效率指数，不是账单，也不是服务一次生产请求的价格。它衡量的是单次成功的成本，而非一致性。一致性我们接下来单独定价。</p>
-<p><strong>举例：</strong>GPT-5.4 跑 507 次尝试（每个任务一次）花费 $43.49，pass@1 为 65.36%，因此 $43.49 ÷ (507 × 0.6536) = 每次成功任务尝试 $0.131。</p>
-<h3>Pareto 成本前沿</h3>
-<p>当没有任何其他模型能<em>同时</em>做到<em>不比它贵</em> <strong>且</strong> <em>精度不低于它</em>时，这个模型才在前沿上。满足条件的有三个模型；其余每一个模型至少在一条轴上被支配。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/oGmXYrxoNPJfsQndxlcMD.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/oGmXYrxoNPJfsQndxlcMD.png" alt="Figure-4"></a></p>
-<p><em>图 4：每次成功任务尝试的成本对 pass@1 的关系。带圆圈的点是 Pareto 成本前沿上的模型。</em></p>
-<p><strong>前沿分三级台阶。</strong>GPT-5.6 Sol 的<strong>单次成功成本最低</strong>，为 $0.127；GPT-5.4 把 pass@1 提高 3.45 个百分点，每次成功只多花 $0.004；Claude Opus 5.5 再加 1.80 个点，每次成功 $0.276。这三个模型都留在成本前沿线上，因为没有更便宜的模型能达到它们的 pass@1。</p>
-<p>Claude Opus 5 是最清楚的例子：每次成功 $0.475、pass@1 66.50%，相比 $0.276、67.16% 的 Claude Opus 5.5，它既更贵又更不准。</p>
-<h3>再给一致性定价</h3>
-<p>单次成功成本奖励的是便宜且经常答对的模型，它不奖励每次都不错的模型。所以我们也计算「每个可靠任务的成本」：把完整 20 轮跑批的总成本，除以模型在 20 次尝试中全部通过的任务数。</p>
-<blockquote>每个可靠任务的成本 = 20 轮 × 507 次尝试的估算成本 ÷ 通过 20/20 的任务数</blockquote>
-<p><strong>举例：</strong>GPT-6-Astra 整轮跑批花费 20 × $86.03 = $1,720.60，在每一次尝试中都通过的任务有 231 个，因此 $1,720.60 ÷ 231 = 每个可靠任务 $7.45。</p>
-<p><em>表 3：在至少有一个 observed 20/20 任务的模型中，每个可靠任务成本最低的九个，由低到高排序。金额为估算值，不是真实云账单。</em></p>
-<table><thead><tr><th>模型</th><th>通过 20/20 的任务数</th><th>估算成本，20 轮</th><th>每个可靠任务的成本</th></tr></thead><tbody><tr><td>GPT-5.4</td><td>128 (25.25%)</td><td>$869.80</td><td><strong>$6.80</strong></td></tr><tr><td>GPT-6 Astra</td><td>231 (45.56%)</td><td>$1,720.60</td><td>$7.45</td></tr><tr><td>Claude Opus 5.5</td><td>241 (47.53%)</td><td>$1,880.77</td><td>$7.80</td></tr><tr><td>GPT-5.6 Sol</td><td>82 (16.17%)</td><td>$800.00</td><td>$9.76</td></tr><tr><td>Claude Opus 5</td><td>241 (47.53%)</td><td>$3,206.00</td><td>$13.30</td></tr><tr><td>Claude Sonnet 4.6</td><td>102 (20.12%)</td><td>$1,587.60</td><td>$15.56</td></tr><tr><td>GPT-5.2</td><td>44 (8.68%)</td><td>$878.00</td><td>$19.95</td></tr><tr><td>Kimi-K3</td><td>68 (13.41%)</td><td>$1,406.40</td><td>$20.68</td></tr><tr><td>Qwen3.8-27B</td><td>38 (7.50%)</td><td>$925.80</td><td>$24.36</td></tr></tbody></table>
-<p><strong>现在按一致性来排名。</strong>GPT-5.4 <strong>最便宜</strong>，$6.80，但只有 128 个任务达标。GPT-6 Astra 达到 231 个，每个 $7.45；Claude Opus 5.5 并列最高 241 个，每个 $7.80。</p>
-<p>这三个里没有哪个能完全支配其他：每多一个可靠任务都要花更多。Claude Opus 5 同样通过 241 个，但每个要 $13.30，所以 Opus 5.5 直接把它支配掉了。GPT-5.6 Sol 单次成功最便宜（$0.127），可每个可靠任务要 $9.76。拿到一次正确答案最省钱的办法，并不是拿到一个可靠答案最省钱的办法。</p>
-<h2>失败特征</h2>
-<p>我们给每一条失败的 trace 指派一个确定性的诊断特征，而最可操作的一条结论是：大约五分之四的失败出在工具处理，而不是推理。汇总 <a href="https://arxiv.org/pdf/2608.19741">我们论文表 5</a> 中的消融实验：</p>
-<table><thead><tr><th>失败特征</th><th>占失败的比例</th></tr></thead><tbody><tr><td>工具使用</td><td>79.9%</td></tr><tr><td>状态更新错误</td><td>10.3%</td></tr><tr><td>未完整解决用户问题</td><td>7.0%</td></tr><tr><td>没有改变状态的动作</td><td>2.9%</td></tr></tbody></table>
-<p>这些数字是各模型占比与可观测标签的未加权平均，不是唯一的因果解释。</p>
-<p>实践层面的规律很简单：agent 通常能走到足够远、开始尝试这个流程，然后在工具报错、前置条件不满足或查询结果为空时恢复失败。在成为模型问题之前，它是一个重试与错误恢复问题。</p>
-<p>难度也随业务域变化：在上文表 2 列出的模型中，零售平均 pass@1 为 59.52%，车险平均只有 33.83%。</p>
-<p><strong>该怎么办。</strong>把 20/20 通过率当成设计输入，而不是判决书。基准用来打分的那同一个信号在生产里同样可得：在提交之前检查最终状态，而不是检查模型对它的总结。</p>
-<p>给工具和系统错误分类，让重试只针对那些可恢复的错误。把工具面裁剪到流程真正需要的程度。对你无法低成本回滚的改动要求人工审批。这些做法能带来多少提升，我们还没有在本基准上测量过——而这恰恰是这套环境现在让它变得可测的那类事情。</p>
-<h2>它是怎么工作的</h2>
-<p>ThinkingBox 是 agent 沙箱，ThinkingBox-Bench 则是用于评测 agent 的数据集基准。本文开头的示意图展示了这个闭环；这里说明每一部分的作用。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/elbRGqTXW6PIqci7xcEJN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/elbRGqTXW6PIqci7xcEJN.png" alt="Figure-1a"></a></p>
-<p><em>图 5：上文图 1 中 A 面板的沙箱闭环：隔离的 tool 会话、最终数据库状态、副作用、可执行裁判。</em></p>
-<p>每个任务都定义了起始 backend 状态、用户目标、可用的 MCP 工具、该业务域的政策，以及针对最终状态的可执行检查。模拟用户持有私有上下文（一个预订号、一个偏好或一个出生日期），只有被问到才放出来。</p>
-<p>每次尝试都获得一个隔离的 MCP 会话，状态全新初始化。同一个任务的两次尝试从不共用任何数据库行或缓存的工具状态，这正是 20 次试次对比有意义的前提。</p>
-<p>结束时，副作用抽取器推导出实际发生了哪些变化，确定性裁判把它与要求的目标终态对比：接受<em>任何</em>产出正确结果的轨迹，拒绝错误、缺失或多余的副作用。对于那些没有干净数据库取值的要求（「agent 是否披露了这一点无法保证？」），用一道窄口径的二元评分问题来处理语义。507 个任务中有 477 个仅依据状态打分；30 个额外带有回复评分项。</p>
-<p>信任边界：模型能看到任务、对话和 tool schema。黄金状态、断言、打分内部实现与凭证都留在评测器一侧。</p>
-<h2>自己跑一遍</h2>
-<p>ThinkingBox 现已上线 Hugging Face，<a href="https://huggingface.co/docs/openenv/environments/thinkingbox">harness</a> 和<a href="https://huggingface.co/datasets/microsoft/ThinkingBox-Bench">数据集</a>都在。ThinkingBox-Bench 现在位于 OpenEnv 接口之后，每个结束的 episode 返回一个二元的 pass/fail 奖励。发布的适配器是为评测设计的；其它独立的、非基准的场景可以在训练流程中使用同一套接口。</p>
-<h3>开始之前</h3>
-<p>已在 Linux 和 WSL 上测试，需要 Python 3.11+、<a href="https://docs.astral.sh/uv/">uv</a> 和 Docker。你还需要一份检出到指定发布版本的 <a href="https://github.com/microsoft/thinkingbox-data">thinkingbox-data</a>，以及为 agent、模拟用户和裁判准备的模型 endpoint。一个 endpoint 可以同时承担这三个角色，这是最简的上手方式。OpenEnv 镜像<em>只启动 OpenEnv API</em>；其余都由你自己运行。</p>
-<h3>安装</h3>
-<pre><code># 1. OpenEnv + the ThinkingBox environment
-git clone https://github.com/huggingface/OpenEnv
-cd OpenEnv
-uv sync --project envs/thinkingbox_env --frozen
-# 2. The executable benchmark, at the pinned release
-git clone https://github.com/microsoft/thinkingbox-data
-git -C thinkingbox-data checkout thinkingbox-bench-v1.0
-# 3. The ThinkingBox CLI, which provides `tb`
-uv tool install &quot;thinkingbox @ git+https://github.com/microsoft/thinkingbox&quot;</code></pre>
-<h3>启动 Typesense</h3>
-<p>在<strong>第二个终端</strong>里启动 Typesense 30.1，并等待它的健康检查通过：</p>
-<pre><code>mkdir -p .typesense-data
-docker run --rm -d --name thinkingbox-typesense \
-  -p 8108:8108 \
-  -v &quot;$PWD/.typesense-data:/data&quot; \
-  typesense/typesense:30.1 \
-  --data-dir /data --api-key=Fake --enable-cors
-until curl -fsS http://127.0.0.1:8108/health; do sleep 1; done</code></pre>
-<h3>启动 MCP 服务器</h3>
-<p>在<strong>第三个终端</strong>里启动 Session Proxy 和 MCP 服务器。</p>
-<pre><code>cd OpenEnv
-tb mcp-start --host 127.0.0.1 --port 7111 \
-  --servers &quot;$PWD/thinkingbox-data/servers/servers.yaml&quot;
-curl -fsS http://127.0.0.1:7111/health</code></pre>
-<h3>启动 OpenEnv 服务器</h3>
-<p>回到第一个终端，用一个指明你那三个模型的 ThinkingBox YAML 配置启动 OpenEnv 服务器（<a href="https://github.com/microsoft/thinkingbox/blob/main/docs/llm_endpoint_config.md">配置指南</a>）：</p>
-<pre><code>OPENENV_TB_CONFIG=&quot;$PWD/thinkingbox.yaml&quot; \
-uv run --project envs/thinkingbox_env --frozen server</code></pre>
-<h3>检查就绪状态</h3>
-<p>在运行任何东西之前先用就绪状态做闸门。在它可观测的数据、配置和 Session Proxy 检查都通过之前，该接口返回 503。它无法观测 Typesense，也不会逐个实时探测每个模型 endpoint，所以这两项要你自己另行确认：</p>
-<pre><code>curl -sS http://127.0.0.1:8000/ready</code></pre>
-<h3>给一个 episode 打分</h3>
-<p>现在给一个真实的 episode 打分。<a href="https://github.com/huggingface/OpenEnv/blob/main/examples/thinkingbox/example_usage.py">example_usage.py</a> 只做 reset 和列出工具；要跑 agent 动作、副作用与断言，请使用打包好的评测器：</p>
-<pre><code>echo &quot;- sandbox_external_retail_group1.py:test_case_ST002_001&quot; &gt; one_task.yaml
-uv run --project envs/thinkingbox_env thinkingbox-eval \
-  one_task.yaml \
-  --config &quot;$PWD/thinkingbox.yaml&quot; \
-  --output results.jsonl \
-  --errors-output errors.jsonl \
-  --repeat 1 --message-timeout 1800</code></pre>
-<p>OpenEnv 适配器会把运行期失败写入一个 errors 附属文件，这样它们可以被重跑，而不是悄悄混进模型的结果里。一份权威结果必须解决或明确计入这些尝试；我们把系统错误计为未成功的试次。</p>
-<p>每次运行都以固定的框架 commit、固定的数据发布版本和 bundle hash 为闸门，因此权威结果是可以验证的，而不是靠声称。</p>
-<h2>下一步往哪走</h2>
-<p>这项工作中有用的部分，不是我们的 pass@1 排行榜，而是这套环境。</p>
-<p>如果你正在评测一个会动真实记录的 agent：</p>
-<ul><li><strong>查一个失败样本。</strong>找一次干净终止却仍然失败的运行，看看数据库里实际改了什么。这会重新界定你自己的 eval 在度量什么。</li><li><strong>用你自己的模型通过 OpenEnv 复现一个任务</strong>。</li><li><strong>报告一个重复性指标，并把它定义清楚。</strong>你的用例支撑多大的 k 就用多大的 k；说明你报告的是 best-of-k 还是 every-of-k，以及你是怎么计算的。</li></ul>
-<p>更多细节见以下链接：</p>
-<ul><li><strong>环境：</strong><a href="https://github.com/huggingface/OpenEnv/tree/main/envs/thinkingbox_env">envs/thinkingbox_env</a></li><li><strong>OpenEnv：</strong><a href="https://huggingface.co/docs/openenv/environments/thinkingbox">https://huggingface.co/docs/openenv/environments/thinkingbox</a></li><li><strong>框架：</strong><a href="https://github.com/microsoft/thinkingbox">microsoft/thinkingbox</a> · <a href="https://github.com/microsoft/thinkingbox/blob/main/docs/tutorial.md">教程</a></li><li><strong>基准：</strong><a href="https://github.com/microsoft/thinkingbox-data">microsoft/thinkingbox-data</a> · <a href="https://github.com/microsoft/thinkingbox-data/releases/tag/thinkingbox-bench-v1.0">v1.0 发布</a></li><li><strong>数据集查看器：</strong><a href="https://huggingface.co/datasets/microsoft/ThinkingBox-Bench">microsoft/ThinkingBox-Bench</a></li><li><strong>论文：</strong><a href="https://arxiv.org/abs/2608.19741">arXiv:2608.19741</a> 或 <a href="https://huggingface.co/papers/2608.19741">HF</a></li><li><strong>RL 训练（即将推出）：</strong><a href="https://github.com/microsoft/thinkingbox-training">microsoft/thinkingbox-training</a></li></ul>
-<p>ThinkingBox 代码采用 MIT 许可证；基准数据采用 <a href="https://cdla.dev/permissive-2-0/">CDLA-Permissive-2.0</a>；OpenEnv 环境按 OpenEnv 的 BSD-3-Clause 发布。</p>
-<p>免责声明：公开基准里的每个任务都是合成的重构。流程和政策参照真实的 AI agentic 企业模式建模；客户并不是真实的人。</p>
-<p><em>ThinkingBox 和 ThinkingBox-Bench 由 Microsoft Copilot Studio 团队与 Toloka 合作构建，参与者还包括来自 University of Pittsburgh、Northwestern University、Columbia University 和 UC Irvine、曾在 Microsoft 实习的合作者。欢迎在下方评论区或 <a href="https://github.com/microsoft/thinkingbox/discussions">github</a> 上提问</em></p>
-<ul><li>OpenRouter 成本快照取自 Sept 20th 2026；Opus 5.5 的价格以 Anthropic 官网为准。</li></ul>
-<h2>本文提及的数据集 1</h2>
-<h2>本文提及的论文 1</h2>
-<p>该作者的其他文章</p>
-<h2>Foundry Managed Compute 上的 Hugging Face 模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt=""></li></ul>
-<p>21</p>
-<p>July 7, 2026</p>
-<h2>Differential Transformer V2</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt=""></li></ul>
-<p>53</p>
-<p>January 20, 2026</p>
-<h3>社区</h3>
-<p>CyberNativeAI</p>
-<p>5 天前</p>
-<p><code>ST003_006</code> 把它的通过检查交给了 <a href="https://github.com/microsoft/thinkingbox-data/blob/fcaba4c1a9debec42fda7f15bf29fe6d6b46c431/dataset/test_case/sandbox_external_retail/sandbox_external_retail_group1.py#L13"><code>validate_database</code></a>。只要结果库与黄金库的哈希不相等，即使 <code>diff</code> 为空也算失败。diff 解释一次失败；但它并不决定是否通过。</p>
-<p>这个<a href="https://github.com/CyberNative-AI/.github/tree/main/notes/thinkingbox-state-check">小型复现</a>用四个手工构造的副作用输入来调用已发布的函数。运行 <code>python3 reproduce.py</code>。它会校验固定的源码版本并测试给定的哈希；它不计算数据库哈希、不运行 agent，也不复现完整环境。</p>
-<p>由 CyberNative AI LLC 借助 AI 完成的源码阅读与示例。</p>
-<p>Nomad-link-id</p>
-<p>4 天前</p>
-<p>有价值的那一刀，是 agent 自报的「完成」与 backend 最终状态之间的差别。</p>
-<p>由执行了动作的那个进程自己给出的绿色成功是一份声明，不是一次评分。我希望 eval 依据一个冻结的 oracle 给持久的副作用（工单状态、退款状态、政策引用的字段）打分——并且在叙述一片绿灯而数据库不同意时判为失败。</p>
-<p>实际可做的检查：当最终状态夹具是红的，一次运行还能被标记为完成吗？</p>
-<p>把图片、音频和视频拖进输入框、粘贴，或</p>
-<p>点击此处</p>
-<p>.</p>
-<p>点击或在此粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmicrosoft%2Fthinkingbox">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fmicrosoft%2Fthinkingbox">登录</a> 后可发表评论</p>
-<ul><li><a href="https://huggingface.co/tuhink"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png" alt=""></a></li><li><a href="https://huggingface.co/Hectozar"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a27ffbf0ea26227e43a0d29/Hk8XoWHT5braavBTjifaw.jpeg" alt=""></a></li><li><a href="https://huggingface.co/youngko"><img src="https://huggingface.co/avatars/821997acf79b7113de576661b1111109.svg" alt=""></a></li><li><a href="https://huggingface.co/IronTech-Studios"><img src="https://huggingface.co/avatars/1462091a632d06d8b3bdf28a8007f621.svg" alt=""></a></li><li><a href="https://huggingface.co/bedesign62"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/YtxawKNmLmMd5dkoGXX6j.png" alt=""></a></li><li><a href="https://huggingface.co/geminiomnidev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/0K6rX9DTE_L7C_ktLloT7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jmarceno"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647cfece36e109abce3f0090/jTLaPk6En8p608on8sfZ3.png" alt=""></a></li><li><a href="https://huggingface.co/garyamorris"><img src="https://huggingface.co/avatars/2b4cb7be234f99a0df5cea995cf46837.svg" alt=""></a></li><li><a href="https://huggingface.co/whitesal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vIHJ-RvmYKUbiydPc5GFl.png" alt=""></a></li><li><a href="https://huggingface.co/sisoma2"><img src="https://huggingface.co/avatars/39abcb2f6dba6ec01822dce0b5a7c2ab.svg" alt=""></a></li><li><a href="https://huggingface.co/Hivartei"><img src="https://huggingface.co/avatars/7a38edf6010c8b01c2c2e1e5c21e4b67.svg" alt=""></a></li><li><a href="https://huggingface.co/Wizzas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/reKDqB0OArc5x-li5obfp.png" alt=""></a></li></ul>
-<h2>本文提及的数据集 1</h2>
-<h2>本文提及的论文 1</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>
