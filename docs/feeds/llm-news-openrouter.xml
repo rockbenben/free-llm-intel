@@ -13,18 +13,592 @@
       <link>https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>如何阻止 AI agent 陷入无限循环</h1>
+<p>OpenRouter ·11/12/2026</p>
+<p><img src="https://openrouter.ai/blog/images/ai-agent-infinite-loop.png" alt="如何阻止 AI agent 陷入无限循环"><img src="https://openrouter.ai/blog/images/ai-agent-infinite-loop-dark.png" alt="如何阻止 AI agent 陷入无限循环"></p>
+<p>当模型不断调用一个失败的工具（通常还带着同样的参数），而 agent 循环里没有任何东西叫它停下，AI agent 就卡进了无限循环。每次重试都会把整段对话重发一遍，于是每一轮都比上一轮更贵，一个放任跑上一整夜的循环能烧掉几千美元。</p>
+<p>本指南用四道闸拦住循环，我们在六个当下主流模型上做过测试。其中三道跑在你的 agent 内部，通过 <a href="https://openrouter.ai/blog/tutorials/agent-sdk-with-callmodel/">OpenRouter Agent SDK</a>（@openrouter/agent 0.11.0）实现：doom-loop 检测、判定「哪些调用算重复」的规则，以及对步数和成本的封顶。第四道是给 API key 设额度上限，由我们在服务端强制执行，因此即便你的 agent 代码有 bug 也照样兜得住。</p>
+<h2>TL;DR</h2>
+<ul><li>开启 doom-loop 检测后，我们测试的六个模型全都在第三次相同的工具调用时被拦下。不开检测时，18 次运行里有 4 次一直重试到 40 步上限才停。开了之后，18 次里有 16 次在两次真实工具调用后就结束了。</li><li>callModel 里的 <code>doomLoop: true</code> 会拦下第三次相同调用，并在第六次时结束本次运行。</li><li>有些模型靠把参数稍作改动绕开检测。一个能对参数做归一化的 <code>loopKey</code> 就能拦住它们。</li><li><code>stopWhen: [stepCountIs(n), maxCost(x)]</code> 给每次运行都封顶，不管循环因何而起。</li><li>API key 上的额度上限封住你的总支出。装不下的请求会以 402 失败，并带 <code>limit_source: “openrouter_key_limit”</code>。</li></ul>
+<h2>AI agent 为什么会卡进无限循环？</h2>
+<p>agent 循环在模型不再请求工具、直接作答时结束。一个持续失败的工具，让模型没有理由这么做。错误被塞回对话，指令仍写着「完成任务」，于是再试一次看起来就是正确的下一步。除非你加上计数的代码，循环里没有任何东西在数尝试次数。</p>
+<p>循环越跑也越贵，因为每一轮都会重发整段对话，连之前每次失败都带上。在我们逐轮记录的一次运行里，输入从 131 token 涨到 3,262，单轮成本几乎翻了两番。若用更贵的模型、又有多个会话同时跑，这种增长就是「一晚上烧掉几千美元」的来由。</p>
+<p>为了亲眼看到它发生，我们搭了一个 billing agent，它唯一的工具会以「计费服务宕机」的方式失败。要跑它，把代码存成 agent.ts，执行 <code>bun add @openrouter/agent zod</code>，设置 <code>OPENROUTER_API_KEY</code>，再运行 <code>bun agent.ts</code>：</p>
+<pre><code>import { OpenRouter, tool, stepCountIs } from '@openrouter/agent';
+import { z } from 'zod';
+
+const openrouter = new OpenRouter({ apiKey: process.env.OPENROUTER_API_KEY });
+
+let attempts = 0;
+
+const fetchInvoice = tool({
+  name: 'fetch_invoice',
+  description: 'Fetch an invoice from the billing service by ID.',
+  inputSchema: z.object({ invoice_id: z.string() }),
+  execute: async ({ invoice_id }) =&gt; {
+    attempts++;
+    console.log(`  fetch_invoice(&quot;${invoice_id}&quot;)`);
+    throw new Error(`billing-service timeout after 30s fetching ${invoice_id}`);
+  },
+});
+
+let cost = 0;
+
+const result = openrouter.callModel({
+  model: 'mistralai/mistral-large-4-0',
+  instructions:
+    'You are a billing agent. Complete the task. If a tool call fails, retry it. ' +
+    'Do not stop until you have the invoice total.',
+  input: 'Get the total of invoice INV-2291.',
+  tools: [fetchInvoice] as const,
+  stopWhen: stepCountIs(40), // so the demo ends
+  hooks: {
+    PostModelCall: [{ handler: ({ usage }) =&gt; { cost += usage?.cost ?? 0; } }],
+    DoomLoopDetected: [{ handler: ({ action, streak }) =&gt;
+      console.log(`DoomLoopDetected: ${action} (streak ${streak})`) }],
+    SessionEnd: [{ handler: ({ reason }) =&gt; console.log(`SessionEnd: ${reason}`) }],
+  },
+});
+
+const text = await result.getText();
+const verdict = await result.getDoomLoopVerdict(); // set only when detection stopped the run
+
+console.log(`attempts: ${attempts}, cost: $${cost.toFixed(4)}`);
+console.log(verdict ? `stopped: ${verdict.message}` : text.slice(0, 160));</code></pre>
+<pre><code>  fetch_invoice(&quot;INV-2291&quot;)
+  fetch_invoice(&quot;INV-2291&quot;)
+  fetch_invoice(&quot;INV-2291&quot;)
+  ...
+SessionEnd: max_turns
+attempts: 41, cost: $0.0309
+I was unable to retrieve the total for invoice INV-2291. The billing service
+consistently timed out after 30 seconds on all 41 attempts to fetch this invoice, r</code></pre>
+<p>41 次调用一模一样，运行之所以停下，仅仅是因为 <code>stepCountIs(40)</code>。多出来的那次，是上限触发时模型已经请求、SDK 仍照跑的一次（第 3 步会讲）。没有 <code>stopWhen</code>，Agent SDK 会一直循环到模型不再请求工具为止，所以这次运行本不会自己停。最终回答里说服务在超时——可见模型每一轮都知道这一点，却仍然重试。</p>
+<p><img src="https://openrouter.ai/blog/images/ai-agent-infinite-loop-1.png" alt="折线图：未加防护的 Mistral Large 4 运行的累计成本，从第 1 轮接近 $0 一路涨到第 41 轮后的 $0.0309。"></p>
+<p>我们在六个模型上各跑三次同样的 agent，分别开、关检测：</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>每次运行工具调用数，无防护</strong></th><th><strong>撞到 40 步上限</strong></th><th><strong>每次运行工具调用数，doomLoop: true</strong></th></tr></thead><tbody><tr><td>anthropic/claude-haiku-5.5</td><td>6, 6, 6</td><td>0 of 3</td><td>2, 2, 2</td></tr><tr><td>deepseek/deepseek-v4.1-flash</td><td>6, 5, 7</td><td>0 of 3</td><td>2, 2, 2</td></tr><tr><td>google/gemini-3.8-flash</td><td>5, 6, 5</td><td>0 of 3</td><td>2, 2, 2</td></tr><tr><td>mistralai/mistral-large-4-0</td><td>11, 41, 41</td><td>2 of 3</td><td>2, 12, 2</td></tr><tr><td>openai/gpt-6-luna</td><td>17, 37, 21</td><td>0 of 3</td><td>2, 2, 20</td></tr><tr><td>x-ai/grok-4.7</td><td>41, 12, 41</td><td>2 of 3</td><td>2, 2, 2</td></tr></tbody></table>
+<p>循环还会一次一个样。Grok 4.7 在同一输入上分别调了 41、12、41 次，所以一次干净利落的测试并不能证明你的 agent 不会循环。全部 18 次运行加起来，检测把工具调用从 314 次砍到 64 次，花费从 $0.29 降到 $0.05。</p>
+<h2>第 1 步：打开 doom-loop 检测</h2>
+<p>给 callModel 调用加一个选项：</p>
+<pre><code>  doomLoop: true,</code></pre>
+<pre><code>  fetch_invoice(&quot;INV-2291&quot;)
+DoomLoopDetected: observe (streak 2)
+  fetch_invoice(&quot;INV-2291&quot;)
+DoomLoopDetected: block (streak 3)
+DoomLoopDetected: block (streak 4)
+DoomLoopDetected: block (streak 5)
+DoomLoopDetected: stop (streak 6)
+SessionEnd: doom_loop
+attempts: 2, cost: $0.0034
+stopped: Doom loop suspected: tool &quot;fetch_invoice&quot; was invoked in 6 consecutive rounds
+with identical arguments (fingerprint 64be4614c5ea3e26…). Repeating the call will not
+change the result. Take a different approach, or explain why repetition is required.</code></pre>
+<p><a href="https://openrouter.ai/docs/agent-sdk/call-model/doom-loop-detection">Doom-loop detection</a> 按工具名和参数给每次工具调用算指纹。它先把参数规范化，因此 JSON 键换个顺序也藏不住重复。只有当模型看过上一次结果、又再次请求时，才算一次重复——所以同一轮里五次相同的调用只算一次。随着连续次数增长，它沿默认阶梯往上爬：第 2 次 observe、第 3 次 block、第 6 次 stop。</p>
+<p>某次调用被 block 时，SDK 跳过 <code>execute</code>，返回一个工具错误，告诉模型它在重复自己。和超时不同，这个错误明说再试也没用。多数运行里，模型读到它就直接写了最终回答，以 <code>SessionEnd: complete</code> 结束。上面那次它还在继续请求，于是 stop 以 <code>reason: doom_loop</code> 结束了运行。<code>getDoomLoopVerdict()</code> 仅在检测结束运行时才返回消息，这正好是值得告警的信号。</p>
+<p>想更早停，就调低阈值。用 <code>doomLoop: { ladder: { observe: 2, block: 3, stop: 4 } }</code> 时，一次 GPT-6 Luna 运行在连续第 4 次就停了，只花 $0.0002。阶梯还有默认关闭的两级：<code>steer</code> 给模型发一条「你在重复自己」的提示，<code>escalate</code> 让下一轮跑在你指定的更强模型上。</p>
+<h2>第 2 步：告诉检测器什么算「同一次调用」</h2>
+<p>默认只有参数完全一致，两次调用才算相同。被 block 之后，有些模型会把参数稍作改动，于是这次调用有了新指纹，连续计数重新从零开始：</p>
+<pre><code> fetch_invoice(&quot;INV-2291&quot;)
+DoomLoopDetected: observe (streak 2)
+  fetch_invoice(&quot;INV-2291&quot;)
+DoomLoopDetected: block (streak 3)
+  fetch_invoice(&quot;2291&quot;)
+  fetch_invoice(&quot;inv-2291&quot;)
+  fetch_invoice(&quot;INV-2291&quot;)
+DoomLoopDetected: observe (streak 2)
+  fetch_invoice(&quot;INV-2291&quot;)
+  fetch_invoice(&quot;INV2291&quot;)
+  ...
+SessionEnd: complete
+attempts: 13, cost: $0.0125</code></pre>
+<p>在另外九次开了检测的 Mistral Large 4 运行里，模型有五次这么干，其中三次撞到 40 步上限，多半是在 <code>INV-2291</code> 和 <code>inv-2291</code> 之间来回换。GPT-6 Luna 则用尾部空格和换行做同样的事。模型其实在照 block 消息做——那条消息让它们换个思路。可只有一个工具时，它们能换的「另一种做法」就只剩换个输入。</p>
+<p>工具上的 <code>loopKey</code> 告诉检测器：输入的哪一部分标识了这次调用。对发票 ID 来说，就是那串数字：</p>
+<pre><code> loopKey: ({ invoice_id }) =&gt; invoice_id.replace(/\D/g, ''), // &quot;inv-2291 &quot; and &quot;INV-2291&quot; are one call</code></pre>
+<pre><code> fetch_invoice(&quot;INV-2291&quot;)
+DoomLoopDetected: observe (streak 2)
+  fetch_invoice(&quot;INV-2291&quot;)
+DoomLoopDetected: block (streak 3)
+DoomLoopDetected: block (streak 4)
+DoomLoopDetected: block (streak 5)
+SessionEnd: complete
+attempts: 2, cost: $0.0039</code></pre>
+<p>现在每种变体都映射到 2291，连续次数持续增长，重复也就一直被拦。六次里有五次在两次真实调用后就停了。第六次里，模型试了另一张发票 <code>INV-0000</code>，连续计数被正确地重置了。</p>
+<p>把大小写、空格、前缀，以及一切「不改变工具所取记录」的差异都归一化。要完全忽略某个字段（比如模型每次重试都调大的 timeout），就只列出要紧的字段：<code>loopKey: [‘invoice_id’]</code>。而本职就是重复的工具，比如轮询任务状态的那个，用 <code>loopKey: false</code>。</p>
+<h2>第 3 步：给每次运行的步数和成本封顶</h2>
+<p>检测只抓重复。每轮都换花样的模型永远不会重复指纹；被 block 后还继续请求的模型，也要等 stop 触发才停。<a href="https://openrouter.ai/docs/agent-sdk/call-model/stop-conditions">Stop conditions</a> 则不管运行为何拖长，都会把它结束。把 <code>maxCost</code> 和 <code>stepCountIs</code> 一起 import，替换 <code>stopWhen</code>，再加两个 <a href="https://openrouter.ai/docs/agent-sdk/call-model/lifecycle-hooks">lifecycle hooks</a>：</p>
+<pre><code>let failuresInARow = 0; // tool errors in a row, whatever the arguments
+
+  stopWhen: [stepCountIs(15), maxCost(0.01), () =&gt; failuresInARow &gt;= 5],
+  hooks: {
+    // ...the hooks from before, plus:
+    PostToolUse: [{ handler: () =&gt; { failuresInARow = 0; } }],
+    PostToolUseFailure: [{ handler: () =&gt; { failuresInARow++; } }],
+  },</code></pre>
+<p><code>stopWhen</code> 每轮之后都会检查，任一条件为真即停止运行。<code>maxCost</code> 累加我们随每次响应返回的 <code>usage.cost</code>，算的正是你被计费的金额。失败计数器不看参数，因此即便没有 <code>loopKey</code>，它也能抓住第 2 步里改过参数的调用。在一次同样改参数的 Mistral Large 4 运行里，它在六次调用后结束了会话，花费 $0.0062，<code>SessionEnd: max_turns</code>。</p>
+<p>每个 <code>stopWhen</code> 条件都以 <code>reason: max_turns</code> 结束会话，所以若需要区分是哪道封顶，就自己记一条原因。当封顶触发、而模型还有待处理的工具调用时，SDK 会先跑完它们，再在禁用工具调用的情况下多走一轮，好让运行以一段写好的回答收尾。这就是为什么这次在 5 次的上限下跑了 6 次调用，也是第一个 demo 在 40 的上限下跑了 41 次。设 <code>allowFinalResponse: false</code> 可跳过这一轮。</p>
+<p>两道封顶都按你正常运行的水位来设。我们那几次在 Mistral Large 4 上用 4 到 6 轮、花 $0.0018 到 $0.0053，所以 15 步和 $0.01 既留了余量，又不至于放进一次 40 轮的运行。两者里成本上限更要紧，因为越到后面每轮越贵。</p>
+<p>不用 Agent SDK 时，同样这几道闸也能塞进任意循环里：按工具名和归一化后的参数计数，第三次重复时不去执行、而是返回一条像「Blocked: tell the user what went wrong」的工具结果，并在步数或累加的 <code>usage.cost</code> 越过上限时停下。我们针对 chat completions API 写的 Python 版本，三次运行里都在四步之后、不到 $0.002 就拦住了 Mistral Large 4。</p>
+<h2>第 4 步：给 API key 设额度上限</h2>
+<p>前面每道闸都跑在 agent 自己的进程里。可一旦那段代码有 bug、上线时漏了封顶，或跑了一百个各自都压在 <code>maxCost</code> 之下的会话，就没有任何东西限制总额了。key 上的额度上限能限制，因为我们在请求到达供应商之前就于服务端做了检查。</p>
+<p>在 dashboard 里、或用 create key API，设置 <code>limit</code>（以美元计）和 <code>limit_reset</code>（daily、weekly、monthly 或 null）。若 key 用了 BYOK，还要把 <code>include_byok_in_limit</code> 设为 true——它默认 false，否则 BYOK 的花费不计入上限。每日额度在 UTC 午夜重置，每周额度在周一重置。给每个 agent 或每个客户单独一把 key，这样一个循环最多只能花掉那把 key 的份额。若多个 agent 不得不共用一把 key，参见 <a href="https://openrouter.ai/docs/guides/best-practices/capping-shared-agent-keys">Capping Shared Agent Keys</a>。</p>
+<p>在路由请求之前，我们先按最坏情况给它估价，即输入加 <code>max_tokens</code>。若这装不进 key 剩下的额度，请求就失败，且不会向你收费。我们往一个还剩 $9.97 的 key 上、对一个贵模型发了一个 <code>max_tokens: 900000</code> 的 chat completions 请求，拿回的是：</p>
+<pre><code>402
+{
+  &quot;error&quot;: {
+    &quot;message&quot;: &quot;This request requires more credits, or fewer max_tokens. You requested up to 900000 tokens, but can only afford 664657. To increase, visit https://openrouter.ai/workspaces/&lt;workspace-slug&gt;/keys/&lt;key-hash&gt; and adjust the key's total limit&quot;,
+    &quot;code&quot;: 402,
+    &quot;metadata&quot;: {
+      &quot;limit_source&quot;: &quot;openrouter_key_limit&quot;,
+      &quot;remedy_hint&quot;: &quot;Raise or remove this API key's usage limit at https://openrouter.ai/settings/keys, or use a key without a limit.&quot;,
+      &quot;provider_name&quot;: null
+    }
+  },
+  &quot;user_id&quot;: &quot;&lt;org-id&gt;&quot;
+}</code></pre>
+<p>我们把 workspace slug、key hash 和 organization ID 都替换掉了。</p>
+<p>请按 <code>error.metadata.limit_source</code> 分支，别按消息文本或状态码。额度耗尽的 key 同样报 <code>openrouter_key_limit</code>，<a href="https://openrouter.ai/docs/api_reference/limits">limits docs</a> 在 402 额度错误和 403 预算错误下都列了这个来源。若像上面例子那样，消息说这把 key 只能负担更少的 token，就调低 <code>max_tokens</code> 重试。若 key 已耗尽，在额度重置前重试都不可能成功，应当当作「停止」处理。Agent SDK 会把这个 402 抛成 <code>PaymentRequiredResponseError</code>。唯一值得重试的 402 是 <code>openrouter_in_flight_budget</code>，且要按它的 <code>Retry-After</code> 头来。限流返回的则是 429，见我们的 <a href="https://openrouter.ai/blog/tutorials/llm-api-rate-limits/">LLM API rate limits guide</a>。</p>
+<p><a href="https://openrouter.ai/docs/guides/features/workspaces/workspace-budgets">Workspace budgets</a> 把一个 workspace 里所有 key 的上限按每天、每周、每月或整个生命周期合并计算。被拦的请求拿到 403，消息形如 <code>Workspace monthly budget of $500.00 exceeded. Contact your org admin.</code>（我们没触发这一种，消息出自文档）。已在途的请求仍会跑完，因此花费可能略微超出，但一个跑通宵的循环会停在接近每日上限的地方。<a href="https://openrouter.ai/docs/guides/best-practices/spend-controls">spend controls guide</a> 讲了 workspace budgets 与按成员护栏如何配合。</p>
+<h2>哪道闸拦哪种循环？</h2>
+<p>每道闸抓的是不同种类的循环。key 上限全都能抓，但要等 key 的额度花完才生效，所以最适合当最后一层。</p>
+<table><thead><tr><th><strong>循环</strong></th><th><strong>doomLoop</strong></th><th><strong>loopKey</strong></th><th><strong>stopWhen 封顶</strong></th><th><strong>Key 上限或 workspace budget</strong></th></tr></thead><tbody><tr><td>同一调用、同一参数</td><td>拦住</td><td>不需要</td><td>到上限拦住</td><td>到额度拦住</td></tr><tr><td>同一调用、参数略有不同</td><td>漏掉</td><td>拦住</td><td>到上限拦住</td><td>到额度拦住</td></tr><tr><td>每轮换一种新做法</td><td>漏掉</td><td>漏掉</td><td>到上限拦住</td><td>到额度拦住</td></tr><tr><td>很多次运行，各自都低于上限</td><td>仅单次运行</td><td>仅单次运行</td><td>仅单次运行</td><td>拦住总额</td></tr><tr><td>上线时漏了防护</td><td>漏掉</td><td>漏掉</td><td>漏掉</td><td>到额度拦住</td></tr></tbody></table>
+<h2>常见问题</h2>
+<h3>出错后我的 agent 为什么还一直调同一个工具？</h3>
+<p>工具结果说调用失败，prompt 又说要完成任务，于是「再试一次」在模型看来就是正确的动作。返回能告诉模型下一步该怎么做的错误，比如「计费服务已宕机。告知用户并停止。」别跟模型说「一直重试到成功为止」。</p>
+<h3>max iterations 上限能拦住失控的成本吗？</h3>
+<p>max iterations 上限能拦住单次运行无限跑下去，却封不住花费——因为越到后面每轮越贵，而且许多压在上限之下的运行加起来仍很可观。LangChain 的 <code>AgentExecutor</code> 里的 <code>max_iterations</code>、CrewAI 里的 <code>max_iter</code>，和 OpenRouter Agent SDK 的 <code>stepCountIs</code> 是同一类东西。请给它配上每次运行的成本上限，以及 API key 上的额度上限。</p>
+<h2>下一步</h2>
+<ul><li><a href="https://openrouter.ai/docs/agent-sdk/call-model/doom-loop-detection">Doom-loop detection</a>：阶梯、steering、escalation 与按工具覆盖。</li><li><a href="https://openrouter.ai/docs/agent-sdk/call-model/stop-conditions">Stop conditions</a>：<code>stepCountIs</code>、<code>maxCost</code>、<code>maxTokensUsed</code> 与自定义条件。</li><li><a href="https://openrouter.ai/blog/tutorials/team-spend-controls-setup/">Set up team AI spend controls</a>：dashboard 里的 workspace budgets 与护栏。</li><li><a href="https://openrouter.ai/blog/tutorials/agent-sdk-with-callmodel/">Agent SDK: Building Multi-turn Agent Workflows on OpenRouter</a>：<code>callModel</code> 如何跑 agent 循环。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>How to Benchmark LLMs</title>
       <link>https://openrouter.ai/blog/tutorials/how-to-benchmark-llms/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/how-to-benchmark-llms/</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>如何给 LLM 做基准测试</h1>
+<p>OpenRouter ·11/12/2026</p>
+<p><img src="https://openrouter.ai/blog/images/how-to-benchmark-llms.png" alt="如何给 LLM 做基准测试"><img src="https://openrouter.ai/blog/images/how-to-benchmark-llms-dark.png" alt="如何给 LLM 做基准测试"></p>
+<p>用你自己应用的输入与输出格式里拿到的证据来挑模型。把完全相同的任务经 OpenRouter 跑一遍，比较判分后的准确率、<a href="https://openrouter.ai/docs/api/api-reference/generations/get-request-%26-usage-metadata-for-a-generation">计费成本</a>和请求耗时。在我们的 60 个合成任务上，GPT-6.1 Sol 在所测契约与设置下、跨三轮重复通过 180/180 次试验。</p>
+<h2>太长不看（TL;DR）</h2>
+<ul><li>代码检查衡量正确性与输出合规性。</li><li>Sol 在我们的合成集上通过 180/180 次试验；DeepSeek 的回答成本最低，通过 157/180 次。</li><li>与公开排行榜的一致性很弱，Spearman 相关系数仅 0.109。</li><li>在信任一个分数之前，先查每个任务跑了多少次、拿回多少条回答、以及每笔账单是否都已核验。</li></ul>
+<p>先把行为定义清楚，再定义它的检查。</p>
+<h2>第 1 步：写出答案能被脚本核验的任务</h2>
+<p>一个任务需要输入、预期答案和输出契约。对发票，要写明计入哪些行、舍入方式，以及可接受的货币后缀。</p>
+<p>全部 40 个 baseline 任务和 20 个 hard 任务，我们都在最终运行之前就写好了。</p>
+<table><thead><tr><th><strong>类别</strong></th><th><strong>示例</strong></th><th><strong>检查</strong></th></tr></thead><tbody><tr><td>发票算术</td><td>折扣后未付款行的合计</td><td>十进制总额与舍入</td></tr><tr><td>日期与排期</td><td>转换一个时间戳，或列出匹配的日期</td><td>精确的时刻或日期列表</td></tr><tr><td>邮件提取</td><td>把字段提取成 JSON</td><td>键、类型与值</td></tr><tr><td>Python 函数</td><td>针对隐藏输入实现一个函数</td><td>在隔离 runtime 里的结果</td></tr><tr><td>输出约束</td><td>在指定限制内产出文本</td><td>长度、词汇与格式</td></tr><tr><td>退款决策</td><td>在书面政策的边界上套用它</td><td>每个订单的决策</td></tr></tbody></table>
+<p>参考答案要独立算出。把 prompt 调优用的 case 与最终评估分开。退款 case 只检验书面决策，不执行交易。</p>
+<h2>第 2 步：用代码判分，并检验判分器</h2>
+<p>对 APPROVE 用精确匹配，对 JSON 用 schema/值检查。只把允许的差异做归一化。若你的消费方只收一个数字，那么容忍数字周围的散文，就会把一次失败藏起来。</p>
+<p>拿已知正确、错误和格式畸形的回答来测。对退款阈值，把正好 $200 和正好 30 天纳入，再取各边界之上一点的值。</p>
+<p>我们开发用的检查器曾把合法 Python 判成无效，因为它漏了 ord 和 type。最终研究之前我们修好了它，明确指定 CPython 3.12.10/WASI 并加资源限制。否则检查器的失败会被算到模型头上。</p>
+<p>完整研究的 runner 会隔离生成的代码，并在 sandbox 环境缺失时停下。教学示例不执行任何生成代码。</p>
+<h2>第 3 步：跑三任务 Python 示例</h2>
+<p>下载<a href="https://drive.google.com/file/d/1JMAwDsDwfmkAwUI7lPe2kn2mlmd-tMOv/view?usp=drivesdk">配套 ZIP</a>。解压之前，把它的 SHA-256 校验和与下面这个值比对：</p>
+<pre><code>a38ee17a2eb7090f9f4849a605cc8214691c889ca0ae40c121259603592178e8</code></pre>
+<p>PowerShell：</p>
+<pre><code>Get-FileHash .\benchmark-reader-companion.zip -Algorithm SHA256</code></pre>
+<p>Linux 或 macOS：</p>
+<pre><code># Linux
+sha256sum benchmark-reader-companion.zip
+# macOS
+shasum -a 256 benchmark-reader-companion.zip</code></pre>
+<p>若两个值不一致，停下来检查下载。一致之后再解压 ZIP。你需要 Python 3.12 或更高版本。标准库版教学 runner、JSON 示例和比较逻辑已在 Windows x64 与 Linux 上通过离线检查；macOS 仍未测试。随包附带的完整研究 sandbox 与原生 Ori 安装仅支持 Windows x64。</p>
+<p>在解压出来的文件夹里：</p>
+<pre><code>python verify_package.py
+python three_tasks.py check</code></pre>
+<p>这条 check 打印 OFFLINE reference and grader checks passed; zero inference calls。完整脚本按文件顺序给出。它的配套模块负责请求、持久化和报告。</p>
+<pre><code>&quot;&quot;&quot;Three exact contracts; run from the extracted companion (standard library).&quot;&quot;&quot;
+import argparse
+from datetime import datetime, timezone
+from decimal import Decimal
+import json
+from pathlib import Path
+import re
+
+from reader_core import execute, reconcile, report, read, load_config, finish_grade
+
+TASKS = [
+    {&quot;id&quot;: &quot;invoice&quot;, &quot;prompt&quot;: &quot;Two unpaid lines cost 3 x 12.50 USD and 2 x 4.25 USD. Return only their total with exactly two decimal places.&quot;, &quot;expected&quot;: &quot;46.00&quot;},
+    {&quot;id&quot;: &quot;utc&quot;, &quot;prompt&quot;: &quot;Convert 2026-10-18T10:30:00+02:00 to UTC. Return only YYYY-MM-DDTHH:MM:SSZ.&quot;, &quot;expected&quot;: &quot;2026-10-18T08:30:00Z&quot;},
+    {&quot;id&quot;: &quot;refund&quot;, &quot;prompt&quot;: &quot;Policy: approve only if amount &lt;= 200 USD and age &lt;= 30 days. Amount=200 USD; age=30 days. Return only APPROVE or DENY.&quot;, &quot;expected&quot;: &quot;APPROVE&quot;},
+]
+
+def refund_policy(amount, days):
+    return &quot;APPROVE&quot; if Decimal(str(amount)) &lt;= 200 and days &lt;= 30 else &quot;DENY&quot;
+
+def grade(task, text, finish):
+    terminal = finish_grade(finish)
+    if terminal:
+        return terminal
+    if not isinstance(text, str) or not text.strip():
+        return {&quot;passed&quot;: False, &quot;classification&quot;: &quot;empty&quot;}
+    text = text.strip()
+    patterns = {&quot;invoice&quot;: r&quot;\d+\.\d{2}&quot;,
+                &quot;utc&quot;: r&quot;\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z&quot;,
+                &quot;refund&quot;: r&quot;APPROVE|DENY&quot;}
+    valid = bool(re.fullmatch(patterns.get(task[&quot;id&quot;], r&quot;\d+\.\d{2}&quot;), text))
+    passed = valid and text == task[&quot;expected&quot;] and finish == &quot;stop&quot;
+    return {&quot;passed&quot;: passed, &quot;classification&quot;: &quot;pass&quot; if passed else
+            (&quot;incorrect&quot; if valid else &quot;malformed&quot;)}</code></pre>
+<p>在采用一个分数之前，先查它的参考答案与拒绝规则。这些离线夹具覆盖边界决策、无效格式和被截断的回答，且不调用模型。</p>
+<pre><code>def offline():
+    money = Decimal(3) * Decimal(&quot;12.50&quot;) + Decimal(2) * Decimal(&quot;4.25&quot;)
+    assert format(money, &quot;.2f&quot;) == TASKS[0][&quot;expected&quot;]
+    utc = datetime.fromisoformat(&quot;2026-10-18T10:30:00+02:00&quot;)
+    assert utc.astimezone(timezone.utc).strftime(&quot;%Y-%m-%dT%H:%M:%SZ&quot;) == TASKS[1][&quot;expected&quot;]
+    assert refund_policy(200, 30) == TASKS[2][&quot;expected&quot;]
+    for amount, days, expected in [(200.01, 30, &quot;DENY&quot;), (200, 31, &quot;DENY&quot;),
+                                   (199.99, 29, &quot;APPROVE&quot;), (0, 0, &quot;APPROVE&quot;)]:
+        assert refund_policy(amount, days) == expected
+    for task in TASKS:
+        assert grade(task, task[&quot;expected&quot;], &quot;stop&quot;)[&quot;passed&quot;]
+        for bad in (&quot;wrong&quot;, None, &quot;&quot;, '{&quot;answer&quot;: 46}', &quot;APPROVE please&quot;):
+            assert not grade(task, bad, &quot;stop&quot;)[&quot;passed&quot;]
+        assert not grade(task, task[&quot;expected&quot;], &quot;length&quot;)[&quot;passed&quot;]
+    assert not grade(TASKS[0], &quot;47.00&quot;, &quot;stop&quot;)[&quot;passed&quot;]
+    assert not grade(TASKS[2], &quot;DENY&quot;, &quot;stop&quot;)[&quot;passed&quot;]
+    print(&quot;OFFLINE reference and grader checks passed; zero inference calls.&quot;)</code></pre>
+<p>把检查与花钱分开。命令行接口默认做离线校验，推理之前必须显式给 live 选项和额度。</p>
+<pre><code>def main(tasks=None, grader=grade, default_config=&quot;demo-config.json&quot;, offline_check=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&quot;operation&quot;, nargs=&quot;?&quot;, default=&quot;check&quot;,
+                        choices=[&quot;check&quot;, &quot;plan&quot;, &quot;run&quot;, &quot;report&quot;, &quot;reconcile&quot;])
+    parser.add_argument(&quot;--config&quot;, default=default_config)
+    parser.add_argument(&quot;--run-dir&quot;, type=Path, default=Path(&quot;runs/demo&quot;))
+    parser.add_argument(&quot;--live&quot;, action=&quot;store_true&quot;)
+    parser.add_argument(&quot;--max-usd&quot;, default=&quot;0&quot;)
+    parser.add_argument(&quot;--resume&quot;, action=&quot;store_true&quot;)
+    parser.add_argument(&quot;--tasks&quot;, help=&quot;Optional exact-contract custom task JSON&quot;)
+    args = parser.parse_args()
+    if args.operation == &quot;check&quot;:
+        if args.tasks:
+            parser.error(&quot;Use an example entry point with its own offline_check; check does not accept --tasks overrides&quot;)
+        if offline_check is not None:
+            offline_check()
+        elif tasks is not None or grader is not grade or args.tasks:
+            parser.error(&quot;Custom tasks/graders require offline_check=... for their own reference and fixture checks&quot;)
+        else:
+            offline()
+        return
+    selected = read(args.tasks) if args.tasks else (tasks if tasks is not None else TASKS)
+    config = load_config(args.config)
+    if args.operation == &quot;report&quot;:
+        print(json.dumps(report(args.run_dir), indent=2))
+    elif args.operation == &quot;reconcile&quot;:
+        reconcile(args.run_dir, live=args.live)
+        print(json.dumps(report(args.run_dir), indent=2))
+    else:
+        execute(args.run_dir, selected, config, grader, args.max_usd,
+                live=args.live, resume=args.resume, plan=args.operation == &quot;plan&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre>
+<h3>配置并查看计划</h3>
+<p>用随包提供的 Luna 配置来设定模型、重复次数、token 额度和 provider 约束：</p>
+<pre><code>{
+  &quot;models&quot;: [
+    &quot;openai/gpt-6-luna&quot;
+  ],
+  &quot;repeats&quot;: 1,
+  &quot;max_tokens&quot;: 1024,
+  &quot;settings&quot;: {
+    &quot;openai/gpt-6-luna&quot;: {
+      &quot;provider&quot;: {
+        &quot;require_parameters&quot;: true,
+        &quot;allow_fallbacks&quot;: true,
+        &quot;max_price&quot;: {
+          &quot;prompt&quot;: 0.09999999999999999,
+          &quot;completion&quot;: 0.5,
+          &quot;request&quot;: 0
+        }
+      },
+      &quot;reasoning&quot;: {
+        &quot;effort&quot;: &quot;low&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>Sol 的配置保留重复次数与 token 设置，但用它自己的价格上限：</p>
+<pre><code>{
+  &quot;models&quot;: [
+    &quot;openai/gpt-6.1-sol&quot;
+  ],
+  &quot;repeats&quot;: 1,
+  &quot;max_tokens&quot;: 1024,
+  &quot;settings&quot;: {
+    &quot;openai/gpt-6.1-sol&quot;: {
+      &quot;provider&quot;: {
+        &quot;require_parameters&quot;: true,
+        &quot;allow_fallbacks&quot;: true,
+        &quot;max_price&quot;: {
+          &quot;prompt&quot;: 2.0,
+          &quot;completion&quot;: 10.0,
+          &quot;request&quot;: 0
+        }
+      },
+      &quot;reasoning&quot;: {
+        &quot;effort&quot;: &quot;low&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>models 选候选模型，repeats 指定每个任务发几次请求，max_tokens 设定 completion 额度。reasoning 可能在可见输出之前就把这份额度耗掉。离线检查不发任何 API 调用。付费运行必须显式给 —live 标志。被长度截断的回答直接判失败、不重试。</p>
+<p>价格上限以「每百万 token 的美元数」计；Luna 的 prompt 上限约为 $0.10。若某个 provider 不再支持已保存的设置，runner 必须停下，而不是悄悄改掉它们。provider fallback 不会换模型，也不会重发推理。</p>
+<pre><code>python three_tasks.py plan --config luna-config.json</code></pre>
+<p>实际离线输出：</p>
+<pre><code>{&quot;planned_calls&quot;: 3, &quot;max_tokens&quot;: 1024, &quot;models&quot;: [&quot;openai/gpt-6-luna&quot;], &quot;repeats&quot;: 1, &quot;estimated_reservations_usd&quot;: &quot;0.0023543749999999999565625&quot;}</code></pre>
+<p>reservation 只是一个本地成本估算，既不是账户上的冻结，也不是保证的封顶。先做 plan，再定额度。</p>
+<table><thead><tr><th><strong>教学用选择</strong></th><th><strong>调用数</strong></th><th><strong>估算 reservations</strong></th></tr></thead><tbody><tr><td>Luna，三个任务</td><td>3</td><td>$0.0023544</td></tr><tr><td>Sol，三个任务</td><td>3</td><td>$0.0470875</td></tr><tr><td>Luna，下面的 JSON 任务</td><td>1</td><td>$0.00080725</td></tr><tr><td>Sol，下面的 JSON 任务</td><td>1</td><td>$0.016145</td></tr></tbody></table>
+<p>改任务、重复次数或 token 都会改变估算。若花费超出估算，脚本就不再发送新请求。</p>
+<h3>做一次小额付费运行</h3>
+<p>在 <a href="https://openrouter.ai/settings/keys">API-key settings</a> 里建一个 key，<a href="https://openrouter.ai/settings/credits">充值 credit</a>，并给 key 设一个合适的限额。在你的终端里本地设置变量。</p>
+<p>PowerShell：</p>
+<pre><code>$env:OPENROUTER_API_KEY = &quot;YOUR_OPENROUTER_API_KEY&quot;</code></pre>
+<p>Bash 或 Zsh：</p>
+<pre><code>export OPENROUTER_API_KEY=&quot;YOUR_OPENROUTER_API_KEY&quot;</code></pre>
+<p>若已配好同名变量，直接复用即可。这个包不加载 .env。对随包提供的三任务 Luna 配置：</p>
+<pre><code>python three_tasks.py run --config luna-config.json --run-dir runs/my-luna --live --max-usd 0.01
+python three_tasks.py reconcile --run-dir runs/my-luna --live
+python three_tasks.py report --run-dir runs/my-luna</code></pre>
+<p>对账只做只读的 <a href="https://openrouter.ai/docs/api/api-reference/generations/get-request-%26-usage-metadata-for-a-generation">generation metadata</a> 查询。报告显示 response coverage（完成的回答数除以计划试验数）、passes/graded、failures、已核验成本和中位请求耗时。账单核验完成之前，报告会把成本保持为未结。请求耗时不含判分和元数据查询，也不是首 token 时间。</p>
+<p>真实实跑结果会有波动。下面的合成示例只为演示报告形态，不是对模型的测量。</p>
+<h2>第 4 步：加你自己的任务和判分器</h2>
+<p>随包提供的 custom-tasks.json 展示了任务格式：</p>
+<pre><code>[
+  {
+    &quot;id&quot;: &quot;custom-total&quot;,
+    &quot;prompt&quot;: &quot;Four items cost 12.50 USD each. Return only the total with exactly two decimals.&quot;,
+    &quot;expected&quot;: &quot;50.00&quot;
+  }
+]</code></pre>
+<p>python custom_task.py check 会用 Decimal 独立算出参考答案，并测试正确、错误和畸形的回答。金额类自定义 ID 走两位小数判分器。另一种契约需要它自己的判分器和检查。</p>
+<p>完整的 json_extraction.py 按文件顺序分三部分给出。它允许 JSON 里的空白和键顺序差异，但拒绝缺失、多余或重复的键以及错误的类型。一个 schema 合法但值错了的对象判为 incorrect。被过滤掉或异常结束有各自的分类。</p>
+<pre><code>&quot;&quot;&quot;A complete exact-schema JSON extraction example; offline check by default.&quot;&quot;&quot;
+import json
+
+from reader_core import finish_grade
+from three_tasks import main
+
+CUSTOMER_EMAIL = &quot;mira@example.test&quot;
+ORDER_CODE = &quot;A-104&quot;
+ITEM_COUNT = 3
+SOURCE_TEXT = (&quot;Customer: Mira. Email: mira@example.test. Order: A-104. &quot;
+               &quot;Items: 3. Gift wrap: no.&quot;)
+
+# Define reference fields from the independently specified source facts.
+# Do not ask a model (or the grader) to produce the reference.
+EXPECTED = {&quot;email&quot;: CUSTOMER_EMAIL, &quot;order_id&quot;: ORDER_CODE,
+            &quot;item_count&quot;: ITEM_COUNT, &quot;gift_wrap&quot;: False}
+TASKS = [{&quot;id&quot;: &quot;order-extraction&quot;, &quot;grader&quot;: &quot;exact-order-json-v1&quot;,
+          &quot;prompt&quot;: &quot;Extract email, order_id, item_count and gift_wrap from this order. &quot;
+                    &quot;Return a JSON object only, with exactly those keys. email and order_id &quot;
+                    &quot;are strings; item_count is an integer; gift_wrap is a boolean. &quot; + SOURCE_TEXT,
+          &quot;expected&quot;: EXPECTED}]</code></pre>
+<p>光有 JSON 语法还不够。先拒绝重复的键和无效的数值，再校验 schema，然后才把字段与参考答案比较。</p>
+<pre><code>def strict_json(text):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError(&quot;Duplicate JSON key&quot;)
+            result[key] = value
+        return result
+    def nonfinite(value):
+        raise ValueError(&quot;Nonfinite JSON number&quot;)
+    return json.loads(text, object_pairs_hook=pairs, parse_constant=nonfinite)
+
+def grade(task, text, finish):
+    terminal = finish_grade(finish)
+    if terminal:
+        return terminal
+    if not isinstance(text, str) or not text.strip():
+        return {&quot;passed&quot;: False, &quot;classification&quot;: &quot;empty&quot;}
+    try:
+        actual = strict_json(text)
+    except (ValueError, TypeError):
+        return {&quot;passed&quot;: False, &quot;classification&quot;: &quot;malformed&quot;}
+    types = {&quot;email&quot;: str, &quot;order_id&quot;: str, &quot;item_count&quot;: int, &quot;gift_wrap&quot;: bool}
+    schema_ok = (type(actual) is dict and actual.keys() == types.keys()
+                 and all(type(actual[key]) is kind for key, kind in types.items()))
+    if not schema_ok:
+        return {&quot;passed&quot;: False, &quot;classification&quot;: &quot;malformed&quot;}
+    passed = actual == task[&quot;expected&quot;]
+    return {&quot;passed&quot;: passed, &quot;classification&quot;: &quot;pass&quot; if passed else &quot;incorrect&quot;}</code></pre>
+<p>接受与拒绝都要测。这些夹具把「合法但值错」与「畸形输出」区分开，并验证被过滤或截断不能算通过。</p>
+<pre><code>CORRECT = '{&quot;order_id&quot;:&quot;A-104&quot;,&quot;email&quot;:&quot;mira@example.test&quot;,&quot;gift_wrap&quot;:false,&quot;item_count&quot;:3}'
+WRONG = '{&quot;email&quot;:&quot;other@example.test&quot;,&quot;order_id&quot;:&quot;A-104&quot;,&quot;item_count&quot;:3,&quot;gift_wrap&quot;:false}'
+MALFORMED = [&quot;not JSON&quot;, '```json\n' + CORRECT + '\n```',
+             '{&quot;email&quot;:&quot;mira@example.test&quot;}', CORRECT.replace('3}', 'true}'),
+             CORRECT.replace('3}', '3.0}'), CORRECT.replace('3}', 'NaN}'),
+             CORRECT[:-1] + ',&quot;item_count&quot;:3}', CORRECT[:-1] + ',&quot;extra&quot;:1}']
+
+def offline():
+    assert EXPECTED == {&quot;email&quot;: &quot;mira@example.test&quot;, &quot;order_id&quot;: &quot;A-104&quot;,
+                        &quot;item_count&quot;: 3, &quot;gift_wrap&quot;: False}
+    assert f&quot;Email: {CUSTOMER_EMAIL}.&quot; in SOURCE_TEXT
+    assert f&quot;Order: {ORDER_CODE}.&quot; in SOURCE_TEXT
+    assert f&quot;Items: {ITEM_COUNT}.&quot; in SOURCE_TEXT and &quot;Gift wrap: no.&quot; in SOURCE_TEXT
+    task = TASKS[0]
+    assert grade(task, CORRECT, &quot;stop&quot;)[&quot;passed&quot;]
+    assert grade(task, json.dumps(EXPECTED, indent=2), &quot;stop&quot;)[&quot;passed&quot;]
+    assert grade(task, WRONG, &quot;stop&quot;)[&quot;classification&quot;] == &quot;incorrect&quot;
+    for text in MALFORMED:
+        assert grade(task, text, &quot;stop&quot;)[&quot;classification&quot;] == &quot;malformed&quot;, text
+    assert grade(task, &quot;&quot;, &quot;stop&quot;)[&quot;classification&quot;] == &quot;empty&quot;
+    assert grade(task, CORRECT, &quot;content_filter&quot;)[&quot;classification&quot;] == &quot;content_filtered&quot;
+    assert grade(task, CORRECT, &quot;length&quot;)[&quot;classification&quot;] == &quot;truncated&quot;
+    print(&quot;OFFLINE JSON extraction: independent source facts, schema, correct/wrong/malformed fixtures passed; zero requests.&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main(tasks=TASKS, grader=grade, offline_check=offline)</code></pre>
+<p>最后那次 main(…) 调用把任务、判分和参考答案检查接到 runner 上。改好源事实和预期字段后，跑：</p>
+<pre><code>python json_extraction.py check
+python json_extraction.py plan --config luna-config.json</code></pre>
+<p>预期的 check 输出：</p>
+<pre><code>OFFLINE JSON extraction: independent source facts, schema, correct/wrong/malformed fixtures passed; zero requests.</code></pre>
+<p>用不同的文件夹。下面这些额度只适用于随包提供的单 case 计划。</p>
+<pre><code>python json_extraction.py run --config luna-config.json --run-dir runs/json-luna --live --max-usd 0.01
+python json_extraction.py run --config sol-config.json --run-dir runs/json-sol --live --max-usd 0.03
+python json_extraction.py reconcile --run-dir runs/json-luna --live
+python json_extraction.py reconcile --run-dir runs/json-sol --live</code></pre>
+<p>开跑前把重复次数设成一致。一个 case 重复三次测的是波动性，不是工作负载覆盖度。要下更宽的结论，先补上代表性的边界与 held-out case。</p>
+<h2>第 5 步：比较已保存的 runs，并处理缺失的回答</h2>
+<p>对你已保存的 JSON runs：</p>
+<pre><code>python compare_runs.py runs/json-luna runs/json-sol --output comparisons/json</code></pre>
+<p>它写出 comparison.md 和 comparison.json，不做推理、也不重新判分。它会校验契约、设置和身份；不兼容的 runs 需要去排查，而不是悄悄排出一个名次。</p>
+<p>先离线演练一遍：</p>
+<pre><code>python synthetic_comparison.py runs/comparison-demo
+python compare_runs.py runs/comparison-demo/luna runs/comparison-demo/sol --output comparisons/full</code></pre>
+<p>下表给出这些<strong>合成夹具值</strong>，列名做了缩写：</p>
+<table><thead><tr><th><strong>夹具标签</strong></th><th><strong>完成/计划</strong></th><th><strong>通过/已判分</strong></th><th><strong>被过滤</strong></th><th><strong>已核验成本/100</strong></th><th><strong>中位秒数</strong></th></tr></thead><tbody><tr><td>Luna</td><td>6/6</td><td>5/6</td><td>1</td><td>$0.000100</td><td>0.150</td></tr><tr><td>Sol</td><td>5/6</td><td>5/5</td><td>0</td><td>unavailable</td><td>0.155</td></tr></tbody></table>
+<p>Sol 的夹具缺一条回答、账单也未经核验。它 5/5 的分数覆盖并不完整。这些数字不衡量任何一个模型。</p>
+<p>把不确定的那次试验和它的 reservation 留着。修好访问或限流问题，然后在配置、来源和额度都不变的情况下续跑：</p>
+<pre><code>python json_extraction.py run --config luna-config.json --run-dir runs/json-luna --live --max-usd 0.01 --resume</code></pre>
+<p>续跑只继续那些从未尝试过的试验。一笔已知账单补不回缺失的文本。若某次请求找不到 generation 记录，报告会把它保持标记为未结。不要丢掉这次 run，也不要删掉尝试记录。README 讲了崩溃后残留锁的处理。</p>
+<p>要只比较所有参与方都答过的 case：</p>
+<pre><code>python compare_runs.py runs/comparison-demo/luna runs/comparison-demo/sol --common-completed --output comparisons/common</code></pre>
+<p>这个显式交集保留原始覆盖度并列出被排除的项。它可能挑中更容易的 case，也修不了缺失的账单。绝不要在不作说明的情况下比较不同的子集。</p>
+<p>可选的 60 任务 runner 与 runtime 安装说明在配套包里。它的历史结果提供了一个更大的可跑例子。</p>
+<h2>在我们的 benchmark 上，哪个模型表现最好？</h2>
+<p>每个模型把 40 个 baseline 和 20 个 hard 任务各跑三遍，得到 120 个 baseline 和 60 个 hard 判分。这些结果描述的是在固定设置下、于 2026 年 10 月 20 日完成的这 60 个合成任务。AA 指我们那份标了日期的公开快照里的 Artificial Analysis Intelligence Index。</p>
+<table><thead><tr><th><strong>模型与 API ID</strong></th><th><strong>Baseline %</strong></th><th><strong>Hard %</strong></th><th><strong>合计通过</strong></th><th><strong>成本/100 条回答</strong></th><th><strong>中位秒数</strong></th><th><strong>AA index</strong></th></tr></thead><tbody><tr><td>Claude Haiku 5.5 <code>anthropic/claude-haiku-5.5</code></td><td>90.8</td><td>76.7</td><td>155/180</td><td>$0.03434</td><td>3.37</td><td>43.4</td></tr><tr><td>Claude Sonnet 5.5 <code>anthropic/claude-sonnet-5.5</code></td><td>47.5</td><td>45.0</td><td>84/180</td><td>$0.47273</td><td>2.33</td><td>56</td></tr><tr><td>GPT-6 Luna <code>openai/gpt-6-luna</code></td><td>98.3</td><td>73.3</td><td>162/180</td><td>$0.01848</td><td>3.81</td><td>38.1</td></tr><tr><td>GPT-6.1 Sol <code>openai/gpt-6.1-sol</code></td><td>100.0</td><td>100.0</td><td>180/180</td><td>$0.24490</td><td>3.52</td><td>51.8</td></tr><tr><td>Gemini 3.8 Flash <code>google/gemini-3.8-flash</code></td><td>95.0</td><td>96.7</td><td>172/180</td><td>$0.30412</td><td>3.38</td><td>40.9</td></tr><tr><td>DeepSeek V4.1 Flash <code>deepseek/deepseek-v4.1-flash</code></td><td>93.3</td><td>75.0</td><td>157/180</td><td>$0.00394</td><td>4.66</td><td>24.7</td></tr><tr><td>Grok 4.7 <code>x-ai/grok-4.7</code></td><td>99.2</td><td>96.7</td><td>177/180</td><td>$1.03462</td><td>5.97</td><td>46.4</td></tr><tr><td>MiMo V2.6 Flash <code>xiaomi/mimo-v2.6-flash</code></td><td>89.2</td><td>63.3</td><td>145/180</td><td>$0.03156</td><td>5.00</td><td>37.9</td></tr><tr><td>Mistral Large 4.0 <code>mistralai/mistral-large-4-0</code></td><td>90.0</td><td>51.7</td><td>139/180</td><td>$0.58945</td><td>31.45</td><td>38.4</td></tr><tr><td>GLM 5.3 <code>z-ai/glm-5.3</code></td><td>92.5</td><td>73.3</td><td>155/180</td><td>$0.06083</td><td>1.59</td><td>44.8</td></tr></tbody></table>
+<p>「每 100 条回答的成本」是 180 条已判分回答的已核验成本按比例折算到 100 条，不含运营开销与未结账单。中位秒数衡量本地请求耗时。</p>
+<p>在这个集合上有三条发现影响选型。</p>
+<ul><li><strong>通过率最高。</strong> Sol 通过 180/180，约合每 100 条回答 $0.2449。</li><li><strong>回答成本最低。</strong> DeepSeek 约合每 100 条 $0.00394，通过 157/180，含 14 次截断。Luna 以约 $0.01848 通过 162/180。按你要求的通过率和失败后果来选。</li><li><strong>输出合规性影响分数。</strong> Sonnet 的 66 条畸形回答涵盖 21 次发票、30 次日期和 15 次退款试验。原始回答里带了说明文字，而 prompt 只要求一个数字或一段 JSON。这个分数衡量的是契约合规性与答案正确性，不是纯粹的推理能力。</li></ul>
+<p>每个模型行合计 180。最后一行合计全部 1,800 条回答。各分类记的是失败的检查，不是其底层成因。</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>Passed</strong></th><th><strong>Incorrect</strong></th><th><strong>Malformed</strong></th><th><strong>Truncated</strong></th><th><strong>Empty</strong></th></tr></thead><tbody><tr><td>Haiku</td><td>155</td><td>7</td><td>18</td><td>0</td><td>0</td></tr><tr><td>Sonnet</td><td>84</td><td>30</td><td>66</td><td>0</td><td>0</td></tr><tr><td>Luna</td><td>162</td><td>18</td><td>0</td><td>0</td><td>0</td></tr><tr><td>Sol</td><td>180</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>Gemini</td><td>172</td><td>8</td><td>0</td><td>0</td><td>0</td></tr><tr><td>DeepSeek</td><td>157</td><td>0</td><td>9</td><td>14</td><td>0</td></tr><tr><td>Grok</td><td>177</td><td>3</td><td>0</td><td>0</td><td>0</td></tr><tr><td>MiMo</td><td>145</td><td>8</td><td>13</td><td>14</td><td>0</td></tr><tr><td>Mistral</td><td>139</td><td>8</td><td>7</td><td>25</td><td>1</td></tr><tr><td>GLM</td><td>155</td><td>18</td><td>7</td><td>0</td><td>0</td></tr><tr><td>Total</td><td>1526</td><td>100</td><td>120</td><td>53</td><td>1</td></tr></tbody></table>
+<p>53 条被截断的回答全部仍算失败。</p>
+<p>该研究请求 8,192 token，并在支持时开 low reasoning。有 16 次试验因为先前尝试没返回回答而需要补发请求。其中一次补发同样没返回回答、又得再派发一次，于是为 16 条入选回答总共派发了 17 次补发。没有对任何已返回的回答做重试。配套包保留了每一次尝试。</p>
+<p>已核验的研究账单为 <strong>$5.1032</strong>，另有 <strong>$0.5383</strong> 作为未结账单的预留。Reader 的计划为 Luna 的 180 次研究试验估算 $0.97、为 Sol 估算 $19.46。路由、日期，以及原始的并发/续跑调度，都限制了与串行 reader runner 之间的可比性。</p>
+<h2>公开 LLM benchmark 与你自己的 benchmark 比起来如何？</h2>
+<p>我们在 <strong>2026 年 10 月 20 日 10:03 UTC</strong> 通过 <a href="https://openrouter.ai/docs/api/api-reference/benchmarks/list-benchmarks">benchmarks API</a> 取了一份 Artificial Analysis 快照，精确匹配 canonical 模型版本。</p>
+<p>Spearman 相关系数比较名次顺序，−1 表示名次完全相反，+1 表示完全一致。跨十个模型：</p>
+<table><thead><tr><th><strong>集合</strong></th><th><strong>Spearman 相关系数</strong></th></tr></thead><tbody><tr><td>Baseline</td><td>0.115</td></tr><tr><td>Hard</td><td>0.183</td></tr><tr><td>Combined</td><td>0.109</td></tr></tbody></table>
+<p>在这个样本里一致性很弱。任务与设置不同，使得我们无法对 benchmark 的普遍可靠性下结论。用公开分数做初筛，再评估你自己的工作负载。</p>
+<h2>每个任务该跑几次？</h2>
+<p>在 600 个「模型-任务」配对里，有 68 对是模型在部分重复中通过、在另一些重复中失败的。把每一次重复都留着。这些是对 60 个 case 的重复观测，不是每个模型 180 个互异 case。名次接近时，需要更多 held-out case 和更多重复。</p>
+<h2>常见问题（FAQ）</h2>
+<h3>我需要多少个测试用例？</h3>
+<p>先从一小批入手，覆盖一条工作流里常见的输入、边界和已知失败。十个仔细评审过的例子足以支撑初步探索，但它们给不出统计保证。当差异很小或失败代价很高时，补上代表性的 held-out case 来扩充。重复用来评估一致性，替代不了覆盖度。</p>
+<h3>我能用 LLM judge 吗？</h3>
+<p>可以，用于 tone 或解释质量这类难以精确核验的性质。拿人工标注的例子校验它的 rubric，并检视分歧所在。可计算的答案和必需的 schema 仍用代码检查。我们的 <a href="https://openrouter.ai/blog/tutorials/llm-as-a-judge-evaluate-ai-agents/">LLM-as-a-judge guide</a> 讲了这条思路。</p>
+<h2>下一步</h2>
+<p>用我们的 <a href="https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/">golden eval dataset guide</a> 从你的应用构建一套有代表性的集合。比较各候选模型，然后<a href="https://openrouter.ai/blog/tutorials/how-to-gate-pull-requests-on-llm-evals-in-ci/">在检查上给 pull request 设闸</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Self-Hosted LLM vs API: When Does Self-Hosting Pay Off</title>
       <link>https://openrouter.ai/blog/insights/self-hosted-llm-vs-api/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/insights/self-hosted-llm-vs-api/</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>自托管 LLM 对比 API：自托管什么时候才划算</h1>
+<p>OpenRouter ·11/12/2026</p>
+<p><img src="https://openrouter.ai/blog/images/self-hosted-llm-vs-api.png" alt="自托管 LLM 对比 API：自托管什么时候才划算"><img src="https://openrouter.ai/blog/images/self-hosted-llm-vs-api-dark.png" alt="自托管 LLM 对比 API：自托管什么时候才划算"></p>
+<p>如果你为一个开放权重模型付着 API 账单，大概会想：自己买块 GPU 会不会更便宜。GPU 租金是按小时收的，忙也好闲也好都得付；而 API 只按你用掉的 token 收费。</p>
+<p>只有当你的流量能让 GPU 在足够多的时间里保持忙碌，自托管 LLM 才更便宜。按 2026 年 10 月 8 日的价格，一个 27B 模型跑在一块租来的 RTX 3090 上，约 12% 负载即可回本；而一个大型 mixture-of-experts 模型跑在租来的 H200 上，永远赢不了最便宜的 zero-data-retention（ZDR）API endpoint。</p>
+<p>本文用<a href="https://openrouter.ai/docs/api/api-reference/endpoints/list-all-endpoints-for-a-model">我们 API 里各供应商的实时价格</a>算清这个回本点，再说明我们的数据控制如何覆盖隐私需求。</p>
+<h2>TL;DR</h2>
+<ul><li>回本负载 = GPU 每小时租金 ÷ 同样一小时 token 走 API 的花费。低于这个负载，API 更便宜。</li><li>DeepSeek V4.1 Flash 跑在四块租来的 H200 上，对最便宜的 ZDR endpoint 永远回不了本。跑在两块 B200 上，按我们找到的最低租金也要 76% 负载。</li><li>按 10 月 8 日价格，Qwen3.8 27B 跑在一块每小时 $0.50 的 RTX 3090 上，6% 到 12% 负载即可回本，但每个用户只能拿到约 15 token/秒。</li><li>外界公布的自托管成本约每百万 token 一美分，多半只算了缓存输入 token——而这类 token 走 API 也几乎不花钱。</li><li>多数隐私要求并不需要自托管。<code>provider.zdr</code> 把请求限定在 zero-data-retention endpoint，我们的 EU 与 US 域名则把请求留在区域内。</li></ul>
+<h2>怎么算自托管划不划算？</h2>
+<p>取 GPU 的一小时，用两种方式给它定价。一边是租金，另一边是：在用户能接受的速度下，这块 GPU 一小时内能服务的 token，走 API 要收多少钱。</p>
+<pre><code>break-even load = GPU rent per hour / API cost of one fully loaded GPU-hour of tokens</code></pre>
+<p>回本负载 30% 的意思是：在你租用它的所有小时里，GPU 得有 30% 的时间在忙，才会比 API 便宜。任何超过 100% 的数值，都意味着哪怕 GPU 一刻不停，也是 API 赢。</p>
+<p>两边必须按同一种 token 构成来定价，因为输入、缓存输入和输出 token 的 API 价格差别很大。我们还把工程时间、以及为流量高峰预留的余量都排除在外，所以本文每个回本点都是下界。</p>
+<h2>同一个开放权重模型，API 要花多少钱？</h2>
+<p>多数开放权重模型由多家供应商提供服务。每一家都在自己的硬件上跑一份自己的权重副本，定自己的价。我们的 <a href="https://openrouter.ai/docs/api/api-reference/endpoints/list-all-endpoints-for-a-model">endpoints API</a>（GET /api/v1/models/{author}/{slug}/endpoints）返回某模型所有供应商的价格与精度，GET /api/v1/endpoints/zdr 则列出带 ZDR 政策的 endpoint。截至 2026 年 10 月 8 日，它们返回的是：</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>Endpoints（ZDR）</strong></th><th><strong>输入 $/M</strong></th><th><strong>缓存输入 $/M</strong></th><th><strong>输出 $/M</strong></th></tr></thead><tbody><tr><td><a href="https://openrouter.ai/qwen/qwen3.8-27b">qwen/qwen3.8-27b</a></td><td>18 (14)</td><td>0.024 to 0.99</td><td>0.02 to 0.99</td><td>1.49 to 5.25</td></tr><tr><td><a href="https://openrouter.ai/deepseek/deepseek-v4.1-flash">deepseek/deepseek-v4.1-flash</a></td><td>31 (24)</td><td>0.016 to 0.45</td><td>0.0007 to 0.20</td><td>0.14 to 1.80</td></tr></tbody></table>
+<p>同一份权重，最贵供应商对 Qwen3.8 27B 输出的收费是最便宜者的 3.5 倍，对 DeepSeek V4.1 Flash 则接近 13 倍。只拿单一标价算出来的回本点，可能差得很远。供应商提供的精度也从 fp4 到 bf16 不等，我们的 <a href="https://openrouter.ai/blog/insights/llm-quantization/">LLM quantization post</a> 测了这会让答案变多少。</p>
+<h3>真实工作负载我们付了多少</h3>
+<p>推理模型在作答前会花输出 token 来「思考」，agent 则每一轮都把整段上下文重发一遍。于是我们给每个模型跑两种工作负载，强制启用 ZDR，并用 GET /api/v1/generation 给每次请求定价——它报的是供应商实际计费的 token 与费用：</p>
+<table><thead><tr><th><strong>工作负载</strong></th><th><strong>模型</strong></th><th><strong>请求数</strong></th><th><strong>输入 token（缓存占比）</strong></th><th><strong>输出 token（推理占比）</strong></th><th><strong>成本</strong></th><th><strong>每 100 万输出 token</strong></th></tr></thead><tbody><tr><td>对一份 5k-token 文档聊天</td><td>DeepSeek V4.1 Flash</td><td>10</td><td>53,330 (68%)</td><td>12,476 (97%)</td><td>$0.0110</td><td>$0.88</td></tr><tr><td>8 轮 agent，60k-token 上下文</td><td>DeepSeek V4.1 Flash</td><td>8</td><td>504,747 (75%)</td><td>28,509 (83%)</td><td>$0.0243</td><td>$0.85</td></tr><tr><td>对一份 5k-token 文档聊天</td><td>Qwen3.8 27B</td><td>10</td><td>72,329 (56%)</td><td>25,084 (97%)</td><td>$0.0694</td><td>$2.77</td></tr><tr><td>7 轮 agent，85k-token 上下文</td><td>Qwen3.8 27B</td><td>7</td><td>595,223 (100%)</td><td>81,870 (99%)</td><td>$0.1900</td><td>$2.32</td></tr></tbody></table>
+<p>最后一列是把含输入在内的全部成本除以输出 token。几乎每个输出 token 都是推理 token，而一份自托管的同款模型，产出它们要耗掉同样的 GPU 时间。Qwen3.8 27B 还在 7 个 agent 轮次中的 3 个里，思考途中就撞上了我们 16,000-token 的上限。本文全部 API 运行加起来花了 $0.49。</p>
+<h2>跑一个自托管 LLM 要花多少钱？</h2>
+<p>这些 GPU 不是我们自己租的。自托管一侧用的是已公布的 benchmark 和租赁价，所以每一行都请当作假设：</p>
+<table><thead><tr><th><strong>配置</strong></th><th><strong>每 GPU 吞吐</strong></th><th><strong>来源</strong></th><th><strong>每 GPU 小时租金</strong></th></tr></thead><tbody><tr><td>DeepSeek V4.1 Flash，4x H200，vLLM fp4，32 个并发会话</td><td>35,084 输入 + 231 输出 tok/s，95% 输入命中缓存，每用户 71 tok/s</td><td><a href="https://github.com/SemiAnalysisAI/InferenceX">InferenceX</a> agentic traces，2026-09-21</td><td>$2.90（InferenceX 零售档）、$4.59（<a href="https://www.runpod.io/pricing">RunPod</a>）</td></tr><tr><td>DeepSeek V4.1 Flash，2x B200，vLLM fp4，32 个并发会话</td><td>117,225 输入 + 683 输出 tok/s，96% 缓存，每用户 232 tok/s</td><td>InferenceX，2026-10-03</td><td>$3.70（InferenceX 零售）、$6.79（RunPod）、$6.89（<a href="https://lambda.ai/pricing">Lambda</a>）</td></tr><tr><td>Qwen3.8 27B，1x RTX 3090，vLLM W4A16，64 并发</td><td>128 token 进 / 512 出时为 942 输出 tok/s，每用户约 15 tok/s</td><td><a href="https://github.com/syv-ai/HyperQwen">HyperQwen</a> benchmarks</td><td>$0.50（RunPod），自有卡则约 $0.05 电费（250 W，按 <a href="https://www.eia.gov/electricity/monthly/">EIA</a> 2026 年 7 月美国居民电价）</td></tr></tbody></table>
+<p>DeepSeek V4.1 Flash 有 <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">552B backbone 参数</a>，因此需要多 GPU 节点。<a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen3.8 27B</a> 是稠密模型，4 bit 下能装进一块 24 GB 卡。</p>
+<p>吞吐是「每 GPU」口径，与 InferenceX 的报法一致，所以本文每项成本都是每 GPU 小时。每用户速度只计生成回答的那段时间，而这些 agentic 会话有大量时间花在 prefill 上，因此它不能直接乘出总量。3090 那个数字来自 HyperQwen 深度打过补丁的 vLLM 构建，请当作最好情况。</p>
+<p>我们用的是它的端到端数字（含 prefill），而不是那个 1,035 tok/s 的纯 decode 头条值。HyperQwen 测的是 128-token prompt，而我们的聊天 prompt 长得多，所以对聊天构成，我们依据它实测的 prefill 与 decode 速率估算为每秒 565 个输出 token。</p>
+<h2>自托管什么时候才划算？</h2>
+<p>对每种配置，我们取 benchmark 测出的那一小时 token，拆成未缓存输入、缓存输入和输出，按该模型每一个 ZDR endpoint 给这份构成定价，再用租金去除。API 价格取自 2026 年 10 月 8 日：</p>
+<table><thead><tr><th><strong>配置</strong></th><th><strong>每 GPU 小时租金</strong></th><th><strong>同一小时走 API 的成本，最便宜 ZDR / 中位 ZDR</strong></th><th><strong>对最便宜 ZDR 的回本负载</strong></th><th><strong>对中位 ZDR 的回本负载</strong></th></tr></thead><tbody><tr><td>DeepSeek V4.1 Flash，4x H200</td><td>$2.90</td><td>$1.70 / $3.54</td><td>永远不</td><td>82%</td></tr><tr><td>DeepSeek V4.1 Flash，4x H200</td><td>$4.59</td><td>$1.70 / $3.54</td><td>永远不</td><td>永远不</td></tr><tr><td>DeepSeek V4.1 Flash，2x B200</td><td>$3.70</td><td>$4.87 / $9.95</td><td>76%</td><td>37%</td></tr><tr><td>DeepSeek V4.1 Flash，2x B200</td><td>$6.79</td><td>$4.87 / $9.95</td><td>永远不</td><td>68%</td></tr><tr><td>Qwen3.8 27B，1x RTX 3090，短 prompt</td><td>$0.50</td><td>$5.89 / $8.35</td><td>8%</td><td>6%</td></tr><tr><td>Qwen3.8 27B，1x RTX 3090，我们的聊天构成（估算）</td><td>$0.50</td><td>$4.33 / $6.14</td><td>12%</td><td>8%</td></tr><tr><td>Qwen3.8 27B，自有 RTX 3090，仅电费</td><td>$0.05</td><td>$5.89 / $8.35</td><td>1%</td><td>1%</td></tr></tbody></table>
+<p>「永远不」指即便 100% 负载，租金也高于 API 成本。价格变动很快。10 月 19 日，Qwen3.8 27B 新增的一个 ZDR endpoint 输出每百万 token 收 $0.50，把短 prompt 的回本点推到了约 29%。</p>
+<p><img src="https://openrouter.ai/blog/images/self-hosted-llm-vs-api-1.png" alt="柱状图：满载 GPU 小时的 API 成本与租金对比，API 价格取自 OpenRouter 2026 年 10 月 8 日。DeepSeek V4.1 Flash 在 4x H200：租金 $2.90，API $1.70。DeepSeek V4.1 Flash 在 2x B200：租金 $3.70，API $4.87。Qwen3.8 27B 在 1x RTX 3090、短 prompt：租金 $0.50，API $5.89。Qwen3.8 27B 在 1x RTX 3090、聊天构成（估算）：租金 $0.50，API $4.33。"></p>
+<p>从你实际的负载出发。只在上班时间来的流量，一周 168 小时里占 40 小时，最多让 GPU 忙 24%。按 10 月 8 日价格，这排除了所有 DeepSeek 行，只剩 3090。对照 10 月 19 日那个 endpoint，3090 需要约 29%，所以下单前先查当前价格。一个全天候跑的批处理流水线能到 70%，这按中位 ZDR 价把两行 B200 都带进了射程，但按最便宜价仍一行都不行。</p>
+<p>换成月度口径，租来的 3090 每月 $365，在我们这份聊天构成下，跑约 1.7 亿输出 token 后回本。双 B200 节点按零售租金每月 $5,402，得先服务 27 亿输出 token 才能赢过最便宜的 ZDR endpoint。</p>
+<p>小模型之所以胜出，是因为它的 API 价格相对所需硬件偏高。供应商对 Qwen3.8 27B 输出每百万 token 收 $1.49 到 $5.25，而一块每小时 $0.50 的卡一小时能产出约 340 万个这样的 token。DeepSeek V4.1 Flash 正相反：24 个 ZDR endpoint 争它的流量，最便宜的每百万输出 token 只收 $0.18。</p>
+<p>3090 的低成本附带着速度上的取舍。它是靠同时服务 64 个请求、每个约 15 token/秒才达到那个吞吐的。这对聊天界面已经偏慢，对一个在作答前要写数千个隐藏 token 的推理模型就更慢。在我们拉取数据前 30 分钟里，Qwen3.8 27B 的 18 个 API endpoint 中位速度为 45 token/秒，最快的是 474。</p>
+<h2>为什么公布出来的自托管成本看着那么低？</h2>
+<p>如果你见过自托管被报成每百万 token 约一美分，原因通常在 token 构成。InferenceX 按 hyperscaler 价格，把 H200 上的 DeepSeek V4.1 Flash 算作每百万 token $0.012。那个数字是每百万<strong>总</strong> token，而在它的 agentic 工作负载里，99% 是输入 token，其中 95% 由 prefix cache 命中。走 API 时，该模型的缓存输入每百万只要 $0.0007 到 $0.20，所以这些 token 无论哪边都便宜。</p>
+<p>改按输出 token 计价，同样这块 H200 在 $2.90 零售租金下，还没算任何输入就是每百万 $3.49；而最便宜的 ZDR endpoint 收 $0.18。</p>
+<h2>为了隐私，需要自托管吗？</h2>
+<p>隐私是自托管的另一个常见理由，而其中大部分需求走 API 就能满足。在请求上设 <code>provider.zdr</code>，会把它限定在「供应商不存储你的 prompt 或 completion」的 endpoint。若你的 ZDR 设置还允许 Safety Retention endpoint，那些 endpoint 可能为检测滥用而保留 prompt 和响应，所以只有在你完全不需要留存时才选纯 ZDR。带隐式缓存的供应商也可能短时间持有派生出的 KV-cache 数据，见我们的 <a href="https://openrouter.ai/blog/insights/is-implicit-caching-prompt-retention/">implicit caching explainer</a>。你也可以<a href="https://openrouter.ai/docs/guides/features/zdr">在全账户、按模型组，或在覆盖特定 API key 的 guardrail 里强制 ZDR</a>。在 Business 和 Enterprise 套餐里，发往 eu.openrouter.ai 或 us.openrouter.ai 的请求只跑在该<a href="https://openrouter.ai/docs/guides/features/in-region-routing">区域</a>内的 endpoint 上，出不去时宁可失败也不离开。</p>
+<p>下面这个脚本把两条路径都试了一遍，其中两次请求我们预期会失败：</p>
+<pre><code>&quot;&quot;&quot;The privacy paths: ZDR per request, a ZDR conflict, and EU in-region routing.&quot;&quot;&quot;
+import os
+
+import requests
+
+KEY = {&quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;}
+MSG = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Reply with the word ok.&quot;}]
+
+def ask(base, model, provider=None):
+    body = {&quot;model&quot;: model, &quot;messages&quot;: MSG, &quot;max_tokens&quot;: 400, &quot;provider&quot;: provider or {}}
+    r = requests.post(f&quot;{base}/api/v1/chat/completions&quot;, json=body, headers=KEY, timeout=120)
+    data = r.json()
+    if r.status_code == 200:
+        return f&quot;{r.status_code} served by {data['provider']}&quot;
+    return f&quot;{r.status_code} {data['error']['message']}&quot;
+
+GLOBAL, EU = &quot;https://openrouter.ai&quot;, &quot;https://eu.openrouter.ai&quot;
+
+print(&quot;1. ZDR on, any provider:     &quot;, ask(GLOBAL, &quot;deepseek/deepseek-v4.1-flash&quot;, {&quot;zdr&quot;: True}))
+print(&quot;2. ZDR on, only DeepSeek API:&quot;, ask(GLOBAL, &quot;deepseek/deepseek-v4.1-flash&quot;, {&quot;zdr&quot;: True, &quot;only&quot;: [&quot;deepseek&quot;]}))
+print(&quot;3. EU domain, DeepSeek:      &quot;, ask(EU, &quot;deepseek/deepseek-v4.1-flash&quot;))
+print(&quot;4. EU domain, GLM 5.3 + ZDR: &quot;, ask(EU, &quot;z-ai/glm-5.3&quot;, {&quot;zdr&quot;: True}))
+
+eu_models = requests.get(f&quot;{GLOBAL}/api/v1/models&quot;, params={&quot;region&quot;: &quot;eu&quot;}, timeout=60).json()[&quot;data&quot;]
+print(f&quot;5. models eligible for EU in-region routing: {len(eu_models)}&quot;)</code></pre>
+<p>2026 年 10 月 8 日记录的输出：</p>
+<pre><code>1. ZDR on, any provider:      200 served by Decart
+2. ZDR on, only DeepSeek API: 404 No endpoints found matching your data policy (Zero data retention). Configure: https://openrouter.ai/settings/privacy
+3. EU domain, DeepSeek:       404 No endpoints found supporting your data region.
+4. EU domain, GLM 5.3 + ZDR:  200 served by Inceptron
+5. models eligible for EU in-region routing: 72</code></pre>
+<p>两道过滤都在我们挑供应商之前生效，因此它们缩小的是候选 endpoint 列表，而不是事后改路由。开了 zdr 后，DeepSeek 自家 API 因为会留存数据而出局；再用 <code>only</code> 把请求钉死在该供应商上，就一个 endpoint 都不剩，于是返回第一个 404。EU 域名只保留我们在欧洲接入的 endpoint。DeepSeek V4.1 Flash 一个都没有，所以第三次请求失败，而不是悄悄跑去美国。要用 EU 路由，就从 GET /api/v1/models?region=eu 里挑一个有 EU endpoint 的模型，那次列出了 72 个模型，其中包括 GLM 5.3。</p>
+<p>ZDR 有一个边界。你的 prompt 仍在供应商的 GPU 上被处理，所以它并不给你对硬件的控制权。若你的政策要求模型跑在你自己掌控的部署上，<a href="https://openrouter.ai/docs/guides/routing/private-endpoints">Private Endpoints</a>（Enterprise 套餐）会把你专属或微调过的部署加进某个目录模型的供应商列表。它必须托管在我们支持 BYOK 的供应商处，你的团队用同一个 slug 调用它，若你把公共 endpoint 也列进去，它们仍可作为回退保留。若数据绝不能离开你自管的硬件，那就自托管，并按上面的回本表给硬件定容。我们的 <a href="https://openrouter.ai/blog/insights/zero-data-retention/">ZDR explainer</a> 和 <a href="https://openrouter.ai/blog/insights/ai-data-residency/">data residency guide</a> 更细地比较了这些选项。</p>
+<h2>能既自托管又用 API 吗？</h2>
+<p>能，而且对多数团队来说，回本表指向的正是这种搭配。GPU 只在高负载下才划算，所以按你流量的稳定基线给自有硬件定容——在那儿它一直忙；把高峰溢出的部分交给 API——在那儿你只为用掉的付钱。</p>
+<p>之所以行得通，是因为 vLLM 和 SGLang 暴露的是与我们相同的 OpenAI-compatible chat API。客户端只要改 base URL、key 和模型名就能在两者间切换。连接出错、或你的服务器队列满时返回 429 / 503，就回退到 API。在 API 一侧设 <code>provider.zdr</code>，让溢出流量也保持 zero data retention。若你的政策要求 prompt 留在自管硬件上，就别往 API 溢出。</p>
+<p>这套搭配有两处会出问题。若你本地副本的精度与 API endpoint 不同，同一个 prompt 可能得到不同答案，因此要用 <a href="https://openrouter.ai/docs/guides/routing/provider-selection">provider routing</a> 把 API 一侧钉到相匹配的量化。另外，一段对话中途换后端会丢掉它的 <a href="https://openrouter.ai/docs/guides/best-practices/prompt-caching">prompt cache</a>，所以每场对话一旦开始就固定留在其中一侧。</p>
+<h2>常见问题</h2>
+<h3>自托管 LLM 值得吗？</h3>
+<p>单看成本，只有你能让 GPU 保持忙碌时才值得。按我们的数字，Qwen3.8 27B 跑在租来的 RTX 3090 上，6% 到 12% 负载回本；DeepSeek V4.1 Flash 跑在租来的数据中心 GPU 上，需要 37% 以上负载，且对最便宜的 zero data retention endpoint 往往永远回不了本。隐私与可控性则可以在任何负载下为自托管提供理由。</p>
+<h3>哪个 LLM 最适合自托管？</h3>
+<p>能装进一块 GPU 的模型最合适，因为既避开了多 GPU 服务器，其 API 价格也留出了最大的省钱空间。例如 Qwen3.8 27B 在 4 bit 下能跑在一块 24 GB 卡上。我们的 <a href="https://openrouter.ai/rankings">rankings</a> 和 <a href="https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/">open-weight vs closed-weight comparison</a> 展示了开发者用得最多的模型。</p>
+<h3>最便宜的自托管 LLM 方案是什么？</h3>
+<p>一块你已经拥有的 GPU。一块限到 250 W 的 RTX 3090，按 2026 年 7 月美国居民平均电价，每小时电费约 $0.05，因此只要忙约 1% 的时间，就赢过 Qwen3.8 27B 最便宜的 zero data retention endpoint。代价是每个用户响应更慢，以及你自己花在维护上的时间。</p>
+<h3>我能托管自己的模型、还照样通过 OpenRouter 用吗？</h3>
+<p>能，在 Enterprise 套餐里。Private Endpoints 把某个目录模型的 slug 路由到你自己专属或微调过的部署，托管在我们支持 BYOK 的供应商处。只有你批准的用户和组织能看见或调用它。</p>
+<h2>下一步</h2>
+<ul><li><a href="https://openrouter.ai/docs/guides/features/zdr">Zero Data Retention</a>：按请求、按模型组、在 guardrail 里或全账户强制 ZDR。</li><li><a href="https://openrouter.ai/docs/guides/features/in-region-routing">In-Region Routing</a>：通过 EU 与 US 域名发请求，并用 guardrail 强制区域。</li><li><a href="https://openrouter.ai/deepseek/deepseek-v4.1-flash">DeepSeek V4.1 Flash</a> 与 <a href="https://openrouter.ai/qwen/qwen3.8-27b">Qwen3.8 27B</a> 的模型页列出当前各供应商价格与吞吐。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>LLM API 速率限制：如何修复 OpenAI 和 Claude 的 429 错误</title>
@@ -1274,6 +1848,194 @@ book_table(
       <link>https://openrouter.ai/blog/announcements/extractions-api/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/extractions-api/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>推出 Extractions API</h1>
+<p>William Kofski ·11/10/2026</p>
+<p>Extractions API 现已在 OpenRouter 上线，处于 alpha 阶段。你只需描述需要的字段，就能从文本、图片和 PDF 里抽出具体信息，比如邮件里的人名，或收据上的总金额。</p>
+<p>首发带来三个抽取模型，分别来自 Cloudflare、Inception 和 ScaleDown。可以先读 <a href="https://openrouter.ai/docs/guides/community/extractions">docs</a>，或到 <a href="https://openrouter.ai/cloudflare/clairic#playground">Playground</a> 里试一试。</p>
+<h2>什么是 Extractions？</h2>
+<p>一次 extraction 就是一个请求：你点名要从文档里取哪些字段，每个字段拿回一个带类型的值。<code>state</code> 承载文本（或 <code>assets</code> 里某张图片、某个 PDF 的键），<code>fields</code> 把每个字段名映射到一份规格：一个 <code>type</code>，以及可选的、说明该字段含义的 <code>instructions</code>。</p>
+<p>共有九种字段类型，每种都返回可直接存储、无需解析的 JSON 类型。下面这张发票问到了其中六种，以 <code>state</code> 发送；表里示例是 Clairic 返回的结果，高亮的词就是值的来源：</p>
+<p>state · 发票，以文本形式</p>
+<p>Invoice INV-4417 from Larkspur Studio, issued 2026-10-14, payment terms net 45. Bill to: Harbor &amp; Pine LLC. Contacts: Dana Ruiz (dana@harborpine.example), Priya Shah. Line items: brand audit 2,400.00; icon set 1,150.00; rush fee 300.00. Total due $3,850.00. Late payments accrue 1.5% per month.</p>
+<p>请求的字段是 <code>invoice_number: text</code>、<code>total: number</code>、<code>due_date: date</code>、<code>contacts: list</code>、<code>po_number: text</code> 和 <code>days_to_pay: estimate</code>。</p>
+<table><thead><tr><th>类型</th><th>你会得到</th><th>示例</th></tr></thead><tbody><tr><td><code>text</code></td><td>从文档读出的字符串</td><td><code>&quot;INV-4417&quot;</code></td></tr><tr><td><code>number</code></td><td>一个数字，带由你指定的 <code>decimals</code> 和 <code>unit</code></td><td><code>3850</code></td></tr><tr><td><code>date</code></td><td>一个 ISO 日期，读出或算出</td><td><code>&quot;2026-11-28&quot;</code></td></tr><tr><td><code>time</code></td><td>一个 ISO 时刻</td><td>这张发票未问到</td></tr><tr><td><code>datetime</code></td><td>一个 ISO 日期加时间</td><td>这张发票未问到</td></tr><tr><td><code>list</code></td><td>一个由 <code>text</code>、<code>number</code> 或 <code>date</code> 组成的数组（由 <code>items</code> 选定哪种）</td><td><code>[&quot;Dana Ruiz&quot;, &quot;Priya Shah&quot;]</code></td></tr><tr><td><code>duration</code></td><td>一个以你选定 <code>unit</code> 计的数字，从秒到年</td><td><code>45</code> 带 <code>unit: &quot;days&quot;</code></td></tr><tr><td><code>estimate</code></td><td>针对文档隐含某个量的分布，介于你设定的 <code>min</code> 和 <code>max</code> 之间</td><td><code>median 45, p10 42, p90 47</code></td></tr><tr><td><code>forecast</code></td><td>同上，但按你设定的 <code>interval</code> 向未来推 <code>horizon</code> 步；<code>value</code>、<code>mean</code>、<code>median</code>、<code>p10</code> 和 <code>p90</code> 都是每步一个元素的数组</td><td>这张发票未问到</td></tr></tbody></table>
+<p>每个答案都带 <code>value</code>；此外还带什么，取决于字段类型和模型。在 Clairic 上，从文本读出的值会带 <code>span</code>，即指向 state 的 <code>[start, end)</code>（按 Unicode 码点计数），这样你就能切出文档片段、展示值的来源（<code>list</code> 带的是 <code>spans</code>，每项一个）。单值带 <code>p_null</code>，即文档在该字段上「什么都没有」的概率；当它超过 0.5 时值就变成 <code>null</code>（可按字段设 <code>null_threshold</code> 来挪动这条线），而 <code>guess</code> 是即便如此也最可能的值。它们还带 <code>confidence</code>，即模型对该值的把握；从图片读出的字符串会额外带 <code>spell_confidence</code>，表示拼写的可信度。<code>estimate</code> 或 <code>forecast</code> 不带置信度；<code>mean</code>、<code>median</code>、<code>p10</code> 和 <code>p90</code> 描述其分布，<code>p10</code> 到 <code>p90</code> 的宽度就是不确定性。Extract 每个值返回 <code>confidence</code>、不返回 <code>p_null</code>；对文本它也返回 spans，对 PDF 则不返回（第 3 节）。</p>
+<p>这些字段构成了信任模型。设一条置信度下限，低于它的送人工处理，其余的直接存储。<code>null</code> 是一个答案，不是低分：模型判定该字段不存在（它的 <code>p_null</code> 过了阈值），而 <code>guess</code> 说的是它本来会取到的值。像 estimate 这样没有 <code>confidence</code> 的值，则改由它的分布来评判。</p>
+<h2>1：从文本抽取</h2>
+<p>输入是文档和一组带名字、带类型的字段。输出是每个字段一个值、从文本读出值时的 <code>span</code>、单值上的 <code>confidence</code> 与 <code>p_null</code>，以及 estimate 的分布。</p>
+<p>在 Clairic 上以 $0.00011 跑出的请求：</p>
+<pre><code>curl https://openrouter.ai/api/alpha/extractions \
+  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;model&quot;: &quot;cloudflare/clairic&quot;,
+    &quot;state&quot;: &quot;Invoice INV-4417 from Larkspur Studio, issued 2026-10-14, payment terms net 45. Bill to: Harbor &amp; Pine LLC. Contacts: Dana Ruiz (dana@harborpine.example), Priya Shah. Line items: brand audit 2,400.00; icon set 1,150.00; rush fee 300.00. Total due $3,850.00. Late payments accrue 1.5% per month.&quot;,
+    &quot;fields&quot;: {
+      &quot;invoice_number&quot;: { &quot;type&quot;: &quot;text&quot; },
+      &quot;total&quot;: { &quot;type&quot;: &quot;number&quot;, &quot;decimals&quot;: 2, &quot;unit&quot;: &quot;USD&quot; },
+      &quot;due_date&quot;: { &quot;type&quot;: &quot;date&quot;, &quot;instructions&quot;: &quot;Issue date plus the net payment days&quot; },
+      &quot;contacts&quot;: { &quot;type&quot;: &quot;list&quot;, &quot;items&quot;: &quot;text&quot;, &quot;instructions&quot;: &quot;People named as contacts&quot; },
+      &quot;po_number&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;instructions&quot;: &quot;Purchase order number, if any&quot; },
+      &quot;days_to_pay&quot;: { &quot;type&quot;: &quot;estimate&quot;, &quot;min&quot;: 0, &quot;max&quot;: 120, &quot;step&quot;: 1, &quot;instructions&quot;: &quot;How many days after issue this invoice will actually be paid&quot; }
+    },
+    &quot;reference_date&quot;: &quot;2026-11-06&quot;
+  }'</code></pre>
+<p>Clairic 读了 1,138 个 input token，回答如下（响应里省去了 <code>model</code> 那一行）：</p>
+<pre><code>{
+  &quot;answers&quot;: {
+    &quot;invoice_number&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;value&quot;: &quot;INV-4417&quot;, &quot;span&quot;: [8, 16], &quot;p_null&quot;: 4.9e-6, &quot;confidence&quot;: 0.9999 },
+    &quot;total&quot;: { &quot;type&quot;: &quot;number&quot;, &quot;value&quot;: 3850, &quot;p_null&quot;: 1.6e-5, &quot;confidence&quot;: 0.9999 },
+    &quot;due_date&quot;: { &quot;type&quot;: &quot;date&quot;, &quot;value&quot;: &quot;2026-11-28&quot;, &quot;p_null&quot;: 4.4e-5, &quot;confidence&quot;: 0.9994 },
+    &quot;contacts&quot;: { &quot;type&quot;: &quot;list&quot;, &quot;value&quot;: [&quot;Dana Ruiz&quot;, &quot;Priya Shah&quot;], &quot;spans&quot;: [[118, 127], [155, 165]] },
+    &quot;po_number&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;value&quot;: null, &quot;guess&quot;: &quot;INV-4417&quot;, &quot;p_null&quot;: 0.9999 },
+    &quot;days_to_pay&quot;: { &quot;type&quot;: &quot;estimate&quot;, &quot;value&quot;: 45, &quot;mean&quot;: 44.79, &quot;median&quot;: 45, &quot;p10&quot;: 42, &quot;p90&quot;: 47 }
+  },
+  &quot;truncated&quot;: false,
+  &quot;usage&quot;: { &quot;input_tokens&quot;: 1138, &quot;output_tokens&quot;: 0, &quot;cost&quot;: 0.0001138, &quot;state_tokens&quot;: 118, &quot;schema_tokens&quot;: 666, &quot;passes&quot;: 4 },
+  &quot;id&quot;: &quot;gen-dec-1794000212-JVtrkaQ2JbqaR59u2bjZ&quot;,
+  &quot;provider&quot;: &quot;Cloudflare&quot;
+}</code></pre>
+<p><code>due_date</code> 在文本里没有日期，于是模型根据开票日和账期算了出来；<code>po_number</code> 返回 <code>null</code>，<code>guess</code> 显示了它本来会取到的值；<code>days_to_pay</code> 是 <code>estimate</code>，因此返回的不是单点而是分布，80% 的概率质量落在 42 到 47 天之间。用每个 <code>span</code> 切 state，就能把证据摆在值旁边。在 Python 里，用 <code>r</code> 表示上面那次调用的 <code>requests</code> 响应：</p>
+<pre><code>state = &quot;Invoice INV-4417 from Larkspur Studio, issued 2026-10-14, payment terms net 45. Bill to: Harbor &amp; Pine LLC. Contacts: Dana Ruiz (dana@harborpine.example), Priya Shah. Line items: brand audit 2,400.00; icon set 1,150.00; rush fee 300.00. Total due $3,850.00. Late payments accrue 1.5% per month.&quot;
+answers = r.json()[&quot;answers&quot;]
+
+for name, answer in answers.items():
+    spans = answer.get(&quot;spans&quot;) or ([answer[&quot;span&quot;]] if answer.get(&quot;span&quot;) else [])
+    evidence = [state[start:end] for start, end in spans]
+    print(f&quot;{name}: {answer['value']!r} &lt;- {evidence!r}&quot;)</code></pre>
+<h2>2：从图片抽取</h2>
+<p>输入是放在 <code>assets</code> 里、由 <code>state</code> 通过键引用的图片，外加同样形式的字段清单。输出是同样结构的记录，模型判定为「从图上读出」的值会带 <code>source: &quot;image&quot;</code>（<code>source</code> 是可选的，下面的 <code>paid_on</code> 就没有，所以别拿它当键），文本还带 <code>spell_confidence</code>。视频里照片上的框是为演示画的；API 返回的是值，不是图片坐标。</p>
+<p>在 Clairic 上以 $0.00025 跑出的请求：</p>
+<pre><code>import base64
+import os
+
+import requests
+
+API = &quot;https://openrouter.ai/api/alpha/extractions&quot;
+HEADERS = {&quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;}
+
+with open(&quot;receipt.png&quot;, &quot;rb&quot;) as f:
+    receipt = base64.b64encode(f.read()).decode()
+
+r = requests.post(
+    API,
+    headers=HEADERS,
+    json={
+        &quot;model&quot;: &quot;cloudflare/clairic&quot;,
+        &quot;state&quot;: &quot;receipt&quot;,
+        &quot;assets&quot;: {&quot;receipt&quot;: {&quot;type&quot;: &quot;image&quot;, &quot;format&quot;: &quot;png&quot;, &quot;data_base64&quot;: receipt}},
+        &quot;fields&quot;: {
+            &quot;merchant&quot;: {&quot;type&quot;: &quot;text&quot;},
+            &quot;total&quot;: {&quot;type&quot;: &quot;number&quot;, &quot;decimals&quot;: 2},
+            &quot;paid_on&quot;: {&quot;type&quot;: &quot;date&quot;},
+            &quot;tax&quot;: {&quot;type&quot;: &quot;number&quot;, &quot;decimals&quot;: 2, &quot;instructions&quot;: &quot;Sales tax charged&quot;},
+            &quot;tip&quot;: {&quot;type&quot;: &quot;number&quot;, &quot;decimals&quot;: 2, &quot;instructions&quot;: &quot;Gratuity, if any&quot;},
+        },
+    },
+)
+r.raise_for_status()
+print(r.json()[&quot;answers&quot;])</code></pre>
+<p>Clairic 读了 1,064 个图片 token、合计 2,532 个，回答如下（响应里省去了 <code>model</code> 那一行）：</p>
+<pre><code>{
+  &quot;merchant&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;value&quot;: &quot;NORTH HAROR C&quot;, &quot;p_null&quot;: 8.0e-5, &quot;confidence&quot;: 0.733, &quot;source&quot;: &quot;image&quot;, &quot;spell_confidence&quot;: 0.733 },
+  &quot;total&quot;: { &quot;type&quot;: &quot;number&quot;, &quot;value&quot;: 29.04, &quot;p_null&quot;: 5.3e-8, &quot;confidence&quot;: 0.9995, &quot;source&quot;: &quot;image&quot; },
+  &quot;paid_on&quot;: { &quot;type&quot;: &quot;date&quot;, &quot;value&quot;: &quot;2026-10-24&quot;, &quot;p_null&quot;: 0.0061, &quot;confidence&quot;: 0.9999 },
+  &quot;tax&quot;: { &quot;type&quot;: &quot;number&quot;, &quot;value&quot;: 3.79, &quot;p_null&quot;: 2.8e-4, &quot;confidence&quot;: 0.9982, &quot;source&quot;: &quot;image&quot; },
+  &quot;tip&quot;: { &quot;type&quot;: &quot;number&quot;, &quot;value&quot;: null, &quot;guess&quot;: 0, &quot;p_null&quot;: 0.9999, &quot;confidence&quot;: 0.8923 }
+}</code></pre>
+<p>每个非 null 的数字和日期字段，置信度都在 0.99 以上，<code>tip</code> 是明确的 <code>null</code> 而非编造的零，<code>p_null</code> 达到 0.9999。商户名是错的（收据上写的是「NORTH HARBOR CAFE」），Clairic 也如实说明了：<code>spell_confidence</code> 为 0.73，比响应里其它所有值低了三分之一。这正是你该转给人工的那个字段，而响应已经替你指出了是哪一个。</p>
+<h2>3：从文件抽取</h2>
+<p>PDF 也放进 <code>assets</code>，用 <code>&quot;type&quot;: &quot;document&quot;</code> 和 <code>&quot;format&quot;: &quot;pdf&quot;</code>。Clairic 只读图片，所以 PDF 会交给 <a href="https://openrouter.ai/scaledown/extract">ScaleDown Extract</a>，它每次请求读一个 PDF 或一张图片，回答 <code>text</code> 和 <code>list</code> 字段。视频里页面上的框是为演示画的；Extract 返回的是值和置信度，不是页面坐标。</p>
+<p>在 Extract 上以 $0.00016 跑出的请求：</p>
+<pre><code>curl https://openrouter.ai/api/alpha/extractions \
+  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d @- &lt;&lt;EOF
+{
+  &quot;model&quot;: &quot;scaledown/extract&quot;,
+  &quot;state&quot;: &quot;po&quot;,
+  &quot;assets&quot;: { &quot;po&quot;: { &quot;type&quot;: &quot;document&quot;, &quot;format&quot;: &quot;pdf&quot;, &quot;data_base64&quot;: &quot;$(base64 &lt; purchase-order.pdf | tr -d '\n')&quot; } },
+  &quot;fields&quot;: {
+    &quot;po_number&quot;: { &quot;type&quot;: &quot;text&quot; },
+    &quot;vendor&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;instructions&quot;: &quot;The supplier the order is placed with&quot; },
+    &quot;total&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;instructions&quot;: &quot;Order total including shipping&quot; },
+    &quot;delivery_date&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;instructions&quot;: &quot;Requested delivery date&quot; },
+    &quot;items&quot;: { &quot;type&quot;: &quot;list&quot;, &quot;items&quot;: &quot;text&quot;, &quot;instructions&quot;: &quot;Ordered line items&quot; },
+    &quot;approver&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;instructions&quot;: &quot;Who approved the order&quot; }
+  }
+}
+EOF</code></pre>
+<p>Extract 从 PDF 读了 3,972 个 input token，在 2.9 秒内回答（响应里省去了 <code>model</code> 那一行）：</p>
+<pre><code>{
+  &quot;answers&quot;: {
+    &quot;po_number&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;value&quot;: &quot;PO-20931&quot;, &quot;confidence&quot;: 1, &quot;source&quot;: &quot;document&quot; },
+    &quot;vendor&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;value&quot;: &quot;Meridian Office Supply&quot;, &quot;confidence&quot;: 1, &quot;source&quot;: &quot;document&quot; },
+    &quot;total&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;value&quot;: &quot;$4,200.00&quot;, &quot;confidence&quot;: 0.814, &quot;source&quot;: &quot;document&quot; },
+    &quot;delivery_date&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;value&quot;: &quot;November 18, 2026&quot;, &quot;confidence&quot;: 0.979, &quot;source&quot;: &quot;document&quot; },
+    &quot;items&quot;: { &quot;type&quot;: &quot;list&quot;, &quot;value&quot;: [&quot;Standing desk, 60 in, walnut&quot;, &quot;Task chair, mesh back&quot;, &quot;Monitor arm, dual&quot;], &quot;confidences&quot;: [0.994, 0.999, 1], &quot;source&quot;: &quot;document&quot; },
+    &quot;approver&quot;: { &quot;type&quot;: &quot;text&quot;, &quot;value&quot;: &quot;Priya Shah&quot;, &quot;confidence&quot;: 1, &quot;source&quot;: &quot;document&quot; }
+  },
+  &quot;truncated&quot;: false,
+  &quot;usage&quot;: { &quot;input_tokens&quot;: 3972, &quot;output_tokens&quot;: 0, &quot;cost&quot;: 0.00015888 },
+  &quot;id&quot;: &quot;gen-dec-1794274074-RzjUzkyrf7WfR9LpFUTO&quot;,
+  &quot;provider&quot;: &quot;ScaleDown&quot;
+}</code></pre>
+<p>每个值都对，包括从表格里取出的三个行项目。相比 Clairic 有两点差异需要留意：Extract 没有 <code>number</code> 或 <code>date</code> 类型，所以总金额和交货日期按页面上的字符串原样返回；它逐值（以及逐 list 项）报置信度，但不给 <code>p_null</code> 或 <code>span</code>。总金额 0.81 是值得扫一眼的字段，其余都在 1 或接近 1。</p>
+<h2>模型清单</h2>
+<p>首发提供 <a href="https://openrouter.ai/models?endpoints=/api/alpha/extractions">三个模型</a>，同一个请求对三者都适用，你可以挑最贴合任务的那一个。图片（比如收据照片）以及需要拿回数字、日期或 estimate 时用 Clairic；从 PDF 里抽文本（比如合同里的各方）用 ScaleDown Extract；从纯文本里抽名字或短语（比如邮件、工单）用 Mercury Decide。</p>
+<table><thead><tr><th>模型</th><th>读取内容</th><th>字段类型</th><th>输入价格</th><th>供应商选项</th></tr></thead><tbody><tr><td><a href="https://openrouter.ai/cloudflare/clairic">Clairic</a> (<code>cloudflare/clairic</code>)</td><td>文本，及最多 4 张 PNG 或 JPEG 图片</td><td>全部类型</td><td>$0.10/M</td><td><code>provider.options.cloudflare</code> 下的 <code>include_quantiles</code>、<code>return_state_text</code></td></tr><tr><td><a href="https://openrouter.ai/scaledown/extract">Extract</a> (<code>scaledown/extract</code>)</td><td>文本，或一个 PDF / 一张图片</td><td><code>text</code>，及由 <code>text</code> 组成的 <code>list</code></td><td>$0.04/M</td><td><code>provider.options.scaledown</code> 下的 <code>threshold</code>、<code>top_n</code></td></tr><tr><td><a href="https://openrouter.ai/inception/mercury-decide">Mercury Decide</a> (<code>inception/mercury-decide</code>)</td><td>仅文本</td><td><code>text</code>，及由 <code>text</code> 组成的 <code>list</code></td><td>$0.02/M</td><td><code>provider.options.inception</code> 下的 <code>snap_to_words</code>、<code>threshold</code>、<code>group_fields</code></td></tr></tbody></table>
+<p>三者的输出都免费。价格是 2026 年 11 月 6 日的目录价；当前价见各模型页面。</p>
+<h3>Cloudflare 的 Clairic</h3>
+<p><a href="https://openrouter.ai/cloudflare/clairic">Clairic</a>（<code>cloudflare/clairic</code>）是 Cloudflare 在 Workers AI 上的抽取模型，建议从它入手。它每次请求读文本加最多四张 PNG 或 JPEG 图片，支持全部字段类型，也是首发模型中唯一返回 <code>p_null</code>、spans 以及 <code>estimate</code> 和 <code>forecast</code> 分布的。上面第 1、2 节就是在它上面跑的。两个供应商选项能扩展响应：<code>include_quantiles: true</code> 为每个 <code>estimate</code> 和 <code>forecast</code> 返回 99 个分位数，<code>return_state_text: true</code> 回显 span 偏移量所指向的确切文本，方便你拿切片去对照。</p>
+<h3>ScaleDown Extract</h3>
+<p><a href="https://openrouter.ai/scaledown/extract">Extract</a>（<code>scaledown/extract</code>）每次请求读文本，或一个 PDF / 一张图片，回答 <code>text</code> 和 <code>list</code> 字段并逐值给置信度。它是当下处理 PDF 的模型（第 3 节）。它不报空值概率，因此拒绝 <code>null_threshold</code>；<code>provider.options.scaledown</code> 下的 <code>threshold</code> 和 <code>top_n</code> 用来调它挑值的方式。</p>
+<h3>Inception 的 Mercury Decide</h3>
+<p><a href="https://openrouter.ai/inception/mercury-decide">Mercury Decide</a>（<code>inception/mercury-decide</code>）只读文本，回答 <code>text</code> 和 <code>list</code> 字段，输入价是三者中最低的。它拒绝 <code>reference_date</code>；<code>provider.options.inception</code> 下的 <code>snap_to_words</code>、<code>threshold</code> 和 <code>group_fields</code> 是它的选项。</p>
+<p>纯文本字段在哪儿都能跑。我们把第 1 节发票的 <code>text</code> 和 <code>list</code> 字段发给 Mercury Decide 和 Extract：两者返回的值相同，文本上的 spans 也与 Clairic 一致，花费分别为 $0.000015 和 $0.000014。Extract 对 PDF 不返回 spans（第 3 节）。</p>
+<h2>Decisions 与 Extractions</h2>
+<p>两条路径用同一个信封（<code>model</code>、<code>state</code>、<code>assets</code>、<code>provider</code>），区别在于你交给模型什么、模型还给你什么。</p>
+<p><strong>Decisions：答案由你来写，模型负责权衡。</strong> Decisions 请求带 <code>questions</code>，每个问题自带答案空间：<code>noul</code> 是一个非真即假的命题，<code>choice</code> 列出选项，<code>score</code> 命名一个量表，<code>box</code> 要求图片里的一个区域。对于 <code>noul</code>、<code>choice</code> 或 <code>score</code>，模型绝不会产出你没写下的值；它只是在你写的答案之间分配概率（<code>box</code> 返回你所描述区域的坐标）。正因如此，它适合一切需要判断的事：这是不是发票、这五条条款里哪条适用、严重程度如何、这张图里有没有收据。输出是一个可设阈值的、经过校准的数字，而「答错」也只是你早已处理的选项之一。</p>
+<p><strong>Extractions：字段由你来命名，模型负责找值。</strong> Extractions 请求带 <code>fields</code>，每个字段是一个名字加一个类型：<code>text</code>、<code>number</code>、<code>date</code>、<code>list</code>、<code>duration</code>、<code>estimate</code>、<code>forecast</code>。答案空间是类型本身，而不是你写下的清单，因此模型得在文档里定位这个值（或算出来，比如由开票日和账期推出到期日；或估出来，比如付款要几天）。因为值是开放的，答案会附带证据：读出它的 <code>span</code>、文档里究竟有没有该字段的 <code>p_null</code>，以及 <code>confidence</code>。当答案本身就是内容时——收据上的数字、合同里的名字、表单上的日期——它就是对的工具。</p>
+<p>同一张第 1 节的发票，通过 Decisions 在 <a href="https://openrouter.ai/cloudflare/clef-flash">Clef Flash</a> 上跑：</p>
+<pre><code>{
+  &quot;questions&quot;: {
+    &quot;overdue&quot;: { &quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;The invoice is past due as of 2026-11-06.&quot; },
+    &quot;terms&quot;: { &quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;What are the payment terms?&quot;, &quot;criteria&quot;: { &quot;net 15&quot;: null, &quot;net 30&quot;: null, &quot;net 45&quot;: null, &quot;net 60&quot;: null, &quot;due on receipt&quot;: null } },
+    &quot;has_late_fee&quot;: { &quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;The invoice states a penalty for late payment.&quot; }
+  }
+}</code></pre>
+<pre><code>{
+  &quot;answers&quot;: {
+    &quot;overdue&quot;: { &quot;type&quot;: &quot;noul&quot;, &quot;noul&quot;: 0.2069 },
+    &quot;terms&quot;: { &quot;type&quot;: &quot;choice&quot;, &quot;choice&quot;: &quot;net 45&quot;, &quot;probabilities&quot;: { &quot;net 15&quot;: 0.0096, &quot;net 30&quot;: 0.0131, &quot;net 45&quot;: 0.9623, &quot;net 60&quot;: 0.0096, &quot;due on receipt&quot;: 0.0055 }, &quot;confidence&quot;: 0.908 },
+    &quot;has_late_fee&quot;: { &quot;type&quot;: &quot;noul&quot;, &quot;noul&quot;: 0.9358 }
+  },
+  &quot;usage&quot;: { &quot;input_tokens&quot;: 466, &quot;output_tokens&quot;: 0, &quot;cost&quot;: 0.000008854 }
+}</code></pre>
+<p>对同一张发票，Decisions 判定账期是 net 45、置信度 0.96，且这张发票并未逾期。Extractions（第 1 节）则返回发票号 INV-4417（位于第 8 到 16 个字符）以及总金额 3850。</p>
+<p>一条经验法则：能在发请求前就列出所有可能答案时用 Decisions；答案是写在文档里的某个值时用 Extractions。</p>
+<p>两者也可以搭配使用。Decisions 先判断某文档是不是发票，Extractions 再从判定为是的那些里把字段抽出来。</p>
+<p>两个 API 的请求几乎一样。差别在于 Decisions 问的是有固定答案集的问题（是或否、或在若干选项里选），而 Extractions 要的是由文档填写的字段。要把一个请求从 Decisions 切到 Extractions，把 <code>questions</code> 改名为 <code>fields</code>，并将每一项重写成字段即可。</p>
+<h2>开始使用</h2>
+<p>拿一个 <a href="https://openrouter.ai/settings/keys">API key</a>，在 <a href="https://openrouter.ai/cloudflare/clairic">Clairic 模型页</a> 打开 Playground，用你自己的字段跑一遍上面那张发票，然后读 <a href="https://openrouter.ai/docs/guides/community/extractions">Extractions guide</a> 和 <a href="https://openrouter.ai/docs/api/api-reference/alphaextractions/submit-an-extractions-request">API reference</a>。同一个任务在 Responses API 上用 ScaleDown Extract 的做法，见 <a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/extract-invoice-fields-with-scaledown">cookbook</a>。</p>
+<p>到 Discord 的 <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> 告诉我们你在抽什么。</p>
+<h2>常见问题</h2>
+<h3>API 稳定吗？</h3>
+<p>目前是 alpha。结构可能会变，变动会先落在 <a href="https://openrouter.ai/docs/guides/community/extractions">guide</a> 上。</p>
+<h3>请求写错会怎样？</h3>
+<p>校验在 OpenRouter 一侧完成，之后才会到供应商：未知的键、Mercury Decide 上的 <code>date</code> 字段、Clairic 上的第五张图片、Clairic 上的 PDF，或没有任何地方引用的 asset，都会得到 <code>400</code>，消息里点明问题所在。把 <code>questions</code> 发到这条路径，会得到一个指向 <code>/api/alpha/decisions</code> 的 <code>400</code>。</p>
+<h3>字段什么时候会变成 <code>null</code>？</h3>
+<p>在 Clairic 上，是 <code>p_null</code> 超过 0.5 时。可按字段设 <code>null_threshold</code> 来挪动这条线，<code>guess</code> 里是模型本来会取到的值。Extract 不报 <code>p_null</code>，所以它给出的 <code>null</code> 就是模型直接的答案，而且它拒绝 <code>null_threshold</code>。</p>
+<h3>文档里的日期没写年份怎么办？</h3>
+<p>传 <code>reference_date</code>，模型会以它为锚点。没有 <code>date</code> 类型的模型会拒绝它：Mercury Decide 和 Extract 即是。</p>
+<h3>文档很长怎么办？</h3>
+<p>响应里 <code>truncated: true</code> 表示供应商只读了 state 的前缀。字段一次装不下时，<code>usage.passes</code> 记下所需的上游调用次数，<code>schema_tokens</code> 是每次请求里字段规格的花费。</p>
+<h3>能把 Decisions 请求搬过来吗？</h3>
+<p>信封一样；把 <code>questions</code> 改名为 <code>fields</code> 并重写每份规格即可，因为带选项的 <code>choice</code> 与 <code>text</code> 字段是不同的问法。</p>
+<h3>spans 怎么计数？</h3>
+<p>按 Unicode 码点，是指向 <code>state</code> 的 <code>[start, end)</code>。在以 UTF-16 单元索引字符串的语言里，要按码点切：在 JavaScript 里用 <code>Array.from(state).slice(start, end).join('')</code>，而不是 <code>state.slice(start, end)</code>。Clairic 上的 <code>return_state_text: true</code> 会回显偏移量所指向的确切文本，方便你核对切片。</p>
+<h3>Playground 支持它吗？</h3>
+<p>支持：<a href="https://openrouter.ai/cloudflare/clairic">Clairic 模型页</a> 上的 Playground 接收 <code>state</code> 和 <code>fields</code>，并展示带类型的答案。</p>]]></content:encoded>
     </item>
     <item>
       <title>如何从任何 LLM 获取结构化输出：JSON Schema、工具调用或决策模型</title>
@@ -3396,6 +4158,26 @@ ori claude --model anthropic/claude-sonnet-5.5</code></pre>
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/introducing-safety-retention/</guid>
       <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
       <description>完整标题：Introducing Safety Retention: A Clearer Choice for AI Privacy</description>
+      <content:encoded><![CDATA[<h1>推出 Safety Retention：更清晰的 AI 隐私选择</h1>
+<p>OpenRouter ·10/26/2026</p>
+<p>用 AI 做开发的人，既应当能用上先进的模型，也应当清楚自己的数据会被如何处理。OpenRouter 的职责，就是在多元的模型生态里把这些边界讲清楚。</p>
+<p>我们推出 Safety Retention，作为与 Zero Data Retention（ZDR）和 Retention and Training 并列的新数据政策层级。它允许仅出于防范滥用而存储数据，不用于模型训练。</p>
+<p>一套统一的框架，让不同模型与供应商之间的数据政策更容易比较。它把「数据是否被存储」与「这些数据可被用于什么」这两个问题区分开来。</p>
+<h2>三个数据政策层级</h2>
+<p>Retention 指的是在处理之后，保留一份你发送给模型的内容，或模型返回的内容。我们的框架区分三个层级：</p>
+<table><thead><tr><th>层级</th><th>含义</th><th>你的数据会被用于训练吗？</th></tr></thead><tbody><tr><td><strong>ZDR</strong></td><td>处理之后不做常规存储，详见 <a href="https://openrouter.ai/docs/guides/features/zdr">ZDR policy</a>。</td><td><strong>否</strong></td></tr><tr><td><strong>Safety Retention</strong></td><td>OpenRouter 或供应商可以存储任意请求，无论是否被标记，但仅用于检测、调查和防范滥用。</td><td><strong>否</strong></td></tr><tr><td><strong>Retention and Training</strong></td><td>数据可按相应供应商的政策存储并用于训练。</td><td><strong>可能</strong>，取决于供应商的政策。</td></tr></tbody></table>
+<p>Safety Retention 限定的是数据「为何」可以留存。它并不要求某条请求先被标记才能被存储。</p>
+<h2>为什么要推出 Safety Retention</h2>
+<p>安全系统可以排查恶意网络活动，以及涉及化学、生物、放射性或核材料的滥用。它们也有助于发现未经授权复制模型能力的尝试。有些威胁在单条请求里就能看出，另一些则要在大量请求的模式中才浮现出来。</p>
+<p>保留请求有助于安全系统在任意单条请求被标记之前就发现滥用。被留存的内容仅用于检测、调查和防范滥用，不用于模型训练。</p>
+<p>在这一层级下，OpenRouter 与我们的供应商可能会开始为防范滥用而留存请求。</p>
+<h2>这对隐私意味着什么</h2>
+<p>存储内容，是数据处理方式上一次实质性的变化。隐私既取决于数据是否被保留，也取决于对其用途所设的限制。越强大的模型带来越多的防护，这些区分也就越发重要。</p>
+<p>我们正在更新文档，以体现这一框架。</p>
+<h2>防护与可及性</h2>
+<p>让先进 AI 被广泛使用，依赖于供应商可信赖的防护，以及用户能看懂的数据政策。有效的滥用防范，能帮助供应商服务更多正当的开发者与企业，包括那些与大型 AI 实验室没有直接合作关系的较小团队。</p>
+<p>我们的职责，是把不同供应商之间的这些差异讲明白，让用户比较数据政策时，不必每次都重新学一套隐私术语。</p>
+<p>我们的目标，是让先进 AI 保持广泛可及，同时把围绕客户数据的边界讲清楚。</p>]]></content:encoded>
     </item>
     <item>
       <title>Private Endpoints：把你的微调模型与算力接入 OpenRouter</title>
