@@ -438,7 +438,7 @@ VENDOR_RANK: tuple[str, ...] = (
     "nvidia_nim", "sensetime_sensenova", "iflytek_spark", "meta_llama",
     # 第三梯队：国内其他厂商
     "longcat_meituan", "siliconflow", "streamlake", "unisound_shanhai", "mthreads_coding",
-    "infini_ai", "ppio", "china_telecom_tianyi", "china_mobile_moma",
+    "moss", "infini_ai", "ppio", "china_telecom_tianyi", "china_mobile_moma",
     "zhinao_360",
     # 第四梯队：海外云厂商的托管服务
     "aws_bedrock", "azure_openai", "gcp_vertex_ai", "oracle_oci_ai", "ibm_watsonx",
@@ -528,6 +528,10 @@ GUIDE_META: dict[str, dict] = {
                             "short": "Token Plan 公测免费：5 小时 12 万 + 每周 120 万积分",
                             "pick": "**国内公测期免费 + 白嫖面最宽**：Token Plan ¥0/月，通用积分池 **5 小时 12 万 / 每周 120 万**，同池可调 `sensenova-6.8-flash`、`deepseek-v4.1-flash`、`glm-5.2`、`kimi-k3`；但**第三方模型实测容易 429**，高并发先用自研 `6.8-flash`，单号 20 个 Key",
                             "tip": "只有公测期免费（官方原话「当前额度和活动规则属于公测期权益」）；按积分计量、5 小时 + 周双层窗口；**非 SenseNova 自研模型（DeepSeek / GLM / Kimi）容易 429**，先退避重试或改用 `sensenova-6.8-flash`。"},
+    "moss": {"tiers": ["onetime"], "scenarios": ["multimodal"],
+             "short": "限时免费 0 积分：nex-n2.6（多模态语言模型）+ moss-vl-1.0 视觉理解 + moss-live-1.0 实时",
+             "pick": "**多模态语言模型限时免费**：`nex-n2.6`（文本/图片/视频→文本）官方标「限时免费 0 积分」，2026-11-12 实测 HTTP 200 真实出文、控制台账单为零；同平台 `moss-vl-1.0` 视觉理解、`moss-live-1.0` 实时交互也限时免费。多模态是它区别于多数纯文本免费平台的强项",
+             "tip": "**限时免费无公开截止日**，随时可能恢复计费，别按长期额度排期；`nex-n2.6` 是推理模型，小 max_tokens 下正文为空（需给足）；TTS/转写/文生图已按积分计费，不在免费范围；`tob-kimi-k3` 需单独授权、普通 key 调它 403"},
     "siliconflow": {"tiers": ["permanent", "onetime"], "scenarios": ["embed"],
                     "short": "bge/OCR/画图等 0 元模型 + 注册送 14 元券",
                     "pick": "**工具链首选**：bge 向量/重排、PaddleOCR-VL、SenseVoice/XingChen ASR、Kolors 画图 **0 元** + 注册送 14 元券；但**没有主流旗舰免费**（对话只有 Xing4.0-29B、Hunyuan-MT 两个小模型），纯聊天别指望它"},
@@ -1296,6 +1300,38 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("API 文档（积分规则 / 模型总览）", "https://platform.sensenova.cn/docs"),
             ("官方主页", "https://www.sensenova.cn/"),
             ("大装置控制台", "https://console.sensecore.cn/"),
+        ],
+    },
+    "moss": {
+        "category": "domestic",
+        "display_name": "复旦 MOSS (MOSI)",
+        "openai_compat": {
+            "summary": "nex-n2.6 等 4 款限时免费 0 积分 + 多模态/语音/图像全家桶",
+            "api_key_label": "控制台创建",
+            "api_key_url": "https://platform.mosi.cn/",
+            "base_url": "https://api.mosi.cn/v1",
+            "models": "`nex-n2.6`, `nex-n2.6-2026-11-05`, `moss-vl-1.0`, `moss-live-1.0`",
+        },
+        "free_quota": "**无注册赠金**；当前实行「限时免费」——语言模型 `nex-n2.6`、多模态 `moss-vl-1.0` / `moss-vl-realtime-1.0`、实时交互 `moss-live-1.0` 均标「限时免费 0 积分」；2026-11-12 实测控制台账单为零，调用未扣积分（控制台读数 + API 实测双重证实）",
+        "validity": "限时免费，官方未公布截止日；随时可能恢复计费，以官方公告为准",
+        "free_models": [
+            "**限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（实测 max_tokens=64 时 63 个 token 全用于推理，finish_reason=length）",
+            "**限时免费 0 积分**：`moss-vl-1.0`（多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（实时视频理解，WebSocket `/v1/realtime`）、`moss-live-1.0`（实时音频+视频流→音频+文本，WebSocket `/v1/realtime`，Beta）",
+            "**付费（非免费）**：TTS 系列 moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥2.00/万字符＝40 积分/万字符）；转写 moss-transcribe-1.0（¥0.80/小时＝16 积分/小时）、moss-transcribe-diarize-pro（¥2.00/小时＝40 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.20/张≈4 积分、高分辨率 ¥0.30/张≈6 积分，智能改写另计 ¥0.05/次＝1 积分）",
+        ],
+        "tier_caveats": [
+            "**限时免费无公开截止日**，随时可能恢复计费；TTS/转写/部分图像已按积分计费，免费仅限上述模型，勿把「平台整体免费」当结论",
+            "`nex-n2.6` 是**推理模型**：小 max_tokens 下 reasoning 吃满预算、content 为空（finish_reason=length），不是坏——要给足 max_tokens 才能拿到正文",
+            "模型列表出现 `tob-kimi-k3`（owned_by kimi），但用普通账号 key 调用 `POST /v1/chat/completions` 返回 403 `forbidden`——**该 key 不覆盖该模型**，需单独授权；别把「列表里可见」当成「能用」",
+            "API 响应体与响应头**不暴露任何计费字段**，故「0 积分」结论依赖控制台账单读数而非 API 自证；接入时以控制台扣减记录为准",
+        ],
+        "preconditions": "注册 MOSS 开放平台账号并创建 API Key（`sk-` 开头），控制台获取；调用带 `Authorization: Bearer <key>`",
+        "promotions": "限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 / moss-live-1.0 标 0 积分。MOSS-Image API 已于 2026-11-11 12:00 起计费（低至 0.2 元/张）。",
+        "notes": "API base 实为 `https://api.mosi.cn`；`platform.moss.cn` 会重定向到 `platform.mosi.cn`（moss.cn 是别名域）。按积分而非 token 计量，免费仅限上述模型。",
+        "links": [
+            ("模型列表（官方全文，含计费标准）", "https://platform.mosi.cn/docs/models"),
+            ("MOSS 开放平台", "https://platform.mosi.cn/"),
+            ("API 基础域名（OpenAI 兼容）", "https://api.mosi.cn/v1/models"),
         ],
     },
     "zhinao_360": {
