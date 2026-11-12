@@ -5151,7 +5151,13 @@ class TestGuideRendering(unittest.TestCase):
                 + crawler_llm_intel.render_guide_block(records)
                 + "\n\n正文之后\n", encoding="utf-8")
             # 故意塞一个过期的首选，验证会被重排回 GUIDE_META 的现渲染
-            stale = readme.read_text(encoding="utf-8").replace("这 6 家都", "这 5 家都")
+            # 首选家数由 GUIDE_META 的 pick 条目数动态决定（新增进首选的厂商会改这个数），
+            # 不写死：先把真渲染里的「这 N 家都」替成「这 5 家都」制造过期，再验证被重排回来。
+            text_before = readme.read_text(encoding="utf-8")
+            import re as _re
+            _m = _re.search(r"这 (\d+) 家都", text_before)
+            self.assertIsNotNone(_m, "攻略块里应有「这 N 家都」首选文案")
+            stale = text_before.replace(f"这 {_m.group(1)} 家都", "这 5 家都")
             readme.write_text(stale, encoding="utf-8")
 
             rc = crawler_llm_intel.render_guide_only(tmpdir, vendors, readme)
@@ -5159,7 +5165,7 @@ class TestGuideRendering(unittest.TestCase):
             text = readme.read_text(encoding="utf-8")
             self.assertTrue(text.startswith("# 标题\n\n正文之前\n"))
             self.assertTrue(text.endswith("\n\n正文之后\n"))
-            self.assertIn("这 6 家都", text)
+            self.assertIn(f"这 {_m.group(1)} 家都", text)
             self.assertNotIn("这 5 家都", text)
             self.assertTrue((tmpdir / "docs" / "images" / "top-picks.svg").exists())
 
