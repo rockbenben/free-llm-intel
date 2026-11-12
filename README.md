@@ -182,7 +182,7 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-11 16:37:11**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-12 11:17:03**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
 > 💡 **核心特性**：覆盖 **85 家厂商**（深度抓取 **157 个情报页 + 45 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 34 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
@@ -925,7 +925,7 @@ python -m unittest discover
 | **额度有效期** | 100 万请求为档内包含额度（是否按月重置官方页未载明） |
 | **前置条件 / 限制** | 注册账号，**仅支持 GitHub / Google OAuth**（`inference.net/register`） |
 | **邀请 / 特惠活动** | Growth 档含 $50 一次性开户赠金；免费档本身无额外活动。 |
-| **实时巡检证据** | • $0+ 使用量<br>• 50 美元一次性开户信用额<br>• 30 请求/分钟速率限制 |
+| **实时巡检证据** | • Get up to 10x the tokens for your agents and apps with reliable, low-cost monthly subscriptions on Inference.net. |
 | **官方直达** | [Pricing（免费档额度）](https://inference.net/pricing/) ｜ [文档：Call Your Deployment](https://docs.inference.net/platform/deploy/call-your-deployment) ｜ [注册](https://inference.net/register/) ｜ [官方主页](https://inference.net/) |
 | **特别说明** | 第三方情报库所称「$1/月重置额度」无官方页支撑，**不予采信**。**重要：这是可观测性平台而非免费推理平台**——`api.inference.net/v1/models` 无鉴权即返回完整模型目录（含 claude 系列，标注 upstream 单价），说明模型目录公开可读，但推理本身仍需付费部署。**OpenAI 兼容 base URL 为 `https://api.inference.net/v1`**（官方 docs 示例确认）。 |
 
@@ -1057,7 +1057,7 @@ python -m unittest discover
 | **额度有效期** | 探索额度 **6 个月**；Always Free 永久 |
 | **前置条件 / 限制** | 注册 AWS 账号并绑定信用卡；控制台开通 Model Access |
 | **邀请 / 特惠活动** | **AWS Activate** 初创计划最高可申请 **$200,000** 抵扣。 |
-| **实时巡检证据** | • 当您创建新的 AWS 免费套餐账户时，您将立即获得 100 美元的服务抵扣金。当您探索关键服务时，最多可以多获取 100 美元服务抵扣金。在免费计划中，6 个月内最高可获得 200 美元服务抵扣金用于搭建环境、调试试错和开展实验，全程无额…<br>• 免费注册，连接您的编码代理，然后开始构建 |
+| **实时巡检证据** | • 当您创建新的 AWS 免费套餐账户时，您将立即获得 100 美元的服务抵扣金。当您探索关键服务时，最多可以多获取 100 美元服务抵扣金。在免费计划中，6 个月内最高可获得 200 美元服务抵扣金用于搭建环境、调试试错和开展实验，全程无额…<br>• 通过有限的免费试用来试用选定的付费计划服务。您的试用从您激活服务时开始，任何符合条件的服务抵扣金都将自动应用于试用限额以外的用量。<br>• * 优先套餐定价比标准套餐定价高 75% |
 | **官方直达** | [AWS Free Tier 官方页](https://aws.amazon.com/free/) ｜ [Bedrock 定价](https://aws.amazon.com/bedrock/pricing/) ｜ [Bedrock 文档](https://docs.aws.amazon.com/bedrock/) |
 | **特别说明** | 与 AWS 生态（IAM、Lambda、S3）集成；免费套餐政策以 aws.amazon.com/free 实时页面为准。 |
 
@@ -1416,7 +1416,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 cloud.dify.ai 账号即可 |
 | **免费层限制 / 注意事项** | • 200 条不带 / month，别按月领的理解它<br>• 知识库命中测试有限速：一分钟内连续 10 次 hit test 会临时限制该工作区后续动作 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • 10 Annotation Quota Limits |
+| **实时巡检证据** | • 5,000 API Rate Limit/month |
 | **官方直达** | [定价页](https://dify.ai/pricing) ｜ [云版控制台](https://cloud.dify.ai/) |
 
 ### 83. Nango (第三方集成 / API 连接)
@@ -1462,6 +1462,7 @@ python -m unittest discover
 | **官方直达** | [定价页](https://v0.app/pricing) |
 
 <!-- LLM-INTEL:END -->
+
 
 
 

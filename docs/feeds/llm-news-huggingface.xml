@@ -147,6 +147,13 @@
 <ul><li><a href="https://huggingface.co/joooon"><img src="https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg" alt=""></a></li><li><a href="https://huggingface.co/milangritta"><img src="https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>Token Pooling-Aware Training for Multi-Vector Embedding Mode…</title>
+      <link>https://huggingface.co/blog/token-pooling</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/token-pooling</guid>
+      <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Token Pooling-Aware Training for Multi-Vector Embedding Models</description>
+    </item>
+    <item>
       <title>用 Google Cloud 账号支付 Hugging Face Hub 费用</title>
       <link>https://huggingface.co/blog/hub-gcp-marketplace</link>
       <guid isPermaLink="true">https://huggingface.co/blog/hub-gcp-marketplace</guid>
@@ -7118,87 +7125,6 @@ hermes config set agent.tool_use_enforcement true</code></pre>
 <ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
 <h2>本文提及的 1 个数据集</h2>
 <h2>本文提及的 2 个 Spaces</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>同一个模型家族，两枚金牌级成绩：为 IOI 与 IMO 微调 Nemotron</title>
-      <link>https://huggingface.co/blog/nvidia/nemotron-ioi-and-imo-2026</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/nemotron-ioi-and-imo-2026</guid>
-      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：One Model Family, Two Gold-Level Results: Fine-Tuning Nemotron for IOI and IMO</description>
-      <content:encoded><![CDATA[<h1>同一个模型家族，两枚金牌级成绩：为 IOI 与 IMO 微调 Nemotron</h1>
-<p>企业</p>
-<p>+</p>
-<p>文章</p>
-<p>发布于</p>
-<p>2026 年 10 月 7 日</p>
-<ul><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/Lord-Kinburg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QZUCtnUduwETYAKYdKZ4k.png" alt=""></a></li><li><a href="https://huggingface.co/Nekodimos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/699afccd584d08e09c0108c7/WYdoOTolDS7sFJDs_WmqS.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sadeghasgarilou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/K4jIazK1mAx5VNdySMF7-.png" alt=""></a></li><li><a href="https://huggingface.co/zakariarafi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/9S21lFJeatwLLH_7_dKus.png" alt=""></a></li></ul>
-<p>Aleksander</p>
-<p>aficek</p>
-<p>nvidia</p>
-<p>Igor Gitman</p>
-<p>igitman</p>
-<p>nvidia</p>
-<p>Sean Narenthiran</p>
-<p>SeanNaren</p>
-<p>nvidia</p>
-<p>Mehrzad Samadi</p>
-<p>mehrzads</p>
-<p>nvidia</p>
-<p>Somshubra Majumdar</p>
-<p>smajumdar94</p>
-<p>nvidia</p>
-<p>国际信息学奥林匹克（IOI）与国际数学奥林匹克（IMO）考察的是不同的能力。IOI 要求算法和能在严格时间与提交限制下通过隐藏测试的代码；IMO 则要求严谨的自然语言证明。在任何一项赛事中取胜都很困难，两项都取胜指向的是某种更宽泛的东西。</p>
-<p>我们最新的成绩表明，Nemotron 是构建世界级专门模型的一个强有力且可适配的基座。从 Nemotron 3 出发，我们的团队用监督微调（SFT）、强化学习（RL）以及反馈驱动的 inference，做出了在 <a href="https://arxiv.org/abs/2609.10712">IMO 2026</a> 和 <a href="https://arxiv.org/abs/2609.02849">IOI 2026</a> 两项赛事中都达到金牌级水平的系统。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/LqM9etFUGTjJT116M7Hq8.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/LqM9etFUGTjJT116M7Hq8.png" alt="fig_ioi_imo_gold_results_headline"></a></p>
-<table><thead><tr><th>赛事</th><th>Nemotron 专门化方案</th><th>结果</th></tr></thead><tbody><tr><td>IOI 2026</td><td>Nemotron-3-Ultra-CC，配合 SFT 与 GenCorrect</td><td>535.4/600，高于 361.12 的金牌线，也高于人类最高分 498.27</td></tr><tr><td>IMO 2026</td><td>Nemotron 3 Ultra 通用版、SFT 与 RL checkpoints，组成 generate-verify-refine 系统</td><td>30/42，高于官方金牌线 29</td></tr></tbody></table>
-<p>IOI 的成绩来自一次实时的、前瞻性的运行，所用的时间、互联网访问与提交限制与人类选手完全一致。它属于一次非官方、无监考的基准测试，没有被纳入 IOI 的正式排名。IMO 系统提交的证明则由 IMO 官方评分员评定。</p>
-<h2>一套可复用的专门化配方</h2>
-<p>「容易微调」不应该只是意味着某个 checkpoint 可以被训练。它应当意味着一个有能力的 foundation model，能够用一套清晰、可复用的配方被适配到一个高要求领域。</p>
-<p>在这两个项目中，这套配方包含四个部分：</p>
-<ul><li>从一个强的 Nemotron 基座模型出发。</li><li>策展领域题目与高质量推理轨迹（reasoning traces）。</li><li>应用标准的 post-training 方法，例如 SFT，以及在有用处的地方加上 RL。</li><li>把专门模型与一个能生成、评估并改进候选答案的 inference 循环配对。</li></ul>
-<p>训练与 inference 的规模都不小，但底层做法是大家熟悉且可复现的。我们不需要为每一个挑战重新造一个 foundation model。我们是把 Nemotron 针对任务做了专门化。</p>
-<h2>从通用编码能力到 IOI 金牌</h2>
-<p>在竞赛编程上，我们策展了 22,000 道题目，并生成合成推理轨迹来训练两个专门模型。Nemotron-3-Nano-CC 总参数 300 亿、激活参数 30 亿，同时接受了 SFT 与 RL。Nemotron-3-Ultra-CC 总参数 5,500 亿、激活参数 550 亿，接受的是 SFT。</p>
-<p>在 IOI 2025 上的递进让专门化的价值一目了然。Nano 从 post-training 之前的 130 分，提升到 SFT 后的 280 分，再到 RL 后的 291 分。配合 GenCorrect——我们的迭代式 generate-evaluate-refine 策略——它达到 468 分，越过了 438.3 的金牌线。Ultra-CC 用同样的 test-time 策略达到 502 分。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/GptKxXbYlSsm2ksIJqZzE.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/GptKxXbYlSsm2ksIJqZzE.png" alt="fig_main_capability_progression_previous_style"></a></p>
-<p>这些实验还表明，适配在不同规模上不必是同一种样子。SFT 贡献了 Nano 的大部分增益，RL 带来的是较小但一致的额外提升。而对更强的 Ultra 模型，一个 SFT epoch 就足以在 IOI、ICPC 与 LiveCodeBench Pro 上超过完成了完整 post-training 的 Nano 模型。这一发现指导了为 IOI 2026 准备的赛事专用 Ultra-CC 系统，该系统拿下 600 分中的 535.4 分。</p>
-<h2>教会 Nemotron 证明、检查与修正</h2>
-<p>IMO 项目把同样的思路用在奥林匹克数学上。我们从 Nemotron 3 Ultra 出发，用 SFT 训练了一个专门模型，用 RL 训练了另一个。</p>
-<p>SFT 语料包含 414,890 条经过质量筛选的样例，覆盖 15,818 道唯一证明题。它教会的不只是最终答案：这些数据涵盖证明生成、证明细化、验证与元验证，因此模型学会了构造论证、找出缺口、回应批评，以及判断一个证明是否完整。RL 模型在 9,597 道证明题上训练，这些题目选取在模型能力边界附近。</p>
-<p>在开发实验中，两个 post-trained checkpoint 都优于公开发布版模型。SFT checkpoint 在第一轮搜索中最强，而 RL checkpoint 取得了单个 checkpoint 的最佳整体结果。它们的优势互补，因此最终系统把两个专门模型与通用模型一起使用。</p>
-<p>对每道 IMO 题目，模型生成候选证明、为其打分、产出批评意见，并细化最有希望的几次尝试。一个独立的高算力阶段负责挑选最终提交。整个系统都在自然语言中工作，没有形式化证明器、外部工具或互联网访问。它拿下 42 分中的 30 分，其中六道题里有四道获得满分，并超过了官方金牌分数线。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/Wo0kpoA9qTLPaxWv48DnL.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/Wo0kpoA9qTLPaxWv48DnL.png" alt="image"></a></p>
-<h2>Fine-tuning 与 test-time compute 是协同的</h2>
-<p>我们早先的 <a href="https://huggingface.co/blog/nvidia/ioi-gold-medal-with-open-weight">IOI 2025 Hugging Face 帖子</a>展示了 test-time compute 如何把 open-weight 模型推到金牌级表现。这次的新结果补上了一块重要的拼图：更好的专门化能给 inference 系统带来更好的候选、更好的批评者和更好的细化。</p>
-<p>在 IOI 上，GenCorrect 把微调带来的增益在多轮反馈中转化为更大的改进。在 IMO 上，使用互补的 SFT 与 RL checkpoint，比单纯从单个 checkpoint 多抽一些样本更有价值。两种情况下，最好的结果都来自把一个有能力的专门模型同一个能搜索、验证与改进的系统结合起来。</p>
-<p>这个区分很重要。这些奖牌不是单靠 fine-tuning 拿到的，也不是单靠暴力采样拿到的。它们来自对模型、数据与 inference 循环的共同设计。</p>
-<h2>开源的模型、数据与配方都在 Hugging Face 上</h2>
-<p>我们希望这些结果在赛事之外同样有用。<a href="https://huggingface.co/collections/nvidia/nemotron-labs-imo-2026">Nemotron Labs IMO 2026 合集</a>把 SFT 与 RL checkpoint、两份训练数据集，以及一个新基准 Nemotron-IMO-Bench（200 道奥赛级题目）收在一起。<a href="https://arxiv.org/abs/2609.10712">IMO 论文</a>描述了训练方法与 generate-verify-refine 系统，而 <a href="https://github.com/NVIDIA-NeMo/Skills/tree/main/recipes/nemotron-imo-tts">NeMo-Skills 仓库</a>收录了 IMO 的 inference 流水线、prompts、提交的证明，以及一份可复现的快速上手指南。竞赛编程方面，<a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-3-Competitive-Coding-550B-A55B-NVFP4">Nemotron-3-Ultra-CC 模型</a>已在 Hugging Face 上提供，<a href="https://arxiv.org/abs/2609.02849">IOI 论文</a>给出了训练配方与 GenCorrect 方法论。IOI 的评测与 inference 流水线同样可在 <a href="https://github.com/NVIDIA-NeMo/Skills">NeMo-Skills</a> 中找到。</p>
-<p>IMO 与 IOI 合在一起，为一个朴素的观点提供了极为严苛的证据：Nemotron 可以被 fine-tune 成世界级的领域专门模型，再与透明的 inference 工作流组合起来，去解决人类竞赛前沿上的问题。</p>
-<p>我们很期待看到 Hugging Face 社区接下来做出什么。</p>
-<h2>本文中提到的模型 1</h2>
-<h2>本文中提到的合集 1</h2>
-<p>这位作者的其他文章</p>
-<h2>NVIDIA Kumo Tabular 为表格预测树立新的精度-效率前沿</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>86</p>
-<p>2026 年 9 月 29 日</p>
-<h2>如何使用 NVIDIA Warp 与 MjWarp 加速机器人仿真与学习工作流</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>56</p>
-<p>2026 年 9 月 23 日</p>
-<h3>社区</h3>
-<p>nev8r</p>
-<p>1 天前</p>
-<p>nano-cc 在哪里</p>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者</p>
-<p>点击这里</p>
-<p>。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fnemotron-ioi-and-imo-2026">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fnemotron-ioi-and-imo-2026">登录</a> 即可评论</p>
-<ul><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/Lord-Kinburg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QZUCtnUduwETYAKYdKZ4k.png" alt=""></a></li><li><a href="https://huggingface.co/Nekodimos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/699afccd584d08e09c0108c7/WYdoOTolDS7sFJDs_WmqS.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sadeghasgarilou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/K4jIazK1mAx5VNdySMF7-.png" alt=""></a></li><li><a href="https://huggingface.co/zakariarafi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/9S21lFJeatwLLH_7_dKus.png" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jayshah5696"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6410e376a8d20679261db5b5/GcO-95nv5fJwXpdIXTvwf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hiepnh"><img src="https://huggingface.co/avatars/15720cf8cd69a7fecfc749f5524c2500.svg" alt=""></a></li><li><a href="https://huggingface.co/robertsganj"><img src="https://huggingface.co/avatars/88cf8627b6f773bfd266b71167f459c3.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>
-<h2>本文中提到的模型 1</h2>
-<h2>本文中提到的合集 1</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

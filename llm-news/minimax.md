@@ -1,6 +1,6 @@
 # MiniMax (稀宇科技) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-11**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-12**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：MiniMax (稀宇科技)（`minimax`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -11,7 +11,7 @@
 
 ## 全部文章（共 52 篇，按日期倒序；无日期条目列于最后）
 
-1. [MiniMax H3 Image](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-11-%E6%9C%88-10-%E6%97%A5)（2026-11-10）
+1. [MiniMax H3 Image](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-11-%E6%9C%88-10-%E6%97%A5)（2026-11-10） <!--orig:MiniMax H3 Image-->
 2. [插件即应用：MiniMax Code Mini App 正式发布](https://www.minimax.cn/blog/minimax-code-mini-app-1792650729)（2026-10-22）
 3. [MiniMax M3.1 Flash](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-10-%E6%9C%88-19-%E6%97%A5)（2026-10-19） <!--orig:MiniMax M3.1 Flash-->
 4. [MiniMax M3.1 Flash：重新定义 Agent 的性能与成本](https://www.minimax.cn/blog/minimax-m31f)（2026-10-19）
