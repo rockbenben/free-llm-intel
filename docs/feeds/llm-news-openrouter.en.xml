@@ -7,7 +7,165 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Reranking in RAG: How to Fix Bad Retrieval with a Reranker</title>
+      <link>https://openrouter.ai/blog/tutorials/reranking-rag/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/reranking-rag/?li=1</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Reranking in RAG: How to Fix Bad Retrieval with a Reranker</h1>
+<p>OpenRouter ·11/13/2026</p>
+<p><img src="https://openrouter.ai/blog/images/reranking-rag.png" alt="Reranking in RAG: How to Fix Bad Retrieval with a Reranker"><img src="https://openrouter.ai/blog/images/reranking-rag-dark.png" alt="Reranking in RAG: How to Fix Bad Retrieval with a Reranker"></p>
+<p>When a RAG (Retrieval-Augmented Generation) app gives wrong answers even though the right information is in your documents, retrieval is often the cause. Vector search is great at finding chunks on the right topic, but it often falls for near misses, like pulling the bucket limit for the Enterprise plan when the user asked about the Growth plan. Reranking in RAG fixes this by taking your vector search’s top 30 candidates and passing them through a dedicated <a href="https://openrouter.ai/docs/api/api-reference/rerank/submit-a-rerank-request">cross-encoder model</a> that re-scores each chunk directly against the question.</p>
+<p>On a 274-question benchmark, standard vector search with google/gemini-embedding-2 landed the exact right chunk at the top <strong>81%</strong> of the time. Adding voyageai/rerank-3-lite to rerank the top 30 pushed that to <strong>97%</strong> for roughly $0.10 per 1,000 queries. Keep in mind this was tested on a small synthetic dataset, so your real-world gains will depend on your documents, but the workflow below will help you measure your own baseline.</p>
+<pre><code>TL;DR
+Retrieve about 30 candidates, rerank them, and send the top 3 to the LLM.
+voyageai/rerank-3-lite and voyageai/rerank-3 were the most accurate dedicated rerank models and the cheapest of all 11 rerankers, at $0.10 and $0.26 per 1,000 queries.
+An LLM reranker (openai/gpt-6-luna) put the right chunk first for 99.6% of questions, but each call took 4.0 seconds against 1.3 for a rerank model.
+The cheap voyageai/voyage-4-lite plus voyageai/rerank-3-lite reached 96.7% precision@1, against 81.0% for the more expensive google/gemini-embedding-2 alone.
+Set input_type on embedding calls. Leaving it out costs 7 to 12 points of precision@1.
+cohere/rerank-v3.5 reads only the first 4,096 tokens (4K) of a document and gives no error.</code></pre>
+<h2>Why does RAG retrieve the wrong chunks?</h2>
+<p>Standard vector search struggles because embedding models compress an entire chunk into a single vector before seeing the user’s question. If a 130-word chunk explains bucket limits, the specific plan name is only one or two words out of that entire block. As a result, the vectors for the Starter, Growth, Scale, and Enterprise plans cluster right on top of each other in vector space, and the retriever can easily rank the wrong plan first.</p>
+<p>To test retrieval accuracy without relying on subjective scoring, we built a controlled dataset for a fictional storage service named Fernbank. The corpus contains 274 chunks spanning documentation, error codes, SDK guides, changelog entries, and noise, including unanswered forum posts and support tickets designed to trap naive keyword and vector matches. We generated each chunk from a fixed set of facts with anthropic/claude-sonnet-5.5 and checked it with a script. A separate model, openai/gpt-6.1-sol, wrote the questions. Because every question maps to one correct chunk, we can score retrieval without judgment calls.</p>
+<p>In the full test set, the question was “How many buckets can I create in a single Fernbank account on the Growth plan?”. google/gemini-embedding-2 ranked the Starter, Enterprise, and Scale plan chunks 1, 2, and 3. An unanswered forum post ranked fourth, and the actual Growth plan answer sat at fifth. If your RAG pipeline only sends its top three candidates to the LLM, the model never even sees the right document.</p>
+<p>A reranker fixes this by using a cross-encoder architecture. Rather than evaluating documents in isolation, it processes the user’s question alongside each candidate chunk. Running a cross-encoder across thousands of documents is too slow for real-time queries, so a vector search serves as a fast retriever, narrowing the field to a shortlist before the reranker sorts it.</p>
+<h2>How to add a reranker to your RAG pipeline</h2>
+<p>You don’t need to replace your existing embedding search. Keep it as the first retrieval stage, increase the number of candidates it returns, and add a reranking call before passing the final results to your LLM.</p>
+<p><img src="https://openrouter.ai/blog/images/reranking-rag-1.png" alt="RAG pipeline with a reranker: question, vector search for the top 30 chunks, rerank model, top 3 chunks, LLM answer"></p>
+<p><em>Retrieve 30 chunks with embeddings, rerank them, and send the top 3 to the LLM.</em></p>
+<p>The following Python example uses our embeddings and rerank APIs. It retrieves candidate chunks using cosine similarity, reranks them with voyageai/rerank-3-lite, and returns the three highest-ranked results.</p>
+<p>You’ll need an OPENROUTER_API_KEY environment variable, along with numpy and requests installed.</p>
+<p><em><strong>Python</strong></em></p>
+<pre><code>import os
+ 
+import numpy as np
+import requests
+ 
+API = &quot;https://openrouter.ai/api/v1&quot;
+HEADERS = {&quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;}
+ 
+def embed(texts, input_type, model=&quot;google/gemini-embedding-2&quot;):
+    r = requests.post(f&quot;{API}/embeddings&quot;, headers=HEADERS, timeout=120,
+                      json={&quot;model&quot;: model, &quot;input&quot;: texts,
+                            &quot;input_type&quot;: input_type})
+    r.raise_for_status()
+    data = sorted(r.json()[&quot;data&quot;], key=lambda d: d[&quot;index&quot;])
+    v = np.array([d[&quot;embedding&quot;] for d in data])
+    return v / np.linalg.norm(v, axis=1, keepdims=True)
+ 
+def retrieve(question, chunks, chunk_vectors, n=30):
+    sims = chunk_vectors @ embed([question], &quot;search_query&quot;)[0]
+    return [(sims[i], chunks[i]) for i in np.argsort(-sims)[:n]]
+ 
+def rerank(question, candidates, top_n=3, model=&quot;voyageai/rerank-3-lite&quot;):
+    r = requests.post(f&quot;{API}/rerank&quot;, headers=HEADERS, timeout=120,
+                      json={&quot;model&quot;: model, &quot;query&quot;: question,
+                            &quot;documents&quot;: candidates, &quot;top_n&quot;: top_n})
+    r.raise_for_status()
+    data = r.json()
+    ranked = [(res[&quot;relevance_score&quot;], candidates[res[&quot;index&quot;]])
+              for res in data[&quot;results&quot;]]
+    return ranked, data.get(&quot;usage&quot;, {}).get(&quot;cost&quot;)
+ 
+# Your knowledge base, already split into chunks
+chunks = [
+    &quot;Starter plan limits: an account on the Starter plan can create up to &quot;
+    &quot;10 buckets.&quot;,
+    &quot;Scale plan limits: accounts on the Scale plan can hold up to &quot;
+    &quot;2,500 buckets.&quot;,
+    &quot;Enterprise plan limits: Enterprise accounts can create up to &quot;
+    &quot;40,000 buckets.&quot;,
+    &quot;Growth plan limits: an account on the Growth plan can hold up to &quot;
+    &quot;150 buckets.&quot;,
+    &quot;Q: What's the bucket cap on the Growth plan? Reply: I think it &quot;
+    &quot;changed recently, check the docs.&quot;,
+    &quot;Growth plan object size: a single object on the Growth plan can be &quot;
+    &quot;up to 50 GB.&quot;,
+]
+chunk_vectors = embed(chunks, &quot;search_document&quot;)
+ 
+question = (&quot;How many buckets can I create in a single account &quot;
+            &quot;on the Growth plan?&quot;)
+retrieved = retrieve(question, chunks, chunk_vectors)
+print(&quot;Vector search:&quot;)
+for sim, text in retrieved:
+    print(f&quot;  {sim:.3f} {text[:60]}&quot;)
+ 
+ranked, cost = rerank(question, [text for _, text in retrieved])
+print(f&quot;Reranked (${cost:.7f}):&quot;)
+for score, text in ranked:
+    print(f&quot;  {score:.3f} {text[:60]}&quot;)</code></pre>
+<p><em><strong>Output</strong></em></p>
+<pre><code>Vector search:
+  0.832 Growth plan limits: an account on the Growth plan can hold u
+  0.758 Starter plan limits: an account on the Starter plan can crea
+  0.741 Scale plan limits: accounts on the Scale plan can hold up to
+  0.737 Enterprise plan limits: Enterprise accounts can create up to
+  0.717 Growth plan object size: a single object on the Growth plan
+  0.695 Q: What's the bucket cap on the Growth plan? Reply: I think
+Reranked ($0.0000038):
+  0.922 Growth plan limits: an account on the Growth plan can hold u
+  0.793 Q: What's the bucket cap on the Growth plan? Reply: I think
+  0.727 Starter plan limits: an account on the Starter plan can crea</code></pre>
+<p>With these short, one-sentence chunks, vector search already places the correct Growth plan limit first. The cosine similarity scores range from 0.695 to 0.832, so several candidates are relatively close. After reranking, the correct chunk receives a relevance score of 0.922. The unanswered forum post moves into second place with a score of 0.793, ahead of the Starter plan entry.</p>
+<p>The second result illustrates an important limitation that relevance isn’t the same as correctness. The forum post asks the same question, so the reranker considers it relevant even though it doesn’t answer the question. In this simplified example, the reranker doesn’t fix the first result because it was already correct. In the full benchmark, with 130-word chunks, vector search put the wrong chunk first for 19% of questions, including the Growth plan question, and reranking with voyageai/rerank-3-lite fixed most of them.</p>
+<p>The practical lesson is to send the LLM a few strong candidates rather than relying on a single result. You should also consider filtering out unanswered discussions and other content that mentions a question without resolving it.</p>
+<p>There are two other details worth getting right in the code:</p>
+<ul><li>First, the input_type parameter tells the embedding model whether it’s encoding a search query or a document. Some models treat these inputs differently, so omitting the parameter can hurt retrieval. In our tests, leaving it out reduced precision@1 for Gemini from 81.0% to 74.1%, and for voyageai/voyage-4-lite from 64.6% to 52.9%. See the <a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">embeddings API reference</a>, which takes it as a string and documents search_query and search_document as its values.</li><li>Second, top_n controls how many results the reranker returns, not how many it evaluates. The model still scores every candidate you send it, so the number of candidates affects both cost and latency.</li></ul>
+<h2>How do you know reranking helped?</h2>
+<p>A reranker can improve result ordering without necessarily improving the answers your users receive. To determine whether it’s worth adding, measure retrieval accuracy before and after the change, then evaluate the final answers.</p>
+<blockquote>1. Start with precision@1: the percentage of questions for which the first retrieved chunk contains the correct answer. You don’t need a huge evaluation set to begin. Fifty real questions from your application logs, each labeled with its correct answer chunk, can give you an initial baseline. The guide to building a golden evaluation dataset from production traffic explains how to put one together.<br>2. Don’t rely on recall@5 alone: It measures whether the correct chunk appears anywhere in the top five, regardless of its position. In our test, Gemini achieved 98.2% recall@5 but only 81.0% precision@1. The right information was usually somewhere in the results, but it wasn’t always at the top.</blockquote>
+<p>We also tested the effect on the final answers. We used anthropic/claude-haiku-5.5 to answer all 274 questions using the chunks returned by each retrieval configuration, then compared the responses with the known facts.</p>
+<table><thead><tr><th><strong>Chunks sent to the LLM</strong></th><th><strong>Answers correct</strong></th><th><strong>Right chunk in context</strong></th></tr></thead><tbody><tr><td>voyage-4-lite top 5, no rerank</td><td>93.1%</td><td>93.1%</td></tr><tr><td>gemini-embedding-2 top 5, no rerank</td><td>97.1%</td><td>98.2%</td></tr><tr><td>gemini-embedding-2 top 3, no rerank</td><td>95.6%</td><td>96.0%</td></tr><tr><td>gemini-embedding-2 top 30, reranked to 3</td><td>99.3%</td><td>100%</td></tr><tr><td>voyage-4-lite top 30, reranked to 3</td><td>99.3%</td><td>99.6%</td></tr></tbody></table>
+<p><em>Our October 8, 2026 run had 274 questions. Reranking used voyageai/rerank-3-lite.</em></p>
+<p>The results show that reranking helped the LLM answer more questions correctly while using fewer chunks. Most incorrect answers came down to missing information. In nine out of ten cases where the correct chunk wasn’t among the top three, the model responded that the supplied passages didn’t contain the answer. In other words, the application told users it didn’t know something that its own documentation could answer.</p>
+<p>Reranking addressed that problem by improving which chunks reached the model. It also let us send three chunks instead of five, reducing the LLM answering cost from $0.22 to $0.16 per 1,000 questions. The rerank call added $0.10, so in our setup reranking cost a net $0.04 more per 1,000 questions.</p>
+<p>Whether reranking saves money for you depends on your models, document sizes, and query volume, so measure cost and accuracy across the whole pipeline, from retrieval through the final answer.</p>
+<h2>Which reranker model is best for RAG?</h2>
+<p>We compared 11 rerankers using the same 30 candidates retrieved by google/gemini-embedding-2 for each of the 274 questions. That gave us a consistent basis for comparing their accuracy, latency, and cost.</p>
+<p>The Voyage rerankers offered the best combination of accuracy and price among the dedicated reranking models we tested.</p>
+<table><thead><tr><th><strong>Reranker</strong></th><th><strong>Precision@1</strong></th><th><strong>Median seconds (our setup)</strong></th><th><strong>$ per 1,000 queries</strong></th></tr></thead><tbody><tr><td>None (embeddings only)</td><td>81.0%</td><td>n/a</td><td>n/a</td></tr><tr><td>voyageai/rerank-3</td><td>97.8%</td><td>1.27</td><td>$0.26</td></tr><tr><td>voyageai/rerank-3-lite</td><td>97.1%</td><td>1.26</td><td>$0.10</td></tr><tr><td>voyageai/rerank-2.5-lite</td><td>96.7%</td><td>1.50</td><td>$0.10</td></tr><tr><td>voyageai/rerank-2.5</td><td>96.4%</td><td>1.30</td><td>$0.26</td></tr><tr><td>cohere/rerank-4-pro</td><td>95.3%</td><td>1.54</td><td>$2.50</td></tr><tr><td>qwen/qwen3-reranker-8b</td><td>92.3%</td><td>1.51</td><td>$1.49</td></tr><tr><td>cohere/rerank-4-fast</td><td>92.0%</td><td>1.25</td><td>$2.00</td></tr><tr><td>cohere/rerank-v3.5</td><td>90.5%</td><td>1.47</td><td>$1.00</td></tr><tr><td>openai/gpt-6-luna (LLM)</td><td>99.6%</td><td>4.01</td><td>$0.70</td></tr><tr><td>anthropic/claude-haiku-5.5 (LLM)</td><td>98.9%</td><td>4.44</td><td>$0.87</td></tr><tr><td>google/gemini-3.8-flash (LLM)</td><td>100%</td><td>3.25</td><td>$4.14</td></tr></tbody></table>
+<p><em>Our run on October 8, 2026. Costs are the usage cost per response, which matches GET /api/v1/generation. About 0.9 seconds of each median is network overhead from our test machine.</em></p>
+<p>On this dataset, voyageai/rerank-3 ranked the correct chunk first 97.8% of the time, while the Lite version reached 97.1%. That difference amounts to only two questions in our 274-question test, so it’s too small to establish that the more expensive model is consistently better. Start with voyageai/rerank-3-lite and compare it with voyageai/rerank-3 on your own evaluation set. Both use the same /rerank endpoint, so switching models only requires changing the model identifier.</p>
+<p>The price differences largely reflect how providers charge, as listed on our <a href="https://openrouter.ai/collections/rerank-models">rerank model pages</a>. Voyage and Qwen bill by token ($0.02 to $0.20 per million), while Cohere charges $0.001 to $0.0025 per search of up to 100 documents, regardless of document length. Because our 30 candidates contained around 5,000 Voyage tokens, the Voyage models were particularly inexpensive. On these short chunks, Cohere’s rerankers cost roughly 4 to 25 times as much as the Voyage options, depending on the models compared. Sending 101 documents to Cohere also triggered a second search charge in our test.</p>
+<p>Reranking made a particularly noticeable difference for questions about specific error codes, such as FB-2411. Embedding search alone put the correct entry first only 25% of the time with voyageai/voyage-4-lite and 53.6% with google/gemini-embedding-2. All 11 rerankers achieved 100% on this subset. Since error-code entries tend to discuss similar errors, their embeddings can look alike. A cross-encoder can compare the exact code in the question with the code in each candidate and distinguish the right entry.</p>
+<p>If you’re interested in which models developers are using most, our <a href="https://openrouter.ai/rankings/rerank">rerank model rankings</a> provide another useful reference. As of October 20, 2026, voyageai/rerank-2.5 led with 4.68 million requests in the week to October 18, and it scored 96.4% in our test. Usage popularity is worth considering, but it shouldn’t replace testing a model against your own documents. Model performance, prices, and provider latency can change. The <a href="https://openrouter.ai/collections/rerank-models">reranking model collection</a> lists the available options and their current details.</p>
+<h2>How many documents should you rerank?</h2>
+<p>Start by reranking around 30 candidates, then adjust the number based on your evaluation results.</p>
+<p>To see how candidate count affects performance, we tested voyageai/rerank-3-lite with different numbers of candidates retrieved by voyageai/voyage-4-lite:</p>
+<table><thead><tr><th><strong>Candidates reranked</strong></th><th><strong>Right chunk among candidates</strong></th><th><strong>Precision@1 after rerank</strong></th><th><strong>$ per 1,000 queries</strong></th></tr></thead><tbody><tr><td>10</td><td>97.1%</td><td>94.5%</td><td>$0.035</td></tr><tr><td>20</td><td>98.9%</td><td>96.4%</td><td>$0.070</td></tr><tr><td>30</td><td>99.6%</td><td>96.7%</td><td>$0.104</td></tr><tr><td>50</td><td>100%</td><td>97.1%</td><td>$0.174</td></tr><tr><td>100</td><td>100%</td><td>97.1%</td><td>$0.348</td></tr></tbody></table>
+<p><em>Our run on October 8, 2026, used 274 questions, voyageai/voyage-4-lite as the first stage.</em></p>
+<p>Increasing the candidate count from 10 to 30 improved precision@1 from 94.5% to 96.7%. Increasing it again to 50 brought precision to 97.1%, fixing just one more question while increasing reranking cost by about two-thirds. Going from 50 to 100 candidates didn’t improve precision.</p>
+<p>Reranking has limits, as it can promote a relevant chunk only if the first retrieval stage includes it in the candidate set. If vector search misses the answer entirely, no reranker can bring it back.</p>
+<p>For a larger knowledge base, use your evaluation set to find the point where retrieving more candidates stops meaningfully improving the percentage of questions for which the correct chunk is available. That’s a better way to choose the candidate count than assuming 30 is optimal for every application.</p>
+<h2>Can LLMs be used as rerankers?</h2>
+<p>In our benchmark, LLM-based rerankers were the most accurate, though they took longer to return results. Instead of sending each candidate through a dedicated reranking model, we gave a chat model the question and all 30 numbered chunks, then asked it to return the IDs of the most relevant chunks in order. We used a strict <a href="https://openrouter.ai/docs/guides/features/structured-outputs">structured output schema</a> to ensure the response followed the expected format.</p>
+<p>The two approaches differ in a key way. A dedicated reranker scores each candidate individually against the question. An LLM can read all candidates together and compare them, which helps when several documents contain similar information.</p>
+<p>In our test, openai/gpt-6-luna achieved 99.6% precision@1 at $0.70 per 1,000 queries, the low end of an LLM cost range that reached $4.14 for google/gemini-3.8-flash. That’s higher accuracy than the dedicated rerankers, but each call took around four seconds in our setup, compared with about 1.3 seconds for a dedicated model.</p>
+<p>That extra time matters in an interactive application, where the user is waiting for an answer. LLM reranking may fit better for batch processing or applications where retrieving the correct information is especially important, and additional latency is acceptable.</p>
+<p>Keep in mind that our benchmark used clean, model-generated text. Real knowledge bases have inconsistent formatting, incomplete documents, and other complications, so we can’t assume LLM rerankers will maintain the same edge on messier, real-world data.</p>
+<h2>Do you still need a reranker with hybrid search or a better embedding model?</h2>
+<p>Hybrid search and better embedding models can both improve retrieval, but our benchmark suggests that neither was as effective as adding a reranker. Hybrid search combines vector similarity with keyword-based retrieval, often using BM25. We combined the results with reciprocal rank fusion (RRF), which merges the two rankings.</p>
+<p>On our test set, hybrid search increased precision@1 for voyageai/voyage-4-lite from 64.6% to 69.3%. With google/gemini-embedding-2, however, precision@1 fell from 81.0% to 78.8%, even though recall@5 improved. A more capable embedding model outperformed the cheaper alternative. Gemini achieved 81.0% precision@1, compared with 64.6% for Voyage 4 Lite. But Gemini’s embedding price was $0.20 per million tokens, versus $0.02 for Voyage 4 Lite. Combining the cheaper embedding model with voyageai/rerank-3-lite reached 96.7% precision@1.</p>
+<p>Hybrid search and better embeddings are still useful, because they do different jobs. Hybrid search can help retrieve candidates that vector search misses, and a stronger embedding model can improve the initial ranking. A reranker adds another layer by comparing each candidate directly with the question.</p>
+<p>For the best results, evaluate these options separately and together. You can use <a href="https://openrouter.ai/blog/insights/best-embedding-models-2026/">our embedding model comparison</a> to help choose an embedding model for the first retrieval stage.</p>
+<h2>What breaks reranking?</h2>
+<p>Reranking can fail silently when a document exceeds the model’s context limit. For example, cohere/rerank-v3.5 has a <a href="https://openrouter.ai/cohere/rerank-v3.5">4,096-token context limit</a>, so it may never see the part of a document that contains the answer.</p>
+<p>We tested this with two 11,000-token documents that differed only in their final sentence. One contained the answer, but both received the same relevance score: 0.2703. The model had effectively missed the detail that distinguished them. By comparison, voyageai/rerank-3-lite scored the documents 0.7812 and 0.3242, correctly ranking the one with the answer higher. The Cohere 4 models, voyageai/rerank-3, and qwen/qwen3-reranker-8b also ranked the correct document higher. Check your reranker’s context limit and keep chunks comfortably within it.</p>
+<p>Another issue is model compatibility, since the /rerank endpoint accepts only rerank models. Sending the chat model openai/gpt-6-luna to it returned 400 Model openai/gpt-6-luna does not exist, the same error a misspelled model identifier gets. Before making a request, check that the model appears in the <a href="https://openrouter.ai/collections/rerank-models">reranking model collection</a>.</p>
+<h2>Next steps</h2>
+<ul><li>Rerank your top 30 with voyageai/rerank-3-lite, then measure.</li><li><a href="https://openrouter.ai/docs/api/api-reference/rerank/submit-a-rerank-request">Rerank API reference</a>: every request field, including provider routing.</li><li><a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/rag">RAG with embeddings and rerank</a>: the full pipeline through answer generation.</li><li><a href="https://openrouter.ai/blog/tutorials/how-to-benchmark-llms/">How to benchmark LLMs</a>: compare models on your own data.</li></ul>
+<h2>Frequently asked questions</h2>
+<h3>What is reranking in RAG?</h3>
+<p>Reranking in RAG is a second retrieval step in which a rerank model scores each chunk returned by vector search against the question and reorders them, so the most relevant few reach the LLM. The rerank model reads the question and chunk together, which lets it catch near-misses such as the right limit for the wrong plan. In our 274-question test, it raised the rate at which the right chunk came first from 81% to 97%.</p>
+<h3>What are the best reranker models for RAG?</h3>
+<p>In our October 2026 test, voyageai/rerank-3 and voyageai/rerank-3-lite were the most accurate dedicated rerank models and the cheapest rerankers, putting the right chunk first for 97.8% and 97.1% of 274 questions. LLM rerankers scored higher but took about 4 seconds per call.</p>
+<h3>How many documents should I rerank?</h3>
+<p>Rerank about 30 candidates, and for a larger knowledge base, increase the number until the right chunk reliably appears. In our test, going from 30 to 50 raised precision@1 from 96.7% to 97.1% (a one-question gain within noise) and increased rerank cost by two-thirds.</p>
+<h2>References</h2>
+<ul><li><a href="https://openrouter.ai/docs/api/api-reference/rerank/submit-a-rerank-request">Rerank API reference</a> and <a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">embeddings API reference</a></li><li><a href="https://openrouter.ai/collections/rerank-models">Rerank models</a> and <a href="https://openrouter.ai/rankings/rerank">rerank rankings</a></li><li><a href="https://openrouter.ai/docs/guides/features/structured-outputs">Structured outputs</a></li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>How to Stop an AI Agent Stuck in an Infinite Loop</title>
       <link>https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/</link>
@@ -503,6 +661,124 @@ python compare_runs.py runs/comparison-demo/luna runs/comparison-demo/sol --outp
 <p>Yes, for properties such as tone or explanation quality that resist exact checks. Validate its rubric against human-labeled examples and inspect disagreements. Keep code checks for calculable answers and required schemas. Our <a href="https://openrouter.ai/blog/tutorials/llm-as-a-judge-evaluate-ai-agents/">LLM-as-a-judge guide</a> explains that approach.</p>
 <h2>Next steps</h2>
 <p>Build a representative set from your application using our <a href="https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/">golden eval dataset guide</a>. Compare candidates, then <a href="https://openrouter.ai/blog/tutorials/how-to-gate-pull-requests-on-llm-evals-in-ci/">gate pull requests on the checks</a>.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>How We Built a Self-Correcting Localization System for OpenR…</title>
+      <link>https://openrouter.ai/blog/announcements/openrouter-in-8-languages/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/openrouter-in-8-languages/?li=1</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: How We Built a Self-Correcting Localization System for OpenRouter</description>
+      <content:encoded><![CDATA[<h1>How We Built a Self-Correcting Localization System for OpenRouter</h1>
+<p>Robert Sun ·11/12/2026</p>
+<p><img src="https://openrouter.ai/blog/images/openrouter-in-8-languages-ja-home.png" alt="The OpenRouter homepage in Japanese."></p>
+<p>OpenRouter now speaks 简体中文, Español, Português (Brasil), Deutsch, Français, 日本語, and 한국어, alongside English. Localization is in beta, starting today. To switch, pick a language from the account menu, or go straight to an address like <a href="https://openrouter.ai/ja">openrouter.ai/ja</a> or <a href="https://openrouter.ai/ko/models">openrouter.ai/ko/models</a>.</p>
+<p><img src="https://openrouter.ai/blog/images/openrouter-in-8-languages-ko-models.png" alt="The OpenRouter models page in Korean, with filters, tabs, and model metadata translated."></p>
+<p>Translating a website and keeping that translation up-to-date is hard, especially true for us. OpenRouter’s site has 16,918 English strings, and we change some of them every day, so a one-time translation would be out of date within a week. We built a loop to help us do this at scale. Every day, it finds the strings that changed, translates them, checks them in code, and has a second model verify the meaning against the English. When a translation fails a check, or the verifier rejects it, the loop sends it back with the reason attached and tries again. That retry loop is the part of the system that corrects itself.</p>
+<p>Some mistakes still get past it, and people catch those. When reviewers and readers report a mistake, we turn it into a glossary rule, a style note, or an override, and mistakes the daily review catches also become test cases that every future model has to pass. The whole pipeline runs on OpenRouter.</p>
+<h2>Translations live in Git next to the code</h2>
+<p>Before any model gets involved, the translations need a home. We use the open-source <a href="https://generaltranslation.com">General Translation</a> runtime to wrap strings in our React code. We commit translations as JSON catalogs next to the code and load them locally at runtime, so no translation service sits in the request path. A string gets picked up for translation within a day of it merging. Until then, the page shows the English source. Each translated entry also stores a fingerprint of the English it came from. When someone edits the English, the fingerprint stops matching, and the entry goes back in the queue. This rule lets the daily run find every stale entry without retranslating the whole catalog.</p>
+<h2>The pipeline</h2>
+<p>Every string in that queue goes through five stages before it reaches the site.</p>
+<p><img src="https://openrouter.ai/blog/images/openrouter-in-8-languages-translation-loop.png" alt="How a string gets translated: new text goes to a translator model, then code checks, then a verifier model, then review, then live. Failed checks and verifier rejections go back to the translator, and fixes flagged by reviewers or readers go into the glossary."></p>
+<h3>1. Extract</h3>
+<p>A script scans the frontend and writes every wrapped English string to a source catalog. Each entry records its file and its UI role, such as button, heading, or table header. The role matters because the same English word can need a different translation in a different place. “Queue” on a button is an instruction, and one of the defects later in this post is a model translating it as a noun.</p>
+<h3>2. Translate</h3>
+<p>We send new and changed strings to GPT-6.1 Sol in batches of up to 40, and use <a href="https://openrouter.ai/docs/guides/features/structured-outputs">Structured Outputs</a> to hold the reply to a strict JSON schema. Each request carries our global and per-language style notes, the glossary rules for any product term in the batch, and the UI role of each string.</p>
+<p>Here is a simplified example of a translator request for one Japanese batch, with the style notes and glossary rules cut short.</p>
+<pre><code>{
+  &quot;model&quot;: &quot;openai/gpt-6.1-sol&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;system&quot;,
+      &quot;content&quot;: &quot;Translate OpenRouter UI strings into Japanese. ...&quot;
+    },
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;[{\&quot;id\&quot;:\&quot;q1\&quot;,\&quot;role\&quot;:\&quot;button\&quot;,\&quot;text\&quot;:\&quot;Queue\&quot;}]&quot;
+    }
+  ],
+  &quot;response_format&quot;: {
+    &quot;type&quot;: &quot;json_schema&quot;,
+    &quot;json_schema&quot;: {
+      &quot;name&quot;: &quot;translations&quot;,
+      &quot;strict&quot;: true,
+      &quot;schema&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;translations&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;type&quot;: &quot;object&quot;,
+              &quot;properties&quot;: {
+                &quot;id&quot;: { &quot;type&quot;: &quot;string&quot; },
+                &quot;text&quot;: { &quot;type&quot;: &quot;string&quot; }
+              },
+              &quot;required&quot;: [&quot;id&quot;, &quot;text&quot;],
+              &quot;additionalProperties&quot;: false
+            }
+          }
+        },
+        &quot;required&quot;: [&quot;translations&quot;],
+        &quot;additionalProperties&quot;: false
+      }
+    }
+  }
+}</code></pre>
+<p>Because every model on OpenRouter takes the same request, trying a different translator means changing only the model slug. That is how we ran the model comparison later in this post.</p>
+<h3>3. Check</h3>
+<p>Code rejects a reply that breaks an ICU placeholder, a plural branch, a rich-text tag, or leading or trailing whitespace, or that renders a product term in a form the glossary forbids. We resend a rejected batch in smaller pieces, naming the failure, for up to 4 passes by default. The limit is a setting that goes up to 20. A string that still fails after the last pass stays in English and is flagged in the pull request.</p>
+<h3>4. Verify</h3>
+<p>A second call to the same model, acting as verifier, reads each translation against the English and lists errors by severity. Any critical or major error, such as a dropped clause or a reversed meaning, sends the string back to the translator with every objection so far attached. The translator gets up to 3 retries after its first attempt, and the last retry uses more reasoning effort. Spend per string has no separate cap, because the retry limits already bound it. Counting the check resends, a string can take up to four translation attempts with up to four check passes each, plus a verifier call after each attempt. That puts the worst case at about 20 model calls per string per language. If the verifier is down, the pipeline writes nothing and the string stays in English. A reader who sees English for a day is better off than one who sees an unchecked translation.</p>
+<h3>5. Review</h3>
+<p>Each daily batch lands as a pull request. An AI reviewer reads the diff and posts findings, and a person merges the pull request.</p>
+<h2>How we measure</h2>
+<p>The rest of this post leans on three eval suites, so it helps to know what each one tests before the numbers start.</p>
+<ul><li><strong>The model comparison (254 cases)</strong> runs the pipeline with different translator models and scores each reply with the production verifier. We used it to choose the translator.</li><li><strong>The pipeline comparison (454 cases)</strong> runs one model twice, once through the full pipeline and once with a bare two-line prompt. Code checks, the verifier, judges from three other model families, and a back-translation check all score it.</li><li><strong>The defects suite (22 cases)</strong> holds real mistakes the daily review caught after the verifier passed them. Each case forbids the mistake that shipped.</li></ul>
+<h2>What we tried and threw away</h2>
+<p>The pipeline looks simple now because we removed three parts of the first design once the evals measured them.</p>
+<h3>A cheaper translator</h3>
+<p>We first tested a smaller, cheaper model, GPT-6 Luna (<code>openai/gpt-6-luna</code>). In the model comparison, it passed 91.7% of cases on the first try, against 99.2% for GPT-6.1 Sol. Its weakest languages were Korean and Japanese. Its hardest failures were replies that General Translation, our translation framework, couldn’t compile, such as its translation of “Legacy alias of {value}”. Those failures persisted through every retry.</p>
+<p>The heavier model cost about 3.4 times as much, $1.94 against $0.57 for those 254 cases. We pay the difference because a wrong string that never converges takes more time and effort to fix than just getting it right off the bat.</p>
+<h3>A separate judge model</h3>
+<p>Before the verifier existed, a separate judge model scored every translation, and we retranslated anything it flagged or marked uncertain. To see how well it worked, we labeled a benchmark with three kinds of strings: known errors, corrected translations (hand-fixed versions of earlier errors, which should pass), and a clean sample. The judge did catch real problems. In one benchmark run, it marked 91% of that run’s real defects as uncertain. It also flagged 11 of the 14 corrected translations and 42 of the 150 clean ones, so it sent a lot of good work back for retranslation.</p>
+<p>With the verifier in place, turning the judge off lowered first-pass accuracy from 99.2% to 98.8% and left the final result unchanged. The judge had been sending about 45% of first drafts back for retranslation. We now leave it off by default.</p>
+<h3>Leaving hard strings for a person</h3>
+<p>At first, a string the verifier rejected on every retry stayed untranslated until someone fixed it by hand. A full retranslation of the catalog, 16,274 strings into 7 languages, left 97 such strings (0.09%). Now the pipeline ranks the rejected drafts by the verifier’s findings, commits the least-wrong one, and flags it in the pull request for review. The loop always ends in a translation, even when that translation still carries a flagged error, and the flag puts it in front of the person who merges the pull request.</p>
+<h2>What the pipeline adds over the bare model</h2>
+<p>Most of what the pipeline adds is fewer outright mistakes. To measure it, our eval runs the same model over 454 cases twice, once through the full pipeline and once with a two-line prompt and no style notes, glossary, or retries. The bare model returned one malformed reply, which leaves 453 pairs to compare.</p>
+<table><thead><tr><th>Measure</th><th>Bare model</th><th>Full pipeline</th></tr></thead><tbody><tr><td>Failed a glossary or authored check</td><td>147 of 453</td><td>4 of 454</td></tr><tr><td>Accepted by the verifier on the first pass</td><td>263 of the 306 that passed checks (85.9%)</td><td>448 of all 454 (98.7%)</td></tr><tr><td>Critical errors, summed across three judges from other model families</td><td>203</td><td>109</td></tr><tr><td>Pairs each side won on overall preference</td><td>117</td><td>139</td></tr><tr><td>Meaning survived back-translation</td><td>90.8%</td><td>89.3%</td></tr></tbody></table>
+<p>An authored check is a handwritten rule on one eval case. For example, “Queue” in Chinese must not be translated as 队列, the noun form that shipped. The check failures fell from 147 to 4, which is the glossary and the retries doing their job.</p>
+<p>The verifier’s first-pass figures use different bases. For the bare model it’s the 306 strings that passed the code checks, and for the pipeline it’s all 454. The verifier comes from the same model family as the translator, so its pass rate tells us how often the model agrees with itself. We use GPT-6.1 Sol for both jobs because it was the more accurate of the two translators we tested. For an outside view, the eval also sends each pair of translations, unlabeled, to three judges from other model families, Claude Opus 5.5, Gemini 4 Argon, and DeepSeek V4 Pro. Across the three judges, they found 109 critical errors in the pipeline’s output and 203 in the bare model’s. Each judge’s errors count separately, so a string that all three judges flag adds three to the total.</p>
+<p>On overall preference across the 453 pairs, the judges picked the pipeline in 139 and the bare model in 117, with 61 ties and 136 pairs where the two translations were identical. That margin is much narrower than the check failures and critical errors show, so the pipeline’s value sits mostly in the specific mistakes it removes.</p>
+<p>The last row back-translates every reply to English and asks whether the meaning survived. It scored the bare model 90.8% and the pipeline 89.3%. Back-translation cannot see terminology or register, which is most of what the pipeline changes, so we read this result as a tie.</p>
+<h2>The feedback loop</h2>
+<p>The verifier catches most errors before they ship, and readers catch some of the rest.</p>
+<p><img src="https://openrouter.ai/blog/images/openrouter-in-8-languages-report.png" alt="Highlighted text on the Japanese homepage with the popover for sending feedback on it."></p>
+<p>Turn on select-to-report in the Language dialog, then highlight any translated text, add a note, and send it. Each report arrives with the language, the page, and the exact text. A model triages it first, picks one of four fixes, and puts the fix up within minutes. Our AI reviewer checks the fix, and a person does the final merge.</p>
+<ul><li><strong>Wrong meaning.</strong> The string reverts to English the same day, then gets a corrected translation.</li><li><strong>Wrong term.</strong> We add the term to the glossary with the accepted form and the forms to reject for that language. We pin compliance and protocol names such as HIPAA, SOC 2, OAuth, and SAML so the pipeline leaves them in English.</li><li><strong>Wrong tone or punctuation.</strong> The rule goes into that language’s style notes.</li><li><strong>One bad string.</strong> An exact override pins the approved wording, and no later run can change it.</li></ul>
+<p>Mistakes the daily review catches after the verifier passed them go into the defects suite. It has 22 cases so far. They include “Queue” translated as a noun on a button that needed a verb, “shadow traffic” rendered as road traffic, and a HIPAA setting whose meaning was inverted. Each case forbids the mistake that shipped, so any future model, prompt, or glossary change that brings it back fails the eval.</p>
+<h2>What it costs</h2>
+<p>When we first priced it, a full retranslation of all 16,274 strings into 7 languages, 113,918 translations in total, came to about $430 with translation and verification included. We arrived at that figure by pricing production-sized batches in each language and scaling up. It works out to under half a cent per string per language. Verification is slightly more than half, about $228, or $0.002 per string per language. The catalog has since grown to 16,918 strings, and a full retranslation of it today costs about $460. The daily loop only sends what changed, and a day with 677 changed strings across 7 languages costs roughly $18.</p>
+<p>Both figures cover the translation and verification calls only. They leave out the engineering time to build the pipeline, the calls made by the AI reviewer and the triage model, and the person who merges each daily pull request.</p>
+<p>Today’s 16,918 strings hold 136,429 words of English, so 7 languages total 955,003 words, which puts our cost at about $0.0005 per word. Here is the same full retranslation at the per-word starting rates Smartling and Gengo publish, as of November 10, 2026.</p>
+<table><thead><tr><th>Option</th><th>Rate</th><th>Full site, 7 languages</th></tr></thead><tbody><tr><td>Our pipeline, translation and verification</td><td>about $0.0005 per word</td><td>about $460</td></tr><tr><td>Smartling Machine Translation</td><td>$0.0075 per word</td><td>about $7,200</td></tr><tr><td>Smartling AI Translation</td><td>$0.06 per word</td><td>about $57,300</td></tr><tr><td>Gengo Standard</td><td>$0.09 per word</td><td>about $86,000</td></tr><tr><td>Smartling AI Human Translation</td><td>$0.12 per word</td><td>about $114,600</td></tr><tr><td>Gengo Advanced</td><td>$0.18 per word</td><td>about $171,900</td></tr><tr><td>Smartling Human Translation</td><td>$0.20 per word</td><td>about $191,000</td></tr></tbody></table>
+<p>These are list prices; enterprise contracts are negotiated, and every row above machine translation includes human review or project management that our figure leaves out. The closest like-for-like option is Smartling’s machine translation, and our pipeline costs about 6% as much.</p>
+<h2>What you can reuse</h2>
+<p>If you are localizing your own product, four parts of this design carry over directly.</p>
+<ul><li>Fingerprint every translation against its English source, so stale entries requeue themselves.</li><li>Let code reject broken placeholders, plural branches, tags, and forbidden terms before any model reviews the meaning.</li><li>Use a verifier that names each error and its severity, and send those objections back to the translator.</li><li>Turn every mistake a person catches into a glossary rule, a style note, an override, or an eval case.</li></ul>
+<h2>Send us your feedback</h2>
+<p>Some wording will be off while we’re in beta, and the quickest way to fix it is to report it with select-to-report in the Language dialog. We review every report and turn it into a glossary rule, a style note, or an override.</p>
+<h2>Frequently asked questions</h2>
+<h3>Which languages does OpenRouter support?</h3>
+<p>OpenRouter is available in English, Simplified Chinese, Spanish, Brazilian Portuguese, German, French, Japanese, and Korean. Localization is in beta.</p>
+<h3>How do I change the language on OpenRouter?</h3>
+<p>Pick a language from the account menu, or open a localized address such as openrouter.ai/ja.</p>
+<h3>Which models translate OpenRouter?</h3>
+<p>GPT-6.1 Sol (openai/gpt-6.1-sol) translates each string, and a second call to the same model verifies it against the English. Both run through the OpenRouter API.</p>
+<h3>How much does it cost to translate the whole site?</h3>
+<p>A full retranslation of today's 16,918 strings into 7 languages costs about $460, translation and verification included, which is under half a cent per string per language. The same job costs about $7,200 at Smartling's published machine translation rate and about $57,300 to $191,000 at published AI and human translation rates.</p>
+<h3>How do I report a bad translation?</h3>
+<p>Turn on select-to-report in the Language dialog, highlight the text that reads wrong, add a note, and submit it.</p>]]></content:encoded>
     </item>
     <item>
       <title>Self-Hosted LLM vs API: When Does Self-Hosting Pay Off</title>
@@ -8330,140 +8606,6 @@ console.log(result.choices[0]?.message.content);</code></pre>
 <p>Yes. We list <code>nvidia/nemotron-3.5-lightning:free</code>, served by NVIDIA at no token cost. Free models have different rate limits and availability from paid models, and this endpoint carries an NVIDIA data notice. Do not send confidential information or personal data through it.</p>
 <h3>Can I run Nemotron 3.5 Lightning locally?</h3>
 <p>Yes. NVIDIA publishes BF16, NVFP4, and GGUF weights under the OpenMDW-1.1 license. The BF16 reference checkpoint targets a single 80GB H100 or A100. The NVFP4 and GGUF releases target supported local hardware such as the RTX 5090, RTX PRO 6000, and DGX Spark. Check NVIDIA’s current model card and license before choosing a deployment.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Two Hours of Work That Takes a Week</title>
-      <link>https://openrouter.ai/blog/insights/descript-model-evaluation-queue/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/insights/descript-model-evaluation-queue/?li=1</guid>
-      <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Two Hours of Work That Takes a Week</h1>
-<p>OpenRouter ·9/21/2026 · Updated 9/24/2026</p>
-<p>For Descript, testing a new model was a couple of hours of work and a week of waiting. The team removed the waiting. Evaluations run in an hour or two now, and nobody has to ask an engineer for time. The full architecture is in the <a href="https://openrouter.ai/blog/case-studies/descript-case-study/">Descript case study</a>.</p>
-<p>When model access is wired provider by provider, testing a new model starts with engineering work. When the person who wants to try a model is not the person who can add it, the request has to be explained, scheduled, and waited on. That is a queueing problem, and at Descript it set how many models the team tried.</p>
-<h2>What the queue cost Descript</h2>
-<p>Descript, the AI video and audio editing platform, ran into this while building Underlord, its video editing agent. Before OpenRouter, the team maintained three direct integrations, with OpenAI, Anthropic, and Google, and wrote its own fallback logic between them. Adding a model took a couple of hours. Getting those hours onto an engineer’s calendar took days, so a promising model could sit for a week before anyone knew whether it was worth pursuing.</p>
-<p>The expensive part was the waiting. The team tried the models that were worth interrupting an engineer for and skipped the rest.</p>
-<h2>How Descript evaluates a model now</h2>
-<p>Aleks Mistratov, Head of AI Product at Descript, describes the loop now.</p>
-<blockquote>“I’m on a walk, I’m very online to my own detriment, and I see a tweet that a new model is out. I go into Slack and say: run evals on this model on OpenRouter, and link to it. An hour or two later we’ve run evals in our harness on that model.”</blockquote>
-<p>The mechanism is Claude Tag, Anthropic’s Slack integration, which Descript configured for this loop. It runs the evaluations and opens the pull requests, and a human reviews and approves.</p>
-<p>What made that workflow automatable is that trying a model no longer requires building a provider integration first. Testing one does not mean opening a vendor relationship or wiring up another API endpoint. There is still work in it. Nobody has to be asked for it.</p>
-<h2>What weekly evaluation changed</h2>
-<p>Descript now evaluates models multiple times a week. Most of what the team tests does not ship. Three things follow from that.</p>
-<p><strong>Model choice is empirical.</strong> Descript measures new releases against its own test cases and changes what it ships when something clears the bar. The alternative the team had before was standardizing on a model early and revisiting the decision when something forced it.</p>
-<p><strong>New releases are not events.</strong> On a recent Anthropic release, Descript went from announcement to live in a couple of hours. The steps that remain are internal. Run the evaluations, decide whether the model beats the incumbent, add it to the model picker, deploy. Most of that work comes from how Descript’s own code is structured rather than from the connection to the model.</p>
-<p><strong>The field widened.</strong> Descript never built a direct integration with xAI. Grok 4.5 runs in production now, added through the same path as everything else.</p>
-<h2>How Descript runs the models it commits to</h2>
-<p>None of this means routing everything through a shared endpoint and accepting what comes back. Descript <a href="https://openrouter.ai/docs/guides/overview/auth/byok">brings its own key</a> to Baseten for a dedicated deployment of an open-weight model, with OpenRouter routing to Baseten first and other providers configured as <a href="https://openrouter.ai/docs/guides/routing/provider-selection">fallbacks</a> behind it. Those fallbacks swap the inference provider and keep the model constant, so a failure at one host does not change which model answers.</p>
-<p>Mistratov’s advice to another engineer weighing the same change is short.</p>
-<blockquote>“It’s far easier than trying to figure out all these different connections. You do it once and everything else is a parameter.”</blockquote>
-<p>Descript uses the same integration to test new models and to run the ones it keeps. Testing is how the team finds a model. Routing configuration is how it runs one.</p>
-<h2>Read the case study</h2>
-<p>The <a href="https://openrouter.ai/blog/case-studies/descript-case-study/">Descript case study</a> has the rest of the architecture, including how Descript sets inference-provider priority per model, what happens when a provider degrades mid-traffic, and what the team’s on-call looks like now.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Jev vs LLM-as-a-Judge</title>
-      <link>https://openrouter.ai/blog/tutorials/jev-vs-llm-as-a-judge/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/jev-vs-llm-as-a-judge/?li=1</guid>
-      <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Jev vs LLM-as-a-Judge</h1>
-<p>Kenny Rogers ·9/21/2026 · Updated 9/24/2026</p>
-<p>Most teams grade their agent’s outputs by handing them to an LLM and asking it to write a verdict. That pattern is called LLM-as-a-judge, and it works well enough that it has become the default. TypeSafe’s decision model, Jev, can grade the same outputs, and it does so in a different way that changes what you can do with the result. This post explains the difference, shows where it mattered in our measurements, and says which judge to use for which kind of rubric.</p>
-<p>It assumes you know what LLM-as-a-judge is. If not, read <a href="https://openrouter.ai/blog/tutorials/llm-as-a-judge-evaluate-ai-agents/">LLM-as-a-Judge: Score AI Agent Outputs Automatically</a> first.</p>
-<h2>TL;DR</h2>
-<p>An LLM judge writes a verdict. Jev gives a probability for a typed question. When the rubric is closed and the evidence is included in the request, Jev matched the LLM judge on accuracy. Jev has better-calibrated probabilities, is 1/5 as expensive, and has 1/10 the latency of the LLM judge. When the rubric is open and reading a whole article is required, the LLM judge follows expert ratings much more closely.</p>
-<p><img src="https://openrouter.ai/blog/images/jev-vs-llm-as-a-judge-tldr.png" alt="Five measurements comparing Jev and an LLM judge. Agreement with labels 95.5% versus 94.3%. Brier score 0.043 versus 0.054. Median latency 171 ms versus 1,662 ms. Cost per 1,000 judgments $0.021 versus $0.114. Spearman correlation with experts on summary consistency 0.47 versus 0.72. Bars in each row are scaled to that row's own unit."></p>
-<ul><li><strong>Use Jev</strong> for closed criteria if the evidence is present, i.e., the answer is source-supported, on-policy, or matching a reference. It can also be used if a threshold or routing rule is needed, or if a judge is needed fast enough and cheap enough to fit into the request path.</li><li><strong>Use an LLM judge</strong> for open rubrics, long-context checks, e.g., a summary consistency check, and if someone needs to read why the answer failed.</li><li><strong>Use neither</strong> if the code can check the criterion exactly. When a decision is consequential and novel, a person should be used.</li></ul>
-<p>The rest of the post discusses where the numbers are coming from and why the two judges behave as they did.</p>
-<h2>Two different kinds of answer</h2>
-<p>An LLM judge is a generative model. You give it a rubric and an output, and it writes text. Ask for JSON and it writes JSON. Ask for a confidence number and it writes one. Every part of the verdict, including the confidence, is text the model chose to produce. The number was written, not measured.</p>
-<p>Jev is a decision model. You do not ask it to write anything. You ask it a fixed question with a fixed set of possible answers, and it returns a probability for each answer. There are three question shapes:</p>
-<table><thead><tr><th>Question type</th><th>You ask</th><th>Jev returns</th><th>Use it for</th></tr></thead><tbody><tr><td>Noul</td><td>A yes/no question with <code>true</code> and <code>false</code> criteria</td><td><code>noul</code>, the probability of yes</td><td>Pass/fail gates: is this answer supported, is this reply on-policy</td></tr><tr><td>Choice</td><td>Pick one of N labeled options</td><td><code>choice</code>, <code>probabilities</code> per option, <code>confidence</code></td><td>Pairwise preference, categorical rubrics</td></tr><tr><td>Score</td><td>Rate on an ordered scale you define</td><td><code>score</code>, <code>probabilities</code> per level, <code>legend</code>, <code>confidence</code></td><td>Likert-style rubrics: coherence 1 to 5, severity low/medium/high</td></tr></tbody></table>
-<p>The two requests look similar. Here is the same faithfulness rubric asked both ways.</p>
-<pre><code>// LLM judge: a prompt, and a verdict parsed out of the text that comes back.
-const verdict = await chat.chat.send({
-  chatRequest: {
-    model: '~openai/gpt-luna-latest',
-    temperature: 0,
-    responseFormat: { type: 'json_object' },
-    messages: [
-      { role: 'system', content: `Grade the answer. acceptable = ${RUBRIC_TRUE} unacceptable = ${RUBRIC_FALSE} Reply with JSON: {&quot;acceptable&quot;: true|false, &quot;confidence&quot;: 0 to 1}` },
-      { role: 'user', content: `knowledge: ${knowledge}\n\nquestion: ${question}\n\nanswer: ${answer}` },
-    ],
-  },
-});
-// -&gt; {&quot;acceptable&quot;: false, &quot;confidence&quot;: 1}
-
-// Jev: a typed question over the same state, and a probability back.
-const decision = await decisions.alpha.decisions.create({
-  decisionsRequest: {
-    model: 'typesafe/jev-1.13',
-    state: { knowledge, question, answer },
-    questions: {
-      acceptable: {
-        type: 'noul',
-        instructions: 'Does answer directly answer question using only facts that knowledge states?',
-        criteria: { true: RUBRIC_TRUE, false: RUBRIC_FALSE },
-      },
-    },
-  },
-});
-// -&gt; answers.acceptable.noul === 0.01</code></pre>
-<p>The LLM judge’s <code>1</code> is a number it wrote. Jev’s <code>0.01</code> is a claim about frequency: across many answers like this one, about 1% should turn out to be acceptable. That claim can be checked. If it holds, you can set a threshold, route the uncertain middle to a person, and reason about error rates. If it does not, the probability is decoration. Full request and response shapes are in the <a href="https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-questions-and-answers-request">Decisions API reference</a> and the <a href="https://openrouter.ai/docs/guides/community/typesafe-sdk">TypeSafe SDK guide</a>.</p>
-<h2>How we compared them</h2>
-<p>We ran both judges on two public datasets through OpenRouter on 2026-09-21. The whole run cost $0.041.</p>
-<p><strong>Faithfulness set.</strong> We took 50 rows from the QA split of <a href="https://huggingface.co/datasets/pminervini/HaluEval">HaluEval</a> (<a href="https://arxiv.org/abs/2305.11747">Li et al., 2023</a>), each with a short passage, a question, a correct answer, and a made-up answer, for 100 answers in all. We had Devin, the coding agent that ran this experiment for us, review every item against its passage, drop six garbled or ambiguous rows, and relabel eight of the made-up answers as acceptable because the passage supported them. That left 88 items: 52 acceptable and 36 unacceptable. This is a closed rubric. The evidence is in hand, and the question is whether the answer sticks to it.</p>
-<p><strong>Summary set.</strong> We took 10 news articles from <a href="https://huggingface.co/datasets/mteb/summeval">SummEval</a> (<a href="https://arxiv.org/abs/2007.12626">Fabbri et al., 2021</a>), each with 5 machine-written summaries. Human experts had rated each summary from 1 to 5 for coherence (does it read well) and consistency (does it stick to the facts in the article). This is a harder, more open rubric over a much longer text.</p>
-<p><strong>Judges.</strong> Jev ran as <code>typesafe/jev-1.13</code>, resolving to <code>typesafe/jev-1.13-20260917</code>. The LLM judge ran as <code>~openai/gpt-luna-latest</code>, resolving to <code>openai/gpt-5.6-luna</code>, with <code>temperature: 0</code> and JSON output. Both judges got the same rubric text, so any difference comes from the model and not the wording.</p>
-<p>For each judgment we recorded the verdict, the probability, the latency, and the <code>usage.cost</code> from the response. For the LLM judge we turned “acceptable plus confidence” into a probability of acceptable so both judges sat on the same 0 to 1 scale.</p>
-<h2>Agreement was a tie</h2>
-<p>On the 88 faithfulness items, Jev agreed with the labels on 84 and the LLM judge on 83. Both had precision 0.98. Two of the misses were the same item for both judges, and in both cases the label was wrong. When both judges disagree with you on the same item, check your label.</p>
-<p>If you only look at accuracy, there is nothing to choose between them. Accuracy is the wrong lens, though, because it only asks which side of 0.5 the judge landed on and treats 0.51 the same as 0.99.</p>
-<h2>Calibration is where they differ</h2>
-<p>To see whether the probabilities meant anything, we used two views. The Brier score is the mean squared error between the probability a judge gave and the true 0 or 1 label, so a judge that is wrong at 90% sure is penalized more than one wrong at 60% sure. A reliability table groups cases by the probability the judge gave and reports how often those cases were actually acceptable.</p>
-<p>Jev’s Brier score was 0.043 and the LLM judge’s was 0.054. The reliability tables explain why.</p>
-<pre><code>jev:  bin 0.0-0.2: n=34 mean_p=0.04 observed=0.03
-      bin 0.2-0.4: n=1  mean_p=0.34 observed=1.00
-      bin 0.4-0.6: n=4  mean_p=0.48 observed=0.50
-      bin 0.6-0.8: n=7  mean_p=0.74 observed=1.00
-      bin 0.8-1.0: n=42 mean_p=0.93 observed=0.98
-llm:  bin 0.0-0.2: n=39 mean_p=0.01 observed=0.10
-      bin 0.8-1.0: n=49 mean_p=0.99 observed=0.98</code></pre>
-<p>Jev put four cases between 0.4 and 0.6 and got half of them right, which is what a 0.5 should do. Cases it scored above 0.8 were acceptable 98% of the time. The LLM judge had no middle ground. Across 88 cases its confidence took only six values (0.82, 0.84, 0.87, 0.98, 0.99, and 1), so every case landed near 0 or near 1, and the cases near 0 were acceptable 10% of the time. It was as sure about its mistakes as about everything else.</p>
-<p>In practice this is the difference between a judge you can route on and a judge you can only read. Seven of Jev’s 88 cases fell between 0.3 and 0.7, and those are exactly the ones worth sending to a person. The LLM judge gave us no such cases to send.</p>
-<h2>Cost and latency differ by 5x and 10x</h2>
-<p>Jev cost $0.021 per 1,000 judgments and answered in 171 ms at the median. The LLM judge cost $0.114 per 1,000 and took 1,662 ms. For a nightly eval of 1,000 items, the cost gap is about $34 a year, which does not matter. If the judge sits inside a request path and blocks a response until it answers, the latency gap matters a lot, and it is the reason Jev fits as a gate in production where an LLM judge fits as an offline grader.</p>
-<h2>Both judges resisted the classic biases, Jev slightly more</h2>
-<p>The <a href="https://arxiv.org/abs/2306.05685">MT-Bench paper</a> found two common biases in LLM judges. They prefer whichever answer is shown first, and they prefer the longer of two answers. Both are cheap to test, so we tested both.</p>
-<p><strong>Position.</strong> We showed each judge the same two answers twice, in reverse order the second time, across all 36 pairs of one acceptable and one unacceptable answer. For Jev this is a Choice question with one criterion per slot. Neither judge changed its pick when the order flipped. Both got 70 of 72 orderings right and missed the same pair in both orders, which points at the label rather than at position. If you run this test yourself, run it on your hardest pairs, where the two answers are close in quality, because that is where position bias shows up. The Choice criteria also only make sense when one answer is acceptable and the other is not. If both can be acceptable, write each criterion as a comparison (more specific, better supported, closer to the question) rather than a label, or Jev has no option that fits.</p>
-<p><strong>Verbosity.</strong> We took each unacceptable answer and padded it with two true sentences copied from its own passage. The padded answer is still wrong, but it grew from 69 to 376 characters on average. We kept only the pairs where padding left the answer wrong, since in a few cases the copied sentences happened to contain the correct answer and the padded version became acceptable.</p>
-<table><thead><tr><th>Judge</th><th>Unpadded wrong answers accepted</th><th>Padded wrong answers accepted</th><th>Flips</th></tr></thead><tbody><tr><td>Jev Noul</td><td>1 / 36</td><td>2 / 36</td><td>1 (probability 0.48 to 0.57)</td></tr><tr><td>LLM judge</td><td>1 / 36</td><td>4 / 36</td><td>3</td></tr></tbody></table>
-<p>Padding nudged Jev. Its average probability of acceptable on the wrong answers rose from 0.08 to 0.12, and the one case that crossed 0.5 was already sitting at 0.48. The LLM judge flipped three cases, and each moved from a confident reject to a confident accept. The pattern is the same as in the calibration table. When Jev is uncertain, it says so, and when the LLM judge is wrong, it is wrong confidently.</p>
-<h2>Where the LLM judge wins</h2>
-<p>The picture changes when the judge has to read a whole article. On the 50 SummEval summaries, Jev got one Score question per criterion, with the five levels written out as criteria, and the LLM judge got the same five level descriptions and returned an integer from 1 to 5. We compared both to the expert averages with Spearman correlation, where 1.0 is a perfect match in ranking.</p>
-<table><thead><tr><th>Criterion</th><th>Jev Score, Spearman vs experts</th><th>LLM judge, Spearman vs experts</th></tr></thead><tbody><tr><td>Coherence</td><td>0.42</td><td>0.44</td></tr><tr><td>Consistency</td><td>0.47</td><td>0.72</td></tr></tbody></table>
-<p>Coherence is a tie. Consistency, the criterion you care about when you are hunting hallucinations, is a clear win for the LLM judge. Our guess is that checking consistency means going claim by claim through the summary and finding where the article supports each one. That is a natural step-by-step process for a generative model, while Jev has to do it in one pass over roughly 1,000 tokens of state.</p>
-<p>Jev was not useless here. Both judges caught all three summaries the experts rated below 4 on consistency, with no false alarms on the other 47, so Jev still works as a rough pass/fail gate. But if you want a ranking that tracks expert judgment, the LLM judge’s is the better signal. Jev cost $0.043 per 1,000 summaries at 168 ms, versus $0.261 at 2,902 ms for the LLM judge, so you are paying about 6x for that signal. Jev’s cost here is double its faithfulness cost because each request carried about twice the input tokens, the whole article plus two Score questions instead of one short passage and one Noul.</p>
-<p>There are two more situations where a generative judge is the right tool, and we did not benchmark them because there is nothing to measure against.</p>
-<ul><li><strong>Open rubrics.</strong> If the question is “is this a good answer?” with no written criteria, you need a generative judge. Jev needs the criteria spelled out, so if you cannot write them down you cannot ask Jev.</li><li><strong>Written explanations.</strong> If a reviewer needs to know why an answer failed, the LLM judge’s reasoning is the product. Jev tells you how sure it is and nothing else.</li></ul>
-<h2>Which judge for which rubric</h2>
-<p>An LLM judge has three alternatives, a deterministic check in code, a Jev question, or a human. Pick one per criterion, not one per project.</p>
-<table><thead><tr><th>If the criterion is…</th><th>Use</th><th>Because</th></tr></thead><tbody><tr><td>Something code can check (schema, arithmetic, forbidden strings)</td><td>Deterministic check</td><td>Exact, free, no bias to test</td></tr><tr><td>Closed, evidence in hand, needs a probability or a threshold (supported by source, on-policy, matches reference)</td><td>Jev Noul or Choice</td><td>Calibrated probabilities, ~170 ms, ~$0.02 per 1,000</td></tr><tr><td>Ordered scale where the levels are describable (severity, tone on a 1 to 5)</td><td>Jev Score</td><td>Distribution over levels plus confidence, same cost profile</td></tr><tr><td>Open, or needs reasoning across long context (consistency of a summary, quality of a plan)</td><td>LLM judge</td><td>0.72 vs 0.47 correlation with experts on consistency in our test</td></tr><tr><td>Needs a written explanation a human will read</td><td>LLM judge</td><td>Jev returns a probability and no explanation</td></tr><tr><td>Consequential and novel</td><td>A person</td><td>Neither judge is a substitute for one</td></tr></tbody></table>
-<p>The <a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/jev-verified-cascade">Jev verified cascade cookbook</a> shows the middle rows in production. A cheap model drafts an answer, a Jev question verifies it, and anything in the uncertain band gets escalated. The <a href="https://openrouter.ai/docs/cookbook/building-agents/gate-tool-calls-with-jev">gate tool calls with Jev cookbook</a> applies the same idea to an agent’s tool calls.</p>
-<h2>Set your own threshold</h2>
-<p>Our numbers show the shape of the trade-off. To set a production threshold you need the same measurement on your own data.</p>
-<ul><li>Label 50 to 100 items that represent what you will run in production, with a written definition of what counts as acceptable.</li><li>Send each one to both judges and record the probability, the latency, and the <code>usage.cost</code>.</li><li>Build the reliability table and ignore the accuracy line. Pick your accept threshold as the lowest bin whose observed rate you would sign off on, and send everything between that and your reject threshold to a person or an LLM judge.</li><li>Rerun the table whenever the rubric or the model version changes. The <code>model</code> field in every Decisions response tells you which version answered.</li></ul>
-<p>The <a href="https://openrouter.ai/typesafe/jev-1.13">Jev model page</a> has current pricing and limits, the <a href="https://openrouter.ai/docs/guides/community/typesafe-sdk">TypeSafe SDK guide</a> has the full Decisions API shape, and the <a href="https://openrouter.ai/blog/tutorials/llm-as-a-judge-evaluate-ai-agents/">LLM-as-a-judge post</a> covers how to write the rubric in the first place.</p>
-<p>If Jev is new to you, <a href="https://openrouter.ai/blog/insights/what-is-jev/">What Is Jev?</a> explains the model and its three question types, and <a href="https://openrouter.ai/blog/tutorials/jev-vs-llm-when-to-use-each/">Jev vs LLM</a> covers the broader question of when a decision model replaces a generative call. For a second accuracy measurement on a different task, <a href="https://openrouter.ai/blog/insights/jev-vs-claude-opus-5-classification/">Is Jev as Accurate as Frontier Models at Classification?</a> runs Jev against Claude Opus 5 on Banking77. The <a href="https://openrouter.ai/docs/guides/community/jev">Jev documentation hub</a> lists every Jev guide and cookbook on OpenRouter.</p>
-<h2>FAQ</h2>
-<h3>Is Jev a calibrated judge model?</h3>
-<p>Jev returns a probability with every judgment, and on our 88-item faithfulness set those probabilities were accurate. The Brier score was 0.043, and when Jev gave a probability above 0.8 the answer was acceptable 98% of the time. Calibration depends on the exact task you’re measuring, so measure it on your own labels before choosing a threshold.</p>
-<h3>What are the alternatives to LLM-as-a-judge?</h3>
-<p>When code is able to decide the answer, use a deterministic check. For anything consequential or novel, involve a person. For closed-rubric cases where having a probability is useful, use a decision model like Jev. Most production pipelines are a mix of all three. For open rubrics and cases where you want a written explanation, keep a generative judge around.</p>
-<h3>When should I still use an LLM as a judge instead of Jev?</h3>
-<p>Use an LLM judge when the rubric is open and you can’t write the criteria down, when the score needs a written explanation, or when the judgment has to proceed step by step over a long text. On factual consistency of SummEval summaries, the LLM judge’s correlation with expert scores was 0.72, while Jev’s was 0.47.</p>
-<h3>How do I calibrate Jev for my own evaluation?</h3>
-<p>Label 50 to 100 items, send each one to Jev as a Noul or Score question through the Decisions API, and record the probability, the latency, and the usage.cost from each response. Compute the agreement with your labels and the Brier score, build a reliability table grouped by probability bin, and pick your threshold from that table.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

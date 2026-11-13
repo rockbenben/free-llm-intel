@@ -7,12 +7,172 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>How to Stop an AI Agent Stuck in an Infinite Loop</title>
+      <title>RAG 中的重新排名：如何使用重新排名器修复错误检索</title>
+      <link>https://openrouter.ai/blog/tutorials/reranking-rag/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/reranking-rag/</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Reranking in RAG: How to Fix Bad Retrieval with a Reranker</description>
+      <content:encoded><![CDATA[<h1>RAG 中的重新排名：如何使用重新排名器修复错误检索</h1>
+<p>开放路由器 ·11/13/2026</p>
+<p><img src="https://openrouter.ai/blog/images/reranking-rag.png" alt="RAG 中的重新排名：如何使用 Reranker 修复错误检索"><img src="https://openrouter.ai/blog/images/reranking-rag-dark.png" alt="RAG 中的重新排名：如何使用 Reranker 修复错误检索"></p>
+<p>当 RAG（检索增强生成）应用程序给出错误答案时，即使文档中包含正确信息，检索通常就是原因。矢量搜索非常适合查找正确主题的块，但它经常会出现侥幸心理，例如当用户询问增长计划时，会拉动企业计划的存储桶限制。 RAG 中的重新排名解决了这个问题，方法是获取向量搜索的前 30 个候选者，并将它们传递给专用的跨编码器模型，该模型直接针对问题对每个块重新评分。</p>
+<p>在 274 个问题的基准测试中，使用 google/gemini-embedding-2 的标准矢量搜索在 <strong>81%</strong> 的时间内准确地找到了最正确的块。添加 voyageai/rerank-3-lite 对前 30 名进行重新排名，将其提升至 <strong>97%</strong>，每 1,000 个查询大约需要 0.10 美元。请记住，这是在小型合成数据集上进行测试的，因此您的实际收益将取决于您的文档，但下面的工作流程将帮助您衡量自己的基线。</p>
+<pre><code>TL;DR
+Retrieve about 30 candidates, rerank them, and send the top 3 to the LLM.
+voyageai/rerank-3-lite and voyageai/rerank-3 were the most accurate dedicated rerank models and the cheapest of all 11 rerankers, at $0.10 and $0.26 per 1,000 queries.
+An LLM reranker (openai/gpt-6-luna) put the right chunk first for 99.6% of questions, but each call took 4.0 seconds against 1.3 for a rerank model.
+The cheap voyageai/voyage-4-lite plus voyageai/rerank-3-lite reached 96.7% precision@1, against 81.0% for the more expensive google/gemini-embedding-2 alone.
+Set input_type on embedding calls. Leaving it out costs 7 to 12 points of precision@1.
+cohere/rerank-v3.5 reads only the first 4,096 tokens (4K) of a document and gives no error.</code></pre>
+<h2>为什么 RAG 检索到错误的块？</h2>
+<p>标准向量搜索很困难，因为嵌入模型在看到用户的问题之前将整个块压缩为单个向量。如果 130 个字的块解释存储桶限制，则特定计划名称仅是整个块中的一两个字。因此，入门计划、增长计划、规模计划和企业计划的向量在向量空间中彼此重叠，并且检索器可以轻松地将错误的计划排在第一位。</p>
+<p>为了在不依赖主观评分的情况下测试检索准确性，我们为名为 Fernbank 的虚构存储服务构建了一个受控数据集。该语料库包含 274 个块，涵盖文档、错误代码、SDK 指南、变更日志条目和噪音，包括未答复的论坛帖子和旨在捕获幼稚关键字和向量匹配的支持票证。我们使用 anthropic/claude-sonnet-5.5 从一组固定的事实生成每个块，并使用脚本对其进行检查。一个单独的模型 openai/gpt-6.1-sol 编写了这些问题。因为每个问题都映射到一个正确的块，所以我们可以在不进行判断的情况下对检索进行评分。</p>
+<p>在完整的测试集中，问题是“我可以在增长计划的单个 Fernbank 账户中创建多少个存储桶？”。 google/gemini-embedding-2 将 Starter、Enterprise 和 Scale 计划块排名为 1、2 和 3。未答复的论坛帖子排名第四，实际的增长计划答案排名第五。如果您的 RAG 管道仅将其前三名候选人发送给 LLM，则该模型甚至永远不会看到正确的文档。</p>
+<p>重新排序器通过使用交叉编码器架构来解决这个问题。它不是单独评估文档，而是与每个候选块一起处理用户的问题。对于实时查询来说，在数千个文档中运行交叉编码器太慢，因此矢量搜索充当快速检索器，在重新排序器对其进行排序之前将字段缩小到候选列表。</p>
+<h2>如何将重新排序器添加到 RAG 管道中</h2>
+<p>您不需要替换现有的嵌入搜索。将其保留为第一个检索阶段，增加其返回的候选者数量，并在将最终结果传递给LLM之前添加重新排名调用。</p>
+<p><img src="https://openrouter.ai/blog/images/reranking-rag-1.png" alt="带有重新排序器的 RAG 管道：问题、前 30 个块的矢量搜索、重新排序模型、前 3 个块、LLM 答案"></p>
+<p><em>检索 30 个带有嵌入的块，对它们重新排序，然后将前 3 个发送给 LLM。</em></p>
+<p>以下 Python 示例使用我们的嵌入和重新排序 API。它使用余弦相似度检索候选块，使用 voyageai/rerank-3-lite 对它们重新排名，并返回排名最高的三个结果。</p>
+<p>您需要一个 OPENROUTER_API_KEY 环境变量，以及安装的 numpy 和 requests。</p>
+<p><em><strong>Python</strong></em></p>
+<pre><code>import os
+ 
+import numpy as np
+import requests
+ 
+API = &quot;https://openrouter.ai/api/v1&quot;
+HEADERS = {&quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;}
+ 
+def embed(texts, input_type, model=&quot;google/gemini-embedding-2&quot;):
+    r = requests.post(f&quot;{API}/embeddings&quot;, headers=HEADERS, timeout=120,
+                      json={&quot;model&quot;: model, &quot;input&quot;: texts,
+                            &quot;input_type&quot;: input_type})
+    r.raise_for_status()
+    data = sorted(r.json()[&quot;data&quot;], key=lambda d: d[&quot;index&quot;])
+    v = np.array([d[&quot;embedding&quot;] for d in data])
+    return v / np.linalg.norm(v, axis=1, keepdims=True)
+ 
+def retrieve(question, chunks, chunk_vectors, n=30):
+    sims = chunk_vectors @ embed([question], &quot;search_query&quot;)[0]
+    return [(sims[i], chunks[i]) for i in np.argsort(-sims)[:n]]
+ 
+def rerank(question, candidates, top_n=3, model=&quot;voyageai/rerank-3-lite&quot;):
+    r = requests.post(f&quot;{API}/rerank&quot;, headers=HEADERS, timeout=120,
+                      json={&quot;model&quot;: model, &quot;query&quot;: question,
+                            &quot;documents&quot;: candidates, &quot;top_n&quot;: top_n})
+    r.raise_for_status()
+    data = r.json()
+    ranked = [(res[&quot;relevance_score&quot;], candidates[res[&quot;index&quot;]])
+              for res in data[&quot;results&quot;]]
+    return ranked, data.get(&quot;usage&quot;, {}).get(&quot;cost&quot;)
+ 
+# Your knowledge base, already split into chunks
+chunks = [
+    &quot;Starter plan limits: an account on the Starter plan can create up to &quot;
+    &quot;10 buckets.&quot;,
+    &quot;Scale plan limits: accounts on the Scale plan can hold up to &quot;
+    &quot;2,500 buckets.&quot;,
+    &quot;Enterprise plan limits: Enterprise accounts can create up to &quot;
+    &quot;40,000 buckets.&quot;,
+    &quot;Growth plan limits: an account on the Growth plan can hold up to &quot;
+    &quot;150 buckets.&quot;,
+    &quot;Q: What's the bucket cap on the Growth plan? Reply: I think it &quot;
+    &quot;changed recently, check the docs.&quot;,
+    &quot;Growth plan object size: a single object on the Growth plan can be &quot;
+    &quot;up to 50 GB.&quot;,
+]
+chunk_vectors = embed(chunks, &quot;search_document&quot;)
+ 
+question = (&quot;How many buckets can I create in a single account &quot;
+            &quot;on the Growth plan?&quot;)
+retrieved = retrieve(question, chunks, chunk_vectors)
+print(&quot;Vector search:&quot;)
+for sim, text in retrieved:
+    print(f&quot;  {sim:.3f} {text[:60]}&quot;)
+ 
+ranked, cost = rerank(question, [text for _, text in retrieved])
+print(f&quot;Reranked (${cost:.7f}):&quot;)
+for score, text in ranked:
+    print(f&quot;  {score:.3f} {text[:60]}&quot;)</code></pre>
+<p><em><strong>输出</strong></em></p>
+<pre><code>Vector search:
+  0.832 Growth plan limits: an account on the Growth plan can hold u
+  0.758 Starter plan limits: an account on the Starter plan can crea
+  0.741 Scale plan limits: accounts on the Scale plan can hold up to
+  0.737 Enterprise plan limits: Enterprise accounts can create up to
+  0.717 Growth plan object size: a single object on the Growth plan
+  0.695 Q: What's the bucket cap on the Growth plan? Reply: I think
+Reranked ($0.0000038):
+  0.922 Growth plan limits: an account on the Growth plan can hold u
+  0.793 Q: What's the bucket cap on the Growth plan? Reply: I think
+  0.727 Starter plan limits: an account on the Starter plan can crea</code></pre>
+<p>通过这些简短的一句话块，向量搜索已经将正确的增长计划限制放在第一位。余弦相似度得分范围为 0.695 到 0.832，因此几个候选者相对接近。重新排名后，正确的块的相关性得分为 0.922。未回复的论坛帖子以 0.793 的分数跃居第二位，领先于 Starter 计划条目。</p>
+<p>第二个结果说明了一个重要的限制，即相关性与正确性不同。论坛帖子提出了同样的问题，因此重新排名者认为它是相关的，即使它没有回答问题。在这个简化的示例中，重新排序器不会修复第一个结果，因为它已经是正确的。在完整的基准测试中，对于 130 个单词的块，矢量搜索将 19% 的问题（包括增长计划问题）放在前面，并使用 voyageai/rerank-3-lite 进行重新排名修复了大部分问题。</p>
+<p>实际经验是向LLM派遣几位实力雄厚的候选人，而不是依赖单一结果。您还应该考虑过滤掉未回答的讨论和其他提及问题但未解决问题的内容。</p>
+<p>代码中还有两个值得正确处理的细节：</p>
+<ul><li>首先，input_type 参数告诉嵌入模型它是对搜索查询还是文档进行编码。某些模型以不同的方式处理这些输入，因此省略参数可能会损害检索。在我们的测试中，忽略它会使 Gemini 的 precision@1 从 81.0% 降低到 74.1%，而 voyageai/voyage-4-lite 的 precision@1 从 64.6% 降低到 52.9%。请参阅<a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">embeddings API 参考</a>，它将它作为字符串并将 search_query 和 search_document 作为其值。</li><li>其次，top_n 控制重新排序器返回的结果数量，而不是它评估的结果数量。该模型仍然会对您发送的每个候选者进行评分，因此候选者的数量会影响成本和延迟。</li></ul>
+<h2>你怎么知道重新排名有帮助？</h2>
+<p>重新排名器可以改善结果排序，而不必改善用户收到的答案。要确定是否值得添加，请测量更改前后的检索准确性，然后评估最终答案。</p>
+<blockquote>1. 从 precision@1 开始：第一个检索到的块包含正确答案的问题的百分比。您不需要大量的评估集来开始。应用程序日志中的 50 个真实问题（每个问题都标有正确答案块）可以为您提供初始基线。从生产流量构建黄金评估数据集的指南解释了如何将数据集组合在一起。<br>2. 不要单独依赖recall@5：它衡量正确的块是否出现在前五名中的任何位置，无论其位置如何。在我们的测试中，Gemini 实现了 98.2% 的召回率@5，但只有 81.0% 的准确率@1。正确的信息通常位于结果中的某个位置，但并不总是位于顶部。</blockquote>
+<p>我们还测试了对最终答案的影响。我们使用 anthropic/claude-haiku-5.5 使用每个检索配置返回的块来回答所有 274 个问题，然后将响应与已知事实进行比较。</p>
+<table><thead><tr><th><strong>发送给LLM的块</strong></th><th><strong>答案正确</strong></th><th><strong>上下文中的正确块</strong></th></tr></thead><tbody><tr><td>voyage-4-lite 前 5 名，无需重新排名</td><td>93.1%</td><td>93.1%</td></tr><tr><td>gemini-embedding-2 前 5 名，无需重新排名</td><td>97.1%</td><td>98.2%</td></tr><tr><td>gemini-embedding-2 前 3 名，无需重新排名</td><td>95.6%</td><td>96.0%</td></tr><tr><td>gemini-embedding-2 前 30 名，重新排名至第 3 位</td><td>99.3%</td><td>100%</td></tr><tr><td>voyage-4-lite 前 30 名，重新排名至第 3 位</td><td>99.3%</td><td>99.6%</td></tr></tbody></table>
+<p><em>我们 2026 年 10 月 8 日的运行有 274 个问题。重新排名使用 voyageai/rerank-3-lite.</em></p>
+<p>结果表明，重新排名有助于LLM在使用更少的块的情况下正确回答更多问题。大多数错误答案都归结为缺少信息。在十分之九的情况下，正确的块不在前三名之内，模型会回答所提供的段落不包含答案。换句话说，该应用程序告诉用户它不知道自己的文档可以回答的问题。</p>
+<p>重新排名通过改进到达模型的块来解决这个问题。它还允许我们发送三个块而不是五个，从而将 LLM 的回答成本从每 1,000 个问题 0.22 美元降低到 0.16 美元。重新排名调用增加了 0.10 美元，因此在我们的设置中，每 1,000 个问题重新排名的净成本增加了 0.04 美元。</p>
+<p>重新排名是否能为您节省资金取决于您的模型、文档大小和查询量，因此请衡量从检索到最终答案的整个管道的成本和准确性。</p>
+<h2>哪种重排序模型最适合 RAG？</h2>
+<p>我们使用 google/gemini-embedding-2 检索到的相同 30 个候选者对 274 个问题中的每一个问题进行了比较 11 个重新排序器。这为我们比较其准确性、延迟和成本提供了一致的基础。</p>
+<p>在我们测试的专用重新排名模型中，Voyage 重新排名器提供了准确性和价格的最佳组合。</p>
+<table><thead><tr><th><strong>重新排序</strong></th><th><strong>精度@1</strong></th><th><strong>中位秒（我们的设置）</strong></th><th><strong>每 1,000 个查询 $</strong></th></tr></thead><tbody><tr><td>无（仅限嵌入）</td><td>81.0%</td><td>不适用</td><td>不适用</td></tr><tr><td>voyageai/rerank-3</td><td>97.8%</td><td>1.27</td><td>1.27 0.26 美元</td></tr><tr><td>voyageai/rerank-3-lite</td><td>97.1%</td><td>1.26</td><td>1.26 0.10 美元</td></tr><tr><td>voyageai/rerank-2.5-lite</td><td>voyageai/rerank-2.5-lite</td><td>96.7%</td><td>1.50</td><td>1.50 0.10 美元</td></tr><tr><td>voyageai/rerank-2.5</td><td>96.4%</td><td>1.30</td><td>1.30 0.26 美元</td></tr><tr><td>cohere/rerank-4-pro</td><td>95.3%</td><td>1.54</td><td>1.54 2.50 美元</td></tr><tr><td>qwen/qwen3-reranker-8b</td><td>92.3%</td><td>1.51</td><td>1.51 1.49 美元</td></tr><tr><td>cohere/rerank-4-fast</td><td>一致/rerank-4-fast</td><td>92.0%</td><td>1.25</td><td>1.25 2.00 美元</td></tr><tr><td>cohere/rerank-v3.5</td><td>cohere/rerank-v3.5</td><td>cohere/rerank-v3.5 90.5%</td><td>1.47</td><td>1.47 1.00 美元</td></tr><tr><td>openai/gpt-6-luna (LLM)</td><td>99.6%</td><td>4.01</td><td>0.70 美元</td></tr><tr><td>人类/claude-haiku-5.5 (LLM)</td><td>98.9%</td><td>4.44</td><td>4.44 0.87 美元</td></tr><tr><td>谷歌/gemini-3.8-flash（LLM）</td><td>100%</td><td>3.25</td><td>3.25 4.14 美元</td></tr></tbody></table>
+<p><em>我们于 2026 年 10 月 8 日运行。成本是每个响应的使用成本，与 GET /api/v1/ Generation 匹配。每个中位数大约 0.9 秒是我们测试机器的网络开销。</em></p>
+<p>在此数据集上，voyageai/rerank-3 在 97.8% 的时间内将正确的块排在第一位，而 Lite 版本达到了 97.1%。在我们的 274 个问题测试中，这种差异仅相当于两个问题，因此它太小，无法确定更昂贵的型号始终更好。从 voyageai/rerank-3-lite 开始，并在您自己的评估集上将其与 voyageai/rerank-3 进行比较。两者都使用相同的 /rerank 端点，因此切换模型只需要更改模型标识符。</p>
+<p>价格差异很大程度上反映了提供商的收费方式，如我们的<a href="https://openrouter.ai/collections/rerank-models">重新排名模型页面</a>中所列。 Voyage 和 Qwen 按代币计费（每百万份 0.02 至 0.20 美元），而 Cohere 每次搜索最多 100 个文档收取 0.001 至 0.0025 美元的费用，无论文档长度如何。由于我们的 30 个候选者包含大约 5,000 个 Voyage 代币，因此 Voyage 模型特别便宜。在这些短块上，Cohere 的重新排名器成本大约是 Voyage 选项的 4 到 25 倍，具体取决于比较的模型。在我们的测试中，向 Cohere 发送 101 份文档还引发了第二次搜索费用。</p>
+<p>对于有关特定错误代码（例如 FB-2411）的问题，重新排序会产生特别明显的差异。仅嵌入搜索在 voyageai/voyage-4-lite 中将正确条目放在第一位的概率仅为 25%，而在 google/gemini-embedding-2 中则为 53.6%。所有 11 名重新排序者在此子集上均达到 100%。由于错误代码条目倾向于讨论类似的错误，因此它们的嵌入可能看起来很相似。交叉编码器可以将问题中的确切代码与每个候选中的代码进行比较，并区分正确的条目。</p>
+<p>如果您对开发人员最常用的模型感兴趣，我们的<a href="https://openrouter.ai/rankings/rerank">rerank模型排名</a>提供了另一个有用的参考。截至 2026 年 10 月 20 日，voyageai/rerank-2.5 在截至 10 月 18 日的一周内以 468 万个请求领先，在我们的测试中得分为 96.4%。使用流行度值得考虑，但它不应该取代根据您自己的文档测试模型。模型性能、价格和提供商延迟可能会发生变化。 <a href="https://openrouter.ai/collections/rerank-models">重新排名模型集合</a> 列出了可用选项及其当前详细信息。</p>
+<h2>您应该对多少文档重新排序？</h2>
+<p>首先对大约 30 名候选人进行重新排名，然后根据评估结果调整数量。</p>
+<p>为了了解候选数量对性能的影响，我们使用 voyageai/voyage-4-lite 检索到的不同数量的候选来测试 voyageai/rerank-3-lite：</p>
+<table><thead><tr><th><strong>候选人重新排名</strong></th><th><strong>候选人中的正确部分</strong></th><th><strong>重新排名后精度@1</strong></th><th><strong>每 1,000 个查询 $</strong></th></tr></thead><tbody><tr><td>10</td><td>10 97.1%</td><td>94.5%</td><td>0.035 美元</td></tr><tr><td>20</td><td>98.9%</td><td>96.4%</td><td>0.070 美元</td></tr><tr><td>30</td><td>99.6%</td><td>96.7%</td><td>0.104 美元</td></tr><tr><td>50</td><td>50 100%</td><td>97.1%</td><td>0.174 美元</td></tr><tr><td>100</td><td>100 100%</td><td>97.1%</td><td>0.348 美元</td></tr></tbody></table>
+<p><em>我们的运行于 2026 年 10 月 8 日进行，使用了 274 个问题，voyageai/voyage-4-lite 作为第一阶段。</em></p>
+<p>将候选数从 10 增加到 30，将 precision@1 从 94.5% 提高到 96.7%。再次将其增加到 50，准确率达到 97.1%，仅解决了一个问题，同时重新排名成本增加了约三分之二。从 50 名候选人增加到 100 名候选人并没有提高精确度。</p>
+<p>重新排名有其局限性，因为只有当第一个检索阶段将相关块包含在候选集中时，它才能提升相关块。如果向量搜索完全错过了答案，则任何重新排序器都无法将其恢复。</p>
+<p>对于更大的知识库，使用您的评估集来找到检索更多候选者停止有意义地提高可用正确块的问题百分比的点。与假设每个应用程序的最佳数量为 30 相比，这是选择候选数量的更好方法。</p>
+<h2>LLM 可以用作重新排名吗？</h2>
+<p>在我们的基准测试中，基于 LLM 的重新排序器是最准确的，尽管它们返回结果的时间较长。我们没有通过专用的重新排序模型发送每个候选者，而是向聊天模型提供问题和所有 30 个编号的块，然后要求它按顺序返回最相关的块的 ID。我们使用严格的<a href="https://openrouter.ai/docs/guides/features/structured-outputs">结构化输出模式</a>来确保响应遵循预期的格式。</p>
+<p>这两种方法有一个关键的不同之处。专门的重新排序器针对问题对每个候选人进行单独评分。LLM可以一起阅读所有候选人并进行比较，这在多个文档包含相似信息时很有帮助。</p>
+<p>在我们的测试中，openai/gpt-6-luna 以每 1,000 个查询 0.70 美元的价格实现了 99.6% 的精度@1，这是 LLM 成本范围的低端，google/gemini-3.8-flash 达到了 4.14 美元。这比专用重新排序器的准确度更高，但在我们的设置中，每次调用大约需要 4 秒，而专用模型大约需要 1.3 秒。</p>
+<p>在用户等待答案的交互式应用程序中，额外的时间很重要。 LLM 重新排名可能更适合批处理或检索正确信息尤其重要的应用程序，并且额外的延迟是可以接受的。</p>
+<p>请记住，我们的基准测试使用了干净的、模型生成的文本。真实的知识库具有不一致的格式、不完整的文档和其他复杂性，因此我们不能假设 LLM 重新排序器将在更混乱的真实数据上保持相同的优势。</p>
+<h2>您是否还需要具有混合搜索的重排序器或更好的嵌入模型？</h2>
+<p>混合搜索和更好的嵌入模型都可以改善检索，但我们的基准测试表明，这两种方法都不如添加重新排序器那么有效。混合搜索将向量相似性与基于关键字的检索相结合，通常使用 BM25。我们将结果与倒数排名融合（RRF）相结合，从而合并了两个排名。</p>
+<p>在我们的测试集上，混合搜索将 voyageai/voyage-4-lite 的 precision@1 从 64.6% 提高到 69.3%。然而，在 google/gemini-embedding-2 中，尽管recall@5 有所改善，但 precision@1 从 81.0% 下降至 78.8%。功能更强大的嵌入模型优于更便宜的替代方案。 Gemini 的精度@1 达到 81.0%，而 Voyage 4 Lite 的精度为 64.6%。但 Gemini 的嵌入价格为每百万代币 0.20 美元，而 Voyage 4 Lite 的嵌入价格为 0.02 美元。将更便宜的嵌入模型与 voyageai/rerank-3-lite 相结合达到了 96.7% 的精度@1。</p>
+<p>混合搜索和更好的嵌入仍然有用，因为它们执行不同的工作。混合搜索可以帮助检索向量搜索错过的候选者，而更强的嵌入模型可以提高初始排名。重新排序器通过直接将每个候选者与问题进行比较来添加另一层。</p>
+<p>为了获得最佳结果，请单独或一起评估这些选项。您可以使用<a href="https://openrouter.ai/blog/insights/best-embedding-models-2026/">我们的嵌入模型比较</a>来帮助为第一个检索阶段选择嵌入模型。</p>
+<h2>是什么破坏了重新排名？</h2>
+<p>当文档超出模型的上下文限制时，重新排名可能会默默失败。例如，cohere/rerank-v3.5 具有 <a href="https://openrouter.ai/cohere/rerank-v3.5">4,096 个令牌上下文限制</a>，因此它可能永远不会看到文档中包含答案的部分。</p>
+<p>我们使用两个包含 11,000 个标记的文档对此进行了测试，这两个文档仅在最后一句话有所不同。其中一个包含答案，但两者获得相同的相关性分数：0.2703。该模型实际上忽略了区分它们的细节。相比之下，voyageai/rerank-3-lite 对文档的评分为 0.7812 和 0.3242，正确地将答案排名较高。 Cohere 4 模型、voyageai/rerank-3 和 qwen/qwen3-reranker-8b 也将正确的文档排名较高。检查重新排名器的上下文限制并将块保持在其中。</p>
+<p>另一个问题是模型兼容性，因为 /rerank 端点仅接受重新排名模型。向其发送聊天模型 openai/gpt-6-luna 返回 400 模型 openai/gpt-6-luna 不存在，与拼写错误的模型标识符得到的错误相同。在发出请求之前，请检查模型是否出现在<a href="https://openrouter.ai/collections/rerank-models">重新排名模型集合</a>中。</p>
+<h2>后续步骤</h2>
+<ul><li>使用 voyageai/rerank-3-lite 对您的前 30 名重新排名，然后进行测量。</li><li><a href="https://openrouter.ai/docs/api/api-reference/rerank/submit-a-rerank-request">Rerank API 参考</a>：每个请求字段，包括提供者路由。</li><li><a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/rag">具有嵌入和重新排名的 RAG</a>：通过答案生成的完整管道。</li><li><a href="https://openrouter.ai/blog/tutorials/how-to-benchmark-llms/">如何对 LLM 进行基准测试</a>：根据您自己的数据比较模型。</li></ul>
+<h2>常见问题</h2>
+<h3>RAG 中的重新排名是什么？</h3>
+<p>RAG 中的重新排名是第二个检索步骤，其中重新排名模型根据问题对向量搜索返回的每个块进行评分并对它们重新排序，以便最相关的少数达到 LLM。重新排序模型将问题和块一起读取，这样它就可以捕获未遂事件，例如错误计划的正确限制。在我们的 274 个问题测试中，它将正确块首先出现的比率从 81% 提高到 97%。</p>
+<h3>RAG 的最佳重新排序模型是什么？</h3>
+<p>在我们 2026 年 10 月的测试中，voyageai/rerank-3 和 voyageai/rerank-3-lite 是最准确的专用重新排序模型和最便宜的重新排序器，在 274 个问题中将正确的块放在第一位，分别为 97.8% 和 97.1%。 LLM 重新排名得分较高，但每次调用大约需要 4 秒。</p>
+<h3>我应该对多少文档重新排序？</h3>
+<p>对大约 30 个候选者进行重新排名，对于更大的知识库，增加数量，直到正确的块可靠地出现。在我们的测试中，从 30 到 50 将 precision@1 从 96.7% 提高到 97.1%（噪音范围内的一个问题增益），并将重新排序成本增加了三分之二。</p>
+<p>＃＃ 参考</p>
+<ul><li><a href="https://openrouter.ai/docs/api/api-reference/rerank/submit-a-rerank-request">重新排序 API 参考</a> 和 <a href="https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request">嵌入 API 参考</a></li><li><a href="https://openrouter.ai/collections/rerank-models">重新排名模型</a> 和 <a href="https://openrouter.ai/rankings/rerank">重新排名排名</a></li><li><a href="https://openrouter.ai/docs/guides/features/structed-outputs">结构化输出</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>如何阻止 AI 代理陷入无限循环</title>
       <link>https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How to Stop an AI Agent Stuck in an Infinite Loop</description>
       <content:encoded><![CDATA[<h1>如何阻止 AI agent 陷入无限循环</h1>
 <p>OpenRouter ·11/12/2026</p>
 <p><img src="https://openrouter.ai/blog/images/ai-agent-infinite-loop.png" alt="如何阻止 AI agent 陷入无限循环"><img src="https://openrouter.ai/blog/images/ai-agent-infinite-loop-dark.png" alt="如何阻止 AI agent 陷入无限循环"></p>
@@ -170,10 +330,11 @@ attempts: 2, cost: $0.0039</code></pre>
 <ul><li><a href="https://openrouter.ai/docs/agent-sdk/call-model/doom-loop-detection">Doom-loop detection</a>：阶梯、steering、escalation 与按工具覆盖。</li><li><a href="https://openrouter.ai/docs/agent-sdk/call-model/stop-conditions">Stop conditions</a>：<code>stepCountIs</code>、<code>maxCost</code>、<code>maxTokensUsed</code> 与自定义条件。</li><li><a href="https://openrouter.ai/blog/tutorials/team-spend-controls-setup/">Set up team AI spend controls</a>：dashboard 里的 workspace budgets 与护栏。</li><li><a href="https://openrouter.ai/blog/tutorials/agent-sdk-with-callmodel/">Agent SDK: Building Multi-turn Agent Workflows on OpenRouter</a>：<code>callModel</code> 如何跑 agent 循环。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>How to Benchmark LLMs</title>
+      <title>如何对 LLM 进行基准测试</title>
       <link>https://openrouter.ai/blog/tutorials/how-to-benchmark-llms/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/how-to-benchmark-llms/</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How to Benchmark LLMs</description>
       <content:encoded><![CDATA[<h1>如何给 LLM 做基准测试</h1>
 <p>OpenRouter ·11/12/2026</p>
 <p><img src="https://openrouter.ai/blog/images/how-to-benchmark-llms.png" alt="如何给 LLM 做基准测试"><img src="https://openrouter.ai/blog/images/how-to-benchmark-llms-dark.png" alt="如何给 LLM 做基准测试"></p>
@@ -505,10 +666,129 @@ python compare_runs.py runs/comparison-demo/luna runs/comparison-demo/sol --outp
 <p>用我们的 <a href="https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/">golden eval dataset guide</a> 从你的应用构建一套有代表性的集合。比较各候选模型，然后<a href="https://openrouter.ai/blog/tutorials/how-to-gate-pull-requests-on-llm-evals-in-ci/">在检查上给 pull request 设闸</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Self-Hosted LLM vs API: When Does Self-Hosting Pay Off</title>
+      <title>我们如何为 OpenRouter 构建自校正定位系统</title>
+      <link>https://openrouter.ai/blog/announcements/openrouter-in-8-languages/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/openrouter-in-8-languages/</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How We Built a Self-Correcting Localization System for OpenRouter</description>
+      <content:encoded><![CDATA[<h1>我们如何为 OpenRouter 构建自校正定位系统</h1>
+<p>孙罗伯特·11/12/2026</p>
+<p><img src="https://openrouter.ai/blog/images/openrouter-in-8-languages-ja-home.png" alt="OpenRouter 日语主页。"></p>
+<p>除了英语之外，OpenRouter 现在还支持简体中文、西班牙语、葡萄牙语（巴西）、德语、法语、日本语、한국어。从今天开始，本地化处于测试阶段。要进行切换，请从帐户菜单中选择一种语言，或直接转到 <a href="https://openrouter.ai/ja">openrouter.ai/ja</a> 或 <a href="https://openrouter.ai/ko/models">openrouter.ai/ko/models</a> 等地址。</p>
+<p><img src="https://openrouter.ai/blog/images/openrouter-in-8-languages-ko-models.png" alt="韩语 OpenRouter 模型页面，包含翻译后的过滤器、选项卡和模型元数据。"></p>
+<p>翻译网站并保持翻译最新是很困难的，对我们来说尤其如此。 OpenRouter 的网站有 16,918 个英文字符串，我们每天都会更改其中一些字符串，因此一次性翻译将在一周内过时。我们构建了一个循环来帮助我们大规模地做到这一点。每天，它都会找到发生变化的字符串，进行翻译，在代码中检查它们，并让第二个模型根据英语验证其含义。当翻译检查失败或验证者拒绝它时，循环会将其发送回并附上原因并重试。重试循环是系统自我纠正的一部分。</p>
+<p>有些错误仍然会过去，人们会发现这些错误。当审稿人和读者报告错误时，我们会将其转化为术语表规则、风格注释或覆盖，而每日审稿发现的错误也成为每个未来模型必须通过的测试用例。整个管道运行在 OpenRouter 上。</p>
+<h2>翻译位于代码旁边的 Git 中</h2>
+<p>在任何模型介入之前，翻译都需要一个家。我们使用开源 <a href="https://generaltranslation.com">General Translation</a> 运行时在 React 代码中包装字符串。我们将翻译作为 JSON 目录提交到代码旁边，并在运行时在本地加载它们，因此请求路径中不存在任何翻译服务。字符串在合并后的一天内就会被挑选出来进行翻译。在此之前，页面显示英文源代码。每个翻译的条目还存储了它所来自的英语的指纹。当有人编辑英文时，指纹会停止匹配，并且该条目会返回到队列中。此规则允许每日运行找到每个陈旧条目，而无需重新翻译整个目录。</p>
+<h2>管道</h2>
+<p>该队列中的每个字符串在到达站点之前都会经过五个阶段。</p>
+<p><img src="https://openrouter.ai/blog/images/openrouter-in-8-languages-translation-loop.png" alt="字符串如何翻译：新文本进入翻译器模型，然后代码检查，然后验证器模型，然后审阅，然后上线。失败的检查和验证者拒绝会返回给翻译者，审阅者或读者标记的修复会进入术语表。"></p>
+<h3>1.提取</h3>
+<p>脚本扫描前端并将每个包装的英文字符串写入源目录。每个条目都记录其文件及其 UI 角色，例如按钮、标题或表格标题。这个角色很重要，因为同一个英语单词在不同的地方可能需要不同的翻译。按钮上的“队列”是一条指令，本文后面的缺陷之一是将其翻译为名词的模型。</p>
+<h3>2. 翻译</h3>
+<p>我们将新的和更改的字符串批量发送到 GPT-6.1 Sol，最多 40 个，并使用结构化输出来保存对严格 JSON 模式的回复。每个请求都包含我们的全局和每种语言的样式注释、批次中任何产品术语的词汇表规则以及每个字符串的 UI 角色。</p>
+<p>以下是译者对一批日语的请求的简化示例，其中风格注释和术语表规则被缩短。</p>
+<pre><code>{
+  &quot;model&quot;: &quot;openai/gpt-6.1-sol&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;system&quot;,
+      &quot;content&quot;: &quot;Translate OpenRouter UI strings into Japanese. ...&quot;
+    },
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;[{\&quot;id\&quot;:\&quot;q1\&quot;,\&quot;role\&quot;:\&quot;button\&quot;,\&quot;text\&quot;:\&quot;Queue\&quot;}]&quot;
+    }
+  ],
+  &quot;response_format&quot;: {
+    &quot;type&quot;: &quot;json_schema&quot;,
+    &quot;json_schema&quot;: {
+      &quot;name&quot;: &quot;translations&quot;,
+      &quot;strict&quot;: true,
+      &quot;schema&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;translations&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;type&quot;: &quot;object&quot;,
+              &quot;properties&quot;: {
+                &quot;id&quot;: { &quot;type&quot;: &quot;string&quot; },
+                &quot;text&quot;: { &quot;type&quot;: &quot;string&quot; }
+              },
+              &quot;required&quot;: [&quot;id&quot;, &quot;text&quot;],
+              &quot;additionalProperties&quot;: false
+            }
+          }
+        },
+        &quot;required&quot;: [&quot;translations&quot;],
+        &quot;additionalProperties&quot;: false
+      }
+    }
+  }
+}</code></pre>
+<p>由于 OpenRouter 上的每个模型都接受相同的请求，因此尝试不同的转换器意味着仅更改模型 slug。这就是我们在本文后面进行模型比较的方式。</p>
+<h3>3.检查</h3>
+<p>代码会拒绝破坏 ICU 占位符、复数分支、富文本标记、前导或尾随空格或以术语表禁止的形式呈现产品术语的回复。我们以较小的片段重新发送被拒绝的批次，命名失败，默认情况下最多 4 次通过。该限制是一个最多为 20 的设置。在最后一次传递后仍然失败的字符串将保留为英语，并在拉取请求中进行标记。</p>
+<h3>4. 验证</h3>
+<p>对同一模型的第二次调用（充当验证者）会对照英语读取每个翻译，并按严重程度列出错误。任何严重或重大错误，例如删除的子句或颠倒的含义，都会将字符串连同迄今为止所附的所有异议发送回译者。翻译器在第一次尝试后最多可以重试 3 次，最后一次重试需要更多的推理工作。每个字符串的花费没有单独的上限，因为重试限制已经对其进行了限制。计算检查重新发送的次数，一个字符串最多可能需要四次翻译尝试，每次最多四次检查通过，并在每次尝试后调用验证程序。最坏的情况是每种语言每个字符串大约有 20 个模型调用。如果验证器关闭，管道不会写入任何内容，并且字符串仍为英文。读一天英语的读者比看未经检查的翻译的读者要好。</p>
+<h3>5. 回顾</h3>
+<p>每个每日批次都会作为拉取请求落地。人工智能审阅者会读取差异并发布结果，而一个人会合并拉取请求。</p>
+<h2>我们如何衡量</h2>
+<p>本文的其余部分依赖于三个评估套件，因此在数字开始之前了解每个套件测试的内容会有所帮助。</p>
+<ul><li><strong>模型比较（254 个案例）</strong> 使用不同的翻译器模型运行管道，并使用生产验证器对每个回复进行评分。我们用它来选择翻译。</li><li><strong>管道比较（454 例）</strong> 将一个模型运行两次，一次通过完整管道，一次仅使用两行提示。代码检查、验证者、来自其他三个模型系列的判断以及反向翻译检查都会对其进行评分。</li><li><strong>缺陷套件（22 个案例）</strong> 包含验证者通过后每日审查发现的真实错误。每种情况都禁止发货的错误。</li></ul>
+<h2>我们尝试过但扔掉的东西</h2>
+<p>现在管道看起来很简单，因为我们在评估测量后删除了第一个设计的三个部分。</p>
+<h3>更便宜的翻译器</h3>
+<p>我们首先测试了一个更小、更便宜的型号，GPT-6 Luna (<code>openai/gpt-6-luna</code>)。在模型比较中，它第一次尝试就通过了 91.7% 的案例，而 GPT-6.1 Sol 则为 99.2%。最弱的语言是韩语和日语。它最严重的失败是我们的翻译框架 General Translation 无法编译的回复，例如它对“{value} 的旧别名”的翻译。每次重试时，这些失败都会持续存在。</p>
+<p>较重型号的价格约为 3.4 倍，1.94 美元，而 254 箱则为 0.57 美元。我们支付差价是因为修复一条永远不会收敛的错误字符串比立即修复它需要更多的时间和精力。</p>
+<h3>单独的判断模型</h3>
+<p>在验证器存在之前，一个单独的判断模型对每个翻译进行评分，并且我们重新翻译它标记或标记为不确定的任何内容。为了看看它的工作效果如何，我们用三种字符串标记了基准：已知错误、更正的翻译（早期错误的手动修复版本，应该会通过）和干净的样本。法官确实发现了真正的问题。在一次基准测试中，它将 91% 的实际缺陷标记为不确定。它还标记了 14 个更正翻译中的 11 个和 150 个干净翻译中的 42 个，因此它送回了大量优秀作品进行重新翻译。</p>
+<p>验证器就位后，关闭判断器会将首次通过准确率从 99.2% 降低到 98.8%，但最终结果保持不变。法官已将约 45% 的初稿发回重新翻译。我们现在默认将其保留。</p>
+<h3>给一个人留下硬伤</h3>
+<p>起初，验证者在每次重试时拒绝的字符串都保持未翻译状态，直到有人手动修复它。对目录进行全面重新翻译，将 16,274 个字符串翻译成 7 种语言，剩下 97 个这样的字符串 (0.09%)。现在，管道根据验证者的发现对被拒绝的草稿进行排名，提交错误最少的草稿，并将其标记在拉取请求中以供审查。循环总是以翻译结束，即使该翻译仍然带有标记的错误，并且该标记将其放在合并拉取请求的人的前面。</p>
+<h2>管道在裸模型上添加了什么</h2>
+<p>管道增加的大部分内容是减少彻底的错误。为了测量它，我们的评估在 454 个案例中运行相同的模型两次，一次通过整个管道，一次使用两行提示，没有样式注释、术语表或重试。裸模型返回了一个格式错误的回复，还剩下 453 对进行比较。</p>
+<table><thead><tr><th>测量</th><th>裸模</th><th>完整管道</th></tr></thead><tbody><tr><td>未通过术语表或作者检查</td><td>147 共 453</td><td>4 共 454 条</td></tr><tr><td>第一次通过时被验证者接受</td><td>306 名中的 263 名通过了检查 (85.9%)</td><td>454 项中的 448 项 (98.7%)</td></tr><tr><td>来自其他模范家庭的三位评委总结的严重错误</td><td>203</td><td>203 109</td><td>109</td></tr><tr><td>双方在整体偏好上获胜</td><td>117</td><td>117 139</td><td>139</td></tr><tr><td>意义在回译中得以保留</td><td>90.8%</td><td>89.3%</td></tr></tbody></table>
+<p>撰写的检查是针对一个评估案例的手写规则。例如，中文中的“Queue”不能翻译为“队列”，即“发货”的名词形式。检查失败次数从 147 次下降到 4 次，词汇表和重试正在发挥作用。</p>
+<p>验证者的首次通过数据使用不同的基础。对于裸模型来说，通过代码检查的是 306 个字符串，对于管道来说，全部是 454 个字符串。验证器与翻译器来自同一模型系列，因此它的通过率告诉我们模型与自身一致的频率。我们使用 GPT-6.1 Sol 来完成这两项工作，因为它是我们测试的两个翻译器中更准确的一个。为了获得外部视图，评估还将每对未标记的翻译发送给来自其他型号系列（Claude Opus 5.5、Gemini 4 Argon 和 DeepSeek V4 Pro）的三位评委。在三位评委中，他们发现管道的输出存在 109 个严重错误，裸模型的输出存在 203 个严重错误。每个法官的错误都是单独计数的，因此所有三个法官都标记的字符串会将总数加三。</p>
+<p>根据 453 对的总体偏好，评委们在 139 对中选择了管道，在 117 对中选择了裸模型，其中 61 对和 136 对的两个翻译是相同的。这个余量比检查失败和严重错误显示的要窄得多，因此管道的价值主要在于它消除的特定错误。</p>
+<p>最后一行将每个回复回译为英语，并询问其含义是否仍然存在。裸模型得分为 90.8%，管道得分为 89.3%。反向翻译无法看到术语或寄存器，这是管道更改的大部分内容，因此我们将此结果视为平局。</p>
+<h2>反馈循环</h2>
+<p>验证者在发布之前发现了大部分错误，读者则发现了其余的一些错误。</p>
+<p><img src="https://openrouter.ai/blog/images/openrouter-in-8-languages-report.png" alt="日语主页上突出显示的文本，带有用于发送反馈的弹出窗口。"></p>
+<p>在“语言”对话框中打开“选择报告”功能，然后突出显示所有翻译文本、添加注释并发送。每份报告均附带语言、页面和确切的文本。模型首先对其进行分类，选择四个修复程序之一，然后在几分钟内完成修复。我们的人工智能审核员会检查修复情况，并由一个人进行最终合并。</p>
+<ul><li><strong>含义错误。</strong> 该字符串在同一天恢复为英语，然后获得更正的翻译。</li><li><strong>错误的术语。</strong> 我们将术语与该语言的接受形式和拒绝形式一起添加到词汇表中。我们固定合规性和协议名称，例如 HIPAA、SOC 2、OAuth 和 SAML，因此管道将它们保留为英文。</li><li><strong>语气或标点符号错误。</strong> 该规则包含在该语言的风格注释中。</li><li><strong>一个错误的字符串。</strong> 精确的覆盖会固定已批准的措辞，并且以后的运行都无法更改它。</li></ul>
+<p>验证者通过后每日审查发现的错误将进入缺陷套件。目前已有22例。其中包括翻译为需要动词的按钮上的名词的“队列”、呈现为道路交通的“影子交通”，以及含义颠倒的 HIPAA 设置。每个案例都禁止发生错误，因此任何未来的模型、提示或术语表更改都会导致错误返回，从而导致评估失败。</p>
+<h2>费用是多少</h2>
+<p>当我们第一次定价时，将所有 16,274 个字符串完全重新翻译成 7 种语言，总共 113,918 个翻译，包括翻译和验证在内，价格约为 430 美元。我们通过对每种语言的生产规模批量定价并扩大规模来得出这个数字。计算得出，每种语言每个字符串的费用不到半美分。验证费用略多于一半，约为 228 美元，即每种语言每个字符串 0.002 美元。此后该目录已增至 16,918 个字符串，如今完整重新翻译的成本约为 460 美元。每日循环仅发送更改的内容，一天包含 7 种语言的 677 个更改的字符串，成本约为 18 美元。</p>
+<p>这两个数字仅涵盖翻译和验证调用。他们忽略了构建管道的工程时间、人工智能审核员和分类模型的调用以及合并每个日常拉取请求的人员。</p>
+<p>今天的 16,918 个字符串包含 136,429 个英语单词，因此 7 种语言总共 955,003 个单词，这使得我们的成本约为每个单词 0.0005 美元。以下是截至 2026 年 11 月 10 日，按 Smartling 和 Gengo 发布的每个字起价进行的相同完整重译。</p>
+<table><thead><tr><th>选项</th><th>评分</th><th>完整网站，7 种语言</th></tr></thead><tbody><tr><td>我们的管道、翻译和验证</td><td>每个字约 0.0005 美元</td><td>约 460 美元</td></tr><tr><td>Smartling 机器翻译</td><td>每个字 0.0075 美元</td><td>约 7,200 美元</td></tr><tr><td>Smartling人工智能翻译</td><td>每个字 0.06 美元</td><td>约$57,300</td></tr><tr><td>Gengo标准</td><td>每个字 0.09 美元</td><td>约$86,000</td></tr><tr><td>Smartling 人工智能人工翻译</td><td>每个字 0.12 美元</td><td>约$114,600</td></tr><tr><td>Gengo 高级</td><td>每个字 0.18 美元</td><td>约$171,900</td></tr><tr><td>Smartling 人工翻译</td><td>每个字 0.20 美元</td><td>约$191,000</td></tr></tbody></table>
+<p>这些是标价；企业合同是经过谈判的，机器翻译上方的每一行都包括我们的数字中遗漏的人工审核或项目管理。最接近的同类选项是 Smartling 的机器翻译，而我们的管道成本大约是 Smartling 的 6%。</p>
+<h2>你可以重用什么</h2>
+<p>如果您要本地化自己的产品，则可以直接继承此设计的四个部分。</p>
+<ul><li>根据英文来源对每个翻译进行指纹识别，以便陈旧的条目重新排队。</li><li>在任何模型审查含义之前，让代码拒绝损坏的占位符、复数分支、标签和禁用术语。</li><li>使用验证程序来命名每个错误及其严重性，并将这些异议发送回翻译人员。</li><li>将人们发现的每个错误转化为术语表规则、样式注释、覆盖或评估案例。</li></ul>
+<h2>将您的反馈发送给我们</h2>
+<p>当我们处于测试阶段时，一些措辞将会被取消，修复它的最快方法是使用“语言”对话框中的“选择报告”来报告它。我们审查每份报告并将其转化为术语表规则、样式注释或覆盖。</p>
+<h2>常见问题</h2>
+<h3>OpenRouter 支持哪些语言？</h3>
+<p>OpenRouter 有英语、简体中文、西班牙语、巴西葡萄牙语、德语、法语、日语和韩语版本。本地化处于测试阶段。</p>
+<h3>如何更改 OpenRouter 上的语言？</h3>
+<p>从帐户菜单中选择一种语言，或打开本地化地址，例如 openrouter.ai/ja。</p>
+<h3>哪些型号可以翻译 OpenRouter？</h3>
+<p>GPT-6.1 Sol (openai/gpt-6.1-sol) 翻译每个字符串，对同一模型的第二次调用将其与英语进行验证。两者都通过 OpenRouter API 运行。</p>
+<h3>翻译整个网站需要多少钱？</h3>
+<p>将当今的 16,918 个字符串完全重新翻译成 7 种语言的成本约为 460 美元，其中包括翻译和验证，每种语言每个字符串的成本不到 0.5 美分。按照 Smartling 公布的机器翻译费率计算，同样的工作成本约为 7,200 美元，按照公布的人工智能和人工翻译费率计算，成本约为 57,300 美元至 191,000 美元。</p>
+<h3>如何报告错误的翻译？</h3>
+<p>在“语言”对话框中打开“选择报告”功能，突出显示读错的文本，添加注释，然后提交。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>自托管 LLM 与 API：自托管何时获得回报</title>
       <link>https://openrouter.ai/blog/insights/self-hosted-llm-vs-api/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/insights/self-hosted-llm-vs-api/</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Self-Hosted LLM vs API: When Does Self-Hosting Pay Off</description>
       <content:encoded><![CDATA[<h1>自托管 LLM 对比 API：自托管什么时候才划算</h1>
 <p>OpenRouter ·11/12/2026</p>
 <p><img src="https://openrouter.ai/blog/images/self-hosted-llm-vs-api.png" alt="自托管 LLM 对比 API：自托管什么时候才划算"><img src="https://openrouter.ai/blog/images/self-hosted-llm-vs-api-dark.png" alt="自托管 LLM 对比 API：自托管什么时候才划算"></p>
@@ -1844,10 +2124,11 @@ book_table(
 <p>什么时候调哪个函数仍由 LLM 决定，实际操作和结果返回由你的应用负责。像订桌、发确认这类动作，务必先确认操作成功，再告诉来电者已经办妥。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Introducing the Extractions API</title>
+      <title>提取 API 简介</title>
       <link>https://openrouter.ai/blog/announcements/extractions-api/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/extractions-api/</guid>
       <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing the Extractions API</description>
       <content:encoded><![CDATA[<h1>推出 Extractions API</h1>
 <p>William Kofski ·11/10/2026</p>
 <p>Extractions API 现已在 OpenRouter 上线，处于 alpha 阶段。你只需描述需要的字段，就能从文本、图片和 PDF 里抽出具体信息，比如邮件里的人名，或收据上的总金额。</p>
@@ -4153,11 +4434,11 @@ ori claude --model anthropic/claude-sonnet-5.5</code></pre>
 <p>AI 正在带来令人振奋的可能性，而围绕前沿模型的做法也在快速演变。我们正在更新文档与相关条款，以说明 OpenRouter 的在途筛选、被标记内容可能被留存的情况，以及 provider 政策的呈现方式。一如既往，我们会持续向你通报进展。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Introducing Safety Retention: A Clearer Choice for AI Privac…</title>
+      <title>引入安全保留：AI 隐私的更清晰选择</title>
       <link>https://openrouter.ai/blog/announcements/introducing-safety-retention/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/introducing-safety-retention/</guid>
       <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Introducing Safety Retention: A Clearer Choice for AI Privacy</description>
+      <description>原文标题：Introducing Safety Retention: A Clearer Choice for AI Privacy</description>
       <content:encoded><![CDATA[<h1>推出 Safety Retention：更清晰的 AI 隐私选择</h1>
 <p>OpenRouter ·10/26/2026</p>
 <p>用 AI 做开发的人，既应当能用上先进的模型，也应当清楚自己的数据会被如何处理。OpenRouter 的职责，就是在多元的模型生态里把这些边界讲清楚。</p>
@@ -8312,140 +8593,6 @@ console.log(result.choices[0]?.message.content);</code></pre>
 <p>有。我们上架了 <code>nvidia/nemotron-3.5-lightning:free</code>，由 NVIDIA 提供服务、token 免费。免费模型的速率限制和可用性与付费模型不同，而且这个端点带有 NVIDIA 的数据声明。请别通过它发送机密信息或个人数据。</p>
 <h3>我能在本地跑 Nemotron 3.5 Lightning 吗？</h3>
 <p>能。NVIDIA 以 OpenMDW-1.1 许可证发布了 BF16、NVFP4 和 GGUF 权重。BF16 参考检查点面向单张 80GB 的 H100 或 A100；NVFP4 和 GGUF 版本面向 RTX 5090、RTX PRO 6000、DGX Spark 等受支持的本地硬件。选择部署方案前请核对 NVIDIA 最新的模型卡和许可证。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>两小时的工作不再要等一周</title>
-      <link>https://openrouter.ai/blog/insights/descript-model-evaluation-queue/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/insights/descript-model-evaluation-queue/</guid>
-      <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Two Hours of Work That Takes a Week</description>
-      <content:encoded><![CDATA[<p>对 Descript 来说，测试一个新模型曾是两小时的工作加一周的等待。这个团队消灭了等待。评测现在一两个小时内就能跑完，也不必再向工程师讨时间。完整架构见 <a href="https://openrouter.ai/blog/case-studies/descript-case-study/">Descript 案例研究</a>。</p>
-<p>当模型接入是按服务商逐个对接时，测试一个新模型得从工程开发开始。而想试模型的人和能加模型的人不是同一个人时，这个请求就得解释、排期、等待。这是一个排队问题，而在 Descript，它决定了团队能尝试多少模型。</p>
-<h2>队列让 Descript 付出了什么</h2>
-<p>Descript 是 AI 视频和音频编辑平台，在打造其视频编辑 agent Underlord 时撞上了这个问题。在用 OpenRouter 之前，团队维护着与 OpenAI、Anthropic 和 Google 的三个直连集成，并自己编写它们之间的 fallback 逻辑。添加一个模型要花几个小时。而把这几个小时排进工程师的日程要几天——于是一个有希望的模型可能搁置一周，才知道值不值得跟进。</p>
-<p>昂贵的部分是等待。团队只试那些值得打断工程师的模型，其他的就跳过了。</p>
-<h2>Descript 现在如何评测模型</h2>
-<p>Descript 的 AI 产品负责人 Aleks Mistratov 描述了现在的循环。</p>
-<blockquote>“我在散步，我上网成瘾到了对自己有害的程度，然后看到一条推文说有新模型发布了。我进 Slack 说：在 OpenRouter 上对这个模型跑评测，并附上链接。一两个小时后，我们已经在自己的评测框架里跑完了这个模型的评测。”</blockquote>
-<p>其机制是 Claude Tag——Anthropic 的 Slack 集成，Descript 为这个循环配置了它。它负责跑评测、开 pull request，然后由人来审核和批准。</p>
-<p>让这套工作流可自动化的关键是：尝试一个模型不再需要先构建服务商集成。测试一个模型不意味着要开启一段供应商关系或再接一个 API 端点。活还是要干的，只是不必再向谁申请。</p>
-<h2>每周评测改变了什么</h2>
-<p>Descript 现在每周多次评测模型。团队测试的大部分内容不会上线。由此带来三点变化。</p>
-<p><strong>模型选择是实证的。</strong> Descript 用自己的测试用例衡量新发布，有东西达标就改变上线的内容。团队此前的替代方案是过早标准化到某个模型，直到被现实逼迫才重新审视这个决定。</p>
-<p><strong>新发布不再是事件。</strong> 在 Anthropic 最近一次发布中，Descript 从公告到上线只用了几个小时。剩下的步骤都是内部事务：跑评测、判断模型是否胜过在位者、加进模型选择器、部署。这些工作中的大部分源于 Descript 自身代码的结构，而不是与模型的连接。</p>
-<p><strong>赛道变宽了。</strong> Descript 从未与 xAI 建立直连集成。Grok 4.5 现在已在生产环境运行——通过与其他模型相同的路径接入。</p>
-<h2>Descript 如何运行它选定的模型</h2>
-<p>这一切并不意味着把所有流量塞进一个共享端点、来者不拒。Descript 为某个开放权重模型的专属部署<a href="https://openrouter.ai/docs/guides/overview/auth/byok">自带密钥</a>接入 Baseten，由 OpenRouter 优先路由到 Baseten，其他服务商作为<a href="https://openrouter.ai/docs/guides/routing/provider-selection">后备</a>配置其后。这些后备更换的是推理服务商而保持模型不变，因此某台主机故障不会改变应答的模型。</p>
-<p>Mistratov 给正在权衡同样改变的工程师的建议很短。</p>
-<blockquote>“这比设法搞定所有这些不同的连接容易太多了。你做一次性接入，其他一切都变成一个参数。”</blockquote>
-<p>Descript 用同一个集成既测试新模型，也运行留下的模型。测试是团队找到模型的方式，路由配置是运行模型的方式。</p>
-<h2>阅读案例研究</h2>
-<p><a href="https://openrouter.ai/blog/case-studies/descript-case-study/">Descript 案例研究</a>包含其余的架构细节：Descript 如何按模型设置推理服务商优先级、服务商中途劣化时会怎样，以及团队现在的 on-call 是什么样的。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Jev 与 LLM 裁判对比</title>
-      <link>https://openrouter.ai/blog/tutorials/jev-vs-llm-as-a-judge/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/jev-vs-llm-as-a-judge/</guid>
-      <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Jev vs LLM-as-a-Judge</description>
-      <content:encoded><![CDATA[<h1>Jev 与 LLM 裁判对比</h1>
-<p>Kenny Rogers ·9/21/2026 · 更新于 9/24/2026</p>
-<p>多数团队给 agent 输出打分的方式，是把输出交给一个 LLM、让它写一份裁决。这个模式叫 LLM-as-a-judge（LLM 裁判），好用到了成为默认的程度。TypeSafe 的决策模型 Jev 也能给同样的输出打分，但方式不同——而方式不同会改变你拿结果能做什么。本文解释这个区别、展示在我们的测量里它在哪儿起了作用，以及哪种 rubric（评分标准）该用哪种裁判。</p>
-<p>本文假设你知道 LLM-as-a-judge 是什么。不知道的话，先读 <a href="https://openrouter.ai/blog/tutorials/llm-as-a-judge-evaluate-ai-agents/">LLM 裁判：自动为 AI 智能体的输出打分</a>。</p>
-<h2>太长不看</h2>
-<p>LLM 裁判写一份裁决；Jev 对一个有类型的问题给出概率。当 rubric 是封闭的、证据就在请求里时，Jev 与 LLM 裁判在准确率上打平；Jev 的概率校准更好、价格是五分之一、延迟是十分之一。当 rubric 是开放的、需要通读整篇文章时，LLM 裁判与专家评分贴合得多。</p>
-<p><img src="https://openrouter.ai/blog/images/jev-vs-llm-as-a-judge-tldr.png" alt="对比 Jev 和 LLM 裁判的五项测量。与标签一致率 95.5% 对 94.3%。Brier 分数 0.043 对 0.054。延迟中位数 171 ms 对 1,662 ms。每千次裁决成本 $0.021 对 $0.114。摘要一致性上与专家的 Spearman 相关 0.47 对 0.72。每行的条形按该行自身单位缩放。"></p>
-<ul><li><strong>用 Jev</strong>：标准封闭且证据在场——答案是否有原文支撑、是否合规、是否匹配参照。需要阈值或路由规则时，或需要快到、便宜到能放进请求路径的裁判时，也用它。</li><li><strong>用 LLM 裁判</strong>：开放式 rubric、长上下文检查（例如摘要一致性检查），以及需要有人读到&quot;答案为什么不行&quot;的文字解释时。</li><li><strong>两者都不用</strong>：代码能精确检查的标准。决定既重大又是新情况时，用人。</li></ul>
-<p>下文讲这些数字从哪里来、两个裁判为什么表现出这样的行为。</p>
-<h2>两种不同形态的答案</h2>
-<p>LLM 裁判是生成式模型。你给它一份 rubric 和一个输出，它写文本。要 JSON 它就写 JSON；要 confidence 数字它就写一个数字。裁决的每一部分——包括 confidence——都是模型选择产出的文本。那个数字是被&quot;写&quot;出来的，不是被&quot;测&quot;出来的。</p>
-<p>Jev 是决策模型。你不要求它写任何东西。你问它一个固定问题、带一组固定的可能答案，它返回每个答案的概率。问题有三种形态：</p>
-<table><thead><tr><th>问题类型</th><th>你问什么</th><th>Jev 返回什么</th><th>用来做什么</th></tr></thead><tbody><tr><td>Noul</td><td>一个带 <code>true</code>/<code>false</code> 标准的是非问题</td><td><code>noul</code>，为真的概率</td><td>通过/失败闸门：这个答案有支撑吗？这条回复合规吗？</td></tr><tr><td>Choice</td><td>从 N 个带标签的选项里选一个</td><td><code>choice</code>、每个选项的 <code>probabilities</code>、<code>confidence</code></td><td>成对偏好、类别型 rubric</td></tr><tr><td>Score</td><td>在你定义的有序刻度上打分</td><td><code>score</code>、每档 <code>probabilities</code>、<code>legend</code>、<code>confidence</code></td><td>Likert 式 rubric：连贯性 1 到 5、严重度低/中/高</td></tr></tbody></table>
-<p>两种请求长得很像。同一份忠实度 rubric，两种问法：</p>
-<pre><code>// LLM judge: a prompt, and a verdict parsed out of the text that comes back.
-const verdict = await chat.chat.send({
-  chatRequest: {
-    model: '~openai/gpt-luna-latest',
-    temperature: 0,
-    responseFormat: { type: 'json_object' },
-    messages: [
-      { role: 'system', content: `Grade the answer. acceptable = ${RUBRIC_TRUE} unacceptable = ${RUBRIC_FALSE} Reply with JSON: {&quot;acceptable&quot;: true|false, &quot;confidence&quot;: 0 to 1}` },
-      { role: 'user', content: `knowledge: ${knowledge}\n\nquestion: ${question}\n\nanswer: ${answer}` },
-    ],
-  },
-});
-// -&gt; {&quot;acceptable&quot;: false, &quot;confidence&quot;: 1}
-
-// Jev: a typed question over the same state, and a probability back.
-const decision = await decisions.alpha.decisions.create({
-  decisionsRequest: {
-    model: 'typesafe/jev-1.13',
-    state: { knowledge, question, answer },
-    questions: {
-      acceptable: {
-        type: 'noul',
-        instructions: 'Does answer directly answer question using only facts that knowledge states?',
-        criteria: { true: RUBRIC_TRUE, false: RUBRIC_FALSE },
-      },
-    },
-  },
-});
-// -&gt; answers.acceptable.noul === 0.01</code></pre>
-<p>LLM 裁判的 <code>1</code> 是它写下的数字；Jev 的 <code>0.01</code> 是一个关于频率的断言：很多这样的答案里，约 1% 最终应当是可接受的。这个断言可以被检验。它成立，你就能设阈值、把不确定的中间地带路由给人、并推演错误率。不成立，概率就只是装饰。完整的请求与响应形态见 <a href="https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-questions-and-answers-request">Decisions API 参考</a>和 <a href="https://openrouter.ai/docs/guides/community/typesafe-sdk">TypeSafe SDK 指南</a>。</p>
-<h2>我们怎么比</h2>
-<p>2026 年 9 月 21 日，我们经 OpenRouter 在两个公开数据集上跑了两个裁判。整轮花了 $0.041。</p>
-<p><strong>忠实度集。</strong>我们从 <a href="https://huggingface.co/datasets/pminervini/HaluEval">HaluEval</a>（<a href="https://arxiv.org/abs/2305.11747">Li 等，2023</a>）的 QA 分区取 50 行，每行有一篇短文章、一个问题、一个正确答案和一个编造答案，合计 100 个答案。我们让 Devin——替我们跑这个实验的编码 agent——对照文章逐项复核，丢掉 6 行乱码或含糊的行，把 8 个编造答案因文章支持而改标为可接受。最终 88 项：52 可接受、36 不可接受。这是封闭 rubric：证据就在手上，问题是答案是否守住它。</p>
-<p><strong>摘要集。</strong>我们从 <a href="https://huggingface.co/datasets/mteb/summeval">SummEval</a>（<a href="https://arxiv.org/abs/2007.12626">Fabbri 等，2021</a>）取 10 篇新闻文章，每篇有 5 条机器写的摘要。人类专家曾给每条摘要按 1 到 5 打连贯性（读起来顺不顺）和一致性（是否守着文章事实）的分。这是在一个长得多文本上的更难、更开放的 rubric。</p>
-<p><strong>裁判。</strong>Jev 以 <code>typesafe/jev-1.13</code> 运行，解析到 <code>typesafe/jev-1.13-20260917</code>。LLM 裁判以 <code>~openai/gpt-luna-latest</code> 运行，解析到 <code>openai/gpt-5.6-luna</code>，配 <code>temperature: 0</code> 和 JSON 输出。两个裁判拿到完全相同的 rubric 文本，任何差异都来自模型而不是措辞。</p>
-<p>每次判断我们记录裁决、概率、延迟和响应的 <code>usage.cost</code>。对 LLM 裁判，我们把&quot;acceptable 加 confidence&quot;换算成可接受概率，让两个裁判落在同一个 0 到 1 的尺度上。</p>
-<h2>一致率打平</h2>
-<p>88 项忠实度上，Jev 与标签一致 84 项，LLM 裁判 83 项。两者精确率都是 0.98。两个错判里有一项是双方共同的，而那两项其实都是标签错了。当两个裁判在同一项上和你意见相左，检查你的标签。</p>
-<p>只看准确率的话，两者没什么可选。但准确率是错的镜片——它只问裁判落在 0.5 的哪边，把 0.51 和 0.99 一视同仁。</p>
-<h2>分歧在校准</h2>
-<p>看概率是否当真，我们用了两个视角。Brier 分数是裁判给出的概率与真实 0/1 标签间的均方误差——一个 90% 自信地出错的裁判，比 60% 自信地出错的罚得更重。可靠性表把案例按裁判给出的概率分组，报告这些案例实际可接受的比例。</p>
-<p>Jev 的 Brier 分数 0.043，LLM 裁判 0.054。可靠性表解释了原因。</p>
-<pre><code>jev:  bin 0.0-0.2: n=34 mean_p=0.04 observed=0.03
-      bin 0.2-0.4: n=1  mean_p=0.34 observed=1.00
-      bin 0.4-0.6: n=4  mean_p=0.48 observed=0.50
-      bin 0.6-0.8: n=7  mean_p=0.74 observed=1.00
-      bin 0.8-1.0: n=42 mean_p=0.93 observed=0.98
-llm:  bin 0.0-0.2: n=39 mean_p=0.01 observed=0.10
-      bin 0.8-1.0: n=49 mean_p=0.99 observed=0.98</code></pre>
-<p>Jev 把 4 个案例放在 0.4 到 0.6 之间，对了其中一半——这正是 0.5 该做到的。它打分 0.8 以上的案例实际可接受率 98%。LLM 裁判没有中间地带：88 个案例里它的置信度只出现过六个值（0.82、0.84、0.87、0.98、0.99 和 1），每个案例都落在 0 附近或 1 附近，而落在 0 附近的案例有 10% 其实是可接受的。它对自己的错误和对其他一切同样确信。</p>
-<p>实践上，这就是&quot;可以据以路由的裁判&quot;和&quot;只能阅读的裁判&quot;的差别。Jev 的 88 个案例里有 7 个落在 0.3 到 0.7 之间，那些恰恰值得发给人。LLM 裁判一个都没给我们。</p>
-<h2>成本和延迟差 5 倍与 10 倍</h2>
-<p>Jev 每千次裁决 $0.021，延迟中位数 171 ms。LLM 裁判每千次 $0.114，用时 1,662 ms。对每晚跑 1,000 项的评估，成本差一年约 $34，无所谓。但如果裁判坐在请求路径里、答案不出就不放行响应，延迟差就非常重要——这正是 Jev 能在生产里当闸门、而 LLM 裁判适合当离线评分器的原因。</p>
-<h2>两个裁判都顶住了经典偏见，Jev 略胜</h2>
-<p><a href="https://arxiv.org/abs/2306.05685">MT-Bench 论文</a>发现 LLM 裁判有两个常见偏见：偏好先呈现的答案，偏好两个答案里更长的那个。两种都容易测，我们全测了。</p>
-<p><strong>位置。</strong>我们把同样两个答案给每个裁判看两遍、第二次调换顺序，覆盖全部 36 对&quot;一个可接受、一个不可接受&quot;的答案。对 Jev 这是每个槽位一条 criteria 的 Choice 问题。两个裁判在顺序翻转时都没改选。两者在 72 次排序里都对 70 次、且在两种顺序下错过同一对——指向标签而不是位置。你自己跑这个测试时，请挑你最难的配对（两个答案质量接近的）跑，位置偏见就在那里显形。另外 Choice 的 criteria 只在&quot;一个可接受另一个不可接受&quot;时成立；若两个都可能可接受，请把每条 criteria 写成比较（更具体、支撑更强、更贴题）而不是标签，否则 Jev 没有能匹配上的选项。</p>
-<p><strong>冗长度。</strong>我们拿每个不可接受答案，用其原文里的两句真话把它加长。加长后的答案仍然是错的，但平均长度从 69 字符涨到 376。我们只保留加长后仍然错误的配对——有少数情况抄进去的句子碰巧包含正确答案，加长版反而可接受了。</p>
-<table><thead><tr><th>裁判</th><th>未加长的错误答案被接受</th><th>加长的错误答案被接受</th><th>翻转</th></tr></thead><tbody><tr><td>Jev Noul</td><td>36 里 1</td><td>36 里 2</td><td>1（概率 0.48 到 0.57）</td></tr><tr><td>LLM 裁判</td><td>36 里 1</td><td>36 里 4</td><td>3</td></tr></tbody></table>
-<p>加长让 Jev 挪了挪：它对错误答案的平均可接受概率从 0.08 升到 0.12，唯一越过 0.5 的那个案例本来就坐在 0.48。LLM 裁判翻转了三个案例，每个都从&quot;自信拒绝&quot;变成&quot;自信接受&quot;。模式和校准表里一致：Jev 不确定时会说出来；LLM 裁判错的时候，错得很有信心。</p>
-<h2>LLM 裁判赢在哪里</h2>
-<p>裁判需要通读整篇文章时，局面就变了。50 条 SummEval 摘要上，Jev 每个标准一个问题——五种档位写成 criteria 的 Score 问题；LLM 裁判拿到同样的五档描述、返回 1 到 5 的整数。我们用 Spearman 相关对照专家平均（1.0 代表排序完全一致）。</p>
-<table><thead><tr><th>标准</th><th>Jev Score 对专家的 Spearman</th><th>LLM 裁判对专家的 Spearman</th></tr></thead><tbody><tr><td>连贯性</td><td>0.42</td><td>0.44</td></tr><tr><td>一致性</td><td>0.47</td><td>0.72</td></tr></tbody></table>
-<p>连贯性打平。一致性——抓幻觉时你在乎的那个标准——是 LLM 裁判的明显胜利。我们的猜测是：检查一致性意味着逐条主张走查摘要、找出文章在哪里支撑每一条。这对生成式模型是天然的按步进行的过程，而 Jev 必须在一次通过约 1,000 token 的 state 中完成它。</p>
-<p>Jev 在这里并非没用。两个裁判都抓住了专家一致性评分低于 4 的全部 3 条摘要、其余 47 条零误报，Jev 仍能当粗粒度的通过/失败闸门。但要一个跟得上专家判断的排序，LLM 裁判是更好的信号。Jev 每千条摘要 $0.043、168 ms；LLM 裁判 $0.261、2,902 ms——这份信号你大约要多付 6 倍。Jev 这里的花费是忠实度场景的两倍，因为每个请求携带约两倍的输入 token：整篇文章加两个 Score 问题，而不是一个短文章加一个 Noul。</p>
-<p>还有两种生成式裁判才是对的工具的情形，我们没有基准测试，因为没有可对照的答案。</p>
-<ul><li><strong>开放式 rubric。</strong>问题是&quot;这是个好答案吗&quot;又没有写下来的标准时，你需要生成式裁判。Jev 需要把标准写清楚——你写不出来，就没法问 Jev。</li><li><strong>需要成文的解释。</strong>审核人需要知道答案为什么失败时，LLM 裁判的推理过程就是产品。Jev 只告诉你它多有把握，别的没有。</li></ul>
-<h2>哪种 rubric 用哪种裁判</h2>
-<p>LLM 裁判有三个替代项：代码里的确定性检查、一个 Jev 问题，或一个人。请按标准逐个选，不要按项目整体选。</p>
-<table><thead><tr><th>如果标准是……</th><th>用什么</th><th>因为</th></tr></thead><tbody><tr><td>代码能检查的（schema、算术、禁用字符串）</td><td>确定性检查</td><td>精确、免费、没有偏见要测</td></tr><tr><td>封闭、证据在场、需要概率或阈值的（有原文支撑、合规、匹配参照）</td><td>Jev Noul 或 Choice</td><td>校准的概率、约 170 ms、每千次约 $0.02</td></tr><tr><td>档位可描述的有序刻度（严重度、1 到 5 的语气）</td><td>Jev Score</td><td>每档分布加 confidence，同样成本画像</td></tr><tr><td>开放，或需要对长上下文推理（摘要一致性、计划质量）</td><td>LLM 裁判</td><td>我们测试中一致性上对专家相关 0.72 对 0.47</td></tr><tr><td>需要一段给人读的文字解释</td><td>LLM 裁判</td><td>Jev 只返回概率，不返回解释</td></tr><tr><td>后果重大又是新情况</td><td>人</td><td>两个裁判都不能替代人</td></tr></tbody></table>
-<p><a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/jev-verified-cascade">Jev verified cascade cookbook</a> 展示了中间几行在生产中的用法：便宜模型起草答案，一个 Jev 问题验证它，落在不确定带间的升级上去。<a href="https://openrouter.ai/docs/cookbook/building-agents/gate-tool-calls-with-jev">用 Jev 为工具调用把关 cookbook</a> 把同一思想用在 agent 的工具调用上。</p>
-<h2>定你自己的阈值</h2>
-<p>我们的数字展示的是取舍的形状。要定生产阈值，你需要在自己的数据上做同样的测量。</p>
-<ul><li>标注 50 到 100 个能代表你生产内容的条目，并写下&quot;什么算可接受&quot;的定义。</li><li>每条都发给两个裁判，记录概率、延迟和 <code>usage.cost</code>。</li><li>构建可靠性表，忽略准确率那一行。把接受阈值选为你愿意签字背书的最低概率段，把接受与拒绝阈值之间的全部发给人或 LLM 裁判。</li><li>rubric 或模型版本变化时重跑这张表。每个 Decisions 响应的 <code>model</code> 字段告诉你是哪个版本作答。</li></ul>
-<p><a href="https://openrouter.ai/typesafe/jev-1.13">Jev 模型页面</a>有当前定价和限制；<a href="https://openrouter.ai/docs/guides/community/typesafe-sdk">TypeSafe SDK 指南</a>有完整的 Decisions API 形态；<a href="https://openrouter.ai/blog/tutorials/llm-as-a-judge-evaluate-ai-agents/">LLM 裁判一文</a>讲 rubric 一开始怎么写。</p>
-<p>Jev 对你还陌生的话，<a href="https://openrouter.ai/blog/insights/what-is-jev/">什么是 Jev？</a>解释模型和三种问题类型；<a href="https://openrouter.ai/blog/tutorials/jev-vs-llm-when-to-use-each/">Jev vs LLM</a> 覆盖&quot;决策模型何时替代生成调用&quot;这个更大的问题。想要不同任务上的第二个准确率测量，<a href="https://openrouter.ai/blog/insights/jev-vs-claude-opus-5-classification/">Jev 的分类精度能赶上前沿模型吗？</a> 在 Banking77 上把 Jev 和 Claude Opus 5 对跑。<a href="https://openrouter.ai/docs/guides/community/jev">Jev 文档中心</a>收录 OpenRouter 上全部 Jev 指南和 cookbook。</p>
-<h2>常见问题</h2>
-<h3>Jev 是一个校准过的裁判模型吗？</h3>
-<p>Jev 每次判断都带一个概率，在我们 88 项忠实度集上这些概率是准的：Brier 分数 0.043，Jev 给出 0.8 以上概率时答案实际可接受率 98%。校准取决于你测的具体任务，选阈值之前先在自己的标签上测。</p>
-<h3>LLM-as-a-judge 有什么替代方案？</h3>
-<p>代码能定答案时用确定性检查。任何后果重大或新出的情况，引入人。有概率有好处的封闭 rubric 场景，用 Jev 这样的决策模型。多数生产流水线是三者的混合。开放式 rubric 和需要成文解释的场景，留着生成式裁判。</p>
-<h3>什么时候仍然该用 LLM 当裁判而不是 Jev？</h3>
-<p>rubric 开放、标准写不下来时；分数需要一段文字解释时；判断必须在长文本上逐步进行时。SummEval 摘要的事实一致性上，LLM 裁判对专家的相关是 0.72，Jev 是 0.47。</p>
-<h3>我怎么为自己的评估校准 Jev？</h3>
-<p>标注 50 到 100 条，每条通过 Decisions API 作为 Noul 或 Score 问题发给 Jev，记录概率、延迟和 usage.cost。计算与你标签的一致率和 Brier 分数，按概率分组建可靠性表，再从表上选阈值。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

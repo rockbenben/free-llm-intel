@@ -7,7 +7,155 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 09 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>使用 Ray 对 JEPA 世界模型架构进行实时推理</title>
+      <link>https://anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Real-time inference for JEPA world model architectures with Ray</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
+<h1>使用 Ray 对 JEPA 世界模型架构进行实时推理</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=omar-shorbaji">Omar Shorbaji</a> 和 <a href="https://www.anyscale.com/blog?author=ian-jordan-phd">Ian Jordan 博士</a> | 2026 年 11 月 12 日</p>
+<p>借助 V-JEPA2-AC，系统通过评估数百种可能的未来并选择最接近目标的一个来决定机器人手臂下一步应该做什么。两次移动之间需要花费大量时间。本文档介绍了一种设计和经过测试的实现，通过将搜索移至 Ray 集群来在一秒钟内实现这一目标。</p>
+<h2>链接<strong>01 · 机器人入门</strong></h2>
+<p>机器人感知对环境的部分观察，通过某种策略选择一个动作，通过控制器执行它，并以控制环频率重复此操作。传统上，这三个函数中的每一个都以封闭形式求解，机器人上的 CPU 足以运行所有函数。</p>
+<p>经典机器人技术根据第一原理构建了这三个盒子：用于感知的手动运动学、用于规划的轨迹优化、用于控制的 PID 或模型预测控制器。这种方法（如图 1 所示）是数十年工业自动化的基础，但每个新任务、对象或环境通常都需要新的工程设计。</p>
+<p><strong>经典机器人</strong> — ~1 毫秒/动作</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5aLy255S6wnzgi5E817Asj/8662c462ba93f2cf31ad285f4639e909/Figure_1._The_loop_every_robot_runs.png" alt="图 1. 每个机器人运行的循环"><em><strong>图 1.</strong></em> <em>循环每个机器人运行。感知将传感器读数转化为状态，规划产生一条路径，控制执行它，而手臂则闭合物理世界的循环。所有这三个问题均在一个板载 CPU 上以封闭形式求解。它的成本是工程：该保单仅涵盖其衍生的任务。</em></p>
+<p>图 1. 每个机器人运行的循环</p>
+<p><em>物理人工智能</em>旨在用经过数据训练的网络取代部分或全部这些盒子，用手工得出的精度换取通用性：一个经过充分数据传输训练的模型，可以传输到未明确编程的情况。</p>
+<h3>链接<strong>JEPA 架构如何填充“计划”框</strong></h3>
+<p>V-JEPA2-AC 就是这样的型号之一。它建立在<em>联合嵌入预测架构</em> (JEPA) 之上。在这种架构中，系统通过使用模型评估数百种可能的未来并选择最接近目标的一个来决定机器人手臂下一步应该做什么。图 2 显示了运行该循环的硬件上的整个循环。</p>
+<p>V-JEPA2-AC 在两个实验室的 Franka 手臂上进行了零射击部署，无需针对特定环境进行微调，报告称在新物体的拾取和放置方面取得了 65-80% 的成功率。它在单个 RTX 4090 上运行。但是，该配置需要 <strong>16 秒来规划每个操作</strong>。它的速度不够快，无法连续运行。</p>
+<h3>链接<strong>十六秒实际去向</strong></h3>
+<p>值得从头到尾地走一个计划步骤，因为算术解释了本文档的其余部分。手臂保持不动。相机帧和目标图像被编码一次。然后，搜索算法 CEM 从以其当前最佳猜测为中心的高斯中抽取 800 个候选动作序列，将每个序列推入预测器，根据目标嵌入对结果进行评分，保留最佳的 80 个，并将高斯重新以它们为中心。这是一轮，会发生十次：对一只手臂的一个小动作进行大约 8,000 次预测评估。然后，系统仅执行获胜序列的第一个动作，丢弃其余的动作，并从新的帧重新开始。成本是结构性的，并且在每一步都会重复出现。</p>
+<p><strong>V-JEPA2-AC 在一个板载 GPU 上</strong> — 16 秒/动作</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/54PrYjWdGSJ8OEMHJAZysm/f0fd37f697dfeae1dbddffef71e413d1/Figure_2._Only_the_plan_box_changes.png" alt="图 2. 仅计划框发生变化"><em><strong>图 2.</strong></em> <em>仅计划框发生变化。机器人仍然捕获相机框架及其关节状态，并且控制不变，但封闭式规划器被模型及其周围的搜索所取代。编码器是模型的一部分，因此编码发生在此处，每步一次；接下来的十轮循环是昂贵的部分。</em></p>
+<p>图 2. 仅计划框发生变化</p>
+<p>控制器也是<strong>阻塞</strong>：它在发送下一个操作之前等待上一个操作完成，因此规划永远不会与运动重叠。机器人暂停，计划十六秒，移动，然后再次暂停。本文档要解决的问题是这种口吃问题，而不是模型的准确性。</p>
+<h2>链接<strong>02 · 方法</strong></h2>
+<p>我们首先采用的方法是将世界模型推理从机器人转移到云服务器中。虽然这在每个控制步骤上引入了网络往返的新成本，但这被其他改进所抵消。首先，它提供了在更强大的 GPU 上提供模型服务的机会。在此实现中，我们使用 NVIDIA A100-40GB GPU，其内存比本文中使用的 24 GB RTX 4090 更多，并且 bf16 吞吐量显着提高。</p>
+<p><strong>在一个云 GPU 上进行相同的搜索</strong> — 21.4 秒/操作（测量，A100，优化模型）</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/793bpoEfPXi9p9NQAkiuXj/0c9bc70e625992db89d9e9aa55733c2c/Figure_3._The_plan_block_lifts_the_inference_off_the_robot.png" alt="图 3. 计划块将推理从机器人"><em><strong>图3.</strong></em> <em>计划块提升机器人的推理。留在本地的是传感和驱动，因此穿过网络的是一个相机帧加上其关节状态，以及一个动作向量返回。</em></p>
+<p>图 3. 计划块提升机器人的推理能力</p>
+<p>仅靠更大的 GPU 是不够的。 Meta 的参考规划器在具有这些设置的一台 A100 上未经修改地运行，每个操作需要 81.8 秒；通过第 05 节中的模型级优化，需要 21.4 秒。我们的 81.8 秒比论文在 4090 上的 16 秒慢，因为我们按原样运行 Meta 发布的规划代码（fp32，800 个候选者 × 10 轮，两步地平线）；该论文的时间安排可能反映了不同的设置或精度。本文中的每个加速都是根据我们在相同硬件上自己的 81.8 秒基准进行测量的。速度更快，但手臂在动作之间仍然会停止。</p>
+<p>第二步是在多个 GPU 之间分配负载。机会来自于注意到，在单个 CEM 细化回合中，可以独立计算并在回合继续之前收集。该论文将它们作为一个大批次在一个 GPU 上运行；没有什么需要它们留在一个 GPU 上。在我们的实施中，我们在 Anyscale 上使用一个 8 个 GPU 节点 (8× A100-40GB)。</p>
+<p><strong>搜索分布在 Ray 集群上</strong> — 2.86 秒/动作（测量，8× A100）； 0.86 秒，每步 3 轮</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/2NyeI9V5I80vK9qqcdv2sD/d82bbbc04e7df418774c405a6357cb37/Figure_4._One_step_inside_the_plan_block_changes.png" alt="图 4. 计划块内部的一步更改"><em><strong>图4.</strong></em> <em>计划块内的一步发生变化。每轮中的 800 个候选者是独立的，因此预测步骤会在已经保存模型的热副本中散开，并在评分之前收集。十轮比赛仍然是连续的，这就是基础。</em></p>
+<p>图 4. 计划块内的一步发生变化</p>
+<p>我们使用 Ray 来实现这一点。</p>
+<h2>链接<strong>03 · Ray 入门</strong></h2>
+<p>###链接<strong>将Python变成集群程序的通用框架</strong></p>
+<p><a href="https://docs.ray.io/en/latest/ray-core/walkthrough.html">Ray</a> 是一个开源框架，最初由加州大学伯克利分校的 RISELab 构建，现在由 Anyscale 维护，用于将普通 Python 从笔记本电脑扩展到集群，而无需将其重写为分布式系统。它公开了一小部分原语并保留了大部分顺序的代码结构。</p>
+<h3>链接<strong>雷核心</strong></h3>
+<p>Ray Core 有两个重要的构建模块。 @ray.remote 函数成为一个 <strong>任务</strong>，安排在集群中的某个位置并返回一个 future。 @ray.remote 类成为一个 <strong>actor</strong>：一个固定在机器上的有状态工作线程，以及可选的 GPU，它可以在调用之间保持加载的模型权重。任务适合一次性并行工作；参与者适合一个付费加载一次 12 亿参数检查点的过程，然后回答许多廉价的请求。</p>
+<h3>链接<strong>雷发球</strong></h3>
+<p>Ray Serve 位于 Ray Core 之上：@serve.deployment 声明足以让 Ray 管理副本池、路由请求和负载下的扩展。 Ray Core 回答了如何在许多工作线程上运行一个函数； Ray Serve 回答了如何将其公开为其他系统调用的服务，这是机器人控制循环所需的形状，每一步命中一次低延迟端点。</p>
+<p>##链接<strong>04·实施</strong></p>
+<h3>链接<strong>两个 Ray Serve 部署，组成</strong></h3>
+<p>该设计是两个 Ray Serve 部署以及它们之间的一个手柄。 WorldModel 是 GPU 层：每个 GPU 一个副本，每个副本包含编码器和预测器（我们在 8 个 A100 上运行 8 个副本）。 Planner 是驱动程序：它运行十轮 CEM 循环，将每一轮分散到这些副本上，并为机器人在每个控制步骤调用一次的端点提供服务。以这种方式组合它们，而不是作为松散的 Ray Core Actor，将它们置于 Serve 的控制之下：放置、运行状况检查、重新启动和 KubeRay RayService 可以在不停机的情况下推出的声明性配置。下面的形状省略了内部结构；重要的是扇出位于何处。部署布局图见图 5。</p>
+<p><strong>serve_app.py</strong> — Ray Serve · 形状、细节已省略</p>
+<pre><code>from ray import serve
+Import ray
+from ray.serve.handle import DeploymentHandle
+
+# The GPU tier. One replica per GPU, pinned, weights resident between calls.
+@serve.deployment(
+    num_replicas=8,  # one per GPU
+    ray_actor_options={&quot;num_gpus&quot;: 1},
+    max_ongoing_requests=1,          # one shard at a time, so fan-out maps 1:1
+)
+class WorldModel:
+    def __init__(self, checkpoint): ...        # paid once, when Serve starts it
+    def encode(self, frame, proprio): ...      # the encoder is part of the model
+    def score(self, ctx, actions): ...   # one shard, one GPU batch
+
+# The driver. Holds a handle to the GPU tier and runs the search.
+@serve.deployment(num_replicas=2)
+@serve.ingress(app)
+class Planner:
+    def __init__(self, model: DeploymentHandle):
+        self.model = model
+
+    @app.post(&quot;/plan&quot;)
+    async def plan(self, frame, proprio, goal_image):
+        obs, goal = await asyncio.gather(      # encode once per control step
+            self.model.encode.remote(frame, proprio),
+            self.model.encode.remote(goal_image),
+        )
+  ctx = ray.put((obs, goal))  # once per plan, read from shared memory
+        mean, std = init_distribution(horizon, action_dim)
+
+        for _ in range(10):                    # CEM rounds: sequential, the floor
+            cands = sample(mean, std, n=800)
+            scores = await asyncio.gather(*[   # fan out one shard per replica
+                self.model.score.remote(ctx, shard)
+                for shard in np.array_split(cands, 8)
+            ])                                 # gather before the round refits
+            mean, std = refit(cands, scores, elite_frac=0.1)
+
+        return {&quot;action&quot;: mean[0].tolist()}    # first action only, then re-plan
+
+app_builder = Planner.bind(WorldModel.bind(CHECKPOINT))</code></pre>
+<p>两种选择承载着设计。 GPU 层固定在 num_replicas=8 而不是自动缩放，因为副本计数在回合中发生变化的搜索具有不可预测的延迟，而关键是稳定的每步预算。 max_ongoing_requests=1 使每个副本一次获取一个分片，因此 8 路扇出为每个 GPU 提供一个分片，而不是在一个子集中对多个分片进行排队。在下面，每个副本仍然是 Ray Core actor，这就是权重保持驻留的原因；不同之处在于 Serve 拥有生命周期。</p>
+<p>![图 5 Ray Serve on Anyscale 通过 DeploymentHandle 将面向机器人的 Planner 部署连接到温暖的 WorldModel 副本，其中一个模型](https://images.ctfassets.net/xjan103pcp94/2Rryj3kORaYUMKZbGnmmI0/9fd934b2fafedb46913144d268e14e2a/Figure_5_Ray_Ser ve_on_Anyscale_connects_the_robot-faceing_Planner_deployment_to_warm_WorldModel_replicas_through_a_Deployment.png)<em><strong>图5:</strong></em> <em>Ray Serve on Anyscale 将面向机器人的 Planner 部署通过 DeploymentHandle 连接到温暖的 WorldModel 副本，其中一个模型</em></p>
+<p>图 5 Ray Serve on Anyscale 通过 DeploymentHandle 将面向机器人的 Planner 部署连接到热 WorldModel 副本，其中一个模型</p>
+<p><strong>我们在构建它时学到了什么。 </strong>三个细节决定了延迟。首先，观察和目标潜在变量 (2.8 MB) 使用 ray.put 按计划进入 Ray 的对象存储中一次；每个副本从共享内存中读取它们并将它们缓存在 GPU 上，因此每轮仅移出约 5 KB 的候选动作并将能量移回，并且 Ray 在一轮中的整个份额（扇出、聚集、重新调整）低于 10 毫秒。其次，当 max_ongoing_requests=1 时，Serve 的默认双选权路由器有时会在一个副本上放置两个分片，而另一个副本闲置，从而使该轮次加倍； Serve 的循环请求路由器将一轮的分片放置在连续的副本上，每个 GPU 一个（50 轮中零冲突）。第三，我们的服务副本进程在其环境中以 TORCHDYNAMO_DISABLE=1 启动，这会默默地将 torch.compile 变成无操作；在副本的构造函数中清除它可以恢复 1.35 倍的加速。</p>
+<p><strong>来源。 </strong>完整的实现，包括模型加载、快速评分路径、完整的 CEM 细化步骤、两个 Serve 部署、每个基准测试脚本和一个可运行的笔记本，都位于配套存储库中： <a href="https://github.com/anyscale/robotics_world_model_inference/tree/main/v3_realtime_inference_for_jepa">https://github.com/anyscale/robotics_world_model_inference/tree/main/v3_realtime_inference_for_jepa</a></p>
+<h2>链接<strong>05 · 结果</strong></h2>
+<h3>链接<strong>在 8× A100 上测量</strong></h3>
+<p>我们构建了上述设计，并使用第 01 节中的搜索设置（800 个候选 × 10 轮，保留 80，地平线 2）在一个具有 8 个 A100-40GB GPU 的 Anyscale 节点上对其进行了测量。锚点是 Meta 的参考规划器，在一台 A100 上以 fp32 运行未经修改：每个动作 81.8 秒。在添加 GPU 之前，我们在一个 GPU 上使模型本身更快：跨推出步骤的 KV 缓存（预测器是帧因果的，因此较早的帧永远不需要重新计算）、带有 FlashAttention 的 bf16 和 torch.compile。结果与参考能量匹配 (Pearson r = 0.9999)，并使一个 GPU 的每个动作耗时 21.4 秒，速度提高了 4 倍。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1HObhsYqltV9tTxq161sK1/c8cd66020e487705829297b137563c19/Figure_6._Measured_planning_time_per_action.png" alt="图 6. 测量的每次操作计划时间"><em><strong>图 6.</strong></em> <em>测量每个行动的计划时间。 Ray Serve 粉丝每回合超过 8 个 A100（2.86 秒，参考值的 29 倍）。在闭环测试（第 06 节）中，每步运行 3 轮（而不是 10 轮）达到了相同的精度，每个动作需要 0.86 秒，是参考值的 96 倍。</em></p>
+<p>图 6. 测量的每个操作的规划时间</p>
+<p>然后是扇出。每轮的 800 个候选者分布在 W WorldModel 副本中，每个副本一个 GPU。 GPU 从 1 个增加到 8 个，计划时间从 21.4 秒缩短到 2.86 秒，加速了 7.5 倍。相同的种子在每个 GPU 计数上给出相同的计划，因此分片改变了搜索速度，但不会改变其答案。本文初稿中提出的延迟模型成立：在我们测量的单 GPU 回合（2.14 秒）上进行校准，它预测 8 个 GPU 时为 2.94 秒，而测量的为 2.86 秒。</p>
+<h3>链接<strong>规划延迟与集群大小</strong></h3>
+<p>一个 8-GPU 节点上的 A100-40GB 副本。测量点；该线是延迟模型。</p>
+<p><strong>2.86 秒/8 个 A100 工作人员的动作</strong>。这比 A100 快 7.5 倍，比 Meta 的参考规划器快 29 倍。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4pO1gOaQkRV99oC3sFaJZI/bb4b1ff81a4e092cd463800cb3f4f4d8/Figure_7._Plan_latency_vs._number_of_GPU_replicas.png" alt="图 7. 计划延迟与 GPU 数量的关系副本"><em><strong>图 7.</strong></em> <em>计划延迟与数量GPU 副本数，在 8× A100（点）上测量，对照在测量的单 GPU 回合上校准的延迟模型（线；超过 8 个 GPU 的虚线 = 投影）。</em></p>
+<p>图 7. 计划延迟与 GPU 副本数量的关系</p>
+<p>模型：time(W) = 10 × ( r / effective(W) + 0.001s × (W − 1) )，其中 effective(W) = W / (1 + 0.008×(W−1))，r 是测量的单 GPU 回合，在 A100 上为 2.14 s。超过 8 个 GPU 后，曲线变平，因为每个 GPU 在 800 个候选者中所占的份额变小。较大的集群主要通过为同一层的更多机器人或更大的搜索提供服务而获得回报。</p>
+<p><strong>有两件事仍未测量：</strong>本地机器人和云区域之间的网络延迟，以及物理手臂上的性能（我们的闭环测试使用世界模型作为模拟器）。冷启动远离请求路径：副本在部署时大约 50 秒内加载和编译，然后才获取流量。以不同方式对候选进行批处理不会改变准确性：在 1、2、4 和 8 个 GPU 上的计划是相同的。</p>
+<p>##链接<strong>06·进一步优化</strong></p>
+<h3>链接<strong>一旦搜索本身不再是瓶颈，该尝试什么</strong></h3>
+<p>一旦每一轮的速度达到 GPU 允许的速度，剩下的就是十个连续轮的链，下一个收益来自重组循环而不是添加 GPU。</p>
+<h4>链接<strong>A。非阻塞控制</strong></h4>
+<p>当机器人仍在执行步骤 <em>t</em> 时，开始计划步骤 <em>t</em>+1。这将计划延迟隐藏在执行时间之后，而不是增加它，这是控制器的更改，而不是模型的更改。</p>
+<p><strong>测量。 </strong>我们模拟了一只手臂，每次动作需要 1 秒，落地时有 4 毫米的执行误差。阻塞控制器每一步花费 1.86 秒（计划，然后移动）。非阻塞控制，根据世界模型对步骤 t 将落地的预测来规划步骤 t+1，每步花费 1.04 秒，即运动本身加上 40 毫秒。它达到了相同的最终精度，并且 12 步的剧集花费了 15.3 秒而不是 25.3 秒。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1wgt2z0xXlplOL8aVQriLB/a03c590900577a0d84d4c2cd843d4a55/Figure_8._Closed-loop_episodes_toward_a_goal_21.6_cm_away.png" alt="图 8. 朝向 21.6 厘米目标的闭环事件离开"><em><strong>图8.</strong></em> <em>以世界模型代替机器人，向 21.6 厘米外的目标进行闭环训练。左：每步 3 轮搜索在三分之一的规划时间内达到与 10 轮相同的精度。右：非阻塞控制将规划器从机器人的关键路径中移除。</em></p>
+<p>图 8. 朝向 21.6 厘米外目标的闭环事件</p>
+<h4>链接<strong>B。热启动 CEM</strong></h4>
+<p>后退控制会抛弃除第一个动作之外的所有内容。重新使用其余部分来播种下一步的分布，而不是新的高斯分布，让每个重新计划在不到十轮内收敛，从而缩小了顺序链并行性无法触及的范围。</p>
+<p><strong>测量。 </strong>在闭环测试中，每步 3 轮（8 个 A100 上为 0.86 秒）达到了与完整 10 轮（2.83 秒）相同的精度：两者都稳定在距离起始于 21.6 厘米远的目标约 4 厘米处。先前计划的热启动是有效的，但在这项任务中，新的 3 轮搜索效果同样好，因此收益来自于运行更少的轮次。每个任务需要多少轮值得调整。</p>
+<h4>链接<strong>C。车队级批处理</strong></h4>
+<p>适合一个机器人大小的 GPU 层在其请求之间处于空闲状态。在服务端点后面，同一层为一个车队提供服务，并且请求批处理可以将来自不同机器人的分片打包到一个 GPU 批次中，从而在多个臂上分摊相同的热 GPU。</p>
+<h4>链接<strong>D。模型压缩</strong></h4>
+<p>提取或量化预测器会缩小计算项本身，而与它分为多少个工作线程无关。它与分销相叠加，而不是与之竞争。</p>
+<h4>链接<strong>E。服务级别优化</strong></h4>
+<p>预测器逐步向前滚动，因此 LLM 服务已经依赖的内容得以延续：跨滚动步骤的 KV 缓存、预填充和解码分解、连续批处理。它们在同一服务部署内从不同方向缩小相同的计算项。</p>
+<p><strong>实施的。 </strong>跨推出步骤的 KV 缓存与 bf16、FlashAttention 和 torch.compile 一起是测量系统的一部分。它在单个 GPU 上提供 4× 并将参考能量匹配到 r = 0.9999。</p>
+<h2>链接<strong>07·要点</strong></h2>
+<p>十六秒不是实现缺陷。它源自深思熟虑的架构选择：JEPA 模型预测状态而不是操作，因此必须在推理时搜索操作而不是读取策略头。这与贸易代理系统对许多候选人进行抽样并对他们进行评分时所做的相同，并且它具有相同的好处，即无需重新培训即可指向新目标的系统。</p>
+<p>这四种设置使交易具体化。手写的策略购买毫秒级的操作并在特定任务的工程中为其付费。 V-JEPA2-AC 以这样的速度换取了一个可以接受您可以拍摄的任何目标的系统。将搜索转移到集群可以在不放弃通用性的情况下恢复速度，并且在基础设施中而不是在模型中进行。在 8 个 A100 的一个节点上进行测量，Ray Serve 将每个动作的完整搜索时间从 82 秒缩短到 2.9 秒，其中分布完成大部分工作，而 Ray 每轮增加的时间不到 10 毫秒。十个连续的回合设定了更多硬件无法移动的底线。每步攻击该楼层的回合数减少到 0.86 秒，并且非阻塞控制隐藏了手臂自身运动背后的剩余内容。</p>
+<h3>链接<strong>参考文献</strong></h3>
+<ul><li>阿斯兰，M. 等人。 <em>V-JEPA 2：自我监督视频模型实现理解、预测和规划。</em> arXiv:2506.09985, 2025。<a href="https://arxiv.org/abs/2506.09985">arxiv.org/abs/2506.09985</a></li><li>Meta AI智能。 <em>介绍 V-JEPA 2 世界模型和物理推理的新基准。</em> <a href="https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/">ai.meta.com/blog/v-jepa-2-world-model-benchmarks</a></li><li>雷项目。 <em>Ray Core：关键概念、任务和参与者。</em> <a href="https://docs.ray.io/en/latest/ray-core/walkthrough.html">docs.ray.io/en/latest/ray-core</a></li><li>雷项目。 <em>Ray Serve 文档。</em> <a href="https://docs.ray.io/en/latest/serve/index.html">docs.ray.io/en/latest/serve</a></li><li>雷项目。 <em>KubeRay：RayService。</em> <a href="https://docs.ray.io/en/latest/cluster/kubernetes/index.html">docs.ray.io/en/latest/cluster/kubernetes</a></li></ul>
+<p><em>规划时间和成功率数据如 V-JEPA2-AC 论文 (arXiv:2506.09985) 中所述。集群规模调整、CEM 并行化设计、延迟模型和所有显示的代码都是基于已发布工作构建的独立工程实现，不隶属于 Meta AI 或 Ray 项目，也不受其认可。第 05 节和第 06 节中的延迟测量是在 Anyscale 上的一个 8× A100-40GB 节点上进行的（2026 年 11 月）；图 6 超出 8 个 GPU 的扩展是一个投影。</em></p>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#01-·-a-primer-on-robotics">01·机器人入门</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#how-the-jepa-architecture-fills-the-&quot;plan&quot;-box">JEPA架构如何填充“计划”框</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#where-the-sixteen-seconds-actually-goes">十六秒实际去向</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#02-·-the-approach">02·方法</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#03-·-a-primer-on-ray">03·Ray 入门</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#a-general-framework-for-turning-python-into-a-cluster-program">将Python变成集群程序的通用框架</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#ray-core">Ray 核心</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#ray-serve">Ray Serve</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#04-·-implementation">04·实现</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#two-ray-serve-deployments,-composed">两个 Ray Serve 部署，组成</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#05-·-results">05 · 结果</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#measured-on-8×-a100">在 8× A100 上测量</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#planning-latency-vs.-cluster-size">规划延迟与集群大小</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#06-·-further-optimization">06·进一步优化</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#what-to-try-once-the-search-itself-is-no-longer-the-bottleneck">一旦搜索本身不再是瓶颈，应该尝试什么</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#07-·-takeaways">07·要点</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#references">参考文献</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5B93PEUBZLNZTWnhOrL9tZ/2e021011ac03276b725e5ffd946e7c48/Donating_KubeRay_to_the_CNCF.png?w=140" alt="向 CNCF 捐赠 KubeRay"></p>
+<h4>将 KubeRay 捐赠给 CNCF</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnfGrZlZyKRBMsd2jSreK/05b0b3cd8d2c9ad962448365782fb980/Lila_x_SkyRL.png?w=140" alt="Lila x SkyRL"></p>
+<h4>Lila Sciences 和 Anyscale 如何将 GLM-5.3-Flash 训练扩展到 100 万个代币</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-products-best-practices-field.png?w=140" alt="kuberay-products-best-practices-field"></p>
+<h4>生产中的 KubeRay：现场最佳实践</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>向 CNCF 捐赠 KubeRay</title>
       <link>https://anyscale.com/blog/donate-kuberay-cncf</link>
@@ -5074,129 +5222,6 @@ def train_loop_per_worker(config: dict):
 <h2>今天就试试</h2>
 <p>无论你是在处理海量数据集还是训练复杂模型，Anyscale 的可观测性看板都能给你所需的可见性，让你更有底气、更高效率地构建、优化和扩展你的 AI 系统。</p>
 <p>想看看这些看板能怎么改变你的 AI 工作流？今天就上手 Anyscale 平台。<a href="https://console.anyscale.com/register/ha?utm_source=blog&amp;utm_medium=web&amp;utm_campaign=ray-day">注册即领 $100 免费额度</a>，体验这套专为使用 Ray 的分布式应用的调试与优化设计的可观测性能力。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>uv + Ray：集群里无痛的 Python 依赖管理</title>
-      <link>https://anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters</guid>
-      <pubDate>Thu, 27 Feb 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：uv + Ray: Pain-Free Python Dependencies in Clusters</description>
-      <content:encoded><![CDATA[<h1>uv + Ray：集群里无痛的 Python 依赖管理</h1>
-<p>作者：<a href="https://www.anyscale.com/blog?author=christina-zhu">Christina Zhu</a> 与 <a href="https://www.anyscale.com/blog?author=philipp-moritz">Philipp Moritz</a> | 2025 年 2 月 27 日</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/2KhO6m2ouQYf5yJ3qF8iN0/cfbb66f0fd3e12d10c8a6323a3a31a65/Illustration_Dark_mode_updated.png?w=1200" alt="uv + 博客头图 2"></p>
-<p>当我们发现 <a href="https://docs.astral.sh/uv">uv 包管理器</a>时，我们意识到 Python 包管理的一个新时代已经到来。它以一致性和速度直击 Python 开发者的依赖难题，也让快速的开发迭代成为可能。</p>
-<p>下面是 <a href="http://astral.sh">astral.sh</a> 团队做对、而且我们特别喜欢的一些事情（并不穷尽）：</p>
-<ul><li><strong>它们把整个环境都打包好了</strong>：你不用再操心自己搭一套 Python 发行版——光是这件事本身就够麻烦的。把 <a href="https://docs.astral.sh/uv/concepts/python-versions/">Python 环境交给 uv 来管理</a>就好。如果你愿意，uv 也支持使用系统安装的 Python。</li><li><strong>他们把 uv 做得飞快：</strong> 首先，它是用 Rust 写的，就像他们那款大获成功的 Python linter <a href="https://github.com/astral-sh/ruff">ruff</a>。它围绕速度而设计，能快速下载包、把它们<a href="https://docs.astral.sh/uv/concepts/cache/">缓存</a>到本地磁盘、在各个环境之间对依赖去重，并用硬链接把它们归拢到一起。</li><li><strong>他们尊重既有 Python 惯例，并在此基础上做得更好：</strong> 其中包括支持 <a href="https://docs.astral.sh/uv/guides/projects/#pyprojecttoml">pyproject.toml</a>、出色的跨平台 <a href="https://docs.astral.sh/uv/concepts/projects/layout/#the-lockfile">lockfile</a>支持、<a href="https://docs.astral.sh/uv/concepts/projects/dependencies/#editable-dependencies">可编辑包</a>、<a href="https://docs.astral.sh/uv/configuration/files/#env">环境变量</a>等等——新的能力不断加入，bug 也<a href="https://github.com/astral-sh/uv/blob/main/CHANGELOG.md">一直在修</a>。</li></ul>
-<p>不过在分布式场景下，管理 Python 依赖仍然有挑战。集群上有大量进程要管，我们得确保它们所有依赖彼此一致。只要改动一个依赖，就得把这个改动传播到其余每一个节点，因为每个 worker 进程都需要相同的环境，好让所有代码都以同样的方式执行。一旦哪里出现版本不匹配，你可能就要花上好几个小时去 debug 到底哪里出了问题……这绝不是有意思的消遣。传统的解决办法是把一切都容器化，但这会让开发迭代慢得多——一旦代码和依赖有变动，就得重新构建一个新版本的容器并推送到所有节点。有时整个集群都要重启，于是更慢。</p>
-<p>如果你只要跑一句 <code>uv run ... script.py</code> 就能启动一个分布式 Python 应用，而动态创建出来的环境会自动作用到集群上的每一个进程，那该多好？<em>剧透一下</em>：这正是我们要做的。先来看一个用 Ray 的简单例子。<a href="https://docs.ray.io/en/latest/">Ray</a> 是一个计算引擎，为的就是让开发和运行分布式 Python 应用——尤其是 AI 应用——变得轻松。</p>
-<p>由于这是<a href="https://github.com/ray-project/ray/releases">最新 Ray 2.43 版本</a>的一项新功能，你目前需要先设置一个 feature flag：</p>
-<pre><code>1export RAY_RUNTIME_ENV_HOOK=ray._private.runtime_env.uv_runtime_env_hook.hook</code></pre>
-<p>我们计划，在从大家那里<a href="https://github.com/ray-project/ray/issues/50961">收集到更多反馈</a>、必要时调整其行为之后，把它变成默认。</p>
-<p>一旦设置好这个环境变量，Ray 就会自动检测到你的脚本是在 uv run 里运行的，并在同一个环境里启动所有 worker 进程。我们先看一个非常简单的例子。新建一个 <code>main.py</code> 文件，内容为：</p>
-<pre><code>1import emoji
-2import ray
-3
-4@ray.remote
-5def f():
-6    return emoji.emojize('Python is :thumbs_up:')
-7# Execute 1000 copies of f across a cluster.
-8
-9print(ray.get([f.remote() for _ in range(1000)]))</code></pre>
-<p>然后用下面这条命令运行它：</p>
-<pre><code>1uv run --with emoji main.py</code></pre>
-<p>这会在一个 Ray 集群里，跨若干 Python worker 进程运行 <code>f</code> 函数的 1000 份副本。<code>emoji</code> 这个依赖除了主脚本能用，所有 worker 进程也能用。此外，当前工作目录里的源代码对所有 worker 也都可见。</p>
-<p>就这么简单！用 Ray + uv，你可以像平时在单机上用 uv 那样，为分布式应用管理 Python 依赖。</p>
-<h3>使用 uv 的端到端示例</h3>
-<p>接下来，我们走一个更详细的例子，看看 uv 怎么用，并深入它一些好用的特性。我们会创建一个用 Ray Data 跑 batch inference 的应用，用的是<a href="https://docs.ray.io/en/latest/data/working-with-llms.html">全新的 LLM 集成</a>。先创建一个带上所需依赖的 pyproject.toml：</p>
-<pre><code>1[project]
-2name = &quot;my_llm_batch_inference&quot;
-3version = &quot;0.1&quot;
-4dependencies = [
-5  &quot;numpy&quot;,
-6  &quot;ray[llm]&quot;,
-7]</code></pre>
-<p>为了让 vLLM 正常工作，你可能需要运行下面这条：</p>
-<pre><code>1sudo apt-get update &amp;&amp; sudo apt-get install -y build-essential</code></pre>
-<p>再准备一个 <code>batch_inference.py</code> 脚本，内容如下：</p>
-<pre><code>1import ray
-2from ray.data.llm import vLLMEngineProcessorConfig, build_llm_processor
-3import numpy as np
-4
-5config = vLLMEngineProcessorConfig(
-6    model_source=&quot;unsloth/Llama-3.1-8B-Instruct&quot;,
-7    engine_kwargs={
-8        &quot;enable_chunked_prefill&quot;: True,
-9        &quot;max_num_batched_tokens&quot;: 4096,
-10        &quot;max_model_len&quot;: 16384,
-11    },
-12    concurrency=1,
-13    batch_size=64,
-14)
-15processor = build_llm_processor(
-16    config,
-17    preprocess=lambda row: dict(
-18        messages=[
-19            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a bot that responds with haikus.&quot;},
-20            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: row[&quot;item&quot;]}
-21        ],
-22        sampling_params=dict(
-23            temperature=0.3,
-24            max_tokens=250,
-25        )
-26    ),
-27    postprocess=lambda row: dict(
-28        answer=row[&quot;generated_text&quot;],
-29        **row  # This will return all the original columns in the dataset.
-30    ),
-31)
-32
-33ds = ray.data.from_items([&quot;Start of the haiku is: Complete this for me...&quot;])
-34
-35ds = processor(ds)
-36ds.show(limit=1)</code></pre>
-<p>要运行这个应用，把 <code>pyproject.toml</code> 和 <code>batch_inference.py</code> 两个文件放到同一个目录，然后用 <code>uv run batch_inference.py</code> 执行。</p>
-<p>注意，这只是一个非常简单的例子：跑一个小模型，数据是用 <code>ray.data.from_items</code> 加载的一个只含一条数据的内存数据集；但你可以用 Ray Data 支持的任意<a href="https://docs.ray.io/en/latest/data/loading-data.html">数据源</a>来加载数据、任意<a href="https://docs.ray.io/en/latest/data/saving-data.html">数据汇</a>来写结果，以及 vLLM 支持的任意模型来做 inference。</p>
-<p>如果你想用一个 gated（需申请授权）的 Hugging Face 模型，可以在工作目录里建一个 <code>.env</code> 文件，像这样：</p>
-<pre><code>1HF_TOKEN = your_huggingface_token</code></pre>
-<p>然后用 <code>uv run --env-file .env batch_inference.py</code> 运行代码。</p>
-<p>如果你想改某个依赖，可以把它 clone 到一个相对 <code>working_dir</code> 的路径 <code>./path/foo</code>，然后运行 <code>uv add --editable ./path/foo</code>。这会在你的 <code>pyproject.toml</code> 里追加一段，告诉 uv 用检出的（并被你改过的）代码，而不是原来的包。</p>
-<h3>它在底层是怎么工作的？</h3>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/2rjcTtNwdOmuzfEHsVGTdv/70cdcb1e017635119e0e27f1007a0df3/Managing_Dependencies_for_Ray_Applications_with_UV.png" alt="uv ray 图 1"></p>
-<p>uv ray 图 1</p>
-<p><strong>图：</strong>没有 uv 时，script.py 跑在默认的 python 环境里，而它可能和 workers 运行所在的 runtime environment 不一样（左）；有了 uv，各环境通过「uv run」被同步，而环境的创建又因 uv 的缓存而提速</p>
-<p>底层上，这套集成用的是 Ray 的<a href="https://docs.ray.io/en/latest/ray-core/handling-dependencies.html">运行时环境</a>（runtime environment）功能，它允许在代码里指定环境。我们定义了一个新的底层 runtime environment 插件，叫 <a href="https://docs.ray.io/en/latest/ray-core/handling-dependencies.html#using-uv-for-package-management">py_executable</a>。它让你指定用来启动 Ray workers 的 Python 可执行文件（含参数）。就 <code>uv</code> 而言，<code>py_executable</code> 被设成 <code>uv run</code>，并带上当初运行 driver 所用的同一批参数。此外，<code>working_dir</code> 这个 runtime environment 被用来把 driver 的工作目录（包括 <code>pyproject.toml)</code>传播给 workers。这样 <code>uv</code> 就能为 workers 配好运行所需的依赖和环境。</p>
-<p>有一些进阶用法，你可能想在自己的程序里直接使用 <code>py_executable</code> 机制：</p>
-<ul><li><strong>依赖异构的应用：</strong> Ray 支持给不同的 task 或 actor 用不同的 runtime environment。这在不同 <a href="https://docs.ray.io/en/latest/serve/production-guide/handling-dependencies.html#dependencies-per-deployment">Ray Serve 部署</a>里分别部署不同 inference 引擎、模型或微服务时很有用，Ray Data 里的异构数据流水线也一样。要实现这一点，你可以为每个不同的 runtime environment 指定不同的 <code>py_executable</code>，并给每个配上不同的 <code>--project</code> 参数来跑 <code>uv run</code>。可参考<a href="https://github.com/pcmoritz/ray-isolated-environments">这个仓库</a>作为例子。</li><li><strong>自定义 worker 运行的命令：</strong> 在 workers 上，你可能想用一些 driver 用不到的特殊参数来定制 uv。又或者，你想用 poetry run、像 bazel 这样的构建系统、profiler 或 debugger 来运行进程。这些情况下，你都可以通过 <code>py_executable</code> 显式指定 worker 要跑在哪个可执行文件里。如果你要用更复杂的方式把多个进程包在一起，它甚至可以是一个存放在 <code>working_dir</code> 里的 shell 脚本。</li></ul>
-<h3>在 Ray Job 里使用 uv</h3>
-<p>要在 Ray Job 里用 uv，这样提交运行作业：</p>
-<pre><code>1ray job submit --runtime-env-json '{&quot;working_dir&quot;: &quot;.&quot;, &quot;py_executable&quot;: &quot;uv run&quot;}' -- uv run main.py</code></pre>
-<p>这能确保这个作业的 driver 和 workers 都跑在你的 <code>pyproject.toml</code> 所指定的 <code>uv</code> 环境里。</p>
-<h3>在 Ray Service 里使用 uv</h3>
-<p>要在 Ray Serve 里用 uv，像上面那样设置 <code>RAY_RUNTIME_ENV_HOOK</code>，然后用 <code>uv run serve run app:main</code> 运行服务。</p>
-<h3>最佳实践与小贴士</h3>
-<ul><li>用 <code>uv lock</code> 生成 lockfile，把所有依赖冻结下来，这样某个包发布了新版本时，事情也不会以失控的方式发生变化。</li><li>如果你有一个 <code>requirements.txt</code> 文件、又不想用 <code>--with-requirements</code> 旗标，你可以用 <code>uv add -r requirement.txt</code> 把依赖加进你的 project.toml，之后配合 uv run 使用。</li><li>需要时，你可以通过 <code>UV_SYSTEM_PYTHON=1</code> 使用系统 python。</li><li>如果你的 <code>pyproject.toml</code> 在某个子目录里，你可以用 <code>uv run --project</code> 从那里用它。</li><li>如果你用 <code>uv run</code>，又想把工作目录设成不是当前工作目录的地方，就用 <code>--directory</code> 旗标。Ray 的 uv 集成会相应地把你的 <code>working_dir</code> 设置好。</li></ul>
-<h3>我们 uv x Ray 开源工作的亮点</h3>
-<p>作为一个新开源项目的热心支持者，我们很幸运：一些 Ray 用户在这个功能正式发布之前就上手用了它，并提出了改进建议，谢谢你们！既然我们已随 Ray 2.43 把这个功能发布出来，我们希望收到更多反馈。</p>
-<p>衷心感谢 uv 的维护者们和我们讨论这套集成，并迅速<a href="https://github.com/astral-sh/uv/issues/11219">修好了一个 bug</a>——它出现在 Ray 里并发创建 uv 环境的时候。</p>
-<h3>结语</h3>
-<p>把 uv 和 Ray 结合，让分布式系统的 Python 依赖管理显著提升：uv 的快速环境搭建配上 Ray 可扩展的编程模型，保证了 worker 在整个集群上一致地执行。我们努力把 Ray + uv 做成以分布式方式运行代码的最佳方案，欢迎你在 <a href="https://github.com/ray-project/ray/issues/50961">GitHub</a> 或 <a href="https://discuss.ray.io/">Discourse</a> 上给我们反馈。</p>
-<p>话虽如此，也有一些场景 uv 并不是可行的方案——你可能在一个成熟项目里，把不同的包管理器、仓库和二进制拼装在一起；又或者你身处一个有非常具体要求的企业环境。在 Anyscale，我们正在做一套依赖管理方案，它基于我们 OCI 兼容的<a href="https://www.anyscale.com/blog/cloud-infrastructure-for-llm-and-generative-ai-applications#faster-instance-startup-time:-a-step-change-in-performance-for-genai-and-llm-applications">快速容器运行时</a>，既能支撑极快的开发迭代，也能满足各种各样的依赖需求。如果你对此感兴趣，不妨上手试试 <a href="https://www.anyscale.com/">Anyscale Platform</a>。</p>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#end-to-end-example-for-using-uv">使用 uv 的端到端示例</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#how-does-this-work-under-the-hood?">它在底层是怎么工作的？</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#using-uv-in-a-ray-job">在 Ray Job 里使用 uv</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#using-uv-in-a-ray-service">在 Ray Service 里使用 uv</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#best-practices-and-tips">最佳实践与小贴士</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#highlights-of-our-uv-x-ray-open-source-efforts">我们 uv x Ray 开源工作的亮点</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#conclusion">结语</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<p>技术、Ray Core</p>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-production-best-practices-field.png?w=140" alt="kuberay-production-best-practices-field"></p>
-<h4>KubeRay 生产实践：来自一线的最佳实践</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 支持 Google TPU 上的 PyTorch"></p>
-<h4>宣布 Ray 支持 Google TPU 上的 PyTorch</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
-<h4>用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
-<h2>立即体验 Anyscale</h2>
-<p>借助一个为生产级 AI 打造的多云平台上，在 Ray 上构建、运行并扩展任意 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">联系专家</a></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

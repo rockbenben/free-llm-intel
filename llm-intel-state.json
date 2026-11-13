@@ -1,7 +1,7 @@
 {
   "failures": {
     "akamai_cloud|free_quota|https://www.akamai.com/zh/lp/akamai-cloud-computing-freetrial": {
-      "fails": 2,
+      "fails": 3,
       "next_try": ""
     }
   },
@@ -308,6 +308,10 @@
     "inference_net|pricing|https://inference.net/pricing/": {
       "fact": "Start free, scale as you grow. Every plan includes monthly credits you can spend on fine-tuning, evals, gateway routing, and observability.\n$0+ usage\n30 req/min rate limit\nStart for free\n$250per month\n$50 one-time opening credit\n250 req/min rate limit",
       "sha256": "ab5111fb078ea0c9b30c43c3fafb42e5ed5bada4a92b016aa266d964395ed097"
+    },
+    "inference_net|pricing|https://inference.net/subscription/": {
+      "fact": "Monthly subscriptions for LLM inference\nGet up to 10x the tokens for your agents and apps with reliable, low-cost monthly subscriptions on Inference.net.\nPick your monthly credit.\nStart with the allowance that fits your workload. Usage beyond the included credit continues at the listed model rate.\n$10 monthly allowance\n$9 / mo\n$10 of Gateway credit, renewed each month.\n$60 monthly allowance\n$49 / mo\n$60 of Gateway credit, renewed each month.\nMore monthly Gateway allowance",
+      "sha256": "07c0de7b96d6cb203b9beda2b715ef659d3aaeed2eb2f905b3a59e3842c4b9aa"
     },
     "infini_ai|billing_rules|https://docs.infini-ai.com/gen-studio/api/usage-and-billing/billing.html": {
       "fact": "LLM API 计费规则 - GenStudio | 无问芯穹文档中心\n计费、限制与用量\nLLM API 服务等级与计费规则\nAPI 频率限制\n监控与计费\n计费规则\n计费、限制与用量\nLLM API 服务等级与计费规则\nAPI 频率限制\nLLM API 计费规则 ​\n本文档详说明了预置 LLM API 服务的计费方式、计费规则、使用限制及费用查看方式。\n租户在 GenStudio 的服务等级决定了默认的 LLM API 频率上限。自 2026-03-30 起，通过 API 调用的预置大语言模型（LLM API）均按实际 Token 用量后付费结算（GenStudio 体验中心网页端暂不计费）。不同服务等级对应不同限频与单价，请在服务列表中查看。\n基础服务：RPM=12、RPD=300、TPM=12000；默认情况下，租户均享受基础服务。基础服务下 LLM API 按实际 Token 用量计费，请保持账户余额充足。支持在线自助升级为高级服务以获得更高 API 频率上限。\n企业服务：如果高级服务无法满足您业务增长与稳定性的需求，欢迎联系我们，我们将根据您的实际用量和需求提供个性化方案。企业服务初始状态下默认按实际 Token 用量进行后付费结算，可继续调整限频。如已购买其他服务，则按合同约定方式计费。\n关于 GenStudio 预置 API 的频率限制细节，详见 API 频率限制。\nGenStudio LLM 包并发服务是一种全新的计费与容量保障方式，通过购买并发槽位（Concurrency Slots），您可以在 GenStudio LLM 推理服务中享受独占的并发能力，与传统的按 Token 量计费方式相比，具有更好的可预测性与可控性。\n或者，您也可以允许多余请求自动回退到按 Token 量计费模式，保证低延迟，同时仅为超出部分额外支付 Token 费用。\n优先级保障：使用并发槽位的请求在调度中优先于按 Token 量计费请求，能够获得更稳定的响应能力。\n转按量计费：多余请求将自动回退至按 Token 量计费模式，按照实际 Token 用量结算，确保最低延迟。\n使用限制与配额 ​\nGenStudio LLM 包并发服务包并发槽位服务同样受 API 频率限制指标约束：\nRPD（每日请求数）\n预算敏感型用户：希望严格控制每月支出，可选择包并发模式并拒绝多余请求，避免溢出费用。\n免费与暂不计费场景 ​\n以下情况不按预置 LLM API 的 Token 用量计费（与服务等级无关）：\nGenStudio 体验中心（网页端）交互暂不计费。\n嵌入模型与重排序模型 API 暂不收费。\n计费场景 ​\n预置 LLM API（HTTP / API Key 调用）：基础服务、高级服务、企业服务均按实际 Token 用量后付费结算，计费规则见上文「服务等级」「计费细则」。请保持账户余额充足。\nLLM 包并发服务：按并发槽位订阅及相关策略计费，并可能与按 Token 计费组合，详见「包并发服务」章节。\n租户可在 GenStudio 服务列表页面查看全部模型价格（区分输入与输出价格）。如租户享受折扣，此处展示折后价。\nGenStudio 模型广场首页不展示价格。如需查看单个模型价格，请选择模型卡片，查看输入与输出价格。如租户享受折扣，此处展示折后价。\n计费细则 ​\n按 Token 用量计费：从您发起 API 调用开始，至平台返回结果为止，实际消耗的 Token 数量（分为输入 Token 和输出 Token）计入计费。\n示例：若一次调用消耗 500 个输入 Token 和 300 个输出 Token，总计 800 Token，其中 500 个 Token 按输入单价计费，300 个 Token 按输出单价计费。\n优先使用代金券抵扣，超出部分从账户余额扣除。\nToken 用量计算单位为个，精度为整数（如 1024 Token）。\n超出计费精度处理：按账期扣费时，累计金额向下取整至小数点后 6 位。\n平台按小时扣费，如果发生欠费时请求尚未终止，将继续完成请求。下次补足账户余额时，将首先补缴上次欠款额度。\n计费公式：每自然小时累计 Token 用量 × 单价。\nAPI 请求失败是否收费？ ​\n按实际消耗的 Token 用量计费。若因平台故障导致失败，可联系客服申请补偿。\n基础服务下 LLM API 如何计费？每天大约可以调用多少次？ ​\n自 2026 年 3 月 30 日起，基础版 LLM API 不再免费提供：通过 API 调用的预置大语言模型按实际 Token 用量后付费结算。GenStudio 体验中心（网页端）仍暂不计费，详见上文「免费与暂不计费场景」。\nGenStudio 不设「每日免费金额封顶」式的试用额度；可调用次数主要受 API 频率限制约束。基础服务下预置 LLM 的限制为 RPM=12、RPD=300、TPM=12000。嵌入模型与重排序模型 API 仍暂不收费，其频率限制与 LLM 不同。\n关于 GenStudio 预置 API 的频率限制细节，详见 API 频率限制。\n与高级服务、企业服务相比，基础服务的 API 频率上限较低（RPM=12、RPD=300、TPM=12000）。计费方面，LLM API 按实际 Token 用量后付费，请保持账户余额充足。\n短文本请求：受限于 RPM（如基础服务每分钟 12 次）。\n长文本请求：通常受限于 TPM（如基础服务每分钟 12,000 Tokens）。\n具体的配额数值取决于您的 LLM API 服务等级。\n支持通过预算管理设置循环预算，限制用户在每个自然月或自然周内的消费；也可以设置一次性预算，限制整个自定义有效期内的累计消费。预算按单用户独立生效，达到上限后，预算覆盖产品的继续消费会受限。预算是否覆盖 GenStudio LLM API 相关产品，请以预算管理页面可选择的适用产品为准。\n下一页API 频率限制\n计费规则\n计费规则",

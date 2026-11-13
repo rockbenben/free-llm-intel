@@ -7,7 +7,155 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 09 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Real-time inference for JEPA world model architectures with…</title>
+      <link>https://anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale?li=1</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Real-time inference for JEPA world model architectures with Ray</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Real-time inference for JEPA world model architectures with Ray</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=omar-shorbaji">Omar Shorbaji</a> and <a href="https://www.anyscale.com/blog?author=ian-jordan-phd">Ian Jordan, PhD</a> | November 12, 2026</p>
+<p>With V-JEPA2-AC the system decides what a robot arm should do next by assessing hundreds of possible futures and picking the one closest to the goal. It takes a significant amount of time between moves. This document presents a design and tested implementation for getting that under a second by moving the search into a Ray cluster.</p>
+<h2>Link<strong>01 · A Primer on Robotics</strong></h2>
+<p>A robot perceives a partial observation of the environment, selects an action via some policy, executes it through a controller, and repeats this at control-loop frequency. Classically, each of those three functions is solved in closed form, and a CPU on the robot is enough to run all of them.</p>
+<p>Classical robotics built each of those three boxes from first principles: hand-derived kinematics for perception, trajectory optimization for planning, PID or model-predictive controllers for control. This approach, depicted in Figure 1, underlies decades of industrial automation, but every new task, object, or environment typically requires new engineering.</p>
+<p><strong>Classical robotics</strong> — ~1 ms / action</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5aLy255S6wnzgi5E817Asj/8662c462ba93f2cf31ad285f4639e909/Figure_1._The_loop_every_robot_runs.png" alt="Figure 1. The loop every robot runs"><em><strong>Figure 1.</strong></em> <em>The loop every robot runs. Perception turns sensor readings into state, planning produces a path, control executes it, and the arm closes the loop through the physical world. All three are solved in closed form on one on-board CPU. What it costs is engineering: the policy only covers the task it was derived for.</em></p>
+<p>Figure 1. The loop every robot runs</p>
+<p><em>Physical AI</em> aims to replace some or all of those boxes with networks trained on data, trading hand-derived precision for generality: a model trained on sufficient data transfers to situations not explicitly programmed for.</p>
+<h3>Link<strong>How the JEPA architecture fills the &quot;plan&quot; box</strong></h3>
+<p>V-JEPA2-AC is one such model. It is built on the <em>Joint-Embedding Predictive Architecture</em> (JEPA). In this architecture, the system decides what a robot arm should do next by assessing hundreds of possible futures using the model and picking the one closest to the goal. Figure 2 shows the whole loop in place on the hardware that runs it.</p>
+<p>Deployed zero-shot on Franka arms in two labs, with no fine-tuning for the specific environment, V-JEPA2-AC reports 65–80% success on pick-and-place with novel objects. This ran on a single RTX 4090. However, that configuration takes <strong>16 seconds to plan every single action</strong>. It is not fast enough to run continuously.</p>
+<h3>Link<strong>Where the sixteen seconds actually goes</strong></h3>
+<p>It is worth walking one planning step end to end, because the arithmetic explains the rest of this document. The arm holds still. The camera frame and the goal image are encoded once. The search algorithm, CEM, then draws 800 candidate action sequences from a Gaussian centered on its current best guess, pushes every one through the predictor, scores the results against the goal embedding, keeps the best 80, and re-centers the Gaussian on them. That is one round, and it happens ten times: roughly 8,000 predictor evaluations for one small movement of one arm. The system then executes only the first action of the winning sequence, throws the rest away, and starts over from a fresh frame. The cost is structural, and it recurs at every step.</p>
+<p><strong>V-JEPA2-AC on one on-board GPU</strong> — 16 s / action</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/54PrYjWdGSJ8OEMHJAZysm/f0fd37f697dfeae1dbddffef71e413d1/Figure_2._Only_the_plan_box_changes.png" alt="Figure 2. Only the plan box changes"><em><strong>Figure 2.</strong></em> <em>Only the plan box changes. The robot still captures a camera frame and its joint state, and control is untouched, but the closed-form planner is replaced by the model and a search around it. The encoder is part of the model, so encoding happens here, once per step; the ten-round loop that follows is the expensive part.</em></p>
+<p>Figure 2. Only the plan box changes</p>
+<p>The controller is also <strong>blocking</strong>: it waits for the previous action to complete before sending the next, so planning never overlaps with motion. The robot pauses, plans for sixteen seconds, moves, and pauses again. That stutter, not the model's accuracy, is the problem this document sets out to fix.</p>
+<h2>Link<strong>02 · The Approach</strong></h2>
+<p>We take the approach of, first, moving world model inference off the robot and into a cloud server. While this introduces the new cost of a network round trip on every control step, that is offset by other improvements. First, it opens the opportunity of serving the model on a more powerful GPU. In this implementation we use NVIDIA A100-40GB GPUs, which have more memory than the 24 GB RTX 4090 used in the paper and substantially more bf16 throughput.</p>
+<p><strong>The same search on one cloud GPU</strong> — 21.4 s / action (measured, A100, optimized model)</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/793bpoEfPXi9p9NQAkiuXj/0c9bc70e625992db89d9e9aa55733c2c/Figure_3._The_plan_block_lifts_the_inference_off_the_robot.png" alt="Figure 3. The plan block lifts the inference off the robot"><em><strong>Figure 3.</strong></em> <em>The plan block lifts the inference off the robot. What stays local is sensing and actuation, so what crosses the network is one camera frame plus its joint state, and one action vector back.</em></p>
+<p>Figure 3. The plan block lifts the inference off the robot</p>
+<p>On its own, a bigger GPU is not enough. Meta's reference planner, run unmodified on one A100 with these settings, takes 81.8 s per action; with the model-level optimizations in Section 05 it takes 21.4 s. Our 81.8 s is slower than the paper's 16 s on a 4090 because we ran Meta's released planning code as-is (fp32, 800 candidates × 10 rounds, a two-step horizon); the paper's timing likely reflects different settings or precision. Every speedup in this post is measured against our own 81.8 s baseline on the same hardware. Faster, but the arm still stops between moves.</p>
+<p>The second step is to distribute the load across multiple GPUs. The opportunity comes from noting that within a single CEM refinement round rollouts can be computed independently and gathered before the round moves on. The paper runs them as one large batch on one GPU; nothing requires them to stay on one GPU. In our implementation we use one eight-GPU node (8× A100-40GB) on Anyscale.</p>
+<p><strong>The search distributed across a Ray cluster</strong> — 2.86 s / action (measured, 8× A100); 0.86 s with 3 rounds per step</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/2NyeI9V5I80vK9qqcdv2sD/d82bbbc04e7df418774c405a6357cb37/Figure_4._One_step_inside_the_plan_block_changes.png" alt="Figure 4. One step inside the plan block changes"><em><strong>Figure 4.</strong></em> <em>One step inside the plan block changes. The 800 candidates in a round are independent, so the predict step fans out across warm replicas that already hold the model and gathers before scoring. The ten rounds are still sequential, which is what sets the floor.</em></p>
+<p>Figure 4. One step inside the plan block changes</p>
+<p>We implement this using Ray.</p>
+<h2>Link<strong>03 · A Primer on Ray</strong></h2>
+<h3>Link<strong>A general framework for turning Python into a cluster program</strong></h3>
+<p><a href="https://docs.ray.io/en/latest/ray-core/walkthrough.html">Ray</a> is an open-source framework, originally built at UC Berkeley's RISELab and now maintained by Anyscale, for scaling ordinary Python from a laptop to a cluster without rewriting it as a distributed system. It exposes a small set of primitives and preserves mostly-sequential code structure.</p>
+<h3>Link<strong>Ray Core</strong></h3>
+<p>Ray Core has two building blocks that matter here. A @ray.remote function becomes a <strong>task</strong>, scheduled somewhere in the cluster and returning a future. A @ray.remote class becomes an <strong>actor</strong>: a stateful worker pinned to a machine, and optionally a GPU, that keeps loaded model weights resident between calls. Tasks suit one-off parallel work; actors suit a process that pays to load a 1.2-billion-parameter checkpoint once and then answers many cheap requests.</p>
+<h3>Link<strong>Ray Serve</strong></h3>
+<p>Ray Serve sits on top of Ray Core: a @serve.deployment declaration is enough for Ray to manage a pool of replicas, route requests, and scale under load. Ray Core answers how to run a function on many workers; Ray Serve answers how to expose it as a service other systems call, which is the shape a robot's control loop needs, a low-latency endpoint hit once per step.</p>
+<h2>Link<strong>04 · Implementation</strong></h2>
+<h3>Link<strong>Two Ray Serve deployments, composed</strong></h3>
+<p>The design is two Ray Serve deployments and a handle between them. WorldModel is the GPU tier: one replica per GPU, each holding the encoder and predictor (we ran 8 replicas on 8 A100s). Planner is the driver: it runs the ten-round CEM loop, fans each round out across those replicas, and serves the endpoint the robot calls once per control step. Composing them this way, rather than as loose Ray Core actors, puts them under Serve's control: placement, health checks, restarts, and a declarative config a KubeRay RayService can roll out without downtime. The shape below elides the internals; what matters is where the fan-out sits. See figure 5 for a diagram of the deployment layout.</p>
+<p><strong>serve_app.py</strong> — Ray Serve · the shape, details elided</p>
+<pre><code>from ray import serve
+Import ray
+from ray.serve.handle import DeploymentHandle
+
+# The GPU tier. One replica per GPU, pinned, weights resident between calls.
+@serve.deployment(
+    num_replicas=8,  # one per GPU
+    ray_actor_options={&quot;num_gpus&quot;: 1},
+    max_ongoing_requests=1,          # one shard at a time, so fan-out maps 1:1
+)
+class WorldModel:
+    def __init__(self, checkpoint): ...        # paid once, when Serve starts it
+    def encode(self, frame, proprio): ...      # the encoder is part of the model
+    def score(self, ctx, actions): ...   # one shard, one GPU batch
+
+# The driver. Holds a handle to the GPU tier and runs the search.
+@serve.deployment(num_replicas=2)
+@serve.ingress(app)
+class Planner:
+    def __init__(self, model: DeploymentHandle):
+        self.model = model
+
+    @app.post(&quot;/plan&quot;)
+    async def plan(self, frame, proprio, goal_image):
+        obs, goal = await asyncio.gather(      # encode once per control step
+            self.model.encode.remote(frame, proprio),
+            self.model.encode.remote(goal_image),
+        )
+  ctx = ray.put((obs, goal))  # once per plan, read from shared memory
+        mean, std = init_distribution(horizon, action_dim)
+
+        for _ in range(10):                    # CEM rounds: sequential, the floor
+            cands = sample(mean, std, n=800)
+            scores = await asyncio.gather(*[   # fan out one shard per replica
+                self.model.score.remote(ctx, shard)
+                for shard in np.array_split(cands, 8)
+            ])                                 # gather before the round refits
+            mean, std = refit(cands, scores, elite_frac=0.1)
+
+        return {&quot;action&quot;: mean[0].tolist()}    # first action only, then re-plan
+
+app_builder = Planner.bind(WorldModel.bind(CHECKPOINT))</code></pre>
+<p>Two choices carry the design. The GPU tier is pinned at num_replicas=8 rather than autoscaled, because a search whose replica count changes mid-round has unpredictable latency, and the point is a stable per-step budget. max_ongoing_requests=1 makes each replica take one shard at a time, so an 8-way fan-out lands one shard per GPU instead of queueing several on a subset. Underneath, each replica is still a Ray Core actor, which is why the weights stay resident; the difference is that Serve owns the lifecycle.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/2Rryj3kORaYUMKZbGnmmI0/9fd934b2fafedb46913144d268e14e2a/Figure_5_Ray_Serve_on_Anyscale_connects_the_robot-facing_Planner_deployment_to_warm_WorldModel_replicas_through_a_Deployment.png" alt="Figure 5 Ray Serve on Anyscale connects the robot-facing Planner deployment to warm WorldModel replicas through a DeploymentHandle, with one model"><em><strong>Figure 5:</strong></em> <em>Ray Serve on Anyscale connects the robot-facing Planner deployment to warm WorldModel replicas through a DeploymentHandle, with one model</em></p>
+<p>Figure 5 Ray Serve on Anyscale connects the robot-facing Planner deployment to warm WorldModel replicas through a DeploymentHandle, with one model</p>
+<p><strong>What we learned building it. </strong>Three details decided the latency. First, the observation and goal latents (2.8 MB) go into Ray's object store once per plan with ray.put; every replica reads them from shared memory and caches them on its GPU, so each round moves only about 5 KB of candidate actions out and the energies back, and Ray's whole share of a round (fan-out, gather, refit) is under 10 ms. Second, with max_ongoing_requests=1 Serve's default power-of-two-choices router occasionally placed two shards on one replica while another sat idle, doubling that round; Serve's round-robin request router lands the shards of a round on consecutive replicas, one per GPU (zero collisions in 50 rounds). Third, our Serve replica processes started with TORCHDYNAMO_DISABLE=1 in their environment, which silently turned torch.compile into a no-op; clearing it in the replica's constructor recovered a 1.35× speedup.</p>
+<p><strong>Source. </strong>The full implementation, including model loading, the fast scoring path, the complete CEM refinement step, the two Serve deployments, every benchmark script and a runnable notebook, lives in the companion repository: <a href="https://github.com/anyscale/robotics_world_model_inference/tree/main/v3_realtime_inference_for_jepa">https://github.com/anyscale/robotics_world_model_inference/tree/main/v3_realtime_inference_for_jepa</a></p>
+<h2>Link<strong>05 · Results</strong></h2>
+<h3>Link<strong>Measured on 8× A100</strong></h3>
+<p>We built the design above and measured it on one Anyscale node with eight A100-40GB GPUs, using the search settings from Section 01 (800 candidates × 10 rounds, keep 80, horizon 2). The anchor is Meta's reference planner, run unmodified in fp32 on one A100: 81.8 s per action. Before adding GPUs we made the model itself faster on one GPU: a KV cache across rollout steps (the predictor is frame-causal, so earlier frames never need recomputing), bf16 with FlashAttention, and torch.compile. The result matches the reference energies (Pearson r = 0.9999) and brings one GPU to 21.4 s per action, 4× faster.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1HObhsYqltV9tTxq161sK1/c8cd66020e487705829297b137563c19/Figure_6._Measured_planning_time_per_action.png" alt="Figure 6. Measured planning time per action"><em><strong>Figure 6.</strong></em> <em>Measured planning time per action. Ray Serve fans each round out over 8 A100s (2.86 s, 29× the reference). Running 3 search rounds per step instead of 10 reached the same accuracy in closed-loop tests (Section 06), giving 0.86 s per action, 96× the reference.</em></p>
+<p>Figure 6. Measured planning time per action</p>
+<p>Then the fan-out. Each round's 800 candidates are split across W WorldModel replicas, one GPU each. Going from 1 to 8 GPUs cuts a plan from 21.4 s to 2.86 s, a 7.5× speedup. Same seeds give identical plans at every GPU count, so sharding changes the speed of the search but not its answer. The latency model proposed in the first draft of this post holds up: calibrated on our measured single-GPU round (2.14 s), it predicts 2.94 s at 8 GPUs against 2.86 s measured.</p>
+<h3>Link<strong>Planning latency vs. cluster size</strong></h3>
+<p>A100-40GB replicas on one 8-GPU node. Points are measured; the line is the latency model.</p>
+<p><strong>2.86 s / action at 8 A100 workers</strong>. This is 7.5× faster than one A100 and 29× faster than Meta's reference planner.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4pO1gOaQkRV99oC3sFaJZI/bb4b1ff81a4e092cd463800cb3f4f4d8/Figure_7._Plan_latency_vs._number_of_GPU_replicas.png" alt="Figure 7. Plan latency vs. number of GPU replicas"><em><strong>Figure 7.</strong></em> <em>Plan latency vs. number of GPU replicas, measured on 8× A100 (points) against the latency model calibrated on the measured single-GPU round (line; dashed beyond 8 GPUs = projection).</em></p>
+<p>Figure 7. Plan latency vs. number of GPU replicas</p>
+<p>Model: time(W) = 10 × ( r / effective(W) + 0.001s × (W − 1) ), where effective(W) = W / (1 + 0.008×(W−1)) and r is the measured single-GPU round, 2.14 s on an A100. Beyond 8 GPUs the curve flattens, because each GPU's share of the 800 candidates gets small. Larger clusters pay off mainly by serving more robots, or larger searches, from the same tier.</p>
+<p><strong>Two things remain unmeasured:</strong> network latency between an on-premises robot and a cloud region, and performance on a physical arm (our closed-loop tests use the world model as the simulator). Cold start stays off the request path: replicas load and compile in about 50 s at deploy time, before they take traffic. Batching candidates differently does not change accuracy: the plans are identical at 1, 2, 4 and 8 GPUs.</p>
+<h2>Link<strong>06 · Further Optimization</strong></h2>
+<h3>Link<strong>What to try once the search itself is no longer the bottleneck</strong></h3>
+<p>Once each round is as fast as the GPUs allow, what remains is the chain of ten sequential rounds, and the next gains come from restructuring the loop rather than adding GPUs.</p>
+<h4>Link<strong>A. Non-blocking control</strong></h4>
+<p>Start planning step <em>t</em>+1 while the robot is still executing step <em>t</em>. That hides planning latency behind execution time instead of adding to it, and it is a controller change, not a model change.</p>
+<p><strong>Measured. </strong>We simulated an arm that takes 1 s per action and lands with 4 mm of execution error. A blocking controller spent 1.86 s per step (plan, then move). Non-blocking control, planning step t+1 from the world model's prediction of where step t will land, spent 1.04 s per step, i.e. the motion itself plus 40 ms. It reached the same final accuracy, and a 12-step episode took 15.3 s instead of 25.3 s.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1wgt2z0xXlplOL8aVQriLB/a03c590900577a0d84d4c2cd843d4a55/Figure_8._Closed-loop_episodes_toward_a_goal_21.6_cm_away.png" alt="Figure 8. Closed-loop episodes toward a goal 21.6 cm away"><em><strong>Figure 8.</strong></em> <em>Closed-loop episodes toward a goal 21.6 cm away, with the world model standing in for the robot. Left: 3 search rounds per step reach the same accuracy as 10 in a third of the planning time. Right: non-blocking control removes the planner from the robot's critical path.</em></p>
+<p>Figure 8. Closed-loop episodes toward a goal 21.6 cm away</p>
+<h4>Link<strong>B. Warm-started CEM</strong></h4>
+<p>Receding-horizon control throws away everything but the first action. Re-using the rest to seed the next step's distribution, instead of a fresh Gaussian, lets each replan converge in fewer than ten rounds, shrinking the sequential chain parallelism cannot touch.</p>
+<p><strong>Measured. </strong>In closed-loop tests, 3 rounds per step (0.86 s on 8 A100s) reached the same accuracy as the full 10 (2.83 s): both settle about 4 cm from a goal that starts 21.6 cm away. Warm-starting from the previous plan worked, but on this task a fresh 3-round search did equally well, so the gain came from running fewer rounds. How many rounds a task needs is worth tuning per task.</p>
+<h4>Link<strong>C. Fleet-level batching</strong></h4>
+<p>A GPU tier sized for one robot is idle between its requests. Behind a Serve endpoint the same tier serves a fleet, and request batching can pack shards from different robots into one GPU batch, amortizing the same warm GPUs across many arms.</p>
+<h4>Link<strong>D. Model compression</strong></h4>
+<p>Distilling or quantizing the predictor shrinks the compute term itself, independent of how many workers it is split across. It stacks with distribution rather than competing with it.</p>
+<h4>Link<strong>E. Serving-level optimization</strong></h4>
+<p>The predictor rolls forward step by step over the horizon, so what LLM serving already relies on carries over: KV caching across rollout steps, prefill and decode disaggregation, continuous batching. These shrink the same compute term from a different direction, inside the same Serve deployment.</p>
+<p><strong>Implemented. </strong>KV caching across rollout steps, together with bf16, FlashAttention and torch.compile, is part of the measured system. It gives 4× on a single GPU and matches the reference energies to r = 0.9999.</p>
+<h2>Link<strong>07 · Takeaways</strong></h2>
+<p>The sixteen seconds is not an implementation defect. It follows from a deliberate architectural choice: a JEPA model predicts state rather than actions, so an action has to be searched for at inference time instead of read off a policy head. That is the same trade agentic systems make when they sample many candidates and score them, and it comes with the same benefit, a system that can be pointed at a new goal without retraining.</p>
+<p>The four setups make the trade concrete. A hand-written policy buys millisecond actions and pays for them in task-specific engineering. V-JEPA2-AC trades that speed for a system that accepts any goal you can photograph. Moving the search to a cluster buys the speed back without giving up the generality, and does it in infrastructure rather than in the model. Measured on one node of eight A100s, Ray Serve takes the full search from 82 s to 2.9 s per action, with distribution doing most of the work and Ray adding under 10 ms per round. The ten sequential rounds set the floor that more hardware cannot move. Attacking that floor with fewer rounds per step brings it to 0.86 s, and non-blocking control hides what remains behind the arm's own motion.</p>
+<h3>Link<strong>References</strong></h3>
+<ul><li>Assran, M. et al. <em>V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning.</em> arXiv:2506.09985, 2025. <a href="https://arxiv.org/abs/2506.09985">arxiv.org/abs/2506.09985</a></li><li>Meta AI. <em>Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning.</em> <a href="https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/">ai.meta.com/blog/v-jepa-2-world-model-benchmarks</a></li><li>Ray Project. <em>Ray Core: Key Concepts, Tasks and Actors.</em> <a href="https://docs.ray.io/en/latest/ray-core/walkthrough.html">docs.ray.io/en/latest/ray-core</a></li><li>Ray Project. <em>Ray Serve documentation.</em> <a href="https://docs.ray.io/en/latest/serve/index.html">docs.ray.io/en/latest/serve</a></li><li>Ray Project. <em>KubeRay: RayService.</em> <a href="https://docs.ray.io/en/latest/cluster/kubernetes/index.html">docs.ray.io/en/latest/cluster/kubernetes</a></li></ul>
+<p><em>Planning-time and success-rate figures are as reported in the V-JEPA2-AC paper (arXiv:2506.09985). Cluster sizing, the CEM parallelization design, the latency model, and all code shown are an independent engineering implementation built on top of that published work, not affiliated with or endorsed by Meta AI or the Ray project. Latency measurements in Sections 05 and 06 were taken on one 8× A100-40GB node on Anyscale (November 2026); the extension of Figure 6 beyond 8 GPUs is a projection.</em></p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#01-·-a-primer-on-robotics">01 · A Primer on Robotics</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#how-the-jepa-architecture-fills-the-&quot;plan&quot;-box">How the JEPA architecture fills the &quot;plan&quot; box</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#where-the-sixteen-seconds-actually-goes">Where the sixteen seconds actually goes</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#02-·-the-approach">02 · The Approach</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#03-·-a-primer-on-ray">03 · A Primer on Ray</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#a-general-framework-for-turning-python-into-a-cluster-program">A general framework for turning Python into a cluster program</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#ray-core">Ray Core</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#ray-serve">Ray Serve</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#04-·-implementation">04 · Implementation</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#two-ray-serve-deployments,-composed">Two Ray Serve deployments, composed</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#05-·-results">05 · Results</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#measured-on-8×-a100">Measured on 8× A100</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#planning-latency-vs.-cluster-size">Planning latency vs. cluster size</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#06-·-further-optimization">06 · Further Optimization</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#what-to-try-once-the-search-itself-is-no-longer-the-bottleneck">What to try once the search itself is no longer the bottleneck</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#07-·-takeaways">07 · Takeaways</a></li><li><a href="https://www.anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale#references">References</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5B93PEUBZLNZTWnhOrL9tZ/2e021011ac03276b725e5ffd946e7c48/Donating_KubeRay_to_the_CNCF.png?w=140" alt="Donating KubeRay to the CNCF"></p>
+<h4>Donating KubeRay to the CNCF</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnfGrZlZyKRBMsd2jSreK/05b0b3cd8d2c9ad962448365782fb980/Lila_x_SkyRL.png?w=140" alt="Lila x SkyRL"></p>
+<h4>How Lila Sciences and Anyscale Scaled GLM-5.3-Flash Training to 1M tokens</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-production-best-practices-field.png?w=140" alt="kuberay-production-best-practices-field"></p>
+<h4>KubeRay in production: best practices from the field</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Donating KubeRay to the CNCF</title>
       <link>https://anyscale.com/blog/donate-kuberay-cncf</link>
@@ -6052,129 +6200,6 @@ def train_loop_per_worker(config: dict):
 <ul><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#ray-train-dashboard:-unified-observability-for-distributed-training">Ray Train Dashboard: Unified Observability for Distributed Training</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#unified-interface-for-log-and-metric-drilldowns">Unified Interface for Log and Metric Drilldowns</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#clear-visualization-of-training-progress-and-job-state">Clear Visualization of Training Progress and Job State</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#detailed-error-context-when-things-go-wrong">Detailed Error Context When Things Go Wrong</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#one-click-profiling-for-performance-optimization">One-Click Profiling for Performance Optimization</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#ray-data-dashboard:-faster-pipeline-debugging-with-tree-and-dag-views">Ray Data Dashboard: Faster Pipeline Debugging with Tree and DAG views</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#progress-overview-and-drill-downs-with-tree-and-dag-views-">Progress Overview and Drill-Downs with Tree and DAG Views </a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#pinpoint-and-resolve-bottlenecks-with-operator-metrics">Pinpoint and Resolve Bottlenecks with Operator Metrics</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#trace-and-fix-hidden-issues-with-dataset-aware-log-views">Trace and Fix Hidden Issues with Dataset-Aware Log Views</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#future-enhancements">Future Enhancements</a></li><li><a href="https://www.anyscale.com/blog/ray-train-data-dashboard#try-it-today">Try It Today</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-production-best-practices-field.png?w=140" alt="kuberay-production-best-practices-field"></p>
-<h4>KubeRay in production: best practices from the field</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="Announcing Ray support for PyTorch on Google TPUs"></p>
-<h4>Announcing Ray support for PyTorch on Google TPUs</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="Running Ray at scale on Kubernetes with KubeRay"></p>
-<h4>Running Ray at scale on Kubernetes with KubeRay</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>uv + Ray: Pain-Free Python Dependencies in Clusters</title>
-      <link>https://anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters?li=1</guid>
-      <pubDate>Thu, 27 Feb 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
-<h1>uv + Ray: Pain-Free Python Dependencies in Clusters</h1>
-<p>By <a href="https://www.anyscale.com/blog?author=christina-zhu">Christina Zhu</a> and <a href="https://www.anyscale.com/blog?author=philipp-moritz">Philipp Moritz</a> | February 27, 2025</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/2KhO6m2ouQYf5yJ3qF8iN0/cfbb66f0fd3e12d10c8a6323a3a31a65/Illustration_Dark_mode_updated.png?w=1200" alt="uv + Blog post header image 2"></p>
-<p>When we discovered <a href="https://docs.astral.sh/uv">the uv package manager</a>, we realized that a new era of Python package management had arrived. It tackles the Python developers’ dependency headaches with consistency and speed, which also enables quick development cycles.</p>
-<p>Here is a (non-exhaustive) collection of things the folks from <a href="http://astral.sh">astral.sh</a> are getting right that we really like:</p>
-<ul><li><strong>They package the whole environment</strong>: You don’t need to worry about setting up your own Python distribution which in itself can be quite cumbersome. Instead, let uv <a href="https://docs.astral.sh/uv/concepts/python-versions/">manage the Python environment</a>. If you prefer, uv also supports using a system installed Python.</li><li><strong>They make uv lightning fast:</strong> For starters, it’s written in Rust<strong>, </strong>just like their very successful Python linter <a href="https://github.com/astral-sh/ruff">ruff</a>. Designed with speed in mind, uv quickly downloads packages, <a href="https://docs.astral.sh/uv/concepts/cache/">caches</a> them locally on disk, de-duplicates dependencies between environments and uses hard links to bring them all together.</li><li><strong>They respect and improve on existing Python conventions:</strong> This includes support for <a href="https://docs.astral.sh/uv/guides/projects/#pyprojecttoml">pyproject.toml</a>, outstanding platform independent <a href="https://docs.astral.sh/uv/concepts/projects/layout/#the-lockfile">lockfile</a> support, <a href="https://docs.astral.sh/uv/concepts/projects/dependencies/#editable-dependencies">editable packages</a>, <a href="https://docs.astral.sh/uv/configuration/files/#env">environment variables</a> and lots more – more capabilities get added and bugs fixed <a href="https://github.com/astral-sh/uv/blob/main/CHANGELOG.md">all the time</a>.</li></ul>
-<p>However, in a distributed context, managing Python dependencies is still challenging. There are many processes to manage on a cluster, and we need to make sure all their dependencies are consistent with each other. If you change a single dependency, you have to propagate that change to every single other node since each worker process needs the same environment so that all the code gets executed the same way. If there’s a version mismatch somewhere, you could be spending lots of hours debugging what went wrong… which is definitely not a fun way to spend your time. The traditional way to solve this problem is by containerizing everything, but that makes the development iteration much slower - if code and dependencies change, a new version of the container needs to be built and pushed to all nodes. Sometimes the whole cluster needs to be restarted, which makes it even slower.</p>
-<p>Wouldn't it be nice if you just kick off a distributed Python application by running <code>uv run ... script.py</code> and your dynamically created environment applied to every process in the cluster? <em>Spoiler</em>: That’s exactly how we are going to do it. Let’s look at a simple example using Ray first. <a href="https://docs.ray.io/en/latest/">Ray</a> is a compute engine designed to make it easy to develop and run distributed Python applications, especially AI applications.</p>
-<p>Since this is a new feature in the <a href="https://github.com/ray-project/ray/releases">latest Ray 2.43 release</a>, you currently need to set a feature flag:</p>
-<pre><code>1export RAY_RUNTIME_ENV_HOOK=ray._private.runtime_env.uv_runtime_env_hook.hook</code></pre>
-<p>We plan to make it default after <a href="https://github.com/ray-project/ray/issues/50961">collecting more feedback</a> from all of you, and adapting the behavior if necessary.</p>
-<p>Once you have set up this environment variable, Ray will automatically detect that your script is running inside of uv run and will run all of the worker processes in the same environment. Let’s first look at a very simple example. Create a new file <code>main.py</code> with:</p>
-<pre><code>1import emoji
-2import ray
-3
-4@ray.remote
-5def f():
-6    return emoji.emojize('Python is :thumbs_up:')
-7# Execute 1000 copies of f across a cluster.
-8
-9print(ray.get([f.remote() for _ in range(1000)]))</code></pre>
-<p>and run it with</p>
-<pre><code>1uv run --with emoji main.py</code></pre>
-<p>This will run 1000 copies of the <code>f</code> function across a number of Python worker processes in a Ray cluster. The <code>emoji</code> dependency, in addition to being available for the main script, will also be available for all worker processes. Also, the source code in the current working directory will be available to all the workers.</p>
-<p>That’s it! Using Ray + uv, you can manage Python dependencies for distributed applications the same way you normally do on a single machine with uv.</p>
-<h3>LinkEnd-to-end example for using uv</h3>
-<p>Now, let’s walk through a more detailed example of how to use uv and dive into some of its convenient features. We will create an application that runs batch inference using Ray Data with the <a href="https://docs.ray.io/en/latest/data/working-with-llms.html">new LLM integration</a>. Let’s first create a pyproject.toml with the necessary dependencies:</p>
-<pre><code>1[project]
-2name = &quot;my_llm_batch_inference&quot;
-3version = &quot;0.1&quot;
-4dependencies = [
-5  &quot;numpy&quot;,
-6  &quot;ray[llm]&quot;,
-7]</code></pre>
-<p>You may need to run the following in order for vLLM to work correctly:</p>
-<pre><code>1sudo apt-get update &amp;&amp; sudo apt-get install -y build-essential</code></pre>
-<p>And a script <code>batch_inference.py</code> with the following content:</p>
-<pre><code>1import ray
-2from ray.data.llm import vLLMEngineProcessorConfig, build_llm_processor
-3import numpy as np
-4
-5config = vLLMEngineProcessorConfig(
-6    model_source=&quot;unsloth/Llama-3.1-8B-Instruct&quot;,
-7    engine_kwargs={
-8        &quot;enable_chunked_prefill&quot;: True,
-9        &quot;max_num_batched_tokens&quot;: 4096,
-10        &quot;max_model_len&quot;: 16384,
-11    },
-12    concurrency=1,
-13    batch_size=64,
-14)
-15processor = build_llm_processor(
-16    config,
-17    preprocess=lambda row: dict(
-18        messages=[
-19            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a bot that responds with haikus.&quot;},
-20            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: row[&quot;item&quot;]}
-21        ],
-22        sampling_params=dict(
-23            temperature=0.3,
-24            max_tokens=250,
-25        )
-26    ),
-27    postprocess=lambda row: dict(
-28        answer=row[&quot;generated_text&quot;],
-29        **row  # This will return all the original columns in the dataset.
-30    ),
-31)
-32
-33ds = ray.data.from_items([&quot;Start of the haiku is: Complete this for me...&quot;])
-34
-35ds = processor(ds)
-36ds.show(limit=1)</code></pre>
-<p>To run the application, put both the <code>pyproject.toml</code> and the <code>batch_inference.py</code> file into the same directory and execute the code with <code>uv run batch_inference.py</code>.</p>
-<p>Note that this is a very simple example that runs a small model and a one item in-memory dataset loaded with <code>ray.data.from_items</code>, but you can use any of the <a href="https://docs.ray.io/en/latest/data/loading-data.html">data sources</a> that Ray Data supports to load the data, any of the <a href="https://docs.ray.io/en/latest/data/saving-data.html">data sinks</a> to write the results, and any of the models that vLLM supports for the inference.</p>
-<p>If you want to use a Hugging Face model that is behind a gate, you can create a <code>.env</code> file in your working directory like:</p>
-<pre><code>1HF_TOKEN = your_huggingface_token</code></pre>
-<p>and run the code with <code>uv run --env-file .env batch_inference.py</code>.</p>
-<p>If you want to edit any of the dependencies, you can clone them into a path <code>./path/foo</code> relative to your <code>working_dir</code> and run <code>uv add --editable ./path/foo</code>. This will append a section in your <code>pyproject.toml</code> that instructs uv to use the checked out (and edited) code instead of the original package.</p>
-<h3>LinkHow does this work under the hood?</h3>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/2rjcTtNwdOmuzfEHsVGTdv/70cdcb1e017635119e0e27f1007a0df3/Managing_Dependencies_for_Ray_Applications_with_UV.png" alt="uv ray figure 1"></p>
-<p>uv ray figure 1</p>
-<p><strong>Figure:</strong> without uv, script.py runs in the default python environment which might be different from the runtime environment that the workers run in (left), with uv the environments are synchronized via “uv run” and the creation of the environments is sped up by uv’s cache</p>
-<p>Under the hood, this integration uses Ray’s <a href="https://docs.ray.io/en/latest/ray-core/handling-dependencies.html">runtime environment</a> feature, which allows the environment to be specified in code. We define a new low level runtime environment plugin called <a href="https://docs.ray.io/en/latest/ray-core/handling-dependencies.html#using-uv-for-package-management">py_executable</a>. It allows you to specify the Python executable (including arguments) that Ray workers will be started in. In the case of <code>uv</code>, the <code>py_executable</code> is set to <code>uv run</code> with the same parameters that were used to run the driver. Also, the <code>working_dir</code> runtime environment is used to propagate the working directory of the driver (including the <code>pyproject.toml)</code> to the workers. This allows <code>uv</code> to set up the right dependencies and environment for the workers to run in.</p>
-<p>There are some advanced use cases where you might want to use the <code>py_executable</code> mechanism directly in your programs:</p>
-<ul><li><strong>Applications with heterogeneous dependencies:</strong> Ray supports using a different runtime environment for different tasks or actors. This is useful for deploying different inference engines, models, or microservices in different <a href="https://docs.ray.io/en/latest/serve/production-guide/handling-dependencies.html#dependencies-per-deployment">Ray Serve deployments</a> and also for heterogeneous data pipelines in Ray Data. To implement this, you can specify a different <code>py_executable</code> for each of the different runtime environments and use <code>uv run</code> with a different <code>--project</code> parameter for each. See <a href="https://github.com/pcmoritz/ray-isolated-environments">this repository here</a> as an example.</li><li><strong>Customizing the command the worker runs in:</strong> On the workers, you might want to customize uv with some special arguments that are not used for the driver. Or, you might want to run processes using poetry run, a build system like bazel, a profiler, or a debugger. In these cases, you can explicitly specify the executable the worker should run in via <code>py_executable</code>. It could even be a shell script that is stored in <code>working_dir</code> if you are trying to wrap multiple processes in more complex ways.</li></ul>
-<h3>LinkUsing uv in a Ray Job</h3>
-<p>To use uv with a Ray Job, run the job with:</p>
-<pre><code>1ray job submit --runtime-env-json '{&quot;working_dir&quot;: &quot;.&quot;, &quot;py_executable&quot;: &quot;uv run&quot;}' -- uv run main.py</code></pre>
-<p>This will make sure both the driver and workers of the job run in the <code>uv</code> environment as specified by your <code>pyproject.toml</code>.</p>
-<h3>LinkUsing uv in a Ray Service</h3>
-<p>To use uv with Ray Serve, set the <code>RAY_RUNTIME_ENV_HOOK</code> like above and run the service with <code>uv run serve run app:main</code>.</p>
-<h3>LinkBest Practices and Tips</h3>
-<ul><li>Use <code>uv lock</code> to generate a lockfile and make sure all your dependencies are frozen, so things won’t change in uncontrolled ways if a new version of a package gets released.</li><li>If you have a <code>requirements.txt</code> file and don’t want to use the <code>--with-requirements</code> flag, you can use <code>uv add -r requirement.txt </code>to add the dependencies to your project.toml and then use that with uv run.</li><li>If needed you can use the system python via <code>UV_SYSTEM_PYTHON=1</code></li><li>If your <code>pyproject.toml</code> is in some subdirectory, you can use <code>uv run --project</code> to use it from there.</li><li>If you use <code>uv run</code> and want to reset the working directory to something that is not the current working directory, use the <code>--directory</code> flag. The Ray uv integration will make sure your <code>working_dir</code> will be set accordingly.</li></ul>
-<h3>LinkHighlights of Our uv x Ray Open Source Efforts</h3>
-<p>As with any enthusiastic supporter of a new open source project, we’ve been very lucky that some Ray users have already picked up this feature before it was even released and suggested improvements, thank you for that! We hope to get a lot more feedback now that we release the feature with Ray 2.43.</p>
-<p>Many thanks to the uv maintainers for discussing the integration with us, and quickly <a href="https://github.com/astral-sh/uv/issues/11219">fixing a bug</a> that occurred when uv environments were set up concurrently in Ray.</p>
-<h3>LinkConclusion</h3>
-<p>Combining uv with Ray significantly improves Python dependency management for distributed systems by pairing uv's fast environment setup with Ray's scalable programming model, ensuring consistent worker execution across clusters. We strive to make Ray + uv the best solution for running code in a distributed fashion, and would love your feedback on <a href="https://github.com/ray-project/ray/issues/50961">GitHub</a> or on <a href="https://discuss.ray.io/">Discourse</a>.</p>
-<p>That being said, there are situations where uv is not a feasible solution – you might work on an established project stitching together different package managers, repositories, and binaries. Or, you are in an enterprise environment with very specific requirements. At Anyscale, we are working on a dependency management solution based on our OCI compatible <a href="https://www.anyscale.com/blog/cloud-infrastructure-for-llm-and-generative-ai-applications#faster-instance-startup-time:-a-step-change-in-performance-for-genai-and-llm-applications">fast container runtime</a> that allows for very fast development iterations and also supports a wide range of dependency needs. If you're interested in this, give the <a href="https://www.anyscale.com/">Anyscale Platform</a> a spin.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#end-to-end-example-for-using-uv">End-to-end example for using uv</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#how-does-this-work-under-the-hood?">How does this work under the hood?</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#using-uv-in-a-ray-job">Using uv in a Ray Job</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#using-uv-in-a-ray-service">Using uv in a Ray Service</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#best-practices-and-tips">Best Practices and Tips</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#highlights-of-our-uv-x-ray-open-source-efforts">Highlights of Our uv x Ray Open Source Efforts</a></li><li><a href="https://www.anyscale.com/blog/uv-ray-pain-free-python-dependencies-in-clusters#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<p>Technology, Ray Core</p>
 <h4>Sign up for product updates</h4>
 <h4>Recommended content</h4>
 <p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-production-best-practices-field.png?w=140" alt="kuberay-production-best-practices-field"></p>
