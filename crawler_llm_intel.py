@@ -3332,6 +3332,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
         ("code", "写代码 / 编程 Agent"),
         ("flagship", "免费体验旗舰通用模型"),
         ("longctx", "超长上下文（约 1M tokens）"),
+        ("multimodal", "图片 / 视频理解与实时音视频交互"),
         ("image", "图像 / 视频生成"),
         ("embed", "Embedding / Rerank / OCR / 语音"),
         ("deploy", "自建私有端点 / 跑任意开源模型"),
@@ -7384,7 +7385,8 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
     # 顶部「懒人首选」速览图：GUIDE_META 的视图，跟巡检一起重生成（不再手绘 PNG）。
     # 写成「同内容不落盘」以满足 G5（同一份源连跑两次零改写）。
     picks_svg_path = root / TOP_PICKS_SVG
-    picks_svg = render_picks_svg(order_vendor_records(intel_list))
+    # 磁盘重排的 intel_list 仅含有动态源的厂商；首选图须使用 yaml 全集。
+    picks_svg = render_picks_svg(order_vendor_records(_stub_intel_list(all_vendors)))
     wrote_picks = not picks_svg_path.exists() or \
         picks_svg_path.read_text(encoding="utf-8") != picks_svg
     if wrote_picks:

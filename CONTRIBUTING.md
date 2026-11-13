@@ -169,7 +169,7 @@ README 项目介绍之后的「白嫖攻略」**不是手写 Markdown**，由爬
 
 - `tiers`：免费类型（`permanent` 永久免费层 / `onetime` 注册赠送 / `recurring` 周期重置 / `selfhost` 开源权重自托管）；
 - `signup`：`email`（邮箱 / OAuth 免信用卡）或 `card`（需绑卡验证）；
-- `scenarios`：`code` / `flagship` / `longctx` / `image` / `embed` / `deploy` / `credit`；
+- `scenarios`：`code` / `flagship` / `longctx` / `multimodal`（图片/视频理解与实时音视频交互）/ `image` / `embed` / `deploy` / `credit` / `referral` / `student`；
 - `short`：一句话额度摘要；`tip`：防扣费提示；`pick`：懒人首选推荐语（仅给首推厂商配置，渲染为攻略第 0 节，按厂商编号排序）。
 
 README 顶部的「懒人首选速览」是 **`docs/images/top-picks.svg`**，同样由 `render_picks_svg()` 从 `GUIDE_META` 生成、随 `--render-only` / `--guide-render` 重写——**不要再手绘 PNG**：手绘图的维护点是「改一次名单就要重做一张图」，实测最容易漏（正文改了、图还停在旧名单）。SVG 是纯文本，可 diff、可校验；测试 `test_picks_svg_matches_guide_meta` 会直接对撞磁盘文件与现渲染结果，改完 `pick` 不跑渲染就会红。

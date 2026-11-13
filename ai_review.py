@@ -138,7 +138,7 @@ FIELD_TYPES = {
 ALLOWED_TIERS = {"permanent", "onetime", "recurring", "selfhost"}
 ALLOWED_SIGNUP = {"email", "card"}
 ALLOWED_SCENARIOS = {"code", "flagship", "longctx", "image", "embed", "deploy", "credit",
-                     "referral", "student"}
+                     "referral", "student", "multimodal"}
 
 SYSTEM_PROMPT = """你是「免费 LLM API 情报」核查员，服务于一个只采信官方页面的开源项目。\
 你的任务：对比「当前档案」与「官方页面原文」，判断免费模型、额度、限速、注册门槛、限时活动等\
@@ -154,7 +154,7 @@ SYSTEM_PROMPT = """你是「免费 LLM API 情报」核查员，服务于一个�
 4. evidence 给出 1-6 条页面原文逐字摘录（不要翻译、不要改写、不要省略号拼接），\
 每条必须能在给定页面文本中连续找到；所有数字、模型名必须与原文一致。
 5. 攻略归类 guide_meta 仅在归类确实需要变化时给出：tiers 取值 permanent/onetime/recurring/\
-selfhost，signup 取值 email/card，scenarios 取值 code/flagship/longctx/image/embed/deploy/credit，\
+selfhost，signup 取值 email/card，scenarios 取值 code/flagship/longctx/multimodal/image/embed/deploy/credit/referral/student，\
 short 是一句话额度摘要，tip 是一句话防扣费提示。
 6. 输出只能是一个 JSON 对象，不要输出解释、Markdown 代码块或多余文字。"""
 

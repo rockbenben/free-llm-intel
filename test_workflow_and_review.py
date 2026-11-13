@@ -5101,6 +5101,19 @@ class TestGuideRendering(unittest.TestCase):
         return [crawler_llm_intel.VendorIntel(vendor_id=v, brand="", homepage="", products=[])
                 for v in provider_profiles.PROVIDER_PROFILES]
 
+    def test_guide_scenarios_are_valid_and_rendered(self):
+        """新增场景须同时进入核查白名单与攻略，避免元数据静默失效。"""
+        text = crawler_llm_intel.render_guide_block(
+            crawler_llm_intel.order_vendor_records(self._all_vendor_intel()))
+        scenarios = text.split("### 3. 按场景选", 1)[1].split("### 4.", 1)[0]
+        for vid, meta in provider_profiles.GUIDE_META.items():
+            for scenario in meta.get("scenarios", []):
+                self.assertIn(scenario, ai_review.ALLOWED_SCENARIOS, vid)
+            if meta.get("scenarios"):
+                name = provider_profiles.get_provider_profile(vid)["display_name"]
+                name = re.sub(r"[（(][^（）()]*[)）]\s*$", "", name).strip()
+                self.assertIn(name, scenarios, f"{vid} 的场景未进入攻略")
+
     def test_picks_svg_covers_every_pick(self):
         """顶部速览图必须是「名单的视图」：每家首选都画进去，且没有漏出 Markdown 记号。"""
         import xml.etree.ElementTree as ET
@@ -5152,12 +5165,11 @@ class TestGuideRendering(unittest.TestCase):
                 + "\n\n正文之后\n", encoding="utf-8")
             # 故意塞一个过期的首选，验证会被重排回 GUIDE_META 的现渲染
             # 首选家数由 GUIDE_META 的 pick 条目数动态决定（新增进首选的厂商会改这个数），
-            # 不写死：先把真渲染里的「这 N 家都」替成「这 5 家都」制造过期，再验证被重排回来。
+            # 使用非数字占位，避免未来首选恰好变成 5 家时测试未制造任何变更。
             text_before = readme.read_text(encoding="utf-8")
-            import re as _re
-            _m = _re.search(r"这 (\d+) 家都", text_before)
+            _m = re.search(r"这 (\d+) 家都", text_before)
             self.assertIsNotNone(_m, "攻略块里应有「这 N 家都」首选文案")
-            stale = text_before.replace(f"这 {_m.group(1)} 家都", "这 5 家都")
+            stale = text_before.replace(f"这 {_m.group(1)} 家都", "这 过期 家都")
             readme.write_text(stale, encoding="utf-8")
 
             rc = crawler_llm_intel.render_guide_only(tmpdir, vendors, readme)
@@ -5166,7 +5178,7 @@ class TestGuideRendering(unittest.TestCase):
             self.assertTrue(text.startswith("# 标题\n\n正文之前\n"))
             self.assertTrue(text.endswith("\n\n正文之后\n"))
             self.assertIn(f"这 {_m.group(1)} 家都", text)
-            self.assertNotIn("这 5 家都", text)
+            self.assertNotIn("这 过期 家都", text)
             self.assertTrue((tmpdir / "docs" / "images" / "top-picks.svg").exists())
 
             # 同一份源再跑一次：零改写（G5 同款契约）
@@ -11121,6 +11133,20 @@ class TestRenderOutputs(unittest.TestCase):
         self.assertTrue((self.root / "llm-news-feeds.opml").exists())
         self.assertGreater(out["rss_items"], 0,
                            "夹具应产出条目，否则后面的断言都是空集蒙绿")
+
+    def test_picks_include_vendors_without_news(self):
+        """无新闻源的首选在磁盘重排后仍须留在图中。"""
+        vendors = [{"id": "demo_pick", "brand": "Demo Pick", "homepage": "https://pick.test"}]
+        with mock.patch.dict(provider_profiles.PROVIDER_PROFILES, {
+            "demo_pick": {"display_name": "Demo Pick", "category": "domestic"}
+        }), mock.patch.dict(provider_profiles.GUIDE_META, {
+            "demo_pick": {"pick": "限时免费", "tiers": ["onetime"]}
+        }):
+            crawler_llm_intel.render_outputs(
+                self.root, [], feeds_base="https://x.test/feeds", all_vendors=vendors, reviews={})
+        svg = (self.root / crawler_llm_intel.TOP_PICKS_SVG).read_text(encoding="utf-8")
+        self.assertIn("Demo Pick", svg)
+        self.assertIn("先注册这 1 个", svg)
 
     def test_idempotent_second_run_changes_nothing(self):
         self._fixture_tree()

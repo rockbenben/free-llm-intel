@@ -769,7 +769,7 @@
         "onetime"
       ],
       "in_guide": true,
-      "free_quota": "**无注册赠金**；当前实行「限时免费」——语言模型 `nex-n2.6`、多模态 `moss-vl-1.0` / `moss-vl-realtime-1.0`、实时交互 `moss-live-1.0` 均标「限时免费 0 积分」；2026-11-12 实测控制台账单为零，调用未扣积分（控制台读数 + API 实测双重证实）",
+      "free_quota": "官方公开文档未见账户级注册赠金说明；模型限免见「免费模型与额度」",
       "validity": "限时免费，官方未公布截止日；随时可能恢复计费，以官方公告为准",
       "free_models": [
         "**限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（实测 max_tokens=64 时 63 个 token 全用于推理，finish_reason=length）",
@@ -777,19 +777,20 @@
         "**付费（非免费）**：TTS 系列 moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥2.00/万字符＝40 积分/万字符）；转写 moss-transcribe-1.0（¥0.80/小时＝16 积分/小时）、moss-transcribe-diarize-pro（¥2.00/小时＝40 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.20/张≈4 积分、高分辨率 ¥0.30/张≈6 积分，智能改写另计 ¥0.05/次＝1 积分）"
       ],
       "tier_caveats": [
+        "官方未公开统一 RPM/TPM/RPD 数值，实际限速以控制台及服务端错误码为准；`moss-vl-1.0` 走 Responses API，实时模型走 WebSocket，不能直接填入 Chat Completions 客户端",
         "**限时免费无公开截止日**，随时可能恢复计费；TTS/转写/部分图像已按积分计费，免费仅限上述模型，勿把「平台整体免费」当结论",
         "`nex-n2.6` 是**推理模型**：小 max_tokens 下 reasoning 吃满预算、content 为空（finish_reason=length），不是坏——要给足 max_tokens 才能拿到正文",
-        "模型列表出现 `tob-kimi-k3`（owned_by kimi），但用普通账号 key 调用 `POST /v1/chat/completions` 返回 403 `forbidden`——**该 key 不覆盖该模型**，需单独授权；别把「列表里可见」当成「能用」",
-        "API 响应体与响应头**不暴露任何计费字段**，故「0 积分」结论依赖控制台账单读数而非 API 自证；接入时以控制台扣减记录为准"
+        "2026-11-12 实测模型列表出现 `tob-kimi-k3`（owned_by kimi），但该次测试账号调用返回 403 `forbidden`；这只说明该账号无权调用，其他账号的开放条件以官方授权为准，勿把「列表里可见」当成「能用」",
+        "2026-11-12 的 API 实测响应未见计费字段；HTTP 200 本身不能证明免费，接入时须同时核对官方价格与控制台扣减记录"
       ],
       "preconditions": "注册 MOSS 开放平台账号并创建 API Key（`sk-` 开头），控制台获取；调用带 `Authorization: Bearer <key>`",
       "promotions": "限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 / moss-live-1.0 标 0 积分。MOSS-Image API 已于 2026-11-11 12:00 起计费（低至 0.2 元/张）。",
       "openai_compat": {
-        "summary": "nex-n2.6 等 4 款限时免费 0 积分 + 多模态/语音/图像全家桶",
+        "summary": "nex-n2.6 限时免费 0 积分（Chat Completions）；TTS/转写/文生图收费",
         "api_key_label": "控制台创建",
-        "api_key_url": "https://platform.mosi.cn/",
+        "api_key_url": "https://platform.moss.cn/app/api-keys/",
         "base_url": "https://api.mosi.cn/v1",
-        "models": "`nex-n2.6`, `nex-n2.6-2026-11-05`, `moss-vl-1.0`, `moss-live-1.0`"
+        "models": "`nex-n2.6`, `nex-n2.6-2026-11-05`"
       },
       "links": [
         [
@@ -801,8 +802,12 @@
           "https://platform.mosi.cn/"
         ],
         [
-          "API 基础域名（OpenAI 兼容）",
-          "https://api.mosi.cn/v1/models"
+          "快速开始（API Key 与接入示例）",
+          "https://platform.moss.cn/docs/getting-started/quickstart"
+        ],
+        [
+          "请求限制",
+          "https://platform.moss.cn/docs/errors-and-limits/limits"
         ]
       ],
       "reviewed": ""
