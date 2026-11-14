@@ -10,8 +10,8 @@
 
 ## 全部文章（共 929 篇，按日期倒序；无日期条目列于最后）
 
-1. [LLMON: An LLM-Native Markup Language, now in Granite 4.1 3B and 8B](https://huggingface.co/blog/ibm-granite/llmon-an-llm-native-markup-language-now-in-granite)（2026-11-12）
-2. [The Definitive Fine-Tuning Guide for 3D Generation Models](https://huggingface.co/blog/3d-lora-finetuning)（2026-11-12）
+1. [LLMON：一种 LLM 原生标记语言，现已在 Granite 4.1 3B 和 8B 上可用](https://huggingface.co/blog/ibm-granite/llmon-an-llm-native-markup-language-now-in-granite)（2026-11-12） <!--orig:LLMON: An LLM-Native Markup Language, now in Granite 4.1 3B and 8B-->
+2. [3D 生成模型的 fine-tuning 权威指南](https://huggingface.co/blog/3d-lora-finetuning)（2026-11-12） <!--orig:The Definitive Fine-Tuning Guide for 3D Generation Models-->
 3. [BotPsy：基于十亿参数以下 agentic 语言模型的端侧个人助理](https://huggingface.co/blog/qvac/botpsy)（2026-11-11） <!--orig:BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model-->
 4. [多向量嵌入模型的令牌池感知训练](https://huggingface.co/blog/token-pooling)（2026-11-11） <!--orig:Token Pooling-Aware Training for Multi-Vector Embedding Models-->
 5. [用 Google Cloud 账号支付 Hugging Face Hub 费用](https://huggingface.co/blog/hub-gcp-marketplace)（2026-11-10） <!--orig:Pay for Hugging Face Hub with your Google Cloud Account-->

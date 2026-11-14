@@ -9,10 +9,10 @@
 
 ## 全部文章（共 183 篇，按日期倒序；无日期条目列于最后）
 
-1. [RAG 中的重新排名：如何使用重新排名器修复错误检索](https://openrouter.ai/blog/tutorials/reranking-rag/)（2026-11-13） <!--orig:Reranking in RAG: How to Fix Bad Retrieval with a Reranker-->
+1. [RAG 中的 reranking：如何用 reranker 修复错误检索](https://openrouter.ai/blog/tutorials/reranking-rag/)（2026-11-13） <!--orig:Reranking in RAG: How to Fix Bad Retrieval with a Reranker-->
 2. [如何阻止 AI 代理陷入无限循环](https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/)（2026-11-12） <!--orig:How to Stop an AI Agent Stuck in an Infinite Loop-->
 3. [如何对 LLM 进行基准测试](https://openrouter.ai/blog/tutorials/how-to-benchmark-llms/)（2026-11-12） <!--orig:How to Benchmark LLMs-->
-4. [我们如何为 OpenRouter 构建自校正定位系统](https://openrouter.ai/blog/announcements/openrouter-in-8-languages/)（2026-11-12） <!--orig:How We Built a Self-Correcting Localization System for OpenRouter-->
+4. [我们如何为 OpenRouter 构建自校正本地化系统](https://openrouter.ai/blog/announcements/openrouter-in-8-languages/)（2026-11-12） <!--orig:How We Built a Self-Correcting Localization System for OpenRouter-->
 5. [自托管 LLM 与 API：自托管何时获得回报](https://openrouter.ai/blog/insights/self-hosted-llm-vs-api/)（2026-11-12） <!--orig:Self-Hosted LLM vs API: When Does Self-Hosting Pay Off-->
 6. [LLM API 速率限制：如何修复 OpenAI 和 Claude 的 429 错误](https://openrouter.ai/blog/tutorials/llm-api-rate-limits/)（2026-11-11） <!--orig:LLM API Rate Limits: How to Fix OpenAI and Claude 429 Errors-->
 7. [LLM 量化：fp8 和 fp4 对质量与价格的影响](https://openrouter.ai/blog/insights/llm-quantization/)（2026-11-11） <!--orig:LLM Quantization: What fp8 and fp4 Do to Quality and Price-->

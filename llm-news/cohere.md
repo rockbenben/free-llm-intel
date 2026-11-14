@@ -9,10 +9,10 @@
 
 ## 全部文章（共 57 篇，按日期倒序；无日期条目列于最后）
 
-1. [欢迎 Jaya Baloo 担任 Cohere 首位 CISO网络安全领导者兼 AISLE 联合创始人加入 Cohere，帮助打造全球最值得信赖的主权人工智能平台](https://cohere.com/blog/cohere-welcomes-jaya-baloo-as-first-ciso)（2026-11-12） <!--orig:Welcoming Jaya Baloo as Cohere's First CISOThe cybersecurity leader and AISLE co-founder joins Cohere to help build the world's most trusted platform for sovereign AI-->
+1. [欢迎 Jaya Baloo 出任 Cohere 首位 CISO](https://cohere.com/blog/cohere-welcomes-jaya-baloo-as-first-ciso)（2026-11-12） <!--orig:Welcoming Jaya Baloo as Cohere's First CISOThe cybersecurity leader and AISLE co-founder joins Cohere to help build the world's most trusted platform for sovereign AI-->
 2. [Embed 5 与 Rerank 5 现已上线 OpenRouter](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04） <!--orig:Embed 5 and Rerank 5 now on OpenRouterAccess Cohere’s state-of-the-art retrieval models through a single API, with unified billing and no additional SDKs.-->
 3. [全球领先的开放模型，完全由你掌控](https://cohere.com/blog/open-source-model-vault)（2026-11-03） <!--orig:The world's leading open models, fully under your controlThe right model for the right job, all under your jurisdiction.-->
-4. [Cohere 承诺提供 40 亿加元，以加强加拿大的人工智能领导地位并大幅扩大其国家劳动力](https://cohere.com/blog/cohere-canada-commitment)（2026-10-30） <!--orig:Cohere advances C$4 billion commitment to strengthen Canada’s AI leadership and significantly expand its national workforce-->
+4. [Cohere 推进 40 亿加元承诺，巩固加拿大 AI 领导地位并大幅扩充本土团队](https://cohere.com/blog/cohere-canada-commitment)（2026-10-30） <!--orig:Cohere advances C$4 billion commitment to strengthen Canada’s AI leadership and significantly expand its national workforce-->
 5. [在 AWS 上用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29） <!--orig:Build a financial research assistant with Cohere on AWS-->
 6. [谁来建设 AI 前沿：民主世界为何需要更多前沿 AI 建设者，以及我们打算如何竞争](https://cohere.com/blog/who-gets-to-build-the-frontier-for-ai)（2026-10-29） <!--orig:Who Gets to Build the Frontier for AI-->
 7. [North 的 PitchBook：面向企业团队的私募市场情报](https://cohere.com/blog/pitchbook-integration)（2026-10-26） <!--orig:PitchBook in North: Private market intelligence for enterprise teams-->

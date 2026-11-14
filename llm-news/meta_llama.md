@@ -10,7 +10,7 @@
 
 ## 全部文章（共 28 篇，按日期倒序；无日期条目列于最后）
 
-1. [Meta 的新协议将清洁制造带入数据中心供应链](https://about.fb.com/news/2026/11/meta-new-agreements-clean-manufacturing-data-center-supply-chains/)（2026-11-12） <!--orig:Meta’s New Agreements Bring Clean Manufacturing to Data Center Supply Chains-->
+1. [Meta 的新协议将清洁制造引入数据中心供应链](https://about.fb.com/news/2026/11/meta-new-agreements-clean-manufacturing-data-center-supply-chains/)（2026-11-12） <!--orig:Meta’s New Agreements Bring Clean Manufacturing to Data Center Supply Chains-->
 2. [为你专属定制 Muse 应用](https://about.fb.com/news/2026/11/introducing-spaces-customize-muse-app/)（2026-11-06） <!--orig:Design the Muse App, Just for You-->
 3. [给你的 Muse 一个声音](https://about.fb.com/news/2026/11/introducing-muse-ai-voice-expressive-avatars/)（2026-11-05） <!--orig:Give Your Muse a Voice-->
 4. [Meta 与五所美国大学合作，加速医学和科学突破](https://about.fb.com/news/2026/10/meta-partners-with-five-us-universities-to-accelerate-medical-and-scientific-breakthroughs/)（2026-10-28） <!--orig:Meta Partners With Five US Universities to Accelerate Medical and Scientific Breakthroughs-->

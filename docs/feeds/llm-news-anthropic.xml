@@ -9,501 +9,499 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>在您的安全范围内操作 Claude Managed Agents</title>
+      <title>在自己的安全边界内运行 Claude Managed Agents</title>
       <link>https://claude.com/resources/articles/self-hosted-claude-managed-agents</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/self-hosted-claude-managed-agents</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Operate Claude Managed Agents inside your security perimeter</description>
-      <content:encoded><![CDATA[<p><a href="https://platform.claude.com/docs/en/management-agents/self-hosted">自托管 Claude Managed Agents</a> 现已推出内测版。开发人员可以构建直接在公司代码和内部系统中工作的代理，并在自己的环境中运行这些代理。</p>
-<p>自托管是运行<a href="https://claude.com/platform/claude-management-agents">托管代理</a>的一种新方式，这是一套用于构建和部署自主代理的可组合 API。托管代理提供代理工具、沙箱、凭证处理和会话历史记录，以使长期运行的代理投入生产。</p>
-<h2>在您自己的环境中运行代理控制平面</h2>
-<p>我们首先在 Claude 平台上推出托管代理作为托管服务，Anthropic 在该平台上为您运行基础设施。对于需要将代码保留在自己的环境中的团队，我们添加了<a href="https://platform.claude.com/docs/en/management-agents/self-hosted-sandboxes">自托管沙箱</a>。</p>
-<p>从那时起，代理变得更加有能力，并承担更重要的工作，例如修复损坏的构建、测试版本、对警报进行分类以及处理错误积压。它们在您的代码上无人值守地运行，并且需要访问您的内部系统。对于具有该级别访问权限的代理，一些团队希望在自己的环境中获得整个服务，而不仅仅是沙箱。到目前为止，这意味着自己构建平台。</p>
-<p>通过自托管托管代理，服务的每个部分都在您自己的云或本地运行，包括工具、沙箱、凭据和会话历史记录。您可以操作托管代理服务器、其数据库以及代理运行 shell 和文件工具的工作线程。模型请求将发送至您选择的位置，无论是直接由 Anthropic、您的云提供商（Amazon Bedrock、Google 的代理平台或 Microsoft Foundry）还是您自己的网关。您的开发人员仍然使用与托管托管代理服务相同的核心 API 来构建代理。</p>
-<p>会话历史记录存储在您自己的数据库中。如果您的组织使用 Anthropic 实现了<a href="https://platform.claude.com/docs/en/manage-claude/api-and-data-retention#zero-data-retention-zdr-scope">零数据保留 (ZDR)</a>，则它适用于发送给 Claude 的请求，方式与任何其他消息 API 调用相同。</p>
-<p><img src="https://assets.claude.com/7607c90e3d3d6e3bf9f7d1af0d39afb006be1413.svg" alt="图 1：自托管 Claude 托管代理"></p>
-<h2>专为代理安全而设计</h2>
-<p>当代理在代码和系统中无人值守地运行时，您不能依赖人员检查每个步骤，因此必须将限制内置到系统本身中。这就是代理安全性从架构开始的原因，也是我们围绕四个原则设计托管代理的原因。无论 Anthropic 托管所有内容、仅托管沙箱还是托管整个服务，这些原则都适用。</p>
-<p><strong>大脑和手分开</strong></p>
-<p>线束（大脑）调用Claude，沙箱（手）是代理代码运行的地方。它们在设计上是分开的。代理的代码在沙箱中运行，而代理循环、会话历史记录和保管库机密则保留在沙箱之外。 <a href="https://www.anthropic.com/engineering/managed-agents">将它们分开</a>还意味着代理不依赖于一个沙箱在整个运行过程中幸存，沙箱仅在工具需要它们时启动，并且会话历史记录作为事件日志存在于沙箱之外。</p>
-<p><strong>凭证远离沙箱</strong></p>
-<p>保险库旨在将凭证排除在沙箱之外。对于 MCP 工具和支持的 API 调用，<a href="https://platform.claude.com/docs/en/management-agents/vaults">沙箱外部的代理将凭证添加到请求中</a>。通过自托管托管代理，您还可以将凭据存储在您自己的机密管理器中。</p>
-<p><strong>网络访问可能受到限制</strong></p>
-<p>您可以将每个环境限制为<a href="https://platform.claude.com/docs/en/management-agents/secure-deployment">允许的主机列表</a>，并阻止对任何其他主机的请求。对于修复损坏的构建的代理，该列表可能只是您的 git 主机和包注册表。当您自己托管沙箱时，您可以在自己的防火墙中设置相同的限制。</p>
-<p><strong>每一次会话都会留下完整的记录</strong></p>
-<p>托管代理会记录代理所采取的每一步，包括其发出的工具调用以及返回的内容。该记录通过 <a href="https://platform.claude.com/docs/en/manage-claude/opentelemetry">OpenTelemetry</a> 导出，因此您可以将其发送到您已使用的监控工具，并与其他系统一起查看代理活动。</p>
-<h2>开始吧</h2>
-<p>自托管的 Claude Managed Agents 现已推出内测版。请联系您的 Anthropic 帐户团队请求访问权限，或阅读<a href="https://platform.claude.com/docs/en/management-agents/self-hosted">文档</a>以了解更多信息。</p>
+      <content:encoded><![CDATA[<p><a href="https://platform.claude.com/docs/en/managed-agents/self-hosted">自托管 Claude Managed Agents</a> 现已开放私有测试。开发者可以构建直接作用于公司代码和内部系统的 agents，并在自己的环境中运行它们。</p>
+<p>自托管是运行 <a href="https://claude.com/platform/claude-managed-agents">Managed Agents</a> 的一种新方式——它是一套可组合的 API，用来构建和部署自主 agents。Managed Agents 提供 agent harness、沙箱、凭据处理和会话历史，让长时间运行的 agents 得以进入生产环境。</p>
+<h2>在自己的环境中运行 agent 控制平面</h2>
+<p>我们最初把 Managed Agents 作为 Claude Platform 上的托管服务推出，由 Anthropic 替你运行基础设施。对于需要把代码留在自己环境里的团队，我们后来加入了<a href="https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes">自托管沙箱</a>。</p>
+<p>此后，agents 能力更强，承担起更要紧的活儿：修复坏掉的构建、测试发布版本、分诊告警、清理 bug backlog。它们在你的代码上无人值守地运行，也需要访问你的内部系统。对拥有这种访问级别的 agents，有些团队希望整套服务都放在自己的环境里，而不只是沙箱。在此之前，这意味着得自己把平台搭出来。</p>
+<p>有了自托管 Managed Agents，服务的每个部分都跑在你自己的云或本地，包括 harness、沙箱、凭据和会话历史。你负责运维 Managed Agents 服务器、它的数据库，以及 agents 运行 shell 和文件工具的 worker。模型请求发往哪里由你定：可以直接发给 Anthropic，也可以走你的云厂商（Amazon Bedrock、Google 的 Agent Platform 或 Microsoft Foundry），或者你自己的网关。你的开发者仍用与托管版 Managed Agents 服务相同的核心 API 来构建 agents。</p>
+<p>会话历史存在你自己的数据库里。如果你的组织与 Anthropic 之间启用了<a href="https://platform.claude.com/docs/en/manage-claude/api-and-data-retention#zero-data-retention-zdr-scope">零数据保留（ZDR）</a>，它对发送给 Claude 的请求同样适用，与任何其他 Messages API 调用一致。</p>
+<p><img src="https://assets.claude.com/7607c90e3d3d6e3bf9f7d1af0d39afb006be1413.svg" alt="图 1：自托管 Claude Managed Agents"></p>
+<h2>为 agent 安全而设计</h2>
+<p>当 agent 在你的代码和系统里无人值守地运行，你没法指望有人逐步盯着，所以限制必须做进系统本身。这就是为什么 agent 安全要从架构抓起，也是我们围绕四条原则设计 Managed Agents 的原因。无论由 Anthropic 托管全部、你只托管沙箱，还是你托管整套服务，这些原则都适用。</p>
+<p><strong>大脑与双手分开</strong></p>
+<p>harness（大脑）负责调用 Claude，沙箱（双手）是 agent 代码运行的地方，两者在设计上刻意分开。agent 的代码跑在沙箱里，而 agent loop、会话历史和 vault 机密都留在它之外。<a href="https://www.anthropic.com/engineering/managed-agents">把两者分开</a>还意味着 agent 不必依赖某一个沙箱撑完整轮运行：沙箱只在工具需要时才启动，会话历史则以事件日志的形式存在于沙箱之外。</p>
+<p><strong>凭据不进沙箱</strong></p>
+<p>Vault 的设计目的就是把凭据挡在沙箱之外。对 MCP 工具和受支持的 API 调用，<a href="https://platform.claude.com/docs/en/managed-agents/vaults">由沙箱外的代理把凭据加进请求</a>。用自托管 Managed Agents 时，你也可以把凭据存进自己的 secrets manager。</p>
+<p><strong>网络访问可以收紧</strong></p>
+<p>你可以把每个环境限制在<a href="https://platform.claude.com/docs/en/managed-agents/secure-deployment">一份允许访问的主机列表</a>内，发往其他主机的请求一律拦截。对修复坏掉构建的 agent 来说，这份名单可能只有你的 git 主机和包仓库。沙箱由你自己托管时，同样的限制就设在自己的防火墙里。</p>
+<p><strong>每次会话都留下完整记录</strong></p>
+<p>Managed Agents 会记下 agent 走过的每一步，包括它发起的工具调用和返回的结果。记录通过 <a href="https://platform.claude.com/docs/en/manage-claude/opentelemetry">OpenTelemetry</a> 导出，你可以送进已在用的监控工具，和其他系统一起查看 agent 的活动。</p>
+<h2>开始使用</h2>
+<p>自托管 Claude Managed Agents 现已开放私有测试。可联系你的 Anthropic 客户团队申请开通，或阅读<a href="https://platform.claude.com/docs/en/managed-agents/self-hosted">文档</a>了解更多。</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>介绍制造领域的Claude</h3>
-<p>具有 17 项技能和 4 个连接器的新插件可帮助制造商从他们已运行的系统起草报价、质量报告和供应商请求。</p>
+<h3>推出 Claude for Manufacturing</h3>
+<p>一款含 17 个 skills 和 4 个 connectors 的新插件，帮制造商从已在运行的系统里起草报价、质量报告和供应商询价。</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>介绍Claude会议</h3>
-<p>将 Claude 添加到您的视频通话中，并在通话时开始工作</p>
+<h3>推出 Claude Meetings</h3>
+<p>把 Claude 加进视频通话，边聊边把活儿开起来</p>
 <p>文章</p>
 <p>2026 年 11 月 10 日</p>
-<h3>您的应用程序现在可以在 Claude 中打开，并且 Claude 可以在其中工作</h3>
-<p>我们的合作伙伴现在可以将他们的应用程序直接嵌入到 Claude 中，这样您和 Claude 就可以在同一屏幕上使用同一个工具，而无需切换选项卡。</p>
-<p>Claude·应用MCP</p>
+<h3>你的应用现在能在 Claude 里打开，Claude 也能在其中工作</h3>
+<p>我们的合作伙伴现在可以把应用直接嵌进 Claude，让你和 Claude 在同一个工具、同一块屏幕上协作，无需切换标签页。</p>
+<p>Claude appsMCP</p>
 <p>文章</p>
 <p>2026 年 11 月 10 日</p>
-<h3>与 Claude 合作的更多方式：表格、白板和交互式连接器</h3>
+<h3>与 Claude 协作的更多方式：Sheets、Whiteboards 和 Interactive Connectors</h3>
 <p>以思考的速度工作</p>
-<p>Claude应用程序</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
-<h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<p>Claude apps</p>
+<h2>用 Claude 改变组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
+<p>如需接收我们的每月开发者通讯，请留下你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>J. Crew 与 Claude 携手将其标志性的造型理念带入生活</title>
+      <title>J.Crew 借 Claude 将标志性造型理念带到线上</title>
       <link>https://claude.com/resources/articles/j-crew-style-advisor-with-claude</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/j-crew-style-advisor-with-claude</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：J. Crew brings its signature approach to styling to life with Claude</description>
-      <content:encoded><![CDATA[<p>在网上，购物通常一次只购买一种产品，因此找到一件毛衣的顾客必须再次搜索与之搭配的裤子和鞋子。为了改变这种状况，J.Crew 今天在 <a href="https://www.jcrew.com/">JCrew.com（在新选项卡中打开）</a> 上推出了 Style Advisor，这是一位人工智能造型师，可帮助客户购买整套服装。 J.Crew 的团队使用 <a href="https://claude.com/product/claude-code">Claude Code（在新选项卡中打开）</a> 构建了它，使用了从《寓言》到Haiku的多个 Claude 模型，每个模型都与其最擅长的工作相匹配。该产品现已在美国推出女装和男装款式。</p>
-<p>40 多年来，J.Crew 自己的造型师通过平衡比例、颜色和层次以及以意想不到的方式搭配单品打造出完整的造型。风格顾问将专业知识带到网上。顾客描述他们需要什么，例如海滩婚礼或第一次工作面试的服装，然后它会用 J.Crew 自己拍摄的照片中的完整造型来回答。他们可以从那里不断完善，因此购物变成了视觉对话。</p>
-<h2><strong>它是如何构建的</strong></h2>
-<p>J.Crew 的产品团队使用 <a href="https://www.anthropic.com/claude/fable">Claude Fable（在新选项卡中打开）</a> 5.1（Anthropic 用于复杂、开放式工作的模型）来规划 Style Advisor 应如何像造型师一样进行推理，然后使用 <a href="https://www.anthropic.com/claude/opus">Claude Opus（在新选项卡中打开）</a> 5.5 构建工作原型Claude·代码。 J.Crew 的工程师将原型投入生产。在每次对话中，<a href="https://www.anthropic.com/claude/sonnet">Claude Sonnet（在新选项卡中打开）</a> 5.5 充当造型师并决定响应的每一步，而 <a href="https://www.anthropic.com/claude/haiku">Claude Haiku（在新选项卡中打开）</a> 5.5 处理快速、集中的任务，因此 Style Advisor 可以快速回答。因为每一套造型都来自 J.Crew 的造型师，所以它的推荐与 J.Crew 的造型观点保持一致。</p>
-<h3><strong>客户如何使用 Style Advisor</strong></h3>
-<ul><li><strong>购买全套服装。</strong> 每项推荐均来自 J.Crew 造型师为该品牌目录拍摄而设计的造型，风格顾问会在照片中显示它们，以便顾客看到全套服装。</li><li><strong>从单件开始构建。</strong> 顾客可以从一件商品开始，然后获得有关完成外观的单品的建议。</li><li><strong>着装适合场合。 </strong>客户可以说出他们要去哪里，无论是度假、节日聚会还是婚礼，并获得相关推荐。</li><li><strong>了解 J.Crew 的观点。 </strong>Style Advisor 采用与 J.Crew 造型师在商店中使用的相同造型原则。</li></ul>
-<h2><strong>下一步是什么</strong></h2>
-<p>推出后，Style Advisor 可帮助客户找到新的服装创意并更有信心地购物。随着时间的推移，J.Crew 计划根据每位客户的喜好和过去的购买情况定制建议，使其更加个性化，并将其推向更多市场和产品线。</p>
-<p>J.Crew 集团首席执行官 Libby Wadle 表示：“随着消费者期望的变化以及人工智能为零售业带来新的可能性，J.Crew 正在挑战传统的在线购物模式，超越单个产品搜索，转向更加互联和灵感主导的体验。” “长期以来，我们一直在思考客户未来想要如何购物，以及我们如何引领这种演变，而不是对其做出反应。我们看到了从根本上重新思考购物体验的机会。通过与 Anthropic 的合作，我们将数十年的 J.Crew 造型、销售和创意专业知识结合在一起，帮助塑造客户行为的下一步。”</p>
-<p>Anthropic 首席商务官 Paul Smith 表示：“J.Crew 拥有时尚界最知名的观点之一，其团队利用 Claude 以新的方式将这种专业知识带给客户。” “他们使用前沿模型来构建体验，并使用更快、更高效的模型来运行体验，以便客户能够快速获得符合品牌风格的答案。”</p>
-<p><em><strong>立即开始使用 <a href="https://claude.com/product/claude-code">Claude Code（在新选项卡中打开）</a> 进行构建。</strong></em></p>
+      <content:encoded><![CDATA[<p>在线购物通常是一件一件地挑：顾客看中一件毛衣，还得再去找搭配的裤子和鞋。为了改变这一点，J.Crew 今天在 <a href="https://www.jcrew.com/">JCrew.com</a> 上线了 Style Advisor——一位 AI 造型师，帮顾客按整套穿搭来选购。J.Crew 团队用 <a href="https://claude.com/product/claude-code">Claude Code</a> 搭建它，调用了多个 Claude 模型，从 Fable 到 Haiku，每个都对应自己最擅长的活儿。目前美国地区的女装和男装款式已可使用。</p>
+<p>四十多年来，J.Crew 自己的造型师靠平衡比例、色彩和层次，再用出人意料的方式搭配单品，搭出完整造型。Style Advisor 把这份专长搬到了线上。顾客说出需求，比如海滩婚礼或初次工作面试要穿什么，它就从 J.Crew 自家拍摄的大片里给出整套造型。顾客可以接着不断调整，购物于是变成一场看得见的对话。</p>
+<h2><strong>它是怎么搭起来的</strong></h2>
+<p>J.Crew 的产品团队先用 <a href="https://www.anthropic.com/claude/fable">Claude Fable</a> 5.1——Anthropic 面向复杂、开放式工作的模型——规划 Style Advisor 该如何像造型师一样思考，再在 Claude Code 里用 <a href="https://www.anthropic.com/claude/opus">Claude Opus</a> 5.5 做出可运行的原型。J.Crew 的工程师把这个原型推上了生产环境。每次对话里，<a href="https://www.anthropic.com/claude/sonnet">Claude Sonnet</a> 5.5 充当造型师，决定回复的每一步；<a href="https://www.anthropic.com/claude/haiku">Claude Haiku</a> 5.5 则处理快速、聚焦的小任务，让 Style Advisor 答得快。由于每套造型都出自 J.Crew 造型师之手，推荐始终与 J.Crew 的造型主张保持一致。</p>
+<h3><strong>顾客怎么用 Style Advisor</strong></h3>
+<ul><li><strong>按整套穿搭选购。</strong> 每条推荐都源于 J.Crew 造型师为品牌目录拍摄打造的造型，Style Advisor 用照片呈现，顾客一眼能看到整套效果。</li><li><strong>从一件单品搭起。</strong> 顾客可以从某一件开始，得到能补全整套造型的其他单品建议。</li><li><strong>按场合搭配。 </strong>顾客说出要去哪里，无论是度假、节日聚会还是婚礼，就能拿到相应推荐。</li><li><strong>感受 J.Crew 的风格主张。 </strong>Style Advisor 用的，和 J.Crew 造型师在门店里用的是同一套造型原则。</li></ul>
+<h2><strong>接下来</strong></h2>
+<p>上线之初，Style Advisor 帮顾客找到新的穿搭灵感，买得更有底气。往后，J.Crew 计划按每位顾客的偏好和过往购买记录调整建议，让它更贴合个人，并推广到更多市场和产品线。</p>
+<p>&quot;随着消费者期待不断变化、AI 为零售打开新的可能，J.Crew 正在挑战传统的在线购物模式，从一件件单品搜索，走向更连贯、由灵感带动的体验，&quot;J.Crew Group 首席执行官 Libby Wadle 说，&quot;很久以来，我们一直在想顾客将来会怎么购物，以及我们如何引领这场变化，而不是被动应对。我们看到一个从根本上重新思考购物体验的机会。通过与 Anthropic 的合作，我们把 J.Crew 数十年在造型、商品企划和创意上的积累汇聚起来，一起塑造顾客行为的下一步。&quot;</p>
+<p>&quot;J.Crew 有着时尚界辨识度最高的风格主张之一，它的团队用 Claude 把这份专长以全新的方式带到了顾客面前，&quot;Anthropic 首席商务官 Paul Smith 说，&quot;他们用前沿模型搭起这套体验，再用更快、更高效的模型来跑，于是顾客能很快得到答案，又不失品牌一贯的造型调性。&quot;</p>
+<p><em><strong>今天就动手，用 <a href="https://claude.com/product/claude-code">Claude Code</a> 构建吧。</strong></em></p>
 <p>文章</p>
 <p>2026 年 11 月 9 日</p>
-<h3>摩根大通将 Claude Code 扩展到公司更多员工</h3>
-<p>Claude·科德</p>
+<h3>JPMorganChase 将 Claude Code 推广到全公司更多员工</h3>
+<p>Claude Code</p>
 <p>文章</p>
 <p>2026 年 10 月 28 日</p>
-<h3>IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude</h3>
-<p>IDC 将 Claude 整合为其 Quanta 平台的一部分，并将 Claude 推广到自己的业务中</p>
-<p>Claude·科沃克</p>
-<p>Claude·科德</p>
+<h3>IDC 把 Quanta 引入 Claude，并在全公司采用 Claude</h3>
+<p>IDC 把 Claude 集成进 Quanta 平台，并在自身业务中全面推广 Claude</p>
+<p>Claude Cowork</p>
+<p>Claude Code</p>
 <p>还有 1 个</p>
-<p>：Claude·企业</p>
-<p>Claude·恩企业</p>
+<p>: Claude Enterprise</p>
+<p>Claude Enterprise</p>
 <p>文章</p>
 <p>2026 年 10 月 21 日</p>
-<h3>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</h3>
-<p>HCLTech 将把 Claude 引入其为银行、医院、电信公司和制造商提供的解决方案中。</p>
+<h3>HCLTech 以 Global Premier 合作伙伴身份加入 Claude Partner Network</h3>
+<p>HCLTech 将把 Claude 带进它为银行、医院、电信公司和制造商提供的解决方案中。</p>
 <p>文章</p>
 <p>2026 年 9 月 28 日</p>
-<h3>使用 Claude Managed Agents 和 NVIDIA 实现代理安全的新方法</h3>
-<p>注意：此博客已从其原始版本更新为包含有关 Claude Managed Agents 的其他技术详细信息。</p>
-<p>Claude·平台</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
-<h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<h3>用 Claude Managed Agents 和 NVIDIA 探索 agent 安全的新思路</h3>
+<p>注：本文已在原版基础上更新，补充了关于 Claude Managed Agents 的技术细节。</p>
+<p>Claude Platform</p>
+<h2>用 Claude 改变组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
+<p>如需接收我们的每月开发者通讯，请留下你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>引入Claude制造</title>
+      <title>推出 Claude for Manufacturing</title>
       <link>https://claude.com/resources/articles/claude-for-manufacturing</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-for-manufacturing</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Claude for Manufacturing</description>
-      <content:encoded><![CDATA[<p>今天，我们推出了 <a href="http://claude.com/solutions/manufacturing">Claude for Manufacturing（在新选项卡中打开）</a>，该插件包含从为新工作定价到诊断停止的机器等工作技能。估算员现在可以让 Claude 阅读客户的请求，比较类似工作的成本，并起草报价。该插件通过与 Autodesk Fusion、Infor、Microsoft 365 和 Oracle NetSuite 的连接器根据制造商自己的记录进行工作。 Claude for Manufacturing 的构建使得负责人可以在工作到达客户或供应商之前对其进行审查和批准。</p>
-<p>制造团队一天中的大部分时间都在收集信息。在 2025 年制造业领导委员会的一项调查中，79% 的制造商表示他们<a href="https://manufacturingleadershipcouncil.com/survey-october/">手动输入数据（在新选项卡中打开）</a>。在Claude对每个流程进行审查的情况下，估算员可以专注于价格，质量工程师可以专注于修复，技术人员可以专注于首先检查的内容。</p>
-<h2><strong>为制造商打造的技能</strong></h2>
-<p>该插件的 17 项技能涵盖销售、质量、运营、供应链、设计和设置。有些处理单个任务，而另一些则按顺序运行多个任务，因此Claude可以通过几个步骤执行一项工作，直到有人需要检查它为止。这些技能可以运行的流程包括：</p>
-<ul><li><strong>引用新工作</strong>：估算员可以要求 Claude 阅读客户的请求，列出缺少的内容，比较类似工作的成本，并起草要发布的报价。</li><li><strong>调查失败的检查</strong>：质量工程师可以让 Claude 记录失败情况，检查过去的报告是否存在相同问题，对可能的原因进行排序，并起草纠正措施报告。</li><li><strong>诊断故障</strong>：技术人员可以让 Claude 阅读传感器输出、维修说明、照片和手册，然后对可能的原因进行排序，以便技术人员检查并决定后续步骤。</li><li><strong>从其他供应商采购</strong>：买家可以让 Claude 准备报价请求，然后比较返回的出价。</li><li><strong>将设计与 Autodesk Fusion 进行比较</strong>：工程师可以让 Claude 根据现有模型生成变体，根据工程师的目标对其进行评分，并起草决策备忘录。</li><li><strong>生产报告</strong>：工厂经理可以让Claude将生产数据编译成一份报告，显示目标产量、设备停机时间以及停机时间和错过的产出成本。</li></ul>
-<p>这些技能是一个起点。组织可以在它们的基础上进行构建以适应其特定的运营，并且我们计划随着时间的推移添加新的制造技能。</p>
-<h2><strong>制造系统的连接器</strong></h2>
-<p>Claude for Manufacturing 使用作为制造运营核心的软件，该软件对于团队如何运营业务始终至关重要：</p>
-<ul><li><strong>Autodesk Fusion</strong>：工程师可以在选择一种设计选项之前比较更多的设计选项，因为 Claude 会根据现有模型生成变体。</li><li><strong>Infor</strong>：买家和计划人员可以在行动之前检查采购订单和库存，因为Claude会在 Infor 中查找它们。</li><li><strong>Microsoft 365</strong>：质量工程师可以将程序、供应商电子邮件和导出的报告纳入一项工作中，因为Claude可以在共享文件夹和收件箱中找到它们。</li><li><strong>Oracle NetSuite</strong>：估算人员可以根据实际订单、库存、生产步骤和工作成本对新工作进行定价，因为 Claude 在起草报价时会提取这些记录。</li></ul>
-<p>制造商还可以在没有连接器的系统上使用该插件。他们将这些系统的定期导出保存到 Microsoft 365，Claude根据这些文件起草报价或编译生产报告。</p>
-<h2><strong>与 Claude 一起在 Infor 中进行更改</strong></h2>
-<p>为制造商制造核心软件的 Infor 也在<a href="https://claude.ai/directory/infor">发布自己的插件（在新选项卡中打开）</a>。借助 Claude for Manufacturing 中的 Infor 连接器，团队可以查找记录。借助 Infor 的插件，他们还可以在 Claude 的 Infor 中进行更改。</p>
-<p>例如，如果钢材发货量推迟两周，买家可以询问Claude哪些客户订单受到影响以及其他地点有多少钢材。一旦买家批准，Claude 就可以向其他供应商下达采购订单，并在 Infor 中重新安排受影响的生产。 Claude 的访问权限遵循买方的 Infor 权限。</p>
-<h2><strong>制造团队保持控制</strong></h2>
-<p>技能的建立以用户的审查结束，因此估算员检查并发布报价，质量工程师验证纠正措施报告的修复。为了支持审查，Claude可以将数据和声明链接回基础数据和文档。</p>
-<p>Claude制造公司不操作设备。为此，Anthropic 正在开发<a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">模型硬件标准（在新选项卡中打开）</a>，这是一项研究预览，为可编程设备提供了描述其测量、设置和安全限制的标准方法。</p>
-<h2><strong>如何开始</strong></h2>
-<p>在团队或企业计划中，<a href="https://claude.ai/customize/plugins/id/45112ff2-6233-4954-b8ec-c448ef2d1e59%40anthropic-plugin-directory">安装插件（在新选项卡中打开）</a>并告诉 Claude，“设置我们。”Claude询问团队使用哪些系统，测试连接器，并报告哪些技能尚未完全运行。</p>
-<p>要了解该插件的工作原理，请<a href="https://claude.com/resources/webinars/claude-for-manufacturing-put-your-plants-know-how-to-work">注册参加我们的技术网络研讨会（在新选项卡中打开）</a>，时间为美国东部时间 11 月 17 日上午 11:00。要了解公司的制造系统，请<a href="https://claude.com/contact-sales">联系我们的销售团队（在新选项卡中打开）</a>。</p>
+      <content:encoded><![CDATA[<p>今天，我们推出 <a href="http://claude.com/solutions/manufacturing">Claude for Manufacturing</a>，这款插件自带的 skills 覆盖从为新订单报价到诊断停机机器的各项工作。估算员现在可以让 Claude 读取客户请求、比照类似订单的成本，并起草报价。该插件通过 connectors 接入 Autodesk Fusion、Infor、Microsoft 365 和 Oracle NetSuite，基于制造商自有的记录工作。Claude for Manufacturing 的设计让负责人在成果送达客户或供应商之前，能够先审阅并批准。</p>
+<p>制造团队一天里往往要花大量时间收集信息。在 2025 年 Manufacturing Leadership Council 的一项调查中，79% 的制造商表示自己<a href="https://manufacturingleadershipcouncil.com/survey-october/">手动录入数据</a>。有了 Claude 把每个流程推进到待审阅这一步，估算员可以专注定价，质量工程师专注修复，技术人员专注先检查哪里。</p>
+<h2><strong>为制造商打造的 skills</strong></h2>
+<p>这款插件的 17 个 skills 覆盖销售、质量、运营、供应链、设计和设置。有的只处理单一任务，有的按顺序连跑多个任务，让 Claude 能把一项工作推进若干步骤，直到需要人工审阅为止。这些 skills 可运行的流程包括：</p>
+<ul><li><strong>为新订单报价</strong>：估算员可以让 Claude 读取客户请求、列出缺失信息、比照类似订单的成本，并起草可供发布的报价。</li><li><strong>排查检验不合格</strong>：质量工程师可以让 Claude 记录不合格情况、翻查过往报告里是否有同类问题、给可能原因排序，并起草纠正措施报告。</li><li><strong>诊断设备故障</strong>：技术人员可以让 Claude 读取传感器导出数据、维修记录、照片和手册，再把可能原因排序，供技术人员逐项排查并决定下一步。</li><li><strong>改向其他供应商采购</strong>：采购员可以让 Claude 拟好询价单，再比较回收的报价。</li><li><strong>用 Autodesk Fusion 比选设计方案</strong>：工程师可以让 Claude 基于现有模型生成多个变体，按工程师设定的目标打分，并起草决策备忘录。</li><li><strong>生成生产报表</strong>：工厂经理可以让 Claude 把生产数据汇总成一份报告，列出实际产量与目标的差距、设备停机时间，以及停机和欠产造成的损失。</li></ul>
+<p>这些 skills 只是起点。企业可以在此基础上按自身运营情况改制，我们也会逐步增加新的制造类 skills。</p>
+<h2><strong>对接制造系统的 connectors</strong></h2>
+<p>Claude for Manufacturing 与制造运营核心软件协同工作，而这些软件仍是团队经营业务的中枢：</p>
+<ul><li><strong>Autodesk Fusion</strong>：工程师能在定案前比选更多设计方案，因为 Claude 会基于他们现有的模型生成变体。</li><li><strong>Infor</strong>：采购员和计划员可以在行动前核对采购订单与库存，因为 Claude 会在 Infor 里查出来。</li><li><strong>Microsoft 365</strong>：质量工程师可以把操作规程、供应商邮件和导出的报告汇进同一项工作，因为 Claude 能在共享文件夹和收件箱里找到它们。</li><li><strong>Oracle NetSuite</strong>：估算员可以对照真实订单、库存、生产工序和订单成本为新工作定价，因为 Claude 起草报价时会调取这些记录。</li></ul>
+<p>对于没有 connectors 的系统，制造商同样可以使用这款插件。他们把那些系统定期导出的文件存到 Microsoft 365，Claude 便据这些文件起草报价或汇总生产报表。</p>
+<h2><strong>用 Claude 在 Infor 里改动数据</strong></h2>
+<p>为制造商提供核心软件的 Infor 也在<a href="https://claude.ai/directory/infor">推出自己的插件</a>。借助 Claude for Manufacturing 里的 Infor connector，团队可以查询记录；借助 Infor 的插件，他们还能在 Claude 里直接改动 Infor 中的数据。</p>
+<p>举例来说，如果一批钢材延迟两周到货，采购员可以问 Claude 哪些客户订单受影响、其他厂区还有多少钢材。采购员一经批准，Claude 就能向另一家供应商下达采购订单，并在 Infor 里重排受影响的生产计划。Claude 的访问权限遵循该采购员在 Infor 中的权限。</p>
+<h2><strong>制造团队始终掌握主动</strong></h2>
+<p>skills 都以用户审阅收尾：估算员核对并发布报价，质量工程师确认纠正措施报告里的修复方案。为便于审阅，Claude 能把数字和论断回溯到对应的原始数据与文档。</p>
+<p>Claude for Manufacturing 不操作设备。为此，Anthropic 正在开发 <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">Model Hardware Standard</a>，这是一项研究预览，为可编程设备提供一套标准方式来描述自身的测量值、设置和安全限值。</p>
+<h2><strong>如何开始使用</strong></h2>
+<p>在 Team 或 Enterprise 计划下，<a href="https://claude.ai/customize/plugins/id/45112ff2-6233-4954-b8ec-c448ef2d1e59%40anthropic-plugin-directory">安装插件</a>，然后对 Claude 说&quot;帮我们配置好&quot;。Claude 会询问团队使用哪些系统、测试 connectors，并报告哪些 skills 暂时还无法完整运行。</p>
+<p>想看插件实际运行，可<a href="https://claude.com/resources/webinars/claude-for-manufacturing-put-your-plants-know-how-to-work">报名参加我们的技术网络研讨会</a>，时间为美国东部时间 11 月 17 日上午 11:00。想结合贵公司的制造系统详谈，请<a href="https://claude.com/contact-sales">联系我们的销售团队</a>。</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>在您的安全范围内操作 Claude Managed Agents</h3>
-<p>推出自托管 Claude Managed Agents。现在，您可以在自己的环境中运行代理，无论是在您自己的云中还是本地。您托管代理、凭据和会话历史记录，并选择向 Claude 发送请求的位置。</p>
-<p>Claude平台Claude托管代理</p>
+<h3>在自己的安全边界内运行 Claude Managed Agents</h3>
+<p>推出自托管 Claude Managed Agents。现在你可以在自己的环境中运行 agents，无论在自己的云上还是本地。agents、凭据和会话历史都由你托管，向 Claude 发送的请求发往哪里也由你选。</p>
+<p>Claude PlatformClaude Managed Agents</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>介绍Claude会议</h3>
-<p>将 Claude 添加到您的视频通话中，并在通话时开始工作</p>
+<h3>推出 Claude Meetings</h3>
+<p>把 Claude 加进视频通话，边聊边把活儿开起来</p>
 <p>文章</p>
 <p>2026 年 11 月 10 日</p>
-<h3>您的应用程序现在可以在 Claude 中打开，并且 Claude 可以在其中工作</h3>
-<p>我们的合作伙伴现在可以将他们的应用程序直接嵌入到 Claude 中，这样您和 Claude 就可以在同一屏幕上使用同一个工具，而无需切换选项卡。</p>
-<p>Claude·应用MCP</p>
+<h3>你的应用现在能在 Claude 里打开，Claude 也能在其中工作</h3>
+<p>我们的合作伙伴现在可以把应用直接嵌进 Claude，让你和 Claude 在同一个工具、同一块屏幕上协作，无需切换标签页。</p>
+<p>Claude appsMCP</p>
 <p>文章</p>
 <p>2026 年 11 月 10 日</p>
-<h3>与 Claude 合作的更多方式：表格、白板和交互式连接器</h3>
+<h3>与 Claude 协作的更多方式：Sheets、Whiteboards 和 Interactive Connectors</h3>
 <p>以思考的速度工作</p>
-<p>Claude应用程序</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
-<h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<p>Claude apps</p>
+<h2>用 Claude 改变组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
+<p>如需接收我们的每月开发者通讯，请留下你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Claude会议介绍</title>
+      <title>推出 Claude Meetings</title>
       <link>https://claude.com/resources/articles/claude-meetings</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-meetings</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Claude Meetings</description>
-      <content:encoded><![CDATA[<p>Claude现在可以作为可见参与者加入您的视频通话，跟踪对话并在会议期间开始工作。Claude会议现在处于测试阶段。</p>
-<p>您的团队可以在会议期间大声或通过聊天向 Claude 提问。默认情况下，Claude 以书面形式答复，并且可以在您的许可下使用您的连接工具。</p>
-<p><img src="https://assets.claude.com/c3058c8a8e4222788e9d908be5c697697137faaa.png" alt="Claude作为参与者的会议截图"></p>
-<p>Claude 还与您一起实时构建文档、<a href="https://claude.com/resources/articles/sheets-whiteboards-data">白板（在新选项卡中打开）</a> 或其他工件，而受邀请的队友则对其进行完善。Claude负责写笔记和行动项目，因此电话会议中的任何人都不必这样做。</p>
-<p>Claude Meetings 开始推出团队和企业计划的测试版。对其他视频会议平台的支持即将推出。</p>
-<h2>它看起来像什么</h2>
-<p>假设您的团队正在计划一次客户活动，而Claude正在接听电话。你说，“Claude，为这个计划开始一个文档。”Claude写下团队到目前为止所说的内容，受邀请的队友可以在您继续交谈时编辑计划。</p>
-<p>当您开始讨论预算时，有人问Claude去年的活动费用是多少。Claude请求他们批准进行查找，将其发布在会议聊天中，并将其与当前计划进行比较。当您开始讨论时间表时，有人要求Claude将其放在白板上，团队会与文档一起制定时间表。</p>
-<p><img src="https://assets.claude.com/6230bdd7ee4d9bd1415ac139dc9e54e4f0defe0e.png" alt="与客户计划会面的屏幕截图"></p>
-<p>在会议结束之前，有人要求Claude与团队分享一次回顾。通话结束后，所有笔记、行动项目、计划和白板都会显示在 <a href="http://claude.ai">claude.ai（在新选项卡中打开）</a> 的会议页面上。</p>
-<p><img src="https://assets.claude.com/a8f4de962073f5e5b755fbefdb73a4bc4a764785.png" alt="显示正在进行的会议文档的屏幕截图"></p>
-<p>稍后，您可以返回参加的会议并向 Claude 询问相关情况，或者从 claude.ai 的日历中将 Claude 添加到下一个会议中。</p>
-<p>我们正在与 Kong、Attention、Granola、Fireflies.ai、Otter 和 Plaud 等合作伙伴合作，因此您很快就可以将会议记录发送到您的团队已使用的工具中。</p>
-<h2>安全和隐私</h2>
-<p>Claude 在 <a href="http://claude.ai">claude.ai（在新选项卡中打开）</a> 中为每次会议添加了一个单独的页面，其中包含笔记、记录和其构建的任何内容。受邀请的组织中的人员可以查看它并编辑 Claude 所做的内容，并且可以从该页面与组织中的其他人共享。</p>
-<p>默认情况下，当邀请组织外部的人员时，Claude设置为不参与通话，而如果组织外部的人员中途加入，Claude则离开。管理员可以允许 Claude 与外部访客通话。在这些电话中，Claude会在通话聊天中发布通知，但不会回复，客人所说的内容会包含在笔记和文字记录中。</p>
-<p>Claude在获得每个人许可的情况下使用该人的互联工具。它第一次询问，并且“是”适用于以后。目前，当有人大声询问时，Claude每次都会询问以确认是谁在说话。通话中的每个人都可以看到通话聊天中发布的答案。</p>
-<p>当 Claude 加入时，它会显示为参与者并在通话聊天中发布通知。它保存文字记录、摘要和屏幕描述，而不是音频。</p>
-<p>在添加 Claude 或打开自动加入之前，请确保通话中的每个人都可以接受转录。</p>
+      <content:encoded><![CDATA[<p>Claude 现在可以作为一个看得见的参会者加入视频通话，跟着对话走，并在会议中就把活儿干起来。Claude Meetings 现已进入 beta。</p>
+<p>团队可以在会中向 Claude 提问，出声问或在聊天里问都行。默认情况下，Claude 用文字作答，并可在你允许后使用你已连接的工具。</p>
+<p><img src="https://assets.claude.com/c3058c8a8e4222788e9d908be5c697697137faaa.png" alt="Claude 作为参会者的会议截图"></p>
+<p>Claude 还会和你实时一起做文档、<a href="https://claude.com/resources/articles/sheets-whiteboards-data">白板</a>或其他 artifacts，同时受邀的队友在上面打磨。笔记和待办由 Claude 来写，会上谁都不用操心这个。</p>
+<p>Claude Meetings 正以 beta 形式在 Team 和 Enterprise 计划中逐步开放。对其他视频会议平台的支持也快了。</p>
+<h2>实际用起来是什么样</h2>
+<p>假设团队正在筹备一场客户活动，Claude 也在会上。你说一句&quot;Claude，给这个方案开个文档&quot;，Claude 就把到目前为止大家说的内容写下来；你继续聊，受邀的队友可以同时改这份方案。</p>
+<p>聊到预算时，有人问 Claude 去年那场活动花了多少。Claude 先请对方同意再去查，把结果发到会议聊天里，并和当前方案对比。聊到时间安排时，有人让 Claude 放到白板上，团队就对着白板和文档一起排期。</p>
+<p><img src="https://assets.claude.com/6230bdd7ee4d9bd1415ac139dc9e54e4f0defe0e.png" alt="客户活动方案会议截图"></p>
+<p>散会前，有人让 Claude 把小结分享给团队。通话结束后，笔记、待办、方案和白板都会出现在 <a href="http://claude.ai">claude.ai</a> 的会议页面上。</p>
+<p><img src="https://assets.claude.com/a8f4de962073f5e5b755fbefdb73a4bc4a764785.png" alt="编辑中的会议文档截图"></p>
+<p>之后，你可以回到自己参加过的会议，向 Claude 追问当时的情况，也可以在 claude.ai 的日历里把 Claude 加进下一场会。</p>
+<p>我们正与 Gong、Attention、Granola、Fireflies.ai、Otter 和 Plaud 等伙伴合作，很快你就能把会议记录发到团队已经在用的工具里。</p>
+<h2>安全与隐私</h2>
+<p>Claude 会在 <a href="http://claude.ai">claude.ai</a> 里为每场会议单开一个页面，放上笔记、记录和它生成的任何内容。组织内受邀的人能查看，也能编辑 Claude 做的东西，还可以从这个页面分享给组织里的其他人。</p>
+<p>默认设置下，只要邀请了组织外部的人，Claude 就不进会；若外部人员中途加入，它会离会。管理员可以允许 Claude 参加有外部访客的通话。在这类通话里，Claude 只在会议聊天中发出通知、不在那里答话，而访客说的话会记进笔记和记录。</p>
+<p>Claude 使用每个人已连接的工具，都要经本人许可。第一次会询问，之后一次&quot;同意&quot;就持续生效。目前，如果有人出声提问，Claude 每次都要确认说话的是谁。发在会议聊天里的答案，会上所有人都看得见。</p>
+<p>Claude 加入时，会以参会者身份出现，并在会议聊天里发一条通知。它保存的是记录、摘要和画面描述，不保存音频。</p>
+<p>在添加 Claude 或开启自动加入之前，先确认通话里每个人都同意被转录。</p>
 <h2>开始使用</h2>
-<p>当有人添加或打开自动加入时，Claude就会加入。目前可支持 Google Meet，其他平台也即将推出。在团队计划中，默认情况下可以邀请 Claude 参加会议，管理员可以将其关闭。在企业计划中，管理员为整个或部分组织启用它。虽然它处于测试阶段，但某些组织无法使用它，包括零数据保留 (ZDR)、HIPAA 就绪配置或客户管理的加密密钥 (CMEK) 的组织。</p>
-<p>在测试期间，Claude的笔记和成绩单在团队和企业计划中是免费的。您的通话中的答案也是如此，除非答案使用您的连接工具之一，这将计入您的计划的使用量。文档、<a href="https://claude.com/resources/articles/sheets-whiteboards-data">白板（在新选项卡中打开）</a> 和 Claude 在通话中制作的其他工件在 2027 年 2 月 10 日之前免费。</p>
-<p>设置步骤位于<a href="https://support.claude.com/en/articles/18325154">帮助中心</a>。</p>
+<p>有人添加 Claude，或开启了自动加入，Claude 就会入会。目前支持 Google Meet，其他平台也快了。在 Team 计划下，默认就能邀请 Claude 参加会议，管理员可以关掉；在 Enterprise 计划下，由管理员为整个或部分组织开启。beta 期间，部分组织还用不上，包括启用了零数据保留（ZDR）、HIPAA 就绪配置或客户自管加密密钥（CMEK）的组织。</p>
+<p>beta 期间，Claude 的笔记和记录在 Team、Enterprise 计划下免费，你在通话里得到的回答也免费——除非某条回答调用了你已连接的工具，那会计入计划用量。Claude 在会中生成的文档、<a href="https://claude.com/resources/articles/sheets-whiteboards-data">白板</a>及其他 artifacts，在 2027 年 2 月 10 日前都免费。</p>
+<p>设置步骤见<a href="https://support.claude.com/en/articles/18325154">帮助中心</a>。</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>在您的安全范围内操作 Claude Managed Agents</h3>
-<p>推出自托管 Claude Managed Agents。现在，您可以在自己的环境中运行代理，无论是在您自己的云中还是本地。您托管代理、凭据和会话历史记录，并选择向 Claude 发送请求的位置。</p>
-<p>Claude平台Claude托管代理</p>
+<h3>在自己的安全边界内运行 Claude Managed Agents</h3>
+<p>推出自托管 Claude Managed Agents。现在你可以在自己的环境中运行 agents，无论在自己的云上还是本地。agents、凭据和会话历史都由你托管，向 Claude 发送的请求发往哪里也由你选。</p>
+<p>Claude PlatformClaude Managed Agents</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>介绍制造领域的Claude</h3>
-<p>具有 17 项技能和 4 个连接器的新插件可帮助制造商从他们已运行的系统起草报价、质量报告和供应商请求。</p>
+<h3>推出 Claude for Manufacturing</h3>
+<p>一款含 17 个 skills 和 4 个 connectors 的新插件，帮制造商从已在运行的系统里起草报价、质量报告和供应商询价。</p>
 <p>文章</p>
 <p>2026 年 11 月 10 日</p>
-<h3>您的应用程序现在可以在 Claude 中打开，并且 Claude 可以在其中工作</h3>
-<p>我们的合作伙伴现在可以将他们的应用程序直接嵌入到 Claude 中，这样您和 Claude 就可以在同一屏幕上使用同一个工具，而无需切换选项卡。</p>
-<p>Claude·应用MCP</p>
+<h3>你的应用现在能在 Claude 里打开，Claude 也能在其中工作</h3>
+<p>我们的合作伙伴现在可以把应用直接嵌进 Claude，让你和 Claude 在同一个工具、同一块屏幕上协作，无需切换标签页。</p>
+<p>Claude appsMCP</p>
 <p>文章</p>
 <p>2026 年 11 月 10 日</p>
-<h3>与 Claude 合作的更多方式：表格、白板和交互式连接器</h3>
+<h3>与 Claude 协作的更多方式：Sheets、Whiteboards 和 Interactive Connectors</h3>
 <p>以思考的速度工作</p>
-<p>Claude应用程序</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
-<h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<p>Claude apps</p>
+<h2>用 Claude 改变组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
+<p>如需接收我们的每月开发者通讯，请留下你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>使用 Claude Opus 5.5 作为您日常知识工作的驱动力</title>
+      <title>把 Claude Opus 5.5 用作知识工作的日常主力模型</title>
       <link>https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Using Claude Opus 5.5 as your daily driver for knowledge work</description>
-      <content:encoded><![CDATA[<p>Claude Opus 5.5 现在是 Claude Pro、Max、Ultra 和 Team 计划中的默认型号。我们建议您将其作为知识工作的日常驱动力，这意味着您在与 Claude 一起研究、分析以及撰写或制作备忘录、报告、电子表格和幻灯片时选择的模型。</p>
-<p>如果您或您的团队一直使用 Sonnet 进行日常工作，并保存 Opus 进行繁重的分析或复杂的项目，那么值得重新考虑，因为功能更强大的模型可以通过更少的工作来完成任务，这<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">可以抵消每个代币较高的价格</a>。</p>
-<p>以下是当前模型的比较：</p>
-<table><thead><tr><th><strong>型号</strong></th><th><strong>使用它</strong></th><th><strong>每百万代币的价格（输入/输出）</strong>*</th><th><strong>相对速度</strong></th></tr></thead><tbody><tr><td>Claude Haiku 5.5</td><td>速度最重要的快速查找和大批量工作</td><td>$0.10 / $0.50</td><td>最快</td></tr><tr><td>Claude Sonnet 5.5</td><td>快速、范围明确的任务，以及从清晰的简介中精美的文档、幻灯片和电子表格</td><td>$2 / $10</td><td>快</td></tr><tr><td>Claude Opus 5.5</td><td>大多数知识工作：需要判断的研究、分析和完成的文档、幻灯片和电子表格</td><td>4 美元 / 20 美元</td><td>中等</td></tr><tr><td>Claude寓言5.2</td><td>编码、金融和科学等领域最雄心勃勃、开放式的技术工作</td><td>8 美元 / 40 美元</td><td>中等</td></tr></tbody></table>
-<p>**价格是按代币计费的使用量（<a href="https://platform.claude.com/docs/en/models/opus-5-5/overview">模型比较</a>）。 Haiku 5.5 的价格适用于最多 100k 个代币的提示，更长的提示费用为 0.50 美元/2.50 美元。在 Pro、Max、Ultra 和 Team 套餐中，价格较高的型号会更快地使用您的限制。专业计划和团队标准席位以及基于席位的企业计划不包括限时发布优惠之外的《神鬼寓言 5.2》，因此它需要使用积分。*</p>
-<p><a href="https://www.anthropic.com/claude-haiku-5-5"><strong>Haiku 5.5</strong></a> 是我们最快且最便宜的模型，专为快速查找和大批量工作（例如编写摘要和排序数据）而构建。这是我们的第一个具有力度控制的Haiku模型，因此您可以在切换到更大的模型之前要求更仔细的传递。它最适合短期、范围狭窄的任务。如需更长时间的分析，请切换到 Opus 5.5。</p>
-<p><a href="https://www.anthropic.com/claude-sonnet-5-5"><strong>Sonnet 5.5</strong></a> 比 Opus 5.5 更快、更便宜，适用于具有明确概要的范围广泛的任务。这可能是要求Claude将完成的笔记变成精美的文档，或者使用幻灯片模板构建一个幻灯片。然而，在较高工作量设置下，Sonnet 5.5 的每项任务成本接近 Opus 5.5，因此，如果您发现自己将 Sonnet 推至超高或最大工作量，请考虑切换到 Opus 5.5。</p>
-<p><strong><a href="https://www.anthropic.com/claude-opus-5-5">Opus 5.5</a> </strong>专为需要仔细判断的复杂工作而构建，例如研究、财务分析以及生成成品文档、幻灯片和电子表格。稍后我们会详细分享为什么推荐 Opus 5.5 进行日常知识工作。</p>
-<p><a href="https://www.anthropic.com/claude-fable-and-mythos-5-2"><strong>寓言 5.2</strong></a> 最适合您最苛刻的推理和长期运行的工作，例如深入的多步骤研究或编码，您可以将其交给运行数小时的大型子代理团队。对于大多数知识工作，从 Opus 5.5 开始，并在项目范围和复杂性需要时转向 Fable 5.2。 《神鬼寓言 5.2》适用于所有付费计划，但<a href="https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan">它如何利用您的使用情况</a>取决于您的计划。</p>
-<p>无论您选择哪种模式，如果Claude没有达到您的预期，请在升级之前先尝试更高的努力。如果它有上下文，明确尝试过，但仍然出错，则升级模型。</p>
-<h2><strong>Opus 5.5 在文档、研究、财务和图表方面表现出色</strong></h2>
-<p>Opus 5.5 精确遵循说明并保持在范围内，因此它生成的电子表格、幻灯片和文档通常几乎不需要编辑。它对数据和来源也很谨慎。在一项内部研究测试中，Opus 5.5 仅使用保存的网络快照编写了公司的季度业绩报告，而在该快照中很难找到该公司的收益发布。自动评分员根据该快照中的页面检查每个数字和引言，条件是即使发明了一个数字或引言，报告也会失败。在各项工作设置中，18 份报告中有 16 份通过了。</p>
-<p>它的文字也比早期型号更清晰。 Opus 5.5 将最重要的信息放在第一位，使用较少的术语，并遵循您给出的写作规则，对于较长的任务，它会清楚地说明它做了什么、发现了什么以及需要您提供什么。这也使得它的工作更容易检查，我们认为这是一种安全效益和实用效益。</p>
-<p>Ramp 的一名软件工程师 John Ruelas 表示：“它的写作方式就像一位好同事，并且遵循我们的写作规则。只需极少的编辑即可使用设计规范，当它重写我们的一个提示时，我更喜欢它的版本而不是我自己的版本。”</p>
-<p>财务分析是另一个优势。 Opus 5.5 准确读取密集的文件、财务模型和图表，并跟踪整个项目或交易的背景。在另一项内部测试中，它分析了两家虚构的人力资源软件公司之间的拟议合并，在 Excel 中构建了财务模型，然后将其转化为高管演示文稿，说明该交易以其价格是否合理。它只用了 63 分钟就完成了，而 Opus 5 完成相同任务的时间为 93 分钟，成本只有一半，模型更全面，演示文稿也更容易阅读。</p>
-<p>投资公司 Walleye Capital 中央股票量化研究工程负责人 Frank Corrao 表示，在较高的工作量设置下，Opus 5.5“检测到我们自己的指令中的分钟索引偏离了一位，并进行了修正，并指出这会导致评分者得分。这是正确的，我们之前测试过的模型都没有捕捉到这一点并采取行动。”</p>
-<p>Opus 5.5 是我们最佳的视觉 Opus 型号。它可以准确读取密集的文档、图表、屏幕截图和图表，这使得从文档中提取数据变得可靠。即使在最低工作量设置下，它从密集图表中读取的值也比 Opus 5 在最高设置下更准确。</p>
-<h2><strong>充分利用 Opus 5.5</strong></h2>
-<p>每一个新模型都是一个重新测试你交给Claude的东西的理由，并放弃为旧模型建立的提示习惯。</p>
-<h3><strong>首先尝试这些任务</strong></h3>
-<ul><li><strong>索取完成的文件。</strong> 如果您想要电子表格或文档，请索取电子表格或文档，而不是构建的大纲。通常，Opus 5.5 可以一次性从您的请求生成最终文件。</li><li><strong>让它检查长文档。</strong>给它一份长计划、报告或甲板，并要求它发现错误和不一致之处。 Opus 5.5 捕捉长文档中容易遗漏的细节，例如套牌中与其源数据不匹配的图表。</li><li><strong>交给它一个研究问题。</strong>提出一个没有固定答案的问题，让它收集资源，浏览长文档，并将发现的内容写成备忘录、报告或甲板。</li><li><strong>尝试视觉工作。</strong>它的愿景可以延续到设计中，所以尝试用它来制作界面原型、构建网站或说明概念。</li></ul>
-<p><img src="https://assets.claude.com/43af7ca2d9f20a0722825b0c207cd80af4d3fdab.png" alt="claude opus 5.5 任务说明"></p>
-<h3><strong>改变这些提示习惯</strong></h3>
-<ul><li><strong>将 Claude 连接到您的工作文件和系统。</strong> 这是获取适合您工作的输出的最有用的步骤之一，因为当 Claude 可以通过连接器访问您的文件和系统时，它可以获取任务所需的内容，而不是仅根据您粘贴的内容进行工作。在团队和企业计划中，所有者必须先打开连接器，然后成员才能使用它。</li><li><strong>在你的第一条消息中说明完成的内容。</strong> 不要每次向 Claude 提示一个指令，而是描述你的目标、完成的输出以及你希望它何时停止并询问。 Opus 5.5 比 Opus 5 更好地完成了漫长的、多部分的工作。</li><li><strong>删除“努力思考”和“仔细思考”。</strong> Opus 5.5 的思考始终处于开启状态，它根据您的要求和努力程度来决定思考的程度。在我们的测试中，删除这些行可以更快地开始回复，并且质量没有明显下降。</li><li><strong>从中等努力开始。</strong> 中等是 Opus 5.5 的默认设置，在我们的编码和知识工作评估中，中等程度的 Opus 5.5 与高程度的 Opus 5 相匹配或击败。较高的设置思考时间更长，成本更高，但并不总能产生更好的工作，因此当“中”停顿时，请升至“高”。要更改设置，请单击发送按钮旁边的型号名称，然后选择“Effort”。</li><li><strong>附加图表而不是重新输入。</strong> 共享图表、屏幕截图或图表本身，而不是将其数字复制到提示中。可能不再需要为早期模型构建的解决方法，例如转录图表的值。</li><li><strong>说出您不想要的样式。</strong> 对于设计工作，诸如“避免通用外观”之类的一般说明往往会将一种默认样式替换为另一种默认样式。命名要避免的特定图案，例如奶油色背景或药丸形按钮，效果会更好。</li><li><strong>赋予它您的风格。</strong> 将您的品牌或写作指南粘贴到请求中，或将 Claude 指向您最好的现有套牌，例如它可以通过连接器到达的 Google Drive 文件夹中，并要求它匹配它们。预计要经过几轮才能完全正确。</li></ul>
-<p><img src="https://assets.claude.com/d61fa79e1e1a38bd6ad4547ddb66c993ef569705.png" alt="claude opus 5.5提示习惯图解"></p>
-<p>这一努力结果也适用于早期测试人员。工厂技术人员 Zimu Li 表示，(https://www.anthropic.com/claude-opus-5-5)，“Claude Opus 5.5 是我们默认的第一个中等工作量的模型。在我们的测试中，它与高工作量的 Opus 5 相匹配，同时使用的输出令牌少了 20% 到 25%。”</p>
-<h2><strong>在演示项目上测试 Opus 5.5</strong></h2>
-<p>这是我们在演示中完成的一个项目中的所有内容。在一家假设的零售公司，收入增长在过去一年中放缓，领导层有四种关于原因的理论，分析师有一个材料文件夹：各商店的销售电子表格、最新领导层场外的 PDF 以及其他文件。在中等程度的 Opus 5.5 中，提示大致如下：</p>
-<p>“今年增长放缓很多。领导层有几种关于原因的理论：它们在[我的经理]的笔记中。我拥有的所有内容都在上传的文件夹中。请根据数据测试这四种理论，并告诉我哪些理论成立。</p>
-<p>提示并没有告诉Claude认真思考，也没有说明要检查哪个文件以查找哪个理论。它说明了目标和最终输出，并将方法留给 Claude。</p>
-<p>Claude发现数据并不支持这四种理论中的任何一种，尽管不能完全排除其中一种理论。然后，它提出了一个没有人提出的解释：新店开得离现有店太近，从而吸引了现有店的销售。对于按城市列出的商店，这种模式有点不清楚，但一旦按照与新商店的邻近程度进行过滤，这种模式就很清楚了。Claude通过销售影响与该距离的回归来支持这一发现。</p>
-<p>接下来，Claude将分析结果转化为一份文档，其中包含图表和交互式元素以及文本，其中包括一个滑块，显示销售额如何随着新商店和现有商店之间的距离而变化。一位队友同时审阅了该文档。</p>
-<p>然后，经理要求Claude将文档转换成董事会幻灯片，以答案开头。对于不使用 Claude 的队友，文档可以导出为 Word、PDF 或 Google 文档，而幻灯片可以导出为 PowerPoint、PDF 或 Google 幻灯片。</p>
-<p>要查看整个项目，包括问答，请<a href="https://claude.com/resources/webinars/opus-5-5-for-work">点播观看 Opus 5.5 for Work 会议</a>。</p>
-<h2><strong>在您自己的作品中尝试 Opus 5.5</strong></h2>
-<p>选择通常会分为多个请求的内容，例如研究备忘录、方差分析或根据现有文档构建的演示文稿。在一条消息中向 Opus 5.5 提供文件和最终结果的描述，将其保留为中等工作量，然后将结果与您习惯从其他模型获得的结果进行比较。</p>
+      <content:encoded><![CDATA[<p>Claude Opus 5.5 现在是 Claude 在 Pro、Max、Ultra 和 Team 计划中的默认模型。我们建议把它作为知识工作的日常主力模型，也就是当你用 Claude 做研究、分析，以及撰写或制作备忘录、报告、电子表格和演示文稿时，一直选着的那个模型。</p>
+<p>如果你或团队一直用 Sonnet 干日常活、把 Opus 留给繁重的分析或复杂项目，现在值得重新掂量：更强的模型能用更少的功夫把任务做完，这<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">往往能抵掉它每 token 更高的一大半价格</a>。</p>
+<p>当前几款模型的对比如下：</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>适用场景</strong></th><th><strong>每百万 token 价格（输入 / 输出）</strong>*</th><th><strong>相对速度</strong></th></tr></thead><tbody><tr><td>Claude Haiku 5.5</td><td>快速查询，以及速度优先的大批量工作</td><td>$0.10 / $0.50</td><td>最快</td></tr><tr><td>Claude Sonnet 5.5</td><td>范围明确、要求清晰的任务，以及据明确要求产出的精修文档、幻灯片和电子表格</td><td>$2 / $10</td><td>快</td></tr><tr><td>Claude Opus 5.5</td><td>大多数知识工作：研究、分析，以及需要判断力的成品文档、演示文稿和电子表格</td><td>$4 / $20</td><td>中等</td></tr><tr><td>Claude Fable 5.2</td><td>最宏大、开放式的技术工作，如编程、金融和科学等领域</td><td>$8 / $40</td><td>中等</td></tr></tbody></table>
+<p>**价格针对按 token 计费的用量（<a href="https://platform.claude.com/docs/en/models/opus-5-5/overview">模型对比</a>）。Haiku 5.5 的价格适用于不超过 100k token 的 prompt，更长的 prompt 按 $0.50 / $2.50 计费。在 Pro、Max、Ultra 和 Team 计划中，价格更高的模型会更快消耗额度。除限时首发优惠外，Pro 计划以及 Team 和按席位计费的 Enterprise 计划的标准席位，其额度不包含 Fable 5.2，因此它按用量积分计费。*</p>
+<p><a href="https://www.anthropic.com/claude-haiku-5-5"><strong>Haiku 5.5</strong></a> 是我们最快、也最便宜的模型，专为快速查询和撰写摘要、整理数据这类大批量工作打造。这是首款带 effort 控制的 Haiku 模型，因此你可以在切换到更大模型之前，先要求它更仔细地过一遍。它最适合短小、范围窄的任务；需要更长的分析，就换用 Opus 5.5。</p>
+<p><a href="https://www.anthropic.com/claude-sonnet-5-5"><strong>Sonnet 5.5</strong></a> 在范围明确、要求清晰的任务上比 Opus 5.5 更快也更便宜，比如让 Claude 把定稿的笔记整理成精修文档，或套用幻灯片模板做一份演示文稿。不过在更高的 effort 档位下，Sonnet 5.5 的单任务成本会逼近 Opus 5.5；所以如果你发现自己在把 Sonnet 推到 Extra high 或 Max effort，不妨换用 Opus 5.5。</p>
+<p><strong><a href="https://www.anthropic.com/claude-opus-5-5">Opus 5.5</a> </strong>专为需要审慎判断的复杂工作打造，比如研究、财务分析，以及产出成品文档、演示文稿和电子表格。后文会详细说明我们为何推荐用 Opus 5.5 承担日常知识工作。</p>
+<p><a href="https://www.anthropic.com/claude-fable-and-mythos-5-2"><strong>Fable 5.2</strong></a> 最适合最吃力的推理和长时间运行的任务，比如深入的多步研究，或可以交给一大群连续跑上数小时的 subagent 去做的编程。大多数知识工作，先用 Opus 5.5；等项目的范围和复杂度确实需要时，再转到 Fable 5.2。Fable 5.2 在所有付费计划中都可用，不过<a href="https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan">它如何计入你的用量</a>取决于具体计划。</p>
+<p>无论当前用的是哪个模型，如果 Claude 表现不如预期，先试更高的 effort，再考虑换更大的模型。如果它已掌握上下文、明显认真做过，却仍然做错，那就换更大的模型。</p>
+<h2><strong>Opus 5.5 在文档、研究、财务和图表上表现最出色</strong></h2>
+<p>Opus 5.5 精确遵循指令、不越出范围，因此它产出的电子表格、幻灯片和文档往往几乎不用再改。它对待数字和来源也很谨慎。在一项内部研究测试中，Opus 5.5 仅凭一份存档的网页快照，撰写某公司的季度业绩报告，而快照里该公司的财报发布很难找到。自动评分器逐一核对报告里每个数字和引文与快照页面的对应关系，规则是：只要凭空捏造哪怕一个数字或一句引文，报告即判不合格。跨各 effort 档位，18 份报告有 16 份通过。</p>
+<p>它的文笔也比早期模型更清晰：把最重要的信息放在最前面，少用行话，遵守你给的写作规范；在较长的任务里，还会直说它做了什么、发现了什么、还需要你提供什么。这也让它的成果更容易核查，我们既把这看作实用上的好处，也看作安全上的好处。</p>
+<p>Ramp 的资深软件工程师 John Ruelas <a href="https://www.anthropic.com/claude-opus-5-5">说</a>：&quot;它写起来像一位靠谱的同事，也遵守我们的写作规范。一份设计说明书出来后几乎不用改就能用；它重写我们的一条 prompt 时，我甚至更喜欢它的版本，胜过我自己写的。&quot;</p>
+<p>财务分析是它的另一项强项。Opus 5.5 能准确读取信息密集的申报文件、财务模型和图表，并在整个项目或交易中保持上下文连贯。在另一项内部测试里，它分析两家虚构 HR 软件公司之间的拟议合并：先在 Excel 里搭出财务模型，再据此做成一份给高管看的演示文稿，判断按该价格这笔交易是否划算。整个任务用时 63 分钟，而 Opus 5 做同一任务要 93 分钟；成本只有一半，模型却更完整，演示文稿也更好读。</p>
+<p>投资公司 Walleye Capital 中央股票量化研究工程负责人 Frank Corrao <a href="https://www.anthropic.com/claude-opus-5-5">表示</a>，在较高的 effort 档位下，Opus 5.5&quot;发现我们自己指令里的分钟索引差了一位，主动做了修正，还指出这会让它在评分器那里丢分。它是对的，此前我们测过的模型没有一个发现并处理过这个问题。&quot;</p>
+<p>Opus 5.5 是我们在视觉能力上最强的 Opus 模型。它能准确读取信息密集的文档、图表、截图和示意图，因此从文档里提取数据很可靠。即便设在最低 effort 档，它从密集图表中读数的准确度也高于 Opus 5 设在最高档时。</p>
+<h2><strong>充分发挥 Opus 5.5</strong></h2>
+<p>每出一个新模型，都值得重新试一遍你交给 Claude 的东西，并丢掉为旧模型养成的提示习惯。</p>
+<h3><strong>先试这些任务</strong></h3>
+<ul><li><strong>直接要成品文件。</strong> 想要电子表格或文档，就直说要电子表格或文档，别只要一份供展开的大纲。多数情况下，Opus 5.5 能从你的请求一步做到成品文件。</li><li><strong>让它核查长文档。</strong> 丢给它一份长计划、报告或演示文稿，让它找错和前后矛盾。长文档里容易漏看的细节，Opus 5.5 能揪出来，比如演示文稿里某张图表与源数据对不上。</li><li><strong>交给它一个研究问题。</strong> 提一个没有标准答案的问题，让它汇集资料、啃完长文档，再把发现写成备忘录、报告或演示文稿。</li><li><strong>试试视觉类工作。</strong> 视觉能力上的提升也延续到了设计，不妨用它做界面原型、搭网站，或把一个概念画出来。</li></ul>
+<p><img src="https://assets.claude.com/43af7ca2d9f20a0722825b0c207cd80af4d3fdab.png" alt="Claude Opus 5.5 的任务示意"></p>
+<h3><strong>改掉这些提示习惯</strong></h3>
+<ul><li><strong>把 Claude 接到你的工作文件和系统。</strong> 想让产出贴合你的工作，这是最有用的一步：Claude 能通过 connector 触达你的文件和系统时，就可以自己去取任务所需的东西，而不只依赖你粘贴进去的内容。在 Team 和 Enterprise 计划中，必须先由所有者开启 connector，成员才能使用。</li><li><strong>在第一条消息里就说清&quot;做完&quot;是什么样。</strong> 别一条一条地给 Claude 下指令，而是一次讲清目标、最终产出，以及希望它何时停下来问你。把又长又分多块的工作一路做到底，Opus 5.5 比 Opus 5 更稳。</li><li><strong>删掉&quot;think hard&quot;和&quot;think carefully&quot;。</strong> Opus 5.5 的思考始终开启，会根据你的请求和 effort 档位决定想多少。在我们的测试里，去掉这两行后回复起步更快，质量也没有明显下降。</li><li><strong>从 Medium 档开始。</strong> Medium 是 Opus 5.5 的默认档；在我们的编程和知识工作评测中，Medium 档的 Opus 5.5 追平或超过了 High 档的 Opus 5。更高的档位想得更久、花钱更多，却不一定产出更好，所以等 Medium 卡住了再升到 High。要改档位，点发送按钮旁边的模型名称，选择 Effort。</li><li><strong>直接附上图表，别重敲一遍。</strong> 把图表、截图或示意图本身发过去，而不是把里面的数字抄进 prompt。为早期模型准备的变通办法，比如把图表数值誊写出来，可能已经用不上了。</li><li><strong>点名你不想要的风格。</strong> 做设计工作时，&quot;避免千篇一律的外观&quot;这类笼统指令，往往只是把一种默认风格换成另一种。点出具体要避开的样式更管用，比如米色背景或药丸形按钮。</li><li><strong>把自家规范给它。</strong> 把品牌或写作规范贴进请求里，或让 Claude 去看你做得最好的几份现成演示文稿——比如放在它能通过 connector 访问的 Google Drive 文件夹里——再让它照着来。要做好几轮才完全到位的准备。</li></ul>
+<p><img src="https://assets.claude.com/d61fa79e1e1a38bd6ad4547ddb66c993ef569705.png" alt="Claude Opus 5.5 提示习惯示意"></p>
+<p>这一关于 effort 的结论，在早期测试者那里也成立。Factory 的技术团队成员 Zimu Li <a href="https://www.anthropic.com/claude-opus-5-5">说</a>：&quot;Claude Opus 5.5 是我们第一个会默认设在 medium effort 的模型。在我们的测试中，它追平了设在 high effort 的 Opus 5，而输出 token 少了 20% 到 25%。&quot;</p>
+<h2><strong>在一个演示项目上测试 Opus 5.5</strong></h2>
+<p>上面这些，放到我们在一次演示里走完的项目中是什么样子？设想一家零售公司，过去一年营收增长放缓，管理层对原因有四种猜测，分析师手里有一文件夹材料：各门店销售电子表格、最近一次管理层外出会议的 PDF，以及其他文件。用设在 Medium 档的 Opus 5.5 时，prompt 大致是：</p>
+<p><code>Growth slowed a lot this year. Leadership has a couple of theories about why; they're in [my manager's] note. Everything I have is in the uploaded folder. Please test each of the four theories against the data and tell me which ones hold up.</code></p>
+<p>这段 prompt 没叫 Claude &quot;think hard&quot;，也没说查哪种理论该看哪个文件。它只讲清目标和最终产出的样子，把做法留给 Claude。</p>
+<p>Claude 发现数据并不支持这四种猜测中的任何一种，不过有一种无法完全排除。接着它提出了一个没人提过的解释：新店开得离老店太近，把老店的生意分走了。按城市列门店时，这个规律还不太看得清；一旦按与新店的距离筛选，就清楚了。Claude 用销售影响对该距离做回归，为这一发现提供了依据。</p>
+<p>随后，Claude 把分析整理成一份文档，正文之外还带图表和交互元素，其中有一个滑块，展示销售额随新店与老店之间距离变化的走势。一位同事同时审阅了这份文档。</p>
+<p>接着，经理让 Claude 把文档做成董事会幻灯片，开头就给出结论。对于不用 Claude 的同事，文档可导出为 Word、PDF 或 Google Docs，演示文稿可导出为 PowerPoint、PDF 或 Google Slides。</p>
+<p>想看完整项目（含问答），可<a href="https://claude.com/resources/webinars/opus-5-5-for-work">点播观看 Opus 5.5 for Work 场次</a>。</p>
+<h2><strong>用自己的工作试试 Opus 5.5</strong></h2>
+<p>挑一件你平时会拆成好几次请求来做的事，比如研究备忘录、差异分析，或根据现成文档做一份演示文稿。把文件和最终成果的描述放在一条消息里交给 Opus 5.5，档位留在 Medium，再把结果和你习惯从其他模型拿到的作个对比。</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>在您的安全范围内操作 Claude Managed Agents</h3>
-<p>推出自托管 Claude Managed Agents。现在，您可以在自己的环境中运行代理，无论是在您自己的云中还是本地。您托管代理、凭据和会话历史记录，并选择向 Claude 发送请求的位置。</p>
-<p>Claude平台Claude托管代理</p>
+<h3>在自己的安全边界内运行 Claude Managed Agents</h3>
+<p>推出自托管 Claude Managed Agents。现在你可以在自己的环境中运行 agents，无论在自己的云上还是本地。agents、凭据和会话历史都由你托管，向 Claude 发送的请求发往哪里也由你选。</p>
+<p>Claude PlatformClaude Managed Agents</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>J. Crew 与 Claude 一起将其标志性的造型方法带入生活</h3>
-<p>J.Crew 的新 Style Advisor 使用 Claude 提供更加个性化的在线购物方式，提供完整的外观而不是单独的产品。</p>
-<p>Claude·科德</p>
+<h3>J.Crew 借 Claude 将标志性造型理念带到线上</h3>
+<p>J.Crew 的新 Style Advisor 用 Claude 提供更个性化的在线购物方式，给出整套造型，而不是一件件单品。</p>
+<p>Claude Code</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>介绍制造领域的Claude</h3>
-<p>具有 17 项技能和 4 个连接器的新插件可帮助制造商从他们已运行的系统起草报价、质量报告和供应商请求。</p>
+<h3>推出 Claude for Manufacturing</h3>
+<p>一款含 17 个 skills 和 4 个 connectors 的新插件，帮制造商从已在运行的系统里起草报价、质量报告和供应商询价。</p>
 <p>文章</p>
 <p>2026 年 11 月 12 日</p>
-<h3>介绍Claude会议</h3>
-<p>将 Claude 添加到您的视频通话中，并在通话时开始工作</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
-<h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<h3>推出 Claude Meetings</h3>
+<p>把 Claude 加进视频通话，边聊边把活儿开起来</p>
+<h2>用 Claude 改变组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
+<p>如需接收我们的每月开发者通讯，请留下你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Claude初创公司标签指南</title>
+      <title>面向初创公司的 Claude Tag 指南</title>
       <link>https://claude.com/resources/articles/claude-tag-guide-for-startups</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-tag-guide-for-startups</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：The Claude Tag guide for startups</description>
-      <content:encoded><![CDATA[<p>初创公司经常以快节奏的方式工作，并且精益团队身兼数职。在很多方面，<a href="https://claude.com/product/tag">Claude Tag</a>（测试版）都适合初创公司的运作方式。您@Claude 到您的上下文所在的 Slack 频道，添加连接器，并让您的团队一起分配和引导任务。</p>
-<p>对于刚开始使用 Claude Tag 的初创团队来说，最常见的问题之一是“我应该首先将 Claude 添加到哪些渠道？”为了帮助回答这个问题，我们采访了八家高增长初创公司，了解 Claude Tag 在他们的团队中如何工作。</p>
-<h3>包含来自的见解</h3>
-<ul><li><a href="https://kikoff.com/"><img src="https://assets.claude.com/58247642907b2621ae6d414ecb7dc6714bcf1e03.svg" alt="Kikoff"></a></li><li><a href="https://campfire.ai/"><img src="https://assets.claude.com/547f3af27e33331c1409324c549d765f790ca68d.svg" alt="Campfire"></a></li><li><a href="https://www.navigate.ai/"><img src="https://assets.claude.com/5348eaceef888ace36b50da1a6c9f8126ad2f1bb.svg" alt="NavigateAI"></a></li><li><a href="https://www.moritzlegal.com/"><img src="https://assets.claude.com/6b65c9f5d995c188f6273248826bbe5fc494b4ff.svg" alt="莫里茨"></a></li><li><a href="https://www.flaglerhealth.io/"><img src="https://assets.claude.com/157cc2437bd370ee12b67e1ba178b5cded79cbfc.svg" alt="弗拉格勒健康"></a></li><li><a href="https://www.valence.co/"><img src="https://assets.claude.com/5855d903e0e618842304aaf2e9b02e7d648a90e2.png" alt="价"></a></li><li><a href="https://www.orderful.com/?utm_source=anthropic&amp;utm_medium=referral&amp;utm_campaign=claude_tag_guide"><img src="https://assets.claude.com/dcd269d39d743ba04bbf4a2e803b60367c0d6b88.svg" alt="Orderful"></a></li><li><a href="https://www.descript.com/"><img src="https://assets.claude.com/05128b9e935b6625beecc1bc4c6fa08814473e3e.svg" alt="描述"></a></li></ul>
-<p>我们听取了一些公司领导人的意见，他们的愿景从重塑律师事务所到构建下一代资源规划软件。有些人几乎将Claude添加到每个频道，而另一些人则深入关注一两个特定的用例。</p>
-<table><thead><tr><th>公司</th><th>随叫随到</th><th>话题到 PR</th><th>公司大脑</th><th>自助数据</th><th>例行报告</th></tr></thead><tbody><tr><td>基科夫</td><td>●</td><td>●</td><td></td><td>●</td><td>●</td></tr><tr><td>导航人工智能</td><td>●</td><td>●</td><td>●</td><td></td><td>●</td></tr><tr><td>篝火</td><td>●</td><td>●</td><td>●</td><td></td><td></td></tr><tr><td>弗拉格勒健康</td><td>●</td><td>●</td><td>●</td><td></td><td></td></tr><tr><td>莫里茨</td><td></td><td></td><td>●</td><td></td><td>●</td></tr><tr><td>秩序井然</td><td>●</td><td>●</td><td>●</td><td>●</td><td></td></tr><tr><td>化合价</td><td></td><td>●</td><td>●</td><td></td><td>●</td></tr><tr><td>描述</td><td></td><td>●</td><td></td><td>●</td><td>●</td></tr></tbody></table>
-<p>但与我们交谈的每个人都发出了“啊哈！”的感叹。在那一刻，他们意识到长达几分钟的Claude·塔格对话取代了数天的工作，或者发现了原本隐藏的见解。</p>
-<p>本指南中包含最常见的内容，每个内容都包含实际的实施细节，旨在帮助创始人找到和部署可为团队带来推动的用例。以下是我们采访过的初创公司的一些例子：</p>
-<p><img src="https://assets.claude.com/547f3af27e33331c1409324c549d765f790ca68d.svg" alt="篝火"></p>
+      <content:encoded><![CDATA[<p>初创公司往往节奏快、团队精简，一人要身兼数职。在很多方面，<a href="https://claude.com/product/tag">Claude Tag</a>（beta）都契合初创公司的工作方式：在存放着团队上下文的 Slack 频道里 @Claude，添加 connector，让全队一起分派任务、把控方向。</p>
+<p>刚上手 Claude Tag 的初创团队，最常问的问题之一是「先该把 Claude 加进哪些频道？」。为了回答这个问题，我们走访了八家高速成长的初创公司，看 Claude Tag 在他们的团队里是怎么运转的。</p>
+<h3>来自以下团队的洞见</h3>
+<ul><li><a href="https://kikoff.com/"><img src="https://assets.claude.com/58247642907b2621ae6d414ecb7dc6714bcf1e03.svg" alt="Kikoff"></a></li><li><a href="https://campfire.ai/"><img src="https://assets.claude.com/547f3af27e33331c1409324c549d765f790ca68d.svg" alt="Campfire"></a></li><li><a href="https://www.navigate.ai/"><img src="https://assets.claude.com/5348eaceef888ace36b50da1a6c9f8126ad2f1bb.svg" alt="NavigateAI"></a></li><li><a href="https://www.moritzlegal.com/"><img src="https://assets.claude.com/6b65c9f5d995c188f6273248826bbe5fc494b4ff.svg" alt="Moritz"></a></li><li><a href="https://www.flaglerhealth.io/"><img src="https://assets.claude.com/157cc2437bd370ee12b67e1ba178b5cded79cbfc.svg" alt="Flagler Health"></a></li><li><a href="https://www.valence.co/"><img src="https://assets.claude.com/5855d903e0e618842304aaf2e9b02e7d648a90e2.png" alt="Valence"></a></li><li><a href="https://www.orderful.com/?utm_source=anthropic&amp;utm_medium=referral&amp;utm_campaign=claude_tag_guide"><img src="https://assets.claude.com/dcd269d39d743ba04bbf4a2e803b60367c0d6b88.svg" alt="Orderful"></a></li><li><a href="https://www.descript.com/"><img src="https://assets.claude.com/05128b9e935b6625beecc1bc4c6fa08814473e3e.svg" alt="Descript"></a></li></ul>
+<p>受访的公司负责人，愿景从重塑律师事务所到打造下一代资源规划软件，各不相同。有的几乎把 Claude 加进了每个频道，有的则深耕一两个具体用例。</p>
+<table><thead><tr><th>公司</th><th>值班响应</th><th>从线程到 PR</th><th>公司大脑</th><th>自助数据</th><th>例行报告</th></tr></thead><tbody><tr><td>Kikoff</td><td>●</td><td>●</td><td></td><td>●</td><td>●</td></tr><tr><td>NavigateAI</td><td>●</td><td>●</td><td>●</td><td></td><td>●</td></tr><tr><td>Campfire</td><td>●</td><td>●</td><td>●</td><td></td><td></td></tr><tr><td>Flagler Health</td><td>●</td><td>●</td><td>●</td><td></td><td></td></tr><tr><td>Moritz</td><td></td><td></td><td>●</td><td></td><td>●</td></tr><tr><td>Orderful</td><td>●</td><td>●</td><td>●</td><td>●</td><td></td></tr><tr><td>Valence</td><td></td><td>●</td><td>●</td><td></td><td>●</td></tr><tr><td>Descript</td><td></td><td>●</td><td></td><td>●</td><td>●</td></tr></tbody></table>
+<p>但每一位受访者都经历过同样的「啊哈！」时刻：几分钟的 Claude Tag 对话，抵得上原本几天的工作，或者挖出了本来会一直埋着的洞见。</p>
+<p>本指南收录了最常见的那些用法，每一种都附上可落地的实施细节，帮创始人找到并部署真正能推动团队进展的用例。先看几家受访初创公司取得的实效：</p>
+<p><img src="https://assets.claude.com/547f3af27e33331c1409324c549d765f790ca68d.svg" alt="Campfire"></p>
 <p>21</p>
-<p>从 Slack 提及到公开 PR 的分钟数</p>
+<p>从 Slack 提及到开出 PR 的分钟数</p>
 <p><img src="https://assets.claude.com/5348eaceef888ace36b50da1a6c9f8126ad2f1bb.svg" alt="NavigateAI"></p>
 <p>134</p>
-<p>从 Slack 线程合并拉取请求</p>
-<p><img src="https://assets.claude.com/6b65c9f5d995c188f6273248826bbe5fc494b4ff.svg" alt="莫里茨"></p>
+<p>从 Slack 线程合并的 pull request 数量</p>
+<p><img src="https://assets.claude.com/6b65c9f5d995c188f6273248826bbe5fc494b4ff.svg" alt="Moritz"></p>
 <p>5</p>
-<p>每日轮班结束更新只需几分钟，从 1 小时缩短</p>
-<p><img src="https://assets.claude.com/5855d903e0e618842304aaf2e9b02e7d648a90e2.png" alt="价"></p>
+<p>每日收工更新所需分钟数，此前要 1 小时</p>
+<p><img src="https://assets.claude.com/5855d903e0e618842304aaf2e9b02e7d648a90e2.png" alt="Valence"></p>
 <p>&lt;1</p>
-<p>从客户询问到无代码解决方案的小时</p>
-<p><img src="https://assets.claude.com/dcd269d39d743ba04bbf4a2e803b60367c0d6b88.svg" alt="有序"></p>
+<p>从客户提出需求到给出无代码方案所需的小时数</p>
+<p><img src="https://assets.claude.com/dcd269d39d743ba04bbf4a2e803b60367c0d6b88.svg" alt="Orderful"></p>
 <p>2</p>
-<p>从 Slack 提出问题到生产的天数</p>
-<p><img src="https://assets.claude.com/05128b9e935b6625beecc1bc4c6fa08814473e3e.svg" alt="描述"></p>
-<p>几天到几小时</p>
-<p>定期报告准备</p>
-<p>在本指南中，我们分享了领先初创公司使用 Claude Tag 的最常见用例、渠道和集体见解。</p>
-<h2>标记 Claude 的热门频道</h2>
-<p>我们采访的八家初创公司在 Slack 上使用 Claude Tag，但少数渠道一次又一次被认为是最佳起点。</p>
-<h2>01 Claude待命</h2>
-<p>设置示例：</p>
-<p>渠道</p>
+<p>从 Slack 里提出问题到上线的天数</p>
+<p><img src="https://assets.claude.com/05128b9e935b6625beecc1bc4c6fa08814473e3e.svg" alt="Descript"></p>
+<p>从数天到数小时</p>
+<p>周期性报告准备所花的时间</p>
+<p>在本指南里，我们把领先初创公司使用 Claude Tag 的最常见用例、频道选择和集体经验一并分享出来。</p>
+<h2>最值得先加 Claude 的频道</h2>
+<p>受访的八家初创公司都在 Slack 里用 Claude Tag，但反复被提到、最适合起步的，始终是少数几个频道。</p>
+<h2>01 Claude 值班响应</h2>
+<p>配置示例：</p>
+<p>频道</p>
 <p><code>#on-call</code> <code>#alerts-ci</code> <code>#deploy-watch</code> <code>#support-escalations</code></p>
-<p>连接器</p>
+<p>Connectors</p>
 <p>GitHub、GitLab、Sentry、dbt、PagerDuty、Linear、Datadog、Jira、Grafana、incident.io</p>
-<p>线程和例程</p>
-<p>事件响应、早上事件摘要、周一值班交接、每日健康状况摘要、每小时事件回顾</p>
-<p>入门说明</p>
-<p>@Claude 请记住此频道：监视警报并立即在其自己的线程中对每个警报进行分类。检查现有票证。首先查询数据，然后进行推理，并将验证的内容与推断的内容分开。如果是真的，请使用链接命名可能的根本原因，标记所有者，并仅在包含修复程序的情况下打开草稿 PR。如果不需要采取任何行动，请直接说出来。每次事件发生后，将您学到的内容添加到[课程文件]中。</p>
-<p>分类渠道是出了名的吵闹。 Sentry 错误、Datadog 警报、客户错误报告和支持请求会不断造成干扰，因此很难从噪音中找到信号。这通常是团队交给Claude的第一个任务。</p>
-<p>由于Claude在频道中作为第一响应者，第一遍通常是在值班工程师打开笔记本电脑之前完成的。Claude会在每个项目落地时阅读它，调查其代码库和它可以访问的工具，并分享它的发现。如果包含修复程序，则会打开 PR 草稿；如果没有，它会将问题转给合适的人并附上调查结果。在这些设置中，一个人会在合并之前检查每个修复，只有真正的新问题才需要有人自己开始调查。</p>
-<p>在为财务团队构建人工智能原生 ERP 的 Campfire，一名工程师在一份报告中给 Claude 贴上了标签，称其人工智能代理的一些最终答案尚未到达用户手中。 21 分钟后，Claude 开了一个 PR，当天下午就合并了。</p>
-<h3>Kikoff：每个分诊渠道的第一响应者</h3>
-<p>Kikoff 是一家金融科技初创公司，致力于帮助消费者建立信用、解决流动性需求并实现财务安全。 Claude Tag 是整个公司分诊渠道的第一响应者，包括：</p>
-<ul><li><code>#deploys</code>：Claude 决定每次发布后要观看的内容，并标记任何损坏的内容。</li><li><code>#alerts-ci</code>：当构建失败时，Claude 会找出原因并提出修复方案作为 PR 草案。</li><li><code>#alerts-sentry-backend</code>：Claude 首先处理 Sentry 异常和崩溃问题。</li><li><code>#dog-fooding</code>：Claude 调查员工在进行dogfooding 时标记的内容，并标记正确的所有者。</li><li><code>#support</code>：Claude率先获得支持票。</li></ul>
-<p>基科夫一开始就让Claude只在被提及时才参与对话，而当团队让它自己加入时，最大的胜利就来了。当注册失败时，Claude将其追溯到后端更改，评估了影响，指定了负责修复的团队，并创建了一份 PR 草案，以便应用程序在此期间会轻微失败。</p>
-<p>Claude 标记注册已损坏，将其追溯到后端更改，评估影响，指定负责修复的团队，并打开草稿 PR，以便应用程序温和地失败。基科夫重现的对话。名称和图像已被修改。经 Kikoff 许可使用。</p>
-<blockquote>“当 Claude 在监视器或人类之前发现问题时，我总是很兴奋。一个人只能亲自管理这么多的上下文，Claude Tag 帮助我们组织和拥有一些上下文，然后我们管理结果。”</blockquote>
+<p>线程与例程</p>
+<p>事件响应、晨间事件摘要、周一值班交接、每日健康状况摘要、每小时事件回顾</p>
+<p>起步指令</p>
+<p>@Claude 请记住本频道的设定：盯着告警，每条都立刻在各自的线程里做分诊。先查有没有现成的工单。先查数据再下推断，把已核实和推测的内容分开。确认问题属实，就附上链接指出最可能的根因，@ 相关负责人，并且只在修复范围可控时才开 draft PR。如果无需处理，就直说。每次事件之后，把学到的东西补进 [lessons file]。</p>
+<p>分诊频道出了名地嘈杂：Sentry 报错、Datadog 告警、客户 bug 反馈、支持请求轮番打断，很难从噪声里捞出信号。团队通常把这件事第一个交给 Claude。</p>
+<p>让 Claude 作为<a href="https://claude.com/resources/articles/ai-ci-cd-on-call">第一响应者</a>待在频道里，往往值班工程师还没打开笔记本，第一轮排查就已经做完了。每条消息一进来 Claude 就读，翻查代码库和它能调用的工具，再把发现同步出来。修复范围可控就开 draft PR；不可控就把问题连同排查记录转给合适的人。这类配置下，每个修复合并前都有人审一遍，只有真正的新问题才需要有人从头查起。</p>
+<p>Campfire 为财务团队做 AI 原生的 ERP。有工程师反馈说，自家 AI agent 生成的部分最终答案没能送达用户，就 @ 了 Claude。21 分钟后 Claude 开出了 PR，当天下午合并。</p>
+<h3>Kikoff：每个分诊频道里的第一响应者</h3>
+<p>Kikoff 是一家金融科技初创公司，帮消费者建立信用、解决资金周转、实现财务稳健。Claude Tag 是全公司各分诊频道的第一响应者，包括：</p>
+<ul><li><code>#deploys</code>：每次发布后由 Claude 判断该盯什么，并标出被改坏的地方。</li><li><code>#alerts-ci</code>：构建失败时，Claude 查出原因，并以 draft PR 给出修复方案。</li><li><code>#alerts-sentry-backend</code>：Sentry 异常和崩溃由 Claude 先做第一轮排查。</li><li><code>#dog-fooding</code>：员工在 dogfooding 时标记的问题由 Claude 排查，并 @ 到对应负责人。</li><li><code>#support</code>：支持工单由 Claude 先过一遍。</li></ul>
+<p>Kikoff 起初只在被 @ 到时才让 Claude 参与对话，真正的大收益出现在团队允许它主动插手之后。注册流程一崩，Claude 就追溯到一次后端改动，评估影响面，点明该由哪个团队修，并开出 draft PR，让应用在此期间温和降级。</p>
+<p>Claude 指出注册已坏，追溯到后端改动，评估影响，点明负责修复的团队，并开出 draft PR 让应用温和降级。Kikoff 重现的对话，姓名与图片已做改动，经 Kikoff 许可使用。</p>
+<blockquote>「Claude 比监控和人更早发现问题时，我总是很兴奋。一个人能亲自照看的上下文有限，Claude Tag 帮我们把一部分上下文整理起来、接管下来，我们则负责结果。」</blockquote>
 <p>Alex Dejeu，Kikoff 工程经理</p>
-<h3>NavigateAI：修复碎片化上下文的错误</h3>
-<p>NavigateAI 为建筑现场团队打造人工智能副驾驶。他们在大约 90 个渠道中运行 Claude Tag，用于警报分类、错误修复、快速功能构建和支持升级。自 6 月以来，Claude 直接从 Slack 线程打开了大约 223 个 PR，并合并了 134 个 PR，从打开到合并的平均时间为两个小时。</p>
-<p>分类是 NavigateAI 一个特别有价值的用例。因为 Claude 有如此多的背景信息，所以它可以找到乍一看可能被忽略的问题的不直观的根本原因。</p>
-<blockquote>“我们与 Claude Tag 最大的‘哇！’时刻是当我们尝试调试负载问题时，该问题似乎是由客户引起的（因为他们的呼叫失败）。正常人的反应是继续追查该客户。但由于 Claude 可以访问许多其他数据源，它实际上发现它来自同一时间运行的未经检测的内部 cron 作业。”</blockquote>
-<p>Mike Chen，NavigateAI 工程主管</p>
-<p>有了Claude，解决问题的平均时间得到了改善。在一个案例中，Claude 在 Sentry 警报发出 8 分钟后找到了根本原因，并在警报发出 93 分钟后合并了修复程序。</p>
-<p>“快速发展的初创公司通常必须选择速度而不是结构。Claude·塔格为我们提供了两者。它是连接我们所有工具上的点的大脑，因此我们无需自己构建即可获得结构，”迈克说。</p>
-<h2>02 话题转公关</h2>
-<p>设置示例：</p>
-<p>渠道</p>
+<h3>NavigateAI：在碎片化上下文里修 bug</h3>
+<p>NavigateAI 为建筑现场团队做 AI copilot。他们在约 90 个频道里跑 Claude Tag，用于告警分诊、集中修 bug、快速做小功能和支持升级。自 6 月以来，Claude 直接从 Slack 线程开出约 223 个 PR，其中 134 个已合并，从开出到合并的中位时间是两小时。</p>
+<p>分诊对 NavigateAI 是格外有价值的用例。Claude 握着大量上下文，能找出乍看容易漏掉、并不直观的根因。</p>
+<blockquote>「用 Claude Tag 最让我们『哇！』的一次，是排查一个负载问题：看上去像是某个客户引起的，因为他们的调用在失败。按常人会顺着这个客户继续追。但 Claude 能访问那么多别的数据源，结果查出真凶是同一时段在跑的一个没有埋点的内部 cron job。」</blockquote>
+<p>Mike Chen，NavigateAI 工程负责人</p>
+<p>有了 Claude，问题的平均解决时间明显缩短。有一次，Sentry 告警触发 8 分钟后 Claude 就定位到根因，告警后 93 分钟修复合并。</p>
+<p>「跑得快的初创公司往往得在速度和章法之间二选一。Claude Tag 让两者兼得。它像一块大脑，把我们所有工具里的线索串起来，于是不必自己搭就能有章法。」Mike 说。</p>
+<h2>02 从线程到 PR</h2>
+<p>配置示例：</p>
+<p>频道</p>
 <p><code>#quick-wins</code> <code>#bug-bash</code> <code>#product-feedback</code> <code>#feature-requests</code> <code>#ux-papercuts</code> <code>#tech-debt</code> <code>#design-polish</code></p>
-<p>连接器</p>
+<p>Connectors</p>
 <p>GitHub、GitLab、Linear、Jira、Confluence、Notion、Figma、Sentry</p>
-<p>线程和例程</p>
-<p>每个线程一个请求，每周积压清理，每日公关综述，每周发货回顾</p>
-<p>入门说明</p>
-<p>@Claude 请记住这个频道：当有人描述错误或小功能时，请在自己的线程中处理它。首先检查现有票证并阅读相关代码。如果缺少细节，请询问它们或提供真实的示例，而不是猜测。如果更改很小且包含在内，请打开一份 PR 草案，其中包含更改内容以及测试方式的简短摘要。绝不合并；一个人审查并批准。如果规模太大或风险太大，请说明原因并建议门票。</p>
-<p>速度是初创公司最大的优势之一，但往往取悦用户的小请求可能会在混乱中迷失。情报通常由面向客户的团队收集，在 Slack 中提交，如果不被忽视，最终会到达 Linear 或 Jira，在那里它会优先于数百个其他票证。</p>
-<p>有了 Claude Tag，任何人都可以起草 PR，无论是技术性的还是非技术性的。在线索中提出一个想法，在同一个地方获得来自产品、工程和 GTM 的实时反馈，Claude 将线索转化为反映每个人意见的 PR 草案。</p>
-<p>我们采访的许多初创公司都使用 Claude Tag 来实现“轻松愉快”的功能，或者删除那些可以快速审查但不会被优先考虑的剪纸。</p>
-<h3>有序：两天内从 Slack 交换到生产功能</h3>
-<p>Orderful 是一个 EDI 平台，可通过 API 或直接通过浏览器将公司与其贸易伙伴连接起来。其客户通过该平台与其合作伙伴交易标准文件。</p>
-<p>Orderful 的 Web 应用程序不支持一种文档类型 753。该请求已积压，一家大型零售商的发货被推迟。</p>
-<p>当一位客户经理在 Slack 中跟进时，PM 给 Claude 加上了标签：“@Claude，你应该建立一个。” Claude 要求提供该文档的真实示例，以便它可以构建为实际格式，然后打开了一份 PR 草案，添加了 753 支持。</p>
-<p>Claude 确认修复程序适用于真实的 753 交易。名称和图像已更改。经 Orderful 许可使用。</p>
-<p>第二天早上，Claude为随附的 754 提交了一张罚单，这是零售商的回应，并开设了第二个 PR。两者都在 Slack 交换后大约两天投入生产。</p>
-<p>Orderful 首席技术官 Piers MacDonald 表示：“之前需要花费数周或数月的时间才能完成 Slack 对话。” “过去，难以证明其价值的轻量级功能常常被积压。现在他们有了出路。”</p>
-<h3>价：从功能请求到推出</h3>
-<p>Valence 与全球最大的雇主合作，将企业人才和绩效与人工智能教练 Nadia 连接起来。当 Valence 工程师在 Slack 中解释如何解决重要客户要求的紧急产品变更时，Claude 不仅仅遵循指示，还确定了需要进行的其他更改，因为相同的配置存在于两个位置。如果没有Claude，最初的改变就不完整。</p>
-<p>Claude指出，所请求的改变实际上是两个改变。经 Valence 许可使用。</p>
-<blockquote>“它不仅同意专家的观点。它还发现了重复的配置，这是人类无法追踪的东西。”</blockquote>
-<p>Sameer Bansal，Valence 首席人工智能工程师</p>
-<p>还有一个案例，客户紧急要求定制。Claude检查了代码，并与工程师合作，确认无需更改代码即可发货。不到一个小时，队友就为客户准备好了解决方案。</p>
+<p>线程与例程</p>
+<p>一个线程只提一个请求、每周清理 backlog、每日 PR 汇总、每周上线回顾</p>
+<p>起步指令</p>
+<p>@Claude 请记住本频道的设定：有人描述 bug 或小功能时，就在各自的线程里处理。先查有没有现成工单，并读一遍相关代码。细节不全就追问，或要一个真实示例，别自己猜。改动小且可控，就开 draft PR，附上改了什么、怎么测的简短说明。绝不自行合并，由人来审、来批准。改动太大或风险太高，就说明原因并建议开工单。</p>
+<p>速度是初创公司最大的优势之一，但那些能让用户会心一笑的小需求，常常在忙乱里被淹没。这类信息往往由面向客户的团队收集、发到 Slack，若没被漏掉，最终才流到 Linear 或 Jira，跟几百张别的工单一起来排优先级。</p>
+<p>有了 Claude Tag，懂不懂技术的人都能起草 PR。在线程里抛出想法，当场拿到产品、工程和 GTM 的反馈，Claude 再把这条线程变成一份吸纳了所有人意见的 draft PR。</p>
+<p>不少受访初创公司用 Claude Tag 做「小而讨喜」的功能，或清掉那些审起来很快、却永远排不上优先级的 papercut。</p>
+<h3>Orderful：两天内，从 Slack 对话到上线功能</h3>
+<p>Orderful 是 EDI 平台，让企业通过 API 或直接在浏览器里与贸易伙伴对接。客户在平台上和伙伴交换标准单据。</p>
+<p>有一种单据类型 753，Orderful 的 Web 应用还不支持。需求一直压在 backlog 里，一家大零售商的发货因此被耽搁。</p>
+<p>客户经理在 Slack 里跟进时，PM 把 Claude @ 了进来：「@Claude，这个你来做一个吧。」Claude 先要来该单据的真实样本，好按实际格式实现，随后开出一份加上 753 支持的 draft PR。</p>
+<p>Claude 在一笔真实的 753 交易上确认修复生效。姓名与图片已做改动，经 Orderful 许可使用。</p>
+<p>第二天一早，Claude 又为配套的 754（零售商的回执）建了工单，开出第二个 PR。两者在 Slack 那次对话后约两天就上了生产。</p>
+<p>「以前要几周甚至几个月的事，现在一次 Slack 对话就办完了。」Orderful CTO Piers MacDonald 说，「价值不好证明的小功能以前总卡在 backlog 里，现在总算有出路了。」</p>
+<h3>Valence：从功能请求到上线</h3>
+<p>Valence 与全球最大的一批雇主合作，通过 AI 教练 Nadia 把企业的人才与绩效打通。一次，重要客户提出紧急的产品改动，Valence 工程师在 Slack 里说明怎么改；Claude 没有只照着做，还发现同一份配置存在两处，因此另有几处也得一起改。没有 Claude，最初那次改动会不完整。</p>
+<p>Claude 指出，提出的改动实际上是两处改动。经 Valence 许可使用。</p>
+<blockquote>「它没有一味附和专家，还揪出了重复的配置——正是人容易跟丢的那类东西。」</blockquote>
+<p>Sameer Bansal，Valence 首席 AI 工程师</p>
+<p>另一次，客户紧急要求做定制。Claude 查了代码，和工程师一起确认不用改代码就能交付。不到一小时，同事就把方案备好给客户了。</p>
 <h2>03 公司大脑</h2>
-<p>设置示例：</p>
-<p>渠道</p>
+<p>配置示例：</p>
+<p>频道</p>
 <p><code>#ask-anything</code> <code>#company-wiki</code> <code>#product-questions</code></p>
-<p>连接器</p>
+<p>Connectors</p>
 <p>GitHub、Notion、Google Drive、Linear、Jira、Confluence、Granola、Metabase</p>
-<p>线程和例程</p>
-<p>每个线程一个问题、决策日志更新、每周陈旧文档检查、重复问题回顾</p>
-<p>入门说明</p>
-<p>@Claude 请记住此频道：回答我们的代码、文档和过去的线程中的问题，并链接您的来源。如果来源不同意，请检查代码，给出当前答案，并标记过时的文档。如果您不确定，请说出来并标记所有者。当线程做出决定时，将其记录在[文档位置]中。任何交给客户的东西都需要先进行人工检查。</p>
-<p>在初创公司，机构知识通常存在于人们的头脑中，从复杂的产品计费代码到入职文档的托管位置。</p>
-<p>对于我们采访过的许多初创公司来说，Claude·塔格（Claude Tag）已经成为公司的大脑。Claude回答了消息来源，并在不确定时标记了所有者。它还可以使知识保持最新状态：当线程做出决定时，Claude 可以在同一天将其记录在您的文档中，并标记已经过时的文档。</p>
-<p>示例交换。</p>
-<h3>Moritz：从招生到人员配置的实时真相来源</h3>
-<p>莫里茨是一家人工智能本土律师事务所，承诺当天就可以处理合同，而莫里茨所说的行业标准至少需要三周。与法律工作相关的一切，从接收和报价到人员配备和后续工作，都在 Slack 中进行，每个事务有一个线程，每个客户有一个渠道。</p>
-<p>现在，从首席执行官到律师助理，每个人都会首先询问Claude。在 Slack 中搜索长达 30 分钟的问题只需不到两分钟即可得到解答。轮班结束时的更新现在是根据当天的线程起草的，从大约一个小时的组装变成了五分钟的编辑。</p>
-<p>那时间又回到了法律工作。Claude·塔格（Claude Tag）处理案件周围的行政工作，例如后续问题、提醒和状态更新。它无法访问客户文件或与莫里茨律师的特权对话。</p>
-<blockquote>“一家在 44 个国家/地区开展业务的公司每月会产生数百个一次性问题，而没有人会为其构建功能。Claude Tag 根据我们自己在 Slack 中的历史记录来回答这些问题。每个答案都是一条带有链接的线索，因此机构记忆会复合。”</blockquote>
-<p>Stefan Mandaric，Moritz 联合创始人兼首席技术官</p>
-<h3>Campfire：按需客户体验</h3>
-<p>Slack 的一个渠道特别“受欢迎”：他们的 CX（或客户体验）渠道。销售人员使用此渠道“在潜在客户对话期间验证某些功能”，而不必“联系 10 个不同的人”。</p>
-<p>这种类型的渠道特别有效，因为销售人员可以在客户关注的同时立即做出答复，并且可以在早期客户对话中更加独立和自信地运作。</p>
-<blockquote>“Claude Tag 基本上充当了我们的中心知识库。”</blockquote>
-<p>Nancy Jin，Campfire 人工智能工程经理</p>
+<p>线程与例程</p>
+<p>一个线程只问一个问题、更新决策记录、每周检查过期文档、汇总重复提问</p>
+<p>起步指令</p>
+<p>@Claude 请记住本频道的设定：依据我们的代码、文档和过往线程回答问题，并附上来源链接。来源之间有冲突，就以代码为准给出当前答案，同时标出过时的文档。拿不准就直说并 @ 负责人。线程里一旦形成决定，就记进 [docs location]。任何要交给客户的内容，都先经人工核对。</p>
+<p>在初创公司，组织沉淀的知识常常装在人脑子里：小到产品计费代码的弯弯绕绕，大到入职文档放在哪儿。</p>
+<p>对不少受访初创公司来说，Claude Tag 已经成了公司大脑。Claude 回答时带上来源，没把握就 @ 负责人。它还让这份知识保持最新：线程里一旦定了事，Claude 当天就能记进文档，并把已经过时的文档标出来。</p>
+<p>一段对话示例。</p>
+<h3>Moritz：从接案到派工的实时事实来源</h3>
+<p>Moritz 是一家 AI 原生律师事务所，承诺合同当天交付——据 Moritz 称，行业标准至少要三周。法律工作周边的一切，从接案、报价到派工、跟进，都在 Slack 里：每个案子一个线程，每个客户一个频道。</p>
+<p>如今从 CEO 到律师助理，人人都先问 Claude。过去要在 Slack 里翻最多 30 分钟的问题，现在不到两分钟就有答案。收工更新如今由当天的线程自动起草，从过去凑约一小时变成改五分钟。</p>
+<p>省下的时间回到了法律业务本身。Claude Tag 承担案件周边的行政杂务：追问、提醒、状态同步。它碰不到客户文档，也碰不到与 Moritz 律师之间受特权保护的对话。</p>
+<blockquote>「一家业务横跨 44 个国家的事务所，每月会冒出几百个一次性问题，没人会为它们专门做功能。Claude Tag 拿我们自己在 Slack 里的历史记录来答。每个答案都是一条带链接的线程，于是组织记忆会越滚越厚。」</blockquote>
+<p>Stefan Mandaric，Moritz 联合创始人兼 CTO</p>
+<h3>Campfire：随叫随到的客户体验</h3>
+<p>有一个 Slack 频道尤其「火了起来」：他们的 CX（客户体验）频道。销售用它「在和潜在客户交谈时当场核实某些功能」，而不必「挨个去问 10 个人」。</p>
+<p>这类频道格外管用，因为销售能趁客户还关注着的时候当场答复，在早期客户沟通里也就更独立、更有底气。</p>
+<blockquote>「Claude Tag 基本就是我们的中央知识库。」</blockquote>
+<p>Nancy Jin，Campfire AI 工程经理</p>
 <h2>04 自助数据</h2>
-<p>设置示例：</p>
-<p>渠道</p>
+<p>配置示例：</p>
+<p>频道</p>
 <p><code>#data-requests</code> <code>#ask-revops</code> <code>#metric-definitions</code></p>
-<p>连接器</p>
-<p>dbt、GitHub、元数据库、BigQuery、雪花、Databricks、概念</p>
-<p>线程和例程</p>
-<p>每个线程一个问题、每周站立前读数、启动和实验读数、管道故障分类、新问题分类</p>
-<p>入门说明</p>
-<p>@Claude 请记住这个频道：来自我们的治理模型的答案以及[数据技能存储库]中的定义。如果那里没有涵盖数据，请说它未经验证，而不是猜测。先给出答案，然后给出数字、驱动因素以及任何注意事项。在解释更改之前，请检查最近的事件、版本和 Slack 讨论。如果某个指标的定义不清楚，请询问我们指的是哪一个。对于任何重要的事情，请在运行之前共享您的计划或 SQL。将您验证的内容与您假设的内容分开，并在答案末尾列出所有开放数据质量警告。如果有人发现错误，请起草修复方案供数据团队成员审核。如果一个问题出现两次，建议安排时间。</p>
-<p>在快速发展的初创公司中，每个职能部门都需要数据，而数据团队必须决定谁的要求优先。通过 Claude Tag 连接到您的数据，任何人都可以用简单的英语提问，而无需在数据团队的队列中等待。</p>
-<p>这也是我们采用的一个用例。 <a href="https://claude.com/resources/articles/self-service-data-analytics-in-slack-how-anthropic-deploys-claude-tag-for-ad-hoc-questions">在我们一个多月的数据渠道中，Claude Tag 回答了人们发布的超过 75% 的问题，通常在一两分钟内</a>。它基于受监管的数据和分析师使用的相同定义，这些定义存在于Claude在每次对话中重新阅读的版本化存储库中。</p>
-<p>来自 Slack 中的自助数据分析：Anthropic 如何部署 Claude Tag 来解决临时问题。</p>
-<h3>描述：响应临时数据请求</h3>
-<p>Descript 是一个人工智能驱动的视频编辑平台。 Claude Tag 现在是数据请求和初步分析的第一线支持者。产品、增长、RevOps 和财务在 Slack 中提出问题，并根据 Descript 的 dbt 模型获得答案。</p>
-<blockquote>“我曾经编写复杂的 SQL，并每周或每月手动刷新数字。现在我已经用我自己的 Claude 工件替换了几个数据团队仪表板，并且我不再手动刷新它们。”</blockquote>
-<p>Daisy 张，Descript 增长营销主管</p>
-<p>黛西的定期报告准备时间从几天缩短到几个小时。</p>
-<p>例如，增长团队会询问生命周期订阅量下降的原因、付费搜索是否正在失去对其他渠道的最后接触信用，或者自助帐户需要多长时间才能成为企业机会。数据团队跟踪 Claude 生成的工件，以了解哪些数据资产在团队中最重要，并将自己的时间花在战略问题和构建使自助服务工作的环境上。</p>
-<blockquote>“商业智能的承诺对于商业用户来说一直是自助式的。直到我们为 Claude Tag 建立了庞大的数据上下文之前，我从未见过它真正实现。”</blockquote>
-<p>Jen Huhn，Descript 货币化项目经理</p>
-<h3>有序：从问题到仪表板</h3>
-<p>在 Orderful，自助分析涵盖对话式分析和完整数据构建：任何人都可以从 Slack 中的问题转到合并到生产中的仪表板。关键是语义层对商定的定义和指标进行编码，因此每个答案和每个构建都使用相同的定义。</p>
-<blockquote>“我们信任输出，因为语义层限制了 SQL，CI 控制了构建，并且有一个就定义达成一致的流程。如果没有这些，你就会得到看似自信的错误答案。一旦这些护栏就位，连接 Claude Tag 需要不到 30 分钟。现在，团队成员在共享 Slack 线程中一起构建，而不是单独会话。”</blockquote>
-<p>Piers MacDonald，Orderful 首席技术官</p>
-<h2>05 报告和移交</h2>
-<p>设置示例：</p>
-<p>渠道</p>
+<p>Connectors</p>
+<p>dbt、GitHub、Metabase、BigQuery、Snowflake、Databricks、Notion</p>
+<p>线程与例程</p>
+<p>一个线程只问一个问题、站会前的每周数据速览、上线与实验复盘、管道故障分诊、新提问分诊</p>
+<p>起步指令</p>
+<p>@Claude 请记住本频道的设定：依据我们受治理的模型和 [data skills repo] 里的定义作答。数据没被覆盖到，就说明未经校验，别猜。先把结论摆出来，再给数字、驱动因素和需要注意的地方。解释变化之前，先查最近的事件、发布和 Slack 讨论。指标定义不清楚，就问清楚指的是哪一个。凡是重要问题，跑之前先亮出计划或 SQL。把已核实和假设的内容分开，并在回答末尾列出所有待处理的数据质量告警。有人发现错误，就起草修复方案交给数据团队同事审。同一个问题出现两次，就建议把它排成定时任务。</p>
+<p>在高速成长的初创公司，每个职能都想要数据，数据团队得决定先做谁的需求。把 Claude Tag 接上数据之后，任何人用大白话就能提问，不必在数据团队的队列里排着。</p>
+<p>这个用例我们自己也在用。<a href="https://claude.com/resources/articles/self-service-data-analytics-in-slack-how-anthropic-deploys-claude-tag-for-ad-hoc-questions">在我们某个数据频道里，一个月内 Claude Tag 答掉了大家提出的 75% 以上的问题，通常一两分钟就有回应</a>。它依据的是受治理的数据，以及分析师用的同一套定义；这些定义放在带版本管理的仓库里，Claude 每次对话都会重读一遍。</p>
+<p>摘自《Slack 中的自助数据分析：Anthropic 如何部署 Claude Tag 来回答临时提问》。</p>
+<h3>Descript：响应临时数据请求</h3>
+<p>Descript 是 AI 驱动的视频剪辑平台。Claude Tag 如今是数据请求和初步分析的第一道支撑。产品、增长、RevOps 和财务在 Slack 里提问，得到的是扎在 Descript 的 dbt 模型上的答案。</p>
+<blockquote>「以前我得写复杂的 SQL，每周或每月手动刷一遍数字。现在我用自己做的 Claude artifacts 替掉了好几个数据团队看板，再也不用手动刷新了。」</blockquote>
+<p>Daisy Zhang，Descript 增长营销负责人</p>
+<p>Daisy 准备周期性报告的时间，从几天缩短到几小时。</p>
+<p>比如增长团队会问：生命周期订阅为什么下滑、付费搜索的末次触点归因是不是被别的渠道抢走了、一个自助账户要多久才长成企业级商机。数据团队则盯着 Claude 生成的 artifacts，看哪些数据资产对各团队最要紧，把自己的时间花在战略性问题上，以及搭建让自助分析跑得通的上下文。</p>
+<blockquote>「商业智能一直承诺让业务人员自助分析。直到我们给 Claude Tag 配足了数据上下文，我才第一次见它真正落地。」</blockquote>
+<p>Jen Huhn，Descript 变现 PM</p>
+<h3>Orderful：从一个问题到一块看板</h3>
+<p>在 Orderful，自助分析既覆盖对话式问答，也覆盖完整的数据搭建：任何人都能从 Slack 里的一个问题，走到一块合并进生产的看板。关键是有一层语义层，把商定好的定义和指标固化下来，于是每个答案、每次搭建用的都是同一套定义。</p>
+<blockquote>「我们信得过输出，是因为语义层约束着 SQL、CI 把着构建关、定义还有一套达成共识的流程。少了这些，你拿到的就是看着笃定、其实错了的答案。这些护栏到位之后，接上 Claude Tag 用了不到 30 分钟。现在同事们在共享的 Slack 线程里一起搭，而不是各干各的。」</blockquote>
+<p>Piers MacDonald，Orderful CTO</p>
+<h2>05 例行报告与交接</h2>
+<p>配置示例：</p>
+<p>频道</p>
 <p><code>#sales-pipeline</code> <code>#customer-handoffs</code> <code>#standup-summary</code> <code>#qbr-prep</code></p>
-<p>连接器</p>
+<p>Connectors</p>
 <p>Notion、Google Drive、Gong、Salesforce、Gainsight</p>
-<p>线程和例程</p>
-<p>日终状态草案、QBR 前简报、交易交接</p>
-<p>入门说明</p>
-<p>@Claude 请记住此频道：从我们的线程、文档和数据中起草每个定期报告，并链接您的来源。领导改变的事情和需要做出决定的事情。将您验证的内容与您假设的内容分开，并标记任何缺失的内容，而不是填补空白。将草稿发布到其自己的线程中以供[所有者]编辑。在一个人批准之前什么都不会发生。如果报告不断得到相同的编辑，建议更新这些说明。</p>
-<p>我们介绍的许多例子都是反应性的：Claude回应说，发生了一些事情。例行报告是Claude按计划负责的工作，就像队友负责重复交付的工作一样。</p>
-<p>在 Claude Tag 中使用例程的示例。</p>
-<p>您描述一次结果； Claude 每次都会运行它并在团队已经工作的地方发布结果。</p>
-<h3>Valence：交易审核和交接</h3>
-<p>Valence 安排 Claude 在每次季度业务审查之前向团队通报客户健康状况、未完成的交易、阻碍因素和后续步骤。他们还致力于在交易完成时使从销售到客户成功的交接更加无缝。Claude通过帮助汇总整个参与过程中的详细信息来节省团队时间，并且经常找到他们可能错过的关键项目。</p>
-<p>Sameer 表示：“当交易完成时，Tag 会根据交易历史记录、通话和合同进行交接：谁是谁、承诺了什么、定制内容以及尚未完成的内容。然后，客户成功部门会在开始之前对其进行审核。”</p>
-<h2>06 入门清单</h2>
-<p>下面的清单汇总了这些初创团队的最佳实践，以便您可以将它们应用到您自己的工作流程中。</p>
-<p>发布前</p>
-<p>检查先决条件。</p>
-<p>Claude Tag 在 Claude Team 和 Enterprise 计划中处于公开测试版，并且不适用于 Free、Pro 或 Max。您需要一个 Claude 组织所有者和一个 Slack 工作区管理员来连接两者。管理员还必须打开例程，并且团队计划需要使用积分才能让 Claude 做出响应。</p>
-<p>使用捆绑包设置Claude的访问权限。</p>
-<p>在渠道中，Claude 以自己的<a href="https://claude.com/docs/claude-tag/concepts/agent-identity">代理身份</a> 工作，使用服务帐户而不是任何人的个人登录。将所需的连接器、存储库和说明分组到<a href="https://claude.com/docs/claude-tag/admins/add-connections">捆绑包</a>中，并将它们附加到组织范围内、每个工作区或每个通道。这设定了Claude在每个地方可以到达的范围，并且频道中的每个人都获得相同的访问权限。开始范围狭窄：仅满足第一个渠道的工作需要。</p>
-<p>在私人频道中进行实验。</p>
-<p>我们采访的初创公司中，近一半是通过在私人渠道中进行小型跨职能团队实验来开始他们的 Claude Tag 之旅的。 Sameer 说：“从混合角色的私人渠道开始，然后转向群组渠道。”</p>
-<p>确定边界。</p>
-<p>默认情况下，Slack 工作区中的任何人都可以使用 Claude，即使没有 Claude 帐户也是如此。您可以<a href="https://claude.com/docs/claude-tag/admins/restrict-access">限制对您的组织的访问</a>，并将搜索限制为 Claude 所在的频道。在 Enterprise 上，您还可以限制对特定角色或所选频道的访问。</p>
-<p>对Claude能做什么和不能做什么设定明确的期望。我们采访过的几个团队让 Claude 打开 PR 草案，但人们会进行审查和合并。对于 Orderful，<a href="https://claude.com/resources/articles/claude-code-guide-for-startups">Claude Code</a>，而不是 Tag，处理“基础设施变更、审计、敏感数据”。对于“艰难的决定”，例如“涉及多个服务的公关”，Claude会获得第二意见。莫里茨不允许Claude·塔格查阅客户文件或与其律师进行特权对话。</p>
-<p>尽早开始安全审查。</p>
-<p>通常的问题是数据保留和 Claude 可以达到什么目的，<a href="https://claude.com/docs/claude-tag/concepts/security-and-data">安全</a> 和 <a href="https://claude.com/docs/claude-tag/concepts/data-lifecycle">数据生命周期</a> 页面回答了这两个问题。 Claude Tag 不适用于启用了零数据保留、客户管理加密 (CMEK) 策略或 HIPAA 配置的组织，并且它不在我们的业务伙伴协议的涵盖范围内，因此请在计划推出之前进行检查。</p>
-<p>设置预算和警报。</p>
-<p>Claude Tag 按使用量计费，因此随着使用量的增长，尽早进行对话可以避免出现意外。您可以使用 Enterprise Analytics API 按用户<a href="https://claude.com/docs/claude-tag/admins/set-spend-limit">设置总体支出限额</a>、选择每个渠道的模型以及<a href="https://claude.com/docs/claude-tag/admins/attribute-costs">属性成本</a>。 Orderful 运行组织范围内的警报上限，分别为 75% 和 90%。 “我们对渠道成本拥有极端的所有权。所有者证明，‘是的，这笔支出对于产出/结果来说是合理的，’”Kikoff 工程经理 Alex Dejeu 说道。使用第一个渠道的实际成本来确定下一个渠道的规模。</p>
+<p>线程与例程</p>
+<p>日终状态草稿、QBR 前简报、交易交接</p>
+<p>起步指令</p>
+<p>@Claude 请记住本频道的设定：依据我们的线程、文档和数据起草每一份周期性报告，并附上来源链接。开头先讲变了什么、哪些事待拍板。把已核实和假设的内容分开，缺什么就标出来，别自己补空。草稿单独发一条线程，交给 [owner] 修改。人没批准之前，一律不对外发。如果某份报告总被改成同一处，就建议更新这套指令。</p>
+<p>前面多数例子都是被动响应：出事了，Claude 才动。例行报告则是 Claude 按点主动认领的活儿，就像同事认领一份周期性交付。</p>
+<p>在 Claude Tag 里使用 Routines 的示例。</p>
+<p>结果只描述一次，之后每回都由 Claude 执行，把结果发到团队本来就在协作的地方。</p>
+<h3>Valence：交易复盘与交接</h3>
+<p>Valence 正在让 Claude 在每次季度业务复盘前给团队做简报，涵盖客户健康度、在谈交易、卡点和下一步。他们也在打磨交易成交时从销售到客户成功的交接，让它更顺滑。Claude 帮忙把整个合作过程里的细节汇总起来，替团队省时间，还常常翻出他们可能漏掉的关键项。</p>
+<p>「交易一成交，Tag 就照着交易历史、通话和合同把交接材料搭出来：谁是谁、承诺过什么、哪里做了定制、还有哪些没结。客户成功团队在启动会前再过一遍。」Sameer 说。</p>
+<h2>06 上手清单</h2>
+<p>下面的清单把这些初创团队的最佳实践收拢到一处，方便你套进自己的工作流。</p>
+<p>上线前</p>
+<p>确认前置条件。</p>
+<p>Claude Tag 在 Claude Team 和 Enterprise 套餐下处于公测，Free、Pro、Max 用不了。要把两边接起来，得有 Claude 组织的 Owner 和 Slack 工作区管理员。管理员还必须开启 Routines；Team 套餐要先有使用额度，Claude 才会响应。</p>
+<p>用 bundle 配置 Claude 的访问权限。</p>
+<p>在频道里，Claude 以自带的 <a href="https://claude.com/docs/claude-tag/concepts/agent-identity">agent identity</a> 工作，用的是服务账号，而不是任何人的个人登录。把它需要的 connector、repo 和指令打包进一个 <a href="https://claude.com/docs/claude-tag/admins/add-connections">bundle</a>，再按全组织、按工作区或按频道挂上去。这就划定了 Claude 在每个地方能触达的范围，同一频道里所有人拿到的权限也一样。起步宜窄：只给第一个频道干活用得上的那部分。</p>
+<p>先在私有频道里试。</p>
+<p>受访初创公司里，近一半是让一个跨职能小团队先在私有频道里试水，才开启 Claude Tag 之旅。「先在私有频道里混搭不同角色，再挪到群频道。」Sameer 说。</p>
+<p>划清边界。</p>
+<p>默认情况下，Slack 工作区里谁都能用 Claude，哪怕没有 Claude 账号。你可以<a href="https://claude.com/docs/claude-tag/admins/restrict-access">限制访问</a>范围到本组织，并把搜索框定在 Claude 所在的频道。Enterprise 下还能进一步限定到特定角色或指定频道。</p>
+<p>把 Claude 能做什么、绝不能做什么讲清楚。有几家受访团队允许 Claude 开 draft PR，但审查和合并仍由人来做。在 Orderful，「基础设施改动、审计、敏感数据」交给 <a href="https://claude.com/resources/articles/claude-code-guide-for-startups">Claude Code</a> 而不是 Tag。碰上「难拿主意」的情形，比如「一个 PR 牵动多个服务」，Claude 会再征询一次意见。Moritz 则不给 Claude Tag 访问客户文档，也不让它碰与律师之间受特权保护的对话。</p>
+<p>安全审查要趁早。</p>
+<p>常被问到的是数据保留和 Claude 能触达什么，<a href="https://claude.com/docs/claude-tag/concepts/security-and-data">安全</a>与<a href="https://claude.com/docs/claude-tag/concepts/data-lifecycle">数据生命周期</a>两页都有答案。启用了零数据保留、采用客户自管加密（CMEK）策略或 HIPAA 配置的组织用不了 Claude Tag，它也不在我们的 Business Associate Agreement 覆盖范围内——规划推广前先核实这一点。</p>
+<p>设好预算和告警。</p>
+<p>Claude Tag 按用量计费，早点把话谈清楚，用的人多了才不至于被账单吓到。你可以整体、也可以按频道<a href="https://claude.com/docs/claude-tag/admins/set-spend-limit">设置支出上限</a>，按频道选模型，还能借 Enterprise Analytics API 按用户<a href="https://claude.com/docs/claude-tag/admins/attribute-costs">归集成本</a>。Orderful 设了全组织上限，在 75% 和 90% 处告警。「频道成本我们盯得极紧。负责人得说得出『是，这笔开销配得上产出／结果』。」Kikoff 工程经理 Alex Dejeu 说。拿第一个频道的真实开销，给下一个定盘子。</p>
 <p>部署</p>
-<p>在您的团队已使用的渠道中选择一项明确的任务，例如待命警报或错误分类。</p>
-<p>“我们在某些团队中进行实验，看看哪些方法有效，然后一旦确信我们已经解决了问题，我们就会将这个想法推广给其他团队，以将其添加到他们自己的类似渠道中。我们希望避免与那些对人工智能错误容忍度较低的人发生信任破裂的经历，”Kikoff 的工程经理 Alex Dejeu 说。</p>
-<p>培养您的专家和文化传承者。</p>
-<p>让您的团队已经信任的人首先公开使用 Claude。</p>
-<p>“与 Claude 公开交流非常高效且有趣。一些销售和客户成功部门的人员观看了专家 [与 Claude Tag 的互动]，然后开始询问 Claude 自己，并快速获得了价值，”Valence 首席人工智能工程师 Sameer Bansal 说道。</p>
-<p>调整噪音。</p>
-<p>多家初创公司告诉我们，他们需要调整Claude的健谈。太健谈是一种风险。</p>
-<p>“临时请求中的对话有时会变得吵闹。我们一直在努力降低这里的响应能力，并且对我们在临时请求中使用 Claude 的内容更加有原则，”NavigateAI 工程主管 Mike Chen 说。</p>
-<p>然而，闲聊太少也是一个风险。 Flagler Health 联合创始人 Will Hu 表示，在繁忙的频道中，“你要么每次都必须@，要么起不了多大作用。”而且“如果没有人密切关注某个频道或与其互动，它就会闲置。”</p>
-<p>让队友连接他们自己的帐户。</p>
-<p>Claude 可以为频道中的每个人提供设置中的管理捆绑包。 <a href="https://claude.com/docs/claude-tag/concepts/personal-connectors">个人连接器</a> 的工作方式有所不同：Claude 会根据请求者的权限进行操作，因此一旦他们批准，它就可以从他们的文档、收件箱或 CRM 中提取（所有者首先为组织添加连接器，在 Enterprise 上由管理员管理个人连接器）。答案仍然发布在频道中，因此对于敏感内容请选择“允许审核”。</p>
-<p>编写渠道说明，就像您在入职新员工一样：</p>
-<p>首先检查什么，何时打开 PR，何时询问，以及“无需采取任何行动”是有效的答案。</p>
-<p>在频道中而不是在私信中向Claude提供反馈。</p>
-<p>在线程中更正它。它<a href="https://claude.com/docs/claude-tag/users/memory">记住每个频道</a>，团队成员可以通过观看来学习如何使用它。要获得持久修复，请要求 Claude 更新该频道的内存。</p>
-<p>两名 Valence 员工在看到一位同事与 Claude 公开讨论问题后向他们表示感谢。经 Valence 许可使用。</p>
-<p>不确定下一步该去哪里？标记 Claude 并询问它对您的组织了解了什么以及它将扩展到哪些用例。</p>
-<p>Moritz 的联合创始人兼首席技术官 Stefan Mandaric 请 Claude 为每个团队推荐用例。十五分钟后，它阅读了公司的 Slack 频道、线性问题、Notion SOP、Drive 和 Metabase 仪表板，并发布了 25 个。“25 个中的 18 个无需进一步设置即可工作。这成为我们的推出计划。”</p>
-<h2>最后一句话：我们从令人惊叹的时刻学到了什么</h2>
-<p>令人惊叹的时刻并不总是与速度有关。Claude经常发现一些没有人要求它寻找的东西。有时惊喜就是克制。有时令人惊讶的是意想不到的交流。 Orderful 首席技术官皮尔斯·麦克唐纳 (Piers MacDonald) 表示：“最终，你会习惯Claude插嘴讲笑话，并且你很快就会意识到，观众很轻松，而且是第一个发笑的人。”</p>
-<p>在 Slack 中重新创建有序的对话。经 Orderful 许可使用。</p>
-<p>我们希望您觉得本指南很有用。特别感谢 Campfire、Descript、Flagler Health、Kikoff、Moritz、NavigateAI、Orderful 和 Valence 分享他们的经验和见解。</p>
-<h2>其他资源</h2>
-<h3>开始吧</h3>
-<ul><li><a href="https://claude.com/product/tag">Claude标签概述</a></li><li><a href="https://claude.com/docs/claude-tag">Claude Tag 文档</a></li><li><a href="https://claude.com/docs/claude-tag/admins/setup-overview">设置Claude标签</a></li><li><a href="https://claude.com/docs/claude-tag/admins/setup-oncall">待命引导设置</a></li><li><a href="https://claude.com/docs/claude-tag/admins/troubleshooting">疑难解答设置</a></li></ul>
-<h3>连接您的工具</h3>
-<ul><li><a href="https://claude.com/docs/claude-tag/admins/add-connections">添加连接和捆绑包</a></li><li><a href="https://claude.com/docs/claude-tag/admins/configure-github">配置 GitHub 访问</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/personal-connectors">个人连接器</a></li><li><a href="https://claude.com/docs/claude-tag/admins/network-requirements">网络要求</a></li></ul>
-<h3>访问、安全和支出</h3>
-<ul><li><a href="https://claude.com/docs/claude-tag/admins/restrict-access">限制访问</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/agent-identity">代理身份如何运作</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/security-and-data">安全和数据</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/data-lifecycle">数据生命周期和删除</a></li><li><a href="https://claude.com/docs/claude-tag/admins/for-slack-admins">Claude Slack 应用程序可以访问的内容</a></li><li><a href="https://claude.com/docs/claude-tag/admins/set-spend-limit">设置支出限额</a></li><li><a href="https://claude.com/docs/claude-tag/admins/attribute-costs">用户的属性成本</a></li></ul>
-<h3>在 Slack 中与 Claude 一起工作</h3>
-<ul><li><a href="https://claude.com/docs/claude-tag/users/when-claude-responds">控制Claude何时响应</a></li><li><a href="https://claude.com/docs/claude-tag/users/commands">Claude Tag 理解的命令</a></li><li><a href="https://claude.com/docs/claude-tag/users/memory">频道记忆</a></li><li><a href="https://claude.com/docs/claude-tag/users/proactivity">设置例程</a></li></ul>
+<p>在团队本来就在用的频道里，挑一件边界清楚的任务，比如值班告警或 bug 分诊。</p>
+<p>「我们先在几个团队里试，看什么管用，等确认坑都填平了，再推给其他团队，让他们加到自己类似的频道里。不想让对 AI 出错容忍度低的人，一上来就碰上砸信任的体验。」Kikoff 工程经理 Alex Dejeu 说。</p>
+<p>先让专家和文化骨干上手。</p>
+<p>让团队本来信得过的人先用 Claude，而且公开地用。</p>
+<p>「公开地和 Claude 来回讨论，既出活又有意思。销售和客户成功里好几个人看着专家 [interact with Claude Tag]，随后自己也去问 Claude，很快尝到了甜头。」Valence 首席 AI 工程师 Sameer Bansal 说。</p>
+<p>拿捏好话多话少的分寸。</p>
+<p>好几家初创公司告诉我们，得调一调 Claude 的健谈程度。太爱说是种风险。</p>
+<p>「临时提问里的对话有时会变吵。我们一直在压低这部分的响应频率，也更讲原则地挑哪些临时请求才交给 Claude。」NavigateAI 工程负责人 Mike Chen 说。</p>
+<p>不过话太少同样是风险。在热闹的频道里，「要么每次都 @，否则它基本不干事。」Flagler Health 联合创始人 Will Hu 说。还有，「要是没人盯着频道、也没人跟它互动，它就一直闲着。」</p>
+<p>让同事接上自己的账号。</p>
+<p>配置阶段的管理员 bundle，决定的是频道里所有人共用时 Claude 能触达什么。<a href="https://claude.com/docs/claude-tag/concepts/personal-connectors">Personal connectors</a> 则不同：Claude 以提问者的权限行事，对方一批准，就能去读他的文档、收件箱或 CRM（先由 Owner 给组织加上这个 connector；Enterprise 下由管理员管理 personal connectors）。答案仍然发在频道里，所以涉及敏感内容时选「Allow with review」。</p>
+<p>写频道指令时，就当在给新人做入职交代：</p>
+<p>先查什么、什么时候开 PR、什么时候发问，以及「无需处理」也是一个合规答案。</p>
+<p>给 Claude 的反馈发在频道里，别走私信。</p>
+<p>就在线程里纠正它。它<a href="https://claude.com/docs/claude-tag/users/memory">按频道记忆</a>，同事看着看着就学会怎么跟它配合。想一劳永逸，就让 Claude 更新这个频道的记忆。</p>
+<p>两名 Valence 员工在看同事公开用 Claude 梳理完一个问题后向他道谢。经 Valence 许可使用。</p>
+<p>不知道下一步往哪走？@Claude 一下，问问它对你的组织学到了什么、还想把用例扩到哪些地方。</p>
+<p>Moritz 联合创始人兼 CTO Stefan Mandaric 让 Claude 给每个团队推荐用例。15 分钟后，它读完了事务所的 Slack 频道、Linear 议题、Notion SOP、Drive 和 Metabase 看板，发出 25 条。「25 条里有 18 条不用再配置就能跑，那份就成了我们的推广计划。」</p>
+<h2>最后的话：那些「哇！」时刻教会了我们什么</h2>
+<p>那些「哇！」时刻不全关乎速度。很多时候，Claude 翻出了没人让它去找的东西；有时惊喜在于它的克制；有时则来自意料之外的互动。「后来你会习惯 Claude 插进来接笑话，很快还会觉得它是个好说话的观众，而且总是第一个笑。」Orderful CTO Piers MacDonald 说。</p>
+<p>在 Slack 里重现的 Orderful 对话。经 Orderful 许可使用。</p>
+<p>希望这份指南对你有用。特别感谢 Campfire、Descript、Flagler Health、Kikoff、Moritz、NavigateAI、Orderful 和 Valence 分享经验与洞见。</p>
+<h2>更多资源</h2>
+<h3>开始使用</h3>
+<ul><li><a href="https://claude.com/product/tag">Claude Tag 概览</a></li><li><a href="https://claude.com/docs/claude-tag">Claude Tag 文档</a></li><li><a href="https://claude.com/docs/claude-tag/admins/setup-overview">配置 Claude Tag</a></li><li><a href="https://claude.com/docs/claude-tag/admins/setup-oncall">值班响应引导配置</a></li><li><a href="https://claude.com/docs/claude-tag/admins/troubleshooting">配置问题排查</a></li></ul>
+<h3>接入你的工具</h3>
+<ul><li><a href="https://claude.com/docs/claude-tag/admins/add-connections">添加连接与 bundle</a></li><li><a href="https://claude.com/docs/claude-tag/admins/configure-github">配置 GitHub 访问</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/personal-connectors">Personal connectors</a></li><li><a href="https://claude.com/docs/claude-tag/admins/network-requirements">网络要求</a></li></ul>
+<h3>访问、安全与支出</h3>
+<ul><li><a href="https://claude.com/docs/claude-tag/admins/restrict-access">限制访问</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/agent-identity">agent identity 如何工作</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/security-and-data">安全与数据</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/data-lifecycle">数据生命周期与删除</a></li><li><a href="https://claude.com/docs/claude-tag/admins/for-slack-admins">Claude Slack 应用能访问什么</a></li><li><a href="https://claude.com/docs/claude-tag/admins/set-spend-limit">设置支出上限</a></li><li><a href="https://claude.com/docs/claude-tag/admins/attribute-costs">按用户归集成本</a></li></ul>
+<h3>在 Slack 里与 Claude 协作</h3>
+<ul><li><a href="https://claude.com/docs/claude-tag/users/when-claude-responds">控制 Claude 何时响应</a></li><li><a href="https://claude.com/docs/claude-tag/users/commands">Claude Tag 能识别的命令</a></li><li><a href="https://claude.com/docs/claude-tag/users/memory">频道记忆</a></li><li><a href="https://claude.com/docs/claude-tag/users/proactivity">配置 Routines</a></li></ul>
 <h3>用例</h3>
-<ul><li><a href="https://claude.com/docs/claude-tag/users/use-cases">用例库</a></li><li><a href="https://claude.com/docs/claude-tag/users/use-cases/fix-bugs">修复错误</a></li><li><a href="https://claude.com/docs/claude-tag/users/use-cases/answer-data-questions">回答数据问题</a></li></ul>
-<h3>Anthropic 如何使用 Claude Tag</h3>
-<ul><li><a href="https://claude.com/resources/articles/ai-ci-cd-on-call">Claude Tag 如何充当 Anthropic CI/CD 故障的第一响应者</a></li><li><a href="https://claude.com/resources/articles/how-anthropic-enables-self-service-data-analytics-with-claude">Anthropic 如何与 Claude 一起实现自助数据分析</a></li></ul>
+<ul><li><a href="https://claude.com/docs/claude-tag/users/use-cases">用例库</a></li><li><a href="https://claude.com/docs/claude-tag/users/use-cases/fix-bugs">修 bug</a></li><li><a href="https://claude.com/docs/claude-tag/users/use-cases/answer-data-questions">回答数据问题</a></li></ul>
+<h3>Anthropic 怎么用 Claude Tag</h3>
+<ul><li><a href="https://claude.com/resources/articles/ai-ci-cd-on-call">Claude Tag 如何充当 Anthropic 应对 CI/CD 故障的第一响应者</a></li><li><a href="https://claude.com/resources/articles/how-anthropic-enables-self-service-data-analytics-with-claude">Anthropic 如何借助 Claude 实现自助数据分析</a></li></ul>
 <p>文章</p>
-<p>2026 年 11 月 10 日</p>
-<h3>Curative 如何与 Claude 代理商建立全国性提供商网络</h3>
-<p>Curative 的交易代理每周协商 2,000 多个供应商合同。</p>
-<p>Claude平台Claude Code</p>
+<p>Nov 10, 2026</p>
+<h3>Curative 如何用基于 Claude 的 agents 搭建全国服务提供方网络</h3>
+<p>Curative 负责谈单的 agent 每周洽谈 2,000+ 份服务提供方合同。</p>
+<p>Claude PlatformClaude Code</p>
 <p>文章</p>
-<p>2026 年 11 月 9 日</p>
-<h3>使用 Claude Fable 5.2 安全扩展多代理团队</h3>
-<p>运行 Claude Fable 5.2 早期版本的 1,000 名代理团队如何使用通用工具、共享数据库和分层安全控制重现费马大定理的形式证明。</p>
-<p>（在新选项卡中打开）</p>
+<p>Nov 9, 2026</p>
+<h3>用 Claude Fable 5.2 安全扩展多 agent 团队</h3>
+<p>一支由 1,000 个 agents 组成的团队，跑着 Claude Fable 5.2 的早期版本，如何仅凭通用工具、共享数据库和分层安全控制，重现了费马大定理的形式化证明。</p>
 <p>文章</p>
-<p>2026 年 11 月 9 日</p>
-<h3>您应该使用哪种Claude模型进行构建？</h3>
-<p>如何根据任务、成本和工作量级别在 Claude Fable 5.2、Opus 5.5、Sonnet 5.5 和 Haiku 5.5 之间进行选择。</p>
-<p>Claude平台Claude Code</p>
-<p>（在新选项卡中打开）</p>
+<p>Nov 9, 2026</p>
+<h3>该用哪个 Claude 模型来构建？</h3>
+<p>如何按任务、成本和投入程度，在 Claude Fable 5.2、Opus 5.5、Sonnet 5.5 与 Haiku 5.5 之间做选择。</p>
+<p>Claude PlatformClaude Code</p>
 <p>文章</p>
-<p>2026 年 10 月 27 日</p>
-<h3>在 Google Cloud 上管理成本并展示 Claude Code 的投资回报率</h3>
-<p>在 Google Cloud 上管理 Claude Code 成本和衡量投资回报的最佳实践。</p>
-<p>Claude·科德</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
-<h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<p>Oct 27, 2026</p>
+<h3>在 Google Cloud 上管理 Claude Code 成本、证明 ROI</h3>
+<p>在 Google Cloud 上管理 Claude Code 成本、衡量投资回报的最佳实践。</p>
+<p>Claude Code</p>
+<h2>用 Claude 改变组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区精选，以及更多内容，每月投递到你的收件箱。</p>
+<p>想收到每月的开发者通讯，请留下邮箱地址。随时可以取消订阅。</p>]]></content:encoded>
     </item>
     <item>
       <title>你的应用现在可以在 Claude 中打开，Claude 也能在其中工作</title>

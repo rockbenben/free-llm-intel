@@ -10,12 +10,12 @@
 
 ## 全部文章（共 156 篇，按日期倒序；无日期条目列于最后）
 
-1. [在您的安全范围内操作 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12） <!--orig:Operate Claude Managed Agents inside your security perimeter-->
-2. [J. Crew 与 Claude 携手将其标志性的造型理念带入生活](https://claude.com/resources/articles/j-crew-style-advisor-with-claude)（2026-11-12） <!--orig:J. Crew brings its signature approach to styling to life with Claude-->
-3. [引入Claude制造](https://claude.com/resources/articles/claude-for-manufacturing)（2026-11-12） <!--orig:Introducing Claude for Manufacturing-->
-4. [Claude会议介绍](https://claude.com/resources/articles/claude-meetings)（2026-11-12） <!--orig:Introducing Claude Meetings-->
-5. [使用 Claude Opus 5.5 作为您日常知识工作的驱动力](https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work)（2026-11-12） <!--orig:Using Claude Opus 5.5 as your daily driver for knowledge work-->
-6. [Claude初创公司标签指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-12） <!--orig:The Claude Tag guide for startups-->
+1. [在自己的安全边界内运行 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12） <!--orig:Operate Claude Managed Agents inside your security perimeter-->
+2. [J.Crew 借 Claude 将标志性造型理念带到线上](https://claude.com/resources/articles/j-crew-style-advisor-with-claude)（2026-11-12） <!--orig:J. Crew brings its signature approach to styling to life with Claude-->
+3. [推出 Claude for Manufacturing](https://claude.com/resources/articles/claude-for-manufacturing)（2026-11-12） <!--orig:Introducing Claude for Manufacturing-->
+4. [推出 Claude Meetings](https://claude.com/resources/articles/claude-meetings)（2026-11-12） <!--orig:Introducing Claude Meetings-->
+5. [把 Claude Opus 5.5 用作知识工作的日常主力模型](https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work)（2026-11-12） <!--orig:Using Claude Opus 5.5 as your daily driver for knowledge work-->
+6. [面向初创公司的 Claude Tag 指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-12） <!--orig:The Claude Tag guide for startups-->
 7. [你的应用现在可以在 Claude 中打开，Claude 也能在其中工作](https://claude.com/resources/articles/interactive-connectors-full-tool)（2026-11-10） <!--orig:Your apps can now open in Claude, and Claude can work in them-->
 8. [Curative 如何用 Claude 上的 agent 构建全国性供应商网络](https://claude.com/resources/articles/how-curative-is-building-a-national-provider-network-with-agents-on-claude)（2026-11-10） <!--orig:How Curative is building a national provider network with agents on Claude-->
 9. [与 Claude 协作的更多方式：Sheets、Whiteboards 和交互式 connectors](https://claude.com/resources/articles/more-ways-to-work-with-claude-sheets-whiteboards-and-interactive-connectors)（2026-11-10） <!--orig:More ways to work with Claude: Sheets, Whiteboards, and Interactive Connectors-->

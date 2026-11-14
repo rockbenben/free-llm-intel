@@ -9,7 +9,7 @@
 
 ## 全部文章（共 103 篇，按日期倒序；无日期条目列于最后）
 
-1. [使用 Ray 对 JEPA 世界模型架构进行实时推理](https://anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale)（2026-11-12） <!--orig:Real-time inference for JEPA world model architectures with Ray-->
+1. [用 Ray 实现 JEPA 世界模型架构的实时推理](https://anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale)（2026-11-12） <!--orig:Real-time inference for JEPA world model architectures with Ray-->
 2. [向 CNCF 捐赠 KubeRay](https://anyscale.com/blog/donate-kuberay-cncf)（2026-11-09） <!--orig:Donating KubeRay to the CNCF-->
 3. [Lila Sciences 与 Anyscale 如何把 GLM-5.3-Flash 训练扩展到 100 万 token](https://anyscale.com/blog/lila-sciences-anyscale-glm-training-one-million-tokens)（2026-11-05） <!--orig:How Lila Sciences and Anyscale Scaled GLM-5.3-Flash Training to 1M tokens-->
 4. [KubeRay 生产实践：来自一线的最佳实践](https://anyscale.com/blog/kuberay-best-practices)（2026-10-26） <!--orig:KubeRay in production: best practices from the field-->
