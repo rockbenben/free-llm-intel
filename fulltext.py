@@ -1985,6 +1985,11 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                 siblings_by_base.get((vendor, url.split("#", 1)[0]), ()),
                 r.get("date") or "")
             if len(sliced) < len(ex["markdown"]):
+                # 切片后**不设最小长度门槛**：单页 changelog 一天的更新可能只有 88 字，
+                # 那是真实正文（2026-11-14 逐条核过 Gemini 105 条，26 条在 88–197 字，
+                # 均为 Launched / Deprecation 类真实公告）。`_MIN_BODY_CHARS` 只管
+                # **整页抽取**（见 extract_article_markdown），别在这里复用：
+                # 放宽整页闸门只会放行 SPA 空壳、反爬页和 404 错误页。
                 ex["markdown"] = sliced
                 # 整页的 <title> 是页面级的（「模型发布 - MiniMax 开放平台文档中心」），
                 # 切片后用它会让每篇正文都顶着同一个标题；条目自己的标题在索引里。

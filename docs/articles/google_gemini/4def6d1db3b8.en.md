@@ -1,14 +1,18 @@
 ---
 vendor: google_gemini
-title: Release notes - Gemini API | Google AI Studio
+title: Introduced a breaking change to the Interactions API in v1beta. The total_reasoning_tokens field has been renamed to total_thought_tokens to better align with the concept of "thoughts" in thinking mo…
 original_title: 
 url: https://aistudio.google.com/docs/changelog
 date: 2025-12-19
 lang: en
-captured: 2026-11-03
+captured: 2026-11-14
 extractor: readability-v1
-status: fetch_failed
-body_sha: e3b0c44298fc
+status: ok
+body_sha: e7a6d9962fc5
 ---
 
+## December 19, 2025  
 
+*   Introduced a breaking change to the Interactions API in v1beta. The
+  `total_reasoning_tokens` field has been renamed to `total_thought_tokens` to
+  better align with the concept of "thoughts" in thinking models.

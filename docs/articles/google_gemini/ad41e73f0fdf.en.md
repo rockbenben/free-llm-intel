@@ -1,14 +1,17 @@
 ---
 vendor: google_gemini
-title: Release notes - Gemini API | Google AI Studio
+title: Added 4k output resolutions for Veo and more support for portrait videos in all resolutions.
 original_title: 
 url: https://aistudio.google.com/docs/changelog
 date: 2026-01-13
 lang: en
-captured: 2026-11-03
+captured: 2026-11-14
 extractor: readability-v1
-status: fetch_failed
-body_sha: e3b0c44298fc
+status: ok
+body_sha: 8cfa597f31a0
 ---
 
+## January 13, 2026  
 
+*   Added 4k output resolutions for [Veo](/docs/video) and more support for
+  portrait videos in all resolutions.

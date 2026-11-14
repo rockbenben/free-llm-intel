@@ -71,12 +71,78 @@
       <link>https://www.inceptionlabs.ai/blog/introducing-mercury-voice</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/introducing-mercury-voice?li=1</guid>
       <pubDate>Thu, 01 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Two weeks ago, alongside Mercury 2.5, we previewed Mercury Voice. Today it's generally available for enterprise customers.</p>
+<p>Mercury Voice is a diffusion LLM (dLLM) tuned to power voice agents. It reasons, calls tools, and follows long system prompts while keeping latency low enough for natural conversation. On a test set of real customer-service prompts, Mercury Voice returns its first answer token in under 320 milliseconds (median), while also beating models like GPT-6 Luna and Gemma 4 31B on a suite of agentic and voice benchmarks.</p>
+<h2>At a glance</h2>
+<ul><li><strong>Speed:</strong> 320 ms median (p50) time to first answer token (p95: 750 ms) on production voice prompts, 5.9x faster than GPT-6 Luna (no reasoning).</li><li><strong>Quality:</strong> Outperforms models including Gemma 4 31B, GPT-6 Luna, GLM-5.3-Flash, and Qwen3.5-397B on a composite of agentic and conversational benchmarks.</li><li><strong>Reasoning effort:</strong> Three settings (low, medium, high)</li><li><strong>Context:</strong> 128K tokens, with up to 50K output tokens.</li><li><strong>Price:</strong> $0.40 per million input tokens and $1.50 per million output tokensAt launch, Mercury Voice is 50% off, at $0.20 per million input and $0.75 per million output.</li></ul>
+<h2>Low-latency conversation</h2>
+<p>For voice applications to feel natural, the agent has to respond within about 500 ms of the caller finishing; any longer and the pause feels awkward. That's why we optimize for <strong>time to first answer token (TTFAT)</strong>: how long until the model starts producing the words the caller actually hears, after all reasoning is done.</p>
+<p>Mercury Voice at low effort is the only model with a median (p50) TTFAT under the 500 ms budget, and its p95 (750 ms) is faster than the <em>median</em> of every model except GPT-OSS-120B (low) on Cerebras. In voice applications, tail latency matters almost as much as the median, since a p95 of four seconds means roughly one turn in twenty fails.</p>
+<h2>Reasoning in real-time</h2>
+<p>Voice application builders have traditionally had to choose between an intelligent, reasoning model that is slow or a non-reasoning model that can only follow basic instructions but is fast. Due to tight latency budgets, non-reasoning models like Gemma 4 31B (no reasoning) and GPT-4.1 are the default for voice agents.</p>
+<p>Mercury Voice removes the trade-off. Here's how it compares:</p>
+<p>Indeed, Mercury Voice outperforms newer models, such as GPT-6 Luna, GLM-5.3-Flash, and Gemini 3.5 Flash-Lite, on a composite benchmark that includes τ³-bench Telecom, τ³-bench Retail, τ³-bench Airline, IFBench, and BFCL v4.</p>
+<ul><li><img src="https://framerusercontent.com/images/xpOumcy8UCM2bdwX4865hiQyRjo.png?lossless=1&amp;width=1296&amp;height=1110" alt="Average quality benchmark"></li><li><img src="https://framerusercontent.com/images/k8jqlogrhSvIvsKCOCAkOlJrR8g.png?lossless=1&amp;width=1296&amp;height=1110" alt="τ³-bench Telecom"></li><li><img src="https://framerusercontent.com/images/FobeQIE1pKqPoQdhxAQtJuwZmE.png?lossless=1&amp;width=1296&amp;height=1110" alt="τ³-bench Airline"></li><li><img src="https://framerusercontent.com/images/eY6wjTGtveaCBwnqOuVya0vDxU.png?lossless=1&amp;width=1296&amp;height=1110" alt="τ³-bench Retail"></li><li><img src="https://framerusercontent.com/images/NFF4bHXAD7BWOvR1e0qGDMArGI.png?lossless=1&amp;width=1296&amp;height=1110" alt="IFBench"></li><li><img src="https://framerusercontent.com/images/yoXjaIXxWes2ygz2KufTljiOGg.png?lossless=1&amp;width=1296&amp;height=1110" alt="BFCL V4 (multi-turn)"></li></ul>
+<p>The difference is even more noticeable when quality and latency are plotted together. When averaged across multiple conversational agent benchmarks such as, τ³-bench Telecom, τ³-bench Retail, and τ³-bench Airline, Mercury Voice achieves higher quality than almost every other model we tested, and is twice as fast as the next fastest model.</p>
+<p>Benchmarks only go so far in voice. Here's what 320 milliseconds sounds like in a live conversation.</p>
+<p><img src="https://i.ytimg.com/vi_webp/y2HfMTuL7-Y/maxresdefault.webp" alt=""></p>
+<h2>Mercury Voice in production</h2>
+<p>Enterprises are already using Mercury Voice to power intelligent, low-latency voice applications.</p>
+<p><strong>Audivi AI </strong>uses Mercury Voice to power fully automated drive-thru ordering, handling real-time customer conversations, complex order modifications, and targeted upsells without a human in the loop.</p>
+<p>At the drive-thru, the order is won or lost in the pause. Mercury Voice shortened ours without making us dumb down the agent. Once you hear the difference, it's hard to accept anything slower.</p>
+<p>Jason Riggs, Chief Product Officer, Audivi AI</p>
+<p><strong>Altur</strong> builds autonomous voice agents that handle calls for financial institutions, negotiating payment plans and handling objections in real time. In Altur's internal benchmarks, Mercury Voice was the fastest model tested by a clear margin.</p>
+<p>Mercury Voice is by far the fastest model we've tested. It's the first time the language model isn't the bottleneck in our voice pipeline.</p>
+<p>Pedro Fernández, Co-Founder &amp; CTO, Altur</p>
+<p><strong>OpenCall</strong> builds AI phone agents that handle live customer calls. On its production workload, Mercury brought median model response latency close to 170 milliseconds.</p>
+<p>Any company working with real-time agents has had to choose between a model that responds intelligently and one that responds instantly. You don't have to trade intelligence for speed. With Mercury, you can have both.</p>
+<p>Oliver Silverstein, Co-founder and CEO, OpenCall</p>
+<p><img src="https://i.ytimg.com/vi_webp/9_58fpiCIOI/maxresdefault.webp" alt=""></p>
+<h2>Pricing</h2>
+<p>Mercury Voice is priced at $0.40 per million input tokens and $1.50 per million output tokens. At launch, it's 50% off: <strong>$0.20 per million input and $0.75 per million output</strong>.</p>
+<p>For a typical voice-agent profile, that works out to about <strong>$0.009 per minute of conversation</strong>. That's <strong>~5x cheaper</strong> than GPT-4.1 ($0.045 per min).</p>
+<h2>Get started</h2>
+<p>For enterprise customers, Mercury Voice is available today through the Inception API as an OpenAI API compatible endpoint. So, it drops into the LLM slot of whatever voice agent platforms or frameworks you use: LiveKit, Pipecat, Vapi, Retell, or your own.</p>
+<p>Enterprise customers interested in Mercury Voice can contact us at <a href="mailto:sales@inceptionlabs.ai"><strong>sales@inceptionlabs.ai</strong></a> to get access.</p>]]></content:encoded>
     </item>
     <item>
       <title>Introducing Mercury 2.5Read story</title>
       <link>https://www.inceptionlabs.ai/blog/introducing-mercury-2-5</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/introducing-mercury-2-5?li=1</guid>
       <pubDate>Thu, 24 Sep 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Today, we’re releasing Mercury 2.5, our most capable production model yet. It is a significant step up in quality over Mercury 2, with the same low-latency, low-cost serving profile.</p>
+<p>Since Mercury 2’s launch, thousands of developers have built with it, dozens of enterprises have put it into production, and usage has grown over an order of magnitude. It now serves latency-sensitive workloads across search, voice, and coding products.</p>
+<p>Those workloads gave us a clearer signal than benchmarks alone. We used customer feedback and production failure cases to sharpen the evals and focus training. Mercury 2.5 is the first result of that loop.</p>
+<h2>What changed</h2>
+<p>Mercury 2.5 is the most capable diffusion LLM on the market. To our knowledge, it is the largest diffusion language model ever trained.</p>
+<ul><li><strong>Quality:</strong> 40% increase in intelligence from Mercury 2. Comparable to cost-optimized frontier models like GPT-5.6 Luna (Low), Gemini 3.5 Flash-Lite, and Claude Haiku 4.5.</li><li><strong>Speed:</strong> 1,107 tokens per second on widely-available NVIDIA GPUs.</li><li><strong>Context:</strong> 260K tokens.</li><li><strong>Price:</strong> $0.20 per million input and $0.75 per million output.At launch, Mercury 2.5 is 80% off at $0.04 per million input and $0.15 per million output.</li><li><strong>Capabilities:</strong> Tunable reasoning, parallel tool calls, and schema-aligned JSON.</li></ul>
+<p>Since Mercury 2's launch, we've watched Inception advance diffusion-based language models further on NVIDIA AI infrastructure. Mercury 2.5's step up in intelligence paired with sustained speeds and low costs, reflects how quickly new architectures can mature into production-ready systems on the NVIDIA platform.</p>
+<p>Shruti Koparkar, Senior Manager of Product, Accelerated Computing Group at NVIDIA</p>
+<h2>Mercury in production</h2>
+<h3>Search Agents and RAG pipelines</h3>
+<p>One search request can trigger dozens of model calls: plan the search, rewrite queries, rerank results, structure facts, summarize sources, and check the answer. Mercury keeps those calls fast enough to stay inside a single user interaction. Several leading search-infrastructure companies now run it in production.</p>
+<h3>Voice agents and interactive applications</h3>
+<p>In voice, latency isn’t an infrastructure detail. It is the pause a caller hears.</p>
+<p>OpenCall builds AI phone agents that handle live customer calls. On its production workload, Mercury brought median model response latency close to 170 milliseconds.</p>
+<p><img src="https://i.ytimg.com/vi_webp/9_58fpiCIOI/sddefault.webp" alt=""></p>
+<p>After we switched to Mercury, our P99 response time dropped from several minutes to just one second, and our P50 dropped from 0.4 seconds to under 0.2 — significantly faster than any other provider we’ve seen, and that’s including reasoning.</p>
+<p>Oliver Silverstein, Co-founder and CEO, OpenCall</p>
+<ul><li><strong>Read more: </strong><a href="https://www.inceptionlabs.ai/blog/mercury-2-the-first-reasoning-model-fast-enough-to-pick-up-the-phone"><strong>The first reasoning model fast enough to pick up the phone</strong></a></li></ul>
+<h3>Coding subagents and assistants</h3>
+<p>Coding agents already split work across models. One may plan or write code while others search, run tools, route requests, summarize state, or compact a long session. Those supporting calls happen again and again, so latency and cost compound quickly.</p>
+<p>Augment Code uses Mercury for context compaction, model routing, and MCP tool search. Moving compaction to Mercury cut latency by 82%, from roughly 150 seconds to 27 seconds, and reduced cost by 90% while maintaining quality. Tool-search summaries return in under a second.</p>
+<p>The same speed applies to developing web apps. Watch Mercury 2.5 generate a working music discovery log web app from a few prompts in the demo below.</p>
+<p><img src="https://i.ytimg.com/vi_webp/PCPxLHM_NKE/sddefault.webp" alt=""></p>
+<h2>Mercury Voice and Mercury Router Preview</h2>
+<p>Alongside Mercury 2.5, we’re announcing a preview of <a href="https://www.inceptionlabs.ai/models">Mercury Voice</a> and <a href="https://www.inceptionlabs.ai/models">Mercury Router</a>.</p>
+<ul><li>Mercury Voice delivers time-to-first-token (TTFT) under 170 milliseconds and is a dLLM optimized for voice agents with the tightest latency budgets.</li><li>Mercury Router understands incoming prompts with a dLLM and routes them to the best models (open and closed models) that offer the best mix of quality, speed, and cost.</li></ul>
+<h2>Get Started</h2>
+<p>Mercury models are available through our Inception API, Baseten, and OpenRouter. Enterprise deployments support dedicated capacity, autoscaling, compliance controls, and configurable data retention.</p>
+<p><strong>Try Mercury 2.5 in </strong><a href="http://chat.inceptionlabs.ai/"><strong>chat</strong></a><strong> Try the API with 100 million free tokens</strong> ·<a href="https://docs.inceptionlabs.ai/get-started/get-started"> <strong>Read the API docs</strong></a></p>
+<ul><li><strong>Baseten customers:</strong> Deploy Mercury 2.5 through your existing Baseten setup.</li><li><strong>Y Combinator companies:</strong> <a href="https://deals.ycombinator.com/deals/11140">Claim</a> $500,000 in deployment benefits.</li><li><strong>Evaluating Mercury for voice?</strong> We’ll work with you to test workload fit, and validate performance under your serving constraints. <a href="https://www.inceptionlabs.ai/enterprise#contact-sales">Contact us</a>.</li></ul>
+<h2>What’s Next</h2>
+<p>We have already started training our next model. It is our largest model yet, and we are targeting a release in the coming months. Our next model will be a leap in capability without giving up diffusion’s speed and token-efficiency. That requires progress on model training, inference, evals, and infrastructure. If that's the kind of problem you want to work on, <a href="https://www.inceptionlabs.ai/careers">we’d love to hear from you</a>.</p>
+<p>More soon.</p>]]></content:encoded>
     </item>
     <item>
       <title>Mercury 2 for Search: Fast enough to run a hundred times per…</title>
