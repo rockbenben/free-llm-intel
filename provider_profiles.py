@@ -435,10 +435,10 @@ VENDOR_RANK: tuple[str, ...] = (
     # 第二梯队：常用推理平台与国内主力、上新热门
     "groq", "volcengine_doubao", "xiaomi_mimo", "tencent_hunyuan", "baidu_qianfan",
     "huggingface", "openrouter", "cloudflare_workers_ai", "cohere",
-    "nvidia_nim", "sensetime_sensenova", "iflytek_spark", "meta_llama",
+    "nvidia_nim", "sensetime_sensenova", "iflytek_spark", "iflytek_maas", "meta_llama",
     # 第三梯队：国内其他厂商
     "longcat_meituan", "siliconflow", "streamlake", "unisound_shanhai", "mthreads_coding",
-    "moss", "infini_ai", "ppio", "china_telecom_tianyi", "china_mobile_moma",
+    "moss", "qiniu", "infini_ai", "ppio", "china_telecom_tianyi", "china_mobile_moma",
     "zhinao_360",
     # 第四梯队：海外云厂商的托管服务
     "aws_bedrock", "azure_openai", "gcp_vertex_ai", "oracle_oci_ai", "ibm_watsonx",
@@ -1231,6 +1231,28 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("控制台", "https://console.xfyun.cn/"),
         ],
     },
+    "iflytek_maas": {
+        "category": "domestic",
+        "display_name": "讯飞星辰",  # 平台名 MaaS 不进展示名（测试禁平台堆叠），细节在 notes
+        "free_models": [
+            "模型广场聚合星火 Spark-X2 系列（含 X2.6）与 DeepSeek / Qwen / GLM / Kimi / MiniMax 等主流模型；**哪些模型免费、免费额度多少须登录模型广场或控制台查看**（模型详情页需登录，公开页面无逐字额度读数，不予采信）",
+        ],
+        "free_quota": "公开文档未见账户级注册赠送；多方报道 2026-10 起星火 Spark-X2.6 上线赠送 10 亿 Token / 31 天有效，但官方页需登录才能核实，**不予采信为档案读数**，以控制台为准",
+        "validity": "各模型与活动不同；付费档 Token Plan 按积分计费（官方文档见链接），免费额度有效期以控制台为准",
+        "tier_caveats": [
+            "免费模型清单与额度只在登录后的模型广场/控制台可见，公开文档未列出",
+            "领取活动额度时弹窗默认勾选「额度用尽自动切换按量计费」，不取消可能产生扣费（第三方实测提醒，官方页需登录核实）",
+            "活动只覆盖指定模型；调用其他模型按量计费",
+            "平台按模型分别定价，按 Token / 按请求次数 / 订阅多种计费模式并存，接入前先核对该模型计费口径",
+        ],
+        "preconditions": "讯飞账号（手机号/微信）注册 + 个人实名认证",
+        "promotions": "限时活动：Spark-X2.6 上线赠送（额度、截止日均以控制台为准）",
+        "notes": "与「科大讯飞星火 (Spark API)」是两个平台：星火 API 在 xinghuo.xfyun.cn，星辰 MaaS 在 maas.xfyun.cn，模型广场为聚合式；官方 Token Plan 文档（www.xfyun.cn/doc/spark/TokenPlan.html）可核实模型清单与积分价格",
+        "links": [
+            ("模型广场", "https://maas.xfyun.cn/modelSquare"),
+            ("Token Plan 使用文档（模型清单 / 积分价）", "https://www.xfyun.cn/doc/spark/TokenPlan.html"),
+        ],
+    },
     "streamlake": {
         "category": "domestic",
         "display_name": "StreamLake (快手万擎)",
@@ -1334,6 +1356,37 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("MOSS 开放平台", "https://platform.mosi.cn/"),
             ("快速开始（API Key 与接入示例）", "https://platform.moss.cn/docs/getting-started/quickstart"),
             ("请求限制", "https://platform.moss.cn/docs/errors-and-limits/limits"),
+        ],
+    },
+    "qiniu": {
+        "category": "domestic",
+        "display_name": "七牛云 Conatus",
+        "free_models": [
+            "**qiniu/conatus-free** —— 聚合多种顶级模型的统一入口（活动期对外只展示这一模型标识）；1M 上下文 / 128K 最大输出；支持工具调用、深度思考、图像理解、结构化输出",
+        ],
+        "free_quota": "活动期每日免费 Token 额度：已实名认证用户每日 **1 亿 Token**；任意一笔大于 100 元且已到账的充值（多笔不累计）后提升至每日 **10 亿 Token**；每日 00:00 重置、当日未用不结转；按输入+输出 Token 计量（缓存命中输入也计入）；不扣减账户余额、资源包、订阅额度或积分",
+        "validity": "2026-10-24 00:00 至 2026-11-30 23:59（北京时间）；结束后停止调用，不自动转付费、不自动切换其他模型",
+        "tier_caveats": [
+            "免费额度按账号发放，同一账号下所有 API Key 共享；每日 00:00 重置、当日未用额度不结转",
+            "额度用尽后请求被直接拒绝：不扣余额/资源包/订阅/积分，也不自动切换其他收费模型",
+            "未登录/未实名认证不可调用（0 Token）；每日 10 亿档需满足单笔 >100 元充值门槛",
+            "活动结束后即使仍有剩余额度也不能继续调用",
+            "限时活动聚合服务：官方明示不承诺稳定性与可用性，可能出现延迟升高或服务中断，不建议用于生产",
+        ],
+        "preconditions": "七牛云账号登录 + 实名认证；每日 10 亿档另需任意一笔大于 100 元已到账充值（多笔不累计）",
+        "promotions": "1024 程序员节限时活动（2026-10-24 00:00 起，至 2026-11-30 23:59）",
+        "openai_compat": {
+            "summary": "实名每日 1 亿 Token；单笔充值满 100 元后每日 10 亿（活动至 11-30）",
+            "api_key_label": "七牛云 API Key",
+            "api_key_url": "https://portal.qiniu.com/",
+            "base_url": "https://api.qnaigc.com/v1",
+            "models": "qiniu/conatus-free",
+        },
+        "notes": "兼容 Completions 与 Messages 两种协议；活动页原文「本期不提供按量付费」，额度不足时须等次日 00:00 重置或按充值规则提升上限",
+        "links": [
+            ("Conatus Free 活动页（额度与规则全文）", "https://www.qiniu.com/ai/free-models/conatus-2026"),
+            ("七牛云 AI 大模型页", "https://www.qiniu.com/ai"),
+            ("控制台（额度查询 / API Key）", "https://portal.qiniu.com/"),
         ],
     },
     "zhinao_360": {

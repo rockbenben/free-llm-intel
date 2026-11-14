@@ -4864,6 +4864,12 @@ class TestGuideRendering(unittest.TestCase):
             "sambanova",
             # StepFun：无通用免费档，仅 StepAudio 3 限时免（至 2026-11-17 11:59:59）——限免不构成长期额度
             "stepfun",
+            # 七牛云 Conatus：1024 限时活动（2026-10-24 ~ 2026-11-30，活动结束即停用）——
+            # 与 StepFun 同类，限免不构成长期额度，不进白嫖攻略（厂商总表里保留完整档案）
+            "qiniu",
+            # 讯飞星辰 MaaS：免费模型清单与额度只登录后可查（模型详情页需登录），
+            # 公开文档只有 Token Plan 付费积分价——免费权益无法从官方公开页核实（宁缺毋假）
+            "iflytek_maas",
         }
         root = Path(__file__).resolve().parent
         vendors, _sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
