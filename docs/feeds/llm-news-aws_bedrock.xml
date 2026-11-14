@@ -9,57 +9,57 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>使用 Amazon SageMaker Canvas 在 GS Caltex 进行生产 MLOps，第 1 部分</title>
+      <title>GS Caltex 借助 Amazon SageMaker Canvas 落地生产级 MLOps，第 1 部分</title>
       <link>https://aws.amazon.com/blogs/machine-learning/production-mlops-at-gs-caltex-with-amazon-sagemaker-canvas-part-1/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/production-mlops-at-gs-caltex-with-amazon-sagemaker-canvas-part-1/</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Production MLOps at GS Caltex with Amazon SageMaker Canvas, part 1</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 Amazon SageMaker Canvas 在 GS Caltex 进行生产 MLOps，第 1 部分</h1>
-<p><a href="https://www.gscaltex.com/en">GS Caltex</a> 使用 <a href="https://aws.amazon.com/sagemaker/canvas/">Amazon SageMaker Canvas</a> 和 <a href="https://aws.amazon.com/sagemaker/ai/pipelines/">Amazon SageMaker Pipelines</a> 将流程工程师的模型连接到生产工作流程。这家韩国能源和化工公司将模型开发和运营分给了技能互补的工程师。</p>
-<p>流程工程师无需编写代码，即可利用其流程知识在 SageMaker Canvas 中构建和验证模型。机器学习 (ML) 工程师配置 SageMaker Pipelines 工作流程以进行部署和计划推理。</p>
-<p>将资产从 SageMaker Canvas 转移到 SageMaker Pipelines 仍然需要集成工作。机器学习工程师必须设置生产数据路径、提供模型配置并连接预处理和推理作业。 GS Caltex 自动执行此交接，同时重用在 SageMaker Canvas 中创建的资产。</p>
-<p>GS Caltex 报告称，其 ML 工程师现在可以在几个小时内部署模型，而之前需要大约一周的时间。该公司每 30 分钟运行一次批量推理，减少了对连续运行端点的需求。 GS Caltex 报告称，这显着降低了推理成本。</p>
-<p>这篇文章介绍了 GS Caltex 如何将 SageMaker Canvas 连接到 SageMaker Pipelines，并在生产中重用经过验证的预处理流程和模型。</p>
+<h1>GS Caltex 借助 Amazon SageMaker Canvas 落地生产级 MLOps，第 1 部分</h1>
+<p><a href="https://www.gscaltex.com/en">GS Caltex</a> 用 <a href="https://aws.amazon.com/sagemaker/canvas/">Amazon SageMaker Canvas</a> 和 <a href="https://aws.amazon.com/sagemaker/ai/pipelines/">Amazon SageMaker Pipelines</a> 把工艺工程师的模型接入生产工作流。这家韩国能源与化工企业把模型开发与运营分给技能互补的两类工程师。</p>
+<p>工艺工程师凭借自身的工艺知识，在 SageMaker Canvas 里无需写代码就能构建和验证模型。机器学习 (ML) 工程师则配置 SageMaker Pipelines 工作流，用于部署和定时推理。</p>
+<p>把资产从 SageMaker Canvas 迁到 SageMaker Pipelines 仍需要集成工作：ML 工程师得设定生产数据路径、提供模型配置、把预处理和推理作业串起来。GS Caltex 把这段交接自动化了，同时复用了在 SageMaker Canvas 中创建的资产。</p>
+<p>GS Caltex 表示，其 ML 工程师现在几小时内就能部署模型，而此前大约要一周。公司每 30 分钟跑一次批量推理，减少了对持续运行端点的依赖。GS Caltex 称这显著降低了推理成本。</p>
+<p>本文介绍 GS Caltex 如何把 SageMaker Canvas 接到 SageMaker Pipelines，并在生产中复用经过验证的预处理流程和模型。</p>
 <h2>解决方案概述</h2>
-<p>机器学习操作 (MLOps) 工作流有两个路径：准备新的模型版本以进行部署，以及使用已部署的模型运行批量推理。</p>
-<h3>从经过验证的模型到可重复的工作流程</h3>
-<p>您可以使用 SageMaker Canvas 直观地准备数据、构建模型并生成批量预测。您还可以通过 SageMaker Canvas 在 Amazon SageMaker 模型注册表中注册经过验证的模型。 GS Caltex 构建了一个单独的移交流程，将这些资产转化为可执行的 SageMaker Pipelines 步骤。</p>
-<p>流程工程师了解流程背后的变量和数据，并评估模型的预测是否有用。机器学习工程师将生成的资产转化为生产作业并管理模型版本和执行历史记录。</p>
-<table><thead><tr><th><strong>面积</strong></th><th><strong>SageMaker Canvas 中准备了什么</strong></th><th><strong>生产工作流程中管理什么</strong></th></tr></thead><tbody><tr><td>数据准备</td><td>使用 Data Wrangler 构建的预处理流程</td><td>Amazon SageMaker 处理中的预处理作业</td></tr><tr><td>模型开发</td><td>训练好的模型和评估结果</td><td>模型注册表中的模型版本和批准状态</td></tr><tr><td>预测</td><td>模型预测的验证</td><td>使用批准的模型每 30 分钟进行一次批量推理</td></tr><tr><td>运营</td><td>单个模型的开发和验证</td><td>步骤执行历史记录、存储结果和故障处理</td></tr></tbody></table>
+<p>机器学习运维 (MLOps) 工作流有两条路径：为部署准备新的模型版本，以及用已部署的模型运行批量推理。</p>
+<h3>从经过验证的模型到可重复的工作流</h3>
+<p>你可以用 SageMaker Canvas 可视化地准备数据、构建模型、生成批量预测，也可以从 SageMaker Canvas 把验证过的模型注册到 Amazon SageMaker Model Registry。GS Caltex 另外搭了一套交接流程，把这些资产转成可执行的 SageMaker Pipelines 步骤。</p>
+<p>工艺工程师熟悉工艺背后的变量和数据，判断模型预测是否有用；ML 工程师则把产出的资产变成生产作业，并管理模型版本与执行历史。</p>
+<table><thead><tr><th><strong>方面</strong></th><th><strong>在 SageMaker Canvas 中准备什么</strong></th><th><strong>在生产工作流中管理什么</strong></th></tr></thead><tbody><tr><td>数据准备</td><td>用 Data Wrangler 构建的预处理流程</td><td>Amazon SageMaker Processing 中的预处理作业</td></tr><tr><td>模型开发</td><td>训练好的模型与评估结果</td><td>Model Registry 中的模型版本与审批状态</td></tr><tr><td>预测</td><td>模型预测的验证</td><td>用已批准的模型每 30 分钟做一次批量推理</td></tr><tr><td>运营</td><td>单个模型的开发与验证</td><td>步骤执行历史、存储的结果与失败处理</td></tr></tbody></table>
 <h3>参考架构</h3>
-<p>下图显示了流程工程师如何将 SageMaker Canvas 资产移交给 ML 工程师进行部署和计划推理。 ML 工程师使用 Amazon Simple Storage Service (Amazon S3) 来预处理流程，并使用模型注册表来存储模型版本，然后通过 Amazon EventBridge 安排管道运行。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21878-1.png" alt="流程工程师在 SageMaker Canvas 中构建模型。 ML 工程师将 S3 中的预处理流程和模型注册表中的模型连接到 SageMaker Pipelines，并通过 Amazon EventBridge 触发批量推理。"></p>
-<p>图 1：连接到 SageMaker Pipelines 工作流程以进行计划批量推理的 SageMaker Canvas 资产</p>
-<p>ML 工程师从 SageMaker Canvas 接收预处理流程和模型，并检查数据格式和预测结果。审核后，他们在模型注册表中批准该模型并进行部署。此准备工作在部署新模型版本时进行。后续推理运行将重用已部署的模型。</p>
-<p>Amazon EventBridge 启动每个计划的运行。 SageMaker Pipelines 准备来自 Amazon Simple Storage Service (Amazon S3) 的输入数据，运行预处理和 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/batch-transform.html">SageMaker 批量转换</a>，并将结果存储在 S3 中。 ML 工程师可以检查步骤状态和 Amazon CloudWatch 日志来监控工作流程。</p>
-<p>生产管道重用在 SageMaker Canvas 中创建的预处理逻辑和经过训练的模型。 ML 工程师配置输入和输出路径，设置执行顺序，并编写将审批和调度连接到工作流程的代码。</p>
+<p>下图展示工艺工程师如何把 SageMaker Canvas 资产交给 ML 工程师，用于部署和定时推理。ML 工程师用 Amazon Simple Storage Service (Amazon S3) 存放预处理流程、用 Model Registry 管理模型版本，再通过 Amazon EventBridge 安排管道运行。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21878-1.png" alt="工艺工程师在 SageMaker Canvas 中构建模型。ML 工程师把 S3 中的预处理流程和 Model Registry 中的模型接入 SageMaker Pipelines，由 Amazon EventBridge 触发批量推理。"></p>
+<p>图 1：接入 SageMaker Pipelines 工作流以做定时批量推理的 SageMaker Canvas 资产</p>
+<p>ML 工程师从 SageMaker Canvas 拿到预处理流程和模型，核对数据格式与预测结果；核对之后，在 Model Registry 里批准该模型并部署。这套准备工作只在部署新模型版本时做一次，后续推理运行直接复用已部署的模型。</p>
+<p>Amazon EventBridge 启动每一次定时运行。SageMaker Pipelines 从 Amazon Simple Storage Service (Amazon S3) 准备输入数据，运行预处理和 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/batch-transform.html">SageMaker Batch Transform</a>，并把结果存回 S3。ML 工程师可以查看步骤状态和 Amazon CloudWatch 日志来监控工作流。</p>
+<p>生产管道复用了在 SageMaker Canvas 中创建的预处理逻辑和训练好的模型。ML 工程师配置输入输出路径、设定执行顺序，并编写把审批与调度接入工作流的代码。</p>
 <h2>先决条件</h2>
 <p>在开始之前，请准备以下内容：</p>
-<ul><li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-custom-models.html">在 SageMaker Canvas 中构建和评估的模型</a> 及其 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-data-prep.html">Data Wrangler 预处理流程</a></li><li>用于推理的 CSV 数据和用于存储文件的 S3 存储桶。</li><li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html">SageMaker 执行角色</a> 和 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipeline-eventbridge.html">具有启动管道权限的 Amazon EventBridge 角色</a></li><li>安装了 Boto3 和 SageMaker Python SDK 2.x 的 Python 环境。</li></ul>
-<p>完整的参考实现可在 <a href="https://github.com/aws-samples/sample-canvas-to-pipelines-mlops">GitHub 存储库</a> 中找到。本文中的代码示例重点关注组件之间的连接。该存储库使用示例贷款分类模型，因此请调整配置以匹配模型的输入和输出格式。</p>
+<ul><li>在 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-custom-models.html">SageMaker Canvas 中构建并评估好的模型</a>，以及配套的 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-data-prep.html">Data Wrangler 预处理流程</a></li><li>用于推理的 CSV 数据，以及存放这些文件的 S3 存储桶。</li><li>一个 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html">SageMaker 执行角色</a>，以及一个<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipeline-eventbridge.html">有权启动管道的 Amazon EventBridge 角色</a></li><li>装好 Boto3 和 SageMaker Python SDK 2.x 的 Python 环境。</li></ul>
+<p>完整的参考实现放在 <a href="https://github.com/aws-samples/sample-canvas-to-pipelines-mlops">GitHub 仓库</a>。本文的代码示例只聚焦组件之间的连接。仓库用的是一个贷款分类示例模型，请把配置改成与你模型的输入输出格式一致。</p>
 <h2>技术实现</h2>
-<p>以下步骤涵盖预处理重用、模型批准和部署、管道构建和计划推理。</p>
-<h3>1. 使用 SageMaker Processing 运行 SageMaker Canvas 预处理流程</h3>
-<p>在 SageMaker Canvas 中使用 Data Wrangler 创建的预处理流程记录数据源和转换步骤。要设置参考实现，请使用 SageMaker Processing 将数据导出到 Amazon S3，然后检索作业设置和该作业使用的“.flow”文件。</p>
-<p>在导出设置中，关闭 <strong>自动作业配置</strong> 并选择 <strong>SageMaker 处理</strong>。导出开始后，在 Amazon SageMaker AI 控制台上打开处理作业详细信息。记录容器映像 URI、名为“flow”的输入的 S3 URI、执行角色和输出设置。使用这些值来配置运行“.flow”文件的管道步骤。</p>
-<p>SageMaker 执行角色必须有权读取所需的 S3 数据、写入结果以及访问容器映像。根据您需要处理的数据量选择实例类型和计数。</p>
-<p>保持工艺工程师验证预处理逻辑，并调整生产环境的数据源、路径和其他设置。根据原始作业配置检查容器映像和输出节点。</p>
-<table><thead><tr><th><strong>要检查的项目</strong></th><th><strong>做什么</strong></th></tr></thead><tbody><tr><td>输入位置</td><td>检查“.flow”文件中数据源引用的 S3 URI。将原始数据上传到另一个位置不会更新此引用。</td></tr><tr><td>容器镜像</td><td>使用 S3 导出期间创建的处理作业中的图像，并固定可重现已验证转换的版本。</td></tr><tr><td>输出 ID</td><td>使用导出配置中的输出节点和输出名称。如果所需格式为“{node_id}.{output_name}”，请完全匹配。</td></tr><tr><td>学习转型价值观</td><td>保留训练期间学到的值，例如缩放和编码参数。不要在每个推理批次上重新安装它们。</td></tr><tr><td>验证</td><td>比较 SageMaker Canvas 和处理针对相同输入生成的列、数据类型和转换值。</td></tr></tbody></table>
-<p>某些“.flow”文件包含执行元数据，例如“internal_metadata.dw_job.container_uri”。检查实际的处理作业设置，而不是假设每个导出都包含此字段。如果您将工作流程移动到另一个 AWS 区域，请验证容器映像在该区域是否可用。</p>
-<p>参考实现通过在“runs/&lt;execution-id&gt;/”下执行来分离中间输出和最终输出。其“PrepareInput”步骤将数据写入“.flow”文件引用的固定 S3 位置。防止共享该输入路径的执行重叠。</p>
-<p>为了隔离每次执行的输入数据，请添加一个准备步骤，更新“.flow”文件副本中的源 URI。声明 SageMaker Pipelines 参数不会自动替换文件内的 URI。</p>
-<h3>2. 处理训练和推理输入之间的差异</h3>
-<p>目标列是训练数据和推理数据之间的区别之一。使用训练数据构建的流可以包含期望输入模式中的目标列的转换。推理数据不包含该已知结果。</p>
-<p>参考实现在预处理之前添加了“PrepareInput”步骤。如果目标列缺失，此步骤将为其添加占位符值。预处理后，“DropTargetColumn”会删除该列。将占位符的数据类型和列位置与训练模式相匹配，并仅按原始顺序将预期特征传递给模型。</p>
+<p>下面的步骤涵盖预处理复用、模型审批与部署、管道构建，以及定时推理。</p>
+<h3>1. 用 SageMaker Processing 运行 SageMaker Canvas 预处理流程</h3>
+<p>在 SageMaker Canvas 里用 Data Wrangler 创建的预处理流程，会记录数据源和转换步骤。要搭好参考实现，先用 SageMaker Processing <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-export-data.html">把数据导出到 Amazon S3</a>，再取回该作业的设置和它用到的 <code>.flow</code> 文件。</p>
+<p>在导出设置里，关掉 <strong>Auto job configuration</strong>，选择 <strong>SageMaker Processing</strong>。导出启动后，到 Amazon SageMaker AI 控制台打开 Processing 作业详情，记下容器镜像 URI、名为 <code>flow</code> 的输入对应的 S3 URI、执行角色和输出设置。用这些值来配置运行 <code>.flow</code> 文件的管道步骤。</p>
+<p>SageMaker 执行角色必须有权读取所需的 S3 数据、写入结果、访问容器镜像。实例类型和数量按要处理的数据量来选。</p>
+<p>保留经工艺工程师验证过的预处理逻辑，只按生产环境调整数据源、路径和其他设置。对照原始作业配置，核对容器镜像和输出节点。</p>
+<table><thead><tr><th><strong>检查项</strong></th><th><strong>要做什么</strong></th></tr></thead><tbody><tr><td>输入位置</td><td>核对 <code>.flow</code> 文件里数据源引用的 S3 URI。把原始数据上传到别处并不会更新这个引用。</td></tr><tr><td>容器镜像</td><td>使用 S3 导出时创建的 Processing 作业里的镜像，并固定一个能复现已验证转换的版本。</td></tr><tr><td>输出 ID</td><td>使用导出配置里的输出节点和输出名称。若要求的格式是 <code>{node_id}.{output_name}</code>，就严格按此匹配。</td></tr><tr><td>学习到的转换参数</td><td>保留训练期间学到的值，例如缩放和编码参数。不要在每个推理批次上重新拟合。</td></tr><tr><td>验证</td><td>对同一份输入，比较 SageMaker Canvas 与 Processing 产出的列、数据类型和转换值。</td></tr></tbody></table>
+<p>有些 <code>.flow</code> 文件带有执行元数据，例如 <code>internal_metadata.dw_job.container_uri</code>。别假定每次导出都含这个字段，应去核对实际 Processing 作业的设置。如果把工作流迁到另一个 AWS 区域，要确认容器镜像在那里可用。</p>
+<p>参考实现按执行把中间产物和最终输出分开，放在 <code>runs/&lt;execution-id&gt;/</code> 下。它的 <code>PrepareInput</code> 步骤把数据写到 <code>.flow</code> 文件引用的固定 S3 位置。要避免共用这一输入路径的多次执行相互重叠。</p>
+<p>如果连每次执行的输入数据也要隔离，就加一个准备步骤，在 <code>.flow</code> 文件的副本里更新源 URI。仅仅声明一个 SageMaker Pipelines 参数，并不会自动替换文件里的 URI。</p>
+<h3>2. 处理训练输入与推理输入的差异</h3>
+<p>目标列是训练数据与推理数据的差异之一。用训练数据构建的流程里，可能含有要求输入 schema 带目标列的转换；而推理数据并不包含这个已知结果。</p>
+<p>参考实现在预处理之前加了一个 <code>PrepareInput</code> 步骤：若目标列缺失，就用占位值补上；预处理之后，<code>DropTargetColumn</code> 再把这一列删掉。占位值的数据类型和列位置要与训练 schema 对齐，并且只按原始顺序把预期特征传给模型。</p>
 <pre><code>PrepareInput -&gt; PreprocessNewData -&gt; DropTargetColumn
              -&gt; BatchPredict -&gt; AssembleResults</code></pre>
-<p>仅当占位符目标不影响特征值时才使用此方法。按目标过滤行、从中派生特征或应用目标编码的流需要额外处理。在这些情况下，将推理所需的转换和学习状态分开。</p>
-<p>验证应涵盖列顺序和计数、数据类型、缺失值处理和行计数。删除目标后，检查剩余列是否与训练期间使用的特征顺序匹配。</p>
-<h3>3. 注册、批准和部署模型</h3>
-<p>在 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-register-model.html">模型注册表</a> 中注册经过验证的 SageMaker Canvas 模型版本。注册版本可以包括模型文件、推理配置和评估结果。 ML 工程师在更改批准状态之前会审查此信息。</p>
-<p>模型文件（例如“model.tar.gz”）必须与正确的推理容器和环境设置一起使用。模型注册表中的模型包将这些信息组合在一起。在此批处理架构中，部署从批准的包中创建 SageMaker 模型资源以供批量转换引用。</p>
-<p>以下示例检查已批准的包，然后创建模型资源。在部署期间提供 <code>model_package_arn</code>、<code>model_name</code> 和 <code>sagemaker_role_arn</code>。此示例为每个版本使用唯一的型号名称。</p>
+<p>只有当占位目标不影响特征值时，才能用这个办法。若流程按目标过滤行、从目标派生特征，或做目标编码，就需要另行处理：把推理所需的转换和学习状态单独拆出来。</p>
+<p>验证要覆盖列顺序与列数、数据类型、缺失值处理和行数。删掉目标列之后，确认剩下的列与训练时使用的特征顺序一致。</p>
+<h3>3. 注册、审批并部署模型</h3>
+<p>把验证过的 SageMaker Canvas 模型版本注册到 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-register-model.html">Model Registry</a>。注册的版本可以包含模型文件、推理配置和评估结果。ML 工程师先审阅这些信息，再更改审批状态。</p>
+<p>模型文件（如 <code>model.tar.gz</code>）必须搭配正确的推理容器和环境设置使用。Model Registry 里的模型包把这些信息归拢到一起。在这套批量架构中，部署会从已批准的模型包创建一个 SageMaker 模型资源，供 Batch Transform 引用。</p>
+<p>下面的示例先检查一个已批准的模型包，再创建模型资源。部署时提供 <code>model_package_arn</code>、<code>model_name</code> 和 <code>sagemaker_role_arn</code>。示例为每个版本使用不同的模型名称。</p>
 <pre><code>import boto3
 
 sm_client = boto3.client(&quot;sagemaker&quot;)
@@ -77,12 +77,12 @@ sm_client.create_model(
     ExecutionRoleArn=sagemaker_role_arn,
     PrimaryContainer={&quot;ModelPackageName&quot;: model_package_arn},
 )</code></pre>
-<p>模型注册表记录批准状态，但它不会对每个推理请求强制执行批准检查。检查部署代码中的状态并在管道配置中保留选定的包 ARN 和模型名称。如果批准被撤销，请更新使用该模型的计划和执行配置。</p>
-<p>模型版本发布时进行注册和部署。每 30 分钟运行一次的管道使用该模型创建批量转换作业，因此不需要在每次运行时再次注册模型。</p>
-<h3>4. 连接预处理、推理和结果组装</h3>
+<p>Model Registry 会记录审批状态，但不会对每次推理请求强制做审批校验。要在部署代码里检查这个状态，并把选定的模型包 ARN 和模型名称留在管道配置中。一旦审批被撤销，就更新用到该模型的调度与执行配置。</p>
+<p>注册和部署只在模型版本发布时进行。每 30 分钟运行一次的管道用该模型创建 Batch Transform 作业，因此不必每次运行都重新注册模型。</p>
+<h3>4. 串起预处理、推理与结果组装</h3>
 <p>推理管道有五个步骤。</p>
-<table><thead><tr><th><strong>步骤</strong></th><th><strong>功能</strong></th><th><strong>输入和输出</strong></th></tr></thead><tbody><tr><td><code>准备输入</code></td><td>如果需要，添加占位符目标列</td><td>新的推理数据 -&gt; 提供目标列的数据</td></tr><tr><td><code>预处理新数据</code></td><td>运行 SageMaker Canvas 预处理流程</td><td>准备好的输入和 <code>.flow</code> -&gt; 转换后的数据</td></tr><tr><td><code>DropTargetColumn</code></td><td>删除目标列和 CSV 标题</td><td>转换后的数据 -&gt; 没有标题的 CSV</td></tr><tr><td><code>批量预测</code></td><td>使用批准的模型运行批量推理</td><td>特征 CSV -&gt; 预测文件</td></tr><tr><td><code>组装结果</code></td><td>将预处理数据与预测相结合</td><td>预处理数据和预测文件 -&gt; 最终结果 CSV</td></tr></tbody></table>
-<p>在连接步骤之前配置每个作业。在以下示例中，“prepare_args”、“preprocess_args”、“drop_target_args”和“assemble_args”保存使用“PipelineSession”的处理器上的“run()”调用返回的步骤参数。处理器和“transformer”共享“pipeline_session”对象。使用之前部署的“model_name”配置“transformer”。</p>
+<table><thead><tr><th><strong>步骤</strong></th><th><strong>作用</strong></th><th><strong>输入与输出</strong></th></tr></thead><tbody><tr><td><code>PrepareInput</code></td><td>需要时补上占位目标列</td><td>新的推理数据 -&gt; 带目标列的数据</td></tr><tr><td><code>PreprocessNewData</code></td><td>运行 SageMaker Canvas 预处理流程</td><td>准备好的输入与 <code>.flow</code> -&gt; 转换后的数据</td></tr><tr><td><code>DropTargetColumn</code></td><td>删除目标列和 CSV 表头</td><td>转换后的数据 -&gt; 无表头的特征 CSV</td></tr><tr><td><code>BatchPredict</code></td><td>用已批准的模型跑批量推理</td><td>特征 CSV -&gt; 预测文件</td></tr><tr><td><code>AssembleResults</code></td><td>把预处理数据与预测合并</td><td>预处理数据与预测文件 -&gt; 最终结果 CSV</td></tr></tbody></table>
+<p>串接步骤之前，先配置好每个作业。下例中，<code>prepare_args</code>、<code>preprocess_args</code>、<code>drop_target_args</code> 和 <code>assemble_args</code> 保存的是使用 <code>PipelineSession</code> 的处理器上 <code>run()</code> 调用返回的步骤参数。处理器和 <code>transformer</code> 共用 <code>pipeline_session</code> 对象。用先前部署好的 <code>model_name</code> 配置 <code>transformer</code>。</p>
 <pre><code>from sagemaker.workflow.pipeline import Pipeline
 from sagemaker.workflow.steps import ProcessingStep, TransformStep
 
@@ -125,13 +125,13 @@ pipeline = Pipeline(
     sagemaker_session=pipeline_session,
 )
 pipeline_arn = pipeline.upsert(role_arn=sagemaker_role_arn)[&quot;PipelineArn&quot;]</code></pre>
-<p>以下执行图显示了示例贷款模型推理工作流程中的五个步骤。他们准备输入、应用预处理、删除目标列、运行批量推理并组装结果。截取此屏幕截图时，执行处于“正在执行”状态。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21878-2.png" alt="示例贷款模型的执行图显示了PrepareInput、PreprocessNewData、DropTargetColumn、BatchPredict 和组装结果"></p>
+<p>下面的执行图展示了示例贷款模型推理工作流中的五个步骤：准备输入、应用预处理、删除目标列、运行批量推理、组装结果。截这张图时，执行处于 <code>Executing</code> 状态。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-21878-2.png" alt="示例贷款模型的执行图，显示 PrepareInput、PreprocessNewData、DropTargetColumn、BatchPredict 和 AssembleResults"></p>
 <p>图 2：示例贷款模型的 SageMaker Pipelines 执行图</p>
-<p>使用“depends_on”控制执行顺序，并通过步骤输出属性传递数据。例如，“assemble_args”必须接收预处理数据的位置和“predict.properties.TransformOutput.S3OutputPath”。输出名称“features”属于“DropTargetColumn”。 Data Wrangler 步骤使用在其预处理流程中定义的输出 ID。</p>
-<p>在参考实现中，“AssembleResults”将预处理的数据和按行位置的预测结合起来。在生产中使用它之前，添加检查文件顺序和行计数是否匹配，如果不匹配则停止结果生成。如果预处理对行进行排序或删除，请维护源记录 ID 和预测之间的显式映射。</p>
-<h3>5. 每 30 分钟安排一次推理</h3>
-<p>GS Caltex 每 30 分钟运行一次推理。以下示例使用 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipeline-eventbridge.html">Amazon EventBridge 规则来安排 SageMaker Pipelines 执行</a>。创建管道并在附加计划之前通过手动运行对其进行验证。</p>
+<p>用 <code>depends_on</code> 控制执行顺序，通过步骤输出属性传递数据。例如，<code>assemble_args</code> 必须拿到预处理数据的位置和 <code>predict.properties.TransformOutput.S3OutputPath</code>。输出名 <code>&quot;features&quot;</code> 属于 <code>DropTargetColumn</code>；Data Wrangler 步骤用的是其预处理流程里定义的输出 ID。</p>
+<p>在参考实现里，<code>AssembleResults</code> 按行位置把预处理数据和预测拼在一起。投产前要加上检查：确认文件顺序和行数一致，不一致就停止生成结果。如果预处理会排序或删行，就要维护源记录 ID 与预测之间的明确映射。</p>
+<h3>5. 每 30 分钟调度一次推理</h3>
+<p>GS Caltex 每 30 分钟跑一次推理。下例用一条 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipeline-eventbridge.html">Amazon EventBridge 规则来调度 SageMaker Pipelines 执行</a>。先创建管道、手动跑一次验证，再挂上调度。</p>
 <pre><code>import boto3
 
 events_client = boto3.client(&quot;events&quot;)
@@ -153,74 +153,74 @@ result = events_client.put_targets(
 )
 if result[&quot;FailedEntryCount&quot;]:
     raise RuntimeError(result[&quot;FailedEntries&quot;])</code></pre>
-<p>将 <code>eventbridge_role_arn</code> 设置为信任 Amazon EventBridge 服务委托人 <code>events.amazonaws.com</code> 的角色，并具有目标管道的 <code>sagemaker:StartPipelineExecution</code> 权限。 <code>pipeline_arn</code> 值标识在上一步中创建的管道。</p>
-<p>表达式“rate(30 分钟)”计划以 30 分钟的间隔运行。要按整点和半点运行，请使用“cron(0/30 <em> </em> <em> ? </em>)”。决定每个运行在输入准备步骤中处理哪个数据窗口，并在执行时记录它。</p>
-<h2>操作注意事项</h2>
-<p>在启用计划运行之前，请检查总成本、执行时间以及无效或不匹配数据的处理。</p>
-<h3>评估整个工作流程中的批次成本</h3>
-<p><a href="https://aws.amazon.com/sagemaker/ai/pipelines/">Amazon SageMaker Pipelines</a> 是一种无服务器工作流程编排服务。它可以管理执行顺序和依赖关系，而无需您配置或维护工作流服务器。处理和批量转换作业使用单独的计算资源，并根据实例类型和持续时间计费。</p>
-<p>预配置的实时端点非常适合需要持续低延迟响应的请求。批量转换适合可以一起处理一组记录的工作负载。它会在作业完成时释放作业的计算资源，因此您可以运行预测，而无需为每个模型保持推理端点持续运行。</p>
-<table><thead><tr><th><strong>考虑</strong></th><th><strong>配置的实时端点</strong></th><th><strong>具有批量转换功能的 SageMaker 管道</strong></th></tr></thead><tbody><tr><td>资源生命周期</td><td>实例仍可用于服务请求</td><td>为每个作业配置和释放资源</td></tr><tr><td>成本驱动因素</td><td>端点正常运行时间和容量</td><td>作业持续时间、频率、实例计数和支持服务</td></tr><tr><td>适合的工作负载</td><td>立即响应和持续的在线请求</td><td>按预定时间间隔处理累积数据</td></tr><tr><td>添加模型</td><td>端点容量和持续托管成本</td><td>附加处理、作业持续时间和并发限制</td></tr></tbody></table>
-<p>30 分钟的时间表每天产生 48 次预定跑步。估计总运行时间时包括预处理、实例启动、推理和后处理。成本比较还应考虑处理、S3、CloudWatch 以及工作流使用的其他服务。</p>
-<p>使用测量的使用情况评估每个工作负载的成本，包括支持服务和每个计划作业的完整运行时间。</p>
-<h3>检查运行时和重叠执行</h3>
-<p>每 30 分钟开始一次跑步的计划并不能保证每次跑步都能在该时间间隔内完成。使用代表性数据测量完整管道运行时间，包括实例启动和重试失败作业所需的时间。</p>
-<p>决定如何处理在上一个执行完成之前到达的计划运行。控制管道内的并行步骤不会阻止单独的管道执行重叠。检查活动执行，防止同一输入窗口的重复处理，并分隔每次运行的输出路径。</p>
-<p>记录每次运行的输入数据窗口、预处理流程版本、模型包 ARN、管道执行 ARN 和输出位置。这些详细信息有助于重现结果并调查错误。</p>
-<h3>验证输出和失败行为</h3>
-<p>在启用计划之前完成以下检查：</p>
-<ul><li>通过 SageMaker Canvas 和处理运行验证数据集。比较输出列、数据类型、行计数和键转换值。</li><li>检查添加占位符目标是否不会更改特征值，并且目标是否已从模型输入中删除。</li><li>使用批准的模型版本运行批量转换并验证源记录和预测之间的关联。</li><li>确认无效的输入模式或预处理失败会阻止下游推理和结果发布。</li><li>测量运行时间和成本，测试同一输入窗口的重叠执行和重新处理，然后启用 30 分钟计划。</li></ul>
-<p>添加针对作业失败和处理延迟的 CloudWatch 警报，以及根据需要的数据质量或模型监控。根据测量的运行时间和数据特征设置初始阈值，并在模型或数据量发生变化时查看它们。</p>
-<h2>采用方法和结果</h2>
-<p>通过分阶段推出，团队可以在跨模型标准化切换之前验证切换。以下部分描述了采用方法和 GS Caltex 报告的结果。</p>
-<h3>从模型开发转向常规运营</h3>
-<p>首先验证一个模型的生产路径，然后标准化跨部署重复的步骤。以下顺序是根据 GS Caltex 经验建议的采用方法。</p>
-<table><thead><tr><th><strong>舞台</strong></th><th><strong>目标</strong></th><th><strong>范围</strong></th></tr></thead><tbody><tr><td>爬行</td><td>在生产中重现开发成果</td><td>验证 SageMaker Canvas 模型，将其注册到模型注册表中，然后手动运行管道</td></tr><tr><td>步行</td><td>建立可靠的计划运行</td><td>检查批准、按要求的时间间隔安排运行、添加故障警报并通过执行管理输出</td></tr><tr><td>运行</td><td>跨模型复用操作流程</td><td>引入通用模板、持续集成和持续交付 (CI/CD)、变更验证以及转移运营责任的程序</td></tr></tbody></table>
-<p>随着自动化的扩展，过程工程师继续评估预测是否对过程有用。机器学习工程师管理管道的执行和变更。</p>
-<h3>GS 加德士成绩</h3>
-<p>GS Caltex 减少了将 SageMaker Canvas 模型连接到生产所需的重复工作。机器学习工程师现在可以在几个小时内部署模型，而之前需要大约一周的时间。他们还重复使用流程工程师在 SageMaker Canvas 中验证的资产。</p>
-<p>工艺工程师在看到他们的模型在生产中使用后，开始建议在其他工艺中的应用。机器学习工程师花更少的时间重复集成工作，可以专注于操作和监控管道。</p>
-<table><thead><tr><th><strong>结果</strong></th><th><strong>报告结果</strong></th></tr></thead><tbody><tr><td>模型部署时间</td><td>之前一周左右。现在几个小时内</td></tr><tr><td>推理频率</td><td>每 30 分钟</td></tr><tr><td>成本影响</td><td>显着的成本节省</td></tr><tr><td>工程工作</td><td>工艺工程师提出了新的应用；机器学习工程师专注于管道运行和监控</td></tr></tbody></table>
+<p>把 <code>eventbridge_role_arn</code> 设为一个信任 Amazon EventBridge 服务主体 <code>events.amazonaws.com</code>、且对目标管道拥有 <code>sagemaker:StartPipelineExecution</code> 权限的角色。<code>pipeline_arn</code> 标识上一步创建的管道。</p>
+<p>表达式 <code>rate(30 minutes)</code> 按 30 分钟间隔调度运行。要在整点和半点运行，用 <code>cron(0/30 <em> </em> <em> ? </em>)</code>。每次运行处理哪段数据窗口，在输入准备步骤里定好，并随该次执行一并记录。</p>
+<h2>运维注意事项</h2>
+<p>启用定时运行之前，先把总成本、执行时间，以及无效或不匹配数据的处理方式核对清楚。</p>
+<h3>评估整个工作流的批量成本</h3>
+<p><a href="https://aws.amazon.com/sagemaker/ai/pipelines/">Amazon SageMaker Pipelines</a> 是一项 serverless 工作流编排服务。它管理执行顺序和依赖关系，你无需预置或维护工作流服务器。Processing 和 Batch Transform 作业使用各自独立的计算资源，按实例类型和时长计费。</p>
+<p>预置的实时端点适合需要稳定低延迟响应的请求。Batch Transform 适合能把一批记录放在一起处理的工作负载：作业结束时它会释放计算资源，因此不必为每个模型常开一个推理端点也能跑预测。</p>
+<table><thead><tr><th><strong>考量</strong></th><th><strong>预置的实时端点</strong></th><th><strong>搭配 Batch Transform 的 SageMaker Pipelines</strong></th></tr></thead><tbody><tr><td>资源生命周期</td><td>实例持续可用，随时响应请求</td><td>每个作业按需预置、用完释放</td></tr><tr><td>成本驱动因素</td><td>端点运行时长与容量</td><td>作业时长、频率、实例数及配套服务</td></tr><tr><td>适合的工作负载</td><td>即时响应与持续的在线请求</td><td>按定时间隔处理累积的数据</td></tr><tr><td>新增模型</td><td>端点容量与持续托管成本</td><td>额外的处理量、作业时长与并发上限</td></tr></tbody></table>
+<p>每 30 分钟一次的计划，一天会产生 48 次定时运行。估算总运行时间时要把预处理、实例启动、推理和后处理都算进去。成本比较还应计入 Processing、S3、CloudWatch 等工作流用到的其它服务。</p>
+<p>按实测用量评估每个工作负载的成本，把配套服务和每次定时作业的完整运行时长都纳入。</p>
+<h3>核对运行时长与执行重叠</h3>
+<p>每 30 分钟启动一次，并不保证每次都能在这个间隔内跑完。用有代表性的数据测出管道的完整运行时长，把实例启动和失败作业重试所需的时间也算上。</p>
+<p>要定好：上一次执行还没结束、新的定时运行就到来时该怎么办。控制单条管道内的并行步骤，挡不住不同管道执行之间互相重叠。检查活跃执行、避免同一输入窗口被重复处理，并把每次运行的输出路径分开。</p>
+<p>每次运行都记录输入数据窗口、预处理流程版本、模型包 ARN、管道执行 ARN 和输出位置。这些细节有助于复现结果、排查错误。</p>
+<h3>验证输出与失败行为</h3>
+<p>启用调度之前，完成以下检查：</p>
+<ul><li>用一份验证数据集分别跑 SageMaker Canvas 和 Processing，比较输出列、数据类型、行数和关键转换值。</li><li>确认补占位目标不会改变特征值，且该目标已从模型输入中移除。</li><li>用已批准的模型版本跑 Batch Transform，核对源记录与预测之间的对应关系。</li><li>确认无效的输入 schema 或预处理失败会拦住下游推理和结果发布。</li><li>测量运行时长与成本，测试执行重叠和同一输入窗口的重复处理，之后再启用 30 分钟调度。</li></ul>
+<p>为作业失败和处理延迟加上 CloudWatch 告警，按需再配数据质量或模型监控。初始阈值按实测运行时长和数据特征来设，模型或数据量变化时重新审视。</p>
+<h2>采用路径与成效</h2>
+<p>分阶段推广，团队可以先验证交接流程，再在各模型间标准化。下面介绍一套采用路径，以及 GS Caltex 报告的成效。</p>
+<h3>从模型开发走向常态化运营</h3>
+<p>先验证一个模型通往生产的路径，再把各次部署中重复的步骤标准化。下面的顺序是基于 GS Caltex 经验给出的建议路径。</p>
+<table><thead><tr><th><strong>阶段</strong></th><th><strong>目标</strong></th><th><strong>范围</strong></th></tr></thead><tbody><tr><td>爬</td><td>在生产中复现开发结果</td><td>验证 SageMaker Canvas 模型、注册到 Model Registry、手动运行管道</td></tr><tr><td>走</td><td>建立可靠的定时运行</td><td>检查审批、按所需间隔调度运行、加失败告警、按执行管理输出</td></tr><tr><td>跑</td><td>把运营流程复用到各模型</td><td>引入通用模板、持续集成与持续交付 (CI/CD)、变更验证，以及运营责任移交的流程</td></tr></tbody></table>
+<p>随着自动化铺开，工艺工程师继续判断预测对工艺是否有用，ML 工程师则负责管道的执行与变更。</p>
+<h3>GS Caltex 的成效</h3>
+<p>GS Caltex 减少了把 SageMaker Canvas 模型接入生产所需的重复劳动。ML 工程师现在几小时内就能部署模型，此前大约要一周；他们还复用了工艺工程师在 SageMaker Canvas 里验证过的资产。</p>
+<p>看到自己的模型用在生产里之后，工艺工程师开始提议把它应用到其它工艺上。ML 工程师花在重复集成上的时间少了，可以专心运营和监控管道。</p>
+<table><thead><tr><th><strong>成效</strong></th><th><strong>报告的结果</strong></th></tr></thead><tbody><tr><td>模型部署时间</td><td>此前约一周，现在几小时内</td></tr><tr><td>推理频率</td><td>每 30 分钟</td></tr><tr><td>成本影响</td><td>显著节省成本</td></tr><tr><td>工程工作</td><td>工艺工程师提出新的应用；ML 工程师专注于管道运营与监控</td></tr></tbody></table>
 <h2>清理测试资源</h2>
-<p>对于测试部署，请禁用 Amazon EventBridge 规则并首先删除其目标。活动管道执行和作业完成后，删除测试管道及其 SageMaker 模型资源。</p>
-<p>如果您创建了用于测试的实时端点，请将其也删除。从 S3 中删除输入、中间和预测文件，并根据您的保留策略清理 CloudWatch 日志。在删除它们之前，检查其他执行或审计要求是否仍然依赖于模型文件和模型注册表版本。</p>
-<p>＃＃ 结论</p>
-<p>在 GS Caltex，流程工程师在 SageMaker Canvas 中创建和验证模型，ML 工程师使用这些资产在 SageMaker Pipelines 中运行生产工作流程。这种切换减少了重复的集成工作。 GS Caltex 报告称，机器学习工程师现在可以在几个小时内完成模型部署，而之前需要大约一周的时间。</p>
-<p>移交需要包括预处理流程、输入模式、推理配置和批准流程以及模型文件。验证工作流程是否重现了预期结果，并且可以按要求的计划可靠地运行。</p>
-<p>要尝试此方法，请从您在 SageMaker Canvas 中验证的一个模型开始，并使用 <a href="https://github.com/aws-samples/sample-canvas-to-pipelines-mlops">GitHub 存储库</a>。有关定义和运行工作流程的详细信息，请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html">SageMaker Pipelines 开发人员指南</a>。通过手动执行检查预处理和批量预测结果，然后安排按照应用程序需要的时间间隔运行。</p>
-<p>在第 2 部分中，我们展示 GS Caltex 如何使用 Amazon Bedrock 自动将现有模型移动到此管道上。</p>
+<p>对测试部署，先禁用 Amazon EventBridge 规则并移除其目标。等活动中的管道执行和作业都结束后，再删除测试管道及其 SageMaker 模型资源。</p>
+<p>如果为测试建过实时端点，也一并删除。从 S3 清掉输入、中间和预测文件，按保留策略清理 CloudWatch 日志。删除模型文件和 Model Registry 版本之前，先确认没有其它执行或审计要求还依赖它们。</p>
+<h2>结论</h2>
+<p>在 GS Caltex，工艺工程师在 SageMaker Canvas 里创建并验证模型，ML 工程师用这些资产在 SageMaker Pipelines 中运行生产工作流。这套交接减少了重复的集成工作。GS Caltex 表示，ML 工程师现在几小时内就能完成模型部署，此前大约要一周。</p>
+<p>交接内容除了模型文件，还得包含预处理流程、输入 schema、推理配置和审批流程。要验证工作流能复现预期结果，并能按要求的节奏可靠运行。</p>
+<p>想试这套做法，就从你在 SageMaker Canvas 里验证过的一个模型开始，配合 <a href="https://github.com/aws-samples/sample-canvas-to-pipelines-mlops">GitHub 仓库</a>。定义和运行工作流的细节见 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html">SageMaker Pipelines 开发者指南</a>。先用一次手动执行核对预处理和批量预测结果，再按应用需要的间隔调度运行。</p>
+<p>在第 2 部分，我们会介绍 GS Caltex 如何用 Amazon Bedrock 把已有模型自动迁移到这条管道上。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>使用 NVIDIA NeMo Switchyard 将编码代理请求路由到 Amazon Bedrock 上的正确模型</title>
+      <title>使用 NVIDIA NeMo Switchyard 将 coding agent 请求路由到 Amazon Bedroc…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/route-coding-agent-requests-to-the-right-model-on-amazon-bedrock-with-nvidia-nemo-switchyard/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/route-coding-agent-requests-to-the-right-model-on-amazon-bedrock-with-nvidia-nemo-switchyard/</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Route coding agent requests to the right model on Amazon Bedrock with NVIDIA NeMo Switchyard</description>
+      <description>完整标题：使用 NVIDIA NeMo Switchyard 将 coding agent 请求路由到 Amazon Bedrock 上的正确模型 | 原文标题：Route coding agent requests to the right model on Amazon Bedrock with NVIDIA NeMo Switchyard</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 NVIDIA NeMo Switchyard 将编码代理请求路由到 Amazon Bedrock 上的正确模型</h1>
-<p>Claude Code 和 OpenAI Codex CLI 等编码代理在任务中工作。开发人员请求更改，代理读取文件、编辑代码并运行测试，直到工作完成。一项任务可能需要几个或几十个模型调用。开发人员支付的是任务，而不是一次调用。</p>
-<p>仅每个代币的价格并不能告诉您整个任务的成本。总数取决于模型需要多少轮、每轮重播多少历史记录以及任务必须重试或永远无法完成的频率。您为每次尝试付费，包括尝试从未完成的任务。因此，当您在模型之间路由编码代理的请求时，请根据每个已解决任务的成本来判断路由：运行的总成本除以测试通过的运行数量。</p>
-<p><a href="https://github.com/NVIDIA-NeMo/Switchyard">NVIDIA NeMo Switchyard</a> 是一个开源库，可帮助 AI 代理选择处理每个请求的模型。您定义它可以使用的模型及其遵循的策略。其<a href="https://github.com/NVIDIA-NeMo/Switchyard/blob/21075c6652152dac88a5fbc6b878ca37d7617c1c/examples/litellm/README.md">LiteLLM集成</a>支持两种策略。阶段路由读取最近的工具活动和请求历史记录中的结果，然后选择两个候选模型之一。从配置的模型中进行随机路由选择，并具有可选的权重，用于流量分割和 A/B 比较。您可以探索的另一个选择是 LiteLLM，它最近还提供了一个本机内置 <a href="https://docs.litellm.ai/blog/switchyard-tool-aware-routing">Switchyard stage router</a> 作为自动路由器策略。</p>
-<p>在本文中，您将使用 AWS 云开发工具包 (AWS CDK) 部署 LiteLLM，这是一种用于大型语言模型 (LLM) 的开源网关，并在您的 AWS 账户中使用 Switchyard 路由插件。 LiteLLM 在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上调用模型。然后，您可以使用示例的基准运行程序来衡量路由模型组和单模型基线组的每个已解决任务的成本，以便您可以根据自己的工作负载评估路由。</p>
-<blockquote>注意：该示例从 crates.io 安装 switchyard-server 0.3.0 并运行已发布的 LiteLLM v1.102.0 映像。 NVIDIA 将 switchyard-server 0.3.0 记录为演示和评估组件，其配置可能会在不同版本之间发生变化。此示例使用实验性 Switchyard LiteLLM 集成，其配置和 API 可能会因版本而异。这是示例代码，用于非生产用途。与您的安全和法律团队合作，在部署之前满足您组织的安全、监管和合规性要求。在非生产帐户中部署示例并在依赖它之前对其进行测试。</blockquote>
+<h1>使用 NVIDIA NeMo Switchyard 将 coding agent 请求路由到 Amazon Bedrock 上的正确模型</h1>
+<p>Claude Code、OpenAI Codex CLI 这类 coding agent 以任务为单位工作。开发者提出一处改动，agent 便读取文件、编辑代码、运行测试，直到完成为止。一个任务可能只需几次模型调用，也可能需要几十次。开发者付费买的是整个任务，而不是某一次调用。</p>
+<p>单看每 token 的价格，并不能告诉你一整个任务要花多少钱。总成本取决于模型需要多少轮、每轮要重放多少历史，以及任务有多经常需要重试、或者干脆跑不完。每一次尝试都要付费，包括那些最终没跑完的任务上的尝试。所以，当你在多个模型之间路由 coding agent 的请求时，要用「每个已解决任务的成本」来衡量路由好坏：所有运行的总成本，除以测试通过的运行次数。</p>
+<p><a href="https://github.com/NVIDIA-NeMo/Switchyard">NVIDIA NeMo Switchyard</a> 是一个开源库，帮助 AI agent 决定每个请求由哪个模型来处理。你来定义它可用的模型，以及它遵循的策略。它的 <a href="https://github.com/NVIDIA-NeMo/Switchyard/blob/21075c6652152dac88a5fbc6b878ca37d7617c1c/examples/litellm/README.md">LiteLLM 集成</a> 支持两种策略。Stage 路由会读取请求历史里最近的工具活动和结果，再从两个候选模型中挑一个。Random 路由从配置好的模型里挑选，可带权重，用于流量切分和 A/B 对比。你还可以考虑另一个选择：LiteLLM 最近也内置了原生的 <a href="https://docs.litellm.ai/blog/switchyard-tool-aware-routing">Switchyard stage router</a>，作为一种自动路由策略。</p>
+<p>本文里，你会用 AWS Cloud Development Kit (AWS CDK) 在自己的 AWS 账户中部署 LiteLLM——一个面向大语言模型 (LLM) 的开源网关——并带上 Switchyard 路由插件。LiteLLM 调用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上的模型。然后用示例自带的基准运行器，分别测量路由模型组和单模型基线组的「每个已解决任务成本」，好让你拿自己的工作负载来评估路由效果。</p>
+<blockquote>注意：该示例从 crates.io 安装 switchyard-server 0.3.0，并运行已发布的 LiteLLM v1.102.0 镜像。NVIDIA 把 switchyard-server 0.3.0 定位为演示与评估组件，其配置可能随版本变动。本示例用的是实验性的 Switchyard LiteLLM 集成，其配置和 API 也可能随版本变动。这是示例代码，仅供非生产用途。部署前请与安全和法务团队协作，满足组织在安全、监管和合规方面的要求。请在非生产账户中部署该示例，先测试再正式依赖它。</blockquote>
 <h2>解决方案概述</h2>
-<p>图 1 显示了该解决方案的架构。 LiteLLM 和 Switchyard 插件在 <a href="https://aws.amazon.com/fargate/">AWS Fargate</a> 上的 <a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service (Amazon ECS)</a> 上的私有子网中的一个容器映像中运行。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/11/ML-22318-1.png" alt="显示编码代理到达应用程序负载均衡器的架构，该负载均衡器路由到 Amazon ECS Fargate 上的 LiteLLM 和 Switchyard，后者调用 Amazon 上的模型Bedrock"></p>
+<p>图 1 展示了该解决方案的架构。LiteLLM 和 Switchyard 插件跑在同一个容器镜像里，该镜像位于私有子网中，运行在 <a href="https://aws.amazon.com/fargate/">AWS Fargate</a> 上的 <a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service (Amazon ECS)</a>。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/11/ML-22318-1.png" alt="架构图：coding agent 请求抵达 Application Load Balancer，由其路由到 Amazon ECS Fargate 上的 LiteLLM 和 Switchyard，再调用 Amazon Bedrock 上的模型"></p>
 <p>图 1：解决方案架构</p>
-<p>请求会经过这些步骤。数字与图表相符。</p>
-<ul><li>编码代理发送 OpenAI 兼容请求，其中模型字段设置为“switchyard”、Switchyard 路由的 LiteLLM 模型组以及“Authorization”标头中的共享网关密钥。终端节点是您通过 HTTPS 的主机名，在负载均衡器上具有 <a href="https://aws.amazon.com/certificate-manager/">AWS Certificate Manager (ACM)</a> 证书，并且只有您允许的 IPv4 CIDR 范围才能访问它。通过 <a href="https://aws.amazon.com/route53/">Amazon Route 53</a> 中的托管区域，Route 53 将主机名解析为负载均衡器。</li><li><a href="https://aws.amazon.com/waf/">AWS WAF</a> 使用 IP 信誉、已知错误输入和每个 IP 速率限制规则过滤请求。 <a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/">Application Load Balancer</a> 仅将 <code>/v1/chat/completions</code>、<code>/v1/models</code> 和 <code>/health/liveiness</code> 转发到私有子网中的 ECS 任务，并使用 404 应答所有其他路径。</li><li>该任务运行一个容器：带有嵌入式 Switchyard 插件的 LiteLLM。 LiteLLM 验证网关密钥并调用插件来选择模型。 Stage 在有能力的模型和低成本高效模型之间进行选择。它读取工具活动并生成请求历史记录，因此代理必须发送完整的对话历史记录。从加权池中随机选择。这两种策略都没有调用法官模型。</li><li>LiteLLM 通过 Amazon Bedrock <code>Converse</code> 或 <code>ConverseStream</code> API 调用选定的模型，并使用任务的 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 角色作为凭证。该调用通过 <a href="https://aws.amazon.com/vpc/">Amazon Virtual Private Cloud (Amazon VPC)</a> 中的 Amazon Bedrock Runtime 接口终端节点，因此推理流量保留在 AWS 网络上。</li><li>响应或令牌流通过 LiteLLM 和负载均衡器返回。 <code>x-litelm-model-name</code> 响应标头命名了应答的模型。响应主体的“model”字段仍然是“switchyard”。</li></ul>
-<p>LiteLLM 侦听容器中的端口 4000，并且是负载均衡器的目标，并且任务的安全组仅允许负载均衡器。路径允许列表使 LiteLLM 管理 UI、API 文档和密钥管理路由无法访问。 <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a> 保存网关映像。 <a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a> 生成网关密钥后面的密钥，容器在启动时添加“sk-”前缀。任务定义传递“LITELLM_CONFIG_TEXT”和“SWITCHYARD_CONFIG_TEXT”中的配置文件，启动脚本在启动 LiteLLM 之前将它们写入“/tmp”。日志会保存到一个 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 日志组“/&lt;stack name&gt;/litellm”，该组会将日志保留 30 天，并且 Container Insights 会收集指标。 VPC 跨越两个可用区，一个 NAT 网关为映像拉取和其他 AWS 服务提供出站访问。</p>
-<p>该插件支持阶段路由（仅需要两个候选者）和随机路由（至少需要两个候选者）并按权重拆分流量以进行 A/B 测试。分类器支持的策略（例如任务和复合路由）需要此集成不支持的中间模型调用。有关完整目录，请参阅 <a href="https://nvidia-nemo.github.io/Switchyard/routing_algorithms/overview/">Switchyard 路由概述</a>。</p>
+<p>请求会经过下面这些步骤，编号与图中一致。</p>
+<ul><li>coding agent 发送一个兼容 OpenAI 的请求，model 字段设为 <code>switchyard</code>（即 Switchyard 负责路由的 LiteLLM 模型组），并在 <code>Authorization</code> 头里带上共享的网关密钥。endpoint 是你自己的主机名，走 HTTPS，负载均衡器上配有 <a href="https://aws.amazon.com/certificate-manager/">AWS Certificate Manager (ACM)</a> 证书，且只允许你放行的 IPv4 CIDR 段访问。借助 <a href="https://aws.amazon.com/route53/">Amazon Route 53</a> 里的托管区域，Route 53 把该主机名解析到负载均衡器。</li><li><a href="https://aws.amazon.com/waf/">AWS WAF</a> 依据 IP 信誉、已知恶意输入和按 IP 限速规则过滤请求。<a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/">Application Load Balancer</a> 只把 <code>/v1/chat/completions</code>、<code>/v1/models</code> 和 <code>/health/liveliness</code> 转发到私有子网里的 ECS 任务，其余路径一律返回 404。</li><li>该任务只跑一个容器：内嵌 Switchyard 插件的 LiteLLM。LiteLLM 校验网关密钥，再调用插件来挑模型。Stage 在能力更强的模型与成本更低的高效模型之间做选择；它会读取请求历史里的工具活动和结果，因此 agent 必须发送完整的对话历史。Random 则从带权重的模型池里挑选。两种策略都不会调用裁判模型。</li><li>LiteLLM 通过 Amazon Bedrock 的 <code>Converse</code> 或 <code>ConverseStream</code> API 调用选中的模型，凭证来自该任务的 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 角色。调用经由 <a href="https://aws.amazon.com/vpc/">Amazon Virtual Private Cloud (Amazon VPC)</a> 里的 Amazon Bedrock Runtime interface endpoint，因此推理流量始终留在 AWS 网络内。</li><li>响应或 token 流经 LiteLLM 和负载均衡器返回。<code>x-litellm-model-name</code> 响应头会标出实际作答的模型。响应体里的 <code>model</code> 字段仍是 <code>switchyard</code>。</li></ul>
+<p>LiteLLM 在容器内监听 4000 端口，是负载均衡器的目标；任务的安全组只允许负载均衡器接入。路径白名单让 LiteLLM 的管理界面、API 文档和密钥管理路由都无法从外部访问。<a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a> 存放网关镜像。<a href="https://aws.amazon.com/secrets-manager/">AWS Secrets Manager</a> 生成网关密钥背后的 secret，容器启动时再加上 <code>sk-</code> 前缀。任务定义通过 <code>LITELLM_CONFIG_TEXT</code> 和 <code>SWITCHYARD_CONFIG_TEXT</code> 传入配置文件，启动脚本在拉起 LiteLLM 前把它们写到 <code>/tmp</code>。日志统一进一个 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 日志组 <code>/&lt;stack name&gt;/litellm</code>，保留 30 天，指标由 Container Insights 采集。VPC 跨两个可用区，一个 NAT 网关为拉取镜像和访问其他 AWS 服务提供出站通道。</p>
+<p>该插件支持 Stage 路由（需要恰好两个候选模型）和 Random 路由（至少需要两个，并按权重切分流量以做 A/B 测试）。由分类器驱动的策略，例如 Task 和 Composite 路由，需要中间的模型调用，而这个集成并不支持。完整清单见 <a href="https://nvidia-nemo.github.io/Switchyard/routing_algorithms/overview/">Switchyard 路由概览</a>。</p>
 <h2>先决条件</h2>
-<p>要完成本演练，您需要具备以下条件：</p>
-<ul><li>具有 Amazon Bedrock 访问权限的非生产 AWS 账户 Claude Opus 5.5 和 NVIDIA Nemotron 3 Super 120B。该对已在美国东部（弗吉尼亚北部）进行了测试。对于其他 AWS 区域，请检查<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">按模型划分的区域可用性</a> 和工具调用支持。</li><li>已配置凭证和显式 AWS 区域的 AWS 命令​​行界面 (AWS CLI) v2，位于 <a href="https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping-env.html">为 AWS CDK 引导</a> 的账户和区域中。</li><li>Node.js 20 或更高版本、npm、带有 BuildKit 的 Docker 以及 Python 3.11 或更高版本。</li><li>您拥有的主机名，以及其域的公共 Route 53 托管区域或部署区域中的 ACM 证书。简短的纯 HTTP 测试两者都不需要。</li></ul>
+<p>要跟着本文走一遍，你需要准备：</p>
+<ul><li>一个非生产用的 AWS 账户，且在 Amazon Bedrock 上能访问 Claude Opus 5.5 和 NVIDIA Nemotron 3 Super 120B。这一对模型已在 US East (N. Virginia) 测过。其他 AWS Region 请查看<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">各模型的区域可用性</a>以及 tool-calling 支持情况。</li><li>装好 AWS Command Line Interface (AWS CLI) v2，配好凭证并显式指定 AWS Region；所在账户和 Region 要已 <a href="https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping-env.html">为 AWS CDK 完成 bootstrap</a>。</li><li>Node.js 20 或更高版本、npm、带 BuildKit 的 Docker，以及 Python 3.11 或更高版本。</li><li>一个你自己拥有的主机名，并且要么其域名有公开的 Route 53 托管区域，要么在部署 Region 里有对应的 ACM 证书。只做简短的纯 HTTP 测试则两者都不需要。</li></ul>
 <h2>演练</h2>
-<p>您定义模型组、配置阶段、部署和测试网关以及测量成本。首先克隆示例存储库：</p>
+<p>你要定义模型组、配置 Stage、部署并测试网关，再测量成本。先克隆示例仓库：</p>
 <pre><code>git clone https://github.com/aws-samples/sample-route-coding-agent-requests-Amazon-Bedrock-nemo-switchyard.git
 cd sample-route-coding-agent-requests-Amazon-Bedrock-nemo-switchyard</code></pre>
-<h3>步骤 1：在 LiteLLM 中定义模型组</h3>
-<p>LiteLLM 模型组是一个公共模型名称，其后面有一个或多个部署。该示例将其配置保存在“profiles/”下的部署配置文件中。每个配置文件都将定义模型和网关设置的“litellm.yaml”与控制 Switchyard 如何选择模型的“switchyard.toml”配对。以下“profiles/stage/litellm.yaml”摘录定义了路由的“switchyard”组、两个单模型基线组和插件注册：</p>
+<h3>第 1 步：在 LiteLLM 中定义模型组</h3>
+<p>一个 LiteLLM 模型组就是一个对外的模型名，背后挂一个或多个 deployment。示例把配置放在 <code>profiles/</code> 下的部署 profile 里。每个 profile 都由 <code>litellm.yaml</code>（定义模型和网关设置）与 <code>switchyard.toml</code>（控制 Switchyard 如何挑模型）配对组成。下面这段 <code>profiles/stage/litellm.yaml</code> 的摘录定义了被路由的 <code>switchyard</code> 组、两个单模型基线组，以及插件注册：</p>
 <pre><code>model_list:
   - model_name: switchyard
     litellm_params:
@@ -252,14 +252,14 @@ litellm_settings:
   num_retries: 2
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY</code></pre>
-<p>两个候选人共享 <code>model_name: switchyard</code>，因此您的客户发送 <code>&quot;model&quot;: &quot;switchyard&quot;</code> 并且 Switchyard 选择一个候选人。首先列出有能力的模型，然后列出高效的模型，因为 Stage 按此顺序读取角色。</p>
-<p><code>claude-opus-5-5</code> 和 <code>nemotron-super-3-120b</code> 组是单模型基线。每个模型始终使用自己的模型进行回答，因此您可以将路由组的成本和通过率与同一部署中单独的每个模型进行比较。 Stage 插件单独拒绝没有两个候选者的组，因此映像注册了一个小包装器“switchyard_gateway.configured.ROUTING_PLUGIN”。它将 Switchyard 应用于具有两个或更多唯一候选者的组，并让单一模型组通过。配置注册包装器两次：选择模型并应用 Switchyard 记录的请求更改。</p>
-<p>每个模型都使用“bedrock/converse/&lt;id&gt;”，因此每个候选者都会通过 Amazon Bedrock“Converse” API，并且验证会拒绝任何其他路线。 LiteLLM“request_timeout”为 600 秒，与负载均衡器的 10 分钟空闲超时相匹配。</p>
-<p>该文件不包含任何凭据。 LiteLLM 从环境中读取网关密钥，任务角色提供 AWS 凭证。切勿在“litellm_params”下添加“aws_access_key_id”、“aws_secret_access_key”或“api_key”等凭证：堆栈以纯文本形式将整个“litellm.yaml”复制到任务定义和 AWS CloudFormation 模板中。</p>
-<p>堆栈从此文件中派生任务角色的 Amazon Bedrock 权限。对于全局跨区域推理配置文件，基础模型资源使用“<em>”区域和尾随“</em>”，因此它还匹配具有相同前缀的其他模型 ID。在部署之前查看派生策略。</p>
-<p>“global.”前缀标记<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">全球跨区域推理配置文件</a>，Amazon Bedrock 可能会在全球受支持的商业 AWS 区域中处理这些请求。如果处理位置很重要，请改用地理配置文件或区域内模型 ID。对于 Nemotron 3 Super，配置文件使用区域内模型 ID“nvidia.nemotron-super-3-120b”，您可以将其切换为任何模型进行测试。</p>
+<p>两个候选都共用 <code>model_name: switchyard</code>，因此客户端发送 <code>&quot;model&quot;: &quot;switchyard&quot;</code>，由 Switchyard 挑一个候选。要把能力更强的模型列在前、高效模型列在后，因为 Stage 按这个顺序读取角色。</p>
+<p><code>claude-opus-5-5</code> 和 <code>nemotron-super-3-120b</code> 这两个组是单模型基线。每组始终用自己的模型作答，这样你就能在同一次部署里，把路由组的成本和通过率与每个模型单独跑的结果对比。Stage 插件本身会拒绝候选不足两个的组，因此镜像注册了一个小包装器 <code>switchyard_gateway.configured.ROUTING_PLUGIN</code>：对含两个及以上唯一候选的组套用 Switchyard，单模型组则直接放行。配置把这个包装器注册了两次，一次用来挑模型，一次用来应用 Switchyard 记录下的请求改动。</p>
+<p>每个模型都用 <code>bedrock/converse/&lt;id&gt;</code>，所以每个候选都走 Amazon Bedrock 的 <code>Converse</code> API，其他路由一律会被校验拒绝。LiteLLM 的 <code>request_timeout</code> 设为 600 秒，与负载均衡器 10 分钟的空闲超时一致。</p>
+<p>这个文件里不放任何凭证。LiteLLM 从环境变量读取网关密钥，任务角色提供 AWS 凭证。切勿在 <code>litellm_params</code> 下添加 <code>aws_access_key_id</code>、<code>aws_secret_access_key</code> 或 <code>api_key</code> 这类凭证：stack 会把整份 <code>litellm.yaml</code> 以明文复制进任务定义和 AWS CloudFormation 模板。</p>
+<p>stack 会依据这个文件推导任务角色的 Amazon Bedrock 权限。对于 global cross-Region inference profile，基础模型资源用 <code><em></code> 作为 Region、末尾再带一个 <code></em></code>，因此也会匹配到前缀相同的其他 model ID。部署前请先审视推导出的策略。</p>
+<p><code>global.</code> 前缀表示这是一个 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">global cross-Region inference profile</a>，Amazon Bedrock 可能会在全球受支持的商业 AWS Region 里处理这些请求。如果处理位置很重要，请改用 geographic profile 或 in-Region model ID。对 Nemotron 3 Super，该 profile 用的是 in-Region model ID <code>nvidia.nemotron-super-3-120b</code>，测试时你可以换成任意模型。</p>
 <h3>第 2 步：配置 Stage 路由</h3>
-<p>Switchyard 从“switchyard.toml”读取其算法和设置。默认配置文件“profiles/stage/switchyard.toml”配置 Stage：</p>
+<p>Switchyard 从 <code>switchyard.toml</code> 读取算法和设置。默认 profile <code>profiles/stage/switchyard.toml</code> 配置的是 Stage：</p>
 <pre><code># Model inventory is in litellm.yaml. This file configures selection behavior.
 algorithm = &quot;stage&quot;
 # Prefer the efficient candidate when history signals are inconclusive.
@@ -268,13 +268,13 @@ confidence_threshold = 0.5
 # Inspect the three most recent tool results for execution signals.
 recent_window = 3
 only_on_wrong_signal_escalation = true</code></pre>
-<p>设置的工作原理如下：</p>
-<ul><li><code>picker = &quot;efficient_first&quot;</code>：当历史信号不确定时，Stage 使用高效模型。新请求尚未有工具结果，因此将发送至 Nemotron 3 Super。</li><li><code>confidence_threshold</code>：阶段得分执行信号的置信度截止值，从 0 到 1。</li><li><code>recent_window = 3</code>：阶段检查三个最新的工具结果。</li><li><code>only_on_wrong_signal_escalation = true</code>：Switchyard 默认值。它控制 Stage 何时添加可选的升级注释，并且此配置文件不设置注释。</li></ul>
-<p>Stage 还接受可选的移交注释和每层系统提示（“escalation_note”、“deescalation_note”、“capable_system_prompt”和“efficient_system_prompt”）。示例配置文件没有设置其中任何一个。</p>
-<p>对于 A/B 测试，<code>profiles/random/</code> 中的随机配置文件使用与 <code>algorithm = &quot;random&quot;</code> 和 <code>weights = [0.5, 0.5]</code> 相同的模型，按声明顺序每个唯一候选者有一个权重。要部署它，请将“-croutingProfile=random”添加到步骤 3 中的“cdk diff”和“cdk deploy”命令中。</p>
-<p>堆栈在合成时一起验证两个文件，并且预检脚本运行相同的检查。要在不调用 AWS 的情况下自行检查配置文件更改，请运行“npm run validate:profile -- stage”。无效的设置会在 LiteLLM 启动时停止它，并且不受支持的消息形状会在推理之前失败。</p>
-<h3>可选：本地运行网关</h3>
-<p>在部署任何内容之前，您可以在计算机上尝试网关。 Docker Compose 构建相同的映像并读取堆栈部署到 Amazon ECS 的相同配置文件。从存储库根运行：</p>
+<p>这几项设置的作用如下：</p>
+<ul><li><code>picker = &quot;efficient_first&quot;</code>：当历史里的信号不明确时，Stage 用高效模型。新请求还没有工具结果，因此会发给 Nemotron 3 Super。</li><li><code>confidence_threshold</code>：Stage 为执行信号打分所用的置信度阈值，取值 0 到 1。</li><li><code>recent_window = 3</code>：Stage 检查最近三个工具结果。</li><li><code>only_on_wrong_signal_escalation = true</code>：Switchyard 的默认值。它控制 Stage 何时添加可选的 escalation note，而这个 profile 没有设置任何 note。</li></ul>
+<p>Stage 还接受可选的 handoff note 和逐层 system prompt（<code>escalation_note</code>、<code>deescalation_note</code>、<code>capable_system_prompt</code>、<code>efficient_system_prompt</code>）。示例 profile 一个都没设置。</p>
+<p>要做 A/B 测试，<code>profiles/random/</code> 里的 Random profile 用的是同一批模型，只是设成 <code>algorithm = &quot;random&quot;</code> 和 <code>weights = [0.5, 0.5]</code>，按声明顺序给每个唯一候选一个权重。要部署它，在第 3 步的 <code>cdk diff</code> 和 <code>cdk deploy</code> 命令里加上 <code>-c routingProfile=random</code>。</p>
+<p>stack 在 synth 时会一并校验这两个文件，preflight 脚本跑的是同样的检查。只想单独检查某处 profile 改动、不调用 AWS 时，运行 <code>npm run validate:profile -- stage</code>。无效设置会在 LiteLLM 启动时把它拦下，不受支持的 message 结构则在推理前就失败。</p>
+<h3>可选：在本地运行网关</h3>
+<p>在部署之前，你可以先在自己的机器上试跑网关。Docker Compose 构建的是同一个镜像，读取的也是 stack 部署到 Amazon ECS 的那同一批 profile 文件。在仓库根目录运行：</p>
 <pre><code>npm ci
 cp .env.example .env
 
@@ -283,9 +283,9 @@ eval &quot;$(aws configure export-credentials --format env)&quot;
 
 ROUTING_PROFILE=stage docker compose up --build --wait
 GATEWAY_URL=http://127.0.0.1:4000 ROUTING_PROFILE=stage scripts/smoke-test.sh</code></pre>
-<p>您导出的密钥优先于“.env”中的占位符，因此 Compose 和冒烟测试使用相同的密钥。 AWS 凭证仅来自您的 shell，绝不会进入“.env”或配置文件中。 Compose 仅​​在“127.0.0.1”上发布网关。本地没有负载均衡器，因此冒烟测试会跳过其封闭路径检查。本地网关仍然呼叫 Amazon Bedrock，并且这些呼叫需要付费。完成后，运行“docker compose down”。</p>
-<h3>步骤 3：部署网关</h3>
-<p>网关在您拥有的主机名上提供 HTTPS 服务。将“GATEWAY_DOMAIN”设置为该主机名，将“HOSTED_ZONE”设置为包含该主机名的现有 Route 53 公共托管区域。然后，AWS CDK 创建经过 DNS 验证的 ACM 证书和别名记录。从存储库根目录，安装依赖项，运行只读预检检查，然后部署：</p>
+<p>你导出的这个密钥优先于 <code>.env</code> 里的占位值，所以 Compose 和 smoke test 用的是同一把。AWS 凭证只来自你的 shell，绝不写进 <code>.env</code> 或 profile 文件。Compose 只在 <code>127.0.0.1</code> 上发布网关。本地没有负载均衡器，因此 smoke test 会跳过针对封闭路径的检查。本地网关依旧会调用 Amazon Bedrock，这些调用照样计费。用完之后运行 <code>docker compose down</code>。</p>
+<h3>第 3 步：部署网关</h3>
+<p>网关在你拥有的主机名上提供 HTTPS。把 <code>GATEWAY_DOMAIN</code> 设为该主机名，把 <code>HOSTED_ZONE</code> 设为包含它的、已存在的 Route 53 公开托管区域。随后 AWS CDK 会创建经 DNS 验证的 ACM 证书和别名记录。在仓库根目录安装依赖、跑一遍只读的 preflight 检查，然后部署：</p>
 <pre><code>npm ci
 
 export AWS_REGION=us-east-1
@@ -302,17 +302,17 @@ npx cdk diff -c allowedCidr=&quot;$ALLOWED_CIDR&quot; \
   -c domainName=&quot;$GATEWAY_DOMAIN&quot; -c hostedZone=&quot;$HOSTED_ZONE&quot;
 npx cdk deploy -c allowedCidr=&quot;$ALLOWED_CIDR&quot; \
   -c domainName=&quot;$GATEWAY_DOMAIN&quot; -c hostedZone=&quot;$HOSTED_ZONE&quot;</code></pre>
-<p>如果您的域的 DNS 不在 Route 53 中，请改用现有的 ACM 证书。将“CERTIFICATE_ARN”设置为部署区域中主机名的 ACM 证书，并在两个命令中将“-cHostedZone=&quot;$HOSTED_ZONE&quot;”替换为“-ccertificateArn=&quot;$CERTIFICATE_ARN&quot;”。然后，AWS CDK 不会创建任何证书和 DNS 记录。部署后，创建一个 CNAME 记录（或 Route 53 别名），将主机名指向“LoadBalancerDnsName”输出。</p>
-<p>所需的“allowedCidr”值限制哪些网络可以到达负载均衡器，并且该命令将其设置为您当前的公共 IPv4 地址。将其保留为您自己的“/32”：共享允许地址（例如办公室 NAT 或 VPN 出口）的每个人都可以到达该端点。如果没有“allowedCidr”、具有世界开放范围（例如“0.0.0.0/0”）或具有 IPv6 范围，堆栈将拒绝进行合成。</p>
-<p>预检会检查配置、您的工具和 AWS 访问权限，包括对配置文件中每个模型的访问权限，而无需发出推理请求。 AWS CDK 构建网关映像，将其发布到 Amazon ECR，并部署堆栈。部署打印这些输出：</p>
-<table><thead><tr><th><strong>输出</strong></th><th><strong>它是什么</strong></th></tr></thead><tbody><tr><td>网关地址</td><td>基本 URL。 OpenAI 兼容 API 位于“/v1”下。</td></tr><tr><td>MasterKeySecretArn</td><td>网关密钥背后的 Secrets Manager 秘密。完整的密钥是“sk-”，后跟秘密值。</td></tr><tr><td>主键命令</td><td>打印网关密钥的命令。</td></tr><tr><td>烟雾测试命令</td><td>烟雾测试命令，其中填写了堆栈名称、区域和配置文件。</td></tr><tr><td>路由配置文件</td><td>活动路由配置文件，默认为阶段。</td></tr><tr><td>集群名称、服务名称</td><td>ECS 集群和服务。关键旋转步骤使用它们。</td></tr><tr><td>LoadBalancerDns 名称</td><td>仅适用于certificateArn：指向主机名的名称。</td></tr></tbody></table>
-<p>始终为客户端提供“https://”URL。端口 80 保持打开状态仅用于重定向到 HTTPS，并且配置为“http://”的客户端在重定向到达时已经以明文形式发送了密钥及其第一个请求。</p>
-<p>对于长时间代理响应，负载均衡器空闲超时为 10 分钟。 Web ACL 使用 Amazon IP 信誉列表和已知的不良输入规则组。它还将每个 IP 地址限制为每 5 分钟 2,000 个请求。它省略了代理请求中的源代码触发的跨站点脚本、SQL 注入和正文大小的通用正文规则。 “allowedCidr”范围和网关密钥仍然适用。</p>
-<p><strong>通过普通 HTTP 进行快速测试。</strong> 如果没有 HTTPS 设置，合成器会因错误而停止。对于没有域的简短测试，您可以选择在负载均衡器的 DNS 名称上使用纯 HTTP：</p>
+<p>如果你的域名 DNS 不在 Route 53 里，就改用一张现成的 ACM 证书：把 <code>CERTIFICATE_ARN</code> 设为部署 Region 中该主机名对应的 ACM 证书，并在两条命令里把 <code>-c hostedZone=&quot;$HOSTED_ZONE&quot;</code> 换成 <code>-c certificateArn=&quot;$CERTIFICATE_ARN&quot;</code>。这样 AWS CDK 就不会创建证书和 DNS 记录。部署完成后，再建一条 CNAME 记录（或 Route 53 别名），把主机名指向 <code>LoadBalancerDnsName</code> 这个 output。</p>
+<p>必填的 <code>allowedCidr</code> 用来限定哪些网络能访问负载均衡器，命令里把它设为你当前的公网 IPv4 地址。务必只留你自己的 <code>/32</code>：凡是共用同一个放行地址的任何人（比如办公室 NAT 或 VPN 出口）都能访问这个 endpoint。缺了 <code>allowedCidr</code>、用了 <code>0.0.0.0/0</code> 这种对全网开放的范围，或者给了 IPv6 范围，stack 都会拒绝 synth。</p>
+<p>preflight 会检查配置、你的工具以及 AWS 访问权限，包括 profile 里每个模型的访问权限，全程不发推理请求。AWS CDK 构建网关镜像、发布到 Amazon ECR 并部署 stack。部署会打印出这些 output：</p>
+<table><thead><tr><th><strong>输出</strong></th><th><strong>含义</strong></th></tr></thead><tbody><tr><td>GatewayUrl</td><td>基础 URL。兼容 OpenAI 的 API 在 <code>/v1</code> 下。</td></tr><tr><td>MasterKeySecretArn</td><td>网关密钥背后的 Secrets Manager secret。完整密钥是 <code>sk-</code> 加上 secret 的值。</td></tr><tr><td>MasterKeyCommand</td><td>一条打印网关密钥的命令。</td></tr><tr><td>SmokeTestCommand</td><td>smoke test 命令，已填好 stack 名、Region 和 profile。</td></tr><tr><td>RoutingProfile</td><td>当前生效的路由 profile，默认是 stage。</td></tr><tr><td>ClusterName, ServiceName</td><td>ECS 集群和服务。轮换密钥的步骤会用到它们。</td></tr><tr><td>LoadBalancerDnsName</td><td>仅在使用 certificateArn 时出现：供主机名指向的那个名称。</td></tr></tbody></table>
+<p>给客户端的一律是 <code>https://</code> URL。80 端口只为重定向到 HTTPS 而开放；配成 <code>http://</code> 的客户端，在重定向到达之前就已经把密钥和第一个请求以明文发出去了。</p>
+<p>为容纳 agent 的长响应，负载均衡器的空闲超时设为 10 分钟。web ACL 使用 Amazon IP 信誉列表和 known bad inputs 规则组，并把每个 IP 限制为每 5 分钟 2,000 次请求。它略去了针对跨站脚本、SQL 注入和 body 大小的通用规则，因为 agent 请求里的源代码会触发这些规则。<code>allowedCidr</code> 范围和网关密钥依然生效。</p>
+<p><strong>用纯 HTTP 快速测试。</strong> 没有 HTTPS 设置时，synth 会报错停下。要在没有域名的情况下做个简短测试，可以选择在负载均衡器的 DNS 名称上启用纯 HTTP：</p>
 <pre><code>npx cdk deploy -c allowedCidr=&quot;$ALLOWED_CIDR&quot; -c allowPlainHttp=true</code></pre>
-<p>使用“allowPlainHttp=true”，AWS CDK 在每次合成堆栈时都会打印一条警告。 “Authorization”标头中的网关密钥、您的提示、代理发送的工具结果和源代码，以及在客户端和负载均衡器之间通过未加密的网络传输的模型响应。仅将选择加入用于对您自己的“/32”中的非敏感代码进行简短测试。然后旋转密钥，完成后运行“cdk destroy”。稍后要将同一堆栈移动到 HTTPS，请使用 HTTPS 设置重新部署它，但不要使用“allowPlainHttp”。</p>
-<h3>步骤 4：测试网关</h3>
-<p>在用于部署的同一终端中，读取 <a href="https://aws.amazon.com/cloudformation/">AWS CloudFormation</a> 堆栈输出并构建网关密钥：</p>
+<p>设了 <code>allowPlainHttp=true</code> 后，AWS CDK 每次 synth 这个 stack 都会打印一条警告。<code>Authorization</code> 头里的网关密钥、你的 prompt、agent 发出的工具结果与源代码，以及模型响应，在客户端和负载均衡器之间都以未加密形式过网。这个开关只用于从你自己的 <code>/32</code> 拿非敏感代码做一次简短测试。之后记得轮换密钥，用完运行 <code>cdk destroy</code>。若日后要把同一个 stack 切到 HTTPS，带上 HTTPS 设置、不带 <code>allowPlainHttp</code> 重新部署一次即可。</p>
+<h3>第 4 步：测试网关</h3>
+<p>在部署时用的同一个终端里，读取 <a href="https://aws.amazon.com/cloudformation/">AWS CloudFormation</a> 的 stack output，拼出网关密钥：</p>
 <pre><code>export STACK_NAME=SwitchyardGateway
 
 output() {
@@ -323,101 +323,101 @@ output() {
 export GATEWAY_URL=&quot;$(output GatewayUrl)&quot;
 export LITELLM_MASTER_KEY=&quot;sk-$(aws secretsmanager get-secret-value --region &quot;$AWS_REGION&quot; \
   --secret-id &quot;$(output MasterKeySecretArn)&quot; --query SecretString --output text)&quot;</code></pre>
-<p>向“switchyard”模型组发送请求：</p>
+<p>向 <code>switchyard</code> 模型组发一个请求：</p>
 <pre><code>curl -sS -i --connect-timeout 10 --max-time 180 &quot;$GATEWAY_URL/v1/chat/completions&quot; \
   -H &quot;Authorization: Bearer $LITELLM_MASTER_KEY&quot; \
   -H &quot;Content-Type: application/json&quot; \
   -d '{&quot;model&quot;:&quot;switchyard&quot;,&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;Reply with the word hello.&quot;}],&quot;max_tokens&quot;:128}'</code></pre>
-<p>查找 HTTP 200 和响应。 <code>x-litellm-model-name</code> 响应标头将所选模型显示为完整的 LiteLLM 模型字符串。新请求没有可评分的工具结果，因此 Stage 选择高效模型“bedrock/converse/nvidia.nemotron-super-3-120b”。</p>
-<p>要检查运行状况、身份验证和路由，请运行冒烟测试：</p>
+<p>看到 HTTP 200 和响应体就成了。<code>x-litellm-model-name</code> 响应头会以完整的 LiteLLM 模型字符串给出被选中的模型。新请求没有可供打分的工具结果，因此 Stage 选中高效模型 <code>bedrock/converse/nvidia.nemotron-super-3-120b</code>。</p>
+<p>要检查健康状况、鉴权和路由，运行 smoke test：</p>
 <pre><code>ROUTING_PROFILE=&quot;$(output RoutingProfile)&quot; scripts/smoke-test.sh</code></pre>
-<p>冒烟测试检查运行状况端点，“/ui”等封闭路径会得到负载均衡器自己的 404，没有密钥的请求会得到 401，而“/v1/models”会列出每个模型组。对于 Stage，它检查普通请求是否选择有效模型，以及记录的重复失败历史记录是否升级为有能力的模型。然后它向每个基线组发送一个请求。该请求和冒烟测试会拨打可计费的 Amazon Bedrock 电话。</p>
-<p>要尝试您自己的代理，请使用“$GATEWAY_URL/v1”作为其与 OpenAI 兼容的基本 URL，使用网关密钥作为其 API 密钥，并使用“switchyard”作为模型。 Stage 需要每个请求的完整支持的请求历史记录。上游适配器支持文本消息、函数工具调用和文本工具结果，不支持的消息形状在推理之前会失败。负载均衡器转发聊天完成路径，但不转发 OpenAI 响应或人性消息路径。使用这些 API 的客户端会收到 404 错误，直到您添加路径、针对本地容器进行测试并重新部署。</p>
-<h3>步骤 5：衡量每个已解决任务的成本</h3>
-<p>该示例的编码运行程序“bench/run.py”让小型编码代理列出并读取文件、替换源文件并通过网关运行提供的单元测试。当任务的测试最终通过时（默认情况下在六个模型轮次内），任务就得到解决。列出任务并从路由组上的“slugify”开始：</p>
+<p>smoke test 会检查 health endpoint、<code>/ui</code> 这类封闭路径是否拿到负载均衡器自己的 404、不带密钥的请求是否拿到 401，以及 <code>/v1/models</code> 是否列出所有模型组。对 Stage，它会检查普通请求是否选中高效模型、以及一段记录了反复失败的历史是否会升级到能力更强的模型。随后它给每个基线组各发一个请求。这些请求和 smoke test 都会产生计费的 Amazon Bedrock 调用。</p>
+<p>想试自己的 agent，就把 <code>$GATEWAY_URL/v1</code> 当作它兼容 OpenAI 的 base URL，把网关密钥当作 API key，模型填 <code>switchyard</code>。Stage 要求每个请求都带上完整的、受支持的请求历史。上游 adapter 支持文本消息、function tool call 和文本工具结果，不受支持的 message 结构会在推理前失败。负载均衡器转发 Chat Completions 路径，但不转发 OpenAI Responses 或 Anthropic Messages 路径。用这些 API 的客户端会一直拿到 404，直到你加上对应路径、对着本地容器测过并重新部署。</p>
+<h3>第 5 步：测量每个已解决任务的成本</h3>
+<p>示例里的 coding runner <code>bench/run.py</code> 让一个小型 coding agent 能够列出并读取文件、替换源文件，并通过网关运行随附的单元测试。任务在测试最终通过时算作已解决，默认上限是六个模型轮次。先列出任务，再从路由组上的 <code>slugify</code> 开始：</p>
 <pre><code>python3 bench/run.py --list-tasks
 python3 bench/run.py --tasks slugify --model switchyard --max-turns 6</code></pre>
-<p>终端显示任务、所选模型、工具操作、测试结果和最终代码差异。每次运行都会将其起始文件、最终工作区、脚本、补丁和结果保存在“bench/results/”下。</p>
-<table><thead><tr><th><strong>任务</strong></th><th><strong>代理人必须做什么</strong></th></tr></thead><tbody><tr><td>slugify</td><td>slugify修复一个构建 URL slug 的短函数。</td></tr><tr><td>罗马</td><td>编写一个将整数转换为罗马数字的函数。</td></tr><tr><td>计算</td><td>编写一个不带“eval”、具有优先级、幂运算符、函数和错误处理的表达式解析器。</td></tr><tr><td>lru_ttl</td><td>编写一个线程安全的最近最少使用 (LRU) 缓存，其中包含每个条目的到期时间和精确计数器。</td></tr></tbody></table>
-<p>为了给算术解析器任务空间来运行测试和尝试修复，请提高轮数限制：</p>
+<p>终端会显示任务、被选中的模型、工具动作、测试结果和最终的代码 diff。每次运行都把起始文件、最终工作区、transcript、patch 和结果存到 <code>bench/results/</code> 下。</p>
+<table><thead><tr><th><strong>任务</strong></th><th><strong>agent 要做什么</strong></th></tr></thead><tbody><tr><td>slugify</td><td>修复一个生成 URL slug 的短函数。</td></tr><tr><td>roman</td><td>写一个把整数转成罗马数字的函数。</td></tr><tr><td>calc</td><td>写一个不用 <code>eval</code> 的表达式解析器，要支持优先级、幂运算符、函数和错误处理。</td></tr><tr><td>lru_ttl</td><td>写一个线程安全的 least recently used (LRU) 缓存，带逐条过期和精确计数。</td></tr></tbody></table>
+<p>为了给算术解析器任务留出跑测试、尝试修复的余地，把轮次上限调高：</p>
 <pre><code>python3 bench/run.py --tasks calc --model switchyard --max-turns 12</code></pre>
-<p>运行后，运行程序会为每个模型组打印一行，其中包含 RUNS、SOLVED、ERRORS、COST/TASK 和 COST/SOLVED 列。每个已解决任务的成本是组中所有运行的估计成本除以测试通过的运行的结果。跑步者使用“bench/run.py”中的价格表，在“x-litellm-model-name”标头中对模型的每一轮进行定价，并在响应中使用令牌。具有缓存输入的回合、没有 PRICES 条目的模型或没有标头或令牌计数的响应保持未定价，而不是计数为零。将模型添加到配置文件时添加价格条目，并检查 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a> 了解当前价格。对两个任务的几次运行演示了工作流程。它们不足以得出有关成本或质量的结论。</p>
-<p>当某个组的任何运行未定价时，该组会显示 n/a 并给出原因，而当没有运行得到解决时，COST/SOLVED 将显示“-”。要查看成本的去向，请检查轮次：终端打印服务于每个轮次的模型，并且“bench/results/”下的记录会记录它。</p>
-<p>为了比较整个对话，“bench/multiturn.py”对每个编码任务运行一个代理循环，第一个提示中的项目文件和每次编辑后反馈的测试输出。它还运行四个脚本化的聊天，共七轮，将简单的轮流与设计、调试和代码编写轮流交替进行，并且每轮都会重播完整的历史记录。使用简单的检查（预期文本、字数限制、项目符号或针对返回函数的断言）记录检查是否通过。设计回答不评分。</p>
+<p>跑完之后，runner 会为每个模型组打印一行，列有 RUNS、SOLVED、ERRORS、COST/TASK 和 COST/SOLVED。每个已解决任务的成本，就是该组所有运行的估算成本除以测试通过的运行数。runner 依据 <code>x-litellm-model-name</code> 头里的模型和响应中的 token 用量，用 <code>bench/run.py</code> 里的 PRICES 表给每一轮定价。某一轮若命中缓存输入、模型没有 PRICES 条目，或响应缺少该头或 token 计数，就保持未定价，而不是记成零。往 profile 里加模型时记得补一条 PRICES 条目，并查 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a> 了解最新价格。在两个任务上跑几次足以演示整个流程，但不足以对成本或质量下结论。</p>
+<p>只要某组里有任何一次运行未定价，该组就会显示 n/a 并附原因；没有任何运行被解决时，COST/SOLVED 显示 <code>-</code>。想看清成本花在哪儿，就去查每一轮：终端会打印服务该轮的模型，<code>bench/results/</code> 下的 transcript 也记着它。</p>
+<p>要比较整段对话，<code>bench/multiturn.py</code> 会在每个 coding 任务上跑一个 agentic 循环：把项目文件放进第一个 prompt，每次编辑后把测试输出回喂进去。它还会跑四段脚本化的对话，各七轮，把简单轮次与设计、调试、写代码轮次交替安排，并在每一轮重放完整历史。带廉价检查的轮次（预期文本、字数上限、要点列表，或针对返回函数的断言）会记录检查是否通过。设计类回答不计分。</p>
 <pre><code>python3 bench/multiturn.py --tasks slugify --scripts backend api --max-spend 2</code></pre>
-<p><code>--max-conv-cost</code> 选项（默认 1 美元）限制每个对话，而 <code>--max-spend</code> 则阻止跑步者开始新的对话。摘要显示了每个模型组通过的编码对话、通过的聊天检查以及每个编码对话、每个聊天和总计的估计成本。</p>
-<p>运行程序在您的计算机上执行模型编写的 Python。运行测试的子进程在其环境中没有凭据，但它不是操作系统沙箱：代码可以读取用户可以读取并可以访问网络的任何文件。使用磁盘上没有长期 AWS 凭证的一次性开发环境，并保护“bench/results/”下的文件，其中包含提示、模型响应、工具输出和生成的代码。</p>
-<h2>解释你的结果</h2>
-<p>该示例的任务很小且具有说明性。要确定路由是否适合您的工作负载，请用代表您自己的代码库的任务替换或扩展它们，并在阅读运行器的输出时记住以下几点。</p>
-<ul><li><strong>从已解决开始，然后阅读成本/已解决 –</strong> 解决较少任务的小组可以显示较低的成本/任务，但每个已解决任务的成本仍然较高，因为失败的运行会增加成本而不增加已解决的任务。仅在比较了每个组解决的任务数量后，才将路由组的成本/已解决的成本与每个基准组的成本/已解决的成本进行比较。</li><li><strong>单独查看困难任务 –</strong> 总数可以隐藏驱动结果的单个任务。按任务细分结果。阶段是根据历史中的失败来决定的，因此它不能提前将艰巨的任务交给有能力的候选人。升级的转弯还会重播整个失败的尝试，这可能会使恢复比在有能力的候选者上开始运行更昂贵。如果一些困难任务占据了您的成本，请考虑将它们路由到专门的模型组，或者选择一个能够解决更多问题的高效候选模型。</li><li><strong>运行足够的重复次数 –</strong> 模型输出因运行而异。由于每组只有几次运行，一两个已解决任务的差异可能会产生噪音。增加“--repeats”直到您关心的差异稳定，并在对差距采取行动之前应用统计测试，例如费舍尔精确测试解决率。</li><li><strong>考虑轮次限制 –</strong> 较低的“--max-turns”值会惩罚在编辑之前进行探索的模型，因为它会留下更少的轮次来修复失败的编辑。设置限制以匹配代理在实践中的运行方式。</li><li><strong>考虑输出上限 –</strong> 如果一个组的回复达到“max_tokens”，则测量的成本是下限，并且缩短的回复也会缩短稍后重放的历史记录。在比较聊天费用之前，请检查文字记录中是否有被截断的回复。</li><li><strong>将成本视为估算 –</strong> 跑步者根据代币使用情况和价格表估算成本，而不是根据您的账单。提示缓存、批量推理和定价更改都会影响您的实际成本。通过 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a> 以及您的 AWS 成本和使用情况报告进行确认。</li><li><strong>测试您计划运行的设置 –</strong> 结果仅适用于您测量的模型、配置文件设置和任务。如果您更改候选人、阶段设置或切换到随机配置文件，请重新测量。</li></ul>
-<p>使用这些读数为每个工作负载在三个选项中进行选择：路由组、单模型组或具有不同候选项或设置的配置文件。当您更改模型、提示或代理行为时，重新运行相同的测量。</p>
+<p><code>--max-conv-cost</code> 选项（默认 1 USD）给每段对话设上限，<code>--max-spend</code> 则让 runner 不再开启新对话。汇总里按每个模型组列出：通过的 coding 对话数、通过的对话检查数，以及每段 coding 对话、每段对话和总计的估算成本。</p>
+<p>这些 runner 会在你的机器上执行模型写出来的 Python。跑测试的子进程环境里没有凭证，但它并不是操作系统级 sandbox：代码能读到你的用户能读的任何文件，也能连网。请用一次性的开发环境，磁盘上别放长期有效的 AWS 凭证，并保护好 <code>bench/results/</code> 下的文件——里面有 prompt、模型响应、工具输出和生成的代码。</p>
+<h2>解读结果</h2>
+<p>示例里的任务都很小，只作示意。要判断路由是否适合你的工作负载，请换成或补上能代表自己代码库的任务，并在读 runner 输出时记住以下几点。</p>
+<ul><li><strong>先看 SOLVED，再读 COST/SOLVED –</strong> 解决任务更少的组，COST/TASK 可能更低，但每个已解决任务的成本反而更高，因为失败的运行只加成本、不加已解决的任务。先比过各组解决了多少任务，再去比路由组与各基线组的 COST/SOLVED。</li><li><strong>把难任务单独拎出来看 –</strong> 汇总数字可能掩盖了真正决定结果的某一个任务。按任务拆开看。Stage 是依据历史里的失败来做判断的，因此没法提前把难任务路由到能力更强的候选模型。升级后的那一轮还会重放整段失败尝试，可能让一次恢复比一开始就用能力更强的候选模型更贵。如果少数几个难任务吃掉了大部分成本，可以考虑把它们路由到专门的模型组，或者换一个能解决更多此类任务的高效候选模型。</li><li><strong>重复次数要够 –</strong> 模型输出每次运行都不一样。每组只跑寥寥几次时，一两个已解决任务的差别可能只是噪声。加大 <code>--repeats</code>，直到你在意的差异稳定下来；在据某段差距采取行动之前，先做一次统计检验，比如对解决率用 Fisher's exact test。</li><li><strong>把轮次上限算进去 –</strong> <code>--max-turns</code> 设得太低，会亏待那些先探索再动手改的模型，因为留给它们修复失败编辑的轮次更少了。把上限设成与 agent 实际运行方式相符的值。</li><li><strong>把输出上限算进去 –</strong> 如果某组的回复撞到了 <code>max_tokens</code>，测得的成本只是下界，而变短的回复也会让后续轮次重放的历史变短。比较对话成本前，先到 transcript 里查一下有没有被截断的回复。</li><li><strong>把成本当估算看 –</strong> runner 是按 token 用量和 PRICES 表估算成本，不是按你的账单。prompt 缓存、批量推理和价格变动都会影响实际成本。请用 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a> 和你的 AWS Cost and Usage Reports 核实。</li><li><strong>测你真正要跑的那套设置 –</strong> 结论只对你测过的模型、profile 设置和任务成立。换了候选模型、改了 Stage 设置，或切到 Random profile，都要重新测量。</li></ul>
+<p>拿这些读数，为每个工作负载在三个选项里做选择：路由组、单模型组，或换了候选模型 / 设置的 profile。改动模型、prompt 或 agent 行为时，把同一套测量再跑一遍。</p>
 <h2>清理</h2>
-<p>为了避免持续产生费用，请删除堆栈。 AWS CDK 需要一个“allowedCidr”值来合成应用程序，但该值在这里并不重要：</p>
+<p>为避免继续产生费用，把 stack 删掉。AWS CDK synth 这个 app 时需要一个 <code>allowedCidr</code> 值，但这里填什么都无所谓：</p>
 <pre><code>npx cdk destroy -c allowedCidr=203.0.113.0/24</code></pre>
-<p>CloudFormation 会删除主密钥，并且没有恢复窗口，因此如果需要，请先复制密钥。网关映像保留在 Amazon ECR 中的 AWS CDK 引导存储库中。</p>
+<p>CloudFormation 删除 master key secret 时不留恢复窗口，所以还需要的话先把密钥复制出来。网关镜像会留在 Amazon ECR 里的 AWS CDK bootstrap 仓库中。</p>
 <h2>结论</h2>
-<p>在这篇文章中，我们展示了如何在 AWS 上使用 NVIDIA NeMo Switchyard 路由插件部署 LiteLLM，在 Amazon Bedrock 上跨模型配置阶段和随机路由，以及测量路由模型组和单模型基线的每个已解决任务的成本。由于代理任务的总成本取决于轮次、历史记录和重试，因此每个代币的价格本身并不能作为可靠的指导。测量您自己的任务中每个已解决任务的成本可为您提供选择配置的证据。</p>
-<p>首先，在开发账户中部署<a href="https://github.com/aws-samples/sample-route-coding-agent-requests-Amazon-Bedrock-nemo-switchyard">示例存储库</a>，并根据您自己的工作负载测量任务的阶段路由和单模型基线。要了解更多信息，请参阅 <a href="https://github.com/NVIDIA-NeMo/Switchyard/blob/main/examples/litellm/README.md">Switchyard LiteLLM 插件指南</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html">Amazon Bedrock 用户指南</a>。在评论中分享您的问题。</p>
+<p>本文里，我们演示了如何在 AWS 上部署带 NVIDIA NeMo Switchyard 路由插件的 LiteLLM，如何为 Amazon Bedrock 上的模型配置 Stage 和 Random 路由，以及如何测量路由模型组与单模型基线各自的「每个已解决任务成本」。由于 agentic 任务的总成本取决于轮次、历史和重试，单看每 token 的价格并不可靠。在自己的任务上测量「每个已解决任务成本」，才能给你选配置的依据。</p>
+<p>想上手，就在开发账户里部署<a href="https://github.com/aws-samples/sample-route-coding-agent-requests-Amazon-Bedrock-nemo-switchyard">示例仓库</a>，拿自己工作负载里的任务测一测 Stage 路由和单模型基线。想了解更多，请看 <a href="https://github.com/NVIDIA-NeMo/Switchyard/blob/main/examples/litellm/README.md">Switchyard LiteLLM 插件指南</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html">Amazon Bedrock User Guide</a>。欢迎在评论区留言提问。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Amazon Bedrock AgentCore 运行时快速会话启动的架构模式</title>
+      <title>在 Amazon Bedrock AgentCore runtime 上快速启动会话的架构模式</title>
       <link>https://aws.amazon.com/blogs/machine-learning/architecture-patterns-for-fast-session-startup-on-amazon-bedrock-agentcore-runtime/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/architecture-patterns-for-fast-session-startup-on-amazon-bedrock-agentcore-runtime/</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Architecture patterns for fast session startup on Amazon Bedrock AgentCore runtime</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Amazon Bedrock AgentCore 运行时快速会话启动的架构模式</h1>
-<p>如今，代理人员会审查代码、处理索赔并在无人值守的情况下运行数小时。许多人还坐在互动体验后面，等待第一反应。 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore 运行时</a> 为这些代理提供了完全托管的无服务器环境：每个会话都在自己的隔离 microVM 中运行，当没有工作时，平台会扩展到零，并且您只需为会话消耗的资源付费。</p>
-<p><a href="https://aws.amazon.com/blogs/machine-learning/the-new-agentcore-runtime-elastic-optimized-and-consistly-fast-starts/">AgentCore 运行时</a> 将“platformVersion”设置为“V2”会更改会话的启动方式。它不是为每个会话初始化容器，而是准备一次环境，为其创建快照，然后为每个新会话恢复该快照。会话开始时间更快且更一致。 V2 还会回收您的会话不使用的内存，因此您的账单会跟踪代理使用的内存。</p>
-<p>对于大多数代理来说，切换到 V2 就足够了。一些代理需要重组才能获得全部好处，对于聊天和语音体验来说，即使 2 秒也太慢了。这篇文章解释了 V2 如何启动会话、如何测量会话开始时间以及如何让第一个请求不再工作，包括 AgentCore 运行时现在支持的构建挂钩。我们涵盖四种模式，从更改代理代码到在用户需要之前启动会话。</p>
-<h2>您需要哪种模式？</h2>
-<table><thead><tr><th><strong>您的情况</strong></th><th><strong>做什么</strong></th><th><strong>部分</strong></th></tr></thead><tbody><tr><td>大约 2 秒内完成新会话就可以了</td><td>切换到 V2 并在 <code>app.run()</code> 之前完成所有初始化</td><td>让工作远离第一个请求</td></tr><tr><td>您的代理需要早期的大文件、CLI 或浏览器，并且无法将它们保留在进程中</td><td>添加构建挂钩以在构建快照时加载并启动它们</td><td>使用钩子</td></tr><tr><td>您需要亚秒级的时间，用户在发送第一个请求（打开应用程序或聊天窗口）之前就参与进来</td><td>当用户参与时在后台启动会话</td><td>预热用户参与度</td></tr></tbody></table>
+<h1>在 Amazon Bedrock AgentCore runtime 上快速启动会话的架构模式</h1>
+<p>如今的 agent 会审查代码、处理理赔，还能无人值守连跑几个小时。不少 agent 还藏在交互式体验背后，让人等着第一个响应。<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore runtime</a> 为这些 agent 提供全托管的 serverless 环境：每个会话跑在自己隔离的 microVM 里，没活干时平台缩容到零，你只为会话实际消耗的资源付费。</p>
+<p>把 <code>platformVersion</code> 设为 &quot;V2&quot; 后，<a href="https://aws.amazon.com/blogs/machine-learning/the-new-agentcore-runtime-elastic-optimized-and-consistently-fast-starts/">AgentCore runtime</a> 改变了会话的启动方式。它不再为每个会话初始化容器，而是把环境准备好一次、做一份快照，之后每个新会话都从这份快照恢复。会话启动更快，也更稳定。V2 还会回收会话没用上的内存，让账单跟着 agent 实际用量走。</p>
+<p>对大多数 agent 来说，切到 V2 就够了。有些 agent 要重构才能吃满收益；而对聊天、语音体验来说，连 2 秒都嫌慢。本文讲清 V2 如何启动会话、怎么测量会话启动时间，以及怎么把工作从第一个请求上挪开——包括 AgentCore runtime 现已支持的构建钩子。我们覆盖四种模式，从改 agent 代码，到赶在用户需要之前就把会话启起来。</p>
+<h2>你需要哪种模式？</h2>
+<table><thead><tr><th><strong>你的情况</strong></th><th><strong>怎么做</strong></th><th><strong>对应章节</strong></th></tr></thead><tbody><tr><td>新会话大约 2 秒启动可以接受</td><td>切到 V2，并在 <code>app.run()</code> 之前完成全部初始化</td><td>把工作挪离第一个请求</td></tr><tr><td>你的 agent 一上来就需要大文件、CLI 或浏览器，又没法把它们留在进程里</td><td>加一个构建钩子，在构建快照时加载并预热它们</td><td>使用钩子</td></tr><tr><td>你需要亚秒级，而且用户在发出首个请求之前就已进入（打开应用或聊天窗口）</td><td>在用户进入时在后台启动会话</td><td>用户进入时预热</td></tr></tbody></table>
 <h2>V2 如何启动会话</h2>
-<p>AgentCore 运行时在新的 microVM 中运行每个会话。在 V1 上，AgentCore 从 Amazon Elastic Container Registry (Amazon ECR) 中提取容器映像、启动容器并运行初始化代码，然后才能处理第一个请求。镜像拉动占主导地位，因此冷启动随着镜像大小而增长。</p>
-<p>V2 只做一次这样的工作。当您创建或更新运行时时，AgentCore 运行时会在新的 microVM 中启动容器并等待第一个正常的 ping (<code>GET /ping</code>)，该 ping 必须在 120 秒内到达。然后，它会清除操作系统的文件缓存，以保持快照较小，冻结 microVM，并将其内存和磁盘存储为快照。</p>
-<p><strong>这是对 V1 的更改：在构建快照时，每次创建或更新现在都需要几分钟</strong>。</p>
-<p>在这篇文章中，<strong>init</strong> 意味着您的代理在“/ping”报告健康之前所做的一切。对于 AgentCore Python SDK，这就是“app.run()”之前的所有内容。如果您使用“Node.js”或其他语言运行自己的 HTTP 服务器，则仅在初始化完成后报告运行状况良好。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/13/ML-22099-1.png" alt="构建流程，容器启动一次，报告运行状况良好，然后 AgentCore 清除文件缓存，冻结 microVM，并存储快照"></p>
-<p>图 1：每次创建或更新时构建一次</p>
-<p>当新会话到达时，AgentCore 将快照恢复到新的 microVM 中。您的流程将在其被冻结的位置准确恢复，其导入、对象和客户端均就位。图像中的文件是延迟加载的：会话第一次读取每个块时都会获取它。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/13/ML-22099-2.png" alt="调用流程，其中每个新会话将快照恢复到新的 microVM，进程恢复，并且首先获取图像文件阅读"></p>
-<p>图 2：每个新会话都调用</p>
-<p>从这些流程中可以得出三个事实，本文的其余部分也以此为基础：</p>
-<ul><li><strong>内存完整恢复。</strong> 进程在快照时保存的任何内容，以及 RAM 支持的文件系统（例如“/dev/shm”）中的任何内容，都可以从第一次访问时以内存速度使用。</li><li><strong>文件读取不会延续。</strong> 文件缓存在冻结之前被清除，因此在 init 期间读取文件不会使其在恢复的会话中速度更快。</li><li><strong>图像文件在第一次读取时获取。</strong> 块的第一次读取来自快照存储，然后缓存在靠近主机的位置。</li></ul>
-<p>下表显示了这对于典型代理所做的工作意味着什么，具体取决于其工作地点：</p>
-<table><thead><tr><th><strong>工作</strong></th><th><strong>在初始化期间完成</strong></th><th><strong>在处理程序中完成</strong></th></tr></thead><tbody><tr><td>导入库</td><td>会话开始时在内存中</td><td>在每个新会话中读取图像</td></tr><tr><td>创建客户端（例如“boto3”）</td><td>已完成端点和凭证解析的恢复。套接字在首次使用时重新连接</td><td>在每个新会话中从头开始构建</td></tr><tr><td>打开网络连接</td><td>恢复后就失效了。在快照之前关闭它们</td><td>新鲜开封</td></tr><tr><td>从图像加载静态数据并将其保存在对象中</td><td>会话开始时在内存中</td><td>在每个新会话中读取图像</td></tr><tr><td>从图像中读取文件而不保留数据</td><td>没有效果，因为文件缓存被清除了</td><td>在每个新会话中读取图像</td></tr></tbody></table>
-<p>如果您了解 AWS Lambda SnapStart，您会感觉很熟悉。 Marc Brooker 关于 SnapStart 如何加载快照的帖子和 SnapStart 启动策略帖子是有用的背景。</p>
-<p>表中的所有内容均假设您的代理可以在自己的流程中保留其所需的内容。这并不总是可能的。作为单独进程运行并退出的 CLI，或浏览器二进制文件，会在 init 期间读取，然后消失，因此恢复的会话会再次从映像中获取它。对于这些情况，您可以添加构建钩子，如“使用钩子”中所述。图 3 显示了它的运行位置。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/13/ML-22099-3.png" alt="使用挂钩构建和调用流程，其中内存预热调用在快照之前运行，磁盘预热调用在测试恢复之后运行"></p>
-<p>图 3：使用钩子构建和调用</p>
-<h2>优化之前先进行测量</h2>
-<p>代理应用程序中的延迟不是一个数字。请求花费时间在 AgentCore 运行时让会话准备好运行您的代码，然后在您的代码中花费时间：模型调用、工具调用、子代理以及流式传输响应。您可以通过不同的方式解决这些问题，因此首先要找出哪种方式占主导地位。</p>
-<p>AgentCore 运行时将两者发布为“AWS/Bedrock-AgentCore”命名空间中的 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-runtime-metrics.html">Amazon CloudWatch 指标</a>。 “延迟”是到达第一个字节的时间。 <code>OverheadLatency</code> 是属于平台的部分，例如启动 microVM 并在新会话上恢复快照。</p>
-<table><thead><tr><th><strong>你想要什么</strong></th><th><strong>如何获得</strong></th></tr></thead><tbody><tr><td>TTFB（第一个字节的时间）</td><td><code>延迟</code></td></tr><tr><td>运行时间</td><td><code>开销延迟</code></td></tr><tr><td>你的代码时间</td><td><code>延迟</code> - <code>开销延迟</code></td></tr><tr><td>初始化时间</td><td>在启动时在代码中测量（请参阅以下示例）。它不是 V2 上任何请求的一部分</td></tr></tbody></table>
-<p>Init 不会出现在这些指标中，因为在 V2 上，它在构建快照时运行一次，而不是在每个会话中运行。它增加了创建或更新达到就绪状态所需的时间，而不是请求延迟。要查看需要多长时间，请在“app.run()”之前记录一次。该行出现在运行时的构建日志中：</p>
+<p>AgentCore runtime 让每个会话跑在一个新的 microVM 里。在 V1 上，AgentCore 会先从 Amazon Elastic Container Registry (Amazon ECR) 拉取容器镜像、启动容器、跑完初始化代码，之后才能处理第一个请求。拉镜像占了大头，所以冷启动时间随镜像体积增长。</p>
+<p>V2 把这套工作只做一次。创建或更新 runtime 时，AgentCore runtime 在一个全新的 microVM 里启动容器，等待第一个健康 ping（<code>GET /ping</code>），它必须在 120 秒内到达。随后平台清掉操作系统的文件缓存（好让快照小一些），冻结 microVM，把内存和磁盘存成一份快照。</p>
+<p><strong>与 V1 不同：现在每次创建或更新都要花几分钟</strong>，因为要构建快照。</p>
+<p>本文里，<strong>init</strong> 指 agent 在 <code>/ping</code> 报健康之前做的所有事。用 AgentCore Python SDK 时，就是 <code>app.run()</code> 之前的全部内容。如果你自己跑 HTTP server（用 <code>Node.js</code> 或其他语言），要等初始化完成后才报健康。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/13/ML-22099-1.png" alt="构建流程：容器只启动一次、报健康，随后 AgentCore 清除文件缓存、冻结 microVM 并保存快照"></p>
+<p>图 1：构建，每次创建或更新执行一次</p>
+<p>新会话到来时，AgentCore 把快照恢复到新的 microVM 里。你的进程从被冻结的那一处精确续上，导入、对象、客户端都还在。镜像里的文件是懒加载的：某个数据块在会话第一次读到它时才去取。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/13/ML-22099-2.png" alt="调用流程：每个新会话把快照恢复到全新 microVM，进程续上，镜像文件在首次读取时获取"></p>
+<p>图 2：调用，每个新会话</p>
+<p>从这两条流程能推出三个事实，本文余下内容都以此为基础：</p>
+<ul><li><strong>内存原样恢复。</strong> 进程在快照那一刻持有的东西，以及 <code>/dev/shm</code> 这类 RAM 支撑的文件系统里的内容，从第一次访问起就以内存速度可用。</li><li><strong>文件读取不会延续。</strong> 文件缓存在冻结前被清掉，所以 init 期间读某个文件，并不会让它在恢复后的会话里变快。</li><li><strong>镜像文件在首次读取时获取。</strong> 某个数据块的第一次读取来自快照存储，之后才被缓存到更靠近主机的位置。</li></ul>
+<p>下表说明，对典型 agent 要做的各类工作，放在不同位置分别意味着什么：</p>
+<table><thead><tr><th><strong>工作</strong></th><th><strong>在 init 期间完成</strong></th><th><strong>在 handler 中完成</strong></th></tr></thead><tbody><tr><td>导入库</td><td>会话启动时已在内存中</td><td>每个新会话都从镜像读取</td></tr><tr><td>创建客户端（例如 <code>boto3</code>）</td><td>随快照恢复，endpoint 与凭证解析已完成。套接字在首次使用时重连</td><td>每个新会话从头构建</td></tr><tr><td>打开网络连接</td><td>恢复后即失效。在快照前关闭它们</td><td>重新打开</td></tr><tr><td>从镜像加载静态数据并保存在对象里</td><td>会话启动时已在内存中</td><td>每个新会话都从镜像读取</td></tr><tr><td>从镜像读文件但不保留数据</td><td>无效，因为文件缓存被清空</td><td>每个新会话都从镜像读取</td></tr></tbody></table>
+<p>如果你熟悉 AWS Lambda SnapStart，会觉得这套很眼熟。Marc Brooker 那篇讲 SnapStart 如何加载快照的文章，以及讲 SnapStart 预热策略的文章，都是不错的背景资料。</p>
+<p>上表有个前提：agent 能把需要的东西都留在自己的进程里。这并不总能做到。作为独立进程运行、跑完就退出的 CLI，或者浏览器二进制文件，在 init 期间被读过之后就没了，恢复的会话只能再从镜像取一次。这类情况可以加一个构建钩子，「使用钩子」一节会讲。图 3 标出了它运行的位置。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/13/ML-22099-3.png" alt="带钩子的构建与调用流程：内存预热调用在快照前运行，磁盘预热调用在测试恢复后运行"></p>
+<p>图 3：带钩子的构建与调用</p>
+<h2>优化之前先测量</h2>
+<p>agentic 应用里的延迟不是一个数字。一个请求的时间，一部分花在 AgentCore runtime 把会话准备好、好让你的代码跑起来，另一部分花在你的代码里：模型调用、工具调用、子 agent，以及把响应流式送回。这几处的修法各不相同，所以先弄清哪一块占大头。</p>
+<p>AgentCore runtime 把这两部分都发成 <code>AWS/Bedrock-AgentCore</code> 命名空间下的 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-runtime-metrics.html">Amazon CloudWatch 指标</a>。<code>Latency</code> 是首字节时间。<code>OverheadLatency</code> 是归平台的那部分，比如启动 microVM、在新会话上恢复快照。</p>
+<table><thead><tr><th><strong>你想得到的量</strong></th><th><strong>怎么拿</strong></th></tr></thead><tbody><tr><td>TTFB（首字节时间）</td><td><code>Latency</code></td></tr><tr><td>Runtime 耗时</td><td><code>OverheadLatency</code></td></tr><tr><td>你的代码耗时</td><td><code>Latency</code> − <code>OverheadLatency</code></td></tr><tr><td>Init 耗时</td><td>在启动时由你的代码测量（见下面的示例）。在 V2 上它不属于任何请求</td></tr></tbody></table>
+<p>init 不会出现在这些指标里，因为在 V2 上它只在构建快照时跑一次，而不是每个会话都跑。它增加的是创建或更新到 READY 所需的时间，不是请求延迟。想知道它花多久，在 <code>app.run()</code> 前打一条日志即可。这一行会出现在 runtime 的构建日志里：</p>
 <pre><code>import time
 INIT_START = time.time()  # first line of your module
 # imports, clients, data loading ...
 print(f&quot;init_ms={round((time.time() - INIT_START) * 1000)}&quot;)
 app.run()</code></pre>
-<p>如何阅读拆分：</p>
-<ul><li><strong>新会话上的高“OverheadLatency”：</strong>时间是在会话开始时。使用本文后面的模式在用户需要之前启动会话。</li><li><strong>您的代码在同一会话中第一个请求的时间比第二个请求的时间要长得多：</strong> 属于 init 的工作正在您的处理程序中运行。在 AgentCore Observability（Amazon Bedrock AgentCore 的一项功能）中围绕工具设置、文件加载和后期导入添加自定义跨度以找到它，然后将其移动到 init 中。</li></ul>
-<p>报告百分位（例如 P90 和 P99），或修剪平均值（例如 TM90），它对最快的 90% 请求进行平均并丢弃最慢的尾部。简单的平均值隐藏了缓慢的请求。 “OverheadLatency”涵盖了对正在运行的会话和新会话的请求，因此其分布取决于有多少请求启动新会话。将运行与类似的组合进行比较。</p>
-<p>按照您在生产中预期的新会话速率进行测试，而不是在部署后使用少量会话进行测试。</p>
-<p>要包括客户端的网络时间，还要在客户端上进行测量。对调用进行计时，让处理程序返回运行的时间，然后减去。两个时间戳都来自同一台机器，因此客户端和 microVM 之间的时钟差异并不重要。如果进行流式传输，非常小的事件可以被保留，直到数百字节的输出建立起来，因此第一个事件的时间可以读取高于会话开始的时间。</p>
-<h2>让工作远离第一个请求</h2>
-<p>通常的冷启动建议是延迟导入并保持初始化较小。在 V2 上，执行相反的操作：在构建快照时 init 运行一次，并且延迟到处理程序的工作由每个新会话支付。这适用于<em>静态</em>工作：导入、客户端和图像中的数据。动态数据无法快照。下一节将介绍它。</p>
-<p><strong>最引人注目的代理</strong>是在请求时从图像中读取大文件的代理：小型本地模型的权重、嵌入、数据集、大型库、用于自动化的浏览器二进制文件或编码代理作为子进程运行的 CLI 工具链。读取许多小文件，就像编译 TypeScript 项目一样，具有相同的效果。导入一些库并调用托管模型的代理主要需要正确地导入和客户端。</p>
-<h3>如何重组你的代理人</h3>
-<p><strong>在 init 期间创建对象，而不仅仅是导入。</strong> 创建对象会加载它所依赖的模块并将它们保留在活动内存中。也在 init 期间初始化使用外部库的本地工具，而不是在代理首次调用它们时。</p>
-<p><strong>在初始化期间创建客户端。</strong> 端点解析、凭证解析和客户端模块都会随快照返回。套接字不会，但“boto3”客户端会在第一次调用时干净地重新连接。其他一些网络客户端首先尝试过时的套接字，这会增加数百毫秒的时间，因此请在快照之前关闭其连接。</p>
-<p><strong>将静态数据保留在内存中</strong>，例如提示、技能前言、配置和小索引。将数据保存在对象中，而不仅仅是读取它：</p>
+<p>怎么读这个拆分：</p>
+<ul><li><strong>新会话上 <code>OverheadLatency</code> 偏高：</strong> 时间花在会话启动上。用本文后面的模式，赶在用户需要之前把会话启起来。</li><li><strong>同一会话里，第一个请求的代码耗时远高于第二个：</strong> 本该放在 init 里的工作跑到了 handler 中。在 AgentCore Observability（Amazon Bedrock AgentCore 的一项能力）里，围绕工具装配、文件加载和延迟导入加上自定义 span 把它找出来，再挪进 init。</li></ul>
+<p>报百分位（比如 P90、P99），或修剪均值（比如 TM90，它对最快的 90% 请求取平均、丢掉最慢的尾部）。简单平均会把慢请求藏起来。<code>OverheadLatency</code> 同时覆盖对已在运行会话和新会话的请求，所以它的分布取决于有多少请求会启动新会话。比较时要选请求构成相近的几轮。</p>
+<p>按生产环境预期的新会话速率来测，而不是部署后随手开几个会话测一测。</p>
+<p>想把客户端那边的网络时间也算进去，就在客户端也测一次：给 invoke 调用计时，让 handler 返回它跑了多久，再相减。两个时间戳都来自同一台机器，所以客户端和 microVM 之间的时钟差不影响结果。如果用了流式，很小的事件可能被攒着，直到输出攒到几百字节才发，因此「到第一个事件的时间」读数可能比会话启动时间还高。</p>
+<h2>把工作挪离第一个请求</h2>
+<p>冷启动的老建议是延迟导入、把初始化做小。在 V2 上要反着来：init 只在构建快照时跑一次，而推给 handler 的工作，每个新会话都得付一遍。这针对的是<em>静态</em>工作：导入、客户端，以及镜像里的数据。动态数据没法进快照，下一节讲它。</p>
+<p><strong>感受最明显的 agent</strong> 是那些在请求时从镜像读大文件的：小型本地模型的权重、嵌入、数据集、大型库、用于自动化的浏览器二进制文件，或者编码 agent 当子进程跑的 CLI 工具链。读很多小文件也一样，比如编译 TypeScript 项目。而只导入几个库、调用托管模型的 agent，主要把导入和客户端弄对就行。</p>
+<h3>如何重构你的 agent</h3>
+<p><strong>在 init 期间创建对象，而不只是导入。</strong> 创建对象会把它依赖的模块一并加载，并留在活动内存里。用到外部库的本地工具，也应在 init 期间初始化，别等 agent 第一次调用时才做。</p>
+<p><strong>在 init 期间创建客户端。</strong> endpoint 解析、凭证解析和客户端的模块都会随快照回来。套接字不会，但 <code>boto3</code> 客户端在第一次调用时会干净地重连。另一些网络客户端会先去试那个已经失效的套接字，平白多出几百毫秒，所以要在快照前关掉它们的连接。</p>
+<p><strong>把静态数据留在内存里，</strong> 比如 prompt、skill front matter、配置和小索引。要把数据攥在对象里，而不只是读一遍：</p>
 <pre><code>INDEX = pathlib.Path(&quot;/opt/data/index.bin&quot;).read_bytes()  # during init: keep the bytes</code></pre>
-<p><strong>保持工具运行，而不是根据请求启动它们。</strong> 在处理程序中启动的子进程在每个新会话中从图像中读取其二进制文件和库。在 init 期间启动的长时间运行的帮助程序（例如语言服务器或完成导入的工作进程）将作为进程内存的一部分返回。通过管道或套接字与它交谈。</p>
-<p><strong>将无法保存在内存中的文件复制到 RAM 支持的磁盘中。</strong> 像“tsc”这样的工具链作为单独的程序运行，读取自己的文件。在初始化期间将它们复制到“/dev/shm”或 ramfs 挂载，以便它们的读取来自内存。</p>
-<p><strong>发送已编译的字节码。</strong> <code>uv pip install</code> 默认情况下不会编译，因此后期导入也会从源代码进行编译。设置“UV_COMPILE_BYTECODE=1”或使用“pip install --compile”。</p>
-<p>下面的示例在 init 期间构建代理、其模型及其客户端，因此每个会话都会继承它们：</p>
+<p><strong>让工具常驻，而不是每个请求都启一次。</strong> 在 handler 里拉起的子进程，每个新会话都要从镜像重读它的二进制文件和库。而在 init 期间启动的常驻辅助进程（比如语言服务器，或者已经完成导入的工作进程）会作为进程内存的一部分一起恢复。用管道或套接字跟它通信。</p>
+<p><strong>把内存放不下的文件拷到 RAM 盘。</strong> 像 <code>tsc</code> 这类工具链是独立程序，会读自己的文件。init 期间把它们拷到 <code>/dev/shm</code> 或 ramfs 挂载点，读取就都来自内存了。</p>
+<p><strong>随包带上编译好的字节码。</strong> <code>uv pip install</code> 默认不编译，所以延迟导入也得从源码编译。设 <code>UV_COMPILE_BYTECODE=1</code>，或者用 <code>pip install --compile</code>。</p>
+<p>下面的示例在 init 期间就把 agent、它的模型和客户端都建好，这样每个会话都能继承：</p>
 <pre><code>import json, pathlib
 import boto3
 import pandas as pd  # import during init, including rarely used libraries
@@ -439,14 +439,14 @@ def invoke(payload):
     return agent(payload[&quot;prompt&quot;])
 
 app.run()  # /ping answers only after this line</code></pre>
-<p><strong>权衡：</strong>新会话上第一个字节的时间是启动 microVM 和恢复快照的时间，加上处理程序所花费的时间。将工作移入 init 会缩短处理程序，但内存中保存的任何内容都会使快照更大。您还需要为每次会话中保留的内存付费。测量更改之前和之后的端到端会话启动，以便您知道您已经减少了延迟，而不仅仅是将其从处理程序移至恢复。</p>
-<h3>参考卡</h3>
-<table><thead><tr><th><strong>数据</strong></th><th><strong>方法</strong></th></tr></thead><tbody><tr><td>第一次请求需要大文件，例如模型、CLI 或浏览器</td><td>在初始化期间将它们保存在内存中，或者使用构建钩子来启动它们</td></tr><tr><td>选择性读取大量参考数据</td><td>在初始化期间通过接入点挂载 Amazon S3 文件或 Amazon Elastic File System (Amazon EFS)（需要 Virtual Private Cloud (VPC) 模式）</td></tr><tr><td>代理很少读取的文件</td><td>将它们保留在映像上，或将它们移动到 Amazon Simple Storage Service (Amazon S3)、S3 文件或 Amazon EFS</td></tr><tr><td>会话创建的文件</td><td>无需改变</td></tr></tbody></table>
+<p><strong>权衡：</strong> 新会话的首字节时间，等于启动 microVM、恢复快照的时间，再加上 handler 的耗时。把工作挪进 init 会缩短 handler，但留在内存里的每样东西都会让快照变大，而且这份内存每个会话都要付费。改动前后都测一遍端到端的会话启动，才能确认你真的降低了延迟，而不只是把它从 handler 挪到了恢复阶段。</p>
+<h3>速查表</h3>
+<table><thead><tr><th><strong>数据</strong></th><th><strong>做法</strong></th></tr></thead><tbody><tr><td>第一个请求就要用的大文件，比如模型、CLI 或浏览器</td><td>在 init 期间留在内存中，或用构建钩子预热它们</td></tr><tr><td>按需读取的大型参考数据</td><td>在 init 期间通过接入点挂载 Amazon S3 Files 或 Amazon Elastic File System (Amazon EFS)（需要 virtual private cloud (VPC) 模式）</td></tr><tr><td>agent 很少读的文件</td><td>留在镜像里，或移到 Amazon Simple Storage Service (Amazon S3)、S3 Files 或 Amazon EFS</td></tr><tr><td>会话自己创建的文件</td><td>无需改动</td></tr></tbody></table>
 <h3>使用钩子</h3>
-<p>构建钩子构建于 init 之上，但不会取代它。在 init 中尽你所能，并使用 hook 来处理 init 无法覆盖的内容。您在容器中公开 HTTP 端点，AgentCore 运行时在构建运行时时向其发送两次“POST”请求：</p>
-<ul><li><strong>快照之前。</strong> 在构建 microVM 上，代理报告运行状况之后且冻结之前。您的代理在此处加载并保留在内存中的任何内容都是快照的一部分，因此每个会话都以此开始。</li><li><strong>测试恢复后。</strong> 在恢复快照以进行检查的单独 microVM 上。这次通话中没有任何内容被快照。使用它来读取您的会话将需要的文件，这决定了恢复的会话首先获取的内容。</li></ul>
-<p>“X-Amzn-Bedrock-AgentCore-Runtime-Warmup-Type”标头告诉您的代理正在处理哪个调用：第一个为“内存”，第二个为“磁盘”。这两个调用共享 120 秒，因此无论“内存”调用离开什么时间，“磁盘”调用都会得到。仅在工作完成后返回“2xx”响应。任何其他响应、连接失败或超时都会导致创建或更新失败，并且 AgentCore 运行时不会重试。运行时日志组中的“build-logs-”流显示哪个调用失败以及原因。</p>
-<p>挂钩在 V2 运行时可用。创建或更新运行时时使用“hooksConfiguration”配置它们：</p>
+<p>构建钩子是在 init 之上叠加，并不取代它。init 能做的都放 init，钩子只补 init 覆盖不到的部分。你在容器里暴露一个 HTTP endpoint，AgentCore runtime 在构建 runtime 时会向它发两次 <code>POST</code> 请求：</p>
+<ul><li><strong>快照之前。</strong> 在构建用的 microVM 上，agent 报健康之后、冻结之前。agent 在这里加载并留在内存里的东西都会进快照，因此每个会话一启动就带着它。</li><li><strong>测试恢复之后。</strong> 在另一个 microVM 上，它恢复快照做校验。这次调用里的内容不会被快照。用它去读会话将要用到的文件，从而决定恢复后的会话最先取哪些内容。</li></ul>
+<p><code>X-Amzn-Bedrock-AgentCore-Runtime-Warmup-Type</code> 这个 header 告诉 agent 当前在处理哪次调用：第一次是 <code>memory</code>，第二次是 <code>disk</code>。两次调用共用 120 秒，所以 <code>disk</code> 能拿到的就是 <code>memory</code> 剩下的时间。只有工作做完了才返回 <code>2xx</code>。返回别的响应、连接失败或者超时，都会让创建或更新失败，而且 AgentCore runtime 不会重试。runtime 日志组里的 <code>build-logs-</code> 流会指出是哪次调用失败、为什么。</p>
+<p>钩子在 V2 runtime 上可用。创建或更新 runtime 时用 <code>hooksConfiguration</code> 配置：</p>
 <pre><code>client = boto3.client(&quot;bedrock-agentcore-control&quot;)
 client.create_agent_runtime(
     agentRuntimeName=&quot;my_agent&quot;,
@@ -462,8 +462,8 @@ client.create_agent_runtime(
         }
     },
 )</code></pre>
-<p>该端口是可选的，默认为代理的服务端口。如果设置，请使用平台未保留的 8000 至 12000 端口。该路径无法与 AgentCore 运行时已在该端口上使用的路由匹配，例如“POST /incalls”或“GET /ping”。 <code>UpdateAgentRuntime</code> 替换了整个钩子配置，因此在每个要保留钩子的更新中包含 <code>hooksConfiguration</code> 。</p>
-<p>在代理中，处理同一端点上的两种调用类型：</p>
+<p>端口可选，默认用 agent 的服务端口。要设的话，用 8000 到 12000 之间、平台没占用的端口。路径不能和 AgentCore runtime 在该端口上已用的路由撞上，比如 <code>POST /invocations</code> 或 <code>GET /ping</code>。<code>UpdateAgentRuntime</code> 会替换整份钩子配置，所以每次想保留钩子的更新都要带上 <code>hooksConfiguration</code>。</p>
+<p>在 agent 里，用同一个 endpoint 处理两种调用：</p>
 <pre><code>import asyncio
 from fastapi import FastAPI, Request, Response
 
@@ -508,10 +508,10 @@ async def invoke(request: Request):
     payload = await request.json()
     # Per-request work runs here on every session.
     return {&quot;response&quot;: payload.get(&quot;prompt&quot;, &quot;&quot;)}</code></pre>
-<p>有关完整配置参考，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-lifecycle-hooks.html">为 AgentCore 运行时配置生命周期挂钩</a>。有关完整的代码示例，请参阅<a href="https://github.com/evandrofranco/agentcore-samples/tree/main/01-features/02-host-your-agent/01-runtime/03-advanced/17-strands-decider-hooks">示例代码</a>。</p>
-<h2>快照陷阱：什么必须保留在处理程序中</h2>
-<p>在 init 期间创建的所有内容都将冻结到快照中，直到下次部署为止，并且每个会话都以相同的副本开始。对于大多数物体来说，这就是重点。对于下面的值，这是一个错误，对于随机值，这是一个安全问题。</p>
-<p><strong>在处理程序中加载动态数据，每个会话一次。</strong> 来自 AgentCore Gateway（Amazon Bedrock AgentCore 的一项功能）的工具目录、功能标志和价格列表在部署后会发生变化。将它们加载到处理程序中并在模块级别缓存它们，因此每个会话都会获取它们一次。会话最多可以持续 8 小时，因此请给缓存一个过期时间：</p>
+<p>完整配置参考见<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-lifecycle-hooks.html">为 AgentCore runtime 配置生命周期钩子</a>。完整代码示例见<a href="https://github.com/evandrofranco/agentcore-samples/tree/main/01-features/02-host-your-agent/01-runtime/03-advanced/17-strands-decider-hooks">示例代码</a>。</p>
+<h2>快照的坑：哪些必须留在 handler 里</h2>
+<p>init 期间创建的一切都会冻进快照，直到下次部署为止；每个会话拿到的都是同一份副本。对大多数对象来说，这正是目的。但对下面这些值，它就是 bug；对随机值来说，更是安全问题。</p>
+<p><strong>动态数据放到 handler 里加载，每个会话一次。</strong> 来自 AgentCore Gateway（Amazon Bedrock AgentCore 的一项能力）的工具目录、feature flag 和价目表，部署之后还会变。把它们放在 handler 里加载、在模块级缓存，这样每个会话只取一次。会话最长能持续 8 小时，所以要给缓存加过期时间：</p>
 <pre><code>_tools, _loaded_at = None, 0.0
 
 def get_tools():
@@ -519,14 +519,14 @@ def get_tools():
     if _tools is None or time.time() - _loaded_at &gt; 300:  # wall clock: refresh after 5 minutes
         _tools, _loaded_at = load_gateway_tools(), time.time()
     return _tools</code></pre>
-<p>从处理程序调用“get_tools()”并将结果传递给您在初始化期间创建的代理。</p>
-<p><strong>在处理程序中创建每个会话的值。</strong></p>
-<table><thead><tr><th><strong>价值</strong></th><th><strong>在哪里创建它</strong></th><th><strong>为什么</strong></th></tr></thead><tbody><tr><td>随机值、随机数、秘密、密钥</td><td>在处理程序中，使用 <code>secrets</code>、<code>os.urandom()</code> 或 <code>uuid.uuid4()</code></td><td>在初始化期间创建的库随机状态（Python 的“随机”、NumPy）在每个会话中都是相同的。来自操作系统的值是唯一的</td></tr><tr><td>当前和经过的时间</td><td>在处理程序中，使用 <code>time.time()</code></td><td>初始化时间戳在快照时间是固定的，并且“time.monotonic()”不计算快照存储所用的时间</td></tr><tr><td>定时器、速率限制器、TTL 缓存</td><td>使用挂钟时间，或在第一次请求时重置它们</td><td>任何用单调时钟测量经过时间的东西在恢复过程中几乎看不到间隙</td></tr><tr><td>您自己获取的凭证和令牌</td><td>过期时刷新它们</td><td>在初始化期间加载的值可能会在会话开始之前过期</td></tr></tbody></table>
-<p><strong>了解限制。</strong> 当会话的空闲超时到期（“idleRuntimeSessionTimeout”：默认情况下为 15 分钟，从 60 秒到 8 小时）、达到其最大生命周期（“maxLifetime”：默认情况下最多为 8 小时）或停止会话时，会话就会结束。</p>
+<p>在 handler 里调用 <code>get_tools()</code>，把结果传给 init 期间创建的那个 agent。</p>
+<p><strong>每个会话独有的值，放到 handler 里创建。</strong></p>
+<table><thead><tr><th><strong>值</strong></th><th><strong>在哪里创建</strong></th><th><strong>原因</strong></th></tr></thead><tbody><tr><td>随机值、nonce、机密、密钥</td><td>在 handler 里，用 <code>secrets</code>、<code>os.urandom()</code> 或 <code>uuid.uuid4()</code></td><td>init 期间创建的库随机状态（Python 的 <code>random</code>、NumPy）在每个会话里都一模一样。来自操作系统的值才是唯一的</td></tr><tr><td>当前时间与经过时间</td><td>在 handler 里，用 <code>time.time()</code></td><td>init 里的时间戳固定在了快照那一刻，而 <code>time.monotonic()</code> 不会把快照存放的那段时间算进去</td></tr><tr><td>计时器、限流器、TTL 缓存</td><td>用挂钟时间，或在第一个请求时重置</td><td>凡是用单调时钟计量经过时间的东西，恢复前后几乎看不到间隔</td></tr><tr><td>你自己去取的凭证和令牌</td><td>过期时刷新</td><td>init 期间加载的值，可能在会话启动前就过期了</td></tr></tbody></table>
+<p><strong>记住这些限制。</strong> 会话在以下情况结束：空闲超时到期（<code>idleRuntimeSessionTimeout</code>：默认 15 分钟，可设 60 秒到 8 小时）、达到最大寿命（<code>maxLifetime</code>：默认且最多 8 小时），或者你主动停掉它。</p>
 <h2>亚秒级：在用户需要之前启动会话</h2>
-<p>假设您的新会话需要大约 2 秒才能启动，包括前面几节中介绍的所有计时细目。已经运行的会话将在大约 200 毫秒内给出答案。对于聊天或语音体验，亚秒级的方法是确保会话在用户的第一个请求到达之前已开始。有两种方法可以做到这一点。</p>
-<h3>预热用户参与度</h3>
-<p>大多数交互式应用程序都会在第一个提示之前收到信号：用户打开应用程序、聊天窗口或支持页面。使用它。生成会话 ID，在后台向代理发送预热请求，并将会话 ID 与对话一起保留。当用户输入第一条消息时，会话就开始运行。</p>
+<p>假设新会话启动要花大约 2 秒，前面几节拆解的各项耗时都算在内。而一个已经在跑的会话，大约 200 ms 就能应答。对聊天或语音体验来说，做到亚秒级的办法，是确保会话在用户第一个请求到达之前就已经启动。有两种做法。</p>
+<h3>用户进入时预热</h3>
+<p>大多数交互式应用在第一个 prompt 之前就能收到信号：用户打开应用、聊天窗口或支持页面。用它。生成一个会话 ID，在后台给 agent 发一个预热请求，并把会话 ID 跟这次对话关联保存。等用户敲完第一条消息，会话已经在跑了。</p>
 <pre><code># Backend, when the user opens the chat (don't block the UI on it)
 session_id = f&quot;chat-{uuid.uuid4().hex}&quot;  # session IDs need at least 33 characters
 agentcore.invoke_agent_runtime(agentRuntimeArn=ARN, runtimeSessionId=session_id,
@@ -539,44 +539,44 @@ def invoke(payload):
     if payload.get(&quot;action&quot;) == &quot;prime&quot;:
         return {&quot;primed&quot;: True}
     return agent(payload[&quot;prompt&quot;])</code></pre>
-<p>此模式不需要额外的基础设施，并且只要用户发送第一条消息的时间超过 2 秒，就会完全隐藏会话启动。每个参与但从未发送提示的用户都会花费一个会话时间。较短的空闲超时可以保持较小的值。</p>
+<p>这个模式不需要额外基础设施；只要用户发出第一条消息前花了大约 2 秒以上，它就能把会话启动完全藏起来。代价是：每个进入却始终没发 prompt 的用户，会白占一个会话。把空闲超时设短一点，这份开销就很小。</p>
 <h2>结论</h2>
-<p>在 V2 上，AgentCore 运行时将启动会话的大部分工作移至部署时间。您的容器启动一次，每个新会话都会恢复结果：内存全部恢复，并且在第一次读取时获取文件。</p>
-<p>为了使会话启动时间保持在 2 秒左右，请在 init 期间执行静态工作，将第一个请求所需的数据保存在内存中，并在处理程序中保存动态值和每个会话值。对于您的进程无法容纳的文件，请添加构建挂钩。为了缩短一秒钟的时间，请在用户需要之前启动会话：当您收到信号时，在用户参与时启动会话。</p>
-<p>首先，请在创建或更新运行时时将“platformVersion”设置为 V2，然后查看<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-v2-optimize.html">针对 AgentCore 运行时 V2 优化代理</a>。有关您的工作负载的问题，请联系您的 AWS 客户团队。</p>
+<p>在 V2 上，AgentCore runtime 把启动会话的大部分工作挪到了部署阶段。容器只启动一次，之后每个新会话都恢复这份结果：内存原样回来，文件在首次读取时获取。</p>
+<p>想把会话启动压在 2 秒左右，就在 init 期间做完静态工作，把第一个请求要用的数据留在内存里，把动态值和每个会话独有的值留在 handler 中。进程装不下的文件，加一个构建钩子。想压到一秒以内，就赶在用户需要之前启动会话：收到信号时，在用户进入那一刻就动手。</p>
+<p>上手时，创建或更新 runtime 把 <code>platformVersion</code> 设为 V2，然后看<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-v2-optimize.html">针对 AgentCore runtime V2 优化你的 agent</a>。工作负载方面的问题，可以联系你的 AWS 客户团队。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>OpenFold3 on Amazon SageMaker JumpStart: Predict biomolecula…</title>
+      <title>Amazon SageMaker JumpStart 上的 OpenFold3：预测生物分子结构</title>
       <link>https://aws.amazon.com/blogs/machine-learning/openfold3-on-amazon-sagemaker-jumpstart-predict-biomolecular-structures/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/openfold3-on-amazon-sagemaker-jumpstart-predict-biomolecular-structures/</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：OpenFold3 on Amazon SageMaker JumpStart: Predict biomolecular structures</description>
+      <description>原文标题：OpenFold3 on Amazon SageMaker JumpStart: Predict biomolecular structures</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
 <h1>Amazon SageMaker JumpStart 上的 OpenFold3：预测生物分子结构</h1>
-<p>您可以从 <a href="https://aws.amazon.com/sagemaker/jumpstart/">Amazon SageMaker JumpStart</a> 部署 <strong>OpenFold3-preview</strong>。 OpenFold 联盟和哥伦比亚大学的 AlQuraishi 实验室开发了 <a href="https://github.com/aqlaboratory/openfold-3">OpenFold3</a> 作为开源生物分子结构预测模型。只需几行代码，您通常就可以将 OpenFold3 部署到您自己的 AWS 账户中。然后，您可以预测蛋白质、DNA、RNA、小分子配体及其形成的复合物的 3D 结构。该终端节点在网络隔离的情况下运行，您可以使用它来帮助将序列保留在您的 AWS 账户中。</p>
-<p>计算药物发现团队现在使用结构预测作为其工作的核心部分。团队将其用于目标识别、抗体和蛋白质工程以及基于结构的虚拟筛选。团队发现运行这些模型具有挑战性。您需要 GPU 基础设施、有效的 CUDA 和 PyTorch 堆栈、大型模型检查点以及处理需要几分钟而不是几毫秒的请求的服务层。 SageMaker JumpStart 可以为您处理大部分工作。 OpenFold3 在托管 Amazon SageMaker AI 终端节点上的 AWS 维护的容器中运行。该端点旨在处理请求排队和 GPU 预热，并且您可以添加自动缩放。</p>
-<p>在这篇文章中，我们向您展示如何：</p>
-<ul><li>在 SageMaker <strong>异步推理</strong> 端点上部署 OpenFold3-preview。</li><li>提交结构预测作业并解释结果，包括预测结构和置信度分数。</li><li>在<strong>多 GPU 实例</strong>上并行运行多个预测。</li><li>提供您自己的<strong>多序列比对 (MSA)</strong> 以提高预测准确性，同时帮助保持您的序列私密性。</li><li>通过在空闲时<strong>将端点扩展到零</strong>来帮助降低成本。</li></ul>
+<p>你可以从 <a href="https://aws.amazon.com/sagemaker/jumpstart/">Amazon SageMaker JumpStart</a> 部署 <strong>OpenFold3-preview</strong>。OpenFold Consortium 与哥伦比亚大学 AlQuraishi Lab 将 <a href="https://github.com/aqlaboratory/openfold-3">OpenFold3</a> 开发为开源生物分子结构预测模型。只需几行代码，通常就能把 OpenFold3 部署到你自己的 AWS 账户中。随后你可以预测蛋白质、DNA、RNA、小分子配体及其所形成复合物的 3D 结构。该 endpoint 在网络隔离下运行，可借此把序列留在你的 AWS 账户内。</p>
+<p>如今，计算药物发现团队把结构预测当作工作的核心环节，用于靶点识别、抗体与蛋白质工程，以及基于结构的虚拟筛选。但团队发现，运行这类模型并不轻松：需要 GPU 基础设施、能正常工作的 CUDA 与 PyTorch 软件栈、体积庞大的模型 checkpoint，还要有一层能处理耗时数分钟而非数毫秒的请求的服务层。SageMaker JumpStart 可以替你承担其中大部分工作。OpenFold3 运行在托管式 Amazon SageMaker AI endpoint 上一个由 AWS 维护的容器里。该 endpoint 负责请求排队与 GPU 预热，你也可以再加上 autoscaling。</p>
+<p>在这篇文章里，我们会展示如何：</p>
+<ul><li>在 SageMaker <strong>异步推理</strong> endpoint 上部署 OpenFold3-preview。</li><li>提交结构预测作业并解读结果，包括预测结构与置信度分数。</li><li>在<strong>多 GPU 实例</strong>上并行运行多个预测。</li><li>提供你自己的<strong>多序列比对（MSA）</strong>来提高预测准确度，同时帮助保持序列私密。</li><li>在空闲时<strong>把 endpoint 缩容到零</strong>，帮助降低成本。</li></ul>
 <h2>OpenFold3 概述</h2>
-<p>OpenFold3是一个全原子结构预测模型。它根据一组分子的序列预测其联合 3D 结构。它不仅限于单蛋白质链：它可以在一次预测中折叠多链蛋白质复合物、蛋白质-核酸组装体和蛋白质-配体复合物。</p>
-<table><thead><tr><th><strong>属性</strong></th><th><strong>详情</strong></th></tr></thead><tbody><tr><td>开发商</td><td>OpenFold 联盟/哥伦比亚大学 AlQuraishi 实验室</td></tr><tr><td>型号类型</td><td>全原子生物分子结构预测</td></tr><tr><td>输入</td><td>蛋白质、DNA 和 RNA 序列。 SMILES 小分子配体</td></tr><tr><td>输出</td><td>mmCIF 格式的预测结构，具有置信度指标（pLDDT、PAE、PDE）</td></tr><tr><td>版本</td><td>OpenFold3 0.4.1，<code>of3-p2-155k</code> 检查点</td></tr><tr><td>许可证</td><td>阿帕奇2.0</td></tr><tr><td>JumpStart 型号 ID</td><td><code>hugingface-蛋白质折叠-openfold3</code></td></tr><tr><td>支持的实例</td><td><code>ml.g6.2xlarge</code>、<code>ml.g6.4xlarge</code>（默认）、<code>ml.g6.12xlarge</code></td></tr></tbody></table>
-<p>OpenFold3开发人员在Apache 2.0许可证下发布了其代码和模型权重，并发布了训练数据和方法。研究组织和制药公司可以检查该模型，对其进行微调，并根据该许可证的条款进行构建。开发人员将 OpenFold3-preview 描述为研究预览。</p>
-<h2>用例</h2>
-<ul><li><strong>目标和复杂结构预测</strong> – 预测没有实验结构的目标的结构，包括多链组装和蛋白质-核酸复合物。</li><li><strong>蛋白质-配体共折叠</strong> – 将蛋白质与作为 SMILES 提供的小分子折叠在一起，为基于结构的设计生成结合姿势假设。</li><li><strong>抗体和蛋白质工程</strong> – 通过预测其结构并比较候选者的置信度来评估设计的变体。</li><li><strong>高吞吐量筛选管道</strong> – 针对自动扩展终端节点对大批量预测作业进行排队，并直接从 Amazon Simple Storage Service (Amazon S3) 处理结果。</li></ul>
-<h2>为什么 OpenFold3 使用异步推理</h2>
-<p>大多数 JumpStart 模型（例如大型语言模型和嵌入模型）都会部署到<strong>实时</strong>端点。实时端点在单个请求内返回其响应，并且该请求的上限为 60 秒。结构预测的工作方式有所不同。折叠时间随着查询中链的数量和长度而增长，而现实世界的蛋白质和复合物通常需要几分钟的时间。</p>
-<p>因此，JumpStart 上的 OpenFold3 在 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference.html">SageMaker 异步推理</a> 上运行：</p>
-<ul><li>您将请求上传到 Amazon S3 并调用“InvokeEndpointAsync”，该操作会立即返回。</li><li>端点将请求排队并处理它，调用超时最多为 1 小时。</li><li>端点将结果或错误详细信息写入您选择的 S3 位置。您可以轮询它或通过 Amazon Simple Notification Service (Amazon SNS) 获取通知。</li></ul>
-<p>异步端点的两个属性特别适合科学工作负载。首先，它们在内部对突发请求进行排队，因此您可以提交大量序列，而无需构建自己的作业队列。其次，当队列为空时，它们可以<strong>扩展到零实例</strong>，这有助于您避免为实验之间的空闲实例付费。</p>
+<p>OpenFold3 是一个全原子结构预测模型，根据一组分子的序列预测它们的联合 3D 结构。它并不局限于单条蛋白质链：一次预测就能折叠多链蛋白质复合物、蛋白质–核酸组装体以及蛋白质–配体复合物。</p>
+<table><thead><tr><th><strong>属性</strong></th><th><strong>详情</strong></th></tr></thead><tbody><tr><td>开发者</td><td>OpenFold Consortium / 哥伦比亚大学 AlQuraishi Lab</td></tr><tr><td>模型类型</td><td>全原子生物分子结构预测</td></tr><tr><td>输入</td><td>蛋白质、DNA 和 RNA 序列；小分子配体以 SMILES 表示</td></tr><tr><td>输出</td><td>mmCIF 格式的预测结构，附带置信度指标（pLDDT、PAE、PDE）</td></tr><tr><td>版本</td><td>OpenFold3 0.4.1，<code>of3-p2-155k</code> checkpoint</td></tr><tr><td>许可证</td><td>Apache 2.0</td></tr><tr><td>JumpStart 模型 ID</td><td><code>huggingface-proteinfolding-openfold3</code></td></tr><tr><td>支持的实例</td><td><code>ml.g6.2xlarge</code>、<code>ml.g6.4xlarge</code>（默认）、<code>ml.g6.12xlarge</code></td></tr></tbody></table>
+<p>OpenFold3 的开发者以 Apache 2.0 许可证发布代码和模型权重，并公开训练数据与方法。研究机构和制药公司可以按该许可证的条款审查模型、对它做 fine-tuning，并在其基础上继续开发。开发者把 OpenFold3-preview 定位为研究预览版。</p>
+<h2>使用场景</h2>
+<ul><li><strong>靶点与复合物结构预测</strong> – 为没有实验结构的靶点预测结构，包括多链组装体和蛋白质–核酸复合物。</li><li><strong>蛋白质–配体共折叠</strong> – 把蛋白质与以 SMILES 提供的小分子一起折叠，为基于结构的设计生成结合姿态假设。</li><li><strong>抗体与蛋白质工程</strong> – 通过预测结构并比较各候选体的置信度来评估设计出的变体。</li><li><strong>高通量筛选流水线</strong> – 把大批量预测作业排入一个 autoscaling endpoint，并直接从 Amazon Simple Storage Service (Amazon S3) 处理结果。</li></ul>
+<h2>为什么 OpenFold3 采用异步推理</h2>
+<p>大多数 JumpStart 模型（例如大语言模型和嵌入模型）部署到<strong>实时</strong> endpoint。实时 endpoint 在单次请求内返回结果，而该请求上限为 60 秒。结构预测则不同：折叠时间随查询中链的数量和长度增长，现实中的蛋白质与复合物往往要花几分钟。</p>
+<p>因此，JumpStart 上的 OpenFold3 运行在 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference.html">SageMaker Asynchronous Inference</a> 上：</p>
+<ul><li>把请求上传到 Amazon S3 并调用 <code>InvokeEndpointAsync</code>，调用会立即返回。</li><li>endpoint 把请求排队并处理，调用超时最长 1 小时。</li><li>endpoint 把结果或错误详情写入你指定的 S3 位置。你可以轮询它，也可以通过 Amazon Simple Notification Service (Amazon SNS) 收到通知。</li></ul>
+<p>异步 endpoint 有两个特性尤其适合科学工作负载。其一，它在内部对突发请求排队，因此你可以一次提交大批量序列，而不必自己搭一套作业队列。其二，队列为空时它可以<strong>缩容到零实例</strong>，帮你避免为两次实验之间的空闲实例付费。</p>
 <h2>先决条件</h2>
-<p>要遵循本演练，您需要：</p>
-<ul><li>AWS 账户和端点的 SageMaker AI 执行角色。根据最低权限，此 AWS Identity and Access Management (IAM) 角色仅需要对您用于请求和结果的 S3 前缀进行读写访问。有关更多信息，请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html">如何使用 SageMaker AI 执行角色</a>。</li><li>运行代码的身份的 IAM 权限：创建、描述、调用和删除模型、端点配置和端点，以及执行角色的“iam:PassRole”。对于可选的缩放至零部分，还需要 AWS Application Auto Scaling 和 Amazon CloudWatch 警报权限。在生产中，将这些权限限制在您的资源范围内，而不是使用广泛的托管策略，例如“AmazonSageMakerFullAccess”。有关更多信息，请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference-create-endpoint-precessions.html">完成异步推理的先决条件</a>。</li><li>访问 <a href="https://aws.amazon.com/sagemaker/studio/">Amazon SageMaker Studio</a>、SageMaker 笔记本实例或本地 IDE。</li><li><a href="https://sagemaker.readthedocs.io/">SageMaker Python SDK</a> v3 和 py3Dmol，您可以使用 <code>pip install &quot;sagemaker&gt;=3,&lt;4&quot; py3Dmol</code> 安装。</li><li>您的 AWS 区域中至少一个“ml.g6.4xlarge”终端节点实例的服务配额。如果您遵循多 GPU 部分，您还需要“ml.g6.12xlarge”配额。您可以在 <strong>Amazon SageMaker</strong> 下的 <a href="https://console.aws.amazon.com/servicequotas/">服务配额控制台</a> 中检查您的配额并请求增加配额。</li></ul>
-<blockquote>重要提示：SageMaker 端点在运行时（包括空闲时）按实例小时计费。为了避免意外收费，请按照清理部分进行操作，或按照本文后面所述配置缩放至零。有关定价详细信息，请参阅 Amazon SageMaker AI 定价。</blockquote>
-<h2>在 SageMaker JumpStart 中发现 OpenFold3</h2>
-<ul><li>打开 SageMaker Studio 并在导航窗格中选择 <strong>JumpStart</strong>。</li><li>搜索 <strong>OpenFold3</strong>。</li><li>打开型号卡查看型号描述、许可证和支持的实例类型。</li><li>从模型卡中打开<strong>示例笔记本</strong>。它包含本文中所示的完整异步部署演练。</li></ul>
-<h2>使用 SageMaker Python SDK 部署 OpenFold3</h2>
-<p>首先，从 JumpStart 配置构建模型并定义“AsyncInferenceConfig”。输出和故障路径是端点写入结果和错误详细信息的 S3 位置。</p>
+<p>要跟着这篇演练动手，你需要：</p>
+<ul><li>一个 AWS 账户，以及供 endpoint 使用的 SageMaker AI 执行角色。遵循最小权限原则，这个 AWS Identity and Access Management (IAM) 角色只需对你用于存放请求与结果的 S3 前缀拥有读写权限。更多信息请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html">如何使用 SageMaker AI 执行角色</a>。</li><li>运行代码的身份所需的 IAM 权限：创建、描述、调用和删除模型、endpoint 配置与 endpoint，以及对执行角色的 <code>iam:PassRole</code>。若要完成可选的「缩容到零」小节，还需要 AWS Application Auto Scaling 和 Amazon CloudWatch 告警权限。在生产环境中，请把这些权限限定到你的资源，而不要使用 <code>AmazonSageMakerFullAccess</code> 这类宽泛的托管策略。更多信息请参阅异步推理的<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference-create-endpoint-prerequisites.html">完成先决条件</a>。</li><li>能访问 <a href="https://aws.amazon.com/sagemaker/studio/">Amazon SageMaker Studio</a>、SageMaker 笔记本实例或本地 IDE。</li><li><a href="https://sagemaker.readthedocs.io/">SageMaker Python SDK</a> v3 和 py3Dmol，可用 <code>pip install &quot;sagemaker&gt;=3,&lt;4&quot; py3Dmol</code> 安装。</li><li>你的 AWS Region 中至少一个 <code>ml.g6.4xlarge</code> endpoint 实例的服务配额；如果要照着多 GPU 小节操作，还需要 <code>ml.g6.12xlarge</code> 的配额。你可以在 <strong>Amazon SageMaker</strong> 下的 <a href="https://console.aws.amazon.com/servicequotas/">Service Quotas 控制台</a> 查看配额并申请提升。</li></ul>
+<blockquote>重要：SageMaker endpoint 在运行期间按实例小时计费，空闲时同样计费。为避免意外产生费用，请按「清理」小节操作，或按本文后面所述配置缩容到零。定价详情请参阅 Amazon SageMaker AI 定价。</blockquote>
+<h2>在 SageMaker JumpStart 中找到 OpenFold3</h2>
+<ul><li>打开 SageMaker Studio，在导航窗格中选择 <strong>JumpStart</strong>。</li><li>搜索 <strong>OpenFold3</strong>。</li><li>打开模型卡片，查看模型说明、许可证和支持的实例类型。</li><li>从模型卡片打开<strong>示例 notebook</strong>。其中包含本文展示的完整异步部署演练。</li></ul>
+<h2>用 SageMaker Python SDK 部署 OpenFold3</h2>
+<p>首先，根据 JumpStart 配置构建模型，并定义 <code>AsyncInferenceConfig</code>。output 与 failure 路径是 endpoint 写入结果和错误详情的 S3 位置。</p>
 <pre><code>import json, time, uuid
 import boto3
 from sagemaker.core.helper.session_helper import Session
@@ -606,15 +606,15 @@ async_config = AsyncInferenceConfig(
 endpoint = model_builder.deploy(inference_config=async_config)
 endpoint_name = endpoint.endpoint_name
 print(f&quot;Deployed asynchronous endpoint: {endpoint_name}&quot;)</code></pre>
-<p>设置 <code>accept_eula=True</code> 确认您已查看并接受模型的许可条款，这是部署此模型所必需的。如果您在 SageMaker Studio 外部运行此代码，还可以使用“role_arn=&quot;&lt;role-arn&gt;”将您的 SageMaker 执行角色传递到“ModelBuilder.from_jumpstart_config”。</p>
-<p>终端节点将您的请求和结果存储在 Amazon S3 中，它们包含您的序列和预测结构。对于专有序列，请考虑使用专用 S3 存储桶或前缀，并使用您管理的 AWS Key Management Service (AWS KMS) 密钥进行服务器端加密。要使用密钥加密结果，请将其 ARN 作为“kms_key_id”传递给“AsyncInferenceConfig”。使用存储桶策略限制访问，仅允许运行此工作流程的角色，并添加 S3 生命周期规则以使您不需要保留的请求和结果对象过期。有关更多信息，请参阅 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html">Amazon S3 的安全最佳实践</a>。</p>
-<p>部署通常在几分钟内完成。这包括一个预热步骤，其中容器在每个 GPU 上运行简短的预测，以便在端点达到“InService”时预热 GPU。</p>
-<blockquote>提示：G6 容量在某些区域可能受到限制。如果部署因 InsufficientInstanceCapacity 而失败，请稍后重试、选择不同的受支持实例大小，或部署在该模型可用的另一个 AWS 区域中。</blockquote>
-<h2>运行结构预测</h2>
-<p>请求是一个 JSON 文档，其中包含一个或多个命名的<strong>查询</strong>，每个查询都会列出其<strong>链</strong>。查询中的所有链都折叠在一起作为一个复合体。单独的查询是独立折叠的。</p>
-<p>每个链都有这些字段：</p>
-<ul><li><code>分子类型</code> – <code>蛋白质</code>、<code>DNA</code>、<code>rna</code> 或<code>配体</code>。</li><li><code>chain_ids</code> – 链标识符列表，例如 <code>[&quot;A&quot;]</code>。要指定相同的副本，例如同二聚体，请使用“[“A”，“B”]`。</li><li><code>序列</code> – 蛋白质、DNA 和 RNA 链的残基序列。</li><li><code>smiles</code> – SMILES 字符串，用于配体链而不是 <code>sequence</code>。</li></ul>
-<p>以下示例折叠人类泛素，这是一种经过充分表征的 76 个残基蛋白质：</p>
+<p>设置 <code>accept_eula=True</code> 表示你已阅读并接受模型的许可条款，这是部署该模型的必要条件。如果你在 SageMaker Studio 之外运行这段代码，还要通过 <code>role_arn=&quot;&lt;role-arn&gt;&quot;</code> 把 SageMaker 执行角色传给 <code>ModelBuilder.from_jumpstart_config</code>。</p>
+<p>endpoint 把请求和结果存放在 Amazon S3 中，其中包含你的序列和预测结构。对于专有序列，建议改用专用的 S3 桶或前缀，并使用你自己管理的 AWS Key Management Service (AWS KMS) 密钥做服务器端加密。要用你的密钥加密结果，把它的 ARN 作为 <code>kms_key_id</code> 传给 <code>AsyncInferenceConfig</code>。用桶策略限制访问，只放行运行这套工作流的角色；再添加一条 S3 Lifecycle 规则，让不需要保留的请求和结果对象到期失效。更多信息请参阅 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html">Amazon S3 安全最佳实践</a>。</p>
+<p>部署通常在几分钟内完成，其中包括一个预热步骤：容器在每个 GPU 上跑一次简短的预测，以便 endpoint 进入 <code>InService</code> 状态时 GPU 已完成预热。</p>
+<blockquote>提示：G6 容量在部分 Region 可能有限。如果部署因 InsufficientInstanceCapacity 失败，可以稍后重试、换一种受支持的实例规格，或改到该模型可用的另一个 AWS Region 部署。</blockquote>
+<h2>运行一次结构预测</h2>
+<p>请求是一个 JSON 文档，含一个或多个带名称的 <strong>queries</strong>，每个 query 列出自己的 <strong>chains</strong>。同一个 query 里的所有链会作为一个复合物一起折叠；不同 query 则各自独立折叠。</p>
+<p>每条链包含以下字段：</p>
+<ul><li><code>molecule_type</code> – <code>protein</code>、<code>dna</code>、<code>rna</code> 或 <code>ligand</code>。</li><li><code>chain_ids</code> – 链标识符列表，例如 <code>[&quot;A&quot;]</code>。要表示相同的拷贝（比如同源二聚体），用 <code>[&quot;A&quot;, &quot;B&quot;]</code>。</li><li><code>sequence</code> – 残基序列，用于蛋白质、DNA 和 RNA 链。</li><li><code>smiles</code> – SMILES 字符串，配体链用它代替 <code>sequence</code>。</li></ul>
+<p>下面的例子折叠人泛素，这是一种研究得很透彻的 76 残基蛋白质：</p>
 <pre><code>s3 = boto3.client(&quot;s3&quot;)
 smr = boto3.client(&quot;sagemaker-runtime&quot;)
 
@@ -644,7 +644,7 @@ resp = smr.invoke_endpoint_async(
     InvocationTimeoutSeconds=3600,
 )
 output_location, failure_location = resp[&quot;OutputLocation&quot;], resp[&quot;FailureLocation&quot;]</code></pre>
-<p>然后轮询 S3 以获得结果或失败记录：</p>
+<p>然后轮询 S3，等待结果或失败记录：</p>
 <pre><code>def split(uri):
     b, _, k = uri.removeprefix(&quot;s3://&quot;).partition(&quot;/&quot;)
     return b, k
@@ -667,10 +667,10 @@ if result is None:
     raise TimeoutError(f&quot;No result yet; check {output_location}&quot;)
 if result.get(&quot;status&quot;) == &quot;error&quot;:
     raise RuntimeError(result[&quot;error&quot;])</code></pre>
-<p>具有无效输入（例如格式错误的链或不受支持的 MSA 名称）的请求仍会生成结果对象，但带有“status”：“error”和“error”消息而不是结构。最后一次检查显示了该消息。</p>
-<p>预测时间随着输入的大小而增长。在我们对 ml.g6.4xlarge 的测试中，较小的蛋白质比较大的蛋白质完成得更快。</p>
-<h3>解释结果</h3>
-<p>响应包含“状态”、mmCIF 格式的预测“结构”列表以及它们匹配的“置信度”。默认情况下，OpenFold3 每个查询生成五个扩散样本，因此每个查询返回五个候选结构。每个样本都附带两个置信度文件：详细文件 (<code><em>_confidences.json</code>) 和摘要文件 (<code></em>_confidences_aggreated.json</code>)。摘要包含一个“sample_ranking_score”，您可以使用它来选择最佳样本。</p>
+<p>输入无效的请求（例如链格式有误，或使用了不受支持的 MSA 名称）仍会生成一个结果对象，只是里面是 <code>&quot;status&quot;: &quot;error&quot;</code> 和一条 <code>error</code> 消息，而没有结构。最后那步检查就是把这条消息抛出来。</p>
+<p>预测时间随输入规模增长。在我们在 ml.g6.4xlarge 上的测试中，较小的蛋白质比较大的完成得更快。</p>
+<h3>解读结果</h3>
+<p>响应里有一个 <code>status</code>、mmCIF 格式的预测 <code>structures</code> 列表，以及与之对应的 <code>confidences</code>。默认情况下，OpenFold3 为每个 query 生成五个扩散样本，因此每个 query 返回五个候选结构。每个样本附带两个置信度文件：详细的 (<code><em>_confidences.json</code>) 和汇总的 (<code></em>_confidences_aggregated.json</code>)。汇总文件里有一个 <code>sample_ranking_score</code>，可以用来挑选最佳样本。</p>
 <pre><code>import os
 os.makedirs(&quot;structures&quot;, exist_ok=True)
 for s in result[&quot;structures&quot;]:
@@ -684,20 +684,20 @@ summaries = {c[&quot;filename&quot;]: c[&quot;data&quot;] for c in result[&quot;
 for name, m in sorted(summaries.items(), key=lambda kv: -kv[1][&quot;sample_ranking_score&quot;]):
     print(f'{name}: ranking={m[&quot;sample_ranking_score&quot;]:.2f} pLDDT={m[&quot;avg_plddt&quot;]:.1f} '
           f'pTM={m[&quot;ptm&quot;]:.2f} ipTM={m[&quot;iptm&quot;]:.2f}')</code></pre>
-<p>您可以在任何结构查看器中打开 <code>.cif</code> 文件，例如 <a href="https://pymol.org/">PyMOL</a>、<a href="https://www.cgl.ucsf.edu/chimerax/">ChimeraX</a> 或 <a href="https://molstar.org/">Mol*</a>。要查看笔记本中的内联结构，请使用“py3Dmol”：</p>
+<p>你可以在任意结构查看器中打开 <code>.cif</code> 文件，例如 <a href="https://pymol.org/">PyMOL</a>、<a href="https://www.cgl.ucsf.edu/chimerax/">ChimeraX</a> 或 <a href="https://molstar.org/">Mol*</a>。要在 notebook 里内联查看结构，可以用 <code>py3Dmol</code>：</p>
 <pre><code>import py3Dmol   # pip install py3Dmol
 view = py3Dmol.view(width=600, height=450)
 view.addModel(result[&quot;structures&quot;][0][&quot;content&quot;], &quot;cif&quot;)
 # pLDDT is stored in the B-factor field: red = low confidence, blue = high
 view.setStyle({&quot;cartoon&quot;: {&quot;colorscheme&quot;: {&quot;prop&quot;: &quot;b&quot;, &quot;gradient&quot;: &quot;roygb&quot;, &quot;min&quot;: 50, &quot;max&quot;: 90}}})
 view.zoomTo(); view.show()</code></pre>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22226-1.png" alt="OpenFold3 通过每个原子 pLDDT 置信度预测泛素的结构，从红色表示低到蓝色表示高"></p>
-<p>图 1：OpenFold3 预测的泛素结构，使用前面的代码渲染并按每个原子置信度 (pLDDT) 着色。本文中的所有图形均使用 3Dmol.js 渲染（Rego 和 Koes，<a href="http://dx.doi.org/10.1093/bioinformatics/btu829">Bioinformatics，2015</a>）。</p>
-<p>该预测显示了泛素的紧凑折叠：混合的 β 片层包裹着单个 α 螺旋。大部分结构是蓝色的（高可信度）。只有位于图像顶部的灵活的 C 末端尾巴转向黄色和红色，这与实验结构中尾巴已知的灵活性相匹配。</p>
-<p>置信度指标告诉您每个预测的信任程度：</p>
-<ul><li><strong>pLDDT（预测局部距离差异测试）</strong> – 局部结构中每个原子的置信度，范围为 0-100。越高越好，大约 70 以上的值通常表明局部结构可靠。摘要文件将平均值报告为“avg_plddt”。</li><li><strong>pTM 和 ipTM（预测 TM 分数和界面 pTM）</strong> – 对折叠以及链和配体如何相对彼此定位的总体置信度，范围为 0-1。对于复合体，ipTM 是关键数字。摘要文件还报告每对链的“chain_pair_iptm”。</li><li><strong>PAE（预测对齐误差）</strong> 和 <strong>PDE（预测距离误差）</strong> – 每个残基对误差估计，位于详细的置信度文件中。使用它们来判断域和链的相对位置。</li></ul>
-<h3>折叠一个复数</h3>
-<p>要预测复合体，请在同一查询中列出多个链。以下示例将人碳酸酐酶 II 与其催化锌离子和药物乙酰唑酰胺共同折叠。这是一个经过充分研究的复合物，在蛋白质数据库中具有实验结构（例如，PDB 3HS4）：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22226-1.png" alt="OpenFold3 预测的泛素结构，按每个原子的 pLDDT 置信度着色，红色表示低、蓝色表示高"></p>
+<p>图 1：OpenFold3 预测的泛素结构，用前面的代码渲染，并按每个原子的置信度 (pLDDT) 着色。本文所有图均用 3Dmol.js 渲染（Rego 和 Koes，<a href="http://dx.doi.org/10.1093/bioinformatics/btu829">Bioinformatics, 2015</a>）。</p>
+<p>该预测呈现出泛素紧凑的折叠：一片混合 β 折叠贴着一段 α 螺旋。结构大部分是蓝色（高置信度），只有图像顶部柔性的 C 端尾巴偏向黄色和红色，这与实验结构中该尾巴已知的柔性相符。</p>
+<p>置信度指标告诉你每个预测有多可信：</p>
+<ul><li><strong>pLDDT（predicted local distance difference test）</strong> – 局部结构的逐原子置信度，取值 0–100，越高越好；大约 70 以上通常意味着局部结构可靠。汇总文件以 <code>avg_plddt</code> 给出平均值。</li><li><strong>pTM 和 ipTM（predicted TM-score and interface pTM）</strong> – 对整体折叠、以及链与配体彼此相对位置的总体置信度，取值 0–1。对复合物而言，ipTM 是关键数值。汇总文件还给出每对链的 <code>chain_pair_iptm</code>。</li><li><strong>PAE（predicted aligned error）</strong> 和 <strong>PDE（predicted distance error）</strong> – 详细置信度文件里的逐残基对误差估计，用来判断结构域与链的相对位置。</li></ul>
+<h3>折叠一个复合物</h3>
+<p>要预测复合物，在同一个 query 里列出多条链。下面这个例子把人碳酸酐酶 II 与它的催化锌离子及药物 acetazolamide 一起折叠。这是一个研究得很充分的复合物，在 Protein Data Bank 中有实验结构（例如 PDB 3HS4）：</p>
 <pre><code>ca2_sequence = (
     &quot;MSHHWGYGKHNGPEHWHKDFPIAKGERQSPVDIDTHTAKYDPSLKPLSVSYDQATSLRILNNGHAFNVEFDDSQDKAVLKGG&quot;
     &quot;PLDGTYRLIQFHFHWGSLDGQGSEHTVDKKKYAAELHLVHWNTKYGDFGKAVQQPDGLAVLGIFLKVGSAKPGLQKVVDVLDS&quot;
@@ -716,9 +716,9 @@ payload = {
         }
     }
 }</code></pre>
-<p>这些示例中的蛋白质序列来自 UniProt (<a href="https://www.uniprot.org/uniprotkb/P0CG48">P0CG48</a>、<a href="https://www.uniprot.org/uniprotkb/P00918">P00918</a>)。您提交并阅读此请求的方式与泛素示例相同。对于像这样的复合体，预测质量在很大程度上取决于提供 MSA，如下一节所示。</p>
+<p>这些例子中的蛋白质序列来自 UniProt（<a href="https://www.uniprot.org/uniprotkb/P0CG48">P0CG48</a>、<a href="https://www.uniprot.org/uniprotkb/P00918">P00918</a>）。提交和读取该请求的方式与泛素示例相同。对这类复合物，预测质量很大程度上取决于是否提供 MSA，后面几节会展示这一点。</p>
 <h2>在多 GPU 实例上并行运行预测</h2>
-<p>单个 OpenFold3 预测在一个 GPU 上运行，因此多 GPU 实例不会使单个预测更快。相反，您可以一次运行多个预测。在多 GPU 实例（例如具有四个 GPU 的“ml.g6.12xlarge”）上，容器为每个并发请求分配自己的 GPU。要使用所有 GPU，请将“max_concurrent_in Vocations_per_instance”设置为实例上的 GPU 数量（对于“ml.g6.12xlarge”为 4 个）：</p>
+<p>单次 OpenFold3 预测只跑在一个 GPU 上，所以多 GPU 实例不会让单个预测变快；它的用处是让你一次跑多个预测。在 <code>ml.g6.12xlarge</code> 这类带四个 GPU 的多 GPU 实例上，容器会给每个并发请求分配各自的 GPU。要用满所有 GPU，把 <code>max_concurrent_invocations_per_instance</code> 设为实例上的 GPU 数量（<code>ml.g6.12xlarge</code> 是四个）：</p>
 <pre><code>multi_gpu_builder = ModelBuilder.from_jumpstart_config(
     jumpstart_config=JumpStartConfig(
         model_id=&quot;huggingface-proteinfolding-openfold3&quot;,
@@ -735,39 +735,39 @@ async_config = AsyncInferenceConfig(
 )
 
 multi_gpu_endpoint = multi_gpu_builder.deploy(inference_config=async_config)</code></pre>
-<p>这会创建第二个端点，因此请记住在完成后也将其删除（请参阅<strong>清理</strong>）。</p>
-<p>在我们的测试中，四个并发预测分别在单独的 GPU 上运行，吞吐量随着蛋白质大小的增加而增加。对于较大的蛋白质，我们根据按需实例定价在“ml.g6.12xlarge”上测量的每次预测成本接近于“ml.g6.4xlarge”。您的结果取决于您的输入和区域。有关定价，请参阅 <a href="https://aws.amazon.com/sagemaker/pricing/">Amazon SageMaker AI 定价</a>。</p>
-<blockquote>注：ml.g6.12xlarge 容量可有限。如果您所在的区域不可用，您可以使用本文后面描述的自动缩放配置跨多个 ml.g6.4xlarge 实例进行横向扩展，从而提高吞吐量。</blockquote>
-<p>使用下表选择实例：</p>
-<table><thead><tr><th><strong>工作量</strong></th><th><strong>推荐实例</strong></th><th><strong>为什么</strong></th></tr></thead><tbody><tr><td>单个用户的交互式探索</td><td><code>ml.g6.2xlarge</code> 或 <code>ml.g6.4xlarge</code></td><td>一个 GPU 一次以受支持实例的最低每小时成本处理一个预测</td></tr><tr><td>团队使用或并发请求突发</td><td><code>ml.g6.12xlarge</code> 与 <code>max_concurrent_inspirations_per_instance=4</code></td><td>四个预测并行运行而不是排队</td></tr><tr><td>高通量筛选</td><td>具有自动缩放功能的“ml.g6.12xlarge”</td><td>受支持实例中每个实例的最高吞吐量。随着队列深度横向扩展并返回到零</td></tr></tbody></table>
-<h2>使用您自己的 MSA 提高预测准确性</h2>
-<p>OpenFold3 可以采用<strong>多序列比对 (MSA)</strong> 作为每个蛋白质链的附加输入。 MSA 是一组与您的查询对齐的进化相关序列。这些序列之间的共变表明哪些残基可能接触，因此 MSA 可以显着提高许多蛋白质和复合物的准确性。</p>
-<p>为了帮助将序列保留在您的 AWS 账户内，JumpStart 终端节点在 <strong>网络隔离</strong> 下运行，并且不会调用外部 MSA 服务器。相反，它接受请求中的<strong>预先计算的 MSA</strong>。您可以在您控制的基础设施上使用已使用的管道和序列数据库生成比对，并将其传递到端点。这种设计可以帮助需要保密专有序列的药物发现项目。</p>
-<p>如果您不提供 MSA，端点将仅根据序列进行预测。这对于小而特征明确的蛋白质（例如泛素）非常有效。对于大多数现实世界的目标和复合体，包括 MSA。本节的其余部分将展示它如何以及如何改进结果。</p>
-<h3>带上您自己的 MSA</h3>
-<p>每个蛋白质链接受一个“precompulated_msa”字段：一个比对列表，每个比对都有一个“名称”和 A3M 或斯德哥尔摩格式的比对“内容”。对于单个合并对齐，例如 ColabFold MMseqs2 搜索的输出，请使用名称“colabfold_main”：</p>
+<p>这会创建第二个 endpoint，用完后记得也把它删掉（见<strong>清理</strong>）。</p>
+<p>在我们的测试中，四个并发预测各自跑在单独的 GPU 上，吞吐量增益随蛋白质变大而提高。对较大的蛋白质，按 On-Demand 实例定价计算，我们在 <code>ml.g6.12xlarge</code> 上测得的单次预测成本与 <code>ml.g6.4xlarge</code> 接近。实际结果取决于你的输入和 Region。定价请参阅 <a href="https://aws.amazon.com/sagemaker/pricing/">Amazon SageMaker AI pricing</a>。</p>
+<blockquote>注：ml.g6.12xlarge 容量可能有限。如果你所在的 Region 没有该规格，可以用本文后面介绍的 autoscaling 配置横向扩展到多台 ml.g6.4xlarge 实例来提升吞吐量。</blockquote>
+<p>用下表来挑选实例：</p>
+<table><thead><tr><th><strong>工作负载</strong></th><th><strong>推荐实例</strong></th><th><strong>理由</strong></th></tr></thead><tbody><tr><td>单用户交互式探索</td><td><code>ml.g6.2xlarge</code> 或 <code>ml.g6.4xlarge</code></td><td>一个 GPU 一次处理一个预测，每小时成本在所有受支持实例中最低</td></tr><tr><td>团队使用或并发请求突发</td><td><code>ml.g6.12xlarge</code> 配 <code>max_concurrent_invocations_per_instance=4</code></td><td>四个预测并行运行，无需排队</td></tr><tr><td>高通量筛选</td><td><code>ml.g6.12xlarge</code> 配 autoscaling</td><td>在所有受支持实例中单实例吞吐量最高；随队列深度横向扩展，并可回缩到零</td></tr></tbody></table>
+<h2>用你自己的 MSA 提升预测准确度</h2>
+<p>OpenFold3 可以接受<strong>多序列比对（MSA）</strong>作为每条蛋白质链的附加输入。MSA 是一组与你的查询对齐、在进化上相关的序列。这些序列之间的共变信号能提示哪些残基可能彼此接触，因此 MSA 能显著提升许多蛋白质和复合物的预测准确度。</p>
+<p>为了帮助把序列留在你的 AWS 账户内，JumpStart endpoint 在<strong>网络隔离</strong>下运行，不会调用外部 MSA 服务器；它改为接受请求里<strong>预先计算好的 MSA</strong>。你用现成的流程和序列数据库、在自己掌控的基础设施上生成比对，再传给 endpoint。这种设计对需要保密专有序列的药物发现项目很有帮助。</p>
+<p>如果不提供 MSA，endpoint 就只凭序列预测。这对泛素这类小而研究透彻的蛋白质效果不错；但对大多数现实中的靶点和复合物，还是要带上 MSA。本节余下部分会说明具体做法，以及它能把结果改善多少。</p>
+<h3>自带 MSA</h3>
+<p>每条蛋白质链都接受一个 <code>precomputed_msa</code> 字段：一个比对列表，每项含 <code>name</code> 以及 A3M 或 Stockholm 格式的比对 <code>content</code>。对于合并后的单个比对（例如 ColabFold MMseqs2 搜索的输出），把名称设为 <code>colabfold_main</code>：</p>
 <pre><code>with open(&quot;ca2_colabfold.a3m&quot;) as f:
     ca2_msa = f.read()
 
 payload[&quot;queries&quot;][&quot;ca2_acetazolamide&quot;][&quot;chains&quot;][0][&quot;precomputed_msa&quot;] = [
     {&quot;name&quot;: &quot;colabfold_main&quot;, &quot;content&quot;: ca2_msa}
 ]</code></pre>
-<p>这个例子有一条蛋白质链。如果查询有多个不同的蛋白质链，请为每个蛋白质链计算一个 MSA，并将其附加到该链的“precompulated_msa”字段。在一个“chain_ids”条目下一起列出的相同副本（例如同源二聚体）共享一个 MSA。</p>
-<p>如果您使用不同的管道生成 MSA，端点还接受其他对齐名称，例如“uniref90_hits”、“mgnify_hits”和“bfd_uniclust_hits”。由于请求在 S3 中暂存，因此您可以发送大型对齐。在我们的测试中，几兆字节的对齐是有效的。</p>
-<p>您可以使用 <a href="https://github.com/sokrypton/ColabFold">ColabFold</a> (MMseqs2) 或 HHblits 或 JackHMMER 等工具生成 MSA。为了帮助将专有序列保留在您的环境中，请在您自己的 AWS 基础设施上针对本地托管的序列数据库运行搜索，而不是将序列发送到公共服务器。例如，ColabFold 的“colabfold_batch”命令默认使用公共 ColabFold MSA 服务器，因此对于专有序列，请使用“colabfold_search”和本地托管数据库。</p>
-<h3>MSA 有多大区别？</h3>
-<p>我们将上一节中的碳酸酐酶 II、锌和乙酰唑酰胺复合物在同一端点上折叠两次：一次在单序列模式下，一次使用来自 ColabFold MMseqs2 搜索的 MSA。</p>
-<table><thead><tr><th><strong>公制（5 个样本中的第一个）</strong></th><th><strong>没有 MSA</strong></th><th><strong>使用 MSA</strong></th></tr></thead><tbody><tr><td>平均 pLDDT</td><td>30</td><td>98</td><td>98</td></tr><tr><td>pTM</td><td>0.22</td><td>0.22 0.98</td><td>0.98</td></tr><tr><td>ipTM</td><td>0.49</td><td>0.49 0.98</td><td>0.98</td></tr><tr><td>锌-His94/His96/His119 距离</td><td>2.3–9.4 埃</td><td>每个 2.0 Å</td></tr><tr><td>乙酰唑胺氮锌距离</td><td>5.6 埃</td><td>2.0 埃</td></tr><tr><td>预测时间</td><td>〜1.5 分钟</td><td>〜1.5 分钟</td></tr></tbody></table>
-<p>通过 MSA，OpenFold3 恢复已知的绑定模式。锌离子由三个活性位点组氨酸配位，乙酰唑酰胺磺酰胺氮直接与锌结合，与实验结构相匹配。如果没有 MSA，蛋白质折叠的置信度较低，并且不会形成结合位点。添加 MSA 并没有明显改变预测时间。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22226-2.png" alt="左侧没有 MSA 的碳酸酐酶 II 预测，右侧有 MSA，每个预测都叠加在灰色 PDB 3HS4 晶体上结构"></p>
-<p>图 2：相同的碳酸酐酶 II、锌和乙酰唑酰胺查询在不带 MSA（左）和带 MSA（右）的情况下折叠。每个预测均由 pLDDT 着色并叠加在实验晶体结构上（灰色，PDB <a href="https://www.rcsb.org/struct/3HS4">3HS4</a>；Sippel 等人，2009）。</p>
-<p>叠加在晶体结构上，基于 MSA 的预测与其紧密匹配：蛋白质主链偏差 0.2 Å (Cα RMSD)，锌离子偏差小于 0.1 Å，乙酰唑酰胺重原子偏差 0.4 Å RMSD。单序列预测错误折叠，Cα RMSD 为 22 Å。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22226-3.png" alt="预测结合位点的特写，显示由 His94、His96、His119 和乙酰唑酰胺磺酰胺配位的锌离子氮"></p>
-<p>图 3：基于 MSA 的预测中结合位点的特写。预测的锌离子（紫色）由 His94、His96 和 His119 以及乙酰唑酰胺的磺酰胺氮（绿色）配位。晶体姿态（灰色）几乎完全隐藏在预测后面。</p>
-<p>碳酸酐酶 II 与乙酰唑酰胺是蛋白质数据库中研究最广泛的复合物之一，密切相关的结构可能是 OpenFold3 训练数据的一部分。将此示例视为工作流程以及 MSA 重要性的演示，而不是作为新目标准确性的基准。</p>
-<p>当您将 OpenFold3 结果与其他工具或已发布的基准进行比较时，请进行同类比较：单序列结果与单序列结果，基于 MSA 的结果与基于 MSA 的结果。</p>
-<h2>帮助降低成本：空闲时扩展到零</h2>
-<p>当没有请求排队时，异步端点可以缩小到<strong>零实例</strong>，并在新请求到达时缩小到回缩。这种模式适合经常突发运行的结构预测工作。</p>
+<p>这个例子只有一条蛋白质链。如果一个 query 有多条不同的蛋白质链，就分别为每条计算 MSA，挂到该链的 <code>precomputed_msa</code> 字段上。列在同一个 <code>chain_ids</code> 条目下的相同拷贝（例如同源二聚体）共用一个 MSA。</p>
+<p>如果你用别的流程生成 MSA，endpoint 也接受其他比对名称，例如 <code>uniref90_hits</code>、<code>mgnify_hits</code> 和 <code>bfd_uniclust_hits</code>。由于请求先暂存在 S3，你可以发送很大的比对；在我们的测试中，几 MB 的比对也能正常工作。</p>
+<p>你可以用 <a href="https://github.com/sokrypton/ColabFold">ColabFold</a>（MMseqs2）、HHblits 或 JackHMMER 等工具生成 MSA。为了把专有序列留在自己的环境里，请在你自己的 AWS 基础设施上针对本地托管的序列数据库运行搜索，而不要把序列发到公共服务器。例如，ColabFold 的 <code>colabfold_batch</code> 命令默认使用公共 ColabFold MSA 服务器，因此处理专有序列时应改用 <code>colabfold_search</code> 搭配本地托管的数据库。</p>
+<h3>MSA 能带来多大差别？</h3>
+<p>我们把上一节的碳酸酐酶 II、锌与 acetazolamide 复合物在同一个 endpoint 上折叠了两次：一次用单序列模式，一次带上来自 ColabFold MMseqs2 搜索的 MSA。</p>
+<table><thead><tr><th><strong>指标（5 个样本中的第一个）</strong></th><th><strong>无 MSA</strong></th><th><strong>有 MSA</strong></th></tr></thead><tbody><tr><td>平均 pLDDT</td><td>30</td><td>98</td></tr><tr><td>pTM</td><td>0.22</td><td>0.98</td></tr><tr><td>ipTM</td><td>0.49</td><td>0.98</td></tr><tr><td>锌–His94/His96/His119 距离</td><td>2.3–9.4 Å</td><td>各 2.0 Å</td></tr><tr><td>Acetazolamide 氮–锌距离</td><td>5.6 Å</td><td>2.0 Å</td></tr><tr><td>预测时间</td><td>~1.5 分钟</td><td>~1.5 分钟</td></tr></tbody></table>
+<p>带上 MSA 后，OpenFold3 还原出已知的结合模式：锌离子由三个活性位点组氨酸配位，acetazolamide 的磺酰胺氮直接与锌结合，与实验结构一致。没有 MSA 时，蛋白质折叠的置信度很低，结合位点也没有形成。加入 MSA 并没有明显改变预测时间。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22226-2.png" alt="左侧为不带 MSA 的碳酸酐酶 II 预测，右侧为带 MSA 的预测，两者都叠加在灰色的 PDB 3HS4 晶体结构上"></p>
+<p>图 2：同一个碳酸酐酶 II、锌与 acetazolamide 查询，分别在无 MSA（左）和有 MSA（右）两种情况下折叠。两个预测都按 pLDDT 着色，并叠加在实验晶体结构上（灰色，PDB <a href="https://www.rcsb.org/structure/3HS4">3HS4</a>；Sippel 等，2009）。</p>
+<p>叠加到晶体结构上看，基于 MSA 的预测与之高度吻合：蛋白质主链偏差 0.2 Å (Cα RMSD)，锌离子偏差小于 0.1 Å，acetazolamide 重原子偏差 0.4 Å RMSD。单序列预测则发生了错误折叠，Cα RMSD 为 22 Å。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22226-3.png" alt="预测结合位点的特写，显示锌离子由 His94、His96、His119 以及 acetazolamide 的磺酰胺氮配位"></p>
+<p>图 3：基于 MSA 的预测中结合位点的特写。预测出的锌离子（紫色）由 His94、His96、His119 以及 acetazolamide 的磺酰胺氮（绿色）配位。晶体姿态（灰色）几乎完全被预测结果遮住。</p>
+<p>碳酸酐酶 II 与 acetazolamide 是 Protein Data Bank 中研究得最充分的复合物之一，与之高度相似的结构很可能就在 OpenFold3 的训练数据里。请把这个例子看作对工作流程、以及 MSA 有多重要的演示，而不是衡量新靶点预测准确度的基准。</p>
+<p>把 OpenFold3 的结果与其他工具或已发表基准比较时，要做到同类相比：单序列结果对单序列结果，基于 MSA 的结果对基于 MSA 的结果。</p>
+<h2>帮助降低成本：空闲时缩容到零</h2>
+<p>没有请求排队时，异步 endpoint 可以缩到<strong>零实例</strong>，新请求到达时再扩回来。这种模式很适合结构预测工作，因为它往往是突发的。</p>
 <pre><code>aas = boto3.client(&quot;application-autoscaling&quot;)
 resource_id = f&quot;endpoint/{endpoint_name}/variant/AllTraffic&quot;
 
@@ -798,7 +798,7 @@ aas.put_scaling_policy(
         &quot;ScaleOutCooldown&quot;: 300,
     },
 )</code></pre>
-<p>队列空一段时间后，目标跟踪会将端点缩小到零。在我们的测试中，这大约需要 15-20 分钟。但是，目标跟踪不会将端点从零放大。要在请求到达且没有实例运行时启动实例，请添加由“HasBacklogWithoutCapacity”指标触发的逐步扩展策略：</p>
+<p>队列空置一段时间后，目标跟踪会把 endpoint 缩到零；在我们的测试中大约需要 15–20 分钟。不过，目标跟踪不会把 endpoint 从零再扩回来。要在请求到达而没有实例运行时拉起实例，需要再加一条由 <code>HasBacklogWithoutCapacity</code> 指标触发的步进扩缩策略：</p>
 <pre><code>cw = boto3.client(&quot;cloudwatch&quot;)
 
 step = aas.put_scaling_policy(
@@ -829,9 +829,9 @@ cw.put_metric_alarm(
     TreatMissingData=&quot;missing&quot;,
     AlarmActions=[step[&quot;PolicyARN&quot;]],
 )</code></pre>
-<p>当请求到达具有零个实例的端点时，它会在实例启动时在队列中等待。从零缩放后的第一个请求将需要更长的时间才能完成，因为它包括触发警报的时间、启动实例的时间以及预测本身的时间。同一突发中的后续请求以正常速度运行。这种权衡对于批量工作负载非常有效。对于交互式使用，请设置“MinCapacity=1”以保持一个实例的温暖。有关更多详细信息，请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference-autoscale.html">自动缩放异步端点</a>。</p>
+<p>当请求到达一个零实例的 endpoint 时，它会在队列里等待实例启动。从零扩容后的第一个请求耗时更长，因为其中还包括告警触发、实例启动，再加上预测本身的时间。同一波突发里的后续请求则以正常速度运行。这种取舍对批处理工作负载很合适。若用于交互式场景，可设 <code>MinCapacity=1</code> 保留一个热实例。更多细节请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference-autoscale.html">自动扩缩异步 endpoint</a>。</p>
 <h2>清理</h2>
-<p>要停止产生费用，请在完成后删除您创建的资源。如果您配置了自动扩展，请先将其删除：删除 Amazon CloudWatch 警报，然后取消注册可扩展目标。然后删除每个端点、其端点配置及其模型，包括多 GPU 端点（如果您部署了它）：</p>
+<p>要停止产生费用，用完后删掉你创建的资源。如果配置了 autoscaling，先把它移除：删除 Amazon CloudWatch 告警，再注销可扩展目标。然后删除每个 endpoint、它的 endpoint 配置和模型；如果部署过多 GPU endpoint，也要一并删除：</p>
 <pre><code># 1. If you configured autoscaling, remove it before deleting the endpoint
 cw.delete_alarms(AlarmNames=[f&quot;{endpoint_name}-has-backlog-without-capacity&quot;])
 aas.deregister_scalable_target(
@@ -849,79 +849,79 @@ for m, ep in ((model, endpoint), (multi_gpu_model, multi_gpu_endpoint)):
     m.delete()
     ep.delete()
     endpoint_config.delete()</code></pre>
-<p>如果您不再需要请求和结果对象，还可以从“s3://&lt;bucket&gt;/openfold3-async/”中删除它们。</p>
+<p>如果不再需要请求和结果对象，也可以把它们从 <code>s3://&lt;bucket&gt;/openfold3-async/</code> 删除。</p>
 <h2>结论</h2>
-<p>借助 SageMaker JumpStart 上的 OpenFold3，研究和药物发现团队只需几行代码即可将开放、可检查的结构预测模型部署到自己的 AWS 账户中。异步推理可处理长时间运行的折叠和突发批处理工作负载，并且多 GPU 实例并行运行预测。网络隔离可帮助您保持专有序列的私密性，并且由于您可以自带 MSA，因此您无需将序列发送到外部服务器即可从 MSA 中受益。通过缩放至零，您可以在队列为空足够长的时间以供终端节点缩减后停止为终端节点实例付费。其他费用（例如 Amazon S3 存储）仍然适用。</p>
-<p>这篇文章中的代码是用于实验的示例代码。在将其与专有或受监管数据一起使用之前，请与您的安全和法律团队合作，以满足您组织的安全、监管和合规性要求。</p>
-<p>要开始使用，请在 <a href="https://aws.amazon.com/sagemaker/jumpstart/">SageMaker JumpStart</a> 中搜索 <strong>OpenFold3</strong>，或从模型卡中打开示例笔记本。要了解有关本文中使用的功能的更多信息，请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference.html">异步推理</a>和<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference-autoscale.html">自动缩放异步端点</a>。要讨论您的结构生物学工作负载，请联系您的 AWS 客户团队。</p>
+<p>借助 SageMaker JumpStart 上的 OpenFold3，研究与药物发现团队只需几行代码，就能把一个开放、可审查的结构预测模型部署到自己的 AWS 账户里。异步推理负责处理耗时很长的折叠和突发式批处理，多 GPU 实例让多个预测并行跑。网络隔离帮助你把专有序列保密；又因为可以自带 MSA，你无需把序列发到外部服务器就能享受 MSA 带来的好处。配合缩容到零，当队列空置足够久、endpoint 完成缩容后，你就不再为 endpoint 实例付费。其他费用（例如 Amazon S3 存储）仍然照常产生。</p>
+<p>本文中的代码是供试验用的示例代码。在把它用于专有或受监管数据之前，请与你的安全和法务团队协作，确保满足所在组织的安全、监管与合规要求。</p>
+<p>要上手，请在 <a href="https://aws.amazon.com/sagemaker/jumpstart/">SageMaker JumpStart</a> 中搜索 <strong>OpenFold3</strong>，或从模型卡片打开示例 notebook。想进一步了解本文用到的功能，请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference.html">异步推理</a>和<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/async-inference-autoscale.html">自动扩缩异步 endpoint</a>。若要讨论结构生物学工作负载，请联系你的 AWS 客户团队。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Cost-optimizing AssemblyAI speech-to-text inference on AWS w…</title>
+      <title>借助 Amazon EC2 Spot 优化 AWS 上 AssemblyAI 语音转文本推理的成本</title>
       <link>https://aws.amazon.com/blogs/machine-learning/cost-optimizing-assemblyai-speech-to-text-inference-on-aws-with-amazon-ec2-spot/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/cost-optimizing-assemblyai-speech-to-text-inference-on-aws-with-amazon-ec2-spot/</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Cost-optimizing AssemblyAI speech-to-text inference on AWS with Amazon EC2 Spot</description>
+      <description>原文标题：Cost-optimizing AssemblyAI speech-to-text inference on AWS with Amazon EC2 Spot</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 Amazon EC2 Spot 在 AWS 上优化 AssemblyAI 语音到文本推理的成本</h1>
-<p>语音到文本的推理是计算密集型的。每个音频文件都会触发在 NVIDIA GPU 上运行的深度学习模型（声学模型、语言模型和后处理阶段）的管道，以满足延迟要求。从规模上看，这意味着数千个 GPU 实例连续运行。</p>
-<p><a href="https://www.assembleai.com/">AssemblyAI</a> 需要一种方法来经济高效地大规模运行 GPU 密集型推理工作负载，同时又不牺牲客户所依赖的可用性和延迟保证。完全在按需实例上运行成本高昂。 Spot 实例可以显着节省成本，而 Amazon Elastic Compute Cloud (Amazon EC2) 可以在其他地方需要容量时通过 2 分钟警告来回收它们。 AssemblyAI 需要一种架构，能够优雅地吸收 Spot 中断，同时维持服务级别协议 (SLA) 承诺。此外，医疗保健、金融和法律等受监管行业的客户必须将音频数据保存在特定的地理边界内。他们在欧洲 AWS 区域实施严格的数据驻留配置。</p>
-<p>AssemblyAI 在 <a href="https://aws.amazon.com/marketplace/pp/prodview-n24l7xlhzr4o6">AWS Marketplace</a> 上提供，提供用于转录、说话人检测、情绪分析、章节检测和个人身份信息 (PII) 编辑的 API。他们的模型可以转录和分析技术、媒体、医疗保健和金融服务等行业的大量工作负载的语音。</p>
-<p>在这篇文章中，我们将向您展示 AssemblyAI 如何为其语音转文本平台大规模运行成本优化的人工智能推理。该架构使用 Amazon Elastic Container Service (Amazon ECS)、Amazon Elastic Compute Cloud (Amazon EC2) Spot 实例和 Amazon Simple Queue Service (Amazon SQS)。这些服务结合了灵活的 NVIDIA GPU、ECS 容量提供程序和基于队列的重试机制。结果是显着节省成本，同时维持欧洲 AWS 区域的 SLA 承诺。</p>
-<h2>解决方案概述</h2>
-<p>AssemblyAI 的推理平台在 Amazon ECS 上运行，并通过 ECS 容量提供商管理计算容量。该队列在多个 NVIDIA GPU 实例系列中混合使用 Amazon EC2 Spot 实例和按需实例，在数千个实例的规模上为每个 GPU 运行一个推理模型。该架构建立在四大支柱之上，它们共同提供成本优化且具有弹性的推理：</p>
-<ul><li>Amazon ECS 容量提供商混合现货和按需。</li><li>跨 EC2 实例类型（例如 g4dn.xlarge、g4dn.2xlarge、g5.xlarge、g5.4xlarge 和 g6.2xlarge）的多系列 GPU Spot 多样化。</li><li>基于队列的重试架构，使用 Amazon SQS 进行中断恢复。</li><li>在美国西部（俄勒冈州）us-west-2 和欧洲（伦敦）eu-west-2 进行区域部署，以实现数据驻留合规性。</li></ul>
-<p>下图说明了该解决方案的部署方式：</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-20884-1.png" alt="AssemblyAI 推理架构：Amazon ECS GPU Spot 任务轮询 Amazon SQS 队列，AWS Lambda 函数返回中断的作业，Amazon CloudWatch 监控舰队"></p>
-<p>图 1：AssemblyAI 在 Amazon ECS 上的推理架构，具有 Amazon EC2 Spot GPU 实例和基于 Amazon SQS 的重试机制</p>
-<p>Amazon ECS 集群在跨多个可用区的 Virtual Private Cloud (VPC) 内运行。该集群托管 GPU 支持的 ECS 任务（显示为 ECS 任务、GPU Spot 1 和 ECS 任务 GPU Spot 2），这些任务轮询队列并处理推理作业。每个任务都会从 Amazon Simple Storage Service (Amazon S3) 检索音频文件，并将完成的转录写入结果存储，AssemblyAI 将其配置为将输出交付给最终客户。</p>
-<p>当 Spot 实例收到中断通知时，Amazon EventBridge 会调用 Spot 中断处理程序（AWS Lambda 函数）。处理程序将正在进行的作业返回到主作业 SQS 队列，以便另一个正常运行的 ECS 任务可以拾取它。客户将其系统配置为将耗尽重试尝试的作业路由到死信 SQS 队列进行调查。 Amazon CloudWatch Metrics 监控队列的运行状况和 Spot 中断事件，提供整个系统的可观察性。</p>
-<h2>Amazon ECS 容量提供商和 Spot 多元化</h2>
-<p>为了在不影响可靠性的情况下优化推理成本，AssemblyAI 在每个 ECS 集群内的单个容量提供程序策略中配置多个容量提供程序。按需容量提供程序充当始终在线的基准，而现货容量提供程序则跨越不同的 GPU 实例系列和可用区来满足需求高峰。每个容量提供商都与一个 Amazon EC2 Auto Scaling 组关联。 Amazon ECS 托管扩展可根据容量提供程序权重和待处理的推理任务自动扩展 GPU 实例。当任务队列增长时，Spot 容量提供程序会从多元化池中请求更多实例。当需求下降时，实例会优雅地缩小。</p>
-<p>最有效的 Spot 最佳实践之一是灵活地适应各种实例类型，以增加获得所需聚合计算容量的机会。 AssemblyAI 的基础设施不依赖于单个 GPU 实例系列，而是跨越三个 Amazon EC2 GPU 实例系列：</p>
-<ul><li><strong>g4dn 实例</strong> – 由 NVIDIA T4 GPU 提供支持，为标准语音识别模型提供经济高效的基准。</li><li><strong>g5 实例</strong> – 配备 NVIDIA A10G GPU，为要求更高的模型架构提供更高的吞吐量。</li><li><strong>g6 实例</strong> – 采用 NVIDIA L4 GPU，为大型模型（包括基于大型语言模型的推理）提供更高的性价比。</li></ul>
-<p>通过跨实例系列和规模分散需求，AssemblyAI 从更大的可用 Spot 容量池中获取资源。使用<a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/allocation-strategies.html">价格-容量优化分配策略</a>，Amazon EC2 以最低的价格从 Spot 容量池中配置具有最高可用容量的实例，从而降低了中断的可能性。</p>
-<h2>基于队列的重试以实现中断恢复</h2>
-<p>在 Spot 中断期间保持服务质量是一项核心设计要求。 AssemblyAI 使用 Amazon SQS 将作业提交与执行分离。当转录请求到达时，它会被放入 Amazon SQS 队列中。在 GPU 实例上运行的 Amazon ECS 任务轮询队列、拉取作业并执行推理管道。个别作业通常需要 15 秒到几分钟，具体取决于音频长度。</p>
-<p>当 Spot 实例收到 2 分钟中断通知时，重试流程如下：</p>
-<ul><li>可以在 2 分钟窗口内完成的正在进行的作业正常完成。需要更多时间的作业将返回到 Amazon SQS 队列，其他工作人员可以立即使用它们。</li><li>另一个运行状况良好的 GPU 实例可能会在不同的实例类型或不同的可用区中获取消息，并完成推理。</li></ul>
-<p>为了缩短恢复时间，AssemblyAI 在大约 2 分钟内创建了包含模型工件和容器映像的自定义 Amazon 系统映像 (AMI)。对于最终客户而言，Spot 中断的影响是处理时间略有增加，但转录会成功完成并按预期交付。</p>
-<h2>数据驻留的区域部署</h2>
-<p>在多个 AWS 区域中运行使得 AssemblyAI 能够为受监管行业的客户提供支持，包括医疗保健、金融服务和法律服务，在这些行业中，音频数据绝不能离开特定的地理边界。每个 AWS 区域都运行完全独立的推理架构副本：自己的 Amazon SQS 队列、Amazon ECS 集群、容量提供程序和 GPU 队列。这些欧洲区域提供多个 GPU 实例系列（g4dn、g5、g6），并且具有具有竞争力的现货价格。这种实例多样性支持可靠的基于 Spot 的推理服务，同时满足严格的数据驻留要求。</p>
+<h1>借助 Amazon EC2 Spot 优化 AWS 上 AssemblyAI 语音转文本推理的成本</h1>
+<p>语音转文本推理是计算密集型的。每个音频文件都会触发一条由深度学习模型组成的流水线（声学模型、语言模型，以及后处理阶段），跑在 NVIDIA GPU 上以满足延迟要求。规模一上来，就意味着成千上万个 GPU 实例持续运转。</p>
+<p><a href="https://www.assemblyai.com/">AssemblyAI</a> 需要一种办法，既能大规模、低成本地跑 GPU 密集型推理工作负载，又不牺牲客户所依赖的可用性和延迟保证。全部跑在 On-Demand Instances 上成本高得不可接受。Spot Instances 能省下可观费用，但当别处需要容量时，Amazon Elastic Compute Cloud (Amazon EC2) 会提前 2 分钟发出通知并把它们回收。AssemblyAI 需要一套架构，能从容吸收 Spot 中断，同时守住服务级别协议 (SLA) 承诺。此外，医疗保健、金融、法律等受监管行业的客户必须把音频数据留在特定的地理边界内，他们在欧洲 AWS 区域落地了严格的数据驻留配置。</p>
+<p>AssemblyAI 已上架 <a href="https://aws.amazon.com/marketplace/pp/prodview-n24l7xlhzr4o6">AWS Marketplace</a>，提供用于转录、说话人检测、情感分析、章节检测，以及 personally identifiable information (PII) 脱敏的 API。他们的模型为科技、媒体、医疗保健、金融服务等行业的大批量工作负载转录并分析语音。</p>
+<p>本文展示 AssemblyAI 如何为其语音转文本平台大规模运行成本优化的 AI 推理。这套架构用到了 Amazon Elastic Container Service (Amazon ECS)、Amazon Elastic Compute Cloud (Amazon EC2) 的 Spot Instances，以及 Amazon Simple Queue Service (Amazon SQS)。这些服务把一支灵活的 NVIDIA GPU 机群、ECS 容量提供程序，以及一套基于队列的重试机制组合在一起。结果是显著省下成本，同时守住欧洲各 AWS 区域的 SLA 承诺。</p>
+<h2>方案概览</h2>
+<p>AssemblyAI 的推理平台跑在 Amazon ECS 上，计算容量由 ECS 容量提供程序管理。这支机群在多个 NVIDIA GPU 实例系列里混用 Amazon EC2 Spot Instances 和 On-Demand Instances，每块 GPU 跑一个推理模型，规模达数千个实例。这套架构建立在四根支柱上，共同交付成本优化且有韧性的推理：</p>
+<ul><li>混用 Spot 和 On-Demand 的 Amazon ECS 容量提供程序。</li><li>跨 EC2 实例类型（例如 g4dn.xlarge、g4dn.2xlarge、g5.xlarge、g5.4xlarge 和 g6.2xlarge）的多系列 GPU Spot 多样化。</li><li>用 Amazon SQS 做中断恢复的基于队列的重试架构。</li><li>为满足数据驻留合规，在美国西部（俄勒冈）us-west-2 和欧洲（伦敦）eu-west-2 做区域部署。</li></ul>
+<p>下图展示了这套方案的部署方式：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/06/ML-20884-1.png" alt="AssemblyAI 推理架构：Amazon ECS GPU Spot 任务轮询 Amazon SQS 队列，AWS Lambda 函数把被中断的作业退回，Amazon CloudWatch 监控整支机群"></p>
+<p>图 1：AssemblyAI 在 Amazon ECS 上的推理架构，采用 Amazon EC2 Spot GPU 实例和基于 Amazon SQS 的重试机制</p>
+<p>一个 Amazon ECS 集群跑在跨多个可用区的 virtual private cloud (VPC) 里。集群承载 GPU 支撑的 ECS 任务（图中标为 ECS Task, GPU Spot 1 和 ECS Task GPU Spot 2），由它们轮询队列、处理推理作业。每个任务从 Amazon Simple Storage Service (Amazon S3) 取回音频文件，把完成的转录写进结果存储，AssemblyAI 再配置它把输出交付给最终客户。</p>
+<p>当某个 Spot Instance 收到中断通知，Amazon EventBridge 会调用 Spot Interruption Handler（一个 AWS Lambda 函数）。这个函数把进行中的作业退回 Main Job SQS Queue，好让另一个健康的 ECS 任务接手。客户可以配置自己的系统，把重试次数耗尽的作业路由到 Dead Letter SQS Queue 待查。Amazon CloudWatch Metrics 监控整支机群的健康状况和 Spot 中断事件，为全系统提供可观测性。</p>
+<h2>Amazon ECS 容量提供程序与 Spot 多样化</h2>
+<p>要在不牺牲可靠性的前提下优化推理成本，AssemblyAI 在每个 ECS 集群里用一条容量提供程序策略配置多个容量提供程序。一个 On-Demand 容量提供程序充当始终在线的基线，一个 Spot 容量提供程序则横跨不同的 GPU 实例系列和可用区，用来承接需求尖峰。每个容量提供程序都关联一个 Amazon EC2 Auto Scaling 组。Amazon ECS 托管扩缩容会依据容量提供程序权重和待处理的推理任务，自动扩缩 GPU 实例。任务队列变长时，Spot 容量提供程序就从多样化池里申请更多实例；需求回落时，实例平稳缩容。</p>
+<p>最有效的 Spot 最佳实践之一，是在很宽的实例类型范围里保持灵活，以提高拿到所需聚合计算容量的概率。AssemblyAI 的基础设施不依赖单一 GPU 实例系列，而是横跨三个 Amazon EC2 GPU 实例系列：</p>
+<ul><li><strong>g4dn 实例</strong> – 由 NVIDIA T4 GPU 驱动，为标准语音识别模型提供高性价比的基线。</li><li><strong>g5 实例</strong> – 配备 NVIDIA A10G GPU，为要求更高的模型架构交付更高吞吐量。</li><li><strong>g6 实例</strong> – 采用 NVIDIA L4 GPU，为更大的模型（包括基于大语言模型的推理）带来更好的性价比。</li></ul>
+<p>把需求摊到不同实例系列和规格上，AssemblyAI 就能从大得多的可用 Spot 容量池里取资源。借助<a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/allocation-strategies.html">价格容量优化分配策略</a>，Amazon EC2 会以最低价格从可用容量最充足的 Spot 容量池里置备实例，降低被中断的概率。</p>
+<h2>面向中断韧性的基于队列的重试</h2>
+<p>在 Spot 中断期间维持服务质量，是一项核心设计要求。AssemblyAI 用 Amazon SQS 把作业提交和执行解耦。转录请求到达后先放进一条 Amazon SQS 队列；跑在 GPU 实例上的 Amazon ECS 任务轮询队列、拉取作业、执行推理流水线。单个作业通常要 15 秒到几分钟不等，取决于音频长度。</p>
+<p>当某个 Spot Instance 收到 2 分钟的中断通知，重试流程是这样走的：</p>
+<ul><li>能在 2 分钟窗口内做完的进行中作业照常完成；需要更久的作业退回 Amazon SQS 队列，立刻可供其他 worker 领取。</li><li>另一个健康的 GPU 实例接走这条消息——可能在另一种实例类型上、或在另一个可用区里——把推理做完。</li></ul>
+<p>为缩短恢复时间，AssemblyAI 会在大约 2 分钟内做出包含模型产物和容器镜像的自定义 Amazon Machine Images (AMIs)。对最终客户来说，Spot 中断的影响只是处理时间略长一点，转录仍会成功完成并按预期交付。</p>
+<h2>面向数据驻留的区域部署</h2>
+<p>在多个 AWS 区域运行，让 AssemblyAI 能服务受监管行业的客户——医疗保健、金融服务、法律服务等等，这些行业的音频数据绝不能离开特定的地理边界。每个 AWS 区域都跑一份完全独立的推理架构副本：自己的 Amazon SQS 队列、Amazon ECS 集群、容量提供程序和 GPU 机群。这些欧洲区域提供多种 GPU 实例系列（g4dn、g5、g6），Spot 定价也很有竞争力。这种实例多样性支撑起可靠的基于 Spot 的推理服务，同时满足严格的数据驻留要求。</p>
 <h2>结果</h2>
-<p>通过在生产环境中运行带有 GPU 的 Amazon EC2 Spot 实例，与按需定价相比，AssemblyAI 在推理计算方面实现了 70% 的成本节省。随着该平台的计算需求同比增长近 4 倍，基于 Spot 的架构保持了单位经济效益的可持续发展。在如此规模的运营中，AssemblyAI 了解到，实例系列和规模的多样化是最大限度降低 Spot 中断率的最有效手段。 g4dn、g5 和 g6 系列可接入独立的容量池，因此当一个系列遇到容量压力时，其他系列仍然可用。从第一天开始就通过基于队列的重试和快速预热来设计容错，将 Spot 中断转变为例行事件，同时维护 SLA 承诺。</p>
-<p>＃＃ 结论</p>
-<p>运行具有相似特征的批量或近实时 AI 工作负载（GPU 计算上的短期、独立可重试作业）的团队可以应用此模式。首先使实例系列多样化并构建基于队列的容错能力，以在不影响可用性的情况下利用经济高效的 Spot 基础设施。</p>
-<p><a href="https://console.aws.amazon.com/ecs/">要开始</a> 在 <a href="https://aws.amazon.com/ecs/">Amazon ECS</a> 上执行 GPU 任务，请参阅<a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-gpu.html">适用于 GPU 工作负载的 Amazon ECS</a>。要评估您的工作负载的 Spot 可用性，请探索使用 <a href="https://github.com/aws-solutions-library-samples/guidance-for-ec2-spot-placement-score-tracker#using-spot-placement-scores-with-accelerated-compute-platforms">加速计算的 Spot 放置分数</a> 和 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-best-practices.html">Amazon EC2 Spot 实例最佳实践</a>。 AssemblyAI 的 Speech-to-Text API 可在 <a href="https://aws.amazon.com/marketplace">AWS Marketplace</a> 上使用。要了解有关其平台的更多信息，请访问 [ assemblyai.com ](https://www. assemblyai.com/)。</p>
+<p>在生产环境里跑带 GPU 的 Amazon EC2 Spot Instances，让 AssemblyAI 的推理计算成本比 On-Demand 定价省了 70%。平台的计算需求同比增长近 4 倍，这套基于 Spot 的架构仍把单位经济效益维持在可持续的水平。在这个规模上运营，AssemblyAI 体会到：跨实例系列和规格做多样化，是把 Spot 中断率压到最低最有效的杠杆。g4dn、g5、g6 三个系列接的是彼此独立的容量池，一个系列遇到容量紧张，另外几个照样可用。从第一天起就用基于队列的重试和快速预热来设计容错，把 Spot 中断变成了例行事件，同时守住 SLA 承诺。</p>
+<h2>结论</h2>
+<p>凡是在跑具有类似特征的批量或近实时 AI 工作负载的团队（GPU 计算上短生命周期、可独立重试的作业），都可以套用这套模式。先做实例系列多样化，再建起基于队列的容错，就能用上高性价比的 Spot 基础设施，而不牺牲可用性。</p>
+<p><a href="https://console.aws.amazon.com/ecs/">开始上手</a>：在 <a href="https://aws.amazon.com/ecs/">Amazon ECS</a> 上跑 GPU 任务，可参见 <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-gpu.html">适用于 GPU 工作负载的 Amazon ECS</a>。要评估自己工作负载的 Spot 可用容量，可以了解<a href="https://github.com/aws-solutions-library-samples/guidance-for-ec2-spot-placement-score-tracker#using-spot-placement-scores-with-accelerated-compute-platforms">加速计算的 Spot placement scores</a> 和 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-best-practices.html">Amazon EC2 Spot Instances 最佳实践</a>。AssemblyAI 的 Speech-to-Text API 已上架 <a href="https://aws.amazon.com/marketplace">AWS Marketplace</a>。想进一步了解他们的平台，请访问 <a href="https://www.assemblyai.com/">assemblyai.com</a>。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Amazon Bedrock 上 AI 开发人员和生产力工具的成本归因和控制</title>
+      <title>Amazon Bedrock 上 AI 开发工具与生产力工具的成本归因与控制</title>
       <link>https://aws.amazon.com/blogs/machine-learning/cost-attribution-and-controls-for-ai-developer-and-productivity-tools-on-amazon-bedrock/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/cost-attribution-and-controls-for-ai-developer-and-productivity-tools-on-amazon-bedrock/</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Cost attribution and controls for AI developer and productivity tools on Amazon Bedrock</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Amazon Bedrock 上人工智能开发人员和生产力工具的成本归因和控制</h1>
-<p>Amazon Bedrock 提供内置的零检测成本归因，可将每个推理调用追溯到发起该调用的 IAM 委托人。身份与组织标签一起流入 AWS 成本和使用情况报告 (CUR 2.0) 和 AWS Cost Explorer，同时将数据保留在 AWS 安全边界内。这篇文章向您展示如何使用这些功能来回答每个 FinOps 和 AI 平台领导者在 AI 工具采用规模扩大时提出的三个问题：每个用户的实际成本是多少？哪些团队产生的支出最多，这些支出与他们交付的价值是否相关？明年的预算应如何根据人员数量和采用情况进行调整？</p>
-<p>无论哪种人工智能编码或生产力工具进行调用，该方法的工作原理都是相同的。 Claude Code、Claude Desktop、OpenAI Codex、ChatGPT Work 和 OpenCode 均通过两个推理端点之一调用 Amazon Bedrock：“bedrock-runtime”或“bedrock-mantle”，并且 Bedrock 的归因机制在端点层运行，位于任何特定于工具的逻辑之下。您配置身份传播一次，通过 Bedrock 路由推理的每个工具都会自动继承每个用户的成本可见性。</p>
-<p>在本文结束时，您将使用外部身份提供商配置 AWS IAM Identity Center，以实现每用户归因、流入 CUR 2.0 的会话标签（团队、成本中心）、Amazon Athena 查询和控制面板选项以实现持续的成本可见性，并清楚了解 Bedrock 原生使用控制以实施支出限制。</p>
+<h1>Amazon Bedrock 上 AI 开发工具与生产力工具的成本归因与控制</h1>
+<p>Amazon Bedrock 内置的成本归因无需任何插桩，就能把每次推理调用追溯到发起它的 IAM 委托人。身份信息连同组织标签一起流入 AWS Cost and Usage Reports (CUR 2.0) 和 AWS Cost Explorer，同时数据始终留在 AWS 安全边界内。本文将介绍如何用这些能力回答每一位 FinOps 与 AI 平台负责人在 AI 工具采用规模扩大时都会问的三个问题：每位用户的真实成本是多少？哪些团队产生的支出最多，这些支出与他们交付的价值是否相称？明年的预算该如何随人员编制和采用规模调整？</p>
+<p>无论发起调用的是哪款 AI 编码或生产力工具，这套做法都完全一样。Claude Code、Claude Desktop、OpenAI Codex、ChatGPT Work 和 OpenCode 都通过两个推理端点之一调用 Amazon Bedrock：<code>bedrock-runtime</code> 或 <code>bedrock-mantle</code>；而 Bedrock 的归因机制运行在端点层，位于任何工具专有逻辑之下。身份传播只需配置一次，之后所有经由 Bedrock 路由推理的工具都会自动获得按用户划分的成本可见性。</p>
+<p>读完本文，你将完成：把 AWS IAM Identity Center 与外部身份提供商对接以实现按用户归因；让会话标签（团队、成本中心）流入 CUR 2.0；掌握用于持续成本可见性的 Amazon Athena 查询与仪表板方案；并清楚理解 Bedrock 原生的使用控制如何落实支出上限。</p>
 <h2>Amazon Bedrock 归因的工作原理</h2>
-<p>Amazon Bedrock 记录每个推理调用者的 IAM 身份，无需对 API 调用进行任何更改。当用户通过“bedrock-runtime”或“bedrock-mantle”端点调用模型时，Bedrock 会捕获调用者的完整 IAM ARN，包括联合用户的会话名称，并将其发布到“line_item_iam_principal”列中的 CUR 2.0。在计费数据中，每个导出间隔的每个主体和每个使用类型聚合使用情况：每小时导出一小时，每日导出一天。 CUR 不包含每个请求的成本。对于每个提示的详细信息，请使用模型调用日志或请求元数据标记。</p>
-<p>或者，您可以将标签附加到 IAM 委托人或在联合期间传递会话标签以添加组织维度。这些标签在 CUR 2.0 中显示为“iamPrincipal/”前缀，并在 Cost Explorer 中显示为可过滤维度。该机制支持四种访问模式：IAM 用户、每个应用程序角色、联合身份和代理到 Bedrock 的大型语言模型 (LLM) 网关。有关这四种方法的比较，请参阅<a href="https://aws.amazon.com/blogs/machine-learning/introducing-capsular-cost-attribution-for-amazon-bedrock/">Amazon Bedrock 的粒度成本归因简介</a>。这篇文章遵循联合身份模式，该模式非常适合人工智能编码和生产力工具，其中每个开发人员或知识工作者都单独进行身份验证。</p>
-<p>除了 IAM 委托人跟踪之外，Amazon Bedrock 还提供其他归因机制，组织可以根据自己的需求进行分层（请参阅附录 A 进行比较）。借助应用程序推理配置文件，您可以按“Bedrock运行时”端点上的工作负载标记支出。通过项目和工作区，您可以隔离并标记“Bedrock地幔”端点上的支出。每个请求元数据标记在模型调用日志中为需要比 CUR 2.0 每个导出间隔的每个使用类型聚合更精细的粒度的工作负载提供每个提示令牌级别的详细信息。例如，您可以将发票上每用户美元的 IAM 主体归属与日志中每个提示详细信息的每个请求元数据标签结合起来。选择取决于您的目标（请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-management.html">跟踪 Amazon Bedrock 中的使用情况和成本</a>）。</p>
+<p>Amazon Bedrock 会记录每个推理调用方的 IAM 身份，你的 API 调用无需任何改动。当用户通过 <code>bedrock-runtime</code> 或 <code>bedrock-mantle</code> 端点调用模型时，Bedrock 会捕获调用方完整的 IAM ARN（包括联合用户的会话名称），并把它发布到 CUR 2.0 的 <code>line_item_iam_principal</code> 列。在计费数据里，用量按每个导出间隔、每个委托人和每个用量类型聚合：按小时导出即每小时一段，按天导出即每天一段。CUR 不包含单次请求的成本。若要逐 prompt 查看明细，请使用模型调用日志或请求元数据标记。</p>
+<p>你也可以选择给 IAM 委托人附加标签，或在联合认证时传入会话标签，以补充组织维度。这些标签在 CUR 2.0 中带 <code>iamPrincipal/</code> 前缀出现，在 Cost Explorer 中则作为可筛选维度。该机制支持四种访问模式：IAM 用户、按应用划分的角色、联合身份，以及代理到 Bedrock 的大型语言模型 (LLM) 网关。四者的对比参见 <a href="https://aws.amazon.com/blogs/machine-learning/introducing-granular-cost-attribution-for-amazon-bedrock/">Amazon Bedrock 细粒度成本归因简介</a>。本文采用联合身份模式——对于每位开发人员或知识工作者都单独认证的 AI 编码与生产力工具来说，这是最自然的选择。</p>
+<p>除 IAM 委托人跟踪之外，Amazon Bedrock 还提供其他归因机制，组织可按需叠加使用（对比见附录 A）。借助 Application Inference Profiles，你可以在 <code>bedrock-runtime</code> 端点上按工作负载标记支出；借助 Projects 和 Workspaces，你可以在 <code>bedrock-mantle</code> 端点上隔离并标记支出。对于需要比 CUR 2.0 每个导出间隔按用量类型聚合更细粒度的工作负载，按请求做元数据标记能在模型调用日志里给出逐 prompt、token 级的明细。这些机制可以组合使用，例如用 IAM 委托人归因拿到账单上每位用户的花费，同时用按请求的元数据标签在日志里保留逐 prompt 明细。如何选择取决于目标（参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-management.html">跟踪 Amazon Bedrock 的使用量与成本</a>）。</p>
 <h2>归因问题</h2>
-<p>开发人员和生产力工具在每个用户的计算机上运行，​​并直接或通过 LLM 网关调用 Amazon Bedrock。用户通过假定共享 IAM 角色进行身份验证，因此每个 API 调用在账单中显示为“假定角色/&lt;角色&gt;/&lt;会话名称&gt;”。如果每个用户都承担具有相同固定会话名称的角色，或者调用通过网关自己的角色，则 CUR 会将支出聚合到单个主体。对于 IAM Identity Center，会话名称是用户的登录名，因此每个用户都有自己的委托人。您可以使用会话标签（团队、成本中心、项目）进一步丰富它。这些字段流入 CUR 2.0 的“line_item_iam_principal”列和带有“iamPrincipal/”前缀的成本分配标签，使每个用户的支出与美元一起可查询，并且对 Bedrock API 调用的更改为零。</p>
-<p>AWS 上的 Claude Platform 和 Claude for Enterprise 通过 Anthropic 管理的基础设施进行路由推理。对于 AWS 上的 Claude Platform，使用情况可通过 Anthropic 管理控制台中的工作区和 API 密钥查看，工作区标签会流向 AWS 账单。对于 Claude for Enterprise，每个用户的使用情况在 Anthropic 的管理控制台以及使用情况和成本 API 中可见。支出限制由 Anthropic 本地强制执行。</p>
+<p>开发工具和生产力工具运行在每位用户的机器上，直接调用 Amazon Bedrock，或经由 LLM 网关调用。用户通过代入一个共享 IAM 角色完成认证，因此每次 API 调用在账单里都显示为 <code>assumed-role/&lt;role&gt;/&lt;session-name&gt;</code>。如果所有用户代入角色时都用同一个固定会话名称，或者调用走的是网关自己的角色，CUR 就会把支出汇总到单一委托人上。使用 IAM Identity Center 时，会话名称就是用户的登录名，于是每位用户都有各自的委托人；你还可以用会话标签（团队、成本中心、项目）进一步丰富它。这些字段会流入 CUR 2.0 的 <code>line_item_iam_principal</code> 列以及带 <code>iamPrincipal/</code> 前缀的成本分配标签，让按用户划分的支出能与具体金额一起被查询，而 Bedrock API 调用无需任何改动。</p>
+<p>Claude Platform on AWS 和 Claude for Enterprise 的推理经由 Anthropic 管理的基础设施路由。对于 Claude Platform on AWS，用量可在 Anthropic 管理控制台里按 workspace 和 API key 查看，workspace 标签也会流入 AWS 账单。对于 Claude for Enterprise，按用户划分的用量可在 Anthropic 管理控制台以及 Usage and Cost API 中查看。支出上限由 Anthropic 原生执行。</p>
 <h2>先决条件</h2>
-<p>开始之前，请确保您拥有：</p>
-<ul><li>具有 IAM 权限的 <a href="https://aws.amazon.com/resources/create-account/">AWS 账户</a>，可以访问您打算使用的 Bedrock 模型。</li><li>您的管理账户中的 AWS <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/enable-identity-center.html">已启用 IAM Identity Center</a>。</li><li>具有 SCIM 配置功能的外部身份提供商（Okta、Microsoft Entra ID 或 Ping Identity）。</li><li>在开发人员计算机上配置的 <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html">AWS CLI v2</a>。</li><li><a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/iam-principal-cost-allocation.html">AWS 成本和使用情况报告</a> (CUR 2.0) 使用 IAM 主体数据启用并交付到 S3 存储桶。</li><li>从管理（付款人）账户激活的<a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html">成本分配标签</a>。</li><li>配置为查询 CUR 2.0 数据的 Athena 表（请参阅 <a href="https://github.com/aws-samples/aws-cudos-framework-deployment">GitHub 示例</a> 以开始使用）。</li></ul>
-<h2>步骤 1：使用外部 IdP 配置 IAM Identity Center</h2>
-<p>将您的外部身份提供商配置为 AWS IAM Identity Center 中的身份源。导航到 IAM 身份中心 → 设置 → 身份源 → 更改身份源。选择“外部身份提供商”并配置与您的 IdP 的 SAML 2.0 或 SCIM 连接。启用 SCIM 配置以自动同步用户和组，包括团队和部门等组织属性。</p>
-<p><strong>通过导航到设置→访问控制属性来配置会话标签的属性映射</strong>。将 IdP 的组织属性映射到将流入 CUR 2.0 的会话标签。这些属性作为会话标签（“aws:PrincipalTag/Team”、“aws:PrincipalTag/CostCenter”）在用户进行的每个 API 调用上传播，包括通过“bedrock-runtime”和“bedrock-mantle”端点进行的每个 Bedrock 调用。</p>
-<h2>步骤 2：创建Bedrock访问权限集</h2>
-<p>在 Identity Center 中创建一个权限集，授予 Bedrock 调用访问权限。每个用户都在此权限集中获得自己的会话。这是每用户归因的基础。具体 IAM 操作取决于该工具调用的 Bedrock 端点。</p>
-<p>调用“bedrock-mantle”端点的工具（例如 Codex 和 ChatGPT Work）需要“bedrock-mantle:CreateInference”以及范围为项目资源的相关操作。调用“bedrock-runtime”端点的工具（例如 Claude Code 和 Claude Desktop）需要范围为相关基础模型或推理配置文件 ARN 的“bedrock:InvokeModel”和“bedrock:InvokeModelWithResponseStream”。如果您的组织跨两个端点使用工具，则可以将两者合并到一个权限集中。</p>
+<p>开始之前，请确认你已具备：</p>
+<ul><li>一个 <a href="https://aws.amazon.com/resources/create-account/">AWS 账户</a>，其 IAM 权限可访问你打算使用的 Bedrock 模型。</li><li>在管理账户中<a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/enable-identity-center.html">启用 AWS IAM Identity Center</a>。</li><li>一个具备 SCIM 预置能力的外部身份提供商（Okta、Microsoft Entra ID 或 Ping Identity）。</li><li>在开发人员机器上配置好的 <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html">AWS CLI v2</a>。</li><li>已启用并包含 IAM 委托人数据、投递到 S3 存储桶的 <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/iam-principal-cost-allocation.html">AWS Cost and Usage Report</a> (CUR 2.0)。</li><li>从管理（付款人）账户激活的<a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html">成本分配标签</a>。</li><li>一个用于查询 CUR 2.0 数据的 Athena 表（可参考 <a href="https://github.com/aws-samples/aws-cudos-framework-deployment">GitHub 示例</a> 上手）。</li></ul>
+<h2>步骤 1：用外部 IdP 配置 IAM Identity Center</h2>
+<p>把外部身份提供商配置为 AWS IAM Identity Center 的身份源。依次进入 IAM Identity Center → Settings → Identity source → Change identity source，选择 “External identity provider”，并配置与 IdP 之间的 SAML 2.0 或 SCIM 连接。启用 SCIM 预置，自动同步用户和组，包括团队、部门等组织属性。</p>
+<p><strong>为会话标签配置属性映射</strong>：进入 Settings → Attributes for access control，把 IdP 的组织属性映射到将流入 CUR 2.0 的会话标签。这些属性会作为会话标签（<code>aws:PrincipalTag/Team</code>、<code>aws:PrincipalTag/CostCenter</code>）随用户发起的每一次 API 调用传播，包括经由 <code>bedrock-runtime</code> 和 <code>bedrock-mantle</code> 两个端点发起的每一次 Bedrock 调用。</p>
+<h2>步骤 2：创建 Bedrock 访问权限集</h2>
+<p>在 Identity Center 中创建一个授予 Bedrock 调用权限的权限集。每位用户在该权限集内都有各自的会话，这是按用户归因的基础。具体需要哪些 IAM 操作，取决于工具调用的是哪个 Bedrock 端点。</p>
+<p>调用 <code>bedrock-mantle</code> 端点的工具（如 Codex 和 ChatGPT Work）需要 <code>bedrock-mantle:CreateInference</code> 以及作用域限定到 Project 资源的相关操作。调用 <code>bedrock-runtime</code> 端点的工具（如 Claude Code 和 Claude Desktop）需要 <code>bedrock:InvokeModel</code> 和 <code>bedrock:InvokeModelWithResponseStream</code>，作用域限定到相应基础模型或推理配置文件的 ARN。如果组织在两个端点上都用到工具，可以把两者合并进同一个权限集。</p>
 <pre><code>{
     &quot;Statement&quot;: [
         {
@@ -950,9 +950,9 @@ for m, ep in ((model, endpoint), (multi_gpu_model, multi_gpu_endpoint)):
         }
     ]
 }</code></pre>
-<p><strong>注意：</strong> 这些资源模式是一个起点。将它们缩小到您批准的特定推理配置文件和项目。将此权限集分配给从您的 IdP 同步的相关组。策略更改是即时且通用的，审核通过 AWS CloudTrail 使用每个用户的身份进行集中，并且用户不会收到长期有效的 AWS 凭证。</p>
+<p><strong>注意：</strong> 这些资源模式只是起点，请收窄到你批准的特定推理配置文件和 Projects。把该权限集分配给从 IdP 同步过来的相关组。策略变更即时且全局生效，审计通过 AWS CloudTrail 按每位用户的身份集中记录，用户也不会拿到长期有效的 AWS 凭证。</p>
 <h2>步骤 3：配置用户工作站</h2>
-<p>用户配置其 AWS CLI 配置文件一次，无需自定义脚本、凭证帮助程序或浏览器自动化。以下 <code>~/.aws/config</code> 条目建立 SSO 会话：</p>
+<p>用户只需配置一次 AWS CLI profile，无需自定义脚本、凭证助手或浏览器自动化。下面这段 <code>~/.aws/config</code> 配置即可建立 SSO 会话：</p>
 <pre><code>[profile bedrock]
 sso_session = corp
 sso_account_id = 111122223333
@@ -963,10 +963,10 @@ region = us-east-1
 sso_start_url = https://your-org.awsapps.com/start
 sso_region = us-east-1
 sso_registration_scopes = sso:account:access</code></pre>
-<p>用户通过运行“aws sso login --profile bedrock”进行身份验证，这会打开浏览器，通过 IdP 进行身份验证，并在本地缓存凭证。 AWS CLI 和开发工具包会自动刷新访问令牌，直到 IAM Identity Center 会话结束（默认为 8 小时）。配置会话持续时间的核心权衡是安全状况和操作便利性之间。</p>
-<h2>步骤 4：将工具指向 Amazon Bedrock</h2>
-<p>每个 AI 工具只需要更改标准配置即可通过 Bedrock 进行推理。由于 Bedrock 归因在端点层运行，因此不需要特定于工具的检测。该工具使用步骤 3 中建立的 AWS 凭证链进行身份验证，Bedrock 会自动捕获调用者身份。</p>
-<p><strong>Claude Desktop</strong> 从操作系统本机托管首选项（macOS 上的“/Library/Managed Preferences/com.anthropic.claudefordesktop.plist”，Windows 上的“HKLM\SOFTWARE\Policies\Claude”）读取第三方推理设置。在应用程序内窗口（开发人员 → 配置第三方推理）中编写一次配置，然后选择 <strong>导出</strong> 为您的移动设备管理 (MDM) 系统生成“.mobileconfig”或“.reg”。对于每用户归因，请使用应用程序内 AWS 登录，每个用户都根据应用程序内的 IAM Identity Center 进行身份验证，而设备上没有 AWS CLI：</p>
+<p>用户运行 <code>aws sso login --profile bedrock</code> 完成认证：命令会打开浏览器、通过 IdP 认证，并在本地缓存凭证。AWS CLI 和 SDK 会自动刷新访问令牌，直到 IAM Identity Center 会话结束（默认 8 小时）。设置会话时长的核心取舍，是在安全态势与操作便利性之间权衡。</p>
+<h2>步骤 4：把工具指向 Amazon Bedrock</h2>
+<p>每款 AI 工具只需改一处标准配置，就能把推理路由到 Bedrock。由于 Bedrock 归因运行在端点层，不需要针对具体工具插桩。工具用步骤 3 建立的 AWS 凭证链完成认证，Bedrock 会自动捕获调用方身份。</p>
+<p><strong>Claude Desktop</strong> 从操作系统原生的托管偏好设置读取第三方推理配置（macOS 上是 <code>/Library/Managed Preferences/com.anthropic.claudefordesktop.plist</code>，Windows 上是 <code>HKLM\SOFTWARE\Policies\Claude</code>）。在应用内窗口（Developer → Configure Third-Party Inference）里编写一次配置，选择 <strong>Export</strong> 即可为移动设备管理 (MDM) 系统生成 <code>.mobileconfig</code> 或 <code>.reg</code>。要做按用户归因，请使用应用内 AWS 登录：每位用户在应用内对着 IAM Identity Center 认证，设备上无需安装 AWS CLI：</p>
 <pre><code>inferenceProvider bedrock
 inferenceBedrockRegion us-east-1
 inferenceBedrockSsoStartUrl https://your-org.awsapps.com/start
@@ -974,9 +974,9 @@ inferenceBedrockSsoRegion us-east-1
 inferenceBedrockSsoAccountId 111122223333
 inferenceBedrockSsoRoleName BedrockDeveloperAccess
 inferenceModels [&quot;us.anthropic.claude-sonnet-5&quot;,&quot;us.anthropic.claude-opus-5&quot;]</code></pre>
-<p>配置在启动时读取。用户必须退出并重新打开应用程序。如果开发人员已运行 AWS CLI v2，请改为设置“inferenceBedrockProfile”，应用程序会为他们运行“aws sso login”。</p>
-<p>Claude Code CLI 读取标准 AWS SDK 凭证链，包括 SSO 配置文件。如果设置了“AWS_BEARER_TOKEN_BEDROCK”，Claude Code 将使用该密钥进行身份验证，并且不使用凭证链，因此调用将归因于该密钥背后的 IAM 用户。当您需要每用户 SSO 归因时禁用它。</p>
-<p>在设置文件中设置 <code>awsAuthRefresh</code> 以在凭证过期时自动重新进行身份验证：</p>
+<p>配置在启动时读取，用户必须退出并重新打开应用。如果开发人员已经在用 AWS CLI v2，改为设置 <code>inferenceBedrockProfile</code>，应用会替他们运行 <code>aws sso login</code>。</p>
+<p>Claude Code CLI 读取标准的 AWS SDK 凭证链，包括 SSO profile。如果设置了 <code>AWS_BEARER_TOKEN_BEDROCK</code>，Claude Code 会用该密钥认证而不走凭证链，于是调用被归到该密钥背后的 IAM 用户。需要按用户做 SSO 归因时，请禁用它。</p>
+<p>在设置文件中设置 <code>awsAuthRefresh</code>，让凭证过期时自动重新认证：</p>
 <pre><code>{
     &quot;awsAuthRefresh&quot;: &quot;aws sso login --profile bedrock&quot;,
     &quot;env&quot;: {
@@ -985,31 +985,31 @@ inferenceModels [&quot;us.anthropic.claude-sonnet-5&quot;,&quot;us.anthropic.cla
         &quot;AWS_REGION&quot;: &quot;us-east-1&quot;
     }
 }</code></pre>
-<p>在队列推出之前固定模型版本，以便新版本不会更改用户调用的内容：</p>
+<p>在全量铺开之前固定好模型版本，避免新版本改变用户实际调用的模型：</p>
 <pre><code>export ANTHROPIC_DEFAULT_OPUS_MODEL='us.anthropic.claude-opus-5'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='us.anthropic.claude-sonnet-5'</code></pre>
-<p><strong>Codex 和 ChatGPT 工作</strong> 阅读 <code>~/.codex/config.toml</code>。桌面应用程序和 CLI 都使用相同的配置层。对于“基岩-地幔”端点：</p>
+<p><strong>Codex 和 ChatGPT Work</strong> 读取 <code>~/.codex/config.toml</code>。桌面应用和 CLI 使用同一套配置层。针对 <code>bedrock-mantle</code> 端点：</p>
 <pre><code>model_provider = &quot;amazon-bedrock&quot;
 model = &quot;openai.gpt-5.6-sol&quot;
 
 [model_providers.amazon-bedrock.aws]
 region = &quot;us-east-1&quot;</code></pre>
-<p>对于“bedrock-runtime”端点，使用推理配置文件 ID：</p>
+<p>针对 <code>bedrock-runtime</code> 端点，请使用推理配置文件 ID：</p>
 <pre><code>model_provider = &quot;amazon-bedrock-runtime&quot;
 model = &quot;us.openai.gpt-5.6-sol&quot;
 web_search = &quot;disabled&quot;</code></pre>
-<p>在两个端点的环境中设置“AWS_PROFILE”。对于桌面应用程序，请将环境变量放置在 <code>~/.codex/.env</code> 中，因为桌面应用程序可能不会继承 shell 环境变量。如果设置了“AWS_BEARER_TOKEN_BEDROCK”，Codex 在 SSO 配置文件之前使用它，并且调用将归因于该 API 密钥背后的 IAM 用户。当您需要每用户 SSO 归属时请取消设置。</p>
+<p>两个端点都要在环境中设置 <code>AWS_PROFILE</code>。桌面应用请把环境变量放在 <code>~/.codex/.env</code> 里，因为桌面应用可能不会继承 shell 的环境变量。如果设置了 <code>AWS_BEARER_TOKEN_BEDROCK</code>，Codex 会优先于 SSO profile 使用它，调用便归到该 API key 背后的 IAM 用户。需要按用户做 SSO 归因时，请取消该设置。</p>
 <h2>步骤 5：在 CUR 2.0 中启用成本归因</h2>
-<p>从 AWS 计费控制台（计费 → 数据导出 → 创建导出），以每小时或每日的粒度配置以 Parquet 格式传输到 S3。选择“包括调用者身份（IAM 主体）分配数据”以填充“line_item_iam_principal”列。 Bedrock 的 IAM 主要成本跟踪适用于“bedrock-runtime”和“bedrock-mantle”端点。</p>
-<p>在管理账户中创建导出会捕获所有账户的 Bedrock 使用情况。如果您在启动 IAM 委托人归因之前创建了 CUR 2.0 数据导出，则必须在选择调用者身份选项的情况下创建新导出。</p>
-<p>用户登录并至少进行一次 Bedrock 呼叫后激活成本分配标签。仅当委托人拨打电话后，标签才会出现在账单中。在管理账户中，打开账单 → 成本分配标签，按 IAM 主体类型进行筛选，然后激活“Team”和“CostCenter”：</p>
+<p>在 AWS Billing Console（Billing → Data Exports → Create export）中，配置以 Parquet 格式、按小时或按天的粒度投递到 S3。选择 “Include caller identity (IAM principal) allocation data”，即可填充 <code>line_item_iam_principal</code> 列。Bedrock 的 IAM 委托人成本跟踪对 <code>bedrock-runtime</code> 和 <code>bedrock-mantle</code> 两个端点都适用。</p>
+<p>在管理账户中创建导出，可以覆盖所有账户的 Bedrock 用量。如果你在 IAM 委托人归因功能上线之前就创建过 CUR 2.0 数据导出，必须新建一个勾选了调用者身份选项的导出。</p>
+<p>等用户登录并至少发起过一次 Bedrock 调用之后，再激活成本分配标签——委托人发起调用之后，标签才会出现在 Billing 里。在管理账户中打开 Billing → Cost allocation tags，按 IAM principal 类型筛选，激活 <code>Team</code> 和 <code>CostCenter</code>：</p>
 <pre><code>aws ce update-cost-allocation-tags-status \
 --cost-allocation-tags-status TagKey=Team,Status=Active
 aws ce update-cost-allocation-tags-status \
 --cost-allocation-tags-status TagKey=CostCenter,Status=Active</code></pre>
-<p>标签最多允许 24 小时显示，最多 48 小时才能在 CUR 2.0 和 Cost Explorer 中查看。激活不具有追溯力。 Bedrock 分别对输入、输出、缓存读取和缓存写入令牌进行计量和计费。一个 IAM 主体下的一小时活动通常会产生 4 个 CUR 行。</p>
-<h2>步骤 6：使用 Amazon Athena 查询成本数据</h2>
-<p>将 CUR 2.0 交付到 S3 并配置 Athena 表后，即可按照您所需的粒度查询使用情况和成本。以下查询提取每个用户的成本：</p>
+<p>标签最多需要 24 小时才会出现，最多 48 小时才能在 CUR 2.0 和 Cost Explorer 中看到；激活不会追溯生效。Bedrock 对输入、输出、缓存读取和缓存写入 token 分别计量、分别计费。同一个 IAM 委托人下一小时的活动，通常会产生 4 行 CUR 记录。</p>
+<h2>步骤 6：用 Amazon Athena 查询成本数据</h2>
+<p>CUR 2.0 投递到 S3、Athena 表也配好之后，就能按需要的粒度查询用量与成本。下面的查询提取每位用户的成本：</p>
 <pre><code>SELECT
   regexp_extract(line_item_iam_principal, 'assumed-role/[^/]+/(.+)$', 1) AS user_name,
   line_item_usage_type,
@@ -1022,7 +1022,7 @@ WHERE line_item_product_code IN ('AmazonBedrock', 'AmazonBedrockService')
   AND billing_period = '2026-09'
 GROUP BY 1, 2
 ORDER BY total_cost_usd DESC;</code></pre>
-<p>对于每个成本中心的每日支出趋势：</p>
+<p>按成本中心查看每日支出趋势：</p>
 <pre><code>SELECT
     DATE(line_item_usage_start_date) AS usage_date,
     element_at(tags, 'iamPrincipal/CostCenter') AS cost_center,
@@ -1034,51 +1034,51 @@ WHERE line_item_product_code IN ('AmazonBedrock', 'AmazonBedrockService')
     AND billing_period = '2026-09'
 GROUP BY 1, 2
 ORDER BY 1, daily_cost_usd DESC;</code></pre>
-<p>雅典娜通过扫描数据收费。 Columnar Parquet 和“billing_period”过滤器使查询成本低廉。</p>
+<p>Athena 按扫描的数据量计费。列式 Parquet 加上 <code>billing_period</code> 过滤，能让查询保持低成本。</p>
 <h2>步骤 7：可视化</h2>
-<p>AWS Cost Explorer 需要零设置。一旦标签被激活，就按标签分组。 AWS Quick Sight 连接到 Athena 以获得交互式仪表板，并提供异常检测功能，可针对意外支出高峰发出警报。您可以与 <a href="https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-cost-attribution-with-amazon-athena-and-cudos/">CUDOS 仪表板</a> 集成，这是一个开源云智能仪表板 (CID) 框架，可提供详细的成本洞察。带有 Athena 插件的 Grafana 将 CUR 数据与现有基础设施指标一起呈现为时间序列。</p>
-<h2>实施每个用户的使用控制</h2>
-<p>一旦通过 CUR 2.0 中的 IAM 主体归因建立了每用户成本可见性，组织就需要执行机制来帮助防止不受控制的累积。目前存在多种方法，每种方法都存在针对操作复杂性的交易执行延迟。</p>
-<p><strong>包含预算操作的 AWS 预算</strong>是最轻的选项，无需自定义基础设施。设置由 IAM 主体标签过滤的预算阈值，并附加在违反阈值时触发的操作（例如应用拒绝策略）。权衡：AWS 预算每天最多更新 3 次，而 Bedrock 费用可能需要长达 24 小时才能出现在账单数据中，因此高速用户可能会在强制生效之前超支最多一天。</p>
-<p><strong>Amazon CloudWatch 警报和 AWS Lambda</strong> 使用按模型 ID 或推理配置文件过滤的 Bedrock 原生 CloudWatch 指标（“InputTokenCount”、“OutputTokenCount”、“调用”）提供近乎实时的执行。执行延迟降至 1-5 分钟。要使用此方法获得用户级粒度，请使用应用程序推理配置文件或每用户角色。</p>
-<p><strong>基于 Amazon DynamoDB 的配额跟踪</strong> 在身份验证层实施限制。 Lambda 函数会增加 DynamoDB 中的每用户令牌计数器，并在超出限制后保留凭证。强制执行在下一次凭证刷新时生效，而不是在单个 API 调用上生效，但消除了基于预算的方法中固有的计费数据滞后。</p>
-<p><strong>LLM 网关代理</strong> 跨 Bedrock 模型和 SDK 工作负载提供每次调用阻塞，但代价是操作复杂性最高，​​并且每个请求的延迟都增加。请参阅<a href="https://aws.amazon.com/blogs/machine-learning/multi-provider-generative-ai-gateway/">多提供商生成式 AI 网关</a>。</p>
-<p>组织通常会对这些选项进行分层：用于报告的 CUR 2.0、用于实时控制的网关或基于 DynamoDB 的实施以及作为后盾的 AWS 预算。有关完整参考，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-management.html">如何限制 Amazon Bedrock 上的使用量和成本</a>。</p>
-<p>＃＃ 结论</p>
-<p>Amazon Bedrock 的 IAM 主要归因功能让您可以跟踪每个通过 Bedrock 路由推理的 AI 开发人员和生产力工具的每用户成本，无需自定义凭证脚本、每用户 IAM 角色或其他基础设施。用户使用“aws sso login”进行身份验证，这与他们用于其他 AWS 访问的流程相同，并且每个 Bedrock 调用都会自动将其身份带入账单数据中。</p>
-<p>每个组件都可以逐步采用。首先将您的 IdP 连接到 Identity Center 并分配 Bedrock 权限集，以立即在 CloudTrail 中获取会话级别归因。激活成本分配标签以在 CUR 2.0 中显示该数据。随着报告需求的增长添加 Athena 查询和仪表板。根据您的组织对执行延迟的容忍度，进行从 AWS 预算到实时网关执行的层使用控制。</p>
-<p>无论您的组织今天采用或明天添加哪种人工智能工具，此处描述的归因和控制机制都在 Bedrock 平台层运行。配置一次，每个调用 Bedrock 的工具都会继承治理。</p>
+<p>AWS Cost Explorer 无需任何配置，标签激活后按标签分组即可。AWS Quick Sight 连接 Athena 提供交互式仪表板，并带有异常检测，可对意外的支出尖峰报警。你还可以集成 <a href="https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-cost-attribution-with-amazon-athena-and-cudos/">CUDOS dashboard</a>——一个开源的 Cloud Intelligence Dashboards (CID) 框架，提供细致的成本洞察。装上 Athena 插件的 Grafana 能把 CUR 数据作为时间序列，与现有基础设施指标并排呈现。</p>
+<h2>实施按用户的使用控制</h2>
+<p>借 CUR 2.0 中的 IAM 委托人归因建立起按用户的成本可见性之后，组织还需要执行机制来防止费用失控累积。目前有多种做法，各自在执行延迟与运维复杂度之间做取舍。</p>
+<p><strong>AWS Budgets 配合预算操作</strong>是最轻量的方案，不需要自建基础设施。设置一个按 IAM 委托人标签筛选的预算阈值，再挂上一个在突破阈值时触发的操作（例如应用 deny 策略）。代价是：AWS Budgets 每天最多更新三次，而 Bedrock 费用最多要 24 小时才会出现在账单数据里，因此高频用户可能在限制生效前就超支最多一整天。</p>
+<p><strong>Amazon CloudWatch 告警与 AWS Lambda</strong> 借助 Bedrock 原生的 CloudWatch 指标（<code>InputTokenCount</code>、<code>OutputTokenCount</code>、<code>Invocations</code>）实现近实时管控，可按模型 ID 或推理配置文件筛选。执行延迟降到 1–5 分钟。要用这种方案拿到用户级粒度，可以配合 Application Inference Profiles 或按用户划分的角色。</p>
+<p><strong>基于 Amazon DynamoDB 的配额跟踪</strong>在认证层执行限制。Lambda 函数在 DynamoDB 里递增按用户统计的 token 计数器，一旦超限就暂不发放凭证。限制在下一次凭证刷新时生效，而非作用于单次 API 调用，但这样消除了基于预算的方案固有的账单数据滞后。</p>
+<p><strong>LLM 网关代理</strong>能在 Bedrock 模型和 SDK 工作负载上做到逐次调用拦截，代价是运维复杂度最高，且每次请求都增加延迟。参见 <a href="https://aws.amazon.com/blogs/machine-learning/multi-provider-generative-ai-gateway/">Multi-Provider Generative AI Gateway</a>。</p>
+<p>组织通常会把这些方案叠加使用：CUR 2.0 用于报表，网关或基于 DynamoDB 的执行用于实时控制，AWS Budgets 兜底。完整参考见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-management.html">如何限制 Amazon Bedrock 的用量与成本</a>。</p>
+<h2>结论</h2>
+<p>Amazon Bedrock 的 IAM 委托人归因，能为每一款经由 Bedrock 路由推理的 AI 开发工具与生产力工具提供按用户的成本跟踪，无需自定义凭证脚本、按用户划分的 IAM 角色或额外基础设施。用户用 <code>aws sso login</code> 认证——与其他 AWS 访问用的是同一套流程——每次 Bedrock 调用都会自动把身份带进账单数据。</p>
+<p>每个组件都可以逐步引入。先把 IdP 接到 Identity Center、分配一个 Bedrock 权限集，立刻就能在 CloudTrail 里拿到会话级归因；再激活成本分配标签，让这些数据在 CUR 2.0 中显现；随着报表需求增长，补上 Athena 查询和仪表板；最后按组织对执行延迟的容忍度，叠加从 AWS Budgets 到实时网关管控的使用控制。</p>
+<p>无论组织今天采用、明天新增哪款 AI 工具，本文讲的归因与控制机制都运行在 Bedrock 平台层。配置一次，所有调用 Bedrock 的工具都会继承这套治理能力。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>使用 Amazon SageMaker HyperPod Data Capture 构建模型改进飞轮</title>
+      <title>用 Amazon SageMaker HyperPod Data Capture 构建模型改进飞轮</title>
       <link>https://aws.amazon.com/blogs/machine-learning/build-a-model-improvement-flywheel-with-amazon-sagemaker-hyperpod-data-capture/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-a-model-improvement-flywheel-with-amazon-sagemaker-hyperpod-data-capture/</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Build a model improvement flywheel with Amazon SageMaker HyperPod Data Capture</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 Amazon SageMaker HyperPod Data Capture 构建模型改进飞轮</h1>
-<p>Amazon SageMaker HyperPod 上部署的基础模型满足任何预先策划的数据集都无法涵盖的输入：特定领域的术语、意外的格式、新产品和不断变化的用户行为。如果没有生产推理数据的记录，团队就无法检测偏差、找到故障模式或使用真实的交互来改进模型。</p>
-<p>Amazon SageMaker HyperPod 现在提供数据捕获，这是一种内置功能，可在三个独立层将实时推理输入和输出记录到 Amazon Simple Storage Service (Amazon S3)，将延迟影响降至最低，对模型可用性的影响为零。</p>
-<p>在这篇文章中，我们将演练单个 SageMaker HyperPod 集群上的一个完整示例。家用电器支持路由器捕获其生产流量，Amazon Athena 查询显示新产品盲点，SQL 策略标记捕获的记录，并对数据进行微调，向路由器通报新产品。我们在部署模型之前和之后测量模型部署之前不可能存在的数据的准确性。推理算子在一个节点上为模型提供服务，训练算子在另一节点上运行微调。</p>
-<p>我们在演练中使用合成数据。脚本、清单、SQL、合成数据集和预期输出可在<a href="https://github.com/awslabs/awsome-distributed-ai/tree/main/examples/use-cases/sagemaker-hyperpod-data-capture-flywheel">随附的 GitHub 存储库</a>中获取。</p>
-<h2>三层数据采集架构</h2>
-<p>HyperPod Data Capture 提供三个独立的层，每个层位于请求路径中的不同点。您可以在同一个“dataCapture”块中打开任意组合。</p>
-<table><thead><tr><th></th><th><strong>第 1 层：SageMaker 端点</strong></th><th><strong>第 2 层：负载均衡器</strong></th><th><strong>第 3 层：模型吊舱</strong></th></tr></thead><tbody><tr><td>捕获了什么</td><td>完整的请求/响应有效负载</td><td>应用程序负载均衡器 (ALB) 访问日志字段：请求行、状态代码、计时、客户端 IP、用户代理</td><td>完整的请求/响应有效负载以及事件元数据</td></tr><tr><td>管理人</td><td>SageMaker 本机数据捕获</td><td>ALB 访问日志</td><td>HyperPod 推理运算符（NGINX + OTel 收集器 + S3 上传边车）</td></tr><tr><td>最适合</td><td>合规性、模型监控、审计</td><td>低成本流量和错误率监控</td><td>调试、分析、培训数据收集</td></tr><tr><td>配置</td><td><code>sagemakerEndpoint:</code> — 采样 %、输入/输出、AWS KMS</td><td><code>loadBalancer: { 启用: true }</code></td><td><code>modelPod:</code> — 采样百分比、输入/输出、缓冲区、最大负载大小、AWS KMS、内容类型</td></tr></tbody></table>
-<p>第 1 层和第 3 层都存储完整的有效负载，因此这两个层都可以将每个记录存储两次。使用第 1 层来实现合规性和模型监控，当您只需要流量元数据时使用第 2 层，当您打算“使用”有效负载时使用第 3 层。这篇文章仅使用第 3 层。由于第 3 层记录了完整的有效负载（其中可能包括名称、地址和订单号），因此请在数据成为训练数据之前对其进行保护。使用采样、AWS Key Management Service (AWS KMS) 加密（<code>kmsKeyId</code>）、S3 生命周期规则和个人身份信息 (PII) 编辑（例如，使用 Amazon Comprehend）。</p>
+<h1>用 Amazon SageMaker HyperPod Data Capture 构建模型改进飞轮</h1>
+<p>部署在 Amazon SageMaker HyperPod 上的基础模型，会遇到任何预先整理好的数据集都覆盖不到的输入：特定领域的行话、意料之外的格式、新产品，以及不断变化的用户行为。如果没有生产推理数据的记录，团队就无法检测漂移、找出失败模式，也无法用真实交互来改进模型。</p>
+<p>Amazon SageMaker HyperPod 现在提供 Data Capture，这是一项内置能力，可在三个独立的层把实时推理的输入和输出记录到 Amazon Simple Storage Service (Amazon S3)，对延迟的影响极小，对模型可用性零影响。</p>
+<p>本文在单个 SageMaker HyperPod 集群上完整演练一个示例。一个家电售后工单路由器捕获自己的生产流量，Amazon Athena 查询暴露出新产品盲区，一条 SQL 策略给捕获记录打上标签，再用这些数据做一次微调，让路由器学会认识新产品。我们在模型部署前根本不可能存在的数据上，测量微调前后的准确率。推理算子在一个节点上提供模型服务，训练算子在另一个节点上运行微调。</p>
+<p>演练使用合成数据。脚本、清单、SQL、合成数据集和预期输出都放在<a href="https://github.com/awslabs/awsome-distributed-ai/tree/main/examples/use-cases/sagemaker-hyperpod-data-capture-flywheel">随附的 GitHub 仓库</a>里。</p>
+<h2>三层 Data Capture 架构</h2>
+<p>HyperPod Data Capture 提供三个独立的层，各自位于请求路径上的不同位置。你可以在同一个 <code>dataCapture</code> 块里开启任意组合。</p>
+<table><thead><tr><th></th><th><strong>第 1 层：SageMaker endpoint</strong></th><th><strong>第 2 层：负载均衡器</strong></th><th><strong>第 3 层：模型 Pod</strong></th></tr></thead><tbody><tr><td>捕获内容</td><td>完整的请求/响应 payload</td><td>Application Load Balancer (ALB) 访问日志字段：请求行、状态码、耗时、客户端 IP、user agent</td><td>完整的请求/响应 payload 以及事件元数据</td></tr><tr><td>管理方</td><td>SageMaker 原生数据捕获</td><td>ALB 访问日志</td><td>HyperPod 推理算子（NGINX + OTel collector + S3 uploader sidecar）</td></tr><tr><td>最适用于</td><td>合规、Model Monitor、审计</td><td>低成本的流量与错误率监控</td><td>调试、分析、训练数据采集</td></tr><tr><td>配置</td><td><code>sagemakerEndpoint:</code> — 采样 %、输入/输出、AWS KMS</td><td><code>loadBalancer: { enabled: true }</code></td><td><code>modelPod:</code> — 采样 %、输入/输出、buffer、最大 payload 大小、AWS KMS、内容类型</td></tr></tbody></table>
+<p>第 1 层和第 3 层都存完整的 payload，两层同时开启会把每条记录存两遍。合规和 Model Monitor 用第 1 层，只需要流量元数据时用第 2 层，打算真正<em>使用</em> payload 时用第 3 层。本文只用第 3 层。由于第 3 层记录的是完整 payload，其中可能包含姓名、地址和订单号，所以要在这些数据变成训练数据之前先做好保护：用采样、AWS Key Management Service (AWS KMS) 加密（<code>kmsKeyId</code>）、S3 生命周期规则，以及 personally identifiable information (PII) 脱敏（例如借助 Amazon Comprehend）。</p>
 <h2>先决条件</h2>
-<ul><li>由 Amazon Elastic Kubernetes Service (Amazon EKS) 编排的 SageMaker HyperPod 集群，安装了推理运算符（<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment-setup.html">设置 HyperPod 集群以进行模型部署</a>）并安装了训练运算符 EKS 插件“amazon-sagemaker-hyperpod-training-operator” （<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-eks-operator-install.html">安装训练运算符</a>）。</li><li><strong>两个可用的 NVIDIA GPU</strong>，一个用于服务，一个用于训练。我们使用“ml.g6e.8xlarge”进行服务，使用“ml.g6e.xlarge”进行训练（每个 48 GB NVIDIA L40S）。服务 Pod 在端点的生命周期内保留其 GPU，因此只有一个 GPU 时，训练 Pod 会保持“待处理”状态。</li><li>为集群配置的“kubectl”。</li><li>同一区域中的 S3 存储桶。</li></ul>
-<p>确认两个操作员均已安装。该命令返回两行：</p>
+<ul><li>一个由 Amazon Elastic Kubernetes Service (Amazon EKS) 编排的 SageMaker HyperPod 集群，已安装推理算子（<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment-setup.html">为模型部署设置 HyperPod 集群</a>），并已安装训练算子的 EKS add-on <code>amazon-sagemaker-hyperpod-training-operator</code>（<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-eks-operator-install.html">安装训练算子</a>）。</li><li><strong>两块可用的 NVIDIA GPU</strong>，一块用于提供服务，一块用于训练。我们用 <code>ml.g6e.8xlarge</code> 提供服务、<code>ml.g6e.xlarge</code> 做训练（各配一块 48 GB NVIDIA L40S）。提供服务的 Pod 在 endpoint 的整个生命周期里一直占着它的 GPU，所以只有一块 GPU 时，训练 Pod 会一直停在 <code>Pending</code>。</li><li>已为该集群配置好 <code>kubectl</code>。</li><li>同一区域里的一个 S3 存储桶。</li></ul>
+<p>确认两个算子都已安装。该命令返回两行：</p>
 <pre><code>kubectl get crd | grep -E 'inferenceendpointconfigs|hyperpodpytorchjobs'
 hyperpodpytorchjobs.sagemaker.amazonaws.com                         2026-09-21T10:57:14Z
 inferenceendpointconfigs.inference.sagemaker.aws.amazon.com         2026-08-06T11:58:53Z</code></pre>
-<h2>解决方案概述</h2>
-<p>下图显示了在一个 SageMaker HyperPod 集群上演练的五个步骤：捕获对 Amazon S3 的每个请求和响应，使用 Athena 分析捕获，使用 SQL 策略标记它们，使用第二个 GPU 上的训练运算符进行微调，以及在捕获仍处于打开状态的情况下并排重新部署。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22239-1.png" alt="一个 SageMaker HyperPod 集群的架构：服务 Pod 中的捕获代理将请求复制到 Amazon S3，Athena 分析并标记这些请求，训练作业在第二个 GPU 上进行微调，第二个端点通过捕获为新模型提供服务上。"></p>
-<p>图 1：单个 SageMaker HyperPod 集群上的五步飞轮，从捕获到 Athena 分析、标记、微调和重新部署</p>
-<p>推理运算符将三个 sidecar 添加到模型容器中。通过 NGINX 代理的每个请求都会被复制到 OpenTelemetry 收集器、批处理并通过 Mountpoint-S3 卷写入 S3。 Athena 就地读取这些文件。训练操作员在第二个 GPU 上作为“HyperPodPyTorchJob”运行微调，新模型由也启用捕获的第二个端点提供服务。</p>
+<h2>方案概览</h2>
+<p>下图展示了在单个 SageMaker HyperPod 集群上完成演练的五个步骤：把每个请求和响应都捕获到 Amazon S3、用 Athena 分析捕获结果、用一条 SQL 策略打标签、借训练算子在第二块 GPU 上微调，以及在捕获仍开启的情况下并排重新部署。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22239-1.png" alt="单个 SageMaker HyperPod 集群的架构：提供服务的 Pod 里的捕获代理把请求复制到 Amazon S3，Athena 分析并打标签，训练作业在第二块 GPU 上微调，第二个 endpoint 在捕获开启的状态下提供新模型的服务。"></p>
+<p>图 1：单个 SageMaker HyperPod 集群上的五步飞轮，从捕获、Athena 分析、打标签、微调到重新部署</p>
+<p>推理算子给模型 Pod 加三个 sidecar。穿过 NGINX 代理的每个请求都会被复制到 OpenTelemetry collector，批量处理后经一个 Mountpoint-S3 卷写入 S3。Athena 就地读取这些文件。训练算子把微调作为 <code>HyperPodPyTorchJob</code> 跑在第二块 GPU 上，新模型由同样开启捕获的第二个 endpoint 提供服务。</p>
 <h3>第 0 步：设置变量</h3>
-<p>后面的每一步都会阅读这些内容。编辑第一个块，然后粘贴整个内容：</p>
+<p>后面每一步都会用到这些变量。改好第一块，再把整段一起粘贴：</p>
 <pre><code># --- edit these ---
 export EKS_CLUSTER_NAME=&quot;my-hyperpod-eks&quot;
 export AWS_REGION=&quot;us-east-1&quot;
@@ -1093,19 +1093,19 @@ export MODEL_V2_LOCATION=&quot;models/qwen2.5-3b-router-v2&quot;
 export TRAIN_SA=&quot;flywheel&quot;                     # service account with S3 access via EKS Pod Identity
 aws eks update-kubeconfig --name &quot;$EKS_CLUSTER_NAME&quot; --region &quot;$AWS_REGION&quot;
 render() { python3 -c 'import os,sys; sys.stdout.write(os.path.expandvars(sys.stdin.read()))'; }</code></pre>
-<h3>步骤 1：在 S3 中暂存基础模型</h3>
-<p>我们使用“Qwen2.5-3B-Instruct”，因为它足够小，可以在大约一分钟内进行微调，并且适合单个 L40S。</p>
+<h3>第 1 步：把基础模型暂存到 S3</h3>
+<p>我们用 <code>Qwen2.5-3B-Instruct</code>，因为它小到大约一分钟就能微调完，而且单块 L40S 放得下。</p>
 <pre><code>pip install -q huggingface_hub
 python3 -c &quot;from huggingface_hub import snapshot_download; \
   snapshot_download('Qwen/Qwen2.5-3B-Instruct', local_dir='qwen2.5-3b-instruct')&quot;
 aws s3 sync qwen2.5-3b-instruct &quot;s3://${BUCKET}/${MODEL_LOCATION}/&quot; --exclude &quot;.cache/*&quot;</code></pre>
-<h3>步骤 2：IAM 权限</h3>
-<p>四个身份需要访问。有关策略声明，请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment-data-capture.html">HyperPod 上的推理数据捕获</a>。</p>
-<ul><li><strong>Mountpoint-S3 CSI 驱动程序角色。</strong> 第 3 层捕获通过 Mountpoint-S3 卷进行写入，并且驱动程序作为其自己的服务帐户 (IRSA) 角色的 IAM 角色（而不是 Pod 的服务帐户）进行身份验证。它需要捕获存储桶上的“s3:PutObject”、“s3:AbortMultipartUpload”和“s3:DeleteObject”，如果设置“kmsKeyId”，还需要“kms:Decrypt”、“kms:GenerateDataKey”和“kms:DescribeKey”。如果缺少此项，端点将保持健康并且请求成功，但不会出现任何捕获。请参阅 <a href="https://docs.aws.amazon.com/eks/latest/userguide/s3-csi.html">Amazon S3 CSI 驱动程序的挂载点</a>。</li><li><strong>推理运算符执行角色。</strong> 如果您设置了“kmsKeyId”，它需要捕获存储桶上的“s3:PutObject”，以及“kms:Decrypt”和“kms:GenerateDataKey”。捕获文件本身是通过 CSI 驱动程序角色写入的，因此当没有捕获出现时，请首先检查该角色。</li><li><strong>训练 Pod 的服务帐户 (</strong><code>$TRAIN_SA</code><strong>)。</strong> 通过 <a href="https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html">EKS Pod Identity</a> 读取基本模型和训练数据的访问权限，以及写入合并模型的访问权限。</li><li><strong>Athena.</strong> 对捕获前缀以及查询结果位置的读取访问权限。</li></ul>
-<h2>启用数据捕获</h2>
-<p>接下来的三个步骤在启用第 3 层捕获的情况下部署路由器，检查 Pod 是否运行捕获边车，并确认记录到达 Amazon S3。</p>
-<h3>步骤 3：在启用第 3 层捕获的情况下部署模型</h3>
-<p>这就是整个功能：“dataCapture.modelPod.enabled: true”块。其他一切都是普通的 vLLM 部署。</p>
+<h3>第 2 步：IAM 权限</h3>
+<p>有四个身份需要权限。策略语句参见 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment-data-capture.html">HyperPod 上的推理数据捕获</a>。</p>
+<ul><li><strong>Mountpoint-S3 CSI driver 角色。</strong> 第 3 层捕获通过 Mountpoint-S3 卷写入，driver 以它自己的 IAM roles for service accounts (IRSA) 角色做认证，而不是用 Pod 的服务账户。它需要在捕获存储桶上有 <code>s3:PutObject</code>、<code>s3:AbortMultipartUpload</code>、<code>s3:DeleteObject</code> 权限；如果设置了 <code>kmsKeyId</code>，还要 <code>kms:Decrypt</code>、<code>kms:GenerateDataKey</code>、<code>kms:DescribeKey</code>。缺了这些，endpoint 依然健康、请求照样成功，但不会出现任何捕获。参见 <a href="https://docs.aws.amazon.com/eks/latest/userguide/s3-csi.html">Mountpoint for Amazon S3 CSI driver</a>。</li><li><strong>推理算子的执行角色。</strong> 它需要在捕获存储桶上有 <code>s3:PutObject</code>；如果设置了 <code>kmsKeyId</code>，还要 <code>kms:Decrypt</code> 和 <code>kms:GenerateDataKey</code>。捕获文件本身是通过 CSI driver 角色写入的，所以没有捕获出现时，先查这个角色。</li><li><strong>训练 Pod 的服务账户（</strong><code>$TRAIN_SA</code><strong>）。</strong> 通过 <a href="https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html">EKS Pod Identity</a> 获得对基础模型和训练数据的读权限，以及对合并后模型的写权限。</li><li><strong>Athena。</strong> 对捕获前缀的读权限，再加一个查询结果存放位置。</li></ul>
+<h2>启用 Data Capture</h2>
+<p>接下来三步会部署开启第 3 层捕获的路由器，确认 Pod 跑起了捕获 sidecar，并核实记录确实到达了 Amazon S3。</p>
+<h3>第 3 步：部署开启第 3 层捕获的模型</h3>
+<p>整个功能就是这个 <code>dataCapture.modelPod.enabled: true</code> 块。其余部分都是一次普通的 vLLM 部署。</p>
 <pre><code>cat &gt; endpoint.yaml &lt;&lt;'YAML'
 apiVersion: inference.sagemaker.aws.amazon.com/v1
 kind: InferenceEndpointConfig
@@ -1152,7 +1152,7 @@ spec:
       limits:   { nvidia.com/gpu: 1 }
 YAML
 render &lt; endpoint.yaml | kubectl apply -f -</code></pre>
-<p>前面的“modelPod”块设置 100% 采样并捕获输入和输出，这是默认值。要调整它，请在“modelPod”下添加以下任意可选字段：</p>
+<p>上面这个 <code>modelPod</code> 块设了 100% 采样，同时捕获输入和输出——这两项本来就是默认值。要调整的话，在 <code>modelPod</code> 下加这些可选字段中的任意几个：</p>
 <pre><code>modelPod:
   enabled: true
   initialSamplingPercentage: 50          # capture 50% of requests (default 100)
@@ -1162,15 +1162,15 @@ render &lt; endpoint.yaml | kubectl apply -f -</code></pre>
   payloadConfig:
     maxPayloadSizeKB: 1024               # truncate payloads larger than this (default: no limit)
   kmsKeyId: &quot;arn:aws:kms:...:key/...&quot;    # encrypt captures at rest</code></pre>
-<h3>第 4 步：等待 Pod</h3>
-<p>启用捕获功能的 Pod 运行 <strong>四个容器</strong>：模型、“sidecar-reverse-proxy”（NGINX）、“otel-collector”和“s3-uploader”。模型容器和 pod 的 app 标签均以 modelName 命名。</p>
+<h3>第 4 步：等待 Pod 就绪</h3>
+<p>开启捕获的 Pod 会跑 <strong>四个容器</strong>：模型、<code>sidecar-reverse-proxy</code> (NGINX)、<code>otel-collector</code> 和 <code>s3-uploader</code>。模型容器和 Pod 的 <code>app</code> 标签都以 <code>modelName</code> 命名。</p>
 <pre><code>kubectl get pods -l app=$ENDPOINT_NAME -o custom-columns=\
 'NAME:.metadata.name,READY:.status.containerStatuses[*].ready,CONTAINERS:.spec.containers[*].name,NODE:.spec.nodeName'
 NAME                            READY                 CONTAINERS                                                              NODE
 appliance-router-849f466476-4f5v8   true,true,true,true   appliance-router,s3-uploader,sidecar-reverse-proxy,otel-collector   hyperpod-i-0f3fe2684afd6a583</code></pre>
-<p>在我们的运行中，pod 在“kubectl apply”后大约五分钟就准备好了，其中大部分时间都花在下载权重上。</p>
-<h3>步骤 5：发送请求并确认占领 S3 中的土地</h3>
-<p>通过端口 <strong>8081</strong> 上的捕获代理发送推理请求，然后在刷新间隔后列出捕获前缀。模型本身侦听端口 8000。发送到那里的请求绕过代理并且不会被捕获。</p>
+<p>在我们的这次运行里，<code>kubectl apply</code> 之后大约五分钟 Pod 才就绪，其中大部分时间花在下载权重上。</p>
+<h3>第 5 步：发一个请求，确认捕获落到 S3</h3>
+<p>通过端口 <strong>8081</strong> 上的捕获代理发一个推理请求，等过一个刷新间隔后，列出捕获前缀。模型本身监听 8000 端口，发到那里的请求会绕过代理，不会被捕获。</p>
 <pre><code>POD=$(kubectl get pod -l app=$ENDPOINT_NAME -o jsonpath='{.items[0].metadata.name}')
 kubectl port-forward &quot;pod/$POD&quot; 18081:8081 &gt;/dev/null 2&gt;&amp;1 &amp;
 sleep 5
@@ -1182,9 +1182,9 @@ curl -s http://localhost:18081/v1/chat/completions \
 echo &quot;Waiting for the capture buffer to flush...&quot;; sleep 75
 aws s3 ls &quot;s3://${BUCKET}/capture/&quot; --recursive | grep '\.jsonl$' | head
 2026-09-28 15:47:14     634356 capture/20e4425092f90c7f/pod/AllTraffic/2026/09/28/15/28-15-47-12-999-ac31d31b-5156-46ad-9ccc-e8a040ab9ab2.jsonl</code></pre>
-<p>您会在“{s3Uri}/{uniqueID}/pod/{variant}/{YYYY}/{MM}/{DD}/{HH}/”下看到一个或多个“.jsonl”对象。每个端点都会生成“uniqueID”。每一行都是 SageMaker 数据捕获格式中的一个推论，如下所示。</p>
-<h3>捕获的记录格式</h3>
-<p>请求和响应主体以 <strong>base64 编码</strong> 的方式存储，如“encoding”字段所示，因此读回它们需要进行 base64 解码，然后解析 JSON：</p>
+<p>你会在 <code>{s3Uri}/{uniqueID}/pod/{variant}/{YYYY}/{MM}/{DD}/{HH}/</code> 下看到一个或多个 <code>.jsonl</code> 对象。<code>uniqueID</code> 按 endpoint 生成。每一行都是一次推理，采用下面这种 SageMaker 数据捕获格式。</p>
+<h3>捕获记录的格式</h3>
+<p>请求体和响应体以 <strong>base64 编码</strong> 存放，<code>encoding</code> 字段就是明证，所以读回来要先做 base64 解码，再解析 JSON：</p>
 <pre><code>{
   &quot;captureData&quot;: {
     &quot;endpointInput&quot;:  { &quot;observedContentType&quot;: &quot;application/json&quot;, &quot;mode&quot;: &quot;INPUT&quot;,
@@ -1195,15 +1195,15 @@ aws s3 ls &quot;s3://${BUCKET}/capture/&quot; --recursive | grep '\.jsonl$' | he
   &quot;eventMetadata&quot;: { &quot;eventId&quot;: &quot;26859f07-d60b-4683-94aa-d21e7f19e746&quot;, &quot;inferenceTime&quot;: &quot;2026-09-28T15:46:09Z&quot; },
   &quot;eventVersion&quot;: &quot;0&quot;
 }</code></pre>
-<p>解码后，“endpointInput.data”是客户端发送的请求正文，“endpointOutput.data”是模型返回的响应。</p>
-<h2>场景：支持票证路由器满足产品发布要求</h2>
-<p>部署的模型是家电零售商的支持票据路由器。它使用 vLLM 引导的 JSON 解码将每张票据分为六个类别之一：“ProductFridge”、“ProductWasher”、“ProductOven”、“ProductDishwasher”、“ProductMicrowave”或包罗万象的“Other”。引导解码意味着它只能返回带有以下标签之一的有效对象：</p>
+<p>解码后，<code>endpointInput.data</code> 是客户端发来的请求体，<code>endpointOutput.data</code> 是模型返回的响应。</p>
+<h2>场景：工单路由器遇上一次新品发布</h2>
+<p>部署的模型是某家电零售商的工单路由器。它用 vLLM 的 guided JSON decoding 把每张工单归到六个类别之一：<code>ProductFridge</code>、<code>ProductWasher</code>、<code>ProductOven</code>、<code>ProductDishwasher</code>、<code>ProductMicrowave</code>，或者兜底的 <code>Other</code>。guided decoding 意味着它只能返回带这些标签之一的有效对象：</p>
 <pre><code>{&quot;category&quot;: &quot;ProductWasher&quot;, &quot;confidence&quot;: 1}</code></pre>
-<p>该型号部署后，零售商推出了自己的空调系列，即 <strong>Arctis</strong> 系列（Arctis 9K、12K、Mini 等）。路由器没有它们的类别。它不能说“这是新的”。它只能选择它所知道的最接近的标签。除非记录每个请求和响应，否则证据在返回响应后就消失了。</p>
+<p>模型部署之后，这家零售商推出了自己的空调产品线——<strong>Arctis</strong> 系列（Arctis 9K、12K、Mini 等）。路由器没有对应它们的类别，它没法说「这是新东西」，只能在自己认识的最接近的标签里挑一个。除非把每个请求和响应都记下来，否则响应一返回，证据就消失了。</p>
 <h3>合成流量</h3>
 <p>我们生成了两个合成数据集：</p>
-<ul><li><strong>生产流量：</strong> 900 张票据，通过捕获代理在 15 分钟内按顺序重播，使用路由器的原始六标签提示。前 400 个是在发布之前发布的，并且没有提到空调。在剩下的 500 个中，Arctis 门票的份额从 15% 上升到 55%。</li><li><strong>评估集：</strong> 280 张标签票，每个类别 40 张，包括新的“ProductAC”。它<em>按内容</em>提供：它使用从未出现在流量中的症状、句子模板和 Arctis 模型名称。</li></ul>
-<p>每个生产请求如下所示（系统提示缩写）：</p>
+<ul><li><strong>生产流量：</strong> 900 张工单，用路由器原来的六标签 prompt，在 15 分钟内通过捕获代理按顺序重放。前 400 张在发布之前，完全没提空调；剩下 500 张里，Arctis 工单的占比从 15% 爬升到 55%。</li><li><strong>评估集：</strong> 280 张带标签的工单，每类 40 张，包含新的 <code>ProductAC</code>。它是<em>按内容</em>独立留出的：用到的症状、句式模板和 Arctis 型号名在流量里从未出现。</li></ul>
+<p>每个生产请求长这样（system prompt 有删节）：</p>
 <pre><code>{&quot;model&quot;: &quot;appliance-router&quot;, &quot;temperature&quot;: 0, &quot;max_tokens&quot;: 40,
  &quot;messages&quot;: [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a support-ticket router for a home-appliance retailer. ... category is one of: ProductFridge, ProductWasher, ProductOven, ProductDishwasher, ProductMicrowave, Other. ...&quot;},
               {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hi, our Arctis 12K blows warm air since last week. Order #66759.&quot;}],
@@ -1211,7 +1211,7 @@ aws s3 ls &quot;s3://${BUCKET}/capture/&quot; --recursive | grep '\.jsonl$' | he
                  &quot;properties&quot;: {&quot;category&quot;: {&quot;enum&quot;: [&quot;ProductFridge&quot;, &quot;ProductWasher&quot;, &quot;ProductOven&quot;,
                                                       &quot;ProductDishwasher&quot;, &quot;ProductMicrowave&quot;, &quot;Other&quot;]},
                                 &quot;confidence&quot;: {&quot;type&quot;: &quot;number&quot;}}}}</code></pre>
-<p>要重放流量，请克隆随附的存储库，生成数据集，然后通过捕获代理发送它们。 <code>scripts/pod.sh</code> 在模型容器内运行客户端，因此不需要负载均衡器或 DNS。客户端打印 Athena 步骤使用的三个时间戳：“RUN_START”、“LAUNCH_TS”（第一个启动后票证）和“RUN_END”。</p>
+<p>要重放流量，先克隆随附的仓库，生成数据集，再通过捕获代理发出去。<code>scripts/pod.sh</code> 把客户端跑在模型容器里，因此不需要负载均衡器或 DNS。客户端会打印出 Athena 各步骤要用的三个时间戳：<code>RUN_START</code>、<code>LAUNCH_TS</code>（发布后第一张工单）和 <code>RUN_END</code>。</p>
 <pre><code>git clone https://github.com/awslabs/awsome-distributed-ai.git
 cd awsome-distributed-ai/examples/use-cases/sagemaker-hyperpod-data-capture-flywheel
 (cd data &amp;&amp; python3 ../scripts/gen_dataset.py)
@@ -1222,12 +1222,12 @@ RUN_START=2026-09-28 15:52:40
 LAUNCH_TS=2026-09-28 15:59:20
 ...
 RUN_END=2026-09-28 16:07:40</code></pre>
-<p>导出运行打印的三个值，然后等待一个刷新间隔：</p>
+<p>把这次运行打印出的三个值导出，再等一个刷新间隔：</p>
 <pre><code>export RUN_START=&quot;2026-09-28 15:52:40&quot; LAUNCH_TS=&quot;2026-09-28 15:59:20&quot; RUN_END=&quot;2026-09-28 16:07:40&quot;
 sleep 75    # one flush interval</code></pre>
-<h2>使用 Amazon Athena 解决问题</h2>
-<p>离线基准测试在发布后看起来仍然没有变化，因为它们已被冻结在过去。这种转变仅在捕获的生产流量中可见。本部分展示了数据科学家如何在不配置任何基础设施的情况下使用 Athena 找到它。</p>
-<h3>步骤 6：设置变量并配置 Athena 辅助函数</h3>
+<h2>用 Amazon Athena 把问题暴露出来</h2>
+<p>发布之后，离线基准看着仍然没变，因为它们被冻在了过去。这种变化只在捕获到的生产流量里看得见。本节展示数据科学家如何在不搭建任何基础设施的前提下，用 Athena 把它找出来。</p>
+<h3>第 6 步：设置变量并配好一个 Athena 辅助函数</h3>
 <pre><code>export ATHENA_DB=&quot;flywheel_demo&quot;
 export ATHENA_OUTPUT=&quot;s3://${BUCKET}/athena-results/&quot;
 # Each endpoint writes under its own uniqueID. Pick the prefix whose captured requests name this
@@ -1262,8 +1262,8 @@ run_athena() {
     --output text --query 'ResultSet.Rows[*].Data[*].VarCharValue'
 }
 run_athena &quot;CREATE DATABASE IF NOT EXISTS ${ATHENA_DB}&quot;</code></pre>
-<h3>步骤 7：向 Athena 声明捕获（两层）</h3>
-<p>第一层是信封。外部表描述了每条记录的外部 JSON，“年/月/日/小时”上的分区投影将每小时的 S3 前缀映射到分区，而无需爬虫或“ADD PARTITION”。 “data”字段被声明为纯字符串，因为它们是 base64 文本。</p>
+<h3>第 7 步：向 Athena 声明捕获数据（两层）</h3>
+<p>第一层是信封。一张外部表描述每条记录的外层 JSON，<code>year/month/day/hour</code> 上的分区投影把按小时划分的 S3 前缀映射到分区，不需要 crawler，也不用 <code>ADD PARTITION</code>。<code>data</code> 字段声明成普通字符串，因为它们是 base64 文本。</p>
 <pre><code>run_athena &quot;
 CREATE EXTERNAL TABLE IF NOT EXISTS inference_captures (
   captureData struct&lt;
@@ -1284,7 +1284,7 @@ TBLPROPERTIES (
   'projection.hour.type'='integer',  'projection.hour.range'='0,23',  'projection.hour.digits'='2',
   'storage.location.template'='${CAPTURE_LOCATION}\${year}/\${month}/\${day}/\${hour}/'
 )&quot;</code></pre>
-<p>第二层是对每条记录解码一次的视图。 <code>from_utf8(from_base64(...))</code> 将有效负载重新转换为 JSON。如果没有它，每次提取都会返回“NULL”。票证是用户消息（“messages[1]”，因为“messages[0]”是系统提示符）。该模型的答案是响应 JSON 中的 JSON 字符串，因此需要进行第二次提取。</p>
+<p>第二层是一个把每条记录解码一次的视图。<code>from_utf8(from_base64(...))</code> 把 payload 还原成 JSON；没有它，每次提取都会返回 <code>NULL</code>。工单就是用户消息（<code>messages[1]</code>，因为 <code>messages[0]</code> 是 system prompt）。模型的答案是响应 JSON 里的一段 JSON 字符串，所以还得再提取一次。</p>
 <pre><code>run_athena &quot;
 CREATE OR REPLACE VIEW preds AS
 WITH decoded AS (
@@ -1304,9 +1304,9 @@ WHERE ts &gt;= timestamp '${RUN_START}' AND ts &lt; timestamp '${RUN_END}'
 run_athena &quot;SELECT count(*) AS n, count_if(predicted_category IS NULL) AS unparsed FROM preds&quot;
 n   unparsed
 900 0</code></pre>
-<p>关于视图的两个注意事项：</p>
-<ul><li><strong>始终在分区上进行过滤。</strong> Athena 读取原始 JSON，因此没有分区过滤器的查询会扫描您捕获的每个对象。视图过滤到一天，并且时间限制将其限制为我们的流量运行：相同的前缀还保存来自步骤 5 的请求。</li><li><code>messages[1]</code> <strong>假设一条系统消息后跟一条用户消息。</strong> 捕获的流量是客户端实际发送的流量，因此请调整多轮或少次请求的提取。</li></ul>
-<h3>第 8 步：类别组合是否发生变化？</h3>
+<p>关于这个视图，有两点要注意：</p>
+<ul><li><strong>一定要按分区过滤。</strong> Athena 读的是原始 JSON，不带分区过滤的查询会把你有史以来捕获的每个对象都扫一遍。这个视图先过滤到某一天，再用时间下界把它限定在这次流量运行内：同一个前缀下还放着第 5 步的那个请求。</li><li><code>messages[1]</code> <strong>假定一条 system message 后面跟一条 user message。</strong> 捕获到的流量是客户端实际发来的东西，遇到多轮或 few-shot 请求，要相应调整提取方式。</li></ul>
+<h3>第 8 步：类别构成在变吗？</h3>
 <pre><code>run_athena &quot;
 SELECT date_trunc('minute', ts) AS minute, count(*) AS tickets,
        count_if(predicted_category = 'Other') AS other,
@@ -1329,12 +1329,12 @@ minute                   tickets  other  other_pct
 2026-09-28 16:05:00.000       60     32       53.3
 2026-09-28 16:06:00.000       60     28       46.7
 2026-09-28 16:07:00.000       40     26       65.0</code></pre>
-<p><em>（输出以制表符分隔。为了便于阅读，我们将其在此处对齐。我们的运行将“周”压缩为 15 分钟。在生产中，按</em> <code>date_trunc('day', ts)</code> <em>或</em> <code>'week'</code> <em>进行存储。）</em></p>
-<p>下图将路由到“其他”的门票的每分钟份额绘制为条形，将累积份额绘制为一条线，并标记了启动。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22239-2.png" alt="路由到其他的票证份额图表。在 Arctis 推出之前，每分钟份额保持在 7% 以下。之后，条形图攀升至 65%，而累积线仅达到 22.6%。"></p>
-<p>图 2：Arctis 启动前后每分钟和累计路由到“其他”的门票份额</p>
-<p>在发布之前，“其他”保持在每分钟 7% 以下。它在启动分钟内跃升至 15%，并持续攀升，在最后三分钟达到 47-65%。图表中的累计线仅达到22.6%，因为它是将上线后的门票与上线前的所有流量进行平均。这就是为什么您要设置警报的是每分钟费率，而不是累积份额。</p>
-<p>在发布时拆分，整个类别组合如下所示：</p>
+<p><em>（输出以制表符分隔。为便于阅读，这里做了对齐。我们这次运行把&quot;几周&quot;压进了 15 分钟。生产环境里请按</em> <code>date_trunc('day', ts)</code> <em>或</em> <code>'week'</code> <em>来分桶。）</em></p>
+<p>下面这张图把每分钟被路由到 <code>Other</code> 的工单占比画成柱子，把累计占比画成一条线，并标出了发布时刻。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/12/ML-22239-2.png" alt="被路由到 Other 的工单占比图。Arctis 发布前，每分钟占比一直低于 7%；发布后柱子爬到 65%，而累计线只到 22.6%。"></p>
+<p>图 2：Arctis 发布前后，被路由到 Other 的工单每分钟占比与累计占比</p>
+<p>发布前，<code>Other</code> 每分钟都在 7% 以下。发布那一分钟跳到 15%，之后继续攀升，最后三分钟到 47–65%。图里的累计线只到 22.6%，因为它把发布后的工单和发布前的全部流量平均在了一起。所以该拿去设告警的是每分钟的比率，而不是累计占比。</p>
+<p>以发布为界拆开看，整体类别构成是这样：</p>
 <pre><code>run_athena &quot;
 SELECT IF(ts &lt; timestamp '${LAUNCH_TS}', '1-before launch', '2-after launch') AS period,
        predicted_category, count(*) AS n
@@ -1352,8 +1352,8 @@ period           predicted_category    n
 2-after launch   ProductDishwasher    64
 2-after launch   ProductWasher        58
 2-after launch   ProductMicrowave     44</code></pre>
-<p>“其他”从推出前的 <strong>4.8%</strong>（400 张中的 19 张）增加到发布后的 <strong>36.8%</strong>（500 张中的 184 张），并成为最大的类别。</p>
-<h3>步骤 9：Other 存储桶内有什么？</h3>
+<p><code>Other</code> 从发布前工单的 <strong>4.8%</strong>（400 张里 19 张）涨到发布后的 <strong>36.8%</strong>（500 张里 184 张），成了最大的类别。</p>
+<h3>第 9 步：Other 这个桶里装的是什么？</h3>
 <pre><code>run_athena &quot;
 SELECT word, count(*) AS freq
 FROM preds CROSS JOIN UNNEST(regexp_extract_all(lower(ticket_text), '[a-z0-9-]{4,}')) AS t(word)
@@ -1372,9 +1372,9 @@ loudly      30
 rattles     30
 wi-fi       30
 blows       28</code></pre>
-<p>“其他”存储桶不是不相关票证的混合。它以一个产品名称“arctis”和冷却设备的词汇为主，这指向路由器没有标签的新类别。</p>
-<h3>步骤 10：它有多大，模型的置信度是否标记了它？</h3>
-<p>在整个流量流中搜索新产品，而不仅仅是“其他”存储桶：</p>
+<p><code>Other</code> 这个桶并不是互不相干的工单混在一起。它由一个产品名 <code>arctis</code> 和制冷设备的词汇主导，指向一个路由器还没有标签的新类别。</p>
+<h3>第 10 步：它有多大？模型的置信度会标出来吗？</h3>
+<p>在整条流量里搜这个新产品，而不只搜 <code>Other</code> 桶：</p>
 <pre><code>run_athena &quot;
 SELECT IF(ts &lt; timestamp '${LAUNCH_TS}', '1-before launch', '2-after launch') AS period,
        predicted_category, count(*) AS n
@@ -1383,9 +1383,9 @@ GROUP BY 1, 2 ORDER BY 1, 3 DESC&quot;
 period          predicted_category    n
 2-after launch  Other               164
 2-after launch  ProductFridge        14</code></pre>
-<p>共有<strong>178张空调票，占全部流量的19.8%。它们在发布之前都没有出现过。</strong>它们分为两类：</p>
-<ul><li><strong>164 转到</strong> <code>Other</code><strong>。</strong> 在六标签模式下，这是<em>正确的</em>答案：<code>Other</code> 正是针对这种情况而存在的。路由器没有坏。分类法缺少类别，因此这些票证到达通用队列，而不是支持该产品的团队。</li><li><strong>14 人去了</strong> <code>ProductFridge</code><strong>。</strong> 这些都是真正的错误路线：冰箱团队现在正在获取空调票。</li></ul>
-<p>现在测试模型对这些已知错误路线的置信度：</p>
+<p>一共 <strong>178 张空调工单，占全部流量的 19.8%。它们在发布前一张都没出现过。</strong> 分成两组：</p>
+<ul><li><strong>164 张进了</strong> <code>Other</code><strong>。</strong> 在六标签体系下，这是<em>正确</em>答案：<code>Other</code> 本来就是为这种情况留的。路由器没坏，是分类体系少了一个类别，于是这些工单进了通用队列，而没到支持该产品的团队手里。</li><li><strong>14 张进了</strong> <code>ProductFridge</code><strong>。</strong> 这些是真正的错路由：冰箱团队现在收到空调工单了。</li></ul>
+<p>现在拿这些已知错路由测一下模型的置信度：</p>
 <pre><code>run_athena &quot;
 SELECT predicted_category, confidence, count(*) AS n FROM preds
 WHERE regexp_like(lower(ticket_text), 'arctis|air condition')
@@ -1398,10 +1398,10 @@ ProductFridge              0.9    9
 ProductFridge              0.8    2
 ProductFridge              0.7    1
 ProductFridge              0.0    1</code></pre>
-<p>在 14 个错误路由的工单中，有 10 个报告置信度为 0.9 或更高。诸如“保持‘置信度&gt;= 0.9’的预测”之类的标签规则将保留 71% 的已知错误标签。这是因为“置信度”是我们要求模型写入的字段，而不是校准的概率。如果您需要真正的不确定性信号，请从 vLLM 请求令牌“logprobs”并读取类别令牌的概率，而不是模型的自我报告。额外负载大小的预算，因为每次响应都会捕获“logprobs”。</p>
-<h2>从诊断到标记训练数据</h2>
-<p>数据科学家不会手工标记数百张票证。相反，他们将 Athena 的发现写下来作为<strong>标签策略</strong>：一个 SQL 视图，为每个捕获的记录分配正确的标签。我们将错误路由的空调票重新标记为新类别。</p>
-<h3>第 11 步：标签政策</h3>
+<p>14 张错路由的工单里，有 10 张报的置信度在 0.9 或以上。像&quot;保留 <code>confidence &gt;= 0.9</code> 的预测&quot;这样的打标规则，会留下 71% 的已知错误标签。原因在于 <code>confidence</code> 是我们让模型自己写的一个字段，并不是校准过的概率。如果真需要不确定性信号，就向 vLLM 请求 token <code>logprobs</code>，去读类别 token 上的概率，而不是信模型的自报。要为此预留额外的 payload 体积，因为每条响应都会把 <code>logprobs</code> 一起捕获下来。</p>
+<h2>从诊断到带标签的训练数据</h2>
+<p>数据科学家不会去手工标注几百张工单。他们会把 Athena 的发现写成一条<strong>标注策略</strong>：一个给每条捕获记录分配更正后标签的 SQL 视图。我们把错路由的空调工单重新标到这个新类别。</p>
+<h3>第 11 步：标注策略</h3>
 <pre><code>run_athena &quot;
 CREATE OR REPLACE VIEW labeled_training_data AS
 WITH t AS (SELECT ticket_text, predicted_category, lower(ticket_text) AS txt FROM preds)
@@ -1418,8 +1418,8 @@ SELECT ticket_text, predicted_category,
     ELSE NULL
   END AS corrected_category
 FROM t&quot;</code></pre>
-<p>双反斜杠 (<code>\\b</code>) 是双引号字符串内的 shell 转义。 Athena 接收“\b”，即正则表达式字边界。</p>
-<p>检查政策产生了什么：</p>
+<p>写成双反斜杠（<code>\\b</code>）是双引号字符串里的 shell 转义。Athena 收到的是 <code>\b</code>，也就是正则表达式的词边界。</p>
+<p>看看这条策略产出了什么：</p>
 <pre><code>run_athena &quot;
 SELECT coalesce(corrected_category, '(human review)') AS label, count(*) AS n,
        count(DISTINCT ticket_text) AS distinct_texts,
@@ -1433,9 +1433,9 @@ ProductOven       140                97          0
 ProductDishwasher 138                95          0
 ProductMicrowave  103                82          0
 Other              39                 8          0</code></pre>
-<p>这种启发式方法之所以有效，是因为新类别是明确的（关键字可识别）。对于不明确的票证或重叠的类别，NULL 行将路由到 Ground Truth 进行人工标记。</p>
-<h3>第 12 步：构建训练文件</h3>
-<p>导出带标签的视图并将其转换为聊天格式 JSONL。允许的类别集现在包括“ProductAC”，重新部署后客户端将发送相同的七标签提示。将其保存为“build_training_file.py”：</p>
+<p>这条启发式规则之所以管用，是因为新类别界限分明（靠关键词就能认出来）。遇到模棱两可的工单或彼此重叠的类别，NULL 行会送到 Ground Truth 由人工标注。</p>
+<h3>第 12 步：生成训练文件</h3>
+<p>把打好标签的视图导出，转成 chat 格式的 JSONL。允许的类别集合现在包含了 <code>ProductAC</code>，也就是重新部署后客户端会发送的那套七标签 prompt。把下面这段存成 <code>build_training_file.py</code>：</p>
 <pre><code>cat &gt; build_training_file.py &lt;&lt;'PY'
 import csv, json, sys
 CATS = [&quot;ProductFridge&quot;, &quot;ProductWasher&quot;, &quot;ProductOven&quot;, &quot;ProductDishwasher&quot;, &quot;ProductMicrowave&quot;, &quot;ProductAC&quot;, &quot;Other&quot;]
@@ -1459,10 +1459,10 @@ aws s3 cp &quot;${ATHENA_OUTPUT}${LAST_QID}.csv&quot; labeled.csv --only-show-er
 python3 build_training_file.py labeled.csv train.jsonl
 aws s3 cp train.jsonl &quot;s3://${BUCKET}/training/train.jsonl&quot;
 wrote 900 training examples -&gt; train.jsonl</code></pre>
-<h2>使用 HyperPod 训练算子对捕获的数据进行微调</h2>
-<p>我们使用第二个 GPU 上的 HyperPod 训练算子对服务模型的同一集群进行微调。第一个端点始终保持服务。</p>
+<h2>用 HyperPod 训练算子在捕获数据上微调</h2>
+<p>我们在提供模型服务的同一个集群上微调，用第二块 GPU 上的 HyperPod 训练算子。第一个 endpoint 全程继续提供服务。</p>
 <h3>第 13 步：训练脚本</h3>
-<p>该脚本从 S3 下载基本模型和训练数据，并训练低阶自适应 (LoRA) 适配器。损失仅在辅助回合中计算，因此模型学习生成标签而不是重复提示。然后，该脚本将适配器合并回基本权重，以便 vLLM 可以保持不变地提供结果，并将合并的模型上传到 S3。该作业将脚本从 ConfigMap 安装到训练 Pod 中。</p>
+<p>这个脚本从 S3 下载基础模型和训练数据，训练一个 low-rank adaptation (LoRA) 适配器。loss 只在 assistant 这一轮上计算，因此模型学的是产出标签，而不是复述 prompt。随后脚本把适配器合并回基础权重，让 vLLM 原样就能提供结果，再把合并后的模型上传到 S3。作业通过 ConfigMap 把脚本挂进训练 Pod。</p>
 <pre><code>cat &gt; train.py &lt;&lt;'PY'
 import os, boto3, torch
 from datasets import load_dataset
@@ -1518,7 +1518,7 @@ for f in os.listdir(&quot;/work/out&quot;):
 print(f&quot;[done] merged model uploaded to {os.environ['OUTPUT_S3']}&quot;, flush=True)
 PY
 kubectl create configmap router-train --from-file=train.py</code></pre>
-<h3>步骤 14：提交 HyperPodPyTorchJob</h3>
+<h3>第 14 步：提交一个 HyperPodPyTorchJob</h3>
 <pre><code>cat &gt; finetune-job.yaml &lt;&lt;'YAML'
 apiVersion: sagemaker.amazonaws.com/v1
 kind: HyperPodPyTorchJob
@@ -1573,8 +1573,8 @@ spec:
 YAML
 render &lt; finetune-job.yaml | kubectl apply -f -
 kubectl logs -l app=router-ft -f</code></pre>
-<ul><li><code>logMonitoringConfiguration</code> <strong>是训练算子的显着特征。</strong> 如果在启动后 20 分钟内没有出现“loss”行，或者在进程仍处于活动状态时日志在运行中安静了 10 分钟，则算子会重新启动作业，而不是让它消耗 GPU 时间。</li><li><strong>该作业在启动时安装三个 Python 包。</strong> 训练节点需要出站互联网访问（例如通过 NAT 网关），从 Docker Hub 拉取“vllm/vllm-openai”映像也需要如此。在没有 Internet 出口的集群上，将包烘焙到 Amazon Elastic Container Registry (Amazon ECR) 中的自定义映像中，然后删除“pip install”。</li></ul>
-<p>工作日志摘录：</p>
+<ul><li><code>logMonitoringConfiguration</code> <strong>是训练算子最有辨识度的能力。</strong> 启动后 20 分钟内没有出现 <code>loss</code> 行，或者运行中进程还活着、日志却安静了 10 分钟，算子就会重启作业，而不是任它白白烧掉 GPU 机时。</li><li><strong>作业启动时会装三个 Python 包。</strong> 训练节点需要出站互联网访问（例如经 NAT gateway），从 Docker Hub 拉取 <code>vllm/vllm-openai</code> 镜像同样需要。在没有公网出口的集群上，得把这些包预先做进 Amazon Elastic Container Registry (Amazon ECR) 的自定义镜像里，并去掉 <code>pip install</code>。</li></ul>
+<p>作业日志摘录：</p>
 <pre><code>{'loss': 0.2484, 'grad_norm': 3.387, 'learning_rate': 3.91e-05, 'epoch': 0.09}
 {'loss': 0.018, 'grad_norm': 0.0037, 'learning_rate': 8.26e-05, 'epoch': 0.18}
 ...
@@ -1584,17 +1584,17 @@ kubectl logs -l app=router-ft -f</code></pre>
 [HyperPodElasticAgent] ... Transitioned from AgentState.RUNNING to AgentState.COMPLETED
 kubectl get hyperpodpytorchjob router-ft -o jsonpath='{range .status.conditions[*]}=  {end}'
 Created=True  Completed=True</code></pre>
-<p>在一台 L40S 上训练需要 <strong>60 秒</strong>。排名 16 的 LoRA 训练了大约 2990 万个参数，不到 31 亿个参数模型的 1%。平均训练损失为 0.0123，每步损失在第一个 epoch 内达到 0.0，这表明该模型可以轻松记住 900 个模板化示例。对于真实数据，进​​行验证拆分并尽早停止。这里我们依赖于保留的评估集。</p>
-<h3>步骤 15：并排部署微调后的模型，捕获仍处于开启状态</h3>
-<p>无需编辑正在运行的端点，而是将新模型作为同一清单中的<strong>第二个端点</strong>部署到刚刚发布的训练作业的 GPU 上。第一个端点将继续提供服务，直到您切换客户端为止，因此重新部署不会导致停机，而回滚意味着将客户端指向第一个端点。</p>
+<p>在一块 L40S 上，训练用了 <strong>60 秒</strong>。rank 16 的 LoRA 训练约 2,990 万个参数，不到这个 31 亿参数模型的 1%。平均训练 loss 是 0.0123，每步 loss 在第一个 epoch 内就到了 0.0，说明模型很容易把 900 个模板化样本记住。换成真实数据，要留出验证集并早停。这里我们靠的是那份留出的评估集。</p>
+<h3>第 15 步：并排部署微调后的模型，捕获继续保持开启</h3>
+<p>不要去改正运行中的 endpoint，而是用同一份清单把新模型部署成<strong>第二个 endpoint</strong>，落到训练作业刚释放的那块 GPU 上。第一个 endpoint 会一直提供服务，直到你把客户端切过去，所以重新部署不会造成停机；要回滚，把客户端指回第一个 endpoint 就行。</p>
 <pre><code>export ENDPOINT_NAME=&quot;appliance-router-v2&quot; MODEL_LOCATION=&quot;$MODEL_V2_LOCATION&quot; SERVE_INSTANCE_TYPE=&quot;$TRAIN_INSTANCE_TYPE&quot;
 render &lt; endpoint.yaml | kubectl apply -f -
 kubectl get pods -l app=$ENDPOINT_NAME -o custom-columns='NAME:.metadata.name,READY:.status.containerStatuses[*].ready,NODE:.spec.nodeName'
 NAME                                  READY                 NODE
 appliance-router-v2-c96594c5-fhs2x    true,true,true,true   hyperpod-i-0e0b756209b5e497a</code></pre>
-<p>新端点在其自己的“uniqueID”下写入捕获。由于“ENDPOINT_NAME”现在是“appliance-router-v2”，因此从步骤 6 重新运行“CAPTURE_LOCATION”查找会找到该前缀，因此您可以将第二个 Athena 表指向它以进行下一轮分析。当您移动客户端时，请在同一版本中更新端点、标签集和引导式 JSON 枚举。</p>
-<h2>测量升力</h2>
-<p>我们针对微调端点运行了相同的 280 个保留票证：</p>
+<p>新 endpoint 把捕获写到自己的 <code>uniqueID</code> 下。由于 <code>ENDPOINT_NAME</code> 现在是 <code>appliance-router-v2</code>，重跑第 6 步的 <code>CAPTURE_LOCATION</code> 查找就会找到那个前缀，于是可以把第二张 Athena 表指向它，做下一轮分析。迁移客户端时，要在同一次发布里一并更新 endpoint、标签集和 guided-JSON enum。</p>
+<h2>衡量提升</h2>
+<p>我们拿同样的 280 张留出工单去跑微调后的 endpoint：</p>
 <pre><code>overall 280/280 = 100.00%
   ProductFridge      40/40
   ProductWasher      40/40
@@ -1603,29 +1603,29 @@ appliance-router-v2-c96594c5-fhs2x    true,true,true,true   hyperpod-i-0e0b75620
   ProductMicrowave   40/40
   ProductAC          40/40
   Other              40/40</code></pre>
-<table><thead><tr><th><strong>公制</strong></th><th><strong>微调之前（启动时）</strong></th><th><strong>微调后</strong></th></tr></thead><tbody><tr><td>保留精度 (280)</td><td>235 (83.9%)</td><td><strong>280 (100%)</strong></td></tr><tr><td><code>产品AC</code> (40)</td><td>0/40 — 全部路由到“其他”</td><td><strong>40/40</strong></td></tr><tr><td><code>其他</code> (40)</td><td>35/40</td><td>35/40 <strong>40/40</strong></td></tr><tr><td>五个既定产品类别 (200)</td><td>200/200</td><td>200/200 200/200</td><td>200/200</td></tr><tr><td>手写探针（24，接下来介绍）</td><td>16/24</td><td>20/24</td><td>20/24</td></tr></tbody></table>
-<p>微调教会了路由器新的类别，并且不会导致五个已建立的类别回归。它还修复了启动前路由器发送到“ProductFridge”的五个“其他”错误。</p>
-<p>因为我们的评估集与训练数据来自同一个生成器，所以我们还手工编写了 24 个探测单，其样式是生成器从未生成的。微调后的模型得分为 20/24：</p>
+<table><thead><tr><th><strong>指标</strong></th><th><strong>微调前（刚上线时）</strong></th><th><strong>微调后</strong></th></tr></thead><tbody><tr><td>留出集准确率 (280)</td><td>235 (83.9%)</td><td><strong>280 (100%)</strong></td></tr><tr><td><code>ProductAC</code> (40)</td><td>0/40 — 全部路由到 <code>Other</code></td><td><strong>40/40</strong></td></tr><tr><td><code>Other</code> (40)</td><td>35/40</td><td><strong>40/40</strong></td></tr><tr><td>五个既有产品类别 (200)</td><td>200/200</td><td>200/200</td></tr><tr><td>手写探针（24，稍后说明）</td><td>16/24</td><td>20/24</td></tr></tbody></table>
+<p>微调让路由器学会了这个新类别，五个既有类别也没有回退。它还修掉了上线前就存在、被当时那个路由器送进 <code>ProductFridge</code> 的 5 个 <code>Other</code> 错误。</p>
+<p>由于评估集和训练数据出自同一个生成器，我们又手写了 24 张探针工单，用生成器从不产出的写法。微调后的模型得分 20/24：</p>
 <pre><code>  MISS ProductFridge -&gt; ProductAC: The cooling fan in my fridge is squealing.
   MISS Other -&gt; ProductAC: When will the Arctis 12K be back in stock?
   MISS Other -&gt; ProductAC: Can I get a quote to install central air in my house?
   MISS Other -&gt; ProductAC: Do you price match the Arctis at other stores?
 overall 20/24 = 83.33%</code></pre>
-<p>它正确路由所有八个空调探针，但它学到了两个快捷方式：“冷却”意味着空调，任何提及 Arctis 的意思都是“ProductAC”，包括库存和价格匹配问题。两者都来自训练数据：标签策略将每张 Arctis 票证发送到“ProductAC”，并且捕获的流量不包含售前问题。启用新端点的捕获后，这些票证正是下一轮捕获收集的内容。</p>
+<p>八张空调探针它全都路由对了，但也学到两条捷径：看到&quot;cooling&quot;就当空调，只要提到 Arctis 就给 <code>ProductAC</code>，连库存和比价问题也算。这两条都来自训练数据：标注策略把每张 Arctis 工单都送去了 <code>ProductAC</code>，而捕获到的流量里没有售前问题。新 endpoint 开着捕获，下一轮捕获收上来的恰恰就是这类工单。</p>
 <h2>捕获会增加多少延迟？</h2>
-<p>我们直接测量了这一点：相同的 400 个路由请求，从 Pod 内部发送到端口 8000（无捕获）或端口 8081（通过捕获代理）。我们在 8 个并发请求下运行了三轮，再加上一轮串行请求：</p>
-<table><thead><tr><th><strong>路径</strong></th><th><strong>并发</strong></th><th><strong>第50页</strong></th><th><strong>第99页</strong></th><th><strong>吞吐量</strong></th></tr></thead><tbody><tr><td>直接进入 vLLM (8000)，无需捕获</td><td>8</td><td>200.7 毫秒</td><td>249.4 毫秒</td><td>39.1 请求/秒</td></tr><tr><td>通过捕获代理（8081）</td><td>8</td><td>200.0 毫秒</td><td>249.8 毫秒</td><td>39.1 请求/秒</td></tr><tr><td>直接进入 vLLM (8000)，无需捕获</td><td>1</td><td>164.4 毫秒</td><td>206.9 毫秒</td><td>6.0 请求/秒</td></tr><tr><td>通过捕获代理（8081）</td><td>1</td><td>164.4 毫秒</td><td>207.0 毫秒</td><td>6.0 请求/秒</td></tr></tbody></table>
-<p><em>并发8时的行数是三轮的平均值。逐轮变化（p50 时 ±1 毫秒）大于两条路径之间的差异。</em></p>
+<p>我们直接测了：同样 400 个路由请求，从 Pod 内部要么发到 8000 端口（不捕获），要么发到 8081 端口（经捕获代理）。8 并发跑了三轮，外加一轮串行：</p>
+<table><thead><tr><th><strong>路径</strong></th><th><strong>并发</strong></th><th><strong>p50</strong></th><th><strong>p99</strong></th><th><strong>吞吐量</strong></th></tr></thead><tbody><tr><td>直连 vLLM (8000)，不捕获</td><td>8</td><td>200.7 ms</td><td>249.4 ms</td><td>39.1 req/s</td></tr><tr><td>经捕获代理 (8081)</td><td>8</td><td>200.0 ms</td><td>249.8 ms</td><td>39.1 req/s</td></tr><tr><td>直连 vLLM (8000)，不捕获</td><td>1</td><td>164.4 ms</td><td>206.9 ms</td><td>6.0 req/s</td></tr><tr><td>经捕获代理 (8081)</td><td>1</td><td>164.4 ms</td><td>207.0 ms</td><td>6.0 req/s</td></tr></tbody></table>
+<p><em>并发为 8 的行是三轮的平均值。轮次之间的波动（p50 上 ±1 ms）比两条路径之间的差异还大。</em></p>
 <h2>捕获数据的其他用途</h2>
-<p>推理数据到达 S3 后，相同的记录会提供给许多工作流程：</p>
-<ul><li><strong>改进模型：</strong> 使用监督微调（此处所示），将大型模型的输出提炼为较小的模型，或构建偏好对以进行直接偏好优化 (DPO)。</li><li><strong>了解模型：</strong> 运行 Athena 分析（如图所示），根据真实提示构建黄金回归集，设置漂移警报，发现新出现的意图，并检测格式错误的输出和拒绝。</li><li><strong>操作和治理：</strong> 将不明确的样本路由到 Ground Truth 进行标记，保留审核跟踪（建议使用第 1 层），重放事件背后的确切输入，并分析流量和有效负载以进行成本归因。</li></ul>
-<h2>成本考虑</h2>
-<table><thead><tr><th><strong>等级</strong></th><th><strong>大概的成本影响</strong></th></tr></thead><tbody><tr><td>第 1 层（SageMaker 端点）</td><td>由 SageMaker 在端点捕获。您支付 S3 存储费用并请求有效负载</td></tr><tr><td>第 2 层（ALB 访问日志）</td><td>仅用于日志文件的 S3 存储</td></tr><tr><td>第 3 层（模型吊舱）</td><td>三个 sidecar 总共请求每个 pod <strong>250m CPU + 640 MiB</strong>（NGINX 代理 100m/128Mi、OTel 收集器 100m/256Mi、<code>s3-uploader</code> 50m/256Mi），加上 S3 存储和有效负载请求</td></tr></tbody></table>
-<p>两种成本随使用情况而变化：</p>
-<ul><li><strong>S3.</strong> 我们的记录平均每条约为 2.3 KB（9.0 MB 中有 3,955 条记录）。较长的提示和响应成本相应更高。上传者在每个 Pod 的每个刷新间隔写入一个对象，每个 Pod 每天大约 1,440 个 PUT，时间为 60 秒。</li><li><strong>Athena</strong> 按扫描的数据收费，因此始终过滤分区列，并使用“CREATE TABLE AS SELECT”(CTAS) 查询将原始 JSON 转换为 Parquet 以进行重复分析。</li></ul>
-<p>有关当前价格，请参阅 <a href="https://aws.amazon.com/s3/pricing/">Amazon S3 定价</a> 和 <a href="https://aws.amazon.com/athena/pricing/">Amazon Athena 定价</a>。</p>
+<p>推理数据落到 S3 之后，同一批记录还能喂给许多工作流：</p>
+<ul><li><strong>改进模型：</strong> 用监督微调（本文演示的），把大模型的输出蒸馏进小模型，或者构造偏好对做 direct preference optimization (DPO)。</li><li><strong>理解模型：</strong> 跑 Athena 分析（本文演示的），用真实 prompt 构建黄金回归集，设置漂移告警，发现新冒出来的意图，检测格式错误的输出和拒答。</li><li><strong>运维与治理：</strong> 把含糊的样本送到 Ground Truth 标注，保留审计轨迹（推荐用第 1 层），重放某次事故背后的原始输入，以及分析流量和 payload 做成本归因。</li></ul>
+<h2>成本考量</h2>
+<table><thead><tr><th><strong>层</strong></th><th><strong>大致的成本影响</strong></th></tr></thead><tbody><tr><td>第 1 层 (SageMaker endpoint)</td><td>由 SageMaker 在 endpoint 处捕获。你为 payload 支付 S3 存储和请求费用</td></tr><tr><td>第 2 层 (ALB 访问日志)</td><td>只为日志文件付 S3 存储费</td></tr><tr><td>第 3 层 (模型 Pod)</td><td>三个 sidecar 合计请求每个 Pod <strong>250m CPU + 640 MiB</strong>（NGINX 代理 100m/128Mi、OTel collector 100m/256Mi、<code>s3-uploader</code> 50m/256Mi），外加 payload 的 S3 存储和请求费用</td></tr></tbody></table>
+<p>有两项成本随用量增长：</p>
+<ul><li><strong>S3。</strong> 我们的记录平均每条约 2.3 KB（9.0 MB 里 3,955 条）。prompt 和响应越长，成本按比例往上走。uploader 每个 Pod 每个刷新间隔写一个对象，按 60 秒算大约每个 Pod 每天 1,440 次 PUT。</li><li><strong>Athena</strong> 按扫描的数据量收费，所以一定要按分区列过滤；反复分析的话，用 <code>CREATE TABLE AS SELECT</code> (CTAS) 查询把原始 JSON 转成 Parquet。</li></ul>
+<p>当前价格参见 <a href="https://aws.amazon.com/s3/pricing/">Amazon S3 定价</a> 和 <a href="https://aws.amazon.com/athena/pricing/">Amazon Athena 定价</a>。</p>
 <h2>清理</h2>
-<p>为了避免产生不必要的费用，请清理本演练中创建的资源：</p>
+<p>为避免产生不必要的费用，把本演练创建的资源清理掉：</p>
 <pre><code>kubectl delete inferenceendpointconfig appliance-router appliance-router-v2
 kubectl delete hyperpodpytorchjob router-ft
 kubectl delete configmap router-train
@@ -1636,11 +1636,11 @@ aws s3 rm &quot;s3://${BUCKET}/athena-results/&quot; --recursive
 aws s3 rm &quot;s3://${BUCKET}/training/&quot; --recursive
 aws s3 rm &quot;s3://${BUCKET}/${MODEL_V2_LOCATION}/&quot; --recursive</code></pre>
 <h2>结论</h2>
-<p>在这篇文章中，我们展示了如何使用 SageMaker HyperPod Data Capture 记录实时推理数据并将其转换为训练数据。通过三个独立层的捕获，您可以：</p>
-<ul><li>收集真实世界的训练数据，对服务延迟没有可测量的影响。</li><li>使用 Amazon Athena 大规模查询推理模式，无需管理基础设施。</li><li>将 Athena 诊断转化为可重现的 SQL 标签策略。</li><li>对捕获的生产数据进行微调并测量硬前/后提升。</li><li>与 HyperPod 训练操作员和 SageMaker Ground Truth 集成以完成循环的其余部分。</li></ul>
-<p>我们在家用电器支持路由器上运行了一整圈循环。捕获的流量揭示了新产品的盲点，SQL 标签策略将这些捕获转化为训练数据。使用 HyperPod 训练操作员进行 60 秒的 LoRA 微调在为模型提供服务的同一集群上运行。它将新类别的召回率从 0% 提高到完全召回，而没有对任何现有类别进行回归。在部署模型之前，这些训练数据都不存在。</p>
-<p>数据捕获现已在带有推理运算符的 SageMaker HyperPod 集群上可用。首先，将“dataCapture”部分添加到“InferenceEndpointConfig”或“JumpStartModel”资源中并进行部署。要关闭同一集群上的循环，请添加“amazon-sagemaker-hyperpod-training-operator”EKS 插件。本演练的完整代码位于<a href="https://github.com/awslabs/awsome-distributed-ai/tree/main/examples/use-cases/sagemaker-hyperpod-data-capture-flywheel">随附的 GitHub 存储库</a>。</p>
-<p>有关更多信息，请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment.html">SageMaker HyperPod 推理文档</a> 和 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-eks-operator.html">HyperPod 训练操作员文档</a>。</p>
+<p>本文展示了如何用 SageMaker HyperPod Data Capture 记录实时推理数据，并把它变成训练数据。捕获在三个独立的层上都可用，你可以：</p>
+<ul><li>收集真实世界的训练数据，对服务延迟没有可测的影响。</li><li>用 Amazon Athena 大规模查询推理模式，无需管理任何基础设施。</li><li>把 Athena 的诊断结论变成一条可复现的 SQL 标注策略。</li><li>在捕获的生产数据上微调，量化出硬碰硬的前后提升。</li><li>接上 HyperPod 训练算子和 SageMaker Ground Truth，把闭环剩下的部分走完。</li></ul>
+<p>我们在一个家电售后工单路由器上跑完了完整一圈闭环。捕获到的流量暴露出新品盲区，一条 SQL 标注策略把这些捕获变成了训练数据。用 HyperPod 训练算子做的 60 秒 LoRA 微调，就跑在提供模型服务的同一个集群上。它把这个新类别的召回率从 0% 拉到全部召回，任何既有类别都没有回退。而这些训练数据，在模型部署之前根本不存在。</p>
+<p>Data Capture 现已在带推理算子的 SageMaker HyperPod 集群上可用。上手时，把 <code>dataCapture</code> 段加进 <code>InferenceEndpointConfig</code> 或 <code>JumpStartModel</code> 资源再部署即可。要在同一集群上把闭环合上，加上 <code>amazon-sagemaker-hyperpod-training-operator</code> 这个 EKS add-on。本演练的完整代码在<a href="https://github.com/awslabs/awsome-distributed-ai/tree/main/examples/use-cases/sagemaker-hyperpod-data-capture-flywheel">随附的 GitHub 仓库</a>里。</p>
+<p>更多内容参见 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment.html">SageMaker HyperPod 推理文档</a> 和 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-eks-operator.html">HyperPod 训练算子文档</a>。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>

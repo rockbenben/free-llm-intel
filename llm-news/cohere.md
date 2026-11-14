@@ -61,7 +61,7 @@
 50. [推出 North Mini Code：Cohere 首个面向开发者的模型](https://cohere.com/blog/north-mini-code)（2026-06-09） <!--orig:Introducing North Mini Code: Cohere’s first model for developers-->
 51. [推出 Command A+：让主权的 agentic 能力惠及所有人](https://cohere.com/blog/command-a-plus)（2026-05-20） <!--orig:Introducing Command A+: Making sovereign agentic capabilities available to all-->
 52. [推出 Cohere Transcribe：开源语音识别的新的先进水平](https://cohere.com/blog/transcribe)（2026-03-26） <!--orig:Introducing Cohere Transcribe: a new state-of-the-art in open-source speech recognition-->
-53. [Cohere 通过 AISLE 和cubic 扩展其主权人工智能平台](https://cohere.com/blog/cohere-expands-its-sovereign-ai-platform-with-aisle-and-cubic) <!--orig:Cohere Expands Its Sovereign AI Platform with AISLE and cubic-->
+53. [Cohere 通过 AISLE 和 cubic 扩展其主权 AI 平台](https://cohere.com/blog/cohere-expands-its-sovereign-ai-platform-with-aisle-and-cubic) <!--orig:Cohere Expands Its Sovereign AI Platform with AISLE and cubic-->
 54. [审视 AI 对工作的影响](https://cohere.com/research/futures-of-work) <!--orig:Future(s) of WorkHow will AI change the way we work?-->
 55. [释放 AI 的潜能，一次一种语言](https://cohere.com/research/aya) <!--orig:Aya ModelsMultilingual AI at scale-->
 56. [塑造 ML 研究的前沿](https://cohere.com/research/scholars-program) <!--orig:Research ScholarsFinding the new generation of ML talent-->

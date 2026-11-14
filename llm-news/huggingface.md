@@ -10,9 +10,9 @@
 
 ## 全部文章（共 932 篇，按日期倒序；无日期条目列于最后）
 
-1. [使用 SimReady Assets 构建机器人拾放模拟](https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place)（2026-11-13） <!--orig:Build a Robot Pick-and-Place Simulation with SimReady Assets-->
-2. [XYBench：帮助解决问题背后的问题](https://huggingface.co/blog/allenai/xybench)（2026-11-13） <!--orig:XYBench: Helping with the problem behind the question-->
-3. [llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem](https://huggingface.co/blog/ggml-org/llama-cpp-v1)（2026-11-13）
+1. [使用 SimReady Assets 构建机器人拾放仿真](https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place)（2026-11-13） <!--orig:Build a Robot Pick-and-Place Simulation with SimReady Assets-->
+2. [XYBench：帮用户解决提问背后的真正问题](https://huggingface.co/blog/allenai/xybench)（2026-11-13） <!--orig:XYBench: Helping with the problem behind the question-->
+3. [llama.cpp v1.0.0：为本地 AI 生态奠定更坚实的基础](https://huggingface.co/blog/ggml-org/llama-cpp-v1)（2026-11-13） <!--orig:llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem-->
 4. [LLMON：一种 LLM 原生标记语言，现已在 Granite 4.1 3B 和 8B 上可用](https://huggingface.co/blog/ibm-granite/llmon-an-llm-native-markup-language-now-in-granite)（2026-11-12） <!--orig:LLMON: An LLM-Native Markup Language, now in Granite 4.1 3B and 8B-->
 5. [3D 生成模型的 fine-tuning 权威指南](https://huggingface.co/blog/3d-lora-finetuning)（2026-11-12） <!--orig:The Definitive Fine-Tuning Guide for 3D Generation Models-->
 6. [BotPsy：基于十亿参数以下 agentic 语言模型的端侧个人助理](https://huggingface.co/blog/qvac/botpsy)（2026-11-11） <!--orig:BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model-->

@@ -9,7 +9,7 @@
 
 ## 全部文章（共 11 篇，按日期倒序；无日期条目列于最后）
 
-1. [MiniMax M3.1 Flash is live on Inference: Day 0](https://inference.net/blog/minimax-m3-1-flash-day-0/)（2026-10-23）
+1. [MiniMax M3.1 Flash 在 Inference 上线：Day 0](https://inference.net/blog/minimax-m3-1-flash-day-0/)（2026-10-23） <!--orig:MiniMax M3.1 Flash is live on Inference: Day 0-->
 2. [AutoEvals 简介：自动找到最适合您任务的模型](https://inference.net/blog/introducing-autoevals/)（2026-08-05） <!--orig:Introducing AutoEvals: Automatically find the best model for your task-->
 3. [Schematron V2：以极低成本实现前沿级 HTML 转 JSON 提取](https://inference.net/blog/schematron-v2/)（2026-04-16） <!--orig:Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost-->
 4. [推理平台简介：监控、训练和部署自我改进的 AI 模型](https://inference.net/blog/introducing-inference-platform/)（2026-04-14） <!--orig:Introducing Inference platform: Monitor, train, and deploy self-improving AI models-->

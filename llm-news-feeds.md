@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-14 19:07:46**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-14 19:43:57**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,7 +26,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [建立永远在线的代理](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13）
+  1. [构建永远在线的 agent](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13）
   2. [面向初创公司的 Claude Tag 指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-13）
   3. [在自己的安全边界内运行 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12）
   4. [J.Crew 借 Claude 将标志性造型理念带到线上](https://claude.com/resources/articles/j-crew-style-advisor-with-claude)（2026-11-12）
@@ -194,9 +194,9 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [使用 SimReady Assets 构建机器人拾放模拟](https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place)（2026-11-13）
-  2. [XYBench：帮助解决问题背后的问题](https://huggingface.co/blog/allenai/xybench)（2026-11-13）
-  3. [llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem](https://huggingface.co/blog/ggml-org/llama-cpp-v1)（2026-11-13）
+  1. [使用 SimReady Assets 构建机器人拾放仿真](https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place)（2026-11-13）
+  2. [XYBench：帮用户解决提问背后的真正问题](https://huggingface.co/blog/allenai/xybench)（2026-11-13）
+  3. [llama.cpp v1.0.0：为本地 AI 生态奠定更坚实的基础](https://huggingface.co/blog/ggml-org/llama-cpp-v1)（2026-11-13）
   4. [LLMON：一种 LLM 原生标记语言，现已在 Granite 4.1 3B 和 8B 上可用](https://huggingface.co/blog/ibm-granite/llmon-an-llm-native-markup-language-now-in-granite)（2026-11-12）
   5. [3D 生成模型的 fine-tuning 权威指南](https://huggingface.co/blog/3d-lora-finetuning)（2026-11-12）
   - 📄 完整文章归档（共 932 篇）：[huggingface.md](llm-news/huggingface.md)
@@ -296,11 +296,11 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [使用 Amazon SageMaker Canvas 在 GS Caltex 进行生产 MLOps，第 1 部分](https://aws.amazon.com/blogs/machine-learning/production-mlops-at-gs-caltex-with-amazon-sagemaker-canvas-part-1/)（2026-11-13）
-  2. [使用 NVIDIA NeMo Switchyard 将编码代理请求路由到 Amazon Bedrock 上的正确模型](https://aws.amazon.com/blogs/machine-learning/route-coding-agent-requests-to-the-right-model-on-amazon-bedrock-with-nvidia-nemo-switchyard/)（2026-11-13）
-  3. [Amazon Bedrock AgentCore 运行时快速会话启动的架构模式](https://aws.amazon.com/blogs/machine-learning/architecture-patterns-for-fast-session-startup-on-amazon-bedrock-agentcore-runtime/)（2026-11-13）
-  4. [OpenFold3 on Amazon SageMaker JumpStart: Predict biomolecular structures](https://aws.amazon.com/blogs/machine-learning/openfold3-on-amazon-sagemaker-jumpstart-predict-biomolecular-structures/)（2026-11-13）
-  5. [Cost-optimizing AssemblyAI speech-to-text inference on AWS with Amazon EC2 Spot](https://aws.amazon.com/blogs/machine-learning/cost-optimizing-assemblyai-speech-to-text-inference-on-aws-with-amazon-ec2-spot/)（2026-11-13）
+  1. [GS Caltex 借助 Amazon SageMaker Canvas 落地生产级 MLOps，第 1 部分](https://aws.amazon.com/blogs/machine-learning/production-mlops-at-gs-caltex-with-amazon-sagemaker-canvas-part-1/)（2026-11-13）
+  2. [使用 NVIDIA NeMo Switchyard 将 coding agent 请求路由到 Amazon Bedrock 上的正确模型](https://aws.amazon.com/blogs/machine-learning/route-coding-agent-requests-to-the-right-model-on-amazon-bedrock-with-nvidia-nemo-switchyard/)（2026-11-13）
+  3. [在 Amazon Bedrock AgentCore runtime 上快速启动会话的架构模式](https://aws.amazon.com/blogs/machine-learning/architecture-patterns-for-fast-session-startup-on-amazon-bedrock-agentcore-runtime/)（2026-11-13）
+  4. [Amazon SageMaker JumpStart 上的 OpenFold3：预测生物分子结构](https://aws.amazon.com/blogs/machine-learning/openfold3-on-amazon-sagemaker-jumpstart-predict-biomolecular-structures/)（2026-11-13）
+  5. [借助 Amazon EC2 Spot 优化 AWS 上 AssemblyAI 语音转文本推理的成本](https://aws.amazon.com/blogs/machine-learning/cost-optimizing-assemblyai-speech-to-text-inference-on-aws-with-amazon-ec2-spot/)（2026-11-13）
   - 📄 完整文章归档（共 212 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)
@@ -421,7 +421,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-inference_net.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-inference_net.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [MiniMax M3.1 Flash is live on Inference: Day 0](https://inference.net/blog/minimax-m3-1-flash-day-0/)（2026-10-23）
+  1. [MiniMax M3.1 Flash 在 Inference 上线：Day 0](https://inference.net/blog/minimax-m3-1-flash-day-0/)（2026-10-23）
   2. [AutoEvals 简介：自动找到最适合您任务的模型](https://inference.net/blog/introducing-autoevals/)（2026-08-05）
   3. [Schematron V2：以极低成本实现前沿级 HTML 转 JSON 提取](https://inference.net/blog/schematron-v2/)（2026-04-16）
   4. [推理平台简介：监控、训练和部署自我改进的 AI 模型](https://inference.net/blog/introducing-inference-platform/)（2026-04-14）

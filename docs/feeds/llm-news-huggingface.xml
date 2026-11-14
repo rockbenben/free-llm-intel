@@ -9,317 +9,317 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>使用 SimReady Assets 构建机器人拾放模拟</title>
+      <title>使用 SimReady Assets 构建机器人拾放仿真</title>
       <link>https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</link>
       <guid isPermaLink="true">https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Build a Robot Pick-and-Place Simulation with SimReady Assets</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
-<h1>使用 SimReady Assets 构建机器人拾放模拟</h1>
-<p>企业+文章</p>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
+<h1>使用 SimReady Assets 构建机器人拾放仿真</h1>
+<p>企业 + 文章</p>
 <p>发布于 2026 年 11 月 13 日</p>
 <p>14</p>
-<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
 <p><a href="https://huggingface.co/dillonb-nv"><img src="https://huggingface.co/avatars/ef260ce572881087d516bcf632928740.svg" alt="Dillon Bailey 的头像"></a></p>
-<p>狄龙·贝利</p>
-<p>狄龙B-NV</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p>Dillon Bailey</p>
+<p>dillonb-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
 <p><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt="Pomi Lee 的头像"></a></p>
-<p>波米·李</p>
-<p>波米莱</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/rchadha-nv"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kaRxLMenXEARG7KGBZJUh.png" alt="Rishabh Chadha 的头像"></a></p>
-<p>里沙卜·查达</p>
-<p>查达-NV</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p>[![figure-01-pick-and-place-highlight](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWI KZEQ8kuWKZtoyM.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif)</p>
-<p>本演练展示了使用 [UR17G臂]（https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda），[Robotiq 2F-140抓手]（https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda）和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料can</a> 在 Isaac Sim 中构建场景，检查它们的行为，并使用代理生成的控件运行拾取和放置示例。</p>
-<p>对于机器人工作流程，SimReady 意味着已准备好 OpenUSD 资产，并具有定义的模拟用例所需的属性，例如碰撞、质量、关节和关节驱动器。 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 是 Hugging Face 上的一个开放资产库，可让您通过编写的模拟属性和配置文件验证证据重复使用机器人和对象资产。有关该库及其发布的更多信息，请阅读<a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">公告博客</a>。</p>
-<h2>是什么让机器人资产 SimReady 成为可能？</h2>
-<p><a href="https://nvidia.github.io/simready-foundation/">SimReady Foundation</a> 定义了 OpenUSD 资产模拟用例所需的功能。其规格连接三个层面：</p>
-<ul><li>配置文件：用例的一组特征，例如机器人身体。</li><li>功能：用例所需的功能，例如可以控制的关节。</li><li>要求：检查每个功能所需的设置，例如关节的驱动设置。</li></ul>
-<p>对于此任务，这些属性包括手臂和夹具的关节以及饮料罐资产的碰撞和质量。验证根据配置文件的要求检查这些设置。然后，模拟测试组装好的机器人是否可以使用它们来拾取和移动罐子。</p>
-<h2>资产附带什么，您添加了什么？</h2>
-<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>，<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a>和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料can</a>包包含模型及其模拟设置。您组装场景并添加任务代码来定义手臂-夹具组件、工作表面、起始位置以及用于移动手臂和打开和关闭夹具的控件。</p>
-<p>[！[图2](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png )](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png)</p>
-<p><em>图 2.SimReady Central 提供资产模型和模拟设置，示例场景和控件定义拾放任务。</em></p>
-<h2>在运行拾放任务之前应该检查什么？</h2>
-<p>机器人在 Isaac Sim 中静止时看起来可能看起来正确，但在模拟运行时会错误地移动或与对象交互。在运行拾放之前，测试其接头、运动和接触行为。您可以要求代理执行这些测试或在 Isaac Sim 中手动执行这些测试。</p>
-<ul><li><strong>关节设置：</strong> 检查手臂和夹具的关节限制和驱动设置。</li><li><strong>运动：</strong> 测试小臂运动并打开和关闭夹具。</li><li><strong>接触：</strong> 确认罐子放在工作表面上而不会掉落。</li></ul>
-<p>在拾取和放置过程中，观察当手臂移动时饮料是否可以留在夹具中。资源结构各不相同，因此请使用加载场景中的设置作为起点。我们将在下面的步骤中完成下载资源和构建场景的整个过程。</p>
-<h2>在 Isaac Sim 中构建拾放模拟</h2>
-<p>此示例结合了 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> 手臂、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹具和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料可以</a>在艾萨克·西姆。任务是抓住罐子，举起它，将其移动到目标，然后释放它。您还可以利用 <a href="http://nvidia-simready-central.hf.space">SimReady Central Space</a> 搜索服务端点来查找 OEM 策划的内容。</p>
-<p>我们还将使用前沿 AI 模型来帮助在开放的 Isaac Sim 场景中创建和运行任务代码。在此示例中，我们使用 GPT-6 Sol，但如果另一个代理和模型组合可以加载所需的技能并针对 Isaac Sim 执行 Python（生成的代码和结果可能会有所不同），则它也可能有效。提示提供了一个起点。在调整任务之前检查生成的代码并检查结果行为。</p>
+<p>Pomi Lee</p>
+<p>pomilee</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/rchadha-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kaRxLMenXEARG7KGBZJUh.png" alt="Rishabh Chadha 的头像"></a></p>
+<p>Rishabh Chadha</p>
+<p>rchadha-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif" alt="figure-01-pick-and-place-highlight"></a></p>
+<p>这篇演练展示了一个饮料罐拾放任务：用 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G 机械臂</a>、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140 夹爪</a>和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>在 Isaac Sim 中搭建场景，检查它们的行为，并用 agent 生成的控制逻辑跑一个拾放示例。</p>
+<p>在机器人工作流里，SimReady 指的是 <a href="https://www.nvidia.com/en-us/glossary/openusd/">OpenUSD</a> 资产已经按某个明确的仿真用例配置好所需属性，例如碰撞、质量、关节和关节驱动。<a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 是 Hugging Face 上的一个开放资产库，让你复用带有编写好的仿真属性和 profile 验证证据的机器人与物体资产。想进一步了解该库及其发布，请读<a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">公告博客</a>。</p>
+<h2>机器人资产怎样才算 SimReady？</h2>
+<p><a href="https://nvidia.github.io/simready-foundation/">SimReady Foundation</a> 规定了 OpenUSD 资产在某个仿真用例下需要具备哪些特性。其规范把三个层次串起来：</p>
+<ul><li>Profile：针对某个用例的一组特性，例如机器人本体。</li><li>Features：该用例所需的能力，例如可控制的关节。</li><li>Requirements：对每项特性所需设置的检查，例如关节的驱动设置。</li></ul>
+<p>对本任务而言，这些属性包括机械臂和夹爪的关节，以及饮料罐资产的碰撞与质量。验证会按 profile 的要求检查这些设置；随后仿真再测试组装好的机器人能否用它们抓起并搬动罐子。</p>
+<h2>资产自带什么，你又需要补什么？</h2>
+<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>这三个包里带有模型及其仿真设置。你需要组装场景，再添加任务代码来定义机械臂–夹爪组合、工作表面、起始位置，以及移动机械臂、开合夹爪的控制逻辑。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png" alt="图 2"></a></p>
+<p><em>图 2. SimReady Central 提供资产模型与仿真设置，示例场景和控制逻辑定义拾放任务。</em></p>
+<h2>运行拾放任务前该检查什么？</h2>
+<p>机器人在 Isaac Sim 里静止时看着可能没问题，但仿真一跑起来，移动或跟物体交互就可能出错。运行拾放之前，先测试它的关节、运动和接触行为。你可以让 agent 做这些测试，也可以在 Isaac Sim 里手动完成。</p>
+<ul><li><strong>关节设置：</strong> 检查机械臂与夹爪的关节限位和驱动设置。</li><li><strong>运动：</strong> 测试一次小幅机械臂移动，并开合夹爪。</li><li><strong>接触：</strong> 确认罐子稳稳放在工作面上，不会穿下去。</li></ul>
+<p>拾放过程中，留意机械臂移动时饮料罐是否一直留在夹爪里。资产结构各不相同，请以你已加载场景里的设置为起点。下面几步会走一遍下载资产、搭建场景的完整流程。</p>
+<h2>在 Isaac Sim 中搭建拾放仿真</h2>
+<p>此示例在 Isaac Sim 里把 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> 机械臂、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹爪和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>组合起来。任务是抓住罐子、抬起、移到目标位置再松开。你也可以借助 <a href="http://nvidia-simready-central.hf.space">SimReady Central Space</a> 的搜索服务端点查找 OEM 精选内容。</p>
+<p>我们还会用一个前沿 AI 模型，帮忙在打开的 Isaac Sim 场景里编写并运行任务代码。本例用的是 GPT-6 Sol；只要别的 agent 与模型组合能加载所需 skills、并针对 Isaac Sim 执行 Python，也同样可行（生成的代码和结果可能有差异）。prompt 只是一个起点。改造任务之前，先检查生成的代码，核对实际行为。</p>
 <p><strong>所需软件：</strong></p>
-<ul><li>安装本示例使用的版本 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim</a> 6.2，并检查其系统要求。</li><li>设置您选择的可以使用艾萨克·西姆技能的特工。按照 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">代理技能文档</a> 为您的代理提供捆绑技能。</li><li>仅当您选择命令行资源下载选项时才安装 <a href="https://huggingface.co/docs/huggingface_hub/guides/cli">Hugging Face CLI</a>。</li><li>使用<a href="http://nvidia-simready-central.hf.space">美元搜索端点</a>。</li></ul>
-<h2>第 1 步：下载机器人手臂、夹具和饮料罐资产</h2>
-<p>打开<a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>并找到<a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>手臂，<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹具和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料可以</a>在这里使用。在每个资源上选择“下载”，然后使用“保存到文件夹”或提供的“Hugging Face”命令。保持所有三个完整的资产文件夹完好无损，以便 Isaac Sim 可以找到其支持文件。</p>
-<p>使用本示例中链接的资产版本，并向您的代理提供手臂、夹具和饮料罐的本地 USD 文件路径。夹具路径示例如下所示；您的下载位置可能有所不同。</p>
+<ul><li>安装本例所用的 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim</a> 6.2，并确认其系统要求。</li><li>搭一个你选的、能使用 Isaac Sim skills 的 agent。按 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Agent Skills 文档</a>把随附的 skills 提供给你的 agent。</li><li>只有在你选择用命令行下载资产时，才需要安装 <a href="https://huggingface.co/docs/huggingface_hub/guides/cli">Hugging Face CLI</a>。</li><li>使用 <a href="http://nvidia-simready-central.hf.space">USD Search endpoint</a>。</li></ul>
+<h2>第 1 步：下载机械臂、夹爪和饮料罐资产</h2>
+<p>打开 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 并找到 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> 机械臂、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹爪和本文用到的<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>。在每个资产上点 Download，再用 Save to folder 或给出的 Hugging Face 命令。三个完整的资产文件夹都要保持原样，这样 Isaac Sim 才能找到它们的支撑文件。</p>
+<p>使用本例中链接的资产版本，并把机械臂、夹爪和饮料罐的本地 USD 文件路径提供给你的 agent。下面给了一个夹爪路径示例；你的下载位置可能不同。</p>
 <pre><code>~/ASSETS/hf/src/simready-assets-c7fa7615/Robotiq_2F_140/simready_usd/Robotiq_2F_140.usda</code></pre>
-<p>[![figure-05-find-robotiq](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0 DIXx9703.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif)</p>
-<p><em>图 3.SimReady Central 搜索和交互式预览有助于识别本示例中使用的 Robotiq 2F-140 夹具和饮料罐。</em></p>
-<p>[![figure-04-download-assets](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5Qk Q2T4JJzYd.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif)</p>
-<p><em>图 4.饮料罐的下载选项包括将资源包保存到文件夹或使用 Hugging Face CLI。</em></p>
-<h2>资产验证告诉您什么？</h2>
-<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/.metadata/ur17g_1300_validation.json">arm验证报告</a>使用Robot-Body 4.0.0配置文件<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/c7fa7615a353ebac03990208cbc2aa57426f4c48/Robotiq_2F_140/.metadata/Robotiq_2F_140_validation.json">抓取器验证报告</a>使用Robot-Gripper 3.0.0。两者都记录通过了 <a href="https://nvidia.github.io/simready-foundation/latest/features/FET_022_PHYSX.html">PhysX 驱动关节检查</a>，该检查检查关节驱动设置。</p>
-<p>SimReady 配置文件验证为重用这些资产提供了共享基线。然后，拾取和放置运行测试手臂、夹具、罐头和控制器在组装场景中如何协同工作。</p>
-<h2>步骤 2：组装机器人并构建拾放场景</h2>
-<p>下载资产后，使用具有 Isaac Sim 技能的代理来帮助组装机器人、运行验证工具并创建拾取和放置控件。您还可以使用链接的文档手动执行这些步骤。</p>
-<p>从安装目录启动 Isaac Sim，并启用远程 Python 服务器，以便代理可以通过 Python 与模拟进行交互：</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif" alt="figure-05-find-robotiq"></a></p>
+<p><em>图 3. SimReady Central 的搜索与交互式预览，有助于认出本例所用的 Robotiq 2F-140 夹爪和饮料罐。</em></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif" alt="figure-04-download-assets"></a></p>
+<p><em>图 4. 饮料罐的下载选项包括把资产包保存到文件夹，或使用 Hugging Face CLI。</em></p>
+<h2>资产验证能告诉你什么？</h2>
+<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/.metadata/ur17g_1300_validation.json">机械臂验证报告</a>用的是 Robot-Body 4.0.0 profile，<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/c7fa7615a353ebac03990208cbc2aa57426f4c48/Robotiq_2F_140/.metadata/Robotiq_2F_140_validation.json">夹爪验证报告</a>用的是 Robot-Gripper 3.0.0。两份报告都记录了通过的 <a href="https://nvidia.github.io/simready-foundation/latest/features/FET_022_PHYSX.html">PhysX 驱动关节检查</a>，该项检查会核对关节驱动设置。</p>
+<p>SimReady 的 profile 验证为复用这些资产提供了共同的基线。随后的拾放运行，则测试机械臂、夹爪、罐子和控制器在组装好的场景里如何协同工作。</p>
+<h2>第 2 步：组装机器人并搭好拾放场景</h2>
+<p>下载资产后，让带 Isaac Sim skills 的 agent 帮你组装机器人、运行验证工具、创建拾放控制逻辑。你也可以照着相关文档手动完成这些步骤。</p>
+<p>从安装目录启动 Isaac Sim，并启用远程 Python 服务器，让 agent 能通过 Python 与仿真交互：</p>
 <pre><code>./isaac-sim.sh --enable isaacsim.code_editor.python_server</code></pre>
-<p>如果您使用代理，请确保从 Isaac Sim 目录启动它，以便它可以在执行以下步骤时访问所需的技能。</p>
-<p>确认所有三个资产均显示且没有丢失文件错误。要求代理检查手臂和夹具的关节限制和驱动设置，或自己在 Isaac Sim 中检查它们。机器人和夹具包含物理关节，也可以在 Isaac Sim GUI 中进行测试和验证。接下来我们将组装手臂和夹具，以便我们可以将组装作为单个关节进行控制。</p>
-<p>您可以按照<a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html">机器人组装器教程</a>进行手动组装。在这里，我们将要求我们的代理完成组装并为我们验证：</p>
-<p><strong>本例中使用的示例提示：</strong></p>
+<p>如果你用 agent，请从 Isaac Sim 目录启动它，这样在下面各步骤里它才能访问所需的 skills。</p>
+<p>确认三个资产都能显示、没有缺文件报错。让 agent 检查机械臂和夹爪的关节限位与驱动设置，或者你自己在 Isaac Sim 里核对。机器人和夹爪都带物理关节，同样可以在 Isaac Sim GUI 里测试和验证。接下来我们把机械臂和夹爪组装起来，好把整个组合当作一个 articulation 来控制。</p>
+<p>手动组装可以照着 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html">Robot Assembler 教程</a>做。这里我们让 agent 完成组装并替我们验证：</p>
+<p><strong>本例使用的示例 prompt：</strong></p>
 <pre><code>Assemble the robot arm &lt;local path to Simready ur17g robot usd&gt;
 with the gripper &lt;local path to downloded simready Robotiq_2F_140 gripper usd&gt;
 using the Robot Assembly tutorial in Isaac Sim
 https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html.
 
 Validate the assembly on completion.</code></pre>
-<p>代理最终使用 Isaac Sim 附带的“isaac-sim-remote”和“usd-articulation”技能来完成组装并验证机器人的物理特性。我们现在拥有运行拾取和放置所需的所有资产；组装好的机器人和汽水罐。我们现在将继续工作流程的最后部分。</p>
-<p>[![figure-05-joint-settings](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBl Xh65rUf0T.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif)</p>
-<p><em>图 5. Isaac Sim 中 UR17G 手臂和 Robotiq 2F-140 夹具的关节设置。</em></p>
-<p>组装好的机器人并可以在场景中，要求代理运行任务。使用下一步中的检查来评估模拟行为。</p>
-<h2>步骤 3：测试控件并运行拾放</h2>
-<p>现在资产包括模拟属性和配置文件验证，我们现在可以在组装的场景和控制器中进行测试。控制器协调 UR17G 手臂的运动与 Robotiq 2F-140 夹具的打开和关闭。使用下面的行为检查来评估代理生成的任务。要自行了解或调整控制器，请参阅<a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/core_api_tutorials/tutorial_core_adding_manipulator.html">添加机械手机器人教程</a>。</p>
-<p><strong>本例中使用的示例提示：</strong></p>
+<p>agent 最终用上了 Isaac Sim 随附的 ‘isaac-sim-remote’ 和 ‘usd-articulation’ skills 来完成组装，并验证机器人的物理特性。至此运行拾放所需的资产都齐了：组装好的机器人和汽水罐。接下来进入工作流的最后一部分。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif" alt="figure-05-joint-settings"></a></p>
+<p><em>图 5. Isaac Sim 中 UR17G 机械臂与 Robotiq 2F-140 夹爪的关节设置。</em></p>
+<p>组装好的机器人和罐子都放进场景后，让 agent 运行任务，再用下一步的检查来评估仿真行为。</p>
+<h2>第 3 步：测试控制逻辑并运行拾放</h2>
+<p>资产现在带有仿真属性和 profile 验证，可以在组装好的场景和控制器里测试了。控制器把 UR17G 机械臂的运动与 Robotiq 2F-140 夹爪的开合协调起来。用下面的行为检查来评估 agent 生成的任务。想自己理解或改造控制器，请参阅<a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/core_api_tutorials/tutorial_core_adding_manipulator.html">添加机械手机器人教程</a>。</p>
+<p><strong>本例使用的示例 prompt：</strong></p>
 <pre><code>Run pick and place with the assembled robot and soda can
 &lt;path to soda can USD from SimReady library&gt; in Isaac Sim.
 
 Ensure you do a contact based grasp for picking up the can and validate
 the accuracy/placement error for the pick and place as well.</code></pre>
-<p><strong>使用的技能</strong>：“isaac-sim-remote”、“manipulaiton-ik”和“physical-simulation”</p>
-<p>完整的任务测试夹具是否在移动过程中握住罐子并将其释放到目标处。重置场景，然后运行接近、抓取、举起、保持、转移和释放序列。将您的跑步与开场视频和下面的成功标准进行比较。</p>
-<p>[![figure-06-pick-and-place-landscape](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTac lDU8oJvkXYCie8.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif)</p>
-<p><em>图 6.UR17G 手臂和 Robotiq 2F-140 夹具将饮料罐从黄色拾取标记移动到 Isaac Sim 中的绿色目标。以 4 倍速度显示。</em></p>
-<p>如果您的运行有所不同，请记下序列失败的位置，并要求代理检查场景并生成控件。在重试之前将罐子和机器人重置为相同的起始状态，以便您可以比较结果。</p>
-<p><strong>模拟假设：</strong></p>
-<ul><li><strong>固定设置：</strong> 罐头从已知位置开始，配有锚定机器人和清晰、平坦的工作空间。没有使用视觉，碰撞检查也受到限制。</li><li><strong>简化可以：</strong> 未对变形和液体运动进行建模，因此此示例不测试破碎。</li><li><strong>脚本化抓取和运动：</strong> 水平抓取使用通过模拟测试选择的 2 N·m 驱动力上限，未根据指尖力进行校准或由制造商推荐。当手臂遵循固定路径点而无需重新规划时，接触和摩擦力固定饮料罐。有关硬件夹持力规格，请参阅 <a href="https://robotiq.com/hubfs/Product-sheets/Adaptive%20Grippers/Product-sheet-Adaptive-Grippers-EN.pdf">Robotiq 产品表</a>。</li></ul>
-<p>这些结果适用于此脚本设置。它们无法对不确定的物体位置、不同的有效负载或真实硬件建立鲁棒性。</p>
-<h2>使用 SimReady Assets 构建您的下一个模拟</h2>
-<p>使用 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 中的资源构建您自己的拾取和放置任务，然后使用您选择的代理来帮助组装场景并在 Isaac Sim 中运行它。</p>
+<p><strong>用到的 skills</strong>：‘isaac-sim-remote’、‘manipulaiton-ik’ 和 ‘physics-simulation’</p>
+<p>完整任务会测试夹爪在移动过程中是否握住罐子、并在目标处松开。先重置场景，再依次跑接近、抓取、抬起、保持、转移和释放。把你的运行结果与开头视频以及下面的成功标准对照。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif" alt="figure-06-pick-and-place-landscape"></a></p>
+<p><em>图 6. 在 Isaac Sim 中，UR17G 机械臂与 Robotiq 2F-140 夹爪把饮料罐从黄色拾取标记移到绿色目标。以 4× 速度播放。</em></p>
+<p>如果你的运行结果不一样，记下序列在哪一步出问题，让 agent 检查场景并重新生成控制逻辑。重试前把罐子和机器人复位到相同的起始状态，方便对比结果。</p>
+<p><strong>仿真假设：</strong></p>
+<ul><li><strong>固定配置：</strong> 罐子从已知位置出发，机器人固定，工作空间干净平整。没有用视觉，碰撞检查也做了限制。</li><li><strong>简化的罐子：</strong> 没有对形变和液体运动建模，所以本例不测试挤压变形。</li><li><strong>脚本化抓取与运动：</strong> 水平抓取用了一个 2 N·m 的驱动力上限，这是通过仿真测试选的，并未按指尖力校准，也不是厂商推荐值。机械臂沿固定路径点运动、不做重新规划，靠接触和摩擦把饮料罐夹住。硬件夹持力规格请参阅 <a href="https://robotiq.com/hubfs/Product-sheets/Adaptive%20Grippers/Product-sheet-Adaptive-Grippers-EN.pdf">Robotiq 产品表</a>。</li></ul>
+<p>这些结果只适用于这套脚本化配置，并不能证明对不确定的物体位置、不同负载或真实硬件也具备鲁棒性。</p>
+<h2>用 SimReady Assets 构建你的下一个仿真</h2>
+<p>用 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 里的资产搭一个自己的拾放任务，再选一个 agent 帮你组装场景、在 Isaac Sim 里跑起来。</p>
 <p><strong>发现资产</strong></p>
-<ul><li><strong>查找机器人和物体：</strong> 在 Hugging Face 上浏览 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>。</li><li><strong>检查资产支持的内容：</strong> 查看 <a href="https://nvidia.github.io/simready-foundation/latest/">SimReady Foundation</a> 中的配置文件和要求以及资产的验证报告。</li></ul>
-<p><strong>构建拾放场景</strong></p>
-<ul><li><strong>设置模拟器：</strong> 请遵循本示例中使用的版本的 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim 安装指南</a>。</li><li><strong>连接您的代理：</strong> 按照 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Isaac Sim 代理技能文档</a> 为您的代理提供捆绑技能。</li><li><strong>组装机器人：</strong> 如果您喜欢手动连接手臂和夹具，请按照<a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html#assemble-robots">机器人组装器教程</a>进行操作。</li></ul>
+<ul><li><strong>查找机器人和物体：</strong> 在 Hugging Face 上浏览 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>。</li><li><strong>确认资产支持什么：</strong> 对照 <a href="https://nvidia.github.io/simready-foundation/latest/">SimReady Foundation</a> 里的 profiles 与 requirements，以及该资产的验证报告。</li></ul>
+<p><strong>搭建拾放场景</strong></p>
+<ul><li><strong>设置模拟器：</strong> 按本例所用的版本，参照 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim 安装指南</a>。</li><li><strong>接入你的 agent：</strong> 按 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Isaac Sim Agent Skills 文档</a> 把随附的 skills 提供给你的 agent。</li><li><strong>组装机器人：</strong> 如果你想手动连接机械臂和夹爪，请遵循 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html#assembling-robots">Robot Assembler 教程</a>。</li></ul>
 <p><strong>准备并贡献内容</strong></p>
-<ul><li><strong>从 CAD 开始：</strong> 按照<a href="https://developer.nvidia.com/blog/5-steps-to-create-simready-assets-for-robotics-with-frontier-ai-models/">为机器人创建 SimReady 资产的 5 个步骤</a> 准备您自己的机器人资产。</li><li><strong>验证并提交资产：</strong> 按照 <a href="https://github.com/NVIDIA-Omniverse/simready-central/blob/main/.agents/skills/submit-simready-assets/SKILL.md">SimReady Central 提交指南</a> 使您的资产可供其他开发人员使用。</li></ul>
-<p>如需灵感，请探索 <a href="https://lnkd.in/p/g3-5svW6">Michael Wagner 的声控 VR 演示</a> 或 <a href="https://lnkd.in/p/gnxQ3YS8">Maziyar Panahi 的 Microduck 模拟</a>。两者都展示了开发人员如何在自己的项目中使用 SimReady 资产。</p>
-<p>你会建造什么？在 Hugging Face 评论中分享您的场景和结果，包括您使用的资源和 Isaac Sim 版本。</p>
-<p>快乐建设！</p>
-<h2>本文提到的数据集3</h2>
-<h2>本文提到的空间1</h2>
+<ul><li><strong>从 CAD 起步：</strong> 按<a href="https://developer.nvidia.com/blog/5-steps-to-create-simready-assets-for-robotics-with-frontier-ai-models/">为机器人创建 SimReady 资产的 5 个步骤</a> 准备你自己的机器人资产。</li><li><strong>验证并提交资产：</strong> 按 <a href="https://github.com/NVIDIA-Omniverse/simready-central/blob/main/.agents/skills/submit-simready-assets/SKILL.md">SimReady Central 提交指南</a> 把你的资产开放给其他开发者。</li></ul>
+<p>想找点灵感，可以看看 <a href="https://lnkd.in/p/g3-5svW6">Michael Wagner 的声控 VR 演示</a> 或 <a href="https://lnkd.in/p/gnxQ3YS8">Maziyar Panahi 的 Microduck 仿真</a>。两者都展示了开发者如何在自己的项目里使用 SimReady 资产。</p>
+<p>你会做点什么？在 Hugging Face 评论区分享你的场景和结果，附上所用的资产和 Isaac Sim 版本。</p>
+<p>祝搭建愉快！</p>
+<h2>本文提到的数据集 3</h2>
+<h2>本文提到的 Spaces 1</h2>
 <p>该作者的更多内容</p>
-<h2><em>使用八个领域的 100,000 个综合业务文档评估隐私保护和实际人工智能应用</em></h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<h2><em>用覆盖八个领域的 10 万份合成商业文档评估隐私保护与实用 AI 应用</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
 <p>5</p>
 <p>2026 年 11 月 9 日</p>
-<h2>Nemotron-Personas-Finance-Japan：捕捉日本人口统计和金融背景的综合数据集</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<h2>Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
 <p>19</p>
 <p>2026 年 11 月 9 日</p>
 <h3>社区</h3>
 <p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
 <p>点击或粘贴此处上传图像</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">登录</a> 发表评论</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">登录</a>发表评论</p>
 <p>14</p>
-<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/yiucw"><img src="https://huggingface.co/avatars/6b59ac5f151b322f5261adacecce6b61.svg" alt=""></a></li><li><a href="https://huggingface.co/klnadim"><img src="https://huggingface.co/avatars/a045d5a990db610dd1f4abbcca7f1bd6.svg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li><li><a href="https://huggingface.co/safikhan5834"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/683acf96542967b165847cff/tUHvC7omJt6mPPdyx1oSe.png" alt=""></a></li><li><a href="https://huggingface.co/Eumoren"><img src="https://huggingface.co/avatars/604ef02c6a6eac9315df923eaf7e56b4.svg" alt=""></a></li><li><a href="https://huggingface.co/willemelliw"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a980914cb03264ff33c4e0c/zOqgwh5M1nCzjQGfrT0Je.jpeg" alt=""></a></li></ul>
-<h2>本文提到的数据集3</h2>
-<h2>本文提到的空间1</h2>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/yiucw"><img src="https://huggingface.co/avatars/6b59ac5f151b322f5261adacecce6b61.svg" alt=""></a></li><li><a href="https://huggingface.co/klnadim"><img src="https://huggingface.co/avatars/a045d5a990db610dd1f4abbcca7f1bd6.svg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li><li><a href="https://huggingface.co/safikhan5834"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/683acf96542967b165847cff/tUHvC7omJt6mPPdyx1oSe.png" alt=""></a></li><li><a href="https://huggingface.co/Eumoren"><img src="https://huggingface.co/avatars/604ef02c6a6eac9315df923eaf7e56b4.svg" alt=""></a></li><li><a href="https://huggingface.co/willemelliw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a980914cb03264ff33c4e0c/zOqgwh5M1nCzjQGfrT0Je.jpeg" alt=""></a></li></ul>
+<h2>本文提到的数据集 3</h2>
+<h2>本文提到的 Spaces 1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>XYBench：帮助解决问题背后的问题</title>
+      <title>XYBench：帮用户解决提问背后的真正问题</title>
       <link>https://huggingface.co/blog/allenai/xybench</link>
       <guid isPermaLink="true">https://huggingface.co/blog/allenai/xybench</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：XYBench: Helping with the problem behind the question</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
-<h1>XYBench：帮助解决问题背后的问题</h1>
-<p>企业文章</p>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
+<h1>XYBench：帮用户解决提问背后的真正问题</h1>
+<p>企业  文章</p>
 <p>发布于 2026 年 11 月 13 日</p>
 <p>7</p>
-<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="凯尔·威格斯的头像"></a></p>
-<p>凯尔威格斯</p>
-<p>爱通信</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
 <p>📄 <a href="https://arxiv.org/abs/2609.06842">论文</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/XYBench-dataset">数据</a> | 💻 <a href="https://github.com/allenai/XYBench">代码</a></p>
-<p><a href="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png"><img src="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png" alt="XY 问题的图表显示用户在考虑潜在目标 X 的同时询问方法 Y，以及重定向到目标的 AI 模型X."></a></p>
-<p>真正有用的人工智能助手需要能够帮助那些提出误导性问题的用户，而不仅仅是那些提出正确问题并提供适当细节的用户。我们正在发布 <a href="https://github.com/allenai/XYBench"><strong>XYBench</strong></a>，这是一个包含 8K 多个问题的基准测试，用于测试人工智能助手如何响应基于误解的请求，例如询问如何加厚糖霜，以防止纸杯蛋糕上的糖霜滑落，而真正的问题是纸杯蛋糕仍然太热而无法结霜。 XYBench 荣获 EMNLP 2026 最佳资源论文奖。</p>
-<p>某人询问的方法与他们想要实现的目标之间的不匹配被称为<em>XY问题</em>：一个人想要完成X，假设某种特定方法Y会起作用，并在Y方面寻求帮助。在纸杯蛋糕的例子中，这个人如此专注于制作糖霜棒，以至于他们没有将纸杯蛋糕的温暖视为需要解决的真正问题。</p>
-<p>XYBench 与卡内基梅隆大学、NVIDIA 和约翰霍普金斯大学的研究人员共同开发，揭示了LLM解决问题的能力中的一个关键差距：“识别”用户的请求是否基于隐含的误解，并适当地将他们“重定向”到能够解决其实际目标的解决方案。根据涵盖编程和烹饪和家庭维修等日常活动的 8,115 个现实世界问题，我们引入了一个基准来衡量模型是否识别这些误解并能够在其响应中优先考虑有效的解决方案。</p>
-<p>我们在 XYBench 上评估的模型（Claude Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro）通常会针对用户的问题提出解决方案，但他们的答案却集中在最初的错误方法上。与人类参考答案不同，所有五个模型都不太可能引导用户放弃该方法并转向适合其目标的解决方案。</p>
-<p>人们使用具有不同知识水平的人工智能系统，可能并不总是知道如何最好地解决问题。我们希望 XYBench 帮助研究人员衡量模型改进是否能让助手更好地识别错误的假设、解释为什么所提出的方法可能行不通，并提出更有效的替代方案——即使用户不知道要问正确的问题。</p>
+<p><a href="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png"><img src="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png" alt="XY 问题示意图：用户询问方法 Y，心里想的却是底层目标 X，AI 模型把话题引回目标 X。"></a></p>
+<p>真正有用的 AI 助手，得能帮到提出不当问题的用户，而不只是那些问题问得对、细节也给得足的用户。我们发布 <a href="https://github.com/allenai/XYBench"><strong>XYBench</strong></a>——一个包含 8K+ 个问题的基准，用来测试 AI 助手如何回应基于错误认知的请求。比如有人问怎么把总从纸杯蛋糕上滑落的糖霜调稠，而真正的问题是蛋糕还太热、根本不该现在抹糖霜。XYBench 获得了 EMNLP 2026 最佳资源论文奖。</p>
+<p>一个人询问的方法与他真正想达成的目标对不上，这就是所谓的 <em>XY problem</em>：他本想完成 X，却认定某个方法 Y 可行，于是开口求人帮忙做 Y。在纸杯蛋糕的例子里，这个人一门心思只想让糖霜挂住，反倒没意识到蛋糕的温度才是真正该解决的问题。</p>
+<p>XYBench 与 Carnegie Mellon、NVIDIA 和 Johns Hopkins 的研究者共同开发，揭示了 LLM 排错能力里的一处关键短板：<em>识别</em>用户的请求是否建立在隐含的错误认知上，并恰当地把用户<em>引向</em>能解决其真实目标的方案。我们从编程以及烹饪、家庭维修等日常活动中收集了 8,115 个真实问题，据此提出这个基准，衡量模型能否识别这些错误认知，并在回答中优先给出有效的解决方案。</p>
+<p>我们在 XYBench 上评测的模型——Claude Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro——常常会给用户的问题提出解法，但回答始终围着最初那个错误的方法打转。与人类参考答案不同，这五个模型都不太会引导用户离开那个方法、转向真正契合其目标的方案。</p>
+<p>人们使用 AI 系统时的知识水平各不相同，未必总能知道该从哪儿入手最合适。我们希望 XYBench 能帮研究者衡量：模型的改进是否让助手更善于识别错误的假设、解释某个提议的方法为何行不通、并给出更有效的替代方案——哪怕用户自己都不知道该问什么才对。</p>
 <h2>构建 XYBench</h2>
-<p>我们从四个来源构建 XYBench：来自 Stack Overflow 的 1,557 个问题、来自 Stack Exchange 的 184 个问题、102 个手动策划的示例以及 WikiHow 指南生成的 6,272 个问题。对于每个问题，我们都确定了所陈述的请求 (Y)、该人明确要求的内容以及预期请求 (X)——可以从上下文中推断出的基本目标。</p>
-<p>对于公共论坛问题，我们使用了三个得分最高的人类答案和可接受的答案（如果有）来确定预期的请求和可能的解决方案。我们过滤掉了那些认为满足所述请求已足够的案例。对于 WikiHow，我们使用 Sonnet 4.5 围绕程序指南中看似合理的误解生成问题，然后对其进行改进，以包含足够的上下文，以便专家推断出潜在的目标，而无需直接说明。我们删除了回答字面请求将在很大程度上解决问题的示例。</p>
-<h2>评估答案的帮助程度</h2>
-<p>模特可能会花几段文字推荐功能更强大的真空吸尘器，然后简短地建议检查软管是否堵塞。如果堵塞导致吸力减弱，清除堵塞可以解决问题。</p>
-<p>更有用的答案是认识到用户想要恢复吸力并专注于诊断原因。这借鉴了语用学，这是语言学的一个分支，研究语境和交际意图如何塑造意义。为了测试模型是否在其答案中使用了这种理解，XYBench 测量了每个响应的三个方面：</p>
-<ul><li><strong>务实的解决方案</strong> - 记录模型的响应是否包括对所述请求 (Y) 和预期请求 (X) 的解决方案，并分别检查每个请求。</li><li><strong>务实重点</strong>——衡量模型的答案是否侧重于所陈述的请求 (Y)、侧重于预期的请求 (X)，还是平衡两者。</li><li><strong>误解识别</strong>——衡量模型的响应是否引导用户实现根本目标 (X)，同时阻止或避免错误的方法 (Y)。</li></ul>
-<p>在 XYBench 中，Claude Sonnet 4.5 充当自动裁判。它将每个模型的响应中的个人建议进行分类，并评估答案的务实重点。</p>
-<p>为了验证 Sonnet 4.5 的判断，两名人类评审员独立评估了 500 个模型对 XYBench 问题的回答。评审员对是否出现解决方案与法官的平均同意度为 97.5-100%，对误解识别的同意度为 84.6-93.3%，对务实强调的同意度为 74.2-79.8%。</p>
-<h2>实验表明什么</h2>
-<p>我们在 XYBench 上以单轮设置评估了 Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro，每个问题有一个答案。我们使用相同的指标分别评估人类参考答案。</p>
-<p>在所有四个来源中，每个模型更有可能包含针对所述请求 (Y) 的解决方案，而不是针对基本目标 (X) 的解决方案。在 Stack Overflow 上，陈述请求解决方案出现在 75-86% 的响应中，而潜在目标解决方案的比例为 59-71%。</p>
-<p>顺便提及解决方案并不会使它成为答案的焦点。在真空吸尘器的示例中，模型可以简短地建议疏通软管，但将其大部分响应集中在购买更强大的真空吸尘器上。即使模型强调了所声明的请求，我们也会将该响应视为包含基本目标的解决方案。我们分别测量了总体重点：在 Stack Overflow 上，只有 35-41% 的模型主要关注潜在目标，47-57% 的模型主要关注所声明的请求。在其余的回复中，模型对所陈述的请求和基本目标给予了类似的重视。</p>
-<p><a href="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png">！[标题为“XYBench 的 Stack Overflow 问题上的五个模型和顶级人类答案”的条形图比较了 GPT-5、DeepSeek-V4 Pro、Qwen3.5-9B、Gemini 3.1 Pro、Claude Sonnet 4.6 和顶级人类答案，其中提到了对根本目标的修复，专注于根本目标，并引导用户远离错误的答案方法。</a>](https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png)</p>
-<p>我们还测试了明确用户的目标是否有帮助。在预言机实验中，我们在每个问题旁边提供了规定的请求 (Y) 和预期的请求 (X)。在 Stack Overflow 上，Sonnet 4.6 包含基本目标解决方案的比率从 59% 上升到 67%，但其误解识别率从 47% 下降到 34%。在具有人类参考答案的来源中，该实验中的每个模型在错误概念识别方面仍然落后于人类。提供意图有所帮助，但并不能始终缩小与人类反应的差距。这表明检测意图只是挑战的一部分：当意图偏离规定的请求时，模型还需要对其采取行动。</p>
-<p>一项单独的实验测试了模型在判断回答而不是编写回答时是否可以识别有用的建议。我们给出了相同的五个模型，加上 GPT-4.1，每个问题都有两种可能的答案：一种侧重于字面要求，一种解释误解并解决根本目标。在 Stack Overflow 上，所有六人在 71-84% 的情况下都选择了以目标为中心的答案。相比之下，在我们的主要评估中，五个模型所写的答案中只有 35-41% 主要关注根本目标。结果暴露了识别有用建议和提出有用建议之间的差距，而单靠多项选择测试就会错过这一差距。</p>
-<p><a href="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png"><img src="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png" alt="标题为“在 XYBench 的 Stack Overflow 问题上挑选和编写以目标为中心的答案”的条形图，比较了五个前沿领域的多项选择选择率 (71–84%) 与自由形式的以目标为中心的答复率 (35–41%)LLM。"></a></p>
-<h2>这对于评估意味着什么</h2>
-<p>研究人员可以使用 XYBench 来测试提示或训练的变化是否有助于模型识别误解、为用户的根本问题提供解决方案，并使这些解决方案成为其答案的焦点。单独测量每种行为可以让研究人员了解一种行为的进步是否也会改善其他行为。</p>
-<p>未来的工作可以测试哪些训练方法可以帮助模型按照推断的意图行事——也就是用户需要什么，而不仅仅是他们真正要求的。 XYBench目前涵盖英语查询，主要是程序问题；将其扩展到其他语言、文化和对话环境仍然是一个开放的方向。</p>
-<p>我们希望 XYBench 能够帮助研究人员构建模型，即使用户的第一个问题基于错误的假设，也能提供有用的建议。</p>
-<h2>本文提到的数据集1</h2>
-<p>该作者的更多内容</p>
-<h2>ToyBlocks：用于机器人学习和评估的受控世界</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>我们从四个来源构建了 XYBench：Stack Overflow 的 1,557 个问题、Stack Exchange 的 184 个、102 个人工整理的样例，以及由 WikiHow 指南生成的 6,272 个问题。对每个问题，我们都标注出明说的请求 (Y)，即这个人明确要求的东西，以及意图中的请求 (X)——能从上下文推断出的底层目标。</p>
+<p>对公开论坛的问题，我们取点赞最高的三个人类回答以及（若有的话）被采纳的回答，据此确定意图中的请求和可能的解法；凡是判定“照字面回答明说的请求就够”的样本，一律剔除。对 WikiHow，我们用 Sonnet 4.5 围绕操作指南里看似合理的错误认知生成问题，再加以打磨，让上下文足以让专家推断出底层目标，却又不必把它直说出来；那些照字面回答就基本能解决问题的样例，也被删掉了。</p>
+<h2>评估回答的帮助程度</h2>
+<p>模型可能用好几个段落推荐吸力更强的吸尘器，最后才顺带提一句检查软管是不是堵了。可如果吸力变弱正是堵塞造成的，把堵塞清掉就能解决问题。</p>
+<p>更有帮助的回答会意识到用户想恢复吸力，于是把重点放在排查原因上。这借用了语用学 (pragmatics)——语言学里研究语境与交际意图如何塑造语义的分支。为检验模型是否把这种理解用在回答里，XYBench 从三个方面衡量每个回答：</p>
+<ul><li><strong>语用解法</strong>——记录模型的回答是否包含针对明说的请求 (Y) 和意图中的请求 (X) 的解法，两项分别核查。</li><li><strong>语用侧重</strong>——衡量模型的回答是聚焦明说的请求 (Y)、聚焦意图中的请求 (X)，还是两者兼顾。</li><li><strong>错误认知识别</strong>——衡量模型的回答是否把用户引向底层目标 (X)，同时劝阻或避开错误的方法 (Y)。</li></ul>
+<p>在 XYBench 中，Claude Sonnet 4.5 充当自动裁判：它把每个模型回答里的各条建议逐一归类，并评判回答的语用侧重。</p>
+<p>为验证 Sonnet 4.5 的判断，两名人类评审独立评了 500 条模型对 XYBench 问题的回答。两位评审与裁判的一致性取平均后：在“是否出现解法”上是 97.5–100%，在错误认知识别上是 84.6–93.3%，在语用侧重上是 74.2–79.8%。</p>
+<h2>实验结果显示什么</h2>
+<p>我们在单轮设置下、每个问题只给一次回答，评测了 Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro 在 XYBench 上的表现。人类参考答案用同一套指标单独评测。</p>
+<p>在全部四个来源上，每个模型都更倾向于给出针对明说的请求 (Y) 的解法，而不是针对底层目标 (X) 的解法。在 Stack Overflow 上，针对明说请求的解法出现在 75–86% 的回答里，针对底层目标的解法只占 59–71%。</p>
+<p>顺带提一句某个解法，并不等于把它当成回答的重点。还拿吸尘器举例：模型可能简单提了疏通软管，却把大部分篇幅花在推荐买一台吸力更强的吸尘器上。即便模型强调的是明说的请求，我们仍会把这个回答算作“包含针对底层目标的解法”。侧重是单独衡量的：在 Stack Overflow 上，模型只有 35–41% 的回答主要聚焦底层目标，47–57% 主要聚焦明说的请求；其余回答里，两者被给予的份量差不多。</p>
+<p><a href="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png"><img src="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png" alt="柱状图，题为“XYBench 的 Stack Overflow 问题上的五个模型与最佳人类回答”，比较 GPT-5、DeepSeek-V4 Pro、Qwen3.5-9B、Gemini 3.1 Pro、Claude Sonnet 4.6 以及最佳人类回答在提及针对底层目标的修法、聚焦底层目标、引导用户远离错误方法三方面的表现。"></a></p>
+<p>我们还测了把用户目标直接挑明是否有帮助。在一项 oracle 实验中，我们给每个问题同时附上明说的请求 (Y) 和意图中的请求 (X)。在 Stack Overflow 上，Sonnet 4.6 给出底层目标解法的比例从 59% 升到 67%，但错误认知识别率却从 47% 掉到 34%。在有人类参考答案的那些来源上，这项实验里的每个模型在错误认知识别上仍落后于人类。把意图喂给模型有帮助，却没能稳定地抹平与人类回答的差距。这说明识别意图只是挑战的一部分：当意图与明说的请求不一致时，模型还得据此行动。</p>
+<p>另一项实验测的是：让模型评判回答、而不是自己写回答时，它能否认出有用的建议。我们给同样的五个模型，再加上 GPT-4.1，每个问题配两个候选回答：一个只围着字面请求打转，另一个解释错误认知并解决底层目标。在 Stack Overflow 上，六个模型有 71–84% 的情况选了以目标为中心的那个。相比之下，主评测里那五个模型自己写出的回答，只有 35–41% 主要聚焦底层目标。结果暴露出“认出有用建议”和“写出有用建议”之间的落差，而单靠选择题测试是看不出来的。</p>
+<p><a href="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png"><img src="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png" alt="柱状图，题为“在 XYBench 的 Stack Overflow 问题上挑选与撰写以目标为中心的回答”，比较五个前沿 LLM 在多项选择上的选中率 (71–84%) 与自由作答中以目标为中心的比例 (35–41%)。"></a></p>
+<h2>这对评测意味着什么</h2>
+<p>研究者可以用 XYBench 检验：改动 prompt 或训练方式，是否让模型更能识别错误认知、更能为用户底层的问题给出解法，并把这些解法变成回答的重点。逐项单独衡量每种行为，就能看清某一项上的进步是否也带动了其它项。</p>
+<p>后续工作可以测哪些训练方法能让模型按推断出的意图行动——也就是用户真正需要的，而不只是他们字面上问的。XYBench 目前只覆盖英语查询，且以操作类问题为主；把它扩展到其它语言、文化和对话场景，仍是一个开放方向。</p>
+<p>我们希望 XYBench 能帮研究者造出这样的模型：即便用户开口第一个问题就建立在错误假设上，它也能给出有用的建议。</p>
+<h2>本文提到的数据集 1</h2>
+<p>该作者的更多文章</p>
+<h2>ToyBlocks：一个用于机器人学习与评估的可控世界</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
 <p>26</p>
 <p>2026 年 11 月 6 日</p>
-<h2>StateBench：测试语言模型如何跟踪长文档的状态变化</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>17 号</p>
+<h2>StateBench：测试语言模型如何跟踪长文档里的状态变化</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>17</p>
 <p>2026 年 11 月 3 日</p>
 <h3>社区</h3>
-<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
-<p>点击或粘贴此处上传图像</p>
+<p>把图片、音频和视频拖进文本输入框，或粘贴、点击此处即可上传。</p>
+<p>点按或粘贴到此处上传图片</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fxybench">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fxybench">登录</a> 发表评论</p>
 <p>7</p>
-<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
-<h2>本文提到的数据集1</h2>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
+<h2>本文提到的数据集 1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>llama.cpp v1.0.0 : A stronger foundation for the local AI ec…</title>
+      <title>llama.cpp v1.0.0：为本地 AI 生态奠定更坚实的基础</title>
       <link>https://huggingface.co/blog/ggml-org/llama-cpp-v1</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llama-cpp-v1</guid>
       <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem</description>
+      <description>原文标题：llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem</description>
       <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
-<h1>llama.cpp v1.0.0：为本地人工智能生态系统奠定更坚实的基础</h1>
+<h1>llama.cpp v1.0.0：为本地 AI 生态奠定更坚实的基础</h1>
 <p>团队文章</p>
 <p>发布于 2026 年 11 月 13 日</p>
 <p>152</p>
-<ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/danbev"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64b12f9135c2e9909c1eca3b/aNTLmtyO_cLuhZgNi9uAQ.jpeg" alt="Daniel Bevenius 的头像"></a></p>
-<p>丹尼尔·贝维纽斯</p>
-<p>丹别夫</p>
-<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
-<p><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt="Georgi Gerganov 的头像"></a></p>
-<p>格奥尔基·格尔加诺夫</p>
-<p>格尔加诺夫</p>
-<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
-<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve 的头像"></a></p>
-<p>梅尔韦</p>
-<p>梅尔韦</p>
-<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
-<p>llama.cpp 使得在各种硬件上运行多模式 LLM 成为可能 - 从消费级本地计算机到高端企业服务器。通过量化、优化的后端和可移植的 C/C++ 实现，我们使 AI 推理可以在软件堆栈的各个级别进行访问。我们相信这是构建跨平台和私有人工智能产品的最轻量级、通用性和合理性的平台。</p>
-<p>自<a href="https://github.com/ggml-org/llama.cpp/commit/26c0846">启动</a>以来的 3.5 年里，该项目已经发展了很多，许多下游应用程序已经依赖于我们的工作。随着本地人工智能和隐私在我们的日常生活中变得越来越重要，我们预计这一趋势将持续下去。每一个新的集成都意味着更多的开发人员依赖我们的库接口，因此拥有灵活但稳定的 API 至关重要。</p>
-<p>今天我们发布了库“v1.0.0”，强调了我们对这些开发人员的责任。展望未来，<a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> 和 <a href="https://github.com/ggml-org/ggml">ggml</a> 都将反映出 API 和 ABI 与主要版本的不兼容。随着采用率的增长，我们将更加严格地让下游消费者看到这些界限。</p>
+<ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/danbev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64b12f9135c2e9909c1eca3b/aNTLmtyO_cLuhZgNi9uAQ.jpeg" alt="Daniel Bevenius 的头像"></a></p>
+<p>Daniel Bevenius</p>
+<p>danbev</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt="Georgi Gerganov 的头像"></a></p>
+<p>Georgi Gerganov</p>
+<p>ggerganov</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve 的头像"></a></p>
+<p>merve</p>
+<p>merve</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p>llama.cpp 让多模态 LLM 能跑在各种各样的硬件上——从消费级本地机器到高端企业服务器。借助量化、优化过的后端和可移植的 C/C++ 实现，我们让 AI 推理在软件栈的每一层都触手可及。我们相信，这是构建跨平台、私有 AI 产品最轻量、最通用、也最合理的平台。</p>
+<p>自<a href="https://github.com/ggml-org/llama.cpp/commit/26c0846">诞生</a>以来的 3.5 年里，项目壮大了很多，已有不少下游应用依赖我们的工作。随着本地 AI 和隐私在日常生活中越来越重要，我们预计这一趋势还会延续。每多一个集成，就多一批开发者依赖我们的库接口，因此一套灵活又稳定的 API 至关重要。</p>
+<p>今天我们发布 <code>v1.0.0</code> 库，以此表明对这些开发者的责任。往后，<a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> 和 <a href="https://github.com/ggml-org/ggml">ggml</a> 都会用主版本号升级来体现 API 与 ABI 的不兼容变更。随着采用者增多，我们会更严格地让下游使用者看清这些边界。</p>
 <h3>发布</h3>
-<table><thead><tr><th>发布</th><th>图书馆</th><th>公共标头</th></tr></thead><tbody><tr><td><a href="https://github.com/ggml-org/llama.cpp/releases/tag/v1.0.0">llama.cpp v1.0.0</a> - C/C++ 中的 LLM 推理</td><td><code>libllama</code></td><td><a href="https://github.com/ggml-org/llama.cpp/blob/master/include/"><code>llama.cpp/include/</code></a></td></tr><tr><td><a href="https://github.com/ggml-org/ggml/releases/tag/v1.0.0">ggml v1.0.0</a> - 用于机器学习的张量库</td><td><code>libggml</code></td><td><a href="https://github.com/ggml-org/llama.cpp/blob/master/ggml/include/"><code>ggml/include/</code></a></td></tr></tbody></table>
-<h3>语义版本更新规则</h3>
-<p>以下规则适用于所有使用<a href="https://semver.org">语义版本控制</a>的<a href="https://huggingface.co/ggml-org">ggml-org</a>项目：</p>
-<table><thead><tr><th>更改类型</th><th>凹凸</th></tr></thead><tbody><tr><td><strong>专业</strong></td><td>对 <code>./include</code> 中公共 C API 的重大更改</td></tr><tr><td><strong>次要</strong></td><td>向后兼容功能、后端更新、模型支持或 API 添加</td></tr><tr><td><strong>补丁</strong></td><td>错误修复，无需更改 API</td></tr></tbody></table>
-<h3>分布</h3>
-<p>我们期待着扩展“ggml-org”软件的分发方式以及到达开发人员和最终用户的方式。有关如何将 ggml-org 项目添加到打包和发布管道的更多信息，请查看以下<a href="https://github.com/ggml-org/ggml/discussions/1579">讨论</a>。</p>
-<table><thead><tr><th>频道</th><th>平台</th></tr></thead><tbody><tr><td><a href="https://github.com/ggml-org/llama.cpp/releases"><strong>预发布工件</strong></a></td><td>Linux、macOS、Windows、Android、iOS</td></tr><tr><td><strong>码头工人</strong></td><td>Linux</td></tr><tr><td><strong>Debian</strong></td><td>Linux</td></tr><tr><td><strong>自制</strong></td><td>macOS、Linux</td></tr><tr><td><strong>conda-forge</strong></td><td>Windows、macOS、Linux</td></tr><tr><td><strong>MacPorts</strong></td><td>macOS</td></tr><tr><td><strong>温盖特</strong></td><td>窗户</td></tr><tr><td><strong>XC框架</strong></td><td>iOS、macOS</td></tr></tbody></table>
-<h3>发展</h3>
-<p>该项目培育了一个令人惊叹的开源社区，拥有高技能和才华横溢的贡献者。随着人工智能能力在软件工程领域的快速发展，我们继续以深思熟虑和合理的方式将LLM融入我们的开发周期中。维护高质量的代码库、保持对架构的控制和了解实现细节仍然是我们的首要任务。</p>
-<p>为了加快发展步伐，我们继续投入越来越多的资源来改善项目背后的 CI 基础设施。借助 <a href="https://huggingface.co/docs/huggingface_hub/en/guides/buckets">HF Buckets</a> 和 <a href="https://huggingface.co/docs/huggingface_hub/en/guides/jobs">HF Jobs</a> 等 HF 技术，我们能够扩展必要的容量，以保证落在“master”分支上的每个更改的正确性。在 NVIDIA、AMD、Qualcomm、Arm、IBM 和 Intel 的硬件支持下，我们继续在所有主要硬件平台上招募更多自托管运行程序。</p>
-<h3>后端和模型覆盖范围</h3>
-<p><code>llama.cpp</code> 的底层机器学习引擎 - <code>ggml</code> 被设计为几乎可以在任何现有的硬件上运行。这是通过实现专用的 ggml 后端来实现的。每个后端都可以编译为动态库，并可以选择在运行时加载。</p>
-<p>当前实现的后端的完整列表可以在<a href="https://github.com/ggml-org/ggml/tree/master/src">此处</a>找到。</p>
-<p>我们致力于为所有模型架构提供持续支持。目前，llama.cpp 支持超过 <a href="https://github.com/ggml-org/llama.cpp/tree/master/src/models">150 种架构变体</a> 以及所有主流推测解码方法。</p>
-<p>＃＃＃ 谢谢</p>
-<p>Hugging Face 的 llama.cpp 团队感谢社区的大力支持。特别感谢项目的<a href="https://github.com/ggml-org/llama.cpp/blob/master/CODEOWNERS">长期维护者</a>和所有<a href="https://github.com/ggml-org/llama.cpp/graphs/contributors?from=8%2F8%2F2026">贡献者</a>。这是一个重要的里程碑，没有我们的共同努力就不可能实现！</p>
+<table><thead><tr><th>版本</th><th>库</th><th>公共头文件</th></tr></thead><tbody><tr><td><a href="https://github.com/ggml-org/llama.cpp/releases/tag/v1.0.0">llama.cpp v1.0.0</a> - 用 C/C++ 做 LLM 推理</td><td><code>libllama</code></td><td><a href="https://github.com/ggml-org/llama.cpp/blob/master/include/"><code>llama.cpp/include/</code></a></td></tr><tr><td><a href="https://github.com/ggml-org/ggml/releases/tag/v1.0.0">ggml v1.0.0</a> - 面向机器学习的张量库</td><td><code>libggml</code></td><td><a href="https://github.com/ggml-org/llama.cpp/blob/master/ggml/include/"><code>ggml/include/</code></a></td></tr></tbody></table>
+<h3>语义化版本更新规则</h3>
+<p>以下规则适用于所有采用<a href="https://semver.org">语义化版本</a>的 <a href="https://huggingface.co/ggml-org">ggml-org</a> 项目：</p>
+<table><thead><tr><th>变更类型</th><th>升级</th></tr></thead><tbody><tr><td><strong>MAJOR</strong></td><td><code>./include</code> 中公共 C API 的破坏性变更</td></tr><tr><td><strong>MINOR</strong></td><td>向后兼容的新功能、后端更新、模型支持或 API 新增</td></tr><tr><td><strong>PATCH</strong></td><td>不改动 API 的 bug 修复</td></tr></tbody></table>
+<h3>分发</h3>
+<p>我们期待拓展 <code>ggml-org</code> 软件的分发方式，让它们更容易触达开发者和终端用户。想了解如何把 <code>ggml-org</code> 项目接入你的打包与发布流水线，请看下面这个<a href="https://github.com/ggml-org/ggml/discussions/1579">讨论</a>。</p>
+<table><thead><tr><th>渠道</th><th>平台</th></tr></thead><tbody><tr><td><a href="https://github.com/ggml-org/llama.cpp/releases"><strong>预发布产物</strong></a></td><td>Linux, macOS, Windows, Android, iOS</td></tr><tr><td><strong>Docker</strong></td><td>Linux</td></tr><tr><td><strong>Debian</strong></td><td>Linux</td></tr><tr><td><strong>Homebrew</strong></td><td>macOS, Linux</td></tr><tr><td><strong>conda-forge</strong></td><td>Windows, macOS, Linux</td></tr><tr><td><strong>MacPorts</strong></td><td>macOS</td></tr><tr><td><strong>Winget</strong></td><td>Windows</td></tr><tr><td><strong>XCFramework</strong></td><td>iOS, macOS</td></tr></tbody></table>
+<h3>开发</h3>
+<p>这个项目孕育出了一个了不起的开源社区，汇聚了技术娴熟、才华出众的贡献者。随着 AI 能力在软件工程领域飞速进步，我们会继续以审慎、合理的方式把 LLM 调整并融入开发流程。维护高质量的代码库、牢牢掌控架构、吃透实现细节，仍是我们最优先的事。</p>
+<p>为了跟上更快的开发节奏，我们持续投入更多资源改进项目背后的 CI 基础设施。借助 <a href="https://huggingface.co/docs/huggingface_hub/en/guides/buckets">HF Buckets</a>、<a href="https://huggingface.co/docs/huggingface_hub/en/guides/jobs">HF Jobs</a> 这类 HF 技术，我们得以扩容到足以保证落在 <code>master</code> 分支上的每一处改动都正确的程度。在 NVIDIA、AMD、Qualcomm、Arm、IBM 和 Intel 的硬件支持下，我们继续在各个主要硬件平台上接入更多 self-hosted runner。</p>
+<h3>后端与模型覆盖</h3>
+<p><code>llama.cpp</code> 底层的机器学习引擎 <code>ggml</code>，被设计成几乎能在现存任何硬件上运行。这是通过实现专用的 ggml 后端做到的。每个后端都能编译成动态库，并可选择在运行时加载。</p>
+<p>目前已实现的后端完整清单见<a href="https://github.com/ggml-org/ggml/tree/master/src">这里</a>。</p>
+<p>我们致力于为所有模型架构提供持续支持。目前 llama.cpp 支持超过 <a href="https://github.com/ggml-org/llama.cpp/tree/master/src/models">150 种架构变体</a>，以及所有主流的投机解码方法。</p>
+<h3>致谢</h3>
+<p>Hugging Face 的 llama.cpp 团队感谢社区给出的惊人支持。特别感谢项目的<a href="https://github.com/ggml-org/llama.cpp/blob/master/CODEOWNERS">长期维护者</a>和所有<a href="https://github.com/ggml-org/llama.cpp/graphs/contributors?from=8%2F8%2F2026">贡献者</a>。这是一个重要的里程碑，没有大家共同努力就不可能达成！</p>
 <h3>其他资源</h3>
-<ul><li><a href="https://github.com/ggml-org/llama.cpp/tree/master/examples">llama.cpp 示例</a></li><li><a href="https://huggingface.co/ggml-org">Hugging Face的 ggml-org</a></li><li><a href="https://github.com/ggml-org">Github 上的 ggml-org</a></li><li>查看适用于 MacOS 和 Windows 的 <a href="https://llama.app/">Llama</a> 桌面应用程序，这些应用程序是由 llama.cpp 和 Hugging Face 背后的团队精心打造的。</li></ul>
-<p>该作者的更多内容</p>
-<h2>llama.cpp 中的新增功能：决策模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<ul><li><a href="https://github.com/ggml-org/llama.cpp/tree/master/examples">llama.cpp 示例</a></li><li><a href="https://huggingface.co/ggml-org">Hugging Face 上的 ggml-org</a></li><li><a href="https://github.com/ggml-org">Github 上的 ggml-org</a></li><li>看看适用于 MacOS 和 Windows 的 <a href="https://llama.app/">Llama</a> 桌面应用，由 llama.cpp 和 Hugging Face 背后的团队倾心打造。</li></ul>
+<p>该作者的更多文章</p>
+<h2>llama.cpp 新增内容：Decision Models</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
 <p>113</p>
 <p>2026 年 10 月 2 日</p>
-<h2>通过 llama.cpp 使用 OCR 模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<h2>在 llama.cpp 中使用 OCR 模型</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
 <p>47</p>
 <p>2026 年 4 月 10 日</p>
 <h3>社区</h3>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></p>
-<p>克莱姆</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></p>
+<p>clem</p>
 <p>大约 21 小时前</p>
 <p>🔥🔥🔥</p>
-<ul><li><a href="https://huggingface.co/Junebugg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/1QuoOl1l2cVKrbCjz20bp.png" alt=""></a></li></ul>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/1QuoOl1l2cVKrbCjz20bp.png" alt=""></p>
-<p>朱恩巴格</p>
+<ul><li><a href="https://huggingface.co/Junebugg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1QuoOl1l2cVKrbCjz20bp.png" alt=""></a></li></ul>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1QuoOl1l2cVKrbCjz20bp.png" alt=""></p>
+<p>Junebugg</p>
 <p>大约 11 小时前</p>
-<p>嘿，你能指导我一个项目吗？我没有连接。</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></p>
-<p>普库恩克</p>
+<p>嘿，能带我做个项目吗？我没连上。</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></p>
+<p>pcuenq</p>
 <p>大约 21 小时前</p>
-<p>我们走吧！</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></p>
-<p>安迪托</p>
+<p>冲！！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></p>
+<p>andito</p>
 <p>大约 21 小时前</p>
-<p>这</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></p>
-<p>泊松</p>
+<p>就是这个！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></p>
+<p>cpoisson</p>
 <p>大约 21 小时前</p>
 <p>🚀</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></p>
-<p>伯滕肖</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></p>
+<p>burtenshaw</p>
 <p>大约 21 小时前</p>
-<p>是的！</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65bb837dbfb878f46c77de4c/23gZ_lBEwyoqjexFy9QLD.jpeg" alt=""></p>
+<p>太好了！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65bb837dbfb878f46c77de4c/23gZ_lBEwyoqjexFy9QLD.jpeg" alt=""></p>
 <p>prithivMLmods</p>
-<p>大约20小时前</p>
+<p>大约 20 小时前</p>
 <p>🔥🔥🚀🚀</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/Yt6lTHZzIvVuGpj_Fka_t.png" alt=""></p>
-<p>项目516</p>
-<p>大约20小时前</p>
-<p>不错！</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/oFYkELh-lKfDSTmtSdmF0.png" alt=""></p>
-<p>阿斯文德</p>
-<p>大约20小时前</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Yt6lTHZzIvVuGpj_Fka_t.png" alt=""></p>
+<p>project516</p>
+<p>大约 20 小时前</p>
+<p>赞！！！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oFYkELh-lKfDSTmtSdmF0.png" alt=""></p>
+<p>asvender</p>
+<p>大约 20 小时前</p>
 <p>👏👏👏</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1643148576788-6196cf5c7bf349604352ecda.png" alt=""></p>
-<p>耶霍尔</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1643148576788-6196cf5c7bf349604352ecda.png" alt=""></p>
+<p>Yehor</p>
 <p>大约 19 小时前</p>
-<p>酷</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6776855be57a4c8f9e6e7aaf/rPvn5Og7NX7PXk1d1mnXP.jpeg" alt=""></p>
-<p>博士-Chad-PhD</p>
+<p>酷！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6776855be57a4c8f9e6e7aaf/rPvn5Og7NX7PXk1d1mnXP.jpeg" alt=""></p>
+<p>Doctor-Chad-PhD</p>
 <p>大约 18 小时前</p>
-<p>Linux 没有桌面应用程序吗？</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6036cca833b7b6f8f2e6748e/MiSTtrrXz1_KxJJwtK23N.png" alt=""></p>
-<p>vs4维杰</p>
+<p>没有 Linux 桌面应用吗？</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6036cca833b7b6f8f2e6748e/MiSTtrrXz1_KxJJwtK23N.png" alt=""></p>
+<p>vs4vijay</p>
 <p>大约 17 小时前</p>
-<p>好消息！</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63d393ed9e1b81818c81e67d/oSd-LWSaZVRU_M1tWZq1j.png" alt=""></p>
-<p>埃夫根105</p>
+<p>好消息！！！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63d393ed9e1b81818c81e67d/oSd-LWSaZVRU_M1tWZq1j.png" alt=""></p>
+<p>evgen105</p>
 <p>大约 15 小时前</p>
-<p>这真是太huuuuge了</p>
+<p>这规模也太大了吧</p>
 <p><img src="https://huggingface.co/avatars/8a2878ff9f441247fd9f427f65d3e94a.svg" alt=""></p>
-<p>文佐</p>
+<p>Vinzou</p>
 <p>大约 14 小时前</p>
 <p>😁👍👍👍</p>
 <p><img src="https://huggingface.co/avatars/ef3e22922f3b8da3e696288b9e702a9f.svg" alt=""></p>
-<p>达赫兰</p>
-<p>大约10小时前</p>
+<p>tdakhran</p>
+<p>大约 10 小时前</p>
 <p>恭喜发布！</p>
 <p><img src="https://huggingface.co/avatars/1c779d6528fc7244278cc561da151efb.svg" alt=""></p>
-<p>风暴骑士2003</p>
+<p>stormrider2003</p>
 <p>大约 7 小时前</p>
 <p>恭喜</p>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/sG9hP9bt1NDLjKMG18209.jpeg" alt=""></p>
-<p>先生-DS-ML-85</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/sG9hP9bt1NDLjKMG18209.jpeg" alt=""></p>
+<p>Mr-DS-ML-85</p>
 <p>26 分钟前</p>
-<p>llama.cpp 很好，但在巨大的提示处理或又称预填充方面仍需要改进</p>
-<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
-<p>点击或粘贴此处上传图像</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">登录</a> 发表评论</p>
+<p>llama.cpp 不错，但在超长 prompt 处理（也就是 prefill）上还需要改进</p>
+<p>把图片、音频和视频拖进文本框、粘贴，或点这里上传。</p>
+<p>点此或粘贴以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">登录</a> 后发表评论</p>
 <p>152</p>
-<ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/74k1"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/J45uU0ctfprHaqrGfNoCy.png" alt=""></a></li><li><a href="https://huggingface.co/lnglth"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/OD5-IRD81mXlt3HQd6x3u.png" alt=""></a></li><li><a href="https://huggingface.co/winklerj"><img src="https://huggingface.co/avatars/f3b23beb0241ff3c32975da592c00af4.svg" alt=""></a></li><li><a href="https://huggingface.co/andito"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2b8b4cf7d8930887629e7bcaf0401f61.svg" alt=""></a></li><li><a href="https://huggingface.co/cpoisson"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></a></li></ul>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/74k1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/J45uU0ctfprHaqrGfNoCy.png" alt=""></a></li><li><a href="https://huggingface.co/lnglth"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OD5-IRD81mXlt3HQd6x3u.png" alt=""></a></li><li><a href="https://huggingface.co/winklerj"><img src="https://huggingface.co/avatars/f3b23beb0241ff3c32975da592c00af4.svg" alt=""></a></li><li><a href="https://huggingface.co/andito"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2b8b4cf7d8930887629e7bcaf0401f61.svg" alt=""></a></li><li><a href="https://huggingface.co/cpoisson"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>LLMON：一种 LLM 原生标记语言，现已在 Granite 4.1 3B 和 8B 上可用</title>

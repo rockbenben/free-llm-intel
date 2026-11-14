@@ -10,7 +10,7 @@
 
 ## 全部文章（共 157 篇，按日期倒序；无日期条目列于最后）
 
-1. [建立永远在线的代理](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13） <!--orig:Building always-on agents-->
+1. [构建永远在线的 agent](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13） <!--orig:Building always-on agents-->
 2. [面向初创公司的 Claude Tag 指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-13） <!--orig:The Claude Tag guide for startups-->
 3. [在自己的安全边界内运行 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12） <!--orig:Operate Claude Managed Agents inside your security perimeter-->
 4. [J.Crew 借 Claude 将标志性造型理念带到线上](https://claude.com/resources/articles/j-crew-style-advisor-with-claude)（2026-11-12） <!--orig:J. Crew brings its signature approach to styling to life with Claude-->
