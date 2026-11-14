@@ -5773,6 +5773,25 @@ def _body_html_for(art: Article, vendor: str, bodies: dict, feeds_dir: Path,
 #: 要么台账写明读不到的原因。
 UNREADABLE_STATUSES = ("fetch_failed", "index_page", "paywall")
 
+#: 正文抓取专用：这些文档页的 HTML 版是 JS 渲染壳（实测 aistudio changelog 返回
+#: 136KB HTML、`extract_article_markdown` 却抽出 0 字），官方同路径 `.md` 端点返回
+#: 纯 markdown、内容同源且静态可读（changelog.md 实测 68,216 字正文）。
+#: **只重写正文抓取的请求 URL**：台账 key / 归档 URL / slug 一律不动，文章身份不能
+#: 因为换了个可读端点而漂移。yaml 里的 changelog 情报源也不在此列 —— 它靠 HTML +
+#: 浏览器拆条目，换成 `.md` 会抽出 0 条（markdown 版只有「日期 → 无序列表」）。
+_MD_BODY_URLS = {
+    "https://aistudio.google.com/docs/changelog": "https://aistudio.google.com/docs/changelog.md",
+}
+
+
+def markdown_body_url(url: str) -> str:
+    """正文抓取时把文档页换成官方 `.md` 端点，保留 fragment；其余 URL 原样返回。"""
+    base, sep, frag = url.partition("#")
+    md = _MD_BODY_URLS.get(base.rstrip("/"))
+    if not md:
+        return url
+    return md + (sep + frag if sep else "")
+
 
 def _has_body_text(root: Path, vendor: str, slug: str, name: str) -> bool:
     """单个正文文件在盘上、且 frontmatter 之后还有字。
@@ -7517,9 +7536,11 @@ def main(argv: list[str] | None = None) -> int:
 
         def _fetch_body(u: str):
             # 正文抓取按 URL 反查源声明的 locale cookie：CI 与本机跑的必须是**同一种
-            # 语言**的页面，否则同一条公告按锚点各存一份（见 news_source_locale_cookies）
-            page = fetch_url(session, u, "news", browser=browser, timeout=timeout,
-                             locale_cookie=declared_source_cookie(u))
+            # 语言**的页面，否则同一条公告按锚点各存一份（见 news_source_locale_cookies）。
+            # 文档站 HTML 是 JS 壳时改抓官方 `.md` 端点（见 markdown_body_url）；
+            # 台账仍按原 URL 记，身份不漂移。
+            page = fetch_url(session, markdown_body_url(u), "news", browser=browser,
+                             timeout=timeout, locale_cookie=declared_source_cookie(u))
             return (page.raw or "", page.ok, page.status_code or 0, page.final_url or u)
 
         def _refetch_body(u: str):

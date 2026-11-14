@@ -669,7 +669,12 @@ def _find_main(root) -> _Node:
     walk(root)
     if articles:
         articles.sort(key=lambda x: x[0], reverse=True)
-        return articles[0][1]
+        # 空壳 <article>/<main> 不能当「选到主容器」的结论：Framer 一类站点拿
+        # <article> 当布局容器（实测 inceptionlabs 两篇 subtree_text=0，正文其实在
+        # 兄弟 div 里，页面去标签后有 6,378 / 6,616 字）。旧逻辑「有 article 就直接
+        # 返回」会把这些页面抽成 0 字 → fetch_failed。非空时行为不变。
+        if articles[0][0] > 0:
+            return articles[0][1]
     # 退化：挑正文最长、非链接密集的 div/section（排除 body/root：整站文本必然最长，
     # 会连导航页脚一起吞掉；真正文块总在某个子 div 里）。
     best, best_score = root, 0
@@ -903,7 +908,10 @@ def extract_article_markdown(html: str, base_url: str) -> dict:
     markdown = "\n\n".join(blocks).strip()
 
     # 硬失败判定（抓不到不猜）：反爬 > 付费墙 > SPA 壳 > 正文过短
-    if _BLOCKED_RE.search(html):
+    # 正常安全文章的示例日志也会写 Access Denied，脚本里也可能有同名字符串。
+    # 用页面标题或短正文识别验证页，不能在整份 HTML 中搜到词就拒收全文。
+    if (_BLOCKED_RE.search(title)
+            or (len(markdown) < _STUB_BODY_CHARS and _BLOCKED_RE.search(markdown))):
         return _fail("blocked")
     # 付费墙指纹要「措辞 + 短正文」一起看：光有措辞会吃掉正文里正常提到订阅/登录的句子。
     # 闸门保持 `_STUB_BODY_CHARS`（400），不为单页调高 —— 理由见该常量注释。
@@ -1627,6 +1635,31 @@ _TOC_HEADING_RE = re.compile(r"^#{1,6}\s*(?:On this page|在此页面上|在本�
                              re.IGNORECASE)
 
 
+def _slice_mintlify_id_section(md: str, frag: str) -> str:
+    """Mintlify 文档站 `.md` 端点：日期标题写成
+    `## January 8, 2026  {% id="01-08-2026" %}`，锚点 id 在标题行的属性里
+    （HTML 版没有这一串）。按 id 精确圈出该分节，终点是下一个同级或更浅的标题。
+
+    条件极窄：必须同时命中「markdown 标题行」与「完全相同的 id」，所以只对这类
+    `.md` 文档生效，不改变任何既有源的结果。实测 aistudio changelog.md 里
+    105/105 个台账锚点都能命中。
+    """
+    if not frag:
+        return ""
+    needle = re.compile(r"""\{%\s*id=["']""" + re.escape(frag) + r"""["']\s*%\}""")
+    for m in re.finditer(r"(?m)^(#{1,6})[^\n]*$", md):
+        if not needle.search(m.group(0)):
+            continue
+        level = len(m.group(1))
+        tail = md[m.end():]
+        nxt = re.search(r"(?m)^#{1,%d}[ \t]" % level, tail)
+        end = m.end() + (nxt.start() if nxt else len(tail))
+        section = md[m.start():end].strip()
+        # id 是文档站的模板属性、不是正文，切完顺手洗掉（只删这一串，不动标题文字）。
+        return re.sub(r"""\{%\s*id=["'][^"']+["']\s*%\}""", "", section).strip()
+    return ""
+
+
 def _slice_anchor_section(md: str, frag: str, title: str = "", siblings=(), date: str = "") -> str:
     """从整页 markdown 里切出 `frag` 锚点那一条的段落；找不到就原样返回整页。
 
@@ -1648,6 +1681,12 @@ def _slice_anchor_section(md: str, frag: str, title: str = "", siblings=(), date
     """
     if not frag and not title:
         return md
+    # `.md` 端点把锚点 id 写在标题行属性里，启发式起点找不到时按 id 精确直切。
+    # 命中条件极窄，先于其它兜底，不影响既有源。
+    if frag:
+        id_slice = _slice_mintlify_id_section(md, frag)
+        if id_slice:
+            return id_slice
     lines = md.splitlines()
     start = _find_entry_start(lines, frag)
     if start < 0:

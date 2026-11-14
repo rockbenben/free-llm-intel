@@ -8670,6 +8670,65 @@ class TestFulltextBodyDoc(unittest.TestCase):
             self.assertRaises(ValueError, ft.read_body_doc, p)
 
 
+class TestFetchFailedExtractionFixes(unittest.TestCase):
+    """2026-11-14 fetch_failed 逐篇验证后的两处修复守卫。
+
+    证人按「该绿的绿在该处」验：空壳 article 要回退、正常 article 不能被改坏、
+    `.md` 重写只碰正文抓取的那一个 URL 且保住 fragment。
+    """
+
+    def test_empty_article_falls_back_to_content_div(self):
+        body = "<h1>Introducing Mercury 2.5</h1><p>" + ("模型正文段落 " * 60) + "</p>"
+        html = ("<html><body><article><div class='framer-shell'></div></article>"
+                f"<div class='framer-content'>{body}</div></body></html>")
+        r = ft.extract_article_markdown(html, "https://www.inceptionlabs.ai/blog/x")
+        self.assertEqual(r["reason"], "")
+        self.assertIn("Introducing Mercury 2.5", r["markdown"])
+        self.assertGreater(len(r["markdown"]), 200)
+
+    def test_nonempty_article_still_wins(self):
+        # 反向夹具：修复不能变成「一律忽略 article」，正常文章仍要选中 article
+        normal = ("<html><body><article><h1>正常文章标题</h1><p>" + ("正文 " * 200)
+                  + "</p></article><div>侧栏导航脚注</div></body></html>")
+        r = ft.extract_article_markdown(normal, "https://x.example/p")
+        self.assertEqual(r["reason"], "")
+        self.assertIn("正常文章标题", r["markdown"])
+
+    def test_markdown_body_url_rewrites_only_changelog_and_keeps_fragment(self):
+        self.assertEqual(
+            crawler_llm_intel.markdown_body_url(
+                "https://aistudio.google.com/docs/changelog#01-08-2026"),
+            "https://aistudio.google.com/docs/changelog.md#01-08-2026")
+        self.assertEqual(
+            crawler_llm_intel.markdown_body_url("https://aistudio.google.com/docs/changelog"),
+            "https://aistudio.google.com/docs/changelog.md")
+        # 情报源、已是 .md 的 URL、别家页面：身份一律不动
+        for u in ("https://aistudio.google.com/docs/pricing.md",
+                  "https://aistudio.google.com/docs/changelog.md#x",
+                  "https://example.com/docs/changelog#01-08-2026",
+                  "https://openai.com/index/gpt-5-first-look"):
+            self.assertEqual(crawler_llm_intel.markdown_body_url(u), u)
+
+    def test_mintlify_md_id_slice_picks_exact_section(self):
+        md = ("> ## AI Agent Context\n\n"
+              '## January 8, 2026  {% id="01-08-2026" %}\n\n'
+              "*   Launched support for Cloud Storage buckets.\n"
+              "*   File size limit increased from 20MB to 100MB.\n\n"
+              '## January 12, 2026  {% id="01-12-2026" %}\n\n'
+              "*   Launched model lifecycle feature.\n")
+        got = ft._slice_anchor_section(md, "01-08-2026", "Cloud Storage", (), "2026-01-08")
+        self.assertIn("Cloud Storage", got)
+        self.assertIn("## January 8, 2026", got)
+        self.assertNotIn("{% id=", got)          # 模板属性不留进正文
+        self.assertNotIn("model lifecycle", got)  # 下一节不能串进来
+
+    def test_mintlify_md_id_slice_no_match_keeps_old_behavior(self):
+        md = "## Plain heading\n\n" + ("正文 " * 200)
+        self.assertEqual(ft._slice_mintlify_id_section(md, "no-such-id"), "")
+        # 没有 {% id %} 时仍走原来的启发式，返回整页而不是空串
+        self.assertEqual(ft._slice_anchor_section(md, "no-such-id", "", (), ""), md)
+
+
 class TestFulltextExtractor(unittest.TestCase):
     """正文抽取（密度选主块 + markdown 化 + 硬失败判定），golden fixtures 冻结输入。"""
 
@@ -8714,6 +8773,22 @@ class TestFulltextExtractor(unittest.TestCase):
 
     def test_blocked_html_reports_blocked(self):
         html = "<html><body>We noticed something unusual. You have been blocked.</body></html>"
+        self.assertEqual(ft.extract_article_markdown(html, "https://x/y")["reason"], "blocked")
+
+    def test_security_article_block_markers_are_not_a_challenge(self):
+        text = "We monitor coding agents and investigate unexpected tool failures. " * 12
+        html = ('<html><title>Monitoring coding agents</title><body><article><h1>Monitoring</h1>'
+                '<p>' + text + '</p><pre>Access Denied</pre></article>'
+                '<script>const message = "you have been blocked";</script></body></html>')
+        result = ft.extract_article_markdown(html, "https://x/y")
+        self.assertEqual(result["reason"], "")
+        self.assertIn("Access Denied", result["markdown"])
+        self.assertNotIn("const message", result["markdown"])
+
+    def test_long_challenge_with_blocked_title_is_rejected(self):
+        html = ('<html><title>Access Denied</title><body><main><p>'
+                + 'Please contact the site administrator for assistance. ' * 20
+                + '</p></main></body></html>')
         self.assertEqual(ft.extract_article_markdown(html, "https://x/y")["reason"], "blocked")
 
     # ai21 `-gated` 落地页那份夹具：2026-10-15 真抓到的残段，473 字符 + 一句 CTA。
