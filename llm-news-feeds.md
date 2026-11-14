@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-14 11:15:18**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-14 19:07:46**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,27 +26,26 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [在自己的安全边界内运行 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12）
-  2. [J.Crew 借 Claude 将标志性造型理念带到线上](https://claude.com/resources/articles/j-crew-style-advisor-with-claude)（2026-11-12）
-  3. [推出 Claude for Manufacturing](https://claude.com/resources/articles/claude-for-manufacturing)（2026-11-12）
-  4. [推出 Claude Meetings](https://claude.com/resources/articles/claude-meetings)（2026-11-12）
-  5. [把 Claude Opus 5.5 用作知识工作的日常主力模型](https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work)（2026-11-12）
-  - 📄 完整文章归档（共 156 篇）：[anthropic.md](llm-news/anthropic.md)
+  1. [建立永远在线的代理](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13）
+  2. [面向初创公司的 Claude Tag 指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-13）
+  3. [在自己的安全边界内运行 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12）
+  4. [J.Crew 借 Claude 将标志性造型理念带到线上](https://claude.com/resources/articles/j-crew-style-advisor-with-claude)（2026-11-12）
+  5. [推出 Claude for Manufacturing](https://claude.com/resources/articles/claude-for-manufacturing)（2026-11-12）
+  - 📄 完整文章归档（共 157 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### OpenAI (openai)
 - 页面：[官方博客](https://openai.com/news/)
-  - ❌ 抓取失败：（可直接访问页面查看）
-- 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
-  - 📡 RSS/Atom：https://openai.com/zh-Hans-CN/news/rss.xml
+- 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
+  - ❌ 抓取失败：（可直接访问页面查看）
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [Amplitude 如何利用 OpenAI 在 1-2 天内改进产品](https://openai.com/business/customer-stories/amplitude)（2026-11-12）
-  2. [Gondola 团队利用 Codex 打造更多产品，收入翻倍](https://openai.com/business/customer-stories/gondola)（2026-11-12）
-  3. [Holiday Extras 正在重新思考可以使用 Codex 构建什么](https://openai.com/business/customer-stories/holidays-extras-codex)（2026-11-12）
-  4. [支持人工智能和儿童安全研究](https://openai.com/index/children-first-declaration)（2026-11-12）
-  5. [Gilbert + Tobin 用人工智能重新思考法律业务](https://openai.com/index/gilbert-tobin-sam-nickless)（2026-11-12）
-  - 📄 完整文章归档（共 1382 篇）：[openai.md](llm-news/openai.md)
+  1. [ChatGPT 钱包简介](https://openai.com/index/introducing-chatgpt-wallet)（2026-11-13）
+  2. [Shield 帮助技术人员使用 OpenAI 移交遗留门户工作](https://openai.com/business/customer-stories/shield)（2026-11-13）
+  3. [Amplitude 如何利用 OpenAI 在 1-2 天内改进产品](https://openai.com/business/customer-stories/amplitude)（2026-11-12）
+  4. [Gondola 团队利用 Codex 打造更多产品，收入翻倍](https://openai.com/business/customer-stories/gondola)（2026-11-12）
+  5. [Holiday Extras 正在重新思考可以使用 Codex 构建什么](https://openai.com/business/customer-stories/holidays-extras-codex)（2026-11-12）
+  - 📄 完整文章归档（共 1384 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[变更日志](https://aistudio.google.com/docs/changelog)
@@ -67,12 +66,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepseek.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepseek.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [开放自研搜索 API](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-10-17)（2026-10-17）
-  2. [DeepSeek-V4.1-Flash-1017 发布](https://api-docs.deepseek.com/zh-cn/news/news261017)（2026-10-17）
-  3. [DeepSeek V4.1 Flash：更强、更快、更普惠](https://api-docs.deepseek.com/zh-cn/news/news260910)（2026-09-10）
-  4. [V4-Flash-Vision-Exp 上线，开启多模态 API 服务](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
-  5. [DeepSeek-V4-Flash-Vision-Exp 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-21)（2026-08-21）
-  - 📄 完整文章归档（共 44 篇）：[deepseek.md](llm-news/deepseek.md)
+  1. [发布全家桶应用 API](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-11-13)（2026-11-13）
+  2. [DeepSeek 全家桶应用 API 发布](https://api-docs.deepseek.com/zh-cn/news/news261113)（2026-11-13）
+  3. [开放自研搜索 API](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-10-17)（2026-10-17）
+  4. [DeepSeek-V4.1-Flash-1017 发布](https://api-docs.deepseek.com/zh-cn/news/news261017)（2026-10-17）
+  5. [DeepSeek V4.1 Flash：更强、更快、更普惠](https://api-docs.deepseek.com/zh-cn/news/news260910)（2026-09-10）
+  - 📄 完整文章归档（共 46 篇）：[deepseek.md](llm-news/deepseek.md)
 
 ### 通义千问 (aliyun_qwen)
 - 页面：[研究页](https://qwen.ai/research)
@@ -195,12 +194,12 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [LLMON：一种 LLM 原生标记语言，现已在 Granite 4.1 3B 和 8B 上可用](https://huggingface.co/blog/ibm-granite/llmon-an-llm-native-markup-language-now-in-granite)（2026-11-12）
-  2. [3D 生成模型的 fine-tuning 权威指南](https://huggingface.co/blog/3d-lora-finetuning)（2026-11-12）
-  3. [BotPsy：基于十亿参数以下 agentic 语言模型的端侧个人助理](https://huggingface.co/blog/qvac/botpsy)（2026-11-11）
-  4. [多向量嵌入模型的令牌池感知训练](https://huggingface.co/blog/token-pooling)（2026-11-11）
-  5. [用 Google Cloud 账号支付 Hugging Face Hub 费用](https://huggingface.co/blog/hub-gcp-marketplace)（2026-11-10）
-  - 📄 完整文章归档（共 929 篇）：[huggingface.md](llm-news/huggingface.md)
+  1. [使用 SimReady Assets 构建机器人拾放模拟](https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place)（2026-11-13）
+  2. [XYBench：帮助解决问题背后的问题](https://huggingface.co/blog/allenai/xybench)（2026-11-13）
+  3. [llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem](https://huggingface.co/blog/ggml-org/llama-cpp-v1)（2026-11-13）
+  4. [LLMON：一种 LLM 原生标记语言，现已在 Granite 4.1 3B 和 8B 上可用](https://huggingface.co/blog/ibm-granite/llmon-an-llm-native-markup-language-now-in-granite)（2026-11-12）
+  5. [3D 生成模型的 fine-tuning 权威指南](https://huggingface.co/blog/3d-lora-finetuning)（2026-11-12）
+  - 📄 完整文章归档（共 932 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (openrouter)
 - 📡 [官方 RSS](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
@@ -232,7 +231,7 @@
   3. [全球领先的开放模型，完全由你掌控](https://cohere.com/blog/open-source-model-vault)（2026-11-03）
   4. [Cohere 推进 40 亿加元承诺，巩固加拿大 AI 领导地位并大幅扩充本土团队](https://cohere.com/blog/cohere-canada-commitment)（2026-10-30）
   5. [在 AWS 上用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29）
-  - 📄 完整文章归档（共 57 篇）：[cohere.md](llm-news/cohere.md)
+  - 📄 完整文章归档（共 58 篇）：[cohere.md](llm-news/cohere.md)
 
 ### 商汤 日日新 (sensetime_sensenova)
 - 页面：[更新日志](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release)
@@ -297,12 +296,12 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [使用 SGLang-Neuron 在 AWS Trainium 上部署前沿 AI 模型](https://aws.amazon.com/blogs/machine-learning/deploy-frontier-ai-models-on-aws-trainium-with-sglang-neuron/)（2026-11-12）
-  2. [Natera 如何用 Amazon Bedrock AgentCore 为实验室运营设计 agentic AI 系统](https://aws.amazon.com/blogs/machine-learning/how-natera-designed-an-agentic-ai-system-for-lab-ops-with-amazon-bedrock-agentcore/)（2026-11-12）
-  3. [影响成本的四个 Amazon Bedrock 推理选项](https://aws.amazon.com/blogs/machine-learning/four-amazon-bedrock-inference-choices-that-affect-cost/)（2026-11-12）
-  4. [规模化 tokenomics：用 CUR 2.0 和 AWS Budgets 按 IAM 主体跟踪并封顶 Amazon Bedrock 支出](https://aws.amazon.com/blogs/machine-learning/tokenomics-at-scale-track-and-cap-amazon-bedrock-spend-per-iam-principal-with-cur-2-0-and-aws-budgets/)（2026-11-12）
-  5. [优化每任务成本，证明 Amazon Bedrock 上 agent 的 ROI](https://aws.amazon.com/blogs/machine-learning/optimizing-cost-per-task-and-proving-agent-roi-on-amazon-bedrock/)（2026-11-12）
-  - 📄 完整文章归档（共 205 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [使用 Amazon SageMaker Canvas 在 GS Caltex 进行生产 MLOps，第 1 部分](https://aws.amazon.com/blogs/machine-learning/production-mlops-at-gs-caltex-with-amazon-sagemaker-canvas-part-1/)（2026-11-13）
+  2. [使用 NVIDIA NeMo Switchyard 将编码代理请求路由到 Amazon Bedrock 上的正确模型](https://aws.amazon.com/blogs/machine-learning/route-coding-agent-requests-to-the-right-model-on-amazon-bedrock-with-nvidia-nemo-switchyard/)（2026-11-13）
+  3. [Amazon Bedrock AgentCore 运行时快速会话启动的架构模式](https://aws.amazon.com/blogs/machine-learning/architecture-patterns-for-fast-session-startup-on-amazon-bedrock-agentcore-runtime/)（2026-11-13）
+  4. [OpenFold3 on Amazon SageMaker JumpStart: Predict biomolecular structures](https://aws.amazon.com/blogs/machine-learning/openfold3-on-amazon-sagemaker-jumpstart-predict-biomolecular-structures/)（2026-11-13）
+  5. [Cost-optimizing AssemblyAI speech-to-text inference on AWS with Amazon EC2 Spot](https://aws.amazon.com/blogs/machine-learning/cost-optimizing-assemblyai-speech-to-text-inference-on-aws-with-amazon-ec2-spot/)（2026-11-13）
+  - 📄 完整文章归档（共 212 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
@@ -422,14 +421,14 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-inference_net.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-inference_net.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-14，标题自动汉化）：
-  1. [AutoEvals 简介：自动找到最适合您任务的模型](https://inference.net/blog/introducing-autoevals/)（2026-10-23）
-  2. [Schematron V2：以极低成本实现前沿级 HTML 转 JSON 提取](https://inference.net/blog/schematron-v2/)（2026-08-05）
-  3. [推理平台简介：监控、训练和部署自我改进的 AI 模型](https://inference.net/blog/introducing-inference-platform/)（2026-04-16）
-  4. [Inference.net 如何训练专用语言模型，把 AI 成本最多降低 50 倍](https://inference.net/blog/nemotron-finetuning/)（2026-04-14）
-  5. [专业LLM：您需要的模型尚不存在](https://inference.net/blog/the-model-you-need-doesnt-exist-yet/)（2026-03-11）
-  - 📄 完整文章归档（共 10 篇）：[inference_net.md](llm-news/inference_net.md)
+  1. [MiniMax M3.1 Flash is live on Inference: Day 0](https://inference.net/blog/minimax-m3-1-flash-day-0/)（2026-10-23）
+  2. [AutoEvals 简介：自动找到最适合您任务的模型](https://inference.net/blog/introducing-autoevals/)（2026-08-05）
+  3. [Schematron V2：以极低成本实现前沿级 HTML 转 JSON 提取](https://inference.net/blog/schematron-v2/)（2026-04-16）
+  4. [推理平台简介：监控、训练和部署自我改进的 AI 模型](https://inference.net/blog/introducing-inference-platform/)（2026-04-14）
+  5. [Inference.net 如何训练专用语言模型，把 AI 成本最多降低 50 倍](https://inference.net/blog/nemotron-finetuning/)（2026-03-11）
+  - 📄 完整文章归档（共 11 篇）：[inference_net.md](llm-news/inference_net.md)
 
 ---
-共整理 34 个厂商的动态入口（其中 34 个成功提取最新文章），RSS/Atom 源 15 个。
+共整理 34 个厂商的动态入口（其中 34 个成功提取最新文章），RSS/Atom 源 14 个。
 
 <!-- LLM-NEWS:END -->

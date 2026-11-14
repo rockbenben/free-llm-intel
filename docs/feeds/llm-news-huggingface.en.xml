@@ -7,7 +7,318 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Build a Robot Pick-and-Place Simulation with SimReady Assets</title>
+      <link>https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place?li=1</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Build a Robot Pick-and-Place Simulation with SimReady Assets</h1>
+<p>Enterprise + Article</p>
+<p>Published November 13, 2026</p>
+<p>14</p>
+<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/dillonb-nv"><img src="https://huggingface.co/avatars/ef260ce572881087d516bcf632928740.svg" alt="Dillon Bailey's avatar"></a></p>
+<p>Dillon Bailey</p>
+<p>dillonb-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt="Pomi Lee's avatar"></a></p>
+<p>Pomi Lee</p>
+<p>pomilee</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/rchadha-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kaRxLMenXEARG7KGBZJUh.png" alt="Rishabh Chadha's avatar"></a></p>
+<p>Rishabh Chadha</p>
+<p>rchadha-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif" alt="figure-01-pick-and-place-highlight"></a></p>
+<p>This walkthrough showcases a beverage can pick-and-place task that uses the <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G arm</a>, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140 gripper</a>, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> to compose a scene in Isaac Sim, check their behavior, and run a pick-and-place example with agent-generated controls.</p>
+<p>For robotics workflows, SimReady means an <a href="https://www.nvidia.com/en-us/glossary/openusd/">OpenUSD</a> asset has been prepared with the properties needed for a defined simulation use case, such as collisions, mass, joints, and joint drives. <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>, an open asset library on Hugging Face, lets you reuse robot and object assets with authored simulation properties and profile-validation evidence. For more about the library and its launch, read the <a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">announcement blog</a>.</p>
+<h2>What makes a robot asset SimReady?</h2>
+<p><a href="https://nvidia.github.io/simready-foundation/">SimReady Foundation</a> defines what features the OpenUSD asset needs for a simulation use case. Its specifications connect three levels:</p>
+<ul><li>Profile: a group of features for a use case, such as a robot body.</li><li>Features: capabilities needed for the use case, such as joints that can be controlled.</li><li>Requirements: checks on the settings needed for each feature, such as a joint’s drive settings.</li></ul>
+<p>For this task, those properties include the arm and gripper’s joints and a beverage can asset collisions and mass. Validation checks these settings against the profile’s requirements. The simulation then tests whether the assembled robot can use them to pick up and move the can.</p>
+<h2>What comes with the asset, and what do you add?</h2>
+<p>The <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a>, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> packages include the models and their simulation settings. You assemble the scene and add task code to define the arm–gripper assembly, work surface, starting positions, and controls for moving the arm and opening and closing the gripper.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png" alt="Figure 2"></a></p>
+<p><em>Figure 2. SimReady Central supplies the asset models and simulation settings and the example scene and controls define the pick-and-place task.</em></p>
+<h2>What should you check before running a pick-and-place task?</h2>
+<p>A robot can look visually correct while stationary in Isaac Sim but move or interact with objects incorrectly when the simulation runs. Before running pick-and-place, test its joints, movement, and contact behavior. You can ask the agent to perform these tests or do them manually in Isaac Sim.</p>
+<ul><li><strong>Joint settings:</strong> Review the arm and gripper’s joint limits and drive settings.</li><li><strong>Movement:</strong> Test a small arm movement and open and close the gripper.</li><li><strong>Contact:</strong> Confirm that the can rests on the work surface without falling through it.</li></ul>
+<p>During pick-and-place, watch whether a beverage can stay in the gripper as the arm moves. Asset structures vary, so use the settings in your loaded scene as your starting point. We will be going through the overall process of downloading the assets and composing the scene in the steps below.</p>
+<h2>Build a pick-and-place simulation in Isaac Sim</h2>
+<p>This example combines the <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> arm, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> gripper, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> in Isaac Sim. The task is to grasp the can, lift it, move it to a target, and release it. You can also leverage <a href="http://nvidia-simready-central.hf.space">SimReady Central Space</a> search service endpoint to look for OEM curated content.</p>
+<p>We will also use a frontier AI model to help create and run the task code in an open Isaac Sim scene. For this example, we use GPT-6 Sol, but another agent and model combination may work if it can load the required skills and execute Python against Isaac Sim (generated code and results can vary). The prompt provides a starting point. Inspect the generated code and check the resulting behavior before adapting the task.</p>
+<p><strong>Required Software:</strong></p>
+<ul><li>Install <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim</a> 6.2, the version used for this example, and check its system requirements.</li><li>Set up an agent of your choice that can use the Isaac Sim skills. Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Agent Skills documentation</a> to make the bundled skills available to your agent.</li><li>Install the <a href="https://huggingface.co/docs/huggingface_hub/guides/cli">Hugging Face CLI</a> only if you choose the command-line asset download option.</li><li>Use the <a href="http://nvidia-simready-central.hf.space">USD Search endpoint</a>.</li></ul>
+<h2>Step 1: Download the robot arm, gripper, and beverage can assets</h2>
+<p>Open <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> and find the <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> arm, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> gripper, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> used here. Select Download on each asset, then use Save to folder or the supplied Hugging Face command. Keep all three complete asset folders intact so Isaac Sim can find their supporting files.</p>
+<p>Use the asset versions linked in this example and provide your agent with the local USD file paths for the arm, gripper, and beverage can. An example gripper path is shown below; your download location may differ.</p>
+<pre><code>~/ASSETS/hf/src/simready-assets-c7fa7615/Robotiq_2F_140/simready_usd/Robotiq_2F_140.usda</code></pre>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif" alt="figure-05-find-robotiq"></a></p>
+<p><em>Figure 3. SimReady Central search and interactive previews help identify the Robotiq 2F-140 gripper and beverage can used in this example.</em></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif" alt="figure-04-download-assets"></a></p>
+<p><em>Figure 4. The beverage can’s download options include saving the asset package to a folder or using the Hugging Face CLI.</em></p>
+<h2>What does asset validation tell you?</h2>
+<p>The <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/.metadata/ur17g_1300_validation.json">arm validation report</a> uses the Robot-Body 4.0.0 profile and the <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/c7fa7615a353ebac03990208cbc2aa57426f4c48/Robotiq_2F_140/.metadata/Robotiq_2F_140_validation.json">gripper validation report</a> uses Robot-Gripper 3.0.0. Both record passing <a href="https://nvidia.github.io/simready-foundation/latest/features/FET_022_PHYSX.html">PhysX driven-joint checks</a>, which inspect joint-drive settings.</p>
+<p>SimReady profile validation provides a shared baseline for reusing these assets. The pick-and-place run then tests how the arm, gripper, can, and controller work together in the assembled scene.</p>
+<h2>Step 2: Assemble the robot and compose the scene for pick and place</h2>
+<p>With the assets downloaded, use your agent with Isaac Sim skills to help assemble the robot, run validation tools, and create the pick-and-place controls. You can also perform these steps manually using the linked documentation.</p>
+<p>Start Isaac Sim from its installation directory with the remote Python server enabled so the agent can interact with the simulation through Python:</p>
+<pre><code>./isaac-sim.sh --enable isaacsim.code_editor.python_server</code></pre>
+<p>If you are using an agent, make sure you start it from the Isaac Sim directory so that it can access the skills needed while going through the steps below.</p>
+<p>Confirm that all three assets appear without missing-file errors. Ask the agent to inspect the arm and gripper’s joint limits and drive settings, or review them yourself in Isaac Sim. The robot and the gripper contain physics joints which can be tested and validated in the Isaac Sim GUI as well. We will now assemble the arm and the gripper next so that we can control the assembly as a single articulation.</p>
+<p>You can follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html">Robot Assembler tutorial</a> for manual assembly. Here we will ask our agent to complete the assembly and validate it for us:</p>
+<p><strong>Sample prompt used in this example:</strong></p>
+<pre><code>Assemble the robot arm &lt;local path to Simready ur17g robot usd&gt;
+with the gripper &lt;local path to downloded simready Robotiq_2F_140 gripper usd&gt;
+using the Robot Assembly tutorial in Isaac Sim
+https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html.
+
+Validate the assembly on completion.</code></pre>
+<p>The agent ends up using the ‘isaac-sim-remote’ and ‘usd-articulation’ skills packaged with Isaac Sim to complete the assembly and validate the physics of the robot. We now have all the assets needed for running pick and place; the assembled robot and the soda can. We will now proceed with the final portion of the workflow.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif" alt="figure-05-joint-settings"></a></p>
+<p><em>Figure 5. Joint settings for the UR17G arm and Robotiq 2F-140 gripper in Isaac Sim.</em></p>
+<p>With the assembled robot and can in the scene, ask the agent to run the task. Evaluate the simulation behavior using the checks in the next step.</p>
+<h2>Step 3: Test the controls and run pick-and-place</h2>
+<p>Now that the assets include simulation properties and profile validation, we can now test in an assembled scene and controller. The controller coordinates the UR17G arm’s movement with the Robotiq 2F-140 gripper’s opening and closing. Use the behavior checks below to evaluate the agent-generated task. To understand or adapt the controller yourself, see the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/core_api_tutorials/tutorial_core_adding_manipulator.html">Adding a Manipulator Robot tutorial</a>.</p>
+<p><strong>Sample prompt used in this example:</strong></p>
+<pre><code>Run pick and place with the assembled robot and soda can
+&lt;path to soda can USD from SimReady library&gt; in Isaac Sim.
+
+Ensure you do a contact based grasp for picking up the can and validate
+the accuracy/placement error for the pick and place as well.</code></pre>
+<p><strong>Skills used</strong>: ‘isaac-sim-remote’, ‘manipulaiton-ik’ and ‘physics-simulation’</p>
+<p>The full task tests whether the gripper holds the can during movement and releases it at the target. Reset the scene, then run the approach, grasp, lift, hold, transfer, and release sequence. Compare your run with the opening video and the success criteria below.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif" alt="figure-06-pick-and-place-landscape"></a></p>
+<p><em>Figure 6. The UR17G arm and Robotiq 2F-140 gripper move the beverage can from the yellow pickup marker to the green target in Isaac Sim. Shown at 4× speed.</em></p>
+<p>If your run differs, note where the sequence fails and ask the agent to inspect the scene and generate controls. Reset the can and robot to the same starting state before retrying so you can compare the results.</p>
+<p><strong>Simulation assumptions:</strong></p>
+<ul><li><strong>Fixed setup:</strong> The can starts at a known position, with an anchored robot and clear, flat workspace. No vision was used and collision checks were limited.</li><li><strong>Simplified can:</strong> Deformation and liquid motion are not modeled, so this example does not test crushing.</li><li><strong>Scripted grasp and motion:</strong> A horizontal grasp uses a 2 N·m drive-effort cap chosen through simulation tests, not calibrated to fingertip forces or recommended by the manufacturer. Contact and friction hold the beverage can as the arm follows fixed waypoints without replanning. For hardware gripping-force specifications, see the <a href="https://robotiq.com/hubfs/Product-sheets/Adaptive%20Grippers/Product-sheet-Adaptive-Grippers-EN.pdf">Robotiq product sheet</a>.</li></ul>
+<p>These results apply to this scripted setup. They do not establish robustness to uncertain object positions, different payloads, or real hardware.</p>
+<h2>Build your next simulation with SimReady Assets</h2>
+<p>Build your own pick-and-place task with assets from <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>, then use an agent of your choice to help assemble the scene and run it in Isaac Sim.</p>
+<p><strong>Discover assets</strong></p>
+<ul><li><strong>Find robots and objects:</strong> Browse <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> on Hugging Face.</li><li><strong>Check what an asset supports:</strong> Review the profiles and requirements in <a href="https://nvidia.github.io/simready-foundation/latest/">SimReady Foundation</a> alongside the asset’s validation reports.</li></ul>
+<p><strong>Build a pick-and-place scene</strong></p>
+<ul><li><strong>Set up the simulator:</strong> Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim installation guide</a> for the version used in this example.</li><li><strong>Connect your agent:</strong> Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Isaac Sim Agent Skills documentation</a> to make the bundled skills available to your agent.</li><li><strong>Assemble the robot:</strong> Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html#assembling-robots">Robot Assembler tutorial</a> if you prefer to connect the arm and gripper manually.</li></ul>
+<p><strong>Prepare and contribute content</strong></p>
+<ul><li><strong>Start from CAD:</strong> Follow the <a href="https://developer.nvidia.com/blog/5-steps-to-create-simready-assets-for-robotics-with-frontier-ai-models/">5 Steps to Create SimReady Assets for Robotics</a> to prepare your own robotics assets.</li><li><strong>Validate and submit assets:</strong> Follow the <a href="https://github.com/NVIDIA-Omniverse/simready-central/blob/main/.agents/skills/submit-simready-assets/SKILL.md">SimReady Central submission guide</a> to make your assets available to other developers.</li></ul>
+<p>For inspiration, explore <a href="https://lnkd.in/p/g3-5svW6">Michael Wagner’s voice-controlled VR demo</a> or <a href="https://lnkd.in/p/gnxQ3YS8">Maziyar Panahi’s Microduck simulation</a>. Both show how developers are using SimReady assets in their own projects.</p>
+<p>What will you build? Share your scene and results in the Hugging Face comments, including the assets and Isaac Sim version you used.</p>
+<p>Happy building!</p>
+<h2>Datasets mentioned in this article 3</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2><em>Evaluating Privacy Protection and Practical AI Applications with 100,000 Synthetic Business Documents Across Eight Domains</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>5</p>
+<p>November 9, 2026</p>
+<h2>Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan's Demographics and Financial Context</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>19</p>
+<p>November 9, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">log in</a> to comment</p>
+<p>14</p>
+<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/yiucw"><img src="https://huggingface.co/avatars/6b59ac5f151b322f5261adacecce6b61.svg" alt=""></a></li><li><a href="https://huggingface.co/klnadim"><img src="https://huggingface.co/avatars/a045d5a990db610dd1f4abbcca7f1bd6.svg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li><li><a href="https://huggingface.co/safikhan5834"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/683acf96542967b165847cff/tUHvC7omJt6mPPdyx1oSe.png" alt=""></a></li><li><a href="https://huggingface.co/Eumoren"><img src="https://huggingface.co/avatars/604ef02c6a6eac9315df923eaf7e56b4.svg" alt=""></a></li><li><a href="https://huggingface.co/willemelliw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a980914cb03264ff33c4e0c/zOqgwh5M1nCzjQGfrT0Je.jpeg" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 3</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>XYBench: Helping with the problem behind the question</title>
+      <link>https://huggingface.co/blog/allenai/xybench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/xybench?li=1</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>XYBench: Helping with the problem behind the question</h1>
+<p>Enterprise  Article</p>
+<p>Published November 13, 2026</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers's avatar"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2's avatar"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://arxiv.org/abs/2609.06842">Paper</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/XYBench-dataset">Data</a> | 💻 <a href="https://github.com/allenai/XYBench">Code</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png"><img src="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png" alt="Diagram of the XY problem showing a user asking about approach Y while thinking of underlying goal X, and an AI model redirecting to goal X."></a></p>
+<p>Truly useful AI assistants need to be able to help users who ask misguided questions—not just users who ask the right question with the right amount of detail. We’re releasing <a href="https://github.com/allenai/XYBench"><strong>XYBench</strong></a>, a benchmark of 8K+ questions that tests how AI assistants respond to requests based on misconceptions, such as asking how to thicken frosting that keeps sliding off cupcakes when the real problem is that the cupcakes are still too warm to frost. XYBench won the Best Resource Paper Award at EMNLP 2026.</p>
+<p>A mismatch between the approach someone asks about and the goal they want to achieve is known as the <em>XY problem</em>: a person wants to accomplish X, assumes a particular approach Y will work, and asks for help with Y. In the cupcake example, the person is so committed to making the frosting stick that they fail to consider the warmth of the cupcake as the true problem to be addressed.</p>
+<p>Developed with researchers at Carnegie Mellon, NVIDIA, and Johns Hopkins, XYBench exposes a critical gap in LLMs' ability to troubleshoot problems: <em>recognizing</em> when a user's request is based on an implicit misconception and appropriately <em>redirecting</em> them toward a solution that addresses their actual goal. Drawing on 8,115 real-world questions spanning programming and everyday activities such as cooking and home repair, we introduce a benchmark that measures whether models identify these misconceptions and are able to prioritize effective solutions in their responses.</p>
+<p>The models we evaluated on XYBench – Claude Sonnet 4.6, GPT-5, Gemini 3.1 Pro, Qwen3.5-9B, and DeepSeek-V4 Pro – often suggested a solution to the user’s problem but kept their answers focused on the original, mistaken approach. Unlike human reference answers, all five models were less likely to steer users away from that approach and toward a solution suited to their goal.</p>
+<p>People use AI systems with different levels of knowledge and may not always know how best to approach a problem. We hope XYBench helps researchers measure whether model improvements make assistants better at recognizing mistaken assumptions, explaining why a proposed approach might not work, and suggesting more effective alternatives—even when users don't know the right questions to ask.</p>
+<h2>Building XYBench</h2>
+<p>We built XYBench from four sources: 1,557 questions from Stack Overflow, 184 from Stack Exchange, 102 manually curated examples, and 6,272 questions generated from WikiHow guides. For each question, we identified the stated request (Y), what the person explicitly asks for, and the intended request (X)—the underlying goal that can be inferred from context.</p>
+<p>For the public forum questions, we used the three highest-scored human answers and the accepted answer, where available, to establish the intended request and possible solutions. We filtered out cases where answering the stated request was judged sufficient. For WikiHow, we used Sonnet 4.5 to generate questions around plausible misconceptions in procedural guides, then refined them to include enough context for an expert to infer the underlying goal without stating it outright. We removed examples where answering the literal request would largely resolve the problem.</p>
+<h2>Evaluating how an answer helps</h2>
+<p>A model might spend several paragraphs recommending a more powerful vacuum cleaner, then briefly suggest checking for a clogged hose. If a clog is causing the weak suction, clearing it could solve the problem.</p>
+<p>A more helpful answer would recognize that the user wants to restore suction and focus on diagnosing the cause. This draws on pragmatics, the branch of linguistics concerned with how context and communicative intent shape meaning. To test whether models use this understanding in their answers, XYBench measures three aspects of each response:</p>
+<ul><li><strong>Pragmatic solution</strong>—records whether a model’s response includes solutions to the stated request (Y) and the intended request (X), checking each separately.</li><li><strong>Pragmatic emphasis</strong>—measures whether a model’s answer focuses on the stated request (Y), focuses on the intended request (X), or balances the two.</li><li><strong>Misconception identification</strong>—measures whether a model’s response steers the user toward the underlying goal (X) while discouraging or avoiding the mistaken approach (Y).</li></ul>
+<p>In XYBench, Claude Sonnet 4.5 serves as the automated judge. It classifies individual suggestions within each model’s response and assesses the answer’s pragmatic emphasis.</p>
+<p>To validate Sonnet 4.5’s judgments, two human reviewers independently assessed 500 model responses to XYBench questions. Agreement with the judge, averaged across the reviewers, ranged from 97.5–100% on whether a solution appeared, 84.6–93.3% on misconception identification, and 74.2–79.8% on pragmatic emphasis.</p>
+<h2>What the experiments show</h2>
+<p>We evaluated Sonnet 4.6, GPT-5, Gemini 3.1 Pro, Qwen3.5-9B, and DeepSeek-V4 Pro on XYBench in a single-turn setting, with one response per question. We evaluated human reference answers separately using the same metrics.</p>
+<p>Across all four sources, every model was more likely to include a solution to the stated request (Y) than to the underlying goal (X). On Stack Overflow, stated-request solutions appeared in 75–86% of responses, compared with 59–71% for underlying-goal solutions.</p>
+<p>A passing mention of a solution does not make it the focus of an answer. In the vacuum example, a model could briefly suggest unclogging the hose but focus most of its response on buying a more powerful vacuum. We would count that response as containing a solution to the underlying goal, even though the model emphasized the stated request. We measured overall emphasis separately: on Stack Overflow, models focused primarily on the underlying goal in only 35–41% of their responses, and on the stated request in 47–57%. In the remaining responses, models gave similar emphasis to the stated request and the underlying goal.</p>
+<p><a href="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png"><img src="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png" alt="Bar chart titled “Five models and top human answers on XYBench’s Stack Overflow questions” comparing GPT-5, DeepSeek-V4 Pro, Qwen3.5-9B, Gemini 3.1 Pro, Claude Sonnet 4.6, and top human answers across mentioning a fix for the underlying goal, focusing on the underlying goal, and steering users away from the mistaken approach."></a></p>
+<p>We also tested whether making the user’s goal explicit would help. In an oracle experiment, we supplied both the stated request (Y) and the intended request (X) alongside each question. On Stack Overflow, Sonnet 4.6’s rate of including a solution to the underlying goal rose from 59% to 67%, but its misconception-identification rate fell from 47% to 34%. Across the sources with human reference answers, every model in this experiment still trailed humans on misconception identification. Supplying intent helped, but did not consistently close the gap with human responses. This suggests that detecting intent is only part of the challenge: models also need to act on it when it diverges from the stated request.</p>
+<p>A separate experiment tested whether models could identify useful advice when judging responses instead of writing them. We gave the same five models, plus GPT-4.1, each question with two possible answers: one focused on the literal request and one explaining the misconception and addressing the underlying goal. On Stack Overflow, all six chose the goal-focused answer in 71–84% of cases. By comparison, only 35–41% of the answers written by the five models in our main evaluation primarily focused on the underlying goal. The results expose a gap between recognizing useful advice and producing it, which a multiple-choice test alone would miss.</p>
+<p><a href="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png"><img src="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png" alt="Bar chart titled “Picking and writing goal-focused answers on XYBench’s Stack Overflow questions” comparing multiple-choice selection rates (71–84%) with free-form goal-focused response rates (35–41%) across five frontier LLMs."></a></p>
+<h2>What this means for evaluation</h2>
+<p>Researchers can use XYBench to test whether changes to prompting or training help models identify misconceptions, offer solutions to users’ underlying problems, and make those solutions the focus of their answers. Measuring each behavior individually lets researchers see whether progress in one also improves the others.</p>
+<p>Future work could test which training methods help models act on inferred intent—AKA what users need and not just what they literally asked for. The XYBench currently covers English-language queries and mainly procedural problems; extending it to other languages, cultures, and conversational settings remains an open direction.</p>
+<p>We hope XYBench enables researchers to build models that offer useful advice even when a user’s first question rests on a mistaken assumption.</p>
+<h2>Datasets mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2>ToyBlocks: A controlled world for robot learning and evaluation</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>26</p>
+<p>November 6, 2026</p>
+<h2>StateBench: Testing how language models track state changes over long documents</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>17</p>
+<p>November 3, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fxybench">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fxybench">log in</a> to comment</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>llama.cpp v1.0.0 : A stronger foundation for the local AI ec…</title>
+      <link>https://huggingface.co/blog/ggml-org/llama-cpp-v1</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llama-cpp-v1?li=1</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem</h1>
+<p>Team Article</p>
+<p>Published November 13, 2026</p>
+<p>152</p>
+<ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/danbev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64b12f9135c2e9909c1eca3b/aNTLmtyO_cLuhZgNi9uAQ.jpeg" alt="Daniel Bevenius's avatar"></a></p>
+<p>Daniel Bevenius</p>
+<p>danbev</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt="Georgi Gerganov's avatar"></a></p>
+<p>Georgi Gerganov</p>
+<p>ggerganov</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve's avatar"></a></p>
+<p>merve</p>
+<p>merve</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p>llama.cpp makes it possible to run multi-modal LLMs across a wide range of hardware - from consumer-grade local machines to high-end enterprise servers. Through quantization, optimized backends, and a portable C/C++ implementation, we make AI inference accessible at every level of the software stack. We believe this is the most lightweight, versatile and sensible platform for building cross-platform and private AI products.</p>
+<p>During the 3.5 years since its <a href="https://github.com/ggml-org/llama.cpp/commit/26c0846">inception</a>, the project has grown a lot and many downstream applications already depend on our work. We expect this trend to continue as local AI and privacy become increasingly important in our everyday lives. Every new integration means more developers depending on our library interfaces and therefore having a flexible but stable API is paramount.</p>
+<p>Today we release libraries <code>v1.0.0</code>, highlighting our responsibility to those developers. Moving forward, both <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> and <a href="https://github.com/ggml-org/ggml">ggml</a> will reflect API and ABI incompatibilities with major-version bumps. As adoption grows, we will be stricter about making those boundaries visible to downstream consumers.</p>
+<h3>Releases</h3>
+<table><thead><tr><th>Release</th><th>Library</th><th>Public header(s)</th></tr></thead><tbody><tr><td><a href="https://github.com/ggml-org/llama.cpp/releases/tag/v1.0.0">llama.cpp v1.0.0</a> - LLM inference in C/C++</td><td><code>libllama</code></td><td><a href="https://github.com/ggml-org/llama.cpp/blob/master/include/"><code>llama.cpp/include/</code></a></td></tr><tr><td><a href="https://github.com/ggml-org/ggml/releases/tag/v1.0.0">ggml v1.0.0</a> - Tensor library for machine learning</td><td><code>libggml</code></td><td><a href="https://github.com/ggml-org/llama.cpp/blob/master/ggml/include/"><code>ggml/include/</code></a></td></tr></tbody></table>
+<h3>Semantic version update rules</h3>
+<p>The following rules apply to all <a href="https://huggingface.co/ggml-org">ggml-org</a> projects using <a href="https://semver.org">semantic versioning</a>:</p>
+<table><thead><tr><th>Change type</th><th>Bump</th></tr></thead><tbody><tr><td><strong>MAJOR</strong></td><td>Breaking change to the public C API in <code>./include</code></td></tr><tr><td><strong>MINOR</strong></td><td>Backward-compatible feature, backend updates, model support, or API addition</td></tr><tr><td><strong>PATCH</strong></td><td>Bug fix with no API change</td></tr></tbody></table>
+<h3>Distribution</h3>
+<p>We are looking forward to expanding the ways in which <code>ggml-org</code> software is distributed and reaches developers and end-users. For more information about how to add <code>ggml-org</code> projects to your packaging and release pipelines, please check the following <a href="https://github.com/ggml-org/ggml/discussions/1579">discussion</a>.</p>
+<table><thead><tr><th>Channel</th><th>Platforms</th></tr></thead><tbody><tr><td><a href="https://github.com/ggml-org/llama.cpp/releases"><strong>Pre-release artifacts</strong></a></td><td>Linux, macOS, Windows, Android, iOS</td></tr><tr><td><strong>Docker</strong></td><td>Linux</td></tr><tr><td><strong>Debian</strong></td><td>Linux</td></tr><tr><td><strong>Homebrew</strong></td><td>macOS, Linux</td></tr><tr><td><strong>conda-forge</strong></td><td>Windows, macOS, Linux</td></tr><tr><td><strong>MacPorts</strong></td><td>macOS</td></tr><tr><td><strong>Winget</strong></td><td>Windows</td></tr><tr><td><strong>XCFramework</strong></td><td>iOS, macOS</td></tr></tbody></table>
+<h3>Development</h3>
+<p>The project has fostered an amazing open-source community with highly-skilled and talented contributors. With the rapid advance of AI capabilities in the field of software engineering, we continue to adapt and integrate LLMs in our developement cycle in a thoughtful and resonable manner. Maintaining a high quality codebase, staying in control of the architecture and understanding the implementation details will remain our top priorities.</p>
+<p>To reinforce the faster pace of development we continue to invest more and more resources in improving the CI infrastructure behind the projects. Thanks to HF technologies such as <a href="https://huggingface.co/docs/huggingface_hub/en/guides/buckets">HF Buckets</a> and <a href="https://huggingface.co/docs/huggingface_hub/en/guides/jobs">HF Jobs</a> we are able to scale the capacity necessary to guarantee correctness for every change that lands on the <code>master</code> branches. With hardware support from NVIDIA, AMD, Qualcomm, Arm, IBM and Intel, we continue to enroll more self-hosted runners across all major hardware platforms.</p>
+<h3>Backend and model coverage</h3>
+<p>The underlying machine learning engine of <code>llama.cpp</code> - <code>ggml</code> is designed to run on virtually any hardware in existence. This is achieved by implementing dedicated ggml backends. Each backend can be compiled as a dynamic library and optionally loaded at runtime.</p>
+<p>A complete list of the currently implemented backends can be found <a href="https://github.com/ggml-org/ggml/tree/master/src">here</a>.</p>
+<p>We are committed to provide continuous support of all model architectures. Currently, llama.cpp supports more than <a href="https://github.com/ggml-org/llama.cpp/tree/master/src/models">150 architecture variants</a> as well as all mainstream speculative decoding methods.</p>
+<h3>Thanks</h3>
+<p>The llama.cpp team at Hugging Face is thankful for the incredible support from the community. Special thanks to the <a href="https://github.com/ggml-org/llama.cpp/blob/master/CODEOWNERS">long-time maintainers</a> of the project and all <a href="https://github.com/ggml-org/llama.cpp/graphs/contributors?from=8%2F8%2F2026">contributors</a>. This is a significant milestone which would not have been possible without our joint efforts!</p>
+<h3>Additional resources</h3>
+<ul><li><a href="https://github.com/ggml-org/llama.cpp/tree/master/examples">llama.cpp examples</a></li><li><a href="https://huggingface.co/ggml-org">ggml-org at Hugging Face</a></li><li><a href="https://github.com/ggml-org">ggml-org at Github</a></li><li>Check out <a href="https://llama.app/">Llama</a> desktop apps for MacOS and Windows, shipped with love by the team behind llama.cpp and Hugging Face.</li></ul>
+<p>More from this author</p>
+<h2>New in llama.cpp: Decision Models</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>113</p>
+<p>October 2, 2026</p>
+<h2>Using OCR models with llama.cpp</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>47</p>
+<p>April 10, 2026</p>
+<h3>Community</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></p>
+<p>clem</p>
+<p>about 21 hours ago</p>
+<p>🔥🔥🔥</p>
+<ul><li><a href="https://huggingface.co/Junebugg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1QuoOl1l2cVKrbCjz20bp.png" alt=""></a></li></ul>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1QuoOl1l2cVKrbCjz20bp.png" alt=""></p>
+<p>Junebugg</p>
+<p>about 11 hours ago</p>
+<p>Hey, can you guide me with a project? I am not connected.</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></p>
+<p>pcuenq</p>
+<p>about 21 hours ago</p>
+<p>Let's go!!</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></p>
+<p>andito</p>
+<p>about 21 hours ago</p>
+<p>THIS</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></p>
+<p>cpoisson</p>
+<p>about 21 hours ago</p>
+<p>🚀</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></p>
+<p>burtenshaw</p>
+<p>about 21 hours ago</p>
+<p>YES!</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65bb837dbfb878f46c77de4c/23gZ_lBEwyoqjexFy9QLD.jpeg" alt=""></p>
+<p>prithivMLmods</p>
+<p>about 20 hours ago</p>
+<p>🔥🔥🚀🚀</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Yt6lTHZzIvVuGpj_Fka_t.png" alt=""></p>
+<p>project516</p>
+<p>about 20 hours ago</p>
+<p>Nice!!!</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oFYkELh-lKfDSTmtSdmF0.png" alt=""></p>
+<p>asvender</p>
+<p>about 20 hours ago</p>
+<p>👏👏👏</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1643148576788-6196cf5c7bf349604352ecda.png" alt=""></p>
+<p>Yehor</p>
+<p>about 19 hours ago</p>
+<p>COOL</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6776855be57a4c8f9e6e7aaf/rPvn5Og7NX7PXk1d1mnXP.jpeg" alt=""></p>
+<p>Doctor-Chad-PhD</p>
+<p>about 18 hours ago</p>
+<p>Is there no Linux desktop app?</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6036cca833b7b6f8f2e6748e/MiSTtrrXz1_KxJJwtK23N.png" alt=""></p>
+<p>vs4vijay</p>
+<p>about 17 hours ago</p>
+<p>Great news!!!</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63d393ed9e1b81818c81e67d/oSd-LWSaZVRU_M1tWZq1j.png" alt=""></p>
+<p>evgen105</p>
+<p>about 15 hours ago</p>
+<p>This is sooo huuuuge</p>
+<p><img src="https://huggingface.co/avatars/8a2878ff9f441247fd9f427f65d3e94a.svg" alt=""></p>
+<p>Vinzou</p>
+<p>about 14 hours ago</p>
+<p>😁👍👍👍</p>
+<p><img src="https://huggingface.co/avatars/ef3e22922f3b8da3e696288b9e702a9f.svg" alt=""></p>
+<p>tdakhran</p>
+<p>about 10 hours ago</p>
+<p>congrats with the release!</p>
+<p><img src="https://huggingface.co/avatars/1c779d6528fc7244278cc561da151efb.svg" alt=""></p>
+<p>stormrider2003</p>
+<p>about 7 hours ago</p>
+<p>congrats</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/sG9hP9bt1NDLjKMG18209.jpeg" alt=""></p>
+<p>Mr-DS-ML-85</p>
+<p>26 minutes ago</p>
+<p>llama.cpp is nice but still needs improvement on huge prompt processing or aka prefill</p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">log in</a> to comment</p>
+<p>152</p>
+<ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/74k1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/J45uU0ctfprHaqrGfNoCy.png" alt=""></a></li><li><a href="https://huggingface.co/lnglth"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OD5-IRD81mXlt3HQd6x3u.png" alt=""></a></li><li><a href="https://huggingface.co/winklerj"><img src="https://huggingface.co/avatars/f3b23beb0241ff3c32975da592c00af4.svg" alt=""></a></li><li><a href="https://huggingface.co/andito"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2b8b4cf7d8930887629e7bcaf0401f61.svg" alt=""></a></li><li><a href="https://huggingface.co/cpoisson"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></a></li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>LLMON: An LLM-Native Markup Language, now in Granite 4.1 3B…</title>
       <link>https://huggingface.co/blog/ibm-granite/llmon-an-llm-native-markup-language-now-in-granite</link>
@@ -1339,102 +1650,6 @@ Upvote
 - [![](https://huggingface.co/avatars/50dd4932deb1863f5df34ac8ac21354e.svg)](https://huggingface.co/krumeto)</code></pre>]]></content:encoded>
     </item>
     <item>
-      <title>Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturi…</title>
-      <link>https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan?li=1</guid>
-      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan&apos;s Demographics and Financial Context</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan's Demographics and Financial Context</h1>
-<p>Enterprise + Article</p>
-<p>Published November 9, 2026</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prajwalpujari16"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/691c4c056c76e3ec5b29e861/mujBimrlUGRhotojdrBr_.png" alt=""></a></li><li><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt=""></a></li><li><a href="https://huggingface.co/chavezpoon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NpzT50N4jI0uaGExtiWLq.png" alt=""></a></li><li><a href="https://huggingface.co/ukuwzi"><img src="https://huggingface.co/avatars/d37876ec884d11dff0e2d928a4d2ee3c.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt="Atsunori Fujita's avatar"></a></p>
-<p>Atsunori Fujita</p>
-<p>Atsunori</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/SnowMasaya"><img src="https://huggingface.co/avatars/0d0803bafe7b9bfbd15d80db3f260012.svg" alt="Masaya Ogushi's avatar"></a></p>
-<p>Masaya Ogushi</p>
-<p>SnowMasaya</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/vg1024"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b9c1a9657bc784a24e8ea9/6BEvDvqg5QK9S2Qyfoj0m.jpeg" alt="Vincent Gong's avatar"></a></p>
-<p>Vincent Gong</p>
-<p>vg1024</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/kyamamoto-nv"><img src="https://huggingface.co/avatars/da1de7d71f01ead08722c5e6460a38c2.svg" alt="Kotaro Yamamoto's avatar"></a></p>
-<p>Kotaro Yamamoto</p>
-<p>kyamamoto-nv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt="Yoshi Suhara's avatar"></a></p>
-<p>Yoshi Suhara</p>
-<p>suhara</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/WillJenningsDC"><img src="https://huggingface.co/avatars/10e0e0a672c21a14b72b4252717dc0ea.svg" alt="Will Jennings's avatar"></a></p>
-<p>Will Jennings</p>
-<p>WillJenningsDC</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/nv-3mei"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NCK3br1uL-gfkVWmd_VRQ.png" alt="Yev Meyer's avatar"></a></p>
-<p>Yev Meyer</p>
-<p>nv-3mei</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><em>A compound AI approach to Japanese personas grounded in real-world distributions </em></p>
-<h3>Open Data Breaking Down Privacy Barriers to Pave the Way for AI in Finance</h3>
-<p>In the financial sector, the utilization of real-world data faces significant constraints due to strict privacy regulations, compliance requirements, and the need for advanced domain expertise. In this context, the development of agentic AI in the financial domain requires synthetic data capable of avoiding the risks of using real data while reflecting demographics, household structures, and asset statuses to reproduce diverse, realistic financial scenarios.</p>
-<p>To address these challenges, <a href="https://www.elith.ai/">Elith</a> and NVIDIA have released <a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Finance-Japan"><strong>Nemotron-Personas-Finance-Japan</strong></a>, a financial domain extension of the open-source persona dataset &quot;<a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Japan">Nemotron-Personas-Japan</a>.&quot; To our knowledge, it is the first open persona dataset at million-record scale that pairs Japan’s official statistics with household finance and financial literacy data. Built upon official government statistics, this dataset was developed using <a href="https://github.com/NVIDIA-NeMo/SDG-PGMs">NeMo SDG-PGMs</a>, a probabilistic graphical model framework for synthetic data generation (SDG), and <a href="https://github.com/NVIDIA-NeMo/DataDesigner">NeMo Data Designer</a>, an enterprise synthetic data generation system. Furthermore, to enhance the practical utility of the dataset in financial use cases, it was designed by incorporating insights and feedback provided by leading domestic financial institutions and industry associations, including Sompo Japan, Tokio Marine Holdings, Bank of Fukuoka, Mizuho Financial Group, Meiji Yasuda Life Insurance, and the Financial Data Utilization Association (FDUA).</p>
-<p>This dataset expands the environment where Japanese developers and enterprises can develop and evaluate AI tailored to local and industry requirements, without using real customer data. Released under the <strong>CC BY 4.0</strong> license, it is available for commercial use. <strong>From building conversational agents to customer simulation and model evaluation, it supports practical financial AI development</strong>. The <a href="https://huggingface.co/collections/nvidia/nemotron-personas">Nemotron-Personas collection</a>, including Nemotron-Personas-Finance-Japan, is designed to seamlessly integrate with the user simulation framework <a href="https://github.com/NVIDIA-NeMo/UserSim">NeMo User Sim</a>, enabling instant execution of simulations drawn from diverse distributions consistent with the real world.</p>
-<h3>What’s in the Dataset?</h3>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/604ad59e2fad27aca4515dab/qEMManizZ8vV73X4Ynh1P.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/604ad59e2fad27aca4515dab/qEMManizZ8vV73X4Ynh1P.png" alt="image2"></a></p>
-<ul><li><strong>9M personas total</strong> (1M records x 9 personas each), written in natural Japanese</li><li><strong>50 fields per record</strong>: 9 persona fields, 11 persona attributes, and 30 contextual fields based on official demographic and labor statistics</li><li><strong>~1.5B tokens total</strong>, including ~750M persona tokens</li><li><strong>~950k unique names</strong></li><li><strong>1600+ occupation categories</strong> reflecting Japan's workforce</li><li><strong>Comprehensive coverage</strong> across demographic, regional, asset distribution, and personality trait axes</li><li><strong>Diverse persona types</strong>: Occupations, sports, arts, travel, cooking, finance, financial behavior, and financial concerns</li><li><strong>Natural language persona attributes</strong>: Cultural background, skills and expertise, career goals and aspirations, hobbies and interests, household/parental/financial background, attitudes toward money, and financial planning</li><li><strong>Available for both commercial and non-commercial use</strong> under the CC BY 4.0 license</li></ul>
-<h3><strong>How We Built It</strong></h3>
-<h4><strong>Data Generation Pipeline</strong></h4>
-<p>It was built using NVIDIA’s framework for synthetic data generation, <strong>NeMo Data Designer</strong>. This compound AI system enables complex Jinja templating, Pydantic validation, structured outputs, automated retries, and support for multiple generation backends. This is the essential toolset required for generating such large-scale synthetic datasets. In addition, the following models were utilized:</p>
-<ul><li><strong>NeMo SDG-PGMs (Apache-2.0)</strong>: A probabilistic graphical model framework for statistically grounded data generation</li><li><strong>gemma-4-31B-it (Apache-2.0)</strong>: For Japanese text generation</li></ul>
-<h4><strong>Enhanced Cultural Context</strong></h4>
-<p>Nemotron-Personas-Finance-Japan was designed to align with Japan's official demographic and labor statistics while taking into account key considerations essential for AI training:</p>
-<ul><li><strong>Education</strong>: Where national statistics broadly aggregate degree levels, we introduced finer granularity to enable the model to reflect diverse educational pathways.</li><li><strong>Occupation</strong>: We incorporated additional categories (such as business owners and specialized professions) to broaden the spectrum of occupations used for training.</li><li><strong>Life Stages</strong>: We modeled scenarios that rarely surface prominently in statistics, such as students, retirees, and periods of unemployment, to represent more realistic personas.</li><li><strong>Household Finances</strong>: In addition to individual income and spending propensity, we incorporated household-level financial and real assets to replicate diverse economic backgrounds.</li><li><strong>Digital &amp; Financial Literacy</strong>: By including internet and smartphone usage along with financial literacy, we enabled the model to precisely capture consumer profiles in financial use cases.</li></ul>
-<h3><strong>Private By Design</strong></h3>
-<p>Every persona is fully synthetic. No real individuals are represented, and the dataset is designed to reduce privacy risk. Demographics and household finances follow official statistics and public survey data, and names follow real Japanese naming patterns. Personas are built from these distributions, not from records about real people.</p>
-<h3><strong>Who This Data Is For</strong></h3>
-<p>Nemotron-Personas-Finance-Japan is built first for teams creating financial AI in Japan, at banks and insurers and at the startups and integrators that serve them. Each persona carries household finances and financial literacy alongside demographics. Teams can use them to build customer-service agents, evaluate sales conversations/marketing initiatives, run user simulations in NeMo User Sim, and red-team customer-facing AI.</p>
-<p>The release also serves anyone building for Japanese users. It holds 9M personas, 50% more than Nemotron-Personas-Japan, across 50 fields instead of 22. That gives any Japanese-language project finer slices of the population to train and test on.</p>
-<h3><strong>Practical AI Applications</strong></h3>
-<p>The synthetic personas in this dataset can be leveraged for:</p>
-<ul><li><strong>Multi-turn conversation</strong>: Using personas as &quot;seeds&quot; to generate human-like dialogue datasets.</li><li><strong>Domain-specific AI development</strong>: Generating datasets to build AI assistants tailored to realistic scenarios in financial use cases.</li><li><strong>Bias testing and fairness</strong>: Evaluating how models and AI agent systems perform across rural and urban divides, various age groups, educational backgrounds, and economic circumstances to check whether AI performs consistently across Japanese society.</li></ul>
-<h3><strong>Why It Matters</strong></h3>
-<p>Access to diverse, high-quality training data that reflects real-world populations has long been a challenge in AI development. Enterprise AI development has predominantly relied on private data, creating barriers for researchers, startups, and particularly AI developers in regions with limited available data.</p>
-<ul><li><strong>Data Diversity</strong>: Reflects the full spectrum of Japan's population, which helps reduce biased training and the risk of <a href="https://medium.com/data-science/addressing-concerns-of-model-collapse-from-synthetic-data-in-ai-7cd380208d14">model collapse</a>.</li><li><strong>Cultural Authenticity</strong>: Reduces reliance on Western-centric datasets and supports the development of <a href="https://www.nvidia.com/en-us/lp/industries/global-public-sector/sovereign-ai-technical-overview/">Sovereign AI systems</a>.</li><li><strong>Privacy and Governance</strong>: Aligned with Japan’s innovation-first approach to AI governance. Every persona is synthetic, so no customer data is needed to build or test with it.</li></ul>
-<p>By releasing Nemotron-Personas-Finance-Japan under CC BY 4.0, we provide access to enterprise-grade, high-quality synthetic data, empowering anyone to build culturally grounded AI systems with lower cost and less privacy risk.</p>
-<h3><strong>Pairs with Nemotron-PII-Japan</strong></h3>
-<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-PII-Japan">Nemotron-PII-Japan</a> launches the same day. It holds 100,000 synthetic Japanese business documents with labeled personal information, for training and testing detection and redaction models. Its documents are built on Nemotron-Personas-Japan. Use Nemotron-Personas-Finance-Japan to simulate customers, and Nemotron-PII-Japan to test how your pipeline protects their data.</p>
-<h3><strong>Start Building with Nemotron-Personas-Finance-Japan</strong></h3>
-<p>You can download this dataset using the command below to help develop AI that genuinely understands Japanese culture and language.</p>
-<pre><code>from datasets import load_dataset
-ds = load_dataset(&quot;nvidia/Nemotron-Personas-Finance-Japan&quot;)</code></pre>
-<p><strong>Use cases for building production-ready applications:</strong></p>
-<ul><li>Using personas as seeds for dialogue generation</li><li>Fine-tuning models with culturally grounded data</li><li>Building personalized engines that reflect Japan's overall demographic makeup</li><li>Developing domain-specific AI agents equipped with Japanese context</li></ul>
-<p>From teams building AI in Japan to global developers aiming for broader regional deployment, <a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Finance-Japan">Nemotron-Personas-Finance-Japan</a> dataset provides the authentic, privacy-conscious foundation required for your applications.</p>
-<h2>Datasets mentioned in this article 3</h2>
-<h2>Collections mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2><em>Evaluating Privacy Protection and Practical AI Applications with 100,000 Synthetic Business Documents Across Eight Domains</em></h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>3</p>
-<p>November 9, 2026</p>
-<h2>Nemotron PII Japan: プライバシー保護に向けた日本語PIIオープンデータ</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>2</p>
-<p>November 9, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fnemotron-personas-finance-japan">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fnemotron-personas-finance-japan">log in</a> to comment</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prajwalpujari16"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/691c4c056c76e3ec5b29e861/mujBimrlUGRhotojdrBr_.png" alt=""></a></li><li><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt=""></a></li><li><a href="https://huggingface.co/chavezpoon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NpzT50N4jI0uaGExtiWLq.png" alt=""></a></li><li><a href="https://huggingface.co/ukuwzi"><img src="https://huggingface.co/avatars/d37876ec884d11dff0e2d928a4d2ee3c.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li><li><a href="https://huggingface.co/efeshinkawa"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6af2315043d5f825e448c522/EJzrdlSgpG5xq4PQPb-8-.jpeg" alt=""></a></li></ul>
-<h2>Datasets mentioned in this article 3</h2>
-<h2>Collections mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
       <title>Your Experts Have Partners. There&apos;s HOPE for Keeping Them To…</title>
       <link>https://huggingface.co/blog/amazon/higher-order-pruning-experts</link>
       <guid isPermaLink="true">https://huggingface.co/blog/amazon/higher-order-pruning-experts?li=1</guid>
@@ -1553,6 +1768,159 @@ prune_model(&quot;Qwen/Qwen3.5-35B-A3B&quot;, &quot;pruneset.json&quot;, &quot;.
 <ul><li><a href="https://huggingface.co/photophilljk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ark7hveFQrEYzCCg0Elkh.png" alt=""></a></li><li><a href="https://huggingface.co/zancato"><img src="https://huggingface.co/avatars/4954ed321af57baadebee55f860e25e3.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturi…</title>
+      <link>https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan?li=1</guid>
+      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan&apos;s Demographics and Financial Context</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan's Demographics and Financial Context</h1>
+<p>Enterprise + Article</p>
+<p>Published November 9, 2026</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prajwalpujari16"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/691c4c056c76e3ec5b29e861/mujBimrlUGRhotojdrBr_.png" alt=""></a></li><li><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt=""></a></li><li><a href="https://huggingface.co/chavezpoon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NpzT50N4jI0uaGExtiWLq.png" alt=""></a></li><li><a href="https://huggingface.co/ukuwzi"><img src="https://huggingface.co/avatars/d37876ec884d11dff0e2d928a4d2ee3c.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt="Atsunori Fujita's avatar"></a></p>
+<p>Atsunori Fujita</p>
+<p>Atsunori</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/SnowMasaya"><img src="https://huggingface.co/avatars/0d0803bafe7b9bfbd15d80db3f260012.svg" alt="Masaya Ogushi's avatar"></a></p>
+<p>Masaya Ogushi</p>
+<p>SnowMasaya</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/vg1024"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b9c1a9657bc784a24e8ea9/6BEvDvqg5QK9S2Qyfoj0m.jpeg" alt="Vincent Gong's avatar"></a></p>
+<p>Vincent Gong</p>
+<p>vg1024</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/kyamamoto-nv"><img src="https://huggingface.co/avatars/da1de7d71f01ead08722c5e6460a38c2.svg" alt="Kotaro Yamamoto's avatar"></a></p>
+<p>Kotaro Yamamoto</p>
+<p>kyamamoto-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt="Yoshi Suhara's avatar"></a></p>
+<p>Yoshi Suhara</p>
+<p>suhara</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/WillJenningsDC"><img src="https://huggingface.co/avatars/10e0e0a672c21a14b72b4252717dc0ea.svg" alt="Will Jennings's avatar"></a></p>
+<p>Will Jennings</p>
+<p>WillJenningsDC</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nv-3mei"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NCK3br1uL-gfkVWmd_VRQ.png" alt="Yev Meyer's avatar"></a></p>
+<p>Yev Meyer</p>
+<p>nv-3mei</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><em>A compound AI approach to Japanese personas grounded in real-world distributions </em></p>
+<h3>Open Data Breaking Down Privacy Barriers to Pave the Way for AI in Finance</h3>
+<p>In the financial sector, the utilization of real-world data faces significant constraints due to strict privacy regulations, compliance requirements, and the need for advanced domain expertise. In this context, the development of agentic AI in the financial domain requires synthetic data capable of avoiding the risks of using real data while reflecting demographics, household structures, and asset statuses to reproduce diverse, realistic financial scenarios.</p>
+<p>To address these challenges, <a href="https://www.elith.ai/">Elith</a> and NVIDIA have released <a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Finance-Japan"><strong>Nemotron-Personas-Finance-Japan</strong></a>, a financial domain extension of the open-source persona dataset &quot;<a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Japan">Nemotron-Personas-Japan</a>.&quot; To our knowledge, it is the first open persona dataset at million-record scale that pairs Japan’s official statistics with household finance and financial literacy data. Built upon official government statistics, this dataset was developed using <a href="https://github.com/NVIDIA-NeMo/SDG-PGMs">NeMo SDG-PGMs</a>, a probabilistic graphical model framework for synthetic data generation (SDG), and <a href="https://github.com/NVIDIA-NeMo/DataDesigner">NeMo Data Designer</a>, an enterprise synthetic data generation system. Furthermore, to enhance the practical utility of the dataset in financial use cases, it was designed by incorporating insights and feedback provided by leading domestic financial institutions and industry associations, including Sompo Japan, Tokio Marine Holdings, Bank of Fukuoka, Mizuho Financial Group, Meiji Yasuda Life Insurance, and the Financial Data Utilization Association (FDUA).</p>
+<p>This dataset expands the environment where Japanese developers and enterprises can develop and evaluate AI tailored to local and industry requirements, without using real customer data. Released under the <strong>CC BY 4.0</strong> license, it is available for commercial use. <strong>From building conversational agents to customer simulation and model evaluation, it supports practical financial AI development</strong>. The <a href="https://huggingface.co/collections/nvidia/nemotron-personas">Nemotron-Personas collection</a>, including Nemotron-Personas-Finance-Japan, is designed to seamlessly integrate with the user simulation framework <a href="https://github.com/NVIDIA-NeMo/UserSim">NeMo User Sim</a>, enabling instant execution of simulations drawn from diverse distributions consistent with the real world.</p>
+<h3>What’s in the Dataset?</h3>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/604ad59e2fad27aca4515dab/qEMManizZ8vV73X4Ynh1P.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/604ad59e2fad27aca4515dab/qEMManizZ8vV73X4Ynh1P.png" alt="image2"></a></p>
+<ul><li><strong>9M personas total</strong> (1M records x 9 personas each), written in natural Japanese</li><li><strong>50 fields per record</strong>: 9 persona fields, 11 persona attributes, and 30 contextual fields based on official demographic and labor statistics</li><li><strong>~1.5B tokens total</strong>, including ~750M persona tokens</li><li><strong>~950k unique names</strong></li><li><strong>1600+ occupation categories</strong> reflecting Japan's workforce</li><li><strong>Comprehensive coverage</strong> across demographic, regional, asset distribution, and personality trait axes</li><li><strong>Diverse persona types</strong>: Occupations, sports, arts, travel, cooking, finance, financial behavior, and financial concerns</li><li><strong>Natural language persona attributes</strong>: Cultural background, skills and expertise, career goals and aspirations, hobbies and interests, household/parental/financial background, attitudes toward money, and financial planning</li><li><strong>Available for both commercial and non-commercial use</strong> under the CC BY 4.0 license</li></ul>
+<h3><strong>How We Built It</strong></h3>
+<h4><strong>Data Generation Pipeline</strong></h4>
+<p>It was built using NVIDIA’s framework for synthetic data generation, <strong>NeMo Data Designer</strong>. This compound AI system enables complex Jinja templating, Pydantic validation, structured outputs, automated retries, and support for multiple generation backends. This is the essential toolset required for generating such large-scale synthetic datasets. In addition, the following models were utilized:</p>
+<ul><li><strong>NeMo SDG-PGMs (Apache-2.0)</strong>: A probabilistic graphical model framework for statistically grounded data generation</li><li><strong>gemma-4-31B-it (Apache-2.0)</strong>: For Japanese text generation</li></ul>
+<h4><strong>Enhanced Cultural Context</strong></h4>
+<p>Nemotron-Personas-Finance-Japan was designed to align with Japan's official demographic and labor statistics while taking into account key considerations essential for AI training:</p>
+<ul><li><strong>Education</strong>: Where national statistics broadly aggregate degree levels, we introduced finer granularity to enable the model to reflect diverse educational pathways.</li><li><strong>Occupation</strong>: We incorporated additional categories (such as business owners and specialized professions) to broaden the spectrum of occupations used for training.</li><li><strong>Life Stages</strong>: We modeled scenarios that rarely surface prominently in statistics, such as students, retirees, and periods of unemployment, to represent more realistic personas.</li><li><strong>Household Finances</strong>: In addition to individual income and spending propensity, we incorporated household-level financial and real assets to replicate diverse economic backgrounds.</li><li><strong>Digital &amp; Financial Literacy</strong>: By including internet and smartphone usage along with financial literacy, we enabled the model to precisely capture consumer profiles in financial use cases.</li></ul>
+<h3><strong>Private By Design</strong></h3>
+<p>Every persona is fully synthetic. No real individuals are represented, and the dataset is designed to reduce privacy risk. Demographics and household finances follow official statistics and public survey data, and names follow real Japanese naming patterns. Personas are built from these distributions, not from records about real people.</p>
+<h3><strong>Who This Data Is For</strong></h3>
+<p>Nemotron-Personas-Finance-Japan is built first for teams creating financial AI in Japan, at banks and insurers and at the startups and integrators that serve them. Each persona carries household finances and financial literacy alongside demographics. Teams can use them to build customer-service agents, evaluate sales conversations/marketing initiatives, run user simulations in NeMo User Sim, and red-team customer-facing AI.</p>
+<p>The release also serves anyone building for Japanese users. It holds 9M personas, 50% more than Nemotron-Personas-Japan, across 50 fields instead of 22. That gives any Japanese-language project finer slices of the population to train and test on.</p>
+<h3><strong>Practical AI Applications</strong></h3>
+<p>The synthetic personas in this dataset can be leveraged for:</p>
+<ul><li><strong>Multi-turn conversation</strong>: Using personas as &quot;seeds&quot; to generate human-like dialogue datasets.</li><li><strong>Domain-specific AI development</strong>: Generating datasets to build AI assistants tailored to realistic scenarios in financial use cases.</li><li><strong>Bias testing and fairness</strong>: Evaluating how models and AI agent systems perform across rural and urban divides, various age groups, educational backgrounds, and economic circumstances to check whether AI performs consistently across Japanese society.</li></ul>
+<h3><strong>Why It Matters</strong></h3>
+<p>Access to diverse, high-quality training data that reflects real-world populations has long been a challenge in AI development. Enterprise AI development has predominantly relied on private data, creating barriers for researchers, startups, and particularly AI developers in regions with limited available data.</p>
+<ul><li><strong>Data Diversity</strong>: Reflects the full spectrum of Japan's population, which helps reduce biased training and the risk of <a href="https://medium.com/data-science/addressing-concerns-of-model-collapse-from-synthetic-data-in-ai-7cd380208d14">model collapse</a>.</li><li><strong>Cultural Authenticity</strong>: Reduces reliance on Western-centric datasets and supports the development of <a href="https://www.nvidia.com/en-us/lp/industries/global-public-sector/sovereign-ai-technical-overview/">Sovereign AI systems</a>.</li><li><strong>Privacy and Governance</strong>: Aligned with Japan’s innovation-first approach to AI governance. Every persona is synthetic, so no customer data is needed to build or test with it.</li></ul>
+<p>By releasing Nemotron-Personas-Finance-Japan under CC BY 4.0, we provide access to enterprise-grade, high-quality synthetic data, empowering anyone to build culturally grounded AI systems with lower cost and less privacy risk.</p>
+<h3><strong>Pairs with Nemotron-PII-Japan</strong></h3>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-PII-Japan">Nemotron-PII-Japan</a> launches the same day. It holds 100,000 synthetic Japanese business documents with labeled personal information, for training and testing detection and redaction models. Its documents are built on Nemotron-Personas-Japan. Use Nemotron-Personas-Finance-Japan to simulate customers, and Nemotron-PII-Japan to test how your pipeline protects their data.</p>
+<h3><strong>Start Building with Nemotron-Personas-Finance-Japan</strong></h3>
+<p>You can download this dataset using the command below to help develop AI that genuinely understands Japanese culture and language.</p>
+<pre><code>from datasets import load_dataset
+ds = load_dataset(&quot;nvidia/Nemotron-Personas-Finance-Japan&quot;)</code></pre>
+<p><strong>Use cases for building production-ready applications:</strong></p>
+<ul><li>Using personas as seeds for dialogue generation</li><li>Fine-tuning models with culturally grounded data</li><li>Building personalized engines that reflect Japan's overall demographic makeup</li><li>Developing domain-specific AI agents equipped with Japanese context</li></ul>
+<p>From teams building AI in Japan to global developers aiming for broader regional deployment, <a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Finance-Japan">Nemotron-Personas-Finance-Japan</a> dataset provides the authentic, privacy-conscious foundation required for your applications.</p>
+<h2>Datasets mentioned in this article 3</h2>
+<h2>Collections mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2><em>Evaluating Privacy Protection and Practical AI Applications with 100,000 Synthetic Business Documents Across Eight Domains</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>3</p>
+<p>November 9, 2026</p>
+<h2>Nemotron PII Japan: プライバシー保護に向けた日本語PIIオープンデータ</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>2</p>
+<p>November 9, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fnemotron-personas-finance-japan">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fnemotron-personas-finance-japan">log in</a> to comment</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prajwalpujari16"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/691c4c056c76e3ec5b29e861/mujBimrlUGRhotojdrBr_.png" alt=""></a></li><li><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt=""></a></li><li><a href="https://huggingface.co/chavezpoon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NpzT50N4jI0uaGExtiWLq.png" alt=""></a></li><li><a href="https://huggingface.co/ukuwzi"><img src="https://huggingface.co/avatars/d37876ec884d11dff0e2d928a4d2ee3c.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li><li><a href="https://huggingface.co/efeshinkawa"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6af2315043d5f825e448c522/EJzrdlSgpG5xq4PQPb-8-.jpeg" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 3</h2>
+<h2>Collections mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Egyptian and Nigerian English join the Open ASR Leaderboard</title>
+      <link>https://huggingface.co/blog/open-asr-leaderboard-liva</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/open-asr-leaderboard-liva?li=1</guid>
+      <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Egyptian and Nigerian English join the Open ASR Leaderboard</h1>
+<p>Published November 6, 2026</p>
+<p>Update on GitHub</p>
+<p>5</p>
+<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt="Eric Bezzam's avatar"></a></p>
+<p>Eric Bezzam</p>
+<p>bezzam</p>
+<p><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt="Ashley Mo's avatar"></a></p>
+<p>Ashley Mo</p>
+<p>ashleymo2025</p>
+<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI's avatar"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
+<p><a href="https://huggingface.co/aonorii"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/hGnt9yx6LyQP5a2MBpXGg.jpeg" alt="Aoi Otani's avatar"></a></p>
+<p>Aoi Otani</p>
+<p>aonorii</p>
+<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI's avatar"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
+<p>A few months ago, we added private data to the <a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">Open ASR Leaderboard</a>: 11 splits from Appen and DataOceanAI covering scripted and conversational speech from five accents (<a href="https://huggingface.co/blog/open-asr-leaderboard-private-data">blog</a>). The community response was great, with many <strong>highlighting the importance of held-out sets for trustworthy evaluations</strong>. Since then, we added one more private split for Indian-accented English with Voice Arena (<a href="https://huggingface.co/blog/open-asr-leaderboard-global-south">blog</a>).</p>
+<p>We’re excited to announce a new collaboration with <a href="https://huggingface.co/liva-ai">Liva AI</a> to add even more private data with two new accents: <strong>Egyptian</strong> 🇪🇬 and <strong>Nigerian</strong> 🇳🇬.</p>
+<table><thead><tr><th>Dataset</th><th>Accent</th><th>Duration [h]</th><th>Style</th><th>Transcription</th></tr></thead><tbody><tr><td>Liva AI Conversational EG</td><td>Egyptian</td><td>1.34</td><td>Conversational, spontaneous</td><td>Punctuated, cased, with disfluencies.</td></tr><tr><td>Liva AI Conversational NG</td><td>Nigerian</td><td>1.55</td><td>Conversational, spontaneous</td><td>Punctuated, cased, with disfluencies.</td></tr></tbody></table>
+<p>This is part of our continued effort to improve representation in ASR evals (more accents and more languages) and to improve trust (new private data to minimize benchmaxxing, and new data providers). We’re excited to see the community continuing to push ASR performance for the world 🤗</p>
+<h2>Richer accent breakdown in the Private tab</h2>
+<p>With these new accents, we can now present a richer breakdown of accents, based on <a href="https://en.wikipedia.org/wiki/World_Englishes#Kachru%27s_Three_Circles_of_English">Kachru’s Three Circles</a> (kudos to Hume AI for this idea in their <a href="https://huggingface.co/spaces/HumeAI/asr-leaderboard">leaderboard</a>). The Open ASR Leaderboard will now report:</p>
+<ul><li>US vs. non-US (<em>UK, Australia, Canada, India, Nigeria, Egypt</em>)</li><li>Inner Circle (<em>US, UK, Australia, Canada</em>) vs. Outer &amp; Expanding Circles (<em>India, Nigeria, Egypt</em>)</li></ul>
+<p>As more accents join, we’ll split the Outer and Expanding Circles.</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/open_asr_leaderboard/private_data_accent_breakdown.png" alt="thumbnail"></p>
+<h2>About Liva AI</h2>
+<p>Liva AI collects multimodal interaction data through consumer products used by real people. Because Liva owns both the collection environment and distribution, it can design products around specific model gaps across domains, industries, languages, modalities, and interaction types. This gives it access to natural, high-context behavior that emerges through real product use, rather than artificially elicited or task-based interactions.</p>
+<h2>Spaces mentioned in this article 2</h2>
+<p>More Articles from our Blog</p>
+<p>audiospeechleaderboard</p>
+<h2>Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png" alt=""></li></ul>
+<p>80</p>
+<p>September 30, 2026</p>
+<p>audiospeechleaderboard</p>
+<h2>The Open ASR Leaderboard Adds Its First Global South Language</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://huggingface.co/avatars/56ce7e0fea0166a14997e7876fb23621.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bc3e2f4b9d3615a6e2c982/8x33LQ0fwbnUtIn9CAwv2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6673251287330d7378e6b5e3/VVvuAsOUMiAPNgsdoRZjM.png" alt=""></li><li>+6</li></ul>
+<p>61</p>
+<p>August 28, 2026</p>
+<h3>Community</h3>
+<p><img src="https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg" alt=""></p>
+<p>wookute221</p>
+<p>about 7 hours ago</p>
+<p>hay</p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopen-asr-leaderboard-liva">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fopen-asr-leaderboard-liva">log in</a> to comment</p>
+<p>5</p>
+<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
+<h2>Spaces mentioned in this article 2</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>ToyBlocks: A controlled world for robot learning and evaluat…</title>
       <link>https://huggingface.co/blog/allenai/toyblocks</link>
       <guid isPermaLink="true">https://huggingface.co/blog/allenai/toyblocks?li=1</guid>
@@ -1668,63 +2036,6 @@ prune_model(&quot;Qwen/Qwen3.5-35B-A3B&quot;, &quot;pruneset.json&quot;, &quot;.
 <h2>Models mentioned in this article 2</h2>
 <h2>Datasets mentioned in this article 1</h2>
 <h2>Collections mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Egyptian and Nigerian English join the Open ASR Leaderboard</title>
-      <link>https://huggingface.co/blog/open-asr-leaderboard-liva</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/open-asr-leaderboard-liva?li=1</guid>
-      <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>Egyptian and Nigerian English join the Open ASR Leaderboard</h1>
-<p>Published November 6, 2026</p>
-<p>Update on GitHub</p>
-<p>5</p>
-<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt="Eric Bezzam's avatar"></a></p>
-<p>Eric Bezzam</p>
-<p>bezzam</p>
-<p><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt="Ashley Mo's avatar"></a></p>
-<p>Ashley Mo</p>
-<p>ashleymo2025</p>
-<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI's avatar"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
-<p><a href="https://huggingface.co/aonorii"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/hGnt9yx6LyQP5a2MBpXGg.jpeg" alt="Aoi Otani's avatar"></a></p>
-<p>Aoi Otani</p>
-<p>aonorii</p>
-<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI's avatar"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
-<p>A few months ago, we added private data to the <a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">Open ASR Leaderboard</a>: 11 splits from Appen and DataOceanAI covering scripted and conversational speech from five accents (<a href="https://huggingface.co/blog/open-asr-leaderboard-private-data">blog</a>). The community response was great, with many <strong>highlighting the importance of held-out sets for trustworthy evaluations</strong>. Since then, we added one more private split for Indian-accented English with Voice Arena (<a href="https://huggingface.co/blog/open-asr-leaderboard-global-south">blog</a>).</p>
-<p>We’re excited to announce a new collaboration with <a href="https://huggingface.co/liva-ai">Liva AI</a> to add even more private data with two new accents: <strong>Egyptian</strong> 🇪🇬 and <strong>Nigerian</strong> 🇳🇬.</p>
-<table><thead><tr><th>Dataset</th><th>Accent</th><th>Duration [h]</th><th>Style</th><th>Transcription</th></tr></thead><tbody><tr><td>Liva AI Conversational EG</td><td>Egyptian</td><td>1.34</td><td>Conversational, spontaneous</td><td>Punctuated, cased, with disfluencies.</td></tr><tr><td>Liva AI Conversational NG</td><td>Nigerian</td><td>1.55</td><td>Conversational, spontaneous</td><td>Punctuated, cased, with disfluencies.</td></tr></tbody></table>
-<p>This is part of our continued effort to improve representation in ASR evals (more accents and more languages) and to improve trust (new private data to minimize benchmaxxing, and new data providers). We’re excited to see the community continuing to push ASR performance for the world 🤗</p>
-<h2>Richer accent breakdown in the Private tab</h2>
-<p>With these new accents, we can now present a richer breakdown of accents, based on <a href="https://en.wikipedia.org/wiki/World_Englishes#Kachru%27s_Three_Circles_of_English">Kachru’s Three Circles</a> (kudos to Hume AI for this idea in their <a href="https://huggingface.co/spaces/HumeAI/asr-leaderboard">leaderboard</a>). The Open ASR Leaderboard will now report:</p>
-<ul><li>US vs. non-US (<em>UK, Australia, Canada, India, Nigeria, Egypt</em>)</li><li>Inner Circle (<em>US, UK, Australia, Canada</em>) vs. Outer &amp; Expanding Circles (<em>India, Nigeria, Egypt</em>)</li></ul>
-<p>As more accents join, we’ll split the Outer and Expanding Circles.</p>
-<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/open_asr_leaderboard/private_data_accent_breakdown.png" alt="thumbnail"></p>
-<h2>About Liva AI</h2>
-<p>Liva AI collects multimodal interaction data through consumer products used by real people. Because Liva owns both the collection environment and distribution, it can design products around specific model gaps across domains, industries, languages, modalities, and interaction types. This gives it access to natural, high-context behavior that emerges through real product use, rather than artificially elicited or task-based interactions.</p>
-<h2>Spaces mentioned in this article 2</h2>
-<p>More Articles from our Blog</p>
-<p>audiospeechleaderboard</p>
-<h2>Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png" alt=""></li></ul>
-<p>80</p>
-<p>September 30, 2026</p>
-<p>audiospeechleaderboard</p>
-<h2>The Open ASR Leaderboard Adds Its First Global South Language</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://huggingface.co/avatars/56ce7e0fea0166a14997e7876fb23621.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bc3e2f4b9d3615a6e2c982/8x33LQ0fwbnUtIn9CAwv2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6673251287330d7378e6b5e3/VVvuAsOUMiAPNgsdoRZjM.png" alt=""></li><li>+6</li></ul>
-<p>61</p>
-<p>August 28, 2026</p>
-<h3>Community</h3>
-<p><img src="https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg" alt=""></p>
-<p>wookute221</p>
-<p>about 7 hours ago</p>
-<p>hay</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopen-asr-leaderboard-liva">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fopen-asr-leaderboard-liva">log in</a> to comment</p>
-<p>5</p>
-<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
-<h2>Spaces mentioned in this article 2</h2>]]></content:encoded>
     </item>
     <item>
       <title>A Closer Look at Phonon TTS. Launching High-Quality On-Devic…</title>
@@ -7252,360 +7563,6 @@ out = pipe(prompt=prompt, generator=torch.Generator().manual_seed(0), output=[&q
 <h2>Models mentioned in this article 5</h2>
 <h2>Spaces mentioned in this article 3</h2>
 <h2>Collections mentioned in this article 2</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>HiRO-ACEv2: Simulating extreme weather at 3 km resolution fo…</title>
-      <link>https://huggingface.co/blog/allenai/hiro-acev2</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/allenai/hiro-acev2?li=1</guid>
-      <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: HiRO-ACEv2: Simulating extreme weather at 3 km resolution for a fraction of the cost</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>HiRO-ACEv2: Simulating extreme weather at 3 km resolution for a fraction of the cost</h1>
-<p>Enterprise  Article</p>
-<p>Published October 14, 2026</p>
-<p>11</p>
-<ul><li><a href="https://huggingface.co/visnetwork"><img src="https://huggingface.co/avatars/2f206f8fc0597a05366ea6333036282d.svg" alt=""></a></li><li><a href="https://huggingface.co/victios7models"><img src="https://huggingface.co/avatars/44c6b7763bdec7924146144f33c9f4e7.svg" alt=""></a></li><li><a href="https://huggingface.co/varyumin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/l3Lh3_OC1Fe1yskNz-0wR.png" alt=""></a></li><li><a href="https://huggingface.co/johnsutor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bd7f0b94c0e3be4aeea623/aea0SNoglPmh2kAfgLBAG.png" alt=""></a></li><li><a href="https://huggingface.co/Gohan1B"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jem48SZISN2Kh0VN4cMwb.png" alt=""></a></li><li><a href="https://huggingface.co/korubilliram"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/cdheUDLO-Hk5kfdtaW0dD.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg" alt="Kyle Wiggers's avatar"></a></p>
-<p>Kyle Wiggers</p>
-<p>Ai2Comms</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2's avatar"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
-<p>🤗 <a href="https://huggingface.co/allenai/HiRO-ACEv2">Models</a> | 📄 <a href="http://arxiv.org/abs/2610.17693">Paper</a> | 📓 <a href="https://ai2cm.github.io/ace/">Tutorial notebooks</a> | 🌎 <a href="http://ace.allen.ai">Demo</a></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/Y8t8GnfI2lUa40iX4_sxA.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/Y8t8GnfI2lUa40iX4_sxA.png" alt="HiRO-ACEv2: Downscaling coarse global climate outputs into fine weather detail."></a></p>
-<p>We introduce <a href="https://huggingface.co/allenai/HiRO-ACEv2"><strong>HiRO-ACEv2</strong></a>, the newest update to our High Resolution Output Ai2 Climate Emulator (HiRO-ACE) system. HiROv2 can reproduce even extremely rare rain, wind, and pressure events with high accuracy, while the full system can generate global 3 km climate data at about 1/300th the cost of X-SHiELD, a high-resolution global atmospheric model that explicitly simulates storms and other small-scale weather.</p>
-<p>HiRO-ACE, <a href="https://allenai.org/blog/hiro-ace">introduced earlier in 2026</a>, has two parts: ACE, an AI model that operates at a coarser 100 km resolution, and HiRO, a model that sharpens those coarse outputs into fine 3 km detail. The biggest change in HiRO-ACEv2 is the new downscaling model, HiROv2, which can now 1) predict several high-resolution fields at once instead of just rainfall, so it can capture a much wider range of extreme weather, and 2) has improved skill in predicting extreme events.</p>
-<p>Our main focus with HiRO-ACEv2 was to simulate extreme events well. Changes to how we train HiROv2 improved its ability to reproduce the most intense rain, wind, and pressure values. When given coarsened X-SHiELD data, it matches the target simulation's high-resolution statistics to within 3%, even for events so rare they occur only once in a million data points. It also accurately estimates the total energy of tropical cyclones, including storms it never saw during training, and generates hurricanes with realistic eyes and rain bands, though winds and pressure around the eye remain somewhat more lopsided than in X-SHiELD. Additionally, HiROv2 realistically generates strong winds flowing down mountain slopes.</p>
-<p>We also trained an updated version of ACE for this system. Over a 10-year simulation, its hurricanes, average climate patterns, and overall distributions of rain, wind, and pressure all line up well with X-SHiELD. That tells us ACE's coarse simulations are a solid foundation for producing long-term high-resolution climate data.</p>
-<p>Putting HiROv2 and ACE together, we generated a full year of global 3 km data. Its statistics closely match X-SHiELD's, even though HiRO was working from a simulation ACE ran on its own rather than from real X-SHiELD data. Across a 10-year run, the energy of HiRO-ACEv2's hurricanes is comparable to X-SHiELD's over the same period, and snapshots from that run show a variety of other extreme events that resemble those in X-SHiELD.</p>
-<p><a href="https://www.datocms-assets.com/64837/1791928654-hiro-acev2-blog-draft-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791928654-hiro-acev2-blog-draft-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550" alt="An example of a strong hurricane in the North Atlantic, generated during the 10-year HiRO-ACEv2 simulation."></a></p>
-<p><em>An example of a strong hurricane in the North Atlantic, generated during the 10-year HiRO-ACEv2 simulation.</em></p>
-<p>Overall, HiRO-ACEv2 offers researchers a flexible and inexpensive way to generate many versions of high-resolution rain, wind, and pressure data for extreme events over 10 years or more. Producing global high-resolution data with it costs roughly 300 times less than running X-SHiELD. If only one region is needed, the savings can be more than a hundred times greater, depending on the size of the area. We're also working on a streamlined version of HiROv2 that could make it more than ten times faster still.</p>
-<p>We still have future work ahead of us: because HiRO learned from X-SHiELD, it only works with the version of ACE tuned to match X-SHiELD. That means it can't yet produce high-resolution data for other climates, such as a warmer future or the historical record in datasets like ERA5. Next, we plan to train on new X-SHiELD datasets, including one simulating a world 4°C warmer, so the system can handle different climates. We also plan to add outputs like near-surface temperature and snow and ice, which would allow for even more uses, such as snowpack prediction.</p>
-<h2>Visualizing and using HiRO outputs</h2>
-<p><a href="https://www.datocms-assets.com/64837/1791928757-hiro-acev2-blog-draft-google-docs-image-3.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791928757-hiro-acev2-blog-draft-google-docs-image-3.png?fit=max&amp;h=810&amp;w=1550" alt="Simulated 10 m wind speed over Baja California in the ACE data visualizer: ACE2 at 100 km resolution on the main map and HiRO-ACEv2 at 3 km in the inset."></a></p>
-<p><em>Simulated 10 m wind speed over Baja California in the ACE data visualizer: ACE2 at 100 km resolution on the main map and HiRO-ACEv2 at 3 km in the inset.</em></p>
-<p><a href="https://www.datocms-assets.com/64837/1791928822-hiro-acev2-blog-draft-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791928822-hiro-acev2-blog-draft-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550" alt="A simulated storm over the northeastern Pacific in the ACE data visualizer. The main map shows 10 m wind speed at 100 km resolution; the 3 km HiRO-ACEv2 inset shows finer structure within the storm."></a></p>
-<p><em>A simulated storm over the northeastern Pacific in the ACE data visualizer. The main map shows 10 m wind speed at 100 km resolution; the 3 km HiRO-ACEv2 inset shows finer structure within the storm.</em></p>
-<p>To make it easy to see what HiRO produces without running any inference, we built a <a href="http://ace.allen.ai">web demo</a> that shows pre-generated precipitation, wind, and sea-level pressure output from HiROv1 and HiROv2 side by side with X-SHiELD, the simulation they were trained on. The demo complements the quantitative comparisons in our tech report: it offers a quick visual check of how the outputs look, and lets users zoom in on their own region of interest to judge performance there.</p>
-<p>For more in-depth analysis, the models are available to <a href="https://huggingface.co/allenai/HiRO-ACEv2">download</a>, and our <a href="https://ai2cm.github.io/ace/">tutorial notebooks</a> walk through how to run them.</p>
-<h2>Models mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2>Impactful scheduling for GPU clusters</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>52</p>
-<p>October 9, 2026</p>
-<h2>Open-sourcing AstaBrief, the fast report-generation model in Asta</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>28</p>
-<p>October 2, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fhiro-acev2">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fhiro-acev2">log in</a> to comment</p>
-<p>11</p>
-<ul><li><a href="https://huggingface.co/visnetwork"><img src="https://huggingface.co/avatars/2f206f8fc0597a05366ea6333036282d.svg" alt=""></a></li><li><a href="https://huggingface.co/victios7models"><img src="https://huggingface.co/avatars/44c6b7763bdec7924146144f33c9f4e7.svg" alt=""></a></li><li><a href="https://huggingface.co/varyumin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/l3Lh3_OC1Fe1yskNz-0wR.png" alt=""></a></li><li><a href="https://huggingface.co/johnsutor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bd7f0b94c0e3be4aeea623/aea0SNoglPmh2kAfgLBAG.png" alt=""></a></li><li><a href="https://huggingface.co/Gohan1B"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jem48SZISN2Kh0VN4cMwb.png" alt=""></a></li><li><a href="https://huggingface.co/korubilliram"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/cdheUDLO-Hk5kfdtaW0dD.png" alt=""></a></li><li><a href="https://huggingface.co/Jekhy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Ti4ZzeT_9uMHcN-OzBdVf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Malicious7"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/hLFYbqkn2KsWNFCRLPpJS.png" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Sentinel7"><img src="https://huggingface.co/avatars/183456c0fa0d5e21c27813ce48d3bad2.svg" alt=""></a></li></ul>
-<h2>Models mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Run fast, private agents on-device with LFM2.5-24B-A2B</title>
-      <link>https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b?li=1</guid>
-      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>Run fast, private agents on-device with LFM2.5-24B-A2B</h1>
-<p>Team Article</p>
-<p>Published October 13, 2026</p>
-<p>41</p>
-<ul><li><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tseyde"><img src="https://huggingface.co/avatars/10d430cbd6ce90b0f2a9dc0c8f6440d3.svg" alt=""></a></li><li><a href="https://huggingface.co/jcorrigan"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/o4tr66MgdtXknWmuO00XD.png" alt=""></a></li><li><a href="https://huggingface.co/iamleonie"><img src="https://huggingface.co/avatars/33af1a607a8bf7780b98d6f70ea19999.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Raahul26"><img src="https://huggingface.co/avatars/5d379b62ea7566953f8a50befc5f3148.svg" alt="Raahul Vignesh's avatar"></a></p>
-<p>Raahul Vignesh</p>
-<p>Raahul26</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/sduong"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61e579a4dad2c81e175fc60c/XjAa60zy43KMDnz7mDbro.jpeg" alt="Song Duong's avatar"></a></p>
-<p>Song Duong</p>
-<p>sduong</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/akhileshdeepakgotmare"><img src="https://huggingface.co/avatars/005d5e5883448bec96a826f979e3f1d6.svg" alt="Akhilesh Deepak Gotmare's avatar"></a></p>
-<p>Akhilesh Deepak Gotmare</p>
-<p>akhileshdeepakgotmare</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/fernandofernandes"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/646e57a5cb6ea6e6b6df1ad4/PlGhM2SUynFBUdYAylaZK.jpeg" alt="Fernando Fernandes Neto's avatar"></a></p>
-<p>Fernando Fernandes Neto</p>
-<p>fernandofernandes</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/WWWjiahui"><img src="https://huggingface.co/avatars/08c7e1096a4a711982b45d117bc0b15a.svg" alt="Jiahui Wang's avatar"></a></p>
-<p>Jiahui Wang</p>
-<p>WWWjiahui</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/mayankagarwal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6229237ed94a4a3d5efbacb5/GM-ec64-qx660keEKqU1c.jpeg" alt="Mayank Agarwal's avatar"></a></p>
-<p>Mayank Agarwal</p>
-<p>mayankagarwal</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/ee4a89ebc7a0716e21deaebc86e062e6.svg" alt="nathan ranchin's avatar"></a></p>
-<p>nathan ranchin</p>
-<p>nathanrchn</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/tilgasergey"><img src="https://huggingface.co/avatars/3975dca73d0941898f637d16e3115872.svg" alt="Sergei Tilga's avatar"></a></p>
-<p>Sergei Tilga</p>
-<p>tilgasergey</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt="Sinoué GAD's avatar"></a></p>
-<p>Sinoué GAD</p>
-<p>GAD-cell</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/tseyde"><img src="https://huggingface.co/avatars/10d430cbd6ce90b0f2a9dc0c8f6440d3.svg" alt="Tim Seyde's avatar"></a></p>
-<p>Tim Seyde</p>
-<p>tseyde</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/zetianli"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68507030a17aa73fb574386e/XgHgjAMJXbuynfzM7v2aR.webp" alt="Zetian Li's avatar"></a></p>
-<p>Zetian Li</p>
-<p>zetianli</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/changyiyang"><img src="https://huggingface.co/avatars/d19090a68fc0722439094646e832f016.svg" alt="changyi yang's avatar"></a></p>
-<p>changyi yang</p>
-<p>changyiyang</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/yungisimon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/2T3vwvjHPZA8mvJzWm5dK.jpeg" alt="Simon Lee's avatar"></a></p>
-<p>Simon Lee</p>
-<p>yungisimon</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/iamleonie"><img src="https://huggingface.co/avatars/33af1a607a8bf7780b98d6f70ea19999.svg" alt="Leonie Monigatti's avatar"></a></p>
-<p>Leonie Monigatti</p>
-<p>iamleonie</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt="Maxime Labonne's avatar"></a></p>
-<p>Maxime Labonne</p>
-<p>mlabonne</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/karthikrmacherla"><img src="https://huggingface.co/avatars/55dbe481dabde3ac3eb385143ba7b63b.svg" alt="Karthik Macherla's avatar"></a></p>
-<p>Karthik Macherla</p>
-<p>karthikrmacherla</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/alfredeng"><img src="https://huggingface.co/avatars/25f52ba836c3144ba1b8cb3a6152fe90.svg" alt="Alfred Eng's avatar"></a></p>
-<p>Alfred Eng</p>
-<p>alfredeng</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt="Khoi Nguyen's avatar"></a></p>
-<p>Khoi Nguyen</p>
-<p>KTLK</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/paulpak58"><img src="https://huggingface.co/avatars/79f6b6d408eea0e18497dd3608d70fdf.svg" alt="Paul Pak's avatar"></a></p>
-<p>Paul Pak</p>
-<p>paulpak58</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/tugot17"><img src="https://huggingface.co/avatars/6c9239f88512b97742b9c03adddbd725.svg" alt="xx's avatar"></a></p>
-<p>xx</p>
-<p>tugot17</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/tdakhran"><img src="https://huggingface.co/avatars/acd0c0a0fbd8126cc571e2876da9706d.svg" alt="Tarek Dakhran's avatar"></a></p>
-<p>Tarek Dakhran</p>
-<p>tdakhran</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/amaltsev"><img src="https://huggingface.co/avatars/94333f7e02e9c1a5b43d9bead22d56a1.svg" alt="Anthony Maltsev's avatar"></a></p>
-<p>Anthony Maltsev</p>
-<p>amaltsev</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/agcarranza"><img src="https://huggingface.co/avatars/c26536f38b3b585d0d72c5ac2cdc6a41.svg" alt="Aldo Gael Carranza's avatar"></a></p>
-<p>Aldo Gael Carranza</p>
-<p>agcarranza</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/undfined"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65e5fefbe8cbae176d9ca005/5SLREDsVzycEwVsPNv765.jpeg" alt="Tyler Murray's avatar"></a></p>
-<p>Tyler Murray</p>
-<p>undfined</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/adityatadimeti"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662b14788e855c7c010c03c9/UWRzvG0YwSj5o7NxiYC6G.jpeg" alt="Aditya Tadimeti's avatar"></a></p>
-<p>Aditya Tadimeti</p>
-<p>adityatadimeti</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/jimmysmith1919"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f8ad3749282808838048a0/Ci6nhDy53Z3_wcR39uJB5.jpeg" alt="Jimmy T.H. Smith's avatar"></a></p>
-<p>Jimmy T.H. Smith</p>
-<p>jimmysmith1919</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt="Yuri Khrustalev's avatar"></a></p>
-<p>Yuri Khrustalev</p>
-<p>ykhrustalev</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B"><strong>LFM2.5-24B-A2B</strong></a> is a 24B-parameter reasoning model with just 2B active parameters, built for fast, private agents on-device. It thinks before it answers, calls tools, and works through multi-step tasks inside popular agent harnesses. Because only 2B parameters are active per token, each reasoning token is cheap, so you can run agents continuously on your own hardware.</p>
-<ul><li><strong>Best-in-class agent:</strong> Competitive with Qwen3.6-35B-A3B, a model with ~50% more total and active parameters, on agentic and tool-use tasks, scoring 48.09 on LiveClaw versus 38.19.</li><li><strong>Reasoning at MoE speed:</strong> Always thinks before it answers. With only 2B active parameters per token, each reasoning token is cheap.</li><li><strong>Efficient inference:</strong> 184 tok/s on an Apple M5 Max and up to 21K output tok/s on a single NVIDIA B300 GPU.</li></ul>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-benchmark.png"><img src="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-benchmark.png" alt="LFM2.5-24B-A2B-benchmark"></a></p>
-<h2>How we built a reasoning agent with 2B active parameters</h2>
-<p>LFM2.5-24B-A2B builds on <a href="https://huggingface.co/LiquidAI/LFM2-24B-A2B">LFM2-24B-A2B</a> and keeps its architecture: 40 layers, 64 experts per MoE block with top-4 routing, and the same hybrid of gated short convolutions and GQA. The context window grows from 32K to 131K tokens, and an <a href="https://www.liquid.ai/blog/tokenizer-expansion">in-place tokenizer expansion</a> doubles the vocabulary from 65K to 128K tokens for better non-Latin tokenization. Unlike its predecessor, it is a reasoning-only model that produces an explicit chain of thought before its final answer.</p>
-<p>Pre-training was scaled up from ~17T to ~33T tokens. Mid-training then adds 2T tokens at 32K context, weighted toward reasoning, math, code, instruction following, and multilingual text, and 300B tokens at 131K context, weighted toward long-context data. Tool calls and multi-turn trajectories appear throughout both phases. Post-training turns the base model into an agent in five stages:</p>
-<ul><li><strong>Supervised fine-tuning (SFT)</strong></li><li><strong>Teacher specialization</strong></li><li><strong>Multi-domain on-policy distillation (MOPD), non-agentic:</strong> distill the specialist teachers on non-agentic tasks.</li><li><strong>MOPD, agentic:</strong> a second distillation stage focused on agentic tasks.</li><li><strong>Agentic reinforcement learning (Agentic RL):</strong> train the model inside agent harnesses, such as <a href="https://openclaw.ai">OpenClaw</a>, <a href="https://hermes-agent.nousresearch.com">Hermes Agent</a>, <a href="https://pi.dev">Pi</a>, and <a href="https://opencode.ai">OpenCode</a>.</li></ul>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-Training-Recipe.png"><img src="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-Training-Recipe.png" alt="LFM2.5-24B-A2B-Training-Recipe"></a></p>
-<h2>Benchmark results</h2>
-<p>We evaluated LFM2.5-24B-A2B against Qwen3.6-35B-A3B, Gemma-4-26B-A4B-it, and Nemotron-3.5-Lightning on 16 benchmarks covering tool use and agentic workflows, knowledge, instruction following, math, and coding. It is the smallest model in the group, yet it is competitive with MoEs with ~50% more total and active parameters.</p>
-<table><thead><tr><th>Benchmark</th><th>LFM2.5-24B-A2B</th><th>Qwen3.6-35B-A3B</th><th>Gemma-4-26B-A4B-it</th><th>Nemotron-3.5-Lightning (30B-A3B)</th></tr></thead><tbody><tr><td>AutomationBench</td><td><strong>27.69</strong></td><td>8.72</td><td>5.46</td><td>2.61</td></tr><tr><td>BFCLv4</td><td><strong>65.01</strong></td><td>65.00</td><td>57.09</td><td>53.78</td></tr><tr><td>ToolSandbox</td><td><strong>80.71</strong></td><td>75.02</td><td>72.09</td><td>75.13</td></tr><tr><td>LiveClaw</td><td><strong>48.09</strong></td><td>38.19</td><td>41.25</td><td>37.72</td></tr><tr><td>PinchBench</td><td>83.18</td><td><strong>89.93</strong></td><td>77.12</td><td>84.20</td></tr><tr><td>τ³-Bench Banking</td><td><strong>8.04</strong></td><td>7.63</td><td>4.54</td><td>7.01</td></tr><tr><td>WebArena Verified</td><td>26.75</td><td><strong>37.62</strong></td><td>25.62</td><td>28.69</td></tr><tr><td>GPQA Diamond</td><td>74.42</td><td><strong>83.69</strong></td><td>74.90</td><td>72.42</td></tr><tr><td>AA-Omniscience</td><td>-24.90</td><td>-24.35</td><td>-59.39</td><td><strong>-3.58</strong></td></tr><tr><td>HLE</td><td>7.40</td><td>7.69</td><td><strong>8.57</strong></td><td>5.65</td></tr><tr><td>IFEval</td><td><strong>96.75</strong></td><td>93.06</td><td>92.00</td><td>94.19</td></tr><tr><td>IFBench</td><td><strong>74.69</strong></td><td>64.21</td><td>47.44</td><td>71.67</td></tr><tr><td>Multi-IF</td><td><strong>84.38</strong></td><td>81.53</td><td>82.19</td><td>82.34</td></tr><tr><td>MATH-500</td><td>96.04</td><td><strong>96.73</strong></td><td>95.66</td><td>96.40</td></tr><tr><td>SWE-Bench Verified (OpenCode)</td><td>51.00</td><td><strong>66.20</strong></td><td>25.80</td><td>53.40</td></tr><tr><td>SciCode</td><td>32.71</td><td><strong>37.35</strong></td><td>35.42</td><td>27.78</td></tr></tbody></table>
-<p>*All the models were evaluated with vLLM, using each benchmark's recommended generation parameters.</p>
-<p>For your app, the strengths are tool use and instruction following. LFM2.5-24B-A2B leads or matches the competition on five of the eight tool-use and agentic benchmarks (AutomationBench, BFCLv4, ToolSandbox, LiveClaw, and τ³-Bench Banking), and on AutomationBench it scores more than three times the next-best model. It also leads on all three instruction-following benchmarks. Larger models keep an edge on knowledge-heavy benchmarks like GPQA Diamond, HLE, and AA-Omniscience, and on coding benchmarks like SWE-Bench Verified (OpenCode) and SciCode, so pair LFM2.5-24B-A2B with retrieval or web search for knowledge-heavy workloads.</p>
-<p>These results make LFM2.5-24B-A2B a strong foundation for agents that need to reason, call tools, and run reliably on your device.</p>
-<h2>Inference speed on CPU and GPU</h2>
-<p>LFM2.5-24B-A2B ships with day-one support across the inference ecosystem, including llama.cpp, MLX, vLLM, SGLang, and ONNX.</p>
-<p><strong>Edge inference.</strong> LFM2.5-24B-A2B is the fastest of the compared MoEs, decoding 184 tokens/s on an M5 Max and 114 tokens/s on a Ryzen AI Max+ 395. That is up to 1.7x faster than the next-best model, while using the least memory.</p>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-edge-inference.png"><img src="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-edge-inference.png" alt="LFM2.5-24B-A2B-edge-inference"></a></p>
-<p><strong>GPU inference.</strong> LFM2.5-24B-A2B is the fastest model in its size class, reaching over 21K output tokens per second at high concurrency on a single B300.</p>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-gpu-inference.png"><img src="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-gpu-inference.png" alt="LFM2.5-24B-A2B-gpu-inference"></a></p>
-<h2>How to use LFM2.5-24B-A2B</h2>
-<p>Reach for LFM2.5-24B-A2B when you need agents that reason, call tools, and run reliably on your device.</p>
-<p>Install the latest version of <code>transformers</code> (compatible with <code>transformers&gt;=5.0.0</code>):</p>
-<pre><code>pip install -U transformers</code></pre>
-<p>Then load and run the model:</p>
-<pre><code>from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
-
-model_id = &quot;LiquidAI/LFM2.5-24B-A2B&quot;
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    device_map=&quot;auto&quot;,
-    dtype=&quot;bfloat16&quot;,
-#   attn_implementation=&quot;flash_attention_2&quot; &lt;- uncomment on compatible GPU
-)
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
-
-prompt = &quot;What is C. elegans?&quot;
-
-input_ids = tokenizer.apply_chat_template(
-    [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: prompt}],
-    add_generation_prompt=True,
-    return_tensors=&quot;pt&quot;,
-    tokenize=True,
-)[&quot;input_ids&quot;].to(model.device)
-
-output = model.generate(
-    input_ids,
-    do_sample=True,
-    temperature=0.1,
-    top_k=50,
-    repetition_penalty=1.05,
-    max_new_tokens=512,
-    streamer=streamer,
-)</code></pre>
-<h3>Use it in your agent harness</h3>
-<p>Serve LFM2.5-24B-A2B locally behind any OpenAI-compatible backend, then point your agent harness at it. For example, with Hermes Agent:</p>
-<pre><code>hermes config set model.provider custom
-hermes config set model.base_url http://localhost:8080/v1
-hermes config set model.default LFM2.5-24B-A2B
-hermes config set model.context_length 131072
-hermes config set model.api_mode chat_completions
-hermes config set agent.tool_use_enforcement true</code></pre>
-<p>The port depends on your serving backend: llama.cpp and MLX use <code>8080</code>, vLLM uses <code>8000</code>, SGLang uses <code>30000</code>, and LM Studio uses <code>1234</code>. See the <a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B">model card</a> for OpenClaw and Pi configs, and <a href="https://docs.liquid.ai/examples/agent-harnesses">our guide</a> for the full setup. Check out our <a href="https://www.liquid.ai/blog/lfm2-5-24b-a2b">release blog</a> for video examples.</p>
-<h2>Get Started with LFM2.5-24B-A2B</h2>
-<p>Both LFM2.5-24B-A2B and LFM2.5-24B-A2B-Base are open-weight and available on Hugging Face today:</p>
-<ul><li><strong>Download:</strong> <a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-Base">LFM2.5-24B-A2B-Base</a> and <a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B">LFM2.5-24B-A2B</a> on Hugging Face.</li><li><strong>Use in your harness:</strong> follow our <a href="https://docs.liquid.ai/examples/agent-harnesses">guide</a> on how to run a local agent, like OpenClaw, Hermes Agent, and Pi.</li><li><strong>Fine-tune:</strong> adapt LFM2.5-24B-A2B to your task with our <a href="https://github.com/Liquid4All/cookbook/tree/main/finetuning/notebooks">fine-tuning tutorials</a>.</li></ul>
-<p>We can't wait to see what you build.</p>
-<h2>Citation</h2>
-<p>If you use this work, please cite the release blog:</p>
-<pre><code>@article{liquidAI202624BA2B,
-  author  = {Liquid AI},
-  title   = {LFM2.5-24B-A2B: Built for Fast On-Device Agents},
-  journal = {Liquid AI Blog},
-  year    = {2026},
-  note    = {www.liquid.ai/blog/lfm2-5-24b-a2b},
-}</code></pre>
-<h2>Models mentioned in this article 3</h2>
-<p>More from this author</p>
-<h2>Multimodal open d1 decision models for the edge</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
-<p>38</p>
-<p>October 7, 2026</p>
-<h2>Accelerating vision-language models with LFM2.5-VL-DSpark</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
-<p>51</p>
-<p>September 24, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FLiquidAI%2Flfm25-24b-a2b">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2FLiquidAI%2Flfm25-24b-a2b">log in</a> to comment</p>
-<p>41</p>
-<ul><li><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tseyde"><img src="https://huggingface.co/avatars/10d430cbd6ce90b0f2a9dc0c8f6440d3.svg" alt=""></a></li><li><a href="https://huggingface.co/jcorrigan"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/o4tr66MgdtXknWmuO00XD.png" alt=""></a></li><li><a href="https://huggingface.co/iamleonie"><img src="https://huggingface.co/avatars/33af1a607a8bf7780b98d6f70ea19999.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt=""></a></li><li><a href="https://huggingface.co/vemz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/KEF9e8lF2ql0WQhNCIUKr.png" alt=""></a></li><li><a href="https://huggingface.co/MaxLSB"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66beff523ae330ae8b698ee9/MexZCkn82Bt-dYEcq5tDw.png" alt=""></a></li><li><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/ee4a89ebc7a0716e21deaebc86e062e6.svg" alt=""></a></li><li><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt=""></a></li><li><a href="https://huggingface.co/alfredeng"><img src="https://huggingface.co/avatars/25f52ba836c3144ba1b8cb3a6152fe90.svg" alt=""></a></li><li><a href="https://huggingface.co/mayankagarwal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6229237ed94a4a3d5efbacb5/GM-ec64-qx660keEKqU1c.jpeg" alt=""></a></li></ul>
-<h2>Models mentioned in this article 3</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Impactful scheduling for GPU clusters</title>
-      <link>https://huggingface.co/blog/allenai/impactful-scheduling</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/allenai/impactful-scheduling?li=1</guid>
-      <pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Impactful scheduling for GPU clusters</h1>
-<p>Enterprise</p>
-<p>Article</p>
-<p>October 9, 2026</p>
-<p>2</p>
-<ul><li><a href="https://huggingface.co/sayednajmuddin"><img src="https://huggingface.co/avatars/58e1472a24ddc0c1c7ce656a17f259ba.svg" alt=""></a></li><li><a href="https://huggingface.co/jobet1995"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/pD_rBjSkxtftpxIss5gFF.jpeg" alt=""></a></li></ul>
-<p>Kyle Wiggers</p>
-<p>Ai2Comms</p>
-<p>allenai</p>
-<p><em>Building a cluster scheduler to prioritize high-impact research while maintaining full occupancy</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/hZQv5zhQmQIHLt5_e9m_R.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/hZQv5zhQmQIHLt5_e9m_R.png" alt="Impactful Scheduling for GPU Clusters - Google Docs-image-1 (1)"></a></p>
-<p>On the AI Infrastructure team at Ai2, we’re responsible for providing the institute’s GPU compute capacity, specifically targeting large, distributed training workloads. We think about this task as a pyramid of four metrics that build on each other.</p>
-<p>The foundation is <strong>availability</strong>: how often the hardware is healthy and ready for work. Above this is <strong>occupancy</strong>: the fraction of available time assigned to a specific workload. Next is <strong>impact</strong>: how often the most valuable workloads are chosen to receive resources. The capstone of the pyramid is <strong>utilization</strong>: the fraction of GPU capacity used over the lifetime of a workload.</p>
-<p><a href="https://www.datocms-assets.com/64837/1791481674-impactful-scheduling-for-gpu-clusters-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791481674-impactful-scheduling-for-gpu-clusters-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550" alt="Pyramid of GPU compute metrics, from availability at the base through occupancy and impact to utilization at the top."></a></p>
-<p>This post is about improving the impact of our scheduling decisions. We recently replaced a priority-based scheduler with a system including GPU time budgets, hierarchical fair-share allocation, and a time-slicing contract. As a result, we shifted the debate about how much GPU time each research project deserves from a case-by-case operational task to a transparent administrative budgeting process.</p>
-<h2>Overcommitting</h2>
-<p>At Ai2, we manage thousands of NVIDIA H100, B200, and B300 GPUs arranged in clusters ranging in size from 88 to 1024 GPUs. These clusters are built for large-scale distributed training of AI models, and they serve a group of about 150 internal researchers whose work covers a diverse set of AI domains, including the full model flow of LLM and VLM training, robotics reinforcement learning (RL) simulation, and post-training for scientific agentic use cases.</p>
-<p>Like many labs, we have demand for GPU time that far exceeds supply. Based on submitted workloads, at any moment in time we have outstanding requests for 2-3x more GPUs than are available. One way to think about this is that every available GPU hour on our cluster has 2-3 different research workloads competing for it.</p>
-<p>Historically, we used a priority-based scheduler, and we allowed workloads to opt out of preemptability. Each team had a limit on concurrent GPUs that could be used by workloads which were protected from preemption. Preemptible workloads could exceed that limit on idle GPUs. This strategy produced predictable pathologies. For example, we observed instances of GPU “squatting” where users would park no-op workloads they could connect to when the need arose. This occurred because researchers found they could not launch debugging workloads with low enough latency to tackle problems in real time. We also observed priority inflation, where eventually 100% of scheduled workloads used HIGH priority. This meant that lower priority levels were starved of GPU time altogether. Since preemptability was optional, we also found that our on-call engineers spent a majority of their ticket response time negotiating the organized shutdown of non-preemptable workloads running on hosts with known maintenance problems.</p>
-<h2>Tragedy of the commons</h2>
-<p>When these problems emerged, we were slow to identify their root causes. Our initial attempts to ensure the most important work received GPU time were focused on tighter control of how priorities were set, and, ultimately, working around the priority-based scheduler by explicitly assigning GPU monopolies to important projects. While we didn’t recognize it at first, we had built a perfect laboratory for observing the “tragedy of the commons.” Individuals were competing over a scarce, shared resource and, by seeking to maximize individual outcomes, achieving a non-optimal global result and abusing the underlying resource.</p>
-<p>We were far from the first to observe this kind of interaction. Resource allocation is a fascinating research domain that mixes algorithm development, economics, and system management. A central problem is that users often know the value of their own jobs better than the organization does, but they may have incentives to hide that value or hold on to resources even when doing so hurts total performance. For example, in their 2011 paper introducing <a href="https://www.semanticscholar.org/paper/Dominant-Resource-Fairness%3A-Fair-Allocation-of-Ghodsi-Zaharia/b1a47759dbcf87ed132838be39f8ab244e78e2d6">Dominant Resource Fairness</a>, Ghodsi et al. recount an anecdote in which a search company provided dedicated machines to jobs only if their users could guarantee high utilization. They soon discovered “users would sprinkle their code with infinite loops to artificially inflate utilization levels.” The hardware changes, but the fundamental problems that make resource allocation complex persist.</p>
-<h2>Budgets not schedules</h2>
-<p>The classic solution to a tragedy of the commons is to privatize the shared resource—owners are incentivized to maximize the value of their property. When we assigned teams monopolies over sets of GPUs, we were already doing a version of this, but it was too coarse. It caused GPUs to sit idle due to the seasonality of research. Teams are ready to run experiments and training at different times, so assigning a monopoly would ensure that there would be times when no jobs were ready to execute, with another team left waiting for capacity.</p>
-<p>We were manually solving a <a href="https://en.wikipedia.org/wiki/Knapsack_problem">knapsack problem</a>, trying to fit dynamically changing research needs into a static schedule. We wanted the ownership incentive, but we also wanted to maintain full occupancy of the GPUs.</p>
-<p>We decided to iterate on the ownership model. Instead of issuing teams GPUs, we chose to allocate a portion of GPU time. Predicting demand into the future would require knowing the result of novel science experiments, so it cannot be forecast with precision. Priority across research efforts, however, is a question of strategy, and it can be more easily debated and decided in advance. Instead of trying to solve the scheduling puzzle, we enabled leadership to think like investors. Before the workloads exist, decide how to fund each research effort with GPU time based on their judgment of its likely impact. The scheduler could then use that information when prioritizing arriving workloads.</p>
-<p>With this in mind, we devised a hierarchical system where managers could proportionally allocate GPU time to the projects and researchers they were responsible for. As the diagram below illustrates, this translates program strategy directly into a guaranteed share of GPU time. Project A1 knows it has a 35% claim on total capacity, regardless of how many other projects are queuing up elsewhere.</p>
-<p><a href="https://www.datocms-assets.com/64837/1791481494-impactful-scheduling-for-gpu-clusters-google-docs-image-1.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791481494-impactful-scheduling-for-gpu-clusters-google-docs-image-1.png?fit=max&amp;h=810&amp;w=1550" alt="Hierarchical allocation of GPU time across research programs and projects; project A1 has a 35% share of total capacity."></a></p>
-<p><em>Parenthetical values represent the total cluster capacity assigned to a leaf project.</em></p>
-<p>In this system, every request for GPU time must be funded by a budget, or it is not protected from preemption. In the old system, HIGH priority carried no cost and non-preemptibility allowed a team to fill their concurrent GPU limit indefinitely, so everyone used them. Now, nothing is free, so any trick to get GPU time draws from the benefiting user’s allocation. A squatting workload is spending team budget on nothing. Our strategy is to make gaming the scheduler more expensive than honestly engaging in the debate for a larger budget. We are constantly iterating on this budget review process, but the key requirements are that there are frequent opportunities for researchers to advocate for the time they need, and the decisions are made by managers with the most context on the tradeoffs in question. This means allocation decisions within a research project are made by a lead researcher, within a research program by a principal investigator, and across programs by a lead program manager, or by the CEO.</p>
-<h2>Fair-share</h2>
-<p>Paired with this GPU time budgeting tool, we built a hierarchical fair-share scheduler to manage actual occupancy of allocations throughout the program tree. The algorithm here is not new—hierarchical fair-share over a time window is part of a lineage that goes back to the <a href="https://issues.apache.org/jira/browse/HADOOP-3746">Hadoop Fair Scheduler in 2009</a>, and the same approach is in active use today in <a href="https://slurm.schedmd.com/fair_tree.html">SLURM’s Fair Tree</a> and <a href="https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/FairScheduler.html">YARN’s Fair Scheduler</a>. What’s new for us are the inputs: the tree mirrors the research program structure, and the weights are budgets set by managers rather than static quotas.</p>
-<p>The scheduler tracks occupancy over a sliding lookback window (we default to 7 days) and sorts workloads from under-utilized allocations above those from over-utilized allocations. This way, over a week-long time range, we can expect every group to receive their allocated GPU time as long as they are actively submitting workloads with sufficient demand.</p>
-<p>“The new scheduler makes it feel like we have an extra 30% compute. In the old scheduler, if we had moments when we didn't need our full slot limit, that compute was basically lost. Now with the new scheduler, if that happens, we can later burst beyond our allocation limit and still see our jobs scheduled quickly and without preemption, essentially letting us reclaim that compute. Our workloads are often bursty, so this gave us a significant amount of compute back.” — Chris Clark</p>
-<p>The scheduler distinguishes two kinds of occupancy. <em>Allocated occupancy</em> is time during which a workload is charged to a budget. This draws from the workload owner’s allocations, which affects the fair-share budget calculation, and these workloads are protected from preemption during their minimum runtime window. <em>Unallocated occupancy</em> is not charged to any budget, is unprotected from the outset, and may be preempted by any allocated request. This allows us to keep the GPUs fully occupied even when allocations don’t properly match demand and prevents teams from ever declining free GPU cycles.</p>
-<h2>The scheduling contract</h2>
-<p>An additional feature of distributed training that makes fair resource allocation difficult is that workloads can run for a very long time. Training jobs regularly run for hours, days, and sometimes even weeks. Once scheduled, a workload could remain on its assigned GPUs for a week or more, providing no opportunity for others to receive their budgeted time. This is the system property that made GPU squatting possible. It’s also what forced on-call engineers to negotiate with long-running job owners to address ongoing maintenance issues.</p>
-<p>To address these problems, we introduced a “scheduling contract.” In exchange for access to the cluster, a workload must declare its minimum runtime, or the shortest amount of occupancy required to make meaningful progress. During this time, a workload is protected from preemption. This gives the researcher a guarantee of progress, while giving the scheduler the right to rebalance once that progress is banked, automatically re-queueing resumable workloads. Alternatively, a user can set minimum runtime to zero, which indicates that the GPU time should be unallocated. These workloads are always subject to preemption, but they’re also free in the sense that they are not charged to any budget.</p>
-<p>The workload lifecycle follows this pattern:</p>
-<ul><li>The workload is submitted with a minimum runtime and indicates whether or not it is resumable.</li><li>The workload is scheduled according to the fair-share algorithm, weighted by a ratio of actual occupancy to allocated time in the lookback window.</li><li>The workload runs for its minimum runtime, which is charged to its allocations.</li><li>The workload may continue running as long as the associated allocations continue to prioritize it over others. This time is also charged to its allocations.</li><li>It may be preempted and requeued, which returns to step 2.</li><li>The workload completes, releasing its claim on any resources.</li></ul>
-<p>Together, these agreements add time-slicing to our scheduler. Running workloads may be removed and requeued automatically, allowing fair-share to converge and disincentivizing squatting. They also let unhealthy hosts drain their workloads as they reach their minimum runtimes, so repair activities can be fully automated. This last point was more important than we realized when planning this work. It reduced repairs requiring a human-in-the-loop by 74%, which was a massive savings in on-call toil.</p>
-<h2>Simulations</h2>
-<p>We know that scheduling policy changes can have unintended consequences. The zero-sum nature of the problem means that giving time to one researcher means taking away from another. Users who lose this exchange tend to look for new workarounds. Before rolling out the budget-based system, we wanted a fast way to predict where those longer wait times might arise and to test configuration knobs like the length of the lookback window or the maximum value to allow for minimum runtime (we chose 8 hours).</p>
-<p>We built a small simulation environment that takes a set of workloads and their submission schedule as input and allows the scheduler to make preemption and GPU assignment decisions. With the knowledge of each workload’s requested number of GPUs and total runtime, the simulator could jump ahead to schedulable moments and provide analysis of queue wait times, preemption events, and distribution of GPU time across projects for many simulated days in a few seconds. We ran the simulator against both historical submission data and constructed scenarios we wanted to better understand.</p>
-<p>One hypothesis we wanted to test involved “debug workloads.” These jobs require a small number of GPUs and a minimum runtime of 15 minutes or less, which is enough for the user to see whether a job launches successfully or crashes early due to a bug or misconfiguration. We wanted to know whether these jobs would see a shorter queue wait time than larger training workloads, which often need many GPUs and hours of runtime to make meaningful progress. Intuitively, these smaller jobs should rise to the top of the queue, since a small job can fit more places than a large one. But the precise queue latency was important. A short wait of a minute or two would unlock a new development practice, but a ten-minute wait becomes infeasible.</p>
-<p>Our simulations required hand-built test case data, because our historical record did not contain a high enough volume of these debug-like workloads. Our results supported the hypothesis, showing p90 debug workload wait times fall from about 6 hours to only 5 minutes.</p>
-<p><a href="https://www.datocms-assets.com/64837/1791481919-impactful-scheduling-for-gpu-clusters-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791481919-impactful-scheduling-for-gpu-clusters-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550" alt="Simulator timelines comparing GPU occupancy under the baseline scheduler and the new allocations scheduler."></a></p>
-<p><em>Smaller-scale simulator visualization of the baseline (left) and the new “allocations” scheduler (right). Each row is one GPU; each bar is a job, colored by parent workload with one color hue per team; hatching marks time where a job is interruptible, and a red edge marks a preemption. In the baseline, long urgent jobs are never interrupted, and fewer preemptions occur on lower-priority-level work. The new scheduler has a larger mix of colors on each GPU, illustrating occupancy rotation across teams.</em></p>
-<h2>Results</h2>
-<p>With simulation results in hand, we began a cluster-by-cluster rollout at the end of July. The results we care about are whether the workloads we chose to fund received their time, whether the new system maintained full occupancy, and whether researchers could reason about the scheduler to make informed decisions.</p>
-<p>Since rollout, we have observed users and teams consistently receiving their allocated GPU time. We count the time owed to a team as its allocation capped hour by hour at its actual demand. Over the 30-day test period, teams were delivered 98% of the GPU hours they were owed, and 13 of 15 team allocations received 95% or more with the worst case receiving 90%. Occupancy on the cluster held steady at 98% before and after the change, with demand exceeding capacity by 2-3x in both periods. 18% of delivered GPU time was unallocated, which is how we maintained high occupancy during periods when funded use cases were not ready to run.</p>
-<p>Our simulator results proved to be directionally accurate with real outcomes overperforming our predictions. Debug workload p90 queue wait time fell from 2 hours to 30 seconds under the new scheduler, against a simulated prediction of 6 hours to 5 minutes from hand-crafted test scenarios. It’s worth noting that the smaller sample size of debug workloads in the baseline meant there was higher variance in those measurements. Queue latency in general improved as a side effect of time-slicing: on our largest H100 cluster, median queue wait time fell from 5 minutes to 24 seconds, and p90 wait time fell by about a third (from 2.8 hours to 1.8 hours).</p>
-<p>Compared against the three problems we set out to solve:</p>
-<ul><li><strong>Squatting:</strong> Short debug workloads start in under a minute, reducing the value of squatting. The cost of this behavior charges the squatter’s budget, which prevents them from receiving time when they really need it.</li><li><strong>Priority inflation:</strong> We still allow workloads to declare priority, but it only impacts sorting within a team. Managers are incentivized to monitor priority across the group to optimize the use of their budgets.</li><li><strong>On-call toil:</strong> Unhealthy hosts drain automatically as workloads reach minimum runtime. Repairs requiring a human-in-the-loop fell by 74%.</li></ul>
-<h2>Challenges</h2>
-<p>The learning curve was steeper than we had assumed. We rolled out the change incrementally, so in the early days researchers experienced varied behavior depending on which cluster they targeted. Furthermore, our interfaces retained some old terminology (like workload priority) whose meanings had changed. Documentation alone did not resolve the confusion. What <em>did</em> work was conducting live explanatory sessions, providing a forum for researchers to ask questions and for the engineering team to provide deeper descriptions of both how and why the scheduler made its prioritization decisions using real examples.</p>
-<p>This was a key moment because it marked a pivot from an early period of frustration and folk theories to the current mode, where research groups communicate more often and more broadly about the GPU needs of their experiments. Researchers are now engaging in the budgeting discussion with clearer knowledge of the tradeoffs being made to accommodate any new request.</p>
-<p>In addition to in-person sessions, we introduced new visualizations post-launch to give users a better sense of how closely their assigned GPU time is tracking their expected allocations and directly exposing the metric used for sorting the workload queue. This provided a simple place to look when a workload was preempted to understand why. These visualizations also helped budget owners, who could see how GPU time was being used across various projects under their management.</p>
-<p><a href="https://www.datocms-assets.com/64837/1791482152-impactful-scheduling-for-gpu-clusters-google-docs-image-5.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791482152-impactful-scheduling-for-gpu-clusters-google-docs-image-5.png?fit=max&amp;h=810&amp;w=1550" alt="Allocation usage over time, showing how delivered GPU time tracks expected allocations."></a></p>
-<p><em>Example visualization of allocation usage over time.</em></p>
-<p>Not every use case improved. In addition to distributed training, our researchers launch interactive sessions where they perform data analysis and test training code while they write it. In the old system, a researcher could hold such a session for up to a week. With time-slicing, they were subject to the 8-hour cap on protected runtime, after which a session becomes preemptible if it exceeds its allocation. We did not appreciate the extent to which researchers were dependent on the volatile state of these sessions. Being preempted meant waiting to secure a new session and also rebuilding their state by hand. After surveying researchers to understand the breadth of this problem, we created two new roadmap projects. We are investing in a CPU-only cluster next to our on-prem storage for dev sessions focused on data prep tasks. This will preserve our training cluster capacity for workloads that truly need it. Additionally, we plan to build restorable sessions for these CPU-only workloads. This will allow us to continue to preempt workloads at the end of their minimum runtime for maintenance or time-slicing, while also being able to restore the session elsewhere without the researcher rebuilding it. We can retain the operational and scheduling benefits of this new system while also improving the user experience.</p>
-<p>We remain on the lookout for emerging issues. One potential problem we’re investigating is capacity fragmentation, which may result in queue wait times increasing for the largest workloads. Our intuition is that minimum runtime protection is being applied to the types of jobs that used to rely on <em>preemptible</em> mechanisms to exceed their team concurrent GPU limit. Previously, those jobs could be interrupted at any time, potentially wasting that time, but also making it easier to schedule large jobs. Now the scheduler may have fewer opportunities to interrupt many jobs at once to place a large pending workload. We’re currently using our simulator tools to reproduce this problem while also measuring the ground truth in production.</p>
-<h2>The future</h2>
-<p>As we look beyond the scheduling work described here, we are aiming at the capstone of the pyramid: utilization. We need to ensure that bootstrapping, checkpointing, and the training applications themselves are all done as efficiently as possible, maximizing the value of the scheduled time each workload receives.</p>
-<p>If you’d like to tackle challenges like these in close collaboration with researchers, <a href="https://allenai.org/careers">we encourage you to explore open engineering roles at Ai2</a>.</p>
-<p>More from this author</p>
-<h2>Open-sourcing AstaBrief, the fast report-generation model in Asta</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>28</p>
-<p>October 2, 2026</p>
-<h2>Introducing Olmo-core 3: Open, scalable training infrastructure for large MoEs</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>25</p>
-<p>October 1, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fimpactful-scheduling">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fimpactful-scheduling">log in</a> to comment</p>
-<p>2</p>
-<ul><li><a href="https://huggingface.co/sayednajmuddin"><img src="https://huggingface.co/avatars/58e1472a24ddc0c1c7ce656a17f259ba.svg" alt=""></a></li><li><a href="https://huggingface.co/jobet1995"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/pD_rBjSkxtftpxIss5gFF.jpeg" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

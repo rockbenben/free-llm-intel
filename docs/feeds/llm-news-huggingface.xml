@@ -7,7 +7,320 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>使用 SimReady Assets 构建机器人拾放模拟</title>
+      <link>https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Build a Robot Pick-and-Place Simulation with SimReady Assets</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>使用 SimReady Assets 构建机器人拾放模拟</h1>
+<p>企业+文章</p>
+<p>发布于 2026 年 11 月 13 日</p>
+<p>14</p>
+<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/dillonb-nv"><img src="https://huggingface.co/avatars/ef260ce572881087d516bcf632928740.svg" alt="Dillon Bailey 的头像"></a></p>
+<p>狄龙·贝利</p>
+<p>狄龙B-NV</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt="Pomi Lee 的头像"></a></p>
+<p>波米·李</p>
+<p>波米莱</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/rchadha-nv"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kaRxLMenXEARG7KGBZJUh.png" alt="Rishabh Chadha 的头像"></a></p>
+<p>里沙卜·查达</p>
+<p>查达-NV</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p>[![figure-01-pick-and-place-highlight](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWI KZEQ8kuWKZtoyM.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif)</p>
+<p>本演练展示了使用 [UR17G臂]（https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda），[Robotiq 2F-140抓手]（https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda）和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料can</a> 在 Isaac Sim 中构建场景，检查它们的行为，并使用代理生成的控件运行拾取和放置示例。</p>
+<p>对于机器人工作流程，SimReady 意味着已准备好 OpenUSD 资产，并具有定义的模拟用例所需的属性，例如碰撞、质量、关节和关节驱动器。 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 是 Hugging Face 上的一个开放资产库，可让您通过编写的模拟属性和配置文件验证证据重复使用机器人和对象资产。有关该库及其发布的更多信息，请阅读<a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">公告博客</a>。</p>
+<h2>是什么让机器人资产 SimReady 成为可能？</h2>
+<p><a href="https://nvidia.github.io/simready-foundation/">SimReady Foundation</a> 定义了 OpenUSD 资产模拟用例所需的功能。其规格连接三个层面：</p>
+<ul><li>配置文件：用例的一组特征，例如机器人身体。</li><li>功能：用例所需的功能，例如可以控制的关节。</li><li>要求：检查每个功能所需的设置，例如关节的驱动设置。</li></ul>
+<p>对于此任务，这些属性包括手臂和夹具的关节以及饮料罐资产的碰撞和质量。验证根据配置文件的要求检查这些设置。然后，模拟测试组装好的机器人是否可以使用它们来拾取和移动罐子。</p>
+<h2>资产附带什么，您添加了什么？</h2>
+<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>，<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a>和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料can</a>包包含模型及其模拟设置。您组装场景并添加任务代码来定义手臂-夹具组件、工作表面、起始位置以及用于移动手臂和打开和关闭夹具的控件。</p>
+<p>[！[图2](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png )](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png)</p>
+<p><em>图 2.SimReady Central 提供资产模型和模拟设置，示例场景和控件定义拾放任务。</em></p>
+<h2>在运行拾放任务之前应该检查什么？</h2>
+<p>机器人在 Isaac Sim 中静止时看起来可能看起来正确，但在模拟运行时会错误地移动或与对象交互。在运行拾放之前，测试其接头、运动和接触行为。您可以要求代理执行这些测试或在 Isaac Sim 中手动执行这些测试。</p>
+<ul><li><strong>关节设置：</strong> 检查手臂和夹具的关节限制和驱动设置。</li><li><strong>运动：</strong> 测试小臂运动并打开和关闭夹具。</li><li><strong>接触：</strong> 确认罐子放在工作表面上而不会掉落。</li></ul>
+<p>在拾取和放置过程中，观察当手臂移动时饮料是否可以留在夹具中。资源结构各不相同，因此请使用加载场景中的设置作为起点。我们将在下面的步骤中完成下载资源和构建场景的整个过程。</p>
+<h2>在 Isaac Sim 中构建拾放模拟</h2>
+<p>此示例结合了 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> 手臂、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹具和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料可以</a>在艾萨克·西姆。任务是抓住罐子，举起它，将其移动到目标，然后释放它。您还可以利用 <a href="http://nvidia-simready-central.hf.space">SimReady Central Space</a> 搜索服务端点来查找 OEM 策划的内容。</p>
+<p>我们还将使用前沿 AI 模型来帮助在开放的 Isaac Sim 场景中创建和运行任务代码。在此示例中，我们使用 GPT-6 Sol，但如果另一个代理和模型组合可以加载所需的技能并针对 Isaac Sim 执行 Python（生成的代码和结果可能会有所不同），则它也可能有效。提示提供了一个起点。在调整任务之前检查生成的代码并检查结果行为。</p>
+<p><strong>所需软件：</strong></p>
+<ul><li>安装本示例使用的版本 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim</a> 6.2，并检查其系统要求。</li><li>设置您选择的可以使用艾萨克·西姆技能的特工。按照 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">代理技能文档</a> 为您的代理提供捆绑技能。</li><li>仅当您选择命令行资源下载选项时才安装 <a href="https://huggingface.co/docs/huggingface_hub/guides/cli">Hugging Face CLI</a>。</li><li>使用<a href="http://nvidia-simready-central.hf.space">美元搜索端点</a>。</li></ul>
+<h2>第 1 步：下载机器人手臂、夹具和饮料罐资产</h2>
+<p>打开<a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>并找到<a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>手臂，<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹具和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料可以</a>在这里使用。在每个资源上选择“下载”，然后使用“保存到文件夹”或提供的“Hugging Face”命令。保持所有三个完整的资产文件夹完好无损，以便 Isaac Sim 可以找到其支持文件。</p>
+<p>使用本示例中链接的资产版本，并向您的代理提供手臂、夹具和饮料罐的本地 USD 文件路径。夹具路径示例如下所示；您的下载位置可能有所不同。</p>
+<pre><code>~/ASSETS/hf/src/simready-assets-c7fa7615/Robotiq_2F_140/simready_usd/Robotiq_2F_140.usda</code></pre>
+<p>[![figure-05-find-robotiq](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0 DIXx9703.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif)</p>
+<p><em>图 3.SimReady Central 搜索和交互式预览有助于识别本示例中使用的 Robotiq 2F-140 夹具和饮料罐。</em></p>
+<p>[![figure-04-download-assets](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5Qk Q2T4JJzYd.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif)</p>
+<p><em>图 4.饮料罐的下载选项包括将资源包保存到文件夹或使用 Hugging Face CLI。</em></p>
+<h2>资产验证告诉您什么？</h2>
+<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/.metadata/ur17g_1300_validation.json">arm验证报告</a>使用Robot-Body 4.0.0配置文件<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/c7fa7615a353ebac03990208cbc2aa57426f4c48/Robotiq_2F_140/.metadata/Robotiq_2F_140_validation.json">抓取器验证报告</a>使用Robot-Gripper 3.0.0。两者都记录通过了 <a href="https://nvidia.github.io/simready-foundation/latest/features/FET_022_PHYSX.html">PhysX 驱动关节检查</a>，该检查检查关节驱动设置。</p>
+<p>SimReady 配置文件验证为重用这些资产提供了共享基线。然后，拾取和放置运行测试手臂、夹具、罐头和控制器在组装场景中如何协同工作。</p>
+<h2>步骤 2：组装机器人并构建拾放场景</h2>
+<p>下载资产后，使用具有 Isaac Sim 技能的代理来帮助组装机器人、运行验证工具并创建拾取和放置控件。您还可以使用链接的文档手动执行这些步骤。</p>
+<p>从安装目录启动 Isaac Sim，并启用远程 Python 服务器，以便代理可以通过 Python 与模拟进行交互：</p>
+<pre><code>./isaac-sim.sh --enable isaacsim.code_editor.python_server</code></pre>
+<p>如果您使用代理，请确保从 Isaac Sim 目录启动它，以便它可以在执行以下步骤时访问所需的技能。</p>
+<p>确认所有三个资产均显示且没有丢失文件错误。要求代理检查手臂和夹具的关节限制和驱动设置，或自己在 Isaac Sim 中检查它们。机器人和夹具包含物理关节，也可以在 Isaac Sim GUI 中进行测试和验证。接下来我们将组装手臂和夹具，以便我们可以将组装作为单个关节进行控制。</p>
+<p>您可以按照<a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html">机器人组装器教程</a>进行手动组装。在这里，我们将要求我们的代理完成组装并为我们验证：</p>
+<p><strong>本例中使用的示例提示：</strong></p>
+<pre><code>Assemble the robot arm &lt;local path to Simready ur17g robot usd&gt;
+with the gripper &lt;local path to downloded simready Robotiq_2F_140 gripper usd&gt;
+using the Robot Assembly tutorial in Isaac Sim
+https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html.
+
+Validate the assembly on completion.</code></pre>
+<p>代理最终使用 Isaac Sim 附带的“isaac-sim-remote”和“usd-articulation”技能来完成组装并验证机器人的物理特性。我们现在拥有运行拾取和放置所需的所有资产；组装好的机器人和汽水罐。我们现在将继续工作流程的最后部分。</p>
+<p>[![figure-05-joint-settings](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBl Xh65rUf0T.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif)</p>
+<p><em>图 5. Isaac Sim 中 UR17G 手臂和 Robotiq 2F-140 夹具的关节设置。</em></p>
+<p>组装好的机器人并可以在场景中，要求代理运行任务。使用下一步中的检查来评估模拟行为。</p>
+<h2>步骤 3：测试控件并运行拾放</h2>
+<p>现在资产包括模拟属性和配置文件验证，我们现在可以在组装的场景和控制器中进行测试。控制器协调 UR17G 手臂的运动与 Robotiq 2F-140 夹具的打开和关闭。使用下面的行为检查来评估代理生成的任务。要自行了解或调整控制器，请参阅<a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/core_api_tutorials/tutorial_core_adding_manipulator.html">添加机械手机器人教程</a>。</p>
+<p><strong>本例中使用的示例提示：</strong></p>
+<pre><code>Run pick and place with the assembled robot and soda can
+&lt;path to soda can USD from SimReady library&gt; in Isaac Sim.
+
+Ensure you do a contact based grasp for picking up the can and validate
+the accuracy/placement error for the pick and place as well.</code></pre>
+<p><strong>使用的技能</strong>：“isaac-sim-remote”、“manipulaiton-ik”和“physical-simulation”</p>
+<p>完整的任务测试夹具是否在移动过程中握住罐子并将其释放到目标处。重置场景，然后运行接近、抓取、举起、保持、转移和释放序列。将您的跑步与开场视频和下面的成功标准进行比较。</p>
+<p>[![figure-06-pick-and-place-landscape](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTac lDU8oJvkXYCie8.gif)](https://cdn-uploads.huggingface.co/product/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif)</p>
+<p><em>图 6.UR17G 手臂和 Robotiq 2F-140 夹具将饮料罐从黄色拾取标记移动到 Isaac Sim 中的绿色目标。以 4 倍速度显示。</em></p>
+<p>如果您的运行有所不同，请记下序列失败的位置，并要求代理检查场景并生成控件。在重试之前将罐子和机器人重置为相同的起始状态，以便您可以比较结果。</p>
+<p><strong>模拟假设：</strong></p>
+<ul><li><strong>固定设置：</strong> 罐头从已知位置开始，配有锚定机器人和清晰、平坦的工作空间。没有使用视觉，碰撞检查也受到限制。</li><li><strong>简化可以：</strong> 未对变形和液体运动进行建模，因此此示例不测试破碎。</li><li><strong>脚本化抓取和运动：</strong> 水平抓取使用通过模拟测试选择的 2 N·m 驱动力上限，未根据指尖力进行校准或由制造商推荐。当手臂遵循固定路径点而无需重新规划时，接触和摩擦力固定饮料罐。有关硬件夹持力规格，请参阅 <a href="https://robotiq.com/hubfs/Product-sheets/Adaptive%20Grippers/Product-sheet-Adaptive-Grippers-EN.pdf">Robotiq 产品表</a>。</li></ul>
+<p>这些结果适用于此脚本设置。它们无法对不确定的物体位置、不同的有效负载或真实硬件建立鲁棒性。</p>
+<h2>使用 SimReady Assets 构建您的下一个模拟</h2>
+<p>使用 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 中的资源构建您自己的拾取和放置任务，然后使用您选择的代理来帮助组装场景并在 Isaac Sim 中运行它。</p>
+<p><strong>发现资产</strong></p>
+<ul><li><strong>查找机器人和物体：</strong> 在 Hugging Face 上浏览 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>。</li><li><strong>检查资产支持的内容：</strong> 查看 <a href="https://nvidia.github.io/simready-foundation/latest/">SimReady Foundation</a> 中的配置文件和要求以及资产的验证报告。</li></ul>
+<p><strong>构建拾放场景</strong></p>
+<ul><li><strong>设置模拟器：</strong> 请遵循本示例中使用的版本的 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim 安装指南</a>。</li><li><strong>连接您的代理：</strong> 按照 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Isaac Sim 代理技能文档</a> 为您的代理提供捆绑技能。</li><li><strong>组装机器人：</strong> 如果您喜欢手动连接手臂和夹具，请按照<a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html#assemble-robots">机器人组装器教程</a>进行操作。</li></ul>
+<p><strong>准备并贡献内容</strong></p>
+<ul><li><strong>从 CAD 开始：</strong> 按照<a href="https://developer.nvidia.com/blog/5-steps-to-create-simready-assets-for-robotics-with-frontier-ai-models/">为机器人创建 SimReady 资产的 5 个步骤</a> 准备您自己的机器人资产。</li><li><strong>验证并提交资产：</strong> 按照 <a href="https://github.com/NVIDIA-Omniverse/simready-central/blob/main/.agents/skills/submit-simready-assets/SKILL.md">SimReady Central 提交指南</a> 使您的资产可供其他开发人员使用。</li></ul>
+<p>如需灵感，请探索 <a href="https://lnkd.in/p/g3-5svW6">Michael Wagner 的声控 VR 演示</a> 或 <a href="https://lnkd.in/p/gnxQ3YS8">Maziyar Panahi 的 Microduck 模拟</a>。两者都展示了开发人员如何在自己的项目中使用 SimReady 资产。</p>
+<p>你会建造什么？在 Hugging Face 评论中分享您的场景和结果，包括您使用的资源和 Isaac Sim 版本。</p>
+<p>快乐建设！</p>
+<h2>本文提到的数据集3</h2>
+<h2>本文提到的空间1</h2>
+<p>该作者的更多内容</p>
+<h2><em>使用八个领域的 100,000 个综合业务文档评估隐私保护和实际人工智能应用</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>5</p>
+<p>2026 年 11 月 9 日</p>
+<h2>Nemotron-Personas-Finance-Japan：捕捉日本人口统计和金融背景的综合数据集</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>19</p>
+<p>2026 年 11 月 9 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">登录</a> 发表评论</p>
+<p>14</p>
+<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/yiucw"><img src="https://huggingface.co/avatars/6b59ac5f151b322f5261adacecce6b61.svg" alt=""></a></li><li><a href="https://huggingface.co/klnadim"><img src="https://huggingface.co/avatars/a045d5a990db610dd1f4abbcca7f1bd6.svg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li><li><a href="https://huggingface.co/safikhan5834"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/683acf96542967b165847cff/tUHvC7omJt6mPPdyx1oSe.png" alt=""></a></li><li><a href="https://huggingface.co/Eumoren"><img src="https://huggingface.co/avatars/604ef02c6a6eac9315df923eaf7e56b4.svg" alt=""></a></li><li><a href="https://huggingface.co/willemelliw"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a980914cb03264ff33c4e0c/zOqgwh5M1nCzjQGfrT0Je.jpeg" alt=""></a></li></ul>
+<h2>本文提到的数据集3</h2>
+<h2>本文提到的空间1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>XYBench：帮助解决问题背后的问题</title>
+      <link>https://huggingface.co/blog/allenai/xybench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/xybench</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：XYBench: Helping with the problem behind the question</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>XYBench：帮助解决问题背后的问题</h1>
+<p>企业文章</p>
+<p>发布于 2026 年 11 月 13 日</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="凯尔·威格斯的头像"></a></p>
+<p>凯尔威格斯</p>
+<p>爱通信</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://arxiv.org/abs/2609.06842">论文</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/XYBench-dataset">数据</a> | 💻 <a href="https://github.com/allenai/XYBench">代码</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png"><img src="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png" alt="XY 问题的图表显示用户在考虑潜在目标 X 的同时询问方法 Y，以及重定向到目标的 AI 模型X."></a></p>
+<p>真正有用的人工智能助手需要能够帮助那些提出误导性问题的用户，而不仅仅是那些提出正确问题并提供适当细节的用户。我们正在发布 <a href="https://github.com/allenai/XYBench"><strong>XYBench</strong></a>，这是一个包含 8K 多个问题的基准测试，用于测试人工智能助手如何响应基于误解的请求，例如询问如何加厚糖霜，以防止纸杯蛋糕上的糖霜滑落，而真正的问题是纸杯蛋糕仍然太热而无法结霜。 XYBench 荣获 EMNLP 2026 最佳资源论文奖。</p>
+<p>某人询问的方法与他们想要实现的目标之间的不匹配被称为<em>XY问题</em>：一个人想要完成X，假设某种特定方法Y会起作用，并在Y方面寻求帮助。在纸杯蛋糕的例子中，这个人如此专注于制作糖霜棒，以至于他们没有将纸杯蛋糕的温暖视为需要解决的真正问题。</p>
+<p>XYBench 与卡内基梅隆大学、NVIDIA 和约翰霍普金斯大学的研究人员共同开发，揭示了LLM解决问题的能力中的一个关键差距：“识别”用户的请求是否基于隐含的误解，并适当地将他们“重定向”到能够解决其实际目标的解决方案。根据涵盖编程和烹饪和家庭维修等日常活动的 8,115 个现实世界问题，我们引入了一个基准来衡量模型是否识别这些误解并能够在其响应中优先考虑有效的解决方案。</p>
+<p>我们在 XYBench 上评估的模型（Claude Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro）通常会针对用户的问题提出解决方案，但他们的答案却集中在最初的错误方法上。与人类参考答案不同，所有五个模型都不太可能引导用户放弃该方法并转向适合其目标的解决方案。</p>
+<p>人们使用具有不同知识水平的人工智能系统，可能并不总是知道如何最好地解决问题。我们希望 XYBench 帮助研究人员衡量模型改进是否能让助手更好地识别错误的假设、解释为什么所提出的方法可能行不通，并提出更有效的替代方案——即使用户不知道要问正确的问题。</p>
+<h2>构建 XYBench</h2>
+<p>我们从四个来源构建 XYBench：来自 Stack Overflow 的 1,557 个问题、来自 Stack Exchange 的 184 个问题、102 个手动策划的示例以及 WikiHow 指南生成的 6,272 个问题。对于每个问题，我们都确定了所陈述的请求 (Y)、该人明确要求的内容以及预期请求 (X)——可以从上下文中推断出的基本目标。</p>
+<p>对于公共论坛问题，我们使用了三个得分最高的人类答案和可接受的答案（如果有）来确定预期的请求和可能的解决方案。我们过滤掉了那些认为满足所述请求已足够的案例。对于 WikiHow，我们使用 Sonnet 4.5 围绕程序指南中看似合理的误解生成问题，然后对其进行改进，以包含足够的上下文，以便专家推断出潜在的目标，而无需直接说明。我们删除了回答字面请求将在很大程度上解决问题的示例。</p>
+<h2>评估答案的帮助程度</h2>
+<p>模特可能会花几段文字推荐功能更强大的真空吸尘器，然后简短地建议检查软管是否堵塞。如果堵塞导致吸力减弱，清除堵塞可以解决问题。</p>
+<p>更有用的答案是认识到用户想要恢复吸力并专注于诊断原因。这借鉴了语用学，这是语言学的一个分支，研究语境和交际意图如何塑造意义。为了测试模型是否在其答案中使用了这种理解，XYBench 测量了每个响应的三个方面：</p>
+<ul><li><strong>务实的解决方案</strong> - 记录模型的响应是否包括对所述请求 (Y) 和预期请求 (X) 的解决方案，并分别检查每个请求。</li><li><strong>务实重点</strong>——衡量模型的答案是否侧重于所陈述的请求 (Y)、侧重于预期的请求 (X)，还是平衡两者。</li><li><strong>误解识别</strong>——衡量模型的响应是否引导用户实现根本目标 (X)，同时阻止或避免错误的方法 (Y)。</li></ul>
+<p>在 XYBench 中，Claude Sonnet 4.5 充当自动裁判。它将每个模型的响应中的个人建议进行分类，并评估答案的务实重点。</p>
+<p>为了验证 Sonnet 4.5 的判断，两名人类评审员独立评估了 500 个模型对 XYBench 问题的回答。评审员对是否出现解决方案与法官的平均同意度为 97.5-100%，对误解识别的同意度为 84.6-93.3%，对务实强调的同意度为 74.2-79.8%。</p>
+<h2>实验表明什么</h2>
+<p>我们在 XYBench 上以单轮设置评估了 Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro，每个问题有一个答案。我们使用相同的指标分别评估人类参考答案。</p>
+<p>在所有四个来源中，每个模型更有可能包含针对所述请求 (Y) 的解决方案，而不是针对基本目标 (X) 的解决方案。在 Stack Overflow 上，陈述请求解决方案出现在 75-86% 的响应中，而潜在目标解决方案的比例为 59-71%。</p>
+<p>顺便提及解决方案并不会使它成为答案的焦点。在真空吸尘器的示例中，模型可以简短地建议疏通软管，但将其大部分响应集中在购买更强大的真空吸尘器上。即使模型强调了所声明的请求，我们也会将该响应视为包含基本目标的解决方案。我们分别测量了总体重点：在 Stack Overflow 上，只有 35-41% 的模型主要关注潜在目标，47-57% 的模型主要关注所声明的请求。在其余的回复中，模型对所陈述的请求和基本目标给予了类似的重视。</p>
+<p><a href="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png">！[标题为“XYBench 的 Stack Overflow 问题上的五个模型和顶级人类答案”的条形图比较了 GPT-5、DeepSeek-V4 Pro、Qwen3.5-9B、Gemini 3.1 Pro、Claude Sonnet 4.6 和顶级人类答案，其中提到了对根本目标的修复，专注于根本目标，并引导用户远离错误的答案方法。</a>](https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png)</p>
+<p>我们还测试了明确用户的目标是否有帮助。在预言机实验中，我们在每个问题旁边提供了规定的请求 (Y) 和预期的请求 (X)。在 Stack Overflow 上，Sonnet 4.6 包含基本目标解决方案的比率从 59% 上升到 67%，但其误解识别率从 47% 下降到 34%。在具有人类参考答案的来源中，该实验中的每个模型在错误概念识别方面仍然落后于人类。提供意图有所帮助，但并不能始终缩小与人类反应的差距。这表明检测意图只是挑战的一部分：当意图偏离规定的请求时，模型还需要对其采取行动。</p>
+<p>一项单独的实验测试了模型在判断回答而不是编写回答时是否可以识别有用的建议。我们给出了相同的五个模型，加上 GPT-4.1，每个问题都有两种可能的答案：一种侧重于字面要求，一种解释误解并解决根本目标。在 Stack Overflow 上，所有六人在 71-84% 的情况下都选择了以目标为中心的答案。相比之下，在我们的主要评估中，五个模型所写的答案中只有 35-41% 主要关注根本目标。结果暴露了识别有用建议和提出有用建议之间的差距，而单靠多项选择测试就会错过这一差距。</p>
+<p><a href="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png"><img src="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png" alt="标题为“在 XYBench 的 Stack Overflow 问题上挑选和编写以目标为中心的答案”的条形图，比较了五个前沿领域的多项选择选择率 (71–84%) 与自由形式的以目标为中心的答复率 (35–41%)LLM。"></a></p>
+<h2>这对于评估意味着什么</h2>
+<p>研究人员可以使用 XYBench 来测试提示或训练的变化是否有助于模型识别误解、为用户的根本问题提供解决方案，并使这些解决方案成为其答案的焦点。单独测量每种行为可以让研究人员了解一种行为的进步是否也会改善其他行为。</p>
+<p>未来的工作可以测试哪些训练方法可以帮助模型按照推断的意图行事——也就是用户需要什么，而不仅仅是他们真正要求的。 XYBench目前涵盖英语查询，主要是程序问题；将其扩展到其他语言、文化和对话环境仍然是一个开放的方向。</p>
+<p>我们希望 XYBench 能够帮助研究人员构建模型，即使用户的第一个问题基于错误的假设，也能提供有用的建议。</p>
+<h2>本文提到的数据集1</h2>
+<p>该作者的更多内容</p>
+<h2>ToyBlocks：用于机器人学习和评估的受控世界</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>26</p>
+<p>2026 年 11 月 6 日</p>
+<h2>StateBench：测试语言模型如何跟踪长文档的状态变化</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>17 号</p>
+<p>2026 年 11 月 3 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fxybench">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fxybench">登录</a> 发表评论</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
+<h2>本文提到的数据集1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>llama.cpp v1.0.0 : A stronger foundation for the local AI ec…</title>
+      <link>https://huggingface.co/blog/ggml-org/llama-cpp-v1</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llama-cpp-v1</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>llama.cpp v1.0.0：为本地人工智能生态系统奠定更坚实的基础</h1>
+<p>团队文章</p>
+<p>发布于 2026 年 11 月 13 日</p>
+<p>152</p>
+<ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/danbev"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64b12f9135c2e9909c1eca3b/aNTLmtyO_cLuhZgNi9uAQ.jpeg" alt="Daniel Bevenius 的头像"></a></p>
+<p>丹尼尔·贝维纽斯</p>
+<p>丹别夫</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt="Georgi Gerganov 的头像"></a></p>
+<p>格奥尔基·格尔加诺夫</p>
+<p>格尔加诺夫</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve 的头像"></a></p>
+<p>梅尔韦</p>
+<p>梅尔韦</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p>llama.cpp 使得在各种硬件上运行多模式 LLM 成为可能 - 从消费级本地计算机到高端企业服务器。通过量化、优化的后端和可移植的 C/C++ 实现，我们使 AI 推理可以在软件堆栈的各个级别进行访问。我们相信这是构建跨平台和私有人工智能产品的最轻量级、通用性和合理性的平台。</p>
+<p>自<a href="https://github.com/ggml-org/llama.cpp/commit/26c0846">启动</a>以来的 3.5 年里，该项目已经发展了很多，许多下游应用程序已经依赖于我们的工作。随着本地人工智能和隐私在我们的日常生活中变得越来越重要，我们预计这一趋势将持续下去。每一个新的集成都意味着更多的开发人员依赖我们的库接口，因此拥有灵活但稳定的 API 至关重要。</p>
+<p>今天我们发布了库“v1.0.0”，强调了我们对这些开发人员的责任。展望未来，<a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> 和 <a href="https://github.com/ggml-org/ggml">ggml</a> 都将反映出 API 和 ABI 与主要版本的不兼容。随着采用率的增长，我们将更加严格地让下游消费者看到这些界限。</p>
+<h3>发布</h3>
+<table><thead><tr><th>发布</th><th>图书馆</th><th>公共标头</th></tr></thead><tbody><tr><td><a href="https://github.com/ggml-org/llama.cpp/releases/tag/v1.0.0">llama.cpp v1.0.0</a> - C/C++ 中的 LLM 推理</td><td><code>libllama</code></td><td><a href="https://github.com/ggml-org/llama.cpp/blob/master/include/"><code>llama.cpp/include/</code></a></td></tr><tr><td><a href="https://github.com/ggml-org/ggml/releases/tag/v1.0.0">ggml v1.0.0</a> - 用于机器学习的张量库</td><td><code>libggml</code></td><td><a href="https://github.com/ggml-org/llama.cpp/blob/master/ggml/include/"><code>ggml/include/</code></a></td></tr></tbody></table>
+<h3>语义版本更新规则</h3>
+<p>以下规则适用于所有使用<a href="https://semver.org">语义版本控制</a>的<a href="https://huggingface.co/ggml-org">ggml-org</a>项目：</p>
+<table><thead><tr><th>更改类型</th><th>凹凸</th></tr></thead><tbody><tr><td><strong>专业</strong></td><td>对 <code>./include</code> 中公共 C API 的重大更改</td></tr><tr><td><strong>次要</strong></td><td>向后兼容功能、后端更新、模型支持或 API 添加</td></tr><tr><td><strong>补丁</strong></td><td>错误修复，无需更改 API</td></tr></tbody></table>
+<h3>分布</h3>
+<p>我们期待着扩展“ggml-org”软件的分发方式以及到达开发人员和最终用户的方式。有关如何将 ggml-org 项目添加到打包和发布管道的更多信息，请查看以下<a href="https://github.com/ggml-org/ggml/discussions/1579">讨论</a>。</p>
+<table><thead><tr><th>频道</th><th>平台</th></tr></thead><tbody><tr><td><a href="https://github.com/ggml-org/llama.cpp/releases"><strong>预发布工件</strong></a></td><td>Linux、macOS、Windows、Android、iOS</td></tr><tr><td><strong>码头工人</strong></td><td>Linux</td></tr><tr><td><strong>Debian</strong></td><td>Linux</td></tr><tr><td><strong>自制</strong></td><td>macOS、Linux</td></tr><tr><td><strong>conda-forge</strong></td><td>Windows、macOS、Linux</td></tr><tr><td><strong>MacPorts</strong></td><td>macOS</td></tr><tr><td><strong>温盖特</strong></td><td>窗户</td></tr><tr><td><strong>XC框架</strong></td><td>iOS、macOS</td></tr></tbody></table>
+<h3>发展</h3>
+<p>该项目培育了一个令人惊叹的开源社区，拥有高技能和才华横溢的贡献者。随着人工智能能力在软件工程领域的快速发展，我们继续以深思熟虑和合理的方式将LLM融入我们的开发周期中。维护高质量的代码库、保持对架构的控制和了解实现细节仍然是我们的首要任务。</p>
+<p>为了加快发展步伐，我们继续投入越来越多的资源来改善项目背后的 CI 基础设施。借助 <a href="https://huggingface.co/docs/huggingface_hub/en/guides/buckets">HF Buckets</a> 和 <a href="https://huggingface.co/docs/huggingface_hub/en/guides/jobs">HF Jobs</a> 等 HF 技术，我们能够扩展必要的容量，以保证落在“master”分支上的每个更改的正确性。在 NVIDIA、AMD、Qualcomm、Arm、IBM 和 Intel 的硬件支持下，我们继续在所有主要硬件平台上招募更多自托管运行程序。</p>
+<h3>后端和模型覆盖范围</h3>
+<p><code>llama.cpp</code> 的底层机器学习引擎 - <code>ggml</code> 被设计为几乎可以在任何现有的硬件上运行。这是通过实现专用的 ggml 后端来实现的。每个后端都可以编译为动态库，并可以选择在运行时加载。</p>
+<p>当前实现的后端的完整列表可以在<a href="https://github.com/ggml-org/ggml/tree/master/src">此处</a>找到。</p>
+<p>我们致力于为所有模型架构提供持续支持。目前，llama.cpp 支持超过 <a href="https://github.com/ggml-org/llama.cpp/tree/master/src/models">150 种架构变体</a> 以及所有主流推测解码方法。</p>
+<p>＃＃＃ 谢谢</p>
+<p>Hugging Face 的 llama.cpp 团队感谢社区的大力支持。特别感谢项目的<a href="https://github.com/ggml-org/llama.cpp/blob/master/CODEOWNERS">长期维护者</a>和所有<a href="https://github.com/ggml-org/llama.cpp/graphs/contributors?from=8%2F8%2F2026">贡献者</a>。这是一个重要的里程碑，没有我们的共同努力就不可能实现！</p>
+<h3>其他资源</h3>
+<ul><li><a href="https://github.com/ggml-org/llama.cpp/tree/master/examples">llama.cpp 示例</a></li><li><a href="https://huggingface.co/ggml-org">Hugging Face的 ggml-org</a></li><li><a href="https://github.com/ggml-org">Github 上的 ggml-org</a></li><li>查看适用于 MacOS 和 Windows 的 <a href="https://llama.app/">Llama</a> 桌面应用程序，这些应用程序是由 llama.cpp 和 Hugging Face 背后的团队精心打造的。</li></ul>
+<p>该作者的更多内容</p>
+<h2>llama.cpp 中的新增功能：决策模型</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>113</p>
+<p>2026 年 10 月 2 日</p>
+<h2>通过 llama.cpp 使用 OCR 模型</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>47</p>
+<p>2026 年 4 月 10 日</p>
+<h3>社区</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></p>
+<p>克莱姆</p>
+<p>大约 21 小时前</p>
+<p>🔥🔥🔥</p>
+<ul><li><a href="https://huggingface.co/Junebugg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/1QuoOl1l2cVKrbCjz20bp.png" alt=""></a></li></ul>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/1QuoOl1l2cVKrbCjz20bp.png" alt=""></p>
+<p>朱恩巴格</p>
+<p>大约 11 小时前</p>
+<p>嘿，你能指导我一个项目吗？我没有连接。</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></p>
+<p>普库恩克</p>
+<p>大约 21 小时前</p>
+<p>我们走吧！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></p>
+<p>安迪托</p>
+<p>大约 21 小时前</p>
+<p>这</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></p>
+<p>泊松</p>
+<p>大约 21 小时前</p>
+<p>🚀</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></p>
+<p>伯滕肖</p>
+<p>大约 21 小时前</p>
+<p>是的！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65bb837dbfb878f46c77de4c/23gZ_lBEwyoqjexFy9QLD.jpeg" alt=""></p>
+<p>prithivMLmods</p>
+<p>大约20小时前</p>
+<p>🔥🔥🚀🚀</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/Yt6lTHZzIvVuGpj_Fka_t.png" alt=""></p>
+<p>项目516</p>
+<p>大约20小时前</p>
+<p>不错！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/oFYkELh-lKfDSTmtSdmF0.png" alt=""></p>
+<p>阿斯文德</p>
+<p>大约20小时前</p>
+<p>👏👏👏</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1643148576788-6196cf5c7bf349604352ecda.png" alt=""></p>
+<p>耶霍尔</p>
+<p>大约 19 小时前</p>
+<p>酷</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6776855be57a4c8f9e6e7aaf/rPvn5Og7NX7PXk1d1mnXP.jpeg" alt=""></p>
+<p>博士-Chad-PhD</p>
+<p>大约 18 小时前</p>
+<p>Linux 没有桌面应用程序吗？</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6036cca833b7b6f8f2e6748e/MiSTtrrXz1_KxJJwtK23N.png" alt=""></p>
+<p>vs4维杰</p>
+<p>大约 17 小时前</p>
+<p>好消息！</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63d393ed9e1b81818c81e67d/oSd-LWSaZVRU_M1tWZq1j.png" alt=""></p>
+<p>埃夫根105</p>
+<p>大约 15 小时前</p>
+<p>这真是太huuuuge了</p>
+<p><img src="https://huggingface.co/avatars/8a2878ff9f441247fd9f427f65d3e94a.svg" alt=""></p>
+<p>文佐</p>
+<p>大约 14 小时前</p>
+<p>😁👍👍👍</p>
+<p><img src="https://huggingface.co/avatars/ef3e22922f3b8da3e696288b9e702a9f.svg" alt=""></p>
+<p>达赫兰</p>
+<p>大约10小时前</p>
+<p>恭喜发布！</p>
+<p><img src="https://huggingface.co/avatars/1c779d6528fc7244278cc561da151efb.svg" alt=""></p>
+<p>风暴骑士2003</p>
+<p>大约 7 小时前</p>
+<p>恭喜</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/sG9hP9bt1NDLjKMG18209.jpeg" alt=""></p>
+<p>先生-DS-ML-85</p>
+<p>26 分钟前</p>
+<p>llama.cpp 很好，但在巨大的提示处理或又称预填充方面仍需要改进</p>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">登录</a> 发表评论</p>
+<p>152</p>
+<ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/74k1"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/J45uU0ctfprHaqrGfNoCy.png" alt=""></a></li><li><a href="https://huggingface.co/lnglth"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/OD5-IRD81mXlt3HQd6x3u.png" alt=""></a></li><li><a href="https://huggingface.co/winklerj"><img src="https://huggingface.co/avatars/f3b23beb0241ff3c32975da592c00af4.svg" alt=""></a></li><li><a href="https://huggingface.co/andito"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2b8b4cf7d8930887629e7bcaf0401f61.svg" alt=""></a></li><li><a href="https://huggingface.co/cpoisson"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></a></li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>LLMON：一种 LLM 原生标记语言，现已在 Granite 4.1 3B 和 8B 上可用</title>
       <link>https://huggingface.co/blog/ibm-granite/llmon-an-llm-native-markup-language-now-in-granite</link>
@@ -1342,102 +1655,6 @@ Hugging Face 引入了专门的 [`decision-model` 标签](https://huggingface.co
 - [![](https://huggingface.co/avatars/50dd4932deb1863f5df34ac8ac21354e.svg)](https://huggingface.co/krumeto)</code></pre>]]></content:encoded>
     </item>
     <item>
-      <title>Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集</title>
-      <link>https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan</guid>
-      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan&apos;s Demographics and Financial Context</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集</h1>
-<p>Enterprise + Article</p>
-<p>发布于 2026 年 11 月 9 日</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prajwalpujari16"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/691c4c056c76e3ec5b29e861/mujBimrlUGRhotojdrBr_.png" alt=""></a></li><li><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt=""></a></li><li><a href="https://huggingface.co/chavezpoon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NpzT50N4jI0uaGExtiWLq.png" alt=""></a></li><li><a href="https://huggingface.co/ukuwzi"><img src="https://huggingface.co/avatars/d37876ec884d11dff0e2d928a4d2ee3c.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt="Atsunori Fujita 的头像"></a></p>
-<p>Atsunori Fujita</p>
-<p>Atsunori</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/SnowMasaya"><img src="https://huggingface.co/avatars/0d0803bafe7b9bfbd15d80db3f260012.svg" alt="Masaya Ogushi 的头像"></a></p>
-<p>Masaya Ogushi</p>
-<p>SnowMasaya</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/vg1024"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b9c1a9657bc784a24e8ea9/6BEvDvqg5QK9S2Qyfoj0m.jpeg" alt="Vincent Gong 的头像"></a></p>
-<p>Vincent Gong</p>
-<p>vg1024</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/kyamamoto-nv"><img src="https://huggingface.co/avatars/da1de7d71f01ead08722c5e6460a38c2.svg" alt="Kotaro Yamamoto 的头像"></a></p>
-<p>Kotaro Yamamoto</p>
-<p>kyamamoto-nv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt="Yoshi Suhara 的头像"></a></p>
-<p>Yoshi Suhara</p>
-<p>suhara</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/WillJenningsDC"><img src="https://huggingface.co/avatars/10e0e0a672c21a14b72b4252717dc0ea.svg" alt="Will Jennings 的头像"></a></p>
-<p>Will Jennings</p>
-<p>WillJenningsDC</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/nv-3mei"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NCK3br1uL-gfkVWmd_VRQ.png" alt="Yev Meyer 的头像"></a></p>
-<p>Yev Meyer</p>
-<p>nv-3mei</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><em>构建扎根于真实世界分布的日本 personas 的复合 AI 方法 </em></p>
-<h3>开放数据打破隐私壁垒，为金融领域的 AI 铺路</h3>
-<p>在金融行业，由于严格的隐私法规、合规要求以及对高级领域专业知识的需求，真实世界数据的利用面临重大限制。在此背景下，金融领域 agentic AI 的发展需要合成数据：既能避免使用真实数据的风险，又能反映人口结构、家庭结构和资产状况，从而复现多样、真实的金融场景。</p>
-<p>为应对这些挑战，<a href="https://www.elith.ai/">Elith</a> 与 NVIDIA 发布了 <a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Finance-Japan"><strong>Nemotron-Personas-Finance-Japan</strong></a>，它是开源 persona 数据集 &quot;<a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Japan">Nemotron-Personas-Japan</a>.&quot; 的金融领域扩展。据我们所知，这是首个达到百万记录规模、将日本官方统计数据与家庭金融和金融素养数据配对的开放 persona 数据集。该数据集基于官方政府统计构建，使用 <a href="https://github.com/NVIDIA-NeMo/SDG-PGMs">NeMo SDG-PGMs</a>（一个用于合成数据生成 (SDG) 的概率图模型框架）和 <a href="https://github.com/NVIDIA-NeMo/DataDesigner">NeMo Data Designer</a>（一个企业级合成数据生成系统）开发。此外，为增强该数据集在金融用例中的实用性，它在设计时纳入了日本国内领先金融机构与行业协会提供的见解和反馈，包括 Sompo Japan、Tokio Marine Holdings、Bank of Fukuoka、Mizuho Financial Group、Meiji Yasuda Life Insurance，以及 Financial Data Utilization Association (FDUA)。</p>
-<p>这个数据集拓展了这样一个环境：日本开发者与企业无需使用真实客户数据，就能开发和评估贴合本地与行业要求的 AI。它以 <strong>CC BY 4.0</strong> 许可证发布，可用于商业用途。<strong>从构建对话 agents 到客户仿真与模型评估，它支持实际的金融 AI 开发</strong>。包含 Nemotron-Personas-Finance-Japan 在内的 <a href="https://huggingface.co/collections/nvidia/nemotron-personas">Nemotron-Personas 合集</a> 设计上可与用户仿真框架 <a href="https://github.com/NVIDIA-NeMo/UserSim">NeMo User Sim</a> 无缝集成，从而能够即时执行取自与真实世界一致的多样分布的仿真。</p>
-<h3>数据集里有什么？</h3>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/604ad59e2fad27aca4515dab/qEMManizZ8vV73X4Ynh1P.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/604ad59e2fad27aca4515dab/qEMManizZ8vV73X4Ynh1P.png" alt="image2"></a></p>
-<ul><li><strong>共 900 万 personas</strong>（100 万条记录 x 每条 9 个 personas），以自然日语书写</li><li><strong>每条记录 50 个字段</strong>：9 个 persona 字段、11 个 persona 属性，以及基于官方人口与劳动统计的 30 个上下文字段</li><li><strong>共约 15 亿 tokens</strong>，其中包含约 7.5 亿 persona tokens</li><li><strong>约 95 万个不重复姓名</strong></li><li><strong>1600+ 个职业类别</strong>，反映日本的劳动力构成</li><li><strong>全面覆盖</strong>人口统计、地域、资产分布与人格特质各轴</li><li><strong>多样的 persona 类型</strong>：职业、体育、艺术、旅行、烹饪、金融、金融行为与金融关切</li><li><strong>自然语言 persona 属性</strong>：文化背景、技能与专长、职业目标与抱负、爱好与兴趣、家庭/父母/金融背景、金钱观，以及财务规划</li><li>在 CC BY 4.0 许可证下<strong>可用于商业与非商业用途</strong></li></ul>
-<h3><strong>我们如何构建它</strong></h3>
-<h4><strong>数据生成管线</strong></h4>
-<p>它使用 NVIDIA 的合成数据生成框架 <strong>NeMo Data Designer</strong> 构建。这个复合 AI 系统支持复杂的 Jinja 模板、Pydantic 验证、结构化输出、自动重试，以及对多种生成后端的支持。这是生成如此大规模合成数据集所必需的核心工具集。此外，还使用了以下模型：</p>
-<ul><li><strong>NeMo SDG-PGMs (Apache-2.0)</strong>：用于有统计依据的数据生成的概率图模型框架</li><li><strong>gemma-4-31B-it (Apache-2.0)</strong>：用于日语文本生成</li></ul>
-<h4><strong>增强的文化背景</strong></h4>
-<p>Nemotron-Personas-Finance-Japan 的设计对齐日本官方人口与劳动统计，同时考虑了对 AI 训练至关重要的关键因素：</p>
-<ul><li><strong>教育</strong>：在国家统计对学位层级做宽泛汇总的地方，我们引入了更细的粒度，使模型能够反映多样的教育路径。</li><li><strong>职业</strong>：我们纳入了额外类别（如企业主与专业职业），以拓宽用于训练的职业谱系。</li><li><strong>人生阶段</strong>：我们对学生、退休者以及失业期这类在统计中很少显著出现的场景进行了建模，以呈现更真实的 personas。</li><li><strong>家庭财务</strong>：除个人收入与支出倾向外，我们还纳入了家庭层面的金融资产与实物资产，以复现多样的经济背景。</li><li><strong>数字与金融素养</strong>：通过纳入互联网与智能手机使用情况以及金融素养，我们使模型能够精确捕捉金融用例中的消费者画像。</li></ul>
-<h3><strong>隐私内建于设计</strong></h3>
-<p>每个 persona 都是完全合成的。没有代表任何真实个人，数据集的设计旨在降低隐私风险。人口统计与家庭财务遵循官方统计和公开调查数据，姓名遵循真实的日语命名模式。Personas 由这些分布构建，而不是来自关于真实个人的记录。</p>
-<h3><strong>这份数据面向谁</strong></h3>
-<p>Nemotron-Personas-Finance-Japan 首先是为在日本创建金融 AI 的团队构建的——银行与保险公司，以及服务它们的初创公司和集成商。每个 persona 在人口统计之外还携带家庭财务与金融素养。团队可以用它们构建客服 agents、评估销售对话/营销活动、在 NeMo User Sim 中运行用户仿真，并对面向客户的 AI 开展 red-team 测试。</p>
-<p>这次发布也服务于任何为日本用户构建产品的人。它包含 900 万 personas，比 Nemotron-Personas-Japan 多 50%，字段为 50 个而非 22 个。这让任何日语项目都能获得更细的人群切片用于训练和测试。</p>
-<h3><strong>实际 AI 应用</strong></h3>
-<p>这个数据集中的合成 personas 可用于：</p>
-<ul><li><strong>多轮对话</strong>：把 personas 用作&quot;种子&quot;，生成类人对话数据集。</li><li><strong>特定领域 AI 开发</strong>：生成数据集，构建贴合金融用例中真实场景的 AI 助手。</li><li><strong>偏见测试与公平性</strong>：评估模型与 AI agent 系统在城乡差异、不同年龄组、教育背景和经济状况下的表现，检验 AI 在日本社会各层面是否表现一致。</li></ul>
-<h3><strong>为什么它重要</strong></h3>
-<p>获取反映真实世界人口的多样、高质量训练数据，长期以来一直是 AI 开发中的难题。企业 AI 开发主要依赖私有数据，这为研究人员、初创公司，尤其是可用数据有限地区的 AI 开发者设置了障碍。</p>
-<ul><li><strong>数据多样性</strong>：反映日本人口的全谱系，有助于减少有偏训练以及 <a href="https://medium.com/data-science/addressing-concerns-of-model-collapse-from-synthetic-data-in-ai-7cd380208d14">model collapse</a> 的风险。</li><li><strong>文化真实性</strong>：减少对以西方为中心的数据集的依赖，支持 <a href="https://www.nvidia.com/en-us/lp/industries/global-public-sector/sovereign-ai-technical-overview/">Sovereign AI 系统</a> 的发展。</li><li><strong>隐私与治理</strong>：与日本创新优先的 AI 治理方式一致。每个 persona 都是合成的，因此用它构建或测试都不需要客户数据。</li></ul>
-<p>通过在 CC BY 4.0 下发布 Nemotron-Personas-Finance-Japan，我们提供了对企业级、高质量合成数据的访问，让任何人都能以更低的成本和更小的隐私风险构建具有文化根基的 AI 系统。</p>
-<h3><strong>与 Nemotron-PII-Japan 配对使用</strong></h3>
-<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-PII-Japan">Nemotron-PII-Japan</a> 同日发布。它包含 100,000 份带有标注个人信息的合成日语商业文档，用于训练和测试检测与脱敏模型。它的文档基于 Nemotron-Personas-Japan 构建。用 Nemotron-Personas-Finance-Japan 模拟客户，用 Nemotron-PII-Japan 测试你的管线如何保护他们的数据。</p>
-<h3><strong>开始用 Nemotron-Personas-Finance-Japan 构建</strong></h3>
-<p>你可以使用下面的命令下载这个数据集，帮助开发真正理解日本文化与语言的 AI。</p>
-<pre><code>from datasets import load_dataset
-ds = load_dataset(&quot;nvidia/Nemotron-Personas-Finance-Japan&quot;)</code></pre>
-<p><strong>构建生产就绪应用的用例：</strong></p>
-<ul><li>把 personas 用作对话生成的种子</li><li>用具有文化根基的数据对模型做 fine-tuning</li><li>构建反映日本整体人口构成的个性化引擎</li><li>开发具备日本语境的特定领域 AI agents</li></ul>
-<p>从在日本构建 AI 的团队，到寻求更广泛区域部署的全球开发者，<a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Finance-Japan">Nemotron-Personas-Finance-Japan</a> 数据集都为你的应用提供了所需的真实、注重隐私的基础。</p>
-<h2>本文提到的数据集 3</h2>
-<h2>本文提到的合集 1</h2>
-<p>更多来自该作者</p>
-<h2><em>用跨八个领域的 100,000 份合成商业文档评估隐私保护与实际 AI 应用</em></h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>3</p>
-<p>2026 年 11 月 9 日</p>
-<h2>Nemotron PII Japan: プライバシー保護に向けた日本語PIIオープンデータ</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>2</p>
-<p>2026 年 11 月 9 日</p>
-<h3>社区</h3>
-<p>在文本输入框中拖拽、粘贴或点击此处上传图片、音频和视频。</p>
-<p>点按或粘贴此处以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fnemotron-personas-finance-japan">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fnemotron-personas-finance-japan">登录</a> 以发表评论</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prajwalpujari16"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/691c4c056c76e3ec5b29e861/mujBimrlUGRhotojdrBr_.png" alt=""></a></li><li><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt=""></a></li><li><a href="https://huggingface.co/chavezpoon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NpzT50N4jI0uaGExtiWLq.png" alt=""></a></li><li><a href="https://huggingface.co/ukuwzi"><img src="https://huggingface.co/avatars/d37876ec884d11dff0e2d928a4d2ee3c.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li><li><a href="https://huggingface.co/efeshinkawa"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6af2315043d5f825e448c522/EJzrdlSgpG5xq4PQPb-8-.jpeg" alt=""></a></li></ul>
-<h2>本文提到的数据集 3</h2>
-<h2>本文提到的合集 1</h2>]]></content:encoded>
-    </item>
-    <item>
       <title>你的专家有搭档。HOPE 让它们继续在一起</title>
       <link>https://huggingface.co/blog/amazon/higher-order-pruning-experts</link>
       <guid isPermaLink="true">https://huggingface.co/blog/amazon/higher-order-pruning-experts</guid>
@@ -1556,6 +1773,160 @@ prune_model(&quot;Qwen/Qwen3.5-35B-A3B&quot;, &quot;pruneset.json&quot;, &quot;.
 <ul><li><a href="https://huggingface.co/photophilljk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ark7hveFQrEYzCCg0Elkh.png" alt=""></a></li><li><a href="https://huggingface.co/zancato"><img src="https://huggingface.co/avatars/4954ed321af57baadebee55f860e25e3.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集</title>
+      <link>https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/nemotron-personas-finance-japan</guid>
+      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan&apos;s Demographics and Financial Context</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
+<h1>Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集</h1>
+<p>Enterprise + Article</p>
+<p>发布于 2026 年 11 月 9 日</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prajwalpujari16"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/691c4c056c76e3ec5b29e861/mujBimrlUGRhotojdrBr_.png" alt=""></a></li><li><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt=""></a></li><li><a href="https://huggingface.co/chavezpoon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NpzT50N4jI0uaGExtiWLq.png" alt=""></a></li><li><a href="https://huggingface.co/ukuwzi"><img src="https://huggingface.co/avatars/d37876ec884d11dff0e2d928a4d2ee3c.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt="Atsunori Fujita 的头像"></a></p>
+<p>Atsunori Fujita</p>
+<p>Atsunori</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/SnowMasaya"><img src="https://huggingface.co/avatars/0d0803bafe7b9bfbd15d80db3f260012.svg" alt="Masaya Ogushi 的头像"></a></p>
+<p>Masaya Ogushi</p>
+<p>SnowMasaya</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/vg1024"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b9c1a9657bc784a24e8ea9/6BEvDvqg5QK9S2Qyfoj0m.jpeg" alt="Vincent Gong 的头像"></a></p>
+<p>Vincent Gong</p>
+<p>vg1024</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/kyamamoto-nv"><img src="https://huggingface.co/avatars/da1de7d71f01ead08722c5e6460a38c2.svg" alt="Kotaro Yamamoto 的头像"></a></p>
+<p>Kotaro Yamamoto</p>
+<p>kyamamoto-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt="Yoshi Suhara 的头像"></a></p>
+<p>Yoshi Suhara</p>
+<p>suhara</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/WillJenningsDC"><img src="https://huggingface.co/avatars/10e0e0a672c21a14b72b4252717dc0ea.svg" alt="Will Jennings 的头像"></a></p>
+<p>Will Jennings</p>
+<p>WillJenningsDC</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nv-3mei"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NCK3br1uL-gfkVWmd_VRQ.png" alt="Yev Meyer 的头像"></a></p>
+<p>Yev Meyer</p>
+<p>nv-3mei</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><em>构建扎根于真实世界分布的日本 personas 的复合 AI 方法 </em></p>
+<h3>开放数据打破隐私壁垒，为金融领域的 AI 铺路</h3>
+<p>在金融行业，由于严格的隐私法规、合规要求以及对高级领域专业知识的需求，真实世界数据的利用面临重大限制。在此背景下，金融领域 agentic AI 的发展需要合成数据：既能避免使用真实数据的风险，又能反映人口结构、家庭结构和资产状况，从而复现多样、真实的金融场景。</p>
+<p>为应对这些挑战，<a href="https://www.elith.ai/">Elith</a> 与 NVIDIA 发布了 <a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Finance-Japan"><strong>Nemotron-Personas-Finance-Japan</strong></a>，它是开源 persona 数据集 &quot;<a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Japan">Nemotron-Personas-Japan</a>.&quot; 的金融领域扩展。据我们所知，这是首个达到百万记录规模、将日本官方统计数据与家庭金融和金融素养数据配对的开放 persona 数据集。该数据集基于官方政府统计构建，使用 <a href="https://github.com/NVIDIA-NeMo/SDG-PGMs">NeMo SDG-PGMs</a>（一个用于合成数据生成 (SDG) 的概率图模型框架）和 <a href="https://github.com/NVIDIA-NeMo/DataDesigner">NeMo Data Designer</a>（一个企业级合成数据生成系统）开发。此外，为增强该数据集在金融用例中的实用性，它在设计时纳入了日本国内领先金融机构与行业协会提供的见解和反馈，包括 Sompo Japan、Tokio Marine Holdings、Bank of Fukuoka、Mizuho Financial Group、Meiji Yasuda Life Insurance，以及 Financial Data Utilization Association (FDUA)。</p>
+<p>这个数据集拓展了这样一个环境：日本开发者与企业无需使用真实客户数据，就能开发和评估贴合本地与行业要求的 AI。它以 <strong>CC BY 4.0</strong> 许可证发布，可用于商业用途。<strong>从构建对话 agents 到客户仿真与模型评估，它支持实际的金融 AI 开发</strong>。包含 Nemotron-Personas-Finance-Japan 在内的 <a href="https://huggingface.co/collections/nvidia/nemotron-personas">Nemotron-Personas 合集</a> 设计上可与用户仿真框架 <a href="https://github.com/NVIDIA-NeMo/UserSim">NeMo User Sim</a> 无缝集成，从而能够即时执行取自与真实世界一致的多样分布的仿真。</p>
+<h3>数据集里有什么？</h3>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/604ad59e2fad27aca4515dab/qEMManizZ8vV73X4Ynh1P.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/604ad59e2fad27aca4515dab/qEMManizZ8vV73X4Ynh1P.png" alt="image2"></a></p>
+<ul><li><strong>共 900 万 personas</strong>（100 万条记录 x 每条 9 个 personas），以自然日语书写</li><li><strong>每条记录 50 个字段</strong>：9 个 persona 字段、11 个 persona 属性，以及基于官方人口与劳动统计的 30 个上下文字段</li><li><strong>共约 15 亿 tokens</strong>，其中包含约 7.5 亿 persona tokens</li><li><strong>约 95 万个不重复姓名</strong></li><li><strong>1600+ 个职业类别</strong>，反映日本的劳动力构成</li><li><strong>全面覆盖</strong>人口统计、地域、资产分布与人格特质各轴</li><li><strong>多样的 persona 类型</strong>：职业、体育、艺术、旅行、烹饪、金融、金融行为与金融关切</li><li><strong>自然语言 persona 属性</strong>：文化背景、技能与专长、职业目标与抱负、爱好与兴趣、家庭/父母/金融背景、金钱观，以及财务规划</li><li>在 CC BY 4.0 许可证下<strong>可用于商业与非商业用途</strong></li></ul>
+<h3><strong>我们如何构建它</strong></h3>
+<h4><strong>数据生成管线</strong></h4>
+<p>它使用 NVIDIA 的合成数据生成框架 <strong>NeMo Data Designer</strong> 构建。这个复合 AI 系统支持复杂的 Jinja 模板、Pydantic 验证、结构化输出、自动重试，以及对多种生成后端的支持。这是生成如此大规模合成数据集所必需的核心工具集。此外，还使用了以下模型：</p>
+<ul><li><strong>NeMo SDG-PGMs (Apache-2.0)</strong>：用于有统计依据的数据生成的概率图模型框架</li><li><strong>gemma-4-31B-it (Apache-2.0)</strong>：用于日语文本生成</li></ul>
+<h4><strong>增强的文化背景</strong></h4>
+<p>Nemotron-Personas-Finance-Japan 的设计对齐日本官方人口与劳动统计，同时考虑了对 AI 训练至关重要的关键因素：</p>
+<ul><li><strong>教育</strong>：在国家统计对学位层级做宽泛汇总的地方，我们引入了更细的粒度，使模型能够反映多样的教育路径。</li><li><strong>职业</strong>：我们纳入了额外类别（如企业主与专业职业），以拓宽用于训练的职业谱系。</li><li><strong>人生阶段</strong>：我们对学生、退休者以及失业期这类在统计中很少显著出现的场景进行了建模，以呈现更真实的 personas。</li><li><strong>家庭财务</strong>：除个人收入与支出倾向外，我们还纳入了家庭层面的金融资产与实物资产，以复现多样的经济背景。</li><li><strong>数字与金融素养</strong>：通过纳入互联网与智能手机使用情况以及金融素养，我们使模型能够精确捕捉金融用例中的消费者画像。</li></ul>
+<h3><strong>隐私内建于设计</strong></h3>
+<p>每个 persona 都是完全合成的。没有代表任何真实个人，数据集的设计旨在降低隐私风险。人口统计与家庭财务遵循官方统计和公开调查数据，姓名遵循真实的日语命名模式。Personas 由这些分布构建，而不是来自关于真实个人的记录。</p>
+<h3><strong>这份数据面向谁</strong></h3>
+<p>Nemotron-Personas-Finance-Japan 首先是为在日本创建金融 AI 的团队构建的——银行与保险公司，以及服务它们的初创公司和集成商。每个 persona 在人口统计之外还携带家庭财务与金融素养。团队可以用它们构建客服 agents、评估销售对话/营销活动、在 NeMo User Sim 中运行用户仿真，并对面向客户的 AI 开展 red-team 测试。</p>
+<p>这次发布也服务于任何为日本用户构建产品的人。它包含 900 万 personas，比 Nemotron-Personas-Japan 多 50%，字段为 50 个而非 22 个。这让任何日语项目都能获得更细的人群切片用于训练和测试。</p>
+<h3><strong>实际 AI 应用</strong></h3>
+<p>这个数据集中的合成 personas 可用于：</p>
+<ul><li><strong>多轮对话</strong>：把 personas 用作&quot;种子&quot;，生成类人对话数据集。</li><li><strong>特定领域 AI 开发</strong>：生成数据集，构建贴合金融用例中真实场景的 AI 助手。</li><li><strong>偏见测试与公平性</strong>：评估模型与 AI agent 系统在城乡差异、不同年龄组、教育背景和经济状况下的表现，检验 AI 在日本社会各层面是否表现一致。</li></ul>
+<h3><strong>为什么它重要</strong></h3>
+<p>获取反映真实世界人口的多样、高质量训练数据，长期以来一直是 AI 开发中的难题。企业 AI 开发主要依赖私有数据，这为研究人员、初创公司，尤其是可用数据有限地区的 AI 开发者设置了障碍。</p>
+<ul><li><strong>数据多样性</strong>：反映日本人口的全谱系，有助于减少有偏训练以及 <a href="https://medium.com/data-science/addressing-concerns-of-model-collapse-from-synthetic-data-in-ai-7cd380208d14">model collapse</a> 的风险。</li><li><strong>文化真实性</strong>：减少对以西方为中心的数据集的依赖，支持 <a href="https://www.nvidia.com/en-us/lp/industries/global-public-sector/sovereign-ai-technical-overview/">Sovereign AI 系统</a> 的发展。</li><li><strong>隐私与治理</strong>：与日本创新优先的 AI 治理方式一致。每个 persona 都是合成的，因此用它构建或测试都不需要客户数据。</li></ul>
+<p>通过在 CC BY 4.0 下发布 Nemotron-Personas-Finance-Japan，我们提供了对企业级、高质量合成数据的访问，让任何人都能以更低的成本和更小的隐私风险构建具有文化根基的 AI 系统。</p>
+<h3><strong>与 Nemotron-PII-Japan 配对使用</strong></h3>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-PII-Japan">Nemotron-PII-Japan</a> 同日发布。它包含 100,000 份带有标注个人信息的合成日语商业文档，用于训练和测试检测与脱敏模型。它的文档基于 Nemotron-Personas-Japan 构建。用 Nemotron-Personas-Finance-Japan 模拟客户，用 Nemotron-PII-Japan 测试你的管线如何保护他们的数据。</p>
+<h3><strong>开始用 Nemotron-Personas-Finance-Japan 构建</strong></h3>
+<p>你可以使用下面的命令下载这个数据集，帮助开发真正理解日本文化与语言的 AI。</p>
+<pre><code>from datasets import load_dataset
+ds = load_dataset(&quot;nvidia/Nemotron-Personas-Finance-Japan&quot;)</code></pre>
+<p><strong>构建生产就绪应用的用例：</strong></p>
+<ul><li>把 personas 用作对话生成的种子</li><li>用具有文化根基的数据对模型做 fine-tuning</li><li>构建反映日本整体人口构成的个性化引擎</li><li>开发具备日本语境的特定领域 AI agents</li></ul>
+<p>从在日本构建 AI 的团队，到寻求更广泛区域部署的全球开发者，<a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Finance-Japan">Nemotron-Personas-Finance-Japan</a> 数据集都为你的应用提供了所需的真实、注重隐私的基础。</p>
+<h2>本文提到的数据集 3</h2>
+<h2>本文提到的合集 1</h2>
+<p>更多来自该作者</p>
+<h2><em>用跨八个领域的 100,000 份合成商业文档评估隐私保护与实际 AI 应用</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>3</p>
+<p>2026 年 11 月 9 日</p>
+<h2>Nemotron PII Japan: プライバシー保護に向けた日本語PIIオープンデータ</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>2</p>
+<p>2026 年 11 月 9 日</p>
+<h3>社区</h3>
+<p>在文本输入框中拖拽、粘贴或点击此处上传图片、音频和视频。</p>
+<p>点按或粘贴此处以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fnemotron-personas-finance-japan">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fnemotron-personas-finance-japan">登录</a> 以发表评论</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Atsunori"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615517039409-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/prajwalpujari16"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/691c4c056c76e3ec5b29e861/mujBimrlUGRhotojdrBr_.png" alt=""></a></li><li><a href="https://huggingface.co/suhara"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5fc181c4ea82dd667bb0ffae/FeiX5mrJakX7FpgK5zQli.png" alt=""></a></li><li><a href="https://huggingface.co/chavezpoon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NpzT50N4jI0uaGExtiWLq.png" alt=""></a></li><li><a href="https://huggingface.co/ukuwzi"><img src="https://huggingface.co/avatars/d37876ec884d11dff0e2d928a4d2ee3c.svg" alt=""></a></li><li><a href="https://huggingface.co/robertflucker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xyQeF8NkqDi82r48uheiY.png" alt=""></a></li><li><a href="https://huggingface.co/efeshinkawa"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6af2315043d5f825e448c522/EJzrdlSgpG5xq4PQPb-8-.jpeg" alt=""></a></li></ul>
+<h2>本文提到的数据集 3</h2>
+<h2>本文提到的合集 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>埃及英语与尼日利亚英语加入 Open ASR 排行榜</title>
+      <link>https://huggingface.co/blog/open-asr-leaderboard-liva</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/open-asr-leaderboard-liva</guid>
+      <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Egyptian and Nigerian English join the Open ASR Leaderboard</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>埃及英语与尼日利亚英语加入 Open ASR 排行榜</h1>
+<p>Published November 6, 2026</p>
+<p>Update on GitHub</p>
+<p>5</p>
+<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt="Eric Bezzam's avatar"></a></p>
+<p>Eric Bezzam</p>
+<p>bezzam</p>
+<p><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt="Ashley Mo's avatar"></a></p>
+<p>Ashley Mo</p>
+<p>ashleymo2025</p>
+<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI's avatar"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
+<p><a href="https://huggingface.co/aonorii"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/hGnt9yx6LyQP5a2MBpXGg.jpeg" alt="Aoi Otani's avatar"></a></p>
+<p>Aoi Otani</p>
+<p>aonorii</p>
+<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI's avatar"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
+<p>几个月前，我们为 <a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">Open ASR Leaderboard</a> 引入了私有测试集：来自 Appen 和 DataOceanAI 的 11 个子集，涵盖 5 种口音的朗读与自然会话语音（<a href="https://huggingface.co/blog/open-asr-leaderboard-private-data">博客</a>）。社区反响非常热烈，许多人<strong>特别强调了保留测试集对于构建可信评测的重要性</strong>。此后，我们又通过 Voice Arena 补充了一个针对印度口音英语的私有子集（<a href="https://huggingface.co/blog/open-asr-leaderboard-global-south">博客</a>）。</p>
+<p>我们非常高兴宣布与 <a href="https://huggingface.co/liva-ai">Liva AI</a> 达成全新合作，进一步扩充私有数据，并引入两种全新口音：<strong>埃及英语</strong> 🇪🇬 与 <strong>尼日利亚英语</strong> 🇳🇬。</p>
+<table><thead><tr><th>Dataset</th><th>Accent</th><th>Duration [h]</th><th>Style</th><th>Transcription</th></tr></thead><tbody><tr><td>Liva AI Conversational EG</td><td>Egyptian</td><td>1.34</td><td>Conversational, spontaneous</td><td>Punctuated, cased, with disfluencies.</td></tr><tr><td>Liva AI Conversational NG</td><td>Nigerian</td><td>1.55</td><td>Conversational, spontaneous</td><td>Punctuated, cased, with disfluencies.</td></tr></tbody></table>
+<p>这是我们持续提升 ASR 评测代表性（覆盖更多口音与语种）与可信度（引入全新私有数据以遏制刷榜行为，并拓展更多数据供应商）工作的一部分。我们非常期待看到开源社区继续推动 ASR 技术造福全球用户 🤗</p>
+<h2>Richer accent breakdown in the Private tab</h2>
+<p>随着这些全新口音的加入，我们现在可以基于 <a href="https://en.wikipedia.org/wiki/World_Englishes#Kachru%27s_Three_Circles_of_English">Kachru 的英语三同心圆理论</a> 呈现更加丰富的口音细分（感谢 Hume AI 在其<a href="https://huggingface.co/spaces/HumeAI/asr-leaderboard">排行榜</a>中提出的这一巧思）。Open ASR Leaderboard 现在将分别汇报：</p>
+<ul><li>美国英语 vs. 非美口音（<em>英国、澳大利亚、加拿大、印度、尼日利亚、埃及</em>）</li><li>内圈（<em>美国、英国、澳大利亚、加拿大</em>）vs. 外圈与扩展圈（<em>印度、尼日利亚、埃及</em>）</li></ul>
+<p>未来随着更多口音的加入，我们还会进一步拆分外圈与扩展圈。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/open_asr_leaderboard/private_data_accent_breakdown.png" alt="thumbnail"></p>
+<h2>About Liva AI</h2>
+<p>Liva AI 通过真实用户使用的消费级产品采集多模态交互数据。由于 Liva 同时拥有数据采集环境与分发渠道，它可以围绕模型在特定领域、行业、语言、模态及交互类型上的能力短板进行针对性产品设计。这使其能够捕获在真实产品使用中自然涌现的高语境、高质量交互行为，而非人工诱导或基于特定任务的机械互动。</p>
+<h2>Spaces mentioned in this article 2</h2>
+<p>More Articles from our Blog</p>
+<p>audiospeechleaderboard</p>
+<h2>Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png" alt=""></li></ul>
+<p>80</p>
+<p>September 30, 2026</p>
+<p>audiospeechleaderboard</p>
+<h2>The Open ASR Leaderboard Adds Its First Global South Language</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://huggingface.co/avatars/56ce7e0fea0166a14997e7876fb23621.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bc3e2f4b9d3615a6e2c982/8x33LQ0fwbnUtIn9CAwv2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6673251287330d7378e6b5e3/VVvuAsOUMiAPNgsdoRZjM.png" alt=""></li><li>+6</li></ul>
+<p>61</p>
+<p>August 28, 2026</p>
+<h3>Community</h3>
+<p><img src="https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg" alt=""></p>
+<p>wookute221</p>
+<p>about 7 hours ago</p>
+<p>hay</p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopen-asr-leaderboard-liva">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fopen-asr-leaderboard-liva">log in</a> to comment</p>
+<p>5</p>
+<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
+<h2>Spaces mentioned in this article 2</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>ToyBlocks：用于机器人学习与评估的受控世界</title>
       <link>https://huggingface.co/blog/allenai/toyblocks</link>
       <guid isPermaLink="true">https://huggingface.co/blog/allenai/toyblocks</guid>
@@ -1671,64 +2042,6 @@ prune_model(&quot;Qwen/Qwen3.5-35B-A3B&quot;, &quot;pruneset.json&quot;, &quot;.
 <h2>本文提及的模型 2</h2>
 <h2>本文提及的数据集 1</h2>
 <h2>本文提及的集合 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>埃及英语与尼日利亚英语加入 Open ASR 排行榜</title>
-      <link>https://huggingface.co/blog/open-asr-leaderboard-liva</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/open-asr-leaderboard-liva</guid>
-      <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Egyptian and Nigerian English join the Open ASR Leaderboard</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>埃及英语与尼日利亚英语加入 Open ASR 排行榜</h1>
-<p>Published November 6, 2026</p>
-<p>Update on GitHub</p>
-<p>5</p>
-<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt="Eric Bezzam's avatar"></a></p>
-<p>Eric Bezzam</p>
-<p>bezzam</p>
-<p><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt="Ashley Mo's avatar"></a></p>
-<p>Ashley Mo</p>
-<p>ashleymo2025</p>
-<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI's avatar"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
-<p><a href="https://huggingface.co/aonorii"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/hGnt9yx6LyQP5a2MBpXGg.jpeg" alt="Aoi Otani's avatar"></a></p>
-<p>Aoi Otani</p>
-<p>aonorii</p>
-<p><a href="https://huggingface.co/liva-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png" alt="Liva AI's avatar"></a> <a href="https://huggingface.co/liva-ai">liva-ai</a></p>
-<p>几个月前，我们为 <a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">Open ASR Leaderboard</a> 引入了私有测试集：来自 Appen 和 DataOceanAI 的 11 个子集，涵盖 5 种口音的朗读与自然会话语音（<a href="https://huggingface.co/blog/open-asr-leaderboard-private-data">博客</a>）。社区反响非常热烈，许多人<strong>特别强调了保留测试集对于构建可信评测的重要性</strong>。此后，我们又通过 Voice Arena 补充了一个针对印度口音英语的私有子集（<a href="https://huggingface.co/blog/open-asr-leaderboard-global-south">博客</a>）。</p>
-<p>我们非常高兴宣布与 <a href="https://huggingface.co/liva-ai">Liva AI</a> 达成全新合作，进一步扩充私有数据，并引入两种全新口音：<strong>埃及英语</strong> 🇪🇬 与 <strong>尼日利亚英语</strong> 🇳🇬。</p>
-<table><thead><tr><th>Dataset</th><th>Accent</th><th>Duration [h]</th><th>Style</th><th>Transcription</th></tr></thead><tbody><tr><td>Liva AI Conversational EG</td><td>Egyptian</td><td>1.34</td><td>Conversational, spontaneous</td><td>Punctuated, cased, with disfluencies.</td></tr><tr><td>Liva AI Conversational NG</td><td>Nigerian</td><td>1.55</td><td>Conversational, spontaneous</td><td>Punctuated, cased, with disfluencies.</td></tr></tbody></table>
-<p>这是我们持续提升 ASR 评测代表性（覆盖更多口音与语种）与可信度（引入全新私有数据以遏制刷榜行为，并拓展更多数据供应商）工作的一部分。我们非常期待看到开源社区继续推动 ASR 技术造福全球用户 🤗</p>
-<h2>Richer accent breakdown in the Private tab</h2>
-<p>随着这些全新口音的加入，我们现在可以基于 <a href="https://en.wikipedia.org/wiki/World_Englishes#Kachru%27s_Three_Circles_of_English">Kachru 的英语三同心圆理论</a> 呈现更加丰富的口音细分（感谢 Hume AI 在其<a href="https://huggingface.co/spaces/HumeAI/asr-leaderboard">排行榜</a>中提出的这一巧思）。Open ASR Leaderboard 现在将分别汇报：</p>
-<ul><li>美国英语 vs. 非美口音（<em>英国、澳大利亚、加拿大、印度、尼日利亚、埃及</em>）</li><li>内圈（<em>美国、英国、澳大利亚、加拿大</em>）vs. 外圈与扩展圈（<em>印度、尼日利亚、埃及</em>）</li></ul>
-<p>未来随着更多口音的加入，我们还会进一步拆分外圈与扩展圈。</p>
-<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/open_asr_leaderboard/private_data_accent_breakdown.png" alt="thumbnail"></p>
-<h2>About Liva AI</h2>
-<p>Liva AI 通过真实用户使用的消费级产品采集多模态交互数据。由于 Liva 同时拥有数据采集环境与分发渠道，它可以围绕模型在特定领域、行业、语言、模态及交互类型上的能力短板进行针对性产品设计。这使其能够捕获在真实产品使用中自然涌现的高语境、高质量交互行为，而非人工诱导或基于特定任务的机械互动。</p>
-<h2>Spaces mentioned in this article 2</h2>
-<p>More Articles from our Blog</p>
-<p>audiospeechleaderboard</p>
-<h2>Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png" alt=""></li></ul>
-<p>80</p>
-<p>September 30, 2026</p>
-<p>audiospeechleaderboard</p>
-<h2>The Open ASR Leaderboard Adds Its First Global South Language</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://huggingface.co/avatars/56ce7e0fea0166a14997e7876fb23621.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bc3e2f4b9d3615a6e2c982/8x33LQ0fwbnUtIn9CAwv2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6673251287330d7378e6b5e3/VVvuAsOUMiAPNgsdoRZjM.png" alt=""></li><li>+6</li></ul>
-<p>61</p>
-<p>August 28, 2026</p>
-<h3>Community</h3>
-<p><img src="https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg" alt=""></p>
-<p>wookute221</p>
-<p>about 7 hours ago</p>
-<p>hay</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopen-asr-leaderboard-liva">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fopen-asr-leaderboard-liva">log in</a> to comment</p>
-<p>5</p>
-<ul><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ausyeternal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png" alt=""></a></li><li><a href="https://huggingface.co/decypher01"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png" alt=""></a></li><li><a href="https://huggingface.co/luckygall"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ashleymo2025"><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></a></li></ul>
-<h2>Spaces mentioned in this article 2</h2>]]></content:encoded>
     </item>
     <item>
       <title>深入了解 Phonon TTS：推出在基准测试上领先的高质量端侧语音</title>
@@ -7233,360 +7546,6 @@ out = pipe(prompt=prompt, generator=torch.Generator().manual_seed(0), output=[&q
 <h2>本文提到的模型 5</h2>
 <h2>本文提到的 Spaces 3</h2>
 <h2>本文提到的 Collections 2</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>HiRO-ACEv2：以一小部分成本用 3 km 分辨率模拟极端天气</title>
-      <link>https://huggingface.co/blog/allenai/hiro-acev2</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/allenai/hiro-acev2</guid>
-      <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：HiRO-ACEv2: Simulating extreme weather at 3 km resolution for a fraction of the cost</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>HiRO-ACEv2：以一小部分的成本模拟 3 km 分辨率的极端天气</h1>
-<p>Enterprise  文章</p>
-<p>发布于 2026 年 10 月 14 日</p>
-<p>11</p>
-<ul><li><a href="https://huggingface.co/visnetwork"><img src="https://huggingface.co/avatars/2f206f8fc0597a05366ea6333036282d.svg" alt=""></a></li><li><a href="https://huggingface.co/victios7models"><img src="https://huggingface.co/avatars/44c6b7763bdec7924146144f33c9f4e7.svg" alt=""></a></li><li><a href="https://huggingface.co/varyumin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/l3Lh3_OC1Fe1yskNz-0wR.png" alt=""></a></li><li><a href="https://huggingface.co/johnsutor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bd7f0b94c0e3be4aeea623/aea0SNoglPmh2kAfgLBAG.png" alt=""></a></li><li><a href="https://huggingface.co/Gohan1B"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jem48SZISN2Kh0VN4cMwb.png" alt=""></a></li><li><a href="https://huggingface.co/korubilliram"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/cdheUDLO-Hk5kfdtaW0dD.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg" alt="Kyle Wiggers 的头像"></a></p>
-<p>Kyle Wiggers</p>
-<p>Ai2Comms</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
-<p>🤗 <a href="https://huggingface.co/allenai/HiRO-ACEv2">模型</a> | 📄 <a href="http://arxiv.org/abs/2610.17693">论文</a> | 📓 <a href="https://ai2cm.github.io/ace/">教程 notebook</a> | 🌎 <a href="http://ace.allen.ai">演示</a></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/Y8t8GnfI2lUa40iX4_sxA.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/Y8t8GnfI2lUa40iX4_sxA.png" alt="HiRO-ACEv2：把粗分辨率的全球气候输出降尺度成精细的天气细节。"></a></p>
-<p>我们推出 <a href="https://huggingface.co/allenai/HiRO-ACEv2"><strong>HiRO-ACEv2</strong></a>，这是我们 High Resolution Output Ai2 Climate Emulator（HiRO-ACE）系统的最新一次更新。HiROv2 能以很高的准确率复现甚至极为罕见的降雨、风和气压事件，而整套系统生成全球 3 km 气候数据的成本，大约只有 X-SHiELD 的 1/300——X-SHiELD 是一个高分辨率全球大气模型，会显式模拟风暴及其他小尺度天气。</p>
-<p>HiRO-ACE 于 <a href="https://allenai.org/blog/hiro-ace">2026 年更早的时候推出</a>，由两部分组成：ACE，一个在更粗的 100 km 分辨率上运行的 AI 模型；以及 HiRO，一个把那些粗分辨率输出锐化成 3 km 精细细节的模型。HiRO-ACEv2 最大的变化是新的降尺度模型 HiROv2，它现在 1) 可以同时预测多个高分辨率场而不只是降雨，因此能捕捉到范围大得多的极端天气，2) 在预测极端事件上的技巧有所提升。</p>
-<p>我们在 HiRO-ACEv2 上的主要关注点是把极端事件模拟好。训练 HiROv2 方式的改动提升了它复现最强降雨、风和气压数值的能力。当输入被粗化的 X-SHiELD 数据时，它能把目标模拟的高分辨率统计量匹配到 3% 以内，即便是那些一百万个数据点里才出现一次的事件。它还能准确估计热带气旋的总能量，包括训练中从未见过的风暴，并生成带有逼真风眼和雨带的飓风，只不过风眼附近的风和气压仍比 X-SHiELD 里更不对称一些。此外，HiROv2 能逼真地生成沿山坡冲下来的强风。</p>
-<p>我们也为这套系统训练了一个更新版的 ACE。在一段 10 年的模拟里，它生成的飓风、平均气候格局，以及降雨、风和气压的总体分布都与 X-SHiELD 对齐得很好。这告诉我们，ACE 的粗分辨率模拟是产出长期高分辨率气候数据的坚实底座。</p>
-<p>把 HiROv2 和 ACE 组合起来，我们生成了一整年的全球 3 km 数据。它的统计量与 X-SHiELD 高度吻合，尽管 HiRO 依据的是 ACE 独自跑出的一次模拟，而不是真实的 X-SHiELD 数据。在一段 10 年的运行里，HiRO-ACEv2 生成的飓风能量与 X-SHiELD 同期相当，而那次运行的快照还显示出与 X-SHiELD 中相似的其他多种极端事件。</p>
-<p><a href="https://www.datocms-assets.com/64837/1791928654-hiro-acev2-blog-draft-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791928654-hiro-acev2-blog-draft-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550" alt="10 年 HiRO-ACEv2 模拟期间生成的北大西洋一场强飓风的示例。"></a></p>
-<p><em>10 年 HiRO-ACEv2 模拟期间生成的北大西洋一场强飓风的示例。</em></p>
-<p>总体而言，HiRO-ACEv2 为研究者提供了一种灵活而廉价的办法，用来生成 10 年乃至更长时间内极端事件的多版本高分辨率降雨、风和气压数据。用它产全球高分辨率数据，成本大约比运行 X-SHiELD 低 300 倍。如果只需要某一个区域，节省可以再多上百倍，具体取决于区域大小。我们还在做一个精简版的 HiROv2，它可能让它再快十倍以上。</p>
-<p>我们面前仍有后续工作：因为 HiRO 是从 X-SHiELD 学来的，它只能与那个为匹配 X-SHiELD 而调好的 ACE 版本一起工作。这意味着它还不能为其他气候产高分辨率数据，比如更暖的未来，或者 ERA5 这类数据集里的历史记录。接下来，我们计划在新的 X-SHiELD 数据集上训练，其中包括一个模拟世界变暖 4°C 的数据集，好让这套系统能应对不同的气候。我们也计划增加近地表温度、雪和冰这类输出，那会让更多用途成为可能，例如积雪预测。</p>
-<h2>可视化并使用 HiRO 的输出</h2>
-<p><a href="https://www.datocms-assets.com/64837/1791928757-hiro-acev2-blog-draft-google-docs-image-3.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791928757-hiro-acev2-blog-draft-google-docs-image-3.png?fit=max&amp;h=810&amp;w=1550" alt="ACE 数据可视化器中下加利福尼亚上空的模拟 10 m 风速：主图是 100 km 分辨率的 ACE2，插图是 3 km 的 HiRO-ACEv2。"></a></p>
-<p><em>ACE 数据可视化器中下加利福尼亚上空的模拟 10 m 风速：主图是 100 km 分辨率的 ACE2，插图是 3 km 的 HiRO-ACEv2。</em></p>
-<p><a href="https://www.datocms-assets.com/64837/1791928822-hiro-acev2-blog-draft-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791928822-hiro-acev2-blog-draft-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550" alt="ACE 数据可视化器中东北太平洋上空一场模拟的风暴。主图显示 100 km 分辨率的 10 m 风速；3 km 的 HiRO-ACEv2 插图显示风暴内部更精细的结构。"></a></p>
-<p><em>ACE 数据可视化器中东北太平洋上空一场模拟的风暴。主图显示 100 km 分辨率的 10 m 风速；3 km 的 HiRO-ACEv2 插图显示风暴内部更精细的结构。</em></p>
-<p>为了让人不必运行任何推理就能方便地看到 HiRO 产出什么，我们搭建了一个 <a href="http://ace.allen.ai">web demo</a>，把 HiROv1 与 HiROv2 预先生成的降水、风和海平面气压输出，同它们训练时所依据的模拟 X-SHiELD 并排展示。这个 demo 与我们技术报告里的定量比较互为补充：它提供对输出长相的快速目视检查，也让用户能缩放到自己关心的区域去判断那里的表现。</p>
-<p>若要做更深入的分析，这些模型都可以<a href="https://huggingface.co/allenai/HiRO-ACEv2">下载</a>，而我们的<a href="https://ai2cm.github.io/ace/">教程 notebook</a> 会逐步讲解如何运行它们。</p>
-<h2>本文中提到的模型 1</h2>
-<p>这位作者的其他文章</p>
-<h2>GPU 集群中卓有成效的调度</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>52</p>
-<p>2026 年 10 月 9 日</p>
-<h2>开源 AstaBrief：Asta 中快速的报告生成模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>28</p>
-<p>2026 年 10 月 2 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fhiro-acev2">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fhiro-acev2">登录</a> 即可评论</p>
-<p>11</p>
-<ul><li><a href="https://huggingface.co/visnetwork"><img src="https://huggingface.co/avatars/2f206f8fc0597a05366ea6333036282d.svg" alt=""></a></li><li><a href="https://huggingface.co/victios7models"><img src="https://huggingface.co/avatars/44c6b7763bdec7924146144f33c9f4e7.svg" alt=""></a></li><li><a href="https://huggingface.co/varyumin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/l3Lh3_OC1Fe1yskNz-0wR.png" alt=""></a></li><li><a href="https://huggingface.co/johnsutor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bd7f0b94c0e3be4aeea623/aea0SNoglPmh2kAfgLBAG.png" alt=""></a></li><li><a href="https://huggingface.co/Gohan1B"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jem48SZISN2Kh0VN4cMwb.png" alt=""></a></li><li><a href="https://huggingface.co/korubilliram"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/cdheUDLO-Hk5kfdtaW0dD.png" alt=""></a></li><li><a href="https://huggingface.co/Jekhy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Ti4ZzeT_9uMHcN-OzBdVf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Malicious7"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/hLFYbqkn2KsWNFCRLPpJS.png" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Sentinel7"><img src="https://huggingface.co/avatars/183456c0fa0d5e21c27813ce48d3bad2.svg" alt=""></a></li></ul>
-<h2>本文中提到的模型 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>用 LFM2.5-24B-A2B 在端侧运行快速、私密的智能体</title>
-      <link>https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b</guid>
-      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Run fast, private agents on-device with LFM2.5-24B-A2B</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章列表</a></p>
-<h1>用 LFM2.5-24B-A2B 在端侧运行快速、私密的智能体</h1>
-<p>团队文章</p>
-<p>发布于 2026 年 10 月 13 日</p>
-<p>41</p>
-<ul><li><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tseyde"><img src="https://huggingface.co/avatars/10d430cbd6ce90b0f2a9dc0c8f6440d3.svg" alt=""></a></li><li><a href="https://huggingface.co/jcorrigan"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/o4tr66MgdtXknWmuO00XD.png" alt=""></a></li><li><a href="https://huggingface.co/iamleonie"><img src="https://huggingface.co/avatars/33af1a607a8bf7780b98d6f70ea19999.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Raahul26"><img src="https://huggingface.co/avatars/5d379b62ea7566953f8a50befc5f3148.svg" alt="Raahul Vignesh 的头像"></a></p>
-<p>Raahul Vignesh</p>
-<p>Raahul26</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/sduong"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61e579a4dad2c81e175fc60c/XjAa60zy43KMDnz7mDbro.jpeg" alt="Song Duong 的头像"></a></p>
-<p>Song Duong</p>
-<p>sduong</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/akhileshdeepakgotmare"><img src="https://huggingface.co/avatars/005d5e5883448bec96a826f979e3f1d6.svg" alt="Akhilesh Deepak Gotmare 的头像"></a></p>
-<p>Akhilesh Deepak Gotmare</p>
-<p>akhileshdeepakgotmare</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/fernandofernandes"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/646e57a5cb6ea6e6b6df1ad4/PlGhM2SUynFBUdYAylaZK.jpeg" alt="Fernando Fernandes Neto 的头像"></a></p>
-<p>Fernando Fernandes Neto</p>
-<p>fernandofernandes</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/WWWjiahui"><img src="https://huggingface.co/avatars/08c7e1096a4a711982b45d117bc0b15a.svg" alt="Jiahui Wang 的头像"></a></p>
-<p>Jiahui Wang</p>
-<p>WWWjiahui</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/mayankagarwal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6229237ed94a4a3d5efbacb5/GM-ec64-qx660keEKqU1c.jpeg" alt="Mayank Agarwal 的头像"></a></p>
-<p>Mayank Agarwal</p>
-<p>mayankagarwal</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/ee4a89ebc7a0716e21deaebc86e062e6.svg" alt="nathan ranchin 的头像"></a></p>
-<p>nathan ranchin</p>
-<p>nathanrchn</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/tilgasergey"><img src="https://huggingface.co/avatars/3975dca73d0941898f637d16e3115872.svg" alt="Sergei Tilga 的头像"></a></p>
-<p>Sergei Tilga</p>
-<p>tilgasergey</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt="Sinoué GAD 的头像"></a></p>
-<p>Sinoué GAD</p>
-<p>GAD-cell</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/tseyde"><img src="https://huggingface.co/avatars/10d430cbd6ce90b0f2a9dc0c8f6440d3.svg" alt="Tim Seyde 的头像"></a></p>
-<p>Tim Seyde</p>
-<p>tseyde</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/zetianli"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68507030a17aa73fb574386e/XgHgjAMJXbuynfzM7v2aR.webp" alt="Zetian Li 的头像"></a></p>
-<p>Zetian Li</p>
-<p>zetianli</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/changyiyang"><img src="https://huggingface.co/avatars/d19090a68fc0722439094646e832f016.svg" alt="changyi yang 的头像"></a></p>
-<p>changyi yang</p>
-<p>changyiyang</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/yungisimon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/2T3vwvjHPZA8mvJzWm5dK.jpeg" alt="Simon Lee 的头像"></a></p>
-<p>Simon Lee</p>
-<p>yungisimon</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/iamleonie"><img src="https://huggingface.co/avatars/33af1a607a8bf7780b98d6f70ea19999.svg" alt="Leonie Monigatti 的头像"></a></p>
-<p>Leonie Monigatti</p>
-<p>iamleonie</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt="Maxime Labonne 的头像"></a></p>
-<p>Maxime Labonne</p>
-<p>mlabonne</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/karthikrmacherla"><img src="https://huggingface.co/avatars/55dbe481dabde3ac3eb385143ba7b63b.svg" alt="Karthik Macherla 的头像"></a></p>
-<p>Karthik Macherla</p>
-<p>karthikrmacherla</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/alfredeng"><img src="https://huggingface.co/avatars/25f52ba836c3144ba1b8cb3a6152fe90.svg" alt="Alfred Eng 的头像"></a></p>
-<p>Alfred Eng</p>
-<p>alfredeng</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt="Khoi Nguyen 的头像"></a></p>
-<p>Khoi Nguyen</p>
-<p>KTLK</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/paulpak58"><img src="https://huggingface.co/avatars/79f6b6d408eea0e18497dd3608d70fdf.svg" alt="Paul Pak 的头像"></a></p>
-<p>Paul Pak</p>
-<p>paulpak58</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/tugot17"><img src="https://huggingface.co/avatars/6c9239f88512b97742b9c03adddbd725.svg" alt="xx 的头像"></a></p>
-<p>xx</p>
-<p>tugot17</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/tdakhran"><img src="https://huggingface.co/avatars/acd0c0a0fbd8126cc571e2876da9706d.svg" alt="Tarek Dakhran 的头像"></a></p>
-<p>Tarek Dakhran</p>
-<p>tdakhran</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/amaltsev"><img src="https://huggingface.co/avatars/94333f7e02e9c1a5b43d9bead22d56a1.svg" alt="Anthony Maltsev 的头像"></a></p>
-<p>Anthony Maltsev</p>
-<p>amaltsev</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/agcarranza"><img src="https://huggingface.co/avatars/c26536f38b3b585d0d72c5ac2cdc6a41.svg" alt="Aldo Gael Carranza 的头像"></a></p>
-<p>Aldo Gael Carranza</p>
-<p>agcarranza</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/undfined"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65e5fefbe8cbae176d9ca005/5SLREDsVzycEwVsPNv765.jpeg" alt="Tyler Murray 的头像"></a></p>
-<p>Tyler Murray</p>
-<p>undfined</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/adityatadimeti"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662b14788e855c7c010c03c9/UWRzvG0YwSj5o7NxiYC6G.jpeg" alt="Aditya Tadimeti 的头像"></a></p>
-<p>Aditya Tadimeti</p>
-<p>adityatadimeti</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/jimmysmith1919"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f8ad3749282808838048a0/Ci6nhDy53Z3_wcR39uJB5.jpeg" alt="Jimmy T.H. Smith 的头像"></a></p>
-<p>Jimmy T.H. Smith</p>
-<p>jimmysmith1919</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt="Yuri Khrustalev 的头像"></a></p>
-<p>Yuri Khrustalev</p>
-<p>ykhrustalev</p>
-<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B"><strong>LFM2.5-24B-A2B</strong></a> 是一个 24B 参数、激活参数只有 2B 的推理模型，专为在端侧运行快速、私密的智能体而打造。它会先思考再作答，会调用工具，能在主流智能体 harness 里完成多步骤任务。由于每个 token 只有 2B 参数处于激活状态，每个推理 token 都很便宜，于是你可以让智能体在自己的硬件上持续运行。</p>
-<ul><li><strong>一流的智能体能力：</strong> 在智能体任务与工具使用任务上和 Qwen3.6-35B-A3B 不相上下——后者的总参数与激活参数都多出约 50%。LiveClaw 上得分 48.09，对方为 38.19。</li><li><strong>MoE 速度的推理：</strong> 始终先思考再作答。每个 token 只有 2B 激活参数，因此每个推理 token 都很便宜。</li><li><strong>高效推理：</strong> 在 Apple M5 Max 上达到 184 tok/s，在单张 NVIDIA B300 GPU 上输出最高可达 21K tok/s。</li></ul>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-benchmark.png"><img src="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-benchmark.png" alt="LFM2.5-24B-A2B-benchmark"></a></p>
-<h2>我们如何构建只有 2B 激活参数的推理智能体</h2>
-<p>LFM2.5-24B-A2B 建立在 <a href="https://huggingface.co/LiquidAI/LFM2-24B-A2B">LFM2-24B-A2B</a> 之上，并沿用了它的架构：40 层，每个 MoE block 含 64 个 expert、采用 top-4 routing，同样是门控短卷积（gated short convolutions）与 GQA 的混合结构。上下文窗口从 32K token 扩大到 131K token；一次<a href="https://www.liquid.ai/blog/tokenizer-expansion">原地 tokenizer 扩展</a>把词表从 65K token 翻倍到 128K token，从而改善非拉丁文字的 tokenization。与前代不同，它是一个只做推理（reasoning-only）的模型，会在给出最终答案之前产出显式的思维链（chain of thought）。</p>
-<p>预训练的规模从约 17T token 提升到约 33T token。中期训练（mid-training）随后加入 2T token 的 32K 上下文数据，配比偏向推理、数学、代码、指令遵循和多语言文本；再加入 300B token 的 131K 上下文数据，配比偏向长上下文数据。工具调用与多轮轨迹贯穿这两个阶段。后训练（post-training）分五个阶段把基座模型变成一个智能体：</p>
-<ul><li><strong>监督微调（SFT，Supervised fine-tuning）</strong></li><li><strong>教师模型专业化（Teacher specialization）</strong></li><li><strong>多领域 on-policy 蒸馏（MOPD），非智能体任务：</strong> 在非智能体任务上蒸馏这些专业化教师模型。</li><li><strong>MOPD，智能体任务：</strong> 第二个蒸馏阶段，聚焦智能体任务。</li><li><strong>智能体强化学习（Agentic RL）：</strong> 在智能体 harness 内训练模型，例如 <a href="https://openclaw.ai">OpenClaw</a>、<a href="https://hermes-agent.nousresearch.com">Hermes Agent</a>、<a href="https://pi.dev">Pi</a> 和 <a href="https://opencode.ai">OpenCode</a>。</li></ul>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-Training-Recipe.png"><img src="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-Training-Recipe.png" alt="LFM2.5-24B-A2B-Training-Recipe"></a></p>
-<h2>基准测试结果</h2>
-<p>我们在 16 个基准上把 LFM2.5-24B-A2B 与 Qwen3.6-35B-A3B、Gemma-4-26B-A4B-it 和 Nemotron-3.5-Lightning 进行对比，覆盖工具使用与智能体工作流、知识、指令遵循、数学和编程。它是这一组里最小的模型，却能跟总参数与激活参数都多出约 50% 的 MoE 相抗衡。</p>
-<table><thead><tr><th>基准</th><th>LFM2.5-24B-A2B</th><th>Qwen3.6-35B-A3B</th><th>Gemma-4-26B-A4B-it</th><th>Nemotron-3.5-Lightning (30B-A3B)</th></tr></thead><tbody><tr><td>AutomationBench</td><td><strong>27.69</strong></td><td>8.72</td><td>5.46</td><td>2.61</td></tr><tr><td>BFCLv4</td><td><strong>65.01</strong></td><td>65.00</td><td>57.09</td><td>53.78</td></tr><tr><td>ToolSandbox</td><td><strong>80.71</strong></td><td>75.02</td><td>72.09</td><td>75.13</td></tr><tr><td>LiveClaw</td><td><strong>48.09</strong></td><td>38.19</td><td>41.25</td><td>37.72</td></tr><tr><td>PinchBench</td><td>83.18</td><td><strong>89.93</strong></td><td>77.12</td><td>84.20</td></tr><tr><td>τ³-Bench Banking</td><td><strong>8.04</strong></td><td>7.63</td><td>4.54</td><td>7.01</td></tr><tr><td>WebArena Verified</td><td>26.75</td><td><strong>37.62</strong></td><td>25.62</td><td>28.69</td></tr><tr><td>GPQA Diamond</td><td>74.42</td><td><strong>83.69</strong></td><td>74.90</td><td>72.42</td></tr><tr><td>AA-Omniscience</td><td>-24.90</td><td>-24.35</td><td>-59.39</td><td><strong>-3.58</strong></td></tr><tr><td>HLE</td><td>7.40</td><td>7.69</td><td><strong>8.57</strong></td><td>5.65</td></tr><tr><td>IFEval</td><td><strong>96.75</strong></td><td>93.06</td><td>92.00</td><td>94.19</td></tr><tr><td>IFBench</td><td><strong>74.69</strong></td><td>64.21</td><td>47.44</td><td>71.67</td></tr><tr><td>Multi-IF</td><td><strong>84.38</strong></td><td>81.53</td><td>82.19</td><td>82.34</td></tr><tr><td>MATH-500</td><td>96.04</td><td><strong>96.73</strong></td><td>95.66</td><td>96.40</td></tr><tr><td>SWE-Bench Verified (OpenCode)</td><td>51.00</td><td><strong>66.20</strong></td><td>25.80</td><td>53.40</td></tr><tr><td>SciCode</td><td>32.71</td><td><strong>37.35</strong></td><td>35.42</td><td>27.78</td></tr></tbody></table>
-<p>*所有模型都在 vLLM 上评测，并使用各个基准推荐的生成参数。</p>
-<p>对你的应用来说，它的强项是工具使用和指令遵循。在 8 个工具使用与智能体基准中，LFM2.5-24B-A2B 在 5 个上领先或持平对手（AutomationBench、BFCLv4、ToolSandbox、LiveClaw 和 τ³-Bench Banking），而在 AutomationBench 上它的得分超过次优模型的三倍。3 个指令遵循基准它也全部领先。知识密集型基准（如 GPQA Diamond、HLE 和 AA-Omniscience）以及编程基准（如 SWE-Bench Verified (OpenCode) 和 SciCode）仍然是更大的模型占优，所以知识密集型的负载要把 LFM2.5-24B-A2B 与检索或网页搜索搭配起来用。</p>
-<p>这些结果让 LFM2.5-24B-A2B 成为一个扎实的底座，适合那些需要推理、调用工具并在你的设备上可靠运行的智能体。</p>
-<h2>CPU 与 GPU 上的推理速度</h2>
-<p>LFM2.5-24B-A2B 发布即打通了整个推理生态，包括 llama.cpp、MLX、vLLM、SGLang 和 ONNX。</p>
-<p><strong>端侧推理。</strong> 在所对比的 MoE 中，LFM2.5-24B-A2B 速度最快：在 M5 Max 上解码 184 tokens/s，在 Ryzen AI Max+ 395 上解码 114 tokens/s。相比次优模型最高快 1.7 倍，同时内存占用最少。</p>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-edge-inference.png"><img src="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-edge-inference.png" alt="LFM2.5-24B-A2B-edge-inference"></a></p>
-<p><strong>GPU 推理。</strong> 在同等尺寸档位里，LFM2.5-24B-A2B 是最快的模型，在单张 B300 上高并发时每秒输出可超过 21K token。</p>
-<p><a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-gpu-inference.png"><img src="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B/resolve/main/figures/LFM2.5-24B-A2B-gpu-inference.png" alt="LFM2.5-24B-A2B-gpu-inference"></a></p>
-<h2>如何使用 LFM2.5-24B-A2B</h2>
-<p>当你需要会推理、会调用工具，又能在自己设备上稳定运行的智能体时，就选 LFM2.5-24B-A2B。</p>
-<p>安装最新版本的 <code>transformers</code>（兼容 <code>transformers&gt;=5.0.0</code>）：</p>
-<pre><code>pip install -U transformers</code></pre>
-<p>然后加载并运行模型：</p>
-<pre><code>from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
-
-model_id = &quot;LiquidAI/LFM2.5-24B-A2B&quot;
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    device_map=&quot;auto&quot;,
-    dtype=&quot;bfloat16&quot;,
-#   attn_implementation=&quot;flash_attention_2&quot; &lt;- uncomment on compatible GPU
-)
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
-
-prompt = &quot;What is C. elegans?&quot;
-
-input_ids = tokenizer.apply_chat_template(
-    [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: prompt}],
-    add_generation_prompt=True,
-    return_tensors=&quot;pt&quot;,
-    tokenize=True,
-)[&quot;input_ids&quot;].to(model.device)
-
-output = model.generate(
-    input_ids,
-    do_sample=True,
-    temperature=0.1,
-    top_k=50,
-    repetition_penalty=1.05,
-    max_new_tokens=512,
-    streamer=streamer,
-)</code></pre>
-<h3>在你的智能体 harness 中使用它</h3>
-<p>用任意 OpenAI 兼容后端在本地把 LFM2.5-24B-A2B 起成服务，然后让你的智能体 harness 指向它。例如，配合 Hermes Agent：</p>
-<pre><code>hermes config set model.provider custom
-hermes config set model.base_url http://localhost:8080/v1
-hermes config set model.default LFM2.5-24B-A2B
-hermes config set model.context_length 131072
-hermes config set model.api_mode chat_completions
-hermes config set agent.tool_use_enforcement true</code></pre>
-<p>端口取决于你使用的服务后端：llama.cpp 和 MLX 用 <code>8080</code>，vLLM 用 <code>8000</code>，SGLang 用 <code>30000</code>，LM Studio 用 <code>1234</code>。OpenClaw 和 Pi 的配置见<a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B">模型卡</a>，完整搭建步骤见<a href="https://docs.liquid.ai/examples/agent-harnesses">我们的指南</a>。视频示例请看我们的<a href="https://www.liquid.ai/blog/lfm2-5-24b-a2b">发布博客</a>。</p>
-<h2>开始使用 LFM2.5-24B-A2B</h2>
-<p>LFM2.5-24B-A2B 和 LFM2.5-24B-A2B-Base 都是开放权重，今天起就能在 Hugging Face 上获取：</p>
-<ul><li><strong>下载：</strong> Hugging Face 上的 <a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-Base">LFM2.5-24B-A2B-Base</a> 与 <a href="https://huggingface.co/LiquidAI/LFM2.5-24B-A2B">LFM2.5-24B-A2B</a>。</li><li><strong>在你的 harness 中使用：</strong> 按照我们的<a href="https://docs.liquid.ai/examples/agent-harnesses">指南</a>学习如何运行本地智能体，例如 OpenClaw、Hermes Agent 和 Pi。</li><li><strong>微调：</strong> 用我们的<a href="https://github.com/Liquid4All/cookbook/tree/main/finetuning/notebooks">微调教程</a>把 LFM2.5-24B-A2B 适配到你的任务上。</li></ul>
-<p>我们很期待看到你用它构建出什么。</p>
-<h2>引用</h2>
-<p>如果你使用了这项工作，请引用发布博客：</p>
-<pre><code>@article{liquidAI202624BA2B,
-  author  = {Liquid AI},
-  title   = {LFM2.5-24B-A2B: Built for Fast On-Device Agents},
-  journal = {Liquid AI Blog},
-  year    = {2026},
-  note    = {www.liquid.ai/blog/lfm2-5-24b-a2b},
-}</code></pre>
-<h2>本文提到的模型 3</h2>
-<p>更多该作者的文章</p>
-<h2>面向端侧的多模态开放 d1 决策模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
-<p>38</p>
-<p>2026 年 10 月 7 日</p>
-<h2>用 LFM2.5-VL-DSpark 加速视觉语言模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
-<p>51</p>
-<p>2026 年 9 月 24 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FLiquidAI%2Flfm25-24b-a2b">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2FLiquidAI%2Flfm25-24b-a2b">登录</a> 即可评论</p>
-<p>41</p>
-<ul><li><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tseyde"><img src="https://huggingface.co/avatars/10d430cbd6ce90b0f2a9dc0c8f6440d3.svg" alt=""></a></li><li><a href="https://huggingface.co/jcorrigan"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/o4tr66MgdtXknWmuO00XD.png" alt=""></a></li><li><a href="https://huggingface.co/iamleonie"><img src="https://huggingface.co/avatars/33af1a607a8bf7780b98d6f70ea19999.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt=""></a></li><li><a href="https://huggingface.co/vemz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/KEF9e8lF2ql0WQhNCIUKr.png" alt=""></a></li><li><a href="https://huggingface.co/MaxLSB"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66beff523ae330ae8b698ee9/MexZCkn82Bt-dYEcq5tDw.png" alt=""></a></li><li><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/ee4a89ebc7a0716e21deaebc86e062e6.svg" alt=""></a></li><li><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt=""></a></li><li><a href="https://huggingface.co/alfredeng"><img src="https://huggingface.co/avatars/25f52ba836c3144ba1b8cb3a6152fe90.svg" alt=""></a></li><li><a href="https://huggingface.co/mayankagarwal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6229237ed94a4a3d5efbacb5/GM-ec64-qx660keEKqU1c.jpeg" alt=""></a></li></ul>
-<h2>本文提到的模型 3</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>面向高影响力的 GPU 集群调度</title>
-      <link>https://huggingface.co/blog/allenai/impactful-scheduling</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/allenai/impactful-scheduling</guid>
-      <pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Impactful scheduling for GPU clusters</description>
-      <content:encoded><![CDATA[<h1>面向高影响力的 GPU 集群调度</h1>
-<p>企业级</p>
-<p>文章</p>
-<p>发布 October 9, 2026</p>
-<ul><li><a href="https://huggingface.co/sayednajmuddin"><img src="https://huggingface.co/avatars/58e1472a24ddc0c1c7ce656a17f259ba.svg" alt=""></a></li><li><a href="https://huggingface.co/jobet1995"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/pD_rBjSkxtftpxIss5gFF.jpeg" alt=""></a></li></ul>
-<p>Kyle Wiggers</p>
-<p>Ai2Comms</p>
-<p>allenai</p>
-<p><em>构建一个集群调度器：在保持满占用的前提下优先支持高影响力的研究</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/hZQv5zhQmQIHLt5_e9m_R.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/hZQv5zhQmQIHLt5_e9m_R.png" alt="Impactful Scheduling for GPU Clusters - Google Docs-image-1 (1)"></a></p>
-<p>在 Ai2 的 AI Infrastructure 团队，我们负责为整个研究所提供 GPU 算力，尤其面向大规模的分布式训练负载。我们把这件事看成一个由四个层层递进的指标构成的金字塔。</p>
-<p>基座是<strong>可用性（availability）</strong>：硬件处于健康、可接活状态的频率。其上是<strong>占用率（occupancy）</strong>：可用时间中被分配给某个具体负载的比例。再往上是<strong>影响力（impact）</strong>：最有价值的负载被选中获得资源的频率。金字塔的顶石是<strong>利用率（utilization）</strong>：在一个负载的整个生命周期内实际用掉的 GPU 容量比例。</p>
-<p><a href="https://www.datocms-assets.com/64837/1791481674-impactful-scheduling-for-gpu-clusters-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791481674-impactful-scheduling-for-gpu-clusters-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550" alt="GPU 算力指标金字塔：从底层的可用性，经由占用率与影响力，直到顶端的利用率。"></a></p>
-<p>这篇文章讲的是如何提升我们调度决策的影响力。我们最近把一个基于优先级的调度器换成了包含 GPU 时间预算、分层 fair-share 分配和时间切片契约的新系统。结果是，我们把「每个研究项目应得多少 GPU 时间」这场争论，从一件逐例处理的事务性操作，变成了一个透明的行政预算流程。</p>
-<h2>超额承诺</h2>
-<p>在 Ai2，我们管理着数千颗 NVIDIA H100、B200 和 B300 GPU，按 88 到 1024 卡不等的规模组成集群。这些集群为 AI 模型的大规模分布式训练而建，服务约 150 名内部研究者，他们的工作覆盖多元的 AI 领域，包括 LLM 与 VLM 训练的完整模型流程、机器人强化学习（RL）仿真，以及面向科学 agentic 用例的 post-training。</p>
-<p>和许多实验室一样，我们对 GPU 时间的需求远超供给。按已提交的负载计，任何时刻我们排队申请的 GPU 数量都是可用量的 2-3 倍。可以这样理解：集群上每一个可用的 GPU 小时，都有 2-3 个不同的研究负载在争抢它。</p>
-<p>过去我们使用基于优先级的调度器，并允许负载选择退出可抢占。每个团队都有一个「受保护、不被抢占的并发 GPU」使用上限；可抢占的负载可以在空闲 GPU 上超过这个上限。这套策略产生了一些可以预见的病灶。例如我们观察到 GPU「占坑（squatting）」：用户会挂着一批空跑负载，等自己需要用时装上去。之所以如此，是因为研究者发现他们无法以足够低的延迟启动调试负载、没法实时处理问题。我们还观察到优先级通胀：最终 100% 被调度的负载都使用 HIGH 优先级，这意味着更低的优先级等级彻底被饿死、拿不到 GPU 时间。由于是否可抢占是自愿的，我们还发现值班工程师把大部分处理工单的时间都花在协商关停那些跑在已知维护问题主机上的不可抢占负载。</p>
-<h2>公地悲剧</h2>
-<p>这些问题出现时，我们没能很快识别出根因。最初为了保障最重要的工作拿到 GPU 时间，我们把力气花在更严格地管控优先级如何设定上，最终还绕开基于优先级的调度器，直接给重要项目显式分配 GPU 独占。当时我们并未意识到，自己实际上建起了一座观察「公地悲剧」的完美实验室：个体在一个稀缺的共享资源上相互竞争，追求个人收益最大化，结果得到了非最优的全局结果，并透支了底层资源。</p>
-<p>观察到这种互动的人远不止我们。资源分配是一个迷人的研究领域，混合了算法开发、经济学与系统管理。其中一个核心难题是：用户往往比组织更了解自家 job 的价值，但他们可能有动机把这份价值藏起来，或者在明知会损害整体性能的情况下仍然占着资源不放。例如，Ghodsi 等人在 2011 年提出 <a href="https://www.semanticscholar.org/paper/Dominant-Resource-Fairness%3A-Fair-Allocation-of-Ghodsi-Zaharia/b1a47759dbcf87ed132838be39f8ab244e78e2d6">Dominant Resource Fairness</a> 的论文里讲过一个轶事：一家搜索公司只在用户能保证高利用率时，才给某个 job 配专属机器。他们很快发现，「用户会往代码里撒无限循环，人为把利用率拉高。」硬件一直在换，但让资源分配变得复杂的那些根本问题始终存在。</p>
-<h2>用预算，而不是排期</h2>
-<p>应对公地悲剧的经典做法是把共享资源私有化——所有者才有动力把自己资产的价值最大化。当我们把成组 GPU 的独占权分配给团队时，其实已经在做某个版本的这件事，只是太粗糙了。它会因为研究的季节性让 GPU 空转：各团队准备好跑实验和训练的时间点并不相同，于是给出独占权必然会造成某些时段没有 job 可执行，而另一个团队还在等着容量。</p>
-<p>我们当时是在手工求解一个<a href="https://en.wikipedia.org/wiki/Knapsack_problem">背包问题</a>，试图把不断变化的研究需求塞进一张静态排期表。我们想要所有权带来的激励，但同时也想保持 GPU 的满占用。</p>
-<p>我们决定在所有权模型上继续迭代。不再给团队发 GPU，而是分配一部分 GPU 时间。要预测未来的需求就得知道全新科学实验的结果，因此它无法被精确预测。但各项研究工作之间的优先级是策略问题，可以更容易地提前讨论并决定。我们没有去解那道调度难题，而是让领导层像投资人一样思考：在负载还不存在的时候，就依据其对预期影响的判断，决定用 GPU 时间为每一项研究工作投入多少。调度器随后可在给新到的负载排优先级时利用这些信息。</p>
-<p>带着这个想法，我们设计了一套分层系统，管理者可以按比例为各自负责的项目和研究人员分配 GPU 时间。如下图所展示，这等于把计划战略直接转换成一份有保障的 GPU 时间份额。项目 A1 清楚自己对总容量有 35% 的索取权，不论别处还有多少项目在排队。</p>
-<p><a href="https://www.datocms-assets.com/64837/1791481494-impactful-scheduling-for-gpu-clusters-google-docs-image-1.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791481494-impactful-scheduling-for-gpu-clusters-google-docs-image-1.png?fit=max&amp;h=810&amp;w=1550" alt="GPU 时间在研究计划与项目之间的分层分配；项目 A1 拥有总容量的 35%。"></a></p>
-<p><em>括号里的数值表示分配给某个叶子项目的集群总容量。</em></p>
-<p>在这套系统里，每一次对 GPU 时间的申请都必须由预算出资，否则就不受抢占保护。在旧系统里，HIGH 优先级不花任何代价，而不可抢占允许一个团队把并发 GPU 上限一直占满，所以所有人都这么用。现在没有什么是免费的，任何骗取 GPU 时间的花招都要从受益用户的配额里扣。一个占坑的负载等于把团队预算花在什么都没做上。我们的策略是，让「钻调度器空子」比「诚实地参与争取更大预算的讨论」更贵。这套预算评审流程我们一直在迭代，但关键要求有两条：研究者要有频繁的机会为自己需要的时间发声，而决定由最了解相关取舍的管理者来做。这意味着研究项目内部的分配决策由首席研究员做，研究计划层面由 principal investigator 做，跨计划则由首席计划经理做，或由 CEO 做。</p>
-<h2>Fair-share</h2>
-<p>与这套 GPU 时间预算工具配套，我们做了一个分层 fair-share 调度器，用来管理整棵计划树上配额的实际占用。这里的算法并不新——在时间窗口上做分层 fair-share，其谱系可追溯到 <a href="https://issues.apache.org/jira/browse/HADOOP-3746">2009 年的 Hadoop Fair Scheduler</a>，同样的思路今天仍在 <a href="https://slurm.schedmd.com/fair_tree.html">SLURM 的 Fair Tree</a> 和 <a href="https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/FairScheduler.html">YARN 的 Fair Scheduler</a> 中活跃使用。对我们而言新的是输入：这棵树映射的是研究计划的结构，权重是管理者设定的预算而不是静态配额。</p>
-<p>调度器在一个滑动的回看窗口（我们默认 7 天）上跟踪占用情况，并把来自欠使用配额的负载排在来自超使用配额的负载之上。这样，在一周尺度的时间范围内，只要每个组持续提交有足够需求的负载，我们就可以预期他们都拿到了自己被分配的 GPU 时间。</p>
-<p>“新调度器让我们觉得凭空多了 30% 的算力。在旧调度器下，如果我们有那么一段时间用不满自己的并发上限，那部分算力基本上就丢了。而现在用新调度器，真出现这种情况时，我们之后可以突破配额上限突发使用，job 依然能被快速调度且不被抢占，等于把那份算力拿了回来。我们的负载常常是突发型的，所以这还给了我们相当可观的算力。” — Chris Clark</p>
-<p>调度器区分两种占用。<em>已分配占用（Allocated occupancy）</em>指负载被计入某个预算的那段时间。它从负载所有者的配额中扣减，因而会影响 fair-share 的预算计算，同时这些负载在最小运行时窗口内受抢占保护。<em>未分配占用（Unallocated occupancy）</em>不计入任何预算，从一开始就不受保护，并且可能被任何已分配的申请抢占。这让我们在配额与需求并不精确匹配时依然能让 GPU 保持满占用，也让团队永远不会拒绝免费的 GPU 周期。</p>
-<h2>调度契约</h2>
-<p>分布式训练还有一个让公平分配资源变难的特点：负载可以运行非常久。训练 job 常常跑上几小时、几天，有时甚至几周。一旦被调度，一个负载可能在其分配到的 GPU 上待上一周甚至更久，别人根本没有机会拿到自己预算内的时间。正是这一系统属性让 GPU 占坑成为可能。也正是它迫使值班工程师去和长跑 job 的所有者协商，才能处理眼前的维护问题。</p>
-<p>为了解决这些问题，我们引入了「调度契约」。负载要换取访问集群的资格，就必须声明自己的最小运行时，也就是取得有意义进展所需的最短占用时长。在这段时间内，负载受抢占保护。这给了研究者进展上的保障，同时给调度器一项权利：一旦这份进展落袋就可以重新平衡，并把可恢复的负载自动重新入队。另外，用户可以把最小运行时设为零，表示这段 GPU 时间应当不计入分配。这类负载随时可能被抢占，但它们同时也是免费的——不计入任何预算。</p>
-<p>负载的生命周期遵循这样的模式：</p>
-<ul><li>提交负载时带上最小运行时，并说明它是否可恢复。</li><li>负载按 fair-share 算法调度，权重是回看窗口内实际占用与分配时间之比。</li><li>负载运行满它的最小运行时，这段时间计入它的配额。</li><li>只要相关配额继续把它排在其他负载之前，它就可以继续运行。这段时间同样计入它的配额。</li><li>它可能被抢占并重新入队，于是回到第 2 步。</li><li>负载完成，释放它对所有资源的索取权。</li></ul>
-<p>这些约定合起来给我们的调度器加上了时间切片。正在运行的负载可以被自动摘除并重新入队，让 fair-share 得以收敛，并削弱占坑的动机。它们还让不健康的主机在负载跑满最小运行时后自然排空，于是修复活动可以完全自动化。最后这一点比我们规划这项工作时所意识到的更重要。它把需要 human-in-the-loop 的修复减少了 74%，为值班省下了大量体力活。</p>
-<h2>仿真</h2>
-<p>我们知道调度策略的改动会带来预料之外的后果。这个问题的零和性质意味着，给一位研究者时间就是从另一位那里拿走。在这场交换里吃亏的用户往往会去找新的绕行办法。在推广这套基于预算的系统之前，我们希望有一种快速方式来预测哪些地方会出现更长的等待，并测试一些配置旋钮，比如回看窗口的长度、允许的最小运行时上限（我们选了 8 小时）。</p>
-<p>我们搭了一个小型仿真环境，输入一组负载及其提交时间表，让调度器在里面做出抢占与 GPU 分配的决策。借助每个负载申请的 GPU 数量和总运行时长，模拟器可以直接跳到可调度的时刻，在几秒之内给出许多仿真日里的队列等待时间、抢占事件，以及 GPU 时间在各项目之间的分布分析。我们既拿历史提交数据跑模拟器，也跑我们想进一步理解的构造场景。</p>
-<p>我们想验证的一个假设涉及「调试负载」。这类 job 只需要少量 GPU 和 15 分钟或更短的最小运行时，足够用户看清一个 job 是成功启动，还是因为 bug 或配置错误早早崩溃。我们想知道这些 job 的排队等待是否比大型训练负载更短——后者往往需要很多 GPU 和好几个小时的运行才能取得有意义的进展。凭直觉，这些小 job 应该能升到队首，因为小 job 能塞进去的地方比大 job 多。但精确的排队延迟很重要：一两分钟的短暂等待能解锁一种新的开发做法，而十分钟的等待就不可行了。</p>
-<p>我们的仿真需要手工构造测试用例数据，因为历史记录里这类调试型负载的数量不够多。结果支持了假设：调试负载的 p90 等待时间从约 6 小时降到只有 5 分钟。</p>
-<p><a href="https://www.datocms-assets.com/64837/1791481919-impactful-scheduling-for-gpu-clusters-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791481919-impactful-scheduling-for-gpu-clusters-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550" alt="基线调度器与新 allocations 调度器下 GPU 占用情况的模拟器时间线对比。"></a></p>
-<p><em>基线（左）与新「allocations」调度器（右）的小规模模拟器可视化。每一行是一颗 GPU；每一根条是一个 job，按父负载着色，每个团队一种色相；斜线填充标记该 job 可被打断的时间，红色边框标记一次抢占。在基线里，长且紧急的 job 从不被打断，较低优先级等级的负载上发生的抢占也更少。新调度器下每颗 GPU 上的颜色混合更丰富，体现出占用在不同团队之间的轮转。</em></p>
-<h2>结果</h2>
-<p>拿到仿真结果后，我们在 7 月底开始逐集群推广。我们关心的结果是：我们选择资助的那些负载是否拿到了属于自己的时间、新系统是否维持了满占用，以及研究者是否能够推断调度器的行为从而做出有依据的决策。</p>
-<p>自推广以来，我们观察到用户和团队都在稳定地拿到自己被分配的 GPU 时间。我们把某个团队应得的时间计为其配额逐小时封顶到实际需求之后的总和。在 30 天的测试期内，团队拿到了应得 GPU 小时的 98%，15 个团队配额中有 13 个获得了 95% 以上，最差的一个也拿到了 90%。集群占用率在改动前后都稳定在 98%，两个时段的实际需求都超出容量 2-3 倍。已交付的 GPU 时间里有 18% 属于未分配占用，这正是我们在被资助的用例尚未准备好运行的时段依然维持高占用的方式。</p>
-<p>模拟器结果证明方向是准的，而真实表现还超出了我们的预测。在新调度器下，调试负载的 p90 排队等待从 2 小时降到 30 秒，而用手工构造的测试场景仿真给出的预测是从 6 小时降到 5 分钟。需要指出的是，基线中调试负载的样本量更小，因此这些测量本身的方差更大。排队延迟的总体改善是时间切片带来的副产品：在我们最大的 H100 集群上，排队等待的中位数从 5 分钟降到 24 秒，p90 等待时间下降约三分之一（从 2.8 小时到 1.8 小时）。</p>
-<p>对照我们最初要解决的三个问题：</p>
-<ul><li><strong>占坑：</strong>短的调试负载在一分钟内就能启动，占坑的价值因此下降。这种行为的花费会从占坑者自己的预算里扣，导致他们在真正需要时拿不到时间。</li><li><strong>优先级通胀：</strong>我们仍然允许负载声明优先级，但它只影响团队内部的排序。管理者有动力在整个组范围内监督优先级，以优化自己预算的使用。</li><li><strong>值班体力活：</strong>负载跑满最小运行时后，不健康的主机会自动排空。需要 human-in-the-loop 的修复下降了 74%。</li></ul>
-<h2>挑战</h2>
-<p>学习曲线比我们预想的更陡。我们是逐步推广这项改动的，所以在早期，研究者体验到的行为会因所选择的集群不同而各异。此外，我们的接口保留了一些含义已经变化的旧术语（比如负载优先级）。光靠文档并没能消除困惑。真正<em>有效</em>的是开现场的讲解会，给研究者一个提问的场合，也让工程团队借真实例子更深入地说明调度器是怎么做优先级决策、以及为什么要这么做。</p>
-<p>这是一个关键节点，因为它标志着一个转折：从早期充满沮丧和民间理论的阶段，转到如今的模式——各研究组就自己实验的 GPU 需求沟通得更频繁、也更广泛。研究者现在参与预算讨论时，为容纳任何新申请而做出的那些取舍，他们了解得更清楚了。</p>
-<p>除了面对面的讲解，上线后我们还引入了新的可视化，让用户更好地感受自己被分配的 GPU 时间在多大程度上贴合预期配额，并直接暴露用于给负载队列排序的那个指标。当一个负载被抢占时，这提供了一个简单的去处来弄清原因。这些可视化对预算所有者也有帮助，他们可以看到 GPU 时间在自己所辖的各个项目之间是怎么被使用的。</p>
-<p><a href="https://www.datocms-assets.com/64837/1791482152-impactful-scheduling-for-gpu-clusters-google-docs-image-5.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791482152-impactful-scheduling-for-gpu-clusters-google-docs-image-5.png?fit=max&amp;h=810&amp;w=1550" alt="配额使用量随时间变化的情况，展示已交付的 GPU 时间如何贴合预期分配。"></a></p>
-<p><em>配额使用量随时间变化的示例可视化。</em></p>
-<p>并不是所有用例都变好了。除了分布式训练，我们的研究者还会启动交互式会话，用来做数据分析、并在编写训练代码的同时测试它。在旧系统里，一个研究者可以把这样的会话保持长达一周。有了时间切片，他们就要受 8 小时受保护运行时上限的约束，超过之后，会话若超出自己的配额就变得可被抢占。我们此前没有意识到研究者对这些会话中易失状态的依赖有多深。被抢占意味着既要排队去争取一个新会话，还要手工把状态重建出来。在调研研究者、弄清这个问题的波及范围之后，我们立项了两个新的 roadmap 项目。我们正在投资一个位于本地存储旁的纯 CPU 集群，用于聚焦数据准备任务的开发会话。这会保住我们训练集群的容量，留给真正需要它的负载。此外，我们计划为这些纯 CPU 负载实现可恢复的会话。这样我们既能继续在负载跑满最小运行时出于维护或时间切片而抢占它，又能把会话在别处恢复，而不需要研究者自己重建。我们既保留了这套新系统在运维和调度上的收益，也改善了用户体验。</p>
-<p>我们仍在持续关注新出现的问题。我们正在排查的一个潜在问题是容量碎片化，它可能导致最大的那些负载排队时间变长。我们的直觉是，最小运行时保护现在被应用到了这样一类 job 上——它们过去正是靠<em>可抢占</em>机制来超出本团队的并发 GPU 上限。以前那些 job 随时可以被打断，可能浪费那段时间，但也因此更容易把大 job 排进去。现在调度器一次性打断许多 job、以安置一个大型待运行负载的机会可能更少了。我们目前正在用模拟器工具复现这个问题，同时在生产环境测量真实情况。</p>
-<h2>未来</h2>
-<p>在越过这里描述的调度工作向前看时，我们瞄准的是金字塔的顶石：利用率。我们需要确保 bootstrapping、checkpointing 以及训练应用本身都以尽可能高的效率完成，把每个负载拿到的调度时间的价值最大化。</p>
-<p>如果你想与研究者紧密协作、解决这类挑战，<a href="https://allenai.org/careers">欢迎你来看看 Ai2 开放中的工程岗位</a>。</p>
-<p>该作者的其他文章</p>
-<h2>AstaBrief 开源：Asta 中那个快速的报告生成模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>28</p>
-<p>October 2, 2026</p>
-<h2>Olmo-core 3 发布：面向大型 MoE 的开放、可扩展训练基础设施</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>25</p>
-<p>October 1, 2026</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进输入框、粘贴，或</p>
-<p>点击此处</p>
-<p>.</p>
-<p>点击或在此粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fimpactful-scheduling">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fimpactful-scheduling">登录</a> 后可发表评论</p>
-<ul><li><a href="https://huggingface.co/sayednajmuddin"><img src="https://huggingface.co/avatars/58e1472a24ddc0c1c7ce656a17f259ba.svg" alt=""></a></li><li><a href="https://huggingface.co/jobet1995"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/pD_rBjSkxtftpxIss5gFF.jpeg" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

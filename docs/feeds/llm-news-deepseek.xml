@@ -3,11 +3,51 @@
   <channel>
     <title>DeepSeek · 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>DeepSeek 官方博客 / 更新日志归档（最近 50 条，共 38 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>DeepSeek 官方博客 / 更新日志归档（最近 50 条，共 40 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepseek.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sat, 17 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>发布全家桶应用 API</title>
+      <link>https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-11-13</link>
+      <guid isPermaLink="true">https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-11-13</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h2>时间: 2026-11-13</h2>
+<h3>发布全家桶应用 API</h3>
+<p>在 DeepSeek App（含网页端）的对话服务中，联网搜索、文件输入、阅读链接、语音交互及安全等能力与模型推理相互配合，构成了用户熟悉的对话体验。今天，我们把这些能力开放给开发者：在原有 API 中开启对应参数，即可获得联网搜索、文件输入、阅读链接等对话功能，相关的工具调用与上下文拼接均由服务端完成。</p>
+<p><code>deepseek-flash</code> 模型已在 Messages、Responses 与 Chat Completions 接口下支持以下能力：</p>
+<ul><li><strong><a href="https://api-docs.deepseek.com/zh-cn/guides/web_tools#web-search">联网搜索</a></strong>：在非思考模式下，打开 <code>deepseek_web_search</code> 工具后，模型可根据提问自动发起网页或图片搜索并附引用作答。</li><li><strong><a href="https://api-docs.deepseek.com/zh-cn/guides/web_tools#search-while-thinking">深度思考搜索</a></strong>：在思考模式下，打开 <code>deepseek_web_search</code> 工具后，模型可在多步推理中自主联网搜索与阅读链接。</li><li><strong><a href="https://api-docs.deepseek.com/zh-cn/guides/document_parsing">文件输入</a></strong>：支持上传 PDF、Office、图片等格式的文件，完成纯文本提取或图文混排解析后，拼入对话上下文供模型作答。</li><li><strong><a href="https://api-docs.deepseek.com/zh-cn/guides/web_tools#read-links">阅读链接</a></strong>：将 <code>deepseek_read_url</code> 工具打开后，模型可自动识别用户消息中的链接，抓取网页内容并结合上下文作答。</li><li><strong><a href="https://api-docs.deepseek.com/zh-cn/guides/safety">模型安全</a></strong>：开启安全校验参数后，我们将提供基础风控，审核模型输入输出，命中风险时返回拒答标识。如您对外提供服务，请开启该参数，并承担内容安全审核、大模型登记、AI 标识等义务。</li></ul>
+<p>此外，上述底层能力及语音能力均支持作为独立接口单独调用，包括：<a href="https://api-docs.deepseek.com/zh-cn/guides/search">Search、Fetch</a>、<a href="https://api-docs.deepseek.com/zh-cn/guides/ocr">OCR</a>、<a href="https://api-docs.deepseek.com/zh-cn/guides/asr">ASR</a>、<a href="https://api-docs.deepseek.com/zh-cn/guides/tts">TTS</a>。</p>
+<p>我们还基于这些 API 构建并开源了一个演示用的对话客户端，支持导入 DeepSeek 历史对话，见 <a href="https://api-docs.deepseek.com/zh-cn/guides/build_a_chatbot#demo">演示客户端</a>。</p>
+<p>使用方法请参阅 <a href="https://api-docs.deepseek.com/zh-cn/guides/build_a_chatbot">构建 Chatbot</a>，价格见 <a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing">模型 &amp; 价格</a>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>DeepSeek 全家桶应用 API 发布</title>
+      <link>https://api-docs.deepseek.com/zh-cn/news/news261113</link>
+      <guid isPermaLink="true">https://api-docs.deepseek.com/zh-cn/news/news261113</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://api-docs.deepseek.com/zh-cn/news/news261113.md">打开 Markdown</a></p>
+<h1>DeepSeek 发布全家桶应用 API</h1>
+<p>在 DeepSeek App（含网页端）的对话服务中，联网搜索、文件输入、阅读链接、语音交互及安全等能力与模型推理相互配合，构成了用户熟悉的对话体验。而开发者如果想要在应用中实现类似功能，除接入原有 DeepSeek API 外，往往还需耗费大量精力去对接外部工具、处理调用衔接。</p>
+<p>今天，我们正式开放这套<strong>全家桶应用 API</strong>：在原有 API 中开启对应参数，即可获得深度思考搜索、文件输入等对话功能；语音及相关底层能力也已开放独立接口（含 OCR、ASR、TTS 等），支持单独或组合调用。开发者可以在自己的应用中轻松实现复杂的对话功能，甚至 1:1 复刻出完整的 DeepSeek App。</p>
+<h2>全面开放应用功能，支持独立调用</h2>
+<p>本次更新将 DeepSeek App 的各项交互功能直接整合进原有 API。开启对应参数后，相关工具调用与上下文拼接均由服务端自动完成。目前，V4.1-Flash 模型（<code>deepseek-flash</code>）已在 <code>Messages</code>、<code>Responses</code> 与 <code>Chat Completions</code> 接口下支持以下能力：</p>
+<ul><li><strong>联网搜索</strong>：在非思考模式下，打开 <code>deepseek_web_search</code> 工具后，模型可根据提问自动发起网页或图片搜索并附引用作答；</li><li><strong>深度思考搜索</strong>：在思考模式下，打开 <code>deepseek_web_search</code> 工具后，模型可在多步推理中自主联网搜索与阅读链接；</li><li><strong>文件输入</strong>：支持上传 PDF、Office、图片等格式的文件，完成纯文本提取或图文混排解析后，拼入对话上下文供模型作答；</li><li><strong>阅读链接</strong>：将 <code>deepseek_read_url</code> 工具打开后，模型可自动识别用户消息中的链接，抓取网页内容并结合上下文作答；</li><li><strong>模型安全</strong>：开启安全校验参数后，我们将提供基础风控，审核模型输入输出，命中风险时返回拒答标识。如您对外提供应用服务，请务必开启该参数，并承担内容安全审核、大模型登记、AI 标识等义务。</li></ul>
+<p>此外，为方便开发者更灵活地接入自有工作流，上述底层能力及语音能力<strong>均支持作为独立接口单独调用</strong>，包括：Search、Fetch、OCR、ASR、TTS。</p>
+<p>使用上述接口，开发者即可实现与 DeepSeek App 基本一致的功能。为直观演示这一效果，我们基于新版 API 构建并开源了一份轻量的前端 Demo，支持直接导入 DeepSeek 历史对话。</p>
+<ul><li><strong>Demo 体验入口：</strong><a href="https://cdn.deepseek.com/chat-demo">https://cdn.deepseek.com/chat-demo</a></li><li><strong>示例代码入口</strong>：<a href="https://github.com/deepseek-ai/chat-demo">https://github.com/deepseek-ai/chat-demo</a></li></ul>
+<p>更详细的参数定义与调用说明，请参考 DeepSeek 官方 API 文档 <a href="https://api-docs.deepseek.com/zh-cn/guides/build_a_chatbot">API 指南 - 构建 Chatbot</a>。</p>
+<h2>API 定价说明</h2>
+<p>用户调用 DeepSeek API 使用扩展能力时，除收取 Token 费用外，也将收取相关工具的调用费用。各项工具价格如下表所示：</p>
+<p><img src="https://api-docs.deepseek.com/zh-cn/img/app_api_261113_pricing_cn.png" alt=""></p>
+<h2>写在后面的话</h2>
+<p>我们相信，人与模型的交互依然充满无限可能，而 DeepSeek 现有的对话产品只是较为基础的一种形态。</p>
+<p>现在，官方产品背后的各项能力均已支持通过 DeepSeek API 随心调用、自由组合，我们期待开发者能够借此省去重复的基础工作，打造出更多样、更极致、更具想象力的产品。</p>
+<p>欢迎使用 DeepSeek API，尽情创造。</p>
+<p><img src="https://api-docs.deepseek.com/zh-cn/img/v4-hire.jpeg" alt=""></p>
+<ul><li><a href="https://api-docs.deepseek.com/zh-cn/news/news261113/#全面开放应用功能支持独立调用">全面开放应用功能，支持独立调用</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news261113/#api-定价说明">API 定价说明</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news261113/#写在后面的话">写在后面的话</a></li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>开放自研搜索 API</title>
       <link>https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-10-17</link>

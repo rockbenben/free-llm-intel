@@ -7,7 +7,332 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Building always-on agents</title>
+      <link>https://claude.com/resources/articles/building-always-on-agents</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/building-always-on-agents?li=1</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Over the past few months, we’ve seen a resurgence of always-on agents.</p>
+<p>Always-on agents are stateful and proactive, meaning they manage context across sessions and take actions without direct supervision. Underneath, they run on the same <a href="https://www.anthropic.com/research/building-effective-agents">core loop</a> as other agents. The difference is the surrounding architecture, which is built from primitives that control when the agents wake up, what carries over between runs, and how their work reaches the user.</p>
+<p>The resurgence is largely due to recent model advancements, which have made always-on agents more practical to run. First, the latest models have better judgment: they’re more reliable at understanding user intent and knowing when to check in. Second, intelligence is becoming cheaper, with long-horizon tasks benefiting the most. For example, on <a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">one long-horizon coding benchmark</a>, Opus 5.5 cost 78% less per solved task than Opus 5, compared with 40% less on typical workloads.</p>
+<p>Customers have started to ask us how to integrate this type of experience into their own products. Some companies want to make their existing agents more proactive, while others are looking to build them from the ground up.</p>
+<p>This post breaks down the primitives behind always-on agents and walks through how they fit together.</p>
+<h2>The cycle behind the always-on agent</h2>
+<p>An always-on agent is not actually “always on.” This is just a description of the user experience.</p>
+<p>In reality, the agent spends most of its time asleep, waking up periodically to do work. Each stretch of work is called a <strong>run</strong>: the agent receives an event, completes its task, and then saves information about what happened. A run works inside a <strong>session</strong>, which is the transcript of messages and tool calls. Once the run is finished, the agent goes back to sleep, and the cycle repeats indefinitely.</p>
+<p><img src="https://assets.claude.com/5dc803bf06d6e92e4aecae762da096626e2fa9ec.gif" alt="Animated diagram of an always-on agent’s timeline: long stretches asleep with no tokens spent, broken by brief runs. Each run has four steps: an event arrives, a session starts, the agent loop runs, and the run writes back to stored state that carries over between runs."></p>
+<h2>The core primitives</h2>
+<p>The surrounding architecture of an always-on agent has five core primitives: an event inbox, timers, memory, permissions, and an outbox. Let’s take a look at each.</p>
+<h3>Event inbox</h3>
+<p>Most AI agents only run when the user sends a message. In contrast, always-on agents can be triggered by many types of events, including webhooks, scheduled tasks, and background jobs.</p>
+<p>One tempting approach is to have each event source call the agent directly, but that has a few failure modes. For example, two events arriving at the same time can start competing runs, and a crash can lose an event entirely.</p>
+<p>This is where the event inbox comes in. Instead of calling the agent, every source sends an event to an inbox, where a worker picks it up.</p>
+<p>The simplest version has three components:</p>
+<ul><li>A durable list of events, usually a database table;</li><li>A handler, usually an HTTP endpoint, that writes events to the list; and</li><li>A worker, usually a background service, that reads from the list.</li></ul>
+<p>The inbox should track the status of each event, and events can be deduplicated based on unique identifiers from the source. A relational database works well for the inbox, with every event appended as a new row. We recommend starting with one inbox per user, but you can split this further if you need more parallelism.</p>
+<p><img src="https://assets.claude.com/bb08543a505cea3a24c88c718ceec4405e9c0a79.png" alt="Diagram of the event inbox. A handler (an HTTP endpoint) writes each event to the inbox, a database table that tracks status and drops duplicates, and wakes the worker. The worker reads what’s pending, starts the run, waits for it to finish, and marks the events done."></p>
+<p>When a new event comes in, the handler writes the event to the inbox and wakes the worker. The worker reads whatever is pending and starts a run. Events that continue earlier work, such as a reply from the user, resume an existing session, while everything else starts a new session.</p>
+<p>From there, the worker passes the events to the agent loop, waits for the run to finish, and marks the corresponding events as done. The implementation details can get tricky, so here are a few best practices:</p>
+<ul><li><strong>The handler should acknowledge events quickly</strong>. Some sources, such as webhook providers, treat slow responses as failures. The handler can still run lightweight checks, but any deeper verification, such as checking for prompt injection, should be done during the run.</li><li><strong>The inbox should be the source of truth</strong>. When the worker is woken up, it should pull the latest events from the inbox first. That way, if the worker dies mid-run, a new one can pick up the same event and retry.</li><li><strong>An inbox should only have one active worker at a time</strong>. This prevents two runs from duplicating work or overwriting each other. When a new event shows up mid-run, you can either push it to the next run, fold it into the current run, or interrupt and restart.</li><li><strong>The worker should batch pending events together.</strong> For example, if the user sends several messages in a row, the worker can merge them into a single run, so the agent only needs to reply once.</li></ul>
+<h3>Timers</h3>
+<p>Together with the event inbox, timers let always-on agents be proactive. Timers generally fall into one of two categories: follow-ups or schedules. A follow-up is a deadline that the agent sets for itself, such as checking in on a reply. A schedule, on the other hand, is a recurring task that happens on a known cadence, such as a daily newsletter.</p>
+<p>Timers live in their own durable store, usually another database table, separate from the inbox. The inbox should only hold events that are ready to be worked on. A follow-up and a schedule can share a similar schema, but a schedule needs to track its recurrence as well.</p>
+<p><img src="https://assets.claude.com/c16694e6d979a2ace84d03da0544297b7245c0a8.png" alt="Diagram of timers. A run sets a timer in a database table, either a follow-up set by the agent or a schedule set by the user. A scheduler finds what’s due and adds an event to the event inbox, which starts the next run."></p>
+<p>A timer doesn’t initiate a run on its own. Instead, a scheduler, usually a background service, polls the store at a fixed interval and fires anything that’s due. On each pass, the scheduler:</p>
+<ul><li>Scans the store and finds timers that are due.</li><li>Updates each timer based on its category.A follow-up should be marked as done.A schedule should get its due time updated to the next occurrence.</li><li>Adds an event to the inbox and wakes the worker.</li></ul>
+<p>For the scheduler, you can either build your own service or use a durable execution engine.</p>
+<h3>Memory</h3>
+<p>Always-on agents work across many disjointed runs and rely on memory to maintain continuity.</p>
+<p>Similar to the event inbox and timers, memory should have its own store. In our products, such as Claude Code’s <a href="https://code.claude.com/docs/en/memory">auto memory</a> and the Messages API’s <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">memory tool</a>, this is implemented as a directory of files. For an always-on agent, the directories should map to durable storage, usually a database or an object store. This way memories outlive the worker.</p>
+<p>As a rule of thumb, memory should only hold what the agent can’t look up again. If something already lives in another system, such as an issue tracker, you should save a pointer instead. Here is a breakdown of the types of memory an always-on agent should store:</p>
+<ul><li><strong>User instructions:</strong> Any instructions from the user about agent behavior should be saved in their own file and loaded at the start of every run. The user won’t always be around to steer the agent, so the instructions have to carry over between runs.</li><li><strong>User notes:</strong> The agent should save what it’s learned about the user, such as their role, their preferences, or any corrections they’ve given. You can start with one file and move to several small files as the notes grow. In the latter case, only an index is loaded at the start of each run, but the agent can pull the individual files into context when it needs more details.</li><li><strong>Past messages:</strong> The agent should keep track of what it’s already told the user so nothing is repeated. It can either store this in a separate file that’s loaded at the start of each run, or have the worker load the agent’s last few messages with the user.</li><li><strong>Task progress:</strong> For each ongoing task, the agent should keep a progress file that covers what’s been done and what’s left. Any new run can then read that file and pick up where the previous run left off. Similar to user notes, only an index is loaded at the start of each run, but the agent can pull the individual files into context when it needs more details.</li></ul>
+<p>The diagram below shows one example setup.</p>
+<p><img src="https://assets.claude.com/e5d209d7ef9b3455dec8a27b777dc12bdf806699.png" alt="Diagram of an example memory setup as a directory of files. instructions.md, index.md, and reported.md are loaded at the start of every run, while the notes/ and progress/ folders are read when needed. The agent writes to memory during the run."></p>
+<p>All of the above describes memory that’s saved during a run. You can also add dreaming, which reviews past sessions to curate memories. Dreaming can replace outdated entries and find patterns that only show up across many runs. If you’re interested in learning more, our <a href="https://www.anthropic.com/research/components-of-agent-memory">post on agent memory</a> covers this in more detail.</p>
+<h4>Inside the context window</h4>
+<p>Before doing any work, the agent loads the system prompt, tool definitions, and memory files. This initial context “overhead” is included in every run, so we recommend keeping it lean and using <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">prompt caching</a> to lower costs.</p>
+<p>A new session starts only with this context overhead and the events that triggered the run. An existing session, on the other hand, brings back the messages and tool calls from its earlier runs.</p>
+<p>If a session becomes too long, you can either <a href="https://platform.claude.com/docs/en/build-with-claude/compaction">compact the older messages</a> or start a new session. Both approaches lose detail, so anything that needs to persist should be saved to memory along the way.</p>
+<p><img src="https://assets.claude.com/48757f0a147acfe841c943674c6214d34ed4405a.gif" alt="Animated chart of context used over time. A fixed band for the system prompt, tools, and memory is present on every run. An existing session brings back its whole transcript and grows until compaction turns the older transcript into a summary."></p>
+<h3>Permissions</h3>
+<p>Permissions are where always-on agents carry the most risk. A run holds the user’s access and, by design, operates unattended. For each tool call, the agent needs to decide whether to proceed on its own, block it, or wait for approval.</p>
+<p>The components for permissions are the same ones other agents use:</p>
+<ul><li><strong>Credential store:</strong> Always-on agents often need sensitive user credentials like passwords or access tokens to be useful. The <a href="https://code.claude.com/docs/en/agent-sdk/secure-deployment#credential-management">recommended pattern</a> is a proxy outside the agent’s environment that adds credentials to outgoing requests. The agent sends requests without credentials, and the proxy injects the real credentials before forwarding.</li><li><strong>Auto mode:</strong> An always-on agent should be able to work without constant user input. We’ve already tackled a version of this problem with <a href="https://www.anthropic.com/research/claude-code-auto-mode">auto mode</a> in Claude Code. Auto mode uses classifiers to review higher-risk actions and block the ones they identify as dangerous so Claude can find a safer approach. User review, however, is still necessary for the most important decisions.</li><li><strong>Deferred tool calls:</strong> In Claude Code, <a href="https://code.claude.com/docs/en/hooks#defer-a-tool-call-for-later">a hook can defer a tool call</a> and wait for additional input from the user. The same pattern applies to always-on agents, which may need clarification or approval before taking certain actions. When a call is deferred, the run ends and the session is saved mid-call. The request is shown to the user (e.g., through an interactive card built with <a href="https://modelcontextprotocol.io/extensions/apps/overview">MCP Apps</a>), and their answer comes back as an event in the inbox. That event starts a new run, which resumes the saved session with the user’s input. While the deferred call waits for a response, the worker can pick up other events, so the agent isn’t blocked.</li></ul>
+<h3>Outbox</h3>
+<p>With most AI agents, the response is streamed to the user as it’s generated, so they can follow along as Claude reasons through the problem, calls tools, and writes its answer.</p>
+<p>Always-on agents, on the other hand, do most of their work in the background. The user gets the outcome and a few details, rather than the entire step-by-step breakdown.</p>
+<p><img src="https://assets.claude.com/700b5f3a446f22493c0307ec65751b6b2f82ccb7.png" alt="Diagram of the outbox. A run ends with nothing to say, a send tool call, or a deferred tool call that asks the user. Messages go to the outbox, a database table, and a dispatcher delivers them to the user. A deferred request can go through the outbox or be shown in your own interface."></p>
+<p>A run can end in one of three ways:</p>
+<ul><li>The agent sends a message to the outbox,</li><li>The agent decides that nothing needs to be sent, or</li><li>The agent uses a deferred tool call to request permission or additional input.</li></ul>
+<p>Most always-on agents can get by with a “send” tool that delivers the message directly to the user. You only need a formal outbox when you want to pace your agent’s messages or allow your agent to recover from errors.</p>
+<p>The outbox is a separate table of outgoing messages, analogous to the event inbox. There’s also a dispatcher, usually a background service, that’s analogous to the worker. The dispatcher reads the pending messages, decides what to deliver, and sends those to the user. A request from a deferred tool call can either go through the outbox or be shown directly in the interface.</p>
+<p>Beyond delivery, it’s important to tune how many messages the agent sends. An agent that sends too many becomes noisy, while an agent that doesn’t send enough misses things that the user needs to know. We recommend building evals to find the right balance. In practice, it’s better for the agent to start quiet and then earn more of the user’s attention over time.</p>
+<h2>How everything fits together</h2>
+<p>Here is how the five primitives fit together:</p>
+<p><img src="https://assets.claude.com/9f8df7b2dcc9d4637d27f37dae6e40a2a5851c8a.gif" alt="Animated diagram of how the five primitives fit together. Timers and the event inbox start a run, the run works with memory and permissions inside a session, and the outbox delivers messages to the user, whose answer comes back as an event."></p>
+<p>Every run starts with an event from the inbox, whether it’s a user message, a webhook, or a timer. When the worker picks up an event, it kicks off a run and wakes the agent in a new or existing session. The agent reads its memory to get a baseline, works within its permissions to take actions, and then updates its memory with anything it has learned. Once the run is finished, the agent pushes a row to the outbox, and the dispatcher delivers the message to the user.</p>
+<p>Together, these form a cycle. A run can set a timer that wakes the agent again later, and when the user replies to a message, their answer comes back as an event in the inbox. Each run is brief, but the cycle keeps going indefinitely, and that’s what makes the agent feel like it’s always on.</p>
+<h2>Acknowledgements</h2>
+<p><em>Written by William Hu. Special thanks to Rodrigo Olivares and Michael Segner for their contributions.</em></p>
+<p>Article</p>
+<p>Nov 13, 2026</p>
+<h3>The Claude Tag guide for startups</h3>
+<p>How leading startups use Claude Tag to ship faster and scale operations</p>
+<p>Claude Tag</p>
+<p>Article</p>
+<p>Nov 10, 2026</p>
+<h3>How Curative is building a national provider network with agents on Claude</h3>
+<p>Curative’s deal-making agent negotiates 2,000+ provider contracts a week.</p>
+<p>Claude PlatformClaude Code</p>
+<p>Article</p>
+<p>Nov 9, 2026</p>
+<h3>Safely scaling multi-agent teams with Claude Fable 5.2</h3>
+<p>How a team of 1,000 agents running an early version of Claude Fable 5.2 reproduced a formal proof of Fermat's Last Theorem with general tools, a shared database, and layered safety controls.</p>
+<p>(opens in new tab)</p>
+<p>Article</p>
+<p>Nov 9, 2026</p>
+<h3>Which Claude model should you build with?</h3>
+<p>How to choose between Claude Fable 5.2, Opus 5.5, Sonnet 5.5, and Haiku 5.5 by task, cost, and effort level.</p>
+<p>Claude PlatformClaude Code</p>
+<p>(opens in new tab)</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>The Claude Tag guide for startups</title>
+      <link>https://claude.com/resources/articles/claude-tag-guide-for-startups</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/claude-tag-guide-for-startups?li=1</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Startups frequently work at a fast pace with lean teams wearing many hats. In many ways, <a href="https://claude.com/product/tag">Claude Tag</a> (beta) is suited for how startups work. You @Claude to a Slack channel where your context lives, add connectors, and have your team assign and steer tasks together.</p>
+<p>For startup teams new to using Claude Tag, one of the most frequent questions is “which channels should I add Claude to first?” To help answer it, we spoke with eight high growth startups to see how Claude Tag works inside their teams.</p>
+<h3>Featuring insights from</h3>
+<ul><li><a href="https://kikoff.com/"><img src="https://assets.claude.com/58247642907b2621ae6d414ecb7dc6714bcf1e03.svg" alt="Kikoff"></a></li><li><a href="https://campfire.ai/"><img src="https://assets.claude.com/547f3af27e33331c1409324c549d765f790ca68d.svg" alt="Campfire"></a></li><li><a href="https://www.navigate.ai/"><img src="https://assets.claude.com/5348eaceef888ace36b50da1a6c9f8126ad2f1bb.svg" alt="NavigateAI"></a></li><li><a href="https://www.moritzlegal.com/"><img src="https://assets.claude.com/6b65c9f5d995c188f6273248826bbe5fc494b4ff.svg" alt="Moritz"></a></li><li><a href="https://www.flaglerhealth.io/"><img src="https://assets.claude.com/157cc2437bd370ee12b67e1ba178b5cded79cbfc.svg" alt="Flagler Health"></a></li><li><a href="https://www.valence.co/"><img src="https://assets.claude.com/5855d903e0e618842304aaf2e9b02e7d648a90e2.png" alt="Valence"></a></li><li><a href="https://www.orderful.com/?utm_source=anthropic&amp;utm_medium=referral&amp;utm_campaign=claude_tag_guide"><img src="https://assets.claude.com/dcd269d39d743ba04bbf4a2e803b60367c0d6b88.svg" alt="Orderful"></a></li><li><a href="https://www.descript.com/"><img src="https://assets.claude.com/05128b9e935b6625beecc1bc4c6fa08814473e3e.svg" alt="Descript"></a></li></ul>
+<p>We heard from leaders at companies with visions from reinventing law firms to building the next generation of resource planning software. Some had added Claude to nearly every channel while others had focused deeply on one or two specific use cases.</p>
+<table><thead><tr><th>Company</th><th>On call</th><th>Thread to PR</th><th>Company brain</th><th>Self-serve data</th><th>Routine reporting</th></tr></thead><tbody><tr><td>Kikoff</td><td>●</td><td>●</td><td></td><td>●</td><td>●</td></tr><tr><td>NavigateAI</td><td>●</td><td>●</td><td>●</td><td></td><td>●</td></tr><tr><td>Campfire</td><td>●</td><td>●</td><td>●</td><td></td><td></td></tr><tr><td>Flagler Health</td><td>●</td><td>●</td><td>●</td><td></td><td></td></tr><tr><td>Moritz</td><td></td><td></td><td>●</td><td></td><td>●</td></tr><tr><td>Orderful</td><td>●</td><td>●</td><td>●</td><td>●</td><td></td></tr><tr><td>Valence</td><td></td><td>●</td><td>●</td><td></td><td>●</td></tr><tr><td>Descript</td><td></td><td>●</td><td></td><td>●</td><td>●</td></tr></tbody></table>
+<p>But everyone we spoke with shared an “aha!” moment where they realized a minutes-long Claude Tag conversation replaced days of work or uncovered insights that would otherwise have remained hidden.</p>
+<p>The most common are contained in this guide, each with practical implementation details designed to help founders find and deploy the use cases that will move the needle for their team. Here are some examples of how the needle moved for the startups we spoke with:</p>
+<p><img src="https://assets.claude.com/547f3af27e33331c1409324c549d765f790ca68d.svg" alt="Campfire"></p>
+<p>21</p>
+<p>minutes from Slack mention to open PR</p>
+<p><img src="https://assets.claude.com/5348eaceef888ace36b50da1a6c9f8126ad2f1bb.svg" alt="NavigateAI"></p>
+<p>134</p>
+<p>pull requests merged from Slack threads</p>
+<p><img src="https://assets.claude.com/6b65c9f5d995c188f6273248826bbe5fc494b4ff.svg" alt="Moritz"></p>
+<p>5</p>
+<p>minutes for the daily end-of-shift update, down from 1 hour</p>
+<p><img src="https://assets.claude.com/5855d903e0e618842304aaf2e9b02e7d648a90e2.png" alt="Valence"></p>
+<p>&lt;1</p>
+<p>hour from client ask to no-code solution</p>
+<p><img src="https://assets.claude.com/dcd269d39d743ba04bbf4a2e803b60367c0d6b88.svg" alt="Orderful"></p>
+<p>2</p>
+<p>days from Slack question to production</p>
+<p><img src="https://assets.claude.com/05128b9e935b6625beecc1bc4c6fa08814473e3e.svg" alt="Descript"></p>
+<p>Days to hours</p>
+<p>of recurring reporting prep</p>
+<p>In this guide, we share the most common use cases, channels, and collective insights from leading startups for using Claude Tag.</p>
+<h2>Top channels to tag Claude</h2>
+<p>The eight startups we spoke with use Claude Tag across Slack, but a handful of channels came up again and again as the best places to start.</p>
+<h2>01 Claude on call</h2>
+<p>Example setups:</p>
+<p>Channels</p>
+<p><code>#on-call</code> <code>#alerts-ci</code> <code>#deploy-watch</code> <code>#support-escalations</code></p>
+<p>Connectors</p>
+<p>GitHub, GitLab, Sentry, dbt, PagerDuty, Linear, Datadog, Jira, Grafana, incident.io</p>
+<p>Threads and routines</p>
+<p>Incident response, morning incident digest, Monday on-call handoff, daily health summary, hourly incident recap</p>
+<p>Starter instruction</p>
+<p>@Claude remember for this channel: monitor alerts and immediately triage each one in its own thread. Check for an existing ticket. Query the data first, then theorize, and separate what you verified from what you inferred. If it's real, name the likely root cause with links, tag the owner, and open a draft PR only if the fix is contained. If no action is needed, say so. After each incident, add what you learned to [lessons file].</p>
+<p>Triage channels are notoriously noisy. There are constant interruptions from Sentry errors, Datadog alerts, customer bug reports, and support requests making it difficult to find the signal from noise. It's usually the first task teams hand to Claude.</p>
+<p>With Claude in the channel as <a href="https://claude.com/resources/articles/ai-ci-cd-on-call">a first responder</a>, the first pass is often done before the on-call engineer opens their laptop. Claude reads each item as it lands, investigates the codebase and the tools it has access to, and shares what it found. If the fix is contained, it opens a draft PR; if not, it routes the issue to the right person with the investigation attached. In these setups, a person reviews each fix before it merges, and only genuinely new problems need someone to start the investigation themselves.</p>
+<p>At Campfire, which builds an AI-native ERP for finance teams, an engineer tagged Claude on a report that some of its AI agent’s finished answers weren’t reaching users. Claude had a PR open 21 minutes later, and it merged that afternoon.</p>
+<h3>Kikoff: A first responder in every triage channel</h3>
+<p>Kikoff is a fintech startup that helps consumers build credit, solve liquidity needs, and achieve financial security. Claude Tag is the first responder in triage channels across the company, including:</p>
+<ul><li><code>#deploys</code>: Claude decides what to watch after each release and flags anything it broke.</li><li><code>#alerts-ci</code>: When a build fails, Claude finds out why and proposes a fix as a draft PR.</li><li><code>#alerts-sentry-backend</code>: Claude takes the first pass on Sentry exceptions and crashes.</li><li><code>#dog-fooding</code>: Claude investigates what employees flag while dogfooding and tags the right owner.</li><li><code>#support</code>: Claude takes the first pass on support tickets.</li></ul>
+<p>Kikoff started with Claude contributing to the conversation only when mentioned, and the biggest wins came once the team let it jump in on its own. When sign-up broke, Claude traced it to a backend change, sized the impact, named the team that owned the fix, and opened a draft PR so the app would fail softly in the meantime.</p>
+<p>Claude flags that sign-up is broken, traces it to a backend change, sizes the impact, names the team that owns the fix, and opens a draft PR so the app fails softly. A recreated conversation from Kikoff. Names and images have been modified. Used with permission from Kikoff.</p>
+<blockquote>“I’m always hyped when Claude catches an issue before a monitor or human does. One person can only personally manage so much context, Claude Tag helps us organize and own some context, and we manage the outcomes.”</blockquote>
+<p>Alex Dejeu, engineering manager at Kikoff</p>
+<h3>NavigateAI: Fixing bugs with fragmented context</h3>
+<p>NavigateAI builds AI copilots for construction field teams. They run Claude Tag in about 90 channels for alert triage, bug bashes, quick feature building, and support escalations. Since June, Claude has opened about 223 PRs straight from Slack threads and 134 have merged with a median of two hours from open to merge.</p>
+<p>Triage has been a particularly valuable use case for NavigateAI. Because Claude has so much context, it can find unintuitive root causes to issues that may have been missed at first glance.</p>
+<blockquote>“Our biggest ‘wow!’ moment with Claude Tag was when we were trying to debug a load issue, which seemed to be caused by a customer (since their calls were failing). A normal human response would be to continue chasing down that customer. But because Claude had access to so many other data sources, it actually found that it was from an uninstrumented internal cron job that was running during the same time.”</blockquote>
+<p>Mike Chen, head of engineering at NavigateAI</p>
+<p>With Claude, mean time to resolve issues has improved. In one case, Claude had the root cause eight minutes after a Sentry alert fired, and the fix was merged 93 minutes after the alert.</p>
+<p>“Fast-moving startups typically have to pick speed over structure. Claude Tag gives us both. It’s a brain that connects the dots across all our tools, so we get the structure without having to build it ourselves,” said Mike.</p>
+<h2>02 Thread to PR</h2>
+<p>Example setups:</p>
+<p>Channels</p>
+<p><code>#quick-wins</code> <code>#bug-bash</code> <code>#product-feedback</code> <code>#feature-requests</code> <code>#ux-papercuts</code> <code>#tech-debt</code> <code>#design-polish</code></p>
+<p>Connectors</p>
+<p>GitHub, GitLab, Linear, Jira, Confluence, Notion, Figma, Sentry</p>
+<p>Threads and routines</p>
+<p>One request per thread, weekly backlog sweep, daily PR roundup, weekly shipped recap</p>
+<p>Starter instruction</p>
+<p>@Claude remember for this channel: when someone describes a bug or small feature, work on it in its own thread. Check for an existing ticket and read the related code first. If details are missing, ask for them or for a real example instead of guessing. If the change is small and contained, open a draft PR with a short summary of what changed and how you tested it. Never merge; a person reviews and approves. If it's too big or risky, say why and suggest a ticket.</p>
+<p>Speed is one of a startup’s biggest advantages, but often small requests that delight users can get lost in the shuffle. The intelligence is often gathered by customer-facing teams, submitted in Slack, and, if it's not overlooked, eventually makes its way to Linear or Jira where it’s prioritized against hundreds of other tickets.</p>
+<p>With Claude Tag, anyone can draft the PR, technical or not. Surface an idea in a thread, get live feedback from product, engineering, and GTM in the same place, and Claude turns the thread into a draft PR that reflects everyone’s input.</p>
+<p>Many of the startups we spoke with used Claude Tag for the “light and delight” features or to remove papercuts that are quick to review but would otherwise not get prioritized.</p>
+<h3>Orderful: From Slack exchange to production feature in two days</h3>
+<p>Orderful is an EDI platform that connects companies with their trading partners, through an API or straight from the browser. Its customers trade standard documents with their partners through the platform.</p>
+<p>One document type, the 753, wasn’t supported in Orderful’s web app. The request had sat in the backlog, and shipments for one large retailer were delayed.</p>
+<p>When an account manager followed up in Slack, the PM tagged Claude in: “@Claude, you should build one.” Claude asked for real examples of the document so it could build to the actual format, then opened a draft PR adding 753 support.</p>
+<p>Claude confirms a fix works on a real 753 transaction. Names and images have been changed. Used with permission from Orderful.</p>
+<p>The next morning, Claude filed a ticket for the accompanying 754, the retailer’s response, and opened a second PR. Both were in production about two days after the Slack exchange.</p>
+<p>“Something that took weeks or months before just took a Slack conversation,” said Piers MacDonald, CTO at Orderful. “Light features with hard-to-prove value used to get stuck in the backlog. Now they have a way out.”</p>
+<h3>Valence: From feature request to rollout</h3>
+<p>Valence works with the world’s largest employers to connect enterprise talent and performance with Nadia, an AI coach. When a Valence engineer explained in Slack how to address an urgent product change requested by an important client, Claude didn’t just follow directions, it identified additional changes that needed to be made as the same configuration lived in two spots. Without Claude, the initial change would have been incomplete.</p>
+<p>Claude calls out that a requested change is actually two changes. Used with permission from Valence.</p>
+<blockquote>“It didn’t just agree with the expert. It caught duplicated configuration, the kind of thing humans lose track of.”</blockquote>
+<p>Sameer Bansal, principal AI engineer at Valence</p>
+<p>In another case, a client urgently asked for a customization. Claude checked the code and, working with an engineer, confirmed it could ship with no code change. In under an hour, a teammate had a solution ready for the client.</p>
+<h2>03 Company brain</h2>
+<p>Example setups:</p>
+<p>Channels</p>
+<p><code>#ask-anything</code> <code>#company-wiki</code> <code>#product-questions</code></p>
+<p>Connectors</p>
+<p>GitHub, Notion, Google Drive, Linear, Jira, Confluence, Granola, Metabase</p>
+<p>Threads and routines</p>
+<p>One question per thread, decision log updates, weekly stale doc check, repeat questions recap</p>
+<p>Starter instruction</p>
+<p>@Claude remember for this channel: answer questions from our code, docs and past threads, and link your sources. If sources disagree, check the code, give the current answer, and flag the stale doc. If you aren’t sure, say so and tag the owner. When a thread reaches a decision, record it in [docs location]. Anything going to a client needs a human check first.</p>
+<p>At a startup, institutional knowledge often lives in people's heads, from the intricacies of product billing codes to where the onboarding docs are hosted.</p>
+<p>For many of the startups we spoke with, Claude Tag has become the company brain. Claude answers with the source, and tags the owner when it isn't confident. It keeps that knowledge current too: when a thread reaches a decision, Claude can record it in your docs the same day and flag docs that have gone stale.</p>
+<p>Example exchange.</p>
+<h3>Moritz: A live source of truth from intake to staffing</h3>
+<p>Moritz is an AI-native law firm that promises a same-day turnaround on contracts, against what Moritz cites as an industry standard of at least three weeks. Everything around the legal work, from intake and quoting to staffing and follow-up, lives in Slack, with a thread per matter and a channel per client.</p>
+<p>Now everyone from the CEO to paralegals asks Claude first. Questions that took up to 30 minutes of searching in Slack get answered in under two. The end-of-shift update, now drafted from the day’s threads, went from about an hour of assembly to a five-minute edit.</p>
+<p>That time goes back to legal work. Claude Tag handles the administrative work around a case, like follow-up questions, reminders, and status updates. It can’t access client documents or privileged conversations with Moritz’s lawyers.</p>
+<blockquote>“A firm working across 44 countries generates hundreds of one-off questions a month that no one will ever build a feature for. Claude Tag answers them from our own history in Slack. Every answer is a thread with links, so institutional memory compounds.”</blockquote>
+<p>Stefan Mandaric, co-founder and CTO at Moritz</p>
+<h3>Campfire: Customer experience on demand</h3>
+<p>One Slack channel in particular “exploded in popularity”: their CX (or customer experience) channel. Sales uses this channel “to validate certain functionality during prospect conversations,” rather than having to “ping 10 different people.”</p>
+<p>This type of channel is particularly effective because sales can answer in the moment, while the customer is paying attention, and can operate more independently and confidently in early customer conversations.</p>
+<blockquote>“Claude Tag basically acts as our central knowledge base.”</blockquote>
+<p>Nancy Jin, AI engineering manager at Campfire</p>
+<h2>04 Self-serve data</h2>
+<p>Example setups:</p>
+<p>Channels</p>
+<p><code>#data-requests</code> <code>#ask-revops</code> <code>#metric-definitions</code></p>
+<p>Connectors</p>
+<p>dbt, GitHub, Metabase, BigQuery, Snowflake, Databricks, Notion</p>
+<p>Threads and routines</p>
+<p>One question per thread, weekly pre-standup readout, launch and experiment readouts, pipeline failure triage, new question triage</p>
+<p>Starter instruction</p>
+<p>@Claude remember for this channel: answer from our governed models and the definitions in [data skills repo]. If the data isn’t covered there, say it’s unvalidated instead of guessing. Lead with the answer, then give the number, what’s driving it, and any caveat. Check recent incidents, releases, and Slack discussions before explaining a change. If a metric’s definition is unclear, ask which one we mean. For anything important, share your plan or SQL before you run it. Separate what you verified from what you assumed, and list any open data quality warnings at the end of your answer. If someone finds a mistake, draft a fix for a data team member to review. If a question comes up twice, suggest scheduling it.</p>
+<p>At a fast-growing startup every function wants numbers, and the data team has to decide whose request comes first. With Claude Tag connected to your data, anyone can ask in plain English without waiting in the data team’s queue.</p>
+<p>This is a use case we have adopted as well. <a href="https://claude.com/resources/articles/self-service-data-analytics-in-slack-how-anthropic-deploys-claude-tag-for-ad-hoc-questions">In one of our data channels over a month, Claude Tag answered more than 75% of questions people posted, typically within a minute or two</a>. It works from governed data and the same definitions analysts use, which live in a versioned repo that Claude re-reads in every conversation.</p>
+<p>From Self-service data analytics in Slack: how Anthropic deploys Claude Tag for ad-hoc questions.</p>
+<h3>Descript: Answering ad-hoc data requests</h3>
+<p>Descript is an AI-powered video editing platform. Claude Tag is now the first line of support for data requests and initial analyses. Product, growth, RevOps, and finance ask questions in Slack and get answers grounded in Descript’s dbt models.</p>
+<blockquote>“I used to write complicated SQL and refresh the numbers by hand every week or month. Now I’ve replaced several data-team dashboards with my own Claude artifacts, and I no longer refresh them by hand.”</blockquote>
+<p>Daisy Zhang, head of growth marketing at Descript</p>
+<p>Daisy’s recurring reporting prep went from days to hours.</p>
+<p>The growth team, for example, asks why lifecycle subscriptions dropped, whether paid search is losing last-touch credit to other channels, or how long a self-serve account takes to become an enterprise opportunity. The data team tracks the artifacts Claude generates to see which data assets matter most across teams, and spends its own time on strategic questions and on building the context that makes self-serve work.</p>
+<blockquote>“The promise of business intelligence has always been self-serve for business users. I’d never seen it actually realized until we had Claude Tag set up with immense context for our data.”</blockquote>
+<p>Jen Huhn, monetization PM at Descript</p>
+<h3>Orderful: From question to dashboard</h3>
+<p>At Orderful, self-serve analytics spans conversational analytics and full data builds: anyone can go from a question in Slack to a dashboard merged to production. The key is a semantic layer that encodes agreed definitions and metrics, so every answer and every build uses the same definitions.</p>
+<blockquote>“We trust the output because a semantic layer constrains the SQL, CI gates the builds, and there’s a process for agreeing on definitions. Without those, you get confident-looking wrong answers. Once those guardrails were in place, connecting Claude Tag took under 30 minutes. Now teammates build together in shared Slack threads instead of solo sessions.”</blockquote>
+<p>Piers MacDonald, CTO at Orderful</p>
+<h2>05 Reporting and handoffs</h2>
+<p>Example setups:</p>
+<p>Channels</p>
+<p><code>#sales-pipeline</code> <code>#customer-handoffs</code> <code>#standup-summary</code> <code>#qbr-prep</code></p>
+<p>Connectors</p>
+<p>Notion, Google Drive, Gong, Salesforce, Gainsight</p>
+<p>Threads and routines</p>
+<p>End-of-day status draft, pre-QBR brief, deal handoff</p>
+<p>Starter instruction</p>
+<p>@Claude remember for this channel: draft each recurring report from our threads, docs, and data, and link your sources. Lead with what changed and what needs a decision. Separate what you verified from what you assumed, and flag anything missing instead of filling the gap. Post the draft in its own thread for [owner] to edit. Nothing goes out until a person approves it. If a report keeps getting the same edits, suggest updating these instructions.</p>
+<p>Many of the examples we’ve covered are reactive: something happens, Claude responds. Routine reporting is work Claude owns on a schedule, the way a teammate owns a recurring deliverable.</p>
+<p>Example of using Routines in Claude Tag.</p>
+<p>You describe the outcome once; Claude runs it every time and posts the result where the team already works.</p>
+<h3>Valence: Deal reviews and handoffs</h3>
+<p>Valence is setting Claude up to brief the team before every quarterly business review, with customer health, open deals, blockers, and next steps. They are also working to make the handoff from sales to customer success when a deal closes more seamless. Claude saves the team time by helping to aggregate details across their engagement and often finds key items they may have missed.</p>
+<p>“When a deal closes, Tag builds the handoff from the deal history, calls and contract: who’s who, what was promised, what’s customized, and what’s still open. Customer success then reviews it before their kickoff,” said Sameer.</p>
+<h2>06 Getting started checklist</h2>
+<p>The checklist below pulls together these startup teams’ best practices so you can apply them to your own workflows.</p>
+<p>Before launch</p>
+<p>Check the prerequisites.</p>
+<p>Claude Tag is in public beta on Claude Team and Enterprise plans, and isn’t available on Free, Pro, or Max. You’ll need a Claude organization Owner and a Slack workspace admin to connect the two. An admin must also turn on Routines, and Team plans need usage credits before Claude responds.</p>
+<p>Set up Claude’s access with a bundle.</p>
+<p>In channels, Claude works under its own <a href="https://claude.com/docs/claude-tag/concepts/agent-identity">agent identity</a>, with service accounts rather than anyone’s personal login. Group the connectors, repos, and instructions it needs in a <a href="https://claude.com/docs/claude-tag/admins/add-connections">bundle</a>, and attach them org-wide, per workspace, or per channel. That sets what Claude can reach in each place, and everyone in a channel gets the same access. Start narrow: only what the first channel’s job needs.</p>
+<p>Experiment in a private channel.</p>
+<p>Nearly half the startups we spoke with started their Claude Tag journey by having a small cross-functional team experiment in a private channel. “Start private with a mix of roles, then move to a group channel,” said Sameer.</p>
+<p>Determine the boundaries.</p>
+<p>By default, anyone in your Slack workspace can use Claude, even without a Claude account. You can <a href="https://claude.com/docs/claude-tag/admins/restrict-access">restrict access</a> to your org and limit search to channels Claude is in. On Enterprise, you can also restrict access to specific roles or chosen channels.</p>
+<p>Set clear expectations for what Claude can do and can never do. Several teams we spoke with let Claude open draft PRs, but people review and merge. For Orderful, <a href="https://claude.com/resources/articles/claude-code-guide-for-startups">Claude Code</a>, not Tag, handles “infrastructure changes, audits, sensitive data.” For a “hard call,” such as “a PR that touches more than one service,” Claude gets a second opinion. Moritz doesn’t give Claude Tag access to client documents or privileged conversations with its lawyers.</p>
+<p>Start your security review early.</p>
+<p>The usual questions are data retention and what Claude can reach, and the <a href="https://claude.com/docs/claude-tag/concepts/security-and-data">security</a> and <a href="https://claude.com/docs/claude-tag/concepts/data-lifecycle">data lifecycle</a> pages answer both. Claude Tag isn’t available to orgs with zero data retention turned on, a customer-managed encryption (CMEK) policy, or the HIPAA configuration, and it isn’t covered by our Business Associate Agreement, so check that before you plan a rollout.</p>
+<p>Set a budget and alerts.</p>
+<p>Claude Tag bills by usage, so an early conversation avoids surprises as adoption grows. You can <a href="https://claude.com/docs/claude-tag/admins/set-spend-limit">set spend limits</a> overall and per channel, choose the model per channel, and <a href="https://claude.com/docs/claude-tag/admins/attribute-costs">attribute costs</a> by user using the Enterprise Analytics API. Orderful runs an org-wide cap with alerts at 75% and 90%. “We have extreme ownership on the channel costs. The owner justifies that ‘yes, this spend is reasonable for the output / outcomes,’” said Alex Dejeu, engineering manager at Kikoff. Use your first channel’s actual costs to size the next one.</p>
+<p>Deployment</p>
+<p>Pick one clear task in a channel your team already uses, like on-call alerts or bug triage.</p>
+<p>“We experiment on certain teams, see what works, then once confident we’ve worked out the kinks, we push the idea out to other teams to add to their own similar channels as well. We want to avoid trust breaking experiences with folks with lower tolerance to AI mistakes,” said Alex Dejeu, engineering manager at Kikoff.</p>
+<p>Prime your experts and culture bearers.</p>
+<p>Have the people your team already trusts use Claude first, and in the open.</p>
+<p>“Going back and forth with Claude in the open has been productive and fun. Several people in sales and customer success have watched experts [interact with Claude Tag], then started asking Claude themselves, and got value fast,” said Sameer Bansal, principal AI engineer at Valence.</p>
+<p>Tune the noise.</p>
+<p>Multiple startups told us they needed to adjust Claude’s chattiness. Too chatty is one risk.</p>
+<p>“Conversation in ad hoc requests can sometimes get noisy. We’ve been trying to tune down the responsiveness here and also be more principled on what we use Claude on ad hoc requests for,” said Mike Chen, head of engineering at NavigateAI.</p>
+<p>Too little chattiness is also a risk, however. In busy channels, “You either have to @ every time or it won’t do much,” said Will Hu, cofounder at Flagler Health. And “if no one is watching a channel closely or interacts with it, it will sit idle.”</p>
+<p>Have teammates connect their own accounts.</p>
+<p>The admin bundles from setup are what Claude can reach for everyone in a channel. <a href="https://claude.com/docs/claude-tag/concepts/personal-connectors">Personal connectors</a> work differently: Claude acts with the permissions of the person asking, so it can pull from their docs, inbox, or CRM once they approve it (an Owner adds the connector for the org first, and on Enterprise an admin manages personal connectors). The answer still posts in the channel, so choose “Allow with review” for anything sensitive.</p>
+<p>Write channel instructions like you’re onboarding a new hire:</p>
+<p>what to check first, when to open a PR, when to ask, and that “no action needed” is a valid answer.</p>
+<p>Give Claude feedback in the channel, not in DMs.</p>
+<p>Correct it in the thread. It <a href="https://claude.com/docs/claude-tag/users/memory">remembers per channel</a>, and teammates learn how to work with it by watching. For a lasting fix, ask Claude to update its memory for this channel.</p>
+<p>Two Valence employees thank a colleague after watching them work through a question with Claude in the open. Used with permission from Valence.</p>
+<p>Not sure where to go next? Tag Claude and ask what it has learned about your org and which use cases it would expand to.</p>
+<p>Moritz’s co-founder and CTO, Stefan Mandaric, asked Claude to recommend use cases for each team. Fifteen minutes later, it had read the firm’s Slack channels, Linear issues, Notion SOPs, Drive, and Metabase dashboards, and published 25. “18 of 25 worked with no further setup. That became our rollout plan.”</p>
+<h2>Last word: what we learned from the wow moments</h2>
+<p>The wow moments weren’t always about speed. Often, Claude found something no one had asked it to look for. Sometimes the surprise was restraint. And sometimes the surprise was the unexpected exchanges. “Eventually you get used to Claude jumping in on jokes, and you soon appreciate that it’s an easy audience and the first one to laugh,” said Piers MacDonald, CTO at Orderful.</p>
+<p>Recreated Orderful conversation in Slack. Used with permission from Orderful.</p>
+<p>We hope you found this guide useful. Special thanks to Campfire, Descript, Flagler Health, Kikoff, Moritz, NavigateAI, Orderful and Valence for sharing their experiences and insights.</p>
+<h2>Additional resources</h2>
+<h3>Get started</h3>
+<ul><li><a href="https://claude.com/product/tag">Claude Tag overview</a></li><li><a href="https://claude.com/docs/claude-tag">Claude Tag documentation</a></li><li><a href="https://claude.com/docs/claude-tag/admins/setup-overview">Set up Claude Tag</a></li><li><a href="https://claude.com/docs/claude-tag/admins/setup-oncall">On-call guided setup</a></li><li><a href="https://claude.com/docs/claude-tag/admins/troubleshooting">Troubleshoot setup</a></li></ul>
+<h3>Connect your tools</h3>
+<ul><li><a href="https://claude.com/docs/claude-tag/admins/add-connections">Add connections and bundles</a></li><li><a href="https://claude.com/docs/claude-tag/admins/configure-github">Configure GitHub access</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/personal-connectors">Personal connectors</a></li><li><a href="https://claude.com/docs/claude-tag/admins/network-requirements">Network requirements</a></li></ul>
+<h3>Access, security and spend</h3>
+<ul><li><a href="https://claude.com/docs/claude-tag/admins/restrict-access">Restrict access</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/agent-identity">How agent identity works</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/security-and-data">Security and data</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/data-lifecycle">Data lifecycle and deletion</a></li><li><a href="https://claude.com/docs/claude-tag/admins/for-slack-admins">What the Claude Slack app can access</a></li><li><a href="https://claude.com/docs/claude-tag/admins/set-spend-limit">Set spend limits</a></li><li><a href="https://claude.com/docs/claude-tag/admins/attribute-costs">Attribute costs to users</a></li></ul>
+<h3>Work with Claude in Slack</h3>
+<ul><li><a href="https://claude.com/docs/claude-tag/users/when-claude-responds">Control when Claude responds</a></li><li><a href="https://claude.com/docs/claude-tag/users/commands">Commands Claude Tag understands</a></li><li><a href="https://claude.com/docs/claude-tag/users/memory">Channel memory</a></li><li><a href="https://claude.com/docs/claude-tag/users/proactivity">Set up routines</a></li></ul>
+<h3>Use cases</h3>
+<ul><li><a href="https://claude.com/docs/claude-tag/users/use-cases">Use case library</a></li><li><a href="https://claude.com/docs/claude-tag/users/use-cases/fix-bugs">Fix bugs</a></li><li><a href="https://claude.com/docs/claude-tag/users/use-cases/answer-data-questions">Answer data questions</a></li></ul>
+<h3>How Anthropic uses Claude Tag</h3>
+<ul><li><a href="https://claude.com/resources/articles/ai-ci-cd-on-call">How Claude Tag serves as Anthropic’s first responder for CI/CD failures</a></li><li><a href="https://claude.com/resources/articles/how-anthropic-enables-self-service-data-analytics-with-claude">How Anthropic enables self-service data analytics with Claude</a></li></ul>
+<p>Article</p>
+<p>Nov 10, 2026</p>
+<h3>How Curative is building a national provider network with agents on Claude</h3>
+<p>Curative’s deal-making agent negotiates 2,000+ provider contracts a week.</p>
+<p>Claude PlatformClaude Code</p>
+<p>Article</p>
+<p>Nov 9, 2026</p>
+<h3>Safely scaling multi-agent teams with Claude Fable 5.2</h3>
+<p>How a team of 1,000 agents running an early version of Claude Fable 5.2 reproduced a formal proof of Fermat's Last Theorem with general tools, a shared database, and layered safety controls.</p>
+<p>(opens in new tab)</p>
+<p>Article</p>
+<p>Nov 9, 2026</p>
+<h3>Which Claude model should you build with?</h3>
+<p>How to choose between Claude Fable 5.2, Opus 5.5, Sonnet 5.5, and Haiku 5.5 by task, cost, and effort level.</p>
+<p>Claude PlatformClaude Code</p>
+<p>(opens in new tab)</p>
+<p>Article</p>
+<p>Oct 27, 2026</p>
+<h3>Manage costs and demonstrate ROI for Claude Code on Google Cloud</h3>
+<p>Best practices for managing costs and measuring return on investment for Claude Code on Google Cloud.</p>
+<p>Claude Code</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Operate Claude Managed Agents inside your security perimeter</title>
       <link>https://claude.com/resources/articles/self-hosted-claude-managed-agents</link>
@@ -264,237 +589,6 @@
 <p>Nov 12, 2026</p>
 <h3>Introducing Claude Meetings</h3>
 <p>Add Claude to your video call and get the work started while you talk</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
-<h3>Get the developer newsletter</h3>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>The Claude Tag guide for startups</title>
-      <link>https://claude.com/resources/articles/claude-tag-guide-for-startups</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/claude-tag-guide-for-startups?li=1</guid>
-      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Startups frequently work at a fast pace with lean teams wearing many hats. In many ways, <a href="https://claude.com/product/tag">Claude Tag</a> (beta) is suited for how startups work. You @Claude to a Slack channel where your context lives, add connectors, and have your team assign and steer tasks together.</p>
-<p>For startup teams new to using Claude Tag, one of the most frequent questions is “which channels should I add Claude to first?” To help answer it, we spoke with eight high growth startups to see how Claude Tag works inside their teams.</p>
-<h3>Featuring insights from</h3>
-<ul><li><a href="https://kikoff.com/"><img src="https://assets.claude.com/58247642907b2621ae6d414ecb7dc6714bcf1e03.svg" alt="Kikoff"></a></li><li><a href="https://campfire.ai/"><img src="https://assets.claude.com/547f3af27e33331c1409324c549d765f790ca68d.svg" alt="Campfire"></a></li><li><a href="https://www.navigate.ai/"><img src="https://assets.claude.com/5348eaceef888ace36b50da1a6c9f8126ad2f1bb.svg" alt="NavigateAI"></a></li><li><a href="https://www.moritzlegal.com/"><img src="https://assets.claude.com/6b65c9f5d995c188f6273248826bbe5fc494b4ff.svg" alt="Moritz"></a></li><li><a href="https://www.flaglerhealth.io/"><img src="https://assets.claude.com/157cc2437bd370ee12b67e1ba178b5cded79cbfc.svg" alt="Flagler Health"></a></li><li><a href="https://www.valence.co/"><img src="https://assets.claude.com/5855d903e0e618842304aaf2e9b02e7d648a90e2.png" alt="Valence"></a></li><li><a href="https://www.orderful.com/?utm_source=anthropic&amp;utm_medium=referral&amp;utm_campaign=claude_tag_guide"><img src="https://assets.claude.com/dcd269d39d743ba04bbf4a2e803b60367c0d6b88.svg" alt="Orderful"></a></li><li><a href="https://www.descript.com/"><img src="https://assets.claude.com/05128b9e935b6625beecc1bc4c6fa08814473e3e.svg" alt="Descript"></a></li></ul>
-<p>We heard from leaders at companies with visions from reinventing law firms to building the next generation of resource planning software. Some had added Claude to nearly every channel while others had focused deeply on one or two specific use cases.</p>
-<table><thead><tr><th>Company</th><th>On call</th><th>Thread to PR</th><th>Company brain</th><th>Self-serve data</th><th>Routine reporting</th></tr></thead><tbody><tr><td>Kikoff</td><td>●</td><td>●</td><td></td><td>●</td><td>●</td></tr><tr><td>NavigateAI</td><td>●</td><td>●</td><td>●</td><td></td><td>●</td></tr><tr><td>Campfire</td><td>●</td><td>●</td><td>●</td><td></td><td></td></tr><tr><td>Flagler Health</td><td>●</td><td>●</td><td>●</td><td></td><td></td></tr><tr><td>Moritz</td><td></td><td></td><td>●</td><td></td><td>●</td></tr><tr><td>Orderful</td><td>●</td><td>●</td><td>●</td><td>●</td><td></td></tr><tr><td>Valence</td><td></td><td>●</td><td>●</td><td></td><td>●</td></tr><tr><td>Descript</td><td></td><td>●</td><td></td><td>●</td><td>●</td></tr></tbody></table>
-<p>But everyone we spoke with shared an “aha!” moment where they realized a minutes-long Claude Tag conversation replaced days of work or uncovered insights that would otherwise have remained hidden.</p>
-<p>The most common are contained in this guide, each with practical implementation details designed to help founders find and deploy the use cases that will move the needle for their team. Here are some examples of how the needle moved for the startups we spoke with:</p>
-<p><img src="https://assets.claude.com/547f3af27e33331c1409324c549d765f790ca68d.svg" alt="Campfire"></p>
-<p>21</p>
-<p>minutes from Slack mention to open PR</p>
-<p><img src="https://assets.claude.com/5348eaceef888ace36b50da1a6c9f8126ad2f1bb.svg" alt="NavigateAI"></p>
-<p>134</p>
-<p>pull requests merged from Slack threads</p>
-<p><img src="https://assets.claude.com/6b65c9f5d995c188f6273248826bbe5fc494b4ff.svg" alt="Moritz"></p>
-<p>5</p>
-<p>minutes for the daily end-of-shift update, down from 1 hour</p>
-<p><img src="https://assets.claude.com/5855d903e0e618842304aaf2e9b02e7d648a90e2.png" alt="Valence"></p>
-<p>&lt;1</p>
-<p>hour from client ask to no-code solution</p>
-<p><img src="https://assets.claude.com/dcd269d39d743ba04bbf4a2e803b60367c0d6b88.svg" alt="Orderful"></p>
-<p>2</p>
-<p>days from Slack question to production</p>
-<p><img src="https://assets.claude.com/05128b9e935b6625beecc1bc4c6fa08814473e3e.svg" alt="Descript"></p>
-<p>Days to hours</p>
-<p>of recurring reporting prep</p>
-<p>In this guide, we share the most common use cases, channels, and collective insights from leading startups for using Claude Tag.</p>
-<h2>Top channels to tag Claude</h2>
-<p>The eight startups we spoke with use Claude Tag across Slack, but a handful of channels came up again and again as the best places to start.</p>
-<h2>01 Claude on call</h2>
-<p>Example setups:</p>
-<p>Channels</p>
-<p><code>#on-call</code> <code>#alerts-ci</code> <code>#deploy-watch</code> <code>#support-escalations</code></p>
-<p>Connectors</p>
-<p>GitHub, GitLab, Sentry, dbt, PagerDuty, Linear, Datadog, Jira, Grafana, incident.io</p>
-<p>Threads and routines</p>
-<p>Incident response, morning incident digest, Monday on-call handoff, daily health summary, hourly incident recap</p>
-<p>Starter instruction</p>
-<p>@Claude remember for this channel: monitor alerts and immediately triage each one in its own thread. Check for an existing ticket. Query the data first, then theorize, and separate what you verified from what you inferred. If it's real, name the likely root cause with links, tag the owner, and open a draft PR only if the fix is contained. If no action is needed, say so. After each incident, add what you learned to [lessons file].</p>
-<p>Triage channels are notoriously noisy. There are constant interruptions from Sentry errors, Datadog alerts, customer bug reports, and support requests making it difficult to find the signal from noise. It's usually the first task teams hand to Claude.</p>
-<p>With Claude in the channel as <a href="https://claude.com/resources/articles/ai-ci-cd-on-call">a first responder</a>, the first pass is often done before the on-call engineer opens their laptop. Claude reads each item as it lands, investigates the codebase and the tools it has access to, and shares what it found. If the fix is contained, it opens a draft PR; if not, it routes the issue to the right person with the investigation attached. In these setups, a person reviews each fix before it merges, and only genuinely new problems need someone to start the investigation themselves.</p>
-<p>At Campfire, which builds an AI-native ERP for finance teams, an engineer tagged Claude on a report that some of its AI agent’s finished answers weren’t reaching users. Claude had a PR open 21 minutes later, and it merged that afternoon.</p>
-<h3>Kikoff: A first responder in every triage channel</h3>
-<p>Kikoff is a fintech startup that helps consumers build credit, solve liquidity needs, and achieve financial security. Claude Tag is the first responder in triage channels across the company, including:</p>
-<ul><li><code>#deploys</code>: Claude decides what to watch after each release and flags anything it broke.</li><li><code>#alerts-ci</code>: When a build fails, Claude finds out why and proposes a fix as a draft PR.</li><li><code>#alerts-sentry-backend</code>: Claude takes the first pass on Sentry exceptions and crashes.</li><li><code>#dog-fooding</code>: Claude investigates what employees flag while dogfooding and tags the right owner.</li><li><code>#support</code>: Claude takes the first pass on support tickets.</li></ul>
-<p>Kikoff started with Claude contributing to the conversation only when mentioned, and the biggest wins came once the team let it jump in on its own. When sign-up broke, Claude traced it to a backend change, sized the impact, named the team that owned the fix, and opened a draft PR so the app would fail softly in the meantime.</p>
-<p>Claude flags that sign-up is broken, traces it to a backend change, sizes the impact, names the team that owns the fix, and opens a draft PR so the app fails softly. A recreated conversation from Kikoff. Names and images have been modified. Used with permission from Kikoff.</p>
-<blockquote>“I’m always hyped when Claude catches an issue before a monitor or human does. One person can only personally manage so much context, Claude Tag helps us organize and own some context, and we manage the outcomes.”</blockquote>
-<p>Alex Dejeu, engineering manager at Kikoff</p>
-<h3>NavigateAI: Fixing bugs with fragmented context</h3>
-<p>NavigateAI builds AI copilots for construction field teams. They run Claude Tag in about 90 channels for alert triage, bug bashes, quick feature building, and support escalations. Since June, Claude has opened about 223 PRs straight from Slack threads and 134 have merged with a median of two hours from open to merge.</p>
-<p>Triage has been a particularly valuable use case for NavigateAI. Because Claude has so much context, it can find unintuitive root causes to issues that may have been missed at first glance.</p>
-<blockquote>“Our biggest ‘wow!’ moment with Claude Tag was when we were trying to debug a load issue, which seemed to be caused by a customer (since their calls were failing). A normal human response would be to continue chasing down that customer. But because Claude had access to so many other data sources, it actually found that it was from an uninstrumented internal cron job that was running during the same time.”</blockquote>
-<p>Mike Chen, head of engineering at NavigateAI</p>
-<p>With Claude, mean time to resolve issues has improved. In one case, Claude had the root cause eight minutes after a Sentry alert fired, and the fix was merged 93 minutes after the alert.</p>
-<p>“Fast-moving startups typically have to pick speed over structure. Claude Tag gives us both. It’s a brain that connects the dots across all our tools, so we get the structure without having to build it ourselves,” said Mike.</p>
-<h2>02 Thread to PR</h2>
-<p>Example setups:</p>
-<p>Channels</p>
-<p><code>#quick-wins</code> <code>#bug-bash</code> <code>#product-feedback</code> <code>#feature-requests</code> <code>#ux-papercuts</code> <code>#tech-debt</code> <code>#design-polish</code></p>
-<p>Connectors</p>
-<p>GitHub, GitLab, Linear, Jira, Confluence, Notion, Figma, Sentry</p>
-<p>Threads and routines</p>
-<p>One request per thread, weekly backlog sweep, daily PR roundup, weekly shipped recap</p>
-<p>Starter instruction</p>
-<p>@Claude remember for this channel: when someone describes a bug or small feature, work on it in its own thread. Check for an existing ticket and read the related code first. If details are missing, ask for them or for a real example instead of guessing. If the change is small and contained, open a draft PR with a short summary of what changed and how you tested it. Never merge; a person reviews and approves. If it's too big or risky, say why and suggest a ticket.</p>
-<p>Speed is one of a startup’s biggest advantages, but often small requests that delight users can get lost in the shuffle. The intelligence is often gathered by customer-facing teams, submitted in Slack, and, if it's not overlooked, eventually makes its way to Linear or Jira where it’s prioritized against hundreds of other tickets.</p>
-<p>With Claude Tag, anyone can draft the PR, technical or not. Surface an idea in a thread, get live feedback from product, engineering, and GTM in the same place, and Claude turns the thread into a draft PR that reflects everyone’s input.</p>
-<p>Many of the startups we spoke with used Claude Tag for the “light and delight” features or to remove papercuts that are quick to review but would otherwise not get prioritized.</p>
-<h3>Orderful: From Slack exchange to production feature in two days</h3>
-<p>Orderful is an EDI platform that connects companies with their trading partners, through an API or straight from the browser. Its customers trade standard documents with their partners through the platform.</p>
-<p>One document type, the 753, wasn’t supported in Orderful’s web app. The request had sat in the backlog, and shipments for one large retailer were delayed.</p>
-<p>When an account manager followed up in Slack, the PM tagged Claude in: “@Claude, you should build one.” Claude asked for real examples of the document so it could build to the actual format, then opened a draft PR adding 753 support.</p>
-<p>Claude confirms a fix works on a real 753 transaction. Names and images have been changed. Used with permission from Orderful.</p>
-<p>The next morning, Claude filed a ticket for the accompanying 754, the retailer’s response, and opened a second PR. Both were in production about two days after the Slack exchange.</p>
-<p>“Something that took weeks or months before just took a Slack conversation,” said Piers MacDonald, CTO at Orderful. “Light features with hard-to-prove value used to get stuck in the backlog. Now they have a way out.”</p>
-<h3>Valence: From feature request to rollout</h3>
-<p>Valence works with the world’s largest employers to connect enterprise talent and performance with Nadia, an AI coach. When a Valence engineer explained in Slack how to address an urgent product change requested by an important client, Claude didn’t just follow directions, it identified additional changes that needed to be made as the same configuration lived in two spots. Without Claude, the initial change would have been incomplete.</p>
-<p>Claude calls out that a requested change is actually two changes. Used with permission from Valence.</p>
-<blockquote>“It didn’t just agree with the expert. It caught duplicated configuration, the kind of thing humans lose track of.”</blockquote>
-<p>Sameer Bansal, principal AI engineer at Valence</p>
-<p>In another case, a client urgently asked for a customization. Claude checked the code and, working with an engineer, confirmed it could ship with no code change. In under an hour, a teammate had a solution ready for the client.</p>
-<h2>03 Company brain</h2>
-<p>Example setups:</p>
-<p>Channels</p>
-<p><code>#ask-anything</code> <code>#company-wiki</code> <code>#product-questions</code></p>
-<p>Connectors</p>
-<p>GitHub, Notion, Google Drive, Linear, Jira, Confluence, Granola, Metabase</p>
-<p>Threads and routines</p>
-<p>One question per thread, decision log updates, weekly stale doc check, repeat questions recap</p>
-<p>Starter instruction</p>
-<p>@Claude remember for this channel: answer questions from our code, docs and past threads, and link your sources. If sources disagree, check the code, give the current answer, and flag the stale doc. If you aren’t sure, say so and tag the owner. When a thread reaches a decision, record it in [docs location]. Anything going to a client needs a human check first.</p>
-<p>At a startup, institutional knowledge often lives in people's heads, from the intricacies of product billing codes to where the onboarding docs are hosted.</p>
-<p>For many of the startups we spoke with, Claude Tag has become the company brain. Claude answers with the source, and tags the owner when it isn't confident. It keeps that knowledge current too: when a thread reaches a decision, Claude can record it in your docs the same day and flag docs that have gone stale.</p>
-<p>Example exchange.</p>
-<h3>Moritz: A live source of truth from intake to staffing</h3>
-<p>Moritz is an AI-native law firm that promises a same-day turnaround on contracts, against what Moritz cites as an industry standard of at least three weeks. Everything around the legal work, from intake and quoting to staffing and follow-up, lives in Slack, with a thread per matter and a channel per client.</p>
-<p>Now everyone from the CEO to paralegals asks Claude first. Questions that took up to 30 minutes of searching in Slack get answered in under two. The end-of-shift update, now drafted from the day’s threads, went from about an hour of assembly to a five-minute edit.</p>
-<p>That time goes back to legal work. Claude Tag handles the administrative work around a case, like follow-up questions, reminders, and status updates. It can’t access client documents or privileged conversations with Moritz’s lawyers.</p>
-<blockquote>“A firm working across 44 countries generates hundreds of one-off questions a month that no one will ever build a feature for. Claude Tag answers them from our own history in Slack. Every answer is a thread with links, so institutional memory compounds.”</blockquote>
-<p>Stefan Mandaric, co-founder and CTO at Moritz</p>
-<h3>Campfire: Customer experience on demand</h3>
-<p>One Slack channel in particular “exploded in popularity”: their CX (or customer experience) channel. Sales uses this channel “to validate certain functionality during prospect conversations,” rather than having to “ping 10 different people.”</p>
-<p>This type of channel is particularly effective because sales can answer in the moment, while the customer is paying attention, and can operate more independently and confidently in early customer conversations.</p>
-<blockquote>“Claude Tag basically acts as our central knowledge base.”</blockquote>
-<p>Nancy Jin, AI engineering manager at Campfire</p>
-<h2>04 Self-serve data</h2>
-<p>Example setups:</p>
-<p>Channels</p>
-<p><code>#data-requests</code> <code>#ask-revops</code> <code>#metric-definitions</code></p>
-<p>Connectors</p>
-<p>dbt, GitHub, Metabase, BigQuery, Snowflake, Databricks, Notion</p>
-<p>Threads and routines</p>
-<p>One question per thread, weekly pre-standup readout, launch and experiment readouts, pipeline failure triage, new question triage</p>
-<p>Starter instruction</p>
-<p>@Claude remember for this channel: answer from our governed models and the definitions in [data skills repo]. If the data isn’t covered there, say it’s unvalidated instead of guessing. Lead with the answer, then give the number, what’s driving it, and any caveat. Check recent incidents, releases, and Slack discussions before explaining a change. If a metric’s definition is unclear, ask which one we mean. For anything important, share your plan or SQL before you run it. Separate what you verified from what you assumed, and list any open data quality warnings at the end of your answer. If someone finds a mistake, draft a fix for a data team member to review. If a question comes up twice, suggest scheduling it.</p>
-<p>At a fast-growing startup every function wants numbers, and the data team has to decide whose request comes first. With Claude Tag connected to your data, anyone can ask in plain English without waiting in the data team’s queue.</p>
-<p>This is a use case we have adopted as well. <a href="https://claude.com/resources/articles/self-service-data-analytics-in-slack-how-anthropic-deploys-claude-tag-for-ad-hoc-questions">In one of our data channels over a month, Claude Tag answered more than 75% of questions people posted, typically within a minute or two</a>. It works from governed data and the same definitions analysts use, which live in a versioned repo that Claude re-reads in every conversation.</p>
-<p>From Self-service data analytics in Slack: how Anthropic deploys Claude Tag for ad-hoc questions.</p>
-<h3>Descript: Answering ad-hoc data requests</h3>
-<p>Descript is an AI-powered video editing platform. Claude Tag is now the first line of support for data requests and initial analyses. Product, growth, RevOps, and finance ask questions in Slack and get answers grounded in Descript’s dbt models.</p>
-<blockquote>“I used to write complicated SQL and refresh the numbers by hand every week or month. Now I’ve replaced several data-team dashboards with my own Claude artifacts, and I no longer refresh them by hand.”</blockquote>
-<p>Daisy Zhang, head of growth marketing at Descript</p>
-<p>Daisy’s recurring reporting prep went from days to hours.</p>
-<p>The growth team, for example, asks why lifecycle subscriptions dropped, whether paid search is losing last-touch credit to other channels, or how long a self-serve account takes to become an enterprise opportunity. The data team tracks the artifacts Claude generates to see which data assets matter most across teams, and spends its own time on strategic questions and on building the context that makes self-serve work.</p>
-<blockquote>“The promise of business intelligence has always been self-serve for business users. I’d never seen it actually realized until we had Claude Tag set up with immense context for our data.”</blockquote>
-<p>Jen Huhn, monetization PM at Descript</p>
-<h3>Orderful: From question to dashboard</h3>
-<p>At Orderful, self-serve analytics spans conversational analytics and full data builds: anyone can go from a question in Slack to a dashboard merged to production. The key is a semantic layer that encodes agreed definitions and metrics, so every answer and every build uses the same definitions.</p>
-<blockquote>“We trust the output because a semantic layer constrains the SQL, CI gates the builds, and there’s a process for agreeing on definitions. Without those, you get confident-looking wrong answers. Once those guardrails were in place, connecting Claude Tag took under 30 minutes. Now teammates build together in shared Slack threads instead of solo sessions.”</blockquote>
-<p>Piers MacDonald, CTO at Orderful</p>
-<h2>05 Reporting and handoffs</h2>
-<p>Example setups:</p>
-<p>Channels</p>
-<p><code>#sales-pipeline</code> <code>#customer-handoffs</code> <code>#standup-summary</code> <code>#qbr-prep</code></p>
-<p>Connectors</p>
-<p>Notion, Google Drive, Gong, Salesforce, Gainsight</p>
-<p>Threads and routines</p>
-<p>End-of-day status draft, pre-QBR brief, deal handoff</p>
-<p>Starter instruction</p>
-<p>@Claude remember for this channel: draft each recurring report from our threads, docs, and data, and link your sources. Lead with what changed and what needs a decision. Separate what you verified from what you assumed, and flag anything missing instead of filling the gap. Post the draft in its own thread for [owner] to edit. Nothing goes out until a person approves it. If a report keeps getting the same edits, suggest updating these instructions.</p>
-<p>Many of the examples we’ve covered are reactive: something happens, Claude responds. Routine reporting is work Claude owns on a schedule, the way a teammate owns a recurring deliverable.</p>
-<p>Example of using Routines in Claude Tag.</p>
-<p>You describe the outcome once; Claude runs it every time and posts the result where the team already works.</p>
-<h3>Valence: Deal reviews and handoffs</h3>
-<p>Valence is setting Claude up to brief the team before every quarterly business review, with customer health, open deals, blockers, and next steps. They are also working to make the handoff from sales to customer success when a deal closes more seamless. Claude saves the team time by helping to aggregate details across their engagement and often finds key items they may have missed.</p>
-<p>“When a deal closes, Tag builds the handoff from the deal history, calls and contract: who’s who, what was promised, what’s customized, and what’s still open. Customer success then reviews it before their kickoff,” said Sameer.</p>
-<h2>06 Getting started checklist</h2>
-<p>The checklist below pulls together these startup teams’ best practices so you can apply them to your own workflows.</p>
-<p>Before launch</p>
-<p>Check the prerequisites.</p>
-<p>Claude Tag is in public beta on Claude Team and Enterprise plans, and isn’t available on Free, Pro, or Max. You’ll need a Claude organization Owner and a Slack workspace admin to connect the two. An admin must also turn on Routines, and Team plans need usage credits before Claude responds.</p>
-<p>Set up Claude’s access with a bundle.</p>
-<p>In channels, Claude works under its own <a href="https://claude.com/docs/claude-tag/concepts/agent-identity">agent identity</a>, with service accounts rather than anyone’s personal login. Group the connectors, repos, and instructions it needs in a <a href="https://claude.com/docs/claude-tag/admins/add-connections">bundle</a>, and attach them org-wide, per workspace, or per channel. That sets what Claude can reach in each place, and everyone in a channel gets the same access. Start narrow: only what the first channel’s job needs.</p>
-<p>Experiment in a private channel.</p>
-<p>Nearly half the startups we spoke with started their Claude Tag journey by having a small cross-functional team experiment in a private channel. “Start private with a mix of roles, then move to a group channel,” said Sameer.</p>
-<p>Determine the boundaries.</p>
-<p>By default, anyone in your Slack workspace can use Claude, even without a Claude account. You can <a href="https://claude.com/docs/claude-tag/admins/restrict-access">restrict access</a> to your org and limit search to channels Claude is in. On Enterprise, you can also restrict access to specific roles or chosen channels.</p>
-<p>Set clear expectations for what Claude can do and can never do. Several teams we spoke with let Claude open draft PRs, but people review and merge. For Orderful, <a href="https://claude.com/resources/articles/claude-code-guide-for-startups">Claude Code</a>, not Tag, handles “infrastructure changes, audits, sensitive data.” For a “hard call,” such as “a PR that touches more than one service,” Claude gets a second opinion. Moritz doesn’t give Claude Tag access to client documents or privileged conversations with its lawyers.</p>
-<p>Start your security review early.</p>
-<p>The usual questions are data retention and what Claude can reach, and the <a href="https://claude.com/docs/claude-tag/concepts/security-and-data">security</a> and <a href="https://claude.com/docs/claude-tag/concepts/data-lifecycle">data lifecycle</a> pages answer both. Claude Tag isn’t available to orgs with zero data retention turned on, a customer-managed encryption (CMEK) policy, or the HIPAA configuration, and it isn’t covered by our Business Associate Agreement, so check that before you plan a rollout.</p>
-<p>Set a budget and alerts.</p>
-<p>Claude Tag bills by usage, so an early conversation avoids surprises as adoption grows. You can <a href="https://claude.com/docs/claude-tag/admins/set-spend-limit">set spend limits</a> overall and per channel, choose the model per channel, and <a href="https://claude.com/docs/claude-tag/admins/attribute-costs">attribute costs</a> by user using the Enterprise Analytics API. Orderful runs an org-wide cap with alerts at 75% and 90%. “We have extreme ownership on the channel costs. The owner justifies that ‘yes, this spend is reasonable for the output / outcomes,’” said Alex Dejeu, engineering manager at Kikoff. Use your first channel’s actual costs to size the next one.</p>
-<p>Deployment</p>
-<p>Pick one clear task in a channel your team already uses, like on-call alerts or bug triage.</p>
-<p>“We experiment on certain teams, see what works, then once confident we’ve worked out the kinks, we push the idea out to other teams to add to their own similar channels as well. We want to avoid trust breaking experiences with folks with lower tolerance to AI mistakes,” said Alex Dejeu, engineering manager at Kikoff.</p>
-<p>Prime your experts and culture bearers.</p>
-<p>Have the people your team already trusts use Claude first, and in the open.</p>
-<p>“Going back and forth with Claude in the open has been productive and fun. Several people in sales and customer success have watched experts [interact with Claude Tag], then started asking Claude themselves, and got value fast,” said Sameer Bansal, principal AI engineer at Valence.</p>
-<p>Tune the noise.</p>
-<p>Multiple startups told us they needed to adjust Claude’s chattiness. Too chatty is one risk.</p>
-<p>“Conversation in ad hoc requests can sometimes get noisy. We’ve been trying to tune down the responsiveness here and also be more principled on what we use Claude on ad hoc requests for,” said Mike Chen, head of engineering at NavigateAI.</p>
-<p>Too little chattiness is also a risk, however. In busy channels, “You either have to @ every time or it won’t do much,” said Will Hu, cofounder at Flagler Health. And “if no one is watching a channel closely or interacts with it, it will sit idle.”</p>
-<p>Have teammates connect their own accounts.</p>
-<p>The admin bundles from setup are what Claude can reach for everyone in a channel. <a href="https://claude.com/docs/claude-tag/concepts/personal-connectors">Personal connectors</a> work differently: Claude acts with the permissions of the person asking, so it can pull from their docs, inbox, or CRM once they approve it (an Owner adds the connector for the org first, and on Enterprise an admin manages personal connectors). The answer still posts in the channel, so choose “Allow with review” for anything sensitive.</p>
-<p>Write channel instructions like you’re onboarding a new hire:</p>
-<p>what to check first, when to open a PR, when to ask, and that “no action needed” is a valid answer.</p>
-<p>Give Claude feedback in the channel, not in DMs.</p>
-<p>Correct it in the thread. It <a href="https://claude.com/docs/claude-tag/users/memory">remembers per channel</a>, and teammates learn how to work with it by watching. For a lasting fix, ask Claude to update its memory for this channel.</p>
-<p>Two Valence employees thank a colleague after watching them work through a question with Claude in the open. Used with permission from Valence.</p>
-<p>Not sure where to go next? Tag Claude and ask what it has learned about your org and which use cases it would expand to.</p>
-<p>Moritz’s co-founder and CTO, Stefan Mandaric, asked Claude to recommend use cases for each team. Fifteen minutes later, it had read the firm’s Slack channels, Linear issues, Notion SOPs, Drive, and Metabase dashboards, and published 25. “18 of 25 worked with no further setup. That became our rollout plan.”</p>
-<h2>Last word: what we learned from the wow moments</h2>
-<p>The wow moments weren’t always about speed. Often, Claude found something no one had asked it to look for. Sometimes the surprise was restraint. And sometimes the surprise was the unexpected exchanges. “Eventually you get used to Claude jumping in on jokes, and you soon appreciate that it’s an easy audience and the first one to laugh,” said Piers MacDonald, CTO at Orderful.</p>
-<p>Recreated Orderful conversation in Slack. Used with permission from Orderful.</p>
-<p>We hope you found this guide useful. Special thanks to Campfire, Descript, Flagler Health, Kikoff, Moritz, NavigateAI, Orderful and Valence for sharing their experiences and insights.</p>
-<h2>Additional resources</h2>
-<h3>Get started</h3>
-<ul><li><a href="https://claude.com/product/tag">Claude Tag overview</a></li><li><a href="https://claude.com/docs/claude-tag">Claude Tag documentation</a></li><li><a href="https://claude.com/docs/claude-tag/admins/setup-overview">Set up Claude Tag</a></li><li><a href="https://claude.com/docs/claude-tag/admins/setup-oncall">On-call guided setup</a></li><li><a href="https://claude.com/docs/claude-tag/admins/troubleshooting">Troubleshoot setup</a></li></ul>
-<h3>Connect your tools</h3>
-<ul><li><a href="https://claude.com/docs/claude-tag/admins/add-connections">Add connections and bundles</a></li><li><a href="https://claude.com/docs/claude-tag/admins/configure-github">Configure GitHub access</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/personal-connectors">Personal connectors</a></li><li><a href="https://claude.com/docs/claude-tag/admins/network-requirements">Network requirements</a></li></ul>
-<h3>Access, security and spend</h3>
-<ul><li><a href="https://claude.com/docs/claude-tag/admins/restrict-access">Restrict access</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/agent-identity">How agent identity works</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/security-and-data">Security and data</a></li><li><a href="https://claude.com/docs/claude-tag/concepts/data-lifecycle">Data lifecycle and deletion</a></li><li><a href="https://claude.com/docs/claude-tag/admins/for-slack-admins">What the Claude Slack app can access</a></li><li><a href="https://claude.com/docs/claude-tag/admins/set-spend-limit">Set spend limits</a></li><li><a href="https://claude.com/docs/claude-tag/admins/attribute-costs">Attribute costs to users</a></li></ul>
-<h3>Work with Claude in Slack</h3>
-<ul><li><a href="https://claude.com/docs/claude-tag/users/when-claude-responds">Control when Claude responds</a></li><li><a href="https://claude.com/docs/claude-tag/users/commands">Commands Claude Tag understands</a></li><li><a href="https://claude.com/docs/claude-tag/users/memory">Channel memory</a></li><li><a href="https://claude.com/docs/claude-tag/users/proactivity">Set up routines</a></li></ul>
-<h3>Use cases</h3>
-<ul><li><a href="https://claude.com/docs/claude-tag/users/use-cases">Use case library</a></li><li><a href="https://claude.com/docs/claude-tag/users/use-cases/fix-bugs">Fix bugs</a></li><li><a href="https://claude.com/docs/claude-tag/users/use-cases/answer-data-questions">Answer data questions</a></li></ul>
-<h3>How Anthropic uses Claude Tag</h3>
-<ul><li><a href="https://claude.com/resources/articles/ai-ci-cd-on-call">How Claude Tag serves as Anthropic’s first responder for CI/CD failures</a></li><li><a href="https://claude.com/resources/articles/how-anthropic-enables-self-service-data-analytics-with-claude">How Anthropic enables self-service data analytics with Claude</a></li></ul>
-<p>Article</p>
-<p>Nov 10, 2026</p>
-<h3>How Curative is building a national provider network with agents on Claude</h3>
-<p>Curative’s deal-making agent negotiates 2,000+ provider contracts a week.</p>
-<p>Claude PlatformClaude Code</p>
-<p>Article</p>
-<p>Nov 9, 2026</p>
-<h3>Safely scaling multi-agent teams with Claude Fable 5.2</h3>
-<p>How a team of 1,000 agents running an early version of Claude Fable 5.2 reproduced a formal proof of Fermat's Last Theorem with general tools, a shared database, and layered safety controls.</p>
-<p>(opens in new tab)</p>
-<p>Article</p>
-<p>Nov 9, 2026</p>
-<h3>Which Claude model should you build with?</h3>
-<p>How to choose between Claude Fable 5.2, Opus 5.5, Sonnet 5.5, and Haiku 5.5 by task, cost, and effort level.</p>
-<p>Claude PlatformClaude Code</p>
-<p>(opens in new tab)</p>
-<p>Article</p>
-<p>Oct 27, 2026</p>
-<h3>Manage costs and demonstrate ROI for Claude Code on Google Cloud</h3>
-<p>Best practices for managing costs and measuring return on investment for Claude Code on Google Cloud.</p>
-<p>Claude Code</p>
 <h2>Transform how your organization operates with Claude</h2>
 <p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
 <h3>Get the developer newsletter</h3>
@@ -780,53 +874,6 @@
 <p><em>A registration statement relating to these securities has been filed with the U.S. Securities and Exchange Commission but has not yet become effective. These securities may not be sold, nor may offers to buy be accepted, prior to the time the registration statement becomes effective. Today’s announcement does not constitute an offer to sell or the solicitation of an offer to buy these securities, nor shall there be any sale of these securities in any state or jurisdiction in which such offer, solicitation, or sale would be unlawful prior to registration or qualification under the securities laws of any such state or jurisdiction.</em></p>]]></content:encoded>
     </item>
     <item>
-      <title>JPMorganChase expands Claude Code to more employees across t…</title>
-      <link>https://claude.com/resources/articles/jpmorganchase-expands-claude-code</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/jpmorganchase-expands-claude-code?li=1</guid>
-      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
-      <description>Full title: JPMorganChase expands Claude Code to more employees across the firm</description>
-      <content:encoded><![CDATA[<p>JPMorganChase is rolling out Claude across the firm, to more employees beyond engineers. In the Commercial and Investment Bank, work moves into production faster, and the firm redeploys that capacity against its business priorities.</p>
-<p>Teams are modernizing other legacy systems, and engineers are building their own agents, including pull request review and self-healing agents, and sharing what works.</p>
-<p>Infrastructure and operations teams use <a href="https://claude.com/product/claude-code">Claude Code (opens in new tab)</a> for monitoring, alerting and root cause analysis. The firm's security team uses our frontier models to find and fix vulnerabilities faster, work we first described in <a href="https://www.anthropic.com/glasswing">Project Glasswing (opens in new tab)</a>.</p>
-<h2><strong>Reaching product teams and advisors</strong></h2>
-<p>The people closest to the business are building with Claude too. Product teams turn requirements directly into engineering backlogs, and other teams use Claude Code for risk and controls assessments and program planning.</p>
-<p>Knowledge work is already underway. Much of the product development lifecycle happens outside the code: research, requirements, design and planning.</p>
-<p>In their Asset &amp; Wealth Management business, JPMorganChase is putting the people with the deepest business insight and the boldest ideas alongside their technology and product experts into small, empowered teams. This is helping them to more easily build and deliver customized client investment solutions at scale. Claude Code is now part of their engineering workflow, and teams are moving faster while putting every change through more rigorous testing before it reaches clients.</p>
-<p>Last month, J.P. Morgan Asset Management announced a connector that brings 55ip's ActiveTax Technology® into <a href="https://claude.com/resources/articles/claude-for-financial-advisors">Claude for Financial Advisors (opens in new tab)</a>, putting tax-aware portfolio transition analysis into advisors' daily work.</p>
-<h2><strong>Built for a regulated firm</strong></h2>
-<p>Claude Code runs in controlled environments, including Devspace, the firm’s containerized development platform, on its own infrastructure. The intent is to prevent agents from getting direct access to employee credentials or internal systems. Access widens in stages, and new Claude models go through the firm’s own approval process before anyone there can use them.</p>
-<p>Code ships under the same discipline. Thousands of automated tests and approval gates check every change, and an automated gate returns a hard pass or halt that the pipeline enforces, so Claude can't sign off on its own work. People stay accountable for every production change.</p>
-<p>Over the past year, JPMorganChase’s use of Claude has grown from software engineering to cyber defense to tools for financial advisors, and what JPMorganChase asks of us is shaping what we build for other regulated institutions. Claude working inside the controls of one of the world’s largest financial institutions is what we are building toward.</p>
-<p>Article</p>
-<p>Oct 28, 2026</p>
-<h3>IDC brings Quanta into Claude and adopts Claude across the company</h3>
-<p>IDC integrated Claude as part of its Quanta platform, and it has rolled Claude out across its own business</p>
-<p>Claude Cowork</p>
-<p>Claude Code</p>
-<p>1 more</p>
-<p>: Claude Enterprise</p>
-<p>Claude Enterprise</p>
-<p>Article</p>
-<p>Oct 21, 2026</p>
-<h3>HCLTech joins the Claude Partner Network as a Global Premier partner</h3>
-<p>HCLTech will bring Claude into the solutions it provides for banks, hospitals, telecom companies, and manufacturers.</p>
-<p>Article</p>
-<p>Sep 28, 2026</p>
-<h3>A new approach to agent security with Claude Managed Agents and NVIDIA</h3>
-<p>Note: This blog has been updated from its original version to include additional technical details on Claude Managed Agents.</p>
-<p>Claude Platform</p>
-<p>Article</p>
-<p>Sep 23, 2026</p>
-<h3>How CodeRabbit, Power Digital, and ThoughtSpot scale with Snowflake and Vercel on Claude Marketplace</h3>
-<p>CodeRabbit expanded its Vercel plan through Claude Marketplace, and Power Digital and ThoughtSpot expanded their Snowflake capacity using their existing Anthropic commitment.</p>
-<p>Claude Platform</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
-<h3>Get the developer newsletter</h3>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
-    </item>
-    <item>
       <title>Introducing Claude Fable 5.2 and Claude Mythos 5.2</title>
       <link>https://www.anthropic.com/claude-fable-and-mythos-5-2</link>
       <guid isPermaLink="true">https://www.anthropic.com/claude-fable-and-mythos-5-2?li=1</guid>
@@ -1013,6 +1060,53 @@
 <p>3 Earlier work on modeling AAV capsids and other large symmetric protein systems includes<a href="https://doi.org/10.1073/pnas.2613741123"> FoldaVirus</a>,<a href="https://doi.org/10.1016/j.str.2022.09.005"> EvoDOCK</a> and its <a href="https://doi.org/10.1038/s41467-023-43681-6">symmetric extension</a>, <a href="https://doi.org/10.1038/s41467-024-52138-3">SymProFold</a>, <a href="https://doi.org/10.1093/nar/gkaf422">CapBuild</a>, <a href="https://doi.org/10.1038/s41467-022-33729-4">MoLPC</a>, <a href="https://doi.org/10.1038/s41592-024-02174-0">CombFold</a>, <a href="https://doi.org/10.1101/2022.08.30.505833">Uni-Fold Symmetry</a>, <a href="https://arxiv.org/abs/2608.11341">Apodex Discovery</a>, and the <a href="https://www.biorxiv.org/content/10.1101/2023.06.09.544317v1">“big bang” initialization</a> (the last of which was referenced in the prompt we gave to Claude Mythos 5.2). These methods typically assemble the full structure from separately predicted chains or small groups of chains. Claude was permitted to use known symmetries but was instructed not to rely on assembly. Note that accuracy is measured by comparing Cα RMSD with the experimental structure: 1.2 Å for <a href="https://github.com/aqlaboratory/openfold-3">OpenFold3-preview2</a> and 1.4 Å for <a href="https://doi.org/10.64898/2026.06.03.729735">ESMFold2</a> on AAV2 (<a href="https://www.rcsb.org/structure/1LP3">PDB:1LP3</a>). A capsid counts as accurately modeled if either model came within 3 Å. For AAV2, Claude’s method required about 58 minutes of inference on one NVIDIA H200 GPU for OpenFold3-preview2 and about seven minutes for ESMFold2.</p>
 <p>4 None of the external organizations reviewed the contents of this blog post or the contents of the System Card. Those organizations do not necessarily agree with any of the claims made in either publication.</p>
 <p>5 We ran these tests on Claude Mythos 5.2 because testing the model with reduced safeguards provides the most comprehensive look at model behavior. We expect Fable 5.2 to behave similarly; in some cases, more potential pathways for misuse should be blocked given its stronger safeguards.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>JPMorganChase expands Claude Code to more employees across t…</title>
+      <link>https://claude.com/resources/articles/jpmorganchase-expands-claude-code</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/jpmorganchase-expands-claude-code?li=1</guid>
+      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: JPMorganChase expands Claude Code to more employees across the firm</description>
+      <content:encoded><![CDATA[<p>JPMorganChase is rolling out Claude across the firm, to more employees beyond engineers. In the Commercial and Investment Bank, work moves into production faster, and the firm redeploys that capacity against its business priorities.</p>
+<p>Teams are modernizing other legacy systems, and engineers are building their own agents, including pull request review and self-healing agents, and sharing what works.</p>
+<p>Infrastructure and operations teams use <a href="https://claude.com/product/claude-code">Claude Code (opens in new tab)</a> for monitoring, alerting and root cause analysis. The firm's security team uses our frontier models to find and fix vulnerabilities faster, work we first described in <a href="https://www.anthropic.com/glasswing">Project Glasswing (opens in new tab)</a>.</p>
+<h2><strong>Reaching product teams and advisors</strong></h2>
+<p>The people closest to the business are building with Claude too. Product teams turn requirements directly into engineering backlogs, and other teams use Claude Code for risk and controls assessments and program planning.</p>
+<p>Knowledge work is already underway. Much of the product development lifecycle happens outside the code: research, requirements, design and planning.</p>
+<p>In their Asset &amp; Wealth Management business, JPMorganChase is putting the people with the deepest business insight and the boldest ideas alongside their technology and product experts into small, empowered teams. This is helping them to more easily build and deliver customized client investment solutions at scale. Claude Code is now part of their engineering workflow, and teams are moving faster while putting every change through more rigorous testing before it reaches clients.</p>
+<p>Last month, J.P. Morgan Asset Management announced a connector that brings 55ip's ActiveTax Technology® into <a href="https://claude.com/resources/articles/claude-for-financial-advisors">Claude for Financial Advisors (opens in new tab)</a>, putting tax-aware portfolio transition analysis into advisors' daily work.</p>
+<h2><strong>Built for a regulated firm</strong></h2>
+<p>Claude Code runs in controlled environments, including Devspace, the firm’s containerized development platform, on its own infrastructure. The intent is to prevent agents from getting direct access to employee credentials or internal systems. Access widens in stages, and new Claude models go through the firm’s own approval process before anyone there can use them.</p>
+<p>Code ships under the same discipline. Thousands of automated tests and approval gates check every change, and an automated gate returns a hard pass or halt that the pipeline enforces, so Claude can't sign off on its own work. People stay accountable for every production change.</p>
+<p>Over the past year, JPMorganChase’s use of Claude has grown from software engineering to cyber defense to tools for financial advisors, and what JPMorganChase asks of us is shaping what we build for other regulated institutions. Claude working inside the controls of one of the world’s largest financial institutions is what we are building toward.</p>
+<p>Article</p>
+<p>Oct 28, 2026</p>
+<h3>IDC brings Quanta into Claude and adopts Claude across the company</h3>
+<p>IDC integrated Claude as part of its Quanta platform, and it has rolled Claude out across its own business</p>
+<p>Claude Cowork</p>
+<p>Claude Code</p>
+<p>1 more</p>
+<p>: Claude Enterprise</p>
+<p>Claude Enterprise</p>
+<p>Article</p>
+<p>Oct 21, 2026</p>
+<h3>HCLTech joins the Claude Partner Network as a Global Premier partner</h3>
+<p>HCLTech will bring Claude into the solutions it provides for banks, hospitals, telecom companies, and manufacturers.</p>
+<p>Article</p>
+<p>Sep 28, 2026</p>
+<h3>A new approach to agent security with Claude Managed Agents and NVIDIA</h3>
+<p>Note: This blog has been updated from its original version to include additional technical details on Claude Managed Agents.</p>
+<p>Claude Platform</p>
+<p>Article</p>
+<p>Sep 23, 2026</p>
+<h3>How CodeRabbit, Power Digital, and ThoughtSpot scale with Snowflake and Vercel on Claude Marketplace</h3>
+<p>CodeRabbit expanded its Vercel plan through Claude Marketplace, and Power Digital and ThoughtSpot expanded their Snowflake capacity using their existing Anthropic commitment.</p>
+<p>Claude Platform</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
     </item>
     <item>
       <title>Introducing Personal Finance in Claude</title>
@@ -2972,72 +3066,6 @@
 <ul><li>Provide Claude, Claude Code, and API credits to several hundred Genesis Mission research projects;</li><li>Partner closely with agencies and national laboratories on the administration’s top science priorities, including fusion energy and quantum computing; and</li><li>Provide training, onboarding, and technical support to scientists on Genesis Mission projects, and help agencies new to the Genesis Mission get their first projects running.</li></ul>
 <h3>Accelerating scientific research</h3>
 <p>This commitment is part of our broader effort to support scientific research. Earlier this year we launched <a href="https://claude.com/product/claude-science">Claude Science</a>, an AI workbench that integrates the tools and packages researchers most commonly use, and <a href="https://www.anthropic.com/news/expanding-support-for-scientists">opened 10,000 free and discounted Claude seats</a> for academic scientists. We also expanded our <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science</a> program, which gives credits to researchers on high-impact projects, and kicked off a research preview of the <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">Model Hardware Standard</a>, a shared specification for AI agents to safely operate lab instruments. Our commitment to the Genesis Mission is our next step toward helping researchers everywhere.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>How Block orchestrates Claude Fable across thousands of pull…</title>
-      <link>https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests?li=1</guid>
-      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: How Block orchestrates Claude Fable across thousands of pull requests</description>
-      <content:encoded><![CDATA[<p>Block builds tools that help businesses and individuals participate in the economy, including Square for sellers and Cash App for consumers. Bradley Axen leads AI capabilities at Block, where his team builds end-to-end AI products, including Buzz, an open-source workspace for <a href="https://claude.com/blog/building-effective-human-agent-teams">human-agent teams (opens in new tab)</a>, and partners with the Square and Cash App teams to build customer-facing AI features. Brad spoke with Anthropic about how frontier models like Claude Opus 5 and Claude Fable 5 have transformed what it means to be an engineer, how Block applies agent orchestration patterns with Fable, and the role of safeguards when every employee has access to frontier models.</p>
-<h2><strong>Frontier models have made meaningful progress in 2026. How has this technology impacted how you work?</strong></h2>
-<p>The biggest impact AI has had on our work at Block is how we build things, and you couldn't overstate how impactful that is. We saw the beginning of it in 2025 with tools like Claude Code, which at the time, required a lot more manual intervention. As models become more intelligent, design and engineering work has shifted toward designing the migrations themselves, reviewing agent behavior, and building more customer-facing features, which was always the goal.</p>
-<p>The next phase is to bring these transformative technologies to our customers, through Block’s products. There's just as much value AI can bring to helping a small business handle the back-of-house operations it doesn't want to spend its time on, or to helping a Cash App customer manage their finances. With Claude, we have a whole new lever in technology that can change what people expect software to do for them. Imagine if AI could respond to customer needs and build new interfaces on the fly? Increasingly, I think our products will be built on demand with AI to solve specific problems.</p>
-<h2><strong>As frontier intelligence evolves, what can your team do now that it couldn't do a few months ago?</strong></h2>
-<p>The biggest thing that has changed with Claude’s newer frontier models is the scale at which we can build software. Writing code is still the core component, but now we'll do company-wide migrations with AI. We've all had that dream for a long time, and in 2025 it rarely panned out. Before Claude Fable 5, you had to have a particularly well-shaped problem for frontier models to really shine.</p>
-<p>In 2026, AI is a major part of how we run all large-scale code migrations. For us, a migration might mean hundreds or thousands of individual pull requests across multiple repos and millions of lines of code. In the past, humans had to coordinate that work, and models could take on one or a few PRs at a time. With Fable, we're seeing it orchestrate the work across many sessions. A human engineer steers, and Fable focuses on the higher-level design work: data models, API specs, algorithms. It then directs up to dozens of smaller, more cost-effective models like Opus or Sonnet to do the individual tasks, such as making the actual file edits and running tests.</p>
-<p>The economics work out well. Early results show the orchestrator using frontier tokens for complex, upfront planning before driving a higher percentage of tokens to smaller worker models, without a drop in quality. We run the whole setup on Buzz, our open source collaboration workspace where humans and AI agents work side by side in shared channels and threads. It gives us great visibility into how the team is progressing.</p>
-<p>In any given migration, we might merge a thousand pull requests orchestrated by Fable. That lets engineers focus on the hard design decisions instead of the mechanical work.</p>
-<h2><strong>When do you use Claude Fable models over other options?</strong></h2>
-<p>A lot of models have started to close the gap since, and Opus is very good too, but the moment Fable came out, it was a big step change in how large a problem you could take on at once. Teams at Block gravitated to that and started figuring out what it means to move up another level of abstraction, another level of scale.</p>
-<p>Now, a lot of our conversation is about model efficiency. That's where model orchestration comes in: Fable’s frontier intelligence is most valuable when you're tackling a big problem with it, and then we look to smaller models to fill in a lot of the details on code changes. It's literally the first time I can remember since we started using LLMs for code where the answer wasn't just &quot;use the most frontier model 100% of the time.&quot;</p>
-<p>Model orchestration is a big part of how we build things today, and it means we need new tools. Some tools are very single-conversation focused, and the interface doesn't keep up with you having 45 agents working with you all the time. That's another place Buzz comes in. We have multi-agent workflows in Buzz, and we really think the future is multiple people talking to many agents, with the organization picking the efficient models for routine tasks and frontier models for bigger problems.</p>
-<h2><strong>What's the hardest problem you've thrown at Fable?</strong></h2>
-<p>The first is large-scale migrations: multiple-thousand-PR migrations where Fable orchestrated the whole system that did the work.</p>
-<p>The second is taking a large codebase, something in the neighborhood of a million lines of code, and making sure it's not growing tech debt every day. We are shipping more PRs than ever before. People are shipping a lot more features and a lot more changes, so our systems accumulate tech debt faster than ever, and we've been missing the corresponding thing that speeds up our ability to maintain them. That's finally happening. We have agents that do daily or weekly passes across a whole codebase asking, &quot;How's it going in here? What do we need to clean up and consolidate?&quot;</p>
-<h2><strong>With broad access, how do you drive efficient use of frontier models?</strong></h2>
-<p>We give anyone in a technical role full access to the most frontier models, because a big part of our strategy is to always be working at the edge of what's possible.</p>
-<p>Using Fable to fix a typo in a README is a very bad use of resources. So we needed better systems for suggesting which model to use for given tasks. To accomplish this, we’ve been building an auto-selector that helps employees choose which model to use, when. Our multi-agent systems powered by a mix of larger and smaller frontier models help too.</p>
-<p>A big part of our goal as a company is to operate efficiently by default, and that's the skill we're building now. We've got a lot of great models to choose from. If everyone gets good at picking the right model for the right task, our cost effectiveness goes a lot further without slowing us down.</p>
-<h2><strong>Do you advise specific optimization strategies, like effort levels?</strong></h2>
-<p>Even as someone who works with LLMs all day, I almost feel like a model at xhigh effort is a different model than the same model at medium. I don't think of effort levels as a spectrum you walk along. Fable on low might just be better than another model on xhigh. So I think of it as a bigger grid we need to optimize against. Every single use case we benchmark, we check not just every model but every effort level of every model.</p>
-<p>As someone working centrally on how we do AI, I want recommendations that are really clear, such as: &quot;Use this model on high as the default for this kind of task.&quot; We have to make the tools do that automatically as much as possible, and then let experts explore when they want to.</p>
-<h2><strong>How are you thinking about incorporating safeguards with today's frontier models?</strong></h2>
-<p>Some things are so critical that you need guarantees, and we're not ready to let LLMs loose on our codebase. We always leave merges to main and deploys to production up to people, along with related changes like feature flags. Agents can make code changes, but those changes have to pass our security checks, and then two humans have to approve the deploy. That dual-approval layer makes it impossible for an LLM to push those kinds of changes on its own.</p>
-<p>At a lower level, it's surprising how many things an employee can do on their laptop if they're not paying attention, things you assume humans won't do because they know not to. That pushes us in interesting directions. I think a lot of the future of work is remote workstations, because they're easier to secure (and they help with other problems LLMs have, like filling up disk space). A big part of our security story is building systems that are secure by default: a network allow list instead of a deny list, and things like that, which stop the worst kinds of problems.</p>
-<p>We also try to get as much as possible out of the model loop. A lot of our security guardrails are really cheap, efficient checks that run without the model needing to be involved. We build those into the interfaces people use to do work. Sometimes it's even a regex. Increasingly, smaller classifiers are part of the picture too.</p>
-<p>Then in the day to day, there's a whole class of things you want to enable to make people productive, where blocking isn't worth it. We intentionally let the model open PRs, review code, and query our logging systems and analytical databases, all to help people move faster.</p>
-<p>That's where the model's built-in safeguards are really critical. By that, I mean the way Fable and other frontier models are tuned to not take part in dangerous activities, plus <a href="https://www.anthropic.com/news/claude-fable-5-mythos-5">Anthropic's own safety classifiers (opens in new tab)</a>. In our testing, even if someone asks Claude to &quot;hack around&quot; our dual-approval system, it refuses to try to bypass it. It's something we benchmark, too.</p>
-<h2><strong>Any advice for other engineering teams working with frontier models?</strong></h2>
-<p>We have thousands of people working with AI who are pushing the frontier of what it can do. They're learning what works as individuals, and they're improving the systems around them. I've got a bunch of local skills on my laptop that make it possible for me to work in our Square web front end, for example, even though I’m not a front-end developer by trade. Organizational maturity comes when all of this context and organizational knowledge is remembered at a system level, not an individual level.</p>
-<p>Our goal is to document everything we're learning from people doing the work and put it into a system where everyone benefits, so every time you run an agent, you know it has the best context available to contribute to your work.</p>
-<p><em>Get started with <a href="https://www.anthropic.com/claude/fable">Claude Fable 5.1 (opens in new tab)</a> today.</em></p>
-<p>Article</p>
-<p>Oct 6, 2026</p>
-<h3>How Comcast and Booz Allen use Claude Mythos to find exploit chains and secure their codebases</h3>
-<p>Security teams at Comcast and Booz Allen used Claude Mythos-class models through Project Glasswing to find, validate, and fix vulnerabilities their existing scanners missed.</p>
-<p>Article</p>
-<p>Sep 29, 2026</p>
-<h3>Agents you can coach: how Asana builds human-agent teams with Claude</h3>
-<p>Arnab Bose, Chief Product Officer at Asana, on how Asana runs AI agents as teammates with scoped roles, shared memory, and work that everyone can see. ‍</p>
-<p>Claude Platform</p>
-<p>Article</p>
-<p>Sep 28, 2026</p>
-<h3>Automating eval design and hillclimbing with Claude</h3>
-<p>Principles for designing evals and hillclimbing against them without fooling yourself, and how the claude-api skill's build-eval and hillclimb commands put them to work.</p>
-<p>Claude Platform</p>
-<p>(opens in new tab)</p>
-<p>Article</p>
-<p>Sep 25, 2026</p>
-<h3>Using Claude Code: Spending your effort</h3>
-<p>What effort really is and when to use which level in Claude Code, from my own tests of three builds and a deep dive into Terminal-Bench 3.0 on Opus 5.5 and Fable 5.1.</p>
-<p>Claude Code</p>
-<p>(opens in new tab)</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<h3>Get the developer newsletter</h3>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

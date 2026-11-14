@@ -1,13 +1,13 @@
 # Cohere 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-13**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-14**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Cohere（`cohere`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
 - 页面：[官方博客](https://cohere.com/blog)
 
-## 全部文章（共 57 篇，按日期倒序；无日期条目列于最后）
+## 全部文章（共 58 篇，按日期倒序；无日期条目列于最后）
 
 1. [欢迎 Jaya Baloo 出任 Cohere 首位 CISO](https://cohere.com/blog/cohere-welcomes-jaya-baloo-as-first-ciso)（2026-11-12） <!--orig:Welcoming Jaya Baloo as Cohere's First CISOThe cybersecurity leader and AISLE co-founder joins Cohere to help build the world's most trusted platform for sovereign AI-->
 2. [Embed 5 与 Rerank 5 现已上线 OpenRouter](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04） <!--orig:Embed 5 and Rerank 5 now on OpenRouterAccess Cohere’s state-of-the-art retrieval models through a single API, with unified billing and no additional SDKs.-->
@@ -20,7 +20,7 @@
 9. [走进 Cohere Model Vault：构建可验证的机密 AI 推理](https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference)（2026-10-22） <!--orig:Inside Cohere Model Vault: Building a verifiable confidential AI inference-->
 10. [介绍 Cohere Model Vault 上的机密计算](https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault)（2026-10-22） <!--orig:Introducing Confidential Computing on Cohere Model Vault-->
 11. [AI 能理解文化吗？一位退休教师和一名高中生来试试](https://cohere.com/blog/can-ai-understand-culture)（2026-10-22） <!--orig:Can AI understand culture?-->
-12. [推出 Rerank 5：精准高效的企业文档检索](https://cohere.com/blog/rerank-5)（2026-10-21） <!--orig:Introducing Rerank 5: precise, efficient enterprise document retrievalGive your AI the most relevant context for each request, now with passage-level precision.-->
+12. [推出 Rerank 5：精准高效的企业文档检索](https://cohere.com/blog/rerank-5)（2026-10-21） <!--orig:Introducing Rerank 5: precise, efficient enterprise document retrieval-->
 13. [重新审视 reasoning model 的置信度](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)（2026-10-20） <!--orig:Rethinking confidence in reasoning models-->
 14. [Cohere 将收购 AISLE 以推进抗网络攻击的主权 AI](https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai)（2026-10-15） <!--orig:Cohere to acquire AISLE to advance cyber-resilient sovereign AI-->
 15. [公用事业的 AI 需要能力，也需要控制](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)（2026-10-15） <!--orig:AI for utilities requires capability and control-->
@@ -61,8 +61,9 @@
 50. [推出 North Mini Code：Cohere 首个面向开发者的模型](https://cohere.com/blog/north-mini-code)（2026-06-09） <!--orig:Introducing North Mini Code: Cohere’s first model for developers-->
 51. [推出 Command A+：让主权的 agentic 能力惠及所有人](https://cohere.com/blog/command-a-plus)（2026-05-20） <!--orig:Introducing Command A+: Making sovereign agentic capabilities available to all-->
 52. [推出 Cohere Transcribe：开源语音识别的新的先进水平](https://cohere.com/blog/transcribe)（2026-03-26） <!--orig:Introducing Cohere Transcribe: a new state-of-the-art in open-source speech recognition-->
-53. [审视 AI 对工作的影响](https://cohere.com/research/futures-of-work) <!--orig:Future(s) of WorkHow will AI change the way we work?-->
-54. [释放 AI 的潜能，一次一种语言](https://cohere.com/research/aya) <!--orig:Aya ModelsMultilingual AI at scale-->
-55. [塑造 ML 研究的前沿](https://cohere.com/research/scholars-program) <!--orig:Research ScholarsFinding the new generation of ML talent-->
-56. [以开放科学加速发现](https://cohere.com/research/open-science) <!--orig:Open Science CommunityChampioning global, open science-->
-57. [用 AI 创造现实世界的影响](https://cohere.com/research/grants) <!--orig:Catalyst GrantsSupporting impactful ML endeavors-->
+53. [Cohere 通过 AISLE 和cubic 扩展其主权人工智能平台](https://cohere.com/blog/cohere-expands-its-sovereign-ai-platform-with-aisle-and-cubic) <!--orig:Cohere Expands Its Sovereign AI Platform with AISLE and cubic-->
+54. [审视 AI 对工作的影响](https://cohere.com/research/futures-of-work) <!--orig:Future(s) of WorkHow will AI change the way we work?-->
+55. [释放 AI 的潜能，一次一种语言](https://cohere.com/research/aya) <!--orig:Aya ModelsMultilingual AI at scale-->
+56. [塑造 ML 研究的前沿](https://cohere.com/research/scholars-program) <!--orig:Research ScholarsFinding the new generation of ML talent-->
+57. [以开放科学加速发现](https://cohere.com/research/open-science) <!--orig:Open Science CommunityChampioning global, open science-->
+58. [用 AI 创造现实世界的影响](https://cohere.com/research/grants) <!--orig:Catalyst GrantsSupporting impactful ML endeavors-->
