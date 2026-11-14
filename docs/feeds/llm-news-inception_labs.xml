@@ -75,6 +75,39 @@
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/introducing-mercury-voice</guid>
       <pubDate>Thu, 01 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Mercury VoiceRead story</description>
+      <content:encoded><![CDATA[<p>两周前，我们随 Mercury 2.5 一并预览了 Mercury Voice。今天，它已面向企业客户全面上市。</p>
+<p>Mercury Voice 是一款扩散 LLM（dLLM），专为驱动语音 agents 而调优。它能够推理、调用工具并遵循冗长的 system prompts，同时把延迟保持在足以自然对话的低水平。在真实客服 prompts 的测试集上，Mercury Voice 首个回答 token 的中位返回时间低于 320 毫秒，同时在一系列 agentic 和语音基准测试中击败 GPT-6 Luna、Gemma 4 31B 等模型。</p>
+<h2>一览</h2>
+<ul><li><strong>速度：</strong> 在生产语音 prompts 上，首个回答 token 的中位 (p50) 时间为 320 ms（p95：750 ms），比 GPT-6 Luna (no reasoning) 快 5.9 倍。</li><li><strong>质量：</strong> 在 agentic 和对话式基准测试的综合评估中，优于 Gemma 4 31B、GPT-6 Luna、GLM-5.3-Flash 和 Qwen3.5-397B 等模型。</li><li><strong>推理强度：</strong> 三档设置（low、medium、high）</li><li><strong>上下文：</strong> 128K tokens，最多 50K 输出 tokens。</li><li><strong>价格：</strong> 每百万输入 tokens $0.40，每百万输出 tokens $1.50。发布期 Mercury Voice 享 50% 折扣，为每百万输入 $0.20、每百万输出 $0.75。</li></ul>
+<h2>低延迟对话</h2>
+<p>要让语音应用感觉自然，agent 必须在通话方说完约 500 ms 内做出回应；再久一点，停顿就会显得尴尬。这就是我们针对 <strong>首个回答 token 时间（TTFAT）</strong> 做优化的原因：即在完成全部推理后，模型要多久才开始产出通话方实际听到的词。</p>
+<p>在低推理强度下，Mercury Voice 是唯一一个中位 (p50) TTFAT 低于 500 ms 预算的模型，其 p95（750 ms）比除 Cerebras 上的 GPT-OSS-120B (low) 之外所有模型的 <em>中位数</em> 还要快。在语音应用中，尾部延迟几乎和中位数一样重要，因为 p95 达到四秒意味着大约每二十轮就有一轮失败。</p>
+<h2>实时推理</h2>
+<p>语音应用的开发者过去不得不在速度慢但智能、会推理的模型，与只能遵循基本指令但速度快的不推理模型之间做选择。由于延迟预算紧张，Gemma 4 31B (no reasoning)、GPT-4.1 这类不推理模型成为语音 agents 的默认选择。</p>
+<p>Mercury Voice 消除了这种取舍。以下是对比情况：</p>
+<p>事实上，在一个包含 τ³-bench Telecom、τ³-bench Retail、τ³-bench Airline、IFBench 和 BFCL v4 的综合基准测试中，Mercury Voice 的表现优于 GPT-6 Luna、GLM-5.3-Flash、Gemini 3.5 Flash-Lite 等较新的模型。</p>
+<ul><li><img src="https://framerusercontent.com/images/xpOumcy8UCM2bdwX4865hiQyRjo.png?lossless=1&amp;width=1296&amp;height=1110" alt="Average quality benchmark"></li><li><img src="https://framerusercontent.com/images/k8jqlogrhSvIvsKCOCAkOlJrR8g.png?lossless=1&amp;width=1296&amp;height=1110" alt="τ³-bench Telecom"></li><li><img src="https://framerusercontent.com/images/FobeQIE1pKqPoQdhxAQtJuwZmE.png?lossless=1&amp;width=1296&amp;height=1110" alt="τ³-bench Airline"></li><li><img src="https://framerusercontent.com/images/eY6wjTGtveaCBwnqOuVya0vDxU.png?lossless=1&amp;width=1296&amp;height=1110" alt="τ³-bench Retail"></li><li><img src="https://framerusercontent.com/images/NFF4bHXAD7BWOvR1e0qGDMArGI.png?lossless=1&amp;width=1296&amp;height=1110" alt="IFBench"></li><li><img src="https://framerusercontent.com/images/yoXjaIXxWes2ygz2KufTljiOGg.png?lossless=1&amp;width=1296&amp;height=1110" alt="BFCL V4 (multi-turn)"></li></ul>
+<p>把质量和延迟放在一起绘制时，差异更加明显。在 τ³-bench Telecom、τ³-bench Retail、τ³-bench Airline 等多个对话 agent 基准测试上取平均时，Mercury Voice 的质量高于我们测试的几乎每一个其他模型，速度是次快模型的两倍。</p>
+<p>在语音领域，基准测试的作用有限。以下是在真实对话中 320 毫秒听起来是什么样子。</p>
+<p><img src="https://i.ytimg.com/vi_webp/y2HfMTuL7-Y/maxresdefault.webp" alt=""></p>
+<h2>生产环境中的 Mercury Voice</h2>
+<p>企业已经在用 Mercury Voice 驱动智能、低延迟的语音应用。</p>
+<p><strong>Audivi AI </strong>使用 Mercury Voice 驱动全自动得来速点餐，处理实时客户对话、复杂的订单修改和定向追加销售，全程无需人工介入。</p>
+<p>在得来速，订单的成败就在停顿之间。Mercury Voice 缩短了我们的停顿，又不必让我们把 agent 做得更笨。一旦听出差别，就很难再接受更慢的方案。</p>
+<p>Jason Riggs，Audivi AI 首席产品官</p>
+<p><strong>Altur</strong> 构建自主语音 agents，为金融机构处理来电，实时协商还款计划并处理异议。在 Altur 的内部基准测试中，Mercury Voice 以明显优势成为测试过的最快模型。</p>
+<p>Mercury Voice 是我们测试过的最快模型，遥遥领先。这是我们第一次不再让语言模型成为语音流水线中的瓶颈。</p>
+<p>Pedro Fernández，Altur 联合创始人兼 CTO</p>
+<p><strong>OpenCall</strong> 构建处理实时客户来电的 AI 电话 agents。在其生产工作负载上，Mercury 把模型响应延迟的中位数压到了接近 170 毫秒。</p>
+<p>任何做实时 agents 的公司，过去都不得不在「回应智能的模型」和「回应即时的模型」之间二选一。你不必再用智能换速度。有了 Mercury，两者可以兼得。</p>
+<p>Oliver Silverstein，OpenCall 联合创始人兼 CEO</p>
+<p><img src="https://i.ytimg.com/vi_webp/9_58fpiCIOI/maxresdefault.webp" alt=""></p>
+<h2>定价</h2>
+<p>Mercury Voice 的定价为每百万输入 tokens $0.40、每百万输出 tokens $1.50。发布期享 50% 折扣：<strong>每百万输入 $0.20、每百万输出 $0.75</strong>。</p>
+<p>按典型的语音 agent 用量算，约合 <strong>每分钟对话 $0.009</strong>。这比 GPT-4.1（每分钟 $0.045）<strong>便宜约 5 倍</strong>。</p>
+<h2>开始使用</h2>
+<p>对企业客户，Mercury Voice 今天起即可通过 Inception API 以 OpenAI API 兼容 endpoint 的形式使用。因此，它可以直接嵌入你所用的任何语音 agent 平台或框架的 LLM 位置：LiveKit、Pipecat、Vapi、Retell，或者你自己的方案。</p>
+<p>对 Mercury Voice 感兴趣的企业客户，可通过 <a href="mailto:sales@inceptionlabs.ai"><strong>sales@inceptionlabs.ai</strong></a> 联系我们以获取访问权限。</p>]]></content:encoded>
     </item>
     <item>
       <title>Mercury 2.5 简介</title>
@@ -82,6 +115,39 @@
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/introducing-mercury-2-5</guid>
       <pubDate>Thu, 24 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Mercury 2.5Read story</description>
+      <content:encoded><![CDATA[<p>今天，我们发布 Mercury 2.5，这是我们迄今能力最强的生产模型。相比 Mercury 2，它的质量显著提升，同时保持同样低延迟、低成本的服务特性。</p>
+<p>自 Mercury 2 发布以来，已有数千名开发者用它构建应用，数十家企业将其投入生产，使用量增长了一个数量级以上。如今它服务于搜索、语音和编程产品中对延迟敏感的工作负载。</p>
+<p>这些工作负载给出的信号比单靠基准测试更清晰。我们利用客户反馈和生产中的失败案例来改进 evals、聚焦训练。Mercury 2.5 就是这一闭环的首个成果。</p>
+<h2>有哪些变化</h2>
+<p>Mercury 2.5 是市面上能力最强的 diffusion LLM。据我们所知，它是迄今训练过的规模最大的 diffusion 语言模型。</p>
+<ul><li><strong>质量：</strong> 相比 Mercury 2，智能提升 40%。可与 GPT-5.6 Luna (Low)、Gemini 3.5 Flash-Lite 和 Claude Haiku 4.5 等成本优化的前沿模型相媲美。</li><li><strong>速度：</strong> 在广泛可用的 NVIDIA GPU 上达到每秒 1,107 个 token。</li><li><strong>上下文：</strong> 260K token。</li><li><strong>价格：</strong> 每百万输入 token $0.20、每百万输出 token $0.75。发布时，Mercury 2.5 降价 80%，为每百万输入 token $0.04、每百万输出 token $0.15。</li><li><strong>能力：</strong> 可调的推理、并行工具调用，以及与 schema 对齐的 JSON。</li></ul>
+<p>自 Mercury 2 发布以来，我们看到 Inception 在 NVIDIA AI 基础设施上进一步推进了基于 diffusion 的语言模型。Mercury 2.5 在智能上的跃升，加上持续保持的速度与低成本，反映出新架构在 NVIDIA 平台上能多快成熟为可投入生产的系统。</p>
+<p>Shruti Koparkar，NVIDIA 加速计算事业部产品高级经理</p>
+<h2>Mercury 在生产环境中</h2>
+<h3>搜索 Agent 与 RAG 流水线</h3>
+<p>一次搜索请求可能触发数十次模型调用：规划搜索、重写查询、重排结果、结构化事实、总结来源、核对答案。Mercury 让这些调用足够快，能控制在一次用户交互之内。目前已有数家领先的搜索基础设施公司在生产环境中运行它。</p>
+<h3>语音 Agent 与交互式应用</h3>
+<p>在语音场景中，延迟不是基础设施细节，而是来电者听到的那一段停顿。</p>
+<p>OpenCall 构建处理实时客户来电的 AI 电话 Agent。在其生产工作负载上，Mercury 把模型响应延迟的中位数压到了接近 170 毫秒。</p>
+<p><img src="https://i.ytimg.com/vi_webp/9_58fpiCIOI/sddefault.webp" alt=""></p>
+<p>改用 Mercury 后，我们的 P99 响应时间从几分钟降到了仅 1 秒，P50 从 0.4 秒降到了 0.2 秒以内——比我们见过的任何其他提供商都快得多，而且这还包含了推理。</p>
+<p>Oliver Silverstein，OpenCall 联合创始人兼 CEO</p>
+<ul><li><strong>阅读更多： </strong><a href="https://www.inceptionlabs.ai/blog/mercury-2-the-first-reasoning-model-fast-enough-to-pick-up-the-phone"><strong>第一个快到足以接起电话的推理模型</strong></a></li></ul>
+<h3>编程 subagent 与助手</h3>
+<p>编程 Agent 已经会把工作分摊到多个模型上。一个模型可能负责规划或写代码，另一些负责搜索、运行工具、路由请求、总结状态，或压缩较长的会话。这些辅助调用会反复发生，因此延迟和成本会迅速累加。</p>
+<p>Augment Code 把 Mercury 用于上下文压缩、模型路由和 MCP 工具搜索。把压缩环节迁到 Mercury 后，延迟降低了 82%，从约 150 秒降到 27 秒，成本降低了 90%，同时质量保持不变。工具搜索的摘要在 1 秒内即可返回。</p>
+<p>同样的速度也适用于 Web 应用开发。在下面的演示中，可以看到 Mercury 2.5 仅凭几条 prompt 就生成一个可运行的音乐发现日志 Web 应用。</p>
+<p><img src="https://i.ytimg.com/vi_webp/PCPxLHM_NKE/sddefault.webp" alt=""></p>
+<h2>Mercury Voice 与 Mercury Router 预览版</h2>
+<p>除 Mercury 2.5 之外，我们还宣布 <a href="https://www.inceptionlabs.ai/models">Mercury Voice</a> 和 <a href="https://www.inceptionlabs.ai/models">Mercury Router</a> 的预览版。</p>
+<ul><li>Mercury Voice 的首 token 时间 (TTFT) 低于 170 毫秒，是一款为延迟预算最紧的语音 Agent 优化的 dLLM。</li><li>Mercury Router 用 dLLM 理解传入的 prompt，并把它们路由到在质量、速度和成本上组合最优的模型（开放模型和闭源模型）。</li></ul>
+<h2>开始使用</h2>
+<p>Mercury 模型可通过我们的 Inception API、Baseten 和 OpenRouter 获取。企业部署支持专属容量、自动扩缩容、合规控制和可配置的数据留存。</p>
+<p><strong>在 </strong><a href="http://chat.inceptionlabs.ai/"><strong>chat</strong></a> 中试用 Mercury 2.5<strong> 试用该 API，享 1 亿免费 token</strong> ·<a href="https://docs.inceptionlabs.ai/get-started/get-started"> <strong>阅读 API 文档</strong></a></p>
+<ul><li><strong>Baseten 客户：</strong> 通过你现有的 Baseten 配置部署 Mercury 2.5。</li><li><strong>Y Combinator 公司：</strong> <a href="https://deals.ycombinator.com/deals/11140">领取</a>价值 $500,000 的部署权益。</li><li><strong>正在评估把 Mercury 用于语音场景？</strong> 我们会与你一起测试工作负载适配度，并验证在你的服务约束下的性能。<a href="https://www.inceptionlabs.ai/enterprise#contact-sales">联系我们</a>。</li></ul>
+<h2>下一步</h2>
+<p>我们已经开始训练下一代模型。它是我们迄今规模最大的模型，计划在未来几个月内发布。下一代模型将在能力上实现飞跃，同时不放弃 diffusion 的速度和 token 效率。这需要在模型训练、推理、evals 和基础设施上取得进展。如果这正是你想解决的问题，<a href="https://www.inceptionlabs.ai/careers">欢迎与我们联系</a>。</p>
+<p>更多内容即将推出。</p>]]></content:encoded>
     </item>
     <item>
       <title>Mercury 2 用于搜索：快到一次查询可以跑上百次</title>
