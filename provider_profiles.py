@@ -254,42 +254,66 @@ def _gtx_translate(text: str, timeout: float = 4.0) -> str | None:
     return None
 
 
-def translate_to_zh(text: str, timeout: float = 4.0) -> str:
+#: 正文路径的型号 token：`K8s` / `200K` / `10M` / `816B` 这类字母紧邻数字。
+#: Google 会把 `K8s` 译成 `K8`（复数词尾被吃掉），型号丢了尾缀；翻译前换成
+#: `ZZTOK<n>ZZ` 占位（实测 Google 在中文译文里原样保留），译后逐位还原，
+#: 保证品牌 / 型号 / 数值单位按官方原文写法落盘。
+_BODY_MODEL_TOKEN_RE = re.compile(
+    r"(?<![A-Za-z0-9])[A-Za-z0-9]*(?:[A-Za-z]\d|\d[A-Za-z])[A-Za-z0-9]*(?![A-Za-z0-9])")
+_BODY_TOKEN_PLACEHOLDER = "ZZTOK{}ZZ"
+
+
+def translate_to_zh(text: str, timeout: float = 4.0, *,
+                    protect_titles: bool = True) -> str:
     """非中文内容借助 Google 公开 translate 接口自动翻译为中文。
 
     成功结果持久化到 .translate_cache.json（跨运行复用，线程安全）；
     翻译失败的条目只在本次运行内回退原文、不落盘，以便下次运行重试。
+
+    `protect_titles=True`（默认）用于文章 / 厂商标题：型号、品牌+版本号、
+    纯专名短标题一律留英文，免得 Google 翻坏品牌名。巡检证据是整句正文，
+    含 `K8s` / `200K` / `10M` 这类字母紧邻数字是常态，必须传
+    `protect_titles=False` 跳过这三条标题守卫；正文里的品牌由
+    `_restore_brand_names` 在译后回正，不会被音译。
     """
     global _TRANS_DIRTY
     if not text or not text.strip():
         return text
     clean_text = text.strip()
-    # 标识符形态（模型 id 等）**在查缓存之前**就返回：整串没有空格、且含 - / . _ 之一。
+    # 标识符形态（模型 id、裸 URL 等）**在查缓存之前**就返回：整串没有空格、且含 - / . _ 之一。
     # 实测 Google 会把 "qwen/qwen3-coder-30b-a3b-instruct：—" 译成
     # "qwen/qwen3-coder-30b-a3b-指令：—" —— 模型名被改掉，比不翻更糟。
-    # 正常标题都带空格，所以这条不会误伤。
+    # 正常标题都带空格，所以这条不会误伤；证据正文里的裸 URL / 模型 id 同样不该进翻译接口。
     # 必须放在缓存查询前：错误的译文可能**已经落进 .translate_cache.json**（本地就撞到了），
     # 放后面等于对历史缓存不生效。
     if " " not in clean_text and re.search(r"[-/._]", clean_text):
         return clean_text
-    # 含**型号**的标题也不翻：字母紧邻数字（`H3` / `v2` / `Grok4`）就是型号信号。
-    # 实测 Google 把 `MiniMax H3` 译成 `迷你最大H3`（品牌名被改写），
-    # `qwen3.8-omni-flash` 译成 `qwen3.8-全向闪存`。带空格的品牌名上面那条拦不住。
-    # 宁可留英文，也不翻坏品牌名；纯散文标题（无型号）照常翻译。
-    # 同样放在缓存查询前 —— 已翻坏的译文可能已在缓存里，放后面就治不了历史数据。
-    if re.search(r"[A-Za-z]\d|\d[A-Za-z]", clean_text):
-        return clean_text
-    # 「品牌 + 版本号」标题（`Grok 4.1` / `Codestral 25.01`）同样直接原样返回：
-    # 型号守卫被空格隔开拦不住，实测坑见上方 _is_brand_version_title 定义处。
-    if _is_brand_version_title(clean_text):
-        return clean_text
-    # 纯专名短标题同样不翻：实测 Google 把 `Magistral` 译成「公路」、`Pixtral Large`
-    # → 「像素大号」、`Le Chat` → 「猫」、`Codestral` → 「共纹」—— 品牌名一旦被汉化，
-    # 标题彻底失去可检索性，读者也不知道那是什么。上面几条守卫都拦不住它
-    # （`Le Chat` 有空格，`Magistral` 既无符号也无数字）。
-    # 同样放在缓存查询前：坏译文可能已落进 .translate_cache.json，放后面治不了历史数据。
-    if _is_proper_noun_title(clean_text):
-        return clean_text
+
+    # 下面三条是**标题专用**守卫，故整块受 protect_titles 控制：
+    # 巡检证据是整句正文，`K8s` / `200K` / `10M` / `816B` 这类字母紧邻数字遍地都是，
+    # 套上去会让整句退回英文（实测 Akamai 证据行 "… managed K8s, built for your
+    # business." 因此漏汉化）。正文路径传 protect_titles=False 跳过，品牌仍由
+    # `_restore_brand_names` 译后回正。注意守卫必须在缓存查询**之前**执行，
+    # 这样标题路径不会误读正文写进缓存的译文。
+    if protect_titles:
+        # 含**型号**的标题也不翻：字母紧邻数字（`H3` / `v2` / `Grok4`）就是型号信号。
+        # 实测 Google 把 `MiniMax H3` 译成 `迷你最大H3`（品牌名被改写），
+        # `qwen3.8-omni-flash` 译成 `qwen3.8-全向闪存`。带空格的品牌名上面那条拦不住。
+        # 宁可留英文，也不翻坏品牌名；纯散文标题（无型号）照常翻译。
+        # 同样放在缓存查询前 —— 已翻坏的译文可能已在缓存里，放后面就治不了历史数据。
+        if re.search(r"[A-Za-z]\d|\d[A-Za-z]", clean_text):
+            return clean_text
+        # 「品牌 + 版本号」标题（`Grok 4.1` / `Codestral 25.01`）同样直接原样返回：
+        # 型号守卫被空格隔开拦不住，实测坑见上方 _is_brand_version_title 定义处。
+        if _is_brand_version_title(clean_text):
+            return clean_text
+        # 纯专名短标题同样不翻：实测 Google 把 `Magistral` 译成「公路」、`Pixtral Large`
+        # → 「像素大号」、`Le Chat` → 「猫」、`Codestral` → 「共纹」—— 品牌名一旦被汉化，
+        # 标题彻底失去可检索性，读者也不知道那是什么。上面几条守卫都拦不住它
+        # （`Le Chat` 有空格，`Magistral` 既无符号也无数字）。
+        # 同样放在缓存查询前：坏译文可能已落进 .translate_cache.json，放后面治不了历史数据。
+        if _is_proper_noun_title(clean_text):
+            return clean_text
     with _TRANS_LOCK:
         if clean_text in _TRANS_CACHE:
             return _TRANS_CACHE[clean_text]
@@ -303,8 +327,25 @@ def translate_to_zh(text: str, timeout: float = 4.0) -> str:
                 _TRANS_CACHE[clean_text] = clean_text
                 _TRANS_DIRTY += 1
         return clean_text
-    translated = _gtx_translate(clean_text, timeout)
+    # 正文路径先把型号 token 占位，译后原样还原；标题路径不需要（含型号的
+    # 标题在上面已被守卫拦下，根本不会走到翻译接口）。
+    work_text = clean_text
+    body_tokens: list[str] = []
+    if not protect_titles:
+        def _stash_model_token(m):
+            body_tokens.append(m.group(0))
+            return _BODY_TOKEN_PLACEHOLDER.format(len(body_tokens) - 1)
+        work_text = _BODY_MODEL_TOKEN_RE.sub(_stash_model_token, work_text)
+
+    translated = _gtx_translate(work_text, timeout)
     if translated:
+        for i, token in enumerate(body_tokens):
+            placeholder = _BODY_TOKEN_PLACEHOLDER.format(i)
+            translated = translated.replace(placeholder, token)
+            # 兜底：个别译文会在占位串里插空格 / 改大小写，严格 replace 没接住时
+            # 用宽松匹配补一次，不让 `ZZTOK0ZZ` 这种机器痕迹漏进 README。
+            translated = re.sub(rf"ZZ\s*TOK\s*{i}\s*ZZ", lambda _m, t=token: t,
+                                translated, flags=re.I)
         # 兜底复原：整句标题没法靠「不翻」拦住（如 `Introducing Claude
         # Fable 5.1 …`），Google 会把句中品牌音译，这里按原文复原。
         translated = _restore_brand_names(translated, clean_text)
@@ -2893,7 +2934,8 @@ def render_freellm_table(intel, profile: dict, index: int) -> list[str]:
                 # 自动翻译非中文；引文里的相对链接先按出处补成绝对地址，
                 # 再洗标点（标点清洗会保护 https:// 开头的整段）
                 trans = normalize_zh_punct(
-                    absolutize_md_links(translate_to_zh(sn.text), sn.url))
+                    absolutize_md_links(
+                        translate_to_zh(sn.text, protect_titles=False), sn.url))
                 # 截断：防单条证据撑爆表格
                 if len(trans) > 120:
                     trans = _trim_quote(trans, 120)

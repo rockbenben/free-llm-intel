@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-15 10:30:59**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-15 11:41:19**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -35,10 +35,9 @@
 
 ### OpenAI (openai)
 - 页面：[官方博客](https://openai.com/news/)
-  - ❌ 抓取失败：（可直接访问页面查看）
+  - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
-  - 📡 RSS/Atom：https://openai.com/zh-Hans-CN/news/rss.xml
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-15，标题自动汉化）：
   1. [ChatGPT 钱包简介](https://openai.com/index/introducing-chatgpt-wallet)（2026-11-13）

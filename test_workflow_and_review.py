@@ -3906,6 +3906,69 @@ class TestTranslationSkipsIdentifiers(unittest.TestCase):
         for s in ("New release 1.2 for everyone", "version 2 is out"):
             self.assertFalse(provider_profiles._is_brand_version_title(s), s)
 
+    def test_body_text_with_model_number_is_translated(self):
+        """证据正文不套标题型号守卫：`K8s` / `200K` / `10M` 不能让整句退回英文。
+
+        Regression：Akamai 证据行 "… managed K8s, built for your business." 曾因
+        型号守卫命中 `K8` 而整句原样落盘，README 里出现未汉化的英文 CTA。
+        """
+        samples = (
+            "Sign up today and unlock AI compute, storage, and managed K8s, built for your business.",
+            "Example: Let's say your RPM = 50 and your TPM = 200K for the free tier.",
+            "Don't panic! Every new API key comes with 10M free tokens!",
+        )
+        saved_cache = dict(provider_profiles._TRANS_CACHE)
+        saved_failed = set(provider_profiles._TRANS_FAILED)
+        try:
+            for s in samples:
+                provider_profiles._TRANS_CACHE.pop(s, None)
+                provider_profiles._TRANS_FAILED.discard(s)
+                with mock.patch.object(provider_profiles, "_gtx_translate",
+                                       return_value="已译成中文的证据句。"):
+                    self.assertEqual(
+                        provider_profiles.translate_to_zh(s, protect_titles=False),
+                        "已译成中文的证据句。", s)
+                # 标题路径不受影响：守卫仍先于缓存查询，含型号的标题照旧留英文
+                self.assertEqual(provider_profiles.translate_to_zh(s), s, s)
+        finally:
+            provider_profiles._TRANS_CACHE.clear()
+            provider_profiles._TRANS_CACHE.update(saved_cache)
+            provider_profiles._TRANS_FAILED.clear()
+            provider_profiles._TRANS_FAILED.update(saved_failed)
+
+    def test_body_model_tokens_survive_translation(self):
+        """正文型号 token 译后原样：`K8s` 不许被 Google 吃掉尾缀变成 `K8`。"""
+        cases = (
+            ("Sign up today and unlock AI compute, storage, and managed K8s, built for your business.",
+             "立即注册并解锁专为您的业务打造的 AI 计算、存储和托管 ZZTOK0ZZ。", "K8s"),
+            ("Example: Let's say your RPM = 50 and your TPM = 200K for the free tier.",
+             "示例：假设免费套餐的 RPM = 50，TPM = ZZTOK0ZZ。", "200K"),
+        )
+        saved_cache = dict(provider_profiles._TRANS_CACHE)
+        saved_failed = set(provider_profiles._TRANS_FAILED)
+        try:
+            for src, translated, token in cases:
+                provider_profiles._TRANS_CACHE.pop(src, None)
+                provider_profiles._TRANS_FAILED.discard(src)
+                sent = []
+
+                def fake_gtx(text, timeout=4.0, _sent=sent):
+                    _sent.append(text)
+                    return translated
+
+                with mock.patch.object(provider_profiles, "_gtx_translate",
+                                       side_effect=fake_gtx):
+                    out = provider_profiles.translate_to_zh(src, protect_titles=False)
+                self.assertIn(token, out, (src, out))
+                self.assertNotIn("ZZTOK", out, (src, out))
+                self.assertEqual(len(sent), 1)
+                self.assertNotIn(token, sent[0], "型号 token 没被占位保护就送进了翻译接口")
+        finally:
+            provider_profiles._TRANS_CACHE.clear()
+            provider_profiles._TRANS_CACHE.update(saved_cache)
+            provider_profiles._TRANS_FAILED.clear()
+            provider_profiles._TRANS_FAILED.update(saved_failed)
+
     def test_transliterated_brands_are_restored_in_translations(self):
         r = provider_profiles._restore_brand_names
         self.assertEqual(
@@ -5394,6 +5457,38 @@ class TestEvidenceQuoteLinks(unittest.TestCase):
             self.assertTrue(target.startswith("http"),
                             f"证据行漏出非绝对地址: [{text}]({target})")
 
+    def test_evidence_row_translates_body_with_model_numbers(self):
+        """证据行必须汉化整句英文，含型号串不能退回原文。
+
+        这是「证据行中文占比过低」的渲染层门禁：全库扫 README 会被存量脏行
+        一起挡红，故在渲染入口钉住行为，存量由后续巡检逐步刷成中文。
+        """
+        sentences = (
+            "Sign up today and unlock AI compute, storage, and managed K8s, built for your business.",
+            "Example: Let's say your RPM = 50 and your TPM = 200K for the free tier.",
+            "Don't panic! Every new API key comes with 10M free tokens!",
+        )
+        saved_cache = dict(provider_profiles._TRANS_CACHE)
+        try:
+            for sentence in sentences:
+                provider_profiles._TRANS_CACHE.pop(sentence, None)
+                intel = crawler_llm_intel.VendorIntel(
+                    vendor_id="akamai_cloud", brand="Akamai Cloud",
+                    homepage="", products=[])
+                intel.evidence = {"signup_bonus": [crawler_llm_intel.Snippet(
+                    text=sentence, url=self.BASE, stype="free_quota")]}
+                prof = provider_profiles.get_provider_profile("akamai_cloud")
+                with mock.patch.object(provider_profiles, "_gtx_translate",
+                                       return_value="已译成中文的证据句。"):
+                    rows = [ln for ln in provider_profiles.render_freellm_table(
+                        intel, prof, 70) if "实时巡检证据" in ln]
+                self.assertEqual(len(rows), 1, sentence)
+                self.assertIn("已译成中文的证据句", rows[0], sentence)
+                self.assertNotIn(sentence[:25], rows[0], sentence)
+        finally:
+            provider_profiles._TRANS_CACHE.clear()
+            provider_profiles._TRANS_CACHE.update(saved_cache)
+
 
 class TestEvidenceKeyContract(unittest.TestCase):
     """巡检证据分组键契约：展示顺序里的键必须真实存在于 KEYWORD_GROUPS。
@@ -5762,6 +5857,14 @@ class TestEvidenceQualityGuards(unittest.TestCase):
             self.assertFalse(crawler_llm_intel._is_fact_line(line), line[:30])
         for line in accept:
             self.assertTrue(crawler_llm_intel._is_fact_line(line), line[:30])
+
+    def test_cta_without_free_semantics_is_not_evidence(self):
+        """型号里的数字不能顶替免费语义：纯营销 CTA 不进证据行。"""
+        self.assertFalse(crawler_llm_intel._is_fact_line(
+            "Sign up today and unlock AI compute, storage, and managed K8s, "
+            "built for your business."))
+        self.assertTrue(crawler_llm_intel._is_fact_line(
+            "Get started with 25 free credits and check your balance on the account page."))
 
 
 # 仅允许排除会破坏 CI 自身状态的测试类。TestCrawlerCleanup 已隔离到临时目录。

@@ -1236,8 +1236,11 @@ def _is_fact_line(line: str) -> bool:
         return False
     if CTA_NAV.match(s):
         # “Get started with 25 free credits / a free trial” 这类虽以 CTA 开头，
-        # 但含数字或免费关键词，保留；纯按钮文案才过滤
-        if len(s) < 30 or (not _HAS_QUANTITY.search(s) and not FREEISH.search(s)):
+        # 但自带免费 / 额度语义，才算事实；纯按钮文案与营销口号一律过滤。
+        # 判据必须落在 FREEISH 上：型号里的数字（`K8s` / `200K` / `10M`）也会
+        # 命中 _HAS_QUANTITY，只认数字会把 "Sign up today and unlock … K8s …"
+        # 这种没有任何额度信息的 CTA 当成证据（实测 Akamai 证据行）。
+        if not FREEISH.search(s) or len(s) < 30:
             return False
     # 面包屑 / 页面标题，形如 “Token Plan - MiniMax API 平台”“免费额度 - 千问AI平台”，
     # 以及 “API Credit & Rate Limits - Handle 402 and 429 Errors” 这类标题
@@ -3056,7 +3059,9 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
     for k in intel.evidence:
         for sn in intel.evidence[k]:
             try:
-                sn.text = translate_to_zh(sn.text)
+                # 证据是整句正文，不套标题的型号 / 专名守卫，否则含 K8s / 200K
+                # 之类字母数字组合的句子会整句退回英文。
+                sn.text = translate_to_zh(sn.text, protect_titles=False)
             except Exception:
                 pass
 
