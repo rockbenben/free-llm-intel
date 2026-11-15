@@ -117,6 +117,7 @@
 
 ### 5. 限时 / 易变信息（最容易过期，看到请先核对官方页）
 
+- [DeepSeek](#1-deepseek-深度求索)：语音 API 限时 5 折：语音合成（TTS）1.5 元/万字符（刊例 3 元）、语音识别（ASR）0.39 元/小时音频（刊例 0.78 元）
 - [小米 MiMo](#7-小米-mimo)：另有 MiMo Claw 限时特惠 ¥14.9 / 月
 - [商汤 日日新](#10-商汤-日日新-sensenova)：Token Plan 公测期免费（¥0/月，限时放量）：通用积分池滚动 5 小时 120,000 积分 + 每周 1,200,000 积分
 - [科大讯飞星火](#11-科大讯飞星火-spark-api)：Spark-X2.5-1.7B 标明“免费”，Spark-X2.5-4B 标明“限时免费”，Spark Lite 等模型在产品页支持“免费领取”
@@ -126,7 +127,6 @@
 - [复旦 MOSS](#18-复旦-moss-mosi)：限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 / moss-live-1.0 标 0 积分
 - [七牛云 Conatus](#19-七牛云-conatus)：1024 程序员节限时活动（2026-10-24 00:00 起，至 2026-11-30 23:59）
 - [中国电信](#21-中国电信-天翼云--息壤智算)：另有编程 Token Plan 3000/10000/25000/50000/100000 积分套餐（29–699 元/月，均为付费限时特惠）
-- [阶跃星辰 StepFun](#25-阶跃星辰-stepfun)：StepAudio 3 中适用限时免费政策的模型（具体范围以控制台为准
 
 ### 6. 免费额度用完之后
 
@@ -187,9 +187,9 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-14 19:05:11**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-15 10:30:44**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
-> 💡 **核心特性**：覆盖 **88 家厂商**（深度抓取 **161 个情报页 + 45 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
+> 💡 **核心特性**：覆盖 **88 家厂商**（深度抓取 **162 个情报页 + 45 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 34 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
 > 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [全部厂商动态（中文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [全部厂商动态（英文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（英文加 `.en.xml`）。全部厂商动态与单厂商源都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。
 > 🛰 **额度变化订阅**（新活动 / 额度调整，前值 → 后值）：[llm-intel-changes.xml](https://free-llm-intel.aishort.top/feeds/llm-intel-changes.xml)
@@ -211,7 +211,7 @@ python -m unittest discover
 | **注册福利 / 账户赠送** | **无公开赠送政策**：现行官方定价页与更新日志均无新用户赠送 token 政策（历史“500 万 tokens/30 天”无法复核，不予采信）；账户扣费顺序中存在“赠送余额”项，实际以注册后账户到账为准 |
 | **额度有效期** | 以账户内余额标注为准 |
 | **前置条件 / 限制** | 注册平台账号；按量计费，并发限制随账户充值等级（Tier）提升 |
-| **邀请 / 特惠活动** | 实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。**网页搜索与抓取（Search/Fetch）按次计费**：两者是独立 API，每 1,000 次成功请求 5 元；费用直接从充值余额或赠送余额扣减，优先扣赠送余额。 |
+| **邀请 / 特惠活动** | 实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲半价）：deepseek-flash 输出 8.0/4.0、缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5、缓存命中 0.30/0.15。**周边 API 计费**：搜索（文字、图片）与网页抓取每 1,000 次 5 元（直接调用或联网工具调用均适用）；文件解析与 OCR 每 1,000 页 1.5 元；**语音 API 限时 5 折**：语音合成（TTS）1.5 元/万字符（刊例 3 元）、语音识别（ASR）0.39 元/小时音频（刊例 0.78 元）。费用优先扣减赠送余额。 |
 | **实时巡检证据** | • 当充值余额与赠送余额同时存在时，优先扣减赠送余额。<br>• (3) 更多并发限制细节，请参考限速与隔离。 |
 | **官方直达** | [定价文档（人民币峰谷价）](https://api-docs.deepseek.com/zh-cn/quick_start/pricing) ｜ [API Key 管理](https://platform.deepseek.com/api_keys) ｜ [更新日志](https://api-docs.deepseek.com/zh-cn/updates/) ｜ [API 平台](https://platform.deepseek.com/) |
 | **特别说明** | V3/R1 时代价格（缓存 0.5 元、输出 8 元）已作废；官方无 RSS，更新见 updates 页。 |
@@ -1238,7 +1238,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 新客户 + 有效支付方式（Visa/Mastercard/PayPal）；支持 Google/GitHub 单点登录或邮箱注册 |
 | **免费层限制 / 注意事项** | • **需绑卡**（Visa/Mastercard/PayPal）：超额部分计入绑卡账单；试用窗口结束后仍在运行的服务继续按标准价扣费——先用完额度再删实例<br>• GPU 套餐不可用本额度；额度不可用于 Marketplace 与第三方服务<br>• 仅限新客户 |
 | **邀请 / 特惠活动** | 常设新客 $100/60 天试用促销，官方未公布统一截止日。 |
-| **实时巡检证据** | • 企业级 K8s 集群：免收控制平面费用。一键部署与扩容，实现 0 成本、高可靠的大规模容器编排。<br>• 仅限新客户使用。信用额度自激活之日起 60 天后失效<br>• 在您用完促销积分金额或促销积分窗口到期后，您的信用卡将被扣款。例如，如果您收到了 100 美元的信用额... |
+| **实时巡检证据** | • Sign up today and unlock AI compute, storage, and managed K8s, built for your business.<br>• 在您用完促销积分金额或促销积分窗口到期后，您的信用卡将被扣款。例如，如果您收到了 100 美元的信用额... |
 | **官方直达** | [试用活动页（官方域，中文）](https://www.akamai.com/zh/lp/akamai-cloud-computing-freetrial) ｜ [北美定价页（FAQ 含 $100/60 天口径）](https://www.akamai.com/cloud/pricing/north-america) ｜ [注册入口](https://login.linode.com/signup) |
 | **特别说明** | 官方域 www.akamai.com 对自动化直连回 403（反爬）；$100/60 天/绑卡三条口径取自官方域名的试用活动页正文与北美定价页 FAQ。 |
 
@@ -1512,6 +1512,7 @@ python -m unittest discover
 | **官方直达** | [定价页](https://v0.app/pricing) |
 
 <!-- LLM-INTEL:END -->
+
 
 
 

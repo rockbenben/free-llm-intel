@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: GPT‑5: Creative Writing
+title: Creative writing with GPT-5
 original_title: Creative writing with GPT-5
 url: https://openai.com/index/gpt-5-creative-writing
 date: 2025-08-07

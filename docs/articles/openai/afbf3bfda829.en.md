@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: 借助 ChatGPT 进行战略规划
+title: Strategic planning with ChatGPT
 original_title: Strategic planning with ChatGPT
 url: https://openai.com/business/learn/strategic-planning-with-chatgpt
 date: 2025-04-08
