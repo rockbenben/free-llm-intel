@@ -185,6 +185,8 @@
   .qlinks a { text-decoration: underline; }
   .kind { padding: 1px var(--sp-7); font-size: var(--fs-xs); color: inherit; }
   .kind.quota { background: var(--warn-bg); border-color: var(--warn-line); }
+  /* 注册通道徽章：card 走上面的告警色，phone 是中性信息（不是风险提示） */
+  .qsignup { padding: 1px var(--sp-7); font-size: var(--fs-xs); font-weight: 400; }
   .chip {
     appearance: none; cursor: pointer; font-size: var(--fs-sm); line-height: 1;
     padding: var(--sp-5) var(--sp-10); white-space: nowrap;
@@ -1403,10 +1405,17 @@ var FLI = (function () {
         s.textContent = text; meta.appendChild(s);
       }
       if (v.validity) bit('有效期：' + plain(v.validity));
+      // signup 枚举：''（未标注）/ email（邮箱或 OAuth）/ phone（手机号注册）/ card（需绑卡）。
+      // 只有 card 是真门槛、走告警色；phone 是中性信息，别渲染成风险提示。
       if (v.signup === 'card') {
         var warn = document.createElement('span');
         warn.className = 'pill kind quota'; warn.textContent = '需绑卡';
         meta.appendChild(warn);
+      } else if (v.signup === 'phone') {
+        var phoneTag = document.createElement('span');
+        phoneTag.className = 'pill qsignup'; phoneTag.textContent = '手机号注册';
+        phoneTag.title = '注册需手机号 + 短信验证码（国内平台常伴随实名）';
+        meta.appendChild(phoneTag);
       }
       if (v.preconditions) bit('前置条件：' + plain(v.preconditions));
       if (v.reviewed) bit('最近核查 ' + v.reviewed);

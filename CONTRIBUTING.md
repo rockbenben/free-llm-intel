@@ -168,9 +168,28 @@ python crawler_llm_intel.py --only <vendor_id> --ai-review --no-browser
 README 项目介绍之后的「白嫖攻略」**不是手写 Markdown**，由爬虫写入独立的 `LLM-GUIDE:BEGIN/END` 生成块（在快速开始之前），依据 `provider_profiles.py` 顶部的 **`GUIDE_META`** 自动渲染（AI 核查可通过补丁里的 `guide_meta` 更新归类）：
 
 - `tiers`：免费类型（`permanent` 永久免费层 / `onetime` 注册赠送 / `recurring` 周期重置 / `selfhost` 开源权重自托管）；
-- `signup`：`email`（邮箱 / OAuth 免信用卡）或 `card`（需绑卡验证）；
+- `signup`：注册通道 / 门槛枚举，三值 + 空串：`email`（邮箱 / OAuth 为主，或邮箱与手机号并列可选、无硬性通道要求；免信用卡）、`phone`（中国大陆账号体系以手机号为**必需 / 主**注册通道：`+86` 短信验证码，常伴随实名；邮箱即便出现也只是可选绑定或海外入口，三方 OAuth 登录不改变本值）、`card`（需绑卡验证）；空串表示该厂商不在白嫖攻略里、暂不标注。**只有 `card` 是攻略里的真门槛**：`phone` 与 `email` 同属免卡常规注册，A/B 类分级按 `signup != "card"` 判定。
+  改 `phone` 必须有注册页 / 官方文档的**一手证据**（issue #9），不许按「国内平台都用手机号」批量推断；`docs/index.html` 浏览页已加「手机号注册」分支。改完跑 `python crawler_llm_intel.py --render-only` 同步 `docs/feeds/quotas.json`（守卫 `test_committed_quotas_signup_matches_guide_meta` 会拦下忘跑的情况）。
 - `scenarios`：`code` / `flagship` / `longctx` / `multimodal`（图片/视频理解与实时音视频交互）/ `image` / `embed` / `deploy` / `credit` / `referral` / `student`；
 - `short`：一句话额度摘要；`tip`：防扣费提示；`pick`：懒人首选推荐语（仅给首推厂商配置，渲染为攻略第 0 节，按厂商编号排序）。
+
+#### signup 取值证据（issue #9，2026-11-15 一手核实）
+
+下表是 `phone` / `email` 判定的证据链。注册页均用无头浏览器实际渲染取字（JS 壳不算证据）；改值前请回访这些官方页复核，链接失效就在同轮更新。
+
+| 厂商 | signup | 一手证据（原文 / 表单字段） | 官方页 |
+|---|---|---|---|
+| `modelscope` | `phone` | 注册 iframe 字段「账号名 / 手机号码 / +86 / 验证码 / 登录密码」，无邮箱注册入口 | https://modelscope.cn/register ；https://www.modelscope.cn/docs/accounts/registration.md |
+| `aliyun_qwen` | `phone` | 注册 iframe 输入框「输入登录名 / 输入登录密码 / 输入手机号 / 请输入校验码」+「+86 / 发送」；帮助文档「通过手机号码注册」 | https://account.aliyun.com/register/register.htm ；https://help.aliyun.com/zh/account/user-guide/ali-cloud-account-registration-process |
+| `xiaomi_mimo` | `phone` | 中国站注册页「+86 / 手机号 / 请输入验证码 / 获取验证码」（input name=phone）；官方 FAQ「中国大陆用户注册方式 - 手机号注册」，海外另有邮箱注册 | https://cn.account.xiaomi.com/fe/service/register ；https://mimo.mi.com/docs/quick-start/faq/ |
+| `iflytek_spark` | `phone` | 注册页「微信扫码注册 / 手机号注册 / +86 / *请使用您本人的手机号进行注册 / 获取验证码」，输入框「请输入手机号 / 请输入手机验证码」 | https://passport.xfyun.cn/register |
+| `streamlake` | `phone` | 隐私政策「您需要提供您的手机号码……我们将通过向您的手机号码发送短信验证码来验证您的身份是否有效，帮助您完成账号注册和登录」 | https://www.streamlake.com/document/POL/me16yzjnvq2ssojcjz |
+| `trae` | `phone` | 登录页「+86 / 获取验证码」+ 输入框「输入手机号 / 输入验证码」；用户协议「你可以通过移动电话号码……注册账号」，另有抖音 / Apple 三方登录 | https://www.trae.cn/login ；https://www.trae.cn/terms-of-service |
+| `tongyi_lingma` | `phone` | 官方 FAQ「Qoder CN（原灵码）：使用阿里云账号登录」「两套账号通过手机号验证码登录已打通」；阿里云账号注册需手机号 + 实名 | https://help.aliyun.com/zh/lingma/faq |
+| `comate` | `phone` | 隐私协议「您可以通过手机号创建百度通用账号……您需向我们提供您的手机号码」，绑定邮箱仅可选，三方登录也要补绑手机号 | https://comate.baidu.com/docs/隐私协议/隐私协议.html |
+| `codebuddy_workbuddy` | `email`（不改） | 官方文档「支持选择微信、手机号、邮箱或者 SSO 等登录方式」——并列可选、无硬性通道，按枚举定义归 `email` | https://cloud.tencent.com/document/product/1831/134347 |
+
+边界：`phone` 说的是「手机号为必需 / 主通道」，不是「页面上只有手机号一个入口」——可选绑定邮箱、海外邮箱入口、三方 OAuth 登录都不改变取值；真正并列可选（谁都不是必需）时记 `email`。
 
 README 顶部的「懒人首选速览」是 **`docs/images/top-picks.svg`**，同样由 `render_picks_svg()` 从 `GUIDE_META` 生成、随 `--render-only` / `--guide-render` 重写——**不要再手绘 PNG**：手绘图的维护点是「改一次名单就要重做一张图」，实测最容易漏（正文改了、图还停在旧名单）。SVG 是纯文本，可 diff、可校验；测试 `test_picks_svg_matches_guide_meta` 会直接对撞磁盘文件与现渲染结果，改完 `pick` 不跑渲染就会红。
 

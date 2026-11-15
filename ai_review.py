@@ -136,7 +136,11 @@ FIELD_TYPES = {
     "openai_compat": dict,
 }
 ALLOWED_TIERS = {"permanent", "onetime", "recurring", "selfhost"}
-ALLOWED_SIGNUP = {"email", "card"}
+# signup 是「注册通道 / 门槛」枚举：email=邮箱 / OAuth 为主，或邮箱与手机号并列可选；
+# phone=中国大陆账号以手机号为必需 / 主注册通道（+86 短信验证码、常伴随实名），
+#       邮箱仅为可选绑定或海外入口；card=需绑卡。
+# 只有 card 是真门槛；phone 与 email 同属免卡常规注册，改值需注册页 / 官方文档的一手证据。
+ALLOWED_SIGNUP = {"email", "phone", "card"}
 ALLOWED_SCENARIOS = {"code", "flagship", "longctx", "image", "embed", "deploy", "credit",
                      "referral", "student", "multimodal"}
 
@@ -154,8 +158,8 @@ SYSTEM_PROMPT = """你是「免费 LLM API 情报」核查员，服务于一个�
 4. evidence 给出 1-6 条页面原文逐字摘录（不要翻译、不要改写、不要省略号拼接），\
 每条必须能在给定页面文本中连续找到；所有数字、模型名必须与原文一致。
 5. 攻略归类 guide_meta 仅在归类确实需要变化时给出：tiers 取值 permanent/onetime/recurring/\
-selfhost，signup 取值 email/card，scenarios 取值 code/flagship/longctx/multimodal/image/embed/deploy/credit/referral/student，\
-short 是一句话额度摘要，tip 是一句话防扣费提示。
+selfhost，signup 取值 email/phone/card（email=邮箱或 OAuth、或邮箱与手机号并列可选；phone=中国大陆账号以手机号为必需/主注册通道（+86 短信验证码、常伴随实名），邮箱仅为可选绑定或海外入口；card=需绑卡），scenarios 取值 code/flagship/longctx/multimodal/image/embed/deploy/credit/referral/student，\
+short 是一句话额度摘要，tip 是一句话防扣费提示；注册页 / 官方文档证明手机号是必需或主注册通道时 signup 取 phone，邮箱与手机号真正并列可选时仍取 email。
 6. 输出只能是一个 JSON 对象，不要输出解释、Markdown 代码块或多余文字。"""
 
 

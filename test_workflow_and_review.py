@@ -5848,6 +5848,115 @@ class TestSpaShellDetection(unittest.TestCase):
         self.assertIsNotNone(crawler_llm_intel.SPA_HTML_MOUNT.search(html))
 
 
+class TestSignupEnum(unittest.TestCase):
+    """signup 是「注册通道 / 门槛」枚举，phone 必须被全链路认得。
+
+    Regression（issue #9）：枚举只认 email/card，国内手机号注册的厂商一律被
+    记成 email；浏览页也只渲染 card —— 值错了，值对了照样显示不出来。
+    phone 与 email 同属**免卡常规注册**，只有 card 是真门槛，所以 A/B 类
+    分级（signup != card）与 TestTierCaveats 的判定不许跟着变。
+    """
+
+    # 含空串：厂商不在白嫖攻略里时 signup 留空，是合法状态
+    ALLOWED = {"", "email", "phone", "card"}
+
+    @staticmethod
+    def _root():
+        return Path(crawler_llm_intel.__file__).resolve().parent
+
+    def _effective_signup(self):
+        """基线与 AI overlay 合并后的实际取值（以磁盘为准）。"""
+        root = self._root()
+        overrides = json.loads((root / "profile_overrides.json").read_text(encoding="utf-8"))
+        ids = set(provider_profiles.GUIDE_META) | set(overrides)
+        return {vid: provider_profiles.get_guide_meta(vid).get("signup", "")
+                for vid in ids}
+
+    def test_ai_review_allows_phone_and_rejects_unknown(self):
+        """AI 核查白名单与提示词都要认 phone，未知枚举值必须拒绝。"""
+        self.assertIn("phone", ai_review.ALLOWED_SIGNUP)
+        self.assertIn("signup 取值 email/phone/card", ai_review.SYSTEM_PROMPT)
+        corpus = "智谱 AI 开放平台面向新用户赠送 2000 万 tokens 资源包，Flash 全家桶永久 0 元免费。"
+        patch = {
+            "changed": True, "summary": "注册改为手机号",
+            "fields": {"free_quota": "2000 万 tokens 资源包"},
+            "evidence": [{"quote": "新用户赠送 2000 万 tokens 资源包",
+                          "url": "https://bigmodel.cn"}],
+            "guide_meta": {"tiers": ["permanent"], "signup": "phone",
+                           "scenarios": ["code"]},
+        }
+        res = ai_review.validate_patch(patch, corpus)
+        self.assertEqual(res["guide_meta"]["signup"], "phone")
+        bad = dict(patch, guide_meta={"signup": "wechat"})
+        with self.assertRaises(ai_review.AiReviewError):
+            ai_review.validate_patch(bad, corpus)
+
+    def test_all_signup_values_are_in_enum(self):
+        """GUIDE_META + AI 补丁里出现的值必须是闭集内的枚举。"""
+        bad = {vid: val for vid, val in self._effective_signup().items()
+               if val not in self.ALLOWED}
+        self.assertEqual(bad, {}, f"signup 出现未登记的枚举值: {bad}")
+
+    def test_phone_only_for_cn_vendors(self):
+        """phone 只给国内厂商（category=domestic 或 region=cn）。"""
+        bad = []
+        for vid, val in self._effective_signup().items():
+            if val != "phone":
+                continue
+            meta = provider_profiles.get_guide_meta(vid)
+            prof = provider_profiles.get_provider_profile(vid)
+            if prof.get("category") != "domestic" and meta.get("region") != "cn":
+                bad.append(vid)
+        self.assertEqual(bad, [], f"非国内厂商被标成手机号注册: {bad}")
+
+    def test_phone_vendor_stays_in_free_tier_group(self):
+        """改成 phone 不许把厂商从 A/B 类「免卡」分级里踢出去。"""
+        base = provider_profiles.get_guide_meta("modelscope")
+        intel_list = [crawler_llm_intel.VendorIntel(
+            vendor_id=v, brand=v, homepage="", products=[])
+            for v in provider_profiles.PROVIDER_PROFILES]
+        with mock.patch.dict(provider_profiles.GUIDE_META,
+                            {"modelscope": dict(base, signup="phone")}):
+            block = crawler_llm_intel.render_guide_block(
+                crawler_llm_intel.order_vendor_records(intel_list))
+        row_a = next(line for line in block.splitlines()
+                     if line.startswith("| **A."))
+        self.assertIn("ModelScope", row_a)
+
+    def test_quotas_payload_carries_phone(self):
+        """build_quotas_payload 必须原样把 phone 带进机读镜像。"""
+        vendor = {"id": "modelscope", "brand": "ModelScope",
+                  "homepage": "https://modelscope.cn"}
+        base = provider_profiles.get_guide_meta("modelscope")
+        with mock.patch.dict(provider_profiles.GUIDE_META,
+                            {"modelscope": dict(base, signup="phone")}):
+            row = crawler_llm_intel.build_quotas_payload([vendor], {})["vendors"][0]
+        self.assertEqual(row["signup"], "phone")
+
+    def test_committed_quotas_signup_matches_guide_meta(self):
+        """quotas.json 是 GUIDE_META 的视图：改 signup 忘了 --render-only 就拦下。"""
+        root = self._root()
+        feed = root / "docs" / "feeds" / "quotas.json"
+        if not feed.exists():          # 精简检出 / fork 无机读镜像时不硬失败
+            self.skipTest("仓库无 quotas.json，跳过实产物校验")
+        committed = {r["id"]: r["signup"] for r in
+                     json.loads(feed.read_text(encoding="utf-8"))["vendors"]}
+        vendors, _sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        fresh = {r["id"]: r["signup"] for r in
+                 crawler_llm_intel.build_quotas_payload(vendors, {})["vendors"]}
+        self.assertEqual(
+            committed, fresh,
+            "docs/feeds/quotas.json 的 signup 与 GUIDE_META 不同步——"
+            "跑 python crawler_llm_intel.py --render-only 重排视图")
+
+    def test_browser_page_renders_phone(self):
+        """浏览页必须给 phone 出「手机号注册」徽章，别只认 card。"""
+        html = (self._root() / "docs" / "index.html").read_text(encoding="utf-8")
+        self.assertIn("v.signup === 'phone'", html)
+        self.assertIn("手机号注册", html)
+        self.assertIn("v.signup === 'card'", html)
+
+
 class TestQuotasIndex(unittest.TestCase):
     """「免费额度与活动一览」的机读镜像 quotas.json。"""
 

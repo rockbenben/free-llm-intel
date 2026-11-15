@@ -3234,7 +3234,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     def tier_group(pred) -> tuple[list[str], list[str]]:
         """按「门槛 + 有效期」的价值排序分组（新用户视角），而非按额度机制归类。
 
-        判定用到的三个信号：meta["signup"]（email=免卡 / card=需绑卡）、
+        判定用到的三个信号：meta["signup"]（email/phone=免卡常规注册 / card=需绑卡）、
         meta["tiers"]（permanent|recurring=不过期 / onetime=一次性 / selfhost=自托管）、
         prof["category"]（domestic=国内，一律需手机号+实名）；Part 4 工具类不属
         于任何 category 分组，其国内/海外归属看 meta["region"]（"cn"=国内产品）。

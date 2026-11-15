@@ -472,12 +472,25 @@ def vendor_rank_index(vendor_id: str) -> int:
 #
 # tiers:      permanent=永久免费层滚动重置 / onetime=注册一次性赠送 /
 #             recurring=每日/每月重置额度 / selfhost=开源权重/自托管
-# signup:     email=邮箱或 OAuth 免信用卡 / card=需验证付款方式/绑卡
+# signup:     注册通道 / 门槛三值枚举：
+#             email=邮箱 / OAuth 为主，或邮箱与手机号并列可选、无硬性通道要求（免信用卡）；
+#             phone=中国大陆账号体系以手机号为必需 / 主注册通道（+86 短信验证码，常伴随实名）；
+#                   邮箱即便出现也只是可选绑定或海外入口，三方 OAuth 登录不改变本值；
+#             card=需验证付款方式 / 绑卡。
+#             只有 card 是攻略里的「真门槛」，email/phone 同属免卡常规注册
+#             （A/B 类分级按 signup != card 判定）。改 phone 必须有注册页 / 官方文档的
+#             一手证据，不许按「国内都用手机号」批量推断；核实清单见 CONTRIBUTING.md。
 # scenarios:  code/flagship/longctx/multimodal/image/embed/deploy/credit/referral/student
 # region:     cn=国内工具（Part 4 攻略表格里归入「国内」行；缺省=海外）
 # short:      一句话额度摘要，用于攻略表格（带括号补充）
 # tip:        防扣费 / 防坑提示（没有则省略）
 # ---------------------------------------------------------------------------
+# issue #9 一手核实（2026-11-15）：下列 8 家中国大陆账号体系以手机号为必需 / 主注册通道，
+# signup 由 email 更正为 phone；逐家官方证据与 URL 见 CONTRIBUTING.md「signup 取值证据」表。
+#   modelscope / aliyun_qwen / xiaomi_mimo / iflytek_spark / streamlake /
+#   trae / tongyi_lingma / comate
+# codebuddy_workbuddy 官方文档明写「微信、手机号、邮箱或者 SSO」并列可选，仍记 email。
+# 注意 aliyun_qwen / iflytek_spark 的 signup 只存在于 AI overlay（本表无该键），改值两边都要看。
 GUIDE_META: dict[str, dict] = {
     # AI 编程 / Agent 工具类（Part 4）
     "qoder": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
@@ -486,12 +499,12 @@ GUIDE_META: dict[str, dict] = {
     "codebuddy_workbuddy": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"], "region": "cn",
               "short": "国内体验版 0 元：500 积分/月 + 限免全模型；国际版 Free $0：100 积分/月 + 每日 30 积分 + 注册送 250",
               "tip": "「限免」条目（全模型 / 无限补全 / 99 任务）随时可能回收，以页面「限免生效中」标注为准"},
-    "trae": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"], "region": "cn",
+    "trae": {"tiers": ["recurring"], "signup": "phone", "scenarios": ["code"], "region": "cn",
              "short": "免费版每月 500 积分、所有功能均可免费使用（云端任务并发限 2）"},
-    "tongyi_lingma": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"], "region": "cn",
+    "tongyi_lingma": {"tiers": ["recurring", "onetime"], "signup": "phone", "scenarios": ["code"], "region": "cn",
                       "short": "个人体验版免费：有限体验额度（含 2 周 Pro 试用 + 300 Credits）",
                       "tip": "已并入 Qoder CN 品牌（原通义灵码）；VSC 插件停止演进，团队版覆盖范围与个人版不同"},
-    "comate": {"tiers": ["permanent", "onetime"], "signup": "email", "scenarios": ["code"], "region": "cn",
+    "comate": {"tiers": ["permanent", "onetime"], "signup": "phone", "scenarios": ["code"], "region": "cn",
                "short": "个人标准版长期免费：智能补全免费 + 首次赠 ¥10 智能体请求券",
                "tip": "智能体请求券仅首次赠送；官方另有个订阅权益调整公告，额度政策有变动风险"},
     "github_copilot": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
@@ -506,7 +519,7 @@ GUIDE_META: dict[str, dict] = {
     "zed": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
             "short": "Personal 档 $0 forever：2,000 次 accepted edit predictions；自带 Key 不限次",
             "tip": "内置模型免费只覆盖编辑预测额度；跑对话/Agent 需 Pro 试用（$5 / 14 天）或 BYOK"},
-    "modelscope": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
+    "modelscope": {"tiers": ["recurring", "onetime"], "signup": "phone", "scenarios": ["code"],
                   "short": "魔粒制：每日登录 +200 魔粒（当日有效）+ 绑阿里云 +50 魔粒/日；按次扣减 0.5/1/2 魔粒",
                   "tip": "魔粒是按次消耗的积分、每日登录奖励当日有效不累计；必须绑阿里云账号并实名（否则 401），勿按「每天 2000 次」旧口径排期"},
     "typhoon": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
@@ -550,7 +563,7 @@ GUIDE_META: dict[str, dict] = {
     "ppio": {"short": "无公开注册赠金，按量计费",
              "tip": "未实名认证用户有请求频率限制；历史“注册送 5 元”说法官方页无据。"},
     "mthreads_coding": {"short": "MUSA Coding Plan 免费试用 30 天，每日限量 100 名"},
-    "xiaomi_mimo": {"tiers": ["onetime", "selfhost"], "signup": "email",
+    "xiaomi_mimo": {"tiers": ["onetime", "selfhost"], "signup": "phone",
                     "scenarios": ["embed", "referral"],
                     "short": "TTS 系列限时免费 + 新用户注册赠金（40 天）",
                     "tip": "语言模型按量计费（v2.6-pro ¥3/¥6 每百万 tokens），免费只覆盖 TTS 与缓存写入且官方标注「限时」；"
@@ -563,7 +576,7 @@ GUIDE_META: dict[str, dict] = {
                       "short": "$0 档 100 万请求是**观测额度**非推理额度；推理需付费部署"},
     "digitalocean_genai": {"tiers": ["onetime"], "signup": "card", "scenarios": ["credit"],
                            "short": "$5 / 90 天通用试用金（非 LLM 免费层，需绑卡）"},
-    "streamlake": {"tiers": ["onetime"], "signup": "email", "scenarios": ["code"],
+    "streamlake": {"tiers": ["onetime"], "signup": "phone", "scenarios": ["code"],
                    "short": "注册开通后分批送免费调用次数（仅基础模型推理）",
                    "tip": "免费额度**分批发放**（初识/探索/首金礼包）、**仅限基础模型推理**、**不可抵扣 Batch 批量推理**，"
                           "具体额度以活动说明为准 ——「Air 永久免费」与「Pro 送 2000 万 tokens/30 天」均无官方依据，不予采信。"},
