@@ -66,6 +66,81 @@
       <link>https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale</guid>
       <description>原文标题：How to Yield at Wafer Scale</description>
+      <content:encoded><![CDATA[<p>Nov 10 2026</p>
+<h1>如何实现晶圆级良率</h1>
+<p><a href="https://www.cerebras.ai/author/isaac-tai">Isaac Tai</a></p>
+<p>在半导体制造中，缺陷与工艺偏差是不可避免的。传统处理器通过禁用有缺陷的核心、并按性能等级给芯片分档来容纳这些偏差。</p>
+<p>晶圆级计算要在远大于单颗芯片的面积上面对同样的挑战，出现缺陷与离群值的概率也随之升高。这也长期让人怀疑：晶圆级处理器究竟能否以经济的方式制造出来。</p>
+<p>Cerebras 正是围绕这些现实来设计 WSE 的。我们<a href="https://www.cerebras.ai/blog/100x-defect-tolerance-how-cerebras-solved-the-yield-problem">此前</a>讨论过：WSE 上 90 万个彼此独立的小核心，如何在制造完成后借助冗余获得出色的缺陷容忍能力。本文则深入制造流程的其余环节，包括我们如何：</p>
+<ul><li>在存在参数偏差的前提下，设计出满足性能与功耗要求的功能电路。</li><li>在 84 个 die 区域上分别独立调节电压。</li><li>用分布式传感器与测试来表征并监控整片晶圆。</li><li>在制造阶段与部署之后，都通过基于软件的重新配置来挽回失效。</li></ul>
+<p>这些能力合在一起，使良率能够追平、甚至超过面积只有我们 1/58 的 GPU，<em>同时</em>还能支撑部署之后连续多年的运行。</p>
+<h3>制造之前：为宽范围的偏差而设计</h3>
+<p>在芯片制造的整个过程中，晶体管的尺寸、连线宽度与层间对准都会出现细微波动，进而影响电路对电压与温度的响应。</p>
+<p>这些差异构成了<strong>参数偏差</strong>（parametric variation）——之所以这么叫，是因为它们改变的是开关速度、电阻、漏电流这类可测量的电气特性。它们决定了一个功能正常的电路能否在自身功耗限制内达到所需性能。</p>
+<p><strong>参数良率</strong>（parametric yield）衡量的是：在功能正常的处理器中，有多大比例同时满足这些要求。而要让电路具备良好的参数良率，设计工作早在 tape-out 之前就已开始。</p>
+<h3>在物理设计中留出余量</h3>
+<p>WSE 基于台积电成熟的 N5 工艺开发，借助的是该工艺经过验证的量产历史。</p>
+<p>在芯片设计阶段，工程师用代工厂的工艺设计套件（PDK）来布置晶体管及其连线。PDK 包含器件模型，以及约束线宽、间距、金属层间连接等要素的强制性物理设计规则。只按强制规则就能做出可用的芯片，但台积电还提供一套推荐规则，称为可制造性设计（Design For Manufacturability，DFM）。遵循这些推荐规则，可以为制造偏差增加额外的保护。</p>
+<p>以连接两层金属的 <em>via</em>（通孔）为例：强制规则只规定通孔周围的最小包边尺寸，DFM 则建议更宽的包边，为刻蚀与金属填充的波动留出额外余量。这能降低出现空洞（void）、进而削弱连接的风险。</p>
+<p>最小值</p>
+<p>推荐值</p>
+<p>推荐规则带来了另一组设计取舍：更大的包边或额外的通孔能让连接更稳健，但会占用本可用于其他走线或电路的空间。我们只在保护收益值得这份版图代价时才采纳推荐规则，其中也包括配置布线工具以生成预期的几何形状。</p>
+<h3><strong>在宽范围偏差下验证时序</strong></h3>
+<p>在制造之前，工程师先设定目标时钟频率，再用代工厂提供的模型计算信号在设计中的传播情况，覆盖电压与温度波动的各种组合。对达不到要求的路径反复修改，直到整个设计通过。这个过程就是<strong>时序收敛</strong>（timing closure）。</p>
+<p>以两个寄存器 A 和 B 为例：每个时钟周期，A 发出一个新值，B 则捕获上一个值。</p>
+<ul><li><strong>建立时间（Setup）</strong>检查上一个值是否在捕获之前到达并稳定。</li><li><strong>保持时间（Hold）</strong>检查下一个值是否来得足够晚，好让捕获可靠完成。</li></ul>
+<p>距下一拍 1.8 s</p>
+<p>寄存器 A 0011</p>
+<p>0011</p>
+<p>寄存器 B 1110</p>
+<p>设计需要容忍多大范围的偏差，由工程师决定。业界用 <strong>sigma</strong>（标准差）来度量这个范围。sigma 目标越高，电路就必须在离模型平均行为更远的位置仍满足时序要求。<a href="https://www.synopsys.com/blogs/chip-design/improving-design-robustness-primeshield-discussion-li-ding.html">Synopsys 称三 sigma 的时序签核（timing signoff）属于常见做法</a>。</p>
+<p>我们按宽范围的时序目标来设计电路与版图。WSE 的目标是<strong>建立时间最多四个 sigma、保持时间最多七个 sigma</strong>。通过细致的单元选择、布线与时钟设计，团队在达成这些目标的同时，只损失不到 1% 的潜在核心容量。</p>
+<p>对传统处理器而言，把硅片<a href="https://www.tomshardware.com/reviews/glossary-binning-definition,5892.html">分档（binning）</a>成不同性能等级，可能比按更高 sigma 目标设计更经济。但在晶圆尺度上，更宽泛的参数容忍度才是经济地造出可靠芯片的关键。我们的工程师在设计阶段就投入这份容忍度，在第一片晶圆投产之前就把时序收敛到更宽的条件范围。</p>
+<h3><strong>制造之后：表征与调校整片晶圆</strong></h3>
+<h3>用边缘剔除挑出最好的核心</h3>
+<p>晶圆从产线回来时，良率损失在其表面上的分布并不均匀。由于抛光、薄膜沉积等工艺更难保持均匀，外缘的良率损失格外高。把晶圆按半径划成五个区、每区约占表面积的 20%，就能直观地看到这一点。</p>
+<p>WSE 的方形轮廓使它几乎不触及最外一圈。约 97% 的有效电路位于内侧四个区，从而把暴露在「良率损失与偏差主要来源」之下的部分降到最低。对仍落在受影响区域（包括靠近四角）的核心，我们的<a href="https://www.cerebras.ai/blog/100x-defect-tolerance-how-cerebras-solved-the-yield-problem">修复流程</a>会将其剔除，并从冗余储备中换上更健康的核心。</p>
+<p>这样，我们拿到的就是一批起点更好的电路，供后续表征与认证。</p>
+<h3>die 级电压调校：兼顾性能与能效</h3>
+<p>参数偏差会影响到：要跑到同一时钟频率，不同区域各自需要多少电压。</p>
+<p>业界的常规做法是用<em>调校</em>（tuning）来应对：先弄清一颗 die 对电压的相对响应，再施加一个能让它达到目标频率的具体电压。</p>
+<p>传统芯片在一片硅晶圆上以彼此独立的 die 形式制造，切开来逐个调校即可。但 WSE 把所有 die 作为一个完整芯片保留下来，这就带来一个风险：整片会被表现最差的 die 拖住（也就是必须施加一个能让所有 die 都「通过」的最高电压）。</p>
+<p>在晶圆上，我们通过 <em>die 级</em>调校化解这个风险——给每颗 die 配备独立的稳压器：</p>
+<h4>共享电压</h4>
+<h4>局部电压</h4>
+<p>更低电压 更高电压</p>
+<p>采用共享电压时，每个区域都要接受「要求最高的那个区域」所需的电压。局部控制则让我们能为每个区域<em>独立</em>选择电压，再通过测试验证这些设置。</p>
+<p>我们会测量每个区域在负载下的表现，调整其工作设置，再按处理器的要求重新测试。举一个说明性的例子：为达到同一时钟频率，die A 需要 0.70 V，die B 需要 0.75 V。</p>
+<h4>Reticle A</h4>
+<p>需要 0.70V</p>
+<p>0.70V</p>
+<p>动态功耗 1.00×</p>
+<p>0.70V 基准 = 1.00×</p>
+<h4>Reticle B</h4>
+<p>需要 0.75V</p>
+<p>0.70V</p>
+<p>动态功耗 0.87×</p>
+<p>0.75V 基准 = 1.00×</p>
+<p>若共享 0.70 V，A 通过时序、B 不通过；若共享 0.75 V，两者都通过，但 A 拿到了高于所需的电压。这点电压差会带来可测量的功耗代价：在频率与开关活动不变的前提下，动态功耗大致与电压的平方成正比：</p>
+<p>(0.75 ÷ 0.70)² ≈ 1.15</p>
+<p>因此，把 A 从 0.70 V 提到 0.75 V，会让它的动态功耗增加约 15%，而时钟频率没有任何提升。</p>
+<p>局部调校是双向的：既能提高 B 的电压以满足时序，也能降低 A 的电压以省电。相对于两者都跑 0.75 V，把 A 退回 0.70 V 可使其动态功耗下降约 13%。</p>
+<p>在相同频率下假设开关活动与电容相同，与两者都跑 0.75 V 相比，局部调校把两者的动态功耗合计降低约 6.4%。这有助于容纳制造出来的整批芯片的两端：需要更高电压的区域能拿到它，而不必让其他所有地方一起承担同样的功耗代价；在更低电压下就能满足时序的区域，也保住了自己的能效优势。</p>
+<h3><strong>感知并追踪硬件全生命周期的各个阶段</strong></h3>
+<p>电压调校，以及为容纳偏差所做的大量工作，都依赖对硬件的精确测量。WSE 每个 reticle 上有 184 个传感器块，分布在整个计算阵列中。制造阶段，环形振荡器测量局部电路速度，帮助工程师绘制整片晶圆的偏差图谱，并在功能测试的同时确定工作设置。</p>
+<h4>晶圆</h4>
+<h4>放大的 reticle</h4>
+<p>采样阵列</p>
+<p>负载切换会让电流需求快速变化，可能导致供电电压跌落或过冲。电压跌落检测器会标记出电压下陷，延迟链监视器追踪其对电路速度的影响，片上采样阵列则捕获电压波形以供分析。三者合起来，能暴露出平均值读数会漏掉的瞬时电气扰动。</p>
+<p>WSE 会自动控制活动的变化速率，从而能平缓地过渡到更安静、更凉爽的状态，同时抑制电压摆幅。工程师用这些传感器读数来表征高负载场景，并验证硬件的响应。</p>
+<h3><strong>为多年服役而设计</strong></h3>
+<p>工作条件会影响硅的老化速度。那些帮助提升良率的决策，同样让硬件在现网中撑得更久。电压调校让各颗 die 运行在理想条件下，避免不必要的应力。我们的量产核心设计还能应对芯片生命周期内可能出现的新缺陷。</p>
+<h3>现网修复</h3>
+<p>WSE 的备用核心与冗余连接有两个用途。在制造阶段，它们让我们能从含有缺陷的硅片上拼出所需规模的算力；部署之后，剩余的储备还能在不物理更换晶圆的情况下挽回新的失效。借助缺陷绕行（defect routing）时使用的同一批冗余核心，我们无需把晶圆从系统中取出，就能恢复软件视角下原本的算力规模。</p>
+<h3>归纳起来</h3>
+<p>芯片设计就是一门做取舍的功夫。芯片尺寸、核心数量、存储架构，各自服务于不同的目标。单纯把现有架构放大，只会让它暴露在更多缺陷与偏差之下。要让晶圆级方案变得经济，必须从一开始就围绕这些现实来设计。</p>
+<p>这些做法合在一起，是晶圆级计算不可或缺的。对单 die 芯片厂商来说，同样的取舍并不成立——它们有更简单的办法把芯片推向市场。而在 Cerebras，对工艺与设计的极致投入，正是让我们的 die 能在宽泛条件下作为一个整体工作的基础。WSE 额外的<em>成本</em>不在芯片制造上，而在设计室里花掉的时间。</p>
+<p><em>特别感谢 David Greenhill、Jean-Philippe Fricker、Alvin Jee 以及许多其他人为撰写本文提供的帮助。</em></p>]]></content:encoded>
     </item>
     <item>
       <title>来自我们的 CEO：打造晶圆级需要什么，以及它为何能持续下去</title>
@@ -462,10 +537,429 @@
 <p>博客</p>]]></content:encoded>
     </item>
     <item>
-      <title>从头开始的分类推理</title>
+      <title>从零开始理解分离式推理</title>
       <link>https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up</guid>
       <description>原文标题：Disaggregated Inference From The Ground Up</description>
+      <content:encoded><![CDATA[<p>Oct 01 2026</p>
+<h1>从零开始理解分离式推理</h1>
+<p><a href="https://www.cerebras.ai/author/isaac-tai">Isaac Tai</a><a href="https://www.cerebras.ai/author/zhenwei-gao">Zhenwei Gao</a></p>
+<p>传统上，提高推理吞吐意味着增加硬件，或者同时服务更多请求。但把并发推高，会拖慢每个用户的 token 生成速度。</p>
+<p>通过采用一种称为分离式的技术，我们在早期结果中把吞吐量提升了 5×——使用同样数量的 Cerebras 系统，token 生成速度没有任何损失。</p>
+<p>在 Cerebras，我们正引领异构分离式的发展，也就是把多种类型的芯片组合进一套推理系统。把推理中受内存限制或受计算限制的各个环节分配给不同的硬件，我们获得了超出同构分离式的收益。</p>
+<p>这是该主题系列的第一篇。如果你听过“分离式”这个词，或者听过“prefill 受计算限制、decode 受内存限制”这个说法，却搞不清它们到底指什么，那么这篇文章就是为你写的。</p>
+<p>我们会从最基础的地方把这种直觉建立起来：</p>
+<ul><li>加速器如何在计算与内存搬运之间取得平衡</li><li>推理的不同阶段分别是什么</li><li>它们为什么对硬件提出不同的要求</li><li>分离式如何改善整个系统</li></ul>
+<h3>加速器是如何工作的</h3>
+<p>加速器是为加速特定类型计算而造的硬件。GPU 就是一个例子。我们可以把加速器看作协同执行程序的两个部分。</p>
+<ul><li><strong>计算单元</strong>自己完成算术运算——加法、乘法、按位逻辑等操作。</li><li><strong>内存</strong>负责存储数据。通常是用户输入、模型权重、中间值和结果。</li></ul>
+<p>GPU</p>
+<p>计算：每个方块是一个计算单元。它们并行执行算术运算。</p>
+<p>算术运算只发生在加速器的计算单元里，而不发生在内存里。因此，每一次计算都必然伴随数据搬运。要想高效使用加速器，工程师会尽量让每次搬运产出尽可能多的算术运算：<em>数据一旦从内存搬过来，在搬运更多数据之前，我们能完成多少次计算？</em></p>
+<p><strong>算术强度</strong>就是衡量这种效率的指标。它指的是搬运一定量数据所对应的计算“工作量”。更准确地说，是浮点运算次数除以传输的字节数。</p>
+<p>算术强度等于 FLOPs 除以传输的字节数。算术强度 = FLOPs / 传输的字节数</p>
+<p>算术强度告诉我们每搬运一个字节做了多少计算；它并不直接告诉我们某个操作跑得多快。当处理器大部分时间都在等数据时，内存带宽最关键；当它一直忙于计算时，算力就更重要。</p>
+<p>吃透算术强度，是理解 LLM 各个计算阶段的关键。我们来看几个真实例子。</p>
+<h3>两个矩阵相加</h3>
+<p>考虑一个简单的矩阵相加。要在加速器上完成它，我们需要从内存读取两个矩阵，在计算核心中做加法，再把结果写回去。</p>
+<p>我们看一个真实的例子。</p>
+<p>这里，我们从内存载入两个数（各 2 字节），执行一次 FLOP 把它们相加，然后把 2 字节的结果写回内存。这样就是 1 次 FLOP 对应传输 6 字节，算术强度为每字节 0.167 次 FLOP。</p>
+<p>算术强度：1 FLOPs 除以传输的 6 字节：4 字节载入计算单元，2 字节存回内存。1 FLOPs / 6 字节传输 = 0.167 FLOP/byte</p>
+<p>内存</p>
+<p>载入</p>
+<p>4 字节</p>
+<p>保存</p>
+<p>2 字节</p>
+<p>计算</p>
+<p>每个值占 2 字节。每次加法读取两个值、写入一个结果：每 6 字节对应 1 次 FLOP。悬停或点击任意单元格，可以追踪与之对应的输入和输出。在每个矩阵内可用方向键移动；按 Escape 清除选择。</p>
+<p>注意，随着你用滑块增大矩阵规模，计算次数和传输字节数按比例同步增长。所以在本例中，矩阵越大 FLOP 总数越高，但相对的算术强度保持不变。</p>
+<h3>矩阵乘法</h3>
+<p>我们再看另一个例子。矩阵乘法遵循同样的基本路径：从内存载入两个输入矩阵，在计算单元里做乘加，然后把结果矩阵保存回内存。</p>
+<p>但与加法不同，每个输出值都由第一个矩阵的一整行和第二个矩阵的一整列共同构成。把鼠标悬停在某个输出值上，就能看到参与构成它的输入值：</p>
+<p>算术强度：45 FLOPs 除以传输的 54 字节45 FLOPs / 54 字节传输 = 0.833 FLOP/byte</p>
+<p>内存</p>
+<p>载入</p>
+<p>36 字节</p>
+<p>保存</p>
+<p>18 字节</p>
+<p>计算</p>
+<p>每个值占 2 字节。我们对每个输入计一次读取，对每个结果计一次写入。对于 N 行 N 列的矩阵，每个结果需要 N 次乘法和 N − 1 次加法。悬停或点击任意输入，可以看到它影响到的输出；悬停或点击某个输出，可以看到参与贡献的输入。在每个矩阵内可用方向键移动；按 Escape 清除选择。</p>
+<p>注意增大矩阵规模时发生了什么变化。加速器仍然只载入每个输入值一次、写出每个结果一次，但现在每个被载入的值都能贡献给更多输出值。搬运的数据量随矩阵元素个数增长，而算术量的增长<em>更快</em>。</p>
+<p>在矩阵乘法中，即使只有一个输入矩阵发生变化，我们也能提高算术强度。下一个例子里，我们只让第二个矩阵可交互。再试一次滑块：</p>
+<p>算术强度：15 FLOPs 除以传输的 30 字节15 FLOPs / 30 字节传输 = 0.500 FLOP/byte</p>
+<p>内存</p>
+<p>载入</p>
+<p>24 字节</p>
+<p>保存</p>
+<p>6 字节</p>
+<p>计算</p>
+<p>每个值占 2 字节。我们对每个输入计一次读取，对每个结果计一次写入。左侧矩阵固定为 3×3。右侧矩阵有 3 行、1 到 6 列。每个结果需要 3 次乘法和 2 次加法。固定的左侧矩阵占 18 字节；每新增一个输入列，就多载入 6 字节、多保存 6 字节。悬停或点击任意输入，可以看到它影响到的输出；悬停或点击某个输出，可以看到参与贡献的输入。在每个矩阵内可用方向键移动；按 Escape 清除选择。</p>
+<p>即使只有一个输入在变化，算术强度也会随输入规模增长！输入规模与算术强度之间的这种关系，是理解推理不同阶段的关键。</p>
+<h3>推理的算术强度</h3>
+<p>推理是一连串矩阵乘法的链条。在这一节里，我们把前面学到的概念用到对语言模型的理解上。</p>
+<p>本文不会深入语言模型架构的全部复杂性。但就我们的目的而言，从语言模型里生成一个 token，本质上就是模型权重与输入 token 之间的一次矩阵运算：</p>
+<p>内存</p>
+<p>模型权重</p>
+<p>2</p>
+<p>1</p>
+<p>3</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>2</p>
+<p>1</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>1</p>
+<p>3</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>输入</p>
+<p>maytheforce</p>
+<p>3</p>
+<p>2</p>
+<p>1</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>4</p>
+<p>2</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>2</p>
+<p>1</p>
+<p>3</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>计算</p>
+<p>输出</p>
+<p>be</p>
+<p>13</p>
+<p>11</p>
+<p>13</p>
+<p>16</p>
+<p>18</p>
+<p>25</p>
+<p>16</p>
+<p>17</p>
+<p>11</p>
+<p>27</p>
+<p>21</p>
+<p>25</p>
+<p>10</p>
+<p>16</p>
+<p>13</p>
+<p>16</p>
+<p>23</p>
+<p>20</p>
+<p>16</p>
+<p>19</p>
+<p>22</p>
+<p>19</p>
+<p>32</p>
+<p>35</p>
+<p>19</p>
+<p>15</p>
+<p>15</p>
+<p>26</p>
+<p>22</p>
+<p>33</p>
+<p>12</p>
+<p>21</p>
+<p>13</p>
+<p>23</p>
+<p>27</p>
+<p>21</p>
+<p>左侧的输入矩阵代表模型的权重。这些是在推理过程中保持固定的、学习得到的数值。右侧的输入矩阵代表模型需要处理的输入 token。我们可以把每一列看作某个 token 的数值表示。</p>
+<p>要生成一个输出 token，加速器要把权重和输入都从内存搬到计算单元，并执行一连串矩阵乘法（此处简化为一次运算）。点击播放，在下方完整跟踪这个过程：</p>
+<p>看似一次连续的生成过程，实际上分为两个截然不同的阶段。首先，模型处理整个提示词（“may the force”），产出第一个响应 token“be”。随后它逐个 token 生成其余响应：“with”和“you”。</p>
+<p>这两个阶段分别称为 <strong>prefill</strong> 和 <strong>decode</strong>，它们的算术强度特征差别很大。</p>
+<blockquote>注意：我们的示例只跟踪一个请求。在生产环境中，服务器通常会把多个请求批处理，一次为多个用户各处理一个新 token。这样多个请求可以共享读取模型权重的工作。但批越大，每个 decode 步骤可能耗时越长。总吞吐可以上升，而每个用户收到 token 的速度变慢。</blockquote>
+<h3>prefill</h3>
+<p>在 prefill 阶段，整个提示词被<em>并行</em>处理。</p>
+<p>前面我们了解到，规模更大的矩阵乘法因为数据复用更多而具有更高的算术强度。用更长的输入提示词可以让这一点更明显：</p>
+<p>真实场景中的提示词可能包含数千甚至数十万个 token。把一个 100 页的 PDF 上传给聊天机器人，本质上就产生了一个需要处理的巨大矩阵计算。</p>
+<p>这就是 prefill 的算术强度相对较高的原因！它是一次大型矩阵运算。</p>
+<h3>decode</h3>
+<p>在 decode 阶段，token 被逐个生成。</p>
+<p>乍看之下，模型似乎每次都要把不断变长的整个序列跑一遍同样的大矩阵乘法。但语言模型用 <strong>KV cache</strong> 避开了这一点。</p>
+<p>KV cache 保存了为先前 token 计算出的 key 和 value，因此不必重新计算它们。随着上下文增长，读取和使用这份缓存的工作量也会增加。</p>
+<p>本文不会深入讨论 KV cache 的全部复杂性，但你可以把矩阵中的灰色部分理解为 token 生成每一步中已缓存的数据。结果就是一次小得多的矩阵运算。</p>
+<p>得益于这份缓存，我们避免了重新计算先前 token 的 key 和 value。</p>
+<blockquote>注意：加速器仍然要从内存中读取已缓存的 key 和 value，并在 attention 中使用它们。我们这里只画出新 token 进入计算单元，是为了强调先前 token 的 key 和 value 是被复用而不是被重算。想了解真实的矩阵运算，见 Hugging Face 的 KV cache 指南。</blockquote>
+<h3>prefill 与 decode 的特征不同</h3>
+<p>在两个阶段中，模型的全部权重都必须被送到计算单元。这可能意味着搬运数百 GB 甚至数 TB 的数据。无论 prefill 阶段处理的是上百万 token 的提示词，还是 decode 阶段只处理一个新输入 token，生成一个 token 都要搬运这些数据。</p>
+<p>这就是为什么 prefill 和 decode 在内存搬运量相近的情况下，计算负载却如此不同：</p>
+<p>内存搬运量 算术强度</p>
+<p>&quot;In the Goblet of Fire film, who does Karkaroff expose as a Death Eater?&quot;&quot;Barty&quot;&quot;Crouch&quot;&quot;Jr.&quot;</p>
+<h3>共享调度的难题</h3>
+<p>到目前为止，我们跟踪的是单个请求在系统中的流转。但在生产环境中，一台推理服务器通常要同时处理许多请求：有些请求处于 prefill 阶段，另一些已经在 decode 阶段生成 token 了。</p>
+<p>当 prefill 和 decode 跑在同一批硬件上，它们会互相干扰。prefill 计算密集程度很高，会拖住正在进行的 decode 请求。</p>
+<p>调度器决定请求如何被分配和排优先级。你可以探索不同调度策略如何影响请求处理：</p>
+<p>PrefillDecode首个 token</p>
+<p>请求 1</p>
+<p>What's the classic Star Wars wish for good luck? Explain what it means.</p>
+<p>May</p>
+<p>the</p>
+<p>Force</p>
+<p>be</p>
+<p>with</p>
+<p>you.</p>
+<p>It</p>
+<p>is</p>
+<p>a</p>
+<p>way</p>
+<p>to</p>
+<p>wish</p>
+<p>someone</p>
+<p>luck,</p>
+<p>courage,</p>
+<p>and</p>
+<p>guidance</p>
+<p>on</p>
+<p>the</p>
+<p>journey</p>
+<p>ahead.</p>
+<p>请求 2</p>
+<p>Summarize these story notes in six words: a crew loses its map during a storm, follows the stars through the night, and finally reaches home just before the sun comes up.</p>
+<p>The</p>
+<p>crew</p>
+<p>returns</p>
+<p>home</p>
+<p>before</p>
+<p>sunrise.</p>
+<p>请求 3</p>
+<p>Create a six-word slogan for a small neighborhood bakery that bakes fresh bread every morning.</p>
+<p>Fresh</p>
+<p>bread,</p>
+<p>warm</p>
+<p>smiles,</p>
+<p>every</p>
+<p>morning.</p>
+<p>时间 →</p>
+<p>优先 prefill 能让新请求更早开始，但可能打断那些响应已经在流式输出的用户。优先 decode 能让已有响应顺畅地流式输出，但可能让新提示词等很久才收到任何响应。</p>
+<p>这些决策会真实影响终端用户体验。在三种模式之间切换，看看每种调度策略如何影响一个聊天机器人：</p>
+<p>你：What's the classic Star Wars wish for good luck? Explain what it means.</p>
+<p>助手…</p>
+<p>等待首个 token…</p>
+<p>0.0 / 40</p>
+<p>1</p>
+<p>2</p>
+<p>3</p>
+<p>聚合式系统——prefill 和 decode 跑在同一批机器上——必须判断对自己的应用来说哪种结果更重要：让新请求尽快拿到第一个 token，让进行中的响应稳定地流式输出，还是把总体吞吐做到最大。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/36f104f2624a2eec880390f022073d0c9cb63bd1-1174x401.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1174" alt=""></p>
+<h3>分离式架构</h3>
+<p>我们先回顾一下到目前为止学到的内容：</p>
+<ul><li>加速器（硬件）负责执行算术运算。其方式是：把数据从内存搬到计算单元，再把数据写回内存。</li><li>在搬运同样多数据的情况下，有些工作负载能完成更多算术运算。</li><li>prefill 和 decode 是推理的不同阶段。</li><li>prefill 因为要并行处理多个 token，计算量很大。</li><li>decode 每一步对每个请求只处理一个新 token，但仍需为模型权重和 KV cache 进行大量内存访问。</li><li>在同一批硬件上平衡这两种工作负载很困难，规模化时必然要做取舍。</li></ul>
+<p>分离式是一种系统设计模式。它识别出资源需求不同的工作，然后把它们分开运行，而不是强迫它们共用同一个硬件池。</p>
+<p>分离式系统使用两个独立的硬件池：一个用于 prefill，一个用于 decode。选择“分离式”，看看调度因此有何变化。</p>
+<p>提示词 token · prefill响应 token · decode</p>
+<p>请求 1</p>
+<p>请求 2</p>
+<p>请求 3</p>
+<p>decode 池</p>
+<p>prefill 池</p>
+<p>时间 →</p>
+<p>在共享池中，首 token 延迟与 token 间延迟直接耦合。开始一个新提示词可能拖慢正在进行的响应；保护正在进行的响应又会让新提示词一直等待。</p>
+<p>分离式远不只是“流式输出更顺滑”。更根本地说，分离式改变了服务系统的控制接口。</p>
+<h3>对取舍有更多控制</h3>
+<p>在共享池中，容量、批处理和调度决策同时影响 prefill 和 decode。一旦把阶段分开，运维者就可以独立调节每一侧——分配硬件、设定批处理策略，并按产品需求决定更偏重延迟还是吞吐。</p>
+<p>例如，对首 token 延迟有严格目标的系统，可以为 prefill 预留更多容量，让进来的提示词立刻开始处理，而不占用 decode 的容量。优先保证流式体验顺滑的系统，可以给 decode 一个更大或调度更紧凑的池，即使在提示词流量激增时也让进行中的响应持续推进。</p>
+<p>关键在于，这些池可以各自独立扩缩。点击不同场景，看看为了满足不同需求，池可以怎样扩缩：</p>
+<p>prefill 池</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>decode 池</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>提示词容量↑</p>
+<p>并发响应数↑</p>
+<p>TTFT↓</p>
+<p>端到端延迟↓</p>
+<p>两个阶段的均衡起点。</p>
+<p>你可以看到，分离式让系统能够适应不同形态的工作负载。</p>
+<p>但把阶段分开也带来一个新需求：池与池之间的数据传输。这个设计中最关键的新增环节就是 <strong>KV cache</strong> 的传输。</p>
+<h3>KV 传输</h3>
+<p>prefill 构建出 KV cache 之后，系统把这份状态传输到 decode 池，在那里载入内存，生成才能继续。</p>
+<p>模型权重在两个池里本来都已加载，而 KV cache 不同，它是与请求相关的数据。交接会带来额外的网络与协调开销，这正是分离式在规模化时最有吸引力的原因：当并发工作足够多时，独立配置和调度 prefill 与 decode 带来的收益可以超过传输状态和运维两套池的成本。</p>
+<p>prefill 处理完一个提示词后，decode 需要 prefill 创建的那份与请求相关的状态。两个池都已经有模型权重，所以必须跨越边界的状态就是 KV cache。</p>
+<p>在下方跟踪一个请求，看看这次交接：</p>
+<p>传入的提示词</p>
+<p>PrefillGPU</p>
+<p>输入 · 位于内存</p>
+<p>May the force</p>
+<p>KV cache</p>
+<p>计算</p>
+<p>KV 传输</p>
+<p>DecodeGPU</p>
+<p>输入 · 位于内存</p>
+<p>KV cache</p>
+<p>计算</p>
+<p>May the force</p>
+<p>跟着这个提示词穿过两个池。prefill 产出“be”，并把 KV cache 和下一个 token 的信息传给 decode。decode 用“be”产出“with”，再用“with”产出“you”，每处理一个 token 就把它加入缓存。“You”会在下一轮才进入缓存。动画展示的是工作顺序，不是实测的硬件占用。</p>
+<p>把阶段分开也会带来成本。KV cache 必须在池之间传输，而且如果两侧容量与需求不匹配，任意一侧都可能闲置。延迟还取决于缓存是在同一机房的机器之间传输，还是跨区域传输。最终，运维者必须判断这点额外延迟是否可以接受。</p>
+<h3>异构分离式</h3>
+<p>到目前为止，我们的例子展示的都是把 prefill 和 decode 分离到使用同一种硬件的两个池里。</p>
+<p>当引入异构硬件组合时，分离式会更强大。问题不再只是哪一款加速器该跑这个模型，而是哪种加速器组合最能服务这种工作负载。</p>
+<p>如果每个池都可以指派给不同的硬件，专用硬件就变得极具吸引力：某一维度——比如提示词处理、内存带宽、token 速度或成本效率——特别出色的加速器，可以带来超过只用单一类型芯片做分离式的性能提升。</p>
+<p>Cerebras 拥有极高的聚合片上内存带宽。它的晶圆级架构围绕对本地内存的快速访问来设计，因此特别适合推理中逐个 token 处理的那一部分。</p>
+<p>GPT-oss-120B</p>
+<p>高推理强度 · 10,000 输入 token</p>
+<p>输出 token/s ↑</p>
+<p>每秒 1,669 个输出 token</p>
+<p>SambaNova</p>
+<p>每秒 708 个输出 token</p>
+<p>Groq</p>
+<p>每秒 475 个输出 token</p>
+<p>Microsoft Azure</p>
+<p>每秒 319 个输出 token</p>
+<p>Nebius</p>
+<p>每秒 294 个输出 token</p>
+<p>Baseten</p>
+<p>每秒 293 个输出 token</p>
+<p>06001,2001,800</p>
+<p><a href="https://artificialanalysis.ai/models/gpt-oss-120b/providers/">Artificial Analysis ↗</a> · Sep 10, 2026</p>
+<h3>为什么有些加速器更擅长 decode？</h3>
+<p>回想一下 decode 的不同之处：我们搬运了大量数据，只为产出一个新 token。它的算术强度相对较低，所以单纯增加 FLOP 算力并不一定能让 token 来得更快。计算单元需要从内存获得更多数据供给。</p>
+<p>在 GPU 上，模型数据主要存放在高带宽内存（HBM）中。在计算单元能使用这些数据之前，数据要先经由更小、更快的片上内存和缓存（包括 SRAM）逐级中转。这种内存层级在提供大容量的同时也有快速的本地存储，但数据仍必须从共享的外部内存向计算核心搬运。</p>
+<p>Cerebras 走的是另一条路：把 SRAM 与计算单元一起分布到整片晶圆上。这让计算单元能快速访问邻近的内存：</p>
+<p>GPU</p>
+<p>共享的 HBM 为众多计算单元供数</p>
+<p>WSE</p>
+<p>每个单元内部：本地 SRAM ↔ 计算</p>
+<p>这种晶圆级设计让 Cerebras 拥有极高的聚合内存带宽：</p>
+<p>内存带宽</p>
+<p>公开峰值 · 每处理器</p>
+<p>TB/s ↑</p>
+<p>片上 SRAMHBM</p>
+<p>Cerebras WSE-3 · 片上 SRAM · 晶圆</p>
+<p>每秒 21,000 TB</p>
+<p>片上 SRAM 加速器 · 片上 SRAM</p>
+<p>每秒 150 TB</p>
+<p>HBM4 GPU 1 · HBM4</p>
+<p>每秒 23.3 TB</p>
+<p>HBM4 GPU 2 · HBM4</p>
+<p>每秒 22 TB</p>
+<p>HBM3e GPU 1 · HBM3e</p>
+<p>每秒 8 TB</p>
+<p>HBM3e GPU 2 · HBM3e</p>
+<p>每秒 8 TB</p>
+<p>HBM3e GPU 3 · HBM3e</p>
+<p>每秒 8 TB</p>
+<p>HBM accelerator 1 · HBM</p>
+<p>每秒 7.38 TB</p>
+<p>HBM3e accelerator 1 · HBM3e</p>
+<p>每秒 7 TB</p>
+<p>HBM3e accelerator 2 · HBM3e</p>
+<p>每秒 4.9 TB</p>
+<p>HBM3e GPU 4 · HBM3e</p>
+<p>每秒 4.8 TB</p>
+<p>05k10k15k20k25k</p>
+<p>SRAM 数字汇总的是整个处理器内各处的本地内存带宽；HBM 数字衡量的是芯片外内存的流量。它们属于不同的内存层级，不是实测的 token 速度。</p>
+<p>来源与处理器细节 · Sep 10, 2026</p>
+<p>选出的领先 AI 加速器，包括新近发布的型号以及本文用到的较早硬件。每行是一个处理器或一片晶圆，不是一台服务器或一个机架。公开峰值未考虑工作负载、内存容量、功耗或价格。</p>
+<p><a href="https://www.cerebras.ai/blog/disaggregated-inference">Cerebras WSE-3 — 片上 SRAM · 晶圆 ↗</a><a href="https://www.nvidia.com/en-gb/data-center/lpx/">片上 SRAM 加速器 — 片上 SRAM ↗</a><a href="https://www.amd.com/en/products/accelerators/instinct/mi400/mi455x.html">HBM4 GPU 1 — HBM4 ↗</a><a href="https://developer.nvidia.com/blog/inside-nvidia-rubin-gpu-architecture-powering-the-era-of-agentic-ai/">HBM4 GPU 2 — HBM4 ↗</a><a href="https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html">HBM3e GPU 1 — HBM3e ↗</a><a href="https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html">HBM3e GPU 2 — HBM3e ↗</a><a href="https://www.amd.com/en/products/accelerators/instinct/mi350/mi355x.html">HBM3e GPU 3 — HBM3e ↗</a><a href="https://docs.cloud.google.com/tpu/docs/tpu7x">HBM 加速器 1 — HBM ↗</a><a href="https://blogs.microsoft.com/blog/2026/01/26/maia-200-the-ai-accelerator-built-for-inference/">HBM3e 加速器 1 — HBM3e ↗</a><a href="https://aws.amazon.com/ec2/instance-types/trn3/">HBM3e 加速器 2 — HBM3e ↗</a><a href="https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html">HBM3e GPU 4 — HBM3e ↗</a></p>
+<h3>分离式的目标</h3>
+<p>同构分离式与异构分离式带来的好处是<em>不同的</em>。</p>
+<p>同构系统通常着眼于通过让 token 生成更平滑来改善响应，而异构系统则被优化成从专用硬件中挖掘出最大价值。对 Cerebras 来说，就是提供极致速度而不牺牲吞吐。</p>
+<p>设想一个由五块 GPU 组成的聚合式系统，每块 GPU 把 80% 的执行时间花在 prefill 上、20% 花在 decode 上。进行中的响应只有在所属 GPU 执行 decode 步骤时才会推进。把五分之四的时间花在 prefill 上，会拖慢输出 token 生成的<em>平均</em>速度。</p>
+<p>PrefillDecode</p>
+<p>共享 GPU 池</p>
+<p>prefill 池</p>
+<p>decode 池</p>
+<p>KV 传输</p>
+<p>GPU 1</p>
+<p>GPU 2</p>
+<p>GPU 3</p>
+<p>GPU 4</p>
+<p>GPU 5</p>
+<p>提示词</p>
+<p>响应</p>
+<p>示意性假设</p>
+<p>示意性的 prefill/decode 交替执行，decode 步骤为 10 ms，传输开销可忽略。总请求吞吐相同：通过一块 decode GPU 的流量提升到 5×，响应完成速度快 5×，其活跃批大小保持不变。</p>
+<p>五块 GPU 合计的执行时间里，decode 只相当于一块 GPU 的量。在这个理想化的稳态下，分离式把这份工作交给一块专用 GPU，把 prefill 交给其余四块。这块 decode GPU 可以在不与 prefill 竞争的情况下推进响应，在 GPU 总数不变的前提下改善 token 节奏。</p>
+<p>共享 GPU 花在 prefill 上的时间越多，改善幅度就越大。如果 GPU 本来就把大部分时间花在 decode 上，那么在同构系统中可消除的干扰就更少。但减少干扰只是做分离式的理由之一。在异构系统中，分离式优化的是更好的硬件专用化。</p>
+<p>假设目前由五片 Cerebras WSE 同时承担两个阶段。把 prefill 移到另一个加速器池，就能让这些晶圆专注于 decode——它们的能力在那里最有价值。</p>
+<p>PrefillDecode</p>
+<p>共享晶圆池</p>
+<p>新增的 prefill 池</p>
+<p>decode 池</p>
+<p>KV 传输</p>
+<p>HW A</p>
+<p>HW B</p>
+<p>HW C</p>
+<p>WSE 1</p>
+<p>WSE 2</p>
+<p>WSE 3</p>
+<p>WSE 4</p>
+<p>WSE 5</p>
+<p>提示词</p>
+<p>响应</p>
+<p>示意性假设</p>
+<p>示意性的初始划分为 75% prefill / 25% decode，并非基准测试结果。只有 prefill、KV 传输和需求都能跟上时，回收的 decode 时间才会提升输出容量。prefill 池的规模仅为示意。</p>
+<p>这是<em>每片 WSE</em> 的吞吐提升，靠额外的 prefill 硬件换来。</p>
+<p>Agentic 应用是异构分离式的理想场景。它们往往涉及很长的多轮工作流，上下文在多次模型调用之间不断增长。随着 agent 承担更长的、影响更大的任务，每一步的延迟都会叠加。快速推理因此变得关键——它决定了 agent 感觉上有多灵敏，以及任务能多快完成。</p>
+<p>Cerebras 分离式解锁了在不牺牲世界级交互性的前提下扩展推理的能力。</p>
+<h3>Cerebras 用分离式扩展超快 token 的规模</h3>
+<p>对超快生成的需求正在快速增长。随着越来越多应用走向 agentic，制约因素越来越不只是模型的总容量，而是我们一次能向用户交付多少快 token。</p>
+<p>在 Cerebras，我们正在构建异构推理系统来满足这一需求。目标不只是提高总吞吐——而是扩大推理的规模，同时保住那种让应用感觉瞬时的超快 token 速度。</p>
+<p>在传统的聚合式系统中，提升容量意味着部署更多硬件。借助合作方的加速器来处理提示词，我们在早期测试中用同样的 WSE 占地规模把容量提升了 5×。</p>
+<p>我们已经宣布与多家硬件伙伴建立合作，把更多超快 token 带给市场，这反映了我们的判断：异构硬件将成为今后推理的核心策略。</p>
+<p>prefill 选项</p>
+<p>提示词</p>
+<p>KV 传输</p>
+<p>Cerebras decode 池</p>
+<p>响应</p>
+<h3>接下来</h3>
+<p>在接下来的文章里，我们会更深入地讨论如何把异构分离式落地到生产环境。我们会探讨其中涉及的硬件与软件栈，以及规模化部署分离式推理在经济上的取舍。</p>
+<p>在 X 上关注我们，下一篇发布时会收到通知！</p>]]></content:encoded>
     </item>
     <item>
       <title>AlphaSense 如何用快速推理让 Agentic 研究变得可交互</title>

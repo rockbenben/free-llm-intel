@@ -16,7 +16,7 @@
 5. [我们如何在 Cerebras 上部署万亿参数前沿模型](https://www.cerebras.ai/blog/how-we-deploy-trillion-parameter-frontier-models-on-cerebras) <!--orig:How we deploy Trillion-parameter frontier models on Cerebras-->
 6. [模型再聪明，也救不了糟糕的 harness](https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness) <!--orig:A Smarter Model Won’t Save Your Bad Harness-->
 7. [MoE 数学揭秘：8x7B 到底是什么意思？](https://www.cerebras.ai/blog/moe-guide-calculator) <!--orig:MoE Math Demystified: What Does 8x7B Actually Mean?-->
-8. [从头开始的分类推理](https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up) <!--orig:Disaggregated Inference From The Ground Up-->
+8. [从零开始理解分离式推理](https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up) <!--orig:Disaggregated Inference From The Ground Up-->
 9. [AlphaSense 如何用快速推理让 Agentic 研究变得可交互](https://www.cerebras.ai/blog/how-alphasense-uses-fast-inference-to-make-agentic-research-interactive) <!--orig:How AlphaSense Uses Fast Inference to Make Agentic Research Interactive-->
 10. [为什么网络防御需要更快的推理](https://www.cerebras.ai/blog/why-cyber-defense-needs-faster-inference) <!--orig:Why Cyber Defense Needs Faster Inference-->
 11. [慢吞吞的个人助理的兴起](https://www.cerebras.ai/blog/the-rise-of-slow-personal-assistants) <!--orig:The rise of slow personal assistants-->

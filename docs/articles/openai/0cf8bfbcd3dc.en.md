@@ -5,10 +5,11 @@ original_title: Creative writing with GPT-5
 url: https://openai.com/index/gpt-5-creative-writing
 date: 2025-08-07
 lang: en
-captured: 2026-10-09
+captured: 2026-11-16
 extractor: readability-v1
-status: fetch_failed
+status: unreachable
 body_sha: e3b0c44298fc
+note: Cloudflare + 客户端渲染：requests 200 仅 JS 外壳，无头 Edge 为 Turnstile 403（个别渲染成功但正文区 500），HTML 里无正文
 ---
 
 

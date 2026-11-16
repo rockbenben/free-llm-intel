@@ -64,6 +64,82 @@
       <title>How to Yield at Wafer Scale</title>
       <link>https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale?li=1</guid>
+      <content:encoded><![CDATA[<p>Nov 10 2026</p>
+<h1>How to Yield at Wafer Scale</h1>
+<p><a href="https://www.cerebras.ai/author/isaac-tai">Isaac Tai</a></p>
+<p>Defects and variations are inevitable in semiconductor manufacturing. Conventional processors accommodate them by disabling defective cores and sorting chips into different performance grades.</p>
+<p>Wafer-scale computing faces the same challenges across a much larger surface area, creating more opportunities for defects and outliers. This has long raised doubts about whether wafer-scale processors could be manufactured economically.</p>
+<p>Cerebras designed the WSE around these realities. We've <a href="https://www.cerebras.ai/blog/100x-defect-tolerance-how-cerebras-solved-the-yield-problem">previously</a> discussed how the WSE's 900,000 small, independent cores can provide excellent defect tolerance after fabrication through redundancy. In this article, we’ll dive into the rest of the manufacturing process, including how we:</p>
+<ul><li>Design functional circuits to meet performance and power requirements despite parametric variation.</li><li>Tune voltage independently across 84 die regions.</li><li>Use distributed sensors and testing to characterize and monitor the wafer.</li><li>Recover failures through software-based reconfiguration, both during manufacturing and after deployment.</li></ul>
+<p>Together, these capabilities enable yields that meet or even exceed those of GPUs 1/58th of our size <em>and</em> support years of continuous operation after deployment.</p>
+<h3>Before fabrication: Designing for wide variation</h3>
+<p>Small variations in transistor dimensions, wire widths and layer alignment arise throughout chip manufacturing, affecting how circuits respond to voltage and temperature.</p>
+<p>These differences produce <strong>parametric variation</strong>, so called because they change measurable electrical characteristics such as switching speed, resistance and leakage current. These differences determine whether a functional circuit can deliver the required performance within its power limits.</p>
+<p><strong>Parametric yield</strong> measures the fraction of functional processors that also meet the requirements. Designing circuits that have good parametric yield starts long before tape-out.</p>
+<h3>Building margin into the physical design</h3>
+<p>We develop the WSE on TSMC’s established N5 process, drawing on its mature production history.</p>
+<p>During chip design, engineers lay out transistors and their connections using the foundry’s process design kit, or PDK. It includes device models and mandatory physical-design rules governing features such as wire widths, spacing and connections between metal layers. The mandatory rules are sufficient to develop a working chip, but TSMC also provides recommended rules called Design For Manufacturability, or DFM. When followed, these add more protection against manufacturing variations.</p>
+<p>Consider a <em>via</em>, a connection between two metal layers. While mandatory design rules specify a minimum enclosure size around a via, DFM recommends a wider one, which provides additional margin to accommodate variation in etching and metal filling. This reduces the risk of voids that can weaken the connection.</p>
+<p>Minimum</p>
+<p>Recommended</p>
+<p>Recommended rules introduce another set of design choices. More enclosure or additional vias can make a connection more robust, while consuming space that could serve other routing or circuitry. We incorporate recommendations where the protection justifies the layout cost, including configuring our routing tools to produce the intended geometry.</p>
+<h3><strong>Verifying timing across a wide range of variation</strong></h3>
+<p>Before fabrication, engineers set a target clock frequency and use foundry-provided models to calculate how signals travel through the design across voltage and temperature variation. They revise paths that miss their requirements until the design passes. This process is <strong>timing closure</strong>.</p>
+<p>Consider two registers, A and B. At each tick, A launches a new value while B captures the previous one.</p>
+<ul><li><strong>Setup</strong> checks that the previous value arrives and settles before capture.</li><li><strong>Hold</strong> checks that the next value arrives late enough for capture to finish reliably.</li></ul>
+<p>Next tick in 1.8 s</p>
+<p>Register A0011</p>
+<p>0011</p>
+<p>Register B1110</p>
+<p>Engineers choose how much variation a design must tolerate. The industry measures this range in <strong>sigma</strong>, or standard deviations. Higher sigma targets require circuits to meet their timing requirements farther from the average modeled behavior. <a href="https://www.synopsys.com/blogs/chip-design/improving-design-robustness-primeshield-discussion-li-ding.html">Synopsys describes three-sigma timing signoff as typical</a>.</p>
+<p>We design our circuits and layout to meet wide timing targets. The WSE targets up to <strong>four-sigma setup and </strong>up to<strong> seven-sigma hold</strong>. Through careful cell selection, routing and clock design, our team achieves these targets while giving up less than 1% of potential core capacity.</p>
+<p>For conventional processors, <a href="https://www.tomshardware.com/reviews/glossary-binning-definition,5892.html">binning</a> silicon into different performance grades can be a more economical way to accommodate variation than designing for higher sigma targets. At wafer scale, broader parametric tolerance is central to producing reliable chips economically. Our engineers invest in that tolerance during the design phase, closing timing across a wider range of conditions before the first wafer is fabricated.</p>
+<h3><strong>After fabrication: Characterizing and tuning the wafer</strong></h3>
+<h3>Picking the best cores with edge exclusion</h3>
+<p>When a wafer returns from fabrication, yield loss is unevenly distributed across its surface. The outer edge has disproportionately higher yield loss due to processes such as polishing and film deposition that are harder to keep uniform. We can visualize this by dividing the wafer into five radial zones, each representing ~20% of its surface area.</p>
+<p>The WSE’s square footprint leaves most of the outermost zone untouched. Approximately 97% of its active circuitry lies within the inner four zones, limiting exposure to the region responsible for much of the yield loss and variation. Where affected cores remain, including near the corners, our <a href="https://www.cerebras.ai/blog/100x-defect-tolerance-how-cerebras-solved-the-yield-problem">repair process</a> can exclude them and replace them with healthier cores from our redundant reserve.</p>
+<p>This gives us a better starting population of circuits to characterize and qualify.</p>
+<h3>Die-level voltage tuning for performance and power efficiency</h3>
+<p>Parametric variation affects how much voltage is required in one area compared to another to reach the same clock frequency.</p>
+<p>It's standard practice in the industry to address this with <em>tuning</em>, which involves first understanding a die's relative response to voltage, then applying a specific voltage that allows the die to reach the target frequency.</p>
+<p>Since conventional chips are manufactured as separate dies on a silicon wafer, they are cut and tuned individually. But in the WSE, since we keep all dies intact as a single chip, this represents a risk of being beholden to the worst-performing die (i.e., we need to apply the highest voltage that &quot;passes&quot; all of the dies).</p>
+<p>We overcome this on our wafer with <em>die-level</em> tuning by providing each die its own regulator:</p>
+<h4>Shared voltage</h4>
+<h4>Local voltage</h4>
+<p>Lower voltageHigher voltage</p>
+<p>With a shared voltage setting, every region receives the voltage required by the most demanding region. Local control lets us select voltage <em>independently</em> for each region, then verify the settings through testing.</p>
+<p>We measure each region’s behavior under load, adjust its operating setting, and retest it against the processor’s requirements. Consider an illustrative example with two dies: A requires 0.70 V and B requires 0.75 V to reach the same clock frequency.</p>
+<h4>Reticle A</h4>
+<p>Needs 0.70V</p>
+<p>0.70V</p>
+<p>Dynamic power1.00×</p>
+<p>0.70V baseline = 1.00×</p>
+<h4>Reticle B</h4>
+<p>Needs 0.75V</p>
+<p>0.70V</p>
+<p>Dynamic power0.87×</p>
+<p>0.75V baseline = 1.00×</p>
+<p>At a shared 0.70 V, A passes timing and B fails. At a shared 0.75 V, both pass, but A receives more voltage than it needs. That small voltage difference has a measurable power cost. Holding frequency and switching activity constant, dynamic power scales approximately with voltage squared:</p>
+<p>(0.75 ÷ 0.70)² ≈ 1.15</p>
+<p>Raising A from 0.70 V to 0.75 V therefore increases its dynamic power by roughly 15%, without increasing its clock frequency.</p>
+<p>Local tuning works in both directions. We can raise B’s voltage to meet timing while lowering A’s voltage to save power. Relative to running both at 0.75 V, returning A to 0.70 V reduces its dynamic power by approximately 13%.</p>
+<p>Assuming equal switching activity and capacitance at the same frequency, local tuning reduces their combined dynamic power by approximately 6.4% compared with running both at 0.75 V. This helps accommodate both ends of the manufactured population. Regions that need additional voltage can receive it without imposing the same power penalty everywhere else, and regions that meet timing at lower voltage retain their efficiency advantage.</p>
+<h3><strong>Sensing and tracking all stages of hardware life</strong></h3>
+<p>Voltage tuning and the broader work of accommodating variation depend on precise measurements of our hardware. The WSE has 184 sensor blocks per reticle, distributed throughout the compute fabric. During manufacturing, ring oscillators measure local circuit speed, helping engineers map variation across the wafer and establish operating settings alongside functional tests.</p>
+<h4>Wafer</h4>
+<h4>Enlarged reticle</h4>
+<p>Sampling arrays</p>
+<p>Workload transitions create rapid changes in current demand that can cause supply voltage to droop or overshoot. Droop detectors flag voltage dips, delay-chain monitors track the effect on circuit speed, and an on-chip sampling array captures voltage waveforms for analysis. Together, they expose brief electrical disturbances that average readings would miss.</p>
+<p>The WSE automatically controls the rate of change in activity. This lets it transition into quieter, cooler states while limiting voltage excursions. Engineers use the sensor readings to characterize demanding workloads and verify the hardware’s response.</p>
+<h3><strong>Designed for years of service</strong></h3>
+<p>Operating conditions influence how quickly silicon ages. The same decisions that contribute to our yields help the hardware last out in the field. Voltage tuning keeps dies running at ideal conditions, preventing unnecessary stress. Our mass core design also addresses new defects that may emerge over the lifespan of the chip.</p>
+<h3>In-field repair</h3>
+<p>The WSE’s spare cores and redundant connections serve two purposes. During manufacturing, they let us assemble the required compute fabric from silicon containing defects. After deployment, the remaining reserve can recover additional failures without physically replacing the wafer. Using the same redundant cores during defect routing, we can restore the original software-visible compute fabric without removing the wafer from the system.</p>
+<p>Broad timing margins, local voltage control and fine-grained repair enable a larger percentage of the manufactured wafers to meet the product requirements. After deployment, those same controls and remaining redundant resources continue to protect useful compute capacity.</p>
+<h3>Putting it all together</h3>
+<p>Chip design is an exercise in tradeoffs. Chip size, core count, and memory architecture are chosen for different outcomes. Simply enlarging an existing architecture leaves it exposed to more defects and variation. Making wafer scale economical requires designing around these realities from the very start.</p>
+<p>These practices, in aggregate, are essential for wafer-scale computing. For single-die chip manufacturers, the same tradeoffs wouldn't make sense since there are other, simpler techniques that can be used to bring chips to market. At Cerebras, excellent attention to process and design serves as the foundation that makes our dies work across a broad range of conditions as one unit. The additional <em>cost</em> of the WSE is not in the manufacturing of the chip. It is in the time spent in the design room.</p>
+<p><em>A big thank you to David Greenhill, Jean-Philippe Fricker, Alvin Jee and many others for help in writing this article.</em></p>]]></content:encoded>
     </item>
     <item>
       <title>What It Took to Build Wafer-Scale, and Why It Lasts</title>
@@ -461,6 +537,425 @@
       <title>Disaggregated Inference From The Ground Up</title>
       <link>https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up?li=1</guid>
+      <content:encoded><![CDATA[<p>Oct 01 2026</p>
+<h1>Disaggregated Inference From The Ground Up</h1>
+<p><a href="https://www.cerebras.ai/author/isaac-tai">Isaac Tai</a><a href="https://www.cerebras.ai/author/zhenwei-gao">Zhenwei Gao</a></p>
+<p>Increasing inference throughput traditionally means adding hardware or serving more requests concurrently. But pushing concurrency can slow token generation for each user.</p>
+<p>By using a technique called disaggregation, we've increased throughput by 5× in early results with the same number of Cerebras systems and no loss in token generation speeds.</p>
+<p>At Cerebras, we’re leading the development of heterogeneous disaggregation, which is combining multiple types of chips in one inference system. By assigning different hardware to the segments of inference that are memory- or compute-bound, we unlock gains beyond homogeneous disaggregation.</p>
+<p>This is the first installment in a series on this topic. If you’ve heard the term “disaggregation” or the claim that “prefill is compute-bound and decode is memory-bound” and wondered what either actually means, this article is for you.</p>
+<p>We’ll build this intuition from the ground up:</p>
+<ul><li>how accelerators balance compute and memory movement</li><li>what the different stages of inference are</li><li>why they place different demands on hardware</li><li>how disaggregation improves the system as a whole</li></ul>
+<h3>How Accelerators Work</h3>
+<p>An accelerator is hardware built to speed up particular kinds of computation. GPUs are one example. We can think of accelerators as two parts working together to execute a program.</p>
+<ul><li><strong>Compute units</strong> perform the arithmetic themselves—operations such as addition, multiplication, and bitwise logic.</li><li><strong>Memory</strong> stores data. These are typically user inputs, model weights, intermediate values, and results.</li></ul>
+<p>GPU</p>
+<p>ComputeEach square is a compute unit.They perform arithmetic in parallel.</p>
+<p>Arithmetic only happens in an accelerator’s compute units, not in memory. So, data movement is necessary for every computation. To use an accelerator efficiently, engineers try to get as much arithmetic as possible from each transfer: <em>once data has been moved from memory, how many calculations can we perform before moving more?</em></p>
+<p><strong>Arithmetic intensity</strong> is the measure of that efficiency. It's the amount of computational &quot;work&quot; for the amount of data moved. More precisely, the number of floating-point operations divided by the number of bytes transferred.</p>
+<p>Arithmetic intensity equals FLOPs divided by bytes transferred.Arithmetic intensity =FLOPsBytes transferred</p>
+<p>Arithmetic intensity tells us how much calculation we do for each byte moved; it does not directly tell us how fast an operation runs. When the processor spends much of its time waiting for data, memory bandwidth matters most. When it stays busy calculating, compute capacity matters more.</p>
+<p>Grokking arithmetic intensity is key to understanding an LLM's different computational stages. Let's dive into some real examples.</p>
+<h3>Adding Two Matrices</h3>
+<p>Consider a simple matrix addition. To perform it on an accelerator, we need to read two matrices from memory, do the addition in the compute cores, and save the result back.</p>
+<p>Let's do a real example.</p>
+<p>Here, we load two numbers from memory (2 bytes each), execute a single FLOP to add them, then write the 2-byte result back to memory. This gives us 1 FLOP over 6 transferred bytes, for an arithmetic intensity of 0.167 FLOPs per byte.</p>
+<p>Arithmetic intensity: 1 FLOPs divided by 6 bytes transferred: 4 bytes loaded into compute and 2 bytes saved to memory.1 FLOPs6 Bytes transferred = 0.167 FLOP/byte</p>
+<p>Memory</p>
+<p>Load</p>
+<p>4 bytes</p>
+<p>Save</p>
+<p>2 bytes</p>
+<p>Compute</p>
+<p>Each value uses 2 bytes. Each addition reads two values and writes one result: 1 FLOP per 6 bytes. Hover or tap any cell to trace its matching inputs and output. Use arrow keys within each matrix; Escape clears the selection.</p>
+<p>Notice that as you increase the matrix size with the slider, both the calculation count and the bytes transferred grow in proportion. So in this example, although the total number of FLOPs increases for larger matrices, the relative arithmetic intensity stays the same.</p>
+<h3>Matrix Multiplication</h3>
+<p>Let's examine a different example. Matrix multiplication follows the same basic path: load two input matrices from memory, multiply and add their values in the compute units, then save the result matrix back to memory.</p>
+<p>But unlike addition, each output value is built from an entire row of the first matrix and an entire column of the second. Hover over an output value to see the input values that contribute to it:</p>
+<p>Arithmetic intensity: 45 FLOPs divided by 54 Bytes transferred45 FLOPs54 Bytes transferred = 0.833 FLOP/byte</p>
+<p>Memory</p>
+<p>Load</p>
+<p>36 bytes</p>
+<p>Save</p>
+<p>18 bytes</p>
+<p>Compute</p>
+<p>Each value uses 2 bytes. We count one read per input and one write per result. For matrices with N rows and columns, each result takes N multiplications and N − 1 additions. Hover or tap any input to see affected outputs, or an output to see contributing inputs. Use arrow keys within each matrix; Escape clears the selection.</p>
+<p>Notice what changes as you increase the matrix size. The accelerator still loads each input value once and writes each result once, but every loaded value can now contribute to more output values. The amount of data moved grows with the number of matrix entries, but the amount of arithmetic grows <em>faster</em>.</p>
+<p>With matrix multiplications, we can increase arithmetic intensity even if only one of the input matrices changes. In the next example, we'll only make the second matrix interactive. Try the slider once more:</p>
+<p>Arithmetic intensity: 15 FLOPs divided by 30 Bytes transferred15 FLOPs30 Bytes transferred = 0.500 FLOP/byte</p>
+<p>Memory</p>
+<p>Load</p>
+<p>24 bytes</p>
+<p>Save</p>
+<p>6 bytes</p>
+<p>Compute</p>
+<p>Each value uses 2 bytes. We count one read per input and one write per result. The left matrix stays 3 by 3. The right matrix has 3 rows and 1 to 6 columns. Each result takes 3 multiplications and 2 additions. The fixed left matrix uses 18 bytes; each new input column adds 6 bytes loaded and 6 bytes saved. Hover or tap any input to see affected outputs, or an output to see contributing inputs. Use arrow keys within each matrix; Escape clears the selection.</p>
+<p>Even with one changing input, arithmetic intensity grows with input size! This relationship between input size and arithmetic intensity is key to understanding inference's different phases.</p>
+<h3>Arithmetic Intensity of Inference</h3>
+<p>Inference is a chain of many matrix multiplications. In this section, we'll apply the concepts we learned previously to understanding language models.</p>
+<p>This article won't go into the full complexity of the language model architecture. But for our purposes, generating a token from a language model is basically a matrix operation between a model's weights and input tokens:</p>
+<p>Memory</p>
+<p>Model weights</p>
+<p>2</p>
+<p>1</p>
+<p>3</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>2</p>
+<p>1</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>1</p>
+<p>3</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>Input</p>
+<p>maytheforce</p>
+<p>3</p>
+<p>2</p>
+<p>1</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>4</p>
+<p>2</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>2</p>
+<p>1</p>
+<p>3</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>1</p>
+<p>4</p>
+<p>1</p>
+<p>3</p>
+<p>5</p>
+<p>2</p>
+<p>4</p>
+<p>Compute</p>
+<p>Output</p>
+<p>be</p>
+<p>13</p>
+<p>11</p>
+<p>13</p>
+<p>16</p>
+<p>18</p>
+<p>25</p>
+<p>16</p>
+<p>17</p>
+<p>11</p>
+<p>27</p>
+<p>21</p>
+<p>25</p>
+<p>10</p>
+<p>16</p>
+<p>13</p>
+<p>16</p>
+<p>23</p>
+<p>20</p>
+<p>16</p>
+<p>19</p>
+<p>22</p>
+<p>19</p>
+<p>32</p>
+<p>35</p>
+<p>19</p>
+<p>15</p>
+<p>15</p>
+<p>26</p>
+<p>22</p>
+<p>33</p>
+<p>12</p>
+<p>21</p>
+<p>13</p>
+<p>23</p>
+<p>27</p>
+<p>21</p>
+<p>The left input matrix represents the model's weights. These are learned values that are fixed during inference. The right input matrix represents the input tokens that the model needs to process. We can think of each column as some numerical representation of a token.</p>
+<p>To generate a single output token, the accelerator moves both the weights and inputs from memory into compute and performs a chain of matrix multiplications (simplified here as one operation). Press play to follow this process end-to-end below:</p>
+<p>What looks like one continuous generation process is actually two distinct phases. First, the model processes the entire prompt (“may the force”) and produces the first response token, “be.” Then it generates the rest of the response one token at a time: “with” and “you.”</p>
+<p>These phases are called <strong>prefill</strong> and <strong>decode,</strong> and they have very different arithmetic intensity profiles.</p>
+<blockquote>NoteOur examples follow one request. In production, servers often batch requests together, processing a new token for several users at once. This lets requests share the work of reading model weights. But larger batches can make each decode step take longer. Total throughput can rise while each user receives tokens more slowly.</blockquote>
+<h3>Prefill</h3>
+<p>During prefill, the entire prompt is processed in <em>parallel</em>.</p>
+<p>We learned earlier that larger matrix multiplications have higher arithmetic intensity because of more data reuse. We can make this more obvious with a longer input prompt:</p>
+<p>Real-world prompts can contain thousands or even hundreds of thousands of tokens. Uploading a 100-page PDF to a chatbot essentially generates a massive matrix calculation that needs to be processed.</p>
+<p>This is why prefill has relatively high arithmetic intensity! It's a large matrix operation.</p>
+<h3>Decode</h3>
+<p>During decode, tokens are generated one after another.</p>
+<p>At first, it may seem like the model needs to run the entire growing sequence through the same large matrix multiplication every time. But language models avoid that with the <strong>KV cache</strong>.</p>
+<p>The KV cache stores keys and values computed for earlier tokens, so we don’t have to calculate them again. As the context grows, reading and using the cache takes more work.</p>
+<p>We won't go into the full complexity of the KV cache in this article, but you can treat the gray parts of the matrix as the cached data in each step of token generation. The result is a much smaller matrix operation.</p>
+<p>Thanks to the cache, we avoid recomputing earlier tokens’ keys and values.</p>
+<blockquote>NoteThe accelerator still reads cached keys and values from memory and uses them in attention. We show only the new token moving into compute to emphasize that earlier tokens’ keys and values are reused rather than recomputed. See the actual matrix operations in Hugging Face’s KV cache guide.</blockquote>
+<h3>Prefill and Decode Have Different Profiles</h3>
+<p>In both phases, all of the model's weights must be brought to compute. That can mean moving hundreds of gigabytes or even terabytes of data. All of this has to be transferred to generate a single token, regardless of whether it's processing a million-token prompt during prefill or processing a single new input token during decode.</p>
+<p>This is why prefill and decode have such different computational workloads despite having similar memory movement:</p>
+<p>Memory movementArithmetic intensity</p>
+<p>&quot;In the Goblet of Fire film, who does Karkaroff expose as a Death Eater?&quot;&quot;Barty&quot;&quot;Crouch&quot;&quot;Jr.&quot;</p>
+<h3>The Shared Scheduling Problem</h3>
+<p>So far, we've followed a single request through the system. In production, however, an inference server typically handles many requests concurrently. Some requests may be in the prefill stage, while others are already generating tokens in the decode stage.</p>
+<p>When prefill and decode run on the same hardware, they can interfere with one another. Prefill is highly compute-intensive, which can stall ongoing decode requests.</p>
+<p>A scheduler determines how requests are assigned and prioritized. Explore how different scheduling strategies affect request processing:</p>
+<p>PrefillDecodeFirst token</p>
+<p>Request 1</p>
+<p>What's the classic Star Wars wish for good luck? Explain what it means.</p>
+<p>May</p>
+<p>the</p>
+<p>Force</p>
+<p>be</p>
+<p>with</p>
+<p>you.</p>
+<p>It</p>
+<p>is</p>
+<p>a</p>
+<p>way</p>
+<p>to</p>
+<p>wish</p>
+<p>someone</p>
+<p>luck,</p>
+<p>courage,</p>
+<p>and</p>
+<p>guidance</p>
+<p>on</p>
+<p>the</p>
+<p>journey</p>
+<p>ahead.</p>
+<p>Request 2</p>
+<p>Summarize these story notes in six words: a crew loses its map during a storm, follows the stars through the night, and finally reaches home just before the sun comes up.</p>
+<p>The</p>
+<p>crew</p>
+<p>returns</p>
+<p>home</p>
+<p>before</p>
+<p>sunrise.</p>
+<p>Request 3</p>
+<p>Create a six-word slogan for a small neighborhood bakery that bakes fresh bread every morning.</p>
+<p>Fresh</p>
+<p>bread,</p>
+<p>warm</p>
+<p>smiles,</p>
+<p>every</p>
+<p>morning.</p>
+<p>Time →</p>
+<p>Prioritizing prefill helps new requests begin sooner, but can interrupt users whose responses are already streaming. Prioritizing decode helps existing responses stream smoothly, but can cause new prompts to wait for a long time before any response.</p>
+<p>These decisions genuinely affect end-user experience. Switch between the three modes to see how each scheduling strategy affects a chatbot:</p>
+<p>YouWhat's the classic Star Wars wish for good luck? Explain what it means.</p>
+<p>Assistant…</p>
+<p>Waiting for the first token…</p>
+<p>0.0 / 40</p>
+<p>1</p>
+<p>2</p>
+<p>3</p>
+<p>Aggregated systems—prefill and decode running on the same machines—must determine what outcome matters more to their application: getting new requests to their first token quickly, keeping active responses streaming smoothly, or maximizing overall throughput.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/36f104f2624a2eec880390f022073d0c9cb63bd1-1174x401.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1174" alt=""></p>
+<h3>Disaggregation</h3>
+<p>Let's recap what we've learned so far:</p>
+<ul><li>Accelerators (hardware) perform arithmetic. This happens by bringing data from memory to compute and writing data back.</li><li>For the same amount of data moved, some workloads perform more arithmetic than others.</li><li>Prefill and decode are different phases of inference.</li><li>Prefill is computationally involved due to processing multiple tokens in parallel.</li><li>Decode processes one new token per request at each step, but still needs substantial memory access for model weights and the KV cache.</li><li>Balancing these two workloads on the same hardware is difficult and requires trade-offs at scale.</li></ul>
+<p>Disaggregation is a systems design pattern. It identifies work with different resource needs, then operates those workloads separately rather than forcing them to share a single pool of hardware.</p>
+<p>A disaggregated system uses two separate hardware pools: one for prefill and one for decode. Select “Disaggregated” to see how this changes the schedule.</p>
+<p>Prompt tokens · prefillResponse tokens · decode</p>
+<p>Request 1</p>
+<p>Request 2</p>
+<p>Request 3</p>
+<p>Decode pool</p>
+<p>Prefill pool</p>
+<p>Time →</p>
+<p>In a shared pool, time to first token and inter-token latency are directly coupled. Starting a new prompt can delay active responses; protecting active responses can leave new prompts waiting.</p>
+<p>Disaggregation is a lot more than &quot;smoother streaming&quot;. More fundamentally, disaggregation changes the control interface for the serving system.</p>
+<h3>More Control Over Trade-offs</h3>
+<p>In a shared pool, capacity, batching, and scheduling decisions affect prefill and decode together. Once the stages are separated, operators can tune each one independently—allocating hardware, setting batching policies, and prioritizing latency or throughput according to the product’s requirements.</p>
+<p>For example, a system with strict time-to-first-token targets can reserve more capacity for prefill, so incoming prompts start promptly without consuming decode capacity. A system that prioritizes a smooth streaming experience can give decode a larger or more tightly scheduled pool, keeping active responses moving even when prompt traffic spikes.</p>
+<p>The point is that these pools can be scaled individually. Click different scenarios to see how pools might be scaled to meet different demands:</p>
+<p>Prefill pool</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>Decode pool</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>GPU</p>
+<p>Prompt capacity↑</p>
+<p>Concurrent responses↑</p>
+<p>TTFT↓</p>
+<p>End-to-end latency↓</p>
+<p>A balanced starting point for both phases.</p>
+<p>You can see how disaggregation allows the system to adapt to different workload shapes.</p>
+<p>But separating the stages introduces a new need: data transfer between the pools. The most important new piece of that design is the transfer of the<strong> KV cache.</strong></p>
+<h3>The KV Transfer</h3>
+<p>After prefill builds the KV cache, the system transfers that state to the decode pool, where it is loaded into memory before generation can continue.</p>
+<p>Unlike the model weights, which are already loaded in both pools, the KV cache is request-specific data. Handoff adds some network and coordination overhead, which is why disaggregation is most compelling at scale: with enough concurrent work, the gains from independently sizing and scheduling prefill and decode can outweigh the cost of transferring state and operating separate pools.</p>
+<p>Once prefill has processed a prompt, decode needs the request-specific state that prefill created. Both pools already have the model weights, so the state that must cross the boundary is the KV cache.</p>
+<p>Follow one request below to see that handoff:</p>
+<p>Incoming prompt</p>
+<p>PrefillGPU</p>
+<p>Input · in memory</p>
+<p>May the force</p>
+<p>KV cache</p>
+<p>Compute</p>
+<p>KV transfer</p>
+<p>DecodeGPU</p>
+<p>Input · in memory</p>
+<p>KV cache</p>
+<p>Compute</p>
+<p>May the force</p>
+<p>Follow the prompt through both pools. Prefill produces “be” and passes the KV cache and next-token information to decode. Decode uses “be” to produce “with,” then “with” to produce “you,” adding each processed token to the cache. “You” would enter the cache on the next pass. The animation shows the sequence of work, not measured hardware use.</p>
+<p>Separating the phases adds costs too. The KV cache must travel between pools, and either pool can sit idle if their capacities do not match demand. Latency also depends on whether the cache is sent across colocated machines or across regions. Ultimately the operator must decide whether the latency addition is acceptable.</p>
+<h3>Heterogeneous Disaggregation</h3>
+<p>So far, our examples have shown separation of prefill and decode into two pools of the same hardware.</p>
+<p>Disaggregation is even more powerful when introducing heterogeneous hardware combinations. The question is no longer simply which accelerator should run the model, but which combination of accelerators best serves this workload.</p>
+<p>If each pool can be assigned to different hardware, it makes specialized hardware compelling: an accelerator that is exceptional at one dimension—such as prompt processing, memory bandwidth, token speed, or cost efficiency—can boost performance beyond disaggregating with a single type of chip.</p>
+<p>Cerebras has exceptionally high aggregate on-chip memory bandwidth. Its wafer-scale architecture is designed around fast access to local memory, making it particularly well suited to the token-by-token portion of inference.</p>
+<p>GPT-oss-120B</p>
+<p>High reasoning · 10,000 input tokens</p>
+<p>Output tokens/s ↑</p>
+<p>1,669 output tokens per second</p>
+<p>SambaNova</p>
+<p>708 output tokens per second</p>
+<p>Groq</p>
+<p>475 output tokens per second</p>
+<p>Microsoft Azure</p>
+<p>319 output tokens per second</p>
+<p>Nebius</p>
+<p>294 output tokens per second</p>
+<p>Baseten</p>
+<p>293 output tokens per second</p>
+<p>06001,2001,800</p>
+<p><a href="https://artificialanalysis.ai/models/gpt-oss-120b/providers/">Artificial Analysis ↗</a> · Sep 10, 2026</p>
+<h3>Why are some accelerators better at decode?</h3>
+<p>Remember what makes decode different: we move a lot of data to produce just one new token. Its arithmetic intensity is relatively low, so adding more raw FLOP capacity doesn’t necessarily make tokens arrive faster. The compute needs to be fed with more data from memory.</p>
+<p>On a GPU, model data resides primarily in high-bandwidth memory (HBM). Before compute units can use it, data is staged through smaller, faster on-chip memories and caches, including SRAM. This memory hierarchy provides large capacity alongside fast local storage, but data still has to travel from shared external memory toward the compute cores.</p>
+<p>Cerebras takes a different approach: it distributes SRAM alongside compute across the entire wafer. That gives compute fast access to nearby memory:</p>
+<p>GPU</p>
+<p>Shared HBM supplies many compute units</p>
+<p>WSE</p>
+<p>Local SRAM ↔ compute, inside every cell</p>
+<p>This wafer-scale design gives Cerebras exceptionally high aggregate memory bandwidth:</p>
+<p>Memory bandwidth</p>
+<p>Published peak · per processor</p>
+<p>TB/s ↑</p>
+<p>On-chip SRAMHBM</p>
+<p>Cerebras WSE-3 · On-chip SRAM · wafer</p>
+<p>21,000 terabytes per second</p>
+<p>On-chip SRAM accelerator · On-chip SRAM</p>
+<p>150 terabytes per second</p>
+<p>HBM4 GPU 1 · HBM4</p>
+<p>23.3 terabytes per second</p>
+<p>HBM4 GPU 2 · HBM4</p>
+<p>22 terabytes per second</p>
+<p>HBM3e GPU 1 · HBM3e</p>
+<p>8 terabytes per second</p>
+<p>HBM3e GPU 2 · HBM3e</p>
+<p>8 terabytes per second</p>
+<p>HBM3e GPU 3 · HBM3e</p>
+<p>8 terabytes per second</p>
+<p>HBM accelerator 1 · HBM</p>
+<p>7.38 terabytes per second</p>
+<p>HBM3e accelerator 1 · HBM3e</p>
+<p>7 terabytes per second</p>
+<p>HBM3e accelerator 2 · HBM3e</p>
+<p>4.9 terabytes per second</p>
+<p>HBM3e GPU 4 · HBM3e</p>
+<p>4.8 terabytes per second</p>
+<p>05k10k15k20k25k</p>
+<p>SRAM figures sum local memory bandwidth across the processor; HBM figures measure traffic from off-chip memory. These are different memory tiers, not measured token speeds.</p>
+<p>Sources &amp; processor details · Sep 10, 2026</p>
+<p>Selected leading AI accelerators, including newly announced designs and earlier hardware used in this article. One processor or wafer per row, not a server or rack. Published peaks do not account for workload, memory capacity, power, or price.</p>
+<p><a href="https://www.cerebras.ai/blog/disaggregated-inference">Cerebras WSE-3 — On-chip SRAM · wafer ↗</a><a href="https://www.nvidia.com/en-gb/data-center/lpx/">On-chip SRAM accelerator — On-chip SRAM ↗</a><a href="https://www.amd.com/en/products/accelerators/instinct/mi400/mi455x.html">HBM4 GPU 1 — HBM4 ↗</a><a href="https://developer.nvidia.com/blog/inside-nvidia-rubin-gpu-architecture-powering-the-era-of-agentic-ai/">HBM4 GPU 2 — HBM4 ↗</a><a href="https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html">HBM3e GPU 1 — HBM3e ↗</a><a href="https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html">HBM3e GPU 2 — HBM3e ↗</a><a href="https://www.amd.com/en/products/accelerators/instinct/mi350/mi355x.html">HBM3e GPU 3 — HBM3e ↗</a><a href="https://docs.cloud.google.com/tpu/docs/tpu7x">HBM accelerator 1 — HBM ↗</a><a href="https://blogs.microsoft.com/blog/2026/01/26/maia-200-the-ai-accelerator-built-for-inference/">HBM3e accelerator 1 — HBM3e ↗</a><a href="https://aws.amazon.com/ec2/instance-types/trn3/">HBM3e accelerator 2 — HBM3e ↗</a><a href="https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory/latest/components.html">HBM3e GPU 4 — HBM3e ↗</a></p>
+<h3>Goals of Disaggregation</h3>
+<p>Homogeneous and heterogeneous disaggregation provide <em>different</em> benefits.</p>
+<p>While homogeneous systems commonly aim to improve responses by smoothing token generation, heterogeneous systems are optimized to get the most value out of the specialized hardware. In Cerebras' case, it provides extreme speed without sacrificing throughput.</p>
+<p>Consider an aggregated system with five GPUs, each spending 80% of its execution time on prefill and 20% on decode. An active response advances only when its GPU performs a decode step. Spending four-fifths of the time on prefill slows the <em>average</em> pace of output token generation.</p>
+<p>PrefillDecode</p>
+<p>Shared GPU pool</p>
+<p>Prefill pool</p>
+<p>Decode pool</p>
+<p>KV transfer</p>
+<p>GPU 1</p>
+<p>GPU 2</p>
+<p>GPU 3</p>
+<p>GPU 4</p>
+<p>GPU 5</p>
+<p>Prompts</p>
+<p>Responses</p>
+<p>Illustrative assumptions</p>
+<p>Illustrative alternating prefill/decode passes with 10 ms decode steps and negligible transfer overhead. Same total request throughput: 5× the flow through one decode GPU, with responses finishing 5× faster, keeps its active batch size unchanged.</p>
+<p>Across the five GPUs, decode accounts for one GPU’s worth of execution time. In this idealized steady state, disaggregation assigns that work to one dedicated GPU and prefill to the other four. The decode GPU can advance responses without competing with prefill, improving token cadence with the same GPU count.</p>
+<p>The more time shared GPUs spend on prefill, the larger the improvement. If GPUs already spend most of their time on decode, there's less interference to remove in a homogeneous system. But reducing interference is only one reason to disaggregate. In a heterogeneous system, disaggregation optimizes for better hardware specialization.</p>
+<p>Suppose five Cerebras WSEs currently handle both phases. By moving prefill to a separate accelerator pool, it allows the wafers to specialize in decode, where their capacity is most valuable.</p>
+<p>PrefillDecode</p>
+<p>Shared wafer pool</p>
+<p>Added prefill pool</p>
+<p>Decode pool</p>
+<p>KV transfer</p>
+<p>HW A</p>
+<p>HW B</p>
+<p>HW C</p>
+<p>WSE 1</p>
+<p>WSE 2</p>
+<p>WSE 3</p>
+<p>WSE 4</p>
+<p>WSE 5</p>
+<p>Prompts</p>
+<p>Responses</p>
+<p>Illustrative assumptions</p>
+<p>Illustrative 75% prefill / 25% decode starting split, not a benchmark. Recovered decode time increases output capacity only if prefill, KV transfer, and demand keep up. Prefill-pool size is schematic.</p>
+<p>This is a gain in throughput <em>per WSE</em>, enabled by additional prefill hardware.</p>
+<p>Agentic applications are a compelling fit for heterogeneous disaggregation. They often involve long, multi-turn workflows, with context growing across model calls. As agents take on longer and more consequential tasks, delays at each step compound. Fast inference becomes essential to how responsive an agent feels and how quickly tasks are completed.</p>
+<p>Cerebras Disaggregation unlocks the ability to scale inference without compromising world-class interactivity.</p>
+<h3>Cerebras Uses Disaggregation to Scale Ultrafast Tokens</h3>
+<p>Demand for ultrafast generation is growing quickly. As more applications become agentic, the limiting resource is increasingly not just total model capacity, but the number of fast tokens we can deliver to users at once.</p>
+<p>At Cerebras, we are building heterogeneous inference systems to meet that demand. The goal is not simply to increase aggregate throughput—it is to scale the volume of inference while preserving the ultrafast token speeds that make applications feel instant.</p>
+<p>In a traditional aggregated system, increasing capacity meant deploying more hardware. By leveraging partner accelerators to handle prompt processing, we've increased capacity by 5× in early tests with the same WSE footprint.</p>
+<p>We have announced partnerships with multiple hardware partners to bring more ultrafast tokens to the market, reflecting our belief that heterogeneous hardware will be a core inference strategy going forward.</p>
+<p>Prefill options</p>
+<p>Prompts</p>
+<p>KV transfer</p>
+<p>Cerebras decode pool</p>
+<p>Responses</p>
+<h3>What's Next</h3>
+<p>In the next posts, we’ll dive deeper into bringing heterogeneous disaggregation to production. We’ll explore the hardware and software stacks involved, and the economic trade-offs of deploying disaggregated inference at scale.</p>
+<p>Follow us on X to be notified when the next post goes live!</p>]]></content:encoded>
     </item>
     <item>
       <title>How AlphaSense Uses Fast Inference to Make Agentic Research…</title>
