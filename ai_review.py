@@ -7,13 +7,14 @@ ai_review.py —— 变化触发式 AI 档案核查。
 哪些事实字段变化、攻略元数据是否要调整、以及逐条「页面原文证据」。证据必须能在
 送模的 prompt 内逐字定位（防幻觉闸门），校验通过后才允许写入 profile_overrides.json。
 
-调用后端（AI_REVIEW_BACKEND=auto|gemini|anthropic，默认 auto）：
+调用后端（AI_REVIEW_BACKEND=auto|opencode-go|gemini|anthropic，默认 auto）：
+- opencode-go：显式启用且未到期时优先；不可用即熔断，核查/标题回退 Gemini，正文交机翻。
 - gemini（默认）：Google AI Studio 的 Gemini API（generativelanguage.googleapis.com），
   用免费层 API Key（环境变量 GEMINI_API_KEY，兼容 GOOGLE_API_KEY），默认模型
   gemini-3.8-flash；本模块不读 AI_REVIEW_MODEL，首选模型由 crawler 读取后经 model 参数传入；
 - anthropic（可选）：直连 Anthropic Messages API（ANTHROPIC_API_KEY）。
 
-auto 规则：哪个 key 存在用哪个；都没有时按 gemini 报缺 key。
+auto 规则：有效 Go 配置优先，否则沿用 Gemini / Anthropic 的 Key 选择顺序。
 
 免费层回退（主要使用场景即 AI Studio 免费层，具体限额只在 AI Studio 控制台公布、
 RPD 太平洋时间午夜重置）：429 当日额度（RPD，按项目共享）耗尽即整批终止、保留旧快照；
@@ -32,6 +33,8 @@ import os
 import re
 import sys
 import time
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
@@ -71,6 +74,26 @@ TOTAL_CHAR_BUDGET = 60_000     # 单厂商总预算
 
 BACKEND_GEMINI = "gemini"
 BACKEND_ANTHROPIC = "anthropic"
+BACKEND_GO = "opencode-go"
+GO_API_URL = "https://opencode.ai/inference/go/openai/v1/chat/completions"
+GO_DEFAULT_MODEL = "deepseek-v4.1-flash"
+_go_disabled = False  # 单进程熔断；正文步骤是另一进程，会重新探测一次。
+_go_session = str(uuid.uuid4())
+
+
+def go_available() -> bool:
+    """显式启用且有 Key 即优先使用；可选截止时间须带时区，错误或到期时回退。"""
+    if (_go_disabled or os.environ.get("OPENCODE_GO_ENABLED", "").lower() != "true"
+            or not os.environ.get("OPENCODE_GO_API_KEY")):
+        return False
+    deadline = os.environ.get("OPENCODE_GO_UNTIL", "").strip()
+    if not deadline:
+        return True
+    try:
+        until = datetime.fromisoformat(deadline.replace("Z", "+00:00"))
+        return until.tzinfo is not None and datetime.now(timezone.utc) < until
+    except ValueError:
+        return False
 
 
 def _gemini_key() -> str:
@@ -82,6 +105,8 @@ def _anthropic_key() -> str:
 
 
 def backend_api_key(backend: str) -> str:
+    if backend == BACKEND_GO:
+        return os.environ.get("OPENCODE_GO_API_KEY", "")
     if backend == BACKEND_GEMINI:
         return _gemini_key()
     if backend == BACKEND_ANTHROPIC:
@@ -105,17 +130,21 @@ def resolve_backend(backend: str | None = None) -> str:
     """决定 LLM 后端：显式参数 > AI_REVIEW_BACKEND 环境变量 > auto（有哪个 key 用哪个）。"""
     name = (backend or os.environ.get("AI_REVIEW_BACKEND") or "auto").strip().lower()
     if name == "auto":
+        if go_available():
+            return BACKEND_GO
         if _gemini_key():
             return BACKEND_GEMINI
         if _anthropic_key():
             return BACKEND_ANTHROPIC
         return BACKEND_GEMINI  # 无 key 时仍按默认后端报缺 key（错误提示含申请地址）
-    if name in (BACKEND_GEMINI, BACKEND_ANTHROPIC):
+    if name in (BACKEND_GEMINI, BACKEND_ANTHROPIC, BACKEND_GO):
         return name
-    raise AiReviewError(f"未知 AI_REVIEW_BACKEND：{name}（可选 auto/gemini/anthropic）")
+    raise AiReviewError(f"未知 AI_REVIEW_BACKEND：{name}（可选 auto/opencode-go/gemini/anthropic）")
 
 
 def default_model(backend: str) -> str:
+    if backend == BACKEND_GO:
+        return os.environ.get("OPENCODE_GO_MODEL") or GO_DEFAULT_MODEL
     return GEMINI_DEFAULT_MODEL if backend == BACKEND_GEMINI else ANTHROPIC_DEFAULT_MODEL
 
 
@@ -293,6 +322,8 @@ def call_llm(prompt: str, api_key: str = "", model: str = "",
     --ai-review 使用核查 system 提示和 JSON 输出。标题润色与正文翻译走 call_llm_text。
     """
     backend = resolve_backend(backend)
+    if backend == BACKEND_GO:
+        return call_llm_go(prompt, timeout=timeout)
     if not model:
         model = default_model(backend)
     if not api_key:
@@ -311,6 +342,9 @@ def call_llm_text(prompt: str, *, system: str, api_key: str = "", model: str = "
     不带情报核查 system —— 正文翻译要的是原样 markdown，不是结构化 JSON。
     """
     backend = resolve_backend(backend)
+    if backend == BACKEND_GO:
+        return call_llm_go(prompt, system=system, max_tokens=max_tokens,
+                           timeout=timeout, json_mode=False)
     if not model:
         model = default_model(backend)
     if not api_key:
@@ -321,6 +355,48 @@ def call_llm_text(prompt: str, *, system: str, api_key: str = "", model: str = "
                                response_mime_type="text/plain")
     return call_llm_anthropic(prompt, api_key=api_key, model=model, timeout=timeout,
                               system=system, max_tokens=max_tokens)
+
+
+def call_llm_go(prompt: str, *, system: str = SYSTEM_PROMPT,
+                max_tokens: int = MAX_TOKENS, timeout: float = 180.0,
+                json_mode: bool = True, fallback_to_gemini: bool = True) -> str:
+    """Go 失败即熔断并重试当前任务至 Gemini；凭证与模型始终按后端隔离。"""
+    global _go_disabled
+    if go_available():
+        body = {"model": default_model(BACKEND_GO), "max_tokens": max_tokens,
+                "messages": [{"role": "system", "content": system},
+                             {"role": "user", "content": prompt}]}
+        if json_mode:
+            body["response_format"] = {"type": "json_object"}
+        try:
+            resp = requests.post(
+                GO_API_URL,
+                headers={"Authorization": "Bearer " + backend_api_key(BACKEND_GO),
+                         "User-Agent": "free-llm-intel/1.0",
+                         "x-opencode-session": str(uuid.uuid5(uuid.UUID(_go_session), prompt))},
+                json=body, timeout=timeout)
+            if resp.status_code != 200:
+                # 不记录服务端响应体，避免错误回显 Key 或请求正文。
+                raise AiReviewError(f"HTTP {resp.status_code}")
+            choice = resp.json()["choices"][0]
+            content = choice["message"]["content"]
+            if (choice.get("finish_reason") != "stop"
+                    or not isinstance(content, str) or not content.strip()):
+                raise AiReviewError("空内容或响应未完整结束")
+            if json_mode:
+                parse_json_loose(content)
+            return content
+        except (requests.RequestException, AiReviewError, ValueError, KeyError,
+                IndexError, TypeError):
+            _go_disabled = True
+            print("      [ai-go-fallback] Go 不可用，本进程停止使用 Go。", file=sys.stderr)
+    if not fallback_to_gemini:
+        raise AiReviewError("Go 不可用，正文留 pending 交给后续机翻")
+    return call_llm_gemini(
+        prompt, api_key=_gemini_key(),
+        model=os.environ.get("AI_REVIEW_MODEL") or GEMINI_DEFAULT_MODEL,
+        timeout=timeout, system=system, max_tokens=max_tokens,
+        response_mime_type="application/json" if json_mode else "text/plain")
 
 
 def _parse_gemini_response(resp) -> str:

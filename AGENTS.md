@@ -71,6 +71,19 @@ CI 流程的细则都在那）。本文件只放最容易踩、踩了会返工�
 
 ## 批量本地精译的正确做法（>几篇时）
 
+**本地精译、正文补齐等维护流程也必须处理 `status: fetch_failed`（台账字段为
+`en_status`），不能只清待译队列就宣告完成。** 先盘点本轮范围内的失败项，用
+`--fetch-bodies --allow-browser` 分批回捞（可用 `--fetch-vendor` 限定厂商）；该命令默认
+就会重试 `fetch_failed`，无需 `--refresh`。自动回捞仍失败时，逐篇打开官方原文核实，
+能取得真实正文的补回英文语料，再由 agent 精译；仍不可读的**先留在 `fetch_failed`**
+（它会按失败性质退避重试：确定性失败一次退 30 天、临时故障走短阶梯），在交付中列明
+未恢复项及原因，不编造、不直接塞进翻译队列。已有真实中文译文的行不重抓。
+
+**核实过、确认这条管线取不到的行，标 `unreachable`**（`--mark-unreachable <slug>`，
+用 `--unreachable-note` 把结论写进 frontmatter）：正文清空、此后默认不再重抓，
+`--retry-unreadable` 可重看。它和 `index_page`（「这不是文章」）是两件事，别混用——
+后者会让读者以为这篇是目录页。
+
 分片交翻译子代理各写若干 `.md`（`translator: agent`），**控制者单点收口**：
 `reconcile_translations` 从磁盘吸收译文更新 ledger → `validate_bodies` 过 schema →
 提交。**以磁盘为准，不信子代理的"已完成"报告**（报告可能乐观/漏篇/夹英文）：
@@ -99,7 +112,8 @@ python test_workflow_and_review.py             # ④ 门禁（含「SVG 与 GUID
 - **push 前先问**（用户惯例）；推语料可能触发 GitHub secret-scanning 对抓取正文里
   示例 token 的误报，需要用户在浏览器点 unblock-Allow URL（`gh api` 点前是空的）。
 - 抓取/翻译**绝不编造**：抓不到记 `fetch_failed`、正文留空；目录页/链接列表记
-  `index_page`——二者都**不进翻译队列**（`pending_translation_keys` 只放行 `en_status==ok`）。
+  `index_page`；核实过取不到正文的记 `unreachable`——三者都**不进翻译队列**
+  （`pending_translation_keys` 只放行 `en_status==ok`）。
 - 改文案/产物要跑门禁：`python test_workflow_and_review.py`（含 CI 实产物 schema 兜底守卫）。
 - **改了 `llm-news/` 归档或 `docs/articles/` 语料，必须同轮跑 `python crawler_llm_intel.py --render-only`
   并把产物一起提交**：展示层（`docs/feeds/articles.json`、各 RSS、OPML、`llm-news-feeds.md`）是归档

@@ -1767,7 +1767,7 @@ def validate_bodies(root: Path, bodies: dict) -> list:
                 _fm, body = read_body_doc(enp)
                 if not body.strip():
                     errs.append(f"{key}: en_status=ok 但正文为空")
-        elif en in ("fetch_failed", "paywall", "index_page"):
+        elif en in ("fetch_failed", "paywall", "index_page", "unreachable"):
             if e.get("en_path") and enp.exists():
                 _fm, body = read_body_doc(enp)
                 if body.strip():
@@ -1864,18 +1864,25 @@ def repair_body_sha(root: Path, bodies: dict) -> dict:
 def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                  today: str, only_missing: bool = True, retry_unreadable: bool = False,
                  save: Callable[[dict], None] | None = None, flush_every: int = 20,
-                 refetch: Callable | None = None) -> int:
+                 refetch: Callable | None = None,
+                 skip: Callable[[str], bool] | None = None,
+                 on_result: Callable[[str, str], None] | None = None) -> int:
     """逐行抓正文写 `.en.md` 并 upsert `bodies`。`fetch(url)->(html,ok,status,final)` 注入。
 
     返回本轮新写/更新的条数。幂等：`only_missing` 时已 `en_status=ok` 的行跳过。
-    `retry_unreadable=True` 时连已标 `index_page` 的行也重抓（判定可能被源站改版
-    推翻）；已有真实中文译文（`zh_status=translated`）的行**始终**跳过，重抓不许
-    把精译冲掉。`fetch_failed` / `paywall` 本来就每天重试，与本旗标无关。
+    `retry_unreadable=True` 时连已标 `index_page` / `unreachable` 的行也重抓
+    （判定可能被源站改版推翻）；已有真实中文译文（`zh_status=translated`）的行
+    **始终**跳过，重抓不许把精译冲掉。`fetch_failed` / `paywall` 本来就每天重试，
+    与本旗标无关（它们的重打频率由调用方的退避台账控制）。
     抓不到 → `fetch_failed`，正文留空，绝不编造。给定 `save` 时每 `flush_every` 篇
     增量落盘一次（长批被中断也不丢进度；末尾再落一次由调用方负责）。
 
     `refetch(url)->(html,ok,status,final)` 可选：页面拿到了却抽不出正文时用它再试一次
     （通常是前端渲染，requests 拿到的是壳）。传了就启用，不传行为不变。
+
+    `skip(url)->bool` 可选：True 就**整行跳过**（不请求、不写文件、不动台账）。
+    给按 URL 的失败退避用：连续抓不到的行隔几天再试，别每天重打一遍。
+    `on_result(url, en_status)` 可选：每行落定状态后回调一次，调用方据此记退避账。
     """
     def _kept_captured(rel: str, new_body: str) -> str:
         """正文**一个字没变**就沿用旧的 `captured`，别让日期凭空漂一天。
@@ -1912,13 +1919,17 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             continue
         key = bodies_key(vendor, url)
         prev = bodies.get(key, {})
+        if skip is not None and skip(url):
+            continue
         if only_missing:
             done = (prev.get("en_status") == "ok"
                     or prev.get("zh_status") == "translated")
             # `index_page` 是**判定**而不是事实：标了就没人再看一眼，源站改版或
             # 当初判错都翻不回来。`fetch_failed` / `paywall` 一向每天重试，不变。
+            # `unreachable` 与 `index_page` 同理：它是**核实过的结论**（反爬 / 客户端渲染 /
+            # 已下线 / 非文章），标上就不再每天重打；要重看用 `--retry-unreadable`。
             if not retry_unreadable:
-                done = done or prev.get("en_status") == "index_page"
+                done = done or prev.get("en_status") in ("index_page", "unreachable")
             if done:
                 continue
         html, ok, _status, final = fetch(url)
@@ -2031,6 +2042,8 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 链接目录页（blog index / 聚合列表）不是文章：置 index_page、正文留空、不入待译
         if en_status == "ok" and detect_index_page(ex["markdown"]):
             en_status = "index_page"
+        if on_result is not None:
+            on_result(url, en_status)
         slug = url_hash(url)
         date = today
         norm = normalize_url(url)

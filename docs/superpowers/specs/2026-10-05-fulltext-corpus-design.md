@@ -49,12 +49,15 @@ lang: zh | en
 captured: <YYYY-MM-DD 正文抓取日>
 extractor: readability-v1
 translator: agent | llm        # 仅中文文件；标译者，供后续升级
-status: ok | fetch_failed | paywall | translated | pending
+status: ok | fetch_failed | paywall | index_page | unreachable | translated | pending
 body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 ---
 <正文 Markdown>
 ```
-- 英文文件 `status ∈ {ok, fetch_failed, paywall}`；`fetch_failed/paywall` 时正文段留空。
+- 英文文件 `status ∈ {ok, fetch_failed, paywall, index_page, unreachable}`；
+  非 `ok` 时正文段留空。`fetch_failed` = 这次没抓到（可能临时，按退避重试）；
+  `unreachable` = **已核实**这条管线取不到（反爬 / 客户端渲染 / 已下线 / 非文章页面），
+  默认不再重试、`--retry-unreadable` 可重看；`index_page` = 判定为目录/列表页。
 - 中文文件仅在有译文时存在，`status: translated`；未译 = 文件不存在，队列即由 `bodies.json` 的 `zh_status` 表达。
 
 ### 3.3 独立索引 `docs/feeds/bodies.json`
@@ -66,7 +69,8 @@ body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 ### 3.4 schema 不变量（有守卫）
 - `bodies.json` 里每条 `en_status=ok` 的行，磁盘上必存在对应 `.en.md` 且其 frontmatter `status=ok`。
 - `zh_status=translated` 的行，`.md` 必存在；反之文件存在但 ledger 未标 = 报错。
-- `en_status ∈ {fetch_failed, paywall}` 的行，其 `.en.md` 正文段必须为空（**防编造**）。
+- `en_status ∈ {fetch_failed, paywall, index_page, unreachable}` 的行，其 `.en.md`
+  正文段必须为空（**防编造**）。
 
 ## 4. 组件与边界（各自可独立理解/独立测）
 
@@ -79,7 +83,7 @@ body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 ### C2 `fetch_bodies(...) · 子命令 --fetch-bodies [--only-missing | --retry-unreadable | --refresh] [--allow-browser]`
 - 入参源：`articles.json` 行（`url/vendor/date/title/original_title`）。
 - 默认**只补 `bodies.json` 缺失或 `body_sha` 过期**的条目（CI 每日走这条，保证增量、有界）。`--refresh` 全量重抓（本地回充用）。
-- `--retry-unreadable`：把已标 `index_page` 的行也纳入重抓。`index_page` 是**判定**不是事实（源站改版、或当初把真条目判成目录页），默认一旦标上就再也不被看一眼；`--refresh` 又能把已有正文一起冲掉，所以留这条窄出口。`fetch_failed/paywall` 本来就每天重试，与本旗标无关；**已有真实中文译文（`zh_status=translated`）的行任何模式都不重抓**，免得冲掉精译。
+- `--retry-unreadable`：把已标 `index_page` / `unreachable` 的行也纳入重抓。`index_page` 是**判定**不是事实（源站改版、或当初把真条目判成目录页），默认一旦标上就再也不被看一眼；`--refresh` 又能把已有正文一起冲掉，所以留这条窄出口。`fetch_failed/paywall` 本来就自动重试（频率由失败退避台账决定），与本旗标无关；**已有真实中文译文（`zh_status=translated`）的行任何模式都不重抓**，免得冲掉精译。
 - 逐条：`requests` 取页 → 命中 SPA 壳/空正文/反爬 →（**仅 `--allow-browser`**，即本地）无头浏览器兜底；否则按 C1 的 `reason` 落 `fetch_failed/paywall`。→ 写 `.en.md`（原子 rename）→ upsert `bodies.json` en 侧。
 - 幂等：已存在且 `body_sha` 未变则跳过。
 - **批量韧性**：增量落盘、可按 `--vendor`/`--limit` 切单元、线程本地 session、失败单条记账不拖垮队列。

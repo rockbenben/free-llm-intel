@@ -101,7 +101,7 @@ git diff README.md
 默认后端是 **Google AI Studio 的 Gemini API**（`generativelanguage.googleapis.com`，免费层 Key 在 [aistudio.google.com/apikey](https://aistudio.google.com/apikey) 申请）：
 
 - 环境变量 `GEMINI_API_KEY`（兼容 `GOOGLE_API_KEY`），默认模型 `gemini-3.8-flash`，可用 `AI_REVIEW_MODEL` 覆盖；
-- `AI_REVIEW_BACKEND=auto|gemini|anthropic` 控制后端，`auto`（默认）为有 Gemini Key 走 Gemini、否则尝试 `ANTHROPIC_API_KEY` 直连 Anthropic；
+- `AI_REVIEW_BACKEND=auto|opencode-go|gemini|anthropic` 控制后端；`auto`（默认）优先用有效 Go 配置，否则沿用 Gemini → Anthropic 的 Key 选择顺序；
 - CI 配置指南：
   1. 在 **Settings → Secrets and variables → Actions** 配置 `GEMINI_API_KEY` Secret；
   2. 在 **Settings → Actions → General → Workflow permissions** 选择 **Read and write permissions**（**不再需要**勾选 Allow GitHub Actions to create and approve pull requests —— 2026-09-22 起巡检不再开 PR）；
@@ -113,6 +113,23 @@ git diff README.md
   `FEEDS_BASE`（形如 `https://<你的域名>/feeds`），下一次巡检和同轮渲染都会使用它。
 
 人工基线在 `provider_profiles.py`，AI 补丁在 `profile_overrides.json`（同名字段整体覆盖，`_evidence` 累积保留最近 20 条证据）。
+
+### OpenCode Go 临时接管 CI
+
+在 Actions 的 Secrets 添加 `OPENCODE_GO_API_KEY`，Variables 设置：
+
+- `OPENCODE_GO_ENABLED=true`：显式启用；留空或 false 即恢复旧流程。
+- `OPENCODE_GO_UNTIL`：可选的订阅截止时刻。不设置或留空时持续优先使用 Go，订阅失效或接口不可用时自动回退旧流程；填写时必须带时区，如 `2026-12-16T18:00:00+08:00`（仅格式示例，按实际到期时间填写），格式错误或到期均跳过 Go。
+- `OPENCODE_GO_MODEL`：可省略，默认 `deepseek-v4.1-flash`；`AI_REVIEW_MODEL` 仍只用于原有后端，回退 Gemini 时不会混用 Go 的模型名或 Key。
+- `AI_BODIES_LIMIT`：可选的正文篇数上限，默认 0（不限）；已有译文不重译。
+
+Go 有效时优先完成档案核查、新标题润色和待译正文。接口 HTTP 错误、网络故障、空响应或截断时，本进程熔断 Go：核查和标题立即用 Gemini 重试当前任务，后续任务沿用旧通道；正文留 pending，交给随后保留的 `--mt-bodies` 机翻步骤，**正文不回退 Gemini**。核查与正文是两个独立进程，各至多探测失败一次。语义证据校验不过仍拒绝补丁，不绕过证据闸门。
+
+CI 正文步骤使用 `--ai-bodies --ai-bodies-go-only`，成功写入 `translator=llm`；过长或完整性检查不过的文章同样由后续机翻覆盖。未启用 Go 时该步骤直接退出，其余与原流程一致。`--render-only` 仍在两种正文翻译后统一更新视图。
+
+接口与使用范围见 [Go 官方文档](https://opencode.ai/docs/console/go/)。请求使用项目自己的 User-Agent 和会话标识；需在 Go 控制台允许 DeepSeek 所需的 Global 区域。建议关闭 Extra Usage，避免超额转按量扣款；这里的截止开关不代替取消订阅自动续费。
+
+本地维护仍以 agent 精译为交付标准；此配置用于 CI 增量处理，不在本地批量调用模型或机翻来替代 agent 精译。
 
 ### 免费层限流 / 模型下线的自动回退（主要使用方式）
 
@@ -152,7 +169,7 @@ git diff README.md
 | 不认可某次 AI 更新 | **`git revert` 那次巡检提交**（提交信息以 `chore(ai):` 开头，一眼可辨）；AI 从未触碰 `provider_profiles.py` |
 | 已合并但发现有误 | 编辑或删除 `profile_overrides.json` 中对应厂商的键，重跑 `python crawler_llm_intel.py --no-browser --no-news` 重新渲染，即恢复人工基线 |
 | 想把某厂商打回重查 | 删除 `llm-intel-state.json` 中该厂商的快照条目，下次 `--ai-review` 强制重新核查 |
-| 想临时彻底关掉 AI | 本地运行不带 `--ai-review`（仅更新快照）；CI 删除 `GEMINI_API_KEY` Secret（事实变化只标记、新闻照更） |
+| 想临时彻底关掉 AI | 本地运行不带 `--ai-review`（仅更新快照）；CI 关闭 `OPENCODE_GO_ENABLED` 并移除 Gemini / Anthropic Key（事实变化只标记、新闻照更；正文仍可机翻） |
 
 本地复现 AI 核查：
 
@@ -247,6 +264,52 @@ python crawler_llm_intel.py --render-only
 归档现状——那正是下次 CI 的产出，属修正而非漂移。
 
 归档条目若缺发布日期（源页面把日期放在 JS 里、或文章已滚出列表页），跑维护命令 `python crawler_llm_intel.py --backfill-dates`：它只访问**缺日期**条目对应的文章页，从 JSON-LD `datePublished` / `article:published_time` / `<time datetime>` 元数据回填（分批礼貌抓取，单次访问数有上限，见 `DATE_BACKFETCH_LIMIT`；解不出就保留空白，绝不猜日期）。日期决定归档排序与是否进合并流，回填后同样用 `--rebuild-only` 刷新产物。
+
+### 本地精译前先回捞失败正文
+
+本地精译、正文补齐等维护流程须先检查本轮范围内的 `fetch_failed`：英文 `.en.md`
+中的字段是 `status`，`docs/feeds/bodies.json` 中对应 `en_status`。这些条目不在
+`pending_translation_keys` 中，所以待译队列清零并不代表失败正文已经处理。
+
+```bash
+python crawler_llm_intel.py --fetch-bodies --allow-browser --fetch-vendor <vendor_id>
+```
+
+默认就会重试 `fetch_failed`，无需 `--refresh`；可按厂商分批。自动回捞仍失败的，
+由本地 agent 逐篇打开官方原文核实，取得真实正文后补回英文语料，再逐段精译并登记
+`translator: agent`。仍不可读的保留失败状态与空正文，在交付中列明未恢复项及原因。
+不得凭标题或摘要编正文，也不得把失败项直接加入待译队列；已有真实中文译文不重抓。
+
+**抓不到的行会退避，而不是每天重打一遍**（`.body_retry_ledger.json`，与翻译缓存同类：
+不进 git、CI 走 Actions cache 续命，删掉即恢复每天重试）。退避长度按**失败性质**分三档：
+
+| 失败性质 | 判据 | 下次再试 |
+|---|---|---|
+| 页面没了 | `404 / 410` | 180 天后 |
+| 临时故障 | 没拿到响应 / `429` / `5xx` | 1/2/4/7/14/30 天阶梯 |
+| 确定性失败 | 拿到 200 却没有正文、`403` 反爬 | **一次就退 30 天**，不按天重打 |
+
+抓成功即清账。要立刻把窗口内的行全部重试一遍用 `--ignore-body-retry`
+（`--refresh`、`--retry-unreadable` 同样绕过退避）。「连续失败」记的是同一 URL 在**同一环境**
+里连续抓不到的次数——本地与 CI 各存各的台账，因为出口 IP 与浏览器能力不同，
+本地 403 不等于 CI 403，两边的观察不能互相覆盖。
+
+**核实过的失败要落成状态，而不是只靠缓存**：退避台账按机器存，换台机器或缓存被逐出
+就重新试；而「这条我们已经确认取不到」是**结论**，该写进语料。
+
+```bash
+python crawler_llm_intel.py --mark-unreachable <slug> \
+    --unreachable-note "Cloudflare + 客户端渲染：requests 200 仅 JS 外壳，无头 Edge 为 403"
+```
+
+`unreachable` 的语义是「**已核实**：这条在我们这条管线里取不到正文」（反爬 / 客户端渲染 /
+已下线 / 非文章页面）：正文清空、退出每日重试、并清掉它的退避账；`--retry-unreadable`
+可重看。它和 `index_page`（「这不是文章」）是两件事，别拿后者当「别抓了」的开关——
+那会让 reader 以为这篇是目录页，连本地 `--allow-browser` 回捞也会一起跳过。
+退避只改「下次什么时候再试」，**不改任何判据**：`fetch_failed` 仍是「这篇正文我们没拿到」，
+`index_page` 仍是「这不是文章」。别拿 `index_page` 当「别抓了」的开关 —— 它会让 reader 与
+后来维护者误判，连本地 `--allow-browser` 回捞也会一起跳过。
+正文有变更后同轮执行 `--render-only` 并运行门禁，产物随源一起提交。
 
 ### 翻译批次 QC（`--translation-qc`）
 

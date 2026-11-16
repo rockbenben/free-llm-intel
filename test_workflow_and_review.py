@@ -8613,9 +8613,14 @@ class TestListedMeansReadable(unittest.TestCase):
                              "有文件 / 记了 index_page 的都算有说法；只标 ok 却没文件才是缺口")
 
     def test_unreadable_status_list_is_the_whole_vocabulary(self):
-        """台账里能算「有说法」的状态是封闭集合，别让人新造一个混过守卫。"""
+        """台账里能算「有说法」的状态是封闭集合，别让人新造一个混过守卫。
+
+        `unreachable` 是**核实过取不到正文**（反爬 / 客户端渲染 / 已下线 / 非文章页面）：
+        它必须算「有说法」，否则那 31 条会被当成「还没轮到正文抓取」的缺口天天报警；
+        但它和 `index_page`（「这不是文章」）是两件事，别合并。
+        """
         self.assertEqual(set(crawler_llm_intel.UNREADABLE_STATUSES),
-                         {"fetch_failed", "index_page", "paywall"})
+                         {"fetch_failed", "index_page", "paywall", "unreachable"})
 
     def test_empty_body_file_is_not_readable(self):
         """文件在但正文空 ≠ 有可读的东西。
@@ -10289,6 +10294,240 @@ class TestFulltextLedgerFetch(unittest.TestCase):
             rows = ft.iter_article_rows(p)
             self.assertEqual(rows, [{"vendor": "openai", "url": "https://a/p", "title": "T",
                                      "date": "2026-01-01", "original_title": "T"}])
+
+
+class TestBodyRetryBackoff(unittest.TestCase):
+    """正文抓取的失败退避：抓不到的行隔几天再试，而不是每天重打一遍。
+
+    为什么不用状态表达这件事：`fetch_failed` 是**语义**（这篇正文我们没拿到），
+    `index_page` 是**判定**（这不是文章）。把被反爬的文章改判 `index_page` 会让
+    reader 与后来维护者误判，连本地 `--allow-browser` 回捞也会一起跳过 ——
+    所以退避只记「下次什么时候再试」，不动任何判据。
+    """
+
+    def test_ladder_and_gone_status(self):
+        """三档：临时故障走 1/2/4/7/14/30；确定性失败一次就 30 天；404/410 走 180 天。"""
+        # 临时故障（没拿到响应 = 0、429、503）：短阶梯
+        entry = None
+        days = []
+        for _ in range(7):
+            entry = crawler_llm_intel.body_retry_after_fail(entry, "2026-11-01")
+            days.append(entry["days"])
+        self.assertEqual(days, [1, 2, 4, 7, 14, 30, 30])
+        self.assertEqual(entry["next"], "2026-12-01")
+        self.assertEqual(crawler_llm_intel.body_retry_after_fail(None, "2026-11-01", 503)["days"], 1)
+        self.assertEqual(crawler_llm_intel.body_retry_after_fail(None, "2026-11-01", 429)["days"], 1)
+
+        # 确定性失败（200 但没正文 / 403 反爬）：试一次就推后 30 天，不再按天重打
+        for status in (200, 403):
+            e = crawler_llm_intel.body_retry_after_fail(None, "2026-11-01", status)
+            self.assertEqual(e["days"], crawler_llm_intel.BODY_STRUCTURAL_RETRY_DAYS,
+                             f"HTTP {status} 是确定性失败，首次失败就该退到 30 天")
+            self.assertEqual(e["next"], "2026-12-01")
+
+        # 404/410：终局答复，180 天
+        gone = crawler_llm_intel.body_retry_after_fail(None, "2026-11-01", 404)
+        self.assertEqual(gone["days"], crawler_llm_intel.BODY_GONE_RETRY_DAYS)
+        self.assertEqual(gone["next"], "2027-04-30")
+
+    def test_due_before_and_after_next(self):
+        e = {"fails": 2, "next": "2026-11-10", "days": 2}
+        self.assertFalse(crawler_llm_intel.body_retry_due(e, "2026-11-09"))
+        self.assertTrue(crawler_llm_intel.body_retry_due(e, "2026-11-10"))
+        self.assertTrue(crawler_llm_intel.body_retry_due({}, "2026-11-10"))
+        self.assertTrue(crawler_llm_intel.body_retry_due(None, "2026-11-10"))
+
+    def test_skip_callback_means_no_request_no_write(self):
+        """skip 为真时：不请求、不写文件、不回调（台账不因跳过而变）。"""
+        with tempfile.TemporaryDirectory() as d:
+            url = "https://a.com/p"
+            rows = [{"vendor": "openai", "url": url, "title": "T", "date": "", "original_title": "T"}]
+            calls, results = [], []
+            ft.fetch_bodies(Path(d), rows, {}, fetch=lambda u, *a: calls.append(u) or ("", False, 0, u),
+                            today="2026-11-01", skip=lambda u: True,
+                            on_result=lambda u, s: results.append((u, s)))
+            self.assertEqual(calls, [], "退避窗口内的行不该发请求")
+            self.assertEqual(results, [], "跳过的行不该记结果")
+            self.assertFalse((Path(d) / "docs" / "articles").exists())
+
+    def test_fail_records_backoff_and_success_clears(self):
+        """失败累加 fails、成功清账；临时故障第二次失败比第一次等得久。"""
+        with tempfile.TemporaryDirectory() as d:
+            url = "https://a.com/p"
+            rows = [{"vendor": "openai", "url": url, "title": "T", "date": "", "original_title": "T"}]
+            state = {}
+
+            def on_result(u, status):
+                if status == "ok":
+                    state.pop(u, None)
+                else:
+                    state[u] = crawler_llm_intel.body_retry_after_fail(state.get(u), "2026-11-01")
+
+            ft.fetch_bodies(Path(d), rows, {}, fetch=lambda u, *a: ("", False, 503, u),
+                            today="2026-11-01", on_result=on_result)
+            self.assertEqual(state[url]["fails"], 1)
+            first = state[url]["days"]
+            ft.fetch_bodies(Path(d), rows, {}, fetch=lambda u, *a: ("", False, 503, u),
+                            today="2026-11-01", on_result=on_result)
+            self.assertEqual(state[url]["fails"], 2)
+            self.assertGreater(state[url]["days"], first, "连续临时失败要越等越久")
+
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows, bodies,
+                            fetch=lambda u, *a: ("<html><article><p>" + "x" * 400 + "</p></article></html>",
+                                                 True, 200, u),
+                            today="2026-11-01", on_result=on_result)
+            self.assertNotIn(url, state, "抓成功要清账")
+
+    def test_ledger_roundtrip_and_corruption(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / crawler_llm_intel.BODY_RETRY_LEDGER_NAME
+            crawler_llm_intel._save_body_retry_ledger(p, {"https://a": {"fails": 1, "next": "2026-12-01"}})
+            self.assertEqual(crawler_llm_intel._load_body_retry_ledger(p),
+                             {"https://a": {"fails": 1, "next": "2026-12-01"}})
+            p.write_text("{not json", encoding="utf-8")
+            self.assertEqual(crawler_llm_intel._load_body_retry_ledger(p), {},
+                             "台账损坏当空账，不能中断抓取")
+
+
+class TestUnreachableStatus(unittest.TestCase):
+    """`unreachable`：已核实取不到正文的行，默认不再每天重打。
+
+    它和 `index_page` 是两件事：后者说「这不是文章」，前者说「这是文章（或本该有正文），
+    但这条管线取不到」（反爬 / 客户端渲染 / 已下线 / 非文章页面）。混用会让 reader 与
+    后来维护者分不清，也会让本地 `--allow-browser` 回捞一起跳过。
+    """
+
+    def _seed_mark_batch(self, root):
+        bodies = {}
+        for slug in ("aaaa1111bbbb", "cccc2222dddd"):
+            url = f"https://a.com/{slug}"
+            rel = f"docs/articles/openai/{slug}.en.md"
+            ft.write_body_doc(root / rel, {"status": "fetch_failed", "url": url}, "")
+            bodies[ft.bodies_key("openai", url)] = {
+                "slug": slug, "en_path": rel, "en_status": "fetch_failed",
+                "zh_path": "", "zh_status": "", "translator": ""}
+        ft.save_bodies(root / "docs/feeds/bodies.json", bodies)
+        crawler_llm_intel._save_body_retry_ledger(
+            root / crawler_llm_intel.BODY_RETRY_LEDGER_NAME,
+            {k.split("\t", 1)[1]: {"fails": 3, "next": "2026-12-01"} for k in bodies})
+        return bodies
+
+    def _snapshot_mark_files(self, root):
+        return {p.relative_to(root).as_posix(): p.read_bytes()
+                for p in root.rglob("*") if p.is_file()}
+
+    def test_mixed_unknown_batch_changes_nothing(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            bodies = self._seed_mark_batch(root)
+            before = self._snapshot_mark_files(root)
+            original = json.loads(json.dumps(bodies))
+            slugs = ["aaaa1111bbbb", "missing"]
+            self.assertEqual(crawler_llm_intel.mark_unreachable(root, bodies, slugs),
+                             (["missing"], 0))
+            self.assertEqual(bodies, original)
+            self.assertEqual(self._snapshot_mark_files(root), before)
+            with mock.patch.object(crawler_llm_intel, "_repo_root", return_value=root):
+                rc = crawler_llm_intel.main([
+                    "--mark-unreachable", slugs[0], "--mark-unreachable", slugs[1]])
+            self.assertEqual(rc, 2)
+            self.assertEqual(self._snapshot_mark_files(root), before)
+
+    def test_readable_batch_rejected_before_any_write(self):
+        # 受保护项放在最后；前面的合法失败项也不能被修改。
+        for case in ("en_ok", "zh_translated", "saved_en", "unregistered_zh"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as d:
+                root = Path(d)
+                bodies = self._seed_mark_batch(root)
+                e = list(bodies.values())[-1]
+                if case == "en_ok":
+                    e["en_status"] = "ok"
+                elif case == "zh_translated":
+                    e["zh_status"] = "translated"
+                    e["translator"] = "agent"
+                elif case == "saved_en":
+                    ft.write_body_doc(root / e["en_path"], {"status": "ok"}, "Real source body")
+                else:
+                    # agent 已写磁盘、reconcile 尚未登记的译文也要保护。
+                    ft.write_body_doc(root / f"docs/articles/openai/{e['slug']}.md",
+                                      {"status": "translated", "translator": "agent"}, "真实译文")
+                ft.save_bodies(root / "docs/feeds/bodies.json", bodies)
+                before = self._snapshot_mark_files(root)
+                original = json.loads(json.dumps(bodies))
+                slugs = [e["slug"] for e in bodies.values()]
+                with self.assertRaisesRegex(ValueError, slugs[-1]):
+                    crawler_llm_intel.mark_unreachable(root, bodies, slugs)
+                self.assertEqual(bodies, original)
+                self.assertEqual(self._snapshot_mark_files(root), before)
+                with mock.patch.object(crawler_llm_intel, "_repo_root", return_value=root):
+                    rc = crawler_llm_intel.main([
+                        "--mark-unreachable", slugs[0], "--mark-unreachable", slugs[1]])
+                self.assertEqual(rc, 2)
+                self.assertEqual(self._snapshot_mark_files(root), before)
+
+    def test_not_retried_by_default_but_retry_unreadable_reopens(self):
+        with tempfile.TemporaryDirectory() as d:
+            url = "https://a.com/p"
+            key = ft.bodies_key("openai", url)
+            rows = [{"vendor": "openai", "url": url, "title": "T", "date": "", "original_title": "T"}]
+            calls = []
+
+            def fetch(u, *a, **kw):
+                calls.append(u)
+                return ("", False, 404, u)
+
+            bodies = {key: {"slug": "aaaa1111bbbb", "en_path": "", "en_status": "unreachable",
+                            "zh_path": "", "zh_status": "", "translator": ""}}
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-11-01")
+            self.assertEqual(calls, [], "unreachable 默认不该再抓")
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-11-01",
+                            retry_unreadable=True)
+            self.assertEqual(calls, [url], "显式重看时才抓")
+
+    def test_must_have_empty_body(self):
+        """与 fetch_failed 同一条防编造闸：标了 unreachable 就不许有正文。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            slug = "aaaa1111bbbb"
+            rel = f"docs/articles/openai/{slug}.en.md"
+            ft.write_body_doc(root / rel, {"vendor": "openai", "url": "https://a.com/p",
+                                           "status": "unreachable"}, "编出来的正文")
+            bodies = {ft.bodies_key("openai", "https://a.com/p"):
+                      {"slug": slug, "en_path": rel, "en_status": "unreachable",
+                       "zh_path": "", "zh_status": "", "translator": ""}}
+            errs = ft.validate_bodies(root, bodies)
+            self.assertTrue(any("unreachable" in e and "非空" in e for e in errs), errs)
+
+    def test_mark_unreachable_writes_note_and_drops_backoff(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            url = "https://a.com/p"
+            key = ft.bodies_key("openai", url)
+            rel = "docs/articles/openai/aaaa1111bbbb.en.md"
+            ft.write_body_doc(root / rel, {"vendor": "openai", "title": "T", "url": url,
+                                           "status": "fetch_failed"}, "")
+            bodies = {key: {"slug": "aaaa1111bbbb", "en_path": rel, "en_status": "fetch_failed",
+                            "zh_path": "", "zh_status": "", "translator": "", "body_sha": ""}}
+            crawler_llm_intel._save_body_retry_ledger(
+                root / crawler_llm_intel.BODY_RETRY_LEDGER_NAME,
+                {url: {"fails": 3, "next": "2026-12-01", "days": 30}})
+
+            unknown, dropped = crawler_llm_intel.mark_unreachable(
+                root, bodies, ["aaaa1111bbbb"], note="403 反爬", today="2026-11-16")
+            self.assertEqual(unknown, [])
+            self.assertEqual(dropped, 1, "状态已表达「别再抓」，退避账要清")
+            self.assertEqual(bodies[key]["en_status"], "unreachable")
+            fm, body = ft.read_body_doc(root / rel)
+            self.assertEqual(fm["status"], "unreachable")
+            self.assertEqual(fm["note"], "403 反爬")
+            self.assertEqual(body, "", "标 unreachable 必须清空正文")
+            self.assertEqual(
+                crawler_llm_intel._load_body_retry_ledger(
+                    root / crawler_llm_intel.BODY_RETRY_LEDGER_NAME), {})
+            # 未知 slug 不写盘，只回报
+            unknown, _ = crawler_llm_intel.mark_unreachable(root, bodies, ["ffffffffffff"])
+            self.assertEqual(unknown, ["ffffffffffff"])
 
 
 class TestTranslateBodiesLlm(unittest.TestCase):

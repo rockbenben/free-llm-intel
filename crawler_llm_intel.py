@@ -486,6 +486,10 @@ def make_llm_body_translator(backend: str, model: str):
     def translate(title: str, en_body: str) -> str:
         user = (f"原文标题：{title}\n\n请将下面这篇英文 Markdown 文章译成中文：\n\n"
                 + en_body)
+        if backend == ai_review.BACKEND_GO:
+            return ai_review.call_llm_go(user, system=BODY_TRANSLATE_SYSTEM,
+                                         max_tokens=ai_review.BODY_MAX_TOKENS,
+                                         json_mode=False, fallback_to_gemini=False)
         return ai_review.call_llm_text(user, system=BODY_TRANSLATE_SYSTEM,
                                        model=model, backend=backend)
 
@@ -676,6 +680,14 @@ _LANG_HEADERS = {
     "zh": "zh-CN,zh;q=0.9,en;q=0.8",
 }
 
+#: 与上面一一对应的**浏览器上下文 locale**（navigator.language / 站点语言分支）。
+#: 只设 Accept-Language 不够：实测 openai 仍会按上下文 locale 302 到 /zh-Hans-CN/，
+#: cerebras 的 CMS 在 zh-CN 上下文下直接 500、渲染出 cookie 弹层。
+_LANG_LOCALES = {
+    "en": "en-US",
+    "zh": "zh-CN",
+}
+
 
 def news_source_langs(sources: list[dict]) -> dict[str, str]:
     """`{host+首要路径段: lang}` —— 只收 NEWS_TYPES 且声明了 `lang` 的动态源。
@@ -785,10 +797,15 @@ class BrowserSession:
     """
 
     def __init__(self, enabled: bool = True, settle_ms: int = 3000,
-                 goto_timeout_ms: int = 45000):
+                 goto_timeout_ms: int = 45000, locale: str = "zh-CN"):
         self.enabled = enabled and HAS_PLAYWRIGHT
         self.settle_ms = settle_ms
         self.goto_timeout_ms = goto_timeout_ms
+        # 上下文 locale 不是装饰：站点按它挑语言版本（openai 会 302 到
+        # /zh-Hans-CN/），CMS 的渲染分支也跟着变。英文源拿 zh-CN 上下文时，
+        # 实测 cerebras 直接回 500、抽出的是 cookie 同意弹层 —— 抓回一份「ok
+        # 但正文是弹层」的垃圾比 fetch_failed 更坏（它骗过了只查长度的闸门）。
+        self.locale = locale
         self._pw = None
         self._browser = None
         self._page = None
@@ -830,7 +847,7 @@ class BrowserSession:
                       file=sys.stderr)
                 return False
             ctx = self._browser.new_context(
-                user_agent=USER_AGENT, locale="zh-CN",
+                user_agent=USER_AGENT, locale=self.locale,
                 ignore_https_errors=True,
                 viewport={"width": 1440, "height": 900},
             )
@@ -845,7 +862,7 @@ class BrowserSession:
 
     def _new_page(self):
         ctx = self._browser.new_context(
-            user_agent=USER_AGENT, locale="zh-CN",
+            user_agent=USER_AGENT, locale=self.locale,
             ignore_https_errors=True,
             viewport={"width": 1440, "height": 900},
         )
@@ -894,6 +911,15 @@ class BrowserSession:
         """
         if not self._ensure():
             return None
+        # 声明语言决定的不只是请求头，还有**上下文 locale**：站点按后者挑语言版本，
+        # 且 CMS 的渲染分支跟着变。换了语言就换一个干净上下文（同一浏览器实例复用）。
+        want_locale = _LANG_LOCALES.get(lang)
+        if want_locale and want_locale != self.locale:
+            self.locale = want_locale
+            try:
+                self._new_page()
+            except Exception:
+                pass
         want = _LANG_HEADERS.get(lang)
         if want and self._page is not None:
             try:
@@ -940,10 +966,16 @@ class BrowserSession:
 #: 保留全文，情报页仍按 20000 字符截断，免得把兆级正文常驻内存。
 JSON_NEWS_BODY_LIMIT = 8_000_000
 
+#: 正文抓取保留的 HTML 上限。巡检路径 2MB 够用，但正文抓取要交给 readability
+#: 抽正文：实测 cerebras 博客渲染后 4.2MB，截到 2MB 时正文正好被切掉、只剩开头
+#: 的 cookie 同意弹层 —— 抽出来「有正文」（1623 字）所以闸门全绿，落盘却是弹层。
+BODY_RAW_LIMIT = 12_000_000
+
 
 def _fetch_with_requests(session: requests.Session, url: str, stype: str,
                          timeout: tuple[float, float], retries: int,
-                         lang: str = "", locale_cookie: str = "") -> PageResult:
+                         lang: str = "", locale_cookie: str = "",
+                         raw_limit: int = 2_000_000) -> PageResult:
     """用 requests 抓取，任何异常都封装进 PageResult，不向上抛出。
 
     `lang` 是这条**源自己声明的语言**：给定就按它发 `Accept-Language`，
@@ -1004,7 +1036,7 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
                 if stype in NEWS_TYPES:
                     result.raw = resp.text[:JSON_NEWS_BODY_LIMIT]
                 return result
-            result.raw = resp.text[:2_000_000]
+            result.raw = resp.text[:raw_limit]
             text, title, feeds, links, link_headings = parse_html(resp.text, resp.url)
             result.text = text
             result.snapshot_text = text  # 浏览器兜底不得覆盖此字段（见 PageResult）
@@ -1043,7 +1075,7 @@ def fetch_url(session: requests.Session, url: str, stype: str,
               browser: "BrowserSession | None" = None,
               timeout: tuple[float, float] = (10.0, 30.0),
               retries: int = 1, lang: str = "",
-              locale_cookie: str = "") -> PageResult:
+              locale_cookie: str = "", raw_limit: int = 2_000_000) -> PageResult:
     """
     抓取单个 URL：优先 requests；若被反爬拦截（401/403/429 等）或抓到 JS 空壳，
     且提供了 browser，则用真实浏览器重渲染兜底。任何异常都不向上抛出。
@@ -1053,7 +1085,7 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     不同语言（正文与锚点跟着变），这正是 siliconflow 双份条目的来路。
     """
     result = _fetch_with_requests(session, url, stype, timeout, retries, lang,
-                                  locale_cookie)
+                                  locale_cookie, raw_limit=raw_limit)
 
     if LOGIN_PATTERNS.search(result.final_url):
         result.is_login = True
@@ -1063,7 +1095,8 @@ def fetch_url(session: requests.Session, url: str, stype: str,
         time.sleep(2.0)
         was_login = result.is_login
         result = _fetch_with_requests(session, url, stype, timeout, retries=0,
-                                              lang=lang, locale_cookie=locale_cookie)
+                                              lang=lang, locale_cookie=locale_cookie,
+                                              raw_limit=raw_limit)
         # 首抓已判定的登录跳转不得因重试丢失：重试结果若是失败壳（final_url 回落
         # 到原 url），LOGIN_PATTERNS 判不出来，is_login 会静默变回 False
         if was_login or LOGIN_PATTERNS.search(result.final_url):
@@ -1119,7 +1152,7 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     result.links = links or result.links
     result.link_headings = link_headings or result.link_headings
     result.final_url = final_url or result.final_url
-    result.raw = html[:2_000_000]
+    result.raw = html[:raw_limit]
     result.status_code = code or result.status_code or 200
     result.ok = True
     result.error = ""
@@ -4776,6 +4809,151 @@ BACKFILL_LEDGER_NAME = ".backfill_orig_ledger.json"
 #: 每记这么多条就落一次盘（中断的一轮也能留住已判过的账）
 LEDGER_FLUSH_EVERY = 25
 
+#: 正文抓取的**失败退避**台账：`{url: {fails, next, days}}`，与上面那份同类——
+#: 不进 git、CI 走 Actions cache 续命，删掉即恢复「每天重试」。
+#: 为什么需要它：`fetch_failed` 是**语义状态**（这篇正文我们没拿到），不是重试开关；
+#: 而 `index_page` 是「这不是文章」的**判定**，拿它当「别抓了」会把真文章说成目录页，
+#: 连本地 `--allow-browser` 回捞也会一起跳过。实测 31 条 openai 文章页连续 35 天
+#: 每天重打一遍（每天约 10 分钟 + 33 个请求），状态一次都没变过。
+#: 退避只改「下次什么时候再试」，不改任何判据。
+BODY_RETRY_LEDGER_NAME = ".body_retry_ledger.json"
+
+#: **临时故障**的间隔阶梯（天）：没拿到响应 / 429 / 5xx / 超时才走它，
+#: 第 1 次隔 1 天、第 2 次 2 天……封顶 30 天。这类失败下一轮就可能自己好了。
+BODY_RETRY_LADDER = (1, 2, 4, 7, 14, 30)
+
+#: **确定性失败**（拿到了页面却没有正文：200 的 JS 壳、403 反爬、目录页判定）
+#: 一次就够证明了，不再按天重打 —— 第一次失败直接推后 30 天。
+#: 仍留一个回头看的窗口，是因为站点会改版 / 解封，正文可能哪天就回来了。
+BODY_STRUCTURAL_RETRY_DAYS = 30
+
+#: 404 / 410 是源站的**终局答复**（页面没了），隔久一点再看一眼；
+#: 但不当永久判决 —— 站点回滚或换路径时还能自己恢复。
+BODY_GONE_RETRY_DAYS = 180
+
+#: 「这一轮没拿到响应 / 被限流 / 服务端故障」——都算临时，下轮值得再试。
+#: 与 `_RETRYABLE_STATUSES` 同源：那边管回填台账，这边管正文台账，判据别漂。
+_BODY_TRANSIENT_STATUSES = (0, 408, 425, 429)
+
+
+def _body_failure_is_transient(http_status: int) -> bool:
+    return http_status in _BODY_TRANSIENT_STATUSES or http_status >= 500
+
+
+def _load_body_retry_ledger(path: Path) -> dict:
+    """读退避台账；损坏 / 缺失一律当空账（不因此中断抓取）。"""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _save_body_retry_ledger(path: Path, data: dict) -> None:
+    try:
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True),
+                        encoding="utf-8", newline="\n")
+    except OSError:
+        pass
+
+
+def mark_unreachable(root: Path, bodies: dict, slugs: list[str], *,
+                    note: str = "", today: str = "") -> tuple[list[str], int]:
+    """把**已核实**取不到正文的行标成 `unreachable`（正文清空、退出每日重试）。
+
+    为什么单独一个状态而不是复用 `index_page`：后者是「这不是文章」的判定，
+    而这些是真文章、只是这条管线取不到（反爬 / 客户端渲染 / 已下线 / 非文章页面）。
+    两个判断混在一个值里，读者和后来维护者都分不清。
+
+    同时清掉这些 URL 的退避账：状态本身已经表达「别再抓」，两份记账会互相打脸。
+    返回 (未知 slug 列表, 清掉的退避账条数)。
+    整批先校验再写盘：未知 slug 原样返回；已有正文或已登记译文时抛 ValueError。
+    """
+    import fulltext
+    today = today or datetime.now().strftime("%Y-%m-%d")
+    by_slug = {e.get("slug"): k for k, e in bodies.items()}
+    unknown = [s for s in slugs if s not in by_slug]
+    if unknown:
+        return unknown, 0
+    # 保护已落盘语料，也保护台账已声明可读但文件暂缺的条目。
+    # 必须在任何写入之前检查整批，否则后一个拒绝会留下前一个的半成品。
+    for slug in slugs:
+        e = bodies[by_slug[slug]]
+        vendor = by_slug[slug].split("\t", 1)[0]
+        paths = {e.get("en_path"), e.get("zh_path"),
+                 f"docs/articles/{vendor}/{slug}.en.md",
+                 f"docs/articles/{vendor}/{slug}.md"} - {None, ""}
+        has_body = any((root / rel).exists()
+                       and fulltext.read_body_doc(root / rel)[1].strip()
+                       for rel in paths)
+        if e.get("en_status") == "ok" or e.get("zh_status") == "translated" or has_body:
+            raise ValueError(f"{slug} 已有正文或已登记译文，拒绝标为 unreachable")
+    for slug in slugs:
+        if slug not in by_slug:
+            continue
+        key = by_slug[slug]
+        e = bodies[key]
+        vendor = key.split("\t", 1)[0]
+        rel = e.get("en_path") or f"docs/articles/{vendor}/{slug}.en.md"
+        enp = root / rel
+        fm = {}
+        if enp.exists():
+            fm, _body = fulltext.read_body_doc(enp)
+        fm.update({"vendor": fm.get("vendor") or vendor,
+                   "url": fm.get("url") or key.split("\t", 1)[1],
+                   "lang": "en", "captured": today,
+                   "extractor": fm.get("extractor") or "readability-v1",
+                   "status": "unreachable",
+                   "body_sha": fulltext.body_sha_of("")})
+        if note:
+            fm["note"] = note
+        fulltext.write_body_doc(enp, fm, "")
+        e.update({"en_path": rel, "en_status": "unreachable", "src_lang": "",
+                  "captured": today, "body_sha": fm["body_sha"]})
+    retry_path = root / BODY_RETRY_LEDGER_NAME
+    state = _load_body_retry_ledger(retry_path)
+    dropped = 0
+    for slug in slugs:
+        if slug not in by_slug:
+            continue
+        url = by_slug[slug].split("\t", 1)[1]
+        if state.pop(url, None) is not None:
+            dropped += 1
+    if dropped:
+        _save_body_retry_ledger(retry_path, state)
+    return unknown, dropped
+
+
+def body_retry_due(entry: dict | None, today: str) -> bool:
+    """今天该不该再试这一条：没记录、或 `next` 已到 / 已过，都该试。"""
+    nxt = (entry or {}).get("next") or ""
+    return not nxt or today >= nxt
+
+
+def body_retry_after_fail(entry: dict | None, today: str,
+                          http_status: int = 0) -> dict:
+    """失败一次后的账：`fails` 累加，`next` 按**失败性质**推后。
+
+    分三档，别混：
+      * 404/410 —— 页面没了，180 天后再看一眼；
+      * 临时故障（没响应 / 429 / 5xx）—— 走 1/2/4/7/14/30 的短阶梯；
+      * 确定性失败（拿到 200 却没正文、403 反爬）—— 一次就够证明，直接 30 天。
+    三档都是「下次什么时候再试」，不是判决：台账删掉即恢复每天重试。
+    """
+    fails = int((entry or {}).get("fails", 0)) + 1
+    if http_status in (404, 410):
+        days = BODY_GONE_RETRY_DAYS
+    elif _body_failure_is_transient(http_status):
+        days = BODY_RETRY_LADDER[min(fails - 1, len(BODY_RETRY_LADDER) - 1)]
+    else:
+        days = BODY_STRUCTURAL_RETRY_DAYS
+    try:
+        base = datetime.strptime(today, "%Y-%m-%d")
+    except ValueError:
+        base = datetime.now()
+    nxt = (base + timedelta(days=days)).strftime("%Y-%m-%d")
+    return {"fails": fails, "next": nxt, "days": days}
+
 
 #: 这些状态是「慢一点再来」而不是「这页不给东西」：与 `_fetch_with_requests` 的
 #: 可重试集合保持一致，否则回填会把限流当成永久失败烧进台账。
@@ -5776,7 +5954,7 @@ def _body_html_for(art: Article, vendor: str, bodies: dict, feeds_dir: Path,
 #: readable 的 '' 原意是「还没轮到正文抓取」，可它一旦落进已提交产物，读者点开的就是
 #: 「这篇正文还没落到语料里」——所以 '' 不许停留在发布产物里：要么磁盘上有正文文件，
 #: 要么台账写明读不到的原因。
-UNREADABLE_STATUSES = ("fetch_failed", "index_page", "paywall")
+UNREADABLE_STATUSES = ("fetch_failed", "index_page", "paywall", "unreachable")
 
 #: 正文抓取专用：这些文档页的 HTML 版是 JS 渲染壳（实测 aistudio changelog 返回
 #: 136KB HTML、`extract_article_markdown` 却抽出 0 字），官方同路径 `.md` 端点返回
@@ -7294,8 +7472,21 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--retry-unreadable", action="store_true",
                         help="正文抓取：已标 index_page / paywall 的行也重抓（判定可能被源站改版推翻），"
                              "但不碰已有真实中文译文的行；比 --refresh 窄得多")
+    parser.add_argument("--ignore-body-retry", action="store_true",
+                        help="正文抓取：忽略失败退避台账，本轮把 fetch_failed 全部重试一遍"
+                             f"（台账 {BODY_RETRY_LEDGER_NAME}，与翻译缓存同类、不进 git；"
+                             "确定性失败一次退 "
+                             f"{BODY_STRUCTURAL_RETRY_DAYS} 天，临时故障走 1/2/4/7/14/30，"
+                             f"404/410 隔 {BODY_GONE_RETRY_DAYS} 天）")
     parser.add_argument("--allow-browser", action="store_true",
                         help="正文抓取：requests 取不到时启用无头浏览器兜底（仅本地；CI 勿加）")
+    parser.add_argument("--mark-unreachable", action="append", default=[], metavar="SLUG",
+                        help="维护模式（不巡检、不联网）：把**已核实**取不到正文的 slug 标成 "
+                             "`unreachable`（反爬 / 客户端渲染 / 已下线 / 非文章）。正文清空、"
+                             "此后默认不再重抓（`--retry-unreadable` 可重看），并清掉它的退避账。"
+                             "可重复传。核实结论用 --unreachable-note 记进 frontmatter。")
+    parser.add_argument("--unreachable-note", default="",
+                        help="配合 --mark-unreachable：写进 .en.md frontmatter 的 note 行（为什么取不到）")
     parser.add_argument("--mark-translated", metavar="KEY", default="",
                         help="把 --zh-file 指定的中文正文登记为 key 的译文（agent 回充译道，只改 ledger）")
     parser.add_argument("--zh-file", default="", help="配合 --mark-translated：中文正文 Markdown 文件路径")
@@ -7313,6 +7504,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
                         help="维护模式（不巡检）：把 bodies.json 里「英文已抓到、中文待译」的条目"
                              "走 --ai-titles 同源 LLM 通道译成中文，写 docs/articles/<vendor>/<urlhash>.md"
                              "（translator=llm）。只译待译项、幂等；超长/失败/校验不过留 pending，不产半成品。")
+    parser.add_argument("--ai-bodies-go-only", action="store_true",
+                        help="正文只尝试 Go；不可用时留待后续 --mt-bodies，不调用 Gemini")
     parser.add_argument("--ai-bodies-limit", type=int, default=0,
                         help="本次最多译多少篇正文（0=不限；CI 用它控单日译量）")
     parser.add_argument("--mt-bodies", action="store_true",
@@ -7486,6 +7679,27 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  [mark-translated] 已记译文：{key}")
         return 1 if errs else 0
 
+    if args.mark_unreachable:
+        import fulltext
+        bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
+        try:
+            unknown, dropped = mark_unreachable(root, bodies, args.mark_unreachable,
+                                                note=args.unreachable_note)
+        except ValueError as exc:
+            print(f"  [mark-unreachable] {exc}", file=sys.stderr)
+            return 2
+        if unknown:
+            print(f"  [mark-unreachable] 未知 slug：{', '.join(unknown)}", file=sys.stderr)
+            return 2
+        for slug in args.mark_unreachable:
+            print(f"  [mark-unreachable] {slug} → unreachable")
+        fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
+        errs = fulltext.validate_bodies(root, bodies)
+        for msg in errs:
+            print(f"  [fulltext-guard] {msg}", file=sys.stderr)
+        print(f"  [mark-unreachable] 共 {len(args.mark_unreachable)} 条；退避账清掉 {dropped} 条")
+        return 1 if errs else 0
+
     if args.repair_body_sha:
         import fulltext
         bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
@@ -7538,14 +7752,45 @@ def main(argv: list[str] | None = None) -> int:
         session = build_session()
         timeout = (10.0, args.timeout)
         today = datetime.now().strftime("%Y-%m-%d")
+        # 失败退避台账：连续抓不到的行隔几天再试（阶梯见 BODY_RETRY_LADDER）。
+        # `--refresh` / `--ignore-body-retry` 都绕过它（要的就是「现在全试一遍」）。
+        retry_path = root / BODY_RETRY_LEDGER_NAME
+        retry_state = _load_body_retry_ledger(retry_path)
+        # 任何「现在就重试」的显式旗标都绕过退避（--retry-unreadable 是窄口重看，
+        # 若还被退避挡住，就等于旗标没生效）。
+        use_retry = not (args.refresh or args.retry_unreadable
+                         or args.ignore_body_retry)
+        last_status: dict[str, int] = {}
+
+        def _skip_row(u: str) -> bool:
+            return use_retry and not body_retry_due(retry_state.get(u), today)
+
+        def _on_result(u: str, en_status: str) -> None:
+            if en_status == "ok":
+                retry_state.pop(u, None)
+                return
+            retry_state[u] = body_retry_after_fail(
+                retry_state.get(u), today, last_status.get(u, 0))
+
+        def _flush(b: dict) -> None:
+            """每 20 篇的增量落盘：正文台账与退避台账一起写（中断的一轮也留得住）。"""
+            fulltext.save_bodies(root / "docs/feeds/bodies.json", b)
+            _save_body_retry_ledger(retry_path, retry_state)
 
         def _fetch_body(u: str):
-            # 正文抓取按 URL 反查源声明的 locale cookie：CI 与本机跑的必须是**同一种
-            # 语言**的页面，否则同一条公告按锚点各存一份（见 news_source_locale_cookies）。
+            # 正文抓取按 URL 反查源声明的语言与 locale cookie：CI 与本机跑的必须是
+            # **同一种语言**的页面，否则同一条公告按锚点各存一份（见 news_source_locale_cookies）。
+            # 语言同样要往下传：漏了它，requests 用会话默认的 zh-CN 头、浏览器用
+            # zh-CN 上下文，英文源会被站点 302 到本地化页（openai）或直接 500
+            # （cerebras 的 CMS），抓回来的是 cookie 弹层而不是正文。
             # 文档站 HTML 是 JS 壳时改抓官方 `.md` 端点（见 markdown_body_url）；
             # 台账仍按原 URL 记，身份不漂移。
             page = fetch_url(session, markdown_body_url(u), "news", browser=browser,
-                             timeout=timeout, locale_cookie=declared_source_cookie(u))
+                             timeout=timeout,
+                             lang=declared_source_lang(u, news_lang_table()),
+                             locale_cookie=declared_source_cookie(u),
+                             raw_limit=BODY_RAW_LIMIT)
+            last_status[u] = page.status_code or 0
             return (page.raw or "", page.ok, page.status_code or 0, page.final_url or u)
 
         def _refetch_body(u: str):
@@ -7555,7 +7800,8 @@ def main(argv: list[str] | None = None) -> int:
             这里直接调 `browser.render` 补上那一档，只在真的读不出来时才多付这一次渲染。"""
             if not browser.enabled:
                 return ("", False, 0, u)
-            rendered = browser.render(u, "", locale_cookie=declared_source_cookie(u))
+            rendered = browser.render(u, declared_source_lang(u, news_lang_table()),
+                                       locale_cookie=declared_source_cookie(u))
             if not rendered:
                 return ("", False, 0, u)
             html, final_url, code = rendered
@@ -7563,13 +7809,18 @@ def main(argv: list[str] | None = None) -> int:
 
         print(f"[维护] 正文抓取：{len(articles)} 篇（{'全量重抓' if args.refresh else '只补缺失'}，"
               f"浏览器兜底{'开' if (args.allow_browser and not args.no_browser) else '关'}）...")
+        skipped = sum(1 for r in articles if _skip_row(r.get("url") or ""))
+        if skipped:
+            print(f"  [body-retry] {skipped} 篇在退避窗口内（连续抓不到，隔几天再试）；"
+                  f"要立刻重试用 --ignore-body-retry。")
         with BrowserSession(enabled=args.allow_browser and not args.no_browser) as browser:
             written = fulltext.fetch_bodies(root, articles, bodies, fetch=_fetch_body,
                                             today=today, only_missing=not args.refresh,
                                             retry_unreadable=args.retry_unreadable,
-                                            save=lambda b: fulltext.save_bodies(
-                                                root / "docs/feeds/bodies.json", b),
-                                            refetch=_refetch_body)
+                                            save=_flush,
+                                            refetch=_refetch_body,
+                                            skip=_skip_row, on_result=_on_result)
+            _save_body_retry_ledger(retry_path, retry_state)
         # 吸收子代理/人工写到磁盘的中文译文（单点写 ledger）
         rec = fulltext.reconcile_translations(root, bodies)
         if rec:
@@ -7579,7 +7830,8 @@ def main(argv: list[str] | None = None) -> int:
         for e in errs:
             print(f"  [fulltext-guard] {e}", file=sys.stderr)
         ok = sum(1 for e in bodies.values() if e.get("en_status") == "ok")
-        failed = sum(1 for e in bodies.values() if e.get("en_status") in ("fetch_failed", "paywall"))
+        failed = sum(1 for e in bodies.values()
+                     if e.get("en_status") in ("fetch_failed", "paywall", "unreachable"))
         print(f"  本轮写 {written} 篇；ledger 共 {len(bodies)} 条（ok {ok} / 抓不到 {failed}）。")
         return 1 if errs else 0
 
@@ -7587,9 +7839,13 @@ def main(argv: list[str] | None = None) -> int:
         import os
         import fulltext
         import ai_review
+        if args.ai_bodies_go_only and not ai_review.go_available():
+            print("  [ai-bodies] Go 未启用、到期或配置不完整，交给后续机翻。")
+            return 0
         # 与 --ai-titles 同源：解析后端 + 模型；缺 key 时禁用、返回 0（不崩巡检产物提交）。
         try:
-            backend = ai_review.resolve_backend()
+            backend = (ai_review.BACKEND_GO if args.ai_bodies_go_only
+                       else ai_review.resolve_backend())
             backend_err = ai_review.backend_config_error(backend)
         except ai_review.AiReviewError as exc:
             backend, backend_err = "", str(exc)
