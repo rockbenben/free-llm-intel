@@ -187,9 +187,9 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-15 11:41:03**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-16 10:27:19**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
-> 💡 **核心特性**：覆盖 **88 家厂商**（深度抓取 **163 个情报页 + 45 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
+> 💡 **核心特性**：覆盖 **88 家厂商**（深度抓取 **162 个情报页 + 45 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 34 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
 > 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [全部厂商动态（中文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [全部厂商动态（英文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（英文加 `.en.xml`）。全部厂商动态与单厂商源都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。
 > 🛰 **额度变化订阅**（新活动 / 额度调整，前值 → 后值）：[llm-intel-changes.xml](https://free-llm-intel.aishort.top/feeds/llm-intel-changes.xml)
@@ -225,7 +225,7 @@ python -m unittest discover
 | **注册福利 / 账户赠送** | 新用户完成实名认证并首次开通千问AI平台后，大部分模型会自动获得独立的免费额度（通常每模型 100 万 Token），具体以权益页面显示为准；新模型上线仍会发放额度；部分模型额度下架后新用户不再获得，老用户可用至到期或耗尽 |
 | **额度有效期** | **90 天**（开通时已有模型自账号开通起算；新上线模型自发布起算） |
 | **前置条件 / 限制** | 新用户需先完成实名认证才能开通千问AI平台并获得免费额度；此前已开通但未完成实名认证的用户可继续使用已有免费额度 |
-| **免费层限制 / 注意事项** | • **额度按模型独立计算，不可合并或跨模型转移**：用完后系统不会自动切换模型，需手动修改 model 参数<br>• **快照版本独立**：带日期后缀版本（如 `qwen-max-2026-05-17`）与主版本独立享有额度<br>• **适用范围受限**：仅抵扣模型实时推理，不可抵扣批量调用、内置工具（联网搜索/图片搜索等）、微调与部署<br>• **扣费风险**：新用户开通平台后「免费额度用尽即停」默认关闭，需自行前往权益页面开启以防超额按量扣费；此前已开通但未认证的用户该功能由系统自动开启且无法关闭<br>• **Key 类型限制**：Token Plan 专属 API Key 不消耗免费额度，须使用通用 API Key |
+| **免费层限制 / 注意事项** | • **额度按模型独立计算，不可合并或跨模型转移**：用完后系统不会自动切换模型，需手动修改 model 参数<br>• **快照版本独立**：带日期后缀版本（如 `qwen-max-2026-05-17`）与主版本独立享有额度<br>• **适用范围受限**：仅抵扣模型实时推理，不可抵扣批量调用、内置工具（联网搜索/图片搜索等）、微调与部署<br>• **扣费风险**：免费额度用尽即停（安心模式）在开通千问AI平台后默认关闭，需自行前往权益页面开启以防超额按量扣费<br>• **Key 类型限制**：Token Plan 专属 API Key 不消耗免费额度，须使用通用 API Key |
 | **邀请 / 特惠活动** | “云大使”返利、知识库 720 小时试用等说法无法在当前官方免费额度页复核，不予采信。 |
 | **邀请 / 拉新奖励** | **阿里云“云大使”官方页不可达**：第三方情报库所指 `k.aliyun.com/smarter/ai-distributor` 复核时无法访问；所称「推广返利 30%–45%」不予采信。 |
 | **实时巡检证据** | • 免费额度的有效期通常为 90 天，但两类额度的起算时间不同：<br>• 同一认证主体下重新注册账号，无法再次领取新人免费额度。<br>• 该页面包含模型调用额度、Agent 开发额度和优惠券三个页签，其中模型调用额度页签提供： |
@@ -414,7 +414,7 @@ python -m unittest discover
 | **免费层限制 / 注意事项** | • **0 元只覆盖指定开源模型 / 向量 / 重排 / 画图 / 识别语音**（Xing4.0-29B、PaddleOCR-VL、Hunyuan-MT、bge 系列、Kolors、SenseVoice 等）；DeepSeek-V4、GLM-5.x、Kimi-K2.7 等旗舰全部按量计费，需使用 14 元代金券抵扣<br>• 免费模型清单随定价页「免费」标签调整，接入前以 pricing 页实时标注为准；免费模型有平台固定限速指标 |
 | **邀请 / 特惠活动** | 官方有邀请返利活动，但具体奖励金额以控制台活动页公示为准（历史页面金额无法在当前官方页复核，不予采信）。 |
 | **邀请 / 拉新奖励** | **未找到官方邀请活动页**：第三方情报库指向的 `siliconflow.cn/about/reward` 已 307 跳转回官网首页（该路径不存在）；所称「注册 + 推荐各得 16 元、可无限叠加」无法复核，**不予采信**。实际奖励以控制台活动页公示为准。 |
-| **实时巡检证据** | • 定价：¥0.7/1M tokens<br>• 月消费金额：包含充值金额消费和赠送金额在内的账户每个月的总 消费金额。<br>• 1. Rate Limits 概述 |
+| **实时巡检证据** | • 0.7 日元/100 万代币<br>• 月消费金额：包含充值金额消费和赠送金额在内的账户每个月的总 消费金额。<br>• 1. Rate Limits 概述 |
 | **官方直达** | [官方主页](https://www.siliconflow.cn/) ｜ [定价 / 免费模型清单](https://www.siliconflow.cn/pricing) ｜ [API Key 申请直达](https://cloud.siliconflow.cn/account/ak) ｜ [计费 FAQ（额度说明）](https://docs.siliconflow.com/cn/faqs/billing-rules) |
 | **特别说明** | 免费模型清单随平台调整，以定价页「免费」标签为准；旗舰模型按 token 计费，可用代金券抵扣。 |
 
@@ -467,12 +467,12 @@ python -m unittest discover
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [复旦 MOSS (MOSI)](https://platform.mosi.cn/) |
-| **免费模型与额度** | • **限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（实测 max_tokens=64 时 63 个 token 全用于推理，finish_reason=length）<br>• **限时免费 0 积分**：`moss-vl-1.0`（多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（实时视频理解，WebSocket `/v1/realtime`）、`moss-live-1.0`（实时音频+视频流→音频+文本，WebSocket `/v1/realtime`，Beta）<br>• **付费（非免费）**：TTS 系列 moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥2.00/万字符＝40 积分/万字符）；转写 moss-transcribe-1.0（¥0.80/小时＝16 积分/小时）、moss-transcribe-diarize-pro（¥2.00/小时＝40 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.20/张≈4 积分、高分辨率 ¥0.30/张≈6 积分，智能改写另计 ¥0.05/次＝1 积分） |
+| **免费模型与额度** | • **限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（实测 max_tokens=64 时 63 个 token 全用于推理，finish_reason=length）<br>• **限时免费 0 积分**：`moss-vl-1.0`（多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（实时视频理解，WebSocket `/v1/realtime`）、`moss-live-1.0`（实时音频+视频流→音频+文本，WebSocket `/v1/realtime`，Beta）<br>• **付费（非免费，当前六折优惠）**：TTS 系列 moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写 moss-transcribe-1.0（¥0.48/小时＝9.60 积分/小时）、moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分、高分辨率 ¥0.18/张＝3.60 积分） |
 | **注册福利 / 账户赠送** | 官方公开文档未见账户级注册赠金说明；模型限免见「免费模型与额度」 |
 | **额度有效期** | 限时免费，官方未公布截止日；随时可能恢复计费，以官方公告为准 |
 | **前置条件 / 限制** | 注册 MOSS 开放平台账号并创建 API Key（`sk-` 开头），控制台获取；调用带 `Authorization: Bearer <key>` |
 | **免费层限制 / 注意事项** | • 官方未公开统一 RPM/TPM/RPD 数值，实际限速以控制台及服务端错误码为准；`moss-vl-1.0` 走 Responses API，实时模型走 WebSocket，不能直接填入 Chat Completions 客户端<br>• **限时免费无公开截止日**，随时可能恢复计费；TTS/转写/部分图像已按积分计费，免费仅限上述模型，勿把「平台整体免费」当结论<br>• `nex-n2.6` 是**推理模型**：小 max_tokens 下 reasoning 吃满预算、content 为空（finish_reason=length），不是坏——要给足 max_tokens 才能拿到正文<br>• 2026-11-12 实测模型列表出现 `tob-kimi-k3`（owned_by kimi），但该次测试账号调用返回 403 `forbidden`；这只说明该账号无权调用，其他账号的开放条件以官方授权为准，勿把「列表里可见」当成「能用」<br>• 2026-11-12 的 API 实测响应未见计费字段；HTTP 200 本身不能证明免费，接入时须同时核对官方价格与控制台扣减记录 |
-| **邀请 / 特惠活动** | 限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 / moss-live-1.0 标 0 积分。MOSS-Image API 已于 2026-11-11 12:00 起计费（低至 0.2 元/张）。 |
+| **邀请 / 特惠活动** | 限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 / moss-live-1.0 标 0 积分；付费模型（语音生成、音频转写、文生图）当前执行六折优惠。 |
 | **实时巡检证据** | • Nex N2.6 已上线，API 限时免费。查看模型 → |
 | **官方直达** | [模型列表（官方全文，含计费标准）](https://platform.mosi.cn/docs/models) ｜ [MOSS 开放平台](https://platform.mosi.cn/) ｜ [快速开始（API Key 与接入示例）](https://platform.moss.cn/docs/getting-started/quickstart) ｜ [请求限制](https://platform.moss.cn/docs/errors-and-limits/limits) |
 | **特别说明** | HTTP API origin 为 `https://api.mosi.cn`，OpenAI SDK base_url 为 `https://api.mosi.cn/v1`；2026-11-12 文档入口 `platform.mosi.cn/docs/models` 实际重定向至 `platform.moss.cn/docs/models`。2026-11-12 已记录 nex-n2.6 调用出文且控制台未扣积分的实测；免费仅限上述模型，TTS/转写/图像各按字符、时长、张数计费。 |
@@ -531,7 +531,6 @@ python -m unittest discover
 | **额度有效期** | 需登录控制台核实 |
 | **前置条件 / 限制** | 注册中国移动/移动云账号并完成实名认证 |
 | **邀请 / 特惠活动** | 面向行业开发者的赋能计划以官方公告为准。 |
-| **实时巡检证据** | • 领2500万Token免费额度，体验最新国产大模型<br>• 低成本体验，特惠畅享Token，下单再享赠券好礼！每天10点限量抢购 |
 | **官方直达** | [九天人工智能平台门户](https://jiutian.10086.cn/portal/) ｜ [九天帮助中心](https://jiutian.10086.cn/portal/common-helpcenter) ｜ [移动云](https://ecloud.10086.cn/portal) |
 | **特别说明** | 本条官方公开证据不足，宁缺毋假：额度与模型信息请以登录九天门户后的控制台内容为准。 |
 
@@ -540,7 +539,7 @@ python -m unittest discover
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [360 智脑](https://ai.360.com/open/) |
-| **免费模型与额度** | • **无公开免费模型层**：平台转为聚合模式，模型列表约 86 款（含第三方模型）；自研模型 `360zhinao-pro` 定价输入 ¥2/百万 tokens、输出 ¥5/百万 tokens（以定价页为准） |
+| **免费模型与额度** | • **无公开免费模型层**：平台转为聚合模式，模型广场共 103 款模型（含第三方模型），均按量计费，未设立永久免费模型层（以定价页为准） |
 | **注册福利 / 账户赠送** | 新用户注册赠送测试资源，**具体数额/有效期未在公开页公示**，以账户实际发放为准（“1000 万 tokens/30 天”说法无法复核，不予采信） |
 | **额度有效期** | 以资源包标注为准 |
 | **前置条件 / 限制** | 360 账号注册并完成实名认证 |
@@ -595,7 +594,7 @@ python -m unittest discover
 | **额度有效期** | 网页免费版额度受每 5 小时与每周双重限制（Limited usage every 5 hours and every week）；API 测试额度以账户到账为准 |
 | **前置条件 / 限制** | 网页端注册账号即可；API 需绑定付款方式；**免费版不含 Claude Code**（官方原文 “Claude Code is included in all paid plans”） |
 | **邀请 / 特惠活动** | Pro 订阅 $20/月（年付 $17/月）含 Claude Code；Max 为 $100/月（含每月 $100 API 额度，5x Pro 额度）；新增 Ultra 计划 $200/月（含每月 $200 API 额度，10x Pro 周额度，认证账号无 5 小时限制）；Team 计划含最高 $500/月池化 API 额度；Batch 5 折、提示缓存读低至 0.1x。 |
-| **实时巡检证据** | • 专业版计划为您提供免费计划中的所有内容，并且具有更多用途和 Claude 的更多功能。其中包括 Claude Code，以及用于组织聊天和文档的项目……<br>• 面向学生学习的专属 API 积分与教育功能<br>• 是的，我们的销售团队可以通过批量折扣和承诺支出折扣为您的组织定制 Claude Enterprise 和 Claude API 定价。我们不发布折扣... |
+| **实时巡检证据** | • 专业版计划为您提供免费计划中的所有内容，并且具有更多用途和 Claude 的更多功能。其中包括 Claude Code，以及用于组织聊天和文档的项目……<br>• 供学生学习的专用 API 学分和教育功能<br>• 是的，我们的销售团队可以通过批量折扣和承诺支出折扣为您的组织定制 Claude Enterprise 和 Claude API 定价。我们不发布折扣... |
 | **官方直达** | [官方主页](https://claude.com/) ｜ [定价中心](https://claude.com/pricing) ｜ [模型文档](https://platform.claude.com/docs/en/models/overview) ｜ [API 定价 FAQ](https://platform.claude.com/docs/en/about-claude/pricing) |
 | **特别说明** | 官方页将 Opus 5.5 定位为日常智能体编码与企业工作的“Daily driver”，Fable 5.1 面向复杂推理与长程智能体任务（“Next generation intelligence for long-running agents”）；另有 Opus 5.5 fast mode（2 倍标准价、最快 2.5x）与 US-only 推理（1.1x 价）等付费选项。 |
 
@@ -609,7 +608,7 @@ python -m unittest discover
 | **额度有效期** | 免费测试请求为注册后一次性体验；额度政策以官方定价页为准 |
 | **前置条件 / 限制** | 注册 OpenAI 账号并绑定海外付款方式；按组织层级划分 RPM / TPM 配额 |
 | **邀请 / 特惠活动** | Batch 批量推理约 5 折；提示缓存输入约 1–2.5 折；网页端 ChatGPT 提供免费版（可用模型以官方说明为准）。 |
-| **实时巡检证据** | • 免费套餐不提供图像生成功能。当您将 Codex 与<br>• ChatGPT Enterprise 目前不提供推荐。<br>• ChatGPT for Education（在新窗口中打开） |
+| **实时巡检证据** | • 免费套餐不提供图像生成功能。 When you use Codex with an<br>• ChatGPT Enterprise 目前不提供推荐。<br>• GPT-6.1 从您的订阅中提取的 Sol 使用量没有长上下文附加费 |
 | **官方直达** | [官方主页](https://openai.com/) ｜ [API 定价](https://developers.openai.com/api/docs/pricing) ｜ [模型列表](https://developers.openai.com/api/docs/models) ｜ [快速开始](https://developers.openai.com/api/docs/quickstart) |
 | **特别说明** | 旧“$5 测试积分”说法在现行官方文档中已不再出现；“数据共享折扣”亦未见公开表述。 |
 
@@ -638,7 +637,7 @@ python -m unittest discover
 | **额度有效期** | 以官方控制台活动为准 |
 | **前置条件 / 限制** | 注册 xAI 控制台并充值；X Premium+ 订阅含网页端 Grok 对话 |
 | **邀请 / 特惠活动** | 部分模型 Batch 8 折；Priority Processing 2x；Grok Build 提供 API 与 CLI 智能体编码。 |
-| **实时巡检证据** | • 在 console.x.ai 注册帐户，然后充值积分以开始使用 API。<br>• 2x 乘数适用于所有 token 类型——输入、输出、缓存和推理；提示缓存折扣在乘数之前应用。<br>• 请求不计入速率限制 |
+| **实时巡检证据** | • 在 console.x.ai 注册一个帐户，然后加载积分以开始使用 API。<br>• 2 倍乘数适用于所有令牌类型 — 输入、输出、缓存和推理。提示缓存折扣在乘数之前应用。<br>• 请求不计入速率限制 |
 | **官方直达** | [官方主页](https://x.ai/) ｜ [API 定价](https://docs.x.ai/developers/pricing) ｜ [快速开始](https://docs.x.ai/developers/quickstart) ｜ [开发者控制台](https://console.x.ai/home) |
 | **特别说明** | 旧“$25 免费额度/30 天”说法在现行官方页面无据。 |
 
@@ -653,7 +652,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 邮箱注册并验证手机号 |
 | **免费层限制 / 注意事项** | • 免费的是**端点**而非额度：官方定价页未提供新用户赠金或免费实验层（旧“€5 赠金 / 1 RPS 免费层”无据）<br>• `Leanstral` 属 Labs「限时开放收集反馈」，**随时可能下线**；`Mistral Moderation 2（Free）` 是常设免费端点<br>• 商业模型（Mistral Medium 3.5、Large 3、Small 4、Ministral 3、Codestral、Voxtral、OCR、Mistral Embed、Shieldstral）均按量付费<br>• 免费端点限速数值官方未公开，以控制台为准 |
 | **邀请 / 特惠活动** | 开放权重模型可下载；提供企业私有化部署；2026-09 宣布完成 €3B 融资。 |
-| **实时巡检证据** | • 可以，您可在任何地方自行托管我们的模型。开放权重模型（如 Mistral 7B）采用 Apache 2.0 许可，供研究/个人使用；<br>• 经过验证的学生可以 $5.99/月（原价 $14.99）购买 Mistral Pro<br>• 是的，Mistral Enterprise 计划包含定制 SLA、专属支持和私有部署。详情请联系我们。 |
+| **实时巡检证据** | • 是的，您可以在任何地方自行托管我们的模型。开放权重模型（例如 Mistral 7B）是 Apache 2.0 许可用于研究/个人使用；<br>• 经过验证的学生可以每月 5.99 美元（通常为 14.99 美元）购买 Mistral Pro。<br>• 是的，Mistral Enterprise 计划包括自定义 SLA、专门支持和私有部署。联系我们了解更多详情。 |
 | **官方直达** | [API Key 控制台直达](https://console.mistral.ai/api-keys/) ｜ [官方主页](https://mistral.ai/) ｜ [API 定价](https://docs.mistral.ai/inference/pricing) ｜ [模型文档](https://docs.mistral.ai/models) ｜ [新闻动态](https://mistral.ai/news/) |
 | **特别说明** | 旧“€5 赠金 / 1 RPS 免费层 / open-mistral-7b / Mixtral / Pixtral-12B”在现行官方页面无据或已列入 deprecated/retired 表。 |
 
@@ -668,7 +667,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 邮箱注册即可获取 API Key，免信用卡 |
 | **免费层限制 / 注意事项** | • 免费层只覆盖 gpt-oss / Qwen / 部分工具模型（gpt-oss 为 30 RPM / 1,000 RPD / 8K TPM，组织级计量）；**旧 Llama-3.1-8b、Llama-3.3-70b 已转 Enterprise 付费**，按旧清单调用会扣费<br>• Batch、Flex、更高限额需付费 Developer plan；缓存命中的 token 不计入限速 |
 | **邀请 / 特惠活动** | **定价页已下线**：`groq.com/pricing` 现跳官方首页（2026-11-03 复核），付费档位与单价改在控制台查看；自研 LPU 硬件推理速度快。 |
-| **实时巡检证据** | • 示例：假设 RPM = 50、TPM = 200K。若一分钟内发送 50 个请求、每个仅 100 token，即使没有察觉也会达到限额…… |
+| **实时巡检证据** | • 示例：假设您的 RPM = 50，TPM = 200K。如果您在一分钟内仅使用 100 个令牌发送 50 个请求，即使您没有看到，您也会达到限制... |
 | **官方直达** | [API Key 控制台直达](https://console.groq.com/keys) ｜ [快速开始文档](https://console.groq.com/docs/quickstart) ｜ [官方主页](https://groq.com/) ｜ [速率限制文档](https://console.groq.com/docs/rate-limits) ｜ [模型清单](https://console.groq.com/docs/models) ｜ [控制台限额页（登录后可见本组织额度）](https://console.groq.com/settings/limits) |
 | **特别说明** | 旧“30 RPM / 14,400 RPD / 6,000 TPM 统一限额”及 Mixtral-8x7B、Gemma-2-9B 模型均已过时/下架。 |
 
@@ -683,7 +682,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 Hugging Face 账号并生成 Access Token，免信用卡 |
 | **免费层限制 / 注意事项** | • 官方已正式取消免费用户的每月 $0.10 额度，未付费免费账号无法免费调用 Inference Providers API<br>• PRO 用户每月含 $2 通用额度，可用于 Inference Providers、Inference Endpoints、Spaces 硬件等 |
 | **邀请 / 特惠活动** | PRO 会员 **$9/月**，含每月 **$2** 通用推理额度（免费额度的 20 倍）。 |
-| **实时巡检证据** | • 追求简便并想用掉每月积分，请从 Routed by Hugging Face 开始<br>• 8× ZeroGPU 配额与最高队列优先级 |
+| **实时巡检证据** | • 如果您想要简单并使用每月积分，请从 Routed by Hugging Face 开始<br>• 8× ZeroGPU 配额和最高队列优先级 |
 | **官方直达** | [官方主页](https://huggingface.co/) ｜ [Inference Providers 定价](https://huggingface.co/docs/inference-providers/pricing) ｜ [会员定价](https://huggingface.co/pricing) |
 | **特别说明** | 高并发生产场景建议使用 Dedicated Endpoints。 |
 
@@ -698,7 +697,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 邮箱或 GitHub 登录创建 API Key，免信用卡 |
 | **免费层限制 / 注意事项** | • **只有带 `:free` 后缀的模型免费**，同名付费模型照常扣费；官方提供 25+ 款免费模型，随上游变动<br>• 限速 20 RPM；每日 50 次（未购满 $10）或 1,000 次（购满 $10 credits 后），**失败请求同样计入每日上限**<br>• 若账户存在负余额（negative balance），将封锁免费模型调用，需充值恢复至零以上方可继续使用 |
 | **邀请 / 特惠活动** | 一个 API Key 统一切换全球多家模型厂商；购满 10 credits 可将免费模型日限提升至 1,000 次。 |
-| **实时巡检证据** | • 帐户余额：您在整个帐户中的可用积分。若积分余额为负，您可能会遇到错误，免费模型也不例外。充值积分即可……<br>• 我们在企业计划中提供 OpenRouter 费用折扣。我们不低估推理。<br>• 不需要。推理按每个计划的提供商标价计费。 OpenRouter 的费用是在您购买积分时收取的，标准版为 5.5%，商业版为 8%，个人购买时不收取费用。 |
+| **实时巡检证据** | • 帐户余额，您在整个帐户中的可用积分。如果您的帐户信用余额为负，您可能会看到错误，包括免费模型的错误。添加学分以放置 y...<br>• 我们在企业计划中提供 OpenRouter 费用折扣。 We do not discount inference.<br>• 不需要。推理按每个计划的提供商标价计费。 OpenRouter 的费用是在您购买积分时收取的，标准版为 5.5%，商业版为 8%，个人购买时不收取… |
 | **官方直达** | [API Key 申请直达](https://openrouter.ai/keys) ｜ [官方主页](https://openrouter.ai/) ｜ [速率限制文档](https://openrouter.ai/docs/api_reference/limits) ｜ [免费模型列表](https://openrouter.ai/models?max_price=0) |
 | **特别说明** | 旧举的 llama-3.3-70b / gemini-2.0-flash-exp / deepseek-r1 / qwen-2.5-72b :free ID 均已下架。 |
 
@@ -728,7 +727,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 邮箱注册即可，免信用卡；Trial Key 仅限非商用开发测试 |
 | **免费层限制 / 注意事项** | • **Trial Key 明令禁止生产 / 商业用途**（官方原文 “not permitted to be used for production or commercial purposes”）；商用必须升级按量付费 key<br>• 每月 1,000 次调用；Chat 限速 20 RPM、Embed 2,000 inputs/min、Rerank 10 RPM |
 | **邀请 / 特惠活动** | Trial 速率：Chat **20 RPM**、Embed 2,000 inputs/min、Rerank 10 RPM；生产 key 按量计费。 |
-| **实时巡检证据** | • Model Vault 是我们专用的、完全托管的平台，用于安全、大规模地运行 Cohere 的最新模型以及领先的开放式重量模型，并保证性能。<br>• 试用密钥（以及较新 Chat 模型变体上的 prod 密钥）每月仅限 1,000 次 API 调用。<br>• 如有任何疑问，或想申请提高速率限制，请联系 support@cohere.com。 |
+| **实时巡检证据** | • Model Vault 是我们专用的、完全托管的平台，用于安全、大规模地运行 Cohere 的最新模型以及领先的开放式重量模型，并保证性能。<br>• 试用密钥（以及较新的 Chat 模型变体上的产品密钥）每月仅限 1,000 次 API 调用。<br>• 如果您有任何疑问或想要讨论提高速率限制的问题，请联系 support@cohere.com。 |
 | **官方直达** | [API Key 控制台直达](https://dashboard.cohere.com/api-keys) ｜ [官方主页](https://cohere.com/) ｜ [定价页](https://cohere.com/pricing) ｜ [速率限制文档](https://docs.cohere.com/docs/rate-limits) |
 | **特别说明** | 旧“40 RPM”说法有误（Chat 实为 20 RPM）；裸 “Embed/Rerank” 已换代为 Embed 4 / Rerank 3.5–4。 |
 
@@ -743,7 +742,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 NVIDIA 开发者账号 |
 | **免费层限制 / 注意事项** | • 多数模型限速约 **40 RPM、不按 token 计费**；仅供**开发评估**，官方 Trial Terms 不允许生产环境使用<br>• 模型目录变动频繁（旧 nemotron-4-340b、llama-3.1-405b 已撤出）；生产用量需走各模型厂商或 NIM 自建 |
 | **邀请 / 特惠活动** | 支持一键导出 NIM Docker 容器镜像本地部署；企业试用另见官方条款。 |
-| **实时巡检证据** | • 免费层按速率限制运行——大多数模型每分钟最多 40 个请求 (RPM)，不按 token 计费。您的个人速率限制显示在控制面板右上角……<br>• 创建并验证您的帐户，以解锁对 NVIDIA NIM API 的完全访问权限。 |
+| **实时巡检证据** | • 免费套餐的运行有速率限制 - 大多数型号每分钟最多 40 个请求 (RPM)，并且没有按令牌计费。您的个人速率限制显示在破折号的右上角......<br>• 创建并验证您的帐户以解锁对 NVIDIA NIM API 的完全访问权限。 |
 | **官方直达** | [体验中心](https://build.nvidia.com/) ｜ [免费端点目录（Free Endpoint 筛选）](https://build.nvidia.com/models?filters=nimType%3Anim_type_preview) ｜ [API 模型目录](https://docs.api.nvidia.com/nim/reference/llm-apis) ｜ [开发者条款](https://developer.nvidia.com/legal/terms) |
 | **特别说明** | “1,000 credits / 90 天”等旧数字在现行公开页面查不到；免费层 40 RPM 为官网当前公示；旧 nemotron-4-340b、llama-3.1-405b 已不在现行目录。 |
 
@@ -757,6 +756,7 @@ python -m unittest discover
 | **额度有效期** | 永久有效（遵守许可条款） |
 | **前置条件 / 限制** | 遵守 Llama 4 社区许可；上自然月活跃用户超过 **7 亿（700 million MAU）** 的实体需另行向 Meta 申请授权 |
 | **邀请 / 特惠活动** | 主流推理平台（Groq、Cerebras、Cloudflare、Together、DeepInfra 等）均托管 Llama 4。 |
+| **实时巡检证据** | • 使用 Muse Spark Open 下载 Muse Spark Open，这是一种用于代理编码的 816B 开放权重模型。使用 SGLang、vLLM 或 Apple MLX 提供服务，在托管 API 上运行它，或者对其进行微调....…<br>• Llama 4 社区许可协议 |
 | **官方直达** | [Meta AI 开发者站](https://dev.meta.ai/) ｜ [Llama 4 许可协议](https://dev.meta.ai/llama/llama4/license) ｜ [Hugging Face 组织](https://huggingface.co/meta-llama) |
 | **特别说明** | 官方主站已迁至 developer.meta.com/ai；llama.com 301 跳转至此；Llama 4 许可页为 /ai/llama4/license/。 |
 
@@ -770,7 +770,7 @@ python -m unittest discover
 | **额度有效期** | **30 天** |
 | **前置条件 / 限制** | 注册账号；$5 赠金需添加验证付款方式 |
 | **邀请 / 特惠活动** | Developer (PAYG) 层 gpt-oss-120b 1K RPM / 1M TPM，无小时与每日限制。 |
-| **实时巡检证据** | • 添加经过验证的付款方式后，新帐户可获得 $5 免费积分，积分自发放起 30 天后过期，可用于所有公共模型…<br>• 当您使用 5 美元的免费试用积分时，这些限制适用。<br>• 任何指标都可能触发速率限制，以先到者为准。例如速率为 50 RPM 和 200K TPM，若一分钟内提交 50 个请求、每个仅 100 tok… |
+| **实时巡检证据** | • 添加经过验证的付款方式后，新帐户将获得 5 美元的免费积分。这些积分在授予后 30 天后到期，可在所有公共模型中使用。那里…<br>• 当您使用 5 美元的免费试用积分时，这些限制适用。<br>• 任何指标都可以触发速率限制，以先到者为准。例如，您的速率限制为 50 RPM 和 200K TPM。如果您仅用 100 tok 一分钟提交 50 个请求…… |
 | **官方直达** | [官方主页](https://www.cerebras.ai/) ｜ [速率限制文档](https://inference-docs.cerebras.ai/support/rate-limits) ｜ [模型清单](https://inference-docs.cerebras.ai/models/overview) ｜ [定价中心](https://www.cerebras.ai/pricing) |
 | **特别说明** | 旧“永久免费 Developer Tier / 30 RPM / 60K TPM / Llama 3.1/3.3”均已过时；Llama 模型已不在公共目录。 |
 
@@ -779,8 +779,8 @@ python -m unittest discover
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [Together AI](https://www.together.ai/) |
-| **免费模型与额度** | • `Ternary Bonsai 27B` —— 输入与输出均定价为 **$0.00/1M tokens**（需充值门槛）<br>• `Tev1 4B Experimental` —— 输出免费（Free），输入收取 **$0.04/1M tokens**（需充值门槛）<br>• **平台调用限制**：官方计费文档明确平台不提供免费试用，使用前组织必须完成最低 $15 充值，且需保持正余额才能调用 API。 |
-| **注册福利 / 账户赠送** | **无免费试用 / 无赠送**：官方计费文档原文 “Together AI does not currently offer free trials. Access to the Together platform requires a minimum $15 credit purchase.”——首次充值最低额为 $15（后续充值最低 $5），而非赠送；预付余额无过期时间（官方原文 “prepaid balance credits in your Together.ai account do not currently have an expiration date”） |
+| **免费模型与额度** | • `Ternary Bonsai 27B` —— 输入与输出均定价为 **Free**（需充值门槛）<br>• `Tev1 4B Experimental` —— 输出免费（Free），输入收取 **$0.042/1M tokens**（需充值门槛）<br>• **平台调用限制**：官方计费文档明确平台不提供免费试用，使用前组织必须完成最低 $15 充值，且需保持正余额才能调用 API。 |
+| **注册福利 / 账户赠送** | **无免费试用 / 无赠送**：官方计费文档明确“Together AI doesn’t currently offer free trials. To use the platform, you must purchase at least $15 of credits. Free credits on your balance don’t count toward this minimum.”——首次充值最低额为 $15（后续充值最低 $5），赠额不计入充值门槛；预付余额不过期（“prepaid balance credits in your Together AI account do not currently have an expiration date”） |
 | **额度有效期** | 预付余额不过期；无免费额度 |
 | **前置条件 / 限制** | 注册账号并完成组织首次最低 $15 充值（后续充值最低 $5） |
 | **邀请 / 特惠活动** | 无 |
@@ -827,7 +827,7 @@ python -m unittest discover
 | **额度有效期** | promo code 有效期以活动规则为准 |
 | **前置条件 / 限制** | 注册 Nebius 账户并绑卡（$25 扣款转余额） |
 | **邀请 / 特惠活动** | Startup program / Research grants 可申请（无公开金额）。 |
-| **实时巡检证据** | • 促销代码可让您获得用于 Nebius AI Cloud 资源的免费积分。作为特别优惠的一部分，您可以从 Nebius 获得促销代码。<br>• 要使用促销代码，您需要注册 Nebius AI Cloud：创建帐户并填写付款信息。添加银行卡后，Nebius 将会……<br>• 促销代码通常带有有效期，请务必在该日期前使用以领取积分。 |
+| **实时巡检证据** | • 促销代码可让您获得使用 Nebius AI Cloud 资源的免费积分。作为特别优惠的一部分，您可以从 Nebius 收到促销代码。<br>• 要使用促销代码，您应该在 Nebius AI Cloud 中注册。请务必注册：创建一个帐户并指定付款详细信息。添加银行卡后，Nebius 会收费...<br>• 通常，促销代码带有有效期。请务必在该日期之前申请以获得学分。 |
 | **官方直达** | [官方主页](https://nebius.com/) ｜ [价格说明](https://nebius.com/prices) ｜ [Promo code 文档](https://docs.nebius.com/signup-billing/payments/promo-codes) ｜ [Token Factory](https://tokenfactory.nebius.com/) |
 | **特别说明** | 旧“注册送 $25 启动金”系对绑卡扣款转余额的误读。 |
 
@@ -842,7 +842,7 @@ python -m unittest discover
 | **前置条件 / 限制** | API 需注册平台账号；开源权重自行下载部署 |
 | **免费层限制 / 注意事项** | • 25 积分按图像生成次数消耗，通常只够少量出图，用完即止、不重置<br>• 真正长期免费的路径是**开源权重自托管**：Community License 仅限年营收 < 100 万美元的组织/个人（含商用），超过需企业授权 |
 | **邀请 / 特惠活动** | **Stability AI Community License**：年营收低于 **100 万美元** 的组织/个人可免费使用（含商用），超过需申请企业授权。 |
-| **实时巡检证据** | • 开始使用 25 个免费积分。检查您的信用余额并在您的帐户页面上购买额外的信用。<br>• Stability AI 社区许可证允许收入低于 $1M（或当地……）的个人或组织对核心模型进行研究、非商业和商业用途。 |
+| **实时巡检证据** | • 开始使用 25 个免费积分。检查您的积分余额并在您的帐户页面上购买额外的积分。<br>• Stability AI 社区许可证允许收入低于 100 万美元（或本地……）的个人或组织对核心模型进行研究、非商业和商业用途。 |
 | **官方直达** | [API 定价（25 free credits 说明）](https://docs.stability.ai/pricing) ｜ [社区许可协议](https://stability.ai/license) ｜ [Stable Image 模型页](https://stability.ai/stable-image) |
 | **特别说明** | 图像/视频生成模型厂商；25 积分为注册赠送，开源部署为零成本长期路径。 |
 
@@ -857,7 +857,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 邮箱注册即可获取 API Key，免信用卡 |
 | **免费层限制 / 注意事项** | • **$10 credits 仅 7 天有效**（旧「3 个月」说法已过时），到期清零<br>• Jamba 1.5 / 1.6 已弃用，免费试用对应现行 Jamba Large 1.7 / Mini 2 |
 | **邀请 / 特惠活动** | 企业产品为 Maestro（原 Contextual Answers 已下线）；Jamba SSM-Transformer 混合架构长上下文显存开销较低。 |
-| **实时巡检证据** | • 先从免费试用开始，无需信用卡，之后按使用量付费。 |
+| **实时巡检证据** | • 从免费试用开始，无需信用卡，然后根据使用情况付费。 |
 | **官方直达** | [官方主页](https://www.ai21.com/) ｜ [定价页面](https://www.ai21.com/pricing/) ｜ [模型文档](https://docs.ai21.com/docs/jamba-foundation-models) |
 | **特别说明** | 旧“$10 / 3 个月”及 Jamba 1.5、Contextual Answers 说法均已过时。 |
 
@@ -872,7 +872,7 @@ python -m unittest discover
 | **前置条件 / 限制** | GitHub 账号登录获取 API Key，免绑定信用卡 |
 | **免费层限制 / 注意事项** | • Embeddings / Reranker 免费层 100 RPM / 100K TPM，共享每 Key **10M tokens** 总额度；Reader 免 key 仅 20 RPM、免费 key 500 RPM<br>• 部分模型（如 v4 embeddings）免费层**仅限非商用**；超限按量计费 |
 | **邀请 / 特惠活动** | Reader 加 r.jina.ai 前缀即可提取任意网页清洁文本/Markdown。 |
-| **实时巡检证据** | • Reader 服务代码可在 Jina AI GitHub 组织上获取。Reader 使用的模型（包括 ReaderLM-v2 和 jina-vlm）采用 CC-BY-NC 4.0 许可，这并非……<br>• 别慌！每个新 API key 都附带 10M 免费 token！<br>• 训练流程、数据源与评估详情见 arXiv 技术报告。jina-embeddings-v5 文本模型以两种方式训练… |
+| **实时巡检证据** | • Reader 服务代码可在 Jina AI GitHub 组织上获取。 Reader 使用的模型，包括 ReaderLM-v2 和 jina-vlm，均获得 CC-BY-NC 4.0 许可，这不是…<br>• 不要恐慌！每个新的 API 密钥都附带 1000 万个免费令牌！<br>• 有关我们的培训流程、数据源和评估的详细信息，请参阅 arXiv 上的技术报告。 jina-embeddings-v5 文本模型经过两种训练…… |
 | **官方直达** | [官方主页](https://jina.ai/) ｜ [Reader](https://jina.ai/reader/) ｜ [Embeddings](https://jina.ai/embeddings/) ｜ [Reranker](https://jina.ai/reranker/) |
 | **特别说明** | 旧“100 万 tokens”说法已过时（现为 10M）；v3/v2 模型已被 v5/v3.5 取代。 |
 
@@ -917,7 +917,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 官网注册获取 API Key |
 | **免费层限制 / 注意事项** | • **限时免费且官方未公布截止日**（原文 “Free to use for a limited time”）——随时可能转收费，接入前先看官方公告<br>• 免费的是 Laguna S 2.1 / XS 2.1 两款代码模型；也可经 OpenRouter 的 :free 实例调用 |
 | **邀请 / 特惠活动** | 面向软件工程的代码生成/改写模型，支持长上下文仓库级理解。 |
-| **实时巡检证据** | • 开始使用 Laguna，限时免费。 |
+| **实时巡检证据** | • 开始使用Laguna。限时免费使用。 |
 | **官方直达** | [模型页](https://poolside.ai/models) ｜ [官方主页](https://poolside.ai/) |
 | **特别说明** | 限时免费结束后的定价以 poolside.ai/models 页面公告为准。 |
 
@@ -932,7 +932,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 邮箱注册；按 token 消耗计费 |
 | **免费层限制 / 注意事项** | • 当前模型列表中仅 `MythoLite` 标注为 **FREE**，其余角色扮演及通用模型（如 MythoMax、Magnum 72B 等）均需消耗积分计费<br>• 若退款导致账户积分变为负数，官方明确仍可继续调用免费模型 |
 | **邀请 / 特惠活动** | OpenAI 兼容接口，主打角色扮演/创意写作（RP）场景的无审查模型托管。 |
-| **实时巡检证据** | • 部分模型免费，多数模型按 per token 计积分。您可以在控制面板查看最近查询的 token 数与积分消耗（需登录）。<br>• 企业帐户可开通自动用量计费：每周自动结算截至当时已用的积分。 |
+| **实时巡检证据** | • 有些模型是免费的，而大多数模型都有“每个代币”的信用成本。您可以在仪表板上查看最近查询的令牌计数和信用成本（需要登录）。<br>• 企业帐户可让您注册自动使用计费。每周一次，系统会自动向您收取截至该点之前所用积分的费用。 |
 | **官方直达** | [模型页（FREE 标注）](https://mancer.tech/models) ｜ [API 开发者文档](https://mancer.tech/docs-api/) ｜ [定价页](https://mancer.tech/pricing) ｜ [官方主页](https://mancer.tech/) |
 | **特别说明** | 免费模型清单以 mancer.tech/models 页面 FREE 标签为准。 |
 
@@ -961,7 +961,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 Inception Platform 账号；**免费额度阶段无需信用卡** |
 | **免费层限制 / 注意事项** | • 1 亿 tokens 的**有效期官方文档未载明**，也未说明是否按月重置，按一次性到账规划用量<br>• 免费额度对应 Mercury 系列模型；超出后需到 Billing 添加付款方式按量计费（Mercury 3 上线 50% 折扣价：输入 $0.10 / 输出 $0.35 每百万 tokens） |
 | **邀请 / 特惠活动** | Mercury 3 上线促销（50% off at launch），Mercury 3、Mercury Voice、Mercury Decide 提供半价定价优惠。 |
-| **实时巡检证据** | • 每个 1M 代币输出 0 美元<br>• 每个新账号包含 1 亿免费 token（100 million）——无需填写支付信息 |
+| **实时巡检证据** | • 每个 1M 代币输出 0 美元<br>• 每个新帐户都包含 1 亿个免费代币 - 无需支付详细信息。 |
 | **官方直达** | [文档 Quick Start（免费额度说明）](https://docs.inceptionlabs.ai/get-started) ｜ [官方主页](https://www.inceptionlabs.ai/) |
 | **特别说明** | 第三方情报库所称「1000 万 tokens」少了一个数量级，实际为 **1 亿**。**免费额度写在文档站**（`docs.inceptionlabs.ai/get-started`），根站 `/pricing` 路径 404——只查官网首页会误判为「无免费层」。 |
 
@@ -1121,7 +1121,7 @@ python -m unittest discover
 | **额度有效期** | $200 赠金 **30 天**；12 个月免费层按服务规则 |
 | **前置条件 / 限制** | 注册 Azure 账号（需信用卡/身份验证）；OpenAI 服务需在 Foundry 中申请接入 |
 | **邀请 / 特惠活动** | **Microsoft for Startups Founders Hub** 最高 **$150,000** Azure 额度。 |
-| **实时巡检证据** | • 免费层 200 万字符<br>• 注册 Azure 免费帐户后，若在 30 天结束前转为按量付费，您不会损失积分。转为按量付费后，您获得的任何积分……<br>• Batch API：语言模型现已登陆 Batch API，支持全球部署和三个区域，24 小时内返回结果，并享受 50% 折扣…… |
+| **实时巡检证据** | • 200 万字符免费套餐<br>• 如果您注册 Azure 免费帐户并在 30 天结束之前转向按量付费定价，您不会失去信用。当您采取随用随付方式时，您所获得的任何信用...<br>• Batch API：语言模型现在也可在 Batch API 中用于全球部署和三个区域，可在 24 小时内返回完成结果，并在 Globa 上享受 50% 的折扣…… |
 | **官方直达** | [Azure 免费账号页](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account) ｜ [Azure AI 产品页](https://azure.microsoft.com/en-us/products/ai/) ｜ [Foundry 模型文档](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure) |
 | **特别说明** | 企业级合规与数据隔离；可用 $200 赠金抵扣 Foundry 模型调用。 |
 
@@ -1149,7 +1149,7 @@ python -m unittest discover
 | **额度有效期** | $300 额度 **30 天**；Always Free 永久 |
 | **前置条件 / 限制** | 注册 Oracle Cloud 账号（需信用卡做身份验证） |
 | **邀请 / 特惠活动** | 提供专用 AI 集群（Dedicated AI Clusters）与 RDMA 网络。 |
-| **实时巡检证据** | • 参加 Oracle Cloud 免费试用可存储无限数据，并可免费使用 20 GB（前 20 GB 不会扣除您的初始……<br>• 对于有资格使用 Always Free 资源的付费或免费试用帐户，同样可使用 200 GB Always Free 卷资源和 5 个 Always Free 卷备份资源……<br>• 购买足够数量的 Oracle Universal Credits 即可享受批量折扣。若在合同结束前耗尽所有积分，您仍然可以获得…… |
+| **实时巡检证据** | • 如果您参加 Oracle Cloud 免费试用，您可以存储无限数据，并且可以免费使用 20 GB（您使用前 20 GB 不会扣除您的初始...<br>• 对于有资格获得 Always Free 资源的付费或免费试用帐户，可使用相同的 200 GB Always Free 卷资源和 5 个 Always Free 卷备份资源...<br>• 购买足够数量的 Oracle Universal Credits 可让您享受批量折扣。如果您在合同结束前耗尽了所有积分，您仍然可以获得... |
 | **官方直达** | [OCI 预训练模型文档](https://docs.oracle.com/en-us/iaas/Content/generative-ai/pretrained-models.htm) ｜ [Always Free 资源说明](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm) ｜ [OCI 定价](https://www.oracle.com/cloud/pricing/) |
 | **特别说明** | $300 额度可抵扣 OCI 生成式 AI 服务用量。 |
 
@@ -1164,7 +1164,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 IBM Cloud 账号（Lite 免费层免信用卡） |
 | **免费层限制 / 注意事项** | • Lite 免费层每月 **300,000 tokens 生成 + 20 CUH + 100 个文档解析**，按月重置；生产用途需升级 Standard/Premium<br>• 免费层主要是 Granite 自研系列；第三方模型通常不包含在 Lite 额度内 |
 | **邀请 / 特惠活动** | Granite 开源模型免许可费，面向受监管行业提供治理与版权保障。 |
-| **实时巡检证据** | • 免费试用 watsonx.ai，或继续您的探索之旅。 |
+| **实时巡检证据** | • 免费试用 watsonx.ai 或继续您的发现之旅。 |
 | **官方直达** | [watsonx.ai 产品页](https://www.ibm.com/products/watsonx) ｜ [watsonx.ai 定价](https://www.ibm.com/products/watsonx-ai/pricing) |
 | **特别说明** | 免费层适合原型验证；生产用途需升级 Standard/Premium。 |
 
@@ -1194,7 +1194,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 支持 GitHub/Google/SSO 注册（官方页面未见手机验证要求） |
 | **免费层限制 / 注意事项** | • $30 是**算力额度而非现成模型 API**：要自己写函数 / 部署 vLLM，模型权重、镜像与代码都要自备；对只想拿 key 调模型的新手门槛高<br>• 额度**按月刷新**，当月用不完不累积；GPU 单价高，A100 类机型 $30 只够很少的时长 |
 | **邀请 / 特惠活动** | 按秒计费、可缩容到零，适合个人开发者托管私有推理端点。 |
-| **实时巡检证据** | • 每月 $30 免费积分<br>• 每月 30 美元的免费信用额度开始使用<br>• 研究生、实验室和研究人员可以在 Modal 上获得高达 $10k 的免费计算积分 |
+| **实时巡检证据** | • 30 美元/月免费积分<br>• 每月 30 美元的免费信用额度开始使用<br>• 研究生、实验室和研究人员可以在 Modal 上获得高达 $10k 的免费计算积分 |
 | **官方直达** | [开发文档直达](https://modal.com/docs) ｜ [定价页（$30/月免费额度）](https://modal.com/pricing) ｜ [官方主页](https://modal.com/) |
 | **特别说明** | 免费额度可抵扣 GPU/CPU 使用；超出后按量计费。 |
 
@@ -1209,7 +1209,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 官网注册（云托管）；开源自托管无需账号 |
 | **免费层限制 / 注意事项** | • 云端免费项仅限**共享端点（shared endpoints）测试**，不保证 SLA 与容量；稳定生产用途要么付费要么**自托管开源版**（MAX 引擎免费但要自备算力） |
 | **邀请 / 特惠活动** | BentoML/MAX 开源生态，Python 代码一键打包为生产推理服务。 |
-| **实时巡检证据** | • 前沿模型端点，配驻场 Modular 工程师优化您的工作负载。先免费测试共享端点，再转向专用端点。<br>• Modular 在共享端点（共享 GPU，按 $/token 计费）或专用端点（专用 GPU，按 $/分钟计费）上运行所有最新的开放模型…… |
+| **实时巡检证据** | • 前沿模型端点与前沿部署的Modular工程师优化您的工作负载。首先免费测试共享端点，然后转向专用端点。<br>• Modular 在我们的计算机上的共享端点（共享 GPU，按美元/代币计费）或专用端点（专用 GPU，按美元/每分钟计费）中运行所有最新的开放模型…… |
 | **官方直达** | [Modular 定价页](https://www.modular.com/pricing) ｜ [Modular 官网](https://www.modular.com/) ｜ [BentoML（开源框架）](https://www.bentoml.com/) |
 | **特别说明** | 品牌与平台已迁移至 modular.com；bentoml.com 保留开源框架文档。 |
 
@@ -1223,7 +1223,7 @@ python -m unittest discover
 | **额度有效期** | **90 天**（自注册起） |
 | **前置条件 / 限制** | 注册账号并**必须添加有效付款方式**后才能创建 Droplets 等资源（官方文档原文："must add a valid payment method"） |
 | **邀请 / 特惠活动** | 面向初创企业另有扶持计划（额度区间未在官方页复核）。 |
-| **实时巡检证据** | • 只有在您用完免费积分或积分过期后，才会向您的卡收费。例如若您获得 90 天有效的 $5 积分，那么这 $5…<br>• 注册积分在注册 90 天后过期<br>• 慷慨的传输配额加上低至 $0.01/GiB 的出站超额费用，助您把带宽成本保持在低位 |
+| **实时巡检证据** | • 仅在您使用免费积分后或积分到期后，才会向您的卡收费。例如，如果您收到 90 天的 5 美元积分，那么这 5 美元......<br>• 注册积分将在注册后 90 天过期。<br>• 通过慷慨的传输配额和仅为 0.01 美元/GiB 的出站超额，保持较低的带宽成本。 |
 | **官方直达** | [Signup Credit 文档（$5 / 90 天）](https://docs.digitalocean.com/platform/billing/signup-credit/) ｜ [Pricing](https://www.digitalocean.com/pricing) ｜ [Inference Engine 产品页](https://www.digitalocean.com/products/inference-engine) |
 | **特别说明** | 第三方情报库所称「$200 / 60 天」**已过期，不予采信**；现行官方口径为 **$5 / 90 天且需绑卡**。**不属于 LLM 免费层**，收录意义在于给需要 GPU 的实验留一个低门槛入口。 |
 
@@ -1238,7 +1238,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 新客户 + 有效支付方式（Visa/Mastercard/PayPal）；支持 Google/GitHub 单点登录或邮箱注册 |
 | **免费层限制 / 注意事项** | • **需绑卡**（Visa/Mastercard/PayPal）：超额部分计入绑卡账单；试用窗口结束后仍在运行的服务继续按标准价扣费——先用完额度再删实例<br>• GPU 套餐不可用本额度；额度不可用于 Marketplace 与第三方服务<br>• 仅限新客户 |
 | **邀请 / 特惠活动** | 常设新客 $100/60 天试用促销，官方未公布统一截止日。 |
-| **实时巡检证据** | • 企业级 K8s 集群：免收控制平面费用。一键部署与扩容，实现 0 成本、高可靠的大规模容器编排。<br>• 仅限新客户使用。信用额度自激活之日起 60 天后失效<br>• 在您用完促销积分金额或促销积分窗口到期后，您的信用卡将被扣款。例如，如果您收到了 100 美元的信用额... |
+| **实时巡检证据** | • 在您用完促销积分金额或促销积分窗口到期后，您的信用卡将被扣款。例如，如果您收到了 100 美元的信用额... |
 | **官方直达** | [试用活动页（官方域，中文）](https://www.akamai.com/zh/lp/akamai-cloud-computing-freetrial) ｜ [北美定价页（FAQ 含 $100/60 天口径）](https://www.akamai.com/cloud/pricing/north-america) ｜ [注册入口](https://login.linode.com/signup) |
 | **特别说明** | 官方域 www.akamai.com 对自动化直连回 403（反爬）；$100/60 天/绑卡三条口径取自官方域名的试用活动页正文与北美定价页 FAQ。 |
 
@@ -1253,7 +1253,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册账号即可，Free 档明写 No credit card、No commitments；注册环节含手机号验证 |
 | **免费层限制 / 注意事项** | • **外部清单常写「约 80 免费 GPU 小时」——照抄即错**：官方定价页带数值的 GPU hours 共 5 处、值全为 50（“Get up to 50 free GPU hours” / FAQ “~50 GPU hours” 等），全页「80」与「GPU hours」共现 0 次<br>• 免费 Studio 每 4 小时重启，长任务会被打断<br>• 「等于多少小时」随卡型差一个数量级（T4 $0.55–0.88/h、A100 $2.19/h、H100 $5.45/h），任何小时数都是折算而非官方面值 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • 从免费套餐开始，可享受 50* 个免费 GPU 小时。按需付费，延长使用时间。升级企业功能，例如自带云、使用 AWS/GCP 积分、SOC2、HIPAA 等……<br>• 最多 2 个并发 GPU |
+| **实时巡检证据** | • 从免费套餐开始，可享受 50* 个免费 GPU 小时。按需付费，延长使用时间。升级企业功能，例如自带云、使用 AWS/GCP 积分、SOC2、HIPAA 等...<br>• 最多 2 个并发 GPU |
 | **官方直达** | [定价页（含 Free 档与价目表）](https://www.lightning.ai/pricing) |
 | **特别说明** | 2026-11-07 核实：公众号卡片标题写 80 小时、正文写 75 小时，均与官方页（50）不符，本档案按官方口径收录。 |
 
@@ -1512,6 +1512,7 @@ python -m unittest discover
 | **官方直达** | [定价页](https://v0.app/pricing) |
 
 <!-- LLM-INTEL:END -->
+
 
 
 
