@@ -7,77 +7,78 @@ date: 2026-11-16
 lang: zh
 captured: 2026-11-17
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: 613331c9f001
+body_sha: ae6c8d6a8081
 ---
 
 ## [人工智能](https://aws.amazon.com/blogs/machine-learning/)
 
 # 使用 Amazon Bedrock 和 AWS Transform 将大型机 Assembler 现代化为 Java
 
-想象一下，一个批处理作业几十年来每天晚上都运行而没有失败，而唯一理解其代码的人即将退休。在与银行、保险和航空公司客户合作时，我们一次又一次地看到这种情况。他们的汇编程序仍然运行关键的业务操作，但每年能够阅读它们的人越来越少。手工重写它们需要数年时间，存在违反无人记得编写的业务规则的风险，并且仍然依赖于即将离开的专家。 [Amazon Bedrock](https://aws.amazon.com/bedrock/) 和 [AWS Transform](https://aws.amazon.com/transform/) 改变了这个等式。
+设想一个批处理作业，几十年来每晚都跑、从没出过错，而唯一看得懂它代码的人马上就要退休。在为银行、保险和航空公司客户做项目的过程中，我们一次又一次见到这种局面。他们的 Assembler 程序仍在支撑关键业务运营，但每年能读懂它们的人都在变少。手工重写要耗费数年时间，还有可能破坏那些已经没人记得当初为什么写下的业务规则，而且依然要依赖正在离开的那批专家。[Amazon Bedrock](https://aws.amazon.com/bedrock/) 和 [AWS Transform](https://aws.amazon.com/transform/) 改变了这个等式。
 
-本文向您展示了一种使用 [Amazon Bedrock](https://aws.amazon.com/bedrock/)、[Kiro IDE](https://kiro.dev/)（AI 支持的集成开发环境）和 [AWS Transform](https://aws.amazon.com/transform/) 的多阶段转换方法，与手动方法相比，该方法有助于缩短现代化时间，同时通过验证检查点保持业务逻辑完整性。您将学习如何系统地从汇编代码中提取业务规则，通过中间 COBOL 阶段进行转换，以及如何将现代化应用程序部署为 AWS 上的 Java Spring Boot 服务。
+本文介绍一套多阶段的改造方法，使用 [Amazon Bedrock](https://aws.amazon.com/bedrock/)、[Kiro IDE](https://kiro.dev/)（一个 AI 驱动的集成开发环境）和 [AWS Transform](https://aws.amazon.com/transform/)，相比手工方式可以帮助缩短现代化时间，同时通过验证检查点保持业务逻辑完整。你将学到如何系统地从 Assembler 代码中提取业务规则，经由中间的 COBOL 阶段完成转换，并把现代化后的应用作为 Java Spring Boot 服务部署到 AWS 上。
 
 ## 先决条件
 
-在开始现代化过程之前，请确保您拥有：
+在开始现代化流程之前，请确认你已具备：
 
-- 活动 [AWS 账户](https://aws.amazon.com/account/)，具有 Amazon Bedrock、AWS Transform 和 Amazon Simple Storage Service (Amazon S3) 的最低权限 AWS Identity and Access Management (IAM) 权限。
-- 访问 [Amazon Q Developer](https://aws.amazon.com/q/developer/) 或 [Kiro](https://kiro.dev/) 进行 AI 辅助代码分析。
-- 访问 AWS Transform 以进行 COBOL 到 Java 的转换。
-- 使用适当的基础模型 (FM) 访问 Amazon Bedrock。
-- 配置用于源代码和项目存储的 [Amazon S3](https://aws.amazon.com/s3/) 存储桶，并启用加密和阻止公共访问。
-- 了解目标业务领域和应用程序功能。
-- 是否有业务和技术主题专家 (SME) 参加验证会议。
-- 带有可用文档的源汇编代码清单。
-- 测试具有预期输出的数据集以进行功能等效性测试。
+- 一个已激活的 [AWS 账号](https://aws.amazon.com/account/)，并为 Amazon Bedrock、AWS Transform 和 Amazon Simple Storage Service（Amazon S3）配置了最小权限的 AWS Identity and Access Management（IAM）权限。
+- 能够使用 [Amazon Q Developer](https://aws.amazon.com/q/developer/) 或 [Kiro](https://kiro.dev/) 进行 AI 辅助的代码分析。
+- 能够使用 AWS Transform 进行 COBOL 到 Java 的转换。
+- 能够访问 Amazon Bedrock，并具备合适的基础模型（FM）。
+- 一个 [Amazon S3](https://aws.amazon.com/s3/) 桶，用于存放源代码和产物，并已启用加密和 Block Public Access。
+- 对目标业务领域和应用功能有所了解。
+- 有业务与技术方面的领域专家（SME）可以参加验证会议。
+- 一份 Assembler 源代码清单，以及可获得的文档。
+- 带有预期输出的测试数据集，用于功能等价性测试。
 
-## 解决方案概述
+## 方案概览
 
-您可以通过系统的五阶段方法将与 COBOL 紧密结合的旧式大型机 Assembler 应用程序转换为为 AWS 云构建的 Java Spring Boot 应用程序。这种多阶段方法将 Assembler 转换为 COBOL 作为 Java 转换之前的中间步骤，与直接将 Assembler 转换为 Java 相比，可以降低风险并以更高的可靠性保留业务逻辑。中间 COBOL 阶段提供了一种结构化的、人类可读的格式，主题专家 (SME) 可以在最终转换之前对其进行验证。这可确保业务规则在整个现代化过程中保持完整。以下部分描述了当前的大型机架构和以云为中心的目标状态。
+你可以通过一套系统化的五阶段方法，把与 COBOL 紧密耦合的传统大型机 Assembler 应用，改造成面向 AWS 云构建的 Java Spring Boot 应用。这套多阶段方法先把 Assembler 转成 COBOL 作为中间步骤，再转成 Java，相比直接从 Assembler 转 Java，风险和业务逻辑丢失的可能性都更低。中间的 COBOL 阶段提供了一种结构化、人类可读的格式，领域专家（SME）可以在最终转换之前先做验证。这样可以确保业务规则在整个现代化过程中都保持完整。下面几节会分别介绍当前的大型机架构和面向云的目标状态。
 
 ### 当前状态
 
-您当前的体系结构代表了传统的大型机环境，其中汇编程序执行批处理、与 COBOL 连接、与数据库交互并处理文件。其核心是，JCL（作业控制语言）作业按计划的时间间隔触发汇编程序执行。这些程序从 VSAM（虚拟存储访问方法）和顺序文件读取输入，并对 IBM Db2 for z/OS 执行操作。您的业​​务逻辑使用低级寄存器操作（直接 CPU 寄存器操作）和内存管理来执行。输出被写回文件或数据库表，并通过 JCL 返回代码报告作业完成状态。所有这些都运行在 IBM z/OS 大型机基础设施上。
+你当前的架构是一个传统的大型机环境：Assembler 程序执行批处理流程，与 COBOL 相连，访问数据库并处理文件。其核心是，JCL（Job Control Language，作业控制语言）作业按计划的时间间隔触发 Assembler 程序执行。这些程序从 VSAM（Virtual Storage Access Method，虚拟存储访问方法）和顺序文件中读取输入，并针对 IBM Db2 for z/OS 执行操作。你的业务逻辑通过低层的寄存器操作（直接操作 CPU 寄存器）和内存管理来执行。输出被写回文件或数据库表，作业完成状态则通过 JCL 返回码上报。这一切都运行在 IBM z/OS 大型机基础设施上。
 
-![具有 JCL 触发的汇编批处理程序访问 VSAM 文件和 IBM Db2 的大型机架构z/OS](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-20283-1-1.png)
+![JCL 触发的 Assembler 批处理程序访问 VSAM 文件和 IBM Db2 for z/OS 的大型机架构](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-20283-1-1.png)
 
-图 1：大型机汇编器架构
+图 1：大型机 Assembler 架构
 
 ### 目标状态
 
-该现代化解决方案可帮助您通过多阶段、人工智能驱动的工作流程，将传统大型机 Assembler 应用程序转换为为 AWS 云构建的 Java 应用程序。该架构使用 Amazon Bedrock 和 Kiro IDE 进行 AI 辅助代码分析和业务规则提取，并使用 AWS Transform 进行自动 COBOL 到 Java 转换。
+这套现代化方案通过一条多阶段、由 AI 驱动的工作流，帮助你把自己传统的大型机 Assembler 应用改造成面向 AWS 云构建的 Java 应用。该架构使用 Amazon Bedrock 和 Kiro IDE 进行 AI 辅助的代码分析与业务规则提取，并使用 AWS Transform 完成自动化的 COBOL 到 Java 转换。
 
-如果 COBOL 源代码已经可用，您可以按照传统方法将其直接提供给 AWS Transform 以转换为 Java Spring Boot 应用程序。
+如果 COBOL 源代码已经存在，你可以走常规路径，直接把它交给 AWS Transform 转换成 Java Spring Boot 应用。
 
-**通过此解决方案，您可以实现：**
+**采用这套方案，你可以获得：**
 
-- 与手动方法相比，减少了转换时间。
-- 通过验证检查点系统地保存业务逻辑。
-- 关键阶段的人机交互验证。
-- 通过功能等效性测试进行自动代码转换。
+- 相比手工方式更短的转换时间。
+- 通过验证检查点系统性地保住业务逻辑。
+- 在关键阶段引入人在环（human-in-the-loop）的验证。
+- 自动化代码转换，并配合功能等价性测试。
 
-![端到端 AWS 工作流程将 Assembler 转换为 Java，经过五个阶段，从业务规则提取到COBOL 到 Java](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-20283-2-1.png)
+![通过五个阶段把 Assembler 转成 Java 的端到端 AWS 工作流，从业务规则提取一直到 COBOL 到 Java](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-20283-2-1.png)
 
-图 2：AWS 上的端到端 Assembler 到 Java 转换架构，显示了五个主要阶段：业务规则提取、规范驱动的数据流、Assembler 到 COBOL 转换、验证和 COBOL 到 Java 转换
+图 2：AWS 上端到端的 Assembler 到 Java 转换架构，展示五个主要阶段：业务规则提取、规格驱动的数据流、Assembler 到 COBOL 转换、验证，以及 COBOL 到 Java 转换
 
-您可以通过分析汇编代码来开始转换工作流程以生成业务规则提取 (BRE) 文档。然后，您可以通过人机交互细化创建详细的功能规范。经过验证的规范指导汇编器到 COBOL 的转换，生成中间 COBOL 代码，弥合低级硬件指令和面向业务的构造之间的差距。在 AWS Transform 将其转换为 Java 之前，该 COBOL 代码会经过功能等效性测试，并在每个阶段设置验证检查点，以降低风险并验证业务连续性。
+转换工作流从分析 Assembler 代码、生成业务规则提取（Business Rules Extraction，BRE）文档开始。接着你编写详细的功能规格，并由人在环做细化。经验证的规格指导 Assembler 到 COBOL 的转换，生成作为桥梁的中间 COBOL 代码，把低层硬件指令与面向业务的构造连接起来。这份 COBOL 代码要先通过功能等价性测试，再由 AWS Transform 转换成 Java；每个阶段都设有验证检查点，以降低风险并确认业务连续性。
 
-## 使用 AI 提取业务规则
+## 用 AI 提取业务规则
 
-业务规则提取 (BRE) 的质量直接影响转换的准确性，因此请仔细关注此阶段。通过 Kiro IDE 或 Amazon Bedrock 控制台以及适用于大型机的 AWS Transform 使用 Amazon Bedrock 从 Assembler 源代码中提取和记录业务规则。
+业务规则提取（BRE）的质量直接决定转换的准确度，所以要把重心放在这个阶段。使用 Amazon Bedrock（通过 Kiro IDE 或 Amazon Bedrock 控制台）以及 AWS Transform for mainframe，从你的 Assembler 源代码中提取并记录业务规则。
 
-您可以通过 [Chat Playground](https://docs.aws.amazon.com/bedrock/latest/userguide/playgrounds.html) 直接在 Amazon Bedrock 中使用本文中的提示，或者在 Kiro IDE 中使用其内置的 [AI 聊天和规格面板](https://kiro.dev/docs)。在运行之前，将占位符值替换为实际的汇编器代码和上下文。
+你可以在 Amazon Bedrock 的 [Chat Playground](https://docs.aws.amazon.com/bedrock/latest/userguide/playgrounds.html) 里直接使用本文中的 prompt，也可以在 Kiro IDE 内使用其内置的 [AI chat 和 Spec 面板](https://kiro.dev/docs)。运行前，请把占位值替换成你实际的 Assembler 代码和上下文。
 
-Amazon Bedrock 是前四个阶段背后的推理平台：业务规则提取、规范创建、汇编器到 COBOL 转换和验证。选择具有强大代码推理和大上下文窗口的基础模型，因为汇编程序又长又密集。将温度设置为 0，以便在运行期间获得一致的输出。要处理多个程序，请通过 Amazon Bedrock Converse API 调用相同的提示，并将每个输出存储在 Amazon S3 存储桶中，以便它可以馈送到下一阶段。 Amazon Bedrock 不会使用您的提示或模型输出来训练 AWS 模型或与第三方共享它们。有关详细信息，请参阅 [Amazon Bedrock 中的数据保护](https://docs.aws.amazon.com/bedrock/latest/userguide/data-protection.html)。使用经过净化的测试数据而不是生产数据或个人身份信息 (PII)。
+Amazon Bedrock 是前四个阶段背后的推理平台：业务规则提取、规格编写、Assembler 到 COBOL 转换，以及验证。请选择代码推理能力强、上下文窗口大的基础模型，因为 Assembler 程序又长又密。把 temperature 设为 0，这样多次运行能得到一致的输出。要处理大量程序时，可以通过 Amazon Bedrock Converse API 调用同一批 prompt，并把每次的输出存进你的 Amazon S3 桶，供下一阶段使用。Amazon Bedrock 不会用你的 prompt 或模型输出来训练 AWS 模型，也不会把它们分享给第三方。详情见 [Amazon Bedrock 中的数据保护](https://docs.aws.amazon.com/bedrock/latest/userguide/data-protection.html)。请使用脱敏的测试数据，不要用生产数据或个人可识别信息（PII）。
 
-您为人工智能提供的上下文越多，它就越能理解代码背后的业务意图。提示时包括相关文档、数据字典和可用的业务上下文以及汇编程序代码。
+你提供给 AI 的上下文越多，它就越能理解代码背后的业务意图。在 prompt 里，除了 Assembler 代码，还应附上相关文档、数据字典和可获得的业务背景。
 
-**注意：** 随时保存每个提示的输出。您将需要它们作为下一阶段的输入。
+**注意：** 边跑边把每个 prompt 的输出保存下来。下一阶段会把它们当作输入。
 
-上下文感知分析的提示示例：
+用于上下文感知分析的示例 prompt：
+
 ```
 Extract the business rules and data mappings from this Assembly code.
 [PASTE YOUR ASSEMBLY CODE HERE]
@@ -127,21 +128,23 @@ For each rule provide:
   "summary": "string"
 }
 ```
-您可以通过添加业务上下文中特定于域的术语来自定义此提示。运行此提示时，您将看到结构化 JSON 输出，可用于自动验证以及与下游转换工具的直接集成。数据映射的准确性直接影响转换质量。不完整的映射可能会导致业务逻辑丢失或损坏。
 
-## 与中小企业验证
+你可以通过加入自己业务语境中的行业术语来定制这个 prompt。运行这个 prompt 时，你会看到结构化的 JSON 输出，可用于自动化校验，也可以直接对接下游的转换工具。数据映射的准确性直接影响转换质量。映射不完整可能导致业务逻辑丢失或损坏。
 
-将 AI 生成的 BRE 文档视为草稿，而不是最终输出。在继续之前，让主题专家审查并验证提取的规则。在继续创建规范之前，在验证日志中记录差异并根据 SME 反馈更新 BRE。
+## 由 SME 验证
 
-为了帮助中小企业验证规则，请使用流程图和数据流程图等视觉辅助工具来补充文本 BRE 文档。维护验证检查表，涵盖业务规则准确性、数据映射正确性、边缘情况处理和错误条件完整性。
+把 AI 生成的 BRE 文档当作草稿，而不是最终产物。在继续之前，请让领域专家审阅并验证提取出的规则。把发现的差异记录到验证日志中，并根据 SME 的反馈更新 BRE，然后再进入规格编写。
 
-## 提取规范驱动的数据流
+为了帮助 SME 验证规则，可以在文字版 BRE 文档之外补充流程图和数据流图之类的可视化材料。维护一份验证清单，覆盖业务规则准确性、数据映射正确性、边缘情况处理和错误条件完整性。
 
-在与中小企业验证业务规则后，将其转化为指导代码转换的详细功能规范。这种规范驱动的方法确认了业务需求在代码转换开始之前得到了明确的记录和商定，从而减少了以后代价高昂的返工。
+## 提取规格驱动的数据流
 
-使用提取的 BRE 文档创建指导 COBOL 代码生成的完整功能规范。这些规范应包括程序概述、COBOL 数据结构、流程设计和业务规则覆盖映射。
+在你和 SME 一起验证完业务规则之后，把它们转写成详细的功能规格，用来指导代码转换。这种规格驱动的做法可以确认：在代码转换开始之前，业务需求已经被清晰地记录并达成一致，从而减少后期昂贵的返工。
 
-功能规范生成的示例提示：
+使用提取出的 BRE 文档，编写完整的功能规格来指导 COBOL 代码生成。这些规格应当包含程序概览、COBOL 数据结构、流程设计，以及业务规则覆盖映射。
+
+用于生成功能规格的示例 prompt：
+
 ```
 Generate a complete functional specification for COBOL code generation based on the following Business Rules Extraction (BRE).
 
@@ -219,13 +222,15 @@ Return as JSON:
   }
 }
 ```
-您可以根据您的 COBOL 标准调整数据结构规范。当您运行此提示时，您将收到完整的功能规范，具有从业务规则到 COBOL 结构的完整可追溯性，可供 SME 审核并与 Kiro 直接集成以生成代码。
 
-## 将旧版汇编器转换为 COBOL
+你可以根据自己的 COBOL 规范调整数据结构部分。运行这个 prompt 时，你会得到一份完整的功能规格，从业务规则到 COBOL 结构全程可追溯，可以直接交给 SME 审阅，也可以直接与 Kiro 集成来做代码生成。
 
-有了经过验证的功能规范，下一阶段将使用这些结构化输出来指导汇编器到 COBOL 的转换。中间 COBOL 步骤可帮助您弥合低级硬件指令和面向业务的构造之间的差距，从而帮助您验证在最终 Java 转换之前是否保留了业务逻辑。
+## 把传统 Assembler 转换为 COBOL
 
-指导转换的示例提示：
+拿到经过验证的功能规格之后，下一阶段就用这些结构化输出来指导 Assembler 到 COBOL 的转换。中间的 COBOL 步骤帮助你跨越低层硬件指令与面向业务构造之间的鸿沟，从而在最终转成 Java 之前，先确认业务逻辑被完整保留。
+
+用于指导转换的示例 prompt：
+
 ```
 Generate production-ready COBOL code from these specifications.
 
@@ -285,13 +290,15 @@ Condition Names: 88-level for flags
 CRITICAL: Return ONLY COBOL code. NO explanatory text, NO markdown blocks, NO commentary.
 START with sequence-numbered header comment. END with STOP RUN/GOBACK.
 ```
-您可以修改格式要求以符合您组织的 COBOL 标准。当您运行此提示时，您将生成语法正确的 COBOL 代码，逻辑上与原始汇编程序等效，并且完全可跟踪，并带有将每个代码部分链接回 BRE 文档中的特定业务规则的注释。生成后，在进行最终的 Java 转换之前严格验证 COBOL 代码。
 
-## 验证转换
+你可以修改格式要求，使之符合贵组织的 COBOL 规范。运行这个 prompt 时，你会生成这样的 COBOL 代码：语法正确、逻辑上与原 Assembler 等价，并且完全可追溯——注释把每一段代码都链接回 BRE 文档中具体的业务规则。生成之后，请在进入最终的 Java 转换之前严格验证这份 COBOL 代码。
 
-您应该将测试视为整个转型过程中持续进行的活动，而不仅仅是最后阶段。汇编程序和 COBOL 代码之间的功能等效性验证应采用全面的测试框架，系统地评估语法正确性、结构对齐、逻辑等效性、数据流完整性、业务规则覆盖率和规范合规性。
+## 验证转换结果
 
-指导测试的示例提示：
+在整个转换过程中，你都应该把测试当成一项持续进行的活动，而不是只在最后阶段才做。Assembler 与 COBOL 代码之间的功能等价性验证，应当采用一套全面的测试框架，系统地评估语法正确性、结构对齐、逻辑等价、数据流完整性、业务规则覆盖，以及规格符合度。
+
+用于指导测试的示例 prompt：
+
 ```
 Perform comprehensive validation and analysis of ASM-to-COBOL translation.
 
@@ -335,31 +342,32 @@ Return single JSON with validation and analysis objects. Include the fields: sta
 CRITICAL: Be thorough, specific (line numbers/paragraphs), actionable, honest (accurate scores), comprehensive (the rules/dimensions). Return JSON only, no explanatory text.
 Generate complete validation and analysis report now.
 ```
-您可以根据您的质量要求自定义验证阈值。当您运行此提示时，您将收到一份全面的验证报告，其中包含可操作的建议，用于解决程序结构、条件逻辑、数据转换以及原始汇编器指令和现代化 COBOL 实现之间的可追溯性方面的差距。
+
+你可以根据自己的质量要求定制验证阈值。运行这个 prompt 时，你会得到一份全面的验证报告，其中给出可执行的建议，用来弥补程序结构、条件逻辑、数据转换，以及原始 Assembler 指令与现代化 COBOL 实现之间可追溯性方面的缺口。
 
 ## COBOL 到 Java 的转换
 
-在最后阶段，您使用 [AWS Transform](https://aws.amazon.com/transform/) 自动将经过验证的 COBOL 代码转换为 Java Spring Boot 应用程序。通过 AWS Transform 中的智能重构生成生产就绪的 Java 代码。这种重构保留了先前阶段验证的业务逻辑，同时引入了现代设计模式，包括依赖项注入、存储库模式和服务层。
+在最后一个阶段，你使用 [AWS Transform](https://aws.amazon.com/transform/) 把已经验证过的 COBOL 代码自动转换成 Java Spring Boot 应用。借助 AWS Transform 中的智能重构生成可上生产的 Java 代码。这种重构在保留前几个阶段验证过的业务逻辑的同时，引入现代设计模式，包括依赖注入、仓储模式和服务层。
 
-您可以在 AWS 基础设施上部署生成的 Java 应用程序，以实现云可扩展性和弹性，同时保持与旧大型机系统相同的业务功能。这种以云为中心的方法用可以独立部署、监控和增强的模块化、可维护的代码取代了单一的大型机架构。
+你可以把生成的 Java 应用部署在 AWS 基础设施上，从而获得云的弹性与可扩展性，同时保持与传统大型机系统相同的业务功能。这种面向云的做法用模块化、可维护、可独立部署与监控、可持续增强的代码，取代了单体式大型机架构。
 
-有关详细的分步说明，请参阅 [AWS Transform Refactor Workshop](https://aws.amazon.com/transform/)。
+详细的分步操作说明请参阅 [AWS Transform Refactor Workshop](https://aws.amazon.com/transform/)。
 
 ## 经验教训
 
-当您在实践中应用这种方法时，以下是可以塑造您的方法的关键经验教训：
+把这套方法用到实际项目中时，以下几条关键经验可以塑造你的做法：
 
-- **人机交互验证对于转换质量至关重要。** Amazon Bedrock 和 Kiro IDE 可以帮助改进业务规则识别，但 AI 生成的文档应始终被视为草稿。 SME 审查在每个关键阶段都至关重要，而不仅仅是在提取过程中，以捕获人工智能工具可能忽略的特定领域逻辑、边缘案例和业务背景。与没有结构化检查点的自动转换相比，这种人工监督有助于减少部署后缺陷。
-- **中间 COBOL 步骤可降低风险。** 您会发现每个阶段都有验证检查点的多阶段方法（汇编器到 COBOL 到 Java）比尝试直接转换更可靠。中间步骤可帮助您在提交最终的 Java 转换之前验证业务逻辑的保留。
-- **规范驱动的方法可以帮助您防止返工。** 在代码转换之前创建详细的功能规范可以尽早​​发现误解。通过结构化 JSON 规范，您还可以自动进行验证并与转换工具直接集成。
-- **增量验证可帮助您加快整体时间表。** 在每个转换阶段之后进行测试，而不是等到最后，可以帮助您及早发现问题并减少整体返工。每个阶段的质量门有助于确认输出已为下一阶段做好准备。
+- **人在环验证对转换质量至关重要。** Amazon Bedrock 和 Kiro IDE 可以帮助提升业务规则识别的效果，但 AI 生成的文档永远应当被当作草稿。每一个关键阶段都需要 SME 审阅，而不只是在提取阶段，这样才能抓住 AI 工具可能忽略的领域特定逻辑、边缘情况和业务背景。与没有结构化检查点的自动化转换相比，这种人工把关有助于减少上线后的缺陷。
+- **中间的 COBOL 步骤降低风险。** 你会发现，这套多阶段方法（Assembler 到 COBOL 再到 Java）在每个阶段都设置验证检查点，比直接转换更可靠。中间步骤帮助你在最终投入 Java 转换之前确认业务逻辑被保留了下来。
+- **规格驱动的方法能帮你避免返工。** 在代码转换之前编写详细的功能规格，可以尽早发现理解偏差。有了结构化的 JSON 规格，你还可以自动化校验并直接对接转换工具。
+- **增量验证能帮你加快整体进度。** 在每一个转换阶段之后测试，而不是等到最后，有助于尽早发现问题并减少整体返工。每个阶段的质量门禁帮助确认输出已经可以进入下一阶段。
 
-## 结论和后续步骤
+## 结论与后续步骤
 
-在这篇文章中，我们介绍了一种基于 AI 的系统方法，将传统大型机 Assembler 应用程序转换为为 AWS 上的云构建的 Java 应用程序。此方法结合了用于智能业务逻辑提取的 Amazon Bedrock 和 Kiro IDE 以及用于自动 COBOL 到 Java 转换的 AWS Transform。通过遵循在每个阶段都设有验证检查点的多阶段方法，您可以帮助加快现代化时间表，同时保持关键业务逻辑的完整性。
+本文介绍了一套系统化、由 AI 驱动的方法，用来把传统大型机 Assembler 应用改造成面向 AWS 云构建的 Java 应用。这套方法把用于智能业务逻辑提取的 Amazon Bedrock 和 Kiro IDE，与用于自动化 COBOL 到 Java 转换的 AWS Transform 结合起来。遵循在每个阶段都设置验证检查点的多阶段方法，你可以帮助加快现代化进度，同时保住关键业务逻辑的完整性。
 
-要评估完整的服务环境并了解组件如何组合在一起，请从 [AWS 大型机现代化文档](https://aws.amazon.com/mainframe-modernization/) 开始。当您准备好查看正在运行的管道时，[AWS Transform Refactor Workshop](https://catalog.workshops.aws/awstransformrefactor/en-US/100-introduction) 将引导您完成端到端流程，并提供可在您自己的环境中运行的示例工作负载。如果您想讨论此方法如何应用于您的特定环境，请[联系 AWS 代表](https://aws.amazon.com/contact-us/)。
+要评估完整的服务全景、理解各组件如何拼在一起，请从 [AWS Mainframe Modernization 文档](https://aws.amazon.com/mainframe-modernization/)入手。当你准备好看到这条流水线实际运行时，[AWS Transform Refactor Workshop](https://catalog.workshops.aws/awstransformrefactor/en-US/100-introduction) 会带着你走完整套流程，并提供可以在自己环境中运行的示例工作负载。如果你想讨论这套方法如何适用于你的具体环境，请联系 [AWS 客户代表](https://aws.amazon.com/contact-us/)。
 
-告诉我们您的现代化之旅，并在评论中分享您的想法。
+欢迎分享你的现代化历程，并在评论中留下你的想法。
 
 ## 关于作者

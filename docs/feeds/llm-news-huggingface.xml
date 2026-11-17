@@ -14,90 +14,90 @@
       <guid isPermaLink="true">https://huggingface.co/blog/openrouter</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Hugging Face and OpenRouter join forces to make open-weight models easy to run</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
-<h1>Hugging Face 和 OpenRouter 联手使开放重量模型易于运行</h1>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
+<h1>Hugging Face 与 OpenRouter 联手，让开放权重模型易于运行</h1>
 <p>发表于 2026 年 11 月 16 日</p>
-<p>GitHub 上更新</p>
+<p>在 GitHub 上更新</p>
 <p>42</p>
-<ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt="Célina Hanouti 的头像"></a></p>
-<p>塞琳娜·哈努蒂</p>
-<p>塞利纳</p>
-<p><a href="https://huggingface.co/victor"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt="Victor Mustar 的头像"></a></p>
-<p>维克多·穆斯塔尔</p>
-<p>胜利者</p>
-<p><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt="Bertrand Chevrier 的头像"></a></p>
-<p>伯特兰·谢弗里尔</p>
-<p>克兰普</p>
-<p><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt="Lucain Pouget 的头像"></a></p>
-<p>卢凯恩·普吉特</p>
-<p>沃普林</p>
-<p><a href="https://huggingface.co/pierric"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1624630689857-5e67de201009063689407481.jpeg" alt="Pierric Cistac 的头像"></a></p>
-<p>皮尔里克·西斯塔克</p>
-<p>皮尔里克</p>
-<p><a href="https://huggingface.co/coyotte508"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61d2f90c3c2083e1c08af22d/jn21aKijwBnopk7aUJUkq.png" alt="Eliott Coyac 的头像"></a></p>
-<p>艾略特·科亚克</p>
-<p>土狼508</p>
-<p><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt="Julien Chaumond 的头像"></a></p>
-<p>朱利安·肖蒙</p>
-<p>朱利安-C</p>
-<p>Hugging Face 和 OpenRouter 正在合作，使开放重量模型易于运行。每个主要的开放权重版本都已经在 Hugging Face Hub 上发布，并且 <a href="https://openrouter.ai">OpenRouter</a> 大规模地为这些模型提供服务，根据每个提供者的实时测量在 80 多个提供者之间路由每个请求。总之，提供者所服务的 Hub 上的每个开放权重模型都可以通过相同的 API 使用您的 Hugging Face 令牌进行调用，并为每个请求选择最佳的提供者。</p>
-<p>今天，我们将 <a href="https://huggingface.co/docs/inference-providers">推理提供程序</a> 从我们自己的自定义路由器切换到 OpenRouter 的。对语言模型的请求现在通过 OpenRouter，它根据实时价格、速度和可靠性为每次调用选择最佳的提供商，并在第一个提供商失败时重试另一个提供商。您的代码保持不变。</p>
-<h2>使用您已经使用的工具运行它们</h2>
-<p>该路由器支持 OpenAI 的聊天完成和响应 API 以及 Anthropic 的消息 API，适用于每种聊天模型，无论其背后的提供商是谁。选择您的编码代理或 SDK 和模型，然后复制步骤，或复制整个设置作为代理的提示：</p>
-<p><a href="https://huggingface.co/docs/inference-providers/integrations/claude-code">Claude Code</a>、<a href="https://huggingface.co/docs/inference-providers/integrations/codex">Codex</a>、<a href="https://huggingface.co/docs/inference-providers/integrations/opencode">OpenCode</a>、 <a href="https://huggingface.co/docs/inference-providers/integrations/pi">Pi</a> 和 <a href="https://huggingface.co/docs/inference-providers/integrations/hermes-agent">Hermes Agent</a></p>
-<p>相同的 Hugging Face 令牌还为您提供了<a href="https://huggingface.co/storage">存储桶</a>的存储、<a href="https://huggingface.co/docs/hub/jobs-overview">作业</a>的计算以及<a href="https://huggingface.co/docs/inference-endpoints">推理端点</a>的专用推理。 PRO、团队和企业计划包括用于计算和推理的每月积分。</p>
-<h2>如何使用开放权重模型</h2>
-<p>在 OpenRouter 上，开放权重模型从 2025 年 10 月所服务代币的 26.8% 上升到 2026 年 9 月末的 71.7%，7 月份达到峰值 77.5%（<a href="https://openrouter.ai/blog/insights/open-weight-vs-lined-weight-models/">OpenRouter，2026 年 10 月</a>）。同一时期，每周开放式重量的交易量增长了 60 多倍，而封闭式重量的交易量几乎增长了十倍。本周，OpenRouter 上最常用的模型是开放权重模型 DeepSeek V4.1 Flash 1017，拥有 59.2 万亿代币（<a href="https://openrouter.ai/rankings">排名</a>）。</p>
-<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/open-weight-share@2x.png" alt="开放权重模型在 OpenRouter 上的代币份额，从 2025 年 10 月的 26.8% 上升到 2026 年 9 月的 71.7%"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/open-weight-share-dark@2x.png" alt="开放权重模型在 OpenRouter 上的代币份额OpenRouter，从 2025 年 10 月的 26.8% 增长到 2026 年 9 月的 71.7%"></p>
-<p>开放权重模型的平均成本大约低四倍：每百万个输入代币 0.28 美元，每百万个输出代币 1.62 美元，而封闭模型为 1.27 美元和 6.36 美元。</p>
-<p>在最严格的基准测试中，最好的开放重量模型仍然落后于最好的专有模型。在 <a href="https://artificialanalysis.ai/leaderboards/models">人工分析智能指数</a> 上，最好的开放权重模型 Kimi K3.1 Pro 得分为 46，Claude Fable 5.2 得分为 65，每项任务成本约为 1/7（3.68 美元对 26.54 美元）。对于很多工作负载来说，这种权衡是值得的。</p>
-<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/intelligence-vs-cost@2x.png" alt="针对每项任务成本的人工分析智能指数，针对顶级专有和开放权重模型"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/intelligence-vs-cost-dark@2x.png" alt="针对每项任务成本的人工分析智能指数，针对顶级专有和开放权重模型模型"></p>
-<h2>由 OpenRouter 提供支持的路由</h2>
-<p>OpenRouter 每月为超过 1000 万用户提供超过 800 万亿个代币，涵盖来自 80 多个提供商的 600 多个模型。其路由基于该流量中每个提供商的实时测量。</p>
-<p>OpenRouter 最近<a href="https://openrouter.ai/blog/announcements/how-we-rebuilt-provider-routing/">重建了其提供商路由</a>：它不再只查看最低标价，而是将每个请求发送给具有最佳价格、速度和可靠性组合的提供商。</p>
-<p>当某个提供程序速度变慢或开始失败时，流量会远离该提供程序直至其恢复，并且会在同一调用中的下一个最佳提供程序上重试失败的尝试。在 OpenRouter 的测量中，新路由将容量错误减少了 46%，并将首次令牌时间缩短了 16.9%，吞吐量提高了 16.3%。</p>
-<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/routing@2x.gif" alt="当第一个提供商受到速率限制时，默认在另一个提供商上重试路由，:cheapest 选择最低价格，:fastest 选择最高吞吐量"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/routing-dark@2x.gif" alt="当第一个提供商受到速率限制时，在另一个提供商上默认路由重试，:cheapest选择最低价格并：最快最高吞吐量"></p>
-<p>以前，推理提供程序为您的请求选择一个提供程序，如果失败则返回其错误。现在，该请求将在另一个提供商上重试。您仍然可以选择模型 ID 上带有后缀的策略或提供商：</p>
+<ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt="Célina Hanouti 的头像"></a></p>
+<p>Célina Hanouti</p>
+<p>celinah</p>
+<p><a href="https://huggingface.co/victor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt="Victor Mustar 的头像"></a></p>
+<p>Victor Mustar</p>
+<p>victor</p>
+<p><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt="Bertrand Chevrier 的头像"></a></p>
+<p>Bertrand Chevrier</p>
+<p>kramp</p>
+<p><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt="Lucain Pouget 的头像"></a></p>
+<p>Lucain Pouget</p>
+<p>Wauplin</p>
+<p><a href="https://huggingface.co/pierric"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1624630689857-5e67de201009063689407481.jpeg" alt="Pierric Cistac 的头像"></a></p>
+<p>Pierric Cistac</p>
+<p>pierric</p>
+<p><a href="https://huggingface.co/coyotte508"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61d2f90c3c2083e1c08af22d/jn21aKijwBnopk7aUJUkq.png" alt="Eliott Coyac 的头像"></a></p>
+<p>Eliott Coyac</p>
+<p>coyotte508</p>
+<p><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt="Julien Chaumond 的头像"></a></p>
+<p>Julien Chaumond</p>
+<p>julien-c</p>
+<p>Hugging Face 与 OpenRouter 正在联手，让开放权重模型易于运行。每个重要的开放权重发布都已经在 Hugging Face Hub 上发布，而 <a href="https://openrouter.ai">OpenRouter</a> 大规模地为这些模型提供服务，根据对每家提供商的实时测量，把每个请求路由到 80 多家提供商。合在一起，Hub 上任何由提供商服务的开放权重模型，都可以用你的 Hugging Face token 调用，走同一个 API，并为每个请求挑选最合适的提供商。</p>
+<p>今天，我们把 <a href="https://huggingface.co/docs/inference-providers">Inference Providers</a> 从自研的路由器切换为 OpenRouter 的。发往语言模型的请求现在经过 OpenRouter，它根据实时价格、速度和可靠性为每次调用挑选最佳提供商，并在第一家提供商失败时换一家重试。你的代码保持不变。</p>
+<h2>用你已经在用的工具运行它们</h2>
+<p>该路由器为所有 chat 模型支持 OpenAI 的 Chat Completions 和 Responses API 以及 Anthropic 的 Messages API，无论背后是哪家提供商。选好你的 coding agent 或 SDK 以及一个模型，然后复制步骤，或者把整套配置作为 prompt 复制给你的 agent：</p>
+<p>配置指南见 <a href="https://huggingface.co/docs/inference-providers/integrations/claude-code">Claude Code</a>、<a href="https://huggingface.co/docs/inference-providers/integrations/codex">Codex</a>、<a href="https://huggingface.co/docs/inference-providers/integrations/opencode">OpenCode</a>、<a href="https://huggingface.co/docs/inference-providers/integrations/pi">Pi</a> 和 <a href="https://huggingface.co/docs/inference-providers/integrations/hermes-agent">Hermes Agent</a></p>
+<p>同一个 Hugging Face token 还为你提供 <a href="https://huggingface.co/storage">Storage Buckets</a> 的存储、<a href="https://huggingface.co/docs/hub/jobs-overview">Jobs</a> 的计算以及 <a href="https://huggingface.co/docs/inference-endpoints">Inference Endpoints</a> 的专用推理。PRO、Team 和 Enterprise 计划每月都包含计算和推理额度。</p>
+<h2>开放权重模型的使用情况</h2>
+<p>在 OpenRouter 上，开放权重模型在服务的 token 中占比从 2025 年 10 月的 26.8% 升至 2026 年 9 月底的 71.7%，此前在 7 月曾达到 77.5% 的峰值（<a href="https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/">OpenRouter，2026 年 10 月</a>）。同一时期，每周开放权重模型的用量增长了 60 多倍，而闭源模型增长了近十倍。本周，OpenRouter 上使用最多的模型就是开放权重模型 DeepSeek V4.1 Flash 1017，共 59.2 万亿 token（<a href="https://openrouter.ai/rankings">排行榜</a>）。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/open-weight-share@2x.png" alt="开放权重模型在 OpenRouter 上的 token 占比，从 2025 年 10 月的 26.8% 升至 2026 年 9 月的 71.7%"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/open-weight-share-dark@2x.png" alt="开放权重模型在 OpenRouter 上的 token 占比，从 2025 年 10 月的 26.8% 升至 2026 年 9 月的 71.7%"></p>
+<p>开放权重模型的平均成本约低四倍：每百万输入 token 0.28 美元、每百万输出 token 1.62 美元，而闭源模型是 1.27 美元和 6.36 美元。</p>
+<p>在最难的基准测试上，最好的开放权重模型仍落后于最好的专有模型。在 <a href="https://artificialanalysis.ai/leaderboards/models">Artificial Analysis Intelligence Index</a> 上，最好的开放权重模型 Kimi K3.1 Pro 得分为 46，Claude Fable 5.2 为 65，而每任务成本约为后者的七分之一（3.68 美元对 26.54 美元）。对许多工作负载来说，这个取舍是值得的。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/intelligence-vs-cost@2x.png" alt="Artificial Analysis Intelligence Index 与每任务成本对比，覆盖顶级专有模型和开放权重模型"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/intelligence-vs-cost-dark@2x.png" alt="Artificial Analysis Intelligence Index 与每任务成本对比，覆盖顶级专有模型和开放权重模型"></p>
+<h2>由 OpenRouter 驱动的路由</h2>
+<p>OpenRouter 每月为超过 1000 万用户提供超过 800 万亿 token，涵盖来自 80 多家提供商的 600 多个模型。其路由基于这些流量中对每家提供商的实时测量。</p>
+<p>OpenRouter 最近<a href="https://openrouter.ai/blog/announcements/how-we-rebuilt-provider-routing/">重建了其提供商路由</a>：不再只看最低标价，而是把每个请求发给价格、速度和可靠性综合最优的提供商。</p>
+<p>当某家提供商变慢或开始失败时，流量会从它那里移开，直到它恢复；一次失败的尝试会在同一次调用内交给次优的提供商重试。在 OpenRouter 的测量中，新路由把容量错误减少了 46%，首 token 时间改善了 16.9%，吞吐量提升了 16.3%。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/routing@2x.gif" alt="当第一个提供商被限流时，默认路由会在另一家提供商上重试；:cheapest 选择最低价格，:fastest 选择最高吞吐量"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/routing-dark@2x.gif" alt="当第一个提供商被限流时，默认路由会在另一家提供商上重试；:cheapest 选择最低价格，:fastest 选择最高吞吐量"></p>
+<p>以前，Inference Providers 为你的请求只挑一家提供商，失败就返回它的错误。现在，请求会在另一家提供商上重试。你仍然可以用模型 ID 上的后缀来选择策略或提供商：</p>
 <pre><code>zai-org/GLM-5.3            # default: best mix of price, speed and reliability
 zai-org/GLM-5.3:fastest    # highest throughput
 zai-org/GLM-5.3:cheapest   # lowest price
 zai-org/GLM-5.3:novita     # only Novita</code></pre>
-<p>路由也是缓存感知的：对话保留在保存其提示缓存的提供者上。为了使其明确，请在“X-HF-Session-Id”标头中为每个会话发送一个稳定的 UUID（请参阅<a href="https://huggingface.co/docs/inference-providers/prompt-caching">提示缓存指南</a>）。</p>
+<p>路由还会感知缓存：一段对话会留在持有其 prompt 缓存的那家提供商上。为了让它明确生效，请在 <code>X-HF-Session-Id</code> 请求头中为每段对话发送一个稳定的 UUID（参见 <a href="https://huggingface.co/docs/inference-providers/prompt-caching">prompt caching 指南</a>）。</p>
 <h2>定价</h2>
-<p>定价不会改变：您在 Hugging Face 账单上支付提供商的价格，并且 Hugging Face 不会在其之上添加标记。 PRO 用户每月获得 2 美元的积分，团队和企业组织每个席位获得 2 美元。有关详细信息，请参阅<a href="https://huggingface.co/docs/inference-providers/pricing">定价和计费</a>。</p>
+<p>定价没有变化：你在 Hugging Face 账单上支付提供商的价格，Hugging Face 不会在此基础上加价。PRO 用户每月获得 2 美元额度，Team 和 Enterprise 组织按席位每人 2 美元。详情见<a href="https://huggingface.co/docs/inference-providers/pricing">定价与计费</a>。</p>
 <h2>图像、视频和音频生成</h2>
-<p>图像、视频和音频生成继续像以前一样工作，直接通过 Hugging Face Inference Providers 进行，无需通过 OpenRouter。您可以继续使用相同的令牌和 API，并访问数以万计的 <a href="https://huggingface.co/models?inference_provider=all&amp;pipeline_tag=text-to-image&amp;other=lora">LoRA</a>。</p>
-<h2>查看您的请求去了哪里</h2>
-<p>在模特页面上，您可以立即在小部件中与模特聊天。两个新选项卡显示了其背后的内容：Providers 列出了 OpenRouter 可以将模型路由到的每个提供商，及其输入和输出价格、过去 24 小时内的速度和正常运行时间，Metrics 显示其中的最佳价格、吞吐量、第一个令牌的时间、上下文长度和正常运行时间：</p>
-<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/widget-playground-3@2x.gif" alt="在模型页面小部件中与 Inkling-2-Small 聊天，打开其代码片段，然后打开其 Metrics 选项卡"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/widget-playground-3-dark@2x.gif" alt="在模型页面小部件中与 Inkling-2-Small 聊天，打开其代码片段，然后是“指标”选项卡"></p>
-<p>您的<a href="https://huggingface.co/settings/inference-providers/overview">使用情况概述</a> 按每个请求发送到的提供商细分了您的支出：</p>
-<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/usage-by-provider@2x.png" alt="每日推理提供商支出，按提供商细分"> ![每日推理提供商支出，按提供商细分提供商]（https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/usage-by-provider-dark@2x.png）</p>
-<p>在您的<a href="https://huggingface.co/settings/inference-providers">设置</a>中，您可以关闭任何您不需要的提供程序：路由器永远不会向那里发送您的请求。组织具有相同的设置，并且它们适用于向组织计费的每个请求。</p>
-<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/settings-providers@2x.png" alt="推理提供程序设置，每个提供程序都有一个切换"> ![推理提供程序设置，每个提供程序都有一个切换提供商]（https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/settings-providers-dark@2x.png）</p>
-<h2>重大更改：自定义提供程序密钥</h2>
-<p>对语言模型的请求现在通过 OpenRouter 进行，并向您的 Hugging Face 帐户或组织计费，因此您不能再将自己的 API 密钥用于具有这些模型的提供商。您仍然可以选择在模型 ID 上带有后缀的提供程序（“model:provider”），或者在您的设置中关闭提供程序，并且您的代码保持不变。图像和视频提供商的自定义密钥继续有效。</p>
-<h2>接下来是什么</h2>
-<p>这是我们与 OpenRouter 合作的第一步。下一篇：</p>
-<ul><li>将您的 OpenRouter 帐户连接到 Hugging Face。</li><li>更多任务通过 OpenRouter 路由。</li></ul>
-<p>尝试使用 <a href="https://huggingface.co/models?inference_provider=all&amp;sort=trending&amp;other=conversational">模型</a>，或阅读 <a href="https://huggingface.co/docs/inference-providers">推理提供程序文档</a> 来开始使用。</p>
+<p>图像、视频和音频生成仍然和以前完全一样，直接通过 Hugging Face Inference Providers 进行，不经过 OpenRouter。你可以继续使用同一个 token 和 API，并访问数以万计的 <a href="https://huggingface.co/models?inference_provider=all&amp;pipeline_tag=text-to-image&amp;other=lora">LoRA</a>。</p>
+<h2>查看你的请求去了哪里</h2>
+<p>在模型页面上，你可以直接在小部件里与模型对话。两个新标签页展示了背后的情况：Providers 列出 OpenRouter 可以把该模型路由到的每一家提供商，以及其输入输出价格、速度和过去 24 小时的正常运行时间；Metrics 则显示其中最佳的价格、吞吐量、首 token 时间、上下文长度和正常运行时间：</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/widget-playground-3@2x.gif" alt="在模型页小部件中与 Inkling-2-Small 对话，打开其代码片段，然后打开 Metrics 标签页"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/widget-playground-3-dark@2x.gif" alt="在模型页小部件中与 Inkling-2-Small 对话，打开其代码片段，然后打开 Metrics 标签页"></p>
+<p>你的<a href="https://huggingface.co/settings/inference-providers/overview">用量概览</a>会按每个请求所到的提供商拆分你的支出：</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/usage-by-provider@2x.png" alt="按提供商拆分的每日 Inference Providers 支出"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/usage-by-provider-dark@2x.png" alt="按提供商拆分的每日 Inference Providers 支出"></p>
+<p>在你的<a href="https://huggingface.co/settings/inference-providers">设置</a>中，你可以关闭任何不想要的提供商：路由器永远不会把请求发到那里。组织也有同样的设置，并且适用于向该组织计费的每一个请求。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/settings-providers@2x.png" alt="Inference Providers 设置，每家提供商都有一个开关"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/settings-providers-dark@2x.png" alt="Inference Providers 设置，每家提供商都有一个开关"></p>
+<h2>破坏性变更：自定义提供商密钥</h2>
+<p>发往语言模型的请求现在经过 OpenRouter，并向你的 Hugging Face 账户或组织计费，因此对这些模型你不能再使用自己在某家提供商处的 API key。你仍然可以用模型 ID 上的后缀（<code>model:provider</code>）挑选提供商，或在设置中关闭提供商，代码保持不变。图像和视频提供商的自定义密钥仍然有效。</p>
+<h2>接下来</h2>
+<p>这是我们与 OpenRouter 合作的第一步。接下来：</p>
+<ul><li>把你的 OpenRouter 账户连接到 Hugging Face。</li><li>更多任务通过 OpenRouter 路由。</li></ul>
+<p>试试某个<a href="https://huggingface.co/models?inference_provider=all&amp;sort=trending&amp;other=conversational">模型</a>，或阅读 <a href="https://huggingface.co/docs/inference-providers">Inference Providers 文档</a>开始使用。</p>
 <p>我们博客的更多文章</p>
 <p>llmsinference-providersbaseten</p>
-<h2>Baseten Hugging Face推理提供商 🔥</h2>
-<ul><li><img src="https://huggingface.co/avatars/03669abbb72c99a299d0d24dae76ce43.svg" alt=""></li><li><img src="https://huggingface.co/avatars/4f997bf5afe1840c4c6e57319b0bed73.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1667348060565-noauth.png" alt=""></li><li><img src="https://huggingface.co/avatars/547c30b7a5a6d53ca44a8e5b7f3b5b56.svg" alt=""></li><li>+4</li></ul>
+<h2>Baseten 上线 Hugging Face Inference Providers 🔥</h2>
+<ul><li><img src="https://huggingface.co/avatars/03669abbb72c99a299d0d24dae76ce43.svg" alt=""></li><li><img src="https://huggingface.co/avatars/4f997bf5afe1840c4c6e57319b0bed73.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1667348060565-noauth.png" alt=""></li><li><img src="https://huggingface.co/avatars/547c30b7a5a6d53ca44a8e5b7f3b5b56.svg" alt=""></li><li>+4</li></ul>
 <p>35</p>
 <p>2026 年 8 月 6 日</p>
 <p>llmsinference-providersdeepinfra</p>
-<h2>DeepInfra Hugging Face推理提供商 🔥</h2>
+<h2>DeepInfra 上线 Hugging Face Inference Providers 🔥</h2>
 <ul><li><img src="https://huggingface.co/avatars/a116dc7e8e87468cd68e8ff5d5086934.svg" alt=""></li><li><img src="https://huggingface.co/avatars/53ebdf207110b3b567c66daf03d2e60d.svg" alt=""></li><li><img src="https://huggingface.co/avatars/7e536331d27b29cb04b804a0b7a81d5e.svg" alt=""></li><li><img src="https://huggingface.co/avatars/671932199532656af4b26880565cd835.svg" alt=""></li><li>+4</li></ul>
 <p>15</p>
 <p>2026 年 4 月 29 日</p>
 <h3>社区</h3>
-<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
-<p>点击或粘贴此处上传图像</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopenrouter">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fopenrouter">登录</a> 发表评论</p>
+<p>把图像、音频和视频拖入文本输入框、粘贴或点击此处即可上传。</p>
+<p>点按或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopenrouter">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fopenrouter">登录</a> 后发表评论</p>
 <p>42</p>
-<ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pierrci"><img src="https://huggingface.co/avatars/d4cce894629554d9a10369ecc2a7de67.svg" alt=""></a></li><li><a href="https://huggingface.co/alrightjones"><img src="https://huggingface.co/avatars/347bb31f03574c50ba0376ecac86a511.svg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Gflorent"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620a77b7dbba8fc1fbb8bdb4/ZRW2pH9Iawj700OyLpJl8.png" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/abatuhanb"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/681a45f2212b9872c123ad4b/_aYKRcWJO0qIYV_sZFfDn.jpeg" alt=""></a></li></ul>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pierrci"><img src="https://huggingface.co/avatars/d4cce894629554d9a10369ecc2a7de67.svg" alt=""></a></li><li><a href="https://huggingface.co/alrightjones"><img src="https://huggingface.co/avatars/347bb31f03574c50ba0376ecac86a511.svg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Gflorent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620a77b7dbba8fc1fbb8bdb4/ZRW2pH9Iawj700OyLpJl8.png" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/abatuhanb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/681a45f2212b9872c123ad4b/_aYKRcWJO0qIYV_sZFfDn.jpeg" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>使用 SimReady Assets 构建机器人拾放仿真</title>

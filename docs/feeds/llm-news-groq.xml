@@ -14,7 +14,7 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#qwen-36-27b</guid>
       <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<h3>已弃用<a href="#qwen-36-27b">Qwen 3.6 27B</a></h3>
-<p><code>qwen/qwen3.6-27b</code> 已弃用，关闭日期为 <strong>2026 年 9 月 14 日</strong>。我们建议迁移到 <a href="https://console.groq.com/docs/model/qwen/qwen3.8-27b">qwen/qwen3.8-27b</a>，它是直接后继者：具有相同 131K 令牌上下文窗口、思考和指导模式、可调推理工作、工具使用和 JSON 模式的 27B 多模式模型。此弃用适用于免费和开发人员级别的使用；具有承诺支出合同的企业客户不受影响。有关详细信息，请参阅<a href="https://console.groq.com/docs/deprecations">弃用页面</a>。</p>]]></content:encoded>
+<p><code>qwen/qwen3.6-27b</code> 已弃用，下线日期为 <strong>2026 年 9 月 14 日</strong>。我们建议迁移到 <a href="https://console.groq.com/docs/model/qwen/qwen3.8-27b">qwen/qwen3.8-27b</a>，它是直接的后继型号：一个 27B 的多模态模型，拥有同样 131K token 的上下文窗口、thinking 与 instruct 模式、可调的 reasoning effort、工具调用与 JSON 模式。本次弃用适用于免费档与 developer 档的使用；签有承诺支出合同的企业客户不受影响。详情请参阅<a href="https://console.groq.com/docs/deprecations">弃用页面</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Compound 与 Compound Mini</title>
@@ -22,8 +22,8 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#compound-and-compound-mini</guid>
       <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Compound and Compound Mini</description>
-      <content:encoded><![CDATA[<h3>删除了<a href="#compound-and-compound-mini">复合和复合迷你</a></h3>
-<p>2026 年 8 月 24 日，我们宣布弃用 <code>groq/compound</code> 和 <code>groq/compound-mini</code>。这两个系统均已于 2026 年 9 月 21 日停用，对这些模型 ID 的请求现在返回错误。 <a href="https://console.groq.com/docs/compound/systems/compound">Compound</a> 和 <a href="https://console.groq.com/docs/compound/systems/compound-mini">Compound Mini</a> 以及 <a href="https://console.groq.com/docs/changelog/compound">Compound 变更日志</a> 仍然可用。有关详细信息，请参阅<a href="https://console.groq.com/docs/deprecations">弃用页面</a>。</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h3>移除<a href="#compound-and-compound-mini">Compound 与 Compound Mini</a></h3>
+<p>2026 年 8 月 24 日，我们宣布弃用 <code>groq/compound</code> 与 <code>groq/compound-mini</code>。这两个系统已于 2026 年 9 月 21 日下线，现在向这些模型 ID 发起的请求会返回错误。历史概览仍可查阅 <a href="https://console.groq.com/docs/compound/systems/compound">Compound</a> 和 <a href="https://console.groq.com/docs/compound/systems/compound-mini">Compound Mini</a>，以及 <a href="https://console.groq.com/docs/changelog/compound">Compound 更新日志</a>。详情见<a href="https://console.groq.com/docs/deprecations">弃用页面</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Batch API 在验证时检查模型访问权限</title>
@@ -31,6 +31,8 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#batch-api-checks-model-access-at-validation</guid>
       <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Batch API Checks Model Access at Validation</description>
+      <content:encoded><![CDATA[<h3>变更<a href="#batch-api-checks-model-access-at-validation">Batch API 在验证时检查模型访问权限</a></h3>
+<p>如果某个 batch 指定了你的组织无权使用的模型，现在会在验证阶段就失败，任何请求都不会执行。该 batch 以 <code>status: &quot;failed&quot;</code> 和 <code>request_counts.total: 0</code> 结束。<code>errors.data[]</code> 数组会为每个被拒绝的模型提供一个条目，其中包含与同步 API 为该模型返回的相同 <code>code</code> 和 <code>message</code>（<code>model_not_found</code>、<code>model_decommissioned</code>、<code>model_terms_required</code>、<code>model_permission_blocked_org</code> 或 <code>model_permission_blocked_project</code>）、<code>param: &quot;body.model&quot;</code>，以及使用该模型的第一个请求所在的 <code>line</code>。在此变更之前，这类 batch 会进入 <code>in_progress</code>，并且每个请求都会在错误文件中以 404 失败。参见 <a href="https://console.groq.com/docs/batch">Batch API 文档</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Python SDK v1.7.0 与 TypeScript SDK v1.6.0</title>
@@ -38,6 +40,12 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#python-sdk-v170-and-typescript-sdk-v160</guid>
       <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Python SDK v1.7.0 and TypeScript SDK v1.6.0</description>
+      <content:encoded><![CDATA[<h3>变更<a href="#python-sdk-v170-and-typescript-sdk-v160">Python SDK v1.7.0 与 TypeScript SDK v1.6.0</a></h3>
+<p><strong>Python SDK</strong>（<a href="https://github.com/groq/groq-python/releases/tag/v1.7.0">v1.7.0</a>）</p>
+<ul><li><strong>v1.7.0</strong> — 为 chat completions 提供 Qwen 3.8 推理指引；更新依赖锁文件以修复已知漏洞。</li></ul>
+<p><strong>TypeScript SDK</strong>（<a href="https://github.com/groq/groq-typescript/releases/tag/v1.6.0">v1.6.0</a>）</p>
+<ul><li><strong>v1.6.0</strong> — 为 chat completions 提供 Qwen 3.8 推理指引。</li></ul>
+<p>---</p>]]></content:encoded>
     </item>
     <item>
       <title>MiniMax M2.7（企业版）</title>
@@ -45,8 +53,8 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#minimax-m27-enterprise</guid>
       <pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：MiniMax M2.7 (Enterprise)</description>
-      <content:encoded><![CDATA[<h3>添加了<a href="#minimax-m27-enterprise">MiniMax M2.7（企业）</a></h3>
-<p><a href="https://console.groq.com/docs/model/minimaxai/minimax-m2.7">minimaxai/minimax-m2.7</a> 现已在 GroqCloud 上为企业客户提供。 MiniMax M2.7 是一个具有 2290 亿参数的专家混合模型（每个令牌约 10B 个活跃值），具有交错思维，专为代理工作流程、工具使用和编码而构建，在 Groq 上具有 196K 令牌上下文窗口。 <a href="https://groq.com/enterprise-access">联系销售人员</a> 进行访问。</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h3>新增<a href="#minimax-m27-enterprise">MiniMax M2.7（企业版）</a></h3>
+<p><a href="https://console.groq.com/docs/model/minimaxai/minimax-m2.7">minimaxai/minimax-m2.7</a> 现已在 GroqCloud 上面向 Enterprise 客户提供。MiniMax M2.7 是一个 2290 亿参数的 Mixture-of-Experts 模型（每 token 约 100 亿激活参数），具备交错思考（interleaved thinking）能力，专为 agentic 工作流、工具调用与编码而打造，在 Groq 上提供 196K token 的上下文窗口。如需使用，请<a href="https://groq.com/enterprise-access">联系销售</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>输入与输出 Token 速率限制（ITPM / OTPM）</title>
@@ -54,8 +62,8 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#input-and-output-token-rate-limits-itpm--otpm</guid>
       <pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Input and Output Token Rate Limits (ITPM / OTPM)</description>
-      <content:encoded><![CDATA[<h3>添加了<a href="#input-and-output-token-rate-limits-itpm--otpm">输入和输出令牌速率限制（ITPM / OTPM）</a></h3>
-<p>除了组合的 TPM 限制之外，组织现在还可能受到输入令牌 (ITPM) 和输出令牌 (OTPM) 的单独每分钟限制。如果您的帐户中配置了这些限制，则<a href="https://console.groq.com/settings/limits">限制页面</a> 上的 TPM 值在悬停时会显示 <strong>“X in / Y out”</strong> 细分。有关详细信息，请参阅<a href="https://console.groq.com/docs/rate-limits">速率限制文档</a>。</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h3>新增<a href="#input-and-output-token-rate-limits-itpm--otpm">输入与输出 Token 速率限制（ITPM / OTPM）</a></h3>
+<p>除了合并的 TPM 限制之外，组织现在还可能受到单独的每分钟输入 token（ITPM）和输出 token（OTPM）限制。如果你的账号配置了这些限制，<a href="https://console.groq.com/settings/limits">Limits 页面</a>上的 TPM 值在鼠标悬停时会显示 <strong>&quot;X in / Y out&quot;</strong> 明细。详情见<a href="https://console.groq.com/docs/rate-limits">速率限制文档</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Llama 3.1 8B Instant 与 Llama 3.3 70B Versatile</title>
@@ -63,8 +71,8 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#llama-31-8b-instant-and-llama-33-70b-versatile</guid>
       <pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Llama 3.1 8B Instant and Llama 3.3 70B Versatile</description>
-      <content:encoded><![CDATA[<h3>已弃用<a href="#llama-31-8b-instant-and-llama-33-70b-versatile">Llama 3.1 8B Instant 和 Llama 3.3 70B Versatile</a></h3>
-<p>2026 年 6 月 17 日，我们宣布弃用“llama-3.1-8b-instant”和“llama-3.3-70b-versatile”，关闭日期为 <strong>2026 年 8 月 16 日</strong>。我们建议迁移到 <a href="https://console.groq.com/docs/model/openai/gpt-oss-20b">openai/gpt-oss-20b</a>（适用于 Llama 3.1 8B Instant）和 <a href="https://console.groq.com/docs/model/openai/gpt-oss-120b">openai/gpt-oss-120b</a>（适用于 Llama 3.3） 70B 多功能）在关闭日期之前。此弃用适用于免费和开发人员级别的使用；具有承诺支出合同的企业客户不受影响。有关详细信息，请参阅<a href="https://console.groq.com/docs/deprecations">弃用页面</a>。</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h3>已弃用<a href="#llama-31-8b-instant-and-llama-33-70b-versatile">Llama 3.1 8B Instant 与 Llama 3.3 70B Versatile</a></h3>
+<p>2026 年 6 月 17 日，我们宣布弃用 <code>llama-3.1-8b-instant</code> 和 <code>llama-3.3-70b-versatile</code>，关停日期为 <strong>2026 年 8 月 16 日</strong>。建议在关停日期之前迁移到 <a href="https://console.groq.com/docs/model/openai/gpt-oss-20b">openai/gpt-oss-20b</a>（用于替代 Llama 3.1 8B Instant）和 <a href="https://console.groq.com/docs/model/openai/gpt-oss-120b">openai/gpt-oss-120b</a>（用于替代 Llama 3.3 70B Versatile）。此次弃用适用于免费层级和 developer 层级的使用；签有承诺支出合同的企业客户不受影响。详情见<a href="https://console.groq.com/docs/deprecations">弃用页面</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Qwen 3 32B 与 Llama 4 Scout 17B</title>
@@ -72,6 +80,8 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#qwen-3-32b-and-llama-4-scout-17b</guid>
       <pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Qwen 3 32B and Llama 4 Scout 17B</description>
+      <content:encoded><![CDATA[<h3>移除<a href="#qwen-3-32b-and-llama-4-scout-17b">Qwen 3 32B 与 Llama 4 Scout 17B</a></h3>
+<p><code>qwen/qwen3-32b</code> 与 <code>meta-llama/llama-4-scout-17b-16e-instruct</code> 已于 2026 年 7 月 17 日下线，此前在 2026 年 6 月 17 日发布了弃用公告。这两个模型的推荐替代品是 <a href="https://console.groq.com/docs/model/openai/gpt-oss-120b">openai/gpt-oss-120b</a>。这适用于免费层与 developer 层用量；签有承诺消费合同的企业客户不受影响。详情见<a href="https://console.groq.com/docs/deprecations">弃用页面</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Compound browser_automation 工具</title>
@@ -79,6 +89,8 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#compound-browserautomation-tool</guid>
       <pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Compound browser\_automation Tool</description>
+      <content:encoded><![CDATA[<h3>移除<a href="#compound-browserautomation-tool">Compound browser\_automation 工具</a></h3>
+<p>面向 <a href="https://console.groq.com/docs/compound/systems/compound">Compound</a> 系统的内置 <code>browser_automation</code> 工具已停用。要自动化完整的浏览器会话，请使用 <a href="https://console.groq.com/docs/anchorbrowser">Anchor Browser 集成</a>。Compound 本身已于 2026 年 9 月 21 日下线；见上方的 2026 年 9 月部分。</p>]]></content:encoded>
     </item>
     <item>
       <title>Python SDK v1.6.0 与 TypeScript SDK v1.5.0</title>
@@ -86,12 +98,12 @@
       <guid isPermaLink="true">https://console.groq.com/docs/changelog.md#python-sdk-v160-and-typescript-sdk-v150</guid>
       <pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Python SDK v1.6.0 and TypeScript SDK v1.5.0</description>
-      <content:encoded><![CDATA[<h3>已更改<a href="#python-sdk-v160-and-typescript-sdk-v150">Python SDK v1.6.0 和 TypeScript SDK v1.5.0</a></h3>
-<p>这两个 SDK 在第二季度都收到了一系列更新。</p>
+      <content:encoded><![CDATA[<h3>变更<a href="#python-sdk-v160-and-typescript-sdk-v150">Python SDK v1.6.0 与 TypeScript SDK v1.5.0</a></h3>
+<p>两个 SDK 在第二季度都迎来了一系列更新。</p>
 <p><strong>Python SDK</strong> (<a href="https://github.com/groq/groq-python/releases/tag/v1.6.0">v1.6.0</a>)</p>
-<ul><li><strong>v1.3.0</strong> — 支持通过环境变量设置 headers；多部分文件数组的固定字段名称格式。</li><li><strong>v1.4.0</strong> — 支持急切验证 pydantic 迭代器。</li><li><strong>v1.5.0</strong> — API 规范更新。</li><li><strong>v1.6.0</strong> — CI 和工作流程模板更新。</li></ul>
+<ul><li><strong>v1.3.0</strong> — 支持通过环境变量设置请求头；修复了 multipart 文件数组的字段名格式。</li><li><strong>v1.4.0</strong> — 支持对 pydantic 迭代器进行提前校验（eager validation）。</li><li><strong>v1.5.0</strong> — API 规范更新。</li><li><strong>v1.6.0</strong> — CI 与工作流模板更新。</li></ul>
 <p><strong>TypeScript SDK</strong> (<a href="https://github.com/groq/groq-typescript/releases/tag/v1.5.0">v1.5.0</a>)</p>
-<ul><li><strong>v1.2.0</strong> — 支持通过环境变量设置标头。</li><li><strong>v1.2.1</strong> — 升级了 <code>tsc-multi</code> 以实现 Node 26 兼容性。</li><li><strong>v1.3.0</strong> — API 规范更新；为省略可选正文的请求发送内容类型标头。</li><li><strong>v1.4.0 / v1.4.1</strong> — CI 工作流程在 Node 24 上运行；依赖项更新。</li><li><strong>v1.5.0</strong> — API 规范更新。</li></ul>
+<ul><li><strong>v1.2.0</strong> — 支持通过环境变量设置请求头。</li><li><strong>v1.2.1</strong> — 升级 <code>tsc-multi</code> 以兼容 Node 26。</li><li><strong>v1.3.0</strong> — API 规范更新；对省略了可选请求体的请求，发送 content-type 请求头。</li><li><strong>v1.4.0 / v1.4.1</strong> — CI 工作流在 Node 24 上运行；依赖更新。</li><li><strong>v1.5.0</strong> — API 规范更新。</li></ul>
 <p>---</p>]]></content:encoded>
     </item>
     <item>

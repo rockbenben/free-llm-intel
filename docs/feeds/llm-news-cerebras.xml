@@ -68,48 +68,48 @@
       <description>原文标题：High-level code, wafer-scale performance</description>
       <content:encoded><![CDATA[<p>2026 年 11 月 16 日</p>
 <h1>高级代码，晶圆级性能</h1>
-<p><a href="https://www.cerebras.ai/author/michael-james">迈克尔·詹姆斯</a></p>
-<h2>介绍钨和鸟舍</h2>
-<p><em>Michael James，Cerebras Systems 先进技术联合创始人兼首席架构师</em></p>
-<p>上个月，我们的一位研究人员对 Cerebras 晶圆 98% 的区域进行了等离子体物理模拟。编码人员编写了其中的每一行。</p>
-<p>今天，我们发布了使这一切成为可能的工具。 Tungsten 是一种语言和编译器，可让您在不牺牲性能的情况下对 Cerebras 晶圆级引擎进行高级编程。 Aviary 是一个高性能应用程序和用它编写的教程的组合。</p>
-<p>现代科学的大部分内容都是基于模拟：金属如何在反应堆内老化、海啸如何穿越海洋、等离子体如何在电场中移动。这些模拟随着时间的推移以微小的步骤前进，向超级计算机添加更多芯片并不会让这些步骤变得更快。晶圆罐。在某些问题上，它的运行速度比最大的超级计算机快数百倍，将一年的计算时间变成了几天。</p>
-<p>这种速度改变了人工智能对科学的作用。足够快的模拟速度可以在人工智能模型旁边运行，成为它的世界模型，因此人工智能可以根据真实物理测试数千种设计。人工智能代理现在可以自己编写模拟。 Tungsten 将所有这一切交给了非硬件专家的科学家。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/0b4d1d4f6795609aa8adc45a80820e3b6d5362e3-1155x930.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1155" alt=""></p>
-<h4>代理编写的细胞内粒子运行：电子束进入氩等离子体，每个核心一个细胞。</h4>
-<h3>硬件为您提供什么</h3>
-<p>Wafer-Scale Engine 是一个拥有 900,000 个核心的数据流机器，数量如此之多，以至于它们作为一个连续体工作：计算位于本地内存上，并由晶圆上结构连接起来。到达核心的数据会触发消耗它的工作。访问模式寄存器遍历多维数组和结构流，因此地址算术不需要指令。</p>
-<p>一条指令可以将整个循环作为其操作数。内核通过在结构上发送消息来相互调用功能，并且基于事件的控制流取代了轮询和分支。</p>
-<p>硬件承担循环和控制开销，因此即使在较短的内部循环上，内核也会接近峰值运行。将问题分散到晶圆上，它会变得越来越快，超过其他机器停止或减慢的程度。然而，传统编译器无法推理这种机制。编程是最困难的部分。</p>
-<h3>抽象差距</h3>
-<p>以前的编译器将这些功能公开为内在函数。标量代码很好。任何接触向量、流或事件硬件的东西都必须显式地调用它。实际上，每个非标量程序都是以接近汇编的方式编写的。</p>
-<p>您手动配置了描述符。您手动将任务连接到事件。你用手把布料铺好。我们自己用这种方式写了很多代码。速度很快。它还需要深厚的专业知识，而且结果难以阅读、更改或重用。</p>
-<h3>对机器进行建模的编译器</h3>
-<p>钨弥补了这一差距。它的表示法在数学上是自然的，并且适应机器的特征，因此代码读起来接近算法的教科书形式。编译器携带完整的架构模型，并将代码映射到访问模式寄存器、事件驱动任务、结构调用和循环承载指令上。</p>
-<p>以下是本教程中雅可比模板更新的核心：</p>
-<p>每行都是整个块的循环，每行都编译为单个向量指令。 <code>&lt;+-</code> 累积到目的地，就像 <code>+=</code> 一样。没有描述符设置，也没有任务连接，只有模板。</p>
-<p>几十年前，编译器就不再要求程序员分配 CPU 寄存器。编译器决定寄存器中的内容，当寄存器用完时，它会溢出到内存中。 Tungsten 对晶圆上更复杂的资源做了同样的事情：访问模式、循环定义、结构套接字和微线程。成本模型和优化过程将它们与整个程序一起分配，并在程序运行时将它们换入和换出。因为编译器拥有这些决定，所以稍后重构代码是编辑，而不是重写。</p>
-<h3>鸟舍</h3>
-<p>鸟舍项目用钨丝绘制成鸟，聚集在铜晶片的模具网格上。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/44929d40ab24d7b79c88e2c04efc305fdb18f932-1254x1254.png" alt=""></p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/46fa841520f2e020e15cd030ede05c4d8b3b919f-1275x1233.png" alt=""></p>
-<p>Aviary 包含一些世界上计算速度最快的代码：</p>
-<ul><li>SNAP 是核辐射传输代码的标准代理，在单个 CS-4 上以 1.6 PFLOP/s 的速度运行，领先于 El Capitan 超级计算机上的 10,800 个 GPU。</li><li>HPCG 是用于对现实世界稀疏工作负载上的超级计算机进行排名的基准，在单个系统上达到 1.04 PFLOP/s。</li><li>我们的晶圆级分子动力学运行速度比世界上最大的超级计算机之一 Frontier 快 748 倍 [3]。</li></ul>
-<p>Aviary 即将推出设计优化器。它将人工智能模型与物理模拟结合起来作为其世界模型，两者都在晶圆上运行。如果您在 SC26，请来我们的展位参观。</p>
-<p>应用范围从紧凑的模板代码到完整的科学应用。较小的教程示例逐步教授该语言。</p>
-<p>Gray-Scott 反应扩散模式来自 Aviary 教程代码，大约 50 行 Tungsten。</p>
-<p>其中许多应用源自我们与桑迪亚国家实验室、劳伦斯利弗莫尔国家实验室和洛斯阿拉莫斯国家实验室在 NNSA 高级内存技术计划下的合作 [5, 6]。分子动力学应用程序建立在我们 2024 年戈登贝尔奖决赛入围作品的基础上。它们不是相同的代码，但结果已经使用了 Tungsten 的早期版本 [2]。</p>
-<p>Gresho 涡流是高阶流体动力学的经典测试，在随材料移动的网格上进行。</p>
-<h3>专为代理编码而构建</h3>
-<p>细胞内粒子代码展示了钨上的代理编码是什么样子的。粒子在场下移动并从一个核心迁移到另一个核心。隐式求解器根据粒子的位置和速度计算分解网格上的场。</p>
-<p>一名研究员。一种编码剂。聊天窗口大约两周。该代理根据已发布的算法构建了代码，根据开源 XOOPIC 代码验证了其参考，并在以 EMPIRE Plasma 代码为模型的问题上运行了该代码。在此过程中，它编写了测试、图表和文档，并发现并修复了自己的错误。完整运行在单个系统上以每秒 7,200 个时间步推进了 6000 万个粒子，每秒更新 4300 亿个粒子。 （对于不是等离子体物理学家的读者来说，这是非常快的。）</p>
-<p>Tungsten 参考足够完整，可以以这种方式工作，因此您可以尝试 Tungsten，几乎不需要启动成本。不过你自己也学学吧。必须有人让特工们保持在正轨上。</p>
-<h3>扩大影响范围</h3>
-<p>我们的使命是扩大人工智能和科学的影响范围。当高性能代码不再需要专家来编写时，更多的问题就变得值得尝试。</p>
-<p>相同的 Tungsten 代码在一个晶圆上或跨一个集群运行。我们的全球海啸模拟在 AI 部署的 64 个晶圆上运行 [1]，这些部署扩展到 2,048 个系统 [4]。</p>
-<p>我们很自豪地发布 Tungsten 和 Aviary，我们希望您发现它们和我们一样有用。一切都在 <a href="https://labs.cerebras.ai/">labs.cerebras.ai</a> 上进行。</p>
-<p>＃＃＃ 参考</p>
-<ul><li>T. Oppelstrup 等人，“<a href="https://arxiv.org/abs/2511.11542">超越百亿亿次级：Cerebras 集群上的数据流域转换</a>”，SCA/HPCAsia 2026。</li><li>K. Santos 等人，“<a href="https://arxiv.org/abs/2405.07898">使用晶圆尺度系统打破分子动力学时间尺度障碍</a>”，SC24，ACM 戈登贝尔奖决赛入围者。</li><li>“<a href="https://doi.org/10.1063/5.0249193">打破模式：克服通用硬件上分子动力学的时间限制</a>，”化学物理杂志 162(7)，2025。</li><li>Cerebras Systems，“[Cerebras Systems 推出世界上最快的人工智能芯片，配备多达 4 万亿个晶体管](https://www.cerebras.ai/press-release/cerebras-announces-third- Generation-wafer-scale-engine)”，新闻稿，2024 年 3 月。</li><li>桑迪亚国家实验室，“<a href="https://newsreleases.sandia.gov/cerebras_research/">调查世界上最大的计算机芯片的库存管理申请</a>”，新闻稿，2022 年 10 月。</li><li>桑迪亚国家实验室，“<a href="https://www.sandia.gov/research/news/advanced-memory-technology-program-kicks-off-round-third-with-cerebras/">先进内存技术计划与 Cerebras 一起启动第三轮</a>”，2025 年 8 月。</li></ul>]]></content:encoded>
+<p><a href="https://www.cerebras.ai/author/michael-james">Michael James</a></p>
+<h2>推出 Tungsten 与 Aviary</h2>
+<p><em>Michael James，Cerebras Systems 联合创始人兼先进技术首席架构师</em></p>
+<p>上个月，我们的一位研究员在一片 Cerebras 晶圆 98% 的范围上跑了一场等离子体物理模拟。它的每一行代码都是一个 coding agent 写的。</p>
+<p>今天我们发布让这一切成为可能的工具。Tungsten 是一门语言兼编译器，让你在高层次上为 Cerebras Wafer-Scale Engine 编程，同时不牺牲性能。Aviary 则是用它编写的一套高性能应用和教程作品集。</p>
+<p>现代科学很大一部分建立在模拟之上：金属在反应堆内如何老化、海啸如何横越海洋、等离子体如何在电场中运动。这些模拟以微小的时间步向前推进，而往超级计算机里加更多芯片并不会让这些步子变快。晶圆可以。在某些问题上，它比最大的超级计算机快数百倍，把一年的计算量压缩成两三天。</p>
+<p>这种速度改变了 AI 在科学中能做的事。快到足以与 AI 模型肩并肩运行的模拟会成为它的世界模型，于是 AI 可以对照真实物理检验成千上万种设计。而 AI agent 现在可以自己写这些模拟。Tungsten 把这一切交到并非硬件专家的科学家手中。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/0b4d1d4f6795609aa8adc45a80820e3b6d5362e3-1155x930.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1155" alt=""></p>
+<h4>由 agent 编写的 particle-in-cell 运算：一束电子射入氩等离子体，每个核心负责一个 cell。</h4>
+<h3>硬件能给你什么</h3>
+<p>Wafer-Scale Engine 是一台拥有 90 万个核心的数据流机器，核心多到它们可以像一个连续体那样工作：计算铺在本地内存之上，由晶圆上的 fabric 相连。数据到达某个核心，就会触发消费它的工作。访问模式寄存器负责遍历多维数组和 fabric 流，因此地址运算不消耗指令。</p>
+<p>一条指令可以把整个循环当作它的操作数。核心之间通过在 fabric 上互发消息来互相调用函数，基于事件的控制流取代了轮询和分支。</p>
+<p>硬件承担了循环和控制开销，因此即便内层循环很短，核心也能接近峰值运行。把一个问题稀薄地摊到整片晶圆上，它会持续变快，越过其他机器停滞或变慢的那个点。然而传统编译器无法对这些机制进行推理。为它编程一直是困难的那部分。</p>
+<h3>抽象鸿沟</h3>
+<p>先前的编译器把这些特性暴露为 intrinsic。标量代码没问题。任何触及向量、流或事件硬件的代码都必须显式调用它们。实践中，每个非标量程序都写得接近汇编。</p>
+<p>你手工配置 descriptor，手工把任务接上事件，手工为 fabric 布线。我们自己就这样写过很多代码。它很快，但也需要深厚的专业知识，而且结果难以阅读、修改或复用。</p>
+<h3>一台为机器建模的编译器</h3>
+<p>Tungsten 弥合了这道鸿沟。它的记法在数学上自然，并且贴合这台机器的特性，因此代码读起来接近算法的教科书形式。编译器携带完整的架构模型，把代码映射到访问模式寄存器、事件驱动任务、fabric 调用和承载循环的指令上。</p>
+<p>下面是教程中 Jacobi stencil 更新的核心：</p>
+<p>每一行都是对整个 block 的循环，而且每一行都编译成一条向量指令。<code>&lt;+-</code> 会像 <code>+=</code> 一样向目标累加。没有 descriptor 设置，也没有任务接线，只有 stencil 本身。</p>
+<p>几十年前，编译器就不再要求程序员分配 CPU 寄存器了。由编译器决定什么东西驻留在寄存器里，寄存器用尽时就溢出到内存。Tungsten 对晶圆上更复杂的资源做同样的事：访问模式、循环定义、fabric socket 和微线程。成本模型和优化 pass 在通观整个程序的情况下分配它们，并在程序运行时换入换出。因为这些决定由编译器掌管，事后重构代码只是一次编辑，而不是重写。</p>
+<h3>Aviary</h3>
+<p>Aviary 的项目被画成由钨丝构成的鸟，聚集在铜晶圆的裸片网格上。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/44929d40ab24d7b79c88e2c04efc305fdb18f932-1254x1254.png" alt=""></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/46fa841520f2e020e15cd030ede05c4d8b3b919f-1275x1233.png" alt=""></p>
+<p>Aviary 收录了若干在所计算内容上属于世界最快的代码：</p>
+<ul><li>SNAP 是核辐射输运代码的标准代理程序，在单台 CS-4 上跑到 1.6 PFLOP/s，超过了 El Capitan 超级计算机上的 10,800 块 GPU。</li><li>HPCG 是用于给超级计算机排名的基准测试，考察真实世界的稀疏工作负载，在单套系统上达到 1.04 PFLOP/s。</li><li>我们的晶圆级分子动力学比 Frontier 快 748 倍，Frontier 是世界上最大的超级计算机之一 [3]。</li></ul>
+<p>一款设计优化器即将加入 Aviary。它把 AI 模型与充当其世界模型的物理模拟耦合起来，两者都运行在晶圆上。如果你在 SC26 现场，欢迎到我们的展台看看。</p>
+<p>这些应用从紧凑的 stencil 代码一直到完整的科学应用。更小的教程示例会一步步教你这门语言。</p>
+<p>来自 Aviary 教程代码的 Gray-Scott 反应-扩散图案，约 50 行 Tungsten。</p>
+<p>这些应用中有许多源自我们与 Sandia、Lawrence Livermore 和 Los Alamos 国家实验室在 NNSA 先进内存技术计划下的合作 [5, 6]。分子动力学应用建立在那次合作中我们 2024 年 Gordon Bell Prize 入围工作的基础之上。它们不是同一份代码，但那个成果已经使用了一版早期的 Tungsten [2]。</p>
+<p>Gresho 涡旋——高阶流体动力学的经典测试——在随材料一起移动的网格上。</p>
+<h3>为 agentic coding 而构建</h3>
+<p>particle-in-cell 代码展示了在 Tungsten 上进行 agentic coding 是什么样子。粒子在场的作用下运动，并从核心迁移到核心。一个隐式求解器根据粒子的位置和速度，在分解后的网格上计算场。</p>
+<p>一位研究员。一个 coding agent。大约两周的聊天窗口时间。agent 依据已发表的算法构建了代码，将它的参考实现与开源代码 XOOPIC 做了验证，并运行了一个参照 EMPIRE 等离子体代码建模的问题。在这个过程中，它写下了测试、图表和文档，还找出并修掉了自己的 bug。完整运行以每秒 7,200 个时间步推进了 6,000 万个粒子，在单套系统上达到每秒 4,300 亿次粒子更新。（对不是等离子体物理学家的人来说，这非常快。）</p>
+<p>Tungsten 的参考实现已经完整到足以支撑这种工作方式，所以你几乎不用任何启动成本就能试用 Tungsten。不过也请自己学一学。总得有人把 agent 们留在正轨上。</p>
+<h3>扩展触达范围</h3>
+<p>我们的使命是扩展 AI 与科学的触达范围。当一份高性能代码不再需要专家来编写，就有更多问题值得尝试。</p>
+<p>同一份 Tungsten 代码可以运行在一片晶圆上，也可以跨越一个集群运行。我们的全球海啸模拟运行在一套 AI 部署的 64 片晶圆上 [1]，而那些部署可扩展到 2,048 套系统 [4]。</p>
+<p>我们很自豪地发布 Tungsten 和 Aviary，希望它们对你和我们一样有用。一切都在 <a href="https://labs.cerebras.ai/">labs.cerebras.ai</a> 上线。</p>
+<h3>参考文献</h3>
+<ul><li>T. Oppelstrup 等，&quot;<a href="https://arxiv.org/abs/2511.11542">Beyond Exascale: Dataflow Domain Translation on a Cerebras Cluster</a>&quot;，SCA/HPCAsia 2026。</li><li>K. Santos 等，&quot;<a href="https://arxiv.org/abs/2405.07898">Breaking the Molecular Dynamics Timescale Barrier Using a Wafer-Scale System</a>&quot;，SC24，ACM Gordon Bell Prize 入围作品。</li><li>&quot;<a href="https://doi.org/10.1063/5.0249193">Breaking the mold: Overcoming the time constraints of molecular dynamics on general-purpose hardware</a>&quot;，Journal of Chemical Physics 162(7)，2025。</li><li>Cerebras Systems，&quot;<a href="https://www.cerebras.ai/press-release/cerebras-announces-third-generation-wafer-scale-engine">Cerebras Systems Unveils World's Fastest AI Chip with Whopping 4 Trillion Transistors</a>&quot;，新闻稿，2024 年 3 月。</li><li>Sandia National Laboratories，&quot;<a href="https://newsreleases.sandia.gov/cerebras_research/">Investigating stockpile stewardship applications for world's largest computer chip</a>&quot;，新闻发布，2022 年 10 月。</li><li>Sandia National Laboratories，&quot;<a href="https://www.sandia.gov/research/news/advanced-memory-technology-program-kicks-off-round-three-with-cerebras/">The Advanced Memory Technology program kicks off round three with Cerebras</a>&quot;，2025 年 8 月。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>如何实现晶圆级良率</title>

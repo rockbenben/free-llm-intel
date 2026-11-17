@@ -14,35 +14,35 @@
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/hugging-face-inference-providers/</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：OpenRouter Now Powers Inference on Hugging Face</description>
-      <content:encoded><![CDATA[<h1>OpenRouter 现在支持Hugging Face推理</h1>
-<p>萨莎·布卢门菲尔德·11/16/2026</p>
-<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers.jpg" alt="OpenRouter 现在支持Hugging Face部推理"><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers-dark.jpg" alt="OpenRouter 现在支持Hugging Face部推理"></p>
-<p>我们构建了 OpenRouter，以便开发人员可以通过一个 API 访问许多模型和提供者，为每项任务使用最佳模型，并依靠它来响应。从今天开始，这将延伸到所有使用 Hugging Face 进行开发的人。 Hugging Face Inference Providers 上的聊天模型现在通过 OpenRouter 运行，跨提供商的路由与 OpenRouter 客户已经依赖的相同。</p>
-<p>集成也以另一种方式运行。 OpenRouter 现在可以将每个请求的跟踪发送到您拥有的 Hugging Face 存储桶，因此来自真实流量的提示和响应位于您用来评估或微调的模型和数据集旁边。 <a href="https://openrouter.ai/docs/guides/features/broadcast/hugging-face">设置指南</a> 有步骤。</p>
-<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/inference-widget.gif" alt="Hugging Face 模型页面上的推理提供程序小部件回答聊天消息，带有“由 OpenRouter 提供支持”标签"></p>
-<h2>你在 Hugging Face 上能得到什么</h2>
-<p>Hugging Face 上的许多聊天模型由多个提供商提供服务。 OpenRouter 的提供商路由现在支持 Hugging Face Inference Provider 上的路由，并根据实时价格、速度和可靠性为每个请求选择提供商。您无需进行任何设置，现有的 Hugging Face 令牌和代码就可以继续工作。</p>
-<p>您还可以获得自动故障转移。如果某个提供程序速度变慢或开始出现故障，请求将发送至其他提供程序，直到其恢复。如果提供程序返回错误，则会在同一调用中的下一个请求中重试该请求。</p>
-<p>当我们 <a href="https://openrouter.ai/blog/how-we-rebuilt-provider-routing">10 月份重建此路由</a> 时，现场实验测量到，遇到容量错误的请求减少了 46%，获得第一个令牌的时间缩短了 16.9%，吞吐量提高了 16.3%，每个请求的成本提高了 6.0%。现在，每个在 Hugging Face 上构建的人都会获得相同的路由。</p>
-<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/routing.gif" alt="Hugging Face 的图表，显示您的应用程序发送到 router.huggingface.co 的请求，其中 OpenRouter 根据测量的价格、速度和可靠性选择四个提供商之一，并提供默认、最便宜和最快的路由选项（轻型模式）"></p>
-<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/routing-dark.gif" alt="Hugging Face 的图表，显示您的应用程序发送到 router.huggingface.co 的请求，其中 OpenRouter 根据测量的价格、速度和可靠性选择四个提供商之一，并提供默认、最便宜和最快的路由选项（暗模式）"></p>
-<p>您可以掌控权衡。向模型 ID 添加后缀，例如“:fastest”、“:cheapest”或提供程序名称，告诉 OpenRouter 优先考虑什么，并通过 OpenAI 的聊天完成和响应 API 或 Anthropic 的消息 API 请求工作。对话也会保留在保存其提示缓存的提供者上。</p>
-<p>每个模型页面都有一个新的“提供商”选项卡，其中包含每个提供商的实时价格、速度和正常运行时间。您可以按提供商查看您的支出，并关闭任何您不想使用的提供商。</p>
-<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/providers-tab.png" alt="Hugging Face 模型页面上的“提供商”选项卡，列出每个提供商的输入价格、输出价格、速度和正常运行时间，并带有“Powered by OpenRouter”标签（轻型模式）"></p>
-<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/providers-tab-dark.png" alt="Hugging Face 模型页面上的“提供商”选项卡，列出每个提供商的输入价格、输出价格、速度和正常运行时间，并带有“由 OpenRouter 提供支持”标签（深色模式）"></p>
-<p>目前，来自 38 个实验室的 160 个模型可以通过这种方式获得，这是 OpenRouter 服务的每个模型在 Hub 上都有一个页面。其中包括开发人员在 OpenRouter 上最常使用的开放权重模型，其中开放权重模型在 10 月份承载了<a href="https://openrouter.ai/data/october-2026">约 70% 的付费代币</a>：</p>
-<ul><li>DeepSeek V4.1 闪存</li><li>MoonshotAI Kimi K3.1 Pro 和 Kimi K3</li><li>Z.ai GLM 5.3 和 GLM 5.3 闪存</li><li>Qwen3.8 27B</li><li>MiniMax M3.1 闪光灯</li><li>小米 MiMo-V2.6-Flash</li><li>NVIDIA Nemotron 3 Ultra</li><li>OpenAI gpt-oss-120b</li></ul>
-<h2>您的痕迹可以存在于 Hub 上</h2>
-<p>添加 Hugging Face Storage Buckets 作为广播目标（处于测试阶段），OpenRouter 将每个请求作为 JSON 文件发送到您拥有的存储桶。每个文件都保存输入消息、模型的输出、令牌计数和成本。图像和其他媒体被排除在外。</p>
-<p>这是评估集或开放权重模型微调运行的原材料。您可以按日期或 API 密钥组织文件。</p>
-<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/storage-buckets-destination.png" alt="OpenRouter 可观测性设置中的新 Hugging Face Storage Buckets 目标表单，其中包含命名空间、存储桶名称、访问密钥 ID 和秘密访问密钥字段。"></p>
-<h2>开始吧</h2>
-<p>Hugging Face上：</p>
-<ul><li>使用“调用推理提供商”权限在 <a href="https://hf.co/settings/tokens">hf.co/settings/tokens</a> 创建令牌。</li><li>在 Hub 上打开任何支持型号的页面。在那里与它聊天，或者单击“查看代码”以了解您的代码或编码代理的设置步骤，包括 Claude Code、Codex、OpenCode、Pi 和 Hermes Agent。</li><li>要选择哪些提供商可以满足您的请求，请转到 Hugging Face 设置中的 <a href="https://huggingface.co/settings/inference-providers">推理提供商</a>。</li></ul>
-<p>要将跟踪发送到存储桶：</p>
-<ul><li>在Hugging Face上创建一个存储桶。</li><li>创建具有写入权限的访问令牌并从中生成 S3 凭证。</li><li>在 OpenRouter 中，进入【设置 &gt; 可观察性】(https://openrouter.ai/settings/observability)，打开广播，然后打开Hugging Face存储桶。</li><li>输入您的命名空间、存储桶名称、访问密钥 ID 和秘密访问密钥。诸如“{apiKeyName}/{date}”之类的路径模板是可选的。</li><li>单击“测试连接”，然后保存。</li></ul>
-<p><a href="https://openrouter.ai/docs/guides/features/broadcast/hugging-face">完整设置指南</a>涵盖了路径模板和跟踪文件格式。</p>
-<p><a href="https://huggingface.co/playground">在 Hugging Face Playground 中尝试模型</a>，或<a href="https://openrouter.ai/docs/guides/features/broadcast/hugging-face">将痕迹发送到存储桶</a>。</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h1>OpenRouter 现在为 Hugging Face 提供推理支持</h1>
+<p>Sasha Blumenfeld ·11/16/2026</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers.jpg" alt="OpenRouter 现在为 Hugging Face 提供推理支持"><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers-dark.jpg" alt="OpenRouter 现在为 Hugging Face 提供推理支持"></p>
+<p>我们打造 OpenRouter，是为了让开发者通过一个 API 就能触达众多模型与提供商，为每个任务选用最合适的模型，并且可以指望它稳定响应。从今天起，这一点也覆盖所有在 Hugging Face 上构建的开发者。Hugging Face Inference Providers 上的聊天模型现在通过 OpenRouter 运行，并沿用 OpenRouter 客户已经依赖的那套跨提供商路由。</p>
+<p>这次集成也是双向的。OpenRouter 现在可以把每个请求的 trace 发送到你自己的 Hugging Face Storage Bucket，这样真实流量里的 prompt 和响应，就和你用来评估、微调模型的模型与数据集放在了一起。<a href="https://openrouter.ai/docs/guides/features/broadcast/hugging-face">设置指南</a>里有具体步骤。</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/inference-widget.gif" alt="Hugging Face 模型页面上的 Inference Providers 小部件正在回答一条聊天消息，带有 Powered by OpenRouter 标签"></p>
+<h2>在 Hugging Face 上你能得到什么</h2>
+<p>Hugging Face 上的许多聊天模型都由不止一个提供商提供服务。OpenRouter 的提供商路由现在为 Hugging Face Inference Providers 的路由提供支持，它会根据实时价格、速度和可靠性为每个请求挑选提供商。你无需做任何配置，现有的 Hugging Face token 和代码照常可用。</p>
+<p>你还能获得自动故障转移。如果某个提供商变慢或开始出错，请求会转到其他提供商，直到它恢复。如果某个提供商返回错误，请求会在同一次调用内交给下一家提供商重试。</p>
+<p>我们在 10 月<a href="https://openrouter.ai/blog/how-we-rebuilt-provider-routing">重建这套路由</a>时，一次线上实验测得：命中容量错误的请求减少了 46%，首 token 时间快了 16.9%，吞吐量提高 16.3%，代价是每请求成本上升 6.0%。现在，所有在 Hugging Face 上构建的人都能用上同一套路由。</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/routing.gif" alt="Hugging Face 的一张示意图：来自你应用的请求发往 router.huggingface.co，OpenRouter 根据实测的价格、速度和可靠性从四个提供商中选一个，并提供 default、cheapest、fastest 三种路由选项（浅色模式）"></p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/routing-dark.gif" alt="Hugging Face 的一张示意图：来自你应用的请求发往 router.huggingface.co，OpenRouter 根据实测的价格、速度和可靠性从四个提供商中选一个，并提供 default、cheapest、fastest 三种路由选项（深色模式）"></p>
+<p>权衡的主动权仍在你手里。在模型 ID 后加后缀，比如 <code>:fastest</code>、<code>:cheapest</code> 或某个提供商的名字，就能告诉 OpenRouter 优先考虑什么；请求既可以通过 OpenAI 的 Chat Completions 和 Responses API 发出，也可以走 Anthropic 的 Messages API。同一段对话还会始终留在持有其 prompt cache 的提供商上。</p>
+<p>每个模型页面都新增了一个 Providers 标签页，列出每个提供商的实时价格、速度和正常运行时间。你可以查看自己在各提供商上的花费，也可以关掉任何不想用的提供商。</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/providers-tab.png" alt="Hugging Face 模型页面上的 Providers 标签页，列出每个提供商的输入价格、输出价格、速度和正常运行时间，带有 Powered by OpenRouter 标签（浅色模式）"></p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/providers-tab-dark.png" alt="Hugging Face 模型页面上的 Providers 标签页，列出每个提供商的输入价格、输出价格、速度和正常运行时间，带有 Powered by OpenRouter 标签（深色模式）"></p>
+<p>今天通过这种方式可用的有来自 38 个实验室的 160 个模型，也就是 OpenRouter 所服务、且在 Hub 上有页面的全部模型。其中包括开发者在 OpenRouter 上最常用的 open-weight 模型——10 月，open-weight 模型承载了<a href="https://openrouter.ai/data/october-2026">约 70% 的付费 token</a>：</p>
+<ul><li>DeepSeek V4.1 Flash</li><li>MoonshotAI Kimi K3.1 Pro 和 Kimi K3</li><li>Z.ai GLM 5.3 和 GLM 5.3 Flash</li><li>Qwen3.8 27B</li><li>MiniMax M3.1 Flash</li><li>Xiaomi MiMo-V2.6-Flash</li><li>NVIDIA Nemotron 3 Ultra</li><li>OpenAI gpt-oss-120b</li></ul>
+<h2>你的 trace 可以存放在 Hub 上</h2>
+<p>把 Hugging Face Storage Buckets 添加为 Broadcast 目的地（目前处于 beta），OpenRouter 就会把每个请求以 JSON 文件的形式发到你自己拥有的 bucket。每个文件包含输入消息、模型的输出、token 数量和成本。图片及其他媒体不会包含在内。</p>
+<p>这是构建评测集、或在 open-weight 模型上做微调的原材料。你可以按日期或按 API key 来组织文件。</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/storage-buckets-destination.png" alt="OpenRouter 的 Observability 设置里新增的 Hugging Face Storage Buckets 目的地表单，包含 namespace、bucket 名称、access key ID 和 secret access key 字段。"></p>
+<h2>开始使用</h2>
+<p>在 Hugging Face 上：</p>
+<ul><li>在 <a href="https://hf.co/settings/tokens">hf.co/settings/tokens</a> 创建一个 token，并勾选“Make calls to Inference Providers”权限。</li><li>在 Hub 上打开任意受支持模型的页面。可以直接在那里和模型聊天，也可以点击 View code，查看针对你的代码或编程 agent 的设置步骤，包括 Claude Code、Codex、OpenCode、Pi 和 Hermes Agent。</li><li>如果你想选择哪些提供商可以服务你的请求，请到 Hugging Face 设置的 <a href="https://huggingface.co/settings/inference-providers">Inference Providers</a> 中配置。</li></ul>
+<p>要把 trace 发送到 Storage Bucket：</p>
+<ul><li>在 Hugging Face 上创建一个 Storage Bucket。</li><li>创建一个带 Write 权限的 access token，并用它生成 S3 凭证。</li><li>在 OpenRouter 中进入 <a href="https://openrouter.ai/settings/observability">Settings &gt; Observability</a>，打开 Broadcast，再打开 Hugging Face Storage Buckets。</li><li>填入 namespace、bucket 名称、access key ID 和 secret access key。像 <code>{apiKeyName}/{date}</code> 这样的路径模板是可选项。</li><li>点击 Test Connection，然后保存。</li></ul>
+<p><a href="https://openrouter.ai/docs/guides/features/broadcast/hugging-face">完整设置指南</a>涵盖了路径模板和 trace 文件格式。</p>
+<p><a href="https://huggingface.co/playground">在 Hugging Face Playground 里试一个模型</a>，或者<a href="https://openrouter.ai/docs/guides/features/broadcast/hugging-face">把你的 trace 发到 Storage Bucket</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>RAG 中的 reranking：如何用 reranker 修复错误检索</title>

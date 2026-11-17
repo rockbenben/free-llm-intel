@@ -15,52 +15,52 @@
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Modular: Modular at LLVM Developers&apos; Meeting 2026</description>
       <content:encoded><![CDATA[<p>2026 年 11 月 16 日</p>
-<h1>2026 年 LLVM 开发者会议上的Modular</h1>
-<p>迈克尔·邓恩-奥康纳</p>
+<h1>Modular 在 LLVM Developers' Meeting 2026 上</h1>
+<p>Michael Dunn-OConnor</p>
 <p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aeb932a7c8fed75ff9caae5_LLVM-CoverImg.jpeg" alt=""></p>
 <p>社区</p>
-<p>Modular 最近在加利福尼亚州圣克拉拉举行的 <a href="https://llvm.swoogo.com/2026devmtg/agenda">2026 LLVM 开发者会议</a> 上度过了三天（10 月 26 日至 28 日），在那里我们举办了全天的 MAX 和 Mojo 研讨会，进行了有关设备图的技术演讲，并在走廊和我们的展位上与 LLVM 社区的人们进行了交谈。这是我们第一次从头到尾分享整个 Modular 堆栈的详细信息，<a href="https://www.modular.com/blog/max-license">所有源代码可供与会者遵循</a>。我们展示了 Mojo 语言的内部架构、如何跨堆栈使用 MLIR，以及如何使用图形编译器对 Mojo 进行分层等主题。这篇文章涵盖了我们介绍的内容、我们听到的内容以及我们未来的合作前景。</p>
-<p>Mojo 和 MAX 研讨会海报</p>
-<h2>研讨会：Mojo 内部深入探讨和路线图</h2>
-<p>10 月 26 日星期一，我们举办了“Mojo：内部深入探讨和路线图”，这是一个面向熟悉 LLVM 和 MLIR 的编译器工程师的全天会议。目标是向观众提供 Mojo 构建方式的工作图，从编译器和类型系统到 GPU 后端和标准库。尽管有这个名字，但这不仅仅是 Mojo 上的一次会议。我们在 Mojo 提供的基础上构建了 MAX，因此我们还介绍了 MAX 如何针对新的加速器硬件，以及它如何为复杂的 AI 模型编译和优化计算图。 <a href="https://www.modular.com/blog/max-license">新提供的源代码</a> MAX 让我们首次展示了整个 Modular 堆栈如何协同工作。</p>
-<p>Mojo 是基于 MLIR（<a href="https://mlir.llvm.org/">LLVM 的一个子项目</a>）构建的，因此活跃用户和贡献者对这种语言有独特的看法，尽管许多人对 Mojo 和 MAX 是陌生的。与一般观众相比，我们能够更深入地了解 Mojo 和 MAX 的内部结构。不幸的是，LLVM 研讨会没有记录，但幻灯片如下。</p>
-<h3>每个演讲涵盖的内容</h3>
-<ul><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-LLVM-Ecosystem.pdf">Mojo 在 LLVM 生态系统中的地位</a><strong>.</strong> Billy Zhu、Lukas Hermann 和 Weiwei Chen 将 Mojo 定义为加速器 MLIR 上面向用户的层，其中硬件专业化由领域专家的库执行可以编写，而不是锁定在编译器或供应商二进制文件中。 Mojo 为程序员提供了直接 MLIR 和 LLVM IR 访问的全部功能，充当 AI 的统一 LLVM 风格层。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Compiler-Architecture.pdf">Mojo 编译器架构概述</a><strong>.</strong> Billy Zhu 和 Weiwei Chen 深入研究了 Mojo 编译器基于 MLIR 的独特设计。他们讨论了 Mojo 解析器如何在没有 AST 的情况下直接发出参数化 MLIR，并延迟解析声明。他们还介绍了阐述器如何异步具体化通用代码，以及插件系统如何允许在不分叉整个编译器的情况下添加新的后端。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Making-New-Hardware-Boring.pdf">插件架构：将编译器和 SDK 与特定于硬件的部分分离</a><strong>.</strong> Connor Gray 展示了 Modular 如何通过可编程插件创建可移植且高性能的 AI 堆栈。任何人都可以通过实现简单的 Mojo <code>PluginHooks</code> 和 <code>MaxPluginHooks</code> 特征来扩展标准库和 MAX 加速器库，为新硬件提供优化支持。这些插件非常简洁，Qualcomm Cloud AI 100的后端只有263行。完整的插件架构将使插件能够将整个Modular堆栈引入新硬件，这是<a href="https://www.modular.com/alliance">Modular硬件联盟</a>的关键技术推动者。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Ownership.pdf">价值所有权、生命周期和起源：Mojo 的内存安全模型</a><strong>.</strong> Chris Lattner 解释了 Mojo 起源系统的优点：无需垃圾收集器的内存安全、系统级控制以及在需要时逃逸到不安全的 API。一般来说，程序员在定义返回引用的 API 之前不必考虑引用。编译器检查生命周期并在最后一次使用后立即销毁每个值，这提供了更小的捕获集、更多的尾部调用和复制到移动优化，以及与类型系统的其余部分组合的线性类型。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-How-Mojo-Supports-Non-LLVM-Back-Ends.pdf">Mojo 如何支持非 LLVM 后端（TPU 和 Trainium）</a><strong>.</strong> Kolya Panchenko 解释了为什么 TPU 和 Trainium 是难以通用的硬件后端语言。他们期望类型化、平铺式、结构化的代码，而 Mojo 没有“memref”类型。第一个里程碑是用 Mojo 编写的矢量添加，可编译为 TPU 的 Mosaic MLIR。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Graph-Compiler.pdf">MAX 图形编译器和内核融合背后的 MLIR 方言</a><strong>.</strong> Feras Bouulala 在整个 MAX 管道中演示了 RMS 范数示例。一路上，他展示了每个阶段应用的优化以及使 MAX 在模型调试方面脱颖而出的功能，包括 Python 堆栈跟踪和跟踪。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-How-We-Write-Mojo-in-Mojo.pdf">我们如何在 Mojo 中编写 Mojo</a><strong>.</strong> Joe Loser 和 Nathan Ward 在 MLIR 中从头开始构建了一个“Int”，然后展示了如何以相同的方式构建 Mojo 标准库中的类型。一些叶子类型包装 MLIR（如 Bool、SIMD 和 Pointer），然后使用这些叶子在 Mojo 中构建其他类型。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Metaprogramming-Magic.pdf">案例研究：抽象硬件细节的元编程</a><strong>.</strong> Kern Handa 描述了在 64 位主机后面启动 32 位设备。该案例研究详细介绍了三个问题（固定的 C 入口点、将参数打包到灵活的数组中以及序列化闭包），每个问题都通过 Mojo 库代码解决。克恩 (Kern) 演示了如何开发加速器主要是图书馆的工作。</li></ul>
-<h2>技术讲座：超越记录和重放</h2>
-<p>10 月 28 日星期三，我们图形执行团队的 Spenser Bauman 介绍了 <a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Roadmap-Compiler-first-device-graph-synthesis.pdf">超越记录和重播</a>，这是一个在编译器中构建设备图的案例，例如里面的例子MAX，而不是在运行时捕获它们。如果您不熟悉，CUDA 和 HIP（以及其他加速器）都提供了一种将操作图发送到加速器的方法，而不是单独发送每个操作。</p>
-<p>随着 GPU 变得越来越快，CPU 到加速器的通信成本也会增加，直到占用大部分推理时间。设备图通过立即向设备提交整个工作序列来解决这个问题。 MAX 使用它们，每个广泛使用的服务堆栈也是如此。构建命令的通常方法是记录和重放：在运行时捕获命令流，然后重放它。 CUDA 和 HIP 都提供此功能。</p>
-<p>斯宾塞指出了这种方法的两个问题：</p>
-<ul><li>记录和重放将复杂性分散到图形执行器、异步运行时、内存池、内核和驱动程序中。</li><li>这取决于并非每个供应商都提供的捕获模式。一些加速器公开了设备图或命令缓冲区构造 API，但没有等效的记录和重放，这使得它们超出了基于捕获的堆栈的范围。</li></ul>
-<p>Modular 正在寻求的替代方案是使用图形编译器直接构建这些设备图。 MAX 中的图形编译器已经知道最终设备图形的基本结构，而不是捕获然后重放图形。图形编译器可以构建设备图并发出对目标的图形构建 API 的直接调用。演讲讨论了该设计的四个部分：</p>
-<ul><li>内核如何声明其设备图功能。</li><li>前端 IR 标记具有设备图功能的区域。</li><li>对设备图进行建模的中端方言和操作。</li><li>用于使用它们的 Mojo 级 API。</li></ul>
-<p>该方法已经在实践中发挥作用。生产 Gemma 4 模型现在通过一个或多个 GPU 上的设备图合成来端到端运行，并且单个模型可以包含多个设备图区域。直接构建图表比记录图表快约 40%。 CUDA、HIP 和 Qualcomm AI100 都有“DeviceGraphBuilder”实现，所有这些都位于一个接口后面，因此相同的方法可以扩展到新的目标。</p>
-<h2>接下来会发生什么</h2>
-<p>研讨会以 Mojo 路线图和贡献邀请结束。</p>
-<p><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Roadmap.pdf"><strong>Roadmap</strong></a><strong>.</strong> Denis Gurchenkov 概述了 Mojo 语言功能对于内核编程的近期优先级（枚举和模式匹配、更多编译时元编程、地址空间等硬件概念的语法）以及长期目标到 2027 年，开发人员将能够编写高性能 CPU 代码，并进行必要的异步/等待、动态调度、线程和网络开发。在编译器方面，计划是提供 GPU 和 NPU 后端源，支持可插拔 MLIR 和 LLVM 后端，启用 WASM 后端，并继续提高编译速度。工具和社区项目包括自动 Mojo 和 C 互操作性、调试器、测试框架、基于 pixi 构建的包管理器以及基于 Bazel 的构建系统。</p>
-<p><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Modulars-Open-Source-Journey.pdf">Modular 的开源之旅</a><strong>.</strong> Brad Larson 和 Joe Loser 追溯了 Mojo 和 MAX 三年的渐进开源历程，从 [2017 年 3 月的 Mojo 标准库] 开始。 2024 年，](https://www.modular.com/blog/the-next-big-step-in-mojo-open-source)一直到几周前<a href="https://www.modular.com/blog/mojo-open-source">开源 Mojo</a> 和<a href="https://www.modular.com/blog/max-license">使 MAX 完全可用</a>。整个Modular堆栈现在是从公共“modular/modular”存储库（现在拥有超过 30,000 个 GitHub star！）构建的，这是一个非常令人兴奋的里程碑。我们在开源 Mojo 和 MAX 的过程中也学到了很多经验教训，我们将在本次演示中对此进行介绍。</p>
-<p>随着 Mojo 和 MAX 的所有源代码现已公开，该团队给与会者留下了一条信息：请<a href="https://github.com/modular/modular">克隆</a><a href="https://github.com/modular/modular"><code>modular/modular</code></a><a href="https://github.com/modular/modular">存储库</a>，从源代码构建 Mojo 和 MAX，并尝试扩展平台。查看<a href="https://github.com/modular/modular/tree/main/Mojo/docs/contributing">Mojo 的贡献者指南</a> 以及<a href="https://github.com/modular/modular/tree/main/max/docs/contributing">MAX 的新添加指南</a>，并了解在何处以及如何对两者进行上游修复和添加。</p>
-<p>Modular（和高通）是 LLVM 基金会活动的长期支持者，对此感到自豪，今年尤其特别：我们终于让每个人都回到了我们的工作幕后，并很高兴看到社区将构建什么。</p>
-<h2>阅读《Modular》的更多内容</h2>
-<p>查看所有博客</p>
+<p>Modular 最近在加州圣克拉拉参加了为期三天的 <a href="https://llvm.swoogo.com/2026devmtg/agenda">2026 LLVM Developers' Meeting</a>（10 月 26 日至 28 日）：我们办了一场全天的 MAX 和 Mojo 工作坊，做了一场关于 device graph 的技术演讲，还在走廊里、展台前和 LLVM 社区的朋友们聊了很多。这是我们第一次能完整分享整个 Modular 技术栈的细节，与会者可以<a href="https://www.modular.com/blog/max-license">拿到全部源码跟着看</a>。我们展示了 Mojo 语言的内部架构、我们如何在整个技术栈中使用 MLIR，以及我们如何用图编译器把 Mojo 分层组合起来，等等。本文介绍我们讲了什么、听到了什么，以及我们看到了哪些后续合作的机会。</p>
+<p>Mojo 和 MAX 工作坊海报</p>
+<h2>工作坊：Mojo 内部机制深入解析与路线图</h2>
+<p>10 月 26 日（周一），我们举办了“Mojo：Internals Deep Dive and Roadmap”全天专场，面向熟悉 LLVM 和 MLIR 的编译器工程师。目标是让这批听众对 Mojo 是如何构建起来的有一张可用的地图：从编译器和类型系统，到 GPU 后端和标准库。这场专场尽管名字里只有 Mojo，却并不只讲 Mojo。MAX 构建在 Mojo 提供的基础之上，所以我们也讲了 MAX 如何支持新的加速器硬件，以及它如何为复杂的 AI 模型编译和优化计算图。<a href="https://www.modular.com/blog/max-license">刚刚开放源码</a>的 MAX 让我们第一次能够展示整个 Modular 技术栈是如何协同工作的。</p>
+<p>Mojo 构建在 MLIR（<a href="https://mlir.llvm.org/">LLVM 的子项目</a>）之上，因此这批活跃用户和贡献者对这门语言有着独特的视角，尽管其中很多人是第一次接触 Mojo 和 MAX。我们得以比面向普通听众时更深入地讲解 Mojo 和 MAX 的内部机制。遗憾的是，LLVM 工作坊不做录像，不过幻灯片附在下面。</p>
+<h3>各场演讲的内容</h3>
+<ul><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-LLVM-Ecosystem.pdf">Mojo 在 LLVM 生态中的位置</a><strong>。</strong>Billy Zhu、Lukas Hermann 和 Weiwei Chen 把 Mojo 定位为加速器场景下 MLIR 之上的用户层：硬件特化由领域专家能够编写的库来完成，而不是锁死在编译器或厂商的二进制里。Mojo 赋予程序员直接访问 MLIR 和 LLVM IR 的全部能力，充当面向 AI 的统一 LLVM 风格层。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Compiler-Architecture.pdf">Mojo 编译器架构概览</a><strong>。</strong>Billy Zhu 和 Weiwei Chen 深入讲解了 Mojo 编译器独特的、基于 MLIR 的设计。他们讨论了 Mojo 解析器如何直接产出参数化 MLIR、完全没有 AST，以及如何惰性解析声明。他们还介绍了 elaborator 如何异步地把泛型代码具体化，以及插件系统如何让新增后端无需 fork 整个编译器。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Making-New-Hardware-Boring.pdf">插件架构：把编译器和 SDK 与硬件相关的部分分开</a><strong>。</strong>Connor Gray 展示了 Modular 如何通过可编程插件构建一个可移植、高性能的 AI 技术栈。任何人都可以通过实现简单的 Mojo <code>PluginHooks</code> 和 <code>MaxPluginHooks</code> trait，为标准库和 MAX 加速器库加上对新硬件的优化支持。这些插件很精炼，Qualcomm Cloud AI 100 的后端只有 263 行。完整的插件架构将让插件能把整个 Modular 技术栈带到新硬件上，这是 <a href="https://www.modular.com/alliance">Modular 硬件联盟</a>的关键技术使能项。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Ownership.pdf">值的所有权、生命周期与 origin：Mojo 的内存安全模型</a><strong>。</strong>Chris Lattner 解释了 Mojo 的 origin 体系带来的好处：不靠垃圾回收也能有内存安全、系统级控制能力，以及在需要时可以逃生到 unsafe API。一般来说，程序员直到要定义返回引用的 API 时才需要操心引用。编译器会检查生命周期，并在每个值最后一次使用之后立刻销毁它，由此带来更小的捕获集合、更多的尾调用与 copy-to-move 优化，以及与类型系统其余部分可组合的线性类型。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-How-Mojo-Supports-Non-LLVM-Back-Ends.pdf">Mojo 如何支持非 LLVM 后端（TPU 和 Trainium）</a><strong>。</strong>Kolya Panchenko 解释了为什么 TPU 和 Trainium 对一门通用语言来说是很棘手的硬件后端。它们要求类型化、分块（tiled）、结构化的代码，而 Mojo 没有 <code>memref</code> 类型。第一个里程碑是用 Mojo 写一个 vector add，并编译成给 TPU 用的 Mosaic MLIR。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Graph-Compiler.pdf">MAX 图编译器与 kernel 融合背后的 MLIR dialect</a><strong>。</strong>Feras Boulala 用一个 RMS-norm 的例子走完了整个 MAX 流水线。沿途他展示了各个阶段所应用的优化，以及让 MAX 在调试模型时与众不同的特性，包括 Python 堆栈跟踪和 tracing。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-How-We-Write-Mojo-in-Mojo.pdf">我们如何用 Mojo 写 Mojo</a><strong>。</strong>Joe Loser 和 Nathan Ward 在 MLIR 里从零构建了一个 <code>Int</code>，然后展示了 Mojo 标准库里的类型是如何以同样的方式构建的。少数叶子类型包装 MLIR（比如 Bool、SIMD 和 Pointer），其余类型则用这些叶子在 Mojo 中构建。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Metaprogramming-Magic.pdf">案例研究：把硬件细节抽象掉的元编程</a><strong>。</strong>Kern Handa 讲述了在 64 位主机背后 bring up 一块 32 位设备的过程。这个案例拆解了三个问题（固定的 C 入口点、把参数打包进 flexible array、以及序列化闭包），每个都用 Mojo 库代码解决。Kern 演示了：bring up 一个加速器，大部分工作其实是库的工作。</li></ul>
+<h2>技术演讲：超越 Record &amp; Replay</h2>
+<p>10 月 28 日（周三），我们 Graph Execution 团队的 Spenser Bauman 作了题为<a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Roadmap-Compiler-first-device-graph-synthesis.pdf">超越 Record &amp; Replay</a>的演讲，主张在编译器中构建设备图（比如 MAX 内部的那个），而不是在运行时捕获它们。如果你还不熟悉：CUDA 和 HIP（以及其他加速器）都提供了一种手段，可以把一整张操作图发给加速器，而不是逐个发送每个操作。</p>
+<p>随着 GPU 越来越快，CPU 与加速器之间的通信开销会不断增长，直到占掉推理时间的很大一部分。设备图通过一次性把整个工作序列提交给设备来解决这个问题。MAX 用设备图，所有广泛使用的推理服务栈也都用。构建设备图的常见做法是 record and replay：在运行时捕获一串命令流，然后回放。CUDA 和 HIP 都提供了这种能力。</p>
+<p>Spenser 指出了这种做法存在的两个问题：</p>
+<ul><li>record and replay 会把复杂度摊到图执行器、异步运行时、内存池、kernel 和驱动上。</li><li>它依赖一种并非所有厂商都会提供的捕获模式。有些加速器提供了构建设备图或 command buffer 的 API，却没有等价的 record and replay 能力，这就把它们挡在了基于捕获的技术栈之外。</li></ul>
+<p>Modular 正在走的另一条路，是用图编译器直接构建这些设备图。图编译器无需先捕获再回放：MAX 内部的图编译器本来就掌握最终设备图的基本结构，可以直接构建设备图，并向目标平台的图构建 API 发出直接调用。演讲梳理了这个设计的四个部分：</p>
+<ul><li>kernel 如何声明自己具备的设备图能力。</li><li>标记出具备设备图能力的区域的前端 IR。</li><li>用来对设备图建模的中端 dialect 与操作。</li><li>在 Mojo 层面使用这些能力的 API。</li></ul>
+<p>这套方案已经在实践中跑通了。一个生产环境的 Gemma 4 模型现在可以在一个或多个 GPU 上、端到端地走设备图合成流程运行，单个模型也可以包含多个设备图区域。直接构建图比录制图快约 40%。CUDA、HIP 和 Qualcomm AI100 都已有 <code>DeviceGraphBuilder</code> 实现，统一在同一个接口之后，因此同样的方案可以扩展到新的目标平台。</p>
+<h2>接下来是什么</h2>
+<p>工作坊以 Mojo 路线图和对大家参与贡献的邀请收尾。</p>
+<p><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Roadmap.pdf"><strong>路线图</strong></a><strong>。</strong>Denis Gurchenkov 概述了近期的重点：面向 kernel 编程的 Mojo 语言特性（枚举与模式匹配、更多编译期元编程、地址空间等硬件概念对应的语法），以及 2027 年更长远的目标——触达编写高性能 CPU 代码的开发者，为此需要开发 async/await、动态分发、线程和网络能力。在编译器一侧，计划是让 GPU 和 NPU 后端开放源码、支持可插拔的 MLIR 和 LLVM 后端、启用 WASM 后端，并持续提升编译速度。工具与社区方面的项目包括 Mojo 与 C 的自动互操作、调试器、测试框架、基于 pixi 的包管理器，以及基于 Bazel 的构建系统。</p>
+<p><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Modulars-Open-Source-Journey.pdf"><strong>Modular 的开源之旅</strong></a><strong>。</strong>Brad Larson 和 Joe Loser 回顾了三年间 Mojo 和 MAX 逐步开源的过程：从 <a href="https://www.modular.com/blog/the-next-big-step-in-mojo-open-source">2024 年 3 月的 Mojo 标准库</a>，一直到几周前的<a href="https://www.modular.com/blog/mojo-open-source">开源 Mojo</a> 和<a href="https://www.modular.com/blog/max-license">让 MAX 完全开放源码</a>。现在整个 Modular 技术栈都可以从公开的 <code>modular/modular</code> 仓库构建（该仓库现在已有超过 30,000 个 GitHub star！），这是一个极其令人振奋的里程碑。在 Mojo 和 MAX 开源的过程中，我们也吸取了很多教训，这次演讲里都有涉及。</p>
+<p>既然 Mojo 和 MAX 的全部源码现在都已公开，团队留给与会者的信息只有一句话：请<a href="https://github.com/modular/modular">克隆</a><a href="https://github.com/modular/modular"><code>modular/modular</code></a><a href="https://github.com/modular/modular"> 仓库</a>，从源码构建 Mojo 和 MAX，并试着扩展这个平台。也请看看 <a href="https://github.com/modular/modular/tree/main/Mojo/docs/contributing">Mojo 的贡献者指南</a>，以及<a href="https://github.com/modular/modular/tree/main/max/docs/contributing">新增的 MAX 指南</a>，了解你可以从哪些地方、以什么方式把两者的修复与新增内容贡献回上游。</p>
+<p>Modular（以及 Qualcomm）是 LLVM Foundation 活动的长期支持者，对此我们深感自豪；今年尤其特别：我们终于把幕后的工作完整展示给了大家，也很期待看到社区将构建出什么。</p>
+<h2>更多来自 Modular 的文章</h2>
+<p>查看全部博客</p>
 <p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aeb932a7c8fed75ff9caae5_LLVM-CoverImg.jpeg" alt=""></p>
-<p>LLVM 开发会议 2026：代理时代的耐用基础设施</p>
+<p>LLVM Dev Meeting 2026：agentic 时代的持久基础设施</p>
 <p>2026 年 11 月 4 日</p>
 <p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aa8a1beed382b82d8230724_communitybp.jpeg" alt=""></p>
-<p>培育Modular生态系统：Modular社区资助计划</p>
+<p>培育 Modular 生态：Modular 社区资助计划</p>
 <p>2026 年 10 月 9 日</p>
 <p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a29a395aea53c6eac963763_MAXMojo-Hyperdrive-Extend_%25281%2529.png" alt=""></p>
-<p>Modverse #55：Mojo 1.0 Beta、社区 Mojo 库和由 MAX 提供支持的实时患者对话</p>
+<p>Modverse #55：Mojo 1.0 Beta、社区 Mojo 库，以及由 MAX 驱动的实时患者对话</p>
 <p>2026 年 6 月 10 日</p>
-<p>用Modular构建人工智能的未来</p>
-<p>开始使用 - 免费</p>
-<p>查看版本</p>
-<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="金发的人使用带有 Apple 徽标的笔记本电脑。">立即注册立即注册我们的云平台即可轻松开始。<a href="https://docs.modular.com/max/get-started">签名上</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="带有黑色手柄和圆形透明镜片的放大镜表情符号。">浏览打开的模型浏览我们的模型目录，或部署您自己的自定义模型<a href="https://www.modular.com/models">浏览模型</a></li></ul>
-<h2>订阅我们的时事通讯</h2>
-<p>将我们所有的最新新闻、公告和更新直接发送到您的收件箱。随时取消订阅。</p>
-<p>感谢您订阅我们的时事通讯！ 🚀</p>
-<p>谢谢你，</p>
-<p>Modular销售团队</p>
-<p>哎呀！提交表单时出现问题。</p>]]></content:encoded>
+<p>与 Modular 一起构建 AI 的未来</p>
+<p>免费开始</p>
+<p>查看各版本</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="一位金发的人正在使用一台带 Apple 标志的笔记本电脑。">今天就注册立即注册我们的云平台，轻松上手。<a href="https://docs.modular.com/max/get-started">注册</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="一个黑色手柄、圆形透明镜片的放大镜 emoji。">浏览开放模型浏览我们的模型目录，或部署你自己的自定义模型<a href="https://www.modular.com/models">浏览模型</a></li></ul>
+<h2>订阅我们的 newsletter</h2>
+<p>获取我们最新的新闻、公告和动态，直接送达你的收件箱。可随时退订。</p>
+<p>感谢订阅我们的 newsletter！🚀</p>
+<p>谢谢，</p>
+<p>Modular 销售团队</p>
+<p>哎呀！提交表单时出了点问题。</p>]]></content:encoded>
     </item>
     <item>
       <title>LLVM 开发者大会 2026：agentic 时代的持久基础设施</title>
