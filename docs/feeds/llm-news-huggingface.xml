@@ -7,7 +7,98 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Hugging Face 与 OpenRouter 联手，让开放权重模型更易运行</title>
+      <link>https://huggingface.co/blog/openrouter</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/openrouter</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Hugging Face and OpenRouter join forces to make open-weight models easy to run</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>Hugging Face 和 OpenRouter 联手使开放重量模型易于运行</h1>
+<p>发表于 2026 年 11 月 16 日</p>
+<p>GitHub 上更新</p>
+<p>42</p>
+<ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt="Célina Hanouti 的头像"></a></p>
+<p>塞琳娜·哈努蒂</p>
+<p>塞利纳</p>
+<p><a href="https://huggingface.co/victor"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt="Victor Mustar 的头像"></a></p>
+<p>维克多·穆斯塔尔</p>
+<p>胜利者</p>
+<p><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt="Bertrand Chevrier 的头像"></a></p>
+<p>伯特兰·谢弗里尔</p>
+<p>克兰普</p>
+<p><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt="Lucain Pouget 的头像"></a></p>
+<p>卢凯恩·普吉特</p>
+<p>沃普林</p>
+<p><a href="https://huggingface.co/pierric"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1624630689857-5e67de201009063689407481.jpeg" alt="Pierric Cistac 的头像"></a></p>
+<p>皮尔里克·西斯塔克</p>
+<p>皮尔里克</p>
+<p><a href="https://huggingface.co/coyotte508"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61d2f90c3c2083e1c08af22d/jn21aKijwBnopk7aUJUkq.png" alt="Eliott Coyac 的头像"></a></p>
+<p>艾略特·科亚克</p>
+<p>土狼508</p>
+<p><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt="Julien Chaumond 的头像"></a></p>
+<p>朱利安·肖蒙</p>
+<p>朱利安-C</p>
+<p>Hugging Face 和 OpenRouter 正在合作，使开放重量模型易于运行。每个主要的开放权重版本都已经在 Hugging Face Hub 上发布，并且 <a href="https://openrouter.ai">OpenRouter</a> 大规模地为这些模型提供服务，根据每个提供者的实时测量在 80 多个提供者之间路由每个请求。总之，提供者所服务的 Hub 上的每个开放权重模型都可以通过相同的 API 使用您的 Hugging Face 令牌进行调用，并为每个请求选择最佳的提供者。</p>
+<p>今天，我们将 <a href="https://huggingface.co/docs/inference-providers">推理提供程序</a> 从我们自己的自定义路由器切换到 OpenRouter 的。对语言模型的请求现在通过 OpenRouter，它根据实时价格、速度和可靠性为每次调用选择最佳的提供商，并在第一个提供商失败时重试另一个提供商。您的代码保持不变。</p>
+<h2>使用您已经使用的工具运行它们</h2>
+<p>该路由器支持 OpenAI 的聊天完成和响应 API 以及 Anthropic 的消息 API，适用于每种聊天模型，无论其背后的提供商是谁。选择您的编码代理或 SDK 和模型，然后复制步骤，或复制整个设置作为代理的提示：</p>
+<p><a href="https://huggingface.co/docs/inference-providers/integrations/claude-code">Claude Code</a>、<a href="https://huggingface.co/docs/inference-providers/integrations/codex">Codex</a>、<a href="https://huggingface.co/docs/inference-providers/integrations/opencode">OpenCode</a>、 <a href="https://huggingface.co/docs/inference-providers/integrations/pi">Pi</a> 和 <a href="https://huggingface.co/docs/inference-providers/integrations/hermes-agent">Hermes Agent</a></p>
+<p>相同的 Hugging Face 令牌还为您提供了<a href="https://huggingface.co/storage">存储桶</a>的存储、<a href="https://huggingface.co/docs/hub/jobs-overview">作业</a>的计算以及<a href="https://huggingface.co/docs/inference-endpoints">推理端点</a>的专用推理。 PRO、团队和企业计划包括用于计算和推理的每月积分。</p>
+<h2>如何使用开放权重模型</h2>
+<p>在 OpenRouter 上，开放权重模型从 2025 年 10 月所服务代币的 26.8% 上升到 2026 年 9 月末的 71.7%，7 月份达到峰值 77.5%（<a href="https://openrouter.ai/blog/insights/open-weight-vs-lined-weight-models/">OpenRouter，2026 年 10 月</a>）。同一时期，每周开放式重量的交易量增长了 60 多倍，而封闭式重量的交易量几乎增长了十倍。本周，OpenRouter 上最常用的模型是开放权重模型 DeepSeek V4.1 Flash 1017，拥有 59.2 万亿代币（<a href="https://openrouter.ai/rankings">排名</a>）。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/open-weight-share@2x.png" alt="开放权重模型在 OpenRouter 上的代币份额，从 2025 年 10 月的 26.8% 上升到 2026 年 9 月的 71.7%"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/open-weight-share-dark@2x.png" alt="开放权重模型在 OpenRouter 上的代币份额OpenRouter，从 2025 年 10 月的 26.8% 增长到 2026 年 9 月的 71.7%"></p>
+<p>开放权重模型的平均成本大约低四倍：每百万个输入代币 0.28 美元，每百万个输出代币 1.62 美元，而封闭模型为 1.27 美元和 6.36 美元。</p>
+<p>在最严格的基准测试中，最好的开放重量模型仍然落后于最好的专有模型。在 <a href="https://artificialanalysis.ai/leaderboards/models">人工分析智能指数</a> 上，最好的开放权重模型 Kimi K3.1 Pro 得分为 46，Claude Fable 5.2 得分为 65，每项任务成本约为 1/7（3.68 美元对 26.54 美元）。对于很多工作负载来说，这种权衡是值得的。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/intelligence-vs-cost@2x.png" alt="针对每项任务成本的人工分析智能指数，针对顶级专有和开放权重模型"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/intelligence-vs-cost-dark@2x.png" alt="针对每项任务成本的人工分析智能指数，针对顶级专有和开放权重模型模型"></p>
+<h2>由 OpenRouter 提供支持的路由</h2>
+<p>OpenRouter 每月为超过 1000 万用户提供超过 800 万亿个代币，涵盖来自 80 多个提供商的 600 多个模型。其路由基于该流量中每个提供商的实时测量。</p>
+<p>OpenRouter 最近<a href="https://openrouter.ai/blog/announcements/how-we-rebuilt-provider-routing/">重建了其提供商路由</a>：它不再只查看最低标价，而是将每个请求发送给具有最佳价格、速度和可靠性组合的提供商。</p>
+<p>当某个提供程序速度变慢或开始失败时，流量会远离该提供程序直至其恢复，并且会在同一调用中的下一个最佳提供程序上重试失败的尝试。在 OpenRouter 的测量中，新路由将容量错误减少了 46%，并将首次令牌时间缩短了 16.9%，吞吐量提高了 16.3%。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/routing@2x.gif" alt="当第一个提供商受到速率限制时，默认在另一个提供商上重试路由，:cheapest 选择最低价格，:fastest 选择最高吞吐量"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/routing-dark@2x.gif" alt="当第一个提供商受到速率限制时，在另一个提供商上默认路由重试，:cheapest选择最低价格并：最快最高吞吐量"></p>
+<p>以前，推理提供程序为您的请求选择一个提供程序，如果失败则返回其错误。现在，该请求将在另一个提供商上重试。您仍然可以选择模型 ID 上带有后缀的策略或提供商：</p>
+<pre><code>zai-org/GLM-5.3            # default: best mix of price, speed and reliability
+zai-org/GLM-5.3:fastest    # highest throughput
+zai-org/GLM-5.3:cheapest   # lowest price
+zai-org/GLM-5.3:novita     # only Novita</code></pre>
+<p>路由也是缓存感知的：对话保留在保存其提示缓存的提供者上。为了使其明确，请在“X-HF-Session-Id”标头中为每个会话发送一个稳定的 UUID（请参阅<a href="https://huggingface.co/docs/inference-providers/prompt-caching">提示缓存指南</a>）。</p>
+<h2>定价</h2>
+<p>定价不会改变：您在 Hugging Face 账单上支付提供商的价格，并且 Hugging Face 不会在其之上添加标记。 PRO 用户每月获得 2 美元的积分，团队和企业组织每个席位获得 2 美元。有关详细信息，请参阅<a href="https://huggingface.co/docs/inference-providers/pricing">定价和计费</a>。</p>
+<h2>图像、视频和音频生成</h2>
+<p>图像、视频和音频生成继续像以前一样工作，直接通过 Hugging Face Inference Providers 进行，无需通过 OpenRouter。您可以继续使用相同的令牌和 API，并访问数以万计的 <a href="https://huggingface.co/models?inference_provider=all&amp;pipeline_tag=text-to-image&amp;other=lora">LoRA</a>。</p>
+<h2>查看您的请求去了哪里</h2>
+<p>在模特页面上，您可以立即在小部件中与模特聊天。两个新选项卡显示了其背后的内容：Providers 列出了 OpenRouter 可以将模型路由到的每个提供商，及其输入和输出价格、过去 24 小时内的速度和正常运行时间，Metrics 显示其中的最佳价格、吞吐量、第一个令牌的时间、上下文长度和正常运行时间：</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/widget-playground-3@2x.gif" alt="在模型页面小部件中与 Inkling-2-Small 聊天，打开其代码片段，然后打开其 Metrics 选项卡"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/widget-playground-3-dark@2x.gif" alt="在模型页面小部件中与 Inkling-2-Small 聊天，打开其代码片段，然后是“指标”选项卡"></p>
+<p>您的<a href="https://huggingface.co/settings/inference-providers/overview">使用情况概述</a> 按每个请求发送到的提供商细分了您的支出：</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/usage-by-provider@2x.png" alt="每日推理提供商支出，按提供商细分"> ![每日推理提供商支出，按提供商细分提供商]（https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/usage-by-provider-dark@2x.png）</p>
+<p>在您的<a href="https://huggingface.co/settings/inference-providers">设置</a>中，您可以关闭任何您不需要的提供程序：路由器永远不会向那里发送您的请求。组织具有相同的设置，并且它们适用于向组织计费的每个请求。</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/settings-providers@2x.png" alt="推理提供程序设置，每个提供程序都有一个切换"> ![推理提供程序设置，每个提供程序都有一个切换提供商]（https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/settings-providers-dark@2x.png）</p>
+<h2>重大更改：自定义提供程序密钥</h2>
+<p>对语言模型的请求现在通过 OpenRouter 进行，并向您的 Hugging Face 帐户或组织计费，因此您不能再将自己的 API 密钥用于具有这些模型的提供商。您仍然可以选择在模型 ID 上带有后缀的提供程序（“model:provider”），或者在您的设置中关闭提供程序，并且您的代码保持不变。图像和视频提供商的自定义密钥继续有效。</p>
+<h2>接下来是什么</h2>
+<p>这是我们与 OpenRouter 合作的第一步。下一篇：</p>
+<ul><li>将您的 OpenRouter 帐户连接到 Hugging Face。</li><li>更多任务通过 OpenRouter 路由。</li></ul>
+<p>尝试使用 <a href="https://huggingface.co/models?inference_provider=all&amp;sort=trending&amp;other=conversational">模型</a>，或阅读 <a href="https://huggingface.co/docs/inference-providers">推理提供程序文档</a> 来开始使用。</p>
+<p>我们博客的更多文章</p>
+<p>llmsinference-providersbaseten</p>
+<h2>Baseten Hugging Face推理提供商 🔥</h2>
+<ul><li><img src="https://huggingface.co/avatars/03669abbb72c99a299d0d24dae76ce43.svg" alt=""></li><li><img src="https://huggingface.co/avatars/4f997bf5afe1840c4c6e57319b0bed73.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1667348060565-noauth.png" alt=""></li><li><img src="https://huggingface.co/avatars/547c30b7a5a6d53ca44a8e5b7f3b5b56.svg" alt=""></li><li>+4</li></ul>
+<p>35</p>
+<p>2026 年 8 月 6 日</p>
+<p>llmsinference-providersdeepinfra</p>
+<h2>DeepInfra Hugging Face推理提供商 🔥</h2>
+<ul><li><img src="https://huggingface.co/avatars/a116dc7e8e87468cd68e8ff5d5086934.svg" alt=""></li><li><img src="https://huggingface.co/avatars/53ebdf207110b3b567c66daf03d2e60d.svg" alt=""></li><li><img src="https://huggingface.co/avatars/7e536331d27b29cb04b804a0b7a81d5e.svg" alt=""></li><li><img src="https://huggingface.co/avatars/671932199532656af4b26880565cd835.svg" alt=""></li><li>+4</li></ul>
+<p>15</p>
+<p>2026 年 4 月 29 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopenrouter">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fopenrouter">登录</a> 发表评论</p>
+<p>42</p>
+<ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pierrci"><img src="https://huggingface.co/avatars/d4cce894629554d9a10369ecc2a7de67.svg" alt=""></a></li><li><a href="https://huggingface.co/alrightjones"><img src="https://huggingface.co/avatars/347bb31f03574c50ba0376ecac86a511.svg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Gflorent"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620a77b7dbba8fc1fbb8bdb4/ZRW2pH9Iawj700OyLpJl8.png" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/abatuhanb"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/681a45f2212b9872c123ad4b/_aYKRcWJO0qIYV_sZFfDn.jpeg" alt=""></a></li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>使用 SimReady Assets 构建机器人拾放仿真</title>
       <link>https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</link>
@@ -7475,77 +7566,6 @@ out = pipe(prompt=prompt, generator=torch.Generator().manual_seed(0), output=[&q
 <h2>本文提到的数据集 1</h2>
 <h2>本文提到的 Spaces 2</h2>
 <h2>本文提到的合集 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音</title>
-      <link>https://huggingface.co/blog/ibm-granite/granite-switch-4-1</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-granite/granite-switch-4-1</guid>
-      <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
-<h1>Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音</h1>
-<p>企业  文章</p>
-<p>发布于 2026 年 10 月 15 日</p>
-<p>8</p>
-<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/0c302d25cdd0e4ac2e84c5ca197b28a7.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/IRENEKO"><img src="https://huggingface.co/avatars/f6a0ce5761e97dd44008d01c98f11ca9.svg" alt=""></a></li><li><a href="https://huggingface.co/nasrimfaume"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/r2HHnBRbZuc0ix0eNgyiH.png" alt=""></a></li><li><a href="https://huggingface.co/cosmojg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669946101720-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/1c1b540117a4580bdb169c9dbe9ffd01.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/1c1b540117a4580bdb169c9dbe9ffd01.svg" alt="Kate Soule's avatar"></a></p>
-<p>Kate Soule</p>
-<p>katesoule</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt="Subhajit Chaudhury's avatar"></a></p>
-<p>Subhajit Chaudhury</p>
-<p>subhajit1412</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/hen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1642069891298-60f58f250e0bc7f10bb020ad.jpeg" alt="Hendrik Strobelt's avatar"></a></p>
-<p>Hendrik Strobelt</p>
-<p>hen</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/0c302d25cdd0e4ac2e84c5ca197b28a7.svg" alt="Luis A Lastras's avatar"></a></p>
-<p>Luis A Lastras</p>
-<p>GrizleeBer</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p>去年春天推出的 <a href="https://github.com/generative-computing/granite-switch">Granite Switch</a> 项目让模型开发可以采用模块化的做法。如今 <strong>Granite Switch 4.1</strong> 模型配备了一个 Decision adapter 和 OpenASR leaderboard 上最快的 ASR 模型，可以在自然语言应答、通用与专门决策、以及语音转文本任务之间高效切换——全部来自一个托管的 endpoint。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/662836b742709fe826510597/LHBbw-MVVQgnYcpDK_DWC.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/662836b742709fe826510597/LHBbw-MVVQgnYcpDK_DWC.png" alt="granite_switch_adapter_swap"></a></p>
-<p>具体而言，<a href="https://huggingface.co/ibm-granite/granite-switch-4.1-8b">Granite-Switch-4.1-8B</a> 和 <a href="https://huggingface.co/ibm-granite/granite-switch-4.1-30b">-30B</a> 模型的配置包含：</p>
-<ul><li>一个用于通用决策的全新 <a href="https://huggingface.co/ibm-granite/granitelib-core-r1.0/blob/main/decision/README.md">Decision aLoRA</a>（例如 v1/systemone），</li><li>一个专门的 <a href="https://huggingface.co/ibm-granite/granitelib-guardian-r1.0/blob/main/guardian-core/README.md">Guardian aLoRA</a>，在与安全相关的决策任务上平均表现优于 Jev 1.13、Microsoft-Decision-1、GPT-Luna-Decisions 和 Clef-Flash，以及</li><li><a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">Granite-Speech-5.0-Turbo-CTC</a>，<a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">OpenASR Leaderboard</a> 上最快的 ASR 模型，为转写任务而内嵌。</li></ul>
-<p>这三项技术（连同底层的基座模型）被组合进同一个模型，它在 GPU 上占用的 VRAM 与基座模型单独存在时大致相同。这意味着用更少的 GPU 得到更多能力。</p>
-<p>而且由于 Switch adapters 是以缓存友好的 <a href="https://research.ibm.com/blog/inference-friendly-aloras-lora">Activated LoRAs</a> 形式构建的，由基座模型一次生成所产生的 KV cache 可以被其后任何基于 adapter 的决策复用。再叠加我们团队为加速低秩 adapter 推理而做的 <a href="https://github.com/generative-computing/granite-switch/blob/main/docs/SWITCH_KERNELS.md">近期 vLLM 贡献</a>，以及一个同址部署的 ASR encoder，Granite Switch 4.1 模型可以在一个聊天请求、一个决策请求和一个语音请求之间<em>切换</em>，速度快得惊人。</p>
-<p><em>来看看我们的 <a href="https://huggingface.co/spaces/ibm-granite/speech-to-decisions">Speech-to-Decisions HF space</a>，granite-switch-4.1-8b 在其中转写音频、生成摘要、筛查有害内容，并检测另外 15 个用户自定义的标记——全部在单个 endpoint 上实时运行。</em></p>
-<h2>Granite Libraries：初代（OG）决策模型</h2>
-<p>决策模型并不新鲜。我们先前发布的 <a href="https://huggingface.co/collections/ibm-granite/granite-libraries">Granite Libraries</a> 就是一个专门“决策模型”adapter 及其他专门任务 adapter 的仓库，它们可以被组合成自定义的 Granite Switch 模型。而且当 Jev 等闭源决策模型专注于通用性时，我们发现许多专门的 granitelib adapters 在专门分类任务上能够胜过通才模型。</p>
-<p><em><a href="https://huggingface.co/spaces/ibm-granite/granitelib-evals">把 granitelib adapters</a> 与通才决策模型在专门分类任务的评估中做对比。</em></p>
-<p>因为 adapters 共享基座模型的 KV cache，在通才决策 adapter 旁边再添加几个专才几乎不花成本。你既得到通才带来的广泛覆盖，又在你关心的任务上得到专才更高的准确率。</p>
-<p><em>在一场“竞速”中，Granite-Switch-4.1-30B（冻结的基座 Granite + 4 个专门 aLoRA）对阵 Jev-27B（冻结的基座 Qwen 模型 + 1 个通用决策 LoRA），Granite-Switch-4.1-30B 完成一个真实的 5 步 RAG 工作流比对手快得多。</em></p>
-<h2>组合并扩展你自己的 Granite Switch 模型</h2>
-<p>Granite-Switch-4.1-8B 和 -30B 是以“batteries included”（自带全套）方式发布的。它们是我们用一组预先定义好的实用 adapters 编译出来的 Granite Switch 模型。但你不必使用我们的版本。任何人都可以<a href="https://generative-computing.github.io/granite-switch/adapter_catalog.html">组合自己的 Granite Switch 模型</a>，把 Granite Libraries 里的 adapters 混合搭配，以最好地满足自己的需求。</p>
-<p>往前看，我们认为社区用自定义和第三方 adapters 来组合、扩展 Granite Switch 模型存在巨大机会。我们计划发布一个 Adapter SDK，用于在 <a href="https://docs.mellea.ai/advanced/lora-and-alora-adapters">Mellea</a> 中训练 adapters，并与其他教程以及 Granite Switch 支持一同提供。这些 adapters 可以是增强决策型工作流的专门分类 adapter，也可以是面向专门语言任务的 adapter。你甚至可以用自定义 adapter 教一个 3B 参数版本的 Granite 去玩经典游戏 Doom。</p>
-<p><em>与 Jev 类似，我们自定义的 3B 参数 Granite Switch 模型做出毫秒之间的决策来在 Doom 游戏中导航，但它能做到 <strong>每秒 60 - 100 次决策，</strong> 而 Jev 报告的数字是每秒 10 次决策。</em><a href="https://huggingface.co/blog/ibm-granite/granite-switch-4-1#footnote-1">1</a> <em>与 Jev 不同的是，这个 Granite Switch 模型在游玩的同时还能解说并回应你的提问。</em></p>
-<p>我们期待在未来几周发布更多关于 Granite Switch 的细节与数据，但在那之前，我们鼓励你试试我们最新的 Switch 模型，以及下面这些其他有助于入门的资源。</p>
-<h2>入门资源</h2>
-<ul><li><a href="https://huggingface.co/collections/ibm-granite/granite-switch">Granite Switch 4.1 模型卡</a></li><li><a href="https://huggingface.co/spaces/ibm-granite/speech-to-decisions">Speech-to-Decisions 演示</a></li><li><a href="https://github.com/generative-computing/granite-switch">Granite Switch GitHub 仓库</a></li><li><a href="https://research.ibm.com/blog/granite-libraries-project-switch">最初的 Granite Switch 与 Granite Libraries 发布博客</a></li><li>在 <a href="https://colab.research.google.com/github/generative-computing/granite-switch/blob/main/tutorials/notebooks/alora_vs_lora_race.ipynb">Colab</a> 上创建你自己的 aLoRA v LoRA 竞速。</li></ul>
-<p><strong>脚注</strong></p>
-<p>1 <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev">https://typesafe.ai/blog/introducing-system-one-models-and-jev</a></p>
-<h2>本文提到的模型 5</h2>
-<h2>本文提到的 Spaces 3</h2>
-<h2>本文提到的 Collections 2</h2>
-<p>这位作者的其他文章</p>
-<h2>Granite 4.2 LLM：它们是如何构建的</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
-<p>127</p>
-<p>2026 年 8 月 25 日</p>
-<h2>用 Granite Speech 5.0 Turbo CTC 实现极快且准确的转写</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
-<p>37</p>
-<p>2026 年 8 月 25 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或点击此处即可上传。</p>
-<p>轻触或粘贴此处以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1">登录</a> 以发表评论</p>
-<p>8</p>
-<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/0c302d25cdd0e4ac2e84c5ca197b28a7.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/IRENEKO"><img src="https://huggingface.co/avatars/f6a0ce5761e97dd44008d01c98f11ca9.svg" alt=""></a></li><li><a href="https://huggingface.co/nasrimfaume"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/r2HHnBRbZuc0ix0eNgyiH.png" alt=""></a></li><li><a href="https://huggingface.co/cosmojg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669946101720-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/1c1b540117a4580bdb169c9dbe9ffd01.svg" alt=""></a></li><li><a href="https://huggingface.co/leonardlin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63a7422854f1d0225b075bfc/XGYAcDPZG5ZEsNBWG6guw.jpeg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
-<h2>本文提到的模型 5</h2>
-<h2>本文提到的 Spaces 3</h2>
-<h2>本文提到的 Collections 2</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

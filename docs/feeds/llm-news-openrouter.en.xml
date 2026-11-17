@@ -7,7 +7,42 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>OpenRouter Now Powers Inference on Hugging Face</title>
+      <link>https://openrouter.ai/blog/announcements/hugging-face-inference-providers/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/hugging-face-inference-providers/?li=1</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>OpenRouter Now Powers Inference on Hugging Face</h1>
+<p>Sasha Blumenfeld ·11/16/2026</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers.jpg" alt="OpenRouter Now Powers Inference on Hugging Face"><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers-dark.jpg" alt="OpenRouter Now Powers Inference on Hugging Face"></p>
+<p>We built OpenRouter so developers can reach many models and providers through one API, use the best model for each task, and count on it to respond. Starting today, that extends to everyone building on Hugging Face. Chat models on Hugging Face Inference Providers now run through OpenRouter, with the same routing across providers that OpenRouter customers already rely on.</p>
+<p>The integration also runs the other way. OpenRouter can now send a trace of each request to a Hugging Face Storage Bucket you own, so the prompts and responses from your real traffic sit next to the models and datasets you would use to evaluate or fine-tune on them. The <a href="https://openrouter.ai/docs/guides/features/broadcast/hugging-face">setup guide</a> has the steps.</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/inference-widget.gif" alt="The Inference Providers widget on a Hugging Face model page answering a chat message, with a Powered by OpenRouter label"></p>
+<h2>What you get on Hugging Face</h2>
+<p>Many chat models on Hugging Face are served by more than one provider. OpenRouter’s provider routing now powers routing on Hugging Face Inference Providers, and it picks the provider for each request based on live price, speed, and reliability. You don’t have to set anything up, and your existing Hugging Face token and code keep working.</p>
+<p>You also get automatic failover. If a provider slows down or starts failing, requests go to other providers until it recovers. If a provider returns an error, the request is retried on the next one inside the same call.</p>
+<p>When we <a href="https://openrouter.ai/blog/how-we-rebuilt-provider-routing">rebuilt this routing in October</a>, a live experiment measured 46% fewer requests hitting a capacity error, 16.9% faster time to first token, and 16.3% higher throughput, for 6.0% higher cost per request. Everyone building on Hugging Face now gets the same routing.</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/routing.gif" alt="A diagram from Hugging Face showing a request from your app going to router.huggingface.co, where OpenRouter picks one of four providers based on measured price, speed, and reliability, with options for default, cheapest, and fastest routing (light mode)"></p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/routing-dark.gif" alt="A diagram from Hugging Face showing a request from your app going to router.huggingface.co, where OpenRouter picks one of four providers based on measured price, speed, and reliability, with options for default, cheapest, and fastest routing (dark mode)"></p>
+<p>You stay in control of the trade-off. Adding a suffix to the model ID, such as <code>:fastest</code>, <code>:cheapest</code>, or a provider name, tells OpenRouter what to prioritize, and requests work through OpenAI’s Chat Completions and Responses APIs or Anthropic’s Messages API. A conversation also stays on the provider that holds its prompt cache.</p>
+<p>Each model page has a new Providers tab with live price, speed, and uptime for every provider. You can see your spend by provider and turn off any provider you don’t want to use.</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/providers-tab.png" alt="The Providers tab on a Hugging Face model page, listing each provider's input price, output price, speed, and uptime, with a Powered by OpenRouter label (light mode)"></p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/providers-tab-dark.png" alt="The Providers tab on a Hugging Face model page, listing each provider's input price, output price, speed, and uptime, with a Powered by OpenRouter label (dark mode)"></p>
+<p>160 models from 38 labs are available this way today, which is every model OpenRouter serves that has a page on the Hub. They include the open-weight models developers use most on OpenRouter, where open-weight models carried <a href="https://openrouter.ai/data/october-2026">about 70% of paid tokens</a> in October:</p>
+<ul><li>DeepSeek V4.1 Flash</li><li>MoonshotAI Kimi K3.1 Pro and Kimi K3</li><li>Z.ai GLM 5.3 and GLM 5.3 Flash</li><li>Qwen3.8 27B</li><li>MiniMax M3.1 Flash</li><li>Xiaomi MiMo-V2.6-Flash</li><li>NVIDIA Nemotron 3 Ultra</li><li>OpenAI gpt-oss-120b</li></ul>
+<h2>Your traces can live on the Hub</h2>
+<p>Add Hugging Face Storage Buckets as a Broadcast destination (it’s in beta) and OpenRouter sends each request as a JSON file to a bucket you own. Each file holds the input messages, the model’s output, token counts, and cost. Images and other media are left out.</p>
+<p>That’s the raw material for an evaluation set or a fine-tuning run on an open-weight model. You can organize the files by date or by API key.</p>
+<p><img src="https://openrouter.ai/blog/images/hugging-face-inference-providers/storage-buckets-destination.png" alt="The new Hugging Face Storage Buckets destination form in OpenRouter's Observability settings, with fields for namespace, bucket name, access key ID, and secret access key."></p>
+<h2>Get started</h2>
+<p>On Hugging Face:</p>
+<ul><li>Create a token at <a href="https://hf.co/settings/tokens">hf.co/settings/tokens</a> with the “Make calls to Inference Providers” permission.</li><li>Open any supported model’s page on the Hub. Chat with it there, or click View code for setup steps for your code or your coding agent, including Claude Code, Codex, OpenCode, Pi, and Hermes Agent.</li><li>To choose which providers can serve your requests, go to <a href="https://huggingface.co/settings/inference-providers">Inference Providers</a> in your Hugging Face settings.</li></ul>
+<p>To send traces to a Storage Bucket:</p>
+<ul><li>Create a Storage Bucket on Hugging Face.</li><li>Create an access token with Write permission and generate S3 credentials from it.</li><li>In OpenRouter, go to <a href="https://openrouter.ai/settings/observability">Settings &gt; Observability</a>, turn on Broadcast, and open Hugging Face Storage Buckets.</li><li>Enter your namespace, bucket name, access key ID, and secret access key. A path template such as <code>{apiKeyName}/{date}</code> is optional.</li><li>Click Test Connection, then save.</li></ul>
+<p>The <a href="https://openrouter.ai/docs/guides/features/broadcast/hugging-face">full setup guide</a> covers path templates and the trace file format.</p>
+<p><a href="https://huggingface.co/playground">Try a model in the Hugging Face Playground</a>, or <a href="https://openrouter.ai/docs/guides/features/broadcast/hugging-face">send your traces to a Storage Bucket</a>.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Reranking in RAG: How to Fix Bad Retrieval with a Reranker</title>
       <link>https://openrouter.ai/blog/tutorials/reranking-rag/</link>
@@ -8489,123 +8524,6 @@ print(len(vectors[0]))</code></pre>
 <p>All 3,080 of the Banking77 requests were billed $0.34 total on typesafe/jev-1.13, which is $0.11 per thousand requests or about $0.0001 per request. Using prompt caching on the 77-label system prompt, the same requests billed $7.44 total on anthropic/claude-opus-5, or $2.42 per thousand. Without caching, Opus would have billed about $19 per thousand at list price.</p>
 <h3>Can I use Jev’s confidence score to decide when to fall back to a bigger model?</h3>
 <p>Yes, and in our data it works as a ranking signal. We measured Jev as 96.3% accurate on the 58% of utterances with confidence at least 0.99, and 29.6% accurate on the 3.5% of utterances with confidence under 0.5. Routing everything under 0.9 confidence to Claude Opus 5 recovered 84.0% accuracy, within 0.4 points of Opus alone, at $0.69 per thousand requests. Because the score is not calibrated as a probability, pick the threshold that works for your own data.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>What Is Nemotron 3.5 Lightning</title>
-      <link>https://openrouter.ai/blog/insights/nemotron-3-5-lightning/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/insights/nemotron-3-5-lightning/?li=1</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>What Is Nemotron 3.5 Lightning</h1>
-<p>OpenRouter ·9/22/2026 · Updated 9/24/2026</p>
-<p>An agent may make one difficult call to plan a task and dozens more to carry it out. Those later calls read files, choose tools, validate results, and decide what to do next. NVIDIA built Nemotron 3.5 Lightning for that high-volume part of the workflow.</p>
-<p>Nemotron 3.5 Lightning is a 30-billion-parameter mixture-of-experts model that activates about 3 billion parameters for each token. It supports tool calls, coding tasks, instruction following, and other well-scoped agent steps.</p>
-<p>The name is easy to confuse with <a href="https://openrouter.ai/nvidia/nemotron-3-ultra-550b-a55b">Nemotron 3 Ultra</a>, but the two models are built for different parts of an agent workflow. Choosing between them affects the cost, latency, and reliability of the complete run.</p>
-<h2>Nemotron 3.5 Lightning at a glance</h2>
-<table><thead><tr><th>Specification</th><th>Nemotron 3.5 Lightning</th></tr></thead><tbody><tr><td>Model type</td><td>Hybrid Mamba-2, attention, and mixture-of-experts language model</td></tr><tr><td>Model size</td><td>30B total parameters, 3B active</td></tr><tr><td>Input and output</td><td>Text to text</td></tr><tr><td>Model context limit</td><td>Up to 1 million tokens, per NVIDIA’s model card</td></tr><tr><td>OpenRouter standard model</td><td>262,144-token context on every current provider. Completion limits vary by provider, from 32,768 to 235,929 tokens</td></tr><tr><td>OpenRouter free model</td><td>1,000,000-token context, up to 65,536 completion tokens</td></tr><tr><td>Tool calling</td><td>Listed for both models. Two of the four current standard providers list it</td></tr><tr><td>Structured outputs</td><td>Listed for the standard model on all four current providers. Not listed for the free model</td></tr><tr><td>OpenRouter model IDs</td><td><code>nvidia/nemotron-3.5-lightning</code> and <code>nvidia/nemotron-3.5-lightning:free</code></td></tr><tr><td>Weights</td><td>BF16 reference weights, plus optimized NVFP4 and GGUF releases</td></tr><tr><td>License</td><td>OpenMDW-1.1</td></tr><tr><td>Released</td><td>August 11, 2026</td></tr></tbody></table>
-<p>The endpoint limits and features in this table come from our model pages on September 11, 2026. Check the <a href="https://openrouter.ai/nvidia/nemotron-3.5-lightning">standard model page</a> or the <a href="https://openrouter.ai/nvidia/nemotron-3.5-lightning:free">free model page</a> before designing around a specific limit.</p>
-<h2>What does 30B MoE with 3B active parameters mean?</h2>
-<p>Nemotron 3.5 Lightning is a sparse mixture-of-experts model. It contains 30 billion parameters in total, but it does not use every expert for every token. A router selects a smaller subset of experts as the model processes each token, which brings the active parameter count to about 3 billion. You will also see this written as 30B-A3B, meaning 30 billion total parameters and about 3 billion active parameters.</p>
-<p>This design gives the model more total capacity than a 3B dense model without running all 30 billion parameters for every token. That is how Lightning combines a relatively large checkpoint with the throughput needed for frequent agent calls.</p>
-<p>The active count is not a complete compute or memory specification. The full model still has to be stored, and shared layers also run during inference. Hardware requirements depend on the precision, context length, inference engine, batching strategy, and cache configuration.</p>
-<p>Lightning also uses a hybrid architecture rather than a pure Transformer stack. The <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16">NVIDIA model card</a> describes interleaved Mamba-2 and MoE layers with selected attention layers. It also supports configurable reasoning and ships with multi-token prediction and two speculative-decoding drafters, DSpark and DFlash, for faster generation, along with an NVFP4 checkpoint tuned for inference.</p>
-<h2>What is Nemotron 3.5 Lightning designed for?</h2>
-<p>Long-running agents make many model calls. Some calls require difficult planning. Much of the work is narrower, such as choosing a tool, generating arguments, checking a result, editing a file, or deciding what to do next.</p>
-<p>NVIDIA positions Lightning for that execution layer. The model is a candidate when your workload has the following characteristics:</p>
-<ul><li>The agent makes many calls, and latency or cost compounds across the run.</li><li>Each call has a clear objective and enough context to complete it.</li><li>The model needs to use tools, follow instructions, or return structured data.</li><li>You want open weights that you can customize for a domain or deployment target.</li></ul>
-<p>For example, a coding agent could use a larger reasoning model to inspect a repository and decide on an implementation plan. Lightning could then handle individual steps such as locating a symbol, editing one file, running a tool, and interpreting the result.</p>
-<h2>Nemotron 3.5 Lightning compared with Nemotron 3 Ultra</h2>
-<p>NVIDIA <a href="https://vllm.ai/blog/2026-08-10-nemotron-3-5-lightning-vllm">distilled Lightning from Nemotron 3 Ultra</a>, but the two models are not interchangeable. Lightning is the smaller model for high-volume agent execution. Ultra is the larger model for complex reasoning and orchestration.</p>
-<table><thead><tr><th></th><th>Nemotron 3.5 Lightning</th><th>Nemotron 3 Ultra</th></tr></thead><tbody><tr><td>OpenRouter model ID</td><td><code>nvidia/nemotron-3.5-lightning</code></td><td><code>nvidia/nemotron-3-ultra-550b-a55b</code></td></tr><tr><td>Total parameters</td><td>30B</td><td>550B</td></tr><tr><td>Active parameters</td><td>3B</td><td>55B</td></tr><tr><td>Primary role</td><td>High-volume execution and specialized tasks</td><td>Complex reasoning and orchestration</td></tr><tr><td>Context on OpenRouter</td><td>262,144 tokens on every current provider</td><td>202,800 to 262,144 tokens, depending on provider</td></tr><tr><td>Tool calling</td><td>Listed on two of four current providers</td><td>Listed on every current provider</td></tr><tr><td>Structured outputs</td><td>Listed on every current provider</td><td>Listed on one of four current providers</td></tr><tr><td>Provider prices on September 11, 2026</td><td>$0.065 to $0.10/M input, $0.18 to $0.25/M output</td><td>$0.50 to $0.625/M input, $2.20 to $3.125/M output</td></tr></tbody></table>
-<p>NVIDIA reports that Lightning reaches up to four times the throughput of similarly sized open models. In NVIDIA’s PinchBench testing, it completed 10,000 agent tasks up to 30% faster at comparable accuracy. These are vendor-reported results, so test throughput and task completion on your own workload.</p>
-<p>The distinction is the difficulty and consequence of the call. Ultra is the stronger fit when a step requires deep reasoning across an ambiguous problem, produces the plan for a long workflow, or makes a decision that is expensive to reverse. Lightning is the stronger fit when the task is well-scoped and repeated often enough for latency and cost to matter.</p>
-<p>You do not need to assign one model to the entire agent. Route complex calls to Ultra and frequent execution calls to Lightning. Then measure whether the mix improves cost per completed task without reducing reliability.</p>
-<p><img src="https://openrouter.ai/blog/images/nemotron-3-5-lightning-agent-pattern.png" alt="Diagram of a two-model agent pattern. A planning model such as Nemotron 3 Ultra inspects the task, writes the plan, and delegates each step. Nemotron 3.5 Lightning runs a loop of calling a tool, checking the result, and taking the next step. A note says your application or a model router decides which model handles each call."></p>
-<h3>Routing between the two models on OpenRouter</h3>
-<p>If you would rather hand model selection to us, use <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">Auto Router</a>. Send <code>openrouter/auto</code> as the model ID, and Auto Router classifies the prompt before selecting a model based on the task type, model capabilities, tool support, and cost. The <code>cost_tier</code> setting selects a cost band, from <code>low</code> to <code>max</code>. It does not escalate a conversation from a cheaper model to a more expensive one. If you want Auto Router to choose only between Lightning and Ultra, restrict its choices with <code>allowed_models</code>.</p>
-<h3>Routing between the two models outside OpenRouter</h3>
-<p>NVIDIA’s <a href="https://developer.nvidia.com/blog/route-ai-agent-workloads-across-models-with-nvidia-nemo-switchyard/">NeMo Switchyard</a> implements this routing pattern as an open-source orchestration layer. Its escalation router starts each conversation with a lower-cost model, and an LLM judge moves the session to a more capable model when it detects sustained difficulty. In <a href="https://www.langchain.com/blog/switchyard-agent-routing-benchmark">LangChain’s evaluation</a> of 145 multi-step agent tasks, routing between Lightning and Claude Opus 4.8 reduced cost by 74% compared with the frontier-only baseline while sending about 7% of calls to the frontier model. Accuracy was about six points lower. This result shows the routing trade-off on that benchmark. It is not a benchmark of a Lightning-and-Ultra combination. Test any routing setup on your own tasks before you rely on the savings.</p>
-<h2>How long is the context window?</h2>
-<p>Nemotron 3.5 Lightning supports up to 1 million tokens at the model level. The context available to your application depends on the endpoint that serves it.</p>
-<p>On September 11, 2026, every provider behind the standard model ID exposes a 262,144-token context window. Completion limits differ by provider, from 32,768 to 235,929 tokens. The <code>:free</code> model exposes the full 1-million-token context window and caps completions at 65,536 tokens.</p>
-<p>If a request needs more than 262,144 tokens, only the free endpoint currently exposes the model’s full 1-million-token context on OpenRouter. NVIDIA’s notice on that endpoint states that use is logged for security purposes and to improve NVIDIA products and services, and asks you not to upload confidential information or personal data. For sensitive or production long-context workloads, choose another endpoint or model.</p>
-<p>This difference matters when you switch between the two model IDs. A request that succeeds on the free endpoint may exceed the context limit of the standard endpoint. The free endpoint also lists tool calling but does not list <code>response_format</code> or structured outputs.</p>
-<p>Check the model page instead of treating the architecture’s maximum context as a promise from every provider. We show the current limits and supported parameters for each endpoint on the model page.</p>
-<h2>Open weights and local deployment</h2>
-<p>NVIDIA publishes the <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16">BF16 reference checkpoint</a> under the OpenMDW-1.1 license. The model card describes the BF16 release as a starting point for post-training, domain adaptation, research, and producing optimized variants. NVIDIA also publishes training data and recipes for customization and evaluation, and the model card says the release is ready for commercial use.</p>
-<p>For direct inference, NVIDIA recommends its NVFP4 release. It also provides a GGUF checkpoint for supported local systems. The BF16 guidance lists an H100 80GB or A100 80GB for single-GPU deployment. The optimized releases target hardware such as the RTX 5090, RTX PRO 6000, and DGX Spark.</p>
-<p>Running the model locally does not mean every machine can serve the full 1-million-token context window. In NVIDIA’s current Ollama guidance, the default context scales with available VRAM. It is 4K below 24GB, 32K from 24GB to below 48GB, and 256K with 48GB or more. The llama.cpp example uses about 40K. You can raise those limits, and doing so may require more memory or CPU offloading.</p>
-<p>The weights are publicly available, and “open-weight” is the clearest description. Read the OpenMDW-1.1 license before you redistribute a modified model or make deployment decisions around its terms.</p>
-<h2>How to call Nemotron 3.5 Lightning on OpenRouter</h2>
-<p>If you do not want to provision GPUs or manage an inference engine, call Lightning through OpenRouter. The standard model ID keeps the same API while we route requests across the available providers for that model.</p>
-<p>Install the OpenRouter TypeScript SDK.</p>
-<pre><code>npm install @openrouter/sdk</code></pre>
-<p>Set <code>OPENROUTER_API_KEY</code> in your environment, then send a request with the Lightning model ID. The standard model lists structured outputs, so you can ask for a JSON schema and have the response conform to it.</p>
-<pre><code>import { OpenRouter } from &quot;@openrouter/sdk&quot;;
-
-const openRouter = new OpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
-
-const result = await openRouter.chat.send({
-  chatRequest: {
-    model: &quot;nvidia/nemotron-3.5-lightning&quot;,
-    messages: [
-      {
-        role: &quot;user&quot;,
-        content:
-          'Ticket: &quot;Checkout returns a 500 after I click Pay. Started this morning, three customers affected.&quot; Return its category and priority.',
-      },
-    ],
-    responseFormat: {
-      type: &quot;json_schema&quot;,
-      jsonSchema: {
-        name: &quot;triage&quot;,
-        strict: true,
-        schema: {
-          type: &quot;object&quot;,
-          properties: {
-            category: { type: &quot;string&quot; },
-            priority: { type: &quot;string&quot;, enum: [&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;] },
-          },
-          required: [&quot;category&quot;, &quot;priority&quot;],
-          additionalProperties: false,
-        },
-      },
-    },
-    provider: {
-      requireParameters: true,
-    },
-  },
-});
-
-if (!(&quot;choices&quot; in result)) {
-  throw new Error(&quot;Expected a non-streaming response&quot;);
-}
-
-console.log(result.choices[0]?.message.content);</code></pre>
-<p>When we ran this request on September 11, 2026, the model returned <code>{&quot;category&quot;: &quot;Bug (Payment Checkout)&quot;, &quot;priority&quot;: &quot;medium&quot;}</code>. Sampled outputs vary between runs, and the schema, not the values, is what the request guarantees.</p>
-<p>Provider support for <code>response_format</code> and structured outputs differs within the same model. By default we prefer providers that support the <code>tools</code> and <code>response_format</code> parameters you send, and a provider that does not support a parameter ignores it. Setting <code>require_parameters</code> to <code>true</code>, as the example does, restricts the request to providers that support every parameter in it. See the <a href="https://openrouter.ai/docs/guides/routing/provider-selection">provider routing docs</a> for the full behavior.</p>
-<p>To try the free endpoint, change the model ID to <code>nvidia/nemotron-3.5-lightning:free</code>. The free endpoint does not list <code>response_format</code>, so drop that field there and validate the JSON yourself. It is useful for evaluation and low-volume experiments, and it has different limits and availability from the standard endpoint.</p>
-<p>Do not submit confidential information or personal data through the free endpoint. Its model page carries NVIDIA’s notice that use is logged for security purposes and to improve NVIDIA products and services. Review that notice before deciding which prompts to send.</p>
-<p>By default we load-balance the standard model across its providers, ordered by price. Two variants change that ordering. <code>nvidia/nemotron-3.5-lightning:nitro</code> sorts providers by throughput, and <code>nvidia/nemotron-3.5-lightning:exacto</code> prefers providers with stronger tool-calling quality signals. For a model chosen for latency and tool use, <a href="https://openrouter.ai/docs/guides/routing/model-variants/nitro">Nitro</a> and <a href="https://openrouter.ai/docs/guides/routing/model-variants/exacto">Exacto</a> are the two variants worth knowing.</p>
-<p>Lightning accepts <code>tools</code> and <code>tool_choice</code>, so you can also use it inside an agent loop. See our <a href="https://openrouter.ai/blog/tutorials/build-tool-calling-agent-loop/">tool-calling agent loop guide</a> for the full request, tool execution, and iteration flow.</p>
-<h2>Should you use Nemotron 3.5 Lightning?</h2>
-<p>Nemotron 3.5 Lightning is worth evaluating when you need a fast, open-weight model for frequent, well-defined agent steps. Its 30B-A3B architecture, tool support, and low listed token price make it a candidate execution model for agents that would otherwise send every call to a much larger reasoning model.</p>
-<p>Use the model name as a starting point, not the decision. Build an evaluation set from the tool calls and tasks your agent performs. Measure task success, retries, latency, and total cost across the full run. A cheaper call does not help if the agent repeats it or escalates the result often enough to erase the savings.</p>
-<p>Start with <code>nvidia/nemotron-3.5-lightning</code>, or use <code>nvidia/nemotron-3.5-lightning:free</code> to test the model before adding paid traffic.</p>
-<h2>FAQ</h2>
-<h3>What is Nemotron 3.5 Lightning?</h3>
-<p>Nemotron 3.5 Lightning is NVIDIA’s open-weight 30B mixture-of-experts language model with about 3B active parameters per token. NVIDIA positions it for high-volume agent execution, tool use, coding, instruction following, and specialized tasks.</p>
-<h3>Is Nemotron 3.5 Lightning the same as Nemotron 3 Ultra?</h3>
-<p>No. Nemotron 3.5 Lightning has 30B total parameters and 3B active parameters. Nemotron 3 Ultra has 550B total parameters and 55B active parameters. Lightning targets frequent execution steps. Ultra targets complex reasoning and orchestration.</p>
-<h3>What does 30B-A3B mean?</h3>
-<p>30B-A3B means the model has 30 billion parameters in total and activates about 3 billion parameters per token. The mixture-of-experts router selects a subset of the model’s experts for each token instead of running every expert.</p>
-<h3>Does Nemotron 3.5 Lightning support tool calling and structured outputs?</h3>
-<p>The standard OpenRouter model, <code>nvidia/nemotron-3.5-lightning</code>, lists <code>tools</code>, <code>tool_choice</code>, <code>response_format</code>, and structured outputs among its supported parameters. Support varies by provider, so set <code>require_parameters</code> to <code>true</code> if your request depends on one of them. The free model lists <code>tools</code> and <code>tool_choice</code> but not <code>response_format</code> or structured outputs.</p>
-<h3>Is there a free Nemotron 3.5 Lightning API?</h3>
-<p>Yes. We list <code>nvidia/nemotron-3.5-lightning:free</code>, served by NVIDIA at no token cost. Free models have different rate limits and availability from paid models, and this endpoint carries an NVIDIA data notice. Do not send confidential information or personal data through it.</p>
-<h3>Can I run Nemotron 3.5 Lightning locally?</h3>
-<p>Yes. NVIDIA publishes BF16, NVFP4, and GGUF weights under the OpenMDW-1.1 license. The BF16 reference checkpoint targets a single 80GB H100 or A100. The NVFP4 and GGUF releases target supported local hardware such as the RTX 5090, RTX PRO 6000, and DGX Spark. Check NVIDIA’s current model card and license before choosing a deployment.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

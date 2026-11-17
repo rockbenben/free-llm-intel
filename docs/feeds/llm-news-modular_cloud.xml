@@ -7,7 +7,61 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-modular_cloud.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Modular：Modular 在 LLVM Developers&apos; Meeting 2026 上</title>
+      <link>https://www.modular.com/blog/modular-llvm-dev-meeting-2026</link>
+      <guid isPermaLink="true">https://www.modular.com/blog/modular-llvm-dev-meeting-2026</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Modular: Modular at LLVM Developers&apos; Meeting 2026</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 16 日</p>
+<h1>2026 年 LLVM 开发者会议上的Modular</h1>
+<p>迈克尔·邓恩-奥康纳</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aeb932a7c8fed75ff9caae5_LLVM-CoverImg.jpeg" alt=""></p>
+<p>社区</p>
+<p>Modular 最近在加利福尼亚州圣克拉拉举行的 <a href="https://llvm.swoogo.com/2026devmtg/agenda">2026 LLVM 开发者会议</a> 上度过了三天（10 月 26 日至 28 日），在那里我们举办了全天的 MAX 和 Mojo 研讨会，进行了有关设备图的技术演讲，并在走廊和我们的展位上与 LLVM 社区的人们进行了交谈。这是我们第一次从头到尾分享整个 Modular 堆栈的详细信息，<a href="https://www.modular.com/blog/max-license">所有源代码可供与会者遵循</a>。我们展示了 Mojo 语言的内部架构、如何跨堆栈使用 MLIR，以及如何使用图形编译器对 Mojo 进行分层等主题。这篇文章涵盖了我们介绍的内容、我们听到的内容以及我们未来的合作前景。</p>
+<p>Mojo 和 MAX 研讨会海报</p>
+<h2>研讨会：Mojo 内部深入探讨和路线图</h2>
+<p>10 月 26 日星期一，我们举办了“Mojo：内部深入探讨和路线图”，这是一个面向熟悉 LLVM 和 MLIR 的编译器工程师的全天会议。目标是向观众提供 Mojo 构建方式的工作图，从编译器和类型系统到 GPU 后端和标准库。尽管有这个名字，但这不仅仅是 Mojo 上的一次会议。我们在 Mojo 提供的基础上构建了 MAX，因此我们还介绍了 MAX 如何针对新的加速器硬件，以及它如何为复杂的 AI 模型编译和优化计算图。 <a href="https://www.modular.com/blog/max-license">新提供的源代码</a> MAX 让我们首次展示了整个 Modular 堆栈如何协同工作。</p>
+<p>Mojo 是基于 MLIR（<a href="https://mlir.llvm.org/">LLVM 的一个子项目</a>）构建的，因此活跃用户和贡献者对这种语言有独特的看法，尽管许多人对 Mojo 和 MAX 是陌生的。与一般观众相比，我们能够更深入地了解 Mojo 和 MAX 的内部结构。不幸的是，LLVM 研讨会没有记录，但幻灯片如下。</p>
+<h3>每个演讲涵盖的内容</h3>
+<ul><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-LLVM-Ecosystem.pdf">Mojo 在 LLVM 生态系统中的地位</a><strong>.</strong> Billy Zhu、Lukas Hermann 和 Weiwei Chen 将 Mojo 定义为加速器 MLIR 上面向用户的层，其中硬件专业化由领域专家的库执行可以编写，而不是锁定在编译器或供应商二进制文件中。 Mojo 为程序员提供了直接 MLIR 和 LLVM IR 访问的全部功能，充当 AI 的统一 LLVM 风格层。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Compiler-Architecture.pdf">Mojo 编译器架构概述</a><strong>.</strong> Billy Zhu 和 Weiwei Chen 深入研究了 Mojo 编译器基于 MLIR 的独特设计。他们讨论了 Mojo 解析器如何在没有 AST 的情况下直接发出参数化 MLIR，并延迟解析声明。他们还介绍了阐述器如何异步具体化通用代码，以及插件系统如何允许在不分叉整个编译器的情况下添加新的后端。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Making-New-Hardware-Boring.pdf">插件架构：将编译器和 SDK 与特定于硬件的部分分离</a><strong>.</strong> Connor Gray 展示了 Modular 如何通过可编程插件创建可移植且高性能的 AI 堆栈。任何人都可以通过实现简单的 Mojo <code>PluginHooks</code> 和 <code>MaxPluginHooks</code> 特征来扩展标准库和 MAX 加速器库，为新硬件提供优化支持。这些插件非常简洁，Qualcomm Cloud AI 100的后端只有263行。完整的插件架构将使插件能够将整个Modular堆栈引入新硬件，这是<a href="https://www.modular.com/alliance">Modular硬件联盟</a>的关键技术推动者。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Ownership.pdf">价值所有权、生命周期和起源：Mojo 的内存安全模型</a><strong>.</strong> Chris Lattner 解释了 Mojo 起源系统的优点：无需垃圾收集器的内存安全、系统级控制以及在需要时逃逸到不安全的 API。一般来说，程序员在定义返回引用的 API 之前不必考虑引用。编译器检查生命周期并在最后一次使用后立即销毁每个值，这提供了更小的捕获集、更多的尾部调用和复制到移动优化，以及与类型系统的其余部分组合的线性类型。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-How-Mojo-Supports-Non-LLVM-Back-Ends.pdf">Mojo 如何支持非 LLVM 后端（TPU 和 Trainium）</a><strong>.</strong> Kolya Panchenko 解释了为什么 TPU 和 Trainium 是难以通用的硬件后端语言。他们期望类型化、平铺式、结构化的代码，而 Mojo 没有“memref”类型。第一个里程碑是用 Mojo 编写的矢量添加，可编译为 TPU 的 Mosaic MLIR。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Graph-Compiler.pdf">MAX 图形编译器和内核融合背后的 MLIR 方言</a><strong>.</strong> Feras Bouulala 在整个 MAX 管道中演示了 RMS 范数示例。一路上，他展示了每个阶段应用的优化以及使 MAX 在模型调试方面脱颖而出的功能，包括 Python 堆栈跟踪和跟踪。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-How-We-Write-Mojo-in-Mojo.pdf">我们如何在 Mojo 中编写 Mojo</a><strong>.</strong> Joe Loser 和 Nathan Ward 在 MLIR 中从头开始构建了一个“Int”，然后展示了如何以相同的方式构建 Mojo 标准库中的类型。一些叶子类型包装 MLIR（如 Bool、SIMD 和 Pointer），然后使用这些叶子在 Mojo 中构建其他类型。</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Metaprogramming-Magic.pdf">案例研究：抽象硬件细节的元编程</a><strong>.</strong> Kern Handa 描述了在 64 位主机后面启动 32 位设备。该案例研究详细介绍了三个问题（固定的 C 入口点、将参数打包到灵活的数组中以及序列化闭包），每个问题都通过 Mojo 库代码解决。克恩 (Kern) 演示了如何开发加速器主要是图书馆的工作。</li></ul>
+<h2>技术讲座：超越记录和重放</h2>
+<p>10 月 28 日星期三，我们图形执行团队的 Spenser Bauman 介绍了 <a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Roadmap-Compiler-first-device-graph-synthesis.pdf">超越记录和重播</a>，这是一个在编译器中构建设备图的案例，例如里面的例子MAX，而不是在运行时捕获它们。如果您不熟悉，CUDA 和 HIP（以及其他加速器）都提供了一种将操作图发送到加速器的方法，而不是单独发送每个操作。</p>
+<p>随着 GPU 变得越来越快，CPU 到加速器的通信成本也会增加，直到占用大部分推理时间。设备图通过立即向设备提交整个工作序列来解决这个问题。 MAX 使用它们，每个广泛使用的服务堆栈也是如此。构建命令的通常方法是记录和重放：在运行时捕获命令流，然后重放它。 CUDA 和 HIP 都提供此功能。</p>
+<p>斯宾塞指出了这种方法的两个问题：</p>
+<ul><li>记录和重放将复杂性分散到图形执行器、异步运行时、内存池、内核和驱动程序中。</li><li>这取决于并非每个供应商都提供的捕获模式。一些加速器公开了设备图或命令缓冲区构造 API，但没有等效的记录和重放，这使得它们超出了基于捕获的堆栈的范围。</li></ul>
+<p>Modular 正在寻求的替代方案是使用图形编译器直接构建这些设备图。 MAX 中的图形编译器已经知道最终设备图形的基本结构，而不是捕获然后重放图形。图形编译器可以构建设备图并发出对目标的图形构建 API 的直接调用。演讲讨论了该设计的四个部分：</p>
+<ul><li>内核如何声明其设备图功能。</li><li>前端 IR 标记具有设备图功能的区域。</li><li>对设备图进行建模的中端方言和操作。</li><li>用于使用它们的 Mojo 级 API。</li></ul>
+<p>该方法已经在实践中发挥作用。生产 Gemma 4 模型现在通过一个或多个 GPU 上的设备图合成来端到端运行，并且单个模型可以包含多个设备图区域。直接构建图表比记录图表快约 40%。 CUDA、HIP 和 Qualcomm AI100 都有“DeviceGraphBuilder”实现，所有这些都位于一个接口后面，因此相同的方法可以扩展到新的目标。</p>
+<h2>接下来会发生什么</h2>
+<p>研讨会以 Mojo 路线图和贡献邀请结束。</p>
+<p><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Roadmap.pdf"><strong>Roadmap</strong></a><strong>.</strong> Denis Gurchenkov 概述了 Mojo 语言功能对于内核编程的近期优先级（枚举和模式匹配、更多编译时元编程、地址空间等硬件概念的语法）以及长期目标到 2027 年，开发人员将能够编写高性能 CPU 代码，并进行必要的异步/等待、动态调度、线程和网络开发。在编译器方面，计划是提供 GPU 和 NPU 后端源，支持可插拔 MLIR 和 LLVM 后端，启用 WASM 后端，并继续提高编译速度。工具和社区项目包括自动 Mojo 和 C 互操作性、调试器、测试框架、基于 pixi 构建的包管理器以及基于 Bazel 的构建系统。</p>
+<p><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Modulars-Open-Source-Journey.pdf">Modular 的开源之旅</a><strong>.</strong> Brad Larson 和 Joe Loser 追溯了 Mojo 和 MAX 三年的渐进开源历程，从 [2017 年 3 月的 Mojo 标准库] 开始。 2024 年，](https://www.modular.com/blog/the-next-big-step-in-mojo-open-source)一直到几周前<a href="https://www.modular.com/blog/mojo-open-source">开源 Mojo</a> 和<a href="https://www.modular.com/blog/max-license">使 MAX 完全可用</a>。整个Modular堆栈现在是从公共“modular/modular”存储库（现在拥有超过 30,000 个 GitHub star！）构建的，这是一个非常令人兴奋的里程碑。我们在开源 Mojo 和 MAX 的过程中也学到了很多经验教训，我们将在本次演示中对此进行介绍。</p>
+<p>随着 Mojo 和 MAX 的所有源代码现已公开，该团队给与会者留下了一条信息：请<a href="https://github.com/modular/modular">克隆</a><a href="https://github.com/modular/modular"><code>modular/modular</code></a><a href="https://github.com/modular/modular">存储库</a>，从源代码构建 Mojo 和 MAX，并尝试扩展平台。查看<a href="https://github.com/modular/modular/tree/main/Mojo/docs/contributing">Mojo 的贡献者指南</a> 以及<a href="https://github.com/modular/modular/tree/main/max/docs/contributing">MAX 的新添加指南</a>，并了解在何处以及如何对两者进行上游修复和添加。</p>
+<p>Modular（和高通）是 LLVM 基金会活动的长期支持者，对此感到自豪，今年尤其特别：我们终于让每个人都回到了我们的工作幕后，并很高兴看到社区将构建什么。</p>
+<h2>阅读《Modular》的更多内容</h2>
+<p>查看所有博客</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aeb932a7c8fed75ff9caae5_LLVM-CoverImg.jpeg" alt=""></p>
+<p>LLVM 开发会议 2026：代理时代的耐用基础设施</p>
+<p>2026 年 11 月 4 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aa8a1beed382b82d8230724_communitybp.jpeg" alt=""></p>
+<p>培育Modular生态系统：Modular社区资助计划</p>
+<p>2026 年 10 月 9 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a29a395aea53c6eac963763_MAXMojo-Hyperdrive-Extend_%25281%2529.png" alt=""></p>
+<p>Modverse #55：Mojo 1.0 Beta、社区 Mojo 库和由 MAX 提供支持的实时患者对话</p>
+<p>2026 年 6 月 10 日</p>
+<p>用Modular构建人工智能的未来</p>
+<p>开始使用 - 免费</p>
+<p>查看版本</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="金发的人使用带有 Apple 徽标的笔记本电脑。">立即注册立即注册我们的云平台即可轻松开始。<a href="https://docs.modular.com/max/get-started">签名上</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="带有黑色手柄和圆形透明镜片的放大镜表情符号。">浏览打开的模型浏览我们的模型目录，或部署您自己的自定义模型<a href="https://www.modular.com/models">浏览模型</a></li></ul>
+<h2>订阅我们的时事通讯</h2>
+<p>将我们所有的最新新闻、公告和更新直接发送到您的收件箱。随时取消订阅。</p>
+<p>感谢您订阅我们的时事通讯！ 🚀</p>
+<p>谢谢你，</p>
+<p>Modular销售团队</p>
+<p>哎呀！提交表单时出现问题。</p>]]></content:encoded>
+    </item>
     <item>
       <title>LLVM 开发者大会 2026：agentic 时代的持久基础设施</title>
       <link>https://www.modular.com/blog/llvm-dev-meeting-2026-durable-infrastructure-in-the-agentic-era</link>
@@ -3695,93 +3749,6 @@ max_output = compile_model(input)</code></pre>
 <p>两场大会上的对话说明了一件事：AI 社区不只是准备好接受减少碎片化的方案——他们在主动寻找。那位问&quot;从哪里开始&quot;的学生，和那些以十年为单位思考而非以季度为单位思考的编译器工程师，都在找同一样东西：能跟上创新步伐、又不必让他们不断重建地基的工具。</p>
 <p>这正是我们打造 Modular Platform 的原因：它让你用一个统一平台完成构建与部署，而不逼你在性能、可移植性与生产力之间做选择。</p>
 <p>了解更多关于<a href="https://www.modular.com/blog/how-is-modular-democratizing-ai-compute">我们民主化 AI 计算的战略</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>仅用 14 天在 AMD MI355 上实现最先进性能</title>
-      <link>https://www.modular.com/blog/achieving-state-of-the-art-performance-on-amd-mi355----in-just-14-days</link>
-      <guid isPermaLink="true">https://www.modular.com/blog/achieving-state-of-the-art-performance-on-amd-mi355----in-just-14-days</guid>
-      <pubDate>Fri, 17 Oct 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Modular: Achieving State-of-the-Art Performance on AMD MI355 — in Just 14 Days</description>
-      <content:encoded><![CDATA[<h1>仅用 14 天在 AMD MI355 上实现最先进性能</h1>
-<p>八月底，AMD 和 TensorWave 联系我们希望为 AMD 媒体技术日（Media Tech Day）联合准备一场演示——他们询问我们能否在 9 月 16 日演示 AMD Instinct™ MI355 上运行的 MAX。只有一个问题：Modular 没有人能接触到 MI355。</p>
-<p>从我们首次能接触硬件算起，只有两周时间。我们视其为一个机会：能否在短短 2 周内在 MI355 上达到最先进（SOTA）性能？我们有信心做到，因为多年来我们一直在构建一个技术平台，以实现 AI 硬件的快速启用（bringup）。</p>
-<h1><strong>为什么 AI 硬件启用如此困难</strong></h1>
-<p>新的 AI 硬件上线本不应只花两周。</p>
-<p>为什么？现代 AI 软件生态是碎片化的。不同公司掌控着不同的层——硬件厂商追逐芯片销量，研究人员在验证最前沿的想法，应用开发者则把这些东西拼凑起来。结果呢？复杂脆弱的技术栈，难以扩展，更难优化。</p>
-<p>正因如此，我们从第一天起就构建了 <strong>Modular 技术栈</strong>，让 AI 硬件启用变得快速、一致且可维护。</p>
-<p>我们常开玩笑说<em>硬件已不再是难点</em>——拖慢所有人的是软件。</p>
-<h2><strong>为可移植性而生的基础</strong></h2>
-<p>Modular 软件栈——从 <strong>Mojo</strong>（我们的编程语言），到 <strong>MAX</strong>（我们的推理框架）和 <strong>Mammoth</strong>（我们的分布式服务系统）——在架构上以<strong>可移植性</strong>为核心，这意味着它能快速迁移到最新的硬件架构并取得 SOTA 性能。</p>
-<p>我们的设计优势体现在：</p>
-<ul><li><strong>架构无关的设计。</strong> Mojo 和 MAX 不硬编码 GPU 知识与优化，而是把所有硬件相关的细节委托给库。</li><li><strong>库驱动的执行。</strong> 卸载（offloading）、调度和指令选择通过抽象层控制，而不是编译器中硬编码的路径。</li><li><strong>参数化操作。</strong> 我们不使用“魔法常量”（如 SIMD 宽度或 tile 形状），而是使用可为新硬件重新调参的参数化 kernel。</li></ul>
-<p>由于<strong>技术栈 99.9% 与架构无关</strong>，添加对新 GPU 的支持大多只需更新少数几个 kernel。MAX 和 Mammoth 开箱即用。</p>
-<p>正是这一设计让我们在 MI355 硬件到位后能够如此迅速地行动。事实上，我们只需修改硬件本身发生变化的部分。这些都存在于特定的 kernel 中——那我们来看看 MI355 的新特性。</p>
-<h3><strong>AMD MI355 的新变化</strong></h3>
-<p>要理解为什么 MI355 只需要增量式的 kernel 更新，我们先来看看 MI355 架构提供了什么，以及 Modular 的 kernel 如何应对这些特性：</p>
-<table><thead><tr><th>MI355 feature</th><th>Impact</th><th>Our adjustment</th></tr></thead><tbody><tr><td>New FP32→BF16 conversion instructions</td><td>Faster casting between data types</td><td>Updated cast dispatch in Mojo’s standard library</td></tr><tr><td>Larger tensor-core tile sizes</td><td>Higher arithmetic intensity</td><td>Expanded matmul tile selection space</td></tr><tr><td>Increased shared memory (64KB→160KB)</td><td>Larger tiles, less memory pressure</td><td>Tuned tile-size parameters</td></tr><tr><td>Transposed DRAM→shared-memory loads</td><td>Removes extra in-place transpositions</td><td>Updated LayoutTensor load logic</td></tr><tr><td>Larger HBM capacity</td><td>Allows larger dynamic batch sizes</td><td>Nothing — handled automatically by MAX’s scheduler</td></tr></tbody></table>
-<p>MI355 的这些新硬件特性专门用于优化类 matmul 操作，因此在 Modular 技术栈中，这也是唯一需要更改的类别。</p>
-<h1><strong>两周达到 SOTA：逐日实录</strong></h1>
-<p>得益于上文所述的技术栈设计，我们在获得硬件访问权限之前很久就已开始在 AMD 的 MI355 上开展工作——我们只需将 Modular 技术栈按支持快速硬件启用来架构即可。</p>
-<p>距离演示只有 2 周，我们必须有选择地确定在合理时间内能开发什么。Modular 虽然行动迅速，但我们也以保持良好的工作与生活平衡为荣——所以我们希望在不进入极限加班模式的情况下达成目标。</p>
-<h2><strong>第 0 天：没有硬件也要准备</strong></h2>
-<p>在我们还没摸到 MI355 之前，我们就已开始离线测试代码生成。Mojo 与硬件无关的后端让我们能模拟指令路径——验证生成的汇编符合预期。你也可以<a href="https://mojo.godbo.lt/z/4cr1en9K6">借助 Compiler Explorer</a>亲自试试。</p>
-<p>通过理解新硬件提供的特性并确保发出正确的指令，我们无需真正在新硬件上运行程序就能对优化做原型验证 🤯。</p>
-<h2><strong>第 1 天：首次登录，首战告捷</strong></h2>
-<p>9 月 1 日，TensorWave 为我们开通了 MI355 系统。我们登录进去，运行 <code>amd-smi</code>，看到新硬件上线：</p>
-<p>Bash</p>
-<p>modular@mia1-p1-g49:~$ amd-smi +------------------------------------------------------------------------------+</p>
-<p>| AMD-SMI 26.0.0+d30a0afe      amdgpu version: 6.14.14  ROCm version: 7.0.0    |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| BDF                        GPU-Name | Mem-Uti   Temp   UEC       Power-Usage |</p>
-<p>| GPU  HIP-ID  OAM-ID  Partition-Mode | GFX-Uti    Fan               Mem-Usage |</p>
-<p>|=====================================+========================================|</p>
-<p>| 0000:05:00.0    AMD Instinct MI355X | 0 %      44 °C   0          229/1400 W |</p>
-<p>|   0       1       6        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:15:00.0    AMD Instinct MI355X | 0 %      45 °C   0          226/1400 W |</p>
-<p>|   1       3       7        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:65:00.0    AMD Instinct MI355X | 0 %      43 °C   0          233/1400 W |</p>
-<p>|   2       2       5        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:75:00.0    AMD Instinct MI355X | 0 %      43 °C   0          225/1400 W |</p>
-<p>|   3       0       4        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:85:00.0    AMD Instinct MI355X | 0 %      40 °C   0          226/1400 W |</p>
-<p>|   4       5       2        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:95:00.0    AMD Instinct MI355X | 0 %      41 °C   0          226/1400 W |</p>
-<p>|   5       7       3        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>我们运行 <code>pip install modular</code>，用 MAX 启动了一个服务端点，一切开箱即用——你按照<a href="https://docs.modular.com/max/get-started">快速入门指南</a>也能做到同样的事。</p>
-<p>虽然此时我们还没有利用 MI355 的新硬件特性，但已经可以进行性能分析并定位执行瓶颈。我们还把执行情况映射到一个内部性能估算工具上进行对照（敬请期待后续相关博文）。</p>
-<p>有了硬件和初步验证，我们现在可以制定计划了。</p>
-<h2><strong>第一周：寻找发力点</strong></h2>
-<p>我们把 MI355 GPU 与 B200 GPU 做了基准对比，运行了 Llama、Gemma 和 Mistral 等模型。我们对照理论上限分析结果以寻找优化机会——我们开发了工具来自动化其中大部分分析工作。工具指出 matmul 优化是通往显著性能提升和 SOTA 结果的路径。</p>
-<p>matmul 实现——仅约 500 行注释良好的代码——很容易调整到能在 MI355 硬件上高效运行。我们还希望跨 AMD 硬件保持可移植性——同一份代码在 MI300、MI325 和 MI355 上都能达到 SOTA——因为即便工期紧张，我们依然重视良好的软件设计。</p>
-<p>在 matmul 代码上工作了几小时并修正 M=N=K=8192 的情况后，我们证明了微小的参数化改动就能带来接近 AMD <a href="https://rocm.docs.amd.com/projects/hipBLASLt/en/latest/what-is-hipBLASLt.html">hipBLASLt</a> 库的性能（我们实测它是 SOTA，且快于 hipBLAS）。</p>
-<table><thead><tr><th>Matmul kernel</th><th>GFlop/s</th></tr></thead><tbody><tr><td>Mojo (day 0)</td><td>1202302.79</td></tr><tr><td>hipblaslt</td><td>1561446.68</td></tr><tr><td>Mojo (day 1)</td><td>1610514.29</td></tr></tbody></table>
-<p>当天再做几处微调后，Mojo matmul kernel 已经<strong>比 SOTA 快 3%</strong>。这一首日实验证明我们的目标是可实现的。</p>
-<p>第一周剩余工作包括：</p>
-<ul><li>将我们的实现泛化到模型中出现的各种形状</li><li>完善用于选择最优 kernel 参数的启发式规则</li><li>搭建基准测试自动化</li><li>配置远程登录系统，使计算资源易于访问和共享</li></ul>
-<p>当然，第一周也并非没有问题。由于硬件配置错误和 Kubernetes 集成中缺少 GPU 算子，我们遭遇了一些延误。尽管有挫折，到周末我们已取得亮眼的性能数字，并安心享受了周末。</p>
-<h2><strong>第二周：从优化到演示</strong></h2>
-<p>还剩一周——演示定于下周二。</p>
-<p>我们继续优化 matmul kernel，并开始探索其他机会，例如优化 Attention kernel 的性能。到第二周中期，我们已有足够好的数字可以与合作伙伴分享。</p>
-<p>演示准备工作也在全面展开。这项工作需要 IT 部门确保我们能现场展示基准测试结果，设计部门把演示做得专业，产品团队帮助打磨信息表达。</p>
-<p>与此同时，我们的工程团队继续针对新硬件优化技术栈，利用第一周建好的自动化向其他团队提供实时数据。</p>
-<p>到周五，<a href="https://x.com/Modular/status/1968071169837613217">MAX nightlies</a> 已在 MI355 上平稳运行，我们的基准测试持续领先于 AMD 定制的 vLLM 分支。带着这些结果，我们已准备好周二演示！</p>
-<p><strong>💡 趣事：</strong> MI355 的启用不仅快，而且仅由两位工程师在正常工作时间内完成，没有熬夜、零赶工。事实证明，出色的架构能同时提升性能<em>与</em>心智健康。</p>
-<h1><strong>结果：超越业界</strong></h1>
-<p>两周结束时，<strong>MAX 在多种工作负载上最多超出 AMD 优化的 vLLM 分支 2.2×</strong>——同时保持了对 <strong>MI300</strong>、<strong>MI325</strong> 和 <strong>MI355</strong> 的<strong>完全可移植性</strong>。这些收益部分来自 kernel，但也来自整个技术栈的协同，兼顾了性能与可移植性。</p>
-<p>更了不起的是，整个启用工作只涉及两位工程师，在 MI355 启用上各投入两周，其中一人还有预先安排的假期，所以实际上相当于 1.5 位工程师工作两周。总计产出 20 个小 PR、零熬夜。这是软件架构成就交付速度的教科书案例。</p>
-<p>性能结果不言自明。</p>
-<p>在 AMD 媒体技术日上，与 <strong>NVIDIA 旗舰 Blackwell 架构</strong>相比，MAX 是<a href="https://tensorwave.com/blog/save-up-to-70-with-max-the-fastest-inference-engine-on-amd-compute"><strong>唯一</strong></a>展示出明显 <strong>TCO 优势</strong>的推理方案。</p>
-<h1><strong>我们完成了吗？差得远。</strong></h1>
-<p>这次两周冲刺只是开始。自那次演示以来，我们扩展了 MI355 支持，加入了早期 <strong>Apple silicon</strong> 支持，并在 <strong>NVIDIA Blackwell</strong> 和 <strong>AMD MI355X</strong> 上都达到了<strong>最先进性能</strong>。看看我们<a href="https://www.modular.com/blog/modular-25-6-unifying-the-latest-gpus-from-nvidia-amd-and-apple">近期的 25.6 版本</a>。</p>
-<p>我们在 <a href="https://www.modular.com/democratizing-ai-compute">Modular 的使命</a>始终不变：让 AI 硬件启用<strong>快速、可移植且普适</strong>——无论它运行在谁的芯片上。</p>
-<p>感谢 <a href="https://tensorwave.com/">TensorWave</a> 与我们合作并提供 MI355X 系统，感谢 <a href="https://www.amd.com/">AMD</a> 邀请我们参加其媒体技术日活动。</p>
-<p>敬请关注更多更新——以及关于促成这一里程碑的 kernel 优化的深度解析文章。也欢迎随时联系我们安排演示，聊聊你的 AI 用例。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

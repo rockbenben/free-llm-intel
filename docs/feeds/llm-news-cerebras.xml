@@ -62,6 +62,56 @@
 <p>联系我们开始使用</p>]]></content:encoded>
     </item>
     <item>
+      <title>高级代码，晶圆级性能</title>
+      <link>https://www.cerebras.ai/blog/high-level-code-wafer-scale-performance</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/high-level-code-wafer-scale-performance</guid>
+      <description>原文标题：High-level code, wafer-scale performance</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 16 日</p>
+<h1>高级代码，晶圆级性能</h1>
+<p><a href="https://www.cerebras.ai/author/michael-james">迈克尔·詹姆斯</a></p>
+<h2>介绍钨和鸟舍</h2>
+<p><em>Michael James，Cerebras Systems 先进技术联合创始人兼首席架构师</em></p>
+<p>上个月，我们的一位研究人员对 Cerebras 晶圆 98% 的区域进行了等离子体物理模拟。编码人员编写了其中的每一行。</p>
+<p>今天，我们发布了使这一切成为可能的工具。 Tungsten 是一种语言和编译器，可让您在不牺牲性能的情况下对 Cerebras 晶圆级引擎进行高级编程。 Aviary 是一个高性能应用程序和用它编写的教程的组合。</p>
+<p>现代科学的大部分内容都是基于模拟：金属如何在反应堆内老化、海啸如何穿越海洋、等离子体如何在电场中移动。这些模拟随着时间的推移以微小的步骤前进，向超级计算机添加更多芯片并不会让这些步骤变得更快。晶圆罐。在某些问题上，它的运行速度比最大的超级计算机快数百倍，将一年的计算时间变成了几天。</p>
+<p>这种速度改变了人工智能对科学的作用。足够快的模拟速度可以在人工智能模型旁边运行，成为它的世界模型，因此人工智能可以根据真实物理测试数千种设计。人工智能代理现在可以自己编写模拟。 Tungsten 将所有这一切交给了非硬件专家的科学家。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/0b4d1d4f6795609aa8adc45a80820e3b6d5362e3-1155x930.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1155" alt=""></p>
+<h4>代理编写的细胞内粒子运行：电子束进入氩等离子体，每个核心一个细胞。</h4>
+<h3>硬件为您提供什么</h3>
+<p>Wafer-Scale Engine 是一个拥有 900,000 个核心的数据流机器，数量如此之多，以至于它们作为一个连续体工作：计算位于本地内存上，并由晶圆上结构连接起来。到达核心的数据会触发消耗它的工作。访问模式寄存器遍历多维数组和结构流，因此地址算术不需要指令。</p>
+<p>一条指令可以将整个循环作为其操作数。内核通过在结构上发送消息来相互调用功能，并且基于事件的控制流取代了轮询和分支。</p>
+<p>硬件承担循环和控制开销，因此即使在较短的内部循环上，内核也会接近峰值运行。将问题分散到晶圆上，它会变得越来越快，超过其他机器停止或减慢的程度。然而，传统编译器无法推理这种机制。编程是最困难的部分。</p>
+<h3>抽象差距</h3>
+<p>以前的编译器将这些功能公开为内在函数。标量代码很好。任何接触向量、流或事件硬件的东西都必须显式地调用它。实际上，每个非标量程序都是以接近汇编的方式编写的。</p>
+<p>您手动配置了描述符。您手动将任务连接到事件。你用手把布料铺好。我们自己用这种方式写了很多代码。速度很快。它还需要深厚的专业知识，而且结果难以阅读、更改或重用。</p>
+<h3>对机器进行建模的编译器</h3>
+<p>钨弥补了这一差距。它的表示法在数学上是自然的，并且适应机器的特征，因此代码读起来接近算法的教科书形式。编译器携带完整的架构模型，并将代码映射到访问模式寄存器、事件驱动任务、结构调用和循环承载指令上。</p>
+<p>以下是本教程中雅可比模板更新的核心：</p>
+<p>每行都是整个块的循环，每行都编译为单个向量指令。 <code>&lt;+-</code> 累积到目的地，就像 <code>+=</code> 一样。没有描述符设置，也没有任务连接，只有模板。</p>
+<p>几十年前，编译器就不再要求程序员分配 CPU 寄存器。编译器决定寄存器中的内容，当寄存器用完时，它会溢出到内存中。 Tungsten 对晶圆上更复杂的资源做了同样的事情：访问模式、循环定义、结构套接字和微线程。成本模型和优化过程将它们与整个程序一起分配，并在程序运行时将它们换入和换出。因为编译器拥有这些决定，所以稍后重构代码是编辑，而不是重写。</p>
+<h3>鸟舍</h3>
+<p>鸟舍项目用钨丝绘制成鸟，聚集在铜晶片的模具网格上。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/44929d40ab24d7b79c88e2c04efc305fdb18f932-1254x1254.png" alt=""></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/46fa841520f2e020e15cd030ede05c4d8b3b919f-1275x1233.png" alt=""></p>
+<p>Aviary 包含一些世界上计算速度最快的代码：</p>
+<ul><li>SNAP 是核辐射传输代码的标准代理，在单个 CS-4 上以 1.6 PFLOP/s 的速度运行，领先于 El Capitan 超级计算机上的 10,800 个 GPU。</li><li>HPCG 是用于对现实世界稀疏工作负载上的超级计算机进行排名的基准，在单个系统上达到 1.04 PFLOP/s。</li><li>我们的晶圆级分子动力学运行速度比世界上最大的超级计算机之一 Frontier 快 748 倍 [3]。</li></ul>
+<p>Aviary 即将推出设计优化器。它将人工智能模型与物理模拟结合起来作为其世界模型，两者都在晶圆上运行。如果您在 SC26，请来我们的展位参观。</p>
+<p>应用范围从紧凑的模板代码到完整的科学应用。较小的教程示例逐步教授该语言。</p>
+<p>Gray-Scott 反应扩散模式来自 Aviary 教程代码，大约 50 行 Tungsten。</p>
+<p>其中许多应用源自我们与桑迪亚国家实验室、劳伦斯利弗莫尔国家实验室和洛斯阿拉莫斯国家实验室在 NNSA 高级内存技术计划下的合作 [5, 6]。分子动力学应用程序建立在我们 2024 年戈登贝尔奖决赛入围作品的基础上。它们不是相同的代码，但结果已经使用了 Tungsten 的早期版本 [2]。</p>
+<p>Gresho 涡流是高阶流体动力学的经典测试，在随材料移动的网格上进行。</p>
+<h3>专为代理编码而构建</h3>
+<p>细胞内粒子代码展示了钨上的代理编码是什么样子的。粒子在场下移动并从一个核心迁移到另一个核心。隐式求解器根据粒子的位置和速度计算分解网格上的场。</p>
+<p>一名研究员。一种编码剂。聊天窗口大约两周。该代理根据已发布的算法构建了代码，根据开源 XOOPIC 代码验证了其参考，并在以 EMPIRE Plasma 代码为模型的问题上运行了该代码。在此过程中，它编写了测试、图表和文档，并发现并修复了自己的错误。完整运行在单个系统上以每秒 7,200 个时间步推进了 6000 万个粒子，每秒更新 4300 亿个粒子。 （对于不是等离子体物理学家的读者来说，这是非常快的。）</p>
+<p>Tungsten 参考足够完整，可以以这种方式工作，因此您可以尝试 Tungsten，几乎不需要启动成本。不过你自己也学学吧。必须有人让特工们保持在正轨上。</p>
+<h3>扩大影响范围</h3>
+<p>我们的使命是扩大人工智能和科学的影响范围。当高性能代码不再需要专家来编写时，更多的问题就变得值得尝试。</p>
+<p>相同的 Tungsten 代码在一个晶圆上或跨一个集群运行。我们的全球海啸模拟在 AI 部署的 64 个晶圆上运行 [1]，这些部署扩展到 2,048 个系统 [4]。</p>
+<p>我们很自豪地发布 Tungsten 和 Aviary，我们希望您发现它们和我们一样有用。一切都在 <a href="https://labs.cerebras.ai/">labs.cerebras.ai</a> 上进行。</p>
+<p>＃＃＃ 参考</p>
+<ul><li>T. Oppelstrup 等人，“<a href="https://arxiv.org/abs/2511.11542">超越百亿亿次级：Cerebras 集群上的数据流域转换</a>”，SCA/HPCAsia 2026。</li><li>K. Santos 等人，“<a href="https://arxiv.org/abs/2405.07898">使用晶圆尺度系统打破分子动力学时间尺度障碍</a>”，SC24，ACM 戈登贝尔奖决赛入围者。</li><li>“<a href="https://doi.org/10.1063/5.0249193">打破模式：克服通用硬件上分子动力学的时间限制</a>，”化学物理杂志 162(7)，2025。</li><li>Cerebras Systems，“[Cerebras Systems 推出世界上最快的人工智能芯片，配备多达 4 万亿个晶体管](https://www.cerebras.ai/press-release/cerebras-announces-third- Generation-wafer-scale-engine)”，新闻稿，2024 年 3 月。</li><li>桑迪亚国家实验室，“<a href="https://newsreleases.sandia.gov/cerebras_research/">调查世界上最大的计算机芯片的库存管理申请</a>”，新闻稿，2022 年 10 月。</li><li>桑迪亚国家实验室，“<a href="https://www.sandia.gov/research/news/advanced-memory-technology-program-kicks-off-round-third-with-cerebras/">先进内存技术计划与 Cerebras 一起启动第三轮</a>”，2025 年 8 月。</li></ul>]]></content:encoded>
+    </item>
+    <item>
       <title>如何实现晶圆级良率</title>
       <link>https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale</guid>
@@ -3131,31 +3181,6 @@
 <p>即刻在 Cerebras Cloud 上开始，包括起步价仅 $10 的按量付费开发者档位——宽松的速度限制让你无需大额前期投入就能原型、构建和扩展。</p>
 <p>如果你在用 GLM-4.6，请参照这份<a href="https://inference-docs.cerebras.ai/resources/glm-47-migration">简单迁移</a><a href="https://inference-docs.cerebras.ai/resources/glm-47-migration">清单</a>。 如果不是，今天就<a href="https://cloud.cerebras.ai/">试试 GLM-4.7</a>——Cerebras Cloud 开发者档位 $10 起步。</p>
 <p>从 Z.ai 了解更多模型信息：https://z.ai/blog/glm-4.7 一如既往，欢迎在 <a href="https://discord.com/invite/q6bZcMWJVu">Discord</a> 或 <a href="https://x.com/cerebras">X</a> 上给我们反馈。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>2026：快速推理找到自己的节奏</title>
-      <link>https://www.cerebras.ai/blog/2026Insights</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/2026Insights</guid>
-      <description>原文标题：2026: Fast Inference Finds its Groove</description>
-      <content:encoded><![CDATA[<p>Jan 06 2026</p>
-<h1>2026：快速推理找到自己的节奏</h1>
-<p>Andrew Feldman</p>
-<p>我是在学跳阿根廷探戈时认识我妻子的。跳探戈没法靠糊弄混过舞步，你必须感受节奏、倾听当下、实时回应。用力过猛，整个舞蹈就会崩坏；找到节奏，一切豁然开朗。</p>
-<p>2025 年，AI 迎来了属于它自己的探戈时刻。</p>
-<p>在过去十多年里，人们用能训练多大的模型来衡量 AI 的进步：更大的集群、更高的预算、更大的数字。但地基已经变动。业界开始从实践而非理论层面理解到：推理速度不是用来炫耀的资本，而是决定 AI 系统能在现实世界中做什么的真正约束。</p>
-<p>在 Cerebras，我们多年来一直坚信这一点。我们打造了有史以来最大的芯片，因为这是从根源上解决延迟、吞吐量和成本的唯一途径。GPU 系统从来就不是为 AI 的这一阶段而设计的，靠渐进式改进完不成这项任务。2025 年，这一信念终于与客户切身体验到的效果对齐了。</p>
-<p>这一年以 <a href="https://www.cerebras.ai/blog/cerebras-launches-worlds-fastest-deepseek-r1-llama-70b-inference">DeepSeek R1 Llama 70B</a> 超过 1,500 tokens/秒 的速度开场，大约比 GPU 快 57 倍。这个结果震动了社区，它表明推理可以从瓶颈转变为助推器，也标志着一波采用潮的开始。我们与 <a href="https://www.cerebras.ai/news/hugging-face-partners-with-cerebras-to-give-developers-access-to-industry-s-fastest-ai-inference">Hugging Face</a> 以及 <a href="https://www.cerebras.ai/press-release/cerebras-systems-and-mayo-clinic-unveil-best-in-class-genomic-foundation-model">Mayo Clinic</a> 团队早期的合作公告表明，快速训练与快速推理如何为开源 AI 和基因组学 AI 开辟新路径。</p>
-<p>生产系统紧随其后。<a href="https://www.cerebras.ai/press-release/cerebras-powers-perplexity-sonar-with-industrys-fastest-ai-inference">Perplexity</a> Sonar 和 <a href="https://www.cerebras.ai/blog/mistral-le-chat">Mistral</a> Le Chat 成为早期范例，让人们体会到当延迟消失时，实时、高质量的回答是什么样子。<a href="https://www.cerebras.ai/press-release/alphasense-and-cerebras-partner-to-power-the-future-of-ai-driven-market-intelligence-with-10x">AlphaSense</a> 展示了速度提升十倍如何重塑商业分析与决策。与 <a href="https://www.cerebras.ai/press-release/inception-and-mbzuai-launch-sherkala-transforming-the-llm-landscape-for-kazakhstan">Inception</a> <a href="https://www.cerebras.ai/press-release/inception-and-mbzuai-launch-sherkala-transforming-the-llm-landscape-for-kazakhstan">和</a><a href="https://www.cerebras.ai/press-release/inception-and-mbzuai-launch-sherkala-transforming-the-llm-landscape-for-kazakhstan">MBZUAI</a> 共同开发的新先进语言模型，以只有极高速推理才可能实现的方式推动了主权 AI 的发展。</p>
-<p>Artificial Analysis 的独立测试很快证实了我们在现场观察到的结果。其评估显示，<a href="https://www.cerebras.ai/press-release/maverick">Cerebras 击败了 NVIDIA Blackwell</a> 的推理记录，在美国及全球 AI 实验室的领先模型上胜出。</p>
-<p>这一刻验证了晶圆级计算的表现截然不同，而且它如今是大模型推理的最佳架构。</p>
-<p>同样的模式贯穿全年。更快的推理催生了更聪明、能力更强的 AI 系统。Sean Lie 和 James Wang 在《<a href="https://www.cerebras.ai/blog/the-cerebras-scaling-law-faster-inference-is-smarter-ai">Cerebras 扩展定律：更快的推理就是更聪明的 AI</a>》中清晰地描述了这一点：同样的时间内能够思考更多的模型会产生更好的结果。我们在各前沿模型上都看到了这一现象。</p>
-<ul><li><a href="https://www.cerebras.ai/blog/qwen3-235b-2507-instruct-now-available-on-cerebras">Qwen3 235B Instruct</a> 的推理速度比领先 GPU 云快十倍不止。</li><li><a href="https://www.cerebras.ai/blog/qwen3-coder-480b-is-live-on-cerebras">Qwen3 Coder 480B</a> 达到 2,000 tokens/秒。</li><li><a href="https://www.cerebras.ai/blog/cerebras-launches-openai-s-gpt-oss-120b-at-a-blistering-3-000-tokens-sec">OpenAI 的 gpt-oss-120B</a> 运行在 3,000 tokens/秒。</li></ul>
-<p>这些不是渐进式的改进，它们改变了人们能构建的东西。</p>
-<p>这一转变催生了新产品。<a href="https://www.cerebras.ai/blog/case-study-cognition-x-cerebras">Cognition 的 SWE-1.5</a> 和 SWE-grep 系列带来了前沿级别的编码性能，比通用模型最快可提速 13 倍。开发者第一次可以在探索代码库、交付功能、调试复杂系统的同时保持心流状态。<a href="https://www.cerebras.ai/blog/ninjatech-ai-powering-the-one-size-fits-all-ai-agent">NinjaTech AI</a> 推出了 Fast Deep Coder，将软件创建速度提升了五到十倍。在 Cerebras 的加持下，<a href="https://www.cerebras.ai/blog/rox-cerebras-real-time-speed-for-agentic-sales-workflows">Rox 的</a><a href="https://www.cerebras.ai/blog/rox-cerebras-real-time-speed-for-agentic-sales-workflows">Revenue Agent</a> 团队报告，当响应进入&quot;即时&quot;区间后，用户的日活跃度显著提升。与 AWS Marketplace、IBM watsonx、Vercel 和 OpenRouter 的新合作持续为所有 AI 构建者开辟更快的道路。</p>
-<p>为了跟上这股需求，我们的基础设施大幅扩张。我们在<a href="https://www.cerebras.ai/blog/okc">俄克拉荷马城</a>开设了算力超过四十 exaflop 的数据中心，并在北美和欧洲运营超过 7 个数据中心。9 月，我们还完成了 G 轮融资，为公司引入了新的长期合作伙伴，夯实了下一阶段增长的基础。</p>
-<p>我们继续兑现对主权 AI 的承诺，推出了 <a href="https://www.cerebras.ai/company/news#:~:text=Cerebras%20Systems%20Launches,PRESS%20RELEASE">Cerebras for Nations</a>，并与 MBZUAI 和 Inception 共同发布了 <a href="https://www.cerebras.ai/press-release/cerebras-delivers-end-to-end-training-and-inference-for-jais-2-the-world-s-leading-open-arabic">JAIS2</a>。我们以对美国能源部 <a href="https://www.cerebras.ai/press-release/cerebras-systems-and-u-s-department-of-energy-sign-mou-to-accelerate-the-genesis-mission-and-u-s">Genesis Mission</a> 的新承诺为这一年收官，并且荣获 <a href="https://www.cerebras.ai/press-release/cerebras-ai-inference-wins-demo-of-the-year-award-at-tsmc-north-america-technology-symposium">TSMC 年度演示</a>奖。</p>
-<p>把去年的种种事件放在一起，讲述的是一个简单的故事：世界上最优秀的构建者能立刻感受到快与慢之间的差距，而他们想要的是 Cerebras。节奏已经改变。</p>
-<p>2025 年是证明。 2026 年是我们找到节奏的一年。 舞池已敞开。让我们起舞。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

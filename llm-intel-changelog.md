@@ -3,6 +3,40 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-11-17
+### Google Gemini（`google_gemini`）
+- 摘要：免费层新增可用的 Gemini Decision 1 并公开其限额；同时 Gemini 4 Carbon 明确不在免费层。
+- `free_models`：`Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；**官方已不公开逐模型免费清单与数值**（定价页只剩 Free / Paid 两档说明，具体限额只在 AI Studio 内显示），调用前以 AI … → `Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；多数模型官方不公开逐模型数值（具体限额在 AI Studio 内显示），调用前以 AI Studio 的 Rate Limit 页为准、`Gemin…
+### Google Gemini Enterprise Agent Platform（`gcp_vertex_ai`）
+- 摘要：免费页新增「Gemini Enterprise Plus 版 30 天免费试用」这一限时活动，$300 赠金、Always Free 与 Startups 赠金数额未变，其余改动均为措辞调整。
+- `free_quota`：新账号 **$300 赠金（90 天）** + **Always Free** 永久免费资源（官方免费页，需开通 Cloud Billing、信用卡验证）；**Google for Startups Cloud Program** 标准 $200,000、AI 赛道最高 **$350,000** → 新账号 **$300 赠金（90 天）** + **Always Free** 每月免费额度（AI API、Compute Engine、BigQuery 等 20 多款产品，不计入赠金）；另可 **免费试用 Gemini Enterprise Plus 版 30 天**；**Google for Startups …
+- `promotions`：**Google for Startups Cloud Program**：标准 **$200,000**，AI 赛道最高 **$350,000**。 → **Gemini Enterprise Plus 版 30 天免费试用**（在一个平台上管理、部署并安全守护所有 AI 智能体）；**Google for Startups Cloud Program**：标准 **$200,000**，AI 初创公司最高 **$350,000**。
+### Morph Labs（`morph_labs`）
+- 摘要：免费层「每月 200 次请求」与首充送 $5 未变，但托管模型阵容已更新（Kimi K3 → Kimi K3.1、新增 GLM-5.3-Flash 与多个 DeepSeek V4.1 Flash 变体，页面不再列出 Qwen/MiniMax），并新增 $200/月不限量 Kimi K3.1 与 DeepSeek V4.1 Flash 的 Ultra 订阅。
+- `free_models`：OpenAI 兼容端点（api.morphllm.com/v1）：`morph-v3-fast`、`morph-v3-large` 及托管 Kimi K3、GLM-5.3、DeepSeek V4/V4.1 Flash、Qwen、MiniMax 等开源模型 —— 免费层 **每月 200 次请求**（200 req f… → 托管开源模型（OpenAI 兼容）：`morph-kimik31`（Kimi K3.1 Pro，1M 上下文）、`morph-glm53-744b`（GLM-5.3 744B，1M）、`morph-glm53flash`（GLM-5.3-Flash，1M）、`morph-dsv41flash` / `morph-ds…
+### Anyscale（`anyscale`）
+- 摘要：Anyscale pricing 页新增 KubeRay 专项 $500 Credits 与 KubeRay Connect 免费试用，并把项目模板额度细化为 $3 / $5 / $5，原有 $100 注册额度仍在。
+- `free_quota`：注册即送 **$100 Anyscale Credits**（官方 pricing 页原文："Get started with $100 credit"）；项目模板一键启动另含 **$5** 额度（原文："Launch project with $5"） → 注册即送 **$100 Anyscale Credits**（官方 pricing 页原文："Get started with $100 credit"）；另有 **KubeRay 专项 $500 Credits**（原文："$500 in Credits for KubeRay"）；项目模板一键启动附带额度分别为 …
+- `promotions`：另有初创企业扶持计划；Committed contracts 提供批量折扣（需商务接触）。 → **KubeRay Connect 免费试用**（原文："KubeRay Connect now available with free trial"），并配套 **$500 Credits for KubeRay**；另有初创企业扶持计划及 Committed contracts 批量折扣（需商务接触）。
+### Parallel Web API（`parallel_ai`）
+- 摘要：免费档由「Developer」更名为「Build」（额度仍为每月 5,000 次请求 + 留卡每月 $5 + 注册最高 $80），并新增「最高 $250 startup credits」，付费档由 Business 更名为 Scale、年付赠金升至 $12,000。
+- `free_quota`：Developer：每月最多 **5,000 次免费请求**（覆盖全部 API）+ **每月 $5 免费额度**（需在账户留卡才发）；注册时最高再得 **$80**（官方写 up to，分档条件未公布） → Build（Pay-as-you-go）：每月最多 **5,000 次免费请求**（覆盖全部 API）+ **每月 $5 免费额度**（需在账户留卡才发）；注册时最高再得 **$80**（官方写 up to，分档条件未公布），另列 **最高 $250 startup credits**
+- `tier_caveats`：免费额度只覆盖请求量、不计 token 深度：Search/Extract 限速 600 次/分钟，但 Task/Responses/FindAll 属高价处理器（单次约 $0.1–$2.4），**深度研究场景消耗很快**、$80 注册赠金随时可能调整，以官方定价页为准 → 免费额度只覆盖请求量、不计 token 深度：Build 档 Search/Extract 限速 600 次/分钟，Decisions API 600 次/分钟，Task API 2,000 次/分钟（Scale 档 Search/Extract 提至 1,500 次/分钟，不含 Turbo）、用量单价按档位上浮：T…
+- `preconditions`：需绑卡（官方写法 “with a card on file”）才能拿到每月 $5 与最高 $80 注册赠金 → 需绑卡（官方写法 “with a card on file”）才能拿到每月 $5 与最高 $80 注册赠金
+### 阶跃星辰 StepFun（`stepfun`）
+- 摘要：StepAudio 3 系列限时免费截止时间由北京时间 2026-11-17 11:59:59 顺延至 2026-11-23 11:59:59（12:00:00 起按新价格计费）。
+- `validity`：仅适用限免政策的 StepAudio 3 模型限免至北京时间 2026-11-17 11:59:59（12:00:00 起恢复计费）。 → 仅适用限免政策的 StepAudio 3 模型限免至北京时间 2026-11-23 11:59:59（12:00:00 起恢复计费）。
+- `free_models`：StepAudio 3 中适用限时免费政策的模型（具体范围以控制台为准；限免至 2026-11-17 11:59:59 北京时间，之后恢复计费） → StepAudio 3 系列中适用限时免费政策的模型 —— 限免至北京时间 2026-11-23 11:59:59，之后恢复计费（具体范围以控制台为准）
+- `tier_caveats`：仅适用限免政策的模型限免至 2026-11-17 11:59:59；已收费模型继续原价计费，勿将整个系列视为免费、Step 5 Preview 仅缓存命中输入价格：2026-10-14 00:30 前已按量调用该模型的用户保留 0.35 元/百万 tokens；其他用户为 0.70 元，非缓存输入与输出另计费、个人账… → 仅适用限免政策的模型限免至 2026-11-23 11:59:59；已收费模型继续原价计费，勿将整个系列视为免费、Step 5 Preview 仅缓存命中输入价格：2026-10-14 00:30 前已按量调用该模型的用户保留 0.35 元/百万 tokens；其他用户为 0.70 元，非缓存输入与输出另计费、个人账…
+### Relace（`relace`）
+- 摘要：官方定价页已改为全部模型按 token 计费（无订阅、无最低消费），不再出现免费套餐（free tier）与 compact/apply/rank/search 免费编程模型，模型阵容换成 DeepSeek V4、Kimi K3、GLM 5.3 等通用模型。
+- `free_quota`：官方定价页原文：提供在线 Playground 并可**“从免费套餐（free tier）开始在您的应用中测试 Relace 模型”**（Sign Up for Free）；具体免费额度未公开数字，以注册后控制台为准 → 官方定价页原文：**“All models are billed per token, pay as you go, with no subscription or minimum.”** 页面已不再出现免费套餐（free tier）、Playground 免费测试或任何免费额度表述，全部模型按每百万 token 计…
+- `free_models`：面向编程智能体的推理模型 `relace-compact`、`relace-apply-3`、`relace-rank`、`relace-search`（代码改写/检索/排序）—— **免费套餐（free tier）可用**，具体配额注册后查看 → DeepSeek V4 Pro —— **无免费额度**，按 token 计费：输入 $0.50 / 缓存输入 $0.05 / 输出 $2.00（每百万 token）、DeepSeek V4 Flash —— **无免费额度**，按 token 计费：输入 $0.07 / 缓存输入 $0.014 / 输出 $0.14…
+- `validity`：以注册后控制台显示为准 → 不适用（无免费额度，按每次请求的 token 用量实时计费）
+- `tier_caveats`：**免费套餐配额不公开数字**，官方定价页只写可从 free tier 开始测试，具体限额要注册后在控制台查看、免费模型是编程 Agent 专用模型（compact/apply/rank/search），不是通用对话模型 → 定价页已无 free tier 表述，明确为“按 token 付费、无订阅或最低消费”、页面所列模型为 DeepSeek V4、Kimi K3、GLM 5.3 等通用模型，不再是 compact/apply/rank/search 编程专用模型、官方称会频繁调价，以请求时 API 返回的价格为准、同一批模型也可通过 …
+- `preconditions`：官网注册（免费套餐入口）；企业部署可预约 guided onboarding → 在 app.relace.ai 注册并获取 API Key（按 token 付费）；大批量可邮件联系 volume pricing。
+- `notes`：免费套餐具体配额需注册后查看；定价页主打 token 计费的基础设施套餐。 → 免费套餐在本页已无任何痕迹，疑似取消；当前为纯按 token 计费的基础设施定价，另提供 OpenRouter 作为接入渠道。
+
 ## 2026-11-16
 ### 通义千问 Qwen（`aliyun_qwen`）
 - 摘要：官方文档移除了未实名老用户自动锁定开启「用尽即停」的规则描述，统一明确用尽即停默认关闭且需手动开启。

@@ -7,7 +7,98 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Hugging Face and OpenRouter join forces to make open-weight…</title>
+      <link>https://huggingface.co/blog/openrouter</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/openrouter?li=1</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Hugging Face and OpenRouter join forces to make open-weight models easy to run</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Hugging Face and OpenRouter join forces to make open-weight models easy to run</h1>
+<p>Published November 16, 2026</p>
+<p>Update on GitHub</p>
+<p>42</p>
+<ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt="Célina Hanouti's avatar"></a></p>
+<p>Célina Hanouti</p>
+<p>celinah</p>
+<p><a href="https://huggingface.co/victor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt="Victor Mustar's avatar"></a></p>
+<p>Victor Mustar</p>
+<p>victor</p>
+<p><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt="Bertrand Chevrier's avatar"></a></p>
+<p>Bertrand Chevrier</p>
+<p>kramp</p>
+<p><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt="Lucain Pouget's avatar"></a></p>
+<p>Lucain Pouget</p>
+<p>Wauplin</p>
+<p><a href="https://huggingface.co/pierric"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1624630689857-5e67de201009063689407481.jpeg" alt="Pierric Cistac's avatar"></a></p>
+<p>Pierric Cistac</p>
+<p>pierric</p>
+<p><a href="https://huggingface.co/coyotte508"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61d2f90c3c2083e1c08af22d/jn21aKijwBnopk7aUJUkq.png" alt="Eliott Coyac's avatar"></a></p>
+<p>Eliott Coyac</p>
+<p>coyotte508</p>
+<p><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt="Julien Chaumond's avatar"></a></p>
+<p>Julien Chaumond</p>
+<p>julien-c</p>
+<p>Hugging Face and OpenRouter are teaming up to make open-weight models easy to run. Every major open-weight release is already being published on the Hugging Face Hub, and <a href="https://openrouter.ai">OpenRouter</a> serves those models at scale, routing each request across 80+ providers based on live measurements of each one. Together, every open-weight model on the Hub that a provider serves can be called with your Hugging Face token, through the same API, with the best provider picked for each request.</p>
+<p>Today, we are switching <a href="https://huggingface.co/docs/inference-providers">Inference Providers</a> from our own custom router to OpenRouter's. Requests made to language models now go through OpenRouter, which picks the best provider for each call based on live price, speed and reliability, and retries on another provider if the first one fails. Your code stays the same.</p>
+<h2>Run them with the tools you already use</h2>
+<p>The router supports OpenAI's Chat Completions and Responses APIs and Anthropic's Messages API for every chat model, whatever the provider behind it. Pick your coding agent or SDK and a model, then copy the steps, or copy the whole setup as a prompt for your agent:</p>
+<p>Setup guides for <a href="https://huggingface.co/docs/inference-providers/integrations/claude-code">Claude Code</a>, <a href="https://huggingface.co/docs/inference-providers/integrations/codex">Codex</a>, <a href="https://huggingface.co/docs/inference-providers/integrations/opencode">OpenCode</a>, <a href="https://huggingface.co/docs/inference-providers/integrations/pi">Pi</a> and <a href="https://huggingface.co/docs/inference-providers/integrations/hermes-agent">Hermes Agent</a></p>
+<p>The same Hugging Face token also gives you storage with <a href="https://huggingface.co/storage">Storage Buckets</a>, compute with <a href="https://huggingface.co/docs/hub/jobs-overview">Jobs</a> and dedicated inference with <a href="https://huggingface.co/docs/inference-endpoints">Inference Endpoints</a>. PRO, Team and Enterprise plans include monthly credits for compute and inference.</p>
+<h2>How open-weight models are used</h2>
+<p>On OpenRouter, open-weight models went from 26.8% of the tokens served in October 2025 to 71.7% at the end of September 2026, after peaking at 77.5% in July (<a href="https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/">OpenRouter, October 2026</a>). Over the same period, weekly open-weight volume grew more than 60-fold, against almost tenfold for closed models. This week, the most used model on OpenRouter is an open-weight one, DeepSeek V4.1 Flash 1017, with 59.2 trillion tokens (<a href="https://openrouter.ai/rankings">rankings</a>).</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/open-weight-share@2x.png" alt="Open-weight models' share of tokens on OpenRouter, from 26.8% in October 2025 to 71.7% in September 2026"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/open-weight-share-dark@2x.png" alt="Open-weight models' share of tokens on OpenRouter, from 26.8% in October 2025 to 71.7% in September 2026"></p>
+<p>Open-weight models cost about four times less on average: $0.28 per million input tokens and $1.62 per million output tokens, against $1.27 and $6.36 for closed models.</p>
+<p>The best open-weight models still trail the best proprietary ones on the hardest benchmarks. On the <a href="https://artificialanalysis.ai/leaderboards/models">Artificial Analysis Intelligence Index</a>, Kimi K3.1 Pro, the best open-weight model, scores 46 against 65 for Claude Fable 5.2, at about a seventh of the cost per task ($3.68 against $26.54). For a lot of workloads, that trade-off is worth it.</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/intelligence-vs-cost@2x.png" alt="Artificial Analysis Intelligence Index against cost per task, for the top proprietary and open-weight models"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/intelligence-vs-cost-dark@2x.png" alt="Artificial Analysis Intelligence Index against cost per task, for the top proprietary and open-weight models"></p>
+<h2>Routing powered by OpenRouter</h2>
+<p>OpenRouter serves more than 800 trillion tokens a month to over 10 million users, across 600+ models from 80+ providers. Its routing is based on live measurements of every provider across that traffic.</p>
+<p>OpenRouter recently <a href="https://openrouter.ai/blog/announcements/how-we-rebuilt-provider-routing/">rebuilt its provider routing</a>: instead of only looking at the lowest list price, it sends each request to the provider with the best mix of price, speed and reliability.</p>
+<p>When a provider slows down or starts failing, traffic moves away from it until it recovers, and a failed try is retried on the next best provider inside the same call. In OpenRouter's measurements, the new routing cut capacity errors by 46% and improved time to first token by 16.9% and throughput by 16.3%.</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/routing@2x.gif" alt="Default routing retries on another provider when the first one is rate limited, :cheapest picks the lowest price and :fastest the highest throughput"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/routing-dark@2x.gif" alt="Default routing retries on another provider when the first one is rate limited, :cheapest picks the lowest price and :fastest the highest throughput"></p>
+<p>Before, Inference Providers picked one provider for your request and returned its error if it failed. Now, the request is retried on another provider. You can still choose a policy or a provider with a suffix on the model id:</p>
+<pre><code>zai-org/GLM-5.3            # default: best mix of price, speed and reliability
+zai-org/GLM-5.3:fastest    # highest throughput
+zai-org/GLM-5.3:cheapest   # lowest price
+zai-org/GLM-5.3:novita     # only Novita</code></pre>
+<p>Routing is also cache-aware: a conversation stays on the provider that holds its prompt cache. To make it explicit, send a stable UUID per conversation in the <code>X-HF-Session-Id</code> header (see the <a href="https://huggingface.co/docs/inference-providers/prompt-caching">prompt caching guide</a>).</p>
+<h2>Pricing</h2>
+<p>Pricing doesn't change: you pay the provider's price on your Hugging Face bill, and Hugging Face doesn't add a markup on top of it. PRO users get $2 of credits every month, and Team and Enterprise organizations get $2 per seat. See <a href="https://huggingface.co/docs/inference-providers/pricing">Pricing and Billing</a> for the details.</p>
+<h2>Image, video and audio generation</h2>
+<p>Image, video, and audio generation continue to work exactly as before, directly through Hugging Face Inference Providers without going through OpenRouter. You can keep using the same token and API, and access tens of thousands of <a href="https://huggingface.co/models?inference_provider=all&amp;pipeline_tag=text-to-image&amp;other=lora">LoRAs</a>.</p>
+<h2>See where your requests go</h2>
+<p>On model pages, you can chat with the model right away in the widget. Two new tabs show what's behind it: Providers lists every provider OpenRouter can route the model to, with its input and output price, speed and uptime over the last 24 hours, and Metrics shows the best price, throughput, time to first token, context length and uptime among them:</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/widget-playground-3@2x.gif" alt="Chatting with Inkling-2-Small in the model page widget, opening its code snippets, then its Metrics tab"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/widget-playground-3-dark@2x.gif" alt="Chatting with Inkling-2-Small in the model page widget, opening its code snippets, then its Metrics tab"></p>
+<p>Your <a href="https://huggingface.co/settings/inference-providers/overview">usage overview</a> breaks your spend down by the provider each request went to:</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/usage-by-provider@2x.png" alt="Daily Inference Providers spend, broken down by provider"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/usage-by-provider-dark@2x.png" alt="Daily Inference Providers spend, broken down by provider"></p>
+<p>In your <a href="https://huggingface.co/settings/inference-providers">settings</a>, you can turn off any provider you don't want: the router never sends your requests there. Organizations have the same settings, and they apply to every request billed to the organization.</p>
+<p><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/settings-providers@2x.png" alt="Inference Providers settings, with a toggle for each provider"> <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inference-providers-openrouter/settings-providers-dark@2x.png" alt="Inference Providers settings, with a toggle for each provider"></p>
+<h2>Breaking change: custom provider keys</h2>
+<p>Requests to language models now go through OpenRouter and are billed to your Hugging Face account or organization, so you can no longer use your own API key for a provider with these models. You can still pick a provider with a suffix on the model id (<code>model:provider</code>) or turn providers off in your settings, and your code stays the same. Custom keys for image and video providers keep working.</p>
+<h2>What's next</h2>
+<p>This is the first step of our partnership with OpenRouter. Next:</p>
+<ul><li>Connect your OpenRouter account to Hugging Face.</li><li>More tasks routed through OpenRouter.</li></ul>
+<p>Try a <a href="https://huggingface.co/models?inference_provider=all&amp;sort=trending&amp;other=conversational">model</a>, or read the <a href="https://huggingface.co/docs/inference-providers">Inference Providers docs</a> to get started.</p>
+<p>More Articles from our Blog</p>
+<p>llmsinference-providersbaseten</p>
+<h2>Baseten on Hugging Face Inference Providers 🔥</h2>
+<ul><li><img src="https://huggingface.co/avatars/03669abbb72c99a299d0d24dae76ce43.svg" alt=""></li><li><img src="https://huggingface.co/avatars/4f997bf5afe1840c4c6e57319b0bed73.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1667348060565-noauth.png" alt=""></li><li><img src="https://huggingface.co/avatars/547c30b7a5a6d53ca44a8e5b7f3b5b56.svg" alt=""></li><li>+4</li></ul>
+<p>35</p>
+<p>August 6, 2026</p>
+<p>llmsinference-providersdeepinfra</p>
+<h2>DeepInfra on Hugging Face Inference Providers 🔥</h2>
+<ul><li><img src="https://huggingface.co/avatars/a116dc7e8e87468cd68e8ff5d5086934.svg" alt=""></li><li><img src="https://huggingface.co/avatars/53ebdf207110b3b567c66daf03d2e60d.svg" alt=""></li><li><img src="https://huggingface.co/avatars/7e536331d27b29cb04b804a0b7a81d5e.svg" alt=""></li><li><img src="https://huggingface.co/avatars/671932199532656af4b26880565cd835.svg" alt=""></li><li>+4</li></ul>
+<p>15</p>
+<p>April 29, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fopenrouter">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fopenrouter">log in</a> to comment</p>
+<p>42</p>
+<ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pierrci"><img src="https://huggingface.co/avatars/d4cce894629554d9a10369ecc2a7de67.svg" alt=""></a></li><li><a href="https://huggingface.co/alrightjones"><img src="https://huggingface.co/avatars/347bb31f03574c50ba0376ecac86a511.svg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Gflorent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620a77b7dbba8fc1fbb8bdb4/ZRW2pH9Iawj700OyLpJl8.png" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/abatuhanb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/681a45f2212b9872c123ad4b/_aYKRcWJO0qIYV_sZFfDn.jpeg" alt=""></a></li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>Build a Robot Pick-and-Place Simulation with SimReady Assets</title>
       <link>https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</link>
@@ -7492,77 +7583,6 @@ out = pipe(prompt=prompt, generator=torch.Generator().manual_seed(0), output=[&q
 <h2>Datasets mentioned in this article 1</h2>
 <h2>Spaces mentioned in this article 2</h2>
 <h2>Collections mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Granite Switch 4.1: Chat, Decisions, and Speech from One End…</title>
-      <link>https://huggingface.co/blog/ibm-granite/granite-switch-4-1</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-granite/granite-switch-4-1?li=1</guid>
-      <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint</h1>
-<p>Enterprise  Article</p>
-<p>Published October 15, 2026</p>
-<p>8</p>
-<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/0c302d25cdd0e4ac2e84c5ca197b28a7.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/IRENEKO"><img src="https://huggingface.co/avatars/f6a0ce5761e97dd44008d01c98f11ca9.svg" alt=""></a></li><li><a href="https://huggingface.co/nasrimfaume"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/r2HHnBRbZuc0ix0eNgyiH.png" alt=""></a></li><li><a href="https://huggingface.co/cosmojg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669946101720-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/1c1b540117a4580bdb169c9dbe9ffd01.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/1c1b540117a4580bdb169c9dbe9ffd01.svg" alt="Kate Soule's avatar"></a></p>
-<p>Kate Soule</p>
-<p>katesoule</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt="Subhajit Chaudhury's avatar"></a></p>
-<p>Subhajit Chaudhury</p>
-<p>subhajit1412</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/hen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1642069891298-60f58f250e0bc7f10bb020ad.jpeg" alt="Hendrik Strobelt's avatar"></a></p>
-<p>Hendrik Strobelt</p>
-<p>hen</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/0c302d25cdd0e4ac2e84c5ca197b28a7.svg" alt="Luis A Lastras's avatar"></a></p>
-<p>Luis A Lastras</p>
-<p>GrizleeBer</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p>Introduced last spring, the <a href="https://github.com/generative-computing/granite-switch">Granite Switch</a> project enables a modular approach to model development. Now <strong>Granite Switch 4.1</strong> models, armed with a Decision adapter and the fastest ASR model on the OpenASR leaderboard, can move efficiently between natural-language responses, general and specialized decisions, and speech-to-text tasks—all from one hosted endpoint.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/662836b742709fe826510597/LHBbw-MVVQgnYcpDK_DWC.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/662836b742709fe826510597/LHBbw-MVVQgnYcpDK_DWC.png" alt="granite_switch_adapter_swap"></a></p>
-<p>Specifically, <a href="https://huggingface.co/ibm-granite/granite-switch-4.1-8b">Granite-Switch-4.1-8B</a> and <a href="https://huggingface.co/ibm-granite/granite-switch-4.1-30b">-30B</a> models are configured to include:</p>
-<ul><li>A new <a href="https://huggingface.co/ibm-granite/granitelib-core-r1.0/blob/main/decision/README.md">Decision aLoRA</a> for general-purpose decision-making (e.g. v1/systemone),</li><li>A specialized <a href="https://huggingface.co/ibm-granite/granitelib-guardian-r1.0/blob/main/guardian-core/README.md">Guardian aLoRA</a> that, on average, outperforms Jev 1.13, Microsoft-Decision-1, GPT-Luna-Decisions, and Clef-Flash on safety-related decision tasks, and</li><li><a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">Granite-Speech-5.0-Turbo-CTC</a>, the fastest ASR model on the <a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">OpenASR Leaderboard</a>, embedded for use in transcription tasks.</li></ul>
-<p>All three of these technologies (along with the underlying base model) are composed into one model, taking up approximately the same amount of VRAM on a GPU as the base model would by itself. That means more capabilities with fewer GPUs.</p>
-<p>And because the Switch adapters were built as cache-efficient <a href="https://research.ibm.com/blog/inference-friendly-aloras-lora">Activated LoRAs</a>, the KV cache created from a base model generation can be reused for any subsequent adapter-based decisions. Combined with our team's <a href="https://github.com/generative-computing/granite-switch/blob/main/docs/SWITCH_KERNELS.md">recent vLLM contributions</a> to speed up low rank adapter inferencing, as well as a co-located ASR encoder, Granite Switch 4.1 models can <em>switch</em> between a chat request and a decision request and a spoken request, with blazing fast speeds.</p>
-<p><em>Check out our <a href="https://huggingface.co/spaces/ibm-granite/speech-to-decisions">Speech-to-Decisions HF space</a> where granite-switch-4.1-8b transcribes audio, generates summaries, screens for harmful content, and tests 15 other user-defined flags—all running on a single endpoint in real time.</em></p>
-<h2>Granite Libraries: The OG Decision Models</h2>
-<p>Decision models aren’t new. Our previous release of <a href="https://huggingface.co/collections/ibm-granite/granite-libraries">Granite Libraries</a> features a repository of specialized “decision model” adapters and other specialized task adapters that can be composed into custom Granite Switch models. And while Jev and other closed decision models focus on generality, we’ve found that many of our specialized granitelib adapters can outperform generalists on specialized classification tasks.</p>
-<p><em><a href="https://huggingface.co/spaces/ibm-granite/granitelib-evals">Compare granitelib adapters</a> with generalist decision models when evaluated on specialized classification tasks.</em></p>
-<p>Because adapters share the base model's KV cache, adding specialists alongside a generalist decision adapter costs almost nothing. You get broad coverage from the generalist and higher accuracy from specialists on the tasks you care about.</p>
-<p><em>In a “Race” between Granite-Switch-4.1-30B (frozen base Granite + 4 specialized aLoRAs) and Jev-27B (frozen base Qwen model + 1 generic decision LoRA), Granite-Switch-4.1-30B was able to complete a real world, 5-step RAG workflow much faster than its competitor.</em></p>
-<h2>Compose and Extend Your Own Granite Switch Model</h2>
-<p>Granite-Switch-4.1-8B and -30B are released with “batteries included”. They are Granite Switch models that we compiled with a predefined set of helpful adapters. But you don’t need to use our version. Anyone can <a href="https://generative-computing.github.io/granite-switch/adapter_catalog.html">compose their own Granite Switch model</a>, mixing and matching adapters from Granite Libraries to best meet their needs.</p>
-<p>Moving forward, we see tremendous opportunity for the community to compose and extend Granite Switch models with custom and third party adapters. We plan to release an Adapter SDK for training adapters in <a href="https://docs.mellea.ai/advanced/lora-and-alora-adapters">Mellea</a>, along side other tutorials and Granite Switch support. These adapters could be specialized classification adapters to augment decision-based workflows or adapters for specialized language tasks. You could even use custom adapters to teach a 3B parameter version of Granite to play the classic game Doom.</p>
-<p><em>Similarly to Jev, our custom 3B parameter Granite Switch model made split second decisions to navigate the Doom game, but was able to do so at <strong>60 - 100 decisions / second,</strong> compared to Jev’s reported 10 decisions / second.</em><a href="https://huggingface.co/blog/ibm-granite/granite-switch-4-1#footnote-1">1</a> <em>Unlike Jev, this Granite Switch model can also narrate and respond to your questions while it is playing.</em></p>
-<p>We look forward to releasing more details and data on Granite Switch in the upcoming weeks, but until then, we encourage you to try out our latest Switch models and these other helpful resources for getting started.</p>
-<h2>Resources for Getting Started</h2>
-<ul><li><a href="https://huggingface.co/collections/ibm-granite/granite-switch">Granite Switch 4.1 Model Cards</a></li><li><a href="https://huggingface.co/spaces/ibm-granite/speech-to-decisions">Speech-to-Decisions Demo</a></li><li><a href="https://github.com/generative-computing/granite-switch">Granite Switch GitHub Repo</a></li><li><a href="https://research.ibm.com/blog/granite-libraries-project-switch">Original Granite Switch and Granite Libraries Release Blog</a></li><li>Create your own aLoRA v LoRA race on <a href="https://colab.research.google.com/github/generative-computing/granite-switch/blob/main/tutorials/notebooks/alora_vs_lora_race.ipynb">Colab</a>.</li></ul>
-<p><strong>Footnotes</strong></p>
-<p>1 <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev">https://typesafe.ai/blog/introducing-system-one-models-and-jev</a></p>
-<h2>Models mentioned in this article 5</h2>
-<h2>Spaces mentioned in this article 3</h2>
-<h2>Collections mentioned in this article 2</h2>
-<p>More from this author</p>
-<h2>Granite 4.2 LLMs: How They're Built</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
-<p>127</p>
-<p>August 25, 2026</p>
-<h2>Extremely Fast and Accurate Transcription with Granite Speech 5.0 Turbo CTC</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
-<p>37</p>
-<p>August 25, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1">log in</a> to comment</p>
-<p>8</p>
-<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/0c302d25cdd0e4ac2e84c5ca197b28a7.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/IRENEKO"><img src="https://huggingface.co/avatars/f6a0ce5761e97dd44008d01c98f11ca9.svg" alt=""></a></li><li><a href="https://huggingface.co/nasrimfaume"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/r2HHnBRbZuc0ix0eNgyiH.png" alt=""></a></li><li><a href="https://huggingface.co/cosmojg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669946101720-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/1c1b540117a4580bdb169c9dbe9ffd01.svg" alt=""></a></li><li><a href="https://huggingface.co/leonardlin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63a7422854f1d0225b075bfc/XGYAcDPZG5ZEsNBWG6guw.jpeg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
-<h2>Models mentioned in this article 5</h2>
-<h2>Spaces mentioned in this article 3</h2>
-<h2>Collections mentioned in this article 2</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

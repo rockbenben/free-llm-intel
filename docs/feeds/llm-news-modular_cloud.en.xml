@@ -7,7 +7,60 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-modular_cloud.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Modular: Modular at LLVM Developers&apos; Meeting 2026</title>
+      <link>https://www.modular.com/blog/modular-llvm-dev-meeting-2026</link>
+      <guid isPermaLink="true">https://www.modular.com/blog/modular-llvm-dev-meeting-2026?li=1</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>November 16, 2026</p>
+<h1>Modular at LLVM Developers' Meeting 2026</h1>
+<p>Michael Dunn-OConnor</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aeb932a7c8fed75ff9caae5_LLVM-CoverImg.jpeg" alt=""></p>
+<p>Community</p>
+<p>Modular recently spent three days at the <a href="https://llvm.swoogo.com/2026devmtg/agenda">2026 LLVM Developers' Meeting</a> in Santa Clara, California (October 26 to 28), where we ran a full-day MAX and Mojo workshop, gave a technical talk on device graphs, and talked with folks in the LLVM community in the hallways and at our booth. This was the first time we could share details about the entire Modular stack from end to end, with <a href="https://www.modular.com/blog/max-license">all of the source code available for attendees to follow along</a>. We showed the internal architecture of the Mojo language, how we use MLIR across the stack, and how we layer Mojo with our graph compiler, among other topics. This post covers what we presented, what we heard, and what collaboration we see ahead.</p>
+<p>Mojo and MAX workshop poster</p>
+<h2>Workshop: Mojo Internals Deep Dive and Roadmap</h2>
+<p>On Monday, October 26th, we ran &quot;Mojo: Internals Deep Dive and Roadmap,&quot; an all-day session for compiler engineers familiar with LLVM and MLIR. The goal was to give that audience a working map of how Mojo is built, from the compiler and type system to GPU back-ends and the standard library. Despite the name, this was not just a session on Mojo. We built MAX on the foundation that Mojo provides, so we also covered how MAX targets new accelerator hardware, and how it compiles and optimizes computational graphs for complex AI models. The <a href="https://www.modular.com/blog/max-license">newly source-available</a> MAX let us show, for the first time, how the entire Modular stack works together.</p>
+<p>Mojo is built on MLIR (<a href="https://mlir.llvm.org/">a subproject of LLVM</a>), so this audience of active users and contributors had a unique perspective on the language, though many were new to Mojo and MAX. We were able to go much deeper into the internals of both Mojo and MAX than we typically do for a general audience. Unfortunately, LLVM workshops are not recorded, but the slides are included below.</p>
+<h3>What each talk covered</h3>
+<ul><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-LLVM-Ecosystem.pdf">Mojo's place in the LLVM ecosystem</a><strong>.</strong> Billy Zhu, Lukas Hermann, and Weiwei Chen framed Mojo as the user-facing layer over MLIR for accelerators, where hardware specialization is performed by libraries that domain experts can write, not locked inside a compiler or a vendor binary. Mojo gives programmers the full power of direct MLIR and LLVM IR access, acting as a unified LLVM-style layer for AI.</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Compiler-Architecture.pdf">Mojo compiler architecture overview</a><strong>.</strong> Billy Zhu and Weiwei Chen went deep into the unique MLIR-based design of the Mojo compiler. They discussed how the Mojo parser emits parametric MLIR directly, with no AST, and resolves declarations lazily. They also covered how the elaborator concretizes generic code asynchronously, and how the plugin system allows new backends to be added without forking the entire compiler.</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Making-New-Hardware-Boring.pdf">Plugin architecture: separating the compiler and SDK from hardware-specific parts</a><strong>.</strong> Connor Gray showed how Modular is creating a portable and performant AI stack through programmable plugins. Anyone can extend the standard library and MAX accelerator library with optimized support for new hardware by implementing simple Mojo <code>PluginHooks</code> and <code>MaxPluginHooks</code> traits. These plugins are concise, with the backend for Qualcomm Cloud AI 100 only 263 lines. The full plugin architecture will enable plugins to bring the entire Modular stack to new hardware, a key technical enabler for the <a href="https://www.modular.com/alliance">Modular hardware alliance</a>.</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Ownership.pdf">Value ownership, lifetimes and origins: Mojo's memory safety model</a><strong>.</strong> Chris Lattner explained the benefits of Mojo's origins system: memory safety without a garbage collector, systems-level control, and an escape to unsafe APIs when needed. Generally, programmers don’t have to think about references until they define an API that returns one. The compiler checks lifetimes and destroys each value right after its last use, which gives smaller capture sets, more tail calls and copy-to-move optimization, and linear types that compose with the rest of the type system.</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-How-Mojo-Supports-Non-LLVM-Back-Ends.pdf">How Mojo supports non-LLVM back-ends (TPU and Trainium)</a><strong>.</strong> Kolya Panchenko explained why TPU and Trainium are difficult hardware backends for a generalpurpose language. They expect typed, tiled, structured code, and Mojo has no <code>memref</code> type. The first milestone was a vector add written in Mojo that compiles to Mosaic MLIR for the TPU.</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Graph-Compiler.pdf">MAX graph compiler and the MLIR dialects behind kernel fusion</a><strong>.</strong> Feras Boulala walked an RMS-norm example through the whole MAX pipeline. Along the way, he showed the optimizations applied at each stage and features that set MAX apart for debugging a model, including Python stack traces and tracing.</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-How-We-Write-Mojo-in-Mojo.pdf">How we write Mojo in Mojo</a><strong>.</strong> Joe Loser and Nathan Ward built an <code>Int</code> from scratch in MLIR, then showed how the types in the Mojo standard library are built the same way. A few leaf types wrap MLIR (like Bool, SIMD, and Pointer), then other types are built in Mojo using these leaves.</li><li><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Metaprogramming-Magic.pdf">Case study: metaprogramming that abstracts away hardware specifics</a><strong>.</strong> Kern Handa described bringing up a 32-bit device behind a 64-bit host. The case study detailed three problems (a fixed C entry point, packing arguments into a flexible array, and serializing closures), each solved with Mojo library code. Kern demonstrated how bringing up an accelerator is mostly library work.</li></ul>
+<h2>Technical talk: Moving Beyond Record &amp; Replay</h2>
+<p>On Wednesday, October 28, Spenser Bauman from our Graph Execution team presented <a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Roadmap-Compiler-first-device-graph-synthesis.pdf">Moving Beyond Record &amp; Replay</a>, a case for building device graphs in a compiler, such as the one inside MAX, instead of capturing them at runtime. If you’re not familiar, both CUDA and HIP (as well as other accelerators) offer a means of sending a graph of operations to an accelerator, instead of sending each operation by itself.</p>
+<p>As GPUs get faster, the cost of CPU-to-accelerator communication grows until it takes up much of the inference time. Device graphs address that by submitting a whole sequence of work to the device at once. MAX uses them, and so does every widely used serving stack. The usual way to build one is record and replay: capture a stream of commands at runtime, then replay it. CUDA and HIP both offer this.</p>
+<p>Spenser laid out two problems with that approach:</p>
+<ul><li>Record and replay spreads complexity across the graph executor, async runtime, memory pools, kernels, and drivers.</li><li>It depends on a capture mode that not every vendor provides. Several accelerators expose device-graph or command-buffer construction APIs but have no record and replay equivalent, which puts them out of reach for a capture-based stack.</li></ul>
+<p>The alternative Modular is pursuing is to use a graph compiler to build those device graphs directly. Rather than capturing and then replaying a graph, the graph compiler within MAX already knows the fundamental structure of the final device graph. The graph compiler can construct the device graph and emit direct calls to the target's graph-construction APIs. The talk walked through four pieces of that design:</p>
+<ul><li>How kernels declare their device-graph capabilities.</li><li>The front-end IR that marks device-graph-capable regions.</li><li>The middle-end dialects and operations that model device graphs.</li><li>The Mojo-level APIs for working with them.</li></ul>
+<p>The approach is already working in practice. A production Gemma 4 model now runs end-to-end through device graph synthesis on one or more GPUs, and a single model can contain multiple device-graph regions. Building the graph directly is about 40% faster than recording it. <code>DeviceGraphBuilder</code> implementations exist for CUDA, HIP, and Qualcomm AI100, all behind one interface, so the same approach extends to new targets.</p>
+<h2>What comes next</h2>
+<p>The workshop closed with the Mojo roadmap and an invitation to contribute.</p>
+<p><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Mojo-Roadmap.pdf"><strong>Roadmap</strong></a><strong>.</strong> Denis Gurchenkov outlined the near-term priority of Mojo language features for kernel programming (enumerations and pattern matching, more compile-time metaprogramming, syntax for hardware concepts such as address spaces) and a longer-term goal for 2027 of reaching developers who write performant CPU code, with the necessary development of async/await, dynamic dispatch, threading, and networking. On the compiler side, the plan is to make the GPU and NPU backends source available, support pluggable MLIR and LLVM backends, enable a WASM backend, and to continue improving compilation speed. Tooling and community items include automatic Mojo and C interoperability, a debugger, a testing framework, a package manager built on pixi, and a Bazel-based build system.</p>
+<p><a href="https://github.com/modular/devrel-extras/blob/main/slides/2026/LLVM-Dev-Mtg-2026-Modulars-Open-Source-Journey.pdf">Modular's open source journey</a><strong>.</strong> Brad Larson and Joe Loser traced three years of progressive open-sourcing of Mojo and MAX, starting with <a href="https://www.modular.com/blog/the-next-big-step-in-mojo-open-source">the Mojo standard library in March of 2024,</a> all the way to <a href="https://www.modular.com/blog/mojo-open-source">open-sourcing Mojo</a> and <a href="https://www.modular.com/blog/max-license">making MAX fully source-available</a> just a few weeks ago. The whole Modular stack now builds from the public <code>modular/modular</code> repository (which now has over 30,000 GitHub stars!), a tremendously exciting milestone. We’ve also learned a lot of lessons during our process of open-sourcing Mojo and MAX, which we get into in this presentation.</p>
+<p>With all of the source code for Mojo and MAX now publicly available, the team left attendees with one message: please <a href="https://github.com/modular/modular">clone the </a><a href="https://github.com/modular/modular"><code>modular/modular</code></a><a href="https://github.com/modular/modular"> repository</a>, build Mojo and MAX from source, and experiment with extending the platform. Check out<a href="https://github.com/modular/modular/tree/main/Mojo/docs/contributing"> the contributor guides for Mojo</a> as well as <a href="https://github.com/modular/modular/tree/main/max/docs/contributing">the newly added guide for MAX</a> and see where and how you can upstream fixes and additions for both.</p>
+<p>Modular (and Qualcomm) are proud long-time supporters of LLVM Foundation events, and this year was particularly special: we finally took everyone behind the curtains of our work, and are excited to see what the community will build.</p>
+<h2>Read more from Modular</h2>
+<p>View all blogs</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aeb932a7c8fed75ff9caae5_LLVM-CoverImg.jpeg" alt=""></p>
+<p>LLVM Dev Meeting 2026: Durable Infrastructure in the Agentic Era</p>
+<p>November 4, 2026</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aa8a1beed382b82d8230724_communitybp.jpeg" alt=""></p>
+<p>Nurturing the Modular ecosystem: the Modular Community Grant Program</p>
+<p>October 9, 2026</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a29a395aea53c6eac963763_MAXMojo-Hyperdrive-Extend_%25281%2529.png" alt=""></p>
+<p>Modverse #55: Mojo 1.0 Beta, Community Mojo Libraries, and Real-Time Patient Conversations Powered by MAX</p>
+<p>June 10, 2026</p>
+<p>Build the future of AI with Modular</p>
+<p>Get started - FREE</p>
+<p>View Editions</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="Person with blonde hair using a laptop with an Apple logo.">Sign up todaySignup to our Cloud Platform today to get started easily.<a href="https://docs.modular.com/max/get-started">Sign Up</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="Magnifying glass emoji with black handle and round clear lens.">Browse open modelsBrowse our model catalog, or deploy your own custom model<a href="https://www.modular.com/models">Browse models</a></li></ul>
+<h2>Sign up for our newsletter</h2>
+<p>Get all our latest news, announcements and updates delivered directly to your inbox. Unsubscribe at anytime.</p>
+<p>Thanks for signing up to our newsletter! 🚀</p>
+<p>Thank you,</p>
+<p>Modular Sales Team</p>
+<p>Oops! Something went wrong while submitting the form.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Modular: LLVM Dev Meeting 2026: Durable Infrastructure in th…</title>
       <link>https://www.modular.com/blog/llvm-dev-meeting-2026-durable-infrastructure-in-the-agentic-era</link>
@@ -4856,120 +4909,6 @@ max_output = compile_model(input)</code></pre>
 <p>May 19, 2026</p>
 <p>Modverse #54: AMD AI DevDay, New Modular Offices, and a Community That Keeps Shipping</p>
 <p>May 4, 2026</p>
-<p>Build the future of AI with Modular</p>
-<p>Get started - FREE</p>
-<p>View Editions</p>
-<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="Person with blonde hair using a laptop with an Apple logo.">Sign up todaySignup to our Cloud Platform today to get started easily.<a href="https://docs.modular.com/max/get-started">Sign Up</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="Magnifying glass emoji with black handle and round clear lens.">Browse open modelsBrowse our model catalog, or deploy your own custom model<a href="https://www.modular.com/models">Browse models</a></li></ul>
-<h2>Sign up for our newsletter</h2>
-<p>Get all our latest news, announcements and updates delivered directly to your inbox. Unsubscribe at anytime.</p>
-<p>Thanks for signing up to our newsletter! 🚀</p>
-<p>Thank you,</p>
-<p>Modular Sales Team</p>
-<p>Oops! Something went wrong while submitting the form.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Modular: Achieving State-of-the-Art Performance on AMD MI355…</title>
-      <link>https://www.modular.com/blog/achieving-state-of-the-art-performance-on-amd-mi355----in-just-14-days</link>
-      <guid isPermaLink="true">https://www.modular.com/blog/achieving-state-of-the-art-performance-on-amd-mi355----in-just-14-days?li=1</guid>
-      <pubDate>Fri, 17 Oct 2025 00:00:00 +0000</pubDate>
-      <description>Full title: Modular: Achieving State-of-the-Art Performance on AMD MI355 — in Just 14 Days</description>
-      <content:encoded><![CDATA[<p>October 17, 2025</p>
-<h1>Achieving State-of-the-Art Performance on AMD MI355 — in Just 14 Days</h1>
-<p>Tracy Sharpe</p>
-<p>Anand Pratap Singh</p>
-<p>Prince Jain</p>
-<p>Abdul Dakkak</p>
-<p>Engineering</p>
-<p>In late August, AMD and TensorWave reached out to collaborate on a presentation for AMD’s Media Tech Day—they asked if we could demo MAX on AMD Instinct™ MI355 on September 16th. There was just one problem: no one at Modular had access to an MI355.</p>
-<p>That gave us just two weeks from the point we’d first have access. We saw this as an opportunity: could we achieve state-of-the-art performance on MI355 in just 2 weeks? We were confident we could, because we had spent several years building a technology platform to enable rapid AI hardware bringup.</p>
-<h1><strong>Why AI Hardware Enablement Is Hard</strong></h1>
-<p>Bringing new AI hardware online isn’t supposed to happen in just two weeks.</p>
-<p>Why? The modern AI software ecosystem is fragmented. Different companies own different layers — hardware vendors are chasing silicon sales, researchers are prototyping bleeding-edge ideas, and application developers are stitching things together. The result? Complex, brittle stacks that are hard to extend and even harder to optimize.</p>
-<p>That’s why, from day one, we built the <strong>Modular stack</strong> to make AI hardware enablement fast, consistent, and maintainable.</p>
-<p>We often joke that <em>the hardware is no longer the hard part</em> — it’s the software that slows everyone down.</p>
-<h2><strong>A Foundation Built for Portability</strong></h2>
-<p>The Modular software stack — from <strong>Mojo</strong> (our programming language), to <strong>MAX</strong> (our inference framework) and <strong>Mammoth</strong> (our distributed serving system) — is architected for <strong>portability</strong>, meaning it can quickly move onto the latest hardware architectures and get SOTA performance.</p>
-<p>Here’s how our design pays off:</p>
-<ul><li><strong>Architecture-agnostic design.</strong> Mojo and MAX do not hardcode GPU knowledge and optimizations. Instead, they delegate all hardware-specific details to libraries.</li><li><strong>Library-directed execution.</strong> Offloading, scheduling, and instruction selection are controlled through abstractions rather than hard-coded pathways in the compiler.</li><li><strong>Parametric operations.</strong> Instead of “magic constants” (like SIMD widths or tile shapes), we use parameterized kernels that can be retuned for new hardware.</li></ul>
-<p>Because <strong>99.9% of the stack is architecture-agnostic</strong>, adding support for a new GPU mostly involves updating a few kernels. MAX and Mammoth just work — out of the box.</p>
-<p>That design is what allowed us to move so quickly once MI355 hardware arrived. In fact, we only need to revise the parts that changed in the hardware itself. These all reside in specific kernels—so let's look at the new features in MI355.</p>
-<h3><strong>What’s New in AMD MI355</strong></h3>
-<p>To understand why MI355 requires only incremental kernel updates, let's examine what the MI355 architecture offers and how Modular kernels address these features:</p>
-<table><thead><tr><th>MI355 feature</th><th>Impact</th><th>Our adjustment</th></tr></thead><tbody><tr><td>New FP32→BF16 conversion instructions</td><td>Faster casting between data types</td><td>Updated cast dispatch in Mojo’s standard library</td></tr><tr><td>Larger tensor-core tile sizes</td><td>Higher arithmetic intensity</td><td>Expanded matmul tile selection space</td></tr><tr><td>Increased shared memory (64KB→160KB)</td><td>Larger tiles, less memory pressure</td><td>Tuned tile-size parameters</td></tr><tr><td>Transposed DRAM→shared-memory loads</td><td>Removes extra in-place transpositions</td><td>Updated LayoutTensor load logic</td></tr><tr><td>Larger HBM capacity</td><td>Allows larger dynamic batch sizes</td><td>Nothing — handled automatically by MAX’s scheduler</td></tr></tbody></table>
-<p>These new hardware features in MI355 are specifically designed to optimize matmul-like operations, so that’s the only category that required changes in the Modular stack.</p>
-<h1><strong>Two Weeks to SOTA: A Day-by-Day Story</strong></h1>
-<p>Thanks to our stack design as described above, our work on AMD's MI355 started well before we had hardware access—we simply architected the Modular stack to enable fast hardware bringup.</p>
-<p>With only 2 weeks until the demo, we had to be selective about what we could develop in a reasonable timeframe. While Modular moves fast, we pride ourselves on maintaining a good work-life balance—so we wanted to accomplish our goals without going into crunch mode.</p>
-<h2><strong>Day 0: Preparing Without Hardware</strong></h2>
-<p>Before we even touched an MI355, we began testing code generation offline. Mojo’s hardware-agnostic backend allowed us to simulate instruction paths — verifying the emitted assembly matched expectations. Try it yourself <a href="https://mojo.godbo.lt/z/4cr1en9K6">with Compiler Explorer</a>.</p>
-<p>By understanding the features available in the new hardware and ensuring we emit the correct instructions, we can prototype optimizations without actually running the program on the new hardware 🤯.</p>
-<h2><strong>Day 1: First Login, First Success</strong></h2>
-<p>On September 1st, TensorWave provisioned MI355 systems for us. We logged in, ran <code>amd-smi</code>, and saw the new hardware come online:</p>
-<p>Bash</p>
-<p>modular@mia1-p1-g49:~$ amd-smi +------------------------------------------------------------------------------+</p>
-<p>| AMD-SMI 26.0.0+d30a0afe      amdgpu version: 6.14.14  ROCm version: 7.0.0    |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| BDF                        GPU-Name | Mem-Uti   Temp   UEC       Power-Usage |</p>
-<p>| GPU  HIP-ID  OAM-ID  Partition-Mode | GFX-Uti    Fan               Mem-Usage |</p>
-<p>|=====================================+========================================|</p>
-<p>| 0000:05:00.0    AMD Instinct MI355X | 0 %      44 °C   0          229/1400 W |</p>
-<p>|   0       1       6        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:15:00.0    AMD Instinct MI355X | 0 %      45 °C   0          226/1400 W |</p>
-<p>|   1       3       7        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:65:00.0    AMD Instinct MI355X | 0 %      43 °C   0          233/1400 W |</p>
-<p>|   2       2       5        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:75:00.0    AMD Instinct MI355X | 0 %      43 °C   0          225/1400 W |</p>
-<p>|   3       0       4        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:85:00.0    AMD Instinct MI355X | 0 %      40 °C   0          226/1400 W |</p>
-<p>|   4       5       2        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>| 0000:95:00.0    AMD Instinct MI355X | 0 %      41 °C   0          226/1400 W |</p>
-<p>|   5       7       3        SPX/NPS1 | 0 %        N/A           283/294896 MB |</p>
-<p>|-------------------------------------+----------------------------------------|</p>
-<p>We ran <code>pip install modular</code>, launched a serving endpoint with MAX, and everything worked out of the box—you can do the same by following <a href="https://docs.modular.com/max/get-started">our quickstart guide</a>.</p>
-<p>We weren't leveraging MI355's new hardware features yet, but we could profile and identify execution bottlenecks. We also mapped our execution against an internal performance estimation tool (stay tuned for an upcoming blog post about this).</p>
-<p>With the hardware and initial validation in hand, we could now form a plan.</p>
-<h2><strong>Week 1: Finding the Levers</strong></h2>
-<p>We benchmarked the MI355 GPUs against B200 GPUs, running models such as Llama, Gemma, and Mistral. We analyzed the results against theoretical upper bounds to identify optimization opportunities—we've developed tools to automate much of this analysis. The tools pointed to matmul optimization as the path to a significant performance gains and SOTA results.</p>
-<p>The matmul implementation — only about 500 lines of well-commented code — was easy to adapt to run efficiently on MI355 hardware. We also wanted portability across AMD hardware—the same code running at SOTA on MI300, MI325, and MI355—because even with tight deadlines, we still value good software design.</p>
-<p>After working on the matmul code for a few hours and fixing the M=N=K=8192, we proved that minor parameterization changes could deliver performance close to AMD’s <a href="https://rocm.docs.amd.com/projects/hipBLASLt/en/latest/what-is-hipBLASLt.html">hipBLASLt</a> library (which we measured to be SOTA and faster than hipBLAS).</p>
-<table><thead><tr><th>Matmul kernel</th><th>GFlop/s</th></tr></thead><tbody><tr><td>Mojo (day 0)</td><td>1202302.79</td></tr><tr><td>hipblaslt</td><td>1561446.68</td></tr><tr><td>Mojo (day 1)</td><td>1610514.29</td></tr></tbody></table>
-<p>With a few more tweaks the same day, the Mojo matmul kernel was now <strong>3% faster than</strong> SOTA. This day-one experiment proved our goal was achievable.</p>
-<p>The rest of our week 1 effort included:</p>
-<ul><li>Generalizing our implementation across the different shapes present in the models</li><li>Refining our heuristics for optimal kernel parameter selection</li><li>Setting up automation for benchmarking</li><li>Configuring our remote login system to make compute resources easy to access and share</li></ul>
-<p>Of course, the first week wasn’t without some issues. We encountered delays due to hardware misconfiguration and missing GPU operators in the Kubernetes integration. Despite the setbacks, we had strong performance numbers by the end of the week and we enjoyed the weekend.</p>
-<h2><strong>Week 2: From Optimization to Demo</strong></h2>
-<p>We had one week to go—the demo presentation was the following Tuesday.</p>
-<p>We continued optimizing the matmul kernel and began exploring other opportunities, such as optimizing the Attention kernel’s performance. By the middle of week 2, we had strong numbers to share with our partners.</p>
-<p>The demo preparation was also in full swing now. The effort required that the IT department make sure we could present live benchmark results, the design department make our presentation professional, and the product team help craft the message.</p>
-<p>Meanwhile, our engineering team continued to optimize our stack for the new hardware, using the automation we enabled in week 1 to feed live numbers to the other teams.</p>
-<p>By Friday, <a href="https://x.com/Modular/status/1968071169837613217">MAX nightlies</a> were running smoothly on MI355, and our benchmarks were consistently leading AMD’s custom fork of vLLM. With these results we were ready to demo on Tuesday!</p>
-<p><strong>💡 Fun fact:</strong> The MI355 bring-up wasn’t just fast, it was done by only two engineers working normal working hours, no late nights, and zero crunch. Turns out, great architecture scales both performance <em>and</em> sanity.</p>
-<h1><strong>Results: Outperforming the Field</strong></h1>
-<p>By the end of two weeks, <strong>MAX outperformed AMD’s optimized vLLM fork by up to 2.2×</strong> across multiple workloads — all while maintaining <strong>full portability</strong> across <strong>MI300</strong>, <strong>MI325</strong>, and <strong>MI355.</strong> These gains came partly from the kernels, but also from the entire stack working together to deliver both performance and portability.</p>
-<p>Even more remarkably, the entire bring-up effort involved just two engineers working on MI355 bringup for just two weeks, one of which had a pre-planned vacation, so in reality we had 1.5 engineers working for two weeks. In total, this effort resulted in 20 small PRs and zero late nights. This is a textbook case of software architecture enabling velocity.</p>
-<p>The performance results speak for themselves.</p>
-<p>At the AMD Media Tech Day, MAX was the <a href="https://tensorwave.com/blog/save-up-to-70-with-max-the-fastest-inference-engine-on-amd-compute"><strong>only inference solution</strong></a> to demonstrate clear <strong>TCO advantages</strong> when compared to <strong>NVIDIA’s flagship Blackwell architecture.</strong></p>
-<h1><strong>Are We Done? Not Even Close.</strong></h1>
-<p>This two-week sprint was just the beginning. Since that demo, we’ve expanded MI355 support, added early <strong>Apple silicon</strong> support, and achieved <strong>state-of-the-art performance</strong> on both <strong>NVIDIA Blackwell</strong> and <strong>AMD MI355X</strong>. Check out our <a href="https://www.modular.com/blog/modular-25-6-unifying-the-latest-gpus-from-nvidia-amd-and-apple">recent 25.6 release</a>.</p>
-<p>Our <a href="https://www.modular.com/democratizing-ai-compute">mission at Modular</a> remains the same: To make AI hardware enablement <strong>fast, portable, and universal</strong> — no matter whose silicon it runs on.</p>
-<p>Thank you to <a href="https://tensorwave.com/">TensorWave</a> for partnering with us as well as providing the MI355X systems and to <a href="https://www.amd.com/">AMD</a> for inviting us to their Media Tech Day event.</p>
-<p>Stay tuned for more updates — and for upcoming deep-dives on the kernel optimizations that made this milestone possible. Or feel free to reach out for a demo and we can talk about your AI use case.</p>
-<p>Request a demo</p>
-<p>Discover what Modular can do for you</p>
-<p>Request a demo</p>
-<h2>Read more from Modular</h2>
-<p>View all blogs</p>
-<p>Modular and Qualcomm: Same code, new silicon</p>
-<p>August 18, 2026</p>
-<p>Why LLM Inference Needs a New Kind of Router - Part 3</p>
-<p>June 5, 2026</p>
-<p>Three trends from MLSys 2026</p>
-<p>May 29, 2026</p>
 <p>Build the future of AI with Modular</p>
 <p>Get started - FREE</p>
 <p>View Editions</p>

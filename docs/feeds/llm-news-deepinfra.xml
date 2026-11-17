@@ -7,7 +7,653 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 05 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 17 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Kimi K3.1 Pro：模型概览、基准测试与 API 指南</title>
+      <link>https://deepinfra.com/blog/kimi-k3-1-pro-model-overview</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/kimi-k3-1-pro-model-overview</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Kimi K3.1 Pro: Model Overview, Benchmarks &amp; API Guide</description>
+      <content:encoded><![CDATA[<h1>Kimi K3.1 Pro：模型概述、基准测试和 API 指南</h1>
+<p>DeepInfra 发布于 2026.11.17</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/kimi-k3-1-pro-model-overview-header.png" alt="Kimi K3.1 Pro：模型概述、基准测试和 API 指南"></p>
+<p><a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro</a> 是 Moonshot AI 的旗舰开放权重模型，<a href="https://artificialanalysis.ai/models/kimi-k3-1-pro">于 2026 年 10 月 23 日发布</a>，专为长期代理工作而构建：编码、3D 创建、金融研究和文档繁重的任务。它是一个 2.8 万亿参数的 Mixture-of-Experts 模型，每个 token 有 104B 个活跃参数，将文本和图像作为输入，返回文本，并具有 <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">1,048,576-token 上下文窗口</a>。</p>
+<p>K3.1 Pro 并不是新的预训练运行。 Moonshot <a href="https://www.kimi.ai/blog/kimi-k3-1-pro">从 Kimi K3 进行后训练</a>“具有更大的训练后计算量”和跨数百个领域的大规模强化学习，并将 K3 的全注意力层替换为稀疏注意力层，以使长上下文的服务成本更低。它是K3.1系列的第一款型号。</p>
+<p>在 DeepInfra 上，该模型在兼容 OpenAI 的 API 后面运行，具有零数据保留、JSON 和结构化输出、函数调用和图像输入。如果您需要更便宜的模型来实现更简单的代理步骤，<a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash-1017">DeepSeek V4.1 Flash-1017</a> 使用相同的 API。模型字符串是：</p>
+<p><strong><code>moonshotai/Kimi-K3.1-Pro</code></strong></p>
+<h2>Kimi K3 有何变化</h2>
+<p>除非另有标记，Moonshot 的以下声明均由供应商报告。</p>
+<h3>训练后和编码</h3>
+<ul><li><strong>Long-horizon 编码：</strong> 在 Kimi Code Bench 3.0 Long-horizon（一项内部 Moonshot 基准）上，K3.1 Pro 得分为 61.2，而 K3 为 55.95（<a href="https://www.kimi.ai/blog/kimi-k3-1-pro">发布帖子</a>）。</li><li><strong>独立检查：</strong>在<a href="https://livebench.ai/">LiveBench 2.0</a>上（2026年11月6日表），Kimi K3的编码从53.1上升到67.8，长期代理工作从36.0上升到38.7。这是一个真正的编码增益，尽管 K3.1 Pro 在 LiveBench 编码上的开放重量模型中仍然处于中游。</li></ul>
+<h3>事实准确性</h3>
+<ul><li>在 Moonshot 的内部 Kimi Hallu Bench Hard 上，声称级别的幻觉率从 K3 的 23.4% 降至 8.3%。 Moonshot 将基准测试称为有意的压力测试，因此该比率并不描述日常错误率。</li></ul>
+<h3>财务和业务工作</h3>
+<ul><li>Moonshot的内部财务基准提高了7.2分（财务建模）和11.6分（财务研究），其业务运营模拟得分约为K3结果的4.2倍。在公开的 OfficeQA Pro v2 上，K3.1 Pro 得分为 64.4，在 Moonshot 的排行榜中名列前茅。</li></ul>
+<h3>注意力和长上下文</h3>
+<ul><li>K3.1 Pro 将 K3 的全注意力门控 MLA 层替换为<strong>门控 DeepSeek 稀疏注意力（门控 DSA）</strong>：其 93 层中的 24 层现在使用稀疏注意力，top-k 为 2,048 个索引标记，其他 69 层使用 KDA 线性注意力。重点是在完整的 1M 窗口中进行更便宜的长上下文建模。</li></ul>
+<h3>网络能力，故意限制</h3>
+<ul><li>对于开放重量版本，Moonshot 从训练中期和强化学习中删除了与网络相关的数据。在其内部 xdev-bench-hard 上，未经过滤的检查点在 pass@3 处解决了 90.5% 的任务；发布的模型解决了81.0%。 Moonshot 表示 K3.1 Pro 的攻击性网络能力仍然落后于前沿专有模型。</li></ul>
+<h3>DeepInfra 价格</h3>
+<ul><li><a href="https://deepinfra.com/moonshotai/Kimi-K3">Kimi K3</a> 仍以每 100 万代币 2.85 美元的输入和 14.25 美元的输出列出。 K3.1 Pro 的促销价格为 1.90 美元/9.50 美元，比两者低三分之一，而且 K3.1 Pro 增加了 Flex 层。</li></ul>
+<h2>技术架构</h2>
+<table><thead><tr><th>组件</th><th>基米K3.1 Pro</th></tr></thead><tbody><tr><td>建筑</td><td>专家混合</td></tr><tr><td>总/活跃参数</td><td>2.8T/104B</td></tr><tr><td>层</td><td>93（1 密）</td></tr><tr><td>注意</td><td>69 KDA + 24 门控 DSA 层</td></tr><tr><td>专家</td><td>896 个路由，每个令牌选择 16 个，2 个共享</td></tr><tr><td>隐藏维度/注意力头</td><td>7,168 / 96</td></tr><tr><td>词汇</td><td>16万</td></tr><tr><td>激活</td><td>SiTU-GLU</td></tr><tr><td>视觉编码器</td><td>MoonViT-V2（401M参数）</td></tr><tr><td>发布权重</td><td>MXFP4 权重/MXFP8 激活（量化感知训练）</td></tr><tr><td>上下文窗口</td><td>1,048,576 个代币</td></tr><tr><td>许可证</td><td>Kimi K3.1-Pro 许可证（修改 MIT）</td></tr></tbody></table>
+<p><em>来源：【Hugging Face模型卡】(https://huggingface.co/moonshotai/Kimi-K3.1-Pro).</em></p>
+<p><a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro/blob/main/LICENSE">许可证</a> 是 MIT 风格的，有两个条件。经营模型即服务业务且在任意 12 个月内集团收入超过 2000 万美元的公司需要在商业使用之前与 Moonshot 签订单独协议。月活跃用户超过 1 亿或月收入超过 2000 万美元的产品必须在界面中显示“Kimi K3.1-Pro”。内部使用不受这两者的限制。如果您的产品可能超过任一阈值，请在发货前阅读许可证文本。</p>
+<h2>基准测试</h2>
+<p>Moonshot 以推理能力“max”、温度 1.0 和 top_p 0.95 运行 K3.1 Pro，主要在 Claude Code 或 Kimi Code 安全带内。一些比较分数引用自排行榜或其他实验室的报告，封闭模型运行后备，标记为“内部”的行使用 Moonshot 自己的基准。将此表中的所有内容视为供应商报告的内容。下面的行是一个选择； <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">模型卡</a> 共有 47 个。</p>
+<table><thead><tr><th>基准</th><th>基米K3.1 Pro</th><th>Claude Opus 5.5</th><th>GPT-6 阿斯特拉</th><th>Claude寓言5.1</th><th>DeepSeek V4.1 Flash-1017</th><th>GLM-5.3</th></tr></thead><tbody><tr><td>终端工作台4.0</td><td>65.7</td><td>65.7 <strong>66.4</strong></td><td>58.2</td><td>58.2 57.9</td><td>57.9 42.3</td><td>42.3 41.8</td><td>41.8</td></tr><tr><td>SWE 马拉松 v1.1</td><td><strong>51.7</strong></td><td>46.3</td><td>46.3 42.5</td><td>42.5 45.6</td><td>45.6 40.0</td><td>40.0 42.5</td><td>42.5</td></tr><tr><td>DeepSWE v1.1</td><td>75.5</td><td>75.5 74.2</td><td>74.2 74.1</td><td>74.1 67.4</td><td>67.4 <strong>77.0</strong></td><td>66.9</td><td>66.9</td></tr><tr><td>程序台</td><td>31.5</td><td>31.5 <strong>65.0</strong></td><td>50.0</td><td>50.0 53.5</td><td>53.5 29.1</td><td>29.1 19.0</td></tr><tr><td>HLE-Full（无工具）</td><td>51.1</td><td>51.1 <strong>59.8</strong></td><td>53.6</td><td>53.6 57.6</td><td>57.6 42.6</td><td>42.6 43.0*</td></tr><tr><td>HLE-Full 带工具</td><td><strong>70.0</strong></td><td>67.7</td><td>67.7 57.2</td><td>57.2 65.6</td><td>65.6 58.8</td><td>62.5</td><td>62.5</td></tr><tr><td>GPQA-钻石</td><td>94.2</td><td>94.2 93.9</td><td>93.9 <strong>96.1</strong></td><td>93.7</td><td>93.7 92.2</td><td>92.2 91.7</td><td>91.7</td></tr><tr><td>浏览比较</td><td><strong>92.1</strong></td><td>90.8</td><td>90.8 91.5</td><td>91.5 —</td><td>—</td><td>—</td></tr><tr><td>特工期末考试（全部）</td><td><strong>43.2</strong></td><td>42.6</td><td>42.6 41.8</td><td>41.8 —</td><td>37.7</td><td>37.7 26.2</td><td>26.2</td></tr><tr><td>自动化工作台-AA</td><td><strong>73.3</strong></td><td>69.5</td><td>69.5 68.5</td><td>68.5 59.4</td><td>59.4 66.6</td><td>66.6 62.2</td><td>62.2</td></tr><tr><td>GDPval-AA v2.1 (Elo)</td><td>1846</td><td>1846 <strong>1866</strong></td><td>1573</td><td>1573 1754</td><td>1754 1746</td><td>1746 1650</td><td>1650</td></tr><tr><td>APEX 代理</td><td>69.4</td><td>69.4 <strong>73.5</strong></td><td>64.7</td><td>64.7 68.6</td><td>69.8</td><td>69.8 56.6</td><td>56.6</td></tr><tr><td>OfficeQA 专业版 v2</td><td><strong>64.4</strong></td><td>62.2</td><td>62.2 54.4</td><td>54.4 54.5</td><td>54.5 40.4</td><td>40.4 31.1</td><td>31.1</td></tr><tr><td>操作系统世界V2.1</td><td>79.6</td><td>79.6 <strong>81.8</strong></td><td>75.8</td><td>80.7</td><td>80.7 69.3</td><td>69.3 —</td></tr><tr><td>MMMU-Pro 带 python</td><td><strong>90.0</strong></td><td>89.8</td><td>87.8</td><td>88.4</td><td>88.4 82.5</td><td>82.5 —</td></tr><tr><td>利用健身房</td><td>20.7</td><td>20.7 34.5</td><td>34.5 <strong>42.4</strong></td><td>30.4</td><td>30.4 —</td><td>15.0</td><td>15.0</td></tr><tr><td>Kimi Hallu 硬质长凳，带工具（内部，越低越好）</td><td>8.3</td><td>15.0</td><td>15.0 <strong>5.5</strong></td><td>23.3</td><td>23.3 23.3</td><td>23.3 22.6</td><td>22.6</td></tr></tbody></table>
+<p><em>来源：【Kimi K3.1 Pro 型号卡】(https://huggingface.co/moonshotai/Kimi-K3.1-Pro)。粗体标记了每行中的最佳成绩。 </em> GLM-5.3 的 HLE 分数位于纯文本子集上。*</p>
+<p><strong>谁领先哪一行。</strong> K3.1 Pro 在代理和工具使用工作方面得分最高：SWE Marathon、使用工具的 HLE、BrowseComp、代理最后考试、AutomationBench、OfficeQA Pro v2 和使用 Python 的 MMMU-Pro。 Claude Opus 5.5 领先 Terminal-Bench 4.0 0.7 分，再加上 ProgramBench、不带工具的 HLE、GDPval-AA、APEX-Agents 和 OSWorld。</p>
+<p><strong>它输的地方。</strong> 差距最大的是 ProgramBench（31.5，Opus 5.5 的 65.0），没有工具的 HLE-Diamond（39.4，GPT-6 Astra 的 65.8）和网络行，其中 Moonshot 故意限制了能力（ExploitGym 20.7 对 42.4）。在表中的开放权重模型中，DeepSeek V4.1 Flash-1017 在 DeepSWE（77.0 对 75.5）和 APEX-Agents（69.8 对 69.4）上击败了它，而价格却只是后者的一小部分。</p>
+<p><strong>独立观点。</strong> <a href="https://artificialanalysis.ai/models/kimi-k3-1-pro">人工分析</a> K3.1 Pro 的智能指数 v5.0.1<strong> 得分为 </strong>46，是 29 个类似大小的开放权重模型中的第一个（类中位数 23）。同一页面称其“与其他类似大小的开放权重模型相比特别昂贵”并且“有些冗长”：需要 1.13 亿输出代币来针对 1.04 亿中位数运行该索引。您可以在<a href="https://deepinfra.com/compare">模型比较页面</a>上将其与 DeepInfra 上的其他模型进行比较。</p>
+<h2>定价</h2>
+<p>截至 2026 年 11 月 17 日，每 1M 代币的定价（<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">模型页面</a>、<a href="https://deepinfra.com/pricing">定价页面</a>）：</p>
+<table><thead><tr><th>等级</th><th>输入</th><th>输出</th><th>缓存输入</th></tr></thead><tbody><tr><td>标准，促销（5% 折扣）</td><td><strong>1.90 美元</strong></td><td><strong>9.50 美元</strong></td><td><strong>0.19 美元</strong></td></tr><tr><td>标准，清单</td><td>2.00 美元</td><td>10.00 美元</td><td>0.20 美元</td></tr><tr><td>弯曲 (0.8×)</td><td>1.52 美元</td><td>7.60 美元</td><td>0.152 美元</td></tr><tr><td>优先级 (1.5×)</td><td>2.85 美元</td><td>14.25 美元</td><td>0.285 美元</td></tr></tbody></table>
+<p><strong>折扣如何叠加。</strong> 5% 的促销不在列表中，Flex 还进一步享受 20% 的促销优惠：投入 1.90 美元 × 0.8 = 1.52 美元，产出 9.50 美元 × 0.8 = 7.60 美元。优先级适用于促销价格的 1.5 倍。缓存输入是每层输入速率的 10%。促销活动的结束日期尚未公布。</p>
+<p><strong>相对于其他提供商。</strong> 在 <a href="https://artificialanalysis.ai/models/kimi-k3-1-pro/providers">Artificial Analysis 的提供商基准</a> 上，DeepInfra 的 1.90 美元/9.50 美元是其测量的提供商中第二低的输入、输出和混合价格，也是未返回错误的提供商中最低的：DeepInfra 的测量错误率为 0.0%，而一个更便宜的端点（PrimaLabs，1.80 美元/9.00 美元）15.4% 的请求失败。大多数提供商对 Moonshot 的收费为 2.00 美元/10.00 美元，高速层的输入为 4.00 美元至 6.00 美元，输出为 20 美元至 30 美元。如果响应速度是您的产品，请测试 DigitalOcean 或 Baseten，它们以标准 2.00 美元/10.00 美元的速率每秒测量大约 200 和 183 个代币，而 DeepInfra 的速度为 47；对于批量、代理和成本敏感的工作，每个令牌的差距会随着长输出而增加。</p>
+<p>如果您的工作可以等待，<strong>Flex</strong> 是运行模型最便宜的方式。发送<code>&quot;service_tier&quot;: &quot;flex&quot;</code>：当容量不足时，请求最多等待10分钟，然后返回HTTP 429，被拒绝的Flex请求不收费。隔夜评估、批量提取和背景剂是一个不错的选择。 <a href="https://deepinfra.com/blog/flex-service-tier">Flex 服务层级公告</a> 涵盖了详细信息。</p>
+<p><strong>优先级</strong> (<code>&quot;service_tier&quot;: &quot;priority&quot;</code>) 用于不应排队的流量。它的价格为 2.85 美元/14.25 美元，比 Moonshot 的标价更高，因此仅在排队成本高于保费的情况下使用它。</p>
+<p><strong>缓存</strong>对于冗长的模型和长时间的代理会话很重要：缓存输入的成本为 0.19 美元，而新输入的成本为 1.90 美元。使用“prompt_cache_key”将重复的前缀路由到同一缓存，并使用“prompt_cache_options”使其保持更长时间（请参阅<a href="https://deepinfra.com/blog/prompt-cache-retention">提示缓存保留</a>）。</p>
+<p>对于每月的成本方案，请参阅 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-pricing-guide">Kimi K3.1 Pro 定价指南</a>。初创公司可以通过<a href="https://deepinfra.com/deepstart">DeepStart</a>申请免费积分。</p>
+<h2>开始使用</h2>
+<p>该 API 与 OpenAI 兼容：</p>
+<ul><li><strong>基本 URL：</strong> <code>https://api.deepinfra.com/v1/openai</code></li><li><strong>端点：</strong> <code>POST /聊天/完成</code></li><li><strong>身份验证标头：</strong> <code>授权：承载 $DEEPINFRA_API_KEY</code></li></ul>
+<p>完整的请求架构位于模型的 <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro/api">API 页面</a>。</p>
+<p>＃＃＃ 参数</p>
+<p>首先是模型特定的参数。通过 OpenAI Python SDK 中的“extra_body”发送非标准字段。</p>
+<table><thead><tr><th>参数</th><th>默认</th><th>笔记</th></tr></thead><tbody><tr><td><code>推理_努力</code></td><td>型号默认</td><td>“无”、“最小”、“低”、“中”、“高”、“xhigh”、“最大”。 “无”会关闭思考。 Moonshot 的基准测试使用“max”。推理代币账单作为输出</td></tr><tr><td><code>推理</code></td><td>—</td><td>对象形式： <code>{&quot;effort&quot;: &quot;...&quot;, &quot;enabled&quot;: true/false}</code></td></tr><tr><td><code>温度</code></td><td>1</td><td>Moonshot 的评估使用 1.0</td></tr><tr><td><code>top_p</code></td><td>1</td><td>Moonshot 的评估使用 0.95</td></tr><tr><td><code>服务层</code></td><td>标准</td><td><code>flex</code> (0.8×，可能排队长达 10 分钟，然后是 429) 或 <code>priority</code> (1.5×)</td></tr><tr><td><code>fail_fast</code></td><td>假</td><td>立即返回429而不是排队</td></tr><tr><td><code>模型</code></td><td>—</td><td>最多 4 个后备型号，如果该型号没有容量，请按顺​​序尝试</td></tr><tr><td><code>prompt_cache_key</code>、<code>prompt_cache_options</code></td><td>—</td><td>跨请求共享提示缓存；例如<code>{&quot;ttl&quot;: &quot;1h&quot;}</code></td></tr><tr><td><code>模型</code></td><td>（必填）</td><td><code>moonshotai/Kimi-K3.1-Pro</code></td></tr><tr><td><code>消息</code></td><td>（必填）</td><td>聊天消息；用户内容可以包含图像</td></tr><tr><td><code>max_tokens</code></td><td>分钟（上下文 - 输入，65,536）</td><td>高达 943,718</td></tr><tr><td><code>流</code></td><td>假</td><td>服务器发送的事件</td></tr><tr><td><code>停止</code></td><td>—</td><td>最多 16 个序列</td></tr><tr><td><code>n</code></td><td>1</td><td>最多 4 个</td></tr><tr><td><code>top_k</code>、<code>min_p</code></td><td>0</td><td>可选的采样控制</td></tr><tr><td><code>存在_惩罚</code>、<code>频率_惩罚</code></td><td>0</td><td>−2 到 2</td></tr><tr><td><code>响应格式</code></td><td>文字</td><td><code>json_object</code>、<code>json_schema</code> 或 <code>regex</code></td></tr><tr><td><code>工具</code>、<code>工具选择</code></td><td>—</td><td>OpenAI 风格的函数调用</td></tr></tbody></table>
+<p>＃＃＃ Python</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+)
+
+response = client.chat.completions.create(
+    model=&quot;moonshotai/Kimi-K3.1-Pro&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a senior equity research analyst.&quot;},
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Summarize the revenue trend in this chart and list three risks.&quot;},
+                {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: &quot;https://example.com/revenue-chart.png&quot;}},
+            ],
+        },
+    ],
+    temperature=1.0,
+    top_p=0.95,
+    max_tokens=32768,
+    extra_body={
+        &quot;reasoning_effort&quot;: &quot;high&quot;,  # none | minimal | low | medium | high | xhigh | max
+        &quot;service_tier&quot;: &quot;flex&quot;,      # remove this line for the standard tier
+    },
+)
+
+print(response.choices[0].message.content)
+print(response.usage)copy</code></pre>
+<p>对于简短、定义明确的步骤，例如分类、提取或路由，请从“reasoning_effort”：“low”或“none”开始。 K3.1 Pro 在高强度工作时比较冗长，并且推理代币在标准层上按每 100 万美元 9.50 美元的输出计费。</p>
+<h3>输出限制</h3>
+<p>该模型没有 16,384 个代币的输出上限。您最多可以请求 <strong>943,718 个输出令牌</strong>。如果您未设置“max_tokens”，DeepInfra 将使用 65,536 个令牌中较小的一个以及输入后 1,048,576 个令牌窗口中剩余的内容。输入和输出一起必须适合该窗口。</p>
+<p>Moonshot 发布的结果使用“最大”努力，在该设置下长时间运行代理可能会在最终答案开始之前花费数万个令牌进行推理。为了更接近 Moonshot 的设置，请将“max_tokens”显式设置为高于默认值 65,536，使用“max”工作量，并流式传输响应，以便长代不会遇到客户端超时。无法保证精确再现，因为 Moonshot 在自己的工具中运行了大多数基准测试。</p>
+<h2>结论</h2>
+<p>Kimi K3.1 Pro 在同尺寸的 29 款开放式重量模型中拥有最高的人工智能分析智能指数得分，而 Moonshot 自己的表格在代理、工具使用和文档工作方面使其处于或接近顶部。它的弱点也很明显：封闭模型仍然领先于没有工具、ProgramBench 和网络任务的知识，而且它很冗长，因此输出代币推动了大部分账单。</p>
+<p>这使得每个输出代币的价格成为值得关注的数字。在 DeepInfra 上，K3.1 Pro 在当前促销活动中每 100 万个输出代币的售价为 9.50 美元，在 Flex 上售价为 7.60 美元。这低于 Moonshot 的标价，也低于它所取代的型号，测量错误率为 0%。</p>
+<p><strong>后续步骤</strong></p>
+<ul><li>使用 <a href="https://deepinfra.com/blog/flex-service-tier">Flex</a> 和寿命更长的提示缓存来削减批量和评估流量的费用。</li><li>构建具有函数调用、结构化输出和每步设置的“reasoning_effort”的代理。</li><li>比较 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">Kimi K3.1 Pro API 基准测试</a> 和 <a href="https://deepinfra.com/blog/best-kimi-k3-1-pro-api-providers">最佳 Kimi K3.1 Pro API 提供商</a> 中的提供商，或从 [Kimi K3.1 Pro 发布开始]帖子](https://deepinfra.com/blog/kimi-k3-1-pro-deepinfra)。</li><li>来自Kimi K3？ <a href="https://deepinfra.com/blog/kimi-k3-2-8t">Kimi K3 概述</a> 涵盖了基本模型。</li><li>需要专用容量吗？ <a href="https://docs.deepinfra.com/private-models/overview">私下部署模型</a>，或<a href="https://deepinfra.com/contact-sales">与销售人员交谈</a>。</li></ul>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/glm-5-3-flash-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-flash-deepinfra.png" alt="GLM-5.3-Flash API 现已上线 DeepInfra"></a><a href="https://deepinfra.com/blog/glm-5-3-flash-deepinfra">GLM-5.3-Flash API 现已上线DeepInfra</a>&lt;p&gt;Z.ai 的 GLM-5.3-Flash 在推理时仅激活 3200 亿个参数中的 180 亿个，根据 Z.ai 报告的结果，它在 DeepSWE v1.1 上的得分超过了 Claude Opus 4.8（63.4 比 58.0），这是一项要求严格的软件工程基准。它是 GLM-5 系列中第一个原生多模态模型，将文本、图像和视频输入与一百万个令牌上下文相结合 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/openclaw-alternatives"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/openclaw-alternatives_rs.webp" alt="最佳 OpenClaw 替代品：Hermes Agent、ZeroClaw 和 NemoClaw"></a><a href="https://deepinfra.com/blog/openclaw-alternatives">最佳 OpenClaw 替代品：Hermes Agent、ZeroClaw 和NemoClaw</a>&lt;p&gt;OpenClaw 拥有 362,000 个 GitHub star 和一个拥有超过 44,000 个社区贡献的技能市场。这种收养的发生并非偶然。尽管如此，在生产中运行它的相同团队仍然遇到同样的抱怨：模型列表是固定的。 OpenClaw 的引导设置向导涵盖 OpenAI、Anthropic、Google、DeepSeek 和本地 Ollama。您可以[...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/glm-5-1-pricing-guide-provider-comparison"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/GLM-5.1-provider.png" alt="GLM-5.1 定价指南：API 成本比较与分析"></a>[GLM-5.1 定价指南：API 成本比较与分析]分析](https://deepinfra.com/blog/glm-5-1-pricing-guide-provider-comparison)&lt;p&gt;更新于 2026 年 11 月。GLM-5.1 的提供商选择是一个真正的经济决策。在 10 个基准 API 提供商中，混合定价从每 100 万个代币 0.74 美元到 1.70 美元不等，输出速度从 ​​33.8 吨/秒到 175.2 吨/秒，最快的提供商比最慢的提供商快 5.2 倍。对于大规模部署的团队来说，这种分布决定了该模型是否[...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>最佳 Kimi K3.1 Pro API 提供商（2026）：价格、档位、速度</title>
+      <link>https://deepinfra.com/blog/best-kimi-k3-1-pro-api-providers</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/best-kimi-k3-1-pro-api-providers</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Best Kimi K3.1 Pro API Providers (2026): Price, Tiers, Speed</description>
+      <content:encoded><![CDATA[<h1>最佳 Kimi K3.1 Pro API 提供商 (2026)：价格、等级、速度</h1>
+<p>DeepInfra 发布于 2026.11.17</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/best-kimi-k3-1-pro-api-providers-header.png" alt="最佳 Kimi K3.1 Pro API 提供商 (2026)：价格、级别、速度"></p>
+<h2>最佳 Kimi K3.1 Pro 提供商总结</h2>
+<table><thead><tr><th>供应商</th><th>最适合</th></tr></thead><tbody><tr><td><strong>深基础设施</strong></td><td>本指南中提供商的最低价格（1.90 美元/9.50 美元）、Flex 和优先级、0% 测量错误率、专用端点</td></tr><tr><td>Moonshot AI（Kimi API）</td><td>第一方访问，加上 Highspeed 变体和 Moonshot 自己的编码和工作应用程序</td></tr><tr><td>数字海洋</td><td>以 Moonshot 标价快速响应，并提供专用 GPU</td></tr><tr><td>巴斯坦</td><td>快速的每代币模型 API，具有专门的规模部署</td></tr><tr><td>莫代尔</td><td>每个令牌 API 连接到编码代理，每个代理任务的成本较低</td></tr><tr><td>Amazon Bedrock</td><td>AWS 帐户内的 Highspeed 变体，具有 Flex 和 Priority 层</td></tr><tr><td>开放路由器</td><td>一个 API 密钥可跨多个主机，并具有自动故障转移功能</td></tr><tr><td>无羽人工智能</td><td>一把适用于 K3.1 Pro 的 OpenAI 兼容密钥和大型开放模型目录</td></tr></tbody></table>
+<p><strong>按优先级快速参考</strong></p>
+<ul><li>本指南中提供商中每个代币的最低价格：DeepInfra（输入 1.90 美元/输出 9.50 美元/每 100 万代币缓存 0.19 美元；Flex 1.52 美元/7.60 美元）</li><li>以标价最快的答案：DigitalOcean 或 Baseten</li><li>本指南中最快的：Amazon Bedrock 的 Highspeed 变体，价格是标价的两倍</li><li>第一方功能和应用程序：Moonshot AI</li><li>一键故障转移：OpenRouter</li></ul>
+<p>Kimi K3.1 Pro 是 Moonshot AI 的开放权重代理模型，<a href="https://www.kimi.ai/blog/kimi-k3-1-pro">2026 年 10 月 23 日发布</a>，权重于 11 月初发布在 <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Hugging Face</a> 上。它是一个专家混合模型，总参数为 2.8T，活动参数为 104B，原生多模态（文本和图像输入，文本输出）和 1M 令牌上下文窗口。它是从 Kimi K3 进行后训练的，具有更大的强化学习计算，并且用 Gated DeepSeek Sparse Attention 取代了 K3 的全注意力层，以实现更便宜的长上下文服务。在人工智能分析的智能指数上，它得分为 46，是同尺寸的 29 个开放权重模型中最高的。它也很冗长，并且在回答之前要解释很长时间，所以你在哪里运行它会影响账单和等待。</p>
+<p>本指南比较了运行 Kimi K3.1 Pro 的方法，以确定选择的因素：价格和定价层、功能、部署模型以及每个选项的适合对象。每个条目都有一行关于测量的速度。完整的速度和延迟比较位于 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">Kimi K3.1 Pro API 基准测试</a>，包括第一个令牌的时间与第一个答案令牌的时间，对于此推理模型，时间范围从大约 25 秒到超过两分钟。速度、混合价格和错误率来自<a href="https://artificialanalysis.ai/models/kimi-k3-1-pro/providers">人工分析</a>（最大推理工作量，2026 年 11 月 17 日拉动），该分析针对该模型对来自 14 个提供商的 16 个端点进行了基准测试。费率和功能来自每个提供商自己的页面。定价截至 2026 年 11 月 17 日。</p>
+<h2>托管 API 提供商</h2>
+<h3>1. 深基础设施</h3>
+<p>当每个代币的成本决定选择并且您想要生产可靠性、服务级别和专用容量的路径时，DeepInfra 是最佳选择。</p>
+<ul><li><strong>当前费率：</strong> <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">$1.90 输入 / $9.50 输出 / $0.19 缓存输入</a> 每 1M 代币，在 $2.00 / $10.00 / $0.20 标价的基础上享受 5% 促销折扣</li><li><strong>弹性层：</strong> $1.52 / $7.60 / $0.152。使用 <code>&quot;service_tier&quot;: &quot;flex&quot;</code> 选择加入。请求最多等待 10 分钟以获得容量，然后返回 HTTP 429，并且被拒绝的 Flex 请求不收费（<a href="https://deepinfra.com/blog/flex-service-tier">Flex 的工作原理</a>）</li><li><strong>优先级：</strong> $2.85 / $14.25 / $0.285，带有 <code>&quot;service_tier&quot;: &quot;priority&quot;</code>，适用于无法排队的请求</li><li><strong>混合价格（人工分析，7:2:1）：</strong> 1.46 美元，低于每个标准价格端点 1.54 美元和每个快速层（2.31 美元至 4.62 美元）。在相同的权重下，Flex 的价格约为 1.17 美元</li><li><strong>可靠性：</strong> 人工分析运行中的错误率为 0.0%。 DeepInfra 是最便宜的端点人工分析措施，错误率为 0%</li><li><strong>上下文和输出：</strong> 1,048,576 个令牌上下文；每个请求最多 943,718 个输出令牌。如果未设置“max_tokens”，则默认值是剩余上下文和 65,536 中的较小者</li><li><strong>功能：</strong> OpenAI 兼容 API、图像输入、工具调用、JSON 模式和结构化输出（JSON 模式和正则表达式）、“reasoning_effort”从“none”（思考）到“max”、使用“prompt_cache_key”和可配置 TTL 进行提示缓存、每个请求最多 4 个后备模型</li><li><strong>部署：</strong>无服务器每代币 API，或专用 GPU 上的专用端点；零数据保留</li><li><strong>速度：</strong> 人工分析时输出为 46.9 个令牌/秒。如果您注重响应速度，请测试 DigitalOcean 或 Baseten；对于批量、代理和成本敏感的工作，每个令牌的差距会复合。</li></ul>
+<p>Kimi K3.1 Pro 很冗长：人工分析计算出 1.13 亿输出代币来运行其智能指数，而类别中位数为 1.04 亿。因此，输出代币（包括推理代币）占据了大部分账单，而 DeepInfra 的 9.50 美元输出率（Flex 上为 7.60 美元）就是节省的体现。它适合后台代理、文档和财务管道、评估运行以及任何可以吸收较长等待时间以获取较低价格的工作负载。根据您自己的流量衡量的一件事是：DeepInfra 对人工分析代理工作负载的缓存命中率为 92.6%，低于几台主机达到的 98-100%。缓存密集型代理循环应设置“prompt_cache_key”并在预测成本之前检查命中率。</p>
+<p>使用 OpenAI SDK 的第一次调用：</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+)
+
+response = client.chat.completions.create(
+    model=&quot;moonshotai/Kimi-K3.1-Pro&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Reconcile these two revenue tables and explain each difference.&quot;}],
+    temperature=1.0,
+    top_p=0.95,
+    extra_body={&quot;reasoning_effort&quot;: &quot;high&quot;, &quot;service_tier&quot;: &quot;flex&quot;},
+)
+print(response.choices[0].message.content)copy</code></pre>
+<p>端点是“/chat/completions”，auth 标头是“Authorization: Bearer $DEEPINFRA_API_KEY”。完整参数位于<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro/api">Kimi K3.1 Pro API页面</a>。</p>
+<h3>2.Moonshot AI（Kimi API）</h3>
+<p>当您需要第一方访问、Highspeed 变体或 Moonshot 产品内的模型时，Moonshot 自己的 <a href="https://platform.kimi.ai/">Kimi API</a> 是最佳选择。</p>
+<ul><li><strong>型号名称：</strong> <code>kimi-k3.1-pro</code> 和 <code>kimi-k3.1-pro-highspeed</code> （<a href="https://www.kimi.ai/blog/kimi-k3-1-pro">Moonshot 发布帖子</a>）</li><li><strong>费率（人工分析）：</strong> $2.00 / $10.00 / $0.20 缓存；高速 $4.00 / $20.00 / $0.20</li><li><strong>高速：</strong> Moonshot 表示其速度是 K3.1 Pro 的 2-3 倍</li><li><strong>产品：</strong> 也可在 Kimi.ai、Kimi Work 和 Kimi Code 中使用； API 客户可以使用零数据保留</li><li><strong>速度：</strong> 标准端点的人工分析为 31.0 个令牌/秒（高速：69.4 个令牌/秒）</li></ul>
+<p>第一方 API 首先获得新的 Moonshot 功能，而 Highspeed 变体是在不离开 Moonshot 的情况下缩短响应时间的最简单方法。它在每个代币类别上的成本都高于 DeepInfra，人工分析在其运行中的标准端点上测量到 8.0% 的错误率，因此需要进行重试。</p>
+<h3>3.数字海洋</h3>
+<p>当用户等待每个答案并且您希望保持 Moonshot 的标价时，<a href="https://docs.digitalocean.com/products/inference/details/pricing/">DigitalOcean Serverless Inference</a> 是最佳选择。</p>
+<ul><li><strong>费率：</strong> 每 1M 代币 2.00 美元输入 / 10.00 美元输出 / 0.20 美元缓存读取</li><li><strong>计费：</strong> 预付费无服务器积分；专用 GPU 推理按 GPU 小时计费</li><li><strong>平台：</strong> 模型目录、推理路由器和代理工具位于一个控制台中</li><li><strong>速度：</strong> 200.8 个代币/秒，在人工分析的标准价格端点中首次应答代币的最短时间</li></ul>
+<p>DigitalOcean 是测试聊天 UI 和交互式编码代理的提供商。每个代币的成本比 DeepInfra 的标准费率高出约 5%，并且其定价页面仅列出了该模型的标准层。</p>
+<h3>4.巴斯坦</h3>
+<p>当您现在想要快速的每个代币 API 并在数量增长时进行专用部署时，<a href="https://www.baseten.co/library/kimi-k31-pro/">Baseten 的模型 API</a> 是最佳选择。</p>
+<ul><li><strong>型号：</strong> Kimi K3.1 Pro，1M上下文、文本和图像输入</li><li><strong>费率（人工分析）：</strong> $2.00 / $10.00 / $0.20 缓存</li><li><strong>部署：</strong> 每个代币模型 API，以及针对自定义设置的专用部署和工程支持</li><li><strong>速度：</strong> 人工分析为 183.0 代币/秒，是标价中最快的</li></ul>
+<p>Baseten 适合希望从共享容量转向专用容量的产品团队。它的每个代币费率与 Moonshot 的标价一致，因此它的每个代币成本高于 DeepInfra。</p>
+<h3>5. 模态</h3>
+<p>当您在编码代理内运行 K3.1 Pro 并希望每完成任务的成本较低时，<a href="https://modal.com/library/moonshot/kimi-k3-1-pro">Modal 的模型 API</a> 是最佳选择。</p>
+<ul><li><strong>费率：</strong> 每 1M 代币 2.00 美元输入 / 0.20 美元缓存输入 / 10.00 美元输出</li><li><strong>API：</strong> OpenAI 兼容，具有 Claude Code、Codex、OpenCode 和 Hermes Agent 的本机集成</li><li><strong>输入：</strong> 文本和图像，1,048,576 个令牌上下文</li><li><strong>每个任务的成本：</strong> 每个人工分析智能指数任务的成本为 3.19 美元，是衡量的最低成本之一，这得益于 100% 的缓存命中率</li><li><strong>速度：</strong> 人工分析为 118.0 代币/秒</li></ul>
+<p>Modal 的高缓存命中率意味着重新发送长前缀的代理循环为每个任务支付的费用低于标价所示。每个代币按 Moonshot 的列表费率收费，比 DeepInfra 的费率高出约 5%。</p>
+<h3>6. Amazon Bedrock</h3>
+<p>当您的工作负载已在 AWS 中运行并且您希望 Highspeed 变体受 AWS 监管时，<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3-1-highspeed.html">Amazon Bedrock</a> 是最佳选择。</p>
+<ul><li><strong>型号：</strong> Kimi K3.1 Pro Highspeed (<code>global.moonshotai.kimi-k3.1</code>)，1M 上下文</li><li><strong>费率（标准层）：</strong> $4.00 输入 / $20.00 输出 / $0.20 全局配置文件上的缓存读取；美国和印度配置文件为 4.40 美元/22.00 美元/0.22 美元；缓存每 100 万个代币写入 5.00 美元</li><li><strong>服务等级：</strong> Flex 为标准费率的 0.5 倍，优先级为标准费率的 1.75 倍</li><li><strong>API：</strong> OpenAI 兼容的聊天完成和响应，以及 Converse 和 Invoke；推理工作“none”到“max”（默认“max”）</li><li><strong>速度：</strong> 人工分析为 218.2 代币/秒，是测得最快的之一</li></ul>
+<p>Bedrock 将数据保留在 AWS 边界内，并提供美国和印度数据驻留的区域配置文件。标准价格是 Moonshot 高速型号标价的两倍。对于可以等待的工作负载，Bedrock 的 Flex 层将其价格恢复到 2.00 美元/10.00 美元，这仍然高于 DeepInfra 的标准费率。</p>
+<h3>7. 开放路由器</h3>
+<p>当您需要一个 API 密钥并在服务 K3.1 Pro 的主机之间进行自动故障转移时，<a href="https://openrouter.ai/moonshotai/kimi-k3.1-pro">OpenRouter</a> 是最佳选择。</p>
+<ul><li><strong>模型块：</strong> <code>moonshotai/kimi-k3.1-pro</code></li><li><strong>路由的主机：</strong> 超过 20 个端点，其中包括 DeepInfra，每个端点均按主机自己的价格</li><li><strong>路由：</strong>平衡、最快或最便宜的模式；您可以固定单个主机</li><li><strong>速度：</strong> 无论所选主机提供什么； OpenRouter 添加了一个网络跃点，但没有自己的计算</li></ul>
+<p>OpenRouter 列出了一些价格低于 DeepInfra 的小型主机，并以一系列精度提供服务。如果输出一致性很重要，请固定主机。选择一台主机的团队通常会直接获取其完整的功能集、服务级别和支持。</p>
+<h3>8. 无羽人工智能</h3>
+<p>当您已经在许多开放模型中使用其与 OpenAI 兼容的 API 并且希望 K3.1 Pro 使用同一密钥时，<a href="https://featherless.ai/blog/kimi-k3-1-pro-is-live-on-featherless">Featherless AI</a> 是最佳选择。</p>
+<ul><li><strong>费率（开发者计划）：</strong> 每 100 万代币输入 2.00 美元/缓存 0.20 美元/输出 10.00 美元</li><li><strong>上下文：</strong> 开发者计划 256K；专用实例上的完整 1M 窗口</li><li><strong>数据：</strong> 不记录提示或完成情况</li><li><strong>部署：</strong>无服务器 API，或专用 GPU 集群</li><li><strong>速度：</strong> 人工分析未跟踪此模型</li></ul>
+<p>256K 窗口是模型本机上下文的四分之一，这对于整个存储库和长文档工作很重要。它适合将许多开放模型整合到一个提供商下的团队。</p>
+<h2>关于许可证</h2>
+<p>Kimi K3.1 Pro 根据 <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Kimi K3.1-Pro 许可证</a> 发货，这是一个允许有条件商业使用的自定义许可证。任何 12 个月内集团收入超过 2000 万美元的模型即服务运营商需要与 Moonshot 签订单独协议，每月活跃用户超过 1 亿或月收入超过 2000 万美元的产品必须在其界面中显示“Kimi K3.1-Pro”。该许可证指定了内部使用和某些访问路线的豁免。阅读全文，或询问您的提供商，了解任一阈值是否适用于您。</p>
+<h2>最后的想法</h2>
+<ul><li><strong>本指南中每个代币的最低价格：</strong> DeepInfra，价格为 1.90 美元/9.50 美元/0.19 美元，人工分析混合价格为 1.46 美元，Flex 异步工作价格为 1.52 美元/7.60 美元</li><li><strong>最低价格，测量错误率为 0%：</strong> DeepInfra</li><li><strong>以标价最快的答案：</strong> DigitalOcean 或 Baseten</li><li><strong>本指南中最快：</strong> Amazon Bedrock 的 Highspeed 变体，价格为 4.00 美元/20.00 美元</li><li><strong>每个代理任务的成本较低：</strong> 模态，得益于 100% 的缓存命中率</li><li><strong>第一方功能和应用程序：</strong> Moonshot AI</li><li><strong>一键自动故障转移：</strong> OpenRouter</li><li><strong>一键跨越大型开放模型目录：</strong> Featherless AI</li></ul>
+<p>随着主机调整其服务堆栈，该模型的速度和延迟每周都会发生变化，如<a href="https://deepinfra.com/blog/why-open-models-get-faster">为什么开放模型在启动后变得更快</a>中所述。在提交之前，请检查<a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">基准指南</a>以获取当前数字。</p>
+<h3>最佳整体解决方案</h3>
+<p>对于大多数将 Kimi K3.1 Pro 作为 API 运行的团队来说，<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">DeepInfra</a> 是默认选择。它的价格是本指南中供应商中最低的，输入价格为 1.90 美元，输出价格为 9.50 美元，对于任何可以等待的产品，Flex 层的输出价格为 7.60 美元。它是最便宜的端点人工分析测量，错误率为 0%，它提供高达 943K 输出令牌的完整 1M 上下文，并且提供零数据保留和私有端点，所有这些都在 OpenAI 兼容的 API 上，您可以通过更改基本 URL 来切换到。对于代理管道中更简单的步骤，<a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash-1017">DeepSeek V4.1 Flash</a> 在相同的 API 上运行，而价格仅为其一小部分。</p>
+<p>有关更多详细信息，请参阅 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-pricing-guide">Kimi K3.1 Pro 定价指南</a> 了解成本场景、<a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">API 基准</a> 了解速度和延迟，以及 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-model-overview">模型概述</a>了解架构和参数。如果您从 Kimi K3 升级，<a href="https://deepinfra.com/blog/kimi-k3-pricing-providers-cost">Kimi K3 定价和提供商指南</a> 涵盖了上一代产品。初创公司可以通过<a href="https://deepinfra.com/deepstart">DeepStart</a>申请免费积分。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/books-llama-index"><img src="https://deepinfra.com/blog/gutenberg-robot.jpg" alt="使用 DeepInfra 和 LlamaIndex 与书籍聊天"></a><a href="https://deepinfra.com/blog/books-llama-index">使用 DeepInfra 和 LlamaIndex 与书籍聊天</a>作为 DeepInfra，我们很高兴宣布与 LlamaIndex 集成。 LlamaIndex 是一个功能强大的库，允许您使用各种语言模型和嵌入来索引和搜索文档。在这篇博文中，我们将向您展示如何使用 DeepInfra 和 LlamaIndex 与图书聊天。我们将...</p>
+<p><a href="https://deepinfra.com/blog/glm-5-3-flash-pricing-providers-cost"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-flash-pricing.png" alt="GLM-5.3-Flash 定价、提供商和成本"></a><a href="https://deepinfra.com/blog/glm-5-3-flash-pricing-providers-cost">GLM-5.3-Flash 定价、提供商和成本</a>&lt;p&gt;GLM-5.3-Flash 是 GLM-5 系列中 Z.ai 的一个模型，于 2026 年 8 月 26 日发布。它是一个原生多模态模型，接受文本和图像输入（一些列表，包括 OpenRouter，还注释视频），具有文本输出。 Artificial Analysis 和 DeepInfra 都将其描述为一个 320B 参数的专家混合模型，每次推理有 18B 个主动参数； DeepInfra 的列表 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/kimi-k2-6-api-benchmarks-latency-throughput-cost"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/kimi-2.6-api-benchmark.webp" alt="Kimi K2.6 API 基准：延迟、TPS 和成本分析 (2026)"></a><a href="https://deepinfra.com/blog/kimi-k2-6-api-benchmarks-latency-throughput-cost">Kimi K2.6 API 基准：延迟、TPS 和成本分析 (2026)</a>&lt;p&gt;关于 Kimi K2.6 Kimi K2.6 是 Moonshot AI 的开源前沿模型，于 2026 年 4 月 20 日发布。它是为长视野编码、自主执行和基于群的任务编排。该模型采用专家混合 (MoE) 架构，总参数为 1 万亿个，每个代币有 320 亿个激活参数，使用 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Kimi K3.1 Pro API 基准测试：提供商、速度与成本</title>
+      <link>https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Kimi K3.1 Pro API Benchmarks: Providers, Speed &amp; Cost</description>
+      <content:encoded><![CDATA[<h1>Kimi K3.1 Pro API 基准：提供商、速度和成本</h1>
+<p>DeepInfra 发布于 2026.11.17</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/kimi-k3-1-pro-api-benchmarks-header.png" alt="Kimi K3.1 Pro API 基准：提供商、速度和成本"></p>
+<p>Kimi K3.1 Pro是Moonshot AI的新开放权重旗舰产品，在同等规模的开放权重模型中，其人工智能分析智能指数名列前茅。它也是一个大型的、健谈的推理模型，因此运行它的位置会改变账单和等待时间。本指南比较了此处涵盖的 14 个提供商的 16 个端点的人工分析数据，价格优先。</p>
+<h2>Kimi K3.1 Pro提供商比较数据</h2>
+<p>价格为每 100 万个代币。混合价格使用人工分析的缓存命中、输入和输出代币的 7:2:1 权重。</p>
+<table><thead><tr><th>提供者（端点）</th><th>输入</th><th>输出</th><th>混合 (7:2:1)</th><th>错误率</th><th>输出速度（吨/秒）</th><th>第一次回答令牌的时间</th><th>每个索引任务的成本</th><th>最适合</th></tr></thead><tbody><tr><td><strong>深基础设施</strong></td><td><strong>1.90 美元</strong></td><td><strong>9.50 美元</strong></td><td><strong>1.46 美元</strong></td><td><strong>0.0%</strong></td><td>46.9</td><td>46.9 109.82</td><td>4.39 美元</td><td><strong>成本与可靠性：</strong>任何端点的最低价格，错误率为 0%；弹性层</td></tr><tr><td>PrimaLabs</td><td>1.80 美元</td><td>9.00 美元</td><td>1.39 美元</td><td>15.4%</td><td>109.8</td><td>109.8 21.16</td><td>21.16 2.94 美元</td><td>最低标价</td></tr><tr><td>莫代尔</td><td>2.00 美元</td><td>10.00 美元</td><td>1.54 美元</td><td>0.0%</td><td>118.0</td><td>44.64</td><td>44.64 3.19 美元</td><td>高速缓存密集型代理运行</td></tr><tr><td>巴斯坦</td><td>2.00 美元</td><td>10.00 美元</td><td>1.54 美元</td><td>0.0%</td><td>183.0</td><td>25.53</td><td>25.53 3.26 美元</td><td>按标价计算的吞吐量</td></tr><tr><td>数据块</td><td>2.00 美元</td><td>10.00 美元</td><td>1.54 美元</td><td>1.9%</td><td>111.7</td><td>111.7 69.25</td><td>69.25 3.29 美元</td><td>Databricks 原生堆栈</td></tr><tr><td>数字海洋</td><td>2.00 美元</td><td>10.00 美元</td><td>1.54 美元</td><td>0.0%</td><td>200.8</td><td>200.8 25.35</td><td>25.35 3.42 美元</td><td><strong>按标价计算的速度和延迟</strong></td></tr><tr><td>晶圆</td><td>2.00 美元</td><td>10.00 美元</td><td>1.54 美元</td><td>0.0%</td><td>112.3</td><td>112.3 81.11</td><td>3.50 美元</td><td>第一个令牌的低时间（1.41 秒）</td></tr><tr><td>Kimi（第一方）</td><td>2.00 美元</td><td>10.00 美元</td><td>1.54 美元</td><td>8.0%</td><td>31.0</td><td>31.0 152.69</td><td>152.69 3.68 美元</td><td>基线； Moonshot 自己的 API</td></tr><tr><td>滑翔伞</td><td>2.00 美元</td><td>10.00 美元</td><td>1.54 美元</td><td>0.0%</td><td>112.1</td><td>112.1 54.07</td><td>54.07 4.22 美元</td><td>中型全能选手</td></tr><tr><td>尼比乌斯</td><td>2.00 美元</td><td>10.00 美元</td><td>1.54 美元</td><td>2.0%</td><td>94.6</td><td>94.6 61.52</td><td>4.38 美元</td><td>中型全能选手</td></tr><tr><td>硅流</td><td>2.00 美元</td><td>10.00 美元</td><td>1.54 美元</td><td>0.0%</td><td>45.5</td><td>45.5 105.62</td><td>4.68 美元</td><td>标价回落</td></tr><tr><td>因科</td><td>$3.00</td><td>15.00 美元</td><td>2.31 美元</td><td>5.8%</td><td>134.2</td><td>134.2 38.91</td><td>38.91 4.79 美元</td><td>快于标价，低于快速等级</td></tr><tr><td>Amazon Bedrock（高速）</td><td>4.00 美元</td><td>20.00 美元</td><td>2.94 美元</td><td>0.0%</td><td>218.2</td><td>218.2 24.93</td><td>24.93 4.37 美元</td><td>AWS 原生快速层</td></tr><tr><td>基米高速</td><td>4.00 美元</td><td>20.00 美元</td><td>2.94 美元</td><td>4.9%</td><td>69.4</td><td>69.4 74.05</td><td>74.05 4.42 美元</td><td>Moonshot 自己的快速层</td></tr><tr><td>LithosAI（超级）</td><td>6.00 美元</td><td>30.00 美元</td><td>4.41 美元</td><td>0.0%</td><td>258.5</td><td>258.5 17.87</td><td>17.87 6.32 美元</td><td><strong>最快输出和第一个答案</strong></td></tr><tr><td>因科（快速）</td><td>6.00 美元</td><td>30.00 美元</td><td>4.62 美元</td><td>0.0%</td><td>187.0</td><td>27.22</td><td>27.22 9.55 美元</td><td>高级速度等级</td></tr></tbody></table>
+<p><strong>方法。</strong> 来自 <a href="https://artificialanalysis.ai/models/kimi-k3-1-pro/providers">人工分析提供商页面</a> 的数据，Kimi K3.1 Pro 在最大推理努力下，于 2026 年 11 月 17 日提取。人工分析使用其“性能 v3”方法：标题速度和延迟平均单请求和多轮代理工作负载，以及这些运行的错误率池。混合价格权重缓存命中、输入和输出代币的比例为 7:2:1。每个任务的成本和时间来自人工分析的智能指数工作负载，并取决于每个端点测量的缓存命中率及其价格。 DeepInfra 的数据是其当前促销价格（比 2.00 美元/10.00 美元标价低 5%）。数字随着时间的推移而变化。定价截至 2026 年 11 月 17 日。</p>
+<h2>Kimi K3.1 Pro API 评测总结</h2>
+<ul><li><strong>实验室和发布：</strong> Moonshot AI，2026 年 10 月 23 日发布；随后在 11 月初进行了公开重量赛。</li><li><strong>智能：</strong> <a href="https://artificialanalysis.ai/models/kimi-k3-1-pro">人工分析智能指数 v5.0.1</a> 上的 46，<strong>#1 of 29</strong> 类似大小的开放权重模型（类别中位数 23）。</li><li><strong>DeepInfra 价格：</strong> 每 100 万代币 1.90 美元输入 / 9.50 美元输出 / 0.19 美元缓存（5% 折扣）；灵活 1.52 美元/7.60 美元/0.152 美元。</li><li><strong>混合价格：</strong> DeepInfra 上每 100 万美元 1.46 美元，是所有基准端点中最低的，错误率为 0%。</li><li><strong>可靠性：</strong> DeepInfra 在人工分析的测量窗口中记录了 0.0% 的错误率。</li><li><strong>标价速度领先者：</strong> DigitalOcean（200.8 吨/秒，第一个应答令牌 25.35 秒）和 Baseten（183.0 吨/秒，25.53 秒）。</li><li><strong>冗长：</strong> 113M 输出令牌用于运行智力指数，而类别中位数为 104M。</li><li><strong>上下文和输出：</strong> 1,048,576 个令牌上下文； DeepInfra 上最多 943,718 个输出令牌（如果未设置“max_tokens”，则默认为 65,536 个）。</li><li><strong>模态：</strong>文本和图像输入，文本输出。</li><li><strong>大小：</strong> 专家混合，总计 2.8T 和 104B 活动参数（<a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Hugging Face</a>）。</li><li><strong>许可证：</strong>定制Kimi K3.1-Pro许可证；允许商业用途，并为超大型模型即服务运营商和超大型消费产品提供额外条款。</li><li><strong>覆盖的提供商：</strong> 来自 14 个提供商的 16 个端点。</li></ul>
+<h2>关于Kimi K3.1 Pro</h2>
+<p>Kimi K3.1 Pro 是在 Kimi K3 的基础上进行后训练的，具有更大的强化学习计算量。主要的架构变化在于注意力：K3 的全注意力门控 MLA 层与 KDA 层一起被替换为门控 DeepSeek 稀疏注意力，以实现更便宜的长上下文工作。它保留 1M 令牌上下文并通过 401M 参数视觉编码器读取图像。</p>
+<p>Moonshot 自己的结果（供应商报告，以最大推理努力运行）使其在代理任务的比较表中名列前茅，例如带有工具的 HLE-Full (70.0)、BrowseComp (92.1) 和 AutomationBench-AA (73.3)。封闭模型在无工具推理方面仍然领先（HLE-Full 51.1 vs Claude Opus 5.5 的 59.8），在 Terminal-Bench 4.0 上领先（65.7 vs 66.4），在网络安全方面也领先。与其前身相比，Moonshot 报告称 Kimi Code Bench 3.0 Long-horizo​​n 为 61.2，而 Kimi K3 为 55.95。我们的<a href="https://deepinfra.com/blog/kimi-k3-model-analysis-api-provider-comparison">Kimi K3 API 提供程序分析</a>涵盖了之前的模型。</p>
+<p>两个服务细节决定了提供商的选择。首先，模型进行详细推理：Artificial Analysis 统计了 1.13 亿个输出代币来完成其索引，推理代币按输出计费，因此输出价格主导成本。其次，每个端点上第一个答案的延迟都很长（17.87 秒到 152.69 秒），因此第一个答案令牌的时间比第一个令牌的时间更重要。</p>
+<h3>DeepInfra：整体推荐的提供商</h3>
+<p>从价格和可靠性来看，DeepInfra 是推荐的 Kimi K3.1 Pro API。每 100 万代币的输入为 1.90 美元，输出为 9.50 美元，比 16 个基准端点中的 9 个收取的 2.00 美元/10.00 美元标价低 5%，其 1.46 美元的混合价格是所有记录了 0% 错误率的端点中最低的。在人工分析基准的提供商中，只有 PrimaLabs 列出了较低的价格。</p>
+<p><a href="https://deepinfra.com/blog/flex-service-tier">Flex 服务层</a> 的价格较低：输入 1.52 美元，输出 7.60 美元，缓存 0.152 美元。该产出率比列表低 24%。在人工分析使用相同的 7:2:1 加权时，Flex 的混合结果约为 1.17 美元（我们的计算）。发送 <code>&quot;service_tier&quot;: &quot;flex&quot;</code>; Flex 请求最多等待 10 分钟以获得容量，然后返回 HTTP 429，并且拒绝的请求不收费。优先级还可享受 1.5 倍促销价。</p>
+<p>由于产出在该模型的账单中占主导地位，因此每个代币的差距会增加。生成 1 亿个输出令牌的批处理作业在 DeepInfra Standard 上的成本为 950 美元，在 Flex 上的成本为 760 美元，按标价计算为 1,000 美元。</p>
+<p>如果您注重响应速度，请按标准标价测试 DigitalOcean 或 Baseten；对于批量、代理和成本敏感的工作，DeepInfra 的每个代币差距会复合。</p>
+<ul><li><strong>混合价格：</strong> 每 100 万美元 1.46 美元（输入 1.90 美元，输出 9.50 美元，缓存 0.19 美元）；弹性约 1.17 美元</li><li><strong>输出速度：</strong> 46.9 吨/秒</li><li><strong>延迟 (TTFT)：</strong> 2.09 秒； 109.82 秒到第一个应答令牌</li><li><strong>最佳工作负载：</strong> 批量推理、后台代理和评估运行，其中价格和干净的错误率比第一个答案的秒数更重要</li></ul>
+<p><a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro模型页面</a>列出了JSON模式、结构化输出、工具调用、图像输入、零数据保留和私有端点。该 API 与 OpenAI 兼容，位于“https://api.deepinfra.com/v1/openai/chat/completions”，具有“授权：承载 $DEEPINFRA_API_KEY”；参数位于<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro/api">API页面</a>。</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+)
+
+response = client.chat.completions.create(
+    model=&quot;moonshotai/Kimi-K3.1-Pro&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Plan the migration steps for this schema change.&quot;}],
+    temperature=1.0,
+    top_p=0.95,
+    max_tokens=32768,
+    extra_body={
+        &quot;reasoning_effort&quot;: &quot;high&quot;,
+        &quot;service_tier&quot;: &quot;flex&quot;,  # remove for standard tier
+    },
+)
+print(response.choices[0].message.content)copy</code></pre>
+<h3>DigitalOcean：标价的速度和延迟领先者</h3>
+<p>DigitalOcean 是标准 2.00 美元/10.00 美元价格下最快的端点：200.8 t/s 输出，25.35 秒到达第一个答案令牌，错误率为 0%。它在 6.0 分钟内完成一项智力指数任务，每项任务的成本为 3.42 美元。</p>
+<ul><li><strong>混合价格：</strong> 每 100 万美元 1.54 美元</li><li><strong>输出速度：</strong> 200.8 吨/秒</li><li><strong>延迟 (TTFT)：</strong> 1.71 秒； 25.35 秒到第一个应答令牌</li><li><strong>最佳工作负载：</strong> 交互式编码助手和聊天，用户等待答案</li></ul>
+<h3>Baseten：高通量替代方案</h3>
+<p>Baseten 紧随其后，速度为 183.0 吨/秒，首次回答所需时间为 25.53 秒，同样以标价计算，错误率为 0%。 Artificial Analysis 的代理工作负载的缓存命中率为 99.6%，使其每项任务的成本降至 3.26 美元，在该系列中排名第三。</p>
+<ul><li><strong>混合价格：</strong> 每 100 万美元 1.54 美元</li><li><strong>输出速度：</strong> 183.0 吨/秒</li><li><strong>延迟 (TTFT)：</strong> 1.44 秒； 25.53 秒到第一个应答标记</li><li><strong>最佳工作负载：</strong> 吞吐量大的代理管道也需要低延迟</li></ul>
+<h3>LithosAI ULTRA 和 Amazon Bedrock High Speed：高级速度层</h3>
+<p>如果速度比价格更重要，那么两个快速层领先。 LithosAI ULTRA 具有最高的输出速度（258.5 吨/秒）和最短的首次应答时间（17.87 秒），价格为 6.00 美元/30.00 美元，是标价的三倍。 Amazon Bedrock High Speed 速度达到 218.2 吨/秒和 24.93 秒，价格为 4.00 美元/20.00 美元。两者的错误率均为 0%。</p>
+<ul><li><strong>混合价格：</strong> $4.41 (LithosAI ULTRA)； 2.94 美元（Bedrock高速）</li><li><strong>输出速度：</strong> 258.5 / 218.2 吨/秒</li><li><strong>延迟 (TTFT)：</strong> 1.75 / 4.00 秒； 17.87 / 24.93 秒到第一个答案令牌</li><li><strong>最佳工作负载：</strong> 具有速度溢价预算的延迟关键型产品</li></ul>
+<h3>PrimaLabs：最低标价</h3>
+<p>PrimaLabs 列出了人工分析的最低价格（1.80 美元/9.00 美元，混合 1.39 美元）和每个索引任务的最低成本（2.94 美元），速度为 109.8 吨/秒，首次回答所需时间为 21.16 秒。它在测量窗口上的 15.4% 错误率是该组中最高的，因此如果您路由到它，请计划重试或后备。</p>
+<ul><li><strong>混合价格：</strong> 每 100 万美元 1.39 美元</li><li><strong>输出速度：</strong> 109.8 吨/秒</li><li><strong>延迟 (TTFT)：</strong> 0.95 秒； 21.16 秒到第一个应答标记</li><li><strong>最佳工作负载：</strong> 具有重试逻辑的成本优先工作负载</li></ul>
+<h3>Kimi（Moonshot 第一方 API）：基线</h3>
+<p>Moonshot 自己的 API 收取 2.00 美元/10.00 美元的标价，测量到 31.0 t/s，第一个应答令牌需要 152.69 秒，错误率为 8.0%。 Moonshot 还以 4.00 美元/20.00 美元的价格出售 Kimi K3.1 Pro Highspeed（人工分析为 69.4 吨/秒）。第一方 API 是定价和 Moonshot 特定功能的参考。</p>
+<ul><li><strong>混合价格：</strong> 每 100 万美元 1.54 美元（高速 2.94 美元）</li><li><strong>输出速度：</strong> 31.0 吨/秒（高速 69.4）</li><li><strong>延迟 (TTFT)：</strong> 4.03 秒； 152.69 秒到第一个应答令牌</li><li><strong>最佳工作负载：</strong> 想要 Moonshot 自己的 API 和产品的团队</li></ul>
+<h2>技术深入探讨：开发人员需要了解什么</h2>
+<h3>1. 首次应答时间标记是重要的延迟数</h3>
+<p>在 16 个端点上，第一个令牌的时间从 0.95 秒到 6.54 秒不等，但第一个应答令牌的时间从 17.87 秒到 152.69 秒不等，因为模型会在应答之前进行推理。对于面向用户的任何内容，比较提供商与首次答复的时间，并考虑交互式调用的较低“reasoning_effort”：DeepInfra 的 API 通过“max”接受“none”，Artificial Analysis 的数据均以“max”测量。</p>
+<h3>2. 产出价格驱动账单</h3>
+<p>以 1.13 亿个输出代币来运行 Artificial Analysis 的指数（类中位数 1.04 亿），Kimi K3.1 Pro 有点冗长，其输出价格是其输入价格的五倍。对于输出量大的工作，输出率是要比较的数字：DeepInfra 为 9.50 美元，Flex 为 7.60 美元，标价为 10.00 美元，快速层为 20.00-30.00 美元。</p>
+<h3>3. 每个任务的成本取决于您的缓存命中率</h3>
+<p>Artificial Analysis 的混合价格假设 70% 的令牌是缓存命中，其每个任务的成本反映了每个端点在长时间代理工作负载上测得的缓存命中率。如果您的流量主要是新鲜提示或输出密集型推理，则每个代币的价格比每个任务的数字更好地预测您的账单。在 DeepInfra 上使用“prompt_cache_key”以在代理轮次之间缓存重复的上下文。</p>
+<h3>4. 输出限制和长上下文</h3>
+<p>DeepInfra 服务于完整的 1,048,576 个令牌上下文，并允许多达 943,718 个输出令牌。如果你不设置 max_tokens ，它默认为剩余上下文和 65,536 中较小的一个。</p>
+<h3>5. API 功能对等</h3>
+<p>上述所有提供商都通过 OpenAI 兼容的 API 提供相同的开放权重，因此您只需更改基本 URL 和模型名称即可将成本敏感的流量路由到一个端点，将延迟敏感的流量路由到另一个端点。</p>
+<h2>结论</h2>
+<ul><li><strong>最低价格，错误率为 0%：</strong> DeepInfra（1.90 美元/9.50 美元，混合 1.46 美元；Flex 输出 7.60 美元）</li><li><strong>按标价计算的速度和延迟：</strong> DigitalOcean（200.8 t/s，第一个答案需要 25.35 秒）；巴斯坦紧随其后</li><li><strong>无论价格如何，最快：</strong> LithosAI ULTRA（258.5 t/s，17.87 s）和 Amazon Bedrock High Speed</li><li><strong>最低标价：</strong> PrimaLabs，计划错误率为 15.4%</li><li><strong>基线：</strong> Moonshot 的第一方 Kimi API 价格为 2.00 美元/10.00 美元</li></ul>
+<p>完整定价场景请参见【Kimi K3.1 Pro定价指南】(https://deepinfra.com/blog/kimi-k3-1-pro-pricing-guide)；对于模型本身，<a href="https://deepinfra.com/blog/kimi-k3-1-pro-model-overview">Kimi K3.1 Pro模型概述</a>。我们对<a href="https://deepinfra.com/blog/best-open-source-models-for-coding">最佳开源编码模型</a>的综述将 K3.1 Pro 置于其开放权重同行的旁边。首先，<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">在 DeepInfra 上调用 Kimi K3.1 Pro</a>，或将其部署在专用端点上以获得专用 GPU 容量。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/openclaw-alternatives"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/openclaw-alternatives_rs.webp" alt="最佳 OpenClaw 替代品：Hermes Agent、ZeroClaw 和 NemoClaw"></a><a href="https://deepinfra.com/blog/openclaw-alternatives">最佳 OpenClaw 替代品：Hermes Agent、ZeroClaw 和NemoClaw</a>&lt;p&gt;OpenClaw 拥有 362,000 个 GitHub star 和一个拥有超过 44,000 个社区贡献的技能市场。这种收养的发生并非偶然。尽管如此，在生产中运行它的相同团队仍然遇到同样的抱怨：模型列表是固定的。 OpenClaw 的引导设置向导涵盖 OpenAI、Anthropic、Google、DeepSeek 和本地 Ollama。您可以[...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/best-mimo-v2-5-api-providers"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/mimo-api-ranked.png" alt="最佳 MiMo-V2.5 API 提供商排名"></a><a href="https://deepinfra.com/blog/best-mimo-v2-5-api-providers">最佳 MiMo-V2.5 API 提供商排名</a>&lt;p&gt;执行摘要：为小米 MiMo-V2.5 选择正确的 API 提供商对于优化生产工作流程至关重要。根据基准研究，DeepInfra 是原始速度和低延迟（130+ 代币/秒）的最佳提供商，而小米的第一方 API 是最具成本效益的，提供无与伦比的即时缓存折扣。本指南详细介绍了模型的 MoE 架构 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/MiMo-V2.6-Pro_-AI-Guide.png" alt="MiMo-V2.6-Pro 指南：性能、定价和提供商"></a><a href="https://deepinfra.com/blog/mimo-v2-6-pro-complete-guide">MiMo-V2.6-Pro 指南：性能、定价和提供商</a>&lt;p&gt;API 审核摘要（2026 年 10 月） 属性值 开发者 小米 发布日期 2026 年 9 月 21 日 模型类型 推理模型（开放权重） 人工智能分析指数 30 — 在 AA 的“大型”（&gt;150B 参数）类别中的 21 个模型中排名第 3，其中类别中位数为 23 速度 53.4 输出令牌/秒（类别中位数：73.9 t/s） 延迟 (TTFT) 3.16 秒（类别 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Kimi K3.1 Pro 定价：API 成本、提供商与 Flex（2026）</title>
+      <link>https://deepinfra.com/blog/kimi-k3-1-pro-pricing-guide</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/kimi-k3-1-pro-pricing-guide</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Kimi K3.1 Pro Pricing: API Costs, Providers &amp; Flex (2026)</description>
+      <content:encoded><![CDATA[<h1>Kimi K3.1 Pro 定价：API 成本、提供商和 Flex (2026)</h1>
+<p>DeepInfra 发布于 2026.11.17</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/kimi-k3-1-pro-pricing-guide-header.png" alt="Kimi K3.1 Pro 定价：API 成本、提供商和 Flex (2026)"></p>
+<h2>Kimi K3.1 Pro 执行摘要</h2>
+<p><strong>定价截至 2026 年 11 月 17 日。</strong> DeepInfra 的标准价格为促销价格（标价 2.00 美元/10.00 美元折扣 5%，未公布结束日期）。如果您计划在本季度之后进行预算，请根据清单进行预算。</p>
+<table><thead><tr><th>最适合</th><th>供应商推荐</th><th>为什么</th></tr></thead><tbody><tr><td>最低价格，错误率 0%</td><td><strong>深基础设施标准</strong></td><td>每 100 万个代币 1.90 美元的输入 / 9.50 美元的输出 / 0.19 美元的缓存：人工分析以 0% 错误率测量的端点中的最低价格。一种端点更便宜（PrimaLabs，1.80 美元/9.00 美元），错误率为 15.4%。</td></tr><tr><td>批处理作业、评估和回填</td><td><strong>DeepInfra Flex</strong></td><td>1.52 美元/7.60 美元/0.152 美元，比标准低 20%，适用于可等待最多 10 分钟容量的请求。</td></tr><tr><td>代理和RAG大量重复提示</td><td><strong>深基础设施标准</strong></td><td>以输入费率的 10%（0.19 美元）缓存输入账单，代理流量主要是缓存前缀。</td></tr><tr><td>第一方访问和高速</td><td><strong>Moonshot（Kimi API）</strong></td><td>列表中为 2.00 美元/10.00 美元/0.20 美元，另加仅 Moonshot 提供的高速版本，价格为 4.00 美元/20.00 美元。</td></tr><tr><td>以标价最快的响应</td><td><strong>DigitalOcean 或 Baseten</strong></td><td>200.8 和 183.0 每秒输出令牌，大约 25 秒到第一个答案令牌，价格为 $2.00 / $10.00。</td></tr><tr><td>跨多个主机的一个 API</td><td><strong>开放路由器</strong></td><td>以每个提供商自己的价格在超过 15 个提供商之间路由 Kimi K3.1 Pro，并具有故障转移功能。</td></tr></tbody></table>
+<p><strong>结论：</strong> 对于大多数生产流量来说，DeepInfra Standard 是成本最低的端点，在人工分析的测试中没有使请求失败，而 Flex 对任何可以等待的内容再提供 20% 的折扣。仅当响应速度是产品时才在其他地方支付标价。</p>
+<p>Kimi K3.1 Pro 是 Moonshot AI 的开放权重旗舰产品，于 <a href="https://www.kimi.ai/blog/kimi-k3-1-pro">2026 年 10 月 23 日</a> 发布，自 2026 年 11 月起在 DeepInfra 上发布。它是一个 Mixture-of-Experts 模型，具有 2.8T 总参数和 104B 活动参数、1,048,576 个令牌上下文窗口和文本和图像输入。 Moonshot 使用更多的计算量对 Kimi K3 进行了后训练，并将 K3 的全注意力层替换为稀疏注意力层，从而使长上下文的运行成本更低。这些权重根据 <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Kimi K3.1-Pro 许可证</a> 发货，这是一种 MIT 风格的许可证，针对大型商业运营商有两个额外条件（详细信息如下）。</p>
+<p>在<a href="https://artificialanalysis.ai/models/kimi-k3-1-pro">人工分析</a> 上，Kimi K3.1 Pro 的智能指数 v5.0.1 得分为 46，是同类规模的 29 个开放权重模型中的第一名（类别中位数：23）。这也是一个长期思考的模型：它编写了 1.13 亿个输出令牌来运行索引，而类中位数为 1.04 亿个。这就是一句话的定价故事。对于开放模型来说，价目表很高，输出是它昂贵的一面，而且这个模型写了很多。有用的问题不是它是否便宜，而是哪个端点和哪种代币组合可以让您的账单保持合理。</p>
+<h2>了解代币以及如何收费</h2>
+<p>您只需为发送的内容、模型编写的内容以及再次发送的内容付费，即可享受 90% 的折扣。</p>
+<table><thead><tr><th>代币类型</th><th>它是什么</th><th>为什么它对 Kimi K3.1 Pro 很重要？</th></tr></thead><tbody><tr><td>输入（未缓存）</td><td>新的提示标记：用户文本、检索的文档、工具结果、图像</td><td>DeepInfra 上每 100 万美元 1.90 美元。完整的 1M 令牌提示费用约为 1.99 美元（未缓存）。</td></tr><tr><td>缓存输入</td><td>提供者最近看到的提示前缀：系统提示、工具模式、对话历史记录</td><td>每 100 万美元 0.19 美元，输入费率的 10%。代理每回合都会循环重新发送历史记录，因此这条线承载了大部分容量。</td></tr><tr><td>输出</td><td>生成的令牌，包括推理</td><td>每 1M 9.50 美元，5 倍输入速率。推理代币也在这里计费。</td></tr><tr><td>最大输出</td><td>一次回复上限</td><td>DeepInfra 上最多有 943,718 个代币。如果不设置 max_tokens ，则默认为 65,536，最多约 0.62 美元的输出。</td></tr><tr><td>上下文窗口</td><td>根据请求提示加上输出</td><td>1,048,576 个代币。长上下文 RAG 不需要激进的分块，这是一种能力，而不是预算。</td></tr></tbody></table>
+<p>这在实践中意味着什么：</p>
+<ul><li><strong>产出就是钱的去向。</strong> 在输入速率的 5 倍下，并且模型人工分析率“有些冗长”，产出通常会决定账单，即使它只是一小部分代币。</li><li><strong>推理工作量是一个成本刻度盘。</strong> DeepInfra 接受从“无”（思考）到“最大”的“reasoning_effort”。 Moonshot 的基准数据使用“max”。对于提取、分类和路由，较低的设置可以保存任务不需要的输出标记。</li><li><strong>缓存命中率与缓存价格一样重要。</strong> 在 Artificial Analysis 的代理索引工作负载上，DeepInfra 的端点在 92.6% 的时间内命中缓存，而其他几个端点的命中率为 98-100%。即使代币价格较低，DeepInfra 每个索引任务的成本也为 4.39 美元，高于几个 2.00 美元/10.00 美元的端点。将提示符的稳定部分保留在前面，并设置“prompt_cache_key”，以便重复的前缀保持缓存。</li><li><strong>图像作为输入计费。</strong> Kimi K3.1 Pro 接受图像，这些图像被标记化并按输入费率收费。</li></ul>
+<h2>提供商代币成本权衡</h2>
+<p>人工分析在 14 个提供商的 16 个端点上对 Kimi K3.1 Pro 进行了基准测试。大多数标准端点均按 Moonshot 的标价收费：2.00 美元/10.00 美元/0.20 美元。 DeepInfra 的输入值低于 0.10 美元，输出值低于 0.50 美元。价格为每 100 万个代币。</p>
+<table><thead><tr><th>供应商/路线</th><th>输入</th><th>输出</th><th>缓存</th><th>优势</th><th>缺点</th><th>最适合</th></tr></thead><tbody><tr><td><a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">DeepInfra</a> 标准（促销）</td><td>1.90 美元</td><td>9.50 美元</td><td>0.19 美元</td><td>人工分析端点中价格最低，错误率为 0%；零数据保留； JSON、结构化输出和工具调用</td><td>促销价（标价 2.00 美元/10.00 美元）；人工分析代理工作负载的测量缓存命中率较低</td><td>生产应用程序、代理、RAG</td></tr><tr><td>深度基础设施 Flex</td><td>1.52 美元</td><td>7.60 美元</td><td>0.152 美元</td><td>低于标准 20%； Flex 无法提出的请求将被拒绝且不收费</td><td>等待最多 10 分钟以获得容量，然后返回 HTTP 429</td><td>批处理作业、评估、回填</td></tr><tr><td>深度基础设施优先</td><td>2.85 美元</td><td>14.25 美元</td><td>0.285 美元</td><td>需求高峰时优先产能</td><td>1.5× 标准，高于 Moonshot 标价</td><td>排队成本高于令牌的延迟敏感路径</td></tr><tr><td>PrimaLabs</td><td>1.80 美元</td><td>9.00 美元</td><td>0.18 美元</td><td>人工分析测得的最低价格</td><td>人工分析错误率为15.4%； OpenRouter 列出其端点的价格为 2.70 美元 / 13.50 美元</td><td>可以吸收失败请求的纯价格工作负载</td></tr><tr><td>Moonshot（Kimi API）</td><td>2.00 美元</td><td>10.00 美元</td><td>0.20 美元</td><td>第一方；高速版本售价 4.00 美元/20.00 美元</td><td>31.0 t/s，人工分析错误率为 8.0%</td><td>已经在 Moonshot 平台上的团队</td></tr><tr><td>DigitalOcean，Baseten</td><td>2.00 美元</td><td>10.00 美元</td><td>0.20 美元</td><td>最快标准价格终点：200.8 和 183.0 吨/秒</td><td>每个代币的标价</td><td>要求速度的交互式产品</td></tr><tr><td>快速层（Amazon Bedrock High Speed、LithosAI ULTRA、Inco FAST）</td><td>$4.00–$6.00</td><td>$20.00–$30.00</td><td>$0.20–$0.60</td><td>高达 258.5 吨/秒</td><td>标准价格的 2–3 倍</td><td>不惜一切代价延迟</td></tr><tr><td>开放路由器</td><td>因提供商而异</td><td>变化</td><td>变化</td><td>一键，故障转移；一些主机人工分析没有对标列出更低的价格</td><td>路由提供商设置价格、速度和缓存行为</td><td>多提供商后备</td></tr><tr><td>自托管</td><td>GPU 成本</td><td>GPU 成本</td><td>不适用</td><td>全面掌控2.8T参数车型</td><td>一个多GPU集群和一个推理团队；收入超过 2000 万美元的 MaaS 运营商需要与 Moonshot 签订单独协议</td><td>体积非常大且稳定</td></tr></tbody></table>
+<p><strong>来源：</strong> <a href="https://artificialanalysis.ai/models/kimi-k3-1-pro/providers">人工分析提供商页面</a>、<a href="https://openrouter.ai/moonshotai/kimi-k3.1-pro">OpenRouter</a> 和 <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">DeepInfra 模型页面</a>，已访问2026年11月17日。</p>
+<p><strong>按工作量划分的要点：</strong></p>
+<ul><li><strong>输出密集型工作：</strong> DeepInfra 的 9.50 美元输出率是零错误端点人工分析测量中最低的。每 1 亿个输出代币的成本比清单上低 50 美元。</li><li><strong>批量和异步工作：</strong> Flex 的输出为 7.60 美元，比列表低 24%，并且需要一个请求字段。</li><li><strong>代理循环：</strong> 0.19 美元的缓存率仅在请求实际命中缓存时才有帮助。结构提示，然后在信任预测之前检查缓存令牌的使用份额。</li><li><strong>非基准路由：</strong> OpenRouter 列出了人工分析未以较低代币价格进行基准测试的一些主机。这就是为什么本指南中的每个价格声明都适用于端点人工分析测量。</li></ul>
+<p><strong>要避免的成本陷阱：</strong> 缓存损坏。在下面的场景 1 中，缓存命中率为 80%（而不是 90%）会使每月账单从 1,653.00 美元增加到 2,166.00 美元，而流量没有变化。系统提示顶部的时间戳或请求 ID，或重新排列的工具定义，是常见的罪魁祸首。</p>
+<p>速度方面：DeepInfra 的端点在最大推理情况下每秒测量 46.9 个令牌，第一个答案令牌需要 109.82 秒。如果您注重响应速度，请按标价测试 DigitalOcean 或 Baseten；对于批量、代理和成本敏感的工作，每个令牌的差距会复合。</p>
+<h2>DeepInfra：Kimi K3.1 Pro 成本最低的零错误路线</h2>
+<table><thead><tr><th>型号/清单</th><th>最佳用例</th><th>背景</th><th>输入（每1M）</th><th>输出（每1M）</th></tr></thead><tbody><tr><td><a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro</a>，标准</td><td>代理、编码、长上下文 RAG、文档和图像理解</td><td>1,048,576</td><td>1,048,576 $1.90（$0.19 缓存）</td><td>9.50 美元</td></tr><tr><td>Kimi K3.1 Pro，Flex</td><td>批处理作业、评估、回填</td><td>1,048,576</td><td>1,048,576 $1.52（$0.152 缓存）</td><td>7.60 美元</td></tr><tr><td>Kimi K3.1 Pro，优先</td><td>延迟敏感的生产路径</td><td>1,048,576</td><td>1,048,576 $2.85（$0.285 缓存）</td><td>14.25 美元</td></tr></tbody></table>
+<p>DeepInfra 上的 Kimi K3.1 Pro 在 OpenAI 兼容端点后面运行（“https://api.deepinfra.com/v1/openai/chat/completions”，模型 ID“moonshotai/Kimi-K3.1-Pro”，“授权：承载 $DEEPINFRA_API_KEY”）。支持JSON模式、结构化输出、工具调用、图像输入和推理控制，数据零保留、无最小值。 DeepInfra 拥有其 GPU 基础设施，当共享容量不再足够时，同一帐户可以将模型部署在专用端点上。 <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro/api"><code>/api</code> 页面</a> 列出了每个参数。此请求使用 Flex 和较低的推理工作：</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+)
+
+response = client.chat.completions.create(
+    model=&quot;moonshotai/Kimi-K3.1-Pro&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Extract the parties and dates from this contract as JSON: ...&quot;}],
+    max_tokens=2048,
+    response_format={&quot;type&quot;: &quot;json_object&quot;},
+    extra_body={
+        &quot;service_tier&quot;: &quot;flex&quot;,
+        &quot;reasoning_effort&quot;: &quot;low&quot;,
+    },
+)
+print(response.choices[0].message.content)copy</code></pre>
+<p><strong>为什么这很重要：</strong> 大多数端点对该型号的 Moonshot 收取 2.00 美元/10.00 美元的标价。 DeepInfra 的促销率比每种代币类型低 5%。在人工分析基准的端点中，只有一个更便宜，并且它失败了 15.4% 的请求。对于推理模型来说，失败的请求可能会浪费数千个代币的工作量，0.0% 的错误率是价格的一部分。</p>
+<h2>开发人员的真实成本场景</h2>
+<p>除非另有说明，所有五个场景均使用 DeepInfra 的促销标准费率（1.90 美元/9.50 美元/0.19 美元）。每个项目都以 Moonshot 的标价（2.00 美元/10.00 美元/0.20 美元）比较相同的工作负载，这也是人工分析上大多数端点的收费以及促销结束时 DeepInfra 的收费。代币数量为每月。 “M”是百万的意思。</p>
+<h3>场景 1：25 人团队的 Repo 规模编码代理</h3>
+<table><thead><tr><th>卷</th><th>型号</th><th>供应商</th><th>输入令牌</th><th>输出代币</th><th>每月费用</th></tr></thead><tbody><tr><td>25 名开发人员，每日代理会议</td><td>基米K3.1 Pro</td><td>深基础设施标准</td><td>3,000M（2,700M 缓存，300M 未缓存）</td><td>60M</td><td><strong>$1,653.00</strong></td></tr></tbody></table>
+<p>编码代理每次都会重新发送存储库映射、工具模式和对话历史记录，因此输入使输出相形见绌，并且大部分内容应该命中缓存。这假设缓存命中率为 90%，输出为输入的 2%。 Moonshot 报告该模型在 SWE Marathon 上的得分为 51.7，在 Terminal-Bench 4.0 上的得分为 65.7（供应商报告），这是该循环所需的长范围编码。</p>
+<p><strong>为什么 DeepInfra 适合：</strong> 缓存的前缀账单为 0.19 美元，未缓存的输入和输出处于人工分析测量的最低零错误率。</p>
+<p><strong>成本明细</strong> – 未缓存输入：300M × $1.90/M = $570.00 – 缓存输入：2,700M × $0.19/M = $513.00 – 输出：60M × $9.50/M = $570.00 – <strong>总计：$1,653.00/月</strong></p>
+<p>标价 ($2.00 / $10.00 / $0.20) 下的相同工作负载：$600.00 + $540.00 + $600.00 = <strong>$1,740.00</strong>，或多 $87.00。当缓存命中率为 80% 时，DeepInfra 费用将上涨至 2,166.00 美元。</p>
+<h3>场景 2：文档库上的长上下文 RAG</h3>
+<table><thead><tr><th>卷</th><th>型号</th><th>供应商</th><th>输入令牌</th><th>输出代币</th><th>每月费用</th></tr></thead><tbody><tr><td>100,000 次查询</td><td>基米K3.1 Pro</td><td>深基础设施标准</td><td>6,000M（5,000M 缓存，1,000M 未缓存）</td><td>80M</td><td><strong>$3,610.00</strong></td></tr></tbody></table>
+<p>每个查询发送一个 60,000 个令牌的提示：一个 50,000 个令牌的指令和核心文档的缓存前缀，加上 10,000 个新检索的段落的令牌。它返回 800 个令牌的答案。在您需要更加努力地分块之前，1M 代币窗口留出了增长前缀的空间。</p>
+<p><strong>为什么 DeepInfra 适合：</strong> 缓存的前缀占输入的 83%，但仅占账单的 950 美元。未缓存的检索令牌出现了 5% 的速率差距。</p>
+<p><strong>成本细分</strong> – 未缓存输入：1,000M × $1.90/M = $1,900.00 – 缓存输入：5,000M × $0.19/M = $950.00 – 输出：80M × $9.50/M = $760.00 – <strong>总计：3,610.00 美元/月</strong>（每次查询约 0.036 美元）</p>
+<p>标价相同的工作负载：2,000.00 美元 + 1,000.00 美元 + 800.00 美元 = <strong>3,800.00 美元</strong>，或多 190.00 美元。</p>
+<h3>场景 3：每晚代理在 Flex 上评估和回填</h3>
+<table><thead><tr><th>卷</th><th>型号</th><th>供应商</th><th>输入令牌</th><th>输出代币</th><th>每月费用</th></tr></thead><tbody><tr><td>每晚评估扫描和数据回填</td><td>基米K3.1 Pro</td><td>深度基础设施 Flex</td><td>2,000M（1,600M 缓存，400M 未缓存）</td><td>100M</td><td><strong>$1,611.20</strong></td></tr></tbody></table>
+<p>代理产品的回归套件、合成数据生成和重新处理旧票据都需要等待几分钟才能获得容量。这正是 Flex 的目的：同样的型号以 0.8 倍的价格，换取长达 10 分钟的排队时间。</p>
+<p><strong>为什么 DeepInfra 适合：</strong> Flex 是一个请求字段（<code>&quot;service_tier&quot;: &quot;flex&quot;</code>），如果它无法在 10 分钟内发出请求，则会返回 429，无需付费。</p>
+<p><strong>成本明细 (Flex)</strong> – 未缓存输入：400M × $1.52/M = $608.00 – 缓存输入：1,600M × $0.152/M = $243.20 – 输出：100M × $7.60/M = $760.00 – <strong>总计：$1,611.20/月</strong></p>
+<p>在 DeepInfra Standard 上，相同的工作成本为 760.00 美元 + 304.00 美元 + 950.00 美元 = <strong>2,014.00 美元</strong>，因此 Flex 节省了 402.80 美元。按标价计算：800.00 美元 + 320.00 美元 + 1,000.00 美元 = <strong>2,120.00 美元</strong>，比 Flex 多 508.80 美元。</p>
+<h3>场景 4：JSON 和工具调用后端</h3>
+<table><thead><tr><th>卷</th><th>型号</th><th>供应商</th><th>输入令牌</th><th>输出代币</th><th>每月费用</th></tr></thead><tbody><tr><td>500,000 个请求</td><td>Kimi K3.1 Pro（<code>reasoning_effort</code>低）</td><td>深基础设施标准</td><td>1,500M（1,000M 缓存，500M 未缓存）</td><td>200M</td><td><strong>$3,040.00</strong></td></tr></tbody></table>
+<p>后端将工单、发票和表单提交转换为经过验证的 JSON 和工具调用。每个请求携带 2,000 个令牌缓存前缀（指令和 JSON 架构）和 1,000 个新令牌，并返回 400 个令牌。推理努力被设置得很低，因为提取从长期思考中获得的收益很少。</p>
+<p><strong>为什么 DeepInfra 适合：</strong> 支持结构化输出和工具调用，并且输出（此账单的三分之二）是测量的最低零错误率。</p>
+<p><strong>成本明细</strong> – 未缓存输入：500M × $1.90/M = $950.00 – 缓存输入：1,000M × $0.19/M = $190.00 – 输出：200M × $9.50/M = $1,900.00 – <strong>总计：$3,040.00/月</strong></p>
+<p>标价相同的工作负载：1,000.00 美元 + 200.00 美元 + 2,000.00 美元 = <strong>3,200.00 美元</strong>，或多 160.00 美元。更大的杠杆是推理设置：每个请求每额外 1,000 个推理代币，就会增加 500M 输出代币，即每月 4,750.00 美元。</p>
+<h3>场景 5：具有优先级切片的生产代理平台</h3>
+<table><thead><tr><th>卷</th><th>型号</th><th>供应商</th><th>输入令牌</th><th>输出代币</th><th>每月费用</th></tr></thead><tbody><tr><td>80% 的流量</td><td>基米K3.1 Pro</td><td>深基础设施标准</td><td>6,400M（5,600M 缓存，800M 未缓存）</td><td>240M</td><td>4,864.00 美元</td></tr><tr><td>20% 流量（互动）</td><td>基米K3.1 Pro</td><td>深度基础设施优先</td><td>1,600M（1,400M 缓存，200M 未缓存）</td><td>60M</td><td>1,824.00 美元</td></tr><tr><td><strong>总计</strong></td><td></td><td></td><td>8,000M</td><td>300M</td><td><strong>$6,688.00</strong></td></tr></tbody></table>
+<p>面向客户的代理平台在标准上运行大部分工作，并将用户正在观看旋转游戏的交互式片段路由到优先级。</p>
+<p><strong>为什么 DeepInfra 适合：</strong> 两层都使用相同的模型 ID、端点和集成，因此在它们之间移动流量是一个请求字段，而不是迁移。如果您以后需要专用容量，同一帐户上可以使用专用端点。</p>
+<p><strong>成本明细</strong> – 标准：800M × $1.90 + 5,600M × $0.19 + 240M × $9.50 = $1,520.00 + $1,064.00 + $2,280.00 = $4,864.00 – 优先级：200M × $2.85 + 1,400M × $0.285 + 60M × $14.25 = $570.00 + $399.00 + $855.00 = $1,824.00 – <strong>总计：$6,688.00/月</strong></p>
+<p>标准版的所有内容费用为 1,900.00 美元 + 1,330.00 美元 + 2,850.00 美元 = <strong>6,080.00 美元</strong>，因此优先级切片会增加 608.00 美元。各地标价：<strong>6,400.00 美元</strong>。优先级位于列表之上，因此在排队成本比令牌高的情况下使用它。</p>
+<h3>这些场景说明了 DeepInfra 的哪些情况</h3>
+<ul><li><strong>每个代币的费率差距很小，总体稳定。</strong> 每个代币类型的费率均低于列表 5%，DeepInfra 在此处的标准方案中每月可节省 87 至 190 美元。</li><li><strong>Flex 节省的金额更大。</strong> 将可安排的工作转移到 Flex 可以使场景 3 比标准节省 402.80 美元，比列表低 24%。</li><li><strong>缓存规则击败了提供商的选择。</strong> 场景 1 的缓存命中率从 90% 下降到 80%，每月成本为 513 美元，几乎是费率差距节省的六倍。</li><li><strong>推理设置击败了两者。</strong> 在场景 4 中，每个请求 1,000 个额外推理令牌的成本将超过整个账单。</li><li><strong>0% 错误率是每项“最低价格”声明的条件。</strong> 一种更便宜的端点人工分析措施失败了 15.4% 的请求。</li></ul>
+<h2>结论</h2>
+<p>Kimi K3.1 Pro 是人工分析中同类尺寸中得分最高的开放重量模型，也是运行成本较高的模型之一。三个决定控制着账单：在哪里运行它、每个提示有多少命中缓存以及让它执行多少推理。</p>
+<p>对于哪里：DeepInfra 的 1.90 美元/9.50 美元是人工分析端点中价格最低的，错误率为 0%，而 Flex（1.52 美元/7.60 美元）是运行任何可以等待的东西的最便宜的方式。仅当您销售的是响应速度时，才可以在更快的端点上支付 2.00 美元/10.00 美元的标价。对于缓存和推理：首先放置稳定的内容，观察缓存的令牌份额，并为每个任务设置“reasoning_effort”，而不是将其保留为最大值。</p>
+<p>Moonshot 的许可证是麻省理工学院风格的。有两个条件仅适用于收入超过 2000 万美元的模型即服务运营商以及每月用户超过 1 亿或月收入超过 2000 万美元的产品，因此在构建基于权重的托管产品之前请先阅读它。</p>
+<p>如果某个步骤不需要 K3.1 Pro，则使用相同 API 的较轻型号的价格仅为其一小部分。 <a href="https://deepinfra.com/blog/best-open-source-models-for-coding">最佳编码开源模型</a> 综述比较了这些选项。有关上一代的数字，请参阅 <a href="https://deepinfra.com/blog/kimi-k3-pricing-providers-cost">Kimi K3 定价指南</a>，有关 Flex 的工作原理，请参阅 <a href="https://deepinfra.com/blog/flex-service-tier">Flex tier 公告</a>。有关提供商的速度和延迟，请参阅 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">Kimi K3.1 Pro API 基准测试</a>；有关规格和参数，请参阅<a href="https://deepinfra.com/blog/kimi-k3-1-pro-model-overview">Kimi K3.1 Pro 型号概述</a>。</p>
+<p>从 <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">DeepInfra 上的 Kimi K3.1 Pro</a> 开始，运行一周的真实提示组合，并在做出预测之前从使用页面读取缓存令牌份额和输出量。初创公司可以通过<a href="https://deepinfra.com/deepstart">DeepStart</a>申请免费积分。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/model-deprecation-llm-apps"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/model-depreciation.png" alt="模型弃用：构建持久的 LLM 应用程序"></a><a href="https://deepinfra.com/blog/model-deprecation-llm-apps">模型弃用：构建持久的 LLM 应用程序最后</a>&lt;p&gt;您的模型 ID 是堆栈中寿命最短的依赖项，并且它很可能没有维护计划。 2026 年 6 月 15 日，claude-sonnet-4-20250514 和 claude-opus-4-20250514 停止回复请求。 Anthropic 于 62 天前发布了该通知。在呼叫站点中使用任一字符串的团队都是从错误率而不是电子邮件中了解到这一点的。 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/deepinfra-series-b"><img src="https://deepinfra.com/blog/us-team-2026.jpg" alt="DeepInfra 筹集了 1.07 亿美元的 B 轮资金以扩大推理基础设施"></a><a href="https://deepinfra.com/blog/deepinfra-series-b">DeepInfra 筹集了 1.07 亿美元的 B 轮资金以扩大推理基础设施基础设施</a>DeepInfra 已筹集 1.07 亿美元的 B 系列资金，用于扩展其推理云、扩大全球容量并支持下一代开源和代理 AI 工作负载。</p>
+<p><a href="https://deepinfra.com/blog/nvidia-nemotron-api-pricing-guide-2026"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/02/NVIDIA-API-Pricing-Guide.png" alt="NVIDIA Nemotron API 定价指南 2026"></a><a href="https://deepinfra.com/blog/nvidia-nemotron-api-pricing-guide-2026">NVIDIA Nemotron API 定价指南2026</a>&lt;p&gt;虽然每个人都知道 Llama 3 和 Qwen，但 NVIDIA 实验室正在悄然发生一场革命。他们一直采用标准 Llama 模型，并使用先进的对齐技术和修剪方法对其进行“增压”。其结果是 Nemotron——一个经常在“帮助”排行榜上名列前茅的模型系列（如 Arena Hard），经常击败 GPT-4o，同时显着 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>DeepInfra 上的 Kimi K3.1 Pro：定价、基准测试与 API</title>
+      <link>https://deepinfra.com/blog/kimi-k3-1-pro-deepinfra</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/kimi-k3-1-pro-deepinfra</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Kimi K3.1 Pro on DeepInfra: Pricing, Benchmarks &amp; API</description>
+      <content:encoded><![CDATA[<h1>DeepInfra 上的 Kimi K3.1 Pro：定价、基准和 API</h1>
+<p>DeepInfra 发布于 2026.11.17</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/kimi-k3-1-pro-deepinfra-header.png" alt="DeepInfra 上的 Kimi K3.1 Pro：定价、基准测试和 API"></p>
+<p>根据 <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro 型号卡</a>（供应商报告），Moonshot AI 的 Kimi K3.1 Pro 在 BrowseComp（92.1）和 Humanity's Last Exam with tools（70.0）上的自己的比较表中获得最高分，领先于 Moonshot 测试的封闭边界模型。独立测试支持了标题：<a href="https://artificialanalysis.ai/models/kimi-k3-1-pro">人工分析</a> 在其智能指数 v5.0.1 中给出了 46 分，是同等规模的 29 个开放权重模型中最高的，而班级中位数为 23。</p>
+<p>Moonshot于2026年10月23日发布了K3.1 Pro，并于11月初公布了权重。它是一个 2.8 万亿参数的专家混合模型，具有 104B 个活动参数、1M 代币上下文窗口和本机图像输入。它专为长期代理工作而构建：编码代理、浏览和研究，以及财务、法律和电子表格工作等文档繁重的办公任务。</p>
+<p><a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro 现已在 DeepInfra 上发售</a>，每 100 万个输入代币 1.90 美元，每 100 万个输出代币 9.50 美元，目前有 5% 的促销。这低于 Moonshot 自己的 API 标价 2.00 美元/10.00 美元，而 Flex 层将产出降至 7.60 美元。 Artificial Analysis 还在 DeepInfra 的端点上记录了 0% 的错误率。</p>
+<table><thead><tr><th>基准</th><th>基米K3.1 Pro</th><th>Claude Opus 5.5</th><th>GPT-6 阿斯特拉</th><th>DeepSeek-V4.1-Flash-1017</th><th>GLM-5.3</th></tr></thead><tbody><tr><td>浏览比较</td><td><strong>92.1</strong></td><td>90.8</td><td>90.8 91.5</td><td>91.5 –</td><td>–</td></tr><tr><td>HLE-Full（带工具）</td><td><strong>70.0</strong></td><td>67.7</td><td>67.7 57.2</td><td>57.2 58.8</td><td>62.5</td><td>62.5</td></tr><tr><td>自动化工作台-AA</td><td><strong>73.3</strong></td><td>69.5</td><td>69.5 68.5</td><td>68.5 66.6</td><td>66.6 62.2</td><td>62.2</td></tr><tr><td>SWE 马拉松 v1.1</td><td><strong>51.7</strong></td><td>46.3</td><td>46.3 42.5</td><td>42.5 40.0</td><td>40.0 42.5</td><td>42.5</td></tr><tr><td>OfficeQA 专业版 v2</td><td><strong>64.4</strong></td><td>62.2</td><td>62.2 54.4</td><td>54.4 40.4</td><td>40.4 31.1</td><td>31.1</td></tr><tr><td>终端工作台4.0</td><td>65.7</td><td>65.7 <strong>66.4</strong></td><td>58.2</td><td>58.2 42.3</td><td>42.3 41.8</td><td>41.8</td></tr><tr><td>DeepSWE v1.1</td><td>75.5</td><td>75.5 74.2</td><td>74.2 74.1</td><td>74.1 <strong>77.0</strong></td><td>66.9</td><td>66.9</td></tr><tr><td>操作系统世界V2.1</td><td>79.6</td><td>79.6 <strong>81.8</strong></td><td>75.8</td><td>69.3</td><td>69.3 –</td></tr><tr><td>HLE-Full（无工具）</td><td>51.1</td><td>51.1 <strong>59.8</strong></td><td>53.6</td><td>53.6 42.6</td><td>42.6 43.0*</td></tr><tr><td>GPQA-钻石</td><td>94.2</td><td>94.2 93.9</td><td>93.9 <strong>96.1</strong></td><td>92.2</td><td>92.2 91.7</td><td>91.7</td></tr><tr><td>漏洞利用基准</td><td>74.7</td><td>74.7 91.0</td><td><strong>100</strong></td><td>–</td><td>54.4</td><td>54.4</td></tr></tbody></table>
+<p><em>所有分数均由供应商从 <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro 型号卡</a> 报告。 Moonshot 以“最大”推理能力运行 K3.1 Pro，并“带回退”运行专有模型；一些比较分数引用自排行榜或其他实验室的报告。 </em>纯文本子集。*</p>
+<p>K3.1 Pro 在使用工具的代理任务方面表现最强。它在 BrowseComp、带有工具的 HLE、AutomationBench、长时间运行的软件工作（SWE Marathon）和办公文档 QA 方面名列前茅。在Moonshot自己用工具进行的内部幻觉测试中，其错误率从Kimi K3的23.4%下降到了8.3%。</p>
+<p>它并不是在所有地方都获胜。 Claude Opus 5.5 在 Terminal-Bench 4.0（66.4 vs 65.7）和计算机使用（OSWorld V2.1）方面处于领先地位，并且封闭模型在无工具推理（HLE-Full 和 HLE-Diamond）以及网络安全方面遥遥领先，Moonshot 表示它从开放权重版本中删除了网络训练数据。在开放权重模型中，DeepSeek-V4.1-Flash-1017 在 DeepSWE v1.1 上击败了它（77.0 vs 75.5）。 Moonshot 运行了上述所有数字，并且模型卡还包含其他人无法重现的内部基准测试；这些都被排除在此处的表格之外。</p>
+<h2>这个模型有何不同</h2>
+<p>Kimi K3.1 Pro是K3.1系列的首款机型。 Moonshot 使用跨数百个领域的大规模联合强化学习，通过“大幅增加的训练后计算”对 Kimi K3 进行了后训练。这就是 K3 的大部分收益的来源。</p>
+<p>该架构是一个稀疏的专家混合体：2.8T 总参数、104B 活跃、896 个专家（每个代币选择 16 个专家）加上 2 个共享专家，跨 93 层。每个令牌所涉及的权重都低于 4%，因此您可以通过对每个令牌进行小得多的计算来获得非常大的模型的容量。</p>
+<h3>对长上下文的稀疏关注</h3>
+<p>K3 的架构变化之一是注意力。 K3.1 Pro 用 Gated DeepSeek Sparse Attention (Gated DSA) 取代了 K3 的全注意力 Gated MLA 层。该模型现在混合了 69 个 KDA 层和 24 个门控 DSA 层，这使得长上下文建模更便宜。这在 1M 令牌上下文中很重要，其中长代理跟踪和大型文档集会快速增加。</p>
+<h3>原生视觉</h3>
+<p>K3.1 Pro 可以拍摄图像和文本。 401M 参数的 MoonViT-V2 视觉编码器直接向语言模型提供数据。当模型还可以运行 Python 时，Moonshot 的图表、文档和多模式结果（CharXiv、MMMU-Pro、GDP.pdf）最为强大，Python 适合读取图表、计算图表并写入结果的代理管道。</p>
+<h3>推理控制和输出长度</h3>
+<p>这是一个推理模型，Moonshot 以“最大”努力、温度 1.0 和 top_p 0.95 进行了评估。在 DeepInfra 上，您可以使用“reasoning_effort”控制深度（从“none”（关闭思考）到“max”）。推理标记作为输出标记进行计费，因此请设置每个任务的工作量：简单步骤为低，困难代理工作为“最大”。</p>
+<p>如果未设置“max_tokens”，DeepInfra 将使用剩余上下文和 65,536 个令牌中较小的一个。对于长时间的推理运行，请明确设置它。 DeepInfra 的输出代币上限为 943,718 个。</p>
+<p>＃＃＃ 执照</p>
+<p>K3.1 Pro 根据 Kimi K3.1-Pro 许可证发货，这是一种具有两个条件的宽松的 MIT 风格许可证。提供模型即服务且 12 个月内集团收入超过 2000 万美元的公司需要首先与 Moonshot 签订单独协议。每月活跃用户超过 1 亿或每月收入超过 2000 万美元的产品必须在其界面中显示“Kimi K3.1-Pro”。内部使用不受影响。如果您要在其上构建大型消费产品，请阅读<a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">许可证</a>。</p>
+<h3>不合适的地方</h3>
+<p>Artificial Analysis 称 K3.1 Pro“有些冗长”：它使用 1.13 亿输出代币来运行智力指数，而类别中位数为 1.04 亿。 “max”的深度推理也需要每个提供商花费时间。存在更快的端点（DigitalOcean 和 Baseten 在人工分析的标准价格下领先输出速度）；如果响应速度是您的产品，请对其进行测试。对于批处理作业、代理和成本敏感的工作，较低的每代币费率和 Flex 相加。对于简单、大批量的步骤，较小的模型是更好的工具（参见结论）。</p>
+<h2>DeepInfra 入门</h2>
+<p>Kimi K3.1 Pro现已在DeepInfra的[文本生成目录](https://deepinfra.com/models/text- Generation/)中提供。定价按每个代币计算，没有最低限额。</p>
+<table><thead><tr><th>等级</th><th>输入</th><th>输出</th><th>缓存输入</th></tr></thead><tbody><tr><td>标准，促销（5% 折扣）</td><td>1.90 美元</td><td>9.50 美元</td><td>0.19 美元</td></tr><tr><td>标准，清单</td><td>2.00 美元</td><td>10.00 美元</td><td>0.20 美元</td></tr><tr><td>弯曲 (0.8×)</td><td>1.52 美元</td><td>7.60 美元</td><td>0.152 美元</td></tr><tr><td>优先级 (1.5×)</td><td>2.85 美元</td><td>14.25 美元</td><td>0.285 美元</td></tr></tbody></table>
+<p><em>每 1M 代币。定价截至 2026 年 11 月 17 日。灵活和优先适用于促销价格。来源：<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">模型页面</a>和<a href="https://deepinfra.com/pricing">定价页面</a>。</em></p>
+<p>该促销活动没有公布结束日期，因此请根据 2.00 美元/10.00 美元的标价进行预算，并将 5% 视为上涨空间。缓存输入消耗输入速率的 10%，这有助于代理每次重新发送相同的系统提示和工具定义。</p>
+<p>例如，10M 输入令牌和 2M 输出令牌的代理工作负载按促销价格花费 19.00 美元 + 19.00 美元 = 38.00 美元。在 Flex 上，相同的工作成本为 15.20 美元 + 15.20 美元 = 30.40 美元。</p>
+<p><strong>选择等级：</strong></p>
+<ul><li><strong>Flex</strong> 成本是标准的 0.8 倍。使用 <code>&quot;service_tier&quot;: &quot;flex&quot;</code> 选择加入。 Flex 请求最多等待 10 分钟以获得容量，然后返回 HTTP 429，并且拒绝的 Flex 请求不收费。它适合批处理作业、评估和后台代理。请参阅<a href="https://deepinfra.com/blog/flex-service-tier">Flex 层的工作原理</a>。</li><li><strong>优先</strong>成本为标准的 1.5 倍。对于不应该排队的流量，选择使用““service_tier”：“priority””。</li></ul>
+<p><strong>DeepInfra 上的型号规格：</strong></p>
+<ul><li>型号 ID：<code>moonshotai/Kimi-K3.1-Pro</code></li><li>上下文窗口：1M 代币 (1,048,576)</li><li>最大产量：943,718 个代币；如果未设置，默认“max_tokens”为 65,536</li><li>输入：文本和图像。输出：文本</li><li><code>reasoning_effort</code>：<code>none</code>、<code>minimal</code>、<code>low</code>、<code>medium</code>、<code>high</code>、<code>xhigh</code> 或 <code>max</code></li><li>支持JSON模式、结构化输出、函数调用</li></ul>
+<p>该端点与 OpenAI 兼容。将您的客户端指向“https://api.deepinfra.com/v1/openai”，调用“/chat/completions”并使用“Authorization: Bearer $DEEPINFRA_API_KEY”进行身份验证。 DeepInfra 运行零保留数据政策，并通过了 SOC 2 和 ISO 27001 认证。如果您需要专用容量，可以从模型页面部署<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">私有端点</a>。</p>
+<p>###Python</p>
+<p>从 <a href="https://deepinfra.com/dash/api_keys">DeepInfra 仪表板</a> 获取 API 密钥并将其导出为“DEEPINFRA_API_KEY”。此示例发送图表图像并要求分析：</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+)
+
+response = client.chat.completions.create(
+    model=&quot;moonshotai/Kimi-K3.1-Pro&quot;,
+    messages=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Summarize the trend in this chart and flag any anomalies.&quot;},
+                {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: &quot;https://example.com/revenue-chart.png&quot;}},
+            ],
+        }
+    ],
+    max_tokens=131072,  # unset defaults to 65,536; the ceiling is 943,718
+    temperature=1.0,
+    top_p=0.95,         # Moonshot's evaluation settings
+    extra_body={
+        &quot;reasoning_effort&quot;: &quot;high&quot;,  # none | minimal | low | medium | high | xhigh | max
+        &quot;service_tier&quot;: &quot;flex&quot;,      # 0.8x price; drop this line for standard
+    },
+)
+
+print(response.choices[0].message.content)copy</code></pre>
+<p>要在编写代码之前尝试提示，请打开 <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro 模型页面</a> 上的交互式演示。 <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro/api">API 参考</a> 列出了每个支持的参数，包括 <code>reasoning_effort</code>、<code>service_tier</code>、<code>response_format</code> 和提示缓存选项。</p>
+<h2>结论</h2>
+<p>Kimi K3.1 Pro 是Artificial Analysis 指数中同类尺寸中最强的开放权重模型，其供应商结果在使用工具进行代理工作时表现最佳：浏览和研究、长时间运行的编码任务以及办公和文档分析。构建研究代理、编码代理或文档管道的团队应该根据自己的任务对其进行评估，因为基准表是 Moonshot 的。如果您现在正在运行 Kimi K3，那么 K3.1 Pro 自然是下一个要测试的型号。</p>
+<p>不要将每一步都路由到它。对于分类、提取和其他简单步骤，DeepInfra 上的 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash</a> 成本仅为每个代币价格的一小部分。保留 K3.1 Pro 来进行艰苦、多步骤的工作，其效果最强。</p>
+<p>有关更多背景信息，请参阅我们的 <a href="https://deepinfra.com/blog/introducing-kimi-k3-on-deepinfra">Kimi K3 发布帖子</a> 和 <a href="https://deepinfra.com/blog/kimi-k3-2-8t">Kimi K3 概述</a>，以及 K3.1 Pro 如何在我们的 [最佳开源模型汇总] 中进行比较编码]（https://deepinfra.com/blog/best-open-source-models-for-coding）。该软件包的其余部分涵盖<a href="https://deepinfra.com/blog/kimi-k3-1-pro-pricing-guide">Kimi K3.1 Pro定价</a>、<a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">API基准</a>、<a href="https://deepinfra.com/blog/kimi-k3-1-pro-model-overview">模型概述</a>和<a href="https://deepinfra.com/blog/best-kimi-k3-1-pro-api-providers">最佳Kimi K3.1 Pro API 提供商</a>。</p>
+<p>建立一家初创公司？ <a href="https://deepinfra.com/deepstart">DeepStart</a> 为符合条件的初创公司提供约 500 亿个免费代币（以 DeepSeek V4 Flash 价格计算），用于购买任何型号，包括 Kimi K3.1 Pro。或者前往<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">模型页面</a>，获取 API 密钥并进行第一次调用。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/best-mimo-v2-6-pro-api-providers"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/Best-Providers-for-MiMo-V2.6-Pro-in-2026.png" alt="最佳 MiMo-V2.6-Pro API 提供商2026"></a><a href="https://deepinfra.com/blog/best-mimo-v2-6-pro-api-providers">最佳 MiMo-V2.6-Pro API 提供商2026</a>&lt;p&gt;随着大型语言模型不断突破上下文长度和多模态功能的界限，小米的 MiMo-V2.6-Pro 已成为开放权重模型中的有力进入者。凭借其原生全模式架构（支持文本、图像、视频和音频）以及 1,048,576 个令牌上下文窗口，它为代理工作流程、长文档分析和 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/token-verbosity"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/token-verbosity.png" alt="代币冗长是新的定价战"></a><a href="https://deepinfra.com/blog/token-verbosity">代币冗长是新的定价战</a>&lt;p&gt;每个新模型发布后，我们看到新的基准声明和证明其代币价值的新论据。然而，当团队比较现实世界工作负载的模型时，仅标价就隐藏了模型解决任务所需工作量的巨大差异。更便宜的代币不一定意味着更低的 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/glm-5-3-api-provider-benchmarks"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/provider-benchmark.png" alt="GLM-5.3 API 提供程序：速度、延迟和成本"></a><a href="https://deepinfra.com/blog/glm-5-3-api-provider-benchmarks">GLM-5.3 API 提供程序：速度、延迟和成本成本</a>&lt;p&gt;GLM-5.3 API 审核摘要 GLM-5.3 是 Z AI 的旗舰编码和代理推理模型，于 2026 年 8 月 14 日发布，自发布以来就在 DeepInfra 上可用。该模型建立在与 GLM-5.2 相同的约 7530 亿参数专家混合 (MoE) 基础架构上，所有性能增益完全来自扩展后训练而不是架构更改。 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>9 个最佳开源编程模型（2026 年 11 月）</title>
+      <link>https://deepinfra.com/blog/best-open-source-models-for-coding</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/best-open-source-models-for-coding</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：9 Best Open-Source Models for Coding (November 2026)</description>
+      <content:encoded><![CDATA[<h1>9 个最佳开源编码模型（2026 年 11 月）</h1>
+<p>DeepInfra 发布于 2026.11.17</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/best-open-source-models-for-coding-header.png" alt="9 个最佳编码开源模型（2026 年 11 月）"></p>
+<p>现代人工智能 (AI) 编码工具现在可以分析存储库、修复错误、编辑多个文件、运行测试并执行自主开发循环。这些代理工作流程通过连续的模型调用生成数百万个输入和输出令牌，这使得专有 API 的大规模成本高昂。</p>
+<p>开源编码模型提供了一种经济高效的替代方案。您可以在私有基础设施上运行它们、选择服务硬件、固定特定模型版本、调整推理设置并减少对单个 API 提供商的依赖。 <a href="https://deepinfra.com/">DeepInfra</a> 等托管推理服务还允许您使用这些模型，而无需自行管理 GPU，对于本指南中得分最高的模型，每个代币的价格低于每百万输入代币 0.10 美元。</p>
+<p>在本指南中，我们比较了截至 2026 年 11 月的领先开源编码模型。我们根据编码基准、上下文窗口大小、许可条款和 API 成本对它们进行评估，并在最后介绍了自托管选项。分数和价格截至 2026 年 11 月 17 日。</p>
+<h2>如何评估编码模型：重要的基准</h2>
+<p>观察以下基准来判断模型在您计划自动化的任务上的执行情况。</p>
+<ul><li>[<strong>HumanEval</strong>](https://github.com/openai/ human-eval) <strong>和 <a href="https://huggingface.co/datasets/Muennighoff/mbpp">MBPP（主要是基本的 Python 问题）</a></strong> 衡量函数级代码生成。模型收到一个简短的自然语言问题，并且必须生成通过单元测试的 Python 代码。它们提供了对基本编程能力的快速衡量，但它们不测试存储库导航、工具使用或多文件更改，并且当前模型已在很大程度上饱和了它们。</li><li><a href="https://huggingface.co/datasets/SWE-bench/SWE-bench_Verified"><strong>SWE-bench Verified</strong></a> <strong>和 <a href="https://huggingface.co/datasets/ScaleAI/SWE-bench_Pro">SWE-bench Pro</a></strong> 评估模型在代理编码工作流程中解决实际 GitHub 问题的效果。该模型必须遍历整个代码库，找到错误的来源，跨多个文件编写补丁，并通过执行测试。</li><li><strong>DeepSWE</strong> 是今年大多数模型卡报告的长期软件工程基准。由于 DeepSeek、Moonshot、MiniMax、小米、Z.ai 和 Qwen 都发布了 DeepSWE v1.1 分数，因此它是最接近跨供应商的通用标准的东西，但需要注意的是每个供应商都运行自己的工具。</li><li><a href="https://www.tbench.ai/"><strong>Terminal-Bench</strong></a> 比较与 shell 命令、命令行界面 (CLI) 和 DevOps 相关的任务的模型性能。供应商现在报告版本 2.1 和 4.0，结果随着所使用的代理线束发生很大变化，因此仅在同一型号卡内比较分数。</li><li><a href="https://livebench.ai/"><strong>LiveBench</strong></a> 是独立的并定期刷新以限制训练数据污染。 LiveBench 于 2026 年 11 月 6 日升级到 2.0 版本。新版本对长期工作（错误修复、运行数小时的应用程序、研究报告）进行评分，其分数与该日期之前发布的 LiveBench 数据无法比较。</li></ul>
+<p>除了排行榜之外，还请检查上下文窗口和许可证。在功能级别完成上看起来不错的模型对于整个存储库重构或私人本地使用来说仍然是一个糟糕的选择。</p>
+<ul><li><strong>上下文窗口</strong>定义模型可以在单个请求中处理多少代码、文档、终端输出和对话历史记录。更大的上下文窗口有助于存储库分析和长时间运行的代理会话。</li><li><strong>许可证</strong>决定您是否可以在商业上使用权重、修改权重、重新分发模型或通过托管服务提供模型。 “开源”在这个领域被广泛使用。下面的几种型号在具有商业条件的定制许可证下运输开放重量，我们对每一种都进行了注明。我们的<a href="https://deepinfra.com/blog/open-weight-model-licenses">开放权重模型许可证</a>指南涵盖了要检查的内容。</li></ul>
+<h2>前 9 个开源编码模型：比较</h2>
+<p>以下是当前顶级开源编码模型在大小、许可证、上下文窗口以及它们最擅长的方面的比较：</p>
+<table><thead><tr><th>型号</th><th>开发商</th><th>参数（总计/活动）</th><th>许可证</th><th>上下文窗口</th><th>最适合</th></tr></thead><tbody><tr><td><strong>DeepSeek V4.1 闪存 (1017)</strong></td><td>深度搜索</td><td>共 763B</td><td>麻省理工学院</td><td>1M</td><td>每美元最佳编码得分</td></tr><tr><td><strong>Mistral大 4</strong></td><td>Mistral人工智能</td><td>1T/49B</td><td>Mistral 生态系统开放权重许可证</td><td>1M</td><td>欧洲出身的多面手，编码成绩接近顶尖</td></tr><tr><td><strong>GLM-5.3</strong></td><td>Z.ai</td><td>共 753B</td><td>GLM-5.3 许可证（定制）</td><td>1M</td><td>长期编码和安全工作</td></tr><tr><td><strong>Qwen3.8-27B</strong></td><td>阿里巴巴Qwen</td><td>27B密</td><td>阿帕奇2.0</td><td>262K</td><td>小型部署和本地使用</td></tr><tr><td><strong>MiniMax M3.1 闪光灯</strong></td><td>最小最大</td><td>428B/23B</td><td>MiniMax 社区许可证</td><td>1M</td><td>具有图像和视频输入的代理编码</td></tr><tr><td><strong>基米K3.1 Pro</strong></td><td>登月人工智能</td><td>2.8T/104B</td><td>Kimi K3.1-Pro 许可证（定制）</td><td>1M</td><td>最艰巨的长期代理任务</td></tr><tr><td><strong>MiMo-V2.6-Pro</strong></td><td>小米</td><td>1.02T/42B</td><td>麻省理工学院</td><td>1M</td><td>MIT 许可证上的长时间工具使用会话</td></tr><tr><td><strong>DeepSeek V4 Pro (0813)</strong></td><td>深度搜索</td><td>总重1.65吨</td><td>麻省理工学院</td><td>1M</td><td>大型代码库的深度推理</td></tr><tr><td><strong>缪斯微光30B</strong></td><td>元</td><td>29.6B密</td><td>阿帕奇2.0</td><td>131K</td><td>消费类硬件上的本地编码代理</td></tr></tbody></table>
+<h3>1.DeepSeek V4.1 闪存 (1017)</h3>
+<p><a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash-1017">DeepSeek V4.1 Flash-1017</a>是DeepSeek Flash系列的10月更新，是目前独立排行榜上最强的开放权重模型。在 <a href="https://livebench.ai/">LiveBench 2.0</a> 上，它在编码类别中得分为 80.4，是所有开放权重模型中最高的，并且领先于几个专有模型。</p>
+<p>DeepSeek 自己的模型卡在 DeepSWE v1.1 上报告为 77.0，在 Terminal-Bench 4.0 上报告为 42.3，均高于原始 V4.1 Flash（74.2 和 31.2）。此更新还减少了任务执行时间和输出长度，这对于按输出令牌付费的代理很重要。该模型是 MIT 许可的、多模式的，并支持 1M 令牌上下文窗口。</p>
+<p>它也是本指南中最便宜的严肃编码模型。在 DeepInfra 上，在 51% 启动促销期间，其定价为每百万输入代币 0.098 美元，每百万输出代币 0.294 美元（标价 0.20 美元和 0.60 美元），并且它支持 0.8× 的 Flex 层，用于可以等待的工作。</p>
+<h3>2. Mistral大型 4</h3>
+<p><a href="https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B">Mistral Large 4</a> 是 Mistral AI 最大的模型：约 1 万亿个参数，每个令牌有 490 亿个活跃值，原生多模式，具有 1M 令牌上下文窗口。 Mistral 于 2026 年 10 月 29 日发布了权重，并表示该模型是在其位于欧洲的数据中心进行训练的。它取代 Devstral 作为 Mistral 模型来考虑进行编码。</p>
+<p>在 LiveBench 2.0 上，它的编码得分为 79.4，落后 DeepSeek V4.1 Flash-1017 一分，远远领先于其他开放权重领域。其长期代理得分为 24.7，在无人值守工作方面处于中游水平。 （LiveBench 列出了两个 Mistral Large 4 条目；这些数字是 10 月 29 日条目的数据，与开放重量版本相匹配。早期条目的编码得分为 44.4。）</p>
+<p>Mistral 生态系统开放权重许可证是经过修改的 MIT 许可证，允许商业和内部使用，但有一个条件：运营模型即服务业务的公司需要获得 Mistral 的单独商业许可证。在撰写本文时，DeepInfra 不为 Mistral Large 4 提供服务，因此路由是 Mistral 自己的 API 或自托管，在这种规模下意味着多 GPU 集群。</p>
+<h3>3.GLM-5.3</h3>
+<p><a href="https://deepinfra.com/zai-org/GLM-5.3">GLM-5.3</a> 使用与 GLM-5.2 相同的基础模型，所有收益都来自训练后。 Z.ai 的<a href="https://huggingface.co/zai-org/GLM-5.3">模型卡</a> 报告了长期工作的大幅跃升：DeepSWE v1.1 从 46.2 上升到 66.9，Terminal-Bench 2.1 从 81.0 上升到 88.2，SWE-Marathon v1.1 从 19.4 上升到 42.5。它还报告了其比较中最高的 Cyber​​Gym 分数 (84.5)，这使其成为安全审查代理的候选者。</p>
+<p>完整的 GLM-5.3 尚未在 LiveBench 2.0 上列出。它的较小兄弟 <a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">GLM-5.3-Flash</a> 是，编码得分为 70.9，在开放权重模型中排名第三。</p>
+<p>在使用许可证构建产品之前，请先检查许可证。 GLM-5.3 遵循定制的 GLM-5.3 许可证，其内容类似于 MIT，但附加了一个条件：年收入超过 100 亿美元的模型即服务业务的公司必须在商业使用之前通过 Z.ai 安全审查。 GLM-5.3-Flash 是普通的 MIT。在 DeepInfra 上，GLM-5.3 每百万代币的投入成本为 0.563 美元，产出成本为 2.50 美元，促销率为 38%（列表为 0.90 美元和 4.00 美元），并提供 Flex。</p>
+<h3>4.Qwen3.8-27B</h3>
+<p><a href="https://deepinfra.com/Qwen/Qwen3.8-27B">Qwen3.8-27B</a> 是 Apache 2.0 下的一个密集的 270 亿参数模型，它是要击败的小模型。其混合架构将门控 DeltaNet 线性注意力模块与门控注意力层相结合，原生支持 262K 令牌上下文，并包含视觉编码器。</p>
+<p>在 LiveBench 2.0 上，它的编码得分为 69.3，尽管尺寸只有 GLM-5.3-Flash 的一小部分，但与 GLM-5.3-Flash 相差仅两分。 Qwen 的模型卡在 SWE-bench Pro 上报告为 61.7，在 Terminal-Bench 2.1 上报告为 73.0，在 LiveCodeBench v6 上报告为 90.3。其 DeepSWE v1.1 得分为 42.2，远低于本指南中的大型模型，这是 27B 模型的真实写照：在包含任务上很强，在多小时任务上较弱。 LiveBench 也显示出同样的情况，长期代理得分为 15.9。</p>
+<p>在 DeepInfra 上，每百万代币的投入成本为 0.15 美元，产出成本为 1.875 美元，促销率为 25%（分别为 0.20 美元和 2.50 美元），具有 Flex 和优先级。</p>
+<h3>5.MiniMax M3.1 闪光灯</h3>
+<p><a href="https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash">MiniMax M3.1 Flash</a> 是一种原生多模式专家混合模型，适用于编码、代理工作流程和计算机使用。它拥有约 4280 亿个总参数，每个令牌有 230 亿个活跃参数，接受文本、图像和视频，并支持多达 100 万个上下文令牌。它在 LiveBench 2.0 编码中得分为 68.8。</p>
+<p>MiniMax 在 DeepSWE v1.1 上报告 73.7，在 Terminal-Bench 4.0 上报告 38.1，在 NL2Repo-Bench 上报告 61.2。该卡还公布了 DeepSeek V4.1 Flash-1017 的数据以及自己的数据，而 DeepSeek 在这三项数据上均处于领先地位。</p>
+<p>有两件事需要知道。首先，MiniMax 社区许可证默认授予非商业用途；商业用途需要显示“Built with MiniMax M3.1-Flash”，通知MiniMax，并在产品年收入超过2000万美元后获得书面授权。其次，在撰写本文时，DeepInfra 不支持 M3.1 Flash。它使用 Flex 以每百万代币 0.28 美元的输入和 1.10 美元的输出为早期的 <a href="https://deepinfra.com/MiniMaxAI/MiniMax-M3">MiniMax-M3</a> 提供服务。</p>
+<h3>6.基米K3.1 Pro</h3>
+<p><a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro</a> 是这里最大的模型：总参数 2.8 万亿个，活跃参数 1040 亿个。它是通过大规模强化学习从 Kimi K3 进行后训练的，并用稀疏注意力取代了 K3 的全注意力层，以实现更高效的长上下文工作。</p>
+<p>它的外形与 Qwen 的相反。在 LiveBench 2.0 上，它在编码方面得分为 67.8，中等水平，但在长期代理类别中得分为 38.7，与开放权重领域顶级的 DeepSeek V4.1 Flash-1017 持平。 Moonshot 的卡在 DeepSWE v1.1 上报告 75.5，在 Terminal-Bench 4.0 上报告 65.7，在 SWE Marathon v1.1 上报告 51.7。它在 LiveBench 编码中比 Kimi K3 提高了近 15 分（67.8 对 53.1）。</p>
+<p>它也是最昂贵的开放权重选项：DeepInfra 上每百万代币 1.90 美元的输入和 9.50 美元的输出（比 2.00 美元和 10.00 美元的标价低 5%），Flex 为 0.8 倍。 Kimi K3.1-Pro 许可证是 MIT 风格的，附带条件：年收入超过 2000 万美元的模型即服务运营商需要与 Moonshot 签订单独协议，并且非常大的消费产品必须显示模型名称。内部使用以及通过 Moonshot 的认证推理合作伙伴使用不受限制。</p>
+<h3>7.MiMo-V2.6-Pro</h3>
+<p><a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Pro">MiMo-V2.6-Pro</a>是小米的万亿参数推理模型：总参数1.02万亿，活跃数420亿，1M令牌上下文窗口，以及文本、图像、视频和音频输入。它带有简单的 MIT 许可证，这使其成为本指南中商业采用的最简单的大型模型。</p>
+<p>本指南中与上一版本的跳跃是最大的。小米卡报告 DeepSWE v1.1 在 MiMo-V2.5 Pro 上从 19.0 上升到 71.9，Terminal-Bench 2.1 从 65.2 上升到 89.9。在 LiveBench 2.0 上，它在编码方面得分为 64.5，在长期代理工作方面得分为 36.4，在后者的开放权重模型中排名第三。</p>
+<p>在 DeepInfra 上，每百万代币的输入成本为 0.387 美元，输出成本为 0.783 美元（比标价 0.43 美元和 0.87 美元优惠 10%）。较低的产出价格非常引人注目：对于在代理工作中与 Kimi K3.1 Pro 接近的型号来说，它的价格还不到 Kimi K3.1 Pro 的十分之一。</p>
+<h3>8.DeepSeek V4 Pro (0813)</h3>
+<p><a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4-Pro-0813">DeepSeek V4 Pro-0813</a> 是 DeepSeek 旗舰产品 8 月份的生产版本，拥有 1.65 万亿个参数，具有 1M 代币上下文窗口和 MIT 许可证。它尚未在 LiveBench 2.0 上列出，因此这里的证据是供应商报告的。</p>
+<p>DeepSeek 的卡片显示了它与预览版的差距：Terminal-Bench 2.1 从 72.1 到 87.9，DeepSWE 从 12.8 到 62.7，NL2Repo 从 38.5 到 61.5。请注意，更新且便宜得多的 V4.1 Flash-1017 报告了更高的 DeepSWE v1.1 分数 (77.0)。当您需要更大的模型对困难的单次问题进行推理时，请选择 V4 Pro，而对于代理循环，请选择 V4.1 Flash。</p>
+<p>在 DeepInfra 上，每百万代币的输入成本为 1.30 美元，缓存输入为 0.10 美元，输出成本为 2.60 美元，Flex 的成本为 1.04 美元和 2.08 美元。对于编码代理来说，缓存输入率值得关注，编码代理在每个步骤中都会重新发送相同的存储库上下文。</p>
+<h3>9. 缪斯微光 30B</h3>
+<p><a href="https://deepinfra.com/meta-models/Muse-Glimmer-30B">Muse Glimmer 30B</a> 是 Meta 的开放模型，适用于在本地或消费者硬件上运行的代理。它是 Apache 2.0 下的一个密集的 296 亿参数模型，于 2026 年 8 月发布，具有图像输入和 131K 令牌上下文窗口。</p>
+<p>Meta 在 SWE-bench Verified 上报告 76.0，在 SWE-bench Pro 上报告 51.2，在 Terminal-Bench 2.1 上报告 51.7。它的与众不同之处在于包装。 Meta 推出了两个大约 4 位的变体，分别针对 32GB 和 24GB VRAM，报告平均性能下降 0.2% 和 1.0%，此外还有一个推测性解码起草器，据说可以将 RTX 5090 上的生成速度从每秒 74.9 个令牌提升到 233.4 个令牌。 Qwen3.8-27B 在 Qwen 自己的卡上发布了更高的编码分数（在 SWE-bench Pro 上为 61.7，而在 SWE-bench Pro 上为 51.2），因此当本地速度和现成的量化构建比最后几点更重要时，Glimmer 是首选。</p>
+<p>如果您不想自己运行它，DeepInfra 会以每百万代币 0.30 美元的输入和 1.20 美元的输出提供服务。</p>
+<h2>开源编码模型与专有模型的对比</h2>
+<p>为了设置上下文，有必要了解<a href="https://deepinfra.com/blog/open-source-vs-lated-source-ai-models-price-gap">开源相对于专有选项的立场</a>。</p>
+<p>专有模型提供可靠的工具调用、完善的 IDE 集成、托管基础架构以及跨编码任务的一致性能。权衡是控制：基于使用的定价可能是不可预测的，并且封闭的 API 限制了您对数据处理和服务基础设施的选择。</p>
+<p>开放权重模型为您在部署、微调和提供商选择方面提供了更大的灵活性。权衡是，自托管可能需要更多的基础设施和工程工作来优化、监控和维护模型。</p>
+<p>以下是 2026 年 11 月 6 日发布的 <a href="https://livebench.ai/">LiveBench 2.0</a> 列出的开放权重模型的结果。 GLM-5.3、DeepSeek V4 Pro-0813 和 Muse Glimmer 30B 尚未出现在排行榜上，因此没有出现。每个类别中最高的专有分数都作为参考线包含在内。</p>
+<h3>LiveBench 2.0 编码</h3>
+<table><thead><tr><th>型号</th><th>组织</th><th>类型</th><th>编码</th></tr></thead><tbody><tr><td>Gemini 4 Carbon（参考）</td><td>谷歌</td><td>专有</td><td>91.0</td></tr><tr><td><strong>DeepSeek V4.1 Flash-1017</strong></td><td>深度搜索</td><td>开放式举重</td><td><strong>80.4</strong></td></tr><tr><td><strong>Mistral大 4</strong></td><td>Mistral人工智能</td><td>开放式举重</td><td>79.4</td><td>79.4</td></tr><tr><td><strong>GLM-5.3-闪存</strong></td><td>Z.ai</td><td>开放式举重</td><td>70.9</td><td>70.9</td></tr><tr><td><strong>Qwen3.8-27B</strong></td><td>阿里巴巴</td><td>开放式举重</td><td>69.3</td><td>69.3</td></tr><tr><td><strong>MiniMax M3.1 闪光灯</strong></td><td>最小最大</td><td>开放式举重</td><td>68.8</td></tr><tr><td><strong>基米K3.1 Pro</strong></td><td>登月人工智能</td><td>开放式举重</td><td>67.8</td><td>67.8</td></tr><tr><td><strong>MiMo-V2.6-Pro</strong></td><td>小米</td><td>开放式举重</td><td>64.5</td><td>64.5</td></tr><tr><td><strong>Muse Spark 开放</strong></td><td>元</td><td>开放式举重</td><td>55.1</td><td>55.1</td></tr><tr><td><strong>Nemotron 3.5 Super VL</strong></td><td>英伟达</td><td>开放式举重</td><td>54.1</td><td>54.1</td></tr><tr><td><strong>基米K3</strong></td><td>登月人工智能</td><td>开放式举重</td><td>53.1</td><td>53.1</td></tr></tbody></table>
+<h3>LiveBench 2.0 长期代理</h3>
+<table><thead><tr><th>型号</th><th>组织</th><th>类型</th><th>长期代理</th></tr></thead><tbody><tr><td>Claude寓言5.2（参考）</td><td>Anthropic</td><td>专有</td><td>82.9</td><td>82.9</td></tr><tr><td><strong>DeepSeek V4.1 Flash-1017</strong></td><td>深度搜索</td><td>开放式举重</td><td><strong>38.8</strong></td></tr><tr><td><strong>基米K3.1 Pro</strong></td><td>登月人工智能</td><td>开放式举重</td><td>38.7</td><td>38.7</td></tr><tr><td><strong>MiMo-V2.6-Pro</strong></td><td>小米</td><td>开放式举重</td><td>36.4</td><td>36.4</td></tr><tr><td><strong>基米K3</strong></td><td>登月人工智能</td><td>开放式举重</td><td>36.0</td></tr><tr><td><strong>MiniMax M3.1 闪光灯</strong></td><td>最小最大</td><td>开放式举重</td><td>25.7</td><td>25.7</td></tr><tr><td><strong>Mistral大 4</strong></td><td>Mistral人工智能</td><td>开放式举重</td><td>24.7</td><td>24.7</td></tr><tr><td><strong>GLM-5.3-闪存</strong></td><td>Z.ai</td><td>开放式举重</td><td>20.7</td><td>20.7</td></tr><tr><td><strong>Qwen3.8-27B</strong></td><td>阿里巴巴</td><td>开放式举重</td><td>15.9</td><td>15.9</td></tr><tr><td><strong>Muse Spark 开放</strong></td><td>元</td><td>开放式举重</td><td>12.1</td><td>12.1</td></tr><tr><td><strong>Nemotron 3.5 Super VL</strong></td><td>英伟达</td><td>开放式举重</td><td>12.0</td></tr></tbody></table>
+<p>两张桌子讲述着不同的故事。在编码方面，最好的开放权重模型比最好的专有模型落后大约十个百分点。在长期代理工作中，即无人值守数小时的工作中，差距超过四十个百分点。实际阅读：开放权重模型已准备好进行大量编码工作，包括错误修复、重构、测试编写和监督代理循环。对于完全自主的多小时任务，专有模型仍然物有所值，常见的设置是<a href="https://deepinfra.com/blog/two-tier-agent-two-models">在两者之间路由</a>。</p>
+<h2>开源编码模型真的免费吗？</h2>
+<p>免费获取模型权重并不意味着零成本。您仍然需要 GPU、存储、网络、推理软件、监控、安全控制、升级和工程时间。大型<a href="https://deepinfra.com/blog/mixture-of-experts-llm-economics-price-drop">混合专家模型</a>可能只为每个代币激活一小部分参数，但服务系统仍然需要内存中的全套权重。</p>
+<p>开放式举重还附带许可条款。 MIT 和 Apache 2.0 授予广泛的使用、修改和重新分发的权利。这里的九个型号中有四个使用具有商业条件的自定义许可证：Mistral Large 4、GLM-5.3、Kimi K3.1 Pro 和 MiniMax M3.1 Flash。</p>
+<p>当您具有稳定、高使用率、严格的源代码隐私要求、现有 GPU 容量或使硬件保持繁忙的可预测工作负载时，自托管通常很经济。当使用情况不确定，或者您想在提交基础设施之前测试多个模型时，托管的开放模型 API 通常更有意义。</p>
+<p>您可以通过简单的计算来比较这两个选项：</p>
+<ul><li>每月托管成本 = 输入令牌成本 + 输出令牌成本，减去任何缓存输入和 Flex 节省</li><li>自托管每月成本=GPU小时数+存储+网络+监控+工程运营</li></ul>
+<h2>开源编码模型在哪里提供最大价值？</h2>
+<p>开源编码模型在不同场景中提供了多种操作优势。</p>
+<ul><li><strong>私有代码库：</strong> 当源代码、凭据、客户数据或内部文档无法离开您的环境时，您可以在受控基础设施内运行模型。</li><li><strong>大容量代理工作流程：</strong> 自托管或低成本开放模型 API 为重复存储库分析、测试执行、调试和工具调用提供了更可预测的成本。</li><li><strong>模型定制：</strong>您可以微调模型、调整其推理设置、添加特定于领域的工具或训练内部框架和编程语言的适配器。</li><li><strong>部署控制：</strong> 您的团队可以固定经过测试的模型版本、选择硬件、控制延迟并决定何时应用升级。托管模型 ID 仍然会停用，因此无论哪种方式<a href="https://deepinfra.com/blog/model-deprecation-llm-apps">计划弃用</a>。</li><li><strong>特定于硬件的工作负载：</strong> 您可以根据可用 VRAM、吞吐量目标、量化支持和预期上下文长度选择密集或 MoE 架构。</li><li><strong>减少提供商依赖性：</strong> 开放权重使得在托管 API、私有端点和自我管理基础设施之间移动变得更加容易，而无需重建编码应用程序。</li></ul>
+<h2>在本地或自托管运行开源编码模型</h2>
+<p>一些服务框架支持开放编码模型：</p>
+<ul><li><strong>vLLM</strong> 专注于高吞吐量 GPU 服务和生产 API。</li><li><strong>SGLang</strong> 提供高效的结构化生成和面向代理的服务。我们的<a href="https://deepinfra.com/blog/vllm-vs-sglang">vLLM 与 SGLang 比较</a> 介绍了如何在两者之间进行选择。</li><li><strong>llama.cpp</strong> 跨 CPU、消费级 GPU 和 Apple Silicon 运行量化模型。</li><li><strong>Ollama</strong> 简化了本地模型安装和 API 访问。</li><li><strong>LM Studio</strong> 提供桌面界面和本地 OpenAI 兼容服务器。</li></ul>
+<p>在本地运行模型时，请考虑其大小、精度和上下文窗口。本指南中的两个型号均适合其尺寸。 Muse Glimmer 30B 附带量化版本，Meta 目标为 24GB 和 32GB VRAM。 Qwen3.8-27B 是一个 27B 密集模型，因此四位构建仅用于权重就需要大约 14GB，一旦添加运行时开销和上下文，24GB GPU 就是一个实用的起点。</p>
+<p>这里的其他一切都是数据中心模型。其他七个（DeepSeek V4.1 Flash、Mistral Large 4、GLM-5.3、MiniMax M3.1 Flash、MiMo-V2.6-Pro、DeepSeek V4 Pro、Kimi K3.1 Pro）运行 4280 亿到 2.8 万亿个参数，需要多 GPU 服务器。</p>
+<p>这些模型是本地或托管的，可连接到任何接受 OpenAI 兼容端点的编码工具，包括 <a href="https://deepinfra.com/blog/claude-code-alternative">OpenCode</a> 等开放代理。</p>
+<h2>在 DeepInfra 上运行这些模型</h2>
+<p>如果您想要模型而不需要自己构建服务层，最简单的方法是 DeepInfra 的 <a href="https://docs.deepinfra.com/chat/overview">OpenAI 兼容 API</a>：与 OpenAI API 相同的请求格式和客户端，并按名称选择模型。上述九种型号中有七种可供选择，价格按代币计算，没有最低价格。</p>
+<table><thead><tr><th>型号</th><th>输入（$/1M）</th><th>产出（$/1M）</th><th>柔性层 (0.8×)</th><th>预计。每月费用*</th></tr></thead><tbody><tr><td>DeepSeek V4.1 Flash-1017</td><td>0.098 美元</td><td>0.294 美元</td><td>是的</td><td>15.68 美元</td></tr><tr><td>Qwen3.8-27B</td><td>0.15 美元</td><td>1.875 美元</td><td>是的</td><td>52.50 美元</td></tr><tr><td>缪斯微光 30B</td><td>0.30 美元</td><td>1.20 美元</td><td>没有</td><td>54.00 美元</td></tr><tr><td>MiMo-V2.6-Pro</td><td>0.387 美元</td><td>0.783 美元</td><td>没有</td><td>54.36 美元</td></tr><tr><td>GLM-5.3</td><td>0.563 美元</td><td>2.50 美元</td><td>是的</td><td>106.30 美元</td></tr><tr><td>DeepSeek V4 Pro-0813</td><td>1.30 美元</td><td>2.60 美元</td><td>是的</td><td>182.00 美元</td></tr><tr><td>基米K3.1 Pro</td><td>1.90 美元</td><td>9.50 美元</td><td>是的</td><td>$380.00</td></tr></tbody></table>
+<p>**在缓存输入节省之前，估计标准层每月 100M 个输入令牌和 20M 个输出令牌。价格来自 DeepInfra 2026 年 11 月 17 日的型号页面。DeepSeek V4.1 Flash-1017、Qwen3.8-27B、MiMo-V2.6-Pro、GLM-5.3 和 Kimi K3.1 Pro 为促销价格；上面每个型号的部分给出了标价。 MiniMax M3.1 Flash 和 Mistral Large 4 不提供服务；早期的 MiniMax-M3 价格为 0.28 美元和 1.10 美元。*</p>
+<p>传播是重点。相同的工作负载在 LiveBench 编码得分最高的模型上花费 15.68 美元，在最大的模型上花费 380 美元，相差 24 倍。三种设置可以进一步降低费用：</p>
+<ul><li><strong>Flex 层。</strong> 带有 Flex 标签的型号以标准价格的 0.8 倍运行，以换取较慢的响应速度和偶尔的不可用。这适合批量重构、测试生成和隔夜代理运行。上述 DeepSeek V4.1 Flash-1017 的预估值降至 12.54 美元左右。</li><li><strong>缓存输入。</strong> 编码代理在每个步骤中重新发送相同的系统提示、工具定义和存储库上下文。这些重复的代币按缓存输入费率计费：例如，在 DeepSeek V4 Pro-0813 上，每百万美元 0.10 美元，而不是 1.30 美元。我们的<a href="https://deepinfra.com/blog/prompt-hygiene-cheaper-faster-llm-calls">提示卫生</a>指南介绍了如何构建提示以便缓存命中。</li><li><strong>推理工作。</strong> 其中一些模型接受 <code>reasoning_effort</code> 设置。 GLM-5.3 默认为“max”；日常编辑时降低到“高”或“低”会减少输出标记。</li></ul>
+<p>对于围绕编码代理的大量支持工作，例如读取构建日志或通过屏幕截图对问题进行分类，<a href="https://deepinfra.com/nvidia/NVIDIA-Nemotron-3.5-Super-VL">Nemotron 3.5 Super VL</a> 是一种低成本多模式选项，每百万代币输入 0.15 美元，输出 0.50 美元。它在 LiveBench 2.0 编码中的得分为 54.1，因此可以使用它来执行简单的步骤。</p>
+<p>如果响应速度是产品，就像内联自动完成一样，那么测试提供程序也建立在速度专用硬件上。对于代理、批量工作以及按数量计费的任何事物，每个代币的差距都会加剧。</p>
+<p>以下是如何使用 Python 客户端调用这些模型之一：</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+)
+
+response = client.chat.completions.create(
+    model=&quot;deepseek-ai/DeepSeek-V4.1-Flash-1017&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a coding assistant. Return only the refactored code.&quot;},
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Refactor this function for readability:\n\ndef f(a,b):\n    return [x for x in a if x not in b]&quot;},
+    ],
+    temperature=0.2,
+)
+
+print(response.choices[0].message.content)copy</code></pre>
+<p>要尝试不同的模型，请更改模型名称。</p>
+<h2>底线</h2>
+<p>最佳的开源编码模型取决于工作。</p>
+<p>对于大多数团队来说，从 DeepSeek V4.1 Flash-1017 开始：它在开放权重模型中具有最高的独立编码分数、MIT 许可证以及本指南中最低的价格。如果您的代理运行长时间、无人值守的任务，请对其进行测试 Kimi K3.1 Pro 和 MiMo-V2.6-Pro；他们在长期工作上的得分接近它，而 MiMo 是在麻省理工学院的许可下以较低的产出价格做到这一点的。对于具有安全角度的长视野编码，在许可允许的情况下，GLM-5.3 是可以评估的。如果您需要一个可以自己运行的小型模型，请选择 Qwen3.8-27B 进行乐谱，或选择 Muse Glimmer 30B 进行现成的本地构建。 Mistral Large 4 在编码方面几乎与 DeepSeek 相匹配，如果欧洲构建的模型对您很重要，只要您可以使用 Mistral 的 API 或自己托管万亿参数模型，那么 Mistral Large 4 就是您的选择。</p>
+<p>无论您入围哪一个，请在提交之前在您自己的存储库中对其进行衡量。供应商基准测试使用不同的工具，独立排行榜尚未涵盖此处的所有型号。</p>
+<p>访问 <a href="https://deepinfra.com/models">DeepInfra 模型页面</a> 来比较跨上下文窗口和定价的开源模型。如有任何问题或反馈，请通过 <a href="mailto:feedback@deepinfra.com">feedback@deepinfra.com</a> 与我们联系。您还可以在 <a href="https://discord.gg/deepinfra">Discord</a> 上加入社区，或者在 X 上的 <a href="https://x.com/DeepInfra">@DeepInfra</a> 上找到我们。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/best-api-for-kimi-k2-5-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/02/Best-API-for-Kimi_sized.jpg" alt="Kimi K2.5 的最佳 API：为什么 DeepInfra 在速度、TTFT 和可扩展性方面领先"></a><a href="https://deepinfra.com/blog/best-api-for-kimi-k2-5-deepinfra">最佳 API Kimi K2.5：为什么 DeepInfra 在速度、TTFT 和可扩展性方面领先</a>&lt;p&gt;更新于 2026 年 11 月。Kimi K2.5 被定位为 Moonshot AI 针对现代产品工作流程的“全能”模型：原生多模态（文本 + 视觉/视频）、即时模式与思考模式以及对代理/多代理（“群”）执行模式。然而，在实际应用中，模型功能只是故事的一半。提供商的推理堆栈决定了您的用户实际的事物 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/nvidia-nemotron-3.5-embed-rerank-release"><img src="https://deepinfra.com/blog/nvidia-nemotron-3.5-embed-rerank-release.png" alt="从搜索结果到证据：DeepInfra 上的 NVIDIA Nemotron 3.5 嵌入和重新排名"></a><a href="https://deepinfra.com/blog/nvidia-nemotron-3.5-embed-rerank-release">从搜索结果到证据：NVIDIA Nemotron 3.5 嵌入DeepInfra 上的重新排序</a>NVIDIA Nemotron 3.5 Embed 和 Rerank 从第 0 天开始在 DeepInfra 上可用。通过 DeepInfra API 调用 Embed 1B、Embed 8B 和 Rerank 8B，无需部署设置和按代币付费定价。</p>
+<p><a href="https://deepinfra.com/blog/prompt-cache-retention"><img src="https://deepinfra.com/blog/prompt-cache-retention.jpg" alt="介绍提示缓存保留：让您的环境保持温暖 5 分钟或一个小时"></a><a href="https://deepinfra.com/blog/prompt-cache-retention">介绍提示缓存保留：让您的环境保持温暖 5 分钟或一个小时小时</a>将提示的 KV 缓存保留 5 分钟或一个小时 - 重用会跳过预填充，以更快地获得第一个令牌，并以折扣缓存读取速率计费。请求中的一个字段。</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>提示词卫生：更低成本、更快的 LLM API 调用</title>
+      <link>https://deepinfra.com/blog/prompt-hygiene-cheaper-faster-llm-calls</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/prompt-hygiene-cheaper-faster-llm-calls</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Prompt Hygiene: Cheaper, Faster LLM API Calls</description>
+      <content:encoded><![CDATA[<h1>Prompt Hygiene：更便宜、更快的 LLM API 调用</h1>
+<p>DeepInfra 发布于 2026.11.17</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/prompt-hygiene-cheaper-faster-llm-calls-header.png" alt="提示卫生：更便宜、更快的 LLM API 调用"></p>
+<p>提示卫生是指编写干净、简洁且明确的提示的习惯。这听起来像是一个写作技巧，但在生产中它的表现就像基础设施优化：它减少了代币支出，改善了延迟，并通过使模型输出更可预测来降低重试率。</p>
+<p>当团队抱怨 LLM 通话“太贵”或“太慢”时，根本原因通常不是模型。这是提示。臃肿的输入、不明确的指令和无限制的输出悄然增加了成本，并将可靠性变成了一场赌博。</p>
+<p>本文解释了什么是即时卫生、为什么它很重要，以及如何应用它，使您的通话更便宜、更快捷，同时又不会降低质量。</p>
+<h2>为什么提示卫生在生产中很重要</h2>
+<p>在生产中，每个 LLM 调用都会在您的账单上显示两件事：您发送的令牌和模型发回的令牌。 （如果算法对您来说是新的，<a href="https://deepinfra.com/blog/pricing-101-token-math-cost-per-completion">Pricing 101</a> 会逐步介绍它。）较长的提示需要花费更多的前期费用，并且通常需要更长的时间来处理。模糊的提示通常会在退出时花费更多，因为模型通过生成您实际上不需要的额外文本来填补空白，并且在大多数模型上输出令牌的价格高于输入令牌。两者都会增加延迟。</p>
+<p>然而，真正的预算杀手并不是过于冗长的回应。这是一个以错误的形式返回的响应——缺少字段、错误的结构、无法解析——并迫使您再次运行调用。重试会使该调用的成本增加一倍，并且还会产生用户立即注意到的“随机缓慢”尾部延迟。这是更安静的原因之一 <a href="https://deepinfra.com/blog/why-your-api-bill-doubled-without-changing-models">API 账单可以在没有任何人更改模型的情况下翻倍</a>。</p>
+<p>及时保持卫生是控制这种变化的最简单方法。</p>
+<h2>“脏提示”是什么样的</h2>
+<p>混乱的提示往往会以同样的几种方式失败。首先，它们包含了太多的上下文“以防万一”。人们粘贴整个文档，发送完整的聊天历史记录，或者以三种不同的方式重复相同的指令。这会增加令牌的使用，但很少改善答案。</p>
+<p>其次，它们包含不明确或相互冲突的约束。要求“详细但简洁”的东西对人类来说听起来很合理，但它迫使模型选择优先考虑哪条指令。有时它会选择“详细”。有时它会选择“简洁”。这种不一致正是导致生产行为不可预测的原因。</p>
+<p>最后，肮脏的提示通常不会定义输出契约。如果你想要项目符号但不说出来，有时你会得到段落。如果您想要 JSON 但不指定架构，您将得到一些看起来像 JSON 的东西 — 直到有一天它没有，并且您的解析器崩溃了。</p>
+<h3>目标：减少歧义并限制输出</h3>
+<p>及时卫生背后的核心思想很简单：减少模型必须做出的决策数量。</p>
+<p>当您指定明确的任务、明确的约束和明确的输出格式时，您就减少了生成中的“熵”。熵越小意味着模型漂移、漫无目的或发明结构的可能性就越小。</p>
+<p>当你限制输出长度时，你可以直接控制成本。一个好的提示可以遵循以下大纲：</p>
+<ul><li><strong>任务：</strong> 用一句话尽早明确地陈述任务。</li><li><strong>约束：</strong> 添加重要的规则：长度、需要时的语气、允许的来源以及缺少某些内容时应采取的措施。</li><li><strong>输出格式：</strong> 描述您希望模型返回的确切结构。</li><li><strong>输入：</strong> 仅提供此调用所需的数据。</li></ul>
+<p>这并不是为了僵化而僵化。它是为模型提供一个明确定义的车道，以便您以较低的成本获得一致的结果。</p>
+<h2>最省钱的卫生规则</h2>
+<h3>规则 1：将任务放在前两行</h3>
+<p>当目标被预先设定时，模型反应最好。如果任务在很长的序言之后被隐藏，就会增加错位的可能性。</p>
+<p>以“总结一下……”开头的提示比以“你是一个有用的助手……”开头，然后是几段场景设置的提示更容易误读模型。</p>
+<h3>规则 2：删除任何不会改变答案的内容</h3>
+<p>每个代币都有成本。如果句子不能提高正确性、格式或合规性，请将其删除。在实践中，这意味着削减激励性的废话、重复的指令以及不影响输出的“最好有”的背景。</p>
+<h3>规则 3：用可测量的限制限制输出长度</h3>
+<p>“简洁”是主观的，主观约束比团队预期更容易被忽视。硬限制之所以有效，是因为它们是可衡量的。您可以使用字数、项目符号计数、字符数或严格的 JSON 键来限制输出。即使是像“最多 120 个单词”这样的简单限制也可以大幅削减支出，因为<a href="https://deepinfra.com/blog/token-verbosity">输出的冗长是大部分账单隐藏的地方</a>。</p>
+<h3>规则 4：始终指定输出格式</h3>
+<p>如果您的下游系统解析结果，那么格式化不是首选。这是一份合同。准确地告诉模型输出应该是什么样子。如果您需要 JSON，请提供架构（我们的 <a href="https://deepinfra.com/blog/deepinfra-json-only-responses">仅 JSON 响应</a> 指南展示了如何在 API 级别强制执行它）。如果您需要项目符号，请指定数量和样式。如果需要标题，请指定标题。</p>
+<p>添加一行以防止出现额外文本，例如“仅输出结果。请勿添加解释”。</p>
+<h3>规则 5：消除冲突的约束</h3>
+<p>包含矛盾指令的提示会导致结果不一致。不要“详细但简短”，而是定义“详细”的含义。例如，要求“恰好三个风险”或“包括两个边缘情况”。然后分别盖上长度。这将模糊的目标变成了确定性的目标。</p>
+<h3>规则 6：定义信息缺失时该怎么做</h3>
+<p>如果您不定义缺失数据行为，模型通常会进行猜测。一句话可以防止幻觉和重试：“如果答案不在输入中，请写下‘源代码中未说明’。”或者：“如果缺少某个字段，则返回 null。”这提高了可靠性并减少了返工。</p>
+<h2>生产卫生：大规模变化</h2>
+<p>一旦您重复调用模型（尤其是在 API 后面），最大的浪费不是单个冗长的提示。它一遍又一遍地为相同的代币支付全价。有两个习惯在这里产生了巨大的影响：将稳定的指令与每个请求的输入分开，并有意识地考虑如何提供上下文。</p>
+<ul><li><strong>将稳定的指令与每个请求的输入分开</strong> 如果您发现自己将相同的策略、语气指南或输出格式规则粘贴到每个请求中，那么您将为每次调用支付“税”。在生产中，将提示分为两层会更干净。第一层是一个稳定的、版本化的包装器，其中包含应始终适用的规则，例如输出格式、安全约束以及如何处理丢失的数据。第二层是每个请求的提示，它很短，仅包含实际的用户输入和特定于任务的详细信息。 API 是无状态的，因此包装器仍然随每个请求一起移动，但是可以从提示缓存中以输入价格的一小部分提供每次调用都相同的包装器（请参阅下一节）。它还使跨端点的行为保持一致，因为您不依赖于随着时间的推移而缓慢漂移的复制粘贴指令。</li><li><strong>更喜欢检索和修剪而不是转储上下文</strong> 另一个常见的成本陷阱是发送整个文档，因为答案是“在那里的某个地方”。您每次都需要为整个文本块付费，即使模型只需要一小段。更好的模式是检索或预先修剪相关部分，然后仅将这些部分传递到提示中。即使没有完整的 RAG 管道，您通常也可以通过选择特定部分、围绕关键字提取几个段落或提供实际包含答案的顶部片段来显着减少标记使用量。更小、更相关的上下文通常也会提高质量，因为它可以减少噪音并保持模型的重点。</li></ul>
+<h2>提示缓存：为永不改变的部分支付更少的费用</h2>
+<p>稳定的前缀也是可缓存的。在 DeepInfra 上，<a href="https://docs.deepinfra.com/chat/prompt-caching">提示缓存</a> 在支持的模型上是自动的：当提示的开头与同一模型上最近请求的前缀匹配时，缓存状态将被重用，模型会跳过重新处理该部分，并且这些令牌按模型的缓存输入速率而不是标准输入速率计费。</p>
+<p>缓存匹配方式直接遵循两条卫生规则：</p>
+<ul><li><strong>首先放置稳定的内容。</strong> 缓存从提示符开始匹配，因此系统提示符、格式规则和少量示例位于用户输入之前。</li><li><strong>保持前缀字节相同。</strong> 单个更改的字符会使匹配无效。保留时间戳、用户 ID 以及前缀之外的任何其他内容。</li></ul>
+<p>这就是它的价值。 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4-Pro-0813">DeepSeek-V4-Pro-0813</a> 列出的标准输入价格为每 1M 代币 1.30 美元，缓存输入价格为每 1M 代币 0.10 美元。以每月发送 200,000 个请求的 3,000 个令牌稳定包装器为例，即 600M 前缀令牌：</p>
+<table><thead><tr><th></th><th>每 100 万代币的费率</th><th>前缀的每月费用</th></tr></thead><tbody><tr><td>标准输入</td><td>1.30 美元</td><td>780 美元</td></tr><tr><td>缓存输入</td><td>0.10 美元</td><td>60 美元</td></tr></tbody></table>
+<p>这是一个基于慷慨假设的估计：每个请求都会命中缓存。缓存条目在一段时间不活动后就会过期，因此实际命中率取决于流量的稳定程度。您可以通过每个响应的使用对象中的“prompt_tokens_details.cached_tokens”字段来衡量您的令牌。如果您需要一个前缀在有保证的窗口内保持温暖，<a href="https://deepinfra.com/blog/prompt-cache-retention">提示缓存保留</a> 将其保留 5 分钟或一个小时，以换取第一个请求的写入费用。</p>
+<h2>一个具体的前后示例</h2>
+<p>如果您通过 DeepInfra 运行提示，您会立即感受到混乱提示的成本：更多的输入令牌、更长的完成时间和更高的延迟，尤其是当您大规模调用模型或为面向用户的端点提供支持时。最快的胜利是收紧提示，以便模型仅在重要的工作上花费代币。</p>
+<h3>之前：浪费代币的“混乱”提示</h3>
+<p>这种提示在原型中很常见：</p>
+<blockquote>“您是一名专家助理。请仔细阅读以下内容并提供专业的答案。确保其包含所有相关细节和上下文。全面且简洁。”</blockquote>
+<p>听起来很合理，但生产起来既昂贵又不可靠：</p>
+<ul><li>它<strong>没有说明任务</strong>（模型实际上应该做什么？）</li><li>它<strong>鼓励冗长</strong>（“相关细节和上下文”，“彻底”）</li><li>它包含<strong>冲突的说明</strong>（“彻底但简洁”）</li><li>它<strong>没有输出契约</strong>，因此格式会变化并且解析器会中断</li></ul>
+<p>在实践中，这通常意味着更长的响应、更多的方差和更多的重试——这正是增加支出和尾部延迟的组合。</p>
+<h3>之后：您可以在 API 后面发送“卫生”提示</h3>
+<p>这是一个生产就绪的重写，它更便宜、更快、更容易验证：</p>
+<blockquote>任务：仅使用提供的文本回答问题。<br>限制：<br>最多使用 6 个要点<br>每个项目符号必须≤ 18 个单词<br>如果文本不包含答案，请写：来源中未说明。<br>输出格式：仅返回项目符号列表（无介绍，无结束行）。<br>文字：……<br>问题：……</blockquote>
+<p>为什么这样效果更好：</p>
+<ul><li><strong>较低的产出代币：</strong> 硬上限可防止失控完成。</li><li><strong>更低的延迟：</strong>较短的代通常完成得更快并减少尾部延迟。</li><li><strong>更少的重试：</strong>严格的格式+清晰的缺失信息行为使响应更容易解析和验证。</li><li><strong>更好的缓存机会：</strong>指令块现在是提示缓存可以重用的固定前缀，并且当输出一致时，您还可以通过（模型、提示版本、输入哈希）缓存整个响应。</li></ul>
+<h3>重写保存了什么</h3>
+<p>以下是 DeepSeek-V4-Pro-0813 标准费率的估计（每 100 万代币输入 1.30 美元，输出 2.60 美元）。假设：两个提示都带有相同的 1,500 个标记的源文本；混乱的指令大约有40个token，重写的指令大约有75个；无上限答案平均为 400 个标记；上限答案最多接近 145 个标记（6 个项目符号 × 18 个单词，每个标记大约 0.75 个单词）。</p>
+<table><thead><tr><th>每 100 万次通话</th><th>输入令牌</th><th>输出代币</th><th>投入成本</th><th>产出成本</th><th>总计</th></tr></thead><tbody><tr><td>之前</td><td>1,540M</td><td>400M</td><td>2,002 美元</td><td>1,040 美元</td><td>3,042 美元</td></tr><tr><td>之后</td><td>1,575M</td><td>145M</td><td>2,048 美元</td><td>377 美元</td><td>2,425 美元</td></tr></tbody></table>
+<p>重写后的提示稍微长一些，但整体成本仍然便宜 20% 左右，因为输出成本下降了大约 64%。重试会扩大差距：如果“之前”的响应中有十分之一因为无法解析而必须重新运行，则每百万次调用会增加约 304 美元。由于缓存了 75 个令牌的指令块，“之后”行进一步下降了一些。</p>
+<p>您的数字将根据您的模型、输入以及无上限答案的运行时间而有所不同。该方法继续下去：对进出、之前和之后的代币进行计数，并按照<a href="https://deepinfra.com/models">模型页面</a>上的价格对其进行定价。</p>
+<h2>快速启动前检查清单</h2>
+<p>在发送提示之前，请先检查一个小清单：</p>
+<ul><li>任务是否在顶部明确说明？</li><li>你能在不改变结果的情况下删除至少 20% 的代币吗？</li><li>输出长度是否受到可测量规则的限制？</li><li>输出格式是否明确且可解析？</li><li>是否存在任何冲突的指示？</li><li>是否定义了缺失数据行为？</li><li>是否只包含必要的上下文？</li><li>提示的稳定部分是否首先出现，每次调用都没有变化，因此可以缓存？</li></ul>
+<p>通过此清单的提示往往更便宜、更快并且更容易维护。</p>
+<h2>结论</h2>
+<p>及时卫生并不是要缩短提示时间。这是为了让他们遵守纪律。</p>
+<p>当您删除不必要的标记、限制输出、定义清晰的格式并保持提示的稳定部分可缓存时，您就可以减少模型的猜测并不再为重复的文本付出全部代价。这降低了成本，减少了延迟，而且最重要的是减少了重试。在生产中，这种可靠性通常比任何单一型号的升级更有价值。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/model-deprecation-llm-apps"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/model-depreciation.png" alt="模型弃用：构建持久的 LLM 应用程序"></a><a href="https://deepinfra.com/blog/model-deprecation-llm-apps">模型弃用：构建持久的 LLM 应用程序最后</a>&lt;p&gt;您的模型 ID 是堆栈中寿命最短的依赖项，并且它很可能没有维护计划。 2026 年 6 月 15 日，claude-sonnet-4-20250514 和 claude-opus-4-20250514 停止回复请求。 Anthropic 于 62 天前发布了该通知。在呼叫站点中使用任一字符串的团队都是从错误率而不是电子邮件中了解到这一点的。 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/vllm-vs-sglang"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/08/vllm-vs-sglang.png" alt="vLLM 与 SGLang：性能、功能和部署比较"></a><a href="https://deepinfra.com/blog/vllm-vs-sglang">vLLM 与 SGLang：性能、功能和部署比较</a>&lt;p&gt;您团队中的某人阅读了基准测试帖子，现在有一张迁移推理堆栈的票证。这就是大多数 vLLM 与 SGLang 决策的开始方式。已发布的测试报告吞吐量差距为 29%，该数字落在 Slack 中，两周后，您在午夜调试内核版本冲突，而 p99 延迟处于 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/glm-5-2-on-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/glm-52.png" alt="在 DeepInfra 上介绍 GLM-5.2"></a><a href="https://deepinfra.com/blog/glm-5-2-on-deepinfra">在 DeepInfra 上介绍 GLM-5.2 DeepInfra</a>&lt;p&gt;GLM-5.2 是 Z-AI 的最新旗舰模型，围绕一个核心功能构建：一个专为长期任务设计的稳定的 1,048,576 个令牌上下文窗口。大多数百万代币的上下文声明都带有实用的星号——检索能力下降、范围内行为不一致。 Z-AI 将此描述为首次为持续、长期工作提供可靠的规模。编码[...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>2026 年最佳 MiMo-V2.6-Pro API 提供商</title>
       <link>https://deepinfra.com/blog/best-mimo-v2-6-pro-api-providers</link>
@@ -3634,533 +4280,6 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>与 &quot;Flash&quot; 表示蒸馏或裁剪旗舰的其他模型家族不同，GLM-5.3-Flash 是一个独立模型。Z.ai 声明它&quot;从一个全新训练的基座模型出发，架构与训练配方围绕能力和效率重新设计&quot;。名字指的是其稀疏-线性混合 attention 架构带来的效率增益，而非能力的削减。</p>
 <p><strong>GLM-5.3-Flash 与 GLM-5.3 有何区别？</strong></p>
 <p>GLM-5.3-Flash 是多模态、高效率变体，定价每百万 token $0.15/$0.50。旗舰 <a href="https://artificialanalysis.ai/models/glm-5-3">GLM-5.3</a> 是纯文本、聚焦编码与网络安全的模型，定价约输入 $1.40/输出 $4.40 每百万——贵了约十倍。对多数非编码工作负载（对话、抽取、视觉、摘要），GLM-5.3-Flash 是更实际的选择。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>DeepSeek-V4.1-Flash 现已上线 DeepInfra</title>
-      <link>https://deepinfra.com/blog/deepseek-v4-1-flash-deepinfra</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/deepseek-v4-1-flash-deepinfra</guid>
-      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：DeepSeek-V4.1-Flash Is Now on DeepInfra</description>
-      <content:encoded><![CDATA[<h1>DeepSeek-V4.1-Flash 现已上线 DeepInfra</h1>
-<p><a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek 的新作 V4.1-Flash</a> 在 5,520 亿参数的骨干中，处理输入时只激活 80 亿参数，却仍在 DeepSeek 公布的所有智能体基准上击败了规模大得多的 DeepSeek-V4-Pro。它于 2026 年 9 月发布，围绕 Causal Encoder-Decoder 设计构建，正是这一设计让总参数与激活参数之间的巨大差距成为可能。对运行输入密集型或长上下文工作负载的开发者来说，实际效果是每个 prefill token 成本更低，而智能体能力不降。</p>
-<p>它<a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">现已在 DeepInfra 上线</a>。</p>
-<p>最亮眼的架构成果是 KV cache 压缩。V4.1-Flash 的全局 KV cache 占用为每 token 890 字节，约为其前代 V4-Flash 的四分之一，从而削减了让长智能体运行变得昂贵的那部分内存与存储成本。在真正关系到实际工作负载的基准上，它拿下 3471 的 Codeforces rating，为对比组中最高；在 DeepSWE v1.1 上得 74.2 分，险胜得 74.0 的 Claude Opus 5.0。该模型支持 1,048,576 token 的上下文窗口和原生多模态输入，在 DeepInfra 上以 fp8 运行，并以 MIT 许可开放权重。</p>
-<h2>这个模型有何不同</h2>
-<p>V4.1-Flash 在结构上最值得注意的一点是其 Causal Encoder-Decoder（CED）架构——对标准 decoder-only transformer 的一次真正背离。40 层骨干拆分为 20 层因果编码器加 20 层解码器，解码器的全局 KV cache 由编码器最后的隐状态投影而来，而非逐层构建。正是这种不对称造就了那样的激活参数量：相对 552B 的骨干，prefill 阶段只激活 8B、decode 阶段激活 16B，另有一个以稀疏方式访问的 196B Engram 条件记忆组件。对智能体流水线这类输入密集型工作负载，更低的 prefill 成本是实打实的。</p>
-<p>KV cache 设计值得单独一说。V4.1-Flash 使用 Compressed Sparse Attention 2（CSA2），给每个 attention 层指定 Full、Reindex 或 Reuse 三种静态模式之一，以在各层之间共享主 KV 与 indexer K。CSA2 加上 FP4 主 KV 缓存，共同产出 890 字节的全局占用。另一套独立机制 SWA Bounded Replay 通过回放最近的 token 而非把它们持久化到 SSD 来重建滑动窗口 attention 状态，把持久化缓存压到 V4-Flash 的约八分之一。如果你想看这些数字与当世代同类产品（而非上一代）的对比，<a href="https://deepinfra.com/zai-org/GLM-5.3">GLM-5.3</a> 和 <a href="https://deepinfra.com/Qwen/Qwen3.8-Flash">Qwen3.8-Flash</a> 是今天在 DeepInfra 上最接近的参照点。</p>
-<table><thead><tr><th><strong>模型</strong></th><th><strong>每 token 全局 KV cache</strong></th><th><strong>相对 V4.1-Flash</strong></th></tr></thead><tbody><tr><td>DeepSeek-V1</td><td>约 389,000 字节</td><td>大 437 倍</td></tr><tr><td>DeepSeek-V4-Flash</td><td>约 3,560 字节</td><td>大 4 倍</td></tr><tr><td>DeepSeek-V4.1-Flash</td><td>890 字节</td><td>基准</td></tr></tbody></table>
-<p>890 字节的数字以及 4 倍、437 倍的比例都由 DeepSeek 官方公布；中间一列 V1 和 V4-Flash 的绝对字节数是依据这些比例推算的，并非直接发布。持久化 KV cache 是另一项独立度量：V4.1-Flash 在 SSD 上的占用约为 V4-Flash 所需量的八分之一。</p>
-<p>对于跑长会话、大量命中缓存的智能体，这直接转化为更低的内存压力和更低的基础设施成本。</p>
-<p>在基准上，V4.1-Flash 与激活参数量远高于它的模型竞争，并在多个智能体类目中领先。instruct 模型评测中的亮点：</p>
-<ul><li>Codeforces rating：3471，对比表中最高，高于 V4-Pro 的 3348 和 V4-Flash 的 3289</li><li>Terminal-Bench 2.1：90.6，表中最高，高于 Claude Opus 5.0 的 89.1</li><li>DeepSWE v1.1（真实世界软件工程）：74.2，略微领先 Opus 5.0 的 74.0，V4-Pro 为 62.7</li><li>CyberGym 得 88.1、AutomationBench 得 54.8，均为对比表中最高</li><li>Agent's Last Exam：31.8，高于 Opus 5.0 的 28.6</li><li>不占优之处：GPQA Diamond 得 90.9，落后 V4-Pro 的 92.4；Terminal-Bench 3.0 和 4.0 明显落后 Opus 5.0——分别为 30.0 对 43.3、31.2 对 51.8</li></ul>
-<p>base 模型同样在 MMLU-Pro 上得 74.1（V4-Pro-Base 为 73.5）、HumanEval 上得 79.4、GSM8K 上得 93.0——尽管激活参数少得多，三项全部超过 V4-Pro-Base。</p>
-<p>在能力方面，V4.1-Flash 支持完整的 1,048,576 token 上下文窗口，并从预训练起就原生多模态：通过从头训练的 DeepSeek-ViT（采用 2D-RoPE 和两层 MLP 投影器）处理文本与图像。base 模型的视觉基准包括 DocVQA 95.6 和 RefCOCO-avg 86.0。模型还支持连续可调的 reasoning effort——1 到 100 的整数——让你在推理时调节成本与准确率的权衡，而不是在思考模型与非思考模型之间二选一。</p>
-<p>与它的前代相比：这些架构改动等于从零重建，而非微调或渐进更新。DeepSeek 用 45T token 从头预训练了该模型，围绕大规模自动化智能体任务合成重建了后训练流水线，并引入了 CED 设计。DeepInfra 会继续在平台上托管更早的 V4 系列模型，方便你直接对比跑分，或关注 <a href="https://deepinfra.com/blog">DeepInfra 博客</a>上的发布公告。</p>
-<h2>在 DeepInfra 上开始使用</h2>
-<p>DeepSeek-V4.1-Flash 现已在 DeepInfra 上架，模型标识为 deepseek-ai/DeepSeek-V4.1-Flash。定价按用量分三档：Standard 为每 1M 输入 token $0.20、每 1M 输出 token $0.60；Priority 为 1.5 倍，即 $0.30 和 $0.90；Flex 为 0.8 倍，即 $0.16 和 $0.48。Flex 是尽力而为档位，运行前最多可等待容量 10 分钟，否则返回 HTTP 429。被拒绝的请求从不触及模型，因此不会产生任何计费。</p>
-<p>缓存输入 token 在 Standard 档为每 1M $0.006，Priority 为 $0.009，Flex 为 $0.0048——考虑到该架构本就是围绕输入密集、缓存密集的工作负载设计的，这是很可观的节省。</p>
-<p>模型开箱支持 JSON mode、function calling 以及文本加图像的多模态输入。关于限制有一点实际提醒：1,048,576 token 的上下文窗口覆盖 prompt 与 completion 之和，而 DeepInfra 对多数模型将输出上限设为 16,384 token。DeepSeek 自己建议的 256K 生成预算适用于你自己跑权重的场景，不适用于共享端点。如果需要超过上限的输出，请使用响应续写：把上一段响应作为 assistant 消息发回去即可。</p>
-<p>DeepInfra 提供即时 API 访问、无需管理任何基础设施：OpenAI 兼容端点、按用量计费，以及匹配你延迟需求的 Priority 和 Flex 吞吐档位。公司执行零保留政策（详见其<a href="https://deepinfra.com/privacy">隐私政策</a>），并持有 SOC 2 与 ISO 27001 认证。实时在线率发布在 <a href="https://status.deepinfra.com">DeepInfra 状态页</a>，平台背后是为扩展推理云而完成的 <a href="https://deepinfra.com/series-b">$1.07 亿 B 轮融资</a>。</p>
-<p>如果你在 V4.1-Flash 之外评估备选，<a href="https://deepinfra.com/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B">NVIDIA Nemotron-3-Super-120B-A12B</a> 和 <a href="https://deepinfra.com/google/gemma-4-31B-it">Gemma 4 31B</a> 位于价格-能力曲线的不同位置。embeddings、语音、reranking 和图像模型等<a href="https://docs.deepinfra.com/apis/completions">其他 API 接口</a>遵循同一套计费模式。</p>
-<p>要发出第一个调用，换上你的 DeepInfra token 和模型名即可：</p>
-<pre><code>curl &quot;https://api.deepinfra.com/v1/openai/chat/completions&quot; \
-  -H &quot;Content-Type: application/json&quot; \
-  -H &quot;Authorization: Bearer $DEEPINFRA_TOKEN&quot; \
-  -d '{
-      &quot;model&quot;: &quot;deepseek-ai/DeepSeek-V4.1-Flash&quot;,
-      &quot;messages&quot;: [
-        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot;}
-      ]
-    }'
-from openai import OpenAI
- 
-client = OpenAI(
-    api_key=&quot;$DEEPINFRA_TOKEN&quot;,
-    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
-)
- 
-response = client.chat.completions.create(
-    model=&quot;deepseek-ai/DeepSeek-V4.1-Flash&quot;,
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot;}],
-)
-print(response.choices[0].message.content)
-import OpenAI from &quot;openai&quot;;
- 
-const openai = new OpenAI({
-  apiKey: &quot;$DEEPINFRA_TOKEN&quot;,
-  baseURL: &quot;https://api.deepinfra.com/v1/openai&quot;,
-});
- 
-const response = await openai.chat.completions.create({
-  model: &quot;deepseek-ai/DeepSeek-V4.1-Flash&quot;,
-  messages: [{ role: &quot;user&quot;, content: &quot;Hello!&quot; }],
-});
-console.log(response.choices[0].message.content);</code></pre>
-<p>相比任何现有的 OpenAI 兼容集成，只需要改三样东西：base URL（https://api.deepinfra.com/v1/openai）、你的 DeepInfra API key，以及模型名。</p>
-<h2>结语</h2>
-<p>DeepSeek-V4.1-Flash 是一个真正有意思的工程成果：在大幅削减激活参数量与 KV cache 占用的同时，把基准分数推向正确的方向。这些架构选择不是表面文章——CED 设计与 CSA2 压缩对大规模运行长智能体会话的成本有直接影响。对于构建代码智能体、自主流水线，或任何依赖大上下文与高频缓存命中的开发者，这个模型应该进入你的评测队列。</p>
-<p>领一个 API key，跑一遍上面的 curl 调用，在你自己的工作负载上与目前使用的模型对比，而不是只看基准表。基于 DeepInfra 构建的早期团队还可以申请 DeepStart 计划获取免费推理额度。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>GLM-5.3-Flash API 现已登陆 DeepInfra</title>
-      <link>https://deepinfra.com/blog/glm-5-3-flash-deepinfra</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-flash-deepinfra</guid>
-      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：GLM-5.3-Flash API Is Now on DeepInfra</description>
-      <content:encoded><![CDATA[<h1>GLM-5.3-Flash API 现已登陆 DeepInfra</h1>
-<p>Z.ai 的 <a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">GLM-5.3-Flash</a> 推理时在其 3,200 亿参数中只激活 180 亿，而按 Z.ai 报告的成绩，它在高难度软件工程基准 DeepSWE v1.1 上超过了 Claude Opus 4.8（63.4 对 58.0）。它是 GLM-5 系列第一个原生多模态模型，把文本、图像和视频输入与一百万 token 的上下文窗口结合在一起，价格约为 <a href="https://deepinfra.com/zai-org/GLM-5.2">GLM-5.2</a> 的十分之一。</p>
-<p>这种效率来自专门设计的混合架构——稀疏 attention 与线性 attention 配对——相比完整版 <a href="https://deepinfra.com/zai-org/GLM-5.3">GLM-5.3</a>，attention 计算量降低 3 倍、KV cache 缩小 4.4 倍，在大规模服务长上下文时这是实打实的差别。</p>
-<p>正式发布之前，Z.ai 曾以 &quot;ox-alpha&quot; 之名在 OpenCode 和 OpenRouter 上匿名测试该模型，据 Z.ai 称，它成了当周最受欢迎的模型。它用 30 万亿 token 的多模态语料训练。GLM-5.3-Flash 现已进入 <a href="https://deepinfra.com/models">DeepInfra 模型目录</a>。</p>
-<h2><strong>这个模型有何不同</strong></h2>
-<p>GLM-5.3-Flash 是 GLM-5 系列首个原生多模态模型，它从一个全新训练的基座模型出发，而不是对早期 checkpoint 的更新。架构引入了两个值得注意的机制：Manifold-Constrained Hyper-Connections（mHC），提升扩展效率；以及 IndexPool，通过加权池化把四个 indexer key 向量压缩成一个，削减长上下文下的延迟与内存开销。最大的变化是转向稀疏与线性混合的 attention 设计——GLM 系列头一回——它让百万 token 级上下文从&quot;技术上可行&quot;变成&quot;运维上可落地&quot;。</p>
-<p>这种混合 attention 在规模下的收益是可测量的。与完整版 GLM-5.3 相比，GLM-5.3-Flash 少用 3.0 倍 attention 算力、KV cache 小 4.4 倍。与 GLM-4.5 相比，激活参数（18B 对 32B）和层数（45 对 92）几乎都减半，而总参数量相当（320B 对 355B）。成果是一个每次前向传播只跑 18B 参数的 320B Mixture-of-Experts 模型。</p>
-<p>在 Z.ai 报告的基准上，相对 GLM-5.2 的提升全面且显著：</p>
-<table><thead><tr><th><strong>基准</strong></th><th><strong>GLM-5.3-Flash</strong></th><th><strong>GLM-5.2</strong></th><th><strong>Claude Opus 4.8</strong></th></tr></thead><tbody><tr><td>DeepSWE v1.1</td><td>63.4</td><td>46.2</td><td>58.0</td></tr><tr><td>AutomationBench v1.0.6</td><td>48.8</td><td>26.2</td><td>41.0</td></tr><tr><td>Toolathlon Verified</td><td>78.4</td><td>59.9</td><td>76.2</td></tr><tr><td>NL2Repo</td><td>56.3</td><td>48.9</td><td>69.7</td></tr><tr><td>GDPval-AA v2</td><td>1773</td><td>1504</td><td>1582</td></tr></tbody></table>
-<p>在 Z.ai 内部 Code Bench v1.0 的 max 档位上，它得 29.0 分，Claude Opus 4.8 为 29.5。所有数字均为 Z.ai 自报，且各基准的测试 harness 并不相同，跨行比较前请先看<a href="https://huggingface.co/zai-org/GLM-5.3-Flash">模型卡</a>上的脚注。</p>
-<p>原生视觉能力是 GLM 系列的新领地。GLM-5.3-Flash 开箱接受图像与视频输入，Z.ai 报告 MMVU 80.5、CharXiv Reasoning（带工具）89.4、Chartography（带工具）78.0、MVBench 77.8、OfficeQA Pro 62.4。这让它成为文档与图表分析、GUI 智能体、computer-use 工作流的合理候选，而不只是文本进文本出的任务。你可以在 <a href="https://deepinfra.com/models/multimodal">DeepInfra 上浏览多模态模型</a>，看看它与同类模型相比如何。</p>
-<h2><strong>在 DeepInfra 上开始使用</strong></h2>
-<p>GLM-5.3-Flash 的模型标识为 zai-org/GLM-5.3-Flash。标准定价为每 1M 输入 token $0.15、每 1M 输出 token $0.50，缓存 token 每 1M $0.03。当前有 50% 折扣，三项分别降到 $0.075、$0.25 和 $0.015；<a href="https://deepinfra.com/pricing">定价页</a>始终展示最新费率。支持完整的 1,048,576 token 上下文窗口，以及 JSON mode、function calling 与多模态输入。需要独享容量，可以<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=zai-org%2FGLM-5.3-Flash">部署私有端点</a>。</p>
-<p>DeepInfra 通过 OpenAI 兼容 API 暴露该模型：无需采购基础设施、无需管理模型权重，从第一个 token 起就按用量计费。如果你已经在用 OpenAI SDK，要改的只有 base URL 和模型名。该模型的 <a href="https://deepinfra.com/zai-org/GLM-5.3-Flash/api">API 页面</a>列出了可用参数，包括用于在延迟与准确率之间权衡的 reasoning_effort 字段（low、high 或 max），API 其余部分见 <a href="https://docs.deepinfra.com">DeepInfra 文档</a>。</p>
-<p>DeepInfra 对推理数据执行<a href="https://trust.deepinfra.com">零保留政策</a>，并持有 SOC 2 与 ISO 27001 认证。</p>
-<p>下面是完成第一个调用所需的全部内容。</p>
-<p>cURL:</p>
-<pre><code>curl &quot;https://api.deepinfra.com/v1/openai/chat/completions&quot; \
-  -H &quot;Content-Type: application/json&quot; \
-  -H &quot;Authorization: Bearer $DEEPINFRA_TOKEN&quot; \
-  -d '{
-    &quot;model&quot;: &quot;zai-org/GLM-5.3-Flash&quot;,
-    &quot;messages&quot;: [
-      {
-        &quot;role&quot;: &quot;user&quot;,
-        &quot;content&quot;: &quot;Explain the tradeoffs between sparse and linear attention in one paragraph.&quot;
-      }
-    ]
-  }'
-Python:
-import os
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ[&quot;DEEPINFRA_TOKEN&quot;],
-    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
-)
-
-response = client.chat.completions.create(
-    model=&quot;zai-org/GLM-5.3-Flash&quot;,
-    messages=[
-        {
-            &quot;role&quot;: &quot;user&quot;,
-            &quot;content&quot;: &quot;Explain the tradeoffs between sparse and linear attention in one paragraph.&quot;,
-        }
-    ],
-)
-
-print(response.choices[0].message.content)
-JavaScript:
-import OpenAI from &quot;openai&quot;;
-
-const openai = new OpenAI({
-  apiKey: process.env.DEEPINFRA_TOKEN,
-  baseURL: &quot;https://api.deepinfra.com/v1/openai&quot;,
-});
-
-const response = await openai.chat.completions.create({
-  model: &quot;zai-org/GLM-5.3-Flash&quot;,
-  messages: [
-    {
-      role: &quot;user&quot;,
-      content:
-        &quot;Explain the tradeoffs between sparse and linear attention in one paragraph.&quot;,
-    },
-  ],
-});
-
-console.log(response.choices[0].message.content);</code></pre>
-<p>从 <a href="https://deepinfra.com/dash/api_keys">DeepInfra dashboard</a>取好 API key，然后到<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">模型 demo 页</a>快速试一下，或在集成前查阅完整规格。</p>
-<h2><strong>总结</strong></h2>
-<p>GLM-5.3-Flash 是一个技术上很有意思的成果：一个每次前向传播只跑 18B 参数的 320B MoE 模型，原生处理视觉，并且按 Z.ai 报告的数据，以一小部分成本在软件工程基准上与前沿模型平分秋色。这里的架构选择不是表面文章——混合 attention 设计与 IndexPool 压缩，正是让百万 token 多模态推理可以被实际服务起来的原因。</p>
-<p>这个组合打开了一整类智能体的空间（带完整仓库上下文的代码助手、GUI 自动化流水线、文档密集的工作流），它们在过去常常贵到无法可靠地构建。如果你想在投入之前看看它如何处理你的工作负载，<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">在线 demo</a>是合理的起点；需要保证容量的团队可以搭建<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=zai-org%2FGLM-5.3-Flash">私有端点</a>。为智能体工作负载做预算时，可以读读我们关于<a href="https://deepinfra.com/blog/token-verbosity">为什么单任务成本比单 token 成本更重要</a>的观点，以及<a href="https://deepinfra.com/blog/two-tier-agent-two-models">双层智能体如何把前沿模型与更便宜的模型配对</a>。也欢迎浏览我们的其余<a href="https://deepinfra.com/models/text-generation">文本生成模型</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>小型开放权重模型：隐藏的成本优势</title>
-      <link>https://deepinfra.com/blog/small-open-weight-models-cost</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/small-open-weight-models-cost</guid>
-      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Small Open-Weight Models: The Hidden Cost Advantage</description>
-      <content:encoded><![CDATA[<h1>小型开放权重模型：隐藏的成本优势</h1>
-<p>Qwen3.8-27B 以 1,595 分位列 <a href="https://x.com/arena/status/2091920512796725272">Arena.ai Code Arena WebDev 榜第 9 名</a>，截至 2026 年 9 月，它是前十名中唯一参数量低于 300 亿的模型。同一年发布、又大三十亿参数的 Gemma 4-31B 排在第 80。比 27B 高三位的是 Qwen3.8-2.4T-A95B——参数量是它的 86 倍的同门模型（A95B 后缀指的是每个 token 实际运行的 950 亿参数；本文剩下的部分就在讲为什么这个区别决定了价格）。</p>
-<p>关于开放模型的大部分报道只追踪一道差距：最大的开放权重离 GPT 和 Claude 有多近。而小型开放权重模型一直在收窄另一道少有人注意的差距：一个 GPU 装得下的模型，与需要一整柜的模型之间的距离。</p>
-<p>更小、更高效的模型本应运行得更便宜。然后你打开价目表：在 DeepInfra 上，Qwen3.8-27B 每百万输出 token 收 $3.00，而 Gemma 4-31B 只要 $0.38——它反而是更大的那个模型。想找回那份效率红利，按 token 单价是最不该看的地方。</p>
-<h2>小型开放权重模型真正缩小的那道差距</h2>
-<p>Epoch AI 统计，自 2026 年 1 月以来，最佳开放权重模型与前沿闭源模型在<a href="https://epoch.ai/data-insights/open-closed-eci-gap">其 Capabilities Index 上的滞后是四个月</a>。英国 AI Safety Institute 测得<a href="https://www.aisi.gov.uk/blog/how-far-behind-the-frontier-are-leading-open-weight-models-on-cyber">网络安全能力上 4 到 7 个月</a>的差距，低于其在 2025 年发布的开放模型身上看到的 6 到 10 个月。这个故事已被充分报道，DeepInfra 也写过<a href="https://deepinfra.com/blog/open-vs-closed-source-ai-models">自己对开放 vs. 闭源差距的解读</a>，覆盖智能、价格与速度。</p>
-<p>另一条轴得到的关注少得多。Hugging Face 的<a href="https://huggingface.co/blog/state-of-open-models-summer-2026">开放模型状况报告</a>给出中国模型的月度参数上限在 7,540 亿到 2.78 万亿之间，而美国模型在七个月里有五个月停留在 1,300 亿以下。阿里巴巴同时在这区间的两端出货：它发布前沿规模的权重，也发布一个在智能体编码上力压大部分参赛者的 27B。同一份报告统计 Hub 上有 151,448 个 Qwen 衍生仓库，每天增长 180 到 210 个——这就是一个有真实需求支撑的规模档位该有的样子。</p>
-<p>如果你是做推理服务的而不是读排行榜的，第二道差距才是沾着钱的那道。四月的能力滞后决定你选哪个模型。而一个排名第 9 的 27B 决定你签哪张硬件账单。</p>
-<h2>小型开放权重模型今天在 DeepInfra 上的价格</h2>
-<p>以下是实时目录，按输出价排序。激活参数是每输出一个 token 都要读取的那些：在稠密模型里就是全部；在 Mixture-of-Experts（MoE）模型里，一个被称作 router 的小型门控层为每个 token 挑选少数几个专家区块，激活数就是它挑中的那些。服务精度是 DeepInfra 实际运行的，未必是实验室发布的那个。</p>
-<table><thead><tr><th><strong>模型</strong></th><th><strong>总/激活参数</strong></th><th><strong>上下文</strong></th><th><strong>输入/1M</strong></th><th><strong>输出/1M</strong></th><th><strong>服务精度</strong></th></tr></thead><tbody><tr><td><a href="https://deepinfra.com/openai/gpt-oss-120b">gpt-oss-120b</a></td><td>117B / 5.1B</td><td>131K</td><td>$0.04</td><td>$0.17</td><td>bfloat16</td></tr><tr><td><a href="https://deepinfra.com/nvidia/Nemotron-3-Nano-30B-A3B">Nemotron-3-Nano-30B-A3B</a></td><td>30B / 3B</td><td>262K</td><td>$0.05</td><td>$0.20</td><td>fp4</td></tr><tr><td><a href="https://deepinfra.com/mistralai/Mistral-Small-3.2-24B-Instruct-2506">Mistral-Small-3.2-24B</a></td><td>24B 稠密</td><td>128K</td><td>$0.07</td><td>$0.20</td><td>fp8</td></tr><tr><td><a href="https://deepinfra.com/google/gemma-4-26B-A4B-it">gemma-4-26B-A4B-it</a></td><td>26B / 4B</td><td>262K</td><td>$0.07</td><td>$0.34</td><td>fp8</td></tr><tr><td><a href="https://deepinfra.com/google/gemma-4-31B-it">gemma-4-31B-it</a></td><td>31B 稠密</td><td>262K</td><td>$0.13</td><td>$0.38</td><td>fp8</td></tr><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.6-35B-A3B">Qwen3.6-35B-A3B</a></td><td>35B / 3B</td><td>262K</td><td>$0.10</td><td>$0.95</td><td>fp8</td></tr><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.5-122B-A10B">Qwen3.5-122B-A10B</a></td><td>122B / 10B</td><td>262K</td><td>$0.29</td><td>$2.40</td><td>fp4</td></tr><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.8-27B">Qwen3.8-27B</a></td><td>27.8B 稠密</td><td>262K</td><td>$0.40</td><td>$3.00</td><td>未标注</td></tr><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.5-397B-A17B">Qwen3.5-397B-A17B</a></td><td>397B / 17B</td><td>262K</td><td>$0.45</td><td>$3.00</td><td>fp8</td></tr><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.8-2.4T-A95B">Qwen3.8-2.4T-A95B</a></td><td>2.4T / 95B</td><td>262K</td><td>$2.00</td><td>$6.00</td><td>fp4</td></tr></tbody></table>
-<p>来源：DeepInfra 实时目录，2026 年 9 月 4 日。</p>
-<p>按价格排序，规模次序就塌了。gpt-oss-120b 的参数量是 Qwen3.8-27B 的四倍，输出价却只有十七分之一。Qwen3.8-27B 与规模十四倍的 Qwen3.5-397B-A17B 定价完全相同。最刺眼的一对排在中间：Gemma 4-31B 是稠密模型、更大，每输出 token 却比在 Code Arena 上领先它 71 个名次的那个 27B 便宜 7.9 倍，其<a href="https://deepinfra.com/blog/gemma-4-pricing-benchmarks-cost-scenarios">完整定价与基准拆解</a>走遍了该家族的其余成员。</p>
-<p>按参数量购物，等于在读一列并不能预测账单的数字。</p>
-<h2>决定单 token 价格的是两个旋钮，都不是模型规模</h2>
-<p>输出一个 token，意味着把激活权重从 GPU 内存中读出来，而这次读取主导了解码成本。所以第一个旋钮是激活参数，不是总参数。gpt-oss-120b 每 token 触碰其 1,170 亿参数中的 51 亿——这个数字 <a href="https://deepinfra.com/openai/gpt-oss-120b">DeepInfra 就写在模型页上</a>。Qwen3.8-27B 是稠密的，所以要触碰全部 278 亿，同一次前向传播的内存流量约为五倍半。</p>
-<p>另一个旋钮是服务精度，DeepInfra 也逐模型公布。Gemma 4 基于同一份权重提供三种变体：<a href="https://deepinfra.com/google/gemma-4-31B-it-turbo">$0.09 输入、$0.34 输出的 fp4 turbo</a>，<a href="https://deepinfra.com/google/gemma-4-31B-it">$0.13 和 $0.38 的 fp8</a>，以及 <a href="https://deepinfra.com/google/gemma-4-31B-it-Ultra">$0.27 和 $0.76 的 fp8 Ultra 档</a>。每个参数更少的字节就意味着更少的搬运，价目表如实反映这一点。</p>
-<p>两个旋钮都可以直接从目录里读出来：</p>
-<pre><code>import json, urllib.request
-
-CATALOG = &quot;https://api.deepinfra.com/models/list&quot;
-WATCH = {
-    &quot;Qwen/Qwen3.8-27B&quot;,
-    &quot;google/gemma-4-31B-it&quot;,
-    &quot;google/gemma-4-31B-it-turbo&quot;,
-    &quot;openai/gpt-oss-120b&quot;,
-}
-
-with urllib.request.urlopen(CATALOG) as resp:
-    catalog = json.load(resp)
-
-for m in catalog:
-    if m[&quot;model_name&quot;] not in WATCH:
-        continue
-    p = m[&quot;pricing&quot;]
-    dollars_in = p[&quot;cents_per_input_token&quot;] * 10_000
-    dollars_out = p[&quot;cents_per_output_token&quot;] * 10_000
-    cached = dollars_in * (p[&quot;rate_per_input_token_cached&quot;] or 1.0)
-    print(
-        f&quot;{m['model_name']:30} {m['quantization'] or 'unquantized':12}&quot;
-        f&quot; in ${dollars_in:.3f}  cached ${cached:.3f}  out ${dollars_out:.2f}&quot;
-    )</code></pre>
-<p>Qwen3.8-27B 那一行返回的 quantization 为空。DeepInfra 没有为它公布服务精度，所以诚实的假设是你拿到的接近阿里巴巴发布的那份权重——也就是在榜单上得分的那个文件。这是假设，不是规格。</p>
-<p>两个旋钮合起来解释的是下限，而不是整个价差。在假定 bf16 下，Qwen3.8-27B 每 token 前向搬运约 56 GB 权重，而 Gemma 4-31B 在 fp8 下是 31 GB——1.8 倍的硬件差距，压在 7.9 倍的价格差距之下。剩余部分来自需求、工作负载形态和利润率。推理模型的账单记在输出通道上，而一个被指向长 agent 运行的模型每请求输出的 token 远多于通用 instruct 模型。价目表是一份价格清单，不是效率计。</p>
-<h2>27B 这个档位同时变好也变贵了</h2>
-<p>阿里巴巴已经连续三代填补同一个规模档位，同样的 262K 上下文，同一个端点。</p>
-<table><thead><tr><th><strong>模型</strong></th><th><strong>DeepInfra 上线时间</strong></th><th><strong>输入/1M</strong></th><th><strong>输出/1M</strong></th><th><strong>缓存输入</strong></th><th><strong>服务精度</strong></th></tr></thead><tbody><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.5-27B">Qwen3.5-27B</a></td><td>2026-03-24</td><td>$0.26</td><td>$2.60</td><td>n/a</td><td>fp8</td></tr><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.6-27B">Qwen3.6-27B</a></td><td>2026-04-30</td><td>$0.32</td><td>$3.20</td><td>n/a</td><td>fp8</td></tr><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.8-27B">Qwen3.8-27B</a></td><td>2026-08-17</td><td>$0.40</td><td>$3.00</td><td>$0.04</td><td>未标注</td></tr></tbody></table>
-<p>输入价在五个月里爬升了 54%。如果效率红利以更低单 token 价的形式到来，本该在这一行显现——但它没有。DeepInfra 的 <a href="https://deepinfra.com/blog/qwen3-5-27b-api-benchmarks">Qwen3.5 27B 基准实测</a>测得那一代输出 153.3 tokens/秒、按其输入输出配比混合下来 $0.84/百万——老模型仍然是搬运 token 的更便宜方式。</p>
-<p>多花的那 14 美分买到的，是一个顶着相同参数数的不同模型：视觉输入、262K 的混合 attention，以及可以关掉的 thinking。混合 attention 意味着多数层用线性 attention、每隔若干层才有一次全量 attention，因此通常主导长上下文内存的 KV cache 保持很小。目录给 Qwen3.8-27B 打了 can-disable-reasoning 标签，而 <a href="https://docs.deepinfra.com/chat/reasoning">DeepInfra 的推理文档</a>对这一点的重要性说得很直白：推理 token 计入输出 token 计费。在 $3.00/百万的价位上，这个模型的第一道成本控制，是逐请求决定你到底需不需要那段思考。</p>
-<pre><code>import os
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ[&quot;DEEPINFRA_API_TOKEN&quot;],
-    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
-)
-
-# Ticket triage does not need a chain of thought. Switching reasoning off
-# keeps the output lane, the expensive one, from carrying tokens you pay
-# for and never read.
-resp = client.chat.completions.create(
-    model=&quot;Qwen/Qwen3.8-27B&quot;,
-    messages=[
-        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;Label the ticket: bug, billing, or feature.&quot;},
-        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: ticket_text},
-    ],
-    extra_body={&quot;reasoning_effort&quot;: &quot;none&quot;},
-    max_tokens=8,
-)
-print(resp.choices[0].message.content, resp.usage.completion_tokens)</code></pre>
-<h2>真正动过的数字是&quot;每个完成任务的成本&quot;</h2>
-<p>Engram 和 Harvey 搭了一个合成律所：9,286 份文件、266 个客户案件、跨一亿 token，然后用参数化记忆（把领域知识烤进权重，而不是查询时再去取）和检索增强对 Qwen3.8-27B 做了适配。在严格的全对才算对的评分下，适配后的 27B <a href="https://engram.com/blog/legal-agents-with-memory">击败了 Claude Opus 4.8，30% 对 25%</a>，约 $0.13/查询对 $1.32。完成任务轨迹中的 token 数下降了 58%。</p>
-<p>小字要读清楚：那是领域语料上的微调模型，不是原装端点，差距有一部分属于适配本身。但机制仍然可迁移：用更少轮次完成的模型计费的 token 更少，而轮次正是智能体成本栖息的地方。</p>
-<p>给一个真实的循环标个价，形态就显现了。假设每任务 12 轮、一个保持稳定的 6,000 token 系统与工具前缀、每轮 1,500 个新对话 token、每轮 700 个输出 token。前缀只在第一轮按全新计费，之后搭缓存跑完其余十一轮：即每任务 24,000 个全新输入、66,000 个可缓存 token、8,400 个输出 token。这个工作负载刻意只缓存静态前缀；真实 agent 还会累积对话历史，让缓存份额更高，所以下表按保守情形处理。</p>
-<table><thead><tr><th><strong>模型</strong></th><th><strong>缓存输入</strong></th><th><strong>全新输入</strong></th><th><strong>输出</strong></th><th><strong>每 1,000 个任务</strong></th></tr></thead><tbody><tr><td><a href="https://deepinfra.com/google/gemma-4-31B-it">gemma-4-31B-it</a></td><td>$8.58</td><td>$3.12</td><td>$3.19</td><td><strong>$14.89</strong></td></tr><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.8-27B">Qwen3.8-27B</a></td><td>$2.64</td><td>$9.60</td><td>$25.20</td><td><strong>$37.44</strong></td></tr><tr><td><a href="https://deepinfra.com/Qwen/Qwen3.8-2.4T-A95B">Qwen3.8-2.4T-A95B</a></td><td>$13.20</td><td>$48.00</td><td>$50.40</td><td><strong>$111.60</strong></td></tr></tbody></table>
-<p>估算基于 DeepInfra 实时费率与上述工作负载。你的轮次数才是关键变量。</p>
-<p>两点结论浮现：在推理模型上，输出才是决定账单的通道，而缓存只碰得到另一条通道；以及这个 27B 走完同一条轨迹，只花其 2.4T 同门（在编码榜上高六名）三分之一的钱。更便宜的那一级能否一轮关掉你的任务，是一个测量问题，不是假设——这正是下面的插桩要做的。</p>
-<p>别猜，装上仪表：</p>
-<pre><code>PRICES = {  # USD per million tokens, live DeepInfra rates
-    &quot;Qwen/Qwen3.8-27B&quot;: {&quot;fresh&quot;: 0.40, &quot;cached&quot;: 0.04, &quot;out&quot;: 3.00},
-    &quot;google/gemma-4-31B-it&quot;: {&quot;fresh&quot;: 0.13, &quot;cached&quot;: 0.13, &quot;out&quot;: 0.38},
-}
-
-def turn_cost(model: str, usage) -&gt; float:
-    p = PRICES[model]
-    details = getattr(usage, &quot;prompt_tokens_details&quot;, None)
-    cached = getattr(details, &quot;cached_tokens&quot;, 0) or 0
-    fresh = usage.prompt_tokens - cached
-    return (
-        fresh * p[&quot;fresh&quot;] + cached * p[&quot;cached&quot;] + usage.completion_tokens * p[&quot;out&quot;]
-    ) / 1_000_000
-
-spent, turns = 0.0, 0
-for turn in run_agent(task):  # one chat.completions call per turn
-    spent += turn_cost(turn.model, turn.usage)
-    turns += 1
-
-print(f&quot;{task.id}: {turns} turns, ${spent:.4f}, ${spent / max(turns, 1):.4f} per turn&quot;)</code></pre>
-<h2>每一个&quot;能在家里跑&quot;声明背后的量化星号</h2>
-<p>拿到第九名的那个 Qwen3.8-27B 是一个 55.58 GB 的 BF16 checkpoint。权重并不是账单的全部：它的 64 层里只有 16 层跑全量 attention，这让 KV cache 在完整 262K 上下文下只有 16 GiB，而<a href="https://kingy.ai/blog/qwen3-8-27b-specs-benchmarks-local-hardware">实际下限约在 67.8 GiB</a>——意味着一张 80GB 卡或几张较小的卡拼起来。能塞进 24GB 消费级 GPU 的构建是 17.11 GB 的 Q4_K_M GGUF，而且很多人跑得更小。</p>
-<p>这个区别在本地推理成本的论据里做着安静的工作。一份<a href="https://www.youtube.com/watch?v=3WbXyUolFA0">被广泛转载的实测流程</a>测得 Q3 量化在消费级卡上 41 tokens/秒，按 250W、每千瓦时 21 美分计价，得出约 0.37 美分/百万输出 token，对比 $3.00 的端点费率。算术成立。范围却很窄：只算电费、一次一条流、跑在一个体积约为得分文件四分之一大小的模型上。</p>
-<p>量化损失是可测量的，不是理论。同一份实测流程把 Kullback-Leibler 散度——量化模型的 next-token 分布与原版的差距——对照社区构建的文件大小画了曲线。Q3_K_M 落在 0.07 附近，约是上一档 Q4 构建散度的三倍。那个模型在负载下会做出不同的选择，把它称作&quot;打折的同一份权重&quot;低估了改变的程度。</p>
-<p>这就是价格表中那个&quot;未标注&quot;格子值得多看一眼的原因。服务精度是一个你在把流量指过去之前可以逐模型核查的变量。</p>
-<h2>在小型开放权重模型的层级之间路由</h2>
-<p>一旦&quot;每个任务的成本&quot;成为指标，模型选择就从应用层决策变成逐步骤决策。两个杠杆干掉了大部分工作：上下文缓存与模型路由。</p>
-<p>上下文缓存优先。DeepInfra 自动匹配 prompt 前缀并在 usage 对象里报告命中，你要做的是编排消息列表、让稳定的内容排前面。在 Qwen3.8-27B 上，这把 $0.40 的输入变成 $0.04，而每轮重发工具 schema 的 agent 是最受益的形态。</p>
-<pre><code>SYSTEM = TOOL_SCHEMAS + HOUSE_STYLE  # stable for the life of the run
-
-resp = client.chat.completions.create(
-    model=&quot;Qwen/Qwen3.8-27B&quot;,
-    messages=[
-        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: SYSTEM},  # stable prefix first
-        *history,                               # then whatever changed
-        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: step},
-    ],
-    extra_body={&quot;prompt_cache_key&quot;: f&quot;agent-{task.id}&quot;},
-)
-d = resp.usage.prompt_tokens_details
-print(f&quot;{d.cached_tokens}/{resp.usage.prompt_tokens} prompt tokens came from cache&quot;)</code></pre>
-<p>模型路由次之。从便宜档起步、做校验、只在失败时升级。每一级共享同一个 base URL 和 key，所以一级就是一个字符串：</p>
-<pre><code>LADDER = [
-    (&quot;google/gemma-4-31B-it&quot;, {&quot;reasoning_effort&quot;: &quot;none&quot;}),
-    (&quot;Qwen/Qwen3.8-27B&quot;, {&quot;reasoning_effort&quot;: &quot;medium&quot;}),
-    (&quot;Qwen/Qwen3.8-2.4T-A95B&quot;, {&quot;reasoning_effort&quot;: &quot;high&quot;}),
-]
-
-def solve(messages, passes):
-    for model, opts in LADDER:
-        resp = client.chat.completions.create(
-            model=model, messages=messages, extra_body=opts
-        )
-        answer = resp.choices[0].message.content
-        if passes(answer):
-            return model, answer
-    raise RuntimeError(&quot;no rung produced a valid answer&quot;)</code></pre>
-<p>只有便宜档能足够频繁地达标，这架梯子才划算。多频繁？这是个逐工作负载的测量问题。把每一级完成任务的记录与上一节的逐轮成本一起打点，升级率就变成你能据以行动的数。如果最高级关闭了大多数任务，这架梯子买到的只是延迟，别无其他——那就从最高级起步。反正换一级只值一个字符串的成本，因为三个模型都在同一个 OpenAI 兼容端点后面。DeepInfra 自己的<a href="https://deepinfra.com/blog/openclaw-cost-optimization-cut-api-costs-90-percent">路由与缓存节省拆解</a>为编码智能体走过同一模式，<a href="https://deepinfra.com/blog/qwen-api-pricing-2026-guide">Qwen 价目表</a>则为可能放上梯子的家族其余成员标价。</p>
-<h2>常见问题</h2>
-<h3>Qwen3.8-27B 真的比 Gemma 4-31B 强吗？</h3>
-<p>在编码与智能体工作上，是的。Qwen3.8-27B 报告 <a href="https://llm-stats.com/models/compare/gemma-4-31b-it-vs-qwen3.8-27b">LiveCodeBench v6 得 90.3，Gemma 4-31B 为 80.0</a>，而第 9 与第 80 的对比出自 WebDev 编码榜，不是综合排名。Gemma 4-31B 在 AIME 2026 和 MMLU 上得分更高，每输出 token 还便宜一个数量级。按工作负载选择。</p>
-<h3>我能在 24GB GPU 上跑 Qwen3.8-27B 吗？</h3>
-<p>能，以更低的精度和更短的上下文。Q4_K_M GGUF 为 17.11 GB，在 24GB 卡上还能给 32K 到 64K token 的缓存留出空间。仅完整 BF16 权重就要 55.58 GB，原生 262K 上下文下的 KV cache 再加 16 GiB，把需求推高到约 67.8 GiB。</p>
-<h3>关闭推理会损害回答质量吗？</h3>
-<p>它改变的是模型成为什么。<a href="https://docs.deepinfra.com/chat/reasoning">DeepInfra 的文档</a>指出，禁用推理会让推理模型表现得像标准聊天模型。对分类、抽取和路由，那通常正是你想要的行为，更便宜的账单是白捡的。对多步规划和仓库规模的编码，thinking 正是 Qwen3.8-27B 报告的提升的来源。</p>
-<h3>要做什么才能拿到缓存输入价吗？</h3>
-<p>不用。DeepInfra 上<a href="https://docs.deepinfra.com/chat/prompt-caching">前缀缓存是自动的</a>，无需额外参数。把 prompt 组织成稳定内容在前，然后从 usage 对象读 prompt_tokens_details.cached_tokens 确认命中。可选的 prompt_cache_key 参数能提高相似 prompt 之间的命中率。</p>
-<h3>Qwen3.8-27B 用什么许可证发布？</h3>
-<p><a href="https://huggingface.co/Qwen/Qwen3.8-27B">Apache 2.0</a>，允许商用与自托管。在这个规模档位，这如今已是常态而非例外：今年参数量超 200 亿的 178 个中国发布中，<a href="https://huggingface.co/blog/state-of-open-models-summer-2026">59% 采用 Apache 2.0，22% 采用 MIT</a>。</p>
-<h2>这会如何改变你的模型选择器</h2>
-<p>小型开放权重模型今年缩小了一道真实的差距，而价目表是量它的错误仪器。单 token 价格用激活参数和服务精度设了个下限；需求与工作负载决定下限之上的一切。真正掉下来的是完成一份工作所需的 token 数，而只有当你按任务而非按 token 计量时它才显形。</p>
-<p>把整个规模区间跑在同一个 OpenAI 兼容端点后面，正是让这件事可测量的原因，因为比较两级只值一个字符串的改动。从 <a href="https://deepinfra.com/Qwen/Qwen3.8-27B">Qwen3.8-27B 模型页</a>起步看实时定价，或浏览<a href="https://deepinfra.com/models">开放权重目录</a>看清整架梯子。欢迎到 <a href="mailto:feedback@deepinfra.com">feedback@deepinfra.com</a>、<a href="https://discord.gg/deepinfra">Discord</a> 或 @DeepInfra 告诉我们你的升级率长什么样。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>智能体需要的是运行时边界，而不只是护栏</title>
-      <link>https://deepinfra.com/blog/agent-runtime-boundaries</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/agent-runtime-boundaries</guid>
-      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Agents Need a Runtime Boundary, Not Just Guardrails</description>
-      <content:encoded><![CDATA[<h1>智能体需要的是运行时边界，而不只是护栏</h1>
-<p>AI 智能体早已超越了单纯的模型调用，开始使用工具、API 和执行环境。随着这套技术栈不断壮大，运行时（runtime）成为架构中越来越重要的一环。</p>
-<p>在 DeepInfra，我们的工作是贯穿整个技术栈的：推理、托管智能体（hosted agents）与沙箱（sandboxes）。</p>
-<p>NVIDIA 对这一区分说得很清楚：<strong>harness（执行框架）决定智能体尝试做什么，基础设施决定它能做什么。</strong></p>
-<p>这与我们对智能体基础设施的思考方式直接对应：模型 API、agent harness 与沙箱。</p>
-<h2>DeepInfra 目前运行的是什么</h2>
-<p><a href="https://docs.deepinfra.com/sandboxes/overview"><strong>DeepInfra Sandboxes</strong></a> 使用 Kata Containers，在硬件隔离的 microVM 中运行不可信的智能体代码，每个沙箱都运行自己的内核。</p>
-<p>网络策略在宿主机上、VM 之外强制执行。沙箱内的智能体可以访问公共互联网，但无法触及 DeepInfra 内部基础设施和云元数据服务。由于这些控制位于 VM 之外，一个被误导或被攻陷的智能体无法轻易改掉自己的边界。</p>
-<p>我们的 <a href="https://docs.deepinfra.com/agents/introduction"><strong>Hosted Agents</strong></a> 服务把同样的原则应用于 OpenClaw、Hermes 这类常驻智能体。每个智能体运行在自己的环境中，拥有独立内核，SSH 由用户自己的密钥把关，dashboard 则藏在每个实例专属的私有 TLS URL 之后。</p>
-<p>正因如此，我们把运行时隔离视为模型层面安全策略的必要补充。</p>
-<h2>NVIDIA OpenShell 处于什么位置</h2>
-<p>DeepInfra 是 NVIDIA OpenShell 中的一方（first-party）推理提供方。我们贡献了 DeepInfra provider profile，并被列入 OpenShell 的 provider 文档。</p>
-<p>OpenShell 把同样的安全原则应用到了更高一层。它的网关将凭证与策略保存在智能体环境之外。对于 DeepInfra 推理，API key 绑定到经批准的 DeepInfra 端点，网络与 L7 策略控制同样在智能体之外施加。</p>
-<p>这正是 NVIDIA 在 Open Agent Safety Platform 中所描述的那种分离：独立的智能体沙箱、策略强制执行，以及一个统管网络、凭证、工具和模型端点访问的网关。</p>
-<p>我们与 NVIDIA 在智能体基础设施上的合作还包括 NemoClaw——DeepInfra 是通过 build.nvidia.com 账号关联可用的推理提供方之一，自 2026 年 3 月 GTC 发布以来一直在线运行。</p>
-<p>我们通过社区例会、RFC 讨论以及 PR 和 issue 讨论参与了 OpenShell 社区，并将随着平台的演进持续跟进。我们也在评估 OpenShell 能如何融入 DeepInfra 的智能体与沙箱基础设施。</p>
-<h2>面向智能体基础设施的 NVIDIA Vera CPU</h2>
-<p>运行时隔离是有成本的，而这会改变智能体基础设施的计算负载特征。</p>
-<p>在<a href="https://deepinfra.com/blog/nvidia-vera-cpu-benchmark">我们公开发布的测试</a>中，NVIDIA Vera CPU 在所有测试的工作负载类别中都是最快的架构。在我们 p99 ≤ 6 秒且零错误的 QoS 标准下，Vera 用 20 个物理核支撑了 256 个持续满载的智能体——每个都运行在自己的 microVM 中——而 Intel 现有旗舰平台只能支撑 160–192 个。</p>
-<p>一个更重要的发现是：智能体托管中最大的开销来自隔离层本身，而非 CPU。</p>
-<p>对于不可信智能体，这种隔离不是我们想去掉的东西。CPU 必须在这种隔离开销存在的情况下依然表现出色。</p>
-<p>在我们的测试中，Vera 表现最好。这就是我们围绕 Vera 做规划的原因。</p>
-<h2>通过 OpenShell 运行 DeepInfra 推理</h2>
-<p>我们经过测试的 OpenShell × DeepInfra 集成指南现已发布：</p>
-<p><a href="https://docs.deepinfra.com/integrations/openshell"><strong>DeepInfra + NVIDIA OpenShell 集成指南</strong></a></p>
-<p>该指南演示如何在 OpenShell 沙箱中运行一个以 DeepInfra 为推理提供方的智能体。内容涵盖：锁定 OpenShell 版本、由我们维护的 DeepInfra provider profile、用现有 DeepInfra API key 配置推理、定义一个只允许访问 api.deepinfra.com 而阻断其他目的地的生产级沙箱策略变体，并完整演示了 Hermes Agent 在沙箱内的操作 walkthrough。</p>
-<p>客户在自己的主机上运行 OpenShell，并自行配置模型与沙箱策略。DeepInfra 提供维护中的 provider profile、OpenAI 兼容的 chat 与 embeddings 接口、我们的模型目录以及 API key。</p>
-<p>随着智能体工作负载的增长，我们将持续评估并贡献那些把安全边界置于智能体自身之外的方案。</p>
-<p>对于智能体，护栏固然重要。<strong>但边界终究要靠基础设施来强制执行。</strong></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>AI 模型校准：那个没人优化的基准评测</title>
-      <link>https://deepinfra.com/blog/ai-model-calibration-benchmark</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/ai-model-calibration-benchmark</guid>
-      <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：AI Model Calibration: The Benchmark Nobody Optimizes</description>
-      <content:encoded><![CDATA[<h1>AI 模型校准：那个没人优化的基准评测</h1>
-<p><a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4-Pro">DeepSeek V4 Pro</a> 在 <a href="https://artificialanalysis.ai/#artificial-analysis-intelligence-index">Artificial Analysis Intelligence Index</a> 上得分 42。而在 AA-Omniscience 基准上——它向模型提出高难度事实问题，衡量模型是作答还是承认不确定——V4 Pro 的幻觉率为 95%。也就是说，当 V4 Pro 不知道答案时，大约 100 次里有 95 次它照样瞎猜。GPT-5.6 Sol 在综合智能榜单上以 59 分领跑，同一基准上的幻觉率也有 92.2%（<a href="https://artificialanalysis.ai/evaluations/omniscience">https://artificialanalysis.ai/evaluations/omniscience</a>）。更聪明的模型，编造答案的倾向几乎一样高。</p>
-<p>这些数字在模型评测文章里被提一句，然后在实际的模型选型过程中基本被无视。标准的 AI 评测基础设施奖励&quot;答对&quot;，而不是奖励&quot;知道自己不该答&quot;。一个每题必答、正确率 60% 的模型，得分会高于只回答有信心题目、正确率 80% 的模型——因为在大多数基准上，弃答按答错计分。</p>
-<p>基准评测基础设施优化的是能力上限。而对一大类真实生产用例来说，这恰恰是错的测量目标。</p>
-<h2>校准（calibration）到底是什么意思</h2>
-<p>校准描述的是模型表达的置信度与其实际准确率之间的吻合程度。一个完美校准的模型，如果对一批问题自称 80% 有信心，那么它在这批问题上就应该恰好答对 80%。即内部概率估计与经验结果率一致。</p>
-<p>实践中，校准有两种测量方式。正式的方法使用 Expected Calibration Error（期望校准误差），衡量模型声称的置信度在各置信度分桶上与实际正确率的偏离程度。更偏操作化的方法——AA-Omniscience 采用的就是这种——问一个更简单的问题：当模型面对一个它确实无法凭参数化知识答对的问题时，它是坦白承认，还是生成一个听起来很合理的错误答案？</p>
-<p>AA-Omniscience 的幻觉率也与 Vectara HHEM 这类摘要基准上的幻觉率不同。Vectara 衡量的是&quot;有源文档时的编造&quot;——模型手里有资料却编出资料里没有的内容。AA-Omniscience 衡量的是&quot;无从查证时的过度自信&quot;——模型接触不到答案，必须在承认这一点与胡编之间选择。两者都重要，但描述的是不同的失效模式。DeepSeek V4 Pro 把这一点体现得很清楚：它在 Vectara 有源摘要上得分 8.6%，确实很强；在 AA-Omniscience 上却是 95%。有源可依时忠于原文；无源可依时过度自信。</p>
-<p>检索增强（retrieval grounding）帮不了第二种失效模式，因为模型不知道自己不知道什么。</p>
-<h2>基准评测的盲区</h2>
-<p>驱动模型选型的大多数基准测试的是模型能否给出正确答案，而不是模型能否识别出自己给不出。MMLU、GPQA Diamond、SWE-bench、LiveCodeBench、MATH-500 全是能力基准。自信地给出错误答案的模型，和正确弃答的模型，都会被判错。弃答得不到任何加分。</p>
-<p>推理模型让情况更糟。<a href="https://arxiv.org/pdf/2606.11211">2026 年 6 月发表的一项研究</a>发现，推理模型在 ARC-Challenge、MMLU 这类老的、已饱和的基准上校准良好，但在 StrategyQA、GPQA、SimpleQA 这类更新更难的基准上校准很差。机制很直观：在模型拥有可靠参数化知识的基准上，思维链（chain-of-thought）过程产出既自信又准确的输出；在模型真正没把握的基准上，同样的过程产出听起来自信的推理，最终抵达一个编造的答案。延长思考让输出更流畅，而不是更诚实。</p>
-<p>AA-Omniscience 是少数系统性度量这一失效模式的尝试之一。它的结构：1,000 道高难度事实问题，每道题都不允许使用检索工具。模型可以作答，也可以弃答。答对得分，答错扣分，弃答记零分。幻觉率衡量的是：在它答错的问题里，模型尝试作答（而非弃答）的比例。一个永远弃答的模型幻觉率为 0%，但总分也是 0。其指数得分把准确率和校准度放在一起平衡。</p>
-<h2>模型的真实分布</h2>
-<table><thead><tr><th><strong>模型</strong></th><th><strong>AA Intelligence Index</strong></th><th><strong>AA-Omniscience 幻觉率</strong></th><th><strong>AA-Omniscience 准确率</strong></th><th><strong>校准姿态</strong></th></tr></thead><tbody><tr><td>Claude Opus 4.8</td><td>56</td><td>35.9%</td><td>46.6%</td><td>少答少错，不确定时弃答</td></tr><tr><td>Claude 4.1 Opus</td><td>n/a</td><td>0%</td><td>总体较低</td><td>对不确定的问题完全拒答（发布时快照）</td></tr><tr><td>Claude Fable 5</td><td>63</td><td>~63.6%</td><td>61%</td><td>指数分更高，幻觉率却高于 Opus 4.8</td></tr><tr><td>Kimi K3</td><td>57</td><td>~53%（估）</td><td>~47.6%</td><td>中等过度自信，介于 Anthropic 与 DeepSeek 梯队之间</td></tr><tr><td>Grok 4.6</td><td>n/a</td><td>34.3%</td><td>~35%</td><td>迄今校准最好的 Grok，较 Grok 4.5 的 54% 大幅下降</td></tr><tr><td>GPT-5.6 Sol</td><td>59</td><td>92.2%</td><td>未公布</td><td>高度过度自信，约 10 次未知中猜 9 次</td></tr><tr><td>DeepSeek V4 Pro</td><td>44</td><td>94%</td><td>未公布</td><td>近乎完全过度自信，无论懂不懂都答</td></tr><tr><td>DeepSeek V4 Flash</td><td>n/a</td><td>96%</td><td>未公布</td><td>幻觉率比 V4 Pro 还高</td></tr><tr><td>Command A+</td><td>n/a</td><td>14.2%</td><td>未公布</td><td>AA-Omniscience 榜单头名，为有依据的企业场景而建</td></tr></tbody></table>
-<p>上表展示了校准研究中反复出现的一个模式：模型的智能指数得分与其校准度之间没有可靠的相关性。Claude Fable 5 是 AA Intelligence Index 上得分最高的模型，但它在 AA-Omniscience 上的幻觉率高于指数分低 7 分的 Claude Opus 4.8。GPT-5.6 Sol 指数 59，幻觉率 92.2%；Opus 4.8 指数 56，遇到不知道的答案时承认不确定的频率是前者的 2.5 倍以上。</p>
-<p>GPT-5.x 系列的趋势尤其明显。随着 GPT-5.5 和 5.6 家族智能指数攀升，校准反而恶化。GPT-5.6 三个档位现在在 AA-Omniscience 上的幻觉率全部超过 87%。带来准确率提升的那些训练改动，并没有同时带来更好的不确定性意识——它们可能恰恰是以牺牲后者为代价的。</p>
-<p>Anthropic 的做法是数据中最清晰的反例。Claude 4.1 Opus 发布时靠拒绝回答不确定问题做到了 0% 幻觉率——这是一种极端的校准姿态，用更低的覆盖率换取所答题目的近零编造。Opus 4.8 从这一极端略微回撤到 35.9%，但在 Omniscience Index 所衡量的准确率-校准权衡上仍处于前沿梯队领先地位。Command A+ 以 14.2% 领跑原始幻觉率榜单，体现了 Cohere 对有依据企业应用的明确定位。</p>
-<p>2026 年 6 月那项推理模型研究在这里同样得到印证。<a href="https://deepinfra.com/moonshotai/Kimi-K3">Kimi K3</a> 始终以最大推理强度运行，幻觉率约 53%，落在 Anthropic 与 DeepSeek 两个集群之间。DeepSeek V4 Pro 的推理模式相对其非推理模式并没有改善 AA-Omniscience 上的校准——V4 Pro 和 V4 Flash 都落在 94%–96% 区间。</p>
-<h2>为什么这在生产中重要</h2>
-<p>把校准作为选型标准的实际理由，取决于你的应用如何对待一个错误答案。在输出可立即验证的用例里，自信给出错误答案的模型是麻烦而非风险：测试套件会失败，schema 校验会拒绝输出，重试循环会兜住错误。模型爱猜的毛病被它周围的架构化解了。</p>
-<p>但在输出被不经独立验证就信任的用例里，局面完全不同：生成直接呈现给用户的客服回复的研究综合工具、产出用于报告和演示的摘要、生成合同条款或法规分析的法律起草助手、回答员工关于公司制度提问的内部知识工具。在所有这些场景里，编造一个听起来很合理答案的模型，比坦承&quot;我不知道&quot;的模型更危险——因为编造看起来就像真答案。</p>
-<table><thead><tr><th><strong>用例</strong></th><th><strong>校准优先级</strong></th><th><strong>原因</strong></th><th><strong>建议做法</strong></th></tr></thead><tbody><tr><td>客服（无人值守）</td><td>关键</td><td>自信的错误答案会在人工纠正前就被用户照着执行</td><td>校准优先；不确定时升级人工</td></tr><tr><td>研究综合</td><td>关键</td><td>编造的论断会传播进下游文档并不断放大</td><td>校准优先；配合检索增强</td></tr><tr><td>法律与合规起草</td><td>关键</td><td>引用错误法条、编造判例已真实出现在法庭文件中</td><td>校准优先；必须人工审核</td></tr><tr><td>智能体流水线（无人值守）</td><td>高</td><td>早期步骤的错误会层层放大；一个错误的检索步骤会污染整条答案链</td><td>校准重要；在模型调用之间加入验证步骤</td></tr><tr><td>专有文档上的 RAG</td><td>中</td><td>检索增强可降低 75–90% 的幻觉；校准在检索失效时最关键</td><td>检索优先；用校准补空缺</td></tr><tr><td>竞赛编程 / 数学</td><td>低</td><td>输出可验证；测试套件和判题机能立刻抓出错误</td><td>智能指数优先；校准次之</td></tr><tr><td>带评审的代码生成</td><td>低到中</td><td>评审者能抓到大部分错误；校准主要在安全关键路径上重要</td><td>智能指数优先</td></tr></tbody></table>
-<p>法律场景值得单独点名，因为其下行风险有据可查。<a href="https://www.damiencharlotin.com/hallucinations/">截至 2026 年 8 月，至少有 1,963 起案件</a>中出现了 AI 生成的幻觉被提交进法律文件。最常见的模式是引用编造：模型凭空造出一个看起来合理的判例引用，律师没有核实，编造的引用就这样进入了法庭文件。一个说&quot;我无法核实这条引用&quot;的模型本可以避免这场失败；一个自信给出错误引用的模型恰恰制造了它。</p>
-<p>客服则是量更敏感的失效场景。一个日均 10,000 会话的客服智能体，如果对答不上的问题有 94% 的幻觉率，每天都会产出数量可观的自信错误答案。如果这些答案未经限定就呈现给客户，它们就会被当作权威信息接受。损害不只是单个客户的不满，而是智能体客服的规模所系统性放大成的错误信息。</p>
-<h2>为什么基准评测生态没有跟上</h2>
-<p>能力基准与校准度量之间的缺口主要不是技术问题。测量校准早就是被充分理解的：AA-Omniscience 在做，TruthfulQA 和 SimpleQA 测量相邻属性，Expected Calibration Error 在机器学习文献中也是几十年的标准指标。</p>
-<p>缺口是个激励问题。实验室为&quot;被比较的东西&quot;做优化。AI Index、Chatbot Arena、LMSys 榜单，以及产品发布报道里嵌入的基准，测量的全是能力。某个模型拿下新的 SWE-bench Verified 分数会上头条；某个模型在 AA-Omniscience 上取得更好的准确率-幻觉比则不会——因为还没人想出怎么把&quot;这个模型更常说自己不知道&quot;包装成激动人心的发布话术。</p>
-<p>还有第二种动力：模型提供方想要高基准分数，而在任何把弃答记为答错的基准上，弃答都会拉低分数。一个被训练成从不弃答的模型，在多数能力基准上都会比一个被训练成对不确定问题弃答的模型得分高——即使后者在生产中更有用。这种训练压力植根于 RLHF 流程：奖励模型从中学习的人类偏好评分，往往更偏爱听起来自信的答案，而不是诚实承认不确定。</p>
-<p><a href="https://arxiv.org/pdf/2507.16806">2026 年 4 月发表的 MIT 研究</a>提出训练模型显式地对自身不确定性进行推理，而不是把正确性当作二元结果。结果显示在所测任务上校准有可度量的改善且不损失准确率。这是有前景的工作，但尚未体现在任何生产模型中。</p>
-<h2>今天你能做什么</h2>
-<p><strong>检索增强是最有效的单项干预。</strong> 在有源摘要基准上，RAG 带来的幻觉降低幅度为 75% 到 90%。当答案就摆在模型面前时，参数化过度自信基本不再相关，失效模式转移到对给定上下文的忠实度上——那是个更容易处理的问题。对知识密集型应用，先搭检索增强，比换一个校准更好的模型更有效。</p>
-<p><strong>显式的不确定性指令会改变模型行为。</strong> 提示模型显式表达不确定性，在部分模型和基准上能带来可度量的校准改善，尽管不能完全弥合差距。经过 RLHF 训练的模型对不确定性诱导提示的响应优于基座模型，因为偏好训练让它们对&quot;答案何时不确定&quot;有某种内部表征。在高强度推理模式下运行的推理模型上效果更小——其思维链过程无论提示怎么写都倾向于生成自信的输出。</p>
-<p><strong>对无人值守的智能体，升级人工的通道比模型选择更重要。</strong> 在客服及其他无人值守应用中，更关键的架构问题不是哪个模型幻觉率最低，而是模型出错时会发生什么。一个幻觉率 60%、但对每个不确定查询都转交人工审核的模型，其用户可见错误数会少于一个幻觉率 35%、却没有升级通道的模型。</p>
-<p><strong>按验证成本而非仅按任务复杂度路由。</strong> 输出可立即验证的任务，交给能可靠处理它们的最便宜模型；输出将被不加验证直接采信的任务，交给你愿意为之付费最校准的模型。这不同于按&quot;执行 vs 规划&quot;讨论的两层架构路由标准——这是按&quot;出错的代价&quot;路由，而不是按&quot;任务的难度&quot;。</p>
-<h2>关于模型选型的论点</h2>
-<p>智能指数分数和校准分数衡量的是不同的东西，而对特定一类应用来说，二者并不相关。因为某个模型在 GPQA Diamond 上分数最高，就把它选作客服智能体或研究综合工具——这是错误的决策标准。</p>
-<p>对这些应用，正确的问题不是&quot;哪个模型最聪明&quot;，而是&quot;哪个模型对自己不知道的东西最诚实&quot;。数据给出了初步答案：Anthropic 的模型系统性地为这一属性投入，代价是牺牲一些覆盖率；Command A+ 以面向有依据企业应用的姿态领跑原始幻觉率榜单；Grok 4.6 相比 4.5 有实质改善；DeepSeek V4 家族和 GPT-5.6 家族则落在谱系另一端——能力极强，自信过度。</p>
-<p>这种权衡是有记录的，不是猜测。在错误答案会被测试套件抓出的竞赛编程智能体上用 V4 Pro，是明智的选择——输出可立即验证时，它 94% 的幻觉率无关紧要。但在没有检索增强兜底的情况下，把同一个模型用于无人值守客服智能体或研究综合工具，就是另一个性质的决定，而这个决定智能指数捕捉不到。</p>
-<p>校准是那个没人优化的基准评测。但它不是那个没人需要的基准评测。</p>
-<p><strong>DeepInfra 上的模型</strong></p>
-<p>DeepInfra 同时服务校准谱系的两端。对于&quot;自信的错误答案是第一失效模式&quot;的应用，选 <a href="https://deepinfra.com/anthropic/claude-opus-4-8">Claude Opus 4.8</a>；对于输出可验证、成本效率优先的高吞吐工作负载，选 DeepSeek V4 Pro。所有模型都通过同一个 OpenAI 兼容端点访问，所以在你的具体任务分布上测试校准差异，只是改一个模型参数，而不是改一次集成。</p>
-<p>浏览全部模型：<a href="https://deepinfra.com/models">deepinfra.com/models</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Token 冗长度是新的定价之战</title>
-      <link>https://deepinfra.com/blog/token-verbosity</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/token-verbosity</guid>
-      <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Token Verbosity Is the New Pricing War</description>
-      <content:encoded><![CDATA[<h1>Token 冗长度是新的定价之战</h1>
-<p>每一轮新模型发布，我们都看到新的基准声明，以及新的为其 token 价值辩护的说辞。然而，当团队针对真实工作负载比较模型时，仅看标价会掩盖每个任务在&quot;模型需要付出多少工作量才能解决任务&quot;上的巨大差异。</p>
-<p>更便宜的 token 未必带来更低的成本。那么，究竟什么在决定运行一个模型的真实成本？</p>
-<p>本文将探讨 token 消耗的隐藏成本——推理、重试与任务效率如何影响总成本——并讨论 DeepInfra 如何帮助管理和优化这些因素。</p>
-<h2>定价页上从不写出的隐藏成本</h2>
-<p>按 token 计费不会告诉你一个任务实际要花多少钱。</p>
-<p>单 token 更便宜的模型，运行起来未必更省。从一个模型拿一百万 token，产出的文本量未必和另一个模型一样，完成的任务也未必相同。这就是为什么&quot;每 token 单价&quot;作为独立的成本度量如此不中用。</p>
-<p>但 token 消耗制造了隐藏的成本差异：一个更便宜的模型如果需要试好几次，可能反而更贵；一个更贵的模型如果一次做对，可能反而更经济。</p>
-<p>真实成本的取决于定价页上印着的那个数字之外的东西——一个模型用多少 token、多高效地完成任务、多常成功。因此，两个 token 价格相近的模型，真实世界的成本可以天差地别。</p>
-<h2>Kimi K3 与 DeepSeek V4 Pro：token 用量的基准观察</h2>
-<p>在同一基准上评测时，模型间的 token 消耗可以有天壤之别。</p>
-<p>在 Artificial Analysis 评测期间，Kimi K3 生成了 <a href="https://deepinfra.com/blog/kimi-k3-model-analysis-api-provider-comparison">1.3 亿输出 token</a>，是可比开放权重模型中位数 6,300 万的两倍多。Kimi K3 永远开启的推理特性是其异常高的 token 用量的成因之一。</p>
-<p>Kimi K3 也处在中端到高端的定价带：输出每百万 token $15，而开放权重模型的中位数是 $10。把它的高 token 消耗加进成本方程，每一次基准运行都变得格外昂贵。</p>
-<p>DeepSeek V4 Pro 呈现的是同一问题的另一面。在其 Think Max 模式下，它生成了约 <a href="https://deepinfra.com/blog/deepseek-v4-pro-model-overview">1.9 亿输出 token</a>，是可比开放权重模型 4,700 万中位数的四倍多。按每百万输出 token $2.60 的费率，这笔用量约产生 $494 的输出 token 费用，而中位用量只需约 $122。</p>
-<p>然而 DeepSeek V4 Pro 的输出单价远低于 Kimi K3。即便如此，它的高 token 消耗依然推高了整体运行成本。这恰恰说明单看 token 价格多么容易误导：一个模型可以单 token 更便宜，却要消耗多得多的 token 才能完成一个任务。因此，生成的 token 数量本身，就在改变运行一个模型的经济学。</p>
-<h2>为什么有些模型要多用这么多 token</h2>
-<p>模型解决同一个任务所用 token 的数量可以差异巨大。几个因素共同造成这种差异：</p>
-<h3>推理深度影响 token 用量</h3>
-<p>推理模型会动用额外的 token 在产出最终答案之前推演问题。这些 reasoning token 在最终回复里看不见，但照样计入输出用量和成本。</p>
-<p>更高的推理强度会推高 token 消耗和响应延迟。一个简短的可见答案，实际用掉的 token 可能远超其字面显示的体量。</p>
-<h3>分词器改变文本的计数方式</h3>
-<p>token 用量还取决于模型如何把文本切分成 token。一个 token 可以是一个字符、一个词的一部分、整个词或标点。</p>
-<p>同一段文本，因模型、编码和语言的不同而产生不同的 token 计数。空格、大小写、拼写等因素也决定文本如何被切分。</p>
-<h3>模型规模不是唯一因素</h3>
-<p>单看模型规模说不出一个任务会消耗多少 token。token 用量取决于输入、生成的输出、reasoning token，以及模型处理任务的方式。</p>
-<p>输入 token 的数量并不能预测模型会生成多少输出 token。token 消耗取决于工作负载和模型的行为，而不只是模型的大小。</p>
-<h2>token 用量何时演变成推理问题</h2>
-<p>token 消耗影响完成任务所需的计算工作量。生成更多输出 token 需要更多计算，但这个关系不是线性的。输入长度、上下文、媒体类型、推理深度和具体用例，都会影响一个任务需要的计算量。</p>
-<p>模型也可能在产出最终回复之前用额外的 token 做推理。创建一小套预定义标签通常需要的 token 更少；而从图像化文档生成完整 schema，则要求模型分析多得多的信息。模型越是需要分析输入或推演任务，推理过程就可能越吃计算。</p>
-<p>输出生成还造成延迟，因为输出 token 是逐个顺序生成的：每个新 token 都依赖它之前生成的 token，长输出因此可能显著耗时。输入处理的工作方式不同——大部分输入可以并行处理。这让输出长度成为推理延迟中的重要因素，对生成长回复或需要大量推理的工作负载尤其如此。</p>
-<p>更吃重的工作负载可能需要更多计算资源并抬高推理成本。既然工作负载复杂度各异，团队就需要手段来控制每个请求要消耗多少计算。推理基础设施可以通过 reasoning effort、上下文缓存和模型选择提供这些控制。</p>
-<p>这些控制能在保留复杂任务所需资源的同时，削减不必要的计算。目标不是单纯少生成 token，而是把计算量与任务的真实需求对齐。</p>
-<h2>DeepInfra 在哪里改变推理经济学</h2>
-<p>既然我们已经理解推理经济学不只是挑每 token 单价最低、或平均单次最便宜的模型，下一个问题就是：如何控制决定推理实际成本的那些因素——你发多少上下文、模型推理多少、每个请求被多高效地服务。</p>
-<p><a href="https://docs.deepinfra.com/?utm_source=chatgpt.com#why-deepinfra">DeepInfra</a> 是一个 AI 推理云平台，为团队提供 <a href="https://docs.deepinfra.com/models">200 多个开源模型</a>的访问，以及私有 GPU 部署。它赋予开发者对这些因素的可见性与控制权，帮助其有效管理推理任务的成本与性能。</p>
-<p>以下能力展示了团队如何掌控推理经济学：</p>
-<h3>Prompt 缓存降低重复输入的成本</h3>
-<p>许多工作负载在每个请求里重复发送同样的上下文：一段很长的 system prompt、一个大文档，或一组固定的 few-shot 示例。</p>
-<p>DeepInfra 的 prompt 缓存在 prompt 开头与某个已缓存前缀匹配时复用 <a href="https://docs.deepinfra.com/chat/prompt-caching">key-value（KV）</a>缓存，避免重算已缓存的部分，从而缩短首 token 时间并降低成本。</p>
-<p>当同一个前缀出现在许多请求的开头，这些 token 就能以显著更低的成本被服务。这让缓存对反复发送相同 system prompt、文档或其他静态上下文的工作负载格外有用。</p>
-<p>Prompt 缓存在支持的模型上自动生效。团队把稳定内容放在 prompt 开头、让前缀在各请求之间保持完全一致，就能拿到最多收益。</p>
-<h3>请求级成本可见性展示真实支出</h3>
-<p>DeepInfra 的 <a href="https://docs.deepinfra.com/quickstart">API 响应</a>中包含 prompt token、completion token、总 token 与估算成本。</p>
-<p>这为团队提供了推理用量的请求级视图：能看出成本究竟来自大输入、长输出，还是两者皆有。对上下文随时间增长、或智能体为完成一个任务发起多次调用的工作负载，这一点很重要。</p>
-<p>团队可以用这种可见性跨模型、跨工作负载比较真实的请求成本；它也简化了识别高成本请求、寻找削减不必要 token 用量的机会。</p>
-<h3>推理控制让开发者用深度换成本</h3>
-<p>DeepInfra 的 <a href="https://docs.deepinfra.com/chat/reasoning">reasoning_effort</a> 参数控制模型做多少推理：档位更高意味着更深的推理、更多输出 token 和更高延迟，也可能抬高推理成本。</p>
-<p>开发者可以按任务设置推理强度：复杂的数学、逻辑和编程问题用高档；简单问答、翻译、摘要可以用低档甚至完全关闭推理。成本敏感的工作负载用 none 或 low 来减少不必要的推理。</p>
-<p>团队也可以直接按工作负载在推理模型与非推理模型之间选择。</p>
-<h3>实时推理指标展示服务效率</h3>
-<p>DeepInfra 提供<a href="https://docs.deepinfra.com/api-reference/logs-%26-metrics/get-live-metrics">实时推理指标</a>，包括 tokens_per_second、time_to_first_token、requests_per_second。这些指标刻画服务性能的不同侧面：每秒 token 衡量生成吞吐；首 token 时间展示生成开始得多快；每秒请求数展示部署正承载多少请求流量。</p>
-<p>对于独享部署，你还会收到平均首 token 时间、平均每 token 时间、请求数、输入输出 token 数、总推理时间和错误率等指标。</p>
-<p>这些指标为基于 token 的成本补充了语境：团队能看到一个部署处理了多少流量、处理得多高效。这很重要，因为推理成本不仅取决于每请求的 token 数，还取决于每天跑多少请求、以及工作负载被服务得多高效。</p>
-<h2>最后的话</h2>
-<p>一个更贵但话少的模型，最终可能整体更便宜——而没有任何定价页会展示这一点。更值得盯的指标是&quot;每成功完成一个任务的成本&quot;，而不是&quot;每百万 token 的价格&quot;。</p>
-<p>DeepInfra 是帮助团队优化成本、延迟、吞吐与可扩展性的推理伙伴。它为开发者提供管理与设计所需的一切控制与可见性，让推理成本被更有效地驾驭，让方案贴合你的优先级。</p>
-<p><a href="https://deepinfra.com/models">探索 DeepInfra 的模型</a>，比较定价、token 用量与推理性能，为你的工作负载挑选在成本、推理深度与性能之间取得正确平衡的模型。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>GLM-5.3-Flash 定价、提供方与成本</title>
-      <link>https://deepinfra.com/blog/glm-5-3-flash-pricing-providers-cost</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-flash-pricing-providers-cost</guid>
-      <pubDate>Thu, 24 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：GLM-5.3-Flash Pricing, Providers &amp; Cost</description>
-      <content:encoded><![CDATA[<h1>GLM-5.3-Flash 定价、提供方与成本</h1>
-<p><a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">GLM-5.3-Flash</a> 是 Z.ai 在 GLM-5 家族下的模型，于 2026 年 8 月 26 日发布。它是一个原生多模态模型，接受文本和图像输入（包括 <a href="https://openrouter.ai/z-ai/glm-5.3-flash">OpenRouter</a> 在内的部分列表还注明支持视频），输出为文本。Artificial Analysis 与 DeepInfra 都把它描述为 320B 参数的 mixture-of-experts 模型、每次推理激活 18B 参数；DeepInfra 的列表还注明 fp4 精度。模型以开放权重发布于 <a href="https://huggingface.co/zai-org/GLM-5.3-Flash">Hugging Face</a>，采用 MIT 许可——这对日后可能想自托管的团队来说，改变了自建与外购的对话格局。</p>
-<p>让 GLM-5.3-Flash 脱颖而出的是，它的经济性不是以牺牲能力换来的。Artificial Analysis 给它 Intelligence Index 42 分（远高于同类开放权重模型 18 的中位数）；OpenRouter 引用的 Artificial Analysis 数据为 41.8，同时给出 Coding Index 71.5、Agentic Index 50.9。它还支持大上下文窗口：Artificial Analysis 与 DeepInfra 标为 1M tokens，OpenRouter 上为 1,310,720 tokens。</p>
-<p>对开发者和 ML 团队来说，实际问题不是模型有没有意思，而是它在哪儿运行才在运维上说得通。它的 API 可得性很广：Artificial Analysis 记录 20 个提供方，OpenRouter 上 31 个，加上 DeepInfra 的公有和私有部署路径。需要一开始就明白的权衡是：GLM-5.3-Flash 便宜，但也明显慢且啰嗦——Artificial Analysis 测得输出 55.9 tokens/秒（同类中位数 85.4），评测期间消耗 1.8 亿输出 token（中位数 1.4 亿）。如果你对成本敏感、在做编码智能体，或规划上下文长度和缓存定价很重要的 RAG 与文档密集系统，这个模型值得一份认真的定价审查，而不是匆匆一瞥。</p>
-<h2><strong>GLM-5.3-Flash 执行摘要</strong></h2>
-<p>对一个大型开放权重推理模型来说，GLM-5.3-Flash 所处的价格带竞争激烈得不同寻常。标准定价为每 1M tokens 输入 $0.15 / 输出 $0.50；<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a> 挂出 $0.075 / $0.25 / 缓存 $0.015 的折扣价；<a href="https://openrouter.ai/z-ai/glm-5.3-flash">OpenRouter</a> 上各家提供方价格从约 $0.045 / $0.14 / $0.01 到最高 $0.30 / $1.00 / $0.03 不等。它最适合这样一类开发者：要构建编码智能体、长上下文助手和文档密集系统，希望拥有开放权重、多模态支持，并能在 DeepInfra、OpenRouter 路由提供方与直连 Z.ai 之间自由选择。</p>
-<table><thead><tr><th><strong>最适合</strong></th><th><strong>提供方推荐</strong></th><th><strong>原因</strong></th></tr></thead><tbody><tr><td>最低价格/成本敏感工作负载</td><td>DeepInfra</td><td>DeepInfra 挂出研究资料中明确标注的最低公开折扣价之一：每 1M tokens 输入 $0.075、输出 $0.25、缓存输入 $0.015</td></tr><tr><td>RAG、文档密集或高吞吐用例</td><td>DeepInfra</td><td>DeepInfra 把折扣定价与公共 API、私有部署选项、JSON 输出、function calling、多模态输入和约 1M token 上下文窗口结合在一起</td></tr><tr><td>上手最容易/最快跑通第一个调用</td><td>DeepInfra</td><td>DeepInfra 提供公共端点和交互式 demo 界面，是一个明确的低摩擦起点</td></tr><tr><td>专有或托管模型访问</td><td>Z.ai API</td><td>Artificial Analysis 基于 Z.ai 自家 API 报告 3.14 秒首 token 时间，对想从创造者手里拿模型的团队，直连厂商是最干净的选择</td></tr><tr><td>最广的提供方选择与路由灵活性</td><td>OpenRouter</td><td>OpenRouter 为 GLM-5.3-Flash 列出 31 个提供方，并提供 Balanced、Nitro、Floor、Exacto 路由模式，对应不同的价格、速度与工具调用优先级</td></tr><tr><td>最佳的提供方侧延迟与吞吐</td><td>OpenRouter 提供方市场</td><td>OpenRouter 自身数据显示最佳 P50 延迟 0.43 秒、最佳提供方吞吐 117 tokens/秒，但结果因提供方差异很大</td></tr><tr><td>投入前的提供方基准比较</td><td>OpenRouter</td><td>OpenRouter 暴露提供方级别的定价、在线率、可用性、吞吐、TTFT 与基准分数，便于在锁定之前比较 DeepInfra、Baseten、CoreWeave、Crusoe 等</td></tr></tbody></table>
-<h2><strong>Token 与计费方式</strong></h2>
-<p>GLM-5.3-Flash 的 token 定价纸面上简单，实践中很容易被低估。输入 token、输出 token 分开付费，有时缓存输入 token 又是一个价。对这个模型，这种拆分很要紧：输出侧比输入侧贵得多，而且模型据说相当啰嗦。</p>
-<p>Token 是一段文本块，不是一个词。短词可能就是一个 token；长词、标点、代码、JSON 和空白模式的切法各不相同。图像等多模态输入在幕后也会被换算成计费单位，即使各提供方并不总以同样的方式呈现。做预算时唯一稳妥的假设是：长 prompt 要钱，长回答更贵，重复上下文则可能便宜也可能昂贵，取决于缓存行为。</p>
-<table><thead><tr><th><strong>Token 类型</strong></th><th><strong>是什么</strong></th><th><strong>为什么重要</strong></th></tr></thead><tbody><tr><td>输入 token</td><td>你的 prompt、system 消息、聊天记录、工具 schema、检索到的文档以及发给模型的一切文本</td><td>每个请求的基础成本。对 GLM-5.3-Flash，输入相对便宜，利好长上下文与 RAG 工作负载</td></tr><tr><td>输出 token</td><td>模型生成回来的一切：答案、代码、推理、JSON、工具参数、摘要</td><td>成本容易在这里跳升。GLM-5.3-Flash 的输出价是输入的 3 倍多，而且据说啰嗦，放任的 prompt 能很快变贵</td></tr><tr><td>缓存输入 token</td><td>提供方识别出并缓存供给、不按全额输入价计费的复用 prompt 内容</td><td>这是让重复大 prompt 可行的杠杆。如果你的应用复用 system prompt、长指令或稳定的文档前缀，缓存定价能实质性削减支出</td></tr></tbody></table>
-<p>Z.ai 标准定价中 GLM-5.3-Flash 常见挂出的费率：</p>
-<ul><li>输入：每 1M tokens $0.15</li><li>输出：每 1M tokens $0.50</li><li>缓存输入：每 1M tokens $0.03，有折扣时更低</li></ul>
-<p>实际解读：输入便宜到让大上下文 prompting 变得现实；输出是成本风险所在，因为它是输入费率的 3 倍多；对 agent 循环、长 system prompt 和重发大共享上下文的 RAG 流水线来说，缓存极其重要。</p>
-<p>Artificial Analysis 报告 Z.ai API 有 83% 缓存折扣，并按缓存命中/输入/输出 7:2:1 的配比算得 $0.10/1M tokens 的混合费率。这个混合数有用，因为它反映生产系统的常见形态：重复的指令、重复的对话脚手架、稳定的检索上下文前缀，加上相对少量的新生成输出。</p>
-<p>麻烦在于 GLM-5.3-Flash 被报告为非常啰嗦：Artificial Analysis 说它评测期间生成了 1.8 亿输出 token，同类模型中位数为 1.4 亿。如果你不限制补全长度、不收紧 prompt、不控制工具和结果的格式，输出支出能把便宜输入的收益抹干净。</p>
-<p>对该模型的构建者来说，token 纪律比平常更重要：</p>
-<ul><li>设置保守的 max_tokens</li><li>尽可能优先使用结构化输出</li><li>避免索要 chain-of-thought 式的长篇大论</li><li>保持工具 schema 紧凑</li><li>采用对缓存友好的 prompt 布局</li><li>聊天记录不再有帮助时果断裁剪</li></ul>
-<h2><strong>改变 token 成本的提供方差异</strong></h2>
-<p>GLM-5.3-Flash 的 token 账本取决于你在哪里运行它。模型本身一样，但提供方的定价、缓存处理和路由行为对账单的影响，比任何微小的基准差距都大。</p>
-<table><thead><tr><th><strong>提供方路径</strong></th><th><strong>token 成本优势</strong></th><th><strong>token 成本劣势</strong></th></tr></thead><tbody><tr><td>DeepInfra</td><td>研究资料中明确标注的最低公开折扣价之一：每 1M tokens $0.075 输入 / $0.25 输出 / $0.015 缓存输入。非常适合能从廉价缓存读取中受益的长上下文应用。公有与私有部署选项对日后想要更多支出控制权的也有帮助</td><td>折扣价未必永久。输出为主的费率结构照旧，输入便宜不会让啰嗦的生成自动变得便宜</td></tr><tr><td>OpenRouter 折扣提供方</td><td>若干 OpenRouter 在列的提供方达到甚至优于 DeepInfra 的折扣价；撰稿时最低挂牌约 $0.045 输入 / $0.14 输出 / $0.01 缓存读取。想用一个 API 又享受降价时很有用</td><td>路由平台会让成本追踪更乱。实际提供方选择、路由模式和回退行为都会影响你付多少、以及这笔支出有多可预测</td></tr><tr><td>OpenRouter 提供方市场</td><td>31 个在列提供方的充分竞争。想寻找性价比甜点位而不是接受某个默认端点时很好</td><td>提供方价格差异巨大：高端（Cloudflare）可达约 $0.30 输入 / $1.00 输出 / $0.03 缓存读取。不锁定提供方、不盯着路由行为，&quot;同一个模型&quot;会悄悄变成一张很不一样的账单</td></tr><tr><td>Z.ai 直连/标准挂牌价</td><td>$0.15 输入 / $0.50 输出的直接参考价。比较路由或折扣选项究竟省没省钱时，是良好基线</td><td>标准价明显高于 DeepInfra 与 OpenRouter 暴露的折扣价。如果成本是第一过滤器，除非你明确需要直连厂商，全额挂牌价很难自圆其说</td></tr><tr><td>自托管开放权重</td><td>模型是 MIT 许可、权重公开可得，你不会被永远锁在按 token 计费的 API 里。在持续高用量或利用率稳定的私有工作负载下，这会开始有吸引力</td><td>token 价格消失了，但基础设施成本登场了。对一个 320B MoE、激活 18B 的模型，托管经济学不是闹着玩的：容量规划、GPU 利用率、延迟调优和运维开销取代了按 token 计费的简单</td></tr></tbody></table>
-<p>提供方相关的成本主线相当清楚：</p>
-<ul><li>DeepInfra 和 OpenRouter 上最便宜的在列提供方，是研究资料里点名的最低公共 API 选项</li><li>OpenRouter 的市场给了灵活性，而灵活性正是账单惊喜溜进来的门缝</li><li>直连标准价应被当作基线，而不是便宜</li><li>自托管只有当你的用量和运维成熟度足以跑赢 API 经济学时才成立</li></ul>
-<p>如果 token 成本优先，大致排序是：打折后的 DeepInfra 或 OpenRouter 折扣挂牌，然后较低价的 OpenRouter 提供方，然后标准挂牌价，最后是在真实利用率分析之后才谈自托管。</p>
-<p>如果你的工作负载输出密集，Prompt 管控比选提供方更重要：模型在大规模地持续生成长答案时，输入省的那几厘钱帮不上忙；在每条提供方路径上，输出 token 仍然是预算漂移最可能的来源。</p>
-<p>如果你的工作负载对缓存友好——重复的 system prompt、长静态指令、可复用的检索上下文、脚手架稳定的 agent 框架——提供方选择就更重要。$0.015 的缓存输入对全价输入的差别会开始起作用，尤其在使用长上下文、prompt 骨架比新用户的消息大得多的时候。</p>
-<h2><strong>DeepInfra：GLM-5.3-Flash 的高阶用户之选</strong></h2>
-<p>DeepInfra 之所以突出，是因为它专为在乎价效比、而不仅仅是好拿到的团队而建。按 <a href="https://deepinfra.com/about">DeepInfra 自己的说法</a>，公司创始团队有超大规模后端基础设施经验（曾构建并运营 imo 即时通讯应用背后的基础设施），其推理栈是从 GPU 硬件起自研，而不是在通用云上叠一层。对 GLM-5.3-Flash，这种基础设施专注配上激进的公开折扣价。如果你是开发者、高用量 API 用户，或一个想推大 token 量又不想多付钱的成本敏感团队，这是值得早早列入候选名单的提供方。</p>
-<table><thead><tr><th><strong>模型名</strong></th><th><strong>最佳用例</strong></th><th><strong>上下文窗口</strong></th><th><strong>输入价（每 1M tokens）</strong></th><th><strong>输出价（每 1M tokens）</strong></th></tr></thead><tbody><tr><td>GLM-5.3-Flash</td><td>长上下文助手、编码智能体、多模态应用</td><td>1,048,576 tokens</td><td>$0.075</td><td>$0.25</td></tr></tbody></table>
-<p>为何重要：在 DeepInfra 上，GLM-5.3-Flash 为每 1M 输入 token $0.075、每 1M 输出 token $0.25，而其标准挂牌是输入 $0.15、输出 $0.50——两侧直接砍半——缓存输入降到每 1M token $0.015。如果你的工作负载量大、重复或对缓存友好，这个价差会迅速累积。</p>
-<p>对高用量或成本敏感的部署，DeepInfra 是你在别处按标准价付费之前应该先测的提供方。如果 GLM-5.3-Flash 在你的候选名单上，这是最快地验证真实经济性的地方之一，投入生产流量前可在<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">该模型的 DeepInfra 页面</a>确认实时可用性与定价。</p>
-<h2><strong>面向开发者的真实成本场景</strong></h2>
-<p>以下是 DeepInfra 让 GLM-5.3-Flash 格外有吸引力的工作负载：长上下文、缓存友好、智能体式、输出敏感的系统——在这些场景里，公开 API 价格打五折是有分量的。所有场景使用 DeepInfra 折扣价（输入 $0.075 / 输出 $0.25 / 缓存 $0.015），并与标准价对比（输入 $0.15 / 输出 $0.50 / 缓存 $0.03）。</p>
-<h3><strong>场景 1：带大型可复用 prompt 的 RAG 支持副驾</strong></h3>
-<p>一个开发团队在构建内部支持助手，多数请求都带一段长 system prompt、检索指令和稳定的策略文本。这正是 DeepInfra 低缓存输入价发力的工作负载——可复用的 prompt 脚手架不必每次都按全价输入计费。</p>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>数值</strong></th></tr></thead><tbody><tr><td>用量</td><td>每月 100M 缓存输入 + 20M 新输入 + 10M 输出 tokens</td></tr><tr><td>模型</td><td>GLM-5.3-Flash</td></tr><tr><td>提供方</td><td>DeepInfra</td></tr><tr><td>月度成本</td><td>$5.50</td></tr></tbody></table>
-<p>成本拆解：缓存输入 100M × $0.015 = $1.50，新输入 20M × $0.075 = $1.50，输出 10M × $0.25 = $2.50。合计：$5.50。</p>
-<p>对比：同样的 token 构成按标准价（$0.15 输入、$0.50 输出、$0.03 缓存）要花 $11.00，DeepInfra 把它砍到 $5.50。</p>
-<h3><strong>场景 2：面向 PR 与仓库任务的编码智能体</strong></h3>
-<p>这是 GLM-5.3-Flash 最明显的适配之一。编码与智能体框架占这类模型真实用量的一大块，而 DeepInfra 给了你不用付标准价的低成本路径。当智能体需要在一次推理里检查多个文件、工具 schema 和之前的步骤时，模型的长上下文也大显身手。</p>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>数值</strong></th></tr></thead><tbody><tr><td>用量</td><td>每月 50M 输入 + 30M 输出 tokens</td></tr><tr><td>模型</td><td>GLM-5.3-Flash</td></tr><tr><td>提供方</td><td>DeepInfra</td></tr><tr><td>月度成本</td><td>$11.25</td></tr></tbody></table>
-<p>成本拆解：输入 50M × $0.075 = $3.75，输出 30M × $0.25 = $7.50。合计：$11.25。</p>
-<p>DeepInfra 在这里显得强的原因：折扣费率、用于快速测试的公共端点、工作流日后需要更严格控制时的私有部署选项，以及服务于结构化 agent 循环的 function calling 和 JSON 输出。</p>
-<p>对比：同样工作负载按标准价要花 $22.50，DeepInfra 每月省 $11.25。</p>
-<h3><strong>场景 3：长文档分析流水线</strong></h3>
-<p>一个团队处理大型合同、技术手册或审计文件，索要紧凑的结构化摘要。这正是 DeepInfra 约 1M token 上下文窗口、多模态支持、function calling 与折扣输入价组合起来格外有吸引力的地方。输入密集的应用受益比通常更大——GLM-5.3-Flash 的输入本来就不贵，DeepInfra 又给它再对半砍。</p>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>数值</strong></th></tr></thead><tbody><tr><td>用量</td><td>每月 200M 输入 + 20M 输出 tokens</td></tr><tr><td>模型</td><td>GLM-5.3-Flash</td></tr><tr><td>提供方</td><td>DeepInfra</td></tr><tr><td>月度成本</td><td>$20.00</td></tr></tbody></table>
-<p>成本拆解：输入 200M × $0.075 = $15.00，输出 20M × $0.25 = $5.00。合计：$20.00。</p>
-<p>DeepInfra 契合的原因：文档密集负载的廉价输入、低到让摘要生成可行的输出价、不必为了小上下文窗口而激进切分，以及先用公共 API、日后流水线变得业务关键再上私有端点的路径。</p>
-<p>对比：按标准价，这个工作负载要花 $40.00，DeepInfra 降到 $20.00。</p>
-<h3><strong>场景 4：带结构化抽取的多模态应用</strong></h3>
-<p>假设你在做一个面向开发者的应用，接受截图、图表或文图混合输入，给下游系统返回 JSON。DeepInfra 很合适，因为它在同一个折扣端点上暴露多模态输入、JSON 响应格式和 function calling。</p>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>数值</strong></th></tr></thead><tbody><tr><td>用量</td><td>每月 80M 输入 + 15M 输出 tokens</td></tr><tr><td>模型</td><td>GLM-5.3-Flash</td></tr><tr><td>提供方</td><td>DeepInfra</td></tr><tr><td>月度成本</td><td>$9.75</td></tr></tbody></table>
-<p>成本拆解：输入 80M × $0.075 = $6.00，输出 15M × $0.25 = $3.75。合计：$9.75。</p>
-<p>DeepInfra 突出的原因：折扣价上的原生多模态支持、有助于约束模型冗长的结构化输出支持，以及对重复调用很快累积的抽取流水线的实际经济性。</p>
-<p>对比：按标准价，同样工作负载要花 $19.50，而 DeepInfra 上是 $9.75。</p>
-<h3><strong>场景 5：缓存友好编排的高吞吐智能体后端</strong></h3>
-<p>这个场景适合用稳定的 system prompt、工具定义和编排脚手架运行大量重复智能体调用的团队。DeepInfra 在这里特别强，因为缓存输入降到每 1M token $0.015——低到让大型重复 prompt 帧在经济上成立。</p>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>数值</strong></th></tr></thead><tbody><tr><td>用量</td><td>每月 500M 缓存输入 + 100M 新输入 + 50M 输出 tokens</td></tr><tr><td>模型</td><td>GLM-5.3-Flash</td></tr><tr><td>提供方</td><td>DeepInfra</td></tr><tr><td>月度成本</td><td>$27.50</td></tr></tbody></table>
-<p>成本拆解：缓存输入 500M × $0.015 = $7.50，新输入 100M × $0.075 = $7.50，输出 50M × $0.25 = $12.50。合计：$27.50。</p>
-<p>为何这是 DeepInfra 的强项用例：重复的编排上下文按最低的公开缓存价计费，公共端点就足以快速验证经济性，私有部署路径则给流量或合规要求增长留了干净的升级路线。</p>
-<p>对比：按标准价，同样工作负载要花 $55.00，DeepInfra 省 $27.50。</p>
-<p>贯穿这些场景，模式是一致的：当你想把 GLM-5.3-Flash 用于长上下文助手、编码智能体、多模态流水线和缓存密集的生产系统、又不想付标准挂牌价时，DeepInfra 最强。最大的告诫仍是输出管控。由于 GLM-5.3-Flash 被描述为啰嗦，最省钱的组合是 DeepInfra 的低费率加上严格的 prompting、结构化输出和保守的补全上限。</p>
-<h2><strong>结论</strong></h2>
-<p>为 GLM-5.3-Flash 选提供方，与其说选出赢家，不如说把工作负载的真实成本结构对上合适的定价模式。模型的长上下文、多模态输入、function calling 和 MIT 许可权重的组合给了你真正的灵活性，但只有明白你的 token 支出到底集中在哪里——输入、输出还是缓存上下文——这份灵活性才会转化为节省。</p>
-<p>实践中最重要的两条标准是输出冗长度和缓存命中率。GLM-5.3-Flash 生成的输出比同类模型多，所以事前谈定的输出价对月度账单有超额影响。如果你的工作负载对缓存友好——稳定的 system prompt、共享的编排脚手架、重复的文档前缀——DeepInfra 每 1M token $0.015 的缓存输入价，就是能把实际成本砍到任何混合估算之下的杠杆。如果你的负载输出密集、缓存复用低，prompt 纪律比选提供方更重要。</p>
-<p>对大多数认真评估这个模型的开发者，DeepInfra 是一个扎实起点：折扣公开价是研究资料里明确标注的最低一档，端点支持多模态输入、JSON 输出和 function calling，<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">交互式 demo</a>让你在不写一行集成代码之前先试模型。<a href="https://docs.deepinfra.com">API 文档</a>覆盖生产调用所需的一切；如果 GLM-5.3-Flash 不合适，DeepInfra 的<a href="https://deepinfra.com/models/text-generation">完整模型目录</a>让你在同一基础设施层上直接对比其他选项。拿你的真实 token 构成跑一遍这些数字，核对你的缓存命中假设，一小时内你就该知道这个&quot;模型 + 提供方&quot;的组合对你的项目是否成立。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
