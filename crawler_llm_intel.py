@@ -7865,6 +7865,13 @@ def main(argv: list[str] | None = None) -> int:
             stats=stats,
             save=lambda b: fulltext.save_bodies(root / "docs/feeds/bodies.json", b))
         fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
+        snap = ai_review.go_usage_snapshot()
+        if snap["requests"]:
+            line = (f"  [ai-bodies] Go 请求 {snap['requests']} 次、"
+                    f"计入额度 {snap['allowance_text']}")
+            if snap["last_failure"]:
+                line += f"；最后一次失败：{snap['last_failure']}"
+            print(line)
         errs = fulltext.validate_bodies(root, bodies)
         for e in errs:
             print(f"  [fulltext-guard] {e}", file=sys.stderr)
@@ -8270,6 +8277,14 @@ def main(argv: list[str] | None = None) -> int:
                         print(f"      [ai-ok] {intel.brand}：页面变化不构成事实更新")
                 if ai_aborted:
                     print("      AI 核查提前终止，未完成核查的厂商保留旧快照。")
+                if backend == ai_review.BACKEND_GO:
+                    snap = ai_review.go_usage_snapshot()
+                    if snap["requests"]:
+                        line = (f"      [ai-go] 本轮 Go 请求 {snap['requests']} 次、"
+                                f"计入额度 {snap['allowance_text']}")
+                        if snap["last_failure"]:
+                            line += f"；最后一次失败：{snap['last_failure']}"
+                        print(line)
                 if ai_patches:
                     adopt_patches(root, ai_patches, intel_by_id)
                     reload_overrides()

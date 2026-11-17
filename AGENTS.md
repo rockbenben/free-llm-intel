@@ -14,15 +14,18 @@ CI 流程的细则都在那）。本文件只放最容易踩、踩了会返工�
 | `agent` | **人工/agent 逐段精译**，质量最高 | **本地** |
 | `native` | 源站本身就是中文，无需翻译 | 抓取时自动 |
 | `mt` | Google 机器翻译，**糙覆盖**（术语/品牌可能翻坏） | **CI 每日** |
-| `llm` | LLM 通道精译（`--ai-bodies`，本地可选） | 本地（可选） |
+| `llm` | LLM 通道精译（`--ai-bodies`；口径与 agent 相同，模型一次成稿） | **CI 每日**（Go 通道）/ 本地（可选） |
 
 **规矩：**
 - **本地要处理待译正文时，一律由 agent 亲自精译**（写 `.md` 标 `translator: agent`，
   或 `--mark-translated`）。**不要在本地跑 `--mt-bodies` 来"代替"精译**——机翻是
   CI 那条不卡额度、求当日覆盖的路子，不是本地的交付标准。
-- CI 分工：每日巡检 `--mt-bodies` 给新文章出机翻中文（`translator=mt`），无 LLM 额度墙、
-  长文也能覆盖；`mt` 是临时糙稿，**重点篇之后由本地 agent 重译、覆盖同名 `.md` 升级为
-  `agent`**（reconcile 会按 frontmatter 的 translator 更新 ledger）。
+- CI 分工：每日巡检先跑 `--ai-bodies --ai-bodies-go-only`（Go 有额度时出 `translator=llm`，
+  精译口径、一次成稿，但没有本地 agent 逐段过一遍），剩余 pending 再交 `--mt-bodies` 出机翻
+  （`translator=mt`，无额度墙、长文也能覆盖）。`mt` 是临时糙稿，**重点篇之后由本地 agent 重译、
+  覆盖同名 `.md` 升级为 `agent`**；`llm` 稿要不要再升级是偏好问题（本地批量升级时
+  一般一并覆盖）。升级走 `--mark-translated`（**已 translated 的行 reconcile 不会再吸收**，
+  只改磁盘不会更新 ledger 的 translator）。
 - 翻译口径（agent 与 LLM 都遵守）：品牌/模型/产品/术语留英文原样（Claude、GPT、LoRA、
   MCP、token、API、RAG、Hugging Face…，绝不音译）；忠实逐段、不增营销词/总结/漏段；
   保住 markdown 结构，``` 代码块内的代码与 URL **一个字都不动**。

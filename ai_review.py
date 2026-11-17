@@ -8,7 +8,9 @@ ai_review.py —— 变化触发式 AI 档案核查。
 送模的 prompt 内逐字定位（防幻觉闸门），校验通过后才允许写入 profile_overrides.json。
 
 调用后端（AI_REVIEW_BACKEND=auto|opencode-go|gemini|anthropic，默认 auto）：
-- opencode-go：显式启用且未到期时优先；不可用即熔断，核查/标题回退 Gemini，正文交机翻。
+- opencode-go：显式启用且未到期时优先；瞬时错误（429/5xx/网络）先短退避重试一次，
+  仍失败才熔断，核查/标题回退 Gemini，正文交机翻；熔断原因与每次计入额度
+  （usage.opencode.allowance）都写日志，便于区分限流、额度与服务故障。
 - gemini（默认）：Google AI Studio 的 Gemini API（generativelanguage.googleapis.com），
   用免费层 API Key（环境变量 GEMINI_API_KEY，兼容 GOOGLE_API_KEY），默认模型
   gemini-3.8-flash；本模块不读 AI_REVIEW_MODEL，首选模型由 crawler 读取后经 model 参数传入；
@@ -77,8 +79,19 @@ BACKEND_ANTHROPIC = "anthropic"
 BACKEND_GO = "opencode-go"
 GO_API_URL = "https://opencode.ai/inference/go/openai/v1/chat/completions"
 GO_DEFAULT_MODEL = "deepseek-v4.1-flash"
+#: Go 的瞬时错误：先短退避重试一次，仍失败才熔断。整进程「一次失败即熔断」会把
+#: 同一轮里剩下的待译正文全部推给机翻（实测 2026-11-17：前 3 篇译成后第 4 篇
+#: HTTP 失败，其余 17 篇全落到 mt）；一次重试足以把限流/抖动挡在熔断之外。
+GO_TRANSIENT_STATUSES = {408, 425, 429, 500, 502, 503, 504}
+GO_MAX_RETRIES = 1
+GO_RETRY_BASE_SECONDS = 5
+GO_RETRY_WAIT_CAP_SECONDS = 30
 _go_disabled = False  # 单进程熔断；正文步骤是另一进程，会重新探测一次。
 _go_session = str(uuid.uuid4())
+_go_requests = 0            # 本进程实际发起的 Go 请求数（含重试），诊断用
+_go_allowance_total = 0.0   # 本进程计入额度的美元数累计（usage.opencode.allowance）
+_go_allowance_calls = 0     # 带 allowance 读数的响应数
+_go_last_failure = ""       # 最近一次熔断原因（HTTP 状态 / finish_reason / 异常类型）
 
 
 def go_available() -> bool:
@@ -227,12 +240,13 @@ def gemini_candidate_models(preferred: str = "") -> list[str]:
     return out
 
 
-def _retry_after_seconds(resp, default: float) -> float:
-    """尊重 Retry-After（秒数形式），其余回退到给定退避值，统一封顶。"""
+def _retry_after_seconds(resp, default: float,
+                        cap: float = RETRY_WAIT_CAP_SECONDS) -> float:
+    """尊重 Retry-After（秒数形式），其余回退到给定退避值，统一按 cap 封顶。"""
     raw = resp.headers.get("retry-after") if getattr(resp, "headers", None) else None
     if raw and raw.strip().isdigit():
-        return min(int(raw.strip()), RETRY_WAIT_CAP_SECONDS)
-    return min(default, RETRY_WAIT_CAP_SECONDS)
+        return min(int(raw.strip()), cap)
+    return min(default, cap)
 
 
 def _gemini_error(resp) -> tuple[dict, str]:
@@ -357,41 +371,127 @@ def call_llm_text(prompt: str, *, system: str, api_key: str = "", model: str = "
                               system=system, max_tokens=max_tokens)
 
 
+def _fmt_usd(amount: float) -> str:
+    """额度读数：便宜的模型单次可能只有 0.0001 美元，4 位小数会显示成 0。"""
+    text = f"{amount:.6f}".rstrip("0").rstrip(".")
+    return "$" + (text or "0")
+
+
+def _record_go_allowance(payload: dict) -> None:
+    """记录本次 Go 请求计入额度的美元数（Go 官方 usage.opencode.allowance）。
+
+    这个字段是判「是不是撞了 5 小时 / 周 / 月额度」的一手证据：过去日志里只有
+    一句「Go 不可用」，429 到底是短期限流、额度用尽还是服务端故障无从区分。
+    """
+    global _go_allowance_total, _go_allowance_calls
+    try:
+        raw = payload["usage"]["opencode"].get("allowance")
+    except (KeyError, TypeError, AttributeError):
+        return
+    if raw is None:
+        return
+    try:
+        amount = float(raw)
+    except (TypeError, ValueError):
+        return
+    _go_allowance_total += amount
+    _go_allowance_calls += 1
+    print(f"      [ai-go] 本次计入额度 {_fmt_usd(amount)}"
+          f"（累计 {_fmt_usd(_go_allowance_total)} / {_go_allowance_calls} 次请求）",
+          file=sys.stderr)
+
+
+def go_usage_snapshot() -> dict:
+    """本进程 Go 通道的用量读数（诊断用；只读，不发请求、不改状态）。"""
+    return {"requests": _go_requests,
+            "allowance": round(_go_allowance_total, 6),
+            "allowance_text": _fmt_usd(_go_allowance_total),
+            "allowance_calls": _go_allowance_calls,
+            "last_failure": _go_last_failure}
+
+
 def call_llm_go(prompt: str, *, system: str = SYSTEM_PROMPT,
                 max_tokens: int = MAX_TOKENS, timeout: float = 180.0,
                 json_mode: bool = True, fallback_to_gemini: bool = True) -> str:
-    """Go 失败即熔断并重试当前任务至 Gemini；凭证与模型始终按后端隔离。"""
-    global _go_disabled
+    """Go 通道：瞬时错误（429/5xx/网络）先短退避重试一次，仍失败才熔断本进程。
+
+    熔断原因（HTTP 状态 / finish_reason / 异常类型）写进日志与异常文本，每次请求
+    计入的额度也逐条打印——过去这些被压成一句「Go 不可用」，出事时无法区分
+    限流、额度、服务故障还是输出截断。凭证与模型始终按后端隔离。
+    """
+    global _go_disabled, _go_requests, _go_last_failure
+    reason = "Go 未启用、已到期或已熔断"
+    suffix = ""
+    retried = False
     if go_available():
         body = {"model": default_model(BACKEND_GO), "max_tokens": max_tokens,
                 "messages": [{"role": "system", "content": system},
                              {"role": "user", "content": prompt}]}
         if json_mode:
             body["response_format"] = {"type": "json_object"}
-        try:
-            resp = requests.post(
-                GO_API_URL,
-                headers={"Authorization": "Bearer " + backend_api_key(BACKEND_GO),
-                         "User-Agent": "free-llm-intel/1.0",
-                         "x-opencode-session": str(uuid.uuid5(uuid.UUID(_go_session), prompt))},
-                json=body, timeout=timeout)
+        attempts = GO_MAX_RETRIES + 1
+        for attempt in range(attempts):
+            _go_requests += 1
+            try:
+                resp = requests.post(
+                    GO_API_URL,
+                    headers={"Authorization": "Bearer " + backend_api_key(BACKEND_GO),
+                             "User-Agent": "free-llm-intel/1.0",
+                             "x-opencode-session": str(uuid.uuid5(uuid.UUID(_go_session), prompt))},
+                    json=body, timeout=timeout)
+            except requests.RequestException as exc:
+                reason = f"网络异常 {type(exc).__name__}: {str(exc)[:120]}"
+                if attempt + 1 < attempts:
+                    retried = True
+                    print(f"      [ai-go-retry] Go 请求失败（{reason}），"
+                          f"{GO_RETRY_BASE_SECONDS}s 后重试（{attempt + 1}/{GO_MAX_RETRIES}）",
+                          file=sys.stderr)
+                    time.sleep(GO_RETRY_BASE_SECONDS)
+                    continue
+                break
             if resp.status_code != 200:
                 # 不记录服务端响应体，避免错误回显 Key 或请求正文。
-                raise AiReviewError(f"HTTP {resp.status_code}")
-            choice = resp.json()["choices"][0]
-            content = choice["message"]["content"]
-            if (choice.get("finish_reason") != "stop"
-                    or not isinstance(content, str) or not content.strip()):
-                raise AiReviewError("空内容或响应未完整结束")
+                reason = f"HTTP {resp.status_code}"
+                if resp.status_code in GO_TRANSIENT_STATUSES and attempt + 1 < attempts:
+                    retried = True
+                    wait = _retry_after_seconds(resp, GO_RETRY_BASE_SECONDS,
+                                                cap=GO_RETRY_WAIT_CAP_SECONDS)
+                    print(f"      [ai-go-retry] Go 返回 {reason}，{wait:.0f}s 后重试"
+                          f"（{attempt + 1}/{GO_MAX_RETRIES}）", file=sys.stderr)
+                    time.sleep(wait)
+                    continue
+                break
+            try:
+                payload = resp.json()
+                choice = payload["choices"][0]
+                content = choice["message"]["content"]
+                finish = choice.get("finish_reason")
+            except (ValueError, KeyError, IndexError, TypeError) as exc:
+                reason = f"响应结构异常 {type(exc).__name__}: {str(exc)[:120]}"
+                break
+            _record_go_allowance(payload)
+            if finish != "stop":
+                reason = f"响应未完整结束（finish_reason={finish}）"
+                break
+            if not isinstance(content, str) or not content.strip():
+                reason = "空内容"
+                break
             if json_mode:
-                parse_json_loose(content)
+                try:
+                    parse_json_loose(content)
+                except AiReviewError as exc:
+                    reason = f"输出不是合法 JSON：{str(exc)[:120]}"
+                    break
             return content
-        except (requests.RequestException, AiReviewError, ValueError, KeyError,
-                IndexError, TypeError):
-            _go_disabled = True
-            print("      [ai-go-fallback] Go 不可用，本进程停止使用 Go。", file=sys.stderr)
+        _go_disabled = True
+        _go_last_failure = reason
+        suffix = f"，已重试 {GO_MAX_RETRIES} 次仍失败" if retried else ""
+        print(f"      [ai-go-fallback] Go 不可用（{reason}{suffix}），"
+              "本进程停止使用 Go。", file=sys.stderr)
+    else:
+        _go_last_failure = reason
     if not fallback_to_gemini:
-        raise AiReviewError("Go 不可用，正文留 pending 交给后续机翻")
+        raise AiReviewError(f"Go 不可用（{reason}{suffix}），正文留 pending 交给后续机翻")
     return call_llm_gemini(
         prompt, api_key=_gemini_key(),
         model=os.environ.get("AI_REVIEW_MODEL") or GEMINI_DEFAULT_MODEL,

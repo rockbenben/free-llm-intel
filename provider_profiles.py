@@ -365,10 +365,16 @@ def translate_to_zh(text: str, timeout: float = 4.0, *,
 # ---------------------------------------------------------------------------
 # 正文机器翻译（--mt-bodies）：按块处理，代码块原样保留，散文块逐段送 gtx。
 # 与标题 MT 不同：不套专名/型号守卫（正文里 `GPT-4`/`100ms` 遍地都是，守卫会把
-# 整篇退回不译），改为「结构保护」——只保证 ``` 代码块与行内代码不被翻译，
-# 其余散文按段落分块译；每块译完按英文原文做一次严格大小写的品牌回正（避免
-# `克劳德作品` / `拥抱脸部` / `法学硕士` 这类坏法批量进入语料）。产物标
-# translator=mt，之后可对重点篇用 agent 重译升级。
+# 整篇退回不译），改为「结构保护」——``` 代码块、行内代码、链接/图片目标、HTML 标签
+# 与裸 URL 一律不进翻译接口（见 _protect_body_inline），其余散文按段落分块译；
+# 每块译完按英文原文做一次严格大小写的品牌回正（避免 `克劳德作品` / `拥抱脸部` /
+# `法学硕士` 这类坏法批量进入语料）。产物标 translator=mt，之后可对重点篇用
+# agent 重译升级。
+#
+# 为什么要护 URL：gtx 会把链接路径里的英文词也翻掉——实测
+# `/engineering/managed-agents` → `/management-agents`（注意多出来的 -ment）、
+# `/production/uploads/` → `/product/uploads/`，链接直接 404；2026-11-17 那批
+# 37 篇机翻里 10 篇被翻译 QC 判 HARD，全是这一类。只护代码块是不够的。
 # ---------------------------------------------------------------------------
 
 _MT_CHUNK_CHARS = 1500   # 单次 gtx 请求的最大字符数（GET 端点有长度上限，按段落聚合到线下）
@@ -416,9 +422,73 @@ def _chunk_text(seg: str) -> list[str]:
     return chunks
 
 
-def translate_body_to_zh(md: str, timeout: float = 8.0) -> str:
-    """整篇 markdown 正文机翻为中文：代码块原样、散文逐块 gtx。失败块留原文。
+#: 正文结构保护：行内代码、链接/图片目标、HTML 标签（含 autolink）与裸 URL。
+#: 这些片段进 gtx 前换成 `ZZTOK<n>ZZ` 占位（与型号 token 同一套机制，实测 gtx
+#: 原样保留），译后逐位还原；占位被吞时整块回退原文，不把机器痕迹写进正文。
+_BODY_INLINE_CODE_RE = re.compile(r"(`{1,3})([^\n]+?)\1")
+_BODY_HTML_TAG_RE = re.compile(r"</?[A-Za-z][^>\n]{0,300}>")
+_BODY_MD_LINK_DEST_RE = re.compile(
+    r"\]\(\s*(<[^>\s]+>|[^)\s]+)(\s+[\"'][^\"']*[\"'])?\s*\)")
+_BODY_BARE_URL_RE = re.compile(r"(?:https?://|mailto:)[^\s<>()\[\]\"'`]+")
+_BODY_TOKEN_LEAK_RE = re.compile(r"ZZ\s*TOK\s*\d+\s*ZZ", re.I)
 
+
+def _protect_body_inline(text: str) -> tuple[str, list[str]]:
+    """把正文里的结构片段换成 ZZTOK<n>ZZ 占位，返回 (待译文本, 占位原值表)。
+
+    顺序有讲究：行内代码先整段拿走（里面的「链接」是代码，不是结构）；HTML 标签
+    其次（autolink 的形式就是 `<https://…>`）；再护 markdown 链接/图片的
+    目标（保留方括号里的链接文字与可选 title，它们该被翻译）；最后剩裸 URL。
+    """
+    stash: list[str] = []
+
+    def _stash(payload: str) -> str:
+        stash.append(payload)
+        return _BODY_TOKEN_PLACEHOLDER.format(len(stash) - 1)
+
+    text = _BODY_INLINE_CODE_RE.sub(lambda m: _stash(m.group(0)), text)
+    text = _BODY_HTML_TAG_RE.sub(lambda m: _stash(m.group(0)), text)
+
+    def _link_dest(m) -> str:
+        return "](" + _stash(m.group(1)) + (m.group(2) or "") + ")"
+
+    text = _BODY_MD_LINK_DEST_RE.sub(_link_dest, text)
+
+    def _bare_url(m) -> str:
+        url = m.group(0)
+        keep = url.rstrip(".,;:!?。，；：！？")   # 句末标点不属 URL，留给译文断句
+        if not keep:
+            return url
+        return _stash(keep) + url[len(keep):]
+
+    return _BODY_BARE_URL_RE.sub(_bare_url, text), stash
+
+
+def _body_tokens_intact(text: str, stash: list[str]) -> bool:
+    """译文里每个占位是否都还在（允许 Google 插空格 / 改大小写）。
+
+    漏一个就说明结构片段被吞了（常见于模型式改写）：此时整块回退原文，
+    不能把半截译文（链接凭空消失）写进正文。
+    """
+    return all(re.search(rf"ZZ\s*TOK\s*{i}\s*ZZ", text, flags=re.I)
+               for i in range(len(stash)))
+
+
+def _restore_body_inline(text: str, stash: list[str]) -> str:
+    """把占位还原回结构原文；空表即无保护片段，原样返回。"""
+    for i, payload in enumerate(stash):
+        text = text.replace(_BODY_TOKEN_PLACEHOLDER.format(i), payload)
+        # 兜底：Google 偶尔在占位串里插空格 / 改大小写（与型号 token 同款处理）
+        text = re.sub(rf"ZZ\s*TOK\s*{i}\s*ZZ", lambda _m, v=payload: v,
+                      text, flags=re.I)
+    return text
+
+
+def translate_body_to_zh(md: str, timeout: float = 8.0) -> str:
+    """整篇 markdown 正文机翻为中文：结构片段原样、散文逐块 gtx。失败块留原文。
+
+    结构片段（代码块 / 行内代码 / 链接目标 / HTML 标签 / 裸 URL）不进 gtx，
+    避免它把 URL 路径里的英文词也翻掉；每块译完按英文原文做品牌回正。
     返回拼好的中文 markdown；某块 gtx 失败则该块保持英文原文（下次 --mt-bodies
     重跑时它仍是 pending，会再试）。不缓存（正文长、命中率低，且失败要能重试）。
     """
@@ -432,9 +502,24 @@ def translate_body_to_zh(md: str, timeout: float = 8.0) -> str:
             continue
         translated_chunks = []
         for chunk in _chunk_text(seg):
-            tr = _gtx_translate(chunk, timeout)
+            masked, stash = _protect_body_inline(chunk)
+            tr = _gtx_translate(masked, timeout)
+            if tr and not _body_tokens_intact(tr, stash):
+                tr = ""      # 占位被吞：译文里的链接会凭空消失 → 整块回退原文
             if tr:
                 tr = _restore_brand_names(tr, chunk, strict_case=True)
+                tr = _restore_body_inline(tr, stash)
+                if _BODY_TOKEN_LEAK_RE.search(tr):
+                    # 占位没接住：宁可整块留英文，也不把 ZZTOK0ZZ 这类机器痕迹写进正文
+                    with _TRANS_LOCK:
+                        first = "placeholders" not in _TRANS_WARNED
+                        _TRANS_WARNED.add("placeholders")
+                    if first:
+                        print("      [warn] 机翻丢失结构占位，受影响块回退原文"
+                              "（不写机器痕迹，下次运行重试）", file=sys.stderr)
+                    tr = ""
+            else:
+                tr = ""
             translated_chunks.append(tr if tr else chunk)   # 失败留原文，绝不吞
         out.append("\n\n".join(translated_chunks))
     return "\n".join(out)

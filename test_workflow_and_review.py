@@ -11029,6 +11029,68 @@ class TestTranslateBodyMt(unittest.TestCase):
         self.assertIn("正文里的Claude。", out)
         self.assertIn("克劳德 in code", out, "``` 内部一个字都不动")
 
+    def test_link_target_not_sent_and_restored(self):
+        """gtx 会翻 URL 路径（managed-agents → management-agents），链接目标必须绕开它。"""
+        sent: list[str] = []
+
+        def gtx(t, timeout=8.0):
+            sent.append(t)
+            return t.replace("See", "请看")
+
+        self._patch_gtx(gtx)
+        out = provider_profiles.translate_body_to_zh(
+            "See the [Claude docs](https://example.com/managed-agents?x=1) for details.")
+        self.assertIn("](https://example.com/managed-agents?x=1)", out,
+                      "链接目标必须逐字还原")
+        self.assertNotIn("example.com", sent[0], "链接目标不得送进 gtx")
+        self.assertIn("请看", out, "散文照常翻译")
+
+    def test_link_title_kept(self):
+        self._patch_gtx(lambda t, timeout=8.0: t.replace("See", "看"))
+        out = provider_profiles.translate_body_to_zh(
+            'See [docs](https://e.com/a "Docs") now.')
+        self.assertIn('](https://e.com/a "Docs")', out)
+
+    def test_inline_code_not_sent_to_gtx(self):
+        sent: list[str] = []
+
+        def gtx(t, timeout=8.0):
+            sent.append(t)
+            return "运行命令即可。"
+
+        self._patch_gtx(gtx)
+        out = provider_profiles.translate_body_to_zh(
+            "Run `kubectl apply -f x.yaml` now.")
+        self.assertIn("`kubectl apply -f x.yaml`", out)
+        self.assertNotIn("kubectl", sent[0], "行内代码不得送进 gtx")
+
+    def test_bare_url_and_autolink_preserved(self):
+        self._patch_gtx(lambda t, timeout=8.0: "访问链接。")
+        out = provider_profiles.translate_body_to_zh(
+            "Visit https://example.com/production/uploads/a.png and "
+            "<https://e.com/managed-agents> now.")
+        self.assertIn("https://example.com/production/uploads/a.png", out)
+        self.assertIn("<https://e.com/managed-agents>", out)
+
+    def test_image_url_preserved(self):
+        self._patch_gtx(lambda t, timeout=8.0: "图片：" + t)
+        out = provider_profiles.translate_body_to_zh(
+            "An image: ![Claude logo](https://cdn.example.com/product/uploads/logo.png) here.")
+        self.assertIn("](https://cdn.example.com/product/uploads/logo.png)", out)
+
+    def test_placeholder_survives_gtx_spacing_and_case(self):
+        self._patch_gtx(lambda t, timeout=8.0:
+                        t.replace("ZZTOK0ZZ", "zz tok 0 zz").replace("See", "看"))
+        out = provider_profiles.translate_body_to_zh("See [x](https://e.com/a-b) now.")
+        self.assertIn("](https://e.com/a-b)", out)
+        self.assertNotIn("tok", out.lower(), "占位不得漏进正文")
+
+    def test_dropped_placeholder_falls_back_to_english_chunk(self):
+        self._patch_gtx(lambda t, timeout=8.0: "译文丢了链接。")
+        out = provider_profiles.translate_body_to_zh("Read [docs](https://e.com/a-b) now.")
+        self.assertIn("[docs](https://e.com/a-b)", out, "占位被吞时整块回退原文")
+        self.assertNotIn("译文丢了链接。", out)
+
 
 class TestMtBodiesCli(unittest.TestCase):
     """crawler main(["--mt-bodies"])：走机翻回调、标 translator=mt、无 key 也能跑。"""

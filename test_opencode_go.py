@@ -9,6 +9,7 @@ import requests
 import yaml
 import ai_review as ai
 import crawler_llm_intel as crawler
+import fulltext as ft
 
 
 class TestOpenCodeGo(unittest.TestCase):
@@ -19,13 +20,22 @@ class TestOpenCodeGo(unittest.TestCase):
         patcher = mock.patch.dict(os.environ, env, clear=True)
         patcher.start()
         self.addCleanup(patcher.stop)
-        patcher = mock.patch.object(ai, "_go_disabled", False)
-        patcher.start()
-        self.addCleanup(patcher.stop)
+        # Go 的一次调用会写模块级状态（熔断 / 计数 / 额度 / 最后失败原因），逐项重置，
+        # 否则前一个用例失败后的熔断会污染后一个用例。
+        for name, value in {"_go_disabled": False, "_go_requests": 0,
+                            "_go_allowance_total": 0.0, "_go_allowance_calls": 0,
+                            "_go_last_failure": ""}.items():
+            patcher = mock.patch.object(ai, name, value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
 
-    def response(self, content='{"changed": false}', finish="stop", status=200):
-        return SimpleNamespace(status_code=status, json=lambda: {
-            "choices": [{"message": {"content": content}, "finish_reason": finish}]})
+    def response(self, content='{"changed": false}', finish="stop", status=200,
+                 allowance=None, headers=None):
+        payload = {"choices": [{"message": {"content": content}, "finish_reason": finish}]}
+        if allowance is not None:
+            payload["usage"] = {"opencode": {"allowance": allowance, "cost": 0}}
+        return SimpleNamespace(status_code=status, headers=headers or {}, text="",
+                               json=lambda: payload)
 
     def test_explicit_enable_key_and_valid_optional_deadline(self):
         self.assertEqual(ai.resolve_backend(), ai.BACKEND_GO)
@@ -87,12 +97,17 @@ class TestOpenCodeGo(unittest.TestCase):
 
     def test_http_failures_fallback_current_task_and_open_circuit(self):
         for status in (400, 401, 402, 403, 404, 429, 500, 503):
+            # 瞬时错误（429/5xx）先重试一次；永久错误（4xx）不重试
+            expected_posts = 2 if status in ai.GO_TRANSIENT_STATUSES else 1
             with self.subTest(status=status), mock.patch.object(ai, "_go_disabled", False), \
                     mock.patch.object(ai.requests, "post", return_value=self.response(status=status)) as post, \
+                    mock.patch.object(ai.time, "sleep") as sleep, \
                     mock.patch.object(ai, "call_llm_gemini", return_value="fallback") as gemini:
                 self.assertEqual(ai.call_llm("p", api_key="go-key", backend=ai.BACKEND_GO), "fallback")
                 ai.call_llm("next", api_key="go-key", backend=ai.BACKEND_GO)
-                post.assert_called_once()
+                self.assertEqual(post.call_count, expected_posts)
+                if expected_posts == 1:
+                    sleep.assert_not_called()
                 self.assertEqual(gemini.call_args.kwargs["api_key"], "gemini-key")
                 self.assertEqual(gemini.call_args.kwargs["model"], "gemini-custom")
                 self.assertEqual(ai.resolve_backend(), "gemini")
@@ -107,21 +122,25 @@ class TestOpenCodeGo(unittest.TestCase):
                 gemini.assert_called_once()
 
     def test_network_failure_preserves_text_parameters(self):
-        with mock.patch.object(ai.requests, "post", side_effect=requests.Timeout), \
+        with mock.patch.object(ai.requests, "post", side_effect=requests.Timeout) as post, \
+                mock.patch.object(ai.time, "sleep"), \
                 mock.patch.object(ai, "call_llm_gemini", return_value="ok") as gemini:
             ai.call_llm_text("p", system="polish", max_tokens=321, timeout=17)
+        self.assertEqual(post.call_count, 2, "网络异常先重试一次再回落 Gemini")
         self.assertEqual(gemini.call_args.kwargs["system"], "polish")
         self.assertEqual(gemini.call_args.kwargs["max_tokens"], 321)
         self.assertEqual(gemini.call_args.kwargs["response_mime_type"], "text/plain")
 
     def test_body_failure_never_calls_gemini(self):
         with mock.patch.object(ai.requests, "post", return_value=self.response(status=429)) as post, \
+                mock.patch.object(ai.time, "sleep"), \
                 mock.patch.object(ai, "call_llm_gemini") as gemini:
             translate = crawler.make_llm_body_translator(ai.BACKEND_GO, "ignored")
             for _ in range(2):
                 with self.assertRaises(ai.AiReviewError):
                     translate("title", "body")
-            post.assert_called_once()
+            # 第 1 次：429 → 重试一次仍 429 → 熔断（2 次请求）；第 2 次：已熔断，不再发请求
+            self.assertEqual(post.call_count, 2)
             gemini.assert_not_called()
 
     def test_body_cli_without_go_never_loads_or_writes_corpus(self):
@@ -152,6 +171,99 @@ class TestOpenCodeGo(unittest.TestCase):
                 mock.patch.object(ai, "call_llm_gemini", side_effect=ai.AiQuotaExhausted("quota")):
             with self.assertRaises(ai.AiQuotaExhausted):
                 ai.call_llm("p")
+
+    def test_transient_error_retried_then_recovers(self):
+        responses = [self.response(status=503), self.response('{"changed": false}')]
+        with mock.patch.object(ai.requests, "post", side_effect=responses) as post, \
+                mock.patch.object(ai.time, "sleep") as sleep, \
+                mock.patch.object(ai, "call_llm_gemini") as gemini:
+            self.assertEqual(ai.call_llm("p"), '{"changed": false}')
+        self.assertEqual(post.call_count, 2, "503 应重试一次后成功")
+        sleep.assert_called_once()
+        gemini.assert_not_called()
+        self.assertTrue(ai.go_available(), "重试成功不得熔断")
+        self.assertEqual(ai.go_usage_snapshot()["requests"], 2)
+
+    def test_retry_after_header_is_respected(self):
+        responses = [self.response(status=429, headers={"retry-after": "7"}),
+                     self.response("ok")]
+        with mock.patch.object(ai.requests, "post", side_effect=responses), \
+                mock.patch.object(ai.time, "sleep") as sleep:
+            self.assertEqual(ai.call_llm_text("p", system="s", max_tokens=10), "ok")
+        sleep.assert_called_once_with(7)
+
+    def test_retry_exhausted_fuses_with_reason(self):
+        with mock.patch.object(ai.requests, "post",
+                               return_value=self.response(status=429)) as post, \
+                mock.patch.object(ai.time, "sleep"):
+            translate = crawler.make_llm_body_translator(ai.BACKEND_GO, "ignored")
+            with self.assertRaises(ai.AiReviewError) as ctx:
+                translate("title", "body")
+        self.assertEqual(post.call_count, 2)
+        self.assertIn("HTTP 429", str(ctx.exception))
+        self.assertIn("已重试 1 次仍失败", str(ctx.exception))
+        self.assertFalse(ai.go_available())
+        self.assertIn("HTTP 429", ai.go_usage_snapshot()["last_failure"])
+
+    def test_permanent_error_not_retried(self):
+        with mock.patch.object(ai.requests, "post",
+                               return_value=self.response(status=400)) as post, \
+                mock.patch.object(ai.time, "sleep") as sleep, \
+                mock.patch.object(ai, "call_llm_gemini", return_value="fallback"):
+            self.assertEqual(ai.call_llm("p"), "fallback")
+        self.assertEqual(post.call_count, 1, "400/401 这类配置错误重试无意义")
+        sleep.assert_not_called()
+
+    def test_truncated_output_not_retried_but_reason_visible(self):
+        with mock.patch.object(ai.requests, "post",
+                               return_value=self.response("partial", finish="length")) as post, \
+                mock.patch.object(ai.time, "sleep") as sleep:
+            translate = crawler.make_llm_body_translator(ai.BACKEND_GO, "ignored")
+            with self.assertRaises(ai.AiReviewError) as ctx:
+                translate("t", "body")
+        self.assertEqual(post.call_count, 1, "输出截断重试无意义")
+        sleep.assert_not_called()
+        self.assertIn("finish_reason=length", str(ctx.exception))
+
+    def test_allowance_accumulates_and_formats(self):
+        responses = [self.response("ok1", allowance=0.0012),
+                     self.response("ok2", allowance=0.0008)]
+        with mock.patch.object(ai.requests, "post", side_effect=responses):
+            ai.call_llm_text("a", system="s", max_tokens=10)
+            ai.call_llm_text("b", system="s", max_tokens=10)
+        snap = ai.go_usage_snapshot()
+        self.assertEqual(snap["requests"], 2)
+        self.assertAlmostEqual(snap["allowance"], 0.002)
+        self.assertEqual(snap["allowance_calls"], 2)
+        self.assertEqual(snap["allowance_text"], "$0.002")
+
+    def test_ai_bodies_prints_go_usage_summary(self):
+        import contextlib
+        import io
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "docs/feeds").mkdir(parents=True)
+            (root / "docs/articles/openai").mkdir(parents=True)
+            en_rel = "docs/articles/openai/go1234567890.en.md"
+            ft.write_body_doc(root / en_rel,
+                              {"status": "ok", "url": "https://a/p", "title": "Eng"},
+                              "English article body with enough words here.")
+            ft.save_bodies(root / "docs/feeds/bodies.json", {
+                "openai\thttps://a/p": {"slug": "go1234567890", "en_path": en_rel,
+                                        "en_status": "ok", "zh_path": "", "zh_status": "",
+                                        "translator": "", "title": "中文标题",
+                                        "date": "", "captured": ""}})
+            resp = self.response("这是一篇中文正文的完整翻译内容，足够长。", allowance=0.004)
+            buf = io.StringIO()
+            with mock.patch.object(crawler, "_repo_root", lambda: root), \
+                    mock.patch.object(ai.requests, "post", return_value=resp), \
+                    contextlib.redirect_stdout(buf):
+                rc = crawler.main(["--ai-bodies", "--ai-bodies-go-only"])
+        self.assertEqual(rc, 0)
+        out = buf.getvalue()
+        self.assertIn("Go 请求 1 次", out)
+        self.assertIn("$0.004", out)
 
     def test_workflow_go_precedes_machine_and_render(self):
         workflow = yaml.safe_load((Path(__file__).parent / ".github/workflows/refresh-intel.yml").read_text(encoding="utf-8"))
