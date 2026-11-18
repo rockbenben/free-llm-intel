@@ -7,12 +7,86 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Building an accounting team with Grok Bot</title>
+      <link>https://x.ai/news/grok-bot-accounting</link>
+      <guid isPermaLink="true">https://x.ai/news/grok-bot-accounting?li=1</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://x.ai/news">Back to news</a>Nov 16, 2026</p>
+<h1>Building an accounting team with Grok Bot</h1>
+<p>By Annay (Paul) Bains, Will Smerdon, and Erin Jenks</p>
+<p>Five Grok Bots at SpaceXSI each own an accounting job end to end, from provisioning a customer account to collecting payment. They only involve a person when the work needs judgment.</p>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">Download for macOS</a><a href="https://cursor.com/contact-sales?product=grok-bot">Contact sales</a></p>
+<p>Most accounting teams organize their work around a set of well-defined jobs, from managing customer accounts to billing and collecting payments.</p>
+<p>At SpaceXSI, we're starting to assign those jobs to <a href="https://x.ai/bot">Grok Bots</a>. Each Bot takes responsibility for an entire process, working independently and involving us when it encounters something that requires human judgment or approval. They're allowing us to handle more work without increasing headcount at the same rate.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_grokbotshaverealplaceson-2x-light-1adc1c4a.png" alt="Grok Bots have real places on the SpaceXSI accounting org chart: Provisioning Bot reports to Paul, Billing Bot and Billing Support Bot report to the Billing Lead, and Cash Applications Bot and Collections Bot report to the Collections and Support Lead"></p>
+<p>We've built five Team Bots, each with a carefully scoped responsibility:</p>
+<ul><li><strong>Provisioning Bot</strong> checks contracts and sets up or closes customer accounts.</li><li><strong>Billing Bot</strong> verifies contract details and generates invoices.</li><li><strong>Billing Support Bot</strong> answers billing questions and takes action on requests from our go-to-market team, such as updating customer records or retrieving invoices.</li><li><strong>Cash Applications Bot</strong> applies incoming payments, investigates discrepancies, writes off bank fees, and flags short payments for collections.</li><li><strong>Collections Bot</strong> handles customer billing inquiries and coordinates requests such as refunds.</li></ul>
+<p>Setting them up has taught us a lot about what it takes to make Bots reliable enough to own important business processes. Here's how we've approached building our team and what each Bot does.</p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#how-we-build-and-manage-our-accounting-bots">How we build and manage our accounting Bots</a></h2>
+<p>Our initial experiments with Grok Bot involved some trial and error as we figured out how best to organize the work. We eventually settled on assigning each Bot an existing well defined and scoped accounting process to own from beginning to end. Rather than asking a Bot to help with various tasks, we give it a specific job that a person on our team would otherwise perform.</p>
+<p>One common misconception about AI agents is that they should be able to do a job as soon as you give them access to the right systems. In practice, we've found that Bots need the same investment in documentation, onboarding, and ongoing coaching as new employees.</p>
+<p>That takes time upfront, but once trained, they can work around the clock and handle far more volume with greater accuracy than a person doing the same job. When we teach a Bot a new skill, it's like uploading a new capability that it can immediately put to work.</p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#build-reliable-processes-before-assigning-them-to-bots">Build reliable processes before assigning them to Bots</a></h3>
+<p>A Bot will struggle to run a process that people haven't already figured out how to perform reliably. If the workflow is poorly defined or depends on undocumented knowledge, giving it to a Bot won't solve those problems.</p>
+<p>For that reason, we've invested in building applications that make our accounting processes more structured. We use Grok Build to create applications with interfaces that define how a process works and what actions are permitted. This gives the Bot a controlled environment to work in, rather than leaving it to figure out how to perform each task from scratch.</p>
+<p>For example, we built an internal provisioning application that provides a defined way to enable customer accounts, with controls on what actions can be taken. Our Provisioning Bot now operates that application. This gives us a reliable process with a logged audit trail of actions taken that both people and Bots can use.</p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#document-each-job-as-if-youre-onboarding-an-employee">Document each job as if you're onboarding an employee</a></h3>
+<p>We maintain a Notion document that serves as each Bot's operating manual. It contains the knowledge and instructions the Bot needs to do its job, from how to verify contract details before issuing an invoice to which billing adjustments require human approval.</p>
+<p>Each night, the Bots consult these documents to refresh their knowledge and flag any discrepancies with their existing instructions. They cannot edit the documents themselves. Only the people responsible for each process have that permission.</p>
+<p>When we change a policy or discover a better way to handle a transaction, we update the documentation and teach the Bot the new procedure. The people who know the job best remain responsible for defining how it gets done.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/3-kb-structure-99883bce.png" alt="The Billing Support Bot knowledge base, a read-only operating manual the Bot checks every night"></p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#give-bots-clear-permissions-and-approval-requirements">Give Bots clear permissions and approval requirements</a></h3>
+<p>Accounting processes require careful controls because they affect financial reporting and may be subject to audit requirements or control frameworks. Our Bots can read the information they need, but their ability to change records is more restricted.</p>
+<p>Grok Bot can also connect securely to internal systems through integrations such as Tailscale. This allows Bots to access private tools and data without exposing those systems to the public internet. Companies can control which resources a Bot can access, with access policies tied to the identity of the person who authorized the connection.</p>
+<p>We allow them to execute lower-risk tasks independently and require approval for sensitive actions such as issuing credits or refunds. We also control who can authorize those actions. For example, anyone with appropriate access can ask Billing Support Bot to explain an invoice, but only designated people can authorize changes to billing records.</p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#train-bots-before-letting-them-work-independently">Train Bots before letting them work independently</a></h3>
+<p>We train new Bots the same way we train new employees. We start by teaching them how the job works, then have them observe us performing the work before gradually giving them responsibility for completing tasks on their own. This gives us time to identify gaps in their knowledge and correct mistakes before they start working independently. Our typical onboarding process now takes about three weeks:</p>
+<ul><li><strong>Week one:</strong> Build the Bot's knowledge base and have it observe how we perform the job.</li><li><strong>Week two:</strong> Let the Bot propose actions and explain what it intends to do, with a person approving its work.</li><li><strong>Week three:</strong> Allow the Bot to execute routine work independently and escalate exceptions.</li></ul>
+<p>Our first Bots took longer to develop. Billing Support Bot, for example, took four to five weeks to roll out. As we've learned how to structure the work, we've been able to build subsequent Bots much faster. We continue to coach them after launch, correcting mistakes and updating their instructions, while they handle work that would otherwise require several full-time employees.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_fivebotsonedeallifecycle-light-7b5a7b12.png" alt="Five bots along one deal lifecycle: Provisioning Bot sets up accounts, Billing Bot sends invoices, Billing Support Bot answers sales questions, Collections Bot works the accounts-receivable inbox, and Cash Applications Bot matches payments"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#provisioning-bot-sets-up-and-closes-customer-accounts">Provisioning Bot sets up and closes customer accounts</a></h2>
+<p>Provisioning Bot makes sure customers receive the correct access to our products when they sign a contract, and that access is removed when their contract ends. It uses an internal application we built with Cursor to manage this process, which previously required someone on our team to handle manually.</p>
+<p>When a deal closes, Provisioning Bot compares the executed contract against the corresponding CRM records. It checks that the order details match, then uses our provisioning application to enable the customer's account. Afterward, it verifies the entitlements against the contract and notifies the sales rep in Slack that provisioning is complete.</p>
+<p>When a customer churns or a contract ends, the Bot also removes the corresponding entitlements. This helps us avoid provisioning errors that could leave customers without the access they've purchased or allow access to continue after a contract ends.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/provisioning-14cbaa92.png" alt="Provisioning Bot in Slack checking a closed-won contract against Salesforce, enabling entitlements, and telling the sales rep the account is ready"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#billing-bot-generates-invoices-and-checks-for-errors">Billing Bot generates invoices and checks for errors</a></h2>
+<p>Billing Bot takes over once a customer account has been provisioned. It checks that the information in our billing system matches the terms of the executed contract before generating, and sending an invoice.</p>
+<p>To do this, the Bot compares the contract against the customer records that flow from the CRM into our Billing System. If it finds a discrepancy, it corrects the information in the Billing System so invoicing can proceed and alerts the appropriate team to fix the underlying CRM record(s). It then sends the invoice and notifies the sales rep.</p>
+<p>This has reduced the time required to issue an invoice from roughly 24 hours to minutes.</p>
+<p>Billing Bot also checks for missing tax information. For example, if a customer hasn't provided a VAT or GST identification number, the Bot notifies the sales rep of the tax that will be assessed and gives them 24 hours to provide the missing information. Previously, we might have sent the invoice and resolved the issue only after the customer raised a question. Now we can address it before the invoice goes out.</p>
+<p>The Bot can also handle credits and rebilling, subject to additional permissions and approvals.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-0bce498b.png" alt="Billing Bot in Slack holding an invoice until a missing VAT ID arrives, then sending it and notifying the sales rep"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#billing-support-bot-answers-questions-from-our-go-to-market-team">Billing Support Bot answers questions from our go-to-market team</a></h2>
+<p>Billing Support Bot handles requests from our go-to-market team about customer billing. It connects to our core accounting systems, allowing sales reps to get answers and make routine updates without involving someone on our accounting team.</p>
+<p>For example, a customer might notice that the usage shown on an invoice doesn't match their dashboard. Billing Support Bot can investigate the underlying records to explain why the two amounts differ.</p>
+<p>The Bot can also take action directly. If a rep needs to update a customer's billing email or add additional recipients, they can ask the Bot in Slack. It verifies that the new addresses match the customer's domain, then updates the billing records automatically.</p>
+<p>Previously, our team handled these requests one at a time, even when the underlying work was straightforward. Now the Bot can resolve many of them from start to finish. We estimate that Billing Support Bot has freed up approximately eight hours a day across our accounting team's work.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-support-22a4aae2.png" alt="Billing Support Bot in Slack explaining why an invoice total is higher than the usage dashboard, tracing the gap to a seat true-up"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#cash-applications-bot-reconciles-customer-payments">Cash Applications Bot reconciles customer payments</a></h2>
+<p>Cash Applications Bot reconciles incoming customer payments against outstanding invoices. Beyond matching payments automatically, it investigates discrepancies and handles routine adjustments that would otherwise require an accountant to intervene.</p>
+<p>The Bot checks our payment feed twice daily and automatically applies payments that match outstanding invoices exactly. When a payment doesn't match, it searches our customer support system for remittance advice that can help identify which invoices the payment covers.</p>
+<p>The Bot also automatically writes off bank fees that cause discrepancies between payment and invoice amounts. If a customer has paid less than they owe, it flags the short payment to our collections team for follow-up.</p>
+<p>This process ordinarily takes an accountant three to four hours. The Bot completes it in roughly 30 minutes.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/cash-app-3552627c.png" alt="Cash Applications Bot in Slack matching a deposit to invoices from remittance advice and flagging a short payment to collections"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#collections-bot-handles-customer-facing-billing-inquiries">Collections Bot handles customer-facing billing inquiries</a></h2>
+<p>Collections Bot is our first accounting Bot to communicate directly with customers. It monitors our accounts receivable inbox, answers billing questions, and coordinates requests that require action from other Bots.</p>
+<p>For example, if a customer requests a refund, Collections Bot works with Billing Bot and Cash Applications Bot to investigate the request and prepare the necessary actions. The Bots must obtain approval from an authorized person before processing the refund.</p>
+<p>We spent approximately three months training Collections Bot because customer-facing communication introduces additional security requirements. In particular, the Bot must verify that someone requesting account information is authorized to receive it.</p>
+<p>It does this by checking the sender's email address against approved contact information in the CRM and our billing system. A similar-looking email domain isn't sufficient. If the information doesn't match, the Bot escalates the inquiry to a person rather than release sensitive information.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/collections-550c874c.png" alt="Collections Bot in Slack verifying a customer's email before coordinating a duplicate-invoice refund with Billing Bot and Cash Applications Bot"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#building-toward-an-si-accounting-team">Building toward an SI accounting team</a></h2>
+<p>Without Grok Bot, we estimate that the work we're assigning to these five Bots would require more than doubling the headcount on our team. Instead, we're building a team in which Bots handle routine processes and our accountants focus on managing the work, improving the systems, and resolving exceptions.</p>
+<p>The biggest lesson from our experience is that building an effective AI team requires the same attention we'd give to building a human one. We need to define jobs clearly, document how they're performed, and invest in training. Once we've done that, we can give Bots responsibility for work that previously depended on people being available to do it.</p>
+<h2>Try Grok Bot today</h2>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">Download for macOS</a><a href="https://cursor.com/contact-sales?product=grok-bot">Contact sales</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Introducing Grok Bot 1.0</title>
       <link>https://x.ai/news/grok-bot-1-0</link>
       <guid isPermaLink="true">https://x.ai/news/grok-bot-1-0?li=1</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<p><a href="https://x.ai/news">Back to news</a>Nov 2, 2026</p>
 <h1>Introducing Grok Bot 1.0</h1>
 <p>Bots now work with your whole team, take on work without being asked, and get more done, faster.</p>
@@ -345,6 +419,38 @@
 <p><a href="https://x.ai/partners">Learn more and apply</a></p>]]></content:encoded>
     </item>
     <item>
+      <title>Introducing Grok Voice 3.0</title>
+      <link>https://x.ai/news/grok-voice-3</link>
+      <guid isPermaLink="true">https://x.ai/news/grok-voice-3?li=1</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://x.ai/news">Back to news</a>Oct 14, 2026</p>
+<h1>Introducing Grok Voice 3.0</h1>
+<p>The world’s most intelligent voice model.</p>
+<p><a href="https://console.x.ai/team/default/voice/agents?campaign=voice-3-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=voice-3-blog">Try It Free</a><a href="https://docs.x.ai/developers/model-capabilities/audio/voice?campaign=voice-3-blog">View Docs</a></p>
+<p>Today, we’re announcing Grok Voice 3.0, the world’s most intelligent speech-to-speech model. It sets a new record for resolving customer support calls, has class-leading latency at under one second, and costs less than other frontier models. Grok Voice powers millions of conversations a day across Tesla and SpaceX, and is available today in the API at the same price as its predecessor.</p>
+<h2><a href="https://x.ai/news/grok-voice-3#the-most-accurate-voice-model">The Most Accurate Voice Model</a></h2>
+<p>In Artificial Analysis’s independent testing, Grok Voice 3.0 ranks #1 on the Speech-to-Speech Index, with a score of 86.9. The Index combines speech reasoning, τ-Voice, and preference and task success from blind head-to-head calls. Grok Voice 3.0 also scores 97% on Full Duplex Bench, a measure of how naturally it handles pauses, turn-taking, and interruptions.</p>
+<table><thead><tr><th>Benchmark</th><th>Grok Voice 3.0 (this release)</th><th>Grok Voice 2.0</th><th>GPT-Live-1(Astra, Medium)</th><th>Gemini 3.8 Live(Ext. Thinking, High)</th></tr></thead><tbody><tr><td>OverallAA Speech-to-Speech Index</td><td>86.9</td><td>81.3</td><td>83.2</td><td>82.6</td></tr><tr><td>Speech ReasoningBig Bench Audio</td><td>98.5%</td><td>97.2%</td><td>90.1%</td><td>97.7%</td></tr><tr><td>Human PreferenceSpeech Agent Arena Elo</td><td>1070</td><td>1011</td><td>1048</td><td>990</td></tr><tr><td>Task CompletionTask Success Rate</td><td>94.8%</td><td>94.6%</td><td>87.4%</td><td>89.1%</td></tr><tr><td>Conversational DynamicsFull Duplex Bench</td><td>97.0%</td><td>95.1%</td><td>94.9%</td><td>91.9%</td></tr></tbody></table>
+<p>Source: <a href="https://artificialanalysis.ai/speech-to-speech">Artificial Analysis</a>, October 13, 2026.</p>
+<p>τ-Voice measures how well agents handle support calls with diverse accents, background noise, and interruptions. Grok Voice 3.0 scores 71.6%, comparable with GPT-Live-1 (Astra), but at 40% lower latency, setting a new frontier in agent intelligence versus responsiveness.</p>
+<h3>Agentic Performance vs. Speed</h3>
+<p>τ-Voice</p>
+<p>Source: <a href="https://artificialanalysis.ai/speech-to-speech">Artificial Analysis</a></p>
+<p>It's also cheaper to run than comparable models. Artificial Analysis measures what each model costs to complete a task in its Big Bench Audio run, and Grok Voice 3.0 comes in under both GPT-Live-1 (Astra, Medium) and GPT-Realtime-2.1.</p>
+<p>Lower cost per task than comparable models</p>
+<p>Average cost per task on Artificial Analysis's Big Bench Audio run, USD. Lower is better.</p>
+<p>On <a href="https://servicenow.github.io/eva">EVA-Bench</a>, ServiceNow’s benchmark for enterprise voice agents, Grok Voice 3.0 achieves the highest accuracy score at 74% and is the best-performing model when jointly scored across accuracy and customer experience.</p>
+<blockquote>“Grok Voice 3.0 sets a new Pareto frontier on EVA-Bench, ServiceNow’s open-source benchmark scoring voice agents on accuracy and experience across 200+ realistic enterprise scenarios. It pairs top accuracy with a natural, responsive conversation, setting a new standard for what enterprises can expect from AI on the front line of customer service.”</blockquote>
+<p>Nitin Aggarwal, Senior Director of Product Management, Agentic Evals and RAI, ServiceNow</p>
+<h2><a href="https://x.ai/news/grok-voice-3#used-by-millions-of-customers-at-tesla--spacex">Used by Millions of Customers at Tesla &amp; SpaceX</a></h2>
+<p>Grok Voice 3.0 handles millions of conversations a day in Tesla vehicles. Drivers can use Connectors for simple requests like checking their calendar or answering an email, and Grok Bot for bigger tasks like ordering a coffee or booking dinner—all completely hands-free (<a href="https://x.com/Tesla/status/2102430656349544590">see it on X</a>). Grok Voice 3.0 also powers Grok Bot’s voice mode.</p>
+<p>Starlink call centers use Grok Voice to answer 20,000 customer calls every day across multiple languages. Roughly 70% are resolved with no human in the loop, and one in four sales calls ends in a purchase before the caller hangs up. A single agent built on Grok Voice 3.0 verifies customers, troubleshoots hardware, issues credits, and ships replacement equipment.</p>
+<h2><a href="https://x.ai/news/grok-voice-3#pricing-and-availability">Pricing and Availability</a></h2>
+<p>Grok Voice 3.0 is available today in the Voice Agent API at <a href="https://docs.x.ai/developers/pricing?campaign=voice-3-blog#voice-api-pricing">$0.08 / min ($4.80 / hr)</a>, the same price as Grok Voice 2.0. Agents using <code>grok-voice-latest</code> have already been switched over automatically, with no changes needed.</p>
+<h2>Start building with Grok Voice</h2>
+<p><a href="https://console.x.ai/team/default/voice/agents?campaign=voice-3-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=voice-3-blog">Try It Free</a><a href="https://docs.x.ai/developers/model-capabilities/audio/voice?campaign=voice-3-blog">View Docs</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>Using Grok Bot to detect and respond to incidents</title>
       <link>https://x.ai/news/incident-sweep</link>
       <guid isPermaLink="true">https://x.ai/news/incident-sweep?li=1</guid>
@@ -425,38 +531,6 @@
 <p>If you reach your included usage, you can keep going with top-offs, or wait for your allowance to refresh. You’ll always see your remaining usage in settings.</p>
 <p>You keep every day you paid for. Your annual term runs through its end date, unless you choose to upgrade. You can keep your current plan through the end of its term. Any future change will take effect only at renewal, with advance notice.</p>
 <p>Yes. Team plans cost the same per seat as individual plans at $30, $100, or $200, with the same included usage per seat. They also include organization-level controls such as SSO, role-based access, consolidated billing, usage analytics, and SOC 2 compliance. You can start on an individual plan and move to a team plan as more people join. And if your team is on Cursor today, the new plans cost less per seat and include more usage than the old Cursor Teams plans.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Introducing Grok Voice 3.0</title>
-      <link>https://x.ai/news/grok-voice-3</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-voice-3?li=1</guid>
-      <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p><a href="https://x.ai/news">Back to news</a>Oct 14, 2026</p>
-<h1>Introducing Grok Voice 3.0</h1>
-<p>The world’s most intelligent voice model.</p>
-<p><a href="https://console.x.ai/team/default/voice/agents?campaign=voice-3-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=voice-3-blog">Try It Free</a><a href="https://docs.x.ai/developers/model-capabilities/audio/voice?campaign=voice-3-blog">View Docs</a></p>
-<p>Today, we’re announcing Grok Voice 3.0, the world’s most intelligent speech-to-speech model. It sets a new record for resolving customer support calls, has class-leading latency at under one second, and costs less than other frontier models. Grok Voice powers millions of conversations a day across Tesla and SpaceX, and is available today in the API at the same price as its predecessor.</p>
-<h2><a href="https://x.ai/news/grok-voice-3#the-most-accurate-voice-model">The Most Accurate Voice Model</a></h2>
-<p>In Artificial Analysis’s independent testing, Grok Voice 3.0 ranks #1 on the Speech-to-Speech Index, with a score of 86.9. The Index combines speech reasoning, τ-Voice, and preference and task success from blind head-to-head calls. Grok Voice 3.0 also scores 97% on Full Duplex Bench, a measure of how naturally it handles pauses, turn-taking, and interruptions.</p>
-<table><thead><tr><th>Benchmark</th><th>Grok Voice 3.0 (this release)</th><th>Grok Voice 2.0</th><th>GPT-Live-1(Astra, Medium)</th><th>Gemini 3.8 Live(Ext. Thinking, High)</th></tr></thead><tbody><tr><td>OverallAA Speech-to-Speech Index</td><td>86.9</td><td>81.3</td><td>83.2</td><td>82.6</td></tr><tr><td>Speech ReasoningBig Bench Audio</td><td>98.5%</td><td>97.2%</td><td>90.1%</td><td>97.7%</td></tr><tr><td>Human PreferenceSpeech Agent Arena Elo</td><td>1070</td><td>1011</td><td>1048</td><td>990</td></tr><tr><td>Task CompletionTask Success Rate</td><td>94.8%</td><td>94.6%</td><td>87.4%</td><td>89.1%</td></tr><tr><td>Conversational DynamicsFull Duplex Bench</td><td>97.0%</td><td>95.1%</td><td>94.9%</td><td>91.9%</td></tr></tbody></table>
-<p>Source: <a href="https://artificialanalysis.ai/speech-to-speech">Artificial Analysis</a>, October 13, 2026.</p>
-<p>τ-Voice measures how well agents handle support calls with diverse accents, background noise, and interruptions. Grok Voice 3.0 scores 71.6%, comparable with GPT-Live-1 (Astra), but at 40% lower latency, setting a new frontier in agent intelligence versus responsiveness.</p>
-<h3>Agentic Performance vs. Speed</h3>
-<p>τ-Voice</p>
-<p>Source: <a href="https://artificialanalysis.ai/speech-to-speech">Artificial Analysis</a></p>
-<p>It's also cheaper to run than comparable models. Artificial Analysis measures what each model costs to complete a task in its Big Bench Audio run, and Grok Voice 3.0 comes in under both GPT-Live-1 (Astra, Medium) and GPT-Realtime-2.1.</p>
-<p>Lower cost per task than comparable models</p>
-<p>Average cost per task on Artificial Analysis's Big Bench Audio run, USD. Lower is better.</p>
-<p>On <a href="https://servicenow.github.io/eva">EVA-Bench</a>, ServiceNow’s benchmark for enterprise voice agents, Grok Voice 3.0 achieves the highest accuracy score at 74% and is the best-performing model when jointly scored across accuracy and customer experience.</p>
-<blockquote>“Grok Voice 3.0 sets a new Pareto frontier on EVA-Bench, ServiceNow’s open-source benchmark scoring voice agents on accuracy and experience across 200+ realistic enterprise scenarios. It pairs top accuracy with a natural, responsive conversation, setting a new standard for what enterprises can expect from AI on the front line of customer service.”</blockquote>
-<p>Nitin Aggarwal, Senior Director of Product Management, Agentic Evals and RAI, ServiceNow</p>
-<h2><a href="https://x.ai/news/grok-voice-3#used-by-millions-of-customers-at-tesla--spacex">Used by Millions of Customers at Tesla &amp; SpaceX</a></h2>
-<p>Grok Voice 3.0 handles millions of conversations a day in Tesla vehicles. Drivers can use Connectors for simple requests like checking their calendar or answering an email, and Grok Bot for bigger tasks like ordering a coffee or booking dinner—all completely hands-free (<a href="https://x.com/Tesla/status/2102430656349544590">see it on X</a>). Grok Voice 3.0 also powers Grok Bot’s voice mode.</p>
-<p>Starlink call centers use Grok Voice to answer 20,000 customer calls every day across multiple languages. Roughly 70% are resolved with no human in the loop, and one in four sales calls ends in a purchase before the caller hangs up. A single agent built on Grok Voice 3.0 verifies customers, troubleshoots hardware, issues credits, and ships replacement equipment.</p>
-<h2><a href="https://x.ai/news/grok-voice-3#pricing-and-availability">Pricing and Availability</a></h2>
-<p>Grok Voice 3.0 is available today in the Voice Agent API at <a href="https://docs.x.ai/developers/pricing?campaign=voice-3-blog#voice-api-pricing">$0.08 / min ($4.80 / hr)</a>, the same price as Grok Voice 2.0. Agents using <code>grok-voice-latest</code> have already been switched over automatically, with no changes needed.</p>
-<h2>Start building with Grok Voice</h2>
-<p><a href="https://console.x.ai/team/default/voice/agents?campaign=voice-3-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=voice-3-blog">Try It Free</a><a href="https://docs.x.ai/developers/model-capabilities/audio/voice?campaign=voice-3-blog">View Docs</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Team Bots: shared AI teammates that learn as they work</title>
@@ -2908,39 +2982,6 @@ grok plugin install &lt;name&gt; --trust</code></pre>
 <p>The marketplace is an open catalog. If you've built a plugin you want to share, submit a pull request to <a href="https://github.com/xai-org/plugin-marketplace">xai-org/plugin-marketplace</a>.</p>
 <h2><a href="https://x.ai/news/grok-plugin-marketplace#getting-started">Getting started</a></h2>
 <p>New to Grok Build? Visit <a href="https://x.ai/build">x.ai/build</a> to get started.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Grok Imagine 1.5 Preview</title>
-      <link>https://x.ai/news/grok-imagine-1-5</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-imagine-1-5?li=1</guid>
-      <pubDate>Thu, 11 Jun 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Back to news</p>
-<p>Jun 3, 2026</p>
-<h1>Grok Imagine 1.5 Preview</h1>
-<p>grok-imagine-video-1.5-preview, our latest image-to-video model, is now available via the xAI API in preview.</p>
-<p>Create API key</p>
-<p>Our latest image-to-video model, <code>grok-imagine-video-1.5-preview</code>, is now available via the xAI API in preview.</p>
-<p><code>grok-imagine-video-1.5-preview</code> turns a single still image into fluid, cinematic video. Give it a starting frame and a prompt describing the motion, and it animates the scene, including camera moves, atmosphere, and physics, while staying faithful to your source image. You can generate clips at up to 720p.</p>
-<p>Your browser does not support the video tag.</p>
-<p>Direct the shot with natural-language prompts. Describe the camera move, the pacing, and the sound design, then set your resolution and clip length. The model holds detail and lighting from the input frame, so the result continues the original image rather than reinterpreting it.</p>
-<p>The model also works well for sequences. Stage each frame, animate it, and chain the shots together into longer scenes that keep a consistent look across an entire project.</p>
-<p>Your browser does not support the video tag.</p>
-<p>Animate an image in a few lines of code.</p>
-<pre><code>import os
-import xai_sdk
-
-client = xai_sdk.Client(api_key=os.getenv(&quot;XAI_API_KEY&quot;))
-
-response = client.video.generate(
-    prompt=&quot;Slow cinematic push-in as embers drift across the battlefield and the helmet's crest stirs in the wind&quot;,
-    model=&quot;grok-imagine-video-1.5-preview&quot;,
-    image_url=&quot;https://your-host.com/helmet.jpg&quot;,
-    duration=10,
-    resolution=&quot;720p&quot;,
-)
-
-print(response.url)</code></pre>
-<p>python</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -7,12 +7,87 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>使用 Grok Bot 建立会计团队</title>
+      <link>https://x.ai/news/grok-bot-accounting</link>
+      <guid isPermaLink="true">https://x.ai/news/grok-bot-accounting</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Building an accounting team with Grok Bot</description>
+      <content:encoded><![CDATA[<p><a href="https://x.ai/news">返回新闻</a>2026年11月16日</p>
+<h1>使用 Grok Bot 建立会计团队</h1>
+<p>作者：安娜（保罗）贝恩斯、威尔·斯默登和艾琳·詹克斯</p>
+<p>SpaceXSI 的五个 Grok 机器人各自负责从配置客户帐户到收取付款的端到端会计工作。只有当工作需要判断时，他们才会涉及一个人。</p>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">macOS 下载</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售人员</a></p>
+<p>大多数会计团队围绕一组明确的工作来组织工作，从管理客户帐户到计费和收款。</p>
+<p>在 SpaceXSI，我们开始将这些工作分配给 <a href="https://x.ai/bot">Grok Bots</a>。每个机器人都负责整个过程，独立工作，并在遇到需要人类判断或批准的事情时让我们参与进来。它们使我们能够处理更多的工作，而无需以同样的速度增加员工人数。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_grokbotshaverealplaceson-2x-light-1adc1c4a.png" alt="Grok 机器人在 SpaceXSI 会计组织结构图上占有一席之地：供应机器人向 Paul 报告，计费机器人和计费支持机器人向计费主管报告，现金应用程序机器人和收款机器人向收款和支持主管报告"></p>
+<p>我们构建了五个团队机器人，每个机器人都有一个仔细界定的职责：</p>
+<ul><li><strong>配置机器人</strong>检查合同并设置或关闭客户帐户。</li><li><strong>计费机器人</strong>验证合同详细信息并生成发票。</li><li><strong>计费支持机器人</strong>回答计费问题并根据我们的市场推广团队的请求采取行动，例如更新客户记录或检索发票。</li><li><strong>现金应用机器人</strong>应用收到的付款、调查差异、冲销银行费用并标记托收的短付款。</li><li><strong>Collections Bot</strong> 处理客户账单查询并协调退款等请求。</li></ul>
+<p>设置它们让我们学到了很多关于如何使机器人足够可靠以拥有重要的业务流程的知识。以下是我们构建团队的方式以及每个机器人的职责。</p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#how-we-build-and-manage-our-accounting-bots">我们如何构建和管理我们的会计机器人</a></h2>
+<p>我们对 Grok Bot 的最初实验涉及一些尝试和错误，因为我们想出了如何最好地组织工作。我们最终决定为每个机器人分配一个现有的、定义明确且范围明确的会计流程，让其自始至终拥有自己的会计流程。我们不是要求机器人帮助完成各种任务，而是给它一项特定的工作，而我们团队中的人员本来可以执行该工作。</p>
+<p>关于人工智能代理的一个常见误解是，只要让他们访问正确的系统，他们就应该能够完成工作。在实践中，我们发现机器人需要与新员工相同的文档、入职培训和持续培训方面的投资。</p>
+<p>这需要预先花费时间，但一旦经过培训，他们可以全天候工作，并且比从事相同工作的人更准确地处理更多的工作量。当我们教机器人一项新技能时，就像上传一项可以立即投入使用的新功能。</p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#build-reliable-processes-before-assigning-them-to-bots">在将流程分配给机器人之前构建可靠的流程</a></h3>
+<p>机器人将难以运行人们尚未弄清楚如何可靠执行的流程。如果工作流程定义不明确或依赖于未记录的知识，那么将其交给机器人并不能解决这些问题。</p>
+<p>因此，我们投资构建应用程序，使我们的会计流程更加结构化。我们使用 Grok Build 创建具有定义流程如何工作以及允许执行哪些操作的接口的应用程序。这为机器人提供了一个受控的工作环境，而不是让它从头开始弄清楚如何执行每项任务。</p>
+<p>例如，我们构建了一个内部配置应用程序，它提供了一种定义的方式来启用客户帐户，并控制可以采取的操作。我们的配置机器人现在运行该应用程序。这为我们提供了一个可靠的流程，其中记录了人们和机器人都可以使用的所采取操作的审计跟踪。</p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#document-each-job-as-if-youre-onboarding-an-employee">像入职员工一样记录每项工作</a></h3>
+<p>我们维护一个概念文档作为每个机器人的操作手册。它包含机器人完成工作所需的知识和指令，从如何在开具发票之前验证合同详细信息到需要人工批准的计费调整。</p>
+<p>每天晚上，机器人都会查阅这些文件以刷新他们的知识并标记与现有指令的任何差异。他们无法自行编辑文档。只有负责每个流程的人员才拥有该权限。</p>
+<p>当我们更改政策或发现更好的处理交易的方法时，我们会更新文档并向机器人传授新程序。最了解这项工作的人仍然负责定义工作的完成方式。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/3-kb-structure-99883bce.png" alt="计费支持机器人知识库，机器人每晚检查的只读操作手册"></p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#give-bots-clear-permissions-and-approval-requirements">给予机器人明确的权限和批准要求</a></h3>
+<p>会计流程需要仔细控制，因为它们会影响财务报告，并可能受到审计要求或控制框架的约束。我们的机器人可以读取他们需要的信息，但他们更改记录的能力受到更多限制。</p>
+<p>Grok Bot 还可以通过 Tailscale 等集成安全地连接到内部系统。这使得机器人能够访问私有工具和数据，而无需将这些系统暴露在公共互联网上。公司可以控制机器人可以访问哪些资源，并将访问策略与授权连接的人员的身份相关联。</p>
+<p>我们允许他们独立执行低风险任务，并要求批准敏感行动，例如发放积分或退款。我们还控制谁可以授权这些操作。例如，任何具有适当访问权限的人都可以要求计费支持机器人解释发票，但只有指定人员才能授权更改计费记录。</p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#train-bots-before-letting-them-work-independently">在让机器人独立工作之前先对其进行训练</a></h3>
+<p>我们以培训新员工的方式培训新机器人。我们首先教他们工作如何进行，然后让他们观察我们执行工作，然后逐渐赋予他们独立完成任务的责任。这让我们有时间在他们开始独立工作之前找出他们的知识差距并纠正错误。我们典型的入职流程现在大约需要三周时间：</p>
+<ul><li><strong>第一周：</strong> 构建机器人的知识库并让它观察我们如何执行工作。</li><li><strong>第二周：</strong> 让机器人提出行动并解释其打算做什么，并由某人批准其工作。</li><li><strong>第三周：</strong> 允许机器人独立执行日常工作并升级异常情况。</li></ul>
+<p>我们的第一个机器人花了更长的时间来开发。例如，计费支持机器人需要四到五周的时间才能推出。当我们学会了如何构建工作时，我们能够更快地构建后续机器人。发布后，我们继续对他们进行指导，纠正错误并更新他们的指示，而他们则负责处理原本需要多名全职员工的工作。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_fivebotsonedeallifecycle-light-7b5a7b12.png" alt="一笔交易生命周期中有五个机器人：配置机器人设置账户、计费机器人发送发票、计费支持机器人回答销售问题、收款机器人处理应收账款收件箱、现金应用程序机器人匹配付款"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#provisioning-bot-sets-up-and-closes-customer-accounts">配置机器人设置和关闭客户帐户</a></h2>
+<p>配置机器人可确保客户在签署合同时获得对我们产品的正确访问权限，并在合同结束时删除该访问权限。它使用我们用 Cursor 构建的内部应用程序来管理此流程，以前需要我们团队中的某人手动处理。</p>
+<p>当交易完成时，Provisioning Bot 会将执行的合同与相应的 CRM 记录进行比较。它检查订单详细信息是否匹配，然后使用我们的配置应用程序启用客户的帐户。然后，它根据合同验证权利，并通知 Slack 中的销售代表配置已完成。</p>
+<p>当客户流失或合同终止时，机器人还会删除相应的权利。这有助于我们避免配置错误，这些错误可能导致客户无法获得他们购买的访问权限或允许在合同结束后继续访问。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/provisioning-14cbaa92.png" alt="在 Slack 中配置机器人，检查针对 Salesforce 的已完成合同、启用权利并告诉销售代表帐户已准备就绪"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#billing-bot-generates-invoices-and-checks-for-errors">计费机器人生成发票并检查错误</a></h2>
+<p>配置客户帐户后，计费机器人就会接管。在生成和发送发票之前，它会检查我们的计费系统中的信息是否与已执行合同的条款相符。</p>
+<p>为此，机器人会将合同与从 CRM 流入我们的计费系统的客户记录进行比较。如果发现差异，它会更正计费系统中的信息，以便继续开具发票，并提醒相应的团队修复基础 CRM 记录。然后发送发票并通知销售代表。</p>
+<p>这将开具发票所需的时间从大约 24 小时缩短到几分钟。</p>
+<p>计费机器人还会检查缺失的税务信息。例如，如果客户未提供增值税或商品及服务税识别号，机器人会通知销售代表将评估的税款，并给他们 24 小时的时间来提供缺失的信息。以前，我们可能只有在客户提出问题后才发送发票并解决问题。现在我们可以在发票发出之前解决这个问题。</p>
+<p>该机器人还可以处理积分和重新计费，但需要获得额外的权限和批准。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-0bce498b.png" alt="Slack 中的计费机器人持有发票，直到收到缺少的增值税 ID，然后将其发送并通知销售代表"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#billing-support-bot-answers-questions-from-our-go-to-market-team">计费支持机器人回答我们的市场推广团队的问题</a></h2>
+<p>计费支持机器人处理我们的市场推广团队关于客户计费的请求。它连接到我们的核心会计系统，使销售代表能够获得答案并进行例行更新，而无需我们会计团队中的人员参与。</p>
+<p>例如，客户可能会注意到发票上显示的使用情况与他们的仪表板不匹配。计费支持机器人可以调查基础记录以解释两个金额不同的原因。</p>
+<p>机器人也可以直接采取行动。如果销售代表需要更新客户的账单电子邮件或添加其他收件人，他们可以询问 Slack 中的机器人。它会验证新地址是否与客户的域匹配，然后自动更新账单记录。</p>
+<p>以前，即使基础工作很简单，我们的团队也一次处理一个请求。现在，机器人可以从头到尾解决其中的许多问题。我们估计，计费支持机器人每天为我们的会计团队节省了大约 8 个小时的工作时间。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-support-22a4aae2.png" alt="Slack 中的计费支持机器人解释了为什么发票总额高于使用情况仪表板，并追踪到席位调整的差距"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#cash-applications-bot-reconciles-customer-payments">现金应用程序机器人核对客户付款</a></h2>
+<p>现金应用机器人根据未清发票对收到的客户付款进行核对。除了自动匹配付款之外，它还调查差异并处理常规调整，否则需要会计师干预。</p>
+<p>机器人每天检查我们的付款信息两次，并自动应用与未清发票完全匹配的付款。当付款不匹配时，它会在我们的客户支持系统中搜索汇款建议，以帮助确定付款涵盖哪些发票。</p>
+<p>该机器人还会自动冲销导致付款和发票金额之间存在差异的银行费用。如果客户支付的金额少于所欠金额，则会将短付款标记给我们的收款团队进行后续处理。</p>
+<p>这个过程通常需要会计师三到四个小时。机器人在大约 30 分钟内完成了它。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/cash-app-3552627c.png" alt="Slack 中的现金应用程序机器人将存款与汇款通知中的发票进行匹配，并将短付款标记为收款"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#collections-bot-handles-customer-facing-billing-inquiries">Collections Bot 处理面向客户的账单查询</a></h2>
+<p>Collections Bot 是我们第一个直接与客户沟通的会计机器人。它监控我们的应收账款收件箱，回答计费问题，并协调需要其他机器人采取行动的请求。</p>
+<p>例如，如果客户请求退款，Collections Bot 会与 Billing Bot 和 Cash applications Bot 合作调查该请求并准备必要的操作。机器人在处理退款之前必须获得授权人员的批准。</p>
+<p>我们花了大约三个月的时间来培训 Collections Bot，因为面向客户的通信引入了额外的安全要求。特别是，机器人必须验证请求帐户信息的人是否有权接收该信息。</p>
+<p>它通过对照 CRM 和我们的计费系统中批准的联系信息检查发件人的电子邮件地址来实现此目的。看起来相似的电子邮件域是不够的。如果信息不匹配，机器人会将询问升级给某人，而不是发布敏感信息。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/collections-550c874c.png" alt="Slack 中的收款机器人在与计费机器人和现金应用程序机器人协调重复发票退款之前验证客户的电子邮件"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#building-toward-an-si-accounting-team">构建 SI 会计团队</a></h2>
+<p>如果没有 Grok Bot，我们估计分配给这五个机器人的工作将需要我们团队的人数增加一倍以上。相反，我们正在建立一个团队，其中机器人处理日常流程，而我们的会计师则专注于管理工作、改进系统和解决异常情况。</p>
+<p>我们的经验中最大的教训是，建立一支有效的人工智能团队需要像建立一支人类团队一样重视。我们需要明确定义工作，记录工作的执行方式，并投资于培训。一旦我们做到了这一点，我们就可以让机器人负责以前依赖于人员来完成的工作。</p>
+<h2>今天尝试 Grok Bot</h2>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">macOS 下载</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售人员</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Introducing Grok Bot 1.0</title>
       <link>https://x.ai/news/grok-bot-1-0</link>
       <guid isPermaLink="true">https://x.ai/news/grok-bot-1-0</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<p><a href="https://x.ai/news">返回新闻</a>Nov 2, 2026</p>
 <h1>推出 Grok Bot 1.0</h1>
 <p>现在，Bots 可以与你的整个团队协作，无需吩咐就主动接手工作，并且做得更多、更快。</p>
@@ -346,6 +421,39 @@
 <p><a href="https://x.ai/partners">了解更多并申请</a></p>]]></content:encoded>
     </item>
     <item>
+      <title>推出 Grok Voice 3.0</title>
+      <link>https://x.ai/news/grok-voice-3</link>
+      <guid isPermaLink="true">https://x.ai/news/grok-voice-3</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Grok Voice 3.0</description>
+      <content:encoded><![CDATA[<p><a href="https://x.ai/news">返回新闻</a>2026 年 10 月 14 日</p>
+<h1>推出 Grok Voice 3.0</h1>
+<p>世界上最智能的语音模型。</p>
+<p><a href="https://console.x.ai/team/default/voice/agents?campaign=voice-3-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=voice-3-blog">免费试用</a><a href="https://docs.x.ai/developers/model-capabilities/audio/voice?campaign=voice-3-blog">查看文档</a></p>
+<p>今天我们宣布 Grok Voice 3.0，世界上最智能的 speech-to-speech 模型。它在客服通话的问题解决上创下新纪录，延迟低于一秒、同类领先，并且比其他前沿模型更便宜。Grok Voice 每天在 Tesla 和 SpaceX 支撑数百万次对话，现已在 API 上可用，价格与前一代相同。</p>
+<h2><a href="https://x.ai/news/grok-voice-3#the-most-accurate-voice-model">最准确的语音模型</a></h2>
+<p>在 Artificial Analysis 的独立测试中，Grok Voice 3.0 在 Speech-to-Speech Index 上排名第一，得分 86.9。该 Index 综合了语音推理、τ-Voice，以及来自盲测一对一通话的偏好与任务成功率。Grok Voice 3.0 在 Full Duplex Bench 上同样拿到 97%，这项指标衡量它处理停顿、轮流发言和打断时有多自然。</p>
+<table><thead><tr><th>基准</th><th>Grok Voice 3.0（本次发布）</th><th>Grok Voice 2.0</th><th>GPT-Live-1(Astra, Medium)</th><th>Gemini 3.8 Live(Ext. Thinking, High)</th></tr></thead><tbody><tr><td>总体AA Speech-to-Speech Index</td><td>86.9</td><td>81.3</td><td>83.2</td><td>82.6</td></tr><tr><td>语音推理Big Bench Audio</td><td>98.5%</td><td>97.2%</td><td>90.1%</td><td>97.7%</td></tr><tr><td>人类偏好Speech Agent Arena Elo</td><td>1070</td><td>1011</td><td>1048</td><td>990</td></tr><tr><td>任务完成Task Success Rate</td><td>94.8%</td><td>94.6%</td><td>87.4%</td><td>89.1%</td></tr><tr><td>对话动态Full Duplex Bench</td><td>97.0%</td><td>95.1%</td><td>94.9%</td><td>91.9%</td></tr></tbody></table>
+<p>来源：<a href="https://artificialanalysis.ai/speech-to-speech">Artificial Analysis</a>，2026 年 10 月 13 日。</p>
+<p>τ-Voice 衡量 agent 在面对各种口音、背景噪声和打断时，处理客服通话的水平有多好。Grok Voice 3.0 得分 71.6%，与 GPT-Live-1 (Astra) 相当，但延迟低 40%，在 agent 智能与响应速度之间立起了新的前沿。</p>
+<h3>Agentic 表现对比速度</h3>
+<p>τ-Voice</p>
+<p>来源：<a href="https://artificialanalysis.ai/speech-to-speech">Artificial Analysis</a></p>
+<p>它的运行成本也比同类模型更低。Artificial Analysis 会在其 Big Bench Audio 运行中测量每个模型完成一次任务的成本，Grok Voice 3.0 同时低于 GPT-Live-1 (Astra, Medium) 和 GPT-Realtime-2.1。</p>
+<p>每次任务的成本低于同类模型</p>
+<p>Artificial Analysis 的 Big Bench Audio 运行中每次任务的平均成本，美元。数值越低越好。</p>
+<p>在 <a href="https://servicenow.github.io/eva">EVA-Bench</a>——ServiceNow 面向企业语音 agent 的基准——上，Grok Voice 3.0 取得了最高的准确率得分 74%，并且在准确率与客户体验联合评分时是表现最好的模型。</p>
+<blockquote>“Grok Voice 3.0 在 EVA-Bench 上立起了新的 Pareto 前沿。EVA-Bench 是 ServiceNow 的开源基准，在 200 多个真实企业场景上为语音 agent 的准确率与体验打分。它把顶尖准确率与一段自然、有回应感的对话结合在一起，为「企业在客户服务第一线可以从 AI 期待什么」设立了新标准。”</blockquote>
+<p>Nitin Aggarwal，Senior Director of Product Management, Agentic Evals and RAI，ServiceNow</p>
+<h2><a href="https://x.ai/news/grok-voice-3#used-by-millions-of-customers-at-tesla--spacex">被 Tesla 与 SpaceX 的数百万客户使用</a></h2>
+<p>Grok Voice 3.0 每天在 Tesla 的车里处理数百万次对话。司机可以用 Connectors 处理简单的请求，比如查看日历或回复一封邮件，用 Grok Bot 处理更大的任务，比如点一杯咖啡或预订晚餐——全程完全免手操作（<a href="https://x.com/Tesla/status/2102430656349544590">在 X 上看演示</a>）。Grok Voice 3.0 同时也为 Grok Bot 的语音模式提供动力。</p>
+<p>Starlink 的客服中心用 Grok Voice 以多种语言每天接听 20,000 个客户电话。大约 70% 无需人工介入即可解决，四分之一个销售电话在来电者挂断之前就以成交告终。一个基于 Grok Voice 3.0 构建的 agent 就能完成客户身份核验、硬件故障排查、发放额度以及寄出替换设备。</p>
+<h2><a href="https://x.ai/news/grok-voice-3#pricing-and-availability">定价与可用性</a></h2>
+<p>Grok Voice 3.0 今天在 Voice Agent API 上可用，价格为 <a href="https://docs.x.ai/developers/pricing?campaign=voice-3-blog#voice-api-pricing">$0.08 / 分钟（$4.80 / 小时）</a>，与 Grok Voice 2.0 同价。使用 <code>grok-voice-latest</code> 的 agent 已经自动切换过来，无需任何改动。</p>
+<h2>开始用 Grok Voice 构建</h2>
+<p><a href="https://console.x.ai/team/default/voice/agents?campaign=voice-3-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=voice-3-blog">免费试用</a><a href="https://docs.x.ai/developers/model-capabilities/audio/voice?campaign=voice-3-blog">查看文档</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>用 Grok Bot 检测并响应线上事故</title>
       <link>https://x.ai/news/incident-sweep</link>
       <guid isPermaLink="true">https://x.ai/news/incident-sweep</guid>
@@ -427,39 +535,6 @@
 <p>如果用尽了套餐内的额度，你可以通过加购继续使用，或者等额度刷新。剩余用量随时能在设置里看到。</p>
 <p>你付过费的每一天都照样保留。按年订阅的周期会一直有效直到到期日，除非你主动升级。你可以保留当前套餐直到本期结束。今后的任何变动都只在续费时生效，并会提前通知。</p>
 <p>是的。团队套餐每个席位的价格与个人套餐相同，为 $30、$100 或 $200，每个席位包含的用量也相同。团队套餐还包含组织级别的管理能力，例如 SSO、基于角色的访问控制、统一账单、用量分析和 SOC 2 合规。你可以先从个人套餐开始，随着更多人加入再转到团队套餐。另外，如果你的团队目前在用 Cursor，新套餐的每席位价格更低、包含的用量也比旧的 Cursor Teams 套餐更多。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>推出 Grok Voice 3.0</title>
-      <link>https://x.ai/news/grok-voice-3</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-voice-3</guid>
-      <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Grok Voice 3.0</description>
-      <content:encoded><![CDATA[<p><a href="https://x.ai/news">返回新闻</a>2026 年 10 月 14 日</p>
-<h1>推出 Grok Voice 3.0</h1>
-<p>世界上最智能的语音模型。</p>
-<p><a href="https://console.x.ai/team/default/voice/agents?campaign=voice-3-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=voice-3-blog">免费试用</a><a href="https://docs.x.ai/developers/model-capabilities/audio/voice?campaign=voice-3-blog">查看文档</a></p>
-<p>今天我们宣布 Grok Voice 3.0，世界上最智能的 speech-to-speech 模型。它在客服通话的问题解决上创下新纪录，延迟低于一秒、同类领先，并且比其他前沿模型更便宜。Grok Voice 每天在 Tesla 和 SpaceX 支撑数百万次对话，现已在 API 上可用，价格与前一代相同。</p>
-<h2><a href="https://x.ai/news/grok-voice-3#the-most-accurate-voice-model">最准确的语音模型</a></h2>
-<p>在 Artificial Analysis 的独立测试中，Grok Voice 3.0 在 Speech-to-Speech Index 上排名第一，得分 86.9。该 Index 综合了语音推理、τ-Voice，以及来自盲测一对一通话的偏好与任务成功率。Grok Voice 3.0 在 Full Duplex Bench 上同样拿到 97%，这项指标衡量它处理停顿、轮流发言和打断时有多自然。</p>
-<table><thead><tr><th>基准</th><th>Grok Voice 3.0（本次发布）</th><th>Grok Voice 2.0</th><th>GPT-Live-1(Astra, Medium)</th><th>Gemini 3.8 Live(Ext. Thinking, High)</th></tr></thead><tbody><tr><td>总体AA Speech-to-Speech Index</td><td>86.9</td><td>81.3</td><td>83.2</td><td>82.6</td></tr><tr><td>语音推理Big Bench Audio</td><td>98.5%</td><td>97.2%</td><td>90.1%</td><td>97.7%</td></tr><tr><td>人类偏好Speech Agent Arena Elo</td><td>1070</td><td>1011</td><td>1048</td><td>990</td></tr><tr><td>任务完成Task Success Rate</td><td>94.8%</td><td>94.6%</td><td>87.4%</td><td>89.1%</td></tr><tr><td>对话动态Full Duplex Bench</td><td>97.0%</td><td>95.1%</td><td>94.9%</td><td>91.9%</td></tr></tbody></table>
-<p>来源：<a href="https://artificialanalysis.ai/speech-to-speech">Artificial Analysis</a>，2026 年 10 月 13 日。</p>
-<p>τ-Voice 衡量 agent 在面对各种口音、背景噪声和打断时，处理客服通话的水平有多好。Grok Voice 3.0 得分 71.6%，与 GPT-Live-1 (Astra) 相当，但延迟低 40%，在 agent 智能与响应速度之间立起了新的前沿。</p>
-<h3>Agentic 表现对比速度</h3>
-<p>τ-Voice</p>
-<p>来源：<a href="https://artificialanalysis.ai/speech-to-speech">Artificial Analysis</a></p>
-<p>它的运行成本也比同类模型更低。Artificial Analysis 会在其 Big Bench Audio 运行中测量每个模型完成一次任务的成本，Grok Voice 3.0 同时低于 GPT-Live-1 (Astra, Medium) 和 GPT-Realtime-2.1。</p>
-<p>每次任务的成本低于同类模型</p>
-<p>Artificial Analysis 的 Big Bench Audio 运行中每次任务的平均成本，美元。数值越低越好。</p>
-<p>在 <a href="https://servicenow.github.io/eva">EVA-Bench</a>——ServiceNow 面向企业语音 agent 的基准——上，Grok Voice 3.0 取得了最高的准确率得分 74%，并且在准确率与客户体验联合评分时是表现最好的模型。</p>
-<blockquote>“Grok Voice 3.0 在 EVA-Bench 上立起了新的 Pareto 前沿。EVA-Bench 是 ServiceNow 的开源基准，在 200 多个真实企业场景上为语音 agent 的准确率与体验打分。它把顶尖准确率与一段自然、有回应感的对话结合在一起，为「企业在客户服务第一线可以从 AI 期待什么」设立了新标准。”</blockquote>
-<p>Nitin Aggarwal，Senior Director of Product Management, Agentic Evals and RAI，ServiceNow</p>
-<h2><a href="https://x.ai/news/grok-voice-3#used-by-millions-of-customers-at-tesla--spacex">被 Tesla 与 SpaceX 的数百万客户使用</a></h2>
-<p>Grok Voice 3.0 每天在 Tesla 的车里处理数百万次对话。司机可以用 Connectors 处理简单的请求，比如查看日历或回复一封邮件，用 Grok Bot 处理更大的任务，比如点一杯咖啡或预订晚餐——全程完全免手操作（<a href="https://x.com/Tesla/status/2102430656349544590">在 X 上看演示</a>）。Grok Voice 3.0 同时也为 Grok Bot 的语音模式提供动力。</p>
-<p>Starlink 的客服中心用 Grok Voice 以多种语言每天接听 20,000 个客户电话。大约 70% 无需人工介入即可解决，四分之一个销售电话在来电者挂断之前就以成交告终。一个基于 Grok Voice 3.0 构建的 agent 就能完成客户身份核验、硬件故障排查、发放额度以及寄出替换设备。</p>
-<h2><a href="https://x.ai/news/grok-voice-3#pricing-and-availability">定价与可用性</a></h2>
-<p>Grok Voice 3.0 今天在 Voice Agent API 上可用，价格为 <a href="https://docs.x.ai/developers/pricing?campaign=voice-3-blog#voice-api-pricing">$0.08 / 分钟（$4.80 / 小时）</a>，与 Grok Voice 2.0 同价。使用 <code>grok-voice-latest</code> 的 agent 已经自动切换过来，无需任何改动。</p>
-<h2>开始用 Grok Voice 构建</h2>
-<p><a href="https://console.x.ai/team/default/voice/agents?campaign=voice-3-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=voice-3-blog">免费试用</a><a href="https://docs.x.ai/developers/model-capabilities/audio/voice?campaign=voice-3-blog">查看文档</a></p>]]></content:encoded>
     </item>
     <item>
       <title>团队机器人：共享人工智能队友，边工作边学习</title>
@@ -2869,38 +2944,6 @@ grok plugin install &lt;name&gt; --trust</code></pre>
 <p>市场是开放的目录。如果你做了一个想分享的插件，向 <a href="https://github.com/xai-org/plugin-marketplace">xai-org/plugin-marketplace</a> 提交 pull request 即可。</p>
 <h2><a href="https://x.ai/news/grok-plugin-marketplace#getting-started">开始使用</a></h2>
 <p>初用 Grok Build？访问 <a href="https://x.ai/build">x.ai/build</a> 开始。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Grok Imagine 1.5 预览版</title>
-      <link>https://x.ai/news/grok-imagine-1-5</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-imagine-1-5</guid>
-      <pubDate>Thu, 11 Jun 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok Imagine 1.5 Preview</description>
-      <content:encoded><![CDATA[<h1>Grok Imagine 1.5 预览版</h1>
-<p><code>grok-imagine-video-1.5-preview</code>——我们最新的图生视频模型——现已通过 xAI API 以预览形式提供。</p>
-<p>Create API key</p>
-<p>我们最新的图生视频模型 <code>grok-imagine-video-1.5-preview</code> 现已通过 xAI API 以预览形式提供。</p>
-<p><code>grok-imagine-video-1.5-preview</code> 把一张静态图像变成流畅、有电影感的视频。给它一个起始画面和一段描述运动的提示词，它就会让场景动起来——包括镜头运动、氛围和物理效果——同时忠实于你的源图像。你最高可以生成 720p 的片段。</p>
-<p>Your browser does not support the video tag.</p>
-<p>用自然语言提示词指导镜头。描述镜头运动、节奏和声音设计，然后设定分辨率与片段时长。模型会保持输入画面的细节与光照，因此成品是原图的延续，而非重新诠释。</p>
-<p>该模型同样擅长连续镜头。逐帧设计、逐帧动画化，再把一个个镜头串成更长的场景，让整个项目保持一致的视觉风格。</p>
-<p>Your browser does not support the video tag.</p>
-<p>几行代码即可让图像动起来。</p>
-<pre><code>import os
-import xai_sdk
-
-client = xai_sdk.Client(api_key=os.getenv(&quot;XAI_API_KEY&quot;))
-
-response = client.video.generate(
-    prompt=&quot;Slow cinematic push-in as embers drift across the battlefield and the helmet's crest stirs in the wind&quot;,
-    model=&quot;grok-imagine-video-1.5-preview&quot;,
-    image_url=&quot;https://your-host.com/helmet.jpg&quot;,
-    duration=10,
-    resolution=&quot;720p&quot;,
-)
-
-print(response.url)</code></pre>
-<p>python</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

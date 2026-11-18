@@ -9,6 +9,155 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 17 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
+      <title>Gemini 3.7 Flash：新增功能、基准测试和 API 指南</title>
+      <link>https://deepinfra.com/blog/gemini-3-7-flash-model-overview-integration-guide</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/gemini-3-7-flash-model-overview-integration-guide</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Gemini 3.7 Flash: What&apos;s New, Benchmarks &amp; API Guide</description>
+      <content:encoded><![CDATA[<h1>Gemini 3.7 Flash：新增功能、基准测试和 API 指南</h1>
+<p>DeepInfra 发布于 2026.11.17</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/gemini-3-7-flash-model-overview-integration-guide-header.png" alt="Gemini 3.7 Flash：新增功能、基准测试和 API 指南"></p>
+<p><a href="https://deepinfra.com/google/gemini-3.7-flash">Gemini 3.7 Flash</a>是Google的Flash层推理模型。它接受文本、图像、视频、音频和 PDF 文件作为输入，返回文本，并在 DeepInfra 上有一个包含 1,000,000 个令牌的上下文窗口。 Google DeepMind 于 <a href="https://artificialanalysis.ai/articles/gemini-3-7-time-frontier">2026 年 8 月 13 日</a> 发布了它，大约在 Gemini 3.6 Flash 之后三周，并将其定位为编码和代理的主力模型。</p>
+<p>它是一个封闭的模型。 DeepInfra 通过 Google 的 API 将其作为合作伙伴模型，因此您可以使用与开放模型（例如 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash</a>、<a href="https://deepinfra.com/zai-org/GLM-5.3">GLM-5.3</a> 和 <a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Flash">MiMo-V2.6-Flash</a>）相同的 OpenAI 兼容端点、API 密钥和账单来调用它。 DeepInfra 每 100 万个输入代币收费 0.75 美元，每 100 万个输出代币收费 3.75 美元，与谷歌当前的折扣标准价格相同。</p>
+<p>此后，Google 发布了更新的 Flash 版本。 <a href="https://artificialanalysis.ai/models/gemini-3-7-flash">人工分析</a> 现在将 Gemini 3.7 Flash 标记为已弃用，并建议使用 Gemini 3.8 Flash。如果您已经运行 3.7 Flash，或者希望它在一个 API 下打开模型，本指南将介绍更改的内容、基准测试方式、成本以及如何调用它。</p>
+<p>型号字符串：<strong><code>google/gemini-3.7-flash</code></strong></p>
+<h2>Gemini 3.6 Flash 有何变化</h2>
+<p>Gemini 3.7 Flash 保留了 3.6 Flash 的 1M-token 上下文和输入类型。变化体现在代理工作、每项任务的速度和价格方面。</p>
+<p><strong>代理编码（Google 报告）。</strong> 正如 <a href="https://www.mindstudio.ai/blog/gemini-3-7-flash-benchmarks/">MindStudio 总结</a> 所示，Google 的发布数据显示了长期软件工程的最大收益：DeepSWE 从 49% 上升到 65.3%，FrontierCode 从 34.4% 上升到 43.6%。 Web Dev Arena 从大约 1538 Elo 移动到大约 1588 Elo。</p>
+<p><strong>代理和知识工作（独立）。</strong> <a href="https://artificialanalysis.ai/articles/gemini-3-7-time-frontier">人工分析</a> 将大部分改进归因于代理评估：Terminal-Bench v2.1 上升 8 分，Tau3 Banking 上升 3 分，GDPval-AA v2 上升 103 Elo 至 1525，其 AA-Briefcase 知识工作评估上升 169 Elo 至 1132。</p>
+<p><strong>每个任务的速度。</strong> 人工分析在启动时测量了每秒约 340 个输出令牌，在高推理情况下每个智能指数任务平均需要 1.7 分钟。这使得 3.7 Flash 处于每个任务的智能与时间帕累托前沿。</p>
+<p><strong>每项任务的成本。</strong> 按照 Google 的折扣价，Artificial Analysis 将 Gemini 3.7 Flash（高）每项智能指数任务的价格定为 0.40 美元，比 Gemini 3.6 Flash 低 30%。按照中等推理，该数字降至 0.26 美元。</p>
+<p><strong>推理级别。</strong> Google 公开了三个推理级别（高、中、低），人工分析对所有三个级别进行了基准测试。 <a href="https://deepinfra.com/blog/gemini-3-7-flash-model-overview-integration-guide#parameters">参数</a> 中介绍了该功能的 DeepInfra 参数。</p>
+<h2>基准测试</h2>
+<h3>Google 报告：Gemini 3.7 Flash 与 3.6 Flash</h3>
+<p>这些是 Google 发布时供应商通过 <a href="https://www.mindstudio.ai/blog/gemini-3-7-flash-benchmarks/">MindStudio 的文章</a> 报告的数据。</p>
+<table><thead><tr><th>基准</th><th>Gemini3.6闪存</th><th>Gemini3.7闪存</th></tr></thead><tbody><tr><td>DeepSWE（远景软件工程）</td><td>49%</td><td><strong>65.3%</strong></td></tr><tr><td>前沿代码</td><td>34.4%</td><td><strong>43.6%</strong></td></tr><tr><td>网络开发竞技场 (Elo)</td><td>~1538</td><td><strong>~1588</strong></td></tr><tr><td>自动化工作台</td><td>〜17%</td><td><strong>~30%</strong></td></tr></tbody></table>
+<p>AutomationBench 显示了最大的相对跳跃，尽管该模型在 Google 版本的测试中仍然未能完成大多数任务。 DeepSWE 是最强的绝对结果。</p>
+<h3>发布时的人工分析（2026 年 8 月 13 日）</h3>
+<p><a href="https://artificialanalysis.ai/articles/gemini-3-7-time-frontier">人工分析</a> 在发布前对模型进行了基准测试。这些分数来自 2026 年 8 月使用的智力指数版本。它们与当前指数 (v5.0.1) 的分数不具有可比性，其中人工分析不再报告该模型的分数。</p>
+<table><thead><tr><th>公制（AA，2026 年 8 月）</th><th>Gemini3.7闪存</th></tr></thead><tbody><tr><td>智力指数高推理</td><td>56（+4 vs 3.6 闪光）</td></tr><tr><td>智力指数，中/低推理</td><td>53 / 51</td><td>53 / 51</td></tr><tr><td>输出速度</td><td>~340 个代币/秒</td></tr><tr><td>每个索引任务的平均时间（高）</td><td>1.7 分钟</td></tr><tr><td>每个索引任务的成本（高/中，折扣价）</td><td>0.40 美元 / 0.26 美元</td></tr><tr><td>自动化工作台-AA</td><td>62.7%（发布时最高）</td></tr><tr><td>AA-AnalystAgent，通过^5</td><td>60%（发布时最高）</td></tr><tr><td>AA-公文包</td><td>第1132章</td></tr><tr><td>GDPval-AA v2</td><td>1525 埃洛</td></tr></tbody></table>
+<p><strong>它领先和落后的地方。</strong> 发布时，Gemini 3.7 Flash 领先于 AA 的 AutomationBench-AA，领先于 Kimi K3 (53%) 和 GPT-5.6 Sol (51.2%)，以及 AA-AnalystAgent，领先于 Claude Opus 5 (54%) 和 Fable 5 (49%)。在整体指数上，它仅落后于 GPT-5.6 Terra 和 Muse Spark 1.2（均为 57）。在 GDPval-AA v2 上，其 1525 与 GLM-5.2 (1506) 持平，低于 DeepSeek V4 Flash 0731 (1558)。</p>
+<p>AutomationBench-AA（62.7%）是Artificial Analysis自己的基准测试版本，因此它与上面谷歌的AutomationBench数据不一致。</p>
+<h3>现在的情况</h3>
+<p>Artificial Analysis 现在将 Gemini 3.7 Flash 列为已弃用：它仍然对模型进行基准测试，但每 18 小时而不是每 6 小时进行一次基准测试，并指向 <a href="https://artificialanalysis.ai/models/gemini-3-8-flash">Gemini 3.8 Flash</a>。其目前的排行榜上由封闭前沿型号引领，例如 Claude Fable 5.2、Gemini 4 Carbon 和 Claude Opus 5.5。 Gemini 3.7 Flash 的优势在于代理和文档工作的吞吐量和每项任务的价格，而不是该表的顶部。</p>
+<h2>方式和背景</h2>
+<table><thead><tr><th>规格</th><th>DeepInfra 上的 Gemini 3.7 Flash</th></tr></thead><tbody><tr><td>输入</td><td>文本、图像、视频、音频、PDF</td></tr><tr><td>输出</td><td>文字</td></tr><tr><td>上下文窗口</td><td>1,000,000 个代币</td></tr><tr><td>推理</td><td>是（推理模型）</td></tr><tr><td>特点</td><td>兼容OpenAI的API、JSON模式、结构化输出、函数调用、OCR</td></tr><tr><td>重量</td><td>专有（无开放重量）</td></tr></tbody></table>
+<p>PDF 和 OCR 支持使其成为文档繁重的代理步骤的实用选择：阅读合同、发票或幻灯片并返回结构化 JSON。这与其在 AA-AnalystAgent 上的领先地位相匹配，AA-AnalystAgent 测试有关电子表格和文档的问题。</p>
+<h2>定价</h2>
+<p>定价截至 2026 年 11 月 17 日。 <a href="https://deepinfra.com/google/gemini-3.7-flash">模型页面</a> 始终显示当前汇率。</p>
+<table><thead><tr><th>等级</th><th>输入/1M</th><th>输出/1M</th><th>缓存输入/1M</th></tr></thead><tbody><tr><td>标准</td><td>0.75 美元</td><td>3.75 美元</td><td>未列出</td></tr></tbody></table>
+<ul><li><strong>与 Google 的折扣价相同。</strong> DeepInfra 的 0.75 美元/3.75 美元与 Google 在其自己的 API 上提供的折扣标准价格相符。 Google 的未折扣标准价格为 1.50 美元/7.50 美元（<a href="https://artificialanalysis.ai/articles/gemini-3-7-time-frontier">人工分析</a>）。</li><li><strong>比 Google 的 API 层级少。</strong> Google 还为缓存输入提供 90% 的折扣，另外还以标准价格的一半提供 Flex 和 Batch 层级，而 DeepInfra 没有为此模型列出这些。对于大量重复提示的批量工作，Google 自己的 API 更便宜。</li><li><strong>DeepInfra 上没有 Flex 或 Priority。</strong> DeepInfra 的 Flex (0.8×) 和 Priority (1.5×) 层仅适用于带有这些标签的型号，而这一层则不然。</li></ul>
+<p>DeepInfra 为该模型提供的是整合，而不是更低的价格。一个 API 密钥、一张发票和一个适用于 Gemini 和开放模型的 OpenAI 兼容客户端。您不需要 Google Cloud 项目、第二个 SDK 或第二个结算关系。</p>
+<h3>计算代理步骤的成本</h3>
+<p>发送 20,000 个输入标记并返回 2,000 个输出标记的文档提取步骤的成本为：</p>
+<ul><li>输入：20,000 × $0.75 / 100 万 = $0.015</li><li>产出：2,000 × $3.75 / 100 万 = $0.0075</li><li><strong>总计：每次调用 0.0225 美元</strong>，或每 1,000 次调用 22.50 美元</li></ul>
+<p>推理令牌按输出计费，因此较高的推理工作量会提高该总和的输出部分。</p>
+<h2>开始使用</h2>
+<p>Gemini 3.7 Flash 使用 DeepInfra 的 <a href="https://deepinfra.com/docs/openai_api">OpenAI 兼容 API</a>：</p>
+<ul><li><strong>基本 URL：</strong> <code>https://api.deepinfra.com/v1/openai</code></li><li><strong>端点：</strong> <code>POST /chat/completions</code></li><li><strong>Auth 标头：</strong> <code>Authorization: Bearer $DEEPINFRA_API_KEY</code>（在 <a href="https://deepinfra.com/dash/api_keys">仪表板</a> 中创建密钥）</li></ul>
+<p>该模型需要使用 API 密钥登录帐户；不提供匿名免费电话。</p>
+<h3>参数</h3>
+<p>完整的架构位于模型的 <a href="https://deepinfra.com/google/gemini-3.7-flash/api">API 页面</a> 上。</p>
+<table><thead><tr><th>参数</th><th>类型</th><th>默认</th><th>笔记</th></tr></thead><tbody><tr><td><code>model</code></td><td>字符串</td><td>—</td><td><code>google/gemini-3.7-flash</code></td></tr><tr><td><code>messages</code></td><td>数组</td><td>—</td><td>聊天记录；支持多模式内容</td></tr><tr><td><code>reasoning_effort</code></td><td>字符串</td><td>—</td><td>DeepInfra 接受 <code>none</code>、<code>minimal</code>、<code>low</code>、<code>medium</code>、<code>high</code>、<code>xhigh</code>、<code>max</code>。较低的值可以减少推理标记和延迟</td></tr><tr><td><code>max_tokens</code></td><td>整数</td><td>—</td><td>DeepInfra 没有发布该模型的最大输出，因此为长输出明确设置</td></tr><tr><td><code>temperature</code></td><td>浮动</td><td>0.7</td><td>0.7取样温度</td></tr><tr><td><code>top_p</code></td><td>浮动</td><td>0.9</td><td>0.9细胞核取样</td></tr><tr><td><code>stream</code></td><td>布尔</td><td>假</td><td>服务器发送的事件</td></tr><tr><td><code>stop</code></td><td>数组</td><td>—</td><td>最多 16 个停止字符串</td></tr><tr><td><code>n</code></td><td>整数</td><td>1</td><td>最多完成 4 项</td></tr><tr><td><code>presence_penalty</code> / <code>frequency_penalty</code></td><td>浮动</td><td>0</td><td>−2 到 2</td></tr><tr><td><code>response_format</code></td><td>对象</td><td><code>{&quot;type&quot;: &quot;text&quot;}</code></td><td>用于结构化输出的 <code>json_object</code> 或 <code>json_schema</code></td></tr><tr><td><code>tools</code> / <code>tool_choice</code></td><td>数组/字符串</td><td>—</td><td>函数调用：<code>none</code>、<code>auto</code> 或 <code>required</code></td></tr><tr><td><code>seed</code></td><td>整数</td><td>随机</td><td>无法保证确定性</td></tr></tbody></table>
+<p><code>reasoning_effort</code> 是 OpenAI SDK 标准参数的一部分，因此您可以直接传递它。在选择一种进行生产之前，请根据您自己的提示测试级别并比较质量、延迟和输出令牌计数。</p>
+<p>＃＃＃ Python</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+)
+
+response = client.chat.completions.create(
+    model=&quot;google/gemini-3.7-flash&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;Extract fields as JSON.&quot;},
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: &quot;Invoice 4417 from Acme GmbH, dated 2026-10-02, total EUR 1,240.00. &quot;
+                       &quot;Return invoice_number, vendor, date and total.&quot;,
+        },
+    ],
+    reasoning_effort=&quot;low&quot;,
+    response_format={&quot;type&quot;: &quot;json_object&quot;},
+    max_tokens=2048,
+)
+
+print(response.choices[0].message.content)
+print(response.usage)copy</code></pre>
+<p>Gemini 3.7 Flash 和开放模型之间的切换是对 <code>model</code> 的一行更改。这对于成本和质量的 A/B 测试以及将机械步骤发送到更便宜的模型并为困难步骤保留更强的模型的<a href="https://deepinfra.com/blog/two-tier-agent-two-models">两层代理</a> 非常有用。</p>
+<h3>输出限制</h3>
+<p>模型页面设置 1,000,000 个标记作为最大上下文，将输入和输出一起计数。 DeepInfra 没有为此模型指定单独的最大输出，因此只要您期望长答案，请传递 <code>max_tokens</code>，并检查 <code>finish_reason</code> 以获得 <code>&quot;length&quot;</code> 以捕获截断的响应。</p>
+<h2>结论</h2>
+<p>Gemini 3.7 Flash 在代理编码和文档工作方面比 3.6 Flash 带来了真正的进步，并且在启动时每个任务的速度都很快。人工分析现在将用户引导至较新的 Gemini 版本，因此，主要当您已经验证了它，或者需要在一个 API 下打开模型旁边的 PDF、音频和视频输入时，它是正确的选择。</p>
+<p>在 DeepInfra 上，每个代币的成本与 Google 的折扣率相同，并且它与堆栈的其余部分共享密钥、发票和客户端。如果缓存输入折扣或批量定价导致您的账单增加，请在提交之前比较 Google 自己的 API。</p>
+<p><strong>后续步骤</strong></p>
+<ul><li><strong>计划模型退役。</strong> 将模型 ID 保留在配置中并设置评估来比较替代品；请参阅<a href="https://deepinfra.com/blog/model-deprecation-llm-apps">如何构建能够在模型退役后继续存在的 LLM 应用程序</a>。</li><li><strong>将其与开放模型配对。</strong> 将批量代理步骤路由到开放模型，并保留 Gemini 用于多模式或文档步骤。我们的<a href="https://deepinfra.com/blog/best-open-source-models-for-coding">最佳开源编码模型指南</a> 对候选模型进行了比较。</li><li><strong>尝试一下。</strong> 打开 <a href="https://deepinfra.com/google/gemini-3.7-flash">Gemini 3.7 Flash 模型页面</a>，创建 API 密钥，然后运行上面的示例。</li></ul>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/best-api-providers-for-glm-5-1"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/API-provider.png" alt="2026 年 GLM-5.1 最佳 API 提供商"></a><a href="https://deepinfra.com/blog/best-api-providers-for-glm-5-1">2026 年 GLM-5.1 最佳 API 提供商</a>&lt;p&gt; 于 2026 年 11 月更新。GLM-5.1 已在 DeepInfra 上停用。其后继产品 GLM-5.3 现已上市；请参阅最佳 GLM-5.3 API 提供商以了解当前选项。下面的对比仅供参考。 GLM-5.1 可供越来越多的 API 提供商使用，它们之间的选择会对成本、延迟以及您可以使用的功能产生重大影响 […]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/best-open-source-llm-api-providers"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/best-open-source.png" alt="2026 年最佳开源 LLM API 提供商"></a><a href="https://deepinfra.com/blog/best-open-source-llm-api-providers">2026 年最佳开源 LLM API 提供商</a>&lt;p&gt; 于 2026 年 11 月更新。选择推理供应商曾经是一个简短的对话。您希望 Llama 位于 HTTP 端点后面，由三家公司提供服务，而且它们的价格足够接近，因此决定权取决于谁有能力。此后，市场已分裂为十几个经营真正不同业务的严肃运营商。最好的[…]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/jev-alternatives"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/jev.png" alt="最佳 Jev 替代方案：托管 API 和开放模型 (2026)"></a><a href="https://deepinfra.com/blog/jev-alternatives">最佳 Jev 替代方案：托管 API 和开放模型 (2026)</a>&lt;p&gt;Jev 甚至在一个月前就有了竞争对手。 TypeSafe 于 9 月 15 日推出，到 10 月第一周，OpenAI 宣布推出 Decisions API，Cloudflare 和 AWS 发布了开放权重决策模型，GitHub 上有一系列开源 Jev 替代品：Laya、OpenJev、Kev、AnyJev。我们运行 Jev 和 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>DeepInfra与Opper AI合作：Opper网关上有100多个模型</title>
+      <link>https://deepinfra.com/blog/deepinfra-opper-partnership</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/deepinfra-opper-partnership</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：DeepInfra Partners with Opper AI: 100+ Models on the Opper Gateway</description>
+      <content:encoded><![CDATA[<h1>DeepInfra 与 Opper AI 达成合作：Opper Gateway 上线 100+ 模型</h1>
+<p>发布于 2026.11.17，作者 DeepInfra</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/deepinfra-opper-partnership-header.png" alt="DeepInfra 与 Opper AI 达成合作：Opper Gateway 上线 100+ 模型"></p>
+<p><em>加利福尼亚州帕洛阿尔托，2026 年 11 月。</em> DeepInfra 与 <a href="https://opper.ai/blog/deepinfra-partnership">Opper AI</a> 达成合作，让 DeepInfra 的开源模型推理能力通过 Opper 托管于欧盟的 AI gateway 对外提供。开发者现在可以通过 Opper API 调用 100 多个由 DeepInfra 托管的模型，从 Kimi K3、GLM-5.3、DeepSeek V4.1 Flash 到 MiniMax M3、Nemotron 3.5 Super VL 和 FLUX.2 Pro，并对每一次调用应用 Opper 的支出、数据保留和路由 Rules。</p>
+<h2>这对开发者意味着什么</h2>
+<p>如果你已经在 DeepInfra 上运行，现有集成不受任何影响。此次合作只是为同一批模型增加了第二条路径：通过 Opper 调用，与你可能已在该平台使用的其他 provider 并列。</p>
+<p><strong>每个层级对应一个模型字符串。</strong> Opper 上的每个 DeepInfra 对话模型都有 standard 层级，许多还提供 flex 和 priority：</p>
+<table><thead><tr><th>Opper 模型字符串</th><th>用途</th></tr></thead><tbody><tr><td><code>deepinfra/…</code></td><td>Standard 层级，用于日常调用</td></tr><tr><td><code>deepinfra:flex/…</code></td><td>便宜约五分之一，用于评测和后台任务</td></tr><tr><td><code>deepinfra:priority/…</code></td><td>必须优先响应的交互式流量</td></tr></tbody></table>
+<p>大规模任务可以通过 Opper 的 <a href="https://opper.ai/blog/batch-vs-flex-vs-standard">Batch API</a> 以 flex 价格运行。每个模型各层级的价格，以及 DeepInfra 的图像、语音、视频和 embedding 模型，都列在 <a href="https://opper.ai/provider/deepinfra">Opper 的 DeepInfra provider 页面</a>上。</p>
+<p><strong>模型目录。</strong> 通过 Opper，你可以访问当前 agent 所运行的开源模型：DeepSeek V4 和 V4.1、Moonshot 的 Kimi K3、Z.ai 的 GLM-5.3、Qwen3.5 至 Qwen3.8 系列、Google 的 Gemma 4、Meta 的 Llama 以及 Thinking Machines 的 Inkling。同一路径还覆盖 Black Forest Labs 的图像模型、字节跳动的 Seedance 2.0 视频模型、Qwen3 TTS 语音模型和用于搜索的 embedding，以及 NVIDIA 的 Nemotron 系列，从 Nemotron 3.5 Super VL 到 Nemotron 3 Ultra。</p>
+<p><strong>价格。</strong> 据 Opper 称，对于 MiniMax M3、NVIDIA Nemotron 3.5 Super VL、DeepSeek V3.2 和 Qwen3 235B Instruct 2507，DeepInfra 目前是 Opper gateway 上任何区域中最便宜的路径。</p>
+<p><strong>数据处理。</strong> Opper 上每条 DeepInfra 路径都在美国运行。在 standard、flex 和 priority 调用中，prompt 和 completion 不会被记录，也不会用于训练，并且可提供 DPA。Batch 任务会在运行前保留请求，这是任何 batch API 都必须的。DeepInfra 拥有并运营自己的 GPU 基础设施，并通过 SOC 2 和 ISO 27001 认证。Opper 的 provider 页面列出了每条路径的数据驻留和保留情况。</p>
+<h3>第一次调用</h3>
+<p>Opper 兼容 OpenAI，因此切换到 DeepInfra 模型只需更改 base URL 和模型字符串：</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;OPPER_API_KEY&quot;],
+    base_url=&quot;https://api.opper.ai/v3/compat&quot;,
+)
+
+completion = client.chat.completions.create(
+    model=&quot;deepinfra/MiniMaxAI/MiniMax-M3&quot;,  # or &quot;deepinfra:flex/MiniMaxAI/MiniMax-M3&quot; for background work
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello&quot;}],
+)
+print(completion.choices[0].message.content)copy</code></pre>
+<h2>为什么选择 Opper：为每次调用设定 Rules</h2>
+<p>Opper 将自己描述为面向 agent 的欧洲 AI gateway。它总部位于斯德哥尔摩，通过一个托管于欧盟、符合 GDPR 的 API 为开发者提供 700 多个模型。路由只是它功能的一部分。通过 Opper 的每次调用都可以在你的 <strong><a href="https://opper.ai/ai-control-plane">Rules</a></strong> 下运行：支出上限、数据保留、模型访问、内容检查和路由顺序，可按组织或按项目一次性设定。</p>
+<p>对 DeepInfra 用户来说，这意味着你可以：</p>
+<ul><li>为评测运行锁定 DeepInfra 的 flex 层级，</li><li>将 DeepInfra 设为另一家 provider 之后的 fallback，或反过来，</li><li>限制支出并限定项目可调用的模型，而无需更改应用代码。</li></ul>
+<h2>选择 Opper 还是直接使用 DeepInfra 的 API？</h2>
+<p>两条路径访问的都是同一批 DeepInfra 模型。如何选择取决于调用周边的需求。</p>
+<p><strong>在以下情况使用 Opper：</strong> 你通过一个 key 使用多家 provider 的模型，希望集中管理支出上限、模型白名单和保留规则，或希望由 gateway 处理 DeepInfra 与其他 provider 之间的路由和 fallback。</p>
+<p><strong>在以下情况直接使用 DeepInfra 的 API：</strong> 你的工作负载只运行 DeepInfra 模型，且不需要在请求路径中加入 gateway。你可以获得完整的 <a href="https://deepinfra.com/models">DeepInfra 模型目录</a>、每个模型页面上列出的<a href="https://deepinfra.com/pricing">价格</a>，以及适用于可等待任务的 <a href="https://deepinfra.com/blog/flex-service-tier">Flex 服务层级</a>。</p>
+<h2>引言</h2>
+<p>“DeepInfra 运营着业界最深入的开源模型目录之一，其价格使其成为高吞吐任务的天然归宿。凭借同一批模型上的 standard、flex、priority 和 batch，Opper 上的构建者可以让每次调用匹配其所需的速率和价格。” — Göran Sandahl，Opper AI 联合创始人兼 CEO</p>
+<p>“我们打造 DeepInfra，是为了在自己的 GPU 上以生产规模运行开源模型，并让每个 token 的价格都合理。Opper 通过一个 API 把这份目录呈现在广泛的构建者社区面前，与他们已在使用的其他模型并列。” — Nikola Borisov，DeepInfra 联合创始人兼 CEO</p>
+<h2>可用性</h2>
+<p>DeepInfra 模型现已在 Opper 上线。开始使用：</p>
+<ul><li>阅读 Opper 的公告：<a href="https://opper.ai/blog/deepinfra-partnership">Opper AI 与 DeepInfra 合作，将 100+ AI 模型引入 gateway</a></li><li>在 <a href="https://opper.ai/provider/deepinfra">Opper 的 DeepInfra provider 页面</a>查看模型、层级和各路径价格</li><li>浏览 <a href="https://deepinfra.com/models">DeepInfra 模型目录</a>和<a href="https://deepinfra.com/pricing">价格</a></li></ul>
+<h2>关于 DeepInfra</h2>
+<p>DeepInfra 是一家推理云服务商，成立于 2022 年，总部位于加利福尼亚州帕洛阿尔托。它拥有并运营自己的 GPU 基础设施，通过兼容 OpenAI 的 API 提供文本、语音、图像、视频和 embedding 开源模型，承诺零数据保留，并通过 SOC 2 和 ISO 27001 认证。2026 年 5 月，它完成了由 500 Global 和 Georges Harik 共同领投的 1.07 亿美元 B 轮融资，NVIDIA、Samsung Next 和 Supermicro 参与投资。</p>
+<h2>关于 Opper AI</h2>
+<p>Opper AI 是面向 agent 的欧洲 AI gateway，总部位于斯德哥尔摩。它通过一个托管于欧盟、符合 GDPR 的 API，让开发者以按需付费方式访问 700 多个领先 AI 模型，并提供支出上限、模型白名单、零数据保留和完整的 OpenAI SDK 兼容性。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/glm-5-3-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-deepinfra.png" alt="GLM-5.3 现已在 DeepInfra 上线"></a><a href="https://deepinfra.com/blog/glm-5-3-deepinfra">GLM-5.3 现已在 DeepInfra 上线</a>&lt;p&gt;GLM-5.3 与 GLM-5.2 共享基础模型，因此每一项性能提升都来自后训练。Z.ai 扩展了其已有的强化学习技术栈，并于 2026 年 8 月 14 日发布成果。GLM-5.3 是一个推理模型，专为复杂软件工程和长周期 agentic 任务而构建。在 Z.ai 内部的 Code Bench 上，它相比 GLM-5.2 提升了 50%，[&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/gpu-instances"><img src="https://deepinfra.com/blog/gpu-instances.jpg" alt="推出 GPU Instances：面向 AI 工作负载的按需 GPU 算力"></a><a href="https://deepinfra.com/blog/gpu-instances">推出 GPU Instances：面向 AI 工作负载的按需 GPU 算力</a>借助我们全新的 GPU Instances 功能，几分钟内即可启动专用 GPU 容器，专为机器学习训练、推理和计算密集型工作负载而设计。</p>
+<p><a href="https://deepinfra.com/blog/nvidia-nemotron-release"><img src="https://deepinfra.com/blog/nvidia-deepinfra-logos.png" alt="DeepInfra 推出对 NVIDIA Nemotron 模型的访问，覆盖视觉、检索和 AI 安全"></a><a href="https://deepinfra.com/blog/nvidia-nemotron-release">DeepInfra 推出对 NVIDIA Nemotron 模型的访问，覆盖视觉、检索和 AI 安全</a>DeepInfra 从发布首日即开始提供全新的开放 NVIDIA Nemotron 视觉语言和 OCR AI 模型。作为致力于性能与成本效率的领先推理 provider，我们以业界最优价格提供这些前沿模型，让开发者在不牺牲预算或性能的前提下构建专用 AI agent。</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>Kimi K3.1 Pro：模型概览、基准测试与 API 指南</title>
       <link>https://deepinfra.com/blog/kimi-k3-1-pro-model-overview</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/kimi-k3-1-pro-model-overview</guid>
@@ -4156,130 +4305,6 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>最清晰的决策标准是 token 经济学与特性覆盖。如果你的工作负载涉及重复上下文——共享 system prompt、检索包装、持久 agent 状态——DeepInfra 在 Standard 档 $0.006/M、Flex 档 $0.0048/M 的缓存输入定价，相对那些只在新输入价上看起来便宜的提供方是实质性优势。如果你需要结构化输出、function calling 和多模态支持，又不想东拼西凑多家提供方，DeepInfra 在一个 API 接口下全覆盖。如果你在跑不需要优先级处理的高量批处理任务，<a href="https://deepinfra.com/models/flex/">DeepInfra 的 Flex 档</a>给出最低的公开挂牌费率，同时不放弃生产特性支持。</p>
 <p>想连 V4.1-Flash 一起评估更大的 DeepSeek 模型家族，<a href="https://deepinfra.com/deepseek">DeepInfra 的 DeepSeek 模型目录</a>呈现了完整阵容——在把 V4.1-Flash 与 V4-Flash 或 V4-Pro 针对具体任务跑基准、再敲定一种架构时很有用。想在同一套定价框架下对比非 DeepSeek 选项，也可以浏览<a href="https://deepinfra.com/models">完整的 DeepInfra 模型库</a>。这个家族内部的定价差异是真实的，而在你的真实 prompt 组合上做一次快速成本预估，花的时间比听起来短。</p>
 <p>如果你已经准备跑这个模型，DeepInfra 上的 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash API 页面</a>是最快的起点——你可以在 demo 里直接试、查看端点详情，然后进入生产集成，全程不需要先和任何人谈话。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>2026 年最佳 GLM-5.3-Flash API 提供方</title>
-      <link>https://deepinfra.com/blog/best-glm-5-3-flash-api-providers</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/best-glm-5-3-flash-api-providers</guid>
-      <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Best GLM-5.3-Flash API Providers in 2026</description>
-      <content:encoded><![CDATA[<h1>2026 年最佳 GLM-5.3-Flash API 提供方</h1>
-<p>随着 AI 架构转向高度优化的 Mixture-of-Experts（MoE）模型，<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">GLM-5.3-Flash</a> 已成为需要快速推理、高级推理能力和稳健 tool-calling 的开发者的强劲选择。把这样的模型部署到生产环境，仍然意味着要在 token 成本、首 token 时间（TTFT）延迟、原始吞吐量和 API 可靠性之间做平衡。</p>
-<p>围绕这个模型的推理云与 API 网关生态相当碎片化且变化很快——各提供方的基准数据可能逐周发生明显变化。本指南梳理 GLM-5.3-Flash 的主要 SaaS 工具与 API 提供方，无论你是为实时交互智能体、大批量处理还是企业治理做优化。</p>
-<h2><strong>最佳 GLM-5.3-Flash 提供方速览</strong></h2>
-<p>如果按具体架构约束快速给出推荐，各分类的头名如下：</p>
-<table><thead><tr><th><strong>分类</strong></th><th><strong>提供方</strong></th></tr></thead><tbody><tr><td>综合性价比与可靠性最佳</td><td><a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a></td></tr><tr><td>原生多模态与推理最佳</td><td><a href="https://z.ai/">Z.ai（智谱 AI）</a></td></tr><tr><td>成本最低</td><td><a href="https://www.bitdeer.ai/">Bitdeer AI</a></td></tr><tr><td>吞吐量最大</td><td><a href="https://inco.ai/">Inco</a></td></tr><tr><td>延迟最低</td><td><a href="https://nebius.com/">Nebius</a></td></tr><tr><td>冗余与路由最佳</td><td><a href="https://openrouter.ai/z-ai/glm-5.3-flash">OpenRouter</a></td></tr><tr><td>企业网关与治理最佳</td><td><a href="https://www.requesty.ai/">Requesty</a></td></tr><tr><td>欧洲 serverless 部署最佳</td><td>Lyceum Technology</td></tr><tr><td>API 整合最佳</td><td>CometAPI</td></tr><tr><td>输入密集型工作负载最佳</td><td><a href="https://www.makora.com/">Makora</a></td></tr></tbody></table>
-<p>这个市场的提供方吞吐、延迟与混合定价变动频繁——下面的一些数字即使在同一天核对的多个来源之间也出现了漂移。请把确切数值当作方向性参考，发布前务必实时复核。</p>
-<h2><strong>DeepInfra</strong></h2>
-<p><a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a> 是领先的推理云，提供高度优化的开放权重模型部署。对访问 GLM-5.3-Flash 来说，它是综合最强的一档，兼顾性能与可负担性。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li>在本清单的提供方中，价值与性能综合表现突出。</li><li>可通过直连路由和聚合平台以有竞争力的促销费率访问（输入 $0.075/1M、输出 $0.25/1M）。</li><li>支持结构化 JSON 输出与 function calling。</li><li>针对大型 MoE 模型优化的基础设施。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> DeepInfra 的基础设施就是为处理这类大型 MoE 模型而构建的。对于想在成本效率、吞吐量与生产级 API 可靠性之间取得平衡的开发者——尤其是智能体工作流——它是稳妥的选择。</p>
-<h2><strong>Z.ai（智谱 AI）</strong></h2>
-<p><a href="https://z.ai/">Z.ai</a> 是 GLM-5.3-Flash 的创造者与一方提供方。直接找源头，开发者可获得原生 API 访问、day-zero 功能支持，以及第三方托管方未必及时跟进的完整多模态能力。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li>一方提供的 OpenAI 兼容 API 端点。</li><li>标价输入 $0.15/1M、输出 $0.50/1M，缓存输入 $0.03/1M。</li><li>原生支持文本与图像输入。</li><li><a href="https://docs.z.ai/guides/llm/glm-5.3">Z.ai 的文档</a>描述 GLM-5.3 家族支持可选的推理强度模式（low/high/max）；Flash 变体对这些具体模式的支持，应在围绕其构建之前直接向 Z.ai 确认。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> 模型出自 Z.ai 之手，因此对于需要直接访问创造方基础设施、或想在多模态与推理新功能上线时确认 day-zero 支持的团队，它是最保险的选择。</p>
-<h2><strong>Bitdeer AI</strong></h2>
-<p><a href="https://www.bitdeer.ai/en/blog/glm-5-3-flash-live-on-bitdeer-ai/">Bitdeer AI</a> 运营一个成本优化的 AI 云平台。根据 <a href="https://artificialanalysis.ai/providers/bitdeer">Artificial Analysis 自身的提供方数据</a>，它目前在被跟踪的提供方中为 GLM-5.3-Flash 提供最低的混合价格。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li>Artificial Analysis 跟踪到的最低混合价格：每 1M token $0.05（按标准缓存/输入/输出比例混合计算）。</li><li>Artificial Analysis 报告的输出速度约 173 tokens/秒（第三方基准在不同日期给出过不同数字——这是个快速变化的数值）。</li><li>运行在 Bitdeer AI Model Studio 上。</li><li>支持 JSON mode 与工具使用。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> 当压低 token 成本是首要约束时，Bitdeer AI 非常合适——成本敏感的部署，以及仍需可靠工具使用的大批量自动化智能体任务。</p>
-<h2><strong>Inco</strong></h2>
-<p><a href="https://inco.ai/">Inco</a> 是原始输出速度上的头名。如果应用的瓶颈在 token 生成时间，Inco 是本清单覆盖提供方中报告吞吐量最高的。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li><a href="https://inco.ai/blog/inco-platform-aa/">Inco 自己公布的数字</a>称该模型吞吐量在 500–700 tokens/秒区间，远超其他提供方。</li><li>但这个速度有实打实的代价：部分基准中首 token 时间在 10 秒以上——明显高于多数其他提供方，而不是更低。如果你的工作负载是延迟敏感而非吞吐受限，这一点值得仔细权衡。</li><li>支持结构化 JSON 输出。</li><li>支持 function calling（工具使用）。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> 对于吞吐量密集型任务——大批量生成或抽取——Inco 是最强选择，前提是你更看重原始 tokens/秒而不是首 token 多快到达。</p>
-<h2><strong>Nebius</strong></h2>
-<p><a href="https://nebius.com/">Nebius</a> 针对 GLM-5.3-Flash 的高吞吐与有竞争力的延迟优化了其基础设施。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li>输出速度强劲——在 Artificial Analysis 的提供方基准中约 269 tokens/秒。</li><li>同一基准中 TTFT 在 7–8 秒区间。其他提供方在不同测试轮次中显示出明显更低的 TTFT，所以&quot;延迟最低&quot;不能视为定论——投入之前请针对你自己的流量模式比对实时数据。</li><li>完整支持 JSON mode 与 function calling。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> Nebius 把高吞吐与尚可的延迟结合在一起，值得与 Baseten、Inco 一起放进延迟敏感的交互式应用测试清单。</p>
-<h2><strong>OpenRouter</strong></h2>
-<p><a href="https://openrouter.ai/z-ai/glm-5.3-flash">OpenRouter</a> 是流行的模型聚合器，把 GLM-5.3-Flash 请求路由到 31 个底层提供方之上，让开发者可以按价格、速度或 tool-calling 准确率动态优化流量。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li>跨 31 个提供方（包括 DeepInfra、NovitaAI 等）的自动故障切换。</li><li>可选路由模式：Balanced（均衡）、Nitro（最快）或 Exacto（最高准确率）。</li><li>OpenAI 兼容 API，可轻松即插即用替换。</li><li>约输入 $0.075/1M、输出 $0.25/1M 的促销价访问，与 DeepInfra 的折扣费率一致。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> OpenRouter 化解了任何单一提供方宕机的风险。对于想要内建冗余、自动故障切换、并能在当下表现最好的底层提供方之间灵活路由的开发者，它是合适的选择。</p>
-<h2><strong>Requesty</strong></h2>
-<p><a href="https://www.requesty.ai/">Requesty</a> 是 AI 网关与路由平台，跨多个提供方服务 GLM-5.3-Flash，面向生产团队内建缓存、治理与可观测性。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li>跨多端点路由，覆盖欧盟和全球区域。</li><li>自动故障切换与基于健康状态的路由。</li><li>不在提供方价格上加价。</li><li>OpenAI 兼容 base URL，内建可观测性。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> 与简单聚合器不同，Requesty 为企业管控而生——需要支出管理、深度可观测性和跨地理区域故障切换的生产团队会很适配。</p>
-<h2><strong>Lyceum Technology</strong></h2>
-<p>Lyceum Technology 是一家欧洲 serverless 推理提供方，把 GLM-5.3-Flash 带入欧盟市场，采用按 token 计量计费。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li>Serverless 推理，无空闲计算成本。</li><li>Flash 变体定价为输入 $0.20/1M、输出 $0.50/1M。</li><li>兼容 OpenAI 与 Anthropic 的 API 端点。</li><li>原生支持 prompt 缓存。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> 对于明确需要欧盟区域 serverless 部署的团队，它是很强的选项，缓存与即插即用 API 兼容性可以轻松接入现有工具链。</p>
-<h2><strong>CometAPI</strong></h2>
-<p>CometAPI 是一个统一 API 聚合器，在同一套计费体系下提供 GLM-5.3-Flash 以及大量其他模型的访问。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li>一个 API key 访问多个模型。</li><li>部分模型提供标价折扣。</li><li>内建故障切换路由。</li><li>统一计费与 API dashboard。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> 如果你的架构已经在 GLM-5.3-Flash 之外依赖多个不同的 LLM，你想整合账号和账单、而不是单独优化这一个模型，它会很有用。</p>
-<h2><strong>Makora</strong></h2>
-<p><a href="https://www.makora.com/">Makora</a> 是<a href="https://openrouter.ai/provider/makora">经确认的 GLM-5.3-Flash 提供方</a>，输入 token 定价激进。</p>
-<p><strong>核心特性：</strong></p>
-<ul><li>按 Artificial Analysis 的提供方跟踪，混合价格较低。</li><li>相对输出定价，输入 token 价格明显偏低。</li><li>支持结构化 JSON 输出。</li><li>支持 function calling。</li></ul>
-<p><strong>为何适合 GLM-5.3-Flash：</strong> Makora 偏输入的定价结构适合以大 prompt 为主的工作负载——文档处理或大上下文分析——即输出量相对较小的场景。</p>
-<h2><strong>结论</strong></h2>
-<p>部署 GLM-5.3-Flash，关键在于弄清你应用的具体瓶颈。基于上述提供方，按用例给几个起点：</p>
-<ul><li><strong>企业与生产团队：</strong> 需要严格治理、可观测性与区域路由，Requesty 是很强的网关选项。需要原生多模态支持与 day-zero 功能访问，直接找 <a href="https://z.ai/">Z.ai</a> 更保险。</li><li><strong>大批量与预算敏感型部署：</strong> 输入密集的文档分析，Makora 的定价结构有帮助。自动化智能体任务的整体成本，Bitdeer AI 目前跟踪到的混合价最低。</li><li><strong>速度与延迟敏感型应用：</strong> 测延迟可试 Nebius 和 Baseten，测原始生成吞吐可试 Inco——但先拿你的实际用例权衡 Inco 更高的 TTFT。</li><li><strong>初创与敏捷团队：</strong> OpenRouter 跨 31 个提供方的故障切换可避免锁定并增加冗余。</li></ul>
-<p>对大多数构建智能体工作流的开发者，<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a> 仍是强有力的默认选择：成本效率、吞吐量与生产级可靠性之间可取的平衡。另可参见该模型的<a href="https://claude.ai/code/artifact/7a858d25-3ffa-469c-96c5-1d83de448eeb">定价与成本分析</a>、<a href="https://claude.ai/code/artifact/1b67dc5b-bd49-4062-bd18-0b2cedf3eb51">模型文档</a>与 <a href="https://claude.ai/code/artifact/ceee9f03-be9b-454f-8d11-ebc8bfc9ea0e">API 提供方技术分析</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>GLM-5.3-Flash API 提供方：速度与成本</title>
-      <link>https://deepinfra.com/blog/glm-5-3-flash-api-providers-speed-latency-cost</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-flash-api-providers-speed-latency-cost</guid>
-      <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：GLM-5.3-Flash API Providers: Speed &amp; Cost</description>
-      <content:encoded><![CDATA[<h1>GLM-5.3-Flash API 提供方：速度与成本</h1>
-<h2><strong>API 评测摘要</strong></h2>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>数值</strong></th></tr></thead><tbody><tr><td>智能（<a href="https://artificialanalysis.ai/models/glm-5-3-flash">Artificial Analysis</a> Intelligence Index）</td><td>42——远高于开放权重中位数（18）</td></tr><tr><td>速度</td><td>55.9 输出 tokens/秒——慢于中位数（85.7 t/s）</td></tr><tr><td>延迟（TTFT）</td><td>3.14s——高于中位数（2.05s）</td></tr><tr><td>成本（Z.ai 一方 API）</td><td>输入 $0.15/1M、输出 $0.50/1M；缓存折扣约 83%</td></tr><tr><td>成本效率</td><td>每个 Intelligence Index 任务 $0.25（加权平均）</td></tr><tr><td>冗长度</td><td>Intelligence Index 评测期间生成 1.8 亿输出 token——高于中位数（1.4 亿）</td></tr><tr><td>上下文窗口</td><td>1,048,576 tokens（约 1M；大致相当于 1,500 页文本）</td></tr><tr><td>模态</td><td>文本 + 图像输入；文本输出</td></tr><tr><td>许可证</td><td>开放权重，MIT（允许商用）</td></tr><tr><td>模型规模</td><td>总参数 320B，激活 18B（MoE）</td></tr><tr><td>可得性</td><td>据 Artificial Analysis 约 20 个 API 提供方（见<a href="https://artificialanalysis.ai/models/glm-5-3-flash/providers">提供方基准</a>）</td></tr></tbody></table>
-<h2><strong>GLM-5.3-Flash 最佳 API</strong></h2>
-<p>下面每一行信号都取自 Artificial Analysis 的读数；中间一列说明它对选择 API 意味着什么，右列是你应在 <a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">deepinfra.com</a> 上针对该模型直接核实的内容。</p>
-<table><thead><tr><th><strong>选型信号（Artificial Analysis）</strong></th><th><strong>对选择 API 的含义</strong></th><th><strong>在 DeepInfra 上需核实</strong></th></tr></thead><tbody><tr><td>输出速度偏慢（55.9 t/s）vs 中位数（85.7 t/s）</td><td>优先选对该模型实际吞吐更高的提供方</td><td>该模型的公开吞吐/基准数据、流式行为、区域选项</td></tr><tr><td>TTFT 偏高（3.14s）vs 中位数（2.05s）</td><td>对交互型应用，提供方侧的路由与低开销服务方式和原始 tokens/秒同样重要</td><td>典型 TTFT 数据、流式优先延迟、有无 &quot;fast start&quot; 或路由特性</td></tr><tr><td>非常啰嗦（Index 评测 1.8 亿 token）</td><td>冗长会推高输出 token 成本和端到端时间——你需要成本控制与稳定的速率限制</td><td>是否支持最大输出限制、回复长度控制、可预测的限流/配额</td></tr><tr><td>低挂牌价 + 大缓存折扣（约 83%）</td><td>prompt 缓存与缓存命中透传能实质性削减重复上下文、RAG 或 system prompt 的支出</td><td>DeepInfra 对该模型是否支持 prompt 缓存，缓存命中如何计费/打折</td></tr><tr><td>每个 Intelligence Index 任务 $0.25</td><td>总成本取决于定价 + 缓存 + 提供方附加项——在同一工作负载上比较提供方</td><td>DeepInfra 每 1M 定价（输入/输出 + 缓存读/写）vs 其他提供方</td></tr><tr><td>1M token 上下文窗口</td><td>长上下文工作负载需要能可靠支持完整窗口、不截断不多延迟的提供方</td><td>实际支持的最大上下文、单请求上限、长上下文稳定性与超时</td></tr><tr><td>文本 + 图像输入</td><td>需要视觉能力就确认 API 接受你使用格式的图像输入</td><td>图像输入支持、载荷格式（URL/base64/multipart）、图像尺寸限制</td></tr><tr><td>开放权重（MIT）、MoE（总 320B/激活 18B）</td><td>开放权重支持自托管，但托管 API 可能更省事；MoE 服务质量因提供方实现而异</td><td>硬件透明度、可靠性/SLA，以及 DeepInfra 是否为该模型提供一致的部署</td></tr><tr><td>约 20 个 API 提供方</td><td>用提供方基准挑出速度、TTFT 与价格的最优组合</td><td>确认 GLM-5.3-Flash 已上架，并把 DeepInfra 的实测性能/价格与提供方基准清单对比</td></tr></tbody></table>
-<p>GLM-5.3-Flash 由 Z.ai 于 2026 年 8 月发布，是一个 320B 参数的 Mixture-of-Experts（MoE）模型，带 1M token 上下文窗口。由于该模型啰嗦、且一方 API 基线延迟偏慢，托管方的选择比通常更重要——下文综合推荐提供方是 <a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a>：完整支持 1M 上下文、约 83% 缓存折扣、输出低至 $0.50/1M。</p>
-<p>GLM-5.3-Flash 在没人知道它名字之前就先火了。2026 年 8 月 20–26 日连续六天，一个代号 &quot;Ox Alpha&quot; 的神秘模型霸榜 OpenRouter 和 OpenCode 的用量图表，在击败一众成熟基准的同时提供近乎无限的免费访问。Z.ai 于 2026 年 8 月 26 日正式揭晓 GLM-5.3-Flash——此时它早已在社区里名声在外。</p>
-<p>GLM-5.3-Flash 是 GLM-5 系列第一个原生多模态模型，融合了稀疏与线性 attention——这是开放权重前沿模型的头一遭。Z.ai 报告这种混合设计在长上下文下相对基础版 <a href="https://artificialanalysis.ai/models/glm-5-3">GLM-5.3</a> 模型带来约 3 倍的 attention 计算量下降和超过 4 倍的 KV cache 缩减。</p>
-<p>Z.ai 表示该模型&quot;从一个全新训练的基座模型出发，其架构与训练配方围绕能力和效率重新设计&quot;——它不是旗舰模型的蒸馏或裁剪版，而是一个用不同语料训练、面向编程与智能体负载优化的独立模型。</p>
-<p>GLM-5.3-Flash 的 MIT 许可开放权重发布在 <a href="https://huggingface.co/zai-org/GLM-5.3-Flash">Hugging Face</a> 上，在各类基准和真实工作负载中全面超越 GLM-5.2，价格约为其十分之一，并在编程与智能体基准上逼近 Claude Opus 4.8。它支持文本、图像与视频输入，上下文窗口 1,048,576 token。</p>
-<h2><strong>提供方对比表</strong></h2>
-<p>GLM-5.3-Flash 约有 20 个 API 提供方提供，因此选对托管方对缓解其延迟、最大化成本效率至关重要。下表按速度、成本与可靠性比较了主要提供方——数据取自 <a href="https://artificialanalysis.ai/models/glm-5-3-flash/providers">Artificial Analysis 的提供方基准</a>以及各提供方自己公布的数字。这些推理市场平台的吞吐和延迟变动很频繁（聚合平台之间日间 2–5 倍的波动很常见），请把下面的数字当作方向性参考，发布前重新核对实时数据。</p>
-<table><thead><tr><th><strong>API 提供方</strong></th><th><strong>最适合</strong></th><th><strong>输出速度（t/s）</strong></th><th><strong>混合成本/1M tokens</strong></th><th><strong>亮点特性</strong></th></tr></thead><tbody><tr><td><a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a></td><td>综合推荐</td><td>–</td><td>–</td><td>缓存输入 $0.03（约 83% 折扣）</td></tr><tr><td>Z.ai（一方）</td><td>原生基线</td><td>55.9</td><td>$0.10</td><td>TTFT 3.14s</td></tr><tr><td><a href="https://inco.ai/">Inco</a></td><td>原始吞吐</td><td>~500–700</td><td>–</td><td>宣称是 AA 榜单上次快提供方的 1.85 倍</td></tr><tr><td><a href="https://www.baseten.co/">Baseten</a></td><td>端到端延迟</td><td>–</td><td>–</td><td>p99 延迟 3.23s</td></tr><tr><td><a href="https://www.bitdeer.ai/">Bitdeer AI</a></td><td>预算与批处理</td><td>–</td><td>–</td><td>已上线 Bitdeer AI Model Studio；定价有竞争力</td></tr><tr><td><a href="https://fireworks.ai/models/fireworks/glm-5p3-flash">Fireworks AI</a></td><td>企业级可靠性</td><td>–</td><td>$0.10</td><td>工具调用类工作负载上任务成功率记录出色</td></tr></tbody></table>
-<h2><strong>API 提供方详细技术分析</strong></h2>
-<h3><strong>1. DeepInfra：综合最佳提供方</strong></h3>
-<p><a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a> 是生产部署的可靠默认选项，在成本效率、上下文处理与可靠性之间取得平衡。</p>
-<ul><li><strong>输入价：</strong> 每 1M token $0.15</li><li><strong>输出价：</strong> 每 1M token $0.50</li><li><strong>缓存输入价：</strong> 每 1M token $0.03（约 83% 缓存折扣）</li><li><strong>上下文窗口支持：</strong> 完整 1.0M tokens</li></ul>
-<p>适配理由：GLM-5.3-Flash 在复杂推理和智能体任务上很依赖 1M 上下文窗口，DeepInfra 完整支持这一点并给到缓存折扣。由于模型啰嗦，DeepInfra 平直的 $0.50/1M 输出价能让长周期工作流保持可预测，同时提供稳定的 OpenAI 兼容端点便于迁移。它的实际吞吐在不同基准来源间有波动，并非本清单中始终最快——选择 DeepInfra 的理由在价格、上下文支持和 API 稳定性，而非原始速度。</p>
-<h3><strong>2. Z.ai：最佳一方原生特性</strong></h3>
-<p>作为模型创造者，Z.ai 运行官方基线 API。</p>
-<ul><li><strong>输出速度：</strong> 55.9 tokens/秒</li><li><strong>TTFT：</strong> 3.14 秒</li><li><strong>混合成本：</strong> 约每 1M token $0.10（按缓存/输入/输出 7:2:1 加权估算）</li><li><strong>单任务成本：</strong> 每个 Intelligence Index 任务 $0.25</li></ul>
-<p>当你需要图像输入与原始推理参数的原生、无抽象层支持时使用它。其 55.9 t/s 的速度在这一规模的开放权重模型中处于低端（中位数 85.7 t/s），因此不是延迟敏感应用的最佳选择。</p>
-<h3><strong>3. Inco：最佳原始吞吐</strong></h3>
-<p><a href="https://inco.ai/">Inco</a> 直指该模型的主要瓶颈——基线生成速度慢。Inco 已<a href="https://inco.ai/blog/inco-platform-aa/">公开表示</a>其 GLM-5.3-Flash 吞吐在 500–700 tokens/秒区间，并称约为 Artificial Analysis 榜单上下一快提供方的 1.85 倍。对大批量生成、大规模抽取或输出速度决定用户体验的工作流，值得拿你的实际负载直接跑一次基准——该提供方的第三方吞吐数字因来源和测试窗口而异。</p>
-<h3><strong>4. Baseten：最佳端到端延迟</strong></h3>
-<p><a href="https://www.baseten.co/">Baseten</a> 优化路由与&quot;思考&quot;阶段，以最小化总体响应时间。</p>
-<ul><li><strong>端到端 p99 延迟：</strong> 3.23 秒（在多个独立基准来源中保持一致）</li></ul>
-<p>端到端延迟把 TTFT、推理时间和输出速度合并计算。对实时智能体工作流——编程助手、终端操作，也就是 GLM-5.3-Flash 生来应对的那类任务——一个低而稳定的 p99 比峰值吞吐更重要，Baseten 正是以此为定位。</p>
-<h3><strong>5. Bitdeer AI：最佳预算与批处理</strong></h3>
-<p><a href="https://www.bitdeer.ai/en/blog/glm-5-3-flash-live-on-bitdeer-ai/">Bitdeer AI</a> 把 GLM-5.3-Flash 加入了 Model Studio，定位为异步批处理的预算型选项——评测运行、量化分析，或其他周转时间不如单位成本重要的工作负载。截至本文撰写时，Bitdeer 尚未公布该模型的详细公开价目表，投入负载前请先在其平台确认当前定价。</p>
-<h3><strong>6. Fireworks AI：最佳任务成功与可靠性</strong></h3>
-<p><a href="https://fireworks.ai/models/fireworks/glm-5p3-flash">Fireworks AI</a> 以严格的 API 契约和高在线率著称，这对企业部署很重要。</p>
-<ul><li><strong>混合价格：</strong> 约每 1M token $0.10</li></ul>
-<p>对工具调用和 JSON schema 密集的工作流——一次掉线或格式错误的输出就能打断多步链条的智能体流水线——Fireworks 的可靠性记录才是卖点，即使其原始速度或 TTFT 落后于 Baseten、Inco 这类更快的提供方。</p>
-<h2><strong>结论</strong></h2>
-<p>GLM-5.3-Flash 是一款能力惊人的 320B 参数模型，在编程与智能体基准上有前沿级表现；但它的啰嗦与一方基线速度慢，意味着 API 提供方的选择比通常更重要。</p>
-<p>对大多数开发者和企业，<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a> 是首选推荐：完整支持 1M 上下文窗口、约 83% 的缓存折扣、可预测的 $0.50/1M 输出定价，让你用上模型的推理能力，而不必承受未优化端点带来的成本不可预测性。另可参考该模型的<a href="https://claude.ai/code/artifact/7a858d25-3ffa-469c-96c5-1d83de448eeb">定价与成本分析</a>和<a href="https://claude.ai/code/artifact/1b67dc5b-bd49-4062-bd18-0b2cedf3eb51">模型文档</a>。</p>
-<h2><strong>常见问题</strong></h2>
-<p><strong>GLM-5.3-Flash 最好的 API 提供方是哪家？</strong></p>
-<p>对大多数开发者和企业，DeepInfra 是首选。它支持完整 1M 上下文窗口，提供约 83% 的缓存折扣（每 1M 缓存输入 token $0.03），输出保持在每 1M token $0.50。</p>
-<p><strong>GLM-5.3-Flash 最快的 API 提供方是哪家？</strong></p>
-<p>Inco 报告了该模型最高的原始吞吐，按其公布数字在 500–700 tokens/秒区间。专看端到端延迟，Baseten 的 3.23s p99 是各基准来源中最强、也最被一致佐证的数字。</p>
-<p><strong>跑 GLM-5.3-Flash 要花多少钱？</strong></p>
-<p>成本因提供方而异。一方 Z.ai API 混合下来约 $0.10/1M token（每个 Intelligence Index 任务 $0.25）。请在你的真实工作负载上比较提供方——如果你的缓存/输入/输出 token 流量配比与基准比例不同，混合费率估算可能误导。</p>
-<p><strong>既然不是蒸馏模型，GLM-5.3-Flash 为什么叫 &quot;Flash&quot;？</strong></p>
-<p>与 &quot;Flash&quot; 表示蒸馏或裁剪旗舰的其他模型家族不同，GLM-5.3-Flash 是一个独立模型。Z.ai 声明它&quot;从一个全新训练的基座模型出发，架构与训练配方围绕能力和效率重新设计&quot;。名字指的是其稀疏-线性混合 attention 架构带来的效率增益，而非能力的削减。</p>
-<p><strong>GLM-5.3-Flash 与 GLM-5.3 有何区别？</strong></p>
-<p>GLM-5.3-Flash 是多模态、高效率变体，定价每百万 token $0.15/$0.50。旗舰 <a href="https://artificialanalysis.ai/models/glm-5-3">GLM-5.3</a> 是纯文本、聚焦编码与网络安全的模型，定价约输入 $1.40/输出 $4.40 每百万——贵了约十倍。对多数非编码工作负载（对话、抽取、视觉、摘要），GLM-5.3-Flash 是更实际的选择。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

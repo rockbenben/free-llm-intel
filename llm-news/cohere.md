@@ -1,6 +1,6 @@
 # Cohere 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-17**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-18**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Cohere（`cohere`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -11,7 +11,7 @@
 
 1. [视频智能：让视频库中的每一刻都可搜索——推出面向企业搜索和 AI 智能体的精准、带时间戳视频检索](https://cohere.com/blog/video-intelligence-preview)（2026-11-16） <!--orig:Video intelligence: Make every moment in your video library searchableIntroducing precise, timestamped video retrieval for enterprise search and AI agents.-->
 2. [欢迎 Jaya Baloo 出任 Cohere 首位 CISO](https://cohere.com/blog/cohere-welcomes-jaya-baloo-as-first-ciso)（2026-11-12） <!--orig:Welcoming Jaya Baloo as Cohere's First CISOThe cybersecurity leader and AISLE co-founder joins Cohere to help build the world's most trusted platform for sovereign AI-->
-3. [Embed 5 与 Rerank 5 现已上线 OpenRouter](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04） <!--orig:Embed 5 and Rerank 5 now on OpenRouterAccess Cohere’s state-of-the-art retrieval models through a single API, with unified billing and no additional SDKs.-->
+3. [Embed 5 与 Rerank 5 现已上线 OpenRouter](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04） <!--orig:Embed 5 and Rerank 5 now on OpenRouter-->
 4. [全球领先的开放模型，完全由你掌控](https://cohere.com/blog/open-source-model-vault)（2026-11-03） <!--orig:The world's leading open models, fully under your control-->
 5. [Cohere 推进 40 亿加元承诺，巩固加拿大 AI 领导地位并大幅扩充本土团队](https://cohere.com/blog/cohere-canada-commitment)（2026-10-30） <!--orig:Cohere advances C$4 billion commitment to strengthen Canada’s AI leadership and significantly expand its national workforce-->
 6. [在 AWS 上用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29） <!--orig:Build a financial research assistant with Cohere on AWS-->
@@ -23,10 +23,10 @@
 12. [AI 能理解文化吗？一位退休教师和一名高中生来试试](https://cohere.com/blog/can-ai-understand-culture)（2026-10-22） <!--orig:Can AI understand culture?-->
 13. [推出 Rerank 5：精准高效的企业文档检索](https://cohere.com/blog/rerank-5)（2026-10-21） <!--orig:Introducing Rerank 5: precise, efficient enterprise document retrieval-->
 14. [重新审视 reasoning model 的置信度](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)（2026-10-20） <!--orig:Rethinking confidence in reasoning models-->
-15. [Cohere 将收购 AISLE 以推进抗网络攻击的主权 AI](https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai)（2026-10-15） <!--orig:Cohere to acquire AISLE to advance cyber-resilient sovereign AI-->
-16. [公用事业的 AI 需要能力，也需要控制](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)（2026-10-15） <!--orig:AI for utilities requires capability and control-->
-17. [Agent 蔓延：如何在企业里管理 agent 的激增](https://cohere.com/blog/agent-sprawl)（2026-10-15） <!--orig:Agent sprawl: How to manage agent proliferation in the enterprise-->
-18. [AI ROI：企业如何衡量 AI 投资的回报](https://cohere.com/blog/ai-roi)（2026-10-15） <!--orig:AI ROI: How enterprises can measure the return on AI investments-->
+15. [公用事业的 AI 需要能力，也需要控制](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)（2026-10-15） <!--orig:AI for utilities requires capability and control-->
+16. [Agent 蔓延：如何在企业里管理 agent 的激增](https://cohere.com/blog/agent-sprawl)（2026-10-15） <!--orig:Agent sprawl: How to manage agent proliferation in the enterprise-->
+17. [AI ROI：企业如何衡量 AI 投资的回报](https://cohere.com/blog/ai-roi)（2026-10-15） <!--orig:AI ROI: How enterprises can measure the return on AI investments-->
+18. [Cohere 将收购 AISLE 以推进抗网络攻击的主权 AI](https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai)（2026-10-15） <!--orig:Cohere to acquire AISLE to advance cyber-resilient sovereign AI-->
 19. [扩展 coding agent 团队的经验教训：用 30% 的成本触达前沿水平](https://cohere.com/blog/lessons-from-scaling-teams-of-frontier-coding-agents)（2026-10-14） <!--orig:Lessons from scaling teams of coding agents: reach the frontier at 30% of the cost-->
 20. [Embed 与 Rerank 该用共享推理还是专属推理](https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank)（2026-10-09） <!--orig:Shared or dedicated inference for Embed & Rerank-->
 21. [多语言之桥：数据混合如何解锁语言内推理](https://cohere.com/blog/building-multilingual-bridges)（2026-10-06） <!--orig:Multilingual Bridges: How Data Mixing Unlocks In-Language Reasoning-->
@@ -65,6 +65,6 @@
 54. [Cohere 通过 AISLE 和 cubic 扩展其主权 AI 平台](https://cohere.com/blog/cohere-expands-its-sovereign-ai-platform-with-aisle-and-cubic) <!--orig:Cohere Expands Its Sovereign AI Platform with AISLE and cubic-->
 55. [审视 AI 对工作的影响](https://cohere.com/research/futures-of-work) <!--orig:Future(s) of WorkHow will AI change the way we work?-->
 56. [释放 AI 的潜能，一次一种语言](https://cohere.com/research/aya) <!--orig:Aya ModelsMultilingual AI at scale-->
-57. [塑造 ML 研究的前沿](https://cohere.com/research/scholars-program) <!--orig:Research ScholarsFinding the new generation of ML talent-->
-58. [以开放科学加速发现](https://cohere.com/research/open-science) <!--orig:Open Science CommunityChampioning global, open science-->
-59. [用 AI 创造现实世界的影响](https://cohere.com/research/grants) <!--orig:Catalyst GrantsSupporting impactful ML endeavors-->
+57. [以开放科学加速发现](https://cohere.com/research/open-science) <!--orig:Open Science CommunityChampioning global, open science-->
+58. [用 AI 创造现实世界的影响](https://cohere.com/research/grants) <!--orig:Catalyst GrantsSupporting impactful ML endeavors-->
+59. [塑造 ML 研究的前沿](https://cohere.com/research/scholars-program) <!--orig:Research ScholarsFinding the new generation of ML talent-->

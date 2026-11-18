@@ -7,7 +7,100 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 17 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Ray Train：通过数据摄取可观测性诊断模型训练中的 GPU 饥饿</title>
+      <link>https://anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Ray Train: Diagnosing GPU Starvation in Model Training with Data Ingest Observability</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">首页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细</p>
+<h1>Ray Train：通过数据摄取可观察性诊断模型训练中的 GPU 饥饿</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=jason-li">Jason Li</a> | 2026 年 11 月 17 日</p>
+<p><em>我们的 KubeRay 系列的第 3 部分。该博客是独立的，因此您不需要遵循早期的帖子。 </em><a href="https://www.anyscale.com/blog/kuberay-best-practices"><em>第 2 部分：生产中的 KubeRay：现场最佳实践</em></a><em> 介绍了团队如何在生产中运行 KubeRay 以及 Anyscale KubeRay Connect 如何与之相适应。</em></p>
+<p>Anyscale 平台具有针对 Ray 工作负载的内置可观察性，并且第 2 部分末尾介绍的 <a href="https://www.anyscale.com/blog/announcing-anyscale-connect-for-kuberay">KubeRay Connect</a> 将其引入您已运行的 KubeRay 集群。这篇文章介绍了专为训练工作负载构建的功能之一：Ray Train 的数据摄取可观察性。</p>
+<h2>Link为什么 GPU 饥饿很难捕捉</h2>
+<p>模型训练是资本密集型的，因此训练团队需要密切关注 GPU 利用率。在数百或数千个 GPU 的规模上，即使是很小的速度下降也会导致大量 GPU 小时的损失。</p>
+<p>为了保持 GPU 忙碌，下一批数据需要在模型完成当前数据时准备好。如果不是，GPU 就会坐下来等待。这就是 GPU 匮乏，也是利用率下降的最常见原因之一。它也是最安静的之一：没有崩溃，没有警报，作业只是运行得比应有的速度慢一点。</p>
+<p>团队通常会注意到以下两种症状之一：GPU 利用率上下波动而不是保持稳定，或者训练运行时间比预期更长。例如，在下面的运行中，每个 GPU 上的 SM 活动不断上升和下降，而不是达到稳定状态：</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6efx8aEOfivG4fBTk2pWiR/d54c4eef90caf4f957228e1c63e2ae59/GPU_SM_Activity.png" alt="GPU SM 活动"></p>
+<p>GPU SM 活动</p>
+<p>这种模式是 GPU 匮乏的典型迹象。数据加载和训练并行运行：当 GPU 训练一批数据时，正在准备下一批数据。当准备一个批次比训练它花费的时间更长时，训练步骤首先完成，并且 GPU 处于空闲状态，直到下一个批次到达：</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3HeLY6JhzRD8Xv2MB0z6pn/b88099eec738f33817d53eb3f7d8ff24/training_steps.png" alt="训练步骤"></p>
+<p>训练步骤</p>
+<p>每个空闲间隙都是上面利用率图表中的下降之一。该症状很容易被发现。原因并非如此。批次可能会由于多种原因而延迟到达：上游数据管道缓慢、数据从另一个节点通过网络传输、训练工作人员上的繁重预处理（例如昂贵的 <code>collate_fn</code> 或主机到设备的副本）。每个原因都有不同的修复方法，因此第一步是找出哪个阶段是瓶颈。</p>
+<p>本文的其余部分将介绍用于执行此操作的工具：</p>
+<ul><li><strong>开源 Ray 中的数据摄取指标：</strong>Ray Train 和 Ray Data 如何计时数据加载的每个阶段，以及如何读取 Grafana 图表以查看训练是否在数据上停滞、哪个阶段负责以及需要更改哪些内容。</li><li><strong>Anyscale 上的数据摄取可观察性：</strong>无需设置的相同图表，加上 Ray Train 仪表板上的实时数据摄取面板，该面板总结了每个正在运行的数据集的摄取健康状况。 KubeRay Connect 将这两种功能带入您自己管理的 KubeRay 集群中。</li></ul>
+<h2>LinkData 在开源 Ray 中摄取指标</h2>
+<p>从 Ray 2.58 开始，Ray Train 和 Ray Data 记录每个批次在数据加载的每个阶段花费的时间，以便您可以看到哪个阶段阻碍了训练。如果您的 Ray Train 代码已从 Ray Data 读取，则无需更改代码。</p>
+<p>典型的设置如下所示。驱动程序定义一个 Ray 数据集，这里是从 S3 读取的 Parquet 文件，并将其传递给训练器。 Ray Train 为八名训练人员中的每一位提供了自己的数据集碎片。每个工作线程使用 <code>iter_torch_batches</code> 读取其分片，这会应用您的 <code>collate_fn</code> 并返回 64 行的批次作为 PyTorch 张量：</p>
+<pre><code>import ray
+import ray.train
+from ray.train import ScalingConfig
+from ray.train.torch import TorchTrainer
+
+train_ds = ray.data.read_parquet(&quot;s3://my-bucket/train/&quot;)
+
+def train_func():
+    shard = ray.train.get_dataset_shard(&quot;train&quot;)
+    for batch in shard.iter_torch_batches(batch_size=64, collate_fn=my_collate):
+        ...  # your training step
+
+trainer = TorchTrainer(
+    train_func,
+    datasets={&quot;train&quot;: train_ds},
+    scaling_config=ScalingConfig(num_workers=8, use_gpu=True),
+)
+trainer.fit()</code></pre>
+<p>单个 <code>iter_torch_batches</code> 调用是所有数据加载发生的地方。与所有其他 Ray Data 迭代器（包括 <code>iter_batches</code>、<code>iter_rows</code> 和 <code>to_tf</code>）一样，它在将每个批次传递给训练循环之前通过相同的管道移动每个批次。</p>
+<p>在该调用中，每个批次从射线数据管道到 GPU 的过程中都会经过六个阶段。其中任何一个都可能成为瓶颈：</p>
+<table><thead><tr><th><strong>舞台</strong></th><th><strong>它测量什么</strong></th></tr></thead><tbody><tr><td>生产等待</td><td>等待上游 Ray Data 管道生成下一个块</td></tr><tr><td>数据传输</td><td>向训练工作者获取块，包括从另一个节点的对象存储中获取块</td></tr><tr><td>配料</td><td>将块切片并组合成批次，包括任何本地洗牌缓冲区</td></tr><tr><td>格式</td><td>将每个批次转换为请求的格式，例如 NumPy 或 pandas</td></tr><tr><td>整理</td><td>在训练工作线程上运行您自己的每批次预处理，例如将文本或填充序列标记为通用长度，以 <code>collate_fn</code></td><td>形式传入。</td></tr><tr><td>完成</td><td>在 <code>iter_torch_batches</code> 中将批次复制到 GPU（主机到设备传输）</td></tr></tbody></table>
+<p>这些阶段不会在您的训练线程上依次运行。相反，后台线程池会同时运行它们，以便在训练步骤运行时准备下一批。只要在训练步骤完成之前准备好下一批，所有这些工作都是隐藏的，不会花费您任何挂钟时间。当下一批没有及时准备好时，训练循环将等待并且 GPU 处于空闲状态。该等待是公开的数据加载时间。雷将其记录在每个培训工人身上，以及每个阶段所花费的时间。</p>
+<p>在开源 Ray 中，一旦您为集群设置了 Prometheus 和 Grafana，这些指标就会出现在 Grafana 的训练仪表板的数据摄取部分中。这些图表按顺序回答了三个问题，此处显示的是在昂贵的 <code>collate_fn</code> 上停滞的运行：</p>
+<ul><li><strong>训练是否因数据而停滞？最大公开数据加载时间</strong>显示训练循环在最慢的排名上等待每个批次的时间。如果为零，数据加载会继续进行，调整管道也无济于事。如果不是，则该时间是每个步骤的 GPU 空闲时间。</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/65VRgaMmjzZAXQSM0M4ZvI/f8fc9c56fcb80754a243bc9120a7c922/Max_Exposed_Data_Loading_Time.png" alt="最大暴露数据加载时间">最大暴露数据加载时间</p>
+<ul><li><strong>哪个阶段负责？按阶段划分的数据加载百分比细分</strong>显示每个阶段在所有级别中汇总的数据加载时间份额。大量的生产等待份额意味着上游 Ray 数据管道无法足够快地生成数据。任何其他阶段的大部分工作都指向培训工人本身。</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6MxxlEPDpHt4S3KjISIsTa/6ad4c0422cfb4f022cc2f00f4b436756/Percentage_Data_Loading_Breakdown_by_Stage.png" alt="按阶段划分的数据加载百分比细分">按阶段划分的数据加载百分比细分</p>
+<ul><li><strong>是每个等级还是只有一个？ </strong>每个阶段都有自己的按等级细分的图表。如果一个排名远远高于其他排名，那么它就是一个掉队者，并且因为排名在每一步上都是同步的，所以一个缓慢的排名可能会阻碍整个运行。</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/hm30tpbpea97dTcf8F0tQ/5a709f470f52229f8f1239ae6074de57/Production_wait_time_by_rank.png" alt="按等级的生产等待时间">按等级的生产等待时间</p>
+<p>两个吞吐量图使视图更加完整。 <strong>按等级划分的数据摄取吞吐量</strong>显示每个等级每秒消耗的行数，而<strong>数据生产吞吐量</strong>显示 Ray Data 管道每秒交付给训练的行数。它们一起显示了健康运行的稳态率，因此排名之间的下降和不平衡很突出。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/48JKCQlR1RbRXrO6TBZMHe/7a3d17850cb65bc2ae74f2751144bd08/Data_Ingest_Throughput_by_Rank___Data_Production_Throughput.png" alt="按排名划分的数据摄取吞吐量和数据生产吞吐量"></p>
+<p>按排名和数据生产吞吐量划分的数据摄取吞吐量</p>
+<p>知道哪个阶段负责才能使问题变得可行，因为每个阶段都指向需要检查或更改的特定事项：</p>
+<table><thead><tr><th><strong>瓶颈</strong></th><th><strong>尝试什么</strong></th></tr></thead><tbody><tr><td>生产等待</td><td>检查 Ray Data 仪表板以查找上游管道中最慢的操作员并调整其配置。您还可以添加仅包含 CPU 的节点，以便 Ray Data 可以横向扩展预处理，或者使用 <code>materialize()</code> 将预处理后的数据集缓存在内存中（如果合适）。</td></tr><tr><td>数据传输</td><td>增加 <code>prefetch_batches</code> 以便块在训练步骤之前开始传输。值越高，内存中保存的批次越多，因此请观察训练节点上的内存使用情况。</td></tr><tr><td>配料</td><td>如果您使用 <code>local_shuffle_buffer_size</code>，请减少它或对上游进行随机播放，例如使用 <code>map_batches</code> 随机播放或在读取时随机播放文件顺序。</td></tr><tr><td>格式</td><td>增加 <code>prefetch_batches</code> 以便在训练步骤之前转换更多批次。</td></tr><tr><td>整理</td><td>使用 <code>map_batches</code> 将繁重的预处理从 <code>collate_fn</code> 移至 Ray Data 管道中，在整个集群中横向扩展，而不是在训练工作线程上运行。对于较轻的整理工作，增加 <code>prefetch_batches</code> 也可以通过在训练步骤之前准备更多批次来提供帮助。</td></tr><tr><td>排名落后一位</td><td>检查该等级的节点有什么不同。常见原因是 Ray Data 任务与训练工作线程竞争 CPU 或内存，以及从远程节点重复获取块。如果 Ray Data 任务正在争夺资源，请通过使用 <code>label_selector</code> 将数据集固定到仅 CPU 节点，使它们远离训练节点。</td></tr></tbody></table>
+<h2>LinkData 在 Anyscale 上摄取可观测性</h2>
+<p>在 Anyscale 上，您无需设置即可获得所有这些 Grafana 图表。 Anyscale 收集每次训练运行的指标，并在 Ray Train 仪表板上显示图表，因此无需托管 Prometheus 或 Grafana。</p>
+<p>在 Grafana 图表之上，Anyscale 上的 Ray Train 仪表板包括一个实时数据摄取面板。您无需阅读十几个图表，而是可以实时查看整个集群的数据摄取运行状况。下面的加速记录显示了在整理时停滞的运行情况：</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/41aR4DzOauQ4hlZnkLZACd/d50db1f3ad178f82bdee37b75d318f5c/Live_data_ingestion_health.gif" alt="实时数据摄取健康状况"></p>
+<p>实时数据摄取健康状况</p>
+<p>对于当前正在执行的每个射线数据数据集，面板显示以下内容。每批次指标适用于您选择的排名；记录显示最慢的排名。</p>
+<ul><li><strong>摄取进度：</strong>训练通过数据集的进度，作为摄取总数中的行数。</li><li><strong>吞吐量：</strong>每秒由上游数据管道生成并由训练摄取的行数。</li><li><strong>暴露的数据加载停滞：</strong>训练循环等待每批数据的时间。</li><li><strong>训练计算时间：</strong>每批训练步骤需要多长时间。</li><li><strong>批次周期：</strong>每个批次的总时间，分为训练计算和暴露的停顿。</li><li><strong>阶段细分：</strong>六个数据加载阶段中每一个阶段的每批时间，因此瓶颈很突出。在录音中，校对几乎占据了所有内容，直接指向<code>collate_fn</code>。</li><li><strong>链接到 Grafana：</strong>单击即可查看完整的数据摄取图表，了解历史指标和更多详细信息。</li></ul>
+<p>本节中的所有内容都是 Anyscale 平台内置的可观察性的一部分。如果您运行自己的 KubeRay 集群，<a href="https://docs.anyscale.com/kuberay-connect">KubeRay Connect</a> 会将其提供给他们，而无需迁移工作负载。</p>
+<p>有了这些指标，不稳定的 GPU 利用率就变成了可以追踪到单个瓶颈的东西，而不是你猜测的东西。修复该阶段，您的 GPU 就会保持正常状态：利用率上升并保持稳定，并且相同的运行在相同的硬件上更快完成。</p>
+<p>要深入了解，请参阅 Ray 文档中的这些指南：</p>
+<ul><li><a href="https://docs.ray.io/en/master/train/user-guides/data-loading-preprocessing.html#debug-data-loading-bottlenecks">调试数据加载瓶颈</a> 涵盖了完整的深入分析和每个结果的修复。</li><li><a href="https://docs.ray.io/en/master/data/internals.html#how-does-ray-data-iterate-over-data">Ray Data 如何迭代数据？</a> 涵盖了六个阶段背后的线程模型。</li></ul>
+<h2>链接摘要</h2>
+<p>GPU 利用率不稳定会告诉您出现问题，但不会告诉您具体问题是什么。从 Ray 2.58 开始，Ray Train 和 Ray Data 中的每阶段数据加载指标缩小了这一差距。它们会告诉您数据加载是否是阻碍训练的原因，如果是的话，瓶颈在哪里，以便您知道下一步该往哪里看。在开源 Ray 中，指标显示在 Grafana 的 Train Dashboard 中。在 Anyscale 上，您无需设置即可获得相同的图表，以及总结每个正在运行的数据集的实时数据摄取面板。</p>
+<h2>链接后续步骤</h2>
+<p>GPU 饥饿是导致生产训练难以调试的几个问题之一，Ray 团队正在继续将可观测性构建到 Ray Train 中，以解决最常见的问题。这是我们接下来要做的工作：</p>
+<ul><li><strong>自动挂起检测和堆栈跟踪捕获。 </strong>Ray Train 将检测训练何时停止进展，并自动捕获每个工作人员的堆栈跟踪，因此您可以看到每个工作人员卡在哪里，而无需重现挂起。</li><li><strong>健康监测。 </strong>更广泛地监控训练运行状况，包括硬件运行状况检查，以发现导致生产训练运行减慢或停止的问题。</li></ul>
+<p>如果您遇到这些工具未涵盖的数据提取问题，或者对我们接下来应该构建的内容有想法，请<a href="https://github.com/ray-project/ray/issues">在 GitHub 上提交问题</a>。</p>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train#why-gpu-starvation-is-hard-to-catch">为什么 GPU 饥饿很难捕捉</a></li><li><a href="https://www.anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train#data-ingest-metrics-in-open-source-ray">开源 Ray 中的数据摄取指标</a></li><li><a href="https://www.anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train#data-ingest-observability-on-anyscale">Anyscale 上的数据摄取可观察性</a></li><li><a href="https://www.anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train#summary">总结</a></li><li><a href="https://www.anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train#next-steps">后续步骤</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6vnw3Qyt9rUo9lTfzxwqJW/157ed8fc53497d5df102483b5f1a5fa8/JEPA_blog.png?w=140" alt="使用 Ray 对 JEPA 世界模型架构进行实时推理"></p>
+<h4>使用 Ray 对 JEPA 世界模型架构进行实时推理</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5B93PEUBZLNZTWnhOrL9tZ/2e021011ac03276b725e5ffd946e7c48/Donating_KubeRay_to_the_CNCF.png?w=140" alt="向 CNCF 捐赠 KubeRay"></p>
+<h4>将 KubeRay 捐赠给 CNCF</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnfGrZlZyKRBMsd2jSreK/05b0b3cd8d2c9ad962448365782fb980/Lila_x_SkyRL.png?w=140" alt="Lila x SkyRL"></p>
+<h4>Lila Sciences 和 Anyscale 如何将 GLM-5.3-Flash 训练扩展到 100 万个代币</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>用 Ray 实现 JEPA 世界模型架构的实时推理</title>
       <link>https://anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale</link>
@@ -5099,129 +5192,6 @@ def train_loop_per_worker(config: dict):
 <p>客户创建了一棵配额树，如下图所示，以便在不同团队和不同类型的负载之间高效共享资源。</p>
 <ul><li>每个团队都有自己的资源配额上下限，既保证最低可用量，也允许最大程度的超卖。</li><li>每个配额都有自己的队列，创建时定义的优先级更高的 RayJob 会在各自队列中按优先级被执行。</li></ul>
 <p>最后一张图</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>用 Anyscale 全新的 Ray Train 与 Ray Data 看板，把分布式 AI 的监控和调试理顺</title>
-      <link>https://anyscale.com/blog/ray-train-data-dashboard</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-train-data-dashboard</guid>
-      <pubDate>Tue, 20 May 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Streamline Distributed AI Monitoring and Debugging with New Ray Train &amp; Ray Data Dashboards in Anyscale</description>
-      <content:encoded><![CDATA[<h1>用 Anyscale 全新的 Ray Train 与 Ray Data 看板，把分布式 AI 的监控和调试理顺</h1>
-<p>作者：<a href="https://www.anyscale.com/blog?author=alan-guo">Alan Guo</a>、<a href="https://www.anyscale.com/blog?author=cuong-nguyen">Cuong Nguyen</a>、<a href="https://www.anyscale.com/blog?author=justin-yu">Justin Yu</a>、<a href="https://www.anyscale.com/blog?author=matthew-deng">Matthew Deng</a>、<a href="https://www.anyscale.com/blog?author=matthew-owen">Matthew Owen</a> 与 <a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a> | 2025 年 5 月 20 日</p>
-<p><a href="https://docs.ray.io/en/latest/train/overview.html">Ray Train</a> 和 <a href="https://docs.ray.io/en/latest/data/key-concepts.html#data-key-concepts">Ray Data</a> 在 Ray 的分布式计算引擎之上提供熟悉的高层 API，让机器学习工程师能把精力放在模型训练和数据处理逻辑上。但说到可观测性，日志和指标往往四散各处、也没有按语义打标，工程师只能手动把它们拼起来才能做出可视化。即便如此费时费力、还容易出错，多数团队仍然缺一个统一界面来看整体运行状态，并逐层下钻去定位具体问题，比如数据加载瓶颈或者显存溢出。</p>
-<p>为了让把模型训练和数据处理规模化的从业者调试更快、性能调优更直观，我们很高兴推出：</p>
-<ul><li><strong>全新的 Ray Train 看板：</strong> 提供四项关键可观测能力：训练进度、错误归因、日志/指标、性能剖析。既能下钻到 worker 级别的行为，又能用上内置的剖析工具，定位性能瓶颈因此简单得多。例如 Torch 训练运行可以直接用 <code>dynolog</code> 这类集成工具做剖析。<a href="https://www.anyscale.com/blog/ray-train-data-dashboard#ray-train-dashboard:-unified-observability-for-distributed-training">了解更多</a>。</li><li><strong>全新的 Ray Data 看板：</strong> 有 Tree 和 DAG 视图对流水线做下钻、有算子级别的指标、还有按数据集聚合的日志，机器学习工程师能更快定位瓶颈、优化数据流水线的性能——而数据流水线正是 AI 应用的地基。<a href="https://www.anyscale.com/blog/ray-train-data-dashboard#ray-data-dashboard:-faster-pipeline-debugging-with-tree-and-dag-views">了解更多</a>。</li></ul>
-<p>在 Anyscale 上，<strong>Ray Data 和 Ray Train 的日志都会自动持久化</strong>——哪怕集群已经挂掉（比如显存溢出），也能做有力的事后分析。不用为了复现错误而重跑、也不用为排查而让昂贵的集群一直开着，只是众多好处里的一条。持久的日志还方便你长期看趋势，在多轮运行中发现跑得慢或效率低的阶段，帮你找到优化机会。</p>
-<h2>Ray Train 看板：分布式训练的统一可观测性</h2>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/78CDDiSdLnZHdva5pGUgVT/0a97eff8cb2af57ffb9a9efe29021866/fig1_running.png" alt="图 1：用 Ray Train 看板观测分布式 AI 训练"></p>
-<p>图 1：用 Ray Train 看板观测分布式 AI 训练</p>
-<p><em>图 1. 用 Ray Train 看板观测分布式 AI 训练</em></p>
-<p>用 Ray 这样的分布式框架把模型训练规模化会引入相当大的复杂度，尤其是监控进行中的任务和调试失败。如今从业者得手动拼凑散落在各个节点上的日志、指标和上下文，才能搞明白哪里出了错；而 worker 和节点数量一上去，这个过程就越来越费劲。</p>
-<p>Anyscale 里全新的 Ray Train 看板针对这些挑战给出一整套工具，帮你理解和优化分布式训练负载：</p>
-<ul><li><strong>统一的体验：</strong> 一个界面访问日志和指标</li><li><strong>进度跟踪：</strong> 清晰呈现训练进度与任务状态</li><li><strong>丰富的错误上下文</strong>：了解错误、重试与容错行为</li><li><strong>一键剖析：</strong> 对正在运行的训练任务一键做 CPU、GPU 和内存剖析</li></ul>
-<h3>日志与指标下钻的统一界面</h3>
-<p>分布式训练环境通常把日志和指标散在不同的系统和界面里，逼着你在 worker 日志、controller 输出和资源指标之间手动对齐信息。等训练规模扩到几十甚至上百个 worker，这种来回切换上下文就越来越让人烦躁，也越来越容易出错。</p>
-<p>Ray Train 看板的解法是提供一个统一界面，在上面既能看 Train Controller 的日志和指标，也能看 Worker 进程的。</p>
-<p>从 <code>TrainRun</code> 页面入手，拿到任务状态和性能的高层视图，再下钻到具体的 worker 页面去查进程级或节点级的行为。所有相关信息都带着上下文组织在一起，帮你省下时间，也减轻监控复杂分布式任务的脑力负担。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5aIiXpxAdkqNnCJKOpFuOx/12cc8557ba0c601d3540ae4ac89ea41c/fig2_metrics.png" alt="图 2：Ray Train 看板按 controller、worker 和节点拆出更多指标"></p>
-<p>图 2：Ray Train 看板按 controller、worker 和节点拆出更多指标</p>
-<p><em>图 2. Ray Train 看板按 controller、worker 和节点拆出更多指标</em></p>
-<h3>训练进度与任务状态的清晰呈现</h3>
-<p>你有没有想过训练任务的时间到底花在了哪里？Ray Train 看板引入了负载级别的抽象——除了直接看到所有 worker，还增加了训练运行（train run）和尝试（attempt）——帮你在从整体到细节的各个层级上理解分布式训练任务里正在发生什么。</p>
-<p>从启动训练任务的那一刻起，你就能监控资源请求、调度行为和利用率。不用再猜训练集群里发生了什么，整个任务生命周期里执行进度和系统性能都有一张清晰的视图。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5CNYBeizlDkw5dAZjln4r5/174ff4dcfff0733282d8725021fca033/fig3_autoscale.png" alt="图 3：Ray Train 看板按所处阶段提供对应信息。这个例子里 train run 请求了 4 块 GPU，看板就会给出相关的自动伸缩信息。"></p>
-<p>图 3：Ray Train 看板按所处阶段提供对应信息。这个例子里 train run 请求了 4 块 GPU，看板就会给出相关的自动伸缩信息。</p>
-<p><em>图 3. Ray Train 看板按所处阶段提供对应信息。这个例子里 train run 请求了 4 块 GPU，看板就会给出相关的自动伸缩信息。</em></p>
-<h3>事情出错时的详细错误上下文</h3>
-<p>分布式训练里的失败不可避免，但诊断它不该这么痛苦。Ray Train 看板围绕失败提供丰富的上下文，帮你快速理解并处理根因。</p>
-<p>训练任务失败时，你能拿到这些信息：</p>
-<ul><li>具体受影响的 worker</li><li>到底是应用错误还是硬件问题</li><li>贯穿整个技术栈的相关日志和指标</li></ul>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/7CFvh3FDFVRHklTsIcrej3/8caa1835e148b205b3c7aa282920214a/fig4_error1.png" alt="图 4：发生失败时，train run 会被标成 Errored，并带上说明错误来自哪里的状态详情。"></p>
-<p>图 4：发生失败时，train run 会被标成 Errored，并带上说明错误来自哪里的状态详情。</p>
-<p><em>图 4.</em> <em>发生失败时，train run 会被标成 Errored，并带上说明错误来自哪里的状态详情</em></p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6tvv2PqTOR2FtFpzPWk0iC/2c390f0d1d8c0fc64d567d18fa810950/fig5_error2.png" alt="图 5：出错时，单个 worker 同样会有状态详情，包括相关的节点日志，比如下面这个 GPU 故障。"></p>
-<p>图 5：出错时，单个 worker 同样会有状态详情，包括相关的节点日志，比如下面这个 GPU 故障。</p>
-<p><em>图 5. 出错时，单个 worker 同样会有状态详情，包括相关的节点日志，比如下面这个 GPU 故障。</em></p>
-<p>如果你用上了 Ray Train 的容错能力，或者 <a href="https://docs.anyscale.com/rayturbo/rayturbo-train/">RayTurbo Train</a> 的弹性训练能力，看板会把重新调度的训练尝试清晰地画出来，并让你查看历史上的重试，从而很容易看懂系统是怎么从失败里恢复的。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/3lXpH0aAMevE3Mn3pHuRke/5117ceca611d2e0fd929ee65fce75548/fig6_attempts.png" alt="图 6：Ray Train 按 attempt 拆分它的运行。这个例子里训练运行在第 6 次尝试成功。你可以点进前面 5 次尝试，看每一次失败的根因。"></p>
-<p>图 6：Ray Train 按 attempt 拆分它的运行。这个例子里训练运行在第 6 次尝试成功。你可以点进前面 5 次尝试，看每一次失败的根因。</p>
-<p><em>图 6.</em> <em>Ray Train 按 attempt 拆分它的运行。这个例子里训练运行在第 6 次尝试成功。你可以点进前面 5 次尝试，看每一次失败的根因。</em></p>
-<h3>用于性能优化的一键剖析</h3>
-<p>识别分布式训练的性能瓶颈，过去要求你同时对 AI 框架和分布式系统都有很深的理解，还得会用多种各有分工的专用工具。</p>
-<p>为了让优化性能更容易，Ray Train 看板集成了 <code>py-spy</code>、<code>dynolog</code> 这类剖析工具做按需的性能分析。用 <code>py-spy</code>，用户可以生成火焰图和栈追踪，找出 CPU 瓶颈或者卡死。对 Torch 训练运行，<code>dynolog</code> 能给出展示 CPU 与 GPU 全部活动的 trace，从中挖出训练流水线里的瓶颈。这些工具一键就能启动，让用户在整个集群上定位出可以优化的地方。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6FU76PoZxqpAdzAVV3R8wq/af5029ad4f774f561ca4b5af9845c1db/fig7_cpu-trace.png" alt="图 7：由 "></p>
-<p>图 7：由 生成的火焰图</p>
-<p><em>图 7. 由按需的基于采样的 CPU 剖析训练 worker 进程生成的火焰图，可用来识别瓶颈。这个例子里有一段指标聚合逻辑占了 CPU 时间的很大比例。</em></p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/4eupDt0ctE8TkjrKvZW3b1/36cf4dc3ae97e69ea562bec5faeb2461/fig8_gpu-trace.png" alt="图 8：在 Anyscale 上由按需 GPU 剖析生成的 trace 可视化。这条 trace 通过展示 ti 来帮助识别 CPU 和 GPU 两侧的瓶颈"></p>
-<p>图 8：在 Anyscale 上由按需 GPU 剖析生成的 trace 可视化。这条 trace 通过展示 ti 来帮助识别 CPU 和 GPU 两侧的瓶颈</p>
-<p><em>图 8. 在 Anyscale 上由按需 GPU 剖析生成的 trace 可视化。这条 trace 通过把 CPU 操作和 GPU kernel 排到一条时间线上来帮助识别 CPU 和 GPU 两侧的瓶颈。上面这张图放大了一个 collective all-reduce 操作，它是分布式训练中 Distributed Data Parallel 算法的一部分</em></p>
-<h2>Ray Data 看板：用 Tree 和 DAG 视图更快调试流水线</h2>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/2BQry7C4sGcpI2uawdXc8f/1e200f3e00aecb819fc612ddc93d6ed7/image2.png" alt="图 2. 用全新的 DAG 视图查看流水线执行"></p>
-<p>图 2. 用全新的 DAG 视图查看流水线执行</p>
-<p><em>图 9. 用全新的 DAG 视图查看流水线执行</em></p>
-<p>数据处理负载是 AI 服务的地基，可一旦它作为 Ray 上运行的分布式流水线的一部分被规模化，调试和优化就出了名的难。数据流水线一卡住，排查过程可能吞掉好几个小时的宝贵开发时间，还白白烧掉昂贵的算力。</p>
-<p>这个为 Ray Data 专门打造的看板目前只在 Anyscale 上提供。有了它，团队可以用下面几种能力来应对大规模数据负载里常见的几个难题：</p>
-<ul><li><strong>流水线数据下钻：</strong> 用 Tree 和 DAG 视图，从高层概览轻松下钻</li><li><strong>瓶颈洞察：</strong> 用算子级别的进度状态定位瓶颈，再随手取用的算子指标来解决</li><li><strong>感知数据集的日志视图：</strong> 用感知数据集的日志视图追踪并修掉隐藏的问题</li></ul>
-<h3>用 Tree 和 DAG 视图做进度概览与下钻</h3>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/pK7keNfR7RNPYw3OqBeiR/f9e8fe96c27c9e3cb735fe2aa5a45522/image5.png" alt="图 3. Ray Data 看板里用 Tree 视图看数据流水线的高层状态"></p>
-<p>图 3. Ray Data 看板里用 Tree 视图看数据流水线的高层状态</p>
-<p><em>图 10. Ray Data 看板里用 Tree 视图看数据流水线的高层状态</em></p>
-<p><a href="https://docs.ray.io/en/latest/data/monitoring-your-workload.html#ray-data-logs">Ray Data</a> 的日志本身信息量很足，但对流水线的真实结构缺少开箱即用的可见性。为了快速暴露你负载的拓扑、好监控和调试流水线的不同阶段，Ray Data 看板同时给出 Tree 视图和 DAG 视图，一眼看清负载的真实拓扑。</p>
-<p>来看一个实际的例子。假设你有一个用于训练的数据预处理负载，作为这个负载的一部分，你需要从多个 S3 数据源读取大量图片。</p>
-<pre><code>1dataset_01 = ray.data.read_parquet(&quot;s3://...&quot;, columns=[&quot;image&quot;, &quot;label&quot;])
-2dataset_02 = ray.data.read_parquet(&quot;s3://...&quot;, columns=[&quot;image&quot;, &quot;label&quot;])
-3dataset = dataset_01.union(dataset_02).limit(100000).map(map_fn(...))</code></pre>
-<p>Tree 视图一眼给出负载的总体状态。DAG 视图则提供另一套洞察：它让你看到流水线在各个阶段之间的推进。这个视图能展示并发的读操作、合并步骤和预处理活动，帮你快速确认流水线确实在按预期执行——不用再靠猜、也不用手动去查底层到底发生了什么。</p>
-<h3>用算子指标定位并解决瓶颈</h3>
-<p>Anyscale 里的 Ray Data 看板不只是告诉你「有地方慢了」，它更进一步给出细节，帮你精确定位到瓶颈到底在哪里。</p>
-<p>看板上展示的是调试必需的那几类指标，包括：</p>
-<ul><li>进度（已处理的行数）</li><li>资源利用率（CPU、GPU 和内存）</li><li>并发度（活跃的 task 和 actor 数量）</li><li>实时吞吐与峰值吞吐</li><li>排队中的 block 数量</li></ul>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6Ai25k6umoYYENYwSmwp8M/78e4101bf10f0a84371f17bb26831136/image6.png" alt="图 6. Ray Data 看板的算子指标视图"></p>
-<p>图 6. Ray Data 看板的算子指标视图</p>
-<p><em>图 11. Ray Data 看板的算子指标视图</em></p>
-<p>接着上面那个例子，看板显示 <code>Map(map_fn)</code> 这个算子是流水线里的瓶颈，因为它占了处理时间的最大份额。而且虽然系统跑得很顺，这个算子已经把可用资源吃满了，吞吐因此被卡住。有了这类洞察，机器学习从业者可以立刻行动，比如加 CPU 资源把瓶颈消掉。在一次内部测试里，只是把 CPU 配额从 272 提到 512（不到 2 倍），就带来了接近 4 倍的加速，任务耗时从 20 多分钟降到 5 分钟出头。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5AZQ1ybRDNOEthJDvo0xsa/facc614613a308525cf6cd5a23a53fae/image7.png" alt="图 7. 增加 CPU 资源后的算子执行"></p>
-<p>图 7. 增加 CPU 资源后的算子执行</p>
-<p><em>图 12. 增加 CPU 资源后的算子执行</em></p>
-<h3>用感知数据集的日志视图追踪并修掉隐藏的问题</h3>
-<p>在分布式系统里调试数据问题是出了名的难。Ray 看板的 Log 视图会自动抓取并高亮那些原本几乎不可能发现的问题数据模式。日志默认就会发出，并回溯到关联的数据集上——不需要任何手动配置。和传统日志系统不同，Log 视图同时给出系统级日志和用户自己打的日志，让你对数据流水线有完整的可见性。</p>
-<p>来看一个实际例子，看看全局的 Log 视图怎么把调试变简单。</p>
-<p>下面这张图里，是一个 Ray Data 程序产生了格式错误的数据，因为 <code>inverse</code> 函数没有处理 0 值。这个程序在 map 函数里触发了除零错误。</p>
-<pre><code>1dataset01 = from_items([{&quot;id&quot;: 1, &quot;value&quot;: 100}, {&quot;id&quot;: 2, &quot;value&quot;: 0}])
-2
-3def inverse(batch):
-4   return {
-5       &quot;id&quot;: batch[&quot;id&quot;],
-6       &quot;value&quot;: 1/batch[&quot;value&quot;],
-7   }
-8
-9dataset01.map(inverse).materialize()
-10</code></pre>
-<p>为了应对这一点，Log View 会把出问题的那个 block 的确切内容（这里是 `<code> </code>{<code>id</code>: 2, <code>value</code>: 0}<code> </code>`）连同指明错误出自哪里的栈追踪一起吐出来。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/YWWRuDZMbEltfidqqxVjB/c230a08cc99b381f49b3f8e5d3fd67bf/image3.png" alt="图 9. 用 log view 看到格式错误的行数据"></p>
-<p>图 9. 用 log view 看到格式错误的行数据</p>
-<p><em>图 13. 用 log view 看到格式错误的行数据</em></p>
-<p>RayTurbo Data 看板的 Log View 还允许你定义一个自定义采样函数，直接在 Log View 里监控 block 数据是怎么在流水线中流动的。</p>
-<pre><code>1   def inspection(batch):
-2   	 logger = logging.getLogger(&quot;ray.data&quot;)
-3   	 if random.random() &lt; 0.001:
-4        logger.info(f&quot;Processing {batch}&quot;)
-5     return batch
-6   dataset = dataset.map(inspection)
-7</code></pre>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/2oPP5ejrntwAttm74lgzOz/feeccef94fc5058e4c36a3c313d7ab8f/image1.png" alt="图 11. 用 log view 做数据采样"></p>
-<p>图 11. 用 log view 做数据采样</p>
-<p><em>图 14. 用 log view 做数据采样</em></p>
-<p>有了这些进阶的日志能力，你可以快速找出并修掉那些原本藏在复杂分布式流水线里的问题。</p>
-<h2>后续增强</h2>
-<p>两个看板都在持续演进，以提供更多价值。计划中的增强包括：</p>
-<p>Ray Data 看板：</p>
-<ul><li>自动问题发现，内置健康检查，覆盖算子卡住、内存占用过高等等</li></ul>
-<p>Ray Train 看板：</p>
-<ul><li>与 Ray Data 看板打通，做到端到端的可观测性</li><li>支持通过 Weights &amp; Biases、MLflow 及类似平台做实验跟踪</li></ul>
-<h2>今天就试试</h2>
-<p>无论你是在处理海量数据集还是训练复杂模型，Anyscale 的可观测性看板都能给你所需的可见性，让你更有底气、更高效率地构建、优化和扩展你的 AI 系统。</p>
-<p>想看看这些看板能怎么改变你的 AI 工作流？今天就上手 Anyscale 平台。<a href="https://console.anyscale.com/register/ha?utm_source=blog&amp;utm_medium=web&amp;utm_campaign=ray-day">注册即领 $100 免费额度</a>，体验这套专为使用 Ray 的分布式应用的调试与优化设计的可观测性能力。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

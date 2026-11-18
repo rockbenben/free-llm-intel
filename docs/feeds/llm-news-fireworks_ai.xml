@@ -3,7 +3,7 @@
   <channel>
     <title>Fireworks AI · 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>Fireworks AI 官方博客 / 更新日志归档（最近 50 条，共 30 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>Fireworks AI 官方博客 / 更新日志归档（最近 50 条，共 31 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml" rel="self" type="application/rss+xml"/>
@@ -273,6 +273,73 @@
 <p><strong>关于成本。</strong> 本分析中的所有成本数据都来自 DeepSWE 排行榜公布的按模型数值。公开 trials 文件里的原始 cost_usd 与榜单显示的数值并不一致，对 DeepSeek 家族来说相差数倍，因此我们对每个模型的单任务成本做了缩放，使其均值与公布数值一致。准确率来自每个任务-模型对的四次原始 rollout，成本则来自榜单。</p>
 <p>来源：DeepSWE v1.1 trials，2026 年 9 月 17 日刷新。113 个任务，18 个模型各自采用其可得的最佳配置，2,034 个模型-任务单元。</p>
 <ul><li><a href="https://fireworks.ai/blog?blogTypes=Perspective">观点</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>What MiniMax M3.1 Flash reveals about choosing and combining…</title>
+      <link>https://fireworks.ai/blog/what-minimax-m3-1-flash-reveals-about-choosing-and-combining-models/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/what-minimax-m3-1-flash-reveals-about-choosing-and-combining-models/</guid>
+      <description>完整标题：What MiniMax M3.1 Flash reveals about choosing and combining models</description>
+      <content:encoded><![CDATA[<p><a href="https://fireworks.ai/models/fireworks/minimax-m3p1-flash">MiniMax M3.1 闪存</a> 在哪里以可接受的成本和速度提供有用的性能？ <a href="https://fireworks.ai/specialized-intelligence-index/">专业情报指数</a> (SII) 通过从业者构建的特定领域基准来帮助团队回答这个问题。我们使用这些评估将 M3.1 Flash 与封闭模型（包括 Claude Sonnet 5.5、GPT-6 Luna 和 Gemini 3.8 Flash）进行比较，并探讨将其与其他模型一起使用是否可以改善结果。</p>
+<p>编码显示了最明显的收益。 M3.1 Flash 比 Gemini 完成更多的 DeepSWE 任务，模型成本大幅降低；对阵卢娜，额外的完成任务是有代价的。网络研究结果更加复杂：比 Sonnet 更低的成本伴随着更长的等待或更低的分数，具体取决于评估。</p>
+<p>编码结果还超出了单独比较模型的范围。在一项模拟中，从 M3.1 Flash 开始并向 Claude Opus 5.5 发送失败的尝试，以比单独使用 Opus 更低的模型成本完成了更多遗留代码任务。这说明了为什么评估模型包括考虑它可以与其他模型一起发挥的作用。</p>
+<h2>我们评估了什么</h2>
+<p>该研究涵盖使用 DeepSWE v1.1 和 Factory 的 Legacy-Bench 进行的软件工程，以及使用 Nimble 的 Web Context、Exa 的 ATLAS 和 Parallel 的搜索能力排行榜进行的网络研究。 Sierra 的 τ³-Banking、Doximity 的 Bedside Bench 和 Column Tax 的 TaxCalcBench 提供了银行支持、临床问题和税务准备方面的比较。我们检查质量、模型成本和执行时间（如果有），然后使用单独的运行来模拟重试和模型组合。 Rogo 的大金融基准测试金融研究，也有助于工作量分配分析。</p>
+<h2>编码：M3.1 Flash 比 Gemini 3.8 Flash 和 GPT-6 Luna 完成更多任务</h2>
+<p>DeepSWE v1.1 测试代理是否可以解决 91 个存储库中 113 个任务的软件问题。代理探索代码库、编辑文件并提交补丁。对代理进行测试，然后检查补丁是否解决了问题。</p>
+<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fhorizon%2Fb7f050129d1864e4bcf2699a702bf207854ffc83-1412x1248.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="在 DeepSWE v1.1 上，M3.1 Flash 以每任务 0.35 美元的价格完成了 73.2% 的任务，而 Gemini 3.8 Flash 的完成率为 61.7%，每任务 4.24 美元，GPT-6 Luna 的完成率为 0.19 美元，完成了 66.4%"></p>
+<p>对于使用 Gemini 3.8 Flash 的团队来说，M3.1 Flash 在此评估中提供了更高的完成度，模型成本降低了约 92%。与 GPT-6 Luna 相比，它的成本高出约 84%，每运行 113 个任务增加大约 8 个成功的任务，模型额外支出为 18 美元。</p>
+<p>M3.1 Flash 每个任务的平均时间约为 20 分钟，与此设置中的 Gemini 和 Luna 大致相似。它的优势在于完成度，成本效益取决于它所取代的型号。</p>
+<h3>重试 M3.1 Flash 将编码覆盖率从 73% 提高到 90%</h3>
+<p>M3.1 Flash 的某些任务在一次尝试中失败，但在另一次尝试中成功。在 3 次记录的运行中，它至少解决了 113 项任务中的 102 项，而平均每次运行大约解决了 83 项任务。</p>
+<p>我们模拟最多允许三次尝试，并在第一次成功时停止。每个提交的任务的平均模型支出从约 0.35 美元增加到 0.50 美元，或者每个解决的任务约 0.55 美元。每次重试都会重新开始，不会收到上次失败的反馈。</p>
+<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fhorizon%2F7a69cfa4248ae446aba39d37e9a45c6531e5146b-1412x1184.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="允许最多 3 次尝试将 M3.1 Flash 的 DeepSWE 覆盖范围从 113 个任务中的约 83 个 (73%) 提高到 113 个任务中的 102 个 (90%)，每个提交任务的模型成本从 0.35 美元上升到 0.50 美元"></p>
+<p>重试可以帮助 M3.1 Flash 解决更多编码任务，前提是应用程序能够可靠地检查每个补丁是否修复了问题。模拟使用隐藏的基准测试来决定何时停止；验证成本和时间在生产工作流程中也很重要。</p>
+<h2>网络研究：节省费用取决于您所需的质量和速度</h2>
+<p>M3.1 Flash 在三个网络研究评估中提供了不同的权衡。它在 Nimble 的 Web Context 基准测试中的得分高于 Claude Sonnet 5.5，模型成本较低，但所需时间要长得多。在 Exa 的 ATLAS 和 Parallel 的搜索能力排行榜上，得分较低可以节省成本。</p>
+<h3>Web Context 得分越高，等待时间越长</h3>
+<p>Nimble 的 Web Context 测试代理收集有关公司和创作者的信息、查找符合指定标准的实体以及撰写研究报告。它根据源页面检查报告的事实，并对准确性和完整性进行评分。</p>
+<p>M3.1 Flash 得分为 74.7，而 Claude Sonnet 5.5 的得分为 67.2，GPT-6 Luna 的得分为 67.9。它在基准测试的三个垂直领域（上市、金融和社交媒体）的得分也高于这两个领域。</p>
+<p>在 Web 上下文中，M3.1 Flash 的得分高于 Sonnet，模型成本低 33%，但所需时间却是 Sonnet 的近八倍。这使得背景研究比有人等待的互动更合理。对抗 Luna，更高的分数意味着更高的支出和更长的执行时间。</p>
+<p>对于使用更昂贵模型的团队来说，M3.1 Flash 也值得评估：Claude Opus 5.5 得分为 71.8，GPT-6 Astra 为 72.6，大约是其模型成本的七倍和十八倍。这些微小的分数差异并不能建立可靠的质量优势。</p>
+<h3>较低的搜索成本可能会带来较低的分数</h3>
+<p>Exa 的 ATLAS 测试代理是否可以构建与请求匹配的完整实体表。 M3.1 Flash 得分为 22.0，而 Claude Sonnet 5.5 的得分为 46.8。 Web 上下文也包括实体查找任务，因此这些聚合结果并不能隔离模型相对性能变化的原因。</p>
+<p>Parallel 的搜索能力排行榜评估了涵盖多步骤研究、专业知识和商业研究的 300 个问题。模型使用搜索和页面提取工具来回答这些问题。</p>
+<p>M3.1 Flash 得分为 68.8，Sonnet 得分为 74.1，每个问题的价格分别为 0.04 美元和 0.80 美元，包括估计的搜索费用。成本降低约 95%，分数降低 5.3 分。在降低研究成本最重要的方面评估 M3.1 Flash，检查它是否满足您的工作流程对答案质量、完整性和周转时间的要求。</p>
+<h2>银行、临床和税务评估有利于经过测试的替代方案</h2>
+<p>M3.1 Flash 的编码优势并未扩展到所有工作负载。 Sierra 的 τ³-Banking 测试了通过银行政策和账户管理工具处理的客户请求，它解决了 34.0% 的尝试，而 Gemini 3.8 Flash 为 51.4%，GPT-6 Luna 为 37.7%。</p>
+<p>我们检查了 38 个对话，至少四分之三的评估模型可以解决这些对话。在每次对话的四次尝试中，M3.1 Flash 失败了 57 次。在其中 23 次失败中，它完成了所有必需的步骤，但也进行了未经请求的帐户更改。在一个例子中，它正确地拒绝了信用额度的增加，然后发布了一份信用声明来软化拒绝。对于帐户更改工作流程，仅检查请求是否已得到满足将错过这些附加操作。</p>
+<p>临床和税务结果也有利于经过测试的替代方案。 Doximity 的床边工作台评估医生撰写的临床问题的答案。 M3.1 Flash 得分为 75.3，而 Gemini 为 86.5，Luna 为 87.2。 Column Tax 的 TaxCalcBench 测试根据纳税人文件准备完整的联邦和州纳税申报表。 M3.1 Flash 在正确报告已扣缴的工资和税款方面与 Luna 接近，但在减少应税收入的扣除和免税方面不太准确。因此，这些基本数字的准确性并不能转化为正确的回报。</p>
+<h2>将 M3.1 Flash 与其他型号相结合可以改善质量与成本的权衡</h2>
+<h3>M3.1 Flash 与 Gemini 3.8 Flash 配对以更低的成本完成更多任务</h3>
+<p>早期的比较显示了编码方面的优势和银行支持方面的较弱结果。 M3.1 Flash 的编码优势是否可以改善整体结果，而另一个模型可以处理该模型性能更好的工作负载？</p>
+<p>我们模拟了四个工作负载模型之间的工作划分：修复软件问题、维护旧代码库、处理银行支持请求和回答金融研究问题。</p>
+<p>对于每个配对，我们将每个工作负载分配给记录完成率较高的模型，并使用成本来打破平局。每个任务由一个模型尝试一次，不会重试或回退到另一个模型。</p>
+<p>与 Gemini 3.8 Flash 配合使用，M3.1 Flash 负责存储库编码和遗留代码维护，而 Gemini 负责银行支持。在这 307 项基准任务中，这对搭档平均完成了 188 项任务，而 Gemini 单独完成了 172 项任务，同时将模型支出从 661 美元减少到 108 美元。</p>
+<p>这 84% 的节省大部分来自 DeepSWE，其中 M3.1 Flash 每个任务的成本为 0.35 美元，而 Gemini 的成本为 4.24 美元。该百分比取决于工作负载组合：具有更多银行任务和更少编码任务的应用程序将看到较小的节省百分比。</p>
+<p>其他配对显示了为什么比较模型很重要。在 GPT-6 Luna 中添加 M3.1 Flash 以更高的成本获得了额外的完成度。将其与 Claude Opus 5.5 或 GPT-6.1 Sol 搭配使用可以减少支出，但在验证检查中并没有始终如一地比这些模型单独完成更多的任务。</p>
+<p>我们还检查了模型选择是否适用于未用于做出这些选择的任务。在 500 个随机分割中，我们使用一半任务为每个工作负载选择一个模型，并在剩下的一半任务上评估这些选择。Gemini配对仍然比单独的Gemini实现了更高的平均完成度和更低的支出。</p>
+<h3>在 Opus 5.5 之前从 M3.1 Flash 开始以更低的成本提高完成度</h3>
+<p>按工作负载分配模型是一种选择。另一种方法是让一个模型尝试一项任务并将失败发送给第二个模型。我们首先使用 M3.1 Flash 和 Claude Opus 5.5 处理失败的尝试来测试这种方法。</p>
+<p>在 Factory 的 Legacy-Bench（测试旧代码库的维护）上，这个模拟序列解决了 97 个共享任务中的约 71%，而仅 Opus 解决了 64%。每个任务的平均模型支出从 0.51 美元下降到 0.42 美元，降低了约 18%（包括不成功的尝试）。</p>
+<p>M3.1 Flash 解决了 Opus 错过的一些任务，同时 Opus 恢复了一些 M3.1 Flash 故障。 M3.1 Flash 解决的任务还避免了 Opus 尝试的成本。这种组合解释了该序列如何提高完成度和支出。</p>
+<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fhorizon%2Fe852242051f4343658b00ad83549cc32d6d8bc02-1412x1950.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="从 M3.1 Flash 开始，故障逐步升级到 Claude Opus 5.5，以每项任务 0.42 美元的价格解决了 97 个 Legacy-Bench 任务中约 71% 的问题，而单独 Opus 则以 0.51 美元的价格解决了 64% 的问题"></p>
+<p>该模拟使用隐藏的基准测试来识别故障。应用这种方法需要可靠的检查；报告的成本不包括验证和编排，并且未测量端到端执行时间。</p>
+<h2>模型无需接管所有任务即可增加价值</h2>
+<p>M3.1 Flash 的编码结果展示了模型如何与现有模型一起获得有限的角色。这将采用问题从是否彻底替换模型转变为是否为其分配一些工作或首次尝试是否可以改善整体结果。答案取决于现有模型、工作负载组合以及升级时可靠地识别故障的能力。</p>
+<p>探索 <a href="https://fireworks.ai/specialized-intelligence-index/"><strong>专业智能指数</strong></a> 中的基准比较，或了解 <a href="https://fireworks.ai/product/nexus"><strong>Fireworks Nexus</strong></a> 以使用开放和封闭模型的集合。</p>
+<h2>方法论和局限性</h2>
+<h3>来源、评分和成本</h3>
+<p>结果使用该研究 2026 年 11 月 7 日和 11 月 11 日的快照。分数遵循每个基准自己的评分规则。模型成本使用记录的使用情况和评估定价，包括 Gemini 3.8 Flash 的介绍性定价。 Parallel 和 Exa 包含检索费；分级机费用不包括在内。每个任务的成本包括不成功的尝试。</p>
+<h3>DeepSWE 并重试</h3>
+<p>M3.1 Flash 在 91 个存储库中完成了 113 项任务的 3 次运行；包括所有 339 次尝试。 10 月 29 日的运行使用了专用 Fireworks 部署，按无服务器费率计算的成本为每百万个未缓存输入令牌 0.15 美元、每百万个缓存输入令牌 0.015 美元和每百万个输出令牌 0.60 美元。</p>
+<p>重试估计对记录的尝试的每个可能的顺序进行平均，在第一个基准验证的成功或尝试限制处停止。重复的尝试并不被认为是独立的。</p>
+<h3>工作负载分配和升级</h3>
+<p>预期完成率总和记录的尝试中每项任务的平均通过率。全套路由结果选择并评估相同数据的工作负载分配。单独的检查使用 500 个分割，选择一半任务的分配，并评估另一半任务的分配。</p>
+<p>Legacy-Bench 路由和升级使用所有比较运行可以构建的 97 个任务。 M3.1 Flash 更高版本环境中可用的另外三个 Java 7 任务被排除在外。</p>
+<h3>任务级分析和覆盖</h3>
+<p>银行子集包含 38 个对话，由至少四分之三的评估模型解决，每个对话有四次 M3.1 Flash 尝试。 57 项中的 23 项发现描述了该子集中的故障。</p>
+<p>税收比较对两种模型都使用无搜索运行。 M3.1 Flash 接收从 PDF 中提取的 OCR 文本。工资/预扣税和扣除/豁免类别是分析师定义的退货行分组。</p>
+<p>不同型号的运行覆盖范围有所不同。 M3.1 Flash 在某些基准测试（包括 Legacy-Bench 和 Bedside Bench）上的运行记录较少，限制了小分数差异得出的结论。仅与 MiniMax M3 共享一项基准测试，因此本研究并未建立一般升级建议。</p>]]></content:encoded>
     </item>
     <item>
       <title>Fireworks 在 Forge 发布新产品，帮企业构建专用智能</title>
