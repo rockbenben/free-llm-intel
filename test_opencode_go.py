@@ -265,6 +265,38 @@ class TestOpenCodeGo(unittest.TestCase):
         self.assertIn("Go 请求 1 次", out)
         self.assertIn("$0.004", out)
 
+    def test_ai_bodies_go_chunks_long_article(self):
+        import contextlib
+        import io
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "docs/feeds").mkdir(parents=True)
+            (root / "docs/articles/openai").mkdir(parents=True)
+            en_rel = "docs/articles/openai/gochunk00001.en.md"
+            para = "This is an english paragraph with enough words to be translated. "
+            body = "\n\n".join(para * 20 for _ in range(10))    # ~14k 字符，超过 12k 单次上限
+            ft.write_body_doc(root / en_rel,
+                              {"status": "ok", "url": "https://a/p", "title": "Eng"}, body)
+            ft.save_bodies(root / "docs/feeds/bodies.json", {
+                "openai\thttps://a/p": {"slug": "gochunk00001", "en_path": en_rel,
+                                        "en_status": "ok", "zh_path": "", "zh_status": "",
+                                        "translator": "", "title": "中文标题",
+                                        "date": "", "captured": ""}})
+            resp = self.response("这是一段中文译文内容，足够长。" * 200, allowance=0.001)
+            buf = io.StringIO()
+            with mock.patch.object(crawler, "_repo_root", lambda: root), \
+                    mock.patch.object(ai.requests, "post", return_value=resp) as post, \
+                    contextlib.redirect_stdout(buf):
+                rc = crawler.main(["--ai-bodies", "--ai-bodies-go-only"])
+                saved = ft.load_bodies(root / "docs/feeds/bodies.json")
+                posts = post.call_count
+                out = buf.getvalue()
+            self.assertEqual(rc, 0)
+            self.assertGreaterEqual(posts, 2, "超过 12k 的长文应分块多次请求")
+            self.assertEqual(saved["openai\thttps://a/p"]["translator"], "llm")
+        self.assertIn("分块成稿 1", out)
+
     def test_workflow_go_precedes_machine_and_render(self):
         workflow = yaml.safe_load((Path(__file__).parent / ".github/workflows/refresh-intel.yml").read_text(encoding="utf-8"))
         job = workflow["jobs"]["crawl"]

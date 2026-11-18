@@ -122,10 +122,12 @@ git diff README.md
 - `OPENCODE_GO_UNTIL`：可选的订阅截止时刻。不设置或留空时持续优先使用 Go，订阅失效或接口不可用时自动回退旧流程；填写时必须带时区，如 `2026-12-16T18:00:00+08:00`（仅格式示例，按实际到期时间填写），格式错误或到期均跳过 Go。
 - `OPENCODE_GO_MODEL`：可省略，默认 `deepseek-v4.1-flash`；`AI_REVIEW_MODEL` 仍只用于原有后端，回退 Gemini 时不会混用 Go 的模型名或 Key。
 - `AI_BODIES_LIMIT`：可选的正文篇数上限，默认 0（不限）；已有译文不重译。
+- `AI_BODIES_BUDGET_SECONDS`：可选的正文单轮墙钟预算（秒），默认 900。到点即停、剩余留
+  pending 给 `--mt-bodies` 兜底，是长文变多时的 CI 总时长保险。
 
 Go 有效时优先完成档案核查、新标题润色和待译正文。接口**瞬时错误**（429/5xx/网络抖动）先按 `Retry-After`（缺省 5s，封顶 30s）**重试一次**，仍失败才熔断；400/401/403 这类配置错误不重试。熔断时日志带原因（HTTP 状态 / `finish_reason` / 异常类型），每次请求计入的 `usage.opencode.allowance` 也逐条打印（AI 核查段与正文步骤收尾各汇总一次），据此可区分短期限流、额度用尽与服务故障。熔断后：核查和标题立即用 Gemini 重试当前任务，后续任务沿用旧通道；正文留 pending，交给随后保留的 `--mt-bodies` 机翻步骤，**正文不回退 Gemini**。核查与正文是两个独立进程，各至多探测失败一次。语义证据校验不过仍拒绝补丁，不绕过证据闸门。
 
-CI 正文步骤使用 `--ai-bodies --ai-bodies-go-only`，成功写入 `translator=llm`；瞬时错误重试一次通过的文章不会被降级，过长或完整性检查不过的文章仍由后续机翻覆盖。未启用 Go 时该步骤直接退出，其余与原流程一致。`--render-only` 仍在两种正文翻译后统一更新视图。
+CI 正文步骤使用 `--ai-bodies --ai-bodies-go-only`，成功写入 `translator=llm`；瞬时错误重试一次通过的文章不会被降级。**Go 侧长文不再有「按篇 12k 硬上限」**：超过 12k 字符的正文按段落 / 代码围栏边界分块（每块 ≤ `BODY_CHUNK_CHARS` = 8000 字符，围栏绝不跨块）逐块译再拼回，单块输出仍落在 8192 token 内；只有块数超过 `BODY_CHUNK_MAX`（8）或切不动（单个超长段落/表格）的才留 pending 交给机翻。12k 硬上限只保留给不分块的 Gemini 后端（免费层 RPD/TPM 与单次响应体量）。单轮另有 `AI_BODIES_BUDGET_SECONDS` 墙钟预算兜底。未启用 Go 时该步骤直接退出，其余与原流程一致。`--render-only` 仍在两种正文翻译后统一更新视图。
 
 机翻正文（`--mt-bodies`）走 Google gtx，**代码块、行内代码、链接/图片目标、HTML 标签与裸 URL
 都不进翻译接口**（占位后逐字还原）：实测 gtx 会把 URL 路径里的英文词一起翻掉

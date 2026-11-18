@@ -14,6 +14,7 @@ import json
 import os
 import re
 import sys
+import time
 from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
@@ -2363,10 +2364,22 @@ def mark_translated(root: Path, bodies: dict, *, key: str, zh_body_md: str,
 # CI 增量翻译（--ai-bodies）：pending 英文正文 → LLM 中文 → .md（translator=llm）
 # ---------------------------------------------------------------------------
 
-#: 单篇英文正文送进翻译的最大字符数。超了直接留 pending、不译半篇（spec §10：
-#: 「设单篇字数上限+截断留 pending，不产半成品」）。取值让中文输出稳落在
-#: ai_review.BODY_MAX_TOKENS 之内——宁可漏译长文（本地 agent 补），不可产残篇。
+#: 单次送进翻译的最大字符数：短稿一次成稿的阈值，也是**不分块后端**（Gemini / 机翻）
+#: 的硬上限。取值让中文输出稳落在 ai_review.BODY_MAX_TOKENS（8192）之内——宁可漏译
+#: 长文，不可产残篇。
 BODY_TRANSLATE_CHAR_CAP = 12_000
+
+#: 长文分块翻译（仅 opencode-go）：超过 char_cap 的正文按段落 / 代码围栏边界切成
+#: 不超过此字符数的块，逐块译再拼回整篇。单块输出仍落在 8192 token 内，所以长文
+#: 不再需要「按篇硬上限」。deepseek-v4.1-flash 是 1M 上下文 / 384K 输出，12k 那档
+#: 是 Gemini 免费层时代的保守值；Gemini 侧继续用 char_cap 硬上限（免费层 RPD/TPM
+#: 与单次响应体量）。
+BODY_CHUNK_CHARS = 8_000
+#: 单篇最多切几块（安全阀）：超过即留 pending 给机翻 / 本地 agent，避免失控长文
+#: 吃光 CI 墙钟（BODY_CHUNK_MAX × BODY_CHUNK_CHARS = 64k 字符）。
+BODY_CHUNK_MAX = 8
+#: --ai-bodies 单轮墙钟预算（秒）：到点即停、剩余留 pending 给 --mt-bodies 兜底。
+BODY_TRANSLATE_BUDGET_SECONDS = 900
 
 _FENCE_RE = re.compile(r"^\s*```(?:markdown|md|text)?\s*\n([\s\S]*?)\n```\s*$")
 _LABEL_RE = re.compile(r"^\s*(译文|翻译|中文翻译|正文)\s*[:：]\s*")
@@ -2402,21 +2415,89 @@ def _translation_acceptable(en_body: str, zh: str) -> bool:
     return True
 
 
+def _body_blocks(body: str) -> list[str]:
+    """把正文切成「不可再切」的块：段落 / 代码围栏（围栏内含空行也整段保留）。
+
+    代码围栏是唯一绝不允许被切开的块——切开会把代码翻坏、结构对撞必然报错；
+    围栏未闭合时整段留作一块（抽取层缺陷按原样镜像）。其余按空行切段。
+    """
+    blocks: list[str] = []
+    cur: list[str] = []
+    in_fence = False
+
+    def flush() -> None:
+        nonlocal cur
+        text = "\n".join(cur).strip("\n")
+        if text.strip():
+            blocks.append(text)
+        cur = []
+
+    for line in body.split("\n"):
+        stripped = line.lstrip()
+        if in_fence:
+            cur.append(line)
+            if stripped.startswith("```"):
+                in_fence = False
+                flush()
+            continue
+        if stripped.startswith("```"):
+            flush()
+            cur.append(line)
+            in_fence = True
+            continue
+        if not line.strip():
+            flush()
+            continue
+        cur.append(line)
+    flush()
+    return blocks
+
+
+def _split_body_chunks(body: str, chunk_chars: int = BODY_CHUNK_CHARS) -> list[str]:
+    """按段落 / 围栏边界把长文切成 ≤ chunk_chars 的块（顺序不变、围栏不跨块）。
+
+    块之间用空行拼回（"\n\n".join），拼回后与原文段落语义一致。单个段落超过
+    chunk_chars 时自成一块：它要么超长表格要么超长列表，硬切只会让两边都读不懂，
+    交给调用方按「切不动」处理（留 pending），不在这里切坏。
+    """
+    chunks: list[str] = []
+    cur: list[str] = []
+    size = 0
+    for block in _body_blocks(body):
+        add = len(block) + (2 if cur else 0)
+        if cur and size + add > chunk_chars:
+            chunks.append("\n\n".join(cur))
+            cur, size = [block], len(block)
+        else:
+            cur.append(block)
+            size += add
+    if cur:
+        chunks.append("\n\n".join(cur))
+    return chunks
+
+
 def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
                          today: str, limit: int = 0, save: Callable = None,
                          flush_every: int = 10,
                          char_cap: int = BODY_TRANSLATE_CHAR_CAP,
+                         chunk_chars: int = 0, chunk_max: int = 0,
+                         budget_seconds: float = 0.0,
                          translator: str = "llm",
                          stats: dict = None) -> int:
     """把待译英文正文逐篇交 `translate(title, en_body)->中文markdown`，落 `.md`。
 
     幂等：只动 `pending_translation_keys`（英文 ok 且未 translated）；已译的绝不重译。
-    有界：`limit`（>0）封顶本次最多译几篇，控 CI 成本；`char_cap` 挡超长篇（留 pending）。
-    不产半成品：正文取不到 / 超长 / 调用抛错 / 输出校验不过，一律留 pending，绝不写残篇。
-    给定 `save` 时每 `flush_every` 篇落一次 ledger（中断也保住已完成项）。返回本轮新译篇数。
+    有界：`limit`（>0）封顶本次最多开译几篇；`budget_seconds`（>0）封顶本轮墙钟，
+    到点即停、剩余留 pending 给机翻兜底；`char_cap` 是不分块后端的单次上限。
+    长文：`chunk_chars`（>0）时，超过 `char_cap` 的正文按段落 / 围栏边界切块、
+    逐块译再拼回（围栏绝不跨块）；块数超过 `chunk_max` 或切不动的整段留 pending。
+    不产半成品：正文取不到 / 超长 / 调用抛错 / 任一块失败 / 输出校验不过，整篇留 pending，
+    绝不写残篇。给定 `save` 时每 `flush_every` 篇落一次 ledger（中断也保住已完成项）。
+    返回本轮新译篇数。
 
     `stats`（传入一个 dict 即被填充）记录每篇的归类，专治「批量译了 0 篇却看不出为什么」：
-    translated / over_cap / no_en / errored 计数 + errors 前几条异常样本（含类型名）。
+    translated / over_cap / no_en / errored / rejected / deferred / chunked（分块成稿）/
+    budget（墙钟到点没轮到的篇数）+ errors 前几条异常样本（含类型名）。
     """
     keys = pending_translation_keys(bodies)
     done = 0
@@ -2424,8 +2505,15 @@ def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
     st = stats
     if st is not None:
         st.update({"considered": len(keys), "translated": 0, "over_cap": 0,
-                   "no_en": 0, "rejected": 0, "errored": 0, "deferred": 0, "errors": []})
-    for key in keys:
+                   "no_en": 0, "rejected": 0, "errored": 0, "deferred": 0,
+                   "chunked": 0, "budget": 0, "errors": []})
+    deadline = (time.monotonic() + budget_seconds
+                if budget_seconds and budget_seconds > 0 else 0.0)
+    for idx, key in enumerate(keys):
+        if deadline and time.monotonic() >= deadline:
+            if st is not None:
+                st["budget"] += len(keys) - idx
+            break
         e = bodies[key]
         en_path = root / e.get("en_path", "")
         if not e.get("en_path") or not en_path.exists():
@@ -2442,24 +2530,49 @@ def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
             if st is not None:
                 st["no_en"] += 1
             continue
-        if len(en_body) > char_cap:       # 超长：留 pending，交本地 agent，不译半篇
-            if st is not None:
-                st["over_cap"] += 1
-            continue                      # 不占调用预算（没真发一次翻译）
+        chunks = [en_body]
+        if len(en_body) > char_cap:
+            if not chunk_chars or chunk_chars <= 0:
+                if st is not None:
+                    st["over_cap"] += 1    # 不分块后端：超长留 pending，交机翻/本地 agent
+                continue
+            chunks = _split_body_chunks(en_body, chunk_chars)
+            if len(chunks) < 2:
+                if st is not None:         # 切不动（单个超长段落/围栏）：不硬切
+                    st["over_cap"] += 1
+                continue
+            if chunk_max and chunk_max > 0 and len(chunks) > chunk_max:
+                if st is not None:         # 块数超安全阀：留 pending，保住 CI 墙钟
+                    st["over_cap"] += 1
+                continue
         if limit and limit > 0 and attempted >= limit:
             if st is not None:
-                st["deferred"] += 1        # 够短但本轮预算已用尽，下次再译
+                st["deferred"] += 1        # 本轮篇数预算已用尽，下次再译
             continue
-        attempted += 1                     # limit 封顶的是「实际调用次数」，不是扫描条数
+        attempted += 1                     # limit 封的是「实际开译的篇数」，超长项不占
         title = en_fm.get("title") or e.get("title", "")
-        try:
-            zh = _clean_llm_translation(translate(title, en_body))
-        except Exception as exc:           # 网络/额度/异常：留 pending，下次再试
-            if st is not None:
-                st["errored"] += 1
-                if len(st["errors"]) < 3:
-                    st["errors"].append(f"{type(exc).__name__}: {str(exc)[:180]}")
+        parts: list[str] = []
+        failed = budget_hit = False
+        for chunk in chunks:
+            if deadline and time.monotonic() >= deadline:
+                budget_hit = True
+                if st is not None:
+                    st["budget"] += len(keys) - idx
+                break
+            try:
+                parts.append(_clean_llm_translation(translate(title, chunk)))
+            except Exception as exc:       # 网络/额度/异常：整篇留 pending，下次再试
+                if st is not None:
+                    st["errored"] += 1
+                    if len(st["errors"]) < 3:
+                        st["errors"].append(f"{type(exc).__name__}: {str(exc)[:180]}")
+                failed = True
+                break
+        if budget_hit:
+            break                          # 半篇不落盘：预算到点即停，剩余交机翻
+        if failed:
             continue
+        zh = "\n\n".join(parts)
         if not _translation_acceptable(en_body, zh):
             if st is not None:
                 st["rejected"] += 1
@@ -2469,6 +2582,8 @@ def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
         done += 1
         if st is not None:
             st["translated"] += 1
+            if len(chunks) > 1:
+                st["chunked"] += 1
         if save is not None and done % flush_every == 0:
             save(bodies)
     return done

@@ -10530,6 +10530,39 @@ class TestUnreachableStatus(unittest.TestCase):
             self.assertEqual(unknown, ["ffffffffffff"])
 
 
+class TestBodyChunkSplitter(unittest.TestCase):
+    """长文分块：围栏绝不跨块、段落顺序与内容守恒、超长单段不硬切。"""
+
+    def test_code_fence_never_split(self):
+        fence = "```python\n" + "\n".join(f"v{i} = {i}" for i in range(400)) + "\n```"
+        chunks = ft._split_body_chunks("intro\n\n" + fence + "\n\noutro", 1000)
+        self.assertGreater(len(chunks), 1, "长围栏必须触发分块")
+        self.assertTrue(any(fence in c for c in chunks), "围栏必须整段落在同一块")
+        for chunk in chunks:
+            self.assertEqual(chunk.count("```") % 2, 0, "每块围栏必须成对，不能跨块")
+
+    def test_short_body_single_chunk(self):
+        self.assertEqual(ft._split_body_chunks("one\n\ntwo", 10_000), ["one\n\ntwo"])
+
+    def test_join_equals_original(self):
+        paras = [f"paragraph-{i} " + "x" * 40 for i in range(30)]
+        body = "\n\n".join(paras)
+        chunks = ft._split_body_chunks(body, 300)
+        self.assertGreater(len(chunks), 1)
+        self.assertEqual("\n\n".join(chunks), body, "按块拼回必须逐字等于原文")
+
+    def test_oversized_paragraph_kept_whole(self):
+        big = "y" * 1200
+        chunks = ft._split_body_chunks("a\n\n" + big + "\n\nb", 500)
+        self.assertTrue(any(big in c for c in chunks), "超长单段不硬切")
+        self.assertEqual(len(chunks), 3)
+
+    def test_unclosed_fence_mirrored(self):
+        body = "para\n\n```python\ncode\n\nnever closed"
+        joined = "\n\n".join(ft._split_body_chunks(body, 100))
+        self.assertIn("```python\ncode\n\nnever closed", joined)
+
+
 class TestTranslateBodiesLlm(unittest.TestCase):
     """--ai-bodies 核心：pending 英文正文 → LLM 中文 → .md（translator=llm），不产半成品。"""
 
@@ -10704,6 +10737,109 @@ class TestTranslateBodiesLlm(unittest.TestCase):
             self.assertEqual(stats["rejected"], 1)
             self.assertTrue(stats["errors"] and "400" in stats["errors"][0],
                             "异常样本要带出来，否则又是静默 0")
+
+
+    # ---- 长文分块 / 墙钟预算（Go 侧）-----------------------------------------
+
+    @staticmethod
+    def _long_body(paragraphs: int = 40) -> str:
+        return "\n\n".join(f"Paragraph {i} " + "word " * 40 for i in range(paragraphs))
+
+    def test_long_body_chunked_into_one_translation(self):
+        with tempfile.TemporaryDirectory() as d:
+            body = self._long_body()
+            key, bodies = self._seed(d, "chunk00001111", body)
+            calls = []
+
+            def tr(title, chunk):
+                calls.append(chunk)
+                return "这是一段中文译文内容。" * max(1, len(chunk) // 40)
+
+            stats = {}
+            n = ft.translate_bodies_llm(Path(d), bodies, tr, today="2026-11-18",
+                                        char_cap=1000, chunk_chars=2000, chunk_max=10,
+                                        stats=stats)
+            self.assertEqual(n, 1)
+            self.assertGreater(len(calls), 1, "超过单次上限的长文应分块多次调用")
+            self.assertEqual(stats["chunked"], 1)
+            self.assertEqual(bodies[key]["translator"], "llm")
+            self.assertEqual(ft.pending_translation_keys(bodies), [])
+            _fm, zh = ft.read_body_doc(Path(d) / bodies[key]["zh_path"])
+            self.assertIn("这是一段中文译文内容", zh)
+
+    def test_chunk_failure_keeps_whole_pending(self):
+        with tempfile.TemporaryDirectory() as d:
+            key, bodies = self._seed(d, "chunk00002222", self._long_body())
+            calls = []
+
+            def tr(title, chunk):
+                calls.append(chunk)
+                if len(calls) == 2:
+                    raise RuntimeError("HTTP 500")
+                return "这是一段中文译文内容。"
+
+            stats = {}
+            n = ft.translate_bodies_llm(Path(d), bodies, tr, today="2026-11-18",
+                                        char_cap=1000, chunk_chars=2000, chunk_max=10,
+                                        stats=stats)
+            self.assertEqual(n, 0)
+            self.assertEqual(stats["errored"], 1)
+            self.assertEqual(ft.pending_translation_keys(bodies), [key])
+            self.assertFalse((Path(d) / "docs/articles/openai/chunk00002222.md").exists(),
+                             "任一块失败不得写半篇")
+
+    def test_too_many_chunks_left_pending(self):
+        with tempfile.TemporaryDirectory() as d:
+            key, bodies = self._seed(d, "chunk00003333", self._long_body())
+            stats = {}
+            n = ft.translate_bodies_llm(Path(d), bodies, lambda t, b: "中文译文内容。",
+                                        today="2026-11-18", char_cap=1000,
+                                        chunk_chars=800, chunk_max=1, stats=stats)
+            self.assertEqual(n, 0)
+            self.assertEqual(stats["over_cap"], 1, "块数超安全阀留 pending")
+            self.assertEqual(ft.pending_translation_keys(bodies), [key])
+
+    def test_unsplittable_long_block_left_pending(self):
+        with tempfile.TemporaryDirectory() as d:
+            key, bodies = self._seed(d, "chunk00004444", "z" * 3000)
+            calls = []
+            n = ft.translate_bodies_llm(Path(d), bodies,
+                                        lambda t, b: calls.append(b) or "中文译文内容。",
+                                        today="2026-11-18", char_cap=100,
+                                        chunk_chars=800, chunk_max=10)
+            self.assertEqual(n, 0)
+            self.assertEqual(calls, [], "单个超长段落切不动 → 不硬切、不送翻译")
+            self.assertEqual(ft.pending_translation_keys(bodies), [key])
+
+    def test_budget_stops_between_articles(self):
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "docs/articles/openai").mkdir(parents=True)
+            bodies = {}
+            for i in range(2):
+                slug = f"budget{i}000000"
+                rel = f"docs/articles/openai/{slug}.en.md"
+                ft.write_body_doc(Path(d) / rel, {"status": "ok", "url": f"https://a/{i}"},
+                                  "short english article body")
+                bodies[f"openai\thttps://a/{i}"] = {
+                    "slug": slug, "en_path": rel, "en_status": "ok", "zh_path": "",
+                    "zh_status": "", "translator": "", "title": "T", "date": "", "captured": ""}
+            clock = {"t": 0.0}
+
+            def fake_monotonic():
+                return clock["t"]
+
+            def tr(title, chunk):
+                clock["t"] += 4.0          # 每篇耗时 4s，第二篇必然撞上 3s 预算
+                return "这是一段中文译文内容。"
+
+            stats = {}
+            with mock.patch.object(ft.time, "monotonic", side_effect=fake_monotonic):
+                n = ft.translate_bodies_llm(Path(d), bodies, tr, today="2026-11-18",
+                                            budget_seconds=3.0, stats=stats)
+            self.assertEqual(n, 1)
+            self.assertEqual(stats["budget"], 1)
+            self.assertEqual(len(ft.pending_translation_keys(bodies)), 1,
+                             "预算到点即停，剩余留 pending 给机翻")
 
 
 class TestFulltextCiInvariants(unittest.TestCase):

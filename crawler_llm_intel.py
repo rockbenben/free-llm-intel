@@ -7503,11 +7503,15 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--ai-bodies", action="store_true",
                         help="维护模式（不巡检）：把 bodies.json 里「英文已抓到、中文待译」的条目"
                              "走 --ai-titles 同源 LLM 通道译成中文，写 docs/articles/<vendor>/<urlhash>.md"
-                             "（translator=llm）。只译待译项、幂等；超长/失败/校验不过留 pending，不产半成品。")
+                             "（translator=llm）。只译待译项、幂等；Go 侧长文分块逐块译再拼回；"
+                             "切不动/超块数/失败/校验不过留 pending，不产半成品。")
     parser.add_argument("--ai-bodies-go-only", action="store_true",
                         help="正文只尝试 Go；不可用时留待后续 --mt-bodies，不调用 Gemini")
     parser.add_argument("--ai-bodies-limit", type=int, default=0,
-                        help="本次最多译多少篇正文（0=不限；CI 用它控单日译量）")
+                        help="本次最多开译多少篇正文（0=不限；CI 用它控单日译量）")
+    parser.add_argument("--ai-bodies-budget-seconds", type=float, default=None,
+                        help="配合 `--ai-bodies`：单轮墙钟预算（秒）。到点即停、剩余留 pending "
+                             "给 `--mt-bodies` 兜底；默认取 fulltext.BODY_TRANSLATE_BUDGET_SECONDS（900）。")
     parser.add_argument("--mt-bodies", action="store_true",
                         help="维护模式（不巡检）：把 bodies.json 里待译英文正文走 Google 机器翻译"
                              "（provider_profiles.translate_body_to_zh，按块处理、代码块原样保留）"
@@ -7857,12 +7861,23 @@ def main(argv: list[str] | None = None) -> int:
         pending = len(fulltext.pending_translation_keys(bodies))
         today = datetime.now().strftime("%Y-%m-%d")
         translate = make_llm_body_translator(backend, model)
+        budget = (args.ai_bodies_budget_seconds
+                  if args.ai_bodies_budget_seconds is not None
+                  else fulltext.BODY_TRANSLATE_BUDGET_SECONDS)
+        # 长文分块只对 Go 开：deepseek-v4.1-flash 是 1M 上下文 / 384K 输出，12k 那档是
+        # Gemini 免费层时代的保守值；Gemini 侧继续用 char_cap 硬上限（免费层 RPD/TPM 与单次响应体量）。
+        chunking = backend == ai_review.BACKEND_GO
+        chunk_desc = (f"长文分块（Go，每块≤{fulltext.BODY_CHUNK_CHARS} 字符）" if chunking
+                      else f"长文不分块（保留 {fulltext.BODY_TRANSLATE_CHAR_CAP} 字符上限）")
         print(f"  [ai-bodies] 待译 {pending} 篇，经 {backend}/{model} 逐篇译"
-              f"（本次上限 {args.ai_bodies_limit or '不限'}，超长/失败留 pending）...")
+              f"（本次上限 {args.ai_bodies_limit or '不限'}；{chunk_desc}；"
+              f"墙钟预算 {budget:.0f}s）...")
         stats = {}
         done = fulltext.translate_bodies_llm(
             root, bodies, translate, today=today, limit=args.ai_bodies_limit,
-            stats=stats,
+            chunk_chars=fulltext.BODY_CHUNK_CHARS if chunking else 0,
+            chunk_max=fulltext.BODY_CHUNK_MAX if chunking else 0,
+            budget_seconds=budget, stats=stats,
             save=lambda b: fulltext.save_bodies(root / "docs/feeds/bodies.json", b))
         fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
         snap = ai_review.go_usage_snapshot()
@@ -7880,8 +7895,9 @@ def main(argv: list[str] | None = None) -> int:
               f"（{pending - left} 已译，{left} 仍 pending）。")
         # 归类读数：专治「译了 0 篇却看不出为什么」——每篇去哪一类都摊开。
         print(f"  [ai-bodies] 归类：考虑 {stats.get('considered', 0)}｜译成 {stats.get('translated', 0)}"
-              f"｜超长留档 {stats.get('over_cap', 0)}｜无正文 {stats.get('no_en', 0)}"
-              f"｜校验不过 {stats.get('rejected', 0)}｜调用报错 {stats.get('errored', 0)}")
+              f"（其中分块成稿 {stats.get('chunked', 0)}）｜超长留档 {stats.get('over_cap', 0)}"
+              f"｜无正文 {stats.get('no_en', 0)}｜校验不过 {stats.get('rejected', 0)}"
+              f"｜调用报错 {stats.get('errored', 0)}｜墙钟到点 {stats.get('budget', 0)}")
         for msg in stats.get("errors", []):
             print(f"  [ai-bodies] 调用异常样本：{msg}", file=sys.stderr)
         return 1 if errs else 0
