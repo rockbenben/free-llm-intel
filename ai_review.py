@@ -36,8 +36,10 @@ import re
 import sys
 import time
 import uuid
+from concurrent.futures import Future, TimeoutError as FutureTimeout
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import Thread
 
 import requests
 
@@ -71,6 +73,8 @@ MAX_TOKENS = 4096
 # 正文翻译（--ai-bodies）走纯文本通路，输出是整篇中文 markdown，比 JSON 结构化
 # 结果长得多，单独放宽输出上限；仍受免费层单次响应体量约束。
 BODY_MAX_TOKENS = 8192
+GO_BODY_MAX_TOKENS = 32_768
+GO_BODY_TIMEOUT_SECONDS = 360
 PAGE_CHAR_BUDGET = 18_000      # 单个来源页送给模型的最大字符数
 TOTAL_CHAR_BUDGET = 60_000     # 单厂商总预算
 
@@ -219,6 +223,14 @@ class AiQuotaExhausted(AiReviewAbort):
 
 class AiServiceOutage(AiReviewAbort):
     """多个模型连续 5xx：Google 侧整体故障，换厂商标重试无意义。"""
+
+
+class GoBodyTruncated(AiReviewError):
+    """仅当前正文输出截断，可用较短的块重试。"""
+
+
+class GoBodyBudgetExpired(AiReviewAbort):
+    """本轮 Go 正文预算耗尽，剩余交给机翻。"""
 
 
 # 429 错误体中识别「当日额度」（太平洋时间午夜重置，重试无意义）
@@ -410,14 +422,48 @@ def go_usage_snapshot() -> dict:
             "last_failure": _go_last_failure}
 
 
+def _go_remaining(deadline: float, *, wait: float = 0) -> float:
+    remaining = deadline - time.monotonic()
+    if remaining <= wait:
+        raise GoBodyBudgetExpired("Go 正文墙钟预算不足")
+    return remaining
+
+
+def _post_go(body: dict, headers: dict, timeout: float, deadline: float | None):
+    if deadline is None:
+        return requests.post(GO_API_URL, headers=headers, json=body, timeout=timeout)
+
+    reply = Future()
+
+    def post():
+        try:
+            response = requests.post(GO_API_URL, headers=headers, json=body,
+                                     timeout=min(timeout, _go_remaining(deadline)))
+        except Exception as exc:
+            reply.set_exception(exc)
+        else:
+            reply.set_result(response)
+
+    # requests 的 timeout 是连接/读等待上限。用独立等待限制总时长，包括慢速响应和 DNS。
+    Thread(target=post, daemon=True).start()
+    try:
+        response = reply.result(timeout=_go_remaining(deadline))
+    except FutureTimeout as exc:
+        raise GoBodyBudgetExpired("等待 Go 正文响应时墙钟预算耗尽") from exc
+    _go_remaining(deadline)
+    return response
+
+
 def call_llm_go(prompt: str, *, system: str = SYSTEM_PROMPT,
                 max_tokens: int = MAX_TOKENS, timeout: float = 180.0,
-                json_mode: bool = True, fallback_to_gemini: bool = True) -> str:
+                json_mode: bool = True, fallback_to_gemini: bool = True,
+                body_translation: bool = False, deadline: float | None = None) -> str:
     """Go 通道：瞬时错误（429/5xx/网络）先短退避重试一次，仍失败才熔断本进程。
 
     熔断原因（HTTP 状态 / finish_reason / 异常类型）写进日志与异常文本，每次请求
     计入的额度也逐条打印——过去这些被压成一句「Go 不可用」，出事时无法区分
     限流、额度、服务故障还是输出截断。凭证与模型始终按后端隔离。
+    正文的截断或预算耗尽由调用方处理，不触发通道熔断。
     """
     global _go_disabled, _go_requests, _go_last_failure
     reason = "Go 未启用、已到期或已熔断"
@@ -429,38 +475,37 @@ def call_llm_go(prompt: str, *, system: str = SYSTEM_PROMPT,
                              {"role": "user", "content": prompt}]}
         if json_mode:
             body["response_format"] = {"type": "json_object"}
-        attempts = GO_MAX_RETRIES + 1
-        for attempt in range(attempts):
+        headers = {"Authorization": "Bearer " + backend_api_key(BACKEND_GO),
+                   "User-Agent": "free-llm-intel/1.0",
+                   "x-opencode-session": str(uuid.uuid5(uuid.UUID(_go_session), prompt))}
+        resp = None
+        for attempt in range(GO_MAX_RETRIES + 1):
+            if deadline is not None:
+                _go_remaining(deadline)
             _go_requests += 1
+            wait = GO_RETRY_BASE_SECONDS
             try:
-                resp = requests.post(
-                    GO_API_URL,
-                    headers={"Authorization": "Bearer " + backend_api_key(BACKEND_GO),
-                             "User-Agent": "free-llm-intel/1.0",
-                             "x-opencode-session": str(uuid.uuid5(uuid.UUID(_go_session), prompt))},
-                    json=body, timeout=timeout)
+                resp = _post_go(body, headers, timeout, deadline)
             except requests.RequestException as exc:
                 reason = f"网络异常 {type(exc).__name__}: {str(exc)[:120]}"
-                if attempt + 1 < attempts:
-                    retried = True
-                    print(f"      [ai-go-retry] Go 请求失败（{reason}），"
-                          f"{GO_RETRY_BASE_SECONDS}s 后重试（{attempt + 1}/{GO_MAX_RETRIES}）",
-                          file=sys.stderr)
-                    time.sleep(GO_RETRY_BASE_SECONDS)
-                    continue
-                break
-            if resp.status_code != 200:
+            else:
+                if resp.status_code == 200:
+                    break
                 # 不记录服务端响应体，避免错误回显 Key 或请求正文。
                 reason = f"HTTP {resp.status_code}"
-                if resp.status_code in GO_TRANSIENT_STATUSES and attempt + 1 < attempts:
-                    retried = True
-                    wait = _retry_after_seconds(resp, GO_RETRY_BASE_SECONDS,
-                                                cap=GO_RETRY_WAIT_CAP_SECONDS)
-                    print(f"      [ai-go-retry] Go 返回 {reason}，{wait:.0f}s 后重试"
-                          f"（{attempt + 1}/{GO_MAX_RETRIES}）", file=sys.stderr)
-                    time.sleep(wait)
-                    continue
+                if resp.status_code not in GO_TRANSIENT_STATUSES:
+                    break
+                wait = _retry_after_seconds(resp, GO_RETRY_BASE_SECONDS, cap=GO_RETRY_WAIT_CAP_SECONDS)
+            if attempt == GO_MAX_RETRIES:
                 break
+            if deadline is not None:
+                _go_remaining(deadline, wait=wait)
+            retried = True
+            print(f"      [ai-go-retry] Go 请求失败（{reason}），{wait:.0f}s 后重试"
+                  f"（{attempt + 1}/{GO_MAX_RETRIES}）", file=sys.stderr)
+            time.sleep(wait)
+
+        if resp is not None and resp.status_code == 200:
             try:
                 payload = resp.json()
                 choice = payload["choices"][0]
@@ -468,21 +513,27 @@ def call_llm_go(prompt: str, *, system: str = SYSTEM_PROMPT,
                 finish = choice.get("finish_reason")
             except (ValueError, KeyError, IndexError, TypeError) as exc:
                 reason = f"响应结构异常 {type(exc).__name__}: {str(exc)[:120]}"
-                break
-            _record_go_allowance(payload)
-            if finish != "stop":
-                reason = f"响应未完整结束（finish_reason={finish}）"
-                break
-            if not isinstance(content, str) or not content.strip():
-                reason = "空内容"
-                break
-            if json_mode:
-                try:
-                    parse_json_loose(content)
-                except AiReviewError as exc:
-                    reason = f"输出不是合法 JSON：{str(exc)[:120]}"
-                    break
-            return content
+            else:
+                _record_go_allowance(payload)
+                if deadline is not None:
+                    _go_remaining(deadline)
+                if finish != "stop":
+                    reason = f"响应未完整结束（finish_reason={finish}）"
+                    if body_translation and finish == "length":
+                        raise GoBodyTruncated(reason)
+                elif not isinstance(content, str) or not content.strip():
+                    reason = "空内容"
+                    if body_translation:
+                        raise AiReviewError(reason)
+                elif not json_mode:
+                    return content
+                else:
+                    try:
+                        parse_json_loose(content)
+                    except AiReviewError as exc:
+                        reason = f"输出不是合法 JSON：{str(exc)[:120]}"
+                    else:
+                        return content
         _go_disabled = True
         _go_last_failure = reason
         suffix = f"，已重试 {GO_MAX_RETRIES} 次仍失败" if retried else ""

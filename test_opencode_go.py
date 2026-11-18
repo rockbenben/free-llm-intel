@@ -219,11 +219,54 @@ class TestOpenCodeGo(unittest.TestCase):
                                return_value=self.response("partial", finish="length")) as post, \
                 mock.patch.object(ai.time, "sleep") as sleep:
             translate = crawler.make_llm_body_translator(ai.BACKEND_GO, "ignored")
-            with self.assertRaises(ai.AiReviewError) as ctx:
+            with self.assertRaises(ai.GoBodyTruncated) as ctx:
                 translate("t", "body")
         self.assertEqual(post.call_count, 1, "输出截断重试无意义")
         sleep.assert_not_called()
         self.assertIn("finish_reason=length", str(ctx.exception))
+        self.assertTrue(ai.go_available())
+
+    def test_body_budget_bounds_each_request_and_retry_wait(self):
+        clock = [100.0]
+        responses = [self.response(status=503), self.response("translated")]
+        with mock.patch.object(ai.requests, "post", side_effect=responses) as post, \
+                mock.patch.object(ai.time, "monotonic", side_effect=lambda: clock[0]), \
+                mock.patch.object(ai.time, "sleep", side_effect=lambda seconds: clock.__setitem__(
+                    0, clock[0] + seconds)) as sleep:
+            translate = crawler.make_llm_body_translator(ai.BACKEND_GO, "ignored")
+            self.assertEqual(translate("t", "body", deadline=112), "translated")
+            self.assertEqual([call.kwargs["timeout"] for call in post.call_args_list], [12, 7])
+            sleep.assert_called_once_with(5)
+        with mock.patch.object(ai.requests, "post",
+                               return_value=self.response(status=429, headers={"retry-after": "7"})) as post, \
+                mock.patch.object(ai.time, "monotonic", return_value=100), \
+                mock.patch.object(ai.time, "sleep") as sleep:
+            with self.assertRaises(ai.GoBodyBudgetExpired):
+                translate("t", "body", deadline=103)
+            post.assert_called_once()
+            self.assertEqual(post.call_args.kwargs["timeout"], 3)
+            sleep.assert_not_called()
+        self.assertTrue(ai.go_available())
+
+    def test_body_budget_stops_waiting_for_an_in_flight_request(self):
+        from threading import Event
+
+        release = Event()
+
+        def blocked_post(*args, **kwargs):
+            release.wait(5)
+            return self.response("late")
+
+        with mock.patch.object(ai.requests, "post", side_effect=blocked_post), \
+                mock.patch.object(ai.time, "sleep") as sleep:
+            translate = crawler.make_llm_body_translator(ai.BACKEND_GO, "ignored")
+            try:
+                with self.assertRaises(ai.GoBodyBudgetExpired):
+                    translate("t", "body", deadline=ai.time.monotonic() + 0.1)
+            finally:
+                release.set()
+            sleep.assert_not_called()
+        self.assertTrue(ai.go_available())
 
     def test_allowance_accumulates_and_formats(self):
         responses = [self.response("ok1", allowance=0.0012),
@@ -265,37 +308,59 @@ class TestOpenCodeGo(unittest.TestCase):
         self.assertIn("Go 请求 1 次", out)
         self.assertIn("$0.004", out)
 
-    def test_ai_bodies_go_chunks_long_article(self):
+    def test_ai_bodies_go_prefers_whole_and_chunks_only_when_needed(self):
         import contextlib
         import io
         import tempfile
-        with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
-            (root / "docs/feeds").mkdir(parents=True)
-            (root / "docs/articles/openai").mkdir(parents=True)
-            en_rel = "docs/articles/openai/gochunk00001.en.md"
-            para = "This is an english paragraph with enough words to be translated. "
-            body = "\n\n".join(para * 20 for _ in range(10))    # ~14k 字符，超过 12k 单次上限
-            ft.write_body_doc(root / en_rel,
-                              {"status": "ok", "url": "https://a/p", "title": "Eng"}, body)
-            ft.save_bodies(root / "docs/feeds/bodies.json", {
-                "openai\thttps://a/p": {"slug": "gochunk00001", "en_path": en_rel,
-                                        "en_status": "ok", "zh_path": "", "zh_status": "",
-                                        "translator": "", "title": "中文标题",
-                                        "date": "", "captured": ""}})
-            resp = self.response("这是一段中文译文内容，足够长。" * 200, allowance=0.001)
-            buf = io.StringIO()
-            with mock.patch.object(crawler, "_repo_root", lambda: root), \
-                    mock.patch.object(ai.requests, "post", return_value=resp) as post, \
-                    contextlib.redirect_stdout(buf):
-                rc = crawler.main(["--ai-bodies", "--ai-bodies-go-only"])
-                saved = ft.load_bodies(root / "docs/feeds/bodies.json")
-                posts = post.call_count
-                out = buf.getvalue()
-            self.assertEqual(rc, 0)
-            self.assertGreaterEqual(posts, 2, "超过 12k 的长文应分块多次请求")
-            self.assertEqual(saved["openai\thttps://a/p"]["translator"], "llm")
-        self.assertIn("分块成稿 1", out)
+
+        for mode in ("whole", "truncated", "estimated", "chunk_truncated"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as d:
+                root = Path(d)
+                paragraph = "This is an English paragraph with enough words to be translated. " * 20
+                body = "\n\n".join(paragraph for _ in range(45 if mode == "estimated" else 10))
+                following = "This independent article should reach Go after the first article."
+                ledger = {}
+                for slug, url, source in (("gochunk00001", "https://a/p", body),
+                                          ("gochunk00002", "https://a/q", following)):
+                    rel = f"docs/articles/openai/{slug}.en.md"
+                    ft.write_body_doc(root / rel, {"status": "ok", "url": url, "title": "Eng"}, source)
+                    ledger[f"openai\t{url}"] = {"slug": slug, "en_path": rel, "en_status": "ok"}
+                ledger_path = root / "docs/feeds/bodies.json"
+                ft.save_bodies(ledger_path, ledger)
+                sent = []
+
+                def reply(*args, **kwargs):
+                    payload = kwargs["json"]
+                    self.assertEqual(payload["max_tokens"], 32_768)
+                    source = payload["messages"][-1]["content"].split("\n\n", 2)[-1]
+                    sent.append(source)
+                    if (mode in {"truncated", "chunk_truncated"} and len(sent) == 1
+                            or mode == "chunk_truncated" and len(sent) == 2):
+                        return self.response("partial", finish="length")
+                    return self.response("这是一段完整的中文译文。" * max(1, len(source) // 30))
+
+                buf = io.StringIO()
+                with mock.patch.object(crawler, "_repo_root", lambda: root), \
+                        mock.patch.object(ai.requests, "post", side_effect=reply), \
+                        contextlib.redirect_stdout(buf):
+                    self.assertEqual(crawler.main(["--ai-bodies", "--ai-bodies-go-only"]), 0)
+                self.assertEqual(sent[-1], following)
+                saved = ft.load_bodies(ledger_path)
+                self.assertEqual(saved["openai\thttps://a/q"]["translator"], "llm")
+                if mode == "whole":
+                    self.assertEqual(sent, [body, following])
+                elif mode == "estimated":
+                    self.assertEqual("\n\n".join(sent[:-1]), body)
+                    self.assertGreater(len(sent), 2)
+                elif mode == "truncated":
+                    self.assertEqual(sent[0], body)
+                    self.assertEqual("\n\n".join(sent[1:-1]), body)
+                else:
+                    self.assertEqual(saved["openai\thttps://a/p"]["zh_status"], "")
+                    self.assertEqual(len(sent), 3)
+                    continue
+                self.assertEqual(saved["openai\thttps://a/p"]["translator"], "llm")
+                self.assertIn(f"分块成稿 {int(mode != 'whole')}", buf.getvalue())
 
     def test_workflow_go_precedes_machine_and_render(self):
         workflow = yaml.safe_load((Path(__file__).parent / ".github/workflows/refresh-intel.yml").read_text(encoding="utf-8"))

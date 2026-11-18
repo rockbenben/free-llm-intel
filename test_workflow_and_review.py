@@ -10541,6 +10541,14 @@ class TestBodyChunkSplitter(unittest.TestCase):
         for chunk in chunks:
             self.assertEqual(chunk.count("```") % 2, 0, "每块围栏必须成对，不能跨块")
 
+    def test_longer_and_tilde_fences_keep_embedded_backticks(self):
+        for opening, closing in (("````markdown", "````"), ("~~~markdown", "~~~")):
+            with self.subTest(opening=opening):
+                fence = f"{opening}\n```python\n\nLoading…\n\n```\n{closing}"
+                body = f"intro\n\n{fence}\n\noutro"
+                self.assertIn(fence, ft._split_body_chunks(body, 30))
+                self.assertIn(fence, ft.strip_page_furniture(body))
+
     def test_short_body_single_chunk(self):
         self.assertEqual(ft._split_body_chunks("one\n\ntwo", 10_000), ["one\n\ntwo"])
 
@@ -10776,7 +10784,7 @@ class TestTranslateBodiesLlm(unittest.TestCase):
                 calls.append(chunk)
                 if len(calls) == 2:
                     raise RuntimeError("HTTP 500")
-                return "这是一段中文译文内容。"
+                return "这是一段中文译文内容。" * max(1, len(chunk) // 40)
 
             stats = {}
             n = ft.translate_bodies_llm(Path(d), bodies, tr, today="2026-11-18",
@@ -10810,6 +10818,42 @@ class TestTranslateBodiesLlm(unittest.TestCase):
             self.assertEqual(n, 0)
             self.assertEqual(calls, [], "单个超长段落切不动 → 不硬切、不送翻译")
             self.assertEqual(ft.pending_translation_keys(bodies), [key])
+
+    def test_mixed_oversized_block_is_rejected_before_any_request(self):
+        with tempfile.TemporaryDirectory() as d:
+            key, bodies = self._seed(d, "chunk00004444", "Intro paragraph\n\n" + "z" * 3000)
+            translate = mock.Mock()
+            self.assertEqual(ft.translate_bodies_llm(
+                Path(d), bodies, translate, today="2026-11-18", char_cap=1000,
+                chunk_chars=800, chunk_max=8), 0)
+            translate.assert_not_called()
+            self.assertEqual(ft.pending_translation_keys(bodies), [key])
+
+    def test_invalid_chunk_cannot_be_hidden_by_a_long_valid_chunk(self):
+        paragraphs = ["English explanatory prose. " * 15, "An [example](https://a/p)."]
+        for invalid in ("译文：", paragraphs[1], "这是[示例](https://a/changed)。"):
+            with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as d:
+                key, bodies = self._seed(d, "chunk00004444", "\n\n".join(paragraphs))
+                translate = mock.Mock(side_effect=["这是一段完整的中文译文。" * 30, invalid])
+                self.assertEqual(ft.translate_bodies_llm(
+                    Path(d), bodies, translate, today="2026-11-18", char_cap=400,
+                    chunk_chars=410, chunk_max=8), 0)
+                self.assertEqual(translate.call_count, 2)
+                self.assertEqual(ft.pending_translation_keys(bodies), [key])
+
+    def test_code_only_chunk_is_kept_without_a_translation_request(self):
+        with tempfile.TemporaryDirectory() as d:
+            prose = "Plain English prose. " * 10
+            fence = "````markdown\n```python\n" + "print(123)\n" * 20 + "```\n````"
+            key, bodies = self._seed(d, "chunk00004444", f"{prose.rstrip()}\n\n{fence}")
+            chinese = "这是一段完整的中文译文。" * 10
+            translate = mock.Mock(return_value=chinese)
+            self.assertEqual(ft.translate_bodies_llm(
+                Path(d), bodies, translate, today="2026-11-18", char_cap=340,
+                chunk_chars=320, chunk_max=8), 1)
+            translate.assert_called_once_with("Eng Title", prose.rstrip())
+            self.assertEqual(ft.read_body_doc(Path(d) / bodies[key]["zh_path"])[1],
+                             f"{chinese}\n\n{fence}")
 
     def test_budget_stops_between_articles(self):
         with tempfile.TemporaryDirectory() as d:
@@ -11275,6 +11319,40 @@ class TestMtBodiesCli(unittest.TestCase):
         self.assertEqual(saved["openai\thttps://a/p"]["zh_status"], "")
         self.assertEqual(ft.pending_translation_keys(saved), ["openai\thttps://a/p"])
 
+    def test_budget_is_shared_with_mt_bodies(self):
+        """--mt-bodies 也吃同一个墙钟开关：默认与 --ai-bodies 同值，显式 0 关闭。"""
+        seen = []
+
+        def fake(root, bodies, translate, **kw):
+            seen.append(kw.get("budget_seconds"))
+            return 0
+
+        with mock.patch.object(provider_profiles, "translate_body_to_zh",
+                               return_value="这是一篇中文正文的完整机翻内容。"), \
+             mock.patch.object(ft, "translate_bodies_llm", side_effect=fake):
+            self.assertEqual(crawler_llm_intel.main(["--mt-bodies"]), 0)
+            self.assertEqual(crawler_llm_intel.main(
+                ["--mt-bodies", "--ai-bodies-budget-seconds", "0"]), 0)
+        self.assertEqual(seen, [ft.BODY_TRANSLATE_BUDGET_SECONDS, 0.0],
+                         "默认与 --ai-bodies 同值；显式 0 才关闭墙钟")
+
+    def test_budget_exhausted_leaves_body_pending(self):
+        """墙钟到点即停：不写半篇、不崩，正文留 pending。"""
+        clock = {"t": 0.0}
+
+        def tick():
+            clock["t"] += 5.0           # 每次读数推进 5s，1s 预算必然在首篇前到点
+            return clock["t"]
+
+        with mock.patch.object(provider_profiles, "translate_body_to_zh",
+                               return_value="这是一篇中文正文的完整机翻内容。"), \
+             mock.patch.object(ft.time, "monotonic", side_effect=tick):
+            rc = crawler_llm_intel.main(
+                ["--mt-bodies", "--ai-bodies-budget-seconds", "1"])
+        self.assertEqual(rc, 0)
+        saved = ft.load_bodies(self.root / "docs/feeds/bodies.json")
+        self.assertEqual(ft.pending_translation_keys(saved), ["openai\thttps://a/p"],
+                         "到点不再开译，剩余留 pending 而不是写残篇")
 
 class TestTranslationQc(unittest.TestCase):
     """翻译批次 QC：代码块逐字、URL 多重集、品牌音译、U+FFFD；只读。"""
