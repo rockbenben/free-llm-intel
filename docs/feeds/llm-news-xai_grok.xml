@@ -14,74 +14,74 @@
       <guid isPermaLink="true">https://x.ai/news/grok-bot-accounting</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Building an accounting team with Grok Bot</description>
-      <content:encoded><![CDATA[<p><a href="https://x.ai/news">返回新闻</a>2026年11月16日</p>
+      <content:encoded><![CDATA[<p><a href="https://x.ai/news">返回新闻</a>2026 年 11 月 16 日</p>
 <h1>使用 Grok Bot 建立会计团队</h1>
-<p>作者：安娜（保罗）贝恩斯、威尔·斯默登和艾琳·詹克斯</p>
-<p>SpaceXSI 的五个 Grok 机器人各自负责从配置客户帐户到收取付款的端到端会计工作。只有当工作需要判断时，他们才会涉及一个人。</p>
-<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">macOS 下载</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售人员</a></p>
-<p>大多数会计团队围绕一组明确的工作来组织工作，从管理客户帐户到计费和收款。</p>
-<p>在 SpaceXSI，我们开始将这些工作分配给 <a href="https://x.ai/bot">Grok Bots</a>。每个机器人都负责整个过程，独立工作，并在遇到需要人类判断或批准的事情时让我们参与进来。它们使我们能够处理更多的工作，而无需以同样的速度增加员工人数。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_grokbotshaverealplaceson-2x-light-1adc1c4a.png" alt="Grok 机器人在 SpaceXSI 会计组织结构图上占有一席之地：供应机器人向 Paul 报告，计费机器人和计费支持机器人向计费主管报告，现金应用程序机器人和收款机器人向收款和支持主管报告"></p>
-<p>我们构建了五个团队机器人，每个机器人都有一个仔细界定的职责：</p>
-<ul><li><strong>配置机器人</strong>检查合同并设置或关闭客户帐户。</li><li><strong>计费机器人</strong>验证合同详细信息并生成发票。</li><li><strong>计费支持机器人</strong>回答计费问题并根据我们的市场推广团队的请求采取行动，例如更新客户记录或检索发票。</li><li><strong>现金应用机器人</strong>应用收到的付款、调查差异、冲销银行费用并标记托收的短付款。</li><li><strong>Collections Bot</strong> 处理客户账单查询并协调退款等请求。</li></ul>
-<p>设置它们让我们学到了很多关于如何使机器人足够可靠以拥有重要的业务流程的知识。以下是我们构建团队的方式以及每个机器人的职责。</p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#how-we-build-and-manage-our-accounting-bots">我们如何构建和管理我们的会计机器人</a></h2>
-<p>我们对 Grok Bot 的最初实验涉及一些尝试和错误，因为我们想出了如何最好地组织工作。我们最终决定为每个机器人分配一个现有的、定义明确且范围明确的会计流程，让其自始至终拥有自己的会计流程。我们不是要求机器人帮助完成各种任务，而是给它一项特定的工作，而我们团队中的人员本来可以执行该工作。</p>
-<p>关于人工智能代理的一个常见误解是，只要让他们访问正确的系统，他们就应该能够完成工作。在实践中，我们发现机器人需要与新员工相同的文档、入职培训和持续培训方面的投资。</p>
-<p>这需要预先花费时间，但一旦经过培训，他们可以全天候工作，并且比从事相同工作的人更准确地处理更多的工作量。当我们教机器人一项新技能时，就像上传一项可以立即投入使用的新功能。</p>
-<h3><a href="https://x.ai/news/grok-bot-accounting#build-reliable-processes-before-assigning-them-to-bots">在将流程分配给机器人之前构建可靠的流程</a></h3>
-<p>机器人将难以运行人们尚未弄清楚如何可靠执行的流程。如果工作流程定义不明确或依赖于未记录的知识，那么将其交给机器人并不能解决这些问题。</p>
-<p>因此，我们投资构建应用程序，使我们的会计流程更加结构化。我们使用 Grok Build 创建具有定义流程如何工作以及允许执行哪些操作的接口的应用程序。这为机器人提供了一个受控的工作环境，而不是让它从头开始弄清楚如何执行每项任务。</p>
-<p>例如，我们构建了一个内部配置应用程序，它提供了一种定义的方式来启用客户帐户，并控制可以采取的操作。我们的配置机器人现在运行该应用程序。这为我们提供了一个可靠的流程，其中记录了人们和机器人都可以使用的所采取操作的审计跟踪。</p>
-<h3><a href="https://x.ai/news/grok-bot-accounting#document-each-job-as-if-youre-onboarding-an-employee">像入职员工一样记录每项工作</a></h3>
-<p>我们维护一个概念文档作为每个机器人的操作手册。它包含机器人完成工作所需的知识和指令，从如何在开具发票之前验证合同详细信息到需要人工批准的计费调整。</p>
-<p>每天晚上，机器人都会查阅这些文件以刷新他们的知识并标记与现有指令的任何差异。他们无法自行编辑文档。只有负责每个流程的人员才拥有该权限。</p>
-<p>当我们更改政策或发现更好的处理交易的方法时，我们会更新文档并向机器人传授新程序。最了解这项工作的人仍然负责定义工作的完成方式。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/3-kb-structure-99883bce.png" alt="计费支持机器人知识库，机器人每晚检查的只读操作手册"></p>
-<h3><a href="https://x.ai/news/grok-bot-accounting#give-bots-clear-permissions-and-approval-requirements">给予机器人明确的权限和批准要求</a></h3>
-<p>会计流程需要仔细控制，因为它们会影响财务报告，并可能受到审计要求或控制框架的约束。我们的机器人可以读取他们需要的信息，但他们更改记录的能力受到更多限制。</p>
-<p>Grok Bot 还可以通过 Tailscale 等集成安全地连接到内部系统。这使得机器人能够访问私有工具和数据，而无需将这些系统暴露在公共互联网上。公司可以控制机器人可以访问哪些资源，并将访问策略与授权连接的人员的身份相关联。</p>
-<p>我们允许他们独立执行低风险任务，并要求批准敏感行动，例如发放积分或退款。我们还控制谁可以授权这些操作。例如，任何具有适当访问权限的人都可以要求计费支持机器人解释发票，但只有指定人员才能授权更改计费记录。</p>
-<h3><a href="https://x.ai/news/grok-bot-accounting#train-bots-before-letting-them-work-independently">在让机器人独立工作之前先对其进行训练</a></h3>
-<p>我们以培训新员工的方式培训新机器人。我们首先教他们工作如何进行，然后让他们观察我们执行工作，然后逐渐赋予他们独立完成任务的责任。这让我们有时间在他们开始独立工作之前找出他们的知识差距并纠正错误。我们典型的入职流程现在大约需要三周时间：</p>
-<ul><li><strong>第一周：</strong> 构建机器人的知识库并让它观察我们如何执行工作。</li><li><strong>第二周：</strong> 让机器人提出行动并解释其打算做什么，并由某人批准其工作。</li><li><strong>第三周：</strong> 允许机器人独立执行日常工作并升级异常情况。</li></ul>
-<p>我们的第一个机器人花了更长的时间来开发。例如，计费支持机器人需要四到五周的时间才能推出。当我们学会了如何构建工作时，我们能够更快地构建后续机器人。发布后，我们继续对他们进行指导，纠正错误并更新他们的指示，而他们则负责处理原本需要多名全职员工的工作。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_fivebotsonedeallifecycle-light-7b5a7b12.png" alt="一笔交易生命周期中有五个机器人：配置机器人设置账户、计费机器人发送发票、计费支持机器人回答销售问题、收款机器人处理应收账款收件箱、现金应用程序机器人匹配付款"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#provisioning-bot-sets-up-and-closes-customer-accounts">配置机器人设置和关闭客户帐户</a></h2>
-<p>配置机器人可确保客户在签署合同时获得对我们产品的正确访问权限，并在合同结束时删除该访问权限。它使用我们用 Cursor 构建的内部应用程序来管理此流程，以前需要我们团队中的某人手动处理。</p>
-<p>当交易完成时，Provisioning Bot 会将执行的合同与相应的 CRM 记录进行比较。它检查订单详细信息是否匹配，然后使用我们的配置应用程序启用客户的帐户。然后，它根据合同验证权利，并通知 Slack 中的销售代表配置已完成。</p>
-<p>当客户流失或合同终止时，机器人还会删除相应的权利。这有助于我们避免配置错误，这些错误可能导致客户无法获得他们购买的访问权限或允许在合同结束后继续访问。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/provisioning-14cbaa92.png" alt="在 Slack 中配置机器人，检查针对 Salesforce 的已完成合同、启用权利并告诉销售代表帐户已准备就绪"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#billing-bot-generates-invoices-and-checks-for-errors">计费机器人生成发票并检查错误</a></h2>
-<p>配置客户帐户后，计费机器人就会接管。在生成和发送发票之前，它会检查我们的计费系统中的信息是否与已执行合同的条款相符。</p>
-<p>为此，机器人会将合同与从 CRM 流入我们的计费系统的客户记录进行比较。如果发现差异，它会更正计费系统中的信息，以便继续开具发票，并提醒相应的团队修复基础 CRM 记录。然后发送发票并通知销售代表。</p>
-<p>这将开具发票所需的时间从大约 24 小时缩短到几分钟。</p>
-<p>计费机器人还会检查缺失的税务信息。例如，如果客户未提供增值税或商品及服务税识别号，机器人会通知销售代表将评估的税款，并给他们 24 小时的时间来提供缺失的信息。以前，我们可能只有在客户提出问题后才发送发票并解决问题。现在我们可以在发票发出之前解决这个问题。</p>
-<p>该机器人还可以处理积分和重新计费，但需要获得额外的权限和批准。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-0bce498b.png" alt="Slack 中的计费机器人持有发票，直到收到缺少的增值税 ID，然后将其发送并通知销售代表"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#billing-support-bot-answers-questions-from-our-go-to-market-team">计费支持机器人回答我们的市场推广团队的问题</a></h2>
-<p>计费支持机器人处理我们的市场推广团队关于客户计费的请求。它连接到我们的核心会计系统，使销售代表能够获得答案并进行例行更新，而无需我们会计团队中的人员参与。</p>
-<p>例如，客户可能会注意到发票上显示的使用情况与他们的仪表板不匹配。计费支持机器人可以调查基础记录以解释两个金额不同的原因。</p>
-<p>机器人也可以直接采取行动。如果销售代表需要更新客户的账单电子邮件或添加其他收件人，他们可以询问 Slack 中的机器人。它会验证新地址是否与客户的域匹配，然后自动更新账单记录。</p>
-<p>以前，即使基础工作很简单，我们的团队也一次处理一个请求。现在，机器人可以从头到尾解决其中的许多问题。我们估计，计费支持机器人每天为我们的会计团队节省了大约 8 个小时的工作时间。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-support-22a4aae2.png" alt="Slack 中的计费支持机器人解释了为什么发票总额高于使用情况仪表板，并追踪到席位调整的差距"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#cash-applications-bot-reconciles-customer-payments">现金应用程序机器人核对客户付款</a></h2>
-<p>现金应用机器人根据未清发票对收到的客户付款进行核对。除了自动匹配付款之外，它还调查差异并处理常规调整，否则需要会计师干预。</p>
-<p>机器人每天检查我们的付款信息两次，并自动应用与未清发票完全匹配的付款。当付款不匹配时，它会在我们的客户支持系统中搜索汇款建议，以帮助确定付款涵盖哪些发票。</p>
-<p>该机器人还会自动冲销导致付款和发票金额之间存在差异的银行费用。如果客户支付的金额少于所欠金额，则会将短付款标记给我们的收款团队进行后续处理。</p>
-<p>这个过程通常需要会计师三到四个小时。机器人在大约 30 分钟内完成了它。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/cash-app-3552627c.png" alt="Slack 中的现金应用程序机器人将存款与汇款通知中的发票进行匹配，并将短付款标记为收款"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#collections-bot-handles-customer-facing-billing-inquiries">Collections Bot 处理面向客户的账单查询</a></h2>
-<p>Collections Bot 是我们第一个直接与客户沟通的会计机器人。它监控我们的应收账款收件箱，回答计费问题，并协调需要其他机器人采取行动的请求。</p>
-<p>例如，如果客户请求退款，Collections Bot 会与 Billing Bot 和 Cash applications Bot 合作调查该请求并准备必要的操作。机器人在处理退款之前必须获得授权人员的批准。</p>
-<p>我们花了大约三个月的时间来培训 Collections Bot，因为面向客户的通信引入了额外的安全要求。特别是，机器人必须验证请求帐户信息的人是否有权接收该信息。</p>
-<p>它通过对照 CRM 和我们的计费系统中批准的联系信息检查发件人的电子邮件地址来实现此目的。看起来相似的电子邮件域是不够的。如果信息不匹配，机器人会将询问升级给某人，而不是发布敏感信息。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/collections-550c874c.png" alt="Slack 中的收款机器人在与计费机器人和现金应用程序机器人协调重复发票退款之前验证客户的电子邮件"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#building-toward-an-si-accounting-team">构建 SI 会计团队</a></h2>
-<p>如果没有 Grok Bot，我们估计分配给这五个机器人的工作将需要我们团队的人数增加一倍以上。相反，我们正在建立一个团队，其中机器人处理日常流程，而我们的会计师则专注于管理工作、改进系统和解决异常情况。</p>
-<p>我们的经验中最大的教训是，建立一支有效的人工智能团队需要像建立一支人类团队一样重视。我们需要明确定义工作，记录工作的执行方式，并投资于培训。一旦我们做到了这一点，我们就可以让机器人负责以前依赖于人员来完成的工作。</p>
-<h2>今天尝试 Grok Bot</h2>
-<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">macOS 下载</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售人员</a></p>]]></content:encoded>
+<p>作者：Annay (Paul) Bains、Will Smerdon 和 Erin Jenks</p>
+<p>在 SpaceXSI，五个 Grok Bot 各自端到端负责一项会计工作，从开通客户账户到收取款项。只有当工作需要有判断力时，它们才会让人参与。</p>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">下载 macOS 版</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售</a></p>
+<p>大多数会计团队都围绕一组定义清晰的工作来组织日常事务，从管理客户账户到计费与收款。</p>
+<p>在 SpaceXSI，我们开始把这些工作交给 <a href="https://x.ai/bot">Grok Bot</a>。每个 Bot 负责一整条流程，独立工作，遇到需要人类判断或批准的事情时才会找我们。它们让我们能处理更多工作，而员工人数不必以同样速度增长。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_grokbotshaverealplaceson-2x-light-1adc1c4a.png" alt="Grok Bot 在 SpaceXSI 会计组织架构图上都有真实的位置：Provisioning Bot 向 Paul 汇报，Billing Bot 和 Billing Support Bot 向计费主管汇报，Cash Applications Bot 和 Collections Bot 向收款与支持主管汇报"></p>
+<p>我们构建了五个 Team Bot，每个都有经过仔细界定的职责：</p>
+<ul><li><strong>Provisioning Bot</strong> 核对合同，开通或关闭客户账户。</li><li><strong>Billing Bot</strong> 核对合同细节并生成发票。</li><li><strong>Billing Support Bot</strong> 回答计费问题，并处理 go-to-market 团队提出的请求，例如更新客户记录或调取发票。</li><li><strong>Cash Applications Bot</strong> 入账收到的付款、调查差异、核销银行手续费，并把短付款标记给收款团队。</li><li><strong>Collections Bot</strong> 处理客户的计费咨询，并协调退款等请求。</li></ul>
+<p>搭建它们的过程让我们学到很多：要让 Bot 可靠到足以负责重要业务流程，需要付出什么。下面是我们组建这个团队的做法，以及每个 Bot 具体做什么。</p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#how-we-build-and-manage-our-accounting-bots">我们如何构建和管理会计 Bot</a></h2>
+<p>我们最初试验 Grok Bot 时经历了不少试错，才想清楚该如何最好地组织这些工作。最终我们定下来的方式是：给每个 Bot 分配一个已经存在、定义清晰且范围明确的会计流程，让它从头到尾负责。我们不是让 Bot 去协助完成各种零散任务，而是交给它一项具体的、原本由团队里某个人来做的工作。</p>
+<p>关于 AI agent 的一个常见误解是：只要给它开通正确的系统权限，它就应该能胜任一份工作。实践下来我们发现，Bot 在文档、入职培训和持续辅导上的投入需求，和新员工完全一样。</p>
+<p>这些前期投入需要时间，但一旦训练完成，它们就能全天候工作，处理的工作量远超同岗位的人，准确率也更高。当我们教 Bot 一项新技能时，就像是上传了一项新能力，它可以立刻投入使用。</p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#build-reliable-processes-before-assigning-them-to-bots">先把流程做可靠，再分配给 Bot</a></h3>
+<p>如果人们都还没弄清楚怎么可靠执行一个流程，Bot 也很难把它跑好。如果工作流定义不清，或者依赖没有写下来的知识，那么把它交给 Bot 并不能解决这些问题。</p>
+<p>正因如此，我们投入构建了一批应用，让会计流程更加结构化。我们用 Grok Build 创建应用，用界面来界定流程如何运转、允许执行哪些操作。这样 Bot 就有了一个受控的工作环境，而不用从头琢磨每项任务该怎么做。</p>
+<p>举例来说，我们构建了一个内部开通应用，用固定的方式来启用客户账户，并对可执行的操作加以控制。现在由我们的 Provisioning Bot 来操作这个应用。这样我们就有了一个可靠的流程，所有已执行的操作都有审计日志，人和 Bot 都能用。</p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#document-each-job-as-if-youre-onboarding-an-employee">像给员工做入职一样记录每项工作</a></h3>
+<p>我们维护一份 Notion 文档，作为每个 Bot 的操作手册。文档里有 Bot 完成工作所需的知识和指示，从开票前如何核对合同细节，到哪些计费调整需要人工批准。</p>
+<p>每天晚上，Bot 会查阅这些文档来刷新知识，并标记其与现有指示之间的任何出入。它们不能自行编辑文档。只有负责各流程的人才有这个权限。</p>
+<p>当我们修改政策，或发现更好的交易处理方式时，我们会更新文档，并把新流程教给 Bot。最了解这项工作的人，始终负责定义它该如何完成。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/3-kb-structure-99883bce.png" alt="Billing Support Bot 的知识库，一份 Bot 每晚都会查阅的只读操作手册"></p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#give-bots-clear-permissions-and-approval-requirements">给 Bot 明确的权限和审批要求</a></h3>
+<p>会计流程需要谨慎的控制，因为它们会影响财务报告，还可能受审计要求或控制框架的约束。我们的 Bot 可以读取所需的信息，但修改记录的能力受到更多限制。</p>
+<p>Grok Bot 还可以通过 Tailscale 等集成安全地连接内部系统。这样 Bot 就能访问私有工具和数据，而无需把这些系统暴露在公网上。公司可以控制 Bot 能访问哪些资源，访问策略与授权该连接的人员身份绑定。</p>
+<p>我们允许它们独立执行风险较低的任务，而发放抵扣或退款等敏感操作需要审批。我们还会控制谁有权授权这些操作。例如，任何拥有相应访问权限的人都可以让 Billing Support Bot 解释一张发票，但只有指定人员才能授权更改计费记录。</p>
+<h3><a href="https://x.ai/news/grok-bot-accounting#train-bots-before-letting-them-work-independently">在让 Bot 独立工作之前先训练它</a></h3>
+<p>我们训练新 Bot 的方式和新员工一样。先教它们工作是怎么做的，然后让它们观察我们执行工作，再逐步把独立完成任务的责任交给它们。这样我们就有时间在它们开始独立工作之前发现知识盲区并纠正错误。现在我们典型的入职流程大约需要三周：</p>
+<ul><li><strong>第一周：</strong> 为 Bot 搭建知识库，并让它观察我们如何执行这项工作。</li><li><strong>第二周：</strong> 让 Bot 提出操作建议并说明它打算做什么，由人员审批它的工作。</li><li><strong>第三周：</strong> 允许 Bot 独立执行日常工作，并将异常情况上报。</li></ul>
+<p>我们最早的几个 Bot 开发耗时更长。例如 Billing Support Bot 花了四到五周才上线。随着我们逐渐摸清如何组织这些工作，后续 Bot 的构建速度快了很多。发布之后我们仍会继续辅导它们，纠正错误、更新指示；而它们承担的工作，原本需要好几名全职员工。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_fivebotsonedeallifecycle-light-7b5a7b12.png" alt="一笔交易生命周期上的五个 Bot：Provisioning Bot 开通账户，Billing Bot 发送发票，Billing Support Bot 回答销售问题，Collections Bot 处理应收账款邮箱，Cash Applications Bot 匹配付款"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#provisioning-bot-sets-up-and-closes-customer-accounts">Provisioning Bot 开通和关闭客户账户</a></h2>
+<p>Provisioning Bot 确保客户在签署合同时获得对我们产品的正确访问权限，并在合同结束时移除这些权限。它通过一个我们用 Cursor 构建的内部应用来管理这一流程，而此前这项工作需要我们团队中的人手工处理。</p>
+<p>当一笔交易成交后，Provisioning Bot 会将已签署的合同与相应的 CRM 记录进行比对。它核对订单细节是否一致，然后用我们的开通应用启用客户账户。之后，它再对照合同验证相应权益，并在 Slack 中通知销售代表开通已完成。</p>
+<p>当客户流失或合同结束时，这个 Bot 还会移除相应的权益。这帮助我们避免开通错误——这类错误可能导致客户拿不到已购买的访问权限，或者让访问权限在合同结束后仍然延续。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/provisioning-14cbaa92.png" alt="Slack 中的 Provisioning Bot 正在对照 Salesforce 检查一份已赢单的合同、启用权益，并告知销售代表账户已就绪"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#billing-bot-generates-invoices-and-checks-for-errors">Billing Bot 生成发票并检查错误</a></h2>
+<p>客户账户开通完成后，Billing Bot 就接手后续工作。在生成并发送发票之前，它会核对计费系统中的信息是否与已签署合同的条款一致。</p>
+<p>为此，Bot 会将合同与从 CRM 流入我们 Billing System 的客户记录进行比对。如果发现不一致，它会更正 Billing System 中的信息，以便继续开票，同时提醒相应团队修复底层的 CRM 记录。随后它发送发票并通知销售代表。</p>
+<p>这使开具一张发票所需的时间从大约 24 小时缩短到了几分钟。</p>
+<p>Billing Bot 还会检查税务信息是否缺失。例如，如果客户没有提供 VAT 或 GST 识别号，Bot 会通知销售代表将被计征的税款，并给他们 24 小时补上缺失的信息。以前我们可能会先把发票发出去，等客户提出问题后才去解决。现在我们可以在发票发出之前就处理好。</p>
+<p>这个 Bot 还能处理抵扣和重新开票，但需要额外的权限和审批。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-0bce498b.png" alt="Slack 中的 Billing Bot 暂缓发出发票，直到缺失的 VAT 识别号补齐，随后发送发票并通知销售代表"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#billing-support-bot-answers-questions-from-our-go-to-market-team">Billing Support Bot 回答 go-to-market 团队的问题</a></h2>
+<p>Billing Support Bot 负责处理我们 go-to-market 团队关于客户计费的请求。它连接我们的核心会计系统，让销售代表无需会计团队介入就能得到答案并完成日常更新。</p>
+<p>例如，客户可能会注意到发票上显示的使用量与其仪表盘不一致。Billing Support Bot 可以调查底层记录，解释这两个金额为何不同。</p>
+<p>这个 Bot 也能直接采取行动。如果销售代表需要更新客户的账单邮箱或增加收件人，可以在 Slack 中向 Bot 提出。它会验证新地址是否与客户的域名匹配，然后自动更新计费记录。</p>
+<p>以前，即使底层工作并不复杂，我们团队也只能逐个处理这些请求。现在 Bot 可以端到端解决其中许多请求。我们估计，Billing Support Bot 每天为整个会计团队的工作节省了大约八小时。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-support-22a4aae2.png" alt="Slack 中的 Billing Support Bot 解释为什么发票总额高于使用量仪表盘，并把差额追溯到一次席位补差结算"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#cash-applications-bot-reconciles-customer-payments">Cash Applications Bot 核对客户付款</a></h2>
+<p>Cash Applications Bot 将收到的客户付款与未结发票进行核对。除了自动匹配付款之外，它还会调查差异，并处理那些原本需要会计师介入的日常调整。</p>
+<p>这个 Bot 每天检查两次付款流水，自动核销与未结发票完全匹配的付款。当付款无法匹配时，它会在我们的客户支持系统中查找汇款通知，以帮助确定这笔付款覆盖哪些发票。</p>
+<p>Bot 还会自动核销导致付款金额与发票金额不一致的银行手续费。如果客户支付的金额少于应付金额，它会把这笔短付款标记给收款团队跟进。</p>
+<p>这个过程通常需要会计师花三到四小时。Bot 大约 30 分钟就能完成。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/cash-app-3552627c.png" alt="Slack 中的 Cash Applications Bot 依据汇款通知把一笔入账与发票匹配，并把一笔短付款标记给收款团队"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#collections-bot-handles-customer-facing-billing-inquiries">Collections Bot 处理面向客户的计费咨询</a></h2>
+<p>Collections Bot 是我们第一个直接与客户沟通的会计 Bot。它监控我们的应收账款邮箱，回答计费问题，并协调需要其他 Bot 采取行动的请求。</p>
+<p>例如，如果客户申请退款，Collections Bot 会与 Billing Bot 和 Cash Applications Bot 协作调查该请求并准备必要的操作。这些 Bot 在处理退款之前必须获得授权人员的批准。</p>
+<p>我们花了大约三个月来训练 Collections Bot，因为面向客户的沟通带来了额外的安全要求。特别是，Bot 必须核实索取账户信息的人是否有权获得这些信息。</p>
+<p>它的做法是把发件人的邮箱地址与 CRM 及计费系统中已核准的联系人信息进行核对。仅仅域名看起来相似是不够的。如果信息不匹配，Bot 会把询问上报给人员处理，而不是泄露敏感信息。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/collections-550c874c.png" alt="Slack 中的 Collections Bot 在核实客户邮箱后，与 Billing Bot 和 Cash Applications Bot 协调处理重复发票退款"></p>
+<h2><a href="https://x.ai/news/grok-bot-accounting#building-toward-an-si-accounting-team">朝着 SI 会计团队的方向建设</a></h2>
+<p>如果没有 Grok Bot，我们估计，现在交给这五个 Bot 的工作会需要我们团队人数增加一倍以上。而现在我们正在建设这样一支团队：Bot 处理日常流程，会计师则专注于管理工作、改进系统和处理异常情况。</p>
+<p>这段经历给我们最大的启示是：打造一支高效的 AI 团队，需要投入和打造人类团队同等的用心。我们需要清晰定义工作、记录工作的执行方式，并在培训上投入。做到这些之后，我们就能把原本依赖有人随时处理的工作交给 Bot 负责。</p>
+<h2>立即试用 Grok Bot</h2>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">下载 macOS 版</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Introducing Grok Bot 1.0</title>

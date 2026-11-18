@@ -7,77 +7,78 @@ date: 2026-11-17
 lang: zh
 captured: 2026-11-18
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: 950d453d8cc0
+body_sha: 32beb7b6c659
 ---
 
-## [人工智能](https://aws.amazon.com/blogs/machine-learning/)
+## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # 降低人工智能生成成本：规则代码、判断模型
 
-生成式人工智能系统中最大的成本杠杆是你是否调用模型。我们经常看到团队通过大型语言模型 (LLM) 路由每项任务，包括输入验证、格式化和路由。每个调用单独来看都很便宜，但在生产规模上，这些小成本成为架构中最大的项目之一。只要确定性规则可以完成工作，跳过模型就可以节省资金、减少延迟并消除非确定性来源。在这篇文章中，您将了解如何确定工作流中的每个步骤是否都需要模型。然后，您可以将每个选项映射到 AWS：确定性代码、受限决策调用或 [Amazon Bedrock](https://aws.amazon.com/bedrock/) 上的适当大小的模型。
+生成式 AI 系统里最大的成本杠杆，是你到底要不要调用模型。我们经常看到团队把每一项任务都交给大型语言模型（LLM），包括输入校验、格式化和路由。单次调用看起来便宜，但在生产规模下，这些零散的小成本会变成架构中最大的一笔开销。只要确定性规则能完成工作，跳过模型就能省钱、降低延迟，并去掉一个非确定性的来源。在本文中，你将学会如何判断工作流中的每个步骤到底需不需要模型。然后，你可以把每种选项对应到 AWS 上：确定性代码、受约束的决策调用，或 [Amazon Bedrock](https://aws.amazon.com/bedrock/) 上规模合适的模型。
 
-## 为什么不需要的模型调用会增加
+## 为什么不需要的模型调用会累积成本
 
-该模式通常从原型开始。模型调用适用于一个步骤，因此它成为下一步的默认调用。这些步骤包括验证输入、重新格式化请求正文以及选择路线。在原型数量上，没有人注意到成本。
+这种模式通常从原型阶段开始。一次模型调用在某个步骤上奏效了，于是它就成了下一个步骤的默认做法。这些步骤包括校验输入、重新格式化请求体，以及选择路由。在原型规模下，没人会注意到成本。
 
-在生产量中，不需要的模型调用会在三个方面给您带来成本：
+到了生产规模，不需要的模型调用会从三个方面让你付出代价：
 
-- 支出随着请求数量的增加而增长，即使对于低价值的步骤也是如此。
-- 延迟叠加，因为链中的每个模型调用都会增加数百毫秒。
-- 输出可能会有所不同，因为相同的输入可能会返回不同的答案。这使得测试变得更加困难，审核也变得更加缓慢。
+- 开销随请求数增长，即便是低价值步骤也一样。
+- 延迟会叠加，因为链路上的每一次模型调用都会增加数百毫秒。
+- 输出可能不稳定，因为同样的输入可能返回不同的答案。这让测试更难、审计更慢。
 
-每次新型号的推出都会重新引发关于使用哪种型号的争论。之前的问题，即该步骤是否需要模型，没有被问到。
+而每有新模型发布，关于「该用哪个模型」的争论又会被重新点燃。更早的那个问题——这个步骤到底需不需要模型——却始终没人问。
 
-成本指导，包括 [AWS Well-Architected Generative AI Lens](https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/genperf02-bp03.html)，通常从模型选择开始。这篇文章提前一步开始​​：该步骤是否需要模型？
+包括 [AWS Well-Architected Generative AI Lens](https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/genperf02-bp03.html) 在内的成本指南，往往从选择模型讲起。本文则再往前推一步：这个步骤到底需不需要模型？
 
 ## 如何判断一个步骤是否需要模型
 
-图 1 以流程图的形式显示了整个决策，其中包含三个标记通道：作为代码运行、问题和在模型上运行。按顺序完成每个工作流程步骤中的三个问题，并停在满足该步骤要求的第一个选项上：
+图 1 把整个决策过程画成一张流程图，分为三条带标签的泳道：以代码运行、问题、以模型运行。让工作流的每个步骤依次经过三个问题，并在第一个满足该步骤要求的选项处停下：
 
-- 规则是否可以检查成功，例如格式、模式、关键字或范围？如果规则仅解决步骤的一部分，则快速路径首先运行该规则。
-- 模型是否可以编写一次规则，例如正则表达式或 JSON 模式？
-- 该步骤是否从固定列表中选择一个答案，例如路线、类别，或者是或否？
+- 规则能否检查是否成功，例如格式、schema、关键字或范围？如果规则只能解决该步骤的一部分，就先走一条快路径来运行规则。
+- 模型能否一次性写出这条规则，例如一个正则表达式或一个 JSON schema？
+- 该步骤是否要从固定列表里选出一个答案，例如一条路由、一个类别，或是/否？
 
-如果这三个问题的答案都是“否”，则该步骤是开放式的，并且在适当大小的模型上运行。
+如果三个问题的答案都是否，那么这个步骤就是开放式的，交由规模合适的模型来运行。
 
-![将工作流程步骤分类为代码、受限决策调用或大小合适的 Amazon Bedrock 模型的流程图](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/17/ML-22259-1.png)
+![将工作流步骤归入代码、受约束的决策调用或规模合适的 Amazon Bedrock 模型的流程图](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/17/ML-22259-1.png)
 
-图 1：确定工作流程步骤是否需要模型以及需要哪个模型
+图 1：判断一个工作流步骤是否需要模型，以及需要哪一个模型
 
-考虑聘请客户支持助理。下表显示了其五个步骤如何通过图表。
+以客户支持助手为例。下表展示了它的五个步骤如何走完这张流程图。
 
-| **#** | **步骤** | **图表路径** | **它在哪里运行** |
+| **#** | **步骤** | **在流程图中的路径** | **在哪里运行** |
 | --- | --- | --- | --- |
-| 1 |检查订单号的格式 |规则可以检查是否成功。 | [Amazon API Gateway](https://aws.amazon.com/api-gateway/) REST API 请求验证或 [AWS Lambda](https://aws.amazon.com/lambda/) 函数 |
-| 2 |按意图路由消息 |规则解决了其中的一部分。快速路径上的关键字匹配会解析“退款”等消息，剩余部分转到第三个问题。 |使用 JSONata 的 [AWS Step Functions](https://aws.amazon.com/step-functions/) 选择状态。残差进入约束决策调用。 |
-| 3 |从运营商电子邮件中提取跟踪号码 |模型可以编写一次规则。它起草一个正则表达式，然后您检查并提交它。 |代码，作为 AWS Lambda 中的承诺模式 |
-| 4 |选择四个支持队列之一获取票证 |答案来自一个固定的列表。 |受限决策调用。不确定的答案升级为合适尺寸的模型。 |
-| 5 |起草给客户的回复 |该任务是开放式的。 |尺寸合适的模型，满足要求的最小的 Amazon Bedrock 模型 |
+| 1 | 检查订单号格式 | 规则可以检查是否成功。 | [Amazon API Gateway](https://aws.amazon.com/api-gateway/) REST API 请求校验，或 [AWS Lambda](https://aws.amazon.com/lambda/) 函数 |
+| 2 | 按意图路由消息 | 规则能解决其中一部分。在快路径上做关键字匹配即可处理 “refund” 这类消息，剩余部分进入第三个问题。 | 使用 JSONata 的 [AWS Step Functions](https://aws.amazon.com/step-functions/) Choice 状态。剩余部分交给受约束的决策调用。 |
+| 3 | 从承运商邮件中提取跟踪号 | 模型可以一次性写出规则。它起草一个正则表达式，由你审核并提交。 | 代码，作为 AWS Lambda 中已提交的模式 |
+| 4 | 为工单挑选四个支持队列之一 | 答案来自固定列表。 | 一次受约束的决策调用。不确定的答案升级到规模合适的模型。 |
+| 5 | 起草给客户的回复 | 任务属于开放式。 | 规模合适的模型，即满足要求的最小 Amazon Bedrock 模型 |
 
-当任务是开放式的、不明确的或生成性的时，您可以使用模型：总结文档、起草回复、从散文中提取含义。当任务具有可检查规则时使用确定性代码：电子邮件格式、模式、确切的关键字、数字范围。下表显示了当您向模型发送规则型任务时您要付出的代价。
+当任务开放式、有歧义或属于生成式时，可以使用模型：总结文档、起草回复、从散文里提取含义。当任务存在可检查的规则时，就使用确定性代码：邮箱格式、schema、精确关键字、数值范围。下表展示了把规则型的任务交给模型会牺牲什么。
 
-| **财产** | **确定性代码** | **模特来电** |
+| **属性** | **确定性代码** | **模型调用** |
 | --- | --- | --- |
-|每次调用成本|通常要低几个数量级 |每个代币，在规模上并不平凡 |
-|延迟|单位数毫秒或更短 |数百毫秒|
-|明确规则的正确性|完全符合所写规则 |高，但错误率非零 |
-|可审计性|该规则位于源代码管理中 |向审计师解释更困难 |
-|随着时间的推移行为 |稳定，直到你改变它 |当您迁移到新模型版本或某个版本停用时发生变化 |
+| 单次调用成本 | 通常低几个数量级 | 按 token 计费，规模化后并不便宜 |
+| 延迟 | 个位数毫秒或更低 | 数百毫秒 |
+| 对明确规则的准确性 | 按所写规则精确执行 | 高，但存在非零错误率 |
+| 可审计性 | 规则存放在源码管理中 | 更难向审计人员解释 |
+| 长期行为 | 在你修改之前保持稳定 | 会随切换到新模型版本或版本退役而变化 |
 
-模型还可以产生幻觉并对同一输入返回不同的答案。温度为 0 会降低不同答案的可能性，但不能保证相同的输出。 [Amazon Bedrock 模型评估](https://aws.amazon.com/bedrock/evaluations/) 和 [Amazon Bedrock Guardrails](https://aws.amazon.com/bedrock/guardrails/) 可帮助您衡量和控制这些风险。规则没有任何问题，这是受监管的工作负载青睐规则的原因之一。有用的测试：如果您可以将验收测试编写为规则，则通常可以将步骤编写为规则。有关更多信息，请参阅 AWS 规范指南中的[编排模型：从基于规则到 AI 原生](https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-serverless/orchestration-models.html)。
+模型还可能产生幻觉，对同样的输入返回不同的答案。temperature 设为 0 可以降低答案多样的可能性，但并不能保证输出完全一致。[Amazon Bedrock model evaluation](https://aws.amazon.com/bedrock/evaluations/) 和 [Amazon Bedrock Guardrails](https://aws.amazon.com/bedrock/guardrails/) 可以帮助你度量和遏制这些风险。规则则没有这两个问题，这也是受监管的工作负载偏好规则的原因之一。一个有用的测试是：如果你能把验收测试写成一条规则，通常就能把这个步骤写成规则。更多信息请参阅 AWS Prescriptive Guidance 中的 [Orchestration models: From rule-based to AI-native](https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-serverless/orchestration-models.html)。
 
-## 决定，不生成
+## 做决策，而非生成
 
-大多数路由和分类步骤位于规则和开放式生成之间。规则无法决定所有情况，但这些步骤也不需要生成文本。他们需要从您预先定义的固定选项列表中找到一个答案，例如上例中的支持队列。使用一个组件，将其输出限制为允许的答案，并为您提供何时升级的信号。自信的答案继续出现，不确定的答案不断升级。 AWS Well-Architected Agentic AI Lens 描述了这种[分层、基于置信度的升级](https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentcost02-bp01.html)。在 AWS 上，您可以通过四种方式构建它：
+大多数路由与分类步骤介于规则和开放式生成之间。规则无法决定所有情况，但这些步骤也不需要生成的文本。它们需要的是从你预先定义的固定选项列表中选出一个答案，就像前面示例里的支持队列。使用这样一个组件：把输出限制在允许的答案内，并给出何时需要升级的信号。有把握的答案继续往下走，不确定的则升级处理。AWS Well-Architected Agentic AI Lens 把这种做法称为[分层、基于置信度的升级](https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentcost02-bp01.html)。在 AWS 上，有四种构建方式：
 
-- **具有结构化输出的小型 Amazon Bedrock 模型 –** 答案仅限于 `enum` 选项，以及触发升级的“不确定”选项。这是模型自己的判断，而不是校准分数，因此在使用它来决定升级之前，请先对照标记数据进行检查。
-- **嵌入相似性 –** 使用 Amazon Bedrock 嵌入模型嵌入输入并选择最近的标记示例。使用相似度分数作为升级信号，并在标记数据上设置其阈值。
-- **[Strands Decider](https://github.com/strands-labs/strands-decider)，Apache License 2.0 下的一个实验性开源决策模型 –** 它根据评分标准从选项或分数中进行选择，并返回每个答案的校准置信度。其 README 报告称，在短分类任务中，置信度为 0.9 或更高的答案在大约 95% 的情况下是正确的。由于该模型是实验性的，因此在生产中使用之前请先根据自己的数据验证该结果。您可以自行托管它，例如在 [Amazon SageMaker AI](https://aws.amazon.com/sagemaker/ai/) 终端节点上，按照其存储库中的[部署指南](https://github.com/strands-labs/strands-decider/tree/main/deploy) 进行操作。
-- **Amazon SageMaker AI 上训练有素的分类器 –** 一旦您标记了训练数据，它就会以低延迟和低成本返回类别概率。
+- **带结构化输出的小型 Amazon Bedrock 模型 –** 答案被限制为选项的 `enum`，外加一个会触发升级的 ‘unsure’ 选项。这是模型自己的判断，而不是校准过的分数，所以在用它决定是否升级之前，要先拿标注数据做校验。
+- **Embedding 相似度 –** 用 Amazon Bedrock 的 embedding 模型把输入向量化，选出最接近的已标注示例。把相似度分数用作升级信号，并在标注数据上设定阈值。
+- **[Strands Decider](https://github.com/strands-labs/strands-decider)，一个以 Apache License 2.0 发布的实验性开源决策模型 –** 它从选项中选择，或按评分标准（rubric）打分，并为每个答案返回一个校准过的置信度。其 README 报告称，在短分类任务上，置信度为 0.9 及以上的答案约有 95% 是正确的。由于该模型仍属实验性质，在生产环境使用前请先在自己的数据上验证这一结果。你需要自行托管它，例如部署到 [Amazon SageMaker AI](https://aws.amazon.com/sagemaker/ai/) endpoint 上，按照其仓库中的[部署指南](https://github.com/strands-labs/strands-decider/tree/main/deploy)操作。
+- **Amazon SageMaker AI 上训练好的分类器 –** 一旦有了标注好的训练数据，它就能以低延迟、低成本返回类别概率。
 
-以下 JSON 模式将结构化输出答案限制为四个队列加上“不确定”。 Amazon Bedrock 要求架构中的每个对象将 `additionalProperties` 设置为 `false`。
+下面的 JSON schema 把结构化输出的答案限制为四个队列加 ‘unsure’。Amazon Bedrock 要求 schema 中的每个对象都把 `additionalProperties` 设为 `false`。
+
 ```
 {
   "type": "object",
@@ -91,20 +92,22 @@ body_sha: 950d453d8cc0
   "additionalProperties": false
 }
 ```
-无论您选择哪个选项，请根据您自己的标记数据检查其升级信号，并在那里设置任何阈值。将您的授权决定（例如退款限额）保留在规则中。
 
-## 确定性快速路径模式
+无论选择哪种方案，都要用自己的标注数据检验它的升级信号，并在标注数据上设定阈值。授权类的决策，例如退款上限，要留在规则里。
 
-许多成本模式侧重于模型之间的路由。快速路径提前一级：首先运行确定性检查，然后仅将规则无法解决的内容发送到模型。意图路由就是一个例子。许多消息都带有明确的信号，例如“退款”或“重置我的密码”，关键字匹配可以在个位数毫秒或更短的时间内解析这些信号。如果规则解决了 95% 的请求，则在模型选择带来的任何节省之前，只有二十分之一的请求会到达模型。 （说明性算术，不是基准。）
+## 确定性快路径模式
 
-在 AWS 上，您可以使用现有的构建块来构建它：
+许多成本模式关注的是在模型之间做路由。快路径则再往前一层：先运行确定性检查，只把规则无法解决的部分交给模型。意图路由就是一个例子。很多消息带有明确的信号，例如 “refund” 或 “reset my password”，用关键字匹配就能在个位数毫秒或更短时间内处理掉。如果规则能解决 95% 的请求，那么每 20 个请求里只有 1 个会到达模型，这还没有算上选择模型带来的节省。（仅为说明性算术，不是 benchmark。）
 
-- AWS Step Functions Choice 在工作流调用任何模型之前声明分支。
-- AWS Lambda 托管需要的不仅仅是选择状态的规则，例如验证和架构检查。
-- Amazon API Gateway (REST API) 请求验证在任何计算运行之前拒绝格式错误的输入。
-- 受限决策调用或 Amazon Bedrock 模型仅处理残差。
+在 AWS 上，你可以用现成的积木拼出这套方案：
 
-下面的Choice状态是关键字快速路径。它使用 JSONata 将退款和密码重置消息直接发送到代码，并将其他所有内容发送到受限决策调用。
+- AWS Step Functions 的 Choice 状态在工作流调用任何模型之前就完成分支。
+- AWS Lambda 承载超出 Choice 状态能力的规则，例如校验和 schema 检查。
+- Amazon API Gateway（REST API）的请求校验会在任何计算运行之前拒绝格式错误的输入。
+- 受约束的决策调用或 Amazon Bedrock 模型只处理剩余部分。
+
+下面的 Choice 状态就是一个关键字快路径。它用 JSONata 把退款和密码重置类消息直接送到代码，其余全部送到受约束的决策调用。
+
 ```
 "KeywordFastPath": {
   "Type": "Choice",
@@ -122,55 +125,56 @@ body_sha: 950d453d8cc0
   "Default": "ConstrainedDecisionCall"
 }
 ```
-您还可以让模型编写一次规则，而不是每次都运行它。让它起草正则表达式或 JSON 模式，对其进行审查并提交。在运行时，规则以规则速度和成本运行。检查模型编写的正则表达式，并根据已知的好输入和坏输入对其进行测试。避免使用 `(a+)+` 等嵌套量词，这可能会使某些输入的匹配速度非常慢（正则表达式拒绝服务或 ReDoS）。
 
-当您生成时，Amazon Bedrock 结构化输出会限制对您定义的 JSON 架构的响应。然后，响应与架构相匹配，因此您的代码可以在没有自定义解析逻辑的情况下解析它（检查内容的正确性）。在代码中保留范围检查，例如数字边界和长度限制。有关支持的模型和架​​构功能，请参阅[从模型获取经过验证的 JSON 结果](https://docs.aws.amazon.com/bedrock/latest/userguide/structured-output.html)。
+你也可以让模型只写一次规则，而不是每次都运行模型。让它起草一个正则表达式或 JSON schema，由你审核并提交。运行时，规则以规则的速度和成本执行。要审查模型写出的正则表达式，并用已知的正常输入和异常输入测试它。避免 `(a+)+` 这类嵌套量词，它们会让某些输入下的匹配变得极慢（正则表达式拒绝服务，即 ReDoS）。
 
-如果您的规则存在于配置中，则仅允许已知的原语，例如正则表达式、架构检查、关键字列表和范围检查。切勿从配置文件运行任意代码。
+当你确实需要生成时，Amazon Bedrock 的结构化输出会把响应约束到你定义的 JSON schema。这样响应就符合 schema，你的代码无需自定义解析逻辑就能解析它（但仍要检查内容是否正确）。范围检查，例如数值边界和长度限制，要留在代码里。受支持的模型与 schema 特性请参阅 [Get validated JSON results from models](https://docs.aws.amazon.com/bedrock/latest/userguide/structured-output.html)。
 
-## 当您确实需要模型时，调整它的大小
+如果你的规则存放在配置里，只允许已知的原语，例如正则表达式、schema 检查、关键字列表和范围检查。绝不要执行来自配置文件的任意代码。
 
-选择符合您的地板质量的最便宜、最快的型号。这通常不是最新或最大的型号。生成式 AI Lens 在[正确调整模型选择](https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/gencost01-bp01.html) 的最佳实践中涵盖了这一点。 [Amazon Bedrock 的有效成本优化策略](https://aws.amazon.com/blogs/machine-learning/effective-cost-optimization-strategies-for-amazon-bedrock/) 对此进行了深入介绍。在比较模型之前定义要求：
+## 确实需要模型时，选对规模
 
-- **质量下限：** 可接受的最低输出质量，在黄金评估集上测量（带有已知正确答案的任务标记示例）。
-- **成本上限：** 您为每个请求或每个成功结果支付的最高费用。
+选择满足你质量下限的最便宜、最快的模型。它往往不是最新或最大的模型。Generative AI Lens 在[为模型选择确定合适规模](https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/gencost01-bp01.html)的最佳实践中涵盖了这一点。[Effective cost optimization strategies for Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/effective-cost-optimization-strategies-for-amazon-bedrock/) 对此有深入讨论。在比较模型之前，先定义需求：
+
+- **质量下限：** 可接受的最低输出质量，在 golden 评估集（带已知正确答案的任务标注样本）上度量。
+- **成本上限：** 每个请求或每个成功结果最多愿意付多少。
 - **延迟目标：** 体验可以容忍的 p95 或 p99 响应时间。
-- **合规性限制：** 可能排除候选者的数据驻留等要求。
+- **合规约束：** 例如数据驻留之类的要求，可能直接排除掉一些候选。
 
-Amazon Bedrock 在一个 API 背后提供多种模型系列和大小，因此您可以在不更改集成的情况下调整每项任务的大小。 [Amazon Bedrock 智能提示路由](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-routing.html) 将每个请求路由到支持的模型系列中的合适模型。 [Amazon Bedrock 模型蒸馏](https://docs.aws.amazon.com/bedrock/latest/userguide/model-distillation.html) 将知识从较大的模型转移到适合您的用例的较小、更便宜的模型。模型提供商在广泛的基准上评估新的前沿模型，但您的工作量是具有单一质量底线的一项任务。较大的模型可能会增加成本和延迟，但不会改善该任务。在切换之前，请根据您的要求评估每次启动，例如黄金评估集的质量和延迟目标。
+Amazon Bedrock 在一个 API 背后提供众多模型家族与规模，因此你可以为每项任务选对规模，而无需改动集成方式。[Amazon Bedrock Intelligent Prompt Routing](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-routing.html) 会在受支持的模型家族内把每个请求路由到合适的模型。[Amazon Bedrock Model Distillation](https://docs.aws.amazon.com/bedrock/latest/userguide/model-distillation.html) 会把知识从更大的模型迁移到更小、更便宜的模型，以适配你的用例。模型提供商会用宽泛的 benchmark 评估新的前沿模型，但你的工作负载只是带着一个质量下限的单一任务。更大的模型可能增加成本与延迟，却对这个任务毫无改善。在切换之前，请按照你的需求评估每一次发布，例如在 golden 评估集上的质量和延迟目标。
 
-## 将模型选择视为经过测试的配置
+## 把模型选择当作经过测试的配置
 
-生成式 AI 镜头建议根据地面实况数据测试候选模型，并提供快速更新模型的方法。更进一步，将决策视为经过测试的配置：
+Generative AI Lens 建议用你的 ground truth 数据测试候选模型，并保留一种快速更新模型的方式。可以再进一步，把这个决策当作一份经过测试的配置来对待：
 
-- 为每个任务保留一个黄金评估集，并带有标记的基本事实，并以持续集成的方式运行它。
-- 满足您的要求。将低于质量底线的较便宜的模型视为回归。
-- 将模型放在配置标志后面，以便您可以反转交换。
-- 使用正确的预言机进行验证。根据基本事实检查规则。为开放式输出保留模型作为法官的评估。
-- 注意漂移。通过影子模式下的模型对一些规则解析的请求进行采样，并在它们不同意时重新分类步骤。
+- 为每项任务维护一个带标注 ground truth 的 golden 评估集，并在持续集成中运行它。
+- 以你的需求作为门禁。把跌破质量下限的更便宜模型视为回归。
+- 把模型放在配置开关后面，以便随时回滚切换。
+- 用合适的判据验证。用 ground truth 检验规则。model-as-judge 评估只留给开放式输出。
+- 关注漂移。用影子模式让模型抽样处理一部分由规则解决的请求，当两者不一致时，就重新判定该步骤的归属。
 
 ## 付诸实践
 
-将模型能力用在需要判断的地方，而不是其他地方。您可以通过四个步骤到达那里：
+把模型算力花在需要判断的地方，其余地方一律不花。你可以通过四个步骤实现：
 
-- **仪器 –** 将每个调用标记为确定性代码、约束决策调用或模型调用。跟踪每个成功结果的成本。
-- **将规则移至代码 –** 在 AWS Lambda 或 AWS Step Functions 上运行可检查规则的步骤。这通常是最大且最安全的胜利。
-- **添加受限决策调用 –** 通过在不确定时升级的调用来路由固定选择步骤。
-- **切换模型之前进行测试 –** 在每个新模型成为默认模型之前，通过您的黄金评估集运行它。
+- **埋点 –** 给每次调用打标签：确定性代码、受约束的决策调用，还是模型调用。跟踪每个成功结果的成本。
+- **把规则搬到代码里 –** 在 AWS Lambda 或 AWS Step Functions 上运行可用规则检查的步骤。这通常是收益最大、也最稳妥的一项。
+- **加入受约束的决策调用 –** 把固定选项的步骤交给一种调用，它在不确定时升级。
+- **切换模型前先测试 –** 每个新模型在成为默认之前，都要跑一遍你的 golden 评估集。
 
-＃＃ 结论
+## 结论
 
-在这篇文章中，您学习了如何确定工作流程步骤是否需要模型。规则属于确定性代码，固定选择属于受限决策调用。开放式工作采用尺寸合适的 Amazon Bedrock 模型。旨在以您的优质地板允许的最低成本和最低延迟来满足每项要求。在询问哪个步骤之前先询问某个步骤是否需要模型。
+在本文中，你学会了如何判断一个工作流步骤到底需不需要模型。规则应该放进确定性代码，固定选项应该交给受约束的决策调用，开放式的工作则交给规模合适的 Amazon Bedrock 模型。目标是在质量下限允许的前提下，用最低的成本和延迟满足每一项需求。先问这个步骤需不需要模型，再问该用哪个模型。
 
-有关更多信息，请参阅 AWS 人工智能博客上的以下帖子：
+更多信息，请参阅 AWS Artificial Intelligence Blog 上的这些文章：
 
-- [将决策模型与 Amazon Bedrock AgentCore 评估结合使用](https://aws.amazon.com/blogs/machine-learning/use-decision-models-with-amazon-bedrock-agentcore-evaluations/)。
-- [使用 Amazon Bedrock 智能提示路由以获得成本和延迟优势](https://aws.amazon.com/blogs/machine-learning/use-amazon-bedrock-intelligent-prompt-routing-for-cost-and-latency-benefits/)。
-- [Amazon Bedrock 上的结构化输出：符合架构的 AI 响应](https://aws.amazon.com/blogs/machine-learning/structured-outputs-on-amazon-bedrock-schema-compliant-ai-responses/)。
-- [修复评估偏差以在 Amazon Bedrock 上解锁更好的模型](https://aws.amazon.com/blogs/machine-learning/fix-evaluation-bias-to-unlock-better-models-on-amazon-bedrock/)。
+- [在 Amazon Bedrock AgentCore Evaluations 中使用决策模型](https://aws.amazon.com/blogs/machine-learning/use-decision-models-with-amazon-bedrock-agentcore-evaluations/)。
+- [使用 Amazon Bedrock Intelligent Prompt Routing 获得成本与延迟收益](https://aws.amazon.com/blogs/machine-learning/use-amazon-bedrock-intelligent-prompt-routing-for-cost-and-latency-benefits/)。
+- [Amazon Bedrock 上的结构化输出：符合 schema 的 AI 响应](https://aws.amazon.com/blogs/machine-learning/structured-outputs-on-amazon-bedrock-schema-compliant-ai-responses/)。
+- [修正评估偏差，在 Amazon Bedrock 上解锁更好的模型](https://aws.amazon.com/blogs/machine-learning/fix-evaluation-bias-to-unlock-better-models-on-amazon-bedrock/)。
 
-要尝试约束决策调用，请打开 [Amazon Bedrock 控制台](https://console.aws.amazon.com/bedrock/)，或从其 [GitHub 存储库](https://github.com/strands-labs/strands-decider) 部署 Strands Decider。
+要试用受约束的决策调用，请打开 [Amazon Bedrock 控制台](https://console.aws.amazon.com/bedrock/)，或从其 [GitHub 仓库](https://github.com/strands-labs/strands-decider)部署 Strands Decider。
 
-从一个大容量工作流程开始，衡量其中有多少不需要模型。
+从一个高流量的工作流开始，测量其中有多少部分其实从来不需要模型。
 
 ## 关于作者
