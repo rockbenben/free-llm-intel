@@ -18,7 +18,7 @@ import time
 from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Callable, Iterable, Tuple
+from typing import Callable, Iterable, Sequence, Tuple
 from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 
 # ---------------------------------------------------------------------------
@@ -264,23 +264,28 @@ _VALUE_WALK_MAX = 8
 _RELATED_MAX_LINES = 40
 
 
-def _fence_mask(lines):
-    """(栅栏内行号集合（含栅栏行本身）, 第一条标题的行号)。判据与证据共用一份。"""
-    fenced, first_head, fence = set(), None, ""
-    for i, l in enumerate(lines):
-        marker = _MARKDOWN_FENCE_RE.match(l)
+def _fence_ranges(lines: Sequence[str]) -> Iterable[range]:
+    """返回每个围栏的行范围（含标记行及未闭合的末块）。"""
+    fence, start = "", 0
+    for i, line in enumerate(lines):
+        marker = _MARKDOWN_FENCE_RE.match(line)
         if fence:
-            fenced.add(i)
             if (marker and marker[1][0] == fence[0] and len(marker[1]) >= len(fence)
                     and not marker[2].strip()):
+                yield range(start, i + 1)
                 fence = ""
-            continue
-        if marker and (marker[1][0] == "~" or "`" not in marker[2]):
+        elif marker and (marker[1][0] == "~" or "`" not in marker[2]):
             fence = marker[1]
-            fenced.add(i)
-            continue
-        if first_head is None and _HEAD_RE.match(l):
-            first_head = i
+            start = i
+    if fence:
+        yield range(start, len(lines))
+
+
+def _fence_mask(lines: Sequence[str]) -> tuple[set[int], int | None]:
+    """(栅栏内行号集合（含栅栏行本身）, 第一条标题的行号)。"""
+    fenced = {i for block in _fence_ranges(lines) for i in block}
+    first_head = next((i for i, line in enumerate(lines)
+                       if i not in fenced and _HEAD_RE.match(line)), None)
     return fenced, first_head
 
 
@@ -2197,34 +2202,15 @@ _AUTOLINK_RE = re.compile(r"<(https?://[^>\s]+)>")
 
 
 def _qc_code_blocks(text: str) -> list[tuple[str, ...]]:
-    """按 ``` 行切出代码块内容；未闭合的围栏也返回，坏文件不能静默通过。"""
-    blocks: list[tuple[str, ...]] = []
-    inside = False
-    cur: list[str] = []
-    for line in text.splitlines():
-        if line.lstrip().startswith("```"):
-            if inside:
-                blocks.append(tuple(x.rstrip() for x in cur))
-                cur = []
-            inside = not inside
-            continue
-        if inside:
-            cur.append(line)
-    if inside:
-        blocks.append(tuple(x.rstrip() for x in cur))
-    return blocks
+    """比较完整围栏，包括标记行、代码缩进与行尾空白。"""
+    lines = text.split("\n")
+    return [tuple(lines[block.start:block.stop]) for block in _fence_ranges(lines)]
 
 
 def _qc_without_code(text: str) -> str:
-    out: list[str] = []
-    inside = False
-    for line in text.splitlines():
-        if line.lstrip().startswith("```"):
-            inside = not inside
-            continue
-        if not inside:
-            out.append(line)
-    return "\n".join(out)
+    lines = text.split("\n")
+    fenced = {i for block in _fence_ranges(lines) for i in block}
+    return "\n".join(line for i, line in enumerate(lines) if i not in fenced)
 
 
 def _qc_url_key(url: str, self_url: str = "") -> str | None:
@@ -2259,7 +2245,8 @@ def _md_link_targets(text: str) -> list[str]:
     return _MD_LINK_RE.findall(plain) + _AUTOLINK_RE.findall(plain)
 
 
-def translation_qc_pair(root: Path, zh_rel: str, *, brand_patterns=()) -> dict:
+def translation_qc_pair(root: Path, zh_rel: str, *, brand_patterns=(),
+                        links_advisory: bool = False) -> dict:
     """检查一篇中文译文与同名 `.en.md` 的机械不变量；只读，不写任何文件。"""
     zh_path = root / zh_rel
     try:
@@ -2311,15 +2298,17 @@ def translation_qc_pair(root: Path, zh_rel: str, *, brand_patterns=()) -> dict:
     ec, zc = Counter(en_urls), Counter(zh_urls)
     extra, missing = zc - ec, ec - zc
     if extra:
-        hard.append(f"译文多出 {sum(extra.values())} 条链接"
-                    f"（{', '.join(list(extra)[:3])}；先核对是否站方新地址，英文源也会过时）")
+        link_issues = warn if links_advisory else hard
+        link_issues.append(f"译文多出 {sum(extra.values())} 条链接"
+                           f"（{', '.join(list(extra)[:3])}；先核对是否站方新地址，英文源也会过时）")
     if missing:
         warn.append(f"英文源有 {sum(missing.values())} 条链接未出现在译文"
                     f"（{', '.join(list(missing)[:3])}）")
     return {"path": zh_rel, "translator": fm.get("translator", ""), "hard": hard, "warn": warn}
 
 
-def translation_qc(root: Path, rel_paths: Iterable[str], *, brand_patterns=()) -> dict:
+def translation_qc(root: Path, rel_paths: Iterable[str], *, brand_patterns=(),
+                   links_advisory: bool = False) -> dict:
     """对一批中文 `.md` 做只读 QC；返回汇总与逐文件问题。"""
     seen: set[str] = set()
     files: list[dict] = []
@@ -2330,7 +2319,8 @@ def translation_qc(root: Path, rel_paths: Iterable[str], *, brand_patterns=()) -
         if not rel.endswith(".md") or rel.endswith(".en.md") or rel in seen:
             continue
         seen.add(rel)
-        r = translation_qc_pair(root, rel, brand_patterns=brand_patterns)
+        r = translation_qc_pair(root, rel, brand_patterns=brand_patterns,
+                                links_advisory=links_advisory)
         if r.get("skipped"):
             skipped += 1
             continue

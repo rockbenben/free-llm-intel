@@ -130,6 +130,23 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertIn("FEEDS_BASE", step.get("env", {}),
                       "render 必须用与 crawler 同一个订阅前缀，否则 rel=self 会退回推导值")
 
+    def test_translation_qc_runs_on_daily_and_committed_changes(self):
+        with self.workflow_path.open(encoding="utf-8") as file:
+            daily = yaml.safe_load(file)["jobs"]["crawl"]["steps"]
+        names = [step.get("name") for step in daily]
+        qc = names.index("Check changed translations")
+        self.assertLess(names.index("Translate new bodies (machine)"), qc)
+        self.assertLess(qc, names.index("Render outputs"))
+        self.assertIn("--qc-links-advisory", daily[qc]["run"])
+        self.assertNotIn("continue-on-error", daily[qc])
+
+        with self.workflow_path.with_name("ci.yml").open(encoding="utf-8") as file:
+            ci = yaml.safe_load(file)["jobs"]["verify"]["steps"]
+        step = next(step for step in ci if step.get("name") == "Check changed translations")
+        self.assertIn("github.event.pull_request.base.sha", step["env"]["QC_BASE"])
+        self.assertIn("github.event.before", step["env"]["QC_BASE"])
+        self.assertIn('--qc-base "$QC_BASE"', step["run"])
+
     def test_workflow_does_not_claim_next_day_body_lag_anymore(self):
         """注释不许替已经不存在的实现说话：改了时序就要同批改掉「次日才带上全文」那句。"""
         text = self.workflow_path.read_text(encoding="utf-8")
@@ -448,6 +465,30 @@ class TestSnapshotState(unittest.TestCase):
 
     def tearDown(self):
         self.temp_dir.cleanup()
+
+    def test_news_pages_merge_partial_round_and_replace_full_round(self):
+        crawler = crawler_llm_intel
+        state = crawler.SnapshotState(self.root)
+        self.assertIsNone(state.news_pages)
+
+        def vendor(vid, url):
+            return crawler.VendorIntel(vid, vid, "", [], news_pages=[
+                crawler.PageResult(url, "blog", ok=True)
+            ])
+
+        a = vendor("a", "https://a.example/blog")
+        b = vendor("b", "https://b.example/blog")
+        state.update_news_pages([a, b], full_run=True)
+        updated_a = vendor("a", "https://a.example/news")
+        state.update_news_pages([updated_a], full_run=False)
+        state.save({"a"}, full_run=False)
+
+        state = crawler.SnapshotState(self.root)
+        self.assertEqual([p["url"] for p in (state.news_pages or {})["a"]],
+                         ["https://a.example/news"])
+        self.assertIn("b", state.news_pages or {})
+        state.update_news_pages([updated_a], full_run=True)
+        self.assertEqual(set(state.news_pages or {}), {"a"})
 
     def test_baseline_and_commit(self):
         state = crawler_llm_intel.SnapshotState(self.root)
@@ -4244,11 +4285,8 @@ class TestArchivePollutionGuards(unittest.TestCase):
         self._quiet.__enter__()
         self.temp_dir = tempfile.TemporaryDirectory()
         self.feeds_dir = Path(self.temp_dir.name) / "feeds"
-        self._saved_orig = dict(crawler_llm_intel._LAST_ORIG_INDEX)
 
     def tearDown(self):
-        crawler_llm_intel._LAST_ORIG_INDEX.clear()
-        crawler_llm_intel._LAST_ORIG_INDEX.update(self._saved_orig)
         self.temp_dir.cleanup()
         self._quiet.__exit__(None, None, None)
 
@@ -4314,8 +4352,6 @@ class TestArchivePollutionGuards(unittest.TestCase):
             "articles": [["甲文章标题", "https://a.com/1", "vendor_a",
                           "2026-09-01", "Original English Headline"]],
         }, ensure_ascii=False), encoding="utf-8")
-        crawler_llm_intel._LAST_ORIG_INDEX.clear()
-        crawler_llm_intel.load_original_titles(self.feeds_dir / "articles.json")
         art = crawler_llm_intel.Article(
             title="甲文章标题", url="https://a.com/1", date="2026-09-01")
         art.zh_title = "甲文章标题"  # 归档合并后 title 已被冻结成中文
@@ -4334,7 +4370,6 @@ class TestArchivePollutionGuards(unittest.TestCase):
     def test_index_orig_not_invented_when_previous_empty(self):
         """上一版索引也没有原文时保持为空，不得把中文标题自己填进原文列。"""
         self.feeds_dir.mkdir(parents=True)
-        crawler_llm_intel._LAST_ORIG_INDEX.clear()
         art = crawler_llm_intel.Article(
             title="甲文章标题", url="https://a.com/1", date="2026-09-01")
         art.zh_title = "甲文章标题"
@@ -4362,11 +4397,8 @@ class TestPartialRoundGuardrails(unittest.TestCase):
         self.news_dir = Path(self.temp_dir.name) / "llm-news"
         self.news_dir.mkdir(parents=True)
         self.feeds_dir = Path(self.temp_dir.name) / "feeds"
-        self._saved_orig = dict(crawler_llm_intel._LAST_ORIG_INDEX)
 
     def tearDown(self):
-        crawler_llm_intel._LAST_ORIG_INDEX.clear()
-        crawler_llm_intel._LAST_ORIG_INDEX.update(self._saved_orig)
         self.temp_dir.cleanup()
         self._quiet.__exit__(None, None, None)
 
@@ -11403,12 +11435,13 @@ class TestTranslationQc(unittest.TestCase):
             "translator": "", "status": "ok", "body_sha": ft.body_sha_of(en),
         }, en)
 
-    def _run(self, en, zh, *, brand_patterns=()):
+    def _run(self, en, zh, *, brand_patterns=(), links_advisory=False):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             rel = "docs/articles/v/a.md"
             self._pair(root, rel, en, zh)
-            res = ft.translation_qc(root, [rel], brand_patterns=brand_patterns)
+            res = ft.translation_qc(root, [rel], brand_patterns=brand_patterns,
+                                    links_advisory=links_advisory)
         self.assertEqual(res["checked"], 1, "夹具必须真的被检查到，零检查不算通过")
         return res
 
@@ -11428,6 +11461,53 @@ class TestTranslationQc(unittest.TestCase):
         res = self._run("Intro.\n\n```py\nprint(1)\n```",
                         "介绍。\n\n```py\nprint(1)\n```\n\n```\nextra\n```")
         self.assertIn("代码块数量", res["files"][0]["hard"][0])
+
+    def test_fence_contents_keep_trailing_spaces_and_inner_markers(self):
+        for marker in ("````", "~~~"):
+            with self.subTest(marker=marker):
+                en = f"Intro.\n\n{marker}md\n```\nline  \n```\n{marker}"
+                zh = en.replace("Intro.", "介绍。").replace("line  ", "line")
+                res = self._run(en, zh)
+                self.assertEqual(res["hard"], 1, res["files"])
+                self.assertIn("第 1 个代码块", res["files"][0]["hard"][0])
+
+    def test_links_can_be_advisory_without_weakening_code_check(self):
+        res = self._run(
+            "Intro.\n\n```\na\n```\n\n[old](https://v.example/old)",
+            "介绍。\n\n```\nb\n```\n\n[新](https://v.example/new)",
+            links_advisory=True)
+        self.assertEqual(res["hard"], 1, res["files"])
+        self.assertEqual(res["warn"], 2, res["files"])
+
+    def test_incremental_paths_cover_committed_and_local_edits(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+
+            def git(*args):
+                return subprocess.check_output(
+                    ["git", "-C", d, *args], stderr=subprocess.STDOUT,
+                    text=True, encoding="utf-8").strip()
+
+            git("init", "-q")
+            git("config", "user.name", "Test")
+            git("config", "user.email", "test@example.test")
+            git("config", "commit.gpgsign", "false")
+            git("commit", "--allow-empty", "-qm", "base")
+            base = git("rev-parse", "HEAD")
+            corpus = root / "docs/articles/v"
+            corpus.mkdir(parents=True)
+            for name in ("committed.md", "deleted.md", "ignore.en.md"):
+                (corpus / name).write_text(name, encoding="utf-8")
+            git("add", "--", "docs/articles")
+            git("commit", "-qm", "new corpus")
+            (corpus / "deleted.md").unlink()
+            (corpus / "untracked space.md").write_text("local", encoding="utf-8")
+            self.assertEqual(crawler_llm_intel._changed_corpus_paths(root),
+                             ["docs/articles/v/untracked space.md"])
+            self.assertEqual(crawler_llm_intel._changed_corpus_paths(root, base),
+                             ["docs/articles/v/committed.md", "docs/articles/v/untracked space.md"])
+            with self.assertRaises(subprocess.CalledProcessError):
+                crawler_llm_intel._changed_corpus_paths(root, "missing-base")
 
     def test_extra_url_is_hard_missing_url_is_warn(self):
         res = self._run(
@@ -12042,6 +12122,41 @@ class TestRenderOutputs(unittest.TestCase):
                  for p in self.root.rglob("*") if p.is_file()}
         self.assertEqual(before, after, "G5 幂等：第二次渲染不得改写任何文件")
 
+    def test_render_only_rebuilds_cold_from_saved_news_pages(self):
+        self._fixture_tree()
+        (self.root / "llm-intel.yaml").write_text(
+            "vendors:\n"
+            "  - {id: vendor_a, brand: Vendor A, homepage: 'https://a.com'}\n"
+            "sources:\n"
+            "  - {vendor_id: vendor_a, type: blog, url: 'https://a.com/blog'}\n"
+            "  - {vendor_id: vendor_a, type: news, url: 'https://a.com/news'}\n",
+            encoding="utf-8")
+        crawler = crawler_llm_intel
+        snapshots = crawler.SnapshotState(self.root)
+        snapshots.update_news_pages([
+            crawler.VendorIntel("vendor_a", "Vendor A", "https://a.com", [],
+                               news_pages=[
+                                   crawler.PageResult("https://a.com/blog", "blog", ok=True,
+                                                      final_url="https://a.com/en/blog",
+                                                      feeds=["https://a.com/feed.xml"]),
+                                   crawler.PageResult("https://a.com/news", "news", error="HTTP 503"),
+                               ])
+        ], full_run=True)
+        snapshots.save({"vendor_a"}, full_run=True)
+        state = snapshots.path.read_bytes()
+        with mock.patch.object(crawler, "_repo_root", return_value=self.root), \
+                mock.patch.object(crawler, "load_original_titles",
+                                  side_effect=AssertionError("新格式须直接使用归档和快照")), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(crawler.main(["--render-only", "--feeds-base", "https://x.test/feeds"]), 0)
+        self.assertEqual(snapshots.path.read_bytes(), state)
+        opml = (self.root / "llm-news-feeds.opml").read_text(encoding="utf-8")
+        self.assertIn('xmlUrl="https://a.com/feed.xml" htmlUrl="https://a.com/en/blog"', opml)
+        news = (self.root / "llm-news-feeds.md").read_text(encoding="utf-8")
+        self.assertIn("抓取失败：HTTP 503", news)
+        article_index = json.loads((self.root / "docs/feeds/articles.json").read_text(encoding="utf-8"))
+        self.assertIn("First post", article_index["articles"][0])
+
     def test_render_never_writes_sources(self):
         """G6：渲染前后源层文件的哈希集合必须完全一致。
 
@@ -12559,7 +12674,6 @@ class TestIndexCoverageIndependent(unittest.TestCase):
             with mock.patch.object(crawler_llm_intel, "datetime", Clock), \
                     mock.patch(f"{__name__}.datetime", Clock), \
                     mock.patch.object(crawler_llm_intel, "_repo_root", return_value=root), \
-                    mock.patch.object(crawler_llm_intel, "_LAST_ORIG_INDEX", {}), \
                     mock.patch.object(crawler_llm_intel, "translate_to_zh", side_effect=lambda s: s):
                 v = crawler_llm_intel.VendorIntel(
                     vendor_id="openai", brand="OpenAI", homepage="", products=[],

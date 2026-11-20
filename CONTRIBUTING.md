@@ -86,7 +86,8 @@ git diff README.md
 - `llm-news-feeds.opml` 的自建源分组需要可用的订阅前缀。本地渲染同样会读取 `docs/CNAME`。厂商官网自带 RSS 的判断（`_native_feed_vendors`）由 OPML 与 `llm-news-feeds.md` 共用。
 - `docs/feeds/*.xml` 与 `docs/feeds/vendors.json`、`docs/feeds/articles.json`、`docs/feeds/model-releases.json`、`docs/feeds/quotas.json`、`docs/feeds/intel-changes.json` 是自建 RSS 订阅源、厂商索引、**全量文章索引**、模型发布雷达（从归档标题抽取「日期+厂商+模型」事件）、「免费额度与活动一览」的机读镜像与变化流伴生 JSON（GitHub Pages 从这里发布），**只由脚本生成**。注意 `--no-news` 会跳过整条新闻链路（发布雷达也在内），因此也不会刷新它们；改动了归档相关的抓取 / 排序 / 清洗逻辑时，请跑一次**不带 `--no-news`** 的巡检确认产物。新增厂商后订阅源会自动多一个 `llm-news-<vendor_id>.xml`、各机读索引随之同步增减，已下线厂商的旧源会被清理。
 - `docs/index.html` 是自建 RSS 的**浏览页**（读 `docs/feeds/articles.json` 列出**全部**条目，可筛选、可搜索；选中某厂商时订阅地址自动切成该家单源），**人工维护、不参与巡检**，改它不会与脚本产物冲突。页面里的厂商清单来自 `feeds/vendors.json`，**不要在页面里硬编码厂商列表**（会随厂商增删而漂移）；`docs/.nojekyll` 关闭 Jekyll，不要删除。
-- **合并流默认不限制**（`RSS_MERGED_LIMIT = 0`，收录全部有日期的条目）。曾经限 200 条，理由是「全量约 1.2 MB 会让阅读器吃力」—— **那个理由站不住**：GitHub Pages 用 gzip 传输，当初决策时线上实测过 `Content-Encoding: gzip`，那份全量 XML 压缩后只剩约八分之一（历史观测值，不代表现状体积）。当时的判断看的是未压缩体积，别再照它把上限加回来。要限流可用 `--rss-limit N`。
+- **合并流默认收录最近 100 条有日期的文章，单厂商流默认最多 50 条**。可用 `--rss-limit N` / `--rss-vendor-limit N` 调整，传 `0` 代表对应的条数不限。任一流的全文 XML 超过 2,000,000 字节时，整源改为首段摘要和回源链接。浏览页仍通过文章索引提供全量归档。
+- `--render-only` 从 `llm-intel-state.json` 的 `news_pages` 恢复官方订阅入口和抓取状态，从 `llm-news/*.md` 的行尾 `orig` 注释读取原文标题。旧快照没有 `news_pages` 时兼容读取上一版总表和索引。
 - **页面为什么还读 `articles.json` 而不是合并流**：体积明显更小（不带描述）、免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里截到 60 字是为了列表可读）。别顺手把页面「简化」成读合并流。
 - `.translate_cache.json` 是本地缓存，不要提交。
 - commit message 只描述变更内容本身。
@@ -149,6 +150,8 @@ CI 正文用 `--ai-bodies --ai-bodies-go-only`，成功写入 `translator=llm`�
 接口与使用范围见 [Go 官方文档](https://opencode.ai/docs/console/go/)。请求使用项目自己的 User-Agent 和会话标识；需在 Go 控制台允许 DeepSeek 所需的 Global 区域。建议关闭 Extra Usage，避免超额转按量扣款；这里的截止开关不代替取消订阅自动续费。
 
 本地维护仍以 agent 精译为交付标准；此配置用于 CI 增量处理，不在本地批量调用模型或机翻来替代 agent 精译。
+
+提交译文前可运行 `python crawler_llm_intel.py --translation-qc`，默认检查相对 HEAD 新增或修改的中文正文。可用 `--qc-path` 点名文件，或用 `--qc-base` 改起点。每日巡检在重排前检查当轮译文，常规 CI 检查 PR 或推送中改动的译文。两处 CI 拦截代码围栏、品牌音译及乱码等硬性问题，链接差异单独提示，供核对站方改址和源稿差异。
 
 ### 免费层限流 / 模型下线的自动回退（主要使用方式）
 

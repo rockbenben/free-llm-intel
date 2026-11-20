@@ -23,11 +23,24 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+          fetch-depth: 2
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
           cache: pip
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
+      - name: Check changed translations
+        env:
+          QC_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [[ "$QC_BASE" == "0000000000000000000000000000000000000000" ]]; then
+            echo "No previous commit for this ref."
+            exit 0
+          fi
+          if ! git cat-file -e "$QC_BASE^{commit}"; then
+            git fetch --no-tags --depth=1 origin "$QC_BASE"
+          fi
+          python crawler_llm_intel.py --translation-qc --qc-base "$QC_BASE" --qc-links-advisory
       - name: Verify checked-in artifacts and invariants
         run: python -m unittest -v test_workflow_and_review.ci_suite

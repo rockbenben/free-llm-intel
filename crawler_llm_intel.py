@@ -5080,13 +5080,7 @@ def backfill_archive_originals(news_dir: Path, fetch,
 
 
 def _parse_news_md_page_states(news_md_text: str) -> dict[str, list[dict]]:
-    """从上次渲染的 llm-news-feeds.md 里恢复每个厂商的动态页状态。
-
-    原生 RSS 检测结果（page.feeds）、稀疏 / 失败标记只存在于抓取现场，产物是它们
-    唯一的落盘记录；--rebuild-only 靠这份解析把 `intel.news_pages` 重建回渲染时的
-    形状，使自建源标注与 OPML 分组不漂移。
-    返回 {vendor_id: [{url, final_url, label, feeds, ok, sparse}, ...]}（保持文档顺序）。
-    """
+    """为尚无 news_pages 快照的旧数据，从上次的动态总表恢复页面状态。"""
     blocks: dict[str, list[dict]] = {}
     rows: list[dict] | None = None
     pending: dict | None = None
@@ -5119,8 +5113,10 @@ def _parse_news_md_page_states(news_md_text: str) -> dict[str, list[dict]]:
         if re.match(r"^\s+- ⚠️ 页面可见文本过少", line) and pending is not None:
             pending["sparse"] = True
             continue
-        if re.match(r"^\s+- ❌ 抓取失败", line) and pending is not None:
+        m = re.match(r"^\s+- ❌ 抓取失败(?::|：)?(.*?)\s*$", line)
+        if m and pending is not None:
             pending["ok"] = False
+            pending["error"] = m.group(1).removesuffix("（可直接访问页面查看）")
     return blocks
 
 
@@ -5129,12 +5125,9 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
                             news_dir: Path,
                             orig_by_key: dict[tuple[str, str], str] | None = None,
                             ) -> list["VendorIntel"]:
-    """不触网，从磁盘产物重建 `intel_list`（--rebuild-only 的入口）。
+    """不触网，从配置、动态页快照与归档重建 `intel_list`。
 
-    三个数据源各司其职：yaml 供厂商元数据与 stype（决定 type_label 渲染）；
-    llm-news-feeds.md 供各动态页的原生 feed / 失败状态；llm-news/*.md 供全量文章
-    与中文标题（articles.json 供英文原文，见 orig_by_key）。
-    不在任何产物里出现的厂商直接跳过：本模式只重建动态类产物，不生成情报页内容。
+    旧归档可用 orig_by_key 回填缺失原文；新归档直接读行尾 orig 注释。
     """
     orig_by_key = orig_by_key or {}
     intel_list: list[VendorIntel] = []
@@ -5149,7 +5142,7 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
         intel = VendorIntel(vendor_id=vid, brand=vendor.get("brand", vid),
                             homepage=vendor.get("homepage", ""),
                             products=vendor.get("products") or [])
-        # 页清单以 yaml 为权威、产物状态只做富化：
+        # 页清单以 yaml 为权威、落盘状态只做富化：
         # ① 换源（如 groq `changelog` → `changelog.md`）时产物还记着旧 URL，按去 `.md`
         #    后缀归一匹配上，检测到的原生 feed 不丢；
         # ② 已登记厂商 yaml 新增的源（产物里从没有过）按声明建页，
@@ -5173,15 +5166,11 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
                 ok=bool(st["ok"]) if st else True,
                 final_url=st["final_url"] if st else "",
                 feeds=list(st["feeds"]) if st else [],
+                error=st.get("error", "") if st else "",
                 sparse=bool(st["sparse"]) if st else False)
             intel.news_pages.append(page)
         intel.all_news_articles = arts
         for a in arts:
-            # 归档 .md 里存的是**中文显示标题**（= 上次的 title_zh）；英文原文只在
-            # articles.json 的 original_title 列里。重建时把中文落成 zh_title、原文回填
-            # 到 art.title，与正常抓取路径的不变量一致（title=原文、zh_title=译文），
-            # 于是 _rss_item 的「原文标题」与索引的 original_title 列都能逐字节复现。
-            #
             # **已经是冻结译文的行不许覆盖**。`parse_archived_articles` 对带
             # `<!--orig:-->` 的新式行给出 `title=原文 / zh_title=显示译文`；此时
             # `_CJK_CHAR_RE.search(a.title)` 常为真（日文标题里也有汉字），下面那行会把
@@ -5207,12 +5196,7 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
 
 
 def load_original_titles(articles_json_path: Path) -> dict[tuple[str, str], str]:
-    """从既有 docs/feeds/articles.json 读回 {(vendor_id, url): 英文原文标题}。
-
-    归档 .md 只保存中文显示标题；RSS `<description>` 里的「原文标题：xxx」是给人读的
-    自由文本、不参与重建回填。**重建路径**（--rebuild-only）能拿回英文原文的
-    唯一结构化来源就是这份索引，缺它重建的 RSS / 索引会丢失「原文标题」。
-    """
+    """为旧归档读取历史索引中的 {(vendor_id, url): 原文标题}。"""
     out: dict[tuple[str, str], str] = {}
     try:
         data = json.loads(articles_json_path.read_text(encoding="utf-8"))
@@ -5234,15 +5218,7 @@ def load_original_titles(articles_json_path: Path) -> dict[tuple[str, str], str]
         orig = html_mod.unescape((row[oi] or "")).strip()
         if orig and orig != (row[ti] or "").strip():
             out[(row[vi], row[ui])] = orig
-    global _LAST_ORIG_INDEX
-    _LAST_ORIG_INDEX = dict(out)
     return out
-
-
-#: 本次运行内读过的上一版原文索引 —— 实抓路径上归档文章的英文原文不在任何
-#: 内存对象里（Article 只带 title/zh_title），写全量索引时靠它兜底，
-#: 否则「跑一次实抓就静默丢掉上一版有、当页没有的原文标题」。
-_LAST_ORIG_INDEX: dict[tuple[str, str], str] = {}
 
 
 def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
@@ -6117,7 +6093,9 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
                     merged_limit: int = RSS_MERGED_LIMIT,
                     vendor_limit: int = RSS_VENDOR_LIMIT,
                     clean_removed: bool = True,
-                    lang_table: dict | None = None) -> tuple[int, int, int, int]:
+                    lang_table: dict | None = None,
+                    legacy_original_titles: dict[tuple[str, str], str] | None = None,
+                    ) -> tuple[int, int, int, int]:
     """把各厂商归档文章写成 RSS 2.0 订阅源（GitHub Pages 托管），**每源出中/英双版**。
 
     产出：
@@ -6366,8 +6344,8 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     #    `articles/<vendor>/<slug>.md` 就地读全文（见 corpus spec §12）；
     #    与 bodies.json 里的 slug 同一份实现，避免 normalize/hash 两处漂移。
     index_rows: list[list[str]] = []
-    if not _LAST_ORIG_INDEX:
-        load_original_titles(out_dir / "articles.json")
+    if legacy_original_titles is None:
+        legacy_original_titles = load_original_titles(out_dir / "articles.json")
     import fulltext as _ft
     # 正文可读性（浏览页「读全文」按钮的判据）。三态：
     #   "1" 磁盘上已有中文或英文正文 → 一定能读
@@ -6399,7 +6377,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
                 # 内存里没有英文原文（纯归档来源的文章，标题已是汉化归档标题，
                 # orig == t）：回退上一版索引的原文，避免旧索引里的英文原文被
                 # 覆盖丢失后永远找不回来。
-                prev = _LAST_ORIG_INDEX.get(key, "")
+                prev = legacy_original_titles.get(key, "")
                 if prev and re.search(r"[A-Za-z]{4}", prev):
                     orig = prev
             slug = _ft.url_hash(art.url)
@@ -6857,6 +6835,7 @@ class SnapshotState:
         # 等于让「只重排视图」的维护模式把源文件删掉：实测构造期改名 + 不落盘 = state
         # 被改名后永远不再重建，CI 照常 exit 0 提交。改名与重建必须成对，都归 `save()`。
         self.corrupt = False
+        self.news_pages: dict[str, list[dict]] | None = None
         try:
             # `utf-8-sig`：BOM 前缀在 UTF-8 下合法解码但会让 `json.loads` 直接抛
             # "Unexpected UTF-8 BOM"。这不是理论——Windows PowerShell 5.1 的
@@ -6868,6 +6847,7 @@ class SnapshotState:
             self.entries: dict[str, dict] = data.get("sources", {}) or {}
             self.reviews: dict[str, str] = data.get("reviews", {}) or {}
             self.failures: dict[str, dict] = data.get("failures", {}) or {}
+            self.news_pages = data.get("news_pages")
         except (ValueError, OSError) as exc:
             # 损坏的 state 绝不能静默清空：空表 + 非基线会让全部厂商误判「变化」，
             # 一夜灌爆核查队列 / AI 免费额度。备份留证后按基线重建（只建档不报变化）。
@@ -7010,6 +6990,20 @@ class SnapshotState:
         stale.sort(key=lambda v: self.reviews.get(v, ""))
         return stale
 
+    def update_news_pages(self, intel_list: list[VendorIntel], *, full_run: bool) -> None:
+        """保存可重放订阅入口和页面诊断所需的抓取结果。"""
+        pages = {} if full_run else dict(self.news_pages or {})
+        for intel in intel_list:
+            if intel.news_pages:
+                pages[intel.vendor_id] = [
+                    {"url": page.url, "final_url": page.final_url, "feeds": list(page.feeds),
+                     "ok": page.ok, "sparse": page.sparse, "error": page.error}
+                    for page in intel.news_pages
+                ]
+            else:
+                pages.pop(intel.vendor_id, None)
+        self.news_pages = pages
+
     def save(self, crawled_ids: set[str], full_run: bool) -> bool:
         # AI 未处理 / 失败的厂商保持旧哈希（未 stage 即自然保留）
         for staged in self._staged.values():
@@ -7019,9 +7013,10 @@ class SnapshotState:
             prefixes = tuple(f"{vid}|" for vid in crawled_ids)
             self.entries = {k: v for k, v in self.entries.items()
                             if k.startswith(prefixes)}
-        payload = json.dumps({"sources": self.entries, "reviews": self.reviews,
-                              "failures": self.failures},
-                             ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+        state = {"sources": self.entries, "reviews": self.reviews, "failures": self.failures}
+        if self.news_pages is not None:
+            state["news_pages"] = self.news_pages
+        payload = json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
         old = self.path.read_text(encoding="utf-8-sig") if self.path.exists() else ""
         if payload == old:
             return False
@@ -7389,6 +7384,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
                              "默认检查 git 改动/未跟踪的 docs/articles/*.md，可用 --qc-path 点名")
     parser.add_argument("--qc-path", action="append", default=[],
                         help="配合 --translation-qc：点名要检查的中文 .md（可重复）")
+    parser.add_argument("--qc-base", default="HEAD",
+                        help="配合 --translation-qc：以此 Git 提交作为增量对照，默认 HEAD")
+    parser.add_argument("--qc-links-advisory", action="store_true",
+                        help="配合 --translation-qc：链接差异只提示，仍拦截代码块等硬性问题")
     parser.add_argument("--ai-bodies", action="store_true",
                         help="维护模式（不巡检）：把 bodies.json 里「英文已抓到、中文待译」的条目"
                              "走 --ai-titles 同源 LLM 通道译成中文，写 docs/articles/<vendor>/<urlhash>.md"
@@ -7417,7 +7416,8 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
                    feeds_dir: Path | None = None, changelog_path: Path | None = None,
                    rss_limit: int = 0, rss_vendor_limit: int = 0,
                    feeds_dir_label: str = "docs/feeds",
-                   clean_removed: bool = True) -> dict:
+                   clean_removed: bool = True,
+                   legacy_original_titles: dict[tuple[str, str], str] | None = None) -> dict:
     """产出层：从 `intel_list` 重排全部**视图**文件。
 
     契约（见 docs/superpowers/specs/2026-10-15-render-layer-design.md §3）：
@@ -7442,7 +7442,8 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
     # RSS 要用的正是那份「新抓取 + 历史归档」合并后、按日期排序的全量列表。
     n_rss, n_rss_items, n_rss_changed, n_rss_skipped = write_rss_feeds(
         feeds_dir, intel_list, feeds_base, merged_limit=rss_limit,
-        vendor_limit=rss_vendor_limit, clean_removed=clean_removed)
+        vendor_limit=rss_vendor_limit, clean_removed=clean_removed,
+        legacy_original_titles=legacy_original_titles)
     print(f"      {feeds_dir_label} 自建 RSS {n_rss} 个源、{n_rss_items} 条"
           f"（本次实际改写 {n_rss_changed} 个文件）")
     # 「没进订阅流」有三类成因，只有第一类值得人去查：晚于今天的日期（源页面把已发布的
@@ -7518,26 +7519,18 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
             "picks_svg_changed": bool(wrote_picks)}
 
 
-def _changed_corpus_paths(root: Path) -> list[str]:
-    """本次工作区改动/未跟踪的 docs/articles/*.md（排除 .en.md）。"""
-    paths: set[str] = set()
-    cmds = (
-        ["git", "-C", str(root), "diff", "--name-only", "HEAD", "--", "docs/articles"],
-        ["git", "-C", str(root), "ls-files", "--others", "--exclude-standard", "--", "docs/articles"],
-    )
-    for cmd in cmds:
-        try:
-            out = subprocess.run(cmd, capture_output=True, text=True,
-                                 encoding="utf-8", timeout=30)
-        except Exception:
-            continue
-        if out.returncode != 0:
-            continue
-        for line in out.stdout.splitlines():
-            rel = line.strip().replace("\\", "/")
-            if rel.endswith(".md") and not rel.endswith(".en.md"):
-                paths.add(rel)
-    return sorted(paths)
+def _changed_corpus_paths(root: Path, base: str = "HEAD") -> list[str]:
+    """选择基线之后新增或修改的中文正文，含尚未跟踪的文件。"""
+    def git(*args: str) -> str:
+        return subprocess.check_output(["git", "-C", str(root), *args], timeout=30,
+                                       stderr=subprocess.PIPE, encoding="utf-8")
+
+    revision = git("rev-parse", "--verify", "--end-of-options", f"{base}^{{commit}}").strip()
+    changed = git("diff", "--name-only", "-z", "--diff-filter=ACMRT",
+                  revision, "--", "docs/articles")
+    untracked = git("ls-files", "-z", "--others", "--exclude-standard", "--", "docs/articles")
+    return sorted(path for path in set((changed + untracked).split("\0"))
+                  if path.endswith(".md") and not path.endswith(".en.md"))
 
 
 def resolve_bodies_budget(parser: argparse.ArgumentParser, args) -> float:
@@ -7627,13 +7620,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.translation_qc:
         import fulltext
         import provider_profiles
-        paths = list(args.qc_path) or _changed_corpus_paths(root)
+        try:
+            paths = args.qc_path or _changed_corpus_paths(root, args.qc_base)
+        except (OSError, subprocess.SubprocessError) as exc:
+            print(f"  [translation-qc] 无法确定 Git 增量：{exc}", file=sys.stderr)
+            return 2
         if not paths:
             print("  [translation-qc] 没有点名文件，也没有本次改动/未跟踪的 "
                   "docs/articles/*.md；用 --qc-path 指定。")
             return 0
         res = fulltext.translation_qc(
-            root, paths, brand_patterns=provider_profiles._BRAND_TRANSLITERATIONS)
+            root, paths, brand_patterns=provider_profiles._BRAND_TRANSLITERATIONS,
+            links_advisory=args.qc_links_advisory)
         by_tr = " / ".join(f"{k} {v}" for k, v in sorted(res["by_translator"].items()))
         print(f"  [translation-qc] 检查 {res['checked']} 篇（{by_tr or '无'}）；"
               f"跳过无英文源 {res['skipped']} 篇。")
@@ -7967,6 +7965,10 @@ def main(argv: list[str] | None = None) -> int:
 
     news_md_path = (root / args.news_md) if not Path(args.news_md).is_absolute() else Path(args.news_md)
     feeds_dir = (root / args.feeds_dir) if not Path(args.feeds_dir).is_absolute() else Path(args.feeds_dir)
+    # 迁移后的主归档和快照已包含重建数据；独立预览仍使用自己的磁盘输入。
+    canonical_news = news_md_path.parent.resolve() == root.resolve()
+    page_states = snapshots.news_pages if canonical_news else None
+    legacy_original_titles: dict[tuple[str, str], str] | None = {} if page_states is not None else None
 
     if args.review_apply:
         with BrowserSession(enabled=use_browser) as browser:
@@ -7986,12 +7988,14 @@ def main(argv: list[str] | None = None) -> int:
     if disk_only:
         mode = "--review-apply" if args.review_apply else ("--rebuild-only" if args.rebuild_only else "--render-only")
         print(f"[2/4] {mode}："
-              "跳过抓取，从磁盘产物重建 ...")
-        news_text = news_md_path.read_text(encoding="utf-8") if news_md_path.exists() else ""
+              "跳过抓取，从磁盘重建 ...")
+        if page_states is None:
+            news_text = news_md_path.read_text(encoding="utf-8") if news_md_path.exists() else ""
+            page_states = _parse_news_md_page_states(news_text)
+            legacy_original_titles = load_original_titles(feeds_dir / "articles.json")
         intel_list = rebuild_intel_from_disk(
-            vendors, grouped, _parse_news_md_page_states(news_text),
-            news_md_path.parent / "llm-news",
-            load_original_titles(feeds_dir / "articles.json"))
+            vendors, grouped, page_states, news_md_path.parent / "llm-news",
+            legacy_original_titles)
         n_arts = sum(len(v.all_news_articles) for v in intel_list)
         print(f"      重建 {len(intel_list)} 个厂商、{n_arts} 篇归档文章（未发起网络请求）。")
     else:
@@ -8209,6 +8213,11 @@ def main(argv: list[str] | None = None) -> int:
         for intel in intel_list:
             snapshots.commit_vendor(intel.vendor_id)
     if not disk_only:
+        if canonical_news and not args.no_news:
+            if args.only and snapshots.news_pages is None and news_md_path.exists():
+                snapshots.news_pages = _parse_news_md_page_states(
+                    news_md_path.read_text(encoding="utf-8"))
+            snapshots.update_news_pages(intel_list, full_run=not args.only)
         state_changed = snapshots.save({v.vendor_id for v in intel_list},
                                        full_run=not args.only)
         if state_changed:
@@ -8293,7 +8302,8 @@ def main(argv: list[str] | None = None) -> int:
                        rss_limit=args.rss_limit,
                        rss_vendor_limit=args.rss_vendor_limit,
                        feeds_dir_label=args.feeds_dir,
-                       clean_removed=not args.only)
+                       clean_removed=not args.only,
+                       legacy_original_titles=legacy_original_titles)
 
     total = sum(len(v.intel_pages) for v in intel_list)
     ok = sum(1 for v in intel_list for p in v.intel_pages if p.ok)

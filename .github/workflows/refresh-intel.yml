@@ -234,6 +234,9 @@ jobs:
           MT_BODIES_LIMIT: ${{ vars.MT_BODIES_LIMIT || '80' }}
         run: python refresh_budget.py translate python crawler_llm_intel.py --mt-bodies --mt-bodies-limit "$MT_BODIES_LIMIT"
 
+      - name: Check changed translations
+        run: python crawler_llm_intel.py --translation-qc --qc-links-advisory
+
       # 产出层重排：RSS 与各类索引都是归档 + 语料的视图，正文步骤之后必须再渲染一次，
       # 否则当天新译的正文进不了 feed（实测合并流里新条目只有 title/link/guid、456 字节）。
       # --render-only 只写视图、绝不写归档与语料（`TestRenderOutputs.test_render_never_writes_sources`
