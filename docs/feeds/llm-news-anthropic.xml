@@ -9,99 +9,6 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>构建永远在线的 agent</title>
-      <link>https://claude.com/resources/articles/building-always-on-agents</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/building-always-on-agents</guid>
-      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Building always-on agents</description>
-      <content:encoded><![CDATA[<p>过去几个月里，我们看到永远在线的 agent 再度兴起。</p>
-<p>永远在线的 agent 是有状态且主动的，也就是说它们会跨会话管理上下文，并在无人直接监督时采取行动。底层它们和其他 agent 跑在同一套<a href="https://www.anthropic.com/research/building-effective-agents">核心循环</a>上。区别在于外围架构：它由若干原语构成，用来控制 agent 何时唤醒、两次运行之间延续什么，以及工作成果如何送达用户。</p>
-<p>这股回潮主要源于近期模型的进步，让永远在线的 agent 跑起来更切实可行。首先，最新模型判断力更强：理解用户意图、拿捏何时该来确认，都更可靠。其次，智能正变得更便宜，其中长时程任务受益最大。例如，在<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">一项长时程编码基准</a>上，Opus 5.5 每解决一个任务的成本比 Opus 5 低 78%，而在典型工作负载上这一数字是 40%。</p>
-<p>已有客户来问我们，怎么把这类体验集成进他们自己的产品。有些公司想让现有的 agent 更主动，另一些则打算从零开始搭建。</p>
-<p>这篇文章拆解永远在线 agent 背后的原语，并逐一讲清它们如何配合。</p>
-<h2>永远在线 agent 背后的循环</h2>
-<p>永远在线的 agent 其实并不是真的「一直开着」，这只是对用户体验的描述。</p>
-<p>实际上，agent 大部分时间都在休眠，只是周期性醒来干活。每一段工作称为一次<strong>运行</strong>：agent 接收事件，完成任务，再把发生的事保存下来。一次运行在<strong>会话</strong>内进行，会话就是消息和工具调用的记录。运行结束后，agent 重新休眠，这个循环无限往复。</p>
-<p><img src="https://assets.claude.com/5dc803bf06d6e92e4aecae762da096626e2fa9ec.gif" alt="永远在线 agent 时间线的动画图：长时间休眠、不消耗 token，被短暂的运行打断。每次运行分四步：事件到达、会话启动、agent 循环运行、运行把结果写回在运行之间延续的存储状态。"></p>
-<h2>核心原语</h2>
-<p>永远在线 agent 的外围架构有五个核心原语：事件收件箱、计时器、记忆、权限和发件箱。下面逐一来看。</p>
-<h3>事件收件箱</h3>
-<p>大多数 AI agent 只在用户发消息时才运行。相比之下，永远在线的 agent 可以由多种事件触发，包括 webhook、定时任务和后台作业。</p>
-<p>一个很诱人的做法是让每个事件源直接调用 agent，但这有几处会出问题。比如两个事件同时到达，可能启动互相冲突的运行；一旦崩溃，某个事件就可能整条丢失。</p>
-<p>事件收件箱就是为此而来。各来源不直接调用 agent，而是把事件发进收件箱，由工作进程取走。</p>
-<p>最简单的版本有三个组件：</p>
-<ul><li>一份持久化的事件列表，通常是一张数据库表；</li><li>一个处理程序，通常是 HTTP endpoint，负责把事件写进列表；以及</li><li>一个工作进程，通常是后台服务，负责从列表读取。</li></ul>
-<p>收件箱要跟踪每个事件的状态，并可以依据来源提供的唯一标识符去重。用关系型数据库做收件箱很合适，每个事件追加为一行。我们建议一开始每位用户一个收件箱；需要更高并行度时，可以再拆细。</p>
-<p><img src="https://assets.claude.com/bb08543a505cea3a24c88c718ceec4405e9c0a79.png" alt="事件收件箱示意图。处理程序（一个 HTTP endpoint）把每个事件写入收件箱——一张跟踪状态、去掉重复项的数据库表——并唤醒工作进程。工作进程读取待处理事件，启动运行，等它完成，再把事件标记为已处理。"></p>
-<p>新事件到来时，处理程序把它写进收件箱并唤醒工作进程。工作进程读取所有待处理事件，启动一次运行。延续此前工作的事件（例如用户的回复）会恢复已有会话，其余事件则开启新会话。</p>
-<p>随后工作进程把事件交给 agent 循环，等运行结束，再把对应事件标记为已完成。实现细节会有些棘手，这里给几条最佳实践：</p>
-<ul><li><strong>处理程序应尽快确认事件</strong>。有些来源（例如 webhook 提供商）会把响应慢当成失败。处理程序仍可做一些轻量检查，但更深一层的校验（比如检查 prompt injection）应放到运行期间做。</li><li><strong>收件箱应当是唯一事实来源</strong>。工作进程被唤醒后，应先从收件箱拉取最新事件。这样即便工作进程在运行中途挂掉，新的工作进程也能接手同一事件重试。</li><li><strong>一个收件箱同一时刻只能有一个活跃工作进程</strong>。这能避免两次运行重复劳动或互相覆盖。运行中途来了新事件，你可以把它推到下一次运行、并入当前运行，或者中断后重启。</li><li><strong>工作进程应把待处理事件成批处理。</strong> 比如用户连发几条消息，工作进程可以把它们合并成一次运行，agent 只需回复一次。</li></ul>
-<h3>计时器</h3>
-<p>计时器与事件收件箱配合，让永远在线的 agent 能主动行事。计时器大致分两类：跟进和排期。跟进是 agent 给自己设的截止时间，比如回头确认有没有收到回复；排期则是按固定节奏重复的任务，比如每日通讯。</p>
-<p>计时器放在自己独立的持久化存储里，通常是另一张数据库表，与收件箱分开。收件箱只保存已就绪、可以处理的事件。跟进和排期可以共用相近的 schema，但排期还要额外记录重复规则。</p>
-<p><img src="https://assets.claude.com/c16694e6d979a2ace84d03da0544297b7245c0a8.png" alt="计时器示意图。一次运行在数据库表里设置一个计时器，可以是 agent 设的跟进，也可以是用户设的排期。调度器找出到期的计时器，往事件收件箱里加一个事件，启动下一次运行。"></p>
-<p>计时器自己不会启动运行。取而代之的是调度器（通常是后台服务），它按固定间隔轮询这份存储，触发所有到期的计时器。每一轮里，调度器会：</p>
-<ul><li>扫描存储，找出到期的计时器。</li><li>按类别更新每个计时器。跟进应标记为已完成。排期应把到期时间更新到下一次发生。</li><li>往收件箱加一个事件并唤醒工作进程。</li></ul>
-<p>调度器可以自己搭一个服务，也可以直接用持久化执行引擎。</p>
-<h3>记忆</h3>
-<p>永远在线的 agent 要跨许多彼此断开的运行来工作，靠记忆维持连贯性。</p>
-<p>和事件收件箱、计时器一样，记忆也该有自己的存储。在我们的产品里，比如 Claude Code 的<a href="https://code.claude.com/docs/en/memory">自动记忆</a>和 Messages API 的<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">记忆工具</a>，它被实现成一个文件目录。对永远在线的 agent 来说，这些目录应映射到持久化存储，通常是数据库或对象存储。这样记忆就能比工作进程活得更久。</p>
-<p>一条经验法则是：记忆只存 agent 无法再查到的东西。如果某样内容已经存在于别的系统里（比如问题跟踪系统），那就只存一个指针。下面是永远在线 agent 该存的几类记忆：</p>
-<ul><li><strong>用户指令：</strong> 用户对 agent 行为的任何要求都应单独存成一个文件，并在每次运行开始时加载。用户不可能一直在场指挥 agent，所以这些指令必须在运行之间延续。</li><li><strong>用户笔记：</strong> agent 应把了解到的用户信息存下来，比如角色、偏好，或者用户给过的更正。可以先用一个文件，笔记多了再拆成几个小文件。后一种情况下，每次运行开始只加载一份索引，但 agent 需要更多细节时可以把单个文件拉进上下文。</li><li><strong>历史消息：</strong> agent 应记下已经对用户说过什么，避免重复。可以单独存一个文件、每次运行开始时加载，也可以让工作进程加载 agent 与用户最近几条消息。</li><li><strong>任务进度：</strong> 对每项进行中的任务，agent 应维护一份进度文件，写清已完成和待完成的部分。这样任何新运行都能读到它，从上次停下的地方接着做。和用户笔记类似，每次运行开始只加载一份索引，agent 需要更多细节时再把单个文件拉进上下文。</li></ul>
-<p>下图展示了一种示例配置。</p>
-<p><img src="https://assets.claude.com/e5d209d7ef9b3455dec8a27b777dc12bdf806699.png" alt="一个示例记忆配置的示意图，以文件目录形式呈现。instructions.md、index.md 和 reported.md 在每次运行开始时加载，notes/ 和 progress/ 目录则按需读取。agent 在运行期间写入记忆。"></p>
-<p>上面说的都是在运行期间保存的记忆。你还可以加上 dreaming，让它回看过去的会话、整理记忆。dreaming 能替换过时的条目，也能找出只在多次运行里才显现的规律。想深入了解的话，我们那篇<a href="https://www.anthropic.com/research/components-of-agent-memory">关于 agent 记忆的文章</a>讲得更细。</p>
-<h4>上下文窗口内部</h4>
-<p>开始干活前，agent 会加载系统 prompt、工具定义和记忆文件。这份初始上下文的「开销」每次运行都算在内，所以我们建议让它保持精简，并用 <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">prompt caching</a> 降低成本。</p>
-<p>新会话启动时只有这份上下文开销和触发本次运行的事件。已有会话则会把此前运行里的消息和工具调用带回来。</p>
-<p>会话变得太长时，你可以<a href="https://platform.claude.com/docs/en/build-with-claude/compaction">压缩较早的消息</a>，也可以另起一个新会话。两种做法都会丢细节，所以凡是需要长期保留的内容，都应随手存进记忆。</p>
-<p><img src="https://assets.claude.com/48757f0a147acfe841c943674c6214d34ed4405a.gif" alt="上下文使用量随时间变化的动画图。每次运行都有一条固定占用，留给系统 prompt、工具和记忆。已有会话会带回完整记录并不断变长，直到压缩把较早的记录变成一份摘要。"></p>
-<h3>权限</h3>
-<p>权限是永远在线 agent 风险最集中的地方。一次运行握着用户的访问权限，而且按设计是无人值守的。每次工具调用，agent 都要决定是自行继续、拦下它，还是等用户批准。</p>
-<p>权限所用的组件和其他 agent 一样：</p>
-<ul><li><strong>凭证存储：</strong> 永远在线的 agent 往往要拿到密码、访问令牌这类敏感用户凭证才有用。<a href="https://code.claude.com/docs/en/agent-sdk/secure-deployment#credential-management">推荐做法</a>是在 agent 环境之外放一个代理，由它把凭证加进出站请求。agent 发出不带凭证的请求，代理在转发前注入真实凭证。</li><li><strong>自动模式：</strong> 永远在线的 agent 应当能在没有用户持续输入的情况下工作。我们已经在 Claude Code 里用<a href="https://www.anthropic.com/research/claude-code-auto-mode">自动模式</a>处理过这个问题的一个版本。自动模式用分类器审查风险较高的操作，拦下被判定为危险的动作，让 Claude 去找更安全的做法。不过最重要的决策仍需用户复核。</li><li><strong>延迟工具调用：</strong> 在 Claude Code 里，<a href="https://code.claude.com/docs/en/hooks#defer-a-tool-call-for-later">钩子可以延迟一次工具调用</a>，等用户补充输入。同样的模式也适用于永远在线的 agent——它们在采取某些动作前可能需要澄清或批准。调用被延迟时，运行结束，会话在调用中途保存下来。请求会展示给用户（例如通过用 <a href="https://modelcontextprotocol.io/extensions/apps/overview">MCP Apps</a> 搭的交互式卡片），用户的答复作为收件箱里的一个事件返回。这个事件启动一次新运行，带着用户输入恢复刚才保存的会话。延迟调用等答复期间，工作进程可以去处理别的事件，agent 不会被卡住。</li></ul>
-<h3>发件箱</h3>
-<p>大多数 AI agent 的响应是边生成边流式推给用户的，用户可以跟着 Claude 推理问题、调用工具、写出答案。</p>
-<p>永远在线的 agent 则相反，大部分工作在后台完成。用户拿到的是结果和少量细节，而不是完整的逐步过程。</p>
-<p><img src="https://assets.claude.com/700b5f3a446f22493c0307ec65751b6b2f82ccb7.png" alt="发件箱示意图。一次运行以三种情况收尾：无话可说、调用发送工具，或用延迟工具调用向用户提问。消息进入发件箱（一张数据库表），再由分发器送达用户。延迟请求可以走发件箱，也可以直接显示在你自己的界面里。"></p>
-<p>一次运行有三种收尾方式：</p>
-<ul><li>agent 往发件箱发一条消息，</li><li>agent 判断没什么需要发送，或者</li><li>agent 用延迟工具调用请求批准或补充输入。</li></ul>
-<p>大多数永远在线 agent 用一个「发送」工具就够了，它能把消息直接递给用户。只有想控制 agent 发消息的节奏，或让 agent 能从错误里恢复时，才需要正式的发件箱。</p>
-<p>发件箱是一张独立的外发消息表，和事件收件箱对应。还有一个分发器（通常是后台服务），和工作进程对应。分发器读取待发消息，决定投递哪些，再发给用户。延迟工具调用产生的请求，可以走发件箱，也可以直接显示在界面里。</p>
-<p>除了投递，还有一件事很重要：调好 agent 发消息的数量。发得太多会变成噪音，发得太少又会漏掉用户该知道的信息。我们建议做 evals 来找到平衡。实践里更稳妥的是让 agent 一开始安静些，再随时间慢慢赢得用户更多注意力。</p>
-<h2>各部分如何配合</h2>
-<p>下面是五个原语如何配合：</p>
-<p><img src="https://assets.claude.com/9f8df7b2dcc9d4637d27f37dae6e40a2a5851c8a.gif" alt="五个原语如何配合的动画图。计时器与事件收件箱启动一次运行，运行在会话内借助记忆和权限工作，发件箱把消息送给用户，用户的答复再作为事件返回。"></p>
-<p>每次运行都从收件箱里的一个事件开始，可能是用户消息、webhook 或计时器。工作进程取走事件后，就启动一次运行，在新的或已有的会话里唤醒 agent。agent 先读记忆拿到基线，在权限范围内采取行动，再把学到的东西更新进记忆。运行结束后，agent 往发件箱推一行，分发器把消息送给用户。</p>
-<p>这些合在一起构成了一个循环。一次运行可以设个计时器，稍后再把 agent 唤醒；用户回复消息时，答复又作为事件回到收件箱。每次运行都很短，但循环无限延续——正是这一点，让 agent 看起来永远在线。</p>
-<h2>致谢</h2>
-<p><em>由 William Hu 撰写。特别感谢 Rodrigo Olivares 和 Michael Segner 的贡献。</em></p>
-<p>文章</p>
-<p>2026 年 11 月 13 日</p>
-<h3>面向初创公司的 Claude Tag 指南</h3>
-<p>领先初创公司如何用 Claude Tag 更快交付、扩大运营规模</p>
-<p>Claude Tag</p>
-<p>文章</p>
-<p>2026 年 11 月 10 日</p>
-<h3>Curative 如何借助 Claude 上的 agent 搭建全国医疗服务网络</h3>
-<p>Curative 负责谈交易的 agent 每周谈下 2,000 多份服务方合同。</p>
-<p>Claude PlatformClaude Code</p>
-<p>文章</p>
-<p>2026 年 11 月 9 日</p>
-<h3>用 Claude Fable 5.2 安全地扩展多 agent 团队</h3>
-<p>一支由 1,000 个 agent 组成的团队运行 Claude Fable 5.2 的早期版本，借助通用工具、共享数据库和分层安全控制，复现了费马大定理的形式化证明。</p>
-<p>文章</p>
-<p>2026 年 11 月 9 日</p>
-<h3>该用哪个 Claude 模型来构建？</h3>
-<p>如何按任务、成本和投入程度，在 Claude Fable 5.2、Opus 5.5、Sonnet 5.5 和 Haiku 5.5 之间做选择。</p>
-<p>Claude PlatformClaude Code</p>
-<h2>用 Claude 重塑组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
-<h3>订阅开发者通讯</h3>
-<p>产品更新、操作指南、社区聚焦等内容，每月寄到你的收件箱。</p>
-<p>如果想收到我们的每月开发者通讯，请留下邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
-    </item>
-    <item>
       <title>面向初创公司的 Claude Tag 指南</title>
       <link>https://claude.com/resources/articles/claude-tag-guide-for-startups</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-tag-guide-for-startups</guid>
@@ -332,6 +239,99 @@
 <p>想收到每月的开发者通讯，请留下邮箱地址。随时可以取消订阅。</p>]]></content:encoded>
     </item>
     <item>
+      <title>构建永远在线的 agent</title>
+      <link>https://claude.com/resources/articles/building-always-on-agents</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/building-always-on-agents</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Building always-on agents</description>
+      <content:encoded><![CDATA[<p>过去几个月里，我们看到永远在线的 agent 再度兴起。</p>
+<p>永远在线的 agent 是有状态且主动的，也就是说它们会跨会话管理上下文，并在无人直接监督时采取行动。底层它们和其他 agent 跑在同一套<a href="https://www.anthropic.com/research/building-effective-agents">核心循环</a>上。区别在于外围架构：它由若干原语构成，用来控制 agent 何时唤醒、两次运行之间延续什么，以及工作成果如何送达用户。</p>
+<p>这股回潮主要源于近期模型的进步，让永远在线的 agent 跑起来更切实可行。首先，最新模型判断力更强：理解用户意图、拿捏何时该来确认，都更可靠。其次，智能正变得更便宜，其中长时程任务受益最大。例如，在<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">一项长时程编码基准</a>上，Opus 5.5 每解决一个任务的成本比 Opus 5 低 78%，而在典型工作负载上这一数字是 40%。</p>
+<p>已有客户来问我们，怎么把这类体验集成进他们自己的产品。有些公司想让现有的 agent 更主动，另一些则打算从零开始搭建。</p>
+<p>这篇文章拆解永远在线 agent 背后的原语，并逐一讲清它们如何配合。</p>
+<h2>永远在线 agent 背后的循环</h2>
+<p>永远在线的 agent 其实并不是真的「一直开着」，这只是对用户体验的描述。</p>
+<p>实际上，agent 大部分时间都在休眠，只是周期性醒来干活。每一段工作称为一次<strong>运行</strong>：agent 接收事件，完成任务，再把发生的事保存下来。一次运行在<strong>会话</strong>内进行，会话就是消息和工具调用的记录。运行结束后，agent 重新休眠，这个循环无限往复。</p>
+<p><img src="https://assets.claude.com/5dc803bf06d6e92e4aecae762da096626e2fa9ec.gif" alt="永远在线 agent 时间线的动画图：长时间休眠、不消耗 token，被短暂的运行打断。每次运行分四步：事件到达、会话启动、agent 循环运行、运行把结果写回在运行之间延续的存储状态。"></p>
+<h2>核心原语</h2>
+<p>永远在线 agent 的外围架构有五个核心原语：事件收件箱、计时器、记忆、权限和发件箱。下面逐一来看。</p>
+<h3>事件收件箱</h3>
+<p>大多数 AI agent 只在用户发消息时才运行。相比之下，永远在线的 agent 可以由多种事件触发，包括 webhook、定时任务和后台作业。</p>
+<p>一个很诱人的做法是让每个事件源直接调用 agent，但这有几处会出问题。比如两个事件同时到达，可能启动互相冲突的运行；一旦崩溃，某个事件就可能整条丢失。</p>
+<p>事件收件箱就是为此而来。各来源不直接调用 agent，而是把事件发进收件箱，由工作进程取走。</p>
+<p>最简单的版本有三个组件：</p>
+<ul><li>一份持久化的事件列表，通常是一张数据库表；</li><li>一个处理程序，通常是 HTTP endpoint，负责把事件写进列表；以及</li><li>一个工作进程，通常是后台服务，负责从列表读取。</li></ul>
+<p>收件箱要跟踪每个事件的状态，并可以依据来源提供的唯一标识符去重。用关系型数据库做收件箱很合适，每个事件追加为一行。我们建议一开始每位用户一个收件箱；需要更高并行度时，可以再拆细。</p>
+<p><img src="https://assets.claude.com/bb08543a505cea3a24c88c718ceec4405e9c0a79.png" alt="事件收件箱示意图。处理程序（一个 HTTP endpoint）把每个事件写入收件箱——一张跟踪状态、去掉重复项的数据库表——并唤醒工作进程。工作进程读取待处理事件，启动运行，等它完成，再把事件标记为已处理。"></p>
+<p>新事件到来时，处理程序把它写进收件箱并唤醒工作进程。工作进程读取所有待处理事件，启动一次运行。延续此前工作的事件（例如用户的回复）会恢复已有会话，其余事件则开启新会话。</p>
+<p>随后工作进程把事件交给 agent 循环，等运行结束，再把对应事件标记为已完成。实现细节会有些棘手，这里给几条最佳实践：</p>
+<ul><li><strong>处理程序应尽快确认事件</strong>。有些来源（例如 webhook 提供商）会把响应慢当成失败。处理程序仍可做一些轻量检查，但更深一层的校验（比如检查 prompt injection）应放到运行期间做。</li><li><strong>收件箱应当是唯一事实来源</strong>。工作进程被唤醒后，应先从收件箱拉取最新事件。这样即便工作进程在运行中途挂掉，新的工作进程也能接手同一事件重试。</li><li><strong>一个收件箱同一时刻只能有一个活跃工作进程</strong>。这能避免两次运行重复劳动或互相覆盖。运行中途来了新事件，你可以把它推到下一次运行、并入当前运行，或者中断后重启。</li><li><strong>工作进程应把待处理事件成批处理。</strong> 比如用户连发几条消息，工作进程可以把它们合并成一次运行，agent 只需回复一次。</li></ul>
+<h3>计时器</h3>
+<p>计时器与事件收件箱配合，让永远在线的 agent 能主动行事。计时器大致分两类：跟进和排期。跟进是 agent 给自己设的截止时间，比如回头确认有没有收到回复；排期则是按固定节奏重复的任务，比如每日通讯。</p>
+<p>计时器放在自己独立的持久化存储里，通常是另一张数据库表，与收件箱分开。收件箱只保存已就绪、可以处理的事件。跟进和排期可以共用相近的 schema，但排期还要额外记录重复规则。</p>
+<p><img src="https://assets.claude.com/c16694e6d979a2ace84d03da0544297b7245c0a8.png" alt="计时器示意图。一次运行在数据库表里设置一个计时器，可以是 agent 设的跟进，也可以是用户设的排期。调度器找出到期的计时器，往事件收件箱里加一个事件，启动下一次运行。"></p>
+<p>计时器自己不会启动运行。取而代之的是调度器（通常是后台服务），它按固定间隔轮询这份存储，触发所有到期的计时器。每一轮里，调度器会：</p>
+<ul><li>扫描存储，找出到期的计时器。</li><li>按类别更新每个计时器。跟进应标记为已完成。排期应把到期时间更新到下一次发生。</li><li>往收件箱加一个事件并唤醒工作进程。</li></ul>
+<p>调度器可以自己搭一个服务，也可以直接用持久化执行引擎。</p>
+<h3>记忆</h3>
+<p>永远在线的 agent 要跨许多彼此断开的运行来工作，靠记忆维持连贯性。</p>
+<p>和事件收件箱、计时器一样，记忆也该有自己的存储。在我们的产品里，比如 Claude Code 的<a href="https://code.claude.com/docs/en/memory">自动记忆</a>和 Messages API 的<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">记忆工具</a>，它被实现成一个文件目录。对永远在线的 agent 来说，这些目录应映射到持久化存储，通常是数据库或对象存储。这样记忆就能比工作进程活得更久。</p>
+<p>一条经验法则是：记忆只存 agent 无法再查到的东西。如果某样内容已经存在于别的系统里（比如问题跟踪系统），那就只存一个指针。下面是永远在线 agent 该存的几类记忆：</p>
+<ul><li><strong>用户指令：</strong> 用户对 agent 行为的任何要求都应单独存成一个文件，并在每次运行开始时加载。用户不可能一直在场指挥 agent，所以这些指令必须在运行之间延续。</li><li><strong>用户笔记：</strong> agent 应把了解到的用户信息存下来，比如角色、偏好，或者用户给过的更正。可以先用一个文件，笔记多了再拆成几个小文件。后一种情况下，每次运行开始只加载一份索引，但 agent 需要更多细节时可以把单个文件拉进上下文。</li><li><strong>历史消息：</strong> agent 应记下已经对用户说过什么，避免重复。可以单独存一个文件、每次运行开始时加载，也可以让工作进程加载 agent 与用户最近几条消息。</li><li><strong>任务进度：</strong> 对每项进行中的任务，agent 应维护一份进度文件，写清已完成和待完成的部分。这样任何新运行都能读到它，从上次停下的地方接着做。和用户笔记类似，每次运行开始只加载一份索引，agent 需要更多细节时再把单个文件拉进上下文。</li></ul>
+<p>下图展示了一种示例配置。</p>
+<p><img src="https://assets.claude.com/e5d209d7ef9b3455dec8a27b777dc12bdf806699.png" alt="一个示例记忆配置的示意图，以文件目录形式呈现。instructions.md、index.md 和 reported.md 在每次运行开始时加载，notes/ 和 progress/ 目录则按需读取。agent 在运行期间写入记忆。"></p>
+<p>上面说的都是在运行期间保存的记忆。你还可以加上 dreaming，让它回看过去的会话、整理记忆。dreaming 能替换过时的条目，也能找出只在多次运行里才显现的规律。想深入了解的话，我们那篇<a href="https://www.anthropic.com/research/components-of-agent-memory">关于 agent 记忆的文章</a>讲得更细。</p>
+<h4>上下文窗口内部</h4>
+<p>开始干活前，agent 会加载系统 prompt、工具定义和记忆文件。这份初始上下文的「开销」每次运行都算在内，所以我们建议让它保持精简，并用 <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">prompt caching</a> 降低成本。</p>
+<p>新会话启动时只有这份上下文开销和触发本次运行的事件。已有会话则会把此前运行里的消息和工具调用带回来。</p>
+<p>会话变得太长时，你可以<a href="https://platform.claude.com/docs/en/build-with-claude/compaction">压缩较早的消息</a>，也可以另起一个新会话。两种做法都会丢细节，所以凡是需要长期保留的内容，都应随手存进记忆。</p>
+<p><img src="https://assets.claude.com/48757f0a147acfe841c943674c6214d34ed4405a.gif" alt="上下文使用量随时间变化的动画图。每次运行都有一条固定占用，留给系统 prompt、工具和记忆。已有会话会带回完整记录并不断变长，直到压缩把较早的记录变成一份摘要。"></p>
+<h3>权限</h3>
+<p>权限是永远在线 agent 风险最集中的地方。一次运行握着用户的访问权限，而且按设计是无人值守的。每次工具调用，agent 都要决定是自行继续、拦下它，还是等用户批准。</p>
+<p>权限所用的组件和其他 agent 一样：</p>
+<ul><li><strong>凭证存储：</strong> 永远在线的 agent 往往要拿到密码、访问令牌这类敏感用户凭证才有用。<a href="https://code.claude.com/docs/en/agent-sdk/secure-deployment#credential-management">推荐做法</a>是在 agent 环境之外放一个代理，由它把凭证加进出站请求。agent 发出不带凭证的请求，代理在转发前注入真实凭证。</li><li><strong>自动模式：</strong> 永远在线的 agent 应当能在没有用户持续输入的情况下工作。我们已经在 Claude Code 里用<a href="https://www.anthropic.com/research/claude-code-auto-mode">自动模式</a>处理过这个问题的一个版本。自动模式用分类器审查风险较高的操作，拦下被判定为危险的动作，让 Claude 去找更安全的做法。不过最重要的决策仍需用户复核。</li><li><strong>延迟工具调用：</strong> 在 Claude Code 里，<a href="https://code.claude.com/docs/en/hooks#defer-a-tool-call-for-later">钩子可以延迟一次工具调用</a>，等用户补充输入。同样的模式也适用于永远在线的 agent——它们在采取某些动作前可能需要澄清或批准。调用被延迟时，运行结束，会话在调用中途保存下来。请求会展示给用户（例如通过用 <a href="https://modelcontextprotocol.io/extensions/apps/overview">MCP Apps</a> 搭的交互式卡片），用户的答复作为收件箱里的一个事件返回。这个事件启动一次新运行，带着用户输入恢复刚才保存的会话。延迟调用等答复期间，工作进程可以去处理别的事件，agent 不会被卡住。</li></ul>
+<h3>发件箱</h3>
+<p>大多数 AI agent 的响应是边生成边流式推给用户的，用户可以跟着 Claude 推理问题、调用工具、写出答案。</p>
+<p>永远在线的 agent 则相反，大部分工作在后台完成。用户拿到的是结果和少量细节，而不是完整的逐步过程。</p>
+<p><img src="https://assets.claude.com/700b5f3a446f22493c0307ec65751b6b2f82ccb7.png" alt="发件箱示意图。一次运行以三种情况收尾：无话可说、调用发送工具，或用延迟工具调用向用户提问。消息进入发件箱（一张数据库表），再由分发器送达用户。延迟请求可以走发件箱，也可以直接显示在你自己的界面里。"></p>
+<p>一次运行有三种收尾方式：</p>
+<ul><li>agent 往发件箱发一条消息，</li><li>agent 判断没什么需要发送，或者</li><li>agent 用延迟工具调用请求批准或补充输入。</li></ul>
+<p>大多数永远在线 agent 用一个「发送」工具就够了，它能把消息直接递给用户。只有想控制 agent 发消息的节奏，或让 agent 能从错误里恢复时，才需要正式的发件箱。</p>
+<p>发件箱是一张独立的外发消息表，和事件收件箱对应。还有一个分发器（通常是后台服务），和工作进程对应。分发器读取待发消息，决定投递哪些，再发给用户。延迟工具调用产生的请求，可以走发件箱，也可以直接显示在界面里。</p>
+<p>除了投递，还有一件事很重要：调好 agent 发消息的数量。发得太多会变成噪音，发得太少又会漏掉用户该知道的信息。我们建议做 evals 来找到平衡。实践里更稳妥的是让 agent 一开始安静些，再随时间慢慢赢得用户更多注意力。</p>
+<h2>各部分如何配合</h2>
+<p>下面是五个原语如何配合：</p>
+<p><img src="https://assets.claude.com/9f8df7b2dcc9d4637d27f37dae6e40a2a5851c8a.gif" alt="五个原语如何配合的动画图。计时器与事件收件箱启动一次运行，运行在会话内借助记忆和权限工作，发件箱把消息送给用户，用户的答复再作为事件返回。"></p>
+<p>每次运行都从收件箱里的一个事件开始，可能是用户消息、webhook 或计时器。工作进程取走事件后，就启动一次运行，在新的或已有的会话里唤醒 agent。agent 先读记忆拿到基线，在权限范围内采取行动，再把学到的东西更新进记忆。运行结束后，agent 往发件箱推一行，分发器把消息送给用户。</p>
+<p>这些合在一起构成了一个循环。一次运行可以设个计时器，稍后再把 agent 唤醒；用户回复消息时，答复又作为事件回到收件箱。每次运行都很短，但循环无限延续——正是这一点，让 agent 看起来永远在线。</p>
+<h2>致谢</h2>
+<p><em>由 William Hu 撰写。特别感谢 Rodrigo Olivares 和 Michael Segner 的贡献。</em></p>
+<p>文章</p>
+<p>2026 年 11 月 13 日</p>
+<h3>面向初创公司的 Claude Tag 指南</h3>
+<p>领先初创公司如何用 Claude Tag 更快交付、扩大运营规模</p>
+<p>Claude Tag</p>
+<p>文章</p>
+<p>2026 年 11 月 10 日</p>
+<h3>Curative 如何借助 Claude 上的 agent 搭建全国医疗服务网络</h3>
+<p>Curative 负责谈交易的 agent 每周谈下 2,000 多份服务方合同。</p>
+<p>Claude PlatformClaude Code</p>
+<p>文章</p>
+<p>2026 年 11 月 9 日</p>
+<h3>用 Claude Fable 5.2 安全地扩展多 agent 团队</h3>
+<p>一支由 1,000 个 agent 组成的团队运行 Claude Fable 5.2 的早期版本，借助通用工具、共享数据库和分层安全控制，复现了费马大定理的形式化证明。</p>
+<p>文章</p>
+<p>2026 年 11 月 9 日</p>
+<h3>该用哪个 Claude 模型来构建？</h3>
+<p>如何按任务、成本和投入程度，在 Claude Fable 5.2、Opus 5.5、Sonnet 5.5 和 Haiku 5.5 之间做选择。</p>
+<p>Claude PlatformClaude Code</p>
+<h2>用 Claude 重塑组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦等内容，每月寄到你的收件箱。</p>
+<p>如果想收到我们的每月开发者通讯，请留下邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
+    </item>
+    <item>
       <title>推出 Claude Meetings</title>
       <link>https://claude.com/resources/articles/claude-meetings</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-meetings</guid>
@@ -369,122 +369,6 @@
 <p>2026 年 11 月 12 日</p>
 <h3>推出 Claude for Manufacturing</h3>
 <p>一款含 17 个 skills 和 4 个 connectors 的新插件，帮制造商从已在运行的系统里起草报价、质量报告和供应商询价。</p>
-<p>文章</p>
-<p>2026 年 11 月 10 日</p>
-<h3>你的应用现在能在 Claude 里打开，Claude 也能在其中工作</h3>
-<p>我们的合作伙伴现在可以把应用直接嵌进 Claude，让你和 Claude 在同一个工具、同一块屏幕上协作，无需切换标签页。</p>
-<p>Claude appsMCP</p>
-<p>文章</p>
-<p>2026 年 11 月 10 日</p>
-<h3>与 Claude 协作的更多方式：Sheets、Whiteboards 和 Interactive Connectors</h3>
-<p>以思考的速度工作</p>
-<p>Claude apps</p>
-<h2>用 Claude 改变组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
-<h3>订阅开发者通讯</h3>
-<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
-<p>如需接收我们的每月开发者通讯，请留下你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>把 Claude Opus 5.5 用作知识工作的日常主力模型</title>
-      <link>https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work</guid>
-      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Using Claude Opus 5.5 as your daily driver for knowledge work</description>
-      <content:encoded><![CDATA[<p>Claude Opus 5.5 现在是 Claude 在 Pro、Max、Ultra 和 Team 计划中的默认模型。我们建议把它作为知识工作的日常主力模型，也就是当你用 Claude 做研究、分析，以及撰写或制作备忘录、报告、电子表格和演示文稿时，一直选着的那个模型。</p>
-<p>如果你或团队一直用 Sonnet 干日常活、把 Opus 留给繁重的分析或复杂项目，现在值得重新掂量：更强的模型能用更少的功夫把任务做完，这<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">往往能抵掉它每 token 更高的一大半价格</a>。</p>
-<p>当前几款模型的对比如下：</p>
-<table><thead><tr><th><strong>模型</strong></th><th><strong>适用场景</strong></th><th><strong>每百万 token 价格（输入 / 输出）</strong>*</th><th><strong>相对速度</strong></th></tr></thead><tbody><tr><td>Claude Haiku 5.5</td><td>快速查询，以及速度优先的大批量工作</td><td>$0.10 / $0.50</td><td>最快</td></tr><tr><td>Claude Sonnet 5.5</td><td>范围明确、要求清晰的任务，以及据明确要求产出的精修文档、幻灯片和电子表格</td><td>$2 / $10</td><td>快</td></tr><tr><td>Claude Opus 5.5</td><td>大多数知识工作：研究、分析，以及需要判断力的成品文档、演示文稿和电子表格</td><td>$4 / $20</td><td>中等</td></tr><tr><td>Claude Fable 5.2</td><td>最宏大、开放式的技术工作，如编程、金融和科学等领域</td><td>$8 / $40</td><td>中等</td></tr></tbody></table>
-<p>**价格针对按 token 计费的用量（<a href="https://platform.claude.com/docs/en/models/opus-5-5/overview">模型对比</a>）。Haiku 5.5 的价格适用于不超过 100k token 的 prompt，更长的 prompt 按 $0.50 / $2.50 计费。在 Pro、Max、Ultra 和 Team 计划中，价格更高的模型会更快消耗额度。除限时首发优惠外，Pro 计划以及 Team 和按席位计费的 Enterprise 计划的标准席位，其额度不包含 Fable 5.2，因此它按用量积分计费。*</p>
-<p><a href="https://www.anthropic.com/claude-haiku-5-5"><strong>Haiku 5.5</strong></a> 是我们最快、也最便宜的模型，专为快速查询和撰写摘要、整理数据这类大批量工作打造。这是首款带 effort 控制的 Haiku 模型，因此你可以在切换到更大模型之前，先要求它更仔细地过一遍。它最适合短小、范围窄的任务；需要更长的分析，就换用 Opus 5.5。</p>
-<p><a href="https://www.anthropic.com/claude-sonnet-5-5"><strong>Sonnet 5.5</strong></a> 在范围明确、要求清晰的任务上比 Opus 5.5 更快也更便宜，比如让 Claude 把定稿的笔记整理成精修文档，或套用幻灯片模板做一份演示文稿。不过在更高的 effort 档位下，Sonnet 5.5 的单任务成本会逼近 Opus 5.5；所以如果你发现自己在把 Sonnet 推到 Extra high 或 Max effort，不妨换用 Opus 5.5。</p>
-<p><strong><a href="https://www.anthropic.com/claude-opus-5-5">Opus 5.5</a> </strong>专为需要审慎判断的复杂工作打造，比如研究、财务分析，以及产出成品文档、演示文稿和电子表格。后文会详细说明我们为何推荐用 Opus 5.5 承担日常知识工作。</p>
-<p><a href="https://www.anthropic.com/claude-fable-and-mythos-5-2"><strong>Fable 5.2</strong></a> 最适合最吃力的推理和长时间运行的任务，比如深入的多步研究，或可以交给一大群连续跑上数小时的 subagent 去做的编程。大多数知识工作，先用 Opus 5.5；等项目的范围和复杂度确实需要时，再转到 Fable 5.2。Fable 5.2 在所有付费计划中都可用，不过<a href="https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan">它如何计入你的用量</a>取决于具体计划。</p>
-<p>无论当前用的是哪个模型，如果 Claude 表现不如预期，先试更高的 effort，再考虑换更大的模型。如果它已掌握上下文、明显认真做过，却仍然做错，那就换更大的模型。</p>
-<h2><strong>Opus 5.5 在文档、研究、财务和图表上表现最出色</strong></h2>
-<p>Opus 5.5 精确遵循指令、不越出范围，因此它产出的电子表格、幻灯片和文档往往几乎不用再改。它对待数字和来源也很谨慎。在一项内部研究测试中，Opus 5.5 仅凭一份存档的网页快照，撰写某公司的季度业绩报告，而快照里该公司的财报发布很难找到。自动评分器逐一核对报告里每个数字和引文与快照页面的对应关系，规则是：只要凭空捏造哪怕一个数字或一句引文，报告即判不合格。跨各 effort 档位，18 份报告有 16 份通过。</p>
-<p>它的文笔也比早期模型更清晰：把最重要的信息放在最前面，少用行话，遵守你给的写作规范；在较长的任务里，还会直说它做了什么、发现了什么、还需要你提供什么。这也让它的成果更容易核查，我们既把这看作实用上的好处，也看作安全上的好处。</p>
-<p>Ramp 的资深软件工程师 John Ruelas <a href="https://www.anthropic.com/claude-opus-5-5">说</a>：&quot;它写起来像一位靠谱的同事，也遵守我们的写作规范。一份设计说明书出来后几乎不用改就能用；它重写我们的一条 prompt 时，我甚至更喜欢它的版本，胜过我自己写的。&quot;</p>
-<p>财务分析是它的另一项强项。Opus 5.5 能准确读取信息密集的申报文件、财务模型和图表，并在整个项目或交易中保持上下文连贯。在另一项内部测试里，它分析两家虚构 HR 软件公司之间的拟议合并：先在 Excel 里搭出财务模型，再据此做成一份给高管看的演示文稿，判断按该价格这笔交易是否划算。整个任务用时 63 分钟，而 Opus 5 做同一任务要 93 分钟；成本只有一半，模型却更完整，演示文稿也更好读。</p>
-<p>投资公司 Walleye Capital 中央股票量化研究工程负责人 Frank Corrao <a href="https://www.anthropic.com/claude-opus-5-5">表示</a>，在较高的 effort 档位下，Opus 5.5&quot;发现我们自己指令里的分钟索引差了一位，主动做了修正，还指出这会让它在评分器那里丢分。它是对的，此前我们测过的模型没有一个发现并处理过这个问题。&quot;</p>
-<p>Opus 5.5 是我们在视觉能力上最强的 Opus 模型。它能准确读取信息密集的文档、图表、截图和示意图，因此从文档里提取数据很可靠。即便设在最低 effort 档，它从密集图表中读数的准确度也高于 Opus 5 设在最高档时。</p>
-<h2><strong>充分发挥 Opus 5.5</strong></h2>
-<p>每出一个新模型，都值得重新试一遍你交给 Claude 的东西，并丢掉为旧模型养成的提示习惯。</p>
-<h3><strong>先试这些任务</strong></h3>
-<ul><li><strong>直接要成品文件。</strong> 想要电子表格或文档，就直说要电子表格或文档，别只要一份供展开的大纲。多数情况下，Opus 5.5 能从你的请求一步做到成品文件。</li><li><strong>让它核查长文档。</strong> 丢给它一份长计划、报告或演示文稿，让它找错和前后矛盾。长文档里容易漏看的细节，Opus 5.5 能揪出来，比如演示文稿里某张图表与源数据对不上。</li><li><strong>交给它一个研究问题。</strong> 提一个没有标准答案的问题，让它汇集资料、啃完长文档，再把发现写成备忘录、报告或演示文稿。</li><li><strong>试试视觉类工作。</strong> 视觉能力上的提升也延续到了设计，不妨用它做界面原型、搭网站，或把一个概念画出来。</li></ul>
-<p><img src="https://assets.claude.com/43af7ca2d9f20a0722825b0c207cd80af4d3fdab.png" alt="Claude Opus 5.5 的任务示意"></p>
-<h3><strong>改掉这些提示习惯</strong></h3>
-<ul><li><strong>把 Claude 接到你的工作文件和系统。</strong> 想让产出贴合你的工作，这是最有用的一步：Claude 能通过 connector 触达你的文件和系统时，就可以自己去取任务所需的东西，而不只依赖你粘贴进去的内容。在 Team 和 Enterprise 计划中，必须先由所有者开启 connector，成员才能使用。</li><li><strong>在第一条消息里就说清&quot;做完&quot;是什么样。</strong> 别一条一条地给 Claude 下指令，而是一次讲清目标、最终产出，以及希望它何时停下来问你。把又长又分多块的工作一路做到底，Opus 5.5 比 Opus 5 更稳。</li><li><strong>删掉&quot;think hard&quot;和&quot;think carefully&quot;。</strong> Opus 5.5 的思考始终开启，会根据你的请求和 effort 档位决定想多少。在我们的测试里，去掉这两行后回复起步更快，质量也没有明显下降。</li><li><strong>从 Medium 档开始。</strong> Medium 是 Opus 5.5 的默认档；在我们的编程和知识工作评测中，Medium 档的 Opus 5.5 追平或超过了 High 档的 Opus 5。更高的档位想得更久、花钱更多，却不一定产出更好，所以等 Medium 卡住了再升到 High。要改档位，点发送按钮旁边的模型名称，选择 Effort。</li><li><strong>直接附上图表，别重敲一遍。</strong> 把图表、截图或示意图本身发过去，而不是把里面的数字抄进 prompt。为早期模型准备的变通办法，比如把图表数值誊写出来，可能已经用不上了。</li><li><strong>点名你不想要的风格。</strong> 做设计工作时，&quot;避免千篇一律的外观&quot;这类笼统指令，往往只是把一种默认风格换成另一种。点出具体要避开的样式更管用，比如米色背景或药丸形按钮。</li><li><strong>把自家规范给它。</strong> 把品牌或写作规范贴进请求里，或让 Claude 去看你做得最好的几份现成演示文稿——比如放在它能通过 connector 访问的 Google Drive 文件夹里——再让它照着来。要做好几轮才完全到位的准备。</li></ul>
-<p><img src="https://assets.claude.com/d61fa79e1e1a38bd6ad4547ddb66c993ef569705.png" alt="Claude Opus 5.5 提示习惯示意"></p>
-<p>这一关于 effort 的结论，在早期测试者那里也成立。Factory 的技术团队成员 Zimu Li <a href="https://www.anthropic.com/claude-opus-5-5">说</a>：&quot;Claude Opus 5.5 是我们第一个会默认设在 medium effort 的模型。在我们的测试中，它追平了设在 high effort 的 Opus 5，而输出 token 少了 20% 到 25%。&quot;</p>
-<h2><strong>在一个演示项目上测试 Opus 5.5</strong></h2>
-<p>上面这些，放到我们在一次演示里走完的项目中是什么样子？设想一家零售公司，过去一年营收增长放缓，管理层对原因有四种猜测，分析师手里有一文件夹材料：各门店销售电子表格、最近一次管理层外出会议的 PDF，以及其他文件。用设在 Medium 档的 Opus 5.5 时，prompt 大致是：</p>
-<p><code>Growth slowed a lot this year. Leadership has a couple of theories about why; they're in [my manager's] note. Everything I have is in the uploaded folder. Please test each of the four theories against the data and tell me which ones hold up.</code></p>
-<p>这段 prompt 没叫 Claude &quot;think hard&quot;，也没说查哪种理论该看哪个文件。它只讲清目标和最终产出的样子，把做法留给 Claude。</p>
-<p>Claude 发现数据并不支持这四种猜测中的任何一种，不过有一种无法完全排除。接着它提出了一个没人提过的解释：新店开得离老店太近，把老店的生意分走了。按城市列门店时，这个规律还不太看得清；一旦按与新店的距离筛选，就清楚了。Claude 用销售影响对该距离做回归，为这一发现提供了依据。</p>
-<p>随后，Claude 把分析整理成一份文档，正文之外还带图表和交互元素，其中有一个滑块，展示销售额随新店与老店之间距离变化的走势。一位同事同时审阅了这份文档。</p>
-<p>接着，经理让 Claude 把文档做成董事会幻灯片，开头就给出结论。对于不用 Claude 的同事，文档可导出为 Word、PDF 或 Google Docs，演示文稿可导出为 PowerPoint、PDF 或 Google Slides。</p>
-<p>想看完整项目（含问答），可<a href="https://claude.com/resources/webinars/opus-5-5-for-work">点播观看 Opus 5.5 for Work 场次</a>。</p>
-<h2><strong>用自己的工作试试 Opus 5.5</strong></h2>
-<p>挑一件你平时会拆成好几次请求来做的事，比如研究备忘录、差异分析，或根据现成文档做一份演示文稿。把文件和最终成果的描述放在一条消息里交给 Opus 5.5，档位留在 Medium，再把结果和你习惯从其他模型拿到的作个对比。</p>
-<p>文章</p>
-<p>2026 年 11 月 12 日</p>
-<h3>在自己的安全边界内运行 Claude Managed Agents</h3>
-<p>推出自托管 Claude Managed Agents。现在你可以在自己的环境中运行 agents，无论在自己的云上还是本地。agents、凭据和会话历史都由你托管，向 Claude 发送的请求发往哪里也由你选。</p>
-<p>Claude PlatformClaude Managed Agents</p>
-<p>文章</p>
-<p>2026 年 11 月 12 日</p>
-<h3>J.Crew 借 Claude 将标志性造型理念带到线上</h3>
-<p>J.Crew 的新 Style Advisor 用 Claude 提供更个性化的在线购物方式，给出整套造型，而不是一件件单品。</p>
-<p>Claude Code</p>
-<p>文章</p>
-<p>2026 年 11 月 12 日</p>
-<h3>推出 Claude for Manufacturing</h3>
-<p>一款含 17 个 skills 和 4 个 connectors 的新插件，帮制造商从已在运行的系统里起草报价、质量报告和供应商询价。</p>
-<p>文章</p>
-<p>2026 年 11 月 12 日</p>
-<h3>推出 Claude Meetings</h3>
-<p>把 Claude 加进视频通话，边聊边把活儿开起来</p>
-<h2>用 Claude 改变组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
-<h3>订阅开发者通讯</h3>
-<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
-<p>如需接收我们的每月开发者通讯，请留下你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>推出 Claude for Manufacturing</title>
-      <link>https://claude.com/resources/articles/claude-for-manufacturing</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/claude-for-manufacturing</guid>
-      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Claude for Manufacturing</description>
-      <content:encoded><![CDATA[<p>今天，我们推出 <a href="http://claude.com/solutions/manufacturing">Claude for Manufacturing</a>，这款插件自带的 skills 覆盖从为新订单报价到诊断停机机器的各项工作。估算员现在可以让 Claude 读取客户请求、比照类似订单的成本，并起草报价。该插件通过 connectors 接入 Autodesk Fusion、Infor、Microsoft 365 和 Oracle NetSuite，基于制造商自有的记录工作。Claude for Manufacturing 的设计让负责人在成果送达客户或供应商之前，能够先审阅并批准。</p>
-<p>制造团队一天里往往要花大量时间收集信息。在 2025 年 Manufacturing Leadership Council 的一项调查中，79% 的制造商表示自己<a href="https://manufacturingleadershipcouncil.com/survey-october/">手动录入数据</a>。有了 Claude 把每个流程推进到待审阅这一步，估算员可以专注定价，质量工程师专注修复，技术人员专注先检查哪里。</p>
-<h2><strong>为制造商打造的 skills</strong></h2>
-<p>这款插件的 17 个 skills 覆盖销售、质量、运营、供应链、设计和设置。有的只处理单一任务，有的按顺序连跑多个任务，让 Claude 能把一项工作推进若干步骤，直到需要人工审阅为止。这些 skills 可运行的流程包括：</p>
-<ul><li><strong>为新订单报价</strong>：估算员可以让 Claude 读取客户请求、列出缺失信息、比照类似订单的成本，并起草可供发布的报价。</li><li><strong>排查检验不合格</strong>：质量工程师可以让 Claude 记录不合格情况、翻查过往报告里是否有同类问题、给可能原因排序，并起草纠正措施报告。</li><li><strong>诊断设备故障</strong>：技术人员可以让 Claude 读取传感器导出数据、维修记录、照片和手册，再把可能原因排序，供技术人员逐项排查并决定下一步。</li><li><strong>改向其他供应商采购</strong>：采购员可以让 Claude 拟好询价单，再比较回收的报价。</li><li><strong>用 Autodesk Fusion 比选设计方案</strong>：工程师可以让 Claude 基于现有模型生成多个变体，按工程师设定的目标打分，并起草决策备忘录。</li><li><strong>生成生产报表</strong>：工厂经理可以让 Claude 把生产数据汇总成一份报告，列出实际产量与目标的差距、设备停机时间，以及停机和欠产造成的损失。</li></ul>
-<p>这些 skills 只是起点。企业可以在此基础上按自身运营情况改制，我们也会逐步增加新的制造类 skills。</p>
-<h2><strong>对接制造系统的 connectors</strong></h2>
-<p>Claude for Manufacturing 与制造运营核心软件协同工作，而这些软件仍是团队经营业务的中枢：</p>
-<ul><li><strong>Autodesk Fusion</strong>：工程师能在定案前比选更多设计方案，因为 Claude 会基于他们现有的模型生成变体。</li><li><strong>Infor</strong>：采购员和计划员可以在行动前核对采购订单与库存，因为 Claude 会在 Infor 里查出来。</li><li><strong>Microsoft 365</strong>：质量工程师可以把操作规程、供应商邮件和导出的报告汇进同一项工作，因为 Claude 能在共享文件夹和收件箱里找到它们。</li><li><strong>Oracle NetSuite</strong>：估算员可以对照真实订单、库存、生产工序和订单成本为新工作定价，因为 Claude 起草报价时会调取这些记录。</li></ul>
-<p>对于没有 connectors 的系统，制造商同样可以使用这款插件。他们把那些系统定期导出的文件存到 Microsoft 365，Claude 便据这些文件起草报价或汇总生产报表。</p>
-<h2><strong>用 Claude 在 Infor 里改动数据</strong></h2>
-<p>为制造商提供核心软件的 Infor 也在<a href="https://claude.ai/directory/infor">推出自己的插件</a>。借助 Claude for Manufacturing 里的 Infor connector，团队可以查询记录；借助 Infor 的插件，他们还能在 Claude 里直接改动 Infor 中的数据。</p>
-<p>举例来说，如果一批钢材延迟两周到货，采购员可以问 Claude 哪些客户订单受影响、其他厂区还有多少钢材。采购员一经批准，Claude 就能向另一家供应商下达采购订单，并在 Infor 里重排受影响的生产计划。Claude 的访问权限遵循该采购员在 Infor 中的权限。</p>
-<h2><strong>制造团队始终掌握主动</strong></h2>
-<p>skills 都以用户审阅收尾：估算员核对并发布报价，质量工程师确认纠正措施报告里的修复方案。为便于审阅，Claude 能把数字和论断回溯到对应的原始数据与文档。</p>
-<p>Claude for Manufacturing 不操作设备。为此，Anthropic 正在开发 <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">Model Hardware Standard</a>，这是一项研究预览，为可编程设备提供一套标准方式来描述自身的测量值、设置和安全限值。</p>
-<h2><strong>如何开始使用</strong></h2>
-<p>在 Team 或 Enterprise 计划下，<a href="https://claude.ai/customize/plugins/id/45112ff2-6233-4954-b8ec-c448ef2d1e59%40anthropic-plugin-directory">安装插件</a>，然后对 Claude 说&quot;帮我们配置好&quot;。Claude 会询问团队使用哪些系统、测试 connectors，并报告哪些 skills 暂时还无法完整运行。</p>
-<p>想看插件实际运行，可<a href="https://claude.com/resources/webinars/claude-for-manufacturing-put-your-plants-know-how-to-work">报名参加我们的技术网络研讨会</a>，时间为美国东部时间 11 月 17 日上午 11:00。想结合贵公司的制造系统详谈，请<a href="https://claude.com/contact-sales">联系我们的销售团队</a>。</p>
-<p>文章</p>
-<p>2026 年 11 月 12 日</p>
-<h3>在自己的安全边界内运行 Claude Managed Agents</h3>
-<p>推出自托管 Claude Managed Agents。现在你可以在自己的环境中运行 agents，无论在自己的云上还是本地。agents、凭据和会话历史都由你托管，向 Claude 发送的请求发往哪里也由你选。</p>
-<p>Claude PlatformClaude Managed Agents</p>
-<p>文章</p>
-<p>2026 年 11 月 12 日</p>
-<h3>推出 Claude Meetings</h3>
-<p>把 Claude 加进视频通话，边聊边把活儿开起来</p>
 <p>文章</p>
 <p>2026 年 11 月 10 日</p>
 <h3>你的应用现在能在 Claude 里打开，Claude 也能在其中工作</h3>
@@ -590,6 +474,122 @@
 <h3>用 Claude Managed Agents 和 NVIDIA 探索 agent 安全的新思路</h3>
 <p>注：本文已在原版基础上更新，补充了关于 Claude Managed Agents 的技术细节。</p>
 <p>Claude Platform</p>
+<h2>用 Claude 改变组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
+<p>如需接收我们的每月开发者通讯，请留下你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>推出 Claude for Manufacturing</title>
+      <link>https://claude.com/resources/articles/claude-for-manufacturing</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/claude-for-manufacturing</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Claude for Manufacturing</description>
+      <content:encoded><![CDATA[<p>今天，我们推出 <a href="http://claude.com/solutions/manufacturing">Claude for Manufacturing</a>，这款插件自带的 skills 覆盖从为新订单报价到诊断停机机器的各项工作。估算员现在可以让 Claude 读取客户请求、比照类似订单的成本，并起草报价。该插件通过 connectors 接入 Autodesk Fusion、Infor、Microsoft 365 和 Oracle NetSuite，基于制造商自有的记录工作。Claude for Manufacturing 的设计让负责人在成果送达客户或供应商之前，能够先审阅并批准。</p>
+<p>制造团队一天里往往要花大量时间收集信息。在 2025 年 Manufacturing Leadership Council 的一项调查中，79% 的制造商表示自己<a href="https://manufacturingleadershipcouncil.com/survey-october/">手动录入数据</a>。有了 Claude 把每个流程推进到待审阅这一步，估算员可以专注定价，质量工程师专注修复，技术人员专注先检查哪里。</p>
+<h2><strong>为制造商打造的 skills</strong></h2>
+<p>这款插件的 17 个 skills 覆盖销售、质量、运营、供应链、设计和设置。有的只处理单一任务，有的按顺序连跑多个任务，让 Claude 能把一项工作推进若干步骤，直到需要人工审阅为止。这些 skills 可运行的流程包括：</p>
+<ul><li><strong>为新订单报价</strong>：估算员可以让 Claude 读取客户请求、列出缺失信息、比照类似订单的成本，并起草可供发布的报价。</li><li><strong>排查检验不合格</strong>：质量工程师可以让 Claude 记录不合格情况、翻查过往报告里是否有同类问题、给可能原因排序，并起草纠正措施报告。</li><li><strong>诊断设备故障</strong>：技术人员可以让 Claude 读取传感器导出数据、维修记录、照片和手册，再把可能原因排序，供技术人员逐项排查并决定下一步。</li><li><strong>改向其他供应商采购</strong>：采购员可以让 Claude 拟好询价单，再比较回收的报价。</li><li><strong>用 Autodesk Fusion 比选设计方案</strong>：工程师可以让 Claude 基于现有模型生成多个变体，按工程师设定的目标打分，并起草决策备忘录。</li><li><strong>生成生产报表</strong>：工厂经理可以让 Claude 把生产数据汇总成一份报告，列出实际产量与目标的差距、设备停机时间，以及停机和欠产造成的损失。</li></ul>
+<p>这些 skills 只是起点。企业可以在此基础上按自身运营情况改制，我们也会逐步增加新的制造类 skills。</p>
+<h2><strong>对接制造系统的 connectors</strong></h2>
+<p>Claude for Manufacturing 与制造运营核心软件协同工作，而这些软件仍是团队经营业务的中枢：</p>
+<ul><li><strong>Autodesk Fusion</strong>：工程师能在定案前比选更多设计方案，因为 Claude 会基于他们现有的模型生成变体。</li><li><strong>Infor</strong>：采购员和计划员可以在行动前核对采购订单与库存，因为 Claude 会在 Infor 里查出来。</li><li><strong>Microsoft 365</strong>：质量工程师可以把操作规程、供应商邮件和导出的报告汇进同一项工作，因为 Claude 能在共享文件夹和收件箱里找到它们。</li><li><strong>Oracle NetSuite</strong>：估算员可以对照真实订单、库存、生产工序和订单成本为新工作定价，因为 Claude 起草报价时会调取这些记录。</li></ul>
+<p>对于没有 connectors 的系统，制造商同样可以使用这款插件。他们把那些系统定期导出的文件存到 Microsoft 365，Claude 便据这些文件起草报价或汇总生产报表。</p>
+<h2><strong>用 Claude 在 Infor 里改动数据</strong></h2>
+<p>为制造商提供核心软件的 Infor 也在<a href="https://claude.ai/directory/infor">推出自己的插件</a>。借助 Claude for Manufacturing 里的 Infor connector，团队可以查询记录；借助 Infor 的插件，他们还能在 Claude 里直接改动 Infor 中的数据。</p>
+<p>举例来说，如果一批钢材延迟两周到货，采购员可以问 Claude 哪些客户订单受影响、其他厂区还有多少钢材。采购员一经批准，Claude 就能向另一家供应商下达采购订单，并在 Infor 里重排受影响的生产计划。Claude 的访问权限遵循该采购员在 Infor 中的权限。</p>
+<h2><strong>制造团队始终掌握主动</strong></h2>
+<p>skills 都以用户审阅收尾：估算员核对并发布报价，质量工程师确认纠正措施报告里的修复方案。为便于审阅，Claude 能把数字和论断回溯到对应的原始数据与文档。</p>
+<p>Claude for Manufacturing 不操作设备。为此，Anthropic 正在开发 <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">Model Hardware Standard</a>，这是一项研究预览，为可编程设备提供一套标准方式来描述自身的测量值、设置和安全限值。</p>
+<h2><strong>如何开始使用</strong></h2>
+<p>在 Team 或 Enterprise 计划下，<a href="https://claude.ai/customize/plugins/id/45112ff2-6233-4954-b8ec-c448ef2d1e59%40anthropic-plugin-directory">安装插件</a>，然后对 Claude 说&quot;帮我们配置好&quot;。Claude 会询问团队使用哪些系统、测试 connectors，并报告哪些 skills 暂时还无法完整运行。</p>
+<p>想看插件实际运行，可<a href="https://claude.com/resources/webinars/claude-for-manufacturing-put-your-plants-know-how-to-work">报名参加我们的技术网络研讨会</a>，时间为美国东部时间 11 月 17 日上午 11:00。想结合贵公司的制造系统详谈，请<a href="https://claude.com/contact-sales">联系我们的销售团队</a>。</p>
+<p>文章</p>
+<p>2026 年 11 月 12 日</p>
+<h3>在自己的安全边界内运行 Claude Managed Agents</h3>
+<p>推出自托管 Claude Managed Agents。现在你可以在自己的环境中运行 agents，无论在自己的云上还是本地。agents、凭据和会话历史都由你托管，向 Claude 发送的请求发往哪里也由你选。</p>
+<p>Claude PlatformClaude Managed Agents</p>
+<p>文章</p>
+<p>2026 年 11 月 12 日</p>
+<h3>推出 Claude Meetings</h3>
+<p>把 Claude 加进视频通话，边聊边把活儿开起来</p>
+<p>文章</p>
+<p>2026 年 11 月 10 日</p>
+<h3>你的应用现在能在 Claude 里打开，Claude 也能在其中工作</h3>
+<p>我们的合作伙伴现在可以把应用直接嵌进 Claude，让你和 Claude 在同一个工具、同一块屏幕上协作，无需切换标签页。</p>
+<p>Claude appsMCP</p>
+<p>文章</p>
+<p>2026 年 11 月 10 日</p>
+<h3>与 Claude 协作的更多方式：Sheets、Whiteboards 和 Interactive Connectors</h3>
+<p>以思考的速度工作</p>
+<p>Claude apps</p>
+<h2>用 Claude 改变组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
+<p>如需接收我们的每月开发者通讯，请留下你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>把 Claude Opus 5.5 用作知识工作的日常主力模型</title>
+      <link>https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Using Claude Opus 5.5 as your daily driver for knowledge work</description>
+      <content:encoded><![CDATA[<p>Claude Opus 5.5 现在是 Claude 在 Pro、Max、Ultra 和 Team 计划中的默认模型。我们建议把它作为知识工作的日常主力模型，也就是当你用 Claude 做研究、分析，以及撰写或制作备忘录、报告、电子表格和演示文稿时，一直选着的那个模型。</p>
+<p>如果你或团队一直用 Sonnet 干日常活、把 Opus 留给繁重的分析或复杂项目，现在值得重新掂量：更强的模型能用更少的功夫把任务做完，这<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">往往能抵掉它每 token 更高的一大半价格</a>。</p>
+<p>当前几款模型的对比如下：</p>
+<table><thead><tr><th><strong>模型</strong></th><th><strong>适用场景</strong></th><th><strong>每百万 token 价格（输入 / 输出）</strong>*</th><th><strong>相对速度</strong></th></tr></thead><tbody><tr><td>Claude Haiku 5.5</td><td>快速查询，以及速度优先的大批量工作</td><td>$0.10 / $0.50</td><td>最快</td></tr><tr><td>Claude Sonnet 5.5</td><td>范围明确、要求清晰的任务，以及据明确要求产出的精修文档、幻灯片和电子表格</td><td>$2 / $10</td><td>快</td></tr><tr><td>Claude Opus 5.5</td><td>大多数知识工作：研究、分析，以及需要判断力的成品文档、演示文稿和电子表格</td><td>$4 / $20</td><td>中等</td></tr><tr><td>Claude Fable 5.2</td><td>最宏大、开放式的技术工作，如编程、金融和科学等领域</td><td>$8 / $40</td><td>中等</td></tr></tbody></table>
+<p>**价格针对按 token 计费的用量（<a href="https://platform.claude.com/docs/en/models/opus-5-5/overview">模型对比</a>）。Haiku 5.5 的价格适用于不超过 100k token 的 prompt，更长的 prompt 按 $0.50 / $2.50 计费。在 Pro、Max、Ultra 和 Team 计划中，价格更高的模型会更快消耗额度。除限时首发优惠外，Pro 计划以及 Team 和按席位计费的 Enterprise 计划的标准席位，其额度不包含 Fable 5.2，因此它按用量积分计费。*</p>
+<p><a href="https://www.anthropic.com/claude-haiku-5-5"><strong>Haiku 5.5</strong></a> 是我们最快、也最便宜的模型，专为快速查询和撰写摘要、整理数据这类大批量工作打造。这是首款带 effort 控制的 Haiku 模型，因此你可以在切换到更大模型之前，先要求它更仔细地过一遍。它最适合短小、范围窄的任务；需要更长的分析，就换用 Opus 5.5。</p>
+<p><a href="https://www.anthropic.com/claude-sonnet-5-5"><strong>Sonnet 5.5</strong></a> 在范围明确、要求清晰的任务上比 Opus 5.5 更快也更便宜，比如让 Claude 把定稿的笔记整理成精修文档，或套用幻灯片模板做一份演示文稿。不过在更高的 effort 档位下，Sonnet 5.5 的单任务成本会逼近 Opus 5.5；所以如果你发现自己在把 Sonnet 推到 Extra high 或 Max effort，不妨换用 Opus 5.5。</p>
+<p><strong><a href="https://www.anthropic.com/claude-opus-5-5">Opus 5.5</a> </strong>专为需要审慎判断的复杂工作打造，比如研究、财务分析，以及产出成品文档、演示文稿和电子表格。后文会详细说明我们为何推荐用 Opus 5.5 承担日常知识工作。</p>
+<p><a href="https://www.anthropic.com/claude-fable-and-mythos-5-2"><strong>Fable 5.2</strong></a> 最适合最吃力的推理和长时间运行的任务，比如深入的多步研究，或可以交给一大群连续跑上数小时的 subagent 去做的编程。大多数知识工作，先用 Opus 5.5；等项目的范围和复杂度确实需要时，再转到 Fable 5.2。Fable 5.2 在所有付费计划中都可用，不过<a href="https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan">它如何计入你的用量</a>取决于具体计划。</p>
+<p>无论当前用的是哪个模型，如果 Claude 表现不如预期，先试更高的 effort，再考虑换更大的模型。如果它已掌握上下文、明显认真做过，却仍然做错，那就换更大的模型。</p>
+<h2><strong>Opus 5.5 在文档、研究、财务和图表上表现最出色</strong></h2>
+<p>Opus 5.5 精确遵循指令、不越出范围，因此它产出的电子表格、幻灯片和文档往往几乎不用再改。它对待数字和来源也很谨慎。在一项内部研究测试中，Opus 5.5 仅凭一份存档的网页快照，撰写某公司的季度业绩报告，而快照里该公司的财报发布很难找到。自动评分器逐一核对报告里每个数字和引文与快照页面的对应关系，规则是：只要凭空捏造哪怕一个数字或一句引文，报告即判不合格。跨各 effort 档位，18 份报告有 16 份通过。</p>
+<p>它的文笔也比早期模型更清晰：把最重要的信息放在最前面，少用行话，遵守你给的写作规范；在较长的任务里，还会直说它做了什么、发现了什么、还需要你提供什么。这也让它的成果更容易核查，我们既把这看作实用上的好处，也看作安全上的好处。</p>
+<p>Ramp 的资深软件工程师 John Ruelas <a href="https://www.anthropic.com/claude-opus-5-5">说</a>：&quot;它写起来像一位靠谱的同事，也遵守我们的写作规范。一份设计说明书出来后几乎不用改就能用；它重写我们的一条 prompt 时，我甚至更喜欢它的版本，胜过我自己写的。&quot;</p>
+<p>财务分析是它的另一项强项。Opus 5.5 能准确读取信息密集的申报文件、财务模型和图表，并在整个项目或交易中保持上下文连贯。在另一项内部测试里，它分析两家虚构 HR 软件公司之间的拟议合并：先在 Excel 里搭出财务模型，再据此做成一份给高管看的演示文稿，判断按该价格这笔交易是否划算。整个任务用时 63 分钟，而 Opus 5 做同一任务要 93 分钟；成本只有一半，模型却更完整，演示文稿也更好读。</p>
+<p>投资公司 Walleye Capital 中央股票量化研究工程负责人 Frank Corrao <a href="https://www.anthropic.com/claude-opus-5-5">表示</a>，在较高的 effort 档位下，Opus 5.5&quot;发现我们自己指令里的分钟索引差了一位，主动做了修正，还指出这会让它在评分器那里丢分。它是对的，此前我们测过的模型没有一个发现并处理过这个问题。&quot;</p>
+<p>Opus 5.5 是我们在视觉能力上最强的 Opus 模型。它能准确读取信息密集的文档、图表、截图和示意图，因此从文档里提取数据很可靠。即便设在最低 effort 档，它从密集图表中读数的准确度也高于 Opus 5 设在最高档时。</p>
+<h2><strong>充分发挥 Opus 5.5</strong></h2>
+<p>每出一个新模型，都值得重新试一遍你交给 Claude 的东西，并丢掉为旧模型养成的提示习惯。</p>
+<h3><strong>先试这些任务</strong></h3>
+<ul><li><strong>直接要成品文件。</strong> 想要电子表格或文档，就直说要电子表格或文档，别只要一份供展开的大纲。多数情况下，Opus 5.5 能从你的请求一步做到成品文件。</li><li><strong>让它核查长文档。</strong> 丢给它一份长计划、报告或演示文稿，让它找错和前后矛盾。长文档里容易漏看的细节，Opus 5.5 能揪出来，比如演示文稿里某张图表与源数据对不上。</li><li><strong>交给它一个研究问题。</strong> 提一个没有标准答案的问题，让它汇集资料、啃完长文档，再把发现写成备忘录、报告或演示文稿。</li><li><strong>试试视觉类工作。</strong> 视觉能力上的提升也延续到了设计，不妨用它做界面原型、搭网站，或把一个概念画出来。</li></ul>
+<p><img src="https://assets.claude.com/43af7ca2d9f20a0722825b0c207cd80af4d3fdab.png" alt="Claude Opus 5.5 的任务示意"></p>
+<h3><strong>改掉这些提示习惯</strong></h3>
+<ul><li><strong>把 Claude 接到你的工作文件和系统。</strong> 想让产出贴合你的工作，这是最有用的一步：Claude 能通过 connector 触达你的文件和系统时，就可以自己去取任务所需的东西，而不只依赖你粘贴进去的内容。在 Team 和 Enterprise 计划中，必须先由所有者开启 connector，成员才能使用。</li><li><strong>在第一条消息里就说清&quot;做完&quot;是什么样。</strong> 别一条一条地给 Claude 下指令，而是一次讲清目标、最终产出，以及希望它何时停下来问你。把又长又分多块的工作一路做到底，Opus 5.5 比 Opus 5 更稳。</li><li><strong>删掉&quot;think hard&quot;和&quot;think carefully&quot;。</strong> Opus 5.5 的思考始终开启，会根据你的请求和 effort 档位决定想多少。在我们的测试里，去掉这两行后回复起步更快，质量也没有明显下降。</li><li><strong>从 Medium 档开始。</strong> Medium 是 Opus 5.5 的默认档；在我们的编程和知识工作评测中，Medium 档的 Opus 5.5 追平或超过了 High 档的 Opus 5。更高的档位想得更久、花钱更多，却不一定产出更好，所以等 Medium 卡住了再升到 High。要改档位，点发送按钮旁边的模型名称，选择 Effort。</li><li><strong>直接附上图表，别重敲一遍。</strong> 把图表、截图或示意图本身发过去，而不是把里面的数字抄进 prompt。为早期模型准备的变通办法，比如把图表数值誊写出来，可能已经用不上了。</li><li><strong>点名你不想要的风格。</strong> 做设计工作时，&quot;避免千篇一律的外观&quot;这类笼统指令，往往只是把一种默认风格换成另一种。点出具体要避开的样式更管用，比如米色背景或药丸形按钮。</li><li><strong>把自家规范给它。</strong> 把品牌或写作规范贴进请求里，或让 Claude 去看你做得最好的几份现成演示文稿——比如放在它能通过 connector 访问的 Google Drive 文件夹里——再让它照着来。要做好几轮才完全到位的准备。</li></ul>
+<p><img src="https://assets.claude.com/d61fa79e1e1a38bd6ad4547ddb66c993ef569705.png" alt="Claude Opus 5.5 提示习惯示意"></p>
+<p>这一关于 effort 的结论，在早期测试者那里也成立。Factory 的技术团队成员 Zimu Li <a href="https://www.anthropic.com/claude-opus-5-5">说</a>：&quot;Claude Opus 5.5 是我们第一个会默认设在 medium effort 的模型。在我们的测试中，它追平了设在 high effort 的 Opus 5，而输出 token 少了 20% 到 25%。&quot;</p>
+<h2><strong>在一个演示项目上测试 Opus 5.5</strong></h2>
+<p>上面这些，放到我们在一次演示里走完的项目中是什么样子？设想一家零售公司，过去一年营收增长放缓，管理层对原因有四种猜测，分析师手里有一文件夹材料：各门店销售电子表格、最近一次管理层外出会议的 PDF，以及其他文件。用设在 Medium 档的 Opus 5.5 时，prompt 大致是：</p>
+<p><code>Growth slowed a lot this year. Leadership has a couple of theories about why; they're in [my manager's] note. Everything I have is in the uploaded folder. Please test each of the four theories against the data and tell me which ones hold up.</code></p>
+<p>这段 prompt 没叫 Claude &quot;think hard&quot;，也没说查哪种理论该看哪个文件。它只讲清目标和最终产出的样子，把做法留给 Claude。</p>
+<p>Claude 发现数据并不支持这四种猜测中的任何一种，不过有一种无法完全排除。接着它提出了一个没人提过的解释：新店开得离老店太近，把老店的生意分走了。按城市列门店时，这个规律还不太看得清；一旦按与新店的距离筛选，就清楚了。Claude 用销售影响对该距离做回归，为这一发现提供了依据。</p>
+<p>随后，Claude 把分析整理成一份文档，正文之外还带图表和交互元素，其中有一个滑块，展示销售额随新店与老店之间距离变化的走势。一位同事同时审阅了这份文档。</p>
+<p>接着，经理让 Claude 把文档做成董事会幻灯片，开头就给出结论。对于不用 Claude 的同事，文档可导出为 Word、PDF 或 Google Docs，演示文稿可导出为 PowerPoint、PDF 或 Google Slides。</p>
+<p>想看完整项目（含问答），可<a href="https://claude.com/resources/webinars/opus-5-5-for-work">点播观看 Opus 5.5 for Work 场次</a>。</p>
+<h2><strong>用自己的工作试试 Opus 5.5</strong></h2>
+<p>挑一件你平时会拆成好几次请求来做的事，比如研究备忘录、差异分析，或根据现成文档做一份演示文稿。把文件和最终成果的描述放在一条消息里交给 Opus 5.5，档位留在 Medium，再把结果和你习惯从其他模型拿到的作个对比。</p>
+<p>文章</p>
+<p>2026 年 11 月 12 日</p>
+<h3>在自己的安全边界内运行 Claude Managed Agents</h3>
+<p>推出自托管 Claude Managed Agents。现在你可以在自己的环境中运行 agents，无论在自己的云上还是本地。agents、凭据和会话历史都由你托管，向 Claude 发送的请求发往哪里也由你选。</p>
+<p>Claude PlatformClaude Managed Agents</p>
+<p>文章</p>
+<p>2026 年 11 月 12 日</p>
+<h3>J.Crew 借 Claude 将标志性造型理念带到线上</h3>
+<p>J.Crew 的新 Style Advisor 用 Claude 提供更个性化的在线购物方式，给出整套造型，而不是一件件单品。</p>
+<p>Claude Code</p>
+<p>文章</p>
+<p>2026 年 11 月 12 日</p>
+<h3>推出 Claude for Manufacturing</h3>
+<p>一款含 17 个 skills 和 4 个 connectors 的新插件，帮制造商从已在运行的系统里起草报价、质量报告和供应商询价。</p>
+<p>文章</p>
+<p>2026 年 11 月 12 日</p>
+<h3>推出 Claude Meetings</h3>
+<p>把 Claude 加进视频通话，边聊边把活儿开起来</p>
 <h2>用 Claude 改变组织的运作方式</h2>
 <p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
 <h3>订阅开发者通讯</h3>

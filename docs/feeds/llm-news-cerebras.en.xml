@@ -8,6 +8,39 @@
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-cerebras.en.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Cerebras launches disaggregated inference &gt;&gt;</title>
+      <link>https://www.cerebras.ai/blog/cerebras-launches-disaggregated-inference</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/cerebras-launches-disaggregated-inference?li=1</guid>
+      <content:encoded><![CDATA[<p>Nov 17 2026</p>
+<h1>Cerebras launches disaggregated inference</h1>
+<p><a href="https://www.cerebras.ai/author/atharva-talpade">Atharva Talpade</a></p>
+<p><em>We’ve deployed Cerebras Wafer Scale Engines with GPUs to deliver lightning-fast tokens at scale</em></p>
+<p>The world is hungry for ultrafast tokens. In 2026, Cerebras saw an insatiable demand for fast inference, both on our inference cloud and via our partners. To meet demand, we began developing disaggregated inference: GPUs handle prompt processing (prefill) and Cerebras systems handle output generation (decode).</p>
+<p>This solution is now in production and delivers five times more tokens per megawatt at the same ultrafast Cerebras speeds.</p>
+<p>We can now serve more ultrafast tokens via Cerebras Inference Cloud to meet market demand. Infrastructure partners can also leverage the Cerebras disaggregated solution to achieve more ultrafast tokens in their own datacenters.</p>
+<p>Alongside our recently announced CS-4, our dramatically scaled manufacturing, and our planned 700MW of data center capacity, disaggregated inference will enable Cerebras and partners to serve many more ultrafast tokens in 2027 and beyond.</p>
+<p>In this blog we cover:</p>
+<ul><li>The need for more ultrafast inference capacity</li><li>Why Cerebras is advantaged for decode</li><li>Cerebras disaggregated inference production results</li><li>Cerebras disaggregated inference for infrastructure partners</li></ul>
+<h3>The need for more fast inference capacity</h3>
+<p>Agentic applications like Muse, Copilot, and Codex are scaling rapidly and require highly interactive inference to keep users engaged. To meet the growing demand of these applications in a power-constrained environment, our industry must deliver significantly more inference capacity per megawatt, at response speeds that make these applications useful.</p>
+<p>Sources: Goldman Sachs Research, “AI Agents Forecast to Boost Tech Cash Flow as Usage Soars,” May 20, 2026; Goldman Sachs data center capacity estimates, as reported by Investing.com, November 6, 2026.</p>
+<p>That is why Cerebras invested in <a href="https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up">disaggregation</a>. Pairing a prefill accelerator for prompt processing with the Cerebras System for response generation increases token throughput per megawatt while preserving Cerebras’ ultrafast generation speeds. For inference providers, that means more capacity to serve customers and greater revenue potential from the same power budget.</p>
+<h3>Why Cerebras is advantaged for decode</h3>
+<p>An inference request has two main stages. Prompt processing, known as prefill, processes the input and produces intermediate model state. Response generation, known as decode, uses that state to generate output tokens. There are many ways to split the inference workload, including draft–target and attention–FFN among others, but separating prefill from decode is uniquely advantageous when the goal is highly interactive inference.</p>
+<p>Decode is autoregressive. That means the model generates one token at a time, using each generated token as an input to generate the next. Each step means reading model data from memory again, so memory bandwidth matters a lot. In the ultrafast inference domain, SRAM-centric chips have an advantage because they can keep that data on-chip and read it much more quickly. Cerebras takes this to wafer scale, with tens of gigabytes of SRAM and tens of petabytes per second of memory bandwidth on a single chip—350× the SRAM capacity and 5,400× the memory bandwidth of a typical GB300 GPU. This allows the Cerebras System to fit more concurrent requests and model layers directly on the chip, enabling the CS-3, CS-4, and CS-5 to achieve ultrafast speeds at an attractive throughput.</p>
+<h3>Cerebras disaggregated inference production results</h3>
+<p>Pairing Cerebras systems, which are optimized for ultrafast decode, with accelerators well-suited to the compute needs of prefill, such as AMD Instinct GPUs, allows the delivery of an immense amount of ultrafast inference at scale. In a production deployment on the Cerebras Inference Cloud, AMD Instinct GPUs process prompts, and Cerebras CS-3 systems generate responses. Moving prompt processing to GPUs allows Cerebras systems to devote their serving capacity to response generation. In our measured production deployment, this combination delivered 5X the throughput per megawatt of a CS-3-only configuration, with no loss in token generation speed.</p>
+<p>Source: November 14th shared GPT-OSS-120B endpoint via the Cerebras Inference Cloud throughput per megawatt before and after enabling disaggregated inference, normalized to the aggregated inference baseline (1×).</p>
+<p>We plan to deploy disaggregated inference broadly across hundreds of megawatts in the Cerebras Inference Cloud and in partner deployments by the end of 2027. Our aim is to increase the ultrafast inference capacity available for our customers.</p>
+<h3>Cerebras disaggregated inference for infrastructure partners</h3>
+<p>The Cerebras disaggregated inference solution was also built for our partners to adopt. Infrastructure partners can deploy disaggregated inference clusters based on Cerebras-provided reference architecture, co-locating their chosen prefill accelerators and Cerebras systems within a unified network. For software integration, partners can either integrate with the Cerebras end-to-end disaggregated software stack or a decode-only SDK.</p>
+<p>The end-to-end disaggregated software stack is best suited for partners optimizing time-to-market. It consists of:</p>
+<ul><li>A disaggregated inference framework to route requests between prefill and decode pools and manage replica capacity and health.</li><li>A prefill engine to process prompts using open-source inference engines like vLLM or SGLang.</li><li>A Cerebras decode engine for response generation on Cerebras systems.</li><li>KV Portal software, an interface to transfer intermediate model state, including key-value caches, between prefill and decode engines over RDMA.</li></ul>
+<p>The decode-only SDK is best suited for partners optimizing for control. With the decode-only SDK, partners can bring their own inference framework and prefill engine to the Cerebras decode engine and KV Portal software. In addition, the decode-only SDK provides development aids such as a mock Cerebras decode replica and a reference integration to an open-source disaggregated inference framework and prefill engine.</p>
+<p>Early-access partners, including Amazon Web Services, Fireworks AI, Gimlet Labs, and General Compute, already have access to the Cerebras disaggregation solution for their deployments. We are now expanding access to additional partners looking to bring ultrafast inference to their customers at scale.</p>
+<p>To discuss the results, solutions, or deployment opportunities in more detail, contact us <a href="https://www.cerebras.ai/contact-disagg?utm_source=google&amp;utm_medium=form&amp;utm_campaign=disagg&amp;utm_id=23138663243&amp;utm_term=%7Bkeyword%7D">here</a>.</p>]]></content:encoded>
+    </item>
+    <item>
       <title>What It Took to Build Wafer-Scale, and Why It Lasts</title>
       <link>https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts?li=1</guid>
@@ -50,39 +83,6 @@
 <p>We love building silicon and are happy to engage in technical discussions on this or other topics related to fast inference with the community.</p>
 <p>Andrew Feldman CEO and Co-Founder</p>
 <p>Disclosure: I am long Cerebras stock.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Cerebras launches disaggregated inference</title>
-      <link>https://www.cerebras.ai/blog/cerebras-launches-disaggregated-inference</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/cerebras-launches-disaggregated-inference?li=1</guid>
-      <content:encoded><![CDATA[<p>Nov 17 2026</p>
-<h1>Cerebras launches disaggregated inference</h1>
-<p><a href="https://www.cerebras.ai/author/atharva-talpade">Atharva Talpade</a></p>
-<p><em>We’ve deployed Cerebras Wafer Scale Engines with GPUs to deliver lightning-fast tokens at scale</em></p>
-<p>The world is hungry for ultrafast tokens. In 2026, Cerebras saw an insatiable demand for fast inference, both on our inference cloud and via our partners. To meet demand, we began developing disaggregated inference: GPUs handle prompt processing (prefill) and Cerebras systems handle output generation (decode).</p>
-<p>This solution is now in production and delivers five times more tokens per megawatt at the same ultrafast Cerebras speeds.</p>
-<p>We can now serve more ultrafast tokens via Cerebras Inference Cloud to meet market demand. Infrastructure partners can also leverage the Cerebras disaggregated solution to achieve more ultrafast tokens in their own datacenters.</p>
-<p>Alongside our recently announced CS-4, our dramatically scaled manufacturing, and our planned 700MW of data center capacity, disaggregated inference will enable Cerebras and partners to serve many more ultrafast tokens in 2027 and beyond.</p>
-<p>In this blog we cover:</p>
-<ul><li>The need for more ultrafast inference capacity</li><li>Why Cerebras is advantaged for decode</li><li>Cerebras disaggregated inference production results</li><li>Cerebras disaggregated inference for infrastructure partners</li></ul>
-<h3>The need for more fast inference capacity</h3>
-<p>Agentic applications like Muse, Copilot, and Codex are scaling rapidly and require highly interactive inference to keep users engaged. To meet the growing demand of these applications in a power-constrained environment, our industry must deliver significantly more inference capacity per megawatt, at response speeds that make these applications useful.</p>
-<p>Sources: Goldman Sachs Research, “AI Agents Forecast to Boost Tech Cash Flow as Usage Soars,” May 20, 2026; Goldman Sachs data center capacity estimates, as reported by Investing.com, November 6, 2026.</p>
-<p>That is why Cerebras invested in <a href="https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up">disaggregation</a>. Pairing a prefill accelerator for prompt processing with the Cerebras System for response generation increases token throughput per megawatt while preserving Cerebras’ ultrafast generation speeds. For inference providers, that means more capacity to serve customers and greater revenue potential from the same power budget.</p>
-<h3>Why Cerebras is advantaged for decode</h3>
-<p>An inference request has two main stages. Prompt processing, known as prefill, processes the input and produces intermediate model state. Response generation, known as decode, uses that state to generate output tokens. There are many ways to split the inference workload, including draft–target and attention–FFN among others, but separating prefill from decode is uniquely advantageous when the goal is highly interactive inference.</p>
-<p>Decode is autoregressive. That means the model generates one token at a time, using each generated token as an input to generate the next. Each step means reading model data from memory again, so memory bandwidth matters a lot. In the ultrafast inference domain, SRAM-centric chips have an advantage because they can keep that data on-chip and read it much more quickly. Cerebras takes this to wafer scale, with tens of gigabytes of SRAM and tens of petabytes per second of memory bandwidth on a single chip—350× the SRAM capacity and 5,400× the memory bandwidth of a typical GB300 GPU. This allows the Cerebras System to fit more concurrent requests and model layers directly on the chip, enabling the CS-3, CS-4, and CS-5 to achieve ultrafast speeds at an attractive throughput.</p>
-<h3>Cerebras disaggregated inference production results</h3>
-<p>Pairing Cerebras systems, which are optimized for ultrafast decode, with accelerators well-suited to the compute needs of prefill, such as AMD Instinct GPUs, allows the delivery of an immense amount of ultrafast inference at scale. In a production deployment on the Cerebras Inference Cloud, AMD Instinct GPUs process prompts, and Cerebras CS-3 systems generate responses. Moving prompt processing to GPUs allows Cerebras systems to devote their serving capacity to response generation. In our measured production deployment, this combination delivered 5X the throughput per megawatt of a CS-3-only configuration, with no loss in token generation speed.</p>
-<p>Source: November 14th shared GPT-OSS-120B endpoint via the Cerebras Inference Cloud throughput per megawatt before and after enabling disaggregated inference, normalized to the aggregated inference baseline (1×).</p>
-<p>We plan to deploy disaggregated inference broadly across hundreds of megawatts in the Cerebras Inference Cloud and in partner deployments by the end of 2027. Our aim is to increase the ultrafast inference capacity available for our customers.</p>
-<h3>Cerebras disaggregated inference for infrastructure partners</h3>
-<p>The Cerebras disaggregated inference solution was also built for our partners to adopt. Infrastructure partners can deploy disaggregated inference clusters based on Cerebras-provided reference architecture, co-locating their chosen prefill accelerators and Cerebras systems within a unified network. For software integration, partners can either integrate with the Cerebras end-to-end disaggregated software stack or a decode-only SDK.</p>
-<p>The end-to-end disaggregated software stack is best suited for partners optimizing time-to-market. It consists of:</p>
-<ul><li>A disaggregated inference framework to route requests between prefill and decode pools and manage replica capacity and health.</li><li>A prefill engine to process prompts using open-source inference engines like vLLM or SGLang.</li><li>A Cerebras decode engine for response generation on Cerebras systems.</li><li>KV Portal software, an interface to transfer intermediate model state, including key-value caches, between prefill and decode engines over RDMA.</li></ul>
-<p>The decode-only SDK is best suited for partners optimizing for control. With the decode-only SDK, partners can bring their own inference framework and prefill engine to the Cerebras decode engine and KV Portal software. In addition, the decode-only SDK provides development aids such as a mock Cerebras decode replica and a reference integration to an open-source disaggregated inference framework and prefill engine.</p>
-<p>Early-access partners, including Amazon Web Services, Fireworks AI, Gimlet Labs, and General Compute, already have access to the Cerebras disaggregation solution for their deployments. We are now expanding access to additional partners looking to bring ultrafast inference to their customers at scale.</p>
-<p>To discuss the results, solutions, or deployment opportunities in more detail, contact us <a href="https://www.cerebras.ai/contact-disagg?utm_source=google&amp;utm_medium=form&amp;utm_campaign=disagg&amp;utm_id=23138663243&amp;utm_term=%7Bkeyword%7D">here</a>.</p>]]></content:encoded>
     </item>
     <item>
       <title>High-level code, wafer-scale performance</title>

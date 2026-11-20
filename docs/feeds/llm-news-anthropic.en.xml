@@ -9,100 +9,6 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.en.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Building always-on agents</title>
-      <link>https://claude.com/resources/articles/building-always-on-agents</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/building-always-on-agents?li=1</guid>
-      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Over the past few months, we’ve seen a resurgence of always-on agents.</p>
-<p>Always-on agents are stateful and proactive, meaning they manage context across sessions and take actions without direct supervision. Underneath, they run on the same <a href="https://www.anthropic.com/research/building-effective-agents">core loop</a> as other agents. The difference is the surrounding architecture, which is built from primitives that control when the agents wake up, what carries over between runs, and how their work reaches the user.</p>
-<p>The resurgence is largely due to recent model advancements, which have made always-on agents more practical to run. First, the latest models have better judgment: they’re more reliable at understanding user intent and knowing when to check in. Second, intelligence is becoming cheaper, with long-horizon tasks benefiting the most. For example, on <a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">one long-horizon coding benchmark</a>, Opus 5.5 cost 78% less per solved task than Opus 5, compared with 40% less on typical workloads.</p>
-<p>Customers have started to ask us how to integrate this type of experience into their own products. Some companies want to make their existing agents more proactive, while others are looking to build them from the ground up.</p>
-<p>This post breaks down the primitives behind always-on agents and walks through how they fit together.</p>
-<h2>The cycle behind the always-on agent</h2>
-<p>An always-on agent is not actually “always on.” This is just a description of the user experience.</p>
-<p>In reality, the agent spends most of its time asleep, waking up periodically to do work. Each stretch of work is called a <strong>run</strong>: the agent receives an event, completes its task, and then saves information about what happened. A run works inside a <strong>session</strong>, which is the transcript of messages and tool calls. Once the run is finished, the agent goes back to sleep, and the cycle repeats indefinitely.</p>
-<p><img src="https://assets.claude.com/5dc803bf06d6e92e4aecae762da096626e2fa9ec.gif" alt="Animated diagram of an always-on agent’s timeline: long stretches asleep with no tokens spent, broken by brief runs. Each run has four steps: an event arrives, a session starts, the agent loop runs, and the run writes back to stored state that carries over between runs."></p>
-<h2>The core primitives</h2>
-<p>The surrounding architecture of an always-on agent has five core primitives: an event inbox, timers, memory, permissions, and an outbox. Let’s take a look at each.</p>
-<h3>Event inbox</h3>
-<p>Most AI agents only run when the user sends a message. In contrast, always-on agents can be triggered by many types of events, including webhooks, scheduled tasks, and background jobs.</p>
-<p>One tempting approach is to have each event source call the agent directly, but that has a few failure modes. For example, two events arriving at the same time can start competing runs, and a crash can lose an event entirely.</p>
-<p>This is where the event inbox comes in. Instead of calling the agent, every source sends an event to an inbox, where a worker picks it up.</p>
-<p>The simplest version has three components:</p>
-<ul><li>A durable list of events, usually a database table;</li><li>A handler, usually an HTTP endpoint, that writes events to the list; and</li><li>A worker, usually a background service, that reads from the list.</li></ul>
-<p>The inbox should track the status of each event, and events can be deduplicated based on unique identifiers from the source. A relational database works well for the inbox, with every event appended as a new row. We recommend starting with one inbox per user, but you can split this further if you need more parallelism.</p>
-<p><img src="https://assets.claude.com/bb08543a505cea3a24c88c718ceec4405e9c0a79.png" alt="Diagram of the event inbox. A handler (an HTTP endpoint) writes each event to the inbox, a database table that tracks status and drops duplicates, and wakes the worker. The worker reads what’s pending, starts the run, waits for it to finish, and marks the events done."></p>
-<p>When a new event comes in, the handler writes the event to the inbox and wakes the worker. The worker reads whatever is pending and starts a run. Events that continue earlier work, such as a reply from the user, resume an existing session, while everything else starts a new session.</p>
-<p>From there, the worker passes the events to the agent loop, waits for the run to finish, and marks the corresponding events as done. The implementation details can get tricky, so here are a few best practices:</p>
-<ul><li><strong>The handler should acknowledge events quickly</strong>. Some sources, such as webhook providers, treat slow responses as failures. The handler can still run lightweight checks, but any deeper verification, such as checking for prompt injection, should be done during the run.</li><li><strong>The inbox should be the source of truth</strong>. When the worker is woken up, it should pull the latest events from the inbox first. That way, if the worker dies mid-run, a new one can pick up the same event and retry.</li><li><strong>An inbox should only have one active worker at a time</strong>. This prevents two runs from duplicating work or overwriting each other. When a new event shows up mid-run, you can either push it to the next run, fold it into the current run, or interrupt and restart.</li><li><strong>The worker should batch pending events together.</strong> For example, if the user sends several messages in a row, the worker can merge them into a single run, so the agent only needs to reply once.</li></ul>
-<h3>Timers</h3>
-<p>Together with the event inbox, timers let always-on agents be proactive. Timers generally fall into one of two categories: follow-ups or schedules. A follow-up is a deadline that the agent sets for itself, such as checking in on a reply. A schedule, on the other hand, is a recurring task that happens on a known cadence, such as a daily newsletter.</p>
-<p>Timers live in their own durable store, usually another database table, separate from the inbox. The inbox should only hold events that are ready to be worked on. A follow-up and a schedule can share a similar schema, but a schedule needs to track its recurrence as well.</p>
-<p><img src="https://assets.claude.com/c16694e6d979a2ace84d03da0544297b7245c0a8.png" alt="Diagram of timers. A run sets a timer in a database table, either a follow-up set by the agent or a schedule set by the user. A scheduler finds what’s due and adds an event to the event inbox, which starts the next run."></p>
-<p>A timer doesn’t initiate a run on its own. Instead, a scheduler, usually a background service, polls the store at a fixed interval and fires anything that’s due. On each pass, the scheduler:</p>
-<ul><li>Scans the store and finds timers that are due.</li><li>Updates each timer based on its category.A follow-up should be marked as done.A schedule should get its due time updated to the next occurrence.</li><li>Adds an event to the inbox and wakes the worker.</li></ul>
-<p>For the scheduler, you can either build your own service or use a durable execution engine.</p>
-<h3>Memory</h3>
-<p>Always-on agents work across many disjointed runs and rely on memory to maintain continuity.</p>
-<p>Similar to the event inbox and timers, memory should have its own store. In our products, such as Claude Code’s <a href="https://code.claude.com/docs/en/memory">auto memory</a> and the Messages API’s <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">memory tool</a>, this is implemented as a directory of files. For an always-on agent, the directories should map to durable storage, usually a database or an object store. This way memories outlive the worker.</p>
-<p>As a rule of thumb, memory should only hold what the agent can’t look up again. If something already lives in another system, such as an issue tracker, you should save a pointer instead. Here is a breakdown of the types of memory an always-on agent should store:</p>
-<ul><li><strong>User instructions:</strong> Any instructions from the user about agent behavior should be saved in their own file and loaded at the start of every run. The user won’t always be around to steer the agent, so the instructions have to carry over between runs.</li><li><strong>User notes:</strong> The agent should save what it’s learned about the user, such as their role, their preferences, or any corrections they’ve given. You can start with one file and move to several small files as the notes grow. In the latter case, only an index is loaded at the start of each run, but the agent can pull the individual files into context when it needs more details.</li><li><strong>Past messages:</strong> The agent should keep track of what it’s already told the user so nothing is repeated. It can either store this in a separate file that’s loaded at the start of each run, or have the worker load the agent’s last few messages with the user.</li><li><strong>Task progress:</strong> For each ongoing task, the agent should keep a progress file that covers what’s been done and what’s left. Any new run can then read that file and pick up where the previous run left off. Similar to user notes, only an index is loaded at the start of each run, but the agent can pull the individual files into context when it needs more details.</li></ul>
-<p>The diagram below shows one example setup.</p>
-<p><img src="https://assets.claude.com/e5d209d7ef9b3455dec8a27b777dc12bdf806699.png" alt="Diagram of an example memory setup as a directory of files. instructions.md, index.md, and reported.md are loaded at the start of every run, while the notes/ and progress/ folders are read when needed. The agent writes to memory during the run."></p>
-<p>All of the above describes memory that’s saved during a run. You can also add dreaming, which reviews past sessions to curate memories. Dreaming can replace outdated entries and find patterns that only show up across many runs. If you’re interested in learning more, our <a href="https://www.anthropic.com/research/components-of-agent-memory">post on agent memory</a> covers this in more detail.</p>
-<h4>Inside the context window</h4>
-<p>Before doing any work, the agent loads the system prompt, tool definitions, and memory files. This initial context “overhead” is included in every run, so we recommend keeping it lean and using <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">prompt caching</a> to lower costs.</p>
-<p>A new session starts only with this context overhead and the events that triggered the run. An existing session, on the other hand, brings back the messages and tool calls from its earlier runs.</p>
-<p>If a session becomes too long, you can either <a href="https://platform.claude.com/docs/en/build-with-claude/compaction">compact the older messages</a> or start a new session. Both approaches lose detail, so anything that needs to persist should be saved to memory along the way.</p>
-<p><img src="https://assets.claude.com/48757f0a147acfe841c943674c6214d34ed4405a.gif" alt="Animated chart of context used over time. A fixed band for the system prompt, tools, and memory is present on every run. An existing session brings back its whole transcript and grows until compaction turns the older transcript into a summary."></p>
-<h3>Permissions</h3>
-<p>Permissions are where always-on agents carry the most risk. A run holds the user’s access and, by design, operates unattended. For each tool call, the agent needs to decide whether to proceed on its own, block it, or wait for approval.</p>
-<p>The components for permissions are the same ones other agents use:</p>
-<ul><li><strong>Credential store:</strong> Always-on agents often need sensitive user credentials like passwords or access tokens to be useful. The <a href="https://code.claude.com/docs/en/agent-sdk/secure-deployment#credential-management">recommended pattern</a> is a proxy outside the agent’s environment that adds credentials to outgoing requests. The agent sends requests without credentials, and the proxy injects the real credentials before forwarding.</li><li><strong>Auto mode:</strong> An always-on agent should be able to work without constant user input. We’ve already tackled a version of this problem with <a href="https://www.anthropic.com/research/claude-code-auto-mode">auto mode</a> in Claude Code. Auto mode uses classifiers to review higher-risk actions and block the ones they identify as dangerous so Claude can find a safer approach. User review, however, is still necessary for the most important decisions.</li><li><strong>Deferred tool calls:</strong> In Claude Code, <a href="https://code.claude.com/docs/en/hooks#defer-a-tool-call-for-later">a hook can defer a tool call</a> and wait for additional input from the user. The same pattern applies to always-on agents, which may need clarification or approval before taking certain actions. When a call is deferred, the run ends and the session is saved mid-call. The request is shown to the user (e.g., through an interactive card built with <a href="https://modelcontextprotocol.io/extensions/apps/overview">MCP Apps</a>), and their answer comes back as an event in the inbox. That event starts a new run, which resumes the saved session with the user’s input. While the deferred call waits for a response, the worker can pick up other events, so the agent isn’t blocked.</li></ul>
-<h3>Outbox</h3>
-<p>With most AI agents, the response is streamed to the user as it’s generated, so they can follow along as Claude reasons through the problem, calls tools, and writes its answer.</p>
-<p>Always-on agents, on the other hand, do most of their work in the background. The user gets the outcome and a few details, rather than the entire step-by-step breakdown.</p>
-<p><img src="https://assets.claude.com/700b5f3a446f22493c0307ec65751b6b2f82ccb7.png" alt="Diagram of the outbox. A run ends with nothing to say, a send tool call, or a deferred tool call that asks the user. Messages go to the outbox, a database table, and a dispatcher delivers them to the user. A deferred request can go through the outbox or be shown in your own interface."></p>
-<p>A run can end in one of three ways:</p>
-<ul><li>The agent sends a message to the outbox,</li><li>The agent decides that nothing needs to be sent, or</li><li>The agent uses a deferred tool call to request permission or additional input.</li></ul>
-<p>Most always-on agents can get by with a “send” tool that delivers the message directly to the user. You only need a formal outbox when you want to pace your agent’s messages or allow your agent to recover from errors.</p>
-<p>The outbox is a separate table of outgoing messages, analogous to the event inbox. There’s also a dispatcher, usually a background service, that’s analogous to the worker. The dispatcher reads the pending messages, decides what to deliver, and sends those to the user. A request from a deferred tool call can either go through the outbox or be shown directly in the interface.</p>
-<p>Beyond delivery, it’s important to tune how many messages the agent sends. An agent that sends too many becomes noisy, while an agent that doesn’t send enough misses things that the user needs to know. We recommend building evals to find the right balance. In practice, it’s better for the agent to start quiet and then earn more of the user’s attention over time.</p>
-<h2>How everything fits together</h2>
-<p>Here is how the five primitives fit together:</p>
-<p><img src="https://assets.claude.com/9f8df7b2dcc9d4637d27f37dae6e40a2a5851c8a.gif" alt="Animated diagram of how the five primitives fit together. Timers and the event inbox start a run, the run works with memory and permissions inside a session, and the outbox delivers messages to the user, whose answer comes back as an event."></p>
-<p>Every run starts with an event from the inbox, whether it’s a user message, a webhook, or a timer. When the worker picks up an event, it kicks off a run and wakes the agent in a new or existing session. The agent reads its memory to get a baseline, works within its permissions to take actions, and then updates its memory with anything it has learned. Once the run is finished, the agent pushes a row to the outbox, and the dispatcher delivers the message to the user.</p>
-<p>Together, these form a cycle. A run can set a timer that wakes the agent again later, and when the user replies to a message, their answer comes back as an event in the inbox. Each run is brief, but the cycle keeps going indefinitely, and that’s what makes the agent feel like it’s always on.</p>
-<h2>Acknowledgements</h2>
-<p><em>Written by William Hu. Special thanks to Rodrigo Olivares and Michael Segner for their contributions.</em></p>
-<p>Article</p>
-<p>Nov 13, 2026</p>
-<h3>The Claude Tag guide for startups</h3>
-<p>How leading startups use Claude Tag to ship faster and scale operations</p>
-<p>Claude Tag</p>
-<p>Article</p>
-<p>Nov 10, 2026</p>
-<h3>How Curative is building a national provider network with agents on Claude</h3>
-<p>Curative’s deal-making agent negotiates 2,000+ provider contracts a week.</p>
-<p>Claude PlatformClaude Code</p>
-<p>Article</p>
-<p>Nov 9, 2026</p>
-<h3>Safely scaling multi-agent teams with Claude Fable 5.2</h3>
-<p>How a team of 1,000 agents running an early version of Claude Fable 5.2 reproduced a formal proof of Fermat's Last Theorem with general tools, a shared database, and layered safety controls.</p>
-<p>(opens in new tab)</p>
-<p>Article</p>
-<p>Nov 9, 2026</p>
-<h3>Which Claude model should you build with?</h3>
-<p>How to choose between Claude Fable 5.2, Opus 5.5, Sonnet 5.5, and Haiku 5.5 by task, cost, and effort level.</p>
-<p>Claude PlatformClaude Code</p>
-<p>(opens in new tab)</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
-<h3>Get the developer newsletter</h3>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
-    </item>
-    <item>
       <title>The Claude Tag guide for startups</title>
       <link>https://claude.com/resources/articles/claude-tag-guide-for-startups</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-tag-guide-for-startups?li=1</guid>
@@ -334,6 +240,100 @@
 <p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
     </item>
     <item>
+      <title>Building always-on agents</title>
+      <link>https://claude.com/resources/articles/building-always-on-agents</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/building-always-on-agents?li=1</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Over the past few months, we’ve seen a resurgence of always-on agents.</p>
+<p>Always-on agents are stateful and proactive, meaning they manage context across sessions and take actions without direct supervision. Underneath, they run on the same <a href="https://www.anthropic.com/research/building-effective-agents">core loop</a> as other agents. The difference is the surrounding architecture, which is built from primitives that control when the agents wake up, what carries over between runs, and how their work reaches the user.</p>
+<p>The resurgence is largely due to recent model advancements, which have made always-on agents more practical to run. First, the latest models have better judgment: they’re more reliable at understanding user intent and knowing when to check in. Second, intelligence is becoming cheaper, with long-horizon tasks benefiting the most. For example, on <a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">one long-horizon coding benchmark</a>, Opus 5.5 cost 78% less per solved task than Opus 5, compared with 40% less on typical workloads.</p>
+<p>Customers have started to ask us how to integrate this type of experience into their own products. Some companies want to make their existing agents more proactive, while others are looking to build them from the ground up.</p>
+<p>This post breaks down the primitives behind always-on agents and walks through how they fit together.</p>
+<h2>The cycle behind the always-on agent</h2>
+<p>An always-on agent is not actually “always on.” This is just a description of the user experience.</p>
+<p>In reality, the agent spends most of its time asleep, waking up periodically to do work. Each stretch of work is called a <strong>run</strong>: the agent receives an event, completes its task, and then saves information about what happened. A run works inside a <strong>session</strong>, which is the transcript of messages and tool calls. Once the run is finished, the agent goes back to sleep, and the cycle repeats indefinitely.</p>
+<p><img src="https://assets.claude.com/5dc803bf06d6e92e4aecae762da096626e2fa9ec.gif" alt="Animated diagram of an always-on agent’s timeline: long stretches asleep with no tokens spent, broken by brief runs. Each run has four steps: an event arrives, a session starts, the agent loop runs, and the run writes back to stored state that carries over between runs."></p>
+<h2>The core primitives</h2>
+<p>The surrounding architecture of an always-on agent has five core primitives: an event inbox, timers, memory, permissions, and an outbox. Let’s take a look at each.</p>
+<h3>Event inbox</h3>
+<p>Most AI agents only run when the user sends a message. In contrast, always-on agents can be triggered by many types of events, including webhooks, scheduled tasks, and background jobs.</p>
+<p>One tempting approach is to have each event source call the agent directly, but that has a few failure modes. For example, two events arriving at the same time can start competing runs, and a crash can lose an event entirely.</p>
+<p>This is where the event inbox comes in. Instead of calling the agent, every source sends an event to an inbox, where a worker picks it up.</p>
+<p>The simplest version has three components:</p>
+<ul><li>A durable list of events, usually a database table;</li><li>A handler, usually an HTTP endpoint, that writes events to the list; and</li><li>A worker, usually a background service, that reads from the list.</li></ul>
+<p>The inbox should track the status of each event, and events can be deduplicated based on unique identifiers from the source. A relational database works well for the inbox, with every event appended as a new row. We recommend starting with one inbox per user, but you can split this further if you need more parallelism.</p>
+<p><img src="https://assets.claude.com/bb08543a505cea3a24c88c718ceec4405e9c0a79.png" alt="Diagram of the event inbox. A handler (an HTTP endpoint) writes each event to the inbox, a database table that tracks status and drops duplicates, and wakes the worker. The worker reads what’s pending, starts the run, waits for it to finish, and marks the events done."></p>
+<p>When a new event comes in, the handler writes the event to the inbox and wakes the worker. The worker reads whatever is pending and starts a run. Events that continue earlier work, such as a reply from the user, resume an existing session, while everything else starts a new session.</p>
+<p>From there, the worker passes the events to the agent loop, waits for the run to finish, and marks the corresponding events as done. The implementation details can get tricky, so here are a few best practices:</p>
+<ul><li><strong>The handler should acknowledge events quickly</strong>. Some sources, such as webhook providers, treat slow responses as failures. The handler can still run lightweight checks, but any deeper verification, such as checking for prompt injection, should be done during the run.</li><li><strong>The inbox should be the source of truth</strong>. When the worker is woken up, it should pull the latest events from the inbox first. That way, if the worker dies mid-run, a new one can pick up the same event and retry.</li><li><strong>An inbox should only have one active worker at a time</strong>. This prevents two runs from duplicating work or overwriting each other. When a new event shows up mid-run, you can either push it to the next run, fold it into the current run, or interrupt and restart.</li><li><strong>The worker should batch pending events together.</strong> For example, if the user sends several messages in a row, the worker can merge them into a single run, so the agent only needs to reply once.</li></ul>
+<h3>Timers</h3>
+<p>Together with the event inbox, timers let always-on agents be proactive. Timers generally fall into one of two categories: follow-ups or schedules. A follow-up is a deadline that the agent sets for itself, such as checking in on a reply. A schedule, on the other hand, is a recurring task that happens on a known cadence, such as a daily newsletter.</p>
+<p>Timers live in their own durable store, usually another database table, separate from the inbox. The inbox should only hold events that are ready to be worked on. A follow-up and a schedule can share a similar schema, but a schedule needs to track its recurrence as well.</p>
+<p><img src="https://assets.claude.com/c16694e6d979a2ace84d03da0544297b7245c0a8.png" alt="Diagram of timers. A run sets a timer in a database table, either a follow-up set by the agent or a schedule set by the user. A scheduler finds what’s due and adds an event to the event inbox, which starts the next run."></p>
+<p>A timer doesn’t initiate a run on its own. Instead, a scheduler, usually a background service, polls the store at a fixed interval and fires anything that’s due. On each pass, the scheduler:</p>
+<ul><li>Scans the store and finds timers that are due.</li><li>Updates each timer based on its category.A follow-up should be marked as done.A schedule should get its due time updated to the next occurrence.</li><li>Adds an event to the inbox and wakes the worker.</li></ul>
+<p>For the scheduler, you can either build your own service or use a durable execution engine.</p>
+<h3>Memory</h3>
+<p>Always-on agents work across many disjointed runs and rely on memory to maintain continuity.</p>
+<p>Similar to the event inbox and timers, memory should have its own store. In our products, such as Claude Code’s <a href="https://code.claude.com/docs/en/memory">auto memory</a> and the Messages API’s <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">memory tool</a>, this is implemented as a directory of files. For an always-on agent, the directories should map to durable storage, usually a database or an object store. This way memories outlive the worker.</p>
+<p>As a rule of thumb, memory should only hold what the agent can’t look up again. If something already lives in another system, such as an issue tracker, you should save a pointer instead. Here is a breakdown of the types of memory an always-on agent should store:</p>
+<ul><li><strong>User instructions:</strong> Any instructions from the user about agent behavior should be saved in their own file and loaded at the start of every run. The user won’t always be around to steer the agent, so the instructions have to carry over between runs.</li><li><strong>User notes:</strong> The agent should save what it’s learned about the user, such as their role, their preferences, or any corrections they’ve given. You can start with one file and move to several small files as the notes grow. In the latter case, only an index is loaded at the start of each run, but the agent can pull the individual files into context when it needs more details.</li><li><strong>Past messages:</strong> The agent should keep track of what it’s already told the user so nothing is repeated. It can either store this in a separate file that’s loaded at the start of each run, or have the worker load the agent’s last few messages with the user.</li><li><strong>Task progress:</strong> For each ongoing task, the agent should keep a progress file that covers what’s been done and what’s left. Any new run can then read that file and pick up where the previous run left off. Similar to user notes, only an index is loaded at the start of each run, but the agent can pull the individual files into context when it needs more details.</li></ul>
+<p>The diagram below shows one example setup.</p>
+<p><img src="https://assets.claude.com/e5d209d7ef9b3455dec8a27b777dc12bdf806699.png" alt="Diagram of an example memory setup as a directory of files. instructions.md, index.md, and reported.md are loaded at the start of every run, while the notes/ and progress/ folders are read when needed. The agent writes to memory during the run."></p>
+<p>All of the above describes memory that’s saved during a run. You can also add dreaming, which reviews past sessions to curate memories. Dreaming can replace outdated entries and find patterns that only show up across many runs. If you’re interested in learning more, our <a href="https://www.anthropic.com/research/components-of-agent-memory">post on agent memory</a> covers this in more detail.</p>
+<h4>Inside the context window</h4>
+<p>Before doing any work, the agent loads the system prompt, tool definitions, and memory files. This initial context “overhead” is included in every run, so we recommend keeping it lean and using <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">prompt caching</a> to lower costs.</p>
+<p>A new session starts only with this context overhead and the events that triggered the run. An existing session, on the other hand, brings back the messages and tool calls from its earlier runs.</p>
+<p>If a session becomes too long, you can either <a href="https://platform.claude.com/docs/en/build-with-claude/compaction">compact the older messages</a> or start a new session. Both approaches lose detail, so anything that needs to persist should be saved to memory along the way.</p>
+<p><img src="https://assets.claude.com/48757f0a147acfe841c943674c6214d34ed4405a.gif" alt="Animated chart of context used over time. A fixed band for the system prompt, tools, and memory is present on every run. An existing session brings back its whole transcript and grows until compaction turns the older transcript into a summary."></p>
+<h3>Permissions</h3>
+<p>Permissions are where always-on agents carry the most risk. A run holds the user’s access and, by design, operates unattended. For each tool call, the agent needs to decide whether to proceed on its own, block it, or wait for approval.</p>
+<p>The components for permissions are the same ones other agents use:</p>
+<ul><li><strong>Credential store:</strong> Always-on agents often need sensitive user credentials like passwords or access tokens to be useful. The <a href="https://code.claude.com/docs/en/agent-sdk/secure-deployment#credential-management">recommended pattern</a> is a proxy outside the agent’s environment that adds credentials to outgoing requests. The agent sends requests without credentials, and the proxy injects the real credentials before forwarding.</li><li><strong>Auto mode:</strong> An always-on agent should be able to work without constant user input. We’ve already tackled a version of this problem with <a href="https://www.anthropic.com/research/claude-code-auto-mode">auto mode</a> in Claude Code. Auto mode uses classifiers to review higher-risk actions and block the ones they identify as dangerous so Claude can find a safer approach. User review, however, is still necessary for the most important decisions.</li><li><strong>Deferred tool calls:</strong> In Claude Code, <a href="https://code.claude.com/docs/en/hooks#defer-a-tool-call-for-later">a hook can defer a tool call</a> and wait for additional input from the user. The same pattern applies to always-on agents, which may need clarification or approval before taking certain actions. When a call is deferred, the run ends and the session is saved mid-call. The request is shown to the user (e.g., through an interactive card built with <a href="https://modelcontextprotocol.io/extensions/apps/overview">MCP Apps</a>), and their answer comes back as an event in the inbox. That event starts a new run, which resumes the saved session with the user’s input. While the deferred call waits for a response, the worker can pick up other events, so the agent isn’t blocked.</li></ul>
+<h3>Outbox</h3>
+<p>With most AI agents, the response is streamed to the user as it’s generated, so they can follow along as Claude reasons through the problem, calls tools, and writes its answer.</p>
+<p>Always-on agents, on the other hand, do most of their work in the background. The user gets the outcome and a few details, rather than the entire step-by-step breakdown.</p>
+<p><img src="https://assets.claude.com/700b5f3a446f22493c0307ec65751b6b2f82ccb7.png" alt="Diagram of the outbox. A run ends with nothing to say, a send tool call, or a deferred tool call that asks the user. Messages go to the outbox, a database table, and a dispatcher delivers them to the user. A deferred request can go through the outbox or be shown in your own interface."></p>
+<p>A run can end in one of three ways:</p>
+<ul><li>The agent sends a message to the outbox,</li><li>The agent decides that nothing needs to be sent, or</li><li>The agent uses a deferred tool call to request permission or additional input.</li></ul>
+<p>Most always-on agents can get by with a “send” tool that delivers the message directly to the user. You only need a formal outbox when you want to pace your agent’s messages or allow your agent to recover from errors.</p>
+<p>The outbox is a separate table of outgoing messages, analogous to the event inbox. There’s also a dispatcher, usually a background service, that’s analogous to the worker. The dispatcher reads the pending messages, decides what to deliver, and sends those to the user. A request from a deferred tool call can either go through the outbox or be shown directly in the interface.</p>
+<p>Beyond delivery, it’s important to tune how many messages the agent sends. An agent that sends too many becomes noisy, while an agent that doesn’t send enough misses things that the user needs to know. We recommend building evals to find the right balance. In practice, it’s better for the agent to start quiet and then earn more of the user’s attention over time.</p>
+<h2>How everything fits together</h2>
+<p>Here is how the five primitives fit together:</p>
+<p><img src="https://assets.claude.com/9f8df7b2dcc9d4637d27f37dae6e40a2a5851c8a.gif" alt="Animated diagram of how the five primitives fit together. Timers and the event inbox start a run, the run works with memory and permissions inside a session, and the outbox delivers messages to the user, whose answer comes back as an event."></p>
+<p>Every run starts with an event from the inbox, whether it’s a user message, a webhook, or a timer. When the worker picks up an event, it kicks off a run and wakes the agent in a new or existing session. The agent reads its memory to get a baseline, works within its permissions to take actions, and then updates its memory with anything it has learned. Once the run is finished, the agent pushes a row to the outbox, and the dispatcher delivers the message to the user.</p>
+<p>Together, these form a cycle. A run can set a timer that wakes the agent again later, and when the user replies to a message, their answer comes back as an event in the inbox. Each run is brief, but the cycle keeps going indefinitely, and that’s what makes the agent feel like it’s always on.</p>
+<h2>Acknowledgements</h2>
+<p><em>Written by William Hu. Special thanks to Rodrigo Olivares and Michael Segner for their contributions.</em></p>
+<p>Article</p>
+<p>Nov 13, 2026</p>
+<h3>The Claude Tag guide for startups</h3>
+<p>How leading startups use Claude Tag to ship faster and scale operations</p>
+<p>Claude Tag</p>
+<p>Article</p>
+<p>Nov 10, 2026</p>
+<h3>How Curative is building a national provider network with agents on Claude</h3>
+<p>Curative’s deal-making agent negotiates 2,000+ provider contracts a week.</p>
+<p>Claude PlatformClaude Code</p>
+<p>Article</p>
+<p>Nov 9, 2026</p>
+<h3>Safely scaling multi-agent teams with Claude Fable 5.2</h3>
+<p>How a team of 1,000 agents running an early version of Claude Fable 5.2 reproduced a formal proof of Fermat's Last Theorem with general tools, a shared database, and layered safety controls.</p>
+<p>(opens in new tab)</p>
+<p>Article</p>
+<p>Nov 9, 2026</p>
+<h3>Which Claude model should you build with?</h3>
+<p>How to choose between Claude Fable 5.2, Opus 5.5, Sonnet 5.5, and Haiku 5.5 by task, cost, and effort level.</p>
+<p>Claude PlatformClaude Code</p>
+<p>(opens in new tab)</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
+    <item>
       <title>Introducing Claude Meetings</title>
       <link>https://claude.com/resources/articles/claude-meetings</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-meetings?li=1</guid>
@@ -370,121 +370,6 @@
 <p>Nov 12, 2026</p>
 <h3>Introducing Claude for Manufacturing</h3>
 <p>A new plugin with 17 skills and four connectors helps manufacturers draft quotes, quality reports, and supplier requests from the systems they already run.</p>
-<p>Article</p>
-<p>Nov 10, 2026</p>
-<h3>Your apps can now open in Claude, and Claude can work in them</h3>
-<p>Our partners can now embed their apps directly in Claude, so you and Claude can work in the same tool, on the same screen, without switching tabs.</p>
-<p>Claude appsMCP</p>
-<p>Article</p>
-<p>Nov 10, 2026</p>
-<h3>More ways to work with Claude: Sheets, Whiteboards, and Interactive Connectors</h3>
-<p>Work at the speed of thought</p>
-<p>Claude apps</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
-<h3>Get the developer newsletter</h3>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Using Claude Opus 5.5 as your daily driver for knowledge wor…</title>
-      <link>https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work?li=1</guid>
-      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Using Claude Opus 5.5 as your daily driver for knowledge work</description>
-      <content:encoded><![CDATA[<p>Claude Opus 5.5 is now the default model in Claude on Pro, Max, Ultra, and Team plans. We recommend it as your daily driver for knowledge work, meaning the model you leave selected when you work with Claude on research, analysis, and writing or producing memos, reports, spreadsheets, and decks.</p>
-<p>If you or your team have been using Sonnet for daily work and saving Opus for heavy analysis or complex projects, it’s worth reconsidering because a more capable model can finish a task by doing less work, which <a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">can then offset much of its higher price per token</a>.</p>
-<p>Here's how the current models compare:</p>
-<table><thead><tr><th><strong>Model</strong></th><th><strong>Use it for</strong></th><th><strong>Price per million tokens (input / output)</strong>*</th><th><strong>Relative speed</strong></th></tr></thead><tbody><tr><td>Claude Haiku 5.5</td><td>Quick lookups and high-volume work where speed matters most</td><td>$0.10 / $0.50</td><td>Fastest</td></tr><tr><td>Claude Sonnet 5.5</td><td>Quick, well-scoped tasks, and polished documents, slides, and spreadsheets from a clear brief</td><td>$2 / $10</td><td>Fast</td></tr><tr><td>Claude Opus 5.5</td><td>Most knowledge work: research, analysis, and finished docs, decks, and spreadsheets that need judgment</td><td>$4 / $20</td><td>Moderate</td></tr><tr><td>Claude Fable 5.2</td><td>The most ambitious, open-ended technical work, in fields like coding, finance, and the sciences</td><td>$8 / $40</td><td>Moderate</td></tr></tbody></table>
-<p>**Prices are for usage billed by the token (<a href="https://platform.claude.com/docs/en/models/opus-5-5/overview">model comparison</a>). Haiku 5.5's prices apply to prompts up to 100k tokens, and longer prompts cost $0.50 / $2.50. On Pro, Max, Ultra, and Team plans, higher-priced models use your limits faster. Pro plans and standard seats on Team and seat-based Enterprise plans don’t include Fable 5.2 in their limits outside limited-time launch offers, so it runs on usage credits.*</p>
-<p><a href="https://www.anthropic.com/claude-haiku-5-5"><strong>Haiku 5.5</strong></a> is our fastest and least expensive model, built for quick lookups and high-volume work like writing summaries and sorting data. This is our first Haiku model with effort controls, so you can ask for a more careful pass before switching to a larger model. It’s best suited to short, narrowly scoped tasks. For longer analysis, switch to Opus 5.5.</p>
-<p><a href="https://www.anthropic.com/claude-sonnet-5-5"><strong>Sonnet 5.5</strong></a> is faster and cheaper than Opus 5.5 for well-scoped tasks that have a clear brief. This could be asking Claude to turn finished notes into a polished document, or to build a deck using a slide template. At higher-effort settings, however, cost per task with Sonnet 5.5 gets close to Opus 5.5, so if you find yourself pushing Sonnet to Extra high or Max effort, consider switching to Opus 5.5.</p>
-<p><strong><a href="https://www.anthropic.com/claude-opus-5-5">Opus 5.5</a> </strong>is built for complex work that needs careful judgment, like research, financial analysis, and producing finished docs, decks, and spreadsheets. We share details on why we recommend Opus 5.5 for daily knowledge work later.</p>
-<p><a href="https://www.anthropic.com/claude-fable-and-mythos-5-2"><strong>Fable 5.2</strong></a> is best for your most demanding reasoning and long-running work, like deep multi-step research or coding that you can hand off to a large team of subagents that run for hours. For most knowledge work, start with Opus 5.5 and move to Fable 5.2 when a project’s scope and complexity calls for it. Fable 5.2 is available on all paid plans, though <a href="https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan">how it draws on your usage</a> depends on your plan.</p>
-<p>Whichever model you're on, if Claude didn’t do as well as you expected, try a higher effort first before moving up a model. If it had the context, clearly tried, and still got it wrong, move up a model.</p>
-<h2><strong>Opus 5.5 does its best work on documents, research, finance, and charts</strong></h2>
-<p>Opus 5.5 follows instructions precisely and stays in scope, so the spreadsheets, slides, and documents it produces often need little editing. It's careful with figures and sources, too. In one internal research test, Opus 5.5 wrote reports on a company's quarterly performance using only a saved snapshot of the web, in which the company’s earnings release was hard to locate. An automated grader checked every figure and quote against the pages in that snapshot, under a condition that the report would fail if even a single figure or quote was invented. Across effort settings, 16 of its 18 reports passed.</p>
-<p>Its writing is clearer than that of earlier models, too. Opus 5.5 puts the most important information first, uses less jargon, and follows the writing rules you give it, and on longer tasks it says plainly what it did, what it found, and what it needs from you. That also makes its work easier to check, which we count as a safety benefit as well as a practical one.</p>
-<p>John Ruelas, a staff software engineer at Ramp, <a href="https://www.anthropic.com/claude-opus-5-5">said</a>: “It writes like a good colleague, and follows our writing rules. A design spec came out usable with very minimal edits, and when it rewrote one of our prompts I preferred its version to my own.”</p>
-<p>Financial analysis is another strength. Opus 5.5 reads dense filings, financial models, and charts accurately and keeps track of context across a whole project or deal. In another internal test, it analyzed a proposed merger between two fictional HR software companies, building a financial model in Excel and then turning it into an executive presentation on whether the deal made sense at its price. It finished in 63 minutes, compared with 93 for Opus 5 on the same task, at half the cost, with a more thorough model, and an easier-to-read presentation.</p>
-<p>Frank Corrao, who leads central equity quant research engineering at investment firm Walleye Capital, <a href="https://www.anthropic.com/claude-opus-5-5">said</a> that at higher effort settings, Opus 5.5 “detected that the minute indexing in our own instructions was off by one and corrected for it, noting that this would cost it points with the grader. It was right, and no model we’ve tested had caught and acted on that before.”</p>
-<p>Opus 5.5 is our best Opus model for vision. It reads dense documents, charts, screenshots, and diagrams accurately, which makes it reliable for pulling data out of documents. Even at its lowest effort setting, it read values off dense charts more accurately than Opus 5 did at its highest.</p>
-<h2><strong>Getting more out of Opus 5.5</strong></h2>
-<p>Each new model is a reason to retest what you hand to Claude and to drop prompting habits built for older models.</p>
-<h3><strong>Try these tasks first</strong></h3>
-<ul><li><strong>Ask for a finished file.</strong> If you want a spreadsheet or a document, ask for the spreadsheet or document rather than an outline to build from. More often than not, Opus 5.5 can get from your request to the finished file in one pass.</li><li><strong>Have it check long documents.</strong> Give it a long plan, report, or deck and ask it to find mistakes and inconsistencies. Opus 5.5 catches details that are easy to miss in long documents, such as a chart in a deck that doesn’t match its source data.</li><li><strong>Hand it a research question.</strong> Ask a question without a set answer and have it pull sources together, work through long documents, and write up what it finds as a memo, report, or deck.</li><li><strong>Try visual work.</strong> Its vision gains carry over to design, so try it for prototyping an interface, building a website, or illustrating a concept.</li></ul>
-<p><img src="https://assets.claude.com/43af7ca2d9f20a0722825b0c207cd80af4d3fdab.png" alt="illustration of tasks for claude opus 5.5"></p>
-<h3><strong>Change these prompting habits</strong></h3>
-<ul><li><strong>Connect Claude to your work files and systems.</strong> This is one of the most useful steps for getting output that fits your work, because when Claude can reach your files and systems through connectors, it can go get what a task needs instead of working only from what you paste in. On Team and Enterprise plans, an owner has to turn a connector on before members can use it.</li><li><strong>Say what done looks like in your first message.</strong> Instead of prompting Claude with instructions one at a time, describe your goal, the finished output, and when you want it to stop and ask. Opus 5.5 carries long, multipart work through to the end better than Opus 5 did.</li><li><strong>Delete “think hard” and “think carefully.”</strong> Thinking is always on for Opus 5.5, and it decides how much to think based on your request and the effort level. In our testing, removing those lines made replies start sooner, with no clear drop in quality.</li><li><strong>Start at Medium effort.</strong> Medium is the default for Opus 5.5, and on our coding and knowledge-work evaluations, Opus 5.5 at Medium matched or beat Opus 5 at High. Higher settings think longer and cost more without always producing better work, so move up to High when Medium stalls. To change the setting, click the model name next to the send button and choose Effort.</li><li><strong>Attach the chart instead of retyping it.</strong> Share the chart, screenshot, or diagram itself rather than copying its numbers into the prompt. Workarounds built for earlier models, like transcribing a chart's values, may no longer be needed.</li><li><strong>Name the styles you don't want.</strong> For design work, a general instruction like “avoid a generic look” tends to swap one default style for another. Naming specific patterns to avoid, such as a cream background or pill-shaped buttons, works better.</li><li><strong>Give it your house style.</strong> Paste your brand or writing guidelines into the request, or point Claude to your best existing decks, for example in a Google Drive folder it can reach through a connector, and ask it to match them. Expect a few rounds before it's exactly right.</li></ul>
-<p><img src="https://assets.claude.com/d61fa79e1e1a38bd6ad4547ddb66c993ef569705.png" alt="illustration of prompting habits for claude opus 5.5"></p>
-<p>The effort finding held for early testers, too. Zimu Li, Member of Technical Staff at Factory, <a href="https://www.anthropic.com/claude-opus-5-5">said</a>, “Claude Opus 5.5 is the first model we’d default to at medium effort. In our testing it matched Opus 5 on high effort, while using 20 to 25% fewer output tokens.”</p>
-<h2><strong>Testing Opus 5.5 on a demo project</strong></h2>
-<p>Here's what all this looks like on one project we worked through in a demo. At a hypothetical retail company, revenue growth had slowed over the past year, leadership had four theories about why, and an analyst had a folder of material: spreadsheets of sales by store, PDFs from the latest leadership off-site, and other files. With Opus 5.5 at Medium effort, the prompt read, roughly:</p>
-<p><code>Growth slowed a lot this year. Leadership has a couple of theories about why; they're in [my manager's] note. Everything I have is in the uploaded folder. Please test each of the four theories against the data and tell me which ones hold up.</code></p>
-<p>The prompt doesn't tell Claude to think hard, and it doesn't say which file to check for which theory. It states the goal and what the final output looks like, and leaves the approach to Claude.</p>
-<p>Claude found that the data didn't support any of the four theories, though one couldn't be fully ruled out. It then proposed an explanation that nobody had raised: new stores had opened too close to existing ones and were drawing sales away from them. The pattern was a little unclear with the stores listed by city, and clear once they were filtered by proximity to a new store. Claude backed the finding with a regression of the sales impact against that distance.</p>
-<p>Next, Claude turned the analysis into a document that holds charts and interactive elements alongside text, including a slider showing how sales change with the distance between a new store and an existing one. A teammate reviewed the doc at the same time.</p>
-<p>The manager then asked Claude to turn the doc into board slides that opened with the answer. For teammates who don't use Claude, docs export to Word, PDF, or Google Docs, and decks export to PowerPoint, PDF, or Google Slides.</p>
-<p>To see the whole project, including the Q&amp;A, <a href="https://claude.com/resources/webinars/opus-5-5-for-work">watch the Opus 5.5 for Work session on demand</a>.</p>
-<h2><strong>Try Opus 5.5 on your own work</strong></h2>
-<p>Pick something you'd normally split across several requests, like a research memo, a variance analysis, or a deck built from an existing doc. Give Opus 5.5 the files and a description of the finished result in one message, leave it at Medium effort, and compare the result with what you're used to getting from other models.</p>
-<p>Article</p>
-<p>Nov 12, 2026</p>
-<h3>Operate Claude Managed Agents inside your security perimeter</h3>
-<p>Introducing self-hosted Claude Managed Agents. Now you can run agents in your own environment, whether that’s in your own cloud or on-premise. You host the agents, credentials, and session history, and choose where requests to Claude are sent.</p>
-<p>Claude PlatformClaude Managed Agents</p>
-<p>Article</p>
-<p>Nov 12, 2026</p>
-<h3>J. Crew brings its signature approach to styling to life with Claude</h3>
-<p>J.Crew's new Style Advisor uses Claude to offer a more personalized way to shop online, with complete looks instead of individual products.</p>
-<p>Claude Code</p>
-<p>Article</p>
-<p>Nov 12, 2026</p>
-<h3>Introducing Claude for Manufacturing</h3>
-<p>A new plugin with 17 skills and four connectors helps manufacturers draft quotes, quality reports, and supplier requests from the systems they already run.</p>
-<p>Article</p>
-<p>Nov 12, 2026</p>
-<h3>Introducing Claude Meetings</h3>
-<p>Add Claude to your video call and get the work started while you talk</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
-<h3>Get the developer newsletter</h3>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Introducing Claude for Manufacturing</title>
-      <link>https://claude.com/resources/articles/claude-for-manufacturing</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/claude-for-manufacturing?li=1</guid>
-      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Today we’re launching <a href="http://claude.com/solutions/manufacturing">Claude for Manufacturing (opens in new tab)</a>, a plugin that includes skills for work from pricing a new job to diagnosing a stopped machine. An estimator can now have Claude read a customer’s request, compare costs on similar jobs, and draft the quote. The plugin works from a manufacturer’s own records through connectors to Autodesk Fusion, Infor, Microsoft 365, and Oracle NetSuite. Claude for Manufacturing is built so the person responsible can review and approve the work before it reaches a customer or supplier.</p>
-<p>Manufacturing teams can spend much of the day gathering information. In a 2025 Manufacturing Leadership Council survey, 79% of manufacturers said they <a href="https://manufacturingleadershipcouncil.com/survey-october/">enter data  (opens in new tab)</a>manually. With Claude carrying each process to the point of review, an estimator can focus on the price, a quality engineer on the fix, and a technician on what to check first.</p>
-<h2><strong>Skills built for manufacturers</strong></h2>
-<p>The plugin’s 17 skills cover sales, quality, operations, supply chain, design, and setup. Some handle a single task, while others run several in order, so Claude can carry a job through several steps until a person needs to review it. The skills can run processes that include:</p>
-<ul><li><strong>Quoting a new job</strong>: An estimator can ask Claude to read a customer’s request, list what’s missing, compare costs on similar jobs, and draft the quote for release.</li><li><strong>Investigating a failed inspection</strong>: A quality engineer can have Claude document the failure, check past reports for the same problem, rank the likely causes, and draft the corrective action report.</li><li><strong>Diagnosing a breakdown</strong>: A technician can have Claude read the sensor exports, repair notes, photos, and manual, then rank the likely causes for the technician to check and decide on next steps.</li><li><strong>Sourcing from another supplier</strong>: A buyer can have Claude prepare the request for quotes, then compare the bids that come back.</li><li><strong>Comparing designs with Autodesk Fusion</strong>: An engineer can have Claude generate variations from an existing model, score them against the engineer’s targets, and draft a decision memo.</li><li><strong>Reporting on production</strong>: A plant manager can have Claude compile production data into one report showing output against target, equipment downtime, and what the downtime and missed output cost.</li></ul>
-<p>These skills are a starting point. Organizations can build on them to fit their specific operations, and we plan to add new manufacturing skills over time.</p>
-<h2><strong>Connectors to manufacturing systems</strong></h2>
-<p>Claude for Manufacturing works with the software at the core of manufacturing operations, and that software stays central to how teams run the business:</p>
-<ul><li><strong>Autodesk Fusion</strong>: Engineers can compare more design options before choosing one, because Claude generates variations from their existing model.</li><li><strong>Infor</strong>: Buyers and planners can check purchase orders and stock before they act, because Claude looks them up in Infor.</li><li><strong>Microsoft 365</strong>: Quality engineers can bring procedures, supplier emails, and exported reports into one job, because Claude finds them in shared folders and inboxes.</li><li><strong>Oracle NetSuite</strong>: Estimators can price new work against actual orders, inventory, production steps, and job costs, because Claude pulls those records when it drafts a quote.</li></ul>
-<p>Manufacturers can also use the plugin with systems that have no connector. They save regular exports from those systems to Microsoft 365, and Claude works from the files to draft a quote or compile a production report.</p>
-<h2><strong>Making changes in Infor with Claude</strong></h2>
-<p>Infor, which makes core software for manufacturers, is also <a href="https://claude.ai/directory/infor">releasing its own plugin (opens in new tab)</a>. With the Infor connector in Claude for Manufacturing, teams can look up records. With Infor’s plugin, they can also make changes in Infor from Claude.</p>
-<p>For example, if a steel shipment slips by two weeks, a buyer can ask Claude which customer orders are affected and how much steel other sites have. Once the buyer approves, Claude can release a purchase order to another supplier and reschedule the affected production in Infor. Claude’s access follows the buyer’s Infor permissions.</p>
-<h2><strong>Manufacturing teams stay in control</strong></h2>
-<p>Skills are built to end with a user’s review, so an estimator checks and releases a quote, and a quality engineer verifies a fix for the corrective action report. To support that review, Claude can link figures and claims back to the underlying data and documents.</p>
-<p>Claude for Manufacturing doesn’t operate equipment. For that, Anthropic is developing the <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">Model Hardware Standard (opens in new tab)</a>, a research preview that gives programmable equipment a standard way to describe its measurements, settings, and safety limits.</p>
-<h2><strong>How to get started</strong></h2>
-<p>On Team or Enterprise plans, <a href="https://claude.ai/customize/plugins/id/45112ff2-6233-4954-b8ec-c448ef2d1e59%40anthropic-plugin-directory">install the plugin (opens in new tab)</a> and tell Claude, “Set us up.” Claude asks which systems the team uses, tests the connectors, and reports which skills can’t fully run yet.</p>
-<p>To see the plugin at work, <a href="https://claude.com/resources/webinars/claude-for-manufacturing-put-your-plants-know-how-to-work">register for our technical webinar (opens in new tab)</a> on November 17 at 11:00 a.m. ET. To talk through a company’s manufacturing systems, <a href="https://claude.com/contact-sales">contact our sales team (opens in new tab)</a>.</p>
-<p>Article</p>
-<p>Nov 12, 2026</p>
-<h3>Operate Claude Managed Agents inside your security perimeter</h3>
-<p>Introducing self-hosted Claude Managed Agents. Now you can run agents in your own environment, whether that’s in your own cloud or on-premise. You host the agents, credentials, and session history, and choose where requests to Claude are sent.</p>
-<p>Claude PlatformClaude Managed Agents</p>
-<p>Article</p>
-<p>Nov 12, 2026</p>
-<h3>Introducing Claude Meetings</h3>
-<p>Add Claude to your video call and get the work started while you talk</p>
 <p>Article</p>
 <p>Nov 10, 2026</p>
 <h3>Your apps can now open in Claude, and Claude can work in them</h3>
@@ -589,6 +474,121 @@
 <h3>A new approach to agent security with Claude Managed Agents and NVIDIA</h3>
 <p>Note: This blog has been updated from its original version to include additional technical details on Claude Managed Agents.</p>
 <p>Claude Platform</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing Claude for Manufacturing</title>
+      <link>https://claude.com/resources/articles/claude-for-manufacturing</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/claude-for-manufacturing?li=1</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Today we’re launching <a href="http://claude.com/solutions/manufacturing">Claude for Manufacturing (opens in new tab)</a>, a plugin that includes skills for work from pricing a new job to diagnosing a stopped machine. An estimator can now have Claude read a customer’s request, compare costs on similar jobs, and draft the quote. The plugin works from a manufacturer’s own records through connectors to Autodesk Fusion, Infor, Microsoft 365, and Oracle NetSuite. Claude for Manufacturing is built so the person responsible can review and approve the work before it reaches a customer or supplier.</p>
+<p>Manufacturing teams can spend much of the day gathering information. In a 2025 Manufacturing Leadership Council survey, 79% of manufacturers said they <a href="https://manufacturingleadershipcouncil.com/survey-october/">enter data  (opens in new tab)</a>manually. With Claude carrying each process to the point of review, an estimator can focus on the price, a quality engineer on the fix, and a technician on what to check first.</p>
+<h2><strong>Skills built for manufacturers</strong></h2>
+<p>The plugin’s 17 skills cover sales, quality, operations, supply chain, design, and setup. Some handle a single task, while others run several in order, so Claude can carry a job through several steps until a person needs to review it. The skills can run processes that include:</p>
+<ul><li><strong>Quoting a new job</strong>: An estimator can ask Claude to read a customer’s request, list what’s missing, compare costs on similar jobs, and draft the quote for release.</li><li><strong>Investigating a failed inspection</strong>: A quality engineer can have Claude document the failure, check past reports for the same problem, rank the likely causes, and draft the corrective action report.</li><li><strong>Diagnosing a breakdown</strong>: A technician can have Claude read the sensor exports, repair notes, photos, and manual, then rank the likely causes for the technician to check and decide on next steps.</li><li><strong>Sourcing from another supplier</strong>: A buyer can have Claude prepare the request for quotes, then compare the bids that come back.</li><li><strong>Comparing designs with Autodesk Fusion</strong>: An engineer can have Claude generate variations from an existing model, score them against the engineer’s targets, and draft a decision memo.</li><li><strong>Reporting on production</strong>: A plant manager can have Claude compile production data into one report showing output against target, equipment downtime, and what the downtime and missed output cost.</li></ul>
+<p>These skills are a starting point. Organizations can build on them to fit their specific operations, and we plan to add new manufacturing skills over time.</p>
+<h2><strong>Connectors to manufacturing systems</strong></h2>
+<p>Claude for Manufacturing works with the software at the core of manufacturing operations, and that software stays central to how teams run the business:</p>
+<ul><li><strong>Autodesk Fusion</strong>: Engineers can compare more design options before choosing one, because Claude generates variations from their existing model.</li><li><strong>Infor</strong>: Buyers and planners can check purchase orders and stock before they act, because Claude looks them up in Infor.</li><li><strong>Microsoft 365</strong>: Quality engineers can bring procedures, supplier emails, and exported reports into one job, because Claude finds them in shared folders and inboxes.</li><li><strong>Oracle NetSuite</strong>: Estimators can price new work against actual orders, inventory, production steps, and job costs, because Claude pulls those records when it drafts a quote.</li></ul>
+<p>Manufacturers can also use the plugin with systems that have no connector. They save regular exports from those systems to Microsoft 365, and Claude works from the files to draft a quote or compile a production report.</p>
+<h2><strong>Making changes in Infor with Claude</strong></h2>
+<p>Infor, which makes core software for manufacturers, is also <a href="https://claude.ai/directory/infor">releasing its own plugin (opens in new tab)</a>. With the Infor connector in Claude for Manufacturing, teams can look up records. With Infor’s plugin, they can also make changes in Infor from Claude.</p>
+<p>For example, if a steel shipment slips by two weeks, a buyer can ask Claude which customer orders are affected and how much steel other sites have. Once the buyer approves, Claude can release a purchase order to another supplier and reschedule the affected production in Infor. Claude’s access follows the buyer’s Infor permissions.</p>
+<h2><strong>Manufacturing teams stay in control</strong></h2>
+<p>Skills are built to end with a user’s review, so an estimator checks and releases a quote, and a quality engineer verifies a fix for the corrective action report. To support that review, Claude can link figures and claims back to the underlying data and documents.</p>
+<p>Claude for Manufacturing doesn’t operate equipment. For that, Anthropic is developing the <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">Model Hardware Standard (opens in new tab)</a>, a research preview that gives programmable equipment a standard way to describe its measurements, settings, and safety limits.</p>
+<h2><strong>How to get started</strong></h2>
+<p>On Team or Enterprise plans, <a href="https://claude.ai/customize/plugins/id/45112ff2-6233-4954-b8ec-c448ef2d1e59%40anthropic-plugin-directory">install the plugin (opens in new tab)</a> and tell Claude, “Set us up.” Claude asks which systems the team uses, tests the connectors, and reports which skills can’t fully run yet.</p>
+<p>To see the plugin at work, <a href="https://claude.com/resources/webinars/claude-for-manufacturing-put-your-plants-know-how-to-work">register for our technical webinar (opens in new tab)</a> on November 17 at 11:00 a.m. ET. To talk through a company’s manufacturing systems, <a href="https://claude.com/contact-sales">contact our sales team (opens in new tab)</a>.</p>
+<p>Article</p>
+<p>Nov 12, 2026</p>
+<h3>Operate Claude Managed Agents inside your security perimeter</h3>
+<p>Introducing self-hosted Claude Managed Agents. Now you can run agents in your own environment, whether that’s in your own cloud or on-premise. You host the agents, credentials, and session history, and choose where requests to Claude are sent.</p>
+<p>Claude PlatformClaude Managed Agents</p>
+<p>Article</p>
+<p>Nov 12, 2026</p>
+<h3>Introducing Claude Meetings</h3>
+<p>Add Claude to your video call and get the work started while you talk</p>
+<p>Article</p>
+<p>Nov 10, 2026</p>
+<h3>Your apps can now open in Claude, and Claude can work in them</h3>
+<p>Our partners can now embed their apps directly in Claude, so you and Claude can work in the same tool, on the same screen, without switching tabs.</p>
+<p>Claude appsMCP</p>
+<p>Article</p>
+<p>Nov 10, 2026</p>
+<h3>More ways to work with Claude: Sheets, Whiteboards, and Interactive Connectors</h3>
+<p>Work at the speed of thought</p>
+<p>Claude apps</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Using Claude Opus 5.5 as your daily driver for knowledge wor…</title>
+      <link>https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work?li=1</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Using Claude Opus 5.5 as your daily driver for knowledge work</description>
+      <content:encoded><![CDATA[<p>Claude Opus 5.5 is now the default model in Claude on Pro, Max, Ultra, and Team plans. We recommend it as your daily driver for knowledge work, meaning the model you leave selected when you work with Claude on research, analysis, and writing or producing memos, reports, spreadsheets, and decks.</p>
+<p>If you or your team have been using Sonnet for daily work and saving Opus for heavy analysis or complex projects, it’s worth reconsidering because a more capable model can finish a task by doing less work, which <a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">can then offset much of its higher price per token</a>.</p>
+<p>Here's how the current models compare:</p>
+<table><thead><tr><th><strong>Model</strong></th><th><strong>Use it for</strong></th><th><strong>Price per million tokens (input / output)</strong>*</th><th><strong>Relative speed</strong></th></tr></thead><tbody><tr><td>Claude Haiku 5.5</td><td>Quick lookups and high-volume work where speed matters most</td><td>$0.10 / $0.50</td><td>Fastest</td></tr><tr><td>Claude Sonnet 5.5</td><td>Quick, well-scoped tasks, and polished documents, slides, and spreadsheets from a clear brief</td><td>$2 / $10</td><td>Fast</td></tr><tr><td>Claude Opus 5.5</td><td>Most knowledge work: research, analysis, and finished docs, decks, and spreadsheets that need judgment</td><td>$4 / $20</td><td>Moderate</td></tr><tr><td>Claude Fable 5.2</td><td>The most ambitious, open-ended technical work, in fields like coding, finance, and the sciences</td><td>$8 / $40</td><td>Moderate</td></tr></tbody></table>
+<p>**Prices are for usage billed by the token (<a href="https://platform.claude.com/docs/en/models/opus-5-5/overview">model comparison</a>). Haiku 5.5's prices apply to prompts up to 100k tokens, and longer prompts cost $0.50 / $2.50. On Pro, Max, Ultra, and Team plans, higher-priced models use your limits faster. Pro plans and standard seats on Team and seat-based Enterprise plans don’t include Fable 5.2 in their limits outside limited-time launch offers, so it runs on usage credits.*</p>
+<p><a href="https://www.anthropic.com/claude-haiku-5-5"><strong>Haiku 5.5</strong></a> is our fastest and least expensive model, built for quick lookups and high-volume work like writing summaries and sorting data. This is our first Haiku model with effort controls, so you can ask for a more careful pass before switching to a larger model. It’s best suited to short, narrowly scoped tasks. For longer analysis, switch to Opus 5.5.</p>
+<p><a href="https://www.anthropic.com/claude-sonnet-5-5"><strong>Sonnet 5.5</strong></a> is faster and cheaper than Opus 5.5 for well-scoped tasks that have a clear brief. This could be asking Claude to turn finished notes into a polished document, or to build a deck using a slide template. At higher-effort settings, however, cost per task with Sonnet 5.5 gets close to Opus 5.5, so if you find yourself pushing Sonnet to Extra high or Max effort, consider switching to Opus 5.5.</p>
+<p><strong><a href="https://www.anthropic.com/claude-opus-5-5">Opus 5.5</a> </strong>is built for complex work that needs careful judgment, like research, financial analysis, and producing finished docs, decks, and spreadsheets. We share details on why we recommend Opus 5.5 for daily knowledge work later.</p>
+<p><a href="https://www.anthropic.com/claude-fable-and-mythos-5-2"><strong>Fable 5.2</strong></a> is best for your most demanding reasoning and long-running work, like deep multi-step research or coding that you can hand off to a large team of subagents that run for hours. For most knowledge work, start with Opus 5.5 and move to Fable 5.2 when a project’s scope and complexity calls for it. Fable 5.2 is available on all paid plans, though <a href="https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan">how it draws on your usage</a> depends on your plan.</p>
+<p>Whichever model you're on, if Claude didn’t do as well as you expected, try a higher effort first before moving up a model. If it had the context, clearly tried, and still got it wrong, move up a model.</p>
+<h2><strong>Opus 5.5 does its best work on documents, research, finance, and charts</strong></h2>
+<p>Opus 5.5 follows instructions precisely and stays in scope, so the spreadsheets, slides, and documents it produces often need little editing. It's careful with figures and sources, too. In one internal research test, Opus 5.5 wrote reports on a company's quarterly performance using only a saved snapshot of the web, in which the company’s earnings release was hard to locate. An automated grader checked every figure and quote against the pages in that snapshot, under a condition that the report would fail if even a single figure or quote was invented. Across effort settings, 16 of its 18 reports passed.</p>
+<p>Its writing is clearer than that of earlier models, too. Opus 5.5 puts the most important information first, uses less jargon, and follows the writing rules you give it, and on longer tasks it says plainly what it did, what it found, and what it needs from you. That also makes its work easier to check, which we count as a safety benefit as well as a practical one.</p>
+<p>John Ruelas, a staff software engineer at Ramp, <a href="https://www.anthropic.com/claude-opus-5-5">said</a>: “It writes like a good colleague, and follows our writing rules. A design spec came out usable with very minimal edits, and when it rewrote one of our prompts I preferred its version to my own.”</p>
+<p>Financial analysis is another strength. Opus 5.5 reads dense filings, financial models, and charts accurately and keeps track of context across a whole project or deal. In another internal test, it analyzed a proposed merger between two fictional HR software companies, building a financial model in Excel and then turning it into an executive presentation on whether the deal made sense at its price. It finished in 63 minutes, compared with 93 for Opus 5 on the same task, at half the cost, with a more thorough model, and an easier-to-read presentation.</p>
+<p>Frank Corrao, who leads central equity quant research engineering at investment firm Walleye Capital, <a href="https://www.anthropic.com/claude-opus-5-5">said</a> that at higher effort settings, Opus 5.5 “detected that the minute indexing in our own instructions was off by one and corrected for it, noting that this would cost it points with the grader. It was right, and no model we’ve tested had caught and acted on that before.”</p>
+<p>Opus 5.5 is our best Opus model for vision. It reads dense documents, charts, screenshots, and diagrams accurately, which makes it reliable for pulling data out of documents. Even at its lowest effort setting, it read values off dense charts more accurately than Opus 5 did at its highest.</p>
+<h2><strong>Getting more out of Opus 5.5</strong></h2>
+<p>Each new model is a reason to retest what you hand to Claude and to drop prompting habits built for older models.</p>
+<h3><strong>Try these tasks first</strong></h3>
+<ul><li><strong>Ask for a finished file.</strong> If you want a spreadsheet or a document, ask for the spreadsheet or document rather than an outline to build from. More often than not, Opus 5.5 can get from your request to the finished file in one pass.</li><li><strong>Have it check long documents.</strong> Give it a long plan, report, or deck and ask it to find mistakes and inconsistencies. Opus 5.5 catches details that are easy to miss in long documents, such as a chart in a deck that doesn’t match its source data.</li><li><strong>Hand it a research question.</strong> Ask a question without a set answer and have it pull sources together, work through long documents, and write up what it finds as a memo, report, or deck.</li><li><strong>Try visual work.</strong> Its vision gains carry over to design, so try it for prototyping an interface, building a website, or illustrating a concept.</li></ul>
+<p><img src="https://assets.claude.com/43af7ca2d9f20a0722825b0c207cd80af4d3fdab.png" alt="illustration of tasks for claude opus 5.5"></p>
+<h3><strong>Change these prompting habits</strong></h3>
+<ul><li><strong>Connect Claude to your work files and systems.</strong> This is one of the most useful steps for getting output that fits your work, because when Claude can reach your files and systems through connectors, it can go get what a task needs instead of working only from what you paste in. On Team and Enterprise plans, an owner has to turn a connector on before members can use it.</li><li><strong>Say what done looks like in your first message.</strong> Instead of prompting Claude with instructions one at a time, describe your goal, the finished output, and when you want it to stop and ask. Opus 5.5 carries long, multipart work through to the end better than Opus 5 did.</li><li><strong>Delete “think hard” and “think carefully.”</strong> Thinking is always on for Opus 5.5, and it decides how much to think based on your request and the effort level. In our testing, removing those lines made replies start sooner, with no clear drop in quality.</li><li><strong>Start at Medium effort.</strong> Medium is the default for Opus 5.5, and on our coding and knowledge-work evaluations, Opus 5.5 at Medium matched or beat Opus 5 at High. Higher settings think longer and cost more without always producing better work, so move up to High when Medium stalls. To change the setting, click the model name next to the send button and choose Effort.</li><li><strong>Attach the chart instead of retyping it.</strong> Share the chart, screenshot, or diagram itself rather than copying its numbers into the prompt. Workarounds built for earlier models, like transcribing a chart's values, may no longer be needed.</li><li><strong>Name the styles you don't want.</strong> For design work, a general instruction like “avoid a generic look” tends to swap one default style for another. Naming specific patterns to avoid, such as a cream background or pill-shaped buttons, works better.</li><li><strong>Give it your house style.</strong> Paste your brand or writing guidelines into the request, or point Claude to your best existing decks, for example in a Google Drive folder it can reach through a connector, and ask it to match them. Expect a few rounds before it's exactly right.</li></ul>
+<p><img src="https://assets.claude.com/d61fa79e1e1a38bd6ad4547ddb66c993ef569705.png" alt="illustration of prompting habits for claude opus 5.5"></p>
+<p>The effort finding held for early testers, too. Zimu Li, Member of Technical Staff at Factory, <a href="https://www.anthropic.com/claude-opus-5-5">said</a>, “Claude Opus 5.5 is the first model we’d default to at medium effort. In our testing it matched Opus 5 on high effort, while using 20 to 25% fewer output tokens.”</p>
+<h2><strong>Testing Opus 5.5 on a demo project</strong></h2>
+<p>Here's what all this looks like on one project we worked through in a demo. At a hypothetical retail company, revenue growth had slowed over the past year, leadership had four theories about why, and an analyst had a folder of material: spreadsheets of sales by store, PDFs from the latest leadership off-site, and other files. With Opus 5.5 at Medium effort, the prompt read, roughly:</p>
+<p><code>Growth slowed a lot this year. Leadership has a couple of theories about why; they're in [my manager's] note. Everything I have is in the uploaded folder. Please test each of the four theories against the data and tell me which ones hold up.</code></p>
+<p>The prompt doesn't tell Claude to think hard, and it doesn't say which file to check for which theory. It states the goal and what the final output looks like, and leaves the approach to Claude.</p>
+<p>Claude found that the data didn't support any of the four theories, though one couldn't be fully ruled out. It then proposed an explanation that nobody had raised: new stores had opened too close to existing ones and were drawing sales away from them. The pattern was a little unclear with the stores listed by city, and clear once they were filtered by proximity to a new store. Claude backed the finding with a regression of the sales impact against that distance.</p>
+<p>Next, Claude turned the analysis into a document that holds charts and interactive elements alongside text, including a slider showing how sales change with the distance between a new store and an existing one. A teammate reviewed the doc at the same time.</p>
+<p>The manager then asked Claude to turn the doc into board slides that opened with the answer. For teammates who don't use Claude, docs export to Word, PDF, or Google Docs, and decks export to PowerPoint, PDF, or Google Slides.</p>
+<p>To see the whole project, including the Q&amp;A, <a href="https://claude.com/resources/webinars/opus-5-5-for-work">watch the Opus 5.5 for Work session on demand</a>.</p>
+<h2><strong>Try Opus 5.5 on your own work</strong></h2>
+<p>Pick something you'd normally split across several requests, like a research memo, a variance analysis, or a deck built from an existing doc. Give Opus 5.5 the files and a description of the finished result in one message, leave it at Medium effort, and compare the result with what you're used to getting from other models.</p>
+<p>Article</p>
+<p>Nov 12, 2026</p>
+<h3>Operate Claude Managed Agents inside your security perimeter</h3>
+<p>Introducing self-hosted Claude Managed Agents. Now you can run agents in your own environment, whether that’s in your own cloud or on-premise. You host the agents, credentials, and session history, and choose where requests to Claude are sent.</p>
+<p>Claude PlatformClaude Managed Agents</p>
+<p>Article</p>
+<p>Nov 12, 2026</p>
+<h3>J. Crew brings its signature approach to styling to life with Claude</h3>
+<p>J.Crew's new Style Advisor uses Claude to offer a more personalized way to shop online, with complete looks instead of individual products.</p>
+<p>Claude Code</p>
+<p>Article</p>
+<p>Nov 12, 2026</p>
+<h3>Introducing Claude for Manufacturing</h3>
+<p>A new plugin with 17 skills and four connectors helps manufacturers draft quotes, quality reports, and supplier requests from the systems they already run.</p>
+<p>Article</p>
+<p>Nov 12, 2026</p>
+<h3>Introducing Claude Meetings</h3>
+<p>Add Claude to your video call and get the work started while you talk</p>
 <h2>Transform how your organization operates with Claude</h2>
 <p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
 <h3>Get the developer newsletter</h3>

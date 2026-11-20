@@ -7,7 +7,122 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-modular_cloud.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Modular: Reintroducing MAX’s Module</title>
+      <link>https://www.modular.com/blog/reintroducing-max-module</link>
+      <guid isPermaLink="true">https://www.modular.com/blog/reintroducing-max-module?li=1</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>November 19, 2026</p>
+<h1>Reintroducing MAX’s Module</h1>
+<p>Kathy Wu</p>
+<p>Alister Burt</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6aff3d96149fad6867cf98f0_ReleaseBlogPost-Option_%25281%2529.jpeg" alt=""></p>
+<p>Engineering</p>
+<p>MAX is built for production inference at maximum speed. We recently redesigned our <code>Module</code> API to help developers build fast models even faster. <code>Module</code> is a standard building block in machine learning frameworks, and this post explains how and why we rebuilt this API, diving into a few key aspects:</p>
+<ul><li>How the new design speeds up development</li><li>Production inference with the new <code>Module</code></li><li>Support for distributed computation</li><li>Simplification of the <code>Module</code> APIs</li><li>Familiar PyTorch-like syntax</li><li>Where the new <code>Module</code> sits in the stack compared to its predecessor</li></ul>
+<h2>Rebuilding MAX’s AI framework</h2>
+<p>Modular has focused on production inference with state-of-the-art performance. MAX's advantage is its compilation stack: cross-architecture, optimized Mojo kernels, plus graph compilation and execution that aggressively fuse kernels and plan memory.</p>
+<p>The legacy <code>Module</code> was built directly on our graph stack. The graph-forward approach delivered excellent performance, but the developer experience left room for improvement. We closed the gap by introducing a new Eager layer on top of the graph stack, then rebuilding <code>Module</code> on top of it.</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d35cf2b4cc97a204c52_stack_diagram_1.png" alt=""></p>
+<h2>Familiar, PyTorch-like syntax</h2>
+<p>If you've written a PyTorch model, the new <code>Module</code> should feel familiar. Here is the same layer in MAX and in PyTorch:</p>
+<p>python</p>
+<pre><code># MAX
+from max.nn import Module
+from max.tensor import Tensor
+
+class MyLayer(Module):
+    def __init__(self, in_dim, out_dim):
+        self.weight = Tensor.zeros([out_dim, in_dim])
+        self.bias = Tensor.zeros([out_dim])
+
+    def forward(self, x):
+        return x @ self.weight.T + self.bias</code></pre>
+<p>python</p>
+<pre><code># PyTorch
+import torch
+from torch import nn
+
+class MyLayer(nn.Module):
+    def __init__(self, in_dim, out_dim):
+        super().__init__()
+        self.weight = nn.Parameter(torch.zeros(out_dim, in_dim))
+        self.bias = nn.Parameter(torch.zeros(out_dim))
+
+    def forward(self, x):
+        return x @ self.weight.T + self.bias</code></pre>
+<p>The differences are intentional simplifications of the design: no <code>super().__init__()</code> call, and plain <code>Tensor</code>s instead of <code>nn.Parameter</code>.</p>
+<h2>Eager execution enables faster development</h2>
+<p>Agents have fundamentally changed the development cycle. While model performance remains critical for production workloads, enabling fast iteration during development is arguably more important than ever. Paying a compilation cost on every unit test and debug log is painful.</p>
+<p>Eager execution avoids expensive graph compilation and instead starts computing results immediately. When you first run Gemma 4 using the new <code>Module</code> your first token appears much more quickly.</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d35fbb5b6653299fb67_startup_time_chart_1.png" alt=""></p>
+<p>Debugging models also gets a lot faster!</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d3558f1987d62d2a796_debugging_a_layer.gif" alt=""></p>
+<h2>Production inference with the new <code>Module</code></h2>
+<p>The redesigned <code>Module</code> still serves our primary use case, production inference. The built-in <code>compile</code> method traces the model and compiles it as a graph, which lets MAX optimize the computation using knowledge about the whole model. Our graph compiler performs:</p>
+<ul><li>Operation fusion, to reduce launch overhead.</li><li>Constant folding and other initialization-time lifting, to avoid repeating the same constant compute on every loop.</li><li>Execution and memory planning, so MAX can plan storage and reuse buffers instead of allocating new ones.</li><li>Shape inference and reasoning about dynamic shapes, which supports all of the above.</li></ul>
+<p><code>Module</code> directly supports both eager and compiled execution, so model authors get the best of both worlds:</p>
+<p>python</p>
+<pre><code>model = DeepSeekV3(config)
+
+# Option 1: Call eagerly
+model.load_state_dict(state_dict)
+model(inputs)
+
+# Option 2: Compile, then call
+compiled = model.compile(*input_types, weights=state_dict)
+compiled(inputs)</code></pre>
+<h2>Distributed computation: split work across many devices</h2>
+<p>The redesign was a chance to rethink how we write distributed models. The framework's role is to structure the scaling of a computation from a single GPU to many.</p>
+<p>There is no single right way to do that. Many parallelism strategies exist because GPUs differ in compute and memory limits, models differ in layers and dimensions, and inputs differ in shape. Here are several ways to distribute a model:</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d36d840e29bf1ddffd2_tensor_parallelism.gif" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d368798806989f4456e_pipeline_parallelism.gif" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d36a98f5293499a160d_data_parallelism.gif" alt=""></p>
+<p>Lower-level abstractions in MAX can now express data parallelism, pipeline parallelism, or tensor parallelism. A <code>Tensor</code> is still a logical N-D array, but it can now live on more than one device. Operations on distributed tensors behave according to specific sharding rules.</p>
+<p>A future post will dive deeper into the specifics of our distributed computation support. For now, see below how a row parallel linear layer is implemented:</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d367142d99440ddef1f_code_distributed_linear_side_by_side.png" alt=""></p>
+<h2>Tree utilities</h2>
+<p>A <code>Module</code> is now a <code>Tree</code>, a new API in MAX inspired by <a href="https://docs.jax.dev/en/latest/pytrees.html">JAX’s Pytrees</a>. <code>Tree</code>s are made of <code>Module</code>s and <code>Tensor</code>s which simplifies two things:</p>
+<ul><li><code>Module.parameters</code> and <code>Module.descendants</code> use tree traversal to collect connected <code>Module</code>s and <code>Tensor</code>s.</li><li><code>Module.trace</code> and <code>Module.compile</code> use <code>tree.map</code> to convert <code>Tensor</code>s into graph weights.</li></ul>
+<p>These APIs also indirectly help with serialization: tree <code>flatten</code> produces both the flattened leaves and a <code>TreeDef</code> object that stores the tree structure.</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff414aa964ec05b8c4675a_tree_diagram_white.png" alt=""></p>
+<p>As an example, we use <code>Tree.map</code> to quantize only the expert layers in a mixture-of-experts model.</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff402560bbdcb52d503671_tree_map_quantize_experts_5.gif" alt=""></p>
+<h2>Simpler APIs for handling graphs, weight tensors and dtypes</h2>
+<p>We also removed abstractions and boilerplate that were no longer needed.</p>
+<p><strong>No symbolic </strong><code><strong>Weight</strong></code><strong> class.</strong> <code>Weight</code> existed to track and create weights in the graph. Now you use <code>Tensor</code> directly in a <code>Module</code>.</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d3777e8487f07c00742_code_diff_example_1_1.png" alt=""></p>
+<p><strong>Default </strong><code><strong>dtype</strong></code><strong> and </strong><code><strong>device</strong></code><strong>.</strong> The layer at the top of this post defines neither. A default <code>dtype</code> and <code>device</code> context manager means a model that uses one device or dtype everywhere doesn't need to pass them to every layer. You can still set them per layer when needed.</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d37beb5520f17172f9e_code_diff_example_2_1.png" alt=""></p>
+<p><strong>Built-in </strong><code><strong>compile</strong></code><strong>.</strong> Graph construction boilerplate is gone. Every <code>Module</code> now has a <code>compile</code> method, covered in the production inference section above.</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/6aff3d3743de88213eee0959_code_diff_example_3_1.png" alt=""></p>
+<h2>Final thoughts</h2>
+<p>The legacy <code>Module</code> implementation now lives in <code>max.nn.legacy</code> and will be removed in Q1 2027, so now is a good time to migrate your existing models. We’re also restructuring <code>max.nn</code> around the new <code>max.tensor</code> and <code>max.functional libraries.</code></p>
+<p>The best place to get started is the <a href="https://max.modular.com/develop/model-bringup-workflow/">Model Bringup Workflow tutorial</a>, which walks through building a model end to end with the new APIs.</p>
+<p>Looking ahead, 2027 brings quantization, training, and multi-node support. Next in this series is a framework overview showing where MAX fits in the ML framework landscape, followed by posts on eager execution, distributed tensors, serialization, and more.</p>
+<h2>Read more from Modular</h2>
+<p>View all blogs</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a845bda1ac3bc13bcd5ee67_QualcommArticle-Compressed.jpeg" alt=""></p>
+<p>Modular and Qualcomm: Same code, new silicon</p>
+<p>August 18, 2026</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a22fb24019a596e49fd31a9_option04.jpeg" alt=""></p>
+<p>Why LLM Inference Needs a New Kind of Router - Part 3</p>
+<p>June 5, 2026</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a19a43c91ec82f0054cb18f_MLSys-CoverImg.jpeg" alt=""></p>
+<p>Three trends from MLSys 2026</p>
+<p>May 29, 2026</p>
+<p>Build the future of AI with Modular</p>
+<p>Get started - FREE</p>
+<p>View Editions</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="Person with blonde hair using a laptop with an Apple logo.">Sign up todaySignup to our Cloud Platform today to get started easily.<a href="https://docs.modular.com/max/get-started">Sign Up</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="Magnifying glass emoji with black handle and round clear lens.">Browse open modelsBrowse our model catalog, or deploy your own custom model<a href="https://www.modular.com/models">Browse models</a></li></ul>
+<h2>Sign up for our newsletter</h2>
+<p>Get all our latest news, announcements and updates delivered directly to your inbox. Unsubscribe at anytime.</p>
+<p>Thanks for signing up to our newsletter! 🚀</p>
+<p>Thank you,</p>
+<p>Modular Sales Team</p>
+<p>Oops! Something went wrong while submitting the form.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Modular: Modular at LLVM Developers&apos; Meeting 2026</title>
       <link>https://www.modular.com/blog/modular-llvm-dev-meeting-2026</link>
@@ -4824,91 +4939,6 @@ max_output = compile_model(input)</code></pre>
 <p>August 18, 2026</p>
 <p>ModCon 2026: Open source, open cloud, open silicon</p>
 <p>August 18, 2026</p>
-<p>Build the future of AI with Modular</p>
-<p>Get started - FREE</p>
-<p>View Editions</p>
-<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="Person with blonde hair using a laptop with an Apple logo.">Sign up todaySignup to our Cloud Platform today to get started easily.<a href="https://docs.modular.com/max/get-started">Sign Up</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="Magnifying glass emoji with black handle and round clear lens.">Browse open modelsBrowse our model catalog, or deploy your own custom model<a href="https://www.modular.com/models">Browse models</a></li></ul>
-<h2>Sign up for our newsletter</h2>
-<p>Get all our latest news, announcements and updates delivered directly to your inbox. Unsubscribe at anytime.</p>
-<p>Thanks for signing up to our newsletter! 🚀</p>
-<p>Thank you,</p>
-<p>Modular Sales Team</p>
-<p>Oops! Something went wrong while submitting the form.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Modular: PyTorch and LLVM in 2025 — Keeping up With AI Innov…</title>
-      <link>https://www.modular.com/blog/pytorch-and-llvm-in-2025-keeping-up-with-ai-innovation</link>
-      <guid isPermaLink="true">https://www.modular.com/blog/pytorch-and-llvm-in-2025-keeping-up-with-ai-innovation?li=1</guid>
-      <pubDate>Thu, 06 Nov 2025 00:00:00 +0000</pubDate>
-      <description>Full title: Modular: PyTorch and LLVM in 2025 — Keeping up With AI Innovation</description>
-      <content:encoded><![CDATA[<p>November 6, 2025</p>
-<h1>PyTorch and LLVM in 2025 — Keeping up With AI Innovation</h1>
-<p>Michael Dunn-OConnor</p>
-<p>Community</p>
-<p>Along with several teammates, I had the privilege of attending two recent developer events in the AI software stack: <a href="https://pytorch.org/event/pytorch-conference-2025/">PyTorch Conference 2025</a> (October 22-23) in San Francisco and <a href="https://llvm.swoogo.com/2025devmtg/home">LLVM Developers' Meeting</a> (October 28-29) in Santa Clara. In this post, I’ll share some observations that stood out among all the conference sessions and conversations I had with developers.</p>
-<p>These events serve vastly different communities — PyTorch at the AI application layer, and LLVM at the compiler infrastructure layer. Yet I observed striking convergence: both communities are grappling with the same fundamental infrastructure challenges as AI innovation accelerates.</p>
-<h2>PyTorch Conference: an unknown developer future</h2>
-<p>My most memorable moment at PyTorch came after showing one of our demos to a computer science student. I asked what questions she had, expecting something about performance comparisons or compiler logic. Instead, she described the many challenges she faced developing kernels for a research project. Like many developers at PyTorch, she was most comfortable writing Python and found the number and complexity of languages and frameworks needed for kernel optimization overwhelming. She asked: &quot;How can I learn this? Where do I start?&quot;</p>
-<p>As an educator, I love hearing these questions. But her story captured an uncertainty I sensed throughout the talks and across the expo hall. No one wants to fall behind, yet there are so many languages and frameworks for different stages of the research-to-production journey. The current ecosystem requires integrating disparate tools and ensuring they work efficiently together—a path that feels increasingly inadequate for a future defined by hardware diversity and rapid model evolution.</p>
-<p>With the industry changing so rapidly, many attendees weren't discussing what <em>AI will be doing</em> in a few years—but rather what <em>they will be doing in AI</em>. This focus on the human experience of AI development extended throughout panels and talks.</p>
-<p>Image courtesy of the PyTorch Foundation</p>
-<p>When <a href="https://youtu.be/XdORM2pkyH8?si=MBYzF-rkIRszcaAs">Mark Saroufim presented Backend Bench</a>, he asked, &quot;What if we could get LLMs to write all of these ops to quickly bring up a new backend?&quot; When describing Helion (&quot;PyTorch with tiles,&quot; as he called it), he emphasized how easy it is for LLMs to program in Helion. Across these topics, Saroufim painted a picture of a future where LLMs generate kernels and autotune them to efficient performance.</p>
-<p>In <a href="https://youtu.be/w-A77TVr2fs?si=MHGoh0ECAPJvTwhw">Jeremy Howard's keynote conversation with Anna Tong</a>, he discussed what he called &quot;the opposite of vibe coding&quot;—using AI to improve your capabilities and learn new things, rather than automating away complexity. Many open questions remain about what LLMs can do in AI development and what work developers actually want to hand off to an LLM.</p>
-<p>Attendees at our booth had similar questions about using LLMs to write kernels in Mojo. This was clearly on many people's minds—how do you make repetitive work more efficient without sacrificing the learning that helps you solve harder problems tomorrow? More than the current state of code assistants, people were wondering what AI engineering will look like in a few years.</p>
-<h3>Hardware diversity</h3>
-<p>The uncertainty and opportunity in the AI world was equally clear on the hardware side. AI data centers experienced massive growth in 2025, and demand for hardware shows no signs of slowing. The conference reflected this reality, with hardware vendors of all sizes competing for market share.</p>
-<p>Many talks focused on CUDA, confirming that <a href="https://www.modular.com/blog/democratizing-ai-compute-part-9-why-do-hw-companies-struggle-to-build-ai-software">NVIDIA has a deep software moat</a>. Yet hardware diversity is growing rapidly in both data centers and edge devices. Other players are making significant investments—from traditional vendors like AMD, Intel, and Qualcomm, to big tech companies like Google (TPUs) and AWS (Trainium), to accelerator startups like Groq, Rebellions, Tenstorrent, and Furiosa (our booth neighbors).</p>
-<p>Developers face significant challenges keeping pace with architectural changes across hardware generations and managing diverse hardware in their current stack. In the <a href="https://youtu.be/XdORM2pkyH8?si=_U4RufSdhDCF-adN">keynote technical deep dive</a>, Meta's Peng Wu highlighted heterogeneous hardware as the leading industry trend in AI inference. Several presenters and attendees referenced Anthropic's <a href="https://www.anthropic.com/engineering/a-postmortem-of-three-recent-issues">postmortem of three recent issues</a>, which describes bugs that manifested different symptoms across platforms at different rates. Anthropic's refreshingly candid postmortem clearly resonated with developers who have felt hardware changes outpace their ability to evaluate and debug performance issues.</p>
-<p>Source: PyTorch Foundation YouTube Channel</p>
-<p>Achieving peak performance on modern GPUs requires deep, specialized knowledge of hardware-specific features that change with every hardware generation. Developers often must drop into CUDA C++ or even lower-level PTX assembly to unlock performance benefits from new hardware, making kernel authoring a bottleneck that only expert engineers can navigate.</p>
-<p>Meanwhile, other teams are working toward a compiler-first future where tools like PyTorch Dynamo, TorchInductor, and compiler dialects like TileIR automatically generate kernels from higher-level abstractions. (Our blog says more <a href="https://www.modular.com/blog/democratizing-ai-compute-part-6-what-about-ai-compilers">about AI compilers here</a>).</p>
-<p>As an alternative, Spenser Bauman presented a talk called <a href="https://www.youtube.com/watch?v=mket48-xpSk">Mojo + PyTorch: A Simpler, Faster Path To Custom Kernels</a>, explaining how to write GPU kernels in Mojo (a Python-style language) that are both high-performance and hardware-agnostic. Nearly every developer I spoke to about kernel development mentioned the same objectives.</p>
-<p>Developers want high-performance inference across a diverse and ever-changing hardware stack—but not at the cost of developer experience. If they were going to change their process, they wanted a single language that would meet their needs for both portability and precise control. They also wanted to write code that would last longer than a single hardware generation. It was refreshing to talk with so many folks who met industry uncertainty with an open mind and enthusiasm for learning something new.</p>
-<p>Source: PyTorch Foundation YouTube Channel</p>
-<h2>LLVM Developers' Meeting: how to build for diverse hardware</h2>
-<p>The following week, I attended the LLVM Developers' Meeting.</p>
-<p>While the conference covered a wide variety of compiler topics—from optimizing C loops to mitigating hardware vulnerabilities—several sessions showed how the LLVM community is facing the same hardware diversity challenges as the PyTorch community.</p>
-<p>Weiwei Chen’s MLIR Workshop talk on Mojo GPU Compilation (</p>
-<p>see the workshop slides</p>
-<p>)</p>
-<p>This year's LLVM Developers' Meeting featured a recurring focus on <a href="https://mlir.llvm.org/">MLIR</a>—an open-source compiler framework uniquely designed to build compilers for diverse hardware. MLIR appeared throughout the event, from training workshops to sessions on dialects, pattern rewrites, crash reproducers, and even Python DSLs for MLIR programmability.</p>
-<p>The LLVM community continues adopting MLIR to build robust support for the explosion of hardware targets—CPUs, GPUs, TPUs, and other AI accelerators—without fragmenting their tools or creating maintenance nightmares. The Modular team also presented talks about our experience with MLIR, which forms the foundation of both the Mojo programming language and the MAX graph compiler (our slides are linked below).</p>
-<h3>Thinking in decades, not years</h3>
-<p>Both conferences centered on open-source tools, so it's no surprise that open-source dominated discussions about AI's future. Meta's Alban Desmaison celebrated PyTorch's 9th birthday and highlighted the growing scale of GitHub contributions. Jeremy Howard called open-source <a href="https://youtu.be/w-A77TVr2fs?si=fewE7Af4ryApvog1&amp;t=816">”the right way for the global community to advance our software capabilities”</a> and made reference to the <a href="https://www.modular.com/blog/democratizing-compute-part-1-deepseeks-impact-on-ai">outsized impact of DeepSeek</a> on the open-source community.</p>
-<p>The keynote presentations at the LLVM Developers' Meeting stood out by taking a long-term view of open-source projects. Peter Smith, Principal Engineer at Arm, opened his talk by looking back at the compiler world in 25 BC (Before <a href="https://clang.llvm.org/">Clang</a>). He outlined, in technical detail, the 15 years he and his team spent incrementally replacing the proprietary parts of Arm's toolchain with LLVM technology—now offering a fully open-source LLVM-based toolchain using LLVM libc. He spoke about making decisions on migration and maintenance strategies that would impact his team's work for decades to come.</p>
-<p>The compiler engineers who crowded around Weiwei Chen's poster session on Mojo GPU Compilation were also thinking long-term. To build software that lasts decades, you can't optimize for a single chip. You need to solve for performance across devices, vendors, and workloads. You need a way to <a href="https://www.modular.com/blog/modulars-bet-to-break-out-of-the-matrix-democratizing-ai-compute-part-10">build for both the hardware in front of you and the hardware that doesn't exist yet</a>. This long-term thinking had a notably positive impact on the community. Developers from competing hardware vendors and software teams showed genuine curiosity and enthusiasm for each other's work—they didn't seem focused on who's the biggest fish today, but on building something for the future.</p>
-<p>Weiwei Chen’s poster session on Mojo GPU Compilation (</p>
-<p>see the poster</p>
-<p>)</p>
-<h2>The convergence: same problems, different layers</h2>
-<p>Attending both conferences back-to-back revealed a clear pattern: whether you're working at the PyTorch AI layer or the LLVM compiler layer, you face similar challenges:</p>
-<ul><li><strong>The two-language problem</strong>: PyTorch developers write Python but still need C++ for performance. Compiler developers support high-level languages but must understand low-level hardware.</li><li><strong>Hardware fragmentation</strong>: The explosion of AI accelerators—NVIDIA, AMD, Qualcomm, custom ASICs—means both communities spend enormous effort on hardware-specific optimizations across vendors and generations.</li><li><strong>Performance vs. productivity</strong>: Researchers want Python's ease of use. Production engineers need C++'s performance. Compiler engineers want portability but need hardware-specific optimizations.</li><li><strong>Velocity vs. stability</strong>: AI moves so fast that toolchains struggle to keep up. By the time infrastructure matures for one generation of models or hardware, the next wave has already arrived.</li></ul>
-<p>Another way to describe it is a &quot;hypercube of tradeoffs,” as Feras Boulala said in his talk about our MAX JIT Graph Compiler. He uses this term to described the software dilemmas facing deep learning engineers—it’s not just tradeoffs in performance vs. portability and low-level control vs. high-level abstractions, but also tradeoffs in debugging features, extensibility, and many other considerations.</p>
-<p>Slide from Feras Boulala’s Technical Talk on the MAX JIT Graph Compiler</p>
-<h2>Bridging the gap: an integrated approach</h2>
-<p>Talking to developers at both conferences, I noticed a pattern: they weren't looking for incremental improvements to existing tools. They were wondering if there was a fundamentally different approach—one that could collapse these tradeoffs rather than force them to choose.</p>
-<p>We believe the Modular Platform offers this kind of fundamentally different approach.</p>
-<p>At the center of the Modular Platform is the <strong>Mojo language</strong>. Built upon MLIR from the ground up, it provides a single programming language for the full stack—from high-level AI application code on CPUs down to low-level GPU kernels. At both conferences, we shared how Mojo unlocks programmability, performance, and portability with these sessions:</p>
-<ul><li>&quot;Mojo + PyTorch: A Simpler, Faster Path To Custom Kernels&quot; by Spenser Bauman at PyTorch Conference showed how to write GPU kernels for PyTorch using Mojo, delivering high-performance kernels that are also hardware-agnostic. <a href="https://modular-assets.s3.us-east-1.amazonaws.com/slides/PyTorch-Conf-2025-Mojo-PyTorch-custom-kernels.pdf">See the slides</a> and <a href="https://www.youtube.com/watch?v=mket48-xpSk">watch on YouTube</a>.</li><li>&quot;Building Modern Language Frontends with MLIR&quot; by Billy Zhu and Chris Lattner at the LLVM event was a technical deep dive on how Mojo leverages MLIR to create a compile-time metaprogramming system for heterogeneous computing. <a href="https://modular-assets.s3.us-east-1.amazonaws.com/slides/LLVM-Mtg-2025-Modern-Language-Frontends-with-MLIR.pdf">See the slides</a>.</li><li>&quot;Mojo GPU Compilation&quot; by Weiwei Chen and Abdul Dakkak at LLVM was a lightning talk on how Mojo's unique compilation flow enables CPU+GPU programming and efficiently offloads GPU kernels to the accelerator. <a href="https://modular-assets.s3.us-east-1.amazonaws.com/slides/LLVM-Mtg-2025-Mojo-GPU-Compilation-lightning-talk.pdf">See the slides</a>.</li></ul>
-<p>On top of Mojo is the <strong>MAX inference framework</strong>, which uses Mojo's powerful metaprogramming and compiler technology to deliver portability across the growing hardware landscape without sacrificing performance. Conference topics included:</p>
-<ul><li>&quot;Modular MAX's JIT Graph Compiler&quot; by Feras Boulala at LLVM was a deep dive on our MLIR-based graph compiler, which leverages unique Mojo features that let AI engineers register high-performance kernels without touching the lower-level compiler infrastructure—while still benefiting from the compiler's support for heterogeneous hardware. <a href="https://modular-assets.s3.us-east-1.amazonaws.com/slides/LLVM-Mtg-2025-MAX-JIT-Graph-Compiler.pdf">See the slides</a>.</li><li>At our PyTorch Conference booth, we shared several demos with the MAX inference server that achieve SOTA performance on both NVIDIA B200 and AMD MI355. You can try it yourself with a local endpoint by following our <a href="https://docs.modular.com/max/get-started/">quickstart guide</a>.</li></ul>
-<p>On top of all that is <strong>Mammoth</strong>, our Kubernetes-native control plane and router designed for large-scale distributed AI serving. It supports multi-model management, prefill-aware routing, disaggregated compute and cache, and more. For details, see <a href="https://docs.modular.com/mammoth/">how to scale your deployments with Modular</a>.</p>
-<h2>Looking ahead</h2>
-<p>The challenges discussed at both PyTorch Conference and the LLVM Developers' Meeting aren't going away—if anything, they're intensifying as AI models grow larger and hardware becomes more diverse. The path forward requires a solution that can:</p>
-<ul><li>Unify developers across backgrounds and skill levels.</li><li>Unify low-level software across frameworks and runtimes.</li><li>Unify hardware across vendors, devices, and use cases.</li></ul>
-<p>The conversations at both conferences made one thing clear: the AI community isn't just ready for solutions that reduce fragmentation—they're actively searching for them. The student who asked “where do I start?” and the compiler engineers thinking in decades, not quarters, are all looking for the same thing: tools that can keep pace with innovation without requiring them to constantly rebuild their foundations.</p>
-<p>That’s precisely why we built the Modular Platform: it allows you to build and deploy with a unified platform that doesn't ask you to choose between performance, portability, and productivity.</p>
-<p>Learn more about <a href="https://www.modular.com/blog/how-is-modular-democratizing-ai-compute">our strategy to democratize AI compute</a>.</p>
-<p>Discover what Modular can do for you</p>
-<p>Request a demo</p>
-<h2>Read more from Modular</h2>
-<p>View all blogs</p>
-<p>Modverse #55: Mojo 1.0 Beta, Community Mojo Libraries, and Real-Time Patient Conversations Powered by MAX</p>
-<p>June 10, 2026</p>
-<p>How I built a pure Mojo app (and 10 libraries) with AI agents</p>
-<p>May 19, 2026</p>
-<p>Modverse #54: AMD AI DevDay, New Modular Offices, and a Community That Keeps Shipping</p>
-<p>May 4, 2026</p>
 <p>Build the future of AI with Modular</p>
 <p>Get started - FREE</p>
 <p>View Editions</p>

@@ -429,16 +429,28 @@
       {
         "quote": "限时折扣价（5 折）\n语音合成（TTS）\n每 10,000 字符\n3元\n1.5元\n语音识别（ASR）\n每小时音频\n0.78元\n0.39元",
         "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/"
+      },
+      {
+        "quote": "自北京时间 2026 年 11 月 18 日 12:00 起，调用模型时触发的服务端搜索、网页抓取，其工具调用本身不再计费；工具返回的结果会拼接到模型上下文中参与推理，按模型 Token 用量计费。使用以下接口时会触发服务端搜索：联网工具、Anthropic API 的 web_search 工具、Responses API 的 web_search 工具。",
+        "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/"
+      },
+      {
+        "quote": "Search 与 Fetch API 按次计费。",
+        "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/"
+      },
+      {
+        "quote": "模型调用费用 = token 消耗量 × 模型单价；Search API 与 Fetch API 按上表价格按次计费。对应的费用将直接从充值余额或赠送余额中进行扣减。",
+        "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/"
       }
     ],
-    "_summary": "新增文件解析与 OCR 计费规则，新增语音合成（TTS）与语音识别（ASR）5 折限时折扣，更新联网搜索与抓取适用范围说明。",
-    "_updated": "2026-11-15 10:30:44",
+    "_summary": "更新 Search 与 Fetch API 计费规则：模型调用触发的服务端搜索与网页抓取工具本身免收调用费，改为仅按 Token 计费，API 计费单位改为每 1,000 次成功请求 5 元",
+    "_updated": "2026-11-20 11:53:52",
     "free_models": [
       "**无免费模型层**，全量模型按量计费：`deepseek-flash`（DeepSeek-V4.1-Flash-1017，支持图像理解与思考模式）、`deepseek-v4-pro`（DeepSeek-V4-Pro-0813）；上下文 1M（最大输出 384K）",
       "峰谷定价（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲半价）：deepseek-flash 输出 8 高峰/4 空闲、缓存命中输入 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5、缓存命中输入 0.30/0.15",
       "旧模型名 `deepseek-v4-flash`、`deepseek-v4-flash-vision-exp` 对应模型已下线，调用自动由 DeepSeek-V4.1-Flash-1017 提供服务并按 Flash 计费"
     ],
-    "promotions": "实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲半价）：deepseek-flash 输出 8.0/4.0、缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5、缓存命中 0.30/0.15。**周边 API 计费**：搜索（文字、图片）与网页抓取每 1,000 次 5 元（直接调用或联网工具调用均适用）；文件解析与 OCR 每 1,000 页 1.5 元；**语音 API 限时 5 折**：语音合成（TTS）1.5 元/万字符（刊例 3 元）、语音识别（ASR）0.39 元/小时音频（刊例 0.78 元）。费用优先扣减赠送余额。"
+    "promotions": "实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲半价）：deepseek-flash 输出 8.0/4.0、缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5、缓存命中 0.30/0.15。**周边 API 计费**：Search API（文字）与 Fetch API 每 1,000 次成功请求 5 元（自 2026 年 11 月 18 日起调用模型触发的服务端搜索与网页抓取工具本身不再计费，结果按模型 Token 用量计费）；文件解析与 OCR 每 1,000 页 1.5 元；**语音 API 限时 5 折**：语音合成（TTS）1.5 元/万字符（刊例 3 元）、语音识别（ASR）0.39 元/小时音频（刊例 0.78 元）。费用优先扣减赠送余额。"
   },
   "dmxapi": {
     "_evidence": [
@@ -613,17 +625,29 @@
       {
         "quote": "Gemini Decision 1 doesn't support the [Batch API](/docs/batch-api).",
         "url": "https://aistudio.google.com/docs/rate-limits.md"
+      },
+      {
+        "quote": "Gemini 4 Neon is not available on the Free tier. Every token the model processes is counted and billed, including thinking tokens and internal tool system instructions and function declarations when using grounding.",
+        "url": "https://aistudio.google.com/docs/pricing.md"
+      },
+      {
+        "quote": "The following concurrent session and daily request limits apply to\n[`models/genie-4`](/docs/models/genie-4) on the [Interactions API](/docs/genie):",
+        "url": "https://aistudio.google.com/docs/rate-limits.md"
+      },
+      {
+        "quote": "* Free\n  * Not supported\n  * Not supported",
+        "url": "https://aistudio.google.com/docs/rate-limits.md"
       }
     ],
-    "_summary": "免费层新增可用的 Gemini Decision 1 并公开其限额；同时 Gemini 4 Carbon 明确不在免费层。",
-    "_updated": "2026-11-17 12:49:03",
+    "_summary": "官方明确 Gemini 4 Neon 与 Genie 4（models/genie-4）不支持免费层（Not available / Not supported）",
+    "_updated": "2026-11-20 11:53:52",
     "free_models": [
       "`Gemini 3.x Flash`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置）；多数模型官方不公开逐模型数值（具体限额在 AI Studio 内显示），调用前以 AI Studio 的 Rate Limit 页为准",
       "`Gemini Decision 1` —— **免费层可用**：200 RPM / 50,000 TPM / 10,000 RPD（Decisions API；不支持 Batch API）",
-      "`Gemini 4 Carbon`、`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、`Gemini Omni Flash` (`gemini-omni-1.2-flash`) 与 Nano Banana 图像系列 —— **无免费层**（Free tier 明确标注 Not available / Not supported）"
+      "`Gemini 4 Carbon`、`Gemini 4 Argon`、`Gemini 4 Neon`、`Genie 4`、`Gemini 3.1 Pro Preview`、`Gemini Omni Flash` (`gemini-omni-1.2-flash`) 与 Nano Banana 图像系列 —— **无免费层**（Free tier 明确标注 Not available / Not supported）"
     ],
     "tier_caveats": [
-      "**不是所有模型都有免费层**：Flash 级部分模型 / Gemma 4 / Embedding 系列可用，但官方不再逐一公示；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、`Gemini Omni Flash` (`gemini-omni-1.2-flash`)、Nano Banana 图像系列**无免费层**，调错模型会直接付费或报错",
+      "**不是所有模型都有免费层**：Flash 级部分模型 / Gemma 4 / Embedding 系列可用，但官方不再逐一公示；`Gemini 4 Carbon/Argon/Neon`、`Genie 4`、`Gemini 3.1 Pro Preview`、`Gemini Omni Flash`、Nano Banana 图像系列**无免费层**，调错模型会直接付费或报错",
       "**隐私代价**：免费层输入/输出数据可能被用于改进 Google 产品；敏感数据不要走免费层",
       "免费层限速官方已不再公开固定数值，以 AI Studio 内 Rate Limit 页为准；RPD 按太平洋时间午夜重置",
       "$300 Google Cloud 试用金**不能**用于 Gemini API / AI Studio（2026 年 3 月起）；付费层需关联结算账户并预付最低 $5"
@@ -1007,16 +1031,38 @@
       {
         "quote": "moss-image-base-1.0Betasnapshot: moss-image-base-1.0-2026-10-09文生图模型，支持长文本、布局生图和文字渲染 · 文本 → 图片POST /v1/images/generations低分辨率 · ¥0.12 / 张约100万像素 · 2.40 积分/张高分辨率 · ¥0.18 / 张约200万像素 · 3.60 积分/张——",
         "url": "https://platform.moss.cn/docs/models"
+      },
+      {
+        "quote": "📢 MOSS-Live-1.0 API 于 11 月 18 日 12:00 开始计费，低至 0.15 元/分钟！立即体验 →",
+        "url": "https://platform.moss.cn/docs/models"
+      },
+      {
+        "quote": "MOSS-Live-1.0snapshot: moss-live-1.0-2026-11-02实时交互模型 · 实时音频 + 实时视频流 → 音频 + 文本WebSocket /v1/realtime¥0.15 / 分钟3 积分 / 分钟✓✓",
+        "url": "https://platform.moss.cn/docs/models"
+      },
+      {
+        "quote": "MOSS-TTS-2.0-Flash-Preview最新snapshot: moss-tts-2.0-flash-preview-2026-11-04单人文本转语音模型 · 文本 + voice_id → 音频POST /v1/audio/speech¥1.20 / 万字符24 积分 / 万字符✓✓",
+        "url": "https://platform.moss.cn/docs/models"
       }
     ],
-    "_summary": "MOSS 开放平台付费模型开启六折优惠（TTS/转写/文生图单价下调），语言与视觉等 4 款模型仍维持限时免费 0 积分。",
-    "_updated": "2026-11-16 10:27:19",
+    "_summary": "MOSS-Live-1.0 结束限时免费并开始按 ¥0.15/分钟计费；新增 MOSS-TTS-2.0-Flash-Preview 付费模型",
+    "_updated": "2026-11-20 11:53:52",
     "free_models": [
       "**限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（实测 max_tokens=64 时 63 个 token 全用于推理，finish_reason=length）",
-      "**限时免费 0 积分**：`moss-vl-1.0`（多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（实时视频理解，WebSocket `/v1/realtime`）、`moss-live-1.0`（实时音频+视频流→音频+文本，WebSocket `/v1/realtime`，Beta）",
-      "**付费（非免费，当前六折优惠）**：TTS 系列 moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写 moss-transcribe-1.0（¥0.48/小时＝9.60 积分/小时）、moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分、高分辨率 ¥0.18/张＝3.60 积分）"
+      "**限时免费 0 积分**：`moss-vl-1.0`（多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（实时视频理解，连续图片帧+文本→增量文本，WebSocket `/v1/realtime`）",
+      "**付费（非免费，执行六折优惠）**：实时交互 MOSS-Live-1.0（¥0.15/分钟＝3 积分/分钟）；TTS 系列 MOSS-TTS-2.0-Flash-Preview / moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写 moss-transcribe-1.0（¥0.48/小时＝9.60 积分/小时）、moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分、高分辨率 ¥0.18/张＝3.60 积分）"
     ],
-    "promotions": "限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 / moss-live-1.0 标 0 积分；付费模型（语音生成、音频转写、文生图）当前执行六折优惠。"
+    "guide_meta": {
+      "scenarios": [
+        "multimodal"
+      ],
+      "short": "限时免费 0 积分：nex-n2.6（多模态语言模型）+ moss-vl-1.0 / moss-vl-realtime-1.0 视觉理解",
+      "tiers": [
+        "onetime"
+      ],
+      "tip": "**限时免费无公开截止日**，随时可能恢复计费，别按长期额度排期；`nex-n2.6` 是推理模型，小 max_tokens 下正文为空（需给足）；MOSS-Live-1.0 已开始计费（¥0.15/分），TTS/转写/文生图均按量收费，不在免费范围；`tob-kimi-k3` 需单独授权、普通 key 调它 403"
+    },
+    "promotions": "限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 标 0 积分；MOSS-Live-1.0 已于 11 月 18 日 12:00 开始计费（¥0.15/分钟），语音生成、音频转写、文生图等付费模型当前执行六折优惠。"
   },
   "nebius": {
     "_evidence": [
@@ -1177,15 +1223,56 @@
       {
         "quote": "The Qwen3.8-Flash free promotion started on September 18, 2026 at 10:00 and has been extended beyond September 30. Its end date will be announced on the [Qwen3.8-Flash: Free for a Limited Time](/events/flashoffer) page. During the promotion, calls to this model consume no Credits and do not deduct from the rewards claimed through this promotion.",
         "url": "https://docs.qoder.com/events/100credits.md"
+      },
+      {
+        "quote": "Starting November 19, 2026 at 10:00, only users in a Pro trial or on a paid individual plan (Lite, Pro, Pro+, or Ultra) can claim the daily 100 general-purpose Credits. Free users can no longer claim the reward. Credits claimed before the change remain available for their original 30-day validity periods.",
+        "url": "https://docs.qoder.com/events/100credits.md"
+      },
+      {
+        "quote": "Starting November 19, 2026 at 10:00, Free users can no longer claim the reward. Once you start a Pro trial or subscribe to Lite, Pro, Pro+, or Ultra as an individual, you can claim the reward during the claim window.",
+        "url": "https://docs.qoder.com/events/100credits.md"
+      },
+      {
+        "quote": "No. If your Pro trial ends and you don’t have a paid individual plan, or if your paid individual subscription expires or is canceled, you’re no longer eligible starting with the next claim window. Previously claimed Credits remain available until they expire.",
+        "url": "https://docs.qoder.com/events/100credits.md"
+      },
+      {
+        "quote": "Eligible new users can receive a free 14-day Pro Trial with 300 Credits.",
+        "url": "https://docs.qoder.com/account/pricing.md"
+      },
+      {
+        "quote": "Trial eligibility is subject to verification. Each user may receive the trial only once, through one account. Signing in on another device or client does not grant an additional trial.",
+        "url": "https://docs.qoder.com/account/pricing.md"
       }
     ],
-    "_summary": "Qwen3.8-Flash 限免活动已延长超过 9 月 30 日，具体截止日期改为待公布",
-    "_updated": "2026-10-11 10:21:01",
+    "_summary": "自 2026-11-19 起，每日领取 100 Credits 活动不再向 Free 用户开放，仅限 Pro 试用期及个人付费用户领取；同时明确了 Pro 试用各端发放方式",
+    "_updated": "2026-11-20 11:53:52",
     "free_models": [
-      "基础模型 —— Free 方案长期可用，消息条数受限（Free 列还含有限补全/NES 与 BYOK）",
-      "高级（premium）模型 —— 每日领 100 Credits（2026-09-18 起，官方未公布截止）+ Pro 试用 300 Credits 抵扣",
+      "基础模型 —— Free 方案长期可用，受每日及每月消息条数限制（含有限补全/NES 与 BYOK）",
+      "高级（premium）模型 —— 需消耗 Credits：新用户 14 天 Pro 试用赠 300 Credits，试用期内每日可手动领取 100 Credits（2026-11-19 起 Free 用户不可领）",
       "限时免费活动 —— `Qwen3.8-Flash` 限免已延长（结束时间待公布，调用不扣 Credits）、SOTA 模型限时免费体验（按轮领取、未用过轮作废）、「经济(Efficient)」档位对付费用户限免（官方 Events 页）"
-    ]
+    ],
+    "free_quota": "**免费层 + 试用期每日赠送**：Free 方案长期可用**基础模型**（受每日与每月消息条数限制，含有限补全/NES 与 BYOK）；新用户 **14 天 Pro 试用赠 300 Credits**；**自 2026-11-19 起，每日领取 100 Credits 仅限处于 Pro 试用期及个人付费订阅用户**（Free 用户无法再领取；每天 10:00 开窗需手动领取，漏领作废）；每份领取的 Credits 自领取起 30 天内有效，未过期可结转；Credits 用尽自动降级基础模型，不断供",
+    "guide_meta": {
+      "scenarios": [
+        "code"
+      ],
+      "short": "新用户 14 天 Pro 试用赠 300 Credits 且试用期内每日可领 100 Credits，Free 层长期可用受限基础模型",
+      "signup": "email",
+      "tiers": [
+        "permanent",
+        "onetime"
+      ],
+      "tip": "自 2026-11-19 起 Free 用户不再享有每日 100 Credits 领取资格（仅 Pro 试用期或付费订阅可用）；已领 Credits 30 天有效且跨日结转"
+    },
+    "preconditions": "注册 Qoder 账号（GitHub / Google 等 OAuth）；14 天 Pro 试用资格需审核（桌面端/IDE/CLI 等首次登录自动发放，移动端需在首登弹窗领取）",
+    "tier_caveats": [
+      "2026-11-19 起 Free 免费用户无法再领取每日 100 Credits，该福利仅限 Pro 试用期与个人付费订阅（Lite/Pro/Pro+/Ultra）用户",
+      "每日奖励必须在当前窗口内手动领取，错过不补发；已领取的 30 天内有效、跨日结转",
+      "Pro 试用每位用户限领一次，跨设备登录不重复发放",
+      "Pro/Pro+/Ultra 的月度 Credits 仅订阅周期内有效，降级或取消后未使用的额度作废"
+    ],
+    "validity": "Pro 试用期 14 天（赠 300 Credits）；试用期内领取的每日 100 Credits 自领取日 30 天内有效（未过期结转后续天，试用到期后已领取的仍可继续使用至 30 天期满）；订阅方案的 Credits 仅当前订阅周期有效"
   },
   "relace": {
     "_evidence": [

@@ -7,7 +7,149 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Tencent Hy4 is live on Together AI</title>
+      <link>https://www.together.ai/blog/tencent-hy4</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/tencent-hy4</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>模型库</p>
+<p>发表于 11/19/2026</p>
+<h1>腾讯 Hy4 上线 Together AI</h1>
+<p>腾讯的旗舰模型现在可以理解图像和文本，开发人员可以在Together Serverless Inference上运行它。</p>
+<ul><li>作者桑尼·汗</li><li>目录<a href="https://www.together.ai/blog/tencent-hy4">40+ 型号选择用于生产...40+ 型号选择用于生产...40+ 型号选择用于生产...</a></li><li>本文链接【Hy4在游乐场】(https://api.together.ai/playground/v2/chat/tencent/Hy4)【腾讯Hy4车型页面】(https://www.together.ai/models/tencent-hy4)【腾讯公告】(https://www.tencent.com/tencent-launches-hy4-joining-the-ranks-of-the-worlds-leading-open-source-ai-models/)</li></ul>
+<p>长话短说</p>
+<ul><li><strong>Tencent Hy4 on Together AI：</strong> 腾讯的旗舰模型现已在 Together Serverless Inference 上提供，具有 1M 代币上下文窗口。</li><li><strong>图像输入：</strong> Hy4是Hy家族中第一个接受图像和文本的模型，它支持工具调用和JSON输出。</li><li><strong>我们测试的内容：</strong> Hy4 从我们的一个图表中读取值，将图表重建为网页，然后根据一个提示编写一个可以运行的浏览器游戏。</li><li><strong>无服务器定价：</strong> Hy4 每 1M 个输入代币成本为 0.83 美元，每 1M 缓存输入代币为 0.042 美元，每 100 万个输出代币为 2.50 美元。</li></ul>
+<p>从今天开始，开发者可以在Together Serverless Inference上运行<a href="https://www.together.ai/models/tencent-hy4">Tencent Hy4</a>。 Hy4 是腾讯的旗舰机型，也是 Hy 系列中首款支持图像和文本的机型。</p>
+<p>我们给它两项小任务，看看它在实践中做了什么：从我们的一个图表中提取数据并用 HTML 重建该图表，然后通过单个提示编写一个浏览器游戏。这是返回的内容，以及您自己发出图表请求的代码。</p>
+<h2>它读取我们的图表，然后重建它</h2>
+<p>我们从愿景开始，因为这是 Hy4 添加的功能。我们从我们的 <a href="https://www.together.ai/blog/introducing-together-storage-accelerator">Together Storage Accelerator</a> 帖子中获取了这张图表，给 Hy4 提供了它的屏幕截图，并要求其内容为 JSON。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aff9343e74092fb5e5a45a0_hy4-chart-original.png" alt="我们给腾讯Hy4的图表：来自Together Storage Accelerator帖子的条形图，有三个条，标记为TSA热读3.18 GB/s，R2来源，直接0.16 GB/s，TSA冷读0.14 GB/s。"></p>
+<p>响应返回的标题和所有三个值与图表中显示的完全相同：</p>
+<pre><code>{
+  &quot;title&quot;: &quot;A warm TSA read is 3.2 GB/s: 20x the R2 origin&quot;,
+  &quot;bars&quot;: [
+    {
+      &quot;label&quot;: &quot;TSA warm read&quot;,
+      &quot;value&quot;: 3.18
+    },
+    {
+      &quot;label&quot;: &quot;R2 origin, direct&quot;,
+      &quot;value&quot;: 0.16
+    },
+    {
+      &quot;label&quot;: &quot;TSA cold read&quot;,
+      &quot;value&quot;: 0.14
+    }
+  ]
+}</code></pre>
+<p>接下来，我们要求它使用相同的屏幕截图将图表重新生成为单个 HTML 文件。这次，输出需要保留视觉布局和数字。原版在上面，Hy4 的版本在下面。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aff944a13ada1c388c8adc6_hy4-chart-original-vs-rebuilt.png" alt="同一条形图的两个版本，堆叠在一起。最上面的一篇是 Together Storage Accelerator 帖子的原文。下图是腾讯 Hy4 截图重建的版本，布局、标签、数值、颜色都一样。"></p>
+<p>Hy4 复制了布局、标签、值、颜色、天花板虚线和脚注。我们要求它使用通用字体，因此字体有所不同。</p>
+<h2>它写了一个游戏</h2>
+<p>对于第二个测试，我们给 Hy4 一个文本提示而不是图像，并要求它在一个 HTML 文件中编写一个浏览器游戏，没有库或外部资源：</p>
+<blockquote>在单个 HTML 文件中制作小型原创浏览器游戏，无需库和外部资源。键盘控制、分数、失败方式和重新开始。两分钟应该会很有趣。仅使用 HTML 进行回复。</blockquote>
+<p>Hy4回归了一款名为Polarity的游戏。我们将响应保存为 HTML 文件并在浏览器中打开它，而无需更改代码。</p>
+<p>方块从屏幕顶部掉落。您抓住与您的颜色相匹配的颜色，然后按空格键切换颜色。如果黄色危险到达您身上，则跑步结束。 Hy4 还添加了一个标题屏幕，用于解释规则和从一轮到下一轮的最佳得分，这都是我们所要求的。</p>
+<p>！【腾讯Hy4网页游戏《Polarity》中的三屏写道：三个规则的标题屏、一个方块落下的回合、显示新记录的游戏结束屏。](https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aff947ca9cbf529712aa72f_hy4-polarity-game.png)</p>
+<p>我们玩了一局，到达游戏结束界面并成功重新开始。</p>
+<h2>关于腾讯Hy4</h2>
+<p>Hy4继Hy4 Preview之后，添加了图像输入和计算机使用功能。腾讯表示，它训练了该模型来操作 Blender 和 CAD 工具等专业软件。它还与自己的产品团队合作，对 Hy4 在虚幻引擎、Unity 和 Godot 中进行办公室工作、金融研究和游戏开发进行培训和评估。 【腾讯公告】(https://www.tencent.com/tencent-launches-hy4-joining-the-ranks-of-the-worlds-leading-open-source-ai-models/)有详细内容。</p>
+<h2>在 Together AI 上运行</h2>
+<p>Hy4 现在可以通过 Together 的聊天完成 API 在模型字符串 <code>tencent/Hy4</code> 下使用。下面的示例是本文前面的图表请求。要运行它，请安装Together Python SDK (<code>pip install together</code>)，设置<code>TOGETHER_API_KEY</code>，并将<a href="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afe92cf7001ead389e131e7_tsa-results-chart-brand.png">我们使用的图表</a>保存为<code>chart.png</code>。</p>
+<pre><code>import base64
+
+from together import Together
+
+client = Together()
+
+with open(&quot;chart.png&quot;, &quot;rb&quot;) as f:
+    image = base64.b64encode(f.read()).decode()
+
+response = client.chat.completions.create(
+    model=&quot;tencent/Hy4&quot;,
+    messages=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;type&quot;: &quot;text&quot;,
+                    &quot;text&quot;: &quot;Read this chart. Return a JSON object with a title &quot;
+                    &quot;and a list of bars, each with a label and a value.&quot;,
+                },
+                {
+                    &quot;type&quot;: &quot;image_url&quot;,
+                    &quot;image_url&quot;: {&quot;url&quot;: f&quot;data:image/png;base64,{image}&quot;},
+                },
+            ],
+        }
+    ],
+    response_format={&quot;type&quot;: &quot;json_object&quot;},
+)
+
+print(response.choices[0].message.content)</code></pre>
+<p>如果您想在编写任何代码之前尝试 Hy4，您可以在 <a href="https://api.together.ai/playground/v2/chat/tencent/Hy4">playground</a> 打开它，<a href="https://www.together.ai/models/tencent-hy4">模型页面</a> 包含完整的详细信息。</p>
+<p>现已上市</p>
+<p>在 Together AI 上运行腾讯 Hy4</p>
+<p>无服务器推理上的 1M 令牌上下文、文本和图像输入、工具调用和 JSON 输出。</p>
+<p>打开游乐场</p>
+<h2>常见问题解答</h2>
+<h3>腾讯 Hy4 在 Together AI 上的售价是多少？</h3>
+<p>腾讯 Hy4 在 Together AI 上的成本为每 100 万个输入代币 0.83 美元，每 100 万个输出代币 2.50 美元，每 100 万个缓存输入代币 0.042 美元。</p>
+<h3>腾讯Hy4在Together AI上的上下文窗口是什么？</h3>
+<p>腾讯 Hy4 在 Together AI 上有一个 1M 代币的上下文窗口，您可以使用模型字符串 <code>tencent/Hy4</code> 来调用它。</p>
+<h3>腾讯Hy4接受图片吗？</h3>
+<p>是的，腾讯Hy4在Together AI上接受文本和图像输入并返回文本，它是腾讯Hy家族中第一款具有视觉功能的模型。您可以将每个图像作为消息内容中的 <code>image_url</code> 块发送，如上例所示。</p>
+<h3>腾讯Hy4支持JSON输出和工具调用吗？</h3>
+<p>是的，腾讯 Hy4 在 Together AI 上都支持两者。您可以通过将 <code>response_format</code> 设置为 <code>{&quot;type&quot;: &quot;json_object&quot;}</code> 来获取 JSON 输出，并通过在标准 <code>tools</code> 参数中传递函数来启用工具调用。</p>
+<h2>相关文章</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>推出 Together Storage Accelerator：为您的 GPU 集群提供快速、免费的数据缓存</title>
+      <link>https://www.together.ai/blog/introducing-together-storage-accelerator</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/introducing-together-storage-accelerator</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Together Storage Accelerator: fast, free data caching for your GPU cluster</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>GPU集群</p>
+<p>发表于 11/19/2026</p>
+<h1>隆重推出 Together Storage Accelerator：为您的 GPU 集群提供快速、免费的数据缓存</h1>
+<p>每个 GPU 节点上的分布式缓存：热读取速度提高约 20 倍，每个集群一次原始提取，并且没有应用程序更改。随 Together GPU Clusters 免费提供。</p>
+<ul><li>作者 Pavneet Ahluwalia、Vinamra Jain</li><li>目录<a href="https://www.together.ai/blog/introducing-together-storage-accelerator">40+ 型号选择用于生产...40+ 型号选择用于生产...40+ 型号选择用于生产...</a></li></ul>
+<p>GPU 的速度取决于数据管道的速度。每次以 30 分钟的模型下载开始的训练运行、从全国各地重新提取相同数据集的每个节点，以及每一个导致工作停滞的 Hugging Face 速率限制，都会导致计算资源闲置，等待您的数据，而您却在为它们付费。</p>
+<p>今天，我们推出 <strong>Together Storage Accelerator (TSA)</strong>，它是 Together GPU 集群的分布式缓存层，可减少从对象存储和 Hugging Face Hub 重复读取数据的需要，从而显着加速您的 AI 数据管道，同时减少数据传出费用。 TSA 现在<strong>免费</strong>包含在每个 Together GPU 集群中。</p>
+<h2>问题：您的数据距离 GPU 很远</h2>
+<p>大多数人工智能团队将其事实来源保存在对象存储中（Amazon S3、Cloudflare R2、Together AI 的 T4*）或直接从 Hugging Face Hub 中提取模型。这意味着每次冷启动都要缴纳 WAN 税：跨云或跨区域读取速度慢、成本高（AWS 的出口高达 0.09 美元/GB）且速率有限。当数百个节点拉取相同的检查点时，浪费会增加，并会花费您的时间、金钱，并且当源端限制您时，作业也会失败。</p>
+<p>**T4 是 Together AI 的数据中心 S3 兼容对象存储解决方案，目前处于有限预览版。如果您有兴趣尝试，请联系销售人员或您的客户团队。*</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aff4de0e9b9a821d633908e_2026-11-19-tsa-architecture-diagram.png" alt=""></p>
+<h2>TSA 缓存数据，提高性能、可靠性和成本</h2>
+<p>TSA 为您提供 GPU 集群的分布式缓存层。它在集群中的每个 GPU 节点上运行，并为您已使用的存储提供直接端点。任何节点第一次读取对象时，TSA 都会将其缓存在集群 NVMe 上。因此，来自任何节点的每个后续读取都将从集群内部以显着更高的本地速度提供服务。</p>
+<p>在 Together GPU Cluster H100 节点上测量的结果：</p>
+<ul><li><strong>比从跨云源拉取的热读取速度快约 20 倍</strong>，每个节点高达 <strong>3.4 GB/s</strong>。从 Cloudflare R2 下载需要 13-15 秒的 2 GiB 对象，可以在 0.6 - 0.7 秒内从缓存中读取</li><li><strong>冷读无需额外费用</strong>：通过 TSA 的首次读取运行速度约为直接下载的 5%</li><li><strong>每个集群一次源获取。</strong> 由 200 个节点拉取的 70 GB 检查点从源下载一次，而不是 200 次</li><li><strong>对中断和速率限制的恢复能力。</strong> 即使上游不提供服务，缓存数据也能继续提供服务。</li></ul>
+<p>您可以开始使用 TSA <strong>无需对您的应用程序进行任何更改</strong>。无需新的 SDK，无需重写数据加载器，您只需一个命令即可开始使用。</p>
+<p><strong>入门：</strong></p>
+<pre><code># S3-compatible storage (S3, R2, T4, ...)
+export AWS_ENDPOINT_URL=http://tsa.tsa.svc.cluster.local:18080
+
+# Hugging Face Hub
+export HF_ENDPOINT=http://tsa.tsa.svc.cluster.local:18080</code></pre>
+<p>您现有的 boto3 代码、变压器调用和 CLI 工作流程按原样工作。 TSA 使用您配置的凭据处理身份验证。凭证经过加密并安全地存储在机密库中。</p>
+<h2>测量结果</h2>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afe92cf7001ead389e131e7_tsa-results-chart-brand.png" alt=""></p>
+<p>于 2026 年 10 月 28 日从 Together GPU 集群 (us-central) 中的一个 H100 节点上的 Pod 进行测量。除非另有说明，否则均为单流读取；客户端写入 /dev/null 或节点 NVMe。</p>
+<ul><li><strong>从跨云存储桶 (Cloudflare R2) 读取 2 GiB 对象：</strong> 无 TSA 时为 143–169 MB/s（12.7–15.0 秒），在 TSA 热时为 3.0–3.4 GB/s（0.64–0.72 秒）。 <strong>~20×</strong></li><li><strong>从同一存储桶读取小文件（5 KB、2.4 MB）：</strong> 不使用 TSA 时为 320 毫秒和 680 毫秒，使用 TSA 热时为 5 毫秒和 8 毫秒。 <strong>~60–80×</strong> 较低的延迟</li><li><strong>200 个节点的集群拉取相同的检查点：</strong> 200 个不带 TSA 的源获取，1 个带 TSA。 <strong>减少 200×</strong> 出口</li></ul>
+<p><em>在 Together GPU 集群预览部署上测量（TSA 图表 0.6.0）；您的结果取决于来源、对象大小和网络路径。起源速度是区域性的：相同的 Hugging Face 下载从美国中部地区运行的速度比从加州西部地区快 5 倍，因此，在起源最慢的地方，TSA 的优势最大。方法：来自 GPU 节点上的 pod 的单流curl 和 aws s3 cp，重复读取同一对象，针对直接下载进行 MD5 验证。</em></p>
+<h2>由 ASTRA 提供支持</h2>
+<p>TSA 利用 <a href="https://docs.together.ai/docs/astra"><strong>ASTRA</strong></a>（加速存储传输和检索架构），这是我们为满足世界上一些最大的 GPU 队列（包括我们自己的推理队列）而构建的分布式缓存技术。我们将在即将发布的工程帖子中分享对 ASTRA 的更深入的技术了解。</p>
+<h2>与T4一起使用效果更好</h2>
+<p>TSA 可与任何 S3 兼容的存储配合使用，并与 Together AI 的托管对象存储解决方案 <strong>T4</strong> 自然配对。立即将 TSA 指向您现有的 S3 或 R2 存储桶，无需迁移数据。当您希望温数据永久驻留在 GPU 旁边时，T4 只需进行一次配置更改即可。 T4 目前处于<strong>有限预览版</strong>：联系销售人员或您的客户团队以获取访问权限。</p>
+<h2>开始吧</h2>
+<p>Together Storage Accelerator 现已在 Together GPU 集群上提供，无需额外付费。从集群的“设置”页面启用它，或参阅<a href="https://docs.together.ai/docs/storage-accelerator">文档</a>，在十分钟内从零加速到加速。</p>
+<p>→ <a href="https://api.together.ai/clusters/create">创建集群</a></p>
+<p>‍→ <a href="https://docs.together.ai/docs/storage-accelerator">阅读文档</a></p>
+<h2>相关文章</h2>]]></content:encoded>
+    </item>
     <item>
       <title>去年我们构建了 megakernels，今年我们删除了它们：通往 Together Compiler 之路</title>
       <link>https://www.together.ai/blog/road-to-together-compiler</link>
@@ -3470,111 +3612,6 @@ curl -L -O \
 <p>→ 了解 <a href="https://www.together.ai/blog/fine-tuning-update">Together Fine-Tuning 的最新能力</a></p>
 <p>→ 阅读 <a href="https://docs.together.ai/docs/fine-tuning-quickstart">Together Fine-Tuning 文档</a></p>
 <p>→ <a href="https://www.together.ai/contact-sales">联系销售</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>DeepSeek-V4 Pro 现已上线 Together AI</title>
-      <link>https://www.together.ai/blog/deepseek-v4-pro-now-available-on-together-ai</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/deepseek-v4-pro-now-available-on-together-ai</guid>
-      <pubDate>Wed, 29 Apr 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：DeepSeek-V4 Pro now available on Together AI</description>
-      <content:encoded><![CDATA[<h1>DeepSeek-V4 Pro 现已登陆 Together AI</h1>
-<p>1.6T 参数 MoE 推理模型，在 Together AI 上提供 512K 上下文、可控推理模式，以及面向长上下文工作负载的缓存输入定价。</p>
-<h2>最新动态</h2>
-<ul><li><a href="https://www.together.ai/models/deepseek-v4-pro"><strong>Together AI 上的 DeepSeek V4 Pro：</strong></a> DeepSeek V4 Pro 现已在 Together AI 上线，提供 512K token 上下文窗口，面向长上下文推理工作负载。</li><li><strong>大规模 MoE 架构：</strong> DeepSeek V4 Pro 采用 1.6T 参数的 Mixture-of-Experts 架构，激活参数 49B。</li><li><strong>可控推理模式：</strong> Non-Think、Think High、Think Max 三种模式，让团队在快速响应、更深推理和最大推理强度之间选择。</li><li><strong>透明的 serverless 定价：</strong> DeepSeek V4 Pro 价格为<strong>每 100 万输入 token \$2.10、每 100 万缓存输入 token \$0.20、每 100 万输出 token \$4.40。</strong></li></ul>
-<p>长上下文推理改变了人们能让模型做的事。整个代码仓库、大型文档集、长 agent trace 和工具输出都能装进模型的工作上下文，而不必被压缩成脆弱的摘要。但能用这么多上下文的模型也最难服务：一个 1.6T 参数的 MoE、支持百万 token 上下文，不是多数团队想自己部署、调优和运维的东西。</p>
-<p>DeepSeek-V4 Pro 现已在 Together AI——AI Native Cloud——上线：团队可以从 512K 上下文的 Serverless Inference 起步，再迁移到专属基础设施以获得完整 1M 上下文、预留容量和生产级控制。DeepSeek-V4 Flash 即将推出，为看重速度和成本胜过最大推理深度的团队提供另一个 V4 选项。</p>
-<h2><strong>速览</strong></h2>
-<table><thead><tr><th>规格</th><th>值</th></tr></thead><tbody><tr><td>模型</td><td>DeepSeek V4 Pro on Together AI</td></tr><tr><td>Endpoint</td><td>deepseek-ai/DeepSeek-V4-Pro</td></tr><tr><td>架构</td><td>1.6T 参数 MoE</td></tr><tr><td>激活参数</td><td>49B</td></tr><tr><td>Together AI 上下文</td><td>512K tokens</td></tr><tr><td>模型级上下文</td><td>1M tokens</td></tr><tr><td>推理模式</td><td>Non-Think、Think High、Think Max</td></tr><tr><td>部署方式</td><td>Serverless、Monthly Reserved</td></tr><tr><td>输入价格</td><td>$2.10 / 1M tokens</td></tr><tr><td>缓存输入价格</td><td>$0.20 / 1M tokens</td></tr><tr><td>输出价格</td><td>$4.40 / 1M tokens</td></tr><tr><td>最适工作负载</td><td>代码 agent、文档智能、长上下文 agent、研究综合</td></tr></tbody></table>
-<h2><strong>为长上下文推理而生</strong></h2>
-<p>DeepSeek V4 Pro 为那些模型需要在远超短 prompt 的内容上推理的工作负载而建：大型代码仓库、长篇技术文档、密集检索包、工具调用历史和研究语料。</p>
-<p>DeepSeek V4 Pro 在模型级支持百万 token 上下文；在 Together AI 上目前以 512K token 上下文窗口提供。这个区别很重要，因为模型能力和已部署的服务形态不总是一回事。Together AI 首发即配一个为可靠生产服务设计的上下文窗口，同时给团队留足严肃长上下文负载的空间。</p>
-<p>架构同样重要，因为长上下文不只是一个产品参数。随着上下文增长，服务成本、内存压力、KV 缓存占用、延迟和并发都成为系统设计的一部分。DeepSeek V4 Pro 采用混合注意力，结合压缩稀疏注意力（Compressed Sparse Attention）与重度压缩注意力（Heavily Compressed Attention），DeepSeek 报告在百万 token 上下文下，单 token 推理 FLOPs 降至 DeepSeek V3.2 的 27%、KV 缓存降至 10%。</p>
-<h2><strong>按工作负载选择推理强度</strong></h2>
-<p>DeepSeek V4 Pro 支持三种推理模式，让团队按任务难度匹配推理深度，而不是一视同仁地处理每个请求。</p>
-<table><thead><tr><th>模式</th><th>适用时机</th><th>权衡</th></tr></thead><tbody><tr><td>Non-Think</td><td>抽取、分类、简单问答、常规回复</td><td>低复杂度任务的最快路径</td></tr><tr><td>Think High</td><td>代码规划、文档分析、多步推理</td><td>更复杂工作配更深推理</td></tr><tr><td>Think Max</td><td>疑难调试、深度研究综合、agent 决策点</td><td>最大推理强度；预期更高延迟和 token 用量</td></tr></tbody></table>
-<p>一个文档助手可能对简单抽取用 Non-Think，对跨条款冲突分析用 Think High，只在模型需要推理艰难决策时用 Think Max。一个代码 agent 可能在规划迁移时用 Think High，调试微妙的跨服务故障时用 Think Max。</p>
-<p>DeepSeek 报告了编码、推理、长上下文和 agent 任务的基准结果，包括 93.5% LiveCodeBench、90.1% GPQA Diamond、80.6% SWE-bench Verified、83.5% MRCR 1M 和 62.0% CorpusQA 1M。</p>
-<h2><strong>用缓存输入定价降低重复长上下文查询的成本</strong></h2>
-<p>长上下文系统常常在多个问题之间复用同一大上下文：一份仓库快照、一个文档包、一套政策档案、一次检索载荷或一条长 agent trace。缓存输入定价让这些重复负载更可行。</p>
-<p>DeepSeek V4 Pro 定价为 \$2.10 / 1M 输入 token，缓存输入 \$0.20 / 1M token，输出 \$4.40 / 1M token。这代表复用上下文<strong>成本降低 90%</strong>——当请求的昂贵部分是一个在后续分析中被反复使用的稳定文本块时，这一点至关重要。</p>
-<p><strong>示例模式：</strong></p>
-<ul><li>加载一个大型稳定上下文，如 300K token 的仓库摘要、合同集或政策档案。</li><li>在同一上下文上连续提出多个后续问题。</li><li>适用处使用缓存输入定价，大幅降低重复分析的成本。</li></ul>
-<h2><strong>工作负载模式</strong></h2>
-<p><strong>代码 agents</strong></p>
-<p>当 agent 需要跨仓库切片、issue trace、内部文档、既往工具调用和候选补丁进行推理时，使用 DeepSeek V4 Pro。规划变更、调试故障或解析跨文件依赖时，Think High 或 Think Max 最有用。</p>
-<p><strong>文档智能</strong></p>
-<p>用长上下文处理需要在单个请求里彼此对照的合同、政策集、技术手册或研究合集。Non-Think 足以应付抽取和简单问答；冲突分析、解读与综合更适合 Think High。</p>
-<p><strong>长上下文 agent trace</strong></p>
-<p>用 DeepSeek V4 Pro 检查长工具调用历史、中间结果和执行 trace。更高的推理模式在决策点最有用：agent 需要决定是继续、再调用一个工具、修订计划还是停止时。</p>
-<p><strong>研究综合</strong></p>
-<p>对合并论文、笔记、基准报告、检索文档和既往分析的工作流，使用 DeepSeek V4 Pro。当同一证据集跨多个问题复用时，缓存输入定价尤其有用。</p>
-<h2><strong>从 serverless 起步，走向预留容量</strong></h2>
-<p>DeepSeek V4 Pro 在 Together AI Serverless Inference 和 Monthly Reserved 基础设施上可用。Serverless 是评估、开发和波动流量的正确起点。对于更平稳的生产需求——团队需要更可预测的容量和成本控制——Monthly Reserved 更合适。</p>
-<p>对长上下文工作负载，部署路径很重要。团队不只在选择一个模型，还在选择随着上下文规模增长如何管理吞吐、并发、延迟、KV 缓存压力和成本。Together AI 给团队一条从评估到生产的路，无需自己搭建服务栈。</p>
-<h2>立即试用</h2>
-<p>DeepSeek-V4 Pro 今天在 Together AI Serverless Inference 和 Dedicated Endpoints 上可用。</p>
-<pre><code>    
-from together import Together
-
-client = Together()
-
-stream = client.chat.completions.create(
-    model=&quot;deepseek-ai/DeepSeek-V4-Pro&quot;,
-    messages=[
-        {
-            &quot;role&quot;: &quot;user&quot;,
-            &quot;content&quot;: &quot;Prove that the square root of 2 is irrational.&quot;,
-        }
-    ],
-    stream=True,
-)
-
-for chunk in stream:
-    if not chunk.choices:
-        continue
-    delta = chunk.choices[0].delta
-
-    if hasattr(delta, &quot;reasoning&quot;) and delta.reasoning:
-        print(delta.reasoning, end=&quot;&quot;, flush=True)
-    if hasattr(delta, &quot;content&quot;) and delta.content:
-        print(delta.content, end=&quot;&quot;, flush=True)
-
-    </code></pre>
-<p>从 Serverless Inference 开始做开发和评估。对需要完整 1M 上下文、预留容量、负载隔离或更可预测吞吐的生产工作负载，请联系销售在 Together AI Dedicated Inference 上部署 DeepSeek-V4 Pro。</p>
-<h2>开始使用</h2>
-<p>→ 按我们的 <a href="https://docs.together.ai/docs/deepseek-v4-quickstart">DeepSeek-V4 快速入门</a>上手</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Together AI Day 0 为开发者带来 NVIDIA Nemotron 3 Nano Omni</title>
-      <link>https://www.together.ai/blog/together-ai-brings-nvidia-nemotron-3-nano-omni-to-developers-on-day-0</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/together-ai-brings-nvidia-nemotron-3-nano-omni-to-developers-on-day-0</guid>
-      <pubDate>Tue, 28 Apr 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Together AI Brings NVIDIA Nemotron 3 Nano Omni to Developers on Day 0</description>
-      <content:encoded><![CDATA[<p><a href="https://developer.nvidia.com/blog/nvidia-nemotron-3-nano-omni-powers-multimodal-agent-reasoning-in-a-single-efficient-open-model">NVIDIA Nemotron™ 3 Nano Omni</a> 现已<a href="https://blogs.nvidia.com/blog/nemotron-3-nano-omni-multimodal-ai-agents/">在 Together AI 平台可用</a>。Nemotron 3 Nano Omni 是多模态 AI 的一次实质进步——一个单一的开放模型，跨视频、图像、音频和语言进行推理。对构建 agentic 应用的开发者，Together AI Dedicated Inference 是最快的上手与扩展方式。</p>
-<h2><strong>为什么在 Together AI 上运行它</strong></h2>
-<p>Together AI——AI Native Cloud——一直是那些想要快速、实惠、可靠地访问全球最佳开放模型做生产规模推理的开发者的首选平台。</p>
-<p>Nemotron 3 Nano Omni 通过执行链式动作把跨模态上下文统一起来——这对需要确定性行为的 agent 常常是关键。这意味着一个 agent 可以同时跨音频输入（如录音或转录）、截图、视频、结构化文档这类视觉输入进行推理——不必把理解碎片化到多次独立推理中。</p>
-<p><strong>1. Together AI 的研究优化释放模型架构的全部潜力</strong></p>
-<p>Nemotron 3 Nano Omni 的混合 Mamba-Transformer Mixture-of-Experts（MoE）架构在 30B 总参数中每 token 仅激活约 3B，并用多 token 预测（MTP）在单次前向传播中同时生成多个未来 token。Together AI 的技术栈由前沿 AI 系统研究驱动，实现高吞吐、具成本效益、生产级、延迟持续稳定的推理。把它与这个全新、高效、高精度的 Nemotron 3 Nano Omni 模型结合，意味着更快的多模态推理、每单位算力更多智能。</p>
-<p><strong>2. 为 agentic、生产规模推理负载打造的托管基础设施</strong></p>
-<p>Agent 应用依赖可预测的性能。Together AI 在流量尖峰下保持可靠性能、高在线率与 token 流式输出，帮助 agent 循环即使在长上下文或持续决策任务中也保持响应。开发者可以快速在 Together AI 上部署 Nemotron 3 Nano Omni、无需管理基础设施，并从原型到生产无缝扩展。这个全托管环境消除运维开销，让团队专注构建，而不是维护 GPU。</p>
-<p><strong>3. 保护你数据的安全、生产就绪平台</strong></p>
-<p>Together AI 提供简单、开发者友好的 API——轻松把 Nemotron 3 Nano Omni 集成进多 agent 框架、规划系统和多模态系统。加上稳定安全的 API，平台给组织一个可信的根基大规模部署 AI——不必用速度换安全。</p>
-<h2><strong>Nemotron 3 Nano Omni 擅长哪里</strong></h2>
-<p>今天多数生产 AI 系统通过碎片化流水线处理多模态输入：一个模型管视觉、另一个管音频、再一个管文档——用定制编排逻辑缝起来。这个架构的每一个接缝都是潜在故障点——增加的延迟、错位的上下文、跨模级联的错误。</p>
-<p>Nemotron Nano Omni 消除了这些接缝。</p>
-<p>基于 Mixture of Experts（MoE）架构与混合 Transformer-Mamba 设计构建，这个 30B A3B 模型支持在单一连贯推理循环内最多 256K token 的共享多模态输入上下文。这允许 agent 理解音频输入（如转录）、截图这类视觉输入和相关文档——而不把理解碎片化到独立推理轮次中。</p>
-<p>效率收益很显著：</p>
-<ul><li>减少对多模型流水线的需求，降低系统复杂度</li><li>跨视频、音频、文档负载的多模态处理更高效</li><li>长上下文 agentic 应用的吞吐与可扩展性更好</li><li>部署灵活，在 <a href="https://www.nvidia.com/en-us/data-center/technologies/hopper-architecture/">NVIDIA Hopper</a>、<a href="https://www.nvidia.com/en-us/data-center/technologies/blackwell-architecture/">NVIDIA Blackwell</a> 等硬件上支持 FP8 与 NVFP4</li></ul>
-<p>而且它完全开放。开放权重、开放数据、开放训练后配方。开发者可以在任何地方部署——云、本地、气隙环境——拥有完整数据控制权、没有模型锁定。</p>
-<h2><strong>你可以构建什么</strong></h2>
-<p>把感知与推理统一进一个模型，打开了此前太复杂或太昂贵而无法投产的用例：</p>
-<p><strong>客服 agent</strong> 可以同时跨通话录音、屏幕录制和政策文档进行推理——既理解用户意图也理解系统上下文。</p>
-<p><strong>金融分析 agent</strong> 跨财报电话会音频、投资人演示视频、扫描的图表图像和 SEC 文件推理——产出有据可依的洞见，而非表面摘要。</p>
-<p><strong>计算机使用 agent</strong> 通过屏幕录制看 UI、解读指令、对照约束文档验证动作——全部在单一推理上下文内。</p>
-<p>任何以前需要组装多模型栈的应用，如今都有了一条更干净的投产之路。</p>
-<h2><strong>开始使用</strong></h2>
-<p><a href="https://www.together.ai/models/nvidia-nemotron-3-nano-omni">NVIDIA Nemotron 3 Nano Omni</a> 今天在 Together AI 可用。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

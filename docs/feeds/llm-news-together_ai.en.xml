@@ -7,7 +7,153 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Tencent Hy4 is live on Together AI</title>
+      <link>https://www.together.ai/blog/tencent-hy4</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/tencent-hy4?li=1</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>Model Library</p>
+<p>Published 11/19/2026</p>
+<h1>Tencent Hy4 is live on Together AI</h1>
+<p>Tencent's flagship model now understands images as well as text, and developers can run it on Together Serverless Inference.</p>
+<ul><li>AuthorsSonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/tencent-hy4">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/tencent/Hy4">Hy4 in the playground</a><a href="https://www.together.ai/models/tencent-hy4">Tencent Hy4 model page</a><a href="https://www.tencent.com/tencent-launches-hy4-joining-the-ranks-of-the-worlds-leading-open-source-ai-models/">Tencent's announcement</a></li></ul>
+<p>TL;DR</p>
+<ul><li><strong>Tencent Hy4 on Together AI:</strong> Tencent's flagship model is now available on Together Serverless Inference with a 1M-token context window.</li><li><strong>Image input:</strong> Hy4 is the first model in the Hy family to accept images alongside text, and it supports tool calling and JSON output.</li><li><strong>What we tested:</strong> Hy4 read the values off one of our charts, rebuilt the chart as a webpage, then wrote a working browser game from one prompt.</li><li><strong>Serverless pricing:</strong> Hy4 costs \$0.83 per 1M input tokens, \$0.042 per 1M cached input tokens and \$2.50 per 1M output tokens.</li></ul>
+<p>Starting today, developers can run <a href="https://www.together.ai/models/tencent-hy4">Tencent Hy4</a> on Together Serverless Inference. Hy4 is Tencent's flagship model and the first in the Hy family to accept images alongside text.</p>
+<p>We gave it two small jobs to see what it does in practice: extracting the data from one of our charts and rebuilding that chart in HTML, then writing a browser game from a single prompt. Here's what came back, along with the code to make the chart request yourself.</p>
+<h2>It read our chart, then rebuilt it</h2>
+<p>We started with vision, since that's the capability Hy4 adds. We took this chart from our <a href="https://www.together.ai/blog/introducing-together-storage-accelerator">Together Storage Accelerator</a> post, gave Hy4 a screenshot of it, and asked for its contents as JSON.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aff9343e74092fb5e5a45a0_hy4-chart-original.png" alt="The chart we gave Tencent Hy4: a bar chart from the Together Storage Accelerator post with three bars, labeled TSA warm read at 3.18 GB/s, R2 origin, direct at 0.16 GB/s, and TSA cold read at 0.14 GB/s."></p>
+<p>The response returned the title and all three values exactly as they appear in the chart:</p>
+<pre><code>{
+  &quot;title&quot;: &quot;A warm TSA read is 3.2 GB/s: 20x the R2 origin&quot;,
+  &quot;bars&quot;: [
+    {
+      &quot;label&quot;: &quot;TSA warm read&quot;,
+      &quot;value&quot;: 3.18
+    },
+    {
+      &quot;label&quot;: &quot;R2 origin, direct&quot;,
+      &quot;value&quot;: 0.16
+    },
+    {
+      &quot;label&quot;: &quot;TSA cold read&quot;,
+      &quot;value&quot;: 0.14
+    }
+  ]
+}</code></pre>
+<p>Next, we asked it to reproduce the chart as a single HTML file, using the same screenshot. This time, the output needed to preserve the visual layout as well as the numbers. The original is on top, and Hy4's version is below it.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aff944a13ada1c388c8adc6_hy4-chart-original-vs-rebuilt.png" alt="Two versions of the same bar chart, stacked. The top one is the original from the Together Storage Accelerator post. The bottom one is the version Tencent Hy4 rebuilt from a screenshot, with the same layout, labels, values and colors."></p>
+<p>Hy4 reproduced the layout, the labels, the values, the colors, the dashed ceiling line and the footnote. We asked it to use generic fonts, so the typeface differs.</p>
+<h2>It wrote a game</h2>
+<p>For the second test, we gave Hy4 a text prompt rather than an image and asked it to write a browser game in one HTML file, with no libraries or external assets:</p>
+<blockquote>Make a small, original browser game in a single HTML file, with no libraries and no external assets. Keyboard controls, a score, a way to lose and a restart. It should be fun for two minutes. Reply with only the HTML.</blockquote>
+<p>Hy4 returned a game called Polarity. We saved the response as an HTML file and opened it in a browser without changing the code.</p>
+<p>Blocks fall from the top of the screen. You catch the ones that match your color and press Space to switch colors. A yellow hazard ends the run if it reaches you. Hy4 also added a title screen that explains the rules and a best score that carries over from one round to the next, neither of which we asked for.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aff947ca9cbf529712aa72f_hy4-polarity-game.png" alt="Three screens from Polarity, the browser game Tencent Hy4 wrote: the title screen with its three rules, a round in play with falling blocks, and the game-over screen showing a new record."></p>
+<p>We played through a round, reached the game-over screen and restarted successfully.</p>
+<h2>About Tencent Hy4</h2>
+<p>Hy4 follows Hy4 Preview, adding image input and computer-use capabilities. Tencent says it trained the model to operate professional software such as Blender and CAD tools. It also worked with its own product teams to train and evaluate Hy4 on office work, financial research and game development in Unreal Engine, Unity and Godot. <a href="https://www.tencent.com/tencent-launches-hy4-joining-the-ranks-of-the-worlds-leading-open-source-ai-models/">Tencent's announcement</a> has the details.</p>
+<h2>Run it on Together AI</h2>
+<p>Hy4 is available now under the model string <code>tencent/Hy4</code>, through Together's chat completions API. The example below is the chart request from earlier in this post. To run it, install the Together Python SDK (<code>pip install together</code>), set a <code>TOGETHER_API_KEY</code>, and save <a href="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afe92cf7001ead389e131e7_tsa-results-chart-brand.png">the chart we used</a> as <code>chart.png</code>.</p>
+<pre><code>import base64
+
+from together import Together
+
+client = Together()
+
+with open(&quot;chart.png&quot;, &quot;rb&quot;) as f:
+    image = base64.b64encode(f.read()).decode()
+
+response = client.chat.completions.create(
+    model=&quot;tencent/Hy4&quot;,
+    messages=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;type&quot;: &quot;text&quot;,
+                    &quot;text&quot;: &quot;Read this chart. Return a JSON object with a title &quot;
+                    &quot;and a list of bars, each with a label and a value.&quot;,
+                },
+                {
+                    &quot;type&quot;: &quot;image_url&quot;,
+                    &quot;image_url&quot;: {&quot;url&quot;: f&quot;data:image/png;base64,{image}&quot;},
+                },
+            ],
+        }
+    ],
+    response_format={&quot;type&quot;: &quot;json_object&quot;},
+)
+
+print(response.choices[0].message.content)</code></pre>
+<p>If you'd like to try Hy4 before writing any code, you can open it <a href="https://api.together.ai/playground/v2/chat/tencent/Hy4">in the playground</a>, and the <a href="https://www.together.ai/models/tencent-hy4">model page</a> has the full details.</p>
+<p>Available now</p>
+<p>Run Tencent Hy4 on Together AI</p>
+<p>1M-token context, text and image input, tool calling and JSON output, on serverless inference.</p>
+<p>Open the playground</p>
+<h2>FAQs</h2>
+<h3>How much does Tencent Hy4 cost on Together AI?</h3>
+<p>Tencent Hy4 on Together AI costs \$0.83 per 1M input tokens, \$2.50 per 1M output tokens and \$0.042 per 1M cached input tokens.</p>
+<h3>What is the context window of Tencent Hy4 on Together AI?</h3>
+<p>Tencent Hy4 has a 1M-token context window on Together AI, and you call it with the model string <code>tencent/Hy4</code>.</p>
+<h3>Does Tencent Hy4 accept images?</h3>
+<p>Yes, Tencent Hy4 accepts text and image input on Together AI and returns text, and it's the first model in Tencent's Hy family with vision. You send each image as an <code>image_url</code> block in the message content, as in the example above.</p>
+<h3>Does Tencent Hy4 support JSON output and tool calling?</h3>
+<p>Yes, Tencent Hy4 supports both on Together AI. You get JSON output by setting <code>response_format</code> to <code>{&quot;type&quot;: &quot;json_object&quot;}</code>, and you enable tool calling by passing your functions in the standard <code>tools</code> parameter.</p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing Together Storage Accelerator: fast, free data ca…</title>
+      <link>https://www.together.ai/blog/introducing-together-storage-accelerator</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/introducing-together-storage-accelerator?li=1</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing Together Storage Accelerator: fast, free data caching for your GPU cluster</description>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>GPU Clusters</p>
+<p>Published 11/19/2026</p>
+<h1>Introducing Together Storage Accelerator: fast, free data caching for your GPU cluster</h1>
+<p>A distributed cache on every GPU node: about 20x faster warm reads, one origin fetch per cluster, and no application changes. Included free with Together GPU Clusters.</p>
+<ul><li>AuthorsPavneet Ahluwalia, Vinamra Jain</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-together-storage-accelerator">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<p>Your GPUs are only as fast as your data pipelines. Every training run that starts with a 30-minute model download, every node that re-pulls the same dataset from across the country, and every Hugging Face rate limit that stalls a job leads to compute resources sitting idle, waiting for your data, while you are paying for them.</p>
+<p>Today we're launching <strong>Together Storage Accelerator (TSA)</strong>, a distributed caching layer for Together GPU Clusters that alleviates the need for repeated data reads from object storage and Hugging Face Hub, dramatically accelerating your AI data pipelines while also cutting your data egress bills. TSA is now included <strong>free</strong> with every Together GPU Cluster.</p>
+<h2>The problem: your data lives far from your GPUs</h2>
+<p>Most AI teams keep their source of truth in object storage (Amazon S3, Cloudflare R2, Together AI's T4*) or pull models directly from Hugging Face Hub. That means every cold start pays a WAN tax: cross-cloud or cross-region reads are slow, expensive (egress from AWS runs up to $0.09/GB), and rate-limited. Multiplied across hundreds of nodes pulling the same checkpoint, the waste compounds and costs you time, money, and failed jobs when the origin throttles you.</p>
+<p>**T4 is Together AI's in data center S3 compatible object storage solution, currently in Limited Preview. Please contact sales or your account team if you are interested to try it out.*</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aff4de0e9b9a821d633908e_2026-11-19-tsa-architecture-diagram.png" alt=""></p>
+<h2>TSA caches the data, improving performance, reliability and cost</h2>
+<p>TSA provides you a distributed caching layer for GPU clusters. It runs on every GPU node in your cluster and presents drop-in endpoints for the storage you already use. The first time any node reads an object, TSA caches it on cluster NVMe. As a result, every subsequent read, from any node, is served from inside the cluster at dramatically higher local speed.</p>
+<p>The result, measured on a Together GPU Cluster H100 node:</p>
+<ul><li><strong>~20× faster warm reads</strong> than pulling from a cross-cloud origin, at up to <strong>3.4 GB/s per node</strong>. A 2 GiB object that took 13-15 s to download from Cloudflare R2 can be read from the cache in 0.6 - 0.7 s</li><li><strong>Cold reads cost nothing extra</strong>: the first read through TSA ran within ~5% of a direct download</li><li><strong>One origin fetch, per cluster.</strong> A 70 GB checkpoint pulled by 200 nodes downloads from the source once, not 200 times</li><li><strong>Resilience to outages and rate limits.</strong> Cached data keeps serving even when the upstream won't.</li></ul>
+<p>You can start using TSA <strong>without making any changes to your application</strong>. No new SDK, no rewritten data loaders, and you can get started with a single command.</p>
+<p><strong>Getting started:</strong></p>
+<pre><code># S3-compatible storage (S3, R2, T4, ...)
+export AWS_ENDPOINT_URL=http://tsa.tsa.svc.cluster.local:18080
+
+# Hugging Face Hub
+export HF_ENDPOINT=http://tsa.tsa.svc.cluster.local:18080</code></pre>
+<p>Your existing boto3 code, transformers calls, and CLI workflows work as-is. TSA handles authentication with credentials you configure. Credentials are encrypted and securely stored in a secrets vault.</p>
+<h2>Measured results</h2>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afe92cf7001ead389e131e7_tsa-results-chart-brand.png" alt=""></p>
+<p>Measured on 2026-10-28 from a pod on one H100 node in a Together GPU Cluster (us-central). Single-stream reads unless noted; clients wrote to /dev/null or node NVMe.</p>
+<ul><li><strong>Read a 2 GiB object from a cross-cloud bucket (Cloudflare R2):</strong> 143–169 MB/s (12.7–15.0 s) without TSA, 3.0–3.4 GB/s (0.64–0.72 s) with TSA warm. <strong>~20×</strong></li><li><strong>Read small files from the same bucket (5 KB, 2.4 MB):</strong> 320 ms and 680 ms without TSA, 5 ms and 8 ms with TSA warm. <strong>~60–80×</strong> lower latency</li><li><strong>200-node cluster pulling the same checkpoint:</strong> 200 origin fetches without TSA, 1 with TSA. <strong>200×</strong> less egress</li></ul>
+<p><em>Measured on a Together GPU Clusters preview deployment (TSA chart 0.6.0); your results depend on origin, object sizes, and network path. Origin speed is regional: the same Hugging Face download ran 5× faster from us-central than from ca-west, so TSA's win is largest where the origin is slowest. Methodology: single-stream curl and aws s3 cp from a pod on the GPU node, repeated reads of the same object, MD5-verified against direct download.</em></p>
+<h2>Powered by ASTRA</h2>
+<p>TSA leverages <a href="https://docs.together.ai/docs/astra"><strong>ASTRA</strong></a> (Accelerated Storage Transport &amp; Retrieval Architecture), the distributed caching technology we built to feed some of the largest GPU fleets in the world, including our own inference fleet. We'll share a deeper technical look at ASTRA in an upcoming engineering post.</p>
+<h2>Better together with T4</h2>
+<p>TSA works with any S3-compatible store, and it pairs naturally with <strong>T4</strong>, Together AI's managed object storage solution. Point TSA at your existing S3 or R2 buckets today without migrating your data. When you want your warm data living next to your GPUs permanently, T4 is one config change away. T4 is currently in <strong>limited preview</strong>: contact sales or your account team for access.</p>
+<h2>Get started</h2>
+<p>Together Storage Accelerator is available now on Together GPU Clusters at no additional cost. Enable it from your cluster's Settings page, or see the <a href="https://docs.together.ai/docs/storage-accelerator">docs</a> to go from zero to accelerated in under ten minutes.</p>
+<p>→ <a href="https://api.together.ai/clusters/create">Create a cluster</a></p>
+<p>‍→ <a href="https://docs.together.ai/docs/storage-accelerator">Read the docs</a></p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
     <item>
       <title>Last year we built megakernels. This year we deleted them: T…</title>
       <link>https://www.together.ai/blog/road-to-together-compiler</link>
@@ -3871,128 +4017,6 @@ curl -L -O \
 <p>→ Read about the <a href="https://www.together.ai/blog/fine-tuning-update">latest capabilities in Together Fine-Tuning</a></p>
 <p>→ Read the <a href="https://docs.together.ai/docs/fine-tuning-quickstart">Together Fine-Tuning docs</a></p>
 <p>→ <a href="https://www.together.ai/contact-sales">Contact Sales</a> for fine-tuning workflows and deployment support</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>DeepSeek-V4 Pro now available on Together AI</title>
-      <link>https://www.together.ai/blog/deepseek-v4-pro-now-available-on-together-ai</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/deepseek-v4-pro-now-available-on-together-ai?li=1</guid>
-      <pubDate>Wed, 29 Apr 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
-<p>Published 4/29/2026</p>
-<h1>DeepSeek-V4 Pro now available on Together AI</h1>
-<p>1.6T-parameter MoE reasoning model with 512K context on Together AI, controllable reasoning modes, and cached-input pricing for long-context workloads.</p>
-<ul><li>AuthorsSonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/deepseek-v4-pro-now-available-on-together-ai#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://www.together.ai/models/deepseek-v4-pro">Try now</a><a href="https://docs.together.ai/docs/deepseek-v4-quickstart">Quickstart Guide</a></li></ul>
-<p>What's New</p>
-<ul><li><a href="https://www.together.ai/models/deepseek-v4-pro"><strong>DeepSeek V4 Pro on Together AI:</strong></a> DeepSeek V4 Pro is now available on Together AI with a 512K-token context window for long-context reasoning workloads.</li><li><strong>Large-scale MoE architecture:</strong> DeepSeek V4 Pro uses a 1.6T-parameter Mixture-of-Experts architecture with 49B activated parameters.</li><li><strong>Controllable reasoning modes:</strong> Non-Think, Think High, and Think Max let teams choose between fast responses, deeper reasoning, and maximum reasoning effort.</li><li>‍<strong>Transparent serverless pricing:</strong> DeepSeek V4 Pro is available at <strong>\$2.10 per 1M input tokens, \$0.20 per 1M cached input tokens, and \$4.40 per 1M output tokens.</strong></li></ul>
-<p>Long-context reasoning changes what teams can ask a model to do. Entire repositories, large document sets, long agent traces, and tool outputs can fit into the model’s working context instead of being compressed into brittle summaries. But the models that can use that much context are also the hardest to serve: a 1.6T-parameter MoE with million-token context is not something most teams want to deploy, tune, and operate themselves.</p>
-<p>DeepSeek-V4 Pro is now available on Together AI, the AI Native Cloud, so teams can start with Serverless Inference at 512K context and move to dedicated infrastucture for full 1M context, reserved capacity, and production control. DeepSeek-V4 Flash is coming soon, giving teams another V4 option for workloads where speed and cost matter more than maximum reasoning depth.</p>
-<h2><strong>At a glance</strong></h2>
-<table><thead><tr><th>Spec</th><th>Value</th></tr></thead><tbody><tr><td>Model</td><td>DeepSeek V4 Pro on Together AI</td></tr><tr><td>Endpoint</td><td>deepseek-ai/DeepSeek-V4-Pro</td></tr><tr><td>Architecture</td><td>1.6T-parameter MoE</td></tr><tr><td>Activated parameters</td><td>49B</td></tr><tr><td>Context on Together AI</td><td>512K tokens</td></tr><tr><td>Model-level context</td><td>1M tokens</td></tr><tr><td>Reasoning modes</td><td>Non-Think, Think High, Think Max</td></tr><tr><td>Deployment</td><td>Serverless, Monthly Reserved</td></tr><tr><td>Input price</td><td>$2.10 / 1M tokens</td></tr><tr><td>Cached input price</td><td>$0.20 / 1M tokens</td></tr><tr><td>Output price</td><td>$4.40 / 1M tokens</td></tr><tr><td>Best-fit workloads</td><td>Code agents, document intelligence, long-context agents, research synthesis</td></tr></tbody></table>
-<h2><strong>Built for long-context reasoning</strong></h2>
-<p>DeepSeek V4 Pro is built for workloads where the model needs to reason over more than a short prompt: large repositories, long technical documents, dense retrieval bundles, tool-call histories, and research corpora.</p>
-<p>DeepSeek V4 Pro supports million-token context at the model level; on Together AI, it is currently available with a 512K-token context window. That distinction matters because model capability and deployed serving profile are not always the same thing. Together AI is launching DeepSeek V4 Pro with a context window designed for reliable production serving, while still giving teams enough room for serious long-context workloads.</p>
-<p>The architecture also matters because long context is not only a product spec. As context grows, serving cost, memory pressure, KV cache usage, latency, and concurrency all become part of the system design. DeepSeek V4 Pro uses hybrid attention, combining Compressed Sparse Attention and Heavily Compressed Attention, with DeepSeek reporting 27% of single-token inference FLOPs and 10% of KV cache compared to DeepSeek V3.2 at million-token context.</p>
-<h2><strong>Choose reasoning effort by workload</strong></h2>
-<p>DeepSeek V4 Pro supports three reasoning modes, so teams can match reasoning depth to task difficulty instead of treating every request the same.</p>
-<table><thead><tr><th>Mode</th><th>Use when</th><th>Tradeoff</th></tr></thead><tbody><tr><td>Non-Think</td><td>Extraction, classification, simple Q&amp;A, routine responses</td><td>Fastest path for lower-complexity tasks</td></tr><tr><td>Think High</td><td>Code planning, document analysis, multi-step reasoning</td><td>More reasoning depth for complex work</td></tr><tr><td>Think Max</td><td>Hard debugging, deep research synthesis, agentic decision points</td><td>Maximum reasoning effort; expect higher latency and token usage</td></tr></tbody></table>
-<p>A document assistant might use Non-Think for simple extraction, Think High for conflict analysis across policies, and Think Max only when the model needs to reason through a difficult decision. A code agent might use Think High for planning a migration and Think Max for debugging a subtle cross-service failure.</p>
-<p>DeepSeek reports benchmark results across coding, reasoning, long-context, and agentic tasks, including 93.5% LiveCodeBench, 90.1% GPQA Diamond, 80.6% SWE-bench Verified, 83.5% MRCR 1M, and 62.0% CorpusQA 1M.</p>
-<h2><strong>Make repeated long-context queries cheaper with cached input pricing</strong></h2>
-<p>Long-context systems often reuse the same large context across multiple questions: a repository snapshot, a document bundle, a policy archive, a retrieval payload, or a long agent trace. Cached input pricing makes those repeated workloads more practical.</p>
-<p>DeepSeek V4 Pro is priced at \$2.10 / 1M input tokens, with cached input at \$0.20 / 1M tokens and output at \$4.40 / 1M tokens. That represents a <strong>90% cost reduction</strong> for reused context, which matters when the expensive part of the request is a stable block of text that gets reused across follow-up analysis.</p>
-<p><strong>Example pattern:</strong></p>
-<ul><li>Load a large stable context, such as a 300K-token repo summary, contract set, or policy archive.</li><li>Ask several follow-up questions over that same context.</li><li>Use cached input pricing where applicable to drastically reduce the cost of repeated analysis.</li></ul>
-<h2><strong>Workload patterns</strong></h2>
-<p><strong>Code agents</strong></p>
-<p>Use DeepSeek V4 Pro when an agent needs to reason across repository slices, issue traces, internal documentation, prior tool calls, and proposed patches. Think High or Think Max is most useful for planning changes, debugging failures, or resolving cross-file dependencies.</p>
-<p><strong>Document intelligence</strong></p>
-<p>Use long context for contracts, policy sets, technical manuals, or research collections that need to be compared in one request. Non-Think can handle extraction and simple Q&amp;A; Think High is better for conflict analysis, interpretation, and synthesis.</p>
-<p><strong>Long-context agent traces</strong></p>
-<p>Use DeepSeek V4 Pro to inspect long tool-call histories, intermediate results, and execution traces. Higher reasoning modes are most useful at decision points: when the agent needs to decide whether to continue, call another tool, revise a plan, or stop.</p>
-<p><strong>Research synthesis</strong></p>
-<p>Use DeepSeek V4 Pro for workflows that combine papers, notes, benchmark reports, retrieved documents, and prior analysis. Cached input pricing is especially useful when the same evidence set is reused across multiple questions.</p>
-<h2><strong>Start serverless, move to reserved capacity</strong></h2>
-<p>DeepSeek V4 Pro is available on Together AI Serverless Inference and Monthly Reserved infrastructure. Serverless is the right starting point for evaluation, development, and variable traffic. Monthly Reserved is better for steadier production demand where teams need more predictable capacity and cost control.</p>
-<p>For long-context workloads, the deployment path matters. Teams are not only choosing a model; they are choosing how to manage throughput, concurrency, latency, KV cache pressure, and cost as context sizes grow. Together AI gives teams a path from evaluation to production without standing up the serving stack themselves.</p>
-<h2>Try it now</h2>
-<p>DeepSeek-V4 Pro is available today on Together AI Serverless Inference and Dedicated Endpoints.</p>
-<pre><code>    
-from together import Together
-
-client = Together()
-
-stream = client.chat.completions.create(
-    model=&quot;deepseek-ai/DeepSeek-V4-Pro&quot;,
-    messages=[
-        {
-            &quot;role&quot;: &quot;user&quot;,
-            &quot;content&quot;: &quot;Prove that the square root of 2 is irrational.&quot;,
-        }
-    ],
-    stream=True,
-)
-
-for chunk in stream:
-    if not chunk.choices:
-        continue
-    delta = chunk.choices[0].delta
-
-    if hasattr(delta, &quot;reasoning&quot;) and delta.reasoning:
-        print(delta.reasoning, end=&quot;&quot;, flush=True)
-    if hasattr(delta, &quot;content&quot;) and delta.content:
-        print(delta.content, end=&quot;&quot;, flush=True)
-
-    </code></pre>
-<p>Start with Serverless Inference for development and evaluation. For production workloads that require full 1M context, reserved capacity, workload isolation, or more predictable throughput, contact sales to deploy DeepSeek-V4 Pro on Together AI Dedicated Inference.</p>
-<h2>Get started</h2>
-<p>→ Follow our <a href="https://docs.together.ai/docs/deepseek-v4-quickstart">DeepSeek-V4 quickstart</a> to get up and running in minutes</p>
-<p>→ View the <a href="https://www.together.ai/models/deepseek-v4-pro">DeepSeek-V4 Pro Model Page</a></p>
-<p>→ Try <a href="https://api.together.ai/playground/v2/chat/deepseek-ai/DeepSeek-V4-Pro">DeepSeek-V4 Pro in the Playground</a></p>
-<p>→ <a href="https://www.together.ai/contact-sales">Contact Sales</a> for Dedicated Inference deployment and volume pricing</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Together AI Brings NVIDIA Nemotron 3 Nano Omni to Developers…</title>
-      <link>https://www.together.ai/blog/together-ai-brings-nvidia-nemotron-3-nano-omni-to-developers-on-day-0</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/together-ai-brings-nvidia-nemotron-3-nano-omni-to-developers-on-day-0?li=1</guid>
-      <pubDate>Tue, 28 Apr 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Together AI Brings NVIDIA Nemotron 3 Nano Omni to Developers on Day 0</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
-<p>Published 4/28/2026</p>
-<h1>Together AI Brings NVIDIA Nemotron 3 Nano Omni to Developers on Day 0</h1>
-<ul><li>AuthorsAbhy Vengavillagam, Hiral Jasani</li><li>Table of contents<a href="https://www.together.ai/blog/together-ai-brings-nvidia-nemotron-3-nano-omni-to-developers-on-day-0#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://www.together.ai/models/nvidia-nemotron-3-nano-omni">NVIDIA Nemotron 3 Nano Omni</a>‍</li></ul>
-<p><a href="https://developer.nvidia.com/blog/nvidia-nemotron-3-nano-omni-powers-multimodal-agent-reasoning-in-a-single-efficient-open-model">NVIDIA Nemotron™ 3 Nano Omni</a> is <a href="https://blogs.nvidia.com/blog/nemotron-3-nano-omni-multimodal-ai-agents/">now available</a> on the Together AI platform. Representing a meaningful step forward for multimodal AI, Nemotron 3 Nano Omni is a single, open model that reasons across video, images, audio and language. For developers building agentic applications, Together AI Dedicated Inference is the fastest way to get started and scale.</p>
-<h2><strong>Why run it on Together AI</strong></h2>
-<p>Together AI, the AI Native Cloud, has been the platform of choice for developers who want fast, affordable, reliable access to the world's best open models for production-scale inference.</p>
-<p>Nemotron 3 Nano Omni unifies context across modalities by executing chained actions often critical for agents that need deterministic behavior. That means an agent can simultaneously reason across audio inputs (e.g., recordings or transcripts), visual inputs such as screenshots, video, and structured documents— without fragmenting that understanding across separate inference passes.</p>
-<p><strong>1. Together AI's Research Optimizations Unlock the Model's Full Architectural Potential</strong></p>
-<p>The Nemotron 3 Nano Omni hybrid Mamba-Transformer mixture-of-experts (MoE) architecture activates only ~3B parameters per token out of 30B total, and uses multi-token prediction (MTP) to generate multiple future tokens simultaneously in a single forward pass. Together AI's stack is powered by frontier AI systems research, which enables high throughput, cost-efficient, production-grade inference with consistently low latency. Pairing that with the new, highly efficient, highly accurate Nemotron 3 Nano Omni model, means faster multimodal reasoning with more intelligence per unit of compute.</p>
-<p><strong>2. Managed Infrastructure Built for Agentic, Production-Scale Inference Workloads</strong></p>
-<p>Agent applications depend on predictable performance. Together AI delivers reliable performance under traffic spikes, high uptime, and token streaming, helping agent loops remain responsive even during long-context or continuous decision-making tasks. Developers can quickly deploy Nemotron 3 Nano Omni on Together AI without managing infrastructure, and scale seamlessly from prototype to production. This fully managed environment eliminates operational overhead so teams can focus on building, not maintaining GPUs.</p>
-<p><strong>3. Secure, Production-Ready Platform That Protects Your Data</strong></p>
-<p>Together AI offers simple, developer-friendly APIs — making it easy to integrate Nemotron 3 Nano Omni into multi-agent frameworks, planning systems, and multi-modal systems. Combined with stable and secure APIs, the platform gives organizations a trustworthy foundation to deploy AI at scale — without trading speed for safety.</p>
-<h2><strong>Where Nemotron 3 Nano Omni excels</strong></h2>
-<p>Most production AI systems today handle multimodal inputs through fragmented pipelines: one model for vision, another for audio, another for documents—stitched together with custom orchestration logic. Every seam in that architecture is a potential failure point — added latency, misaligned context, and compounding errors across modalities.</p>
-<p>Nemotron Nano Omni eliminates those seams.</p>
-<p>Built on a Mixture of Experts (MoE) architecture with Hybrid Transformer-Mamba design, the 30B A3B model supports up to 256K tokens of shared multimodal input context in a single coherent reasoning loop. This allows an agent to understand audio inputs (e.g., transcripts), visual inputs such as screenshots, and relevant documents—without fragmenting that understanding across separate inference passes.</p>
-<p>The efficiency benefits are significant:</p>
-<ul><li>Reduced need for multi-model pipelines, lowering system complexity</li><li>More efficient multimodal processing across video, audio, and document workloads</li><li>Improved throughput and scalability for long-context, agentic applications</li><li>Flexible deployment with support for FP8 and NVFP4 across <a href="https://www.nvidia.com/en-us/data-center/technologies/hopper-architecture/">NVIDIA Hopper</a>, <a href="https://www.nvidia.com/en-us/data-center/technologies/blackwell-architecture/">NVIDIA Blackwell</a>, and more</li></ul>
-<p>And it's fully open. Open weights, open data, open post-training recipes. Developers can deploy anywhere — cloud, on-prem, air-gapped — with full data control and no model lock-in.</p>
-<h2><strong>What you can build</strong></h2>
-<p>The unification of perception and reasoning in one model opens up use cases that were previously too complex or too costly to productionize:</p>
-<p><strong>Customer service agents</strong> can reason across call recordings, screen recordings, and policy documents simultaneously — understanding both user intent and system context.</p>
-<p><strong>Financial analyst agents</strong> reason across earnings call audio, investor presentation video, scanned chart images, and SEC filings — producing grounded insights rather than surface-level summaries.</p>
-<p><strong>Computer use agents</strong> see a UI through screen recordings, interpret instructions, and validate actions against constraint documents — all within a single reasoning context.</p>
-<p>Any application that previously required assembling a multi-model stack now has a cleaner path to production.</p>
-<h2><strong>Get started</strong></h2>
-<p><a href="https://www.together.ai/models/nvidia-nemotron-3-nano-omni">NVIDIA Nemotron 3 Nano Omni</a> is available on Together AI today.</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>

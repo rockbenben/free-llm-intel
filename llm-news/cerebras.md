@@ -1,6 +1,6 @@
 # Cerebras Inference (晶圆级推理) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-18**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-20**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Cerebras Inference (晶圆级推理)（`cerebras`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,8 +9,8 @@
 
 ## 全部文章（共 60 篇，按日期倒序；无日期条目列于最后）
 
-1. [来自我们的 CEO：打造晶圆级需要什么，以及它为何能持续下去](https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts) <!--orig:What It Took to Build Wafer-Scale, and Why It Lasts-->
-2. [Cerebras 推出分类推理](https://www.cerebras.ai/blog/cerebras-launches-disaggregated-inference) <!--orig:Cerebras launches disaggregated inference-->
+1. [Cerebras 推出分类推理](https://www.cerebras.ai/blog/cerebras-launches-disaggregated-inference) <!--orig:Cerebras launches disaggregated inference >>-->
+2. [来自我们的 CEO：打造晶圆级需要什么，以及它为何能持续下去](https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts) <!--orig:What It Took to Build Wafer-Scale, and Why It Lasts-->
 3. [高级代码，晶圆级性能](https://www.cerebras.ai/blog/high-level-code-wafer-scale-performance) <!--orig:High-level code, wafer-scale performance-->
 4. [如何实现晶圆级良率](https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale) <!--orig:How to Yield at Wafer Scale-->
 5. [MoE 规模化：让稀疏模型在真实硬件上跑得快](https://www.cerebras.ai/blog/moe-guide-scale) <!--orig:MoE at Scale: Making Sparse Models Fast on Real Hardware-->

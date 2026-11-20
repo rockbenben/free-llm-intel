@@ -1,6 +1,6 @@
 # Anthropic Claude 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-18**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-20**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anthropic Claude（`anthropic`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -10,13 +10,13 @@
 
 ## 全部文章（共 164 篇，按日期倒序；无日期条目列于最后）
 
-1. [构建永远在线的 agent](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13） <!--orig:Building always-on agents-->
-2. [面向初创公司的 Claude Tag 指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-13） <!--orig:The Claude Tag guide for startups-->
+1. [面向初创公司的 Claude Tag 指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-13） <!--orig:The Claude Tag guide for startups-->
+2. [构建永远在线的 agent](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13） <!--orig:Building always-on agents-->
 3. [推出 Claude Meetings](https://claude.com/resources/articles/claude-meetings)（2026-11-13） <!--orig:Introducing Claude Meetings-->
-4. [把 Claude Opus 5.5 用作知识工作的日常主力模型](https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work)（2026-11-12） <!--orig:Using Claude Opus 5.5 as your daily driver for knowledge work-->
-5. [推出 Claude for Manufacturing](https://claude.com/resources/articles/claude-for-manufacturing)（2026-11-12） <!--orig:Introducing Claude for Manufacturing-->
-6. [在自己的安全边界内运行 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12） <!--orig:Operate Claude Managed Agents inside your security perimeter-->
-7. [J.Crew 借 Claude 将标志性造型理念带到线上](https://claude.com/resources/articles/j-crew-style-advisor-with-claude)（2026-11-12） <!--orig:J. Crew brings its signature approach to styling to life with Claude-->
+4. [在自己的安全边界内运行 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12） <!--orig:Operate Claude Managed Agents inside your security perimeter-->
+5. [J.Crew 借 Claude 将标志性造型理念带到线上](https://claude.com/resources/articles/j-crew-style-advisor-with-claude)（2026-11-12） <!--orig:J. Crew brings its signature approach to styling to life with Claude-->
+6. [推出 Claude for Manufacturing](https://claude.com/resources/articles/claude-for-manufacturing)（2026-11-12） <!--orig:Introducing Claude for Manufacturing-->
+7. [把 Claude Opus 5.5 用作知识工作的日常主力模型](https://claude.com/resources/articles/using-claude-opus-5-5-as-your-daily-driver-for-knowledge-work)（2026-11-12） <!--orig:Using Claude Opus 5.5 as your daily driver for knowledge work-->
 8. [你的应用现在可以在 Claude 中打开，Claude 也能在其中工作](https://claude.com/resources/articles/interactive-connectors-full-tool)（2026-11-10） <!--orig:Your apps can now open in Claude, and Claude can work in them-->
 9. [Curative 如何用 Claude 上的 agent 构建全国性供应商网络](https://claude.com/resources/articles/how-curative-is-building-a-national-provider-network-with-agents-on-claude)（2026-11-10） <!--orig:How Curative is building a national provider network with agents on Claude-->
 10. [与 Claude 协作的更多方式：Sheets、Whiteboards 和交互式 connectors](https://claude.com/resources/articles/more-ways-to-work-with-claude-sheets-whiteboards-and-interactive-connectors)（2026-11-10） <!--orig:More ways to work with Claude: Sheets, Whiteboards, and Interactive Connectors-->
