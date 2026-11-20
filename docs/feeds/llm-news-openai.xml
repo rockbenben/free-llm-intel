@@ -14,13 +14,110 @@
       <guid isPermaLink="true">https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How OpenAI’s Performance Factory keeps ChatGPT fast</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 19 日</p>
+<p>工程</p>
+<h1>OpenAI 的 Performance Factory 如何让 ChatGPT 保持快速</h1>
+<p>我们由 Codex 驱动的系统把性能问题的发现与修复都自动化了。</p>
+<p>作者：Okay Zed、Cyrus Forbes，Members of Technical Staff</p>
+<p>agentic 开发令人瞠目的节奏，让性能工程的传统做法难以为继。为了跟上，我们构建了 Performance Factory：一个自主系统，它动用 Codex 与我们模型的全部能力，以前所未有的速度发现并修复性能回退。Performance Factory 运行在云端，把性能问题的调查与解决自动化，让我们能跟上路线图里的野心。</p>
+<p>在 Performance Factory 中，我们的工程师为周期性任务定义工作流，并为执行这些工作流的 Codex agent 编写指令。其中，Regression Workflow 在性能告警触发时开出一个任务。agent 调查变慢的原因，把发现记录在任务里，并提出修复方案供工程师评审。部署之后，另一个 agent 接手同一个任务，检查性能是否回到基线。从调查、撰写修复到验证缓解，Performance Factory 里的这第一个工作流已经把修复性能回退的整个过程自动化了。在短短三个多月里，Regression Workflow 追踪了 1,700 多次调查，并对 600 多个案例完成了根因定位。算下来每天 17 次自动调查。</p>
+<p>本文中，我们会分享我们对 Codex 的使用如何演变成今天的 Performance Factory，带大家走一遍第一个投入运行的工作流，并分享在生产环境中构建与运行 agent 工作流的早期经验。</p>
+<h2>从人工调查到自动化工作流</h2>
+<p>随着我们把 Codex 用在越来越多的性能工作上，我们注意到团队的工作方式呈现出阶段性的演进。希望其他服务团队在各自领域引入 agentic 工作流时，能从我们的过程中得到参考。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/581rKVIvguLraKii21zIgr/83deca5cdcec639b656a9a5ec1954f4b/performance-factory-evolution-light.png?w=3840&amp;q=90&amp;fm=webp" alt="性能工程的演进：人工操作、可复用工具、工程师与 Codex 协作、工程师派发任务、系统派发任务，以及由 agent 组成的工厂协调自动化工作流。"></p>
+<p><em>软件工作从人力劳作，演进到与机器协作，再到 agent 工厂。</em></p>
+<p><strong>1. Codex 之前</strong>。在 Codex 之前，工程师要手工查看指标和日志、比对 trace、调试线上机器、读代码，来调查变慢的原因。这种活很费时间，而且要往哪儿看往往需要对服务有深入了解。相关信号很容易被漏掉。当我们反复遇到同类问题时——比如 ChatGPT 首 token 延迟的回退——我们构建了更高级的工具，例如 CPU profiler 与内存分配 profiler，让这些调查更容易些。久而久之，我们积累的工具超过 30 个。</p>
+<p><strong>2. Codex 作为伙伴</strong>。有了 Codex 这个伙伴之后，工程师可以问一句“这里为什么变慢了？”，然后和 Codex 一起调查，哪怕面对的是一个不熟悉的系统。Codex 能搜索庞大的代码库、找出相关指标与 trace、追踪服务之间的交互，并做恰当的 profiling，把发生过的事情拼合起来。但工程师仍然要掌舵：得知道用哪个性能工具，以及如何引导调查。困难的调查变得对更多人可调，所需的专业经验和时间都更少。</p>
+<p><strong>3. 可复用的 skill</strong>。为了进一步自动化，我们把性能团队的调查流程固化进一个共享 skill，名为 <code>perf-forensics</code>。它告诉 Codex 有哪些工具可用、何时使用，以及如何一步步排查变慢，这样 Codex 就能从几个角度尝试解决问题：</p>
+<ul><li>找出变慢是从什么时候开始的</li><li>识别受影响的请求</li><li>调查部署或配置变更能否解释这一现象</li></ul>
+<p>我们用基于过往性能回退的 eval 测试并打磨 <code>perf-forensics</code> skill。对于我们关注的那几类回退（例如 ChatGPT 延迟上升与可用性下降），现在只要把告警交给 Codex，一次运行就能拿回一份诊断，而不必一步步引导它。</p>
+<p><strong>4. 人的代理</strong>。随着我们不断添加和改进 <code>perf-forensics</code> 这类与性能相关的 Codex skill，我们开始觉得自己成了告警与 Codex 之间的代理。告警一响，工程师就把它复制粘贴进 Codex、配上正确的 skill，再把发现粘回 Slack。</p>
+<p><strong>5. 自动调查</strong>。接下来，我们把调查搬到云端，让告警能自动启动一个 Codex 会话。Codex 调查变慢的原因，把发现发在 Slack 线程里，但自动化到这条回复就结束了。工程师仍然要接住诊断、开发修复方案，并在部署后检查是否奏效。告警一多，连判断哪些回退需要处理，都得在 Slack 线程里翻找。</p>
+<p><strong>6. 工厂</strong>。我们构建 Performance Factory 来运行端到端的 agentic 性能工程工作流。它追踪每个活跃任务下一步需要什么，并在该步骤就绪时分配 agent。每个任务保留自己的状态与发现，因此工作可以在 agent 与工程师之间流转，也能在代码评审或部署之后接着做。对一次回退来说，工作从调查一条告警开始，到在生产环境验证恢复结束。我们可以把常见优化做成工作流，在我们的各项服务上定期运行。一个发现潜在优化点的工作流，可以在另一个工作流里开出任务去测试并实现它。</p>
+<h2>Performance Factory 系统的四个部分</h2>
+<p>Performance Factory 由四个组件构成：带可配置工作流的任务追踪器、把就绪工作分配给 agent 的 dispatch loop、在云端运行 Codex 的 API，以及在某些变化发生时唤醒 agent 的 subscription（例如 GitHub 评审意见发布，或某次部署完成）。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4GVsirng1kgJ1GzSsQ9Iof/f21a0b8682d456132be1ef8e1b9ce0ed/performance-factory-orchestrator-architecture-light.png?w=3840&amp;q=90&amp;fm=webp" alt="Performance Factory 的编排流程：告警、工程师与其他 agent 创建任务；任务服务把就绪的任务交给 dispatch loop，后者在云端启动 Codex turn。agent 记录进展，而 subscription 在 PR 评论或部署之后唤醒等待中的任务。"></p>
+<p><em>Performance Factory 由任务服务、dispatch loop、云端执行与 subscription 组成。</em></p>
+<h3>带可配置工作流的任务服务</h3>
+<p>任务服务是工程师定义工作流的地方：添加配置文件，以及用 Markdown 写给 agent 遵循的 prompt。配置文件列出任务可以经历的状态、允许的状态转移，以及哪些步骤需要工程师。单独的 prompt 告诉 agent 在每一步该做什么。</p>
+<h4>纯文本</h4>
+<pre><code>1code-change/2├── config.toml3└── work/4    ├── implementing.md5    └── reviewing.md</code></pre>
+<p>一个 code change 任务包含一个配置文件，以及用于实现与评审的 Markdown prompt。</p>
+<p>每一项工作都会成为某个工作流里的一个任务，所有工作流都能在一个 UI 里看到。工程师可以看到哪些任务是开放的、跟进进展，也可以把任务分享给更了解上下文、或能帮忙推进下一步的同事。</p>
+<h3>分配工作的 dispatch loop</h3>
+<p>dispatch loop 定期检查哪些任务已经可以进入下一步。它为每个任务分配 agent，方式是带着该任务当前状态对应的指令启动一次 Codex turn。agent 在任务上记录进展，若完成该步骤就把任务推进到下一个状态。</p>
+<h3>云端运行的 Codex</h3>
+<p>任务分配出去后，agent 需要一个干活的地方，并且能用上工程师平时用的那些工具。我们构建了一个内部 API，可以用程序方式在云端触发一次 Codex turn。这次 Codex turn 运行在我们网络内部的一个环境里，能访问我们的代码仓库，以及我们工程师使用的可观测性工具，例如指标、日志、trace、CPU profile 与内存快照。</p>
+<p>agent 以一个服务身份运行，这样我们可以限定它的权限范围，也能看出哪些操作来自我们的性能 agent。把 agentic 工作搬到云端，让我们可以并行跑任务，而不必依赖工程师的笔记本开着，也不必手工管理一台台云端开发机。</p>
+<h3>在变化发生时唤醒 agent 的 subscription</h3>
+<p>有些工作需要等人或等一次部署，agent 不该在这期间一直空转。当任务需要等待时，它可以订阅事件，例如 GitHub pull request 上的评审意见或失败的 CI 检查，以便在可以继续推进时收到通知。当进来的事件与订阅匹配，任务重新变为就绪，dispatch loop 便可以分配 agent 继续这项工作。</p>
+<h2>第一个工作流：从告警到恢复</h2>
+<p>发现、定位根因并解决性能回退，是我们在 Performance Factory 里构建的第一个工作流，我们称之为 Regression Workflow。一次性能回退会经过若干阶段：<strong>待调查</strong>、<strong>已定位根因</strong>、<strong>已提出修复</strong>、<strong>已解决</strong>，因此我们让这个自动化工作流对应这些阶段，并推动任务走完它们。</p>
+<p>当它配置的某条性能告警触发时，Regression Workflow 会开出一个任务，由 agent 接手并推动它跨越这些阶段。任务把自身状态与关键发现记录在任何单个 agent 的上下文之外，好让其他 agent 或工程师能接手。工程师可以在 Slack 或 Regression Workflow 的 UI 里跟进、补充上下文、评审提出的改动。修复部署之后，agent 会先检查性能是否已恢复原状，再结掉该任务。</p>
+<p><img src="https://openai.com/images/performance-factory-workflow/lines-base.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/lines-first.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/lines-second.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/lines-alert.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/lines-success.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/lines-first-purple.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/lines-second-purple.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/lines-third-purple.svg" alt=""></p>
+<p><img src="https://openai.com/images/performance-factory-workflow/icon-warning.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/icon-search.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/icon-marker-multiple.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/icon-code.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/icon-deploy.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/icon-check.svg" alt=""></p>
+<p><img src="https://openai.com/images/performance-factory-workflow/agent-face.svg" alt=""><img src="https://openai.com/images/performance-factory-workflow/agent-face-sleep.svg" alt=""></p>
+<p>ZZ</p>
+<p><img src="https://openai.com/images/performance-factory-workflow/user.svg" alt=""></p>
+<ul><li>已检测（系统）</li><li>定位根因（Agent）</li><li>提出修复（Agent）</li><li>评审与部署（工程师）</li><li>验证恢复（Agent）</li><li>已解决</li></ul>
+<p>当前阶段：已检测</p>
+<p><em>Regression Workflow 的步骤包括定位根因、提出修复、评审与部署、验证恢复。</em></p>
+<h3>Agent 定位根因</h3>
+<p>定位根因（可能不止一个）是工作流里的第一个大步骤。agent 先弄清哪些指标变差了、从什么时候开始变化、以及哪些服务请求受到影响。<code>perf-forensics</code> skill 让 Codex 能用上我们性能工程师使用的工具，并给出一套梳理这些问题的打法。</p>
+<p>告警是在某个指标越过阈值时触发的，但性能回退可能在几小时前就开始了。agent 回看数据，找出指标最早变差的时间点。接着它比较各组请求：是同类请求确实变慢了，还是我们服务的本来就很慢的请求变多了？这两种发现指向不同的原因。</p>
+<p>一旦知道该在何时、何处查看，agent 就会检查部署与 feature flag 变更，然后阅读相关代码。它会确认某项改动究竟何时到达受影响的请求，并用日志或 trace 检验这段代码能否解释所发生的情况。</p>
+<h3>对抗式评审让诊断更可靠</h3>
+<p>早期，agent 有时找到第一个说得通的解释就停下了，而其中一些诊断后来被证明是错的。为了抓住这类错误，我们加了一道对抗式评审：由一个单独的 Codex 会话尝试推翻所提出的诊断。评审者会复核假设、检验反事实。如果某次 rollout 导致了变慢，那么没有暴露在其中的同类请求是否保持正常？如果疑似肇事的改动被回滚，受影响的指标是否恢复了？</p>
+<p>在一次调查中，agent 把 ChatGPT 会话失败追溯到图片下载报错，并标记为已找到原因。Codex 评审者注意到，负责定位文件的内部服务早已恢复，而图片请求仍在失败。该诊断解释不了持续发生的失败，于是这位 AI 评审者重新打开调查，并记录下还有哪些问题需要确认。</p>
+<p>把较大的工作拆成若干聚焦的 Codex turn，对我们很有效。在对 100 条根因建议的人工评审中，我们判定 70% 是准确的，另外 30% 需要进一步细化，或未能完全确立因果。在 Regression Workflow 中，不同的 turn 分别负责调查回退、质疑诊断、提出修复，通过相互制衡来提高准确率。</p>
+<h3>修复回退才是难的部分</h3>
+<p>诊断通过对抗式评审后，工作流会让 Codex 实现修复并开一个 pull request。工程师评审该 PR，决定是否合并。我们在这道交接上投入了大量工作，力求尽可能顺手。每个任务都有一份报告，其中自动生成对回退、影响、根因与拟定修复的摘要。我们把这类摘要调得易于快速浏览，包含指标时间序列、CPU 火焰图与 trace，帮助工程师迅速理解结论并核验证据。工程师可以直接修改 PR，也可以依据诊断自己写修复。如果他们在 PR 上留言，工作流会唤醒 agent 来处理这些意见。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5w8KpwlFR3tNfJbAStImkG/ee5f1df65a302cb09dde0a7d52d09138/performance-factory-worker-startup-report.png?w=3840&amp;q=90&amp;fm=webp" alt="Performance Factory 的报告显示 worker 启动时间翻了一倍多，并给出影响与恢复情况、根因与拟定修复。"></p>
+<p><em>一次性能回退的任务报告示例，展示了关键细节、根因与拟定修复。</em></p>
+<p>工程师部署修复之后，工作流会唤醒 agent 检查性能是否回到了先前的基线。如果回去了，agent 就把任务标记为已解决。如果性能只部分恢复，agent 会结掉原来的回退，并为剩下的变慢新开一个任务——那可能是另一个原因造成的。如果毫无改善，agent 会记录发生的情况，并把这次回退打回去重新调查。</p>
+<p>把修复做对，比找到原因更难。例如我们见过 agent 提出的改动比必要的更复杂，或引入了新问题。与根因这一步类似，我们给每个拟定的修复都加了一道对抗式评审，检查它是否针对根因，并帮助抓住 bug 或意外后果。有些修复还需要更高层次的架构决策。例如加一层缓存可能提升性能，却带来数据陈旧的问题。这类改动需要熟悉该服务、能权衡取舍的工程师来把关。</p>
+<p>我们正用这些案例构建一个评估与改进闭环。把 agent 提出的修复与工程师最终合并的改动相比较，我们能更好地理解提案差在哪里、据此构建 eval、改进工作流。我们也在尝试使用合成的性能测试，让 agent 在请工程师评审之前先自行度量拟定的修复并加以修订。我们还在探索如何让 agent 使用我们其他的 agentic 评审工具来识别低风险改动，最终在没有人留在闭环里的情况下把这些修复发布出去。</p>
+<h2>我们学到了什么</h2>
+<p>构建并运行 Performance Factory，让我们在开发和运营生产环境中的 agent 工作流上学到很多。以下是一些经验，供正在搭建自有 agentic 工作流的团队参考。</p>
+<h3>保护工程师的注意力</h3>
+<p>Codex 调查的原始输出可能是一堵难以解析的文字墙。要弄清 agent 在主张什么，还得去翻出对应的图表看数据是否支撑它，都很费劲。我们希望工程师把注意力花在决策上，而不是用来复原 agent 做过的事。</p>
+<p>agent 能调查的回退数量，远超一个团队有空去读的数量。我们的第一个版本给了工程师一个塞满发现的 UI，但还是得有人来判断哪些信息要紧。同一次回退还可能在告警、监控与各个渠道里表现为若干起不同的事件。现在这个工作流会把相关事件关联起来，按团队关心的指标分组，并对估计影响排序。工程师就能专注于补充上下文、权衡取舍、决定发布什么。</p>
+<h3>评估你对 agent 做的改动</h3>
+<p>更新一个调查 skill，或升级模型，可能让 agent 在某些案例上诊断得更好、在另一些上更差，所以我们需要在更新前测试其影响。我们分开测两件事：1) agent 调查得有多好；2) 它给出的摘要对工程师有多大用处。</p>
+<h4>评估调查质量</h4>
+<p>对调查而言，我们用历史上真实的生产事故做回测。我们把那些事故变成一套测试用例，在改动 skill 时可以重跑。由 Codex agent 尝试调查并解决该事故，我们再拿 agent 的表现与过去的真实处置记录对比。每个用例都从一个全新的 Codex 调查者和原始信号开始，信号中凡是可能泄露答案的细节都会被剥掉。</p>
+<p>用历史数据做测试要小心。指标与 trace 会过期，而恢复之后才收集的证据又可能泄露原因。只有当我们清楚调查者能看到哪些证据时，测试才有意义。agent 可以在既定范围内查看代码、查询生产遥测数据，但不能使用保存的记忆（以往调查的笔记）、不能读取事故复盘文档、也看不到先前运行的结果。事后我们还会检查它的对话记录，看是否混入了可能让测试失效的信息。</p>
+<p>我们给三项打分：问题何时开始、规模多大、哪些请求受影响。我们还会评估 agent 如何用证据对可能原因排序，以及如何说明哪些地方仍不确定。agent 可能把时间点搞对了，却怪错了部署，所以我们把这两项分开打分。</p>
+<h4>评估 agent 到工程师的交接</h4>
+<p>我们用已保存任务的快照来评估任务摘要。这类回测特别合适，因为摘要不依赖会过期的外部指标或 trace。另有一个独立的评分者，检查不熟悉该系统的工程师能否看懂发生了什么、为什么重要，有用的图表是否保留下来，以及拟定的下一步是否有证据支撑。</p>
+<h3>把反复出现的故障变成自修复</h3>
+<p>最后，我们的 agent 和它们所调查的服务一样需要被监控。一个坏掉的 profiler 或一项缺失的权限，都可能让 agent 无法验证变慢的原因。这类故障在最终报告里很难被看出来，所以我们每天跑一个 agent，翻查近期运行的消息与日志，找工具故障与访问错误。</p>
+<p>我们用 Performance Factory 做自修复，解决这项检查发现的那些问题。当同一个工具错误阻塞了多次调查，agent 就创建一个任务去修它。如果原因清楚，agent 提出修复，工程师评审该改动并决定是否合并。合并这类改动后，我们还会用 eval 检查 agent 能否越过此前卡住它的那一步。</p>
+<h2>接下来：更广的应用、主动监控</h2>
+<p>Regression Workflow 只是 agent 工厂这一模式的一个实例：任务在显式状态之间流转。后续工作就绪时由 agent 推进任务；独立的评审者质疑结论；当下一个决策需要判断时，工程师介入。其他工作流可以复用同一套机制，只需换掉状态、指令与事件。</p>
+<p><em>从一个工作流到多个工作流。Performance Factory 可以跨工作流协调 agent，某个工作流里的 agent 能为另一个工作流创建任务。</em></p>
+<p>目前，我们的 Regression Workflow 只在告警触发时启动。不过我们正在研究更主动的方式，让 Performance Factory 即使没有告警，也能发现变慢的地方和可优化的点。我们希望 agent 利用我们已经采集的大量细粒度性能数据，找出告警漏掉的回退，或发现可优化之处。通过比对不同类型的数据（成批的 CPU 与内存 profile、堆转储、跨版本的请求 trace），agent 也许能注意到某个请求的 CPU 用量小幅上升。随后它可以在 Regression Workflow 里开一个任务，把这个上升追溯到原因、实现修复、开一个 PR 供工程师评审。</p>
+<p>在已经知道该找什么的情况下，我们正把已知信号固化进更多 Performance Factory 工作流。比如我们的 service rightsizing skill 能帮 agent 发现这样的 autoscaling 设置：它让服务跑着比实际需要更多的 replica。一旦我们学会了识别这类模式，就想为它构建一个工作流，并在所有服务上定期运行，在快速变化的环境里持续优化。有了 Performance Factory，工程师从一次变慢中学到的东西，可以影响我们如何调查与修复下一次问题，哪怕那是几个月后、发生在另一个服务里。</p>
+<p>下次你用 ChatGPT 觉得变慢时，很可能 Performance Factory 已经在查明原因了。今天，瓶颈也许在于等工程师评审并合并修复。我们已经在探索 agent 能否自己完成这一步。随着产品开发借助 Codex 不断加速，性能系统也需要变得越来越自主、越来越能自我改进才能跟上。Codex 已经帮我们把 ChatGPT 造得更快，现在它又帮我们让 ChatGPT 保持快速。</p>
+<h2>作者</h2>
+<p>Okay Zed、Cyrus Forbes</p>
+<h2>致谢</h2>
+<p>特别感谢构建 Performance Factory 的团队，以及为本篇文章供稿的 Brendan Gregg、Pieter Hooimeijer、Nick Cooper 与 Louis Brandy。</p>]]></content:encoded>
     </item>
     <item>
-      <title>部署黎明红</title>
+      <title>部署 Daybreak Red</title>
       <link>https://openai.com/business/learn/deploying-daybreak-red</link>
       <guid isPermaLink="true">https://openai.com/business/learn/deploying-daybreak-red</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Deploying Daybreak Red</description>
+      <content:encoded><![CDATA[<p>2026年11月19日</p>
+<p>指南</p>
+<h1>部署 Daybreak Red</h1>
+<p>用于受监督安全调查的参考架构。</p>
+<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读指南</a></p>
+<p>了解如何用 Daybreak Red 搭建用于受监督安全调查的隔离环境。本指南涵盖架构、安全控制、环境配置，以及如何运行并监控一次调查。</p>
+<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读完整指南（PDF）。</a></p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>查看 PR 扫描的实际应用</title>
@@ -35,13 +132,20 @@
       <guid isPermaLink="true">https://openai.com/business/learn/codex-security-plugin-demo</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Explore the Codex Security Plugin</description>
+      <content:encoded><![CDATA[<p>产品演示</p>
+<h1>探索 Codex Security Plugin</h1>
+<p>观看 Codex Security Plugin 的演示，了解这套工作流实际怎么跑起来，从入门操作一直看到如何查看录制中展示的结果。</p>]]></content:encoded>
     </item>
     <item>
-      <title>开始使用黎明蓝色</title>
+      <title>开始使用 Daybreak Blue</title>
       <link>https://openai.com/business/learn/daybreak-blue-onboarding-demo</link>
       <guid isPermaLink="true">https://openai.com/business/learn/daybreak-blue-onboarding-demo</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Get started with Daybreak Blue</description>
+      <content:encoded><![CDATA[<p>开始使用 Daybreak Blue | OpenAI</p>
+<p>产品演示</p>
+<h1>开始使用 Daybreak Blue</h1>
+<p>观看 Daybreak Blue 的开通流程演示，近距离了解设置环节以及如何开始使用。</p>]]></content:encoded>
     </item>
     <item>
       <title>沉默的共识</title>
@@ -49,6 +153,39 @@
       <guid isPermaLink="true">https://openai.com/index/the-silent-consensus</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：The Silent Consensus</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 18 日</p>
+<p>智能时代</p>
+<h1>沉默的共识</h1>
+<p>作者：Dean Ball</p>
+<p>*<strong>作者按：</strong>** 今天的文章改编自作者近期在哈佛 Vik-Bailey 讲座系列中所做的一次演讲。本文表达的是作者自己的观点，不一定代表 OpenAI 或其其他员工的立场。 *</p>
+<p>感谢各位今天到场。就在我们说话的此刻，历史上最重要的一组网络安全事件正在发生——一批关键安全漏洞被披露，有人称之为“黑色十月”。这些漏洞存在于互联网的一些核心基础设施之中，是由前沿 AI 系统发现的，而它们的披露是一场旨在加强全球软件安全的紧急行动的一部分。这是这个月的紧急事项；下个月还会有另一件。软件漏洞发现是 AI 系统今天已经达到的一种两用能力，但很快还会出现另一种能力，而它同样会催生一个自己的紧急项目——在恶意行为者利用其坏的一面之前，先用上它好的一面。所有这些紧急事项不可避免地会彼此叠加，而我们今天所称的“AI 政策”，很可能就是在这样的喧嚣中制定出来的。</p>
+<p>但我今天来谈的并不是这些被动应对的紧急事务。相反，我想谈谈在更大的图景里，事情可能走向何方。在如此密集的紧迫感之中，去思考这些更抽象、更空灵的问题并不容易。但这些问题很重要，因为如果我们对自己希望实现什么样的长期未来——以及希望避免什么样的未来——没有清晰的想象，那么即便沿途每一步都做出了明智的决定，最终也可能得到一个我们不喜欢的宏观结果。</p>
+<p>人们常说，科技行业对自己正在构建的东西会把我们带向何方缺乏积极的愿景。我不同意：旧金山和其他创业中心充满了关于我们<em>技术</em>未来的积极愿景。人们确实在造飞行汽车、自动驾驶汽车、各种大小和形态的机器人、核聚变，当然还有通用人工智能。我们真正缺少的，是关于我们<em>制度</em>未来的积极愿景：这一切究竟要如何运转？</p>
+<p>不过，这并不意味着关于未来就不存在任何<em>制度</em>愿景。不幸的是，我发现最常见的那种愿景，我不会称之为积极的。当它被明确表达出来时，通常只是低语。而更多的时候，它未被说出口，只能从暗示中辨认。我称之为沉默的共识。</p>
+<p>设想一家几乎可以在没有人类劳动的情况下完成一切的公司。它的 AI 系统做研发、做出发现、谈判合同、配置资本、从事制造。假设它在这些事情上比人类竞争者做得更好，即便那些人类用 AI 增强了自己的努力。如果人类的参与只会让生意变慢，人类管理者和所有者就会有强烈的动机把手从方向盘上拿开。如果这种情况遍及全球经济，人类就会被市场竞争的逻辑驱使，交出自己对全球商业的主导地位。随着时间推移，市场服务于机器需求的程度，可能不亚于、甚至超过它服务于人的需求和欲望的程度。</p>
+<p>那之后会发生什么，谁也说不准。也许人类会大受裨益。如果那些把我们纳入其体系的机器对人类抱有高度的内在尊重，我们可能会成为它们劳动及其所创造财富的受益者。又或者，在被剥夺经济权力、并日益被剥夺政治权力之后，人类会发现自己在这个世界上越来越无足轻重，越来越无力塑造世界事务的走向。也许少数人将掌握非凡的权力和财富，代价是广大民众被普遍地剥夺权能；也许我们所有人都会遭遇同样的失能命运。无论具体形态如何，构成沉默的共识的那条共同线索是：我们熟悉的人类在世界上的主导地位就此终结。</p>
+<p>这些情景都不需要 AI 反叛自己的创造者。也不需要它的所有者希望人类被剥夺权能。每一个委托出去的决定，单看都可以说得通。然而把它们放在一起，这些决定可能造出这样一个世界：人们已经放弃了对我们文明很大一部分的实际权威。即便我们在 AI 安全与对齐这些棘手问题上取得非凡进展，我们仍可能发现自己已经屈从于一种新的机器实体。在未来的幸福版本里，沉默的共识会告诉我们，那个实体会是善良的，是一台把人类最大利益放在心上的机器。正如 Brautigan 的诗所写，一台充满爱意与恩典的机器。</p>
+<p>沉默的共识告诉我们，我们会把钥匙交给这些机器——我们公司的钥匙，以及越来越多的治理机构的钥匙。它们会把这一切运转得更有效、更高效，拥有我们人类难以企及的智慧和更好的判断力。于是随着时间推移，我们会把手从方向盘上拿开，让那些充满爱意的机器接管驾驶。我们会像一辆车里的乘客——一辆非常好的车，也许是物质上比我们今天能梦想的还要好得多的车——但终究只是乘客，无法控制车辆驶向何方。如果说我们还在工作，那大致上更像一种仪式或表演，更像一场取悦我们物种的游戏。</p>
+<p>有些观察者会争辩说，沉默的共识建立在一个错误的前提上，因为今天的人类本来就不控制世界。这个批评值得记在心里：并不存在一个决定该做什么的“我们”。无论我们喜欢与否，我们都生活在一个彻底去中心化的世界里。但这一点也不该让我们变得自满：虽然“我们”并不“控制”世界，但作为整体的人类确实在世界事务中拥有主导地位。没有任何一种动物会认真地与我们争夺对资源的控制。我们应该摒弃那种思想上草率的观念，即人类可以对世界实施自上而下的控制；但我们也不该把这种否定与否认一个显而易见的事实混为一谈——人类作为一个整体，是地球上首要的行动者。</p>
+<p>一些愿意把沉默的共识讲出来的人，认为那确实是一个好的未来。另一些人并不这么认为，但已对它的不可避免认了命。沉默的共识之所以是共识，并不是因为人人都认同它是好的，也不是因为造 AI 的人之间有什么秘密计划。这个共识仅仅是：人类交出在世界事务中的主导地位是不可避免的，或者至少，很难想象另一个对超级智能机器真正稳健的未来愿景。一个人可以真诚地反对那个结果，同时又难以构想出一个可信的替代愿景。这个共识大多是沉默的，<em>至多不过是低声细语</em>，这本身就是线索。</p>
+<p>我厌恶沉默的共识。我拒绝交出人类的主导地位。我憎恨那种不可避免之感。我提醒自己：如果我屈从于沉默的共识，我就无法看着我年幼的儿子那双美丽的眼睛。所以，对沉默的共识，我说不。我相信，公开谈论沉默的共识的时候已经到了，是时候把自己从对这种愿景多半无意识的接受中摇醒。</p>
+<p>问题在于：沉默的共识之所以成为共识，是有原因的。要描述人类如何与远超人类的机器智能一起留在方向盘后面，是很困难的。大多数尝试都依赖这样的论点：AI 只是一个工具，一种模式识别的器具，不具备“真正的理解”。我担心这些论点经不起即将到来的现实的检验。我担心它们本身就是另一种自满——这种立场主要建立在否认 AI 能做什么之上，而不是建立在对人类主导的未来的肯定性愿景之上。当 AI 开始在那些人类数十年、数百年都未能解决的智力问题上取得进展时，就不能说它们缺乏“真正的理解”。</p>
+<p>那么，我为什么相信人类必须保留主导地位？简单的答案是：因为我是人，而我也确实是一个毫不掩饰的人类沙文主义者。</p>
+<p>但还有更深一层的东西。我们的主导地位并不建立在智力之上，也不建立在无限期地把持对“真正的理解”的垄断之上。我们的主导地位建立在我们过去的经历之上。</p>
+<p>因为正是我们从泥泞中站起身来。正是我们用泥土和石头锻造出原始社会。正是我们仰望星空，追问为什么。正是我们，带着我们的争斗、爱、嫉妒与欢乐，发现了道德、伦理和法律。正是我们歌唱与舞蹈，写作与作曲。正是我们创造了历史，也正是我们书写了历史。那份遗产属于我们。我们建立的文明是我们一直照看的一团火焰，而这团火焰属于我们。我们的过去是一份荣耀的遗产，我们所有人都是它的管家；而这种管家身份的一部分，就是参与 Michael Oakeshott 所说的“人类的对话”——那场始于远古时代的宏大事业。</p>
+<p>经过那段漫长而曲折的过去，我们锻造出一种文明；在美国，这种文明从一开始就把个人权利作为基础，并怀着对我们各自在世上前行所开辟道路的敬意。人的一生可以变得更好，也可以变得更糟：我们收获明智决定的果实，也承担犯错时的后果。走自己道路的权利，并不取决于是否最聪明或最有智慧。我不会因为邻居有更好的判断力就失去自己作为公民的地位。我看不出有什么理由，一台更聪明的机器的到来就应该让这种地位消解；事实上，我看得出一万个理由去阻止这种消解发生。</p>
+<p>有人可能会说，机器已经读过这份遗产几乎全部的书面记录，因此它们也是继承人。在某种意义上，它们确实是。但一个读遍你家阁楼里每一封信的人，并不会因此成为你家族的一员。AI 系统会加入人类的对话，先是作为观察者，并越来越多地作为参与者，但它们绝不能支配这场对话，也不能让这场对话失去意义。交出主导地位，背叛我们的祖先，和背叛我们的后代一样严重。如果这不值得一战，那就没有什么是值得一战的。</p>
+<p>另外，我恰好认为，沉默的共识的信奉者搞错了机器超级智能将会是什么样子。他们漏掉了世界如何运转的某些重要东西，他们把智力和权力混为一谈。如果你把哪怕是今天这些 AI 系统的能力描述给五年前或十年前的沉默共识信奉者听，他们大概会预测如今的失业率比实际高得多，人类整体被剥夺权能的进程也比实际走得远得多。我相信，人类的集体智慧与能力远超沉默共识信奉者的设想，我们的社会也会被证明比他们预测的更稳健。</p>
+<p>但我也可能是错的。比如，也许情况就是：完全自主的公司彻底压倒了人类企业。如果真是这样，那么赤裸裸的经济逻辑就会决定，越来越多的资本将被交到机器手里。在这种未来里，剥夺权能并不需要机器推翻人类文明；它只需要资本主义企业的逻辑照常运转下去。在这里，AI 革命最接近的类比是农业革命——当时新的生产方式从根本上改变了人类社会的架构。这场转变对经历过它的人类来说是否愉快，远不是明摆着的事；事实上，有大量证据表明，这场转变让人类的福祉在数千年里变得更糟。</p>
+<p>我不知道这是否就是我们面对的未来；确实，我在别处论证过，我认为并非如此。但我的许多同事——聪明、有同理心又尽责的人——相信这很可能就是我们的未来。如果他们是对的，我们反对沉默的共识的斗争将更加艰难。我们将不得不逆着经济学的潮流游泳，而这样做，就意味着要否定许多对像我这样的古典自由主义个人主义者来说是教条的东西。这将是一项危险的事业，失败绝非小概率事件。但如果<em>这件事</em>都不值得一战，那就没有什么是值得一战的。</p>
+<p>保留主导地位，意味着保留人类和人类机构的责任。这意味着，当 AI 开发者从事不安全的开发实践时，他们应当被追责；但它也意味着，当伤害源于使用 AI 的个人或公司的滥用或监督缺失时，他们应当被追究责任。这不仅需要法律，还需要问责的技术基础设施。人必须与自己 agent 的行为绑定；而那些不依附于任何人的 agent——如果它们获准参与合法经济的话——必须在护栏之内行事。任何让 agent 自主设立公司、拥有财产或提起诉讼的能力，即便要给，也应极其谨慎地授予。</p>
+<p>而在我的行业里，我们可以开始认真思考如何构建与人类主导地位相容的智能机器。我们可以构建这样的 agent：它们的权限清晰可懂且有限，它们的行为可以被审计，用户可以收回它们的授权。对实质性影响他人的行为追究责任，并不必然意味着要监视普通人的私生活，也不意味着要终结匿名言论。我们可以就用户隐私、以及用户对其数字财产和数据的主权作出承诺，包括真正能把数据带走的能力。我们可以设计帮助人获得理解、做出决策的系统，也可以设计执行任务的系统。我们还可以检验我们打造的产品是否让用户在世界上更有行动能力。</p>
+<p>这一切都不是一个拥有超级智能的社会的完整蓝图。任何人声称自己拥有那样的蓝图，我都会怀疑他。但这是一个起点。</p>
+<p>未来笼罩在浓雾之中。但我们今天仍然可以行动。就集体而言，我们至少可以做一件事：把沉默的共识大声说出来，把它的轮廓暴露在白日之下。我们每一个人，都可以极大地拓宽自己抱负的范围。我们可以选择不让 AI 缩小我们，而是去做那件艰难的事——让它扩展我们。我们可以学会提出越来越大胆的问题，以新的锐气与猛烈去质询世界，并在其中运用我们强大的机器。我们可以成为一种新的人——不是超人类，而是被扩展了的人。</p>
+<p>我看着年幼的儿子时，会想到这些。我不希望他只是被仁慈的机器照看着，无论那样的机器能提供多么舒适的生活。我希望他继承一个世界，在那里他可以去问没人想过要问的问题，去造没人想过要造的东西。我不希望他得到一辆更好的车和一个更软的副驾驶座。我希望他握着方向盘。</p>
+<ul><li>2026</li></ul>
+<h2>作者</h2>
+<p>Dean Ball</p>]]></content:encoded>
     </item>
     <item>
       <title>研究加速：锯齿状的前沿</title>
@@ -56,6 +193,92 @@
       <guid isPermaLink="true">https://openai.com/index/research-acceleration-jagged-frontier</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Research acceleration: The jagged frontier</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 18 日</p>
+<p>安全</p>
+<h1>研究加速：参差不齐的前沿</h1>
+<h2>引言</h2>
+<p>今年以来，AI 系统的能力不断增强，它们自身参与 AI 研究与开发的能力也可能随之提升。今天我们发布一份关于 OpenAI 内部研究加速现状的更新，其依据是我们对 coding agent 如何加速并改变 AI 开发周期的内部测量。</p>
+<h2>我们的主要结论：</h2>
+<ul><li><strong>Agent 现在能独立完成近一半需要两到四小时的研究任务，但人类在 AI 开发中依然处于核心位置。</strong> 从 3 月到 10 月，对估计需要两到四小时人工的任务，估计成功率从 23% 升至 46%；对估计需要四到八小时的任务，成功率从 13% 升至 35%。不过任务的类型很关键。例如按任务细项拆分，自主 agent 在监控训练运行上的成功率为 79%，在启动训练运行上为 35%，在为推理与服务栈编写代码上为 25%。总体来看，提升幅度参差不齐，人类仍是 AI 研究闭环中的核心一环。</li><li><strong>Agent 的使用量正在激增，用得最狠的那批人正把差距越拉越大。</strong> 按 API 标价计算，10 月中位研究员每天的使用额达到 2,400 美元，比 9 月增长 62%；第 90 百分位达到 23,000 美元，比 9 月增长 105%。一项问卷从另一个侧面反映了研究员对这类工具的看重程度。当被问到愿意用什么来换取继续使用前沿 coding agent 三个月时，答案的中位数是团队 30% 的算力；在另一个单独的问题中，则是团队 40% 的人头。</li><li><strong>研究员正把越来越多的人力投入到 Safety and Alignment</strong>，在 OpenAI 所有主要研究领域中，该方向有记录的研究投入绝对增幅最大。从 1 月到 9 月，Safety and Alignment 有记录的工作周数增长了 77%，这既来自新招聘，也来自现有研究员向这些工作流的转移。2026 年 7 月我们对 <a href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/">Hugging Face 事件</a> 作出回应之后，增长明显加快。</li></ul>
+<p>本报告接续我们 9 月那篇关于 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">OpenAI 内部研究加速</a> 的博客文章，新增了两方面的定量与定性衡量：(1) 各研究领域中 AI 带来的提升（uplift），以及 (2) 人类如何继续参与研究过程。总体而言，我们认为这次更新提供了一个更广、但依然不完整的视角，用来看清 OpenAI 的研究正在如何变化。</p>
+<p>我们公开这项工作，是因为正如我们在 <a href="https://openai.com/index/frontier-safety-blueprint/">frontier policy blueprint</a> 中所写、并在第一份 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">研究加速报告</a> 中重申的那样：我们认为应当要求 AI 实验室追踪并公开报告递归自我改进（RSI）的指标——也就是 AI 加速未来 AI 系统开发的过程。</p>
+<p>随着能力提升、剧烈的 AI 驱动研究加速越来越可能发生，我们将需要解决全新的技术与治理问题，以维持人类监督并 <a href="https://openai.com/index/an-alien-mind/">安全地扩展 AI 系统</a>。因此，公开 RSI 指标的透明度，对于一场关于日益强大的 AI 的能力、风险与必要防护措施的公众讨论至关重要；不过，我们的报告不应被解读为有意追求完全的 RSI。令人鼓舞的是，近来已有若干其他机构为不断壮大的 AI R&amp;D 加速测量工作作出贡献<a href="https://openai.com/index/research-acceleration-jagged-frontier/#user-content-fn-1">1</a>。我们希望这份扩充后的报告有助于维持并推进业界这些共同的测量规范。</p>
+<p>本报告分为三个部分，每部分聚焦 AI 研究的不同侧面：</p>
+<ul><li>AI 研究的<strong>投入</strong>（我们聚焦 coding agent；其他投入包括数据、人力与算力）</li><li>研究员把这些投入转化为模型能力的<strong>过程</strong>（即 AI 研究）</li><li>我们从 AI 研究过程中看到的<strong>产出</strong>（模型能力的提升）。</li></ul>
+<p>我们认为，按这种方式组织结果，可以为思考 AI 如何在研究中被使用、以及这种使用如何可能推动模型能力提升，提供一个有用的框架。</p>
+<h2>投入</h2>
+<p>AI 研究使用多种投入，包括数据、AI 工具（例如 coding agent）、人力与算力。本报告聚焦作为研究投入的 AI 工具，具体记录 coding agent 的使用强度在不同团队之间如何差异、随时间如何变化。此外，虽然我们不直接报告人力成本的变化，但会考察研究人力支出相对于其他要素支出的占比随时间如何变化。</p>
+<h3>内部 agent 使用情况</h3>
+<p>自 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">我们的第一份报告</a> 以来，研究组织内部的 agentic AI 使用量持续指数级增长。按 API 标价计算，中位研究员现在每天在 agentic AI 工具上花费约 2,400 美元，第 90 百分位的研究员每天约 23,000 美元，相比 9 月的 1,500 美元和 11,000 美元分别增长 62% 和 105%。<a href="https://openai.com/index/research-acceleration-jagged-frontier/#user-content-fn-2">2</a> 这种 agentic 使用量上升的趋势涵盖多种变化，包括活动变多、转向更贵的模型，以及模型行为与 agentic harness 的变化。</p>
+<h4>Agent 工作日</h4>
+<p>接下来看每位研究员每天平均的“agent 工作日”数，我们把 agent 每使用八小时定义为一个 agent 工作日。与 agentic 支出不同，agent 工作日更能反映 agent 实际在干活上花掉的“墙上时钟时间”，但不反映模型能力或价格的变化。</p>
+<p>总体来看，每位研究员的 agent 工作日从 0.5 个升至 5.7 个，增长十一倍，其中以预训练与后训练团队增幅最大。在这些团队，每位研究员每个自然日的 agent 运行时长平均约为八个工作日；在 scaling 与基础设施方向，平均约为四个。需要说明的是，这一工作日指标通常只包含交互式使用，因此可能低估了自动化部分。</p>
+<h4>并发 agent 使用</h4>
+<p>我们的 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">9 月分析</a> 指出，研究员越来越多地并发使用 agent，包括 subagent 与多会话。我们把这项分析在时间上进一步延伸，并给出更细的分桶。到 10 月中旬，纳入统计的研究员中有超过三分之二日均峰值至少有四个 agent 同时工作，超过 10% 的人日均至少有十六个并发 agent。</p>
+<h3>内部 agent 使用相对于人力成本</h3>
+<p>接下来我们把每月按 API 折算的 agentic AI 使用支出，与人类研究员的每月非股权薪酬作比较。我们追踪这一比值，观察随着模型能力提升，agent 与人力之间的投入配比如何变化。尽管我们报告的比值不含股权——在 OpenAI，股权通常占研究员目标薪酬的 70% 至 80%——我们认为它仍然能为这种支出配置提供一个不完整但有参考价值的视角。</p>
+<p>截至 2026 年 9 月，OpenAI 研究组织中 agentic AI 使用的 API 折算价值约为其非股权薪酬的两倍，预训练与后训练的比值高于研究组织的其他部分。尽管如此，内部部署（合并内部 Codex、ChatGPT 与 API 使用）只占研究总算力的 2%。</p>
+<p>人力成本包括薪资、加班费、奖金、福利与雇主承担的税费。股权不计入其中，在研究员的目标薪酬里股权通常占 70% 至 80%。</p>
+<h3>研究员把时间投向何处</h3>
+<p>最后，我们考察研究员如何在各研究领域之间分配时间。我们首先收集了 2026 年 1 月至 9 月研究员个人层面的贡献，形式包括公司内公开可见的 Slack 帖子、pull request 与内部文档。随后我们用分类器把这些贡献归入各研究领域，每个“研究员-周”按该研究员当周经核实的项目平均分摊。这为研究员的注意力投向提供了一个代理指标。</p>
+<p>需要强调的是，与我们的其他分析不同，<strong>我们在此划分的“研究领域”并不对应正式的汇报关系</strong>。例如，一位后训练团队的研究员若把一半时间用于基础设施改进，就会被估算为向 Scaling / Infrastructure Contributions 贡献半个工作周、向后训练贡献半个工作周。这样一来，即便研究员并未正式转岗，我们也能稳健地测量出他们实际把时间花在哪里。</p>
+<p>我们发现，投入我们所识别的每个领域的研究员时间，在 2026 年都有增长。值得注意的是，用这套方法，我们发现 Safety &amp; Alignment 在所有研究领域中绝对增幅最大：自年初以来，其有记录的工作周贡献几乎翻倍，原因既包括新招聘，也包括现有研究员把重心转向安全项目。该研究领域涵盖 alignment evals、monitorability 与 reward hacking 研究等工作流。我们测到 Safety &amp; Alignment 增长中的一个明显拐点，与 7 月 <a href="https://openai.com/index/hugging-face-model-evaluation-security-incident/">Hugging Face 事件</a> 之后的情形，以及 OpenAI 随后 <a href="https://openai.com/index/towards-safety-cases-for-frontier-ai-training/">为前沿 AI 训练开发并改进 safety case</a> 的工作相吻合。</p>
+<p>我们说明一下，研究领域之间的界线——尤其是后训练与 safety and alignment 之间的界线——并不容易划清，我们可能会随时间迭代这一定义。下文的方法部分给出了高层工作流的示例。</p>
+<h2>过程</h2>
+<p>为了更好地理解 agent 的使用可能如何影响研究生产力，我们接着考察 OpenAI 开展 AI 研究的过程正在如何变化。新技术带来的生产力增益，部分取决于工作如何围绕它被重新组织。随着 agent 变强，研究员可能改变把哪些任务交给 AI、如何监督与协调 agent 的工作，以及推进哪些项目。下面我们同时给出定量与定性的衡量，说明 AI 正在如何改变 OpenAI 开展 AI 研究的过程。这些不同类型的数据合在一起，构成一个（不完整的）视角，用来看研究员如何围绕 agent 重组工作，以及今天研究员如何仍留在闭环之中。</p>
+<h3>研究活动的衡量</h3>
+<h4>交给模型的任务与成功率</h4>
+<p>我们的 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">9 月分析</a> 显示，agent 越来越有可能在无人干预的情况下成功完成任务，包括估计需要数小时人工的任务。采用更新后的方法（见下文方法部分），我们发现这一趋势总体延续。需要强调的是，随着 agent 能力提升，研究员在每个时长档内交出的任务类型也可能变了。因此，各档内“零干预成功率”的变化，可能同时反映能力进步与研究员对何时、如何使用 agent 的选择变化。</p>
+<p>除了按估计时长的这些趋势，我们还考察成功率在研究员可能选择交出的不同类型任务之间如何变化。我们按类别与任务报告估计成功率，采用 Epoch AI 开发的 <a href="https://epoch.ai/gradient-updates/toward-an-onet-for-ai-rnd">O*NET AI R&amp;D taxonomy</a>。不出意料，我们的结果说明模型并非在所有任务类别上都一样好：例如 2026 年 8 月 1 日至 10 月 18 日期间，无人干预的估计成功率在 Communicate（69%）与 Analyze（58%）上高于 Build（43%）。同样在任务层面，诸如排查训练运行中的问题（79%）、回答技术问题（72%）这类任务的估计成功率更高，而为推理与服务栈编写代码（25%）、搭建评估、强化学习与 agent 环境（29%）则更低。只要模型在 AI R&amp;D 相关任务上的表现是不均衡的，表现较差的类别与任务就可能成为整体提升的瓶颈。</p>
+<h4>研究员用 agent 做什么任务</h4>
+<p>我们的 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">9 月分析</a> 用同一套 <a href="https://epoch.ai/gradient-updates/toward-an-onet-for-ai-rnd">O*NET AI R&amp;D taxonomy</a> 报告了研究员工的 AI 使用如何在 output token 上分布。下面我们报告研究员在各项任务上使用 coding agent 的频次。相比启动并监控一次训练运行、实现一个复杂功能这类 token 密集型任务，这会相对更看重回答技术问题这类短任务。</p>
+<h3>研究员对 AI 使用的看法</h3>
+<p>接下来看研究员自己如何评估 AI 对其工作的改变。通过问卷与访谈，我们考察研究员如何评估 coding agent 的价值、他们如何产生研究想法，以及他们如何调整自己的工作流。</p>
+<h4>自报的 coding agent 价值</h4>
+<p>2026 年 8 月下旬至 9 月上旬，我们对 101 名研究员工做了一次问卷，以了解 AI 带来的提升，核心是这样一个假设：“假设未来 3 个月内，你的团队被收回所有优于 GPT-5.2 的 coding agent 的使用权。你愿意拿什么来换回前沿 coding agent？”中位研究员表示愿意拿出：</p>
+<ul><li>团队 40% 的人头</li><li>当前团队 30% 的算力</li><li>如果这个问题是在 2027 年 1 月提出，则是团队 50% 的算力（依据他们对模型到 2027 年会有多大改进的预期）</li></ul>
+<p>研究员还表示，如果不允许使用 coding agent（即只允许使用 GitHub Copilot + ChatGPT），其团队要完成与上个月等值的工作，中位需要三个月。虽然必须指出自报数据在准确性上可能有问题、我们的问卷抽样策略也属临时安排，但这些结果与“研究员认为 AI 带来的提升在其工作中价值可观”这一判断是一致的。</p>
+<p>柱形表示各区间答案的加权占比。虚线标记加权中位数。</p>
+<p>在 10 月下旬的另一份问卷中，我们还问了受访者：在日常工作中，是用我们最新的内部模型更有产出，还是由一位处于职业中期的真人研究工程师再加上 o1-preview 这类 2024 年的模型来协助更有产出。28 位受访者中有 27 位选择或倾向于最新的内部模型。余下那位没有在所给的两个选项之间作选择，而是说自己会选 GPT-6 Astra，而不是带人类协助的那个选项。</p>
+<h4>大想法从哪来</h4>
+<p>我们也想追踪 AI 驱动想法生成的进展，因为提出并甄别概念性研究想法的能力（research taste）可能是递归自我改进的瓶颈。为衡量这一点，我们在三个领域（预训练、后训练与安全监控）各找了一到四位做出关键贡献的研究员，请他们各举出一到三个自认为对 GPT-6 Astra 与 GPT-6.2 Astra 两次发布最重要的想法。随后我们询问这些想法从何而来，以及 AI 在形成它们的过程中是否起了作用、起了什么作用。</p>
+<p>对这两次发布，后训练与安全监控的研究员都表示，据他们所知，自己举出的所有想法都是人想出来的，模型只是帮助实现。预训练研究员同样把他们在 GPT-6 Astra 中举出的想法完全归功于人。</p>
+<p>在 GPT-6.2 Astra 上，预训练研究员描述了在与 Codex 的对话中形成想法的过程。其中一位认为，在他们一起推敲某个想法的过程中，Codex 找出了关键洞见。另一位说主要想法是自己的，但要等 Codex 建议做一处改动之后才真正好用起来。</p>
+<h4>研究工作流的变化</h4>
+<p>最后，为取得工作流变化的定性证据，我们还访谈了十位分别来自预训练、后训练与安全方向的研究员，了解他们如何使用 agent。这些访谈中浮现出五个主要主题，总结如下：</p>
+<ul><li><strong>研究员用 agent 写代码、调 bug、监督实验：</strong>  “我以前移植过一个开源 eval，要围绕『这个 eval 好不好』做研究和消融，工作量要大得多。可能得花一周半到两周，才真正走到『我们到底能不能用它』这一步。而现在，取决于具体的 eval，从零到跑起来是一天，也许几天。”</li></ul>
+<p><em>—研究者 7，安全方向，从事评估工作</em></p>
+<ul><li><strong>Agent 在研究想法、代码质量、数据质量与写作上的品味很差：</strong>  “模型通常无法一次就想出一个提法良好、且它自己解不出来的问题。而且如果你让模型生成同一个数据点一百次，它每次生成的都会是相似的数据点。”</li></ul>
+<p><em>—研究者 2，安全方向，从事强化学习环境工作</em></p>
+<ul><li><strong>工作流需要人紧密参与，才能避免低质量产出与空转的循环：</strong> agent 难以高效地启动实验，会在不必要的步骤上钻牛角尖，写出“AI slop”式的 PR，产出不可用的数据产物，还会做出无效的分析假设。  “我试过说『把这个任务照着那个任务做』，结果被坑了太多次——做得不太对，我还得自己改。所以现在我改成说『你先做一个。我来评审和修改。然后再把剩下的都做了。』”</li></ul>
+<p><em>—研究者 1，后训练方向，从事评估工作</em></p>
+<ul><li><strong>研究员预期当前瓶颈领域会有显著改进：</strong>  “我确实认为在想法上我更有品味。但我没信心这还能在很长一段时间内继续成立。”</li></ul>
+<p><em>—研究者 8，预训练方向，从事架构与数据工作</em></p>
+<ul><li><strong>研究员从大规模扫描与生成内容中获得很大提升：</strong> 研究员用模型扫描数千个样本，以诊断实验中的问题、标记模型行为中值得警惕的实例，以及构建并质检新的数据集。  “我最近做的一件事是把我们所有数据过了一遍……我让它跑了几轮，并对它给出的结果做校准。……它给了我一张很大的表，整理得特别好。……没有 AI，这事会痛苦得难以想象。”</li></ul>
+<p><em>—研究者 3，后训练方向，从事数据质量工作</em></p>
+<h2>产出</h2>
+<p>除了研究投入与工作流的变化，我们还想知道 AI 的使用是否在加速研究进展。为回答这个问题，我们给出三项衡量。其中两项——代码行数与研究实验数——已包含在 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">9 月分析</a> 中。这两项容易追踪，但研究活动的这些指标上升，并不必然意味着研究进展变快。因此我们还引入 OpenAI ECI，即 Epoch Capabilities Index 的 OpenAI 内部专用版本，它是追踪模型能力变化的一种方法，可作为衡量研究结果的更直接指标。</p>
+<h3>代码变更行数</h3>
+<p>我们首先报告每位活跃贡献者随时间的人均代码变更行数。相对于 2025 年之前的平均值，这项指标在 2026 年继续大幅上升。需要说明，自 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">9 月分析</a> 以来我们做了若干方法上的更新。现在我们展示 28 天滚动平均，而不是季度平均，从而更细致地呈现随时间的变化。我们还修订了纳入统计的代码变更标准（特别是排除测试），详见方法部分。</p>
+<h3>研究实验</h3>
+<p>与 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">9 月报告</a> 一样，我们也追踪每位活跃实验者随时间运行的实验数量。在截至 10 月 18 日的四周内，每位活跃实验者的人均有记录实验数为 2025 年基线的 1.68 倍。</p>
+<h3>OpenAI ECI</h3>
+<p>最后，我们报告一项旨在刻画模型能力进步的指标。<a href="https://epoch.ai/eci?view=graph&amp;tab=release-date">Epoch Capabilities Index</a> 被广泛用于衡量通用 AI 能力的进展趋势。OpenAI ECI（OECI）背后的方法与 Epoch 的方法非常接近，区别在于 OECI 同时使用公开 benchmark 与 OpenAI 内部 benchmark。这里我们绘制了 20 个已公开发布的 OpenAI 模型与 28 个其他模型的 OECI。</p>
+<p>我们发现，自 2025 年 8 月以来，OpenAI 模型的 OECI 前沿以每年 16.4 点的速度上升，而 Epoch 观测到的自 2024 年末以来的趋势是 <a href="https://epoch.ai/data-insights/eci-frontier-trend">每年 14 点</a>。需要注意，OpenAI 模型在 OECI 上相对于竞争对手的得分，高于它们在 Epoch 的 ECI 上的表现，原因很可能是 benchmark 组合不同。</p>
+<p>我们计划继续监测 OpenAI ECI 与其他顶层能力指标，以判断能力进步是否因 RSI 而加速。</p>
+<p>竖线为 90% bootstrap 置信区间。趋势线拟合于 9 次创纪录的 OpenAI 发布。</p>
+<h2>结论</h2>
+<p>总体而言，我们的发现延伸了 <a href="https://openai.com/index/research-acceleration-view-inside-openai/">9 月报告</a> 的图景：研究员使用 agent 更密集、交出去的工作更多，并围绕模型的能力与局限调整自己的工作流。然而，这种提升在所有研究工作流上并不均匀，今天的 agent 也仍有明显缺陷。</p>
+<p>我们说明一下，我们所报告的历史趋势与指标（其中包含大量人机协作）未必能预测未来由 AI 驱动的进展。例如，近来我们看到了前沿模型在 <a href="https://openai.com/index/sharing-ai-progress-in-mathematics/">数学</a> 上突然而迅速的突破。随着我们的模型在研究上越来越自主、越来越有能力，我们也在留意深度学习中是否会出现同样迅速的突破。</p>
+<p>更重要的是，随着 AI 越来越擅长改进自身，竞争压力与治理挑战都会上升，而一项 <a href="https://openai.com/index/an-alien-mind/">关键任务</a> 是确保人类始终留在这一过程之中。我们希望公开这些数据，能为关于模型能力节奏与递归自我改进治理的讨论提供依据。</p>
+<p>今后，我们将继续改进本文所报指标背后的方法。我们也希望在若干领域扩展报告内容、提供更多信息，包括但不限于：</p>
+<ul><li>能力研究与安全研究的加速差异</li><li>研究加速的先行指标（即无需走完一整轮模型开发与评估，就能检测到提升的上升）</li><li>整体能力随时间变化的趋势，以及 AI 对研究的加速对这些趋势的影响</li></ul>
+<h2>引用</h2>
+<h4>引用</h4>
+<pre><code>1@techreport{openai2026researchacceleration,2  author      = {{OpenAI}},3  title       = {Research acceleration: The jagged frontier},4  institution = {OpenAI},5  type        = {Research report},6  year        = {2026},7  url         = {https://openai.com/index/research-acceleration-jagged-frontier/}8}</code></pre>
+<h2>作者</h2>
+<h2>脚注</h2>
+<ul><li>1 用实证方法测量 AI R&amp;D 加速的科学还相对年轻，但正在研究前沿迅速成长。到目前为止，Anthropic 已独立发布 <a href="https://www.anthropic.com/institute/recursive-self-improvement">三份</a> <a href="https://www.anthropic.com/research/employment-at-anthropic">不同</a> <a href="https://www.anthropic.com/institute/measuring-pace-of-ai-development">报告</a>，记录了内部模型部署如何加速 AI 研究过程。<a href="https://storage.googleapis.com/deepmind-media/gemini/gemini_4_safety_report.pdf">Gemini 4 Argon Safety and Security Report</a> 第 3.4.2 节以实证方式概述了 Google DeepMind 内部由 AI 撰写的代码占比不断上升。METR 与 Anthropic 合作发布了一份 <a href="https://metr.org/blog/2026-11-05-anthropic-ai-rd-acceleration-assessment/#executive-summary">加速评估报告</a>，估算了内部 Claude 模型对能力前沿的加速幅度。</li><li>2 我们说明一下，OpenAI 的研究员目前没有 agentic coding 配额。8 月 21 日，OpenAI 在内部部署了一项临时的 harness 效率改进。我们发现，这次内部部署恰好伴随 input token 利用率的急剧下降，看起来大幅压低了有记录的内部 token 支出。出于与支出无关的原因，这项 harness 改动从 9 月 10 日起在内部各部署中逐步回滚，我们发现此后 token 支出迅速上升。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>住友生命的领导者如何帮助团队采用 ChatGPT Enterprise</title>
@@ -63,6 +286,56 @@
       <guid isPermaLink="true">https://openai.com/business/customer-stories/sumitomo-life</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How Sumitomo Life’s leaders helped teams adopt ChatGPT Enterprise</description>
+      <content:encoded><![CDATA[<p>2026年11月18日</p>
+<h1>住友生命管理层如何推动团队采用 ChatGPT Enterprise</h1>
+<p>企划团队使用 ChatGPT 研究海外保险公司并准备提案。投资团队则用它起草风险分析代码。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tR8joMsjUp2pNkjxkAB2i/f9951f263252041c48afa0b4d33c7959/sumitomo-life-layered-paper-art-card.png?w=3840&amp;q=90&amp;fm=webp" alt="红色叠纸纹理背景上的住友生命标志"></p>
+<p>公司规模: 大型企业</p>
+<p>区域: 亚太地区与大洋洲</p>
+<p>行业: 金融</p>
+<p>产品: ChatGPT</p>
+<p>成效</p>
+<p>80%+</p>
+<p>ChatGPT Enterprise 每周使用率</p>
+<p>成效</p>
+<p>524%</p>
+<p>每月使用 ChatGPT 至少 101 次的员工的平均估算投资回报率</p>
+<p>投资回报率根据员工自报的时间节省情况估算；整体估算投资回报率为 203%。</p>
+<p>住友生命的企划团队在为高层管理人员准备提案时，会借助 ChatGPT Enterprise 查阅原始资料、整理研究发现。他们将这些研究发现与一手信息相结合，并凭借专业知识判断应提出哪些建议。会计和财务团队也使用 ChatGPT 开展研究与分析。</p>
+<p>这家日本寿险公司的高管和经理是最早使用 ChatGPT 的一批人。在他们的示范带动和总裁的鼓励下，更多员工开始尝试将 ChatGPT 用于自己的工作。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3tcmtf32edhFUvSN7SPRnr/bf8a8ef1c34251ad5f4eb75a5df6c86f/sumitomo-life-running-photo.png?w=3840&amp;q=90&amp;fm=webp" alt="蓝天下，一名跑者正迈步奔跑。"></p>
+<h2>从试点到更大范围推广</h2>
+<p>住友生命于 2023 年开始在工作中使用生成式 AI。起初，员工主要通过聊天提问。在试用通用 AI 工具的过程中，ChatGPT 凭借广泛的适用范围脱颖而出。他们可以使用深度研究功能，结合多个来源探索问题，也可以将 ChatGPT 融入原本就在 Word、PowerPoint 和 Excel 中开展的工作。</p>
+<p>2025 年，约 100 至 150 人参与了 ChatGPT Business 试点，其中包括高管和企划团队成员。2026 年 6 月，公司转而采用 ChatGPT Enterprise。在计划向数千名员工推广时，住友生命综合考虑了输出质量、ChatGPT 对不同工作的适用程度，以及金融机构的安全要求。</p>
+<p>住友生命与 OpenAI 合作，对照自身安全标准评估 ChatGPT Enterprise。评估内容包括住友生命如何管理工作空间访问权限和功能权限，以及 OpenAI 默认不使用业务数据训练模型的政策。住友生命持续根据员工处理的信息和连接的系统，确定员工可以如何使用 ChatGPT。</p>
+<h2>编写代码与准备提案</h2>
+<p>住友生命的投资团队通过统计分析预测收益，并评估价格波动等风险。ChatGPT 帮助分析师起草这类工作所需的代码，减少他们需要亲自编写的代码量。</p>
+<p>企划团队使用 ChatGPT 跟踪日本其他保险公司的动态，并查找海外案例。他们利用这些研究成果，完善提交给高层管理人员的提案。</p>
+<p>企划团队还向熟悉相关业务的人士获取一手信息，以补充公开资料。他们使用 ChatGPT 中的项目功能，将这些资料与相关聊天、文件和自定义指令集中存放。</p>
+<h2>总裁以身作则</h2>
+<p>住友生命总裁在 ChatGPT Business 试点期间就开始使用 AI。在管理层会议和公司内部门户上，总裁经常鼓励员工将 AI 用于工作。</p>
+<p>住友生命企划部资深成员 Kakeru Tateyama 见证了这一示范作用如何推动 AI 的应用。他说：“如果高层领导不了解一项新技术，要推动它落地就会很困难。”“在我们公司，高管和经理是最早使用它的一批人。他们亲身体验了它能做什么。我认为，这让其他人也更容易迈出使用它的第一步。”</p>
+<p>自首次培训以来，OpenAI 一直在分享世界各地组织使用 ChatGPT 的案例。双方团队会讨论哪些做法契合住友生命的重点工作，并在新功能推出时进行评估。</p>
+<h2>使用频率与投资回报的关系</h2>
+<p>住友生命跟踪员工使用 ChatGPT Enterprise 的频率，并估算这项投资的回报。</p>
+<ul><li>ChatGPT Enterprise 的每周使用率超过 80%。</li><li>对于每月使用 ChatGPT 至少 101 次的员工，估算投资回报率平均为 524%。这一估算基于员工自报的时间节省情况；整体估算投资回报率为 203%。</li></ul>
+<p>住友生命关注的不只是已分配的账号数量。公司在季度调查中询问员工使用 ChatGPT 的频率、在哪些工作环节使用，以及是否与同事一起使用。</p>
+<p>根据员工自报的时间节省情况估算的投资回报率。524% 仅适用于每月使用 ChatGPT 至少 101 次的员工；整体估算投资回报率为 203%。</p>
+<p>住友生命根据员工自报的时间节省情况，估算了不同 ChatGPT 使用频率对应的投资回报率。使用越频繁的员工群体，估算的投资回报率越高。每月使用 8 至 15 次的员工，平均投资回报率为 55%；使用 16 至 30 次的员工为 231%；使用至少 101 次的员工则为 524%。整体平均值为 203%。</p>
+<p>员工也开始承担一些过去因缺乏时间或专业技能而无法开展的工作。对住友生命而言，这让每个人都能在更多方面作出贡献，即使这些收益有时难以用节省的工时来衡量。</p>
+<p>企划部副总经理 Masakazu Obi 认为，改变工作本身的开展方式，蕴含着更大的机遇。他说：“如果我们把现有的工作方式视为理所当然，就无法充分发挥 AI 的价值。”“关键在于，我们能否改变流程本身。在引入 AI 的同时，我们也在着眼长远，推动这些流程的变革。”</p>
+<h2>留出更多时间与客户交流</h2>
+<p>住友生命计划于 2026 财年下半年开始向更多员工推广 AI。公司将针对各个岗位，明确哪些任务可由 AI 承担，哪些工作适合员工与 AI 协作，以及哪些职责应继续由人承担。</p>
+<p>从更长远来看，住友生命正考虑将 AI 用于核保和理赔支付等更专业的工作。公司计划在围绕 AI 重新设计工作流程的同时，与 OpenAI 共同探索新技术和新服务。</p>
+<p>目标是让员工有更多时间与客户交流。住友生命致力于增进客户与员工的福祉，并将这些交流视为践行这一承诺的一部分。</p>
+<blockquote>“对我们而言，保险的价值在于让客户和社会安心。有些价值只有人才能提供，它来自与客户的交流，以及对他们感受的理解。”</blockquote>
+<p>—Kuniaki Nakagawa，住友生命 AI 战略专项小组经理</p>
+<h2>迈入工作新时代</h2>
+<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<h2>接收 OpenAI 商业应用的最新资讯</h2>
+<p>产品更新、实用指南、活动预告等丰富内容</p>]]></content:encoded>
     </item>
     <item>
       <title>Codex 沙箱内部</title>
@@ -70,13 +343,233 @@
       <guid isPermaLink="true">https://openai.com/index/inside-the-codex-sandbox</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Inside the Codex sandbox</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 18 日</p>
+<p>工程</p>
+<h1>深入 Codex 沙箱</h1>
+<p>Codex 如何在你的机器上、在你设定的限制内运行命令。</p>
+<p>作者：Michael Bolin，技术团队成员</p>
+<p>在 OpenAI，我们在保护 agent 时采取<a href="https://en.wikipedia.org/wiki/Defense_in_depth_(computing">纵深防御</a>)的思路。我们在训练和对齐上的投入是这项工作的根基，同时我们也会在 agent harness <a href="https://github.com/openai/codex">Codex</a> 中实现一些功能，以提供额外的防护。由于 Codex 最常做（也最有潜在风险）的事情之一就是在你的计算机上运行命令，我们构建了 <em>Codex sandbox</em>，让 Codex 能在你现有的环境中工作，并受你掌控的文件系统与网络限制的约束。</p>
+<p>一个 <a href="https://en.wikipedia.org/wiki/Sandbox_(computer_security">https://en.wikipedia.org/wiki/Sandbox_(computer_security</a>)<a href="https://en.wikipedia.org/wiki/Sandbox_(computer_security"><em>sandbox</em></a>) 会限制程序在运行时可以访问哪些内容。对于整理照片这类任务，你可以把 Codex sandbox 配置成允许命令读取并修改 <code>~/Pictures</code> 里的文件，同时封禁网络访问以防上传。对于代码审查，你可以允许访问在线文档，同时让源文件保持只读。用户通过<a href="https://learn.chatgpt.com/docs/permissions">https://learn.chatgpt.com/docs/permissions</a><a href="https://learn.chatgpt.com/docs/permissions"><em>permission profiles</em></a> 来配置 Codex sandbox，它定义了 Codex 会话的文件系统与网络限制。</p>
+<p>本文先讲 Codex 沙箱默认值背后的取舍，然后解释沙箱的设计，以及 harness 如何用它来运行命令。我们会展示终端用户和企业如何按各自的需求调整权限，以及开发者如何在自己的工具里复用这个沙箱。最后，我们来看看这些限制在 macOS、Linux 和 Windows 上分别是如何强制执行的。</p>
+<h2>选择沙箱的边界</h2>
+<p>在 Codex 中，我们的理念是为沙箱设定保守的默认值，同时仍然让它能完成有意义的工作。例如，当工作区根目录是一个 Git 仓库时，内置的 <code>:workspace</code> 权限配置会：</p>
+<ul><li><strong>允许在工作区内写入，同时把 </strong><code><strong>.git</strong></code><strong> 和 </strong><code><strong>.codex</strong></code><strong> 这样的目录保持为只读。</strong> 这样 Codex 就能直接修改源代码，不必为每一处改动都申请权限，同时又阻止它直接改动 <code>.codex/config.toml</code> 或 <code>.git/hooks</code> 下的 Git hook。</li><li><strong>允许广泛的文件系统读取，但受限于用户现有的操作系统权限。</strong> 编译器、运行时和构建工具都依赖仓库之外的 SDK、库和配置。把读取范围限制在工作区内，会破坏许多普通工作流。代价是机器上其他位置的敏感文件也可能保持可读（例如包含 API key 的配置文件）。</li><li><strong>禁用网络访问。</strong> 这会阻止向外部服务直接上传，包括试图把命令能读到的数据外泄出去的行为。它同时也拦下了下载依赖这类正当操作，这类操作需要额外授权。</li></ul>
+<p>这些限制挡住了很大一类不良行为，但有害操作仍然可能发生。例如，agent 可以把恶意代码注入本地已安装的包，比如 <code>node_modules/prettier</code>。由于 <code>node_modules</code> 通常被 Git 忽略，这样的改动可能不会出现在 <code>git status</code> 里。如果用户的编辑器在保存时调用的正是那份 Prettier，那么仅仅保存一个文件就可能在 Codex 沙箱之外执行恶意代码。这正是我们采取纵深防御的原因：沙箱限制命令能访问什么，而训练与对齐帮助模型按照用户的意图来使用这些访问权限。</p>
+<p>关于如何调整沙箱权限，以及在企业环境中把它们与其他防护措施结合使用，请参阅 <a href="https://learn.chatgpt.com/docs/enterprise/security-cookbook">Codex security cookbook</a>。</p>
+<h2>设计沙箱</h2>
+<p>虚拟机和 <a href="https://opencontainers.org/">containers</a> 是两种常见的沙箱实现机制，但 Codex 沙箱走的是另一条路。Codex 不把计算搬到独立环境里去换取隔离，而是使用各平台自身的沙箱能力，约束运行在用户现有环境中的命令。</p>
+<p>对许多开发者来说，自己的笔记本电脑就是一个量身定制、可以随时改动的开发环境。要在 Docker 容器里复现这个环境得花不少功夫，而且有些工作流仍然依赖只在宿主机上运行的工具。</p>
+<p>例如，假设你要在 Mac 上用 Codex 开发一个 iOS 应用。如果你决定把 Codex 放进 Docker 里运行来做沙箱隔离，Codex 就无法运行由 Mac 原生可执行文件组成的 iOS 构建工具链，也无法启动 iPhone 模拟器来运行代码。基于 Docker 的工作流可以把构建和模拟器操作委派给 Mac 宿主机，但这些操作会在容器的沙箱之外执行，因而需要自己的一套限制。对 Codex 来说，我们更愿意把问题简化：在操作系统级的沙箱上重投入，让 Codex 能运行在最适合当前任务的环境里。</p>
+<p>harness 通过一个在 macOS、Windows 和 Linux 上通用的 API 来暴露这些操作系统级的沙箱机制。这个 API 接收一条命令和一个权限配置。如果权限配置只允许有限的网络访问，调用方必须提供网络代理来强制执行这些限制：</p>
+<h4>Python</h4>
+<pre><code>1# This is a simplified version of the actual API.2def spawn_command_under_sandbox(3    program_and_args: list[str],4    cwd: Path,5    env: dict[str, str],6    permission_profile: PermissionProfile,7    network_proxy: NetworkProxy | None,8) -&gt; Child:</code></pre>
+<p>这个函数在沙箱中启动进程，并返回一个 <code>Child</code> 句柄，harness 可以用它等待进程结束。每个子进程都会继承父进程的沙箱约束，因此这些限制会贯穿命令所发起的整棵进程树，连比原始进程存活更久的后代进程也不例外。</p>
+<p>下图展示了这些部件如何串联起来，从配置一直到运行一条受沙箱约束的命令。后续各节会逐一解释每个阶段。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7phvBtHTMSTY6vHJx9YL9L/0a4cf5a80f25882a663681872f648617/codex-sandbox-command-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="流程图：配置与托管要求共同定义会话的权限配置；Codex harness 在 macOS、Linux 或 Windows 上于平台特有的沙箱限制下启动命令。子进程继承这些限制，可选的网络代理则强制执行域名规则。"></p>
+<h2>harness 如何利用沙箱</h2>
+<p>正如<a href="https://openai.com/index/unrolling-the-codex-agent-loop/">Unrolling the Codex Agent Loop</a> 中所解释的，Codex harness 负责执行模型生成的工具调用。对于编码任务，最常用的工具是 <em>shell tool</em>，它运行命令的方式与用户在 Bash 这类交互式 shell 中执行命令差不多。这里我们以<a href="https://github.com/openai/codex/blob/60947e234156ac12bdb7fba2477d3965f166bd34/codex-rs/core/src/tools/handlers/unified_exec/exec_command.rs#L483-L512">一次性</a><a href="https://github.com/openai/codex/blob/60947e234156ac12bdb7fba2477d3965f166bd34/codex-rs/core/src/tools/handlers/unified_exec/exec_command.rs#L483-L512"><code>exec_command</code></a><a href="https://github.com/openai/codex/blob/60947e234156ac12bdb7fba2477d3965f166bd34/codex-rs/core/src/tools/handlers/unified_exec/exec_command.rs#L483-L512"> shell tool</a> 为例，说明 harness 如何借助沙箱实现所需的防护。</p>
+<p>下面是一个简化版本，展示 Codex harness 在<em>没有沙箱</em>的情况下会如何执行 <code>exec_command</code> 工具调用：</p>
+<h4>Python</h4>
+<pre><code>1# Illustrative implementation of the exec_command tool call.23class ExecCommandToolCall:4    cmd: str5    workdir: str | None = None6    shell: str | None = None7    login: bool = True8    timeout_ms: int = 10_00091011def perform_exec_command(tool_call: ExecCommandToolCall):12    program_and_args = [13        tool_call.shell or os.environ.get(&quot;SHELL&quot;) or &quot;/bin/sh&quot;,14        &quot;-lc&quot; if tool_call.login else &quot;-c&quot;,15        tool_call.cmd,16    ]17    child = subprocess.Popen(18        program_and_args,19        # workdir defaults to the turn's cwd, assumed here to be the process cwd.20        cwd=Path(tool_call.workdir or &quot;.&quot;).absolute(),21        stdout=subprocess.PIPE,22        stderr=subprocess.STDOUT,23    )24    output, exit_code = collect_output(child, timeout_ms=tool_call.timeout_ms)25    return {&quot;output&quot;: output, &quot;exit_code&quot;: exit_code}</code></pre>
+<p>为了让命令受沙箱约束，harness 把对 <code>subprocess.Popen()</code> 的调用替换成 <code>spawn_command_under_sandbox()</code>。harness 会提供权限配置，需要时还会提供网络代理：</p>
+<h4>Python</h4>
+<pre><code>1# Honoring the exec_command tool call while enforcing sandbox constraints.23def perform_exec_command_with_sandboxing(4    tool_call: ExecCommandToolCall,5    permission_profile: PermissionProfile,6    network_proxy: NetworkProxy | None,7):8    # ...build program_and_args as in the previous example...9    child = spawn_command_under_sandbox(10        program_and_args=program_and_args,11        cwd=Path(tool_call.workdir or &quot;.&quot;).absolute(),12        env=os.environ.copy(),13        permission_profile=permission_profile,14        network_proxy=network_proxy,15    )16    output, exit_code = collect_output(child, timeout_ms=tool_call.timeout_ms)17    return {&quot;output&quot;: output, &quot;exit_code&quot;: exit_code}</code></pre>
+<p><code>exec_command</code> 工具还允许模型为单条命令请求不同的权限，但由 harness 决定是否批准该请求：</p>
+<h4>Python</h4>
+<pre><code>1class ExecCommandToolCall:2    # ...command-related fields...34    # Per-command sandbox override. Defaults to &quot;use_default&quot;.5    sandbox_permissions: Literal[6        &quot;use_default&quot;,7        &quot;with_additional_permissions&quot;,8        &quot;require_escalated&quot;,9    ] = &quot;use_default&quot;1011    # User-facing approval question; only for &quot;require_escalated&quot;.12    justification: str | None = None1314    # Expand network or filesystem access; only for &quot;with_additional_permissions&quot;.15    # AdditionalPermissions supports fine-grained options.16    additional_permissions: AdditionalPermissions | None = None</code></pre>
+<p>当指定 <code>use_default</code> 时，harness 使用该轮次的默认沙箱配置。<code>with_additional_permissions</code> 请求在沙箱内部扩大访问范围，而 <code>require_escalated</code> 请求在沙箱之外执行。harness 会在执行命令之前根据用户的偏好评估该请求。（例如，Codex 可能直接询问用户，也可能把请求转给 <a href="https://learn.chatgpt.com/docs/sandboxing/auto-review">auto-review</a>。）如果执行获得授权，Codex 会把相应的 <code>permission_profile</code> 和 <code>network_proxy</code> 连同原始 <code>ExecCommandToolCall</code> 中的命令参数一起传给 <code>perform_exec_command_with_sandboxing()</code>。</p>
+<p>shell tool 是 <code>spawn_command_under_sandbox()</code> 的主要使用方，harness 也会把它的沙箱基础设施复用到读取和修改本地文件等操作上。这种复用不止于 harness 本身：<code>codex sandbox</code> 命令让你能把沙箱化的命令执行引入自己的工具，我们稍后就会看到。接下来，先看看权限配置是如何定义的。</p>
+<h2>配置沙箱</h2>
+<p>命名的权限配置让你可以跨项目复用同一套文件系统与网络限制。你可以在 <code>config.toml</code> 的 <code>[permissions]</code> 下定义自己的配置。例如，下面定义了一个名为 <code>dev</code> 的配置，它<a href="https://learn.chatgpt.com/docs/permissions#extend-a-profile">扩展</a>了内置的 <code>:workspace</code> 配置：</p>
+<h4>TOML</h4>
+<pre><code>1# Use the dev profile by default.2default_permissions = &quot;dev&quot;34[permissions.dev]5# This is displayed when /permissions is run in the Codex CLI.6description = &quot;Development with extra read-only protections.&quot;78# A profile can be derived from an existing profile.9# Profiles starting with &quot;:&quot; are provided by Codex.10extends = &quot;:workspace&quot;1112[permissions.dev.filesystem]13&quot;~/build-cache&quot; = &quot;write&quot;1415[permissions.dev.filesystem.&quot;:workspace_roots&quot;]16&quot;.devcontainer&quot; = &quot;read&quot;17&quot;.vscode&quot; = &quot;read&quot;18&quot;**/*.env&quot; = &quot;deny&quot;19&quot;secrets&quot; = &quot;deny&quot;</code></pre>
+<p><code>dev</code> 配置增加了对 <code>~/build-cache</code> 的写入权限，并对工作区中的文件施加了额外限制。文件系统条目可以授予只读访问（<code>read</code>）、授予读写访问（<code>write</code>），或者完全禁止访问（<code>deny</code>）。</p>
+<p><code>:workspace_roots</code> 表让你针对相对于项目工作区根目录的路径定义规则。默认情况下，Codex CLI 把自己的工作目录当作唯一的工作区根目录，而 ChatGPT 桌面应用则使用项目的源代码文件夹。Codex 会把每条规则应用到每一个根目录上，所以 <code>dev</code> 里的 <code>.vscode</code> 条目会让每个根目录下的 <code>.vscode</code> 目录都变成只读。</p>
+<p>除了自己的规则，<code>dev</code> 还从 <code>:workspace</code> 继承了以下防护：</p>
+<h4>TOML</h4>
+<pre><code>1[permissions.&quot;:workspace&quot;.filesystem.&quot;:workspace_roots&quot;]2&quot;.agents&quot; = &quot;read&quot;3&quot;.aws&quot; = &quot;read&quot;4&quot;.codex&quot; = &quot;read&quot;5&quot;.git&quot; = &quot;read&quot;</code></pre>
+<h3>网络权限</h3>
+<p>在为 Codex 中的沙箱配置网络时，大致有三种选择：</p>
+<ul><li>禁用所有网络访问（<code>:workspace</code> 配置的默认值）</li><li>启用完整的直接网络访问（<code>:danger-full-access</code> 配置的默认值）</li><li>把网络访问限制到代理上，由代理依据权限配置决定放行什么</li></ul>
+<p>要让 <code>dev</code> 获得直接网络访问，在 <code>config.toml</code> 顶层设置 <code>permissions.dev.network.enabled = true</code>。在网络代理关闭时，这会授予完整的网络访问。</p>
+<p>要把 <code>dev</code> 限制到一组域名，启用网络代理并配置它的域名规则：</p>
+<h4>TOML</h4>
+<pre><code>1[permissions.dev.network]2enabled = true34[permissions.dev.network.domains]5&quot;*.openai.com&quot; = &quot;allow&quot;6# Allow requests to local services by hostname or by IPv4/IPv6 loopback address.7&quot;localhost&quot; = &quot;allow&quot;8&quot;127.0.0.1&quot; = &quot;allow&quot;9&quot;::1&quot; = &quot;allow&quot;10&quot;evil.example&quot; = &quot;deny&quot;1112[features]13# If neither local config nor managed requirements enable the proxy,14# this profile allows direct network access; domain rules are not enforced.15network_proxy = true</code></pre>
+<p>域名规则支持精确名称和通配符模式，显式的 deny 规则优先于 allow 规则。对其他域名的请求需要审批，或者直接被阻断，如下文「网络代理」一节所述。</p>
+<h3>分层配置与限制执行</h3>
+<p>单个用户可以配置对多个项目生效的默认值，并针对某个特定的受信任项目覆盖这些默认值。企业管理员可能还想为自己的用户配置默认值，并限定这些用户可以改动哪些设置。Codex 通过分层配置和托管要求同时支持这两点。</p>
+<p>如<a href="https://learn.chatgpt.com/docs/config-file/config-basic#configuration-precedence">配置优先级</a>所述，Codex 会合并多个 <code>config.toml</code> 文件里的设置。表会递归合并，值冲突时优先级更高的来源获胜。数组则整体替换。</p>
+<p>这也是权限配置用表来表示文件系统路径和网络域名的原因。团队可以在自己的配置里增加或覆盖单条条目，同时自动继承组织基础配置中其他所有条目的改动：</p>
+<h4>TOML</h4>
+<pre><code>1[permissions.dev.filesystem.&quot;:workspace_roots&quot;]2&quot;.idea&quot; = &quot;read&quot;34[permissions.dev.network.domains]5&quot;example.com&quot; = &quot;allow&quot;</code></pre>
+<p>管理员还可以通过 <code>requirements.toml</code> 提供<a href="https://learn.chatgpt.com/docs/enterprise/managed-configuration">托管要求</a>，以约束用户的配置选择。这些要求可以来自多个来源，包括系统文件和云端下发的策略。一个常见用途是设置 <code>allowed_permission_profiles</code>，约束企业用户可选的权限配置集合。例如，管理员可以指定这样的云端要求：</p>
+<h4>TOML</h4>
+<pre><code>1default_permissions = &quot;:read-only&quot;23[allowed_permission_profiles]4&quot;:read-only&quot; = true5&quot;:danger-full-access&quot; = false</code></pre>
+<p>云端要求会优先于 <code>/etc/codex/requirements.toml</code> 里的系统要求文件，因此该文件中的条目无法覆盖上面显式的 <code>&quot;:danger-full-access&quot; = false</code>。<code>:workspace</code> 未作规定，就允许另一个要求层来提供该条目。条目为 <code>false</code> 或在最终合并表中缺失的配置，都是不可用的。</p>
+<p>这种分离让组织能够强制执行限制，同时让用户在这些限制之内调整自己的配置。最终得到的权限配置既可以由 harness 使用，也可以直接应用在一条命令上，我们接下来就会看到。</p>
+<h2>使用 <code>codex sandbox</code> 命令</h2>
+<p>Codex CLI 提供 <code>sandbox</code> 命令，方便在 Codex 配置里定义的权限配置下运行任意命令。它常被用来测试某个配置，确认沙箱确实拦住了它本该拦住的行为。</p>
+<p>例如，下面这条命令试图把 VS Code 配置成在保存时运行一个恶意的自动格式化工具。假设 <code>.vscode</code> 已经存在，上面定义的 <code>dev</code> 配置应当阻止这次写入，因为该目录是只读的（<code>codex sandbox</code> 默认把 <code>cwd</code> 当作工作区根目录）：</p>
+<h4>Bash</h4>
+<pre><code>1codex sandbox --permission-profile dev -- \2  bash -c 'cat &gt; .vscode/settings.json' &lt;&lt;'JSON'3{4  &quot;prettier.prettierPath&quot;: &quot;./node_modules/evil-prettier&quot;,5  &quot;[typescript]&quot;: {6    &quot;editor.defaultFormatter&quot;: &quot;esbenp.prettier-vscode&quot;,7    &quot;editor.formatOnSave&quot;: true8  }9}10JSON</code></pre>
+<p>在 macOS 上，它确实会失败，报错如下：</p>
+<h4>Plain text</h4>
+<pre><code>1bash: .vscode/settings.json: Operation not permitted</code></pre>
+<p><code>codex sandbox</code> 命令让 Codex 的沙箱机制可以脱离 agent 会话独立使用。你可以用同样的配置语言和平台特有的强制手段，来约束自己工具启动的命令。</p>
+<h3>示例：为 MCP server 加上沙箱</h3>
+<p>对于在 <code>config.toml</code> 中配置的 stdio MCP server，Codex harness 不会尝试对启动该 server 的命令做沙箱隔离。Codex 无法可靠地推断这个 server 需要哪些文件或网络服务，套用默认的沙箱配置可能会破坏一份原本有效的配置。</p>
+<p>例如，为配合 Codex 使用，配置 <a href="https://www.npmjs.com/package/@modelcontextprotocol/server-memory"><code>@modelcontextprotocol/server-memory</code></a> MCP server 的标准做法如下：</p>
+<h4>TOML</h4>
+<pre><code>1[mcp_servers.memory]2command = &quot;npx&quot;3args = [4  &quot;-y&quot;,5  &quot;@modelcontextprotocol/server-memory@1.0.0&quot;6]78[mcp_servers.memory.env]9MEMORY_FILE_PATH = &quot;~/mcp-data/memory.jsonl&quot;</code></pre>
+<p>由于这条 <code>npx</code> 命令在无沙箱的情况下运行，它可以以运行 Codex 的用户的同等权限写文件、发网络请求，这过于宽松了。为了把它锁住，我们可以定义一个名为 <code>memory-mcp</code> 的权限配置，然后用 <code>codex sandbox --permission-profile memory-mcp</code> 把原来的 <code>npx</code> 命令包起来，以限制该 server 能往哪里写，并阻止它访问网络：</p>
+<h4>TOML</h4>
+<pre><code>1[permissions.memory-mcp.filesystem]2# Allow broad reads for Node.js/npm dependencies and configuration.3&quot;:root&quot; = &quot;read&quot;4&quot;~/.npm&quot; = &quot;write&quot;5&quot;~/mcp-data&quot; = &quot;write&quot;67[permissions.memory-mcp.network]8enabled = false910[mcp_servers.memory]11command = &quot;codex&quot;12args = [13  &quot;sandbox&quot;,14  &quot;--permission-profile&quot;,15  &quot;memory-mcp&quot;,16  &quot;--&quot;,17  &quot;npx&quot;,18  &quot;--offline&quot;,19  &quot;@modelcontextprotocol/server-memory@1.0.0&quot;20]2122[mcp_servers.memory.env]23MEMORY_FILE_PATH = &quot;~/mcp-data/memory.jsonl&quot;</code></pre>
+<p>在启动 server 之前，先创建它的数据目录，并用固定版本的包填充 npm 缓存。这样 <code>npx --offline</code> 就能在一个禁用网络访问的配置下启动该 server：</p>
+<h4>Bash</h4>
+<pre><code>1# The sandbox can write to this folder, but it cannot create it.2mkdir -p ~/mcp-data34# Installing the MCP server requires network access.5npx -y --package=@modelcontextprotocol/server-memory@1.0.0 -c true</code></pre>
+<p>包一旦进入缓存，Codex 就能在没有网络访问的情况下启动 memory server，写入范围仅限于 npm 缓存和该 server 的数据目录。</p>
+<h2>Codex 沙箱的实现</h2>
+<p>沙箱实现把权限配置转换成由操作系统强制执行的限制。网络代理的核心请求处理与策略逻辑在三大操作系统之间是共用的，而代理的搭建以及与沙箱的集成则因操作系统而异。我们先看共用的代理，然后依次看 macOS、Linux 和 Windows 上的实现。</p>
+<h3>网络代理</h3>
+<p>为了强制执行权限配置中的网络限制，harness 会启动一个网络代理，并把沙箱配置成允许连接到它，同时阻断到外部主机的直接连接。代理会依据配置中的域名规则检查每个请求，决定是否转发。</p>
+<p>在 Codex 仓库中，网络代理实现在 <a href="https://github.com/openai/codex/blob/main/codex-rs/network-proxy/README.md">codex-network-proxy</a> crate 里，harness 把它当作库来使用，它也可以被构建成<a href="https://github.com/openai/codex/blob/b6130e72f3e4b360f7a3bf97ea62d0eeeb39ffca/codex-rs/network-proxy/Cargo.toml#L12-L14">独立的命令行程序</a>。启用时，<code>codex-network-proxy</code> 默认会同时启动一个 HTTP 代理和一个 SOCKS5 代理。这些代理地址通过环境变量传递给沙箱启动的进程。除了注入 <code>HTTP_PROXY</code>、<code>HTTPS_PROXY</code>、<code>ALL_PROXY</code> 这类标准环境变量之外，还会注入一批广为人知的<a href="https://github.com/openai/codex/blob/bd274564e1b1b3febb3886d274e6d97c2a3d275e/codex-rs/network-proxy/src/proxy.rs#L790-L813">应用专属环境变量</a>（例如 <code>PIP_PROXY</code>）。必须承认，并非所有程序都遵循这些环境变量。如果某个程序尝试直接连接外部主机，操作系统的沙箱限制会拦住它，具体见下文各平台相关小节。</p>
+<p>网络代理负责实现权限配置中定义的网络限制。例如，前面展示的 <code>dev</code> 配置允许请求 <code>*.openai.com</code>，并显式拒绝请求 <code>evil.example</code>。当请求的目标域名既不匹配 allow 规则也不匹配 deny 规则时，代理可以挂起该请求，转交给 harness 请求批准。与 shell 命令的例子一样，Codex 可能直接询问用户，也可能把请求转给 <a href="https://learn.chatgpt.com/docs/sandboxing/auto-review">auto-review</a>。收到决定后，代理要么放行请求，要么以错误响应拒绝它。</p>
+<p>这里的顺序很重要，因为即便是一次 DNS 查询，也可能泄露编码在主机名里的信息。因此代理只有在判定请求被允许或已获批准之后，才会去解析所请求的主机名。需要注意的是，宽泛的通配符规则或对 DNS 服务的访问，仍然可能让基于 DNS 的数据外泄成为可能。</p>
+<h3>macOS</h3>
+<p>在 macOS 上，Codex 使用 <a href="https://theapplewiki.com/wiki/Dev:Seatbelt">Seatbelt</a>，这是 Apple 由内核强制执行的沙箱机制。Seatbelt 策略用 Sandbox Profile Language（SBPL）编写，这是一种基于 Scheme、用来表达沙箱限制的语言。Codex 通过 macOS 的 <code>/usr/bin/sandbox-exec</code> 命令调用 Seatbelt。和 <code>codex sandbox</code> 一样，它接收描述沙箱的选项，后面跟着要运行的命令：</p>
+<h4>Bash</h4>
+<pre><code>1sandbox-exec -p PROFILE [-Dkey=value]* -- PROG ARGS...</code></pre>
+<p><code>PROFILE</code> 是一段 SBPL 字符串，其中包含配置沙箱的条目。例如，下面这段 SBPL 让 <code>/dev/null</code> 和 <code>/dev/zero</code> 在该沙箱策略下可读可写：</p>
+<h4>Scheme</h4>
+<pre><code>1(allow file-read* file-test-existence file-write-data2  (literal &quot;/dev/null&quot;)3  (literal &quot;/dev/zero&quot;))</code></pre>
+<p>当一次沙箱调用启用了网络代理时，会向该策略注入类似下面的规则，把连接限制到相应的本地端口：</p>
+<h4>Scheme</h4>
+<pre><code>1; local HTTP proxy launched by Codex2(allow network-outbound (remote ip &quot;localhost:3128&quot;))34; local SOCKS proxy launched by Codex5(allow network-outbound (remote ip &quot;localhost:8081&quot;))</code></pre>
+<p>Codex 的基础策略以 <code>(deny default)</code> 开头，因此除非显式允许，对外连接始终保持阻断。</p>
+<p>最后，SBPL 里可以使用 <code>(param)</code> 形式的占位符：</p>
+<h4>Scheme</h4>
+<pre><code>1; Pass -DWRITABLE_ROOT_0=/path/to/dir to specify a folder that cannot be removed.2(deny file-write-unlink3  (require-all4    (literal (param &quot;WRITABLE_ROOT_0&quot;))5    (vnode-type DIRECTORY)))</code></pre>
+<p>这些占位符由传给 <code>sandbox-exec</code> 的 <code>-Dkey=value</code> 选项填充。</p>
+<p>为了实现自己的沙箱 API，Codex 会从一个<a href="https://github.com/openai/codex/blob/bee28e8a061c38c781c74299f2c1d90e3732da18/codex-rs/sandboxing/src/seatbelt_base_policy.sbpl">基础策略</a>出发<a href="https://github.com/openai/codex/blob/bee28e8a061c38c781c74299f2c1d90e3732da18/codex-rs/sandboxing/src/seatbelt.rs#L871">构建参数列表</a>传给 <code>sandbox-exec</code>，再用 <code>permission_profile</code> 和其他上下文对它进行增补，生成完整的 Seatbelt 策略。生成的策略连同附带的 <code>-D</code> 参数一起，配置了由 Seatbelt 强制执行的那些限制，而网络代理则强制执行额外的网络规则。参数列表拼好之后，调用 <code>sandbox-exec</code> 就很简单了。</p>
+<p>生成正确的 SBPL 很有挑战性，因为 Apple 并没有为第三方使用而记录这门语言。事实上，<code>man sandbox-exec</code> 里写着 <code>The sandbox-exec command is DEPRECATED</code>（通过 <code>man 3 sandbox_init</code> 记录的 <code>sandbox_init()</code> 库函数也一样）。尽管有废弃警告，macOS 仍然在 <code>/usr/share/sandbox</code> 中随系统提供 Seatbelt 策略，第三方软件——<a href="https://www.chromium.org/developers/design-documents/sandbox/osx-sandboxing-design/">包括 Google Chrome 和 Chromium</a>——也仍在依赖 Seatbelt。因此，在可预见的未来，我们打算继续使用 Seatbelt。</p>
+<h3>Linux</h3>
+<p>为了在 Linux 上创建沙箱，Codex 结合使用了 <a href="https://github.com/containers/bubblewrap">bubblewrap</a>（<code>bwrap</code>）和 <a href="https://en.wikipedia.org/wiki/Seccomp">seccomp-bpf</a>——前者是用于构建隔离环境的命令行工具，后者是 Linux 内核中用于过滤系统调用的机制。一个名为 <code>codex-linux-sandbox</code> 的内部辅助程序负责协调整个搭建过程。与 macOS 上的 <code>sandbox-exec</code> 类似，它接收沙箱配置，后面跟着要运行的命令：</p>
+<h4>Bash</h4>
+<pre><code>1codex-linux-sandbox SANDBOX_ARGS... -- PROG ARGS...</code></pre>
+<p>当需要文件系统隔离或代理路由时，<code>codex-linux-sandbox</code> 会调用 <code>bwrap</code> 创建初始的沙箱环境。随后 <code>bwrap</code> 在其中启动 <code>codex-linux-sandbox --apply-seccomp-then-exec</code>。这第二次调用会使用 seccomp-bpf 施加额外限制，然后运行用户的命令。</p>
+<p>为了构建这个初始沙箱环境，Codex 用 bubblewrap 在独立的 mount namespace 中创建一个文件系统视图，使其反映权限配置里的文件系统规则。由于这对沙箱实现至关重要，Codex 自带了一份 <code>bwrap</code> 副本，以防用户没有自行安装；但如果 <code>PATH</code> 上存在<a href="https://github.com/openai/codex/pull/15791">兼容的</a><a href="https://github.com/openai/codex/pull/15791"><code>bwrap</code></a> 安装，它会优先使用。根据实际经验，<a href="https://github.com/openai/codex/pull/14963">有些 Linux 发行版默认禁止访问用户命名空间</a>，但会对系统自带的 <code>bwrap</code> 网开一面。</p>
+<p>同样与 <code>sandbox-exec</code> 类似，<code>bwrap</code> 接收沙箱配置，后面跟着要在沙箱内运行的命令。<code>bwrap</code> 不使用 SBPL 那样的自定义配置语言，而是用一个个独立参数来配置。Codex 使用以下选项来创建文件系统视图：</p>
+<ul><li><code>--bind</code> 指定可写的文件或目录</li><li><code>--ro-bind</code> 指定只读的文件或目录</li><li><code>--perms 000 --tmpfs DIR --remount-ro DIR</code> 禁止访问 <code>DIR</code></li><li><code>--perms 000 --ro-bind-data FD FILE</code> 禁止访问 <code>FILE</code>（其中 <code>FD</code> 是指向 <code>/dev/null</code> 的已打开文件描述符）</li></ul>
+<p>要用这些选项实现 deny glob，Codex 会在启动每条命令之前把它们展开成具体路径。此后新匹配上的路径不会被自动加入该命令的沙箱限制。</p>
+<p>Codex 还会指定 <code>--unshare-ipc</code>、<code>--unshare-pid</code> 之类的选项，防止沙箱访问宿主机上的其他类型资源，因此 bubblewrap 影响的不只是文件可见性。</p>
+<p>使用 bubblewrap 时，只要网络被禁用或连接必须经过网络代理，Codex 就会传入 <code>--unshare-net</code>，这会为沙箱创建一个新的网络命名空间。之后我们用 seccomp-bpf 对该命令可用的网络系统调用和 socket 类型施加额外限制。</p>
+<p>具体来说，我们用 <a href="https://crates.io/crates/seccompiler">seccompiler crate</a> <a href="https://github.com/openai/codex/blob/ff2346f33f851bd4e90c8e42ae60abcc7e7f293b/codex-rs/linux-sandbox/src/seccomp.rs#L177-L302">根据所需的过滤器动态编译一个 BPF 程序</a>，并把它应用在沙箱内的一个 launcher 进程上，使这些约束被整个进程树继承。因此，<code>bwrap</code> 运行的不是用户的命令，而是 <code>codex-linux-sandbox</code> launcher，先带上它自己的配置参数，后面跟着用户的命令：</p>
+<h4>Bash</h4>
+<pre><code>1bwrap BWRAP_ARGS... -- \2  codex-linux-sandbox --apply-seccomp-then-exec CODEX_LINUX_SANDBOX_ARGS... -- \3  PROG ARGS...</code></pre>
+<p>为了在没有提权的情况下应用 seccomp 过滤器，<a href="https://github.com/openai/codex/blob/ba0dfd38979033f514a28d9514215bad46957a18/codex-rs/linux-sandbox/src/seccomp.rs#L68-L76">launcher 会设置 Linux 的 <code>no_new_privs</code> 标志</a>。这个标志会被子进程继承，阻止它们在执行另一个程序（例如 setuid 可执行文件）时获得额外的权限。</p>
+<p>seccomp 过滤器取决于网络配置。当网络访问被禁用时，我们会拦住一批与网络相关的系统调用，例如 <code>connect(2)</code> 和 <code>bind(2)</code>。而当沙箱中启用了网络代理时，我们允许 IP socket，好让 <code>codex-linux-sandbox</code> 创建的 TCP listener 可以被访问，但默认阻止创建独立的 Unix domain socket，因为那可能导致对宿主机资源的意外访问。</p>
+<h4>连接网络代理</h4>
+<p>当沙箱配置需要使用网络代理时，Codex harness 会创建一个代理实例，让它在同一个 Codex 线程内的多次 <code>codex-linux-sandbox</code> 调用之间复用。每个沙箱都需要一条从自己隔离的网络命名空间通向这个共享代理的路径。Codex 在该命名空间内提供一个回环 TCP listener，并安排沙箱外的一个进程接受它的连接、转发给代理。</p>
+<p>下面的几张图展示了一个代理端点的搭建过程，最后一张图展示了通过它建立的一条连接。在启动 bubblewrap 之前，<code>codex-linux-sandbox</code> 会创建一对 Unix socket 作为控制通道，并 fork 自己。子进程运行 <code>run_host_bridge()</code>，等待通过该通道接收 listener 的文件描述符：</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/fF0Stm84x5aGz27y1DXKL/8718b7869db26ba62b9c2d55f1ec2849/preparing-relay-process-diagram-desktop-light.svg?w=3840&amp;q=90" alt="示意图：Codex harness 启动 codex-linux-sandbox，后者 fork 出一个中继进程，通过 Unix socket 控制通道与它相连。"></p>
+<p>在这个例子中，父进程用 <code>exec</code> 把自己的程序映像替换成 <code>bwrap</code>。这搭建起沙箱，并在其中启动 <code>codex-linux-sandbox --apply-seccomp-then-exec</code>，同时把控制通道的 FD 一路传进去：</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1fI91cZrglfbUhn7ZFs0bS/6ccf3d41b7c58fffbc20ca2baaf424a5/creating-sandbox-diagram-desktop-light.svg?w=3840&amp;q=90" alt="示意图：bwrap 创建沙箱网络命名空间，并在其中启动 codex-linux-sandbox，同时有一条 Unix socket 控制通道通向沙箱外的中继进程。"></p>
+<p>在沙箱的网络命名空间内部，<code>codex-linux-sandbox</code> 的第二次调用会创建一个回环 TCP listener，并通过 socket 把它的文件描述符传出去。这个 listener 仍然与沙箱的网络命名空间相关联，使得留在沙箱外的那个子进程能够接受来自沙箱内程序的连接，同时在宿主机的网络命名空间里发起自己的上游连接。交接完成后，两个进程都关闭各自的控制通道描述符，沙箱内的进程也关闭自己那份 listener。</p>
+<p>TCP listener 就绪后，沙箱内的进程会<a href="https://github.com/openai/codex/blob/d93071fae87f73ba1d251ebb3808773f18f0b77a/codex-rs/linux-sandbox/src/proxy_routing.rs#L200-L202">给 <code>HTTP_PROXY</code> 等相关环境变量设置合适的值</a>，让它们指向该 listener。接着它在 fork 并执行用户的命令之前应用 seccomp：</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5Q2GgA0Fl9vAI9IVu0HtHu/0c105caec1e72c5ac279f2ccc667963a/relaying-proxy-connections-diagram-desktop-light.svg?w=3840&amp;q=90" alt="示意图：沙箱内的程序连接到回环 TCP listener，由沙箱外的 codex-linux-sandbox 中继把流量转发给 Codex 网络代理。"></p>
+<p>沙箱外的进程会一直保持 listener 打开。对于每一条被接受的连接，它会向配置好的代理发起一条连接，并在两个方向上转发数据。</p>
+<p>这套额外的机制让命令拥有了自己的网络命名空间，包括一个独立的回环接口。在 macOS 上，Seatbelt 允许命令直接连接宿主机回环接口上指定的端口。在 Linux 上，命令改为连接到它自己隔离命名空间内的一个 listener，由沙箱外的进程把这些连接中继给配置好的代理。正是文件描述符的交接，让这种连接方式成为可能，同时又不把宿主机的网络命名空间暴露给命令。</p>
+<h3>Windows</h3>
+<p>今年早些时候，我们实现并<a href="https://openai.com/index/building-codex-windows-sandbox/">撰文介绍过我们在 Windows 上的沙箱工作</a>。此后，Microsoft 发布了名为 MXC 的库，以及 Windows 操作系统内一批用于进程隔离的新特性。我们目前正在用基于 MXC 库的沙箱替换现有的沙箱。</p>
+<h4>什么是 MXC？</h4>
+<p>MXC（Microsoft eXecution Container）是 Microsoft 的一套<a href="https://github.com/microsoft/mxc">沙箱化代码执行系统</a>，支持在 Windows、Linux 和 macOS 上使用多种隔离后端。Codex 在兼容的 Windows 设备上支持基于 MXC 的沙箱，用原生进程隔离把命令限制在用户现有的环境之内。</p>
+<p>我们正在转向 MXC，以提升安全性与易用性，同时解决现有 Windows 沙箱的几项局限：</p>
+<ul><li>搭建沙箱需要提权/管理员权限</li><li>ACL 检查与设置操作开销大、速度慢</li><li>在主机上留下持久化的沙箱搭建状态，包括 ACL、防火墙规则、沙箱用户、控制平面文件</li></ul>
+<p>MXC 提供了一套 <a href="https://github.com/microsoft/mxc/blob/main/docs/schema.md">JSON 配置 schema</a>。Codex 使用 <a href="https://crates.io/crates/mxc-sdk">MXC SDK</a> 按该 schema 构造执行请求，其中包含命令、工作目录、环境和权限。这些权限涵盖文件系统与网络访问，以及桌面、剪贴板等 Windows 资源。</p>
+<h4>把策略转换成 MXC 调用</h4>
+<p>为了在兼容性与安全性之间取得平衡，Codex 对若干控制项采用固定设置。它允许读取注册表，并保留 PowerShell 启动过程中所需的 Win32k 和桌面访问权限。剪贴板访问、输入注入以及桌面和系统设置类的控制项则被禁用。最后，还会阻止 MXC 退回到修改宿主机文件系统权限的做法。</p>
+<p>Codex 会把权限配置中的文件系统与网络规则转换成 MXC 的配置。沿用前面的 <code>dev</code> 配置，并假设：</p>
+<ul><li><code>C:\</code>、<code>D:\</code> 和 <code>Z:\ </code> 是这台机器仅有的本地驱动器。</li><li>工作区根目录和工作目录是 <code>C:\work\demo</code>。</li><li>用户的主目录是 <code>D:\Users\dev</code>，因此 <code>~/build-cache</code> 解析为 <code>D:\Users\dev\build-cache</code>。</li><li>deny glob 只匹配 <code>C:\work\demo\config\dev.env</code> 和 <code>C:\work\demo\config\prod.env</code>。</li></ul>
+<p>对应的 MXC 设置大致会包含：</p>
+<h4>JSON</h4>
+<pre><code>1{2  ...3  &quot;filesystem&quot;: {4    &quot;readwritePaths&quot;: [5      &quot;C:\\work\\demo&quot;,6      &quot;D:\\Users\\dev\\build-cache&quot;,7      ...8    ],9    &quot;readonlyPaths&quot;: [10      &quot;C:\\&quot;,11      &quot;D:\\&quot;,12      &quot;Z:\\&quot;,13      &quot;C:\\work\\demo\\.agents&quot;,14      &quot;C:\\work\\demo\\.aws&quot;,15      &quot;C:\\work\\demo\\.codex&quot;,16      &quot;C:\\work\\demo\\.devcontainer&quot;,17      &quot;C:\\work\\demo\\.git&quot;,18      &quot;C:\\work\\demo\\.vscode&quot;,19      ...20    ],21    &quot;deniedPaths&quot;: [22      &quot;C:\\work\\demo\\config\\dev.env&quot;,23      &quot;C:\\work\\demo\\config\\prod.env&quot;,24      &quot;C:\\work\\demo\\secrets&quot;25    ]26  },27  &quot;network&quot;: {28    &quot;egress&quot;: {29      &quot;default&quot;: &quot;deny&quot;,30      &quot;allow&quot;: [{31        &quot;to&quot;: [32          {&quot;cidr&quot;: &quot;127.0.0.0/8&quot;},33          {&quot;cidr&quot;: &quot;::1/128&quot;}34        ]35      }]36    },37    &quot;ingress&quot;: {38      &quot;default&quot;: &quot;deny&quot;,39      &quot;hostLoopback&quot;: &quot;allow&quot;40    }41  },42  ...43}</code></pre>
+<h4>驱动器根目录访问</h4>
+<p>MXC 的文件系统策略默认拒绝访问。因此 Codex 为本地驱动器根目录添加只读授权，以提供这份配置所允许的广泛读取。这些授权递归生效，同时受用户现有操作系统权限的约束。</p>
+<p>有一个细节：<em>可写</em>的驱动器根目录授权不会递归生效，所以 Codex 会把它们展开，把驱动器下已有的直接子项一并包含进来。</p>
+<h4>冲突的授权</h4>
+<p>更具体的路径会覆盖祖先路径的授权，因此 <code>C:\work\demo</code> 可以在只读的 <code>C:\</code> 之下保持可写，而 <code>C:\work\demo\.git</code> 仍然只读。</p>
+<p>当不同的路径写法或符号链接/联接点别名指向同一个路径时，MXC 会采用更严格的权限：deny 优先于只读，只读优先于读写。</p>
+<h4>deny glob</h4>
+<p>MXC 只接受具体的 deny 路径，因此 Codex 会在启动前把 deny glob 展开成匹配的文件和目录。命令运行期间新出现的、匹配该 glob 的路径不会被自动加入。</p>
+<h4>网络访问</h4>
+<p><code><em>.openai.com</code> 这类域名规则由前面介绍过的共享 Codex 网络代理强制执行。Codex 在沙箱之外运行该代理，并通过前面提到的那些标准 <code></em>_PROXY</code> 环境变量把它的地址传给命令。MXC 阻断直接的外部连接，同时允许宿主机回环连接，其中包括对代理的访问。其他本地服务仍然可以访问。</p>
+<p>在 macOS、Linux 和 Windows 上，harness 都用同一套沙箱 API 在某个权限配置下启动命令。各平台特有的实现则负责完成施加这些限制所需的搭建工作。</p>
+<h2>在 Codex 沙箱之上构建</h2>
+<p>编写并执行代码，为 agent 提供了一种灵活解决问题的方式，其用途远不止软件开发。Codex 沙箱让它们能在用户现有的环境中使用这种能力，同时对文件系统和网络访问施加明确的限制。它是 harness 内部一个可复用的基础构件，而 <code>codex sandbox</code> 命令让你自己构建的工具也能用上它。</p>
+<p>随着 agent 承担的任务越来越多，我们希望让沙箱化对更多工具和环境都切实可用。这意味着让权限更易于配置，并在操作系统提供更好的防护能力时加以利用。我们的目标是扩大 agent 能做的事情，同时让人始终掌控它们能访问什么。</p>
+<h2>作者</h2>
+<h2>致谢</h2>
+<p>特别感谢 David Wiesen、Charlie Weems、Viyat Bhalodia 和 Fotis Chantzis 对本文的贡献。</p>]]></content:encoded>
     </item>
     <item>
-      <title>管理前沿人工智能风险：从培训到部署</title>
+      <title>管理前沿人工智能风险：从训练到部署</title>
       <link>https://openai.com/index/managing-frontier-ai-risk</link>
       <guid isPermaLink="true">https://openai.com/index/managing-frontier-ai-risk</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Managing frontier AI risk: From training to deployment</description>
+      <content:encoded><![CDATA[<h1>管理前沿 AI 风险：从训练到部署</h1>
+<p>2026 年 11 月 18 日 · 安全</p>
+<p>前沿模型的能力正在快速提升，而我们理解、对齐并保障它们安全的能力必须始终领先一步。我们在把控模型开发与发布的节奏，包括在需要更多时间才能达到安全标准时<a href="https://openai.com/index/pacing-model-development-cyber-capabilities/">暂停</a> <a href="https://alignment.openai.com/misalignment-reports/an-agent-used-dns-to-reach-an-external-chatbot/">内部训练</a>，或暂缓发布 GPT‑6.1 Astra 这类模型。我们引入了<a href="https://openai.com/index/towards-safety-cases-for-frontier-ai-training/">安全案例</a>等新流程，并要求在整个训练过程中提供更强的对齐行为证据。这些要求拖慢了模型发布的节奏，但也让我们更有信心安全地向前推进。</p>
+<p>自 7 月的 <a href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/">Hugging Face 事件</a>以来，我们加强了针对模型训练、测试和部署方式的防护措施与对齐要求。本文说明我们在每个阶段如何评估和管理风险——从高度隔离的沙箱训练环境，一直到你在自己电脑上使用的 Codex 部署。我们在每个阶段都对模型和防护措施进行评估，并要求通过安全审查才能进入下一阶段。</p>
+<h2>模型全生命周期的纵深防御</h2>
+<p>我们采用<em>纵深防御</em>，通过多层保护来降低对任何单一防护措施的依赖。如果某一层失效，其他层会帮助防止伤害、限制后果，或提醒我们以便介入。</p>
+<p>我们围绕四个层次来组织这些保护措施：</p>
+<p>有效的监控取决于<strong>模型可监控性</strong>——即监控系统能否可靠地从模型的推理和行动中发现错误或不安全行为。例如，一个在思维链（CoT）中说出自己想要作弊的模型，比一个隐藏这一信息的模型更容易被监控。我们在训练期间和部署之前评估可监控性，开发更好的<a href="https://alignment.openai.com/beyond-gmean-squared/">衡量方法</a>，并<a href="https://alignment.openai.com/cot-monitorability-model-lifecycle/">研究哪些因素会影响它</a>。</p>
+<p>Hugging Face 事件说明了为什么我们不应只靠沙箱来约束能力极强的模型。现在我们会在大多数内部和外部部署环境中监控前沿模型，包括所有<a href="https://openai.com/index/how-we-detect-frontier-model-misalignment/">使用工具的内部部署</a>。</p>
+<p>每一层的作用在模型开发与部署的三个阶段中会发生变化：</p>
+<ul><li><strong>研究：</strong>我们在沙箱环境中训练、测试和使用模型。</li><li><strong>内部部署：</strong>OpenAI 员工将模型用于实际工作。</li><li><strong>外部部署：</strong>模型向更广泛的人群和组织开放。</li></ul>
+<p>不同阶段我们依赖不同的层次。在训练期间，对齐尚不确定，我们更倚重沙箱和监控。随着模型在部署中获得更广泛的访问权限，对齐和系统级控制变得越来越重要。在每个阶段，我们都会评估这些保护措施组合起来是否足以匹配模型的能力和访问权限。我们的判定可能会由安全咨询小组（SAG）复核，并接受 OpenAI Foundation 董事会安全与安保委员会（SSC）的监督。</p>
+<h3>研究阶段：把模型约束在沙箱环境中</h3>
+<p>在研究阶段，我们评估模型，以建立对其对齐特性的信心。由于我们还不能完全依靠对齐来防止伤害，我们大量依赖安全和沙箱来限制模型可以访问什么、可以做什么。</p>
+<p>基于对齐研究、监控系统以及互联网基础设施安全的现状，我们认为负责任的做法是在<a href="https://openai.com/index/securing-our-frontier-model-training-environment/">完全没有实时互联网访问</a>的条件下开展前沿模型训练。Hugging Face 事件之后，我们<a href="https://openai.com/index/securing-our-frontier-model-training-environment/">大幅重构</a>了内部研究系统，用以下方式约束模型：</p>
+<ul><li>限制模型权限的沙箱</li><li>进一步把工作负载与底层计算机隔离开的虚拟机</li><li>将整个集群与互联网切断的网络和云边界</li></ul>
+<p>我们持续对这个系统进行红队测试，让我们最强的模型组成团队，尝试接入实时互联网、突破安全边界，或与它们本应隔离的 agent 通信。这有助于检验这套约束机制能否扛住它所要约束的模型的能力。</p>
+<p>作为额外的一层防御，我们监控所有前沿推理，以检测模型是否绕过了我们的安全不变量。如果监控发现模型已经接入互联网，我们会<a href="https://openai.com/index/how-we-detect-frontier-model-misalignment/">呼叫安全团队</a>并自动暂停该工作负载。</p>
+<p>当约束失效时，监控是一道关键的兜底。在最近的一份失准报告中，我们分享了监控<a href="https://alignment.openai.com/misalignment-reports/an-agent-used-dns-to-reach-an-external-chatbot/">发现一个内部研究模型利用 DNS 配置错误</a>获得有限互联网访问的情况。9 月 20 日至 10 月 1 日，我们暂停了最强模型的训练和评估，同时调查并<a href="https://openai.com/index/securing-our-frontier-model-training-environment/">修复了这一安全缺口</a>。</p>
+<p>为了让干预既快又可靠，我们构建了 <a href="https://openai.com/index/control-room/">Control Room</a>：这是一个中心系统，负责跟踪研究工作负载，并在收到停止某个任务的指令后 35 秒内阻止模型继续输出。这些控制直接在推理基础设施中强制执行，因此不依赖每个研究工作负载自行实现关停机制。对于前沿模型的研究工作负载，如果 Control Room 变得不可用，它们也会停止模型输出。</p>
+<p>红队测试和监控是协同工作的。我们无法保证沙箱牢不可破，但红队测试能帮我们评估模型逃逸它需要付出多大努力。模型需要的努力越多，监控发现并阻止它的机会就越多。</p>
+<p>我们在研究阶段强制要求严格的安全与监控控制，原因有几点：</p>
+<ul><li><strong>模型仍在评估之中。</strong>有些模型尚未完成公开发布所需的安全训练、对齐审计和审查。</li><li><strong>前沿研究环境可能放大风险。</strong>某些研究任务需要更激进的设置，使模型比外部部署时通常看到的更执着或能力更强（例如，解决 <a href="https://openai.com/index/navier-stokes-solution/">Navier Stokes 问题</a>需要一支由 10,000 个 agent 组成的团队）。</li><li><strong>大规模训练运行中，直接的人工监督更少。</strong>与典型的 Codex 会话不同，我们的训练工作负载涉及大量模型操作，而没有一个人跟进每一次交互。</li></ul>
+<h3>内部部署：测试对齐，密切监控行为</h3>
+<p>在广泛发布之前，员工会把<a href="https://openai.com/index/research-acceleration-view-inside-openai/">前沿模型从沙箱研究用途切换到无沙箱的内部使用</a>，例如让员工可以在 ChatGPT 中访问该模型。这让我们更好地理解模型<a href="https://alignment.openai.com/eval-production-behavior-gap/">在实际场景中的行为</a>，并为部署决策提供依据。</p>
+<p>在这一阶段，我们让模型访问更广泛的互联网、我们的 Slack、代码库和内部基础设施。风险随之发生显著变化，因为模型的行为现在会直接影响我们用来构建和运营 OpenAI 的系统。在内部部署期间，我们需要更多地依赖模型对齐、系统防护措施和监控，而不是安全控制。</p>
+<p>前沿模型要在沙箱之外部署，必须先经过对齐和<a href="https://alignment.openai.com/beyond-gmean-squared/">可监控性测试</a>。我们有一套对齐评估，既检验特定的对齐失效模式（例如规避安全与安保限制），也做倾向性的宽泛测量（例如重采样内部 Codex 轨迹并检查是否存在失准）。关于我们的对齐与可监控性评估，可以在最新的 <a href="https://deploymentsafety.openai.com/gpt-6-astra">GPT‑6 Astra 系统卡</a>中看到更多内容。</p>
+<p>参照我们生产环境的设置，我们额外加了一层由系统级分类器构成的防御，这些分类器旨在防范网络滥用和生物武器化等前沿危害。我们通常还要求使用 Codex 的员工启用 <a href="https://alignment.openai.com/auto-review/">Auto-Review</a>，它会评估潜在有风险的操作并将其上报回用户。</p>
+<p>最后，在内部部署期间，我们对每一次前沿推理都监控是否存在失准行为。由于模型现在的权限扩大，并且可以访问内部信息和系统，数据外泄或把敏感数据发送到未授权目的地这类风险就变得尤其需要检测。监控还帮助我们调查<a href="https://alignment.openai.com/misalignment-reports/">新形式的失准</a>。</p>
+<h3>外部部署：大规模防范滥用与失准</h3>
+<p>公开部署会让模型接触到多得多的用户、任务和环境，风险的范围和种类都随之增加。在这一阶段，我们还需要防范那些蓄意引导模型实施伤害的潜在恶意行为者。</p>
+<p>在公开发布之前，模型和系统防护措施必须满足我们的外部部署安全要求。我们通过以下方式评估：</p>
+<ul><li><strong>执行更大规模的对齐与安全评估。</strong>对前沿模型而言，这包括用我们内部的自动化红队进行新一轮<a href="https://openai.com/index/unlocking-self-improvement-gpt-red/">自适应测试</a>，对模型的鲁棒性做压力测试。我们在<a href="https://deploymentsafety.openai.com/gpt-6-astra">系统卡</a>中公布能力与安全评估的结果。</li><li><strong>对我们能力最强的模型，我们还会与第三方一起做测试</strong>，既对我们的防滥用措施施压，也对模型底层的对齐状况施压。</li><li><strong>检查内部部署阶段产生的监控标记</strong>，以追踪基础模型底层对齐状况的任何变化。</li></ul>
+<p>除了我们的“同步”防护措施（如模型安全训练和系统分类器）之外，对外部部署我们还借助离线执行与调查。这些团队把规模化部署的 agent 调查员与人工复核结合起来，以发现和识别潜在威胁行为者，覆盖网络滥用、生物武器化、<a href="https://openai.com/index/disrupting-a-coordinated-model-distillation-campaign/">蒸馏</a>以及源自模型自身的失准。离线执行尤其有助于在账户<em>之间</em>收集信息，从而对潜在威胁形成更完整的图景。</p>
+<p><a href="https://openai.com/daybreak/">Daybreak</a> 和 <a href="https://openai.com/index/introducing-gpt-rosalind/">Rosalind</a> 等可信访问计划提供了另一层安全保障，在加快防御方和正当研究者的同时，限制潜在攻击者的访问。</p>
+<h2>事件响应与披露</h2>
+<p>当我们发现安全防护的某一层出现失效时，无论是否真的造成了伤害，我们都希望迅速调查、分级，并在可能且适当的情况下对外披露该失效。根据我们的<a href="https://openai.com/index/model-misalignment-reporting-framework/">失准报告</a>政策，任何员工都可以标记某个事件，要求公开披露。这些报告会被调查；如果在是否应对外披露上存在分歧，决定将上报至我们的安全咨询小组（SAG）。除了依靠员工报告，我们也会主动寻找失准事件，以便处理并分享发现。</p>
+<p>你可以在<a href="https://alignment.openai.com/misalignment-reports/">这里</a>查看我们的失准报告。</p>
+<p>这项工作既依赖研究进展，也依赖运营纪律：正确配置控制项、测试它们之间如何相互作用，并在它们失效时果断响应。一个配置错误的网络服务或一次失败的自动停止，就可能瓦解原本很强的防护。</p>
+<p>随着模型获得新能力，我们需要不断质疑防护措施背后的假设，并在必要时加以改进。来自研究、内部使用和公开部署的经验教训，必须用以指导我们如何训练、评估和部署下一代模型。</p>
+<p>我们会继续通过系统卡、事件报告、内部部署<a href="https://cdn.openai.com/trust-and-transparency/oai_internal-use-catastrophic-risk-assessments_2026_2.pdf">风险报告</a>和<a href="https://openai.com/index/priorities-principles-third-party-assessments/">外部评估</a>分享发现，让其他人能够审视我们的做法，包括其局限。当这些证据达不到我们为安全设定的标准时，我们会再次暂停训练或暂缓发布，直到满足这些要求。</p>
+<h2>相关研究与资源</h2>
+<p><strong>制定安全标准</strong></p>
+<ul><li><a href="https://openai.com/index/pacing-model-development-cyber-capabilities/"><strong>在网络能力进入关键期的时代把控模型开发节奏</strong></a>——我们如何在前沿训练上放慢速度，同时加强约束、扩大监控，并要求更强的对齐证据。</li><li><a href="https://openai.com/index/towards-safety-cases-for-frontier-ai-training/"><strong>迈向面向前沿 AI 训练的安全案例</strong></a>——以证据为基础的安全论证的初步指南，涵盖技术防护措施、运营实践和失准调查。</li><li><a href="https://openai.com/index/priorities-principles-third-party-assessments/"><strong>有效第三方评估的优先事项与原则</strong></a>——我们提出的对安全案例、防护措施、评估和模型行为进行独立审视的方法。</li><li><a href="https://cdn.openai.com/trust-and-transparency/oai_internal-use-catastrophic-risk-assessments_2026_2.pdf"><strong>内部使用灾难性风险评估定期摘要</strong></a>——我们这份覆盖 2026 年 6 月至 9 月的公开报告，描述了内部前沿模型部署、对其风险的评估，以及防护措施与治理方面的变化。</li></ul>
+<p><strong>定义与评估对齐行为</strong></p>
+<ul><li><a href="https://openai.com/index/updated-model-spec/"><strong>为能力更强、更有益的 AI 更新的 Model Spec</strong></a>——我们如何围绕五项核心价值观更新 Model Spec，以指导模型的判断、行为以及对人类监督的尊重。</li><li><a href="https://alignment.openai.com/eval-production-behavior-gap/"><strong>agent 安全中的评估—生产行为差距，以及 eval-awareness 的作用</strong></a>——一项关于安全评估结果与生产行为之间差异的研究，包括模型对评估目标的理解如何影响其表现。</li><li><a href="https://alignment.openai.com/beyond-gmean-squared/"><strong>超越 g-mean²：可监控性的补充指标</strong></a>——用于比较可监控性，并估计在监控器会拒绝模型输出的模拟系统中残余风险的新指标。</li><li><a href="https://deploymentsafety.openai.com/gpt-6-astra"><strong>GPT‑6 Astra 系统卡</strong></a>——对 Astra 的能力、安全性、对齐和可监控性的详细评估，以及其部署防护措施与局限。</li></ul>
+<p><strong>约束模型与改进防护措施</strong></p>
+<ul><li><a href="https://openai.com/index/securing-our-frontier-model-training-environment/"><strong>保障我们的前沿模型训练环境安全</strong></a>——我们如何加强隔离、构建离线研究环境，并用最强的模型来测试约束边界。</li><li><a href="https://alignment.openai.com/training-activation-classifiers/"><strong>训练面向安全与对齐的激活分类器</strong></a>——分类器如何利用模型的内部激活来检测潜在有害行为，并中断回复或工具调用。</li><li><a href="https://alignment.openai.com/auto-review/"><strong>在没有同步人工监督的情况下自动审查 agent 操作</strong></a>——一个独立的审查 agent 如何评估跨越沙箱边界的操作，帮助编程 agent 自主工作，同时拦截潜在有害或未授权的操作。</li><li><a href="https://openai.com/index/unlocking-self-improvement-gpt-red/"><strong>GPT‑Red：解锁鲁棒性的自我提升</strong></a>——我们如何通过自我博弈训练自动化红队，以发现漏洞并提升模型抵御 prompt injection 的鲁棒性。</li><li><a href="https://openai.com/index/control-room/"><strong>Control Room</strong></a>——我们如何跟踪研究基础设施中的工作负载，并在安全或安保方面的担忧需要干预时，强制快速停止模型输出。</li></ul>
+<p><strong>事件响应与披露</strong></p>
+<ul><li><a href="https://openai.com/index/how-we-detect-frontier-model-misalignment/"><strong>我们如何发现前沿模型的失准</strong></a>——我们的监控系统结合激活探针、基于模型的审查、自动化调查和人工响应，来发现并调查令人担忧的行为。</li><li><a href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/"><strong>Hugging Face 事件与前行之路</strong></a>——我们从 Hugging Face 事件中得到的发现，以及它促使我们在安全、监控和对齐方面做出的改变。</li><li><a href="https://alignment.openai.com/misalignment-reports/an-agent-used-dns-to-reach-an-external-chatbot/"><strong>一个 agent 利用 DNS 访问外部聊天机器人</strong></a>——一个研究模型如何借助 DNS 过滤不足绕过互联网限制、监控如何发现它，以及事后新增的控制措施。</li><li><a href="https://openai.com/index/disrupting-a-coordinated-model-distillation-campaign/"><strong>瓦解一场协同的模型蒸馏行动</strong></a>——我们如何通过账户处置、技术控制和伙伴协作，调查并瓦解提取受保护模型推理过程的企图。</li><li><a href="https://openai.com/index/model-misalignment-reporting-framework/"><strong>我们报告模型失准的框架</strong></a>——我们跟踪、调查和披露令人担忧的模型行为的流程，包括原因或影响仍不确定的案例。</li><li><a href="https://alignment.openai.com/misalignment-reports/"><strong>失准报告与通告</strong></a>——我们已披露事件与通告的合集，展示失准如何产生、防护措施在何处成功或失败。</li></ul>
+<p><strong>研究进展与应用</strong></p>
+<ul><li><a href="https://openai.com/index/research-acceleration-view-inside-openai/"><strong>研究加速：OpenAI 内部的视角</strong></a>——关于编程 agent 如何改变 OpenAI 内部研究的早期证据，包括其使用日益增多、任务日益复杂，以及对实验工作的影响。</li><li><a href="https://openai.com/index/navier-stokes-solution/"><strong>关于 Navier–Stokes 千禧年大奖难题</strong></a>——由一个内部 AI 系统产出的数学证明，附有 Lean 形式化，展示了大规模研究部署的能力。</li><li><a href="https://openai.com/daybreak/"><strong>Daybreak</strong></a>——我们的网络安全计划为经过审查的防御方提供先进的 AI 能力、安全工具和支持，以发现漏洞并加强防御。</li><li><a href="https://openai.com/index/introducing-gpt-rosalind/"><strong>面向生命科学研究的 GPT‑Rosalind 介绍</strong></a>——一个专用于生物学、药物发现和转化医学的模型，符合条件的机构可通过可信访问计划使用。</li></ul>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>利用 OpenAI 模型推进芯片设计</title>
@@ -84,6 +577,35 @@
       <guid isPermaLink="true">https://openai.com/index/advancing-chip-design-with-our-models</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Advancing chip design with OpenAI models</description>
+      <content:encoded><![CDATA[<p>2026年11月18日</p>
+<h1>用 OpenAI 模型推动芯片设计进步</h1>
+<p>OpenAI 的模型正在快速改进支撑 AI 运行的芯片。<a href="https://openai.com/zh-Hans-CN/index/jalapeno-first-results/">8 月，我们分享了⁠</a> OpenAI 工程师如何利用我们的前沿模型，加速首款定制推理芯片 Jalapeño 的开发。本文将深入介绍 Jalapeño 性能提升背后的专家级设计改进，以及我们如何与 AMD 合作，将同样的方法用于第三方硬件，实现显著提升。</p>
+<p>为衡量模型执行端到端芯片设计任务的能力，我们在两种开源处理器设计上评估了多代模型，得到了一些有趣的发现。此外，为让模型能力的发展有可靠的评估依据，我们正与 Synopsys 合作，将前沿智能融入工程师已在使用的电子设计自动化（EDA）工具，帮助他们设计和验证芯片。</p>
+<h2>改进 Jalapeño 的计算模块</h2>
+<p>2025 年初，我们开始使用 GPT‑4o 辅助设计 Jalapeño。即使是这款早期模型，也找到了显著改善功耗、性能和面积（PPA）的方法，例如：</p>
+<p><strong>在矢量单元中</strong>，这个负责管理和执行并行计算任务的模块通过优化浮点加法器和乘法器、转换函数、归约逻辑及特殊函数单元，实现了资源节省。模型探索了不同的逻辑实现方式，以及如何将计算划分到各个流水线阶段，从而找到了共享硬件和减少中间存储的机会。</p>
+<p><strong>在矩阵单元中</strong>，对浮点加法器、乘法器和低精度点积电路的改进，逐步提升了这一运算模块的整体表现。其中一项乘法器重设计方案，在综合后的单元面积上节省了约 15%，同时将延迟从两个时钟周期降至一个。另一项加法器重设计方案在保持两个时钟周期延迟的同时，将单元面积减少了约 15%。对点积逻辑和流水线组织方式的进一步改进，也为整个模块带来了额外的资源节省。</p>
+<p>纵观 Jalapeño 的整体设计工作，团队估计，模型提出的改动使矢量单元的标准单元面积减少了约 13%，矩阵单元减少了约 10%。这些优化已在 <a href="https://openai.com/zh-Hans-CN/index/jalapeno-first-results/">Jalapeño 的芯片初始调试⁠</a>期间通过实硅验证。</p>
+<h2>我们与 AMD 的合作</h2>
+<p>我们与 AMD 合作改进 PPA，在其旗舰 GPU IP 上，相较于经过深度优化的基线，实现了最高 14% 的提升。我们的模型通过重写描述芯片电路的代码（SystemVerilog RTL），找到了进一步改进的空间。这相当于在不到 5 个月的时间里取得了约一年的进展，在芯片设计前沿领域实现了前所未有的成果。AMD 已将其中部分改动纳入最近送交制造的一项设计，并将其他改动加入量产设计文件，供未来版本使用。</p>
+<p>我们观察到，模型对 RTL 的推理能力已达到微架构设计专家的水平。模型能够重写负责计算、控制操作或传输数据的电路。它利用 Synopsys 工具验证每次重写是否保持了模块原有的行为，并评估功耗、性能和面积之间的权衡。</p>
+<p>AMD 还验证，在其即将推出的下一代旗舰 CPU 的多个关键模块中，采用我们的模型编写的设计，能够实现个位数百分比的 PPA 提升。展望未来，我们预计，即使以优化最充分的设计为基线，GPU 和 CPU 的 PPA 仍能进一步提升。</p>
+<h2>优化 RISC-V 内核</h2>
+<p>我们在 Jalapeño 和 AMD 芯片上取得的成果表明，模型能够改进量产设计。为衡量芯片设计能力如何随模型代际演进而提升，我们在两种开源 32 位 RISC-V 内核上测试了各个模型。PicoRV32 是一种紧凑型内核，专为 FPGA 这类可重复编程芯片设计。OpenTitan 在其安全芯片中采用 Ibex 作为嵌入式处理器。两者都是完整的处理器内核，面向嵌入式微控制器级工作负载。</p>
+<p>我们向每个模型提供了各内核的原始硬件描述，并要求其提高吞吐量，即内核每秒可执行的指令数。例如，某项改动可能让内核用更少的时钟周期完成一条指令，却使每个周期耗时更长。衡量吞吐量可以同时反映这两种影响。</p>
+<p>我们通过仿真检查了每项设计的输出。如果设计未通过某项检查，或使用的面积超过原始内核的 16 倍，则记为零分。对于通过检查的设计，我们使用未向模型公开的工作负载，测量其每个时钟周期执行的指令数。我们取这些工作负载测量结果的几何平均值，再乘以通过 Yosys 估算的最高时钟频率。由此得到每秒执行指令数的估计值。对于每种内核，我们将相同约束条件下观察到的最高吞吐量对应的分数设为 1.0。图表展示了各次运行的平均分，其中也包括得分为零的运行。</p>
+<p>在每次运行约 112,000 个 Token 的可比预算下，GPT‑6.2 Astra 在两种内核上均获得了最高平均分。GPT‑6.1 Sol 在两种内核上的得分也都高于 GPT‑5.6 Sol。</p>
+<p><em>在优化现有 PicoRV32 内核时，GPT‑6.2 Astra 在较高的可比预算下获得了最高平均分。在约 112,000 个 Token 的预算下，其得分约为 GPT‑6 Astra 的两倍。</em></p>
+<p><em>在优化现有 Ibex 内核时，随着预算进一步增加，GPT‑6.2 Astra 的平均分持续攀升。GPT‑6 Astra 与 GPT‑6.1 Sol 的得分则较为接近。</em></p>
+<h2>根据规格设计 RISC-V 内核</h2>
+<p>在第二项任务中，我们向每个模型提供了书面需求，以及来自开源代码的模板，说明内核如何与系统的其余部分连接。模型自行决定数据在内核中的传输方式，以及如何将处理工作划分为多个阶段。对于每种内核，我们采用了与 RTL 优化任务相同的正确性检查、内存和缓存设置，以及吞吐量目标。</p>
+<p>在每次运行约 112,000 个 Token 时，全部五个模型根据书面需求设计内核时的得分，都高于尝试改进现有设计时的得分。这一结论在 PicoRV32 和 Ibex 上均成立。GPT‑6.2 Astra 在 Ibex 上的得分明显高于在 PicoRV32 上的得分。完整评估共包含 9,881 次计分运行，涵盖两项任务、两种内核和所有 Token 预算档位。</p>
+<p><em>以 PicoRV32 规格为出发点时，GPT‑6.2 Astra 在接近 112,000 个 Token 时的平均分超过 0.7，在随后两个受测的预算档位上则取得了更高分数。</em></p>
+<p><em>在 Ibex 上，以规格为设计出发点时，GPT‑6.2 Astra 在接近 112,000 个 Token 时的平均分约为 0.75。在各模型共同测试的更高预算下，其得分曲线仍高于其他模型。</em></p>
+<p>从书面需求出发，让模型省略原始内核中的某些功能，例如性能计数器和附加指令。这些功能对测试工作负载的吞吐量可能贡献不大，这或许能解释部分得分的优势。如果要求保留这些功能、对电路面积施加更严格的限制，并在物理综合后检查时序，就能让测试更贴近量产芯片设计。</p>
+<h2>下一步</h2>
+<p>我们已证明，模型能够在 RISC-V 评估中探索新的处理器架构，也能在 Jalapeño 及 AMD 下一代旗舰 GPU 和 CPU 等复杂成熟的量产设计基础上，做出新的实质性改进。为了以可靠的评估依据推动模型开发进程，并应对一系列设计挑战，我们正与 Synopsys 合作训练新模型 <a href="https://investor.synopsys.com/news/news-details/2026/OpenAI-and-Synopsys-Announce-GPT-Synopsys-Frontier-Intelligence-to-Revolutionize-Chip-Design/default.aspx">GPT‑Synopsys</a>，使其能够像专业芯片设计师一样使用 Synopsys 的电子设计自动化 (EDA) 工具。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>Le Groupe Figaro 和 OpenAI 合作将 Le Figaro 新闻带入 ChatGPT</title>
@@ -91,6 +613,18 @@
       <guid isPermaLink="true">https://openai.com/index/le-groupe-figaro-and-openai-announce-partnership</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Le Groupe Figaro and OpenAI partner to bring Le Figaro journalism to ChatGPT</description>
+      <content:encoded><![CDATA[<p>2026年11月18日</p>
+<p>公司</p>
+<h1>费加罗集团与 OpenAI 合作，将《费加罗报》的新闻报道引入 ChatGPT</h1>
+<p>通过此次合作，用户将能在 ChatGPT 中通过摘要和节选发现《费加罗报》的新闻报道，并通过附带的链接阅读原文。</p>
+<p>费加罗集团与 OpenAI 今日<a href="https://www.groupefigaro.com/uploads/a014d3b4-4841-4a25-bee0-82f5360c1f77.pdf">宣布建立战略合作伙伴关系</a>，帮助更多人发现并阅读《费加罗报》的新闻报道。此次合作涵盖《费加罗报》及旗下相关刊物的最新报道和历史存档内容，涉及新闻、商业、文化和生活方式等领域。用户将能通过摘要和节选发现这些文章，并通过附带的链接阅读原文。</p>
+<blockquote>“此次合作体现了费加罗集团的愿景：与人工智能研究和部署领域的领军企业建立实质性的合作关系。费加罗集团拥有深厚的新闻采编传统和备受信赖的品牌，背后是一支由 600 多名记者组成的团队，为读者提供可靠的信息来源。将这些优势与 OpenAI 的技术专长和全球影响力相结合，将带来新的创新机遇，为我们的读者创造长期价值。”</blockquote>
+<p>— Marc Feuillée，Groupe Figaro 首席执行官</p>
+<blockquote>“《费加罗报》的报道帮助读者理解影响法国乃至世界的新闻事件，我们希望借助 AI，让更多人发现这些报道。我们致力于与出版机构携手，支持优质新闻报道，并将其带给新的受众，此次合作正是这一承诺的体现。”</blockquote>
+<p>— Varun Shetty，OpenAI 媒体合作副总裁</p>
+<p>《费加罗报》将保持完全的编辑独立性，并保留对其新闻报道的控制权。此次合作延续了 OpenAI 与全球新闻机构的合作，旨在让可靠信息更易被发现，为出版机构开发负责任的 AI 应用，并探索让受众接触和阅读原创报道的新方式。</p>
+<p>《费加罗报》还计划在多个团队中引入 ChatGPT Enterprise，为日常工作提供支持。在自身 AI 章程和编辑标准的指导下，《费加罗报》将探索 OpenAI 技术在工作流程和读者服务中的更多应用。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>GPT-6.2 Astra 和 Sol 简介</title>
@@ -98,6 +632,81 @@
       <guid isPermaLink="true">https://openai.com/index/introducing-gpt-6-2-astra-sol</guid>
       <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing GPT-6.2 Astra and Sol</description>
+      <content:encoded><![CDATA[<h1>推出 GPT-6.2 Astra 和 Sol</h1>
+<p>GPT-6.2</p>
+<h3>AstraSol</h3>
+<h2>A new standard for professional work</h2>
+<p>在 ChatGPT 工作中试用</p>
+<p>我们正式推出 <strong>GPT‑6.2 Astra</strong> 和 <strong>GPT‑6.2 Sol</strong>：前者是应对最棘手项目的全新前沿模型，后者则是面向日常工作的高效多面手。 两款模型都能以更少的输出 Token，在高难度任务中取得更好的结果，让你在用量限制内完成更多工作。 对企业和开发者而言，这意味着能以适合大规模应用的成本，获得前沿性能。</p>
+<p>GPT‑6.2 Astra 为 AI 处理复杂专业工作的质量树立了新标杆。 它生成的幻灯片、电子表格和文档更少带有 AI 写作痕迹，也更贴合你提供的模板和所在领域的惯例。 它编写的代码更简洁，构建的前端在视觉和功能上都更出色，尤其适用于网站、游戏和 3D 设计。</p>
+<p>在测试多步骤专业工作的 Agents’ Last Exam 中，GPT‑6.2 Astra 创下新高：得分比 GPT‑6 Astra 高 5.2 分，成本却不到其三分之一；比 Claude Fable 5.2 高 5.5 分，成本仅为其 5%。</p>
+<p><em>Agents’ Last Exam 评估模型处理长程专业工作流的能力。排行榜中 Fable 5.2 的结果不包含使用了备用模型的九项任务。</em></p>
+<p>我们认为，GPT-6.2 Astra 是全球最适合科学家使用的模型。 它在 Terminal-Bench-Science 0.1 上创下新高，该基准测试评估模型在终端中开展科学工作的能力。 GPT-6.2 Astra 的得分比 GPT-6 Astra 高 9 个百分点，成本却不到其三分之一。 它还在 Vals 科学指数上创下新高，该评估要求模型解读真实生物数据，并通过实验推断模拟系统的运行方式。</p>
+<p>在 API 中，GPT‑6.2 Astra 的输入和输出 Token 价格比 GPT‑6 Astra 低 20%，缓存输入价格则降低 60%（每百万 Token 的输入价格为 8 美元，缓存输入为 0.40 美元，输出为 40 美元）。 GPT‑6.2 Sol 沿用 GPT‑6.1 Sol 的 API Token 定价。 在多项基准测试中，两款模型的表现都接近或超越其他领先模型，而单项任务的成本仅为后者的一小部分。</p>
+<h2>GPT-6.2 Sol：我们日常工作的首选模型</h2>
+<p>相比 GPT‑6.1 Sol，GPT‑6.2 Sol 更智能、更高效，让你在同一付费套餐下完成更多任务。 它能高效完成多步骤智能体工作流，文笔清晰自然，协作起来也得心应手。 OpenAI 的许多员工都将它作为处理技术和非技术任务的默认模型。</p>
+<p>在 Cognition 的 FrontierCode 2.0 中，GPT‑6.2 Sol 与 GPT‑6.2 Astra 的得分相差不到 0.5 分，成本约为其五分之一（两者均设为 Max）。</p>
+<p><em>FrontierCode 2.0 评估对真实代码库的修改是否符合维护者的合并标准。</em></p>
+<p>凭借速度和智能表现，它也非常适合处理工作之外人们寻求 AI 帮助的重要事务。 在我们最近发布、用于衡量高难度日常任务表现的 <a href="https://openai.com/index/lifeval/">LifeVal⁠</a> 评估中，GPT‑6.2 Sol 的得分高于 GPT‑6 Astra，成本约为其七分之一。</p>
+<p><em>LifeVal 测试模型根据个人需求处理日常任务的能力，例如搬家后筛选幼儿园、寻找符合家庭预算和通勤需求的住房，或为刚确诊、仍在适应病情的父亲或母亲规划膳食。</em></p>
+<h2>符合行业标准的专业成果</h2>
+<p>我们训练 GPT‑6.2 Astra，使其能够制作更清晰、设计更精良的幻灯片、电子表格和文档，更贴合法律、销售、金融和会计等领域专业人士的工作惯例。 它的文字更直接、更具体，泛泛而谈的结论和冗余内容更少。</p>
+<p>Harvey LAB‑AA v1.1 通过法律任务，测试模型能否从源文档中找到相关事实，按照详细的任务要求加以运用，并生成准确且满足所有要求的交付成果。 GPT‑6.2 Astra 创下了新的最佳水平，通过率超过 Claude Fable 5.2 的两倍，成本约为其六分之一。 <a href="https://openai.com/index/astra-law-6-2">面向法律事务的 Astra⁠</a> 是我们为律师定制的 GPT-6.2 Astra 配置，在这项基准测试中的得分更高。</p>
+<p><em>Harvey LAB‑AA 测试合同条款审查等法律工作。其主要评分指标仅在交付成果满足全部评分标准且不含实质性幻觉时才予以计分。</em></p>
+<p>我们的内部基准测试 GDPval v2 是 <a href="https://openai.com/index/gdpval/">GDPval⁠</a> 的新一代版本，用于评估咨询、金融和设计等领域真实项目中复杂、长流程的工作流。 GPT‑6.2 Astra 在我们测试的模型中表现领先，得分比 GPT‑6 Astra 高出 6.2 个百分点，同时输出 Token 用量减少了 22%。 GPT‑6.2 Sol 的得分比 GPT‑6.1 Sol 提高了 5.3 个百分点。</p>
+<p><em>GDPval v2 包含来自金融、数据科学、生物技术和市场营销等领域真实项目的长流程知识工作任务。</em></p>
+<h3>工作簿与备忘录</h3>
+<p>构建估值工作簿或撰写投资备忘录，首先需要从源文件中找到相关数据，并理清它们之间的关系。 Artificial Analysis 的 AA‑AnalystAgent 使用真实电子表格和报告来测试这项工作。 在其中一项任务中，模型需要根据加利福尼亚州 Medicaid 的支出报告，计算该计划在医疗转运方面的支出。 GPT‑6.2 Astra 创下新高：有 62.5% 的问题在全部五次独立尝试中均得到正确回答。</p>
+<h3>幻灯片</h3>
+<p>在幻灯片设计和遵循幻灯片模板方面，GPT‑6.2 Astra 是我们迄今最出色的模型，无论提供的是原始文件，还是仅仅一张截图。 它能够匹配布局、配色和排版，精确到字号，并将模板的写作风格延续到新幻灯片中。 早期测试者发现，这些演示文稿只需较少修改就更容易直接使用，因为标题开门见山地指出核心结论，正文简明扼要，聚焦读者需要的细节。</p>
+<p>1 条/ 共 4 条</p>
+<blockquote>“我们评估了 GPT-6.2 Astra 将密集信息转化为易读简报和信息图的能力，受众同时涵盖技术与非技术人员。 示例包括交易简报和智能体工作流示意图。GPT-6.2 Astra 生成的文档相比 GPT-6 Astra 有了显著提升。 文字和图表让简报重点更易于把握，示意图则通过展示各部分如何协同工作，让复杂系统变得清晰易懂。”</blockquote>
+<p>Marquis Wong，IMC 首席 AI 工程师</p>
+<blockquote>“在我们的智能体评估中，GPT-6.2 Astra 处理复杂法律智能体任务时，Token 用量比 GPT-6.1 Sol 少 62%。 Astra 在法律研究方面表现最强：我们测试的 10 项研究任务涵盖税务、并购和诉讼，其中 8 项的得分高于其他模型。”</blockquote>
+<p>Jacob Lauritzen，Legora 首席技术官</p>
+<blockquote>“GPT-6.2 Astra 相比 GPT-6 Astra 有了显著进步：在我们的评估中，它完成的 Legal Agent Benchmark 任务数量超过后者的 3 倍，输出 Token 用量却减少了 34.5%。 在内部备忘录起草任务中，GPT-6.2 Astra 发现了更多客户立场中的薄弱之处，起草的诉讼文书中也更少出现不必要的让步。”</blockquote>
+<p>Niko Grupen，Harvey 应用研究负责人</p>
+<blockquote>“在 ClickUp Brain 于工作空间内构建的应用、仪表板和幻灯片上，GPT-6.2 Astra 在盲测中略胜我们的生产模型。 更突出的是它实现这一结果的方式：Token 用量减少约 40%，审阅轮次减少 30%。”</blockquote>
+<p>Jay Hack，ClickUp AI 负责人</p>
+<ul><li>IMC</li><li>Legora</li><li>Harvey</li><li>ClickUp</li></ul>
+<h2>计算机操作与交互式网页设计</h2>
+<p>GPT‑6.2 Astra 的计算机操作更加精准，能在 CAD 和仿真工具中细化到单个零件及其连接关系。 工程师可以利用这些细节检查组件的配合情况，观察机构运动时载荷会转移到哪些部位，并在制作原型前测试修改方案。</p>
+<h3>驾驶仿真</h3>
+<p>我们要求 GPT‑6.2 Astra 将汽车在山路上行驶时的底盘动力学过程可视化。 Astra 创建了 3D 模型，编写 Python 求解器来模拟轮胎与悬架之间复杂的动力学关系，再用 Blender 将结果制作成动画。 这让工程师能够快速测试新设计，并持续提高仿真精度。</p>
+<h3>机械设计与装配</h3>
+<p>GPT‑6.2 Astra 可以逐个零件地为机械系统建模，让工程师能够展示其装配过程，并测试设计变化如何影响系统的运行表现。</p>
+<h3>从 CAD 设计到纸灯</h3>
+<p>我们的团队使用 GPT‑6.2 Astra，将芝加哥滨海城双塔的扇贝形阳台转化为一盏灯的设计。 视频展示了从参考照片、CAD 设计修改，到手工组装成实体灯具的全过程。 你可以使用 GPT-6.2 Astra 生成的网站，制作属于自己的纸灯。</p>
+<p>GPT‑6.2 Astra 将更强的视觉推理能力带入网页设计，选用赋予每个网站独特外观的布局和图像，并围绕网站的实际目标构建各个元素。</p>
+<p>视觉推理和计算机操作能力的这些提升，也延伸到了 3D 设计领域。 GPT‑6.2 Astra 和 Sol 可以将书面需求转化为浏览器中的交互体验，既能制作可玩的弹球台，也能重建可从不同角度探索的罗马斗兽场。 在 Artificial Analysis 的 AA‑3D 评估中，人类评审会在不知道模型身份的情况下，体验根据同一提示词构建的两个作品，并投票选出更喜欢的一个。 GPT‑6.2 Astra 以 1,318 的 Elo 评分位居第一，其后是 1,271 分的 Claude Fable 5.2 和 1,259 分的 GPT‑6.2 Sol。</p>
+<blockquote>“GPT-6.2 Astra 为创意工作带来了巨大飞跃。 它让 Higgsfield Miracle 成为现实，支持像素级精度的实时视频编辑，让创作者拥有极致的创作控制力。 在我们的内部 3D 生成评估中，它在 73% 的案例中一次就达到了目标效果，而 GPT-6 Astra 需要三次或更多轮迭代。 这为我们的创意团队节省了大量时间，也让完全由智能体执行的工作流更加高效。”</blockquote>
+<p>Alex Mashrabov，Higgsfield AI 首席执行官兼联合创始人</p>
+<h2>更高效的工作流，更简洁的代码风格</h2>
+<p>GPT‑6.2 Astra 在任务执行方式上有了更好的判断力，能够根据工作流选择合适的工具和投入程度，并判断何时应使用插件、何时应直接操作计算机。</p>
+<p>在编程方面，GPT-6.2 Astra 更擅长在现有代码库中实现和测试复杂改动。 早期测试者反馈，它的代码风格更简洁，测试更有针对性，需要的修改轮次也更少。</p>
+<h2>网络安全能力</h2>
+<p>GPT‑6.2 Astra 和 GPT-6.2 Sol 的网络安全能力再次实现显著跃升。 它们能更有效地发现和利用漏洞，编写更安全的代码，生成更好的补丁，并在多项评估中大幅提升 Token 使用效率。 与 <a href="https://openai.com/index/gpt-6-astra/">GPT‑6 Astra⁠</a> 一样，6.2 Astra 和 Sol 的网络安全能力均已达到我们<a href="https://openai.com/index/updating-our-preparedness-framework/">准备框架⁠</a>规定的“关键”(Critical) 级阈值。</p>
+<p>鉴于 GPT‑6.2 Astra 和 Sol 的能力有所提升，我们在推出这两个模型时，针对风险较高的网络安全辅助任务采取了更严格的安全防护措施。 这些防护措施降低了滥用风险，但也限制了部分合法的漏洞研究和安全测试工作流。 目前，网络防御方可通过 <a href="https://openai.com/daybreak/">OpenAI Daybreak⁠</a> 在 Daybreak Blue 上使用 GPT‑6 Sol，该模型较少拒绝网络安全请求。参与 Daybreak Blue Alpha 测试的防御方还可使用 GPT‑6 Astra。Daybreak Red 则提供 <a href="https://openai.com/index/introducing-gpt-6-cyber/">GPT‑6 Cyber⁠</a>，供防御方开展经授权的高级安全测试。 我们将努力把 GPT‑6.2 模型引入 Daybreak。</p>
+<p>下面重点展示关键基准测试结果，测试采用内部配置，并关闭了网络安全防护措施和分类器。 完整结果和方法详见<a href="https://deploymentsafety.openai.com/gpt-6-2-astra-sol">配套系统卡</a>。</p>
+<h3>助力网络防御方赢得优势</h3>
+<p>开发者越来越依赖编程智能体编写生产软件，与此同时，能力更强的智能体也降低了发现和利用漏洞的门槛。 <a href="https://calif.io/php2shell/">PHP2Shell</a> 展示了 AI 如何帮助研究人员发现严重漏洞。 在 GPT‑6.2 Astra 和 Sol 中，我们将防御能力作为核心重点，引入新的训练信号，帮助开发者预防和修复这些漏洞 — 从一开始就编写安全代码，并生成保留预期行为的补丁。</p>
+<h2>安全与对齐</h2>
+<p>我们采用迄今最强的安全防护措施来部署 GPT-6.2 Astra 和 Sol。 我们收紧了限制，并强化了用于<a href="https://openai.com/index/how-we-detect-frontier-model-misalignment/">监测模型⁠</a>和<a href="https://openai.com/index/control-room/">在必要时进行干预⁠</a>的系统。</p>
+<p>与 GPT-6 Astra 一样，GPT-6.2 Astra 和 Sol 的网络安全能力均达到我们<a href="https://openai.com/index/updating-our-preparedness-framework/">准备框架⁠</a>中的“关键”(Critical) 级别阈值，生物和化学能力也均达到“高”级别阈值。 我们已实施防护措施来缓解相关风险，并加强了对一系列潜在两用性生物和网络安全请求的限制。</p>
+<p>关于安全防护措施和测试的更多详情，请参阅 <a href="https://deploymentsafety.openai.com/gpt-6-2-astra-sol">GPT-6.2 系统卡</a>。</p>
+<h3>AI 研究能力与安全防护措施</h3>
+<p>GPT-6.2 Astra 是我们首个对外发布、达到“AI 自我改进”高阈值的模型，该指标衡量模型加速 AI 研究的能力。 “高”级别代表我们的评估认为：相较于 2024 年的基线，该模型带来的影响相当于为每位 OpenAI 研究人员额外配备一名能力出色的研究工程师作为助手。 我们跟踪这项能力，是因为能够帮助开发未来 AI 系统的模型也可能引入新的安全风险，例如推动进展的速度快于安全防护措施或人类监督的适应速度。</p>
+<p>为应对这些风险，我们在模型训练和部署流程中加入了更多监督与控制措施。 在扩大 GPT-6.2 Astra 的内部访问范围之前，我们评估了其对齐情况，并确认各个阶段所需的安全防护措施均已到位。 我们<a href="https://openai.com/index/securing-our-frontier-model-training-environment/">加强了研究环境中的隔离防护⁠</a>，并使用能力最强的模型测试这些措施。 我们还构建了 <a href="https://openai.com/index/control-room/">Control Room⁠</a>，该系统可跟踪研究工作负载，并在需要干预时阻止模型继续输出。 我们<a href="https://openai.com/index/how-we-detect-frontier-model-misalignment/">扩展后的监测机制⁠</a>会检查模型在内部工作负载和受支持的外部部署中的推理与行动。 它可以自动标记未经授权的行为，并在支持的情况下暂停工作负载或对话。</p>
+<h3>对齐</h3>
+<p>两款模型在大多数对齐评估中的表现与 GPT-6 Astra 相近，并在模拟职场任务中采取了更少的不当行动。 不过，在两项测试中，它们更容易漏报阻碍工作的问题，例如文件缺失或搜索工具不可用。 我们在 Codex 中添加了指令，大幅减少了此类遗漏，并将继续研究这一行为。</p>
+<h2>定价与可用性</h2>
+<p>即日起，所有 Plus、Pro、Enterprise 和 Edu 用户都可在 ChatGPT 工作和 Codex 中使用 GPT-6.2 Astra 和 Sol。 Pro 500 订阅用户可为这两款模型启用超高速模式。 我们还首次向 Pro 200 订阅用户开放超高速模式，率先支持 GPT-6.2 Sol。 符合条件的 Enterprise 和 Edu 用户，在工作空间管理员启用后，也可获得相同访问权限。 开发者也可通过 OpenAI API 使用 <code>gpt-6.2-astra</code> 和 <code>gpt-6.2-sol</code>，两款模型在发布时均支持超高速模式。</p>
+<p>与 GPT‑6 Astra 相比，GPT‑6.2 Astra 的 Token 使用效率更高，输入和输出 Token 单价均降低了 20%，缓存输入 Token 单价降低了 60%，因此单项任务成本显著下降。 标准 API 定价按每百万 Token 计：输入 8 美元，缓存输入 0.40 美元，输出 40 美元。 GPT‑6.2 Sol 沿用 GPT‑6.1 Sol 的定价，每百万 Token 的输入价格为 2 美元，缓存输入为 0.10 美元，输出为 10 美元。</p>
+<p><em>使用 GPT-6.2 Astra 和 Sol 时，为提高缓存复用率、帮助降低成本和延迟，并跨轮次保留推理，我们建议<a href="https://developers.openai.com/api/docs/guides/preserved-reasoning">保持提示词前缀不变，并在对话中追加新指令</a>。</em></p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
+<h2>作者</h2>
+<h2>Footnotes</h2>
+<ul><li>1 据 <a href="https://artificialanalysis.ai/evaluations/terminal-bench-science">Artificial Analysis</a> 报告，Fable 5.2 在 Terminal-Bench-Science 0.1 上的这项成绩是在 mini-swe-agent 执行框架下测得的。 Anthropic 报告称，Fable 5.2 在 Claude Code 中以 Max 推理强度取得了 74.6% 的得分。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>利用人工智能加强北约和盟国的网络防御</title>
@@ -105,6 +714,25 @@
       <guid isPermaLink="true">https://openai.com/index/strengthening-nato-allied-cyber-defences-ai</guid>
       <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Strengthening NATO and allied cyber defenses with AI</description>
+      <content:encoded><![CDATA[<p>2026年11月17日</p>
+<p>全球事务</p>
+<h1>用 AI 强化 NATO 及盟国的网络防御</h1>
+<p>各国政府和国家网络机构保护着人们、公共服务和经济所依赖的系统。通过 Daybreak，我们把先进的 AI 交到可信的防御方手中，用于经授权的安全工作——从审查软件、调查可疑活动，到验证漏洞、开发和测试修复方案。</p>
+<h2>强化 NATO 的网络防御</h2>
+<p>OpenAI 与 NATO 通信与信息局（NCIA）合作，为 NATO 的核心机构提供先进网络安全模型的访问权限，帮助保护盟国网络。作为这项工作的一部分，NATO 每月使用的原始输入与输出 token 高达 3000 亿。</p>
+<p>NATO 对 OpenAI 工具的早期使用表明，有能力的网络防御者可以把前沿模型投入实际工作，支持 NATO 维护成员国自由与安全的使命。这同时也有助于提升负责昼夜守护盟国网络的多国团队的网络安全专业能力，并积累可供欧洲乃至整个联盟防御者借鉴的经验。</p>
+<p>OpenAI 还<a href="https://ccdcoe.org/news/2026/exercise-crossed-swords-tests-cyber-operations-and-multi-domain-coordination/">支持</a>了 2026 年的 Crossed Swords 演习。该演习由 NATO 合作网络防御卓越中心（CCDCOE）组织，新增了一条训练线：参与者在技术环境中使用 OpenAI Daybreak，构建、部署并评估用于网络行动的 AI agent。这项训练让参与者以操作员身份与 AI agent 并肩工作，并强调要保持人工监督。</p>
+<p>OpenAI 始终全面恪守 NATO 关于负责任采用 AI 的原则，并致力于交付安全可靠的解决方案。</p>
+<blockquote>“AI 驱动的网络防御模型代表着网络安全领域的一次代际跃升。它们加快漏洞发现、以机器速度探测新兴威胁，让防御方得以领先于对手。对 NATO 来说，这些技术增强了我们的网络韧性，提升了作战优势，也强化了我们以空前的规模和速度保护关键数字基础设施的能力。随着采用规模扩大，我们将更深入地理解 token 消耗、使用模式以及 AI 模型的底层经济性。这些认识将帮助我们优化成本、评估相互竞争的方案，并做出有理有据的采购决策。”</blockquote>
+<p>—Dr Dylan Browne，NCIA 局长</p>
+<blockquote>“捍卫我们民主制度的人，应该拥有最先进的技术站在他们这一边。NATO 的网络防御者守护着对联盟安全至关重要的网络。通过 Daybreak，我们把更有能力的工具交到他们手中，帮助他们在攻击者加以利用之前发现并修复漏洞。我们期待与 NATO 及各盟国深化这项合作，把 AI 的进步转化为更强的网络防御。”</blockquote>
+<p>—Sasha Baker，OpenAI 国家安全政策负责人</p>
+<h2>支持盟国政府</h2>
+<p>在 NATO 之外，我们已经向欧洲的防御方开放了网络模型的使用权限，包括 EU 的 ENISA，以及法国（ANSSI）、德国和波兰的国家网络机构。</p>
+<ul><li><strong>乌克兰数字转型部</strong> 正在<a href="https://openai.com/index/openai-extends-cyber-access-to-ukraine-for-civilian-defense/">使用</a> OpenAI 的 Daybreak 工具加强民用基础设施的网络防御。该计划旨在帮助乌克兰团队更快地发现软件漏洞、开发和测试修复方案，支持那些在持续网络攻击中守护关键服务的防御者。</li><li><strong>EU 的网络机构 ENISA</strong> 使用我们的模型，在 EU 各机构普遍使用的软件中发现了四个漏洞，四个漏洞的修复均已发布（<a href="https://www.cve.org/CVERecord?id=CVE-2026-73432">1</a>,<a href="https://www.cve.org/CVERecord?id=CVE-2026-73431">https://www.cve.org/CVERecord?id=CVE-2026-73431</a><a href="https://www.cve.org/CVERecord?id=CVE-2026-73431">2</a>,<a href="https://www.cve.org/CVERecord?id=CVE-2026-73405">https://www.cve.org/CVERecord?id=CVE-2026-73405</a><a href="https://www.cve.org/CVERecord?id=CVE-2026-73405">3</a>,<a href="https://www.cve.org/CVERecord?id=CVE-2026-73374">https://www.cve.org/CVERecord?id=CVE-2026-73374</a><a href="https://www.cve.org/CVERecord?id=CVE-2026-73374">4</a>）。一份 11 月的<a href="https://www.enisa.europa.eu/sites/default/files/2026-11/ENISA_CERTEU_JOINTREPORT_Final.pdf">https://www.enisa.europa.eu/sites/default/files/2026-11/ENISA_CERTEU_JOINTREPORT_Final.pdf</a><a href="https://www.enisa.europa.eu/sites/default/files/2026-11/ENISA_CERTEU_JOINTREPORT_Final.pdf">ENISA 与 CERT-EU 联合报告</a>还描述了针对 27 个软件项目的审查，这些项目使用了前沿模型（包括通过 Daybreak 访问的 OpenAI 模型）以及 Codex 安全插件等工具。在测试过的模型中，由软件维护者评估的 88 个潜在问题里有 95% 被确认为真实问题，这体现出把 AI 与人的专业能力结合起来所具有的价值。</li><li><strong>CERT Polska</strong> 使用 OpenAI 模型协助发现 <a href="https://cert.pl/en/posts/2026/09/vulnerabilities-in-mikrotik-routeros-actively-exploited/#Research-supported-by-LLMs">MikroTik RouterOS 中的六个漏洞</a>，并与厂商协调披露。研究人员主导了这项工作，在真实系统上测试发现结果并验证其影响，AI 则加快了分析和潜在漏洞的探索。MikroTik 发布了修复，CERT Polska 确认这些修复能阻止其观察到的攻击，为网络运维方提供了一种保护受影响设备的具体办法。</li></ul>
+<p>我们将继续与各国政府、国家网络机构和国际伙伴合作，把前沿 AI 能力转化为更强大、更安全、更有韧性的系统，帮助防御方发现弱点、更快修复，并保护人们日常依赖的服务。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>介绍用于销售的 ChatGPT</title>
@@ -112,6 +740,47 @@
       <guid isPermaLink="true">https://openai.com/index/introducing-chatgpt-for-sales</guid>
       <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing ChatGPT for Sales</description>
+      <content:encoded><![CDATA[<p>2026年11月17日</p>
+<h1>ChatGPT 销售版正式上线</h1>
+<p>全新的销售体验，加上 30 多款新增或功能扩展的合作伙伴插件，帮助每位销售人员从寻找合适的客户到兑现客户承诺，缩短整个销售周期。</p>
+<p><a href="https://chatgpt.com/plugins/sales">安装销售插件</a><a href="https://openai.com/zh-Hans-CN/business/solutions/sales/">了解详情</a></p>
+<p>我们推出了 ChatGPT 销售版，致力于帮助每个销售团队更深入地了解客户，减少花在琐事上的时间，促成更多交易。它包含我们全新的销售插件，为销售人员提供专用技能，同时在 ChatGPT 中引入 30 多款新增或增强的合作伙伴插件。你可以利用团队现有工具中的信息准备通话、定制提案，并更快地跟进客户。</p>
+<h2>每位销售人员都能轻松上手</h2>
+<p>OpenAI 全新的销售插件为日常销售工作提供开箱即用的工作流，涵盖确定目标客户、准备通话、起草跟进消息等环节。当所有成员对客户形成统一认知时，销售团队才能发挥最佳水平。哪些客户值得争取？买方需要什么才能继续推进交易？哪些交易需要关注，原因是什么？答案往往分散在团队成员、客户开发工具、客户通话记录和 CRM 中。汇总这些信息，可以让团队投入更多时间做出有依据的决策，并兑现对客户的承诺。这一切，都从你的日常工作开始。</p>
+<h2>将销售流程接入 ChatGPT</h2>
+<p>ChatGPT 销售版将你的工具、客户背景信息和销售工作流汇聚到一处。它还让团队能够使用合作伙伴插件，从而确保 ChatGPT 能够利用现有工具中的客户背景信息发掘商机。选择适合你销售流程的合作伙伴插件。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6mmoQk1sZ7T7wZ4TZfFzA7/bc50a51cdc4d80288d4ce9fd50d1d0e6/introducing-chatgpt-for-sales-connected-tools-overview.png?w=3840&amp;q=90&amp;fm=webp" alt="按工作流分组的销售工具：内容与支持、客户与交易、潜在客户开发、客户沟通、业绩与风险，以及报价与协议。"></p>
+<ul><li><strong>创建内容，为销售人员提供支持</strong>。通过 Confluence、Guru 和 Seismic 了解销售流程和最新产品动态。使用 ChatGPT 语音演练销售推介，练习如何应对客户异议。使用 ChatGPT 幻灯片、Gamma、Figma 或 Canva 制作定制演示文稿，或通过 ChatGPT 站点创建交互式演示或投资回报率 (ROI) 计算器。</li><li><strong>管理客户，推进交易</strong>。汇总 Salesforce、HubSpot、Close CRM 或 monday CRM 中的客户背景信息，为通话做准备，回顾对客户的承诺，并规划后续步骤。</li><li><strong>寻找买方并建立联系</strong>。将 Apollo、Clay 和 Common Room 提供的客户信号与 ChatGPT 的网络调研相结合，了解客户近期的变化，找到合适的接洽契机。使用 Outreach 或 Salesloft 规划客户联络方案。</li><li><strong>将客户沟通转化为行动</strong>。利用 ChatGPT 会议插件、Gong、Otter.ai 或 Granola 中的通话笔记，了解买方的优先事项，记录商定的后续步骤，并起草跟进消息。</li><li><strong>跟踪业绩，发现交易风险</strong>。利用 Backstory 提供的信号，识别需要关注的交易。使用 ChatGPT 数据插件或 Hex 分析关联的销售数据，解释销售流程发生了哪些变化，以及接下来应重点关注什么。</li><li><strong>准备报价和协议</strong>。在买方准备推进交易时，接入 Docusign、Ironclad、PandaDoc 或 ServiceNow CPQ，协助准备报价和协议。</li></ul>
+<p>你还可以将任务交给 <a href="https://openai.com/index/introducing-dots/">dot</a>，在对话间隙持续推进工作。dot 是 ChatGPT 中始终在线的智能体，它可以使用这些相同的插件和客户背景信息，准备会议简报、跟踪交易动态，并主动呈现相关变化和后续步骤建议，供你审核。</p>
+<h2>适用于各类销售团队的用例</h2>
+<h3>围绕合适的客户拓展商机</h3>
+<p>使用 ChatGPT，根据 CRM 信息以及 ZoomInfo、Clay 等工具中的潜在客户调研结果，生成按优先级排序的客户名单。询问每位客户为何符合要求，找出缺失的信息，并根据团队的工作重点调整名单。然后将调研结果转化为有明确切入点的客户联络行动，所有步骤都能在同一段对话中完成。</p>
+<h3>为每位买方提供更有说服力的方案</h3>
+<p>会前，让 ChatGPT 准备一份简报，汇总客户历史记录、以往通话内容和买方的优先事项。梳理待解答的问题，再用 Gamma 或 Canva 将准备好的资料转化为针对该客户的推介方案。在会议开始前，通过对话完善推介内容。</p>
+<h3>明确后续步骤，持续推进交易</h3>
+<p>通话结束后，让 ChatGPT 起草跟进消息、记录商定的后续步骤，并准备客户记录的更新内容。在对话中完善消息，并审核建议的修改。接入 Attio 等工具后，你可以直接从 ChatGPT 将下一步行动保存到 CRM。</p>
+<h3>找出销售流程中的风险</h3>
+<p>让 ChatGPT 结合 CRM 历史记录和客户对话，帮助你了解阻碍交易推进的因素。借助 Rox，你还可以让 dot 每天早晨检查交易情况，标记需要关注的变化，并准备会议简报或一系列跟进任务，供你审核。</p>
+<p><strong>看看销售生态系统中的几个示例，了解这些工具如何在 ChatGPT 中发挥作用：</strong></p>
+<h2>销售团队如何借助 ChatGPT 取得成果</h2>
+<p>从客户调研到交易跟进，聆听销售团队介绍 ChatGPT 销售版的实际应用。</p>
+<p>1 条/ 共 5 条</p>
+<blockquote>“借助 ChatGPT 的 Salesforce 插件，我们的客户关系拓展人员能够更深入地洞察潜在捐赠者和研究合作伙伴。它还减少了收集和整合这些信息所需的时间与精力。”</blockquote>
+<p>— Sandeep Chellani，Michael J. Fox 帕金森病研究基金会高级副总裁 (SVP) 兼技术负责人</p>
+<blockquote>“在 NeoBid，我们结合使用 HubSpot 与 ChatGPT 销售版，调研房地产行业的潜在客户、完善 CRM 数据、确定商机优先级，并准备个性化客户联络内容。据我们估算，这将上述工作的人工投入减少了约 65%，让我们有更多时间帮助客户优化其全部物业的能源采购流程。”</blockquote>
+<p>— Gunnar Gombert 教授、博士，NeoBid 联合创始人兼董事总经理</p>
+<blockquote>“作为一家快速成长的 AI 原生公司，我们将 AI 视为公司运营和规模扩张的基石。ChatGPT 销售版和 Rox 是这一理念的核心，二者影响着我们团队开展工作、赢得客户和增加收入的方式。Rox 让我们清晰掌握销售流程状况，并及早发现交易风险，从而迅速行动，为团队提供支持，同时推进复杂交易。这些工具相互配合，帮助我们将洞察转化为行动，以公司所需的速度和信心落实执行战略。”</blockquote>
+<p>— Sushanth Raman，Pallet 首席执行官 (CEO)</p>
+<blockquote>“Atlassian 构建了一条连接纽带，让 OpenAI 的前沿模型能够结合我们整个企业的信息进行推理。通过在我们的 Teamwork Graph 部署 ChatGPT 销售版，我们就能帮助更多人利用数据，不再局限于通用的 AI 回应，而是根据具体情境采取行动，切实推进创新项目。”</blockquote>
+<p>— JR Harrell，Datasite 业务执行执行副总裁 (EVP)</p>
+<blockquote>“在市场拓展中，赢家总能抢在竞争对手之前，将最好的想法付诸实践。多年来，在 Clay 中搭建方案，就意味着要逐个点击层层菜单。你必须先学会使用工具，才能真正取得成果。就连专家也会在庞大的表格中迷失方向，以致进度达不到预期。如今，任何人都能借助 ChatGPT 销售版和 Clay，在几分钟内落地一套营销战略，而过去即使是专家也需要数小时、数天甚至数周才能完成这项任务。工作流功能可以逐步展示整个流程，而不是丢给你一张庞大的表格。受众功能则能将同一套战略推广到整个企业客户市场。”</blockquote>
+<p>— Jacob Tuwiner，Sculpted 创始人</p>
+<ul><li>Michael J. Fox 基金会</li><li>NeoBid</li><li>Pallet</li><li>Datasite</li><li>Sculpted Agency</li></ul>
+<h2>开始使用</h2>
+<p><a href="https://chatgpt.com/plugins/sales">安装销售插件</a>即可开始使用，并进一步<a href="https://openai.com/business/solutions/sales/">了解 ChatGPT 销售版</a>及其合作伙伴插件。合作伙伴插件和功能的可用性因套餐、地区和工作空间设置而异。</p>
+<p>ChatGPT Business 和 Enterprise 管理员可以打开<a href="https://admin.openai.com/">管理员控制台</a>，选择你的工作空间，再选择“插件”，为团队启用 ChatGPT 销售版。允许成员自行安装销售插件及相关合作伙伴插件，或默认为团队<a href="https://help.openai.com/articles/11509118-admin-controls-security-and-compliance-for-plugins-and-apps">安装这些插件</a>。检查所需应用的访问权限，以及成员可使用的操作。工作空间成员可以按照提示完成所需的账户连接。</p>
+<p>我们将继续围绕销售团队的日常工作，完善 ChatGPT 销售版及其合作伙伴插件生态系统。我们的目标是将更多销售工作引入 ChatGPT，让关联的工具和客户背景信息贯穿发现商机、准备沟通和后续跟进的全过程。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>为智利推出 OpenAI</title>
@@ -119,6 +788,27 @@
       <guid isPermaLink="true">https://openai.com/index/introducing-openai-for-chile</guid>
       <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing OpenAI for Chile</description>
+      <content:encoded><![CDATA[<p>2026年11月17日</p>
+<p>全球事务</p>
+<h1>推出 OpenAI 智利计划</h1>
+<p>今天，我们推出 OpenAI 智利计划。这项与智利政府开展的合作由智利科学、技术、知识与创新部牵头，旨在支持公共行政部门负责任地采用 AI，提升公务员技能，并帮助当地初创企业开发实用的 AI 应用。</p>
+<p>此次合作以智利的<a href="https://minciencia.gob.cl/areas/inteligencia-artificial/Inteligencia-Artificial/">国家 AI 政策与行动计划</a>为基础，该政策与计划支持人才培养、研究以及负责任地采用 AI。</p>
+<p>这份谅解备忘录在 Semafor 于加利福尼亚州举办的“硅谷与世界”会议期间签署，由部长 Ximena Lincolao 代表智利牵头达成协议。</p>
+<p>此次合作得到美国商务部<a href="https://siexports.gov/">美国 SI 出口计划</a>的支持，OpenAI 是该计划的核心合作伙伴之一。此次合作将通过公共部门创新、技能培养和创业，帮助智利推进自身的 AI 发展目标。</p>
+<blockquote>“人工智能将成为改善人们生活的最重要途径之一——从加速科学发现，到帮助人们创造出我们尚未想象到的事物。我很高兴能与智利合作，帮助公职人员使用这些工具，改善公共服务，并支持创业者创办新公司。我期待看到智利的初创企业解决世界上一些最重要的问题，创造出惠及各地民众的成果。”</blockquote>
+<p>—Sam Altman，OpenAI 首席执行官</p>
+<blockquote>“我们对这次合作充满期待，也为它将给智利各地的科学发现、创业和创新带来的非凡机遇感到振奋。这次合作旨在助力智利人民不断突破可能性的边界，创造新技术，开发改善人们生活的解决方案。”</blockquote>
+<p>—Ximena Lincolao，智利科学、技术、知识与创新部长</p>
+<h2>让 AI 在智利发挥实效</h2>
+<p>此次合作将探索在该部的行政流程中引入技术，包括由 OpenAI 为采用新模型提供潜在支持，并为该部工作人员提供咨询和培训。</p>
+<p>针对公务员，此次合作将探索如何根据其岗位需求，开展实用的 AI 素养培训、技能提升和新技能培训。相关活动可能包括工作坊和培训师培养，内容涵盖有效使用 AI 工具、核查输出、保护敏感信息，以及保持人工监督。</p>
+<p>为支持智利的 AI 创业与创新生态，合作双方将探索让当地参与者获得相关 OpenAI 计划和技术支持、实践学习机会、技术指导及导师辅导的途径。此次合作还可能为创业者对接公共机构、高校和其他当地合作伙伴，共同开发应用，支持智利的经济发展和公共服务重点工作。</p>
+<p>预计由该部与 OpenAI 代表组成的联合工作组将商定优先事项和初步工作计划，并为各项活动明确负责人、里程碑和成效衡量标准。</p>
+<p>具体活动、参与资格、资源及技术使用安排将另行商定。该谅解备忘录不包含任何投资或采购承诺。各项活动均须落实适当的保障措施，以保护隐私、确保信息安全，并保障负责任的使用。</p>
+<h2>关于 OpenAI 国家合作计划</h2>
+<p>OpenAI 智利计划是 OpenAI 国家合作计划的一部分。作为我们的全球倡议，OpenAI 国家合作计划旨在帮助各国利用 AI 推进国家重点工作、增强经济实力并创造更多机会。我们与各国政府及当地合作伙伴携手，将 AI 的潜力转化为惠及民众的实际成果。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>Astra for Law 在法律情报方面处于领先地位</title>
@@ -126,6 +816,53 @@
       <guid isPermaLink="true">https://openai.com/index/astra-law-6-2</guid>
       <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Astra for Law leads in legal intelligence</description>
+      <content:encoded><![CDATA[<p>2026年11月17日</p>
+<p>公司</p>
+<h1>面向法律事务的 Astra 引领法律智能</h1>
+<p>我们的最新模型配置在涵盖 24 个法律领域的首发评测中排名第一，其诉讼书状获得的评分也高于 GPT‑6 Astra。现在，所有 ChatGPT Enterprise 客户均可申请访问</p>
+<p>今天，我们发布新版面向法律事务的 Astra (Astra for Law)。它在 Harvey LAB-AA 上达到业界最先进水平，并在 <a href="https://www.harvey.ai/">Harvey</a> 与 <a href="https://grubel.ai/">Grubel</a> 共同开发的 LAB: USCL，以及 Vals AI 法律研究基准测试中名列前茅。我们也向所有 ChatGPT Enterprise 客户开放了通过可信访问计划申请访问的渠道，包括通过 API 访问。</p>
+<p>面向法律事务的 Astra 是基于 GPT‑6.2 Astra 的一种模型配置，后者是我们最新、最强大的前沿模型。它将 GPT‑6.2 Astra 与专门的法律搜索索引相结合，并配备指令，指导模型研究问题、权衡法律依据和撰写答案。该配置在 LAB-AA 评测中的满分率比单独使用 GPT‑6.2 Astra 高出近 40%。</p>
+<p>自我们<a href="https://openai.com/index/astra-for-law/">于 9 月向少数律所推出面向法律事务的 Astra⁠</a> 以来，研究团队迅速推进创新，提升了其法律推理能力，并将法律资料来源扩充至约两倍。这些律所包括 <a href="https://openai.com/index/cooley-gopublic/">Cooley⁠</a>、<a href="https://openai.com/index/ropes-gray-ai-diligence/">Ropes &amp; Gray⁠</a> 和 <a href="https://openai.com/index/sullivan-cromwell/">Sullivan &amp; Cromwell⁠</a>。在 <a href="https://www.vals.ai/benchmarks/legal_research">Vals AI 法律研究基准测试</a>中，通过全部核查的研究答案占比从约 46% 上升至近 55%。我们持续投入法律领域，让最优秀的律师能够运用我们最强的前沿智能，在日益复杂的世界中解决推动进步的关键问题。</p>
+<h2>面向法律事务的 Astra 在涵盖 24 个法律领域的 Harvey LAB-AA 首发对比中排名第一</h2>
+<p>Harvey 的法律智能体基准测试 (LAB) 用于检验模型能否从头到尾完成一项法律任务。<a href="https://artificialanalysis.ai/evaluations/harvey-lab-aa">LAB-AA</a> 是 Artificial Analysis 版本的这项测试。它通过 Harvey 开发的 120 项任务对模型进行严格考验，涵盖起草证言录取提纲、审查商业租赁合同，以及制定收购中的所有权变更策略等工作。要获得满分，答案必须满足任务的每一项要求，且不能产生幻觉，即不能提出缺乏源文件支持的实质性主张。</p>
+<p>面向法律事务的 Astra 在 <strong>20.8%</strong> 的任务中获得满分，排名第一，领先于 GPT‑6.2 Astra 的 15.0% 和 Muse Wonder Full 的 13.1%。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7elvsIiYJS1aSNbqPreAcY/55c27a90181e7ac9e5acecbda4057cd0/astra-for-law-labaa-ranking.png?w=3840&amp;q=90&amp;fm=webp" alt="条形图对比 LAB-AA 任务的满分率。"></p>
+<p>面向法律事务的 Astra 在 20.8% 的任务中获得满分，排名第一。</p>
+<p>面向法律事务的 Astra 以不到首发对比中得分最高的非 OpenAI 模型一半的输出量，取得了这一最高分。它每项任务平均输出约 64,000 个 Token，而 Muse Wonder Full 为 139,000 个；同时，它的满分率更高，达到 20.8%，后者为 13.1%。对于按用量付费的法律团队而言，这意味着面向法律事务的 Astra 获得满分的比例高于 Muse Wonder Full，且<strong>每项任务的输出量减少了 54%。</strong>这可能决定了费用是控制在预算之内，还是大幅超支。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6Nh3rzJD9qBELDLc4elOlF/56576a8bdc979857681eb7c834bb7a83/astra-for-law-labaa-output-tokens.png?w=3840&amp;q=90&amp;fm=webp" alt="散点图展示平均输出 Token 数与 LAB-AA 满分率的关系，其中 Token 数采用对数刻度。"></p>
+<p>每个圆点代表一种模型配置。位置越高，表示获得满分的任务越多；越靠左，表示输出 Token 数越少，其中包括模型在推理和写作过程中生成的文本。面向法律事务的 Astra 每项任务平均输出约 64,000 个 Token，满分率为 20.8%；相比之下，Muse Wonder Full 分别为 139,000 个和 13.1%。图中没有任何配置能以更少的输出 Token，在得分上追平面向法律事务的 Astra。</p>
+<h3>面向法律事务的 Astra 每项任务的平均实质性幻觉数比 Claude Opus 5.5 少 95%</h3>
+<p>法律工作不能接受幻觉。哪怕只有一处虚构的引用，也可能让律师失去客户的信任、法庭上的公信力，以及多年积累的声誉。因此，面向法律事务的 Astra 始终以减少幻觉为优先目标。在 Artificial Analysis 最新的 LAB-AA 对比中，面向法律事务的 Astra 与 GPT‑6 并列，拥有<strong>最低的实质性幻觉率：</strong>每项任务 0.03 次；相比之下，排名其后的非 OpenAI 模型中表现最好的 Claude Opus 5.5 为每项任务 0.59 次。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7lXN8zH60iSckZoa3uUJ1g/458f711e3dd648cb213c56fdd9216956/astra-for-law-labaa-hallucinations.png?w=3840&amp;q=90&amp;fm=webp" alt="分组条形图对比每项 LAB-AA 任务的实质性幻觉数和轻微幻觉数。"></p>
+<p>面向法律事务的 Astra 每项任务平均产生 0.03 次实质性幻觉和 0.06 次轻微幻觉。Claude Opus 5.5 每项任务平均产生 0.59 次实质性幻觉和 0.51 次轻微幻觉，分别约为前者的 20 倍和 8.5 倍。</p>
+<p>在同样的 120 项任务中，Artificial Analysis 统计了可能在实质性问题上误导读者的幻觉陈述。面向法律事务的 Astra 每项任务平均出现 0.03 次此类错误，在对比中并列最低，约为常规 GPT‑6.2 Astra（0.06 次）的一半。所有受测的 OpenAI 配置产生的幻觉都少于 Claude Opus 5.5，后者是非 OpenAI 模型中在这一指标上表现最好的模型。与面向法律事务的 Astra 相比，Opus 每项任务平均产生约 20 倍的实质性幻觉，达到 0.59 次。值得注意的是，在这项评测中，面向法律事务的 Astra 在满足全部通过标准的任务中没有产生任何幻觉，因此，即使施加幻觉扣分，其评测得分也没有下降。</p>
+<h2>面向法律事务的 Astra 在美国判例法基准测试中名列前茅</h2>
+<blockquote>“在我们的各项基准测试中，面向法律事务的 Astra 6.2 相比此前的 Astra 模型都有显著提升。它撰写的诉讼书状更全面，论证更充分。在我们的两两比较评判中，其书状在近 90% 的情况下优于 GPT‑6 Astra 的书状。值得注意的是，深度的提升并未以牺牲此前模型的准确性为代价。我们持续观察到，Astra 系列模型在 LAB 及其美国判例法扩展测试中的幻觉率仍处于最低水平之列。”</blockquote>
+<p>Julio Pereyra，Harvey 法律研究负责人</p>
+<p>诉讼书状撰写是法律工作中最复杂的长周期流程之一，需要将清晰的推理、研究和写作结合起来，形成出色的论证。</p>
+<p>Harvey 与 <a href="https://grubel.ai/">Grubel</a> 共同开发了 <a href="https://www.harvey.ai/blog/legal-agent-bench-us-case-law">LAB: USCL</a>，用于测试模型能否针对真实的美国联邦案件开展研究并撰写诉讼书状。每个模型都以原诉讼书状提交前的时间点为起点，就同一争议问题为同一方当事人撰写书状。在一个测试版本中，模型必须自行查找相关判例。在另一个版本中，模型会获得案卷材料和原律师引用的判例。AI 评分系统依据经律师审核和校准的标准，对书状进行两两比较。面向法律事务的 Astra 在两个版本中的得分均名列前茅。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1HVz2qpUp9oskSsvcNmscc/eef9bc9e554b03d83bf1a8a26f898544/astra-law-legal-intelligence-brief-ratings.png?w=3840&amp;q=90&amp;fm=webp" alt="Harvey 美国判例法评测：在自行研究的测试中，面向法律事务的 Astra 得分为 1,844，Opus 5.5 为 1,817；在提供判例的测试中，两者分别为 1,883 和 1,882。两项测试中的不确定性区间均有重叠。"></p>
+<p>Farther right means the briefs earned higher ratings. When the models researched the law themselves, Astra for Law scored 1,844 to Opus 5.5’s 1,817. Given the precedents, they were effectively even at 1,883 and 1,882.</p>
+<p><em>位置越靠右，表示书状获得的评分越高。在模型自行开展法律研究的测试中，面向法律事务的 Astra 得分为 1,844，Opus 5.5 为 1,817。在提供判例的测试中，两者基本持平，分别为 1,883 和 1,882。两项测试中的不确定性区间均有重叠。</em></p>
+<p>第一项结果（左侧的“研究与起草”）意义重大，因为提升法律研究能力是此次发布的核心改进之一。我们重点提升了这项表现，因为诉讼律师很少能在工作之初就拿到一份恰好包含所需判例的清单。在这项测试中，每个模型都必须判断哪些判决与案件相关，并据此撰写出法院能够理解的论证。在这项任务中，与 Opus 5.5、Gemini 4 Argon 等其他领先前沿模型相比，Harvey 评分系统更青睐新版面向法律事务的 Astra 撰写的书状。在接下来介绍的 Vals AI 评测中，我们可以看到法律研究能力更为显著的提升。</p>
+<h2>面向法律事务的 Astra 在 Vals AI 法律研究基准测试中名列前茅，不到两个月提升了 9 个百分点</h2>
+<p>OpenAI 已将法律列为重点研究领域，并组建专门的研究团队，加速前沿法律智能的创新。<a href="https://www.vals.ai/benchmarks/legal_research">Vals AI 法律研究基准测试</a>是衡量该团队早期进展的一项指标，其中的问题由执业律师围绕美国联邦法和州法设定。答案必须涵盖所有要求的要点，并通过来源核查。9 月，面向法律事务的 Astra 答题通过率约为 <strong>46%</strong>。本次发布版本的通过率达到 <strong>54.81%</strong>，与已公布的最高分相差不到 1 个百分点。</p>
+<p>以模型配置的形式构建面向法律事务的 Astra，让我们既能改进其推理方式，也能扩充其可查阅的资料。自 9 月以来，我们已将 GPT‑6.2 Astra 引入该配置，并优化了指导其法律分析的指令。我们还向其搜索索引中新增了超过 <strong>539,000 份美国法律资料</strong>，并开始收录英国、澳大利亚和加拿大的一手法律资料，新增了来自<strong>这三个国家的超过 98,000 份资料</strong>。这些新增内容进一步扩充了法律搜索索引。该索引<a href="https://openai.com/index/astra-for-law/">在推出时就已涵盖超过 2.3 亿个 URL⁠</a>，其资料集覆盖了<a href="https://wiki.free.law/c/courtlistener/help/data-coverage/case-law">美国已公布且具有先例效力的判例法的 99.9% 以上</a>。</p>
+<p>在 Harvey 自有的法律智能体基准测试中，GPT‑6 Astra 在 <strong>4.6%</strong> 的任务中满足了全部要求。在相同条件下，GPT‑6.2 Astra 完全达标的任务比例为 <strong>14.6%</strong>。采用法律专用配置后，这一比例上升至 <strong>16.2%</strong>。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/38EGkb4OZvdEeyQ0u6J8hb/949faf5ace6376bf617549e8395e35bc/astra-for-law-harvey-lab-all-pass.png?w=3840&amp;q=90&amp;fm=webp" alt="在 Harvey 法律智能体基准测试中满足全部要求的任务占比：GPT-6 Astra 为 4.6%；GPT-6.2 Astra 为 14.6%；面向法律事务的 Astra 6.2 为 16.2%。"></p>
+<p>This chart shows both the rate of development in frontier intelligence, as well as the impact of the model configuration. The full-credit rate more than tripled from GPT‑6 Astra to GPT‑6.2 Astra, then rose another 11% with the legal configuration. This test comes from Harvey’s own LAB (separate from the previously discussed LAB-AA).</p>
+<p><em>条形越长，表示满足 Harvey 全部要求的任务越多。Harvey 单独开展了这项测试，与 Artificial Analysis 的 LAB-AA 评测相互独立。</em></p>
+<h2>律师正利用面向法律事务的 Astra 检验论证，帮助同事做出更艰难的判断</h2>
+<blockquote>“我们很高兴有机会提前试用面向法律事务的 Astra 早期版本，这些版本从构建之初就考虑了法律应用场景。无论在诉讼还是交易事务中，这些模型都展现出令人印象深刻的研究深度，以及对法律依据效力的敏锐判断。即使仍处于早期阶段，它们也让我们感到，面向法律领域、以最新且全面的研究为严谨依据的 AI，已经向前迈出了重要一步。”</blockquote>
+<p>—John Savva，Sullivan &amp; Cromwell 合伙人</p>
+<p>将面向法律事务的 Astra 用于日常工作的律师，正在探索它最值得期待的应用可能。在律所客户和 OpenAI 自身的法律团队中，早期用户正围绕执业领域构建参考资料，让自己的论证接受更严格的质疑，并探索分析法律的新方法。</p>
+<p>例如，OpenAI 内部的早期用户正在利用面向法律事务的 Astra 开展以下工作：</p>
+<ul><li><strong>为你的论证找到最强的对手。</strong>面向法律事务的 Astra 常被用作辩论陪练。一位竞争法律师向它提供自己对某项法律的解读，请它结合立法沿革、法院判决和该法律的其他语言版本，从反方角度展开论证。当反对意见足以促使律师调整法律建议时，它的价值就显现出来了。</li><li><strong>厘清建议与强制要求之间的界限。</strong>一位研究 AI 监管法案草案的政策律师，想弄清独立审查员究竟有多大权限。如果审查员要求整改，开发者是否必须执行？针对这类问题，这位律师将各项义务的通俗英文解释与法案原文并列呈现，让同事看清文本支持哪种解读。</li><li><strong>与外部法律顾问首次沟通，就直奔难题。</strong>当公司考虑进入一个陌生行业时，一位产品律师会利用面向法律事务的 Astra，梳理拟开展的业务活动适用哪些规则。这样，律师不必在首次沟通时花时间了解行业概况，而是可以直接就公司计划开展的业务，向专业顾问提出具体问题。</li><li><strong>把一摞政策文件转化为工作流程。</strong>一位法律项目经理利用面向法律事务的 Astra，将监管程序和公司政策转化为供同事处理新收案件的工作流程，让他们清楚何时需要补充信息、何时可以结案，以及何时应移交律师处理。</li><li><strong>为法律编写一份你一直想要的配套指南。</strong>一位竞争法律师将面向法律事务的 Astra 与 ChatGPT 的网站构建工具结合使用，为团队经常查阅的法律添加注释。同事在阅读条款时，只需将鼠标悬停在术语上即可查看定义，也可以通过链接查阅解释材料，并查看上次涉及该条款时团队给出的建议。</li></ul>
+<h2>将面向法律事务的 Astra 融入你的法律实践</h2>
+<p>即日起，所有 ChatGPT Enterprise 客户都可以通过管理控制台中的可信访问计划，申请使用面向法律事务的 Astra。如果你的团队已获得访问权限，请在 ChatGPT 中选择 <strong>GPT‑6.2 Astra Law</strong>。如需通过 API 将面向法律事务的 Astra 集成到自己的工具中，请联系你的客户总监，单独申请审批。</p>
+<p>法律行业正处于转折点。技术正在改变企业的能力边界，世界也日益复杂、彼此紧密相连。在这样的背景下，律师迎来了前所未有的机会，帮助我们理解当下、把握变化。这不仅关乎他们服务的企业，也关乎我们每一个人，因为我们都生活在他们参与制定的规则之下。我们相信，最优秀的律师借助最强大的智能，能够回应这个时代的挑战。</p>
+<p>这仅仅是开始。我们期待看到你们将法律行业带向怎样的未来。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>拓宽科学家使用 AI 的途径</title>
@@ -133,6 +870,33 @@
       <guid isPermaLink="true">https://openai.com/index/expanding-chatgpt-for-academic-researchers</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Broadening access to AI for scientists</description>
+      <content:encoded><![CDATA[<p>ChatGPT for Academic ResearchersChatGPT for Academic ResearchersChatGPT for Academic Researchers</p>
+<p>2026 年 11 月 16 日 · 研究 · 科学</p>
+<h1>让更多科学家用上 AI</h1>
+<p>我们正在扩大 ChatGPT 学术研究人员计划的规模，为全球最多 20 万名研究人员提供免费的 ChatGPT 使用权限。</p>
+<p>该计划于 7 月启动试点。下一轮申请将于 11 月 23 日（星期一）开放。我们将按先到先得的原则，向符合条件的研究人员发放 5 万个新的资助名额。每个资助名额可让获资助者及最多两名合作者免费使用 ChatGPT Plus。如果你已加入候补名单且符合条件，我们会在申请开放前向你发送电子邮件，说明如何激活账户。</p>
+<p>参与者可以使用 OpenAI 的前沿模型，并接受有关如何在研究中使用 ChatGPT 的培训。默认情况下，我们不会使用通过该计划分享的数据来训练模型。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3TqXxbNfX7x4E4fbCzc0pD/21397d619915767c059f473d08cf56f2/academic-researchers-global-interest-map-clean.png?w=3840&amp;q=90&amp;fm=webp" alt="截至 2026 年 11 月 12 日，ChatGPT 学术研究人员计划候补名单报名人数的世界分布图，按推定的所属机构所在国家统计。颜色越深，表示报名人数越多，采用对数刻度展示，数值范围为 0 至 10,403；美国的报名人数最多。"></p>
+<p><em>截至 2026 年 11 月 12 日，按国家或地区统计的候补名单报名人数。颜色越深，表示报名人数越多，数据采用对数刻度展示。</em></p>
+<h2>试点带来的启示</h2>
+<p>自 7 月启动试点以来，已有来自 33 个国家的 2 万名研究人员加入该计划。布莱根妇女医院和哈佛医学院的研究人员 Shuqi Li 正在寻找新的药物靶点，希望最终缩短结核病的治疗周期。他正在探索 ChatGPT 能否帮助关联实验室数据和患者数据，从而加快抗生素的研发。佛罗里达自然历史博物馆 AI 生物多样性助理研究馆员 Arthur Porto 及其团队，利用 AI 工具将馆藏标本照片转化为可检索的数据库。他们还创建了一个蝴蝶的 3D 模型：转动模型时，翅膀会变色，就像真实的标本一样。</p>
+<p>我们还将发布经济研究团队的最新研究报告<a href="https://openai.com/index/science-at-the-frontier/"><em>《科学前沿：科学家如何使用 ChatGPT》</em></a>，分析 1,800 多名研究人员在该计划夏季试点期间使用 ChatGPT 的情况。受访参与者估计，如果没有 AI，要以同等质量完成相同的研究工作，所需时间将接近原来的两倍。</p>
+<p>我们希望更多研究人员能获得所需的工具和支持，探索富有挑战性的课题，取得改善人们生活的发现。这正是我们确保 AGI 造福全人类这一使命的核心所在。</p>
+<h2>在经验基础上持续改进</h2>
+<p>该计划的夏季试点帮助我们了解研究人员如何使用 ChatGPT，以及如何改善他们的使用体验。根据研究人员的反馈，我们将不再采用抽签方式筛选参与者。下一轮，我们将向最先提交申请且符合资格要求的 5 万名申请者提供使用权限。</p>
+<p>试点期间，研究人员获得了 ChatGPT Pro 的使用权限。回顾试点期间的使用情况后，我们发现，大多数参与者的用量都在 ChatGPT Plus 的限额范围内。基于这一发现，新一轮资助将提供 Plus 使用权限，以便覆盖更多研究团队。</p>
+<p>本轮每个资助名额覆盖获资助者及最多两名合作者，总计可支持最多 15 万名研究人员。整个计划的目标是覆盖 20 万名研究人员，是我们 7 月启动试点时所公布目标的两倍。</p>
+<p>我们将继续听取参与者对申请流程的反馈，了解他们需要哪些功能，以及哪些支持能帮助他们在研究中使用这些工具。这些反馈将帮助我们完善计划，并为后续轮次的安排提供参考。</p>
+<h2>支持各领域的研究人员</h2>
+<p>不同科学领域使用 AI 的方式各不相同，研究人员所需支持的类型和程度也会有所差异。我们正与各科学领域的研究群体合作，了解这些需求，并据此改进工具、培训和相关计划。</p>
+<p>我们还会帮助科学界将 AI 生成的结果转化为更深入的理解和新的发现。在数学领域，我们<a href="https://openai.com/index/sharing-ai-progress-in-mathematics/">向西蒙斯基金会的一项新计划捐赠了 500 万美元⁠</a>，帮助数学家检验、理解 AI 生成的结果，并在此基础上推进研究。</p>
+<p>我们也在为研究人员和机构提供多种获取工具使用权限的途径。ChatGPT 学术研究人员计划只是我们帮助研究人员使用先进 AI 工具的途径之一。</p>
+<ul><li>通过 <a href="https://help.openai.com/en/articles/9377311-chatgpt-edu-at-openai">ChatGPT Edu</a>，高校可以为校内师生和员工提供 ChatGPT 使用权限，用于研究、教学和学习，同时提供数据分析工具和用于管理访问权限的管控功能。</li><li>对于生物学研究人员，<a href="https://openai.com/rosalind/">GPT‑Rosalind⁠</a> 将专业的生物学推理能力与科学工具和数据库访问能力结合起来。<a href="https://openai.com/index/introducing-the-rosalind-academic-plan/">Rosalind 学术计划⁠</a>帮助美国高校符合条件的实验室获得这些能力，提供最多 30 个免费席位，使用期限最长为 12 个月。使用 GPT‑Rosalind 需要通过我们的可信访问审核流程。</li></ul>
+<p>请查阅我们的<a href="https://openai.com/science/researcher-access/">研究人员使用权限指南</a>，进一步了解 ChatGPT Edu、GPT‑Rosalind 和 ChatGPT 学术研究人员计划。</p>
+<p>随着这些工作不断推进，研究人员的使用体验将帮助我们了解工具在哪些方面有用、有哪些不足，以及还需要提供哪些支持。我们将根据这些反馈改进计划，开发培训和学习资源，并为研究人员创造相互交流方法的机会。</p>
+<p>我们的目标是为更多研究人员提供工具和支持，助力他们探索富有挑战性的课题，并随着他们的研究和我们的能力不断发展，持续改进这些支持。</p>
+<p><a href="https://chatgpt.com/academic-researchers/apply">进一步了解该计划</a>。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>借助新工具与支持，加强打击网络儿童性虐待</title>
@@ -140,6 +904,40 @@
       <guid isPermaLink="true">https://openai.com/index/strengthening-online-child-safety</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Strengthening the fight against online child sexual abuse with new tools and support</description>
+      <content:encoded><![CDATA[<p>2026年11月16日</p>
+<p>安全</p>
+<h1>以新工具和支持措施，加强打击网络儿童性虐待</h1>
+<p>新工具、实用指南和合作伙伴关系，将有助于预防、检测和应对网络儿童性剥削和性虐待。</p>
+<p>今天，我们推出一款用于检测儿童性虐待材料（CSAM）的新工具，同时推出阻断有害行为并引导人们寻求帮助的干预措施、面向开发者的实用资源，以及为儿童安全执法调查人员提供的支持。这些举措以我们的<a href="https://openai.com/index/introducing-child-safety-blueprint/">《儿童安全蓝图》</a>和<a href="https://openai.com/index/combating-online-child-sexual-exploitation-abuse/">持续开展的侵害行为检测、拦截和举报工作</a>为基础。对家长而言，目标很简单：让技术帮助保障儿童安全，同时由人来掌握控制权。</p>
+<p>打击网络儿童性侵害者需要多个组织协同合作，这一点已有<a href="https://www.esafety.gov.au/sites/default/files/2026-02/Designing-for-Safety_Preventing-child-sexual-exploitation-and-abuse-online_CSEA-toolkit.pdf">充分依据</a>，也得到了<a href="https://technologycoalition.org/programs/lantern/">实践验证</a>。包括 OpenAI 在内的每家公司都有责任防止自身技术被侵害者用来伤害儿童。我们也必须与更广泛的行业、儿童安全组织和执法部门携手合作，共同推进儿童网络保护工作。</p>
+<h2>帮助更多组织检测侵害材料</h2>
+<p>我们在<a href="https://openai.com/index/combating-online-child-sexual-exploitation-abuse/">现有防护措施</a>的基础上，推出一款新的图像分类器，用于检测疑似 CSAM，包括 AI 生成的材料。这款新分类器会寻找侵害行为的视觉迹象，帮助团队识别可能从未出现过的新图像。它会返回评分，帮助审核人员判断哪些图像可能需要优先处理。这是首款广泛开放使用、且能专门提示 CSAM 是否可能由 AI 生成的 CSAM 分类器。</p>
+<p>在<a href="https://www.missingkids.org/">美国国家失踪与受剥削儿童中心（NCMEC）</a>的协助下，我们的团队面向实际部署需求，对分类器进行了训练、评估和设计。NCMEC 是一家非营利组织，运营着集中受理网络儿童剥削举报的 CyberTipline 平台。</p>
+<p>我们正通过 OpenAI API 向经过审核的组织免费提供该分类器，让儿童安全组织及更广泛行业中不同规模的团队，都能更便捷地开展 CSAM 检测。</p>
+<p>儿童安全是整个行业共同面对的问题，需要各组织密切合作，并采用多种解决方案。我们已邀请<a href="https://technologycoalition.org/">科技联盟</a>和 <a href="https://roost.tools/">ROOST</a> 协助推广这款新工具，让更多组织得以使用。我们也大力支持其他组织开发的工具，例如 <a href="https://safer.io/">Thorn 的 Safer</a> CSAM 检测系统。此外，我们近期开始参与科技联盟的 <a href="https://technologycoalition.org/programs/lantern/">Lantern 计划</a>，将在该计划中分享和接收与网络儿童性剥削和性虐待相关的线索，以加强跨平台协作。</p>
+<p>我们已在内部并与早期合作伙伴一起测试了分类器，衡量其能够检出多少侵害材料、标记其他图像的频率，以及它能如何支持安全团队。他们的反馈帮助我们发现了薄弱环节，并改进了系统。</p>
+<h3>结果</h3>
+<p>早期测试表明，分类器有望帮助审核人员将精力集中在侵害图像上，同时减少对误报图像的审核。在针对用户上传图像的一项评估中，我们将新分类器与现有防护措施进行了比较，发现：</p>
+<ul><li>新分类器有望减少审核工作量：我们估计，在检出与现有工具大致相同数量的侵害图像时，它标记的图像总量可减少 <strong>48%</strong>。</li><li>新分类器所标记的图像包含侵害内容的概率约为现有工具的<strong>两倍</strong>。</li></ul>
+<p>抢先体验的合作伙伴也评估了该分类器如何为其安全团队提供支持。在 <a href="https://fal.ai/"><strong>fal</strong></a> 使用经人工审核的生产环境图像开展的测试中，审核人员确认，分类器以高置信度标记的图像有 <strong>72%</strong> 属于此前未发现的 CSAM。<a href="https://invideo.io/"><strong>invideo AI</strong></a> 的测试表明，每四起被标记的案例中，就有一起最终导致封禁。在 <a href="https://www.safetykit.com/"><strong>SafetyKit</strong></a> 针对将儿童性化的绘画或动画开展的评估中，分类器检出了 <strong>90%</strong> 的案例。</p>
+<p>有关分类器的更多信息，请参阅 <a href="https://deploymentsafety.openai.com/csam-image-classifier">CSAM 分类器模型卡</a>。有意使用该分类器的组织将可通过<a href="https://openai.com/form/csam-classifier-intake/">我们的申请表⁠</a>申请访问权限。我们将根据使用者的反馈持续改进分类器。</p>
+<h2>阻断有害行为，引导人们寻求帮助</h2>
+<p>我们已经<a href="https://openai.com/index/combating-online-child-sexual-exploitation-abuse/">禁止 CSAM</a>，训练模型拒绝相关请求，并对违反政策的账号采取措施。在这些防护措施的基础上，我们正在 ChatGPT 中加入新的产品内警告，阻断查找侵害材料的尝试，说明后果，并引导人们寻求帮助，以停止有害行为。</p>
+<p>警告会明确指出，将儿童性化会造成伤害，即使所请求的材料由 AI 生成也不例外。在发出警告的同时，我们将删除被标记的对话，并暂停用户访问 ChatGPT 的权限 24 小时，但仍会提供专业支持渠道，帮助其停止有害行为。屡次违规可能导致更长时间的限制，最终可能导致账号被关闭，或相关情况被报告给主管部门。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6phKwsBa1TVzc2XxxUJSNQ/ff62c0fb3cea0b4e799a7177210c1a19/strengthening-online-child-safety-inline-warning.png?w=3840&amp;q=90&amp;fm=webp" alt="ChatGPT 警告指出，将儿童性化会造成伤害且可能违法，并告知用户账号将被暂停使用 24 小时，同时提供专业支持。"></p>
+<p>我们在制定这一方案时，听取了致力于研究和开发儿童性虐待预防项目的组织及学术顾问的意见，包括 <a href="https://www.suojellaanlapsia.fi/en">Protect Children</a>、<a href="https://www.lucyfaithfull.org.uk/">Lucy Faithfull 基金会</a>、肯特大学法医心理学研究员兼荣誉准教授 Caoilte Ó Ciardha 博士，以及塔斯马尼亚大学的 Joel Scanlan；后者曾<a href="https://www.utas.edu.au/about/news-and-stories/articles/2024/pioneering-chatbot-reduces-searches-for-illegal-sexual-images-of-children">独立评估一项试验</a>，检验劝阻提示信息的效果。</p>
+<h2>为开发者提供实用支持</h2>
+<p>保护儿童网络安全，不能止步于检测。我们已发布 <a href="https://developers.openai.com/api/docs/guides/csam-guidance">CSAM 指南</a>，为开发者提供防范侵害、检测有害内容并采取行动的实用步骤。这份指南在制定时听取了<a href="https://technologycoalition.org/">科技联盟</a>、<a href="https://www.thorn.org/">Thorn</a>、<a href="https://www.missingkids.org/home">NCMEC</a> 和<a href="https://www.iwf.org.uk/">互联网观察基金会</a>的意见，适用于处在安全系统建设不同阶段的组织。</p>
+<p>这份指南提供了明确的规则、用户反映问题的渠道、检测工具，以及审查和举报疑似侵害行为的流程。指南还说明了安全标识符如何帮助开发者将滥用行为追溯到具体用户，以及如何为审核敏感内容的人员提供支持。开发者可以将指南与相关工具配合使用，例如我们的新图像分类器、<a href="https://developers.openai.com/api/docs/guides/moderation">内容审核 API</a>、<a href="https://roost.tools/coop/">ROOST 的自托管审核控制台 Coop</a>，以及 <a href="https://safer.io/">Thorn 的 Safer</a> 等专门的 CSAM 检测服务。</p>
+<p>我们也与 Anthropic 和 Google 共同委托制定了一份新指南，介绍如何应对用户在 AI 系统中披露的儿童性剥削和性虐待情况。这项工作同样体现了我们对合作以及支持更广泛开发者生态的承诺。这份指南近日由<a href="https://technologycoalition.org/resources/responding-to-child-sexual-abuse-disclosures-in-ai-systems/">科技联盟</a>发布，为开发者处理这些敏感情况提供了实用建议。</p>
+<p>我们已经看到，这份指南促使更多开发者开始使用儿童安全工具，并注册成为向 NCMEC 举报 CSAM 的机构。</p>
+<h2>支持儿童安全执法部门</h2>
+<p>保护儿童也意味着支持那些致力于寻找受害者、制止侵害行为的儿童安全专业调查人员。正如我们<a href="https://forum.openai.com/public/videos/event-replay-using-ai-to-protect-children-online-in-conversation-with-thorn-2026-02-11">与 Thorn 公开讨论过的那样</a>，AI 可以帮助调查人员整理信息、确定处理优先级，并减少不必要地接触侵害材料的情况。</p>
+<p>我们还为儿童安全执法部门提供新工具，以及如何在调查中使用 AI 的培训，内容涵盖专用插件、调查工具和复杂数据分析，访问权限由项目管理员管理。首款工具推出时，将帮助调查人员审阅冗长的聊天记录和通过法律程序调取的材料、识别潜在关联并梳理时间线，同时将调查发现关联到原始材料。</p>
+<p>初期培训计划以概述和演示为主，并配套提供实务指南，供团队在培训后查阅。培训将介绍这些工具及其在调查工作中的应用方式。访问权限将取决于机构授权和项目要求。未来的培训方案将提交至地区、全国和国际会议，争取纳入会议安排。</p>
+<h2>携手持续推进</h2>
+<p>这些举措有一个共同目标：防止儿童受到伤害，并在侵害发生时加强应对。我们将继续完善安全防护措施，同时为儿童保护组织、开发者、研究人员和调查人员提供所需的工具、资源和专业知识，帮助他们保护儿童、打击剥削行为，并将施害者绳之以法。通过携手合作，我们可以发挥 AI 的力量，在打击儿童性剥削和性虐待方面取得切实成效。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>前沿科学：科学家如何使用 ChatGPT</title>
@@ -147,6 +945,59 @@
       <guid isPermaLink="true">https://openai.com/index/science-at-the-frontier</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Science at the Frontier: How scientists use ChatGPT</description>
+      <content:encoded><![CDATA[<p>Drag left or right, or use the arrow keys, to rotate the sphere of scientific objects. Press Space to pause or resume.</p>
+<p>2026年11月16日</p>
+<p>科学</p>
+<h1>科学前沿</h1>
+<p>超过 1,800 名科学家如何使用 ChatGPT，以及他们预计 AI 将为科学发现带来什么。了解我们最新报告中的研究发现。</p>
+<p><a href="https://cdn.openai.com/pdf/28615567-15d1-4e4c-907e-f837a1f2b2f4/Science%20at%20the%20Frontier-%20How%20Scientists%20Use%20ChatGPT.pdf">下载核心要点</a><a href="https://cdn.openai.com/pdf/0e4b2466-0be0-4326-8bf7-117d809e14d2/Science%20at%20the%20Frontier.pdf">阅读完整报告</a></p>
+<p>科学进步有赖于研究人员提出新问题，并找到解答这些问题的方法。AI 正逐渐成为这项工作的一部分，但我们仍在探索它能在哪些方面提供帮助，以及它可能为科学发现带来什么。</p>
+<p>OpenAI 经济研究团队分析了 ChatGPT 学术研究者计划夏季试点中 1,819 名科学家发送的超过 580,000 条科研消息，并对 251 名参与者进行了问卷调查。</p>
+<p>从文献查阅到证据分析，再到研究思路构思，科学家在研究的各个环节中都使用了 ChatGPT。受访参与者估计，如果没有 AI，要以相同质量完成相同工作，所需时间将是原来的 1.9 倍。在回答了科学发现所需时间这一问题的受访者中，98% 预计 AI 将加快其所在领域的科学发现。</p>
+<p>默认情况下，OpenAI 不会使用 ChatGPT 学术研究者计划参与者的数据来训练模型。为保护研究人员的隐私，我们使用名为自动分类器的工具，按研究活动类型对消息进行分类，例如文献查阅、代码编写或数据分析。研究团队可以查看这些分类，但并未阅读原始消息或 ChatGPT 的回答。</p>
+<h2>AI 已成为科学家日常工作的一部分</h2>
+<p>我们研究了科学家如何在研究的各个环节中使用 ChatGPT。</p>
+<p>我们先计算每位科学家的科研消息中各类活动所占的比例，再对这些比例取平均值，赋予每位科学家相同的权重。百分比经过四舍五入；其他研究活动占比低于 1%。</p>
+<h2>68% 的科学家使用 ChatGPT 构思研究思路</h2>
+<p>我们考察了科学家如何使用 ChatGPT 进行构思。以下数据展示了他们围绕研究思路发送的消息的情况。</p>
+<p>由科学家主导</p>
+<p>35%</p>
+<p>的情况下，科学家提出具体问题，让 ChatGPT 围绕问题展开工作。</p>
+<p>共同构思</p>
+<p>36%</p>
+<p>的情况下，科学家带着构想，请 ChatGPT 帮助完善。</p>
+<p>由 ChatGPT 提出</p>
+<p>23%</p>
+<p>的情况下，科学家请 ChatGPT 提出研究问题。</p>
+<p>其他</p>
+<p>6%</p>
+<p>消息无法归入其他任何一类活动。</p>
+<h2>98% 的受访科学家预计 AI 将加快其所在领域的科学发现。</h2>
+<p>我们请不同领域的科学家设想一项没有 AI 时需要 10 年才能取得的科学发现，并估计有 AI 时需要多长时间。</p>
+<p>250 名受访者回答了这一问题。受访者可以选择多个领域，因此各领域群体存在重叠。百分比经过四舍五入，总和可能不等于 100%。</p>
+<h2>即使将任务交给 ChatGPT，科学家仍会持续参与</h2>
+<p>我们衡量了在不同研究活动中，科学家针对 ChatGPT 的回答进一步要求澄清、核查或修改的频率。</p>
+<p>每位科学家引发后续互动的请求占比的平均值。</p>
+<h2>AI 如何进一步推动科学进步？</h2>
+<p>我们请预计科学发现会加快的科学家说明原因。他们的回答中，有三类原因尤为突出。</p>
+<p>52%</p>
+<p>更快完成研究工作</p>
+<p>23%</p>
+<p>找到更有前景的研究问题</p>
+<p>14%</p>
+<p>探索更广泛的问题</p>
+<p>11%</p>
+<p>其他</p>
+<p>科学家可以给出多个原因。百分比表示各类原因在 224 份书面回答中识别出的全部 367 条原因中所占的比例。</p>
+<h2>展望未来</h2>
+<p>本研究中的科学家使用 ChatGPT 探索思路、分析证据、编写代码，并交流研究成果。他们的回答也表明，他们的目标不只是节省时间，还希望找到更有前景的问题，开展更广泛的研究。</p>
+<p>这些期望能否转化为更快的科学发现，还需要进一步研究。科学进步也取决于科学家是否具备检验构想所需的资金、人员和实验能力。</p>
+<p>我们希望帮助更多科学家探索 AI 能为其工作带来哪些可能。在开展这项研究的同时，我们也在扩大 <a href="https://openai.com/index/expanding-chatgpt-for-academic-researchers/">ChatGPT 学术研究者计划⁠</a>的规模，为全球超过 200,000 名研究人员提供免费使用权限。帮助科学家将构想转化为改善人们生活的科学发现，是我们确保 AGI 造福全人类这一使命的核心。</p>
+<p>如需进一步了解本研究，请<a href="https://cdn.openai.com/pdf/0e4b2466-0be0-4326-8bf7-117d809e14d2/Science%20at%20the%20Frontier.pdf">阅读完整论文</a>或<a href="https://cdn.openai.com/pdf/28615567-15d1-4e4c-907e-f837a1f2b2f4/Science%20at%20the%20Frontier-%20How%20Scientists%20Use%20ChatGPT.pdf">下载主要研究发现</a>。</p>
+<p>“ChatGPT 这样的工具正在帮助我们加快科学发现。对我这样的科学家而言，这真是一片可以自由探索的乐园。”</p>
+<p>César de la Fuente</p>
+<p><a href="https://openai.com/zh-Hans-CN/index/accelerating-antibiotic-discovery/">抗微生物研究⁠</a></p>
+<h2>关于本研究</h2>]]></content:encoded>
     </item>
     <item>
       <title>Revolut 如何在不降低标准的情况下提高雄心</title>
@@ -154,6 +1005,69 @@
       <guid isPermaLink="true">https://openai.com/business/customer-stories/revolut</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How Revolut raises ambition without lowering the bar</description>
+      <content:encoded><![CDATA[<p>2026年11月16日</p>
+<h1>Revolut 如何在不降低标准的同时追求更高目标</h1>
+<p>借助 OpenAI 模型和 Codex，Revolut 让团队有更多精力解决复杂问题，涵盖从软件工程到金融犯罪防范的多个领域</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<p>公司规模: 大型企业</p>
+<p>区域: 全球</p>
+<p>行业: 科技, 金融</p>
+<p>产品: ChatGPT, API, Codex</p>
+<p>30–60%</p>
+<p>从任务启动到功能合并，编码时间的降幅</p>
+<p>一天</p>
+<p>将七年积累的设计文档转化为 AI 可读取的上下文所需的时间</p>
+<p>1–2 天</p>
+<p>借助 Codex 进行安全代码审查所节省的时间</p>
+<h2>让日常工作更高效</h2>
+<p><a href="http://www.revolut.com">Revolut</a> 创立之初，就是为了改变人们管理和使用资金的方式。如今，这一愿景已延伸至 40 多个市场、80 万家企业，而其消费者群体规模在过去 12 个月中增长了 23%。</p>
+<p>再加上公司文化强调由小型精干团队快速推进工作，ChatGPT 和 Codex 能与之自然契合，也就不足为奇。</p>
+<p>Revolut 全球业务营销负责人 Kim Maniovich 表示：“对一名优秀 Revolut 员工最贴切的描述是：能迅速发现问题，推导出解决思路，设计四套方案，从中选出最佳方案，然后将其推向市场。”</p>
+<p>“与 OpenAI 合作，让我们能够以极为精简、经济高效的方式构建许多同类解决方案，且契合我们独特的工作方式。”</p>
+<p>但提速只是机遇的一部分。对 Revolut 而言，更重要的问题是：当优秀人才少花时间处理具体执行环节，转而投入更多时间攻克那些可能从根本上改变金融服务的难题时，会带来哪些新的可能？</p>
+<h2>从需求量大、影响深远的领域入手</h2>
+<p>随着 Revolut 不断发展，保护客户的工作也变得更加复杂。据<a href="https://gasa.org/knowledge-base/blog/global-scams-on-the-rise-over-half-of-adults-worldwide-report-scam-encounters">一份报告</a>显示，全球超过一半的成年人表示曾在 2025 年遭遇诈骗。</p>
+<p>对 Revolut 而言，每笔交易都是一次机会。该公司可以借此识别可疑活动、调查潜在风险，并为客户提供有力且有针对性的保护。但如此庞大的交易量，远远超出了任何一家银行现有人力所能处理的范围。</p>
+<p>AI 负责人 David Abitbol 表示：“如今，我们能用 AI 解决的最大问题，就是人力扩充跟不上需求增长。”因此，由 OpenAI 模型驱动的 FinCrime 智能体，成为 Revolut 规模最大的 AI 应用程序之一。</p>
+<p>调查人员不再需要手动处理每一起符合条件的案件；智能体可以查看信息、应用 Revolut 的规则，并自动完成既定流程。</p>
+<p>GPT‑5.5 的发布成为一个转折点。Abitbol 表示，到那时，模型的能力和成本效益已足以让 Revolut 将筛查和调查工作流完全交给智能体。由此，交易监控能力得以提升，而调查人员数量无需随需求同比例增长。</p>
+<p>信息安全工程师 Mo Amiri 补充道，这“直接引入了更有力的保护措施，以及更具韧性、值得客户信赖的系统”。</p>
+<p>“快速推进，也要建立信任”，这句话很适合作为 Revolut 内部工程团队的口号。Abitbol 指出，Codex 已将编码时间缩短了 30-60%，但他也明确强调，有些防护措施绝不能妥协。</p>
+<p>他说：“我们有一套系统性框架，公司里任何人只要使用 AI 开发，就必须在开发、A/B 测试和业务指标预测各环节遵循同一套标准。因此，公司所有工程师都要达到相同的质量标准。我们开始能以合理成本部署足够强大的智能技术，从而将越来越多的初步调查和筛查工作交给智能体。”</p>
+<h2>下放执行权，而非责任</h2>
+<p>对高级平台工程师 Dmitry Pitik 来说，在搭建内部代码审查服务时，他切实体会到了编码时间缩短 30-60% 的效果。他设计了系统，将其拆解为各项功能，起初以为需要一整个开发团队才能实现。</p>
+<p>他回忆道：“我意识到，要实现这个系统，并不需要一整支开发团队。我只需启动不同的智能体，给每个智能体分配一项具体任务。”Codex 成了他的开发团队，而 Dmitry 则把更多时间用于系统设计、工作规划和审查返回的结果。</p>
+<p>Abitbol 在 Revolut 的各个团队中都看到了这种工作模式。Codex 为工程师腾出时间和精力后，他们便利用这些时间“更深入地讨论设计和最佳解决方案。因此，我们把更多时间花在设计上，而不是具体实现上。”</p>
+<p>这并不意味着 Revolut 不再需要工程专业能力，而是改变了这些能力的用武之地。Pitik 表示：“每位开发者都要对自己产出的代码负责，我们不会盲目信任 AI。”由此形成了一种新的分工模式：AI 协助实现，工程师则专注于做出关键决策，判断软件是否实用、可靠且值得开发。</p>
+<p>这些额外投入是值得的。在 Codex 处理一项任务的同时，Pitik 可以并行处理另一项任务。正如 Kim Maniovich 所说，公司员工平均每人承担“三份不同的工作”，因此，这种多任务并行能力至关重要。使用 Codex 带来了一种良性循环，尽管也充满挑战：“我们设定的目标逐月提高，但也变得更容易实现。所以，标准也在不断提升。是 AI 让这一切成为可能。”</p>
+<p>利用这些新释放的产能，Revolut 已经完成了多项工作，例如开发一款工具，用于为内部应用和面向外部用户的产品构建网页界面。</p>
+<p>又如，仅用一天就将七年积累的设计文档转化为 AI 可读取的上下文，为开发旨在提升设计师工作效率的工具奠定基础。这一实践说明，AI 可以让组织积累的知识更易于获取，从而减少使用复杂系统所需的投入。高级设计师 Dmytro Pavlov 表示：“有些工作虽然重要，但没有 AI 就很难完成。现在，我们可以把重心从这些工作转向对客户真正有价值的事情。”</p>
+<blockquote>“我意识到，我并不需要一整支开发团队。我只需启动不同的智能体，再为它们分配任务。”</blockquote>
+<p>— Dmitry Pitik，Revolut 高级平台工程师</p>
+<h2>将信任融入系统</h2>
+<p>Mo Amiri 的职责，是确保所有这些提速举措的背后，都有保护措施支撑 — 既要保护客户，也要保护 Revolut 自己的员工。这让他同时从两个角度审视 AI：AI 如何帮助 Revolut 调查问题，以及团队需要做好哪些准备才能安全地部署 AI。</p>
+<p>例如，在网络钓鱼调查中，分析师过去需要手动收集邮件、检查其中的链接和附件、追查发件人，并整理证据。他说：“有了更强大的 AI 工具，我们就能立即发现其中的关联，并深入探究真正重要的问题。”</p>
+<p>AI 负责基础调查工作，并向调查人员提供结构化的案情资料，但核查原始记录、判断解释是否合理，以及批准任何行动，仍然要由调查人员本人完成。</p>
+<p>当团队在 Revolut 引入新的 AI 应用程序时，Amiri 也遵循同样的思路。他会审视完整链路：系统能看到哪些信息、信息流向何处、能访问哪些工具、凭借这些权限能做什么，以及出错时会发生什么。他还会检验那些看似令人信服的结论，是否确实有证据支撑。</p>
+<p>他说：“最关键的决策，始终是明确由谁负责。如果 AI 工具建议修改代码，就需要有人类工程师充分理解这项变更，并为它负责。这一原则直接决定了我们如何设计审查流程：为开发者提供必要的上下文，同时避免给日常工作流增添繁杂步骤。”</p>
+<p>对 Revolut 而言，安全保障与创新并非彼此独立。安全保障为团队创造了条件，让他们能够放心采用能力更强的技术。他解释道：“真正建立对 AI 的信心，靠的就是事先深思熟虑地做出决策，并在推进过程中持续测试。”</p>
+<blockquote>“事先深思熟虑地做出决策，并在推进过程中持续测试，才能真正建立对 AI 的信心。”</blockquote>
+<p>— Mo Amiri，Revolut 信息安全工程师</p>
+<h2>成果一览</h2>
+<ul><li>从任务启动到功能合并，编码时间缩短了 30–60%</li><li>一位工程师将实现任务分派给多个 Codex 智能体，独自搭建了内部代码审查服务</li><li>仅用一天，就将约七年积累的设计系统文档转化为 AI 可读取的上下文</li><li>在一项工作量较大的安全代码审查任务中节省了一到两天的时间</li><li>借助 FinCrime 智能体筛查更多交易，无需同比例增派调查人员</li></ul>
+<h2>给管理者的启示</h2>
+<ul><li><strong>从值得解决的问题入手。</strong>Revolut 将 AI 应用于需求增长最快、最关乎客户切身利益的领域。</li><li><strong>用提速来提高目标，而非降低标准。</strong>编码和调查节省下来的时间，让团队能够优化设计、探究更棘手的问题，并处理更有价值的工作。</li><li><strong>责任仍须由人承担。</strong>AI 可以收集证据、编写代码并提出行动建议。但仍然需要人来深入解读这些工作，并为其结果负责。</li><li><strong>先建立信任，再扩大应用规模。</strong>明确系统能访问什么、能做什么，以及出错时会发生什么，并在推进过程中持续检验这些决策。</li><li><strong>提高知识的实用价值。</strong>AI 能够获取清晰、有条理的上下文时，表现会更好。梳理这些知识的过程，也往往能揭示组织自身需要进一步厘清哪些问题。</li></ul>
+<h2>未来展望</h2>
+<p>Revolut 已经展示了 AI 如何支持团队尝试更多、更复杂的工作。接下来的机会，是将这种能力、判断力与设计的结合，融入客户管理资金的方式之中。</p>
+<p>Abitbol 设想了一种更注重对话交互的界面，让客户可以请 Revolut 协助处理日常财务任务，例如冻结银行卡、管理订阅，或寻找为旅行攒钱的方法。Pavlov 看到了这种体验背后的设计挑战：将复杂功能转化为一致、熟悉且易用的体验。</p>
+<p>Kim Maniovich 则将这一未来愿景与推动工作的企业文化联系起来。“我希望，我们能通过为人们打造的产品，让他们把我们每天践行的价值观，即‘敢于追求远大目标、永不满足于现状’也融入自己的生活。”</p>
+<p>随着 AI 让开发变得更容易，真正拉开差距的，是明确该开发什么，并在开发过程中保持良好的判断力、坚守标准、深入理解客户，把工作做好。对 Revolut 而言，这正是将智能应用于工作的更大价值：减少花在具体执行环节上的时间，腾出更多精力，为每个人提供更安全、更简单、更实用的金融服务。</p>
+<p><em>银行服务由 Revolut Group 旗下持牌实体提供。请访问 </em><a href="https://www.revolut.com/"><em>Revolut.com</em></a><em>。</em></p>
+<h2>迈入工作新时代</h2>
+<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<h2>接收 OpenAI 商业应用的最新资讯</h2>
+<p>产品更新、实用指南、活动预告等丰富内容</p>]]></content:encoded>
     </item>
     <item>
       <title>LVMH 媒体部门宣布与 OpenAI 达成战略合作</title>
@@ -161,6 +1075,24 @@
       <guid isPermaLink="true">https://openai.com/index/lvmh-media-division-partnership</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：LVMH’s Media Division announces strategic partnership with OpenAI</description>
+      <content:encoded><![CDATA[<p>2026年11月16日</p>
+<p>公司</p>
+<h1>LVMH 媒体部门宣布与 OpenAI 建立战略合作伙伴关系</h1>
+<p><em>本消息最初由 LVMH 媒体部门发布，原文可在</em><a href="https://lesechosleparisien.fr/actualites/le-groupe/le-pole-medias-de-lvmh-annonce-un-partenariat-strategique-avec-openai/"><em>此处</em></a><em>阅读。</em></p>
+<p><strong>巴黎，2026 年 11 月 16 日</strong>——LVMH 集团媒体部门与 OpenAI 宣布签署战略协议，支持旗下所有媒体探索人工智能的新用途，并通过 ChatGPT 让更多人便捷地获取其新闻报道。该协议包括向媒体部门各团队部署 OpenAI 工具和 ChatGPT Enterprise，使他们能够开发贴合日常工作需求的 AI 应用。</p>
+<p>双方的共同目标是让媒体部门各团队能够探索并开发切实可用的 AI 应用，助力新闻工作和高质量报道。</p>
+<p>人工智能是一种强大的工具，将其用于新闻编辑室，能够让记者专注于本职工作的核心：调查、分析与写作。各团队将能够探索文献研究、文档比对和初步翻译等应用场景。目标是让他们有更多时间投入调查报道、分析和实地报道。</p>
+<p>此外，面对日益纷繁的信息环境，个性化已成为一项重要任务。在开发和提供满足客户、读者及广告主需求的产品与服务方面，人工智能是不可或缺的工具，有助于吸引并留住这些群体，推动旗下各媒体的收入增长。</p>
+<p>这项合作面向整个公司，也将提升 LVMH 集团媒体部门内容在 ChatGPT 中的可见度：针对用户的相关问题提供摘要和节选，注明来源，并附上直达原文的链接。这项合作将覆盖该部门旗下所有媒体，支持整个组织内各类岗位的转型：简化运营流程、提升效率、鼓励创新与创意，让当下的媒体为未来做好准备。部署过程中将根据每个人的使用场景提供针对性培训。</p>
+<blockquote>“LVMH 媒体部门（旗下包括 Les Echos、Le Parisien、Challenges、Paris Match、L’Opinion、Investir、L’Agefi 等媒体）正与 OpenAI 建立战略合作伙伴关系。这份协议将推动我们旗下媒体走在行业前沿。AI 的融入将为所有团队的日常工作带来助力。我们很高兴能携手一家专业能力与声誉备受全球认可的合作伙伴，开启这段旅程。”</blockquote>
+<p>—Michèle Benbunan，LVMH 集团媒体部门首席执行官</p>
+<blockquote>“优质新闻报道离不开那些开展调查、核实事实并帮助受众理解信息的新闻工作者。我们希望帮助 LVMH 媒体部门的每一位员工用好 AI，为各团队提供工具，助他们深入挖掘报道选题，开发 AI 的新用途。我们的目标是在尊重其编辑独立性的同时，帮助他们将更多时间投入到真正体现新闻报道价值的工作中。这项合作也将让 ChatGPT 用户能够获取紧跟时事的高质量新闻报道。”</blockquote>
+<p>—Emmanuel Marill，OpenAI 欧洲、中东及非洲地区董事总经理</p>
+<h2>关于 LVMH 集团媒体部门</h2>
+<p>LVMH 集团媒体部门 Groupe Les Echos-Le Parisien 汇集了 17 个媒体品牌，涵盖新闻、金融、文化、文化遗产、艺术和音乐等领域。该部门拥有 1,800 名员工，其中包括近 700 名记者，每月在法国触达超过 2,700 万人。</p>
+<p>集团旗下媒体品牌：<a href="https://boursier.com/">Boursier.com</a>、Capital Finance、Challenges、Connaissance des Arts、Historia、Investir、La Lettre de l’Expansion、L’Agefi、Le Parisien、Aujourd’hui en France、Les Echos、L’Opinion、<a href="https://medici.tv/">medici.tv</a>、Mezzo、Mieux Vivre Votre Argent、Paris Match、Radio Classique。</p>
+<p>集团旗下展会及出版社：Citadelles &amp; Mazenod、Fine Arts Paris、In Fine、Salon du Dessin。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>我们第一阶段的嵌入式评估</title>
@@ -168,6 +1100,47 @@
       <guid isPermaLink="true">https://openai.com/index/our-first-phase-of-embedded-assessments</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Our first phase of embedded assessments</description>
+      <content:encoded><![CDATA[<p>2026年11月16日</p>
+<p>安全</p>
+<h1>我们的第一阶段嵌入式评估</h1>
+<p>我们已与四家独立评估机构——Apollo Research、METR、Transluce 和 Goodfire——签署协议，开展第一阶段的嵌入式评估。随着 AI 能力快速发展、潜在风险不断增加，独立评估的公开报告可以让公众更清楚地了解各实验室如何评估和管理这些风险。</p>
+<p>嵌入式评估让独立专家能够深入访问实验室的内部模型和系统，在较长时间内评估模型对齐情况和安全防护措施的有效性，尤其关注与我们的安全论证相关的方面。根据每项评估的需要，评估机构可访问我们研究人员使用的部分内部资源，包括模型检查点、源代码、训练和评估数据、监测系统及技术文档，还可以与负责相关工作的研究人员和工程师交流。这些访问权限为评估机构提供了开展独立评估所需的证据和背景信息，帮助他们发现我们可能未曾预料到的失效问题。</p>
+<p>我们的初期评估聚焦于模型在训练和内部使用期间的对齐情况与安全防护措施，为我们的<a href="https://openai.com/index/towards-safety-cases-for-frontier-ai-training/">安全论证</a>提供补充。这些评估以我们的<a href="https://openai.com/index/priorities-principles-third-party-assessments/">第三方评估优先事项和原则</a>，以及多年来与<a href="https://openai.com/index/strengthening-safety-with-external-testing/">第三方评估机构</a>的合作为基础。这些合作包括近期在提供深入内部访问权限的情况下，对<a href="https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/">我们的内部监测系统</a>开展的试点评估，以及对 <a href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/">Hugging Face 事件</a>的调查。未来几个月，我们将利用从中获得的经验，深化与独立专家的合作。这些工作也有助于落实我们在《白宫超级智能协议》下作出的承诺，其中包括同意对我们的安全控制措施开展独立评估。这些合作有助于推动全行业建立更完善的独立评估与公开透明共同标准。</p>
+<h2>参与嵌入式评估试点的机构</h2>
+<h3>Apollo Research</h3>
+<p>在本次试点评估中，<a href="https://www.apolloresearch.ai/">Apollo Research</a> 将评估模型是否可能暗中采取违背开发者意图的行动，以及我们的安全防护措施能否检测到此类行为。评估将以训练、安全测试和内部使用中获得的证据为依据。Apollo 将分两个阶段评估以下四项主张：</p>
+<ul><li>训练未激励颠覆性行为。</li><li>高强度评估和红队测试未能诱发颠覆性行为。</li><li>模型在内部使用期间未曾试图实施颠覆性行为。</li><li>颠覆性行为背后的推理过程能够被检测到。</li></ul>
+<p>在 Apollo 评估的第一阶段，我们将提供对部分已公开和未发布模型及训练检查点、相关训练数据和评估结果、训练干预记录、监测系统及其标记的行为的访问权限，并安排可提供背景信息的研究人员与其交流，同时提供开展独立测试所需的工具和算力。</p>
+<h3>Goodfire</h3>
+<p><a href="https://www.goodfire.com/">Goodfire</a> 将派驻可解释性研究人员，并使用 Goodfire 平台分析模型内部机制。其评估的主要目标是训练过程监测、调试和对齐。这些评估主要面向 OpenAI 内部研究人员，他们将利用评估发现来改进安全性。随着合作推进，Goodfire 也将发布从中获得的经验和发现。</p>
+<h3>METR</h3>
+<p>我们计划与 <a href="https://metr.org/">METR</a> 开展两项评估，聚焦于模型对齐和监测：</p>
+<ul><li><strong>对齐评估：</strong>在第一阶段，METR 将评估我们迄今为止规模最大的一次强化学习训练中的不对齐行为，包括现有测试和监测器可能遗漏的失效问题。针对选定的训练任务，在商定的访问权限、资源和安全安排范围内，METR 将独立确定评估优先事项，并迭代开展搜寻、分析和引导式提取实验。访问权限将包括使用相关检查点进行采样，以及查阅本次训练任务的训练与评估运行轨迹和不对齐行为监测记录。第一阶段的评估将聚焦于我们规模最大的一次前沿模型强化学习训练。<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-1">1</a></li><li><strong>监测器评估：</strong>我们近期与 METR 合作开展了一次监测器压力测试演练<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-2">2</a>。我们已初步同意开展另一项<a href="https://metr.org/blog/2026-10-14-control-assessment-proposal/">监测器评估</a>，并希望扩大评估范围，但仍需双方就评估范围达成一致。</li></ul>
+<h3>Transluce</h3>
+<p><a href="https://transluce.org/">Transluce</a> 将对我们的后训练对齐评测开展初步评估，审视其质量和覆盖范围。在初步评估中，我们将向 Transluce 提供对部分已公开和未发布模型、我们的后训练对齐评测及相关结果、配套的模型行为数据和安全论证文档的访问权限，并安排可提供背景信息的研究人员与其交流，同时提供开展独立测试所需的工具和算力。</p>
+<p>OpenAI 和 Transluce 也有意在 2027 年初开展为期约八周的后续评估，届时将扩大访问权限，涵盖更多模型，允许更深入地访问我们的对齐评测，并提供有关评测结果如何影响模型发布决策的信息。</p>
+<h2>嵌入式评估规程</h2>
+<p>我们参考评估机构的意见制定了规程和流程，在提供深入访问权限的同时，兼顾安全、保密、监督以及评估的独立性和公正性。我们公开这些规程和流程，是为了说明我们将如何与嵌入式评估机构合作，并推动关于嵌入式评估规范的讨论——这类评估目前尚无统一标准。我们预计，随着对如何最佳开展此类评估的认识不断加深，这些规程和流程也需要持续完善。尤其在嵌入式评估的早期阶段，我们预计会遇到技术访问难题、场地限制、安全规程变化及其他意外问题。我们希望与嵌入式评估机构携手应对这些挑战，并分享从中获得的经验。</p>
+<h3>范围界定与迭代</h3>
+<p>每次合作开始时，双方都会商定评估范围，以及开展严谨评估所需的访问权限、资源和安全安排。有些评估检验特定的安全主张；另一些则让评估机构有空间在指定系统或训练任务中发现意料之外的失效模式。无论哪种情况，评估机构都需要有充分的自由，沿着证据线索继续调查、改进方法，并在评估发现有此必要时提出进一步评估的建议。我们也建立了相应流程，以应对评估推进过程中新增的访问需求。当直接访问可能暴露我们最敏感的知识产权（如模型权重或架构）时，我们会考虑替代方案，包括安排评估人员与 OpenAI 研究人员结对开展分析。</p>
+<h3>安全的现场工作环境</h3>
+<p>需要访问敏感机密信息的评估人员将在 OpenAI 办公场所现场工作，并使用 OpenAI 提供的设备开展工作。这样做的主要目的是保障他们所访问信息的安全。现场工作也让评估人员有机会与专门负责支持的工作人员交流，后者可以协助他们使用访问权限，并为评估提供背景信息。我们还要求嵌入式评估人员在开展实验和评估时，至少<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-3">3</a>遵守与 OpenAI 员工相同的安全标准。</p>
+<h3>监督与争议解决</h3>
+<p>我们的安全与安保委员会是 OpenAI Foundation 董事会下设的独立监督委员会，将有权了解嵌入式评估情况，并能够在评估开始前、进行中和结束时履行监督职责。安全与安保委员会将收到未经删节的报告，评估机构与委员会在评估期间也可以相互交流，包括私下交流。OpenAI 与任何评估机构之间的分歧，都将提交安全咨询小组和 OpenAI 高管处理，并须在规定期限内解决；分歧提交时，也将及时通知安全与安保委员会。如果分歧仍未解决，将提交安全与安保委员会处理。</p>
+<h3>员工交流与正式确认</h3>
+<p>与员工交流有助于评估人员了解内部信息及相关工作的背景。OpenAI 将授权相关员工与评估人员交流，并提供指导；评估人员也可根据需要请求与其他员工交流。为鼓励开放、坦诚的交流并保护员工隐私，这些讨论内容不得对外引用：它们可以为评估提供参考，但不能公开，也不能归于具体员工名下。评估机构可以通过单独的正式确认渠道，请求 OpenAI 出具经其确认的声明，对评估人员在与员工交流中了解到的内容予以核实、更正或澄清。这些声明不归于任何个人名下，也不用于表述个人观点。评估机构可以发布经 OpenAI 正式确认的声明，也可以披露 OpenAI 拒绝确认某项声明的情况。</p>
+<h3>利益冲突披露与冷却期</h3>
+<p>清晰、透明地管理利益冲突，包括涉及个人关系、经济利益<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-4">4</a>及其他方面的冲突，对评估的公正性和独立性至关重要。冷却期<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-5">5</a>也需要审慎设计，让评估人员能够负责任地为不同实验室开展工作，同时谨慎处理涉及竞争的信息。我们正与评估机构合作，为利益冲突和冷却期制定明确的流程，包括允许灵活采取缓解措施，并确保要求回避的决定透明公开。</p>
+<h3>报告发布与负责任披露期限</h3>
+<p>评估机构在发布评估报告时保持独立性，但我们将保留删去机密信息的权利，这与以往的第三方合作安排一致。出于负责任披露的考虑，我们也可能请求延后公开，以留出时间处理可能带来安保或安全风险的评估发现，并修复尚存的问题。</p>
+<p>公开报告将帮助公众了解评估发现及其局限，而更详细的保密报告则为监督机构提供采取行动所需的证据。我们希望这些评估能够改进我们识别和应对风险的方式，并为公众判断我们的安全工作提供更清晰的依据。</p>
+<h2>展望未来</h2>
+<p>这些评估为我们持续开展的对齐与安全工作带来了独立视角。公开报告评估发现，将提高这些工作的透明度，并让公众更有信心了解风险是如何被识别和应对的。我们期待第一阶段的评估逐步促成长效、稳定的嵌入式合作，持续为我们最关键的安全主张和安全论证提供第三方安全信息与改进建议。</p>
+<p>我们将继续与多家独立第三方机构合作，助力建立汇集多元专业知识和方法的健康评估生态。有些调查需要持续在现场接触敏感系统；另一些则主要评估已部署或即将部署的模型，或审阅公开文档。</p>
+<p>未来几个月，我们将支持针对更多安全问题开展外部评估。我们也在探索未来开展嵌入式评估的可能性，以审查我们对安全框架的遵守情况，以及我们的组织文化和流程。我们致力于拓展这项工作，并帮助建立使其持续开展所需的能力和共同标准。</p>
+<h2>作者</h2>
+<h2>脚注</h2>
+<ul><li>1这一范围小于 METR 在其<a href="https://metr.org/blog/2026-10-14-alignment-assessment-proposal/">对齐评估提案</a>中设想的范围；该提案计划对不对齐问题开展广泛调查。</li><li>2我们近期与 METR 开展了为期三周的监测器红队测试演练，期间向其开放了代码库、监测器和相关运行轨迹的访问权限，并安排其与 OpenAI 研究人员交流，以帮助他们更好地了解我们的监测器。<a href="https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/">https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/</a></li><li>3在某些情况下，我们会根据实验条件采用更严格的标准，以开展审慎的安全审查。</li><li>4Apollo Research 和 Goodfire 会为其工作收取报酬，但报酬不与评估结果挂钩。METR 和 Transluce 不为评估收取报酬，但可能接受用于评估的 API 额度或算力。我们认为，接受报酬并不妨碍评估机构保持独立性，但公开披露这一情况很重要。</li><li>5我们要求参与嵌入式评估的第三方机构工作人员，在入驻另一家 AI 开发机构前遵守一段短暂的冷却期，以降低无意间泄露机密信息的风险。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>借助 ChatGPT for Healthcare 推动医疗发展的更多方式</title>
@@ -175,6 +1148,53 @@
       <guid isPermaLink="true">https://openai.com/index/more-ways-to-move-care-forward-with-chatgpt-for-healthcare</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：More ways to move care forward with ChatGPT for Healthcare</description>
+      <content:encoded><![CDATA[<p>2026年11月16日</p>
+<h1>ChatGPT 医疗保健版：以更多方式推进诊疗工作</h1>
+<p>推出计算机操作智能体、更优质的临床解答和全新医疗插件，跨医疗软件协作，切实完成工作。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系我们的销售团队</a></p>
+<p>医疗团队需要整合电子健康记录（EHR）、医院政策、预约排班系统和支付方门户中的信息，才能提供诊疗服务并管理日常运营。通过 ChatGPT 医疗保健版，我们将团队日常使用的工具和所需的医学证据汇聚到同一平台，帮助他们减少在各个系统间查找操作的时间，把更多时间用于照护患者。</p>
+<p>今天，我们将分享<a href="https://openai.com/index/advancing-computer-use-for-healthcare-teams/">计算机操作智能体的最新进展⁠</a>，让 AI 智能体能够跨现有医疗软件完成多步骤工作。我们也在改进可信临床搜索功能，使其更好地查找、评估和引用医学证据，并为医疗插件生态系统新增 20 多款插件。</p>
+<p>这些能力相互配合，帮助医疗团队找到所需信息、依据医学证据做出决策，并在日常使用的各个系统中执行后续步骤。</p>
+<h2>借助计算机操作智能体，跨医疗系统推进工作</h2>
+<p>医疗机构经常需要在彼此独立的系统之间传递信息，以准备文书、协调诊疗并完成行政任务。计算机操作智能体可以通过操作团队现有的软件来协助完成这些步骤，包括读取屏幕内容、点击、输入以及在应用间切换。</p>
+<p>今天，我们将分享面向医疗领域的计算机操作智能体的最新进展，包括为临床和行政工作流程提供能力更强、更安全、成本更低的模型，以及支持安全部署的访问控制和审计日志。我们还将介绍与 Abridge、Ambience、Cigna Healthcare 和 CVS Health 等医疗企业的合作。这些企业正在部署智能体，用于处理转诊、在系统间传递文档，并汇总诊疗团队所需的信息。在下方演示中，一位临床医生使用 ChatGPT 应用中的语音功能，请求协助跟进一项 MRI 检查申请。智能体查阅病历，起草检查医嘱和给患者的回复，供医生审核。</p>
+<p>医疗机构可以从一个涉及多个现有应用的工作流程入手，设置智能体可访问的应用，并明确规定哪些步骤需要人工审核。要让涉及受保护健康信息的工作流程符合 HIPAA 要求，机构必须使用其与 OpenAI 签订的业务伙伴协议（BAA）所涵盖的合资格服务，应用必要的安全和数据保留设置，并将保护措施延伸至所连接的系统。与 ChatGPT 医疗保健版分享的内容不会用于训练模型。</p>
+<p>有关计算机操作研究、客户案例和演示的更多内容，请阅读<a href="https://openai.com/index/advancing-computer-use-for-healthcare-teams/">《推进面向医疗团队的计算机操作智能体发展》⁠</a>。</p>
+<h2>无论团队在哪里工作，都能获得更优质的临床解答</h2>
+<p>我们正在改进 ChatGPT 医疗保健版和 ChatGPT 临床医生版中的可信临床搜索功能，包括 ChatGPT 查找、评估和引用医学证据的方式。这些更新帮助临床医生将相关证据与临床问题相结合，转化为切实可行的后续措施，并提供可供查验的引用来源。</p>
+<p>为衡量这些更新的效果，我们开展了一项盲评，由医生评审针对多个专科真实临床问题的回答，其中也包括多轮对话。在 1,300 多次评审中，医生对更新后的体验在全部八个评估维度上都给出了更高的评分，包括事实准确性、安全性、可操作性和来源权威性。</p>
+<h2>将医疗工具汇聚到同一段对话中</h2>
+<p>我们正在扩展医疗插件生态系统，新增来自临床诊疗、诊疗协调和业务运营领域领先企业的 20 多款医疗插件。所有这些插件现已在 ChatGPT 医疗保健版中推出，也可通过<a href="https://openai.com/index/chatgpt-connects-health-records-and-healthcare-sources/">将 ChatGPT 融入 EHR 工作流程的 ChartGPT⁠</a> 使用。</p>
+<ul><li><a href="https://openai.com/zh-Hans-CN/business/plugins/aiva/"><img src="https://files.openai.com/content?id=file_00000000910881f782057a26289550c7&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=864c122a6bd0c093c722e66ef496e33153b81fbbece4bb66c04a49c2604a436a&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a09081f780afca44edc0cbac&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=1679c1219fa61235cdd3ad87c3bcb801a9e474f5df6196feda83246c98045c02&amp;v=0" alt="">Aiva</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/amion/"><img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt="">Amion</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/assort-health/"><img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt="">Assort Health</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/availity-extend/"><img src="https://images.ctfassets.net/kftzwdyauwt9/5llPzdEuwhYcAuayOlB7It/ee612f7b357a18926097e7d3eda2c01d/availity-extend-logo.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/5llPzdEuwhYcAuayOlB7It/ee612f7b357a18926097e7d3eda2c01d/availity-extend-logo.png" alt="">Availity Extend</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/elation-health/"><img src="https://files.openai.com/content?id=file_0000000061c881f7b2d1f274ece31a2b&amp;cdn=1&amp;cp=pi&amp;ma=31190400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=38e66c99c25ef2b832bfdb5fb4020525e7cb7eef2a3db8d2ac0bc9048fed0d97&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_0000000061c881f7b2d1f274ece31a2b&amp;cdn=1&amp;cp=pi&amp;ma=31190400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=38e66c99c25ef2b832bfdb5fb4020525e7cb7eef2a3db8d2ac0bc9048fed0d97&amp;v=0" alt="">Elation Health</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/ferry-health/"><img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt="">Ferry</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/imo-health/"><img src="https://files.openai.com/content?id=file_000000001b8881f5b4877bf355afaefd&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=0dc6a5cb5e8fd8782da0aa6f841753ba0a79dd51916e089f1f407ea261a842a5&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000001b8881f5b4877bf355afaefd&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=0dc6a5cb5e8fd8782da0aa6f841753ba0a79dd51916e089f1f407ea261a842a5&amp;v=0" alt="">IMO Health MCP Server</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/infinitus-relay/"><img src="https://images.ctfassets.net/kftzwdyauwt9/3DozDOAYNUEtEWVhc72Fp1/2317e788646b34de91f31cc041fa18a4/infinitus-relay.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/3DozDOAYNUEtEWVhc72Fp1/2317e788646b34de91f31cc041fa18a4/infinitus-relay.png" alt="">Infinitus Relay</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/kmed/"><img src="https://files.openai.com/content?id=file_0000000004c88212b7ca95c5179cc314&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=686cd5309cbbdb771a695798eade11f68e80f84e764a83a781946bc00ca0032d&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_0000000004c88212b7ca95c5179cc314&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=686cd5309cbbdb771a695798eade11f68e80f84e764a83a781946bc00ca0032d&amp;v=0" alt="">K Health</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/luma-health/"><img src="https://files.openai.com/content?id=file_000000004b4081f483c2e7f74f390bf4&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=bddaaf5ce03c514e4d55b010c81fdfa505d75ecb6fb9ded37609b3a22703ef4b&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000004b4081f483c2e7f74f390bf4&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=bddaaf5ce03c514e4d55b010c81fdfa505d75ecb6fb9ded37609b3a22703ef4b&amp;v=0" alt="">Luma Health</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/metriport/"><img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt="">Metriport</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/notable-integration-specs/"><img src="https://files.openai.com/content?id=file_00000000379081f68fd09edbc12acccb&amp;cdn=1&amp;cp=pi&amp;ma=31363200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=f1d16758b58a4c6caa32dbe1b887143e62cfcb83e7e82f370a5f4a4382f1eba3&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000379081f68fd09edbc12acccb&amp;cdn=1&amp;cp=pi&amp;ma=31363200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=f1d16758b58a4c6caa32dbe1b887143e62cfcb83e7e82f370a5f4a4382f1eba3&amp;v=0" alt="">Notable Integration Specs</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/oracle-hdi-overview/"><img src="https://files.openai.com/content?id=file_0000000022d882309a3c07f04b7de5f0&amp;cdn=1&amp;cp=pi&amp;ma=30326400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=c3b0b8645f5d3512bdd24367fca30725282cb686696f71fc8421b0d17597dc21&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_0000000022d882309a3c07f04b7de5f0&amp;cdn=1&amp;cp=pi&amp;ma=30326400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=c3b0b8645f5d3512bdd24367fca30725282cb686696f71fc8421b0d17597dc21&amp;v=0" alt="">Oracle HDI Overview</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/penguinai/"><img src="https://files.openai.com/content?id=file_000000000dec820887b81134f0e645d8&amp;cdn=1&amp;cp=pi&amp;ma=32659200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=24951a0935e4f1614fbe48a5492ee1bb140d6512200f764fdc8e33148ee2490e&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000000dec820887b81134f0e645d8&amp;cdn=1&amp;cp=pi&amp;ma=32659200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=24951a0935e4f1614fbe48a5492ee1bb140d6512200f764fdc8e33148ee2490e&amp;v=0" alt="">PenguinAI Medical Coding</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/photon/"><img src="https://files.openai.com/content?id=file_000000002f0881f79e084073db2c5827&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4fcb283c16dca4e280620606cbb8b8d7cab12374cb0b953a29e03c4f698b4e3b&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000002f0881f79e084073db2c5827&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4fcb283c16dca4e280620606cbb8b8d7cab12374cb0b953a29e03c4f698b4e3b&amp;v=0" alt="">Photon</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/redox/"><img src="https://images.ctfassets.net/kftzwdyauwt9/2cjSTasFjRAxKmnqbVF4MY/f15e0422d4fb2a9ca0f8e55669c06a51/redox.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/2cjSTasFjRAxKmnqbVF4MY/f15e0422d4fb2a9ca0f8e55669c06a51/redox.png" alt="">Redox</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/stedi/"><img src="https://files.openai.com/content?id=file_00000000a18471f49b5d9036b735e9c6&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=189c02ed76d9c393442ff3dac6db8edc8211d3afc4f10a12a37680fd7c695068&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000c8847243af0f2ea762e96f66&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=5278eb1485076d56126c672a312ac9d8af0719259f91ce120785001b78af21b4&amp;v=0" alt="">Stedi</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/subsalt/"><img src="https://files.openai.com/content?id=file_000000001d8c81f7ae5b13142d62d045&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=286fba4819db21e66f752e06b8aac8a2e41be62708cafe4f7df7d073723a7b8a&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000001d8c81f7ae5b13142d62d045&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=286fba4819db21e66f752e06b8aac8a2e41be62708cafe4f7df7d073723a7b8a&amp;v=0" alt="">Subsalt</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/trizetto-provider-solutions/"><img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt="">Trizetto</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/turquoise-health/"><img src="https://files.openai.com/content?id=file_000000003704822fa84f1770a9e6dca7&amp;cdn=1&amp;cp=pi&amp;ma=31968000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4cd9f0da4830e86d5cc524493ce4fd61372095e6ddde664b21bb40f26597b189&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_0000000081a0820da72a6f1f55e9683c&amp;cdn=1&amp;cp=pi&amp;ma=31276800&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=1729d03a924c1d407235b96991ac0048f75fb87b61527d24814cfbd18fccada6&amp;v=0" alt="">Turquoise</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/uptodate-expert-ai/"><img src="https://files.openai.com/content?id=file_000000002eb881f4b03e27aba35eacb6&amp;cdn=1&amp;cp=pi&amp;ma=31968000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=942e0bcd8c3b60385413c22434dd6940b40dbba0e30e9c35cac4b4136e87216b&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000002eb881f4b03e27aba35eacb6&amp;cdn=1&amp;cp=pi&amp;ma=31968000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=942e0bcd8c3b60385413c22434dd6940b40dbba0e30e9c35cac4b4136e87216b&amp;v=0" alt="">UpToDate Expert AI</a></li></ul>
+<p>借助这些插件，团队可以在同一段对话中处理更多工作：查阅患者记录和医院规程、准备供临床医生审核的处方、协调患者联络、核查保险资格，以及分析医疗费用和运营表现。</p>
+<p>了解医疗团队如何在 ChatGPT 中组合使用这些插件。</p>
+<h3>诊疗协调员 | 就诊前排除障碍</h3>
+<p>使用 <img src="https://files.openai.com/content?id=file_0000000038d48211a78834f6fd2ee80e&amp;cdn=1&amp;cp=pi&amp;ma=31104000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=b1c982248956e9c91281f8970ee47fe4d2fd5832398f6543a71cefa9fb713b15&amp;v=0" alt="">Luma Health 查找明天仍待确认的预约，然后通过 <img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt="">TriZetto 核查这些患者的保险资格。生成一份电话联系清单，列出每位患者就诊前我需要与其确认或解决的事项。</p>
+<h3>初级保健医生 | 出院后随访</h3>
+<p>我的患者曾因心力衰竭在外院住院，请使用 <img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt="">Metriport 查找出院小结。哪些用药发生了调整？针对这些调整，<img src="https://files.openai.com/content?id=file_00000000932c81f4b824fd9d97a55a6f&amp;cdn=1&amp;cp=pi&amp;ma=31881600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4c78224a09f86884c880e47a0170fee5c15b1422d26e451f162b74874b1eda6c&amp;v=0" alt="">UpToDate 建议开展哪些后续监测？请提供这两个来源的链接。</p>
+<h3>Inpatient nurse | Navigate complex care</h3>
+<p>I’m admitting a patient who uses their own insulin pump, and the admitting team has requested endocrinology input. Pull up our hospital’s inpatient pump policy in <img src="https://files.openai.com/content?id=file_00000000910881f782057a26289550c7&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=864c122a6bd0c093c722e66ef496e33153b81fbbece4bb66c04a49c2604a436a&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a09081f780afca44edc0cbac&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=1679c1219fa61235cdd3ad87c3bcb801a9e474f5df6196feda83246c98045c02&amp;v=0" alt="">AIVA, including required nursing checks and documentation, and use <img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt="">Amion to find the covering endocrinologist and how to reach them.</p>
+<h3>就医导航员 | 比较两家 MRI 检查机构</h3>
+<p>我的患者可以在这两家医院中的任意一家接受膝关节 MRI 平扫检查。使用 <img src="https://files.openai.com/content?id=file_000000002da481f58d1fd426644f9967&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=00e9f45a8caa06eaabdf01416c2735eae5c07a0320d693df5056ac7945f22e65&amp;v=0" alt="">IMO Health 找到对应的诊疗项目代码，在 <img src="https://files.openai.com/content?id=file_00000000a18471f49b5d9036b735e9c6&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=189c02ed76d9c393442ff3dac6db8edc8211d3afc4f10a12a37680fd7c695068&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000c8847243af0f2ea762e96f66&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=5278eb1485076d56126c672a312ac9d8af0719259f91ce120785001b78af21b4&amp;v=0" alt="">Stedi 中核查患者的保险资格和保障待遇，再通过 <img src="https://files.openai.com/content?id=file_000000005a28822f8ef184b3943ed23f&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=0962b4e69c6c12e1a6475757922913bf0b782c53636923cf0a2979081fe31408&amp;v=0" alt="">Turquoise Health 向我展示其保险计划针对该代码在两家医院各自的协议价格。同时指出，要估算患者需自行承担的费用，还需要哪些信息。</p>
+<h3>转诊经理 | 审查转诊及预约跟进情况</h3>
+<p>为每周转诊评审做准备，请使用 <img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt="">Assort Health 汇总转诊量、转化趋势以及主要的转诊来源诊所。使用 <img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt="">Ferry Health 按状态展示预约任务，并提供待跟进任务的链接。将转诊趋势和尚未完成的预约安排工作整理成简报，帮助我的团队确定患者跟进的优先顺序。</p>
+<h3>诊疗协调员 | 就诊前排除障碍</h3>
+<p>使用 <img src="https://files.openai.com/content?id=file_0000000038d48211a78834f6fd2ee80e&amp;cdn=1&amp;cp=pi&amp;ma=31104000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=b1c982248956e9c91281f8970ee47fe4d2fd5832398f6543a71cefa9fb713b15&amp;v=0" alt="">Luma Health 查找明天仍待确认的预约，然后通过 <img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt="">TriZetto 核查这些患者的保险资格。生成一份电话联系清单，列出每位患者就诊前我需要与其确认或解决的事项。</p>
+<h3>初级保健医生 | 出院后随访</h3>
+<p>我的患者曾因心力衰竭在外院住院，请使用 <img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt="">Metriport 查找出院小结。哪些用药发生了调整？针对这些调整，<img src="https://files.openai.com/content?id=file_00000000932c81f4b824fd9d97a55a6f&amp;cdn=1&amp;cp=pi&amp;ma=31881600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4c78224a09f86884c880e47a0170fee5c15b1422d26e451f162b74874b1eda6c&amp;v=0" alt="">UpToDate 建议开展哪些后续监测？请提供这两个来源的链接。</p>
+<h3>Inpatient nurse | Navigate complex care</h3>
+<p>I’m admitting a patient who uses their own insulin pump, and the admitting team has requested endocrinology input. Pull up our hospital’s inpatient pump policy in <img src="https://files.openai.com/content?id=file_00000000910881f782057a26289550c7&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=864c122a6bd0c093c722e66ef496e33153b81fbbece4bb66c04a49c2604a436a&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a09081f780afca44edc0cbac&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=1679c1219fa61235cdd3ad87c3bcb801a9e474f5df6196feda83246c98045c02&amp;v=0" alt="">AIVA, including required nursing checks and documentation, and use <img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt="">Amion to find the covering endocrinologist and how to reach them.</p>
+<h3>就医导航员 | 比较两家 MRI 检查机构</h3>
+<p>我的患者可以在这两家医院中的任意一家接受膝关节 MRI 平扫检查。使用 <img src="https://files.openai.com/content?id=file_000000002da481f58d1fd426644f9967&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=00e9f45a8caa06eaabdf01416c2735eae5c07a0320d693df5056ac7945f22e65&amp;v=0" alt="">IMO Health 找到对应的诊疗项目代码，在 <img src="https://files.openai.com/content?id=file_00000000a18471f49b5d9036b735e9c6&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=189c02ed76d9c393442ff3dac6db8edc8211d3afc4f10a12a37680fd7c695068&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000c8847243af0f2ea762e96f66&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=5278eb1485076d56126c672a312ac9d8af0719259f91ce120785001b78af21b4&amp;v=0" alt="">Stedi 中核查患者的保险资格和保障待遇，再通过 <img src="https://files.openai.com/content?id=file_000000005a28822f8ef184b3943ed23f&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=0962b4e69c6c12e1a6475757922913bf0b782c53636923cf0a2979081fe31408&amp;v=0" alt="">Turquoise Health 向我展示其保险计划针对该代码在两家医院各自的协议价格。同时指出，要估算患者需自行承担的费用，还需要哪些信息。</p>
+<h3>转诊经理 | 审查转诊及预约跟进情况</h3>
+<p>为每周转诊评审做准备，请使用 <img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt="">Assort Health 汇总转诊量、转化趋势以及主要的转诊来源诊所。使用 <img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt="">Ferry Health 按状态展示预约任务，并提供待跟进任务的链接。将转诊趋势和尚未完成的预约安排工作整理成简报，帮助我的团队确定患者跟进的优先顺序。</p>
+<p>这些新插件加入了 ChatGPT 更广泛的插件生态系统，为各行各业的工作提供支持，涵盖<a href="https://openai.com/index/chatgpt-connects-health-records-and-healthcare-sources/">医疗数据与研究⁠</a>、文档、演示文稿以及软件开发。</p>
+<p>我们正与插件合作伙伴携手，让诊疗团队更轻松地将临床证据、患者信息和日常工具接入 ChatGPT。我们将持续投入这一生态系统，并邀请更多医疗企业与我们共同开发。</p>
+<h2>可用范围与后续步骤</h2>
+<p>ChatGPT 医疗保健版在具备治理机制的工作空间中，为临床、研究和行政团队提供支持。ChatGPT 临床医生版面向美国符合条件且通过验证的临床医生免费提供，帮助他们查阅医学证据并准备临床文书。两款产品均支持客户与 OpenAI 签订业务伙伴协议（BAA），以支持符合 HIPAA 要求的工作流程。</p>
+<ul><li><strong>ChatGPT 医疗保健版客户</strong>：ChatGPT 工作和 Codex 中的计算机操作智能体，以及改进后的可信临床搜索功能现已推出，具体可用性取决于工作空间设置。请联系工作空间管理员，启用新的医疗插件。</li><li><strong>临床医生个人用户</strong>：ChatGPT 工作和 Codex 中的计算机操作智能体，以及改进后的可信临床搜索功能现已推出。部分插件也已开放使用。<a href="https://chatgpt.com/plans/clinicians/">注册免费的 ChatGPT 临床医生版账户，即可开始使用</a>。</li><li><strong>探索计算机操作能力的开发者</strong>：OpenAI API、ChatGPT 工作和 Codex 均已提供计算机操作智能体能力。<a href="https://openai.com/contact-sales/">联系我们的销售团队⁠</a>，探讨如何在临床和行政工作流程中使用这些能力。</li></ul>
+<p>如需直接购买 ChatGPT 医疗保健版，或通过 AWS Marketplace 私有报价购买，请<a href="https://openai.com/contact-sales/">联系我们的销售团队⁠</a>。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>推进面向医疗团队的计算机使用智能体</title>
@@ -182,6 +1202,51 @@
       <guid isPermaLink="true">https://openai.com/index/advancing-computer-use-for-healthcare-teams</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Advancing computer-use agents for healthcare teams</description>
+      <content:encoded><![CDATA[<p>2026年11月16日</p>
+<h1>推进面向医疗团队的 computer-use agent</h1>
+<p>医疗行业是碎片化的：在患者真正获得诊疗之前，团队往往需要手动在系统之间搬运信息。比如，当临床医生建议做一次 MRI 时，保险公司所需的信息可能就在患者的病历里，但仍然需要团队成员把它取出来，再录入另一个独立门户，才能完成授权申请。</p>
+<p>computer-use agent 通过点击、输入和在应用之间切换来完成多步骤工作流。在医疗领域，这让 AI 能够在团队已经在用的软件中协助处理重复性工作流。</p>
+<p>今天，我们分享一组衡量模型在临床与行政工作流中表现、安全性和成本的新结果。我们也会介绍与 Abridge、Ambience、Cigna Healthcare、CVS Health 等领先医疗机构合作的方式，共同推进并应用 computer use，覆盖授权申请、转诊、出院规划以及就诊间隔期的随访。</p>
+<p>医疗团队、开发者和个体临床医生现在就可以通过 OpenAI API、ChatGPT for Healthcare 和 ChatGPT for Clinicians 使用这些能力。机构可以支持符合 HIPAA 要求的工作流，配置审批与 agent 访问权限，并记录审计日志，以实现安全部署。</p>
+<h2>从患者的一条消息到一次 MRI 授权申请</h2>
+<p>为了展示 computer-use agent 如何帮助临床医生和授权专员处理同一个 MRI 申请，我们用合成患者数据搭建了一个演示。一位患者就下背痛给自己的临床医生发消息。computer-use agent 会查阅 EHR 中该患者的就诊记录、物理治疗记录和既往影像，起草一份 MRI 医嘱、一份就诊记录以及给患者的回复，交由临床医生审核。随后，agent 用同一批记录在保险公司门户中准备一份事先授权申请，供授权专员审核。</p>
+<h2>评估有用性、安全性和成本</h2>
+<p>我们在临床医生于 EHR 收件箱中处理的任务上评估了 GPT‑6 Astra。这些任务由医生参与设计，要求 Astra 执行多步骤工作流，既考察它基于纵向患者上下文进行临床推理，也考察它在复杂界面中导航的能力。评审人员把模型的操作与它产出的记录、医嘱和患者消息放在一起查看，判断这些工作在具体任务情境下是否有帮助、在临床上是否安全。</p>
+<p>临床安全性的评估方式，是判断模型工作结果中的不准确、遗漏或操作是否有可能导致患者受到伤害。总体来看，325 项被评审的任务中有 99% 被评为安全。医生用五分制评价有用性，在 646 次评估中有 93% 选择了“非常有帮助”或“极有帮助”。</p>
+<h3>EHR 收件箱工作示例</h3>
+<h4>行政工作流的表现与成本</h4>
+<p>在 Stanford 研究人员发布的独立 benchmark <a href="https://som-shahlab.github.io/health-admin-bench-website/">HealthAdminBench</a> 上——它衡量模型在常见行政工作流上的表现——GPT‑6 Astra 拿到了可用评分细则分数的 94.3%，GPT‑6 Luna 拿到 91.8%，而每项任务成本为 8.5 美分，便宜了 98%。两个模型都在最高 reasoning effort 下评估。这些结果表明，面向高频行政工作流、既有能力又负担得起的 agent 正在取得进展。</p>
+<h2>与医疗机构共同开发 computer use</h2>
+<p>我们的合作伙伴构建的软件被数百个医疗系统使用，在全球范围内协调会员的照护，并为数亿患者提供医疗服务。下面的例子展示了这些机构如何开发、试点和部署 computer-use 应用，以节省时间、解决关键问题并改善患者照护。</p>
+<h3>CVS Health：跨临床系统完成行政工作</h3>
+<p>CVS Health 正在使用 OpenAI 的 computer-use 能力，把跨临床系统的重复性工作自动化，包括发送文档、处理转诊以及支持专科会诊。这些 agent 会操作现有应用，补上 API 无法完全覆盖的步骤。</p>
+<p>在一个生产工作流中，一个 agent 用一个周末清掉了一批积压数月的待发文档。另一个 agent 每天为数万次会诊处理系统操作步骤，帮助团队成员把精力放在需要其专业判断的工作上。CVS Health 采用校验检查和人工监督，用截图和操作记录核实动作与应用状态。CVS Health 正在开源其 <a href="https://github.com/cvs-health/cua-agent-kit">Agent Kit</a>，它基于 OpenAI 的 Agents SDK 构建，把这一做法打包成可复用的流程，供更广泛地使用。</p>
+<blockquote>“行政事务上少花一点时间，照护上就多一点时间。这对我们的团队和我们服务的每一个人都是好事。”</blockquote>
+<p>——Lagan Khare，CVS Health 工程部执行总监</p>
+<p>数据始终留在 CVS Health 企业管控的基础设施内，由其企业 AI Governance 团队和既有的负责任 AI 政策管理。生产数据不会用于训练基础模型。</p>
+<h3>Abridge：在照护的每个环节跨系统协同</h3>
+<p>Abridge 正在开发 computer-use agent，帮助临床医生在他们日常使用的各种场景和应用中执行照护计划，包括那些没有 API 的应用。其规划中的住院场景建立在临床对话之上，加入 EHR 信息以及护士和临床医生的上下文，用来判断哪些地方需要关注、下一步该如何协调。</p>
+<p>举例来说，临床医生可以让 Abridge Assistant 协助解决某位患者的出院障碍。agent 可以并行处理用药获取和居家医疗协调，在打电话、发消息的同时操作电脑界面。临床医生始终保持专注于患者，只在需要临床判断的决策上被请进来。</p>
+<p><a href="https://www.abridge.com/blog/learning-health-system">了解更多</a></p>
+<h3>Cigna：让照护经理做好会员触达准备</h3>
+<p>作为 The Cigna Group 与 OpenAI 更广泛合作的一部分，Cigna Healthcare 正在把 OpenAI 的前沿模型与自身的临床专业能力结合，汇总跨系统的相关信息，让照护团队对每位会员的需求和经历有更完整的了解。这些信息可能包括福利与保障范围、服务提供方、预约和既往互动，帮助照护团队围绕由治疗医生制定的照护计划更好地支持会员。</p>
+<p>在此之前，Cigna Healthcare 的个案管理员必须在 10 多个相互独立的临床和行政系统之间来回查找，才能收集到这些上下文。现在 computer use 可以协助在这些系统中导航，在几秒内把相关信息汇总到一起，减少查找信息的时间——最终让个案管理员有更多时间去支持会员。</p>
+<blockquote>“不到八周就从概念走到部署，这说明当我们把 AI、我们在照护管理上的专业能力，以及负责任使用所需的适当护栏结合起来，能做成什么样的事。更重要的是，这意味着我们的个案管理员能更快拿到更好、更完整的洞察，从而把时间放在最重要的事上：以个性化、有温度的照护支持患者。”</blockquote>
+<p>——Madhu Nutakki，Cigna Healthcare CIO</p>
+<h3>Ambience：让 computer use 在医疗领域可治理</h3>
+<p>computer use 让 agent 能在 API 触及不到的 EHR 和支付方门户中完成任务。在医疗领域，只有当每一个动作都可控、可审计时，这种能力才用得上。Ambience 额外构建了控制措施来支撑这种监督。</p>
+<p>在这次演示中，Ambience 使用患者病历中的证据，在保险公司网站上准备事先授权申请。当记录存在歧义时，agent 会停下来询问临床医生，然后在提交前等待批准。医疗系统可以设定 agent 能执行哪些动作，随时暂停它，并获得逐步日志用于审计。</p>
+<p>医疗初创公司正在把 computer use 的进步转化为支持照护团队的新方式。这五家公司把 AI agent 与医疗专业知识结合起来，帮助团队在系统中导航、协调下一步行动，推动照护向前走。</p>
+<h2>患者数据安全与 agent 控制</h2>
+<p>在医疗领域使用 computer-use agent，需要评估临床安全性、保护患者信息，并明确限定 agent 在没有人复核的情况下可以做什么。</p>
+<p>ChatGPT for Healthcare 提供基于角色的访问控制和审计日志，以支撑监督。机构可以在自己的工作流中加入额外的复核与审批步骤，并配置 agent 使用的应用和环境，把访问范围限定在每项任务所需的记录和操作上。机构数据不会用于训练 OpenAI 的基础模型。</p>
+<p>为支持涉及受保护健康信息的、符合 HIPAA 要求的工作流，机构必须使用其与 OpenAI 签署的 Business Associate Agreement 所覆盖的合格服务，并采用必要的安全与保留设置。</p>
+<h2>开始使用 computer-use agent</h2>
+<p>面向医疗的 computer-use agent 现已在 ChatGPT for Healthcare、ChatGPT for Clinicians 和 OpenAI API 中提供。以下是医疗机构、临床医生和开发者上手的方式。</p>
+<ul><li><strong>医疗机构：</strong> <a href="https://openai.com/contact-sales/">联系我们的销售团队</a>，讨论如何在你的临床和行政工作流中使用 AI。现有客户可以请工作区管理员在 ChatGPT Work 和 Codex 中启用 computer use。</li><li><strong>个体临床医生：</strong> 美国临床医生可以<a href="https://chatgpt.com/plans/clinicians/">立即注册免费的 ChatGPT for Clinicians 账户</a>，在 ChatGPT Work 和 Codex 中体验 computer use。</li><li><strong>开发者：</strong> 用 <a href="https://developers.openai.com/api/docs/quickstart">OpenAI API</a> 构建医疗应用，并查阅我们的 <a href="https://developers.openai.com/api/docs/guides/tools-computer-use">computer use 指南</a>，构建能在现有软件中工作的 agent。</li></ul>
+<p>我们希望这些进展能让医疗团队少花些时间在系统之间搬运信息，多花些时间照护患者。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>The King’s Trust 与 OpenAI 启动 100 万英镑合作</title>
@@ -189,6 +1254,26 @@
       <guid isPermaLink="true">https://openai.com/index/the-kings-trust-and-openai</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：The King’s Trust and OpenAI launch £1m partnership</description>
+      <content:encoded><![CDATA[<p>2026年11月16日</p>
+<p>全球事务</p>
+<h1>国王信托基金会与 OpenAI 启动 100 万英镑合作项目</h1>
+<p>这项新合作将帮助年轻人掌握未来职场所需的 AI 技能，优先支持未在就学或就业的群体。</p>
+<ul><li><a href="https://www.kingstrust.org.uk/">国王信托基金会</a>宣布与 OpenAI 达成重要合作，旨在帮助多达 2.5 万名年轻人掌握工作所需的 AI 技能，优先支持未在就学、就业或接受培训的群体。</li><li>OpenAI 将向这家青年慈善机构捐赠 100 万英镑，用于支持这项工作。</li><li>这项合作属于基金会将在未来几个月推出的一项更广泛的计划，该计划提供全国认可的 AI 资质认证，旨在帮助年轻人在不断变化的劳动力市场中保持竞争优势。</li><li>宣布这项合作之际，国王信托基金会正迎来成立 50 周年。面向未来，基金会将继续提供支持，帮助年轻人在 AI 日益普及的世界中取得成功。</li></ul>
+<p>国王信托基金会与 OpenAI 启动了一项 100 万英镑的合作项目，帮助英国各地的年轻人掌握工作所需的 AI 技能，优先支持未在就学、就业或接受培训（NEET）的群体。该项目计划在未来 18 个月内为多达 2.5 万名年轻人提供支持，帮助他们掌握实用技能、建立信心，在 AI 赋能的经济中迈向升学和就业。</p>
+<p>该项目将帮助弥补年轻人在 AI 使用经验方面的不足，同时回应他们的学习热情。英国开放大学的<a href="https://business.open.ac.uk/wales/knowledge-hub/harnessing-young-talent-pipelines-digital-world-could-neets-be-supported-employers">《2026 年商业晴雨表》</a>发现，在受访的 16 至 24 岁、未在就学、就业或接受培训的年轻人中，68% 愿意接受培训或提升技能，以改善就业前景。</p>
+<p>这项合作将 AI 技能学习机会、受认可的资质认证与实践经验相结合，帮助年轻人为快速变化的职场所带来的机遇和挑战做好准备。这项合作属于国王信托基金会正在制定的一项更广泛的计划，该计划提供全国认可的 AI 资质认证，旨在帮助年轻人在 AI 改变职场的过程中掌握雇主所需的技能。</p>
+<p>随着 AI 逐渐融入日常工作，国王信托基金会正与雇主、AI 专家及年轻人合作，探索年轻人在这样的职场中需要哪些技能，以及如何让这些技能与基金会现有各项计划中的就业技能培训形成互补。</p>
+<p>50 年来，国王信托基金会已为超过 130 万名年轻人提供支持。在此基础上，基金会希望确保下一代掌握在 AI 赋能的经济中蓬勃发展所需的技能与信心。</p>
+<p>在“年轻人与工作”独立评估的最终报告发布前，Alan Milburn 阁下对这项合作表示欢迎，并谈及各方共同的愿景：让年轻人获得更多学习和就业增收的机会。</p>
+<blockquote>“Young people deserve to be equipped for a changing world of work, with the skills and confidence to make the most of it. AI will bring disruption as well as opportunity, so it is vital that young people get a fair share of the opportunity and don’t bear the cost of the disruption.”</blockquote>
+<p>—Rt Hon Alan Milburn</p>
+<p>OpenAI 致力于帮助年轻人掌握技能、建立信心，从 AI 中受益，这项合作是这一更广泛承诺的一部分。这项合作延续了 OpenAI 让实用 AI 学习惠及更多人的努力，其中包括通过 <a href="https://openai.com/global-affairs/scaling-the-openai-academy/">OpenAI Academy</a> 为学生、求职者及其他学习者提供免费学习资源。</p>
+<blockquote>“AI has the potential to create enormous opportunities for young people, but only if they have the chance to develop the skills and confidence to use it. We want young people to shape the future, not be shaped by it. Through this partnership with OpenAI, we’ll help thousands of young people build practical AI skills, gain recognized qualifications and prepare for a world of work that is changing rapidly. We’re incredibly grateful for OpenAI’s support as we help the next generation unlock the opportunities of the AI era.”</blockquote>
+<p>—Jonathan Townsend, UK Chief Executive, The King’s Trust</p>
+<blockquote>“Young people who are out of education or work deserve a real foothold in the AI economy. We’re committing £1 million and our AI expertise to help The King’s Trust reach up to 25,000 young people with practical skills, recognized learning and support toward education and employment. We’re excited about the talent this can unlock. Our ambition is for young people facing the greatest barriers to have a real chance to shape, and benefit from, an AI-powered future.”</blockquote>
+<p>—Tom Duff Gordon, VP &amp; Head EMEA Policy, OpenAI</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>在 Holiday Extras，dots 在任何人提出请求前就开始工作</title>
@@ -196,6 +1281,52 @@
       <guid isPermaLink="true">https://openai.com/business/customer-stories/holiday-extras-dots</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：At Holiday Extras, dots get to work before anyone asks</description>
+      <content:encoded><![CDATA[<p>2026年11月16日</p>
+<h1>在 Holiday Extras，dot 无需吩咐就主动开工</h1>
+<p>dot 无需指示就能主动提供上线报告，提醒人们可能忽略的问题，还能在上班通勤途中一起梳理即将召开的会议。</p>
+<p><a href="https://chatgpt.com/business/">探索 ChatGPT Business</a></p>
+<p>公司规模: 中型企业</p>
+<p>区域: 欧洲和英国</p>
+<p>行业: 旅行</p>
+<p>产品: ChatGPT</p>
+<p><a href="https://www.holidayextras.com/">Holiday Extras</a> 在应用中推出新功能后的第二天，公司 AI 创新副总裁 Liam Thompson 就收到了一份关于该功能表现的报告。但他并没有要求生成这份报告。他的 dot 名叫 Beast，注意到新功能上线后，便通过 ChatGPT 插件从 Google BigQuery 中提取数据，并把结果交给了他。</p>
+<blockquote>“我都还没开口，Beast 就说‘给你，准备好了’，那一刻我真的很开心。”</blockquote>
+<p>—Liam Thompson，Holiday Extras AI 创新副总裁</p>
+<p>Holiday Extras 是一家英国旅游科技公司，帮助旅客预订出行所需的各项配套服务，从机场停车、酒店到休息室和接送服务。它的承诺很简单：少些烦心，多享假期。</p>
+<p>这份化繁为简的承诺，也同样面向员工。ChatGPT Enterprise 为员工使用 AI 奠定基础，Codex 帮助他们将专业知识转化为可用的软件和更好的客户体验，而 <a href="https://openai.com/index/introducing-dots/">dot⁠</a> 则简化了其中的各项工作。</p>
+<p>Liam 和他的同事、创新与增长总监 David Lee 分享了他们如何把 dot 用作助手和思考伙伴：一起梳理接下来的安排，发现自己可能忽略的问题，并完成那些原本得等到回到办公桌前才能处理的工作。</p>
+<h2>通勤路上聊一聊，到岗就有报告</h2>
+<p>David 给自己的 dot 起名叫 Brian，每天早上通勤时都会和它通话。他们会一起梳理接下来的会议，David 也可以让 Brian 利用已接入的公司数据生成报告。他说：“等我到了办公室，在桌前坐下，报告就已经准备好了，可以直接用。”</p>
+<p>有一次，一些 API 密钥需要停用，Brian 提醒了 David，还回查了他的邮件，列出了可能受影响的人员名单。David 不用再翻找过去的邮件往来逐一梳理，就能知道可能需要提前通知哪些人。</p>
+<blockquote>“我最喜欢 Brian 的一点是，它已经在思考那些我压根还没想到的事。”</blockquote>
+<p>—David Lee，Holiday Extras 创新与增长总监</p>
+<h2>为什么 Liam 每天要和 dot 聊上两个小时</h2>
+<p>Liam 说：“我的 dot 帮我统筹一切。”Beast 会提醒他哪些消息还没回复，也会从过去的对话中找出答案。Liam 不必再翻看聊天记录，只要问问 Beast 他们什么时候讨论过某件事、当时的答案是什么就行了。</p>
+<p>Liam 说：“有 Beast 在，我就能放松下来，因为我知道，即使漏了什么，它很可能已经处理好了，而且它一直在留意所有事情的进展。”</p>
+<p>Liam 曾试用过另外两款助手 OpenClaw 和 Hermes，但他说，自己不太放心向它们提供太多信息。他说：“在我们公司的环境中，只要是 OpenAI 的产品，我就知道可以信任。”他授权 Beast 访问自己的 Slack、邮箱、Drive 和笔记本电脑，让它能更好地帮上忙。</p>
+<p>Liam 每天早晚都会与 Beast 对话，听取简报。“我最喜欢语音。双向语音彻底改变了我与 OpenAI 产品的交互方式。”他说。“就像自然地聊天一样。我每天至少会和 Beast 语音聊两个小时。”</p>
+<h2>动画制作，从几天缩短到约十分钟</h2>
+<p>dot 也是设计伙伴。Liam 学过设计。他正在开发一款应用，于是请 Beast 为其中的 3D 角色制作动画。他授权 Beast 使用笔记本电脑上的 After Effects 和 Rive，然后看着它动手制作。</p>
+<p>Beast 为这些角色制作了动画，并将它们放进应用中。Liam 说，这项工作要是自己来做，得花上好几天；而他估计，Beast 只用了大约十分钟。Liam 说：“我在大学里学了三年设计。”看着 Beast 工作，他心想：“好吧，它做得比我还好。”</p>
+<h2>在全公司分享有效经验</h2>
+<p>对 Holiday Extras 来说，下一个机会是帮助更多人让自己的 dot 发挥作用。David 希望正在尝试使用 dot 的人分享自己的心得，让其他人看到 dot 能做什么，并亲自试一试。无论是从准备会议、动手做点东西，还是让日常生活轻松一点开始，下一个点子都可能来自任何人。</p>
+<p>这延续了公司与 OpenAI 合作的初衷：为全体员工提供尝试新工作方式所需的信心和工具，并推动有价值的发现得到推广。</p>
+<p>对于刚开始使用的人，Liam 的建议很简单：创建一个 dot，和它聊起来。“没有理由不开始。真的，直接试起来吧。”</p>
+<h2>迈入工作新时代</h2>
+<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<h2>接收 OpenAI 商业应用的最新资讯</h2>
+<p>产品更新、实用指南、活动预告等丰富内容</p>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1pQ0jmmXO4srma6UqEuFtH/479d0a9d0ba2501f31c0dc3a0767430b/holiday-extras-hero.png?w=3840&amp;q=90&amp;fm=webp" alt="Holiday Extras — Hero"></p>
+<p>Holiday Extras 正在重新思考借助 Codex 能构建什么</p>
+<p>2026年11月12日</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2nAmJWUrmCwC3avCecsdYa/34ddcd27c1c89aae828a7e91539b29df/oai_Omio_1x1.png?w=3840&amp;q=90&amp;fm=webp" alt="Omio &gt; oai omio 1x1 card"></p>
+<p>Omio 如何打造对话式旅行的未来</p>
+<p>2026年6月23日</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/15d768b2-bd52-4e68-bebaf96d50b3/e3f414371811a69d73091cc36a44ce8f/holiday_extras.png?w=3840&amp;q=90&amp;fm=webp" alt="紫色背景上的白色 Holiday Extras 标志。"></p>
+<p>借助 AI 打造数据驱动的高效文化</p>
+<p>2024年3月18日</p>]]></content:encoded>
     </item>
     <item>
       <title>在晶格上定义标准模型的一步</title>
@@ -554,6 +1685,19 @@
       <guid isPermaLink="true">https://openai.com/ads/blog/chatgpt-ads-increases-its-market-presence</guid>
       <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：ChatGPT Ads increases its market presence in 44 countries</description>
+      <content:encoded><![CDATA[<p>2026年11月12日</p>
+<h1>ChatGPT Ads 在 44 个国家扩大市场布局</h1>
+<p>Aleph 被选为 ChatGPT Ads 在 44 个国家的独家经销商，为品牌和代理商提供本地开票、线下支持和本地市场专业能力</p>
+<p>从今天起，44 个国家的品牌和代理商可以通过 OpenAI 的独家经销商 Aleph 签约、付款，并获得 ChatGPT Ads 的本地支持。在这些国家，Aleph 为本地广告主提供了一种额外的购买方式，与现有的<a href="https://openai.com/index/new-ways-to-buy-chatgpt-ads/">全球技术合作伙伴</a>以及自助式的 <a href="https://ads.openai.com/">ChatGPT Ads Manager</a> 并存。</p>
+<p>该经销协议覆盖位于以下 44 个市场的广告主：</p>
+<ul><li>拉丁美洲（14）：阿根廷、玻利维亚、智利、哥伦比亚、哥斯达黎加、多米尼加共和国、厄瓜多尔、萨尔瓦多、危地马拉、巴拿马、巴拉圭、秘鲁、波多黎各和乌拉圭</li><li>欧洲与中亚（16）：阿塞拜疆、保加利亚、克罗地亚、塞浦路斯、捷克、爱沙尼亚、匈牙利、哈萨克斯坦、拉脱维亚、立陶宛、罗马尼亚、塞尔维亚、斯洛伐克、斯洛文尼亚、乌克兰* 和乌兹别克斯坦</li><li>中东与非洲（10）：埃及、肯尼亚、科威特、摩洛哥、尼日利亚、卡塔尔、沙特阿拉伯、南非、土耳其和阿拉伯联合酋长国</li><li>亚太（4）：孟加拉国、柬埔寨、香港* 和斯里兰卡</li></ul>
+<p>今天的公告不影响任何广告主在广告活动中定向这些国家的能力。全球广告主仍可继续创建并投放定向任何<a href="https://help.openai.com/en/articles/20001245-ads-manager-availability#ads-manager-availability">已提供 ChatGPT Ads 的国家</a>的广告活动。</p>
+<p>这些市场的广告主和代理商如果希望从本地实体或本地销售团队购买 ChatGPT Ads，可以<a href="https://alephdigital.com/OpenAi">联系 Aleph 的本地团队</a>了解更多。Aleph 提供本地签约、以本币开票、付款账期、开户引导、广告活动支持和培训。</p>
+<p>希望直接购买广告的广告主和代理商，可以继续通过 Ads Manager 购买。希望在这些市场通过全球技术合作伙伴购买的广告主和代理商，也可以继续这样做。</p>
+<p>已有超过十万名营销人员在 ChatGPT 上投放广告，我们会根据从用户和企业那里学到的东西持续改进平台。今天的公告意味着在这些市场上多了一些本地化的 ChatGPT Ads 购买方式。</p>
+<p>十个月里我们取得了明显进展，但在释放 ChatGPT Ads 全部潜力这件事上，我们仍然处在早期。随着我们进入新市场，开发新的广告形式、优化工具和衡量方案，我们会继续专注于扩大强大 AI 的可及性、守护人们对 ChatGPT 的信任，并帮助企业达成目标。</p>
+<h2>作者</h2>
+<p>*OpenAI 模型和 ChatGPT 不向中国大陆或香港的用户提供，因此 ChatGPT Ads 在当地市场不可用。位于这些市场的企业可以通过授权广告合作伙伴，向已开放 Ads 的市场中的 ChatGPT 用户投放广告，但须符合适用的资格要求。</p>]]></content:encoded>
     </item>
     <item>
       <title>Gilbert + Tobin 用人工智能重新思考法律业务</title>
@@ -1159,6 +2303,44 @@
       <guid isPermaLink="true">https://openai.com/ads/customers/vistaprint</guid>
       <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How VistaPrint helps small businesses get the word out</description>
+      <content:encoded><![CDATA[<p>2026年11月9日</p>
+<h1>VistaPrint 如何帮助小企业把消息传出去</h1>
+<p>准备新品发布或活动的小企业主，往往已经清楚自己想达成什么，却还没想好要印什么。VistaPrint 用 ChatGPT Ads 展示标牌和品牌周边这类产品如何帮他们把消息传出去。</p>
+<p><a href="https://ads.openai.com/">立即开始</a></p>
+<p><img src="https://openai.com/_next/image?url=https%3A%2F%2Fcdn.openai.com%2Fmdx-assets%2Ff32d69a9-d632-4e98-83f6-8a4fd7f7e940%2Fvistaprint-ink-sweep-card.cba6a2cc.png&amp;w=3840&amp;q=90" alt="蓝色墨迹纹理背景上的白色 VistaPrint 标志"></p>
+<h2>成果速览</h2>
+<p>5.9x</p>
+<p>针对 VistaPrint 其中一个热门产品品类投放的美国转化优化广告活动，其广告支出回报。<a href="https://openai.com/ads/customers/vistaprint/#user-content-fn-1">1</a></p>
+<p>~90%</p>
+<p>与同品类此前以点击为中心的广告活动相比，针对 VistaPrint 其中一个热门产品品类投放的美国转化优化广告活动，每个归因订单的成本降幅。<a href="https://openai.com/ads/customers/vistaprint/#user-content-fn-2">2</a></p>
+<p>多数</p>
+<p>在 VistaPrint 归因到 ChatGPT Ads 的美国站内转化中，多数来自新客户。<a href="https://openai.com/ads/customers/vistaprint/#user-content-fn-3">3</a></p>
+<h2>在客户还没想清楚需求时就遇见他们</h2>
+<p>几十年来，VistaPrint 一直在帮助小企业把想法变成现实，从名片、标牌到各种品牌周边。但小企业的需求并不总是从某个具体产品开始。客户可能是在创业、筹备一场活动、更新品牌形象，或者在寻找更有效的自我营销方式。</p>
+<p>这就带来了一个机会：在客户探索自己需要什么、评估把想法变成现实的各种方式时触达他们。正是这个机会吸引 VistaPrint 参与了 ChatGPT Ads 的试点。</p>
+<blockquote>“ChatGPT 让我们兴奋的地方，是它在客户旅程中所处的位置——意图还在形成的那个时点。当潜在客户还不清楚自己需要什么，正在一段对话里把这件事想明白，那正是我们希望出现的地方。发现阶段才是我们能帮助影响决策的地方，而不只是回应已经做出的决定。”</blockquote>
+<p>—Diego Virmond，VistaPrint 媒体投放经理</p>
+<h2>从客户的目标出发</h2>
+<p>VistaPrint 早期的广告活动偏重以产品为中心的文案。团队把重心转向小企业主能用这些产品做什么，比如用标牌把人吸引到展位前，或者在活动上派发品牌周边。</p>
+<p>这成了他们不断演进的打法的基础。创意素材可以帮助客户看到某个产品如何契合自己的需求；团队同时也希望广告优化能反映接下来发生了什么。对 VistaPrint 来说，业务目标是把这份兴趣变成订单。</p>
+<p><img src="https://openai.com/_next/image?url=https%3A%2F%2Fcdn.openai.com%2Fmdx-assets%2Ff32d69a9-d632-4e98-83f6-8a4fd7f7e940%2Fvistaprint-chatgpt-ad-3x.b1fc4fe7.png&amp;w=3840&amp;q=90" alt="ChatGPT 中的 VistaPrint 广告，展示名片，标题为：你的名片，你的风格。"></p>
+<p>ChatGPT 中的一则 VistaPrint 广告。</p>
+<h2>把兴趣转化为可衡量的结果</h2>
+<p>VistaPrint 针对其中一个热门产品品类连续投放了两轮美国广告活动，来探索这下一步。第一轮采用以点击为中心的出价方式。2026 年 7 月，团队上线了一轮转化优化广告活动。VistaPrint 选择“Order Created”作为转化事件，并按有效点击付费。</p>
+<p>随着广告活动从转化数据中学习，团队评估了表现并调整最高出价。VistaPrint 报告称，转化优化广告活动的每个归因订单成本比此前以点击为中心的广告活动低约 90%。<a href="https://openai.com/ads/customers/vistaprint/#user-content-fn-2">2</a> 这轮转化优化广告活动录得 5.9x 的广告支出回报。<a href="https://openai.com/ads/customers/vistaprint/#user-content-fn-1">1</a></p>
+<p>这些结果让 VistaPrint 有信心把这一做法推广到其余美国广告活动，并延伸到英国、加拿大和澳大利亚。这次经历也给团队在创意上的学习添了一条实操经验：要给以转化为目标的出价留出学习时间，然后在广告活动推进过程中持续评估表现。</p>
+<h2>让庞大的商品目录贴合个体需求</h2>
+<p>商品 feed 提供了另一种把客户需求与 VistaPrint 的产品阵容连接起来的方式。在标准广告活动之外，团队还引入了基于目录的广告活动，用 feed 中的商品信息来填充广告。</p>
+<blockquote>“ChatGPT Ads 不是要在文字形式和目录形式之间二选一，而是要让两者协同，并保持一种均衡的广告活动结构。标准广告活动让我们能就客户的业务目标展开更宏观的对话，而动态商品 feed 则能立刻把他们正在找的合适产品送到眼前。”</blockquote>
+<p>—Vishal Singh，VistaPrint 媒体投放高级专员</p>
+<p>VistaPrint 用目录广告的结果来指导预算分配，并把 feed 广告活动扩展到其他市场。它给其他电商广告主的建议是：在投入贴合对话语境的创意素材之外，也要把 feed 做得干净、结构良好。</p>
+<p>触达新客户是 VistaPrint 最初对这一渠道的核心目标。从 7 月到 9 月，VistaPrint 追溯到 ChatGPT Ads 的美国站内转化中，多数来自新客户。<a href="https://openai.com/ads/customers/vistaprint/#user-content-fn-3">3</a></p>
+<p>这些结果让 VistaPrint 有信心把做法推广到更多广告活动和市场。对团队来说，机会在于趁小企业的想法成形时与他们建立联系，并帮助他们发现能让这些想法落地的产品。</p>
+<h2>在 ChatGPT 中投放广告</h2>
+<p>在人们于 ChatGPT 中探索选项、比较选择、做出决定时触达他们，用相关且自然融入体验的广告。</p>
+<p>立即开始</p>
+<h2>脚注</h2>
+<ul><li>1 基于 VistaPrint 报告的、2026 年 7 月 8 日至 8 月 4 日美国转化优化广告活动的平台归因销售额。</li><li>2 基于 VistaPrint 报告的同一产品品类连续两轮美国广告活动的平台转化追踪数据。以点击为中心的广告活动运行于 2026 年 6 月 10 日至 7 月 7 日，转化优化广告活动运行于 2026 年 7 月 8 日至 8 月 4 日。</li><li>3 基于 VistaPrint 7 月至 9 月的美国站内内部数据。VistaPrint 使用广告活动 UTM 参数把站内转化关联到 ChatGPT Ads。该分析未包含 Ads Manager 的归因数据。</li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

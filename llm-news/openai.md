@@ -12,15 +12,15 @@
 ## 全部文章（共 1415 篇，按日期倒序；无日期条目列于最后）
 
 1. [OpenAI 的 Performance Factory 如何保持 ChatGPT 快速](https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast)（2026-11-19） <!--orig:How OpenAI’s Performance Factory keeps ChatGPT fast-->
-2. [部署黎明红](https://openai.com/business/learn/deploying-daybreak-red)（2026-11-19） <!--orig:Deploying Daybreak Red-->
+2. [部署 Daybreak Red](https://openai.com/business/learn/deploying-daybreak-red)（2026-11-19） <!--orig:Deploying Daybreak Red-->
 3. [查看 PR 扫描的实际应用](https://openai.com/business/learn/pr-scans-demo)（2026-11-19） <!--orig:See PR scans in action-->
 4. [探索 Codex 安全插件](https://openai.com/business/learn/codex-security-plugin-demo)（2026-11-19） <!--orig:Explore the Codex Security Plugin-->
-5. [开始使用黎明蓝色](https://openai.com/business/learn/daybreak-blue-onboarding-demo)（2026-11-19） <!--orig:Get started with Daybreak Blue-->
+5. [开始使用 Daybreak Blue](https://openai.com/business/learn/daybreak-blue-onboarding-demo)（2026-11-19） <!--orig:Get started with Daybreak Blue-->
 6. [沉默的共识](https://openai.com/index/the-silent-consensus)（2026-11-18） <!--orig:The Silent Consensus-->
 7. [研究加速：锯齿状的前沿](https://openai.com/index/research-acceleration-jagged-frontier)（2026-11-18） <!--orig:Research acceleration: The jagged frontier-->
 8. [住友生命的领导者如何帮助团队采用 ChatGPT Enterprise](https://openai.com/business/customer-stories/sumitomo-life)（2026-11-18） <!--orig:How Sumitomo Life’s leaders helped teams adopt ChatGPT Enterprise-->
 9. [Codex 沙箱内部](https://openai.com/index/inside-the-codex-sandbox)（2026-11-18） <!--orig:Inside the Codex sandbox-->
-10. [管理前沿人工智能风险：从培训到部署](https://openai.com/index/managing-frontier-ai-risk)（2026-11-18） <!--orig:Managing frontier AI risk: From training to deployment-->
+10. [管理前沿人工智能风险：从训练到部署](https://openai.com/index/managing-frontier-ai-risk)（2026-11-18） <!--orig:Managing frontier AI risk: From training to deployment-->
 11. [利用 OpenAI 模型推进芯片设计](https://openai.com/index/advancing-chip-design-with-our-models)（2026-11-18） <!--orig:Advancing chip design with OpenAI models-->
 12. [Le Groupe Figaro 和 OpenAI 合作将 Le Figaro 新闻带入 ChatGPT](https://openai.com/index/le-groupe-figaro-and-openai-announce-partnership)（2026-11-18） <!--orig:Le Groupe Figaro and OpenAI partner to bring Le Figaro journalism to ChatGPT-->
 13. [GPT-6.2 Astra 和 Sol 简介](https://openai.com/index/introducing-gpt-6-2-astra-sol)（2026-11-17） <!--orig:Introducing GPT-6.2 Astra and Sol-->

@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-20 12:13:33**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-20 14:37:57**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -41,10 +41,10 @@
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-20，标题自动汉化）：
   1. [OpenAI 的 Performance Factory 如何保持 ChatGPT 快速](https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast)（2026-11-19）
-  2. [部署黎明红](https://openai.com/business/learn/deploying-daybreak-red)（2026-11-19）
+  2. [部署 Daybreak Red](https://openai.com/business/learn/deploying-daybreak-red)（2026-11-19）
   3. [查看 PR 扫描的实际应用](https://openai.com/business/learn/pr-scans-demo)（2026-11-19）
   4. [探索 Codex 安全插件](https://openai.com/business/learn/codex-security-plugin-demo)（2026-11-19）
-  5. [开始使用黎明蓝色](https://openai.com/business/learn/daybreak-blue-onboarding-demo)（2026-11-19）
+  5. [开始使用 Daybreak Blue](https://openai.com/business/learn/daybreak-blue-onboarding-demo)（2026-11-19）
   - 📄 完整文章归档（共 1415 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (google_gemini)
@@ -53,7 +53,7 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-google_gemini.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-google_gemini.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-20，标题自动汉化）：
   1. [Genie 4 (models/genie-4) generally available (GA): Released Genie 4 (models/genie-4) on the Interactions API (v1beta) for real-time interactive world generation, streaming steerable 24 fps 16:9 video…](https://aistudio.google.com/docs/changelog#11-19-2026)（2026-11-19）
-  2. [Gemini 4 Neon (gemini-4-neon) 全面上市 (GA)：发布了 Gemini 4 Neon (gemini-4-neon)，带来前沿级智能，跨复杂的软件引擎快速完成端到端任务……](https://aistudio.google.com/docs/changelog#11-18-2026)（2026-11-18）
+  2. [Gemini 4 Neon (gemini-4-neon) 全面上市 (GA)：发布了 Gemini 4 Neon (gemini-4-neon)，带来前沿级智能，跨复杂的软件工程快速完成端到端任务……](https://aistudio.google.com/docs/changelog#11-18-2026)（2026-11-18）
   3. [Gemini 3.5 Transcribe 中的语音编辑：gemini-3.5-transcribe 和 gemini-3.5-transcribe-live 现在支持语音驱动的编辑、重写和格式化听写语音或预先存在的文本（来源...](https://aistudio.google.com/docs/changelog#11-17-2026)（2026-11-17）
   4. [Gemini 4 Hydrogen (gemini-4-Hydrogen) 全面上市 (GA)：发布了 Gemini 4 Hydrogen (gemini-4-Hydrogen)，为每个人带来尖端智能，为日常生活带来速度和效率……](https://aistudio.google.com/docs/changelog#11-12-2026)（2026-11-12）
   5. [Gemini Decision 1 and the Decisions API: Released Gemini Decision 1 (gemini-decision-1) and the Decisions API for fast, calibrated binary, categorical, and rubric decisions across text, images, audio…](https://aistudio.google.com/docs/changelog#11-11-2026)（2026-11-11）
