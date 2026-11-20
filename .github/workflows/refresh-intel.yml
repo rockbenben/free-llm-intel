@@ -101,10 +101,17 @@ jobs:
       OPENCODE_GO_ENABLED: ${{ vars.OPENCODE_GO_ENABLED }}
       OPENCODE_GO_UNTIL: ${{ vars.OPENCODE_GO_UNTIL }}
       OPENCODE_GO_MODEL: ${{ vars.OPENCODE_GO_MODEL }}
+      AI_BODIES_BUDGET_SECONDS: ${{ vars.AI_BODIES_BUDGET_SECONDS || '900' }}
+      REFRESH_JOB_TIMEOUT_MINUTES: "60"
+      REFRESH_PUBLISH_RESERVE_SECONDS: "180"
     # 首次运行是冷启动：翻译缓存未命中需冷译归档全量标题 + 全量深度抓取 + 浏览器内核安装，
     # 比缓存命中的常规巡检慢一个量级；timeout 按冷启动上限留余量，别按常规耗时判断。
     timeout-minutes: 60
     steps:
+      - name: Set refresh work deadline
+        run: |
+          printf 'REFRESH_WORK_DEADLINE=%s\n' "$(( $(date +%s) + REFRESH_JOB_TIMEOUT_MINUTES * 60 - REFRESH_PUBLISH_RESERVE_SECONDS ))" >> "$GITHUB_ENV"
+
       - name: Checkout
         uses: actions/checkout@v7
 
@@ -171,7 +178,7 @@ jobs:
       # continue-on-error：回填是增强项，它挂了不该挡掉当天的巡检产物提交。
       - name: Backfill article originals
         continue-on-error: true
-        run: python crawler_llm_intel.py --backfill-orig
+        run: python refresh_budget.py optional python crawler_llm_intel.py --backfill-orig
 
       # 灾难性失败护栏：情报页失败占比 ≥ INTEL_FAIL_ABORT_RATIO（多数失败）时，
       # crawler 以非零码退出，本步骤随即失败，后面的 Verify / Commit 都不执行 ——
@@ -187,7 +194,7 @@ jobs:
           # GITHUB_REPOSITORY 推导为 https://<owner>.github.io/<repo>/feeds
           # （fork 后无需配置）；显式传入可覆盖推导值。
           FEEDS_BASE: ${{ vars.FEEDS_BASE }}
-        run: python crawler_llm_intel.py --ai-review --ai-titles --feeds-base "$FEEDS_BASE"
+        run: python refresh_budget.py required python crawler_llm_intel.py --ai-review --ai-titles --feeds-base "$FEEDS_BASE"
 
       # 正文语料增量（corpus spec §5/§9 M2）：抓今天新文章的英文正文 → 译中文。
       # 必须排在 crawler **之后**：crawler 刚重写 docs/feeds/articles.json，今天新收录的
@@ -198,7 +205,7 @@ jobs:
       # README/新闻提交；写坏的产物由紧随其后的 Verify「实产物 schema 守卫」兜底拦提交。
       - name: Fetch article bodies (incremental)
         continue-on-error: true
-        run: python crawler_llm_intel.py --fetch-bodies
+        run: python refresh_budget.py required python crawler_llm_intel.py --fetch-bodies
 
       # Go 正文优先整篇译，输出上限 32768 token。估算超限或整篇截断时按 Markdown
       # 边界分段，逐块验收后才落盘。单轮墙钟覆盖请求及退避，剩余交给下面的机翻。
@@ -210,14 +217,12 @@ jobs:
         env:
           OPENCODE_GO_API_KEY: ${{ secrets.OPENCODE_GO_API_KEY }}
           AI_BODIES_LIMIT: ${{ vars.AI_BODIES_LIMIT || '0' }}
-          AI_BODIES_BUDGET_SECONDS: ${{ vars.AI_BODIES_BUDGET_SECONDS || '900' }}
-        run: python crawler_llm_intel.py --ai-bodies --ai-bodies-go-only --ai-bodies-limit "$AI_BODIES_LIMIT" --ai-bodies-budget-seconds "$AI_BODIES_BUDGET_SECONDS"
+        run: python refresh_budget.py translate python crawler_llm_intel.py --ai-bodies --ai-bodies-go-only --ai-bodies-limit "$AI_BODIES_LIMIT"
 
       # 中文正文剩余 pending → Google 机器翻译 → .md。
       # 用 gtx（无 key、无 LLM 免费层 RPD 额度墙），按块译、代码块/行内代码/链接目标
       # 等结构原样保留（占位后逐字还原），长文也能覆盖。
-      # 与上一步共用同一个墙钟预算开关：不传 `--ai-bodies-budget-seconds` 时默认 900 秒
-      # （到点即停、剩余留 pending 给下一轮），避免 gtx 抖动把这一步拖成无限跑。
+      # 与 Go 共用截止时间；单步预算默认 900 秒，到点剩余篇目留 pending。
       # 产物标 translator=mt —— 是糙覆盖，术语/品牌可能翻坏，重点篇之后本地 agent 重译升级。
       # --mt-bodies-limit 封顶单日请求量（未设 var 时默认 80，日常新增远小于此）。
       # 正文今天落 `.md`，产出层由下面这一步的 --render-only 在同一天重排，
@@ -227,7 +232,7 @@ jobs:
         continue-on-error: true
         env:
           MT_BODIES_LIMIT: ${{ vars.MT_BODIES_LIMIT || '80' }}
-        run: python crawler_llm_intel.py --mt-bodies --mt-bodies-limit "$MT_BODIES_LIMIT"
+        run: python refresh_budget.py translate python crawler_llm_intel.py --mt-bodies --mt-bodies-limit "$MT_BODIES_LIMIT"
 
       # 产出层重排：RSS 与各类索引都是归档 + 语料的视图，正文步骤之后必须再渲染一次，
       # 否则当天新译的正文进不了 feed（实测合并流里新条目只有 title/link/guid、456 字节）。
@@ -257,7 +262,7 @@ jobs:
       # 且因为工作区每次都重新生成，这个漂移不会自己暴露（2026-11-04 修）。
       - name: Commit all updates
         run: |
-          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds docs/articles docs/images README.md profile_overrides.json
+          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds docs/articles docs/images README.md profile_overrides.json ':(exclude,glob)**/*.tmp'
           # 变更日志要到第一次 AI 采纳档案更新才落盘；对不存在的路径 git add 会
           # 以 exit 128 中断整个提交步骤（2026-09-25 巡检就是这么挂的），故先判存在。
           if [ -f llm-intel-changelog.md ]; then git add llm-intel-changelog.md; fi

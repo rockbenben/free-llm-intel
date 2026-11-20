@@ -11,6 +11,7 @@ import atexit
 import json
 import re
 import sys
+import time
 from pathlib import Path
 from threading import Lock
 from urllib.parse import urljoin
@@ -484,16 +485,18 @@ def _restore_body_inline(text: str, stash: list[str]) -> str:
     return text
 
 
-def translate_body_to_zh(md: str, timeout: float = 8.0) -> str:
+def translate_body_to_zh(md: str, timeout: float = 8.0, *, deadline: float | None = None) -> str:
     """整篇 markdown 正文机翻为中文：结构片段原样、散文逐块 gtx。失败块留原文。
 
     结构片段（代码块 / 行内代码 / 链接目标 / HTML 标签 / 裸 URL）不进 gtx，
     避免它把 URL 路径里的英文词也翻掉；每块译完按英文原文做品牌回正。
-    返回拼好的中文 markdown；某块 gtx 失败则该块保持英文原文（下次 --mt-bodies
-    重跑时它仍是 pending，会再试）。不缓存（正文长、命中率低，且失败要能重试）。
+    返回拼好的中文 markdown；gtx 请求失败的块保留原文。
+    给定本轮截止时间时，每个请求按剩余时间限时，到点放弃整篇。
     """
     if not md or not md.strip():
         return md
+    from fulltext import BodyBudgetExpired
+
     parts = _split_code_and_text(md)
     out: list[str] = []
     for kind, seg in parts:
@@ -503,7 +506,12 @@ def translate_body_to_zh(md: str, timeout: float = 8.0) -> str:
         translated_chunks = []
         for chunk in _chunk_text(seg):
             masked, stash = _protect_body_inline(chunk)
-            tr = _gtx_translate(masked, timeout)
+            remaining = deadline - time.monotonic() if deadline is not None else timeout
+            if remaining <= 0:
+                raise BodyBudgetExpired("机翻墙钟预算耗尽")
+            tr = _gtx_translate(masked, min(timeout, remaining))
+            if deadline is not None and time.monotonic() >= deadline:
+                raise BodyBudgetExpired("机翻墙钟预算耗尽")
             if tr and not _body_tokens_intact(tr, stash):
                 tr = ""      # 占位被吞：译文里的链接会凭空消失 → 整块回退原文
             if tr:

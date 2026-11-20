@@ -5092,7 +5092,7 @@ def backfill_archive_originals(news_dir: Path, fetch,
             fixed += 1
             dirty = True
         if dirty:
-            arch.write_text("".join(lines), encoding="utf-8", newline="\n")
+            _atomic_write_text(arch, "".join(lines))
     if ledger_path and recorded:
         _save_backfill_ledger(ledger_path, ledger)
     return visited, fixed, recorded
@@ -7833,9 +7833,13 @@ def main(argv: list[str] | None = None) -> int:
         bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
         pending = len(fulltext.pending_translation_keys(bodies))
         today = datetime.now().strftime("%Y-%m-%d")
-        translate = lambda title, en_body: provider_profiles.translate_body_to_zh(en_body)
         # 机翻同样吃墙钟预算：gtx 没有额度墙，但不该无限跑——到点剩余留 pending 给下一轮。
         budget = resolve_bodies_budget(parser, args)
+        deadline = time.monotonic() + budget if budget else None
+
+        def translate(_title: str, en_body: str) -> str:
+            return provider_profiles.translate_body_to_zh(en_body, deadline=deadline)
+
         budget_desc = f"{budget:g}s" if budget else "不限"
         print(f"  [mt-bodies] 待译 {pending} 篇，走 Google 机翻（按块、代码块原样保留；"
               f"本次上限 {args.mt_bodies_limit or '不限'}；墙钟预算 {budget_desc}）...")

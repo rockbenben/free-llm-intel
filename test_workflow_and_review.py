@@ -170,6 +170,16 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertIn("--ai-titles", crawl_step.get("run", ""),
                       "新增标题的 AI 润色必须随巡检开启，否则机翻味标题要等人工发起")
 
+    def test_body_translation_steps_pass_the_same_budget_setting(self):
+        crawl = yaml.safe_load(self.workflow_path.read_text(encoding="utf-8"))["jobs"]["crawl"]
+        variable = "AI_BODIES_BUDGET_SECONDS"
+        self.assertEqual(crawl["env"][variable], "${{ vars.AI_BODIES_BUDGET_SECONDS || '900' }}")
+        steps = {step.get("name"): step for step in crawl["steps"]}
+        for name in ("Translate new bodies (Go)", "Translate new bodies (machine)"):
+            with self.subTest(step=name):
+                self.assertNotIn(variable, steps[name].get("env", {}))
+                self.assertIn("refresh_budget.py translate", steps[name]["run"])
+
     def test_workflow_backfills_originals_before_crawling(self):
         """英文原文回填是 AI 重译标题的前提，必须接进入口，且排在爬虫之前。
 
@@ -11267,7 +11277,7 @@ class TestMtBodiesCli(unittest.TestCase):
     def test_gtx_failure_leaves_pending_no_crash(self):
         # translate_body_to_zh 原样退回（gtx 全失败）→ 校验不过 → 留 pending、不崩、不写坏
         with mock.patch.object(provider_profiles, "translate_body_to_zh",
-                               side_effect=lambda b: b):   # 返回英文原文 = 没翻
+                               side_effect=lambda b, **_kw: b):   # 返回英文原文 = 没翻
             rc = crawler_llm_intel.main(["--mt-bodies"])
         self.assertEqual(rc, 0)
         saved = ft.load_bodies(self.root / "docs/feeds/bodies.json")
@@ -11290,6 +11300,29 @@ class TestMtBodiesCli(unittest.TestCase):
                 ["--mt-bodies", "--ai-bodies-budget-seconds", "0"]), 0)
         self.assertEqual(seen, [ft.BODY_TRANSLATE_BUDGET_SECONDS, 0.0],
                          "默认与 --ai-bodies 同值；显式 0 才关闭墙钟")
+
+    def test_request_finishing_after_deadline_leaves_whole_article_pending(self):
+        ledger = self.root / "docs/feeds/bodies.json"
+        key = "openai\thttps://a/p"
+        en_path = self.root / ft.load_bodies(ledger)[key]["en_path"]
+        ft.write_body_doc(en_path, {"status": "ok", "url": "https://a/p"},
+                          "First paragraph.\n\n```\ncode()\n```\n\nLast paragraph.")
+        elapsed = 0.0
+        timeouts = []
+
+        def translate(_text, timeout):
+            nonlocal elapsed
+            timeouts.append(timeout)
+            elapsed += 9.0 if len(timeouts) == 1 else 2.0
+            return "这是一段完整的中文译文内容。"
+
+        with mock.patch.object(ft.time, "monotonic", side_effect=lambda: elapsed), \
+             mock.patch.object(provider_profiles, "_gtx_translate", side_effect=translate):
+            self.assertEqual(crawler_llm_intel.main(
+                ["--mt-bodies", "--ai-bodies-budget-seconds", "10"]), 0)
+        self.assertEqual(timeouts, [8.0, 1.0])
+        self.assertEqual(ft.pending_translation_keys(ft.load_bodies(ledger)), [key])
+        self.assertFalse(en_path.with_name(en_path.name.replace(".en.md", ".md")).exists())
 
     def test_budget_exhausted_leaves_body_pending(self):
         """墙钟到点即停：不写半篇、不崩，正文留 pending。"""
