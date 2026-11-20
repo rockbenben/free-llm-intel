@@ -369,6 +369,6 @@ python crawler_llm_intel.py --review-export          # 组卷：待核查厂商 
 python crawler_llm_intel.py --review-apply           # 过同一道逐字证据闸门后入库并前进快照
 ```
 
-`--review-apply` 默认重新实抓、用**当次页面**重建校验语料；但当 manifest 指纹证明页面自导包以来一字未动时，会**快进复用包内语料**（免网络，闸门语义不变）——指纹一致即走快进，否则自动回退完整巡检重验（快照为空的厂商即使指纹一致也证明不了未变，同样回退实抓），不存在「拿过期语料放行」的中间态。给本地 agent 的标准指令一句话即可：「处理 .ai-review/packets/ 下所有 prompt.md，按包尾输出格式填同名 json」。
+`--review-apply` 只重抓有待应用补丁的厂商情报页，按证据的 URL 对照**当次页面**原文。`--only` 可进一步限定厂商。manifest 指纹记录导包时的本地状态，供追溯。给本地 agent 的标准指令是「处理 .ai-review/packets/ 下所有 prompt.md，按包尾输出格式填同名 json」。
 
-要点：闸门校验的语料是 **apply 当次实抓的页面**——导出后页面又变了、证据已不在原文上的补丁会被 `[local-reject]` 拒掉并继续排队；已应用的补丁改名 `.json.applied` 防重复入库；导出本身不前进任何哈希（未被核查的厂商明早 CI 仍会重新入队）。`.ai-review/` 已 gitignore；核查产物（overlay / changelog / 快照）与远端通道完全同轨，CI 的校验步骤照跑。
+证据失效的补丁保留原文件和旧快照。`changed: false` 仅在当次核查材料及实抓快照与导包时一致时采纳；若收到 `[local-reject]` 提示材料已变，重新导包核查。补丁采纳成功后才改名为 `.json.applied` 并推进快照。导包本身不推进待核查变化的快照。`.ai-review/` 已 gitignore，核查产物（overlay / changelog / 快照）与远端通道使用同一套校验规则。

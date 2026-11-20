@@ -5,7 +5,7 @@ ai_review.py —— 变化触发式 AI 档案核查。
 每日巡检发现某厂商的官方页面文本相对上次快照发生变化时，由 crawler 调用本模块：
 把该厂商全部情报页正文 + 当前生效档案发给 LLM，要求只依据页面原文输出严格 JSON：
 哪些事实字段变化、攻略元数据是否要调整、以及逐条「页面原文证据」。证据必须能在
-送模的 prompt 内逐字定位（防幻觉闸门），校验通过后才允许写入 profile_overrides.json。
+送模时标明的来源页原文中逐字定位（防幻觉闸门），校验通过后才允许写入 profile_overrides.json。
 
 调用后端（AI_REVIEW_BACKEND=auto|opencode-go|gemini|anthropic，默认 auto）：
 - opencode-go：显式启用且未到期时优先；瞬时错误（429/5xx/网络）先短退避重试一次，
@@ -202,6 +202,7 @@ SYSTEM_PROMPT = """你是「免费 LLM API 情报」核查员，服务于一个�
 该字段的完整新内容（不是只给差异行）；每条 free_models 字符串格式为「模型名 —— 内联额度/限速」，\
 可使用 Markdown 加粗与反引号，中文撰写。
 4. evidence 给出 1-6 条页面原文逐字摘录（不要翻译、不要改写、不要省略号拼接），\
+   url 必须使用该引文所在页面的来源地址，按来源栏逐字填写。\
 每条必须能在给定页面文本中连续找到；所有数字、模型名必须与原文一致。
 5. 攻略归类 guide_meta 仅在归类确实需要变化时给出：tiers 取值 permanent/onetime/recurring/\
 selfhost，signup 取值 email/phone/card（email=邮箱或 OAuth、或邮箱与手机号并列可选；phone=中国大陆账号以手机号为必需/主注册通道（+86 短信验证码、常伴随实名），邮箱仅为可选绑定或海外入口；card=需绑卡），scenarios 取值 code/flagship/longctx/multimodal/image/embed/deploy/credit/referral/student，\
@@ -281,7 +282,8 @@ def _norm(s: str) -> str:
 def build_user_prompt(
         vendor_id: str, brand: str, profile: dict, guide_meta: dict,
         pages: list[dict], char_budget: int = TOTAL_CHAR_BUDGET,
-        focus: list[dict] | None = None) -> str:
+        focus: list[dict] | None = None, *,
+        evidence_by_url: dict[str, list[str]] | None = None) -> str:
     """pages: [{"url","stype","title","text"}]，按 char_budget 截断。
 
     focus（diff 导向核查）：[{"url","stype","removed":[...],"added":[...]}]。
@@ -300,8 +302,8 @@ def build_user_prompt(
         "",
     ]
     # focus 时最贵的整页原文预算减半（diff 已把注意力指到变化行）；
-    # 变化行区块本身很小，不抵总长。证据闸门的语料由 evidence_corpus 从本
-    # prompt 裁出：原文区（含截断）+ 变化行新增侧，不含档案 JSON 与删除行。
+    # 同步记录送模的证据片段，按来源页隔离，避免从拼接后的 prompt 反解析。
+    page_urls = {page["url"] for page in pages}
     page_budget_cap = PAGE_CHAR_BUDGET
     if focus:
         page_budget_cap //= 2
@@ -313,6 +315,8 @@ def build_user_prompt(
                 parts.append("- " + line)
             for line in f.get("added", []):
                 parts.append("+ " + line)
+                if evidence_by_url is not None and f.get("url") in page_urls:
+                    evidence_by_url.setdefault(f["url"], []).append(line)
         parts.append("")
     parts.append("【官方页面原文】")
     total = 0
@@ -324,6 +328,8 @@ def build_user_prompt(
             body = body[:max(0, char_budget - total - len(header))]
         parts.append(header)
         parts.append(body)
+        if evidence_by_url is not None and body:
+            evidence_by_url.setdefault(page["url"], []).append(body)
         total += len(header) + len(body)
         if total >= char_budget:
             break
@@ -737,41 +743,12 @@ def parse_json_loose(text: str) -> dict:
     return data
 
 
-_ORIG_SECTION = "【官方页面原文】"
-_FOCUS_SECTION = "【本次页面变化行】"
-_OUTPUT_SECTION = "【输出格式】"
-
-
-def evidence_corpus(prompt: str) -> str:
-    """从送模 prompt 中裁出证据闸门语料：官方页面原文区 + 变化行的新增侧。
-
-    整份 prompt 还含【当前生效档案】的旧值与变化行的删除侧（旧文本）——拿它
-    当语料，引用旧档案值或已删除文本的幻觉补丁也能逐字命中而过闸。新增侧要
-    保留：focus 模式下每页原文预算减半，引文可能落在截断点之后，变化行是它
-    在 prompt 里的唯一出处（而这正是模型被要求主要依据的文本）。
-    prompt 不含分区标记时（测试直接构造的语料等）原样返回。
-    """
-    start = prompt.find(_ORIG_SECTION)
-    if start < 0:
-        return prompt
-    end = prompt.find(_OUTPUT_SECTION, start)
-    parts = [prompt[start:end] if end > start else prompt[start:]]
-    fstart = prompt.find(_FOCUS_SECTION)
-    if 0 <= fstart < start:
-        for line in prompt[fstart:start].splitlines():
-            if line.startswith("+ "):
-                parts.append(line[2:])
-    return "\n".join(parts)
-
-
-def validate_patch(data: dict, corpus_norm: str) -> dict:
-    """校验并归一化 AI 补丁；证据必须逐字命中 corpus_norm，否则拒绝整个补丁。
-
-    corpus_norm 由调用方用 evidence_corpus(prompt) 裁出（官方页面原文 +
-    变化行新增侧），内部会再做一次空白归一化。
-    """
-    corpus_norm = _norm(corpus_norm)
-    if not data.get("changed"):
+def validate_patch(data: dict, evidence_by_url: dict[str, list[str]]) -> dict:
+    """校验 AI 补丁，证据必须出现在其 URL 对应的一段官方原文中。"""
+    changed = data.get("changed")
+    if not isinstance(changed, bool):
+        raise AiReviewError("changed 必须是布尔值")
+    if not changed:
         return {"changed": False}
 
     fields = data.get("fields") or {}
@@ -807,16 +784,18 @@ def validate_patch(data: dict, corpus_norm: str) -> dict:
         guide_meta = {}
         if "tiers" in gm:
             tiers = gm["tiers"]
-            if not isinstance(tiers, list) or not set(tiers) <= ALLOWED_TIERS:
+            if not isinstance(tiers, list) or not all(
+                    isinstance(tier, str) and tier in ALLOWED_TIERS for tier in tiers):
                 raise AiReviewError("guide_meta.tiers 非法")
             guide_meta["tiers"] = tiers
         if "signup" in gm:
-            if gm["signup"] not in ALLOWED_SIGNUP:
+            if not isinstance(gm["signup"], str) or gm["signup"] not in ALLOWED_SIGNUP:
                 raise AiReviewError("guide_meta.signup 非法")
             guide_meta["signup"] = gm["signup"]
         if "scenarios" in gm:
             sc = gm["scenarios"]
-            if not isinstance(sc, list) or not set(sc) <= ALLOWED_SCENARIOS:
+            if not isinstance(sc, list) or not all(
+                    isinstance(scenario, str) and scenario in ALLOWED_SCENARIOS for scenario in sc):
                 raise AiReviewError("guide_meta.scenarios 非法")
             guide_meta["scenarios"] = sc
         for key in ("short", "tip"):
@@ -834,10 +813,14 @@ def validate_patch(data: dict, corpus_norm: str) -> dict:
     for item in evidence[:6]:
         if not isinstance(item, dict):
             raise AiReviewError("evidence 条目不是对象")
-        quote, url = str(item.get("quote", "")), str(item.get("url", ""))
-        if len(quote) < 6:
+        quote, url = item.get("quote"), item.get("url")
+        if not isinstance(quote, str) or not isinstance(url, str) or not url.strip():
+            raise AiReviewError("证据必须含非空来源 URL 和字符串引文")
+        url = url.strip()
+        quote_norm = _norm(quote)
+        if len(quote_norm) < 6:
             raise AiReviewError("证据过短（<6 字符），拒绝采信")
-        if _norm(quote) not in corpus_norm:
+        if not any(quote_norm in _norm(fragment) for fragment in evidence_by_url.get(url, [])):
             raise AiReviewError(f"证据无法在页面原文中逐字定位，疑似臆造：{quote[:60]}")
         clean_evidence.append({"url": url, "quote": quote})
     if not clean_evidence:
@@ -861,17 +844,17 @@ def review_vendor(vendor_id: str, brand: str, profile: dict, guide_meta: dict,
     backend = resolve_backend(backend)
     if not model:
         model = default_model(backend)
+    evidence_by_url: dict[str, list[str]] = {}
     prompt = build_user_prompt(vendor_id, brand, profile, guide_meta, pages,
-                               char_budget=TOTAL_CHAR_BUDGET, focus=focus)
+                               char_budget=TOTAL_CHAR_BUDGET, focus=focus,
+                               evidence_by_url=evidence_by_url)
     raw = call_llm(prompt, api_key=api_key, model=model, backend=backend)
     data = parse_json_loose(raw)
-    # 证据只要求命中模型实际看到的页面文本（原文区 + 变化行新增侧，含预算截断）
-    corpus_norm = _norm(evidence_corpus(prompt))
-    return validate_patch(data, corpus_norm)
+    return validate_patch(data, evidence_by_url)
 
 
 def apply_patches(overlay_path: Path, patches: dict[str, dict]) -> None:
-    """把通过校验的补丁合并写入 profile_overrides.json（整体字段覆盖）。"""
+    """把通过校验的补丁写入覆盖层，攻略元数据逐键合并。"""
     try:
         overlay = json.loads(overlay_path.read_text(encoding="utf-8"))
         if not isinstance(overlay, dict):
@@ -898,7 +881,10 @@ def apply_patches(overlay_path: Path, patches: dict[str, dict]) -> None:
         entry = overlay.setdefault(vendor_id, {})
         entry.update(patch["fields"])
         if patch.get("guide_meta"):
-            entry["guide_meta"] = patch["guide_meta"]
+            previous = entry.get("guide_meta")
+            entry["guide_meta"] = {
+                **(previous if isinstance(previous, dict) else {}), **patch["guide_meta"],
+            }
         entry["_updated"] = now
         entry["_summary"] = patch["summary"]
         # 累积证据只保留最近若干条，防止无限增长，便于事后追溯

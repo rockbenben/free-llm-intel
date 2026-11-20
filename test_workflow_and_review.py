@@ -368,7 +368,7 @@ class TestAiReviewValidatePatch(unittest.TestCase):
     """测试 ai_review.validate_patch 的防幻觉逐字证据闸门与字段校验"""
 
     def setUp(self):
-        self.corpus = "智谱 AI 开放平台面向新用户赠送 2000 万 tokens 资源包，Flash 全家桶永久 0 元免费。"
+        self.corpus = {"https://bigmodel.cn": ["智谱 AI 开放平台面向新用户赠送 2000 万 tokens 资源包，Flash 全家桶永久 0 元免费。"]}
 
     def test_valid_patch_passes(self):
         patch = {
@@ -2117,36 +2117,19 @@ sources:
         self.assertFalse((self.root / "llm-intel-state.json").exists())
         self.assertFalse((self.root / "README.md").exists())
 
-    def test_main_fast_replay_skips_readme(self):
-        """本地核查快进轮：intel_list 由磁盘重建、没有实抓情报页，不得渲染 README。
-
-        Regression: 快进与 --rebuild-only 同源（rebuild_intel_from_disk 只填动态页），
-        渲染 README 会把厂商档案区写成空白、冲掉上一轮实抓成果。补丁已 adopt 进
-        profile_overrides.json，留待下一次完整巡检渲染。
-        """
-        # 状态文件存在 → 非基线，快进守卫（line 5189）才会生效
-        (self.root / "llm-intel-state.json").write_text(
-            json.dumps({"sources": {}, "reviews": {}, "failures": {}}),
-            encoding="utf-8")
-        vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
-        grouped = crawler_llm_intel.group_sources_by_vendor(sources)
-        states = crawler_llm_intel._parse_news_md_page_states(self.NEWS_MD)
-        rebuilt = crawler_llm_intel.rebuild_intel_from_disk(
-            vendors, grouped, states, self.root / "llm-news")
+    def test_main_review_apply_skips_readme(self):
+        """局部重验后重排视图时，不用部分厂商的情报覆盖全站 README。"""
         with (
-            mock.patch.object(crawler_llm_intel, "try_packet_fast_replay",
-                              return_value=(rebuilt, True, {"vendor_a"})),
-            mock.patch.object(crawler_llm_intel, "crawl_vendor",
-                              side_effect=AssertionError("快进不得实抓")),
+            mock.patch.object(crawler_llm_intel, "apply_review_packets",
+                              return_value={"vendor_a"}),
             mock.patch.object(crawler_llm_intel, "update_readme",
-                              side_effect=AssertionError("快进轮不得渲染 README")),
+                              side_effect=AssertionError("局部重验不得渲染 README")),
         ):
             rc = crawler_llm_intel.main([
                 "--review-apply", "--yaml", "intel.yaml", "--news-md", "news.md",
                 "--news-opml", "news.opml"])
         self.assertEqual(rc, 0)
-        self.assertFalse((self.root / "README.md").exists(),
-                         "快进轮不得写 README（情报区需要实抓页面）")
+        self.assertFalse((self.root / "README.md").exists())
 
     def test_rebuild_only_keeps_every_vendor_in_quotas(self):
         """rebuild 的重建集只有「有动态归档的厂商」，一览必须仍是全集。
@@ -5979,7 +5962,7 @@ class TestSignupEnum(unittest.TestCase):
         """AI 核查白名单与提示词都要认 phone，未知枚举值必须拒绝。"""
         self.assertIn("phone", ai_review.ALLOWED_SIGNUP)
         self.assertIn("signup 取值 email/phone/card", ai_review.SYSTEM_PROMPT)
-        corpus = "智谱 AI 开放平台面向新用户赠送 2000 万 tokens 资源包，Flash 全家桶永久 0 元免费。"
+        corpus = {"https://bigmodel.cn": ["智谱 AI 开放平台面向新用户赠送 2000 万 tokens 资源包，Flash 全家桶永久 0 元免费。"]}
         patch = {
             "changed": True, "summary": "注册改为手机号",
             "fields": {"free_quota": "2000 万 tokens 资源包"},
@@ -6662,7 +6645,7 @@ class TestLocalReviewChannel(unittest.TestCase):
              "fields": {"free_quota": "每月 100 万 tokens"},
              "evidence": [{"url": "https://p.example/pricing",
                            "quote": "长期有效，仅限非商用"}]},
-            self.PAGE)
+            {"https://p.example/pricing": [self.PAGE]})
         n = crawler_llm_intel.adopt_patches(
             self.root, {"demo_vid": patch}, self.intel_by_id)
         self.assertGreaterEqual(n, 1)
@@ -6673,8 +6656,8 @@ class TestLocalReviewChannel(unittest.TestCase):
         self.assertTrue((self.root / ".ai-changed").exists())
 
 
-class TestPacketFastReplay(unittest.TestCase):
-    """本地核查快进：指纹一致 → 免重抓复用包内语料；不一致 → 回退完整巡检。"""
+class TestPacketRevalidation(unittest.TestCase):
+    """本地核查使用当次来源页，导包和应用保持各自的写入范围。"""
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -6719,82 +6702,45 @@ class TestPacketFastReplay(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def _replay(self, digest, exported=None):
-        mpath = (self.root / crawler_llm_intel.REVIEW_PACKET_DIR
-                 / crawler_llm_intel.REVIEW_MANIFEST)
-        # 在 export 写出的真实 manifest 上改指纹/日期：保留 staged 等其余字段，
-        # exported 默认昨天（固定日期会随时间推移撞上超龄回退，测试变定时炸弹）。
-        manifest = json.loads(mpath.read_text(encoding="utf-8"))
-        manifest["demo_vid"]["digest"] = digest
-        manifest["demo_vid"]["exported"] = exported or (
-            date.today() - timedelta(days=1)).isoformat()
-        mpath.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
-        return crawler_llm_intel.try_packet_fast_replay(
-            self.root, self.snaps, self.vendors, self.grouped,
-            self.root / "llm-news-feeds.md", self.root / "docs" / "feeds")
-
-    def test_matching_digest_applies_without_crawl(self):
-        self.assertNotEqual(
-            self.digest, crawler_llm_intel.vendor_snapshot_digest({}, ""),
-            "fixture 里厂商必须有真实情报页快照，否则指纹恒空、快进断言变成空转")
-        intel_list, applied, vids = self._replay(self.digest)
-        self.assertEqual(vids, {"demo_vid"})
-        self.assertTrue(applied, "指纹一致必须走快进")
-        self.assertTrue(intel_list, "快进要交回磁盘重建的 intel 供渲染")
-        overlay = json.loads((self.root / "profile_overrides.json")
-                             .read_text(encoding="utf-8"))
-        self.assertIn("demo_vid", overlay, "补丁应过闸入库")
-        d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
-        self.assertTrue((d / "demo_vid.json.applied").exists())
-        self.assertFalse((d / "demo_vid.json").exists())
-        self.assertEqual(
-            crawler_llm_intel.read_packet_manifest(self.root), {},
-            "已过闸的登记应注销，不留陈旧条目")
-
-    def test_fast_replay_save_keeps_outside_vendors(self):
-        # 快进只处理 in-scope 厂商：清单外厂商的哈希条目一条都不能掉
-        other = crawler_llm_intel.SnapshotState(self.root)
+    def test_apply_refreshes_only_pending_vendors_and_keeps_other_snapshots(self):
         key = "other_vid|pricing|https://o.example/p"
-        demo_key = "demo_vid|pricing|https://p.example/pricing"
-        other.entries[key] = {"sha256": "x" * 64, "fact": ""}
-        other.entries[demo_key] = {"sha256": "y" * 64, "fact": ""}
-        other.save({"demo_vid"}, full_run=True, crawl_scope={"demo_vid"})
-        data = json.loads(other.path.read_text(encoding="utf-8"))
-        self.assertIn(key, data["sources"],
-                      "限定范围落盘不得清理本轮没实抓的其余厂商")
-        self.assertIn(demo_key, data["sources"])
-        # 对照组：整跑语义（无范围）仍会清掉不在本轮清单里的条目
-        other.save({"demo_vid"}, full_run=True)
-        data3 = json.loads(other.path.read_text(encoding="utf-8"))
-        self.assertNotIn(key, data3["sources"])
+        self.snaps.entries[key] = {"sha256": "other"}
+        pricing = self.grouped["demo_vid"][0]
+        self.grouped["demo_vid"].append({"type": "blog", "url": "https://p.example/blog"})
+        self.vendors.append({"id": "other_vid"})
+        page = crawler_llm_intel.PageResult(
+            url=pricing["url"], stype="pricing", ok=True,
+            text=TestLocalReviewChannel.PAGE, snapshot_text=TestLocalReviewChannel.PAGE,
+            snapshot_ok=True)
+        refresh = mock.Mock(return_value=crawler_llm_intel.VendorIntel(
+            "demo_vid", "Demo", "", [], intel_pages=[page]))
+        applied = crawler_llm_intel.apply_review_packets(
+            self.root, self.snaps, self.vendors, self.grouped, refresh)
+        refresh.assert_called_once_with(self.vendors[0], [pricing])
+        self.assertEqual(applied, {"demo_vid"})
+        self.snaps.save(applied, full_run=False)
+        self.assertEqual(crawler_llm_intel.SnapshotState(self.root).entries[key], {"sha256": "other"})
+        overlay = json.loads((self.root / "profile_overrides.json").read_text(encoding="utf-8"))
+        self.assertIn("demo_vid", overlay)
+        self.assertEqual(crawler_llm_intel.read_packet_manifest(self.root), {})
+        packet_dir = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
+        self.assertTrue((packet_dir / "demo_vid.json.applied").is_file())
 
-    def test_stale_digest_falls_back(self):
-        intel_list, applied, vids = self._replay("0" * 64)
-        self.assertEqual(vids, set())
-        self.assertFalse(applied, "页面变了必须回退完整巡检重验")
-        self.assertEqual(intel_list, [])
-        self.assertEqual((self.root / "profile_overrides.json")
-                         .read_text(encoding="utf-8"), "{}")
-        d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
-        self.assertTrue((d / "demo_vid.json").exists(),
-                        "回退路径不得消费补丁——留给完整巡检")
-
-    def test_empty_snapshot_digest_falls_back(self):
-        """厂商没有任何情报页快照时指纹恒定为空摘要：一致也证明不了页面没变。"""
-        empty = crawler_llm_intel.SnapshotState(self.root)
-        digest = crawler_llm_intel.vendor_snapshot_digest(empty.entries, "demo_vid")
-        self.assertEqual(digest, crawler_llm_intel.vendor_snapshot_digest({}, ""))
-        (self.root / crawler_llm_intel.REVIEW_PACKET_DIR
-         / crawler_llm_intel.REVIEW_MANIFEST).write_text(
-            json.dumps({"demo_vid": {"digest": digest,
-                                     "exported": (date.today()
-                                                  - timedelta(days=1)).isoformat()}}),
-            encoding="utf-8", newline="\n")
-        _il, applied, vids = crawler_llm_intel.try_packet_fast_replay(
-            self.root, empty, self.vendors, self.grouped,
-            self.root / "llm-news-feeds.md", self.root / "docs" / "feeds")
-        self.assertFalse(applied, "空快照厂商必须回退实抓")
-        self.assertEqual(vids, set())
+    def test_stale_evidence_rejected_even_when_local_digest_matches(self):
+        page = crawler_llm_intel.PageResult(
+            url="https://p.example/pricing", stype="pricing", ok=True,
+            text="当前额度需要登录查看。", snapshot_text="当前额度需要登录查看。",
+            snapshot_ok=True)
+        intel = crawler_llm_intel.VendorIntel("demo_vid", "Demo", "", [], intel_pages=[page])
+        entries = self.snaps.entries.copy()
+        applied = crawler_llm_intel.apply_review_packets(
+            self.root, self.snaps, self.vendors, self.grouped, lambda *_: intel)
+        self.assertEqual(applied, set())
+        self.assertEqual(self.snaps.entries, entries)
+        self.assertEqual(self.snaps.reviews, {})
+        self.assertEqual((self.root / "profile_overrides.json").read_text(encoding="utf-8"), "{}")
+        packet_dir = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
+        self.assertTrue((packet_dir / "demo_vid.json").is_file())
 
     def test_export_registers_manifest(self):
         m = crawler_llm_intel.read_packet_manifest(self.root)
@@ -6802,25 +6748,13 @@ class TestPacketFastReplay(unittest.TestCase):
                          "登记指纹必须与当前情报页快照一致（新闻页不进指纹）")
 
     def test_export_writes_packet_header(self):
-        """页头由 export 写：真实包若缺页头，快进通道会 100% 拒收（曾踩过）。"""
+        """导出产物包含核查包页头及原文。"""
         pkt = (self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
                / "demo_vid.prompt.md").read_text(encoding="utf-8")
         self.assertTrue(pkt.startswith(crawler_llm_intel.PACKET_HEADER),
                         "导出的包必须以核查包页头开头")
         self.assertIn("【官方页面原文】", pkt)
 
-    def test_headerless_packet_is_rejected(self):
-        """手工/截断的无页头包不能当语料用，且必须回退而非原地空转。"""
-        d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
-        (d / "demo_vid.prompt.md").write_text(
-            "【官方页面原文】\n" + TestLocalReviewChannel.PAGE, encoding="utf-8")
-        _il, applied, vids = self._replay(self.digest)
-        self.assertFalse(applied, "有包没过闸就要回退完整巡检，否则下轮重演同一次拒绝")
-        self.assertEqual(vids, set())
-        self.assertTrue((d / "demo_vid.json").exists(),
-                        "被拒的补丁必须原样留着，等完整巡检重验")
-        self.assertEqual((self.root / "profile_overrides.json")
-                         .read_text(encoding="utf-8"), "{}")
 
 
 class TestReviewChannelHardening(unittest.TestCase):
@@ -6851,8 +6785,8 @@ class TestReviewChannelHardening(unittest.TestCase):
             vendor_id="demo_vid", brand="Demo", homepage="https://p.example",
             products=[], intel_pages=[page])
 
-    def test_fast_replay_advances_snapshot_hash(self):
-        """完整本地周期：export→填包→apply 快进后哈希必须前进，不再每轮重复排队。"""
+    def test_fresh_apply_advances_snapshot_hash(self):
+        """完整本地周期：export→填包→apply 实抓重验后哈希必须前进，不再每轮重复排队。"""
         vid = "demo_vid"
         # 第一轮：基线建档（旧页面）
         snaps = crawler_llm_intel.SnapshotState(self.root)
@@ -6875,13 +6809,13 @@ class TestReviewChannelHardening(unittest.TestCase):
             "evidence": [{"url": "https://p.example/pricing",
                           "quote": "每月 200 万 tokens，长期有效"}],
         }, ensure_ascii=False), encoding="utf-8", newline="\n")
-        # apply：快进过闸
         snaps = crawler_llm_intel.SnapshotState(self.root)
-        _il, applied, vids = crawler_llm_intel.try_packet_fast_replay(
+        applied = crawler_llm_intel.apply_review_packets(
             self.root, snaps, self.vendors, self.grouped,
-            self.root / "llm-news-feeds.md", self.root / "docs" / "feeds")
-        self.assertTrue(applied)
-        snaps.save(vids, full_run=False, crawl_scope=vids)
+            lambda *_: self._intel(self.NEW_TEXT))
+        self.assertEqual(applied, {vid})
+        self.assertNotIn(vid, snaps.changed_pages)
+        snaps.save(applied, full_run=False)
         # 关键断言：快照已前进到新页面哈希 —— 再抓同一页面不再报变化
         snaps = crawler_llm_intel.SnapshotState(self.root)
         self.assertEqual(snaps.stage_vendor(vid, self._intel(self.NEW_TEXT)), [],
@@ -6986,55 +6920,46 @@ class TestReviewChannelHardening(unittest.TestCase):
             snaps.entries, "demo_vid")
         self.assertEqual(before, after)
 
-    def test_aged_packet_falls_back_to_crawl(self):
-        """导包超过 PACKET_MAX_AGE_DAYS：指纹一致也不再快进，回退实抓。"""
+    def test_local_no_change_requires_matching_current_material(self):
         vid = "demo_vid"
+        intel = self._intel(self.OLD_TEXT)
         snaps = crawler_llm_intel.SnapshotState(self.root)
-        snaps.stage_vendor(vid, self._intel(self.OLD_TEXT))
-        snaps.commit_vendor(vid)
+        snaps.stage_vendor(vid, intel)
         crawler_llm_intel.export_review_packets(
-            self.root, {vid: "【官方页面原文】\n" + self.OLD_TEXT}, snaps)
+            self.root, {vid: crawler_llm_intel.build_review_prompt(intel)}, snaps)
         d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
-        (d / f"{vid}.json").write_text('{"changed": false}', encoding="utf-8")
-        mpath = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "manifest.json"
-        manifest = json.loads(mpath.read_text(encoding="utf-8"))
-        manifest[vid]["exported"] = (
-            date.today()
-            - timedelta(days=crawler_llm_intel.PACKET_MAX_AGE_DAYS + 1)
-        ).isoformat()
-        mpath.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
-        _il, applied, vids = crawler_llm_intel.try_packet_fast_replay(
+        packet = d / f"{vid}.json"
+        packet.write_text('{"changed": false}', encoding="utf-8")
+        # 本轮仍可抓到页面，但「无变化」判断来自较旧的材料。
+        self.assertEqual(crawler_llm_intel.apply_review_packets(
             self.root, snaps, self.vendors, self.grouped,
-            self.root / "llm-news-feeds.md", self.root / "docs" / "feeds")
-        self.assertFalse(applied, "超龄包必须回退实抓重验")
-        self.assertEqual(vids, set())
+            lambda *_: self._intel(self.NEW_TEXT)), set())
+        self.assertTrue(packet.is_file())
+        self.assertEqual(snaps.reviews, {})
+        self.assertEqual(crawler_llm_intel.apply_review_packets(
+            self.root, snaps, self.vendors, self.grouped, lambda *_: intel), {vid})
+        self.assertFalse(packet.is_file())
+        self.assertIn(vid, snaps.reviews)
 
     def test_evidence_corpus_excludes_profile_and_removed_lines(self):
-        """闸门语料 = 原文区 + 变化行新增侧：旧档案值与删除行不得给幻觉补丁放行。"""
         profile = {"free_quota": "旧额度 OLDQUOTA 每月 1 分"}
         pages = [{"url": "u", "stype": "pricing", "title": "t",
                   "text": "页面原文包含 全新事实 NEWFACT，足够长的正文内容。"}]
         focus = [{"url": "u", "stype": "pricing",
                   "removed": ["旧文本 OLDQUOTA 已删除"],
                   "added": ["全新事实 NEWFACT 已上线"]}]
-        prompt = ai_review.build_user_prompt(
-            "v", "B", profile, {}, pages, focus=focus)
-        corpus = ai_review.evidence_corpus(prompt)
-        self.assertIn("NEWFACT", corpus)
-        self.assertNotIn("OLDQUOTA", corpus,
-                         "旧档案值/删除行混进语料会放过引用旧值的幻觉补丁")
+        corpus = {}
+        ai_review.build_user_prompt("v", "B", profile, {}, pages, focus=focus,
+                                    evidence_by_url=corpus)
+        self.assertEqual(corpus["u"], [focus[0]["added"][0], pages[0]["text"]])
         base = {"changed": True, "summary": "s",
                 "fields": {"free_quota": "每月 2 分"}}
         with self.assertRaises(ai_review.AiReviewError):
             ai_review.validate_patch(
-                {**base, "evidence": [{"url": "u", "quote": "旧额度 OLDQUOTA"}]},
-                ai_review.evidence_corpus(prompt))
+                {**base, "evidence": [{"url": "u", "quote": "旧额度 OLDQUOTA"}]}, corpus)
         ok = ai_review.validate_patch(
-            {**base, "evidence": [{"url": "u", "quote": "全新事实 NEWFACT 已上线"}]},
-            ai_review.evidence_corpus(prompt))
+            {**base, "evidence": [{"url": "u", "quote": "全新事实 NEWFACT 已上线"}]}, corpus)
         self.assertTrue(ok["changed"])
-        # 无分区标记的语料原样返回（兼容直接构造 corpus 的调用方）
-        self.assertEqual(ai_review.evidence_corpus("裸语料"), "裸语料")
 
     def test_field_types_align_with_overlay_fields(self):
         """FIELD_TYPES 与 _OVERLAY_FIELDS 必须同集：漂移会让合法补丁整个被拒。"""
@@ -7049,17 +6974,17 @@ class TestReviewChannelHardening(unittest.TestCase):
                 "base_url": "https://api.example/v1",
                 "api_key_url": "https://example/key",
                 "models": "m1"}}},
-            "base_url 见页面原文")
+            {"u": ["base_url 见页面原文"]})
         self.assertEqual(ok["fields"]["openai_compat"]["base_url"],
                          "https://api.example/v1")
         with self.assertRaises(ai_review.AiReviewError):
             ai_review.validate_patch(
                 {**base, "fields": {"openai_compat": {"base_url": 42}}},
-                "base_url 见页面原文")
+                {"u": ["base_url 见页面原文"]})
         with self.assertRaises(ai_review.AiReviewError):
             ai_review.validate_patch(
                 {**base, "fields": {"openai_compat": {}}},
-                "base_url 见页面原文")
+                {"u": ["base_url 见页面原文"]})
 
     def test_apply_patches_backs_up_corrupt_overlay(self):
         p = self.root / "profile_overrides.json"
@@ -7068,7 +6993,7 @@ class TestReviewChannelHardening(unittest.TestCase):
             {"changed": True, "summary": "s",
              "fields": {"free_quota": "每月 100 万 tokens"},
              "evidence": [{"url": "u", "quote": "长期有效，仅限非商用"}]},
-            TestLocalReviewChannel.PAGE)
+            {"u": [TestLocalReviewChannel.PAGE]})
         err = io.StringIO()
         with contextlib.redirect_stderr(err):
             ai_review.apply_patches(p, {"demo_vid": patch})
