@@ -675,7 +675,9 @@ var FLI = (function () {
         }
         i++;
         var codeBody = htmlEsc(body.join('\n'));
-        var cls = lang ? ' class="language-' + lang + '"' : '';
+        // 围栏说明来自语料。只接受单个语言标识，与 RSS 使用相同的字符集。
+        var cls = /^[A-Za-z0-9][A-Za-z0-9_+.#-]*$/.test(lang)
+          ? ' class="language-' + htmlEsc(lang) + '"' : '';
         out.push('<pre><code' + cls + '>' + codeBody + '</code></pre>');
         continue;
       }

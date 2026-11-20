@@ -5609,7 +5609,9 @@ def _md_to_html(md: str) -> str:
                 i += 1
             i += 1  # 跳过闭合 ```
             code_body = _html_escape("\n".join(body_lines))
-            cls = f' class="language-{lang}"' if lang else ""
+            # 围栏说明来自语料。只接受单个语言标识，与浏览页使用相同的字符集。
+            cls = (f' class="language-{_html_escape(lang)}"'
+                   if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_+.#-]*", lang) else "")
             out.append(f"<pre><code{cls}>{code_body}</code></pre>")
             continue
         # ATX heading

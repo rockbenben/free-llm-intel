@@ -9707,6 +9707,36 @@ class TestMdHtmlDualRun(unittest.TestCase):
                 self.assertEqual(self._tokens(py), self._tokens(js),
                                  f"Python/JS tag sequence 不一致\npy={py!r}\njs={js!r}")
 
+    FENCE_INFO_CASES = (
+        ("  Python  ", "language-Python"),
+        ("c++", "language-c++"),
+        ("c#", "language-c#"),
+        ("objective-c", "language-objective-c"),
+        ("", ""),
+        ("python sample.py", ""),
+        ('"python"', ""),
+        ("python {linenos=true}", ""),
+        ("示例", ""),
+    )
+    FENCE_BODY = '\tprint("<tag> & value")  \n\n    中文示例'
+
+    def test_fence_info_only_renders_a_simple_language_class(self):
+        from xml.etree import ElementTree as ET
+
+        for engine, render in (("rss", crawler_llm_intel._md_to_html),
+                               ("reader", self._js_html)):
+            for info, language_class in self.FENCE_INFO_CASES:
+                with self.subTest(engine=engine, info=info):
+                    md = f"```{info}\n{self.FENCE_BODY}\n```"
+                    block = ET.fromstring(render(md))
+                    self.assertEqual(block.tag, "pre")
+                    self.assertEqual(block.attrib, {})
+                    self.assertEqual([child.tag for child in block], ["code"])
+                    code = block[0]
+                    self.assertEqual(code.attrib, {"class": language_class} if language_class else {})
+                    self.assertEqual(len(code), 0)
+                    self.assertEqual(code.text, self.FENCE_BODY)
+
 
 class TestIndexHasSlug(unittest.TestCase):
     """articles.json 每行末尾加 slug（reader 抽屉拼 md 路径的数据前置，见 corpus spec §12）。
