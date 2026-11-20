@@ -7465,13 +7465,13 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--fetch-bodies", action="store_true",
                         help="维护模式（不巡检）：逐篇访问 docs/feeds/articles.json 里的文章 URL，"
                              "readability 抽正文写 docs/articles/<vendor>/<urlhash>.en.md，"
-                             "并 upsert docs/feeds/bodies.json。默认只补缺失；--refresh 全量重抓。"
+                             "并 upsert docs/feeds/bodies.json。默认只补缺失；--refresh 重抓未译正文。"
                              "SPA/反爬取不到记 fetch_failed、正文留空。用 --fetch-vendor/--fetch-limit 分批。")
     parser.add_argument("--fetch-vendor", action="append", default=[],
                         help="只抓这些 vendor_id 的正文（配合 --fetch-bodies；可重复传，"
                              "传多次即多厂商一批跑完）")
     parser.add_argument("--fetch-limit", type=int, default=0, help="本次最多抓多少篇正文（0=不限）")
-    parser.add_argument("--refresh", action="store_true", help="正文抓取：忽略已有、全量重抓")
+    parser.add_argument("--refresh", action="store_true", help="正文抓取：重抓未译条目，含已有英文正文")
     parser.add_argument("--retry-unreadable", action="store_true",
                         help="正文抓取：已标 index_page / paywall 的行也重抓（判定可能被源站改版推翻），"
                              "但不碰已有真实中文译文的行；比 --refresh 窄得多")
@@ -7530,7 +7530,8 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
                    news_md_path: Path | None = None, opml_path: Path | None = None,
                    feeds_dir: Path | None = None, changelog_path: Path | None = None,
                    rss_limit: int = 0, rss_vendor_limit: int = 0,
-                   feeds_dir_label: str = "docs/feeds") -> dict:
+                   feeds_dir_label: str = "docs/feeds",
+                   clean_removed: bool = True) -> dict:
     """产出层：从 `intel_list` 重排全部**视图**文件。
 
     契约（见 docs/superpowers/specs/2026-10-15-render-layer-design.md §3）：
@@ -7555,7 +7556,7 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
     # RSS 要用的正是那份「新抓取 + 历史归档」合并后、按日期排序的全量列表。
     n_rss, n_rss_items, n_rss_changed, n_rss_skipped = write_rss_feeds(
         feeds_dir, intel_list, feeds_base, merged_limit=rss_limit,
-        vendor_limit=rss_vendor_limit)
+        vendor_limit=rss_vendor_limit, clean_removed=clean_removed)
     print(f"      {feeds_dir_label} 自建 RSS {n_rss} 个源、{n_rss_items} 条"
           f"（本次实际改写 {n_rss_changed} 个文件）")
     # 「没进订阅流」有三类成因，只有第一类值得人去查：晚于今天的日期（源页面把已发布的
@@ -7764,7 +7765,7 @@ def main(argv: list[str] | None = None) -> int:
         articles = select_body_rows(articles, args.fetch_vendor, args.fetch_limit)
         bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
         # 自愈：把任何旧逻辑误存成 .en.md 的中文原生正文重分类到 .md（幂等、复用缓存、不重抓）
-        moved = fulltext.reclassify_bodies(root, bodies)
+        moved = fulltext.reclassify_bodies(root, bodies, vendors=args.fetch_vendor)
         if moved:
             fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
             print(f"  [reclassify] {moved} 条按源语言重分类（中文原生 → .md native）。")
@@ -7826,7 +7827,7 @@ def main(argv: list[str] | None = None) -> int:
             html, final_url, code = rendered
             return (html, True, code or 200, final_url or u)
 
-        print(f"[维护] 正文抓取：{len(articles)} 篇（{'全量重抓' if args.refresh else '只补缺失'}，"
+        print(f"[维护] 正文抓取：{len(articles)} 篇（{'重抓未译条目' if args.refresh else '只补缺失'}，"
               f"浏览器兜底{'开' if (args.allow_browser and not args.no_browser) else '关'}）...")
         skipped = sum(1 for r in articles if _skip_row(r.get("url") or ""))
         if skipped:
@@ -8376,36 +8377,51 @@ def main(argv: list[str] | None = None) -> int:
         else:
             title_polish = make_llm_title_polisher()
             print(f"      [ai-titles] 新收录标题将经 {polish_backend} 润色一次（结果进归档即冻结）")
+    news_dir = news_md_path.parent / "llm-news"
+    preview_dir = news_md_path.parent.resolve()
+    # 预览需要一套独立的输出目录；单独改总表文件名不能扩大局部巡检的写入范围。
+    isolated_preview = args.only and (
+        preview_dir != root.resolve()
+        and not preview_dir.is_relative_to((root / "docs").resolve())
+        and not preview_dir.is_relative_to((root / "llm-news").resolve())
+        and news_md_path.resolve().parent == preview_dir
+        and opml_path.resolve().parent == preview_dir
+        and news_dir.resolve().parent == preview_dir
+        and feeds_dir.resolve().parent == preview_dir
+        and feeds_dir.resolve() != news_dir.resolve()
+    )
     if args.no_news:
         print("      已跳过（--no-news）")
-    elif args.only and news_md_path.resolve() == (root / "llm-news-feeds.md").resolve():
-        news_dir = news_md_path.parent / "llm-news"
+    elif args.only and not isolated_preview:
+        news_dir = root / "llm-news"
         n_arch, n_arch_arts, n_arch_changed = write_news_archives(
             news_dir, intel_list, clean_removed=False, title_polish=title_polish)
         print("      [info] 当前为 --only 局部调试运行：跳过全局 llm-news-feeds.md、opml 与自建 RSS "
               "覆盖重写；"
               f"llm-news/ 已更新 {n_arch} 个对应厂商归档文件（共 {n_arch_arts} 篇文章，改写 {n_arch_changed} 个）。")
+        if news_md_path.resolve() != (root / "llm-news-feeds.md").resolve():
+            print("      [info] 局部预览请将 --news-md、--news-opml 和 --feeds-dir 指向同一独立目录下的输出。")
     else:
         # write_news_archives 会把「新抓取 + 历史归档」的合并结果写回 intel.all_news_articles
         # 与 intel.news_articles，而总表的「共 N 篇」和「最新 5 篇」都取自这两个字段 ——
         # 因此它必须排在 render_outputs 之前：否则总表用的是合并前计数，会比归档文件少
         # （归档保留了页面已不再链接的历史文章，总表计数取自合并后字段，故必须后置）。
-        news_dir = news_md_path.parent / "llm-news"
         # --render-only 到此为止不写源：归档是源层，重排视图不需要（也不允许）改它。
         # 少了这道护栏，「重排产物」就会顺带折叠影子行（实测 deepseek 46→42），
         # 每次本地渲染都得人工判断那几行 diff 是折叠还是丢数据。
         if not args.render_only:
             n_arch, n_arch_arts, n_arch_changed = write_news_archives(
-                news_dir, intel_list, clean_removed=True, title_polish=title_polish)
+                news_dir, intel_list, clean_removed=not args.only, title_polish=title_polish)
             print(f"      llm-news/ 归档 {n_arch} 个厂商文件、共 {n_arch_arts} 篇文章"
                   f"（本次实际改写 {n_arch_changed} 个文件）")
-        render_outputs(root, intel_list, feeds_base=feeds_base,
+        render_outputs(preview_dir if isolated_preview else root, intel_list, feeds_base=feeds_base,
                        all_vendors=all_vendors, reviews=snapshots.reviews,
                        news_md_path=news_md_path, opml_path=opml_path,
                        feeds_dir=feeds_dir, changelog_path=root / CHANGELOG_MD,
                        rss_limit=args.rss_limit,
                        rss_vendor_limit=args.rss_vendor_limit,
-                       feeds_dir_label=args.feeds_dir)
+                       feeds_dir_label=args.feeds_dir,
+                       clean_removed=not args.only)
 
     total = sum(len(v.intel_pages) for v in intel_list)
     ok = sum(1 for v in intel_list for p in v.intel_pages if p.ok)

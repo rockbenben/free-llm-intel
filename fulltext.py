@@ -1975,11 +1975,12 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             continue
         key = bodies_key(vendor, url)
         prev = bodies.get(key, {})
+        if prev.get("zh_status") == "translated":
+            continue
         if skip is not None and skip(url):
             continue
         if only_missing:
-            done = (prev.get("en_status") == "ok"
-                    or prev.get("zh_status") == "translated")
+            done = prev.get("en_status") == "ok"
             # `index_page` 是**判定**而不是事实：标了就没人再看一眼，源站改版或
             # 当初判错都翻不回来。`fetch_failed` / `paywall` 一向每天重试，不变。
             # `unreachable` 与 `index_page` 同理：它是**核实过的结论**（反爬 / 客户端渲染 /
@@ -2164,12 +2165,18 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
     return written
 
 
-def reclassify_bodies(root: Path, bodies: dict) -> int:
+def reclassify_bodies(root: Path, bodies: dict, *, vendors: Iterable[str] = ()) -> int:
     """一次性、幂等地把已缓存的 `.en.md` 按真实语言重判：中文原生的移到 `.md`（native）
-    并删掉误存的 `.en.md`；英文的补 `src_lang=en`。复用磁盘正文，不重新抓取。返回改动数。"""
+    并删掉误存的 `.en.md`；英文的补 `src_lang=en`。仅处理指定厂商的未译条目。
+    厂商列表为空时处理所有厂商。复用磁盘正文，不重新抓取。返回改动数。"""
     changed = 0
+    vendor_scope = set(vendors)
     for key, e in list(bodies.items()):
-        if e.get("en_status") != "ok" or not e.get("en_path"):
+        vendor = key.split("\t", 1)[0]
+        if vendor_scope and vendor not in vendor_scope:
+            continue
+        if (e.get("zh_status") == "translated"
+                or e.get("en_status") != "ok" or not e.get("en_path")):
             continue
         enp = root / e["en_path"]
         if not enp.exists():
@@ -2189,7 +2196,6 @@ def reclassify_bodies(root: Path, bodies: dict) -> int:
                 changed += 1
             continue
         slug = e["slug"]
-        vendor = key.split("\t", 1)[0]
         zh_rel = f"docs/articles/{vendor}/{slug}.md"
         body = strip_page_furniture(body, fm.get("url", "")).strip()
         nfm = {"vendor": vendor, "title": fm.get("title", ""), "original_title": "",
