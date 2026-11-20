@@ -379,24 +379,17 @@ def translate_to_zh(text: str, timeout: float = 4.0, *,
 # ---------------------------------------------------------------------------
 
 _MT_CHUNK_CHARS = 1500   # 单次 gtx 请求的最大字符数（GET 端点有长度上限，按段落聚合到线下）
-_FENCE_PREFIX = "```"
 
 
 def _split_code_and_text(md: str) -> list[tuple[str, str]]:
-    """把 markdown 切成连续同类片段 [(kind, text)]，kind ∈ {'code','text'}。
+    """把 markdown 切成连续的代码与正文片段，围栏和里面的每一行都归代码。"""
+    from fulltext import _fence_mask
 
-    ``` 围栏行本身连同其内容都归 'code'（原样保留）；其余归 'text'。按行奇偶
-    判定围栏内外，避免把代码块里的伪 ``` 误判。
-    """
     lines = md.split("\n")
+    fenced, _ = _fence_mask(lines)
     parts: list[tuple[str, list[str]]] = []
-    in_code = False
-    for ln in lines:
-        if ln.lstrip().startswith(_FENCE_PREFIX):
-            kind = "code"
-            in_code = not in_code
-        else:
-            kind = "code" if in_code else "text"
+    for i, ln in enumerate(lines):
+        kind = "code" if i in fenced else "text"
         if parts and parts[-1][0] == kind:
             parts[-1][1].append(ln)
         else:
@@ -426,46 +419,50 @@ def _chunk_text(seg: str) -> list[str]:
 #: 正文结构保护：行内代码、链接/图片目标、HTML 标签（含 autolink）与裸 URL。
 #: 这些片段进 gtx 前换成 `ZZTOK<n>ZZ` 占位（与型号 token 同一套机制，实测 gtx
 #: 原样保留），译后逐位还原；占位被吞时整块回退原文，不把机器痕迹写进正文。
-_BODY_INLINE_CODE_RE = re.compile(r"(`{1,3})([^\n]+?)\1")
-_BODY_HTML_TAG_RE = re.compile(r"</?[A-Za-z][^>\n]{0,300}>")
-_BODY_MD_LINK_DEST_RE = re.compile(
-    r"\]\(\s*(<[^>\s]+>|[^)\s]+)(\s+[\"'][^\"']*[\"'])?\s*\)")
-_BODY_BARE_URL_RE = re.compile(r"(?:https?://|mailto:)[^\s<>()\[\]\"'`]+")
+_BODY_URL_PATTERN = r"(?:https?://|mailto:)[^\s<>()\[\]\"'`]+"
+_BODY_INLINE_RE = re.compile(
+    r"(?P<escape>\\[\\!\[\]])"
+    r"|(?P<code>(?P<ticks>`{1,3})[^\n]+?(?P=ticks))"
+    r"|(?P<label>!?\[)"
+    r"|(?P<close>\])(?:\(\s*"
+    r"(?P<target><[^>\s]+>|(?:[^()\s]|\([^()\s]*\))+)"
+    r"(?:\s+[\"'][^\"']*[\"'])?\s*\))?"
+    r"|(?P<autolink><" + _BODY_URL_PATTERN + r">)|(?P<html></?[A-Za-z][^>\n]{0,300}>)"
+    r"|(?P<url>" + _BODY_URL_PATTERN + r")")
 _BODY_TOKEN_LEAK_RE = re.compile(r"ZZ\s*TOK\s*\d+\s*ZZ", re.I)
 
 
-def _protect_body_inline(text: str) -> tuple[str, list[str]]:
-    """把正文里的结构片段换成 ZZTOK<n>ZZ 占位，返回 (待译文本, 占位原值表)。
+def _protect_body_inline(text: str) -> tuple[str, list[tuple[str, str]]]:
+    """用占位符保护行内结构，记录每个片段的类型和原文。"""
+    stash: list[tuple[str, str]] = []
+    labels: list[str] = []
 
-    顺序有讲究：行内代码先整段拿走（里面的「链接」是代码，不是结构）；HTML 标签
-    其次（autolink 的形式就是 `<https://…>`）；再护 markdown 链接/图片的
-    目标（保留方括号里的链接文字与可选 title，它们该被翻译）；最后剩裸 URL。
-    """
-    stash: list[str] = []
-
-    def _stash(payload: str) -> str:
-        stash.append(payload)
+    def _stash(kind: str, payload: str) -> str:
+        stash.append((kind, payload))
         return _BODY_TOKEN_PLACEHOLDER.format(len(stash) - 1)
 
-    text = _BODY_INLINE_CODE_RE.sub(lambda m: _stash(m.group(0)), text)
-    text = _BODY_HTML_TAG_RE.sub(lambda m: _stash(m.group(0)), text)
+    def protect(m: re.Match) -> str:
+        fragment = m[0]
+        if m["label"]:
+            labels.append("image" if fragment.startswith("!") else "link")
+        elif m["close"]:
+            # 栈保留嵌套层级，例如外链里嵌一张图片。畸形链接的目标也继续保护。
+            kind = labels.pop() if labels else "link_target"
+            if m["target"]:
+                start, end = m.span("target")
+                return (fragment[:start - m.start()] + _stash(kind, m["target"])
+                        + fragment[end - m.start():])
+        elif m["url"]:
+            url = fragment.rstrip(".,;:!?。，；：！？")
+            return _stash("url", url) + fragment[len(url):]
+        elif not m["escape"]:
+            return _stash(m.lastgroup, fragment)
+        return fragment
 
-    def _link_dest(m) -> str:
-        return "](" + _stash(m.group(1)) + (m.group(2) or "") + ")"
-
-    text = _BODY_MD_LINK_DEST_RE.sub(_link_dest, text)
-
-    def _bare_url(m) -> str:
-        url = m.group(0)
-        keep = url.rstrip(".,;:!?。，；：！？")   # 句末标点不属 URL，留给译文断句
-        if not keep:
-            return url
-        return _stash(keep) + url[len(keep):]
-
-    return _BODY_BARE_URL_RE.sub(_bare_url, text), stash
+    return _BODY_INLINE_RE.sub(protect, text), stash
 
 
-def _body_tokens_intact(text: str, stash: list[str]) -> bool:
+def _body_tokens_intact(text: str, stash: list[tuple[str, str]]) -> bool:
     """译文里每个占位是否都还在（允许 Google 插空格 / 改大小写）。
 
     漏一个就说明结构片段被吞了（常见于模型式改写）：此时整块回退原文，
@@ -475,9 +472,9 @@ def _body_tokens_intact(text: str, stash: list[str]) -> bool:
                for i in range(len(stash)))
 
 
-def _restore_body_inline(text: str, stash: list[str]) -> str:
+def _restore_body_inline(text: str, stash: list[tuple[str, str]]) -> str:
     """把占位还原回结构原文；空表即无保护片段，原样返回。"""
-    for i, payload in enumerate(stash):
+    for i, (_, payload) in enumerate(stash):
         text = text.replace(_BODY_TOKEN_PLACEHOLDER.format(i), payload)
         # 兜底：Google 偶尔在占位串里插空格 / 改大小写（与型号 token 同款处理）
         text = re.sub(rf"ZZ\s*TOK\s*{i}\s*ZZ", lambda _m, v=payload: v,
@@ -505,8 +502,11 @@ def translate_body_to_zh(md: str, timeout: float = 8.0, *,
         if kind == "code" or not seg.strip():
             out.append(seg)      # 代码块与纯空行原样保留（空行是块间分隔，不能吞）
             continue
+        lines = seg.split("\n")
+        start = next(i for i, line in enumerate(lines) if line.strip())
+        end = len(lines) - next(i for i, line in enumerate(reversed(lines)) if line.strip())
         translated_chunks = []
-        for chunk in _chunk_text(seg):
+        for chunk in _chunk_text("\n".join(lines[start:end])):
             masked, stash = _protect_body_inline(chunk)
             remaining = deadline - time.monotonic() if deadline is not None else timeout
             if remaining <= 0:
@@ -533,7 +533,7 @@ def translate_body_to_zh(md: str, timeout: float = 8.0, *,
             if require_complete and not tr.strip():
                 return ""
             translated_chunks.append(tr if tr else chunk)   # 失败留原文，绝不吞
-        out.append("\n\n".join(translated_chunks))
+        out.append("\n".join([*lines[:start], "\n\n".join(translated_chunks), *lines[end:]]))
     return "\n".join(out)
 
 

@@ -236,24 +236,13 @@ _CARD_META_RE = re.compile(
     r"|^\d{4}[/-]\d{2}[/-]\d{2}$")
 _BARE_MEDIA_RE = re.compile(
     r"^https?://\S+\.(mp4|mp3|webm|mov|m4v|ogg|gif|png|jpe?g|webp)(\?\S*)?$")
-#: 播放器倍速控件：闭集里已经有单个 token（见 `_FURN_ANYWHERE`），但 about.fb.com 会把
-#: 它们**拼成一行**渲染，整行精确匹配就落空了（实测 `0.25× 0.5× 1× 1.25× 1.5× 2×` 13 处 / 13 文件）。
-_SPEED_TOKENS = frozenset({
-    "0.25×", "0.5×", "0.75×", "1×", "1.25×", "1.5×", "1.75×", "2×",
-    "0.25x", "0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x",
-})
-#: 整行 = 同一短语重复 2–4 次。站方的装饰性字标、重复日期被抽取器按**兄弟行内元素**
-#: 拼成了一行：`aria-hidden` 装饰画里三个同文本 `<span>`（`ChatGPT for Academic
-#: Researchers` ×3）、日期胶囊的两次渲染（`November 12, 2026November 12, 2026`）、
-#: 单词标 ×3（`transformers`）。实测 13 处 / 13 文件，除这 13 行外全库零命中。
-#: 短语必须 ≥8 字符且含字母或汉字：纯标点/字符画（`----`、`====`、`| --- |`）
-#: 永远走不到这一档，表格分隔行与代码块另有各自的豁免。
-_REPEAT_MIN_CHUNK = 8
-#: 重复单元的长度上限：真实命中是字标/日期/单词标（8–33 字符），而**句子**成段重复
-#: （实测夹具里「这是一段完整的中文译文。」×10）不是站件，删了就是删正文。
-_REPEAT_MAX_CHUNK = 40
-_REPEAT_MAX_LINE = 300
-_REPEAT_WORDISH_RE = re.compile(r"[A-Za-z\u4e00-\u9fff]")
+# about.fb.com 把六档倍速或两枚相同的日期胶囊拼成一行。
+_META_PLAYER_SPEEDS = ("0.25×", "0.5×", "1×", "1.25×", "1.5×", "2×")
+_META_DUPLICATE_DATE_RE = re.compile(
+    r"(?P<date>(?:" + _MONTHS + r"|[一二三四五六七八九十]{1,3}月)\s+\d{1,2},\s+\d{4}"
+    r"|\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日)\s*(?P=date)")
+# OpenAI 装饰画的三个同文本 span 被拼成一行。
+_OPENAI_DECORATIVE_WORDMARK = "ChatGPT for Academic Researchers" * 3
 _VALUE_MAX = 24
 # 行内无障碍提示：站方把它塞进**每个外链的显示文本**里，readability 连链接文字一起收了。
 # 它不是"没加载完"，是抽取噪声；独立成行的那档走 R2，句中这一大坨（实测 4290 处）走这里。
@@ -308,35 +297,6 @@ def _is_tag_value(s):
     return True
 
 
-def _is_speed_line(s: str) -> bool:
-    """整行只由倍速 token 拼成（`0.25× 0.5× 1× …`）→ 播放器控件，不是正文。"""
-    toks = s.split()
-    return len(toks) >= 2 and all(t in _SPEED_TOKENS for t in toks)
-
-
-def _repeated_chunk(s: str) -> str:
-    """整行是同一短语重复 2/3/4 次 → 返回该短语，否则空串。
-
-    只认**整行**且短语含字母或汉字，所以 `----`/`====`/`| --- |` 这类分隔线
-    与纯标点字符画永远不命中（它们另有 R6 管）。
-    """
-    n = len(s)
-    if n < _REPEAT_MIN_CHUNK * 2 or n > _REPEAT_MAX_LINE:
-        return ""
-    if "](" in s or "://" in s:
-        # 含链接/裸 URL 的整行一律不动：链接目标的多重集是硬不变量（见 strip_inline_junk）。
-        # 重复的 URL 是「两条黏成一条」的渲染事故，删掉会静默少两条指向。
-        return ""
-    for k in (2, 3, 4):
-        if n % k:
-            continue
-        chunk = s[: n // k]
-        if (len(chunk) >= _REPEAT_MIN_CHUNK and len(chunk) <= _REPEAT_MAX_CHUNK
-                and _REPEAT_WORDISH_RE.search(chunk) and chunk * k == s):
-            return chunk
-    return ""
-
-
 def _brand_of(url: str) -> str:
     """页面 host 的品牌词：`www.anthropic.com` → `anthropic`，`huggingface.co` → `huggingface`。"""
     host = (urlsplit(url).netloc or "").lower().split(":")[0]
@@ -357,11 +317,11 @@ def furniture_drops(lines, page_url: str = ""):
     R7 连续的标签/年份筛选链接块（`- [x](…?tags=y)` ≥2 行，实测 804 个文件各一段）
     R9 Anyscale 中文页脚块：`#### 目录` 之后只剩分享/标签/订阅/推荐卡/探索 CTA
         （实测 14 篇文末残留；真目录在正文前、后面有 H2/H3 时不匹配）
-    R10 整行 = 同一短语重复 2–4 次（装饰性字标 / 重复日期被按兄弟行内元素拼成一行，
-        实测 13 处 / 13 文件；短语须 ≥8 字符且含字母或汉字，分隔线与字符画走不到这档）
+    R10 about.fb.com 重复日期行与 OpenAI 的三连装饰字标
     """
     fenced, first_head = _fence_mask(lines)
     brand = _brand_of(page_url)
+    host = (urlsplit(page_url).hostname or "").removeprefix("www.")
     drop = {}
     for i, l in enumerate(lines):
         if i in fenced:
@@ -369,11 +329,12 @@ def furniture_drops(lines, page_url: str = ""):
         s = l.strip()
         if not s:
             continue
-        if s in _FURN_ANYWHERE or _is_speed_line(s):
+        if s in _FURN_ANYWHERE or (host == "about.fb.com" and tuple(s.split()) == _META_PLAYER_SPEEDS):
             drop[i] = "R2"
         elif _FURN_SEPARATOR_RE.match(s):
             drop[i] = "R6"
-        elif _repeated_chunk(s):
+        elif ((host == "about.fb.com" and _META_DUPLICATE_DATE_RE.fullmatch(s))
+              or (host == "openai.com" and s == _OPENAI_DECORATIVE_WORDMARK)):
             drop[i] = "R10"
         elif brand and s[0] not in "-*+>|#" and s.lower().replace(" ", "").replace("-", "") == brand:
             # 整行只有本页品牌词 = 字标。实测 741 处「标题之后」的全是孤立行（635 处在
@@ -1067,9 +1028,10 @@ ZH_SOURCE_RATIO = 0.4   # 正文里 CJK 占比阈值（代码块/URL 已剔，�
 
 def _body_text_for_lang(md: str) -> str:
     """剔掉代码块与 URL，只留自然语言文本，再量 CJK/拉丁占比。"""
-    t = re.sub(r"```.*?```", " ", md, flags=re.S)
-    t = re.sub(r"https?://\S+", " ", t)
-    return t
+    lines = md.split("\n")
+    fenced, _ = _fence_mask(lines)
+    prose = "\n".join(line for i, line in enumerate(lines) if i not in fenced)
+    return re.sub(r"https?://\S+", " ", prose)
 
 
 def detect_source_lang(md: str) -> str:
@@ -2423,7 +2385,8 @@ def mark_translated(root: Path, bodies: dict, *, key: str, zh_body_md: str,
     # 中文侧落盘口统一洗家具：agent 精译、--ai-bodies、CI 的 --mt-bodies 都走这里，
     # 不然洗过一轮，第二天新稿又把站点页脚带回正文。sha 也在洗完之后算。
     # 传入条目 URL，让「同页锚点」那类永久链接图标能被坐实删掉。
-    zh_body_md = strip_page_furniture(zh_body_md, key.split("\t", 1)[1]).strip()
+    # 只收掉空白行的换行符，保留首尾围栏行上的缩进和尾随空格。
+    zh_body_md = strip_page_furniture(zh_body_md, key.split("\t", 1)[1]).strip("\n")
     if not zh_body_md.strip():
         raise EmptyTranslationError("译文清洗后为空")
     fm = {"vendor": vendor, "title": e.get("title", ""), "original_title": e.get("original_title", ""),
@@ -2551,7 +2514,7 @@ def _split_body_chunks(body: str, chunk_chars: int, *, force_split: bool = False
     return chunks
 
 
-def _go_body_parts(body: str) -> tuple[str, list[str], Counter]:
+def _go_body_parts(body: str) -> tuple[str, list[str], Counter[tuple[str, str]]]:
     """提取可译文字、围栏原文以及需保留的行内结构。"""
     from provider_profiles import _BODY_TOKEN_LEAK_RE, _protect_body_inline
 
@@ -2563,7 +2526,7 @@ def _go_body_parts(body: str) -> tuple[str, list[str], Counter]:
             [lines[i] for i in sorted(fenced)], Counter(protected))
 
 
-def _go_part_acceptable(source_parts: tuple[str, list[str], Counter], zh: str) -> bool:
+def _go_part_acceptable(source_parts: tuple[str, list[str], Counter[tuple[str, str]]], zh: str) -> bool:
     en_prose, en_code, en_inline = source_parts
     zh_prose, zh_code, zh_inline = _go_body_parts(zh)
     return ("\ufffd" not in zh and en_code == zh_code and en_inline == zh_inline
@@ -2671,8 +2634,11 @@ def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
                             or (chunk_max > 0 and len(chunks) > chunk_max)):
                         break
                     continue
-                zh_part = _clean_llm_translation(
-                    raw, unwrap=not (go and _MARKDOWN_FENCE_RE.match(chunk.split("\n", 1)[0])))
+                if translator == "mt":
+                    zh_part = raw or ""
+                else:
+                    zh_part = _clean_llm_translation(
+                        raw, unwrap=not (go and _MARKDOWN_FENCE_RE.match(chunk.split("\n", 1)[0])))
                 if go and not _go_part_acceptable(source_parts, zh_part):
                     break
                 parts.append(zh_part)

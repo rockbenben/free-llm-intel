@@ -10806,6 +10806,27 @@ class TestTranslateBodiesLlm(unittest.TestCase):
                 self.assertEqual(translate.call_count, 2)
                 self.assertEqual(ft.pending_translation_keys(bodies), [key])
 
+    def test_go_preserves_link_and_image_types_and_counts(self):
+        url = "https://a.test/chart(v2).png"
+        source = f"Compare the [chart]({url}) and ![throughput]({url}) at ![preview]({url})."
+        translated = f"请比较 ![预览]({url})、![吞吐量]({url}) 和[图表]({url})。"
+        for output, accepted in (
+                (translated, 1),
+                (translated.replace("![吞吐量]", "[吞吐量]"), 0),
+                (translated.replace(f"[图表]({url})", url), 0),
+                (translated.replace(f"![预览]({url})、", ""), 0),
+        ):
+            with self.subTest(output=output), tempfile.TemporaryDirectory() as d:
+                key, bodies = self._seed(d, "links0000001", source)
+                n = ft.translate_bodies_llm(Path(d), bodies, lambda t, b: output,
+                                            today="2026-11-18", chunk_chars=800)
+                self.assertEqual(n, accepted)
+                if accepted:
+                    self.assertEqual(ft.read_body_doc(Path(d) / bodies[key]["zh_path"])[1], output)
+                else:
+                    self.assertEqual(ft.pending_translation_keys(bodies), [key])
+                    self.assertFalse((Path(d) / "docs/articles/openai/links0000001.md").exists())
+
     def test_code_only_chunk_is_kept_without_a_translation_request(self):
         with tempfile.TemporaryDirectory() as d:
             prose = "Plain English prose. " * 10
@@ -11284,6 +11305,27 @@ class TestMtBodiesCli(unittest.TestCase):
         self.assertEqual(saved["openai\thttps://a/p"]["zh_status"], "")
         self.assertEqual(ft.pending_translation_keys(saved), ["openai\thttps://a/p"])
 
+    def test_fences_preserved_from_input_through_written_translation(self):
+        ledger = self.root / "docs/feeds/bodies.json"
+        key = "openai\thttps://a/p"
+        en_path = self.root / ft.load_bodies(ledger)[key]["en_path"]
+        prose = "Here is how the examples work."
+        translated = "下面介绍这些示例的用途。"
+        start = "  ```\nfirst()  \n```"
+        middle = "~~~~python\n" + "print('untranslated example')\n" * 30 + "~~~~"
+        nested = "````markdown\n```python\ninside()\n```\n````"
+        end = "```\nlast()\n```  "
+        blocks = [start, prose, middle, prose, nested, prose, end]
+        ft.write_body_doc(en_path, {"status": "ok", "url": "https://a/p"}, "\n\n".join(blocks))
+
+        with mock.patch.object(provider_profiles, "_gtx_translate", return_value=translated) as gtx:
+            self.assertEqual(crawler_llm_intel.main(["--mt-bodies"]), 0)
+        self.assertEqual([call.args[0] for call in gtx.call_args_list], [prose] * 3)
+        e = ft.load_bodies(ledger)[key]
+        self.assertEqual(e["translator"], "mt")
+        _, body = ft.read_body_doc(self.root / e["zh_path"])
+        self.assertEqual(body, "\n\n".join(translated if block == prose else block for block in blocks))
+
     def test_budget_is_shared_with_mt_bodies(self):
         """--mt-bodies 也吃同一个墙钟开关：默认与 --ai-bodies 同值，显式 0 关闭。"""
         seen = []
@@ -11297,9 +11339,10 @@ class TestMtBodiesCli(unittest.TestCase):
              mock.patch.object(ft, "translate_bodies_llm", side_effect=fake):
             self.assertEqual(crawler_llm_intel.main(["--mt-bodies"]), 0)
             self.assertEqual(crawler_llm_intel.main(
+                ["--mt-bodies", "--ai-bodies-budget-seconds", "300"]), 0)
+            self.assertEqual(crawler_llm_intel.main(
                 ["--mt-bodies", "--ai-bodies-budget-seconds", "0"]), 0)
-        self.assertEqual(seen, [ft.BODY_TRANSLATE_BUDGET_SECONDS, 0.0],
-                         "默认与 --ai-bodies 同值；显式 0 才关闭墙钟")
+        self.assertEqual(seen, [900, 300, 0])
 
     def test_request_finishing_after_deadline_leaves_whole_article_pending(self):
         ledger = self.root / "docs/feeds/bodies.json"
@@ -11566,18 +11609,20 @@ class TestPageFurnitureStrip(unittest.TestCase):
                          "标题之前的导航词该删")
         self.assertIn("产品", out.split("\n")[-1], "正文里出现的同一个词不许删")
 
-    # --- 重复短语行（装饰字标 / 重复日期）与倍速控件 -------------------------
-    # 两类都是「闭集判据看得见、但形状没覆盖」的漏网：装饰画里三个同文本 <span>
-    # 被拼成一行、倍速 token 被拼成一行，整行精确匹配就落空。
-
-    def test_repeated_phrase_line_dropped(self):
-        for line in ("November 12, 2026November 12, 2026",
-                     "ChatGPT for Academic Researchers" * 3,
-                     "transformers" * 3):
-            out = ft.strip_page_furniture("# 标题\n\n" + line + "\n\n正文。")
-            self.assertNotIn(line, out, f"{line[:40]} 是装饰性重复行，该删")
-            self.assertIn("# 标题", out)
-            self.assertIn("正文。", out)
+    def test_concatenated_furniture_only_dropped_on_its_site(self):
+        for host, line in (
+                ("about.fb.com", "November 12, 2026" * 2),
+                ("about.fb.com", "2026 年 10 月 28 日" * 2),
+                ("about.fb.com", "2026年11月17日" * 2),
+                ("about.fb.com", "十一月 18, 2026" * 2),
+                ("about.fb.com", "0.25× 0.5× 1× 1.25× 1.5× 2×"),
+                ("openai.com", "ChatGPT for Academic Researchers" * 3),
+        ):
+            with self.subTest(host=host, line=line):
+                body = f"# 标题\n\n{line}\n\n正文。"
+                self.assertEqual(ft.strip_page_furniture(body, f"https://{host}/news"),
+                                 "# 标题\n\n\n正文。")
+                self.assertEqual(ft.strip_page_furniture(body, f"https://{host}.example/news"), body)
 
     def test_repeat_rule_never_eats_separators_or_prose(self):
         body = "\n".join([
@@ -11589,29 +11634,21 @@ class TestPageFurnitureStrip(unittest.TestCase):
             "这句话里同一个词出现两次：very very good。",
             "",
             "2026 年 10 月 28 日",
+            "警告：请勿关闭电源。" * 2,
+            "这是一段完整的中文译文。" * 10,
+            "transformers" * 3,
+            "[A](https://x.example/a)" * 2,
+            "0.5x 2x",
+            "0.5× 2×",
+            "我们支持 0.5× 与 2× 两档播放。",
             "",
             "```text",
             "aaaaaaaaaaaaaaaa",
             "```",
         ])
-        out = ft.strip_page_furniture(body)
-        for keep in ("| --- | --- |", "very very good", "2026 年 10 月 28 日",
-                     "aaaaaaaaaaaaaaaa"):
-            self.assertIn(keep, out, f"{keep} 不是装饰性重复行，不许删")
-        # 含链接的行不在这条判据上：删了会改变链接目标多重集
-        linked = "[A](https://x.example/a)[A](https://x.example/a)"
-        self.assertIn(linked, ft.strip_page_furniture("# 标题\n\n" + linked + "\n\n正文。"))
-        # 成段重复的**句子**不是字标：重复单元超过 _REPEAT_MAX_CHUNK 就不算（实测踩过，
-        # 「这是一段完整的中文译文。」×10 的夹具曾被整行吃掉）
-        sentence = "这是一段完整的中文译文。" * 10
-        self.assertIn(sentence, ft.strip_page_furniture("# 标题\n\n" + sentence + "\n\n正文。"))
-
-    def test_player_speed_line_dropped_prose_untouched(self):
-        out = ft.strip_page_furniture("# 标题\n\n0.25× 0.5× 1× 1.25× 1.5× 2×\n\n正文。")
-        self.assertNotIn("0.25× 0.5× 1×", out)
-        self.assertIn("正文。", out)
-        prose = "# 标题\n\n我们支持 0.5× 与 2× 两档播放。"
-        self.assertEqual(ft.strip_page_furniture(prose), prose, "句子里的倍速不是控件")
+        for host in ("about.fb.com", "openai.com", "example.com"):
+            with self.subTest(host=host):
+                self.assertEqual(ft.strip_page_furniture(body, f"https://{host}/news"), body)
 
     def test_strip_is_idempotent(self):
         body = "\n".join(["# 标题", "正文。", "", "分类", "", ":", "", "Meta", "", "联系销售"])
