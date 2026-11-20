@@ -59,7 +59,7 @@ test('vendorList: rank 优先，其次篇数，末位按名称；rank 相同才�
   assert.equal(list.find((v) => v.name === 'OpenAI').n, 2, '篇数统计正确');
 });
 
-test('vendorList: 同名跨条目合并，feed 取第一个非空', () => {
+test('vendorList: 同 ID 合并，feed 取第一个非空', () => {
   const all = [
     { vendor: 'X', vendorId: 'x', feed: '' },
     { vendor: 'X', vendorId: 'x', feed: 'https://f/x.xml' },
@@ -68,6 +68,15 @@ test('vendorList: 同名跨条目合并，feed 取第一个非空', () => {
   assert.equal(list.length, 1);
   assert.equal(list[0].feed, 'https://f/x.xml');
   assert.equal(list[0].n, 2);
+});
+
+test('厂商筛选和统计按 ID 区分同名厂商', () => {
+  const all = [
+    { vendor: '同名', vendorId: 'one', feed: 'one.xml' },
+    { vendor: '同名', vendorId: 'two', feed: 'two.xml' },
+  ];
+  assert.deepEqual(FLI.vendorList(all, {}).map((v) => v.key), ['one', 'two']);
+  assert.deepEqual(FLI.visible(all, 'one', '', false, 20), [all[0]]);
 });
 
 test('visible: 摘要上限只在「未选厂商且未搜索」时生效', () => {
@@ -82,7 +91,7 @@ test('visible: 摘要上限只在「未选厂商且未搜索」时生效', () =>
   assert.equal(FLI.visible(all, null, 't', true, 3).length, 10, '搜了关键词：摘要不生效');
 });
 
-test('visible: 关键词大小写不敏感、匹配标题或原文；厂商筛选按显示名', () => {
+test('visible: 关键词匹配标题或原文；缺少厂商 ID 时按显示名筛选', () => {
   const all = [
     { vendor: 'OpenAI', title: 'GPT-6 Released', link: '', orig: '', date: '' },
     { vendor: 'Anthropic', title: 'Claude update', link: '', orig: '', date: '' },

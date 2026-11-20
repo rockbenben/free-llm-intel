@@ -6246,7 +6246,9 @@ class TestBrowsePageDesignContract(unittest.TestCase):
                          self.page.index("function appendRows")]
         self.assertIn("badge = document.createElement('button')", row,
                       "厂商胶囊应是筛选按钮")
-        self.assertIn("state.vendor = (state.vendor === it.vendor) ? null : it.vendor", row,
+        self.assertIn("vendor = FLI.vendorKey(it)", row,
+                      "有厂商 ID 时选择应独立于显示名")
+        self.assertIn("state.vendor = (state.vendor === vendor) ? null : vendor", row,
                       "点击厂商胶囊要切换厂商筛选")
         self.assertNotIn("badge.href", row,
                          "厂商胶囊不许直接链到 RSS/XML")
@@ -8794,7 +8796,7 @@ class TestReadFullButtonHonesty(unittest.TestCase):
         self.assertIn("FLI.loadBody(", body, "正文语言决议要走 FLI.loadBody")
         self.assertNotIn("Promise.race", self.page,
                          "reader 不许再用 Promise.race 让 404 与正文赛跑")
-        self.assertIn("readerMdPath(reader.vendor, reader.slug, lang)", body)
+        self.assertIn("readerMdPath(vendor, slug, lang)", body)
 
 
 class TestFulltextBodyDoc(unittest.TestCase):

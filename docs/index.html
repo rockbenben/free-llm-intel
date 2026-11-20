@@ -548,13 +548,16 @@ var FLI = (function () {
     return (rankMap && typeof rankMap[id] === 'number') ? rankMap[id] : Infinity;
   }
 
+  // 文章索引有稳定的厂商 ID；合并流兜底没有 ID 时仍按显示名归组。
+  function vendorKey(it) { return it.vendorId || it.vendor || UNKNOWN; }
+
   // 从条目数组聚合出「厂商 → 篇数 + 单源地址」，按 rank 优先、篇数次之、名称（zh）末位排序。
   function vendorList(all, rankMap) {
-    var seen = {}, list = [];
+    var seen = Object.create(null), list = [];
     all.forEach(function (it) {
-      var key = it.vendor || UNKNOWN;
+      var key = vendorKey(it);
       if (!seen[key]) {
-        seen[key] = { name: key, id: it.vendorId, feed: it.feed, n: 0 };
+        seen[key] = { key: key, name: it.vendor || UNKNOWN, id: it.vendorId, feed: it.feed, n: 0 };
         list.push(seen[key]);
       }
       seen[key].n++;
@@ -574,16 +577,16 @@ var FLI = (function () {
   function visible(all, vendor, q, digest, cap) {
     var ql = (q || '').toLowerCase();
     var rows = all.filter(function (it) {
-      if (vendor !== null && (it.vendor || UNKNOWN) !== vendor) return false;
+      if (vendor !== null && vendorKey(it) !== vendor) return false;
       var hay = ((it.title || '') + ' ' + (it.orig || '')).toLowerCase();
       if (ql && hay.indexOf(ql) < 0) return false;
       return true;
     });
     if (!digest) return rows;
     if (vendor !== null || q) return rows;
-    var seen = {}, out = [];
+    var seen = Object.create(null), out = [];
     for (var i = 0; i < rows.length; i++) {
-      var key = rows[i].vendor || UNKNOWN;
+      var key = vendorKey(rows[i]);
       var n = seen[key] || 0;
       if (n >= cap) continue;
       seen[key] = n + 1;
@@ -781,6 +784,7 @@ var FLI = (function () {
     UNKNOWN: UNKNOWN,
     mapRow: mapRow,
     rankOf: rankOf,
+    vendorKey: vendorKey,
     vendorList: vendorList,
     visible: visible,
     fmtDate: fmtDate,
@@ -812,7 +816,7 @@ var FLI = (function () {
   // 分批只决定**渲染多少行**：计数、各家篇数与搜索始终基于全量数组。
   var RENDER_CHUNK = 200;
   var state = {
-    all: [], brands: {}, feeds: {}, rank: {}, vendor: null, q: '', digest: false,
+    all: [], articleRows: null, brands: {}, feeds: {}, rank: {}, vendor: null, q: '', digest: false,
     chipsExpanded: false, shown: RENDER_CHUNK, rows: [], vendorIndexApplied: false,
     // 用缓存首屏时记下年龄；网络替换后清空，失败时标 stale（计数后面会显示）
     cache: null
@@ -904,7 +908,7 @@ var FLI = (function () {
     var limit = chipVisibleLimit();
     if (!state.chipsExpanded && list.length > limit) {
       var head = list.slice(0, limit);
-      var picked = list.filter(function (v) { return v.name === state.vendor; })[0];
+      var picked = list.find(function (v) { return v.key === state.vendor; });
       shown = head.slice();
       if (picked && head.indexOf(picked) < 0) shown.push(picked);
       hidden = list.length - shown.length;
@@ -914,7 +918,7 @@ var FLI = (function () {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'pill chip';
-      b.setAttribute('aria-pressed', state.vendor === v.name);
+      b.setAttribute('aria-pressed', state.vendor === v.key);
       b.innerHTML = '';
       b.appendChild(document.createTextNode(v.name));
       var n = document.createElement('span');
@@ -922,7 +926,7 @@ var FLI = (function () {
       n.textContent = v.n;
       b.appendChild(n);
       b.onclick = function () {
-        state.vendor = (state.vendor === v.name) ? null : v.name;
+        state.vendor = (state.vendor === v.key) ? null : v.key;
         render();
       };
       el.chips.appendChild(b);
@@ -961,7 +965,7 @@ var FLI = (function () {
     var url = new URL(FEED, location.href).href;
     var label = '订阅厂商动态';
     if (currentTab === 'news' && state.vendor !== null) {
-      var v = vendorList().filter(function (x) { return x.name === state.vendor; })[0];
+      var v = vendorList().find(function (x) { return x.key === state.vendor; });
       if (v && v.feed) {
         url = v.feed;
         label = '订阅「' + v.name + '」单源';
@@ -1004,10 +1008,11 @@ var FLI = (function () {
     badge.className = 'pill vendor';
     badge.textContent = it.vendor || '未知来源';
     badge.title = '只看该厂商（订阅地址会切到它的单源）';
-    badge.setAttribute('aria-pressed', state.vendor === it.vendor ? 'true' : 'false');
+    var vendor = FLI.vendorKey(it);
+    badge.setAttribute('aria-pressed', state.vendor === vendor ? 'true' : 'false');
     badge.onclick = function () {
       var deep = window.scrollY > tabsDocTop();
-      state.vendor = (state.vendor === it.vendor) ? null : it.vendor;
+      state.vendor = (state.vendor === vendor) ? null : vendor;
       render();
       if (deep) window.scrollTo(0, tabsDocTop());
     };
@@ -1575,6 +1580,7 @@ var FLI = (function () {
       state.feeds[v.id] = v.feed || '';
       if (typeof v.rank === 'number') state.rank[v.id] = v.rank;
     });
+    if (state.articleRows) state.all = state.articleRows.map(mapRow);
     renderVendorFeeds(index);
     state.vendorIndexApplied = true;
     // 缓存里有索引时不算「索引缺失」——退化的只是这次网络没帮上忙
@@ -1582,11 +1588,12 @@ var FLI = (function () {
   }
 
   function applyArticles(data) {
-    state.all = (data.articles || []).map(mapRow);
+    state.articleRows = data.articles || [];
+    state.all = state.articleRows.map(mapRow);
     state.limited = false;
   }
 
-  // 三份数据并行在途：厂商索引到位即补映射并重渲染（品牌名不再等文章索引）。
+  // 厂商和文章索引并行加载。任一先到都可以渲染，厂商索引到齐后再补齐映射。
   var bootCache = cacheRead('articles');
   var vendorsNet = fetch(VENDORS, { cache: 'no-cache' })
     .then(function (r) { return r.ok ? r.json() : null; })
@@ -1648,7 +1655,7 @@ var FLI = (function () {
   });
 
   // ---- reader 抽屉（corpus spec §12.2-12.5）----
-  var reader = { vendor: '', slug: '', lang: 'zh', langs: '', title: '', link: '', open: false, lastFocus: null, pushed: false, error: false, pendingClose: false };
+  var reader = { vendor: '', slug: '', lang: 'zh', langs: '', title: '', link: '', open: false, lastFocus: null, pushed: false, error: false, pendingClose: false, requestId: 0 };
   var rdOverlay = document.getElementById('reader-overlay');
   var rdDrawer = document.getElementById('reader-drawer');
   var rdTitle = document.getElementById('reader-title-text');
@@ -1752,10 +1759,15 @@ var FLI = (function () {
     readerSetLangButtons(fl ? fl.zh : true, fl ? fl.en : true);
   }
 
-  function readerLoad(opts) {
+  function readerLoad() {
+    var requestId = ++reader.requestId;
+    var vendor = reader.vendor, slug = reader.slug;
+    function isCurrent() { return reader.open && requestId === reader.requestId; }
+
     readerShowLoading();
     function fetchText(lang) {
-      return fetch(readerMdPath(reader.vendor, reader.slug, lang), { cache: 'no-cache' })
+      if (!isCurrent()) throw new Error('正文请求已失效');
+      return fetch(readerMdPath(vendor, slug, lang), { cache: 'no-cache' })
         .then(function (r) {
           if (!r.ok) throw new Error('HTTP ' + r.status);
           return r.text();
@@ -1766,6 +1778,7 @@ var FLI = (function () {
     var want = reader.lang, flags = FLI.langFlags(reader.langs);
     if (flags && !flags[want]) want = want === 'zh' ? 'en' : 'zh';
     FLI.loadBody(want, fetchText).then(function (got) {
+      if (!isCurrent()) return;
       reader.lang = got.lang;
       // 剥掉 frontmatter（首行 --- 到下一 --- 之间），只留正文
       var fm = /^---\n[\s\S]*?\n---\n?/.exec(got.text);
@@ -1776,16 +1789,16 @@ var FLI = (function () {
       }
       // 索引没说另一种在不在，或它说的与盘上对不上（正文晚于索引落盘、刚被重分类）：
       // 以实际读到的这门为准，HEAD 探另一种再定页签。
-      var other = reader.lang === 'zh' ? 'en' : 'zh';
-      readerSetLangButtons(reader.lang === 'zh', reader.lang === 'en');
-      fetch(readerMdPath(reader.vendor, reader.slug, other),
+      var other = got.lang === 'zh' ? 'en' : 'zh';
+      readerSetLangButtons(got.lang === 'zh', got.lang === 'en');
+      fetch(readerMdPath(vendor, slug, other),
             { method: 'HEAD', cache: 'no-cache' }).then(function (rr) {
-        var ok = {}; ok[reader.lang] = true; ok[other] = rr.ok;
+        if (!isCurrent()) return;
+        var ok = {}; ok[got.lang] = true; ok[other] = rr.ok;
         readerSetLangButtons(ok.zh, ok.en);
-      }, function () {
-        readerSetLangButtons(reader.lang === 'zh', reader.lang === 'en');
-      });
+      }, function () { /* 保留已显示语言的按钮状态 */ });
     }, function () {
+      if (!isCurrent()) return;
       readerShowError(reader.title, reader.link);
       readerSetLangButtons(false, false);
     });
@@ -1816,7 +1829,7 @@ var FLI = (function () {
     }
     rdTitle.textContent = reader.title;
     readerLangButtonsInit();
-    readerLoad({ link: opts.link });
+    readerLoad();
     if (opts.push !== false) {
       var u = new URL(location.href);
       u.searchParams.set('read', vendor + '/' + slug);
@@ -1830,6 +1843,7 @@ var FLI = (function () {
     if (!reader.open) return;
     var wasPushed = reader.pushed;
     reader.open = false;
+    reader.requestId++;
     reader.pushed = false;
     rdOverlay.hidden = true;
     rdDrawer.hidden = true;
@@ -1873,7 +1887,7 @@ var FLI = (function () {
   rdZh.addEventListener('click', function () {
     if (reader.lang === 'zh') return;
     reader.lang = 'zh';
-    readerLoad({});
+    readerLoad();
     readerLangButtonsInit();
     var u = new URL(location.href);
     u.searchParams.set('lang', 'zh');
@@ -1885,7 +1899,7 @@ var FLI = (function () {
   rdEn.addEventListener('click', function () {
     if (reader.lang === 'en') return;
     reader.lang = 'en';
-    readerLoad({});
+    readerLoad();
     readerLangButtonsInit();
     var u = new URL(location.href);
     u.searchParams.set('lang', 'en');
@@ -1905,7 +1919,8 @@ var FLI = (function () {
       if (slash > 0) {
         var vendor = r.slice(0, slash), slug = r.slice(slash + 1);
         if (vendor && slug) {
-          openReader(vendor, slug, params.get('lang') || 'zh', reader.title || '', {push: false});
+          var title = reader.vendor === vendor && reader.slug === slug ? reader.title : '';
+          openReader(vendor, slug, params.get('lang') || 'zh', title, {push: false});
           return;
         }
       }
