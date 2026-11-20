@@ -8,16 +8,14 @@ lang: en
 captured: 2026-11-20
 extractor: readability-v1
 status: ok
-body_sha: 58bfcbaef766
+body_sha: 93c8e2f680f4
 ---
 
 [  Back to Newsroom](https://about.fb.com/news)
 
 [ Meta ](https://about.fb.com/news/category/technologies/meta/)
 
-November 18, 2026November 18, 2026
 
-0.25× 0.5× 1× 1.25× 1.5× 2×
 
 ## TAKE AWAYS
 
@@ -56,7 +54,7 @@ You can choose where your spaces live in Muse. Add them to your sidebar, move th
 Category
 
 
-[Canada Newsroom](https://about.fb.com/news/category/canada-newsroom/ )
+[Canada Newsroom](https://about.fb.com/news/category/canada-newsroom/)
 
 
 [AI](https://about.fb.com/news/tag/ai/)   [Muse](https://about.fb.com/news/tag/muse/)

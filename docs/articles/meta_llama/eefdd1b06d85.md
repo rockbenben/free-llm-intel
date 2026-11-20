@@ -9,16 +9,14 @@ captured: 2026-11-20
 extractor: readability-v1
 translator: mt
 status: translated
-body_sha: d6877e831719
+body_sha: 66a98fd50381
 ---
 
 [ 返回新闻编辑室](https://about.fb.com/news)
 
 [ 元 ](https://about.fb.com/news/category/technologies/meta/)
 
-十一月 18, 2026十一月 18, 2026
 
-0.25× 0.5× 1× 1.25× 1.5× 2×
 
 ## 带走
 

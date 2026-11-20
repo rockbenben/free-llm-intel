@@ -11578,6 +11578,53 @@ class TestPageFurnitureStrip(unittest.TestCase):
                          "标题之前的导航词该删")
         self.assertIn("产品", out.split("\n")[-1], "正文里出现的同一个词不许删")
 
+    # --- 重复短语行（装饰字标 / 重复日期）与倍速控件 -------------------------
+    # 两类都是「闭集判据看得见、但形状没覆盖」的漏网：装饰画里三个同文本 <span>
+    # 被拼成一行、倍速 token 被拼成一行，整行精确匹配就落空。
+
+    def test_repeated_phrase_line_dropped(self):
+        for line in ("November 12, 2026November 12, 2026",
+                     "ChatGPT for Academic Researchers" * 3,
+                     "transformers" * 3):
+            out = ft.strip_page_furniture("# 标题\n\n" + line + "\n\n正文。")
+            self.assertNotIn(line, out, f"{line[:40]} 是装饰性重复行，该删")
+            self.assertIn("# 标题", out)
+            self.assertIn("正文。", out)
+
+    def test_repeat_rule_never_eats_separators_or_prose(self):
+        body = "\n".join([
+            "# 标题",
+            "",
+            "| a | b |",
+            "| --- | --- |",
+            "",
+            "这句话里同一个词出现两次：very very good。",
+            "",
+            "2026 年 10 月 28 日",
+            "",
+            "```text",
+            "aaaaaaaaaaaaaaaa",
+            "```",
+        ])
+        out = ft.strip_page_furniture(body)
+        for keep in ("| --- | --- |", "very very good", "2026 年 10 月 28 日",
+                     "aaaaaaaaaaaaaaaa"):
+            self.assertIn(keep, out, f"{keep} 不是装饰性重复行，不许删")
+        # 含链接的行不在这条判据上：删了会改变链接目标多重集
+        linked = "[A](https://x.example/a)[A](https://x.example/a)"
+        self.assertIn(linked, ft.strip_page_furniture("# 标题\n\n" + linked + "\n\n正文。"))
+        # 成段重复的**句子**不是字标：重复单元超过 _REPEAT_MAX_CHUNK 就不算（实测踩过，
+        # 「这是一段完整的中文译文。」×10 的夹具曾被整行吃掉）
+        sentence = "这是一段完整的中文译文。" * 10
+        self.assertIn(sentence, ft.strip_page_furniture("# 标题\n\n" + sentence + "\n\n正文。"))
+
+    def test_player_speed_line_dropped_prose_untouched(self):
+        out = ft.strip_page_furniture("# 标题\n\n0.25× 0.5× 1× 1.25× 1.5× 2×\n\n正文。")
+        self.assertNotIn("0.25× 0.5× 1×", out)
+        self.assertIn("正文。", out)
+        prose = "# 标题\n\n我们支持 0.5× 与 2× 两档播放。"
+        self.assertEqual(ft.strip_page_furniture(prose), prose, "句子里的倍速不是控件")
+
     def test_strip_is_idempotent(self):
         body = "\n".join(["# 标题", "正文。", "", "分类", "", ":", "", "Meta", "", "联系销售"])
         once = ft.strip_page_furniture(body)

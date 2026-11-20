@@ -236,6 +236,24 @@ _CARD_META_RE = re.compile(
     r"|^\d{4}[/-]\d{2}[/-]\d{2}$")
 _BARE_MEDIA_RE = re.compile(
     r"^https?://\S+\.(mp4|mp3|webm|mov|m4v|ogg|gif|png|jpe?g|webp)(\?\S*)?$")
+#: 播放器倍速控件：闭集里已经有单个 token（见 `_FURN_ANYWHERE`），但 about.fb.com 会把
+#: 它们**拼成一行**渲染，整行精确匹配就落空了（实测 `0.25× 0.5× 1× 1.25× 1.5× 2×` 13 处 / 13 文件）。
+_SPEED_TOKENS = frozenset({
+    "0.25×", "0.5×", "0.75×", "1×", "1.25×", "1.5×", "1.75×", "2×",
+    "0.25x", "0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x",
+})
+#: 整行 = 同一短语重复 2–4 次。站方的装饰性字标、重复日期被抽取器按**兄弟行内元素**
+#: 拼成了一行：`aria-hidden` 装饰画里三个同文本 `<span>`（`ChatGPT for Academic
+#: Researchers` ×3）、日期胶囊的两次渲染（`November 12, 2026November 12, 2026`）、
+#: 单词标 ×3（`transformers`）。实测 13 处 / 13 文件，除这 13 行外全库零命中。
+#: 短语必须 ≥8 字符且含字母或汉字：纯标点/字符画（`----`、`====`、`| --- |`）
+#: 永远走不到这一档，表格分隔行与代码块另有各自的豁免。
+_REPEAT_MIN_CHUNK = 8
+#: 重复单元的长度上限：真实命中是字标/日期/单词标（8–33 字符），而**句子**成段重复
+#: （实测夹具里「这是一段完整的中文译文。」×10）不是站件，删了就是删正文。
+_REPEAT_MAX_CHUNK = 40
+_REPEAT_MAX_LINE = 300
+_REPEAT_WORDISH_RE = re.compile(r"[A-Za-z\u4e00-\u9fff]")
 _VALUE_MAX = 24
 # 行内无障碍提示：站方把它塞进**每个外链的显示文本**里，readability 连链接文字一起收了。
 # 它不是"没加载完"，是抽取噪声；独立成行的那档走 R2，句中这一大坨（实测 4290 处）走这里。
@@ -290,6 +308,35 @@ def _is_tag_value(s):
     return True
 
 
+def _is_speed_line(s: str) -> bool:
+    """整行只由倍速 token 拼成（`0.25× 0.5× 1× …`）→ 播放器控件，不是正文。"""
+    toks = s.split()
+    return len(toks) >= 2 and all(t in _SPEED_TOKENS for t in toks)
+
+
+def _repeated_chunk(s: str) -> str:
+    """整行是同一短语重复 2/3/4 次 → 返回该短语，否则空串。
+
+    只认**整行**且短语含字母或汉字，所以 `----`/`====`/`| --- |` 这类分隔线
+    与纯标点字符画永远不命中（它们另有 R6 管）。
+    """
+    n = len(s)
+    if n < _REPEAT_MIN_CHUNK * 2 or n > _REPEAT_MAX_LINE:
+        return ""
+    if "](" in s or "://" in s:
+        # 含链接/裸 URL 的整行一律不动：链接目标的多重集是硬不变量（见 strip_inline_junk）。
+        # 重复的 URL 是「两条黏成一条」的渲染事故，删掉会静默少两条指向。
+        return ""
+    for k in (2, 3, 4):
+        if n % k:
+            continue
+        chunk = s[: n // k]
+        if (len(chunk) >= _REPEAT_MIN_CHUNK and len(chunk) <= _REPEAT_MAX_CHUNK
+                and _REPEAT_WORDISH_RE.search(chunk) and chunk * k == s):
+            return chunk
+    return ""
+
+
 def _brand_of(url: str) -> str:
     """页面 host 的品牌词：`www.anthropic.com` → `anthropic`，`huggingface.co` → `huggingface`。"""
     host = (urlsplit(url).netloc or "").lower().split(":")[0]
@@ -310,6 +357,8 @@ def furniture_drops(lines, page_url: str = ""):
     R7 连续的标签/年份筛选链接块（`- [x](…?tags=y)` ≥2 行，实测 804 个文件各一段）
     R9 Anyscale 中文页脚块：`#### 目录` 之后只剩分享/标签/订阅/推荐卡/探索 CTA
         （实测 14 篇文末残留；真目录在正文前、后面有 H2/H3 时不匹配）
+    R10 整行 = 同一短语重复 2–4 次（装饰性字标 / 重复日期被按兄弟行内元素拼成一行，
+        实测 13 处 / 13 文件；短语须 ≥8 字符且含字母或汉字，分隔线与字符画走不到这档）
     """
     fenced, first_head = _fence_mask(lines)
     brand = _brand_of(page_url)
@@ -320,10 +369,12 @@ def furniture_drops(lines, page_url: str = ""):
         s = l.strip()
         if not s:
             continue
-        if s in _FURN_ANYWHERE:
+        if s in _FURN_ANYWHERE or _is_speed_line(s):
             drop[i] = "R2"
         elif _FURN_SEPARATOR_RE.match(s):
             drop[i] = "R6"
+        elif _repeated_chunk(s):
+            drop[i] = "R10"
         elif brand and s[0] not in "-*+>|#" and s.lower().replace(" ", "").replace("-", "") == brand:
             # 整行只有本页品牌词 = 字标。实测 741 处「标题之后」的全是孤立行（635 处在
             # 文末当页脚、106 处前后都空），句子里的品牌词走不到这一档（要求整行相等）。
