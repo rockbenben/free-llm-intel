@@ -31,7 +31,7 @@
 1. [智谱 GLM](#3-智谱-glm) —— **国内免卡长期 0 元**：`glm-4.7-flash`（30B 级 / 200K）+ 视觉 `glm-4.6v-flash` 与旧版 Flash、`CogView-3-Flash` / `CogVideoX-Flash` 画图视频都免费；但 4.x 是上一代、5.x 旗舰收费——**它是国内首选，不是能力最强**，追能力看 Gemini
 2. [商汤 日日新](#10-商汤-日日新-sensenova) —— **国内公测期免费 + 白嫖面最宽**：Token Plan ¥0/月，通用积分池 **5 小时 12 万 / 每周 120 万**，同池可调 `sensenova-6.8-flash`、`deepseek-v4.1-flash`、`glm-5.2`、`kimi-k3`；但**第三方模型实测容易 429**，高并发先用自研 `6.8-flash`，单号 20 个 Key
 3. [硅基流动](#14-硅基流动-siliconflow) —— **工具链首选**：bge 向量/重排、PaddleOCR-VL、SenseVoice/XingChen ASR、Kolors 画图 **0 元** + 注册送 14 元券；但**没有主流旗舰免费**（对话只有 Xing4.0-29B、Hunyuan-MT 两个小模型），纯聊天别指望它
-4. [复旦 MOSS](#18-复旦-moss-mosi) —— **多模态语言模型限时免费**：`nex-n2.6`（文本/图片/视频→文本）官方标「限时免费 0 积分」，2026-11-12 实测 HTTP 200 真实出文、控制台账单为零；同平台 `moss-vl-1.0` 视觉理解、`moss-live-1.0` 实时交互也限时免费。多模态是它区别于多数纯文本免费平台的强项
+4. [复旦 MOSS](#18-复旦-moss-mosi) —— **多模态语言模型限时免费**：`nex-n2.6`（文本/图片/视频→文本）官方标「限时免费 0 积分」，2026-11-12 实测 HTTP 200 真实出文、控制台账单为零；同平台仍在限免的是 `moss-vl-1.0` 视觉理解与 `moss-vl-realtime-1.0`（实时视频理解，只吃视频帧、只回文字，不做语音）。**`moss-live-1.0` 已不在免费范围**：2026-11-18 12:00 起 ¥0.15/分钟（3 积分/分钟）
 5. [Google Gemini](#28-google-gemini-google-ai-studio) —— **海外首选 · 邮箱免信用卡**：AI Studio 新号即 Free Tier，Flash 系列免费、按日刷新；具体额度官方不再公开（只在 AI Studio 内显示），`Gemini 4 Argon` / Pro 预览不在免费层
 6. [Groq Cloud](#31-groq-cloud-lpu-推理) —— **极速推理**（⚠️ 免费层**不在定价页**：`groq.com/pricing` 已下线只剩首页，限额在速率文档的 Free Plan 分页）：`openai/gpt-oss-120b` 30 RPM / 1,000 RPD / 8K TPM，写代码与 Agent 的海外主力
 7. [OpenRouter](#33-openrouter-模型统一网关) —— **一个 Key 试十几款免费模型**（官方标称 25+，API 实测 17 款 0 价）：`:free` 后缀即免费、无需付款方式，含 Nemotron 3 Ultra 550B、Gemma 4 31B；20 RPM / 50 RPD，充值 $10 升到 1,000 RPD
