@@ -2621,7 +2621,7 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
     汇总一个厂商的最新文章：
       1) YAML 中 type=feed 的源直接解析原始 XML；
       2) 博客 / 新闻 HTML 页自动发现的 RSS/Atom 链接，抓取并解析；
-      3) 仍无文章时，从 HTML 链接中启发式提取文章卡片；
+      3) 各 HTML 页没有可用的关联 RSS 时，从该页提取文章卡片；
       3.5) JSON 数据接口的源（页面纯前端渲染、官方又无 RSS）解析接口正文；
       4) 同日锚点与详情页去重（保留详情页）；
       5) 按日期倒序（无日期排后）。
@@ -2632,7 +2632,7 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
     """
     articles: list[Article] = []
     seen_urls: set[str] = set()
-    feed_done: set[str] = set()
+    feed_has_articles: dict[str, bool] = {}
 
     def _add(arts: list[Article]) -> None:
         for art in arts:
@@ -2648,13 +2648,19 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
             seen_urls.add(key)
             articles.append(art)
 
-    # 1) 显式 RSS/Atom 源（raw 为抓取时保留的原始 XML）
+    def _add_feed(feed_articles: list[Article]) -> bool:
+        usable = [art for art in feed_articles
+                  if art.url and not _is_retired_news_url(art.url)]
+        _add(usable)
+        return bool(usable)
+
+    # 1) 显式 RSS/Atom 源。记录原 URL 和重定向后的 URL，供声明该 feed 的 HTML 页复用。
     for page in intel.news_pages:
         if page.stype == "feed":
-            feed_done.add(_norm_url(page.final_url or page.url))
-            if page.ok and page.raw:
-                _add(parse_feed_xml(page.raw, page.final_url or page.url,
-                                    stype="feed"))
+            final_url = page.final_url or page.url
+            usable = _add_feed(parse_feed_xml(page.raw, final_url)) if page.ok and page.raw else False
+            for key in {_norm_url(page.url), _norm_url(final_url)}:
+                feed_has_articles[key] = usable or feed_has_articles.get(key, False)
 
     # 2) HTML 动态页中发现的 RSS/Atom 链接
     for page in intel.news_pages:
@@ -2664,58 +2670,53 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
             # sitemap.xml 形似 feed 但不是订阅源，跳过（发现端已拦，双保险）
             if "sitemap" in feed_url.lower():
                 continue
-            if _norm_url(feed_url) in feed_done:
+            key = _norm_url(feed_url)
+            if key in feed_has_articles:
                 continue
-            feed_done.add(_norm_url(feed_url))
-            _add(fetch_feed_articles(session, feed_url, stype=page.stype,
-                                     timeout=timeout))
+            feed_has_articles[key] = _add_feed(fetch_feed_articles(
+                session, feed_url, stype=page.stype, timeout=timeout))
             if delay:
                 time.sleep(delay)
 
-    # 3) HTML 文章链接兜底（RSS 无产出时）
-    if not articles:
-        for page in intel.news_pages:
-            # JSON 数据接口另走步骤 3.5：它的正文是兆级响应体，扔进 HTML 提取器会让
-            # extract_changelog_sections 把接口里的日期字段当分节 —— 实测千问接口凭空
-            # 造出 53 条，URL 全是「接口地址 + 合成 `#d-<日期>-<n>` 锚点」（点进去是
-            # 4.9MB 的 JSON），标题里还混着文章正文内的小标题（如「分层分解的应用#」）。
-            if page.stype != "feed" and not json_api_body(page):
-                # 子文档需要全量归档，HTML 兜底提取上限放宽到 100 条
-                _add(extract_articles_from_page(page, max_items=100))
-        # 锚文本是「this documentation / 查看详情」之类通用词时，
-        # 抓文章页 <title> 补全标题（限前 5 篇，避免请求过多）；
-        # 若补全到的是文档指南页标题，说明链接已失效（站点回退到默认文档），丢弃
-        drop_urls: set[str] = set()
-        for art in articles[:5]:
-            if not _GENERIC_ARTICLE_TITLE.match(art.title.strip()):
-                continue
-            try:
-                resp = session.get(art.url, timeout=timeout,
-                                   allow_redirects=True)
-                if delay:
-                    time.sleep(delay)
-                if resp.status_code < 400:
-                    if not resp.encoding or resp.encoding.lower() in (
-                            "iso-8859-1", "ascii"):
-                        resp.encoding = resp.apparent_encoding or resp.encoding
-                    page_title = parse_html(resp.text, resp.url)[1]
-                    # 去掉站点名后缀（"标题 | 站点名" / "标题 - 站点名"）
-                    page_title = re.split(r"\s[|\-–—_]\s", page_title)[0].strip()
-                    if len(page_title) >= 8:
-                        if _DOCISH_TITLE.match(page_title):
-                            drop_urls.add(_norm_url(art.url))
-                        else:
-                            art.title = page_title
-            except requests.RequestException:
-                continue
-        if drop_urls:
-            articles = [a for a in articles if _norm_url(a.url) not in drop_urls]
+    # 3) 只对没有可用关联 RSS 的 HTML 页兜底。JSON 源由下一段专门解析。
+    first_html = len(articles)
+    for page in intel.news_pages:
+        if not page.ok or page.stype == "feed" or json_api_body(page):
+            continue
+        if any(feed_has_articles.get(_norm_url(url)) for url in page.feeds):
+            continue
+        _add(extract_articles_from_page(page, max_items=100))
+    # 锚文本是「this documentation / 查看详情」之类通用词时，
+    # 抓文章页 <title> 补全标题（限前 5 篇，避免请求过多）；
+    # 若补全到的是文档指南页标题，说明链接已失效（站点回退到默认文档），丢弃
+    drop_urls: set[str] = set()
+    for art in articles[first_html:first_html + 5]:
+        if not _GENERIC_ARTICLE_TITLE.match(art.title.strip()):
+            continue
+        try:
+            resp = session.get(art.url, timeout=timeout,
+                               allow_redirects=True)
+            if delay:
+                time.sleep(delay)
+            if resp.status_code < 400:
+                if not resp.encoding or resp.encoding.lower() in (
+                        "iso-8859-1", "ascii"):
+                    resp.encoding = resp.apparent_encoding or resp.encoding
+                page_title = parse_html(resp.text, resp.url)[1]
+                # 去掉站点名后缀（"标题 | 站点名" / "标题 - 站点名"）
+                page_title = re.split(r"\s[|\-–—_]\s", page_title)[0].strip()
+                if len(page_title) >= 8:
+                    if _DOCISH_TITLE.match(page_title):
+                        drop_urls.add(_norm_url(art.url))
+                    else:
+                        art.title = page_title
+        except requests.RequestException:
+            continue
+    if drop_urls:
+        articles[first_html:] = [a for a in articles[first_html:] if _norm_url(a.url) not in drop_urls]
 
     # 3.5) JSON 数据接口（页面纯前端渲染、官方又无 RSS 的站点，如千问 qwen.ai/research、
     #      AI21 的 WordPress wp-json）。
-    #      刻意排在 HTML 兜底**之后**：步骤 3 带 `if not articles` 前置，接口条目若先进
-    #      articles，同一厂商的 HTML 动态页从此再也不会被提取 —— 而归档只增不减，
-    #      这种「静默停更」在产物上完全看不出来。
     for page in intel.news_pages:
         if page.ok and json_api_body(page):
             # 两种已知形状各试一次，谁认得出来用谁（形状不符的返回空列表）
@@ -2982,6 +2983,7 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
             intel.skipped_sources.append(src)
             continue
         page = fetch_url(session, url, stype, browser=browser, timeout=timeout,
+                         lang=src.get("lang") or "",
                          locale_cookie=(src.get("locale_cookie") or "").strip())
         # 源是数据接口时，yaml 的 `page` 给出人类可读地址：产出物（归档 /
         # llm-news-feeds.md 的「订阅入口」）印它，不印接口长串。
@@ -4533,52 +4535,31 @@ def verify_index_matches_archives(root: Path) -> list:
 
 
 def verify_feed_bodies(root: Path) -> list:
-    """G4：台账里 `zh_status=translated` 的条目，出现在中文 feed 里就必须带全文。
-
-    两个刻意的例外，都是为了不让闸挡巡检而不是掩盖真问题：
-    - **整源摘要化**：`write_rss_feeds` 在单源超过 `RSS_SOFT_CAP` 时把整个源重建成
-      「首段摘要 + 回源链接」，此时该文件所有 item 都没有 `<content:encoded>`。
-      判据取「整源零全文」而不是逐条放行，避免把真滞后一起豁免掉。
-      代价：只有 1~2 条且全都缺全文的小源会被当成降级放过 —— 实测事故形态都是
-      「部分条目缺全文」（新条目缺、老条目有），那才是本闸要抓的形状。
-    - **英文镜像**（`*.en.xml`）：它的全文来自 `en_path`，是另一条判据，不在 G4 范围。
-      这里显式跳过 —— 早先的版本靠「文件名带 .en 查不到厂商」意外绕开，
-      那种隐式豁免下次改名就失效。
-    """
+    """G4：中文源的已译条目必须带非空 content:encoded，摘要也写在该字段。"""
     import fulltext as _ft
-    ledger = root / "docs" / "feeds" / "bodies.json"
+    feeds_dir = root / "docs" / "feeds"
+    ledger = feeds_dir / "bodies.json"
     if not ledger.exists():
         return []
     bodies = _ft.load_bodies(ledger)
-    translated: set[str] = set()
-    for key, e in bodies.items():
-        if e.get("zh_status") == "translated" and e.get("zh_path"):
-            translated.add(_article_key(key.partition("\t")[2]))
+    translated = {_article_key(key.partition("\t")[2]) for key, entry in bodies.items()
+                  if entry.get("zh_status") == "translated" and entry.get("zh_path")}
+    content_tag = "{http://purl.org/rss/1.0/modules/content/}encoded"
     errs = []
-    for xml in sorted((root / "docs" / "feeds").glob("llm-news-*.xml")):
-        if xml.name.endswith(".en.xml") or xml.name == "llm-news-all.en.xml":
+    for xml in sorted(feeds_dir.glob("llm-news-*.xml")):
+        if xml.name.endswith(".en.xml"):
             continue
-        text = xml.read_text(encoding="utf-8", errors="replace")
-        items = re.findall(r"<item>[\s\S]*?</item>", text)
-        if not items:
+        try:
+            channel = ET.parse(xml)
+        except (ET.ParseError, OSError) as exc:
+            errs.append(f"{xml.name}: RSS 无法读取：{exc}")
             continue
-        if not any("<content:encoded>" in it for it in items):
-            continue                       # 整个源一条正文都没有（RSS_SOFT_CAP 兜底摘要化）
-        for it in items:
-            if "<content:encoded>" in it:
-                continue
-            # 台账是按 `art.url`（= `<guid>`）建的键，而 `_rss_item` 的 `<link>` 取
-            # `art.link or art.url` —— `--backfill-links` 那批两者不同。实测已提交产物
-            # 里 58 个 item 的 guid≠link、48 个涉及已译条目。只认 `<link>` 时，这些条目
-            # 查的是另一把钥匙，本闸对它们失明（今天还没真漏判，但闸不能靠运气）。
-            m = re.search(r"<link>([^<]+)</link>", it)
-            g = re.search(r"<guid[^>]*>([^<]+)</guid>", it)
-            keys = {_article_key(x) for x in ((m.group(1) if m else ""),
-                                              (g.group(1) if g else "")) if x.strip()}
-            hit = keys & translated
-            if hit:
+        for item in channel.findall("./channel/item"):
+            # guid 是正文的身份 URL，link 可能使用实际可跳转的另一个锚点。
+            identity = item.findtext("guid") or item.findtext("link") or ""
+            if _article_key(identity) in translated and not (item.findtext(content_tag) or "").strip():
                 errs.append(f"{xml.name}: 台账已有中文正文，item 却缺 "
-                            f"<content:encoded>（{sorted(hit)[0]}）")
+                            f"<content:encoded>（{identity}）")
     return errs
 
 
@@ -6119,7 +6100,7 @@ def unledgered_body_files(index_payload: dict, body_entries: dict, root: Path) -
 
 
 def select_body_rows(rows: list[dict], vendors: list[str], limit: int = 0) -> list[dict]:
-    """正文抓取的行筛选（`--fetch-vendor` / `--fetch-limit`）。
+    """筛选正文抓取的厂商；可选 limit 仅对返回行切片。
 
     `vendors` 为空 = 不限厂商；传多家 = **几家都收**（这个参数一度是单值，
     传 5 家只有最后一家被抓，实测把一整轮白跑）。
@@ -7595,8 +7576,12 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         zh = (Path(args.zh_file).read_text(encoding="utf-8")
               if args.zh_file else sys.stdin.read())
-        fulltext.mark_translated(root, bodies, key=key, zh_body_md=zh.strip(),
-                                 translator="agent", today=datetime.now().strftime("%Y-%m-%d"))
+        try:
+            fulltext.mark_translated(root, bodies, key=key, zh_body_md=zh.strip("\n"),
+                                     translator="agent", today=datetime.now().strftime("%Y-%m-%d"))
+        except fulltext.EmptyTranslationError as exc:
+            print(f"  [mark-translated] {exc}", file=sys.stderr)
+            return 2
         fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
         errs = fulltext.validate_bodies(root, bodies)
         for e in errs:
@@ -7667,7 +7652,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.fetch_bodies:
         import fulltext
         articles = fulltext.iter_article_rows(root / "docs/feeds/articles.json")
-        articles = select_body_rows(articles, args.fetch_vendor, args.fetch_limit)
+        articles = select_body_rows(articles, args.fetch_vendor)
         bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
         # 自愈：把任何旧逻辑误存成 .en.md 的中文原生正文重分类到 .md（幂等、复用缓存、不重抓）
         moved = fulltext.reclassify_bodies(root, bodies, vendors=args.fetch_vendor)
@@ -7742,7 +7727,7 @@ def main(argv: list[str] | None = None) -> int:
             written = fulltext.fetch_bodies(root, articles, bodies, fetch=_fetch_body,
                                             today=today, only_missing=not args.refresh,
                                             retry_unreadable=args.retry_unreadable,
-                                            save=_flush,
+                                            limit=args.fetch_limit, save=_flush,
                                             refetch=_refetch_body,
                                             skip=_skip_row, on_result=_on_result)
             _save_body_retry_ledger(retry_path, retry_state)
@@ -7838,7 +7823,7 @@ def main(argv: list[str] | None = None) -> int:
         deadline = time.monotonic() + budget if budget else None
 
         def translate(_title: str, en_body: str) -> str:
-            return provider_profiles.translate_body_to_zh(en_body, deadline=deadline)
+            return provider_profiles.translate_body_to_zh(en_body, deadline=deadline, require_complete=True)
 
         budget_desc = f"{budget:g}s" if budget else "不限"
         print(f"  [mt-bodies] 待译 {pending} 篇，走 Google 机翻（按块、代码块原样保留；"

@@ -485,12 +485,14 @@ def _restore_body_inline(text: str, stash: list[str]) -> str:
     return text
 
 
-def translate_body_to_zh(md: str, timeout: float = 8.0, *, deadline: float | None = None) -> str:
+def translate_body_to_zh(md: str, timeout: float = 8.0, *,
+                         deadline: float | None = None, require_complete: bool = False) -> str:
     """整篇 markdown 正文机翻为中文：结构片段原样、散文逐块 gtx。失败块留原文。
 
     结构片段（代码块 / 行内代码 / 链接目标 / HTML 标签 / 裸 URL）不进 gtx，
     避免它把 URL 路径里的英文词也翻掉；每块译完按英文原文做品牌回正。
     返回拼好的中文 markdown；gtx 请求失败的块保留原文。
+    require_complete 时任一块失败即返回空译文，供台账写入口保留 pending。
     给定本轮截止时间时，每个请求按剩余时间限时，到点放弃整篇。
     """
     if not md or not md.strip():
@@ -528,6 +530,8 @@ def translate_body_to_zh(md: str, timeout: float = 8.0, *, deadline: float | Non
                     tr = ""
             else:
                 tr = ""
+            if require_complete and not tr.strip():
+                return ""
             translated_chunks.append(tr if tr else chunk)   # 失败留原文，绝不吞
         out.append("\n\n".join(translated_chunks))
     return "\n".join(out)

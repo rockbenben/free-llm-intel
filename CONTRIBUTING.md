@@ -142,7 +142,7 @@ CI 正文用 `--ai-bodies --ai-bodies-go-only`，成功写入 `translator=llm`�
 机翻正文（`--mt-bodies`）走 Google gtx，**代码块、行内代码、链接/图片目标、HTML 标签与裸 URL
 都不进翻译接口**（占位后逐字还原）：实测 gtx 会把 URL 路径里的英文词一起翻掉
 （`/engineering/managed-agents` → `/management-agents`，链接 404），2026-11-17 那批 37 篇
-机翻有 10 篇因此被翻译 QC 判 HARD。占位被译文吞掉时整块回退英文原文，绝不把机器痕迹写进正文。
+机翻有 10 篇因此被翻译 QC 判 HARD。CI 中任一翻译块请求失败或丢失占位符时，整篇保留在待译队列。
 这一步同样吃 `AI_BODIES_BUDGET_SECONDS` 墙钟（不传时默认 900 秒）：gtx 没有额度墙，
 但也不该无限跑，到点剩余留 pending 给下一轮。
 

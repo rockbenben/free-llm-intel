@@ -12287,7 +12287,8 @@ class TestFeedCarriesTranslatedBodies(unittest.TestCase):
 
     def _write(self, items_xml, translated_url="https://a.com/one"):
         (self.root / "docs" / "feeds" / "llm-news-vendor_a.xml").write_text(
-            '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>'
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel>'
             + items_xml + '</channel></rss>', encoding="utf-8", newline="\n")
         bodies = {"vendor_a\t" + translated_url: {
             "slug": "aaa111", "en_path": "", "zh_path": "docs/articles/vendor_a/one.md",
@@ -12318,11 +12319,7 @@ class TestFeedCarriesTranslatedBodies(unittest.TestCase):
         self.assertIn("content:encoded", errs[0])
 
     def test_item_with_translation_must_carry_full_text(self):
-        """真事故形态：同源的别的条目有全文，只有新那条缺 —— 必须报警。
-
-        故意带上带全文的对照条目：整源一条全文都没有时按 `RSS_SOFT_CAP` 降级豁免，
-        单 item 夹具会落进那个豁免里，测不到本闸要测的东西。
-        """
+        """同源的新条目缺全文时必须报警。"""
         self._write(self._item("https://a.com/one")
                     + self._item("https://a.com/other",
                                  "<content:encoded><![CDATA[<p>有全文</p>]]></content:encoded>"))
@@ -12341,10 +12338,19 @@ class TestFeedCarriesTranslatedBodies(unittest.TestCase):
         self._write(self._item("https://a.com/two"))
         self.assertEqual(crawler_llm_intel.verify_feed_bodies(self.root), [])
 
-    def test_whole_source_degraded_to_summary_is_exempt(self):
-        """整源摘要化是 RSS_SOFT_CAP 的既有兜底，不该被当成缺正文。"""
-        self._write(self._item("https://a.com/one")
-                    + self._item("https://a.com/two"))
+    def test_whole_source_without_content_is_not_an_rss_summary(self):
+        self._write(self._item("https://a.com/one") + self._item("https://a.com/two"))
+        self.assertEqual(len(crawler_llm_intel.verify_feed_bodies(self.root)), 1)
+
+    def test_empty_encoded_content_is_rejected(self):
+        self._write(self._item("https://a.com/one", "<content:encoded> </content:encoded>"))
+        self.assertEqual(len(crawler_llm_intel.verify_feed_bodies(self.root)), 1)
+
+    def test_degraded_feed_keeps_valid_summary(self):
+        url = "https://a.com/one"
+        summary = crawler_llm_intel._summarize_html("<p>" + "正文" * 400 + "</p>", url, limit=100)
+        article = crawler_llm_intel.Article(title="第一篇", url=url)
+        self._write(crawler_llm_intel._rss_item(article, "第一篇", content_html=summary))
         self.assertEqual(crawler_llm_intel.verify_feed_bodies(self.root), [])
 
     def test_english_mirror_is_out_of_scope_here(self):

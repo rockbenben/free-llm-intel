@@ -337,7 +337,8 @@ class TestOpenCodeGo(unittest.TestCase):
                     if (mode in {"truncated", "chunk_truncated"} and len(sent) == 1
                             or mode == "chunk_truncated" and len(sent) == 2):
                         return self.response("partial", finish="length")
-                    return self.response("这是一段完整的中文译文。" * max(1, len(source) // 30))
+                    return self.response("这是一段完整的中文译文。" * max(1, len(source) // 30)
+                                         + "最后保留原文结论。")
 
                 buf = io.StringIO()
                 with mock.patch.object(crawler, "_repo_root", lambda: root), \
@@ -347,6 +348,8 @@ class TestOpenCodeGo(unittest.TestCase):
                 self.assertEqual(sent[-1], following)
                 saved = ft.load_bodies(ledger_path)
                 self.assertEqual(saved["openai\thttps://a/q"]["translator"], "llm")
+                self.assertIn("最后保留原文结论。",
+                              ft.read_body_doc(root / saved["openai\thttps://a/q"]["zh_path"])[1])
                 if mode == "whole":
                     self.assertEqual(sent, [body, following])
                 elif mode == "estimated":

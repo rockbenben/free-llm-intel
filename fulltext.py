@@ -1831,14 +1831,11 @@ def validate_bodies(root: Path, bodies: dict) -> list:
         if zh == "translated":
             if not e.get("zh_path") or not (root / e.get("zh_path", "")).exists():
                 errs.append(f"{key}: zh=translated 但缺 {e.get('zh_path')!r}")
-            elif e.get("translator") == "native":
-                # 「中文原生」= 正文本身就是中文，不经翻译。登记成 native 却一个汉字都
-                # 没有，等于把一篇（多半是英文的）正文记成已完成的汉化；而
-                # `zh_status=translated` 会让它此后被 `fetch_bodies` 永久跳过、
-                # `reclassify_bodies` 又只查 `en_status == "ok"` 的行，没有任何回访路径
-                # —— 不在这道闸上拦住，它就永远错下去了。
+            else:
                 _fm, body = read_body_doc(root / e["zh_path"])
-                if body.strip() and not _CJK.search(body):
+                if not body.strip():
+                    errs.append(f"{key}: zh=translated 但正文为空")
+                elif e.get("translator") == "native" and not _CJK.search(body):
                     errs.append(f"{key}: translator=native 但正文里没有汉字")
     return errs
 
@@ -1922,10 +1919,12 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                  save: Callable[[dict], None] | None = None, flush_every: int = 20,
                  refetch: Callable | None = None,
                  skip: Callable[[str], bool] | None = None,
-                 on_result: Callable[[str, str], None] | None = None) -> int:
+                 on_result: Callable[[str, str], None] | None = None,
+                 limit: int = 0) -> int:
     """逐行抓正文写 `.en.md` 并 upsert `bodies`。`fetch(url)->(html,ok,status,final)` 注入。
 
     返回本轮新写/更新的条数。幂等：`only_missing` 时已 `en_status=ok` 的行跳过。
+    `limit` 为正时限制实际开始抓取的条目数；切片始终保留全部输入行作上下文。
     `retry_unreadable=True` 时连已标 `index_page` / `unreachable` 的行也重抓
     （判定可能被源站改版推翻）；已有真实中文译文（`zh_status=translated`）的行
     **始终**跳过，重抓不许把精译冲掉。`fetch_failed` / `paywall` 本来就每天重试，
@@ -1968,6 +1967,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             continue
         siblings_by_base.setdefault((v, u.split("#", 1)[0]), []).append(t)
     written = 0
+    attempted = 0
     for r in rows:
         url = r.get("url")
         vendor = r.get("vendor")
@@ -1989,6 +1989,9 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                 done = done or prev.get("en_status") in ("index_page", "unreachable")
             if done:
                 continue
+        if limit > 0 and attempted >= limit:
+            break
+        attempted += 1
         html, ok, _status, final = fetch(url)
         ex = extract_article_markdown(html or "", final or url)
         # 页面拿到了（200、大量 HTML）却**抽不出正文**时，用 `refetch` 再渲染一次。
@@ -2099,11 +2102,15 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 链接目录页（blog index / 聚合列表）不是文章：置 index_page、正文留空、不入待译
         if en_status == "ok" and detect_index_page(ex["markdown"]):
             en_status = "index_page"
+        norm = normalize_url(url)
+        body = strip_page_furniture(ex["markdown"], norm) if en_status == "ok" else ""
+        if en_status == "ok" and not body.strip():
+            en_status = "fetch_failed"
+            body = ""
         if on_result is not None:
             on_result(url, en_status)
         slug = url_hash(url)
         date = today
-        norm = normalize_url(url)
         # 中文判定**先看整页、再看切片**，但**切片自己必须真的有汉字**才算数。
         # 单页变更日志的一条正文往往整段都是模型名（Gemini 那条弃用公告 778 字里 425 个
         # 拉丁字符，CJK 只占 18%，单看切片会被判成英文源，白送进翻译队列让 CI 把
@@ -2123,7 +2130,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             # 中文原生：正文即译文，直接落 `.md`，不留英文侧
             zh_rel = f"docs/articles/{vendor}/{slug}.md"
             cap = _kept_captured(prev.get("zh_path") or "", ex["markdown"])
-            zh_md = strip_page_furniture(ex["markdown"], norm).strip()
+            zh_md = body.strip()
             fm = {"vendor": vendor, "title": ex["title"] or r.get("title", ""),
                   "original_title": "", "url": norm, "date": ex["date"] or r.get("date", ""),
                   "lang": "zh", "captured": cap, "extractor": "readability-v1",
@@ -2143,10 +2150,6 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             continue
         # 英文原文 / 抓取失败：写英文侧，保留已有的真实中文译文
         en_rel = f"docs/articles/{vendor}/{slug}.en.md"
-        body = ex["markdown"] if en_status == "ok" else ""
-        # 英文侧同样过整行家具判据：实测站件 residue 大头在英文侧（`Loading…` 536 处、
-        # `View all` 409 处、`Upvote` 1755 处……），只洗中文侧等于把 EN 页签留在原地。
-        body = strip_page_furniture(body, norm)
         cap = _kept_captured(prev.get("en_path") or "", body)
         fm = {"vendor": vendor, "title": ex["title"] or r.get("original_title") or r.get("title", ""),
               "original_title": r.get("original_title", ""), "url": norm,
@@ -2198,6 +2201,12 @@ def reclassify_bodies(root: Path, bodies: dict, *, vendors: Iterable[str] = ()) 
         slug = e["slug"]
         zh_rel = f"docs/articles/{vendor}/{slug}.md"
         body = strip_page_furniture(body, fm.get("url", "")).strip()
+        if not body:
+            sha = body_sha_of("")
+            write_body_doc(enp, {**fm, "status": "fetch_failed", "body_sha": sha}, "")
+            e.update({"en_status": "fetch_failed", "src_lang": "", "body_sha": sha})
+            changed += 1
+            continue
         nfm = {"vendor": vendor, "title": fm.get("title", ""), "original_title": "",
                "url": fm.get("url", ""), "date": fm.get("date", ""), "lang": "zh",
                "captured": fm.get("captured", ""), "extractor": fm.get("extractor", "readability-v1"),
@@ -2393,12 +2402,16 @@ def reconcile_translations(root: Path, bodies: dict) -> int:
             fm, body = read_body_doc(p)
         except (ValueError, OSError):
             continue
-        if body.strip():
+        if body.strip() and strip_page_furniture(body, fm.get("url") or key.split("\t", 1)[1]).strip():
             e["zh_path"] = rel
             e["zh_status"] = "translated"
             e["translator"] = fm.get("translator", "agent")
             n += 1
     return n
+
+
+class EmptyTranslationError(ValueError):
+    """译文清洗后没有正文。"""
 
 
 def mark_translated(root: Path, bodies: dict, *, key: str, zh_body_md: str,
@@ -2411,6 +2424,8 @@ def mark_translated(root: Path, bodies: dict, *, key: str, zh_body_md: str,
     # 不然洗过一轮，第二天新稿又把站点页脚带回正文。sha 也在洗完之后算。
     # 传入条目 URL，让「同页锚点」那类永久链接图标能被坐实删掉。
     zh_body_md = strip_page_furniture(zh_body_md, key.split("\t", 1)[1]).strip()
+    if not zh_body_md.strip():
+        raise EmptyTranslationError("译文清洗后为空")
     fm = {"vendor": vendor, "title": e.get("title", ""), "original_title": e.get("original_title", ""),
           "url": key.split("\t", 1)[1], "date": e.get("date", ""), "lang": "zh", "captured": today,
           "extractor": "readability-v1", "translator": translator, "status": "translated",
@@ -2680,8 +2695,13 @@ def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
             if st is not None:
                 st["rejected"] += 1
             continue                       # 校验不过：宁缺毋残
-        mark_translated(root, bodies, key=key, zh_body_md=zh, translator=translator,
-                        today=today)
+        try:
+            mark_translated(root, bodies, key=key, zh_body_md=zh, translator=translator,
+                            today=today)
+        except EmptyTranslationError:
+            if st is not None:
+                st["rejected"] += 1
+            continue
         done += 1
         if st is not None:
             st["translated"] += 1
