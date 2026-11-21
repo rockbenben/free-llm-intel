@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 10:32:08**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 11:55:26**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -98,16 +98,16 @@
   - 📄 完整文章归档（共 26 篇）：[zhipu_glm.md](llm-news/zhipu_glm.md)
 
 ### Kimi (moonshot_kimi)
-- 页面：[变更日志](https://platform.kimi.com/docs/changelog)
+- 页面：[官方博客](https://www.kimi.com/blog/)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-moonshot_kimi.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-moonshot_kimi.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [📦 Batch API 支持 Kimi K3.1 Pro 与 Kimi K3Batch API 批量推理新增支持 kimi-k3.1-pro 和 kimi-k3 模型（此前仅支持 kimi-k2.7-code 与 kimi-k2.6），国内外同步上线。批量推理价格仍为标准价格的 60%；其中 kimi-k3.1-pro、kimi-k3 的批量任务同样收取缓存写入（Cache Write）费用，且…](https://platform.kimi.com/docs/changelog#2026%E5%B9%B410%E6%9C%88)（2026-10-01）
-  2. [🤖 Kimi 托管智能体（Hosted Agents）Beta 上线在模型推理 API 之上，我们封装了 Kimi Durable Harness，为企业提供 7x24 小时全托管的智能体运行环境——无需自建沙箱与会话基础设施，就能让 Agent 高质量、可持续地执行长程任务。](https://platform.kimi.com/docs/changelog#2026%E5%B9%B49%E6%9C%88)（2026-09-01）
-  3. [kimi-k2.5 与 moonshot-v1 全系列模型（含 -vision-preview、moonshot-v1-auto）已于今日 16:00 在国内外全平台下线，调用将返回 404 错误（模型不存在），请迁移至 Kimi K3](https://platform.kimi.com/docs/changelog/changelog/changelog#2026%E5%B9%B48%E6%9C%8831%E6%97%A5)（2026-08-31）
-  4. [kimi-k2.5 与 moonshot-v1 全系列模型（含 -vision-preview、moonshot-v1-auto）在国内外全平台下线，调用将返回 404 错误，请迁移至 Kimi K3](https://platform.kimi.com/docs/changelog#2026%E5%B9%B48%E6%9C%88)（2026-08-01）
-  5. [🚀 Kimi K3 上线开放平台 APIKimi 面向长程编程与端到端知识工作的旗舰模型 K3 正式通过开放平台 API 提供，1M token 上下文，综合智能达到领先水平。详见 Kimi K3 快速开始。同期 kimi-k2.5 和 moonshot-v1 系列停止向新注册用户开放。账户概览新增当日实时消费金额展示，平台服务协议同步更新。](https://platform.kimi.com/docs/changelog#2026%E5%B9%B47%E6%9C%88)（2026-07-01）
-  - 📄 完整文章归档（共 27 篇）：[moonshot_kimi.md](llm-news/moonshot_kimi.md)
+  1. [Kimi K3.1 Pro](https://www.kimi.com/blog/kimi-k3-1-pro)（2026-10-24）
+  2. [Kimi K3](https://www.kimi.com/blog/kimi-k3)（2026-07-16）
+  3. [PerceptionBench](https://www.kimi.com/blog/perception-bench)（2026-07-16）
+  4. [Kimi K2.6](https://www.kimi.com/blog/kimi-k2-6)（2026-04-20）
+  5. [Agent Swarm](https://www.kimi.com/blog/agent-swarm)（2026-02-09）
+  - 📄 完整文章归档（共 10 篇）：[moonshot_kimi.md](llm-news/moonshot_kimi.md)
 
 ### xAI Grok (xai_grok)
 - 页面：[新闻 / 更新](https://x.ai/news)

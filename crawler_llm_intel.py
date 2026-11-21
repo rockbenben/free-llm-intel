@@ -1804,6 +1804,132 @@ def extract_articles_from_wordpress(page: PageResult,
     return articles
 
 
+#: Next.js App Router 把页面数据塞进 `self.__next_f.push([1,"…"])` 的 RSC 分片，
+#: 每个参数是一个「转义过的 JSON 字符串」，**拼起来**才是完整负载。只认这一种调用形状：
+#: 老式 `__NEXT_DATA__` / Nuxt `__NUXT__` 不走这里。
+_NEXT_FLIGHT_PUSH = re.compile(r'self\.__next_f\.push\(\[1,("(?:[^"\\]|\\.)*")\]\)')
+
+
+def _next_flight_text(html: str) -> str:
+    """把 Next.js App Router 的 RSC 分片拼回一段文本；不是这种站返回空串。"""
+    chunks = _NEXT_FLIGHT_PUSH.findall(html or "")
+    if not chunks:
+        return ""
+    parts = []
+    for chunk in chunks:
+        try:
+            parts.append(json.loads(chunk))
+        except ValueError:
+            continue
+    return "".join(parts)
+
+
+def _json_object_at(text: str, start: int) -> str:
+    """从 `start`（指向 `{`）起做括号配对，返回这一段 JSON 文本；配不平返回空串。
+
+    只用来从 RSC 文本里切出一个**已知键**后面的对象（`"articleList":{…}`），
+    不是通用 JSON 扫描器：字符串里的花括号要按引号状态跳过，否则切出来的片段
+    `json.loads` 会炸。"""
+    depth = 0
+    in_str = False
+    escaped = False
+    for i in range(start, len(text)):
+        ch = text[i]
+        if in_str:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+    return ""
+
+
+def extract_articles_from_kimi_blog(page: PageResult,
+                                    max_items: int = JSON_NEWS_MAX_ITEMS) -> list[Article]:
+    """Kimi 研究博客列表页（`www.kimi.com/blog/`）—— 取 RSC 流里的 `articleList`。
+
+    为什么单独写：卡片是 `<div class="menu-card">` + 绝对定位的**空锚点**（标题在
+    `<h4 class="card-title">`、日期在 `<p class="card-date">`，都是兄弟节点），通用链接
+    提取只拿得到页脚那几条「Kimi K3 技术博客」，标题与日期还会被拼成合成的
+    `#d-<日期>-<n>` 锚点；实测 19 张卡片里只有前 12 张能按「最近的 href + 标题/日期」
+    对上，其余错位或落空。列表数据本身是 RSC 里的
+    `"articleList":{"items":[{id,title,href,date,…}]}`，形状稳定。
+
+    正链统一用**中文站**路径 `/blog/<id>`：卡片 href 写的是 `/en/blog/<id>`（服务端默认
+    英文），而 `/blog/<id>` 会 302 到 `/en/blog/<id>` —— 文章本身只有英文版，标题与日期
+    取自中文列表。"""
+    payload = _next_flight_text(page.raw or "")
+    if not payload:
+        return []
+    marker = '"articleList":'
+    at = payload.find(marker)
+    if at < 0:
+        return []
+    obj_at = payload.find("{", at + len(marker))
+    if obj_at < 0:
+        return []
+    blob = _json_object_at(payload, obj_at)
+    if not blob:
+        return []
+    try:
+        data = json.loads(blob)
+    except ValueError:
+        return []
+    items = data.get("items") if isinstance(data, dict) else None
+    if not isinstance(items, list):
+        return []
+    parts = urlparse(page.display_url or page.url)
+    if not parts.scheme or not parts.netloc:
+        return []
+    origin = f"{parts.scheme}://{parts.netloc}"
+    articles: list[Article] = []
+    for item in items[:max_items]:
+        if not isinstance(item, dict):
+            continue
+        title = re.sub(r"\s+", " ", str(item.get("title") or "")).strip()
+        # href 才是正链；`id` 只在本站文章上有 slug 形状，外链条目（GitHub / HuggingFace
+        # / 项目页）的 id 拼出来的地址一律 302 回列表页，**不能**拿来拼 URL。
+        href = str(item.get("href") or "").strip()
+        m = re.match(r"^(?:/en)?(/blog/[A-Za-z0-9._~%/-]+)$", href)
+        if len(title) < 4 or not m:
+            # 外链（GitHub 仓库 / HF 模型卡 / 项目主页）不是文章：没有正文可抓，
+            # 收进来只会变成一条 index_page。研究发布里这 9 条牺牲掉，不污染订阅流。
+            continue
+        slug = m.group(1)
+        day = re.sub(r"[^0-9-]", "", str(item.get("date") or ""))[:10]
+        articles.append(Article(
+            title=title,
+            url=f"{origin}{slug}",
+            date=_drop_future_date(day),
+            source="官方页面", stype=page.stype))
+    return articles
+
+
+#: 站点私有解析器：host → 提取函数。这些站的卡片没有可用锚点（或标题/日期分居兄弟
+#: 节点），通用链接提取拿到的不是文章：命中 host 先走专用适配器，**拿到 0 条再退回**
+#: 通用逻辑 —— 适配器失败不该让这条源整个空掉。
+_SITE_PAGE_EXTRACTORS = {
+    "www.kimi.com": extract_articles_from_kimi_blog,
+}
+
+
+def extract_articles_from_site_page(page: PageResult) -> list[Article]:
+    """按 host 走站点专用解析器；没有对应适配器返回空列表。"""
+    host = urlparse(page.final_url or page.url).netloc.lower()
+    fn = _SITE_PAGE_EXTRACTORS.get(host)
+    return fn(page) if fn else []
+
+
 # HTML 博客页文章链接的路径特征：/blog/<slug>、/news/<slug>、/updates/... 等
 _ARTICLE_PATH_HINTS = re.compile(
     r"/(blog|blogs|news|updates|changelog|announcements?|posts?|articles?|"
@@ -2737,6 +2863,12 @@ RETIRED_NEWS_URL_PREFIXES: tuple[str, ...] = (
     # 只留迁移公告，官网 research 才是带日期的真动态（14 篇，含 Hy4 flash 的 API 价目）。
     # ⚠️ 同厂商的计费页（97731）与 TokenHub 说明（111007）是情报页，路径不同，不受影响。
     "https://cloud.tencent.com/document/product/1729/97765",
+    # 月之暗面 Kimi 开放平台「更新日志」（platform.kimi.com/docs/changelog）：2026-11-21
+    # 从 yaml 移除，改用官网研究博客（见 llm-intel.yaml 的 blog 源）。那页是 API 变更记录，
+    # 卡片锚文本把「标题 + 整段说明」粘成一串（27 条里 22 条标题 100+ 字）。
+    # ⚠️ 同厂商的账号/模型/定价文档是另外几个路径（docs/guide、docs/models、docs/pricing），
+    # 属情报页，不受这条前缀影响。
+    "https://platform.kimi.com/docs/changelog",
 )
 
 
@@ -2816,7 +2948,10 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
             continue
         if any(feed_has_articles.get(_norm_url(url)) for url in page.feeds):
             continue
-        _add(extract_articles_from_page(page, max_items=100))
+        # 站点专用适配器优先（卡片无可用锚点的站，通用提取会造合成锚点/丢条目），
+        # 它拿不到东西时再退回通用链接提取
+        _add(extract_articles_from_site_page(page)
+             or extract_articles_from_page(page, max_items=100))
     # 锚文本是「this documentation / 查看详情」之类通用词时，
     # 抓文章页 <title> 补全标题（限前 5 篇，避免请求过多）；
     # 若补全到的是文档指南页标题，说明链接已失效（站点回退到默认文档），丢弃

@@ -7877,6 +7877,99 @@ class TestHunyuanNewsSource(unittest.TestCase):
             "https://cloud.tencent.com/document/product/1729/97731"),
             "同厂商的计费页是情报页，不能被退役前缀误伤")
 
+class TestKimiBlogSource(unittest.TestCase):
+    """月之暗面 Kimi 研究博客（www.kimi.com/blog/）—— 第一个站点专用**页面**适配器。
+
+    换源动因（2026-11-21）：原 `changelog` 指向开放平台更新日志，卡片锚文本把「标题 +
+    整段说明」粘成一串（27 条里 22 条标题 100+ 字），且只有 API 变更、没有研究发布。
+    官网研究博客有日期、有站内文章，但卡片是 div + 绝对定位的空锚点，通用链接提取会
+    把标题/日期拼成合成锚点；列表数据在 Next.js RSC 流的 `articleList` 里。
+    """
+
+    URL = "https://www.kimi.com/blog/"
+
+    @staticmethod
+    def _items():
+        return [
+            {"id": "kimi-k3-1-pro", "title": "Kimi K3.1 Pro", "date": "2026-10-24",
+             "href": "/en/blog/kimi-k3-1-pro"},
+            {"id": "kimi-k2-6", "title": "Kimi K2.6", "date": "2026-04-20",
+             "href": "/en/blog/kimi-k2-6"},
+            # 外链（GitHub / HF / 项目主页）不是文章：没有正文可抓，必须跳过
+            {"id": "Kimi-Dev", "title": "Kimi-Dev", "date": "2025-06-17",
+             "href": "https://github.com/MoonshotAI/Kimi-Dev"},
+            {"id": "Moonlight", "title": "Muon is Scalable for LLM Training",
+             "date": "2025-02-23", "href": "https://github.com/MoonshotAI/Moonlight"},
+            {"id": "", "title": "没有 href 的条目", "date": "2025-01-01", "href": ""},
+            {"id": "x", "title": "太短", "date": "2025-01-01",
+             "href": "/en/blog/x"},
+            "不是字典的条目",
+        ]
+
+    def _html(self, items=None):
+        payload = {"articleList": {"cardLayout": "firstCardHero",
+                                  "items": self._items() if items is None else items}}
+        flight = "9:" + json.dumps(payload, ensure_ascii=False) + "\n"
+        return ("<html><body><script>self.__next_f.push([1,"
+                + json.dumps(flight, ensure_ascii=False)
+                + "])</script></body></html>")
+
+    def _page(self, html=None, url=URL):
+        return crawler_llm_intel.PageResult(url=url, stype="blog", ok=True,
+                                            final_url=url, raw=self._html() if html is None else html)
+
+    def test_adapter_reads_article_list_from_flight_payload(self):
+        arts = crawler_llm_intel.extract_articles_from_kimi_blog(self._page())
+        by_url = {a.url: a for a in arts}
+        art = by_url["https://www.kimi.com/blog/kimi-k3-1-pro"]
+        self.assertEqual(art.title, "Kimi K3.1 Pro")
+        self.assertEqual(art.date, "2026-10-24")
+        self.assertEqual(art.stype, "blog")
+        self.assertEqual(art.source, "官方页面")
+
+    def test_canonical_url_drops_the_en_prefix(self):
+        """卡片 href 是 /en/blog/<slug>（服务端默认英文），正链要落回 /blog/<slug>。"""
+        arts = crawler_llm_intel.extract_articles_from_kimi_blog(self._page())
+        self.assertIn("https://www.kimi.com/blog/kimi-k2-6", {a.url for a in arts})
+        self.assertFalse([a.url for a in arts if "/en/" in a.url])
+
+    def test_external_links_are_not_articles(self):
+        arts = crawler_llm_intel.extract_articles_from_kimi_blog(self._page())
+        urls = [a.url for a in arts]
+        self.assertNotIn("https://github.com/MoonshotAI/Kimi-Dev", urls)
+        self.assertNotIn("https://github.com/MoonshotAI/Moonlight", urls)
+        self.assertNotIn("太短", [a.title for a in arts])
+        self.assertNotIn("不是字典的条目", [a.title for a in arts])
+
+    def test_missing_payload_returns_empty_so_generic_logic_can_take_over(self):
+        for label, html in (("普通 HTML", "<html><body><a href='/blog/x'>x</a></body></html>"),
+                            ("坏 RSC", "<script>self.__next_f.push([1,\"not json\"])</script>"),
+                            ("空正文", "")):
+            self.assertEqual(
+                crawler_llm_intel.extract_articles_from_kimi_blog(self._page(html=html)),
+                [], label)
+
+    def test_site_extractor_is_selected_by_host(self):
+        self.assertTrue(crawler_llm_intel.extract_articles_from_site_page(self._page()))
+        other = crawler_llm_intel.PageResult(url="https://example.com/blog", stype="blog",
+                                             ok=True, final_url="https://example.com/blog",
+                                             raw=self._html())
+        self.assertEqual(crawler_llm_intel.extract_articles_from_site_page(other), [],
+                         "别的站不该被 Kimi 适配器接管")
+
+    def test_yaml_points_at_the_blog_and_retires_the_changelog(self):
+        root = Path(__file__).resolve().parent
+        _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        news = [s for s in sources if s.get("vendor_id") == "moonshot_kimi"
+                and (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
+        self.assertEqual([s["url"] for s in news], [self.URL])
+        self.assertEqual(news[0].get("lang"), "zh")
+        self.assertTrue(crawler_llm_intel._is_retired_news_url(
+            "https://platform.kimi.com/docs/changelog#2026-09-01-a"))
+        self.assertFalse(crawler_llm_intel._is_retired_news_url(
+            "https://platform.kimi.com/docs/pricing/chat"),
+            "同厂商的定价文档是情报页，不能被退役前缀误伤")
+
 class TestBackfillOriginalEncoding(unittest.TestCase):
     """`--backfill-orig` 的字符编码：乱码绝不能被当成「英文原文」写进归档。
 

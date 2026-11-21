@@ -1002,10 +1002,28 @@ sources:
   - vendor_id: moonshot_kimi
     type: api_product
     url: https://platform.kimi.com/
+  # 研究博客（2026-11-21 换源）：原 `changelog` 指向开放平台「更新日志」
+  # （platform.kimi.com/docs/changelog）—— 那是 API 变更记录，卡片是「标题 + 整段说明」
+  # 粘在一个锚点里，27 条归档里 22 条标题被撑成整段文案（最长 200+ 字），读起来不像标题，
+  # 也不含研究发布。官网自己的研究博客才是带日期的研究动态：20 条里 10 条是站内技术博客
+  # （Kimi K3.1 Pro / K3 / K2.6 / K2.5 / K2 Thinking / PerceptionBench / Agent Swarm /
+  # WorldVQA / Kimi Vendor Verifier / Kimi K2），另 10 条是 GitHub 仓库、HuggingFace 模型卡
+  # 与项目主页（不是文章，适配器里跳过）。
+  #
+  # 为什么不用通用链接提取：卡片是 `<div class="menu-card">` + **绝对定位的空锚点**
+  # （`<a aria-label>` 无文本），标题/日期在 `<h4 class="card-title">`、`<p class="card-date">`
+  # 兄弟节点里；实测通用提取只拿到页脚 8 条「…技术博客」，还把 19 张卡片拼成合成的
+  # `#d-<日期>-<n>` 锚点、日期错位（K2.6 的 04-20 被记成 04-15）。列表数据在 Next.js
+  # RSC 流（`self.__next_f.push`）的 `"articleList":{"items":[…]}` 里，形状稳定，
+  # 适配器见 `extract_articles_from_kimi_blog`。
+  #
+  # `https://www.kimi.com/resources/` 也一起看过：431 条无日期的通用教程（「10 款婚礼
+  # 网站模板」这类 SEO 内容，接口 /resources/api/aggregation-cards 也只能给标题+描述），
+  # 没有日期、不是动态，收进订阅流只会把 Kimi 单源灌成教程列表 —— 故不作为动态源。
   - vendor_id: moonshot_kimi
-    type: changelog
+    type: blog
     lang: zh
-    url: https://platform.kimi.com/docs/changelog
+    url: https://www.kimi.com/blog/
 
   # Mistral
   - vendor_id: mistral
