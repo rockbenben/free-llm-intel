@@ -1,6 +1,6 @@
 ---
 vendor: google_gemini
-title: 以下型号已被关闭：
+title: The following models are shut down:
 original_title: The following models are shut down:
 url: https://aistudio.google.com/docs/changelog
 date: 2026-02-17

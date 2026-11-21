@@ -1,6 +1,6 @@
 ---
 vendor: mistral
-title: Mistral AI partners with NVIDIA to accelerate open frontier models
+title: Mistral partners with NVIDIA to accelerate open frontier models
 original_title: Mistral AI partners with NVIDIA to accelerate open frontier models
 url: https://mistral.ai/news/mistral-ai-and-nvidia-partner-to-accelerate-open-frontier-models
 date: 2026-03-16

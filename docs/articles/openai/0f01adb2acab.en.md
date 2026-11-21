@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: 我们如何检测前沿模型的对齐失范行为
+title: How we detect frontier model misalignment
 original_title: 
 url: https://openai.com/index/how-we-detect-frontier-model-misalignment
 date: 2026-10-29

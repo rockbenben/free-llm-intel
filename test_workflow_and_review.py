@@ -8125,6 +8125,101 @@ class TestLongCatResearchSource(unittest.TestCase):
             "https://longcat.chat/platform/docs/zh/token-pack"),
             "同站 Token Pack 文档是情报页，不能被退役前缀误伤")
 
+class TestCorpusTitles(unittest.TestCase):
+    """语料 frontmatter 的 `title` 必须来自索引行，不能是抽出来的页面标题。
+
+    实测事故（2026-11-21）：腾讯混元 research 页的 `<title>` 是「腾讯混元」，readability
+    抓到小标题时又变成「复杂推理」「新一代旗舰模型」，于是 14 篇语料里 10 篇的 title 是
+    站点名/小标题 —— 文章真正的标题（「Hy3 正式发布」）只在 articles.json 那一行里。
+    corpus spec §3.2：中文文件用 zh 展示标题，英文文件用原文标题。
+    """
+
+    ZH_HTML = ("<html><head><title>腾讯混元</title></head><body><article>"
+               "<h1>新一代旗舰模型</h1><p>" + "这是一段中文正文内容。" * 40 + "</p></article></body></html>")
+    EN_HTML = ("<html><head><title>Changelog</title></head><body><article>"
+               "<p>" + "This is English body text. " * 40 + "</p></article></body></html>")
+
+    def test_zh_body_title_comes_from_the_index_row(self):
+        with tempfile.TemporaryDirectory() as d:
+            rows = [{"vendor": "tencent_hunyuan", "url": "https://x/hy3",
+                     "title": "Hy3 正式发布", "date": "2026-07-06", "original_title": ""}]
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows, bodies,
+                            fetch=lambda u: (self.ZH_HTML, True, 200, u), today="2026-11-21")
+            e = bodies[ft.bodies_key("tencent_hunyuan", "https://x/hy3")]
+            fm, _ = ft.read_body_doc(Path(d) / e["zh_path"])
+            self.assertEqual(fm.get("title"), "Hy3 正式发布",
+                             "页面 <title>/<h1> 不是文章标题，索引行才是")
+
+    def test_en_body_title_prefers_the_original_title(self):
+        with tempfile.TemporaryDirectory() as d:
+            rows = [{"vendor": "groq", "url": "https://x/chg",
+                     "title": "提示词缓存", "date": "", "original_title": "Prompt Caching"}]
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows, bodies,
+                            fetch=lambda u: (self.EN_HTML, True, 200, u), today="2026-11-21")
+            e = bodies[ft.bodies_key("groq", "https://x/chg")]
+            fm, _ = ft.read_body_doc(Path(d) / e["en_path"])
+            self.assertEqual(fm.get("title"), "Prompt Caching",
+                             "英文侧要写原文标题，不是页面 <title>（Changelog）也不是译文")
+
+    def test_en_body_falls_back_to_the_page_title_without_an_original(self):
+        with tempfile.TemporaryDirectory() as d:
+            rows = [{"vendor": "groq", "url": "https://x/chg2",
+                     "title": "提示词缓存", "date": "", "original_title": ""}]
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows, bodies,
+                            fetch=lambda u: (self.EN_HTML, True, 200, u), today="2026-11-21")
+            e = bodies[ft.bodies_key("groq", "https://x/chg2")]
+            fm, _ = ft.read_body_doc(Path(d) / e["en_path"])
+            self.assertEqual(fm.get("title"), "Changelog",
+                             "没有原文标题时退回页面标题，绝不把中文展示标题写进英文文件")
+
+    def test_repair_titles_fixes_corpus_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            rows = [{"vendor": "tencent_hunyuan", "url": "https://x/hy3", "title": "Hy3 正式发布",
+                     "date": "2026-07-06", "original_title": "Introducing Hy3"}]
+            bodies = {}
+            ft.fetch_bodies(root, rows, bodies,
+                            fetch=lambda u: (self.ZH_HTML, True, 200, u), today="2026-11-21")
+            e = bodies[ft.bodies_key("tencent_hunyuan", "https://x/hy3")]
+            zh_path = root / e["zh_path"]
+            # 模拟历史脏数据：把 title 改回页面标题（正文与 body_sha 不动）
+            text = zh_path.read_text(encoding="utf-8")
+            bad = text.replace("title: Hy3 正式发布", "title: 新一代旗舰模型")
+            self.assertNotEqual(bad, text, "夹具前提：要能改到 title 行")
+            zh_path.write_text(bad, encoding="utf-8", newline="\n")
+            before_fm, before_body = ft.read_body_doc(zh_path)
+            self.assertEqual(before_fm.get("title"), "新一代旗舰模型")
+
+            stats = ft.repair_body_titles(root, rows)
+            self.assertEqual(stats["fixed"], 1)
+            after_fm, after_body = ft.read_body_doc(zh_path)
+            self.assertEqual(after_fm.get("title"), "Hy3 正式发布")
+            self.assertEqual(after_body, before_body, "正文逐字不动")
+            self.assertEqual(after_fm.get("body_sha"), before_fm.get("body_sha"),
+                             "body_sha 跟着正文，不该被标题修复改掉")
+
+            again = ft.repair_body_titles(root, rows)
+            self.assertEqual(again["fixed"], 0, "幂等：第二遍零改写")
+
+    def test_repair_titles_never_overwrites_english_with_a_chinese_title(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            rows = [{"vendor": "groq", "url": "https://x/chg", "title": "提示词缓存",
+                     "date": "", "original_title": ""}]
+            bodies = {}
+            ft.fetch_bodies(root, rows, bodies,
+                            fetch=lambda u: (self.EN_HTML, True, 200, u), today="2026-11-21")
+            e = bodies[ft.bodies_key("groq", "https://x/chg")]
+            en_path = root / e["en_path"]
+            before, _ = ft.read_body_doc(en_path)
+            stats = ft.repair_body_titles(root, rows)
+            after, _ = ft.read_body_doc(en_path)
+            self.assertEqual(stats["fixed"], 0, "没有原文标题时不许拿中文展示标题去覆盖英文文件")
+            self.assertEqual(after.get("title"), before.get("title"))
+
 class TestBackfillOriginalEncoding(unittest.TestCase):
     """`--backfill-orig` 的字符编码：乱码绝不能被当成「英文原文」写进归档。
 

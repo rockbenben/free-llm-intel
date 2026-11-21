@@ -1,6 +1,6 @@
 ---
 vendor: cloudflare_workers_ai
-title: Workers AI - 推出嵌入式函数调用
+title: Workers AI - Introducing embedded function calling
 original_title: 
 url: https://developers.cloudflare.com/workers-ai/changelog
 date: 2024-06-27

@@ -1,6 +1,6 @@
 ---
 vendor: ai21_labs
-title: The Best Private LLM for Enterprise AI Deployment | AI21
+title: AI21’s Jamba 1.6: The Best Open Model for Private Enterprise Deployment
 original_title: 
 url: https://www.ai21.com/blog/introducing-jamba-1-6
 date: 2025-03-06

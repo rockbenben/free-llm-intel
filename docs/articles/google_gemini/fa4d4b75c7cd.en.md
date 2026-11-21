@@ -1,6 +1,6 @@
 ---
 vendor: google_gemini
-title: 弃用公告：以下图像生成模型将被弃用，并将于 2026 年 8 月 17 日关闭：
+title: Deprecation announcement: The following image generation models are being deprecated and will be shut down on August 17, 2026:
 original_title: Deprecation announcement: The following image generation models are being deprecated and will be shut down on August 17, 2026:
 url: https://aistudio.google.com/docs/changelog
 date: 2026-06-15

@@ -1,6 +1,6 @@
 ---
 vendor: ai21_labs
-title: Go Big or Go OOM: The Art of Scaling vLLM
+title: Go big or go OOM: the art of scaling vLLM
 original_title: Go big or go OOM: the art of scaling vLLM
 url: https://www.ai21.com/blog/scaling-vllm-without-oom
 date: 2026-02-05

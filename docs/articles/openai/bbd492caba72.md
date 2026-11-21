@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Cult.fit 借助 Codex 增强运营实力
+title: Cult.fit 通过 Codex 增强运营能力
 original_title: 
 url: https://openai.com/index/cultfit-builds-with-codex
 date: 2026-05-29

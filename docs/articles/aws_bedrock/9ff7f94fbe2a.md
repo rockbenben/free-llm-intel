@@ -1,6 +1,6 @@
 ---
 vendor: aws_bedrock
-title: Accelerating product development with AI-driven lifecycle management (AI-PDLC) in AWS Quick
+title: 通过 AWS Quick 中的 AI 驱动的生命周期管理 (AI-PDLC) 加速产品开发
 original_title: 
 url: https://aws.amazon.com/blogs/machine-learning/accelerating-product-development-with-ai-driven-lifecycle-management-ai-pdlc-in-aws-quick
 date: 2026-11-11

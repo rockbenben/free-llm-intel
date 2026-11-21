@@ -1,6 +1,6 @@
 ---
 vendor: minimax
-title: 介绍 Music-3.0
+title: Music-3.0
 original_title: 
 url: https://platform.minimax.cn/docs/release-notes/models
 date: 2026-07-16

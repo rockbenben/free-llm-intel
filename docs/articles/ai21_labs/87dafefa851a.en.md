@@ -1,6 +1,6 @@
 ---
 vendor: ai21_labs
-title: Reaching SOTA RTL Parsing By Leveraging LTR Capabilities
+title: Closing the parsing gap: reaching SOTA RTL parsing by leveraging LTR capabilities
 original_title: Closing the parsing gap: reaching SOTA RTL parsing by leveraging LTR capabilities
 url: https://www.ai21.com/blog/rtl-pdf-parsing
 date: 2026-01-22

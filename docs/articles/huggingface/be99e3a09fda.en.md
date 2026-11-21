@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: Deploy Hugging Face models easily with Amazon SageMaker 🏎
+title: Deploy Hugging Face models easily with Amazon SageMaker
 original_title: Deploy Hugging Face models easily with Amazon SageMaker
 url: https://huggingface.co/blog/deploy-hugging-face-models-easily-with-amazon-sagemaker
 date: 2021-07-08

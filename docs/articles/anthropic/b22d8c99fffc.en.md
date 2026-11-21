@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Make long-running agents faster with message threads | Claude by Anthropic
+title: Make long-running agents faster with message threads
 original_title: Make long-running agents faster with message threads
 url: https://claude.com/resources/articles/message-threads
 date: 2026-11-02

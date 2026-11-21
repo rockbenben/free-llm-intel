@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Codex 全面升级
+title: Introducing upgrades to Codex
 original_title: Introducing upgrades to Codex
 url: https://openai.com/index/introducing-upgrades-to-codex
 date: 2026-10-02

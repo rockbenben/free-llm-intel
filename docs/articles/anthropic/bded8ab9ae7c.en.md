@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Customize Claude Code with mods in TypeScript | Claude by Anthropic
+title: Customize Claude Code with mods
 original_title: Customize Claude Code with mods
 url: https://claude.com/resources/articles/claude-code-mods
 date: 2026-10-01

@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: Qualcomm Completes Acquisition of Modular
+title: Modular: Qualcomm Completes Acquisition of Modular
 original_title: Modular: Qualcomm Completes Acquisition of Modular
 url: https://www.modular.com/blog/qualcomm-completes-acquisition-of-modular
 date: 2026-07-29

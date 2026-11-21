@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: Introducing Storage Regions on the Hub
+title: Introducing Storage Regions on the HF Hub
 original_title: Introducing Storage Regions on the HF Hub
 url: https://huggingface.co/blog/regions
 date: 2023-11-03

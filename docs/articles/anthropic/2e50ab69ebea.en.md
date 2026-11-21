@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Equipping agents for the real world with Agent Skills
+title: Equipping agents for the real world with Agent Skills \ Anthropic
 original_title: Equipping agents for the real world with Agent Skills \ Anthropic
 url: https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
 date: 2025-10-16

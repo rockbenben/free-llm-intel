@@ -1,6 +1,6 @@
 ---
 vendor: google_gemini
-title: 弃用公告：text-embedding-004 模型将于 2026 年 1 月 14 日关闭。
+title: Deprecation announcement: The text-embedding-004 model will be shut down January 14, 2026.
 original_title: Deprecation announcement: The text-embedding-004 model will be shut down January 14, 2026.
 url: https://aistudio.google.com/docs/changelog
 date: 2025-12-03

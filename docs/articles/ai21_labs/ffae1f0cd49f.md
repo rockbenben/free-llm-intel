@@ -1,6 +1,6 @@
 ---
 vendor: ai21_labs
-title: 模块化智能：一种面向 agent 编排的类人模型
+title: Modular智能：一种面向 agent 编排的类人模型
 original_title: Modular intelligence: a human-like model for agent orchestration
 url: https://www.ai21.com/blog/modular-intelligence-agent-orchestration
 date: 2026-02-26

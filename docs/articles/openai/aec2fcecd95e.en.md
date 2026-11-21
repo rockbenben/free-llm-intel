@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: GPT‑2: 6-month follow-up
+title: GPT-2: 6-month follow-up
 original_title: GPT-2: 6-month follow-up
 url: https://openai.com/index/gpt-2-6-month-follow-up
 date: 2024-01-16

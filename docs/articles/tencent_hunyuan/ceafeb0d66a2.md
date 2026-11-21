@@ -1,6 +1,6 @@
 ---
 vendor: tencent_hunyuan
-title: 持续解锁的真实生产力
+title: Hy4 正式发布
 original_title: 
 url: https://hunyuan.tencent.com/research/hy4
 date: 2026-11-04

@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: 🧨 Diffusers welcomes Stable Diffusion 3
+title: Diffusers welcomes Stable Diffusion 3
 original_title: Diffusers welcomes Stable Diffusion 3
 url: https://huggingface.co/blog/sd3
 date: 2023-01-24

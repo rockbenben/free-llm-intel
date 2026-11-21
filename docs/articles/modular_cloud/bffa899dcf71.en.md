@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: What about Triton and Python eDSLs? (Democratizing AI Compute, Part 7)
+title: Modular: What about Triton and Python eDSLs? (Democratizing AI Compute, Part 7)
 original_title: Modular: What about Triton and Python eDSLs? (Democratizing AI Compute, Part 7)
 url: https://www.modular.com/blog/democratizing-ai-compute-part-7-what-about-triton-and-python-edsls
 date: 2025-03-26

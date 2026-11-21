@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Building a C compiler with a team of parallel Claudes
+title: Building a C compiler with a team of parallel Claudes \ Anthropic
 original_title: Building a C compiler with a team of parallel Claudes \ Anthropic
 url: https://www.anthropic.com/engineering/building-c-compiler
 date: 2026-02-05

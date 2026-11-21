@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Claude Haiku 5.5
+title: Introducing Claude Haiku 5.5
 original_title: 
 url: https://www.anthropic.com/claude-haiku-5-5
 date: 2026-10-07

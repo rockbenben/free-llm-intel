@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: 支持 AI 与儿童安全研究
+title: 支持人工智能和儿童安全研究
 original_title: 
 url: https://openai.com/index/children-first-declaration
 date: 2026-11-05

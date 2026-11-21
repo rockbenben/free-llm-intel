@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Localiza 如何围绕生成式 AI 重塑工作方式
+title: Localiza 如何围绕生成式人工智能重组工作
 original_title: 
 url: https://openai.com/index/localiza-generative-ai
 date: 2026-08-26

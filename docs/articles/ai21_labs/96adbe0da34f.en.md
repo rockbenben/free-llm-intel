@@ -1,6 +1,6 @@
 ---
 vendor: ai21_labs
-title: Karpathy’s Leash for Constraining AI Agents | AI21
+title: Karpathy’s Leash
 original_title: 
 url: https://www.ai21.com/blog/karpathys-leash
 date: 2025-07-23

@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: Patch Time Series Transformer in Hugging Face - Getting Started
+title: Patch Time Series Transformer in Hugging Face
 original_title: Patch Time Series Transformer in Hugging Face
 url: https://huggingface.co/blog/patchtst
 date: 2022-11-27

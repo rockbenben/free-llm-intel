@@ -1,6 +1,6 @@
 ---
 vendor: xai_grok
-title: Grok for Word
+title: Introducing Grok for Word
 original_title: Grok for Word
 url: https://x.ai/news/introducing-word-addin
 date: 2026-06-18

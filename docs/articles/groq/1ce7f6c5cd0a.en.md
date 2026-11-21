@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: Batch Processing with GroqCloud™ for AI Inference Workloads | Groq is the premier neocloud for fast inference
+title: Batch Processing with GroqCloud™ for AI Inference Workloads
 original_title: Batch Processing with GroqCloud™ for AI Inference Workloads
 url: https://groq.com/blog/batch-processing-with-groqcloud-for-ai-inference-workloads
 date: 2025-03-13

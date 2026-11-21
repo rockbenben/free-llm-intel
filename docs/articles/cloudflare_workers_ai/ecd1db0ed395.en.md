@@ -1,6 +1,6 @@
 ---
 vendor: cloudflare_workers_ai
-title: Workers AI - 对 llama-3.2-1b-instruct、whisper-large-v3-turbo、llama-guard 的模型 schema 小幅更新
+title: Workers AI - Minor updates to the model schema for llama-3.2-1b-instruct, whisper-large-v3-turbo, llama-guard
 original_title: 
 url: https://developers.cloudflare.com/workers-ai/changelog
 date: 2025-03-17

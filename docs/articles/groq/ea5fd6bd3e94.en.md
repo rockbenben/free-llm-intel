@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: GroqCloud: Expanding to Meet Demand  | Groq is the premier neocloud for fast inference
+title: GroqCloud: Expanding to Meet Demand
 original_title: GroqCloud: Expanding to Meet Demand
 url: https://groq.com/blog/groqcloud-expanding-to-meet-demand
 date: 2026-02-16

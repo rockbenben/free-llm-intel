@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: 通往 root 的路径，减少一千条
+title: 减少一千条通往根的路径
 original_title: 
 url: https://openai.com/index/a-thousand-fewer-paths-to-root
 date: 2026-11-06

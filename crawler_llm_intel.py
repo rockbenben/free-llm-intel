@@ -7794,6 +7794,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--mark-translated", metavar="KEY", default="",
                         help="把 --zh-file 指定的中文正文登记为 key 的译文（agent 回充译道，只改 ledger）")
     parser.add_argument("--zh-file", default="", help="配合 --mark-translated：中文正文 Markdown 文件路径")
+    parser.add_argument("--repair-body-titles", action="store_true",
+                        help="维护模式（不巡检、不联网）：把语料 frontmatter 的 `title` 对齐到"
+                             " articles.json 那一行（中文文件→展示标题，英文文件→原文标题）。"
+                             "只动这一行，正文与 body_sha 逐字保全；幂等。")
     parser.add_argument("--repair-body-sha", action="store_true",
                         help="维护模式（不巡检、不联网）：把每个 .md/.en.md 的 frontmatter "
                              "`body_sha` 修成与磁盘正文一致（缺则补、错则改）。只动这一行，"
@@ -8022,6 +8026,14 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  [fulltext-guard] {msg}", file=sys.stderr)
         print(f"  [mark-unreachable] 共 {len(args.mark_unreachable)} 条；退避账清掉 {dropped} 条")
         return 1 if errs else 0
+
+    if args.repair_body_titles:
+        import fulltext
+        rows = fulltext.iter_article_rows(root / "docs/feeds/articles.json")
+        stats = fulltext.repair_body_titles(root, rows)
+        print(f"  [repair-body-titles] 查过 {stats['checked']} 个文件："
+              f"纠正 {stats['fixed']} 个（第二次跑应为 0）")
+        return 0
 
     if args.repair_body_sha:
         import fulltext

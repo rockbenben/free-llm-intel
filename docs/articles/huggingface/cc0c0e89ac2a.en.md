@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: Swift 🧨Diffusers: Fast Stable Diffusion for Mac
+title: Swift 🧨Diffusers - Fast Stable Diffusion for Mac
 original_title: Swift 🧨Diffusers
 url: https://huggingface.co/blog/fast-mac-diffusers
 date: 2023-02-24

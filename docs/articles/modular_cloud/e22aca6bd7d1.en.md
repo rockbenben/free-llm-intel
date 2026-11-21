@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: How did CUDA succeed? (Democratizing AI Compute, Part 3)
+title: Modular: How did CUDA succeed? (Democratizing AI Compute, Part 3)
 original_title: Modular: How did CUDA succeed? (Democratizing AI Compute, Part 3)
 url: https://www.modular.com/blog/democratizing-ai-compute-part-3-how-did-cuda-succeed
 date: 2025-02-12

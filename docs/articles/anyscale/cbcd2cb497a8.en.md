@@ -1,6 +1,6 @@
 ---
 vendor: anyscale
-title: Advances in Foundation Models — Technology, Society, and Applications
+title: Advances in Foundation Models
 original_title: Advances in Foundation Models
 url: https://anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications
 date: 2023-11-03

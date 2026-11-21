@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Building always-on agents | Claude by Anthropic
+title: Building always-on agents
 original_title: Building always-on agents
 url: https://claude.com/resources/articles/building-always-on-agents
 date: 2026-11-13

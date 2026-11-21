@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: Docmatix - A huge dataset for Document Visual Question Answering
+title: Docmatix - a huge dataset for Document Visual Question Answering
 original_title: Docmatix
 url: https://huggingface.co/blog/docmatix
 date: 2025-12-10

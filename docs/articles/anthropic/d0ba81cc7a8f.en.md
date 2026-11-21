@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Announcing our updated Responsible Scaling Policy
+title: Announcing our updated Responsible Scaling Policy \ Anthropic
 original_title: Announcing our updated Responsible Scaling Policy \ Anthropic
 url: https://www.anthropic.com/news/announcing-our-updated-responsible-scaling-policy
 date: 2024-10-15

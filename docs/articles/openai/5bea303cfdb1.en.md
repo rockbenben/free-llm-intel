@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: GPT‑5.1 全新上线：更智能、更具对话感的 ChatGPT
+title: GPT-5.1: A smarter, more conversational ChatGPT
 original_title: GPT-5.1: A smarter, more conversational ChatGPT
 url: https://openai.com/index/gpt-5-1
 date: 2026-10-02

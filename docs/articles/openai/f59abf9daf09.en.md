@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: GPT‑5.4 Thinking System Card
+title: GPT-5.4 Thinking System Card
 original_title: GPT-5.4 Thinking System Card
 url: https://openai.com/index/gpt-5-4-thinking-system-card
 date: 2026-03-05

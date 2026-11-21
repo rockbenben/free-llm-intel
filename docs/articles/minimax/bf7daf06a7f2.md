@@ -1,6 +1,6 @@
 ---
 vendor: minimax
-title: 介绍 MiniMax-Speech-2.6
+title: MiniMax-Speech-2.6
 original_title: 
 url: https://platform.minimax.cn/docs/release-notes/models
 date: 2025-10-29

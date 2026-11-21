@@ -1,6 +1,6 @@
 ---
 vendor: ai21_labs
-title: AI Agents: Real Hype or Just If-Else Logic? | AI21
+title: The AI Agent Hype Is Real – But Many Are Still Just Glorified If-Else Statements
 original_title: The AI Agent Hype Is Real – But Many Are Still Just Glorified If-Else Statements
 url: https://www.ai21.com/blog/ai-agent
 date: 2025-02-25

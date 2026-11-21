@@ -1,6 +1,6 @@
 ---
 vendor: tencent_hunyuan
-title: 复杂推理
+title: Hy3 preview : 混元大模型重建的第一步
 original_title: 
 url: https://hunyuan.tencent.com/research/hy3-preview
 date: 2026-04-23

@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Claude for Financial Advisors | Claude by Anthropic
+title: Claude for Financial Advisors
 original_title: Claude for Financial Advisors
 url: https://claude.com/resources/articles/claude-for-financial-advisors
 date: 2026-10-27

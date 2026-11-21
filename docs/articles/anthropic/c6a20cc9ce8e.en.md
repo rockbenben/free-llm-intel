@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Uber's CISO on building an insider threat program for AI | Claude by Anthropic
+title: Uber's CISO on building an insider threat program for AI
 original_title: 
 url: https://claude.com/resources/articles/uber-s-ciso-on-building-an-insider-threat-program-for-ai
 date: 2026-10-13

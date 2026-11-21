@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: MiniMax M2.7（企业版）
+title: MiniMax M2.7 (Enterprise)
 original_title: MiniMax M2.7 (Enterprise)
 url: https://console.groq.com/docs/changelog.md
 date: 2026-08-10

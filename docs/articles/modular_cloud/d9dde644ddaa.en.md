@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: Structured Mojo Kernels Part 3 - Composition in Practice
+title: Modular: Structured Mojo Kernels Part 3 - Composition in Practice
 original_title: Modular: Structured Mojo Kernels Part 3
 url: https://www.modular.com/blog/structured-mojo-kernels-part-3-composition-in-practice
 date: 2026-03-26

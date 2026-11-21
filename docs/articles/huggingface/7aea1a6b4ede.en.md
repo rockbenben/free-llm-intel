@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: The NLP Course is becoming the LLM Course!
+title: The NLP Course is becoming the LLM Course
 original_title: The NLP Course is becoming the LLM Course
 url: https://huggingface.co/blog/llm-course
 date: 2025-04-04

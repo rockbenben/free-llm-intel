@@ -1,6 +1,6 @@
 ---
 vendor: meta_llama
-title: Meta Welcomes Loblaw as First Canadian Retail Partner to MuseDismiss locale prompt
+title: Meta Welcomes Loblaw as First Canadian Retail Partner to Muse
 original_title: Meta Welcomes Loblaw as First Canadian Retail Partner to Muse
 url: https://about.fb.com/news/2026/11/meta-welcomes-loblaw-as-first-canadian-retail-partner-to-muse
 date: 2026-11-18

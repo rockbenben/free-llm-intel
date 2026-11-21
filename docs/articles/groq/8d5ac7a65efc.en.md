@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: 想找更早的更新日志？
+title: Looking for older changelogs?
 original_title: 
 url: https://console.groq.com/docs/changelog.md
 date: 2025-04-14

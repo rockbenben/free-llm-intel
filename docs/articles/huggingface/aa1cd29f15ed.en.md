@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: Introducing Multimodal TextImage Augmentation for Document Images
+title: Introducing TextImage Augmentation for Document Images
 original_title: Introducing TextImage Augmentation for Document Images
 url: https://huggingface.co/blog/doc_aug_hf_alb
 date: 2024-03-29

@@ -1,6 +1,6 @@
 ---
 vendor: google_gemini
-title: 预览模型gemini-2.5-pro-preview-05-06和gemini-2.5-pro-preview-03-25现在重定向到最新的稳定版本gemini-2.5-pro。
+title: The preview models gemini-2.5-pro-preview-05-06 and gemini-2.5-pro-preview-03-25 are now redirecting to the latest stable version gemini-2.5-pro.
 original_title: The preview models gemini-2.5-pro-preview-05-06 and gemini-2.5-pro-preview-03-25 are now redirecting to the latest stable version gemini-2.5-pro.
 url: https://aistudio.google.com/docs/changelog
 date: 2025-06-26

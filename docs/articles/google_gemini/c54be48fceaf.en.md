@@ -1,6 +1,6 @@
 ---
 vendor: google_gemini
-title: Gemini 3.8 Live 和 Gemini 3.8 Live Extended Thinking 全面上市 (GA)：发布了我们的下一代 Live API 模型，用于实时多模式对话和代理工具使用：
+title: Gemini 3.8 Live and Gemini 3.8 Live Extended Thinking generally available (GA): Released our next-generation Live API models for real-time multimodal dialogue and agentic tool use:
 original_title: Gemini 3.8 Live and Gemini 3.8 Live Extended Thinking generally available (GA): Released our next-generation Live API models for real-time multimodal dialogue and agentic tool use:
 url: https://aistudio.google.com/docs/changelog
 date: 2026-09-15

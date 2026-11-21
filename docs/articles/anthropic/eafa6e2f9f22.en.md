@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Introducing advanced tool use on the Claude Developer Platform
+title: Introducing advanced tool use on the Claude Developer Platform \ Anthropic
 original_title: Introducing advanced tool use on the Claude Developer Platform \ Anthropic
 url: https://www.anthropic.com/engineering/advanced-tool-use
 date: 2025-11-24

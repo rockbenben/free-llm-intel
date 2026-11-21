@@ -1,6 +1,6 @@
 ---
 vendor: openrouter
-title: How to Stop an AI Agent Stuck in an Infinite Loop
+title: 如何阻止 AI 代理陷入无限循环
 original_title: 
 url: https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop
 date: 2026-11-12

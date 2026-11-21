@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: How we built our multi-agent research system
+title: How we built our multi-agent research system \ Anthropic
 original_title: How we built our multi-agent research system \ Anthropic
 url: https://www.anthropic.com/engineering/multi-agent-research-system
 date: 2025-06-13

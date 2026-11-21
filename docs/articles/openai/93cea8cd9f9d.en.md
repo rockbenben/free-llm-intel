@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Morgan Stanley uses AI evals to shape the future of financial services
+title: Morgan Stanley is shaping the future of financial services
 original_title: Morgan Stanley uses AI evals to shape the future of financial services
 url: https://openai.com/index/morgan-stanley
 date: 2024-12-04

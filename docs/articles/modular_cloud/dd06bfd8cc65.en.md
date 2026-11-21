@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: Modular’s bet to break out of the Matrix (Democratizing AI Compute, Part 10)
+title: Modular: Modular’s bet to break out of the Matrix (Democratizing AI Compute, Part 10)
 original_title: Modular: Modular’s bet to break out of the Matrix (Democratizing AI Compute, Part 10)
 url: https://www.modular.com/blog/modulars-bet-to-break-out-of-the-matrix-democratizing-ai-compute-part-10
 date: 2025-05-08

@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: Groq Compound 与 Compound Mini
+title: Groq Compound and Compound Mini
 original_title: Groq Compound and Compound Mini
 url: https://console.groq.com/docs/changelog.md
 date: 2025-09-04

@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: 面向法律事务的 Astra 引领法律智能
+title: Astra for Law 在法律情报方面处于领先地位
 original_title: 
 url: https://openai.com/index/astra-law-6-2
 date: 2026-11-18

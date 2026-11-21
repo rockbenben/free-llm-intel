@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: How an Anthropic Japan BDR runs his day with a fleet of Claude agents | Claude by Anthropic
+title: How an Anthropic BDR in Japan runs his day with Claude Managed Agents
 original_title: 
 url: https://claude.com/resources/articles/how-an-anthropic-japan-business-development-representative-runs-his-day
 date: 2026-10-16

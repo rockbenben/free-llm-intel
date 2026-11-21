@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: ChatGPT Enterprise 现已在 AWS Marketplace 上线
+title: ChatGPT Enterprise 现已在 AWS Marketplace 中提供
 original_title: 
 url: https://openai.com/index/chatgpt-enterprise-aws-marketplace
 date: 2026-08-11

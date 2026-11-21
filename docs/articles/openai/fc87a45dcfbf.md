@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Heimstaden 正借助 AI 变革住宅物业管理
+title: Heimstaden 正在利用人工智能改变住宅房地产管理
 original_title: 
 url: https://openai.com/index/heimstaden
 date: 2026-10-28

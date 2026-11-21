@@ -1,6 +1,6 @@
 ---
 vendor: jina_ai
-title: jina-embeddings-v5-omni: Embeddings for Text, Image, Audio and Video
+title: jina-embeddings-v5-omni: Embeddings for Text, Image, Audio and VideoOne model, four modalities: text, image, audio, video. Best-in-class omni embeddings in 1.6B and 0.9B.
 original_title: 
 url: https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video
 date: 2026-05-12

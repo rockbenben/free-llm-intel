@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: GPT-OSS 20B 启用提示词缓存
+title: Prompt Caching Enabled for GPT-OSS 20B
 original_title: Prompt Caching Enabled for GPT-OSS 20B
 url: https://console.groq.com/docs/changelog.md
 date: 2025-09-25

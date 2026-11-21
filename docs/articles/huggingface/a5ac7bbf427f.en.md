@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: A Hugging Face Accelerate Story of Multiple Backends: FSDP and DeepSpeed
+title: From DeepSpeed to FSDP and Back Again with Hugging Face Accelerate
 original_title: From DeepSpeed to FSDP and Back Again with Hugging Face Accelerate
 url: https://huggingface.co/blog/deepspeed-to-fsdp-and-back
 date: 2024-12-19

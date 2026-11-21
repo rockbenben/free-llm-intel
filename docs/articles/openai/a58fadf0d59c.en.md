@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: PaperBench
+title: PaperBench: Evaluating AI’s Ability to Replicate AI Research
 original_title: PaperBench: Evaluating AI’s Ability to Replicate AI Research
 url: https://openai.com/index/paperbench
 date: 2025-04-02

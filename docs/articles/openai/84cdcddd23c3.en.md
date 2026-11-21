@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Superhuman
+title: Reimagining the email experience with AI
 original_title: Reimagining the email experience with AI
 url: https://openai.com/index/superhuman
 date: 2024-03-21

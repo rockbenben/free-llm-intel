@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: Modverse #49: Modular Platform 25.4, Modular 🤝 AMD, and Modular Hack Weekend
+title: Modular: Modverse #49: Modular Platform 25.4, Modular 🤝 AMD, and Modular Hack Weekend
 original_title: Modular: Modverse #49: Modular Platform 25.4, Modular 🤝 AMD, and Modular Hack Weekend
 url: https://www.modular.com/blog/modverse-49
 date: 2025-07-09

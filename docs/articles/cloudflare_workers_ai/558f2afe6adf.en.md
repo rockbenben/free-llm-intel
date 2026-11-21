@@ -1,6 +1,6 @@
 ---
 vendor: cloudflare_workers_ai
-title: Workers AI - Markdown 转换工具支持全新文档格式
+title: Workers AI - New document formats supported by Markdown conversion utility
 original_title: Workers AI - New document formats supported by Markdown conversion utility
 url: https://developers.cloudflare.com/workers-ai/changelog
 date: 2026-04-21

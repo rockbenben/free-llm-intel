@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: Structured Mojo Kernels Part 1 - Peak Performance, Half the Code
+title: Modular: Structured Mojo Kernels Part 1 - Peak Performance, Half the Code
 original_title: Modular: Structured Mojo Kernels Part 1
 url: https://www.modular.com/blog/structured-mojo-kernels-part-1-peak-performance-half-the-code
 date: 2026-03-05

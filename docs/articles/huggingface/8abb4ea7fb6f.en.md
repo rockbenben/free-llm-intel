@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: Faster Training and Inference: Habana Gaudi®-2 vs Nvidia A100 80GB
+title: Faster Training and Inference: Habana Gaudi®2 vs Nvidia A100 80GB
 original_title: Faster Training and Inference: Habana Gaudi®2 vs Nvidia A100 80GB
 url: https://huggingface.co/blog/habana-gaudi-2-benchmark
 date: 2023-09-07

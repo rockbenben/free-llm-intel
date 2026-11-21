@@ -1,6 +1,6 @@
 ---
 vendor: google_gemini
-title: 推出交互 API。该 API 提供了与 Gemini 模型和代理交互的统一接口。要了解更多信息，请参阅交互 API 指南。
+title: Launched the Interactions API. This API provides a unified interface for interacting with Gemini models and agents. To learn more, see the Interactions API guide.
 original_title: Launched the Interactions API. This API provides a unified interface for interacting with Gemini models and agents. To learn more, see the Interactions API guide.
 url: https://aistudio.google.com/docs/changelog
 date: 2025-12-11

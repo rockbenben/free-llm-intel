@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: Matrix Multiplication on Blackwell: Part 2 - Using Hardware Features to Optimize Matmul
+title: Modular: Matrix Multiplication on Blackwell: Part 2 - Using Hardware Features to Optimize Matmul
 original_title: Modular: Matrix Multiplication on Blackwell: Part 2
 url: https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-2-using-hardware-features-to-optimize-matmul
 date: 2025-09-05

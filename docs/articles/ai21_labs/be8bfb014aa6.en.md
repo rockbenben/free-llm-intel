@@ -1,6 +1,6 @@
 ---
 vendor: ai21_labs
-title: Stop Prompting and Praying: Start Building Complete AI Systems | AI21
+title: Stop Prompting and Praying: Start Building Complete AI Systems
 original_title: Stop Prompting and Praying: Start Building Complete AI Systems
 url: https://www.ai21.com/blog/stop-prompting-and-praying
 date: 2025-02-27

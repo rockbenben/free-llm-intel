@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: Day Zero: MiniMax M3 Open Weights on Modular Cloud
+title: Modular: Day Zero: MiniMax M3 Open Weights on Modular Cloud
 original_title: Modular: Day Zero: MiniMax M3 Open Weights on Modular Cloud
 url: https://www.modular.com/blog/day-zero-minimax-m3-open-weights-on-modular-cloud
 date: 2026-06-11

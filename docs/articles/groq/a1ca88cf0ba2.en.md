@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: Thank You! 1 Million Developers Now On GroqCloud™ | Groq is the premier neocloud for fast inference
+title: Thank You! 1 Million Developers Now On GroqCloud™
 original_title: Thank You! 1 Million Developers Now On GroqCloud™
 url: https://groq.com/blog/thank-you-1m-developers-building-with-groqcloud
 date: 2025-03-01

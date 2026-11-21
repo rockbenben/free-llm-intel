@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Patch the Planet：协调全球响应，应对智能体发现的严重漏洞
+title: 修补地球：特工发现关键漏洞时进行全球响应协调
 original_title: 
 url: https://openai.com/index/coordinated-disclosure-of-critical-vulnerabilities
 date: 2026-06-22

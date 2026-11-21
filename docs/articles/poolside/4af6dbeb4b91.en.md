@@ -1,6 +1,6 @@
 ---
 vendor: poolside
-title: Tools of the Trade: C2C Activation Offloading on Grace Blackwell — Poolside
+title: Tools of the Trade: C2C Activation Offloading on Grace Blackwell
 original_title: 
 url: https://poolside.ai/blog/tools-of-the-trade-c2c-activation-offloading-on-grace-blackwell
 date: 2026-03-18

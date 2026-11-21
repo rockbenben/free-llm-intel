@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: Python SDK v1.6.0 与 TypeScript SDK v1.5.0
+title: Python SDK v1.6.0 and TypeScript SDK v1.5.0
 original_title: Python SDK v1.6.0 and TypeScript SDK v1.5.0
 url: https://console.groq.com/docs/changelog.md
 date: 2026-08-10

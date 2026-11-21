@@ -1,6 +1,6 @@
 ---
 vendor: google_gemini
-title: 发布了gemini-3.1-flash-lite，这是 Gemini 3.1 Flash-Lite 的通用 (GA) 版本，针对速度、规模和成本效率进行了优化。
+title: Released gemini-3.1-flash-lite, the generally available (GA) version of Gemini 3.1 Flash-Lite, optimized for speed, scale, and cost efficiency.
 original_title: Released gemini-3.1-flash-lite, the generally available (GA) version of Gemini 3.1 Flash-Lite, optimized for speed, scale, and cost efficiency.
 url: https://aistudio.google.com/docs/changelog
 date: 2026-05-07

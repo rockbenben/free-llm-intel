@@ -1,6 +1,6 @@
 ---
 vendor: ai21_labs
-title: 5 Questions in 5 Minutes: Dr. Avi Tsur on AI in Healthcare
+title: Five questions in five Minutes: Dr. Avi Tsur on AI in healthcare
 original_title: Five questions in five Minutes: Dr. Avi Tsur on AI in healthcare
 url: https://www.ai21.com/blog/five-in-five-healthcare
 date: 2025-10-22

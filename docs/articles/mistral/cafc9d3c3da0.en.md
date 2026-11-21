@@ -1,6 +1,6 @@
 ---
 vendor: mistral
-title: Robostral Navigate: single-camera AI navigation | Mistral AI
+title: Introducing Robostral Navigate
 original_title: Robostral Navigate: single-camera AI navigation
 url: https://mistral.ai/news/robostral-navigate
 date: 2026-07-08

@@ -1,6 +1,6 @@
 ---
 vendor: cloudflare_workers_ai
-title: Changelog
+title: Workers AI - Meta Llama 3.1 now available on Workers AI
 original_title: Workers AI - Meta Llama 3.1 now available on Workers AI
 url: https://developers.cloudflare.com/workers-ai/changelog
 date: 2026-04-21

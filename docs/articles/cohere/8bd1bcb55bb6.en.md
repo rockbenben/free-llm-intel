@@ -1,6 +1,6 @@
 ---
 vendor: cohere
-title: Video intelligence: Make every moment in your video library searchable
+title: Video intelligence: Make every moment in your video library searchableIntroducing precise, timestamped video retrieval for enterprise search and AI agents.
 original_title: Video intelligence: Make every moment in your video library searchableIntroducing precise, timestamped video retrieval for enterprise search and AI agents.
 url: https://cohere.com/blog/video-intelligence-preview
 date: 2026-11-16

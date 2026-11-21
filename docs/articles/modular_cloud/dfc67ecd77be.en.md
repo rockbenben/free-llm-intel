@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: Paged Attention & Prefix Caching Now Available in MAX Serve
+title: Modular: Paged Attention & Prefix Caching Now Available in MAX Serve
 original_title: Modular: Paged Attention & Prefix Caching Now Available in MAX Serve
 url: https://www.modular.com/blog/paged-attention-prefix-caching-now-available-in-max-serve
 date: 2025-02-06

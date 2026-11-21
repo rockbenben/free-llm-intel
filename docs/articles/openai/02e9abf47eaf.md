@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: CodeRabbit 扩大智能体软件开发规模，将交付量提升至 20 倍
+title: CodeRabbit scales agentic software development and ships 20x more
 original_title: 
 url: https://openai.com/index/coderabbit-codex-daybreak
 date: 2026-01-09

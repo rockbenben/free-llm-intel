@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Donating Agent Skills to the Agentic AI Foundation \ Anthropic
+title: Donating Agent Skills to the Agentic AI Foundation
 original_title: Donating Agent Skills to the Agentic AI Foundation
 url: https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation
 date: 2026-10-22

@@ -1,6 +1,6 @@
 ---
 vendor: google_gemini
-title: 为 Gemini API 推出了新的日志记录和数据集工具。
+title: Launched the new logging and datasets tool for the Gemini API.
 original_title: Launched the new logging and datasets tool for the Gemini API.
 url: https://aistudio.google.com/docs/changelog
 date: 2025-10-29

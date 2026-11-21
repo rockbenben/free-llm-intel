@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: WHOOP
+title: Delivering LLM-powered health solutions
 original_title: Delivering LLM-powered health solutions
 url: https://openai.com/index/whoop
 date: 2024-01-12

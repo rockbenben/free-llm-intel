@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: How we built Claude Code auto mode: a safer way to skip permissions
+title: How we built Claude Code auto mode: a safer way to skip permissions \ Anthropic
 original_title: How we built Claude Code auto mode: a safer way to skip permissions \ Anthropic
 url: https://www.anthropic.com/engineering/claude-code-auto-mode
 date: 2026-03-25

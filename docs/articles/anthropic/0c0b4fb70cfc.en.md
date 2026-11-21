@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Claude Duet Safety, Privacy, and Security | Claude by Anthropic
+title: Claude Duet Safety, Privacy, and Security
 original_title: Claude Duet Safety, Privacy, and Security
 url: https://claude.com/resources/articles/claude-duet-safety-privacy-and-security
 date: 2026-10-23

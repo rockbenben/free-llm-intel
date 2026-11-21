@@ -1,6 +1,6 @@
 ---
 vendor: modular_cloud
-title: Modular + AMD: Unleashing AI performance on AMD GPUs
+title: Modular: Modular + AMD: Unleashing AI performance on AMD GPUs
 original_title: Modular: Modular + AMD: Unleashing AI performance on AMD GPUs
 url: https://www.modular.com/blog/modular-x-amd-unleashing-ai-performance-on-amd-gpus
 date: 2025-06-10

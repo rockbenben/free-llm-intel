@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Claude Opus 5.5
+title: Introducing Claude Opus 5.5
 original_title: 
 url: https://www.anthropic.com/claude-opus-5-5
 date: 2026-09-22

@@ -1,6 +1,6 @@
 ---
 vendor: anthropic
-title: Operate Claude Managed Agents inside your security perimeter | Claude by Anthropic
+title: Operate Claude Managed Agents inside your security perimeter
 original_title: Operate Claude Managed Agents inside your security perimeter
 url: https://claude.com/resources/articles/self-hosted-claude-managed-agents
 date: 2026-11-12

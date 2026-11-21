@@ -1881,6 +1881,52 @@ def repair_body_sha(root: Path, bodies: dict) -> dict:
     return {"added": added, "fixed": fixed, "checked": checked}
 
 
+def repair_body_titles(root: Path, rows: list) -> dict:
+    """把语料 frontmatter 的 `title` 对齐到索引行：中文文件→展示标题，英文→原文标题。
+
+    为什么需要它：落盘时 `title` 取的是 `fetch` 抽出来的**页面标题**，而页面标题不等于
+    文章标题 —— SPA 页面的 `<title>` 常是站点名（实测 `腾讯混元`、`Changelog`、`Blog`），
+    readability 也可能抓到小标题（`References`）或片段（`Introducing`）。规范
+    （corpus spec §3.2）要求「中文文件用 zh 展示标题、英文文件用原文标题」，两者都只在
+    `articles.json` 那一行里。
+
+    只改 `title:` 一行（缺则插在 frontmatter 第一行），正文与 `body_sha` 逐字保全；
+    幂等（第二次跑 `fixed == 0`）。英文文件缺 `original_title` 时**不动**：拿中文展示
+    标题去覆盖英文侧，等于把译文写成原文。
+    """
+    checked = fixed = 0
+    for r in rows:
+        vendor = (r.get("vendor") or "").strip()
+        url = (r.get("url") or "").strip()
+        if not vendor or not url:
+            continue
+        slug = url_hash(url)
+        want_zh = re.sub(r"\s+", " ", (r.get("title") or "")).strip()
+        want_en = re.sub(r"\s+", " ", (r.get("original_title") or "")).strip()
+        for rel, want in ((f"docs/articles/{vendor}/{slug}.md", want_zh),
+                          (f"docs/articles/{vendor}/{slug}.en.md", want_en)):
+            p = root / rel
+            if not want or not p.exists():
+                continue
+            checked += 1
+            try:
+                fm, _body = read_body_doc(p)
+            except (OSError, ValueError):
+                continue
+            if (fm.get("title") or "").strip() == want:
+                continue
+            lines = p.read_text(encoding="utf-8").split("\n")
+            close = _fm_close(lines)
+            at = [i for i in range(close) if lines[i].startswith("title:")]
+            if at:
+                lines[at[0]] = f"title: {want}"
+            else:
+                lines.insert(1, f"title: {want}")
+            p.write_text("\n".join(lines), encoding="utf-8", newline="\n")
+            fixed += 1
+    return {"checked": checked, "fixed": fixed}
+
+
 def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                  today: str, only_missing: bool = True, retry_unreadable: bool = False,
                  save: Callable[[dict], None] | None = None, flush_every: int = 20,
@@ -2098,7 +2144,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             zh_rel = f"docs/articles/{vendor}/{slug}.md"
             cap = _kept_captured(prev.get("zh_path") or "", ex["markdown"])
             zh_md = body.strip()
-            fm = {"vendor": vendor, "title": ex["title"] or r.get("title", ""),
+            fm = {"vendor": vendor, "title": r.get("title") or ex["title"],
                   "original_title": "", "url": norm, "date": ex["date"] or r.get("date", ""),
                   "lang": "zh", "captured": cap, "extractor": "readability-v1",
                   "translator": "native", "status": "translated",
@@ -2118,7 +2164,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 英文原文 / 抓取失败：写英文侧，保留已有的真实中文译文
         en_rel = f"docs/articles/{vendor}/{slug}.en.md"
         cap = _kept_captured(prev.get("en_path") or "", body)
-        fm = {"vendor": vendor, "title": ex["title"] or r.get("original_title") or r.get("title", ""),
+        fm = {"vendor": vendor, "title": r.get("original_title") or ex["title"] or r.get("title", ""),
               "original_title": r.get("original_title", ""), "url": norm,
               "date": ex["date"] or r.get("date", ""), "lang": "en", "captured": cap,
               "extractor": "readability-v1", "status": en_status,
