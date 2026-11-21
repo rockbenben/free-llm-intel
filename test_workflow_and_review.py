@@ -8217,6 +8217,39 @@ class TestSenseTimeNewsSource(unittest.TestCase):
         arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._page())
         self.assertTrue(arts, "没有 api 时仍走卡片解析")
 
+    def test_collection_keeps_model_and_quota_updates_from_both_sources(self):
+        api = self._api_page([
+            {"slug": "benchmark", "title": "SenseNova U1 Pro 获 Design Arena 双榜中国第一"},
+            {"slug": "app", "title": "商汤发布基于日日新的小浣熊金融版"},
+            {"slug": "quota", "title": "商汤 Token Plan 调整免费额度"},
+        ])
+        intel = crawler_llm_intel.VendorIntel(
+            "sensetime_sensenova", "商汤", self.URL, [],
+            news_pages=[self._page(), api])
+        crawler_llm_intel.collect_news_articles(intel, mock.Mock())
+        self.assertCountEqual(
+            [a.url.rsplit("/", 1)[-1] for a in intel.all_news_articles],
+            ["sensenova-loop-9b-20261118-1059", "quota"])
+        self.assertEqual(intel.news_articles, intel.all_news_articles)
+
+    def test_archive_merge_prunes_group_pr_and_keeps_verified_historical_updates(self):
+        intel = crawler_llm_intel.VendorIntel(
+            "sensetime_sensenova", "商汤", self.URL, [],
+            news_pages=[self._page(), self._api_page([])])
+        with tempfile.TemporaryDirectory() as tmp:
+            news_dir = Path(tmp)
+            archive = news_dir / "sensetime_sensenova.md"
+            archive.write_text(
+                f"1. [商汤科技获纳入MSCI中国指数]({self.URL}/stock)（2026-01-20）\n"
+                f"2. [空间智能再突破！联合创新研究]({self.URL}/51170214)（2025-11-20）\n"
+                f"3. [商汤大装置上架DeepSeek系列模型，限免体验]({self.URL}/51169337)（2025-02-10）\n",
+                encoding="utf-8")
+            crawler_llm_intel.write_news_archives(news_dir, [intel], clean_removed=False)
+            self.assertEqual(
+                [a.url for a in crawler_llm_intel.parse_archived_articles(archive)],
+                [f"{self.URL}/51170214", f"{self.URL}/51169337"])
+            self.assertEqual(archive.read_text(encoding="utf-8").count(f"]({self.URL})"), 1)
+
     def test_yaml_points_at_the_news_center_and_retires_sensecore(self):
         root = Path(__file__).resolve().parent
         _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")

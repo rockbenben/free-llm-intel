@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 17:16:15**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 21:47:45**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -238,12 +238,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-sensetime_sensenova.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-sensetime_sensenova.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [从大国外交现场到城市公共空间，商汤科技亮相APEC领导人会议周](https://www.sensetime.com/cn/news/sensetime-apec-leaders-week-20261120-1525)（2026-11-20）
-  2. [商汤小浣熊·金融版正式推出，深化AI在金融行业的场景化应用](https://www.sensetime.com/cn/news/sensetime-raccoon-finance-20261119-1522)（2026-11-19）
-  3. [SenseNova U1 Pro 获 Design Arena 双榜中国第一、全球第六](https://www.sensetime.com/cn/news/sensenova-u1-pro-design-arena-20261119-1414)（2026-11-19）
-  4. [商汤发布2026前三季度业务进展：收入增长加速、毛利率持续改善、全栈AI商业化提速](https://www.sensetime.com/cn/news/sensetime-flash-20261118-1821)（2026-11-18）
-  5. [科技赋能文博：南京博物院 × 商汤，在VR大空间打开《坤舆万国全图》](https://www.sensetime.com/cn/news/nanjing-museum-sensetime-vr-kunyu-map-20261118-1017)（2026-11-17）
-  - 📄 完整文章归档（共 307 篇）：[sensetime_sensenova.md](llm-news/sensetime_sensenova.md)
+  1. [SenseNova Loop-9B正式版：让更少的参数走更深的计算路径](https://www.sensetime.com/cn/news/sensenova-loop-9b-20261118-1059)（2026-11-17）
+  2. [SenseNova 6.8 Flash 正式版发布：办公更稳，设计更美](https://www.sensetime.com/cn/news/sensenova-6-8-flash-release-20261103-1421)（2026-11-02）
+  3. [商汤开源 SenseNova Loop-9B-Preview：探索以计算深度释放模型潜力](https://www.sensetime.com/cn/news/sensenova-loop-9b-preview-20261117-1750)（2026-10-29）
+  4. [商汤实测 GPT-6-Astra 并开源 SenseNova-RoboRSI：具身智能下一步怎么走？](https://www.sensetime.com/cn/news/gpt-6-astra-sensenova-roborsi-20261019-1513)（2026-10-18）
+  5. [“五彩斑斓的黑”也能直接出片，SenseNova U1 Pro正式版上线商汤小浣熊](https://www.sensetime.com/cn/news/sense-nova-u1-pro)（2026-09-21）
+  - 📄 完整文章归档（共 36 篇）：[sensetime_sensenova.md](llm-news/sensetime_sensenova.md)
 
 ### Meta Llama (meta_llama)
 - 页面：[官方博客](https://ai.meta.com/blog/)

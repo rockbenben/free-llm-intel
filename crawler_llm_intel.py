@@ -3069,6 +3069,46 @@ def _is_retired_news_url(url: str) -> bool:
     return any((url or "").startswith(p) for p in RETIRED_NEWS_URL_PREFIXES)
 
 
+_SENSENOVA_NEWS_HISTORY = {
+    "looped-mm-di-t-scaling",  # Looped MMDiT 技术博客
+    "sensenova-u1-infographics-20260917-1154",  # U1 信息图模型权重与训练代码
+    "sensenova-skills-office-ppt-20260917-1049",  # 开源 SenseNova-Skills
+    "51170548",  # NEO-unify 技术报告
+    "51170250",  # NEO 架构发布与开源
+    "51170214",  # Puffin 空间推理论文
+    "51169920",  # Claude API 迁移体验包
+    "51169448",  # 声网云市场新增 API 接入
+}
+_SENSENOVA_NEWS_PRODUCT = re.compile(r"SenseNova|日日新", re.I)
+_SENSENOVA_NEWS_UPDATE = re.compile(
+    r"开源|技术报告|技术博客|正式版|开放(?:体验|商用|测试)|公测|内测|"
+    r"全新升级|(?:增强|预览)版|"
+    r"(?:发布|推出|上架|上线|下架|退役|停服)\s*[「“]?(?:SenseNova|日日新)|"
+    r"(?:SenseNova|日日新)[^，。！？：；]{0,28}(?:发布|推出|上架|下架|退役|停服)|"
+    r"API.{0,16}(?:上线|接入|开放|更新|升级|下线|迁移)|"
+    r"免费(?:额度|体验|调用|版)|限(?:时免费|免)|计费|降价", re.I)
+_SENSENOVA_PLAN = re.compile(r"Token\s+Plan", re.I)
+_SENSENOVA_PLAN_UPDATE = re.compile(
+    r"开放|接入|上线|下线|新增|升级|再进化|调整|免费|限免|额度|计费|降价|停服")
+_SENSENOVA_FREE_MODELS = re.compile(
+    r"(?:商汤大装置|SenseCore).*(?:模型|DeepSeek|推理).*(?:免费|限免)", re.I)
+
+
+def _keeps_sensenova_news(title: str, url: str) -> bool:
+    """集团新闻中心混有公关稿，日日新流只收模型、技术和开发者服务更新。"""
+    parts = urlparse(url)
+    if (parts.hostname not in {"www.sensetime.com", "sensetime.com"}
+            or parts.fragment or not re.fullmatch(r"/cn/news/[^/]+/?", parts.path)):
+        return False
+    slug = parts.path.rstrip("/").rsplit("/", 1)[-1]
+    return bool(
+        slug in _SENSENOVA_NEWS_HISTORY
+        or (_SENSENOVA_NEWS_PRODUCT.search(title) and _SENSENOVA_NEWS_UPDATE.search(title))
+        or (_SENSENOVA_PLAN.search(title) and _SENSENOVA_PLAN_UPDATE.search(title))
+        or _SENSENOVA_FREE_MODELS.search(title)
+    )
+
+
 def collect_news_articles(intel: VendorIntel, session: requests.Session,
                           delay: float = 0.0,
                           timeout: tuple[float, float] = (8.0, 20.0)) -> None:
@@ -3183,6 +3223,9 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
                  or extract_articles_from_hunyuan(page)
                  or extract_articles_from_wordpress(page)
                  or extract_articles_from_site_page(page))
+
+    if intel.vendor_id == "sensetime_sensenova":
+        articles = [a for a in articles if _keeps_sensenova_news(a.title, a.url)]
 
     # 4) 同日去重：更新日志列表页里的日期锚点（如 DeepSeek /updates/#时间-2026-09-10）
     #    与对应新闻详情页（/news/<slug>）指向同一次发布时，保留详情页、丢弃锚点；
@@ -4452,20 +4495,24 @@ _SYNTHETIC_ANCHOR_RE = re.compile(r"^d-\d{4}-\d{2}-\d{2}-\d+$")
 ARCHIVE_DROP_SYNTHETIC_ANCHORS = {"meta_llama"}
 
 
-def _drops_news_article(vendor_id: str, url: str, *, in_archive: bool = False) -> bool:
-    """这条 URL 是否**不该**当成一篇文章的身份。
+def _drops_news_article(vendor_id: str, url: str, *, title: str = "",
+                        in_archive: bool = False) -> bool:
+    """按来源、条目身份和厂商收录范围排除文章。
 
-    两种情况：
+    排除情况：
       * 已退役新闻源的历史残留（见 `RETIRED_NEWS_URL_PREFIXES`）；
+      * 商汤集团新闻中心里超出日日新订阅范围的稿件；
       * `NEWS_CANONICAL_ONLY_VENDORS` 里由 changelog 式抽取给分节**现编**的
         `#d-<日期>-<n>` 锚点 —— 页面上不存在这个 id，点开只落到列表页顶部。
         真实页内锚不在此列。
 
-    `in_archive=True` 时再收紧一层（只对 `ARCHIVE_DROP_SYNTHETIC_ANCHORS` 生效）：
+    合成锚点规则在 `in_archive=True` 时只对 `ARCHIVE_DROP_SYNTHETIC_ANCHORS` 生效：
     归档要留唯一记录，订阅流只挑能读的，两个判据的代价不一样。
     """
     if _is_retired_news_url(url):
         return True
+    if vendor_id == "sensetime_sensenova":
+        return not _keeps_sensenova_news(title, url)
     if vendor_id not in NEWS_CANONICAL_ONLY_VENDORS:
         return False
     if in_archive and vendor_id not in ARCHIVE_DROP_SYNTHETIC_ANCHORS:
@@ -4499,7 +4546,7 @@ def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
         # 只丢**合成**锚点：`#d-<日期>-<n>` 是 changelog 式抽取给分节现编的 id，
         # 页面上并不存在，点开只会落到列表页顶部。真实页内锚（deepseek 的
         # `#时间-2026-10-17` 这类）是能点开的条目标识，不能连带丢掉。
-        if _drops_news_article(intel.vendor_id, a.url):
+        if _drops_news_article(intel.vendor_id, a.url, title=a.title):
             continue
         key = _title_key(a.title)
         prev = kept.get(key)
@@ -5778,18 +5825,17 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
     for intel in intel_list:
         arch_path = out_dir / f"{intel.vendor_id}.md"
         # 1) 增量合并既有归档：新抓取排前，历史已有且本次未抓到的条目追加在后
-        #    （只增不减：`_drops_news_article` 命中的除外 —— 退役源前缀 + 合成锚点）
+        #    （只增不减：`_drops_news_article` 命中的除外）
         existing = parse_archived_articles(arch_path)
         # 新抓的这一批里也可能带合成锚点（栏目卡片），归档同样不收：只挡历史行的话，
         # 每轮巡检都会把同一批栏目名再灌回来（meta 的 8 条就是这么反复长出来的）。
         merged_arts: list[Article] = [
             a for a in intel.all_news_articles
-            if not _drops_news_article(intel.vendor_id, a.url, in_archive=True)]
+            if not _drops_news_article(intel.vendor_id, a.url, title=a.title, in_archive=True)]
         by_url = {_article_key(a.url): a for a in merged_arts}
         old_urls = {_article_key(o.url) for o in existing}
         for old_art in existing:
-            # 退役源的历史条目、以及「不是一篇文章」的合成锚点，都不再保留
-            if _drops_news_article(intel.vendor_id, old_art.url, in_archive=True):
+            if _drops_news_article(intel.vendor_id, old_art.url, title=old_art.title, in_archive=True):
                 continue
             u_norm = _article_key(old_art.url)
             fresh = by_url.get(u_norm)
@@ -5882,12 +5928,15 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
         lines.append("")
         lines.append("## 订阅入口")
         lines.append("")
+        entry_lines: list[str] = []
         for page in intel.news_pages:
             label = type_label(page.stype)
             if page.stype == "feed":
-                lines.append(f"- 📡 RSS/Atom：[{label}]({page.final_url or page.url})")
+                entry_lines.append(f"- 📡 RSS/Atom：[{label}]({page.final_url or page.url})")
             else:
-                lines.append(f"- 页面：[{label}]({page.display_url or page.url})")
+                entry_lines.append(f"- 页面：[{label}]({page.display_url or page.url})")
+        # 分页接口共享列表页地址，归档只展示一次订阅入口。
+        lines.extend(dict.fromkeys(entry_lines))
         lines.append("")
         lines.append(f"## 全部文章（共 {len(arts)} 篇，按日期倒序；无日期条目列于最后）")
         lines.append("")
