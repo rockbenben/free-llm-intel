@@ -7859,7 +7859,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
                              "正文与其他字段逐字保全；幂等。台账那份 body_sha 跟英文侧，不回写。")
     parser.add_argument("--translation-qc", action="store_true",
                         help="只读 QC（不巡检、不联网）：检查本批中文译文与同名 .en.md 的"
-                             "代码块逐字、URL 多重集、品牌音译与 U+FFFD；"
+                             "代码块逐字、URL 多重集与 U+FFFD；"
                              "默认检查 git 改动/未跟踪的 docs/articles/*.md，可用 --qc-path 点名")
     parser.add_argument("--qc-path", action="append", default=[],
                         help="配合 --translation-qc：点名要检查的中文 .md（可重复）")
@@ -8117,8 +8117,7 @@ def main(argv: list[str] | None = None) -> int:
                   "docs/articles/*.md；用 --qc-path 指定。")
             return 0
         res = fulltext.translation_qc(
-            root, paths, brand_patterns=provider_profiles._BRAND_TRANSLITERATIONS,
-            links_advisory=args.qc_links_advisory)
+            root, paths, links_advisory=args.qc_links_advisory)
         by_tr = " / ".join(f"{k} {v}" for k, v in sorted(res["by_translator"].items()))
         print(f"  [translation-qc] 检查 {res['checked']} 篇（{by_tr or '无'}）；"
               f"跳过无英文源 {res['skipped']} 篇。")

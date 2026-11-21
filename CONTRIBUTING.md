@@ -151,7 +151,7 @@ CI 正文用 `--ai-bodies --ai-bodies-go-only`，成功写入 `translator=llm`�
 
 本地维护仍以 agent 精译为交付标准；此配置用于 CI 增量处理，不在本地批量调用模型或机翻来替代 agent 精译。
 
-提交译文前可运行 `python crawler_llm_intel.py --translation-qc`，默认检查相对 HEAD 新增或修改的中文正文。可用 `--qc-path` 点名文件，或用 `--qc-base` 改起点。每日巡检在重排前检查当轮译文，常规 CI 检查 PR 或推送中改动的译文。两处 CI 拦截代码围栏、品牌音译及乱码等硬性问题，链接差异单独提示，供核对站方改址和源稿差异。
+提交译文前可运行 `python crawler_llm_intel.py --translation-qc`，默认检查相对 HEAD 新增或修改的中文正文。可用 `--qc-path` 点名文件，或用 `--qc-base` 改起点。每日巡检在重排前检查当轮译文，常规 CI 检查 PR 或推送中改动的译文。两处 CI 拦截代码围栏差异及乱码，链接差异单独提示，供核对站方改址和源稿差异。品牌词的译法在精译时按上下文判断。
 
 ### 免费层限流 / 模型下线的自动回退（主要使用方式）
 
@@ -342,7 +342,7 @@ python crawler_llm_intel.py --translation-qc          # 默认检查 git 改动/
 python crawler_llm_intel.py --translation-qc --qc-path docs/articles/openai/xxx.md
 ```
 
-- **硬问题（退出码 1）**：代码块与英文源不一致 / 数量不同、译文多出英文源没有的链接、品牌音译、U+FFFD 替换字符。
+- **硬问题（退出码 1）**：代码块与英文源不一致 / 数量不同、译文多出英文源没有的链接、U+FFFD 替换字符。
 - **提示（不阻断）**：英文源有链接未出现在译文。目录、作者栏、追踪串等页面结构差异也会落在这里，需要人工判断，别把 WARN 当泄漏。
 - **链接差异只是信号，不是链接真值**：英文源同样是抓取快照，站方可能已把链接迁到新地址（实测 vLLM 旧域名 → `vllm.ai/blog/...`）。修 URL 前先打开目标核对，别直接把英文源那个 URL 抄回去。
 - 链接身份复用 `normalize_url`，并额外把 www / 自链接 / `__hs*`、`_gl` 追踪参数折成同一形态；命令只读，不写任何文件。

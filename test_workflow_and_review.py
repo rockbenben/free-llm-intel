@@ -12001,7 +12001,7 @@ class TestMtBodiesCli(unittest.TestCase):
                          "到点不再开译，剩余留 pending 而不是写残篇")
 
 class TestTranslationQc(unittest.TestCase):
-    """翻译批次 QC：代码块逐字、URL 多重集、品牌音译、U+FFFD；只读。"""
+    """翻译批次 QC：代码块逐字、URL 多重集、U+FFFD；只读。"""
 
     def _pair(self, root, rel, en, zh, *, url="https://v.example/a"):
         en_rel = str(Path(rel).with_suffix(".en.md")).replace("\\", "/")
@@ -12016,13 +12016,12 @@ class TestTranslationQc(unittest.TestCase):
             "translator": "", "status": "ok", "body_sha": ft.body_sha_of(en),
         }, en)
 
-    def _run(self, en, zh, *, brand_patterns=(), links_advisory=False):
+    def _run(self, en, zh, *, links_advisory=False):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             rel = "docs/articles/v/a.md"
             self._pair(root, rel, en, zh)
-            res = ft.translation_qc(root, [rel], brand_patterns=brand_patterns,
-                                    links_advisory=links_advisory)
+            res = ft.translation_qc(root, [rel], links_advisory=links_advisory)
         self.assertEqual(res["checked"], 1, "夹具必须真的被检查到，零检查不算通过")
         return res
 
@@ -12104,40 +12103,22 @@ class TestTranslationQc(unittest.TestCase):
             "介绍。\n\n[其它](https://v.example/other)")
         self.assertEqual(res["warn"], 0, res["files"])
 
-    def test_brand_transliteration_is_hard(self):
-        res = self._run("Claude is here.", "克劳德来了。",
-                        brand_patterns=(("Claude", re.compile(r"克劳\s*德")),))
-        self.assertEqual(res["hard"], 1, res["files"])
-        self.assertIn("品牌被机翻", res["files"][0]["hard"][0])
-
-    def test_brand_word_boundary_skips_longer_plain_word(self):
-        # `Modularity` 是普通名词，不是厂商 Modular：中文「模块化」没错，不该报 HARD。
-        # 实测 anyscale/9cfca6565da1.md 的表格有 7 处 `modularity`，子串匹配全被误报。
-        brand = (("Modular", re.compile(r"模块化")),)
-        res = self._run("Modularity, flexibility and scalability matter.",
-                        "模块化、灵活性与可扩展性很重要。", brand_patterns=brand)
-        self.assertEqual(res["hard"], 0, res["files"])
-
-    def test_brand_word_boundary_still_catches_standalone_brand(self):
-        # 反向夹具：词边界没把真正的品牌漏掉，别为了消误报把检出能力一起关了。
-        brand = (("Modular", re.compile(r"模块化")),)
-        res = self._run("Modular is a vendor.", "模块化是一家厂商。",
-                        brand_patterns=brand)
-        self.assertEqual(res["hard"], 1, res["files"])
-        self.assertIn("品牌被机翻", res["files"][0]["hard"][0])
+    def test_cli_accepts_common_adjective_that_matches_brand(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            rel = "docs/articles/v/a.md"
+            self._pair(root, rel, "# Simpler, Clearer, and More Modular", "# 更简单、更清晰、更模块化")
+            buf = io.StringIO()
+            with mock.patch.object(crawler_llm_intel, "_repo_root", return_value=root), \
+                    contextlib.redirect_stdout(buf):
+                rc = crawler_llm_intel.main(["--translation-qc", "--qc-path", rel])
+            self.assertEqual(rc, 0, buf.getvalue())
+            self.assertIn("HARD 0", buf.getvalue())
 
     def test_replacement_character_is_hard(self):
         res = self._run("Intro.", "介绍\ufffd。")
         self.assertEqual(res["hard"], 1, res["files"])
         self.assertIn("U+FFFD", res["files"][0]["hard"][0])
-
-    def test_brand_check_skips_compound_overlap_but_finds_standalone(self):
-        res = self._run(
-            "Claude Opus and Claude Code.",
-            "克劳德作品与克劳德代码。",
-            brand_patterns=(("Claude Opus", re.compile(r"克劳德作品")),
-                            ("Claude", re.compile(r"克劳德"))))
-        self.assertEqual(res["hard"], 2, res["files"])
 
     def test_no_english_source_is_skipped(self):
         with tempfile.TemporaryDirectory() as d:

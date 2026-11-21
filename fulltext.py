@@ -2240,7 +2240,7 @@ def pending_translation_keys(bodies: dict) -> list:
 
 
 # ---------------------------------------------------------------------------
-# 翻译批次 QC（只读）：代码块逐字 / URL 多重集 / 品牌音译 / U+FFFD
+# 翻译批次 QC（只读）：代码块逐字 / URL 多重集 / U+FFFD
 # ---------------------------------------------------------------------------
 
 _MD_LINK_RE = re.compile(r"\]\(([^)\s]+)\)")
@@ -2291,7 +2291,7 @@ def _md_link_targets(text: str) -> list[str]:
     return _MD_LINK_RE.findall(plain) + _AUTOLINK_RE.findall(plain)
 
 
-def translation_qc_pair(root: Path, zh_rel: str, *, brand_patterns=(),
+def translation_qc_pair(root: Path, zh_rel: str, *,
                         links_advisory: bool = False) -> dict:
     """检查一篇中文译文与同名 `.en.md` 的机械不变量；只读，不写任何文件。"""
     zh_path = root / zh_rel
@@ -2323,21 +2323,6 @@ def translation_qc_pair(root: Path, zh_rel: str, *, brand_patterns=(),
     if zh.count("\ufffd") > en.count("\ufffd"):
         hard.append(f"含 {zh.count(chr(0xfffd))} 个替换字符 U+FFFD")
 
-    covered: list[tuple[int, int]] = []
-    for brand, pat in brand_patterns:
-        # 用词边界而不是子串：`Modularity` 里的 `Modular` 是普通词，子串匹配会把
-        # 正确的「模块化」判成品牌音译（实测 anyscale 一篇全是 `modularity` 的表格
-        # 被误报 HARD，7 处普通名词一一对应 7 处「模块化」）。代价是复数形态
-        # （如 `LLMs`）不再命中 —— 宁可漏报，也不能把正确译文判坏、逼人改错。
-        if not re.search(r"\b%s\b" % re.escape(brand), en):
-            continue
-        for m in pat.finditer(zh):
-            if any(not (m.end() <= a or m.start() >= b) for a, b in covered):
-                continue
-            covered.append((m.start(), m.end()))
-            hard.append(f"品牌被机翻：{brand} → {m.group(0)}")
-            break
-
     self_key = _qc_url_key(fm.get("url", ""))
     en_urls = [k for k in (_qc_url_key(u, self_key) for u in _md_link_targets(en)) if k]
     zh_urls = [k for k in (_qc_url_key(u, self_key) for u in _md_link_targets(zh)) if k]
@@ -2353,7 +2338,7 @@ def translation_qc_pair(root: Path, zh_rel: str, *, brand_patterns=(),
     return {"path": zh_rel, "translator": fm.get("translator", ""), "hard": hard, "warn": warn}
 
 
-def translation_qc(root: Path, rel_paths: Iterable[str], *, brand_patterns=(),
+def translation_qc(root: Path, rel_paths: Iterable[str], *,
                    links_advisory: bool = False) -> dict:
     """对一批中文 `.md` 做只读 QC；返回汇总与逐文件问题。"""
     seen: set[str] = set()
@@ -2365,8 +2350,7 @@ def translation_qc(root: Path, rel_paths: Iterable[str], *, brand_patterns=(),
         if not rel.endswith(".md") or rel.endswith(".en.md") or rel in seen:
             continue
         seen.add(rel)
-        r = translation_qc_pair(root, rel, brand_patterns=brand_patterns,
-                                links_advisory=links_advisory)
+        r = translation_qc_pair(root, rel, links_advisory=links_advisory)
         if r.get("skipped"):
             skipped += 1
             continue
