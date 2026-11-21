@@ -5,20 +5,21 @@ original_title:
 url: https://huggingface.co/blog/moe-expert-streaming
 date: 2026-11-18
 lang: zh
-captured: 2026-11-20
+captured: 2026-11-21
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: c8683b37374e
+body_sha: 46f18637d16e
 ---
 
 [ 返回文章](https://huggingface.co/blog)
 
-# 180B 参数，32GB RAM：利用 Transformers 将 MoE 推理推向极限
+# 180B 参数，32GB 内存：用 Transformers 把 MoE 推理逼到极限
 
-发表于 2026 年 11 月 18 日
+发布于 2026 年 11 月 18 日
 
-GitHub 上更新
+在 GitHub 上更新
+
 
 14
 
@@ -29,81 +30,84 @@ GitHub 上更新
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FZm4zYHMsgadLGM1bIAJq.png)](https://huggingface.co/dboglou)
 
-[![塔里克·齐亚德的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png)](https://huggingface.co/tarekziade)
+[![Tarek Ziadé 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png)](https://huggingface.co/tarekziade)
 
-塔里克·齐亚德
+Tarek Ziadé
 
-塔雷克齐亚德
+tarekziade
 
-*直接来自 SSD 的流媒体 MoE 专家在代币生成方面与 Strata 的差距在 6% 以内。*
+*把 MoE 专家直接从 SSD 流式读取，token 生成速度与 Strata 相差不到 6%。*
 
-我一直在尝试减少对在线模型的依赖，并在本地运行更大的模型。家里我有一台配有两台 RTX 4090 的 PC（我们称之为 **Orthrus** - 希腊神话中的双头猎犬），工作时我有一台配备 32G 统一内存的 MacBook M5。
+我一直想少用在线模型、在本地跑更大的模型。家里是台双 RTX 4090 的 PC（就叫它 **Orthrus**，希腊神话里的双头犬），工作用一台 32G 统一内存的 MacBook M5。
 
-Orthrus 在 Windows 11 上运行，因为我的孩子一直在玩游戏。我使用 Ubuntu 进行双启动，但他们的游戏最终占用了 2 TB 磁盘的大部分。
+Orthrus 跑 Windows 11，因为孩子总在打游戏。原本的 Ubuntu 双系统，两块 TB 的盘被游戏占掉大半。
 
-我也是 RMD（房间移动开发）的忠实粉丝：在厨房喝咖啡一小时，在办公桌前呆两个小时，然后在沙发上。固定的台式塔不适合我。
+我也是 RMD（rooms moving development，换房间开发）的拥趸：厨房喝一小时咖啡，办公桌坐两小时，再换到沙发。固定台式机箱不适合我。
 
-我的第一个实验是在 Orthrus 上运行 [Qwen 3.8 27B](https://huggingface.co/Qwen/Qwen3.8-27B) 和 [`llama.app`](https://llama.app/)，并通过 [`pi`](https://pi.dev/) 从我的笔记本电脑使用它。该模型执行编码任务，Opus 等在线模型负责编排，第二个 RTX 运行 FIM 模型以在 Neovim 中自动完成。
+第一个实验是在 Orthrus 上用 [`llama.app`](https://llama.app/) 跑 [Qwen 3.8 27B](https://huggingface.co/Qwen/Qwen3.8-27B)，再从笔记本通过 [`pi`](https://pi.dev/) 用它。模型写代码，Opus 这类在线模型负责编排，第二块 RTX 跑 FIM 模型，给 Neovim 做补全。
 
-当我在社交网络上谈论这个问题时，我得到了非常强烈的反馈：将 [Strata](https://github.com/niko1221/strata) 与 [Qwen3.8-Flash-Next](https://huggingface.co/Qwen/Qwen3.8-Flash-Next) 一起使用。
+我把这套东西发到社交网络，反馈很强烈：用 [Qwen3.8-Flash-Next](https://huggingface.co/Qwen/Qwen3.8-Flash-Next) 配 [Strata](https://github.com/niko1221/strata)。
 
-## 什么是分层？
+## 什么是 Strata？
 
-Strata 是 Qwen 等 MoE 模型的推理引擎。只有热门专家保留在 VRAM 中，其余的进入 RAM，甚至磁盘。专家占 MoE 模型权重的 90% 以上，因此像这样的 180B 模型可以在内存少得多的 GPU 上运行。就像我的 RTX 4090！
+Strata 是面向 Qwen 这类 MoE 模型的推理引擎。只有热专家留在 VRAM，其余放到 RAM 甚至磁盘。专家占 MoE 权重的 90% 以上，所以这个 180B 模型也能跑在显存小得多的 GPU 上，比如我的 RTX 4090！
 
-它也适用于笔记本电脑，我偶然发现 [这篇博文](https://modelfit.io/blog/strata-qwen38-flash-next-mac/) 正是这样做的：Qwen3.8-Flash-Next 在 32 GB Mac M4 上，比 [llama.cpp](https://github.com/ggml-org/llama.cpp) 更快，速度为 13.5 tok/s。
+笔记本上同样可行：[这篇博文](https://modelfit.io/blog/strata-qwen38-flash-next-mac/)做的就是这件事——Qwen3.8-Flash-Next 在 32 GB Mac M4 上比 [llama.cpp](https://github.com/ggml-org/llama.cpp) 更快，13.5 tok/s。
 
-对于我使用编码代理的方式来说，这太慢了，但这是一个有趣的渴望。所有 MoE 型号都不适合 MacBook 的统一内存，并且可以以不错的速度运行。
+按我使用编码 agent 的方式，这太慢了，但确实值得一挠。一批 MoE 模型装不进 MacBook 的统一内存，本可以跑到不错的速度。
 
-## 其他引擎如何卸载？
+## 其他引擎是怎么卸载的？
 
-在致力于 Strata 之前，我研究了当 MoE 模型不适合时 llama.cpp、[vLLM](https://github.com/vllm-project/vllm) 和 [Transformers](https://github.com/huggingface/transformers) 会做什么。三个问题很重要：专家住在哪里，专家 matmul 在哪里运行，以及每个代币发生了什么变化？
+决定用 Strata 之前，我先看 MoE 模型装不下时 llama.cpp、[vLLM](https://github.com/vllm-project/vllm) 和 [Transformers](https://github.com/huggingface/transformers) 怎么做。三点最关键：专家放在哪、matmul 在哪算、每个 token 搬什么。
 
-**llama.cpp** 将 GGUF 文件与 `mmap` 进行映射，并且可以将专家保留在 CPU 上（`--cpu-moe`、`--n-cpu-moe N`、`-ot "exps=CPU"` 或 `--fit on` 供您选择）。这些专家也在 CPU 上“计算”，因此只有跨 PCIe 的激活，而不是权重。当专家适合 RAM 时就很好了。如果不这样做，页面缓存就会崩溃。 GPU 专家缓存 (`--moe-cache-mib`) 刚刚落地，但它使图表碎片化（每个令牌 2 个分割变成 50 个），即使一切都合适，也会损失约 10%。
+**llama.cpp** 用 `mmap` 映射 GGUF，可把专家留在 CPU 上（`--cpu-moe`、`--n-cpu-moe N`、`-ot "exps=CPU"`，或用 `--fit on` 让它自己挑），并且就在 CPU 上*计算*：跨 PCIe 的只有激活值，权重从不过线。装得进 RAM 时很好用；装不下，page cache 就会抖动。GPU 专家缓存（`--moe-cache-mib`）刚落地，但会把计算图切碎（每个 token 的 split 从 2 个变成 50 个），即使全装得下也损失约 10%。
 
-**vLLM** 的 `--cpu-offload-gb N` 将 N GB 权重放入固定 RAM 中，内核通过 PCIe 读取它们。对于 MoE 层，这只是路由的专家，但不会缓存任何内容：热门专家在每个令牌上再次跨越 PCIe，并且没有磁盘层。默认情况下，卸载的权重包括密集层，读取每个令牌； `--cpu-offload-params experts` 将其保留给专家。这适合 vLLM 的大批量，无论如何，它几乎涉及每一位专家，更不用说一个用户使用一个 GPU。
+**vLLM** 的 `--cpu-offload-gb N` 把 N GB 权重放进 pinned RAM，kernel 经 PCIe 就地读。MoE 层里只有被路由到的专家，且无缓存：热专家每个 token 都要再过一次 PCIe，也没有磁盘层。默认卸载还包含 dense 层，每个 token 都读；`--cpu-offload-params experts` 可收窄到专家。这契合 vLLM 的大 batch：大批次几乎碰到每个专家，一个用户一块 GPU 就不合适。
 
-**Transformers** 通过 [Accelerate](https://github.com/huggingface/accelerate)（`device_map="auto"`、`offload_folder`）卸载，一次一个*模块*：钩子在 `forward` 之前将其权重复制到 GPU。对于 MoE 来说，该模块是一层的整个专家库，因此每个代币都会复制每个卸载层的每个专家以使用其中的 8 个或 10 个专家。没有缓存，没有路由的概念。在 Mac 上，CPU 和 GPU 共享相同的内存，因此“卸载到 CPU”不会释放任何内容。
+**Transformers** 通过 [Accelerate](https://github.com/huggingface/accelerate)（`device_map="auto"`、`offload_folder`）卸载，一次一个*模块*：hook 在 `forward` 前把权重复制到 GPU。MoE 的这个模块是一层整个专家库，于是每个 token 都要复制每个被卸载层的所有专家，只用其中 8 个或 10 个。没有缓存，也没有路由的概念。Mac 上 CPU 与 GPU 共用内存，「卸载到 CPU」并不释放空间。
 
-我在一台具有充足 RAM 的 A10G (24 GB) 上的 [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) 上运行了所有这些程序，Harry Mellor 则使用更好的标志重新运行了 vLLM：
+我在一块 A10G（24 GB）、RAM 充足，用 [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) 跑遍这些引擎；Harry Mellor 又用更好的参数重跑了 vLLM：
 
-|发动机|解码（tok/s）|
+| 引擎 | 解码（tok/s） |
 | --- | --- |
-|地层，Q8_0 | 82 - 88 | 82 - 88
-| llama.cpp，Q8_0，`--fit on` | 63 - 64 | 63 - 64
-| llama.cpp、BF16、`--fit on` | 35 - 36 | 35 - 36
-| vLLM、FP8、`--cpu-offload-gb 16 --cpu-offload-params experts` | 20.1 | 20.1
-| vLLM，FP8，相同的标志，`--enforce-eager` | 14.7 | 14.7
-| vLLM、FP8、`--cpu-offload-gb 16` | 9.7 | 9.7
-| vLLM，BF16，`--cpu-offload-gb 50 --cpu-offload-params experts` | 7.3 | 7.3
+| Strata，Q8_0 | 82 - 88 |
+| llama.cpp，Q8_0，`--fit on` | 63 - 64 |
+| llama.cpp，BF16，`--fit on` | 35 - 36 |
+| vLLM，FP8，`--cpu-offload-gb 16 --cpu-offload-params experts` | 20.1 |
+| vLLM，FP8，同参数，`--enforce-eager` | 14.7 |
+| vLLM，FP8，`--cpu-offload-gb 16` | 9.7 |
+| vLLM，BF16，`--cpu-offload-gb 50 --cpu-offload-params experts` | 7.3 |
 | vLLM，BF16，`--cpu-offload-gb 50` | 3.3 |
-|变形金刚+加速| 0.16 | 0.16
+| Transformers + Accelerate | 0.16 |
 
-仅卸载专家可以使 vLLM 的速度加倍，而 FP8 可以提供帮助（每个专家一半的字节，GPU 上的模型更多）。 vLLM 的另一个卸载后端会提前复制层组，运行速度低于 1 tok/s。
+只卸载专家，vLLM 速度翻倍，再叠 FP8 更好（每个专家字节数减半，更多模型进 GPU）。vLLM 另一个卸载后端提前成组复制层，跑下来不到 1 tok/s。
 
-如果专家能够适应 RAM，那么 llama.cpp 就很难被击败。如果没有，您必须通过有界缓存仅传输路由器选择的内容，速度足够快，以至于 SSD 成为瓶颈，而不是 Python，理想情况下重用模型的快速专家内核。这是 32 GB Mac 上的 Qwen3.8-Flash-Next，而 Transformers 无法开箱即用。
+专家装得进 RAM，llama.cpp 很难被击败。装不进，只能流式读取 router 选中的部分，过一层有界缓存，快到瓶颈落在 SSD 而非 Python，最好还能复用模型自带的快速专家 kernel。这正是 32 GB Mac 上跑 Qwen3.8-Flash-Next 要解决的问题，Transformers 开箱做不到。
 
-## 使用 Transformers 让 Qwen3.8-Flash-Next 在我的 32 GB Mac 上运行
+## 用 Transformers 让 Qwen3.8-Flash-Next 跑在我的 32 GB Mac 上
 
-Strata 在笔记本电脑上对我来说已经太慢了，变形金刚不会很快打败它。但加速路径还很遥远，我想尝试修复变形金刚本身的卸载问题，以笔记本电脑上的大型模型为目标，因为我知道它对于我的工作方式来说可能会太慢。
+Strata 在笔记本上对我已经太慢，Transformers 短期也超不过它。但 Accelerate 那条路差得太远，我干脆动手修 Transformers 的卸载机制，目标就是笔记本上这个大模型，心里清楚它大概还是慢到不合我的用法。
 
-所有代码都是用 AI 构建的：Transformers PR、特定于模型的包和 Metal 内核。我的职责是选择尝试什么、阅读资料并决定保留什么。一切都在一个空间中：[tarekziade/moe-expert-streaming](https://huggingface.co/spaces/tarekziade/moe-expert-streaming)。
+代码全是 AI 写的：Transformers 的 PR、模型专用包、Metal kernel。我只负责决定试什么、读 profile、判断留什么。全部在一个 Space 里：[tarekziade/moe-expert-streaming](https://huggingface.co/spaces/tarekziade/moe-expert-streaming)。
 
-###从小事做起
+### 从小处开始
 
-我从 [OLMoE-1B-7B](https://huggingface.co/allenai/OLMoE-1B-7B-0924) 开始，它适合内存，因此我可以将每个标记与普通变形金刚进行比较。
+我从 [OLMoE-1B-7B](https://huggingface.co/allenai/OLMoE-1B-7B-0924) 起步，它能完全装进内存，这样就能拿每个 token 与原生 Transformers 对比。
 
-第一个版本：磁盘上的专家、设备上的 LRU 缓存以及一次运行一个专家的 Python 循环。每个专家都已缓存，它的速度为 10.1 tok/s。香草做了〜32。 I/O 很好，我的循环则不然：vanilla 使用 `grouped_mm`，它在一个内核中运行一层的所有专家。
+第一版：专家放磁盘，设备上放 LRU 缓存，Python 循环一次跑一个。全部缓存后跑到 10.1 tok/s，原生约 32。I/O 没问题，问题在循环：原生用 `grouped_mm`，一个 kernel 跑完一层所有专家。
 
-该修复以及该项目的关键思想是将缓存转变为**槽池**：一个由所有层共享的预分配设备张量，以及从专家 ID 到槽的每层表。将路由器的专家 ID 重新映射到插槽，池看起来就像一个常规的专家库，因此 `grouped_mm` 按原样在其上运行。无需定制专家 matmul。这使其达到 34.6 tok/s，而普通版本为 38.1 tok/s。
+解决办法、也是项目的核心思路，是把缓存变成**槽位池（slot pool）**：一块所有层共享的预分配设备张量，加每层一张 expert id 到槽位的表。把 router 的 expert id 重映射到槽位，池子看起来就跟普通专家库一样，`grouped_mm` 能原样运行，不必自己写专家 matmul。这一步推到 34.6 tok/s，原生 38.1。
 
 ### `experts_offload`
 
-然后我将独立加载程序变成了 `from_pretrained` 的一个选项，在 [huggingface/transformers#50717](https://github.com/huggingface/transformers/pull/50717) 中。要尝试它，请从该 PR 安装 Transformers：
+随后我把独立加载器做成 `from_pretrained` 的一个选项，提交在 [huggingface/transformers#50717](https://github.com/huggingface/transformers/pull/50717)。试的话从那个 PR 安装：
+
 ```
 pip install "git+https://github.com/huggingface/transformers.git@refs/pull/50717/head"
 ```
-然后，从 OLMoE 转向真正的目标 Qwen3.8-Flash-Next：
+
+再把目标从 OLMoE 换成真正的对象 Qwen3.8-Flash-Next：
+
 ```
 path = snapshot_download("tarekziade/Qwen3.8-Flash-Next-expert-streaming")
 
@@ -118,86 +122,87 @@ model = AutoModelForCausalLM.from_pretrained(
     },
 )
 ```
-[该存储库](https://huggingface.co/tarekziade/Qwen3.8-Flash-Next-expert-streaming) 保存项目的[转换脚本](https://github.com/tarekziade/moe-expert-streaming#readme) 的输出：密集权重、量化为 3 位的专家以及 n 元语法表。
 
-映射到 `"disk"` 的专家通过流路径而不是 Accelerate 的卸载：加载器跳过它们的张量，MoE 层切换到卸载的实现。未命中由 8 个 I/O 线程读取，每个专家一次连续读取。接下来两层的路由器会尽早在当前隐藏状态上运行，以猜测要预取哪些专家。专家可以离线量化，因此读取量更小。它适用于具有标准专家布局的 MoE 模型。
+[那个仓库](https://huggingface.co/tarekziade/Qwen3.8-Flash-Next-expert-streaming) 存放项目[转换脚本](https://github.com/tarekziade/moe-expert-streaming#readme)的产物：dense 权重、量化到 3 bit 的专家，以及 n-gram 表。
 
-该 API 仍在与 Transformers 维护人员讨论。 `device_map` 形式由此而来，量化专家可能会执行 [#50245](https://github.com/huggingface/transformers/pull/50245) 的每层量化计划，而不是他们自己的选择。
+映射到 `"disk"` 的专家走流式路径而非 Accelerate 卸载：加载器跳过它们的张量，MoE 层切到卸载实现。未命中由 8 个 I/O 线程读取，每个专家一次连续读。接下来两层的 router 会基于当前 hidden state 提前跑，猜该预取哪些专家。专家可离线量化，让读取更小。机制适用于标准专家布局的 MoE 模型。
 
-### 在 32 GB Mac 上运行 121 GB Expert
+这个 API 还在和 Transformers 维护者讨论。`device_map` 的写法就是讨论的结果；量化专家之后大概率走 [#50245](https://github.com/huggingface/transformers/pull/50245) 的逐层量化方案，而不是单独开选项。
 
-Qwen3.8-Flash-Next 有 48 层，共 512 个专家（10 个活动），FP8 中有 121 GB。流式传输它们还不够：还有一个 51 GB n-gram 嵌入表需要自己的磁盘路径。所以：
+### 在一台 32 GB 的 Mac 上跑 121 GB 专家
 
-- 专家量化为 3 位：磁盘上 49 GB，设备上缓存 12 GiB
-- 8 位密集层（~5.4 GB，与 BF16 相比 +0.2% 困惑度）
-- n-gram 表保留在磁盘上，需要时读取行
+Qwen3.8-Flash-Next 有 48 层、每层 512 个专家（激活 10 个），FP8 下共 121 GB。光流式读还不够：还有一张 51 GB 的 n-gram embedding 表要单独走磁盘。所以：
 
-转换大约需要 5 小时。加载后，它使用约 18 GiB，6K 提示峰值为 25.4 GiB。这就是限制：我必须关闭浏览器，否则 macOS 就会开始交换。
+- 专家量化到 3 bit：磁盘上 49 GB，设备上缓存 12 GiB
+- dense 层用 8 bit（约 5.4 GB，相比 BF16 困惑度 +0.2%）
+- n-gram 表留在磁盘，用到哪行读哪行
 
-特定于模型的位（n-gram 表、Metal 内核）位于 PR 顶部的一个小包 [moe-expert-streaming](https://github.com/tarekziade/moe-expert-streaming) 中。第一个版本的运行速度约为 10 tok/s。
+转换约需 5 小时。加载后占约 18 GiB，6K prompt 峰值 25.4 GiB。这差不多是极限：我得关掉浏览器，否则 macOS 开始 swap。
 
-然后我在同一个M5上安装了Strata，同样的提示：
+模型专用部分（n-gram 表、Metal kernel）放在小包 [moe-expert-streaming](https://github.com/tarekziade/moe-expert-streaming) 里，叠在那个 PR 之上。第一版约 10 tok/s。
 
-|  |变形金刚|地层 |差距|
+然后我在同一台 M5 上装了 Strata，用同样的 prompt：
+
+|  | Transformers | Strata | 差距 |
 | --- | --- | --- | --- |
-|解码，200 个代币 | 10.0 托克/秒 | 14.8 | 14.8 1.5 倍 |
-|预填充，4K 提示 | 68 托克/秒 | 220 | 220 3.2 倍 |
-| 6K文档后解码 | 7.3 托克/秒 | 13.7 | 13.7 1.9 倍 |
+| 解码，200 token | 10.0 tok/s | 14.8 | 1.5x |
+| Prefill，4K prompt | 68 tok/s | 220 | 3.2x |
+| 解码，6K 文档之后 | 7.3 tok/s | 13.7 | 1.9x |
 
-Strata 0.1.60 使用了 IQ3_XXS 专家。两者都运行贪婪，思考、MTP 和投机草案以及 1,024 个代币预填充块。完整的设置和原始结果位于空间的[详细信息页面](https://tarekziade-moe-expert-streaming.static.hf.space/details.html)。
+Strata 0.1.60 用 IQ3_XXS 专家。两边都跑 greedy，关掉 thinking、MTP 和投机草稿，prefill 块 1,024 token。完整配置与原始结果在 Space 的[详情页](https://tarekziade-moe-expert-streaming.static.hf.space/details.html)。
 
-我还尝试了 [vllm-metal](https://github.com/vllm-project/vllm-metal)，通过 MLX 在 Apple GPU 上进行 vLLM，最近得到了专家的卸载。它通过有界缓存从 MLX 检查点传输路由专家，就像这个项目一样。但由于上述 n-gram 原因，它无法在 32 GB 上运行 Qwen3.8-Flash-Next：仅对专家进行流式传输，并且 n-gram 表保留在内存中。在 Hub 上的 MLX 检查点中，这是 32 GB，在大约 5 GB 的密集层和任何专家缓存之前。
+我还试了 [vllm-metal](https://github.com/vllm-project/vllm-metal)，即通过 MLX 在 Apple GPU 上跑 vLLM，最近刚支持专家卸载。它同样从小型有界缓存流式读取被路由的专家，思路一致。但它在 32 GB 上跑不了 Qwen3.8-Flash-Next：只有专家被流式化，n-gram 表仍在内存，光 Hub 上 MLX checkpoint 里这部分就占 32 GB，还没算约 5 GB 的 dense 层和专家缓存。
 
 ## 缩小差距
 
-大部分时间没有花在专家身上。以下是有帮助的：
+大部分时间并不是花在专家上。起作用的是这些：
 
-- **尽早提交 GPU 工作。** MPS 上的 [PyTorch](https://github.com/pytorch/pytorch) 保留小内核，直到下一次同步，因此 GPU 在 Python 工作时空闲。在每个块之后强制提交会增加 10%。这确实应该在 PyTorch 中修复。
-- **金属内核**，适用于 macOS 上没有快速路径的部分：门控 DeltaNet 和超连接。
-- **Strata 自己的权重。** 我切换到 [Strata 的 GGUF 权重](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)，将每个令牌的密集权重流量从 5.4 GB 减少到 3.9 GB，将单个专家大小从 2.15 MB 减少到 1.75 MB，每个专家大小都有一个单独的缓存池。
-- **预填充**，我们使用更大的块从 68 tok/s 提高到约 228 tok/s，并在计算当前层时读取下一层的专家。
-- **长文档**：仅关注索引器选定的块，以及就地增长而不是在每个令牌处复制的 KV 缓存。
-- **未命中**：Strata 不会隐藏它们，它像我一样等待，并且没有缓存策略比 LRU 性能好得多。有用的是每层只读取一位猜测的专家，否则 SSD 就会闲置。
+- **尽早提交 GPU 工作。** MPS 上的 [PyTorch](https://github.com/pytorch/pytorch) 会把小 kernel 攒到下次 sync 才发，Python 干活时 GPU 空转。每算完一个 block 就强制 commit，提升 10%。这本来就该在 PyTorch 里修掉。
+- 给 macOS 上没有快速路径的部分写 **Metal kernel**：Gated DeltaNet 和 hyper-connections。
+- **换用 Strata 自己的权重。** 我切到 [Strata 的 GGUF 权重](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)，每个 token 的 dense 权重流量从 5.4 GB 降到 3.9 GB，单个专家从 2.15 MB 降到 1.75 MB，并按专家大小各配缓存池。
+- **Prefill** 从 68 提到约 228 tok/s，靠更大的块，以及在算当前层时读下一层的专家。
+- **长文档**：attention 只算 indexer 选中的 block，KV cache 原地增长，而不是每个 token 复制一次。
+- **未命中**：Strata 不藏它，它和我一样等，也没什么策略明显强过 LRU。有用的是每层多读一个猜出来的专家，反正这时 SSD 本来闲着。
 
-这是一个代币的一个 MoE 层，它现在正在运行：
+下面是一个 token 经过一个 MoE 层时现在的样子：
 
-[！[对于一层和一个令牌，路由器会从 512 个专家中选择 10 个。八个已经在专家缓存中，两个从 SSD 读取到空闲缓存插槽中。然后，专家从缓存槽在 GPU 上运行，而 SSD 为下一层读取一个猜测的专家，该专家仅在使用时才进入缓存。](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe-expert-streaming/expert-streaming.svg)](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe-expert-streaming/expert-streaming.svg)
+[![一层一个 token：router 从 512 个专家里选出 10 个。其中 8 个已在专家缓存中，2 个正从 SSD 读入空闲的缓存槽位。随后专家从缓存槽位在 GPU 上执行，同时 SSD 为下一层读取一个猜测的专家，该专家只有被用到才会进入缓存。](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe-expert-streaming/expert-streaming.svg)](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe-expert-streaming/expert-streaming.svg)
 
-以下是在相同的 M5 上进行这些优化后的最终结果，并具有相同的提示：
+这些是做完上述优化后，在同一台 M5、同样 prompt 下的最终结果：
 
-|  |变形金刚|地层 |差距|
+|  | Transformers | Strata | 差距 |
 | --- | --- | --- | --- |
-|解码，200 个代币 | 13.9 托克/秒 | 14.8 | 14.8 1.06 倍 |
-|预填充，4K 提示 | 228 托克/秒 | 220 | 220 1.0 倍 |
-| 6K文档后解码 | 12.4 托克/秒 | 13.7 | 13.7 1.1 倍 |
+| 解码，200 token | 13.9 tok/s | 14.8 | 1.06x |
+| Prefill，4K prompt | 228 tok/s | 220 | 1.0x |
+| 解码，6K 文档之后 | 12.4 tok/s | 13.7 | 1.1x |
 
-在短解码方面，比 Strata 落后约 6%，预填充速度稍快，全部通过 Transformers 实现。
+短解码上落后 Strata 约 6%，prefill 略快，全程都在 Transformers 里。
 
-剩下的大部分是主机往返，每个令牌约 10 毫秒。同步后唤醒只需约 1 毫秒。剩下的就是 GPU 空运行，而 Python 则对下一层进行排队。 Strata 将整个代币的工作预先排队，GPU 在每一层等待 Metal 共享事件，同时主机读取专家。 PyTorch 没有公开这一点。我试图用一个内核在 CPU 写入的标志上旋转来伪造它，而 GPU 花了一秒钟才看到写入。真正的解决方案是 PyTorch 的 MPS 流上的本机操作，有挂起的风险，所以我还没有构建它。
+剩下的开销主要是 host 往返，每 token 约 10 ms。sync 后唤醒只占约 1 ms，其余是 GPU 空等 Python 排下一层。Strata 一次排好整个 token 的活儿，GPU 每层等一个 Metal shared event，host 同时读专家。PyTorch 没暴露这个。我试过用小 kernel 空转等 CPU 写的标志位来伪造，GPU 有时一秒后才看到写入，有时永远看不到。真正的解法是在 PyTorch 的 MPS 流上加原生 op，但有挂死风险，我没做。
 
 ## 结论
 
-它的运行速度约为 14 tok/s，接近 Strata，但对于我使用编码代理的方式来说仍然太慢。 Orthrus 一直在做真正的工作。
+它跑到约 14 tok/s，接近 Strata，但按我使用编码 agent 的方式仍然太慢。真正干活的还是 Orthrus。
 
-Transformers 没有击败 Strata，关闭最后约 6% 需要对堆栈进行更深入的更改，首先是对每层同步的控制，而 PyTorch 目前还没有提供这一点。有趣的部分是它是如何做到这一点的：仅流式传输路由专家、`grouped_mm` 按原样运行的有界缓存以及一些目标 Metal 内核。该项目中没有 C++ 扩展：只有 Python、使用 `torch.mps.compile_shader` 在运行时编译的 Metal 内核以及预构建的 [来自 Hub 的内核](https://huggingface.co/kernels-community)。为此实验编写的所有 Metal 内核现已[发布在 Hub 上](https://tarekziade-moe-expert-streaming.static.hf.space/details.html#published-kernels)，项目从那里加载它们。
+Transformers 没能击败 Strata。要追掉最后约 6%，得在栈上做更深的改动，首先是对逐层 sync 的控制权，PyTorch 目前不给。有意思的是它怎么追得这么近：只流式读取被路由的专家，一个有界缓存让 `grouped_mm` 原样运行，再加几个针对性的 Metal kernel。项目里没有 C++ 扩展：只有 Python、用 `torch.mps.compile_shader` 运行时编译的 Metal kernel，以及预编译的[来自 Hub 的 kernel](https://huggingface.co/kernels-community)。为实验写的 Metal kernel 都已[发布到 Hub](https://tarekziade-moe-expert-streaming.static.hf.space/details.html#published-kernels)，项目直接从那里加载。
 
-不过，击败 Strata 从来都不是唯一的目标。构建这个是从系统角度了解 MoE 和 LLM 如何工作的好方法：路由到底有多稀疏、专家缓存能为您带来多少、每个令牌的内存带宽在哪里，以及主机和 GPU 相互等待的时间。 Transformer 让所有这些都变得很容易，一次一个模块。
+不过击败 Strata 从不是唯一目标。做这件事是从系统视角理解 MoE 与 LLM 的好办法：路由到底多稀疏、专家缓存能换来多少、每个 token 的内存带宽花在哪、host 与 GPU 互相等待占多少时间。Transformers 让这些都能一个个模块地随手试探。
 
-通用专家流实现位于 [huggingface/transformers#50717](https://github.com/huggingface/transformers/pull/50717) 中，基准测试位于 [Space](https://huggingface.co/spaces/tarekziade/moe-expert-streaming) 中。欢迎对该方法和 API 提供反馈。
+通用的专家流式实现位于 [huggingface/transformers#50717](https://github.com/huggingface/transformers/pull/50717)，基准测试在 [Space](https://huggingface.co/spaces/tarekziade/moe-expert-streaming)。欢迎对方法和 API 提意见。
 
-感谢 Pedro、Lysandre 和 Arthur 的出色反馈，并感谢 Harry 帮助测试 vLLM。
+感谢 Pedro、Lysandre 与 Arthur 的反馈，也感谢 Harry 帮忙测 vLLM。
 
-最后，感谢 Niko Veit 的 [Strata](https://github.com/niko1221/strata)。 Strata 为消费者硬件上的专家流媒体的可能性设定了标准，而追逐这些数字正是推动这项工作取得进展的原因。
+最后，感谢 Niko Veit 带来 [Strata](https://github.com/niko1221/strata)。Strata 树立了消费级硬件上专家流式推理的标杆，有这些数字可追，这项工作才走到这一步。
 
-## 本文提到的型号 6
+## 本文提到的模型 6
 
-## 本文提到的空间1
+## 本文提到的 Space 1
 
-我们博客的更多文章
+博客更多文章
 
-变形金刚米斯特拉维姆
+transformersmistralvllm
 
-## 欢迎 Le Chonk：Hugging Face部的 Mistral Large 4
+## 欢迎 Le Chonk：Hugging Face 上的 Mistral Large 4
 
 - ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg)
 - ![](https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg)
@@ -209,9 +214,9 @@ Transformers 没有击败 Strata，关闭最后约 6% 需要对堆栈进行更�
 
 2026 年 10 月 29 日
 
-开源 collabllmtransformers
+open-source-collabllmtransformers
 
-## 欢迎光束：您可以拥有、定制和扩展的 501B 开放模型
+## 欢迎 Beam：一个你可以拥有、定制并扩展的 501B 开放模型
 
 - ![](https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png)
 - ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg)
@@ -229,13 +234,14 @@ jdjsjsj28828
 
 1 天前
 
-s7327-所有者博客评论
+s7327-owner-blog-comment
 
-通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。
+把图片、音频和视频拖进输入框、粘贴或点击这里即可上传。
 
-点击或粘贴此处上传图像
+点击或粘贴此处上传图片
 
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fmoe-expert-streaming) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fmoe-expert-streaming) 发表评论
+· [注册](https://huggingface.co/join?next=%2Fblog%2Fmoe-expert-streaming) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fmoe-expert-streaming) 后发表评论
+
 
 14
 
@@ -252,6 +258,6 @@ s7327-所有者博客评论
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/_t5ifHICcVJNBHoUvJ5VQ.png)](https://huggingface.co/AsTrO963)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64fdfaeb01aedd0e86014de9/UliF1du7InfuCs7RHLiA5.png)](https://huggingface.co/eramax)
 
-## 本文提到的型号 6
+## 本文提到的模型 6
 
-## 本文提到的空间1
+## 本文提到的 Space 1

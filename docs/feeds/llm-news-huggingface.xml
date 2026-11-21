@@ -469,23 +469,23 @@ done</code></pre>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>完整标题：DaisyRose-27B: Pushing the Frontier of Post-Training Efficiency</description>
       <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>DaisyRose-27B：突破训练后效率的前沿</h1>
+<h1>DaisyRose-27B：把后训练效率推进到新前沿</h1>
 <p>团队文章</p>
-<p>发表于 2026 年 11 月 18 日</p>
+<p>发布于 2026 年 11 月 18 日</p>
 <p>19</p>
 <ul><li><a href="https://huggingface.co/banghua"><img src="https://huggingface.co/avatars/64737a9f97288b3823ef9dd602da306b.svg" alt=""></a></li><li><a href="https://huggingface.co/pb09204048"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/646af200ca17a49700e94aa1/7nqby5QEtLktCMrBCqwuo.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nblintao"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6aa0d94c7f8bc24c79f0d4ec/PPZnlhQrdTlfLNOKTuywA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AgentAtelier"><img src="https://huggingface.co/avatars/b154b109b27ad042229271a848832c1d.svg" alt=""></a></li><li><a href="https://huggingface.co/bigmikeq92"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qz3OXCjrQi0KZZ5OJkEgq.png" alt=""></a></li><li><a href="https://huggingface.co/CharyZeng"><img src="https://huggingface.co/avatars/a942b7b43bd8c1e191f631fc1cf23596.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/jzsc"><img src="https://huggingface.co/avatars/d8ae67f105dea7f04e0db3871591e15c.svg" alt="Jason Chen 头像"></a></p>
-<p>陈杰森</p>
-<p>江泽山</p>
-<p><a href="https://huggingface.co/RadixArk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/692f6fa22fe03c133986059c/uVcDantaDXJOwc_T93yei.png" alt="RadixArk 头像"></a> <a href="https://huggingface.co/RadixArk">RadixArk</a></p>
+<p><a href="https://huggingface.co/jzsc"><img src="https://huggingface.co/avatars/d8ae67f105dea7f04e0db3871591e15c.svg" alt="Jason Chen's avatar"></a></p>
+<p>Jason Chen</p>
+<p>jzsc</p>
+<p><a href="https://huggingface.co/RadixArk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/692f6fa22fe03c133986059c/uVcDantaDXJOwc_T93yei.png" alt="RadixArk's avatar"></a> <a href="https://huggingface.co/RadixArk">RadixArk</a></p>
 <p><a href="https://www.radixark.com/images/daisyrose-27b/hero.png"><img src="https://www.radixark.com/images/daisyrose-27b/hero.png" alt="DaisyRose-27B"></a></p>
-<p>今天我们发布 <strong>DaisyRose-27B</strong>，RadixArk 的第一个模型，基于 Qwen3.8-27B 构建，并使用 <a href="https://miles.radixark.com/">Miles</a> 进行强化学习训练。我们对它进行了长期代理任务的训练，会话量高达 100 万代币，18 天内在 144 个 H200 GPU 上仅执行了 1,200 个策划任务。 DaisyRose-27B 将 Terminal-Bench 4.1 pass@1 从 <strong>5.6% 提高到 12.0%</strong>。除了 Terminal-Bench 4.1 之外，它还提供了各种其他推理、指令跟踪和编码基准测试的提升。</p>
-<p>检查点在 <strong>Apache 2.0</strong> 下可用：</p>
+<p>今天我们发布 <strong>DaisyRose-27B</strong>，这是 RadixArk 的第一个模型，基于 Qwen3.8-27B 构建，并使用 <a href="https://miles.radixark.com/">Miles</a> 做强化学习训练。我们针对长程 agent 任务训练它，单次会话最长可达 100 万 token；只用了 1,200 个精挑细选的任务，18 天内在 144 张 H200 GPU 上完成训练。DaisyRose-27B 把 Terminal-Bench 4.1 pass@1 从 <strong>5.6% 提升到 12.0%</strong>。除 Terminal-Bench 4.1 之外，它在多项推理、指令遵循和编程 benchmark 上也都有提升。</p>
+<p>checkpoint 以 <strong>Apache 2.0</strong> 协议提供：</p>
 <ul><li><a href="https://huggingface.co/RadixArk/DaisyRose-27B">BF16</a></li><li><a href="https://huggingface.co/RadixArk/DaisyRose-27B-FP8">FP8</a></li><li><a href="https://huggingface.co/RadixArk/DaisyRose-27B-NVFP4">NVFP4</a></li></ul>
-<p>该模型保留了 Qwen3.8-27B 的架构、分词器、聊天模板、图像理解和 <strong>256K 令牌上下文窗口</strong>。较长的训练课程使用​​线束汇总来跨越多个轨迹。有关模型属性和推理设置，请参阅<a href="https://huggingface.co/RadixArk/DaisyRose-27B">模型卡</a>。</p>
+<p>模型保留了 Qwen3.8-27B 的架构、tokenizer、chat template、图像理解能力以及 <strong>256K token 的上下文窗口</strong>。更长的训练会话通过 harness 摘要来跨越多个 trajectory。模型属性和推理参数见<a href="https://huggingface.co/RadixArk/DaisyRose-27B">模型卡</a>。</p>
 <h2>运行 DaisyRose-27B</h2>
-<p>我们建议使用 SGLang 和 DSpark 推测解码来为 DaisyRose-27B 提供服务。 <a href="https://docs.sglang.io/cookbook/autoregressive/RadixArk/DaisyRose-27B">SGLang 食谱</a> 提供了不同 GPU 和检查点格式的启动配置。</p>
-<p>在端口 <code>30000</code> 上启动具有服务模型名称 <code>DaisyRose-27B</code> 的服务器后，您可以使用 OpenAI Python 客户端发送请求：</p>
+<p>我们建议用 SGLang 配合 DSpark 投机解码来部署 DaisyRose-27B。<a href="https://docs.sglang.io/cookbook/autoregressive/RadixArk/DaisyRose-27B">SGLang cookbook</a> 里给出了针对不同 GPU 和 checkpoint 格式的启动配置。</p>
+<p>用 <code>DaisyRose-27B</code> 作为 served model name、在 <code>30000</code> 端口启动服务后，即可用 OpenAI Python 客户端发送请求：</p>
 <pre><code>from openai import OpenAI
 
 client = OpenAI(
@@ -508,45 +508,45 @@ response = client.chat.completions.create(
 
 print(response.choices[0].message.reasoning_content)
 print(response.choices[0].message.content)</code></pre>
-<p>默认情况下，模型会在回答之前进行思考。它的推理在 <code>reasoning_content</code> 中返回，其最终答案在 <code>content</code> 中。这些设置遵循<a href="https://huggingface.co/RadixArk/DaisyRose-27B#3-getting-started">型号卡的快速入门</a>。</p>
-<h2>基准测试结果</h2>
-<p><a href="https://www.radixark.com/images/daisyrose-27b/benchmarks.png"><img src="https://www.radixark.com/images/daisyrose-27b/benchmarks.png" alt="DaisyRose-27B 在七个基准测试中与八个模型进行比较"></a></p>
-<table><thead><tr><th>基准</th><th>Qwen3.8-27B</th><th>雏菊玫瑰-27B</th></tr></thead><tbody><tr><td>终端工作台 4.1</td><td>5.6</td><td>5.6 <strong>12.0</strong></td></tr><tr><td>终端工作台2.1</td><td>73.0</td><td>73.0 <strong>75.5</strong></td></tr><tr><td>DeepSWE v1.1</td><td>42.2</td><td>42.2 <strong>46.2</strong></td></tr><tr><td>SWE Bench Pro v2</td><td>SWE Bench Pro v2</td><td>SWE Bench Pro v2</td><td>SWE Bench Pro v2 91.3</td><td>91.3 <strong>94.7</strong></td></tr><tr><td>HLE（纯文本）</td><td>33.9</td><td>33.9 <strong>34.3</strong></td></tr><tr><td>IFBench</td><td>79.5</td><td>79.5 <strong>82.4</strong></td></tr><tr><td>GPQA 钻石</td><td>89.2</td><td>89.2 <strong>90.7</strong></td></tr></tbody></table>
-<p>DaisyRose-27B 在上述每个基准测试中的得分均高于原始 Qwen3.8-27B 型号。涨幅最大的是 Terminal Bench 4.1，其中 pass@1 从 5.6% 上升至 12.0%。</p>
-<p>每个基准测试的分数使用 BF16 和 FP8 运行中的较高者；无论在哪里进行评估，两者的差异都小于一分。 <a href="https://huggingface.co/RadixArk/DaisyRose-27B#2-evaluations">模型卡</a>包括比较源和评估设置。</p>
-<p>训练设置的三个部分使此版本成为可能：精心设计的任务、高效的训练后端和可靠的沙箱。</p>
-<h2>高质量的训练数据</h2>
-<p>我们与 <a href="https://www.eigent.ai/">Eigent AI</a> 合作构建了这些任务，从其在机器学习、软件工程、科学和其他领域的大量任务开始。我们共同培养了数千名候选人。大约 1,200 人进入了最终训练集。</p>
-<p>我们使用三个标准选择任务：</p>
-<ul><li><strong>每项任务都针对原始模型所犯的错误。</strong> 我们在每项任务上运行 Qwen3.8-27B，并围绕我们希望模型停止犯的错误重新设计每一项任务。然后我们调整难度，直到解决率落入有用的学习范围内。</li><li><strong>每项任务都需要几个相互依赖的步骤。</strong> 代理必须在一项长期工作中进行推理、计划和执行。每次尝试都会在沙盒中长达 1.5 小时，其中包含超过 100 次工具调用和超过 256K 的输出令牌。</li><li><strong>任务必须奖励实际解决问题。</strong>我们审查了每项任务以及模型的尝试。可以在未解决预期问题的情况下通过的任务或包含设计缺陷的任务已被修复或删除。</li></ul>
+<p>模型默认先思考再作答：推理过程通过 <code>reasoning_content</code> 返回，最终答案在 <code>content</code> 中。以上参数与<a href="https://huggingface.co/RadixArk/DaisyRose-27B#3-getting-started">模型卡的 quickstart</a> 一致。</p>
+<h2>Benchmark 结果</h2>
+<p><a href="https://www.radixark.com/images/daisyrose-27b/benchmarks.png"><img src="https://www.radixark.com/images/daisyrose-27b/benchmarks.png" alt="DaisyRose-27B 在七个 benchmark 上与八个模型的对比"></a></p>
+<table><thead><tr><th>Benchmark</th><th>Qwen3.8-27B</th><th>DaisyRose-27B</th></tr></thead><tbody><tr><td>Terminal Bench 4.1</td><td>5.6</td><td><strong>12.0</strong></td></tr><tr><td>Terminal Bench 2.1</td><td>73.0</td><td><strong>75.5</strong></td></tr><tr><td>DeepSWE v1.1</td><td>42.2</td><td><strong>46.2</strong></td></tr><tr><td>SWE Bench Pro v2</td><td>91.3</td><td><strong>94.7</strong></td></tr><tr><td>HLE（纯文本）</td><td>33.9</td><td><strong>34.3</strong></td></tr><tr><td>IFBench</td><td>79.5</td><td><strong>82.4</strong></td></tr><tr><td>GPQA Diamond</td><td>89.2</td><td><strong>90.7</strong></td></tr></tbody></table>
+<p>在上述每一个 benchmark 上，DaisyRose-27B 的得分都高于原始 Qwen3.8-27B。提升最大的是 Terminal Bench 4.1，pass@1 从 5.6% 升到 12.0%。</p>
+<p>每个 benchmark 取 BF16 与 FP8 两次运行中较高的成绩；在两者都评测过的项目上，差距不到 1 分。对比数据来源与评测设置见<a href="https://huggingface.co/RadixArk/DaisyRose-27B#2-evaluations">模型卡</a>。</p>
+<p>这次发布能做成，靠训练方案里的三件事：精心设计的任务、高效的训练后端，以及可靠的 sandbox。</p>
+<h2>高质量训练数据</h2>
+<p>这些任务是我们与 <a href="https://www.eigent.ai/">Eigent AI</a> 合作构建的，起点是它在机器学习、软件工程、科学等领域积累的大量任务。双方一共做出数千个候选任务，最终约 1,200 个进入训练集。</p>
+<p>我们用三条标准筛选任务：</p>
+<ul><li><strong>每个任务都针对原模型确实会犯的错误。</strong> 我们在每个任务上跑一遍 Qwen3.8-27B，围绕希望模型改掉的错误重新设计任务，再调整难度，直到解决率落在一个有学习价值的区间。</li><li><strong>每个任务都需要多个相互依赖的步骤。</strong> agent 必须在一项长作业中完成推理、规划和执行。每次尝试在 sandbox 里最长 1.5 小时，涉及 100 次以上工具调用和超过 256K 输出 token。</li><li><strong>任务必须奖励真正解决问题。</strong> 我们逐个复核任务与模型的尝试记录；凡是没解决目标问题也能通过的任务，或者存在设计缺陷的任务，都已修正或删除。</li></ul>
 <h2>高效的训练后端</h2>
-<p>RadixArk 使用 Miles（我们用于大规模模型后训练的开源强化学习框架）以完全异步模式训练 DaisyRose-27B：代理在模型学习时继续工作，互不等待。 128 个 H200 对代理任务运行推理，另外 16 个 H200 运行训练器并从轨迹中学习。每一步完成后，更新的模型都会发送到运行代理的 128 个 GPU。学习在我们的内部训练后端上运行，该后端是为代理训练而构建的：每个步骤都从几个非常长的会话中学习，有些会话长达 1M 个令牌，通过线束摘要折叠成多个轨迹。</p>
-<p><strong>训练成本降低了 57%。</strong> 在此版本中，每个 GPU 峰值计算的 37% 投入到了后端的有用训练工作（模型 FLOP 利用率，或 MFU）。这款基于威震天 (Megatron) 构建的开源训练器在可比运行中达到了 16%。因此相同的训练需要的 GPU 时间减少 57%。混合专家模型的增益甚至更大：Qwen3.6-35B-A3B 上的增益为 6.2 倍，大约 300B 参数的 GLM-5.3-Flash 上的增益超过 10 倍。</p>
-<p><a href="https://www.radixark.com/images/daisyrose-27b/gpu-efficiency.png"><img src="https://www.radixark.com/images/daisyrose-27b/gpu-efficiency.png" alt="GPU效率：RadixArk的内部后端与开源训练器相比"></a></p>
-<p><strong>端到端速度提高了 2 倍。</strong> 计算代理在其任务上花费的时间，该版本在 144 个 GPU 上每秒训练约 16,800 个令牌。开源训练器在相同的 GPU 上达到了约 8,300。</p>
-<p><a href="https://www.radixark.com/images/daisyrose-27b/training-speed.png"><img src="https://www.radixark.com/images/daisyrose-27b/training-speed.png" alt="端到端训练速度：144 个 H200 上每秒 16.8k 与 8.3k 令牌"></a></p>
-<p><strong>稳定数周。</strong> 该版本在 144 个 H200 上运行了数周，总共 63,000 个 GPU 小时。从第一步到最后一步，速度和效率都保持稳定。</p>
-<p><a href="https://www.radixark.com/images/daisyrose-27b/training-stability.png"><img src="https://www.radixark.com/images/daisyrose-27b/training-stability.png" alt="DaisyRose-27B 版本运行期间的训练速度和 GPU 效率"></a></p>
-<p><em>DaisyRose-27B 版本的每个训练步骤都在 144 个 H200 上运行，根据总训练时间绘制。虚线：可比运行的开源训练器。</em></p>
-<h2>强大的沙箱服务</h2>
-<p>每次训练尝试都在沙箱中运行：任务环境的全新副本，代理在其中运行命令、编辑文件，然后进行评分。</p>
-<p>我们的服务基于开源 <a href="https://github.com/kvcache-ai/AgentENV">AgentENV</a> 项目构建，我们还为其提供了修复程序。从 9 月中旬到 11 月中旬，该项目运行了大约 <strong>944,000 个沙箱</strong>，其中并发运行的沙箱数量高达 <strong>1,566 个</strong>。</p>
-<p>该服务从一台机器增加到多达 12 台。我们对其进行了十次升级，几乎都是在训练运行期间进行的。在这九周内，99% 的沙盒创作都成功了；自10月下旬以来，这一数字已超过99.95%。</p>
-<p><a href="https://www.radixark.com/images/daisyrose-27b/sandboxes.png"><img src="https://www.radixark.com/images/daisyrose-27b/sandboxes.png" alt="沙箱总数944K，峰值并发沙箱1,566个，最终运行成功率99.95%"></a></p>
-<p>该项目沙箱的云基础设施成本比与流行的云沙箱提供商运行相同的沙箱低约 <strong>80%</strong>。我们降低成本的一种方法是让每个沙箱的内存分配随着其实际使用情况而增长和收缩，从而允许更多的沙箱共享每台机器。</p>
-<h2>尝试该模型或训练自己的模型</h2>
-<p>下载<a href="https://huggingface.co/RadixArk/DaisyRose-27B">DaisyRose-27B</a>，按照<a href="https://docs.sglang.io/cookbook/autoregressive/RadixArk/DaisyRose-27B">SGLang服务指南</a>，或使用<a href="https://miles.radixark.com/">里程</a>来训练你自己的代理。</p>
-<p>我们想了解 DaisyRose-27B 在您的任务中的表现如何，包括它的不足之处。在模型的“社区”选项卡中分享您的设置和结果。</p>
-<p>我们感谢 Eigent AI 在训练数据方面与我们密切合作，感谢 Qwen 团队创建了 Qwen3.8-27B。我们还感谢 Miles 和 <a href="https://www.sglang.io/">SGLang</a> 社区，以及其他开源项目，包括 slime、AgentENV 和 Harbor。</p>
-<p><em>改编自<a href="https://www.radixark.com/blog/daisyrose-27b">原始 RadixArk 文章</a>。</em></p>
-<h2>本文提到的型号3</h2>
+<p>RadixArk 用 Miles（我们面向大规模模型后训练的开源强化学习框架）以全异步模式训练 DaisyRose-27B：agent 持续干活，模型同时学习，两边互不等待。128 张 H200 负责 agent 任务的推理，另外 16 张跑 trainer，从 trajectory 中学习。每一步结束后，更新后的模型下发到跑 agent 的 128 张 GPU。学习过程跑在我们内部的训练后端上，这套后端专为 agent 训练打造：每一步都从少数几个超长会话中学习，有的会话长达 100 万 token，经 harness 摘要折叠成多个 trajectory。</p>
+<p><strong>训练成本降低 57%。</strong> 这次发布中，我们的后端让每张 GPU 峰值算力的 37% 用于有效训练工作（model FLOPs utilization，即 MFU）；基于 Megatron 的开源 trainer 在可比运行中只有 16%。因此同样的训练所需 GPU 时间减少 57%。在 mixture-of-experts 模型上收益更大：Qwen3.6-35B-A3B 上为 6.2 倍，约 300B 参数的 GLM-5.3-Flash 上超过 10 倍。</p>
+<p><a href="https://www.radixark.com/images/daisyrose-27b/gpu-efficiency.png"><img src="https://www.radixark.com/images/daisyrose-27b/gpu-efficiency.png" alt="GPU 效率：RadixArk 内部后端与开源 trainer 的对比"></a></p>
+<p><strong>端到端快 2 倍。</strong> 把 agent 花在任务上的时间也算进去，这次发布运行在 144 张 GPU 上的训练吞吐约为每秒 16,800 token；开源 trainer 在同样硬件上约为每秒 8,300 token。</p>
+<p><a href="https://www.radixark.com/images/daisyrose-27b/training-speed.png"><img src="https://www.radixark.com/images/daisyrose-27b/training-speed.png" alt="端到端训练速度：144 张 H200 上每秒 16.8k 与 8.3k token"></a></p>
+<p><strong>数周保持稳定。</strong> 这次发布运行在 144 张 H200 上训练了数周，共 63,000 GPU 小时。从第一步到最后一步，速度和效率始终平稳。</p>
+<p><a href="https://www.radixark.com/images/daisyrose-27b/training-stability.png"><img src="https://www.radixark.com/images/daisyrose-27b/training-stability.png" alt="DaisyRose-27B 发布运行期间的训练速度与 GPU 效率"></a></p>
+<p><em>DaisyRose-27B 发布运行在 144 张 H200 上的每一个训练 step，横轴为累计训练时间。虚线：可比运行中的开源 trainer。</em></p>
+<h2>稳得住的 sandbox 服务</h2>
+<p>每次训练尝试都在 sandbox 中运行：任务环境的一份全新副本，agent 在其中执行命令、编辑文件，然后接受评分。</p>
+<p>这套服务建立在开源项目 <a href="https://github.com/kvcache-ai/AgentENV">AgentENV</a> 之上，我们也向它提交修复。9 月中旬到 11 月中旬，它为本项目运行了约 <strong>94.4 万个 sandbox</strong>，并发峰值达 <strong>1,566 个</strong>。</p>
+<p>这套服务从一台机器扩展到最多 12 台。我们上线了十次升级，几乎都在训练进行中完成。九周里 sandbox 创建成功率 99%；10 月下旬以来，这一数字已超过 99.95%。</p>
+<p><a href="https://www.radixark.com/images/daisyrose-27b/sandboxes.png"><img src="https://www.radixark.com/images/daisyrose-27b/sandboxes.png" alt="总计 944K 个 sandbox、1,566 个并发峰值，最终运行成功率 99.95%"></a></p>
+<p>本项目 sandbox 的云基础设施成本，比用主流云 sandbox 服务商跑同样的 sandbox 低约 <strong>80%</strong>。降本的一个做法是让每个 sandbox 的内存分配随实际用量伸缩，从而让更多 sandbox 共享同一台机器。</p>
+<h2>试用模型，或训练你自己的</h2>
+<p>下载 <a href="https://huggingface.co/RadixArk/DaisyRose-27B">DaisyRose-27B</a>，参照 <a href="https://docs.sglang.io/cookbook/autoregressive/RadixArk/DaisyRose-27B">SGLang 部署指南</a>，或用 <a href="https://miles.radixark.com/">Miles</a> 训练你自己的 agent。</p>
+<p>我们很想了解 DaisyRose-27B 在你的任务上表现如何，包括哪些地方还不够好。欢迎在模型的 Community 标签页分享你的配置与结果。</p>
+<p>感谢 Eigent AI 在训练数据上的紧密合作，感谢 Qwen 团队打造 Qwen3.8-27B。也感谢 Miles 与 <a href="https://www.sglang.io/">SGLang</a> 社区，以及 slime、AgentENV、Harbor 等其他开源项目。</p>
+<p><em>改编自 <a href="https://www.radixark.com/blog/daisyrose-27b">RadixArk 原文</a>。</em></p>
+<h2>本文提到的模型 3</h2>
 <h3>社区</h3>
-<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
-<p>点击或粘贴此处上传图像</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FRadixArk%2Fdaisyrose-27b-pushing-the-frontier-of-post-trainin">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2FRadixArk%2Fdaisyrose-27b-pushing-the-frontier-of-post-trainin">登录</a> 发表评论</p>
+<p>把图片、音频和视频拖入输入框、粘贴，或点击此处上传。</p>
+<p>点按或粘贴到此处上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FRadixArk%2Fdaisyrose-27b-pushing-the-frontier-of-post-trainin">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2FRadixArk%2Fdaisyrose-27b-pushing-the-frontier-of-post-trainin">登录</a> 后发表评论</p>
 <p>19</p>
 <ul><li><a href="https://huggingface.co/banghua"><img src="https://huggingface.co/avatars/64737a9f97288b3823ef9dd602da306b.svg" alt=""></a></li><li><a href="https://huggingface.co/pb09204048"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/646af200ca17a49700e94aa1/7nqby5QEtLktCMrBCqwuo.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nblintao"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6aa0d94c7f8bc24c79f0d4ec/PPZnlhQrdTlfLNOKTuywA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AgentAtelier"><img src="https://huggingface.co/avatars/b154b109b27ad042229271a848832c1d.svg" alt=""></a></li><li><a href="https://huggingface.co/bigmikeq92"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qz3OXCjrQi0KZZ5OJkEgq.png" alt=""></a></li><li><a href="https://huggingface.co/CharyZeng"><img src="https://huggingface.co/avatars/a942b7b43bd8c1e191f631fc1cf23596.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/skx618"><img src="https://huggingface.co/avatars/8c33bd112d969672a6e312c566c3a9cc.svg" alt=""></a></li><li><a href="https://huggingface.co/ml1996"><img src="https://huggingface.co/avatars/66086fa10e3a3e9926b95190e9c41a9f.svg" alt=""></a></li><li><a href="https://huggingface.co/pblancohugging"><img src="https://huggingface.co/avatars/e1a1c6b3bb39804b4638ebdf46998587.svg" alt=""></a></li><li><a href="https://huggingface.co/ggcristian"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64da082a79c87e13ca232042/DKGEIffK3kLj7SQ20yYiK.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>
-<h2>本文提到的型号3</h2>]]></content:encoded>
+<h2>本文提到的模型 3</h2>]]></content:encoded>
     </item>
     <item>
       <title>为什么你的微调工作花费的时间比 FLOP 所说的要长</title>
@@ -554,99 +554,99 @@ print(response.choices[0].message.content)</code></pre>
       <guid isPermaLink="true">https://huggingface.co/blog/Dharma-AI/predicting-fine-tuning-time</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Why your fine-tuning job takes longer than the FLOPs say</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
 <h1>为什么你的微调工作花费的时间比 FLOP 所说的要长</h1>
 <p>团队文章</p>
-<p>发表于 2026 年 11 月 18 日</p>
+<p>发布于 2026 年 11 月 18 日</p>
 <p>11</p>
 <ul><li><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt=""></a></li><li><a href="https://huggingface.co/Braias42"><img src="https://huggingface.co/avatars/a92711f439350b33e5f64d6fb7d68684.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/c2426d4c00d1dbaaf7b299b3d1e304c9.svg" alt=""></a></li><li><a href="https://huggingface.co/lmfelipe"><img src="https://huggingface.co/avatars/6fd5bdabfb97ce2e8a4ffaf454c7aa82.svg" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/892344f02f1be897b751797574cb411b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt="布鲁诺·杜阿尔特的头像"></a></p>
-<p>布鲁诺·杜阿尔特</p>
-<p>布鲁诺杜阿尔特01</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt="Bruno Duarte 的头像"></a></p>
+<p>Bruno Duarte</p>
+<p>brunoduarte01</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 的头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
 <p><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt="Gabriel Pimenta de Freitas Cardoso 的头像"></a></p>
-<p>加布里埃尔·皮门塔·德·弗雷塔斯·卡多佐</p>
-<p>加布里埃尔·皮门塔99</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p>Gabriel Pimenta de Freitas Cardoso</p>
+<p>GabrielPimenta99</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 的头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
 <p><a href="https://huggingface.co/isisfc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/lgG1lEgFBLnmfARS1pLCB.png" alt="Isis F Carvalho 的头像"></a></p>
-<p>伊希斯·F·卡瓦略</p>
-<p>伊斯兰国组织</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p>Isis F Carvalho</p>
+<p>isisfc</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 的头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
 <p><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/892344f02f1be897b751797574cb411b.svg" alt="Breno de Almeida Beleza 的头像"></a></p>
-<p>布雷诺·德·阿尔梅达·贝莱萨</p>
-<p>布雷诺·贝莱扎</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><a href="https://huggingface.co/limafelipe"><img src="https://huggingface.co/avatars/344abdf81cfc54ca5ac2eba4c7876ac3.svg" alt="费利佩·利马的头像"></a></p>
-<p>费利佩·利马</p>
-<p>利马菲利佩</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><em>根据 272 次生产运行预测共享 GPU 集群上的端到端微调时间。</em></p>
-<p>**我们即将发表的论文的预览，<em>预测生成语言模型的端到端微调时间</em>。完整版本很快就会在 arXiv 上发布。**</p>
-<p>GPU 是当今人工智能领域最昂贵和最稀缺的资源之一。运行共享集群的任何人每天都必须决定哪些作业在哪些 GPU 上运行以及以什么顺序运行。该计划的好坏取决于对每项工作所需时间的估计。当一项作业提前几个小时完成时，GPU 会处于空闲状态，直到调度下一个作业。当它迟到几个小时时，后面排队的所有东西都会溜走，实验等待，交付日期也会改变。</p>
-<p>更好的持续时间估计将其转化为规划而不是猜测：运行什么、何时运行以及在多少个 GPU 上运行，其间的空闲容量更少。然而，大多数团队使用的估计是粗略的 FLOP 计算。上面写着九个小时，工作第二天下午就完成了。</p>
-<p>我们想知道这个数学结果到底有多远，以及在派遣工作之前我们是否可以做得更好。因此，我们从 NVIDIA H200 GPU 生产池中获取了 272 个真实的监督微调 (SFT) 作业，总共约 7,382 个 GPU 小时，并将分析估计值与学习预测器进行了比较。</p>
-<p>简短版本：通常基于 FLOP 的估计几乎无法解释我们观察到的情况（R² = 0.31，MAE 12.41 h）。 CatBoost 回归器仅在调度之前看到可用信息达到 <strong>R² = 0.98，在 5 倍交叉验证中平均绝对误差为 1.71 h，中值误差为 0.51 h</strong>。这种差距来自于封闭式估计无法做到的两件事。回归器看到更多特定于训练的信号，例如评估节奏、检查点策略、每个 GPU 负载和微调机制，并从过去的运行中学习它们之间的非线性相互作用。</p>
-<h2>每个人使用的估计仅用于计算</h2>
-<p>对于密集 Transformer，训练大约需要 6·P·D 次浮点运算，其中 P 是参数计数，D 是训练标记的数量。将其除以 GPU 可以提供的能力，即可得到训练循环时间：</p>
+<p>Breno de Almeida Beleza</p>
+<p>BrenoBeleza</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 的头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/limafelipe"><img src="https://huggingface.co/avatars/344abdf81cfc54ca5ac2eba4c7876ac3.svg" alt="Felipe Lima 的头像"></a></p>
+<p>Felipe Lima</p>
+<p>limafelipe</p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 的头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><em>根据 272 次生产运行，预测共享 GPU 集群上的端到端微调时间。</em></p>
+<p>**这是我们即将发表的论文 <em>Predicting End-to-End Fine-Tuning Time for Generative Language Models</em> 的预览。完整版很快会在 arXiv 上发布。**</p>
+<p>GPU 是当下 AI 领域最贵也最紧俏的资源之一。任何在跑共享集群的人，每天都要决定哪些作业上哪些 GPU、按什么顺序上。而这个排期计划的好坏，取决于对每个作业耗时的估计。作业早完工几个小时，GPU 就空转着等下一个人来派活；晚几个小时，后面排队的一切都跟着顺延，实验要等，交付日期要改。</p>
+<p>更准的时长估计能把这件事从猜测变成规划：跑什么、什么时候跑、用多少张 GPU，中间的空闲容量更少。可大多数团队用的估计，不过是拿 FLOP 随手一算。它说九小时，结果作业第二天下午才结束。</p>
+<p>我们想知道这套算式到底偏了多少，以及能不能在作业派发之前就估得更准。于是我们从生产环境里 NVIDIA H200 的 GPU 池中取出 272 个真实的监督微调（SFT）作业，合计约 7,382 GPU 小时，把解析式估计与学习型预测器做了对比。</p>
+<p>先说结论：常见的基于 FLOP 的估计几乎解释不了我们观察到的结果（R² = 0.31，MAE 12.41 h）。而一个只看派发前信息的 CatBoost 回归器，在 5 折交叉验证中达到 <strong>R² = 0.98，平均绝对误差 1.71 h，中位误差 0.51 h</strong>。差距来自两件闭式估计做不到的事：回归器能看到更多与训练相关的信号，比如评估节奏、checkpoint 策略、单 GPU 负载和微调方式；它还能从历史运行中学到这些信号之间的非线性交互。</p>
+<h2>大家常用的估计只算计算量</h2>
+<p>对稠密 Transformer 来说，训练开销大致是 6·P·D 次浮点运算，其中 P 是参数量，D 是训练 token 数。把它除以你的 GPU 能提供的算力，就得到训练循环时间：</p>
 <pre><code>T_theoretical = (6 · P · D) / (N_GPU · FLOPS_peak · MFU)</code></pre>
-<p>这里，N_GPU 是 GPU 的数量，FLOPS_peak 是规格表中一个 GPU 的峰值吞吐量，MFU（模型 FLOP 利用率）是训练实际达到的峰值的分数。由于内存流量、通信和内核效率低下，实际作业永远不会在高峰时运行，因此 MFU 通常位于 30% 到 60% 之间，并且无法提前知道给定作业的正确值。</p>
-<p>这是对优化循环的一个很好的描述。然而，工作不仅仅是它的循环。在第一步之前，需要进行环境设置、模型下载和加载以及标记化。训练期间会有定期评估和检查点上传。最后，最终模型进入对象存储。在多租户集群上，所有这些都与其他作业竞争网络和存储 I/O。</p>
-<p>这些开销取决于配置，并且不会随着工作负载或 GPU 数量而灵活地扩展。具有相同标称计算能力的两个作业可以相隔数小时完成。</p>
-<p>为了保持比较公平，我们测试的 FLOP 基线计算了预定的评估令牌和训练令牌，并且我们在很大的范围内扫描了 MFU。</p>
-<h2>我们构建了什么</h2>
-<p>我们将端到端持续时间视为监督回归问题。给定根据作业配置和模型元数据构建的特征向量，预测作业获得 GPU 的时刻与完成时刻之间的挂钟时间。不包括排队时间。</p>
-<p>两项设计选择塑造了这部作品：</p>
-<ul><li><strong>在调度之前一切都已知。</strong> 每个输入都来自提交的配置：超参数、数据集大小、模型标识符、GPU 分配。没有运行时日志，没有部分进度。这就是使预测可用于调度的原因。</li><li><strong>暴露开销的功能。</strong> 在原始配置之上，我们导出 <code>num_eval_data</code>（跨所有评估周期处理的样本）、<code>num_saves</code> 和 <code>num_params_saved</code>（检查点 I/O）以及每个 GPU 令牌量等数量。 FLOP 估计本身（MFU 固定为 0.45）作为又一个特征 (<code>baseline_time</code>)，因此模型从仅计算数字开始并学习校正。</li></ul>
-<p>我们比较了线性回归、Ridge、XGBoost 和 CatBoost。特征选择结合了 18 个候选特征集的相关过滤、互信息和排列重要性，然后以 MAE 为标准进行网格搜索。最终的 CatBoost 模型使用 24 个特征。</p>
+<p>这里 N_GPU 是 GPU 数量，FLOPS_peak 是单张 GPU 规格书上的峰值吞吐，MFU（Model FLOPs Utilization，模型 FLOP 利用率）是训练实际达到的峰值比例。真实作业从来跑不到峰值——内存访问、通信和 kernel 效率都会拖后腿，所以 MFU 通常落在 30% 到 60% 之间，而且某个具体作业该取多少，事先并不知道。</p>
+<p>对优化循环来说，这是个不错的描述。但一个作业并不只有循环。第一步之前有环境准备、模型下载与加载、tokenization；训练过程中有周期性评估和 checkpoint 上传；结束时最终模型要写进对象存储。在多租户集群上，这些环节还都要和其他作业抢网络与存储 I/O。</p>
+<p>这些开销取决于配置，而且不会随工作负载或 GPU 数量整齐地缩放。两个名义计算量相同的作业，完工时间可能差好几个小时。</p>
+<p>为了让比较公平，我们测试的 FLOP 基线把排定的评估 token 与训练 token 一并计入，并且在大范围内扫描 MFU。</p>
+<h2>我们做了什么</h2>
+<p>我们把端到端时长当作一个有监督回归问题：给定由作业配置和模型元数据构成的特征向量，预测从作业拿到 GPU 到作业完成之间的 wall-clock 时间。排队时间不计入。</p>
+<p>两个设计选择决定了这项工作：</p>
+<ul><li><strong>所有信息都在派发前已知。</strong> 每个输入都来自提交的配置：超参数、数据集大小、模型标识、GPU 分配。不看运行时日志，不看中途进度。正因如此，这个预测才能用于调度。</li><li><strong>用特征把开销暴露出来。</strong> 在原始配置之外，我们还派生了一些量，例如 <code>num_eval_data</code>（所有评估轮次累计处理的样本数）、<code>num_saves</code> 与 <code>num_params_saved</code>（checkpoint I/O），以及单 GPU 的 token 量。FLOP 估计本身（MFU 固定为 0.45）作为又一个特征（<code>baseline_time</code>）输入，于是模型从纯计算数字出发，去学那些修正项。</li></ul>
+<p>我们比较了 Linear Regression、Ridge、XGBoost 和 CatBoost。特征选择结合了相关性过滤、互信息和排列重要性，覆盖 18 组候选特征集，随后以 MAE 为准则做网格搜索。最终的 CatBoost 模型使用 24 个特征。</p>
 <h2>数据</h2>
-<ul><li><strong>272 SFT 从企业生产环境的操作日志运行</strong>，涵盖多个模型系列，多达 150 亿个参数，LoRA 和全面微调，以及广泛的数据集大小和超参数。</li><li><strong>共享基础设施。</strong> 作业在 1、2 或 4 个 GPU 上运行，这些 GPU 来自跨 1 到 4 个节点的 8 到 32 个 H200 池，以及其他训练和推理工作负载。测量的时间包括真实的争用。</li><li><strong>持续时间为 1.6 至 172.4 小时</strong>，平均值为 23.43 小时，中位数为 15.29 小时。</li><li><strong>堆栈：</strong> 拥抱变形金刚和不懒惰。我们将堆栈建模为分类特征，并且不对两者之间的固定加速做出假设。</li></ul>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/uD4Td4N-bvoPStQBNx8yy.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/uD4Td4N-bvoPStQBNx8yy.png" alt="图持续时间分布"></a></p>
-<p><em>272 次运行中端到端持续时间的分布。平均 23.43 小时，中位数 15.29 小时。</em></p>
+<ul><li><strong>272 次 SFT 运行</strong>，来自某企业生产环境的运维日志，覆盖多个模型系列、参数规模最高到 150 亿，既有 LoRA 也有全量微调，数据集大小和超参数分布很宽。</li><li><strong>共享基础设施。</strong> 作业在 1、2 或 4 张 GPU 上运行，GPU 取自跨 1 到 4 个节点、共 8 到 32 张 H200 的池子，并与其他训练和推理工作负载共存。测得的时间包含真实的资源争用。</li><li><strong>时长从 1.6 到 172.4 小时</strong>，均值 23.43 h，中位数 15.29 h。</li><li><strong>技术栈：</strong> Hugging Face Transformers 和 Unsloth。我们把技术栈建模为一个分类特征，不对两者之间的固定加速比做任何假设。</li></ul>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/uD4Td4N-bvoPStQBNx8yy.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/uD4Td4N-bvoPStQBNx8yy.png" alt="fig-duration-distribution"></a></p>
+<p><em>272 次运行的端到端时长分布。均值 23.43 h，中位数 15.29 h。</em></p>
 <h2>结果</h2>
-<p>所有数字均来自分层 5 倍交叉验证。前四行是分析性的，不涉及拟合。</p>
-<table><thead><tr><th>型号</th><th>R²</th><th>RMSE（小时）</th><th>MAE (h)</th></tr></thead><tbody><tr><td>失败基线（MFU 30%）</td><td>0.31</td><td>0.31 20.45</td><td>20.45 12.41</td><td>12.41</td></tr><tr><td>失败基线（MFU 45%）</td><td>0.18</td><td>0.18 22.38</td><td>22.38 13.01</td></tr><tr><td>失败基线（MFU 60%）</td><td>0.01</td><td>0.01 24.56</td><td>24.56 14.62</td><td>14.62</td></tr><tr><td>计算</td><td>−0.51</td><td>30.40</td><td>20.36</td><td>20.36</td></tr><tr><td>线性回归</td><td>0.69±0.14</td><td>13.52±4.23</td><td>7.52±0.49</td></tr><tr><td>岭</td><td>0.73±0.09</td><td>12.72±3.70</td><td>7.23 ± 0.68</td></tr><tr><td>XGBoost</td><td>0.97±0.01</td><td>4.18±1.17</td><td>1.95±0.32</td></tr><tr><td><strong>猫助推</strong></td><td><strong>0.98 ± 0.01</strong></td><td><strong>3.52 ± 0.78</strong></td><td><strong>1.71 ± 0.33</strong></td></tr></tbody></table>
-<p>有几件事很突出。</p>
-<p><strong>没有单一 MFU 值可以固定 FLOP 基线。</strong>我们将 MFU 从 0.25 扫到 0.65。最佳设置为 30%，对于平均持续 23 小时的作业，仍然会留下超过 12 小时的平均误差。</p>
-<p><strong>更详细的分析模型并不能缩小差距。</strong> 作为第二个基线，我们采用了 Calculon（Isaev 等人，SC '23），这是之前工作中 LLM 培训的分析性能模型。它构建了一个显式的层图并考虑了计算、内存流量和设备间通信。我们扩展了公共实现以涵盖 LoRA、分组查询注意力、融合注意力、bfloat16 和 SwiGLU。它的估计值仍然只对应于观察到的挂钟时间的 11% 的中位数。这并不反对 Calculon 作为一个阶梯级工具，这正是它的设计目的。它显示了有多少生产作业发生在优化步骤之外。</p>
-<p><strong>线性模型有所帮助，然后停滞不前。</strong> Ridge 将 MAE 降低至 7.23 小时。纯线性模型无法很好地捕捉配置和持续时间之间的关系。</p>
-<p><strong>梯度提升完成了繁重的工作。</strong> CatBoost 和 XGBoost 在每个指标上都在一个标准差之内。我们将 CatBoost 向前推进，因为它的平均误差全面最低。</p>
+<p>所有数字都来自分层 5 折交叉验证。前四行是解析式结果，不涉及拟合。</p>
+<table><thead><tr><th>模型</th><th>R²</th><th>RMSE (h)</th><th>MAE (h)</th></tr></thead><tbody><tr><td>FLOP 基线（MFU 30%）</td><td>0.31</td><td>20.45</td><td>12.41</td></tr><tr><td>FLOP 基线（MFU 45%）</td><td>0.18</td><td>22.38</td><td>13.01</td></tr><tr><td>FLOP 基线（MFU 60%）</td><td>0.01</td><td>24.56</td><td>14.62</td></tr><tr><td>Calculon</td><td>−0.51</td><td>30.40</td><td>20.36</td></tr><tr><td>Linear Regression</td><td>0.69 ± 0.14</td><td>13.52 ± 4.23</td><td>7.52 ± 0.49</td></tr><tr><td>Ridge</td><td>0.73 ± 0.09</td><td>12.72 ± 3.70</td><td>7.23 ± 0.68</td></tr><tr><td>XGBoost</td><td>0.97 ± 0.01</td><td>4.18 ± 1.17</td><td>1.95 ± 0.32</td></tr><tr><td><strong>CatBoost</strong></td><td><strong>0.98 ± 0.01</strong></td><td><strong>3.52 ± 0.78</strong></td><td><strong>1.71 ± 0.33</strong></td></tr></tbody></table>
+<p>有几处值得注意。</p>
+<p><strong>没有任何单一 MFU 取值能修正 FLOP 基线。</strong> 我们把 MFU 从 0.25 扫到 0.65。最好的设置是 30%，但对于平均时长 23 小时的作业，平均误差仍在 12 小时以上。</p>
+<p><strong>更精细的解析模型也补不上这个缺口。</strong> 作为第二个基线，我们采用了 Calculon（Isaev 等，SC '23），这是以往工作中面向 LLM 训练的解析性能模型。它会构建显式的层图，并把计算、内存访问和设备间通信都算进去。我们把公开实现扩展到支持 LoRA、grouped-query attention、fused attention、bfloat16 和 SwiGLU。它的估计值中位数仍只对应实测 wall-clock 时间的 11%。这并不是说 Calculon 不行——它是为 step 级别的分析而设计的工具，本来就是这个用途。它说明的是一个生产作业有多大比例发生在优化步之外。</p>
+<p><strong>线性模型有帮助，然后就走不动了。</strong> Ridge 把 MAE 降到 7.23 h。配置与时长之间的关系，纯线性模型捕捉得并不好。</p>
+<p><strong>梯度提升承担了主要工作。</strong> CatBoost 和 XGBoost 在每一项指标上都落在一个标准差之内。我们最终选用 CatBoost，因为它的平均误差整体最低。</p>
 <h2>预测器依赖什么</h2>
-<p>CatBoost 的功能重要性集中在少数功能上。正如预期的那样，模型和工作负载变量都存在，但评估和检查点变量也存在。 <code>num_eval_data</code>（工作生命周期内评估中处理的样本总数）排名第一，其次是 <code>num_trainable_params</code>、<code>batch_eval_size_percent</code>、<code>num_all_params</code> 和 <code>num_gpus*batch_train_percent</code>，<code>num_params_saved</code> 紧随其后。 SHAP 值讲述了同样的故事：高评估量持续推高预测时间，而可训练参数计数具有非线性效应，仅对于最大的模型才会变大。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/MHyGZSFJZ6HXmwAUCTAnF.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/MHyGZSFJZ6HXmwAUCTAnF.png" alt="图特征重要性"></a></p>
-<p><em>跨折叠的 CatBoost 模型的平均特征重要性 (PredictionValuesChange)。</em></p>
-<p>特征重要性不是因果关系。不过，这种模式与工作的实际花费方式是一致的。您评估的频率、评估集的大小以及您保留的检查点数量都会影响挂钟时间以及模型和数据集的规模。这些是人们在编写训练配置时经常根据习惯做出的选择。</p>
-<p>阅读这些图时需要注意一点：更大的 GPU 分配对预测时间有积极的贡献。在我们的数据中，更大的分配伴随着更大的工作，因此 <code>num_gpus</code> 在一定程度上充当了工作规模的代理。这并不意味着添加 GPU 会使作业变慢。</p>
-<h2>错误有多大，错误在哪里</h2>
-<p>查看所有 272 个折叠外预测，中值绝对误差为 0.51 h。 80% 的预测在 2.20 小时内，90% 的预测在 4.31 小时内。按工作期限细分：</p>
-<table><thead><tr><th>工作持续时间（小时）</th><th>运行</th><th>中位腹肌。错误（h）</th><th>P90（小时）</th></tr></thead><tbody><tr><td>1.56 至 5</td><td>60</td><td>0.30</td><td>0.30 1.55</td><td>1.55</td></tr><tr><td>5 至 10</td><td>63</td><td>63 0.18</td><td>0.18 1.27</td><td>1.27</td></tr><tr><td>10 至 30</td><td>69</td><td>69 0.73</td><td>0.73 4.17</td><td>4.17</td></tr><tr><td>30 至 60</td><td>67</td><td>67 1.06</td><td>1.06 5.50</td><td>5.50</td></tr><tr><td>60 至 175</td><td>13</td><td>5.19</td><td>5.19 18.51</td><td>18.51</td></tr></tbody></table>
-<p>在 60 小时内，中位误差保持在大约一小时或更短。长尾是模型的困境所在，只有 13 次运行时间超过 60 小时，我们将其视为数据限制。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/gQbjzLv37ag5kX7nZuuMh.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/gQbjzLv37ag5kX7nZuuMh.png" alt="图错误按持续时间"></a></p>
-<p><em>相对于实际持续时间的折叠绝对误差，按持续时间范围着色。错误在长达 60 小时内保持较低水平，并在稀疏尾部扩大。</em></p>
-<p>更多数据应该还是有帮助的。在固定的 20% 保留率下，当训练分区从 85% 增加到 100% 时，MAE 从 1.63 小时下降到 1.50 小时，没有明显的平台期。</p>
-<h2>它有什么好处</h2>
-<p>在实践中，预测器会为调度程序提供一个在作业开始之前可以计划的持续时间：哪些作业一起运行、GPU 何时释放以及运行是否会在截止日期前及时完成。</p>
-<h2>限制</h2>
-<ul><li><strong>仅限 SFT。</strong> 我们没有包括其他培训和调整策略，例如 RLHF、DPO 或 RLVR。</li><li><strong>一种 GPU 类型。</strong> 每次运行都使用 H200。拟合模型已根据该基础设施进行校准，并且不应期望在未经重新训练的情况下将数值转移到其他 GPU 代。混合池的预测器还需要硬件描述符，例如计算吞吐量、内存容量和带宽以及互连拓扑。</li><li><strong>很少有非常长的运行。</strong> 错误会在 60 小时以上扩大。</li></ul>
-<p>传递的是方法：开销感知特征、多重共线性感知选择和比较协议。全文将完整报告特征公式、选择过程、搜索空间和最终超参数，因此可以在具有类似结构的任何执行日志数据集上重建管道。</p>
-<p>我们列表中的下一个：特定于硬件的描述符和其他 GPU 类型的验证、很少观察的配置的迁移学习、其他训练目标以及长期运行的更多数据。</p>
-<h2>接下来是什么</h2>
-<p>完整论文即将发布到 arXiv。在 Hugging Face 上关注 Dharma-AI 组织，以便在发布时收到通知，并在下面的评论中留下您的问题。我们想听听您如何估计自己集群上的工作持续时间。</p>
-<h2>进一步阅读</h2>
-<ul><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management">GPU管理：为什么空闲GPU是新的停飞飞机</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management-pt2">相同集群，利用率增加 33 点：改变的是顺序</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization">SLM词汇专业化如何在实际应用中将推理成本降低77%</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/specialization-beats-scale">专业化战胜规模：大多数人工智能采购决策忽视的战略变量</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/why-specialization-is-inevitable">为什么专业化是必然的</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/newer-models-same-advantages">新型号，同样优势</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/direct-preference-optimization-beyond-chatbots">超越聊天机器人的直接偏好优化</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/text-degeneration-a-production-failure-mode">文本退化：大多数基准测试不跟踪的生产故障模式</a></li></ul>
-<p><em>Dharma-AI研发·我们让AI成为您的模型</em></p>
-<p>该作者的更多内容</p>
-<h2>Dharma 字段提取器：任何文档输入，JSON 输出中的结构化字段</h2>
+<p>CatBoost 的特征重要性集中在少数几个特征上。模型与工作负载变量如预期地出现了，但评估和 checkpoint 相关的变量同样在列。<code>num_eval_data</code>——作业生命周期内评估累计处理的样本总数——排第一，其后是 <code>num_trainable_params</code>、<code>batch_eval_size_percent</code>、<code>num_all_params</code> 和 <code>num_gpus*batch_train_percent</code>，<code>num_params_saved</code> 紧随其后。SHAP 值讲的是同一个故事：评估量越大，预测时长越是被推高；可训练参数量则是非线性影响，只有最大的那些模型才会明显放大。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/MHyGZSFJZ6HXmwAUCTAnF.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/MHyGZSFJZ6HXmwAUCTAnF.png" alt="fig-feature-importance"></a></p>
+<p><em>CatBoost 模型在各折上的平均特征重要性（PredictionValuesChange）。</em></p>
+<p>特征重要性不等于因果关系。不过这个模式与作业实际把时间花在哪里是吻合的。你多久评估一次、评估集有多大、存多少个 checkpoint，都会左右 wall-clock 时间，与模型和数据集的规模并列。而这些，往往是人们写训练配置时按习惯随手定下的选择。</p>
+<p>读图时有一点要留意：更大的 GPU 分配对预测时长是正贡献。在我们的数据里，分到更多 GPU 的往往也是更大的作业，所以 <code>num_gpus</code> 在某种程度上充当了作业规模的代理变量。它并不意味着多加 GPU 会让作业变慢。</p>
+<h2>误差有多大，错在哪里</h2>
+<p>看全部 272 个折外预测，绝对误差中位数为 0.51 h。80% 的预测误差在 2.20 h 以内，90% 在 4.31 h 以内。按作业时长拆开看：</p>
+<table><thead><tr><th>作业时长（h）</th><th>运行次数</th><th>绝对误差中位数（h）</th><th>P90（h）</th></tr></thead><tbody><tr><td>1.56 至 5</td><td>60</td><td>0.30</td><td>1.55</td></tr><tr><td>5 至 10</td><td>63</td><td>0.18</td><td>1.27</td></tr><tr><td>10 至 30</td><td>69</td><td>0.73</td><td>4.17</td></tr><tr><td>30 至 60</td><td>67</td><td>1.06</td><td>5.50</td></tr><tr><td>60 至 175</td><td>13</td><td>5.19</td><td>18.51</td></tr></tbody></table>
+<p>在 60 小时以内，误差中位数保持在一小时上下或更低。长尾是模型吃力之处，而超过 60 小时的运行只有 13 次，我们把这看作数据量的限制。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/gQbjzLv37ag5kX7nZuuMh.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/gQbjzLv37ag5kX7nZuuMh.png" alt="fig-error-by-duration"></a></p>
+<p><em>折外绝对误差对实际时长，按时长区间着色。误差在 60 h 以内保持低位，在稀疏的长尾里放大。</em></p>
+<p>更多数据应该仍有帮助。在固定的 20% 留出集上，训练分区从 85% 提到 100%，MAE 从 1.63 h 降到 1.50 h，尚未看到明显的平台。</p>
+<h2>它有什么用</h2>
+<p>实际使用中，这个预测器能在作业开始前给调度器一个可据以规划的时长：哪些作业可以凑一起跑、GPU 什么时候腾出来、某次运行能否赶上截止时间。</p>
+<h2>局限</h2>
+<ul><li><strong>仅限 SFT。</strong> 我们没有纳入 RLHF、DPO、RLVR 等其他训练与对齐策略。</li><li><strong>单一 GPU 型号。</strong> 所有运行都用 H200。拟合出的模型是针对这套基础设施校准的，不能指望不重新训练就把数值迁移到其他代际的 GPU 上。要做混合 GPU 池的预测器，还需要硬件描述符，例如算力吞吐、显存容量与带宽、互连拓扑。</li><li><strong>超长运行样本太少。</strong> 60 小时以上误差会放大。</li></ul>
+<p>能迁移的是方法本身：开销感知的特征、考虑多重共线性的选择流程，以及比较协议。完整论文会逐一给出特征公式、选择流程、搜索空间和最终超参数，使得这套 pipeline 能在任何结构相似的执行日志数据集上重建。</p>
+<p>我们接下来的计划是：面向特定硬件的描述符、在其他 GPU 型号上的验证、面向观测样本很少的配置的迁移学习、其他训练目标，以及更多长时运行的数据。</p>
+<h2>下一步</h2>
+<p>完整论文很快会上 arXiv。在 Hugging Face 上关注 Dharma-AI 组织，发布时就会收到通知；有问题欢迎留在下方评论里。我们也很想知道你在自己的集群上是怎么估算作业时长的。</p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management">GPU 管理：为什么闲置的 GPU 就像新一代停飞的客机</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management-pt2">同一个集群，利用率再高 33 个点：改变的是顺序</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization">为 SLM 定制词表，如何在真实应用中把推理成本降低 77%</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/specialization-beats-scale">专精胜过规模：大多数 AI 采购决策忽略的一个战略变量</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/why-specialization-is-inevitable">为什么专精是必然的</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/newer-models-same-advantages">更新的模型，同样的优势</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/direct-preference-optimization-beyond-chatbots">聊天机器人之外的直接偏好优化</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/text-degeneration-a-production-failure-mode">文本退化：大多数 benchmark 都不追踪的一种生产故障模式</a></li></ul>
+<p><em>Dharma-AI 研发 · 我们让 AI 成为你的模型</em></p>
+<p>该作者的更多文章</p>
+<h2>Dharma Field Extractor：任意文档输入，JSON 输出结构化字段</h2>
 <ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
 <p>34</p>
 <p>2026 年 11 月 4 日</p>
-<h2>SLM 词汇专业化如何在实际应用中将推理成本降低 77%</h2>
+<h2>为 SLM 定制词表如何在真实应用中把推理成本降低 77%</h2>
 <ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
 <p>38</p>
 <p>2026 年 10 月 21 日</p>
 <h3>社区</h3>
-<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
-<p>点击或粘贴此处上传图像</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FDharma-AI%2Fpredicting-fine-tuning-time">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2FDharma-AI%2Fpredicting-fine-tuning-time">登录</a> 发表评论</p>
+<p>把图像、音频和视频拖入文本输入框、粘贴，或点击此处上传。</p>
+<p>点击或粘贴此处以上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FDharma-AI%2Fpredicting-fine-tuning-time">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2FDharma-AI%2Fpredicting-fine-tuning-time">登录</a> 以发表评论</p>
 <p>11</p>
 <ul><li><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/7f7159bc589e2e23e67a77a46151149a.svg" alt=""></a></li><li><a href="https://huggingface.co/Braias42"><img src="https://huggingface.co/avatars/a92711f439350b33e5f64d6fb7d68684.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/c2426d4c00d1dbaaf7b299b3d1e304c9.svg" alt=""></a></li><li><a href="https://huggingface.co/lmfelipe"><img src="https://huggingface.co/avatars/6fd5bdabfb97ce2e8a4ffaf454c7aa82.svg" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/892344f02f1be897b751797574cb411b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/kishore-ai-dev"><img src="https://huggingface.co/avatars/7d5f9e70a311b0b7fff4f01d4aaa6b68.svg" alt=""></a></li><li><a href="https://huggingface.co/gustavolucchetti"><img src="https://huggingface.co/avatars/e920392ebf5a3b7c6b677800ec839bdd.svg" alt=""></a></li><li><a href="https://huggingface.co/AsTrO963"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/_t5ifHICcVJNBHoUvJ5VQ.png" alt=""></a></li><li><a href="https://huggingface.co/ameforge"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a0b17272dcc89d6563d20df/-YWsVvf5HKh7i6Zq9OyiQ.png" alt=""></a></li><li><a href="https://huggingface.co/iky1e"><img src="https://huggingface.co/avatars/c6b8300024dded3c58d079cb6da10984.svg" alt=""></a></li></ul>]]></content:encoded>
     </item>
@@ -659,151 +659,151 @@ print(response.choices[0].message.content)</code></pre>
       <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
 <h1>Streamhouse 中的时间序列模型：新领域和用例</h1>
 <p>企业文章</p>
-<p>发表于 2026 年 11 月 18 日</p>
+<p>发布于 2026 年 11 月 18 日</p>
 <p>26</p>
 <ul><li><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nfuller"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b12ed52be9660f0b7e5f72/r230jdYzTFj_CYmKgpz78.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/bradleyjeck"><img src="https://huggingface.co/avatars/917b1995b76ce6232153c9104a180fc6.svg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Violette"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1638698875017-noauth.jpeg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/nfuller"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b12ed52be9660f0b7e5f72/r230jdYzTFj_CYmKgpz78.jpeg" alt="尼古拉斯·富勒的头像"></a></p>
-<p>尼古拉斯·富勒</p>
-<p>恩富勒</p>
+<p><a href="https://huggingface.co/nfuller"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b12ed52be9660f0b7e5f72/r230jdYzTFj_CYmKgpz78.jpeg" alt="Nicholas Fuller 的头像"></a></p>
+<p>Nicholas Fuller</p>
+<p>nfuller</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/thefalc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a95bef85a23d548d3a6033f/rAmRICBlEO1O8qHRZ20qO.png" alt="肖恩·法尔科纳的头像"></a></p>
-<p>肖恩·法尔科纳</p>
-<p>特法尔克</p>
+<p><a href="https://huggingface.co/thefalc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a95bef85a23d548d3a6033f/rAmRICBlEO1O8qHRZ20qO.png" alt="Sean Falconer 的头像"></a></p>
+<p>Sean Falconer</p>
+<p>thefalc</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt="Ayhan Sebin 的头像"></a></p>
-<p>艾汉·塞宾</p>
-<p>艾汉瑟宾</p>
+<p>Ayhan Sebin</p>
+<p>ayhansebin</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/pankajdayama"><img src="https://huggingface.co/avatars/40557bc175dc732b7fd14a23312c4462.svg" alt="Pankaj Dayama 的头像"></a></p>
-<p>潘卡吉·达亚玛</p>
-<p>潘卡吉达亚马</p>
+<p>Pankaj Dayama</p>
+<p>pankajdayama</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/63335566a35123bba6e5644d10e0ccd6.svg" alt="罗马瓦库林的头像"></a></p>
-<p>罗曼·瓦库林</p>
-<p>真空蛋白</p>
+<p><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/63335566a35123bba6e5644d10e0ccd6.svg" alt="Roman Vaculin 的头像"></a></p>
+<p>Roman Vaculin</p>
+<p>vaculin</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/bzeren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a95c9b7b2432a8a934d90b4/CZFckqS6pNWYd2L6GPDEN.jpeg" alt="Bilge Zeren Aksu 的头像"></a></p>
-<p>比尔格·泽伦·阿克苏</p>
-<p>布泽伦</p>
+<p>Bilge Zeren Aksu</p>
+<p>bzeren</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/Pyjamacardinal"><img src="https://huggingface.co/avatars/f7a44228cf542b3253d40c5ed889f09e.svg" alt="朱利安·佩恩的头像"></a></p>
-<p>朱利安·佩恩</p>
-<p>睡衣红衣主教</p>
+<p><a href="https://huggingface.co/Pyjamacardinal"><img src="https://huggingface.co/avatars/f7a44228cf542b3253d40c5ed889f09e.svg" alt="Julian Payne 的头像"></a></p>
+<p>Julian Payne</p>
+<p>Pyjamacardinal</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/mjinwala"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a9607e72d4dad45f5965208/XN4yY40EvH0YRP1FvPXJr.png" alt="Mountu Jinwala 头像"></a></p>
-<p>金瓦拉山</p>
-<p>姆金瓦拉</p>
+<p><a href="https://huggingface.co/mjinwala"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a9607e72d4dad45f5965208/XN4yY40EvH0YRP1FvPXJr.png" alt="Mountu Jinwala 的头像"></a></p>
+<p>Mountu Jinwala</p>
+<p>mjinwala</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/wmgifford"><img src="https://huggingface.co/avatars/60ecc574000e8c41b29e7b428f9580b5.svg" alt="Wesley M. Gifford 的头像"></a></p>
-<p>韦斯利·M·吉福德</p>
-<p>威姆吉福德</p>
+<p>Wesley M. Gifford</p>
+<p>wmgifford</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/creddyhf"><img src="https://huggingface.co/avatars/c5da273b4e6a5c07d10ac4ee345ab366.svg" alt="钱德拉·雷迪的头像"></a></p>
-<p>钱德拉·雷迪</p>
-<p>可信的</p>
+<p><a href="https://huggingface.co/creddyhf"><img src="https://huggingface.co/avatars/c5da273b4e6a5c07d10ac4ee345ab366.svg" alt="Chandra Reddy 的头像"></a></p>
+<p>Chandra Reddy</p>
+<p>creddyhf</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/vijaye12"><img src="https://huggingface.co/avatars/8f4026485d82038b671adc4800a2587b.svg" alt="Vijay Ekambaram 的头像"></a></p>
-<p>维杰·埃坎巴拉姆</p>
-<p>他的妻子12</p>
+<p>Vijay Ekambaram</p>
+<p>vijaye12</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/ajati"><img src="https://huggingface.co/avatars/7b9ac8a0b635bdd3de3aef0a9d138b22.svg" alt="Arindam Jati 的头像"></a></p>
-<p>阿林丹·贾蒂</p>
-<p>阿贾提</p>
+<p>Arindam Jati</p>
+<p>ajati</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/rmetzger0"><img src="https://huggingface.co/avatars/de10ec5da5336a98d268471d40eef8df.svg" alt="罗伯特·梅茨格的头像"></a></p>
-<p>罗伯特·梅茨格</p>
-<p>雷梅茨格0</p>
+<p><a href="https://huggingface.co/rmetzger0"><img src="https://huggingface.co/avatars/de10ec5da5336a98d268471d40eef8df.svg" alt="Robert Metzger 的头像"></a></p>
+<p>Robert Metzger</p>
+<p>rmetzger0</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><strong>实时预测、异常检测和优化，由下载量超过 5000 万次的 IBM 时间序列模型提供支持。现在可在 Confluence 本地、云端和本地使用，在 CPU 上运行。</strong></p>
-<p>每个企业都会生成连续的变化记录：机器读取、付款、销售、订单或库存变化。这些观察形成时间序列，它们携带的信号可以帮助团队预测接下来会发生什么。</p>
-<p>挑战在于在这些信号仍然重要的情况下将其转化为决策。在生产运行、缺货或付款授权后提供的预测可能是准确的，但为时已晚，无法影响结果。</p>
-<p>IBM 和 Confluence 正在使时间序列基础模型更接近数据流动。借助 Apache Flink，团队可以使用 SQL 将预测、异常检测和语义智能应用于流数据，从而使模型输出可供应用程序和负责下一步操作的人员使用。</p>
-<p>基础模型改变了组织处理文本、图像和文档的方式。时间序列基础模型通过从不同的历史数据中学习一般模式，然后将这些知识应用到新的序列和任务中，将类似的想法扩展到数值数据。这些模型可以提供一个起点，而不需要团队为每个系列训练单独的模型。根据任务和部署，团队还可以微调模型或将其输出与其他数据和业务逻辑相结合。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/uNQkq4JD8ABh729KrjG0A.webp">！[超过 5000 万次下载和四个型号的系列。单击以在 Confluence 上试用模型。</a>](https://events.confluent.io/early-access-flink-features)</p>
-<p><em>图 1. 超过 5000 万次下载，及其背后的四款机型</em></p>
-<p>现在，时间序列基础模型作为云端和本地的内置函数在 Confluence 中本地运行。在 Confluence Cloud 中，它们是完全托管的，无需部署任何内容（<a href="https://docs.confluent.io/cloud/current/ai/builtin-functions/forecast.html">文档</a>）。在本地，模型可以使用 Apache Flink 的 Confluence Platform 在您自己的基础设施中运行。（<a href="https://docs.confluent.io/cp-flink/current/jobs/sql-statements/ai/set-up-ai-functions.html">文档</a>）。这些模型在 CPU 上运行，不需要 GPU。</p>
-<p>这些模型可以支持一系列关键任务用例，从帮助保持生产线符合规格、检测不寻常的商店活动到改进产品级规划。他们还可以提供信号来评估卡支付并预测交易量，以帮助下大订单。这些构建模块可以应用于制造、零售、银行和航空公司，使洞察更接近决策制定的地方。</p>
-<p>了解时间序列和实时上下文如何结合起来创造价值：</p>
-<h2>Streamhouse：代理时代的实时数据和情报</h2>
-<p>企业持续经营。订单更新、付款到达、发货延迟以及库存全天发生变化。然而，这些事件背后的信息通常分布在不同时间更新或依赖于定期批处理的系统中。当应用程序和人工智能代理根据过时或不一致的信息采取行动时，他们可能会做出不再反映正在发生的情况的决策。</p>
-<p>Streamhouse 通过持续捕获、处理、管理和服务当前的业务环境来解决这个问题。 Confluence 的数据流平台汇集了连接、流、处理、治理和查询五种功能，使该上下文可供应用程序、分析和代理使用。 Apache Flink 在数据流动时转换和丰富数据，而 Lightning Tables 提供对当前状态的低延迟访问。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/M2Rn5ft2uBCZcTkyUxNfx.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/M2Rn5ft2uBCZcTkyUxNfx.png" alt="Confluence 上的 Streamhouse"></a></p>
-<p><em>图 2. Confluence 上的 Streamhouse：从现有数据源到代理、应用程序、分析和 Lakehouse 在任何地方使用的当前业务环境。</em></p>
-<p>时间序列模型为该架构增添了预测能力。 Flink 可以准备数据、调用预测和异常检测，并将结果与​​生成结果的事件一起提供。其他模型（包括大型语言模型、统计模型和专门的机器学习系统）可以在适当的情况下做出贡献。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/ELIbCPJpgpZn1X58rxs7p.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/ELIbCPJpgpZn1X58rxs7p.png" alt="Streamhouse 的层次：代理体验、端到端解决方案、流原生智能和 Streamhouse"></a></p>
-<p><em>图 3.Streamhouse 的智能层：时间序列模型、大型语言模型以及 ML 和统计模型，以及跨它们的编排。</em></p>
-<p>这种方法可以通过四种方式帮助团队：</p>
-<p>-<strong>比例模型开发</strong>。预训练模型可以提供跨多个时间序列的共同起点，从而减少为每个时间序列开发和维护单独模型的需要。</p>
-<p>-<strong>随着数据变化刷新预测</strong>。预测可以将最近的观测结果合并为流式工作流程的一部分，具体取决于模型的要求和管道的配置。</p>
-<p>-<strong>让信号更接近决策</strong>。预测和异常可以更快地发送到运营应用程序，团队可以将它们与业务环境、规则和人工判断相结合。</p>
-<p>-<strong>在 CPU 上运行紧凑模型。</strong> 这些模型足够小，可以在云端或本地的流管道旁边的标准 CPU 上运行，这可以减少对专用 GPU 基础设施的需求并简化部署。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/Rcda03VYTPUiq9sh5zW1B.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/Rcda03VYTPUiq9sh5zW1B.webp" alt="05-架构动态"></a></p>
-<p><em>图 4. 在 Confluence 上流式传输本机时间序列智能</em></p>
-<h2>跨真实企业的关键任务用例</h2>
-<p>以下场景说明了组织如何组合时间序列模型、流数据和应用程序逻辑。</p>
-<h3>用例 1 |生产优化：每个浴缸均符合规格</h3>
-<p>冰淇淋生产线的质量取决于溢出量——搅入混合物中的空气量。如今，工艺工程师和操作员依赖于 QA 实验室在桶装满后进行的测量。如果新的奶油批次或温暖潮湿的天气改变了流程，那么当团队看到结果时，生产时间可能已经需要返工。</p>
-<p>为了解决这个问题，预训练的 TTM 模型每 10 分钟读取一次 SCADA 遥测和 QA 测量结果。它预测预计未来四小时符合规格的浴缸比例以及可能的范围。</p>
-<p>当预测低于工厂目标时，优化过程会评估冷冻机抽气温度和气流的组合。由于模型将这些控制变量作为输入，因此它可以在线路发生任何变化之前对每个选项进行评分。操作员批准建议的设定点，同时可以在预定义的护栏内自动进行常规调整。</p>
-<p>其结果是一个更加积极主动的过程：更少的返工、更低的每吨能源消耗以及更一致的质量。同样的方法也适用于烘箱、干燥机、窑炉和研磨机。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/B1eCtmZ6M0ufgJ9u_P_oU.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/B1eCtmZ6M0ufgJ9u_P_oU.webp" alt="07-生产优化"></a></p>
-<p><em>图 5。产品质量预测可帮助操作员在进行调整之前评估冷冻机设定点。</em></p>
-<h3>用例 2 |异常检测：从标记到正确的操作</h3>
-<p>商店运营团队监控数百家商店的数千种产品的销售情况。固定阈值通常会标记可预测的周末高峰，而忽略更安静的变化，例如产品销量低于预期。随着警报的积累，团队变得更难知道应该关注哪里。</p>
-<p>AI_DETECT_ANOMALIES 根据每个销售系列的近期历史记录给出一个预期范围。每个新读数都会按照团队选择的置信水平与该范围进行比较，而无需为每个产品和商店训练单独的模型。</p>
-<p>当销售额超出预期范围时，信号可以与库存和商店数据结合起来，帮助识别可能的原因并建议下一步措施，例如检查货架或补充库存。同样的方法可以应用于机器传感器、API 遥测、仪表读数和支付量。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/vbMeXLhmrNv_BP4tSHwl7.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/vbMeXLhmrNv_BP4tSHwl7.webp" alt="08-异常检测"></a></p>
-<p><em>图 6. 商店销售额与预期范围的比较。在所示视图中，重复出现的峰值保持在范围内，并且没有标记异常。</em></p>
-<h3>用例 3 |供应链规划：每个SKU、每个商店、每小时</h3>
-<p>品类规划人员和补货团队需要保证每家商店都有可用的产品，而不需要持有过多的库存。但预测可能每周只刷新一次，通常侧重于最畅销的产品，而长尾则通过更简单的规则进行管理。当销售模式在计划周期之间发生变化时，一家商店可能会缺货，而另一家商店则库存过多。</p>
-<p>借助 AI_FORECAST，预训练模型可以预测跨产品和商店的需求。在此示例中，它生成范围为 P10-P90 的 28 天预测，并随着新销售数据的到来而刷新。规划应用程序将预测与库存、提前期和规划人员选择的服务级别相结合，以计算再订购点。</p>
-<p>当库存预计低于该点时，代理商可以起草采购订单以供审核。同样的方法可以支持备件、人员配置、ATM 现金和能源需求的规划。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/CjaQoYxJfRy89ahsPN2P3.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/CjaQoYxJfRy89ahsPN2P3.webp" alt="09-供应链规划-v2"></a></p>
-<p><em>图 7. 商店级别的需求预测告知再订购点和燕麦奶的拟议采购订单。</em></p>
-<h3>用例 4 |欺诈与安全：每张卡都有自己的常态</h3>
-<p>欺诈团队已经依靠复杂的规则和模型来评估交易。一个持续的挑战是，对许多持卡人适用的阈值可能无法反映每个人通常的消费方式。</p>
-<p>时间序列信号可以添加单独的上下文。在此示例中，每笔付款都会与基于卡的近期历史记录的预期支出范围进行比较。超出该范围的交易将与其他信号和业务规则一起作为附加输入传递到银行现有的欺诈系统。</p>
-<p>然后，银行可以决定是否批准付款、请求额外身份验证或进一步调查。决策及其背后的信号可以保留以供审查。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/5rPcP75nAZTLx56KSASo1.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/5rPcP75nAZTLx56KSASo1.webp" alt="10-欺诈和安全"></a></p>
-<p><em>图 8. 超出卡预期支出范围的付款会提示在示例性欺诈工作流程中进行升级身份验证。</em></p>
-<h3>用例 5 |交易：跟随磁带调整订单节奏</h3>
-<p>执行台需要将大订单分成较小的交易，同时管理其对市场的影响。历史交易量曲线提供了一个起点，但今天的交易活动可能看起来与平均值有很大不同。</p>
-<p>在每个一分钟柱上，PatchTST-FM 预测未来 30 分钟的交易量，范围为 P10-P90。执行算法使用该预测来在交易台设定的参与限制内调整订单的节奏。</p>
-<p>如果新闻事件改变了市场活动，算法可以暂停并重新计划。如果交易比预期安静，它可以减少每个切片的大小，并表明订单可能需要更长的时间才能完成。每个预测和由此产生的执行决策都可以保留在审计跟踪中。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/wZtPpIN2ujDQEfOzfUBwm.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/wZtPpIN2ujDQEfOzfUBwm.webp" alt="12-交易"></a></p>
-<p><em>图 9. 成交量预测告知 100,000 股订单的建议执行计划。</em></p>
-<h3>用例 6 |语义搜索：找到每个看起来像这样的信号</h3>
-<p>调查异常传感器模式的可靠性工程师可能想知道工厂其他地方是否出现了类似的行为。</p>
-<p>TSPulse 可以生成支持相似性搜索的时间序列窗口的表示。在单独构建的应用程序中，可以对这些表示进行索引并用于检索跨设备的历史模式。工程师可以搜索峰值和恢复、逐渐上升或阶跃变化等形状，然后检查相关的维护记录和操作条件。</p>
-<p>该应用程序需要嵌入管道、索引以及对相关上下文的访问。相似性可以帮助缩小调查范围；它本身并不能确定根本原因。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/8xO2-4i9W0BDyJ4TVrsGC.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/8xO2-4i9W0BDyJ4TVrsGC.webp" alt="11-语义搜索"></a></p>
-<p><em>图 10。时间序列嵌入可以支持跨设备和其他信号搜索相似模式。</em></p>
+<p><strong>实时预测、异常检测与优化，由下载量超过 5,000 万次的 IBM 时间序列模型驱动。如今已原生支持 Confluent，云端与本地皆可部署，运行在 CPU 上。</strong></p>
+<p>每家企业都在持续产生一份变化记录：一次机器读数、一笔支付、一次销售、一张订单，或者一次库存变动。这些观测构成时间序列，而其中携带的信号可以帮助团队预判接下来会发生什么。</p>
+<p>难点在于趁这些信号仍然有价值时把它们变成决策。一次生产批次跑完、一次缺货、一次支付授权之后才送达的预测，也许依然准确，却已来不及影响结果。</p>
+<p>IBM 与 Confluent 正让时间序列基础模型更贴近流动中的数据。借助 Apache Flink，团队可以用 SQL 对流式数据施加预测、异常检测与语义智能，让模型输出直达负责下一步动作的应用和人员。</p>
+<p>基础模型改变了组织处理文本、图像与文档的方式。时间序列基础模型把类似的思路延伸到数值数据：先从多样化的历史数据中学习通用模式，再把这份知识用于新的序列与任务。这类模型可以提供一个起点，团队无需为每一条序列单独训练模型。视任务与部署方式而定，团队还可以对模型做 fine-tuning，或把模型的输出与其他数据和业务逻辑结合。</p>
+<p><a href="https://events.confluent.io/early-access-flink-features"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/uNQkq4JD8ABh729KrjG0A.webp" alt="下载量超过 5,000 万次，以及支撑这一数字的四款模型家族。点击在 Confluent 上试用这些模型。"></a></p>
+<p><em>图 1. 下载量超过 5,000 万次，以及撑起这个数字的四款模型</em></p>
+<p>如今，时间序列基础模型以内置函数的形式原生运行在 Confluent 之内，云端与本地皆可。在 Confluent Cloud 中它们完全托管，无需部署任何东西（<a href="https://docs.confluent.io/cloud/current/ai/builtin-functions/forecast.html">文档</a>）。在本地，模型可以借助 Confluent Platform for Apache Flink 跑在你自己的基础设施里。（<a href="https://docs.confluent.io/cp-flink/current/jobs/sql-statements/ai/set-up-ai-functions.html">文档</a>）。这些模型运行在 CPU 上，不需要 GPU。</p>
+<p>这些模型可以支撑一系列关键业务场景：从帮助生产线保持在规格之内、发现门店异常活动，到改进单品层面的规划。它们还能提供信号来评估卡片支付，并预测交易量以协助下达大额订单。这些构件可以通用于制造业、零售、银行与航空业，把洞察带到离决策更近的地方。</p>
+<p>看看时间序列与实时上下文如何结合，共同创造价值：</p>
+<h2>Streamhouse：agentic 时代的实时数据与智能</h2>
+<p>企业的运营从不间断。订单在更新，付款在到账，货运在延误，库存一天之内反复变动。然而这些事件背后的信息往往散落在不同系统里，各系统更新节奏不一，或者依赖周期性的批处理。当应用与 AI agent 依据过时或不一致的信息行动时，就可能做出不再反映当下实况的决策。</p>
+<p>Streamhouse 通过持续捕获、处理、治理并提供当前的业务上下文来解决这个问题。Confluent 的 Data Streaming Platform 把 connect、stream、process、govern、query 五项能力汇于一处，让这份上下文可供应用、分析与 agent 使用。Apache Flink 在数据流动过程中完成转换与增强，Lightning Tables 则提供对当前状态的低延迟访问。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/M2Rn5ft2uBCZcTkyUxNfx.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/M2Rn5ft2uBCZcTkyUxNfx.png" alt="Confluent 上的 Streamhouse"></a></p>
+<p><em>图 2. Confluent 上的 Streamhouse：从既有数据源到当前的业务上下文，供 agent、应用、分析与 lakehouse 在任何地方使用。</em></p>
+<p>时间序列模型为这套架构补上预测能力。Flink 可以准备数据、调用预测与异常检测，并让结果与产生它的事件一并可用。其他模型——包括大型语言模型、统计模型和专用机器学习系统——也能在合适的位置参与进来。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/ELIbCPJpgpZn1X58rxs7p.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/ELIbCPJpgpZn1X58rxs7p.png" alt="Streamhouse 的各层：agentic 体验、端到端解决方案、流原生智能，以及 Streamhouse 本身"></a></p>
+<p><em>图 3. Streamhouse 的智能层：时间序列模型、大型语言模型，以及 ML 与统计模型，并在它们之间做编排。</em></p>
+<p>这种做法可以在四个方面帮到团队：</p>
+<p>-<strong>扩大模型开发的规模</strong>。一个预训练模型可以为众多时间序列提供共同的起点，减少为每一条序列单独开发并维护模型的需要。</p>
+<p>-<strong>随数据变化刷新预测</strong>。预测可以在流式工作流中纳入最近的观测，具体取决于模型的要求与 pipeline 的配置。</p>
+<p>-<strong>让信号离决策更近</strong>。预测与异常可以更早地路由到运营类应用，团队在那里把它们与业务上下文、规则和人工判断结合。</p>
+<p>-<strong>在 CPU 上运行紧凑模型。</strong> 这些模型足够小，可以与流式 pipeline 一起跑在标准 CPU 上，云端或本地皆可，从而减少对专用 GPU 基础设施的依赖，并简化部署。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/Rcda03VYTPUiq9sh5zW1B.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/Rcda03VYTPUiq9sh5zW1B.webp" alt="05-architecture-dynamic"></a></p>
+<p><em>图 4. Confluent 上的流原生时间序列智能</em></p>
+<h2>真实企业中的关键业务场景</h2>
+<p>以下场景展示了组织可以如何把时间序列模型、流式数据与应用逻辑组合起来。</p>
+<h3>用例 1 | 生产优化：每一桶都合乎规格</h3>
+<p>冰淇淋生产线的质量取决于 overrun——也就是搅打进混合料里的空气量。目前，工艺工程师和操作员依赖 QA 实验室在桶装完成之后所做的测量。如果换了一批新奶油，或者遇上温暖潮湿的天气而让工艺发生变化，等到团队看到结果时，可能已有数小时的产品需要返工。</p>
+<p>为了提前应对这个问题，一个预训练的 TTM 模型每 10 分钟读取一次 SCADA 遥测数据与 QA 测量值。它预测未来四小时内预计合乎规格的桶装比例，并给出一个可能区间。</p>
+<p>当预测值低于工厂目标时，优化流程会评估冷冻机抽气温度与风量的各种组合。由于模型把这些控制变量作为输入，它可以在产线做任何改动之前就为每个选项打分。操作员批准推荐的设定点，而常规调整可以在预设的护栏范围内自动执行。</p>
+<p>结果是流程变得更主动：返工更少、每吨能耗更低、质量更稳定。同样的方法也适用于烤箱、干燥机、窑炉和研磨机。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/B1eCtmZ6M0ufgJ9u_P_oU.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/B1eCtmZ6M0ufgJ9u_P_oU.webp" alt="07-production-optimization"></a></p>
+<p><em>图 5. 产品质量预测帮助操作员在做出调整之前评估冷冻机设定点。</em></p>
+<h3>用例 2 | 异常检测：从一条标记到正确的处置</h3>
+<p>某门店运营团队要监控数百家门店、数千种商品的销售。固定阈值常常把可预期的周末高峰标出来，却漏掉更安静的变化，比如某件商品卖得比预期少。警报越积越多，团队反而越来越难判断该把注意力放在哪里。</p>
+<p>AI_DETECT_ANOMALIES 依据每条销售序列的近期历史给出一个预期区间。每个新读数都会按团队选定的置信水平与该区间比对，无需为每个商品和门店单独训练模型。</p>
+<p>当销售落到预期区间之外时，这个信号可以与库存和门店数据结合，帮助找出可能的原因并建议下一步——例如检查货架或补货。同样的方法也适用于机器传感器、API 遥测、电表读数和支付量。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/vbMeXLhmrNv_BP4tSHwl7.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/vbMeXLhmrNv_BP4tSHwl7.webp" alt="08-anomaly-detection"></a></p>
+<p><em>图 6. 门店销售与预期区间做比对。在所示视图中，周期性高峰仍落在区间内，没有触发异常标记。</em></p>
+<h3>用例 3 | 供应链规划：每个 SKU、每家门店、每个小时</h3>
+<p>品类规划师与补货团队需要让每家门店都不断货，同时又不背上多余库存。但预测可能一周才刷新一次，而且往往只覆盖畅销品，长尾商品则靠更简单的规则管理。一旦销售模式在两个规划周期之间发生变化，就可能一家门店断货、另一家库存过剩。</p>
+<p>借助 AI_FORECAST，一个预训练模型可以跨商品、跨门店预测需求。在这个例子里，它产出带 P10–P90 区间的 28 天预测，并随着新销售数据的到来而刷新。规划应用把预测与库存、提前期以及规划师选定的服务水平结合起来，计算出再订货点。</p>
+<p>当预计库存将跌破该点时，agent 可以起草一份采购订单供审阅。同样的方法也能支撑备件、人员排班、ATM 现金和能源需求的规划。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/CjaQoYxJfRy89ahsPN2P3.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/CjaQoYxJfRy89ahsPN2P3.webp" alt="09-supply-chain-planning-v2"></a></p>
+<p><em>图 7. 门店级需求预测支撑出再订货点，以及一份针对燕麦奶的采购订单建议。</em></p>
+<h3>用例 4 | 欺诈与安全：每张卡都有自己的常态</h3>
+<p>欺诈团队早已依靠复杂的规则与模型来评估交易。一个持续的难题是：套用于众多持卡人的统一阈值，未必能反映每个人平常的消费方式。</p>
+<p>时间序列信号可以补上这层个体上下文。在这个例子里，每笔支付都会与基于该卡近期历史得出的预期消费区间比对。落在区间之外的交易，会连同其他信号与业务规则一起，作为额外输入送给银行现有的反欺诈系统。</p>
+<p>随后银行可以决定是批准这笔支付、要求追加认证，还是进一步调查。决策及其背后的信号都可以留存备查。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/5rPcP75nAZTLx56KSASo1.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/5rPcP75nAZTLx56KSASo1.webp" alt="10-fraud-and-security"></a></p>
+<p><em>图 8. 一笔超出该卡预期消费区间的支付，在一个示意性的欺诈工作流中触发强化认证。</em></p>
+<h3>用例 5 | 交易：让下单节奏跟随行情</h3>
+<p>执行台需要把一笔大单拆成多笔较小的交易，同时控制它对市场的影响。历史成交量曲线能提供起点，但当下的交易活跃度可能与均值相去甚远。</p>
+<p>在每一根一分钟 bar 上，PatchTST-FM 预测未来 30 分钟的成交量，并给出 P10–P90 区间。执行算法用这份预测，在交易台设定的参与率上限内安排下单节奏。</p>
+<p>如果新闻事件改变了市场活跃度，算法可以暂停并重新规划。如果交易比预期清淡，它可以缩小每一笔切分的规模，并提示该订单可能需要更长时间才能完成。每一次预测以及由此产生的执行决策，都可以留在审计轨迹里。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/wZtPpIN2ujDQEfOzfUBwm.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/wZtPpIN2ujDQEfOzfUBwm.webp" alt="12-trading"></a></p>
+<p><em>图 9. 成交量预测为一张 10 万股订单的执行计划建议提供依据。</em></p>
+<h3>用例 6 | 语义搜索：找出每一个长得像它的信号</h3>
+<p>一位可靠性工程师在调查某个异常传感器模式时，可能想知道工厂其他地方是否出现过类似的行为。</p>
+<p>TSPulse 可以生成时间序列窗口的表示，用来支撑相似度检索。在一个另行搭建的应用中，这些表示可以被索引，用于跨设备召回历史模式。工程师可以按形状检索，比如尖峰后回落、缓慢上升或阶跃变化，然后再查看相关的维护记录与运行工况。</p>
+<p>这个应用需要一条 embedding pipeline、一个索引，以及对相关上下文的访问权限。相似度能帮调查收窄范围，但它本身并不确立根因。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/8xO2-4i9W0BDyJ4TVrsGC.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/8xO2-4i9W0BDyJ4TVrsGC.webp" alt="11-semantic-search"></a></p>
+<p><em>图 10. 时间序列 embedding 可以支撑跨设备及其他信号的相似模式检索。</em></p>
 <h2>行业特定应用</h2>
-<p>相同的模型和构建块可以支持跨行业的不同工作流程：</p>
-<ul><li><strong>工业人工智能：从传感器到设定值。</strong> 工厂经理希望每批产品都符合规格，并且没有一条生产线会因意外而停止。 SCADA、QA 实验室和电表流在到达时进行预测。当质量开始漂移时，生产优化会移动设定点，异常检测会标记未编写任何规则的读数，语义搜索会找到故障前显示相同模式的每个泵。设定点、工作指令和警报到达周期内的底线，而不是到达下一个班次报告。</li></ul>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/q8GaODH5na0inQAQ5NsSy.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/q8GaODH5na0inQAQ5NsSy.webp" alt="13-双工厂"></a></p>
-<p><em>图 11. 工厂双胞胎，从传感器到设定点。一批新的奶油批次超出了目标。预测显示该线，代理商提出新的抽气温度和气流，操作员批准，浴缸恢复到规格。模拟数据。</em></p>
-<ul><li><strong>零售：商店及其供应链。</strong> 商店经理希望周六有完整的货架，而周一不会积压。预测每家商店中每种产品的销售、天气和促销流。供应链规划设定订单，异常检测发现空货架或错过的交货，欺诈和安全控制可疑卡。在货架空完之前，订单、商店任务和保留的商品都会被售完。</li></ul>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/H2fM8uPxwgGowSbE81se3.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/H2fM8uPxwgGowSbE81se3.webp" alt="14-双店"></a></p>
-<p><em>图 12. 商店双胞胎，一家商店及其供应链。燕麦奶促销即将到来。促销中的预测价格并设置再订购点，代理商提出采购订单，计划人员批准，促销当天货架已满。模拟数据。</em></p>
-<ul><li><strong>银行业：支付和交易柜台。</strong> 欺诈负责人希望在不阻止优质客户的情况下停止卡测试，而交易员希望在不改变价格的情况下完成大额订单。每张牌和每个符号都会根据其自己的预期模式逐个事件进行评分。欺诈和安全控制授权前的奇怪刷卡，异常检测发现异常流量，并根据预测量调整每个订单的交易速度。</li><li><strong>航空公司：枢纽运营、机队和网络。</strong> 运营控制希望在仍有时间采取行动的情况下看到即将发生的中断。引擎、登机门和网络流量都会被实时预测和检查。异常检测捕获漂移的发动机读数，生产优化重新平衡登机口和机组人员，供应链规划将备件放置在飞机所在的位置。</li></ul>
-<p>在每个行业中，Streamhouse 都做同样的工作：Flink 运行 Granite 模型来预测、检测和优化，流代理在实时上下文中起作用，并且人们批准例外情况。</p>
-<p>探索 Confluence 上的模型，了解时间序列智能如何支持实时决策。</p>
-<p><a href="https://events.confluent.io/early-access-flink-features"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/_UuP1FMzinS6oJu3XiXUW.webp" alt="在 Confluence 上尝试模型"></a></p>
-<h3>了解更多</h3>
-<ul><li>代码和笔记本：<a href="https://github.com/ibm-granite/granite-tsfm">github.com/ibm-granite/granite-tsfm</a></li><li><a href="https://huggingface.co/blog/ibm-research/real-time-intelligence">Confluence 上 IBM 时间序列模型的实时智能</a></li><li><a href="https://huggingface.co/blog/ibm-research/granite-timeseries-ensemble-r1">使用 IBM Granite 时间序列模型进行集合预测</a></li><li><a href="https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series">IBM 发布具有商业友好许可证的 SOTA Granite Time Series PatchTST-FM-r2 模型</a></li><li><a href="https://www.confluent.io/blog/2026-q3-confluent-intelligence-ai-update/">融合智能和人工智能工具的新功能：使代理原生于流、扩展模型支持、新代理技能和融合助手</a></li><li><a href="https://www.confluent.io/blog/2026-q4-confluent-bundle-launch/">Q4'26 Confluence 数据流平台的新增功能</a></li><li><a href="https://docs.confluent.io/cp-flink/current/changelog.html#november-2026">Apache Flink Confluence 平台的新增功能，2026 年 11 月</a></li></ul>
-<p>该作者的更多内容</p>
-<h2>Palette：教一个小模型用你的设计语言构建牌组</h2>
+<p>同样的模型与构件可以支撑不同行业中的不同工作流：</p>
+<ul><li><strong>工业 AI：从传感器到设定点。</strong> 工厂经理希望每一批都合乎规格，也没有哪条产线被意外停机。SCADA、QA 实验室和电表的数据流在到达时即被预测。质量开始漂移时，生产优化会调整设定点；异常检测会标出任何规则都没写过的读数；语义搜索会找出故障前出现过同样模式的每一台泵。设定点、工单和警报在周期之内就抵达车间，而不是等下一份交接班报告。</li></ul>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/q8GaODH5na0inQAQ5NsSy.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/q8GaODH5na0inQAQ5NsSy.webp" alt="13-twin-plant"></a></p>
+<p><em>图 11. 工厂数字孪生，从传感器到设定点。一批新奶油让 overrun 偏离目标。预测读取产线状态，agent 提出新的抽气温度与风量，操作员批准，桶装产品重回规格。模拟数据。</em></p>
+<ul><li><strong>零售：一家门店与它的供应链。</strong> 门店经理希望周六货架是满的，周一又不要压货。销售、天气与促销数据流会针对每家门店的每个商品做出预测。供应链规划确定订单，异常检测捕捉空货架或漏送的到货，欺诈与安全模块拦下可疑的卡。订单、门店任务和拦截指令在货架空掉之前就发出去了。</li></ul>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/H2fM8uPxwgGowSbE81se3.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/H2fM8uPxwgGowSbE81se3.webp" alt="14-twin-store"></a></p>
+<p><em>图 12. 门店数字孪生，一家门店与它的供应链。燕麦奶即将促销。预测把促销计入并设定再订货点，agent 提出采购订单，规划师批准，促销当天货架是满的。模拟数据。</em></p>
+<ul><li><strong>银行：支付与交易台。</strong> 反欺诈负责人想在不误伤好客户的前提下阻止卡测试，交易员想在不推动价格的情况下完成大额订单。每一张卡、每一个标的都按各自的预期模式逐事件打分。欺诈与安全模块在授权前拦下异常刷卡，异常检测发现异常的资金流，交易模块用预测成交量安排每笔订单的节奏。</li><li><strong>航空：枢纽运营、机队与航线网络。</strong> 运行控制部门希望在还来得及行动的时候就看到扰动来临。发动机、登机口与网络数据流被实时预测和核查。异常检测捕捉漂移的发动机读数，生产优化重新平衡登机口与机组，供应链规划把备件放到飞机将要去的地方。</li></ul>
+<p>在每个行业里，Streamhouse 做的都是同一件事：Flink 运行 Granite 模型来做预测、检测与优化，Streaming Agents 基于实时上下文采取行动，而人来批准例外。</p>
+<p>去 Confluent 上探索这些模型，看看时间序列智能如何支撑实时决策。</p>
+<p><a href="https://events.confluent.io/early-access-flink-features"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/_UuP1FMzinS6oJu3XiXUW.webp" alt="在 Confluent 上试用这些模型"></a></p>
+<h3>延伸阅读</h3>
+<ul><li>代码与 notebook：<a href="https://github.com/ibm-granite/granite-tsfm">github.com/ibm-granite/granite-tsfm</a></li><li><a href="https://huggingface.co/blog/ibm-research/real-time-intelligence">Confluent 上基于 IBM 时间序列模型的实时智能</a></li><li><a href="https://huggingface.co/blog/ibm-research/granite-timeseries-ensemble-r1">用 IBM Granite 时间序列模型做集成预测</a></li><li><a href="https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series">IBM 发布采用商业友好许可的 SOTA Granite Time Series PatchTST-FM-r2 模型</a></li><li><a href="https://www.confluent.io/blog/2026-q3-confluent-intelligence-ai-update/">Confluent Intelligence 与 AI 工具新动向：让 agent 原生贴近数据流、扩大模型支持、新增 Agent Skills，以及 Confluent Assistant</a></li><li><a href="https://www.confluent.io/blog/2026-q4-confluent-bundle-launch/">Q4'26 Confluent Data Streaming Platform 新特性</a></li><li><a href="https://docs.confluent.io/cp-flink/current/changelog.html#november-2026">Confluent Platform for Apache Flink 2026 年 11 月新特性</a></li></ul>
+<p>该作者的更多文章</p>
+<h2>Palette：教一个小模型用你的设计语言搭建演示文稿</h2>
 <ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
 <p>21</p>
 <p>2026 年 11 月 3 日</p>
-<h2>相同模型，不同装备：CUGA、Hermes 和 Deep Agent — 何时选择 CUGA？</h2>
+<h2>同一个模型，不同的 harness：CUGA、Hermes 与 Deep Agents —— 何时该选 CUGA？</h2>
 <ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
 <p>38</p>
 <p>2026 年 11 月 3 日</p>
 <h3>社区</h3>
-<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
-<p>点击或粘贴此处上传图像</p>
+<p>拖入文本输入框、粘贴或点击此处，即可上传图片、音频和视频。</p>
+<p>点击或粘贴此处上传图片</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Ftime-series-powered-streamhouse">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Ftime-series-powered-streamhouse">登录</a> 发表评论</p>
 <p>26</p>
 <ul><li><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nfuller"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b12ed52be9660f0b7e5f72/r230jdYzTFj_CYmKgpz78.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/bradleyjeck"><img src="https://huggingface.co/avatars/917b1995b76ce6232153c9104a180fc6.svg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Violette"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1638698875017-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jayaramkr"><img src="https://huggingface.co/avatars/b3fd5aeb83c64d2d0b1b25c153f2727d.svg" alt=""></a></li><li><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/0ad0b4c983b7d63b38a40c15f4d7ca3d.svg" alt=""></a></li><li><a href="https://huggingface.co/vrunda-gadesha"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67fe070a4e8cc28ba346f53c/iEtn-b7KR5MEyQZvCyWve.jpeg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Vatche"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6435a1131860001f144239ea/smzcd7SHs33E2ArxBLBBK.png" alt=""></a></li><li><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/63335566a35123bba6e5644d10e0ccd6.svg" alt=""></a></li></ul>]]></content:encoded>
@@ -815,44 +815,44 @@ print(response.choices[0].message.content)</code></pre>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>完整标题：180B Parameters, 32GB of RAM: Pushing MoE Inference to the Limit with Transformers</description>
       <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>180B 参数，32GB RAM：利用 Transformers 将 MoE 推理推向极限</h1>
-<p>发表于 2026 年 11 月 18 日</p>
-<p>GitHub 上更新</p>
+<h1>180B 参数，32GB 内存：用 Transformers 把 MoE 推理逼到极限</h1>
+<p>发布于 2026 年 11 月 18 日</p>
+<p>在 GitHub 上更新</p>
 <p>14</p>
 <ul><li><a href="https://huggingface.co/badaoui"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/aisyndicate"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5dfb8ac450460a466bd07c/huiG-tO1nldQRFCUjXvO5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bigmikeq92"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qz3OXCjrQi0KZZ5OJkEgq.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/dboglou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FZm4zYHMsgadLGM1bIAJq.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/tarekziade"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png" alt="塔里克·齐亚德的头像"></a></p>
-<p>塔里克·齐亚德</p>
-<p>塔雷克齐亚德</p>
-<p><em>直接来自 SSD 的流媒体 MoE 专家在代币生成方面与 Strata 的差距在 6% 以内。</em></p>
-<p>我一直在尝试减少对在线模型的依赖，并在本地运行更大的模型。家里我有一台配有两台 RTX 4090 的 PC（我们称之为 <strong>Orthrus</strong> - 希腊神话中的双头猎犬），工作时我有一台配备 32G 统一内存的 MacBook M5。</p>
-<p>Orthrus 在 Windows 11 上运行，因为我的孩子一直在玩游戏。我使用 Ubuntu 进行双启动，但他们的游戏最终占用了 2 TB 磁盘的大部分。</p>
-<p>我也是 RMD（房间移动开发）的忠实粉丝：在厨房喝咖啡一小时，在办公桌前呆两个小时，然后在沙发上。固定的台式塔不适合我。</p>
-<p>我的第一个实验是在 Orthrus 上运行 <a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen 3.8 27B</a> 和 <a href="https://llama.app/"><code>llama.app</code></a>，并通过 <a href="https://pi.dev/"><code>pi</code></a> 从我的笔记本电脑使用它。该模型执行编码任务，Opus 等在线模型负责编排，第二个 RTX 运行 FIM 模型以在 Neovim 中自动完成。</p>
-<p>当我在社交网络上谈论这个问题时，我得到了非常强烈的反馈：将 <a href="https://github.com/niko1221/strata">Strata</a> 与 <a href="https://huggingface.co/Qwen/Qwen3.8-Flash-Next">Qwen3.8-Flash-Next</a> 一起使用。</p>
-<h2>什么是分层？</h2>
-<p>Strata 是 Qwen 等 MoE 模型的推理引擎。只有热门专家保留在 VRAM 中，其余的进入 RAM，甚至磁盘。专家占 MoE 模型权重的 90% 以上，因此像这样的 180B 模型可以在内存少得多的 GPU 上运行。就像我的 RTX 4090！</p>
-<p>它也适用于笔记本电脑，我偶然发现 <a href="https://modelfit.io/blog/strata-qwen38-flash-next-mac/">这篇博文</a> 正是这样做的：Qwen3.8-Flash-Next 在 32 GB Mac M4 上，比 <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> 更快，速度为 13.5 tok/s。</p>
-<p>对于我使用编码代理的方式来说，这太慢了，但这是一个有趣的渴望。所有 MoE 型号都不适合 MacBook 的统一内存，并且可以以不错的速度运行。</p>
-<h2>其他引擎如何卸载？</h2>
-<p>在致力于 Strata 之前，我研究了当 MoE 模型不适合时 llama.cpp、<a href="https://github.com/vllm-project/vllm">vLLM</a> 和 <a href="https://github.com/huggingface/transformers">Transformers</a> 会做什么。三个问题很重要：专家住在哪里，专家 matmul 在哪里运行，以及每个代币发生了什么变化？</p>
-<p><strong>llama.cpp</strong> 将 GGUF 文件与 <code>mmap</code> 进行映射，并且可以将专家保留在 CPU 上（<code>--cpu-moe</code>、<code>--n-cpu-moe N</code>、<code>-ot &quot;exps=CPU&quot;</code> 或 <code>--fit on</code> 供您选择）。这些专家也在 CPU 上“计算”，因此只有跨 PCIe 的激活，而不是权重。当专家适合 RAM 时就很好了。如果不这样做，页面缓存就会崩溃。 GPU 专家缓存 (<code>--moe-cache-mib</code>) 刚刚落地，但它使图表碎片化（每个令牌 2 个分割变成 50 个），即使一切都合适，也会损失约 10%。</p>
-<p><strong>vLLM</strong> 的 <code>--cpu-offload-gb N</code> 将 N GB 权重放入固定 RAM 中，内核通过 PCIe 读取它们。对于 MoE 层，这只是路由的专家，但不会缓存任何内容：热门专家在每个令牌上再次跨越 PCIe，并且没有磁盘层。默认情况下，卸载的权重包括密集层，读取每个令牌； <code>--cpu-offload-params experts</code> 将其保留给专家。这适合 vLLM 的大批量，无论如何，它几乎涉及每一位专家，更不用说一个用户使用一个 GPU。</p>
-<p><strong>Transformers</strong> 通过 <a href="https://github.com/huggingface/accelerate">Accelerate</a>（<code>device_map=&quot;auto&quot;</code>、<code>offload_folder</code>）卸载，一次一个<em>模块</em>：钩子在 <code>forward</code> 之前将其权重复制到 GPU。对于 MoE 来说，该模块是一层的整个专家库，因此每个代币都会复制每个卸载层的每个专家以使用其中的 8 个或 10 个专家。没有缓存，没有路由的概念。在 Mac 上，CPU 和 GPU 共享相同的内存，因此“卸载到 CPU”不会释放任何内容。</p>
-<p>我在一台具有充足 RAM 的 A10G (24 GB) 上的 <a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B">Qwen3.6-35B-A3B</a> 上运行了所有这些程序，Harry Mellor 则使用更好的标志重新运行了 vLLM：</p>
-<table><thead><tr><th>发动机</th><th>解码（tok/s）</th></tr></thead><tbody><tr><td>地层，Q8_0</td><td>82 - 88</td><td>82 - 88</td></tr><tr><td>llama.cpp，Q8_0，<code>--fit on</code></td><td>63 - 64</td><td>63 - 64</td></tr><tr><td>llama.cpp、BF16、<code>--fit on</code></td><td>35 - 36</td><td>35 - 36</td></tr><tr><td>vLLM、FP8、<code>--cpu-offload-gb 16 --cpu-offload-params experts</code></td><td>20.1</td><td>20.1</td></tr><tr><td>vLLM，FP8，相同的标志，<code>--enforce-eager</code></td><td>14.7</td><td>14.7</td></tr><tr><td>vLLM、FP8、<code>--cpu-offload-gb 16</code></td><td>9.7</td><td>9.7</td></tr><tr><td>vLLM，BF16，<code>--cpu-offload-gb 50 --cpu-offload-params experts</code></td><td>7.3</td><td>7.3</td></tr><tr><td>vLLM，BF16，<code>--cpu-offload-gb 50</code></td><td>3.3</td></tr><tr><td>变形金刚+加速</td><td>0.16</td><td>0.16</td></tr></tbody></table>
-<p>仅卸载专家可以使 vLLM 的速度加倍，而 FP8 可以提供帮助（每个专家一半的字节，GPU 上的模型更多）。 vLLM 的另一个卸载后端会提前复制层组，运行速度低于 1 tok/s。</p>
-<p>如果专家能够适应 RAM，那么 llama.cpp 就很难被击败。如果没有，您必须通过有界缓存仅传输路由器选择的内容，速度足够快，以至于 SSD 成为瓶颈，而不是 Python，理想情况下重用模型的快速专家内核。这是 32 GB Mac 上的 Qwen3.8-Flash-Next，而 Transformers 无法开箱即用。</p>
-<h2>使用 Transformers 让 Qwen3.8-Flash-Next 在我的 32 GB Mac 上运行</h2>
-<p>Strata 在笔记本电脑上对我来说已经太慢了，变形金刚不会很快打败它。但加速路径还很遥远，我想尝试修复变形金刚本身的卸载问题，以笔记本电脑上的大型模型为目标，因为我知道它对于我的工作方式来说可能会太慢。</p>
-<p>所有代码都是用 AI 构建的：Transformers PR、特定于模型的包和 Metal 内核。我的职责是选择尝试什么、阅读资料并决定保留什么。一切都在一个空间中：<a href="https://huggingface.co/spaces/tarekziade/moe-expert-streaming">tarekziade/moe-expert-streaming</a>。</p>
-<p>###从小事做起</p>
-<p>我从 <a href="https://huggingface.co/allenai/OLMoE-1B-7B-0924">OLMoE-1B-7B</a> 开始，它适合内存，因此我可以将每个标记与普通变形金刚进行比较。</p>
-<p>第一个版本：磁盘上的专家、设备上的 LRU 缓存以及一次运行一个专家的 Python 循环。每个专家都已缓存，它的速度为 10.1 tok/s。香草做了〜32。 I/O 很好，我的循环则不然：vanilla 使用 <code>grouped_mm</code>，它在一个内核中运行一层的所有专家。</p>
-<p>该修复以及该项目的关键思想是将缓存转变为<strong>槽池</strong>：一个由所有层共享的预分配设备张量，以及从专家 ID 到槽的每层表。将路由器的专家 ID 重新映射到插槽，池看起来就像一个常规的专家库，因此 <code>grouped_mm</code> 按原样在其上运行。无需定制专家 matmul。这使其达到 34.6 tok/s，而普通版本为 38.1 tok/s。</p>
+<p><a href="https://huggingface.co/tarekziade"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png" alt="Tarek Ziadé 的头像"></a></p>
+<p>Tarek Ziadé</p>
+<p>tarekziade</p>
+<p><em>把 MoE 专家直接从 SSD 流式读取，token 生成速度与 Strata 相差不到 6%。</em></p>
+<p>我一直想少用在线模型、在本地跑更大的模型。家里是台双 RTX 4090 的 PC（就叫它 <strong>Orthrus</strong>，希腊神话里的双头犬），工作用一台 32G 统一内存的 MacBook M5。</p>
+<p>Orthrus 跑 Windows 11，因为孩子总在打游戏。原本的 Ubuntu 双系统，两块 TB 的盘被游戏占掉大半。</p>
+<p>我也是 RMD（rooms moving development，换房间开发）的拥趸：厨房喝一小时咖啡，办公桌坐两小时，再换到沙发。固定台式机箱不适合我。</p>
+<p>第一个实验是在 Orthrus 上用 <a href="https://llama.app/"><code>llama.app</code></a> 跑 <a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen 3.8 27B</a>，再从笔记本通过 <a href="https://pi.dev/"><code>pi</code></a> 用它。模型写代码，Opus 这类在线模型负责编排，第二块 RTX 跑 FIM 模型，给 Neovim 做补全。</p>
+<p>我把这套东西发到社交网络，反馈很强烈：用 <a href="https://huggingface.co/Qwen/Qwen3.8-Flash-Next">Qwen3.8-Flash-Next</a> 配 <a href="https://github.com/niko1221/strata">Strata</a>。</p>
+<h2>什么是 Strata？</h2>
+<p>Strata 是面向 Qwen 这类 MoE 模型的推理引擎。只有热专家留在 VRAM，其余放到 RAM 甚至磁盘。专家占 MoE 权重的 90% 以上，所以这个 180B 模型也能跑在显存小得多的 GPU 上，比如我的 RTX 4090！</p>
+<p>笔记本上同样可行：<a href="https://modelfit.io/blog/strata-qwen38-flash-next-mac/">这篇博文</a>做的就是这件事——Qwen3.8-Flash-Next 在 32 GB Mac M4 上比 <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> 更快，13.5 tok/s。</p>
+<p>按我使用编码 agent 的方式，这太慢了，但确实值得一挠。一批 MoE 模型装不进 MacBook 的统一内存，本可以跑到不错的速度。</p>
+<h2>其他引擎是怎么卸载的？</h2>
+<p>决定用 Strata 之前，我先看 MoE 模型装不下时 llama.cpp、<a href="https://github.com/vllm-project/vllm">vLLM</a> 和 <a href="https://github.com/huggingface/transformers">Transformers</a> 怎么做。三点最关键：专家放在哪、matmul 在哪算、每个 token 搬什么。</p>
+<p><strong>llama.cpp</strong> 用 <code>mmap</code> 映射 GGUF，可把专家留在 CPU 上（<code>--cpu-moe</code>、<code>--n-cpu-moe N</code>、<code>-ot &quot;exps=CPU&quot;</code>，或用 <code>--fit on</code> 让它自己挑），并且就在 CPU 上<em>计算</em>：跨 PCIe 的只有激活值，权重从不过线。装得进 RAM 时很好用；装不下，page cache 就会抖动。GPU 专家缓存（<code>--moe-cache-mib</code>）刚落地，但会把计算图切碎（每个 token 的 split 从 2 个变成 50 个），即使全装得下也损失约 10%。</p>
+<p><strong>vLLM</strong> 的 <code>--cpu-offload-gb N</code> 把 N GB 权重放进 pinned RAM，kernel 经 PCIe 就地读。MoE 层里只有被路由到的专家，且无缓存：热专家每个 token 都要再过一次 PCIe，也没有磁盘层。默认卸载还包含 dense 层，每个 token 都读；<code>--cpu-offload-params experts</code> 可收窄到专家。这契合 vLLM 的大 batch：大批次几乎碰到每个专家，一个用户一块 GPU 就不合适。</p>
+<p><strong>Transformers</strong> 通过 <a href="https://github.com/huggingface/accelerate">Accelerate</a>（<code>device_map=&quot;auto&quot;</code>、<code>offload_folder</code>）卸载，一次一个<em>模块</em>：hook 在 <code>forward</code> 前把权重复制到 GPU。MoE 的这个模块是一层整个专家库，于是每个 token 都要复制每个被卸载层的所有专家，只用其中 8 个或 10 个。没有缓存，也没有路由的概念。Mac 上 CPU 与 GPU 共用内存，「卸载到 CPU」并不释放空间。</p>
+<p>我在一块 A10G（24 GB）、RAM 充足，用 <a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B">Qwen3.6-35B-A3B</a> 跑遍这些引擎；Harry Mellor 又用更好的参数重跑了 vLLM：</p>
+<table><thead><tr><th>引擎</th><th>解码（tok/s）</th></tr></thead><tbody><tr><td>Strata，Q8_0</td><td>82 - 88</td></tr><tr><td>llama.cpp，Q8_0，<code>--fit on</code></td><td>63 - 64</td></tr><tr><td>llama.cpp，BF16，<code>--fit on</code></td><td>35 - 36</td></tr><tr><td>vLLM，FP8，<code>--cpu-offload-gb 16 --cpu-offload-params experts</code></td><td>20.1</td></tr><tr><td>vLLM，FP8，同参数，<code>--enforce-eager</code></td><td>14.7</td></tr><tr><td>vLLM，FP8，<code>--cpu-offload-gb 16</code></td><td>9.7</td></tr><tr><td>vLLM，BF16，<code>--cpu-offload-gb 50 --cpu-offload-params experts</code></td><td>7.3</td></tr><tr><td>vLLM，BF16，<code>--cpu-offload-gb 50</code></td><td>3.3</td></tr><tr><td>Transformers + Accelerate</td><td>0.16</td></tr></tbody></table>
+<p>只卸载专家，vLLM 速度翻倍，再叠 FP8 更好（每个专家字节数减半，更多模型进 GPU）。vLLM 另一个卸载后端提前成组复制层，跑下来不到 1 tok/s。</p>
+<p>专家装得进 RAM，llama.cpp 很难被击败。装不进，只能流式读取 router 选中的部分，过一层有界缓存，快到瓶颈落在 SSD 而非 Python，最好还能复用模型自带的快速专家 kernel。这正是 32 GB Mac 上跑 Qwen3.8-Flash-Next 要解决的问题，Transformers 开箱做不到。</p>
+<h2>用 Transformers 让 Qwen3.8-Flash-Next 跑在我的 32 GB Mac 上</h2>
+<p>Strata 在笔记本上对我已经太慢，Transformers 短期也超不过它。但 Accelerate 那条路差得太远，我干脆动手修 Transformers 的卸载机制，目标就是笔记本上这个大模型，心里清楚它大概还是慢到不合我的用法。</p>
+<p>代码全是 AI 写的：Transformers 的 PR、模型专用包、Metal kernel。我只负责决定试什么、读 profile、判断留什么。全部在一个 Space 里：<a href="https://huggingface.co/spaces/tarekziade/moe-expert-streaming">tarekziade/moe-expert-streaming</a>。</p>
+<h3>从小处开始</h3>
+<p>我从 <a href="https://huggingface.co/allenai/OLMoE-1B-7B-0924">OLMoE-1B-7B</a> 起步，它能完全装进内存，这样就能拿每个 token 与原生 Transformers 对比。</p>
+<p>第一版：专家放磁盘，设备上放 LRU 缓存，Python 循环一次跑一个。全部缓存后跑到 10.1 tok/s，原生约 32。I/O 没问题，问题在循环：原生用 <code>grouped_mm</code>，一个 kernel 跑完一层所有专家。</p>
+<p>解决办法、也是项目的核心思路，是把缓存变成<strong>槽位池（slot pool）</strong>：一块所有层共享的预分配设备张量，加每层一张 expert id 到槽位的表。把 router 的 expert id 重映射到槽位，池子看起来就跟普通专家库一样，<code>grouped_mm</code> 能原样运行，不必自己写专家 matmul。这一步推到 34.6 tok/s，原生 38.1。</p>
 <h3><code>experts_offload</code></h3>
-<p>然后我将独立加载程序变成了 <code>from_pretrained</code> 的一个选项，在 <a href="https://github.com/huggingface/transformers/pull/50717">huggingface/transformers#50717</a> 中。要尝试它，请从该 PR 安装 Transformers：</p>
+<p>随后我把独立加载器做成 <code>from_pretrained</code> 的一个选项，提交在 <a href="https://github.com/huggingface/transformers/pull/50717">huggingface/transformers#50717</a>。试的话从那个 PR 安装：</p>
 <pre><code>pip install &quot;git+https://github.com/huggingface/transformers.git@refs/pull/50717/head&quot;</code></pre>
-<p>然后，从 OLMoE 转向真正的目标 Qwen3.8-Flash-Next：</p>
+<p>再把目标从 OLMoE 换成真正的对象 Qwen3.8-Flash-Next：</p>
 <pre><code>path = snapshot_download(&quot;tarekziade/Qwen3.8-Flash-Next-expert-streaming&quot;)
 
 model = AutoModelForCausalLM.from_pretrained(
@@ -865,44 +865,44 @@ model = AutoModelForCausalLM.from_pretrained(
         &quot;quantized_experts&quot;: f&quot;{path}/experts-q3&quot;,
     },
 )</code></pre>
-<p><a href="https://huggingface.co/tarekziade/Qwen3.8-Flash-Next-expert-streaming">该存储库</a> 保存项目的<a href="https://github.com/tarekziade/moe-expert-streaming#readme">转换脚本</a> 的输出：密集权重、量化为 3 位的专家以及 n 元语法表。</p>
-<p>映射到 <code>&quot;disk&quot;</code> 的专家通过流路径而不是 Accelerate 的卸载：加载器跳过它们的张量，MoE 层切换到卸载的实现。未命中由 8 个 I/O 线程读取，每个专家一次连续读取。接下来两层的路由器会尽早在当前隐藏状态上运行，以猜测要预取哪些专家。专家可以离线量化，因此读取量更小。它适用于具有标准专家布局的 MoE 模型。</p>
-<p>该 API 仍在与 Transformers 维护人员讨论。 <code>device_map</code> 形式由此而来，量化专家可能会执行 <a href="https://github.com/huggingface/transformers/pull/50245">#50245</a> 的每层量化计划，而不是他们自己的选择。</p>
-<h3>在 32 GB Mac 上运行 121 GB Expert</h3>
-<p>Qwen3.8-Flash-Next 有 48 层，共 512 个专家（10 个活动），FP8 中有 121 GB。流式传输它们还不够：还有一个 51 GB n-gram 嵌入表需要自己的磁盘路径。所以：</p>
-<ul><li>专家量化为 3 位：磁盘上 49 GB，设备上缓存 12 GiB</li><li>8 位密集层（~5.4 GB，与 BF16 相比 +0.2% 困惑度）</li><li>n-gram 表保留在磁盘上，需要时读取行</li></ul>
-<p>转换大约需要 5 小时。加载后，它使用约 18 GiB，6K 提示峰值为 25.4 GiB。这就是限制：我必须关闭浏览器，否则 macOS 就会开始交换。</p>
-<p>特定于模型的位（n-gram 表、Metal 内核）位于 PR 顶部的一个小包 <a href="https://github.com/tarekziade/moe-expert-streaming">moe-expert-streaming</a> 中。第一个版本的运行速度约为 10 tok/s。</p>
-<p>然后我在同一个M5上安装了Strata，同样的提示：</p>
-<table><thead><tr><th></th><th>变形金刚</th><th>地层</th><th>差距</th></tr></thead><tbody><tr><td>解码，200 个代币</td><td>10.0 托克/秒</td><td>14.8</td><td>14.8 1.5 倍</td></tr><tr><td>预填充，4K 提示</td><td>68 托克/秒</td><td>220</td><td>220 3.2 倍</td></tr><tr><td>6K文档后解码</td><td>7.3 托克/秒</td><td>13.7</td><td>13.7 1.9 倍</td></tr></tbody></table>
-<p>Strata 0.1.60 使用了 IQ3_XXS 专家。两者都运行贪婪，思考、MTP 和投机草案以及 1,024 个代币预填充块。完整的设置和原始结果位于空间的<a href="https://tarekziade-moe-expert-streaming.static.hf.space/details.html">详细信息页面</a>。</p>
-<p>我还尝试了 <a href="https://github.com/vllm-project/vllm-metal">vllm-metal</a>，通过 MLX 在 Apple GPU 上进行 vLLM，最近得到了专家的卸载。它通过有界缓存从 MLX 检查点传输路由专家，就像这个项目一样。但由于上述 n-gram 原因，它无法在 32 GB 上运行 Qwen3.8-Flash-Next：仅对专家进行流式传输，并且 n-gram 表保留在内存中。在 Hub 上的 MLX 检查点中，这是 32 GB，在大约 5 GB 的密集层和任何专家缓存之前。</p>
+<p><a href="https://huggingface.co/tarekziade/Qwen3.8-Flash-Next-expert-streaming">那个仓库</a> 存放项目<a href="https://github.com/tarekziade/moe-expert-streaming#readme">转换脚本</a>的产物：dense 权重、量化到 3 bit 的专家，以及 n-gram 表。</p>
+<p>映射到 <code>&quot;disk&quot;</code> 的专家走流式路径而非 Accelerate 卸载：加载器跳过它们的张量，MoE 层切到卸载实现。未命中由 8 个 I/O 线程读取，每个专家一次连续读。接下来两层的 router 会基于当前 hidden state 提前跑，猜该预取哪些专家。专家可离线量化，让读取更小。机制适用于标准专家布局的 MoE 模型。</p>
+<p>这个 API 还在和 Transformers 维护者讨论。<code>device_map</code> 的写法就是讨论的结果；量化专家之后大概率走 <a href="https://github.com/huggingface/transformers/pull/50245">#50245</a> 的逐层量化方案，而不是单独开选项。</p>
+<h3>在一台 32 GB 的 Mac 上跑 121 GB 专家</h3>
+<p>Qwen3.8-Flash-Next 有 48 层、每层 512 个专家（激活 10 个），FP8 下共 121 GB。光流式读还不够：还有一张 51 GB 的 n-gram embedding 表要单独走磁盘。所以：</p>
+<ul><li>专家量化到 3 bit：磁盘上 49 GB，设备上缓存 12 GiB</li><li>dense 层用 8 bit（约 5.4 GB，相比 BF16 困惑度 +0.2%）</li><li>n-gram 表留在磁盘，用到哪行读哪行</li></ul>
+<p>转换约需 5 小时。加载后占约 18 GiB，6K prompt 峰值 25.4 GiB。这差不多是极限：我得关掉浏览器，否则 macOS 开始 swap。</p>
+<p>模型专用部分（n-gram 表、Metal kernel）放在小包 <a href="https://github.com/tarekziade/moe-expert-streaming">moe-expert-streaming</a> 里，叠在那个 PR 之上。第一版约 10 tok/s。</p>
+<p>然后我在同一台 M5 上装了 Strata，用同样的 prompt：</p>
+<table><thead><tr><th></th><th>Transformers</th><th>Strata</th><th>差距</th></tr></thead><tbody><tr><td>解码，200 token</td><td>10.0 tok/s</td><td>14.8</td><td>1.5x</td></tr><tr><td>Prefill，4K prompt</td><td>68 tok/s</td><td>220</td><td>3.2x</td></tr><tr><td>解码，6K 文档之后</td><td>7.3 tok/s</td><td>13.7</td><td>1.9x</td></tr></tbody></table>
+<p>Strata 0.1.60 用 IQ3_XXS 专家。两边都跑 greedy，关掉 thinking、MTP 和投机草稿，prefill 块 1,024 token。完整配置与原始结果在 Space 的<a href="https://tarekziade-moe-expert-streaming.static.hf.space/details.html">详情页</a>。</p>
+<p>我还试了 <a href="https://github.com/vllm-project/vllm-metal">vllm-metal</a>，即通过 MLX 在 Apple GPU 上跑 vLLM，最近刚支持专家卸载。它同样从小型有界缓存流式读取被路由的专家，思路一致。但它在 32 GB 上跑不了 Qwen3.8-Flash-Next：只有专家被流式化，n-gram 表仍在内存，光 Hub 上 MLX checkpoint 里这部分就占 32 GB，还没算约 5 GB 的 dense 层和专家缓存。</p>
 <h2>缩小差距</h2>
-<p>大部分时间没有花在专家身上。以下是有帮助的：</p>
-<ul><li><strong>尽早提交 GPU 工作。</strong> MPS 上的 <a href="https://github.com/pytorch/pytorch">PyTorch</a> 保留小内核，直到下一次同步，因此 GPU 在 Python 工作时空闲。在每个块之后强制提交会增加 10%。这确实应该在 PyTorch 中修复。</li><li><strong>金属内核</strong>，适用于 macOS 上没有快速路径的部分：门控 DeltaNet 和超连接。</li><li><strong>Strata 自己的权重。</strong> 我切换到 <a href="https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF">Strata 的 GGUF 权重</a>，将每个令牌的密集权重流量从 5.4 GB 减少到 3.9 GB，将单个专家大小从 2.15 MB 减少到 1.75 MB，每个专家大小都有一个单独的缓存池。</li><li><strong>预填充</strong>，我们使用更大的块从 68 tok/s 提高到约 228 tok/s，并在计算当前层时读取下一层的专家。</li><li><strong>长文档</strong>：仅关注索引器选定的块，以及就地增长而不是在每个令牌处复制的 KV 缓存。</li><li><strong>未命中</strong>：Strata 不会隐藏它们，它像我一样等待，并且没有缓存策略比 LRU 性能好得多。有用的是每层只读取一位猜测的专家，否则 SSD 就会闲置。</li></ul>
-<p>这是一个代币的一个 MoE 层，它现在正在运行：</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe-expert-streaming/expert-streaming.svg">！[对于一层和一个令牌，路由器会从 512 个专家中选择 10 个。八个已经在专家缓存中，两个从 SSD 读取到空闲缓存插槽中。然后，专家从缓存槽在 GPU 上运行，而 SSD 为下一层读取一个猜测的专家，该专家仅在使用时才进入缓存。</a>](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe-expert-streaming/expert-streaming.svg)</p>
-<p>以下是在相同的 M5 上进行这些优化后的最终结果，并具有相同的提示：</p>
-<table><thead><tr><th></th><th>变形金刚</th><th>地层</th><th>差距</th></tr></thead><tbody><tr><td>解码，200 个代币</td><td>13.9 托克/秒</td><td>14.8</td><td>14.8 1.06 倍</td></tr><tr><td>预填充，4K 提示</td><td>228 托克/秒</td><td>220</td><td>220 1.0 倍</td></tr><tr><td>6K文档后解码</td><td>12.4 托克/秒</td><td>13.7</td><td>13.7 1.1 倍</td></tr></tbody></table>
-<p>在短解码方面，比 Strata 落后约 6%，预填充速度稍快，全部通过 Transformers 实现。</p>
-<p>剩下的大部分是主机往返，每个令牌约 10 毫秒。同步后唤醒只需约 1 毫秒。剩下的就是 GPU 空运行，而 Python 则对下一层进行排队。 Strata 将整个代币的工作预先排队，GPU 在每一层等待 Metal 共享事件，同时主机读取专家。 PyTorch 没有公开这一点。我试图用一个内核在 CPU 写入的标志上旋转来伪造它，而 GPU 花了一秒钟才看到写入。真正的解决方案是 PyTorch 的 MPS 流上的本机操作，有挂起的风险，所以我还没有构建它。</p>
+<p>大部分时间并不是花在专家上。起作用的是这些：</p>
+<ul><li><strong>尽早提交 GPU 工作。</strong> MPS 上的 <a href="https://github.com/pytorch/pytorch">PyTorch</a> 会把小 kernel 攒到下次 sync 才发，Python 干活时 GPU 空转。每算完一个 block 就强制 commit，提升 10%。这本来就该在 PyTorch 里修掉。</li><li>给 macOS 上没有快速路径的部分写 <strong>Metal kernel</strong>：Gated DeltaNet 和 hyper-connections。</li><li><strong>换用 Strata 自己的权重。</strong> 我切到 <a href="https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF">Strata 的 GGUF 权重</a>，每个 token 的 dense 权重流量从 5.4 GB 降到 3.9 GB，单个专家从 2.15 MB 降到 1.75 MB，并按专家大小各配缓存池。</li><li><strong>Prefill</strong> 从 68 提到约 228 tok/s，靠更大的块，以及在算当前层时读下一层的专家。</li><li><strong>长文档</strong>：attention 只算 indexer 选中的 block，KV cache 原地增长，而不是每个 token 复制一次。</li><li><strong>未命中</strong>：Strata 不藏它，它和我一样等，也没什么策略明显强过 LRU。有用的是每层多读一个猜出来的专家，反正这时 SSD 本来闲着。</li></ul>
+<p>下面是一个 token 经过一个 MoE 层时现在的样子：</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe-expert-streaming/expert-streaming.svg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/moe-expert-streaming/expert-streaming.svg" alt="一层一个 token：router 从 512 个专家里选出 10 个。其中 8 个已在专家缓存中，2 个正从 SSD 读入空闲的缓存槽位。随后专家从缓存槽位在 GPU 上执行，同时 SSD 为下一层读取一个猜测的专家，该专家只有被用到才会进入缓存。"></a></p>
+<p>这些是做完上述优化后，在同一台 M5、同样 prompt 下的最终结果：</p>
+<table><thead><tr><th></th><th>Transformers</th><th>Strata</th><th>差距</th></tr></thead><tbody><tr><td>解码，200 token</td><td>13.9 tok/s</td><td>14.8</td><td>1.06x</td></tr><tr><td>Prefill，4K prompt</td><td>228 tok/s</td><td>220</td><td>1.0x</td></tr><tr><td>解码，6K 文档之后</td><td>12.4 tok/s</td><td>13.7</td><td>1.1x</td></tr></tbody></table>
+<p>短解码上落后 Strata 约 6%，prefill 略快，全程都在 Transformers 里。</p>
+<p>剩下的开销主要是 host 往返，每 token 约 10 ms。sync 后唤醒只占约 1 ms，其余是 GPU 空等 Python 排下一层。Strata 一次排好整个 token 的活儿，GPU 每层等一个 Metal shared event，host 同时读专家。PyTorch 没暴露这个。我试过用小 kernel 空转等 CPU 写的标志位来伪造，GPU 有时一秒后才看到写入，有时永远看不到。真正的解法是在 PyTorch 的 MPS 流上加原生 op，但有挂死风险，我没做。</p>
 <h2>结论</h2>
-<p>它的运行速度约为 14 tok/s，接近 Strata，但对于我使用编码代理的方式来说仍然太慢。 Orthrus 一直在做真正的工作。</p>
-<p>Transformers 没有击败 Strata，关闭最后约 6% 需要对堆栈进行更深入的更改，首先是对每层同步的控制，而 PyTorch 目前还没有提供这一点。有趣的部分是它是如何做到这一点的：仅流式传输路由专家、<code>grouped_mm</code> 按原样运行的有界缓存以及一些目标 Metal 内核。该项目中没有 C++ 扩展：只有 Python、使用 <code>torch.mps.compile_shader</code> 在运行时编译的 Metal 内核以及预构建的 <a href="https://huggingface.co/kernels-community">来自 Hub 的内核</a>。为此实验编写的所有 Metal 内核现已<a href="https://tarekziade-moe-expert-streaming.static.hf.space/details.html#published-kernels">发布在 Hub 上</a>，项目从那里加载它们。</p>
-<p>不过，击败 Strata 从来都不是唯一的目标。构建这个是从系统角度了解 MoE 和 LLM 如何工作的好方法：路由到底有多稀疏、专家缓存能为您带来多少、每个令牌的内存带宽在哪里，以及主机和 GPU 相互等待的时间。 Transformer 让所有这些都变得很容易，一次一个模块。</p>
-<p>通用专家流实现位于 <a href="https://github.com/huggingface/transformers/pull/50717">huggingface/transformers#50717</a> 中，基准测试位于 <a href="https://huggingface.co/spaces/tarekziade/moe-expert-streaming">Space</a> 中。欢迎对该方法和 API 提供反馈。</p>
-<p>感谢 Pedro、Lysandre 和 Arthur 的出色反馈，并感谢 Harry 帮助测试 vLLM。</p>
-<p>最后，感谢 Niko Veit 的 <a href="https://github.com/niko1221/strata">Strata</a>。 Strata 为消费者硬件上的专家流媒体的可能性设定了标准，而追逐这些数字正是推动这项工作取得进展的原因。</p>
-<h2>本文提到的型号 6</h2>
-<h2>本文提到的空间1</h2>
-<p>我们博客的更多文章</p>
-<p>变形金刚米斯特拉维姆</p>
-<h2>欢迎 Le Chonk：Hugging Face部的 Mistral Large 4</h2>
+<p>它跑到约 14 tok/s，接近 Strata，但按我使用编码 agent 的方式仍然太慢。真正干活的还是 Orthrus。</p>
+<p>Transformers 没能击败 Strata。要追掉最后约 6%，得在栈上做更深的改动，首先是对逐层 sync 的控制权，PyTorch 目前不给。有意思的是它怎么追得这么近：只流式读取被路由的专家，一个有界缓存让 <code>grouped_mm</code> 原样运行，再加几个针对性的 Metal kernel。项目里没有 C++ 扩展：只有 Python、用 <code>torch.mps.compile_shader</code> 运行时编译的 Metal kernel，以及预编译的<a href="https://huggingface.co/kernels-community">来自 Hub 的 kernel</a>。为实验写的 Metal kernel 都已<a href="https://tarekziade-moe-expert-streaming.static.hf.space/details.html#published-kernels">发布到 Hub</a>，项目直接从那里加载。</p>
+<p>不过击败 Strata 从不是唯一目标。做这件事是从系统视角理解 MoE 与 LLM 的好办法：路由到底多稀疏、专家缓存能换来多少、每个 token 的内存带宽花在哪、host 与 GPU 互相等待占多少时间。Transformers 让这些都能一个个模块地随手试探。</p>
+<p>通用的专家流式实现位于 <a href="https://github.com/huggingface/transformers/pull/50717">huggingface/transformers#50717</a>，基准测试在 <a href="https://huggingface.co/spaces/tarekziade/moe-expert-streaming">Space</a>。欢迎对方法和 API 提意见。</p>
+<p>感谢 Pedro、Lysandre 与 Arthur 的反馈，也感谢 Harry 帮忙测 vLLM。</p>
+<p>最后，感谢 Niko Veit 带来 <a href="https://github.com/niko1221/strata">Strata</a>。Strata 树立了消费级硬件上专家流式推理的标杆，有这些数字可追，这项工作才走到这一步。</p>
+<h2>本文提到的模型 6</h2>
+<h2>本文提到的 Space 1</h2>
+<p>博客更多文章</p>
+<p>transformersmistralvllm</p>
+<h2>欢迎 Le Chonk：Hugging Face 上的 Mistral Large 4</h2>
 <ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/649a943906690b959319d192/k8ZlmJWF3GNpYLHrdpejY.jpeg" alt=""></li><li>+7</li></ul>
 <p>91</p>
 <p>2026 年 10 月 29 日</p>
-<p>开源 collabllmtransformers</p>
-<h2>欢迎光束：您可以拥有、定制和扩展的 501B 开放模型</h2>
+<p>open-source-collabllmtransformers</p>
+<h2>欢迎 Beam：一个你可以拥有、定制并扩展的 501B 开放模型</h2>
 <ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li></ul>
 <p>82</p>
 <p>2026 年 10 月 16 日</p>
@@ -910,14 +910,14 @@ model = AutoModelForCausalLM.from_pretrained(
 <p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6afa05210b2b38354a566ca3/A-j9wYe8kZ1ZEgSrC7ZBv.png" alt=""></p>
 <p>jdjsjsj28828</p>
 <p>1 天前</p>
-<p>s7327-所有者博客评论</p>
-<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
-<p>点击或粘贴此处上传图像</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmoe-expert-streaming">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fmoe-expert-streaming">登录</a> 发表评论</p>
+<p>s7327-owner-blog-comment</p>
+<p>把图片、音频和视频拖进输入框、粘贴或点击这里即可上传。</p>
+<p>点击或粘贴此处上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmoe-expert-streaming">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fmoe-expert-streaming">登录</a> 后发表评论</p>
 <p>14</p>
 <ul><li><a href="https://huggingface.co/badaoui"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/aisyndicate"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5dfb8ac450460a466bd07c/huiG-tO1nldQRFCUjXvO5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bigmikeq92"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qz3OXCjrQi0KZZ5OJkEgq.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/dboglou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FZm4zYHMsgadLGM1bIAJq.png" alt=""></a></li><li><a href="https://huggingface.co/syl0390"><img src="https://huggingface.co/avatars/2fa431d2f7fda60021dae107f3138e90.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/AdrianLepers"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67e199e97f6b4386bad07cc7/fxCC9xs9m8_Qw2IHl1y2j.jpeg" alt=""></a></li><li><a href="https://huggingface.co/zaz2026"><img src="https://huggingface.co/avatars/4dd5862915dc3443a05cd19076cb643f.svg" alt=""></a></li><li><a href="https://huggingface.co/AsTrO963"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/_t5ifHICcVJNBHoUvJ5VQ.png" alt=""></a></li><li><a href="https://huggingface.co/eramax"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64fdfaeb01aedd0e86014de9/UliF1du7InfuCs7RHLiA5.png" alt=""></a></li></ul>
-<h2>本文提到的型号 6</h2>
-<h2>本文提到的空间1</h2>]]></content:encoded>
+<h2>本文提到的模型 6</h2>
+<h2>本文提到的 Space 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>Rumble-2-Flash: an open 0.5B speech model for 40+ languages</title>
@@ -925,29 +925,29 @@ model = AutoModelForCausalLM.from_pretrained(
       <guid isPermaLink="true">https://huggingface.co/blog/rumble-2-flash</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>Rumble-2-Flash：适用于 40 多种语言的开放 0.5B 语音模型</h1>
-<p>发表于 2026 年 11 月 18 日</p>
-<p>GitHub 上更新</p>
+<h1>Rumble-2-Flash：面向 40 多种语言的开源 0.5B 语音模型</h1>
+<p>发布于 2026 年 11 月 18 日</p>
+<p>在 GitHub 上更新</p>
 <p>16</p>
 <ul><li><a href="https://huggingface.co/MarktHart"><img src="https://huggingface.co/avatars/fc90e5ebfe1fe3339c0b805000fd8e71.svg" alt=""></a></li><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Rijgersberg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6319b164bc8f3b313f7a1db0/Hh0kuwsAnD2AOKdL6PpRs.png" alt=""></a></li><li><a href="https://huggingface.co/raoulritter"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/GKuJsvaWYJawOHCOAMj7g.png" alt=""></a></li><li><a href="https://huggingface.co/angt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67289c93ff90038d9a6e5675/klana6SP95tj8-VwXnIYC.png" alt=""></a></li><li><a href="https://huggingface.co/livrasand"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a9857786a647b531b3bf190/ZAaVV0HBKMOQrI_POx76H.jpeg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/reson8-thomas"><img src="https://huggingface.co/avatars/a4e27cca5fbbcd648a2af44acbfe7d80.svg" alt="Reson8的头像"></a></p>
-<p>共振8</p>
-<p>reson8-托马斯</p>
-<p><a href="https://huggingface.co/Reson8"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6446c3045aa406ee9e16ba57/9zMH4hwUXITSH7LdLHUJa.png" alt="Reson8的头像"></a> <a href="https://huggingface.co/Reson8">Reson8</a></p>
-<p><a href="https://huggingface.co/MarktHart"><img src="https://huggingface.co/avatars/fc90e5ebfe1fe3339c0b805000fd8e71.svg" alt="马克·哈特的头像"></a></p>
-<p>马克·哈特</p>
-<p>马克特·哈特</p>
-<p><a href="https://huggingface.co/Reson8"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6446c3045aa406ee9e16ba57/9zMH4hwUXITSH7LdLHUJa.png" alt="Reson8 头像"></a> <a href="https://huggingface.co/Reson8">Reson8</a></p>
+<p><a href="https://huggingface.co/reson8-thomas"><img src="https://huggingface.co/avatars/a4e27cca5fbbcd648a2af44acbfe7d80.svg" alt="Reson8 的头像"></a></p>
+<p>Reson8</p>
+<p>reson8-thomas</p>
+<p><a href="https://huggingface.co/Reson8"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6446c3045aa406ee9e16ba57/9zMH4hwUXITSH7LdLHUJa.png" alt="Reson8 的头像"></a> <a href="https://huggingface.co/Reson8">Reson8</a></p>
+<p><a href="https://huggingface.co/MarktHart"><img src="https://huggingface.co/avatars/fc90e5ebfe1fe3339c0b805000fd8e71.svg" alt="Mark 't Hart 的头像"></a></p>
+<p>Mark 't Hart</p>
+<p>MarktHart</p>
+<p><a href="https://huggingface.co/Reson8"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6446c3045aa406ee9e16ba57/9zMH4hwUXITSH7LdLHUJa.png" alt="Reson8 的头像"></a> <a href="https://huggingface.co/Reson8">Reson8</a></p>
 <p><a href="https://huggingface.co/eustlb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg" alt="Eustache Le Bihan 的头像"></a></p>
-<p>尤斯塔什·勒比汉</p>
-<p>尤斯特布</p>
+<p>Eustache Le Bihan</p>
+<p>eustlb</p>
 <p><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt="Eric Bezzam 的头像"></a></p>
-<p>埃里克·贝扎姆</p>
-<p>贝扎姆</p>
-<p>今天，我们在 Apache 2.0 许可证下开源 <a href="https://huggingface.co/Reson8/Rumble-2-Flash">Rumble-2-Flash</a>。它是一个 0.5B 参数的语音识别模型，支持 40 多种语言，可与 3-60 倍大小的模型竞争。</p>
-<ul><li><strong>在任何地方运行</strong>：🤗 Transformers 和 vLLM 中的本机支持，无需自定义代码</li><li><strong>40 多种语言</strong>：自动语言检测</li><li><strong>输出控制</strong>：数字或单词、填充符、逐字重复、强制语言</li><li><strong>极快</strong>：大约半秒即可播放一小时的音频，全批次有超过 7,000 个 RTFx</li><li><strong>支持真实通话</strong>：在 302 小时呼叫中心基准测试中与 NVIDIA 的 Nemotron 3.5 Transcribe (30B) 相当</li></ul>
-<h2>快速入门</h2>
-<p>使用 🤗 Transformers 进行转录</p>
+<p>Eric Bezzam</p>
+<p>bezzam</p>
+<p>今天我们以 Apache 2.0 许可证开源 <a href="https://huggingface.co/Reson8/Rumble-2-Flash">Rumble-2-Flash</a>。它是一个 0.5B 参数的语音识别模型，覆盖 40 多种语言，能跟比它大 3 到 60 倍的模型掰手腕。</p>
+<ul><li><strong>哪里都能跑</strong>：🤗 Transformers 与 vLLM 原生支持，不需要自定义代码</li><li><strong>40 多种语言</strong>：自动检测语种</li><li><strong>输出可控</strong>：数字写成阿拉伯数字或文字、填充词、逐字重复、强制语种</li><li><strong>极快</strong>：一小时音频约半秒，整批处理时超过 7,000 RTFx</li><li><strong>真实电话通话也扛得住</strong>：在 302 小时的呼叫中心基准上，与 NVIDIA 的 Nemotron 3.5 Transcribe (30B) 持平</li></ul>
+<h2>快速上手</h2>
+<p>用 🤗 Transformers 转写</p>
 <pre><code>uv pip install torch transformers accelerate</code></pre>
 <pre><code>from transformers import AutoProcessor, AutoModelForMultimodalLM
 
@@ -963,47 +963,47 @@ inputs = processor.apply_transcription_request(
 output = model.generate(**inputs, max_new_tokens=512)
 generated = output[:, inputs[&quot;input_ids&quot;].shape[-1]:]
 print(processor.decode(generated, return_format=&quot;transcription_only&quot;)[0])  # return_format=&quot;parsed&quot; if detecting language</code></pre>
-<p><code>audio</code> 接受本地路径、URL、NumPy 数组或这些的列表。</p>
-<h2>它是如何构建的</h2>
-<p>Rumble-2-Flash 使用 Qwen3-ASR 架构来支持 day-0。如果您的堆栈运行 Transformers 或 vLLM，它将运行 Rumble-2-Flash，没有分叉运行时或 <code>trust_remote_code</code>。</p>
-<p>为了找出模型在精度下降之前可以达到多小，我们通过策略蒸馏将较大的生产模型 Rumble-2 提炼到其中。学生不根据老师写的成绩单进行训练。它会转录音频本身，老师会逐个标记地对转录内容进行评分：在每个位置，它都会给出接下来发生的情况的概率，而学生则学会匹配它。因为学生从自己的输出中学习，所以它会准确地纠正自己所犯的错误，并针对每个标记提供反馈，而不是每个剪辑一个分数。</p>
-<p>在政策蒸馏通常要求教师和学生共享标记器，而我们的不需要：选择 Qwen3-ASR 也意味着采用它的词汇表。 <a href="https://huggingface.co/spaces/HuggingFaceH4/on-policy-distillation">GOLD</a> 消除了该限制。它合并两个标记器以不同方式分割文本的标记，因此两个模型都在相同的文本上进行比较。直接比较两个词汇表中存在的标记，其余标记按其排序概率进行比较。</p>
-<p>使用 GOLD 进行策略蒸馏</p>
+<p><code>audio</code> 接受本地路径、URL、NumPy 数组，或这些组成的列表。</p>
+<h2>它是怎么构建的</h2>
+<p>Rumble-2-Flash 采用 Qwen3-ASR 架构，从而做到 day-0 支持。只要你的栈跑得动 Transformers 或 vLLM，就跑得动 Rumble-2-Flash，既不需要 fork 运行时，也不需要 <code>trust_remote_code</code>。</p>
+<p>为了找出模型在精度塌掉之前能小到什么程度，我们用 on-policy 蒸馏，把更大的生产模型 Rumble-2 蒸馏进它。学生模型不是照老师写好的转写稿学：它自己转录音频，老师逐 token 给这份转写打分——在每个位置给出自己对下一个 token 的概率，学生学着去对齐。因为学习材料出自它自己的输出，被纠正的正是它犯的错，而且每个 token 都有反馈，不是一段音频只给一个分数。</p>
+<p>on-policy 蒸馏通常要求教师和学生共用 tokenizer，而我们两边不共用：选了 Qwen3-ASR，就等于把它的词表一并接下。<a href="https://huggingface.co/spaces/HuggingFaceH4/on-policy-distillation">GOLD</a> 去掉了这个限制。当两个 tokenizer 对同一段文本切分不一致时，它会把 token 合并，让两个模型在同一段文本上比较。两边词表都有的 token 直接比，其余按排序后的概率比。</p>
+<p>使用 GOLD 的 on-policy 蒸馏</p>
 <h2>结果</h2>
-<h3>尺寸精度</h3>
-<p>在开放 ASR 排行榜 <a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard?languages=Reson8%2FRumble-2-Flash&amp;proprietary=false">多语言</a> 赛道上，Rumble-2-Flash 在中文、德语、法语、意大利语、西班牙语、葡萄牙语、印地语、荷兰语和英语方面的平均错误率为 <strong>6.96%</strong>。这比 Meta 的omniASR-LLM 7B 更好，模型大 15 倍，并且领先于 Whisper large-v3。在 <a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">English</a> 赛道上，平均成绩为 <strong>6.6% WER</strong>。</p>
-<p>其尺寸的最佳得分</p>
+<h3>同尺寸下的精度</h3>
+<p>在 Open ASR Leaderboard 的<a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard?languages=Reson8%2FRumble-2-Flash&amp;proprietary=false">多语言</a>赛道上，Rumble-2-Flash 在中文、德语、法语、意大利语、西班牙语、葡萄牙语、印地语、荷兰语和英语上的平均错误率为 <strong>6.96%</strong>，优于大它 15 倍的 Meta omniASR-LLM 7B，也领先 Whisper large-v3。在<a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">英语</a>赛道上平均 <strong>6.6% WER</strong>。</p>
+<p>同尺寸下的最好成绩</p>
 <h3>速度</h3>
-<p>Rumble-2-Flash 也很快。其吞吐量取决于批次的满度：在 HF 开放 ASR 排行榜中的较大数据集上，批次保持满状态，它达到 <strong>超过 7,000 RTFx</strong>。大约半秒就可以播放一个小时的音频。</p>
-<h3>真实的电话</h3>
-<p>干净的音频很容易。电话通话压缩且嘈杂，并且说话者的口音通常截然不同。在 <a href="https://huggingface.co/datasets/apptek-com/apptek_callcenter_dialogues">AppTek 的呼叫中心基准测试</a> 上（302 小时的帮助热线电话，14 种英语口音，用 AppTek 自己的脚本评分），Rumble-2-Flash 达到 <strong>7.86% WER</strong>，与 NVIDIA 的 Nemotron 3.5 Transcribe (30B) 的 7.78% 相当。这远远领先于同一型号系列的 Qwen3-ASR 0.6B (8.7%)，并且接近 Qwen3-ASR 1.7B (7.4%)，这是比较中唯一表现更好的型号。</p>
-<p>真实通话，14种英语口音</p>
-<h2>尝试一下</h2>
-<p>权重位于集线器上的 <a href="https://huggingface.co/Reson8/Rumble-2-Flash">Reson8/Rumble-2-Flash</a> 处。也可通过我们的 <a href="https://www.reson8.dev">API</a> 获取。</p>
-<p>我们很好奇您将用它构建什么。在<a href="https://huggingface.co/Reson8/Rumble-2-Flash/discussions">讨论选项卡</a> 中告诉我们您做了什么、您喜欢什么以及您希望在下一版本中看到什么更改。</p>
-<h2>本文提到的型号1</h2>
-<h2>本文提到的数据集1</h2>
-<h2>本文提到的空格2</h2>
-<p>我们博客的更多文章</p>
+<p>Rumble-2-Flash 也很快。吞吐取决于 batch 填得多满：在 HF Open ASR Leaderboard 中较大的数据集上，batch 一直是满的，它能跑到 <strong>超过 7,000 RTFx</strong>，也就是一小时音频约半秒。</p>
+<h3>真实电话通话</h3>
+<p>干净音频不难。电话通话经过压缩、带噪声，说话人的口音还常常差别很大。在 <a href="https://huggingface.co/datasets/apptek-com/apptek_callcenter_dialogues">AppTek 的呼叫中心基准</a> 上（302 小时求助热线录音、14 种英语口音，按 AppTek 自己的脚本评分），Rumble-2-Flash 达到 <strong>7.86% WER</strong>，与 NVIDIA 的 Nemotron 3.5 Transcribe (30B) 的 7.78% 基本持平。这明显领先同门的 Qwen3-ASR 0.6B（8.7%），也接近 Qwen3-ASR 1.7B（7.4%）——对比中唯一更好的模型。</p>
+<p>真实电话通话，14 种英语口音</p>
+<h2>上手试试</h2>
+<p>权重在 Hub 上的 <a href="https://huggingface.co/Reson8/Rumble-2-Flash">Reson8/Rumble-2-Flash</a>。也可以通过我们的 <a href="https://www.reson8.dev">API</a> 使用。</p>
+<p>我们很好奇你会拿它做出什么。到<a href="https://huggingface.co/Reson8/Rumble-2-Flash/discussions">讨论区</a>告诉我们你做了什么、喜欢哪里、希望下个版本改什么。</p>
+<h2>本文提到的模型 1</h2>
+<h2>本文提到的数据集 1</h2>
+<h2>本文提到的 Space 2</h2>
+<p>博客更多文章</p>
 <p>swiftmlxcoreml</p>
-<h2>AnySpeechRecognizer 和 AnyDecisionModel 简介：Apple 平台上的语音和决策开放模型</h2>
+<h2>认识 AnySpeechRecognizer 与 AnyDecisionModel：Apple 平台上的语音与决策开放模型</h2>
 <ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt=""></li></ul>
 <p>21</p>
 <p>2026 年 10 月 29 日</p>
-<p>音频语音排行榜</p>
-<h2>埃及语和尼日利亚英语加入 Open ASR 排行榜</h2>
+<p>audiospeechleaderboard</p>
+<h2>埃及英语与尼日利亚英语加入 Open ASR Leaderboard</h2>
 <ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></li><li><img src="https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/hGnt9yx6LyQP5a2MBpXGg.jpeg" alt=""></li></ul>
 <p>13</p>
 <p>2026 年 11 月 6 日</p>
 <h3>社区</h3>
-<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
-<p>点击或粘贴此处上传图像</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Frumble-2-flash">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Frumble-2-flash">登录</a> 发表评论</p>
+<p>把图片、音频和视频拖进输入框、粘贴或点击这里即可上传。</p>
+<p>点击或粘贴此处上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Frumble-2-flash">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Frumble-2-flash">登录</a> 后发表评论</p>
 <p>16</p>
 <ul><li><a href="https://huggingface.co/MarktHart"><img src="https://huggingface.co/avatars/fc90e5ebfe1fe3339c0b805000fd8e71.svg" alt=""></a></li><li><a href="https://huggingface.co/bezzam"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Rijgersberg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6319b164bc8f3b313f7a1db0/Hh0kuwsAnD2AOKdL6PpRs.png" alt=""></a></li><li><a href="https://huggingface.co/raoulritter"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/GKuJsvaWYJawOHCOAMj7g.png" alt=""></a></li><li><a href="https://huggingface.co/angt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67289c93ff90038d9a6e5675/klana6SP95tj8-VwXnIYC.png" alt=""></a></li><li><a href="https://huggingface.co/livrasand"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a9857786a647b531b3bf190/ZAaVV0HBKMOQrI_POx76H.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tarekziade"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png" alt=""></a></li><li><a href="https://huggingface.co/Feudor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/XqOSc8XN_6tqtaGPloB4o.png" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/alejandro-hp"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/680e9062c4756876c4b0fd53/4PlDwg58O10NxoYSXPCeU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jonasrosman"><img src="https://huggingface.co/avatars/d6605bf65d7360f69411ee1896ff8d1c.svg" alt=""></a></li></ul>
-<h2>本文提到的型号1</h2>
-<h2>本文提到的数据集1</h2>
-<h2>本文提到的空格2</h2>]]></content:encoded>
+<h2>本文提到的模型 1</h2>
+<h2>本文提到的数据集 1</h2>
+<h2>本文提到的 Space 2</h2>]]></content:encoded>
     </item>
     <item>
       <title>Hugging Face 与 OpenRouter 联手，让开放权重模型更易运行</title>

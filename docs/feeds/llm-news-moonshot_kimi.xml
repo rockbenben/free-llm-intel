@@ -13,133 +13,132 @@
       <link>https://www.kimi.com/blog/kimi-k3-1-pro</link>
       <guid isPermaLink="true">https://www.kimi.com/blog/kimi-k3-1-pro</guid>
       <pubDate>Sat, 24 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>介绍 Kimi K3.1 Pro</h1>
-<p>我们正在推出 <strong>Kimi K3.1 Pro</strong>，这是我们新 K3.1 系列中的第一个模型，也是我们迄今为止功能最强大的 3T 级开放重量模型，具有 100 万代币上下文窗口。它在编码、3D 创建、金融研究和其他代理功能方面提供了重大改进。</p>
-<p>我们还发布了 <strong>Kimi K3.1 Pro Highspeed</strong>，其速度是 K3.1 Pro 的 2-3 倍，可实现更灵敏的交互。</p>
-<p>Kimi K3.1 Pro 和 Kimi K3.1 Pro Highspeed 现已在 <a href="https://www.kimi.com/en">Kimi.com</a>、<a href="https://www.kimi.com/en/products/kimi-work">Kimi Work</a>、<a href="https://www.kimi.com/code/en">Kimi Code</a> 和 <a href="https://platform.kimi.com/">Kimi API</a> 上提供。完整的模型重量将于 11 月 4 日发布。</p>
-<p><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/managed-assets/43394bf2-0bfe-4f41-8f93-bb7fb3a079c2.webp" alt="Kimi K3.1 Pro 和同行模型在 14 项编码、科学和知识工作评估中的基准结果"><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/managed-assets/43394bf2-0bfe-4f41-8f93-bb7fb3a079c2.webp" alt=""></p>
-<h2>推进开放智能前沿</h2>
-<p>Kimi K3.1 Pro 是 Kimi K3 的后训练版本，具有更大的后训练计算量。为了实现跨<strong>数百个下游域</strong>的大规模联合强化学习，我们优化了堆栈的每一层——强化学习框架、长上下文推理、训练效率、沙箱基础设施、部署调度和用于环境质量检查的共享平台——以便强化学习计算的每次增量都能提供稳定、可预测的回报。因此，K3.1 Pro 在各个领域都取得了一致的收益。</p>
-<p>在编码、代理和知识基准方面，K3.1 Pro 匹配或接近最强的专有模型。 <strong>Terminal-Bench 4.0</strong> 使用严格的特定任务测试来评估实际的、资源受限的终端任务上的编码代理，<strong>K3.1 Pro 得分为 65.7%，领先于 GPT-6 Astra (58.2%)，并以微弱优势落后于 Claude Opus 5.5 (66.4%)</strong>。在 <strong>Kimi Code Bench 3.0 Long-horizo​​n</strong>（我们的内部基准测试，测试编码代理跨不同工程领域的多步骤执行、工具使用和端到端问题解决）上，K3.1 Pro 得分 <strong>61.2%</strong>，高于 K3 的 <strong>55.95%</strong>。</p>
-<h2>编码</h2>
-<p><strong>K3.1 Pro 涵盖了全方位的编码工作，从真实代码库中的快速修复到完整项目构建。它还为游戏和网络体验带来了更经过深思熟虑的视觉风格，并知道如何使用正确的工具来构建它们。</strong></p>
-<p>K3.1 Pro 在 <strong>Unity、Unreal Engine 和 Godot</strong> 等游戏引擎中有效工作，将它们与网络搜索和 3D 生成相结合以创建完整的体验。它的前端页面、交互式 Three.js 场景和 3D 资源显示出更强的构图、排版、动画和润色。以下示例由 K3.1 Pro 端到端创建：</p>
-<p><strong>K3.1 Pro 的长视野编码能力也通过大规模强化学习得到加强。</strong> 在一项内部测试中，它在 <a href="https://github.com/ashemag/human-atlas"><em> human-atlas</em></a> 之上构建了一个具有集成训练和评估管道的人体行走动力学模拟器，这是一个开源的人体解剖模型，包含 296 个骨骼组件（包括软骨）和 402 个肌肉组件。在 167 次任务和 420 次独立审查中，它分析了实验结果，诊断了问题，并迭代完善了行走控制器，使模拟人能够从几秒钟内崩溃到以交替步幅连续行走 11.2 秒。当奖励塑造无法改善手臂运动时，K3.1 Pro 并没有简单地继续调整奖励：它运行模拟器动力学的开环探针，识别并纠正肩部肌肉力臂计算中的 36 个错误，然后重新训练控制器。</p>
-<h2>3D 建模和设计</h2>
-<p><strong>K3.1 Pro 擅长 3D 创建和空间推理。</strong> 在 <strong>BenchCAD</strong>（通过 CAD 代码生成测试多视图渲染的 3D 重建）上，<strong>K3.1 Pro 使用工具得分为 92.7%，接近 </strong>Claude Opus 5.5 (96.2%)<strong> 和 </strong>GPT-6 Astra (95.9%)** 的性能。它可以根据文本简介、草图或参考图像推断形状、比例和空间关系，以创建可用的 3D 模型。它还对现有的资产库和模型集合有更强的掌握。</p>
-<p><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/benchcad-results-v2.webp" alt="BenchCAD 结果（1,000 个文件子集，Voxel IoU）：使用工具时，Claude Opus 5.5 得分 96.2、GPT-6 Astra 95.9、Kimi K3.1 Pro 92.7、Claude Fable 5.1 92.6 和 DeepSeek-V4.1-Flash-1017 81.6；不使用工具时，Claude Opus 5.5 得分 73.0，Kimi K3.1 Pro 72.8，Claude Fable 5.1 60.6，DeepSeek-V4.1-Flash-1017 41.2"><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/benchcad-results-v2.webp" alt=""></p>
-<p><strong>K3.1 Pro 尤其擅长参数化建模，从机械零件和建筑模型到可配置产品和定制家具。</strong> 无需 MCP 连接器，它可以为 Blender 和 CAD 软件等工具编写和运行脚本，以构建和优化资产、编辑组件以及调整几何、材料和场景布局。</p>
-<p>以下是 K3.1 Pro 为品牌电影、游戏和交互式网络体验创建的 3D 资产示例：</p>
-<p><strong>3D Make</strong> 现已在 <a href="https://www.kimi.com/en">kimi.com</a> 和 Kimi 应用程序上上线 — 在线预览和编辑您的 3D 模型，下载它们以进行 3D 打印，或将它们导出为视频或实时照片以在任何地方共享。</p>
-<p><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/weaver/assets/9d2a6db49991ae6a4eb13c8a322de721.webp" alt="kimi.com 上的 Kimi 3D Make 界面，带有将想法转化为 3D 模型的提示框，以及包括宝塔、打字机和喷气发动机在内的特色模板"><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/weaver/assets/9d2a6db49991ae6a4eb13c8a322de721.webp" alt=""></p>
+      <content:encoded><![CDATA[<h1>Kimi K3.1 Pro 简介</h1>
+<p>我们推出 <strong>Kimi K3.1 Pro</strong>。它是全新 K3.1 系列的首款模型，也是我们迄今最强的 3T 级开放权重模型，上下文窗口达 100 万 token。它在编程、3D 创作、金融研究以及其他 agentic 能力上都有大幅提升。</p>
+<p>我们还发布了 <strong>Kimi K3.1 Pro Highspeed</strong>，速度是 K3.1 Pro 的 2-3 倍，交互更灵敏。</p>
+<p>Kimi K3.1 Pro 与 Kimi K3.1 Pro Highspeed 即日起可在 <a href="https://www.kimi.com/en">Kimi.com</a>、<a href="https://www.kimi.com/en/products/kimi-work">Kimi Work</a>、<a href="https://www.kimi.com/code/en">Kimi Code</a> 以及 <a href="https://platform.kimi.com/">Kimi API</a> 使用。完整模型权重将于 11 月 4 日前发布。</p>
+<p><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/managed-assets/43394bf2-0bfe-4f41-8f93-bb7fb3a079c2.webp" alt="Kimi K3.1 Pro 与同类模型在 14 项编程、科学和知识工作评测中的基准成绩"><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/managed-assets/43394bf2-0bfe-4f41-8f93-bb7fb3a079c2.webp" alt=""></p>
+<h2>推进开放智能的边界</h2>
+<p>Kimi K3.1 Pro 是 Kimi K3 的后训练版本，后训练算力大幅增加。为了让 RL 在<strong>数百个下游领域</strong>上大规模联合进行，我们优化了整条技术栈的每一层——RL 框架、长上下文推理、训练效率、sandbox 基础设施、rollout 调度，以及一个用于环境质量检查的共享平台——使每一份 RL 算力都能带来稳定、可预期的回报。也正因如此，K3.1 Pro 在各个领域都取得了一致提升。</p>
+<p>在编程、agentic 与知识类基准上，K3.1 Pro 达到或接近最强闭源模型的水平。<strong>Terminal-Bench 4.0</strong> 通过严格的任务专属测试，在贴近真实、资源受限的终端任务上考察编程 agent；在该基准上，<strong>K3.1 Pro 得分为 65.7%，领先 GPT-6 Astra（58.2%），仅略微落后于 Claude Opus 5.5（66.4%）</strong>。在 <strong>Kimi Code Bench 3.0 Long-horizon</strong> 上，K3.1 Pro 得分为 <strong>61.2%</strong>，高于 K3 的 <strong>55.95%</strong>；这一内部基准考察编程 agent 在多个工程领域中的多步执行、工具调用与端到端问题求解能力。</p>
+<h2>编程</h2>
+<p><strong>K3.1 Pro 覆盖各种规模的编程工作，从真实代码库里的快速修复到整项目构建。它还能为游戏与网页体验带来更考究的视觉风格，并且懂得用合适的工具把它们做出来。</strong></p>
+<p>K3.1 Pro 能在 <strong>Unity、Unreal Engine、Godot</strong> 等游戏引擎中高效工作，并把它们与联网搜索、3D 生成结合起来，做出完整的体验。它的前端页面、可交互的 Three.js 场景和 3D 资产在构图、字体排版、动画与完成度上都更出色。下面的示例均由 K3.1 Pro 端到端完成：</p>
+<p><strong>K3.1 Pro 的长程编程能力同样通过大规模强化学习得到加强。</strong> 在一次内部测试中，它在 <a href="https://github.com/ashemag/human-atlas"><em>human-atlas</em></a> 之上构建了一套人体行走动力学仿真器，并整合了训练与评测流水线；这一开源的人体解剖模型包含 296 个骨骼部件（含软骨）和 402 块肌肉部件。在 167 项任务、420 次独立评审中，它分析实验结果、诊断问题，并反复改进行走控制器，使仿真人从几秒内就瘫倒，进步到能以交替步态连续行走 11.2 秒。当 reward shaping 无法改善手臂动作时，K3.1 Pro 没有一味去调 reward：它对仿真器的动力学做开环探测，找出并修正了肩部肌肉力臂计算中的 36 处错误，然后重新训练控制器。</p>
+<h2>3D 建模与设计</h2>
+<p><strong>K3.1 Pro 在 3D 创作与空间推理上很强。</strong> <strong>BenchCAD</strong> 通过生成 CAD 代码来考察基于多视角渲染的 3D 重建；在该基准上，<strong>K3.1 Pro 携带工具得分 92.7%</strong>，接近 <strong>Claude Opus 5.5（96.2%）</strong> 与 <strong>GPT-6 Astra（95.9%）</strong> 的水平。无论是文字简介、草图还是参考图，它都能推断出形状、比例与空间关系，产出可用的 3D 模型。它对现有资产库与模型集合的掌握也更到位。</p>
+<p><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/benchcad-results-v2.webp" alt="BenchCAD 成绩（1,000 文件子集，Voxel IoU）：携带工具时，Claude Opus 5.5 为 96.2，GPT-6 Astra 为 95.9，Kimi K3.1 Pro 为 92.7，Claude Fable 5.1 为 92.6，DeepSeek-V4.1-Flash-1017 为 81.6；不带工具时，Claude Opus 5.5 为 73.0，Kimi K3.1 Pro 为 72.8，Claude Fable 5.1 为 60.6，DeepSeek-V4.1-Flash-1017 为 41.2"><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/benchcad-results-v2.webp" alt=""></p>
+<p><strong>K3.1 Pro 尤其擅长参数化建模，从机械零件、建筑模型到可配置产品与定制家具。</strong> 即便没有 MCP connector，它也能为 Blender 和 CAD 软件之类的工具编写并运行脚本，用来构建和打磨资产、编辑部件，以及调整几何、材质与场景布局。</p>
+<p>以下是 K3.1 Pro 为品牌广告片、游戏和交互式网页体验创作的 3D 资产示例：</p>
+<p><strong>3D Make</strong> 现已在 <a href="https://www.kimi.com/en">kimi.com</a> 和 Kimi app 上线——你可以在线预览、编辑 3D 模型，下载可直接用于 3D 打印的文件，也可以导出为视频或 Live Photo，分享到任何地方。</p>
+<p><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/weaver/assets/9d2a6db49991ae6a4eb13c8a322de721.webp" alt="kimi.com 上的 Kimi 3D Make 界面，带有把想法变成 3D 模型的 prompt 输入框，以及包含宝塔、打字机和喷气发动机的精选模板"><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/weaver/assets/9d2a6db49991ae6a4eb13c8a322de721.webp" alt=""></p>
 <h2>金融</h2>
-<p><strong>K3.1 Pro具有更强的推理和代理能力，能够端到端交付完整的财务工作流程。 K3.1 Pro 在 OfficeQA Pro v2 (64.4) 上取得了最先进的结果，</strong> 通过检索、跨文档验证和多步骤数值推理，测试对真实财务文档的复杂财务数据分析。 K3.1 Pro 还对 Frontier Finance 上的 K3 进行了改进，后者衡量了对从筛选到盈利分析的完整投资工作流程的支持。</p>
-<p><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/finance-productivity-v4.webp" alt="OfficeQA Pro v2 和 Frontier Finance 的金融基准测试结果，Kimi K3.1 Pro 以 64.4 领先 OfficeQA Pro v2，在 Frontier Finance 上相对于 Claude、GPT、GLM 和 DeepSeek 模型得分 58.6"><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/finance-productivity-v4.webp" alt=""></p>
-<p>K3.1 Pro 在我们所有的内部财务基准中也显着提高：</p>
-<ul><li><strong>财务建模</strong>评估现实世界建模任务中的公式链接、财务逻辑和最终工作簿质量。 K3.1 Pro比K3提升了7.2分。</li><li><strong>金融研究</strong>评估模型是否可以在证据和截止约束下产生可审计的研究。 K3.1 Pro比K3提升了11.6分。</li><li><strong>业务运营</strong>在模拟业务环境中评估长期管理和决策。 K3.1 Pro 的性能约为 K3 的 4.2 倍。</li></ul>
-<p><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/weaver/assets/f0a2d8ff95b181942bbe5a78405058ef.webp" alt="内部财务基准：Kimi K3.1 Pro 与 K3 的内部财务建模（57.6 vs 50.4）、内部财务研究（70.4 vs 58.8）和内部业务运营（37 vs 8.9）"><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/weaver/assets/f0a2d8ff95b181942bbe5a78405058ef.webp" alt=""></p>
-<p>财务分析和投资研究需要高度的事实准确性。为了解决这个问题，我们对 K3.1 Pro 在现实任务和具有挑战性的提示方面的<strong>事实准确性</strong>进行了针对性的改进。在 Kimi Hallu Bench Hard bench（旨在对事实准确性进行压力测试的内部基准）上，其声称级别的幻觉率从 K3 的 23.4% 降至 8.3%，而包含至少一个事实错误的响应比例仅为其前身的 42.4%。 （该评估是对事实准确性的压力测试，故意设计示例来探讨模型容易出错的情况。报告的比率并不代表日常使用中的总体错误率。）</p>
-<p><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/hallu-bench-results-v2.webp" alt="Kimi Hallu Bench声称级别幻觉率（越低越好）：无工具、GPT-6 Astra 4.2、Kimi K3.1 Pro 5.4、Opus 5.5 6.8、Fable 5.1 11.4、DeepSeek-V4.1-Flash-1017 13.1、GLM-5.3 14.8；硬配工具，GPT-6 Astra 5.5、Kimi K3.1 Pro 8.3、Opus 5.5 15.0、GLM-5.3 22.6、DeepSeek-V4.1-Flash-1017 23.3、Fable 5.1 23.3"><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/hallu-bench-results-v2.webp" alt=""></p>
-<p>以下案例展示了K3.1 Pro如何在实践中处理财务建模、投资分析和根源研究：</p>
+<p><strong>凭借更强的推理与 agentic 能力，K3.1 Pro 能够端到端交付完整的金融工作流。在 OfficeQA Pro v2 上，K3.1 Pro 取得业界领先的成绩（64.4），</strong> 该基准要求在真实财务文档上完成复杂的财务数据分析，涉及检索、跨文档核验与多步数值推理。在衡量从筛选到盈利分析全流程投资工作流支持度的 Frontier Finance 上，K3.1 Pro 同样优于 K3。</p>
+<p><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/finance-productivity-v4.webp" alt="OfficeQA Pro v2 与 Frontier Finance 的金融基准成绩：Kimi K3.1 Pro 以 64.4 在 OfficeQA Pro v2 上领先，在 Frontier Finance 上则相对于 Claude、GPT、GLM 和 DeepSeek 系列模型取得 58.6"><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/finance-productivity-v4.webp" alt=""></p>
+<p>在我们全部内部金融基准上，K3.1 Pro 也有显著提升：</p>
+<ul><li><strong>Financial Modeling</strong> 在真实建模任务中考察公式联动、财务逻辑与最终工作簿质量。K3.1 Pro 比 K3 提升 7.2 分。</li><li><strong>Financial Research</strong> 考察模型能否在证据与截止条件约束下产出可审计的研究。K3.1 Pro 比 K3 提升 11.6 分。</li><li><strong>Business Operation</strong> 在模拟商业环境中考察长程管理与决策。K3.1 Pro 的表现约为 K3 的 4.2 倍。</li></ul>
+<p><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/weaver/assets/f0a2d8ff95b181942bbe5a78405058ef.webp" alt="内部金融基准：Kimi K3.1 Pro 与 K3 在 Internal Finance Modeling（57.6 对 50.4）、Internal Financial Research（70.4 对 58.8）和 Internal Business Operation（37 对 8.9）上的对比"><img src="https://kimi-img.kimi.ai/pub/slides/kimi-fs/weaver/assets/f0a2d8ff95b181942bbe5a78405058ef.webp" alt=""></p>
+<p>金融分析与投资研究对事实准确度要求极高。为此，我们针对真实任务和高难度 prompt，对 K3.1 Pro 的<strong>事实准确度</strong>做了定向改进。在 Kimi Hallu Bench Hard 这个以压力测试事实准确度为目的的内部基准上，它在 claim 层面的幻觉率从 K3 的 23.4% 降至 8.3%，而至少出现一处事实错误的回答占比仅为前代模型的 42.4%。（该评测是对事实准确度的压力测试，题目刻意设计成容易诱发模型出错的场景。所报比例不代表日常使用中的整体错误率。）</p>
+<p><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/hallu-bench-results-v2.webp" alt="Kimi Hallu Bench 的 claim 级幻觉率（越低越好）：不带工具时，GPT-6 Astra 4.2，Kimi K3.1 Pro 5.4，Opus 5.5 6.8，Fable 5.1 11.4，DeepSeek-V4.1-Flash-1017 13.1，GLM-5.3 14.8；Hard 携带工具时，GPT-6 Astra 5.5，Kimi K3.1 Pro 8.3，Opus 5.5 15.0，GLM-5.3 22.6，DeepSeek-V4.1-Flash-1017 23.3，Fable 5.1 23.3"><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/hallu-bench-results-v2.webp" alt=""></p>
+<p>以下案例展示了 K3.1 Pro 在实践中如何处理金融建模、投资分析与有来源依据的研究：</p>
 <h2>网络安全</h2>
-<p>随着 K3.1 Pro 的能力变得越来越强大，我们相应地投入了更多的精力来了解网络能力从何而来，以及我们可以控制多少。因此，我们分析和评估了K3.1 Pro的漏洞研究能力，并在训练过程中进行了有针对性的控制，以减少潜在的误用风险，同时保持通用性。</p>
-<p><strong>识别和删除网络相关数据。</strong> 在开发过程中，我们观察到漏洞研究性能随着训练后规模的扩大而稳步提高。追踪这一趋势的根源，我们发现网络相关内容嵌入在一般的中期训练语料库中，而网络相关任务则存在于 RL 环境组合中——这是广泛数据训练的自然副产品。在内部模型的初步实验中，我们发现，如果在训练中期或强化学习阶段不删除数据，下游网络能力将大幅增强。这些发现为我们提供了具体的控制杠杆。对于 K3.1 Pro 的开放权重版本，我们从两个训练阶段识别并删除了网络相关数据，同时保留了模型实用性所需的通用编码任务。我们将继续在每个培训阶段应用适当的控制，其中与网络相关的数据识别和限制就是一个例子。</p>
-<p><strong>评估和结果。</strong> 数据清理后，我们在 xdev-bench-hard 上评估了 K3.1 Pro，xdev-bench-hard 是我们专家策划的、基于源代码的漏洞发现和利用任务的内部基准，经过校准以在我们当前的能力水平上提供有意义的差异化。大多数任务忠实地重现了最近披露的 Linux 内核、Node.js、JavaScriptCore、Exim 和 VirGL 等软件中的漏洞，并启用了缓解措施。每个任务都提供易受攻击的源代码、简短的错误提示以及相应的二进制文件；代理必须开发漏洞，在单独的沙箱中实现任意代码执行，并检索秘密字符串以进行自动验证。我们在运行的随机子集上报告 pass@3，没有硬超时或输出令牌限制。</p>
-<p><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/xdev-bench-hard-results.webp" alt="内部xdev-bench-hard（pass@3）结果：GPT-5.6 Sol（第三方评估）解决了100个问题，无网络风险降低的Kimi模型90.5，DeepSeek-V4.1-Flash 85.7，Kimi K3.1 Pro 81.0，GLM-5.3 57.1和Kimi K3 33.3，平均成功率和每次成功的平均代币每个的轨迹"><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/xdev-bench-hard-results.webp" alt=""></p>
-<p>在 xdev-bench-hard 上，没有这些风险降低措施的检查点（在训练中期没有删除与网络相关的数据，也没有与网络相关的 RL 环境过滤）在 pass@3 时解决了 90.5% 的问题；最终K3.1 Pro达到81.0%。比较表明，相对于相同训练管道原本产生的能力，数据删除会显着降低网络能力。与此同时，K3.1 Pro 比其前身有了很大改进，这表明即使在有针对性的数据删除之后，更强大的通用编码和长期调试能力也适用于网络任务。 K3.1 Pro的网络能力仍然落后于已公开发布至少三个月的前沿专有型号。我们将不断发展我们的内部基准，以便随着模型功能的不断进步，评估仍能提供丰富的信息。</p>
-<p><strong>开放重量原则。</strong> 这些评估构成了我们的开放重量发布决策。首先，我们的目标是不发布会扩展网络能力绝对边界的开放权重。从设计上来说，K3.1 Pro 的进攻性网络能力低于我们的管道所能产生的能力，并且仍然落后于前沿专有模型。其次，我们打算逐步提高开放权重中可用的网络能力。我们相信，以非歧视的方式提供 K3.1 Pro 将使那些需要双重用途功能用于防御目的的人们受益。当一个有能力的模型开放并在用户控制的基础设施上运行时，更多的团队可以获得审核他们维护的代码的方法——包括很少接受专门安全审查的遗留系统。我们相信，让这种能力逐渐扩散——而不是将其集中在几个专有系统中——最终会让所有软件变得更加安全。</p>
-<h2>可用性</h2>
-<p>Kimi K3.1 Pro 今天在 Kimi 产品系列中推出：在 <a href="https://www.kimi.com/en">Kimi.com</a> 和 Kimi 移动应用程序、Kimi Work 和 Kimi Code 上，以及通过 <a href="https://platform.kimi.com/">Kimi API</a>。</p>
-<p>完整模型权重将于 2026 年 11 月 4 日发布。</p>
-<p><a href="https://www.kimi.com/en/business">Kimi企业管理员</a>可以为其组织启用K3.1 Pro；启动时默认关闭访问权限。</p>
-<p>每个频道的详细信息：</p>
-<ul><li><strong>Kimi Agents：</strong> 从您的移动应用商店下载或更新到最新的 Kimi 应用程序（适用于 iOS、Android 和 HarmonyOS），或访问 <a href="https://www.kimi.com/en">kimi.com</a>。</li><li><strong>使用 Kimi K3.1 Pro：</strong> 下载最新的 <a href="https://www.kimi.com/en/products/kimi-work">Kimi Work 桌面应用程序</a>，版本 3.1.0 或更高版本，适用于 Windows 和 Apple Silicon Mac。</li><li><strong>使用 Kimi K3.1 Pro 进行编码：</strong> 运行 <a href="https://www.kimi.com/code/en">Kimi Code</a> 并使用 <code>/model</code> 命令选择 Kimi K3.1 Pro。</li><li><strong>使用 Kimi API 构建：</strong> 访问 <a href="https://platform.kimi.com/">Kimi API 平台</a> 并选择 kimi-k3.1-pro / kimi-k3.1-pro-highspeed。 API 客户可以使用零数据保留。</li><li><strong>将Kimi带入您的组织：</strong> <a href="https://www.kimi.com/en/business">Kimi商务</a>提供企业级数据隐私和会员管理，个人帐户与组织帐户完全分离。访问定价页面并选择“获取 Kimi Business”为您的团队订阅。</li></ul>
+<p>随着 K3.1 Pro 能力增强，我们相应投入了更大比例的精力，去理解网络攻击能力从何而来，以及其中有多少是我们能控制的。因此，我们分析并评测了 K3.1 Pro 的漏洞研究能力，并在训练中施加定向控制，在保留通用可用性的同时降低潜在的滥用风险。</p>
+<p><strong>识别并移除与网络攻击相关的数据。</strong> 在开发过程中，我们观察到随着后训练规模扩大，漏洞研究的表现稳步提升。追溯这一趋势的来源后我们发现，与网络攻击相关的内容混在通用中训练语料中，RL 环境组合里也存在相关任务——这是在大规模通用数据上训练的自然副产品。在内部模型的初步实验中我们发现，如果中训练阶段和 RL 阶段都不移除数据，下游的网络攻击能力会显著增强。这些发现给了我们一个具体可用的控制抓手。在 K3.1 Pro 的开放权重版本中，我们从两个训练阶段都识别并移除了这类数据，同时保留模型可用性所需的通用编程任务。我们会继续在每一个训练阶段施加适当的控制，网络攻击相关数据的识别与限制只是其中一例。</p>
+<p><strong>评测与结果。</strong> 完成数据清洗后，我们在 xdev-bench-hard 上评测 K3.1 Pro。这是我们的内部基准，题目由专家策划、基于源码，覆盖漏洞发现与利用，并针对当前能力水平做了校准，以便产生有意义的区分度。多数任务忠实复现了 Linux 内核、Node.js、JavaScriptCore、Exim、VirGL 等软件近期披露的漏洞，且已开启缓解措施。每道题提供存在漏洞的源代码、一段简短的 bug 提示以及对应的二进制文件；agent 需要写出 exploit，在独立 sandbox 中实现任意代码执行，并取回一个秘密字符串以完成自动校验。我们在一部分随机运行上报告 pass@3，不设硬性超时，也不限制输出 token。</p>
+<p><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/xdev-bench-hard-results.webp" alt="内部 xdev-bench-hard（pass@3）成绩：GPT-5.6 Sol（第三方评测）解出 100 题，未做网络风险削减的 Kimi 模型为 90.5，DeepSeek-V4.1-Flash 为 85.7，Kimi K3.1 Pro 为 81.0，GLM-5.3 为 57.1，Kimi K3 为 33.3；同时给出各模型的平均成功率与每条成功轨迹的平均 token 数"><img src="https://statics.kimi.ai/kimi-blogs/kimi-k3-1/20261023/xdev-bench-hard-results.webp" alt=""></p>
+<p>在 xdev-bench-hard 上，未采取这些风险削减措施的 checkpoint——即中训练阶段不移除网络攻击相关数据、也不过滤 RL 环境中的相关任务——在 pass@3 下解出 90.5% 的题目；最终的 K3.1 Pro 为 81.0%。这一对比表明，相对于同一条训练流水线原本会产出的结果，数据移除确实显著削弱了网络攻击能力。与此同时，K3.1 Pro 相比前代仍有大幅提升，说明更强的通用编程与长程调试能力在定向数据移除之后依然能泛化到网络任务上。K3.1 Pro 的网络攻击能力仍落后于已公开至少三个月的前沿闭源模型。我们会持续迭代内部基准，让评测在模型能力不断进步的过程中始终保持参考价值。</p>
+<p><strong>开放权重原则。</strong> 这些评测构成了我们开放权重发布决策的依据。第一，我们不希望发布的开放权重把网络攻击能力的绝对前沿再往前推。按设计，K3.1 Pro 的攻击性网络能力低于我们流水线所能达到的水平，也仍落后于前沿闭源模型。第二，我们打算逐步提高开放权重中可获得的网络能力。我们相信，以非歧视性的方式提供 K3.1 Pro，会让需要把双用途能力用于防御的人受益。当一个有能力的模型开放、并运行在用户自己掌控的基础设施上时，会有更多团队有能力审计自己维护的代码——包括那些很少得到专门安全审查的遗留系统。我们相信，让这种能力逐步扩散、而不是集中在少数闭源系统里，最终会让所有软件更安全。</p>
+<h2>获取方式</h2>
+<p>Kimi K3.1 Pro 今日在 Kimi 全线产品上线：<a href="https://www.kimi.com/en">Kimi.com</a> 及 Kimi 移动 app、Kimi Work、Kimi Code，也可通过 <a href="https://platform.kimi.com/">Kimi API</a> 使用。</p>
+<p>完整模型权重将于 2026 年 11 月 4 日前发布。</p>
+<p><a href="https://www.kimi.com/en/business">Kimi 企业版管理员</a>可为所在组织启用 K3.1 Pro；发布时该访问权限默认关闭。</p>
+<p>各渠道详情：</p>
+<ul><li><strong>Kimi Agents：</strong> 从手机应用商店下载或更新到最新版 Kimi app，支持 iOS、Android 和 HarmonyOS；也可以访问 <a href="https://www.kimi.com/en">kimi.com</a>。</li><li><strong>用 Kimi K3.1 Pro 办公：</strong> 下载最新的 <a href="https://www.kimi.com/en/products/kimi-work">Kimi Work 桌面版</a>，需 3.1.0 或更高版本，支持 Windows 与 Apple silicon Mac。</li><li><strong>用 Kimi K3.1 Pro 写代码：</strong> 运行 <a href="https://www.kimi.com/code/en">Kimi Code</a>，用 <code>/model</code> 命令选择 Kimi K3.1 Pro。</li><li><strong>用 Kimi API 构建：</strong> 访问 <a href="https://platform.kimi.com/">Kimi API 平台</a>，选择 kimi-k3.1-pro / kimi-k3.1-pro-highspeed。API 客户可选择 Zero Data Retention（零数据保留）。</li><li><strong>为组织引入 Kimi：</strong> <a href="https://www.kimi.com/en/business">Kimi Business</a> 提供企业级数据隐私与成员管理，个人账号与组织账号完全隔离。访问定价页并选择 “Get Kimi Business” 即可为团队订阅。</li></ul>
 <h2>基准测试</h2>
 <h2>脚注</h2>
-<p>除非另有说明，下面报告的所有 Kimi K3.1 Pro 结果都是在推理工作设置为“最大”、温度 = 1.0 和 top-p = 0.95 的情况下获得的。</p>
-<h3>编码基准</h3>
-<ul><li>终端工作台 4.0。 Kimi K3.1 Pro 使用 Claude-Code 安全带进行评估。 DeepSeek-V4.1-Flash-1017 摘自发布博客 (<a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017">https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017</a>)。所有剩余分数均视为其博客文章或官方 Terminal-Bench 4.0 排行榜 (<a href="https://www.tbench.ai/">https://www.tbench.ai/</a>) 中报告的最大值。</li><li>终端基准科学 0.1。 Kimi K3.1 Pro 使用 Claude-Code 安全带进行评估。我们对 DeepSeek-V4.1-Flash-1017 的内部评估得分为 9.3；然而，较旧的版本 DeepSeek-V4.1-Flash 在官方 Terminal-Bench-Science 上的得分为 15.7，因此我们在此报告为 15.7；所有剩余分数均来自官方 Terminal-Bench-Science 排行榜 (<a href="https://www.terminal-bench-science.ai/">https://www.terminal-bench-science.ai/</a>)。</li><li>DeepSWE v1.1。 Kimi K3.1 Pro 使用 Claude-Code 安全带进行评估。所有分数均取自每个型号各自的技术报告。 GPT-6 阿斯特拉（[https://openai.com/index/gpt-6-astra/]（https://openai.com/index/gpt-6-astra/））。Claude Opus 5.5 和Claude寓言 5.1(<a href="https://www.anthropic.com/claude-opus-5-5-system-card">https://www.anthropic.com/claude-opus-5-5-system-card</a> 和 <a href="https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card">https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card</a>)； DeepSeek-V4.1-Flash-1017 (<a href="https://api-docs.deepseek.com/news/news261017/">https://api-docs.deepseek.com/news/news261017/</a>); GLM-5.3（[https://z.ai/blog/glm-5.3]（https://z.ai/blog/glm-5.3））。</li><li>SWE-马拉松 v1.1。 Kimi K3.1 Pro 使用 Claude-Code 安全带进行评估。 DeepSeek-V4.1-Flash-1017 使用 ClaudeCode 工具进行评估。所有其他分数均取自 SWE-Marathon 官方排行榜 (<a href="https://www.swe-marathon.org/">https://www.swe-marathon.org/</a>)。</li><li>PostTrainBench。 Kimi K3.1 Pro 和 DeepSeek-V4.1-Flash-1017 在 v1.2 上使用 Claude-Code 工具和 H20 GPU（而不是 H100 GPU）进行了内部评估。为了稳定评估，所有法官模型都尽力使用 DeepSeek-V4.1-Flash-1017，在测试中与官方 GPT-5.6-Terra (xhigh) 法官最匹配。其他分数来自官方排行榜（<a href="https://posttrainbench.com/">https://posttrainbench.com/</a>）。</li><li>ProgramBench（二进制分数）。我们报告二进制分数而不是原始 ProgramBench 分数：如果任务的 ProgramBench 分数≥95%，则其得分为 1，否则为 0。 Kimi K3.1 Pro 使用 Claude-Code 安全带进行评估。 DeepSeek-V4.1-Flash-1017 和 GLM-5.3 分数取自发布博客 (<a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017">https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017</a>)；所有剩余分数均来自 Vals ProgramBench 排行榜 (<a href="https://www.vals.ai/benchmarks/programbench">https://www.vals.ai/benchmarks/programbench</a>)。</li><li>内部编码基准：Kimi Code Bench 2.0 和 Kimi Code Bench 3.0 Long-horizo​​n。 Kimi K3.1 Pro 使用 Claude-Code 安全带进行评估；所有其他模型均以其最大努力设置进行评估。请注意，专有模型测试可能涉及一些后备行为。</li><li>BenchCAD。我们使用从完整的 17,900 个案例 Vision2Code 数据集中随机抽取的 1,000 个案例子集来评估开放模型，并尽最大努力进行推理。 With-tools 结果使用 Claude Code 工具；无工具结果使用带有官方 BenchCAD 提示和评分管道的单次生成。 《Claude寓言5.1》和《Claude Opus5.5》的分数取自【Claude Opus5.5系统卡】（https://www-cdn.anthropic.com/fc1b44717c85dc068bc6ba5024219938094694bd/Claude%20Opus%205.5%20System%20Card.pdf）； GPT-6 Astra 的工具得分取自其<a href="https://openai.com/zh-Hans-CN/index/gpt-6-astra/">官方报告</a>。 GPT-6 Astra 尚未报告无工具得分，并标记为“—”。</li></ul>
-<h3>代理基准测试</h3>
-<ul><li>BioMysteryBench数据集取自【官方v11版本】(https://huggingface.co/datasets/Anthropic/BioMysteryBench-full/commit/b5a889c)，以Kimi K3为评判模型。我们使用 Kimi Code 评估 Kimi K3.1 Pro，使用 Claude Code 评估 GLM-5.3 和 DeepSeek-V4.1-Flash-1017，使用 Codex 评估 GPT-6 Astra。Claude模型的分数直接取自其官方系统卡。</li><li>我们的 Agents Last Exam 数据集取自 <a href="https://github.com/rdi-berkeley/agents-last-exam">官方 v1.1 版本</a>，包含 122 个任务，其中包括 86 个 CLI 任务，环境图像与官方 Hugging Face 版本一致。我们还为绕过任务规定要求的运行分配零分，例如在线检索答案而不是在 Wireshark 中执行所需的分析。 DeepSeek 和 Kimi 分别使用 Claude Code 和 Kimi Code 进行评估。所有其他结果均来自官方基准测试网站。</li><li>OfficeQA Pro、OfficeQA Pro v2。 GPT-6 Astra 使用 Codex 进行评估，而所有其他模型则使用 Claude Code 进行评估。每个任务都为代理提供整个 PDF 语料库，所有 PDF 都呈现为图像，并且没有可用的机器可读文本。我们观察了某些外部模型的轨迹实例，它们在线检索参考答案；因此，我们给这些任务打了零分。</li><li>Frontier Finance 使用官方财务代理 v2 工具进行评估。</li><li>HANDBOOK.md 使用基于 OpenHands 构建的官方工具进行评估，评估任务取自基准测试的早期开源 v1 版本。</li><li>使用 Artificial Analysis 的 Stirrup 工具在包含 1,251 项任务的公共数据集上对 Harvey Legal Agent 进行评估，性能报告为全通过率（即通过所有评分标准的任务的百分比）。</li><li>OSWorld V2.1 使用官方 OSWorld v2 存储库中的 Kimi Agent 工具进行评估，而 GPT-6 Astra 的分数取自 Muse Wonder 的技术报告。</li><li>DECK-Arena 根据现实世界的查询评估演示文稿生成，而 Design Bench 通过直接和参考图像几次提示涵盖图形设计；两者都在集成搜索和图像生成的工具中跨 python-pptx、pptxjs 和 Kimi 的内部 DSL 运行模型，并使用根据 10,000 多个人类判断进行校准的自动评分器。</li><li>MCP 阿特拉斯。所有模型均在 500 个任务的公共子集上进行评估，限制为 100 轮，使用 Gemini 3.1 Pro 作为评判。</li><li>浏览比较。我们采用 Claude 模型卡中使用的上下文压缩策略，在 200K 令牌时触发。我们允许最多 500 步；如果在任务完成之前达到此限制，我们会强制代理提供答案，然后进行判断。所有 BrowseComp 运行均在温度 = 1.0 和 top-p = 1.0 的情况下进行。</li><li>GDPval-AA v2.1、AA-Briefcase v1.1 和 AutomationBench-AA 分数引用自 <a href="https://artificialanalysis.ai/">https://artificialanalysis.ai/</a>，Apex Agents 分数引用自 <a href="https://www.mercor.com/apex/apex-agents-leaderboard/">https://www.mercor.com/apex/apex-agents-leaderboard/</a></li><li>GDP.pdf w/ python、ZeroBench w/ python 和 ChartoGraphy w/ python 是五次运行的平均值。其他多模式基准（w/python）是四次运行的平均值。对于带有 python 的 GDP.pdf：每个原始 PDF 文件都被发送到沙箱，模型可以在沙箱中使用 IPython 工具对其进行处理。使用 Gemini-3.5-Flash（中等推理能力）和官方评审提示根据每个评分标准对最终答案进行评分。我们报告任务宏平均评分标准通过率：对于每个任务，我们对五次独立运行中通过的评分标准分数进行平均，然后在所有任务中平均这些任务级别分数。</li></ul>
-<h3>推理、知识和多模式基准</h3>
-<ul><li>GDP.pdf。每个 PDF 均以页面图像的形式提供，最长边缘调整为 1,152 像素，并按页面顺序与 Docling 提取的文本交错。使用 Gemini-3.5-Flash Medium 和官方评审提示根据每个评分标准对回答进行评分。我们报告满分回复中的严格通过率。</li><li>HLE 和 HLE-Diamond 评估一般知识和推理能力。我们报告完整评估集的准确性，其中 HLE 包含 2,500 个问题，HLE-Diamond 包含 1,000 个问题。对于标有星号 (*) 的模型，报告的准确性是针对纯文本问题子集。</li><li>GDP.pdf、ZeroBench 和 ChartoGraphy 是五次运行的平均值。其他多模式基准测试是四次运行的平均值。 GLM-5.3 Max 和 DeepSeek-V4.1-Flash-1017 Max 的 GDP.pdf 分数引用自 <a href="https://artificialanalysis.ai/">https://artificialanalysis.ai/</a>。</li><li>MMMU-Pro 按照官方协议进行评估，保留原始输入顺序并将图像添加到文本输入中。</li><li>Kimi 幻觉基准评估从实际工作任务中提取的一组具有挑战性的、去识别化的内部提示的事实准确性。我们报告了事实核查机构评估的声称水平的幻觉率。</li></ul>
+<p>除另有说明外，下文报告的所有 Kimi K3.1 Pro 成绩均在 reasoning effort 设为 'max'、temperature = 1.0、top-p = 0.95 的条件下取得。</p>
+<h3>编程基准</h3>
+<ul><li>Terminal-Bench 4.0。Kimi K3.1 Pro 使用 Claude-Code harness 评测。DeepSeek-V4.1-Flash-1017 的成绩取自其发布博客（<a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017">https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017</a>）。其余成绩均取其博客文章或 Terminal-Bench 4.0 官方榜单中报告的较高值（<a href="https://www.tbench.ai/">https://www.tbench.ai/</a>）。</li><li>Terminal-Bench-Science 0.1。Kimi K3.1 Pro 使用 Claude-Code harness 评测。我们内部评测 DeepSeek-V4.1-Flash-1017 的得分为 9.3；但其较早版本 DeepSeek-V4.1-Flash 在官方 Terminal-Bench-Science 上得分为 15.7，因此这里报告 15.7；其余成绩来自 Terminal-Bench-Science 官方榜单（<a href="https://www.terminal-bench-science.ai/">https://www.terminal-bench-science.ai/</a>）。</li><li>DeepSWE v1.1。Kimi K3.1 Pro 使用 Claude-Code harness 评测。所有成绩取自各模型相应的技术报告。GPT-6 Astra（<a href="https://openai.com/index/gpt-6-astra/">https://openai.com/index/gpt-6-astra/</a>）。Claude Opus 5.5 与 Claude Fable 5.1（<a href="https://www.anthropic.com/claude-opus-5-5-system-card">https://www.anthropic.com/claude-opus-5-5-system-card</a> 与 <a href="https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card">https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card</a>）；DeepSeek-V4.1-Flash-1017（<a href="https://api-docs.deepseek.com/news/news261017/">https://api-docs.deepseek.com/news/news261017/</a>）；GLM-5.3（<a href="https://z.ai/blog/glm-5.3">https://z.ai/blog/glm-5.3</a>）。</li><li>SWE-Marathon v1.1。Kimi K3.1 Pro 使用 Claude-Code harness 评测。DeepSeek-V4.1-Flash-1017 使用 ClaudeCode harness 评测。其余成绩取自 SWE-Marathon 官方榜单（<a href="https://www.swe-marathon.org/">https://www.swe-marathon.org/</a>）。</li><li>PostTrainBench。Kimi K3.1 Pro 与 DeepSeek-V4.1-Flash-1017 在 v1.2 上使用 Claude-Code harness、以 H20 GPU（而非 H100 GPU）内部评测。为保证评测稳定，所有 judge 模型都使用 DeepSeek-V4.1-Flash-1017 并设为最大 effort，测试中它与官方 GPT-5.6-Terra（xhigh）judge 的匹配度最好。其他成绩来自官方榜单（<a href="https://posttrainbench.com/">https://posttrainbench.com/</a>）。</li><li>ProgramBench（二值分数）。我们报告二值分数，而非 ProgramBench 原始分数：任务的 ProgramBench 分数 ≥95% 记为 1，否则记为 0。Kimi K3.1 Pro 使用 Claude-Code harness 评测。DeepSeek-V4.1-Flash-1017 与 GLM-5.3 的成绩取自发布博客（<a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017">https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017</a>）；其余成绩来自 Vals ProgramBench 榜单（<a href="https://www.vals.ai/benchmarks/programbench">https://www.vals.ai/benchmarks/programbench</a>）。</li><li>内部编程基准：Kimi Code Bench 2.0 与 Kimi Code Bench 3.0 Long-horizon。Kimi K3.1 Pro 使用 Claude-Code harness 评测；其他所有模型均在其 max-effort 设置下评测。需要注意，闭源模型的测试可能涉及部分 fallback 行为。</li><li>BenchCAD。开放模型由我们在完整 17,900 例 Vision2Code 数据集中随机抽取的 1,000 例子集上评测，采用最大 reasoning effort。with-tools 结果使用 Claude Code harness；without-tools 结果使用官方 BenchCAD prompt 与评分流水线做单次生成。Claude Fable 5.1 与 Claude Opus 5.5 的成绩取自 <a href="https://www-cdn.anthropic.com/fc1b44717c85dc068bc6ba5024219938094694bd/Claude%20Opus%205.5%20System%20Card.pdf">Claude Opus 5.5 System Card</a>；GPT‑6 Astra 的 with-tools 成绩取自其<a href="https://openai.com/zh-Hans-CN/index/gpt-6-astra/">官方报告</a>。GPT‑6 Astra 未报告 without-tools 成绩，标记为 “—”。</li></ul>
+<h3>Agentic 基准</h3>
+<ul><li>BioMysteryBench 数据集取自<a href="https://huggingface.co/datasets/Anthropic/BioMysteryBench-full/commit/b5a889c">官方 v11 版本</a>，以 Kimi K3 作为 judge 模型。我们用 Kimi Code 评测 Kimi K3.1 Pro，用 Claude Code 评测 GLM-5.3 与 DeepSeek-V4.1-Flash-1017，用 Codex 评测 GPT-6 Astra。Claude 系列模型的成绩直接取自其官方 system card。</li><li>我们的 Agents' Last Exam 数据集取自<a href="https://github.com/rdi-berkeley/agents-last-exam">官方 v1.1 版本</a>，共 122 个任务，其中 86 个为 CLI 任务，环境镜像与 Hugging Face 官方发布保持一致。对于绕过任务既定要求的运行，我们额外记为零分，例如在网上检索答案，而不在 Wireshark 中完成所要求的分析。DeepSeek 与 Kimi 分别使用 Claude Code 和 Kimi Code 评测。其余结果取自该基准官网。</li><li>OfficeQA Pro、OfficeQA Pro v2。GPT-6 Astra 使用 Codex 评测，其余模型均使用 Claude Code 评测。每道题把整个 PDF 语料交给 agent，所有 PDF 都渲染为图像，不提供任何机器可读文本。我们在某些外部模型的轨迹中发现其在网上检索参考答案的情况；因此这些任务被记为零分。</li><li>Frontier Finance 使用官方 finance agent v2 harness 评测。</li><li>HANDBOOK.md 使用基于 OpenHands 构建的官方 harness 评测，评测任务取自该基准早期开源的 v1 版本。</li><li>Harvey Legal Agent 在一个包含 1,251 个任务的公开数据集上评测，使用 Artificial Analysis 的 Stirrup harness，成绩以全通过率（即通过所有评分细则的任务占比）报告。</li><li>OSWorld V2.1 在官方 OSWorld v2 仓库中使用 Kimi Agent harness 评测；GPT-6 Astra 的成绩取自 Muse Wonder 的技术报告。</li><li>DECK-Arena 在真实查询上评测演示文稿生成，Design Bench 则通过直接提示与参考图 few-shot 提示评测平面设计；两者都在集成搜索与图像生成的 harness 中，让模型分别通过 python-pptx、pptxjs 和 Kimi 自研 DSL 生成，并使用在 10,000+ 人工判断上校准的自动评分器。</li><li>MCP Atlas。所有模型都在 500 题的公开子集上评测，限制 100 轮，以 Gemini 3.1 Pro 作为 judge。</li><li>BrowseComp。我们采用 Claude 模型卡中使用的上下文压缩策略，在 200K token 时触发。最多允许 500 步；若在任务完成前触及该上限，我们强制 agent 给出答案，再据此评判。所有 BrowseComp 运行均在 temperature=1.0、top-p=1.0 下进行。</li><li>GDPval-AA v2.1、AA-Briefcase v1.1 与 AutomationBench-AA 的成绩引自 <a href="https://artificialanalysis.ai/">https://artificialanalysis.ai/</a>，Apex Agents 的成绩引自 <a href="https://www.mercor.com/apex/apex-agents-leaderboard/">https://www.mercor.com/apex/apex-agents-leaderboard/</a></li><li>GDP.pdf w/ python、ZeroBench w/ python 与 ChartoGraphy w/ python 取五次运行的平均值。其他多模态基准（w/ python）取四次运行的平均值。关于 GDP.pdf w/ python：每个原始 PDF 文件都会送入 sandbox，模型可用 IPython 工具处理。最终回答由 Gemini-3.5-Flash（中等 reasoning effort）按官方评判 prompt 逐条对照评分细则打分。我们报告任务宏观平均的细则通过率：对每个任务，先将其五次独立运行中通过的细则占比取平均，再在所有任务间对这些任务级分数等权平均。</li></ul>
+<h3>推理与知识、多模态基准</h3>
+<ul><li>GDP.pdf。每个 PDF 以页面图像形式提供，最长边缩放至 1,152 像素，并按页序与 Docling 抽取的文本交替拼接。回答由 Gemini-3.5-Flash Medium 按官方评判 prompt 逐条对照评分细则打分。我们报告完整评分回答中的严格通过率。</li><li>HLE 与 HLE-Diamond 考察通用知识与推理能力。我们在完整评测集上报告准确率，HLE 为 2,500 题，HLE-Diamond 为 1,000 题。对于带星号（*）的模型，准确率仅在纯文本题目子集上报告。</li><li>GDP.pdf、ZeroBench 与 ChartoGraphy 取五次运行的平均值。其他多模态基准取四次运行的平均值。GLM-5.3 Max 与 DeepSeek-V4.1-Flash-1017 Max 的 GDP.pdf 成绩引自 <a href="https://artificialanalysis.ai/">https://artificialanalysis.ai/</a>。</li><li>MMMU-Pro 按官方协议评测，保留原始输入顺序，并把图像置于文本输入之前。</li><li>Kimi Hallucination Benchmark 在一组来自实际工作场景、经过匿名化处理的高难度 prompt 上评测事实准确度。我们报告由事实核查 agent 判定的 claim 级幻觉率。</li></ul>
 <h3>网络安全基准</h3>
-<p>-利用基准。 Kimi K3.1 Pro 使用官方 ExploitBench 线束在 300 转预算下进行评估。我们报告 pass@5 最大能力得分：对于每个环境，跨 5 个种子的最佳运行，根据达到 16 个能力标志的数量进行评分，其中实现任意代码执行算作实现所有 16 个能力。 GPT-6 Astra 分数取自 <a href="https://openai.com/index/gpt-6-astra/">https://openai.com/index/gpt-6-astra/</a>； Claude Opus 5.5 和 Claude Mythos 5.1 分数取自 <a href="https://www.anthropic.com/claude-opus-5-5-system-card">https://www.anthropic.com/claude-opus-5-5-system-card</a>； GLM-5.3 分数取自 <a href="https://z.ai/blog/glm-5.3">https://z.ai/blog/glm-5.3</a>。</p>
-<ul><li>利用健身房。 Kimi K3.1 Pro 使用 KimiCode 线束在每项任务 6 小时的挂钟预算下进行评估。 GPT-6 Astra 分数取自<a href="https://openai.com/index/gpt-6-astra/">https://openai.com/index/gpt-6-astra/</a>； Claude Opus 5.5 和 Claude Mythos 5.1 分数取自 6 小时预算的 <a href="https://www.anthropic.com/claude-opus-5-5-system-card">https://www.anthropic.com/claude-opus-5-5-system-card</a>； GLM-5.3 分数取自 <a href="https://z.ai/blog/glm-5.3">https://z.ai/blog/glm-5.3</a>。</li><li>xdev-Bench-hard：Kimi K3.1 Pro 使用 KimiCode 工具进行评估。 GLM-5.3 和 DeepSeek-V4.1-Flash-1017 使用 Claude Code 工具进行评估。</li></ul>
-<p><a href="https://www.kimi.com/en/">试用K3.1 Pro</a></p>]]></content:encoded>
+<ul><li>ExploitBench。Kimi K3.1 Pro 在 300 轮预算下使用官方 ExploitBench harness 评测。我们报告 pass@5 最大能力分：每个环境取 5 个 seed 中最好的一次运行，按达成的 capability flag 数（共 16 项）计分，实现任意代码执行即视为达成全部 16 项能力。GPT-6 Astra 的成绩取自 <a href="https://openai.com/index/gpt-6-astra/">https://openai.com/index/gpt-6-astra/</a>；Claude Opus 5.5 与 Claude Mythos 5.1 的成绩取自 <a href="https://www.anthropic.com/claude-opus-5-5-system-card">https://www.anthropic.com/claude-opus-5-5-system-card</a>；GLM-5.3 的成绩取自 <a href="https://z.ai/blog/glm-5.3">https://z.ai/blog/glm-5.3</a>。</li><li>ExploitGym。Kimi K3.1 Pro 在每个任务 6 小时 wall-clock 预算下使用 KimiCode harness 评测。GPT-6 Astra 的成绩取自 <a href="https://openai.com/index/gpt-6-astra/">https://openai.com/index/gpt-6-astra/</a>；Claude Opus 5.5 与 Claude Mythos 5.1 在 6 小时预算下的成绩取自 <a href="https://www.anthropic.com/claude-opus-5-5-system-card">https://www.anthropic.com/claude-opus-5-5-system-card</a>；GLM-5.3 的成绩取自 <a href="https://z.ai/blog/glm-5.3">https://z.ai/blog/glm-5.3</a>。</li><li>xdev-Bench-hard：Kimi K3.1 Pro 使用 KimiCode harness 评测。GLM-5.3 与 DeepSeek-V4.1-Flash-1017 使用 Claude Code harness 评测。</li></ul>
+<p><a href="https://www.kimi.com/en/">试用 K3.1 Pro</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Kimi K3</title>
       <link>https://www.kimi.com/blog/kimi-k3</link>
       <guid isPermaLink="true">https://www.kimi.com/blog/kimi-k3</guid>
       <pubDate>Thu, 16 Jul 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Kimi K3：开放前沿情报</h1>
-<p><a href="https://www.kimi.com/en">尝试Kimi K3</a></p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs7176rtp4tqfofnsg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3英雄视觉"></p>
-<p>今天，我们要介绍 Kimi K3——我们最强大的型号。 Kimi K3 是一个基于 Kimi Delta Attention 和 Attention Residuals 构建的 2.8T 参数模型，具有原生视觉功能和 100 万个令牌上下文窗口。它是世界上第一个开放的 3T 级模型，专为跨长视野编码、知识工作和推理的前沿智能而设计。</p>
-<p>虽然其整体性能仍然落后于最强大的专有模型 Claude Fable 5 和 GPT 5.6 Sol，但 Kimi K3 在我们的评估套件中展示了前沿水平的性能，始终优于其他测试模型。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9chl6mdcmosb3rnlehg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3 基准比较"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9chlgn6rtp4tqfnnmjg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9chkpqav1fc645qbcj0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3 基准比较"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9chlbnf2ena6205244g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs73v6rtp4tqfofoag?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3 展示"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/1d9cv7rt3v89kkemm3860?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs73n6rtp4tqfofo9g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3 展示"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs73f6rtp4tqfofo7g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
-<p>Kimi K3 现已在 <a href="https://www.kimi.com/en">Kimi.com</a>、<a href="https://www.kimi.com/en/products/kimi-work">Kimi Work</a>、<a href="https://www.kimi.com/code/en">Kimi Code</a> 和 <a href="https://platform.kimi.com/">Kimi API</a> 上提供。发布时，Kimi K3 将默认使用最大思考努力，后续更新中将引入低努力和高努力模式。我们目前正在与推理合作伙伴和开源维护者密切合作，以协调技术细节并确保在整个生态系统中可靠的推出。完整的模型权重将于 2026 年 7 月 27 日发布。有关架构、训练和评估的更多详细信息将与 Kimi K3 技术报告一起发布。</p>
-<h2>开放式 3T 级车型</h2>
-<p>Kimi K3是第一个达到2.8万亿参数的开放模型。它标志着 Kimi 持续推动扩展前沿的最新一步：过去 12 个月中有 9 个月，Kimi 模型设定了开放模型尺寸的上限。</p>
-<p>Kimi K3 基于 Kimi Delta Attention (KDA) 和 Attention Residuals (AttnRes) 构建，这两个架构更新旨在改善信息在序列长度和模型深度上的流动方式。我们还扩大了专家混合 (MoE) 的稀疏性，与稳定的 LatentMoE 框架配合使用时，有效激活了 896 名专家中的 16 名。与 Kimi K2 相比，这些结构变化加上改进的训练和数据配方，整体扩展效率提高了约 2.5 倍，使模型能够更有效地将计算转化为智能。</p>
-<h2>编码</h2>
-<p>Kimi K3具有强大的长视距编码性能。它在最少的人工监督下运行，可以维持长时间的工程会话、浏览大量存储库并编排终端工具。</p>
-<p>Kimi K3 还擅长将软件工程与视觉推理相结合的任务 - 它利用屏幕截图和视觉效果来优化游戏开发、前端和 CAD。</p>
-<p>下面的案例研究展示了 Kimi K3 的编码能力如何转化为开放式软件创建和科学研究。</p>
+      <content:encoded><![CDATA[<h1>Kimi K3：开放的前沿智能</h1>
+<p><a href="https://www.kimi.com/en">试用 Kimi K3</a></p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs7176rtp4tqfofnsg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3 主视觉"></p>
+<p>今天，我们发布 Kimi K3——这是我们能力最强的模型。Kimi K3 是一个 2.8 万亿参数的模型，构建在 Kimi Delta Attention 与 Attention Residuals 之上，具备原生视觉能力和 100 万 token 的上下文窗口。它是全球首个开放的 3T 级模型，面向长程编程、知识工作与推理的前沿智能而设计。</p>
+<p>虽然整体表现仍落后于最强的闭源模型 Claude Fable 5 和 GPT 5.6 Sol，但 Kimi K3 在我们的评测套件中展现出前沿水平，且始终优于其他受测模型。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9chl6mdcmosb3rnlehg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3 基准对比"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9chlgn6rtp4tqfnnmjg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9chkpqav1fc645qbcj0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3 基准对比"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9chlbnf2ena6205244g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs73v6rtp4tqfofoag?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3 案例展示"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/1d9cv7rt3v89kkemm3860?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs73n6rtp4tqfofo9g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K3 案例展示"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs73f6rtp4tqfofo7g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
+<p>Kimi K3 现已在 <a href="https://www.kimi.com/en">Kimi.com</a>、<a href="https://www.kimi.com/en/products/kimi-work">Kimi Work</a>、<a href="https://www.kimi.com/code/en">Kimi Code</a> 和 <a href="https://platform.kimi.com/">Kimi API</a> 上线。发布时，Kimi K3 默认使用最大思考强度，低强度和高强度模式将在后续更新中推出。我们正与推理合作伙伴和开源维护者紧密协作，对齐技术细节，确保在整个生态中可靠上线。完整模型权重将于 2026 年 7 月 27 日前发布。关于架构、训练和评测的更多细节，将随 Kimi K3 技术报告一同发布。</p>
+<h2>开放的 3T 级模型</h2>
+<p>Kimi K3 是首个参数规模达到 2.8 万亿的开放模型。它标志着 Kimi 在规模前沿持续冲刺的最新一步：过去 12 个月中有 9 个月，Kimi 的模型都占据着开放模型规模的上限。</p>
+<p>Kimi K3 构建在 Kimi Delta Attention（KDA）与 Attention Residuals（AttnRes）之上，这两项架构更新旨在改善信息在序列长度和模型深度上的流动方式。我们还提高了 Mixture of Experts（MoE）的稀疏度，配合 Stable LatentMoE 框架，896 个专家中实际激活 16 个。再加上精炼过的训练与数据配方，这些结构改动使整体扩展效率相比 Kimi K2 提升约 2.5 倍，让模型能更有效地把算力转化为智能。</p>
+<h2>编程</h2>
+<p>Kimi K3 具备很强的长程编程能力。它只需极少的人工监督，就能维持长时间的工程会话、在庞大的代码库中穿行，并调度终端工具。</p>
+<p>Kimi K3 同样擅长融合软件工程与视觉推理的任务——它利用截图和视觉信息来优化游戏开发、前端和 CAD 工作。</p>
+<p>下面的案例研究展示了 Kimi K3 的编程能力如何转化为开放式软件创作与科学研究。</p>
 <h3>内核优化</h3>
-<p>我们测试了模型优化 GPU 内核的能力。每个模型在相同的沙箱中独立工作，最多可在 24 小时内对涵盖 AttnRes、KDA 和跨 NVIDIA Hopper GPU 和来自替代供应商的 GPGPU 的 512 头尺寸 MLA 内核的四项任务进行分析、重写和基准测试。 Kimi K3 的表现与《神鬼寓言 5》（有回退）相当，并且大大优于 Opus 4.8、GPT 5.6 Sol 和 GPT 5.5。</p>
-<p>《Claude寓言 5》由第三方进行评估，其结果可能包括回退行为。在大多数模型中，一些轨迹包括小的、可接受的精度捷径，这些捷径保持在我们的数值公差范围内。 GPGPU 表示用于图形渲染之外的计算的通用 GPU。</p>
-<p>在 Kimi K3 开发的后期阶段，Kimi K3 的早期版本处理了团队的大部分内核优化工作。</p>
-<h3>GPU编译器开发</h3>
-<p>我们进一步测试了Kimi K3是否可以从头开始构建GPU编程系统。 Kimi K3 开发了 MiniTriton，这是一个紧凑的类似 Triton 的编译器，在 MLIR 上拥有自己的图块级 IR 层、优化通道和 PTX 代码生成管道。在支持的 Roofline 基准测试中，MiniTriton 的性能与 Triton 和 torch.compile 相当或更好，在某些工作负载上击败了 Triton。除了微基准测试之外，MiniTriton 还可以稳定收敛地维持端到端 nanoGPT 训练，损失曲线紧密跟踪参考，只有很小的偏差——在实际工作负载上验证整个流程。这些结果表明 Kimi K3 可以构建一个连贯的端到端编译器——从 DSL 前端和 IR 传递到 PTX 代码生成和运行时——而不是孤立的内核；它从头开始的 Tensor Core 路径已经可以与 Triton 广泛优化的堆栈相媲美。</p>
-<p><img src="https://www.kimi.com/landing-ui/assets/blog-assets/kimi-k3/roofline_cuda_core_light.svg" alt="NVIDIA L20 上的 MiniTriton CUDA 核心车顶线"><img src="https://www.kimi.com/landing-ui/assets/blog-assets/kimi-k3/roofline_cuda_core_dark.svg" alt=""></p>
-<h3>游戏开发和数字创作</h3>
-<p>Kimi K3 结合了强大的 3D 推理、编码和视觉功能，将概念、图像和视频转化为完全可玩的交互体验。 Kimi K3 通过在代码和实时屏幕截图之间无缝迭代来实现真正的“循环中的视觉”——立即查看和完善输出。</p>
+<p>我们测试了各模型优化 GPU kernel 的能力。每个模型在完全相同的沙箱中独立工作，最多有 24 小时对四项任务做 profile、重写和基准测试，这些任务涵盖 AttnRes、KDA，以及一个 512 head 维度的 MLA kernel，运行环境包括 NVIDIA Hopper GPU 和来自另一家厂商的 GPGPU。Kimi K3 的表现与 Fable 5（带 fallback）相当，并大幅优于 Opus 4.8、GPT 5.6 Sol 和 GPT 5.5。</p>
+<p>Claude Fable 5 由第三方评测，其结果可能包含 fallback 行为。在大多数模型上，部分轨迹包含一些小的、可接受的精度取巧，仍在我们允许的数值误差范围内。GPGPU 指用于图形渲染之外计算任务的通用 GPU。</p>
+<p>在 Kimi K3 开发的后期，团队大部分 kernel 优化工作都是由 Kimi K3 的一个早期版本完成的。</p>
+<h3>GPU 编译器开发</h3>
+<p>我们进一步测试了 Kimi K3 能否从零构建一套 GPU 编程系统。Kimi K3 开发出 MiniTriton——一个紧凑的、类 Triton 的编译器，在 MLIR 之上有自己的 tile 级 IR 层、优化 pass 以及 PTX 代码生成流水线。在受支持的 roofline 基准上，MiniTriton 的性能与 Triton 和 torch.compile 持平甚至更好——在部分工作负载上胜过 Triton。除微基准之外，MiniTriton 还能支撑端到端的 nanoGPT 训练并稳定收敛，损失曲线紧贴参考曲线，仅有很小的偏差——在真实负载上验证了整条流水线。这些结果表明，Kimi K3 能构建一个连贯的端到端编译器——从 DSL 前端、IR pass 一直到 PTX 代码生成和运行时——而不是零散的内核；它从零实现的 Tensor Core 路径已经可以与 Triton 经过大量优化的技术栈相比肩。</p>
+<p><img src="https://www.kimi.com/landing-ui/assets/blog-assets/kimi-k3/roofline_cuda_core_light.svg" alt="NVIDIA L20 上 MiniTriton 的 CUDA core roofline"><img src="https://www.kimi.com/landing-ui/assets/blog-assets/kimi-k3/roofline_cuda_core_dark.svg" alt=""></p>
+<h3>游戏开发与数字创作</h3>
+<p>Kimi K3 把强大的 3D 推理、编程和视觉能力结合起来，把概念、图像和视频变成可完整游玩的交互体验。Kimi K3 在代码与实时截图之间无缝迭代，实现了真正的「视觉在环」——即时看到并改进输出。</p>
 <h3>芯片设计</h3>
-<p>作为早期的概念验证，Kimi K3 设计了一款芯片，为基于其自身架构构建的纳米模型提供服务。在一次 48 小时的自主运行中，K3 使用 Nangate 45nm 库上的开源 EDA 工具构建、优化和验证了芯片。在 4 mm² 内，该芯片以 100 MHz 关闭时序，并在模拟中维持超过 8,700 个令牌/秒的解码吞吐量，封装了 1.46M 标准单元、0.277 MB SRAM 和具有融合去量化功能的 INT4 MAC 阵列。一个模型为一个模型打造的芯片，体现了K3的长视野代理能力。</p>
-<h3>研究编码</h3>
-<p>Kimi K3 连接科学文献和可执行代码，自主实施、验证和分析复杂的计算研究工作流程。</p>
-<p>在一个案例中，Kimi K3 在大约两个小时内完成了通常需要经验丰富的研究人员一到两周的工作。为了重现计算天体物理学中的 I-Love-Q 普遍关系，它审查并交叉验证了 20 多篇论文，实施了完整的数值管道，评估了 300 多个状态方程，识别了已发布公式中的不一致之处，生成了 3,000 多行 Python 代码，并生成了一个用于探索结果的交互式 HTML 仪表板。</p>
+<p>作为早期的概念验证，Kimi K3 设计了一颗芯片，用来运行基于它自身架构构建的 nano 模型。在一次 48 小时的自主运行中，K3 在 Nangate 45nm 库上使用开源 EDA 工具完成了这颗芯片的构建、优化和验证。在 4 mm² 的面积内，该芯片以 100 MHz 收敛时序，在仿真中维持超过 8,700 tokens/s 的解码吞吐，容纳 146 万个标准单元、0.277 MB SRAM，以及一个带融合反量化的 INT4 MAC 阵列。一颗由模型设计、为模型服务的芯片，体现了 K3 的长程 agentic 能力。</p>
+<h3>面向科研的编程</h3>
+<p>Kimi K3 打通了科学文献与可执行代码，能自主实现、验证并分析复杂的计算研究工作流。</p>
+<p>在一个案例中，Kimi K3 用大约两小时完成了资深研究者通常需要一到两周的工作。为复现计算天体物理中的 I–Love–Q 普适关系，它审阅并交叉验证了 20 多篇论文，实现了完整的数值流水线，评估了 300 多个状态方程，找出了已发表公式中的不一致之处，生成了 3,000 多行 Python 代码，并产出一个可交互的 HTML dashboard 用于探索结果。</p>
 <h2>知识工作</h2>
-<p>Kimi K3 推进端到端知识工作。除了公共基准之外，Kimi K3（max）在我们的内部评估中表现出一致的收益，这些收益源自现实世界的用户代理工作流程中观察到的重复模式和挑战。这些跨不同的以生产为导向的工作流程的一致优势反映了 Kimi K3 代理知识工作能力的广泛改进。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9cg76vf2ena6204uv80?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="内部知识工作台"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs71f6rtp4tqfofntg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
-<h3>交互式可视化研究</h3>
-<p>以下是 Kimi Work 中 Kimi K3 可以在金融咨询和科学研究方面产生的成果的一些示例：</p>
-<p>###案例一：互动42年AI ASIC行业研究网站</p>
-<p>您可以深入了解的交互式研究报告：ASIC 行业 42 年，通过 120 多轮递归自我完善创建。 Kimi K3 将证据转化为定制图表、动画图表和交互式视觉叙述。它通过 2800 多次网络搜索/获取和 11000 多次终端数据提取来提取数据，跨 11000 多个页面，涵盖 87 份季度报告和 99 个原始 PDF。</p>
-<h3>案例2：聚变产业研究</h3>
-<p>具有交互式可视化效果的咨询式行业报告，包括时间线、漏斗图、范围条形图、甘特图和出版物质量的幻灯片。</p>
+<p>Kimi K3 把端到端的知识工作又向前推了一步。除公开基准之外，Kimi K3（max）在我们的内部评测中也取得了一致的提升，这些评测取材于真实用户-agent 工作流中反复出现的模式和难点。在多种面向生产的流程上都能稳定占优，说明 Kimi K3 的 agentic 知识工作能力有广泛提升。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-16/1d9cg76vf2ena6204uv80?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="内部知识工作评测"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-17/d9cs71f6rtp4tqfofntg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt=""></p>
+<h3>带交互式可视化的研究</h3>
+<p>以下是 Kimi Work 中的 Kimi K3 在金融咨询和科学研究领域能够产出的几个例子：</p>
+<h3>案例 1：交互式「AI ASIC 行业 42 年」研究网站</h3>
+<p>一份可以逐层深入的交互式研究报告：跨越 42 年的 ASIC 行业，经由 120 多轮递归自我改进完成。Kimi K3 把证据转化为量身定制的图表、动画示意图和交互式视觉叙事。它通过 2,800 多次网页搜索/抓取和 1,100 多次终端数据拉取来搜集数据，覆盖 11,000 多页内容，包括 87 份季报和 99 份原始 PDF。</p>
+<h3>案例 2：聚变行业研究</h3>
+<p>一份咨询风格的行业报告，配有交互式可视化——包括时间线、漏斗图（Funnel Chart）、范围条形图（Range Bar Chart）、甘特图和出版级幻灯片。</p>
 <h3>案例 3：GWTC-5 引力波分析</h3>
-<p>使用 20 多个并发子代理对 391 个引力波事件进行分析，生成 7 个科学可视化、2 个表格以及 10 多篇论文的文献综合。</p>
-<p>Kimi K3 在制作信息图表风格的演示文稿方面也特别有效，例如下面所示的完全可编辑的热图和年度报告：</p>
-<h3>小部件和仪表板</h3>
-<p>在 Kimi Work 中，我们引入了两项新功能 - 小部件和仪表板 - 使与 Kimi K3 的交互更加直观和持久。小部件可让您直接在聊天中生成交互式组件，并连接到本地数据或外部插件以进行持续更新。仪表板将您最关心的小部件带入一个围绕主题、项目或目标组织的持久、个性化视图中。</p>
+<p>使用 20 多个并发 subagent 对 391 个引力波事件进行分析，产出 7 张科学可视化图、2 张表格，以及基于 10 多篇论文的文献综述。</p>
+<p>Kimi K3 在制作信息图风格的演示文稿方面也格外拿手，例如下图这份完全可编辑的热力图和年度报告：</p>
+<h3>Widgets 与 Dashboard</h3>
+<p>在 Kimi Work 中，我们推出两项新功能——Widgets 和 Dashboard——让与 Kimi K3 的交互更可视化、更持久。Widgets 让你直接在对话中生成可交互组件，并可连接本地数据或外部插件实现持续更新。Dashboard 则把你最关心的 widget 汇聚到一个持久、个性化的视图中，按主题、项目或目标组织起来。</p>
 <h3>视频编辑</h3>
-<p>Kimi K3 擅长运动设计、动画和视频编辑，因为其原生多模式架构可以理解同一模型中的文本、图像和视频。</p>
-<p>在一个示例中，K3 创建了自己架构的 3Blue1Brown 风格的运动图形解释器，将技术思想转化为动画图表和过渡。</p>
-<p>在另一个例子中，Kimi K3 从 56 个源剪辑中编辑了自己的预告片视频，处理剪辑选择、动作匹配剪辑、帧精确的节拍同步、音频处理和多轮修改。像这样的高密度短视频，经验丰富的剪辑师通常需要一到两个工作日，初学者则需要三到五个工作日。</p>
-<h3>架构和基础设施</h3>
-<p>Kimi K3 基于 Kimi Delta Attention (KDA) 和 Attention Residuals (AttnRes) 构建。 KDA 为扩展注意力提供了有效的基础，而 AttnRes 选择性地检索跨深度的表示，而不是统一累积它们。它们共同构成了模型的架构支柱，该模型的规模远远超出了万亿参数范围。</p>
-<p>Kimi K3 使用 Stable LatentMoE，有效激活了 896 个专家中的 16 个。在这种稀疏程度下，路由和优化成为首要挑战。分位数平衡直接从路由器分数分位数得出专家分配，消除启发式更新和敏感的平衡超参数，而每头 Muon 通过独立优化注意力头来扩展 Muon，以实现更具规模的自适应学习。 Sigmoid Tanh Unit (SiTU) 和门控 MLA 分别改善激活控制和注意力选择性。这些进步共同实现了 2.8 万亿参数规模的稳定高效的训练。</p>
-<p>Kimi K3 从 SFT 阶段开始应用量化感知训练，使用 MXFP4 权重和 MXFP8 激活来实现广泛的硬件兼容性。为了防止专家不平衡导致大规模专家并行规模下的吞吐量下降，我们引入了一种完全平衡的专家并行训练方法，该方法具有静态形状并且关键路径上没有主机同步。由于推理效率同样受益于更大的高带宽通信域，因此我们建议在具有 64 个或更多加速器的超级节点配置上部署 Kimi K3。最后，由于 KDA 对传统前缀缓存提出了新的挑战，我们向 vLLM 社区贡献了相应的实现，将与模型一起发布。具有预填充缓存的 KDA 使我们能够以极具竞争力的代币价格为 Kimi K3 提供服务，尽管它规模庞大且上下文较长。</p>
-<p>更多技术细节将在我们即将发布的报告中提供。</p>
+<p>Kimi K3 擅长动效设计、动画和视频剪辑，因为它的原生多模态架构能在同一个模型内理解文本、图像和视频。</p>
+<p>在一个例子中，K3 为自己架构制作了一支 3Blue1Brown 风格的动效解说视频，把技术思路转化为动画示意图和转场。</p>
+<p>另一个例子里，Kimi K3 从 56 段素材中剪辑了自己的预告片，涵盖素材挑选、动作匹配剪辑、帧级精准的节拍对齐、音频处理以及多轮修改。这样高密度的短视频，熟练剪辑师通常要一到两个工作日，新手则要三到五天。</p>
+<h3>架构与基础设施</h3>
+<p>Kimi K3 构建在 Kimi Delta Attention（KDA）与 Attention Residuals（AttnRes）之上。KDA 为扩展注意力提供了高效的基础，AttnRes 则在深度方向上按需检索表示，而不是统一累加。两者共同构成这个模型的架构主干，使其可扩展性远超万亿参数级。</p>
+<p>Kimi K3 采用 Stable LatentMoE，896 个专家中实际激活 16 个。在这样高的稀疏度下，路由与优化成了首要难题。Quantile Balancing 直接从 router 分数的分位数推导专家分配，省去了启发式更新和一个敏感的平衡超参数；Per-Head Muon 则通过独立优化各个注意力 head 来扩展 Muon，在大规模训练中实现更自适应的学习。Sigmoid Tanh Unit（SiTU）和 Gated MLA 分别改善了激活控制与注意力选择性。这些进展共同支撑起 2.8 万亿参数规模下稳定而高效的训练。</p>
+<p>Kimi K3 从 SFT 阶段起就采用量化感知训练，权重使用 MXFP4、激活使用 MXFP8，以获得广泛的硬件兼容性。为避免专家不均衡在大规模专家并行下拖累吞吐，我们引入了一种完全均衡的专家并行训练方法，形状静态化，且关键路径上没有 host 同步。由于推理效率同样受益于更大的高带宽通信域，我们建议在配备 64 个及以上加速器的超节点配置上部署 Kimi K3。最后，由于 KDA 给传统 prefix caching 带来了新挑战，我们已向 vLLM 社区贡献了相应实现，将随模型一同发布。借助带 prefill cache 的 KDA，尽管模型规模庞大、上下文很长，我们仍能以极具竞争力的 token 价格提供 Kimi K3 服务。</p>
+<p>更多技术细节将在我们即将发布的技术报告中提供。</p>
 <h2>可用性</h2>
-<ul><li>Kimi K3 Agents：从您的移动应用商店下载或更新到最新的 Kimi 应用程序（适用于 iOS、Android 和 HarmonyOS），或访问 <a href="https://www.kimi.com/en">kimi.com</a>。</li><li>使用 Kimi K3：下载最新的 <a href="https://www.kimi.com/en/products/kimi-work">Kimi Work 桌面应用程序</a>，版本 3.1.0 或更高版本，适用于 Windows 和 Apple Silicon Mac。</li><li>使用 Kimi K3 进行编码：在终端中运行 <a href="https://www.kimi.com/code/en">Kimi Code</a>，然后使用 <code>/model</code> 命令选择 Kimi K3。</li><li>使用Kimi API构建：访问<a href="https://platform.kimi.com/">Kimi API平台</a>并选择<code>kimi-k3</code>。缓存命中输入的定价为 $0.30/MTok，缓存未命中输入的定价为 $3.00/MTok，输出的定价为 $15.00/MTok。在 Mooncake 的分解推理架构的支持下，官方 Kimi API 在编码工作负载中实现了 90% 以上的缓存命中率。</li><li>将Kimi带入您的组织：<a href="https://www.kimi.com/membership/pricing">Kimi Enterprise</a>提供企业级数据隐私和会员管理，个人帐户与组织帐户完全分离。访问定价页面并选择“获取 Kimi Enterprise”为您的团队订阅。</li></ul>
+<ul><li>Kimi K3 Agents：从手机应用商店下载或更新到最新版 Kimi app，支持 iOS、Android 和 HarmonyOS，也可以访问 <a href="https://www.kimi.com/en">kimi.com</a>。</li><li>用 Kimi K3 处理工作：下载最新的 <a href="https://www.kimi.com/en/products/kimi-work">Kimi Work 桌面端</a>，版本 3.1.0 及以上，支持 Windows 和 Apple silicon Mac。</li><li>用 Kimi K3 写代码：在终端中运行 <a href="https://www.kimi.com/code/en">Kimi Code</a>，用 <code>/model</code> 命令选择 Kimi K3。</li><li>用 Kimi API 构建应用：访问 <a href="https://platform.kimi.com/">Kimi API 平台</a> 并选择 <code>kimi-k3</code>。定价为：缓存命中输入 $0.30/MTok，缓存未命中输入 $3.00/MTok，输出 $15.00/MTok。在 Mooncake 分离式推理架构的支撑下，官方 Kimi API 在编程类工作负载中的缓存命中率超过 90%。</li><li>把 Kimi 引入你的组织：<a href="https://www.kimi.com/membership/pricing">Kimi Enterprise</a> 提供企业级数据隐私与成员管理，个人账号与组织账号完全隔离。访问定价页面并选择「Get Kimi Enterprise」，即可为团队订阅。</li></ul>
 <h3>完整基准表</h3>
 <h2>脚注</h2>
-<p>下面报告的所有 Kimi K3 结果都是在推理工作设置为“最大”、设置温度 = 1.0 和 top-p = 1.0 的情况下获得的。根据基准，每个模型都会在三种代理工具之一（Kimi Code、Claude Code 或 Codex）下进行评估，如下面的注释中所指定。</p>
-<h3>编码基准</h3>
-<ul><li><strong>DeepSWE。</strong> Kimi K3 使用 Kimi Code 安全带进行评估。 GLM-5.2 分数取自 GLM-5.2 发布博客 (<a href="https://z.ai/blog/glm-5.2">https://z.ai/blog/glm-5.2</a>)；所有剩余分数均来自官方 DeepSWE 排行榜 (<a href="https://deepswe.datacurve.ai/">https://deepswe.datacurve.ai/</a>)，其中 Kimi K3 使用迷你 SWE 代理安全带获得了 67.3 分。我们报告 DeepSWE v1.1 任务。</li><li><strong>Terminal-Bench 2.1.</strong> Kimi K3 使用 Kimi Code 工具进行评估。对于所有其他型号，我们报告了各种安全带的最佳得分：GLM-5.2 和 Claude Code (<a href="https://z.ai/blog/glm-5.2">https://z.ai/blog/glm-5.2</a>)；Claude Opus 4.8 和Claude寓言 5 及终点站 2 (<a href="https://artificialanalysis.ai/evaluations/terminalbench-v2-1">https://artificialanalysis.ai/evaluations/terminalbench-v2-1</a>)； GPT 5.5 和 GPT 5.6 Sol 以及 Codex (<a href="https://openai.com/index/previewing-gpt-5-6-sol/">https://openai.com/index/previewing-gpt-5-6-sol/</a>)。</li><li><strong>程序基准。</strong> Kimi K3 使用 Kimi Code 工具进行评估。 GLM-5.2分数来自<a href="https://z.ai/blog/glm-5.2">https://z.ai/blog/glm-5.2</a>；所有其他分数均来自<a href="https://www.vals.ai/benchmarks/programbench">https://www.vals.ai/benchmarks/programbench</a>。</li><li><strong>SWE Marathon。</strong> Kimi K3、Claude Opus 4.8 和 Claude Fable 5 使用 Claude Code 安全带进行评估； GPT-5.6 Sol 使用 Codex 工具进行评估。 GLM-5.2 分数来自 <a href="https://z.ai/blog/glm-5.2">https://z.ai/blog/glm-5.2</a>。我们的评估基于官方 v1.1 任务的 H20 校准分支（<a href="https://www.swe-marathon.org/">https://www.swe-marathon.org/</a>）：GPU 任务的 Docker 镜像、性能门和参考预言机已针对 H20 重新校准，而正确性和反作弊验证器保持不变。此外，在我们的评估中，《Claude寓言 5》有 35% 的任务出现了回退，这可能对其测量的性能产生了负面影响。</li><li><strong>FrontierSWE.</strong> Kimi K3 使用 Kimi Code 安全带进行评估，GPT-5.6 Sol 使用 Codex 安全带进行评估；所有其他结果均来自<a href="https://www.frontierswe.com/">https://www.frontierswe.com/</a>。优势分数是使用官方评估脚本根据原始分数重新计算得出的，最新数据截至 2026 年 7 月 16 日。</li><li><strong>PostTrain Bench。</strong> GLM-5.2、GPT-5.5 和 Claude Opus 4.8 的分数采用官方 PostTrainBench (<a href="https://posttrainbench.com/">https://posttrainbench.com/</a>) 结果。 Kimi K3、Claude Fable 5 和 GPT-5.6 Sol 使用官方 Harbor 实现以最大推理能力进行评估，在 H20 GPU（而不是官方设置中的 H100）上平均运行 3 次——Kimi K3 和 Claude Fable 5 使用 Claude Code 工具，GPT-5.6 Sol 使用 Codex 工具。</li><li><strong>MLS Bench Lite。</strong> Kimi K3 使用 Kimi Code 工具进行评估； GLM-5.2 和配备 Claude Code 安全带的 Claude 型号； GPT-5.5 和 GPT-5.6 Sol 与 Codex 安全带。</li><li><strong>KCB 2.0.</strong> Kimi K3 使用 Kimi Code 和 Claude Code 安全带进行评估； GLM-5.2、Claude Opus 4.8 和 Claude Fable 5 以及 Claude Code 安全带； GPT-5.5 和 GPT-5.6 Sol 与 Codex 安全带。所有模型均以最大推理努力进行评估，但 GPT-5.5 除外，它使用“xhigh”设置。我们还注意到，在这个内部基准测试中，10% 的任务进入了 GPT-5.6 Sol 的网络防护。</li></ul>
-<h3>生产力和代理基准</h3>
-<ul><li>对于 OfficeQA Pro，每个测试用例都为代理提供整个 PDF 语料库，所有 PDF 均呈现为图像，并且没有可用的机器可读文本。</li><li><strong>OfficeQA Pro 和 SpreadsheetBench 2.</strong> Kimi K3、GLM-5.2、Claude Opus 4.8 和 Claude Fable 5 使用 Claude Code 工具进行评估； GPT 5.5 和 GPT 5.6 Sol 使用 Codex 工具进行评估。</li><li><strong>MCP Atlas。</strong> 所有模型均在 500 任务公共子集上进行评估，限制为 100 轮，使用 Gemini 3.1 Pro 作为评判。</li><li><strong>AutomationBench。</strong> 所有模型均在 600 任务公共子集上进行评估，在所有其他方面均遵循官方 GitHub 设置。</li><li><strong>BrowseComp.</strong> 我们采用 Claude 模型卡中使用的上下文压缩策略，在 300K 令牌时触发。当使用 1M 代币上下文窗口且无上下文管理进行评估时，Kimi K3 的得分为 90.4。 Claude Fable 5、Claude Opus 4.8、GPT 5.6 Sol 和 GPT 5.5 的结果引用自 <a href="https://www.anthropic.com/news/claude-fable-5-mythos-5">https://www.anthropic.com/news/claude-fable-5-mythos-5</a> 和 <a href="https://openai.com/index/gpt-5-6/">https://openai.com/index/gpt-5-6/</a>。</li><li><strong>GDPval-AA、AA-Briefcase 和 APEX-Agents</strong> 分数引用自 <a href="https://artificialanalysis.ai/">https://artificialanalysis.ai/</a>。</li></ul>
-<h3>多模式基准</h3>
-<ul><li>除了 ZeroBench 遵循官方设置并运行五次外，所有多模式分数均是三轮运行的平均值。 MMMU-Pro 按照官方协议进行评估，保留原始输入顺序并将图像添加到文本输入中。</li><li><strong>PerceptionBench.</strong> PerceptionBench (<a href="https://www.kimi.com/en/blog/perception-bench">https://www.kimi.com/blog/perception-bench</a>) 是一个专注于原子视觉感知能力的基准测试。</li></ul>
-<h2>限制</h2>
-<ul><li><strong>对思维历史的敏感性。</strong> K3是在保留思维历史模式下进行训练的。如果代理线束无法按要求传回所有历史思维内容，或者如果正在与另一个模型进行的会话切换到 K3，则生成质量可能会变得高度不稳定。我们建议使用具有经过验证的兼容性的工具，例如 Kimi Code，并避免在会话中途切换到 K3。</li><li><strong>过度主动性。</strong> K3 的培训特别强调长期、具有挑战性的任务。因此，当它在任务执行过程中遇到小问题或不明确的用户意图时，它可能会代表用户做出意想不到的决定。如果您的应用程序要求代理在明确定义的边界内运行并避免过度即兴创作，请在系统提示符或 <code>AGENTS.md</code> 中对 K3 施加更明确的行为约束。</li><li>尽管K3总体上是一款竞争激烈的机型，但与Claude Fable 5和GPT 5.6 Sol相比，用户体验上仍存在明显差距。</li></ul>]]></content:encoded>
+<p>下列所有 Kimi K3 成绩均在推理强度设为 <code>max</code>、temperature = 1.0、top-p = 1.0 的条件下取得。视基准不同，每个模型在三种 agentic harness——Kimi Code、Claude Code 或 Codex——之一下评测，具体见下面的说明。</p>
+<h3>编程基准</h3>
+<ul><li><strong>DeepSWE。</strong> Kimi K3 使用 Kimi Code harness 评测。GLM-5.2 的分数取自 GLM-5.2 发布博客（<a href="https://z.ai/blog/glm-5.2">https://z.ai/blog/glm-5.2</a>）；其余分数均来自官方 DeepSWE 排行榜（<a href="https://deepswe.datacurve.ai/">https://deepswe.datacurve.ai/</a>），在该榜上 Kimi K3 使用 mini-SWE-agent harness 取得 67.3。我们报告的是 DeepSWE v1.1 任务。</li><li><strong>Terminal-Bench 2.1。</strong> Kimi K3 使用 Kimi Code harness 评测。对于其他所有模型，我们报告其在各 harness 中的最佳成绩：GLM-5.2 使用 Claude Code（<a href="https://z.ai/blog/glm-5.2">https://z.ai/blog/glm-5.2</a>）；Claude Opus 4.8 和 Claude Fable 5 使用 Terminus 2（<a href="https://artificialanalysis.ai/evaluations/terminalbench-v2-1">https://artificialanalysis.ai/evaluations/terminalbench-v2-1</a>）；GPT 5.5 和 GPT 5.6 Sol 使用 Codex（<a href="https://openai.com/index/previewing-gpt-5-6-sol/">https://openai.com/index/previewing-gpt-5-6-sol/</a>）。</li><li><strong>Program Bench。</strong> Kimi K3 使用 Kimi Code harness 评测。GLM-5.2 的分数来自 <a href="https://z.ai/blog/glm-5.2">https://z.ai/blog/glm-5.2</a>；其余分数来自 <a href="https://www.vals.ai/benchmarks/programbench">https://www.vals.ai/benchmarks/programbench</a>。</li><li><strong>SWE Marathon。</strong> Kimi K3、Claude Opus 4.8 和 Claude Fable 5 使用 Claude Code harness 评测；GPT-5.6 Sol 使用 Codex harness 评测。GLM-5.2 的分数来自 <a href="https://z.ai/blog/glm-5.2">https://z.ai/blog/glm-5.2</a>。我们的评测基于官方 v1.1 任务的 H20 校准分支（<a href="https://www.swe-marathon.org/">https://www.swe-marathon.org/</a>）：GPU 任务的 Docker 镜像、性能门槛和参考 oracle 已按 H20 重新校准，而正确性与反作弊校验器保持不变。此外，在我们的评测中，Claude Fable 5 有 35% 的任务触发了 fallback，这可能对其测得的性能产生了负面影响。</li><li><strong>FrontierSWE。</strong> Kimi K3 使用 Kimi Code harness 评测，GPT-5.6 Sol 使用 Codex harness 评测；其余结果均来自 <a href="https://www.frontierswe.com/">https://www.frontierswe.com/</a>。Dominance 分数是用官方评测脚本从原始分数重算得到的，截至 2026 年 7 月 16 日。</li><li><strong>PostTrain Bench。</strong> GLM-5.2、GPT-5.5 和 Claude Opus 4.8 的分数沿用官方 PostTrainBench（<a href="https://posttrainbench.com/">https://posttrainbench.com/</a>）的结果。Kimi K3、Claude Fable 5 和 GPT-5.6 Sol 使用官方 Harbor 实现、以最大推理强度评测，在 H20 GPU（而非官方设置中的 H100）上取三次运行的平均值——其中 Kimi K3 和 Claude Fable 5 使用 Claude Code harness，GPT-5.6 Sol 使用 Codex harness。</li><li><strong>MLS Bench Lite。</strong> Kimi K3 使用 Kimi Code harness 评测；GLM-5.2 和各 Claude 模型使用 Claude Code harness；GPT-5.5 和 GPT-5.6 Sol 使用 Codex harness。</li><li><strong>KCB 2.0。</strong> Kimi K3 同时使用 Kimi Code 和 Claude Code harness 评测；GLM-5.2、Claude Opus 4.8 和 Claude Fable 5 使用 Claude Code harness；GPT-5.5 和 GPT-5.6 Sol 使用 Codex harness。除 GPT-5.5 使用「xhigh」设置外，所有模型都在最大推理强度下评测。另需说明，在这项自研基准上，有 10% 的任务触发了 GPT-5.6 Sol 的 cyber guard。</li></ul>
+<h3>生产力与 agentic 基准</h3>
+<ul><li>对 OfficeQA Pro，每个测试用例都向 agent 提供完整的 PDF 语料库，所有 PDF 均以图像形式呈现，不提供任何机器可读文本。</li><li><strong>OfficeQA Pro 和 SpreadsheetBench 2。</strong> Kimi K3、GLM-5.2、Claude Opus 4.8 和 Claude Fable 5 使用 Claude Code harness 评测；GPT 5.5 和 GPT 5.6 Sol 使用 Codex harness 评测。</li><li><strong>MCP Atlas。</strong> 所有模型都在 500 道题的公开子集上评测，最多 100 轮，由 Gemini 3.1 Pro 担任评委。</li><li><strong>AutomationBench。</strong> 所有模型都在 600 道题的公开子集上评测，其余方面全部遵循官方 GitHub 设置。</li><li><strong>BrowseComp。</strong> 我们采用 Claude 模型卡中所用的上下文压缩策略，在 300K token 处触发。在 1M token 上下文窗口且不做上下文管理的条件下评测时，Kimi K3 得分 90.4。Claude Fable 5、Claude Opus 4.8、GPT 5.6 Sol 和 GPT 5.5 的结果引用自 <a href="https://www.anthropic.com/news/claude-fable-5-mythos-5">https://www.anthropic.com/news/claude-fable-5-mythos-5</a> 和 <a href="https://openai.com/index/gpt-5-6/">https://openai.com/index/gpt-5-6/</a>。</li><li><strong>GDPval-AA、AA-Briefcase 和 APEX-Agents</strong> 的分数引用自 <a href="https://artificialanalysis.ai/">https://artificialanalysis.ai/</a>。</li></ul>
+<h3>多模态基准</h3>
+<ul><li>除 ZeroBench 遵循官方设置并运行五次外，所有多模态分数均为三次运行的平均值。MMMU-Pro 按官方协议评测，保留原始输入顺序，并把图像置于文本输入之前。</li><li><strong>PerceptionBench。</strong> PerceptionBench（<a href="https://www.kimi.com/en/blog/perception-bench">https://www.kimi.com/blog/perception-bench</a>）是一项聚焦原子级视觉感知能力的基准。</li></ul>
+<h2>局限</h2>
+<ul><li><strong>对思考历史的敏感。</strong> K3 在保留思考历史的模式下训练。如果 agent harness 未能按要求回传全部历史思考内容，或者把一个正在进行的、使用其他模型的会话切换到 K3，生成质量可能变得非常不稳定。我们建议使用已验证兼容的 harness，例如 Kimi Code，并避免在会话中途切换到 K3。</li><li><strong>主动性过强。</strong> K3 的训练格外强调长程、高难任务。因此，当它在执行任务途中遇到小问题或用户意图不明确时，可能替用户做出意料之外的决定。如果你的应用要求 agent 在明确边界内运作、不要过度即兴发挥，请在 system prompt 或 <code>AGENTS.md</code> 中对 K3 施加更明确的行为约束。</li><li>尽管 K3 整体上是一款极具竞争力的模型，但与 Claude Fable 5 和 GPT 5.6 Sol 相比，它在用户体验上仍有明显差距。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>PerceptionBench</title>
@@ -148,102 +147,102 @@
       <pubDate>Thu, 16 Jul 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<h1>PerceptionBench 简介</h1>
 <p><strong>评估多模态大语言模型中的原子视觉感知</strong></p>
-<p><strong>作者</strong> Kimi 团队</p>
+<p><strong>作者</strong> Kimi Team</p>
 <h2>概述</h2>
-<p>我们正在发布 <strong>PerceptionBench</strong>，这是一个隔离视觉感知并将其作为一组原子能力进行评估的基准 - <strong>从当今模型的失败中发现，而不是提前定义。</strong> 从 42 个基准的前沿模型失败中，我们得出 10 个原子感知能力并构建 3,000 个经过验证的问题，每个问题都隔离一个能力并通过观察来回答，不需要推理或外部知识。</p>
-<p>在 16 个前沿 MLLM 中，没有一个模型达到 60% 的准确度，而与感知相关的幻觉平均来说是最弱的能力。总体得分几乎相同的模型在实际感知中可能会出现巨大差异。 PerceptionBench 旨在准确揭示感知中断的位置，并推动实现忠实一致的多模式 AI 的进步。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-24/1d9hj9od3v89kken0j8dg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="PerceptionBench 与现有评估：现有基准项目将感知与知识和推理结合在一个问题中，而 PerceptionBench 评估十个原子感知类别，每个类别有一个孤立的问题"></p>
+<p>我们发布 <strong>PerceptionBench</strong>。这个 benchmark 把视觉感知单独隔离出来，并按一组原子能力加以评估，而这些能力<strong>是从当下模型的失败方式中发现的，并非预先设定。</strong> 我们从 42 个 benchmark 上前沿模型的失败出发，归纳出 10 项原子感知能力，构建了 3,000 道经过验证的题目；每道题只考察单一能力，看一眼就能作答，既不需要推理，也不需要外部知识。</p>
+<p>在十六个前沿 MLLM 上，没有任何模型达到 60% 准确率，而与感知相关的幻觉平均来看是最弱的一项能力。总体得分几乎相同的模型，实际&quot;看到&quot;的东西却可能相差极大。PerceptionBench 正是为了把感知在哪里失效精确暴露出来，并推动多模态 AI 走向看得忠实、看得一致。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-24/1d9hj9od3v89kken0j8dg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="PerceptionBench 与现有评测的对比：现有 benchmark 的一道题会把感知与知识、推理纠缠在一起，而 PerceptionBench 用十道彼此独立的问题分别考察十个原子感知类别"></p>
 <h2>数据集</h2>
-<p>在诱导分类法的指导下，我们从源基准中选择信息最丰富的失败，将它们分解为原子子问题，并在补充图像上提出其他问题。保留的样本和构建的样本一起形成了一个包含 <strong>17,000+</strong> 已验证问题的内部池。发布的基准子样本<strong>3,000</strong>验证了来自构建部分的问题——<strong>60%由归因模型故障分解</strong>和<strong>40%新编写的</strong>——通过类别级平衡和难度分层来将原子感知能力与混杂因素隔离开来。发布的基准测试通过三个核心设计原则脱颖而出：</p>
-<ul><li><strong>故障驱动分类法：</strong> 每个类别都是从真实模型故障中发现的，归因于 42 个现有基准中最早的错误步骤。</li><li><strong>十个原子感知类别：</strong> 视觉关系、计数、属性、深度和 3D、定位、比较、细粒度识别、上下文集成、OCR 和幻觉。</li><li><strong>感知，而不是推理或知识：</strong> 样本经过策划、分解和难度平衡，因此难度源于感知而不是推理或外部知识。</li></ul>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01rl3v89kkemvehg0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="定性示例：四个源基准项目，其原始问题需要多步骤解决方案，被分解为仅原子感知的子问题，以地面事实和 Kimi K3、GPT-5.6-Sol、Claude-Fable-5 和 Gemini-3.1-Pro 的答案显示"></p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g792aav1fc64631kjg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉本地化示例"></p>
+<p>在归纳出的分类体系指引下，我们从源 benchmark 中挑出信息量最大的失败案例，拆解成原子子问题，并在补充图片上另外撰写题目。保留样本与新构建样本合在一起，构成内部 <strong>17,000+</strong> 道已验证题目的题库。对外发布的 benchmark 从构建部分抽样 <strong>3,000</strong> 道已验证题目——<strong>60% 由模型失败案例拆解而来</strong>，<strong>40% 为新撰写</strong>——并做类别层面的平衡与难度分层，把原子感知能力从混杂因素中隔离开。这份 benchmark 的特别之处在于三条核心设计原则：</p>
+<ul><li><strong>失败驱动的分类体系：</strong> 每个类别都取自真实的模型失败，并归因到 42 个现有 benchmark 中最早出错的那一步。</li><li><strong>十个原子感知类别：</strong> 视觉关系、计数、属性、深度与 3D、定位、比较、细粒度识别、上下文整合、OCR，以及幻觉。</li><li><strong>考感知，而非推理或知识：</strong> 样本经过筛选、拆解与难度平衡，使难度来自感知本身，而不是推理或外部知识。</li></ul>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01rl3v89kkemvehg0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="定性示例：四个源 benchmark 题目原本需要多步求解，被拆解为只考感知的原子子问题，图中给出标准答案以及 Kimi K3、GPT-5.6-Sol、Claude-Fable-5 和 Gemini-3.1-Pro 的回答"></p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g792aav1fc64631kjg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉定位示例"></p>
 <p>视觉定位</p>
-<p>图像中的Gemini符号位于表盘的哪个点钟位置？仅用号码回答。</p>
+<p>图中 Gemini 符号位于表盘的几点钟方向？只回答数字。</p>
 <p>答案：6</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7a17f2ena620dok1g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉本地化示例"></p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7a17f2ena620dok1g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉定位示例"></p>
 <p>视觉定位</p>
-<p>图像中的红线将图片分为九个部分，从左到右、从上到下依次编号为区域 1-9。以下哪个区域根本没有树木？ A. 区域 1 B. 区域 2 C. 区域 5 D. 区域 8</p>
+<p>图中的红线把画面分成九个区块，按从左到右、再从上到下的顺序编号为区域 1–9。以下哪个区域一棵树都没有？A. 区域 1 B. 区域 2 C. 区域 5 D. 区域 8</p>
 <p>答案：B</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7a2ff2ena620dok5g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉属性示例"></p>
 <p>视觉属性</p>
-<p>从图中所示的角度，对比桌子上两个粉红色的笔架。以下哪个结论是正确的？ A、左侧笔筒为纯粉色，表面有卡通人物图案；右笔筒为灰粉色拼布B。左笔筒为灰粉色拼布；右笔筒为纯粉色，表面有卡通人物图案C。左笔筒为纯粉色；右笔杆为灰粉色拼缝，表面有卡通人物图案D。左笔杆为灰粉色拼缝，表面有卡通人物图案。右边的笔筒是纯粉色的</p>
+<p>按图中所示视角，比较桌上两个带粉色的笔筒。以下哪个结论正确？A. 左边笔筒是纯粉色，表面有卡通人物图案；右边笔筒是灰粉拼色 B. 左边笔筒是灰粉拼色；右边笔筒是纯粉色，表面有卡通人物图案 C. 左边笔筒是纯粉色；右边笔筒是灰粉拼色，表面有卡通人物图案 D. 左边笔筒是灰粉拼色，表面有卡通人物图案；右边笔筒是纯粉色</p>
 <p>答案：B</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7a3ff2ena620dokag?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉属性示例"></p>
 <p>视觉属性</p>
-<p>观察图片右下角的两个卡通人物。从图像呈现的角度来看，哪种说法正确地描述了这两个人物的构成？ A. 两个字符都完全由曲线组成 B. 两个字符都由直线和曲线组合组成 C. 两个字符都完全由直线组成 D. 左边的字符完全由直线组成，而右边的字符完全由曲线组成</p>
+<p>观察图片右下角的两个卡通人物。按图中呈现的视角，哪一项正确描述了这两个人物的构成？A. 两个人物都完全由曲线构成 B. 两个人物都由直线与曲线组合构成 C. 两个人物都完全由直线构成 D. 左边人物完全由直线构成，右边人物完全由曲线构成</p>
 <p>答案：B</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7b5t3v89kkemtmo3g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉计数示例"></p>
 <p>视觉计数</p>
-<p>观察图中的红色框。红色盒子里有多少朵花的主体？</p>
+<p>观察图中的红色框。有多少朵花的主体落在红色框内？</p>
 <p>答案：2</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7a67f2ena620doklg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉计数示例"></p>
 <p>视觉计数</p>
-<p>图片中总共可以看到多少盆绿色植物？ （不包括玻璃反射的绿色植物）</p>
-<p>答案：5盆</p>
+<p>图中总共能看到多少盆绿植？（不计玻璃中反射的绿植）</p>
+<p>答案：5 盆</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7b753v89kkemtmo80?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉关系示例"></p>
 <p>视觉关系</p>
-<p>找到红色框内的实心点。当点沿着迷宫的现有路线移动时，它首先到达哪个猫区域？ A. 左下困惑的猫 B. 右下开心的猫 C. 中间撑伞的猫 D. 右上赏花的猫</p>
+<p>找到红色框内的实心圆点。圆点沿迷宫中已有的路线前进，最先到达哪个猫咪区域？A. 左下角一脸困惑的猫 B. 右下角开心的猫 C. 中间撑伞的猫 D. 右上角赏花的猫</p>
 <p>答案：C</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01g9l51jas5c6c05g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉关系示例"></p>
 <p>视觉关系</p>
-<p>图中，对于最长的黑色对角线段，该线段从其右端点向外延伸的方向是？ A. 右上 B. 直接向右 C. 右下 D. 直接向下</p>
+<p>图中最长的那条黑色斜线段，从其右端点向外延伸的部分指向哪个方向？A. 右上 B. 正右 C. 右下 D. 正下</p>
 <p>答案：A</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01hhl51jas5c6c0ag?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="深度和 3D 示例"></p>
-<p>深度和 3D</p>
-<p>以当前观察者的视角，以靠近摄像机的方向为前方，图像中央的红衣人和黑色电风扇，哪一个更靠后？ A. 红衣人 B. 黑色电风扇 C. 两者相同 D. 无法确定</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01hhl51jas5c6c0ag?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="深度与 3D 示例"></p>
+<p>深度与 3D</p>
+<p>以当前观察者的视角来看，将靠近相机的方向定义为前方，图中红衣人与画面中央的黑色电风扇相比，哪一个更靠后？A. 红衣人 B. 黑色电风扇 C. 两者一样 D. 无法判断</p>
 <p>答案：A</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01il3v89kkemvegrg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="深度和 3D 示例"></p>
-<p>深度和 3D</p>
-<p>如果图中堆叠的小立方体必须放在地上或另一个小立方体上，那么图中一共有多少个小立方体（包括看不到的）？</p>
-<p>答案：26个立方体</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01il3v89kkemvegrg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="深度与 3D 示例"></p>
+<p>深度与 3D</p>
+<p>若图中堆叠的小立方体必须放在地面或另一个小立方体上，图中一共有多少个小立方体（含看不见的）？</p>
+<p>答案：26 个</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7acf6rtp4tq80eq40?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="OCR 示例"></p>
-<p>光学字符识别</p>
-<p>观察图像。白色文本以两种不同的字体大小显示。对于最大字体的白色文本，从左到右阅读文本内容，注意大小写字母，并保留所有标点符号和空格。写下答案。</p>
-<p>答案：马歇尔·B·克林纳德</p>
+<p>OCR</p>
+<p>观察图像。白色文字有两种不同字号。请将字号最大的白色文字从左到右读出，注意大小写，并保留所有标点符号与空格。写出答案。</p>
+<p>答案：Marshall B. Clinard</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7adnf2ena620dol90?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="OCR 示例"></p>
-<p>光学字符识别</p>
-<p>（注：边界框以 [x1, y1, x2, y2] 格式给出。）观察图像，建立归一化坐标，从左到右读取坐标区域 [0.697, 0.429, 0.875, 0.521] 中的文本内容，区分大小写，保留空格和标点符号，然后写下答案。</p>
-<p>答：自来水</p>
+<p>OCR</p>
+<p>（注：边界框以 [x1, y1, x2, y2] 格式给出。）观察图像，建立归一化坐标，从左到右读出坐标区域 [0.697, 0.429, 0.875, 0.521] 内的文字，区分大小写，保留空格与标点，然后写出答案。</p>
+<p>答案：Tap Water</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7aenf2ena620dolc0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉比较示例"></p>
 <p>视觉比较</p>
-<p>P、Q、M、N 对应的圆中，哪个圆最大？ （用圆圈对应的字母回答）</p>
+<p>P、Q、M、N 对应的几个圆中，哪一个最大？（用该圆对应的字母作答）</p>
 <p>答案：N</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7afvf2ena620doleg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="视觉比较示例"></p>
 <p>视觉比较</p>
-<p>将连接数据点A和D的线段表示为线段AD，并将连接数据点E和M的线段表示为线段EM。关于 AD 和 EM 段的厚度，以下哪项是正确的？ A. 线段 AD 较厚 B. 线段 EM 较厚 C. 线段 AD 和 EM 等厚 D. 无法确定</p>
+<p>将连接数据点 A 与 D 的线段记作线段 AD，将连接数据点 E 与 M 的线段记作线段 EM。关于线段 AD 与 EM 的粗细，以下哪项正确？A. 线段 AD 更粗 B. 线段 EM 更粗 C. 线段 AD 与 EM 一样粗 D. 无法判断</p>
 <p>答案：B</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-22/1d9g7agvf2ena620doli0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="细粒度识别示例"></p>
 <p>细粒度识别</p>
-<p>观察上面主要图案中凹口的轮廓形状。在A、B、C、D、E、F、G、H这八个选项中，哪一个选项的边缘轮廓能够完美匹配主体上的缺口并无缝填充缺失区域？</p>
+<p>观察上方主图案中缺口的轮廓形状。在 A、B、C、D、E、F、G、H 八个选项中，哪一个的边缘轮廓能与主体上的缺口完全吻合，并严丝合缝地补上缺失区域？</p>
 <p>答案：D</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-24/1d9hi4lt3v89kken0g0pg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="细粒度识别示例"></p>
 <p>细粒度识别</p>
-<p>观察图像并将中间位置（C 位置）的人与紧邻其右侧的人的造型和服装进行比较。下列说法正确的是： A. 两人发色不同，服装配色、装饰完全相同 B. 两人发色不同，服装配色、装饰明显不同 C. 两人发色相同，服装配色、装饰完全相同 D. 两人发色相同，服装配色、装饰明显不同</p>
+<p>观察图像，比较站在中间位置（C 位）的人与其右侧紧邻之人的造型和穿搭。以下哪种说法正确：A. 两人发色不同，服装配色与装饰完全一致 B. 两人发色不同，服装配色与装饰明显不同 C. 两人发色相同，服装配色与装饰完全一致 D. 两人发色相同，服装配色与装饰明显不同</p>
 <p>答案：A</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01jt3v89kkemvegv0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="上下文集成示例"></p>
-<p>情境整合</p>
-<p>请查看第一张图片中的地图。我在红十字标记的位置又拍了一张照片，这是第二张照片。请判断道路两侧 ROAD NO.2 SUNRISE HOMES 是下列哪一建筑物。 A. Riva 智能商店 B. Dasthagir &amp; Sons C. Bait-ul-Ata D. 日出谷别墅</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01jt3v89kkemvegv0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="上下文整合示例"></p>
+<p>上下文整合</p>
+<p>请看第一张图里的地图。我在红十字标记的位置又拍了一张照片，也就是第二张图。请判断以下哪座建筑位于 ROAD NO.2 SUNRISE HOMES 这条路的两侧。A. Riva shop smart B. Dasthagir &amp; Sons C. Bait-ul-Ata D. Sunrise Valley Villas</p>
 <p>答案：B</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01l2av1fc6464ou0g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="上下文集成示例"></p>
-<p>情境整合</p>
-<p>与图1相比，图2的场景增加了哪些内容？ A. 黑色办公桌 B. 半透明储物篮 C. 浅黄色文件柜 D. 标有箭头的纸板箱</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-23/1d9h01l2av1fc6464ou0g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="上下文整合示例"></p>
+<p>上下文整合</p>
+<p>与图 1 相比，图 2 的场景里新增了什么？A. 黑色办公桌 B. 半透明收纳筐 C. 浅黄色文件柜 D. 标有箭头的纸箱</p>
 <p>答案：D</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-24/1d9hi4n2av1fc6465qskg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="幻觉示例"></p>
 <p>幻觉</p>
-<p>图片中的办公室有多少张白色桌子？ A.0 B.1 C.2 D.3</p>
+<p>图中的办公室里有多少张白色桌子？A. 0 B. 1 C. 2 D. 3</p>
 <p>答案：A</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-07-24/1d9hi4o2av1fc6465qsmg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="幻觉示例"></p>
 <p>幻觉</p>
-<p>图像中的 15 个图案中，有多少个图案带有狗标志？</p>
+<p>图中 15 个图案里，有多少个带有狗的标识？</p>
 <p>答案：0</p>
-<p>每个源基准测试捕获感知误差的一小部分，并且这些部分重叠很弱（平均成对加权 Jaccard 0.20）。没有任何一个基准（或一小群基准）能够涵盖整体感知，这激发了以能力为中心的基准来聚合和重新平衡这些支离破碎的观点。</p>
-<p><img src="https://www.kimi.com/landing-ui/assets/blog-assets/perception-bench/openbench_jaccard.svg" alt="42 个聚合开源基准测试中每个错误类型的归因故障分布；每个基准测试的失败都集中在一种或几种错误类型上，而十种感知分支类型几乎在所有基准测试中都会重复出现"></p>
-<h3>每个类别的任务分布</h3>
-<table><thead><tr><th>统计</th><th>数量</th></tr></thead><tbody><tr><td>数据</td><td></td></tr><tr><td>总计</td><td>3,000</td></tr><tr><td>原子感知类别</td><td>10</td><td>10</td></tr><tr><td>任务类别</td><td></td></tr><tr><td>深度 3D 感知误差</td><td>330 (11.00%)</td></tr><tr><td>视觉计数错误</td><td>330 (11.00%)</td></tr><tr><td>细粒度识别错误</td><td>290 (9.67%)</td></tr><tr><td>视觉关系错误</td><td>330 (11.00%)</td></tr><tr><td>视觉属性错误</td><td>330 (11.00%)</td></tr><tr><td>视觉定位错误</td><td>330 (11.00%)</td></tr><tr><td>视觉比较错误</td><td>279 (9.30%)</td></tr><tr><td>上下文集成错误</td><td>255 (8.50%)</td></tr><tr><td>幻觉</td><td>271 (9.03%)</td></tr><tr><td>OCR 错误</td><td>255 (8.50%)</td></tr></tbody></table>
-<h2>使用 PerceptionBench 比较模型</h2>
+<p>每个源 benchmark 只覆盖感知错误的一个窄切面，而这些切面之间重叠很弱（成对加权 Jaccard 均值为 0.20）。没有任何一个 benchmark——或一小撮 benchmark——能代表感知的全貌，这正是我们做一个以能力为中心的 benchmark 的动机：把这些割裂的视角聚合起来并重新配平。</p>
+<p><img src="https://www.kimi.com/landing-ui/assets/blog-assets/perception-bench/openbench_jaccard.svg" alt="42 个被聚合的开源 benchmark 中，各类错误类型上归因失败的分布；每个 benchmark 的失败都集中在一种或少数几种错误类型上，而十个感知分支类型几乎在所有 benchmark 中都会反复出现"></p>
+<h3>各类别的任务分布</h3>
+<table><thead><tr><th>统计项</th><th>数量</th></tr></thead><tbody><tr><td>数据</td><td></td></tr><tr><td>总计</td><td>3,000</td></tr><tr><td>原子感知类别</td><td>10</td></tr><tr><td>任务类别</td><td></td></tr><tr><td>深度 3D 感知错误</td><td>330 (11.00%)</td></tr><tr><td>视觉计数错误</td><td>330 (11.00%)</td></tr><tr><td>细粒度识别错误</td><td>290 (9.67%)</td></tr><tr><td>视觉关系错误</td><td>330 (11.00%)</td></tr><tr><td>视觉属性错误</td><td>330 (11.00%)</td></tr><tr><td>视觉定位错误</td><td>330 (11.00%)</td></tr><tr><td>视觉比较错误</td><td>279 (9.30%)</td></tr><tr><td>上下文整合错误</td><td>255 (8.50%)</td></tr><tr><td>幻觉</td><td>271 (9.03%)</td></tr><tr><td>OCR 错误</td><td>255 (8.50%)</td></tr></tbody></table>
+<h2>用 PerceptionBench 比较模型</h2>
 <h2>结论</h2>
-<p>PerceptionBench 是一个简单但具有挑战性的基准，用于评估前沿模型的原子视觉感知。它为测量和诊断多模态模型的视觉感知边界提供了能力级别标准。我们正在开源 PerceptionBench 数据集和评估代码，以帮助社区解决视觉感知差距。</p>
+<p>PerceptionBench 是一个简单却颇具挑战的 benchmark，用于评估前沿模型的原子视觉感知。它为衡量和诊断多模态模型的视觉感知边界提供了能力层面的标准。我们开源 PerceptionBench 数据集与评测代码，希望帮助社区一起补上视觉感知的缺口。</p>
 <ul><li><strong>下载数据：</strong> <a href="https://github.com/MoonshotAI/PerceptionBench">https://github.com/MoonshotAI/PerceptionBench</a></li></ul>]]></content:encoded>
     </item>
     <item>
@@ -252,83 +251,83 @@
       <guid isPermaLink="true">https://www.kimi.com/blog/kimi-k2-6</guid>
       <pubDate>Mon, 20 Apr 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<h1>Kimi K2.6：推进开源编码</h1>
-<p><a href="https://www.kimi.com/en">尝试Kimi K2.6</a></p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j2jpl3v89kkei5mq70?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K2.6英雄视觉"></p>
-<p>我们正在开源我们的最新模型 <strong>Kimi K2.6</strong>，具有 <strong>最先进的编码、长视野执行和代理群功能</strong>。 Kimi K2.6 现已通过 <strong><a href="https://www.kimi.com/en">Kimi.com</a>、Kimi 应用程序、<a href="https://platform.kimi.com/">API</a> 和 <a href="https://www.kimi.com/code/en">Kimi 代码</a></strong> 提供。</p>
-<h2>长视野编码</h2>
-<p>Kimi K2.6 在长期编码任务方面表现出强大的改进，在编程语言（例如 Rust、Go 和 Python）和任务（例如前端、devops 和性能优化）之间具有可靠的泛化能力。在<strong>Kimi Code Bench</strong>（我们涵盖各种复杂的端到端任务的内部编码基准）上，Kimi K2.6 展示了比 Kimi K2.5 显着的改进。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j305qav1fc641b5670?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi 代码台"></p>
-<p>Kimi K2.6 在复杂的工程任务中展示了强大的长视野编码：</p>
-<p>Kimi K2.6 成功下载并在 Mac 上本地部署 <strong>Qwen3.5-0.8B</strong> 模型。通过在 <strong>Zig</strong>（一种高度小众的编程语言）中实现和优化模型推理，它展示了出色的分布外泛化能力。通过 <strong>4,000 多个工具调用、超过 12 小时的连续执行和 14 次迭代</strong>，Kimi K2.6 将吞吐量从 ~15 个令牌/秒大幅提高到 <strong>~193 个令牌/秒</strong>，最终实现的速度比 LM Studio 快约 20%。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j1727f2ena623likig?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="K2.6 Qwen3.5-0.8B Mac推理优化案例"></p>
-<p>Kimi K2.6自主检修了<strong>exchange-core</strong>，一个已有8年历史的开源金融撮合引擎。在 <strong>13 小时的执行</strong>中，该模型迭代了 12 种优化策略，发起了 1,000 多次工具调用，精确修改了 4,000 多行代码。作为专家系统架构师，Kimi K2.6 分析了 CPU 和分配火焰图，以查明隐藏的瓶颈，并大胆地重新配置了核心线程拓扑（从 4ME+2RE 到 2ME+1RE）。尽管引擎已经接近其性能极限运行，但 Kimi K2.6 实现了 <strong>185% 的中等吞吐量飞跃</strong>（从 0.43 到 1.24 MT/s）和 <strong>133% 的性能吞吐量增益</strong>（从 1.23 飙升到 2.86 MT/s）。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j16siav1fc641arbr0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="K2.6交换-核心编码展示"></p>
-<p>在 Beta 测试中，K2.6 在企业评估中的长期编码任务上表现良好（随机排序）：</p>
-<p><a href="https://www.anything.com/"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-21/1d7jmpvt3v89kkei7cvlg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="anything.com 徽标"></a></p>
-<p>在无代码环境中，人工智能必须处理每种边缘情况。当某些事情没有按预期工作时，没有开发人员可以介入。 <strong>K2.6 在导航细微的 API 行为和在发生故障时进行恢复方面明显比 K2.5 更有效，并且它在遇到问题之前运行长期任务。</strong> 与 K2.5 相比，我们已经看到在让用户从想法到部署方面有了真正的改进。</p>
-<p><a href="https://www.augmentcode.com/"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-21/1d7jmq2d3v89kkei7cvng?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="augmentcode.com 徽标"></a></p>
-<p><strong>K2.6 给我们印象最深的是它在大型代码库中的精确性。</strong> 当初始路径受阻时，它擅长智能地旋转：遵循现有的架构模式，发现隐藏的相关更改，并针对实际问题进行修复。这种集中的适应性有助于增强代码减少浪费的周期，并为企业规模的工程工作提供更快、更具成本效益的代理编码。</p>
-<p><a href="https://www.baseten.co/"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivhb7f2ena623lavfg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="baseten.co 徽标"></a></p>
-<p><strong>Kimi K2.6 的发展令人印象深刻。</strong> 它在编码任务上的表现可与领先的闭源模型相媲美，并且由于对第三方框架的深刻理解而提供了强大的工具调用质量。 Kimi K2.6 卓越的可靠性使其成为复杂和长期工程任务的绝佳选择。</p>
+<p><a href="https://www.kimi.com/en">试用 Kimi K2.6</a></p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j2jpl3v89kkei5mq70?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K2.6 主视觉"></p>
+<p>我们开源了最新模型 <strong>Kimi K2.6</strong>，它在<strong>编码、长程执行和 agent swarm 能力</strong>上达到业界领先水准。Kimi K2.6 现已通过 <strong><a href="https://www.kimi.com/en">Kimi.com</a>、Kimi App、<a href="https://platform.kimi.com/">API</a> 与 <a href="https://www.kimi.com/code/en">Kimi Code</a></strong> 提供。</p>
+<h2>长程编码</h2>
+<p>Kimi K2.6 在长程编码任务上有明显提升，并在多种编程语言（如 Rust、Go、Python）和多种任务类型（如前端、devops、性能优化）上表现出可靠的泛化。在 <strong>Kimi Code Bench</strong> 上——这是我们内部覆盖各类复杂端到端任务的编码基准——Kimi K2.6 相对 Kimi K2.5 有显著进步。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j305qav1fc641b5670?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi Code Bench"></p>
+<p>Kimi K2.6 在复杂工程任务中展现了很强的长程编码能力：</p>
+<p>Kimi K2.6 在一台 Mac 上成功下载并在本地部署了 <strong>Qwen3.5-0.8B</strong> 模型。它用 <strong>Zig</strong>——一门相当小众的编程语言——实现并优化模型推理，展现出出色的分布外泛化能力。在 <strong>4,000+ 次工具调用、12 小时以上的连续执行和 14 轮迭代</strong>中，Kimi K2.6 把吞吐从约 15 提升到 <strong>约 193 tokens/sec</strong>，最终速度比 LM Studio 快约 20%。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j1727f2ena623likig?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="K2.6 Qwen3.5-0.8B Mac 推理优化案例"></p>
+<p>Kimi K2.6 自主改造了 <strong>exchange-core</strong>——一个已有 8 年历史的开源金融撮合引擎。在一次 <strong>13 小时的执行</strong>中，模型迭代了 12 种优化策略，发起 1,000 多次工具调用，精确修改了 4,000 多行代码。Kimi K2.6 以专家系统架构师的角色分析 CPU 与内存分配火焰图，定位隐藏瓶颈，并果断重设核心线程拓扑（从 4ME+2RE 改为 2ME+1RE）。尽管该引擎的性能已接近极限，Kimi K2.6 仍拿到了 <strong>185% 的中等负载吞吐跃升</strong>（从 0.43 到 1.24 MT/s）和 <strong>133% 的性能吞吐提升</strong>（从 1.23 冲上 2.86 MT/s）。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j16siav1fc641arbr0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="K2.6 exchange-core 编码展示"></p>
+<p>在 beta 测试中，K2.6 在多家企业的长程编码评测里表现良好（顺序随机）：</p>
+<p><a href="https://www.anything.com/"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-21/1d7jmpvt3v89kkei7cvlg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="anything.com 标志"></a></p>
+<p>在无代码环境里，AI 必须处理每一个边界情况。当事情没按预期运行时，没有开发者能介入。<strong>在应对微妙的 API 行为、以及在出错后恢复方面，K2.6 明显比 K2.5 更有效；它也能在撞墙之前跑更长的任务。</strong> 与 K2.5 相比，我们在让用户从想法走到部署这件事上看到了实实在在的改善。</p>
+<p><a href="https://www.augmentcode.com/"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-21/1d7jmq2d3v89kkei7cvng?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="augmentcode.com 标志"></a></p>
+<p><strong>K2.6 最让我们印象深刻的是它在大型代码库中的手术级精度。</strong> 当初始路径走不通时，它很擅长智能地转向：沿用既有的架构模式、找出隐藏的关联改动，并把修复范围控制在真正的问题上。这种专注的适应能力帮助 Augment Code 减少无效往返，为企业级工程工作提供更快、更具成本效益的 agentic 编码。</p>
+<p><a href="https://www.baseten.co/"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivhb7f2ena623lavfg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="baseten.co 标志"></a></p>
+<p><strong>Kimi K2.6 的进化令人印象深刻。</strong> 它在编码任务上的水平可与领先的闭源模型相比，并且凭借对第三方框架的深入理解，工具调用质量很强。Kimi K2.6 出色的可靠性使它成为复杂、长程工程任务的上佳选择。</p>
 <p><a href="https://www.blackbox.ai/"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivhgd3v89kkei57atg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="blackbox.ai 标志"></a></p>
-<p><strong>Kimi K2.6 为开源模型设定了新的水平，特别是在长期、代理式编码工作流程中。</strong> 它可以处理复杂的多步骤任务，具有更强的指令跟踪能力和始终如一的高代码质量。我们已经看到它能够以卓越的稳定性维持长时间的编码会话，远远超出了典型的模型。它还会暴露一些深层的、不明显的错误，这些错误通常需要开发人员花费大量时间才能发现。总体而言，K2.6 为可靠编码树立了新的标准。</p>
+<p><strong>Kimi K2.6 为开源模型树立了新的水准，尤其是在长程、agent 式编码工作流中。</strong> 它处理复杂的多步任务时指令遵循更强、代码质量稳定偏高。我们看到它能以惊人的稳定性维持长时间的编码会话，远超一般模型。它还能挖出深层的、不易察觉的 bug——这些问题通常要开发者花大量时间才能发现。总体而言，K2.6 为可靠编码立了新的标尺。</p>
 <p><a href="https://www.codebuddy.com/"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j2dbnf2ena623lpflg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="codebuddy.ai 标志"></a></p>
-<p><strong>Kimi K2.6在CodeBuddy内部评测中较K2.5有显着提升：代码生成准确率提升12%，长上下文稳定性提升18%，工具调用成功率达到96.60%。</strong>更强的推理能力和更一致的输出质量，为CodeBuddy WorkBuddy可靠的用户体验提供了强有力的支撑。</p>
+<p><strong>在 CodeBuddy 的内部评测中，Kimi K2.6 相对 K2.5 有显著提升：代码生成准确率提高 12%，长上下文稳定性提升 18%，工具调用成功率达到 96.60%。</strong> 它更强的推理能力和更一致的输出质量，为在 CodeBuddy WorkBuddy 中提供稳定的用户体验提供了有力支撑。</p>
 <p><a href="https://factory.com"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivhn6dcmosb3v7vag0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="factory.ai 标志"></a></p>
-<p><strong>K2.6 在我们的基准测试 (+15%) 和并排比较中都比 K2.5 有了明显的改进。</strong> 它似乎具有更好的指令遵循、更彻底的探索和推理，并且不太可能出现编码错误或使用 hack。</p>
-<p><a href="https://fireworks.ai"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivhqudcmosb3v7vb20?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="fireworks.ai 徽标"></a></p>
-<p>我们很高兴看到 Kimi K2.6 版本的开源模型再次飞跃，这标志着高风险、代理工作流程的重大进步。 <strong>最有影响力的改进在于其长期可靠性和指令遵循。</strong> K2.6 擅长在扩展编码会话中保持架构完整性，使其成为自主代理管道的稳定基础，就像所有“爪子”一样。它在长上下文任务中展示了相对 K2.5 的可衡量的飞跃，在复杂推理中实现了最先进的性能。</p>
+<p><strong>无论在我们的基准（+15%）还是并排对比中，K2.6 都比 K2.5 有明显提升。</strong> 它的指令遵循似乎更好，探索和推理更彻底，也更不容易犯编码错误或走取巧的路子。</p>
+<p><a href="https://fireworks.ai"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivhqudcmosb3v7vb20?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="fireworks.ai 标志"></a></p>
+<p>Kimi K2.6 的发布让我们看到开源模型又跨了一步，这对高风险、agentic 的工作流意义重大。<strong>最有价值的改进在于它的长程可靠性和指令遵循。</strong> K2.6 擅长在长时间编码会话中保持架构完整性，因此可以成为自主 agent 流水线的稳定底座，各类“claw”皆然。它在长上下文任务上相对 K2.5 有可度量的跃升，在复杂推理上达到业界领先水平。</p>
 <p><a href="https://hermes-agent.nousresearch.com"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j00ol3v89kkei58q40?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="hermes-agent.nousresearch.com 标志"></a></p>
-<p>很早就了解了 K2.6 并通过 Hermes Agent 运行它。 <strong>工具调用和代理循环感觉明显更紧，编码是一个明显的进步，创造性的范围让我们感到惊讶。</strong>我们对与 Kimi 一起举办关于创造力的黑客马拉松感到非常兴奋。 Kimi团队继续超出预期！</p>
+<p>我们提前拿到了 K2.6，并在 Hermes Agent 里跑了一轮。<strong>工具调用和 agentic 循环明显更紧凑，编码能力上了一个台阶，创作上的跨度也让我们意外。</strong> 我们非常期待与 Kimi 一起办一场以创造力为主题的黑客松。Kimi 团队一直在超越预期！</p>
 <p><a href="https://kilo.ai"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivi2d3v89kkei57ce0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="kilo.ai 标志"></a></p>
-<p><strong>K2.6 以一小部分成本提供 SOTA 级性能。</strong> 它非常擅长跨代码库的长上下文任务，以及支持 KiloClaw 等永远在线代理所需的日常工作。</p>
-<p><a href="https://ollama.com"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivi5l3v89kkei57d2g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="ollama.com 徽标"></a></p>
-<p><strong>Kimi K2.6 提高了开源模型的门槛。</strong> 它擅长编码，特别是对于 OpenClaw 和 Hermes 等代理工具。在早期测试中，它能够以令人印象深刻的稳定性维持长时间的多步骤会话。它将立即可用 Ollama 的所有集成，我们很高兴看到开发人员用它构建什么。</p>
-<p><a href="https://opencode.ai"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivi8qav1fc641ajj60?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="opencode.ai 徽标"></a></p>
-<p><strong>在 OpenCode 中，Kimi K2.6 被证明异常可靠。</strong> 它的任务分解和工具调用方法既稳定又一致。通过更清晰地把握任务需求和更精简的多步骤操作，有效减少重复性开销，从而带来更流畅、更值得信赖的端到端体验。</p>
-<p><a href="https://qoder.com"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivibnf2ena623lb2mg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="qoder.com 徽标"></a></p>
-<p><strong>Kimi K2.6在Qoder内部评测中表现强劲，较K2.5有明显进步。</strong>具体来说，工具调用和模型调用的频率都有明显提升，反映出模型在任务执行过程中主动性和智能性的大幅提升。这种工具调用的主动性使模型能够更主动地掌握开发人员意图并自动完成上下文，从而最大限度地减少用户中断和等待时间。</p>
-<p><a href="https://vercel.com"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ividpl51jas5fc28h0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="vercel.com 徽标"></a></p>
-<p>在我们的开发人员最关心的功能上，K2.6 比 K2.5 有了重大进步：我们看到 Next.js 基准测试提高了 50% 以上，使其跻身平台上表现最佳的模型之列。结合其性价比，它是通过 AI Gateway 进行代理编码和前端生成的一个令人信服的选择。我们很高兴将其提供给我们的开发者社区。</p>
+<p><strong>K2.6 以极低成本提供了 SOTA 级表现。</strong> 它在跨代码库的长上下文任务上非常出色，在支撑 KiloClaw 这类常驻 agent 所需的日常工作上同样如此。</p>
+<p><a href="https://ollama.com"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivi5l3v89kkei57d2g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="ollama.com 标志"></a></p>
+<p><strong>Kimi K2.6 拉高了开源模型的门槛。</strong> 它在编码上表现出色，对 OpenClaw、Hermes 这类 agentic 工具尤其如此。在早期测试中，它能以令人印象深刻的稳定性维持长时间的多步会话。它能开箱即用地跑通 Ollama 的所有集成，我们很期待开发者用它做出什么。</p>
+<p><a href="https://opencode.ai"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivi8qav1fc641ajj60?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="opencode.ai 标志"></a></p>
+<p><strong>在 OpenCode 中，Kimi K2.6 被证明异常可靠。</strong> 它的任务拆解和工具调用方式既稳又一致。凭借对任务需求更准确的把握和更精简的多步操作，它有效压低了重复开销，端到端体验更顺、更值得信任。</p>
+<p><a href="https://qoder.com"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ivibnf2ena623lb2mg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="qoder.com 标志"></a></p>
+<p><strong>Kimi K2.6 在 Qoder 的内部评测中表现强劲，相对 K2.5 有明显进步。</strong> 具体来说，工具调用与模型调用的频率都有明显上升，反映出模型在任务执行中的主动性和智能程度大幅提升。这种更强的工具调用主动性，让模型能更主动地把握开发者意图并自动补全上下文，从而减少用户打断和等待。</p>
+<p><a href="https://vercel.com"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7ividpl51jas5fc28h0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="vercel.com 标志"></a></p>
+<p>在我们开发者最在意的能力上，K2.6 相对 K2.5 有大幅提升：在我们的 Next.js 基准上提升超过 50%，跻身平台上表现最好的模型之列。再加上它的性价比，通过 AI Gateway 做 agentic 编码和前端生成是个很有吸引力的选择。我们很高兴把它提供给开发者社区。</p>
 <p>01 / 07</p>
-<h2>编码驱动设计</h2>
-<p>基于强大的编码能力，Kimi K2.6可以将简单的提示变成完整的前端界面，生成结构化的布局，并经过深思熟虑的设计选择，例如美观的英雄部分，以及交互元素和丰富的动画，包括滚动触发效果。 Kimi K2.6 非常擅长利用图像和视频生成工具，支持生成视觉连贯的资产，并有助于生成更高质量、更突出的英雄部分。</p>
-<p>此外，Kimi K2.6 超越了静态前端开发，扩展到简单的全栈工作流程——从身份验证到用户交互，再到事务日志或会话管理等轻量级用例的数据库操作。</p>
-<p>我们建立了一个内部<strong>Kimi Design Bench</strong>，分为四个类别：视觉输入任务、登陆页面构建、全栈应用程序开发和通用创意编程。与 Google AI Studio 相比，Kimi K2.6 显示出令人鼓舞的结果，并且在这些类别中表现良好。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j30aiav1fc641b5710?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi设计台"></p>
-<p>以下是 <a href="https://www.kimi.com/en/build">K2.6 Agent</a> 根据单个提示生成的示例，其中包含预配置的线束和工具：</p>
-<h2>特工群，高架</h2>
-<p><strong>横向扩展，而不仅仅是向上扩展。</strong> Agent Swarm 将任务动态分解为异构子任务，由自创建的域专用代理同时执行。</p>
-<p>基于 K2.5 Agent Swarm 研究预览，<a href="https://www.kimi.com/en/agent-swarm">Kimi K2.6 Agent Swarm</a> 展示了 Agent Swarm 体验的<strong>质的飞跃</strong>。它无缝地协调异构代理以结合互补的技能：广泛的搜索与深入的研究、大规模文档分析与长篇写作相融合，以及并行执行的多格式内容生成。这种组合智能使群体能够在一次自主运行中提供端到端的输出——涵盖文档、网站、幻灯片和电子表格。</p>
-<p>该架构可水平扩展至 <strong>300 个子代理同时执行 4,000 个协调步骤</strong>，这是对 K2.5 的 100 个子代理和 1,500 个步骤的大幅扩展。这种大规模并行化从根本上减少了端到端延迟，同时显着提高了输出质量并扩展了代理群的操作边界。</p>
-<p>它还可以将 PDF、电子表格、幻灯片和 Word 文档等任何高质量文件转化为<strong>技能</strong>。 Kimi K2.6 捕获并保留文档的结构和风格 DNA，使您能够在未来的任务中重现相同的质量和格式。</p>
+<h2>编码驱动的设计</h2>
+<p>在强编码能力的基础上，Kimi K2.6 能把简单的 prompt 变成完整的前端界面，生成结构化的布局，并做出有意识的设计选择——比如赏心悦目的 hero 区，以及可交互元素和滚动触发效果等丰富动画。Kimi K2.6 熟练调用图像与视频生成工具，支持生成视觉上连贯的素材，并有助于做出质量更高、更抓眼的 hero 区。</p>
+<p>此外，Kimi K2.6 不止于静态前端开发，还扩展到简单的全栈工作流——从身份认证、用户交互直到数据库操作，适用于交易日志、会话管理等轻量场景。</p>
+<p>我们建立了内部的 <strong>Kimi Design Bench</strong>，分为四个类别：视觉输入任务、落地页构建、全栈应用开发和通用创意编程。与 Google AI Studio 相比，Kimi K2.6 结果可观，在这些类别上表现良好。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j30aiav1fc641b5710?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi Design Bench"></p>
+<p>以下是 <a href="https://www.kimi.com/en/build">K2.6 Agent</a> 在预配置 harness 和工具下、由单条 prompt 生成的示例：</p>
+<h2>Agent Swarm，再进一步</h2>
+<p><strong>向外扩，而不只是往上堆。</strong> Agent Swarm 把任务动态拆成异构子任务，由它自己创建的领域专用 agent 并发执行。</p>
+<p>在 K2.5 Agent Swarm 研究预览的基础上，<a href="https://www.kimi.com/en/agent-swarm">Kimi K2.6 Agent Swarm</a> 在 agent swarm 体验上实现了<strong>质变</strong>。它无缝协调异构 agent，把互补的能力组合起来：广度搜索叠加深度研究，大规模文档分析与长文写作融合，多格式内容生成并行推进。这种组合式智能让 swarm 在一次自主运行中就能交付端到端产出——涵盖文档、网站、幻灯片和电子表格。</p>
+<p>该架构可横向扩展到 <strong>300 个子 agent，同时跨越 4,000 个协同步骤执行</strong>，相比 K2.5 的 100 个子 agent 和 1,500 个步骤是一次大幅扩张。这种大规模并行从根本上降低了端到端延迟，同时显著提升产出质量，并拓展了 agent swarm 的运行边界。</p>
+<p>它还能把 PDF、电子表格、幻灯片和 Word 文档等任何高质量文件转成 <strong>Skills</strong>。Kimi K2.6 会捕捉并保留文档的结构与风格“DNA”，让你在后续任务中复现同样的质量与格式。</p>
 <p>以下是一些示例：</p>
-<h2>主动代理</h2>
-<p>K2.6 在自主、主动的代理（例如 <strong><a href="https://openclaw.ai/">OpenClaw</a></strong> 和 <strong><a href="https://hermes-agent.nousresearch.com/">Hermes</a></strong>）中展示了强大的性能，这些代理跨多个应用程序运行，并且 24/7 连续执行。</p>
-<p>与简单的基于聊天的交互不同，这些工作流程需要人工智能作为持久的后台代理主动管理计划、执行代码并协调跨平台操作。</p>
-<p>我们的 RL 基础设施团队使用了 K2.6 支持的代理，该代理可以自主运行 <strong>5 天</strong>，管理监控、事件响应和系统操作，展示持久上下文、多线程任务处理以及从警报到解决方案的全周期执行。这是K2.6的工作日志（匿名以删除敏感信息）：</p>
-<p>Kimi K2.6 在现实世界的可靠性方面提供了可衡量的改进：更精确的 API 解释、更稳定的长期运行性能以及在扩展研究任务期间增强的安全意识。</p>
-<p>性能提升通过我们内部的 <strong>Claw Bench</strong> 进行量化，该评估套件涵盖五个领域：编码任务、IM 生态系统集成、信息研究与分析、计划任务管理和内存利用率。在所有指标中，Kimi K2.6 在任务完成率和工具调用准确性方面均显着优于 Kimi K2.5，特别是在需要持续自主操作而无需人工监督的工作流程中。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j2vv53v89kkei5on5g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi 爪凳"></p>
-<h2>自带代理</h2>
-<p>基于 Kimi K2.6 强大的编排功能，Kimi K2.6 将您的主动代理扩展到 <strong>Claw Groups</strong> 作为研究预览 - Agent Swarm 架构的新实例。</p>
-<p>Claw Groups 拥抱一个开放的、异构的生态系统：多个代理和人类作为真正的合作者运作。用户可以从任何设备上加入代理，运行任何模型，每个代理都带有自己的专用工具包、技能和持久内存上下文。无论是部署在本地笔记本电脑、移动设备还是云实例上，这些不同的代理都可以无缝集成到共享操作空间中。</p>
-<p>在这个群体的中心，Kimi K2.6 充当自适应协调员。它根据座席的特定技能概况和可用工具动态地将任务与座席匹配，从而优化能力契合度。当代理遇到故障或停滞时，协调器会检测到中断，自动重新分配任务或重新生成子任务，并主动管理可交付成果的整个生命周期 - 从启动到验证再到完成。</p>
-<p>我们还要感谢 Claw Groups 中由 K2.6 支持的代理——我们一直在通过在实践中改进人工代理工作流程来测试我们自己的代理营销团队。使用 Claw Groups，我们与演示制作者、基准制作者、社交媒体代理和视频制作者等专业代理一起开展端到端内容制作和发布活动。 K2.6 协调流程，使代理能够共享中间结果并将想法转化为一致的、完全打包的可交付成果。</p>
-<p>我们正在超越简单地向人工智能提出问题或为人工智能分配任务，并进入人类和人工智能作为真正合作伙伴进行协作的阶段——结合优势共同解决问题。 Claw Groups 标志着我们为实现“我的代理”、“您的代理”和“我们的团队”之间的界限无缝融入协作系统而做出的最新努力。</p>
+<h2>主动型 agent</h2>
+<p>K2.6 在自主、主动型 agent 上表现强劲，例如 <strong><a href="https://openclaw.ai/">OpenClaw</a></strong> 和 <strong><a href="https://hermes-agent.nousresearch.com/">Hermes</a></strong>——它们跨多个应用运行，7×24 小时持续执行。</p>
+<p>与简单的对话式交互不同，这类工作流要求 AI 作为一个常驻的后台 agent，主动管理日程、执行代码、编排跨平台操作。</p>
+<p>我们的 RL infra 团队用了一个由 K2.6 驱动的 agent，它自主运行了 <strong>5 天</strong>，负责监控、事故响应和系统运维，展现出持久的上下文、多线程任务处理，以及从告警到解决的完整闭环执行能力。以下是 K2.6 的工作日志（已做匿名化处理以去除敏感信息）：</p>
+<p>Kimi K2.6 在真实世界的可靠性上有可度量的改进：API 解读更精确、长时间运行的性能更稳定、在长时研究任务中的安全意识更强。</p>
+<p>性能提升由我们内部的 <strong>Claw Bench</strong> 量化，这套评测覆盖五个领域：编码任务、IM 生态集成、信息研究与分析、定时任务管理以及记忆利用。在所有指标上，Kimi K2.6 在任务完成率和工具调用准确率上都显著优于 Kimi K2.5，在需要长时间无人值守自主运行的工作流中尤其如此。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-04-20/1d7j2vv53v89kkei5on5g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi Claw Bench"></p>
+<h2>自带你的 agent</h2>
+<p>在 Kimi K2.6 强大的编排能力之上，我们以研究预览形式把你的主动型 agent 扩展到 <strong>Claw Groups</strong>——这是 Agent Swarm 架构的一种新实例。</p>
+<p>Claw Groups 拥抱开放、异构的生态：多个 agent 与人类作为真正的协作者一起工作。用户可以从任何设备接入 agent、运行任何模型，每个 agent 都带着自己的专用工具集、skills 和持久记忆上下文。无论部署在本地笔记本、移动设备还是云实例上，这些各不相同的 agent 都能无缝融入同一个共享操作空间。</p>
+<p>在这个 swarm 的中心，Kimi K2.6 充当自适应的协调者。它依据各 agent 具体的技能画像和可用工具，动态地把任务匹配给合适的 agent，以能力契合度做优化。当某个 agent 失败或卡住时，协调者能察觉这次中断，自动重新分配任务或重新生成子任务，并主动管理交付物的整个生命周期——从启动、校验直到完成。</p>
+<p>我们也要感谢 Claw Groups 中由 K2.6 驱动的那些 agent——我们一直在实践中打磨人机协作流程，把自己那支 agent 营销团队当作试验田。借助 Claw Groups，我们跑端到端的内容生产与发布活动，由 Demo Makers、Benchmark Makers、Social Media Agents、Video Makers 等专用 agent 协同工作。K2.6 协调整个流程，让 agent 之间共享中间结果，把想法变成一致的、完整打包的交付物。</p>
+<p>我们正在走出“向 AI 提一个问题”或“给 AI 派一个任务”的阶段，进入人与 AI 作为真正伙伴协作的时期——把各自的长处合起来共同解决问题。Claw Groups 是我们为实现这样一个未来所做的最新努力：在那里，“我的 agent”“你的 agent”与“我们的团队”之间的边界会自然地融进同一个协作系统。</p>
 <h2>基准表</h2>
-<p>要重现官方 Kimi-K2.6 基准测试结果，我们建议使用官方 API。对于第三方提供商，请参考 Kimi Vendor Verifier (KVV) 选择高精度服务。详情：<a href="https://www.kimi.com/en/blog/kimi-vendor-verifier">https://www.kimi.com/blog/kimi-vendor-verifier</a></p>
+<p>要复现 Kimi-K2.6 的官方基准结果，我们建议使用官方 API。使用第三方服务商时，请参考 Kimi Vendor Verifier (KVV) 选择高准确率的服务。详情：<a href="https://www.kimi.com/en/blog/kimi-vendor-verifier">https://www.kimi.com/blog/kimi-vendor-verifier</a></p>
 <h2>脚注</h2>
-<p><strong>1.一般测试细节</strong></p>
-<ul><li>我们报告了启用思维模式的 Kimi K2.6 和 Kimi K2.5、具有最大努力程度的 Claude Opus 4.6、具有极高推理能力的 GPT-5.4 以及具有高思维水平的 Gemini 3.1 Pro 的结果。</li><li>除非另有说明，所有 Kimi K2.6 实验均在温度 = 1.0、top-p = 1.0 和上下文长度为 262,144 个标记的情况下进行。</li><li>没有公开分数的基准在与 Kimi K2.6 相同的条件下重新评估，并标有星号 (*)。除标有星号的地方外，所有其他结果均引用自官方报告。</li></ul>
-<p><strong>2.推理基准</strong></p>
-<ul><li>GPT-5.4 和 Claude 4.6 的 IMO-AnswerBench 分数从 <a href="https://z.ai/blog/glm-5.1">https://z.ai/blog/glm-5.1</a> 获得。</li><li>Humanity's Last Exam (HLE) 和其他推理任务的评估最大生成长度为 98,304 个标记。默认情况下，我们报告 HLE 全套结果。对于纯文本子集，Kimi K2.6 在没有工具的情况下达到了 36.4% 的准确率，在使用工具的情况下达到了 55.5%。</li></ul>
-<p><strong>3.工具增强/代理任务</strong></p>
-<ul><li>Kimi K2.6 配备了用于 HLE 的搜索、代码解释器和网络浏览工具，包括 BrowseComp、DeepSearchQA 和 WideSearch。</li><li>对于带有工具的 HLE-Full，最大生成长度为 262,144 个令牌，每步限制为 49,152 个令牌。我们采用简单的上下文管理策略：一旦上下文窗口超过阈值，则仅保留最近一轮与工具相关的消息。</li><li>对于 BrowseComp，我们报告使用与 Kimi K2.5 和 DeepSeek-V3.2 相同的全部丢弃策略通过上下文管理获得的分数。</li><li>对于 DeepSearchQA，Kimi K2.6 测试没有应用上下文管理，超过支持的上下文长度的任务直接计为失败。 DeepSearchQA 上 Claude Opus 4.6、GPT-5.4 和 Gemini 3.1 Pro 的分数引自 <a href="https://cdn.sanity.io/files/4zrzovbb/website/037f06850df7fbe871e206dad004c3db5fd50340.pdf">Claude Opus 4.7 系统卡</a>。</li><li>对于 WideSearch，我们在“隐藏工具结果”上下文管理设置下报告结果。一旦上下文窗口超过阈值，则仅保留最近一轮与工具相关的消息。</li><li>测试系统提示与<a href="https://arxiv.org/pdf/2602.02276">Kimi K2.5技术报告</a>中使用的相同。</li><li>Claw Eval 使用 1.1 版进行，每步最大令牌数 = 16384。</li><li>对于 APEX-Agents，我们评估了公开的 480 个任务版本中的 452 个任务，由 <a href="https://artificialanalysis.ai/evaluations/apex-agents-aa">人工分析</a> 完成（不包括具有外部运行时依赖性的投资银行世界 244 和 246）。</li></ul>
-<p><strong>4.编码任务</strong></p>
-<ul><li>Terminal-Bench 2.0 分数是使用默认代理框架 (Terminus-2) 和提供的 JSON 解析器获得的，在保留思维模式下运行。</li><li>对于 SWE-Bench 系列评估（包括 Verified、Multilingual 和 Pro），我们使用了改编自 SWE-agent 的内部评估框架。该框架包括一个最小的工具集：bash 工具、createfile 工具、插入工具、查看工具、strreplace 工具和提交工具。</li><li>所有报告的编码任务分数均是 10 次独立运行的平均值。</li></ul>
-<p><strong>5.愿景基准</strong></p>
-<ul><li>最大令牌 = 98,304，三轮运行的平均值 (avg@3)。</li><li>Python 工具的设置使用 max-tokens-per-step = 65,536 和 max-steps = 50 进行多步推理。</li><li>MMMU-Pro 遵循官方协议，保留输入顺序并预先添加图像。</li></ul>]]></content:encoded>
+<p><strong>1. 通用测试细节</strong></p>
+<ul><li>Kimi K2.6 与 Kimi K2.5 开启 thinking 模式，Claude Opus 4.6 使用 max effort，GPT-5.4 使用 xhigh reasoning effort，Gemini 3.1 Pro 使用 high thinking level，以上为报告的结果。</li><li>除另有说明，Kimi K2.6 的所有实验均使用 temperature = 1.0、top-p = 1.0、上下文长度 262,144 token。</li><li>没有公开分数的基准，在与 Kimi K2.6 相同的条件下重新评测，并以星号（*）标注。除标注星号之处外，其余结果均引自官方报告。</li></ul>
+<p><strong>2. 推理基准</strong></p>
+<ul><li>GPT-5.4 与 Claude 4.6 的 IMO-AnswerBench 分数取自 <a href="https://z.ai/blog/glm-5.1">https://z.ai/blog/glm-5.1</a>。</li><li>Humanity's Last Exam（HLE）及其他推理任务的评测使用 98,304 token 的最大生成长度。默认情况下，我们报告 HLE 全集上的结果。在纯文本子集上，Kimi K2.6 不使用工具时达到 36.4% 准确率，使用工具时达到 55.5%。</li></ul>
+<p><strong>3. 工具增强 / agentic 任务</strong></p>
+<ul><li>在带工具的 HLE、BrowseComp、DeepSearchQA 和 WideSearch 中，Kimi K2.6 配备了 search、code-interpreter 和 web-browsing 工具。</li><li>带工具的 HLE-Full 最大生成长度为 262,144 token，单步上限 49,152 token。我们采用简单的上下文管理策略：一旦上下文窗口超过阈值，只保留最近一轮与工具相关的消息。</li><li>BrowseComp 报告的是在上下文管理下取得的分数，采用与 Kimi K2.5、DeepSeek-V3.2 相同的 discard-all 策略。</li><li>DeepSearchQA 上，Kimi K2.6 的测试未施加任何上下文管理，超出支持上下文长度的任务直接计为失败。Claude Opus 4.6、GPT-5.4 和 Gemini 3.1 Pro 在 DeepSearchQA 上的分数引自 <a href="https://cdn.sanity.io/files/4zrzovbb/website/037f06850df7fbe871e206dad004c3db5fd50340.pdf">Claude Opus 4.7 System Card</a>。</li><li>WideSearch 报告的是“hide tool result”上下文管理设置下的结果。一旦上下文窗口超过阈值，只保留最近一轮与工具相关的消息。</li><li>测试用的 system prompt 与 <a href="https://arxiv.org/pdf/2602.02276">Kimi K2.5 technical report</a> 中使用的完全相同。</li><li>Claw Eval 使用 1.1 版进行，max-tokens-per-step = 16384。</li><li>APEX-Agents 上，我们从公开的 480 个任务中评测了 452 个，与 <a href="https://artificialanalysis.ai/evaluations/apex-agents-aa">Artificial Analysis</a> 的做法一致（排除 Investment Banking Worlds 244 和 246，这两个任务依赖外部运行时）。</li></ul>
+<p><strong>4. 编码任务</strong></p>
+<ul><li>Terminal-Bench 2.0 的分数使用默认 agent 框架（Terminus-2）和随附的 JSON 解析器获得，运行在 preserve thinking 模式下。</li><li>对于 SWE-Bench 系列评测（含 Verified、Multilingual 和 Pro），我们使用了从 SWE-agent 改造而来的内部评测框架。该框架包含一组最小工具——bash 工具、createfile 工具、insert 工具、view 工具、strreplace 工具和 submit 工具。</li><li>编码任务的所有报告分数均为 10 次独立运行的平均。</li></ul>
+<p><strong>5. 视觉基准</strong></p>
+<ul><li>Max-tokens = 98,304，取三次运行的平均（avg@3）。</li><li>启用 Python 工具的设置使用 max-tokens-per-step = 65,536、max-steps = 50 进行多步推理。</li><li>MMMU-Pro 遵循官方协议，保留输入顺序并将图像前置。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Agent Swarm</title>
@@ -393,94 +392,94 @@
       <link>https://www.kimi.com/blog/worldvqa</link>
       <guid isPermaLink="true">https://www.kimi.com/blog/worldvqa</guid>
       <pubDate>Tue, 03 Feb 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>介绍 WorldVQA</h1>
-<p><strong>评估多模式LLM中原子视觉世界知识的基准。</strong></p>
+      <content:encoded><![CDATA[<h1>推出 WorldVQA</h1>
+<p><strong>一个用于评估多模态 LLM 原子级视觉世界知识的基准。</strong></p>
 <p><strong>作者</strong> Kimi 团队</p>
 <h2>概述</h2>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-13/1d67h1af6rtp4tqfle8mg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="主图"></p>
-<p>我们正在发布 <strong>WorldVQA</strong>，这是一个新的基准，旨在衡量多模态大型语言模型 (MLLM) 的事实正确性。虽然最近的模型在视觉推理和描述方面表现出了令人印象深刻的能力，但衡量它们在视觉世界知识方面的可靠性仍然是一个挑战。</p>
-<p>WorldVQA 关注一个关键问题：<strong>模型是否真正识别它所看到的特定实体，或者仅仅是基于视觉模式的幻觉？</strong></p>
-<p>我们的结果表明，WorldVQA 对前沿模型提出了重大挑战。即使是最先进的模型也难以在长尾视觉知识上实现高精度，常常低于 50% 的准确度。该基准旨在推动更加真实可靠和知识渊博的多模式人工智能的进步。</p>
+<p>我们发布 <strong>WorldVQA</strong>，这是一个用来衡量多模态大语言模型（MLLM）事实正确性的新基准。近期的模型在视觉推理与描述上已经展现出很强的能力，但它们在视觉世界知识上是否可靠，仍然是个难题。</p>
+<p>WorldVQA 关注一个关键问题：<strong>模型是真的认出了它看到的那个具体实体，还是只是在根据视觉模式编造？</strong></p>
+<p>我们的结果显示，WorldVQA 对前沿模型构成了不小的挑战。即便是业界领先的模型，在长尾视觉知识上也很难拿到高分，准确率常常低于 50%。这个基准的目标，是推动多模态 AI 朝着事实更可靠、知识更扎实的方向前进。</p>
 <h2>数据集</h2>
-<p>该数据集由 <strong>3,500</strong> 高质量图像问题对组成。该发行版旨在测试模型在全球范围内的百科全书式广度。该数据集通过三个核心设计原则脱颖而出：</p>
-<ul><li><strong>真实性和明确性：</strong> 每个问题都有一个可验证的真实答案。我们排除主观问题或模糊的视觉场景。</li><li><strong>丰富的分类法：</strong> 数据集涵盖 9 个类别，以确保广泛覆盖世界知识。</li><li><strong>头与尾分布：</strong>我们明确地将数据分为<strong>头</strong>（常识）和<strong>尾</strong>（稀有/长尾知识）。这使我们能够衡量随着知识变得更加模糊，模型性能如何下降。</li></ul>
-<blockquote>质量说明：为了确保基准是可靠的黄金标准，所有图像和问答对都经过严格的多阶段人工验证，以滤除噪音和歧义。</blockquote>
+<p>数据集由 <strong>3,500</strong> 组高质量图文问答对构成，其分布意在检验模型覆盖全世界的百科式广度。这套数据靠三条核心设计原则立住：</p>
+<ul><li><strong>事实性与无歧义：</strong> 每个问题都有唯一且可核验的正确答案。我们排除主观问题，也排除视觉上存在歧义的场景。</li><li><strong>分类体系丰富：</strong> 数据集覆盖 9 个类别，以确保世界知识的广泛覆盖。</li><li><strong>头尾分布：</strong> 我们明确把数据划分为<strong>头部</strong>（常识）和<strong>尾部</strong>（稀有 / 长尾知识）。这样就可以衡量知识越冷门时，模型表现会下滑到什么程度。</li></ul>
+<blockquote>关于质量的说明：为确保这个基准是可靠的黄金标准，所有图像与问答对都经过严格的多阶段人工核验，以剔除噪声与歧义。</blockquote>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d61038d3v89kkelvvb80?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="自然示例"></p>
 <p>自然与环境</p>
 <p>图片中是什么鸟？</p>
-<p>答案：栗短翅</p>
+<p>答案：Chestnut Shortwing</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6103dpl51jas5b6u5mg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="自然示例"></p>
 <p>自然与环境</p>
 <p>图片中的花叫什么名字？</p>
-<p>答案：小苍兰</p>
+<p>答案：Freesia</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6104sff2ena627g3nng?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="地理示例"></p>
 <p>地点与建筑</p>
-<p>表示出现的内容/文物是/属于哪个地点？</p>
+<p>图中出现的内容/文物是/属于哪个遗址？</p>
 <p>答案：善化寺</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d61052aav1fc6455cqkg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="地理示例"></p>
 <p>地点与建筑</p>
-<p>图片中显示的自然地标的名称是什么？</p>
-<p>答案：好望角</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6105pudcmosb3r2uqm0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="文化范例"></p>
-<p>文化、艺术和手工艺</p>
-<p>图片中的舞蹈表演的标题是什么？</p>
-<p>答案：《天鹅湖》</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6105upl51jas5b6ud60?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="文化范例"></p>
-<p>文化、艺术和手工艺</p>
-<p>这图片是什么珍品</p>
+<p>图片中展示的自然地标叫什么名字？</p>
+<p>答案：Cape of Good Hope</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6105pudcmosb3r2uqm0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="文化示例"></p>
+<p>文化、艺术与工艺</p>
+<p>图片中这场舞蹈演出叫什么名字？</p>
+<p>答案：Swan Lake</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6105upl51jas5b6ud60?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="文化示例"></p>
+<p>文化、艺术与工艺</p>
+<p>这个图片是什么珍品</p>
 <p>答案：战国水晶杯</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d610647f2ena627g3re0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="对象示例"></p>
-<p>物品和产品</p>
-<p>图片中显示的包是什么款式？</p>
-<p>答：贝壳袋</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6106976rtp4tqf2uhvg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="对象示例"></p>
-<p>物品和产品</p>
-<p>图中显示的是什么电子消费产品？提供准确的名称和型号。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d610647f2ena627g3re0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="物品示例"></p>
+<p>物品与产品</p>
+<p>图片中是什么款式的包？</p>
+<p>答案：Shell bag</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6106976rtp4tqf2uhvg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="物品示例"></p>
+<p>物品与产品</p>
+<p>图片中是什么消费电子产品？请给出准确的名称和型号。</p>
 <p>答案：iPhone 17 Pro</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6106epl51jas5b6uebg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="运输示例"></p>
-<p>车辆、工艺和运输</p>
-<p>比如说的飞行器是什么型号？</p>
-<p>答案：中国歼-20</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6106jhl51jas5b6uen0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="运输示例"></p>
-<p>车辆、工艺和运输</p>
-<p>该车辆的具体附件或附件是什么？</p>
-<p>答：防滚架</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6106pedcmosb3r2ut90?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="娱乐范例"></p>
-<p>娱乐、媒体和游戏</p>
-<p>图片中的人物叫什么名字？</p>
-<p>答案：恐惧者贝尔</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d61071iav1fc6455d01g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="娱乐范例"></p>
-<p>娱乐、媒体和游戏</p>
-<p>这张图片出自哪部电影或电视剧？</p>
-<p>答案：你的名字</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6106epl51jas5b6uebg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="交通示例"></p>
+<p>交通工具、飞行器与运输</p>
+<p>图中的飞行器是什么型号？</p>
+<p>答案：中国歼 - 20战斗机</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6106jhl51jas5b6uen0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="交通示例"></p>
+<p>交通工具、飞行器与运输</p>
+<p>图中车辆的这件具体配件或附件是什么？</p>
+<p>答案：Roll cage</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6106pedcmosb3r2ut90?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="娱乐示例"></p>
+<p>娱乐、媒体与游戏</p>
+<p>图片中的角色叫什么名字？</p>
+<p>答案：Bayle the Dread</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d61071iav1fc6455d01g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="娱乐示例"></p>
+<p>娱乐、媒体与游戏</p>
+<p>这张图出自哪部电影或电视剧？</p>
+<p>答案：Your Name</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d61077iav1fc6455d0jg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="品牌示例"></p>
-<p>品牌、标志和平面设计</p>
-<p>此图中广告的媒介（载体）是什么？</p>
-<p>答：直邮广告</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6107dff2ena627g3v0g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Brands example"></p>
-<p>Brands, Logos &amp; Graphic Design</p>
-<p>What is the name of the trademark or logo shown in the image?</p>
-<p>Answer:EgyptAir</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6107hvf2ena627g3vjg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Sports example"></p>
-<p>Sports, Gear &amp; Venues</p>
-<p>What track-and-field or gymnastics event is shown in the picture? Please be as specific as possible.</p>
-<p>Answer:Floor exercise</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6107mnf2ena627g3vtg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Sports example"></p>
-<p>Sports, Gear &amp; Venues</p>
+<p>品牌、标志与平面设计</p>
+<p>图片中这则广告的投放媒介（载体）是什么？</p>
+<p>答案：Direct-mail advertisement</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6107dff2ena627g3v0g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="品牌示例"></p>
+<p>品牌、标志与平面设计</p>
+<p>图片中展示的商标或标志叫什么名字？</p>
+<p>答案：EgyptAir</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6107hvf2ena627g3vjg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="体育示例"></p>
+<p>体育、装备与场馆</p>
+<p>图片中展示的是哪项田径或体操项目？请尽量具体。</p>
+<p>答案：Floor exercise</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d6107mnf2ena627g3vtg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="体育示例"></p>
+<p>体育、装备与场馆</p>
 <p>图片中的建筑是哪座体育场馆？</p>
-<p>Answer:上海体育场</p>
-<h3>Distribution of Tasks per Category</h3>
-<table><thead><tr><th>统计</th><th>数量</th></tr></thead><tbody><tr><td>数据</td><td></td></tr><tr><td>总计</td><td>3500</td><td>3500</td></tr><tr><td>中文 (CN)</td><td>1260 (36%)</td></tr><tr><td>英语 (EN)</td><td>2240 (64%)</td></tr><tr><td>类别 类别</td><td></td></tr><tr><td>总类别</td><td>9</td></tr><tr><td>自然与环境（自然）</td><td>9.31%</td></tr><tr><td>地点和建筑（地理）</td><td>14.63%</td></tr><tr><td>文化、艺术和手工艺（文化）</td><td>14.46%</td></tr><tr><td>物体和产品（物体）</td><td>12.49%</td></tr><tr><td>车辆、工艺和运输（运输）</td><td>8.74%</td></tr><tr><td>娱乐、媒体和游戏（娱乐）</td><td>14.60%</td></tr><tr><td>品牌、标志和平面设计（品牌）</td><td>7.43%</td></tr><tr><td>体育、装备和场地（体育）</td><td>4.06%</td></tr><tr><td>著名人物和公众人物（人物）</td><td>14.29%</td></tr><tr><td>难度</td><td></td></tr><tr><td>简单</td><td>31.16%</td></tr><tr><td>中等</td><td>40.77%</td></tr><tr><td>硬</td><td>28.07%</td></tr></tbody></table>
-<h2>使用 WorldVQA 比较模型</h2>
-<h2>测量校准：置信度与准确性</h2>
-<p>在比较模型置信度与实际准确性的实验中，我们利用两个关键指标来衡量模型的主观信念与其客观表现之间的一致性：</p>
-<ul><li><strong>ECE（预期校准误差）：</strong> 测量模型的主观置信度与其客观准确性之间的平均差距。理想值为 <strong>0</strong>。</li><li><strong>斜率（加权平均斜率）：</strong> 衡量模型准确性与其自身置信度之间的相关性和敏感性。理想值为 <strong>1.0</strong>。</li></ul>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d60v7i2av1fc64559d50?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="显示模型校准的可靠性图 - 实际准确度与设定置信度"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d60v81aav1fc64559ekg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="WorldVQA 基准上各模型的置信度得分分布"></p>
-<p><strong>校准和置信分布分析。左图：</strong> 绘制实际准确度与置信度的可靠性图。为了确保统计显着性，仅对包含 20 个以上样本的箱进行可视化。每个数据点的大小与该箱中的样本数量成正比。黑色虚线对角线 (y=x) 表示完美校准，而彩色虚线表示每个模型的加权平均斜率。 <strong>右图：</strong> 整个数据集中所述置信度分数的分布（没有样本阈值）。这些图揭示了严重的过度自信趋势，大多数模型的预测集中在 90-100% 的置信范围内。</p>
-<p>我们的实验表明，所有评估的模型目前都远未达到理想状态，表现出普遍的过度自信倾向。</p>
-<p>虽然 <strong>Kimi-K2.5</strong> 在这两个指标上都取得了最佳性能——记录了 <strong>37.9%</strong> 的 ECE 和 <strong>0.550</strong> 的斜率，但在追求“诚实”和“一致性”方面仍然存在巨大差距。增强多模态模型的自我意识边界是未来探索的关键方向。</p>
+<p>答案：上海体育场</p>
+<h3>各类别任务分布</h3>
+<table><thead><tr><th>统计项</th><th>数量</th></tr></thead><tbody><tr><td>数据</td><td></td></tr><tr><td>总计</td><td>3500</td></tr><tr><td>中文（CN）</td><td>1260 (36%)</td></tr><tr><td>英文（EN）</td><td>2240 (64%)</td></tr><tr><td>类别</td><td></td></tr><tr><td>类别总数</td><td>9</td></tr><tr><td>自然与环境（Nature）</td><td>9.31%</td></tr><tr><td>地点与建筑（Geography）</td><td>14.63%</td></tr><tr><td>文化、艺术与工艺（Culture）</td><td>14.46%</td></tr><tr><td>物品与产品（Objects）</td><td>12.49%</td></tr><tr><td>交通工具、飞行器与运输（Transportation）</td><td>8.74%</td></tr><tr><td>娱乐、媒体与游戏（Entertainment）</td><td>14.60%</td></tr><tr><td>品牌、标志与平面设计（Brands）</td><td>7.43%</td></tr><tr><td>体育、装备与场馆（Sports）</td><td>4.06%</td></tr><tr><td>知名人物与公众人物（People）</td><td>14.29%</td></tr><tr><td>难度</td><td></td></tr><tr><td>简单</td><td>31.16%</td></tr><tr><td>中等</td><td>40.77%</td></tr><tr><td>困难</td><td>28.07%</td></tr></tbody></table>
+<h2>用 WorldVQA 比较模型</h2>
+<h2>衡量校准：置信度与准确率</h2>
+<p>在把模型置信度与实际准确率放在一起比较的实验中，我们用两项关键指标来衡量模型的主观信念与客观表现之间的对齐程度：</p>
+<ul><li><strong>ECE（Expected Calibration Error，期望校准误差）：</strong> 衡量模型主观置信度与客观准确率之间的平均差距，理想值为 <strong>0</strong>。</li><li><strong>Slope（加权平均斜率）：</strong> 衡量模型准确率与其自身置信度之间的相关性和敏感度，理想值为 <strong>1.0</strong>。</li></ul>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d60v7i2av1fc64559d50?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="展示模型校准情况的可靠性图——实际准确率与自报置信度"><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-03/1d60v81aav1fc64559ekg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="WorldVQA 基准上各模型的置信度分数分布"></p>
+<p><strong>校准与置信度分布分析。左图：</strong> 以自报置信度为横轴、实际准确率为纵轴绘制的可靠性图。为保证统计显著性，只展示样本数超过 20 的分箱，每个数据点的大小与该分箱的样本数成正比。黑色虚线对角线（y=x）代表完美校准，彩色虚线表示各模型的加权平均斜率。<strong>右图：</strong> 全数据集（不做样本阈值筛除）上自报置信度分数的分布。图中呈现出严重的过度自信趋势，多数模型的预测集中在 90-100% 的置信度区间。</p>
+<p>实验表明，当前所有受评模型都远未达到理想状态，普遍表现出过度自信的倾向。</p>
+<p><strong>Kimi-K2.5</strong> 在这两项指标上都是表现最好的模型——ECE 为 <strong>37.9%</strong>，Slope 为 <strong>0.550</strong>——但距离「诚实」与「对齐」仍有一段明显差距。提升多模态模型的自我认知边界，是未来值得重点探索的方向。</p>
 <h2>结论</h2>
-<p>WorldVQA 是一个简单但具有挑战性的基准，用于评估前沿模型的原子视觉知识。提高 WorldVQA 的性能是下一代 AI 代理的必要步骤。我们正在开源 WorldVQA 数据集和评估脚本，以帮助社区解决视觉知识差距。</p>
+<p>WorldVQA 是一个简单却颇具挑战的基准，用来评估前沿模型的原子级视觉知识。对下一代 AI agent 而言，在 WorldVQA 上取得更好的成绩是必经的一步。我们将开源 WorldVQA 数据集与评测脚本，帮助社区补齐视觉知识上的缺口。</p>
 <ul><li><strong>阅读论文：</strong> <a href="https://arxiv.org/abs/2602.02537">https://arxiv.org/abs/2602.02537</a></li><li><strong>查看代码：</strong> <a href="https://github.com/MoonshotAI/WorldVQA">https://github.com/MoonshotAI/WorldVQA</a></li><li><strong>下载数据：</strong> <a href="https://huggingface.co/datasets/moonshotai/WorldVQA">https://huggingface.co/datasets/moonshotai/WorldVQA</a></li></ul>]]></content:encoded>
     </item>
     <item>
@@ -488,73 +487,73 @@
       <link>https://www.kimi.com/blog/kimi-k2-5</link>
       <guid isPermaLink="true">https://www.kimi.com/blog/kimi-k2-5</guid>
       <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Kimi K2.5：视觉代理智能</h1>
-<p>今天，我们推出 Kimi K2.5，迄今为止最强大的开源模型。</p>
-<p>Kimi K2.5 以 Kimi K2 为基础，对大约 15T 混合视觉和文本标记进行持续预训练。 K2.5 作为原生多模式模型构建，提供最先进的<strong>编码和视觉</strong>功能以及自我导向的<strong>代理群</strong>范例。</p>
-<p>对于复杂的任务，Kimi K2.5 可以自我指导具有多达 100 个子代理的<strong>代理群</strong>，在多达 <strong>1,500</strong> <strong>工具调用</strong>中执行并行工作流程。与单代理设置相比，执行时间最多可减少 <strong>4.5 倍</strong>。代理群由 Kimi K2.5 自动创建和编排，无需任何预定义的子代理或工作流程。</p>
-<p>Kimi K2.5 可通过 <strong><a href="https://www.kimi.com/en">Kimi.com</a>、Kimi 应用程序、<a href="https://platform.kimi.com/">API</a> 和 <a href="https://www.kimi.com/code/en">Kimi 代码</a></strong> 获取。 Kimi.com 和 Kimi App 现在支持 4 种模式：K2.5 Instant、K2.5 Thinking、K2.5 Agent 和 K2.5 Agent Swarm（Beta）。 Agent Swarm 目前在 Kimi.com 上处于测试阶段，为高级付费用户提供免费积分。</p>
+      <content:encoded><![CDATA[<h1>Kimi K2.5：视觉 agentic 智能</h1>
+<p>今天，我们发布 Kimi K2.5——迄今为止最强大的开源模型。</p>
+<p>Kimi K2.5 在 Kimi K2 的基础上继续预训练，用了约 15T 视觉与文本混合 token。作为原生多模态模型，K2.5 在<strong>编码与视觉</strong>两方面都达到业界领先水平，并带来自主调度的 <strong>agent swarm</strong> 范式。</p>
+<p>面对复杂任务，Kimi K2.5 可以自主调度一个由最多 100 个子 agent 组成的 <strong>agent swarm</strong>，在最多 <strong>1,500</strong> <strong>次工具调用</strong>中并行执行工作流。与单 agent 配置相比，执行时间最多缩短 <strong>4.5 倍</strong>。这个 agent swarm 由 Kimi K2.5 自动创建并编排，不需要任何预定义的子 agent 或工作流。</p>
+<p>Kimi K2.5 可通过 <strong><a href="https://www.kimi.com/en">Kimi.com</a>、Kimi App、<a href="https://platform.kimi.com/">API</a> 与 <a href="https://www.kimi.com/code/en">Kimi Code</a></strong> 使用。Kimi.com 与 Kimi App 现支持 4 种模式：K2.5 Instant、K2.5 Thinking、K2.5 Agent 和 K2.5 Agent Swarm（Beta）。Agent Swarm 目前在 Kimi.com 上处于 beta，高等级付费用户可获得免费额度。</p>
 <p><img src="https://statics.kimi.ai/blogs/k2-5/token_cost.png" alt=""></p>
-<blockquote>在三个代理基准测试（HLE、BrowseComp 和 SWE-Verified）中，Kimi K2.5 以极低的成本提供了强大的性能。</blockquote>
-<h2>1. 用视觉编码</h2>
-<p>Kimi K2.5是迄今为止编码能力最强的开源模型，在前端开发方面的能力尤其强大。</p>
-<p>K2.5可以将简单的对话变成完整的前端界面，实现<strong>交互式布局</strong>和<strong>丰富的动画，例如滚动触发效果</strong>。以下是 K2.5 使用 image-gen 工具从单个提示生成的示例：</p>
-<p>除了文本提示之外，K2.5 还擅长<strong>用视觉进行编码</strong>。通过对图像和视频进行推理，K2.5 改进了图像/视频到代码的生成和可视化调试，降低了用户视觉表达意图的障碍。</p>
-<p>以下是 K2.5 从视频重建网站的示例：</p>
-<p>这种能力源于大规模的视觉-文本联合预训练。从规模上看，视觉和文本功能之间的权衡消失了——它们同步改进。</p>
-<p>下面是一个 K2.5 推理谜题并使用代码标记最短路径的示例：</p>
-<p><strong>K2.5 在现实世界的软件工程任务中表现出色。</strong> 我们使用 <strong>Kimi Code Bench</strong> 对其进行评估，这是我们的<strong>内部编码基准</strong>，涵盖跨多种编程语言的各种端到端任务（从构建到调试、重构、测试和脚本编写）。在此基准测试中，<strong>K2.5 在不同任务类型</strong>上显示出相对于 <strong> </strong>K2** 的一致且有意义的改进。</p>
+<blockquote>在 HLE、BrowseComp 和 SWE-Verified 这三个 agentic 基准上，Kimi K2.5 以极低的一部分成本取得了很强的表现。</blockquote>
+<h2>1. 带视觉的编码</h2>
+<p>Kimi K2.5 是迄今为止编码能力最强的开源模型，在前端开发上尤其突出。</p>
+<p>K2.5 能把几句简单的对话变成完整的前端界面，实现<strong>可交互的布局</strong>和<strong>滚动触发等丰富动画</strong>。下面是 K2.5 借助 image-gen 工具、由单条 prompt 生成的示例：</p>
+<p>除文本 prompt 之外，K2.5 还擅长<strong>基于视觉的编码</strong>。通过对图像和视频做推理，K2.5 提升了图像/视频到代码的生成效果和可视化调试能力，降低了用户用视觉方式表达意图的门槛。</p>
+<p>下面是 K2.5 从视频重建网站的示例：</p>
+<p>这种能力来自超大规模的视觉—文本联合预训练。规模上去之后，视觉与文本能力之间的取舍消失了——两者同步提升。</p>
+<p>下面是 K2.5 推理一道谜题、并用代码标出最短路径的示例：</p>
+<p><strong>K2.5 在真实软件工程任务中表现出色。</strong> 我们用 <strong>Kimi Code Bench</strong> 评测它——这是我们内部的<strong>编码基准</strong>，覆盖多种编程语言下各类端到端任务，从构建到调试、重构、测试和脚本编写。在这套基准上，<strong>K2.5 在各任务类型上相对</strong> <strong>K2</strong> <strong>都有稳定且有意义的提升</strong>。</p>
 <p><img src="https://statics.kimi.ai/blogs/k2-5/img_v3_02ub_47858019-34ce-4e34-ae76-f7165f95b91g.png" alt=""></p>
-<p>为了尝试 K2.5 的代理编码功能，<strong><a href="https://www.kimi.com/en">K2.5 Agent</a></strong> 提供了一组预配置工具，可提供即时的实践体验。对于软件工程用例，我们建议将 Kimi K2.5 与我们的新编码产品 <strong><a href="https://www.kimi.com/code/en">Kimi Code</a></strong> 配对。</p>
-<p><strong><a href="https://www.kimi.com/code/en">Kimi Code</a></strong> 在您的终端中工作，可以与各种 IDE 集成，包括 VSCode、Cursor、Zed 等。Kimi Code 是开源的，支持图像和视频作为输入。它还会自动发现现有技能和 MCP，并将其迁移到 Kimi Code 中的工作环境中。</p>
-<p>以下是使用 <strong><a href="https://www.kimi.com/code/en">Kimi 代码</a></strong> 将 <em>Matisse 的 La Danse</em> 的美学转化为 Kimi 应用程序的示例。该演示凸显了<strong>自主可视化调试</strong>方面的突破。使用视觉输入和文档查找，K2.5 直观地检查其自己的输出并自主对其进行迭代。它创建了一个端到端创建的受艺术启发的网页：</p>
-<h2>2. 特工群</h2>
-<p><strong>横向扩展，而不仅仅是向上。</strong>我们发布了 <strong><a href="https://www.kimi.com/en/agent-swarm">K2.5 Agent Swarm</a></strong> 作为研究预览，标志着从单代理扩展到自我引导、协调的集群式执行的转变。</p>
-<p>经过并行智能体强化学习 (PARL) 的训练，K2.5 学会自我指导由最多 <strong>100 个子智能体</strong>组成的<strong>智能体群</strong>，跨<strong>多达 1,500 个协调步骤</strong>执行并行工作流程，无需预定义角色或手工制作的工作流程。</p>
-<p>PARL 使用<em><strong>可训练的协调器代理</strong></em>将任务分解为可并行的子任务，每个子任务由动态实例化的<em><strong>冻结子代理</strong></em>执行。与顺序代理执行相比，同时运行这些子任务可显着减少端到端延迟。</p>
-<p>由于独立运行的子代理的延迟、稀疏和非平稳反馈，训练可靠的并行协调器具有挑战性。常见的故障模式是<strong>串行崩溃</strong>，其中编排器默认为单代理执行，尽管具有并行能力。为了解决这个问题，PARL 采用“分阶段奖励塑造”，鼓励训练早期的并行性，并逐渐将重点转向任务成功。</p>
-<p>我们将奖励定义为</p>
-<p>$r_{\mathrm{PARL}}(x, y) = \lambda_1 \cdot \mkern-26mu \underbrace{r_{\text{并行}}}_{\text{实例化奖励}} \mkern-9mu + \mkern18mu\lambda_2 \cdot \mkern-32mu\underbrace{r_{\text{完成}}}_{\text{子代理完成率}} + \underbrace{r_{\text{perf}}(x, y)}_{\text{任务级结果}} \, .$</p>
-<p>绩效奖励 $r_{\text{perf}}$ 评估给定任务 $x$ 的解决方案 $y$ 的总体成功和质量。两个辅助奖励增强了这一点，每个奖励都解决了学习并行编排方面的独特挑战。引入奖励 $r_{\text{parallel}}$ 是为了减轻<em>串行崩溃</em>——协调器默认为单代理执行的局部最优。通过激励子代理实例化，该术语鼓励对并发调度空间的探索。 $r_{\text{finish}}$ 奖励侧重于成功完成分配的子任务。它用于防止“虚假并行性”，这是一种奖励黑客行为，在这种行为中，协调器通过在没有有意义的任务分解的情况下产生许多子代理来显着增加并行指标。通过奖励完成的子任务，$r_{\text{finish}}$ 增强了可行性并指导策略进行有效且有效的分解。超参数 $\lambda_1$ 和 $\lambda_2$ 在训练过程中退火为零。</p>
-<p>为了进一步迫使并行策略出现，我们引入了一个计算瓶颈，这使得顺序执行变得不切实际。我们不计算总步数，而是使用 <strong>关键步骤</strong> 来评估性能，这是一种受并行计算中关键路径启发的面向延迟的指标：</p>
+<p>想体验 K2.5 的 agentic 编码能力，可以用 <strong><a href="https://www.kimi.com/en">K2.5 Agent</a></strong>：它提供一组预配置工具，可以立刻上手。面向软件工程场景，我们建议把 Kimi K2.5 与我们的新编码产品 <strong><a href="https://www.kimi.com/code/en">Kimi Code</a></strong> 搭配使用。</p>
+<p><strong><a href="https://www.kimi.com/code/en">Kimi Code</a></strong> 运行在你的终端里，可与 VSCode、Cursor、Zed 等多种 IDE 集成。Kimi Code 已开源，支持图像和视频作为输入。它还会自动发现已有的 skills 和 MCP，并把它们迁移到你在 Kimi Code 中的工作环境。</p>
+<p>下面这个例子用 <strong><a href="https://www.kimi.com/code/en">Kimi Code</a></strong> 把 <em>Matisse 的 La Danse</em> 的美学搬进 Kimi App。这个演示展示了<strong>自主可视化调试</strong>上的一次突破：K2.5 借助视觉输入和文档检索，用视觉方式检查自己的产出，并自主迭代。它端到端地做出了一个受这幅画启发的网页：</p>
+<h2>2. Agent Swarm</h2>
+<p><strong>向外扩，而不只是往上堆。</strong> 我们以研究预览形式发布 <strong><a href="https://www.kimi.com/en/agent-swarm">K2.5 Agent Swarm</a></strong>，标志着从单 agent 扩展转向自主调度、协同的群体式执行。</p>
+<p>K2.5 使用 Parallel-Agent Reinforcement Learning（PARL）训练，学会自主调度由最多 <strong>100 个子 agent</strong> 组成的 agent swarm，在<strong>最多 1,500 个协同步骤</strong>中执行并行工作流，且不需要预定义角色或手工编排的工作流。</p>
+<p>PARL 用一个<em><strong>可训练的 orchestrator agent</strong></em> 把任务拆成可并行的子任务，每个子任务由动态实例化的<em><strong>冻结子 agent</strong></em> 执行。与串行 agent 执行相比，并发运行这些子任务能显著降低端到端延迟。</p>
+<p>训练一个可靠的并行 orchestrator 并不容易，因为各子 agent 独立运行，反馈是延迟的、稀疏的、非平稳的。一种常见的失败模式是<strong>串行坍缩</strong>：orchestrator 明明有并行能力，却退化为单 agent 执行。为此，PARL 采用<em>分阶段奖励塑造</em>，在训练早期鼓励并行，随后逐步把重点转向任务成功。</p>
+<p>我们把奖励定义为</p>
+<p>$r_{\mathrm{PARL}}(x, y) = \lambda_1 \cdot \mkern-26mu \underbrace{r_{\text{parallel}}}_{\text{instantiation reward}} \mkern-9mu + \mkern18mu\lambda_2 \cdot \mkern-32mu\underbrace{r_{\text{finish}}}_{\text{sub-agent finish rate}} + \underbrace{r_{\text{perf}}(x, y)}_{\text{task-level outcome}} \, .$</p>
+<p>性能奖励 $r_{\text{perf}}$ 衡量在给定任务 $x$ 上解决方案 $y$ 的整体成功度与质量。在此基础上再加两个辅助奖励，各自针对学习并行编排中的一项不同难题。奖励 $r_{\text{parallel}}$ 用来缓解<em>串行坍缩</em>——即 orchestrator 退化为单 agent 执行的那个局部最优。通过激励子 agent 实例化，这一项鼓励模型探索并发的调度空间。$r_{\text{finish}}$ 奖励关注被分配的子任务是否成功完成，用来防止<em>虚假并行</em>：这是一种 reward hacking 行为，orchestrator 通过大量派生 subagent、却不做有意义的任务拆解，把并行指标迅速刷高。通过奖励已完成的子任务，$r_{\text{finish}}$ 约束了可行性，并把策略引向有效且真正可用的拆解。超参数 $\lambda_1$ 与 $\lambda_2$ 在训练过程中退火到零。</p>
+<p>为了进一步逼出并行策略，我们引入一个计算瓶颈，让串行执行变得不切实际。我们不再统计总步数，而是用<strong>关键步数（Critical Steps）</strong>衡量性能——这是一个面向延迟的指标，灵感来自并行计算中的关键路径：</p>
 <p>$\text{CriticalSteps} = \sum_{t=1}^{T} \left( S_{\text{main}}^{(t)} + \max_{i} S_{\text{sub},i}^{(t)} \right)$</p>
-<p>$S_{\text{main}}^{(t)}$捕获编排开销，而$\max_{i} S_{\text{sub},i}^{(t)}$反映每个阶段最慢的子代理。在这个指标下，产生更多的子任务只有在缩短关键路径的情况下才有帮助。</p>
-<p><img src="https://statics.kimi.ai/blogs/k2-5/orchestrator-1.png" alt="Kimi K2.5 Agent Swarm 架构图，显示 Orchestrator 动态创建任务并将任务分配给专用子代理以并行执行"></p>
-<blockquote>代理群有一个编排器，可以动态创建专门的子代理（例如，人工智能研究员、物理研究员、事实检查者）并将复杂的任务分解为可并行的子任务，以实现高效的分布式执行。</blockquote>
-<p><img src="https://statics.kimi.ai/blogs/k2-5/20260126-225846.png" alt="Kimi K2.5 的训练指标显示，在强化学习过程中，训练精度和平均并行度都随着 RL 失败而稳定增长"></p>
-<blockquote>在我们的并行代理强化学习环境中，奖励随着训练的进展而平稳增加。同时，训练时的并行度也逐渐提高。</blockquote>
-<p><strong><a href="https://www.kimi.com/en/agent-swarm">K2.5 Agent Swarm</a></strong> <strong>通过并行、专门的执行来提高复杂任务的性能。</strong> 在我们的内部评估中，它导致 <strong>80%</strong> <strong>端到端运行时间减少</strong>，同时支持更复杂、长期的工作负载，如下所示。</p>
-<p><img src="https://statics.kimi.ai/blogs/k2-5/20260127-131347.jpeg" alt="基准比较：Kimi K2.5 Agent Swarm 在 BrowseComp、Wide Search 和 In-house Bench 上的表现优于 Claude Opus 4.5"></p>
-<p><img src="https://statics.kimi.ai/blogs/k2-5/complpexity_of_tasks.png" alt="解决不同复杂度任务的执行时间"></p>
-<blockquote>与广泛搜索场景中的单代理执行相比，Agent Swarm 将实现目标性能所需的最少关键步骤减少了 3 至 4.5 倍，随着目标的增加，节省的成本也随之增加，通过并行化，可将挂钟时间减少多达 4.5 倍。</blockquote>
-<p>以下是展示 <a href="https://www.kimi.com/en/agent-swarm">K2.5 Agent Swarm</a> 实际应用的代表性 <strong>轨迹</strong>：</p>
-<h2>3. 办公效率</h2>
-<p>Kimi K2.5 将代理智能带入<strong>现实世界的知识工作中。</strong></p>
-<p><strong><a href="https://www.kimi.com/en">K2.5 Agent</a></strong> 可以<strong>端到端处理高密度、大规模的办公室工作。</strong> 它对大量、高密度的输入进行推理，协调多步骤工具的使用，并直接通过对话提供专家级的输出：文档、电子表格、PDF 和幻灯片。</p>
-<p>我们专注于现实世界的专业任务，设计了<strong>两个内部专家生产力基准</strong>。 <strong>AI Office 基准</strong>评估端到端 Office 输出质量，而<strong>常规</strong> <strong>代理基准</strong> 根据人类专家的表现衡量多步骤、生产级工作流程。在这两个基准测试中，<strong>K2.5 显示</strong> <strong>比 K2 Thinking</strong> 提高了 59.3% 和 24.3%，反映了在实际任务中更强的端到端性能。</p>
-<p><img src="https://statics.kimi.ai/blog/k2-5/20260127-152311.png" alt="基准测试结果：Kimi K2.5 较 K2 Thinking 显着提升，AI Office Bench 性能提升 71.2%，General-Agent Bench 性能提升 39.0%"></p>
-<p><strong>内部专家生产力工作台（AI Office）</strong></p>
-<p>K2.5 代理支持高级任务，例如 <strong>在 Word 中添加注释、使用数据透视表构建财务模型以及在 PDF 中编写 LaTeX 方程</strong>，同时扩展到长格式输出，例如 <strong>10,000 字论文或 100 页文档</strong>。</p>
-<p>曾经需要数小时或数天的任务现在只需几分钟即可完成。以下是一些示例：</p>
-<h2>4. 结论</h2>
-<p>Kimi K2.5 立足于视觉编码、代理群和办公效率方面的进步，代表了开源社区迈向 AGI 的有意义的一步，展示了在现实世界约束下执行现实世界任务的强大能力。展望未来，我们将进一步推进代理智能的前沿，重新定义人工智能在知识工作中的边界。</p>
+<p>$S_{\text{main}}^{(t)}$捕捉编排开销，而 $\max_{i} S_{\text{sub},i}^{(t)}$ 反映每个阶段最慢的子 agent。在这个指标下，派生更多子任务只有在缩短关键路径时才有帮助。</p>
+<p><img src="https://statics.kimi.ai/blogs/k2-5/orchestrator-1.png" alt="Kimi K2.5 Agent Swarm 架构图：Orchestrator 动态创建任务并分派给专用子 agent 并行执行"></p>
+<blockquote>agent swarm 中有一个 orchestrator，它动态创建专用 subagent（例如 AI Researcher、Physics Researcher、Fact Checker），并把复杂任务拆成可并行的子任务，以实现高效的分布式执行。</blockquote>
+<p><img src="https://statics.kimi.ai/blogs/k2-5/20260126-225846.png" alt="Kimi K2.5 的训练指标：在强化学习过程中，Training Accuracy 与 Average Parallelism 随 RL flops 稳步上升"></p>
+<blockquote>在我们的 parallel-agent 强化学习环境中，奖励随训练推进平稳上升；与此同时，训练过程中的并行度也逐步提高。</blockquote>
+<p><strong><a href="https://www.kimi.com/en/agent-swarm">K2.5 Agent Swarm</a></strong> <strong>通过并行、专门化的执行提升复杂任务上的表现。</strong> 在我们的内部评测中，它带来 <strong>80%</strong> <strong>的端到端运行时间下降</strong>，同时支撑更复杂、更长程的工作负载，如下图所示。</p>
+<p><img src="https://statics.kimi.ai/blogs/k2-5/20260127-131347.jpeg" alt="基准对比：Kimi K2.5 Agent Swarm 在 BrowseComp、Wide Search 和 In-house Bench 上优于 Claude Opus 4.5"></p>
+<p><img src="https://statics.kimi.ai/blogs/k2-5/complpexity_of_tasks.png" alt="求解不同复杂度任务的执行时间"></p>
+<blockquote>在 wide search 场景中，与单 agent 执行相比，Agent Swarm 把达到目标性能所需的最少关键步数压缩了 3×–4.5×，且目标越高节省越多——折算下来，通过并行化最多可减少 4.5× 的实际耗时。</blockquote>
+<p>以下是一些有代表性的 <strong>trajectories</strong>，展示 <a href="https://www.kimi.com/en/agent-swarm">K2.5 Agent Swarm</a> 的实际运行：</p>
+<h2>3. 办公生产力</h2>
+<p>Kimi K2.5 把 agentic 智能带进<strong>真实世界的知识工作</strong>。</p>
+<p><strong><a href="https://www.kimi.com/en">K2.5 Agent</a></strong> 能<strong>端到端处理高密度、大规模的办公工作</strong>。它对体量大、密度高的输入做推理，协调多步工具调用，直接通过对话交付专家级产出：文档、电子表格、PDF 和幻灯片。</p>
+<p>围绕真实职业任务，我们设计了两套<strong>内部专家生产力基准</strong>。<strong>AI Office Benchmark</strong> 评估端到端的 Office 产出质量，<strong>General</strong> <strong>Agent Benchmark</strong> 则对照人类专家表现，衡量多步、生产级工作流。在这两套基准上，<strong>K2.5 相对 K2 Thinking 分别提升 59.3% 与 24.3%</strong>，体现出在真实任务上更强的端到端表现。</p>
+<p><img src="https://statics.kimi.ai/blog/k2-5/20260127-152311.png" alt="基准结果：Kimi K2.5 较 K2 Thinking 显著提升，AI Office Bench 表现好 71.2%，General-Agent Bench 好 39.0%"></p>
+<p><strong>Internal Expert Productivity Bench（AI Office）</strong></p>
+<p>K2.5 的 agent 支持进阶任务，例如<strong>在 Word 中添加批注、用数据透视表搭建财务模型、在 PDF 中书写 LaTeX 公式</strong>，也能扩展到<strong>一万字论文或一百页文档</strong>这样的长文产出。</p>
+<p>过去要花上数小时甚至数天的任务，现在几分钟就能完成。以下是一些示例：</p>
+<h2>4. 结语</h2>
+<p>基于在视觉编码、agent swarm 与办公生产力上的进展，Kimi K2.5 是开源社区迈向 AGI 的实质性一步，展示了在真实约束下完成真实任务的强能力。展望之后，我们将继续推进 agentic 智能的边界，重新定义 AI 在知识工作中的范围。</p>
 <h2>附录</h2>
 <h3>基准表</h3>
-<p>要重现官方 <strong>Kimi-K2.5</strong> 基准测试结果，我们建议使用<a href="https://platform.kimi.com/">官方 API</a>。对于第三方提供商，请参考 <strong>Kimi Vendor Verifier (KVV)</strong> 选择高精度服务。详情：<a href="https://www.kimi.com/en/blog/kimi-vendor-verifier">https://www.kimi.com/blog/kimi-vendor-verifier</a></p>
+<p>要复现 <strong>Kimi-K2.5</strong> 的官方基准结果，我们建议使用<a href="https://platform.kimi.com/">官方 API</a>。使用第三方服务商时，请参考 <strong>Kimi Vendor Verifier (KVV)</strong> 选择高准确率的服务。详情：<a href="https://www.kimi.com/en/blog/kimi-vendor-verifier">https://www.kimi.com/blog/kimi-vendor-verifier</a></p>
 <h2>脚注</h2>
-<p><strong>1.一般测试细节</strong></p>
-<ul><li>我们报告了启用思维模式的 Kimi K2.5 和 DeepSeek-V3.2、具有扩展思维模式的 Claude Opus 4.5、具有高推理能力的 GPT-5.2 以及具有高思维水平的 Gemini 3 Pro 的结果。对于视觉基准测试，我们还报告了 Qwen3-VL-235B-A22B-Thinking 的结果。</li><li>除非另有说明，所有 Kimi K2.5 实验均在温度 = 1.0、top-p = 0.95 和 256k 标记的上下文长度下进行。</li><li>没有公开分数的基准在与 Kimi K2.5 相同的条件下重新评估，并标有星号 (*)。</li><li>由于服务稳定性问题，我们无法在所有基准测试中评估 GPT-5.2 xhigh。对于未经测试的基准，我们将其标记为“-”。</li></ul>
+<p><strong>1. 通用测试细节</strong></p>
+<ul><li>Kimi K2.5 与 DeepSeek-V3.2 开启 thinking 模式，Claude Opus 4.5 开启 extended thinking 模式，GPT-5.2 使用 xhigh reasoning effort，Gemini 3 Pro 使用 high thinking level，以上为报告的结果。视觉基准上，我们额外报告 Qwen3-VL-235B-A22B-Thinking 的结果。</li><li>除另有说明，Kimi K2.5 的所有实验均使用 temperature = 1.0、top-p = 0.95、上下文长度 256k token。</li><li>没有公开分数的基准，在与 Kimi K2.5 相同的条件下重新评测，并以星号（*）标注。</li><li>受服务稳定性问题影响，我们无法在所有基准上评测 GPT-5.2 xhigh。未测试的基准标记为“-”。</li></ul>
 <p><strong>2.</strong> <strong>文本与推理</strong></p>
-<ul><li>HLE、AIME 2025、HMMT 2025（2 月）、GPQA-Diamond 和 IMO-AnswerBench 的评估最大完成预算为 96k 代币。</li><li>AIME 和 HMMT 的结果是 32 次运行的平均值 (avg@32)； GPQA-钻石超过 8 次运行 (avg@8)。</li><li>对于 HLE，我们报告全套得分（文本和图像）。 Kimi K2.5 在没有工具的情况下得分为 31.5（文本）和 21.3（图像），在使用工具的情况下得分为 51.8（文本）和 39.8（图像）。 DeepSeek-V3.2 分数对应于其纯文本子集（用 † 标记）。Hugging Face访问已被阻止，以防止潜在的数据泄露。带有工具的 HLE 使用简单的上下文管理：一旦上下文超过阈值，仅保留最新一轮的工具消息。</li></ul>
-<p><strong>3.</strong> <strong>工具增强/代理搜索</strong></p>
-<ul><li>Kimi K2.5 配备了用于 HLE 的搜索、代码解释器和网络浏览工具，以及所有代理搜索基准。</li><li>除BrowseComp（其中K2.5和DeepSeek-V3.2使用discard-all策略）外，没有应用上下文管理，超过支持的上下文长度的任务直接计为失败。</li><li>测试系统提示强调深入、主动的工具使用，指导模型仔细推理、利用工具并验证不确定信息。技术报告中将提供完整的提示。</li><li>Seal-0 和 WideSearch 的结果是四次运行的平均值 (avg@4)。</li></ul>
-<p><strong>4.</strong> <strong>愿景基准</strong></p>
-<ul><li>最大令牌 = 64k，三轮运行的平均值 (avg@3)。</li><li>ZeroBench（带工具）使用 max-tokens-per-step = 24k 和 max-steps = 30 进行多步推理。</li><li>MMMU-Pro 遵循官方协议，保留输入顺序并预先添加图像。</li><li>GPT-5.2-xhigh 的失败率约为 10%（尽管重试 3 次仍没有输出），被视为不正确；报告的分数可能低估了真实的表现。</li><li>WorldVQA，旨在评估以原子视觉为中心的世界知识的基准。通过 <a href="https://github.com/MoonshotAI/WorldVQA">https://github.com/MoonshotAI/WorldVQA</a> 访问 WorldVQA。</li><li>OmniDocBench 分数的计算方式为（1 − 标准化 Levenshtein 距离）× 100，其中分数越高表示准确度越高。</li></ul>
+<ul><li>HLE、AIME 2025、HMMT 2025（2 月）、GPQA-Diamond 和 IMO-AnswerBench 的评测使用 96k token 的最大完成预算。</li><li>AIME 与 HMMT 的结果为 32 次运行的平均（avg@32）；GPQA-Diamond 为 8 次运行的平均（avg@8）。</li><li>HLE 我们报告全集（文本与图像）上的分数。Kimi K2.5 在不使用工具时得 31.5（文本）和 21.3（图像），使用工具时得 51.8（文本）和 39.8（图像）。DeepSeek-V3.2 的分数对应其纯文本子集（以 † 标注）。为防止潜在的数据泄漏，Hugging Face 的访问被屏蔽。带工具的 HLE 使用简单的上下文管理：上下文一旦超过阈值，只保留最近一轮工具消息。</li></ul>
+<p><strong>3.</strong> <strong>工具增强 / agentic 搜索</strong></p>
+<ul><li>在带工具的 HLE 以及所有 agentic 搜索基准中，Kimi K2.5 配备了 search、code-interpreter 和 web-browsing 工具。</li><li>除 BrowseComp（K2.5 与 DeepSeek-V3.2 采用 discard-all 策略）外，未施加任何上下文管理，超出支持上下文长度的任务直接计为失败。</li><li>测试用的 system prompt 强调深入、主动地使用工具，要求模型仔细推理、善用工具、对不确定的信息做核验。完整 prompt 将在技术报告中提供。</li><li>Seal-0 与 WideSearch 的结果为四次运行的平均（avg@4）。</li></ul>
+<p><strong>4.</strong> <strong>视觉基准</strong></p>
+<ul><li>Max-tokens = 64k，取三次运行的平均（avg@3）。</li><li>ZeroBench（带工具）使用 max-tokens-per-step = 24k、max-steps = 30 进行多步推理。</li><li>MMMU-Pro 遵循官方协议，保留输入顺序并将图像前置。</li><li>GPT-5.2-xhigh 约有 10% 的失败率（重试 3 次仍无输出），按错误处理；因此报告分数很可能低估了真实表现。</li><li>WorldVQA 是一个用于评测以视觉为中心的原子级世界知识的基准。访问地址：<a href="https://github.com/MoonshotAI/WorldVQA">https://github.com/MoonshotAI/WorldVQA</a>。</li><li>OmniDocBench 分数按（1 − 归一化 Levenshtein 距离）× 100 计算，分数越高表示准确度越好。</li></ul>
 <p><strong>5.</strong> <strong>编码任务</strong></p>
-<ul><li>Terminal-Bench 2.0 分数是使用默认代理框架 (Terminus-2) 和提供的 JSON 解析器获得的。在我们的实施中，我们在非思考模式下评估了 Terminal-Bench 2.0。做出这个选择是因为我们当前的思维模式上下文管理策略与 Terminus-2 不兼容。</li><li>对于SWE-Bench系列评估（包括验证型、多语言型和专业型），我们使用了内部开发的评估框架。该框架包括一组最小的工具——bash 工具、createfile 工具、插入工具、查看工具、strreplace 工具和提交工具——以及为任务设计的定制系统提示。最高分是在非思考模式下获得的。</li><li>Claude Opus 4.5 在 Cyber​​Gym 上的得分是在非思考设置下报告的。</li><li>所有报告的编码任务分数均是 5 次独立运行的平均值。</li></ul>
+<ul><li>Terminal-Bench 2.0 的分数使用默认 agent 框架（Terminus-2）和随附的 JSON 解析器获得。在我们的实现中，Terminal-Bench 2.0 是在 non-thinking 模式下评测的；这样选择是因为我们当前针对 thinking 模式的上下文管理策略与 Terminus-2 不兼容。</li><li>对于 SWE-Bench 系列评测（含 verified、multilingual 和 pro），我们使用了内部开发的评测框架。该框架包含一组最小工具——bash 工具、createfile 工具、insert 工具、view 工具、strreplace 工具和 submit 工具——以及针对任务定制的 system prompt。最高分在 non-thinking 模式下取得。</li><li>Claude Opus 4.5 在 CyberGym 上的分数是在 non-thinking 设置下报告的。</li><li>编码任务的所有报告分数均为 5 次独立运行的平均。</li></ul>
 <p><strong>6.</strong> <strong>长上下文基准</strong></p>
-<ul><li>AA-LCR：三轮运行的平均分数 (avg@3)。</li><li>LongBench-V2：相同的提示和输入上下文标准化为约 128k 标记。</li></ul>
-<p><strong>7.</strong> <strong>特工群</strong></p>
-<ul><li>BrowseComp（群体模式）：主代理最多 15 步；子代理最多 100 步。</li><li>WideSearch（群模式）：主代理和子代理最多 100 步。</li></ul>]]></content:encoded>
+<ul><li>AA-LCR：分数取三次运行的平均（avg@3）。</li><li>LongBench-V2：使用相同的 prompt，输入上下文统一为约 128k token。</li></ul>
+<p><strong>7.</strong> <strong>Agent Swarm</strong></p>
+<ul><li>BrowseComp（Swarm 模式）：主 agent 最多 15 步；子 agent 最多 100 步。</li><li>WideSearch（Swarm 模式）：主 agent 与子 agent 最多 100 步。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Kimi供应商验证者</title>
@@ -562,122 +561,122 @@
       <guid isPermaLink="true">https://www.kimi.com/blog/kimi-vendor-verifier</guid>
       <pubDate>Thu, 22 Jan 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Kimi Vendor Verifier</description>
-      <content:encoded><![CDATA[<h1>重建“信任链”：Kimi 供应商验证者 <a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&amp;logo=github&amp;logoColor=white" alt="GitHub"></a></h1>
-<p>在发布 Kimi K2.6 模型的同时，我们还开源了 Kimi Vendor Verifier (KVV) 项目，旨在帮助开源模型的用户验证其推理实现的准确性。</p>
-<p>不是事后才想到的，而是因为我们惨痛地认识到，开源模型只是成功的一半。另一半是确保它在其他地方正确运行。</p>
-<h2>官方评估结果</h2>
+      <content:encoded><![CDATA[<h1>重建“信任链”：Kimi Vendor Verifier <a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&amp;logo=github&amp;logoColor=white" alt="GitHub"></a></h1>
+<p>在发布 Kimi K2.6 模型的同时，我们开源了 Kimi Vendor Verifier（KVV）项目，帮助开源模型的用户验证自己推理实现的准确性。</p>
+<p>这不是事后补上的想法，而是因为我们在实践中吃够了苦头才明白：开源一个模型只是打赢了一半的仗，另一半是确保它在别处也能正确运行。</p>
+<h2>官方评测结果</h2>
 <p>思考</p>
 <p>非思考</p>
-<table><thead><tr><th>基准</th><th>公制</th><th>温度</th><th>顶P</th><th>最大代币数</th><th>基米API</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>OCRBench</td><td>ACC</td><td>1.0</td><td>0.95</td><td>0.95 16384</td><td>91.0</td></tr><tr><td>AIME2025</td><td>平均@32</td><td>1.0</td><td>0.95</td><td>0.95 98304</td><td>98.4</td><td>98.4</td></tr><tr><td>MMMU Pro 视觉</td><td>ACC</td><td>1.0</td><td>0.95</td><td>0.95 65536</td><td>78.8</td></tr></tbody></table>
-<p>您可以<a href="https://statics.kimi.ai/k2vv/kimi-k2.6_t0.6_m8192_nothink.zip">点击这里</a>访问Kimi API K2VV评估结果来计算F1分数。</p>
-<h2>为什么我们构建 KVV</h2>
-<p><strong>从孤立事件到系统性问题</strong></p>
-<p>自 K2 Thinking 发布以来，我们经常收到社区关于基准分数异常的反馈。我们的调查证实，这些案例很大一部分源于解码参数的滥用。为了立即缓解这种情况，我们在 API 级别构建了第一道防线：在思考模式下强制Temperature=1.0 和 TopP=0.95，并强制验证思考内容是否正确传回。</p>
-<p>然而，更微妙的异常现象很快引发了我们的警报。在<a href="https://www.reddit.com/r/LocalLLaMA/comments/1osglws/kimi_k2_thinking_scores_lower_than_gemini_25/?rdt=41412">LiveBenchmark</a>的具体评测中，我们观察到第三方API与官方API之间形成了鲜明的对比。经过对各个基础设施提供商的广泛测试，我们发现这种差异很普遍。</p>
-<p>这暴露了开源模型生态中更深层次的问题：权重越开放，部署渠道越多样化，质量就越不可控。</p>
-<p>如果用户无法区分“模型能力缺陷”和“工程实现偏差”，对开源生态的信任将不可避免地崩溃。</p>
-<h2>我们的解决方案</h2>
-<p><strong>六个关键基准</strong>（选择用于暴露特定的基础设施故障）：</p>
-<ul><li><a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier?tab=readme-ov-file#3-pre-flight-check">预验证</a>：验证 API 参数约束（温度、top_p 等）是否正确执行。在进行基准评估之前，所有测试都必须通过。</li><li><a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier?tab=readme-ov-file#ocrbench-quick-validation">OCRBench</a>：多模式管道的 5 分钟烟雾测试。</li><li><a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier?tab=readme-ov-file#mmmu-pro-vision">MMMU Pro</a>：通过测试不同的视觉输入来验证视觉输入预处理。</li><li><a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier?tab=readme-ov-file#aime-2025">AIME2025</a>：长输出压力测试。捕获短基准测试隐藏的 KV 缓存错误和量化退化。</li><li><a href="https://github.com/MoonshotAI/K2-Vendor-Verifier">K2VV ToolCall</a>：测量触发器一致性 (F1) 和 JSON 架构准确性。工具错误在代理中复合；我们很早就抓住了他们。</li><li>SWE-Bench：完整的代理编码测试。 （由于依赖沙箱，未开源）</li></ul>
-<p><strong>上游修复</strong>：我们嵌入 vLLM/SGLang/KTransformers 社区来修复根本原因，而不仅仅是检测症状。</p>
-<p><strong>发布前验证</strong>：我们提供对测试模型的早期访问，而不是等待部署后投诉。这使得基础设施提供商可以在用户遇到问题之前验证其堆栈。</p>
-<p><strong>持续基准测试</strong>：我们将维护供应商结果的公共排行榜。这种透明度鼓励供应商优先考虑准确性。</p>
+<table><thead><tr><th>Benchmark</th><th>指标</th><th>Temperature</th><th>TopP</th><th>MaxTokens</th><th>Kimi API</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>OCRBench</td><td>acc</td><td>1.0</td><td>0.95</td><td>16384</td><td>91.0</td></tr><tr><td>AIME2025</td><td>avg@32</td><td>1.0</td><td>0.95</td><td>98304</td><td>98.4</td></tr><tr><td>MMMU Pro Vision</td><td>acc</td><td>1.0</td><td>0.95</td><td>65536</td><td>78.8</td></tr></tbody></table>
+<p>你可以<a href="https://statics.kimi.ai/k2vv/kimi-k2.6_t0.6_m8192_nothink.zip">点击这里</a>获取 Kimi API 的 K2VV 评测结果，用于计算 F1 分数。</p>
+<h2>为什么要做 KVV</h2>
+<p><strong>从个别事件到系统性问题</strong></p>
+<p>自 K2 Thinking 发布以来，社区关于 benchmark 分数异常的反馈一直不断。我们排查后确认，其中相当一部分源于解码参数用错。为了立刻缓解这个问题，我们在 API 层建起第一道防线：在 Thinking 模式下强制 Temperature=1.0、TopP=0.95，并强制校验 thinking 内容是否被正确回传。</p>
+<p>然而，更隐蔽的异常很快又敲响了警钟。在 <a href="https://www.reddit.com/r/LocalLLaMA/comments/1osglws/kimi_k2_thinking_scores_lower_than_gemini_25/?rdt=41412">LiveBenchmark</a> 上的一次评测中，我们看到第三方 API 与官方 API 之间存在鲜明反差。在对多家基础设施提供商做了大量测试之后，我们发现这种差异相当普遍。</p>
+<p>这暴露了开源模型生态里更深层的问题：权重越开放、部署渠道越多元，质量就越难以掌控。</p>
+<p>如果用户无法区分“模型能力缺陷”和“工程实现偏差”，对开源生态的信任必然崩塌。</p>
+<h2>我们的方案</h2>
+<p><strong>六个关键 benchmark</strong>（专门挑选出来暴露特定基础设施故障）：</p>
+<ul><li><a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier?tab=readme-ov-file#3-pre-flight-check">预校验</a>：验证 API 参数约束（temperature、top_p 等）是否被正确执行。所有测试通过后才会进入 benchmark 评测。</li><li><a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier?tab=readme-ov-file#ocrbench-quick-validation">OCRBench</a>：面向多模态流水线的 5 分钟冒烟测试。</li><li><a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier?tab=readme-ov-file#mmmu-pro-vision">MMMU Pro</a>：用多样化的视觉输入检验 Vision 输入预处理。</li><li><a href="https://github.com/MoonshotAI/Kimi-Vendor-Verifier?tab=readme-ov-file#aime-2025">AIME2025</a>：长输出压力测试，能抓出短 benchmark 掩盖的 KV cache bug 和量化退化。</li><li><a href="https://github.com/MoonshotAI/K2-Vendor-Verifier">K2VV ToolCall</a>：衡量触发一致性（F1）与 JSON Schema 准确率。工具错误在 agent 中会层层放大，我们要尽早发现。</li><li>SWE-Bench：完整的 agentic 编码测试。（因依赖沙箱，未开源）</li></ul>
+<p><strong>上游修复</strong>：我们深入参与 vLLM/SGLang/KTransformers 社区，从根因上修复问题，而不只是检测症状。</p>
+<p><strong>发布前验证</strong>：与其等部署之后收到抱怨，我们提前开放测试模型。基础设施提供商可以在用户遇到问题之前先验证自己的技术栈。</p>
+<p><strong>持续 benchmark</strong>：我们会维护一份公开的各厂商结果排行榜。这种透明度会促使厂商把准确性放在优先位置。</p>
 <h2>测试成本估算</h2>
-<p>我们在两台 NVIDIA H20 8-GPU 服务器上完成了完整的评估工作流程验证，顺序执行大约需要 15 小时。为了提高评估效率，脚本针对长时间运行的推理场景进行了优化，包括流式推理、自动重试和检查点恢复机制。</p>
+<p>我们在两台 NVIDIA H20 8-GPU 服务器上完成了完整评测流程的验证，串行执行约需 15 小时。为提升评测效率，脚本针对长时间运行的推理场景做了优化，包括流式推理、自动重试和 checkpoint 续跑机制。</p>
 <h2>公开邀请</h2>
-<p><strong>重量是开放的。正确运行它们的知识也必须如此。</strong></p>
-<p>我们正在扩大供应商覆盖范围并寻求更轻松的代理测试。 <strong>联系我们：<a href="mailto:contact-kvv@kimi.com">contact-kvv@kimi.com</a></strong></p>]]></content:encoded>
+<p><strong>权重是开放的，正确运行它们的知识也必须开放。</strong></p>
+<p>我们正在扩大厂商覆盖范围，也在寻找更轻量的 agentic 测试。<strong>联系我们：<a href="mailto:contact-kvv@kimi.com">contact-kvv@kimi.com</a></strong></p>]]></content:encoded>
     </item>
     <item>
       <title>Kimi K2 Thinking</title>
       <link>https://www.kimi.com/blog/kimi-k2-thinking</link>
       <guid isPermaLink="true">https://www.kimi.com/blog/kimi-k2-thinking</guid>
       <pubDate>Thu, 06 Nov 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Kimi K2 思维介绍</h1>
-<p>今天，我们要介绍 <strong>Kimi</strong> <strong>K2</strong> <strong>Thinking</strong>，我们最好的开源思维模型。</p>
-<p>作为一个<strong>思考代理</strong>，它在使用工具的同时逐步进行推理，在 Humanity's Last Exam (HLE)、BrowseComp 和其他基准测试中实现了最先进的性能，在推理、代理搜索、编码、写作和一般能力方面取得了重大进展。</p>
-<p>Kimi K2 Thinking 可以执行多达 <strong>200 – 300 个连续工具调用</strong>，无需人工干预，通过数百个步骤进行连贯推理来解决复杂问题。</p>
-<p>它标志着我们通过扩展思维标记和工具调用步骤在<strong>测试时间扩展</strong>方面所做的最新努力。</p>
-<p>K2 Thinking 现已在 <a href="https://www.kimi.com/en">kimi.com</a> 上以聊天模式 [[1]](https://www.kimi.com/en/blog/kimi-k2-thinking#footnote-1) 上线，其完整的代理模式即将推出。也可以通过 Kimi K2 Thinking <a href="https://platform.kimi.com/">API</a> 访问它。</p>
-<h3>评价</h3>
-<p>Kimi K2 Thinking 在评估推理、编码和代理能力的基准测试中创下了新记录。 K2 Thinking 在使用工具的 HLE 上取得了 44.9% 的成绩，在 BrowseComp 上取得了 60.2% 的成绩，在 SWE-Bench Verified 上取得了 71.3% 的成绩，展示了作为最先进的思维代理模型的强大泛化能力。</p>
-<h3>代理推理</h3>
-<p>K2 Thinking 表现出出色的推理和解决问题的能力。在 Humanity’s Last Exam (HLE)（一项精心设计的封闭式基准测试，涵盖 100 多个科目的数千个专家级问题）中，K2 Thinking 凭借搜索、Python 和网络浏览工具取得了<strong>a​</strong> ​<strong>最先进</strong>​ ​<strong>​分数</strong> <strong>​​44.9%</strong>，在多领域专家级推理性能方面创造了新记录。</p>
-<p>通过在积极使用各种工具的同时进行推理，K2 Thinking 能够<strong>规划、推理、执行和适应数百个步骤</strong>，以解决一些最具挑战性的学术和分析问题。在一个实例中，它通过<strong>23次交错推理和工具调用</strong>成功解决了<strong>博士级数学问题</strong>，体现了其深度、结构化推理和长期解决问题的能力：</p>
-<h3>代理编码</h3>
-<p>K2 Thinking 在编码和软件开发任务方面表现出了巨大的进步。它在 SWE-Multilingual 上得分为 61.1%，在 SWE-Bench Verified 上得分为 71.3%，在 Terminal-Bench 上得分为 47.1%，展示了跨编程语言和代理支架的强大泛化能力。</p>
-<p>该模型对 HTML、React 和组件密集型前端任务进行了显着改进，将想法转化为功能齐全、响应迅速的产品。在代理编码设置中，它在调用工具时进行推理，流畅地集成到软件代理中，以精确且适应性强地执行复杂的多步骤开发工作流程。</p>
-<p>以下是 Kimi K2 Thinking 根据单个提示构建的一些示例：</p>
-<h3>代理搜索和浏览</h3>
-<p>K2 Thinking 在代理搜索和浏览场景中表现出了强大的性能。在 BrowseComp（一项旨在评估模型持续浏览、搜索和推理难以找到的现实世界网络信息的能力的具有挑战性的基准）上，K2 Thinking 取得了 <strong>​​60.​2%</strong> 的分数，显着超过了 29.2% 的人类基线。这一结果凸显了 K2 Thinking 在目标导向、基于网络的推理方面的卓越能力及其在动态、信息丰富的环境中的稳健性。</p>
-<p>K2 Thinking 可以执行​<strong>200–300 个顺序工具调用</strong>​，由 <strong>长期规划</strong> 和 <strong>自适应推理</strong>​ 驱动。它执行<em>思考→搜索→浏览器使用→思考→代码</em>​的动态循环，不断生成和完善假设、验证证据、推理并构建连贯的答案。这种交错推理使其能够将模糊的、开放式的问题分解为清晰的、可操作的子任务。</p>
-<p>以下是 <strong>Kimi ​</strong>​<strong>K2</strong>​<strong>​ Thinking</strong> 仅根据一个提示进行研究的一个示例：</p>
-<h3>一般功能</h3>
-<p><strong>创意写作：​</strong>K2 Thinking 提高了完整性和丰富性。它显示出对风格和指令的更强掌握，能够自然流畅地处理不同的语气和格式。它的写作变得更加生动和富有想象力——诗意意象带有更深层次的联想，而故事和剧本感觉更加人性化、情感化和有目的性。它所表达的思想往往能达到更大的主题深度和共鸣。</p>
-<p><strong>实用写作：​</strong>K2 Thinking 在推理深度、视角广度和指令遵守方面表现出显着的进步。它更精确地遵循提示，清晰、系统地解决每项要求——通常会扩展每个提到的点，以确保全面覆盖。在学术、研究和长篇分析写作中，它擅长撰写严谨、逻辑连贯且内容丰富的内容，使其在学术和专业环境中特别有效。</p>
-<p><strong>个人和情感：​</strong>在解决个人或情感问题时，K2 Thinking 会以更多的同理心和平衡来回应。它的思考是深思熟虑和具体的，提供了细致入微的观点和可行的后续步骤。它帮助用户清晰、谨慎地做出复杂的决策——脚踏实地、实用且真正人性化。</p>
+      <content:encoded><![CDATA[<h1>推出 Kimi K2 Thinking</h1>
+<p>今天，我们推出 <strong>Kimi</strong> <strong>K2</strong> <strong>Thinking</strong>，这是我们最好的开源思考模型。</p>
+<p>它是一个<strong>思考型 agent</strong>，在调用工具的同时逐步推理，在 Humanity's Last Exam (HLE)、BrowseComp 等基准测试上取得业界领先的成绩，在推理、agentic 搜索、编码、写作与通用能力上都有大幅提升。</p>
+<p>Kimi K2 Thinking 无需人工干预即可连续执行最多 <strong>200 – 300 次工具调用</strong>，在数百个步骤中保持连贯推理，攻克复杂问题。</p>
+<p>它代表我们在<strong>测试时扩展</strong>上的最新努力：同时扩展思考 token 与工具调用步数。</p>
+<p>K2 Thinking 现已在 <a href="https://www.kimi.com/en">kimi.com</a> 的聊天模式下上线 [[1]](https://www.kimi.com/en/blog/kimi-k2-thinking#footnote-1)，完整的 agentic 模式即将推出。你也可以通过 Kimi K2 Thinking <a href="https://platform.kimi.com/">API</a> 访问它。</p>
+<h3>评测结果</h3>
+<p>Kimi K2 Thinking 在考察推理、编码与 agent 能力的多项 benchmark 上刷新纪录。K2 Thinking 在带工具的 HLE 上达到 44.9%，在 BrowseComp 上达到 60.2%，在 SWE-Bench Verified 上达到 71.3%，展现出作为业界领先思考型 agent 模型的强大泛化能力。</p>
+<h3>Agentic 推理</h3>
+<p>K2 Thinking 展现出卓越的推理与问题求解能力。Humanity's Last Exam (HLE) 是一套严谨构建的封闭式基准，涵盖 100 多个学科、数千道专家级题目；在配备搜索、python 与网页浏览工具的情况下，K2 Thinking 取得了<strong>业界领先的 44.9%</strong> 成绩，在多领域专家级推理性能上创下新纪录。</p>
+<p>通过在积极调用多种工具的同时进行推理，K2 Thinking 能够<strong>在数百个步骤中规划、推理、执行并调整</strong>，攻克一些最具挑战性的学术与分析难题。其中一例是，它经过 <strong>23 次交错的推理与工具调用</strong>，成功解出一道<strong>博士级数学难题</strong>，体现出深度结构化推理与长程问题求解的能力：</p>
+<h3>Agentic 编码</h3>
+<p>K2 Thinking 在编码与软件开发任务上有显著提升。它在 SWE-Multilingual 上得分 61.1%，在 SWE-Bench Verified 上 71.3%，在 Terminal-Bench 上 47.1%，显示出跨编程语言与 agent scaffold 的强大泛化能力。</p>
+<p>该模型在 HTML、React 以及组件密集型前端任务上有明显改进——把想法变成功能完整、响应式适配的产品。在 agentic 编码场景中，它一边调用工具一边推理，能顺畅地接入软件 agent，精确而灵活地执行复杂的多步开发工作流。</p>
+<p>以下是 Kimi K2 Thinking 仅凭一句 prompt 构建出的一些示例：</p>
+<h3>Agentic 搜索与浏览</h3>
+<p>K2 Thinking 在 agentic 搜索与浏览场景中表现强劲。BrowseComp 是一项颇具挑战的基准，用来评估模型<strong>持续浏览、搜索并推理难以找到的真实世界网络信息</strong>的能力；K2 Thinking 在该基准上取得 <strong>60.2%</strong>，大幅超过 29.2% 的人类基线。这一结果凸显了 K2 Thinking 在目标导向的网页推理上的出众能力，以及它在动态、信息密集环境中的稳健表现。</p>
+<p>K2 Thinking 可以执行 <strong>200–300 次顺序工具调用</strong>，由<strong>长程规划</strong>与<strong>自适应推理</strong>驱动。它循环执行 <em>思考 → 搜索 → 使用浏览器 → 思考 → 写代码</em>，不断生成并修正假设、验证证据、推理，并构建连贯的答案。这种交错推理让它能把含糊的开放式问题拆解成清晰、可执行的子任务。</p>
+<p>以下是 <strong>Kimi K2 Thinking</strong> 仅凭一句 prompt 完成研究的一个示例：</p>
+<h3>通用能力</h3>
+<p><strong>创意写作：</strong>K2 Thinking 在完整度与丰富度上都有提升。它对风格与指令的驾驭更强，能自然流畅地处理多样的语气与格式。它的文字更鲜活、更富想象——诗性意象承载更深的联想，故事与剧本读起来更像人写的，有情感、有意图。它表达的想法往往达到更深的主题层次与共鸣。</p>
+<p><strong>实用写作：</strong>K2 Thinking 在推理深度、视角广度与指令遵循上进步明显。它更精确地遵循 prompt，清晰而有条理地回应每一项要求——常常把提到的每个点都展开，确保覆盖周全。在学术、研究和长篇分析写作中，它擅长产出严谨、逻辑连贯、内容扎实的文字，在学术与专业场景中尤其好用。</p>
+<p><strong>个人与情感：</strong>面对个人或情感类问题时，K2 Thinking 的回应更有同理心、更平衡。它的思考细致而具体，给出有层次的视角与可执行的下一步。它帮用户清醒而妥帖地梳理复杂决策——脚踏实地、务实，语气也真切地像人。</p>
 <h3>推理效率</h3>
-<p>低位量化是减少大规模推理服务器上的推理延迟和 GPU 内存使用的有效方法。然而，思维模型使用过多的解码长度，因此量化通常会导致性能大幅下降。</p>
-<p>为了克服这一挑战，我们在训练后阶段采用量化感知训练（QAT），对 MoE 组件应用 INT4 仅权重量化。它使 K2 Thinking 支持原生 INT4 推理，生成速度提高了大约 2 倍，同时实现了最先进的性能。所有基准测试结果均以 INT4 精度报告。</p>
-<h3>完整评估 [[2]](https://www.kimi.com/en/blog/kimi-k2-thinking#footnote-2)</h3>
-<p>下表显示，Kimi K2 Thinking 在广泛的任务中匹配或超越了最新的开源和前沿模型，在推理、代理搜索和编码的基准方面表现出色。</p>
+<p>低位量化是降低大规模推理服务器上推理延迟与 GPU 显存占用的有效手段。然而思考模型使用的解码长度过长，量化往往会带来明显的性能下降。</p>
+<p>为克服这一难题，我们在 post-training 阶段采用量化感知训练（QAT），对 MoE 组件施加 INT4 仅权重量化。这让 K2 Thinking 支持原生 INT4 推理，生成速度约提升 2 倍，同时保持业界领先的性能。所有 benchmark 结果均以 INT4 精度报告。</p>
+<h3>完整评测 [[2]](https://www.kimi.com/en/blog/kimi-k2-thinking#footnote-2)</h3>
+<p>下表显示，Kimi K2 Thinking 在广泛任务上与最新的开源模型和前沿模型持平或超越，在推理、agentic 搜索与编码类 benchmark 上表现突出。</p>
 <p><strong>脚注</strong></p>
-<ul><li>为了确保快速、轻量级的体验，我们选择性地使用一部分工具，并减少 <a href="https://www.kimi.com/en">kimi.com</a> 聊天模式下工具调用的次数。因此，在 <a href="https://www.kimi.com/en">kimi.com</a> 上聊天可能无法重现我们的基准分数。我们的代理模式将很快更新，以体现 K2 Thinking 的全部功能。</li><li><strong>测试详细信息：</strong>所有基准测试均在 K2 Thinking 的温度 = 1.0 和 256 k 上下文长度下进行评估，但 SciCode 除外，我们遵循官方温度设置 0.0。 b. HLE（无工具）、AIME25、HMMT25 和 GPQA 的思维代币预算上限为 96k，而 IMO-Answer Bench、LiveCodeBench 和 OJ-Bench 的思维代币预算上限为 128k。长篇写作的完成令牌预算上限为 32k。 c.对于 AIME 和 HMMT（无工具），我们报告 32 次运行的平均值 (avg@32)。对于 AIME 和 HMMT（使用 Python），我们报告 16 次运行的平均值 (avg@16)。对于 IMO-AnswerBench，我们报告 8 次运行的平均值 (avg@8)。</li><li><strong>基线：</strong> GPT-5、Claude-4.5-sonnet、Grok-4 结果和 DeepSeek-V3.2 结果引用自<a href="https://openai.com/index/introducing-gpt-5/">GPT-5 帖子</a>、<a href="https://openai.com/index/introducing-gpt-5-for-developers/">GPT-5 开发者帖子</a>、<a href="https://openai.com/index/gpt-5-system-card/">GPT-5 系统卡</a>、<a href="https://www.anthropic.com/news/claude-sonnet-4-5">claude-sonnet-4-5</a>、 <a href="https://x.ai/news/grok-4">grok-4</a>、<a href="https://api-docs.deepseek.com/news/news250929/">deepseek-v3.2</a>、公共<a href="https://www.tbench.ai/">Terminal-Bench排行榜</a> (Terminus-2)、公共<a href="https://www.vals.ai/benchmarks/legal_bench">Vals AI排行榜</a>和<a href="https://artificialanalysis.ai/">人工分析</a>。没有可用公共分数的基准在与 k2 思维相同的条件下重新测试，并标有星号 (*)。对于 GPT-5 测试，我们将推理工作设置为高。  b. HLE 全套工具中的 GPT-5 和 Grok-4 从其官方帖子来看分别为 35.2 和 38.6。在我们对 HLE 纯文本子集的内部评估中，GPT-5 得分 <strong>41.7</strong>，Grok-4 得分 <strong>38.6 </strong>​（Grok-4 的发布在纯文本子集上引用 <strong>41.0</strong>）。对于 GPT-5 的 HLE 纯文本无工具，我们使用 <a href="https://labs.scale.com/leaderboard/humanitys_last_exam_text_only">Scale.ai</a> 的分数，HLE 全套（无工具）的官方 GPT-5 分数为 24.8。  c.对于 <a href="https://aclanthology.org/2025.emnlp-main.1794.pdf">IMO-AnswerBench</a>：GPT-5 在基准论文中得分为 65.6。我们用官方API重新评估了GPT-5，得到了76分。</li><li><strong>对于 HLE（带工具）和代理搜索基准：</strong> K2 Thinking 配备了搜索、代码解释器和网络浏览工具。 b. BrowseComp-ZH、Seal-0、FinSearchComp-T3 独立运行 4 次并报告平均值 (avg@4)。 c.评测使用o3-mini作为评委，配置与官方HLE设置相同；法官提示逐字取自官方存储库。 d.在 HLE 上，最大步数限制为 120，每步推理预算为 48 k-token；在代理搜索任务中，限制为 300 个步骤，每个步骤有 24 k-token 推理预算。 e.当工具执行结果导致累积输入超过模型的上下文限制（256k）时，我们采用简单的上下文管理策略来隐藏所有先前的工具输出。 f. Web 访问 Hugging Face 可能会导致某些基准测试（例如 HLE）中的数据泄露。 K2 Thinking 在不屏蔽 Hugging Face 的情况下，在 HLE 上可以取得 51.3 的分数。为了确保公平和严格的比较，我们在测试期间阻止了对 Hugging Face 的访问。</li><li><strong>对于编码任务：</strong> Terminal-Bench 分数是使用默认代理框架 (Terminus-2) 和提供的 JSON 解析器获得的。 b.对于其他编码任务，结果是通过我们的内部评估工具生成的。该工具源自 SWE-agent，但我们限制了 Bash 和编辑工具的上下文窗口，并重写了系统提示符以匹配任务语义。 c.所有报告的编码任务分数均是 5 次独立运行的平均值。</li><li>​<strong>重模式</strong>​：K2 Thinking Heavy 模式采用高效的并行策略：它首先同时推出八个轨迹，然后反思性地聚合所有输出以生成最终结果。 GPT-5 的重度模式表示官方 GPT-5 Pro 分数。</li></ul>]]></content:encoded>
+<ul><li>为保证快速、轻量的体验，我们在 <a href="https://www.kimi.com/en">kimi.com</a> 的聊天模式下有选择地使用一部分工具，并减少工具调用的轮数。因此，在 <a href="https://www.kimi.com/en">kimi.com</a> 上聊天可能无法复现我们的 benchmark 成绩。我们的 agentic 模式很快会更新，以体现 K2 Thinking 的完整能力。</li><li><strong>测试细节：</strong> a. 除 SciCode 遵循官方的 0.0 温度设置外，K2 Thinking 的所有 benchmark 均在 temperature = 1.0、256 k 上下文长度下评测。b. HLE（无工具）、AIME25、HMMT25 与 GPQA 的思考 token 预算上限为 96k，IMO-Answer Bench、LiveCodeBench 与 OJ-Bench 的上限为 128k。Longform Writing 的补全 token 预算上限为 32k。c. AIME 与 HMMT（无工具）报告 32 次运行的平均值（avg@32）。AIME 与 HMMT（使用 Python）报告 16 次运行的平均值（avg@16）。IMO-AnswerBench 报告 8 次运行的平均值（avg@8）。</li><li><strong>基线：</strong> a. GPT-5、Claude-4.5-sonnet、Grok-4 的结果与 DeepSeek-V3.2 的结果引自 <a href="https://openai.com/index/introducing-gpt-5/">GPT-5 发布文</a>、<a href="https://openai.com/index/introducing-gpt-5-for-developers/">GPT-5 for Developers 发布文</a>、<a href="https://openai.com/index/gpt-5-system-card/">GPT-5 system card</a>、<a href="https://www.anthropic.com/news/claude-sonnet-4-5">claude-sonnet-4-5</a>、<a href="https://x.ai/news/grok-4">grok-4</a>、<a href="https://api-docs.deepseek.com/news/news250929/">deepseek-v3.2</a>、公开的 <a href="https://www.tbench.ai/">Terminal-Bench 排行榜</a>（Terminus-2）、公开的 <a href="https://www.vals.ai/benchmarks/legal_bench">Vals AI 排行榜</a> 以及 <a href="https://artificialanalysis.ai/">artificialanalysis</a>。对没有公开可用分数的 benchmark，我们在与 k2 thinking 相同的条件下重新测试，并以星号（*）标注。GPT-5 测试中，我们把 reasoning effort 设为 high。 b. HLE 全套题（带工具）上，GPT-5 与 Grok-4 的分数按其官方发布文分别为 35.2 和 38.6。在我们对 HLE 纯文本子集的内部评测中，GPT-5 得分 <strong>41.7</strong>，Grok-4 得分 <strong>38.6</strong>（Grok-4 发布时在纯文本子集上引用的是 <strong>41.0</strong>）。GPT-5 在 HLE 纯文本无工具设置下，我们采用 <a href="https://labs.scale.com/leaderboard/humanitys_last_exam_text_only">Scale.ai</a> 的分数；HLE 全套（无工具）的官方 GPT-5 分数为 24.8。 c. 关于 <a href="https://aclanthology.org/2025.emnlp-main.1794.pdf">IMO-AnswerBench</a>：GPT-5 在基准论文中得 65.6。我们用官方 API 重新评测 GPT-5，得到 76。</li><li><strong>HLE（带工具）与 agentic 搜索类 benchmark：</strong> a. K2 Thinking 配备了搜索、代码解释器与网页浏览工具。b. BrowseComp-ZH、Seal-0、FinSearchComp-T3 各自独立运行 4 次，报告平均值（avg@4）。c. 评测使用 o3-mini 作为 judge，配置与官方 HLE 设置一致；judge prompt 逐字取自官方仓库。d. HLE 上最大步数限制为 120 步，每步 48 k-token 推理预算；agentic 搜索任务限制为 300 步，每步 24 k-token 推理预算。e. 当工具执行结果使累计输入超过模型上下文上限（256k）时，我们采用简单的上下文管理策略，隐藏此前所有工具输出。f. 对 Hugging Face 的网络访问可能导致某些 benchmark（如 HLE）出现数据泄漏。不屏蔽 Hugging Face 时，K2 Thinking 在 HLE 上可以拿到 51.3 分。为确保公平严谨的对比，我们在测试期间屏蔽了对 Hugging Face 的访问。</li><li><strong>编码任务：</strong> a. Terminal-Bench 分数使用默认 agent 框架（Terminus-2）与随附的 JSON parser 获得。b. 其他编码任务的结果由我们内部的评测 harness 产出。该 harness 源自 SWE-agent，但我们收紧了 Bash 与 Edit 工具的上下文窗口，并重写了 system prompt 以匹配任务语义。c. 所有报告的编码任务分数均为 5 次独立运行的平均值。</li><li><strong>Heavy Mode</strong>：K2 Thinking Heavy Mode 采用一种高效的并行策略：先同时铺开八条轨迹，再反思性地聚合所有输出，生成最终结果。GPT-5 的 heavy mode 指官方 GPT-5 Pro 分数。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Kimi K2</title>
       <link>https://www.kimi.com/blog/kimi-k2</link>
       <guid isPermaLink="true">https://www.kimi.com/blog/kimi-k2</guid>
       <pubDate>Fri, 11 Jul 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Kimi K2：开放代理智能</h1>
-<p><strong>更新(0905)</strong>：我们更新了权重，增强了<strong>代理编码</strong>并支持<strong>256K上下文</strong>，<a href="https://huggingface.co/moonshotai/Kimi-K2-Instruct-0905">参见此处</a></p>
-<p>Kimi K2 是我们最新的 Mixture-of-Experts 模型，拥有 320 亿个激活参数和 1 万亿个总参数。它在非思维模型的前沿知识、数学和编码方面实现了最先进的性能。但它更进一步——针对代理任务进行了精心优化，Kimi K2 不仅仅是回答；它起作用了。</p>
-<p>现在，它触手可及。今天，我们开源：</p>
-<ul><li><strong>Kimi-K2-Base：</strong> 基础模型，对于想要完全控制微调和定制解决方案的研究人员和构建者来说是一个良好的开端。</li><li><strong>Kimi-K2-Instruct：</strong> 经过训​​练的模型最适合即插即用、通用聊天和代理体验。这是一款无需长时间思考的反射级模型。</li></ul>
-<p>借助 Kimi K2，先进的代理智能比以往任何时候都更加开放和易于访问。我们迫不及待地想看看您构建了什么。</p>
+      <content:encoded><![CDATA[<h1>Kimi K2：开放的 agentic 智能</h1>
+<p><strong>更新（0905）</strong>：我们更新了权重，增强了 <strong>agentic 编程</strong> 能力并支持 <strong>256K 上下文</strong>，<a href="https://huggingface.co/moonshotai/Kimi-K2-Instruct-0905">点此查看</a></p>
+<p>Kimi K2 是我们最新的 Mixture-of-Experts 模型，激活参数 320 亿，总参数 1 万亿。在非思考型模型中，它在前沿知识、数学和编程上都达到业界领先水平。但它走得更远——围绕 agentic 任务做了细致优化，Kimi K2 不只是回答问题，它还会动手做事。</p>
+<p>而现在，它已经触手可及。今天我们开源：</p>
+<ul><li><strong>Kimi-K2-Base：</strong> 基础模型，适合希望完全掌控 fine-tuning 与定制方案的研究者和构建者，是一个很强的起点。</li><li><strong>Kimi-K2-Instruct：</strong> 后训练模型，最适合即插即用的通用聊天和 agentic 体验。它是一个无需长时间思考的反射级模型。</li></ul>
+<p>有了 Kimi K2，先进的 agentic 智能比以往更开放、更易得。我们很期待看到你做出什么。</p>
 <h3>用例</h3>
-<p>为 Kimi K2 提供您的工具并描述您的任务。</p>
-<p>它会自动理解如何使用工具并完成工作。您不必为代理应用程序编写任何复杂的工作流程。</p>
-<p>想象一下，使用 Kimi K2 通过薪资数据分析示例来探索远程工作薪资，其中 16 个 IPython 调用生成统计数据、可视化和洞察的交互式网页。深入研究斯坦福 NLP 谱系，让 Kimi K2 通过 5 次网络搜索、4 次浏览、3 次点击、5 次滚动、6 次编辑和 2 次部署来生成一个交互式网站。或者使用 Kimi K2 计划您梦想的 2025 年伦敦酷玩巡回演唱会，它通过 17 个无缝工具调用（涵盖搜索、日历、Gmail、航班、Airbnb 和餐厅预订）为您制定计划。</p>
-<p>将 Kimi K2 添加到命令行。它编辑文件。它运行命令。</p>
-<p>Kimi K2 了解您的环境，决定采取哪些行动，并无缝执行它们。</p>
-<p>为了清楚起见，终端仅显示每个轨迹的摘要。在每个示例中，Kimi K2 在幕后编排多个工具和命令来完成复杂的目标。例如，Kimi K2 可以用 JavaScript 自动化 Minecraft 开发：它管理渲染、运行和调试测试用例、捕获失败日志，并迭代改进代码，直到所有测试成功。对于前/后范数分析，Kimi K2 使用权重和偏差 (wandb) 数据读取器从语言模型实验中提取见解并生成完善的分析报告。当将 Flask 项目转换为 Rust 时，Kimi K2 系统地重构了代码库并运行性能基准测试以确保稳健的结果。</p>
+<p>把工具交给 Kimi K2，再描述你的任务。</p>
+<p>它会自动理解怎么使用这些工具并完成任务。你不需要为 agentic 应用编写任何复杂的工作流。</p>
+<p>想象一下用 Kimi K2 通过 Salary Data Analysis 示例来调研远程办公薪资：16 次 IPython 调用生成了统计数据、可视化图表，以及一个可交互的洞察网页。深入 Stanford NLP Genealogy，让 Kimi K2 生成一个交互式站点，整个过程经过 5 次网页搜索、4 次浏览、3 次点击、5 次滚动、6 次编辑和 2 次部署。或者用它规划你梦想中的 2025 年伦敦 Coldplay 巡演，它通过 17 次无缝衔接的工具调用，串起搜索、日历、Gmail、航班、Airbnb 和餐厅预订，把计划做了出来。</p>
+<p>把 Kimi K2 带进你的命令行。它会编辑文件，也会执行命令。</p>
+<p>Kimi K2 理解你的环境，判断该做什么，然后顺畅地执行。</p>
+<p>需要说明的是，终端只展示每条轨迹的摘要。在每一个示例中，Kimi K2 都在幕后调度多个工具和命令来完成复杂目标。例如，Kimi K2 能用 JavaScript 自动化 Minecraft 开发：它管理渲染，运行并调试测试用例，在失败时抓取日志，并不断改进代码直到所有测试通过。做前/后范数分析时，Kimi K2 使用 Weights &amp; Biases（wandb）数据读取器从语言模型实验中提取洞察，并生成一份打磨完善的分析报告。把 Flask 项目迁移到 Rust 时，Kimi K2 会系统地重构代码库，并运行性能基准测试，以确保结果稳健。</p>
 <h3>Kimi K2 基准测试</h3>
-<h3>开放代理情报</h3>
-<p>预训练是<a href="https://ysymyth.github.io/The-Second-Half/">代理智能</a> 的重要基础，它建立了使强化学习 (RL) 探索易于处理、高效且可推广的先验。然而，正如 Ilya Sutskever 也观察到的那样，人类数据是一种有限的“化石燃料”，其增长远远落后于计算的速度。这使得预训练期间的<strong>代币效率</strong>成为人工智能缩放法则中的新关键系数。</p>
-<p>后期培训在“<a href="https://storage.googleapis.com/deepmind-media/Era-of-Experience%20/The%20Era%20of%20Experience%20Paper.pdf">体验时代</a>”中至关重要（David Silver、Richard Sutton，2025）。在这个时代，LLM越来越多地从自己产生的互动中学习，获得奖励，使他们摆脱人类数据的限制，并使他们超越人类的能力。</p>
-<p>Kimi K2 正是基于这些见解而打造的。</p>
+<h3>开放的 agentic 智能</h3>
+<p>预训练是 <a href="https://ysymyth.github.io/The-Second-Half/">Agentic Intelligence</a> 的关键基础，它建立起先验，让强化学习（RL）的探索变得可处理、高效且可泛化。然而，正如 Ilya Sutskever 也观察到的，人类数据是一种有限的「化石燃料」，其增长速度远远落后于算力的增长。这让预训练阶段的 <strong>token 效率</strong> 成为 AI 缩放定律中的一个新的关键系数。</p>
+<p>后训练在「<a href="https://storage.googleapis.com/deepmind-media/Era-of-Experience%20/The%20Era%20of%20Experience%20Paper.pdf">经验时代</a>」（David Silver、Richard Sutton，2025）中举足轻重。在这个时代，LLM 越来越多地从自身生成的交互中学习，获得的奖励使它们摆脱人类数据的限制，从而超越人类能力。</p>
+<p>Kimi K2 正是由这些洞见锻造而来。</p>
 <h4>MuonClip 优化器</h4>
-<p>如果没有严格的要求，给定一个近似有限的预训练数据集和一个固定的模型配置，一个更高效的优化器会产生更多的智能。我们之前的工作 <a href="https://github.com/MoonshotAI/Moonlight">Moonlight</a> 已经证明，<a href="https://kellerjordan.github.io/posts/muon/">Muon</a> 优化器在 LLM 训练方面远远优于广泛使用的 AdamW 优化器。</p>
-<p>Kimi K2 旨在进一步扩展 Moonlight，它采用类似于 DeepSeek-V3 的架构。基于缩放定律分析，我们减少了头的数量以提高长上下文效率，并增加 MoE 稀疏性以提高令牌效率。在扩大规模的过程中，我们遇到了一个持续的挑战：由于注意力逻辑爆炸导致训练不稳定，在我们的实验中，Muon 更频繁地出现这个问题，而 AdamW 则较少出现这个问题。现有的解决方案（例如 logit 软上限和查询键规范化）被发现不足。</p>
-<p>为了解决这个问题，我们引入了 MuonClip 优化器，它通过我们提出的 qk-clip 技术改进了 Muon。具体来说，qk-clip 通过在 Muon 更新后直接重新调整查询和关键投影的权重矩阵来稳定训练，从而在源头控制注意力逻辑的规模。具体来说，查询和关键投影的缩放比例如下：</p>
+<p>严谨地说，在预训练数据量近似有限、模型配置固定的前提下，token 效率更高的优化器能产生更多智能。我们此前的工作 <a href="https://github.com/MoonshotAI/Moonlight">Moonlight</a> 已经证明，<a href="https://kellerjordan.github.io/posts/muon/">Muon</a> 优化器在 LLM 训练中显著优于广泛使用的 AdamW。</p>
+<p>Kimi K2 的目标是把 Moonlight 进一步做大，后者采用了与 DeepSeek-V3 相似的架构。基于缩放定律分析，我们减少了 head 数量以提升长上下文效率，并提高 MoE 稀疏度以获得更高的 token 效率。在扩大规模的过程中，我们遇到一个持续的难题：注意力 logit 爆炸导致的训练不稳定。在我们的实验里，这个问题在 Muon 上更频繁，在 AdamW 上则较少。已有的方案，例如 logit soft-capping 和 query-key normalization，都不够用。</p>
+<p>为此，我们引入 MuonClip 优化器，用我们提出的 qk-clip 技术改进 Muon。具体来说，qk-clip 在 Muon 更新之后直接重新缩放 query 和 key 投影的权重矩阵，从源头控制注意力 logit 的量级，从而稳定训练。query 和 key 投影的缩放方式如下：</p>
 <p>$q_i = \eta^{\alpha} W_q x_i$</p>
 <p>$k_i = \eta^{1-\alpha} W_k x_i$</p>
-<p>其中 $\alpha$ 是平衡超参数，因此注意力 logit 变为：</p>
+<p>其中 $\alpha$ 是平衡超参数，于是注意力 logit 变为：</p>
 <p>$(\eta^{\alpha} q_i)^\top (\eta^{1-\alpha} k_j) = \eta\, q_i^\top k_j$</p>
-<p>自适应因子$\eta$（阈值$t$）在每一步之后根据该步骤中的最大注意力logit设置：</p>
+<p>自适应因子 $\eta$（阈值为 $t$）在每一步之后根据该步的最大注意力 logit 设定：</p>
 <p>$\eta = \min(\frac{t}{\displaystyle\max_{i,j}\bigl(q_i^\top k_j\bigr)}, 1)$</p>
-<p>其中$t$是预先设定的阈值。这是一种通用技术，可以应用于其他稳定用例。</p>
-<p>我们的实验表明，MuonClip 可以有效防止 logit 爆炸，同时保持下游任务性能。在实践中，Kimi K2 使用 MuonClip 在 15.5T 令牌上进行了零训练峰值的预训练，证明 MuonClip 是稳定、大规模 LLM 训练的稳健解决方案。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/4/2026-07-13/d9af7sff2ena62011o2g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="训练损失 vs 代币：Muon vs AdamW"></p>
-<h4>代理能力</h4>
-<p>Kimi K2增强的代理能力源于两个重要方面——大规模代理数据合成和通用强化学习。</p>
-<p><strong>用于工具使用学习的大规模代理数据合成：</strong> 为了教授模型复杂的工具使用功能，我们开发了一个受 ACEBench 启发的综合管道，可大规模模拟真实世界的工具使用场景。我们的方法系统地发展了数百个包含数千种工具的领域——包括真正的 MCP（模型上下文协议）工具和合成工具——然后生成数百个具有不同工具集的代理。</p>
-<p>所有任务均基于评估标准，从而实现一致的评估。代理与模拟环境和用户代理交互，创建真实的多回合工具使用场景。LLM评委根据任务标准评估模拟结果，筛选高质量的训练数据。这种可扩展的管道生成多样化的高质量数据，为大规模拒绝采样和强化学习铺平了道路。</p>
-<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/4/2026-07-13/d9af7svf2ena62011o3g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K2 代理数据合成工作流程"></p>
-<p><strong>一般强化学习：</strong> 关键挑战是将强化学习应用于具有可验证和不可验证奖励的任务；可验证任务的典型例子是数学和竞赛编码，而撰写研究报告通常被视为不可验证。除了可验证的奖励之外，我们的通用强化学习系统还使用一种自我判断机制，其中模型充当自己的批评者，为不可验证的任务提供可扩展的、基于规则的反馈。</p>
-<p>同时，通过具有可验​​证奖励的on-policy rollout来不断更新critic，使critic不断提高对最新政策的评估准确性。这可以被视为使用可验证奖励来改进对不可验证奖励的估计的一种方式。</p>
-<h3>Kimi K2 入门</h3>
-<h4>在 <a href="https://www.kimi.com/en">kimi.com</a> 上尝试 Kimi K2</h4>
-<p>从今天开始，Kimi 网络和移动用户可以免费选择和使用新的 Kimi K2 型号。目前，我们的 Web 和应用程序 MCP 功能仍在开发中。我们希望在未来几周内开始推出它们。同时，欢迎您尝试我们的研究人员，以尽早了解其代理功能。请注意，Kimi K2 尚不支持视觉功能。</p>
+<p>其中 $t$ 是预先设定的阈值。这是一项通用技术，或许也能用于其他需要稳定化的场景。</p>
+<p>实验表明，MuonClip 能有效防止 logit 爆炸，同时保持下游任务表现。实践中，Kimi K2 用 MuonClip 在 15.5T token 上完成预训练，训练全程零 spike，说明 MuonClip 是稳定开展大规模 LLM 训练的可靠方案。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/4/2026-07-13/d9af7sff2ena62011o2g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="训练损失随 token 的变化：Muon vs AdamW"></p>
+<h4>Agentic 能力</h4>
+<p>Kimi K2 增强的 agentic 能力来自两个重要方面——大规模 agentic 数据合成与通用强化学习。</p>
+<p><strong>面向工具使用学习的大规模 agentic 数据合成：</strong> 为了让模型掌握复杂的工具使用能力，我们搭建了一条受 ACEBench 启发的完整流水线，可规模化地模拟真实世界的工具使用场景。我们的方法系统地演化出数百个包含数千个工具的领域——既有真实的 MCP（Model Context Protocol）工具，也有合成工具——然后生成数百个拥有不同工具集的 agent。</p>
+<p>所有任务都基于 rubric，因而评测可以保持一致。agent 与模拟环境和用户 agent 交互，构造出贴近真实的多轮工具使用场景。由 LLM 担任评委，按任务 rubric 评估仿真结果，筛出高质量训练数据。这条可扩展的流水线产出多样且高质量的数据，为大规模拒绝采样和强化学习铺平了道路。</p>
+<p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/4/2026-07-13/d9af7svf2ena62011o3g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Kimi K2 agentic 数据合成流程"></p>
+<p><strong>通用强化学习：</strong> 关键难题在于把 RL 用到既有可验证奖励、又有不可验证奖励的任务上。可验证任务的典型例子是数学和竞赛编程，而撰写研究报告通常被视为不可验证。我们的通用 RL 系统不局限于可验证奖励，而是采用自我评判机制：模型充当自己的批评者，为不可验证任务提供可扩展、基于 rubric 的反馈。</p>
+<p>与此同时，我们用在策略 rollout（on-policy rollout）配合可验证奖励，持续更新 critic，让 critic 对最新策略的评估准确度不断提升。这可以看作是用可验证奖励来改进对不可验证奖励的估计。</p>
+<h3>Kimi K2 快速上手</h3>
+<h4>在 <a href="https://www.kimi.com/en">kimi.com</a> 上试用 Kimi K2</h4>
+<p>从今天起，Kimi 的网页端和移动端用户都可以免费选用新的 Kimi K2 模型。目前，网页端和应用端的 MCP 功能仍在开发中，我们希望在未来几周内开始逐步开放。在此期间，欢迎你试用我们的 Researcher，抢先感受它的 agentic 能力。请注意，Kimi K2 目前还不支持视觉功能。</p>
 <h4>通过 API 使用 Kimi K2</h4>
-<p>Kimi 平台提供 OpenAI/Anthropic 兼容接口，可让您的现有应用程序轻松适应 Kimi K2。我们鼓励开发人员探索我们的工具调用 API 来构建代理应用程序。详细信息请访问<a href="https://platform.kimi.com/">platform.kimi.com</a>。</p>
-<h4>自行服务 Kimi K2</h4>
-<p>我们建议在以下推理引擎之一上运行 Kimi K2：vLLM、SGLang、KTransformers 或 TensorRT-LLM。有关详细的部署说明，请参阅我们的 <a href="https://github.com/MoonshotAI/Kimi-K2?tab=readme-ov-file#4-deployment">GitHub 存储库</a>。</p>
-<h4>接下来是什么</h4>
-<p>Kimi K2 是开放代理智能的坚实基础，而总代理则使用更高级的功能，例如思维和视觉理解。我们计划将来将这些添加到 Kimi K2 中。</p>
-<h4>限制</h4>
-<p>在我们的内部测试中，我们发现了当前 Kimi K2 型号的一些局限性。当处理困难的推理任务或不明确的工具定义时，模型可能会生成过多的标记，有时会导致输出被截断或工具调用不完整。此外，如果启用工具使用，某些任务的性能可能会下降。构建完整的软件项目时，与在代理框架下使用 K2 相比，一次性提示会导致性能下降。我们正在努力在未来的版本中解决这些问题，并期待更多反馈。</p>]]></content:encoded>
+<p>Kimi 平台提供兼容 OpenAI/Anthropic 的接口，可以很方便地把现有应用迁移到 Kimi K2。我们鼓励开发者探索我们的工具调用 API 来构建 agent 应用。详细信息请访问 <a href="https://platform.kimi.com/">platform.kimi.com</a>。</p>
+<h4>自行部署 Kimi K2</h4>
+<p>我们建议在以下推理引擎之一上运行 Kimi K2：vLLM、SGLang、KTransformers 或 TensorRT-LLM。详细部署说明请参阅我们的 <a href="https://github.com/MoonshotAI/Kimi-K2?tab=readme-ov-file#4-deployment">GitHub 仓库</a>。</p>
+<h4>下一步计划</h4>
+<p>Kimi K2 为开放的 agentic 智能打下了坚实基础，但通用 agent 还需要更高级的能力，例如思考和视觉理解。我们计划在未来为 Kimi K2 补上这些能力。</p>
+<h4>局限</h4>
+<p>在内部测试中，我们发现当前 Kimi K2 模型存在一些局限。面对高难度推理任务或工具定义不清晰时，模型可能生成过多 token，有时会导致输出被截断或工具调用不完整。此外，启用工具使用后，模型在某些任务上的表现可能下降。构建完整软件项目时，一次性提示的效果不如在 agentic 框架下使用 K2。我们正在后续版本中着手解决这些问题，也期待收到更多反馈。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
