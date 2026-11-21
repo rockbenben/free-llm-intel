@@ -1,6 +1,6 @@
 ---
 vendor: tencent_hunyuan
-title: From LR to ELR: A Better Heuristic for Pretraining Dynamics
+title: 从 LR 到 ELR：预训练动态的更好启发式
 original_title: 
 url: https://hunyuan.tencent.com/research/elr
 date: 2026-08-11

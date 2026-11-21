@@ -6,14 +6,6 @@
 ## 订阅入口
 
 - 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
-- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
-- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
-- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
-- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
-- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
-- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
-- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
-- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
 
 ## 全部文章（共 307 篇，按日期倒序；无日期条目列于最后）
 

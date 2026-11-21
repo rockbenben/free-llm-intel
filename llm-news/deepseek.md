@@ -47,7 +47,7 @@
 35. [deepseek-chat](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-12-10)（2024-12-10） <!--orig:deepseek-chat-->
 36. [DeepSeek V2 系列收官，联网搜索上线官网](https://api-docs.deepseek.com/zh-cn/news/news1210)（2024-12-10） <!--orig:DeepSeek-V2.5-1210 发布-->
 37. [DeepSeek推理模型预览版上线，解密o1推理过程](https://api-docs.deepseek.com/zh-cn/news/news1120)（2024-11-20） <!--orig:DeepSeek-R1-Lite 发布-->
-38. [deepseek-coder & deepseek-chat 升级为 DeepSeek V2.5 模型](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-09-05)（2024-09-05） <!--orig:deepseek-coder &amp; deepseek-chat 升级为 DeepSeek V2.5 模型-->
+38. [deepseek-coder & deepseek-chat 升级为 DeepSeek V2.5 模型](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-09-05)（2024-09-05）
 39. [DeepSeek-V2.5：融合通用与代码能力的全新开源模型](https://api-docs.deepseek.com/zh-cn/news/news0905)（2024-09-05） <!--orig:DeepSeek-V2.5 发布-->
 40. [API 上线硬盘缓存技术](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-08-02)（2024-08-02）
 41. [DeepSeek API 创新采用硬盘缓存，价格再降一个数量级](https://api-docs.deepseek.com/zh-cn/news/news0802)（2024-08-02） <!--orig:API 上线硬盘缓存-->

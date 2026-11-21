@@ -19,7 +19,7 @@
 8. [Hyra: 简单有效的科学发现智能体](https://hunyuan.tencent.com/research/hyra)（2026-07-21）
 9. [Hy3 正式发布](https://hunyuan.tencent.com/research/hy3)（2026-07-06）
 10. [Hy-MT2：面向实际应用场景的高性能多语言翻译模型](https://hunyuan.tencent.com/research/100041)（2026-05-21）
-11. [现实生活中环境变得困难](https://hunyuan.tencent.com/research/100039)（2026-04-30） <!--orig:Real life is where context gets hard-->
+11. [现实世界里，上下文才真正变难](https://hunyuan.tencent.com/research/100039)（2026-04-30） <!--orig:Real life is where context gets hard-->
 12. [Hy3 preview : 混元大模型重建的第一步](https://hunyuan.tencent.com/research/hy3-preview)（2026-04-23）
-13. [通过代币级梯度诊断和分层裁剪稳定 RLVR](https://hunyuan.tencent.com/research/100015)（2026-02-13） <!--orig:Stabilizing RLVR via Token-level Gradient Diagnosis and Layerwise Clipping-->
+13. [用 token 级梯度诊断与逐层裁剪稳定 RLVR](https://hunyuan.tencent.com/research/100015)（2026-02-13） <!--orig:Stabilizing RLVR via Token-level Gradient Diagnosis and Layerwise Clipping-->
 14. [从上下文中学习比我们想象的更难](https://hunyuan.tencent.com/research/100025)（2026-02-03） <!--orig:Learning from context is harder than we thought-->
