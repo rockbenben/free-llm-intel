@@ -1,6 +1,6 @@
 ---
 vendor: aws_bedrock
-title: Enable AI agents to pay for AWS Marketplace x402 products with Amazon Bedrock AgentCore payments
+title: 让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款
 original_title: 
 url: https://aws.amazon.com/blogs/machine-learning/enable-ai-agents-to-pay-for-aws-marketplace-x402-products-with-amazon-bedrock-agentcore-payments
 date: 2026-11-19

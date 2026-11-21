@@ -10,7 +10,7 @@
 ## 全部文章（共 185 篇，按日期倒序；无日期条目列于最后）
 
 1. [OpenRouter 现在为 Hugging Face 提供推理支持](https://openrouter.ai/blog/announcements/hugging-face-inference-providers/)（2026-11-16） <!--orig:OpenRouter Now Powers Inference on Hugging Face-->
-2. [更严格的管理密钥访问控制](https://openrouter.ai/blog/announcements/scoped-management-keys/)（2026-11-16） <!--orig:Tighter Access Controls for Management Keys-->
+2. [管理密钥访问控制收紧](https://openrouter.ai/blog/announcements/scoped-management-keys/)（2026-11-16） <!--orig:Tighter Access Controls for Management Keys-->
 3. [RAG 中的 reranking：如何用 reranker 修复错误检索](https://openrouter.ai/blog/tutorials/reranking-rag/)（2026-11-13） <!--orig:Reranking in RAG: How to Fix Bad Retrieval with a Reranker-->
 4. [如何阻止 AI 代理陷入无限循环](https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/)（2026-11-12） <!--orig:How to Stop an AI Agent Stuck in an Infinite Loop-->
 5. [如何对 LLM 进行基准测试](https://openrouter.ai/blog/tutorials/how-to-benchmark-llms/)（2026-11-12） <!--orig:How to Benchmark LLMs-->

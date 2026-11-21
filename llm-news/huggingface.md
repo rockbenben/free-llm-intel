@@ -10,8 +10,8 @@
 
 ## 全部文章（共 940 篇，按日期倒序；无日期条目列于最后）
 
-1. [迎来 Inkling 2 Mini，为本地配置带来前沿性能](https://huggingface.co/blog/inkling2mini)（2026-11-20） <!--orig:Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup-->
-2. [推出 harness adapters：将常用模型适配至专属 harness，以提升性能并优化成本](https://huggingface.co/blog/harness-adapters-at-scale)（2026-11-20） <!--orig:Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost-->
+1. [欢迎 Inkling 2 Mini：为本地部署带来前沿性能](https://huggingface.co/blog/inkling2mini)（2026-11-20） <!--orig:Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup-->
+2. [推出 harness adapters：把常用模型适配到你的 harness，提升性能并优化成本](https://huggingface.co/blog/harness-adapters-at-scale)（2026-11-20） <!--orig:Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost-->
 3. [DaisyRose-27B: Pushing the Frontier of Post-Training Efficiency](https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin)（2026-11-18）
 4. [为什么你的微调工作花费的时间比 FLOP 所说的要长](https://huggingface.co/blog/Dharma-AI/predicting-fine-tuning-time)（2026-11-18） <!--orig:Why your fine-tuning job takes longer than the FLOPs say-->
 5. [Streamhouse 中的时间序列模型：新领域和用例](https://huggingface.co/blog/ibm-research/time-series-powered-streamhouse)（2026-11-18） <!--orig:Time-Series Models in the Streamhouse: A New Frontier and Use Cases-->

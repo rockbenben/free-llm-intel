@@ -10,9 +10,9 @@
 
 ## 全部文章（共 167 篇，按日期倒序；无日期条目列于最后）
 
-1. [Anthropic宣布完成首次公开募股，包括承销商全额行使增购股份选择权，并完成同步私募配售](https://www.anthropic.com/news/ipo-close)（2026-11-20） <!--orig:Anthropic announces closing of initial public offering, including full exercise of underwriters’ option to purchase additional shares, and closing of concurrent private placement-->
-2. [Anthropic确定首次公开募股发行价](https://www.anthropic.com/news/anthropic-prices-initial-public-offering)（2026-11-18） <!--orig:Anthropic prices initial public offering-->
-3. [Claude Platform上的关联计费](https://claude.com/resources/articles/linked-billing-on-claude-platform)（2026-11-17） <!--orig:Linked billing on the Claude Platform-->
+1. [Anthropic 宣布完成 IPO：承销商全额行使超额配售选择权，同步私募配售亦告完成](https://www.anthropic.com/news/ipo-close)（2026-11-20） <!--orig:Anthropic announces closing of initial public offering, including full exercise of underwriters’ option to purchase additional shares, and closing of concurrent private placement-->
+2. [Anthropic 公布 IPO 发行价](https://www.anthropic.com/news/anthropic-prices-initial-public-offering)（2026-11-18） <!--orig:Anthropic prices initial public offering-->
+3. [Claude Platform 上的关联计费](https://claude.com/resources/articles/linked-billing-on-claude-platform)（2026-11-17） <!--orig:Linked billing on the Claude Platform-->
 4. [面向初创公司的 Claude Tag 指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-13） <!--orig:The Claude Tag guide for startups-->
 5. [构建永远在线的 agent](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13） <!--orig:Building always-on agents-->
 6. [在自己的安全边界内运行 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12） <!--orig:Operate Claude Managed Agents inside your security perimeter-->

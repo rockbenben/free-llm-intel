@@ -10,7 +10,7 @@
 ## 全部文章（共 64 篇，按日期倒序；无日期条目列于最后）
 
 1. [Gemini 3.7 Flash：新增功能、基准测试和 API 指南](https://deepinfra.com/blog/gemini-3-7-flash-model-overview-integration-guide)（2026-11-17） <!--orig:Gemini 3.7 Flash: What's New, Benchmarks & API Guide-->
-2. [DeepInfra与Opper AI合作：Opper网关上有100多个模型](https://deepinfra.com/blog/deepinfra-opper-partnership)（2026-11-17） <!--orig:DeepInfra Partners with Opper AI: 100+ Models on the Opper Gateway-->
+2. [DeepInfra 与 Opper AI 合作：Opper 网关接入 100+ 模型](https://deepinfra.com/blog/deepinfra-opper-partnership)（2026-11-17） <!--orig:DeepInfra Partners with Opper AI: 100+ Models on the Opper Gateway-->
 3. [Kimi K3.1 Pro：模型概览、基准测试与 API 指南](https://deepinfra.com/blog/kimi-k3-1-pro-model-overview)（2026-11-17） <!--orig:Kimi K3.1 Pro: Model Overview, Benchmarks & API Guide-->
 4. [最佳 Kimi K3.1 Pro API 提供商（2026）：价格、档位、速度](https://deepinfra.com/blog/best-kimi-k3-1-pro-api-providers)（2026-11-17） <!--orig:Best Kimi K3.1 Pro API Providers (2026): Price, Tiers, Speed-->
 5. [Kimi K3.1 Pro API 基准测试：提供商、速度与成本](https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks)（2026-11-17） <!--orig:Kimi K3.1 Pro API Benchmarks: Providers, Speed & Cost-->

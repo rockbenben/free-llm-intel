@@ -1,6 +1,6 @@
 ---
 vendor: deepinfra
-title: DeepInfra与Opper AI合作：Opper网关上有100多个模型
+title: DeepInfra 与 Opper AI 合作：Opper 网关接入 100+ 模型
 original_title: 
 url: https://deepinfra.com/blog/deepinfra-opper-partnership
 date: 2026-11-17

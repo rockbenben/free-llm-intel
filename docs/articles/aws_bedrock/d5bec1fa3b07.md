@@ -1,6 +1,6 @@
 ---
 vendor: aws_bedrock
-title: Amazon SageMaker HyperPod Global Inference Gateway 简介：跨区域和集群的一个终端节点
+title: Amazon SageMaker HyperPod Global Inference Gateway 简介：一个端点覆盖多个区域与集群
 original_title: 
 url: https://aws.amazon.com/blogs/machine-learning/introducing-amazon-sagemaker-hyperpod-global-inference-gateway-one-endpoint-across-regions-and-clusters
 date: 2026-11-20

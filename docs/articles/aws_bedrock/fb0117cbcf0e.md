@@ -1,6 +1,6 @@
 ---
 vendor: aws_bedrock
-title: 标准银行集团如何自动化生成人工智能的人工智能风险评估
+title: 标准银行集团如何自动化生成式 AI 风险评估
 original_title: 
 url: https://aws.amazon.com/blogs/machine-learning/how-standard-bank-group-automates-ai-risk-assessment-for-generative-ai
 date: 2026-11-20

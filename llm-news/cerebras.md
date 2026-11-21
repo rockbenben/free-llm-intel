@@ -9,7 +9,7 @@
 
 ## 全部文章（共 60 篇，按日期倒序；无日期条目列于最后）
 
-1. [Cerebras 推出分类推理](https://www.cerebras.ai/blog/cerebras-launches-disaggregated-inference) <!--orig:Cerebras launches disaggregated inference >>-->
+1. [Cerebras 推出解耦式推理](https://www.cerebras.ai/blog/cerebras-launches-disaggregated-inference) <!--orig:Cerebras launches disaggregated inference >>-->
 2. [来自我们的 CEO：打造晶圆级需要什么，以及它为何能持续下去](https://www.cerebras.ai/blog/what-it-took-to-build-wafer-scale-and-why-it-lasts) <!--orig:What It Took to Build Wafer-Scale, and Why It Lasts-->
 3. [高级代码，晶圆级性能](https://www.cerebras.ai/blog/high-level-code-wafer-scale-performance) <!--orig:High-level code, wafer-scale performance-->
 4. [如何实现晶圆级良率](https://www.cerebras.ai/blog/how-to-yield-at-wafer-scale) <!--orig:How to Yield at Wafer Scale-->

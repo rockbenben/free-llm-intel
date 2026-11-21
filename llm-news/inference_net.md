@@ -9,7 +9,7 @@
 
 ## 全部文章（共 12 篇，按日期倒序；无日期条目列于最后）
 
-1. [We made vLLM tokenization 120x faster with Elixir](https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/)（2026-11-20）
+1. [我们用 Elixir 把 vLLM 分词提速 120 倍](https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/)（2026-11-20）
 2. [MiniMax M3.1 Flash 在 Inference 上线：Day 0](https://inference.net/blog/minimax-m3-1-flash-day-0/)（2026-10-23） <!--orig:MiniMax M3.1 Flash is live on Inference: Day 0-->
 3. [AutoEvals 简介：自动找到最适合您任务的模型](https://inference.net/blog/introducing-autoevals/)（2026-08-05） <!--orig:Introducing AutoEvals: Automatically find the best model for your task-->
 4. [Schematron V2：以极低成本实现前沿级 HTML 转 JSON 提取](https://inference.net/blog/schematron-v2/)（2026-04-16） <!--orig:Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost-->

@@ -10,9 +10,9 @@
 
 ## 全部文章（共 41 篇，按日期倒序；无日期条目列于最后）
 
-1. [共同推进科学：开源人工智能科学峰会亮点](https://about.fb.com/news/2026/11/advancing-science-together-highlights-from-the-open-source-ai-for-science-summit/)（2026-11-20） <!--orig:Advancing Science Together: Highlights From the Open Source AI For Science Summit-->
+1. [共同推进科学：开源 AI for Science 峰会亮点](https://about.fb.com/news/2026/11/advancing-science-together-highlights-from-the-open-source-ai-for-science-summit/)（2026-11-20） <!--orig:Advancing Science Together: Highlights From the Open Source AI For Science Summit-->
 2. [Meta 欢迎 Loblaw 成为 Muse 首家加拿大零售合作伙伴](https://about.fb.com/news/2026/11/meta-welcomes-loblaw-as-first-canadian-retail-partner-to-muse/)（2026-11-18） <!--orig:Meta Welcomes Loblaw as First Canadian Retail Partner to Muse-->
-3. [Muse 现已在澳大利亚上市：世界上第一个为所有人打造的个人人工智能代理](https://about.fb.com/news/2026/11/muse-is-now-available-in-australia/)（2026-11-17） <!--orig:Muse Is Now Available in Australia: The World’s First Personal AI Agent Built for Everyone-->
+3. [Muse 在澳大利亚上线：全球首款面向所有人的个人 AI agent](https://about.fb.com/news/2026/11/muse-is-now-available-in-australia/)（2026-11-17） <!--orig:Muse Is Now Available in Australia: The World’s First Personal AI Agent Built for Everyone-->
 4. [Meta 的新协议将清洁制造引入数据中心供应链](https://about.fb.com/news/2026/11/meta-new-agreements-clean-manufacturing-data-center-supply-chains/)（2026-11-12） <!--orig:Meta’s New Agreements Bring Clean Manufacturing to Data Center Supply Chains-->
 5. [为你专属定制 Muse 应用](https://about.fb.com/news/2026/11/introducing-spaces-customize-muse-app/)（2026-11-06） <!--orig:Design the Muse App, Just for You-->
 6. [给你的 Muse 一个声音](https://about.fb.com/news/2026/11/introducing-muse-ai-voice-expressive-avatars/)（2026-11-05） <!--orig:Give Your Muse a Voice-->
