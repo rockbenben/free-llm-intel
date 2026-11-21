@@ -1915,11 +1915,69 @@ def extract_articles_from_kimi_blog(page: PageResult,
     return articles
 
 
+def extract_articles_from_sensetime_news(page: PageResult,
+                                      max_items: int = JSON_NEWS_MAX_ITEMS) -> list[Article]:
+    """商汤新闻中心列表页（`www.sensetime.com/cn/news`）—— 卡片里的标题 + 日期。
+
+    为什么单独写：每张卡是**整块 `<a>`**（`class="NewsCenter_card…"`），里面是 `<img>` +
+    标题 `<strong class="…cardTitle">` + 摘要 + `<small><time>2026/11/20</time></small>`；
+    通用提取把这种「一条长锚文本」判成导航/栏目，反而回退到标题+日期合成锚点，
+    实测只出 3 条且 URL 是 `#d-<日期>-<n>`。JSON-LD 的 CollectionPage 只有前 8 条，
+    **也不完整**，故以卡片为准。
+
+    日期取 `<time>` 的**可见文本**（北京时间当天），不取 `dateTime` 属性：后者是 UTC 时刻，
+    深夜发的稿会退到前一天。取不到再退回 URL 尾部的 `-YYYYMMDD-` 段。"""
+    html = page.raw or ""
+    if not html:
+        return []
+    parts = urlparse(page.display_url or page.url)
+    if not parts.scheme or not parts.netloc:
+        return []
+    origin = f"{parts.scheme}://{parts.netloc}"
+    articles: list[Article] = []
+    seen: set[str] = set()
+    card_re = re.compile(
+        r'<a[^>]+class="[^"]*NewsCenter_card[^"]*"[^>]+href="(/cn/news/[^"#?]+)"[^>]*>'
+        r"([\s\S]*?)</a>")
+    for m in card_re.finditer(html):
+        href, inner = m.group(1), m.group(2)
+        m_title = re.search(r"<strong[^>]*>([\s\S]*?)</strong>", inner)
+        if not m_title:
+            continue
+        title = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", m_title.group(1))).strip()
+        if len(title) < 4:
+            continue
+        day = ""
+        t = re.search(r"<time[^>]*>([^<]*)</time>", inner)
+        if t:
+            raw = re.sub(r"[^0-9]", "-", t.group(1).strip()).strip("-")
+            nums = [p for p in raw.split("-") if p]
+            if len(nums) == 3:
+                day = "%04d-%02d-%02d" % (int(nums[0]), int(nums[1]), int(nums[2]))
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
+            day = ""
+        if not day:
+            sm = re.search(r"-(\d{4})(\d{2})(\d{2})-\d{4}$", href)
+            if sm:
+                day = f"{sm.group(1)}-{sm.group(2)}-{sm.group(3)}"
+        url = f"{origin}{href}"
+        if url in seen:
+            continue
+        seen.add(url)
+        articles.append(Article(title=title, url=url,
+                                date=_drop_future_date(day),
+                                source="官方页面", stype=page.stype))
+        if len(articles) >= max_items:
+            break
+    return articles
+
+
 #: 站点私有解析器：host → 提取函数。这些站的卡片没有可用锚点（或标题/日期分居兄弟
 #: 节点），通用链接提取拿到的不是文章：命中 host 先走专用适配器，**拿到 0 条再退回**
 #: 通用逻辑 —— 适配器失败不该让这条源整个空掉。
 _SITE_PAGE_EXTRACTORS = {
     "www.kimi.com": extract_articles_from_kimi_blog,
+    "www.sensetime.com": extract_articles_from_sensetime_news,
 }
 
 
@@ -2869,6 +2927,10 @@ RETIRED_NEWS_URL_PREFIXES: tuple[str, ...] = (
     # ⚠️ 同厂商的账号/模型/定价文档是另外几个路径（docs/guide、docs/models、docs/pricing），
     # 属情报页，不受这条前缀影响。
     "https://platform.kimi.com/docs/changelog",
+    # 商汤 SenseCore「模型服务发布记录」：2026-11-21 从 yaml 移除，改用官网新闻中心
+    # （见 llm-intel.yaml 的 news 源）。这条线最新一条停在 2025-07-23 —— 落后 16 个月，
+    # 商汤的模型发布/合作动态都发在 www.sensetime.com/cn/news。
+    "https://www.sensecore.cn/help/docs/model-as-a-service/nova/release",
 )
 
 

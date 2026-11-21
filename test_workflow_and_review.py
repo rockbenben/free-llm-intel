@@ -7970,6 +7970,86 @@ class TestKimiBlogSource(unittest.TestCase):
             "https://platform.kimi.com/docs/pricing/chat"),
             "同厂商的定价文档是情报页，不能被退役前缀误伤")
 
+class TestSenseTimeNewsSource(unittest.TestCase):
+    """商汤新闻中心（www.sensetime.com/cn/news）—— 卡片锚文本 + `<time>` 日期。
+
+    换源动因（2026-11-21）：原 `updates` 指向 SenseCore 文档「模型服务发布记录」，
+    最新一条停在 2025-07-23（落后 16 个月），商汤的动态都发在官网新闻中心。
+    页内 JSON-LD 的 CollectionPage 只有前 8 条，不完整；卡片才是全量。
+    """
+
+    URL = "https://www.sensetime.com/cn/news"
+
+    @staticmethod
+    def _card(href, title, day="2026-11-20", with_time=True):
+        time_html = (f'<small class="Card_date"><svg></svg><time dateTime="{day}T07:15:33.000Z">'
+                     f'{day.replace("-", "/")}</time></small>') if with_time else ""
+        return (f'<a class="NewsCenter_card__x" href="{href}">'
+                f'<span class="Card_image"><img></span>'
+                f'<span class="Card_body"><strong class="Card_title">{title}</strong>'
+                f'<span class="Card_summary">摘要文字</span>{time_html}</span></a>')
+
+    def _html(self):
+        return ("<html><body><div class=\"NewsCenter_grid\">"
+                + self._card("/cn/news/apec-week-20261120-1525",
+                             "从大国外交现场到城市公共空间，商汤科技亮相APEC领导人会议周")
+                + self._card("/cn/news/sensenova-loop-9b-20261118-1059",
+                             "SenseNova Loop-9B正式版：让更少的参数走更深的计算路径")
+                # 没有 <time> 的卡：日期退回 URL 尾部的 -YYYYMMDD- 段
+                + self._card("/cn/news/old-post-20251101-0900", "一条没有 time 的旧稿",
+                             with_time=False)
+                # 没有标题的卡：不是文章
+                + '<a class="NewsCenter_card__x" href="/cn/news/no-title-20251102-0900">'
+                  "<span class='Card_body'></span></a>"
+                + "</div></body></html>")
+
+    def _page(self, html=None, url=URL):
+        return crawler_llm_intel.PageResult(url=url, stype="news", ok=True,
+                                            final_url=url, raw=self._html() if html is None else html)
+
+    def test_adapter_reads_cards_with_title_and_visible_date(self):
+        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._page())
+        by_url = {a.url: a for a in arts}
+        art = by_url["https://www.sensetime.com/cn/news/apec-week-20261120-1525"]
+        self.assertEqual(art.title, "从大国外交现场到城市公共空间，商汤科技亮相APEC领导人会议周")
+        self.assertEqual(art.date, "2026-11-20")
+        self.assertEqual(art.source, "官方页面")
+
+    def test_date_falls_back_to_the_slug_when_time_is_missing(self):
+        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._page())
+        by_url = {a.url: a for a in arts}
+        self.assertEqual(by_url["https://www.sensetime.com/cn/news/old-post-20251101-0900"].date,
+                         "2025-11-01", "卡片没有 <time> 时用 URL 尾部的 -YYYYMMDD- 段")
+
+    def test_cards_without_a_title_are_not_articles(self):
+        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._page())
+        self.assertNotIn("https://www.sensetime.com/cn/news/no-title-20251102-0900",
+                         [a.url for a in arts])
+
+    def test_missing_markup_returns_empty_so_generic_logic_can_take_over(self):
+        for label, html in (("普通 HTML", "<html><body><h1>新闻</h1></body></html>"),
+                            ("空正文", "")):
+            self.assertEqual(
+                crawler_llm_intel.extract_articles_from_sensetime_news(self._page(html=html)),
+                [], label)
+
+    def test_dispatch_is_host_keyed(self):
+        self.assertTrue(crawler_llm_intel.extract_articles_from_site_page(self._page()))
+        other = crawler_llm_intel.PageResult(url="https://example.com/cn/news", stype="news",
+                                             ok=True, final_url="https://example.com/cn/news",
+                                             raw=self._html())
+        self.assertEqual(crawler_llm_intel.extract_articles_from_site_page(other), [])
+
+    def test_yaml_points_at_the_news_center_and_retires_sensecore(self):
+        root = Path(__file__).resolve().parent
+        _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        news = [s for s in sources if s.get("vendor_id") == "sensetime_sensenova"
+                and (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
+        self.assertEqual([s["url"] for s in news], [self.URL])
+        self.assertEqual(news[0].get("lang"), "zh")
+        self.assertTrue(crawler_llm_intel._is_retired_news_url(
+            "https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#release-202507"))
+
 class TestBackfillOriginalEncoding(unittest.TestCase):
     """`--backfill-orig` 的字符编码：乱码绝不能被当成「英文原文」写进归档。
 

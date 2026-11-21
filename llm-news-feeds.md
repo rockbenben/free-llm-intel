@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 11:55:26**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 12:04:26**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -234,16 +234,16 @@
   - 📄 完整文章归档（共 59 篇）：[cohere.md](llm-news/cohere.md)
 
 ### 商汤 日日新 (sensetime_sensenova)
-- 页面：[更新日志](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release)
+- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-sensetime_sensenova.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-sensetime_sensenova.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [【模型更新】发布最新版本日日新-融合模态模型SenseNova-V6.5-Pro、SenseNova-V6.5-Turbo](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#%E6%A8%A1%E5%9E%8B%E6%9B%B4%E6%96%B0%E5%8F%91%E5%B8%83%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E6%97%A5%E6%97%A5%E6%96%B0-%E8%9E%8D%E5%90%88%E6%A8%A1%E6%80%81%E6%A8%A1%E5%9E%8Bsensenova-v65-prosensenova-v65-turbo)（2025-07-23）
-  2. [【模型更新】发布最新版本日日新-语音大模型-语音合成（音色融合）](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#%E6%A8%A1%E5%9E%8B%E6%9B%B4%E6%96%B0%E5%8F%91%E5%B8%83%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E6%97%A5%E6%97%A5%E6%96%B0-%E8%AF%AD%E9%9F%B3%E5%A4%A7%E6%A8%A1%E5%9E%8B-%E8%AF%AD%E9%9F%B3%E5%90%88%E6%88%90%E9%9F%B3%E8%89%B2%E8%9E%8D%E5%90%88)（2025-06-03）
-  3. [【模型更新】发布最新版本日日新-融合模态模型SenseNova-V6-Pro、SenseNova-V6-Reasoner、SenseNova-V6-Turbo](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#%E6%A8%A1%E5%9E%8B%E6%9B%B4%E6%96%B0%E5%8F%91%E5%B8%83%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E6%97%A5%E6%97%A5%E6%96%B0-%E8%9E%8D%E5%90%88%E6%A8%A1%E6%80%81%E6%A8%A1%E5%9E%8Bsensenova-v6-prosensenova-v6-reasonersensenova-v6-turbo)（2025-04-09）
-  4. [【模型更新】发布最新版本日日新-大语言模型SenseChat-5-1202、SenseChat-Turbo-1202](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#%E6%A8%A1%E5%9E%8B%E6%9B%B4%E6%96%B0%E5%8F%91%E5%B8%83%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E6%97%A5%E6%97%A5%E6%96%B0-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8Bsensechat-5-1202sensechat-turbo-1202)（2024-12-30）
-  5. [【功能更新】OpenAPI全面支持通过API Key调用](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#%E5%8A%9F%E8%83%BD%E6%9B%B4%E6%96%B0openapi%E5%85%A8%E9%9D%A2%E6%94%AF%E6%8C%81%E9%80%9A%E8%BF%87api-key%E8%B0%83%E7%94%A8)（2024-10-30）
-  - 📄 完整文章归档（共 18 篇）：[sensetime_sensenova.md](llm-news/sensetime_sensenova.md)
+  1. [从大国外交现场到城市公共空间，商汤科技亮相APEC领导人会议周](https://www.sensetime.com/cn/news/sensetime-apec-leaders-week-20261120-1525)（2026-11-20）
+  2. [商汤小浣熊·金融版正式推出，深化AI在金融行业的场景化应用](https://www.sensetime.com/cn/news/sensetime-raccoon-finance-20261119-1522)（2026-11-19）
+  3. [SenseNova U1 Pro 获 Design Arena 双榜中国第一、全球第六](https://www.sensetime.com/cn/news/sensenova-u1-pro-design-arena-20261119-1414)（2026-11-19）
+  4. [商汤发布2026前三季度业务进展：收入增长加速、毛利率持续改善、全栈AI商业化提速](https://www.sensetime.com/cn/news/sensetime-flash-20261118-1821)（2026-11-18）
+  5. [科技赋能文博：南京博物院 × 商汤，在VR大空间打开《坤舆万国全图》](https://www.sensetime.com/cn/news/nanjing-museum-sensetime-vr-kunyu-map-20261118-1017)（2026-11-17）
+  - 📄 完整文章归档（共 12 篇）：[sensetime_sensenova.md](llm-news/sensetime_sensenova.md)
 
 ### Meta Llama (meta_llama)
 - 页面：[官方博客](https://ai.meta.com/blog/)
