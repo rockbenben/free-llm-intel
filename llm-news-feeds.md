@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 12:12:10**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 12:43:40**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -243,7 +243,7 @@
   3. [SenseNova U1 Pro 获 Design Arena 双榜中国第一、全球第六](https://www.sensetime.com/cn/news/sensenova-u1-pro-design-arena-20261119-1414)（2026-11-19）
   4. [商汤发布2026前三季度业务进展：收入增长加速、毛利率持续改善、全栈AI商业化提速](https://www.sensetime.com/cn/news/sensetime-flash-20261118-1821)（2026-11-18）
   5. [科技赋能文博：南京博物院 × 商汤，在VR大空间打开《坤舆万国全图》](https://www.sensetime.com/cn/news/nanjing-museum-sensetime-vr-kunyu-map-20261118-1017)（2026-11-17）
-  - 📄 完整文章归档（共 12 篇）：[sensetime_sensenova.md](llm-news/sensetime_sensenova.md)
+  - 📄 完整文章归档（共 307 篇）：[sensetime_sensenova.md](llm-news/sensetime_sensenova.md)
 
 ### Meta Llama (meta_llama)
 - 页面：[官方博客](https://ai.meta.com/blog/)

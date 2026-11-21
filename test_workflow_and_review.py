@@ -8040,6 +8040,43 @@ class TestSenseTimeNewsSource(unittest.TestCase):
                                              raw=self._html())
         self.assertEqual(crawler_llm_intel.extract_articles_from_site_page(other), [])
 
+    # ---- 分页接口：列表页只给第一屏，历史在 /api/news ----
+
+    def _api_page(self, items, url="https://www.sensetime.com/api/news?locale=zh-CN&page=1&pageSize=100"):
+        body = json.dumps({"items": items, "page": 1, "pageSize": 100,
+                           "pageCount": 8, "total": 779}, ensure_ascii=False)
+        return crawler_llm_intel.PageResult(
+            url=url, stype="news", ok=True, final_url=url, raw=body,
+            display_url=self.URL)
+
+    def test_api_pages_supply_history_beyond_the_first_screen(self):
+        items = [{"title": "商汤发布2026前三季度业务进展",
+                  "slug": "sensetime-flash-20261118-1821",
+                  "releaseDate": "2026-11-18T10:21:00.000Z"}]
+        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._api_page(items))
+        self.assertEqual(len(arts), 1)
+        self.assertEqual(arts[0].url,
+                         "https://www.sensetime.com/cn/news/sensetime-flash-20261118-1821")
+        self.assertEqual(arts[0].title, "商汤发布2026前三季度业务进展")
+        self.assertEqual(arts[0].date, "2026-11-18")
+        self.assertEqual(arts[0].source, "官方接口")
+
+    def test_api_history_is_cut_at_the_json_news_window(self):
+        items = [
+            {"title": "窗口内的一条", "slug": "fresh-20260101-0000",
+             "releaseDate": "2026-01-01T00:00:00.000Z"},
+            # 2017 年的公司新闻：779 条里这类占一半，按 730 天窗口丢
+            {"title": "2017 年的一条旧闻", "slug": "old-20170724-0000",
+             "releaseDate": "2017-07-24T00:00:00.000Z"},
+            {"title": "", "slug": "no-title", "releaseDate": "2026-01-01"},
+        ]
+        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._api_page(items))
+        self.assertEqual([a.url.rsplit("/", 1)[-1] for a in arts], ["fresh-20260101-0000"])
+
+    def test_html_page_still_parses_cards_when_the_api_is_absent(self):
+        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._page())
+        self.assertTrue(arts, "没有 api 时仍走卡片解析")
+
     def test_yaml_points_at_the_news_center_and_retires_sensecore(self):
         root = Path(__file__).resolve().parent
         _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
@@ -8047,6 +8084,9 @@ class TestSenseTimeNewsSource(unittest.TestCase):
                 and (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
         self.assertEqual([s["url"] for s in news], [self.URL])
         self.assertEqual(news[0].get("lang"), "zh")
+        # 历史靠分页接口补：模板必须带 {page}，页数写死为正整数
+        self.assertIn("{page}", news[0].get("api") or "")
+        self.assertGreaterEqual(int(news[0].get("api_pages") or 0), 2)
         self.assertTrue(crawler_llm_intel._is_retired_news_url(
             "https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#release-202507"))
 

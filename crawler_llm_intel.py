@@ -2000,6 +2000,35 @@ def extract_articles_from_sensetime_news(page: PageResult,
     if not parts.scheme or not parts.netloc:
         return []
     origin = f"{parts.scheme}://{parts.netloc}"
+    # 分页接口（`/api/news`）：列表页只渲染第一屏，历史页只能走它。形状是
+    # `{items:[{title, slug, releaseDate, …}], page, pageSize, pageCount, total}`，
+    # 实测 779 条、2017 年至今。逐条按 `JSON_NEWS_WINDOW_DAYS` 截断 —— 与 AI21 同口径：
+    # 更早的公司新闻对「现在能白嫖到什么」没有订阅价值（730 天内 310 条、全量 779 条）。
+    body = html.lstrip()
+    if body.startswith("{"):
+        try:
+            data = json.loads(body)
+        except ValueError:
+            return []
+        items = data.get("items") if isinstance(data, dict) else None
+        if not isinstance(items, list):
+            return []
+        cutoff = (datetime.now() - timedelta(days=JSON_NEWS_WINDOW_DAYS)).strftime("%Y-%m-%d")
+        api_articles: list[Article] = []
+        for item in items[:max_items]:
+            if not isinstance(item, dict):
+                continue
+            title = re.sub(r"\s+", " ", str(item.get("title") or "")).strip()
+            slug = str(item.get("slug") or "").strip().strip("/")
+            if len(title) < 4 or not slug:
+                continue
+            day = _drop_future_date(str(item.get("releaseDate") or "")[:10])
+            if day and day < cutoff:
+                continue
+            api_articles.append(Article(
+                title=title, url=f"{origin}/cn/news/{slug}", date=day,
+                source="官方接口", stype=page.stype))
+        return api_articles
     articles: list[Article] = []
     seen: set[str] = set()
     for href, inner in _anchor_blocks(html, "NewsCenter_card"):
@@ -3114,12 +3143,14 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
 
     # 3.5) JSON 数据接口（页面纯前端渲染、官方又无 RSS 的站点，如千问 qwen.ai/research、
     #      AI21 的 WordPress wp-json）。
+    #      站点适配器排在最后：分页接口也是 JSON（商汤 `/api/news`），由 host 适配器认领。
     for page in intel.news_pages:
         if page.ok and json_api_body(page):
             # 已知形状各试一次，谁认得出来用谁（形状不符的返回空列表）
             _add(extract_articles_from_json(page)
                  or extract_articles_from_hunyuan(page)
-                 or extract_articles_from_wordpress(page))
+                 or extract_articles_from_wordpress(page)
+                 or extract_articles_from_site_page(page))
 
     # 4) 同日去重：更新日志列表页里的日期锚点（如 DeepSeek /updates/#时间-2026-09-10）
     #    与对应新闻详情页（/news/<slug>）指向同一次发布时，保留详情页、丢弃锚点；
@@ -3391,6 +3422,30 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
         # llm-news-feeds.md 的「订阅入口」）印它，不印接口长串。
         page.display_url = src.get("page") or ""
         target.append(page)
+        # 分页接口补历史：列表页是前端翻页、静态只给第一屏的源（商汤新闻中心 779 条、
+        # 首页只渲染 12 条），用 `api` 模板 + `api_pages` 把历史页一起取回来。
+        # `{page}` 从 1 开始替换；某一页失败或为空就停（后面的页只会更旧）。
+        api_tmpl = (src.get("api") or "").strip()
+        try:
+            api_pages = int(src.get("api_pages") or 0)
+        except (TypeError, ValueError):
+            api_pages = 0
+        if api_tmpl and api_pages > 0 and "{page}" in api_tmpl and stype in NEWS_TYPES:
+            got = 0
+            for pno in range(1, api_pages + 1):
+                api_url = api_tmpl.replace("{page}", str(pno))
+                api_page = fetch_url(session, api_url, stype, browser=None,
+                                     timeout=timeout, lang=src.get("lang") or "",
+                                     locale_cookie=(src.get("locale_cookie") or "").strip())
+                api_page.display_url = src.get("page") or url
+                if not api_page.ok or not (api_page.raw or "").strip():
+                    break
+                target.append(api_page)
+                got += 1
+                if delay:
+                    time.sleep(delay)
+            if got:
+                print(f"    [{'分页接口':<16}] ok {' ' * 19} {api_tmpl.replace('{page}', '1..%d' % got)}")
         if page.ok:
             via = "🌐browser" if page.rendered_by == "browser" else "ok"
             extra = " (内容过少)" if page.sparse else ""

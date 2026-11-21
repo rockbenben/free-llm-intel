@@ -112,6 +112,12 @@ python test_workflow_and_review.py             # ④ 门禁（含「SVG 与 GUID
 
 ## 其它硬规矩
 
+- **换源要带历史**：新增或替换「动态源」时，先把该源的往期条目**尽量回捞**再收工——
+  列表分页、官方接口、站点归档都算，别让归档从今天开始。列表页是前端翻页的，在 yaml 源里
+  加 `api`（`{page}` 从 1 替换）+ `api_pages`，见 `sensetime_sensenova`（首页只渲染 12 条，
+  `/api/news` 有 779 条历史）；只能拿到第一屏又没有接口的，把「为什么取不到历史」写进源注释。
+  历史量沿用 AI21 的口径（`JSON_NEWS_WINDOW_DAYS` = 730 天）截断：把公司 2017 年的旧闻
+  灌进订阅流没有价值，要全量就显式调大窗口。
 - **push 前先问**（用户惯例）；推语料可能触发 GitHub secret-scanning 对抓取正文里
   示例 token 的误报，需要用户在浏览器点 unblock-Allow URL（`gh api` 点前是空的）。
 - 抓取/翻译**绝不编造**：抓不到记 `fetch_failed`、正文留空；目录页/链接列表记

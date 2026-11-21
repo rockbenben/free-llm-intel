@@ -937,10 +937,17 @@ sources:
   # 故用站点适配器按卡片取 `cardTitle` + `<time>`（见 `extract_articles_from_sensetime_news`）。
   # 日期取 `<time>` 的可见文本（北京时间发布日），不取 `dateTime` 属性（UTC 时刻会退一天）。
   # 实测首页 12 条，2026-11-04 ~ 2026-11-20。
+  # 分页接口补历史：列表页是前端翻页（静态只渲染第一屏 12 条），历史在
+  # `/api/news` 后面 —— 实测 total 779 条、pageCount 8（pageSize 上限 100），最早 2017-07。
+  # 逐页取回后由适配器按 `JSON_NEWS_WINDOW_DAYS`（730 天）截断：730 天内 310 条，
+  # 更早的公司新闻对「现在能白嫖到什么」没有订阅价值（同 AI21 的口径）。要收全量把
+  # api_pages 保留、窗口调大即可；`{page}` 从 1 开始替换，某页失败或为空即停。
   - vendor_id: sensetime_sensenova
     type: news
     lang: zh
     url: https://www.sensetime.com/cn/news
+    api: "https://www.sensetime.com/api/news?locale=zh-CN&page={page}&pageSize=100"
+    api_pages: 8
 
   # SiliconFlow
   - vendor_id: siliconflow
