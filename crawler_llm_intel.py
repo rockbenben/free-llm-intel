@@ -3898,7 +3898,9 @@ def update_readme(path: Path, section: str, guide_section: str = "") -> bool:
             head = head.rstrip("\n") + "\n\n" + guide_section + "\n\n"
         # 2) 情报总表整块替换；END 之后的人工尾部保留
         tail = old[old.find(README_END) + len(README_END):]
-        new = head + section + tail
+        # section 末尾自带 '\n'，而人工尾部 tail 通常以 '\n\n' 开头；
+        # 直接拼接每跑一次就会在 END 后多叠一行空行（实测曾滚到 85 行）。
+        new = head + (section.rstrip("\n") + tail if tail.startswith("\n") else section + tail)
     if _mask_ts(new) == _mask_ts(old):
         return False
     path.write_text(new, encoding="utf-8", newline="\n")

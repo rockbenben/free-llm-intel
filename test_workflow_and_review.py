@@ -6608,6 +6608,21 @@ class TestIntelChangesFeed(unittest.TestCase):
         self.assertNotIn("旧表", new)
         self.assertTrue(new.endswith(tail.lstrip("\n")), "人工尾部必须原样保留")
 
+    def test_update_readme_does_not_accumulate_blank_lines(self):
+        """连续刷新 README 时，INTEL END 与人工尾部之间不得反复叠空行。"""
+        path = self.root / "README.md"
+        tail = "\n\n## 仓库结构\n\n表\n"
+        path.write_text(
+            "头部\n\n" + crawler_llm_intel.README_BEGIN + "\n旧表\n"
+            + crawler_llm_intel.README_END + tail, encoding="utf-8")
+        for label in ("第一版", "第二版", "第三版"):
+            crawler_llm_intel.update_readme(
+                path, crawler_llm_intel.README_BEGIN + f"\n{label}\n"
+                + crawler_llm_intel.README_END + "\n", guide_section="")
+        new = path.read_text(encoding="utf-8")
+        self.assertIn(crawler_llm_intel.README_END + "\n\n## 仓库结构", new)
+        self.assertNotIn(crawler_llm_intel.README_END + "\n\n\n", new)
+
 
 class TestLocalReviewChannel(unittest.TestCase):
     """本地 AI 核查通道（--review-export / --review-apply）：与远端共用证据闸门。"""
