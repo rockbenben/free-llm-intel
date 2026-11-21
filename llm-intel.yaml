@@ -927,27 +927,15 @@ sources:
   - vendor_id: moss
     type: rate_limits
     url: https://platform.moss.cn/docs/errors-and-limits/limits
-  # 新闻中心（2026-11-21 换源）：原 `updates` 指向 SenseCore 文档的「模型服务发布
-  # 记录」—— 那条线**早已停更**（归档 19 条，最新 2025-07-23，落后 16 个月），
-  # 新的模型与开发者服务动态见官网新闻中心。集团新闻混有财报、展会、奖项与案例，
-  # 巡检和归档合并统一用 `_keeps_sensenova_news` 筛选模型发布、开源、API 与额度更新。
-  #
-  # 页面上每张卡是整块 `<a class="NewsCenter_card…">`（图片 + 标题 + 摘要 + 日期），
-  # 通用链接提取把这条长锚文本判成导航、回退到「标题+日期」合成锚点（实测只出 3 条，
-  # URL 是 `#d-<日期>-<n>`）；页内 JSON-LD 的 `CollectionPage` 又只有前 8 条，不完整。
-  # 故用站点适配器按卡片取 `cardTitle` + `<time>`（见 `extract_articles_from_sensetime_news`）。
-  # 日期取 `<time>` 的可见文本（北京时间发布日），不取 `dateTime` 属性（UTC 时刻会退一天）。
-  # 实测首页 12 条，2026-11-04 ~ 2026-11-20。
-  # 分页接口补历史：列表页是前端翻页（静态只渲染第一屏 12 条），历史在
-  # `/api/news` 后面 —— 实测 total 779 条、pageCount 8（pageSize 上限 100），最早 2017-07。
-  # 逐页取回后由适配器按 `JSON_NEWS_WINDOW_DAYS`（730 天）截断，再按日日新收录范围过滤。
-  # `{page}` 从 1 开始替换，某页失败或为空即停。
+  # 日日新官网指向 OpenSenseNova 开源仓库，模型权重由同名 Hugging Face 官方账号发布。
+  # 官方模型清单接入时共 44 个仓库，接口无后续页；回捞 730 天内有模型卡和权重的记录。
+  # 仓库创建日作为排序日期。停抓集团新闻中心，曾核实的开发者公告留在归档。
+  # 闭源模型和额度不一定出现于此，免费额度继续巡检上方官方 Token Plan 页。
   - vendor_id: sensetime_sensenova
-    type: news
-    lang: zh
-    url: https://www.sensetime.com/cn/news
-    api: "https://www.sensetime.com/api/news?locale=zh-CN&page={page}&pageSize=100"
-    api_pages: 8
+    type: model_registry
+    lang: en
+    url: "https://huggingface.co/api/models?author=sensenova&full=true"
+    page: https://huggingface.co/sensenova
 
   # SiliconFlow
   - vendor_id: siliconflow

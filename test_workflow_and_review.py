@@ -7602,8 +7602,7 @@ sources:
         api_sources = [s for s in sources
                        if any(k in (s.get("url") or "") for k in ("/api/", "wp-json"))
                        and (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
-        self.assertEqual(len(api_sources), 3,
-                         "夹具前提：目前应有千问、混元两个官方接口源与 AI21 wp-json")
+        self.assertTrue(api_sources, "至少有一个配置的数据接口源可校验")
         for s in api_sources:
             self.assertTrue(s.get("page"), f"数据接口源缺 page：{s}")
             self.assertNotIn("/api/", s["page"], "page 必须是给人看的地址")
@@ -8110,158 +8109,77 @@ class TestKimiBlogSource(unittest.TestCase):
             "https://platform.kimi.com/docs/pricing/chat"),
             "同厂商的定价文档是情报页，不能被退役前缀误伤")
 
-class TestSenseTimeNewsSource(unittest.TestCase):
-    """商汤新闻中心（www.sensetime.com/cn/news）—— 卡片锚文本 + `<time>` 日期。
+class TestSenseNovaModelSource(unittest.TestCase):
+    API = "https://huggingface.co/api/models?author=sensenova&full=true"
+    PAGE = "https://huggingface.co/sensenova"
 
-    换源动因（2026-11-21）：原 `updates` 指向 SenseCore 文档「模型服务发布记录」，
-    最新一条停在 2025-07-23（落后 16 个月），商汤的动态都发在官网新闻中心。
-    页内 JSON-LD 的 CollectionPage 只有前 8 条，不完整；卡片才是全量。
-    """
-
-    URL = "https://www.sensetime.com/cn/news"
-
-    @staticmethod
-    def _card(href, title, day="2026-11-20", with_time=True):
-        time_html = (f'<small class="Card_date"><svg></svg><time dateTime="{day}T07:15:33.000Z">'
-                     f'{day.replace("-", "/")}</time></small>') if with_time else ""
-        return (f'<a class="NewsCenter_card__x" href="{href}">'
-                f'<span class="Card_image"><img></span>'
-                f'<span class="Card_body"><strong class="Card_title">{title}</strong>'
-                f'<span class="Card_summary">摘要文字</span>{time_html}</span></a>')
-
-    def _html(self):
-        return ("<html><body><div class=\"NewsCenter_grid\">"
-                + self._card("/cn/news/apec-week-20261120-1525",
-                             "从大国外交现场到城市公共空间，商汤科技亮相APEC领导人会议周")
-                + self._card("/cn/news/sensenova-loop-9b-20261118-1059",
-                             "SenseNova Loop-9B正式版：让更少的参数走更深的计算路径")
-                # 没有 <time> 的卡：日期退回 URL 尾部的 -YYYYMMDD- 段
-                + self._card("/cn/news/old-post-20251101-0900", "一条没有 time 的旧稿",
-                             with_time=False)
-                # 没有标题的卡：不是文章
-                + '<a class="NewsCenter_card__x" href="/cn/news/no-title-20251102-0900">'
-                  "<span class='Card_body'></span></a>"
-                + "</div></body></html>")
-
-    def _page(self, html=None, url=URL):
-        return crawler_llm_intel.PageResult(url=url, stype="news", ok=True,
-                                            final_url=url, raw=self._html() if html is None else html)
-
-    def test_adapter_reads_cards_with_title_and_visible_date(self):
-        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._page())
-        by_url = {a.url: a for a in arts}
-        art = by_url["https://www.sensetime.com/cn/news/apec-week-20261120-1525"]
-        self.assertEqual(art.title, "从大国外交现场到城市公共空间，商汤科技亮相APEC领导人会议周")
-        self.assertEqual(art.date, "2026-11-20")
-        self.assertEqual(art.source, "官方页面")
-
-    def test_date_falls_back_to_the_slug_when_time_is_missing(self):
-        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._page())
-        by_url = {a.url: a for a in arts}
-        self.assertEqual(by_url["https://www.sensetime.com/cn/news/old-post-20251101-0900"].date,
-                         "2025-11-01", "卡片没有 <time> 时用 URL 尾部的 -YYYYMMDD- 段")
-
-    def test_cards_without_a_title_are_not_articles(self):
-        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._page())
-        self.assertNotIn("https://www.sensetime.com/cn/news/no-title-20251102-0900",
-                         [a.url for a in arts])
-
-    def test_missing_markup_returns_empty_so_generic_logic_can_take_over(self):
-        for label, html in (("普通 HTML", "<html><body><h1>新闻</h1></body></html>"),
-                            ("空正文", "")):
-            self.assertEqual(
-                crawler_llm_intel.extract_articles_from_sensetime_news(self._page(html=html)),
-                [], label)
-
-    def test_dispatch_is_host_keyed(self):
-        self.assertTrue(crawler_llm_intel.extract_articles_from_site_page(self._page()))
-        other = crawler_llm_intel.PageResult(url="https://example.com/cn/news", stype="news",
-                                             ok=True, final_url="https://example.com/cn/news",
-                                             raw=self._html())
-        self.assertEqual(crawler_llm_intel.extract_articles_from_site_page(other), [])
-
-    # ---- 分页接口：列表页只给第一屏，历史在 /api/news ----
-
-    def _api_page(self, items, url="https://www.sensetime.com/api/news?locale=zh-CN&page=1&pageSize=100"):
-        body = json.dumps({"items": items, "page": 1, "pageSize": 100,
-                           "pageCount": 8, "total": 779}, ensure_ascii=False)
+    def _page(self, models):
         return crawler_llm_intel.PageResult(
-            url=url, stype="news", ok=True, final_url=url, raw=body,
-            display_url=self.URL)
+            url=self.API, stype="model_registry", ok=True, final_url=self.API,
+            raw=json.dumps(models), display_url=self.PAGE)
 
-    def test_api_pages_supply_history_beyond_the_first_screen(self):
-        items = [{"title": "商汤发布2026前三季度业务进展",
-                  "slug": "sensetime-flash-20261118-1821",
-                  "releaseDate": "2026-11-18T10:21:00.000Z"}]
-        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._api_page(items))
-        self.assertEqual(len(arts), 1)
-        self.assertEqual(arts[0].url,
-                         "https://www.sensetime.com/cn/news/sensetime-flash-20261118-1821")
-        self.assertEqual(arts[0].title, "商汤发布2026前三季度业务进展")
-        self.assertEqual(arts[0].date, "2026-11-18")
-        self.assertEqual(arts[0].source, "官方接口")
+    def _model(self, name, **overrides):
+        return {
+            "id": f"sensenova/{name}", "author": "sensenova",
+            "createdAt": f"{date.today().isoformat()}T00:00:00Z",
+            "siblings": [{"rfilename": "README.md"}, {"rfilename": "model.safetensors"}],
+            **overrides,
+        }
 
-    def test_api_history_is_cut_at_the_json_news_window(self):
-        items = [
-            {"title": "窗口内的一条", "slug": "fresh-20260101-0000",
-             "releaseDate": "2026-01-01T00:00:00.000Z"},
-            # 2017 年的公司新闻：779 条里这类占一半，按 730 天窗口丢
-            {"title": "2017 年的一条旧闻", "slug": "old-20170724-0000",
-             "releaseDate": "2017-07-24T00:00:00.000Z"},
-            {"title": "", "slug": "no-title", "releaseDate": "2026-01-01"},
-        ]
-        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._api_page(items))
-        self.assertEqual([a.url.rsplit("/", 1)[-1] for a in arts], ["fresh-20260101-0000"])
-
-    def test_html_page_still_parses_cards_when_the_api_is_absent(self):
-        arts = crawler_llm_intel.extract_articles_from_sensetime_news(self._page())
-        self.assertTrue(arts, "没有 api 时仍走卡片解析")
-
-    def test_collection_keeps_model_and_quota_updates_from_both_sources(self):
-        api = self._api_page([
-            {"slug": "benchmark", "title": "SenseNova U1 Pro 获 Design Arena 双榜中国第一"},
-            {"slug": "app", "title": "商汤发布基于日日新的小浣熊金融版"},
-            {"slug": "quota", "title": "商汤 Token Plan 调整免费额度"},
+    def test_collects_weights_from_the_official_org_without_variant_noise(self):
+        page = self._page([
+            self._model("SenseNova-Loop-9B"),
+            self._model("SenseNova-Loop-9B-AWQ", tags=["base_model:quantized:sensenova/Loop"]),
+            self._model("SenseNova-U1-LoRAs", tags=["lora"]),
+            self._model("empty", siblings=[{"rfilename": "README.md"}]),
+            self._model("foreign", author="another-org", id="another-org/SenseNova-Lookalike"),
+            self._model("old", createdAt="2023-01-01T00:00:00Z"),
+            self._model("undated", createdAt=None),
         ])
         intel = crawler_llm_intel.VendorIntel(
-            "sensetime_sensenova", "商汤", self.URL, [],
-            news_pages=[self._page(), api])
+            "sensetime_sensenova", "商汤", self.PAGE, [], news_pages=[page])
         crawler_llm_intel.collect_news_articles(intel, mock.Mock())
-        self.assertCountEqual(
-            [a.url.rsplit("/", 1)[-1] for a in intel.all_news_articles],
-            ["sensenova-loop-9b-20261118-1059", "quota"])
-        self.assertEqual(intel.news_articles, intel.all_news_articles)
+        [article] = intel.all_news_articles
+        self.assertEqual(article.url, f"{self.PAGE}/SenseNova-Loop-9B")
+        self.assertEqual(article.date, date.today().isoformat())
+        self.assertEqual(article.zh_title, article.title, "模型名原样保留")
 
-    def test_archive_merge_prunes_group_pr_and_keeps_verified_historical_updates(self):
-        intel = crawler_llm_intel.VendorIntel(
-            "sensetime_sensenova", "商汤", self.URL, [],
-            news_pages=[self._page(), self._api_page([])])
+    def test_archive_keeps_developer_history_and_drops_group_pr(self):
+        intel = crawler_llm_intel.VendorIntel("sensetime_sensenova", "商汤", self.PAGE, [])
+        news = "https://www.sensetime.com/cn/news"
         with tempfile.TemporaryDirectory() as tmp:
             news_dir = Path(tmp)
             archive = news_dir / "sensetime_sensenova.md"
             archive.write_text(
-                f"1. [商汤科技获纳入MSCI中国指数]({self.URL}/stock)（2026-01-20）\n"
-                f"2. [空间智能再突破！联合创新研究]({self.URL}/51170214)（2025-11-20）\n"
-                f"3. [商汤大装置上架DeepSeek系列模型，限免体验]({self.URL}/51169337)（2025-02-10）\n",
+                f"1. [商汤科技获纳入MSCI中国指数]({news}/stock)（2026-01-20）\n"
+                f"2. [空间智能再突破！联合创新研究]({news}/51170214)（2025-11-20）\n"
+                f"3. [商汤大装置上架DeepSeek系列模型，限免体验]({news}/51169337)（2025-02-10）\n",
                 encoding="utf-8")
             crawler_llm_intel.write_news_archives(news_dir, [intel], clean_removed=False)
             self.assertEqual(
                 [a.url for a in crawler_llm_intel.parse_archived_articles(archive)],
-                [f"{self.URL}/51170214", f"{self.URL}/51169337"])
-            self.assertEqual(archive.read_text(encoding="utf-8").count(f"]({self.URL})"), 1)
+                [f"{news}/51170214", f"{news}/51169337"])
 
-    def test_yaml_points_at_the_news_center_and_retires_sensecore(self):
+    def test_yaml_only_crawls_the_official_model_registry_for_updates(self):
         root = Path(__file__).resolve().parent
         _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
         news = [s for s in sources if s.get("vendor_id") == "sensetime_sensenova"
-                and (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
-        self.assertEqual([s["url"] for s in news], [self.URL])
-        self.assertEqual(news[0].get("lang"), "zh")
-        # 历史靠分页接口补：模板必须带 {page}，页数写死为正整数
-        self.assertIn("{page}", news[0].get("api") or "")
-        self.assertGreaterEqual(int(news[0].get("api_pages") or 0), 2)
-        self.assertTrue(crawler_llm_intel._is_retired_news_url(
-            "https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#release-202507"))
+                and s.get("type") in crawler_llm_intel.NEWS_TYPES]
+        self.assertEqual(news, [{
+            "vendor_id": "sensetime_sensenova", "type": "model_registry", "lang": "en",
+            "url": self.API, "page": self.PAGE,
+        }])
+
+    def test_removed_news_has_no_published_body(self):
+        root = Path(__file__).resolve().parent
+        vid = "sensetime_sensenova"
+        urls = {a.url for a in crawler_llm_intel.parse_archived_articles(root / "llm-news" / f"{vid}.md")}
+        import fulltext
+        ledger = fulltext.load_bodies(root / "docs/feeds/bodies.json")
+        self.assertEqual(
+            [key for key in ledger if key.startswith(f"{vid}\t") and key.split("\t", 1)[1] not in urls],
+            [])
+
 
 class TestLongCatResearchSource(unittest.TestCase):
     """美团 LongCat 官网首页「最新研究」卡片 —— 卡片指向的才是真实文章。

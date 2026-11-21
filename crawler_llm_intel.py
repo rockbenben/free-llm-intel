@@ -138,7 +138,7 @@ CONDITION_TYPES = {
 # 「博客 / 动态」页：不进 README，单独输出并发现 RSS
 NEWS_TYPES = {
     "blog", "engineering", "news", "updates", "v4_news", "research", "changelog",
-    "feed",
+    "feed", "model_registry",
 }
 # 产品页及其他入口：不深度抓取
 SKIP_TYPES = {"product"}
@@ -166,6 +166,7 @@ TYPE_LABELS = {
     "engineering": "工程博客",
     "news": "新闻 / 更新",
     "updates": "更新日志",
+    "model_registry": "官方模型仓库",
     "v4_news": "版本动态",
     "research": "研究页",
     "changelog": "变更日志",
@@ -2013,87 +2014,54 @@ def extract_articles_from_longcat_home(page: PageResult,
             break
     return articles
 
-def extract_articles_from_sensetime_news(page: PageResult,
-                                      max_items: int = JSON_NEWS_MAX_ITEMS) -> list[Article]:
-    """商汤新闻中心列表页（`www.sensetime.com/cn/news`）—— 卡片里的标题 + 日期。
+_SENSENOVA_MODEL_PATH = re.compile(r"/sensenova/([A-Za-z0-9][A-Za-z0-9._-]*)")
 
-    为什么单独写：每张卡是**整块 `<a>`**（`class="NewsCenter_card…"`），里面是 `<img>` +
-    标题 `<strong class="…cardTitle">` + 摘要 + `<small><time>2026/11/20</time></small>`；
-    通用提取把这种「一条长锚文本」判成导航/栏目，反而回退到标题+日期合成锚点，
-    实测只出 3 条且 URL 是 `#d-<日期>-<n>`。JSON-LD 的 CollectionPage 只有前 8 条，
-    **也不完整**，故以卡片为准。
 
-    日期取 `<time>` 的**可见文本**（北京时间当天），不取 `dateTime` 属性：后者是 UTC 时刻，
-    深夜发的稿会退到前一天。取不到再退回 URL 尾部的 `-YYYYMMDD-` 段。"""
-    html = page.raw or ""
-    if not html:
+def _is_sensenova_model_card(url: str) -> bool:
+    parts = urlparse(url)
+    return bool(parts.hostname == "huggingface.co" and not parts.fragment
+                and _SENSENOVA_MODEL_PATH.fullmatch(parts.path))
+
+
+def extract_articles_from_sensenova_models(page: PageResult) -> list[Article]:
+    """从官方模型仓库取权重条目，日期是 Hugging Face 仓库创建日。"""
+    parts = urlparse(page.final_url or page.url)
+    if page.stype != "model_registry" or parts.path != "/api/models":
         return []
-    parts = urlparse(page.display_url or page.url)
-    if not parts.scheme or not parts.netloc:
+    try:
+        models = json.loads(json_api_body(page))
+    except ValueError:
         return []
-    origin = f"{parts.scheme}://{parts.netloc}"
-    # 分页接口（`/api/news`）：列表页只渲染第一屏，历史页只能走它。形状是
-    # `{items:[{title, slug, releaseDate, …}], page, pageSize, pageCount, total}`，
-    # 实测 779 条、2017 年至今。逐条按 `JSON_NEWS_WINDOW_DAYS` 截断 —— 与 AI21 同口径：
-    # 更早的公司新闻对「现在能白嫖到什么」没有订阅价值（730 天内 310 条、全量 779 条）。
-    body = html.lstrip()
-    if body.startswith("{"):
-        try:
-            data = json.loads(body)
-        except ValueError:
-            return []
-        items = data.get("items") if isinstance(data, dict) else None
-        if not isinstance(items, list):
-            return []
-        cutoff = (datetime.now() - timedelta(days=JSON_NEWS_WINDOW_DAYS)).strftime("%Y-%m-%d")
-        api_articles: list[Article] = []
-        for item in items[:max_items]:
-            if not isinstance(item, dict):
-                continue
-            title = re.sub(r"\s+", " ", str(item.get("title") or "")).strip()
-            slug = str(item.get("slug") or "").strip().strip("/")
-            if len(title) < 4 or not slug:
-                continue
-            day = _drop_future_date(str(item.get("releaseDate") or "")[:10])
-            if day and day < cutoff:
-                continue
-            api_articles.append(Article(
-                title=title, url=f"{origin}/cn/news/{slug}", date=day,
-                source="官方接口", stype=page.stype))
-        return api_articles
+    if not isinstance(models, list):
+        return []
+    cutoff = (datetime.now() - timedelta(days=JSON_NEWS_WINDOW_DAYS)).strftime("%Y-%m-%d")
     articles: list[Article] = []
-    seen: set[str] = set()
-    for href, inner in _anchor_blocks(html, "NewsCenter_card"):
-        if not re.match(r"/cn/news/[^#?]+", href):
+    for model in models:
+        if not isinstance(model, dict) or model.get("private"):
             continue
-        m_title = re.search(r"<strong[^>]*>([\s\S]*?)</strong>", inner)
-        if not m_title:
+        model_id = model.get("id")
+        match = _SENSENOVA_MODEL_PATH.fullmatch(f"/{model_id}")
+        if not match or model.get("author") != "sensenova":
             continue
-        title = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", m_title.group(1))).strip()
-        if len(title) < 4:
+        tags = {tag for tag in model.get("tags") or [] if isinstance(tag, str)}
+        if tags & {"gguf", "awq", "lora", "adapter"} or any(
+                tag.startswith(("base_model:quantized:", "base_model:adapter:")) for tag in tags):
             continue
-        day = ""
-        t = re.search(r"<time[^>]*>([^<]*)</time>", inner)
-        if t:
-            raw = re.sub(r"[^0-9]", "-", t.group(1).strip()).strip("-")
-            nums = [p for p in raw.split("-") if p]
-            if len(nums) == 3:
-                day = "%04d-%02d-%02d" % (int(nums[0]), int(nums[1]), int(nums[2]))
-        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
-            day = ""
-        if not day:
-            sm = re.search(r"-(\d{4})(\d{2})(\d{2})-\d{4}$", href)
-            if sm:
-                day = f"{sm.group(1)}-{sm.group(2)}-{sm.group(3)}"
-        url = f"{origin}{href}"
-        if url in seen:
+        files = {f.get("rfilename") for f in model.get("siblings") or []
+                 if isinstance(f, dict) and isinstance(f.get("rfilename"), str)}
+        if "README.md" not in files or not any(
+                f.endswith((".safetensors", ".onnx", ".pt", ".pth", ".ckpt"))
+                or re.fullmatch(r"pytorch_model(?:-\d+-of-\d+)?\.bin", f) for f in files):
             continue
-        seen.add(url)
-        articles.append(Article(title=title, url=url,
-                                date=_drop_future_date(day),
-                                source="官方页面", stype=page.stype))
-        if len(articles) >= max_items:
-            break
+        created_at = model.get("createdAt")
+        if not isinstance(created_at, str):
+            continue
+        day = _drop_future_date(normalize_feed_date(created_at))
+        if day < cutoff:
+            continue
+        name = match.group(1)
+        articles.append(Article(title=name, url=f"https://huggingface.co/{model_id}",
+                                date=day, source="官方模型仓库", stype=page.stype, zh_title=name))
     return articles
 
 
@@ -2102,7 +2070,7 @@ def extract_articles_from_sensetime_news(page: PageResult,
 #: 通用逻辑 —— 适配器失败不该让这条源整个空掉。
 _SITE_PAGE_EXTRACTORS = {
     "www.kimi.com": extract_articles_from_kimi_blog,
-    "www.sensetime.com": extract_articles_from_sensetime_news,
+    "huggingface.co": extract_articles_from_sensenova_models,
     "longcat.ai": extract_articles_from_longcat_home,
 }
 
@@ -3095,7 +3063,7 @@ _SENSENOVA_FREE_MODELS = re.compile(
 
 
 def _keeps_sensenova_news(title: str, url: str) -> bool:
-    """集团新闻中心混有公关稿，日日新流只收模型、技术和开发者服务更新。"""
+    """清理集团新闻中心的存量时，保留曾核实的模型、技术和开发者服务更新。"""
     parts = urlparse(url)
     if (parts.hostname not in {"www.sensetime.com", "sensetime.com"}
             or parts.fragment or not re.fullmatch(r"/cn/news/[^/]+/?", parts.path)):
@@ -3215,7 +3183,7 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
 
     # 3.5) JSON 数据接口（页面纯前端渲染、官方又无 RSS 的站点，如千问 qwen.ai/research、
     #      AI21 的 WordPress wp-json）。
-    #      站点适配器排在最后：分页接口也是 JSON（商汤 `/api/news`），由 host 适配器认领。
+    #      站点适配器排在最后：商汤的官方模型清单由 Hugging Face 适配器认领。
     for page in intel.news_pages:
         if page.ok and json_api_body(page):
             # 已知形状各试一次，谁认得出来用谁（形状不符的返回空列表）
@@ -3225,7 +3193,7 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
                  or extract_articles_from_site_page(page))
 
     if intel.vendor_id == "sensetime_sensenova":
-        articles = [a for a in articles if _keeps_sensenova_news(a.title, a.url)]
+        articles = [a for a in articles if _is_sensenova_model_card(a.url)]
 
     # 4) 同日去重：更新日志列表页里的日期锚点（如 DeepSeek /updates/#时间-2026-09-10）
     #    与对应新闻详情页（/news/<slug>）指向同一次发布时，保留详情页、丢弃锚点；
@@ -3497,8 +3465,7 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
         # llm-news-feeds.md 的「订阅入口」）印它，不印接口长串。
         page.display_url = src.get("page") or ""
         target.append(page)
-        # 分页接口补历史：列表页是前端翻页、静态只给第一屏的源（商汤新闻中心 779 条、
-        # 首页只渲染 12 条），用 `api` 模板 + `api_pages` 把历史页一起取回来。
+        # 列表页若是前端翻页，可用 api 模板和 api_pages 把历史页一起取回来。
         # `{page}` 从 1 开始替换；某一页失败或为空就停（后面的页只会更旧）。
         api_tmpl = (src.get("api") or "").strip()
         try:
@@ -4512,7 +4479,7 @@ def _drops_news_article(vendor_id: str, url: str, *, title: str = "",
     if _is_retired_news_url(url):
         return True
     if vendor_id == "sensetime_sensenova":
-        return not _keeps_sensenova_news(title, url)
+        return not (_is_sensenova_model_card(url) or _keeps_sensenova_news(title, url))
     if vendor_id not in NEWS_CANONICAL_ONLY_VENDORS:
         return False
     if in_archive and vendor_id not in ARCHIVE_DROP_SYNTHETIC_ANCHORS:
@@ -6245,7 +6212,7 @@ def _summarize_html(html: str, url: str, limit: int = RSS_SUMMARY_CHARS) -> str:
     # 截半开的标签：last `<` 若无配对 `>`，去掉这段
     lt = head.rfind("<")
     if lt != -1 and ">" not in head[lt:]:
-        head = head[:lt]
+        head = head[:lt].rstrip()
     tail_label = "阅读完整文章 →" if "阅读" not in head else "Read full article →"
     return f"{head}\n<p><a href=\"{url}\">{tail_label}</a></p>"
 
