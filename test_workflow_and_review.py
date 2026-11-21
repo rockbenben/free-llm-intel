@@ -8109,6 +8109,60 @@ class TestKimiBlogSource(unittest.TestCase):
             "https://platform.kimi.com/docs/pricing/chat"),
             "同厂商的定价文档是情报页，不能被退役前缀误伤")
 
+class TestOfficialReleaseFeeds(unittest.TestCase):
+    def _feed(self, urls):
+        day = date.today().strftime("%d %b %Y") + " 00:00:00 GMT"
+        return "<rss><channel>" + "".join(
+            f"<item><title>New feature</title><guid>reused-guid</guid><link>{url}</link>"
+            f"<pubDate>{day}</pubDate><description>{body}</description></item>"
+            for url, body in urls
+        ) + "</channel></rss>"
+
+    def test_bedrock_keeps_updates_to_the_same_document_and_their_short_bodies(self):
+        c = crawler_llm_intel
+        doc = "https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html"
+        text_rows = ["Model A is available.", "Model B is available."]
+        raw = self._feed([(doc, body) for body in text_rows])
+        entries = c._official_release_entries(raw, c._BEDROCK_RELEASE_FEED)
+        articles = c.parse_feed_xml(raw, c._BEDROCK_RELEASE_FEED)
+        self.assertEqual(len({a.url for a in articles}), 2)
+        self.assertEqual([a.link for a in articles], [doc, doc])
+        self.assertIn('<guid isPermaLink="false">', c._rss_item(articles[0], articles[0].title))
+        import fulltext
+        by_url = {a.url: (html, a.link) for a, html in entries}
+        rows = [{"url": a.url, "vendor": "aws_bedrock", "title": a.title, "date": a.date}
+                for a in articles]
+        bodies = {}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fetch_page = mock.Mock(side_effect=AssertionError("release body must come from RSS"))
+            fulltext.fetch_bodies(root, rows, bodies, fetch=fetch_page, fetch_entry=by_url.get,
+                                  today=date.today().isoformat())
+            self.assertEqual(
+                [fulltext.read_body_doc(root / e["en_path"])[1] for e in bodies.values()], text_rows)
+
+    def test_claude_keeps_same_day_updates_in_archive_and_rss(self):
+        c = crawler_llm_intel
+        raw = self._feed([(f"{c._CLAUDE_RELEASE_NOTES}#{frag}", "Same first sentence. Additional details.")
+                          for frag in ("first", "second")])
+        articles = c.parse_feed_xml(raw, c._CLAUDE_RELEASE_FEED)
+        self.assertEqual(len(articles), 2)
+        self.assertEqual({a.title for a in articles}, {"Same first sentence."})
+        self.assertEqual(c._dedup_same_title(articles), articles)
+        intel = c.VendorIntel("anthropic", "Claude", "", [], all_news_articles=articles)
+        self.assertEqual(c._rss_articles(intel, date.today().isoformat()), articles)
+
+    def test_meta_group_news_and_paper_urls_are_excluded(self):
+        drop = crawler_llm_intel._drops_news_article
+        self.assertTrue(drop("meta_llama", "https://about.fb.com/news/llama-press/"))
+        self.assertTrue(drop("meta_llama", "https://huggingface.co/papers/2407.00000"))
+        self.assertFalse(drop("meta_llama", "https://github.com/meta-llama/llama-models/releases/tag/v0.2.0"))
+        lang = crawler_llm_intel.declared_source_lang
+        langs = {"github.com/meta-llama": "en"}
+        self.assertEqual(lang("https://github.com/meta-llama/llama-models", langs), "en")
+        self.assertEqual(lang("https://github.com/groq/groq-changelog/commit/test", langs), "")
+
+
 class TestSenseNovaModelSource(unittest.TestCase):
     API = "https://huggingface.co/api/models?author=sensenova&full=true"
     PAGE = "https://huggingface.co/sensenova"

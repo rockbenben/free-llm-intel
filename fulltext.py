@@ -1931,6 +1931,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                  today: str, only_missing: bool = True, retry_unreadable: bool = False,
                  save: Callable[[dict], None] | None = None, flush_every: int = 20,
                  refetch: Callable | None = None,
+                 fetch_entry: Callable | None = None,
                  skip: Callable[[str], bool] | None = None,
                  on_result: Callable[[str, str], None] | None = None,
                  limit: int = 0) -> int:
@@ -1947,6 +1948,9 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
 
     `refetch(url)->(html,ok,status,final)` 可选：页面拿到了却抽不出正文时用它再试一次
     （通常是前端渲染，requests 拿到的是壳）。传了就启用，不传行为不变。
+
+    `fetch_entry(url)` 可返回 (正文 HTML, 官方链接)，表示正文来自单条 RSS 发布说明。
+    返回 None 时照常抓页面，返回空正文时登记失败。
 
     `skip(url)->bool` 可选：True 就**整行跳过**（不请求、不写文件、不动台账）。
     给按 URL 的失败退避用：连续抓不到的行隔几天再试，别每天重打一遍。
@@ -2005,8 +2009,23 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         if limit > 0 and attempted >= limit:
             break
         attempted += 1
-        html, ok, _status, final = fetch(url)
-        ex = extract_article_markdown(html or "", final or url)
+        entry = fetch_entry(url) if fetch_entry is not None else None
+        if entry is None:
+            html, ok, _status, final = fetch(url)
+            ex = extract_article_markdown(html or "", final or url)
+        else:
+            # RSS 发布说明已经是单条正文，短条目也可以直接存档。
+            html, final = entry
+            tree = _TreeBuilder()
+            tree.feed(html)
+            _absolutize(tree.root, final)
+            blocks: list[str] = []
+            _blocks(tree.root, blocks)
+            markdown = "\n\n".join(blocks).strip()
+            ok = bool(markdown)
+            ex = {"title": r.get("original_title") or r.get("title") or "",
+                  "date": r.get("date") or "", "markdown": markdown,
+                  "reason": "" if ok else "empty"}
         # 页面拿到了（200、大量 HTML）却**抽不出正文**时，用 `refetch` 再渲染一次。
         # 这类页面是前端渲染的：requests 拿到的是壳，readability 自然什么都读不到 ——
         # 实测 cohere.com/research/* 有 500KB+ HTML、sparse 判定也不触发浏览器兜底，
@@ -2016,7 +2035,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # `not ok / 4xx / sparse / 拦截标记`，覆盖不到这一档；放到正文抓取路径而不是
         # `fetch_url` 里，是因为巡检路径每页都渲染太贵，而正文抓取是慢路径、且只在
         # 真的读不出来时才多付这一次渲染。
-        if refetch is not None and ok and ex["reason"]:
+        if entry is None and refetch is not None and ok and ex["reason"]:
             h2, ok2, _s2, f2 = refetch(url)
             if ok2:
                 ex2 = extract_article_markdown(h2 or "", f2 or url)
@@ -2034,7 +2053,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # `Sign in to read` 就会命中每一篇长文，不设上限等于让整个 WordPress 语料
         # 每次重抓都被 REST 版本换一遍正文（实测 REST 抽出的正文常常比前台长几个字符，
         # 「更长就采纳」这条守不住）。缺正文（`reason` 非空）与真残段（< 400）不设限。
-        if ok and ex["reason"] != "blocked":
+        if entry is None and ok and ex["reason"] != "blocked":
             _alts = alternate_json_urls(html or "", final or url)
             _stub = len(ex["markdown"]) < _STUB_BODY_CHARS
             _short = len(ex["markdown"]) < _TEASER_CEILING_CHARS
@@ -2054,7 +2073,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         frag = anchor_fragment(url)
         shrank = True
         page_md = ex["markdown"]      # 切片前的整页，留给中文判定用（见下方 src_lang）
-        if en_status == "ok" and frag:
+        if entry is None and en_status == "ok" and frag:
             # `date` 传给切片器：条目是「日期分节下的列表项」时（Gemini 版本说明）靠它
             # 圈分节。取自 ledger 的 date，**不解析锚点** —— 锚点里的序号会随厂商往分节
             # 里插条目而整体位移，按序号取会把别的条目正文挂到这条标题上。
@@ -2104,7 +2123,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 守卫对它们完全失明 —— 合成锚点位移（厂商往某个日期分节里插一条，后面序号整体
         # 后移）会让两个标题同时落到同一切片，两份逐字相同的正文都被写进语料，而
         # `validate_bodies` 查不出来。这正是本组守卫要根除的缺陷。
-        if en_status == "ok" and len(ex["markdown"]) >= 200:
+        if entry is None and en_status == "ok" and len(ex["markdown"]) >= 200:
             # 用与落盘相同的口径（`body_sha_of`）：它比的是台账里已记的 `body_sha`，
             # 两边口径不一致会让带尾部换行的行对不上，这道去重就对它们失明。
             _sha = body_sha_of(ex["markdown"])
@@ -2113,7 +2132,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                    if kk != key and kk.split("\t", 1)[0] == vendor):
                 en_status = "index_page"
         # 链接目录页（blog index / 聚合列表）不是文章：置 index_page、正文留空、不入待译
-        if en_status == "ok" and detect_index_page(ex["markdown"]):
+        if entry is None and en_status == "ok" and detect_index_page(ex["markdown"]):
             en_status = "index_page"
         norm = normalize_url(url)
         body = strip_page_furniture(ex["markdown"], norm) if en_status == "ok" else ""
@@ -2167,7 +2186,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         fm = {"vendor": vendor, "title": r.get("original_title") or ex["title"] or r.get("title", ""),
               "original_title": r.get("original_title", ""), "url": norm,
               "date": ex["date"] or r.get("date", ""), "lang": "en", "captured": cap,
-              "extractor": "readability-v1", "status": en_status,
+              "extractor": "rss-entry" if entry is not None else "readability-v1", "status": en_status,
               "body_sha": body_sha_of(body)}
         write_body_doc(root / en_rel, fm, body)
         bodies[key] = {"slug": slug, "en_path": en_rel, "en_status": en_status,

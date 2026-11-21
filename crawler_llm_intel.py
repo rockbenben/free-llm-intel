@@ -760,6 +760,9 @@ def _declared_by_host(url: str, table: dict[str, str]) -> str:
     if key in table:
         return table[key]
     host = key.split("/", 1)[0]
+    # GitHub 路径首段是账号，不能把一个组织的语言或请求设置借给另一个组织。
+    if host == "github.com":
+        return ""
     on_host = {v for k, v in table.items() if k.split("/", 1)[0] == host}
     return on_host.pop() if len(on_host) == 1 else ""
 
@@ -1574,8 +1577,69 @@ def normalize_feed_date(raw: str) -> str:
     return ""
 
 
+_BEDROCK_RELEASE_FEED = "https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug.rss"
+_BEDROCK_HISTORY = "https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html"
+_CLAUDE_RELEASE_FEED = "https://platform.claude.com/docs/en/release-notes/feed.xml"
+_CLAUDE_RELEASE_NOTES = "https://platform.claude.com/docs/en/release-notes/overview"
+_RELEASE_FEEDS = {_BEDROCK_RELEASE_FEED, _CLAUDE_RELEASE_FEED}
+
+
+def _release_feed_for_article(url: str) -> str:
+    base, _, fragment = url.partition("#")
+    if base == _BEDROCK_HISTORY and fragment.startswith("rss-"):
+        return _BEDROCK_RELEASE_FEED
+    if base == _CLAUDE_RELEASE_NOTES and fragment:
+        return _CLAUDE_RELEASE_FEED
+    return ""
+
+
+def _official_release_entries(raw: str, feed: str, cutoff: str = "") -> list[tuple[Article, str]]:
+    """读取厂商 RSS 中的单条变更及正文，保留可打开的官方页面链接。"""
+    from hashlib import sha256
+
+    try:
+        root = ET.fromstring(raw)
+    except ET.ParseError:
+        return []
+    entries: dict[str, tuple[Article, str]] = {}
+    for item in root.findall("./channel/item"):
+        day = normalize_feed_date(item.findtext("pubDate") or "")
+        body = (item.findtext("description") or "").strip()
+        link = (item.findtext("link") or "").strip()
+        if not day or day < cutoff or not body or not link.startswith("https://"):
+            continue
+        description = " ".join(parse_html(body, link)[0].split())
+        if not description:
+            continue
+        if feed == _BEDROCK_RELEASE_FEED:
+            title = (item.findtext("title") or "").strip()
+            guid = (item.findtext("guid") or "").strip()
+            if not title or not guid:
+                continue
+            # AWS 会对同一文档重复发布更新，同日通用标题甚至可能共用 GUID。
+            digest = sha256(f"{guid}\n{link}\n{description}".encode()).hexdigest()[:16]
+            url = f"{_BEDROCK_HISTORY}#rss-{digest}"
+            if re.fullmatch(r"(?:New|Updated) (?:feature|model|topic)|Region expansion",
+                            title, flags=re.I):
+                title = description
+        else:
+            url = link
+            if _release_feed_for_article(url) != _CLAUDE_RELEASE_FEED:
+                continue
+            # Claude RSS 标题只有日期。用该条官方说明首句作标题。
+            title = re.split(r"(?<=[.!?])\s+(?=[A-Z])", description, maxsplit=1)[0]
+        if len(title) > 145:
+            title = title[:142].rsplit(" ", 1)[0] + "…"
+        entries[url] = (Article(title=title, url=url, link=link if link != url else "",
+                                date=day, source="官方发布说明", stype="feed"), body)
+    return list(entries.values())
+
+
 def parse_feed_xml(raw: str, base_url: str, stype: str = "feed") -> list[Article]:
     """解析 RSS 2.0 / Atom 订阅源，返回文章列表（保持源内顺序，通常最新在前）。"""
+    if base_url in _RELEASE_FEEDS:
+        cutoff = (datetime.now() - timedelta(days=JSON_NEWS_WINDOW_DAYS)).strftime("%Y-%m-%d")
+        return [article for article, _ in _official_release_entries(raw, base_url, cutoff)]
     articles: list[Article] = []
     if not raw or "<" not in raw[:500]:
         return articles
@@ -2023,6 +2087,31 @@ def _is_sensenova_model_card(url: str) -> bool:
                 and _SENSENOVA_MODEL_PATH.fullmatch(parts.path))
 
 
+def extract_llama_model_releases(page: PageResult) -> list[Article]:
+    """使用 Meta Llama 的正式 GitHub Releases，跳过未发布的标签和候选版。"""
+    target = "https://github.com/meta-llama/llama-models/releases/tag/"
+    if urlparse(page.final_url or page.url).path != "/repos/meta-llama/llama-models/releases":
+        return []
+    try:
+        releases = json.loads(json_api_body(page))
+    except ValueError:
+        return []
+    if not isinstance(releases, list):
+        return []
+    articles: list[Article] = []
+    for release in releases:
+        if not isinstance(release, dict) or release.get("draft") or release.get("prerelease"):
+            continue
+        url = release.get("html_url") or ""
+        day = normalize_feed_date(release.get("published_at") or "")
+        tag = release.get("tag_name") or ""
+        if url.startswith(target) and day and re.fullmatch(r"v[0-9.]+", tag):
+            title = f"Llama Models {tag}"
+            articles.append(Article(title=title, zh_title=title, url=url, date=day,
+                                    source="Meta Llama GitHub Releases", stype=page.stype))
+    return articles
+
+
 def extract_articles_from_sensenova_models(page: PageResult) -> list[Article]:
     """从官方模型仓库取权重条目，日期是 Hugging Face 仓库创建日。"""
     parts = urlparse(page.final_url or page.url)
@@ -2069,6 +2158,7 @@ def extract_articles_from_sensenova_models(page: PageResult) -> list[Article]:
 #: 节点），通用链接提取拿到的不是文章：命中 host 先走专用适配器，**拿到 0 条再退回**
 #: 通用逻辑 —— 适配器失败不该让这条源整个空掉。
 _SITE_PAGE_EXTRACTORS = {
+    "api.github.com": extract_llama_model_releases,
     "www.kimi.com": extract_articles_from_kimi_blog,
     "huggingface.co": extract_articles_from_sensenova_models,
     "longcat.ai": extract_articles_from_longcat_home,
@@ -4480,6 +4570,8 @@ def _drops_news_article(vendor_id: str, url: str, *, title: str = "",
         return True
     if vendor_id == "sensetime_sensenova":
         return not (_is_sensenova_model_card(url) or _keeps_sensenova_news(title, url))
+    if vendor_id == "meta_llama" and urlparse(url).hostname in {"about.fb.com", "huggingface.co"}:
+        return True
     if vendor_id not in NEWS_CANONICAL_ONLY_VENDORS:
         return False
     if in_archive and vendor_id not in ARCHIVE_DROP_SYNTHETIC_ANCHORS:
@@ -4515,7 +4607,7 @@ def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
         # `#时间-2026-10-17` 这类）是能点开的条目标识，不能连带丢掉。
         if _drops_news_article(intel.vendor_id, a.url, title=a.title):
             continue
-        key = _title_key(a.title)
+        key = _article_key(a.url) if _release_feed_for_article(a.url) else _title_key(a.title)
         prev = kept.get(key)
         if prev is None or _prefer_article(a, prev):
             kept[key] = a
@@ -4874,6 +4966,8 @@ def _dedup_same_title(arts: list[Article]) -> list[Article]:
         （title 就是当年冻结的中文）—— 措辞可能不同（一次 AI 润色、一次机翻），
         只按显示标题归组会漏；原文标题是稳定锚，两个别名任一命中即同一篇。
         """
+        if _release_feed_for_article(a.url):
+            return {_article_key(a.url)}
         out = set()
         for s in (a.title, a.zh_title):
             n = norm_title(s)
@@ -6280,11 +6374,12 @@ def _rss_item(art: Article, title_zh: str, brand: str = "",
         if art.title.strip() and art.title.strip() != title_zh.strip():
             notes.append(f"原文标题：{art.title.strip()}")
         guid_url = art.url
+    permalink = "false" if _release_feed_for_article(art.url) == _BEDROCK_RELEASE_FEED else "true"
     lines = [
         "    <item>",
         f"      <title>{_rss_esc(short)}</title>",
         f"      <link>{_rss_esc(art.link or art.url)}</link>",
-        f'      <guid isPermaLink="true">{_rss_esc(guid_url)}</guid>',
+        f'      <guid isPermaLink="{permalink}">{_rss_esc(guid_url)}</guid>',
     ]
     pub = _rss_pubdate(art.date)
     if pub:
@@ -8276,6 +8371,24 @@ def main(argv: list[str] | None = None) -> int:
             last_status[u] = page.status_code or 0
             return (page.raw or "", page.ok, page.status_code or 0, page.final_url or u)
 
+        release_bodies: dict[str, dict[str, tuple[str, str]]] = {}
+
+        def _fetch_release_body(u: str):
+            feed = _release_feed_for_article(u)
+            if not feed:
+                return None
+            if feed not in release_bodies:
+                page = fetch_url(session, feed, "feed", browser=None, timeout=timeout,
+                                 lang=declared_source_lang(feed, news_lang_table()),
+                                 locale_cookie=declared_source_cookie(feed),
+                                 accept_language=declared_source_accept_language(feed),
+                                 raw_limit=BODY_RAW_LIMIT)
+                release_bodies[feed] = {
+                    a.url: (body, a.link or a.url)
+                    for a, body in _official_release_entries(page.raw or "", feed)
+                } if page.ok else {}
+            return release_bodies[feed].get(u, ("", feed))
+
         def _refetch_body(u: str):
             """`fetch_url` 的浏览器兜底只在 not ok / 4xx / sparse / 拦截标记时触发，
             覆盖不到「200 + 大量 HTML、但正文是前端渲染的」这一档 —— 实测
@@ -8303,6 +8416,7 @@ def main(argv: list[str] | None = None) -> int:
                                             retry_unreadable=args.retry_unreadable,
                                             limit=args.fetch_limit, save=_flush,
                                             refetch=_refetch_body,
+                                            fetch_entry=_fetch_release_body,
                                             skip=_skip_row, on_result=_on_result)
             _save_body_retry_ledger(retry_path, retry_state)
         # 吸收子代理/人工写到磁盘的中文译文（单点写 ledger）

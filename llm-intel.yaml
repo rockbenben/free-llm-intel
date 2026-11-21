@@ -619,14 +619,12 @@ sources:
   - vendor_id: anthropic
     type: pricing
     url: https://claude.com/pricing
+  # Claude Platform 官方发布 RSS。回捞同一 RSS 中 730 天内的发布记录。
   - vendor_id: anthropic
-    type: blog
+    type: feed
     lang: en
-    url: https://claude.com/resources/articles
-  - vendor_id: anthropic
-    type: news
-    lang: en
-    url: https://www.anthropic.com/news
+    url: https://platform.claude.com/docs/en/release-notes/feed.xml
+    page: https://platform.claude.com/docs/en/release-notes/overview
   # 原有一个 https://www.anthropic.com/engineering 源已移除：该页**不含日期**
   # （实测整页 0 个日期串，抓到的 26 条全部无日期），于是它产出的条目永远进不了合并流，
   # 只把归档撑到 67 条、其中 31 条无日期。要看工程文章可从 /news 里点进去。
@@ -1077,23 +1075,13 @@ sources:
   - vendor_id: meta_llama
     type: hf_org
     url: https://huggingface.co/meta-llama
+  # Llama 官方代码仓库的 Releases。GitHub API 当前给出全部 4 个正式版本；
+  # 官方 Llama 文档是资料目录，未找到更新更频繁的 Llama 专属公告流。
   - vendor_id: meta_llama
-    # Llama 官方博客 —— 这才是与本厂商对口的内容。
-    # ⚠️ 本机（境内 IP）访问 `ai.meta.com` 一律 **HTTP 400**（WAF / 区域限制），
-    # 但归档里出现过 5 条 `ai.meta.com/blog/*` 条目（`introducing-muse-spark-meta-model-api`
-    # 等），说明该域名在 **CI runner（境外）侧可达**。
-    type: blog
+    type: updates
     lang: en
-    url: https://ai.meta.com/blog/
-  - vendor_id: meta_llama
-    # 广度兜底：Meta 公司层面的 AI 新闻（原生 RSS，10 条全带日期）。
-    # ⚠️ **不是 Llama 专属源** —— 条目多为政策、合作伙伴、消费级产品
-    # （`Meta One 订阅`、`Facebook 验证`、`数据中心合资`）。
-    # 2026-09-22 曾给动态条目加过「情报过滤」，这一源的条目基本会被全部剔除；该过滤
-    # 已于 2026-10-10 整段移除（厂商官方内容一律收录），留着不再有过滤顾虑。
-    type: feed
-    lang: en
-    url: https://about.fb.com/news/tag/ai/feed/
+    url: "https://api.github.com/repos/meta-llama/llama-models/releases?per_page=100"
+    page: https://github.com/meta-llama/llama-models/releases
 
   # Hugging Face
   - vendor_id: huggingface
@@ -1211,12 +1199,12 @@ sources:
   - vendor_id: aws_bedrock
     type: docs
     url: https://docs.aws.amazon.com/bedrock/
-  # 官方 ML 博客原生 RSS（实测 20 条）。⚠️ 内容混有客户案例 —— 按 2026-10-10 定的口径，
-  # 厂商官方发布的内容一律收录（原先的 `NEWS_INTEL_SIGNALS` 标题过滤已整段移除）。
+  # Bedrock 专属文档更新 RSS。回捞 730 天；同一文档多次更新保留为独立条目。
   - vendor_id: aws_bedrock
     type: feed
     lang: en
-    url: https://aws.amazon.com/blogs/machine-learning/feed/
+    url: https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug.rss
+    page: https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html
 
   # Azure OpenAI / Azure AI Foundry
   - vendor_id: azure_openai
