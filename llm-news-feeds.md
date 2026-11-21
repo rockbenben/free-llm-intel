@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 16:15:20**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 17:16:15**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -255,7 +255,7 @@
   3. [Muse 在澳大利亚上线：全球首款面向所有人的个人 AI agent](https://about.fb.com/news/2026/11/muse-is-now-available-in-australia/)（2026-11-17）
   4. [Meta 的新协议将清洁制造引入数据中心供应链](https://about.fb.com/news/2026/11/meta-new-agreements-clean-manufacturing-data-center-supply-chains/)（2026-11-12）
   5. [为你专属定制 Muse 应用](https://about.fb.com/news/2026/11/introducing-spaces-customize-muse-app/)（2026-11-06）
-  - 📄 完整文章归档（共 41 篇）：[meta_llama.md](llm-news/meta_llama.md)
+  - 📄 完整文章归档（共 33 篇）：[meta_llama.md](llm-news/meta_llama.md)
 
 ### 美团 LongCat (longcat_meituan)
 - 页面：[新闻 / 更新](https://longcat.ai/)
