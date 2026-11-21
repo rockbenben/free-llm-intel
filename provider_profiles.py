@@ -1723,11 +1723,11 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "free_quota": "注册 Cloudflare 账号即可使用、免绑卡；超额后开通 Workers Paid 按 **$0.011 / 1,000 Neurons** 计费（官方定价页原文）",
         "validity": "**每日 UTC 0 点重置**",
         "free_models": [
-            "目录内模型共享 **每日 10,000 Neurons 免费额度**（官方定价页原文 “use a total of 10,000 Neurons per day at no charge”），UTC 0 点刷新；代表免费模型 `@cf/meta/llama-4-scout-17b`、`llama-3.3-70b-fp8`、`@cf/openai/gpt-oss-120b/20b`、`qwen3-30b`、`bge-m3` 等；**`kimi-k2.6`/`kimi-k2.7-code`、`glm-5.2`/`glm-5.3`/`glm-5.3-flash`、`deepseek-v4-flash-0731`/`v4.1-flash-1017`/`v4-pro-0813` 要求付费计费方式，不在免费层**",
+            "目录内可免费使用的模型共享 **每日 10,000 Neurons 免费额度**（官方定价页原文 “use a total of 10,000 Neurons per day at no charge”），UTC 0 点刷新；代表模型 `@cf/meta/llama-4-scout-17b`、`llama-3.3-70b-fp8`、`@cf/openai/gpt-oss-120b/20b`、`@cf/qwen/qwen3.8-27b`、`bge-m3` 等；部分模型（例如 `@cf/zai-org/glm-5.3`、`@cf/deepseek-ai/deepseek-v4.1-flash-1017`）**需 Workers Paid 或预付 AI Gateway credits**",
         ],
         "tier_caveats": [
             "免费额度是账号级 **每日 10,000 Neurons 共享总额度**（不是每模型各 1 万），所有限额每日 00:00 UTC 重置；超额按 $0.011 / 1,000 Neurons 计费，需开通 Workers Paid",
-            "kimi / glm-5.x / deepseek-v4 系列等前沿模型**要求付费计费方式，不在免费层内**；免费层主要覆盖 Llama 3.x/4、Qwen、Mistral、gpt-oss 等模型",
+            "Text Generation 模型默认限速 300 请求/分钟；要求付费计费方式的模型按账户、按模型限速，Workers Paid 为 20 请求/分钟，预付 AI Gateway credits 为 50 请求/分钟",
             "免费层主要面向 Workers 平台内调用；Neurons 换算随模型不同",
         ],
         "preconditions": "注册 Cloudflare 账号即可使用，免绑卡",
