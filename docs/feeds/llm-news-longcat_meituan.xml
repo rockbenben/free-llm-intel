@@ -176,7 +176,7 @@
       <pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<p>论文</p>
 <p>arxiv:2605.27209</p>
-<h1>在噪声中学习行动：通过噪声环境提升 agent 鲁棒性</h1>
+<h1>在噪声中学习行动：用噪声环境增强 agent 鲁棒性</h1>
 <p>发布于 5 月 26 日</p>
 <p>提交者</p>
 <p><img src="https://huggingface.co/avatars/c2b0429e1de130d4b65d1f461f759e2a.svg" alt=""></p>
@@ -198,9 +198,9 @@
 <p>,</p>
 <p>,</p>
 <h2>摘要</h2>
-<p>NoisyAgent 是一个 agentic 训练框架，它将环境的不完美纳入 agent 学习过程，以提升在真实世界随机环境中的鲁棒性。</p>
+<p>NoisyAgent 是一个 agentic 训练框架，它把环境的种种不完美纳入 agent 学习过程，以提升 agent 在真实世界随机环境中的鲁棒性。</p>
 <p>由 <a href="https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct">Qwen/Qwen2.5-Coder-32B-Instruct</a> 生成</p>
-<p><a href="https://huggingface.co/papers?q=large%20language%20models">大语言模型</a>（LLM）的最新进展推动了 LLM 作为<a href="https://huggingface.co/papers?q=interactive%20agents">交互式 agent</a> 的广泛部署，使其能够进行<a href="https://huggingface.co/papers?q=reasoning">推理</a>、<a href="https://huggingface.co/papers?q=planning">规划</a>和<a href="https://huggingface.co/papers?q=tool%20use">工具使用</a>。尽管在现有基准上表现强劲，这类 agent 在真实世界环境中部署时往往出现明显退化，因为真实环境本质上是随机且不完美的。我们认为，这种差异源于理想化训练设置与真实世界交互动态之间的根本性不匹配——当前范式依赖于精心整理的任务指令以及稳定、受控良好的环境。为填补这一空白，我们提出 NoisyAgent，一个将<a href="https://huggingface.co/papers?q=environmental%20imperfections">环境不完美</a>显式纳入 <a href="https://huggingface.co/papers?q=agent%20learning">agent 学习</a>过程的 <a href="https://huggingface.co/papers?q=agentic%20training%20framework">agentic 训练框架</a>。我们识别出真实世界场景中交互噪声的两大来源：<a href="https://huggingface.co/papers?q=user%20noise">用户噪声</a>，它刻画用户交互中的模糊性与可变性；以及<a href="https://huggingface.co/papers?q=tool%20noise">工具噪声</a>，它反映工具执行中的失败与异常。我们通过在训练环境中修改用户交互模式并模拟工具执行结果，将这类扰动引入<a href="https://huggingface.co/papers?q=training%20pipeline">训练流程</a>。为稳定训练，同时鼓励 agent 处理日益具有挑战性的不完美情况，噪声仅施加于一部分 <a href="https://huggingface.co/papers?q=rollout">rollout</a>，并随着模型适应当前噪声水平而逐步提升难度。大量实验表明，我们的方法在噪声和动态环境下持续提升 agent 鲁棒性。我们的分析揭示，在噪声条件下训练也能在理想化基准上带来性能提升，这表明受控地暴露于环境噪声有助于促进更具<a href="https://huggingface.co/papers?q=generalizable%20reasoning">泛化性的推理</a>与<a href="https://huggingface.co/papers?q=decision-making%20behaviors">决策行为</a>。我们的发现凸显了建模交互不完美对于弥合 agent 训练与<a href="https://huggingface.co/papers?q=real-world%20deployment">真实世界部署</a>之间差距的重要性。</p>
+<p><a href="https://huggingface.co/papers?q=large%20language%20models">大语言模型</a>（LLM）的近期进展，推动了 LLM 作为<a href="https://huggingface.co/papers?q=interactive%20agents">交互式 agent</a> 的广泛部署——这类 agent 能够<a href="https://huggingface.co/papers?q=reasoning">推理</a>、<a href="https://huggingface.co/papers?q=planning">规划</a>并使用<a href="https://huggingface.co/papers?q=tool%20use">工具</a>。尽管在现有基准上表现强劲，这类 agent 一旦部署到真实环境，往往出现明显退化，因为真实环境本质上是随机且不完美的。我们认为，这种落差源于理想化训练设置与真实交互动态之间的根本错配：当前范式依赖精心整理的任务指令，以及稳定、受控良好的环境。为填补这一空白，我们提出 NoisyAgent，一个把<a href="https://huggingface.co/papers?q=environmental%20imperfections">环境不完美</a>显式纳入 <a href="https://huggingface.co/papers?q=agent%20learning">agent 学习</a>过程的 <a href="https://huggingface.co/papers?q=agentic%20training%20framework">agentic 训练框架</a>。我们识别出真实场景中交互噪声的两大来源：<a href="https://huggingface.co/papers?q=user%20noise">用户噪声</a>，刻画用户交互中的模糊与多变；<a href="https://huggingface.co/papers?q=tool%20noise">工具噪声</a>，反映工具执行中的失败与异常。我们通过在训练环境中修改用户交互模式、模拟工具执行结果，把这类扰动引入<a href="https://huggingface.co/papers?q=training%20pipeline">训练流程</a>。为了在稳定训练的同时促使 agent 应对越来越难的缺陷，噪声只施加于一部分 <a href="https://huggingface.co/papers?q=rollout">rollout</a>，并在模型逐步适应当前噪声水平的过程中提高难度。大量实验表明，我们的方法在噪声与动态环境下都能持续提升 agent 鲁棒性。我们的分析还发现，在噪声条件下训练，在理想化基准上同样带来性能提升，这说明受控地暴露于环境噪声，有助于促成更具<a href="https://huggingface.co/papers?q=generalizable%20reasoning">泛化性的推理</a>与<a href="https://huggingface.co/papers?q=decision-making%20behaviors">决策行为</a>。这些发现凸显了建模交互不完美对于弥合 agent 训练与<a href="https://huggingface.co/papers?q=real-world%20deployment">真实世界部署</a>之间差距的重要性。</p>
 <p><a href="https://arxiv.org/abs/2605.27209">查看 arXiv 页面</a> <a href="https://arxiv.org/pdf/2605.27209">查看 PDF</a>    <a href="https://huggingface.co/login?next=%2Fpapers%2F2605.27209"> 添加到收藏</a></p>
 <h3>社区</h3>
 <p><img src="https://huggingface.co/avatars/c2b0429e1de130d4b65d1f461f759e2a.svg" alt=""></p>
@@ -215,9 +215,9 @@
 <p>以下论文由 Semantic Scholar API 推荐</p>
 <ul><li><a href="https://huggingface.co/papers/2604.18292">Agent-World: Scaling Real-World Environment Synthesis for Evolving General Agent Intelligence</a> (2026)</li><li><a href="https://huggingface.co/papers/2605.16143">Look Before You Leap: Autonomous Exploration for LLM Agents</a> (2026)</li><li><a href="https://huggingface.co/papers/2605.18703">EnvFactory: Scaling Tool-Use Agents via Executable Environments Synthesis and Robust RL</a> (2026)</li><li><a href="https://huggingface.co/papers/2604.15840">CoEvolve: Training LLM Agents via Agent-Data Mutual Evolution</a> (2026)</li><li><a href="https://huggingface.co/papers/2605.20061">Rewarding Beliefs, Not Actions: Consistency-Guided Credit Assignment for Long-Horizon Agents</a> (2026)</li><li><a href="https://huggingface.co/papers/2604.21590">AgenticQwen: Training Small Agentic Language Models with Dual Data Flywheels for Industrial-Scale Tool Use</a> (2026)</li><li><a href="https://huggingface.co/papers/2604.05336">TRACE: Capability-Targeted Agentic Training</a> (2026)</li></ul>
 <p>如果你觉得这条评论有帮助，请点赞！</p>
-<p>如果你想获取 Hugging Face 上任意论文的推荐，请查看<a href="https://huggingface.co/spaces/librarian-bots/recommend_similar_papers">这个</a> Space</p>
-<p>你可以在评论中 @ Librarian Bot 直接向它请求论文推荐：<code>@librarian-bot recommend</code></p>
-<p>将图像、音频和视频拖入文本输入框、粘贴或点击此处即可上传。</p>
+<p>如果你想获得 Hugging Face 上任意论文的推荐，请看<a href="https://huggingface.co/spaces/librarian-bots/recommend_similar_papers">这个</a> Space</p>
+<p>你可以在评论中 @ Librarian Bot 直接向它索取论文推荐：<code>@librarian-bot recommend</code></p>
+<p>把图像、音频和视频拖进文本输入框、粘贴，或点击此处即可上传。</p>
 <p>点按或粘贴此处以上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fpapers%2F2605.27209">注册</a>或<a href="https://huggingface.co/login?next=%2Fpapers%2F2605.27209">登录</a>以发表评论</p>
 <p>12</p>
@@ -237,7 +237,7 @@
 <p>在 Space README.md 中引用 arxiv.org/abs/2605.27209，即可从此页面链接。</p>
 <h2>包含本文的收藏集 0</h2>
 <p>暂无包含本文的收藏集</p>
-<p>将本文添加到<a href="https://huggingface.co/new-collection">收藏集</a>，即可从此页面链接。</p>]]></content:encoded>
+<p>将本文加入<a href="https://huggingface.co/new-collection">收藏集</a>，即可从此页面链接。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

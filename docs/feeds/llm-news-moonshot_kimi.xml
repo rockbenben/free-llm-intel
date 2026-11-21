@@ -334,58 +334,58 @@
       <link>https://www.kimi.com/blog/agent-swarm</link>
       <guid isPermaLink="true">https://www.kimi.com/blog/agent-swarm</guid>
       <pubDate>Mon, 09 Feb 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Kimi 推出 Agent Swarm：让 100 个 AI Agent 为你工作</h1>
+      <content:encoded><![CDATA[<h1>Kimi 推出 Agent Swarm：让 100 个 AI agent 为你工作</h1>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-13/1d67gvgudcmosb3rlf92g?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Introducing Agent Swarm"></p>
-<p>2025 年，如果你走进任何一场 AI 大会，可能都会听到同一套福音：更快的推理速度、更长的上下文窗口、更低的推理成本。</p>
-<p>仿佛我们花了多年时间打磨这把锤子，让它更轻、更强、重心更精准，却从未质疑过一个事实：木匠仍然只有两只手，一天仍然只有二十四小时。</p>
-<p><strong>现在，Kimi 推出 Agent Swarm。</strong> 它不是一把更好的锤子。它是对整个车间的重建。</p>
-<p>这不是一个“多个 AI Agent 协同工作”的故事。我们要构建的是一种拥有老板、员工和分工的组织结构，只不过这个组织不是由人类设计的。<strong>它自己设计自己。</strong></p>
-<p>当你让 Agent Swarm 研究一个课题时，你不再是在指挥一个助手。你是在雇佣一位 CEO，由它来帮忙寻找研究员、分析师、事实核查员，全部当场自主招聘。<strong>而你不需要事无巨细地管理。</strong></p>
-<p>但要做到这一点，我们必须直面一个过去一直在回避的问题：</p>
-<h2>单 Agent 推理的局限</h2>
-<p>在测试阶段，我们究竟能把一个模型推到多远？</p>
-<p>这个问题本质上与智能无关。当今 AI 推理的真正瓶颈，是单 Agent 顺序执行模型本身。</p>
-<p>无论你是想延长模型能够处理的任务长度（研究者称之为长程任务），还是在推理过程中动态扩展算力和结构（测试时扩展），单 Agent 顺序执行模型都会撞墙。</p>
-<p>举个例子，让一个单 Agent 深度研究工具调研一百家公司，或综合数十篇论文。随着任务推进，上下文窗口被填满。系统退回到简单的历史折叠或摘要，以便为新 token 腾出空间。这种压缩是有损的，后续推理质量随之下降。</p>
-<p>这不是 bug，也不是临时性限制。这是上下文窗口、时间，以及依赖单一 Agent 管理长程推理所施加的结构性天花板。</p>
+<p>2025 年，你走进任何一场 AI 大会，可能都会听到同一套福音：更快的推理、更长的上下文窗口、更低的推理成本。</p>
+<p>仿佛这些年我们一直在打磨同一把锤子，让它更轻、更结实、配重更精准，却从没问过一句：木匠仍然只有两只手，一天仍然只有二十四小时。</p>
+<p><strong>现在，Kimi 推出 Agent Swarm。</strong> 它不是一把更好的锤子，它是整个车间的重建。</p>
+<p>这不是一个“许多 AI agent 协同工作”的故事。我们要建的是一种有老板、有员工、有分工的组织结构，只不过这个组织不是由人设计的。<strong>它自己设计自己。</strong></p>
+<p>当你让 Agent Swarm 研究一个课题时，你指挥的不再是一个助手。你是在雇一位 CEO，由它自己去找到研究员、分析师、事实核查员，全部当场招齐。<strong>而你不需要事无巨细地盯。</strong></p>
+<p>但要走到这一步，我们必须先面对一个过去一直绕开的问题：</p>
+<h2>单 agent 推理的局限</h2>
+<p>在测试时，我们究竟能把一个模型推到多远？</p>
+<p>这个问题其实与智能无关。今天 AI 推理真正的瓶颈，是单 agent 顺序执行这一模式本身。</p>
+<p>无论你是想拉长模型能处理的任务跨度（研究者称之为长程任务），还是在推理过程中动态扩展算力与结构（测试时扩展），单 agent 顺序执行模式都会撞墙。</p>
+<p>举个例子：让一个单 agent 深度研究工具调研一百家公司，或综合几十篇论文。任务越往后走，context 窗口越满。系统只好退回到简单的历史折叠或摘要，为新 token 腾出位置。这种压缩是有损的，后续推理随之退化。</p>
+<p>这不是 bug，也不是暂时性限制。这是 context 窗口、时间，以及把长程推理交给单个 agent 所共同设定的结构性天花板。</p>
 <h2>向外扩展，而不只是向上扩展</h2>
-<p>多年来，AI 领域的主流叙事一直是扩展：更大的模型、更多的参数、更好的基准分数。这一叙事带来了非凡的成果。但纵向扩展存在天花板——物理上的、经济上的，或许还有智力上的。</p>
-<p>横向扩展则不同。一个大脑对比许多个大脑。单一模型是一位专家。一个自组织网络则是一家公司、一个实验室、一个情报机构。</p>
-<p>2025 年 6 月，在我们推出 Kimi Researcher 后不久，团队里一位成员——我们姑且称她为“热情的业余股票交易员”——有了一个看似简单的想法：Kimi 能不能自动收集股票的每日信息？</p>
-<p>她让 Kimi 查新闻看宏观趋势。查询历史涨停数量。条件匹配就进一步深挖。综合。她写了一个 Python 工作流，一串级联的 if-else 语句。</p>
-<p>写到第一百行，她停下了。<em>“我这是在手写一个多 Agent 系统。”</em></p>
-<p>如果模型能够使用工具并处理长程任务，为什么它们不能自己架构自己？决定何时并行、雇佣谁、如何委派？</p>
-<p><strong>未来不是更好的单 Agent。而是能够构建组织的 Agent。</strong> Agent Swarm 正是诞生于这一假设。</p>
-<p>数字说明了部分故事。借助 Agent Swarm，Kimi K2.5 可以：</p>
-<ul><li>部署最多 <strong>100 个子 agent</strong> 并行工作</li><li>执行超过 <strong>1,500 次工具调用</strong></li><li>比顺序执行<strong>快 4.5 倍</strong>地交付更好的结果</li></ul>
+<p>多年来，AI 的主流叙事一直是扩展：更大的模型、更多的参数、更高的基准分数。这套叙事确实成果斐然。但纵向扩展有天花板——物理的、经济的，或许还有智力的。</p>
+<p>横向扩展不一样。一个大脑，对比许多个大脑。单个模型是一位专家；一张自组织的网络则是一家公司、一间实验室、一个情报机构。</p>
+<p>2025 年 6 月，我们推出 Kimi Researcher 后不久，团队里一位成员——就称她为“热衷炒股的业余选手”吧——冒出一个看上去很简单的想法：Kimi 能不能每天自动收集股票信息？</p>
+<p>她让 Kimi 查新闻看宏观趋势，查历史涨停数量，条件符合就再往下挖，最后综合。她写了一个 Python 工作流，一串层层嵌套的 if-else。</p>
+<p>写到第一百行，她停手了。<em>“我这是在手写一个多 agent 系统。”</em></p>
+<p>如果模型会调用工具、能处理长程任务，为什么不能自己搭架构？自己决定何时并行、招谁、怎么分派？</p>
+<p><strong>未来不是更好的单 agent，而是会组建组织的 agent。</strong> Agent Swarm 就诞生于这个假设。</p>
+<p>数字只能说明一部分。借助 Agent Swarm，Kimi K2.5 可以：</p>
+<ul><li>部署最多 <strong>100 个 sub-agent</strong> 并行工作</li><li>执行超过 <strong>1,500 次工具调用</strong></li><li>比顺序执行<strong>快 4.5 倍</strong>地交付更好的结果</li></ul>
 <h2>Agent Swarm 最佳实践</h2>
-<p>显然，Agent Swarm 在可并行的工作中表现出色：广泛调研、批量下载、多文件处理、多角度分析、长文写作。</p>
-<p>但更深层的收益是结构性的，它创造了<strong>建设性分歧的条件</strong>——让独立的 agent 得出不同结论，然后强制进行调和。<strong>它从结构上避免了群体思维。</strong></p>
-<p>因此在以下场景中，我们建议你体验 agent swarm 的魔力。</p>
+<p>显然，Agent Swarm 擅长的是可以并行的活：大范围调研、批量下载、多文件处理、多角度分析、长篇写作。</p>
+<p>但更深的收益在结构层面：它创造了<strong>建设性分歧的条件</strong>——让彼此独立的 agent 各自得出结论，再迫使它们达成一致。<strong>它从结构上避免了群体思维。</strong></p>
+<p>所以在下面这些场景里，我们建议你亲自体验一下 Agent Swarm 的魔力。</p>
 <h3>规模化发现</h3>
-<p>从最简单的场景开始：寻找<strong>海量难以找到的东西</strong>。</p>
-<p>假设你需要 100 个细分 YouTube 领域中的前 3 位创作者。K2.5 Agent Swarm 会先研究并定义每个领域，然后自主<strong>创建 100 个子 agent 进行并行搜索。</strong></p>
-<p>或者你想收集所有 200 多篇 Paul Graham 的文章，它们散落在个人网站、旧博客、演讲转录稿中。K2.5 Agent Swarm 可以分配专门的子 agent 去搜索、下载、分类、总结并汇编 Paul Graham 的文章。它们共同将 <strong>200 多篇原始文章</strong>整理进 <strong>6 个主题文件夹</strong>，并产出一份全面的总结报告。</p>
+<p>从最简单的情况开始：找<strong>一大堆</strong>很难找的东西。</p>
+<p>假设你需要 100 个细分 YouTube 领域各自的前 3 名创作者。K2.5 Agent Swarm 会先研究并界定每个领域，然后自主<strong>创建 100 个 sub-agent 并行搜索。</strong></p>
+<p>又或者你想收齐 Paul Graham 的 200 多篇文章，它们散落在个人网站、旧博客、演讲转录稿里。K2.5 Agent Swarm 可以派出专门的 sub-agent 去搜索、下载、分类、摘要并汇编。它们合力把 <strong>200 多篇原文</strong>整理进 <strong>6 个按主题划分的文件夹</strong>，并产出一份完整的总结报告。</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-09/1d64nsivf2ena627qcitg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="100 Sub-agents Hunting for Creators"></p>
 <blockquote>100 Sub-agents Hunting for Creators: https://www.kimi.ai/share/19c40eea-b272-8ef2-8000-0000af5e0baa</blockquote>
 <h3>规模化输出</h3>
-<p>除了收集零散信息，你还可以让 Agent Swarm <strong>消化海量文档集</strong>，并协调专家角色<strong>产出书籍长度的专业级报告。</strong></p>
-<p>例如，让它从四十篇社会心理学 PDF 生成一份 100 页的文献综述。K2.5 Agent Swarm 将任务分解到整个文档集上，部署多个专注写作的子 agent。每个子 agent 负责特定章节，它们的输出被综合成一份 <strong>100 页、双栏</strong>的学术文档，引文和参考文献格式完整。</p>
+<p>除了收集零散信息，你还可以让 Agent Swarm <strong>消化大体量文档集</strong>，协调不同的专家角色，<strong>产出书籍篇幅的专业报告。</strong></p>
+<p>比如让它基于四十篇社会心理学 PDF 生成一份 100 页的文献综述。K2.5 Agent Swarm 把任务拆到整个文档集上，派出多个专攻写作的 sub-agent。各自认领特定章节，输出再被综合成一份 <strong>100 页、双栏</strong>的学术文档，引文与参考文献格式齐全。</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-09/1d64nuepl51jas5bh88fg?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Generate 100-Page Literature Review from 40 PDFs"></p>
 <blockquote>Generate 100-Page Literature Review from 40 PDFs: https://www.kimi.ai/share/19c4106b-89b2-8361-8000-0000d07b8235</blockquote>
 <h3>规模化视角</h3>
-<p>最有趣的用例是当你需要分歧本身——当你想同时从多个视角审视一个问题。</p>
-<p><strong>面对一次复杂的产品发布？</strong> 部署一支专家团队：持怀疑态度的 VC 质疑单位经济模型，资深 PM 担心技术债，伦理学家探查暗黑模式，客户成功负责人为边缘案例发声。</p>
+<p>最有意思的用法，是你需要分歧本身——想同时从多个视角看一个问题。</p>
+<p><strong>要发布一个复杂产品？</strong> 派一支专家团队：怀疑派的 VC 质疑单位经济模型，资深 PM 担心技术债，伦理学家盯住暗黑模式，客户成功负责人替边缘场景说话。</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-09/1d64nu0d3v89kkema91ag?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Get your product plan reviewed by a team of experts"></p>
 <blockquote>Get your product plan reviewed by a team of experts: https://www.kimi.ai/share/19c40bc9-31a2-8533-8000-0000bad59b7a</blockquote>
-<p><strong>或者探索不同的故事走向。</strong> 你可以让 20 位不同文学风格的作家续写刘慈欣的《三体》：从弗吉尼亚·伍尔夫式的内心独白，到博尔赫斯式的思想迷宫，卡夫卡式的荒诞世界，以及加西亚·马尔克斯式由重复命运塑造的故事。</p>
+<p><strong>或者探索不同的故事走向。</strong> 你可以让 20 位不同文学风格的作家续写刘慈欣的《三体》：从弗吉尼亚·伍尔夫式的内心独白，到博尔赫斯式的观念迷宫、卡夫卡式的荒诞世界，再到加西亚·马尔克斯式由循环宿命塑造的故事。</p>
 <p><img src="https://kimi-file.kimi.ai/prod-chat-kimi/kfs/4/2/2026-02-09/1d64nvf7f2ena627qcve0?x-tos-process=image%2Fauto-orient%2C1%2Fstrip%2Fignore-error%2C1" alt="Let 20 writers create alternative endings for The Three-Body Problem"></p>
 <blockquote>Let 20 writers create alternative endings for The Three-Body Problem: https://www.kimi.ai/share/19c409c8-8692-821a-8000-0000070ad369</blockquote>
 <h2>现已向顶级订阅用户开放</h2>
-<p>你曾经拥有的 Kimi Agent 是一位 single、勤勉的研究员。你现在拥有的 Kimi Agent Swarm 是一支专家团队：专业化、并行化，能够同时持有相互矛盾的观点。</p>
-<p>这是一个早期研究预览。我们将继续加固架构，引入子 agent 之间的直接通信、并行宽度的动态控制——但基础已经为你的最严苛工作准备就绪。</p>
-<p>在 AI 时代，素养或许可以用我们消耗多少 token 来衡量。</p>
-<p>所以输入你的提示词，让 Kimi 为你自主指挥 100 个子 agent：<a href="https://www.kimi.com/en/?agent=1&amp;swarm=1">https://www.kimi.com/agent-swarm</a></p>]]></content:encoded>
+<p>你过去拥有的 Kimi Agent 只是一位勤勉的研究员。现在你拥有的 Kimi Agent Swarm 是一支专家团队：各有专长、并行工作，能同时容纳互相矛盾的观点。</p>
+<p>这是一个早期研究预览版。我们会继续加固架构，加入 sub-agent 之间的直接通信、并行宽度的动态控制——但底座已经能承接你最难的工作。</p>
+<p>在 AI 时代，识字率也许要按我们用掉多少 token 来衡量。</p>
+<p>所以，敲下你的 prompt，让 Kimi 替你自主指挥 100 个 sub-agent：<a href="https://www.kimi.com/en/?agent=1&amp;swarm=1">https://www.kimi.com/agent-swarm</a></p>]]></content:encoded>
     </item>
     <item>
       <title>WorldVQA</title>
