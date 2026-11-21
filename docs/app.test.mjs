@@ -164,7 +164,8 @@ test('mdToHtml: 链接与图片', () => {
   const md = 'See [docs](https://x.test/a) and ![alt](https://x.test/p.png).\n';
   const h = FLI.mdToHtml(md);
   assert.match(h, /<a href="https:\/\/x\.test\/a">docs<\/a>/);
-  assert.match(h, /<img src="https:\/\/x\.test\/p\.png" alt="alt">/);
+  // 属性顺序固定为 src/alt/loading/decoding；懒加载是 2026-11-21 加的（长文图多）
+  assert.match(h, /<img src="https:\/\/x\.test\/p\.png" alt="alt" loading="lazy" decoding="async">/);
 });
 
 test('mdToHtml: 协议白名单（可执行协议不套标签）', () => {
@@ -332,4 +333,59 @@ test('richTokens: 安全切分粗体与行内代码，未闭合定界符退回�
   assert.deepEqual(FLI.richTokens('未闭合 `abc 与 **def'), [
     { type: 'text', value: '未闭合 `abc 与 **def' },
   ]);
+});
+
+// ---- 图片密集内容的版式：logo 行 / 图组 / 数据卡（mdToHtml 的 decorateMedia） ----
+// 背景：厂商文章常把「一排公司 logo」「一组截图」「logo + 大数字 + 一句说明」压成
+// markdown 列表或连续段落，逐条渲染就是一列几百像素高的纵向图片柱。
+
+test('mdToHtml: 整列表都是「链接包图片」→ logo 行', () => {
+  const html = FLI.mdToHtml(
+    '- [![Kikoff](https://x/k.svg)](https://kikoff.com/)\n' +
+    '- [![Campfire](https://x/c.svg)](https://campfire.ai/)');
+  assert.match(html, /<ul class="logo-row">/);
+  assert.equal((html.match(/<img /g) || []).length, 2);
+});
+
+test('mdToHtml: 整列表都是裸图片 → 图组；图文混排保持普通列表', () => {
+  const grid = FLI.mdToHtml('- ![](https://x/a.png)\n- ![](https://x/b.png)');
+  assert.match(grid, /<ul class="media-grid">/);
+  const mixed = FLI.mdToHtml('- ![](https://x/a.png)\n- 说明文字');
+  assert.match(mixed, /<ul>/);
+  assert.doesNotMatch(mixed, /class="(logo-row|media-grid)"/);
+});
+
+test('mdToHtml: 只有一项的图片列表不重排（形状不够明确）', () => {
+  const html = FLI.mdToHtml('- ![](https://x/a.png)');
+  assert.doesNotMatch(html, /media-grid/);
+});
+
+test('mdToHtml: 连续多段只有图 → 图组；单张图仍是普通段落', () => {
+  const grid = FLI.mdToHtml('![](https://x/a.png)\n\n![](https://x/b.png)\n');
+  assert.match(grid, /<div class="media-grid">/);
+  assert.equal((grid.match(/<img /g) || []).length, 2);
+  const one = FLI.mdToHtml('![](https://x/a.png)\n');
+  assert.match(one, /<p><img /);
+  assert.doesNotMatch(one, /media-grid/);
+});
+
+test('mdToHtml: 「logo + 数字 + 一句说明」连排两组 → 数据卡', () => {
+  const md = [
+    '![Campfire](https://x/c.svg)', '', '21', '', 'minutes from Slack mention to open PR', '',
+    '![NavigateAI](https://x/n.svg)', '', '134', '', 'pull requests merged from Slack threads', '',
+  ].join('\n');
+  const html = FLI.mdToHtml(md);
+  assert.match(html, /<div class="stat-grid">/);
+  assert.equal((html.match(/class="stat-card"/g) || []).length, 2);
+  assert.match(html, /class="stat-num">21</);
+  assert.match(html, /class="stat-cap">minutes from Slack mention to open PR</);
+});
+
+test('mdToHtml: 只有一组「图 + 数字 + 说明」不认数据卡（别把正文拆坏）', () => {
+  const html = FLI.mdToHtml('![x](https://x/1.svg)\n\n21\n\nminutes from Slack mention to open PR\n');
+  assert.doesNotMatch(html, /stat-grid/);
+});
+
+test('mdToHtml: 图片带懒加载属性', () => {
+  assert.match(FLI.mdToHtml('![](https://x/a.png)\n'), /loading="lazy"/);
 });
