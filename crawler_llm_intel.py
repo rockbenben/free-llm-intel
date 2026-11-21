@@ -83,6 +83,17 @@ USER_AGENT = (
     "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
 )
 
+#: 按主机覆盖 User-Agent。极少数站点的机器人判据是「UA 与 TLS 指纹是否自洽」，
+#: **声明成浏览器反而比老老实实报 python-requests 更容易被拦**。
+#: ai.meta.com 实测（同一台机器、同一时段，唯一变量是 UA 字符串）：Chrome 131 /
+#: Edge 126（本仓默认）/ Firefox 132 三种浏览器 UA 一律 400 —— 1542 字节的 Facebook
+#: 错误页；`python-requests/x.y.z` 与 Safari 17 都是 200（204KB 正常页面）。
+#: 结果是 meta 的 41 条归档长期只有 5 条有正文，其余全落 fetch_failed。
+#: 只按主机放开这一家：别的站恰好吃浏览器 UA，全局换掉会反过来伤它们。
+HOST_USER_AGENT_OVERRIDES = {
+    "ai.meta.com": f"python-requests/{requests.__version__}",
+}
+
 # 浏览器渲染后仍判定为「被反爬拦截」的页面特征
 BLOCK_MARKERS = re.compile(
     r"(you have been blocked|enable cookies|checking your browser|"
@@ -814,16 +825,22 @@ def declared_source_accept_language(url: str, table: dict[str, str] | None = Non
 
 
 def build_session() -> requests.Session:
+    """巡检用的会话：**只**声明最基本的浏览器身份。
+
+    ⚠ 这里刻意**不发** `Sec-Fetch-Dest/Mode/Site/User` 与 `Upgrade-Insecure-Requests`。
+    那四个头是在声称「这是用户点开的一次顶层导航」，而我们只是裸 GET：缺了 cookies、
+    Referer、TLS 指纹这些配套证据，越声称越像伪造。实测（2026-11-21）openai.com 对带
+    这套头的请求一律回 403（10KB 拦截页），把 `Sec-Fetch-*` 去掉就是 200 / 300KB 正常
+    页面 —— 同一台机器、同一秒、唯一变量是这 4 个字符串。代价是整个 openai 渠道：
+    31 条被误判成 `unreachable`（当初就是这样「核实」的），另有 3 条 fetch_failed。
+    逐厂商抽样（34 家各取一条已抓到的正文）对比两种头：33 家完全一致，只有 openai 反转，
+    所以改成**不发**而不是按站点豁免。
+    """
     session = requests.Session()
     session.headers.update({
         "User-Agent": USER_AGENT,
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "none",
-        "Sec-Fetch-User": "?1",
-        "Upgrade-Insecure-Requests": "1",
     })
     return session
 
@@ -1014,6 +1031,28 @@ JSON_NEWS_BODY_LIMIT = 8_000_000
 BODY_RAW_LIMIT = 12_000_000
 
 
+def request_headers(url: str, *, lang: str = "", locale_cookie: str = "",
+                    accept_language: str = "") -> dict[str, str] | None:
+    """这一条请求要带的**非默认**头；空字典返回 None（requests 用会话默认值）。
+
+    优先级从低到高：`lang`（源声明语言）→ `locale_cookie`（只看 cookie 的站）
+    → `accept_language`（源级覆盖）→ `HOST_USER_AGENT_OVERRIDES`（主机级 UA）。
+    最后一项压过会话默认值，见那里的注释。
+    """
+    headers: dict[str, str] = {}
+    if lang in _LANG_HEADERS:
+        headers["Accept-Language"] = _LANG_HEADERS[lang]
+    if locale_cookie:
+        headers["Cookie"] = locale_cookie
+    # 源级覆盖排在语言头之后：覆盖面只到这一条源，别的源照旧按 `lang` 发
+    if accept_language:
+        headers["Accept-Language"] = accept_language
+    host_ua = HOST_USER_AGENT_OVERRIDES.get(urlparse(url).hostname or "")
+    if host_ua:
+        headers["User-Agent"] = host_ua
+    return headers or None
+
+
 def _fetch_with_requests(session: requests.Session, url: str, stype: str,
                          timeout: tuple[float, float], retries: int,
                          lang: str = "", locale_cookie: str = "",
@@ -1033,15 +1072,8 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
     「声明语言」（正文抓取、英文镜像判据用它），不能为了一个站点改全局值。
     """
     result = PageResult(url=url, stype=stype, final_url=url)
-    headers: dict[str, str] = {}
-    if lang in _LANG_HEADERS:
-        headers["Accept-Language"] = _LANG_HEADERS[lang]
-    if locale_cookie:
-        headers["Cookie"] = locale_cookie
-    # 源级覆盖排在语言头之后：覆盖面只到这一条源，别的源照旧按 `lang` 发
-    if accept_language:
-        headers["Accept-Language"] = accept_language
-    headers = headers or None
+    headers = request_headers(url, lang=lang, locale_cookie=locale_cookie,
+                              accept_language=accept_language)
     last_err = ""
     for attempt in range(retries + 1):
         try:
@@ -4396,11 +4428,49 @@ def _native_feed_vendors(intel_list: list[VendorIntel]) -> set[str]:
 #: ai21_labs 是 2026-09-30 换源时加进来的：它的归档当时**只有**锚点（13 条全是
 #: `blog/#d-…`，没有一条能点开的直链），换源后新条目走 wp-json 带规范地址，
 #: 这批老锚点就纯剩死链了。
-NEWS_CANONICAL_ONLY_VENDORS = {"deepseek", "xai_grok", "anthropic", "ai21_labs"}
+#: meta_llama 是 2026-11-21 加的：`ai.meta.com/blog` 的卡片区里混着**栏目标签**
+#: （Open Source / Research / Blog Posts / Computer Vision），抽取器给它们也编了
+#: `#d-<日期>-<n>` 锚点，于是归档里 8 条这样的「文章」全部 0 字、或长期 fetch_failed；
+#: 真帖子在这页上都有 `/blog/<slug>/` 直链（实测 5 条已抓到正文）。
+NEWS_CANONICAL_ONLY_VENDORS = {"deepseek", "xai_grok", "anthropic", "ai21_labs",
+                               "meta_llama"}
 
 #: changelog 式抽取给分节现编的锚点（`#d-<日期>-<n>`）：页面上不存在这个 id，
 #: 点开只落到列表页顶部。真实页内锚（如 deepseek 的 `#时间-2026-10-17`）不匹配。
 _SYNTHETIC_ANCHOR_RE = re.compile(r"^d-\d{4}-\d{2}-\d{2}-\d+$")
+
+
+#: 归档侧也顺手剔除合成锚点的厂商。**故意比 `NEWS_CANONICAL_ONLY_VENDORS` 窄**：
+#: 那个集合管的是「订阅流读什么」，这个管「归档留什么」，两者不能合并。
+#: 依据（2026-11-21 实测）：xai / anthropic 的锚点行里仍有**唯一记录** ——
+#: 2026-09-01 的 Fable 5.1 / Mythos 5.1、2026-07-31 的 Grok Voice Think Fast 2.0
+#: 三条模型发布事件只存在于锚点行，剔掉之后 `model-releases.json` 直接从 229 掉到 226。
+#: 归档是 record-of-record，不能因为「链接不好点」就删掉唯一一份记录；订阅流那边
+#: 早已不收它们，读者不会看到，也已经够了。
+#: meta_llama 不同：它的 8 条锚点标题全是栏目名（Open Source / Research / Blog Posts /
+#: Computer Vision），正文 0 字，没有承载任何信息，留着只会每天重试抓正文。
+ARCHIVE_DROP_SYNTHETIC_ANCHORS = {"meta_llama"}
+
+
+def _drops_news_article(vendor_id: str, url: str, *, in_archive: bool = False) -> bool:
+    """这条 URL 是否**不该**当成一篇文章的身份。
+
+    两种情况：
+      * 已退役新闻源的历史残留（见 `RETIRED_NEWS_URL_PREFIXES`）；
+      * `NEWS_CANONICAL_ONLY_VENDORS` 里由 changelog 式抽取给分节**现编**的
+        `#d-<日期>-<n>` 锚点 —— 页面上不存在这个 id，点开只落到列表页顶部。
+        真实页内锚不在此列。
+
+    `in_archive=True` 时再收紧一层（只对 `ARCHIVE_DROP_SYNTHETIC_ANCHORS` 生效）：
+    归档要留唯一记录，订阅流只挑能读的，两个判据的代价不一样。
+    """
+    if _is_retired_news_url(url):
+        return True
+    if vendor_id not in NEWS_CANONICAL_ONLY_VENDORS:
+        return False
+    if in_archive and vendor_id not in ARCHIVE_DROP_SYNTHETIC_ANCHORS:
+        return False
+    return bool(_SYNTHETIC_ANCHOR_RE.match(urlparse(url).fragment))
 
 
 def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
@@ -4422,7 +4492,6 @@ def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
     1 条（2024-07-25）是该日期唯一记录。判定与边界由
     `TestArchiveShadowFold` 钉住，别把这里当"只增不减"的凭据引用。
     """
-    drop_frag = intel.vendor_id in NEWS_CANONICAL_ONLY_VENDORS
     kept: dict[str, Article] = {}
     for a in intel.all_news_articles:
         if a.date > today:
@@ -4430,7 +4499,7 @@ def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
         # 只丢**合成**锚点：`#d-<日期>-<n>` 是 changelog 式抽取给分节现编的 id，
         # 页面上并不存在，点开只会落到列表页顶部。真实页内锚（deepseek 的
         # `#时间-2026-10-17` 这类）是能点开的条目标识，不能连带丢掉。
-        if drop_frag and _SYNTHETIC_ANCHOR_RE.match(urlparse(a.url).fragment):
+        if _drops_news_article(intel.vendor_id, a.url):
             continue
         key = _title_key(a.title)
         prev = kept.get(key)
@@ -5685,8 +5754,8 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
     """把每个厂商的全量文章写到 llm-news/<vendor_id>.md 子文档。
 
     返回 (归档文件数, 文章总数, 实际改写文件数)。自动将新抓取的文章与既有归档增量
-    合并（只增不减：`clean_removed` 下已下线厂商会整文件删除、RETIRED 前缀命中的历史条目
-    会被剔除，这两类例外）；标题汉化走 translate_to_zh（磁盘缓存 + 并发）。
+    合并（只增不减：`clean_removed` 下已下线厂商会整文件删除、`_drops_news_article`
+    命中的历史条目会被剔除，这两类例外）；标题汉化走 translate_to_zh（磁盘缓存 + 并发）。
     title_polish 非空时，对**新收录**（归档里没这个 URL）且仍是英文的标题调用一次润色（brand, titles)
     -> {英文: 中文}，结果写进 zh_title 随归档冻结（见 --ai-titles）。
     屏蔽「抓取于」日期后与旧文件比对，无内容变化则不重写（避免无变化日产生 diff）。
@@ -5709,14 +5778,18 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
     for intel in intel_list:
         arch_path = out_dir / f"{intel.vendor_id}.md"
         # 1) 增量合并既有归档：新抓取排前，历史已有且本次未抓到的条目追加在后
-        #    （只增不减：RETIRED 前缀命中的历史条目除外，见 RETIRED_NEWS_URL_PREFIXES）
+        #    （只增不减：`_drops_news_article` 命中的除外 —— 退役源前缀 + 合成锚点）
         existing = parse_archived_articles(arch_path)
-        merged_arts: list[Article] = list(intel.all_news_articles)
+        # 新抓的这一批里也可能带合成锚点（栏目卡片），归档同样不收：只挡历史行的话，
+        # 每轮巡检都会把同一批栏目名再灌回来（meta 的 8 条就是这么反复长出来的）。
+        merged_arts: list[Article] = [
+            a for a in intel.all_news_articles
+            if not _drops_news_article(intel.vendor_id, a.url, in_archive=True)]
         by_url = {_article_key(a.url): a for a in merged_arts}
         old_urls = {_article_key(o.url) for o in existing}
         for old_art in existing:
-            # 已废弃源的历史条目不再保留（见 RETIRED_NEWS_URL_PREFIXES）
-            if _is_retired_news_url(old_art.url):
+            # 退役源的历史条目、以及「不是一篇文章」的合成锚点，都不再保留
+            if _drops_news_article(intel.vendor_id, old_art.url, in_archive=True):
                 continue
             u_norm = _article_key(old_art.url)
             fresh = by_url.get(u_norm)

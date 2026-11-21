@@ -3681,6 +3681,135 @@ class TestRetiredNewsSource(unittest.TestCase):
             self.assertNotIn("云博客残留", text, "已废弃源的历史条目应被清理")
 
 
+class TestSyntheticAnchorStaysOutOfArchive(unittest.TestCase):
+    """合成锚点（`#d-<日期>-<n>`）不许在归档里冒充文章 —— 但只对 meta 收紧。
+
+    实例：`ai.meta.com/blog` 的卡片区里混着**栏目标签**（Open Source / Research /
+    Blog Posts / Computer Vision），抽取器给它们也编了 `#d-…` 锚点。归档侧原本只
+    过滤「退役源前缀」，于是这 8 条「文章」长期留在 meta 归档里、每轮抓正文都 0 字，
+    攒成 6 条 `fetch_failed`。
+
+    边界同样重要：锚点**是唯一记录**的厂商（xai / anthropic 的模型发布事件、
+    minimax / 百炼 / gemini 的整页变更日志）一条都不许丢，所以归档侧用的是比
+    `NEWS_CANONICAL_ONLY_VENDORS` 更窄的白名单。
+    """
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.news_dir = Path(self.temp_dir.name) / "llm-news"
+        self.news_dir.mkdir(parents=True)
+        self.addCleanup(self.temp_dir.cleanup)
+
+    def _rebuild(self, arch_text, vendor_id):
+        arch_path = self.news_dir / f"{vendor_id}.md"
+        arch_path.write_text(arch_text, encoding="utf-8")
+        arts = crawler_llm_intel.parse_archived_articles(arch_path)
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id=vendor_id, brand="V", homepage="https://a.com",
+            products=[], all_news_articles=list(arts))
+        with mock.patch.object(crawler_llm_intel, "translate_to_zh", lambda t: t):
+            crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                                  clean_removed=False)
+        return {a.url for a in crawler_llm_intel.parse_archived_articles(arch_path)}
+
+    def test_meta_category_labels_dropped_real_links_kept(self):
+        """栏目名锚点清掉，同页的 `/blog/<slug>/` 真文章保留。"""
+        urls = self._rebuild(
+            "## 全部文章（共 3 篇）\n\n"
+            "1. [Open Source](https://ai.meta.com/blog/#d-2026-07-27-2)（2026-07-27）\n"
+            "2. [Research](https://ai.meta.com/blog/#d-2026-07-09-5)（2026-07-09）\n"
+            "3. [Muse Spark 简介](https://ai.meta.com/blog/introducing-muse-spark-msl/)"
+            "（2026-04-08）\n", "meta_llama")
+        self.assertEqual(urls, {"https://ai.meta.com/blog/introducing-muse-spark-msl/"},
+                         "栏目标签不是文章，真帖子必须留")
+
+    def test_fresh_synthetic_anchor_also_rejected(self):
+        """新抓的这一批也要挡 —— 只挡历史行的话，每轮巡检会把栏目名再灌回来。"""
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="meta_llama", brand="V", homepage="https://a.com", products=[],
+            all_news_articles=[
+                crawler_llm_intel.Article(
+                    title="Research", url="https://ai.meta.com/blog#d-2026-07-09-5",
+                    date="2026-07-09", source="官方页面文章列表", stype="html"),
+                crawler_llm_intel.Article(
+                    title="真文章", url="https://ai.meta.com/blog/real-post/",
+                    date="2026-07-08", source="官方页面文章列表", stype="html"),
+            ])
+        with mock.patch.object(crawler_llm_intel, "translate_to_zh", lambda t: t):
+            crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                                  clean_removed=False)
+        text = (self.news_dir / "meta_llama.md").read_text(encoding="utf-8")
+        self.assertNotIn("#d-2026-07-09-5", text, "新抓的栏目标签不许落归档")
+        self.assertIn("real-post", text)
+
+    def test_anchor_identity_vendors_untouched(self):
+        """单页变更日志的锚点就是条目身份：白名单外的厂商一条都不许丢。"""
+        urls = self._rebuild(
+            "## 全部文章（共 2 篇）\n\n"
+            "1. [MiniMax M2 发布](https://platform.minimaxi.com/release-notes#d-2026-05-01-1)"
+            "（2026-05-01）\n"
+            "2. [MiniMax M2.1 发布](https://platform.minimaxi.com/release-notes#d-2026-06-01-2)"
+            "（2026-06-01）\n", "minimax")
+        self.assertEqual(len(urls), 2, "锚点身份厂商的条目一条都不能掉")
+
+    def test_predicate_edges(self):
+        r = crawler_llm_intel._drops_news_article
+        self.assertTrue(r("meta_llama", "https://ai.meta.com/blog/#d-2026-04-06-10"))
+        self.assertTrue(r("meta_llama", "https://ai.meta.com/blog#d-2026-04-06-10"),
+                        "两种写法（有无斜杠）都要挡")
+        self.assertFalse(r("meta_llama", "https://ai.meta.com/blog/brain2qwerty-x/"))
+        # 真实页内锚不是合成锚点，照旧保留
+        self.assertFalse(r("deepseek", "https://api-docs.deepseek.com/zh-cn/news/news250115"))
+        # 退役源前缀这条老判据要一起继承
+        self.assertTrue(r("openai", "https://openai.com/form/stargate-infrastructure"))
+
+    def test_archive_side_is_narrower_than_rss(self):
+        """归档侧只对 meta 生效：xai/anthropic 的锚点行还承载唯一记录。
+
+        实测代价：把它们一起剔掉，2026-09-01 的 Fable/Mythos 5.1 与 2026-07-31 的
+        Grok Voice Think Fast 2.0 三条模型发布事件会从 `model-releases.json` 消失
+        （229 → 226）。所以两个判据分开：订阅流全剔，归档只剔 meta。
+        """
+        r = crawler_llm_intel._drops_news_article
+        self.assertTrue(r("meta_llama", "https://ai.meta.com/blog/#d-2026-07-27-2",
+                          in_archive=True))
+        self.assertFalse(r("xai_grok", "https://x.ai/news#d-2026-07-31-18",
+                           in_archive=True), "xai 锚点行是唯一记录，归档要留")
+        self.assertFalse(r("anthropic", "https://www.anthropic.com/news#d-2026-09-01-3",
+                           in_archive=True), "anthropic 锚点行是唯一记录，归档要留")
+        # 但订阅流（in_archive=False）对这些厂商照旧全剔
+        self.assertTrue(r("xai_grok", "https://x.ai/news#d-2026-07-31-18"))
+        self.assertTrue(r("anthropic", "https://www.anthropic.com/news#d-2026-09-01-3"))
+
+
+class TestRequestHeaderHonesty(unittest.TestCase):
+    """请求头的「别自称浏览器导航」。
+
+    实测（2026-11-21，同一台机器同一秒）：openai.com 对带 `Sec-Fetch-*` +
+    `Upgrade-Insecure-Requests` 的裸 GET 一律 403（10KB 拦截页），去掉就是 200 /
+    300KB 正常页面。代价是整个 openai 渠道：31 条被误判成 `unreachable`、3 条
+    `fetch_failed`。逐厂商抽样 34 家对比两种头：33 家完全一致，只有 openai 反转。
+    """
+
+    def test_session_does_not_claim_top_level_navigation(self):
+        headers = crawler_llm_intel.build_session().headers
+        for name in ("Sec-Fetch-Dest", "Sec-Fetch-Mode", "Sec-Fetch-Site",
+                     "Sec-Fetch-User", "Upgrade-Insecure-Requests"):
+            self.assertNotIn(name, headers, f"{name} 会让 openai 直接 403")
+        self.assertIn("User-Agent", headers)
+
+    def test_meta_ua_override_beats_session(self):
+        """meta 的判据相反：自称浏览器（Chrome/Edge/Firefox）反而 400。"""
+        h = crawler_llm_intel.request_headers("https://ai.meta.com/blog/x/")
+        self.assertTrue(h and h["User-Agent"].startswith("python-requests/"))
+
+    def test_other_hosts_get_no_override(self):
+        self.assertIsNone(crawler_llm_intel.request_headers("https://openai.com/index/x"))
+        # 语言覆盖照旧生效，且不会被 UA 覆盖顺手带歪
+        h = crawler_llm_intel.request_headers("https://openai.com/x", lang="zh")
+        self.assertEqual(list(h), ["Accept-Language"])
+
+
 class TestNewsTitleQuality(unittest.TestCase):
     """抓取条目的标题质量 —— 2026-09-22 数据审计发现的问题逐类冻结。
 
