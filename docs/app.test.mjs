@@ -275,3 +275,61 @@ test('mapRow: langs 取第 8 列，老索引缺列退回空串', () => {
   assert.equal(FLI.mapRow(r, {}, {}).langs, 'zh');
   assert.equal(FLI.mapRow(r.slice(0, 7), {}, {}).langs, '');
 });
+
+test('matchQuotaFilters: 按分区、有免费额度、免绑卡、长期/周期与 OpenAI 兼容筛选', () => {
+  const base = {
+    part: 1,
+    in_guide: true,
+    signup: 'phone',
+    tiers: ['permanent'],
+    openai_compat: { base_url: 'https://api.example.com/v1' },
+  };
+  assert.equal(FLI.matchQuotaFilters(base, {}), true);
+  assert.equal(FLI.matchQuotaFilters(base, { part: 2 }), false);
+  assert.equal(FLI.matchQuotaFilters(base, { part: 1 }), true);
+  assert.equal(FLI.matchQuotaFilters({ ...base, in_guide: false }, { onlyGuide: true }), false);
+  assert.equal(FLI.matchQuotaFilters({ ...base, signup: 'card' }, { noCard: true }), false);
+  assert.equal(FLI.matchQuotaFilters({ ...base, signup: 'phone' }, { noCard: true }), true);
+  assert.equal(FLI.matchQuotaFilters({ ...base, tiers: ['onetime'] }, { longTerm: true }), false);
+  assert.equal(FLI.matchQuotaFilters({ ...base, tiers: ['recurring'] }, { longTerm: true }), true);
+  assert.equal(FLI.matchQuotaFilters({ ...base, openai_compat: null }, { onlyCompat: true }), false);
+  assert.equal(FLI.matchQuotaFilters(base, {
+    part: 1, onlyGuide: true, noCard: true, longTerm: true, onlyCompat: true,
+  }), true);
+});
+
+test('parseChangeLines: 多字段拆出中文标签与改前/改后，无箭头时保留原文', () => {
+  const labels = { free_models: '免费模型', promotions: '活动' };
+  const text = 'free_models：**旧模型** `m1` → **新模型** `m2`\npromotions：仅文字说明\n\nunknown_k：A → B';
+  const lines = FLI.parseChangeLines(text, labels);
+  assert.equal(lines.length, 3);
+  assert.deepEqual(lines[0], {
+    key: 'free_models',
+    label: '免费模型',
+    before: '旧模型 m1',
+    after: '新模型 m2',
+    raw: '旧模型 m1 → 新模型 m2',
+  });
+  assert.deepEqual(lines[1], {
+    key: 'promotions',
+    label: '活动',
+    before: '',
+    after: '',
+    raw: '仅文字说明',
+  });
+  assert.equal(lines[2].label, 'unknown_k');
+  assert.equal(lines[2].before, 'A');
+  assert.equal(lines[2].after, 'B');
+});
+
+test('richTokens: 安全切分粗体与行内代码，未闭合定界符退回纯文本', () => {
+  assert.deepEqual(FLI.richTokens('可用 `glm-4.7-flash` 与 **长期 0 元**'), [
+    { type: 'text', value: '可用 ' },
+    { type: 'code', value: 'glm-4.7-flash' },
+    { type: 'text', value: ' 与 ' },
+    { type: 'strong', value: '长期 0 元' },
+  ]);
+  assert.deepEqual(FLI.richTokens('未闭合 `abc 与 **def'), [
+    { type: 'text', value: '未闭合 `abc 与 **def' },
+  ]);
+});

@@ -1,36 +1,67 @@
 ---
-version: 1
+version: 2
 name: free-llm-intel 浏览页设计契约
-description: docs/index.html（厂商动态 / 最新变化 / 免费额度与活动一览）的唯一设计面。页面为单文件、无构建、无组件库，设计面就是这份文件里的 CSS 自定义属性。
+description: docs/index.html（厂商动态 / 额度变化 / 免费额度与活动）的唯一设计面。单文件、无构建、无组件库，设计面就是该文件 `<style>` 里的 CSS 自定义属性。
 colors:
-  bg: "#ffffff"
-  fg: "#1f2328"
-  muted: "#656d76"
-  line: "#d8dee4"
+  bg: "#f6f7f9"
+  surface: "#ffffff"
+  surface-subtle: "#f1f4f7"
+  fg: "#18212b"
+  muted: "#556270"
+  line: "#e2e7ee"
+  line-strong: "#cdd5df"
   card: "#ffffff"
-  card-hover: "#f6f8fa"
-  accent: "#0969da"
-  chip-bg: "#f6f8fa"
-  chip-fg: "#424a53"
-  chip-active-bg: "#0969da"
+  card-hover: "#f3f6f9"
+  accent: "#0f766e"
+  accent-hover: "#115e59"
+  accent-soft: "#ecfdf5"
+  accent-line: "#99d5cc"
+  chip-bg: "#eef2f6"
+  chip-fg: "#364152"
+  chip-active-bg: "#0f766e"
   chip-active-fg: "#ffffff"
-  warn-bg: "#fff8c5"
-  warn-line: "#d4a72c"
-  bg-dark: "#0d1117"
-  fg-dark: "#e6edf3"
-  muted-dark: "#8b949e"
-  line-dark: "#30363d"
-  accent-dark: "#58a6ff"
-  warn-bg-dark: "#2d2410"
-  warn-line-dark: "#9e6a03"
+  ok-bg: "#ecfdf5"
+  ok-fg: "#065f46"
+  ok-line: "#a7f3d0"
+  info-bg: "#eff6ff"
+  info-fg: "#1e40af"
+  info-line: "#bfdbfe"
+  warn-bg: "#fffbeb"
+  warn-fg: "#92400e"
+  warn-line: "#f59e0b"
+  bg-dark: "#0e1319"
+  surface-dark: "#151c24"
+  surface-subtle-dark: "#1b242f"
+  fg-dark: "#e7edf4"
+  muted-dark: "#93a1b2"
+  line-dark: "#25303e"
+  line-strong-dark: "#334154"
+  accent-dark: "#2dd4bf"
+  accent-hover-dark: "#5eead4"
+  accent-soft-dark: "#122b2b"
+  accent-line-dark: "#1f5c58"
+  warn-bg-dark: "#2b2110"
+  warn-fg-dark: "#fcd34d"
+  warn-line-dark: "#a16207"
 typography:
-  display-lg:
+  display-xl:
     fontFamily: 'system-ui + PingFang SC / Microsoft YaHei 兜底'
     fontSize: 24px
     fontWeight: 700
-    lineHeight: 1.25
+    lineHeight: 1.3
     letterSpacing: -0.2px
-  body-lg:
+  heading-xl:
+    fontFamily: '同上'
+    fontSize: 22px
+    fontWeight: 700
+    lineHeight: 1.25
+    letterSpacing: -0.3px
+  heading-lg:
+    fontFamily: '同上'
+    fontSize: 17px
+    fontWeight: 700
+    lineHeight: 1.4
+  body-base:
     fontFamily: '同上'
     fontSize: 15px
     fontWeight: 400
@@ -58,80 +89,73 @@ typography:
 spacing:
   sp-2: 2px
   sp-4: 4px
-  sp-5: 5px
   sp-6: 6px
-  sp-7: 7px
   sp-8: 8px
   sp-10: 10px
-  sp-11: 11px
   sp-12: 12px
-  sp-14: 14px
   sp-16: 16px
-  sp-18: 18px
   sp-20: 20px
-  sp-28: 28px
+  sp-24: 24px
   sp-32: 32px
   sp-40: 40px
   sp-48: 48px
-  sp-60: 60px
 rounded:
-  control: 6px
-  surface: 8px
+  control: 8px
+  surface: 12px
   pill: 999px
 components:
   tab:
-    backgroundColor: chip-bg
-    textColor: chip-fg
+    backgroundColor: transparent
+    textColor: muted
     typography: body-md
-    rounded: surface
-    padding: 8px 14px
-    height: 31px
+    rounded: control
+    padding: 10px 12px
   tab-selected:
-    backgroundColor: bg
+    backgroundColor: surface
     textColor: fg
     typography: body-md
-    rounded: surface
-    padding: 8px 14px
+    indicator: 2px inset bottom accent
+    padding: 10px 12px
   chip:
     backgroundColor: chip-bg
     textColor: chip-fg
     typography: label-sm
     rounded: pill
-    padding: 5px 10px
+    padding: 6px 10px
   chip-selected:
     backgroundColor: chip-active-bg
     textColor: chip-active-fg
     typography: label-sm
     rounded: pill
-    padding: 5px 10px
+    padding: 6px 10px
   button:
     backgroundColor: card
     textColor: fg
     typography: label-sm
     rounded: control
-    padding: 5px 12px
+    padding: 6px 12px
   button-primary:
     backgroundColor: chip-active-bg
     textColor: chip-active-fg
     typography: label-sm
     rounded: control
-    padding: 5px 12px
+    padding: 6px 12px
   search-field:
     backgroundColor: card
     textColor: fg
     typography: body-md
     rounded: control
-    padding: 7px 11px
+    padding: 8px 12px 8px 32px
   card-surface:
-    backgroundColor: chip-bg
+    backgroundColor: surface
     textColor: fg
     rounded: surface
-    padding: 10px 12px
+    padding: 16px
   warning-surface:
     backgroundColor: warn-bg
     textColor: fg
-    rounded: surface
-    padding: 14px 16px
+    rounded: control
+    padding: 8px 10px
 ---
 
 # DESIGN.md
@@ -140,145 +164,82 @@ components:
 
 这个仓库的产品是一份机读情报流，人看的界面只有一个文件：`docs/index.html`。
 它由 GitHub Pages 直接发布，没有构建步骤、没有组件库、没有 CSS 预处理——
-**设计面 = 该文件 `<style>` 里的自定义属性**。改设计就是改变量，不是改样式表。
+**设计面 = 该文件 `<style>` 里的自定义属性**。
 
-页面职责是把三种阅读节奏分开：「厂商动态」是长列表（3500+ 条，按时间倒序），
-「最新变化」是带日期的事件流，「免费额度与活动一览」是全集快照。
-三块共用同一套表面、同一套文字标度，只靠页签与密度区分，不各自造样式。
+界面气质为**现代编辑情报台**：冷灰白画布（`--bg`）托起纯白内容卡片（`--surface`），深翡翠青（`--accent`）作为唯一交互主色，配合语义状态色（免费绿 `--ok-*`、注册赠金蓝 `--info-*`、活动与绑卡警示琥珀 `--warn-*`）区分信息优先级；支持自动跟随系统与手动一键切换亮暗主题（持久化在 `localStorage` 的 `fli-theme`）。
 
-约束前提，后面所有取舍都由它推出：内容每天由巡检脚本重写，**页面不许硬编码任何数据**；
-读者是来查事实的，不是来看排版的，所以信息密度优先于留白；中文正文为主。
+页面职责将三种阅读节奏分开：「厂商动态」是高密度时间线长列表（4500+ 条，配右侧语言标明的全文档阅读抽屉），「额度变化」是结构化多字段对比流（改前 / 改后分栏），「免费额度与活动」是可多维筛选的厂商档案卡集（分区、有免费额度、免绑卡、长期/周期、OpenAI 兼容一键复制）。
+
+约束前提：内容每天由巡检脚本重写，**页面不许硬编码任何数据**；中文正文为主，信息密度优先于装饰性留白。
 
 ## Colors
 
-13 个语义角色 + 暗色同名覆盖，全部走 `:root`，样式里不出现裸 hex。
+全站颜色走 `:root` 语义变量 + `@media (prefers-color-scheme: dark)` 与 `:root[data-theme="dark"]` 覆盖，样式里不出现裸 hex。
 
 | 角色 | 用途 | 亮 | 暗 |
 | --- | --- | --- | --- |
-| `--bg` / `--fg` | 页面底与正文 | `#ffffff` / `#1f2328` | `#0d1117` / `#e6edf3` |
-| `--muted` | 次要文字：日期、计数、提示、页脚 | `#656d76` | `#8b949e` |
-| `--line` | 一切分隔线与描边 | `#d8dee4` | `#30363d` |
-| `--card` / `--card-hover` | 输入框与按钮底 / 行悬停 | `#ffffff` `#f6f8fa` | `#161b22` `#1c2128` |
-| `--accent` | 链接、悬停描边、次要按钮文字 | `#0969da` | `#58a6ff` |
-| `--chip-bg` / `--chip-fg` | 胶囊与页签的默认态 | `#f6f8fa` `#424a53` | `#21262d` `#c9d1d9` |
-| `--chip-active-bg` / `-fg` | 选中态（页签、筛选胶囊、主按钮） | `#0969da` / `#ffffff` | `#1f6feb` / `#ffffff` |
-| `--warn-bg` / `--warn-line` | 需要读者留意的行：活动标签、需绑卡、降级告警条 | `#fff8c5` `#d4a72c` | `#2d2410` `#9e6a03` |
-
-配色不表达品牌，只表达状态层级：中性面占绝大多数，`--accent` 只给可点的东西，
-`--warn-*` 只给"这条值得停一下"。新增颜色前先问它属于哪个角色。
+| `--bg` / `--surface` | 画布底与白卡面板底 | `#f6f7f9` / `#ffffff` | `#0e1319` / `#151c24` |
+| `--surface-subtle` | 兼容端点块、对比字段、代码块底 | `#f1f4f7` | `#1b242f` |
+| `--fg` / `--muted` | 正文主墨色与日期/计数/说明文字 | `#18212b` / `#556270` | `#e7edf4` / `#93a1b2` |
+| `--line` / `--line-strong` | 卡片发丝分隔线与控件边框 | `#e2e7ee` / `#cdd5df` | `#25303e` / `#334154` |
+| `--card` / `--card-hover` | 按钮/输入框底与列表悬停 | `#ffffff` / `#f3f6f9` | `#151c24` / `#1d2733` |
+| `--accent` / `--accent-hover` | 主链接、当前页签指示、动作高亮 | `#0f766e` / `#115e59` | `#2dd4bf` / `#5eead4` |
+| `--accent-soft` / `--accent-line` | 「读全文」胶囊与展开按钮激活底/框 | `#ecfdf5` / `#99d5cc` | `#122b2b` / `#1f5c58` |
+| `--chip-bg` / `--chip-fg` | 胶囊默认态 | `#eef2f6` / `#364152` | `#1c2530` / `#cbd5e1` |
+| `--chip-active-bg` / `-fg` | 选中态（筛选胶囊、分段按钮、主按钮） | `#0f766e` / `#ffffff` | `#0f766e` / `#ffffff` |
+| `--ok-*` | 永久免费 / 周期重置 / OpenAI 兼容标签 | `#ecfdf5` / `#065f46` / `#a7f3d0` | `#102a25` / `#6ee7b7` / `#1f5c4d` |
+| `--info-*` | 注册赠送 / 一次性额度标签 | `#eff6ff` / `#1e40af` / `#bfdbfe` | `#132238` / `#93c5fd` / `#234674` |
+| `--warn-*` | 活动、需绑卡警示、错误告警条 | `#fffbeb` / `#92400e` / `#f59e0b` | `#2b2110` / `#fcd34d` / `#a16207` |
 
 ## Typography
 
-五档整数标度，定义在 `:root` 的 `--fs-*`，样式表里只允许引用变量：
+七档整数标度，定义在 `:root` 的 `--fs-*`，样式表里只允许引用变量：
 
 | token | 值 | 用在哪 |
 | --- | --- | --- |
-| `--fs-xl` | 24px | `h1` |
-| `--fs-base` | 15px | body 基准、条目主标题、一览厂商名与**额度正文** |
-| `--fs-md` | 14px | 导语、搜索框、页签、一览的**活动行** |
-| `--fs-sm` | 13px | 行内次要信息（日期、有效期、最近核查、计数）与控件文字 |
-| `--fs-xs` | 12px | 胶囊徽章、等宽 URL/订阅地址、提示段 |
+| `--fs-2xl` | 24px | 阅读器正文 `h1` |
+| `--fs-xl` | 22px | 页面报头 `h1` |
+| `--fs-lg` | 17px | 阅读器小节标题 `h2` |
+| `--fs-base` | 15px | 正文基准、条目主标题、一览厂商名与主额度正文 |
+| `--fs-md` | 14px | 导语、搜索框、页签、一览模型列表与活动行 |
+| `--fs-sm` | 13px | 日期、计数、控件按钮、差异对比、折叠提示 |
+| `--fs-xs` | 12px | 胶囊徽章、等宽 URL/代码片段、提示说明 |
 
-中文最小可读档是 12px，**不再往下**。字体族是系统栈加中文兜底
-（`-apple-system … "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei"`），
-等宽只用于会被人复制粘贴的字符串。数字一律 `font-variant-numeric: tabular-nums`，
-让日期与计数在列表里对齐。
-
-字号**故意不做 `clamp()` 流式缩放**：这页是中文高密度情报流，五档是逐处定过的，
-上 clamp 会改掉每一行的渲染像素，而收益只有"自适应"——无法用等像素验证的改动不做。
-同理，收敛 `--sp-*` 到 4 的倍数需要一次带视觉验收的独立改动。
+中文最小可读档为 12px，**不再往下**。数字一律 `font-variant-numeric: tabular-nums`，保证日期、计数与页签数字对齐。
 
 ## Layout
 
-单列，`.wrap` 最大 880px，左右 16px 内边距；不做多栏，因为条目宽度要留给长标题。
+单列 `.wrap` 最大宽度 960px，左右 16px 内边距。
 
-垂直顺序固定：header → 页签（sticky）→ `<main>` 内的三个 pane → footer。
-`ul.items` 的行是 `日期 | 正文` 两段 flex，560px 以下转成纵向。
-一览行是「名称+分区 → 额度（账户赠送 + 免费模型）→ 活动 → 元信息（有效期 / 绑卡 / 前置条件 / 核查日期）→ 官方直达」五层，靠字号档位拉开，不靠颜色。
+垂直顺序固定：`header`（紧凑报头 + 可折叠 RSS 面板）→ `nav.tabs`（sticky 置顶页签栏）→ `<main>` 三面板 → `footer`。
 
-sticky 只留给页签栏：它曾经是整个筛选块（搜索 + 厂商胶囊 + 提示）常驻置顶，
-实测占掉 360×740 视口的 39%，把"换视图"这个动作挤到滚动之外。
-
-间距一律取 `--sp-<值>`（2/4/5/6/7/8/10/11/12/14/16/18/20/28/32/40/48/60），
-守卫会拒绝 margin/padding/gap 里新出现的裸 px。
-**这套值仍是历史形状，不是标度**：5/7/11/14/18/28 都是当年一处一调留下的。
-目标形状是 4 的倍数（4/8/12/16/24/32/48），收敛它需要逐处改渲染像素、
-再逐屏比对，属于另一次带视觉验收的改动；在此之前，新值只能从既有 token 里挑，
-不许再开一个 13px。布局宽度（`.wrap` 880px、日期列 84px、输入框 240px）
-与 1px 发丝描边不进这套 token——它们是结构，不是节奏。
-
-触摸目标按输入方式给，不按屏宽给：`@media (pointer: coarse)` 下页签与按钮 ~44px、
-分段控件与厂商徽章 ~37px，桌面一个像素都不动（实测 31/32/25/24/25 原样）。
-**厂商筛选胶囊只给到 ~34px，是有意不到 44 的**：它是一条会折 6 行的横向带，
-再高就把窄屏首屏的正文全部顶走——与"折叠胶囊条"是同一个取舍，见 finding #3。
+- **报头收拢**：RSS 地址与一键复制收进默认折叠的 `#subscribe-panel`，由顶部 `RSS 订阅` 按钮切换；无论收起或展开，顶部 `#subscribe-link` 均同步当前视图或所选厂商单源，且 `header` 不吸顶，保证 `tabsDocTop()` 测算精确与移动首屏内容直达。
+- **页签栏**：唯一使用 `position: sticky` 的导航带，小屏单行水平收纳并在 360px 宽度下保持三页签与计数同屏可见。
+- **筛选区**：`.controls` 不吸顶，随内容滚动。支持 `/` 快捷键聚焦当前面板搜索框，`Escape` 优先关抽屉、次优收起 RSS 面板。
+- **间距标度**：以 4px 为基数收敛为 `--sp-2/4/6/8/10/12/16/20/24/32/40/48`，守卫测试禁止在 `:root` 之外引入裸 px 间距或圆角。
+- **触摸目标**：`@media (pointer: coarse)` 下增大按钮、页签与胶囊内边距，桌面端保持紧凑。
 
 ## Elevation & Depth
 
-没有阴影、没有 z 轴层次。层级全部由**表面色差 + 1px 描边**表达：
-`--card` 浮在 `--bg` 上，`--chip-bg` 是次级面，`--warn-bg` 是提醒面。
-唯一的 z-index 是页签栏（6），用来盖住滚动内容。动效只有 `:hover` 的底色与描边变化，
-没有位移动画，因此不需要 `prefers-reduced-motion` 分支。
+卡片与列表通过**画布与表面色差（`--bg` vs `--surface`）+ 1px 发丝描边**建立层级，列表与卡片不铺投影；仅右滑全屏/780px 阅读抽屉 `.reader-drawer` 使用 `--shadow-drawer` 与 `--backdrop` 区分模态覆盖层。
 
 ## Shapes
 
-三种圆角，别的不许加：`--rd-control` 6px（按钮、输入框、分段控件）、
-`--rd-surface` 8px（卡片、告警条、页签顶角）、`--rd-pill` 999px（胶囊与徽章）。
-描边统一 1px `--line`；选中态把描边设为 `transparent`
-而不是加粗，避免尺寸跳动。
+三种圆角，别的不许加：`--rd-control` 8px（按钮、输入框、分段控件、兼容端点块、差异框）、`--rd-surface` 12px（列表卡、一览厂商卡、订阅面板、告警条）、`--rd-pill` 999px（胶囊与徽章）。
 
 ## Components
 
-胶囊基元：`.pill` 独占 `display / border-radius / border / background / color`，
-角色类只写差异——`.chip`（可点筛选）、`.vendor`（行内厂商名）、`.kind`（事件类型）、
-`.qpart`（分区标签）、`.qp-tag`（活动标签）。
-**新胶囊挂 `.pill` + 一个角色类，不要再抄一遍基元**（守卫会拒绝第二处
-`border-radius: var(--rd-pill)`）。
-一个坑值得记下来：基元一旦声明 `color`，就接管了原本**继承**来的文字色——
-`.qp-tag` 与 `.kind` 是提醒色底、文字跟着所在行走（前者继承 `--fg`，后者继承
-`.meta` 的 `--muted`），所以必须显式写回 `color`。这条是像素哈希抓出来的，不是看出来的。
-
-状态口径（各组件按此表取子集，别自造）：
-
-| 状态 | 表达 | 说明 |
-| --- | --- | --- |
-| default | `--chip-bg` / `--card` 面 + 1px `--line` | 页签、胶囊、按钮、输入框共用 |
-| hover | 底色换 `--card-hover`，或描边换 `--accent` | 只做颜色变化，不做位移与缩放 |
-| focus-visible | 2px `--accent` 外描边（输入框 `outline-offset: -1px`） | 键盘可达性依赖它，不许用 `outline: none` 抹掉 |
-| selected / pressed | `--chip-active-bg` + `--chip-active-fg`，描边转 `transparent` | 由 `aria-selected`（页签）或 `aria-pressed`（胶囊、视图切换）驱动 |
-| active（按下） | 与 selected 同色，无额外样式 | 点击即切换视图/筛选，反馈来自结果变化 |
-| disabled | 本页面**没有**禁用态 | 控件要么可用要么不渲染，别预留灰态 |
-| loading | `.msg` 显示 `data-loading` 文案 | 首次取数前 |
-| empty | `.msg` 显示各自的空结果文案 | 必须区别于 loading，见下 |
-| error | `.msg.warn` + `--warn-*` 面 | 取数失败或厂商索引缺失 |
-
-- **tab** — 顶角 8px、底边开口，默认 `--chip-bg`，选中态换成 `--bg` + 加粗。
-  一组页签在 Tab 键序里只占一站（roving tabindex），左右键互切、Home/End 跳首尾。
-- **chip** — 厂商筛选胶囊，`aria-pressed` 驱动选中态；计数尾巴 `.n` 同色，
-  过去用 `opacity: .62` 压暗，在选中态上对比度不达标，已去掉。
-  `.chip.more` 用虚线描边表示"还能展开更多"，与可筛选的实底胶囊区分。
-- **条目行 `.item`** — `日期 | 正文` 两段 flex。**标题行只放标题**，`读全文` 与厂商徽章、
-  原文标题一起待在 `.meta` 行，并且靠 `margin-left: auto` 钉在行尾。
-  曾经把按钮放在标题行里跟着标题文字流动，它的横坐标随标题长度逐行漂移
-  （实测头 20 行出现 14 个不同的 x），整列右缘参差，标题还被控件截短。
-- **`.note.orig`** — 英文原文标题可截成一行（`text-overflow: ellipsis`），
-  前提是 `flex: 1 1 0`：可换行的 flex 容器在**收缩之前**就按假设尺寸决定换行，
-  只写 `min-width: 0` 的话长原文会被整体推到独立行、永远触发不了省略号。
-  截断只加在 `.orig` 上——额度变化页复用 `.note`，但那里的内容是「前值 → 后值」的
-  结论，截了就把结论藏了。
-- **button / button.primary** — 同一控件的两个强度，主按钮复用 `--chip-active-*`。
-- **search-field** — `type=search`，焦点态是 2px `--accent` 外描边（`outline-offset: -1px`）。
-- **warning-surface** — `.msg.warn`，只在取数失败或索引缺失时出现。
-- **msg（三态提示行）** — 一个元素兼当加载中 / 空结果 / 出错，**谁最后画它谁定状态**；
-  空结果必须写自己的文案，不许把「加载中…」留在页面上。
+- **胶囊基元 `.pill`**：全页唯一声明 `border-radius: var(--rd-pill)` 的规则，角色类（`.chip` / `.vendor` / `.read-btn` / `.qpart` / `.qtier` / `.qp-tag` / `.qsignup` / `.kind` / `.diff-field` / `.tab-n` / `.brand-dot`）只写颜色、字号与内边距差异。
+- **`[hidden]` 显隐规则**：显式覆盖 `.btn` / `.pill` / `.subscribe` / `.filter-group` / `.reader-orig` 的 `display`，避免自定义 `display: inline-flex` 压过原生 `hidden` 属性。
+- **条目行 `.item`**：`日期 | 正文` 两段 flex（640px 以下转纵向）。`.meta` 放可点筛选的 `.vendor` 按钮、单行省略的 `.note.orig` 原文标题、以及固定靠右（`margin-left: auto`）且标注语言可用性（`读全文 · 中/EN` 等）的 `.pill.read-btn`。
+- **额度变化 `.diff-row`**：按字段拆分 `改前` / `改后` 双栏对比卡（窄屏自动上下堆叠），超过 2 个变更字段自动折叠进 `.diff-more`。
+- **免费额度与活动 `.qrow`**：独立卡片展示，顶部承载分区与免费类型徽章（`永久免费` / `周期重置` / `注册赠送` / `开源自托管` / `按量付费`）及右侧官网直达按钮；内联解析 `` `code` `` 与 `**bold**` 富文本节点（纯 DOM 拼接，不拼 HTML）；兼容厂商附带 `base_url` 一键复制框；限制说明默认折叠进 `.qcaveats`。
+- **阅读抽屉 `.reader-drawer`**：780px 宽滑出抽屉，内部 `.reader-prose` 限制 `max-width: 68ch` 与 `1.8` 行高，支持头部跳转原文、中/英双语切换与浏览器前进后退同步。
 
 ## Do's and Don'ts
 
-- **Do** 新增视觉值先落到 `:root` 的既有变量上；确实需要新角色时，同时补亮暗两版。
-- **Do** 用 `--fs-*` 控制字号，半像素字号（11.5 / 12.5 / 13.5）已经清过一轮，别再引入。
-- **Don't** 用 `opacity` 压暗文字来表达层级——它会在深色底上直接跌破 4.5:1。
-- **Don't** 在 HTML 里写 `style="…"`；显隐一律切 `hidden` 属性。
-- **Don't** 给正文句子里的链接只靠颜色区分，默认态要有下划线。
-- **Don't** 往页面里硬编码厂商清单或条目数据，全部从 `feeds/*.json` 读；
-  仓库里有守卫测试钉住这条。
-- **Don't** 把 sticky 当成"重要控件就钉住"的手段；常驻 chrome 每多一层，
-  手机上可读的正文就少一屏。
+- **Do** 新增视觉值先落到 `:root` 变量并同步亮暗两版。
+- **Do** 在 `<style>` 中严格避免 `opacity`（改用语义色变量表达层级）和除 `.pill` 之外的 `var(--rd-pill)`。
+- **Don't** 在 `docs/index.html` 中出现独立小写厂商 ID（如 `openai` / `modal` 等），防止触发 `test_browse_page_does_not_hardcode_vendors`。
+- **Don't** 让 `.controls` 吸顶，或把 `.read-btn` 塞回 `.title` 行。
+- **Don't** 往页面里硬编码厂商清单或条目数据，全部从 `feeds/*.json` 读。
