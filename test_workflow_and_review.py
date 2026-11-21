@@ -8050,6 +8050,81 @@ class TestSenseTimeNewsSource(unittest.TestCase):
         self.assertTrue(crawler_llm_intel._is_retired_news_url(
             "https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#release-202507"))
 
+class TestLongCatResearchSource(unittest.TestCase):
+    """美团 LongCat 官网首页「最新研究」卡片 —— 卡片指向的才是真实文章。
+
+    换源动因（2026-11-21）：原 `updates` 指向 longcat.chat 的 ChangeLog，15 条「文章」
+    其实是同一页上的版本锚点（`#版本-2026-11-02`），正文从同页切出来，不是文章。
+    官网首页的 `research-card` 每张卡「阅读更多」就是文章页本身。
+    """
+
+    URL = "https://longcat.ai/"
+
+    @staticmethod
+    def _card(href, title, day="2026-11-01"):
+        # 属性顺序按线上真实写法：href 在 class 之前（写死顺序的正在实测中匹配到 0 条）
+        return (f'<a data-v-x="" href="{href}" target="_blank" class="research-card">'
+                f'<div class="research-card-thumb"><img></div>'
+                f'<div class="research-card-body"><div class="research-card-meta">'
+                f'<span class="research-card-tag">文章</span>'
+                f'<span class="research-card-date">{day}</span></div>'
+                f'<h3>{title}</h3><p>摘要</p>'
+                f'<span class="research-card-link">阅读更多 →</span></div></a>')
+
+    def _html(self):
+        return ("<html><body><section class=\"research-section\">"
+                + self._card("https://longcat.ai/blog/longcat-2.5",
+                             "LongCat-2.5：面向智能体任务的原生多模态模型", "2026-11-01")
+                + self._card("https://longcat.ai/blog/longcat-2.0",
+                             "LongCat-2.0：万亿参数 MoE 大语言模型", "2026-06-29")
+                # 阅读更多指向站外论文页：那就是它的真实落点，照收
+                + self._card("https://huggingface.co/papers/2605.27209",
+                             "Learning to Act under Noise：通过噪声环境增强 Agent 鲁棒性",
+                             "2026-05-26")
+                # 没有 h3 的卡不是文章
+                + '<a class="research-card" href="https://longcat.ai/blog/x"><p>无标题</p></a>'
+                + "</section></body></html>")
+
+    def _page(self, html=None, url=URL):
+        return crawler_llm_intel.PageResult(url=url, stype="news", ok=True,
+                                            final_url=url, raw=self._html() if html is None else html)
+
+    def test_adapter_reads_research_cards(self):
+        arts = crawler_llm_intel.extract_articles_from_longcat_home(self._page())
+        by_url = {a.url: a for a in arts}
+        art = by_url["https://longcat.ai/blog/longcat-2.5"]
+        self.assertEqual(art.title, "LongCat-2.5：面向智能体任务的原生多模态模型")
+        self.assertEqual(art.date, "2026-11-01")
+        self.assertEqual(len(arts), 3)
+
+    def test_external_paper_link_is_kept(self):
+        arts = crawler_llm_intel.extract_articles_from_longcat_home(self._page())
+        self.assertIn("https://huggingface.co/papers/2605.27209", {a.url for a in arts},
+                      "第三张卡的阅读更多就指向论文页，换成合成锚点反而指回首页")
+
+    def test_cards_without_heading_are_skipped(self):
+        arts = crawler_llm_intel.extract_articles_from_longcat_home(self._page())
+        self.assertNotIn("https://longcat.ai/blog/x", {a.url for a in arts})
+
+    def test_missing_markup_returns_empty_so_generic_logic_can_take_over(self):
+        for label, html in (("普通 HTML", "<html><body><h1>LongCat</h1></body></html>"),
+                            ("空正文", "")):
+            self.assertEqual(
+                crawler_llm_intel.extract_articles_from_longcat_home(self._page(html=html)),
+                [], label)
+
+    def test_yaml_points_at_the_home_page_and_retires_the_changelog(self):
+        root = Path(__file__).resolve().parent
+        _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        news = [s for s in sources if s.get("vendor_id") == "longcat_meituan"
+                and (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
+        self.assertEqual([s["url"] for s in news], [self.URL])
+        self.assertTrue(crawler_llm_intel._is_retired_news_url(
+            "https://longcat.chat/platform/docs/zh/ChangeLog.html#版本-2026-11-02"))
+        self.assertFalse(crawler_llm_intel._is_retired_news_url(
+            "https://longcat.chat/platform/docs/zh/token-pack"),
+            "同站 Token Pack 文档是情报页，不能被退役前缀误伤")
+
 class TestBackfillOriginalEncoding(unittest.TestCase):
     """`--backfill-orig` 的字符编码：乱码绝不能被当成「英文原文」写进归档。
 

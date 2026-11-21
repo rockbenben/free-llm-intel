@@ -1915,6 +1915,72 @@ def extract_articles_from_kimi_blog(page: PageResult,
     return articles
 
 
+def _anchor_blocks(html: str, class_needle: str):
+    """按 class 片段筛出 `(href, inner_html)`：属性顺序无关。
+
+    站点适配器专用 —— 这些站的卡片是**整块 `<a>`**，而各站属性顺序并不统一
+    （商汤写 `class` 在前、LongCat 写 `href` 在前），写死一种顺序的正在实测中直接
+    匹配到 0 条。"""
+    for m in re.finditer(r"<a\b([^>]*)>", html or "", re.I):
+        attrs = m.group(1)
+        if class_needle not in attrs:
+            continue
+        hm = re.search(r'href="([^"]+)"', attrs)
+        if not hm:
+            continue
+        end = html.find("</a>", m.end())
+        if end < 0:
+            continue
+        yield hm.group(1).strip(), html[m.end():end]
+
+
+def extract_articles_from_longcat_home(page: PageResult,
+                                    max_items: int = JSON_NEWS_MAX_ITEMS) -> list[Article]:
+    """美团 LongCat 官网首页的**最新研究**卡片（`longcat.ai`）—— 每张卡指向真实文章。
+
+    为什么单独写：首页是纯前端渲染（静态 HTML 4KB 只有标题），`最新研究` 区只有三张
+    `<a class="research-card" href="…">` 卡片（期刊式列表页不存在：`/blog`、`/research`、
+    `/paper` 实测全部 `ResourceNotFoundException`，`查看全部 →` 指向 HuggingFace 论文列表，
+    是站外）。通用链接提取在这一页拿不到卡片（锚文本是整块卡片的拼接串），故按卡片解析：
+    日期在 `.research-card-date`，标题在 `<h3>`，正链就是卡片自己的 href。
+
+    卡片 href **可以是站外**：第三张卡（Learning to Act under Noise）的「阅读更多」实测
+    指向 `huggingface.co/papers/…`，那就是这篇文章真正的落点，照收 —— 换成合成锚点反而
+    指回首页。"""
+    html = page.raw or ""
+    if not html:
+        return []
+    articles: list[Article] = []
+    seen: set[str] = set()
+    for href, inner in _anchor_blocks(html, "research-card"):
+        m_title = re.search(r"<h3[^>]*>([\s\S]*?)</h3>", inner)
+        if not m_title or not href or href.startswith("#"):
+            continue
+        title = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", m_title.group(1))).strip()
+        if len(title) < 4:
+            continue
+        m_date = re.search(r'research-card-date[^"]*"[^>]*>([^<]+)<', inner)
+        day = ""
+        if m_date:
+            raw = re.sub(r"[^0-9]", "-", m_date.group(1).strip()).strip("-")
+            nums = [p for p in raw.split("-") if p]
+            if len(nums) == 3:
+                day = "%04d-%02d-%02d" % (int(nums[0]), int(nums[1]), int(nums[2]))
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
+            day = ""
+        if href.startswith("/"):
+            parts = urlparse(page.display_url or page.url)
+            href = f"{parts.scheme}://{parts.netloc}{href}"
+        if href in seen:
+            continue
+        seen.add(href)
+        articles.append(Article(title=title, url=href,
+                                date=_drop_future_date(day),
+                                source="官方页面", stype=page.stype))
+        if len(articles) >= max_items:
+            break
+    return articles
+
 def extract_articles_from_sensetime_news(page: PageResult,
                                       max_items: int = JSON_NEWS_MAX_ITEMS) -> list[Article]:
     """商汤新闻中心列表页（`www.sensetime.com/cn/news`）—— 卡片里的标题 + 日期。
@@ -1936,11 +2002,9 @@ def extract_articles_from_sensetime_news(page: PageResult,
     origin = f"{parts.scheme}://{parts.netloc}"
     articles: list[Article] = []
     seen: set[str] = set()
-    card_re = re.compile(
-        r'<a[^>]+class="[^"]*NewsCenter_card[^"]*"[^>]+href="(/cn/news/[^"#?]+)"[^>]*>'
-        r"([\s\S]*?)</a>")
-    for m in card_re.finditer(html):
-        href, inner = m.group(1), m.group(2)
+    for href, inner in _anchor_blocks(html, "NewsCenter_card"):
+        if not re.match(r"/cn/news/[^#?]+", href):
+            continue
         m_title = re.search(r"<strong[^>]*>([\s\S]*?)</strong>", inner)
         if not m_title:
             continue
@@ -1978,6 +2042,7 @@ def extract_articles_from_sensetime_news(page: PageResult,
 _SITE_PAGE_EXTRACTORS = {
     "www.kimi.com": extract_articles_from_kimi_blog,
     "www.sensetime.com": extract_articles_from_sensetime_news,
+    "longcat.ai": extract_articles_from_longcat_home,
 }
 
 
@@ -2931,6 +2996,10 @@ RETIRED_NEWS_URL_PREFIXES: tuple[str, ...] = (
     # （见 llm-intel.yaml 的 news 源）。这条线最新一条停在 2025-07-23 —— 落后 16 个月，
     # 商汤的模型发布/合作动态都发在 www.sensetime.com/cn/news。
     "https://www.sensecore.cn/help/docs/model-as-a-service/nova/release",
+    # 美团 LongCat 平台 ChangeLog：2026-11-21 从 yaml 移除，改用官网首页「最新研究」的
+    # 文章卡（见 llm-intel.yaml 的 news 源）。旧源自带的 15 条是同一页上的版本锚点，
+    # 不是文章；Token Pack / 按量计费两个文档是不同路径，属情报页，不受影响。
+    "https://longcat.chat/platform/docs/zh/ChangeLog.html",
 )
 
 

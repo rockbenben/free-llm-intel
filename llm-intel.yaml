@@ -1334,12 +1334,21 @@ sources:
   - vendor_id: longcat_meituan
     type: referral
     url: https://longcat.chat/about
-  # 更新日志（实测 8 条，带日期）：静态 HTML，无需浏览器兜底；
-  # 内容是「模型发布 / 模型服务下线 / 计费服务推出」—— 与主题高度对口。
+  # 最新研究（2026-11-21 换源）：原 `updates` 指向 longcat.chat 的 ChangeLog —— 那是
+  # **一个页面上的版本锚点**（`#版本-2026-11-02`），15 条「文章」其实共用同一份发布
+  # 记录，正文是从同页切出来的段落，不是文章。官网 longcat.ai 首页底部的「最新研究」
+  # 才是指向真实文章：每张 `research-card` 的「阅读更多」就是文章页本身。
+  #
+  # 三条实测限制：① 首页是纯前端渲染（静态 4KB 只有 <title>），要浏览器兜底；
+  # ② 没有列表页（`/blog`、`/research`、`/paper` 全是 ResourceNotFoundException，
+  #    「查看全部 →」指向 HuggingFace 论文列表，站外）；③ 卡片是整块 `<a>`，锚文本
+  #    是整张卡的拼接串，通用提取拿不到标题 —— 故用站点适配器按 `research-card` 解析。
+  # 第三张卡（Learning to Act under Noise）的「阅读更多」本身指向 HuggingFace 论文页，
+  # 那就是它的真实落点，照收。
   - vendor_id: longcat_meituan
-    type: updates
+    type: news
     lang: zh
-    url: https://longcat.chat/platform/docs/zh/ChangeLog.html
+    url: https://longcat.ai/
   # 额度/计费事实的静态同源：platform/pricing 是前端渲染、requests 拿不到正文（进不了快照，
   # 变化检测等于没有）；这两页是文档站的静态输出，能取到正文，快照才有意义。
   - vendor_id: longcat_meituan

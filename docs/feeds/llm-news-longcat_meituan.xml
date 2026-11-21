@@ -3,141 +3,177 @@
   <channel>
     <title>美团 LongCat · 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>美团 LongCat 官方博客 / 更新日志归档（最近 50 条，共 14 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>美团 LongCat 官方博客 / 更新日志归档（最近 50 条，共 3 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-longcat_meituan.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 02 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 01 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>LongCat-2.5 上线</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-11-02</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-11-02</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-11-02</h2>
-<h3>LongCat-2.5 上线</h3>
-<p>LongCat-2.5 的核心特性如下：</p>
-<ul><li><strong>原生多模态，拓展编程边界</strong>：融合视觉理解与智能体编程，支持视觉编程、创意设计与 3D 任务。</li><li><strong>长程智能体，处理复杂工程任务</strong>：处理复杂代码库与完整项目，支持多步推理、工具调用与端到端执行。</li><li><strong>适配多种 Harness，融入现有工作流</strong>：兼容 Claude Code、Codex、Hermes 等主流 Harness，可按需接入不同开发工具与工作流。</li></ul>]]></content:encoded>
+      <title>LongCat-2.5：面向智能体任务的原生多模态模型</title>
+      <link>https://longcat.ai/blog/longcat-2.5</link>
+      <guid isPermaLink="true">https://longcat.ai/blog/longcat-2.5</guid>
+      <pubDate>Sun, 01 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><img src="https://s3.meituan.net/static-prod01/com.sankuai.friday.longcat.next2p/assets/longcat_logo-X5K_hpNA.svg" alt="LongCat"></p>
+<h1>LongCat-2.5面向智能体任务的原生多模态模型</h1>
+<p>2026-11-1</p>
+<p>[ GitHub 敬请期待]()<a href="https://huggingface.co/meituan-longcat/LongCat-2.5"> HuggingFace</a><a href="https://longcat.ai/chat"> 在线体验</a><a href="https://longcat.ai/platform/docs/"> API 接入</a></p>
+<p>今天，我们正式发布 LongCat-2.5，这是一个面向长程智能体任务的原生多模态模型。模型总参数量为 1.6 万亿，每个 token 激活约 480 亿参数，在 LongCat-2.0 的基础上进一步强化了原生视觉理解与智能体编程能力。</p>
+<p>LongCat-2.5 在长程智能体任务中有明显效果提升，这源于我们在长序列训练中加入了更多长程轨迹数据，并通过<strong>大规模长程强化学习</strong>，提升模型在复杂代码库开发、完整项目构建等任务中的端到端工程能力。围绕数据合成、环境构建与跨 Harness 混合训练，我们持续扩展这条训练链路。此外，我们也将真实 Agent 的失败轨迹转化为可复现、可验证的训练任务，针对模型能力短板持续补充训练数据。</p>
+<p>与此同时，LongCat-2.5 在 Visual Coding 上表现出色，并支持创意设计和 3D 等任务。它具备原生视觉理解能力，可将视觉信号表示为多层级离散 token，使主干模型以统一的 token 形式处理视觉与文本输入。</p>
+<p>这些升级背后，是持续演进的基础设施：我们优化了国产算力上的长上下文训练与 W4A4 推理，并通过训推数值一致性和长上下文 rollout 优化，支撑大规模长程 RL 的高效运行。</p>
+<h2>指标看板</h2>
+<p>为直观呈现 LongCat-2.5 当前的能力水平，我们在下图中选取了部分有代表性的模型进行对比，涵盖更多模型的详细评测结果见后文表格。</p>
+<h2>能力演示</h2>
+<p>以下案例均为 LongCat-2.5 端到端生成的真实演示，覆盖软件开发与专业办公两大场景——从实时流体模拟、3D 数字展览、城市沙盘，到经营分析、反馈报告与活动运营。点击任意案例均可查看完整演示视频。</p>
+<p>软件开发 · 网页视觉DEMO 01 / 08</p>
+<h3>实时流体模拟</h3>
+<p>使用 LongCat-2.5 开发实时流体模拟与视觉特效生成工具，生成包含实时流体动态模拟的高帧率动态交互网页，帮助开发者、设计师与科普创作者完成复杂物理现象的交互式可视化与美学展示。</p>
+<h2>视觉表征建模</h2>
+<p>LongCat-2.5 将视觉信号表示为多层级离散 token，使主干模型以统一的 token 形式处理视觉与文本输入。这一设计融合了原生分辨率视觉离散化、离线视觉预处理，以及与主干模型联合学习的视觉 embedding，既能支持原生多模态融合，也简化了训练中的视觉计算与负载管理。</p>
+<p><strong>离散原生分辨率视觉 Transformer</strong>：为了让视觉基本单元的建模具备类似语言建模的 token 级抽象能力，LongCat-2.5 将视觉信号表示为多层级词表 token。沿用 LongCat-Next 的方法，模型对语义对齐编码器（Semantic-and-Aligned Encoder，SAE）产生的原生分辨率特征应用残差向量量化（Residual Vector Quantization，RVQ），以缓解视觉离散化的信息瓶颈。</p>
+<p>图 1：原生分辨率视觉离散化：将不同分辨率的图像编码为离散 token 序列，并通过视觉解码器重建图像。</p>
+<p><strong>离线视觉 token 预处理</strong>：为减少在线视觉计算量、降低工作负载的异构性，固定的 tokenizer 允许模型离线预计算并缓存视觉 token ID。这样，主干模型可以直接处理预先分词的序列，简化长序列打包与切分，并改善分布式训练的负载均衡。</p>
+<p><strong>原生视觉表示</strong>：视觉码本 embedding 与主干模型联合学习。在平均激活参数约为 3B 的较小规模 MoE 模型上，初步验证显示，视觉与文本 embedding 在 t-SNE 可视化中呈交织分布，说明二者已在共享语义空间中实现融合。</p>
+<p>图 2：视觉与文本 embedding 的 t-SNE 对比。右图为平均激活参数约 3B 的 MoE 模型上的验证结果。</p>
+<h2>大规模智能体强化学习</h2>
+<p>强化学习扩展（RL scaling）是提升模型智能的关键环节。我们为 LongCat-2.5 搭建了全面的 Agentic RL 训练链路，从数据、环境、算法和 Harness 等方面对长程任务进行大规模扩展。</p>
+<p>图 3：面向长程任务的 Agentic RL 训练链路，涵盖数据与环境、异步训练、奖励设计和混合训练。</p>
+<p><strong>大规模数据合成与环境构建</strong>：我们构建了一条可扩展的数据合成流水线，自动生成训练任务、可交互环境和可验证的测试用例，数据来源涵盖 GitHub 公开仓库和内部真实场景的代码任务。筛选出 PR 和关联 issue 后，Agent 会自动打标签、搭好可交互环境，并进行 fail-to-pass（F2P）和 pass-to-pass（P2P）测试。在 RL 训练过程中，模型实际 rollout 产生的轨迹和通过率会反过来帮助二次打标和筛选数据。同时我们还会分析假阴性、假阳性等误判，持续修正和扩充 F2P 测试用例，让测试覆盖更多任务功能，也让验证信号更加准确。</p>
+<p><strong>异步强化学习与稳定性优化</strong>：我们采用部分采样（partial rollout）的异步训练策略，解决长尾任务拖慢整体效率的问题：每个 RL step 会多采样一些任务，凑够一批后先中断，并且把没跑完的轨迹存下来，在下一轮接着跑。具体多采样多少，会根据任务通过率进行动态调整；全对或全错的零梯度样本组会被过滤掉，以保证有效梯度。在 partial rollout 中，同一轨迹的 token 可能来自不同历史 checkpoint，从而带来样本陈旧性。为保障训练稳定性，我们裁剪采样阶段与当前训练阶段的 logprob 差异，并基于历史累计差异调整每个 token 的梯度贡献，以限制陈旧性带来的梯度偏差；此外，我们也从 infra 视角提供了训推一致性的优化方案。</p>
+<p><strong>Reward hacking 与输出行为优化</strong>：为了防止模型&quot;钻空子&quot;拿奖励，我们在任务环境中断网、清除 git 历史和文件缓存，并引入 LLM judge 监督轨迹。在输出行为上，我们对重复思考和重复工具调用施加额外惩罚；对过度思考和长度增长过快的问题，则通过重新分配正样本中的奖励加以抑制。</p>
+<p><strong>混合训练与泛化</strong>：模型可在 RL 过程中自主学习并适配相近任务和 Harness。冷启动阶段仅需覆盖少量适配 scaffold 的用例，到了 RL 阶段，通过跨多任务、跨 scaffold 的混合训练可显著提高模型泛化能力，并促进不同任务上的效果提升。</p>
+<h2>多专家在线教学</h2>
+<p>为让主线模型同时具备各领域能力，我们沿用 LongCat-2.0 的专家组机制，分别优化 Agent 能力、推理能力和交互体验，涵盖多轮任务执行、单轮推理、细粒度指令遵循，以及不牺牲有用性的安全防御。在 MOPD 中，学生模型在各领域任务中在线采样，领域专家通过采样结果上的全词表 KL 散度训练学生。也就是说，学生先按自己的方式答题，专家再纠正它在整个词表上的概率分布。</p>
+<p>样本既要反映学生的实际任务行为，也要让教师给出可信的学习信号。为减少分布偏移，先前工作将教师在 SFT 或 RL 阶段见过的轨迹拆为 per-turn prefix，作为学生采样的上下文。我们进一步将每轮教师回复按固定长度拆为 per-cut prefix，并将学生自采样的最大长度限制为该值，以处理单轮长回复中的分布偏移。</p>
+<p>图 4：用于学生在线采样的 per-cut prefix。</p>
+<p>为控制计算与存储成本，我们将同一教师轨迹的 prefix 归为一组，送至同一个推理引擎，共享 prefill 计算与 KV cache。训练时，以教师轨迹为树干、学生采样为分支构建树，结合 Tree Attention，通过单次前传与反传就完成同组所有样本的 OPD 训练，避免教师轨迹上的冗余计算与存储。</p>
+<h2>国产算力上的长上下文训练</h2>
+<p>LongCat-2.5 在中训练和监督微调阶段均采用长序列训练。国产算力单卡显存不足 80 GB，因此训练系统重点压低显存开销，并围绕超节点架构设计并行策略。</p>
+<h3>面向超节点的并行策略</h3>
+<p>LongCat-2.5 根据超节点拓扑配置并行组，FSDP 和 EP 并行度都与单个超节点的卡数一致，CP 并行度不超过这个卡数。这样，参数 AllGather、专家 token AllToAll 和 KV AllGather 都能在超节点内的高带宽互联域中完成，减少跨节点通信开销。</p>
+<p>混合词表并行在 DP 和 CP 联合并行域内，对基础词嵌入层、LM head 和 N-gram 嵌入层进行分片，进一步降低显存占用。</p>
+<p>大规模专家并行容易出现负载不均衡问题。为此，LongCat-2.5 基于 MoonEP 引入阈值触发的动态专家复制机制：只有当 EP 负载不均衡程度达到预设阈值时才启用复制，避免额外通信开销超过负载均衡带来的收益；同时防止路由 token 导致接收端显存溢出，或通信操作导致发送端显存溢出。</p>
+<p>提前生成图像 token 后，训练计算图不再包含视觉编码器，并行实现更简单。由于图像 token 数量已知，系统可以在数据打包和打散时预估各模态的负载比例，使各数据并行 rank 上的模态占比尽量接近。</p>
+<h3>FSDP 与系统优化</h3>
+<p>LongCat-2.5 引入双重分片 FSDP，模型参数在超节点内的 FSDP 域中分片，FP32 主权重和优化器状态则通过 HSDP 副本进一步跨 FSDP 域分片。这样既保持参数通信效率，又降低常驻显存。</p>
+<p>参数、梯度和优化器状态统一组织为连续的扁平化缓冲区，支持非均匀分片和 Muon 优化器分片。同时，系统直接写入权重梯度、复用临时缓冲区，减少中间拷贝，从而降低峰值显存占用。</p>
+<p>系统采用零拷贝 AllGather/ReduceScatter，消除默认通信算法引入的中间拷贝。EP 将 token 与路由概率打包传输，并采用基于 AIV 的通信实现，缓解 AICPU 任务展开瓶颈。参数预取使 AllGather 与计算重叠执行，同时控制与 CP 的资源竞争；ScMoE 则使 EP 通信与稠密分支计算重叠执行。</p>
+<p>此外，系统通过批量执行梯度操作、合并指标归约、CPU 绑核和 NUMA 感知调度，降低主机侧开销。</p>
+<p>综合上述优化，该 FSDP 配置在<strong>长序列 SFT 任务</strong>中的<strong>单卡吞吐量较 DDP 基线提升 86%</strong>。</p>
+<p>图 5：国产 AI 加速器上的长上下文训练。</p>
+<h2>智能体强化学习基础设施</h2>
+<h3>训推精度一致性</h3>
+<p>训练和推理算出来的数值如果不一致，模型表现就可能&quot;飘&quot;。基于 <a href="https://vllm.ai/blog/2026-08-21-isoexec">IsoExec</a>、<a href="https://github.com/THUDM/slime/pull/2262">GLM-5</a> 和 <a href="https://kiddyboots216.github.io/mismatch/">XoRL</a> 的工作，我们构建了生产级训推一致性方案，使训练、Prefill 和 Decode 可以各自独立选择并行配置，在性能接近无损的同时，保持逐 token logprob 的 bitwise 一致。具体做法是：训推两端统一采用高效的 batch-invariant 算子，并对齐框架计算逻辑，同时补齐 backward 支持。该方案已在实验和生产任务中默认启用，为算子与框架迭代提供统一的数值回归基准。不过，不同并行方式本身就可能导致训推无法对齐，我们在社区方案的基础上，进一步扩展了 TP 和 DCP 的训推一致性支持。</p>
+<p><strong>TP</strong>：以完整 K 维计算替代分段求和，性能接近无损。传统 TP 会把 K 维切分到多张卡上，各自算一部分，再做 Reduce-Scatter 求和。问题是，跨卡求和的顺序和训练时不一样，数值就容易对不上。为解决这一问题，我们在训练侧保留权重分片，通过权重 All-Gather 和输入 AlltoAll，让每张卡独立完成完整 K 维 GEMM，不再对局部结果进行 Reduce-Scatter 求和。Prefill 沿用同一方案；Decode 阶段则将 o_proj/fc2 改为 column-parallel，通过输入 All-Gather、完整 K 维 GEMM 和输出 AlltoAll 完成计算，既避免每一步聚合完整权重，也避免跨卡数值求和。</p>
+<p><strong>DCP</strong>：在训练与 Prefill 中复现 Decode 的累加路径。Decode 阶段会按特定配置对 KV 做分块计算，再按固定顺序归约。训练和 Prefill 如果累加顺序不同，精度就会产生差异。为此，我们在训练 forward 和推理 Prefill 中接入配套的 sparse attention 算子，复现指定 DCP 配置下 Decode 的 KV 分块与归约顺序，从而把训练、Prefill、Decode 三者的计算精度对齐。</p>
+<h3>长上下文 rollout 优化</h3>
+<p>针对负载可控的长上下文多轮 rollout，我们采用 PD 分离，也就是把 Prefill 和 Decode 拆开，分别选择合适的并行策略，并从缓存存储、跨层卸载和请求调度三个方面协同优化：</p>
+<ul><li><strong>扩大有效缓存容量</strong>：Prefill 阶段采用 QCP 按 token 分配计算、KVP 按页分散存储，避免 MLA 下 TP 切分带来的 KV 冗余。HiCache 在 KV 回迁显存后，会释放主存里没有其他读取引用的副本，减少显存和主存这两级缓存的重复占用；同时，我们基于 Mooncake 重构了权重管理与 Actor offload 方案，为 HiCache 释放更多内存。</li><li><strong>通过跨层预取隐藏搬运开销</strong>：利用 <a href="https://arxiv.org/abs/2608.01662">LSA</a> 奇数层复用前一偶数层 top-k 索引的特点，我们将奇数层完整 KV 卸载至主存，显存里只保留小容量工作缓存。等偶数层产生索引后，提前加载下一奇数层所需 KV，并让它与当前层后续计算重叠执行，在 TPOT 无损的情况下，Decode 阶段的 KV 缓存容量接近翻倍。</li><li><strong>通过容量感知调度避免重算雪崩</strong>：多条长轨迹交替推进时，缓存不够可能导致互相淘汰对方的前缀，引发大规模重算。为此，Router 会根据 L1+L2 缓存容量和请求 token 总量控制请求放行，并优先推进完成度较高的 Group，尽早凑齐训练批次、释放缓存，避免反复淘汰和重算。</li></ul>
+<p>图 6：所测长上下文负载的 Prefill/Decode 配置；在该场景下，P/D 实例配比 3:2 性能最优。</p>
+<h2>W4A4 高效推理</h2>
+<p>针对 1.6T 级 MoE 模型，我们结合模型结构与国产 AI 加速器的硬件特性，围绕量化精度、底层算子与推理流水开展协同优化，构建 W4A4 高效推理方案。</p>
+<p>该方案将专家权重与激活同时量化至 <strong>4 bit</strong>，并通过原生 INT4 矩阵乘法单元执行相应的矩阵计算。</p>
+<p>在精度方面，我们以 FlatQuant 的可学习等价变换为基础，进一步优化 MoE 模型的量化精度，在已评测的各项下游任务上，量化后的模型表现与量化前保持相当。</p>
+<p>在算子与数据路径方面，我们通过专家共享的输入变换，在 token 复制与分发前完成量化，让同一份 INT4 表示贯穿专家通信与计算。同时，我们把变换、尺度计算、量化和打包融合到专用算子，并结合权重布局与转置访问优化，减少数据搬运和转换开销。</p>
+<p>在系统层面，prefill 与 decode 的执行特点不同，前者更偏重批量计算，后者更偏重逐 token 推进和通信。我们依据模型的数据依赖和硬件资源约束，分别优化计算与通信的流水重叠，尽量减少互相等待。</p>
+<p>+0.0%</p>
+<p>Prefill 吞吐提升</p>
+<p>+0.00%</p>
+<p>Decode 吞吐提升</p>
+<p>−0.00%</p>
+<p>TTFT 降低</p>
+<p>−0.00%</p>
+<p>TPOT 降低</p>
+<p>0.00×</p>
+<p>GMM 算子加速</p>
+<p>在线上压测中，相对 <strong>W8A8 INT8 基线</strong>，prefill 和 decode 吞吐分别提升 <strong>43.3%</strong> 和 <strong>42.77%</strong>，TTFT 和 TPOT 分别降低 <strong>15.91%</strong> 和 <strong>19.72%</strong>。在算子层面，GMM 相对 W8A8 实现平均 <strong>1.73×</strong> 加速。</p>
+<h2>评测</h2>
+<table><thead><tr><th></th><th>Benchmark</th><th>LongCat-2.5</th><th>LongCat-2.0</th><th>GPT-5.5</th><th>GPT-5.6-Sol</th><th>Claude-Opus-4.8</th><th>Claude-Opus-5</th><th>GLM-5.3</th><th>kimi-k3</th><th>DeepSeek-V4.1-Flash</th></tr></thead><tbody><tr><td>Code Agent</td><td>Terminal Bench v2.1</td><td>88.4</td><td>70.8</td><td>83.2*</td><td>88.8*</td><td>74.6*</td><td>89.1*</td><td>88.2*</td><td>88.3*</td><td>90.6*</td></tr><tr><td>Terminal Bench v4.0</td><td>38.5</td><td>3.0</td><td>-</td><td>37.3*</td><td>23.6*</td><td>53.9*</td><td>41.8*</td><td>12.6*</td><td>31.2*</td><td></td></tr><tr><td>Program Bench Almost Resolved</td><td>25.5</td><td>2.5</td><td>13.5*</td><td>23.0*</td><td>16.5*</td><td>37.0*</td><td>19.0*</td><td>17.5*</td><td>20.3*</td><td></td></tr><tr><td>DeepSWE v1.1</td><td>64.6</td><td>9.7</td><td>67.0*</td><td>72.7*</td><td>59.0*</td><td>68.8*</td><td>66.9*</td><td>67.5*</td><td>74.2*</td><td></td></tr><tr><td>PaperBench</td><td>82.1</td><td>45.2</td><td>80.0</td><td>83.3</td><td>72.9</td><td>79.1</td><td>73.7</td><td>77.5</td><td>-</td><td></td></tr><tr><td>SWE Atlas - Codebase QnA</td><td>58.3</td><td>33.1</td><td>45.4*</td><td>46.0*</td><td>57.3*</td><td>63.2*</td><td>58.3</td><td>54.3</td><td>55.2</td><td></td></tr><tr><td>SWE Atlas - Refactoring</td><td>55.2</td><td>35.7</td><td>44.8</td><td>-</td><td>46.7</td><td>51.9</td><td>-</td><td>49.5</td><td>56.7</td><td></td></tr><tr><td>SWE Atlas - Test Writing</td><td>47.8</td><td>28.0</td><td>42.6</td><td>45.9</td><td>49.6</td><td>62.2</td><td>42.2</td><td>42.2</td><td>48.9</td><td></td></tr><tr><td>NL2Repo</td><td>60.5</td><td>40.9</td><td>-</td><td>56.8*</td><td>69.7*</td><td>75.3*</td><td>58.0*</td><td>58.0*</td><td>65.4*</td><td></td></tr><tr><td>LongCat AppDev Internal</td><td>73.7</td><td>47.7</td><td>-</td><td>68.8</td><td>-</td><td>76.4</td><td>73.5</td><td>75.1</td><td>-</td><td></td></tr><tr><td>General Agent</td><td>BrowseComp</td><td>91.9</td><td>79.9</td><td>84.4*</td><td>90.4*</td><td>84.3*</td><td>90.8*</td><td>81.0</td><td>91.2*</td><td>91.5</td></tr><tr><td>AutomationBench v1.0.6</td><td>51.8</td><td>15.8</td><td>39.7</td><td>45.8*</td><td>41.0*</td><td>50.3*</td><td>48.2*</td><td>46.7*</td><td>54.8*</td><td></td></tr><tr><td>HLE w/ tools</td><td>63.1</td><td>37.5</td><td>52.2</td><td>58.0*</td><td>57.9*</td><td>64.7*</td><td>62.5*</td><td>56.0*</td><td>63.9*</td><td></td></tr><tr><td>ALE v1.1</td><td>38.5</td><td>-</td><td>-</td><td>30.3*</td><td>-</td><td>-</td><td>26.2*</td><td>35.2*</td><td>-</td><td></td></tr><tr><td>ResearchRubrics</td><td>81.0</td><td>71.9</td><td>-</td><td>74.2</td><td>-</td><td>72.9</td><td>79.9</td><td>78.8</td><td>80.9</td><td></td></tr><tr><td>MCP Atlas</td><td>83.1</td><td>61.8</td><td>75.3*</td><td>81.8*</td><td>82.2*</td><td>85.8*</td><td>84.2*</td><td>84.2*</td><td>84.4</td><td></td></tr><tr><td>JobBench</td><td>65.4</td><td>44.4</td><td>38.3*</td><td>45.4*</td><td>48.4*</td><td>66.7*</td><td>61.4*</td><td>52.9*</td><td>63.2</td><td></td></tr><tr><td>SkillsBench</td><td>63.3</td><td>36.8</td><td>62.6*</td><td>54.1*</td><td>59.2*</td><td>60.4*</td><td>52.9</td><td>-</td><td>69.8*</td><td></td></tr><tr><td>GDPVal-AA rubrics</td><td>84.8</td><td>72.9</td><td>-</td><td>-</td><td>-</td><td>87.7</td><td>87.7</td><td>86.6</td><td>86.8</td><td></td></tr><tr><td>FrontierScience</td><td>77.0</td><td>66.0</td><td>-</td><td>-</td><td>-</td><td>78.0</td><td>75.0</td><td>70.0</td><td>73.0</td><td></td></tr><tr><td>SpreadsheetBench 2</td><td>34.9</td><td>24.1</td><td>30.2</td><td>33.3</td><td>-</td><td>33.0</td><td>35.8</td><td>34.8*</td><td>33.0</td><td></td></tr><tr><td>FinSearchComp T3</td><td>63.4</td><td>42.4</td><td>62.2</td><td>62.2</td><td>-</td><td>64.0</td><td>62.2</td><td>64.0</td><td>64.3</td><td></td></tr><tr><td>Claw-Eval Pass^3</td><td>78.3</td><td>67.1</td><td>-</td><td>79.5</td><td>82.0</td><td>80.8</td><td>73.9</td><td>73.9</td><td>-</td><td></td></tr><tr><td>LongCatClawBench FORTE</td><td>83.3</td><td>72.2</td><td>80.7</td><td>80.6</td><td>80.6</td><td>82.6</td><td>85.6</td><td>86.3</td><td>73.5</td><td></td></tr><tr><td>Visual</td><td>3DCodeBench Text→3D</td><td>55.4</td><td>-</td><td>51.9</td><td>52.3</td><td>52.7</td><td>54.3</td><td>53.4</td><td>49.3</td><td>53.3</td></tr><tr><td>Vision2Web</td><td>78.6</td><td>-</td><td>74.6</td><td>73.5*</td><td>76.1*</td><td>80.2*</td><td>77.8*</td><td>79.0*</td><td>79.2</td><td></td></tr><tr><td>CharXiv-RQ w/ tools</td><td>90.2</td><td>-</td><td>89.0*</td><td>89.1*</td><td>89.9*</td><td>89.3*</td><td>-</td><td>91.3*</td><td>87.7</td><td></td></tr><tr><td>MathVision w/ tools</td><td>96.5</td><td>-</td><td>96.8*</td><td>97.8*</td><td>97.1*</td><td>-</td><td>-</td><td>97.8*</td><td>97.4</td><td></td></tr><tr><td>VideoMME</td><td>85.2</td><td>-</td><td>-</td><td>89.5*</td><td>86.0*</td><td>-</td><td>-</td><td>90.0*</td><td>-</td><td></td></tr><tr><td>PosterBench</td><td>77.4</td><td>-</td><td>-</td><td>-</td><td>82.3</td><td>-</td><td>82.4</td><td>76.8</td><td>75.3</td><td></td></tr><tr><td>LongCatClawBench-MM FORTE-MM</td><td>72.1</td><td>-</td><td>63.5</td><td>73.2</td><td>69.9</td><td>73.1</td><td>69.0</td><td>70.7</td><td>72.8</td><td></td></tr></tbody></table>
+<p>除特别说明外，LongCat-2.5 的全部结果均在 enable_thinking=on、temperature = 1.0、top_p = 0.95 下取得；对比模型中带 <em> 的分数取自公开的技术报告、博客或官方榜单，未标 </em> 的为我们自测，仅供参考。</p>]]></content:encoded>
     </item>
     <item>
-      <title>LongCat-2.5-Preview 上线</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-25</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-25</guid>
-      <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-09-25</h2>
-<h3>LongCat-2.5-Preview 上线</h3>
-<p>LongCat-2.5-Preview 的核心特性如下：</p>
-<ul><li><strong>多模态理解</strong>：新增图片理解能力，可解析图像内容，支持跨模态问答、内容摘要与复杂视觉推理。</li><li><strong>卓越的 Coding 能力</strong>：在代码生成、代码理解与自动化编程任务上表现突出。</li><li><strong>深度适配 Claude Code 等主流开发环境</strong>：与 Claude Code、Hermes、OpenClaw、OpenCode、Kilo Code 高效协同。</li></ul>]]></content:encoded>
+      <title>LongCat-2.0：万亿参数 MoE 大语言模型</title>
+      <link>https://longcat.ai/blog/longcat-2.0</link>
+      <guid isPermaLink="true">https://longcat.ai/blog/longcat-2.0</guid>
+      <pubDate>Mon, 29 Jun 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><img src="https://s3.meituan.net/static-prod01/com.sankuai.friday.longcat.next2/assets/longcat_logo-X5K_hpNA.svg" alt="LongCat"></p>
+<h1>LongCat-2.0 正式发布</h1>
+<p>2026-06-30</p>
+<p><a href="https://github.com/meituan-longcat/LongCat-2.0"> GitHub</a><a href="https://huggingface.co/meituan-longcat/LongCat-2.0"> HuggingFace</a><a href="https://longcat.ai/chat"> 在线体验</a><a href="https://longcat.ai/platform/docs/"> API 接入</a></p>
+<p>我们正式发布并开源 LongCat-2.0，它是一个总参数量达 <strong>1.6 万亿</strong>、每个 token 激活约 480 亿参数的 MoE 语言模型。LongCat-2.0 相比此前的 LongCat 系列引入了多项架构改进，实现了模型能力的显著跃升。</p>
+<p>LongCat-2.0的完整训练流程与大规模部署均全部使用<strong>国产算力集群</strong>。预训练在5万余国产算力芯片上耗时月余完成，消费了超过 35 万亿 tokens，全程无回滚、无不可恢复的 loss 突刺。这一结果验证了我们有能力在国产算力平台上进行前沿级大规模模型训练。</p>
+<p>为强化模型在长程任务上的能力，我们引入 LongCat 稀疏注意力机制，并在数千亿 tokens 的<strong>百万上下文长度</strong>数据上训练 LongCat-2.0。结合专门的后训练，LongCat-2.0 在编程与智能体任务上表现强劲。</p>
+<p>LongCat-2.0 深度适配 Claude Code、OpenClaw、Hermes 等主流 Harness，在代码理解、仓库级修改、自动化任务执行及 Agentic Workflow 等多元场景中表现出色，能够为开发者带来更稳定、更高效的智能协作体验。</p>
+<p>Terminal-Bench 2.1</p>
+<p>SWE-bench Pro</p>
+<p>SWE-bench Multilingual</p>
+<p>FORTE</p>
+<p>RWSearch</p>
+<p>BrowseComp</p>
+<p><img src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='60'%20height='60'%20viewBox='0%200%2060%2060'%3e%3cpath%20fill-rule='evenodd'%20fill='%2321B443'%20d='M2.7756775414520263,49.199714136901854C1.9830409014520263,49.199714136901854,1.4081580014520263,48.44486513690185,1.6188458504520264,47.68074313690185L11.739575941452026,10.974834436901855C12.172216941452026,9.405727506901856,14.008175941452027,8.713243486901856,15.369297941452027,9.605781106901855L28.686237941452028,18.338191936901858C29.484213941452026,18.861454936901858,30.516376941452027,18.862270336901858,31.315180941452027,18.340269136901856L44.68860094145202,9.600991036901856C46.05092894145203,8.710731536901855,47.885538941452026,9.405774696901856,48.31600494145203,10.975238336901855L58.383844941452026,47.68230313690186C58.59331794145203,48.446063136901856,58.01854994145203,49.199714136901854,57.22657994145202,49.199714136901854L44.37263794145203,49.199714136901854C46.71254594145203,46.49043213690186,48.00002894145203,43.029975136901854,48.00002894145203,39.45011813690186L48.00002894145203,39.03232813690185C48.00002894145203,35.53063713690186,46.726274941452026,32.148499136901854,44.41634594145203,29.516759136901854L42.76674894145203,21.236575136901855C42.669828941452025,20.750059136901854,42.242800941452025,20.399711136901857,41.74672194145202,20.399711136901857C41.521677941452026,20.399711136901857,41.30270694145203,20.472702136901855,41.12267594145202,20.607726136901853L34.90312794145203,25.272387136901855C34.46019594145203,25.604588136901857,33.88733594145203,25.710372136901857,33.354975941452025,25.558268136901855C31.162218941452025,24.931765136901856,28.837843941452025,24.931765136901856,26.645084941452026,25.558268136901855C26.112724941452026,25.710372136901857,25.539861941452028,25.604588136901857,25.096931941452027,25.272387136901855L18.874630941452025,20.605663136901853C18.696384941452028,20.471978136901853,18.479585941452026,20.399711136901857,18.256775941452027,20.399711136901857C17.760292941452025,20.399711136901857,17.334501941452025,20.753966136901855,17.244195941452027,21.242167136901855L15.643734941452026,29.894450136901856C13.308616941452026,32.26901713690185,12.000028941452026,35.46603713690186,12.000028941452026,38.79640313690186L12.000028941452026,39.58785513690185C12.000028941452026,43.08011513690185,13.249285941452026,46.45717913690186,15.522020941452027,49.108699136901855L15.600027941452026,49.199714136901854L2.7756775414520263,49.199714136901854Z'/%3e%3cpath%20fill='%2321B443'%20d='M23.39998435974121,41.999998074121095L26.99998425974121,41.999998074121095L26.99998425974121,33.599998474121094L23.94543891974121,33.599998474121094L23.39998435974121,41.999998074121095ZM36.59998535974121,41.999998074121095L32.99998475974121,41.999998074121095L32.99998475974121,33.599998474121094L36.05453135974121,33.599998474121094L36.59998535974121,41.999998074121095Z'/%3e%3c/svg%3e" alt="LongCat-2.0">LongCat-2.0</p>
+<p><img src="data:image/png;base64,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" alt="Gemini 3.1 Pro">Gemini 3.1 Pro</p>
+<p><img src="https://s3.meituan.net/static-prod01/com.sankuai.friday.longcat.next2/assets/openai-D47DLl8Z.png" alt="GPT-5.5">GPT-5.5</p>
+<p><img src="https://s3.meituan.net/static-prod01/com.sankuai.friday.longcat.next2/assets/claude-DCCvR6e9.png" alt="Opus 4.6">Opus 4.6</p>
+<p><img src="https://s3.meituan.net/static-prod01/com.sankuai.friday.longcat.next2/assets/claude-DCCvR6e9.png" alt="Opus 4.7">Opus 4.7</p>
+<p><img src="https://s3.meituan.net/static-prod01/com.sankuai.friday.longcat.next2/assets/claude-DCCvR6e9.png" alt="Opus 4.8">Opus 4.8</p>
+<h2>架构升级</h2>
+<p>LongCat-2.0的模型架构设计继承自 <a href="https://arxiv.org/abs/2509.01322">LongCat-Flash</a> ，在参数效率以及长上下文训练与推理速度上更进一步。在注意力机制方面，我们提出 LongCat 稀疏注意力 (LSA)：该机制由 DeepSeek 稀疏注意力 (DSA) 演进而来，通过引入更轻量化的索引器（Indexer），在无损模型质量的前提下显著加速长上下文处理。同时，为了让每个参数发挥更大价值，我们加入 N-gram Embedding 模块，通过 N-gram token 组合将 embedding 空间扩展超过 100 倍，以更充分地建模局部上下文信息，并提升 token 级表示能力。</p>
+<h2>LongCat 稀疏注意力</h2>
+<p>智能体应用的兴起对大语言模型的高效长输入处理能力提出了极高要求。尽管 <a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp">DSA</a> 通过细粒度稀疏注意力缓解了这一压力，但我们的性能分析表明，受限于不连续的索引输出形式和二次方的索引评分开销，DSA中的轻量索引器 (Lightning Indexer) 成为制约端到端延迟的核心瓶颈。为此，LongCat 稀疏注意力（LSA）针对索引器引入了三项相互正交的效率优化策略：</p>
+<ul><li><strong>流感知索引（Streaming-aware Indexing, SI）</strong>：重塑了索引器选择 Token 的预算分配，将硬件对齐的连续访问与动态随机选择相结合。该策略将部分原本碎片化的显存访问转化为可预知的顺序读取，从而实现合并的 HBM 访问并最大化有效带宽。</li><li><strong>跨层索引（Cross-Layer Indexing, CLI）</strong>：利用注意力中重要 Token 在相邻层间分布的高度一致性来摊薄索引开销。得益于训练阶段引入的跨层蒸馏，推理时单次索引计算可由多个连续的注意力层复用。</li><li><strong>层级化索引（Hierarchical Indexing, HI）</strong>：采用由粗到细的两阶段打分机制，先通过 block 级近似打分进行粗召回，再在召回的候选中进行细粒度 token 选择，从而缩小索引器每次检索需处理的候选空间。在 LongCat-2.0 中，层级化索引（HI）以可插拔的组件形式在部分超长上下文任务上按需启用。</li></ul>
+<p>这三个组件在设计上相互正交，支持独立开启或关闭。系统的整体架构如以下总览图所示：</p>
+<p>LongCat 稀疏注意力设计总览。（为清晰起见省略了 Sink tokens。）</p>
+<p>我们将上述三项策略扩展至用于加速投机解码（Speculative Decoding）的 3-step MTP 模块。跨层索引（CLI）在 Target 模型与 Draft 模型中的应用方式略有不同：在 Target 模型中，每两个连续层共享一次索引结果；而在多步 MTP中，全部三个 Draft 步的计算共用一次索引——具体而言，Step 2 与 Step 3 完全复用 Step 1 所生成的索引结果。</p>
+<h2>N-gram Embedding</h2>
+<p>LongCat-2.0 继承了 <a href="https://arxiv.org/abs/2601.21204">LongCat-Flash-Lite</a> 的 N-gram Embedding，在同 MoE 正交的稀疏维度上扩展参数，从而提升参数利用效率。为适配 LongCat-2.0 的庞大规模，n-gram size 被设为 5；模型中包含 135B N-gram Embedding 参数，并遵循以下扩展原则：</p>
+<ul><li><strong>MoE 的稀疏度已越过甜点区。</strong> 即便不考虑 N-gram Embedding，LongCat-2.0 的稀疏度就接近 97%，此时再增加 135B 专家参数所带来的性能收益较少。相比之下，增加同等参数量的 N-gram Embedding 所带来的收益远超标准MoE。</li><li><strong>N-gram Embedding 的占比被约束在最优区间。</strong> 实验表明，当 N-gram Embedding 参数在总参中占比过高（超过 50%）时，其相对于扩增专家的优势会消失。在 LongCat-2.0 中，该占比被控制在 10% 以内，处于安全比例内。</li></ul>
+<p>这两条原则保证了 N-gram Embedding 相较同等规模的纯 MoE 模型的稳健优势。除此之外，在推理阶段，将参数从专家转移到 N-gram Embedding 可降低大 batch 解码时的显存 I/O，从而加速解码过程。</p>
+<p>N-gram Embedding 总览。</p>
+<h2>大规模国产算力基建</h2>
+<p>LongCat-2.0 的训练与部署构建在数万张国产算力芯片组成的大规模集群之上。与成熟的 Nvidia GPU 生态相比，其配套的软件社区仍欠发达。为此，我们投入了大量精力来打造稳定、安全且可扩展的基础设施。</p>
+<h2>训练</h2>
+<p>LongCat-2.0 在超过 5 万片国产算力芯片上完成预训练，模型规模与集群规模均带来显著的系统级挑战。为此，我们进行了一系列系统化优化，相比朴素实现将训练吞吐提升超过 35%，同时进一步增强了可靠性。</p>
+<h3>确定性与可靠性</h3>
+<p>为保证生产环境的可复现性，我们在通信与计算两条路径上均保证确定性，自研覆盖 Embedding、FA、LSA、MoE 等多个确定性算子和模块。</p>
+<p>在数值可靠性方面，我们重写一系列基础算子以提升精度——例如所有规约类算子均采用二叉树分段累加，以减少浮点误差累积。在真实 LLM 负载下，我们以严格的高精度基线为对照验证国产算力芯片的计算精度，确认其数值正确性与生产可用性。同时在部分计算密集型算子上加入比特翻转检测，及时发现硬件比特翻转引发的数值异常。</p>
+<p>在故障恢复方面，端到端监控驱动链路故障的识别、切流与恢复，可以做到全程无需人工介入。故障链路隔离对训练无可感知影响，修复后的链路需通过压测方可重新投入使用。</p>
+<h3>大规模训练</h3>
+<p>国产算力芯片单片显存显著小于 H800 的 80GB，显存成为大规模训练的主要瓶颈。我们从并行策略与显存管理两个维度做针对性优化：</p>
+<ul><li><strong>6D 并行：</strong> 在常规 TP/CP/EP/DP/PP 之外，额外引入 EMBP 对 N-gram Embedding 做并行加速。</li><li><strong>超节点：</strong> 训练运行在物理超节点上，每个超节点最多 48 台机器，节点内全互联高带宽、节点间走 RoCE 网络。超节点把高带宽通信域扩展到数百张卡，支撑带宽敏感的并行策略（TP/CP/EP）。相比同规模下，超节点额外带来约 30% 的预训练吞吐提升。逻辑超节点同时是亲和调度的基本单元，在通信局部性与可调度性之间取得平衡。</li><li><strong>显存优化：</strong> 采用 ZeRO-1、选择性重计算、分配器层的显存超限（OOM）时自动卸载，并将填充词元路由至零计算专家等。</li><li><strong>Muon 优化器：</strong> 在国产算力芯片上大规模部署 Muon 优化器，围绕 TP 并行、DP 状态去冗余及高效对称矩阵乘核函数等关键路径做专项优化。</li></ul>
+<h3>长上下文训练</h3>
+<p>我们从三个方面应对大规模长上下文训练的挑战：</p>
+<ul><li><strong>LSA 算子与前向优化：</strong> 为 LSA 预热和稀疏两阶段训练自研确定性注意力算子及 KL 损失算子。LSA 预热采用 forward-only 训练策略，仅需一次前向即可同时得到 KL 损失与梯度，从而提升训练效率。</li><li><strong>百万上下文长度扩展：</strong> 采用 all-gather 的上下文并行方式，可将上下文并行扩展至 512 路以上，实现原生百万上下文长度数据的训练。数据在预取阶段重新打散，并采用均衡的序列切分策略以保持负载均衡。</li><li><strong>计算通信重叠：</strong> 我们精心设计了计算与通信的重叠，例如 ScMoE 结构使 MoE 通信与并行分支计算重叠，同时 LSA 的 top-k 索引计算与 KV all-gather 重叠，降低同步开销。</li></ul>
+<h2>推理</h2>
+<p>在显存容量、显存 I/O 带宽与互联带宽都较为受限的条件下，在万亿参数大模型上跑百万上下文的推理是一项不小的挑战。为此，我们在模型、设备与部署三个层面进行了一系列优化。</p>
+<h3>模型层面优化</h3>
+<ul><li><strong>Attention:</strong> 为了高效应对超长上下文带来的 I/O、计算及显存瓶颈，我们通过三种方式对系统进行了优化。(1) 引入 absorb 计算模式应用于 prefill 和 decode 阶段；(2) 将 indexer 与 MLA prolog 做了并行处理，使 indexer 的一部分开销可以被 MLA 计算所掩盖；(3) 借助 KV-cache 并行 (KVP) 将 KV-cache 切分到多片卡上。</li><li><strong>ScMoE:</strong> 基于 <a href="https://arxiv.org/abs/2509.01322">LongCat-Flash</a> 中 dense 与 MoE 分支的计算-通信重叠机制，LongCat-2.0 利用国产计算芯片的控核能力做了进一步的调度优化——通过主动分配 dense 流和 MoE 流的核心数量，使得 dense 与 MoE 的执行可以完全并行，而不局限于计算与通信的并行。</li></ul>
+<h3>面向国产算力芯片的优化</h3>
+<ul><li><strong>Super Kernel:</strong> 开启图模式后，算子之间的空隙得以消除，但每个算子内部的启动开销依然存在。为此，我们引入 super kernel 来减小算子数量，从而降低算子的总启动开销。</li><li><strong>Weight Prefetch:</strong> Longcat-2.0使用的国产算力芯片的显存带宽有限，但 L2 cache 相对较大。我们正是利用这块较大的 L2 cache 提前预取权重，将 I/O 延迟隐藏在前一个算子的计算之中。</li><li><strong>Scale Up 与 Scale Out:</strong> 使用国产算力芯片内置的 200 Gbps 网卡按 layer-wise 方式进行 prefill 与 decode 节点之间的 KV-cache 传输，KV-cache store 则构建在主机的 RDMA 网卡之上，TP/SP/KVP 则均在 scale-up 互联域内完成。</li></ul>
+<h3>部署与服务</h3>
+<ul><li><strong>最优并行:</strong> LongCat-2.0 采用 prefill–decode (PD) 分离式部署来兼顾 TTFT 与 TPOT。  <strong>Prefill 节点:</strong> Prefill 节点在处理长序列时主要受限于节点间通信带宽，MoE 的 dispatch/combine 耗时占比很高。为此，我们采用多节点 Chunked Pipeline Parallel (CPP) 来缩小 Expert-Parallel (EP) 域；在每个 pipeline stage 内，再以 Attention Sequence Parallelism (SP) 分担长序列的计算压力。 <strong>Decode 节点:</strong> Decode 节点主要受限于显存与 KV-cache I/O。我们以 KVP 切分 KV-cache、降低单片显存占用，并辅以较大的 EP 并行度 (EP128)，同时压低单片的权重显存与 Expert I/O。  在这两个阶段中，上述并行方案 (CPP/SP 与 KVP) 均适配了 constrained decoding、multi-step scheduling、MTP 等推理优化特性，保证了推理性能。</li><li><strong>Expert-Parallel 负载均衡:</strong> Decode 节点上较大的 EP 并行度更容易引发专家之间的负载不均，我们通过 Expert-Parallel Load Balancing (EPLB) 加以应对，并且将统计采集与分布计算的过程进行了异步化处理。</li></ul>
+<h2>多教师在线蒸馏</h2>
+<p>为了全面提升模型的综合表现与应用边界，我们在后训练架构上引入了高度专业化的专家组机制，将其系统性划分为三大核心阵列：Agent能力专家组、推理能力专家组以及交互体验专家组。</p>
+<ul><li>Agent能力专家组致力于在复杂真实场景下深化模型的自主执行能力。该组专家在代码、办公以及检索等细分垂直领域均已达到业界 SOTA 水平。在训练目标上，我们不仅关注端到端的任务成功率，更深度优化了决定系统鲁棒性的关键“原子能力”——例如复杂工具调用的精准度、多轮API交互中的参数解析能力，以及有效规避死循环或重复调用的自我纠错机制。</li><li>推理能力专家组的核心愿景是拓展模型的逻辑演进深度，并实现基于问题难度的自适应推理计算。我们的推理专家模型在数学、STEM学科复杂问题求解，以及多跳知识推理任务上，均稳居行业第一梯队。</li><li>交互体验专家组则聚焦于人机对齐与底层用户感知的优化。交互专家主要负责攻克模型在多变应用场景下的细粒度指令遵循难题，通过先进的对齐技术显著抑制事实性幻觉，并构建了在不牺牲有用性的前提下、边界清晰的安全防御机制。</li></ul>
+<p>最后，我们采用 MOPD 架构方案，在数万卡的国产算力集群上将上述三大维度的顶尖能力进行无缝融合，使得最终产出的模型不仅具备了极强的智能体思维能力，更能够精准解构并洞察用户的复杂需求，在各种极具挑战的真实场景中稳定、高效地执行并交付结果。</p>
+<p>基于 MOPD 的多专家后训练架构总览。</p>
+<h2>模型能力演示</h2>
+<p>上述架构与基础设施的改进转化为实打实的能力。凭借长上下文推理增强与精细的后训练，LongCat-2.0 在完成真实任务上表现出色。下方的演示覆盖了多种场景，点击标签即可观看每个演示。</p>
+<p>软件工程</p>
+<p>智能体任务</p>
+<p>内容生成</p>
+<h3>代码库迁移</h3>
+<p>LongCat-2.0 同时读取你的完整代码库与迁移文档，梳理出整体架构，并将整个插件重写到新的 SDK——既保留全部既有功能，又能发现潜藏的 bug，且首次构建即编译通过。</p>
+<h2>评测</h2>
+<p>我们在代码、通用 Agent 与基础能力等维度上，将 LongCat-2.0 与领先的闭源模型进行对比。除标注 * 者外，所有分数均在统一的评测框架下由内部测得。</p>
+<table><thead><tr><th></th><th>LongCat-2.0</th><th>Gemini 3.1 Pro</th><th>GPT-5.5</th><th>Claude Opus 4.6</th><th>Claude Opus 4.7</th><th>Claude Opus 4.8</th></tr></thead><tbody><tr><td>Code Agent</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Terminal-Bench 2.1</td><td>70.8</td><td>70.7*</td><td>73.8*</td><td>-</td><td>71.7*</td><td>78.9*</td></tr><tr><td>SWE-bench Pro</td><td>59.5</td><td>54.2*</td><td>58.6*</td><td>57.3*</td><td>64.3*</td><td>69.2*</td></tr><tr><td>SWE-bench Multilingual</td><td>77.3</td><td>76.9*</td><td>-</td><td>77.8*</td><td>80.5*</td><td>84.8*</td></tr><tr><td>General Agent</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>FORTE †</td><td>73.2</td><td>70.3</td><td>77.8</td><td>73.2</td><td>77.6</td><td>77.2</td></tr><tr><td>BrowseComp</td><td>79.9</td><td>85.9*</td><td>84.4*</td><td>84.0*</td><td>79.3*</td><td>84.3*</td></tr><tr><td>RWSearch</td><td>78.8</td><td>76.3</td><td>85.3</td><td>81.3</td><td>79.3</td><td>77.3</td></tr><tr><td>Foundational</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>IFEval</td><td>90.0</td><td>96.1</td><td>95.0</td><td>92.2</td><td>88.7</td><td>86.0</td></tr><tr><td>Writing Bench</td><td>83.8</td><td>83.7</td><td>84.7</td><td>-</td><td>85.3</td><td>85.2</td></tr><tr><td>IMO-AnswerBench</td><td>81.8</td><td>90.0</td><td>79.5</td><td>75.3*</td><td>81.8</td><td>75.3</td></tr><tr><td>GPQA-diamond</td><td>88.9</td><td>94.3*</td><td>93.6*</td><td>91.3*</td><td>94.2*</td><td>92.4</td></tr></tbody></table>
+<p>标注 * 的数值为外部（公开报告）指标，其余均为内部测得。&quot;-&quot; 表示暂无结果。分数已归一化到 0–100 区间。</p>
+<ul><li>- Terminal-Bench 2.1 : 通过 Claude Code 评测；沙盒单实例资源 8c16g；推理参数 temperature=1.0、top_k=-1、top_p=0.95；agent 超时 6 小时。</li><li>- SWE-Bench Series : 通过 Claude Code 评测；沙盒单实例资源 4c8g；推理参数 temperature=1.0、top_k=-1、top_p=1；已修正有问题的任务。</li><li>- <a href="https://github.com/AGI-Eval-Official/FORTE">FORTE</a> : FORTE（Full-cycle Office Real-world Task Evaluation）是面向 15 类企业职业、评估 AI Agent 日常办公生产力的通用 Agent 评测集，支持 OpenClaw / Hermes / Claude Code 等框架。所有任务限时 45 分钟；单实例 2 CPU / 4GB 内存；单轮 API 调用超时 500s，最多重试 10 次。标注为 †。</li><li>- <a href="https://github.com/AGI-Eval-Official/RW-Search">RW-Search</a> : 自建的搜索智能体客观评测基准。RW-Search 采用裸模型评测（配置基础的 Search 与 Browse 工具），不使用上下文管理策略。</li><li>- Foundational : 数学推理类（如 IMO-AnswerBench）推理参数 temperature=1.0、top_k=-1、top_p=0.95；其余为 temperature=0.7、top_k=-1、top_p=0.95。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>全新推出企业服务</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-10</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-10</guid>
-      <pubDate>Thu, 10 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-09-10</h2>
-<h3>全新推出企业服务</h3>
-<p>LongCat API 开放平台推出面向企业用户的服务能力：</p>
-<ul><li><strong>企业认证</strong>：新增企业认证功能，账号认证前的原有权益全部保留。</li><li><strong>开具发票</strong>：面向企业认证用户新增自助开具发票功能，详情见<a href="https://longcat.chat/platform/docs/zh/faq#%E5%8F%91%E7%A5%A8%E9%97%AE%E9%A2%98">常见问题-发票问题</a>。</li><li><strong>专属权益</strong>：面向企业用户提供 API 按量付费阶梯折扣及其他专属服务，详情见<a href="https://longcat.chat/platform/docs/zh/faq#%E8%B4%A6%E5%8F%B7%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%9D%83%E7%9B%8A">常见问题-账号认证与权益</a>。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat-2.0 发布 &amp; 全新推出计费服务</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-06-30</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-06-30</guid>
-      <pubDate>Tue, 30 Jun 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-06-30</h2>
-<h3>LongCat-2.0 发布 &amp; 全新推出计费服务</h3>
-<ul><li>LongCat-2.0的核心特性如下：<strong>万亿参数，1M超长上下文</strong>：原生工具调用与多步推理，稳定承载长上下文 Agent 任务。<strong>卓越的 Coding 能力</strong>：在代码生成、代码理解与自动化编程任务上表现突出。<strong>深度适配 Claude Code 等主流开发环境</strong>：与 Claude Code、Hermes、OpenClaw、OpenCode、Kilo Code 高效协同。</li><li>LongCat API 开放平台全新推出计费服务，提供以下两种计费方式：<strong>Token 资源包</strong>：Token 资源包是一次性购买固定 Token 额度，购买后 30 个自然日内有效，适合短期内有大量 Token 需求的场景。<strong>API 按量付费</strong>：API 按量付费是先充值余额，后按实际 Token 消耗扣费的计费模式，适合用量不稳定或想精确控制成本的场景。</li><li>调用指南请参考：<a href="https://longcat.chat/platform/docs/zh/api-docs">LongCat API 开放平台接口文档</a>。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat 部分模型服务下线</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-05-29</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-05-29</guid>
-      <pubDate>Fri, 29 May 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-05-29</h2>
-<h3>LongCat 部分模型服务下线</h3>
-<ul><li>LongCat-2.0-Preview 上线测试以来，用户申请非常踊跃，服务资源需要持续增加。LongCat API 开放平台将停止老模型的测试，集中资源支持好 LongCat-2.0-Preview 的测试和迭代。自 2026年5月29日 起，平台将停止以下 6 个模型的调用服务：LongCat-Flash-ChatLongCat-Flash-ThinkingLongCat-Flash-Thinking-2601LongCat-Flash-LiteLongCat-Flash-Omni-2603LongCat-Flash-Chat-2602-Exp</li><li>请您根据使用需要做好模型迁移，欢迎申请试用 LongCat-2.0-Preview，每日09:00:00 和 21:00:00（UTC+8）限量开放内测名额，名额数量将逐步扩大，先到先得。感谢您的理解与支持。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat-2.0-Preview 发布</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-04-20</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-04-20</guid>
-      <pubDate>Mon, 20 Apr 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-04-20</h2>
-<h3>LongCat-2.0-Preview 发布</h3>
-<ul><li>LongCat-2.0-Preview的核心特性如下：面向Agent开发场景，原生支持工具调用、多步推理和长上下文任务；在代码生成、自动化工作流和复杂指令执行上表现突出；深度适配 Claude Code、OpenClaw、OpenCode和Kilo Code等生产力工具。</li><li>初始额度5,000,000 Tokens/天，<a href="https://longcat.chat/platform/feedback">提交模型使用反馈</a>，每次有效的反馈都将有机会获得额度刷新，每日最多可获得120,000,000 Tokens。</li><li>调用指南请参考：<a href="https://longcat.chat/platform/docs/zh/api-docs">LongCat API 开放平台接口文档</a>。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat-Flash-Thinking 升级</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-03-12</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-03-12</guid>
-      <pubDate>Thu, 12 Mar 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-03-12</h2>
-<h3>LongCat-Flash-Thinking 升级</h3>
-<ul><li>为确保您获得顶级推理性能，LongCat API开放平台已对LongCat-Flash-Thinking模型的调用进行统一升级。所有原 <code>model=LongCat-Flash-Thinking</code> 请求将自动切换至最新版本 <code>LongCat-Flash-Thinking-2601</code>，无需任何代码修改。</li><li>生效时间：2026-03-12 20:00:00 (UTC+8)</li><li>调用指南请参考: <a href="https://longcat.chat/platform/docs/zh/api-docs">LongCat API 开放平台接口文档</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat-Flash-Omni-2603 发布</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-03-11</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-03-11</guid>
-      <pubDate>Wed, 11 Mar 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-03-11</h2>
-<h3>LongCat-Flash-Omni-2603 发布</h3>
-<ul><li>LongCat-Flash-Omni-2603正式发布。该模型作为LongCat-Flash-Omni的升级版，是一款回复拟人度更高、全模态感知能力更强的端到端Omni交互模型。可以在LongCat Chat中免费对话，也可以通过指定 <code>model=LongCat-Flash-Omni-2603 </code>调用。</li><li>相较于 LongCat-Flash-Omni 模型，LongCat-Flash-Omni-2603核心特性如下：深度语义对齐与个性化风格适配，对话体验更加自然流畅。视觉、语音、文本多模态任务准确率全面提升。问题解决、情感理解与日常娱乐场景表现显著增强。支持原生语音Function Call能力，直接解析音频指令，实时交互几乎零延迟。</li><li>调用指南请参考: <a href="https://longcat.chat/platform/docs/zh/api-docs">LongCat API 开放平台接口文档</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat-Flash-Lite 发布</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-02-05</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-02-05</guid>
-      <pubDate>Thu, 05 Feb 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-02-05</h2>
-<h3>LongCat-Flash-Lite 发布</h3>
-<ul><li>LongCat-Flash-Lite正式发布。该模型采用高效 MoE 架构（总参数 685亿，激活参数约 30亿），通过 N-gram 嵌入表实现参数的高效利用，并针对推理效率与特定场景深度优化。</li><li>相较于同量级模型，模型核心特性如下： <strong>卓越的推理效率</strong>：通过 N-gram 嵌入表从底层缓解 MoE 的 I/O 瓶颈，配合专用缓存与内核优化，大幅降低推理延迟并提升效率；<strong>强大的 Agent 与代码性能</strong>：在工具调用和代码开发领域展现出极强的竞争力，相对于其模型规模表现十分出色。</li><li>调用指南请参考：<a href="https://longcat.chat/platform/docs/zh/api-docs">LongCat API开放平台接口文档</a></li><li>开源平台地址 Hugging Face：<a href="https://huggingface.co/meituan-longcat/LongCat-Flash-Lite">https://huggingface.co/meituan-longcat/LongCat-Flash-Lite</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat-Flash-Thinking-2601 发布</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-01-14</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-01-14</guid>
-      <pubDate>Wed, 14 Jan 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2026-01-14</h2>
-<h3>LongCat-Flash-Thinking-2601 发布</h3>
-<ul><li>LongCat-Flash-Thinking-2601正式发布。该模型作为升级版推理模型，基于混合专家（MoE）架构，总参数量达 5600 亿。在保持传统推理基准极强竞争力的同时，通过大规模多环境强化学习，系统性增强了Agent思维能力。</li><li>相较于 LongCat-Flash-Thinking 模型，本次升级核心特性如下：<strong>极致的抗噪环境鲁棒性</strong>：针对现实环境中的噪声与不确定性开展系统性课程式训练，模型在Agent工具调用、Agent搜索及工具融合推理领域表现卓越，泛化能力显著提升；<strong>强大的 Agent 能力</strong>：构建包含 60 余种工具的紧密依赖图谱，通过多环境扩展与大规模探索训练，显著提升模型在复杂、分布外现实场景中的泛化能力；<strong>先进的深度思考模式</strong>：利用并行推理拓展思维广度，配合递归反馈的总结归纳机制拓展思维深度，有效攻克高难度问题。</li><li>调用指南请参考: <a href="https://longcat.chat/platform/docs/zh/api-docs">LongCat API 开放平台接口文档</a></li><li>开源平台地址Hugging Face：<a href="https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking-2601">https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking-2601</a>Github：<a href="https://github.com/meituan-longcat/LongCat-Flash-Thinking-2601">https://github.com/meituan-longcat/LongCat-Flash-Thinking-2601</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat-Flash-Chat更新</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2025-12-22</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2025-12-22</guid>
-      <pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2025-12-22</h2>
-<h3>LongCat-Flash-Chat更新</h3>
-<ul><li>LongCat-Flash-Chat模型已升级至新版本。本次升级仅涉及模型能力更新，模型名称及API调用方式保持不变。</li><li>新版本的LongCat-Flash-Chat模型在延续“极致效率”与“闪电级响应”的基础上，进一步提升了模型上下文与编程实战能力：<strong>编程能力显著增强</strong>：面向开发者场景进行深度优化，在代码生成、调试与解释等任务中表现大幅提升，推荐开发者重点关注与测试；<strong>支持256K超长上下文</strong>：上下文长度较上一代模型（128K）翻倍，可高效处理海量文档与长序列任务；<strong>多语言能力全面加强</strong>：出色支持西班牙语、法语、阿拉伯语、葡萄牙语、俄语、印尼语等9种语言；<strong>更强大的Agent能力</strong>：在复杂工具调用与多步任务执行中表现更加稳健、高效。</li><li>调用指南请参考：<a href="https://longcat.chat/platform/docs/zh/api-docs">LongCat API 开放平台接口文档</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat-Flash-Thinking发布</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2025-09-22</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2025-09-22</guid>
-      <pubDate>Mon, 22 Sep 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>LongCat-Flash-Thinking发布</h1>
-<h2>版本: 2025-09-22</h2>
-<h3>LongCat-Flash-Thinking发布</h3>
-<ul><li>LongCat-Flash-Thinking正式发布，并同步开源。该模型是一款深度思考模型，可以在LongCat Chat中免费对话，也可以通过指定 <code>model=LongCat-Flash-Thinking</code>调用。</li><li>LongCat Chat地址：<a href="https://longcat.chat/">https://longcat.chat/</a></li><li>调用指南请参考: <a href="https://longcat.chat/platform/docs/zh/api-docs">LongCat API 开放平台接口文档</a></li><li>开源平台地址Hugging Face：<a href="https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking">https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking</a>Github：<a href="https://github.com/meituan-longcat/LongCat-Flash-Thinking">https://github.com/meituan-longcat/LongCat-Flash-Thinking</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat API开放平台上线</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2025-09-05</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2025-09-05</guid>
-      <pubDate>Fri, 05 Sep 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>LongCat API开放平台上线</h1>
-<h2>版本: 2025-09-05</h2>
-<h3>LongCat API开放平台上线</h3>
-<ul><li>LongCat API开放平台上线，支持API调用模型LongCat-Flash-Chat，可以通过指定 <code>model=LongCat-Flash-Chat </code>调用。</li><li>调用指南请参考: <a href="https://longcat.chat/platform/docs/zh/api-docs">LongCat API开放平台接口文档</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>LongCat-Flash-Chat发布</title>
-      <link>https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2025-08-29</link>
-      <guid isPermaLink="true">https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2025-08-29</guid>
-      <pubDate>Fri, 29 Aug 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2>版本: 2025-08-29</h2>
-<h3>LongCat-Flash-Chat发布</h3>
-<ul><li>LongCat-Flash-Chat正式发布，并同步开源。该模型是一款高性能通用对话模型，可以在LongCat Chat中免费对话。</li><li>LongCat Chat地址：<a href="https://longcat.chat/">https://longcat.chat/</a></li><li>开源平台地址Hugging Face：<a href="https://huggingface.co/meituan-longcat/LongCat-Flash-Chat">https://huggingface.co/meituan-longcat/LongCat-Flash-Chat</a>Github：<a href="https://github.com/meituan-longcat/LongCat-Flash-Chat">https://github.com/meituan-longcat/LongCat-Flash-Chat</a></li></ul>]]></content:encoded>
+      <title>Learning to Act under Noise：通过噪声环境增强 Agent 鲁棒性</title>
+      <link>https://huggingface.co/papers/2605.27209</link>
+      <guid isPermaLink="true">https://huggingface.co/papers/2605.27209</guid>
+      <pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

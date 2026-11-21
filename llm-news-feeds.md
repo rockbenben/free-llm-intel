@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 12:04:26**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 12:12:10**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -258,16 +258,13 @@
   - 📄 完整文章归档（共 30 篇）：[meta_llama.md](llm-news/meta_llama.md)
 
 ### 美团 LongCat (longcat_meituan)
-- 页面：[更新日志](https://longcat.chat/platform/docs/zh/ChangeLog.html)
+- 页面：[新闻 / 更新](https://longcat.ai/)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-longcat_meituan.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-longcat_meituan.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [LongCat-2.5 上线](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-11-02)（2026-11-02）
-  2. [LongCat-2.5-Preview 上线](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-25)（2026-09-25）
-  3. [全新推出企业服务](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-10)（2026-09-10）
-  4. [全新推出企业服务](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-02)（2026-09-02）
-  5. [LongCat-2.0 发布 & 全新推出计费服务](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-06-30)（2026-06-30）
-  - 📄 完整文章归档（共 15 篇）：[longcat_meituan.md](llm-news/longcat_meituan.md)
+  1. [LongCat-2.5：面向智能体任务的原生多模态模型](https://longcat.ai/blog/longcat-2.5)（2026-11-01）
+  2. [LongCat-2.0：万亿参数 MoE 大语言模型](https://longcat.ai/blog/longcat-2.0)（2026-06-29）
+  3. [Learning to Act under Noise：通过噪声环境增强 Agent 鲁棒性](https://huggingface.co/papers/2605.27209)（2026-05-26）
 
 ### 硅基流动 (siliconflow)
 - 页面：[更新日志](https://docs.siliconflow.cn/docs/release-notes/overview)
