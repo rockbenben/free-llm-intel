@@ -394,21 +394,23 @@
     margin-bottom: var(--sp-6);
   }
   .diff-pair {
-    display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-8);
-    font-size: var(--fs-sm); line-height: 1.55;
+    display: grid; gap: var(--sp-4);
+    font-size: var(--fs-sm); line-height: 1.55; overflow-wrap: anywhere;
   }
-  .diff-old, .diff-new {
-    min-width: 0; word-break: break-word; padding: var(--sp-6) var(--sp-8);
-    border-radius: var(--rd-control); background: var(--surface);
-    border: 1px solid var(--line);
+  .diff-value {
+    display: grid; grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--sp-8);
   }
-  .diff-old { border-left: 3px solid var(--line-strong); color: var(--muted); }
-  .diff-new { border-left: 3px solid var(--accent); color: var(--fg); }
   .diff-tag {
-    display: inline-block; font-size: var(--fs-xs); font-weight: 600;
-    margin-right: var(--sp-6); color: var(--muted);
+    font-weight: 600; color: var(--muted);
   }
-  .diff-new .diff-tag { color: var(--accent); }
+  .diff-old del, .diff-new ins {
+    padding-inline: var(--sp-2); font-weight: 600;
+    box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  }
+  .diff-old del { color: var(--warn-fg); background: var(--warn-bg); }
+  .diff-new ins { color: var(--ok-fg); background: var(--ok-bg); text-decoration: none; }
+  .diff-context { color: var(--muted); }
   .diff-more { margin-top: var(--sp-4); font-size: var(--fs-sm); }
   .diff-more summary {
     cursor: pointer; color: var(--accent); padding: var(--sp-4) 0;
@@ -695,7 +697,6 @@
     .tab-n { padding: 0 var(--sp-4); }
     .item { flex-direction: column; gap: var(--sp-4); padding: var(--sp-12); }
     .date { flex-basis: auto; }
-    .diff-pair { grid-template-columns: 1fr; }
     .qrow { padding: var(--sp-12); }
     .reader-body { padding: var(--sp-16); }
   }
@@ -825,7 +826,7 @@
         <span class="count" id="changes-count" role="status" aria-live="polite"></span>
       </div>
       <p class="hint">
-        记录巡检采纳的<strong>免费额度与活动改前 → 改后</strong>（点标题跳官方档案核对）。新模型发布看
+        查看巡检记录中的<strong>额度与活动变化</strong>。字段值可展开核对，新模型发布见
         <a href="?tab=news" data-tab-link="news">「厂商动态」</a>；
         <a id="changes-sub" href="#">单独订阅变化流</a>（RSS）。
       </p>
@@ -1025,21 +1026,50 @@ var FLI = (function () {
         label = (labels && labels[key]) || key;
         body = m[2].trim();
       }
-      var clean = plain(body);
-      var arrow = clean.indexOf(' → ');
-      if (arrow >= 0) {
+      var clean = plain(body).replace(/\u00a0→\u00a0/g, ' → ');
+      var separator = /(?:^| )→(?: |$)/.exec(body);
+      if (separator) {
+        var before = body.slice(0, separator.index).trim();
+        var after = body.slice(separator.index + separator[0].length).trim();
         out.push({
           key: key,
           label: label,
-          before: clean.slice(0, arrow).trim(),
-          after: clean.slice(arrow + 3).trim(),
-          raw: clean
+          before: plain(before).replace(/\u00a0→\u00a0/g, ' → ').trim(),
+          after: plain(after).replace(/\u00a0→\u00a0/g, ' → ').trim(),
+          raw: clean,
+          truncated: [before, after].some(function (value) {
+            // 旧日志在第 160 个字符写入省略号，Markdown 标记也计入长度。
+            return value.endsWith('…') && Array.from(value).length === 160;
+          })
         });
       } else {
         out.push({ key: key, label: label, before: '', after: '', raw: clean });
       }
     }
     return out;
+  }
+
+  function diffExcerpt(before, after) {
+    if (before === after) return null;
+    // 按完整数字、英文词和型号对齐，避免把 29.5 → 41.3 高亮成半个数字。
+    var tokens = /[+-]?\d+(?:[.,:]\d+)*|[a-zA-Z][a-zA-Z0-9]*(?:[._/-][a-zA-Z0-9]+)*|\s+|[^\s]/gu;
+    var oldParts = before.match(tokens) || [];
+    var newParts = after.match(tokens) || [];
+    var shared = Math.min(oldParts.length, newParts.length);
+    var start = 0;
+    var end = 0;
+    while (start < shared && oldParts[start] === newParts[start]) start++;
+    while (end < shared - start &&
+           oldParts[oldParts.length - 1 - end] === newParts[newParts.length - 1 - end]) end++;
+    var left = Array.from(oldParts.slice(0, start).join(''));
+    var right = Array.from(oldParts.slice(oldParts.length - end).join(''));
+    var context = 16;
+    return {
+      left: (left.length > context ? '…' : '') + left.slice(-context).join(''),
+      right: right.slice(0, context).join('') + (right.length > context ? '…' : ''),
+      before: oldParts.slice(start, oldParts.length - end).join(''),
+      after: newParts.slice(start, newParts.length - end).join('')
+    };
   }
 
   // 档案短文本内联富文本切片：只解析 **粗体** 与 `行内代码`，不拼 HTML 字符串
@@ -1314,6 +1344,7 @@ var FLI = (function () {
     cacheAgeLabel: cacheAgeLabel,
     matchQuotaFilters: matchQuotaFilters,
     parseChangeLines: parseChangeLines,
+    diffExcerpt: diffExcerpt,
     richTokens: richTokens,
     mdToHtml: mdToHtml,
     loadBody: loadBody,
@@ -1814,6 +1845,30 @@ var FLI = (function () {
       return (ln.label ? ln.label + '：' : '') + ln.raw;
     }).join(' ');
   }
+  function buildDiffValue(side, value, excerpt) {
+    var box = document.createElement('div');
+    box.className = 'diff-value diff-' + side;
+    var tag = document.createElement('span');
+    tag.className = 'diff-tag';
+    tag.textContent = side === 'old' ? '改前' : '改后';
+    box.appendChild(tag);
+    var text = document.createElement('span');
+    if (excerpt && value) {
+      text.className = 'diff-context';
+      text.append(excerpt.left);
+      var mark = document.createElement(side === 'old' ? 'del' : 'ins');
+      var changed = Array.from(side === 'old' ? excerpt.before : excerpt.after);
+      mark.textContent = changed.length > 160
+        ? changed.slice(0, 100).join('') + '…' + changed.slice(-50).join('')
+        : changed.join('');
+      if (mark.textContent) text.appendChild(mark);
+      text.append(excerpt.right);
+    } else {
+      text.textContent = value || '（空）';
+    }
+    box.appendChild(text);
+    return box;
+  }
   function buildDiffNode(ln) {
     if (ln.before || ln.after) {
       var card = document.createElement('div');
@@ -1824,21 +1879,35 @@ var FLI = (function () {
         f.textContent = ln.label;
         card.appendChild(f);
       }
-      var pair = document.createElement('div');
-      pair.className = 'diff-pair';
-      var oldBox = document.createElement('div');
-      oldBox.className = 'diff-old';
-      var ot = document.createElement('span'); ot.className = 'diff-tag'; ot.textContent = '改前';
-      oldBox.appendChild(ot);
-      oldBox.appendChild(document.createTextNode(ln.before || '（空）'));
-      var newBox = document.createElement('div');
-      newBox.className = 'diff-new';
-      var nt = document.createElement('span'); nt.className = 'diff-tag'; nt.textContent = '改后';
-      newBox.appendChild(nt);
-      newBox.appendChild(document.createTextNode(ln.after || '（空）'));
-      pair.appendChild(oldBox);
-      pair.appendChild(newBox);
-      card.appendChild(pair);
+      var excerpt = FLI.diffExcerpt(ln.before, ln.after);
+      if (excerpt) {
+        var pair = document.createElement('div');
+        pair.className = 'diff-pair';
+        pair.append(buildDiffValue('old', ln.before, excerpt),
+                    buildDiffValue('new', ln.after, excerpt));
+        card.appendChild(pair);
+      } else {
+        var message = document.createElement('div');
+        message.className = 'note';
+        message.textContent = ln.truncated
+          ? '历史字段值已截断，具体变化见上方摘要。'
+          : '记录中的改前、改后相同，详见上方摘要。';
+        card.appendChild(message);
+      }
+      var details = document.createElement('details');
+      details.className = 'diff-more';
+      var summary = document.createElement('summary');
+      summary.textContent = ln.truncated ? '查看已记录的字段片段' : '查看字段原值';
+      details.appendChild(summary);
+      var originals = document.createElement('div');
+      originals.className = 'diff-pair';
+      if (excerpt) {
+        originals.append(buildDiffValue('old', ln.before), buildDiffValue('new', ln.after));
+      } else {
+        originals.textContent = ln.after;
+      }
+      details.appendChild(originals);
+      card.appendChild(details);
       return card;
     }
     var note = document.createElement('div');

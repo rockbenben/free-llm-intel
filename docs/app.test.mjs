@@ -310,6 +310,7 @@ test('parseChangeLines: 多字段拆出中文标签与改前/改后，无箭头�
     before: '旧模型 m1',
     after: '新模型 m2',
     raw: '旧模型 m1 → 新模型 m2',
+    truncated: false,
   });
   assert.deepEqual(lines[1], {
     key: 'promotions',
@@ -321,6 +322,34 @@ test('parseChangeLines: 多字段拆出中文标签与改前/改后，无箭头�
   assert.equal(lines[2].label, 'unknown_k');
   assert.equal(lines[2].before, 'A');
   assert.equal(lines[2].after, 'B');
+});
+
+test('额度变化：截断后相同的历史值保留截断标记，不生成差异', () => {
+  const clipped = '**' + '旧'.repeat(157) + '…';
+  const [line] = FLI.parseChangeLines('free_models：' + clipped + ' → ' + clipped);
+  assert.equal(line.truncated, true);
+  assert.equal(FLI.diffExcerpt(line.before, line.after), null);
+});
+
+test('额度变化：隐藏长公共前后文，保留完整金额和有变化的折扣', () => {
+  const prefix = '相同的说明'.repeat(40) + ' ，套餐升级限时 ';
+  const suffix = ' 元/月；' + '相同的模型权益'.repeat(40);
+  const diff = FLI.diffExcerpt(prefix + '5 折，低至 29.5' + suffix,
+                               prefix + '7 折，低至 41.3' + suffix);
+  assert.equal(diff.before, '5 折，低至 29.5');
+  assert.equal(diff.after, '7 折，低至 41.3');
+  assert.ok(diff.left.startsWith('…') && diff.right.endsWith('…'));
+});
+
+test('额度变化：字段内的箭头不影响改前、改后拆分', () => {
+  const [line] = FLI.parseChangeLines('free_models：文字\u00a0→\u00a0图片 → 文字\u00a0→\u00a0视频');
+  assert.equal(line.before, '文字 → 图片');
+  assert.equal(line.after, '文字 → 视频');
+  const [, added, removed] = FLI.parseChangeLines(
+    'promotions：—\npromotions： → 首月免费\npromotions：首月免费 → '
+  );
+  assert.equal(FLI.diffExcerpt(added.before, added.after).after, '首月免费');
+  assert.equal(FLI.diffExcerpt(removed.before, removed.after).before, '首月免费');
 });
 
 test('richTokens: 安全切分粗体与行内代码，未闭合定界符退回纯文本', () => {

@@ -6958,11 +6958,10 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
 
 CHANGELOG_MD = "llm-intel-changelog.md"
 CHANGELOG_MAX_VENDORS = 150   # 厂商-天 记录条数上限，超出裁剪最旧日块
-CHANGELOG_VALUE_LIMIT = 160   # 单值展示上限，防 free_models 长列表刷爆日志
 
 
 def _changelog_fmt(value) -> str:
-    """档案字段值 → 日志一行的紧凑字符串（列表顿号连接、超长截断）。"""
+    """档案字段值 → 日志一行的完整字符串，共同上下文由浏览页折叠。"""
     if value is None:
         return "（原无此项）"
     if isinstance(value, (list, tuple)):
@@ -6971,10 +6970,7 @@ def _changelog_fmt(value) -> str:
         text = json.dumps(value, ensure_ascii=False)
     else:
         text = str(value)
-    text = " ".join(text.split())
-    if len(text) > CHANGELOG_VALUE_LIMIT:
-        text = text[:CHANGELOG_VALUE_LIMIT - 1] + "…"
-    return text
+    return " ".join(text.split())
 
 
 def append_intel_changelog(path: Path, run_date: str, entries: list[dict]) -> int:
@@ -6999,6 +6995,9 @@ def append_intel_changelog(path: Path, run_date: str, entries: list[dict]) -> in
         chunks.append(f"### {e['brand']}（`{e['vendor_id']}`）")
         chunks.append(f"- 摘要：{e['summary']}")
         for field, old, new in e["diffs"]:
+            # 保留字段内箭头的可读性，同时给改前 / 改后分隔符留出唯一匹配。
+            old = old.replace(" → ", "\u00a0→\u00a0")
+            new = new.replace(" → ", "\u00a0→\u00a0")
             chunks.append(f"- `{field}`：{old} → {new}")
     idx = next((i for i, blk in enumerate(day_blocks)
                 if blk[0] == run_date), None)

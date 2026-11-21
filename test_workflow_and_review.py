@@ -1778,11 +1778,22 @@ class TestIntelChangelogAndStaleReview(unittest.TestCase):
         return {"vendor_id": vid, "brand": brand, "summary": summary,
                 "diffs": list(diffs)}
 
-    def test_fmt_compacts_and_truncates(self):
+    def test_fmt_compacts_without_losing_differences_after_legacy_limit(self):
         self.assertEqual(crawler_llm_intel._changelog_fmt(None), "（原无此项）")
         self.assertEqual(crawler_llm_intel._changelog_fmt(["a", "b"]), "a、b")
-        long = crawler_llm_intel._changelog_fmt("字" * 400)
-        self.assertTrue(long.endswith("…") and len(long) <= 160)
+        shared = "字" * 400
+        before = crawler_llm_intel._changelog_fmt(shared + "\n5 折")
+        after = crawler_llm_intel._changelog_fmt(shared + "\n7 折")
+        self.assertEqual(before, shared + " 5 折")
+        self.assertEqual(after, shared + " 7 折")
+
+    def test_append_keeps_field_arrows_distinct_from_the_diff_separator(self):
+        path = self.root / crawler_llm_intel.CHANGELOG_MD
+        entry = self._entry(diffs=(("free_models", "文字 → 图片", "文字 → 视频"),))
+        crawler_llm_intel.append_intel_changelog(path, "2026-09-25", [entry])
+        stored = crawler_llm_intel.parse_intel_changelog(path.read_text(encoding="utf-8"))
+        self.assertEqual(stored[0]["diffs"],
+                         [("free_models", "文字\u00a0→\u00a0图片 → 文字\u00a0→\u00a0视频")])
 
     def test_append_creates_then_merges_same_day_and_prepends_new_day(self):
         p = self.root / crawler_llm_intel.CHANGELOG_MD
