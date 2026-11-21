@@ -871,12 +871,34 @@ sources:
   - vendor_id: tencent_hunyuan
     type: tokenhub
     url: https://cloud.tencent.com/document/product/1729/111007
-  # 产品动态（实测 8 条，带日期）。正文是**表格**：日期列 + 说明列，
-  # 靠 crawler 的「结构 7」提取；页头「最近更新时间」等表头已被拦掉。
+  # 混元官方动态（2026-11-21 换源）：原 `updates` 指向腾讯云文档「混元大模型产品动态」
+  # （1729/97765），实测那是一张**表格** —— 日期列 + 一段发布说明，抽出来的是
+  # 「1. 适用场景：AI 数字分身…」这种表格碎片，95 条里大量重复、最新停在 2026-06-22
+  # （混元迁 TokenHub 后旧平台只留迁移公告）；而且它归 `STRUCTURED_NEWS_TYPES`，
+  # 模型发布雷达里也只喂出 1 条 2025-04 的旧记录。
+  #
+  # 新源是混元官网 research 页背后的官方接口：14 篇带日期的真文章（Hy4 flash / Hy4 /
+  # Hyra 2.0 / Hy Image3.5 preview …，模型发布稿还带 API 价目表）。三条替代路都实测堵死：
+  #   1) /research 是前端渲染 —— 静态 HTML 6.5KB 只有 <title>，渲染后整页没有指向文章
+  #      的 <a>（卡片是 div + 点击），链接提取拿不到条目；
+  #   2) 文章页同样是壳（requests 只拿到 6584 字节、12 字正文），正文得靠浏览器兜底，
+  #      所以这条源的正文由本地 `--fetch-bodies --allow-browser` 回捞；
+  #   3) 官方无 RSS（/rss.xml、/feed 全部回落同一份壳）。
+  #
+  # 接口只能 POST（GET 返回 405），且**只认** `Accept-Language: zh`：`zh-CN` / `zh_CN` /
+  # `zh-Hans` / 带 q 值的 `zh-CN,zh;q=0.9` **一律回英文版**（列表接口与正文页同一套判定，
+  # 实测正文页连标题都变成 `Introducing Hy4 flash`）。`lang: zh` 仍要声明（正文语言与英文
+  # 镜像判据用它），语言头则用 `accept_language` 单独覆盖 —— 前者是「我们认这条源是中文」，
+  # 后者是「这家站点只认这一个值」，两件事不能合并。这个覆盖值会按 host 跟到**正文抓取**
+  # 的两条通路上（见 `news_source_accept_languages`），否则正文一律落英文。
+  # `page` 是给人看的地址：归档与 llm-news-feeds.md 的「订阅入口」印它，不印接口长串。
   - vendor_id: tencent_hunyuan
-    type: updates
+    type: research
     lang: zh
-    url: https://cloud.tencent.com/document/product/1729/97765
+    url: "https://api.hunyuan.tencent.com/api/blog/publicList"
+    post: {"pageNum": 1, "pageSize": 1000, "renderType": 0}
+    accept_language: zh
+    page: https://hunyuan.tencent.com/research
 
   # 商汤 SenseNova Token Plan
   - vendor_id: sensetime_sensenova

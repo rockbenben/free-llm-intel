@@ -1243,7 +1243,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "tencent_hunyuan": {
         "category": "domestic",
-        "display_name": "腾讯云混元 (TokenHub)",
+        "display_name": "腾讯混元 (TokenHub)",
         "free_quota": "**无额外注册赠金**；免费资源即左栏两款模型的 tokens（官方免费额度文档 /document/product/1729/97731）",
         "validity": "免费资源包有效期 **1 年**（官方文档原文）",
         "free_models": [

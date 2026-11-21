@@ -7462,8 +7462,8 @@ sources:
         api_sources = [s for s in sources
                        if any(k in (s.get("url") or "") for k in ("/api/", "wp-json"))
                        and (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
-        self.assertEqual(len(api_sources), 2,
-                         "夹具前提：目前应有千问接口与 AI21 wp-json 两个动态接口源")
+        self.assertEqual(len(api_sources), 3,
+                         "夹具前提：目前应有千问、混元两个官方接口源与 AI21 wp-json")
         for s in api_sources:
             self.assertTrue(s.get("page"), f"数据接口源缺 page：{s}")
             self.assertNotIn("/api/", s["page"], "page 必须是给人看的地址")
@@ -7693,6 +7693,189 @@ class TestWordpressNewsSource(unittest.TestCase):
         listing = [s for s in sources if (s.get("url") or "") == "https://www.ai21.com/blog"]
         self.assertEqual(listing, [], "列表页源已换掉")
 
+
+class TestHunyuanNewsSource(unittest.TestCase):
+    """腾讯混元官网 research 页背后的接口 —— 第三个 JSON 消费者（2026-11-21 换源）。
+
+    换源动因：原 `updates` 指向腾讯云文档「混元大模型产品动态」（1729/97765），那页是
+    一张**表格**（日期列 + 发布说明），抽出来的是「1. 适用场景：AI 数字分身…」这种表格
+    碎片：95 条里大量重复、最新停在 2026-06-22（混元迁 TokenHub 后旧平台只留迁移公告）。
+    官网 research 才是带日期的真动态（14 篇，含 Hy4 flash 的 API 价目表）。
+
+    三处站点私有约定：接口只收 POST（GET 405）、只认 `Accept-Language: zh`（`zh-CN`
+    就回英文那 12 条）、详情页 slug 在 `customUrl`（论文类为空，只有数字 id）。
+    """
+
+    API = "https://api.hunyuan.tencent.com/api/blog/publicList"
+    HUMAN = "https://hunyuan.tencent.com/research"
+
+    @staticmethod
+    def _items():
+        return [
+            {"id": 100145, "title": "Hy4 flash：日常工作的极致性价比模型",
+             "customUrl": "hy4-flash", "displayPublishTime": 1794758400,
+             "publishedAt": 1794803377, "lang": "zh"},
+            # 论文类：customUrl 为空，详情页只有数字 id（/research/<id> 实测能打开）
+            {"id": 100116, "title": "当大模型强化学习走向规模化",
+             "customUrl": "", "displayPublishTime": 1790006400},
+            {"id": 100117, "title": "太短", "customUrl": "x"},
+            {"id": "", "title": "既没有 slug 也没有 id 的条目", "customUrl": ""},
+            "不是字典的条目",
+        ]
+
+    def _body(self):
+        return json.dumps({"code": 0, "msg": "success",
+                           "data": {"totalNum": len(self._items()),
+                                    "list": self._items()}},
+                          ensure_ascii=False)
+
+    def _page(self, *, raw=None, url=API, display_url=HUMAN):
+        return crawler_llm_intel.PageResult(
+            url=url, stype="research", ok=True, final_url=url,
+            raw=self._body() if raw is None else raw, display_url=display_url)
+
+    # ---- 1) 适配器解析 ----
+
+    def test_adapter_parses_official_shape(self):
+        arts = crawler_llm_intel.extract_articles_from_hunyuan(self._page())
+        by_url = {a.url: a for a in arts}
+        art = by_url["https://hunyuan.tencent.com/research/hy4-flash"]
+        self.assertEqual(art.title, "Hy4 flash：日常工作的极致性价比模型")
+        # displayPublishTime 是北京时间零点：CI 在 UTC 跑时按本机时区换算会退一天
+        self.assertEqual(art.date, "2026-11-16")
+        self.assertEqual(art.source, "官方 JSON 接口")
+        self.assertEqual(art.stype, "research")
+
+    def test_paper_entries_fall_back_to_numeric_id(self):
+        arts = crawler_llm_intel.extract_articles_from_hunyuan(self._page())
+        urls = {a.url for a in arts}
+        self.assertIn("https://hunyuan.tencent.com/research/100116", urls,
+                      "customUrl 为空的论文条目用数字 id 拼正链")
+
+    def test_adapter_drops_junk(self):
+        arts = crawler_llm_intel.extract_articles_from_hunyuan(self._page())
+        titles = [a.title for a in arts]
+        self.assertNotIn("太短", titles, "标题 < 4 字符的不是文章")
+        self.assertNotIn("既没有 slug 也没有 id 的条目", titles, "拼不出正链就丢")
+        self.assertNotIn("不是字典的条目", titles)
+
+    def test_origin_comes_from_page_not_api_host(self):
+        """正链必须落在给人看的 host 上：接口在 api.hunyuan.tencent.com。"""
+        default = crawler_llm_intel.extract_articles_from_hunyuan(self._page())
+        self.assertTrue(all(a.url.startswith("https://hunyuan.tencent.com/research/")
+                            for a in default), [a.url for a in default])
+        mirrored = crawler_llm_intel.extract_articles_from_hunyuan(
+            self._page(display_url="https://mirror.example/research"))
+        self.assertTrue(all(a.url.startswith("https://mirror.example/research/")
+                            for a in mirrored), "origin 要从 page 推，不能写死")
+
+    def test_adapter_returns_empty_for_unusable_bodies(self):
+        cases = {
+            "HTML 页": "<html><body>前端渲染的空壳</body></html>",
+            "坏 JSON": '{"data": {"list": [',
+            "缺 list": '{"data": {"totalNum": 14}}',
+            "list 不是列表": '{"data": {"list": {"a": 1}}}',
+            "空正文": "",
+        }
+        for label, body in cases.items():
+            self.assertEqual(
+                crawler_llm_intel.extract_articles_from_hunyuan(self._page(raw=body)),
+                [], label)
+
+    # ---- 2) 抓取层：POST + 语言头 + 不走浏览器 ----
+
+    def test_post_source_sends_json_with_source_headers(self):
+        resp = mock.Mock(status_code=200, url=self.API, text=self._body(),
+                         headers={"Content-Type": "text/plain; charset=utf-8"},
+                         encoding="utf-8")
+        session = mock.Mock()
+        session.post.return_value = resp
+        browser = mock.Mock(enabled=True)
+        page = crawler_llm_intel.fetch_url(
+            session, self.API, "research", browser=browser,
+            post={"pageNum": 1, "pageSize": 1000, "renderType": 0},
+            accept_language="zh")
+        self.assertTrue(page.ok)
+        self.assertEqual(session.post.call_count, 1, "声明了 post 就必须走 POST")
+        self.assertEqual(session.get.call_count, 0, "POST 源不该再发一遍 GET")
+        self.assertEqual(session.post.call_args.kwargs["json"],
+                         {"pageNum": 1, "pageSize": 1000, "renderType": 0})
+        self.assertEqual(session.post.call_args.kwargs["headers"]["Accept-Language"],
+                         "zh", "源级语言头要盖过 lang 表里的 zh-CN")
+
+    def test_failed_post_source_does_not_fall_through_to_browser(self):
+        """浏览器只能发 GET：POST 源失败时转浏览器只会把「失败」翻成「ok 但 0 条」。"""
+        resp = mock.Mock(status_code=405, url=self.API, text="", headers={},
+                         encoding="utf-8")
+        session = mock.Mock()
+        session.post.return_value = resp
+        browser = mock.Mock(enabled=True)
+        page = crawler_llm_intel.fetch_url(session, self.API, "research",
+                                           browser=browser, post={})
+        self.assertFalse(page.ok)
+        self.assertFalse(browser.render.called)
+
+    # ---- 3) 语言声明：文章页要能查到这条源是中文 ----
+
+    def test_accept_language_override_follows_article_urls(self):
+        """语言头覆盖要按 host 跟到文章页：混元只认裸 `zh`，`zh-CN` 就变英文版。"""
+        srcs = [{"vendor_id": "tencent_hunyuan", "type": "research",
+                 "lang": "zh", "url": self.API, "page": self.HUMAN,
+                 "accept_language": "zh"}]
+        table = crawler_llm_intel.news_source_accept_languages(srcs)
+        self.assertEqual(table.get("hunyuan.tencent.com/research"), "zh",
+                         "正文页与列表接口同一套语言判定，覆盖值要一起跟过去")
+        self.assertEqual(crawler_llm_intel.declared_source_accept_language(
+            "https://hunyuan.tencent.com/research/hy4-flash", table), "zh")
+
+    def test_browser_render_uses_the_override_header(self):
+        seen = {}
+
+        class _Page:
+            def set_extra_http_headers(self, headers):
+                seen.update(headers)
+
+        bs = crawler_llm_intel.BrowserSession(enabled=False)
+        bs._page = _Page()
+        bs._ensure = lambda: True
+        bs._render_once = lambda url: ("<html></html>", url, 200)
+        bs.render("https://hunyuan.tencent.com/research/hy4-flash", lang="zh",
+                  accept_language="zh")
+        self.assertEqual(seen.get("Accept-Language"), "zh",
+                         "覆盖值必须压过 _LANG_HEADERS 里那条带 q 值的 zh-CN 串")
+
+    def test_human_page_is_registered_for_declared_language(self):
+        srcs = [{"vendor_id": "tencent_hunyuan", "type": "research",
+                 "lang": "zh", "url": self.API, "page": self.HUMAN}]
+        table = crawler_llm_intel.news_source_langs(srcs)
+        self.assertEqual(table.get("api.hunyuan.tencent.com/api"), "zh")
+        self.assertEqual(crawler_llm_intel.declared_source_lang(
+            "https://hunyuan.tencent.com/research/hy4-flash", table), "zh",
+            "只登记接口 URL 的话，正文抓取与浏览器兜底查不到语言，中文站会被渲染成英文")
+
+    # ---- 4) yaml 契约与退役旧源 ----
+
+    def test_yaml_declares_post_headers_and_page(self):
+        root = Path(__file__).resolve().parent
+        _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        src = next(s for s in sources
+                   if s.get("vendor_id") == "tencent_hunyuan"
+                   and s.get("type") == "research")
+        self.assertTrue(str(src["url"]).startswith("https://api.hunyuan.tencent.com/"),
+                        "混元动态只能走官方接口（页面是 CSR 空壳）")
+        self.assertEqual(src.get("post"),
+                         {"pageNum": 1, "pageSize": 1000, "renderType": 0})
+        self.assertEqual(src.get("accept_language"), "zh",
+                         "换成 zh-CN 接口就回英文那 12 条")
+        self.assertEqual(src.get("page"), self.HUMAN)
+        self.assertEqual(src.get("lang"), "zh")
+
+    def test_tencent_changelog_prefix_is_retired(self):
+        self.assertTrue(crawler_llm_intel._is_retired_news_url(
+            "https://cloud.tencent.com/document/product/1729/97765#t2026-06-22-0"))
+        self.assertFalse(crawler_llm_intel._is_retired_news_url(
+            "https://cloud.tencent.com/document/product/1729/97731"),
+            "同厂商的计费页是情报页，不能被退役前缀误伤")
 
 class TestBackfillOriginalEncoding(unittest.TestCase):
     """`--backfill-orig` 的字符编码：乱码绝不能被当成「英文原文」写进归档。

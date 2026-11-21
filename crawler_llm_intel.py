@@ -707,9 +707,14 @@ def news_source_langs(sources: list[dict]) -> dict[str, str]:
         u = (s.get("url") or "").strip()
         if not lang or not u:
             continue
-        key = _lang_match_key(u)
-        if key:
-            out[key] = lang
+        # `page` 是同一个源的**人类可读地址**（数据接口源必填）。条目正链挂在
+        # page 那个 host/路径下（混元：接口在 api.hunyuan.tencent.com，文章在
+        # hunyuan.tencent.com/research/<slug>），只登记接口 URL 的话正文抓取与
+        # 浏览器兜底都查不到这条源的语言，中文站会被渲染成英文版。
+        for candidate in (u, (s.get("page") or "").strip()):
+            key = _lang_match_key(candidate)
+            if key:
+                out[key] = lang
     return out
 
 
@@ -774,6 +779,37 @@ def news_source_locale_cookies(sources: list[dict]) -> dict[str, str]:
 def declared_source_cookie(url: str, cookies: dict[str, str] | None = None) -> str:
     """这一条 URL 该带哪个 locale cookie（源声明，命中不了返回空串）。"""
     table = news_locale_cookie_table() if cookies is None else cookies
+    return _declared_by_host(url, table)
+
+
+def news_source_accept_languages(sources: list[dict]) -> dict[str, str]:
+    """`{host+首要路径段: Accept-Language 覆盖值}` —— 只收声明了 `accept_language` 的动态源。
+
+    为什么需要它：腾讯混元官网**只认 `Accept-Language: zh` 这一个值** —— 列表接口与正文页
+    同一套判定，换 `zh-CN`、`zh_CN`、`zh-Hans` 或带 q 值的 `zh-CN,zh;q=0.9` 一律回英文版
+    （实测正文页 HTML 里连标题都变成 `Introducing Hy4 flash`）。而 `_LANG_HEADERS["zh"]`
+    是带 q 值的通用串，不能为一个站点改全局值（openai 靠它做 locale 302）。所以语言头
+    跟 `locale_cookie` 一样按源声明、按 host 反查：**正文抓取的两条通路（requests / 浏览器）
+    都要带上**，否则同一篇文正会列表拿到中文、正文落到英文。
+    """
+    out: dict[str, str] = {}
+    for s in sources or []:
+        if (s.get("type") or "") not in NEWS_TYPES:
+            continue
+        value = (s.get("accept_language") or "").strip()
+        u = (s.get("url") or "").strip()
+        if not value or not u:
+            continue
+        for candidate in (u, (s.get("page") or "").strip()):
+            key = _lang_match_key(candidate)
+            if key:
+                out[key] = value
+    return out
+
+
+def declared_source_accept_language(url: str, table: dict[str, str] | None = None) -> str:
+    """这一条 URL 该带哪个 Accept-Language 覆盖值（源声明，命中不了返回空串）。"""
+    table = news_accept_language_table() if table is None else table
     return _declared_by_host(url, table)
 
 
@@ -900,7 +936,8 @@ class BrowserSession:
         return page.content(), page.url, (resp.status if resp else None)
 
     def render(self, url: str, lang: str = "",
-               locale_cookie: str = "") -> tuple[str, str, int | None] | None:
+               locale_cookie: str = "",
+               accept_language: str = "") -> tuple[str, str, int | None] | None:
         """返回 (最终HTML, 最终URL, HTTP状态码)；失败时重建页面重试一次，再失败返回 None。
 
         `lang` 是这条**源声明的语言**：浏览器上下文建好就不能改 locale，但它谈判
@@ -911,6 +948,8 @@ class BrowserSession:
         `locale_cookie` 是源声明的**语言 cookie**（只看 cookie 的站，见
         `news_source_locale_cookies`）：浏览器通路要把它写进上下文，光发头没用 ——
         浏览器自己维护 cookie jar，会覆盖手写的 Cookie 头。
+        `accept_language` 是源声明的**语言头覆盖值**（只看完整头、`zh-CN` 就当英文的站，
+        见 `news_source_accept_languages`）：给了就压过 `_LANG_HEADERS` 那一份。
         """
         if not self._ensure():
             return None
@@ -923,7 +962,7 @@ class BrowserSession:
                 self._new_page()
             except Exception:
                 pass
-        want = _LANG_HEADERS.get(lang)
+        want = accept_language or _LANG_HEADERS.get(lang)
         if want and self._page is not None:
             try:
                 self._page.set_extra_http_headers({"Accept-Language": want})
@@ -978,7 +1017,9 @@ BODY_RAW_LIMIT = 12_000_000
 def _fetch_with_requests(session: requests.Session, url: str, stype: str,
                          timeout: tuple[float, float], retries: int,
                          lang: str = "", locale_cookie: str = "",
-                         raw_limit: int = 2_000_000) -> PageResult:
+                         raw_limit: int = 2_000_000,
+                         post: dict | None = None,
+                         accept_language: str = "") -> PageResult:
     """用 requests 抓取，任何异常都封装进 PageResult，不向上抛出。
 
     `lang` 是这条**源自己声明的语言**：给定就按它发 `Accept-Language`，
@@ -986,6 +1027,10 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
     不让站点拿我们的请求头猜。
     `locale_cookie` 是源声明的**语言 cookie**（只看 cookie 的站，见
     `news_source_locale_cookies`），与 `lang` 一起发：谁说了算由站点定，我们两边都给。
+    `post` 非空时改发 POST JSON：腾讯混元的官方动态接口只收 POST（GET 返回 405），
+    且**只认** `Accept-Language: zh` 这一个值（`zh-CN` / `zh_CN` / `zh-Hans` 一律回
+    英文那 12 条），所以源还要用 `accept_language` 覆盖语言头 —— `lang` 那张表是
+    「声明语言」（正文抓取、英文镜像判据用它），不能为了一个站点改全局值。
     """
     result = PageResult(url=url, stype=stype, final_url=url)
     headers: dict[str, str] = {}
@@ -993,11 +1038,19 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
         headers["Accept-Language"] = _LANG_HEADERS[lang]
     if locale_cookie:
         headers["Cookie"] = locale_cookie
+    # 源级覆盖排在语言头之后：覆盖面只到这一条源，别的源照旧按 `lang` 发
+    if accept_language:
+        headers["Accept-Language"] = accept_language
     headers = headers or None
     last_err = ""
     for attempt in range(retries + 1):
         try:
-            resp = session.get(url, timeout=timeout, allow_redirects=True, headers=headers)
+            if post is not None:
+                resp = session.post(url, json=post, timeout=timeout,
+                                    allow_redirects=True, headers=headers)
+            else:
+                resp = session.get(url, timeout=timeout, allow_redirects=True,
+                                   headers=headers)
             result.status_code = resp.status_code
             result.final_url = resp.url
             if resp.status_code >= 400:
@@ -1078,7 +1131,9 @@ def fetch_url(session: requests.Session, url: str, stype: str,
               browser: "BrowserSession | None" = None,
               timeout: tuple[float, float] = (10.0, 30.0),
               retries: int = 1, lang: str = "",
-              locale_cookie: str = "", raw_limit: int = 2_000_000) -> PageResult:
+              locale_cookie: str = "", raw_limit: int = 2_000_000,
+              post: dict | None = None,
+              accept_language: str = "") -> PageResult:
     """
     抓取单个 URL：优先 requests；若被反爬拦截（401/403/429 等）或抓到 JS 空壳，
     且提供了 browser，则用真实浏览器重渲染兜底。任何异常都不向上抛出。
@@ -1088,7 +1143,8 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     不同语言（正文与锚点跟着变），这正是 siliconflow 双份条目的来路。
     """
     result = _fetch_with_requests(session, url, stype, timeout, retries, lang,
-                                  locale_cookie, raw_limit=raw_limit)
+                                  locale_cookie, raw_limit=raw_limit,
+                                  post=post, accept_language=accept_language)
 
     if LOGIN_PATTERNS.search(result.final_url):
         result.is_login = True
@@ -1099,7 +1155,8 @@ def fetch_url(session: requests.Session, url: str, stype: str,
         was_login = result.is_login
         result = _fetch_with_requests(session, url, stype, timeout, retries=0,
                                               lang=lang, locale_cookie=locale_cookie,
-                                              raw_limit=raw_limit)
+                                              raw_limit=raw_limit, post=post,
+                                              accept_language=accept_language)
         # 首抓已判定的登录跳转不得因重试丢失：重试结果若是失败壳（final_url 回落
         # 到原 url），LOGIN_PATTERNS 判不出来，is_login 会静默变回 False
         if was_login or LOGIN_PATTERNS.search(result.final_url):
@@ -1114,6 +1171,10 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     # 订阅源本就是纯 HTTP 资源，浏览器兜底对它只有坏处。
     if stype == "feed":
         return result
+    # POST 数据接口不走浏览器兜底：浏览器只会发 GET（实测 405），渲染出来的是错误页，
+    # 反而把「接口失败」翻成「ok 但 0 条」。接口成不成都由 requests 的结论说了算。
+    if post is not None:
+        return result
 
     blocked_status = result.status_code in (400, 401, 403, 407, 429, 451)
     # requests 返回 200 但正文是反爬拦截 / 验证页（如 Cloudflare "Sorry, blocked"）
@@ -1123,7 +1184,8 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     if not needs_browser:
         return result
 
-    rendered = browser.render(url, lang, locale_cookie=locale_cookie)
+    rendered = browser.render(url, lang, locale_cookie=locale_cookie,
+                              accept_language=accept_language)
     if not rendered:
         if req_blocked:  # requests 拿到的就是拦截页
             result.ok = False
@@ -1623,6 +1685,68 @@ def extract_articles_from_json(page: PageResult,
             title=title,
             url=f"{origin}/blog?id={slug}",
             date=_drop_future_date(m.group(1)) if m else "",
+            source="官方 JSON 接口", stype=page.stype))
+    return articles
+
+
+#: 混元动态接口的 `displayPublishTime` 是**北京时间零点**：实测 1794758400 = 2026-11-16
+#: 00:00 +08:00（UTC 还停在 11-15 16:00）。CI 跑在 UTC，按本机时区换算会把每条都
+#: 退一天，所以这里钉死 +08:00，不跟机器时区走。
+_HUNYUAN_TZ = timezone(timedelta(hours=8))
+
+
+def extract_articles_from_hunyuan(page: PageResult,
+                                  max_items: int = JSON_NEWS_MAX_ITEMS) -> list[Article]:
+    """腾讯混元官网 /research 背后的接口（`{"data": {"list": [...]}}`）。
+
+    这是第三个具体消费者（前两个是千问、WordPress），形状又是全新的：
+      - 标题在 `title`，**详情页 slug 在 `customUrl`**，论文类条目 `customUrl` 为空、
+        只有数字 `id`（实测 `/research/<id>` 能打开，别的一律「文章不存在」）；
+      - 日期在 `displayPublishTime`（北京时间零点的时间戳），`publishedAt` 是精确到秒的
+        入库时间、不是展示日期 —— 两个都在时只认前者；
+      - 正链的 origin **不能**取接口自己（api.hunyuan.tencent.com），必须取 `page`
+        那个给人看的地址，否则条目会指到接口域名上。
+
+    接口还要 POST + `Accept-Language: zh` 才给中文这 14 条（GET 返回 405；语言头换成
+    `zh-CN` 就是英文那 12 条），这两件事在 yaml 的 `post` / `accept_language` 里声明。
+    """
+    body = json_api_body(page)
+    if not body:
+        return []
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return []
+    payload = data.get("data") if isinstance(data, dict) else None
+    items = payload.get("list") if isinstance(payload, dict) else None
+    if not isinstance(items, list):
+        return []
+    parts = urlparse(page.display_url or page.url)
+    if not parts.scheme or not parts.netloc:
+        return []
+    origin = f"{parts.scheme}://{parts.netloc}"
+    articles: list[Article] = []
+    for item in items[:max_items]:
+        if not isinstance(item, dict):
+            continue
+        title = re.sub(r"\s+", " ", str(item.get("title") or "")).strip()
+        slug = str(item.get("customUrl") or item.get("id") or "").strip()
+        if len(title) < 4 or not slug:
+            continue
+        day = ""
+        for raw in (item.get("displayPublishTime"), item.get("publishedAt")):
+            try:
+                stamp = int(raw)
+            except (TypeError, ValueError):
+                continue
+            if stamp > 0:
+                day = _drop_future_date(
+                    datetime.fromtimestamp(stamp, _HUNYUAN_TZ).strftime("%Y-%m-%d"))
+                break
+        articles.append(Article(
+            title=title,
+            url=f"{origin}/research/{slug}",
+            date=day,
             source="官方 JSON 接口", stype=page.stype))
     return articles
 
@@ -2606,6 +2730,13 @@ RETIRED_NEWS_URL_PREFIXES: tuple[str, ...] = (
     # 巡检每天从列表页重新解析会把它们再灌回来，故登记前缀（含锚点 id）一并挡掉。
     "https://poolside.ai/blog#d-2025-07-17-17",
     "https://openai.com/form/stargate-infrastructure",
+    # 腾讯云文档「混元大模型产品动态」（1729/97765）：2026-11-21 从 yaml 移除，改用
+    # 混元官网 research 页背后的官方接口（见 llm-intel.yaml 的 research 源）。那页是
+    # **一张表**（日期列 + 一段发布说明），抽出来的条目是「1. 适用场景：AI 数字分身…」
+    # 这种表格碎片：95 条里大量重复、最新停在 2026-06-22 —— 混元迁 TokenHub 后旧平台
+    # 只留迁移公告，官网 research 才是带日期的真动态（14 篇，含 Hy4 flash 的 API 价目）。
+    # ⚠️ 同厂商的计费页（97731）与 TokenHub 说明（111007）是情报页，路径不同，不受影响。
+    "https://cloud.tencent.com/document/product/1729/97765",
 )
 
 
@@ -2719,8 +2850,9 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
     #      AI21 的 WordPress wp-json）。
     for page in intel.news_pages:
         if page.ok and json_api_body(page):
-            # 两种已知形状各试一次，谁认得出来用谁（形状不符的返回空列表）
+            # 已知形状各试一次，谁认得出来用谁（形状不符的返回空列表）
             _add(extract_articles_from_json(page)
+                 or extract_articles_from_hunyuan(page)
                  or extract_articles_from_wordpress(page))
 
     # 4) 同日去重：更新日志列表页里的日期锚点（如 DeepSeek /updates/#时间-2026-09-10）
@@ -2982,9 +3114,13 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
             # api_docs / docs / console / hf_org 等入口：不深度抓取
             intel.skipped_sources.append(src)
             continue
+        post = src.get("post")
+        headers = src.get("headers")
         page = fetch_url(session, url, stype, browser=browser, timeout=timeout,
                          lang=src.get("lang") or "",
-                         locale_cookie=(src.get("locale_cookie") or "").strip())
+                         locale_cookie=(src.get("locale_cookie") or "").strip(),
+                         post=post if isinstance(post, dict) else None,
+                         accept_language=(src.get("accept_language") or "").strip())
         # 源是数据接口时，yaml 的 `page` 给出人类可读地址：产出物（归档 /
         # llm-news-feeds.md 的「订阅入口」）印它，不印接口长串。
         page.display_url = src.get("page") or ""
@@ -5869,6 +6005,22 @@ def news_locale_cookie_table(path: Path | None = None) -> dict[str, str]:
             _NEWS_COOKIE_CACHE = {}
     return _NEWS_COOKIE_CACHE
 
+_NEWS_ACCEPT_LANGUAGE_CACHE: dict | None = None
+
+
+def news_accept_language_table(path: Path | None = None) -> dict[str, str]:
+    """读 `llm-intel.yaml` 里动态源声明的 Accept-Language 覆盖值（进程内缓存；给 path 则强制重读）。"""
+    global _NEWS_ACCEPT_LANGUAGE_CACHE
+    if _NEWS_ACCEPT_LANGUAGE_CACHE is None or path is not None:
+        p = path or (_repo_root() / "llm-intel.yaml")
+        try:
+            data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+            _NEWS_ACCEPT_LANGUAGE_CACHE = news_source_accept_languages(
+                data.get("sources") or [])
+        except Exception:
+            _NEWS_ACCEPT_LANGUAGE_CACHE = {}
+    return _NEWS_ACCEPT_LANGUAGE_CACHE
+
 
 def _english_eligible(art: Article, bodies: dict, vendor: str,
                       langs: dict[str, str] | None = None) -> bool:
@@ -7699,6 +7851,7 @@ def main(argv: list[str] | None = None) -> int:
                              timeout=timeout,
                              lang=declared_source_lang(u, news_lang_table()),
                              locale_cookie=declared_source_cookie(u),
+                             accept_language=declared_source_accept_language(u),
                              raw_limit=BODY_RAW_LIMIT)
             last_status[u] = page.status_code or 0
             return (page.raw or "", page.ok, page.status_code or 0, page.final_url or u)
@@ -7711,7 +7864,8 @@ def main(argv: list[str] | None = None) -> int:
             if not browser.enabled:
                 return ("", False, 0, u)
             rendered = browser.render(u, declared_source_lang(u, news_lang_table()),
-                                       locale_cookie=declared_source_cookie(u))
+                                       locale_cookie=declared_source_cookie(u),
+                                       accept_language=declared_source_accept_language(u))
             if not rendered:
                 return ("", False, 0, u)
             html, final_url, code = rendered
