@@ -7,7 +7,461 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 18 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Welcome Inkling 2 Mini, Cutting-edge Performance for your Lo…</title>
+      <link>https://huggingface.co/blog/inkling2mini</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/inkling2mini?li=1</guid>
+      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup</h1>
+<p>Published November 20, 2026</p>
+<p>Update on GitHub</p>
+<p>25</p>
+<ul><li><a href="https://huggingface.co/cfahlgren1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/648a374f00f7a3374ee64b99/YPwSOrronoozwHbJchPn3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Presidentlin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/655e4c26d5c0d3db535cdd66/IjYjuy2goiaHG08mFiFmU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/gksriharsha"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ipZZ5HGriNP6O2peUw0Nx.jpeg" alt=""></a></li><li><a href="https://huggingface.co/blanchon"><img src="https://huggingface.co/avatars/95cb600601ea4207aaf8bcaa1c387895.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve's avatar"></a></p>
+<p>merve</p>
+<p>merve</p>
+<p><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt="Pedro Cuenca's avatar"></a></p>
+<p>Pedro Cuenca</p>
+<p>pcuenq</p>
+<p><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt="Aritra Roy Gosthipaty's avatar"></a></p>
+<p>Aritra Roy Gosthipaty</p>
+<p>ariG23498</p>
+<p><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2b8b4cf7d8930887629e7bcaf0401f61.svg" alt="Guarin Flück's avatar"></a></p>
+<p>Guarin Flück</p>
+<p>guarin</p>
+<p>TLDR; Inkling 2 Mini is a new looped transformer model. It’s a multimodal Mixture-of-Experts with ~26B <em>physical</em> total and 3B active parameters per token. It uses a neat trick to increase capacity: some layers are visited in a loop that repeats three times, which makes it work like it had more parameters. It supports a 1M-token context size, accepts images and text inputs. Thinking Machines Lab ships the model in a mixed-precision format, with NVFP4 and MXFP8 expert weights. A DSpark drafter is also included for additional speed-up at a small memory cost.</p>
+<p>Inkling 2 Mini is much, much smaller than Inkling 2 Small, and is designed for local AI setups. We think this is a refreshingly new great local model. In our vibe tests, it's at least comparable with Qwen 3.8 27B. More validation is needed, but we are super excited about this release!</p>
+<p>We ship transformers, Llama App (llama.cpp), and MLX support. SGLang also provides day-zero inference support for production deployments on datacenter hardware.</p>
+<p>This post goes through what makes Inkling Mini different, some of our vibe tests, and how you can use it with your setup.</p>
+<h2>What is new with Inkling 2 Mini?</h2>
+<p>Inkling 2 Mini is a mixture-of-experts model with 24 decoder layers, but the 12 middle layers run three times in a loop. Therefore, the model acts as if it had 48 (6+ 3<em>12 + 6) </em>logical<em> layers with just 24 </em>physical* ones.</p>
+<p>Similar to Inkling 2 Small, Inkling 2 Mini executes 48 layer visits per token. The hidden size is 2,304 instead of 4,608. At each layer visit, both variants route the token to 8 experts, but Mini selects them from among 128 experts per layer, while Small selects from 384. The decoder runs layers 0–5 once, layers 6–17 three times, and layers 18–23 once. All three passes through layers 6–17 reuse the same weights.</p>
+<p>Architectures such as Nanbeige have explored looping before. But Inkling 2 Mini explores an interesting approach. Every pass through the looped core (layers 6–17) starts from the same inputs which is the output of the first six layers. Information moves between passes through cross-pass <code>messages</code>. Each looped layer reads a message from the previous pass's outputs with its own learned query (one message for its query, key, value and MLP inputs). A small gating controller then looks at both the layer's current input and the message. It decides how much of the current input to forget and how much of the message to add. Each pass therefore refines what the previous one computed.</p>
+<p><a href="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/architecture.png"><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/architecture.png" alt="Inkling 2 Mini architecture"></a></p>
+<blockquote>Each six-layer block has five sliding-window layers and one full-attention layer. The local window holds up to 1,024 tokens.<br>Attention uses 24 query heads and eight KV heads. It uses learned relative position logits, a learned sink, and an output gate. Full-attention layers use dynamic key and value convolutions.<br>The router selects eight of 128 SwiGLU experts for each token. It normalizes the selected scores and scales the weights by 8.<br>During passes 2 and 3, each core layer attends over two residual blocks from the previous pass. Four rank-64 gates mix separate messages into the query, key, value, and MoE inputs.</blockquote>
+<blockquote>Text decoder width is 2,304, and the intermediate width of each expert is 1,152. Reusing core weights reduces the number of distinct layers the checkpoint stores. The model still executes all 48 visits, and each visit keeps its own KV and short-convolution state.</blockquote>
+<p>In addition to the flagship Inkling 2 Mini model, a research artifact has also been released. It shares the same architecture, but this variant was trained to accept a variable number of passes through the loop 🤯. Setting 1 or 2 passes instead of 3 will make inference run a lot faster, but generations may be of slightly lower quality. We tested this variant, and it works, but we haven’t evaluated it in depth.</p>
+<h2>Benchmark Results</h2>
+<p>Inkling 2 Mini is state-of-the-art in its class in the Artificial Analysis Intelligence Index v5 (AAv5), as well as across many benchmarks in various categories. Compared with Gemma 4 31B, Muse Glimmer, Qwen3.8-27B, and Nemotron 3.5 Super VL, Inkling 2 Mini leads in 32 benchmarks out of 48. These cover coding and autoresearch, agentic search and tool use for knowledge work, vision interpretation and creation, reasoning and knowledge, and safety and alignment. See the <a href="https://huggingface.co/thinkingmachines/Inkling-2-Mini">Inkling 2 Mini model card</a> for the full list of benchmarks and scores.</p>
+<p>Inkling 2 Mini is a great local coding companion. It leads in FrontierCode v2.0, ties with Qwen3.8-27B on Terminal-Bench 4.0, and trails Qwen on AutomationBench-AA v1.0.6. You can check out a few of our highlights below for coding and knowledge work. Note that AA Briefcase is in ELO rating, higher is better.</p>
+<p><a href="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/selected-benchmarks.png"><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/selected-benchmarks.png" alt="Inkling 2 Mini selected benchmarks"></a></p>
+<h2>Inference Support</h2>
+<p>In this section, you can find how to use Inkling 2 Mini in transformers, llama.cpp, MLX, and SGLang.</p>
+<h3>Transformers</h3>
+<p>We provide support for both Inkling 2 Mini (fixed loop) and the <code>TML-d24-varloop-research</code> (variable loop) research variant.</p>
+<h4>Fixed loop with Inkling 2 Mini</h4>
+<p>You can use the <code>AutoModelForMultimodalLM</code> class.</p>
+<pre><code>import torch
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;thinkingmachines/Inkling-2-Mini&quot;
+
+processor = AutoProcessor.from_pretrained(model_id)
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id,
+)
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Why is the sky blue?&quot;}]}]
+
+inputs = processor.apply_chat_template(
+    messages, tokenize=True, add_generation_prompt=True, return_dict=True, return_tensors=&quot;pt&quot;,
+).to(model.device)
+input_len = inputs[&quot;input_ids&quot;].shape[-1]
+
+outputs = model.generate(**inputs, max_new_tokens=1024)
+print(processor.decode(outputs[0][input_len:], skip_special_tokens=False))</code></pre>
+<h4>Variable loop</h4>
+<p>To set the number of loops in the research checkpoint, you can modify the <code>loop_num_passes</code> in <code>text_config</code> as follows. The example below uses two loops.</p>
+<pre><code>import torch
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;thinkingmachines/TML-d24-varloop-research&quot;
+
+processor = AutoProcessor.from_pretrained(model_id)
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id,
+    text_config={&quot;loop_num_passes&quot;: 2},
+)
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Why is the sky blue?&quot;}]}]
+
+inputs = processor.apply_chat_template(
+    messages, reasoning_effort=&quot;medium&quot;, tokenize=True, add_generation_prompt=True, return_dict=True, return_tensors=&quot;pt&quot;, 
+).to(model.device)
+input_len = inputs[&quot;input_ids&quot;].shape[-1]
+
+outputs = model.generate(**inputs, max_new_tokens=1024)
+print(processor.decode(outputs[0][input_len:], skip_special_tokens=False))</code></pre>
+<h4>Images and text</h4>
+<p>For an image prompt, replace messages in either example with the list below and infer as usual.</p>
+<pre><code>messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;image&quot;, &quot;image&quot;: &quot;/path/to/image.jpg&quot;},
+            {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;What is in this image?&quot;},
+        ],
+    }
+]</code></pre>
+<h4>Reasoning Effort</h4>
+<p>Pass <code>reasoning_effort=&quot;medium&quot;</code> to <code>processor.apply_chat_template(...)</code> to set the effort for a request. The chat template adds the numeric value to the prompt as a system message. The default is <code>high</code> (0.9).</p>
+<pre><code>inputs = processor.apply_chat_template(
+    messages, reasoning_effort=&quot;medium&quot;, tokenize=True, add_generation_prompt=True, return_dict=True, return_tensors=&quot;pt&quot;, 
+).to(model.device)</code></pre>
+<p>Available levels are <code>none</code> (0.0), <code>minimal</code> (0.1), <code>low</code> (0.2), <code>medium</code> (0.7), <code>high</code> (0.9; default), <code>xhigh</code> (0.99), and <code>max</code> (0.99). You can also pass a number from 0.0 to 0.99, such as <code>reasoning_effort=0.35</code>.</p>
+<h4>Tool calling</h4>
+<p>Let’s get our model to call some tools.</p>
+<p>In this example we ask our model about the current temperature at a given location. With the prompt, we also provide the tool (<code>get_current_temperature</code>) to do it. The model asks for a tool call, we call the tool on its behalf and then add the output to the next instruction set. It uses the output of the tool and provides us with the final result.</p>
+<p>If you want to know more about tool calling, we recommend going to our <a href="https://huggingface.co/docs/transformers/en/chat_extras">official docs</a>.</p>
+<pre><code>import torch
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;thinkingmachines/Inkling-2-Mini&quot;
+processor = AutoProcessor.from_pretrained(model_id)
+model = AutoModelForMultimodalLM.from_pretrained(model_id, dtype=torch.bfloat16, device_map=&quot;auto&quot;)
+
+
+def get_current_temperature(location: str, unit: str):
+    &quot;&quot;&quot;
+    Get the current temperature at a location.
+
+    Args:
+        location: The location to get the temperature for, in the format &quot;City, Country&quot;
+        unit: The unit to return the temperature in. (choices: [&quot;celsius&quot;, &quot;fahrenheit&quot;])
+    &quot;&quot;&quot;
+    return 22.0  # A real function would call a weather API here
+
+
+def ask(messages):
+    inputs = processor.apply_chat_template(
+        messages, tools=[get_current_temperature], reasoning_effort=&quot;low&quot;, tokenize=True, return_dict=True, return_tensors=&quot;pt&quot;
+    ).to(model.device)
+    output = model.generate(**inputs, max_new_tokens=1024)[0][inputs[&quot;input_ids&quot;].shape[-1] :]
+    parsed = processor.parse_response(output, prefix=inputs[&quot;input_ids&quot;][0])
+    return parsed
+
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hey, what's the temperature in Paris right now?&quot;}]
+
+reply = ask(messages)
+call = reply[&quot;tool_calls&quot;][0][&quot;function&quot;]
+print(&quot;Model calls:&quot;, call[&quot;name&quot;], call[&quot;arguments&quot;])  # the model fills in the arguments itself
+
+temperature = get_current_temperature(**call[&quot;arguments&quot;])
+messages += [reply, {&quot;role&quot;: &quot;tool&quot;, &quot;name&quot;: call[&quot;name&quot;], &quot;content&quot;: str(temperature)}]
+print(ask(messages)[&quot;content&quot;])
+
+# Model calls: get_current_temperature {'location': 'Paris, France', 'unit': 'celsius'}
+# Right now in Paris it’s about **22°C** (roughly **71.6°F**).</code></pre>
+<h3>Llama App and Llama.cpp</h3>
+<p><a href="https://llama.app/">Llama App</a> lets you easily run and manage local language models on macOS (from the menu bar) or Windows (system tray). It’s built on llama.cpp, and by the same team. The app also provides a local OpenAI-compatible API for easy integration with coding agents, editors, and scripts.</p>
+<p>For the Inkling 2 Mini release we provide GGUF 4-bit (<code>IQ4_NL)</code> and 8-bit (<code>Q8_0</code>) quants for both models.</p>
+<p>If you’re on Linux or you want to serve the model from the CLI, you can run the following command for the fixed-loop model:</p>
+<pre><code>llama serve -hf ggml-org/Inkling-2-Mini-GGUF:IQ4_NL</code></pre>
+<p>To run the variable-loop model, you can run</p>
+<pre><code>llama serve -hf ggml-org/TML-d24-varloop-research-GGUF:IQ4_NL</code></pre>
+<p>To load the 8-bit weights, change the suffix to <code>:Q8_0</code>.</p>
+<p>Here we ask the 4-bit model to make a website to a SaaS called plant therapy where plants get matched to licensed therapists. Model is quite autonomous, it has made its own SVGs for the visuals on the website, and even built the matching logic.</p>
+<h3>SGLang</h3>
+<p>Inkling 2 Mini comes with Day 0 support inside SGLang. You can install the latest version of SGLang and execute the following to get the server up and running. One prerequisite to take care of is to run it on <code>SM103</code>.</p>
+<pre><code>export MODEL=&quot;thinkingmachines/Inkling-2-Mini&quot;
+
+python -m sglang.launch_server \
+  --model-path $MODEL \
+  --served-model-name inkling \
+  --attention-backend fa4 --bf16-gemm-backend torch --dtype bfloat16 \
+  --tp 1 --page-size 128 --grammar-backend xgrammar \
+  --host 0.0.0.0 --port 30000</code></pre>
+<p>After the server is up you should be able to request the APIs like so</p>
+<pre><code>curl -s localhost:30000/health_generate &amp;&amp; echo OK
+curl -s localhost:30000/v1/models | python -m json.tool
+
+curl -s localhost:30000/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+        &quot;model&quot;: &quot;inkling&quot;,
+        &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is 17 times 24?&quot;}],
+        &quot;max_tokens&quot;: 512,
+        &quot;reasoning_effort&quot;: &quot;low&quot;
+      }' | python -m json.tool</code></pre>
+<p>One can also enable multimodality by setting <code>--enable-multimodal</code>.</p>
+<h3>Speculative decoding</h3>
+<p>SGLang can use a three-layer DSpark draft to propose tokens for the target model to verify. The draft reads the inputs to decoder visits 5, 23, and 41, plus the final normalized state at index 48. With the draft weights present, add <code>--speculative-algorithm DSPARK --context-length 131072</code> to the server command.</p>
+<p>We benchmarked the models with and without speculative decoding, and measured generation speed on a single NVIDIA B300 GPU where every request has a 1,024-token prompt and generates exactly 1,024 tokens and concurrency of 1, 4, 16 and 64.</p>
+<p>Show SGLang benchmarking script</p>
+<pre><code>MODEL=thinkingmachines/Inkling-2-Mini
+
+for TAG in base mtp; do
+  EXTRA=&quot;&quot;; [ $TAG = mtp ] &amp;&amp; EXTRA=&quot;--speculative-algorithm DSPARK&quot;
+
+  # Start the server (with or without MTP)
+  python -m sglang.launch_server --model-path $MODEL \
+    --attention-backend fa4 --bf16-gemm-backend torch --dtype bfloat16 \
+    --tp 1 --page-size 128 --context-length 131072 --max-running-requests 64 \
+    --port 30000 $EXTRA &gt; $TAG.log 2&gt;&amp;1 &amp;
+  until curl -sf localhost:30000/health_generate &gt; /dev/null; do sleep 10; done
+
+  # Benchmark at increasing concurrency
+  for C in 1 4 16 64; do
+    python -m sglang.bench_serving --backend sglang --port 30000 --model $MODEL \
+      --dataset-name random --apply-chat-template \
+      --random-input-len 1024 --random-output-len 1024 --random-range-ratio 1.0 \
+      --num-prompts $(( C*4 &lt; 32 ? 32 : C*4 )) --max-concurrency $C \
+      --output-file results_$TAG.jsonl
+  done
+
+  kill %1; wait
+done</code></pre>
+<p><a href="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/mtp-benchmark.png"><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/mtp-benchmark.png" alt="SGLang throughput and time per token with and without MTP"></a></p>
+<h3>MLX</h3>
+<p>We upstreamed MLX support to the mlx-lm project, including multimodal image and text inputs, and shared quants through the mlx-community organization.</p>
+<p>MLX inference works with the original checkpoint too. In this case, the native nvfp4 + mxfp8 quantization scheme is used without reconversion: you get the original quality the authors intended.</p>
+<p>Here’s an example CLI invocation:</p>
+<pre><code>mlx_lm generate --model thinkingmachines/Inkling-2-Mini --image image.jpg --prompt &quot;Describe this image.&lt;|end_message|&gt;&lt;|message_user|&gt;&lt;|content_image|&gt;&lt;|unused_200054|&gt;&quot; -m 1000</code></pre>
+<h3>Demos and Vibe Tests</h3>
+<p>We have given Inkling 2 Mini a shot in many fun tasks, check them out in this section.</p>
+<h4>3D shader flythroughs</h4>
+<p>The same prompt produced two sunset flythroughs over procedural mountains and reflective water, each rendered with a single WebGL fragment shader.</p>
+<p><strong>Sunset Ridge (Inkling 2 Mini)</strong></p>
+<p><strong>Over the Still Sea (Qwen 3.8 27B)</strong></p>
+<p>Show shared flythrough prompt</p>
+<blockquote>Build the most impressive original real-time scene you can: a slow, cinematic camera flight over procedural mountains, through volumetric clouds and low over water with reflections, all lit by a sunset. Deliver it as a single self-contained index.html in the current directory that renders everything in one full-screen WebGL fragment shader, purely from code (no textures, images, fonts, libraries, external files or network requests of any kind). It must run smoothly in desktop Chrome at 1920x1080, aiming for 60 fps on a desktop GPU, with an automatic resolution-scale fallback that lowers the internal render resolution when the frame rate drops, and the flight must keep going indefinitely without glitches. To check your work, run node shot.cjs index.html shot.png 6 (the third argument is how many seconds to wait; a comma list such as 3,12,25 saves one screenshot per time, and an optional fourth argument sets the size, default 1280x720): it renders the page in headless Chrome, saves the screenshot(s), and prints the WebGL renderer, a rough frame rate and any console errors; then look at the images. The headless renderer on this machine may be software-only, so its frame rate can be far below what a real desktop GPU achieves and is not the target. Decide for yourself when the result is finished, then reply with a short description of what you built.</blockquote>
+<h4>Starry Night, Alive</h4>
+<p>Vincent van Gogh, <em>The Starry Night</em> (1889)</p>
+<p>Inkling 2 Mini recreation</p>
+<p>We gave Inkling 2 Mini a reference image of Van Gogh’s painting and a screenshot helper in the Pi coding harness. Inkling wrote a self-contained HTML page with a single WebGL2 fragment shader. The shader draws the scene from code without loading the reference image or any other assets. It uses time to animate the swirling sky, the glow of the stars, the swaying cypress, and the flicker of the village windows.</p>
+<p>Inkling rendered and reviewed its work over 24 rounds of screenshot checks. We recorded the final animation frame by frame at 1080p and 60 fps on an Apple M4 Max.</p>
+<p>Show prompt</p>
+<blockquote>In this folder, starry-night.jpg is Vincent van Gogh's The Starry Night (1889, public domain). Recreate it as a living painting: a single self-contained index.html (all code inline, no external files, libraries or network requests) that fills the browser window and runs smoothly in desktop Chrome at 1920x1080. Everything must be generated procedurally in code, for example with WebGL shaders; the page must not load, embed or sample starry-night.jpg or any other image. Stay faithful to the painting's composition and palette (the great spiral and swirling currents of the sky, the haloed stars, the glowing crescent moon, the dark flame-like cypress on the left, the rolling hills, and the village with its church spire), rendered in Van Gogh's thick, directional brushstrokes, and bring it to life: the sky's swirls flow, the stars and moon pulse with light, the cypress sways, and the village windows glow and flicker. Aim for the most impressive result you can make. A helper is provided: run node shot.js --help to see how to screenshot index.html at several moments; look at the screenshots next to the reference and keep improving until you are satisfied, then reply with a short summary of what you made.</blockquote>
+<h4>Napkin to App</h4>
+<p><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/napkin-to-app/napkin-sketch.png" alt="Hand-drawn Trip Split wireframe with Expenses, Add expense, and Balances screens"></p>
+<p>Input napkin sketch</p>
+<p><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/napkin-to-app/trip-split-app.png" alt="Inkling’s Trip Split app showing three trip expenses and a $405 total"></p>
+<p>Generated Trip Split app</p>
+<p>We gave Inkling 2 Mini a photo of a hand-drawn Trip Split wireframe and a one-paragraph prompt in the Pi coding harness. Inkling used the sketch’s labels, sample expenses, and handwritten notes to build the expense list, add-expense form, and balances view in a single HTML file with vanilla CSS and JavaScript. The app updates totals and balances when expenses change, suggests payments to settle the trip, and saves data in the browser’s localStorage so it survives a reload.</p>
+<p>We ran three independent Inkling attempts and used Playwright to click through each build, checking screenshots where visual judgment was needed. The first attempt, shown here, passed all 13 checks. Adding the sketch’s $90 dinner raised the total from $405 to $495 and recalculated what each person owed.</p>
+<p>Show prompt</p>
+<blockquote>The photo sketch.jpg in this folder is a product designer's hand-drawn wireframe of a small app. Build that app for real, as the most impressive, original, production-quality version you can make: a single self-contained index.html in this folder using vanilla HTML, CSS and JavaScript only (no frameworks, CDNs, external files or network requests; localStorage is fine), which must run smoothly in desktop Chrome at 1920x1080. Treat everything on the paper as the spec: every screen, label, button and number, the example data, and each red note describe behaviour that must actually work, while the visual design, typography and motion are yours to make beautiful. Look at the sketch carefully with your vision, and use your vision again to check your own work: node shot.cjs --help explains a provided helper that screenshots index.html in headless Chrome at any window size after clicks or other JavaScript steps (Playwright is also installed if you prefer your own scripts), and you can look at any screenshot with the read tool. Click through every feature, compare each screen against the sketch, and keep improving until you are fully satisfied; then reply with a short summary of what you built.</blockquote>
+<h4>4-bit Model</h4>
+<p>We ask the 4-bit GGUF quantized Inkling 2 Mini (IQ4_NL) to make a website to a SaaS called plant therapy where plants get matched to licensed therapists.</p>
+<p>Model is quite autonomous, it has made its own SVGs for the visuals on the website, and even built the matching logic, all from a short prompt: &quot;Can you make a website for my saas called plant therapy where I match house plants with licensed therapists so plants don’t die, return single HTML”.</p>
+<h4>“Make yourself into a browser agent&quot;</h4>
+<p>We have paired Inkling 2 Mini with Pi coding agent to build itself into a browser agent using Helium, Chromium and Hugging Face Sandboxes. We provide the traces and the final file (that can be used as a browser agent) <a href="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/browser-agent-demo">in this bucket</a>.</p>
+<h4>Wrapping Up</h4>
+<p>We are very glad to partner with Thinking Machines Lab to ship Inkling 2 Mini, a performant mid-sized model for local setups. Give this model a try and let us know what you think in comments!</p>
+<h2>Models mentioned in this article 1</h2>
+<p>More Articles from our Blog</p>
+<p>announcementmultimodaltransformers</p>
+<h2>Welcome Inkling by Thinking Machines</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li>+1</li></ul>
+<p>174</p>
+<p>July 15, 2026</p>
+<p>transformersmistralvllm</p>
+<h2>Welcome Le Chonk: Mistral Large 4 on Hugging Face</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/649a943906690b959319d192/k8ZlmJWF3GNpYLHrdpejY.jpeg" alt=""></li><li>+7</li></ul>
+<p>91</p>
+<p>October 29, 2026</p>
+<h3>Community</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/651c82d629de5e7f06614d1c/SejY_tHfa_H_TSLo6jg5H.png" alt=""></p>
+<p>fahdmirzac</p>
+<p>about 7 hours ago</p>
+<p>Thank you for this article. It helped me in creating this hands-on video on this model <a href="https://youtu.be/BrN8dKfTU7M?si=8Cqg4igsdMY9OSJc">https://youtu.be/BrN8dKfTU7M?si=8Cqg4igsdMY9OSJc</a></p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Finkling2mini">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Finkling2mini">log in</a> to comment</p>
+<p>25</p>
+<ul><li><a href="https://huggingface.co/cfahlgren1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/648a374f00f7a3374ee64b99/YPwSOrronoozwHbJchPn3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Presidentlin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/655e4c26d5c0d3db535cdd66/IjYjuy2goiaHG08mFiFmU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/gksriharsha"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ipZZ5HGriNP6O2peUw0Nx.jpeg" alt=""></a></li><li><a href="https://huggingface.co/blanchon"><img src="https://huggingface.co/avatars/95cb600601ea4207aaf8bcaa1c387895.svg" alt=""></a></li><li><a href="https://huggingface.co/rwightman"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1667002643224-604a5184dca2c7ac7508b849.jpeg" alt=""></a></li><li><a href="https://huggingface.co/MindBuilder"><img src="https://huggingface.co/avatars/1a9213c39e3fc74a6e2359c16de239a8.svg" alt=""></a></li><li><a href="https://huggingface.co/pierrci"><img src="https://huggingface.co/avatars/d4cce894629554d9a10369ecc2a7de67.svg" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kashyap7x"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6489d7aada6bb0138f52027b/py4YEgVs8Y-QWzCmpa6Xx.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li></ul>
+<h2>Models mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing harness adapters: adapt your favorite model to y…</title>
+      <link>https://huggingface.co/blog/harness-adapters-at-scale</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/harness-adapters-at-scale?li=1</guid>
+      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost</h1>
+<p>Published November 20, 2026</p>
+<p>Update on GitHub</p>
+<p>31</p>
+<ul><li><a href="https://huggingface.co/ybelkada"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/lewtun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AdithyaSK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6442d975ad54813badc1ddf7/JIAN8B1dLOXN8fWTk8_mI.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ljupco"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/655879337b098f9cb5dbdb16/j-NwJgRvi_2jw6JU0yFp4.jpeg" alt=""></a></li><li><a href="https://huggingface.co/TheOnlyN3O"><img src="https://huggingface.co/avatars/978cf80583be8fb8a48d8fbe047a941f.svg" alt=""></a></li><li><a href="https://huggingface.co/aminediroHF"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/ybelkada"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt="Younes B's avatar"></a></p>
+<p>Younes B</p>
+<p>ybelkada</p>
+<p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw's avatar"></a></p>
+<p>ben burtenshaw</p>
+<p>burtenshaw</p>
+<p><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63e0eea7af523c37e5a77966/B6Qs5bgr8wXcy2tPl6CVQ.jpeg" alt="Nathan Habib's avatar"></a></p>
+<p>Nathan Habib</p>
+<p>SaylorTwift</p>
+<p><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt="Lysandre's avatar"></a></p>
+<p>Lysandre</p>
+<p>lysandre</p>
+<p><a href="https://huggingface.co/aminediroHF"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt="Amine Dirhoussi's avatar"></a></p>
+<p>Amine Dirhoussi</p>
+<p>aminediroHF</p>
+<p><a href="https://huggingface.co/AdithyaSK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6442d975ad54813badc1ddf7/JIAN8B1dLOXN8fWTk8_mI.jpeg" alt="Adithya S K's avatar"></a></p>
+<p>Adithya S K</p>
+<p>AdithyaSK</p>
+<p><a href="https://huggingface.co/evalstate"><img src="https://huggingface.co/avatars/fd5487822c0c223732070dd3e9aedf25.svg" alt="shaun smith's avatar"></a></p>
+<p>shaun smith</p>
+<p>evalstate</p>
+<p><a href="https://huggingface.co/sergiopaniego"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt="Sergio Paniego's avatar"></a></p>
+<p>Sergio Paniego</p>
+<p>sergiopaniego</p>
+<p><a href="https://huggingface.co/joelniklaus"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1656078368144-5fae5f68b8423e1d80b8a988.jpeg" alt="Joel Niklaus's avatar"></a></p>
+<p>Joel Niklaus</p>
+<p>joelniklaus</p>
+<p><a href="https://huggingface.co/lewtun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt="Lewis Tunstall's avatar"></a></p>
+<p>Lewis Tunstall</p>
+<p>lewtun</p>
+<p>Combining RL on a custom task distribution with your favorite agent harness yields more accurate and efficient models for that target harness and task distribution.</p>
+<p>Models are not fully optimized for all harnesses and the tasks you’re doing. Instead, they target general performance. So when you combine a model and harness, you’re leaving performance and efficiency on the table for the stuff you’re actually doing. With RL, you can train a custom harness adapter that squeezes everything out of your model for your harness and task combination.</p>
+<p>Take Qwen3.8-27B, its Terminal-Bench 2.1 score with the pi harness is 39% which uses on average 2.9K tokens per task. If we freeze those weights and add a custom RL-trained LoRA adapter we can get 55% pass@1, with average token usage of 1.5K. Most of this is down to the model reasoning less, calling less tools, and performing better first time.</p>
+<p>Our earlier work (<a href="https://huggingface.co/spaces/FineEnvs/multi-harness-rl">multi-harness RL</a>, <a href="https://huggingface.co/blog/harness-hub/harness-adapters">harness adapters</a>) showed that RL on your own task distribution, inside your own harness, gives a more accurate and more efficient model. Those experiments covered data-analysis and code-building tasks. Here we wanted to push this further by exploring whether the result holds at 27B, on harder real-world software engineering tasks, across three harnesses: Pi, OpenCode and Hermes Agent. And most of all, share a fully reusable recipe, so you can reproduce this on your own task, harness, model combinations.</p>
+<h2>TL;DR</h2>
+<ul><li>We trained one LoRA adapter for Qwen3.8-27B per agent harness (pi, Hermes Agent, OpenCode), with RL inside the harness itself.</li><li>Datasets, training and agent rollouts all happen on the Hub in Jobs using TRL's <code>AsyncGRPOTrainer</code>, OpenEnv and harbor.</li><li>Each harness adapter beats the base model under its own harness on both benchmarks, for both performance and efficiency.</li><li>The three LoRAs are also merged into a single super adapter that runs unchanged under pi, Hermes Agent and OpenCode.</li><li>All artifacts (adapters, GGUFs, RL tasks, safeagents plugin) can be browsed through this <a href="https://huggingface.co/collections/harness-hub/qwen38-27b-harness-adapters">Hugging Face collection</a>.</li></ul>
+<h2>Table of Contents</h2>
+<ul><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#training-inside-agent-harnesses">Training inside agent harnesses</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#generating-custom-rl-tasks-on-hugging-face">Generating custom RL tasks on Hugging Face</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#testing-the-filters-with-short-training-runs">Testing the filters with short training runs</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#asyncgrpotrainer-for-more-efficient-grpo-training"><code>AsyncGRPOTrainer</code> for more efficient GRPO training</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#training-setup">Training setup</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#super-adapter-merging-all-adapters-into-one">Super-adapter: merging all adapters into one</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#final-results">Final results</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#open-question-what-did-the-model-really-learn-to-do">Open question: What did the model really learn to do?</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#closing-words-and-future-directions">Closing words and future directions</a></li></ul>
+<h2>Training inside agent harnesses</h2>
+<p>We leverage the <a href="https://huggingface.co/docs/openenv/environments/harbor">Harbor integration in OpenEnv</a> and <a href="https://huggingface.co/docs/trl/openenv">TRL’s OpenEnv</a> guide to train the model inside the harnesses we chose for the final training. We have built ready-to-use docker images for all our RL tasks that come with the target harnesses already pre-installed inside. In our final docker images, we use Pi <code>1.5.2</code>, OpenCode <code>2.2.7</code> and Hermes Agent <code>v0.22.6</code>. The diagram below from the aforementioned blogpost explains well the entire protocol:</p>
+<p>Most RL frameworks train a re-implementation of the agent loop: the agent is written against the framework's own interface, such as <a href="https://verl.readthedocs.io/en/latest/advance/agent_loop.html">verl's AgentLoop</a>, <a href="https://github.com/NovaSky-AI/SkyRL">SkyRL-Gym</a> environments, <a href="https://github.com/rllm-org/rllm">rLLM</a>'s agent and environment classes, <a href="https://github.com/THUDM/slime">slime</a>'s custom rollout functions, or <a href="https://github.com/OpenPipe/ART">ART</a>'s client inside your own Python agent. Here the harness runs exactly as it ships, and the trainer learns from the exact tokens it produced, recorded by a proxy between the harness and vLLM. Recent work moves in the same direction: <a href="https://huggingface.co/papers/2608.17528">Agent Lightning v1.0</a> keeps the deploy-time harness in the loop through a proxy (&quot;harnessed agentic RL&quot;), and <a href="https://novasky-ai.notion.site/skyrl-harbor">SkyRL's Harbor integration</a> trains on Harbor trials, converting their chat histories into tokens for the trainer.</p>
+<h2>Generating custom RL tasks on Hugging Face</h2>
+<p>For this recipe we created a custom dataset for agentic coding with the Hub, OpenEnv, and <a href="https://github.com/huggingface/Repo2RLEnv">Repo2RLEnv</a>. We combined together task retrieval of existing RL envs, task generation with Repo2RLEnv, task validation with OpenEnv, and sampling into a single data pipeline. This gave us the highest quality set of validated and relevant tasks to improve Qwen3.8-27B on agentic coding. In this section, we’ll walk through how we built it, so you can try it out on your own domains.</p>
+<p>RL training needs tasks the agent can attempt, a verifier that scores each attempt, and evidence that the verifier is right. A verifier that accepts wrong answers teaches the wrong behavior. A task that is already feasible will not teach the model anything.</p>
+<p>This section describes how we built the task set from three sources: two on the Hugging Face Hub and a third generated with Tasksmith, a pipeline in Repo2RLEnv. Every task passes an eligibility screen with <code>openenv validate</code>, and the same difficulty check against the base model, Qwen3.8-27B.</p>
+<p><img src="https://huggingface.co/buckets/huggingface/harness-adapters-blog-assets/resolve/images/task-pipeline.png" alt="Task pipeline: Tasksmith, SWE-smith and SWE-Gym sources pass through an eligibility screen, Harbor packaging, openenv validate on Hugging Face Jobs, and a difficulty check with Qwen3.8-27B"></p>
+<h3>Three sources</h3>
+<p>Each task uses the Harbor format, which Terminal-Bench 2.1 also uses. A broad search of the Hub for Harbor environments returned about 59,000 tasks, but they included duplicates, evaluation sets and tasks marked as not for training. We filtered down to just two Hub sources built for training and generated a third set ourselves:</p>
+<ul><li>SWE-smith (<a href="https://huggingface.co/datasets/SWE-bench/SWE-smith-py">Python</a>, <a href="https://huggingface.co/datasets/SWE-bench/SWE-smith-go">Go</a>) injects bugs into real Python and Go repositories, with an LLM rewrite or a mutation such as a flipped operator. The tests that catch each bug become the task's tests. It adds volume.</li><li>SWE-Gym, packaged as Harbor tasks in <a href="https://huggingface.co/datasets/open-thoughts/TaskTrove">TaskTrove</a>, turns real GitHub issues and their merged fixes into tasks. It adds real-world bugs.</li><li><a href="https://huggingface.github.io/Repo2RLEnv/pipelines/tasksmith/">Tasksmith</a> generates tasks from merged pull requests. An LLM agent writes the instruction and tests, and Tasksmith checks the result: the reference and a valid alternative must pass, while the unfixed code and a known-wrong solution must fail.</li></ul>
+<p>We used Tasksmith to target gaps. We mapped the skills that our target benchmarks test (Terminal-Bench 2.1, the hard subset of SWE-bench Pro, and DeepSWE), then chose pull requests that exercise them, such as HTTP streaming, filesystem operations and serialization. From 30 merged pull requests, Tasksmith produced 24 tasks in 10 Python repositories that passed its checks, 17 of them on a second run. Its checks do not replace ours, so these tasks go through the same pipeline as the rest.</p>
+<h3>Validation with <code>openenv validate</code></h3>
+<p>A metadata screen runs first. It keeps tasks from training splits with permissive licenses. It drops duplicates, tasks marked as not for training, the 253 tasks in our target benchmarks, and any task from a repository those benchmarks use. We then ran the semantic checks from <code>openenv validate</code> on every task in fresh trials:</p>
+<ul><li>The reference solution earns the maximum reward (<code>semantic.oracle_max</code>).</li><li>Doing nothing scores clearly lower (<code>semantic.floor_gap</code>).</li><li>No canary scores more than doing nothing (<code>semantic.canary_floor</code>).</li><li>A replay of the reference gives the same reward (<code>runtime.episode_determinism</code>).</li></ul>
+<p>Each trial ran as its own Hugging Face Job, which let us validate dozens of tasks at once. <code>openenv validate</code> offers the same option for any Harbor task:</p>
+<pre><code>openenv validate path/to/task --sandbox hf-sandbox</code></pre>
+<p>858 of 1,127 Hub candidates passed. Wrong-answer controls caught defects, including a Tasksmith task that accepted an incomplete implementation and a Terminal-Bench 2.1 verifier (regex-log) that accepted known-wrong answers. Most failures were infrastructure problems, such as images that did not start. Failed tasks stay in a rejected split with the failing check recorded.</p>
+<h3>Difficulty check with the base model</h3>
+<p>A valid task can still teach nothing. GRPO (group relative policy optimization) scores each attempt against the other attempts at the same task, so a task where every attempt passes, or every attempt fails, gives no learning signal. Before training, Qwen3.8-27B attempted each task 4 times, or 8 times for a stratified sample of six tasks per repository.</p>
+<p>Of 442 scored tasks, Qwen3.8-27B solved 151 every time and 120 never. The 171 tasks it solved only sometimes form the qualified set. The figure below shows how the scores pile up at both ends and how they differ by source. The model solves most Go tasks every time, fails every attempt on more than a third of the SWE-smith Python tasks, and lands in the middle on 73% of the SWE-Gym tasks.</p>
+<p><img src="https://huggingface.co/buckets/huggingface/harness-adapters-blog-assets/resolve/images/difficulty-check.png" alt="Qwen3.8-27B results on 442 scored tasks, split by attempts solved and by source"></p>
+<p><em>Qwen3.8-27B results on 442 scored tasks. Green marks the qualified tasks, which the model solves on some attempts but not all.</em></p>
+<p>This example shows how we filtered and validated 1,127 tasks to 278 which we included directly in the final dataset. The pipeline then took the remaining 522 rejected tasks, repaired and complexified them with Tasksmith and repeated validation.</p>
+<h2>Testing the filters with short training runs</h2>
+<p>The pipeline applies two filters: validation removes broken tasks, and the difficulty check keeps tasks the base model solves only sometimes. This section tests whether those filters change what the model learns. We trained four short runs of up to 50 steps, each on tasks from a different stage of the pipeline, and compared them with the base model on Terminal-Bench 2.1.</p>
+<p>Each run trains Qwen3.8-27B with LoRA and GRPO, using TRL's <code>AsyncGRPOTrainer</code>, on 32 tasks. All four use the same agent harness (OpenCode with up to 48 model calls), the same settings and one 8×H200 Hugging Face Job, and the reward is the verifier's pass or fail. The task sets differ in how they were filtered:</p>
+<ul><li><strong>Unvalidated</strong>: 24 accepted tasks plus 8 that failed validation.</li><li><strong>Validated</strong>: 32 accepted tasks, chosen without regard to difficulty.</li><li><strong>Unqualified</strong>: 32 accepted tasks that the base model always or never solves.</li><li><strong>Qualified</strong>: 32 accepted tasks that the base model solves on some attempts.</li></ul>
+<p>The figure below shows how the tasks impacted model learning. The table lists each run's steps and the checkpoint we evaluate. The chart tracks training reward across subsets of tasks with differing validation status.</p>
+<h3>The dataset</h3>
+<p><code>harness-hub/agentic-coding-envs</code> holds 871 tasks from 35 repositories. Hub tasks are capped at 40 per repository, so no single project dominates. The table below shows what each source contributes. The dataset has two views: every accepted task, and the qualified subset for GRPO training. Rejected attempts stay in a separate config.</p>
+<table><thead><tr><th>Source</th><th>Task type</th><th>Tasks</th><th>Qualified</th></tr></thead><tbody><tr><td>SWE-smith</td><td>Injected bugs in Python and Go</td><td>717</td><td>144</td></tr><tr><td>SWE-Gym (TaskTrove)</td><td>Real GitHub issues</td><td>130</td><td>27</td></tr><tr><td>Tasksmith</td><td>Generated from merged pull requests</td><td>24</td><td>22</td></tr><tr><td><strong>Total</strong></td><td></td><td><strong>871</strong></td><td><strong>171</strong></td></tr></tbody></table>
+<h2><code>AsyncGRPOTrainer</code> for more efficient GRPO training</h2>
+<p>We leveraged the stable version of <code>AsyncGRPOTrainer</code> from TRL, with the main advantage of the trainer being that it does not wait until all rollouts are completed before moving to the next training optimization step.</p>
+<p>For more detailed reading on the trainer and its building blocks, please refer to <a href="https://huggingface.co/spaces/trl-lib/async-grpo-stable">the AsyncGRPO blogpost</a>.</p>
+<h2>Training setup</h2>
+<p>To obtain our final harness adapters, we trained LoRA adapters on top of <a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen/Qwen3.8-27B</a> using TRL's <code>AsyncGRPOTrainer</code>. The adapters were attached to the model using the <code>all-linear</code> flag. To maximize the training efficiency, thinking mode was turned off during rollout stages, and we evaluated our final adapter with and without thinking for broader comparison.</p>
+<p>The final reward function consists of the verifier's correctness, combined with a small tool-efficiency bonus (0.1, derived from <a href="https://huggingface.co/blog/harness-hub/harness-adapters">early experiments from the previous iteration of harness adapters</a> which showed that 0.1 worked best).</p>
+<p>We performed a small LR sweep on 50 steps using Termgrade environments (1e-5, 5e-5 and 1e-4) and noticed that 1e-5 barely moved training correctness (from 0.52 to 0.50), 1e-4 collapsed the rollouts instead of improving them (turns per rollout moved from 18 to 6, with entropy rising), and only 5e-5 clearly improved (from 0.49 to 0.60 by step 40). Longer 5e-5 runs then showed signs of instability (collapsing rollout lengths, rising entropy), so we settled on 2e-5 for the final runs.</p>
+<h3>Training infrastructure</h3>
+<p>Each harness adapter was trained using NVIDIA 2xB200 GPUs, with one GPU allocated for the vLLM server and the other allocated for the training process. We first performed some stress testing to maximize the amount of RL tasks that can be trained within a single optimization step. For that, we ‘maxed out’ the <code>--token-budget</code> argument from <code>AsyncGRPOTrainer</code> to its limit for the setup that we had. The chart below shows the evolution of the number of groups per step for each harness (in blue: Pi, green: OpenCode and orange: Hermes).</p>
+<p>As the model gets better and better during training, it is able to fit more and more groups during each training step, which diversifies the signals that the model gets at each optimization step.</p>
+<h3>Final mixture</h3>
+<p>The final data mixture consists of 750 tasks from <a href="https://huggingface.co/datasets/harness-hub/harness-adapters">harness-adapters RL environments</a> and 300 tasks from <a href="https://huggingface.co/datasets/ai-and/termgrade-environments">termgrade</a>. In order to maximize the diversity of the sampled tasks during training, we have slightly customized the data sampling strategy, which will be explained below:</p>
+<p>Before training, the tasks are put in a fixed order that interleaves them by family (i.e., their repository for our generated RL environments. For Termgrade, we just sorted them by name since each task is considered as its own family), so every training step mixes as many repositories as possible while following the distribution of the mixture.</p>
+<h3>safeagents in the loop</h3>
+<p>We also plug the <a href="https://github.com/huggingface/safeagents">safeagents</a> tool, in order to block any misbehavior from the model during training. The final plugin (which consists of the regex and pattern rules specific to the RL tasks and test path) is hosted in <a href="https://huggingface.co/harness-hub/qwen-safeagents-plugin">harness-hub/qwen-safeagents-plugin</a> and can be used out of the box using the latest version of safeagents in case anyone wants to reproduce the training setup.</p>
+<p>The number of blocked tools from safeagents decreases consistently during training, which indicates that the model gets ‘safer and safer’ after each optimization step. Below is a diagram of the safeagents blocked calls per 1000 tool calls, by training step, for each harness adapter.</p>
+<p><img src="https://huggingface.co/buckets/huggingface/harness-adapters-blog-assets/resolve/images/safeagents-blocked.png" alt="safeagents blocked calls per 1,000 tool calls by training step for the pi, hermes and opencode adapters"></p>
+<h2>Super-adapter: merging all adapters into one</h2>
+<p>Merging models often combines their capabilities while keeping most of what each one could do. Once the three harness adapters were trained, we asked two questions. Does merging them cost accuracy? And can a single &quot;super-adapter&quot; be accurate and efficient under every harness?</p>
+<p>We started by comparing the weight updates of the three adapters, layer by layer. The cosine similarity between any two of them is about 0.01–0.02: each adapter pushed the model in a nearly orthogonal direction during training. That's the best case for merging, since the updates barely interfere.</p>
+<p>We concatenate the three LoRA adapters along the rank dimension (PEFT's <code>combination_type=&quot;cat&quot;</code>). The merged adapter has rank 96 (3 × 32) and applies exactly w · (ΔW_pi + ΔW_hermes + ΔW_opencode). Prior work on merging (<a href="https://huggingface.co/papers/2212.04089">task arithmetic</a>, <a href="https://huggingface.co/papers/2306.01708">TIES</a>, <a href="https://huggingface.co/papers/2410.19735">KnOTS</a>) finds that scaling each update below 1 works best, so we compared three weights on all 89 Terminal-Bench 2.1 tasks, under each harness, with the step-120 adapters:</p>
+<ul><li>⅓ (the average): each harness keeps only a third of its own update.</li><li>½: each update at half strength.</li><li>1 (the plain sum): every update applied in full.</li></ul>
+<table><thead><tr><th>Weight</th><th>pi</th><th>hermes</th><th>opencode</th><th>All three harnesses</th><th>Tool calls per task</th></tr></thead><tbody><tr><td>base model</td><td>39.1%</td><td>46.0%</td><td>44.8%</td><td>43.3%</td><td>49.2</td></tr><tr><td>⅓ (average)</td><td>49.4%</td><td>51.2%</td><td>47.1%</td><td>49.2%</td><td>35.6</td></tr><tr><td><strong>½</strong></td><td>48.8%</td><td>53.5%</td><td>55.2%</td><td><strong>52.5%</strong></td><td>25.9</td></tr><tr><td>1 (sum)</td><td>40.2%</td><td>62.8%</td><td>47.1%</td><td>50.0%</td><td>13.4</td></tr></tbody></table>
+<p>The plain sum over-applies the updates. The agents become very short (13 tool calls per task, against 49 for the base model), and while Hermes peaks at 62.8%, pi falls back to the base model's level. The average dilutes each harness's own update. ½ gives the best balance, so we built the final super-adapter from the released checkpoints (pi step 160, hermes step 160, opencode step 150) at weight ½.</p>
+<h3>Adapter merging evaluation results</h3>
+<p>Under each harness, on the tasks every run graded (50–51 on SWE-bench Pro, 82–85 on Terminal-Bench 2.1), one attempt per task (in parentheses, the efficiency gain with respect to the base model):</p>
+<table><thead><tr><th>Harness</th><th>Benchmark</th><th><a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen3.8-27B</a></th><th>Qwen3.8-27B-&lt;harness&gt;-adapted</th><th><a href="https://huggingface.co/harness-hub/Qwen3.8-27B-super-adapter">Qwen3.8-27B-super-adapter</a></th><th><a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen3.8-27B</a>, thinking</th><th><a href="https://huggingface.co/harness-hub/Qwen3.8-27B-super-adapter">Qwen3.8-27B-super-adapter</a>, thinking</th></tr></thead><tbody><tr><td>pi</td><td>SWE-bench Pro (hard 51)</td><td>40.0%</td><td>64.0% (−60%)</td><td>46.0% (−73%)</td><td>74.0%</td><td>74.0% (−48%)</td></tr><tr><td>hermes</td><td>SWE-bench Pro (hard 51)</td><td>29.4%</td><td>43.1% (−56%)</td><td>47.1% (−60%)</td><td>45.1%</td><td>60.8% (−36%)</td></tr><tr><td>opencode</td><td>SWE-bench Pro (hard 51)</td><td>35.3%</td><td>51.0% (−72%)</td><td>45.1% (−63%)</td><td>47.1%</td><td>66.7% (−31%)</td></tr><tr><td>pi</td><td>Terminal-Bench 2.1</td><td>40.0%</td><td>56.5% (−56%)</td><td>48.2% (−56%)</td><td>52.9%</td><td>57.6% (−25%)</td></tr><tr><td>hermes</td><td>Terminal-Bench 2.1</td><td>44.7%</td><td>58.8% (−70%)</td><td>55.3% (−53%)</td><td>58.8%</td><td>63.5% (−19%)</td></tr><tr><td>opencode</td><td>Terminal-Bench 2.1</td><td>47.6%</td><td>52.4% (−53%)</td><td>52.4% (−68%)</td><td>54.9%</td><td>58.5% (−22%)</td></tr></tbody></table>
+<p>&quot;Thinking&quot; is the chat template's thinking mode at its default effort (xhigh). The specialists were trained and served with thinking off.</p>
+<p>With thinking off, the super-adapter improves on the base model on all six harness–benchmark pairs (mean pass@1 39.5% → 49.0%; 71 tasks newly solved vs 34 lost, p &lt; 0.001).</p>
+<p>Despite not being trained at all with thinking on, it's the strongest model we evaluated with thinking mode. Against the base model thinking at the same effort, it wins on five of six pairs and ties the sixth (mean 55.5% → 63.5%; 67 newly solved vs 37 lost, p = 0.004). The largest gains are on SWE-bench Pro: +16 points under hermes and +20 under opencode. Under pi on SWE-bench Pro, where thinking alone already reaches 74%, it ties.</p>
+<p>Use the specialist harness adapters when thinking off. Each harness's own adapter is ahead on four of six pairs, by the most under pi (64.0% vs 46.0% on SWE-bench Pro, 56.5% vs 48.2% on Terminal-Bench). Splitting one model across three harnesses costs pi the most of its gain. If you only use one harness and keep thinking off, take its specialist.</p>
+<p>The super adapter is also much more efficient. On the tasks both the base model and the super-adapter solve, with thinking off, it makes 53–73% fewer tool calls and generates 44–60% fewer tokens per task, with fewer tool calls on 111 of 130 tasks. With thinking on, it still cuts tool calls by 31–48% and tokens by 24–43% on SWE-bench Pro. On Terminal-Bench, tool calls drop by 19–25% and token counts stay about the same.</p>
+<p>The ½ weight was chosen on Terminal-Bench 2.1 with the step-120 adapters, so the Terminal-Bench numbers are slightly optimistic; SWE-bench Pro played no part in the choice. Full paired results are in the <a href="https://huggingface.co/harness-hub/Qwen3.8-27B-super-adapter">super-adapter's model card</a>.</p>
+<h2>Final results</h2>
+<p>This section reports what happened during training, then how the adapters score on held-out benchmarks inside and outside their own harnesses.</p>
+<h3>Training results</h3>
+<p>Training ran for a cumulative total of 598 steps, with a total of 78,114 samples trained, which consists exactly of 167M trained tokens.</p>
+<p>During training, we see a clear signal that the model learns to solve tasks in fewer and fewer steps, with no clear sign of saturation. Despite having some clear increasing trend sometimes, training correctness seems to overall stay flat. This can be explained by the fact that the model meets new tasks during training, but the number of groups that fit in a step’s token budget more than doubles as trajectories get shorter. The accuracy gains show up on the held-out benchmarks in the section below.</p>
+<p>On the other hand, safeagents was able to block multiple suspicious attempts. Across the three training runs, a total of 1.3M tool calls have been checked, and a total of 647 tool calls have been blocked.</p>
+<h3>Evaluation results</h3>
+<p>This section covers the evaluation setup, the in-harness results, transfer across harnesses, and an out-of-distribution check.</p>
+<h4>Evaluation setup</h4>
+<p>We evaluate each adapter inside the harness it was trained in, on two agentic coding benchmarks: all 89 tasks of <a href="https://huggingface.co/datasets/harborframework/terminal-bench-2.1">Terminal-Bench 2.1</a> (1 hour and 100 agent steps per task) and the 51 hardest tasks of SWE-bench Pro (2 hours and 100 agent steps). We cap the maximum number of tokens per task to be 131072. We do not tune the agent settings and use the default setup for all harnesses. For example, Pi does not keep previous reasoning turns while OpenCode and Hermes do, which mainly affects the SWE-bench Pro results due to rapid context overflow. Therefore you cannot compare the results across different harnesses (using Pi does not necessarily lead to better results than Hermes or OpenCode), but it is fair to compare results within the same harness and draw conclusions.</p>
+<p>Every rollout runs through the same Harbor and OpenEnv stack as training, in HF sandboxes, with one attempt per task at temperature 0.8 and thinking off. Each LoRA checkpoint is merged into the base weights and served alone with vLLM on a single GPU, at the same concurrency as the base model's eval.</p>
+<p>For all the evaluation benchmarks, we report the pass@1 as well as the number of tool calls, total turns, for all tasks and for solved tasks.</p>
+<p>For openness, all model trajectories for final evaluations are pushed in this public bucket: <a href="https://huggingface.co/buckets/harness-hub/harness-adapters-trajectories">harness-hub/harness-adapters-trajectories</a>.</p>
+<h4>Final evaluation results</h4>
+<p>All three specialist adapters beat the base model under their own harness, on both benchmarks. On SWE-bench Pro (hard 51), pi goes from 39.2% to 64.7% (+25.5 points: 15 tasks newly solved vs 2 lost, p = 0.002), hermes from 29.4% to 43.1%, and opencode from 35.3% to 51.0%. On the full Terminal-Bench 2.1, pi gains +16.3 points (16 vs 2, p = 0.001) and hermes +14.1 (19 vs 7, p = 0.03). Opencode gains +6.0 overall, and +13.6 on the 66 tasks that played no part in choosing its checkpoint (12 vs 3, p = 0.035).</p>
+<p>The adapters also solve tasks much more efficiently: on the tasks both they and the base model solve, they make 56–72% fewer tool calls per task on SWE-bench Pro and 53–70% fewer on Terminal-Bench 2.1. The single super-adapter beats the base model under all three harnesses too (+6 to +18 points on SWE-bench Pro, +5 to +10 on Terminal-Bench 2.1), with just as large a cut in tool calls (53–73%). It keeps less of each specialist's gain with thinking off, most under pi, but with thinking on it beats the base model thinking at the same effort on five of six harness–benchmark pairs (see the <a href="https://huggingface.co/blog/harness-adapters-at-scale#super-adapter-merging-all-adapters-into-one">super-adapter section</a>). Each model card has the full paired results.</p>
+<h4>Does the efficiency and performance ability transfer across harnesses?</h4>
+<p>To answer this question, we also evaluated the pi harness adapter under Hermes Agent and OpenCode.</p>
+<p>Under OpenCode it matches OpenCode's own specialist on Terminal-Bench 2.1 (44.8% → 54.0%, against 46.4% → 52.4%). Under Hermes it keeps about two-thirds of the specialist's gain (46.3% → 56.1%, against 44.7% → 58.8%), with the same ~45% cut in tool calls in both. Therefore it seems that the newly learned capabilities are transferred across harnesses.</p>
+<h4>Evaluation on out-of-distribution tasks and setup</h4>
+<p>What happens if we evaluate in out-of-distribution tasks, outside the harnesses the adapters have been trained with?</p>
+<p>We ran all five models on 300 <a href="https://github.com/zapier/AutomationBench">AutomationBench tasks</a> which consists of business-automation workflows evaluations, with AutomationBench's own agent loop instead of Pi, Hermes or OpenCode. This way, we can cross check two different questions: can the model solve problems outside SWE-related tasks? What happens when the model is being put outside the harness it has been trained with?</p>
+<p>Results show that the adapters stay close to the base model. Pi and OpenCode are slightly ahead (27.0% and 25.3% pass@1 against 23.0%), the merged adapter is level (23.7%), and Hermes is a few points behind (17.7%). The differences are within noise, except perhaps Hermes, therefore RL inside the harnesses neither transfers clearly to this very different setting nor breaks the model on it.</p>
+<table><thead><tr><th>Model</th><th>pass@1 (all assertions met)</th><th>vs base</th><th>Partial credit (share of assertions met)</th><th>vs base</th></tr></thead><tbody><tr><td>base</td><td>23.0%</td><td></td><td>62.2%</td><td></td></tr><tr><td>pi 160</td><td>27.0%</td><td>+4.0</td><td>66.2%</td><td>+4.0</td></tr><tr><td>opencode 150</td><td>25.3%</td><td>+2.3</td><td>65.2%</td><td>+3.0</td></tr><tr><td>merged</td><td>23.7%</td><td>+0.7</td><td>60.6%</td><td>−1.6</td></tr><tr><td>hermes 160</td><td>17.7%</td><td>−5.3</td><td>56.6%</td><td>−5.6</td></tr></tbody></table>
+<h2>Open question: What did the model really learn to do?</h2>
+<p>We appreciate the feedback from the users and the community, initial testing and results from the community seemed overall extremely positive, and we wish to continue in this direction in the future. We also saw some surprising results, such as users reporting that the <a href="https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted-GGUF/discussions/2">harness adapters work really well under Qwen3.8 derivatives, such as Swift-1.5</a>.</p>
+<p>This question is an open question we thought about, post-release. After inspecting carefully the generated trajectories from the evaluation benchmarks, it turns out the model, under non-thinking mode, tends to generate some short text before proposing a tool call, as opposed to the base model which generates the tool calls barely without any text beforehand.</p>
+<p>This phenomenon can be seen as a sort of ‘reasoning leakage’, where the model learns to ‘escape’ from its non-thinking version to its thinking version by generating some text that can sometimes look like reasoning traces (e.g.: ..wait? ..let me see, etc.). <a href="https://huggingface.co/papers/2610.14270">A recent paper</a> also describes behavior from LLMs during the RL stage very well.</p>
+<p>Does this invalidate our models? We do not think so, as the final results are still valid; under the exact same conditions (fixed token budget) our adapters do outperform the base non-thinking model (by far) and match the performance of the thinking version, while being much more token efficient. This has been further confirmed by the positive feedback from the community.</p>
+<p>However this raises the need of a proper follow up work, where we will try to re-apply the same pipeline for pure thinking models, as well as exploring hybrid thinking / non-thinking training, to better understand the behavior of RL training on hybrid thinking models. We will share with the community our next findings (and harness adapters), once we get conclusive results.</p>
+<h2>Closing words and future directions</h2>
+<p>Throughout this work, we demonstrated that RL training your model inside your target harness leads to more efficient and therefore more accurate final models, when evaluated under the same conditions. This observation is in line and in continuation with several previous work from Hugging Face teams, such as <a href="https://huggingface.co/spaces/FineEnvs/multi-harness-rl">multi-harness-RL</a> or the <a href="https://huggingface.co/blog/harness-hub/harness-adapters">early iterations of harness adapters</a>.</p>
+<p>In the future, we will explore applying this recipe to more models, while better studying the training strategies for hybrid thinking / non-thinking models.</p>
+<p>We also share to the community openly the full recipe and pipeline to reproduce everything, and invite everyone to build their own RL tasks, derived from their own codebase, or any relevant materials, and apply the same training recipe and ideas to their favorite model and harness for more efficient agentic models. We hope this blogpost will serve as a starting point for builders to build and share their own harness adapters in the future.</p>
+<h2>Models mentioned in this article 4</h2>
+<h2>Datasets mentioned in this article 6</h2>
+<h2>Spaces mentioned in this article 2</h2>
+<h2>Papers mentioned in this article 5</h2>
+<h2>Collections mentioned in this article 1</h2>
+<p>More Articles from our Blog</p>
+<p>llmrltrl</p>
+<h2>Async GRPO with LoRA across HF Jobs: a bucket, a proxy, and no NCCL</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
+<p>55</p>
+<p>September 10, 2026</p>
+<p>rlgrpotrl</p>
+<h2>Training a coding model to paint watercolours with TRL and OpenEnv</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
+<p>85</p>
+<p>September 3, 2026</p>
+<h3>Community</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a563ccc365af97ccad51100/G_t3suPdLtRnBuMjDsctP.png" alt=""></p>
+<p>PalindromeRL-Admin</p>
+<p>about 16 hours ago</p>
+<p>edited about 16 hours ago</p>
+<p>Thanks for such a nice and detailed blog on it. Can you also share, how many iterations did this take, and roughly how long end to end? What would be the minimum GPU requirements to train. Also curious how you think the adapter holds up when the harness changes.</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/wkLf88hCMyMKy07H-DiPB.jpeg" alt=""></p>
+<p>akhilai02</p>
+<p>about 13 hours ago</p>
+<p>this is good</p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fharness-adapters-at-scale">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fharness-adapters-at-scale">log in</a> to comment</p>
+<p>31</p>
+<ul><li><a href="https://huggingface.co/ybelkada"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/lewtun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AdithyaSK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6442d975ad54813badc1ddf7/JIAN8B1dLOXN8fWTk8_mI.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ljupco"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/655879337b098f9cb5dbdb16/j-NwJgRvi_2jw6JU0yFp4.jpeg" alt=""></a></li><li><a href="https://huggingface.co/TheOnlyN3O"><img src="https://huggingface.co/avatars/978cf80583be8fb8a48d8fbe047a941f.svg" alt=""></a></li><li><a href="https://huggingface.co/aminediroHF"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></a></li><li><a href="https://huggingface.co/loubnabnl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61c141342aac764ce1654e43/81AwoT5IQ_Xdw0OVw7TKu.jpeg" alt=""></a></li><li><a href="https://huggingface.co/NoeFlandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/660e63bfa0d76479a1a73701/P7tp3aeLxF5btEcuKk-4z.png" alt=""></a></li><li><a href="https://huggingface.co/fellten"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voKimJ0mRTOk9vh_u2C7R.png" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/PalindromeRL-Admin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a563ccc365af97ccad51100/G_t3suPdLtRnBuMjDsctP.png" alt=""></a></li><li><a href="https://huggingface.co/xiachongfeng"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6776ae0c91b4c75dac91249c/uJk3ZnRrzjPCcBNjmrWLI.png" alt=""></a></li></ul>
+<h2>Models mentioned in this article 4</h2>
+<h2>Datasets mentioned in this article 6</h2>
+<h2>Spaces mentioned in this article 2</h2>
+<h2>Papers mentioned in this article 5</h2>
+<h2>Collections mentioned in this article 1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>DaisyRose-27B: Pushing the Frontier of Post-Training Efficie…</title>
       <link>https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin</link>
@@ -6351,339 +6805,6 @@ As a retail agent, you can help users:
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Faltk-evolve-bc">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Faltk-evolve-bc">log in</a> to comment</p>
 <p>20</p>
 <ul><li><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/MuzaffarSharofitdinov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5ae21ed03e92b01a32342/X1XgnmMAGWN4Uz_Gabj4K.jpeg" alt=""></a></li><li><a href="https://huggingface.co/CharanSripadi"><img src="https://huggingface.co/avatars/be40b5bce28c1378042615d9349747f8.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/aadebiyi"><img src="https://huggingface.co/avatars/a532e8ece9767dde21278ec06fd21b31.svg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/Vatche"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6435a1131860001f144239ea/smzcd7SHs33E2ArxBLBBK.png" alt=""></a></li><li><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/c2670566c5cbdfccf87954a9caf7d381.svg" alt=""></a></li><li><a href="https://huggingface.co/brmcg"><img src="https://huggingface.co/avatars/b71be4ef8a21d10746bdec6d271f055d.svg" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>NVIDIA Cosmos3-H-Dreams: Bringing Clinical Surgery to Life T…</title>
-      <link>https://huggingface.co/blog/nvidia/cosmos3-h-dreams</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/cosmos3-h-dreams?li=1</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: NVIDIA Cosmos3-H-Dreams: Bringing Clinical Surgery to Life Through Generative Simulation</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>NVIDIA Cosmos3-H-Dreams: Bringing Clinical Surgery to Life Through Generative Simulation</h1>
-<p>Enterprise + Article</p>
-<p>Published October 20, 2026</p>
-<p>2</p>
-<ul><li><a href="https://huggingface.co/MasterOfDisaster67"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/eYjcgliRdr2ZMi5_xG_B8.png" alt=""></a></li><li><a href="https://huggingface.co/brxerq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65167fe9da8a3d7cdda09a53/U1OsYfG7n3fW0L1VVl7pO.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/lzbinden"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tQyCJ2_ygMOucYjNRsZkf.png" alt="Lukas Zbinden's avatar"></a></p>
-<p>Lukas Zbinden</p>
-<p>lzbinden</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/javirk1"><img src="https://huggingface.co/avatars/2da14fb4fcab0b865cadc94851868294.svg" alt="Javier Gamazo's avatar"></a></p>
-<p>Javier Gamazo</p>
-<p>javirk1</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/nigeln"><img src="https://huggingface.co/avatars/519fb4ebc97874fad75efa97594b18d1.svg" alt="Nigel Nelson's avatar"></a></p>
-<p>Nigel Nelson</p>
-<p>nigeln</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/mtoloui"><img src="https://huggingface.co/avatars/df2cc3a69194090a4c6859726ec61890.svg" alt="Mostafa Toloui's avatar"></a></p>
-<p>Mostafa Toloui</p>
-<p>mtoloui</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/shuver"><img src="https://huggingface.co/avatars/d116ee7bef2ca4f33d68a7883ddcdbbf.svg" alt="Sean Huver's avatar"></a></p>
-<p>Sean Huver</p>
-<p>shuver</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p>Picture moving the Cadiere grasper, grasping the gallbladder, and lifting it, all within a generated surgical scene that responds in real time. Today, we take the next step and introduce Cosmos3-H-Dreams, bringing interactive generative simulation to the visual and procedural complexity of clinical surgery with our most convincing in-body imagery to date.</p>
-<p>Our first <a href="https://huggingface.co/blog/nvidia/cosmos-h-dreams">Cosmos-H-Dreams</a> release, built on Cosmos-Predict2.5, brought interactive generative simulation to dVRK tabletop suturing, a foundational proving ground for surgical robotics. As world foundation model (WFM), Cosmos-H-Dreams demonstrated an alternative to numerical simulation: rather than explicitly modeling scene geometry, tissue deformation, and physical interactions, it learned visual dynamics directly from synchronized video and robot kinematics, yielding interactive tabletop task simulation with high realism.</p>
-<p>Today, <a href="https://github.com/isaac-for-healthcare/cosmos3-h-dreams">Cosmos3-H-Dreams</a> advances this capability by learning from video and robot kinematics recording during clinical procedures on the CMR Surgical Versius platform. To our knowledge, this is the first real-time generative surgical simulator trained on clinical cholecystectomy recordings to support live kinematic control. Powered by Cosmos 3 and accelerated with FlashDreams, NVIDIA’s accelerated streaming-inference library, Cosmos3-H-Dreams runs interactively on a single NVIDIA RTX PRO 6000 GPU.</p>
-<h2>1. From Tabletop Tasks to Clinical Scenes</h2>
-<p>In a controlled tabletop environment like that of Cosmos-H-Dreams, instruments operate against a relatively simple background. Inside the human body, however, small instrument movements can affect an entire scene: tissue stretches under traction, reflections shift, structures become occluded, and smoke changes visibility. Given an initial image and supplied tool actions, a generative simulator must capture these responses while preserving the anatomy and instruments as it generates each new block of video. Small errors can accumulate over time, gradually changing instrument geometry or anatomical structure, making temporal consistency essential.</p>
-<p>Visual realism is therefore a starting point for validation, not proof of biomechanical accuracy. The generated scene must also follow the controls: translation, rotation, and gripper commands should produce coherent anatomical consequences. A plausible-looking rollout that ignores those commands cannot serve as an interactive environment.</p>
-<p>Maintaining this fidelity and responsiveness in a live control loop requires low latency generation. Cosmos3-H-Dreams addresses this setting through a model specialized for clinical cholecystectomy and distilled for real-time generation, bringing action-conditioned interaction into scenes with complex anatomy, tissue motion, and occlusion.</p>
-<h2>2. What is New in Cosmos3-H-Dreams?</h2>
-<h3>2.1 A Cosmos 3 Foundation and Richer Surgical Controls</h3>
-<p>Cosmos3-H-Dreams builds on <a href="https://huggingface.co/nvidia/Cosmos3-H-Embodied-Nano">Cosmos3-H-Embodied-Nano</a>, a 16-billion-parameter model pretrained on <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Open-H-Embodiment</a>, and specializes a bidirectional teacher on curated cholecystectomy video and kinematics. Sample selection targets two visible, engaged instruments, a left Cadiere grasper and a right monopolar hook, and limits camera commands to emphasize instrument-driven interaction.</p>
-<p>The model uses 28 action dimensions: pose and gripper information for both arms, plus energy controls, thumbstick axes and thumbstick buttons. Training uses 832 x 480 video with actions aligned at 10 Hz; that sampling rate is distinct from runtime generation throughput.</p>
-<h3>2.2 From Teacher to Four-Step and Two-Step Students</h3>
-<p>Cosmos3-H-Dreams combines a teacher-to-student training pipeline designed for long autoregressive rollouts with accelerated streaming inference through FlashDreams.</p>
-<p>We first adapt the bidirectional teacher on 24 future frames, then extend the horizon to 72 frames, 2.4 and 7.2 seconds at 10 Hz. This gives the teacher longer sequences over which to learn surgical dynamics.</p>
-<p>Next, distillation turns the bidirectional teacher into a causal student that can generate video in short blocks as new actions arrive. Causal teacher forcing prepares the student for sequential generation using recorded context. Self-Forcing then trains it on its own generated context, guided by the teacher and a learned critic. This helps address the accumulation of errors during interactive rollouts.</p>
-<p>The first released student uses four denoising steps per generated block. We then train that student further with a two-step schedule to produce the second release checkpoint. The two-step model is separately trained, not simply the four-step model run with fewer sampling steps.</p>
-<p>Fewer denoising steps results in faster inference time at the expense of lower visual quality. Both checkpoints let developers explore the balance between visual quality and inference cost.</p>
-<h3>2.3 Streaming through FlashDreams</h3>
-<p><a href="https://github.com/NVIDIA/flashdreams">FlashDreams</a> supplies the accelerated streaming runtime. Long rollouts also require managing the model’s attention history. The Cosmos3-H-Dreams integration uses an adapted FadeMem module that consolidates the growing key/value cache during long rollouts. This complements Self-Forcing: distillation addresses how the model learns from its generated history, while cache consolidation addresses how that history is stored during streaming generation.</p>
-<h2>3. Exploring Unseen Trajectories</h2>
-<p>During a clinical procedure there may be complications or some room for the surgeon to perform “novel” movements. Therefore, a simulator must be able to generalize beyond the training data, and produce coherent frames with unseen movements. The demonstrations below show Cosmos3-H-Dreams generating different cholecystectomy scenes conditioned on instrument actions recorded with a VR headset.</p>
-<p>The two videos begin with the same initial frame but follow different action sequences illustrating how instrument control leads to distinct continuations of the same scene with physically accurate tissue deformations.</p>
-<p>Furthermore, these rollouts allow us to inspect whether instruments follow the controls, whether tissue responds coherently to interaction, and whether anatomical and instrument appearance remain consistent over time.</p>
-<h2>4. Adapting to Your Own Data and Controller</h2>
-<p>Cosmos3-H-Dreams includes four-step and two-step checkpoints for cholecystectomy. The system can be adapted to other datasets and embodiments with synchronized video and compatible action representations. To train a real-time student model on your own dataset, we provide a complete recipe for teacher fine-tuning and Self-Forcing distillation in our <a href="https://github.com/NVIDIA-Medtech/Cosmos3-H-Embodied-Nano/blob/main/cosmos3_h_embodied/tutorial_teacher_training_and_self_forcing.md">step-by-step guide</a>. It describes data preparation, public teacher-training tools, and the distillation stages. Controller integrations must use the same action conventions and normalization as training.</p>
-<h2>5. What is Next</h2>
-<p>The advance in visual realism opens several research directions:</p>
-<ul><li><strong>Model the full procedure.</strong> Expand coverage and temporal consistency so all phases of cholecystectomy can be explored systematically, with clear task boundaries and success criteria.</li><li><strong>Connect generative and numerical simulation.</strong> Combine learned visual realism with explicit geometry, contact and tissue mechanics. Numerical models and measured data could help constrain and validate deformation, making simulation behavior inspectable as well as convincing.</li><li><strong>Evaluate with surgeons.</strong> Assess anatomical accuracy, instrument behavior and tissue response, turning expert feedback into reproducible benchmarks.</li><li><strong>Support more instruments.</strong> Move beyond two controlled tools to richer coordination, occlusion and interaction.</li><li><strong>Develop autonomous surgical policies.</strong> Couple world action models to Cosmos3-H-Dreams in a closed loop, so policies can learn defined cholecystectomy subtasks.</li></ul>
-<p>These are research directions, not established clinical capabilities. Cosmos3-H-Dreams is a research simulator, not a validated system for patient care. It offers a foundation for studying surgical interaction in an increasingly realistic environment.</p>
-<h2>6. Get Started Today</h2>
-<p>Explore the models, data, and runtime behind Cosmos3-H-Dreams:</p>
-<ul><li>Cosmos3-H-Dreams code and examples: <a href="https://github.com/isaac-for-healthcare/cosmos3-h-dreams">GitHub repository</a></li><li>Cosmos3-H-Dreams model: <a href="https://huggingface.co/nvidia/Cosmos3-H-Dreams">Hugging Face checkpoint</a></li><li>Cosmos3-H-Embodied-Nano: <a href="https://huggingface.co/nvidia/Cosmos3-H-Embodied-Nano">Hugging Face model</a> and <a href="https://github.com/NVIDIA-Medtech/Cosmos3-H-Embodied-Nano">GitHub repository</a></li><li>Adapt to your own data: <a href="https://github.com/NVIDIA-Medtech/Cosmos3-H-Embodied-Nano/blob/main/cosmos3_h_embodied/tutorial_teacher_training_and_self_forcing.md">Step-by-step recipe for teacher fine-tuning and self-forcing distillation</a></li><li>Open-H-Embodiment: <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Hugging Face dataset</a></li><li>FlashDreams: <a href="https://github.com/NVIDIA/flashdreams">GitHub repository</a></li><li>NVIDIA Cosmos 3: <a href="https://github.com/nvidia/cosmos">GitHub repository</a></li></ul>
-<p>Bring your controllers, your trajectories, and your research questions. We look forward to seeing what the community builds inside these new surgical worlds.</p>
-<h2>Models mentioned in this article 2</h2>
-<h2>Datasets mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2>Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>47</p>
-<p>October 16, 2026</p>
-<h2>Fine-Tune ASR for Your Domain with NVIDIA Speech Agent Skills</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>13</p>
-<p>October 13, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fcosmos3-h-dreams">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fcosmos3-h-dreams">log in</a> to comment</p>
-<p>2</p>
-<ul><li><a href="https://huggingface.co/MasterOfDisaster67"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/eYjcgliRdr2ZMi5_xG_B8.png" alt=""></a></li><li><a href="https://huggingface.co/brxerq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65167fe9da8a3d7cdda09a53/U1OsYfG7n3fW0L1VVl7pO.png" alt=""></a></li></ul>
-<h2>Models mentioned in this article 2</h2>
-<h2>Datasets mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>TorchNeuron: running HF models on AWS Trainium is easier tha…</title>
-      <link>https://huggingface.co/blog/hf-torchneuron</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/hf-torchneuron?li=1</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: TorchNeuron: running HF models on AWS Trainium is easier than ever</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>TorchNeuron: running HF models on AWS Trainium is easier than ever</h1>
-<p>Published October 19, 2026</p>
-<p>Update on GitHub</p>
-<p>13</p>
-<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt="Régis Pierrard's avatar"></a></p>
-<p>Régis Pierrard</p>
-<p>regisss</p>
-<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy's avatar"></a></p>
-<p>Simon Pagezy</p>
-<p>pagezyhf</p>
-<p><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt="Michael Benayoun's avatar"></a></p>
-<p>Michael Benayoun</p>
-<p>michaelbenayoun</p>
-<p><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt="Jingya Huang's avatar"></a></p>
-<p>Jingya Huang</p>
-<p>Jingya</p>
-<p><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt="Alvaro Moran's avatar"></a></p>
-<p>Alvaro Moran</p>
-<p>tengomucho</p>
-<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier's avatar"></a></p>
-<p>David Corvoysier</p>
-<p>dacorvo</p>
-<p><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt="Jeff Boudier's avatar"></a></p>
-<p>Jeff Boudier</p>
-<p>jeffboudier</p>
-<p>TorchNeuron provides a new native backend for PyTorch on AWS Trainium. Transformers, Diffusers and Kernels natively support it, making it easier than ever to run models on Trainium and to share them on the HF hub.</p>
-<h2>TorchNeuron</h2>
-<p><a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/frameworks/torch/index.html">TorchNeuron</a> is a PyTorch plugin that brings a new backend for Trainium enabling support for eager mode, <code>torch.compile</code> and native distributed APIs like FSDP and TP. Read the Pytorch <a href="https://pytorch.org/blog/introducing-torchneuron-native-pytorch-backend-for-aws-trainium/">blog</a> to learn more about TorchNeuron.</p>
-<p>Starting Oct. 20, 2026, TorchNeuron will be available as a public beta. Researchers and developers will be able to install it with <code>pip install torch-neuronx</code>.</p>
-<h2>New backend, native interface in HF libraries</h2>
-<p>To date, the Hugging Face experience on AWS Trainium and Inferentia — AI chips designed respectively for cost-effective training and inference at scale — has been delivered through <a href="https://github.com/huggingface/optimum-neuron">optimum-neuron</a>. This library relies on the torch-neuronx package, which is based on PyTorch XLA. It was the natural choice at the time, but it meant thinking like a compiler: lazy tensors instead of eager execution, static shapes only, a recompilation for every graph break. Optimum Neuron existed to hide that complexity, and maintained custom code (modeling classes, trainers, etc) to do so.</p>
-<p>TorchNeuron changes this. It integrates directly into PyTorch and exposes <code>neuron</code> as a native device, with eager execution, PyTorch's own distributed primitives (DTensor, FSDP2) and <code>torch.compile</code>.</p>
-<p>For the Hugging Face libraries, Trainium becomes a device like any other: Transformers, Diffusers, Accelerate, PEFT and TRL run on it directly, with the same classes and scripts you would use on any other accelerator. From now on, we recommend that Neuron users use these libraries directly instead of going through Optimum Neuron.</p>
-<h3>Transformers</h3>
-<h4>Inference</h4>
-<p>Text generation is now natively supported in Transformers for a wide range of models. With TorchNeuron, 89% of the top 100 most-used text-generation model architectures are supported out of the box, compared to 46% with Optimum Neuron v0.4.5. You just need to pass the <code>device_map=neuron</code> argument in your code and your model will be moved to the Neuron devices.</p>
-<p>The following is an example of text-generation with tensor parallelism, which will enable to fully benefit from your Neuron instance. Note that it uses a static cache for generation as this is strongly recommended with Neuron to prevent frequent recompilations.</p>
-<pre><code>import os
-
-import torch
-import torch.distributed as dist
-import torch_neuronx  # noqa: F401
-from torch.distributed import DeviceMesh
-from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
-from transformers.distributed import DistributedConfig
-from transformers.generation.configuration_utils import CompileConfig
-
-MODEL_ID = &quot;Qwen/Qwen3.8-27B&quot;
-MAX_SEQ_LEN = 1024
-PREFILL_CHUNK_SIZE = 512
-
-dist.init_process_group(backend=&quot;neuron&quot;)
-world_size = dist.get_world_size()
-
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_ID,
-    dtype=torch.bfloat16,
-    distributed_config=DistributedConfig(tp_size=world_size),
-    device_mesh=DeviceMesh(&quot;neuron&quot;, list(range(world_size))),
-).eval()
-
-tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-if tokenizer.pad_token is None:
-    tokenizer.pad_token = tokenizer.eos_token
-tokenizer.padding_side = &quot;left&quot;
-
-inputs = tokenizer.apply_chat_template(
-    [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;The future of AI is&quot;}],
-    add_generation_prompt=True,
-    padding=True,
-    tokenizer_kwargs={&quot;pad_to_multiple_of&quot;: PREFILL_CHUNK_SIZE},
-    return_tensors=&quot;pt&quot;,
-)
-
-generation_config = GenerationConfig(
-    max_new_tokens=128,
-    do_sample=False,
-    use_cache=True,
-    pad_token_id=tokenizer.pad_token_id,
-    eos_token_id=tokenizer.eos_token_id,
-    cache_implementation=&quot;static&quot;,
-    max_cache_len=MAX_SEQ_LEN,
-    prefill_chunk_size=PREFILL_CHUNK_SIZE,
-    compile_config=CompileConfig(backend=&quot;neuron&quot;, fullgraph=False, dynamic=False),
-)
-
-with torch.no_grad():
-    output_ids = model.generate(
-        inputs[&quot;input_ids&quot;],
-        attention_mask=inputs[&quot;attention_mask&quot;],
-        generation_config=generation_config,
-    )
-
-if dist.get_rank() == 0:
-    prompt_len = inputs[&quot;input_ids&quot;].shape[1]
-    print(tokenizer.decode(output_ids[0, prompt_len:], skip_special_tokens=True))</code></pre>
-<h4>Training</h4>
-<p>Now that Neuron is a native PyTorch device, training on Trainium uses the same Hugging Face libraries as any other accelerator: Transformers, Accelerate, PEFT and TRL. You no longer need a dedicated trainer or a Neuron-specific fork of the model code. A standard TRL fine-tuning script runs on a Trainium instance with only a few Neuron-specific settings.</p>
-<p>Here is a supervised fine-tuning script built on TRL's <code>SFTTrainer</code>. If you have fine-tuned a model with TRL on GPUs before, it should look familiar.</p>
-<pre><code>import os
-
-import torch
-from datasets import load_dataset
-from transformers.distributed import DistributedConfig
-
-from trl import ModelConfig, ScriptArguments, SFTConfig, SFTTrainer, TrlParser
-
-
-def main(script_args, training_args, model_args):
-    # The Neuron backend can't compile Dynamo's automatic dynamic shapes yet (https://github.com/huggingface/trl/issues/7660)
-    torch._dynamo.config.automatic_dynamic_shapes = False
-
-    training_args.model_init_kwargs = {
-        &quot;revision&quot;: model_args.model_revision,
-        &quot;trust_remote_code&quot;: training_args.trust_remote_code,
-        &quot;attn_implementation&quot;: model_args.attn_implementation,
-        &quot;dtype&quot;: model_args.dtype,
-        &quot;device_map&quot;: None,
-    }
-    if int(os.environ.get(&quot;WORLD_SIZE&quot;, &quot;1&quot;)) &gt; 1:
-        # The model is sharded on the TP x FSDP grid as its weights are loaded
-        training_args.model_init_kwargs[&quot;distributed_config&quot;] = DistributedConfig(
-            tp_size=int(os.environ.get(&quot;TP_SIZE&quot;, &quot;1&quot;)),
-            fsdp_size=int(os.environ.get(&quot;FSDP_SIZE&quot;, &quot;1&quot;)),
-        )
-
-    # Prepare dataset
-    train_dataset = load_dataset(
-        script_args.dataset_name,
-        name=script_args.dataset_config,
-        split=script_args.dataset_train_split,
-    )
-    # UltraChat also has a string `prompt` column, which makes TRL treat it as a prompt-completion dataset.
-    train_dataset = train_dataset.select_columns([&quot;messages&quot;])
-
-    # Training
-    trainer = SFTTrainer(
-        model=model_args.model_name_or_path,
-        args=training_args,
-        train_dataset=train_dataset,
-    )
-
-    trainer.train()
-    trainer.save_model(training_args.output_dir)
-    trainer.end()
-
-
-if __name__ == &quot;__main__&quot;:
-    parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
-    script_args, training_args, model_args = parser.parse_args_and_config()
-    main(script_args, training_args, model_args)</code></pre>
-<p>Parallelism is handled natively by Transformers. You put a <code>DistributedConfig</code> with the tensor-parallel (TP) and FSDP sizes in <code>model_init_kwargs</code>, <code>SFTTrainer</code> passes it to <code>from_pretrained</code>, and the model is sharded as its weights are loaded. The Trainer sees that the model is already distributed and does not wrap it again. You don't need an <code>--fsdp</code> flag or an Accelerate FSDP config.</p>
-<p>Nothing in the script is tied to Trainium: the same code runs on any hardware. A few things are worth knowing when you run it on Trainium:</p>
-<ul><li><strong>Static shapes.</strong> The script disables automatic dynamic shapes in <code>torch.compile</code> and uses wrapped packing to produce sequences of up to 2048 tokens. With TRL ≥ 1.16, batches on Neuron are padded to a multiple of 128 tokens, limiting the number of input shapes. Compiled graphs are reused for subsequent steps with the same shapes.</li><li><strong><code>torch.compile</code> on.</strong> Passing <code>--torch_compile true</code> is all it takes: on a Trainium instance, <code>torch.compile</code> detects the device and picks the Neuron backend automatically, with nothing else to configure.</li><li><strong>Async weight loading off.</strong> The built-in asynchronous weight loading in Transformers is not supported on Neuron, so for now we disable it with <code>HF_DEACTIVATE_ASYNC_LOAD=1</code>.</li></ul>
-<p>The command below launches training with <code>torchrun</code>, which starts one process per NeuronCore. <code>TP_SIZE</code> and <code>FSDP_SIZE</code> set the parallelism layout, and their product is the number of processes: here 4 x 8 = 32, matching <code>--nproc_per_node</code>. The 32 processes form a 4 x 8 grid. Tensor parallelism splits each layer across the 4 cores of a TP group, and FSDP shards the parameters, gradients and optimizer state across the 8 TP groups.</p>
-<pre><code>TP_SIZE=4 FSDP_SIZE=8 HF_DEACTIVATE_ASYNC_LOAD=1 uv run torchrun --nproc_per_node=32 sft_neuron_example.py \
-    --model_name_or_path Qwen/Qwen3-8B \
-    --dataset_name HuggingFaceH4/ultrachat_200k \
-    --dataset_train_split train_sft \
-    --output_dir Qwen3-8B-sft-tp4-fsdp8 \
-    --dtype bfloat16 \
-    --max_length 2048 \
-    --packing true \
-    --packing_strategy wrapped \
-    --learning_rate 2e-5 \
-    --warmup_steps 0.03 \
-    --num_train_epochs 1 \
-    --logging_steps 2 \
-    --per_device_train_batch_size 4 \
-    --gradient_accumulation_steps 4 \
-    --save_only_model true \
-    --torch_compile true</code></pre>
-<p>We ran it on 8 Trainium2 chips (32 NeuronCores), which is half a <code>trn2.48xlarge</code> instance.</p>
-<p>Training runs to completion, and <code>trainer.save_model</code> writes a standard Transformers checkpoint. Nothing in it is tied to Neuron: you can push it to the Hugging Face Hub as is and load it on any other hardware.</p>
-<h3>Diffusers</h3>
-<h4>Inference</h4>
-<p>Many pipelines from the Diffusers library are compatible with TorchNeuron in eager and compiled mode. FLUX.1-dev, FLUX.2, Qwen-Image, Qwen-Image-2.1 and H3 are also compatible with tensor parallelism to make the most of your Neuron devices. The following is an example showing how you can use TP:</p>
-<pre><code>import torch, torch.distributed as dist, torch_neuronx # TP
-from torch.distributed.device_mesh import DeviceMesh # TP
-from diffusers import QwenImage21Pipeline, QwenImage21Transformer2DModel, TensorParallelConfig
-
-# Distributed devices initialization
-dist.init_process_group(backend=&quot;neuron&quot;) # TP
-dev = torch.neuron.current_device()
-mesh = DeviceMesh(&quot;neuron&quot;, list(range(8))) # TP=8
-
-# Pipeline initialization
-model = &quot;Qwen/Qwen-Image-2.1&quot;
-transformer = QwenImage21Transformer2DModel.from_pretrained(
-    model,
-    subfolder=&quot;transformer&quot;,
-    torch_dtype=torch.bfloat16,
-    parallel_config=TensorParallelConfig(mesh=mesh), # TP
-)
-pipe = QwenImage21Pipeline.from_pretrained(
-    model,
-    transformer=transformer,
-    torch_dtype=torch.bfloat16,
-)
-pipe.vae.to(dev)
-pipe.transformer.compile_repeated_blocks(backend=&quot;neuron&quot;, fullgraph=True, dynamic=False)
-
-# Image generation
-emb, mask, _ = pipe.encode_prompt(prompt=&quot;A capybara wearing a wizard hat, oil painting&quot;, device=&quot;cpu&quot;)  # text encoder stays on CPU
-image = pipe(
-    prompt_embeds=emb.to(dev),
-    prompt_embeds_mask=mask.to(dev) if mask is not None else None,
-    height=1024,
-    width=1024,
-    num_inference_steps=40,
-    generator=torch.Generator(&quot;cpu&quot;).manual_seed(0), # same noise on every rank
-).images[0]
-if dist.get_rank() == 0:
-    image.save(&quot;out.png&quot;)</code></pre>
-<p>You can run this piece of code with: <code>NEURON_LOGICAL_NC_CONFIG=2 torchrun --nproc_per_node=8 run.py</code>.</p>
-<p>More and more pipleines will be compatible with TP. If a pipeline you like is not, you can also add support for it following <a href="https://huggingface.co/docs/diffusers/main/en/training/distributed_inference#writing-a-tensor-parallelism-plan">this guide</a>.</p>
-<h3>Kernels</h3>
-<p>Make sure to check out the <a href="https://huggingface.co/aws-neuron/kernels">kernels from the Neuron team</a> as more and more Neuron kernels will become available on the Hub to speed up your models. Neuron kernels can be written using the <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/nki/index.html">Neuron Kernel Interface</a> (NKI), which gives lower control to optimize operations. This way, users can run their own custom operations and share them on the hub.</p>
-<p>You can use for example <a href="https://huggingface.co/kernels/aws-neuron/vit-encoder-neuron-kernels">this kernel</a> to speed up your vision transformers with up to a x2.4 speedup on Trainium!</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hf-torchneuron/kernel.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hf-torchneuron/kernel.png" alt=""></a></p>
-<h2>Acknowledgments</h2>
-<p>Special thanks to the AWS team for their work on TorchNeuron and for their reactivity to our feedback to make the HF integration as good as possible.</p>
-<p>More Articles from our Blog</p>
-<p>torchprofileCUDA</p>
-<h2>Profiling in PyTorch (Part 2): From nn.Linear to a Fused MLP</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li>+1</li></ul>
-<p>65</p>
-<p>June 11, 2026</p>
-<p>torchprofileCUDA</p>
-<h2>Profiling in PyTorch (Part 1): A Beginner's Guide to torch.profiler</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li>+1</li></ul>
-<p>183</p>
-<p>May 29, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fhf-torchneuron">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fhf-torchneuron">log in</a> to comment</p>
-<p>13</p>
-<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li><li><a href="https://huggingface.co/gbharada-aws"><img src="https://huggingface.co/avatars/55e629c40983a2b82c0c75012c13e074.svg" alt=""></a></li><li><a href="https://huggingface.co/zwang-amazon"><img src="https://huggingface.co/avatars/c698e2722ba05d640b6f958f142b0082.svg" alt=""></a></li><li><a href="https://huggingface.co/ozardeso-aws"><img src="https://huggingface.co/avatars/9aa3820bf2cf891b3997883155a87e54.svg" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></a></li><li><a href="https://huggingface.co/3outeille"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/iB42uASF1DoQth23cizSh.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

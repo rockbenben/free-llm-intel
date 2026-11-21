@@ -7,7 +7,461 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 18 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>迎来 Inkling 2 Mini，为本地配置带来前沿性能</title>
+      <link>https://huggingface.co/blog/inkling2mini</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/inkling2mini</guid>
+      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章列表</a></p>
+<h1>欢迎 Inkling 2 Mini：为本地环境带来前沿性能</h1>
+<p>发布于 2026 年 11 月 20 日</p>
+<p>在 GitHub 上更新</p>
+<p>25</p>
+<ul><li><a href="https://huggingface.co/cfahlgren1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/648a374f00f7a3374ee64b99/YPwSOrronoozwHbJchPn3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Presidentlin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/655e4c26d5c0d3db535cdd66/IjYjuy2goiaHG08mFiFmU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/gksriharsha"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ipZZ5HGriNP6O2peUw0Nx.jpeg" alt=""></a></li><li><a href="https://huggingface.co/blanchon"><img src="https://huggingface.co/avatars/95cb600601ea4207aaf8bcaa1c387895.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve's avatar"></a></p>
+<p>merve</p>
+<p>merve</p>
+<p><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt="Pedro Cuenca's avatar"></a></p>
+<p>Pedro Cuenca</p>
+<p>pcuenq</p>
+<p><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt="Aritra Roy Gosthipaty's avatar"></a></p>
+<p>Aritra Roy Gosthipaty</p>
+<p>ariG23498</p>
+<p><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2b8b4cf7d8930887629e7bcaf0401f61.svg" alt="Guarin Flück's avatar"></a></p>
+<p>Guarin Flück</p>
+<p>guarin</p>
+<p>TLDR；Inkling 2 Mini 是一个新的 looped transformer 模型。它是一个多模态 Mixture-of-Experts，约 26B <em>物理</em>总参数，每 token 激活 3B 参数。它用了一个巧妙的技巧来提升容量：部分层会以循环方式被访问三次，使其表现如同拥有更多参数。它支持 1M-token 的上下文长度，可接受图像和文本输入。Thinking Machines Lab 以混合精度格式发布该模型，专家权重采用 NVFP4 和 MXFP8。还附带一个 DSpark drafter，以少量内存开销换取额外加速。</p>
+<p>Inkling 2 Mini 比 Inkling 2 Small 小得多得多，专为本地 AI 环境设计。我们认为这是一个令人耳目一新的优秀本地模型。在我们的 vibe 测试中，它至少与 Qwen 3.8 27B 相当。还需要更多验证，但我们对这次发布非常兴奋！</p>
+<p>我们提供 transformers、Llama App（llama.cpp）和 MLX 支持。SGLang 也为数据中心硬件上的生产部署提供首日推理支持。</p>
+<p>本文会介绍 Inkling Mini 的不同之处、我们的一些 vibe 测试，以及如何在你的环境中使用它。</p>
+<h2>Inkling 2 Mini 有哪些新特性？</h2>
+<p>Inkling 2 Mini 是一个拥有 24 个解码器层的 mixture-of-experts 模型，但中间 12 层会在一个循环中运行三次。因此，该模型以仅 24 个<em>物理</em>层，表现得如同拥有 48 个（6+ 3<em>12 + 6）</em>逻辑*层。</p>
+<p>与 Inkling 2 Small 类似，Inkling 2 Mini 每 token 执行 48 次层访问。隐藏维度是 2,304，而非 4,608。在每次层访问时，两个变体都会将 token 路由到 8 个专家，但 Mini 从每层 128 个专家中选择，而 Small 从 384 个中选择。 解码器运行第 0–5 层一次，第 6–17 层三次，第 18–23 层一次。对第 6–17 层的三次遍历都复用相同的权重。</p>
+<p>Nanbeige 等架构此前已探索过循环机制。但 Inkling 2 Mini 探索了一种有趣的方法。每次遍历循环核心（第 6–17 层）都从相同的输入开始，即前六层的输出。信息通过跨 pass 的 <code>messages</code> 在各次遍历之间传递。每个循环层用自己的学习到的 query 读取上一次遍历输出中的一条 message（为其 query、key、value 和 MLP 输入各读取一条 message）。随后一个小型门控控制器同时查看该层的当前输入和 message。它决定遗忘当前输入的多少部分，以及加入 message 的多少部分。因此每次遍历都会对上一次遍历计算出的结果进行细化。</p>
+<p><a href="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/architecture.png"><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/architecture.png" alt="Inkling 2 Mini 架构"></a></p>
+<blockquote>每个六层块包含五个滑动窗口层和一个全注意力层。本地窗口最多容纳 1,024 个 token。<br>注意力使用 24 个 query 头和 8 个 KV 头。它使用学习到的相对位置 logits、一个学习到的 sink 和一个输出门。全注意力层使用动态 key 和 value 卷积。<br>路由器为每个 token 从 128 个 SwiGLU 专家中选择 8 个。它对选中的分数做归一化，并将权重缩放 8 倍。<br>在第 2 和第 3 次遍历中，每个核心层会对上一次遍历的两个残差块做注意力。四个 rank-64 门将各自的 message 混合进 query、key、value 和 MoE 输入。</blockquote>
+<blockquote>文本解码器宽度为 2,304，每个专家的中间宽度为 1,152。复用核心权重减少了 checkpoint 存储的不同层数量。模型仍然执行全部 48 次访问，每次访问都保留自己的 KV 和短卷积状态。</blockquote>
+<p>除了旗舰的 Inkling 2 Mini 模型，还发布了一个研究产物。它共享相同的架构，但这个变体经过训练，可以接受可变次数的循环遍历 🤯。将遍历次数设为 1 或 2 而不是 3，会使推理快得多，但生成质量可能略低。我们测试了这个变体，它能工作，但我们还没有深入评估。</p>
+<h2>基准测试结果</h2>
+<p>Inkling 2 Mini 在 Artificial Analysis Intelligence Index v5（AAv5）中处于同类最先进水平，在各类别的众多基准测试中也是如此。与 Gemma 4 31B、Muse Glimmer、Qwen3.8-27B 和 Nemotron 3.5 Super VL 相比，Inkling 2 Mini 在 48 个基准中的 32 个上领先。这些基准涵盖编程与自动研究、面向知识工作的 agentic 搜索与工具使用、视觉理解与创作、推理与知识，以及安全与对齐。完整基准列表和分数请见 <a href="https://huggingface.co/thinkingmachines/Inkling-2-Mini">Inkling 2 Mini 模型卡</a>。</p>
+<p>Inkling 2 Mini 是一个出色的本地编程伙伴。它在 FrontierCode v2.0 中领先，在 Terminal-Bench 4.0 上与 Qwen3.8-27B 持平，在 AutomationBench-AA v1.0.6 上落后于 Qwen。你可以在下面查看我们在编程和知识工作方面的一些亮点。注意 AA Briefcase 是 ELO 评分，越高越好。</p>
+<p><a href="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/selected-benchmarks.png"><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/selected-benchmarks.png" alt="Inkling 2 Mini 部分基准测试"></a></p>
+<h2>推理支持</h2>
+<p>本节介绍如何在 transformers、llama.cpp、MLX 和 SGLang 中使用 Inkling 2 Mini。</p>
+<h3>Transformers</h3>
+<p>我们同时支持 Inkling 2 Mini（固定循环）和 <code>TML-d24-varloop-research</code>（可变循环）研究变体。</p>
+<h4>使用 Inkling 2 Mini 的固定循环</h4>
+<p>你可以使用 <code>AutoModelForMultimodalLM</code> 类。</p>
+<pre><code>import torch
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;thinkingmachines/Inkling-2-Mini&quot;
+
+processor = AutoProcessor.from_pretrained(model_id)
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id,
+)
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Why is the sky blue?&quot;}]}]
+
+inputs = processor.apply_chat_template(
+    messages, tokenize=True, add_generation_prompt=True, return_dict=True, return_tensors=&quot;pt&quot;,
+).to(model.device)
+input_len = inputs[&quot;input_ids&quot;].shape[-1]
+
+outputs = model.generate(**inputs, max_new_tokens=1024)
+print(processor.decode(outputs[0][input_len:], skip_special_tokens=False))</code></pre>
+<h4>可变循环</h4>
+<p>要设置研究 checkpoint 中的循环次数，可以按如下方式修改 <code>text_config</code> 中的 <code>loop_num_passes</code>。下面的示例使用两次循环。</p>
+<pre><code>import torch
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;thinkingmachines/TML-d24-varloop-research&quot;
+
+processor = AutoProcessor.from_pretrained(model_id)
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id,
+    text_config={&quot;loop_num_passes&quot;: 2},
+)
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Why is the sky blue?&quot;}]}]
+
+inputs = processor.apply_chat_template(
+    messages, reasoning_effort=&quot;medium&quot;, tokenize=True, add_generation_prompt=True, return_dict=True, return_tensors=&quot;pt&quot;, 
+).to(model.device)
+input_len = inputs[&quot;input_ids&quot;].shape[-1]
+
+outputs = model.generate(**inputs, max_new_tokens=1024)
+print(processor.decode(outputs[0][input_len:], skip_special_tokens=False))</code></pre>
+<h4>图像与文本</h4>
+<p>对于图像 prompt，将任一示例中的 messages 替换为下面的列表，然后照常推理。</p>
+<pre><code>messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;image&quot;, &quot;image&quot;: &quot;/path/to/image.jpg&quot;},
+            {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;What is in this image?&quot;},
+        ],
+    }
+]</code></pre>
+<h4>推理强度</h4>
+<p>向 <code>processor.apply_chat_template(...)</code> 传入 <code>reasoning_effort=&quot;medium&quot;</code> 可为请求设置强度。chat template 会把对应的数值作为 system message 加入 prompt。默认值为 <code>high</code>（0.9）。</p>
+<pre><code>inputs = processor.apply_chat_template(
+    messages, reasoning_effort=&quot;medium&quot;, tokenize=True, add_generation_prompt=True, return_dict=True, return_tensors=&quot;pt&quot;, 
+).to(model.device)</code></pre>
+<p>可用级别有 <code>none</code>（0.0）、<code>minimal</code>（0.1）、<code>low</code>（0.2）、<code>medium</code>（0.7）、<code>high</code>（0.9；默认）、<code>xhigh</code>（0.99）和 <code>max</code>（0.99）。你也可以传入 0.0 到 0.99 之间的数字，例如 <code>reasoning_effort=0.35</code>。</p>
+<h4>工具调用</h4>
+<p>让我们让模型调用一些工具。</p>
+<p>在这个示例中，我们向模型询问给定位置的当前温度。除了 prompt，我们还提供了执行该任务的工具（<code>get_current_temperature</code>）。模型请求调用工具，我们代它调用工具，然后将输出加入下一组指令。它使用工具的输出，并为我们提供最终结果。</p>
+<p>如果你想进一步了解工具调用，建议查阅我们的<a href="https://huggingface.co/docs/transformers/en/chat_extras">官方文档</a>。</p>
+<pre><code>import torch
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;thinkingmachines/Inkling-2-Mini&quot;
+processor = AutoProcessor.from_pretrained(model_id)
+model = AutoModelForMultimodalLM.from_pretrained(model_id, dtype=torch.bfloat16, device_map=&quot;auto&quot;)
+
+
+def get_current_temperature(location: str, unit: str):
+    &quot;&quot;&quot;
+    Get the current temperature at a location.
+
+    Args:
+        location: The location to get the temperature for, in the format &quot;City, Country&quot;
+        unit: The unit to return the temperature in. (choices: [&quot;celsius&quot;, &quot;fahrenheit&quot;])
+    &quot;&quot;&quot;
+    return 22.0  # A real function would call a weather API here
+
+
+def ask(messages):
+    inputs = processor.apply_chat_template(
+        messages, tools=[get_current_temperature], reasoning_effort=&quot;low&quot;, tokenize=True, return_dict=True, return_tensors=&quot;pt&quot;
+    ).to(model.device)
+    output = model.generate(**inputs, max_new_tokens=1024)[0][inputs[&quot;input_ids&quot;].shape[-1] :]
+    parsed = processor.parse_response(output, prefix=inputs[&quot;input_ids&quot;][0])
+    return parsed
+
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hey, what's the temperature in Paris right now?&quot;}]
+
+reply = ask(messages)
+call = reply[&quot;tool_calls&quot;][0][&quot;function&quot;]
+print(&quot;Model calls:&quot;, call[&quot;name&quot;], call[&quot;arguments&quot;])  # the model fills in the arguments itself
+
+temperature = get_current_temperature(**call[&quot;arguments&quot;])
+messages += [reply, {&quot;role&quot;: &quot;tool&quot;, &quot;name&quot;: call[&quot;name&quot;], &quot;content&quot;: str(temperature)}]
+print(ask(messages)[&quot;content&quot;])
+
+# Model calls: get_current_temperature {'location': 'Paris, France', 'unit': 'celsius'}
+# Right now in Paris it’s about **22°C** (roughly **71.6°F**).</code></pre>
+<h3>Llama App 与 Llama.cpp</h3>
+<p><a href="https://llama.app/">Llama App</a> 让你可以在 macOS（从菜单栏）或 Windows（系统托盘）上轻松运行和管理本地语言模型。它基于 llama.cpp 构建，由同一团队开发。该应用还提供本地 OpenAI 兼容 API，便于与编程 agent、编辑器和脚本集成。</p>
+<p>为 Inkling 2 Mini 的发布，我们为两个模型提供了 GGUF 4-bit（<code>IQ4_NL)</code>）和 8-bit（<code>Q8_0</code>）量化版本。</p>
+<p>如果你使用 Linux，或想从 CLI 提供模型服务，可以对固定循环模型运行以下命令：</p>
+<pre><code>llama serve -hf ggml-org/Inkling-2-Mini-GGUF:IQ4_NL</code></pre>
+<p>要运行可变循环模型，可以运行</p>
+<pre><code>llama serve -hf ggml-org/TML-d24-varloop-research-GGUF:IQ4_NL</code></pre>
+<p>要加载 8-bit 权重，请将后缀改为 <code>:Q8_0</code>。</p>
+<p>这里我们让 4-bit 模型为一个名为 plant therapy 的 SaaS 做一个网站，该服务为植物匹配持证治疗师。模型相当自主，它自己为网站视觉元素制作了 SVG，甚至构建了匹配逻辑。</p>
+<h3>SGLang</h3>
+<p>Inkling 2 Mini 在 SGLang 中提供 Day 0 支持。你可以安装最新版本的 SGLang，并执行以下命令来启动服务器。有一个前提条件需要满足：在 <code>SM103</code> 上运行。</p>
+<pre><code>export MODEL=&quot;thinkingmachines/Inkling-2-Mini&quot;
+
+python -m sglang.launch_server \
+  --model-path $MODEL \
+  --served-model-name inkling \
+  --attention-backend fa4 --bf16-gemm-backend torch --dtype bfloat16 \
+  --tp 1 --page-size 128 --grammar-backend xgrammar \
+  --host 0.0.0.0 --port 30000</code></pre>
+<p>服务器启动后，你应该可以这样请求 API</p>
+<pre><code>curl -s localhost:30000/health_generate &amp;&amp; echo OK
+curl -s localhost:30000/v1/models | python -m json.tool
+
+curl -s localhost:30000/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+        &quot;model&quot;: &quot;inkling&quot;,
+        &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is 17 times 24?&quot;}],
+        &quot;max_tokens&quot;: 512,
+        &quot;reasoning_effort&quot;: &quot;low&quot;
+      }' | python -m json.tool</code></pre>
+<p>也可以通过设置 <code>--enable-multimodal</code> 启用多模态。</p>
+<h3>投机解码</h3>
+<p>SGLang 可以使用三层 DSpark draft 来提出候选 token，交由目标模型验证。该 draft 会读取解码器第 5、23 和 41 次访问的输入，以及索引 48 处的最终归一化状态。在已有 draft 权重的情况下，在服务器命令中加入 <code>--speculative-algorithm DSPARK --context-length 131072</code>。</p>
+<p>我们对启用和不启用投机解码的模型进行了基准测试，在单张 NVIDIA B300 GPU 上测量生成速度，其中每个请求都有 1,024-token 的 prompt，并恰好生成 1,024 个 token，并发数为 1、4、16 和 64。</p>
+<p>展开 SGLang 基准测试脚本</p>
+<pre><code>MODEL=thinkingmachines/Inkling-2-Mini
+
+for TAG in base mtp; do
+  EXTRA=&quot;&quot;; [ $TAG = mtp ] &amp;&amp; EXTRA=&quot;--speculative-algorithm DSPARK&quot;
+
+  # Start the server (with or without MTP)
+  python -m sglang.launch_server --model-path $MODEL \
+    --attention-backend fa4 --bf16-gemm-backend torch --dtype bfloat16 \
+    --tp 1 --page-size 128 --context-length 131072 --max-running-requests 64 \
+    --port 30000 $EXTRA &gt; $TAG.log 2&gt;&amp;1 &amp;
+  until curl -sf localhost:30000/health_generate &gt; /dev/null; do sleep 10; done
+
+  # Benchmark at increasing concurrency
+  for C in 1 4 16 64; do
+    python -m sglang.bench_serving --backend sglang --port 30000 --model $MODEL \
+      --dataset-name random --apply-chat-template \
+      --random-input-len 1024 --random-output-len 1024 --random-range-ratio 1.0 \
+      --num-prompts $(( C*4 &lt; 32 ? 32 : C*4 )) --max-concurrency $C \
+      --output-file results_$TAG.jsonl
+  done
+
+  kill %1; wait
+done</code></pre>
+<p><a href="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/mtp-benchmark.png"><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/mtp-benchmark.png" alt="启用和不启用 MTP 时 SGLang 的吞吐量与每 token 耗时"></a></p>
+<h3>MLX</h3>
+<p>我们已将 MLX 支持上游到 mlx-lm 项目，包括多模态图像和文本输入，并通过 mlx-community 组织共享了量化版本。</p>
+<p>MLX 推理也可用于原始 checkpoint。在这种情况下，使用原生的 nvfp4 + mxfp8 量化方案，无需重新转换：你能获得作者预期的原始质量。</p>
+<p>以下是一个 CLI 调用示例：</p>
+<pre><code>mlx_lm generate --model thinkingmachines/Inkling-2-Mini --image image.jpg --prompt &quot;Describe this image.&lt;|end_message|&gt;&lt;|message_user|&gt;&lt;|content_image|&gt;&lt;|unused_200054|&gt;&quot; -m 1000</code></pre>
+<h3>演示与 vibe 测试</h3>
+<p>我们在许多有趣的任务中试用了 Inkling 2 Mini，请在本节中查看。</p>
+<h4>3D shader 飞越动画</h4>
+<p>同一个 prompt 生成了两段日落飞越动画，掠过程序化生成的山脉和反光水面，每段都使用单个 WebGL fragment shader 渲染。</p>
+<p><strong>Sunset Ridge（Inkling 2 Mini）</strong></p>
+<p><strong>Over the Still Sea（Qwen 3.8 27B）</strong></p>
+<p>展开共用的飞越 prompt</p>
+<blockquote>构建你能做出的最令人印象深刻的原创实时场景：一个缓慢、电影感的相机飞行，掠过程序化生成的山脉，穿过体积云，低空掠过带有倒影的水面，全部由日落光照亮。以当前目录中单个自包含的 index.html 交付，用一个全屏 WebGL fragment shader 渲染一切，完全由代码生成（不使用任何纹理、图像、字体、库、外部文件或网络请求）。它必须在桌面 Chrome 中于 1920x1080 下流畅运行，目标是在桌面 GPU 上达到 60 fps，并带有一个自动分辨率缩放回退机制：当帧率下降时降低内部渲染分辨率，且飞行必须无限持续且不出现故障。要检查你的工作，运行 node shot.cjs index.html shot.png 6（第三个参数是等待多少秒；逗号列表如 3,12,25 会在每个时间点保存一张截图，可选的第四个参数设置尺寸，默认 1280x720）：它会在无头 Chrome 中渲染页面、保存截图，并打印 WebGL 渲染器、大致帧率和任何控制台错误；然后查看图像。这台机器上的无头渲染器可能仅使用软件渲染，因此其帧率可能远低于真实桌面 GPU 的帧率，并非目标。自己决定结果何时完成，然后用简短描述回复你构建了什么。</blockquote>
+<h4>活起来的《星月夜》</h4>
+<p>文森特·梵高，《星月夜》（1889）</p>
+<p>Inkling 2 Mini 的再创作</p>
+<p>我们在 Pi coding harness 中给 Inkling 2 Mini 提供了梵高画作的参考图像和一个截图辅助工具。Inkling 编写了一个自包含的 HTML 页面，使用单个 WebGL2 fragment shader。该 shader 从代码绘制场景，不加载参考图像或任何其他资源。它利用时间让旋转的天空、星星的光芒、摇曳的柏树和村庄窗户的闪烁动起来。</p>
+<p>Inkling 通过 24 轮截图检查渲染并审视自己的作品。我们在 Apple M4 Max 上以 1080p 和 60 fps 逐帧录制了最终动画。</p>
+<p>展开 prompt</p>
+<blockquote>在这个文件夹中，starry-night.jpg 是文森特·梵高的《星月夜》（1889，公有领域）。将其再创作为一幅活着的画：单个自包含的 index.html（所有代码内联，无外部文件、库或网络请求），填满浏览器窗口，并在桌面 Chrome 中于 1920x1080 下流畅运行。一切都必须通过代码程序化生成，例如使用 WebGL shader；页面不得加载、嵌入或采样 starry-night.jpg 或任何其他图像。忠实于画作的构图和调色板（天空中巨大的螺旋和漩涡、带光环的星星、发光的新月、左侧深色火焰般的柏树、起伏的山丘，以及带有教堂尖顶的村庄），以梵高厚重、有方向性的笔触渲染，并让它活起来：天空的漩涡流动，星星和月亮脉动发光，柏树摇曳，村庄的窗户发光闪烁。力求做出最令人印象深刻的结果。提供了一个辅助工具：运行 node shot.js --help 查看如何在多个时刻截图 index.html；将截图与参考图对比，不断改进直到你满意，然后用简短总结回复你做了什么。</blockquote>
+<h4>从餐巾纸到应用</h4>
+<p><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/napkin-to-app/napkin-sketch.png" alt="手绘的 Trip Split 线框图，包含 Expenses、Add expense 和 Balances 界面"></p>
+<p>输入的餐巾纸草图</p>
+<p><img src="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/napkin-to-app/trip-split-app.png" alt="Inkling 的 Trip Split 应用，显示三笔旅行支出和 $405 总计"></p>
+<p>生成的 Trip Split 应用</p>
+<p>我们在 Pi coding harness 中给 Inkling 2 Mini 提供了一张手绘 Trip Split 线框图的照片和一段 prompt。Inkling 利用草图中的标签、示例支出和手写注释，用原生 CSS 和 JavaScript 在单个 HTML 文件中构建了支出列表、添加支出表单和余额视图。当支出变化时，应用会更新总计和余额，建议用于结清旅行的付款，并将数据保存在浏览器的 localStorage 中，以便刷新后仍能保留。</p>
+<p>我们进行了三次独立的 Inkling 尝试，并使用 Playwright 点击检查每个构建，在需要视觉判断的地方查看截图。这里展示的第一次尝试通过了全部 13 项检查。添加草图中的 $90 晚餐后，总计从 $405 升至 $495，并重新计算了每个人应付的金额。</p>
+<p>展开 prompt</p>
+<blockquote>这个文件夹中的照片 sketch.jpg 是一位产品设计师手绘的小应用线框图。真正构建那个应用，做出你能实现的最令人印象深刻、原创、生产质量的版本：在这个文件夹中放置单个自包含的 index.html，仅使用原生 HTML、CSS 和 JavaScript（不使用框架、CDN、外部文件或网络请求；localStorage 可以），它必须在桌面 Chrome 中于 1920x1080 下流畅运行。把纸上的一切都当作规范：每个界面、标签、按钮和数字，示例数据，以及每条红色注释描述的行为都必须真正可用，而视觉设计、排版和动效则由你做得漂亮。用你的视觉仔细查看草图，并再次用你的视觉检查自己的工作：node shot.cjs --help 说明了一个提供的辅助工具，可在无头 Chrome 中于任意窗口尺寸下，在点击或其他 JavaScript 步骤之后对 index.html 截图（如果你更喜欢自己的脚本，也安装了 Playwright），你可以用 read 工具查看任何截图。点击每个功能，将每个界面与草图对比，不断改进直到你完全满意；然后用简短总结回复你构建了什么。</blockquote>
+<h4>4-bit 模型</h4>
+<p>我们让 4-bit GGUF 量化的 Inkling 2 Mini（IQ4_NL）为一个名为 plant therapy 的 SaaS 做一个网站，该服务为植物匹配持证治疗师。</p>
+<p>模型相当自主，它自己为网站视觉元素制作了 SVG，甚至构建了匹配逻辑，而这一切都来自一个简短的 prompt：“Can you make a website for my saas called plant therapy where I match house plants with licensed therapists so plants don’t die, return single HTML”。</p>
+<h4>“把自己变成浏览器 agent”</h4>
+<p>我们将 Inkling 2 Mini 与 Pi coding agent 配对，让它使用 Helium、Chromium 和 Hugging Face Sandboxes 把自己构建成一个浏览器 agent。我们在<a href="https://huggingface.co/buckets/huggingface-projects/inkling-2-mini-release-assets/resolve/browser-agent-demo">这个 bucket</a> 中提供了 traces 和最终文件（可用作浏览器 agent）。</p>
+<h4>结语</h4>
+<p>我们非常高兴与 Thinking Machines Lab 合作发布 Inkling 2 Mini，这是一个面向本地环境的高性能中型模型。试试这个模型，并在评论中告诉我们你的想法！</p>
+<h2>本文提到的模型 1</h2>
+<p>更多博客文章</p>
+<p>announcementmultimodaltransformers</p>
+<h2>欢迎 Thinking Machines 的 Inkling</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li>+1</li></ul>
+<p>174</p>
+<p>2026 年 7 月 15 日</p>
+<p>transformersmistralvllm</p>
+<h2>欢迎 Le Chonk：Hugging Face 上的 Mistral Large 4</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/649a943906690b959319d192/k8ZlmJWF3GNpYLHrdpejY.jpeg" alt=""></li><li>+7</li></ul>
+<p>91</p>
+<p>2026 年 10 月 29 日</p>
+<h3>社区</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/651c82d629de5e7f06614d1c/SejY_tHfa_H_TSLo6jg5H.png" alt=""></p>
+<p>fahdmirzac</p>
+<p>约 7 小时前</p>
+<p>感谢这篇文章。它帮助我制作了这个模型的实操视频 <a href="https://youtu.be/BrN8dKfTU7M?si=8Cqg4igsdMY9OSJc">https://youtu.be/BrN8dKfTU7M?si=8Cqg4igsdMY9OSJc</a></p>
+<p>通过将文件拖入文本输入框、粘贴或点击此处来上传图像、音频和视频。</p>
+<p>轻点或粘贴此处以上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Finkling2mini">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Finkling2mini">登录</a> 以发表评论</p>
+<p>25</p>
+<ul><li><a href="https://huggingface.co/cfahlgren1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/648a374f00f7a3374ee64b99/YPwSOrronoozwHbJchPn3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Presidentlin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/655e4c26d5c0d3db535cdd66/IjYjuy2goiaHG08mFiFmU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/gksriharsha"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ipZZ5HGriNP6O2peUw0Nx.jpeg" alt=""></a></li><li><a href="https://huggingface.co/blanchon"><img src="https://huggingface.co/avatars/95cb600601ea4207aaf8bcaa1c387895.svg" alt=""></a></li><li><a href="https://huggingface.co/rwightman"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1667002643224-604a5184dca2c7ac7508b849.jpeg" alt=""></a></li><li><a href="https://huggingface.co/MindBuilder"><img src="https://huggingface.co/avatars/1a9213c39e3fc74a6e2359c16de239a8.svg" alt=""></a></li><li><a href="https://huggingface.co/pierrci"><img src="https://huggingface.co/avatars/d4cce894629554d9a10369ecc2a7de67.svg" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kashyap7x"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6489d7aada6bb0138f52027b/py4YEgVs8Y-QWzCmpa6Xx.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li></ul>
+<h2>本文提到的模型 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>推出 harness adapters：将常用模型适配至专属 harness，以提升性能并优化成本</title>
+      <link>https://huggingface.co/blog/harness-adapters-at-scale</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/harness-adapters-at-scale</guid>
+      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章列表</a></p>
+<h1>推出 harness 适配器：将你喜欢的模型适配到你的 harness，提升性能并降低成本</h1>
+<p>发布于 2026 年 11 月 20 日</p>
+<p>在 GitHub 上更新</p>
+<p>31</p>
+<ul><li><a href="https://huggingface.co/ybelkada"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/lewtun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AdithyaSK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6442d975ad54813badc1ddf7/JIAN8B1dLOXN8fWTk8_mI.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ljupco"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/655879337b098f9cb5dbdb16/j-NwJgRvi_2jw6JU0yFp4.jpeg" alt=""></a></li><li><a href="https://huggingface.co/TheOnlyN3O"><img src="https://huggingface.co/avatars/978cf80583be8fb8a48d8fbe047a941f.svg" alt=""></a></li><li><a href="https://huggingface.co/aminediroHF"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/ybelkada"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt="Younes B's avatar"></a></p>
+<p>Younes B</p>
+<p>ybelkada</p>
+<p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw's avatar"></a></p>
+<p>ben burtenshaw</p>
+<p>burtenshaw</p>
+<p><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63e0eea7af523c37e5a77966/B6Qs5bgr8wXcy2tPl6CVQ.jpeg" alt="Nathan Habib's avatar"></a></p>
+<p>Nathan Habib</p>
+<p>SaylorTwift</p>
+<p><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt="Lysandre's avatar"></a></p>
+<p>Lysandre</p>
+<p>lysandre</p>
+<p><a href="https://huggingface.co/aminediroHF"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt="Amine Dirhoussi's avatar"></a></p>
+<p>Amine Dirhoussi</p>
+<p>aminediroHF</p>
+<p><a href="https://huggingface.co/AdithyaSK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6442d975ad54813badc1ddf7/JIAN8B1dLOXN8fWTk8_mI.jpeg" alt="Adithya S K's avatar"></a></p>
+<p>Adithya S K</p>
+<p>AdithyaSK</p>
+<p><a href="https://huggingface.co/evalstate"><img src="https://huggingface.co/avatars/fd5487822c0c223732070dd3e9aedf25.svg" alt="shaun smith's avatar"></a></p>
+<p>shaun smith</p>
+<p>evalstate</p>
+<p><a href="https://huggingface.co/sergiopaniego"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt="Sergio Paniego's avatar"></a></p>
+<p>Sergio Paniego</p>
+<p>sergiopaniego</p>
+<p><a href="https://huggingface.co/joelniklaus"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1656078368144-5fae5f68b8423e1d80b8a988.jpeg" alt="Joel Niklaus's avatar"></a></p>
+<p>Joel Niklaus</p>
+<p>joelniklaus</p>
+<p><a href="https://huggingface.co/lewtun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt="Lewis Tunstall's avatar"></a></p>
+<p>Lewis Tunstall</p>
+<p>lewtun</p>
+<p>在自定义任务分布上结合 RL 与你最喜欢的 agent harness，可为该目标 harness 和任务分布带来更准确、更高效的模型。</p>
+<p>模型并未针对所有 harness 和你正在执行的任务进行完全优化，而是面向通用性能。因此，当你把模型和 harness 组合使用时，实际上是在为你真正在做的事情上放弃了性能和效率。借助 RL，你可以训练一个自定义 harness 适配器，为你的 harness 与任务组合充分压榨模型的能力。</p>
+<p>以 Qwen3.8-27B 为例，它在 pi harness 上的 Terminal-Bench 2.1 得分为 39%，平均每任务使用 2.9K token。如果我们冻结这些权重，并加入一个由 RL 训练的自定义 LoRA 适配器，可以得到 55% 的 pass@1，平均 token 使用量为 1.5K。这主要归功于模型推理更少、调用工具更少，并且首次尝试表现更好。</p>
+<p>我们早期的工作（<a href="https://huggingface.co/spaces/FineEnvs/multi-harness-rl">multi-harness RL</a>、<a href="https://huggingface.co/blog/harness-hub/harness-adapters">harness 适配器</a>）表明，在你自己的任务分布上、在你自己的 harness 内进行 RL，可以得到更准确、更高效的模型。那些实验涵盖了数据分析和代码构建任务。在这里，我们希望进一步推进，探索这一结果是否在 27B 规模、更困难的真实世界软件工程任务上、跨三个 harness（Pi、OpenCode 和 Hermes Agent）依然成立。最重要的是，分享一套完全可复用的配方，以便你可以在自己的任务、harness、模型组合上复现。</p>
+<h2>TL;DR</h2>
+<ul><li>我们为每个 agent harness（pi、Hermes Agent、OpenCode）各训练了一个 Qwen3.8-27B 的 LoRA 适配器，RL 在 harness 自身内部进行。</li><li>数据集、训练和 agent rollout 都在 Hub 上的 Jobs 中完成，使用 TRL 的 <code>AsyncGRPOTrainer</code>、OpenEnv 和 harbor。</li><li>每个 harness 适配器在其自身 harness 下、在两个基准测试上都优于基座模型，无论是性能还是效率。</li><li>这三个 LoRA 还合并为一个单一的 super adapter，可在 pi、Hermes Agent 和 OpenCode 下原样运行。</li><li>所有产物（适配器、GGUF、RL 任务、safeagents 插件）都可以通过这个 <a href="https://huggingface.co/collections/harness-hub/qwen38-27b-harness-adapters">Hugging Face collection</a> 浏览。</li></ul>
+<h2>目录</h2>
+<ul><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#training-inside-agent-harnesses">在 agent harness 内部训练</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#generating-custom-rl-tasks-on-hugging-face">在 Hugging Face 上生成自定义 RL 任务</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#testing-the-filters-with-short-training-runs">通过短训练运行测试过滤器</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#asyncgrpotrainer-for-more-efficient-grpo-training"><code>AsyncGRPOTrainer</code>：更高效的 GRPO 训练</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#training-setup">训练设置</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#super-adapter-merging-all-adapters-into-one">Super-adapter：将所有适配器合并为一个</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#final-results">最终结果</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#open-question-what-did-the-model-really-learn-to-do">开放问题：模型究竟学会了做什么？</a></li><li><a href="https://huggingface.co/blog/harness-adapters-at-scale#closing-words-and-future-directions">结语与未来方向</a></li></ul>
+<h2>在 agent harness 内部训练</h2>
+<p>我们利用 <a href="https://huggingface.co/docs/openenv/environments/harbor">OpenEnv 中的 Harbor 集成</a> 和 <a href="https://huggingface.co/docs/trl/openenv">TRL 的 OpenEnv</a> 指南，在我们为最终训练所选的 harness 内部训练模型。我们为所有 RL 任务构建了即用型 Docker 镜像，其中已预装了目标 harness。在最终的 Docker 镜像中，我们使用 Pi <code>1.5.2</code>、OpenCode <code>2.2.7</code> 和 Hermes Agent <code>v0.22.6</code>。下面这张来自前述博客文章的示意图很好地解释了整个协议：</p>
+<p>大多数 RL 框架训练的是 agent 循环的重新实现：agent 是针对框架自己的接口编写的，例如 <a href="https://verl.readthedocs.io/en/latest/advance/agent_loop.html">verl 的 AgentLoop</a>、<a href="https://github.com/NovaSky-AI/SkyRL">SkyRL-Gym</a> 环境、<a href="https://github.com/rllm-org/rllm">rLLM</a> 的 agent 和环境类、<a href="https://github.com/THUDM/slime">slime</a> 的自定义 rollout 函数，或 <a href="https://github.com/OpenPipe/ART">ART</a> 在你自己的 Python agent 中的客户端。而在这里，harness 完全按发布时的样子运行，训练器从它产生的确切 token 中学习，这些 token 由 harness 与 vLLM 之间的代理记录。近期的工作也朝着同一方向推进：<a href="https://huggingface.co/papers/2608.17528">Agent Lightning v1.0</a> 通过代理将部署时的 harness 保持在循环中（“harnessed agentic RL”），<a href="https://novasky-ai.notion.site/skyrl-harbor">SkyRL 的 Harbor 集成</a> 在 Harbor trial 上训练，并将其聊天历史转换为训练器所需的 token。</p>
+<h2>在 Hugging Face 上生成自定义 RL 任务</h2>
+<p>在这套配方中，我们使用 Hub、OpenEnv 和 <a href="https://github.com/huggingface/Repo2RLEnv">Repo2RLEnv</a> 创建了一个用于 agentic coding 的自定义数据集。我们将现有 RL 环境的任务检索、使用 Repo2RLEnv 的任务生成、使用 OpenEnv 的任务验证，以及采样整合到一个单一的数据流水线中。这为我们提供了质量最高的一组经过验证且相关的任务，用于提升 Qwen3.8-27B 在 agentic coding 上的表现。在本节中，我们将介绍它是如何构建的，以便你在自己的领域中尝试。</p>
+<p>RL 训练需要 agent 可以尝试的任务、对每次尝试打分的验证器，以及证明验证器正确的证据。接受错误答案的验证器会教出错误的行为。已经可行的任务不会教给模型任何东西。</p>
+<p>本节描述了我们如何从三个来源构建任务集：两个来自 Hugging Face Hub，第三个使用 Tasksmith（Repo2RLEnv 中的流水线）生成。每个任务都通过 <code>openenv validate</code> 的资格筛选，并对基座模型 Qwen3.8-27B 进行同样的难度检查。</p>
+<p><img src="https://huggingface.co/buckets/huggingface/harness-adapters-blog-assets/resolve/images/task-pipeline.png" alt="任务流水线：Tasksmith、SWE-smith 和 SWE-Gym 来源经过资格筛选、Harbor 打包、在 Hugging Face Jobs 上运行 openenv validate，以及用 Qwen3.8-27B 进行难度检查"></p>
+<h3>三个来源</h3>
+<p>每个任务使用 Harbor 格式，Terminal-Bench 2.1 也使用该格式。在 Hub 上对 Harbor 环境的广泛搜索返回了约 59,000 个任务，但它们包含重复项、评估集和标记为不可用于训练的任务。我们筛选出仅两个专为训练构建的 Hub 来源，并自行生成了第三个集合：</p>
+<ul><li>SWE-smith（<a href="https://huggingface.co/datasets/SWE-bench/SWE-smith-py">Python</a>、<a href="https://huggingface.co/datasets/SWE-bench/SWE-smith-go">Go</a>）向真实的 Python 和 Go 仓库注入 bug，通过 LLM 改写或诸如翻转运算符之类的变异实现。捕获每个 bug 的测试成为该任务的测试。它增加了数据量。</li><li>SWE-Gym，以 Harbor 任务形式打包在 <a href="https://huggingface.co/datasets/open-thoughts/TaskTrove">TaskTrove</a> 中，将真实 GitHub issue 及其已合并的修复转化为任务。它增加了真实世界中的 bug。</li><li><a href="https://huggingface.github.io/Repo2RLEnv/pipelines/tasksmith/">Tasksmith</a> 从已合并的 pull request 生成任务。一个 LLM agent 编写指令和测试，Tasksmith 检查结果：参考解和一个有效的替代解必须通过，而未修复的代码和一个已知错误的解必须失败。</li></ul>
+<p>我们使用 Tasksmith 来针对性地填补缺口。我们梳理了目标基准测试（Terminal-Bench 2.1、SWE-bench Pro 的困难子集和 DeepSWE）所测试的技能，然后选择能锻炼这些技能的 pull request，例如 HTTP 流式传输、文件系统操作和序列化。从 30 个已合并的 pull request 中，Tasksmith 在 10 个 Python 仓库中生成了 24 个通过其检查的任务，其中 17 个是在第二次运行时通过的。它的检查不能取代我们的检查，因此这些任务与其他任务一样经过相同的流水线。</p>
+<h3>使用 <code>openenv validate</code> 进行验证</h3>
+<p>首先运行元数据筛选。它保留来自训练划分、具有宽松许可证的任务。它丢弃重复项、标记为不可用于训练的任务、我们目标基准测试中的 253 个任务，以及来自这些基准测试所用仓库的任何任务。然后我们在全新 trial 中对每个任务运行 <code>openenv validate</code> 的语义检查：</p>
+<ul><li>参考解获得最高奖励（<code>semantic.oracle_max</code>）。</li><li>什么都不做得分明显更低（<code>semantic.floor_gap</code>）。</li><li>没有任何 canary 得分高于什么都不做（<code>semantic.canary_floor</code>）。</li><li>重放参考解得到相同奖励（<code>runtime.episode_determinism</code>）。</li></ul>
+<p>每个 trial 作为独立的 Hugging Face Job 运行，这让我们可以一次验证数十个任务。<code>openenv validate</code> 为任何 Harbor 任务提供相同的选项：</p>
+<pre><code>openenv validate path/to/task --sandbox hf-sandbox</code></pre>
+<p>1,127 个 Hub 候选任务中有 858 个通过。错误答案对照捕获了缺陷，包括一个接受不完整实现的 Tasksmith 任务，以及一个接受已知错误答案的 Terminal-Bench 2.1 验证器（regex-log）。大多数失败是基础设施问题，例如镜像未能启动。失败的任务保留在 rejected 划分中，并记录失败的检查。</p>
+<h3>使用基座模型进行难度检查</h3>
+<p>一个有效的任务仍然可能教不了任何东西。GRPO（group relative policy optimization）将每次尝试与同一任务的其他尝试进行对比打分，因此如果一个任务的每次尝试都通过，或每次尝试都失败，就不会提供学习信号。在训练之前，Qwen3.8-27B 对每个任务尝试 4 次，或对每个仓库分层抽样的六个任务尝试 8 次。</p>
+<p>在 442 个已打分任务中，Qwen3.8-27B 每次都解决了 151 个，从未解决 120 个。它仅有时解决的 171 个任务构成合格集。下图显示了得分如何在两端堆积，以及它们如何因来源而异。模型每次都解决大多数 Go 任务，在超过三分之一的 SWE-smith Python 任务上每次尝试都失败，并在 73% 的 SWE-Gym 任务上处于中间水平。</p>
+<p><img src="https://huggingface.co/buckets/huggingface/harness-adapters-blog-assets/resolve/images/difficulty-check.png" alt="Qwen3.8-27B 在 442 个已打分任务上的结果，按解决的尝试次数和来源划分"></p>
+<p><em>Qwen3.8-27B 在 442 个已打分任务上的结果。绿色标记的是合格任务，即模型在某些尝试中解决但并非全部。</em></p>
+<p>这个例子展示了我们如何将 1,127 个任务筛选和验证为 278 个，并直接纳入最终数据集。该流水线随后将剩余的 522 个被拒绝任务，使用 Tasksmith 进行修复和复杂化，并重复验证。</p>
+<h2>通过短训练运行测试过滤器</h2>
+<p>该流水线应用两个过滤器：验证移除损坏的任务，难度检查保留基座模型仅有时解决的任务。本节测试这些过滤器是否改变模型所学的内容。我们进行了四次短训练运行，每次最多 50 步，各自使用来自流水线不同阶段的任务，并在 Terminal-Bench 2.1 上与基座模型进行比较。</p>
+<p>每次运行使用 LoRA 和 GRPO、TRL 的 <code>AsyncGRPOTrainer</code>，在 32 个任务上训练 Qwen3.8-27B。所有四次运行使用相同的 agent harness（OpenCode，最多 48 次模型调用）、相同的设置和一个 8×H200 Hugging Face Job，奖励是验证器的通过或失败。任务集的区别在于它们的过滤方式：</p>
+<ul><li><strong>未验证</strong>：24 个接受的任务加上 8 个未通过验证的任务。</li><li><strong>已验证</strong>：32 个接受的任务，不考虑难度选择。</li><li><strong>不合格</strong>：32 个接受的任务，基座模型总是或从不解决。</li><li><strong>合格</strong>：32 个接受的任务，基座模型在某些尝试中解决。</li></ul>
+<p>下图显示了任务如何影响模型学习。表格列出了每次运行的步数和我们评估的 checkpoint。图表跟踪了在不同验证状态的任务子集上的训练奖励。</p>
+<h3>数据集</h3>
+<p><code>harness-hub/agentic-coding-envs</code> 包含来自 35 个仓库的 871 个任务。Hub 任务每个仓库上限为 40 个，因此没有单一项目占主导。下表显示了每个来源的贡献。该数据集有两个视图：所有接受的任务，以及用于 GRPO 训练的合格子集。被拒绝的尝试保留在单独的配置中。</p>
+<table><thead><tr><th>来源</th><th>任务类型</th><th>任务数</th><th>合格数</th></tr></thead><tbody><tr><td>SWE-smith</td><td>注入到 Python 和 Go 中的 bug</td><td>717</td><td>144</td></tr><tr><td>SWE-Gym (TaskTrove)</td><td>真实 GitHub issue</td><td>130</td><td>27</td></tr><tr><td>Tasksmith</td><td>从已合并 pull request 生成</td><td>24</td><td>22</td></tr><tr><td><strong>总计</strong></td><td></td><td><strong>871</strong></td><td><strong>171</strong></td></tr></tbody></table>
+<h2><code>AsyncGRPOTrainer</code>：更高效的 GRPO 训练</h2>
+<p>我们利用了 TRL 中稳定版本的 <code>AsyncGRPOTrainer</code>，该训练器的主要优势在于它不必等到所有 rollout 完成后才进入下一个训练优化步骤。</p>
+<p>有关该训练器及其构建块的更详细阅读，请参阅 <a href="https://huggingface.co/spaces/trl-lib/async-grpo-stable">AsyncGRPO 博客文章</a>。</p>
+<h2>训练设置</h2>
+<p>为了得到最终的 harness 适配器，我们使用 TRL 的 <code>AsyncGRPOTrainer</code> 在 <a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen/Qwen3.8-27B</a> 之上训练了 LoRA 适配器。适配器通过 <code>all-linear</code> 标志附加到模型。为了最大化训练效率，在 rollout 阶段关闭了 thinking 模式，并且我们在开启和关闭 thinking 的情况下评估了最终适配器，以便进行更广泛的比较。</p>
+<p>最终奖励函数由验证器的正确性加上一个小的工具效率奖励（0.1，源自 <a href="https://huggingface.co/blog/harness-hub/harness-adapters">上一轮 harness 适配器早期实验</a>，该实验表明 0.1 效果最佳）组成。</p>
+<p>我们使用 Termgrade 环境进行了 50 步的小型 LR 扫描（1e-5、5e-5 和 1e-4），注意到 1e-5 几乎不改变训练正确性（从 0.52 到 0.50），1e-4 导致 rollout 崩溃而非改善（每次 rollout 的轮数从 18 降到 6，熵上升），只有 5e-5 明显改善（到第 40 步时从 0.49 到 0.60）。更长的 5e-5 运行随后显示出不稳定迹象（rollout 长度崩溃、熵上升），因此我们在最终运行中选定 2e-5。</p>
+<h3>训练基础设施</h3>
+<p>每个 harness 适配器使用 NVIDIA 2xB200 GPU 训练，其中一个 GPU 分配给 vLLM 服务器，另一个分配给训练进程。我们首先进行了一些压力测试，以最大化单个优化步骤内可训练的 RL 任务数量。为此，我们将 <code>AsyncGRPOTrainer</code> 的 <code>--token-budget</code> 参数在我们设置下的上限“拉满”。下图显示了每个 harness 每步组数的演变（蓝色：Pi，绿色：OpenCode，橙色：Hermes）。</p>
+<p>随着模型在训练过程中越来越好，它能够在每个训练步骤中容纳越来越多的组，这使模型在每个优化步骤获得的信号更加多样化。</p>
+<h3>最终混合</h3>
+<p>最终数据混合由来自 <a href="https://huggingface.co/datasets/harness-hub/harness-adapters">harness-adapters RL 环境</a>的 750 个任务和来自 <a href="https://huggingface.co/datasets/ai-and/termgrade-environments">termgrade</a> 的 300 个任务组成。为了最大化训练期间采样任务的多样性，我们对数据采样策略进行了轻微定制，下面将进行解释：</p>
+<p>在训练之前，任务按家族（即我们生成的 RL 环境的仓库。对于 Termgrade，我们只是按名称排序，因为每个任务被视为自己的家族）交错排列成固定顺序，因此每个训练步骤在遵循混合分布的同时尽可能混合多个仓库。</p>
+<h3>循环中的 safeagents</h3>
+<p>我们还插入了 <a href="https://github.com/huggingface/safeagents">safeagents</a> 工具，以便在训练期间阻止模型的任何不当行为。最终插件（由针对 RL 任务和测试路径的正则与模式规则组成）托管在 <a href="https://huggingface.co/harness-hub/qwen-safeagents-plugin">harness-hub/qwen-safeagents-plugin</a>，可使用最新版本的 safeagents 开箱即用，以便任何想复现训练设置的人使用。</p>
+<p>safeagents 阻止的工具数量在训练期间持续下降，这表明模型在每个优化步骤后变得“越来越安全”。下图显示了每个 harness 适配器按训练步骤统计的每 1000 次工具调用中被 safeagents 阻止的调用数。</p>
+<p><img src="https://huggingface.co/buckets/huggingface/harness-adapters-blog-assets/resolve/images/safeagents-blocked.png" alt="pi、hermes 和 opencode 适配器按训练步骤统计的每 1,000 次工具调用中被 safeagents 阻止的调用数"></p>
+<h2>Super-adapter：将所有适配器合并为一个</h2>
+<p>模型合并通常会将它们的能力结合起来，同时保留每个模型所能做的大部分事情。在三个 harness 适配器训练完成后，我们提出了两个问题：合并它们会损失准确率吗？一个单一的“super-adapter”能否在每个 harness 下都准确且高效？</p>
+<p>我们首先逐层比较三个适配器的权重更新。它们中任意两个之间的余弦相似度约为 0.01–0.02：每个适配器在训练期间将模型推向几乎正交的方向。这是合并的最佳情况，因为更新几乎不相互干扰。</p>
+<p>我们沿 rank 维度拼接三个 LoRA 适配器（PEFT 的 <code>combination_type=&quot;cat&quot;</code>）。合并后的适配器 rank 为 96（3 × 32），精确应用 w · (ΔW_pi + ΔW_hermes + ΔW_opencode)。先前的合并工作（<a href="https://huggingface.co/papers/2212.04089">task arithmetic</a>、<a href="https://huggingface.co/papers/2306.01708">TIES</a>、<a href="https://huggingface.co/papers/2410.19735">KnOTS</a>）发现将每个更新缩放到 1 以下效果最佳，因此我们在每个 harness 下、在所有 89 个 Terminal-Bench 2.1 任务上，使用第 120 步的适配器比较了三种权重：</p>
+<ul><li>⅓（平均值）：每个 harness 只保留自己更新的三分之一。</li><li>½：每个更新以一半强度应用。</li><li>1（直接求和）：每个更新完整应用。</li></ul>
+<table><thead><tr><th>权重</th><th>pi</th><th>hermes</th><th>opencode</th><th>所有三个 harness</th><th>每任务工具调用数</th></tr></thead><tbody><tr><td>基座模型</td><td>39.1%</td><td>46.0%</td><td>44.8%</td><td>43.3%</td><td>49.2</td></tr><tr><td>⅓（平均）</td><td>49.4%</td><td>51.2%</td><td>47.1%</td><td>49.2%</td><td>35.6</td></tr><tr><td><strong>½</strong></td><td>48.8%</td><td>53.5%</td><td>55.2%</td><td><strong>52.5%</strong></td><td>25.9</td></tr><tr><td>1（求和）</td><td>40.2%</td><td>62.8%</td><td>47.1%</td><td>50.0%</td><td>13.4</td></tr></tbody></table>
+<p>直接求和会过度应用更新。agent 变得非常短（每任务 13 次工具调用，而基座模型为 49 次），虽然 Hermes 达到 62.8% 的峰值，但 pi 回落到基座模型的水平。平均值稀释了每个 harness 自己的更新。½ 提供了最佳平衡，因此我们使用发布的 checkpoint（pi 第 160 步、hermes 第 160 步、opencode 第 150 步）以权重 ½ 构建了最终的 super-adapter。</p>
+<h3>适配器合并评估结果</h3>
+<p>在每个 harness 下，在所有运行都评分的任务上（SWE-bench Pro 上 50–51 个，Terminal-Bench 2.1 上 82–85 个），每任务一次尝试（括号中为相对于基座模型的效率提升）：</p>
+<table><thead><tr><th>Harness</th><th>基准测试</th><th><a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen3.8-27B</a></th><th>Qwen3.8-27B-&lt;harness&gt;-adapted</th><th><a href="https://huggingface.co/harness-hub/Qwen3.8-27B-super-adapter">Qwen3.8-27B-super-adapter</a></th><th><a href="https://huggingface.co/Qwen/Qwen3.8-27B">Qwen3.8-27B</a>，thinking</th><th><a href="https://huggingface.co/harness-hub/Qwen3.8-27B-super-adapter">Qwen3.8-27B-super-adapter</a>，thinking</th></tr></thead><tbody><tr><td>pi</td><td>SWE-bench Pro（困难 51）</td><td>40.0%</td><td>64.0%（−60%）</td><td>46.0%（−73%）</td><td>74.0%</td><td>74.0%（−48%）</td></tr><tr><td>hermes</td><td>SWE-bench Pro（困难 51）</td><td>29.4%</td><td>43.1%（−56%）</td><td>47.1%（−60%）</td><td>45.1%</td><td>60.8%（−36%）</td></tr><tr><td>opencode</td><td>SWE-bench Pro（困难 51）</td><td>35.3%</td><td>51.0%（−72%）</td><td>45.1%（−63%）</td><td>47.1%</td><td>66.7%（−31%）</td></tr><tr><td>pi</td><td>Terminal-Bench 2.1</td><td>40.0%</td><td>56.5%（−56%）</td><td>48.2%（−56%）</td><td>52.9%</td><td>57.6%（−25%）</td></tr><tr><td>hermes</td><td>Terminal-Bench 2.1</td><td>44.7%</td><td>58.8%（−70%）</td><td>55.3%（−53%）</td><td>58.8%</td><td>63.5%（−19%）</td></tr><tr><td>opencode</td><td>Terminal-Bench 2.1</td><td>47.6%</td><td>52.4%（−53%）</td><td>52.4%（−68%）</td><td>54.9%</td><td>58.5%（−22%）</td></tr></tbody></table>
+<p>“Thinking”指聊天模板在默认努力程度（xhigh）下的 thinking 模式。专用适配器在关闭 thinking 的情况下训练和提供服务。</p>
+<p>在关闭 thinking 的情况下，super-adapter 在所有六个 harness–基准测试组合上都优于基座模型（平均 pass@1 39.5% → 49.0%；新解决 71 个任务，丢失 34 个，p &lt; 0.001）。</p>
+<p>尽管完全没有在开启 thinking 的情况下训练，它却是我们评估过的开启 thinking 模式的最强模型。与相同努力程度下开启 thinking 的基座模型相比，它在六个组合中赢下五个，并在第六个上持平（平均 55.5% → 63.5%；新解决 67 个，丢失 37 个，p = 0.004）。最大增益在 SWE-bench Pro 上：hermes 下 +16 分，opencode 下 +20 分。在 pi 下的 SWE-bench Pro 上，仅 thinking 就已达到 74%，它持平。</p>
+<p>关闭 thinking 时使用专用 harness 适配器。每个 harness 自己的适配器在六个组合中的四个上领先，其中 pi 下领先最多（SWE-bench Pro 上 64.0% 对 46.0%，Terminal-Bench 上 56.5% 对 48.2%）。将一个模型拆分到三个 harness 上，pi 损失了最多的增益。如果你只使用一个 harness 并保持 thinking 关闭，就使用它的专用适配器。</p>
+<p>super adapter 的效率也高得多。在基座模型和 super-adapter 都能解决的任务上，关闭 thinking 时，它每任务减少 53–73% 的工具调用，生成减少 44–60% 的 token，在 130 个任务中的 111 个上工具调用更少。开启 thinking 时，它在 SWE-bench Pro 上仍将工具调用减少 31–48%，token 减少 24–43%。在 Terminal-Bench 上，工具调用减少 19–25%，token 数大致相同。</p>
+<p>½ 权重是在 Terminal-Bench 2.1 上使用第 120 步适配器选定的，因此 Terminal-Bench 的数字略有乐观；SWE-bench Pro 未参与该选择。完整的配对结果在 <a href="https://huggingface.co/harness-hub/Qwen3.8-27B-super-adapter">super-adapter 的模型卡</a>中。</p>
+<h2>最终结果</h2>
+<p>本节报告训练期间发生的情况，然后说明适配器在其自身 harness 内外、在留出基准测试上的得分。</p>
+<h3>训练结果</h3>
+<p>训练累计运行了 598 步，总共训练了 78,114 个样本，正好相当于 167M 个训练 token。</p>
+<p>在训练期间，我们看到一个明确的信号：模型学会用越来越少的步骤解决任务，且没有明显的饱和迹象。尽管有时有明显的上升趋势，训练正确性总体上似乎持平。这可以解释为：模型在训练期间遇到新任务，但随着轨迹变短，一个步骤 token 预算内能容纳的组数增加了一倍以上。准确率增益出现在下面一节的留出基准测试中。</p>
+<p>另一方面，safeagents 成功阻止了多次可疑尝试。在三次训练运行中，总共检查了 1.3M 次工具调用，共阻止了 647 次工具调用。</p>
+<h3>评估结果</h3>
+<p>本节涵盖评估设置、harness 内结果、跨 harness 迁移，以及一项分布外检查。</p>
+<h4>评估设置</h4>
+<p>我们在每个适配器训练所在的 harness 内评估它，使用两个 agentic coding 基准测试：所有 89 个 <a href="https://huggingface.co/datasets/harborframework/terminal-bench-2.1">Terminal-Bench 2.1</a> 任务（每任务 1 小时和 100 个 agent 步骤）以及 SWE-bench Pro 的 51 个最困难任务（2 小时和 100 个 agent 步骤）。我们将每任务的最大 token 数上限设为 131072。我们不调整 agent 设置，并对所有 harness 使用默认设置。例如，Pi 不保留之前的推理轮次，而 OpenCode 和 Hermes 会保留，这主要由于上下文快速溢出而影响 SWE-bench Pro 的结果。因此你不能跨不同 harness 比较结果（使用 Pi 不一定比 Hermes 或 OpenCode 带来更好的结果），但在同一 harness 内比较结果并得出结论是公平的。</p>
+<p>每次 rollout 都通过与训练相同的 Harbor 和 OpenEnv 栈运行，在 HF sandbox 中，每任务一次尝试，温度 0.8、thinking 关闭。每个 LoRA checkpoint 合并到基座权重中，并在单个 GPU 上用 vLLM 单独提供服务，并发与基座模型的评估相同。</p>
+<p>对于所有评估基准测试，我们报告 pass@1 以及工具调用次数、总轮数，针对所有任务和已解决任务。</p>
+<p>为了开放，最终评估的所有模型轨迹都推送到了这个公共 bucket：<a href="https://huggingface.co/buckets/harness-hub/harness-adapters-trajectories">harness-hub/harness-adapters-trajectories</a>。</p>
+<h4>最终评估结果</h4>
+<p>所有三个专用适配器在其自身 harness 下、在两个基准测试上都优于基座模型。在 SWE-bench Pro（困难 51）上，pi 从 39.2% 到 64.7%（+25.5 分：新解决 15 个任务，丢失 2 个，p = 0.002），hermes 从 29.4% 到 43.1%，opencode 从 35.3% 到 51.0%。在完整的 Terminal-Bench 2.1 上，pi 提升 +16.3 分（16 对 2，p = 0.001），hermes 提升 +14.1（19 对 7，p = 0.03）。Opencode 总体提升 +6.0，在未参与其 checkpoint 选择的 66 个任务上提升 +13.6（12 对 3，p = 0.035）。</p>
+<p>适配器解决任务的效率也高得多：在它们和基座模型都能解决的任务上，它们在 SWE-bench Pro 上每任务减少 56–72% 的工具调用，在 Terminal-Bench 2.1 上减少 53–70%。单一的 super-adapter 在所有三个 harness 下也优于基座模型（SWE-bench Pro 上 +6 到 +18 分，Terminal-Bench 2.1 上 +5 到 +10），工具调用减少幅度同样大（53–73%）。在关闭 thinking 的情况下，它保留每个专用适配器增益的程度较低，pi 下最低，但在开启 thinking 的情况下，它在六个 harness–基准测试组合中的五个上优于相同努力程度的基座模型 thinking（见 <a href="https://huggingface.co/blog/harness-adapters-at-scale#super-adapter-merging-all-adapters-into-one">super-adapter 部分</a>）。每个模型卡都有完整的配对结果。</p>
+<h4>效率和性能能力能否跨 harness 迁移？</h4>
+<p>为了回答这个问题，我们还评估了 pi harness 适配器在 Hermes Agent 和 OpenCode 下的表现。</p>
+<p>在 OpenCode 下，它在 Terminal-Bench 2.1 上与 OpenCode 自己的专用适配器持平（44.8% → 54.0%，对照 46.4% → 52.4%）。在 Hermes 下，它保留了专用适配器约三分之二的增益（46.3% → 56.1%，对照 44.7% → 58.8%），两者工具调用减少幅度相同，约 45%。因此，新学到的能力似乎可以跨 harness 迁移。</p>
+<h4>分布外任务和设置的评估</h4>
+<p>如果我们在分布外任务上评估、在适配器训练所用的 harness 之外评估，会发生什么？</p>
+<p>我们在 300 个 <a href="https://github.com/zapier/AutomationBench">AutomationBench 任务</a>上运行了所有五个模型，这些任务由业务自动化工作流评估组成，使用 AutomationBench 自己的 agent 循环，而不是 Pi、Hermes 或 OpenCode。这样，我们可以交叉检查两个不同的问题：模型能否解决 SWE 相关任务之外的问题？当模型被置于其训练所用 harness 之外时会发生什么？</p>
+<p>结果表明，适配器与基座模型接近。Pi 和 OpenCode 略领先（27.0% 和 25.3% pass@1，对照 23.0%），合并适配器持平（23.7%），Hermes 落后几分（17.7%）。除 Hermes 外，差异都在噪声范围内，因此 harness 内的 RL 既没有明显迁移到这个非常不同的设置，也没有在这个设置上破坏模型。</p>
+<table><thead><tr><th>模型</th><th>pass@1（满足所有断言）</th><th>相对基座</th><th>部分得分（满足断言的比例）</th><th>相对基座</th></tr></thead><tbody><tr><td>base</td><td>23.0%</td><td></td><td>62.2%</td><td></td></tr><tr><td>pi 160</td><td>27.0%</td><td>+4.0</td><td>66.2%</td><td>+4.0</td></tr><tr><td>opencode 150</td><td>25.3%</td><td>+2.3</td><td>65.2%</td><td>+3.0</td></tr><tr><td>merged</td><td>23.7%</td><td>+0.7</td><td>60.6%</td><td>−1.6</td></tr><tr><td>hermes 160</td><td>17.7%</td><td>−5.3</td><td>56.6%</td><td>−5.6</td></tr></tbody></table>
+<h2>开放问题：模型究竟学会了做什么？</h2>
+<p>我们感谢用户和社区的反馈，社区的初步测试和结果总体上似乎非常积极，我们希望未来继续朝这个方向努力。我们也看到了一些令人惊讶的结果，例如用户报告 <a href="https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted-GGUF/discussions/2">harness 适配器在 Qwen3.8 衍生模型（如 Swift-1.5）下效果非常好</a>。</p>
+<p>这个问题是我们在发布后思考的一个开放问题。在仔细检查评估基准生成的轨迹后，我们发现模型在非 thinking 模式下，倾向于在提出工具调用之前生成一些短文本，而基座模型几乎不生成任何文本就直接生成工具调用。</p>
+<p>这种现象可以看作一种“推理泄漏”，模型学会通过生成一些有时看起来像推理轨迹的文本（例如：..wait? ..let me see 等）来“逃逸”其非 thinking 版本，进入 thinking 版本。<a href="https://huggingface.co/papers/2610.14270">最近的一篇论文</a>也很好地描述了 LLM 在 RL 阶段的行为。</p>
+<p>这是否使我们的模型失效？我们不这么认为，因为最终结果仍然有效；在完全相同的条件下（固定 token 预算），我们的适配器确实（远远）优于基座非 thinking 模型，并达到 thinking 版本的性能，同时 token 效率高得多。社区的积极反馈进一步证实了这一点。</p>
+<p>然而，这提出了进行适当后续工作的必要性，我们将尝试对纯 thinking 模型重新应用相同的流水线，并探索混合 thinking / 非 thinking 训练，以更好地理解 RL 训练在混合 thinking 模型上的行为。一旦我们获得结论性结果，我们将与社区分享我们的下一步发现（以及 harness 适配器）。</p>
+<h2>结语与未来方向</h2>
+<p>在这项工作中，我们证明了在目标 harness 内对模型进行 RL 训练，会在相同条件下评估时带来更高效、因而更准确的最终模型。这一观察与 Hugging Face 团队之前的几项工作一致并延续，例如 <a href="https://huggingface.co/spaces/FineEnvs/multi-harness-rl">multi-harness-RL</a> 或 <a href="https://huggingface.co/blog/harness-hub/harness-adapters">harness 适配器的早期迭代</a>。</p>
+<p>未来，我们将探索将此配方应用于更多模型，同时更好地研究混合 thinking / 非 thinking 模型的训练策略。</p>
+<p>我们还公开与社区分享完整的配方和流水线，以便复现一切，并邀请每个人从自己的代码库或任何相关材料中构建自己的 RL 任务，并将相同的训练配方和想法应用于他们最喜欢的模型和 harness，以获得更高效的 agentic 模型。我们希望这篇博客文章能成为构建者未来构建和分享自己的 harness 适配器的起点。</p>
+<h2>本文提及的模型 4</h2>
+<h2>本文提及的数据集 6</h2>
+<h2>本文提及的 Spaces 2</h2>
+<h2>本文提及的论文 5</h2>
+<h2>本文提及的 Collections 1</h2>
+<p>更多来自我们博客的文章</p>
+<p>llmrltrl</p>
+<h2>跨 HF Jobs 使用 LoRA 的 Async GRPO：一个 bucket、一个代理，没有 NCCL</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
+<p>55</p>
+<p>2026 年 9 月 10 日</p>
+<p>rlgrpotrl</p>
+<h2>用 TRL 和 OpenEnv 训练一个编码模型画水彩画</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
+<p>85</p>
+<p>2026 年 9 月 3 日</p>
+<h3>社区</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a563ccc365af97ccad51100/G_t3suPdLtRnBuMjDsctP.png" alt=""></p>
+<p>PalindromeRL-Admin</p>
+<p>约 16 小时前</p>
+<p>编辑于约 16 小时前</p>
+<p>感谢如此精彩且详细的博客。你能也分享一下，这花了多少次迭代，以及端到端大致多长时间吗？训练的最低 GPU 要求是什么。另外好奇你认为当 harness 变化时适配器的表现如何。</p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/wkLf88hCMyMKy07H-DiPB.jpeg" alt=""></p>
+<p>akhilai02</p>
+<p>约 13 小时前</p>
+<p>这个不错</p>
+<p>通过拖入文本输入框、粘贴或点击此处上传图片、音频和视频。</p>
+<p>点击或粘贴此处上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fharness-adapters-at-scale">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fharness-adapters-at-scale">登录</a> 以发表评论</p>
+<p>31</p>
+<ul><li><a href="https://huggingface.co/ybelkada"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/lewtun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AdithyaSK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6442d975ad54813badc1ddf7/JIAN8B1dLOXN8fWTk8_mI.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ljupco"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/655879337b098f9cb5dbdb16/j-NwJgRvi_2jw6JU0yFp4.jpeg" alt=""></a></li><li><a href="https://huggingface.co/TheOnlyN3O"><img src="https://huggingface.co/avatars/978cf80583be8fb8a48d8fbe047a941f.svg" alt=""></a></li><li><a href="https://huggingface.co/aminediroHF"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></a></li><li><a href="https://huggingface.co/loubnabnl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61c141342aac764ce1654e43/81AwoT5IQ_Xdw0OVw7TKu.jpeg" alt=""></a></li><li><a href="https://huggingface.co/NoeFlandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/660e63bfa0d76479a1a73701/P7tp3aeLxF5btEcuKk-4z.png" alt=""></a></li><li><a href="https://huggingface.co/fellten"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voKimJ0mRTOk9vh_u2C7R.png" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/PalindromeRL-Admin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a563ccc365af97ccad51100/G_t3suPdLtRnBuMjDsctP.png" alt=""></a></li><li><a href="https://huggingface.co/xiachongfeng"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6776ae0c91b4c75dac91249c/uJk3ZnRrzjPCcBNjmrWLI.png" alt=""></a></li></ul>
+<h2>本文提及的模型 4</h2>
+<h2>本文提及的数据集 6</h2>
+<h2>本文提及的 Spaces 2</h2>
+<h2>本文提及的论文 5</h2>
+<h2>本文提及的 Collections 1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>DaisyRose-27B: Pushing the Frontier of Post-Training Efficie…</title>
       <link>https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin</link>
@@ -6333,339 +6787,6 @@ As a retail agent, you can help users:
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Faltk-evolve-bc">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Faltk-evolve-bc">登录</a> 后发表评论</p>
 <p>20</p>
 <ul><li><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/MuzaffarSharofitdinov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5ae21ed03e92b01a32342/X1XgnmMAGWN4Uz_Gabj4K.jpeg" alt=""></a></li><li><a href="https://huggingface.co/CharanSripadi"><img src="https://huggingface.co/avatars/be40b5bce28c1378042615d9349747f8.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/aadebiyi"><img src="https://huggingface.co/avatars/a532e8ece9767dde21278ec06fd21b31.svg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/Vatche"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6435a1131860001f144239ea/smzcd7SHs33E2ArxBLBBK.png" alt=""></a></li><li><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/c2670566c5cbdfccf87954a9caf7d381.svg" alt=""></a></li><li><a href="https://huggingface.co/brmcg"><img src="https://huggingface.co/avatars/b71be4ef8a21d10746bdec6d271f055d.svg" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>NVIDIA Cosmos3-H-Dreams：用生成式仿真让临床手术活起来</title>
-      <link>https://huggingface.co/blog/nvidia/cosmos3-h-dreams</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/cosmos3-h-dreams</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：NVIDIA Cosmos3-H-Dreams: Bringing Clinical Surgery to Life Through Generative Simulation</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>NVIDIA Cosmos3-H-Dreams：用生成式仿真让临床手术活起来</h1>
-<p>Enterprise + 文章</p>
-<p>发布于 2026 年 10 月 20 日</p>
-<p>2</p>
-<ul><li><a href="https://huggingface.co/MasterOfDisaster67"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/eYjcgliRdr2ZMi5_xG_B8.png" alt=""></a></li><li><a href="https://huggingface.co/brxerq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65167fe9da8a3d7cdda09a53/U1OsYfG7n3fW0L1VVl7pO.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/lzbinden"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tQyCJ2_ygMOucYjNRsZkf.png" alt="Lukas Zbinden 的头像"></a></p>
-<p>Lukas Zbinden</p>
-<p>lzbinden</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/javirk1"><img src="https://huggingface.co/avatars/2da14fb4fcab0b865cadc94851868294.svg" alt="Javier Gamazo 的头像"></a></p>
-<p>Javier Gamazo</p>
-<p>javirk1</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/nigeln"><img src="https://huggingface.co/avatars/519fb4ebc97874fad75efa97594b18d1.svg" alt="Nigel Nelson 的头像"></a></p>
-<p>Nigel Nelson</p>
-<p>nigeln</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/mtoloui"><img src="https://huggingface.co/avatars/df2cc3a69194090a4c6859726ec61890.svg" alt="Mostafa Toloui 的头像"></a></p>
-<p>Mostafa Toloui</p>
-<p>mtoloui</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/shuver"><img src="https://huggingface.co/avatars/d116ee7bef2ca4f33d68a7883ddcdbbf.svg" alt="Sean Huver 的头像"></a></p>
-<p>Sean Huver</p>
-<p>shuver</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p>想象一下移动 Cadiere 抓钳、夹住胆囊、再把它提起来，这一切都发生在一个实时响应的生成式手术场景里。今天我们再进一步，推出 Cosmos3-H-Dreams，把交互式生成仿真带到临床手术所具备的视觉复杂度与流程复杂度上，并给出了我们迄今最有说服力的体内影像。</p>
-<p>我们最初的 <a href="https://huggingface.co/blog/nvidia/cosmos-h-dreams">Cosmos-H-Dreams</a> 版本建立在 Cosmos-Predict2.5 之上，把交互式生成仿真带到了 dVRK 桌面缝合——这是手术机器人领域的一块基础试验田。作为世界基础模型（WFM），Cosmos-H-Dreams 展示了一条替代数值仿真的路径：它不显式建模场景几何、组织形变与物理交互，而是直接从同步的视频与机器人运动学中学习视觉动态，从而得到高真实感的交互式桌面任务仿真。</p>
-<p>今天，<a href="https://github.com/isaac-for-healthcare/cosmos3-h-dreams">Cosmos3-H-Dreams</a> 通过在 CMR Surgical Versius 平台上临床手术过程中录制的视频与机器人运动学进行学习，把这项能力又推进了一步。据我们所知，这是首个在临床胆囊切除术录像上训练、并支持实时运动学控制的实时生成式手术模拟器。它由 Cosmos 3 驱动，并用 NVIDIA 的加速流式推理库 FlashDreams 加速，可以在单块 NVIDIA RTX PRO 6000 GPU 上交互式运行。</p>
-<h2>1. 从桌面任务到临床场景</h2>
-<p>在像 Cosmos-H-Dreams 那样的受控桌面环境中，器械是在相对简单的背景前操作的。但在人体内部，器械的一点点移动就可能影响整个场景：组织在牵拉下被拉伸、反光发生偏移、结构被遮挡、烟雾改变能见度。给定一张初始图像和提供好的器械动作，生成式模拟器在生成每一段新视频时，都必须捕捉这些响应，同时保持解剖结构和器械不变形。小误差会随时间累积，逐渐改变器械的几何形状或解剖结构，因此时间一致性至关重要。</p>
-<p>所以，视觉真实感只是验证的起点，而不是生物力学准确性的证明。生成的场景还必须遵循控制指令：平移、旋转和夹爪命令应当产生连贯的解剖学后果。一个看起来合理、却忽略这些命令的推演结果，不能作为交互式环境使用。</p>
-<p>要在实时控制回路中保持这种保真度和响应性，就需要低延迟生成。Cosmos3-H-Dreams 通过一个专为临床胆囊切除术特化、并为实时生成做过蒸馏的模型来应对这一要求，把以动作为条件的交互带进了具有复杂解剖结构、组织运动和遮挡的场景。</p>
-<h2>2. Cosmos3-H-Dreams 有哪些新东西？</h2>
-<h3>2.1 以 Cosmos 3 为基础，更丰富的手术控制</h3>
-<p>Cosmos3-H-Dreams 建立在 <a href="https://huggingface.co/nvidia/Cosmos3-H-Embodied-Nano">Cosmos3-H-Embodied-Nano</a> 之上，这是一个 160 亿参数的模型，在 <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Open-H-Embodiment</a> 上预训练，并在一批经过整理的胆囊切除视频与运动学数据上对一个双向教师模型做了特化。样本筛选瞄准两把可见且在作业的器械——左侧的 Cadiere 抓钳和右侧的单极电钩——并限制相机指令，以突出由器械驱动的交互。</p>
-<p>模型使用 28 个动作维度：两条机械臂的位姿与夹爪信息，加上能量控制、摇杆轴与摇杆按键。训练使用 832 x 480 的视频，动作按 10 Hz 对齐；这个采样率与运行时的生成吞吐不是一回事。</p>
-<h3>2.2 从教师到四步与两步学生模型</h3>
-<p>Cosmos3-H-Dreams 把一条为长程自回归推演而设计的教师—学生训练流水线，与通过 FlashDreams 实现的加速流式推理结合起来。</p>
-<p>我们首先在 24 个未来帧上适配这个双向教师模型，然后把预测跨度扩展到 72 帧，也就是 10 Hz 下的 2.4 秒和 7.2 秒。这让教师模型能在更长的序列上学习手术动态。</p>
-<p>接下来，蒸馏把双向教师模型转成一个因果学生模型，它可以在新动作到来时以短段形式生成视频。因果教师强制（causal teacher forcing）用录制的上下文为学生模型的顺序生成做准备。随后 Self-Forcing 让它在自己生成的上下文上训练，并由教师模型和一个学到的评判器引导。这有助于应对交互式推演中的误差累积。</p>
-<p>首个发布的学生模型每生成一段使用四步去噪。随后我们用一个两步日程进一步训练该学生模型，得到第二个发布检查点。两步模型是单独训练的，而不是简单地把四步模型少跑几步采样。</p>
-<p>去噪步数更少，推理时间更快，代价是视觉质量更低。两个检查点让开发者可以探索视觉质量与推理成本之间的平衡。</p>
-<h3>2.3 通过 FlashDreams 实现流式生成</h3>
-<p><a href="https://github.com/NVIDIA/flashdreams">FlashDreams</a> 提供加速的流式运行时。长程推演还需要管理模型的注意力历史。Cosmos3-H-Dreams 的集成使用了一个改造过的 FadeMem 模块，在长程推演过程中合并不断增长的 key/value 缓存。这与 Self-Forcing 互补：蒸馏解决的是模型如何从自己生成的历史中学习，而缓存合并解决的是这段历史在流式生成期间如何被存储。</p>
-<h2>3. 探索未见过的轨迹</h2>
-<p>在临床手术过程中可能会出现并发症，或者外科医生总有一些空间去做&quot;新颖&quot;的动作。因此，模拟器必须能够泛化到训练数据之外，对未见过的动作生成连贯的帧。下面的演示展示了 Cosmos3-H-Dreams 以用 VR 头显录制的器械动作作为条件，生成不同的胆囊切除场景。</p>
-<p>这两段视频从同一张初始帧开始，但走的是不同的动作序列，说明器械控制如何导致同一场景走向不同的后续，并伴随物理上准确的组织形变。</p>
-<p>此外，这些推演让我们可以检视器械是否遵循控制指令、组织是否对交互做出连贯的响应，以及解剖结构与器械外观是否随时间保持一致。</p>
-<h2>4. 适配你自己的数据与控制器</h2>
-<p>Cosmos3-H-Dreams 包含面向胆囊切除术的四步和两步检查点。该系统可以适配到其他数据集与其他具身形态，只要它们具备同步视频和兼容的动作表示。要在你自己的数据集上训练一个实时学生模型，我们在<a href="https://github.com/NVIDIA-Medtech/Cosmos3-H-Embodied-Nano/blob/main/cosmos3_h_embodied/tutorial_teacher_training_and_self_forcing.md">分步指南</a>里提供了完整的教师精调与 Self-Forcing 蒸馏配方。它描述了数据准备、公开的教师训练工具以及各个蒸馏阶段。控制器集成必须使用与训练相同的动作约定和归一化。</p>
-<h2>5. 下一步</h2>
-<p>视觉真实感上的这一进展打开了若干研究方向：</p>
-<ul><li><strong>建模完整流程。</strong> 扩大覆盖范围与时间一致性，让胆囊切除术的所有阶段都能被系统地探索，并具备清晰的任务边界与成功判据。</li><li><strong>连接生成式仿真与数值仿真。</strong> 把学到的视觉真实感与显式的几何、接触和组织力学结合起来。数值模型与实测数据可以帮助约束和验证形变，使仿真行为既可检查也令人信服。</li><li><strong>让外科医生参与评估。</strong> 评估解剖准确性、器械行为与组织响应，把专家反馈变成可复现的基准。</li><li><strong>支持更多器械。</strong> 从两把受控器械走向更丰富的协同、遮挡与交互。</li><li><strong>发展自主手术策略。</strong> 把世界动作模型与 Cosmos3-H-Dreams 闭环耦合，让策略能够学习定义明确的胆囊切除子任务。</li></ul>
-<p>这些都是研究方向，而不是已经确立的临床能力。Cosmos3-H-Dreams 是一个研究用模拟器，不是经过验证的患者护理系统。它为在日益真实的环境中研究手术交互提供了一个基础。</p>
-<h2>6. 今天就上手</h2>
-<p>探索 Cosmos3-H-Dreams 背后的模型、数据和运行时：</p>
-<ul><li>Cosmos3-H-Dreams 代码与示例：<a href="https://github.com/isaac-for-healthcare/cosmos3-h-dreams">GitHub 仓库</a></li><li>Cosmos3-H-Dreams 模型：<a href="https://huggingface.co/nvidia/Cosmos3-H-Dreams">Hugging Face 检查点</a></li><li>Cosmos3-H-Embodied-Nano：<a href="https://huggingface.co/nvidia/Cosmos3-H-Embodied-Nano">Hugging Face 模型</a> 与 <a href="https://github.com/NVIDIA-Medtech/Cosmos3-H-Embodied-Nano">GitHub 仓库</a></li><li>适配你自己的数据：<a href="https://github.com/NVIDIA-Medtech/Cosmos3-H-Embodied-Nano/blob/main/cosmos3_h_embodied/tutorial_teacher_training_and_self_forcing.md">教师精调与 Self-Forcing 蒸馏的分步配方</a></li><li>Open-H-Embodiment：<a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Hugging Face 数据集</a></li><li>FlashDreams：<a href="https://github.com/NVIDIA/flashdreams">GitHub 仓库</a></li><li>NVIDIA Cosmos 3：<a href="https://github.com/nvidia/cosmos">GitHub 仓库</a></li></ul>
-<p>带上你的控制器、你的轨迹和你的研究问题。我们期待看到社区在这些新的手术世界里造出什么。</p>
-<h2>本文中提到的模型 2</h2>
-<h2>本文中提到的数据集 1</h2>
-<p>这位作者的其他文章</p>
-<h2>扩展 Indic 预训练：2.8 万亿 token 与一条开放的数据生成流水线</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>47</p>
-<p>2026 年 10 月 16 日</p>
-<h2>用 NVIDIA Speech Agent Skills 为你的领域精调 ASR</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>13</p>
-<p>2026 年 10 月 13 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fcosmos3-h-dreams">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fcosmos3-h-dreams">登录</a> 即可评论</p>
-<p>2</p>
-<ul><li><a href="https://huggingface.co/MasterOfDisaster67"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/eYjcgliRdr2ZMi5_xG_B8.png" alt=""></a></li><li><a href="https://huggingface.co/brxerq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65167fe9da8a3d7cdda09a53/U1OsYfG7n3fW0L1VVl7pO.png" alt=""></a></li></ul>
-<h2>本文中提到的模型 2</h2>
-<h2>本文中提到的数据集 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>TorchNeuron：在 AWS Trainium 上运行 HF 模型比以往更容易</title>
-      <link>https://huggingface.co/blog/hf-torchneuron</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/hf-torchneuron</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：TorchNeuron: running HF models on AWS Trainium is easier than ever</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>TorchNeuron：在 AWS Trainium 上运行 HF 模型比以往更容易</h1>
-<p>发布于 2026 年 10 月 19 日</p>
-<p>在 GitHub 上更新</p>
-<p>13</p>
-<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt="Régis Pierrard 的头像"></a></p>
-<p>Régis Pierrard</p>
-<p>regisss</p>
-<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy 的头像"></a></p>
-<p>Simon Pagezy</p>
-<p>pagezyhf</p>
-<p><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt="Michael Benayoun 的头像"></a></p>
-<p>Michael Benayoun</p>
-<p>michaelbenayoun</p>
-<p><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt="Jingya Huang 的头像"></a></p>
-<p>Jingya Huang</p>
-<p>Jingya</p>
-<p><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt="Alvaro Moran 的头像"></a></p>
-<p>Alvaro Moran</p>
-<p>tengomucho</p>
-<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier 的头像"></a></p>
-<p>David Corvoysier</p>
-<p>dacorvo</p>
-<p><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt="Jeff Boudier 的头像"></a></p>
-<p>Jeff Boudier</p>
-<p>jeffboudier</p>
-<p>TorchNeuron 为 AWS Trainium 上的 PyTorch 提供了一个新的原生后端。Transformers、Diffusers 与 Kernels 都原生支持它，让在 Trainium 上运行模型、并把模型分享到 HF hub 比以往更容易。</p>
-<h2>TorchNeuron</h2>
-<p><a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/frameworks/torch/index.html">TorchNeuron</a> 是一个 PyTorch 插件，为 Trainium 带来新的后端，支持 eager 模式、<code>torch.compile</code> 以及 FSDP、TP 这类原生分布式 API。更多内容请阅读 PyTorch 的<a href="https://pytorch.org/blog/introducing-torchneuron-native-pytorch-backend-for-aws-trainium/">博客</a>。</p>
-<p>自 2026 年 10 月 20 日起，TorchNeuron 将以公开测试版提供。研究者和开发者可以用 <code>pip install torch-neuronx</code> 安装它。</p>
-<h2>新后端，HF 库中的原生接口</h2>
-<p>迄今为止，Hugging Face 在 AWS Trainium 与 Inferentia（这两款 AI 芯片分别面向高性价比的大规模训练与推理）上的体验，都是通过 <a href="https://github.com/huggingface/optimum-neuron">optimum-neuron</a> 提供的。这个库依赖基于 PyTorch XLA 的 torch-neuronx 包。在当时这是自然而然的选择，但代价是你得像编译器一样思考：用惰性张量而非 eager 执行、只支持静态形状、每次 graph break 都要重新编译。Optimum Neuron 的存在就是为了隐藏这些复杂性，并为此维护了大量自定义代码（建模类、trainer 等）。</p>
-<p>TorchNeuron 改变了这一点。它直接集成进 PyTorch，把 <code>neuron</code> 暴露为一个原生设备，支持 eager 执行、PyTorch 自身的分布式原语（DTensor、FSDP2）以及 <code>torch.compile</code>。</p>
-<p>对 Hugging Face 的各个库来说，Trainium 变成了和其他设备一样的设备：Transformers、Diffusers、Accelerate、PEFT 和 TRL 可以直接在其上运行，使用的类与脚本和你在其他任何加速器上所用的一致。从今往后，我们建议 Neuron 用户直接使用这些库，而不再经由 Optimum Neuron。</p>
-<h3>Transformers</h3>
-<h4>推理</h4>
-<p>Transformers 现在为大量模型原生支持文本生成。借助 TorchNeuron，最常用的 100 个文本生成模型架构中有 89% 可直接开箱支持，而在 Optimum Neuron v0.4.5 上只有 46%。你只需在代码中传入 <code>device_map=neuron</code> 参数，模型就会被移动到 Neuron 设备上。</p>
-<p>下面是一个使用张量并行的文本生成示例，它能让你充分利用 Neuron 实例。注意它在生成时使用了静态 cache，因为在 Neuron 上强烈建议这样做，以避免频繁重编译。</p>
-<pre><code>import os
-
-import torch
-import torch.distributed as dist
-import torch_neuronx  # noqa: F401
-from torch.distributed import DeviceMesh
-from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
-from transformers.distributed import DistributedConfig
-from transformers.generation.configuration_utils import CompileConfig
-
-MODEL_ID = &quot;Qwen/Qwen3.8-27B&quot;
-MAX_SEQ_LEN = 1024
-PREFILL_CHUNK_SIZE = 512
-
-dist.init_process_group(backend=&quot;neuron&quot;)
-world_size = dist.get_world_size()
-
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_ID,
-    dtype=torch.bfloat16,
-    distributed_config=DistributedConfig(tp_size=world_size),
-    device_mesh=DeviceMesh(&quot;neuron&quot;, list(range(world_size))),
-).eval()
-
-tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-if tokenizer.pad_token is None:
-    tokenizer.pad_token = tokenizer.eos_token
-tokenizer.padding_side = &quot;left&quot;
-
-inputs = tokenizer.apply_chat_template(
-    [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;The future of AI is&quot;}],
-    add_generation_prompt=True,
-    padding=True,
-    tokenizer_kwargs={&quot;pad_to_multiple_of&quot;: PREFILL_CHUNK_SIZE},
-    return_tensors=&quot;pt&quot;,
-)
-
-generation_config = GenerationConfig(
-    max_new_tokens=128,
-    do_sample=False,
-    use_cache=True,
-    pad_token_id=tokenizer.pad_token_id,
-    eos_token_id=tokenizer.eos_token_id,
-    cache_implementation=&quot;static&quot;,
-    max_cache_len=MAX_SEQ_LEN,
-    prefill_chunk_size=PREFILL_CHUNK_SIZE,
-    compile_config=CompileConfig(backend=&quot;neuron&quot;, fullgraph=False, dynamic=False),
-)
-
-with torch.no_grad():
-    output_ids = model.generate(
-        inputs[&quot;input_ids&quot;],
-        attention_mask=inputs[&quot;attention_mask&quot;],
-        generation_config=generation_config,
-    )
-
-if dist.get_rank() == 0:
-    prompt_len = inputs[&quot;input_ids&quot;].shape[1]
-    print(tokenizer.decode(output_ids[0, prompt_len:], skip_special_tokens=True))</code></pre>
-<h4>训练</h4>
-<p>既然 Neuron 已成为原生 PyTorch 设备，在 Trainium 上训练所用的 Hugging Face 库与其他加速器完全一样：Transformers、Accelerate、PEFT 和 TRL。你不再需要专用的 trainer，也不需要 Neuron 专属的模型代码分支。一个标准的 TRL 微调脚本只需少量 Neuron 专属设置，就能在 Trainium 实例上运行。</p>
-<p>下面是一个基于 TRL <code>SFTTrainer</code> 的监督微调脚本。如果你之前在 GPU 上用 TRL 微调过模型，它看上去应该很眼熟。</p>
-<pre><code>import os
-
-import torch
-from datasets import load_dataset
-from transformers.distributed import DistributedConfig
-
-from trl import ModelConfig, ScriptArguments, SFTConfig, SFTTrainer, TrlParser
-
-
-def main(script_args, training_args, model_args):
-    # The Neuron backend can't compile Dynamo's automatic dynamic shapes yet (https://github.com/huggingface/trl/issues/7660)
-    torch._dynamo.config.automatic_dynamic_shapes = False
-
-    training_args.model_init_kwargs = {
-        &quot;revision&quot;: model_args.model_revision,
-        &quot;trust_remote_code&quot;: training_args.trust_remote_code,
-        &quot;attn_implementation&quot;: model_args.attn_implementation,
-        &quot;dtype&quot;: model_args.dtype,
-        &quot;device_map&quot;: None,
-    }
-    if int(os.environ.get(&quot;WORLD_SIZE&quot;, &quot;1&quot;)) &gt; 1:
-        # The model is sharded on the TP x FSDP grid as its weights are loaded
-        training_args.model_init_kwargs[&quot;distributed_config&quot;] = DistributedConfig(
-            tp_size=int(os.environ.get(&quot;TP_SIZE&quot;, &quot;1&quot;)),
-            fsdp_size=int(os.environ.get(&quot;FSDP_SIZE&quot;, &quot;1&quot;)),
-        )
-
-    # Prepare dataset
-    train_dataset = load_dataset(
-        script_args.dataset_name,
-        name=script_args.dataset_config,
-        split=script_args.dataset_train_split,
-    )
-    # UltraChat also has a string `prompt` column, which makes TRL treat it as a prompt-completion dataset.
-    train_dataset = train_dataset.select_columns([&quot;messages&quot;])
-
-    # Training
-    trainer = SFTTrainer(
-        model=model_args.model_name_or_path,
-        args=training_args,
-        train_dataset=train_dataset,
-    )
-
-    trainer.train()
-    trainer.save_model(training_args.output_dir)
-    trainer.end()
-
-
-if __name__ == &quot;__main__&quot;:
-    parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
-    script_args, training_args, model_args = parser.parse_args_and_config()
-    main(script_args, training_args, model_args)</code></pre>
-<p>并行由 Transformers 原生处理。你把带有张量并行（TP）和 FSDP 大小的 <code>DistributedConfig</code> 放进 <code>model_init_kwargs</code>，<code>SFTTrainer</code> 会把它传给 <code>from_pretrained</code>，模型在加载权重时即完成分片。Trainer 发现模型已经是分布式的，便不会再包装一次。你不需要 <code>--fsdp</code> 标志，也不需要 Accelerate 的 FSDP 配置。</p>
-<p>脚本里没有任何东西与 Trainium 绑定：同样的代码在任何硬件上都能运行。在 Trainium 上运行时，有几点值得了解：</p>
-<ul><li><strong>静态形状。</strong> 脚本禁用了 <code>torch.compile</code> 的自动动态形状，并使用 wrapped packing 生成最长 2048 token 的序列。在 TRL ≥ 1.16 中，Neuron 上的 batch 会 padding 到 128 token 的倍数，从而限制输入形状的数量。编译后的图会在后续形状相同的步骤中被复用。</li><li><strong>开启 <code>torch.compile</code>。</strong> 只需传入 <code>--torch_compile true</code>：在 Trainium 实例上，<code>torch.compile</code> 会自动识别设备并选用 Neuron 后端，无须再做其他配置。</li><li><strong>关闭异步权重加载。</strong> Transformers 内置的异步权重加载在 Neuron 上不受支持，因此目前我们用 <code>HF_DEACTIVATE_ASYNC_LOAD=1</code> 把它关闭。</li></ul>
-<p>下面的命令用 <code>torchrun</code> 启动训练，它会为每个 NeuronCore 启动一个进程。<code>TP_SIZE</code> 和 <code>FSDP_SIZE</code> 设定并行布局，二者相乘就是进程数：这里是 4 x 8 = 32，与 <code>--nproc_per_node</code> 一致。32 个进程构成一个 4 x 8 的网格。张量并行把每一层切分到 TP 组的 4 个 core 上，FSDP 则把参数、梯度和优化器状态分片到 8 个 TP 组之间。</p>
-<pre><code>TP_SIZE=4 FSDP_SIZE=8 HF_DEACTIVATE_ASYNC_LOAD=1 uv run torchrun --nproc_per_node=32 sft_neuron_example.py \
-    --model_name_or_path Qwen/Qwen3-8B \
-    --dataset_name HuggingFaceH4/ultrachat_200k \
-    --dataset_train_split train_sft \
-    --output_dir Qwen3-8B-sft-tp4-fsdp8 \
-    --dtype bfloat16 \
-    --max_length 2048 \
-    --packing true \
-    --packing_strategy wrapped \
-    --learning_rate 2e-5 \
-    --warmup_steps 0.03 \
-    --num_train_epochs 1 \
-    --logging_steps 2 \
-    --per_device_train_batch_size 4 \
-    --gradient_accumulation_steps 4 \
-    --save_only_model true \
-    --torch_compile true</code></pre>
-<p>我们在 8 颗 Trainium2 芯片（32 个 NeuronCore）上运行了它，相当于半台 <code>trn2.48xlarge</code> 实例。</p>
-<p>训练完整跑完，<code>trainer.save_model</code> 写出的是标准 Transformers checkpoint。其中没有任何东西与 Neuron 绑定：你可以原样推送到 Hugging Face Hub，并在其他任何硬件上加载。</p>
-<h3>Diffusers</h3>
-<h4>推理</h4>
-<p>Diffusers 库中的许多 pipeline 在 eager 与编译模式下都与 TorchNeuron 兼容。FLUX.1-dev、FLUX.2、Qwen-Image、Qwen-Image-2.1 和 H3 还兼容张量并行，以充分利用你的 Neuron 设备。下面是一个演示如何使用 TP 的示例：</p>
-<pre><code>import torch, torch.distributed as dist, torch_neuronx # TP
-from torch.distributed.device_mesh import DeviceMesh # TP
-from diffusers import QwenImage21Pipeline, QwenImage21Transformer2DModel, TensorParallelConfig
-
-# Distributed devices initialization
-dist.init_process_group(backend=&quot;neuron&quot;) # TP
-dev = torch.neuron.current_device()
-mesh = DeviceMesh(&quot;neuron&quot;, list(range(8))) # TP=8
-
-# Pipeline initialization
-model = &quot;Qwen/Qwen-Image-2.1&quot;
-transformer = QwenImage21Transformer2DModel.from_pretrained(
-    model,
-    subfolder=&quot;transformer&quot;,
-    torch_dtype=torch.bfloat16,
-    parallel_config=TensorParallelConfig(mesh=mesh), # TP
-)
-pipe = QwenImage21Pipeline.from_pretrained(
-    model,
-    transformer=transformer,
-    torch_dtype=torch.bfloat16,
-)
-pipe.vae.to(dev)
-pipe.transformer.compile_repeated_blocks(backend=&quot;neuron&quot;, fullgraph=True, dynamic=False)
-
-# Image generation
-emb, mask, _ = pipe.encode_prompt(prompt=&quot;A capybara wearing a wizard hat, oil painting&quot;, device=&quot;cpu&quot;)  # text encoder stays on CPU
-image = pipe(
-    prompt_embeds=emb.to(dev),
-    prompt_embeds_mask=mask.to(dev) if mask is not None else None,
-    height=1024,
-    width=1024,
-    num_inference_steps=40,
-    generator=torch.Generator(&quot;cpu&quot;).manual_seed(0), # same noise on every rank
-).images[0]
-if dist.get_rank() == 0:
-    image.save(&quot;out.png&quot;)</code></pre>
-<p>你可以用下面这条命令运行这段代码：<code>NEURON_LOGICAL_NC_CONFIG=2 torchrun --nproc_per_node=8 run.py</code>。</p>
-<p>越来越多的 pipeline 将兼容 TP。如果你喜欢的某个 pipeline 还不支持，也可以按照<a href="https://huggingface.co/docs/diffusers/main/en/training/distributed_inference#writing-a-tensor-parallelism-plan">这份指南</a>为其添加支持。</p>
-<h3>Kernels</h3>
-<p>请务必看看 <a href="https://huggingface.co/aws-neuron/kernels">Neuron 团队提供的 kernels</a>，因为会有越来越多 Neuron kernel 出现在 Hub 上，用来加速你的模型。Neuron kernel 可以用 <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/nki/index.html">Neuron Kernel Interface</a>（NKI）编写，它提供更底层的控制来优化操作。这样用户就能运行自己的自定义操作，并把它们分享到 hub 上。</p>
-<p>例如，你可以用<a href="https://huggingface.co/kernels/aws-neuron/vit-encoder-neuron-kernels">这个 kernel</a> 来加速你的视觉 transformer，在 Trainium 上最高可获得 2.4 倍加速！</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hf-torchneuron/kernel.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hf-torchneuron/kernel.png" alt=""></a></p>
-<h2>致谢</h2>
-<p>特别感谢 AWS 团队在 TorchNeuron 上的工作，以及他们对我们的反馈如此迅速地响应，使 HF 集成尽可能完善。</p>
-<p>更多来自我们博客的文章</p>
-<p>torchprofileCUDA</p>
-<h2>PyTorch 中的性能剖析（第 2 部分）：从 nn.Linear 到融合 MLP</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li>+1</li></ul>
-<p>65</p>
-<p>2026 年 6 月 11 日</p>
-<p>torchprofileCUDA</p>
-<h2>PyTorch 中的性能剖析（第 1 部分）：torch.profiler 新手指南</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li>+1</li></ul>
-<p>183</p>
-<p>2026 年 5 月 29 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框，或粘贴、或点击此处即可上传。</p>
-<p>点击或粘贴此处上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fhf-torchneuron">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fhf-torchneuron">登录</a> 后发表评论</p>
-<p>13</p>
-<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li><li><a href="https://huggingface.co/gbharada-aws"><img src="https://huggingface.co/avatars/55e629c40983a2b82c0c75012c13e074.svg" alt=""></a></li><li><a href="https://huggingface.co/zwang-amazon"><img src="https://huggingface.co/avatars/c698e2722ba05d640b6f958f142b0082.svg" alt=""></a></li><li><a href="https://huggingface.co/ozardeso-aws"><img src="https://huggingface.co/avatars/9aa3820bf2cf891b3997883155a87e54.svg" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></a></li><li><a href="https://huggingface.co/3outeille"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/iB42uASF1DoQth23cizSh.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

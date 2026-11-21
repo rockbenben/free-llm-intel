@@ -3,11 +3,109 @@
   <channel>
     <title>Inference.net · 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>Inference.net 官方博客 / 更新日志归档（最近 50 条，共 11 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>Inference.net 官方博客 / 更新日志归档（最近 50 条，共 12 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-inference_net.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 23 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>We made vLLM tokenization 120x faster with Elixir</title>
+      <link>https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/</link>
+      <guid isPermaLink="true">https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/</guid>
+      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>我们花了数月时间投资于推理路由栈，加倍投入一个用 Elixir 构建的自定义请求路由器。这是系列博客文章中的第一篇，讨论我们在扩展到每天数万亿 token 过程中的进展与经验。本文聚焦 tokenizer，以及我们如何仅靠 tokenization 就让 SGLang 快 33 倍、vLLM 快 12 倍。</p>
+<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#why-does-tokenization-even-matter">#</a>为什么 tokenization 甚至重要？</h2>
+<p><img src="https://inference.net/assets/request-timeline-Dr9A6UVv.png" alt="推理请求的时间线：tokenization、prefill，然后每步解码一个 token，TTFT 标记在第一个解码步骤之后"></p>
+<p>处理一个推理请求时，在得到第一个输出 token 之前有 4 个主要阶段：Tokenization、Routing、Prefill 和 Decode。</p>
+<p>我们的路由层根据输入上下文长度做决策。要知道输入长度，你需要对输入进行 tokenization，或者使用粗略估计（比如每四个输入字符一个 token）。一旦请求被路由，我们就使用某个流行的开源推理引擎进行 prefill 和 decode。所有这些引擎都可以选择：接受 chat completion，或接受原始 token ID。过去，我们会依赖开源推理引擎来处理 tokenization、prefill，然后最终开始 decoding。</p>
+<p><img src="https://inference.net/assets/old-hot-path-CKjXcuQL.png" alt="旧热路径示意图：请求经过一个 Elixir 节点，该节点进行 tokenization 以挑选实例，然后完整的 JSON 被发送到 vLLM 或 SGLang 实例，由后者再次进行 tokenization"></p>
+<p>我们过去如何路由请求，将完整的 JSON 载荷发送给引擎</p>
+<p>我们的路由层对请求进行 tokenization，以估算这个请求将占用多少 token。当你限制输入上下文长度时，推理引擎可以更快地处理请求，因此知道请求长度可以让你把短请求路由到“短池”，与按模型完整上下文长度配置的池相比，这会带来性能提升。我们用于生产热路径的 tokenizer 是 <a href="https://github.com/actual-computer/toks">Toks</a>（来自 Actual, Inc.），但有一个前提：它不渲染 chat template，并且用 C 编写，而 C 并非原生存在于我们的路由栈中，集成需要额外工作。</p>
+<p>过去几个月，随着需求扩展，我们把开源推理引擎推到了极限，现在拥有 vLLM 和 SGLang 的内部 fork，并为效率对它们打补丁。我们仍然会遇到根本性限制，因为它们的前端目前用 Python 编写，这是一种单线程解释型语言，意味着变慢、GIL（Global Interpreter Lock，全局解释器锁）争用等等，这些都会影响你的 TTFT（time to first token，首个 token 时间）。与其发送原始 JSON 请求，你可以通过向引擎发送原始 token ID，来减少 tokenization 在 Python 进程中执行所带来的开销！</p>
+<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#tokenization-library-benchmarking">#</a>Tokenization 库基准测试</h2>
+<p>考虑到这一切，我们构建了 <code>ChatTokenizer</code>，看看我们能做得好多少！</p>
+<p><img src="https://inference.net/assets/headline-kimi-tokens-per-second-BySqGt1u.png" alt="柱状图：ChatTokenizer、Baseten、SGLang gateway、vllm-rs、SGLang 和 vLLM 的 Kimi K3.1 tokenization 吞吐量（token/秒）"></p>
+<p>约 158K token 的 prompt，使用 8 个 vCPU</p>
+<p><img src="https://inference.net/assets/deepseek-req-s-by-prompt-size-C_rkBBE8.png" alt="柱状图：ChatTokenizer、SGLang gateway、vllm-rs、Baseten、NVIDIA Dynamo、SGLang、vLLM 和 HF transformers 在 DeepSeek v4.1 上按 prompt 大小划分的每秒请求数"></p>
+<p>Deepseek v4.1 Flash 在 8 个 vCPU 下按 prompt 大小划分的 req/s</p>
+<p>这里的图表来自我们自己对开源 tokenization 库的内部基准测试，观察它们在不同载荷和计算资源下的表现。我们的方法学见本文末尾的附录。</p>
+<p>我们做基准测试的目标是看看：</p>
+<ul><li>tokenization 如何随载荷大小变化？它是否印证了我们之前的假设：大上下文对话会导致显著变慢？</li><li>现成的最佳选项是什么？</li></ul>
+<p>从图中你可以看到，vLLM 和 SGLang 本身绝不是最高效的 tokenizer。SGLang 自带一个用 Rust 编写的 gateway，这是最佳选项之一（注意：它不对图像进行 tokenization）。一旦我们意识到开源选项的差距和糟糕性能，就很清楚是时候提高标准了。</p>
+<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#what-makes-ours-faster">#</a>是什么让我们的更快？</h2>
+<p>我们一直是 Elixir 和 BEAM 的倡导者，自去年十二月以来就在生产环境中将其用于我们的 Router。Ericsson 的 Open Telecom Platform（OTP）是我们能够扩展到每天数亿请求的根本原因之一。然而，它远不够快，无法在这里击败其他 tokenizer，所以我们决定借助 <a href="https://www.erlang.org/doc/system/nif.html">Native Implemented Functions（NIFs）</a>，允许我们将 Rust、C 和 Assembly 用作 BEAM 监督树的一部分。</p>
+<p><img src="https://inference.net/assets/tokenizer-internals-DXiylxBU.png" alt="ChatTokenizer 内部结构示意图，跨越 Elixir、Rust 和 C 通道：请求处理器、拆分图像、构建 prompt、segment 缓存、跨 vCPU 编码、展开图像、token ID"></p>
+<p>我们的 tokenizer 核心仍然是 Actual 的 <code>toks</code>，它使用优化过的 assembly 来产生与 Hugging Face 的 tokenizers 一一对应的 token ID，但速度是后者的 13-151 倍！然而，Toks 尚不支持渲染 chat template 和图像，以及我们内部需要的其他一些功能。这促使我们在其周围构建一个配套的 Rust 和 Elixir 库，来处理这些功能及更多。</p>
+<p>elixir</p>
+<pre><code>{:ok, tok} =
+  ChatTokenizer.load(&quot;moonshotai/Kimi-K3.1-Pro&quot;, revision: &quot;6d0a0202956796543364d666ab19c6ad1a494ee1&quot;)
+
+compiled =
+  ChatTokenizer.compile(tok,
+    # varies by model
+    engine: :sglang,
+
+    # usually passed to the engines
+    default_chat_template_kwargs: %{&quot;reasoning_effort&quot; =&gt; &quot;high&quot;},
+  )</code></pre>
+<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#headline-improvements">#</a>主要改进</h3>
+<p>下面每项改进都会在本文后面更详细地解释，但为了防止这篇文章变得超级冗长，这里是我们所做的一些重大改进的 tl;dr。</p>
+<ul><li>Deepseek v4.1 Flash 和 Kimi K3.1 Pro 的 chat template 被移植到原生 Rust，Jinja/Python 保留作为参考，并用单元测试验证</li><li>Deepseek 编码器中的一个二次循环被移除，Kimi 重复的模板片段在单个请求内被记忆化（memoized）</li><li>Token ID 从 C/Rust 以 little-endian u32 的二进制形式传给 Elixir，而不是以列表形式传递，以避免传递列表的开销</li><li>inline base64 图像通过 SIMD 字节扫描找到，并作为指向原始请求的子二进制（sub-binaries）交给 Rust，而不是复制它们</li><li>我们避免多次解析整个 JSON body，而只提取引擎需要的字段</li></ul>
+<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#reading-image-metadata-instead-of-the-full-image">#</a>读取图像元数据而非完整图像</h3>
+<p>Agent 流量中充满了图像。一个带 8 张 inline 图像的 1M token 请求大约有 30MB JSON，其中几乎全是 base64。朴素路径（我们最初采用的）是解析整个 body，把每个图像字符串复制出来，进行 base64 解码并打开图像，只是为了找出它有多大，因为这就是引擎实际需要知道的全部，以便计算要插入多少个图像占位 token。</p>
+<p>所以我们停止那样做：</p>
+<ul><li>在解析任何内容之前，我们对原始请求做一次 SIMD 字节扫描（memchr），寻找超过 4KiB 的 <code>&quot;data:</code> 字符串。</li><li>每张图像作为 sub-binary 进入 Rust，这是 BEAM 指向原始请求二进制而不是复制它的方式。在 JSON 中，我们把图像换成一个很小的标记（<code>data:x-chat-tokenizer-ref,0</code>），这样 30MB 的请求就会被解析为它实际只有的几 MB 文本。</li><li>我们直接从 PNG/GIF/WebP/JPEG 头部读取宽度和高度，而此时它仍然是 base64，从不解码任何像素（并在引擎会这样做的地方应用 EXIF 方向）。</li><li>模型自身的 resize 规则（Deepseek v4.1、Kimi K3、Qwen-VL 等）会把该尺寸转换为引擎本会产生的确切图像 token 数量。</li></ul>
+<p><img src="https://inference.net/assets/zero-copy-images-CPr_Jr3u.png" alt="柱状图：在带 8 张图像的约 1M token DeepSeek v4.1 请求上的每秒请求数：采用 zero-copy images 之后和之前的 ChatTokenizer、SGLang gateway、SGLang 和 vLLM"></p>
+<p>Deepseek v4.1，约 1M token + 8 张 inline 图像，8 个 vCPU 下的 req/s。zero-copy images 之前与之后，对比 SGLang gateway 以及 vLLM 和 SGLang 自身的预处理。SGLang gateway 跳过图像展开，所以它的 ID 与引擎不匹配。</p>
+<p>这让我们在百万 token 请求上从 22.5 req/s 提升到 167 req/s，单核上的单个请求从 240ms 降到 28ms。作为对比，vLLM 和 SGLang 自身的预处理在相同请求上分别做到 1.3 和 1.6 req/s，每个请求大约 2-3 秒。</p>
+<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#only-parse-the-json-you-need">#</a>只解析你需要的 JSON</h3>
+<p>另一件让我们惊讶的事是，仅仅读取一个请求、然后丢掉其中大部分内容，竟花费了那么多时间；</p>
+<ul><li><code>serde_json</code> 用标量循环对每个字符串检查 UTF-8，这大约占整个 chat 请求的十分之一。我们改为先对整个 body 做一次 SIMD UTF-8 检查，然后把它当作已经验证过的字符串来解析。</li><li>Chat 请求大多是由少量键组成的微小对象（一条 message、一个 content part、一个 tool call）。对每个键做哈希是过度设计，所以对于键数不超过 8 个的对象，我们直接扫描它们。</li><li>我们只取出引擎会读取的字段，并在 Rust 中应用引擎自己的请求规则（比如 vLLM 如何预解析 tool call 参数），因此 body 永远不会被解析两次或重新序列化。</li><li>进入 <code>toks</code> 的文本会得到同样的 SIMD UTF-8 检查。标准库在 CJK 密集的 prompt 上运行速度约为 3GB/s，这占了 <code>toks</code> 整个编码时间的五分之一。</li></ul>
+<p>并非一切都奏效。我们尝试了并行 JSON 解析和并行模板渲染，然后把两者都移除了。唤醒线程的成本超过了它们节省的工作。</p>
+<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#while-under-load">#</a>在负载之下</h2>
+<p>对吞吐量做基准测试固然不错，但你总能让数字看起来比生产环境中的实际值高出许多倍。在构建我们的库的过程中，我们测试了负载下长尾如何增长，并问自己：当一个 serving 实例越来越忙时，那些慢请求到底有多慢？</p>
+<p><img src="https://inference.net/assets/latency-under-load-DbziloSv.png" alt="垂直须线图：ChatTokenizer 和 SGLang gateway 在 DeepSeek v4.1 和 Kimi K3.1 上按 prompt 大小划分的 p50 和 p99 延迟"></p>
+<p>全部 8 个 vCPU 忙碌时每个请求的延迟，我们的与 SGLang gateway 对比。圆点是 p50，端帽是 p99。每个 prompt 大小有自己的轴。越低越好。</p>
+<p>从 8K 到 160K token 的 prompt，在两个模型上，我们的 p99 都低于 SGLang gateway 的中位数。在 Deepseek 上，约 37K token 时，我们的 p99 是 2.6ms，而他们的 p50 是 2.9ms（他们的 p99 是 15.9ms）。这要归功于 NIFs 运行在 dirty CPU schedulers 上，一个百万 token 的请求永远不会阻塞 BEAM 的其余部分，并且当 tokenizer 正在处理大请求或大量请求时，路由器可以继续路由。</p>
+<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#how-does-this-compare-to-the-engines">#</a>这与引擎相比如何？</h2>
+<p>我们拿 vLLM 和 SGLang 自身的请求预处理（应用 chat template、解析 body，然后产生 token），在进程内与我们的实现做基准对比。</p>
+<p><img src="https://inference.net/assets/vs-engine-preprocessing-Dgzpx28J.png" alt="柱状图：ChatTokenizer、vLLM 和 SGLang 在 DeepSeek v4.1 和 Kimi K3.1 上按 prompt 大小划分的每秒请求数"></p>
+<p>ChatTokenizer 对比 vLLM 和 SGLang 自身预处理的按 prompt 大小划分的 req/s，进程内，8 个 vCPU。每个 prompt 大小有自己的轴。越高越好。</p>
+<p>在两个模型上，每个大小我们都快 53-181 倍。既然我们现在向推理引擎发送原始 token ID 而不是原始 JSON，我们想评估这对推理引擎的影响。</p>
+<p><img src="https://inference.net/assets/engine-servers-with-our-ids-DE7swN_4.png" alt="折线图：随着并发客户端增加，SGLang 和 vLLM HTTP 服务器的每秒请求数，使用我们的 token ID 与原始 chat 对比"></p>
+<p>Kimi K3.1，约 37K token 的 prompt，随着并发上升的引擎 HTTP 服务器吞吐量，使用 4 个 API 进程。原始 chat 与我们的 token ID 对比。每个引擎有自己的轴。越高越好。</p>
+<p>发送 ID 使 SGLang 从 31 提升到 1,031 req/s（33 倍），使 vLLM 从 43 提升到 505 req/s（12 倍）。使用原始 chat 时，每个 API 服务器进程大约在一个核上就趋于平坦，因为 tokenization 在该进程的 GIL 下用 Python 运行。在 8 vCPU 的机器上，运行 4 个进程只让 vLLM 从 13 提升到 43 req/s，而发送我们的 ID 能让同样的 4 个进程达到 505 req/s。这就是本文开头提到的热路径变化：我们在路由器中 tokenize 一次，然后推理引擎再也不必做这件事。</p>
+<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#tokenization-accuracy">#</a>Tokenization 准确性</h3>
+<p>我们 tokenizer 的一项核心要求是输出与引擎完全相同。如果我们发送的 token ID 与引擎本会从原始 chat 产生的 token ID 不完全匹配，那么模型看到的 prompt 就与客户发送的不同，这可能导致模型以奇怪的方式表现——当我们深入调查这一点时，发现引擎本身之外的大多数 tokenizer 并不能做到这一点！</p>
+<p>棘手的地方在于，tokenization 并不只是把文本跑过 tokenizer。每个引擎会先渲染 chat template 并应用自己的请求规则；每个引擎都有自己的奇怪怪癖，会产生略有不同的 token。例如 vLLM 会解析 tool call 参数并重新序列化它们，因此模型看到的 JSON 与客户端发送的并非逐字节相同。这就是为什么我们根据要发送请求的引擎采用不同的 tokenization 方式，以确保 token 对该引擎是正确的。</p>
+<p><img src="https://inference.net/assets/what-accurate-means-DKqHJEJ8.png" alt="一个 tool call 的 token 框：vLLM 的参考 ID、ChatTokenizer 完全相同的 ID，以及另一个合并了一个 token 并产生不匹配的 tokenizer"></p>
+<p>我们所说的准确是什么意思。vLLM 解析 tool call 参数，chat template 会用冒号后的空格重新序列化它们，所以模型看到的 prompt 不是客户端发送的字符串。渲染原始参数字符串的 tokenizer 会产生不同的 token ID。只有当每个 ID 都相同且顺序相同时，我们才把请求计为匹配。示例仅作说明。</p>
+<p><img src="https://inference.net/assets/accuracy-vs-throughput-DDKWNOej.png" alt="散点图：ChatTokenizer、SGLang gateway、Baseten、NVIDIA Dynamo、HF transformers 和 vLLM 的匹配 vLLM token ID 的请求占比与每秒请求数的关系"></p>
+<p>Deepseek v4.1，约 8K token 的 prompt，8 个 vCPU。token ID 与 vLLM 完全匹配的请求占比，与 req/s 的关系。越往右上越好。</p>
+<p>在每项基准测试中，我们也把 token 与 vLLM 的 token 做了比较；在两个模型上，每个 prompt 大小下，100% 的请求中我们的输出都一一匹配。其他库在短 chat 上表现良好，但一旦请求中包含 tool call 和更长的对话就会漂移。在约 8K token 时，SGLang gateway 只匹配了 16% 的请求（这是意料之中的，因为 SGLang 渲染模板的方式与 vLLM 不同），NVIDIA Dynamo 为 73%，HF transformers 为 96%。在带图像的约 1M token 时，其他所有库都匹配 0%；而在 Kimi K3.1 上，HF transformers 完全渲染了错误的 prompt，因为它忽略了 <code>reasoning_effort</code>。</p>
+<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#additional-tokenizer-comparisons">#</a>更多 Tokenizer 对比</h3>
+<p>Baseten 写了一篇博客文章，讲他们如何用自己的库 <a href="https://github.com/basetenlabs/basetenkenizer"><code>basetenkenizer</code></a> 加速 Kimi tokenization，所以我们想在 Kimi K3.1 上比较这两个库。他们的 Rust tokenizer 无法渲染 Kimi chat template，所以他们的生产路径用 Python 渲染，然后用 Rust 编码。为公平起见，我们在他们自己的 API 上只比较编码步骤，两个库编码完全相同的预渲染 Kimi K3.1 segments。</p>
+<p><img src="https://inference.net/assets/encode-only-vs-basetenkenizer-DRelix1i.png" alt="柱状图：ChatTokenizer 和 basetenkenizer 在固定线程池与默认线程池下，Kimi K3.1 仅编码的每秒请求数按 prompt 大小划分"></p>
+<p>仅编码，Kimi K3.1。ChatTokenizer 与 basetenkenizer 的 encode_segments 在相同预渲染 segments 上的 req/s，8 个 worker 运行在 8 个 vCPU 上。basetenkenizer 展示了每个 worker 固定到 1 个核（其更快的设置）以及使用其默认线程池的情况。每个 prompt 大小有自己的轴。</p>
+<p>使用 8 个 worker，从约 200 到约 1.1M token，我们比他们最快的设置快 1.9-5.7 倍。</p>
+<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#agentic-workloads-and-caching">#</a>Agentic 工作负载与缓存</h2>
+<p>我们流量的很大一部分是 agentic 的，每一轮都会重新发送整个对话。因此，我们重放了 8 个 agent 对话，每个 213 轮，每轮从 2K 到 160K token 不等。</p>
+<p><img src="https://inference.net/assets/multi-turn-agent-replay-Ct-PY_84.png" alt="柱状图：每个库在多轮 agent 重放中的每秒请求数，冷启动与开启 segment 缓存的情况"></p>
+<p>多轮 agent 重放，8 个 vCPU 下的 req/s。实心是冷启动，空心是开启我们的 segment 缓存。</p>
+<p>segment 缓存是内容寻址的，并在每个 BEAM 进程之间共享，所以一段对话一旦被编码，就永远不会再次被编码。大约到第 30 轮之后，98-99% 的 token 直接来自缓存。收益“只有”1.2-1.8 倍，因为即使某一轮完全命中缓存，仍然必须解析请求并渲染整个对话，而这一点每一轮都会增长，仍然是我们想要解决的瓶颈！</p>
+<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#whats-next">#</a>下一步是什么？</h2>
+<p>在长 prompt 上，发送 token ID 使 SGLang 从 31 req/s 提升到 1,031 req/s，vLLM 从 43 req/s 提升到 505 req/s；并且 ChatTokenizer 比引擎自身的预处理快 53-181 倍，同时仍与它们的 ID 完全匹配。</p>
+<p>这是系列文章中的第一篇，接下来我们想写关于从少数几个 Elixir 节点向我们的 GPU worker 运行 10,000+ 并发 websocket、我们如何跨引擎和池路由推理请求，以及我们在获得更多 prefix cache 命中方面的经验。</p>
+<p>如果这类工作听起来有趣，我们正在招聘各个工程岗位。<a href="https://jobs.ashbyhq.com/inference">来和我们一起工作吧！</a>（如果没有完全匹配的职位，请给我发邮件或私信）</p>
+<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#appendix-1-benchmark-methodology">#</a>附录 1：基准测试方法</h2>
+<p>所有基准测试都在 CoreWeave 上运行，每次运行使用一个 Xeon 8562Y+ 节点，配备 8 个独占 vCPU。每个库都在同一节点上依次运行，并使用冷缓存，每个数字是 3 秒预热后两次 10 秒运行的中位数。请求来自 WildChat、glaive function-calling 和 SWE-agent 轨迹的固定 commit，按 prompt 大小分桶（XS 约 140 token，S 约 1.4K，M 约 8K，L 约 37K，XL 约 160K，XXL 约 1M 加 8 张图像）。</p>
+<p>版本：vLLM <code>21d9da46b3</code>、SGLang <code>31e55a5120</code>、basetenkenizer 0.2.9、dynamo-llm 1.6.2、Kimi K3.1 Pro 为 <code>6d0a020</code>。</p>
+<ul><li>每张图都是标注的 Deepseek v4.1 或 Kimi K3.1，配备 8 个 vCPU。</li><li>ChatTokenizer、SGLang gateway、Baseten（basetenkenizer 0.2.9）、NVIDIA Dynamo 和 HF transformers 在同一台机器上依次运行。</li><li>vLLM 和 SGLang 是在另一个 CoreWeave 区域的单独会话中，测量它们自己的进程内请求预处理。</li><li>vllm-rs 没有进程内模式，所以通过 HTTP 在 256 个并发客户端下测量，这包含了其他库不需要承担的 HTTP 开销。</li><li>我们的实现在 100% 的请求上与 vLLM 的 ID 匹配。其他库的例外：SGLang gateway 在约 140 token 时匹配 98%，约 1.4K 时 87%，约 8K 时 16%，约 1M 时 0%（它跳过图像展开）；Baseten 和 HF transformers 在约 8K 时匹配 96%；NVIDIA Dynamo 在约 8K 时匹配 73%。其他所有情况都匹配 100%。不匹配的请求仍然计入它们的吞吐量。</li><li>在 Kimi K3.1 上，“Baseten”是他们的生产 K3 路径（模型的 Python renderer 加上 basetenkenizer 的 encoder），因为仅靠 Rust 库无法渲染 Kimi chat。NVIDIA Dynamo 无法加载 Kimi K3.1，而 HF transformers 为它渲染了错误的 prompt（它忽略了 <code>reasoning_effort</code>）。</li><li>HF transformers 指 Python <code>apply_chat_template</code> 后接 tokenization。</li><li>所有图都使用线性刻度。当数值跨越多个数量级时，每个 prompt 大小（或引擎）有自己的轴，所以比较同一面板内的柱高，而不是跨面板比较。</li></ul>
+<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#appendix-2-vllm-and-sglang-tokenization-speedups">#</a>附录 2：vLLM 和 SGLang tokenization 加速</h2>
+<p>标题中的 120 倍是 Deepseek v4.1 在约 1M token 且带 8 张 inline 图像时的情况，我们的 tokenizer 做到 162 req/s，而 vLLM 自身的预处理是 1.35 req/s。下面是两个模型上的每个 prompt 大小，以便你看到完整范围。所有数字都是 8 个 vCPU 下的 req/s，进程内，使用上述版本的 vLLM 和 SGLang 自身请求预处理（chat template 渲染加 tokenization）。在每个大小上，我们都比 vLLM 快 61-181 倍，比 SGLang 快 53-112 倍，大多数大小落在约 90-120 倍。</p>
+<p><img src="https://inference.net/assets/speedups-table-mlKXSjdo.png" alt="表格：ChatTokenizer、vLLM 和 SGLang 在 DeepSeek v4.1 和 Kimi K3.1 上按 prompt 大小划分的每秒请求数，以及 ChatTokenizer 比各自快多少倍"></p>
+<p><a href="https://inference.net/blog/"> 返回博客</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>MiniMax M3.1 Flash 在 Inference 上线：Day 0</title>
       <link>https://inference.net/blog/minimax-m3-1-flash-day-0/</link>

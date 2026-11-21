@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 12:43:40**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-21 15:30:27**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -25,34 +25,34 @@
 - 页面：[新闻 / 更新](https://www.anthropic.com/news)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [面向初创公司的 Claude Tag 指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-13）
-  2. [构建永远在线的 agent](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13）
-  3. [推出 Claude Meetings](https://claude.com/resources/articles/claude-meetings)（2026-11-13）
-  4. [在自己的安全边界内运行 Claude Managed Agents](https://claude.com/resources/articles/self-hosted-claude-managed-agents)（2026-11-12）
-  5. [J.Crew 借 Claude 将标志性造型理念带到线上](https://claude.com/resources/articles/j-crew-style-advisor-with-claude)（2026-11-12）
-  - 📄 完整文章归档（共 164 篇）：[anthropic.md](llm-news/anthropic.md)
+  1. [Anthropic宣布完成首次公开募股，包括承销商全额行使增购股份选择权，并完成同步私募配售](https://www.anthropic.com/news/ipo-close)（2026-11-20）
+  2. [Anthropic确定首次公开募股发行价](https://www.anthropic.com/news/anthropic-prices-initial-public-offering)（2026-11-18）
+  3. [Claude Platform上的关联计费](https://claude.com/resources/articles/linked-billing-on-claude-platform)（2026-11-17）
+  4. [面向初创公司的 Claude Tag 指南](https://claude.com/resources/articles/claude-tag-guide-for-startups)（2026-11-13）
+  5. [构建永远在线的 agent](https://claude.com/resources/articles/building-always-on-agents)（2026-11-13）
+  - 📄 完整文章归档（共 167 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### OpenAI (openai)
 - 页面：[官方博客](https://openai.com/news/)
-  - ❌ 抓取失败：（可直接访问页面查看）
+  - ❌ 抓取失败：HTTP 403（可直接访问页面查看）
 - 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
   - 📡 RSS/Atom：https://openai.com/zh-Hans-CN/news/rss.xml
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [OpenAI 的 Performance Factory 如何保持 ChatGPT 快速](https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast)（2026-11-19）
-  2. [部署 Daybreak Red](https://openai.com/business/learn/deploying-daybreak-red)（2026-11-19）
-  3. [查看 PR 扫描的实际应用](https://openai.com/business/learn/pr-scans-demo)（2026-11-19）
-  4. [探索 Codex 安全插件](https://openai.com/business/learn/codex-security-plugin-demo)（2026-11-19）
-  5. [开始使用 Daybreak Blue](https://openai.com/business/learn/daybreak-blue-onboarding-demo)（2026-11-19）
-  - 📄 完整文章归档（共 1415 篇）：[openai.md](llm-news/openai.md)
+  1. [应对对抗性蒸馏](https://openai.com/index/combatting-adversarial-distillation)（2026-11-20）
+  2. [Hebbia 借助 GPT-6 Astra 提升金融研究能力](https://openai.com/business/customer-stories/hebbia)（2026-11-20）
+  3. [AI 能否帮助科学家发现有前景的候选药物？](https://openai.com/index/introducing-medchembench)（2026-11-20）
+  4. [OpenAI 的 Performance Factory 如何保持 ChatGPT 快速](https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast)（2026-11-19）
+  5. [探索 Codex 安全插件](https://openai.com/business/learn/codex-security-plugin-demo)（2026-11-19）
+  - 📄 完整文章归档（共 1418 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[变更日志](https://aistudio.google.com/docs/changelog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-google_gemini.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-google_gemini.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [Genie 4 (models/genie-4) generally available (GA): Released Genie 4 (models/genie-4) on the Interactions API (v1beta) for real-time interactive world generation, streaming steerable 24 fps 16:9 video…](https://aistudio.google.com/docs/changelog#11-19-2026)（2026-11-19）
+  1. [Genie 4 (genie-4) generally available (GA): Released Genie 4 (genie-4) on the Interactions API (v1beta) for real-time interactive world generation, streaming steerable 24 fps 16:9 video with synchron…](https://aistudio.google.com/docs/changelog#11-19-2026)（2026-11-19）
   2. [Gemini 4 Neon (gemini-4-neon) 全面上市 (GA)：发布了 Gemini 4 Neon (gemini-4-neon)，带来前沿级智能，跨复杂的软件工程快速完成端到端任务……](https://aistudio.google.com/docs/changelog#11-18-2026)（2026-11-18）
   3. [Gemini 3.5 Transcribe 中的语音编辑：gemini-3.5-transcribe 和 gemini-3.5-transcribe-live 现在支持语音驱动的编辑、重写和格式化听写语音或预先存在的文本（来源...](https://aistudio.google.com/docs/changelog#11-17-2026)（2026-11-17）
   4. [Gemini 4 Hydrogen (gemini-4-Hydrogen) 全面上市 (GA)：发布了 Gemini 4 Hydrogen (gemini-4-Hydrogen)，为每个人带来尖端智能，为日常生活带来速度和效率……](https://aistudio.google.com/docs/changelog#11-12-2026)（2026-11-12）
@@ -194,12 +194,12 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [DaisyRose-27B: Pushing the Frontier of Post-Training Efficiency](https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin)（2026-11-18）
-  2. [为什么你的微调工作花费的时间比 FLOP 所说的要长](https://huggingface.co/blog/Dharma-AI/predicting-fine-tuning-time)（2026-11-18）
-  3. [Streamhouse 中的时间序列模型：新领域和用例](https://huggingface.co/blog/ibm-research/time-series-powered-streamhouse)（2026-11-18）
-  4. [180B Parameters, 32GB of RAM: Pushing MoE Inference to the Limit with Transformers](https://huggingface.co/blog/moe-expert-streaming)（2026-11-18）
-  5. [Rumble-2-Flash: an open 0.5B speech model for 40+ languages](https://huggingface.co/blog/rumble-2-flash)（2026-11-18）
-  - 📄 完整文章归档（共 938 篇）：[huggingface.md](llm-news/huggingface.md)
+  1. [迎来 Inkling 2 Mini，为本地配置带来前沿性能](https://huggingface.co/blog/inkling2mini)（2026-11-20）
+  2. [推出 harness adapters：将常用模型适配至专属 harness，以提升性能并优化成本](https://huggingface.co/blog/harness-adapters-at-scale)（2026-11-20）
+  3. [DaisyRose-27B: Pushing the Frontier of Post-Training Efficiency](https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin)（2026-11-18）
+  4. [为什么你的微调工作花费的时间比 FLOP 所说的要长](https://huggingface.co/blog/Dharma-AI/predicting-fine-tuning-time)（2026-11-18）
+  5. [Streamhouse 中的时间序列模型：新领域和用例](https://huggingface.co/blog/ibm-research/time-series-powered-streamhouse)（2026-11-18）
+  - 📄 完整文章归档（共 940 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (openrouter)
 - 📡 [官方 RSS](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
@@ -250,12 +250,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 [官方 RSS](https://about.fb.com/news/tag/ai/feed/)：`https://about.fb.com/news/tag/ai/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [Meta 欢迎 Loblaw 成为 Muse 首家加拿大零售合作伙伴](https://about.fb.com/news/2026/11/meta-welcomes-loblaw-as-first-canadian-retail-partner-to-muse/)（2026-11-18）
-  2. [Muse 现已在澳大利亚上市：世界上第一个为所有人打造的个人人工智能代理](https://about.fb.com/news/2026/11/muse-is-now-available-in-australia/)（2026-11-17）
-  3. [Meta 的新协议将清洁制造引入数据中心供应链](https://about.fb.com/news/2026/11/meta-new-agreements-clean-manufacturing-data-center-supply-chains/)（2026-11-12）
-  4. [为你专属定制 Muse 应用](https://about.fb.com/news/2026/11/introducing-spaces-customize-muse-app/)（2026-11-06）
-  5. [给你的 Muse 一个声音](https://about.fb.com/news/2026/11/introducing-muse-ai-voice-expressive-avatars/)（2026-11-05）
-  - 📄 完整文章归档（共 30 篇）：[meta_llama.md](llm-news/meta_llama.md)
+  1. [共同推进科学：开源人工智能科学峰会亮点](https://about.fb.com/news/2026/11/advancing-science-together-highlights-from-the-open-source-ai-for-science-summit/)（2026-11-20）
+  2. [Meta 欢迎 Loblaw 成为 Muse 首家加拿大零售合作伙伴](https://about.fb.com/news/2026/11/meta-welcomes-loblaw-as-first-canadian-retail-partner-to-muse/)（2026-11-18）
+  3. [Muse 现已在澳大利亚上市：世界上第一个为所有人打造的个人人工智能代理](https://about.fb.com/news/2026/11/muse-is-now-available-in-australia/)（2026-11-17）
+  4. [Meta 的新协议将清洁制造引入数据中心供应链](https://about.fb.com/news/2026/11/meta-new-agreements-clean-manufacturing-data-center-supply-chains/)（2026-11-12）
+  5. [为你专属定制 Muse 应用](https://about.fb.com/news/2026/11/introducing-spaces-customize-muse-app/)（2026-11-06）
+  - 📄 完整文章归档（共 41 篇）：[meta_llama.md](llm-news/meta_llama.md)
 
 ### 美团 LongCat (longcat_meituan)
 - 页面：[新闻 / 更新](https://longcat.ai/)
@@ -293,12 +293,12 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [Amazon SageMaker Inference：2026 年发布回顾，第 2 部分](https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-inference-2026-launches-in-review-part-2/)（2026-11-20）
-  2. [将 Kimi Code CLI 与 Amazon Bedrock 上的模型结合使用](https://aws.amazon.com/blogs/machine-learning/use-kimi-code-cli-with-models-on-amazon-bedrock/)（2026-11-20）
-  3. [Enable AI agents to pay for AWS Marketplace x402 products with Amazon Bedrock AgentCore payments](https://aws.amazon.com/blogs/machine-learning/enable-ai-agents-to-pay-for-aws-marketplace-x402-products-with-amazon-bedrock-agentcore-payments/)（2026-11-19）
-  4. [宝马集团如何管理数千名开发商的数百名代理商](https://aws.amazon.com/blogs/machine-learning/how-the-bmw-group-governs-hundreds-of-agents-across-thousands-of-developers/)（2026-11-19）
-  5. [在 AWS Quick 中运营您的整个销售业务](https://aws.amazon.com/blogs/machine-learning/run-your-whole-selling-business-in-aws-quick/)（2026-11-19）
-  - 📄 完整文章归档（共 256 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [AWS Quick 的新增功能：功能更强大的流程、更新的 Web 体验以及协同工作的代理](https://aws.amazon.com/blogs/machine-learning/new-in-aws-quick-more-capable-flows-an-updated-web-experience-and-agents-that-work-together/)（2026-11-21）
+  2. [利用分布式 KV 缓存代理技能降低自托管 LLM 成本和延迟](https://aws.amazon.com/blogs/machine-learning/cut-self-hosted-llm-cost-and-latency-with-the-distributed-kv-caching-agent-skill/)（2026-11-21）
+  3. [在 Amazon SageMaker HyperPod Slurm 中引入用于可观察性和用户管理的托管集群扩展](https://aws.amazon.com/blogs/machine-learning/introducing-managed-cluster-extensions-for-observability-and-user-management-in-amazon-sagemaker-hyperpod-slurm/)（2026-11-20）
+  4. [Amazon SageMaker HyperPod Global Inference Gateway 简介：跨区域和集群的一个终端节点](https://aws.amazon.com/blogs/machine-learning/introducing-amazon-sagemaker-hyperpod-global-inference-gateway-one-endpoint-across-regions-and-clusters/)（2026-11-20）
+  5. [标准银行集团如何自动化生成人工智能的人工智能风险评估](https://aws.amazon.com/blogs/machine-learning/how-standard-bank-group-automates-ai-risk-assessment-for-generative-ai/)（2026-11-20）
+  - 📄 完整文章归档（共 263 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
@@ -315,12 +315,12 @@
 ### Together AI (together_ai)
 - 📡 [官方 RSS](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [Tencent Hy4 is live on Together AI](https://www.together.ai/blog/tencent-hy4)（2026-11-19）
-  2. [推出 Together Storage Accelerator：为您的 GPU 集群提供快速、免费的数据缓存](https://www.together.ai/blog/introducing-together-storage-accelerator)（2026-11-19）
-  3. [去年我们构建了 megakernels，今年我们删除了它们：通往 Together Compiler 之路](https://www.together.ai/blog/road-to-together-compiler)（2026-11-16）
-  4. [让开放模型适用于长时程 agentic 工作负载](https://www.together.ai/blog/making-open-models-work-for-long-horizon-agentic-workloads)（2026-11-16）
-  5. [我们如何让编码智能体轻松使用 Together AI](https://www.together.ai/blog/how-we-do-agent-evals-at-together-ai)（2026-11-16）
-  - 📄 完整文章归档（共 101 篇）：[together_ai.md](llm-news/together_ai.md)
+  1. [Qwen3 TTS is now available on Together AI](https://www.together.ai/blog/qwen3-tts)（2026-11-20）
+  2. [Tencent Hy4 is live on Together AI](https://www.together.ai/blog/tencent-hy4)（2026-11-19）
+  3. [推出 Together Storage Accelerator：为您的 GPU 集群提供快速、免费的数据缓存](https://www.together.ai/blog/introducing-together-storage-accelerator)（2026-11-19）
+  4. [去年我们构建了 megakernels，今年我们删除了它们：通往 Together Compiler 之路](https://www.together.ai/blog/road-to-together-compiler)（2026-11-16）
+  5. [让开放模型适用于长时程 agentic 工作负载](https://www.together.ai/blog/making-open-models-work-for-long-horizon-agentic-workloads)（2026-11-16）
+  - 📄 完整文章归档（共 102 篇）：[together_ai.md](llm-news/together_ai.md)
 
 ### Fireworks AI (fireworks_ai)
 - 页面：[官方博客](https://fireworks.ai/blog)
@@ -418,12 +418,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-inference_net.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-inference_net.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-21，标题自动汉化）：
-  1. [MiniMax M3.1 Flash 在 Inference 上线：Day 0](https://inference.net/blog/minimax-m3-1-flash-day-0/)（2026-10-23）
-  2. [AutoEvals 简介：自动找到最适合您任务的模型](https://inference.net/blog/introducing-autoevals/)（2026-08-05）
-  3. [Schematron V2：以极低成本实现前沿级 HTML 转 JSON 提取](https://inference.net/blog/schematron-v2/)（2026-04-16）
-  4. [推理平台简介：监控、训练和部署自我改进的 AI 模型](https://inference.net/blog/introducing-inference-platform/)（2026-04-14）
-  5. [Inference.net 如何训练专用语言模型，把 AI 成本最多降低 50 倍](https://inference.net/blog/nemotron-finetuning/)（2026-03-11）
-  - 📄 完整文章归档（共 11 篇）：[inference_net.md](llm-news/inference_net.md)
+  1. [We made vLLM tokenization 120x faster with Elixir](https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/)（2026-11-20）
+  2. [MiniMax M3.1 Flash 在 Inference 上线：Day 0](https://inference.net/blog/minimax-m3-1-flash-day-0/)（2026-10-23）
+  3. [AutoEvals 简介：自动找到最适合您任务的模型](https://inference.net/blog/introducing-autoevals/)（2026-08-05）
+  4. [Schematron V2：以极低成本实现前沿级 HTML 转 JSON 提取](https://inference.net/blog/schematron-v2/)（2026-04-16）
+  5. [推理平台简介：监控、训练和部署自我改进的 AI 模型](https://inference.net/blog/introducing-inference-platform/)（2026-04-14）
+  - 📄 完整文章归档（共 12 篇）：[inference_net.md](llm-news/inference_net.md)
 
 ---
 共整理 34 个厂商的动态入口（其中 34 个成功提取最新文章），RSS/Atom 源 16 个。

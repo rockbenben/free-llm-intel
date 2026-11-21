@@ -867,11 +867,27 @@
       {
         "quote": "$25.5 /mo in API credits.",
         "url": "https://mistral.ai/pricing/"
+      },
+      {
+        "quote": "Extend usage with PAYG credits",
+        "url": "https://mistral.ai/pricing/"
+      },
+      {
+        "quote": "Keep going past your plan limit by paying only for what you use beyond it at API rate.",
+        "url": "https://mistral.ai/pricing/"
+      },
+      {
+        "quote": "Yes, Mistral’s Free plan provides limited access to Vibe, including our latest models, chat, search, creation, and Vibe for code for agentic coding in your terminal. On the Free plan, you also get access to Mistral Studio.",
+        "url": "https://mistral.ai/pricing/"
+      },
+      {
+        "quote": "Most models are priced per million tokens, with both input (your prompts) and output (responses) counted separately.",
+        "url": "https://mistral.ai/pricing/"
       }
     ],
-    "_summary": "付费订阅 Vibe Pro 附带的 API credits 调整为 $25.5/月，免费 API 端点与无新用户赠金政策保持不变",
-    "_updated": "2026-10-08 11:09:13",
-    "free_quota": "**无新用户赠金 / 免费实验层**（现行 API 定价页未提及；旧“€5 赠金 / 1 RPS 免费层”无据）；Vibe Pro 订阅套餐含 $25.5/月 API credits 属付费订阅权益"
+    "_summary": "Vibe 订阅套餐原来标注的随附 API credits（$25.5/月、$15/月两档）已从定价页删除，改为套餐额度用尽后按 API 价另行购买 PAYG credits；免费层仍无新用户赠金或免费实验层。",
+    "_updated": "2026-11-21 15:01:10",
+    "free_quota": "**无新用户赠金 / 免费实验层**（现行 API 定价页未提及；旧“€5 赠金 / 1 RPS 免费层”无据）；Vibe 订阅套餐**不再随附 API credits**（旧“Pro 含 $25.5/月 API credits”已不在页面出现），超出套餐额度需按 API 价另行购买 PAYG credits"
   },
   "moonshot_kimi": {
     "_evidence": [
@@ -1043,14 +1059,34 @@
       {
         "quote": "MOSS-TTS-2.0-Flash-Preview最新snapshot: moss-tts-2.0-flash-preview-2026-11-04单人文本转语音模型 · 文本 + voice_id → 音频POST /v1/audio/speech¥1.20 / 万字符24 积分 / 万字符✓✓",
         "url": "https://platform.moss.cn/docs/models"
+      },
+      {
+        "quote": "moss-transcribe-1.0 于 11 月 30 日 12:00（北京时间）下线，请提前迁移。查看迁移说明 →",
+        "url": "https://platform.moss.cn/docs/models"
+      },
+      {
+        "quote": "MOSS-Voice-Generator-1.0最新snapshot: moss-voice-generator-1.0-2026-07-22根据文本和声音指令生成语音 · 文本 + 指令 → 音频POST /v1/audio/voice/generations¥1.20 / 万字符24 积分 / 万字符—✓MOSS-Transcribe-Diarize-Pro推荐",
+        "url": "https://platform.moss.cn/docs/models"
+      },
+      {
+        "quote": "Nex-N2.6最新snapshot: nex-n2.6-2026-11-05多模态语言模型 · 文本、图片、视频 → 文本POST /v1/chat/completions限时免费0 积分✓—",
+        "url": "https://platform.moss.cn/docs/models"
+      },
+      {
+        "quote": "MOSS-Live-1.0snapshot: moss-live-1.0-2026-11-02实时交互模型 · 实时音频 + 实时视频流 → 音频 + 文本WebSocket /v1/realtime¥0.15 / 分钟3 积分 / 分钟✓✓",
+        "url": "https://platform.moss.cn/docs/models"
+      },
+      {
+        "quote": "Nex-N2.6 限时免费，调用消耗 0 积分。",
+        "url": "https://platform.moss.cn/docs/getting-started/quickstart"
       }
     ],
-    "_summary": "MOSS-Live-1.0 结束限时免费并开始按 ¥0.15/分钟计费；新增 MOSS-TTS-2.0-Flash-Preview 付费模型",
-    "_updated": "2026-11-20 11:53:52",
+    "_summary": "模型列表中 `moss-transcribe-1.0` 已下架，官方公告其于 11 月 30 日 12:00（北京时间）下线；免费模型（nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0）与各付费价格未变。",
+    "_updated": "2026-11-21 15:01:10",
     "free_models": [
       "**限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（实测 max_tokens=64 时 63 个 token 全用于推理，finish_reason=length）",
       "**限时免费 0 积分**：`moss-vl-1.0`（多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（实时视频理解，连续图片帧+文本→增量文本，WebSocket `/v1/realtime`）",
-      "**付费（非免费，执行六折优惠）**：实时交互 MOSS-Live-1.0（¥0.15/分钟＝3 积分/分钟）；TTS 系列 MOSS-TTS-2.0-Flash-Preview / moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写 moss-transcribe-1.0（¥0.48/小时＝9.60 积分/小时）、moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分、高分辨率 ¥0.18/张＝3.60 积分）"
+      "**付费（非免费，执行六折优惠）**：实时交互 MOSS-Live-1.0（¥0.15/分钟＝3 积分/分钟）；TTS 系列 MOSS-TTS-2.0-Flash-Preview / moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写目前仅列 moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时），`moss-transcribe-1.0`（原 ¥0.48/小时＝9.60 积分/小时）已从模型列表移除，官方公告于 11 月 30 日 12:00（北京时间）下线；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分、高分辨率 ¥0.18/张＝3.60 积分）"
     ],
     "guide_meta": {
       "pick": "**多模态语言模型限时免费**：`nex-n2.6`（文本/图片/视频→文本）官方标「限时免费 0 积分」，2026-11-12 实测 HTTP 200 真实出文、控制台账单为零；同平台仍在限免的是 `moss-vl-1.0` 视觉理解与 `moss-vl-realtime-1.0`（实时视频理解，只吃视频帧、只回文字，不做语音）。**`moss-live-1.0` 已不在免费范围**：2026-11-18 12:00 起 ¥0.15/分钟（3 积分/分钟）",
@@ -1064,6 +1100,54 @@
       "tip": "**限时免费无公开截止日**，随时可能恢复计费，别按长期额度排期；`nex-n2.6` 是推理模型，小 max_tokens 下正文为空（需给足）；MOSS-Live-1.0 已开始计费（¥0.15/分），TTS/转写/文生图均按量收费，不在免费范围；`tob-kimi-k3` 需单独授权、普通 key 调它 403"
     },
     "promotions": "限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 标 0 积分；MOSS-Live-1.0 已于 11 月 18 日 12:00 开始计费（¥0.15/分钟），语音生成、音频转写、文生图等付费模型当前执行六折优惠。"
+  },
+  "nango": {
+    "_evidence": [
+      {
+        "quote": "Get up to $10,000 in Nango credits and the Growth add-on free for six months.",
+        "url": "https://nango.dev/pricing"
+      },
+      {
+        "quote": "Up to $10,000 in startup credits.",
+        "url": "https://nango.dev/pricing"
+      },
+      {
+        "quote": "Get up to $10,000 in Nango credits with our startup program.",
+        "url": "https://nango.dev/pricing"
+      },
+      {
+        "quote": "All offers include six months of credits and free Growth.",
+        "url": "https://nango.dev/startup"
+      },
+      {
+        "quote": "All YC batches qualify for $10,000 in usage credits and free Growth for six months.",
+        "url": "https://nango.dev/startup"
+      },
+      {
+        "quote": "You can also set up spend alerts.",
+        "url": "https://nango.dev/pricing"
+      }
+    ],
+    "_summary": "免费档本身未变，但官方页面新增了「Startup program」限时活动：符合资格的初创最高可获 $10,000 Nango credits，并可免费使用 Growth add-on 六个月。",
+    "_updated": "2026-11-21 15:01:10",
+    "guide_meta": {
+      "scenarios": [
+        "code",
+        "credit"
+      ],
+      "short": "Free $0/月：10 connections + 10 小时计算 + 10GB 传输/月；另有 startup program 最高 $10,000 credits + 6 个月 Growth（需资格审核）",
+      "signup": "email",
+      "tiers": [
+        "recurring",
+        "onetime"
+      ],
+      "tip": "超出免费额度按 $0.29/connection、$0.72/小时、$0.5/GB 计费，建议在 dashboard 设置 spend alerts 防超支。"
+    },
+    "tier_caveats": [
+      "免费档的 10 小时计算是**集成同步算力**，不是模型 token",
+      "Pay-as-you-go 档为 $50/月，含每月 $50 credits",
+      "Startup program（限时、需资格审核）：YC 批次或合作 VC portfolio 可获 $10,000 usage credits；融资 $1M–$10M 的 VC-backed 初创为 $5,000；所有 offer 均含六个月 credits 与免费 Growth add-on（Growth add-on 单独订阅为 $450/月）"
+    ]
   },
   "nebius": {
     "_evidence": [
@@ -1575,10 +1659,26 @@
       {
         "quote": "套餐专属 Key 用于套餐额度，与按量计费 API Key 不可互换；仅在套餐有效期内可用。详情见 U Plan 订阅概要。",
         "url": "https://maas.unisound.com/docs/guide/quickstart"
+      },
+      {
+        "quote": "U Plan 正式上线！Free 档免费领，套餐升级限时7折，低至41.3元/月！U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送！",
+        "url": "https://maas.unisound.com/docs/guide/quickstart"
+      },
+      {
+        "quote": "访问 云知声Maas平台，点击右上角的「登录」按钮，手机验证码登录，用户为首次登录时自动完成注册。",
+        "url": "https://maas.unisound.com/docs/guide/quickstart"
+      },
+      {
+        "quote": "登录后，在账户管理页面，点击「实名认证」，请填写相关信息完成个人开发者或企业开发者认证。",
+        "url": "https://maas.unisound.com/docs/guide/quickstart"
+      },
+      {
+        "quote": "U Plan：领取或订阅成功后，通过「控制台 > 订阅管理 > U Plan」获取套餐专属 API Key（随套餐自动分配，每账户唯一一把）。",
+        "url": "https://maas.unisound.com/docs/guide/quickstart"
       }
     ],
-    "_summary": "快速入门页下线了原实名认证赠送具体 Token 资源包的说明与 U2 Flash 限时免费横幅，改版上线 U Plan 体系并提供 Free 档免费领取。",
-    "_updated": "2026-11-02 10:04:04",
+    "_summary": "U Plan 限时升级折扣由 5 折（低至 29.5 元/月）调整为 7 折（低至 41.3 元/月），Free 档免费权益与模型清单未变。",
+    "_updated": "2026-11-21 15:01:10",
     "free_models": [
       "`U2-Flash`、`U2-Med` —— U Plan Free 档免费领取（套餐权益）",
       "ASR（语音识别）、TTS（语音合成）、OCR（视觉理解）模型 —— U Plan Free 档免费送模型权益"
@@ -1589,12 +1689,13 @@
         "embed"
       ],
       "short": "U Plan Free 档免费领：含 U2-Flash、U2-Med、ASR、TTS、OCR 权益，需专属 Key",
+      "signup": "phone",
       "tiers": [
         "recurring"
       ],
       "tip": "套餐专属 Key 与按量计费 Key 不互换，仅在套餐有效期内可用"
     },
-    "promotions": "页面顶部横幅标注：U Plan 正式上线，Free 档免费领，套餐升级限时 5 折，低至 29.5 元/月；U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送。",
+    "promotions": "页面顶部横幅标注：U Plan 正式上线，Free 档免费领，套餐升级限时 7 折，低至 41.3 元/月；U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送。",
     "tier_caveats": [
       "U Plan 领取或订阅成功后，需通过「控制台 > 订阅管理 > U Plan」获取套餐专属 API Key（随套餐自动分配，每账户唯一一把）",
       "套餐专属 Key 用于套餐额度，与按量计费 API Key 不可互换，且仅在套餐有效期内可用"

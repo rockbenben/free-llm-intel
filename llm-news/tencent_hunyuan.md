@@ -15,11 +15,11 @@
 4. [Hy Image3.5 preview 发布：为专业创作提供高性价比模型](https://hunyuan.tencent.com/research/hy-image35-preview)（2026-09-22）
 5. [当大模型强化学习走向规模化，Batch Size Scaling 有什么不一样？](https://hunyuan.tencent.com/research/100116)（2026-09-22）
 6. [Hy4 preview 发布](https://hunyuan.tencent.com/research/hy4-preview)（2026-08-28）
-7. [From LR to ELR: A Better Heuristic for Pretraining Dynamics](https://hunyuan.tencent.com/research/elr)（2026-08-11） <!--orig:From LR to ELR: A Better Heuristic for Pretraining Dynamics-->
+7. [从 LR 到 ELR：预训练动态的更好启发式](https://hunyuan.tencent.com/research/elr)（2026-08-11） <!--orig:From LR to ELR: A Better Heuristic for Pretraining Dynamics-->
 8. [Hyra: 简单有效的科学发现智能体](https://hunyuan.tencent.com/research/hyra)（2026-07-21）
 9. [Hy3 正式发布](https://hunyuan.tencent.com/research/hy3)（2026-07-06）
 10. [Hy-MT2：面向实际应用场景的高性能多语言翻译模型](https://hunyuan.tencent.com/research/100041)（2026-05-21）
-11. [Real life is where context gets hard](https://hunyuan.tencent.com/research/100039)（2026-04-30） <!--orig:Real life is where context gets hard-->
+11. [现实生活中环境变得困难](https://hunyuan.tencent.com/research/100039)（2026-04-30） <!--orig:Real life is where context gets hard-->
 12. [Hy3 preview : 混元大模型重建的第一步](https://hunyuan.tencent.com/research/hy3-preview)（2026-04-23）
-13. [Stabilizing RLVR via Token-level Gradient Diagnosis and Layerwise Clipping](https://hunyuan.tencent.com/research/100015)（2026-02-13） <!--orig:Stabilizing RLVR via Token-level Gradient Diagnosis and Layerwise Clipping-->
-14. [Learning from context is harder than we thought](https://hunyuan.tencent.com/research/100025)（2026-02-03） <!--orig:Learning from context is harder than we thought-->
+13. [通过代币级梯度诊断和分层裁剪稳定 RLVR](https://hunyuan.tencent.com/research/100015)（2026-02-13） <!--orig:Stabilizing RLVR via Token-level Gradient Diagnosis and Layerwise Clipping-->
+14. [从上下文中学习比我们想象的更难](https://hunyuan.tencent.com/research/100025)（2026-02-03） <!--orig:Learning from context is harder than we thought-->

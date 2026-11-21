@@ -3,6 +3,20 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-11-21
+### 复旦 MOSS (MOSI)（`moss`）
+- 摘要：模型列表中 `moss-transcribe-1.0` 已下架，官方公告其于 11 月 30 日 12:00（北京时间）下线；免费模型（nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0）与各付费价格未变。
+- `free_models`：**限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token… → **限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token…
+### Mistral AI（`mistral`）
+- 摘要：Vibe 订阅套餐原来标注的随附 API credits（$25.5/月、$15/月两档）已从定价页删除，改为套餐额度用尽后按 API 价另行购买 PAYG credits；免费层仍无新用户赠金或免费实验层。
+- `free_quota`：**无新用户赠金 / 免费实验层**（现行 API 定价页未提及；旧“€5 赠金 / 1 RPS 免费层”无据）；Vibe Pro 订阅套餐含 $25.5/月 API credits 属付费订阅权益 → **无新用户赠金 / 免费实验层**（现行 API 定价页未提及；旧“€5 赠金 / 1 RPS 免费层”无据）；Vibe 订阅套餐**不再随附 API credits**（旧“Pro 含 $25.5/月 API credits”已不在页面出现），超出套餐额度需按 API 价另行购买 PAYG credits
+### 云知声 Token Hub（`unisound_shanhai`）
+- 摘要：U Plan 限时升级折扣由 5 折（低至 29.5 元/月）调整为 7 折（低至 41.3 元/月），Free 档免费权益与模型清单未变。
+- `promotions`：页面顶部横幅标注：U Plan 正式上线，Free 档免费领，套餐升级限时 5 折，低至 29.5 元/月；U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送。 → 页面顶部横幅标注：U Plan 正式上线，Free 档免费领，套餐升级限时 7 折，低至 41.3 元/月；U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送。
+### Nango（`nango`）
+- 摘要：免费档本身未变，但官方页面新增了「Startup program」限时活动：符合资格的初创最高可获 $10,000 Nango credits，并可免费使用 Growth add-on 六个月。
+- `tier_caveats`：免费档的 10 小时计算是**集成同步算力**，不是模型 token、Pay-as-you-go 档为 $50/月 → 免费档的 10 小时计算是**集成同步算力**，不是模型 token、Pay-as-you-go 档为 $50/月，含每月 $50 credits、Startup program（限时、需资格审核）：YC 批次或合作 VC portfolio 可获 $10,000 usage credits；融资 $1M–$10M …
+
 ## 2026-11-20
 ### Google Gemini（`google_gemini`）
 - 摘要：官方明确 Gemini 4 Neon 与 Genie 4（models/genie-4）不支持免费层（Not available / Not supported）

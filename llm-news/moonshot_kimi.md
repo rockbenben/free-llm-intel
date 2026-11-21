@@ -16,6 +16,6 @@
 5. [Agent Swarm](https://www.kimi.com/blog/agent-swarm)（2026-02-09）
 6. [WorldVQA](https://www.kimi.com/blog/worldvqa)（2026-02-03）
 7. [Kimi K2.5](https://www.kimi.com/blog/kimi-k2-5)（2026-01-27）
-8. [Kimi Vendor Verifier](https://www.kimi.com/blog/kimi-vendor-verifier)（2026-01-22） <!--orig:Kimi Vendor Verifier-->
+8. [Kimi供应商验证者](https://www.kimi.com/blog/kimi-vendor-verifier)（2026-01-22） <!--orig:Kimi Vendor Verifier-->
 9. [Kimi K2 Thinking](https://www.kimi.com/blog/kimi-k2-thinking)（2025-11-06）
 10. [Kimi K2](https://www.kimi.com/blog/kimi-k2)（2025-07-11）
