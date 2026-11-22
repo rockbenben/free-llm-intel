@@ -7,7 +7,159 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>安全事件：2026年6月和7月请求的 Prompt 泄露</title>
+      <link>https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026</guid>
+      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Security event: Prompt leakage for requests in June and July of 2026</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>公司简介</p>
+<p>发表于 11/21/2026</p>
+<h1>安全事件：2026年6月、7月请求提示泄露</h1>
+<ul><li>作者 Vipul Ved Prakash</li><li>目录<a href="https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026">40+ 型号选择用于生产...40+ 型号选择用于生产...40+ 型号选择用于生产...</a></li></ul>
+<p>我们正在通知客户有关 2026 年 6 月和 7 月提交到 Together AI 无服务器推理服务的提示子集的安全事件。在公共代码存储库中公开私有存储库的凭据后，未经授权的一方下载了存储的提示样本。</p>
+<p>我们对此次事件表示歉意。我们正在审查受影响的数据，以确定哪些信息被泄露以及哪些客户需要直接通知。</p>
+<h2>发生了什么</h2>
+<p>作为常规软件测试的一部分，我们收集了授权用于该用途的提示样本，并将它们存储在私人 Hugging Face 存储库中。这些样本来自对 MiniMax M3、GLM-5.2 和 Kimi K2.6 型号的请求，主要是在 2026 年 6 月 24 日、7 月 4 日、7 月 8 日和 7 月 14 日。</p>
+<p>在开发我们的公共 GitHub 存储库期间，人工智能编码代理 xorl 提交了一个凭证，可提供对私有 Hugging Face 存储库的访问权限。我们的自动扫描检测到暴露的凭据，并恢复了提交。</p>
+<p>在暴露窗口期间，未经授权的一方获得了凭据并使用它来下载存储的提示样本。该方随后在这些样本中搜索了其他服务的凭据，并测试了这些凭据是否有效。测试的其中五个凭据是与 Dragos 安全实验相关的金丝雀凭据。</p>
+<p>我们没有理由相信未经授权的一方进一步泄露了这些数据，并且我们知道这些数据现已被删除。</p>
+<h2>调查和范围</h2>
+<p>我们已与外部法医调查公司和执法部门合作调查该事件。</p>
+<p>根据我们的审查，我们尚未发现除此事件之外的其他及时泄漏的证据。我们正在对受影响的提示内容进行审查，以确定是否泄露了敏感的个人信息或其他客户数据。我们将根据需要直接联系受影响的客户，并提供与他们相关的调查结果。</p>
+<h2>我们所做的改变</h2>
+<p>事件发生后，我们加强了对开发工作流程、凭证和客户数据的控制。这些变化包括：</p>
+<ul><li>使用有范围或短期的凭据以及支持的无密钥访问，以减少凭据暴露的潜在影响。</li><li>检查所有拉取请求的凭据。</li><li>将零数据保留 (ZDR) 设为新帐户的默认设置。</li><li>更新我们管理人工智能编码代理使用的开发流程。</li></ul>
+<h2>客户可以做什么</h2>
+<p>处理敏感提示数据的客户应在其帐户设置中启用 ZDR。</p>
+<p>如果您对此事件或其对您的组织的潜在影响有疑问，请联系 security@together.ai。</p>
+<p><strong>维普尔·韦德·普拉卡什</strong></p>
+<p>Together AI 首席执行官兼联合创始人</p>
+<h2>相关文章</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Qwen4 Max 已上线 Together AI</title>
+      <link>https://www.together.ai/blog/qwen4-max</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/qwen4-max</guid>
+      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Qwen4 Max is live on Together AI</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>模型库</p>
+<p>发表于 11/21/2026</p>
+<h1>Qwen4 Max 已在 Together AI 上线</h1>
+<p>截至 2026 年 11 月 22 日，阿里巴巴的旗舰 Qwen 型号可享受 30% 的折扣。我们在一次请求中向其提供了错误报告和整个 Tornado 存储库，以了解 1M 代币上下文窗口的价值和成本。</p>
+<ul><li>作者桑尼·汗</li><li>目录<a href="https://www.together.ai/blog/qwen4-max">40+ 型号选择用于生产...40+ 型号选择用于生产...40+ 型号选择用于生产...</a></li><li>本文链接【Qwen4 Max在游乐场】(https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max)【Qwen4 Max型号页面】(https://www.together.ai/models/qwen4-max)【阿里巴巴公告】(https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max)</li></ul>
+<p>总结</p>
+<ul><li><strong>Together AI 上的 Qwen4 Max：</strong> 阿里巴巴的旗舰 Qwen 模型可在 Together Serverless Inference 上使用，具有 1M 代币上下文窗口。</li><li><strong>我们测试的内容：</strong> Qwen4 Max 在一次请求中获取了一份错误报告和 Tornado 存储库的所有 344 个文件，并且其补丁通过了维护人员的测试。</li><li><strong>销售定价：</strong> 截至 2026 年 11 月 22 日，每 100 万个输入代币的成本为 1.05 美元，每 100 万个缓存输入代币的成本为 0.0525 美元，每 100 万个输出代币的成本为 3.15 美元。</li><li><strong>在调用它之前：</strong> 请求必须进行流式传输，默认情况下思考处于开启状态，思考令牌计为输出令牌。</li></ul>
+<p>我们在一次请求中向 <a href="https://www.together.ai/models/qwen4-max">Qwen4 Max</a> 提供了一份错误报告和整个代码库。代码库是 Tornado，Python Web 框架：所有 344 个文件，652,519 个令牌。该模型没有工具，我们没有选择相关文件或首先运行检索步骤。七十二秒后，它返回了一个补丁，并且该补丁通过了 Tornado 维护人员为该错误编写的测试。该请求花费了 69 美分。</p>
+<p>它还在存储库的其他地方找到了先例。错误报告从未提及 <code>tornado/iostream.py</code>，但模型指出那里的代码已经按照补丁所需的方式处理错误。 Tornado 的维护者在他们自己的修复中引用了相同的代码。</p>
+<p>Qwen4 Max是阿里巴巴的旗舰Qwen机型。该产品现已在 Together AI 上上线，截至 2026 年 11 月 22 日可享受 30% 折扣。</p>
+<h2>测试</h2>
+<p>Tornado 是一个开源 Python Web 框架。其存储库包含大约 340 个代码、测试和文档文件。这适合 Qwen4 Max 的上下文窗口，而且远远超过任何人手动粘贴到提示中的效果。我们选择了维护者于 2026 年 11 月 18 日（即 Qwen4 Max 发布两天后）提交的修复程序，并针对该提交之前的存储库进行了测试。</p>
+<p>这是一个示例，旨在展示单个调用可以执行的操作及其成本。</p>
+<p>该错误存在于 Tornado 的 websocket 代码中。当连接关闭且消息仍未发送时，每个未等待的 <code>write_message()</code> 调用都会记录错误，即使等待它是可选的。我们将结帐中的每个文本文件作为一个提示发送，并附有一份仅描述症状的错误报告：</p>
+<blockquote>write_message 在连接关闭时记录“从未检索到任务异常”当 Websocket 连接关闭而消息仍未发送时（例如，客户端发送消息和 FIN，或重置连接，而不读取回复），未等待结果的每个 write_message() 调用都会在错误级别记录“从未检索到任务异常”。等待 write_message 返回的 Future 是可选的，因此未等待的调用不应该记录任何内容。等待它的调用者仍然应该得到 WebSocketClosedError。</blockquote>
+<p>我们询问原因和补丁。这是重播的请求：</p>
+<h3>回来了什么</h3>
+<p>第一个令牌在 54 秒后到达，回复在 72 秒完成。Qwen4 Max 在 <code>tornado/websocket.py</code> 中将错误追溯到 <code>WebSocketProtocol13.write_message</code>。该方法将每个写入包装在一个任务中。当连接关闭时，任务会失败，并出现一个不需要任何人收集的异常，Python 会将其记录为“从未检索到任务异常”。</p>
+<p>该模型的补丁将异常标记为已检索。没有记录任何内容，等待写入的调用者仍然会收到错误：</p>
+<pre><code>-        return asyncio.ensure_future(wrapper())
++        task = asyncio.ensure_future(wrapper())
++
++        # Awaiting the returned Future is optional, so an error nobody looks
++        # at must not be reported as &quot;Task exception was never retrieved&quot;.
++        # Retrieving it here leaves it in place for callers that do await.
++        def _mark_retrieved(t: &quot;asyncio.Task[None]&quot;) -&gt; None:
++            if not t.cancelled():
++                t.exception()
++
++        task.add_done_callback(_mark_retrieved)
++        return task</code></pre>
+<p>先例使得补丁读起来就像它属于项目一样。该模型的解释说，修复应该做 <code>BaseIOStream.write</code> 已经为自己的未来所做的事情。该方法位于 <code>tornado/iostream.py</code> 中，位于 websocket 代码的下一层，它以相同的方式解决了相同的问题。维护者的提交也做了同样的比较。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b01fded989d54b2b151f5cf_qwen4-max-repo-map.png" alt="由 344 个方格组成的网格，Tornado 存储库中的每个文件一个，按文件夹分组。龙卷风文件夹中的两个方块突出显示并用一条线连接：websocket.py（错误所在）和 iostream.py（模型指向的先例）。"></p>
+<p>没有人为此挑选这些文件。所有 344 个都输入了，模型找到了重要的两个。</p>
+<h3>我们如何检查它</h3>
+<p>Tornado 的维护者在修复中添加了两项回归测试：一项针对未等待的写入，另一项针对等待的写入。在修复之前的代码中，第一个失败。应用模型的补丁后，两者都通过了。然后，我们在补丁到位的情况下运行了 Tornado 的全套套件，进行了 1,673 次测试，没有一次失败。</p>
+<h3>花费是多少</h3>
+<p>按销售价格计算，请求价格约为 69 美分，几乎全部用于 652,519 个输入代币。按标价计算，价格为 98 美分。</p>
+<p>再次发送相同的存储库的成本要低得多。 AI 会自动缓存提示输入，并且在销售期间缓存的输入为每百万代币 0.0525 美元。当我们重复大约 630,000 个令牌的请求时，几乎所有令牌都被缓存回来。第一个令牌在 8 秒内到达，而不是 54 秒，输入成本约为 3 美分，而不是 66 秒。</p>
+<h2>关于Qwen4 Max</h2>
+<p>阿里巴巴于2026年11月16日发布了Qwen4 Max，并将其描述为Qwen家族迄今为止最强大的型号。它将模型定位为长期代理工作，包括跨大型存储库进行编码，这是我们测试的任务类型。</p>
+<p>Qwen4 Max 是一个稀疏专家混合模型，拥有 2.4 万亿个参数，其中每个代币有 710 亿个活跃参数。在阿里巴巴自己的跨 721 个专业领域的行业任务基准 Work360 上，阿里巴巴报告称，其整体性能优于 Qwen3.8 Max，在高推理强度下使用的代币减少了 35%，平均每个任务的成本降低了约 60%。这是阿里巴巴的数据，<a href="https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max">其公告</a>有详细信息。</p>
+<h2>在 Together AI 上运行</h2>
+<p>Qwen4 Max 位于模型字符串 <code>Qwen/Qwen4-Max</code> 下的 Together Serverless Inference 上。该脚本在一个请求中发送整个存储库和错误报告，就像我们的测试所做的那样。您需要 Together Python SDK (<code>pip install together</code>)、<code>TOGETHER_API_KEY</code>、存储库的本地克隆以及保存为 <code>bug_report.md</code> 的错误报告。它发送 git 跟踪的每个文本文件，因此首先检查存储库中的机密。</p>
+<pre><code>import subprocess
+from pathlib import Path
+
+from together import Together
+
+repo = Path(&quot;tornado&quot;)
+bug_report = Path(&quot;bug_report.md&quot;).read_text()
+
+# Every file git tracks, skipping the ones that aren't text
+names = subprocess.check_output(
+    [&quot;git&quot;, &quot;-C&quot;, str(repo), &quot;ls-files&quot;], text=True
+).splitlines()
+files = []
+for name in names:
+    try:
+        files.append(f&quot;=== FILE: {name} ===\n{(repo / name).read_text()}\n&quot;)
+    except UnicodeDecodeError:
+        continue
+
+client = Together()
+
+stream = client.chat.completions.create(
+    model=&quot;Qwen/Qwen4-Max&quot;,
+    messages=[
+        {
+            &quot;role&quot;: &quot;system&quot;,
+            &quot;content&quot;: f&quot;This is a complete repository, {len(files)} files.\n\n&quot;
+            + &quot;&quot;.join(files),
+        },
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;Here is a bug report.\n\n{bug_report}\n\n&quot;
+            &quot;Explain the cause, then write a patch.&quot;,
+        },
+    ],
+    stream=True,
+)
+
+for chunk in stream:
+    if not chunk.choices:
+        continue
+    delta = chunk.choices[0].delta
+    # delta.reasoning carries the model's thinking, delta.content the answer
+    if delta.content:
+        print(delta.content, end=&quot;&quot;, flush=True)</code></pre>
+<p>其中有两件事是该模型特有的。请求必须设置 <code>stream=True</code>，因为 Together AI 上的 Qwen4 Max 仅接受流请求。默认情况下，思考处于开启状态，因此模型的推理首先在 <code>delta.reasoning</code> 中流动，并且在答案开始之前有一个暂停。思考标记算作输出标记。要跳过对简单请求的思考，请传递 <code>reasoning={&quot;enabled&quot;: False}</code>。</p>
+<p>要在不编写代码的情况下尝试它，请在 <a href="https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max">playground</a> 打开它。 <a href="https://www.together.ai/models/qwen4-max">模型页面</a> 具有相同的详细信息。</p>
+<p>现已上市</p>
+<p>在 Together AI 上运行 Qwen4 Max</p>
+<p>基于无服务器推理的 1M 令牌上下文、文本和图像输入以及自动提示缓存。</p>
+<p>打开游乐场</p>
+<h2>常见问题解答</h2>
+<h3>Qwen4 Max 在 Together AI 上的售价是多少？</h3>
+<p>Together AI 上的 Qwen4 Max 标价为每 100 万个输入代币 1.50 美元，每 100 万个输出代币 4.50 美元，每 100 万个缓存输入代币 0.075 美元。截至 2026 年 11 月 22 日，可享受 30% 折扣：1.05 美元、3.15 美元和 0.0525 美元。思考标记算作输出标记。</p>
+<p>###Together AI 上 Qwen4 Max 的上下文窗口是什么？</p>
+<p>Qwen4 Max 在 Together AI 上有一个 1M 代币的上下文窗口。在我们的测试中，具有 652,519 个输入令牌的请求在 54 秒后返回其第一个令牌。</p>
+<h3>Qwen4 Max 接受图像吗？</h3>
+<p>是的，Qwen4 Max 接受 Together AI 上的文本和图像输入并返回文本。将每个图像作为消息内容中的 <code>image_url</code> 块发送，如 <a href="https://docs.together.ai/docs/inference/vision/overview">视觉文档</a> 中所述。</p>
+<h3>为什么我的 Qwen4 Max 请求在没有流式传输的情况下失败？</h3>
+<p>Together AI 上的 Qwen4 Max 仅接受流请求。没有 <code>&quot;stream&quot;: true</code> 的请求将返回 400 错误，代码为 <code>streaming_required</code>。在 SDK 中设置 <code>stream=True</code>，或在请求正文中设置 <code>&quot;stream&quot;: true</code>，然后从流中读取回复。</p>
+<h3>如何关闭 Qwen4 Max 上的思考？</h3>
+<p>在Python SDK中传递<code>reasoning={&quot;enabled&quot;: False}</code>，或在请求正文中传递<code>&quot;reasoning&quot;: {&quot;enabled&quot;: false}</code>，以关闭Qwen4 Max上的思考。默认情况下，思考处于开启状态，并且它会在答案之前返回到 <code>reasoning</code> 字段。要对难题进行更多思考，请将 <code>reasoning_effort</code> 设置为 <code>&quot;max&quot;</code>。</p>
+<h3>Qwen4 Max支持工具调用吗？</h3>
+<p>是的，Qwen4 Max 支持通过标准 <code>tools</code> 参数调用 Together AI 的工具。它可以轮流返回多个调用。</p>
+<h3>提示缓存是否适用于 Qwen4 Max？</h3>
+<p>是的，Together AI 上的 Qwen4 Max 会自动进行提示缓存，并且缓存的输入令牌按标价每 1M 花费 0.075 美元。在我们的测试中，重复 630,000 个令牌的请求几乎完全被缓存，并且其第一个令牌在 8 秒内到达，而不是 54 秒。缓存是尽力而为，因此并非每个重复都被缓存。</p>
+<h3>我可以微调 Qwen4 Max 或在专用端点上运行它吗？</h3>
+<p>不，Qwen4 Max 目前仅在 Together AI 上是无服务器的，并且无法进行微调。阿里巴巴表示，Qwen4 系列的小型开放式重量型号也将随之推出。</p>
+<h2>相关文章</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Qwen3 TTS is now available on Together AI</title>
       <link>https://www.together.ai/blog/qwen3-tts</link>
@@ -3677,80 +3829,6 @@ curl -L -O \
 <p>对想快速行动的团队，这是大事。当 Netflix、某个研究实验室或开源社区发布新模型时，你可以几乎立刻让它在生产级环境中跑起来。不用自己开 GPU 虚拟机，不用和推理服务器依赖搏斗，不用等谁在托管 endpoint 里加上对它的支持。DCI 生来灵活：模型存在，你就能部署。</p>
 <p>成本模型也让实验很轻松。你按用量付费，容器属于你，还没有管理底层算力的开销。这样的设置让你能对&quot;测试新模型&quot;说不犹豫，而不是把它归档到&quot;等我有空&quot;。</p>
 <p>如果你想了解 Together 的 DCI，<a href="https://www.together.ai/contact-sales?dci=true">联系我们</a>开通。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>支撑大规模高效推理的基础研究</title>
-      <link>https://www.together.ai/blog/foundational-research-powering-efficient-inference-at-scale</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/foundational-research-powering-efficient-inference-at-scale</guid>
-      <pubDate>Mon, 04 May 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Foundational research powering efficient inference at scale</description>
-      <content:encoded><![CDATA[<p>随着 AI 从研究走向生产，AI 原生团队的挑战从&quot;造模型&quot;转向&quot;跑模型&quot;——高效、可靠、大规模。</p>
-<p>AI 多年来一直站在&quot;训练&quot;的聚光灯下：那个庞大的、GPU 密集的造模型过程。但对今天大多数部署 AI 的团队，真正塑造单位经济性的是持续的推理成本。据估计，推理占<a href="https://www.ankursnewsletter.com/p/the-real-price-of-ai-pre-training">生产 AI 系统全生命周期成本的 80-90%</a>，原因很简单：每一次用户查询、每一步 agent、每一次 API 调用都在运行它。训练是有界的投资，而推理随你交付的每个新用户、新用例同步扩张。</p>
-<p>在 NVIDIA GTC 2026 上，NVIDIA CEO 黄仁勋平实地点明了这一转变：&quot;人们为信息付费，但更多是为'干活'付费。Agentic 系统能把活干完。&quot; AI 从新奇玩意到生产主力角色的转变，正在重塑基础设施的优先级。</p>
-<p>对 Together AI，这一切都不新鲜。推理 imperative 正是我们一直在构建的方向。我们的 CTO Ce Zhang 在 GTC 上深度分享了这些动态，带来在业内最苛刻的生产推理负载上淬炼出的经验教训。</p>
-<h2>为什么推理是另一种&quot;难&quot;</h2>
-<p>推理不只是&quot;跑一下模型&quot;。在生产中，它是一个同时在多个相互竞争维度上的优化问题：</p>
-<ul><li><strong>延迟决定能构建什么。</strong> 对编码助手、实时支持或对话 agent 这类应用，sub-500ms 的响应时间不是锦上添花——它决定产品感觉像软件还是像干等。Agentic 工作流会放大这一点：五次模型调用各 200ms，用户看到结果之前已累计整整一秒延迟。阈值很重要，达不到就有产品后果。</li><li><strong>吞吐决定单位经济性。</strong> AI 原生公司面临与传统 SaaS 结构不同的成本画像。 legacy 软件公司瞄准 80-90% 的毛利率，而 <a href="https://www.bvp.com/atlas/the-ai-pricing-and-monetization-playbook">AI 公司普遍只有 50-60%</a>，其中仅推理一项在扩张期公司就约占 <a href="https://www.softwareseni.com/why-ai-gross-margins-are-so-much-lower-than-saas-and-what-that-means-for-your-business/">23% 的收入</a>。高效推理意味着每 GPU 小时服务更多请求，这道数学题直通利润率。</li><li><strong>模型版图一直在变。</strong> 为今天的模型优化的推理栈，明天可能需要大改。新架构、量化方法、新硬件——留在前沿需要贯穿全栈的持续投入，而非一次性优化。</li><li><strong>并发不留情面。</strong> 服务数千同时用户，意味着同时应对迥异的上下文长度、延迟要求和成本画像——全都要、且不能劣化。这既是计算问题，也是调度与编排问题。</li></ul>
-<p>这也是为什么利害关系比多数团队最初预期的大。</p>
-<h2>Together 如何应对推理</h2>
-<p>Together 的推理之道不是单项优化，而是研究、系统工程与硬件专长叠加的复合栈，随前沿移动而持续改进：</p>
-<ul><li><strong>能上生产的研究。</strong> Together Research 团队贡献了推理效率领域被最广泛采用的进展：FlashAttention（现已到 <a href="https://www.together.ai/blog/flashattention-4">FlashAttention-4</a>）、ThunderKittens，以及 Aurora——我们的开源自适应推测解码系统，可让 LLM 推理快 1.25 倍。这些研究成果会进入客户的生产，通常在发表后数周内。</li><li><strong>自适应推测解码。</strong> 标准推测解码用较小的草稿模型提出 token，由更大的模型并行验证，在代码补全、结构化输出这类可预测负载上带来 1.5-3 倍加速。我们的 ATLAS 和 Aurora 走得更远：<a href="https://www.together.ai/blog/aurora">Aurora</a> 是一个基于 RL 的开源框架，实时从真实推理 trace 中学习，随流量模式移动而适应。即使对训练有素的静态推测器，它也能在不中断服务的情况下取得有意义的加速。</li><li><strong>全栈硬件优化。</strong> 跑在最新 NVIDIA Blackwell 硬件（GB200 NVL72、HGX B200）上，意味着在 72-GPU 网格上构建自定义并行策略、实现 NVFP4 量化、搭建&quot;权重到生产&quot;的流水线让模型发布数天内上线。当 <a href="https://www.together.ai/customers/cursor">Cursor</a> 需要为数百万活跃开发者提供生产级延迟时，Together AI 构建了全栈基础设施让它成真，在不可预测的高并发流量下扛住严格的延迟 SLA。</li><li><strong>智能调度与批处理。</strong> 高吞吐推理需要聪明的实时决策：哪些请求批在一起、如何按上下文长度和延迟要求路由、何时用吞吐换响应性。Together 的推理引擎动态处理这一切，从每个 GPU 小时榨取最大效率，同时不牺牲 AI 原生应用与产品所依赖的体验。</li></ul>
-<h2>做对这件事的经济学</h2>
-<p><a href="https://hai.stanford.edu/ai-index">Stanford 2025 AI Index</a> 记录了一个非凡趋势：GPT-3.5 水平的推理成本在 2022 年底至 2024 年底之间下降了 280 倍以上。但推理总支出在上升——成本下降，团队反而把 AI 部署到更多用例、更多用户、更多 agent 步骤上。更低的每 token 成本没有缩小基础设施挑战，而是扩大了它的表面积。<a href="https://blogs.nvidia.com/blog/lowest-token-cost-ai-factories/">当行业逐渐把更低 token 成本视为 AI 基础设施 TCO 的真实指标</a>，Together AI 优化全栈软硬件的路线持续为客户交付更好的盈利性。</p>
-<p>对 AI 原生公司，这使推理优化成为复利优势。推理<a href="https://www.together.ai/blog/fastest-inference-for-the-top-open-source-models">效率高 2 倍</a>，同样的硬件就能服务更多客户，还打开此前不成立的用例。每一份效率收益不仅直接流入利润率，也流入你随时间能构建的东西。</p>
-<p>这正是 Together AI 引以为豪的：一个不只是&quot;快推理&quot;，而是让 AI 原生团队成长、且成本增速不超过收入增速的基础设施层。</p>
-<h2>在 AI Native Cloud 上跑生产规模推理</h2>
-<p>Together AI 是 AI Native Cloud，提供横跨 Serverless &amp; Dedicated Inference、Accelerated Compute、Model Shaping 的全栈 AI 平台——让你从每个 GPU 小时获得更多价值，且不牺牲用户期待的速度与生产级可靠性。</p>
-<p>推理不是边缘议题。对今天构建 AI 原生应用的团队，它将塑造利润率、产品路线图和竞争力。好消息是：在 AI Native Cloud 上应对它的工具从未这么好过。</p>
-<p>准备好在 Together AI 上构建下一个产品了吗？<a href="http://api.together.ai">立即开始</a>。</p>
-<p>---</p>
-<p>想更深入？我们的生产推理<a href="https://www.together.ai/guides/best-practices-to-accelerate-inference-for-large-scale-production-workloads">最佳实践指南</a>详细讲解推测解码、优化 kernel、量化和硬件加速。</p>
-<h2>FAQ</h2>
-<p><strong>什么是大规模 AI 推理？</strong></p>
-<p>AI 推理是运行训练好的模型生成响应的过程——用户每发一条消息、触发一次 agent、调一次 API 都是推理。在规模上，这意味着同时服务成千上万的请求，每个都有不同的上下文长度、延迟要求和成本画像。基础设施挑战不只是算力——而是高效地、持续地编排这一切，且不为任何一个用户牺牲速度或可靠性。</p>
-<p><strong>为什么 AI 推理比训练更贵？</strong></p>
-<p>训练是高强度但有界的投资——发生一次（或模型更新时周期性发生）。而推理持续运行：每次用户交互、每步 agent、每个 API 调用都产生成本。业界估计推理占<a href="https://www.ankursnewsletter.com/p/the-real-price-of-ai-pre-training">生产 AI 系统全生命周期成本的 80-90%</a>。用量增长，账单就增长。对 AI 原生公司，推理实际上就是销货成本——与收入同步扩张。</p>
-<p><strong>什么是推测解码？</strong></p>
-<p>推测解码是一种推理加速技术：较小较快的&quot;草稿&quot;模型一次提出多个 token，由较大的目标模型并行验证。匹配的 token 被接受，其余丢弃重生成。当草稿模型与目标模型对齐良好时，这个方法能在不改变输出的情况下带来 1.5–3 倍加速，对代码补全或结构化数据生成这类可预测负载尤其有效。Together AI 的 ATLAS 系统进一步扩展它以自适应推测解码——实时从真实流量中学习调整。</p>
-<p><strong>什么是自适应推测解码？</strong></p>
-<p>标准推测解码依赖静态草稿模型——离线训练好、部署时冻结。问题是真实流量模式不断移动，静态草稿模型的准确率随领域变化退化。自适应推测解码通过持续从真实推理 trace 学习来解决这一点，在不中断服务的情况下更新草稿模型。Together AI 的 Aurora 框架是一个基于 RL 的开源实现，即使从零开始，也能相对训练有素的静态推测器取得有意义的加速。</p>
-<p><strong>AI 语境下的&quot;推理研究&quot;指什么？</strong></p>
-<p>推理研究是研究如何让 AI 模型在生产中跑得更快、更便宜、更高效——且不牺牲输出质量。它涵盖算法层工作（如推测解码、注意力优化）、系统层工作（如 kernel 工程、请求调度）和硬件层工作（如量化、GPU 利用率）。它与模型研究不同——后者聚焦改进模型知道什么、能做什么。当推理成本成为 AI 部署的主导开销，推理研究已成为应用 AI 中杠杆最高的领域之一。</p>
-<p><strong>推理优化如何影响产品经济性？</strong></p>
-<p>推理优化直接影响单位经济性：更快的推理意味着每 GPU 小时服务更多请求，换算为更低的每请求成本。在规模下，即使小幅效率改进也会显著复利——吞吐提升 2 倍，同等负载的基础设施成本近乎减半。这之所以重要，是因为它决定了哪些用例在经济上成立、利润率随体量改善的速度、以及产品能否在市场成熟过程中维持有竞争力的定价。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>从 732 字节到无处遁形：在生产中关闭 Copy Fail</title>
-      <link>https://www.together.ai/blog/shutting-down-copy-fail-in-production</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/shutting-down-copy-fail-in-production</guid>
-      <pubDate>Thu, 30 Apr 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：From 732 bytes to nowhere: shutting down Copy Fail in production</description>
-      <content:encoded><![CDATA[<h2>摘要</h2>
-<p>我们之所以能在 Copy Fail（CVE‑2026‑31431）之前抢先处置，是把它当成了一次舰队级紧急事件：数小时内关掉了全基础设施上有漏洞的 crypto socket 接口，待内核补丁在我们的 AI 负载上稳定后再行推送。在上游修复广泛可用之前，我们依靠一步针对性的内核加固：卸载有漏洞的模块并把它移出 module path，使其无法被静默重新启用。</p>
-<h2>一段话讲清 Copy Fail</h2>
-<p>Copy Fail（CVE‑2026‑31431）是 Linux 内核 crypto 子系统中 <code>algif_aead</code> AF_ALG 接口的一个逻辑 bug——该接口用于 AEAD 操作。它让任何非特权本地用户对系统上任何可读文件的 page cache 获得精确的 4 字节写入原语。实践中，公开的利用程序在内存里翻转共享 setuid 二进制文件的几个字节，借此在主流 Linux 发行版上拿到 root。磁盘文件从不改变，页也从不被标脏——这意味着传统文件完整性检查看不到攻击，哪怕被修改的二进制已经在运行。</p>
-<h2>这对 AI 基础设施为什么重要</h2>
-<p>在开发者笔记本上，Copy Fail <em>只是</em>一次本地提权。在现代 AI 平台里，&quot;本地&quot;通常意味着 CI 任务、多租户 GPU 节点、临时研究环境，或携带自己依赖的第三方负载。</p>
-<p>从云与 AI 视角，风险是这样的：</p>
-<ul><li>在能访问 AF_ALG socket 的容器内的入侵，可以升级为对底层宿主机的 root。</li><li>因为 page cache 是共享的，一个负载的写入可以悄然损坏同一节点上其他租户使用的二进制或库。</li><li>一旦宿主机被拿下，访问挂载存储、控制平面与相邻 workload 就容易得多。</li></ul>
-<p>我们本来就按&quot;容器不是安全边界&quot;的前提运营。Copy Fail 正是那种安静、确定性的原语——如果你把有漏洞的接口暴露着，它就能击穿共享内核多租户环境中剩余的缓冲。</p>
-<h2>我们的即时响应：全面禁用 <code>algif_aead</code></h2>
-<p>可用的利用细节一出现，我们立刻聚焦最直接可用的杠杆：停止暴露有漏洞的 AF_ALG 接口。</p>
-<p>对 Together AI 的生产负载，推理或训练主机不依赖用户态 <code>algif_aead</code> socket。这给了我们在全舰队采取粗暴但安全动作的自由：</p>
-<p>卸载 <code>algif_aead</code> 模块立即关闭了运行中内核里的漏洞代码路径。把模块文件移出标准模块目录，防止系统服务或自动化在后续正常运维中重新加载它。</p>
-<p>这个方法有几个重要属性：</p>
-<ul><li>快：不需要重启——在跑长时 GPU 任务时这很重要。</li><li>低风险：典型的服务器与 AI 负载不直接依赖 AF_ALG AEAD socket，运维影响极小。</li><li>持久：即使某台主机重启进同一个有漏洞的内核，它回来时 <code>algif_aead</code> 依然是禁用状态。</li></ul>
-<p>我们把这一点编码进配置管理，作为幂等合规检查：模块未卸载、.ko 文件未隔离的主机不算健康。</p>
-<h2>安全地推送内核补丁</h2>
-<p>禁用 <code>algif_aead</code> 是缓解手段，不是最终状态。一旦厂商发布 CVE‑2026‑31431 补丁，我们会转向更传统的生命周期：</p>
-<ul><li>在镜像我们最重 AI 负载（包括密集多租户 GPU 节点）的非生产集群里灰度验证修补后的内核。</li><li>跑加速浸泡测试：性能、GPU 驱动兼容性、真实推理与训练负载下的稳定性。</li><li>按区域和环境逐步推送修补内核，从共享程度较低的集群开始，遥测保持干净后推进到重度多租户集群。</li></ul>
-<p>即使打了补丁，在没有明确需要的环境里我们仍保持 <code>algif_aead</code> 禁用。狭窄、专用的内核接口一旦出事，影响范围可以是整个生态；能安全地不用它们，我们就不用了。</p>
-<p>与此同时，我们的检测团队在遥测里加入了 Copy Fail 感知信号：</p>
-<ul><li>在本绝不该出现的地方的 AF_ALG 意外使用或 crypto 模块加载告警。</li><li>对特权二进制的行为监控——即使磁盘镜像保持不变，也要找异常。</li></ul>
-<h2>运营安全 AI 平台的经验</h2>
-<p>Copy Fail 很好地说明了小内核 bug 如何对 AI 基础设施产生超额影响：</p>
-<ul><li>共享内核与密集多租户把本地 bug 放大成跨租户风险。</li><li>Page cache 技巧可以绕过传统基于文件完整性的防御。</li><li>&quot;没人用&quot;的狭窄接口可能突然变成主要攻击面。</li></ul>
-<p>我们在 Together AI 的收获是：持续收紧内核暴露模型——小众接口默认关闭、出事时全舰队快速切换、并有一条验证流水线来证明这些决策与高性能 AI 负载兼容。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

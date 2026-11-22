@@ -7,7 +7,162 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Security event: Prompt leakage for requests in June and July…</title>
+      <link>https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026?li=1</guid>
+      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Security event: Prompt leakage for requests in June and July of 2026</description>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>Company</p>
+<p>Published 11/21/2026</p>
+<h1>Security event: Prompt leakage for requests in June and July of 2026</h1>
+<ul><li>AuthorsVipul Ved Prakash</li><li>Table of contents<a href="https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<p>We are notifying customers about a security incident involving a subset of prompts submitted to Together AI’s serverless inference service in June and July 2026. An unauthorized party downloaded stored prompt samples after a credential for a private repository was exposed in a public code repository.</p>
+<p>We apologize for this incident. We are reviewing the affected data to determine what information was exposed and which customers require direct notification.</p>
+<h2>What happened</h2>
+<p>As part of routine software testing, we collected prompt samples authorized for that use and stored them in a private Hugging Face repository. The samples came from requests to the MiniMax M3, GLM-5.2, and Kimi K2.6 models, primarily on June 24, July 4, July 8, and July 14, 2026.</p>
+<p>During development of our public GitHub repository, xorl, an AI coding agent committed a credential that provided access to the private Hugging Face repository. Our automated scanning detected the exposed credential, and we reverted the commit.</p>
+<p>During the exposure window, an unauthorized party obtained the credential and used it to download the stored prompt samples. The party subsequently searched those samples for credentials to other services and tested whether those credentials were valid. Five of the credentials tested were canary credentials associated with a Dragos security experiment.</p>
+<p>We have no reason to believe the unauthorized party has leaked this data further and understand that it has now been deleted.</p>
+<h2>Investigation and scope</h2>
+<p>We have worked with an external forensic investigation firm and law enforcement to investigate the incident.</p>
+<p>Based on our review, we have not identified evidence of additional prompt leakage beyond this incident. Our review of the affected prompt contents is ongoing to determine whether sensitive personal information or other customer data was exposed. We will contact affected customers directly as needed with the findings relevant to them.</p>
+<h2>Changes we have made</h2>
+<p>Following the incident, we strengthened controls around development workflows, credentials, and customer data. These changes include:</p>
+<ul><li>Using scoped or short-lived credentials, and keyless access where supported, to reduce the potential impact of credential exposure.</li><li>Checking all pull requests for credentials.</li><li>Making zero data retention (ZDR) the default setting for new accounts.</li><li>Updating our development processes governing the use of AI coding agents.</li></ul>
+<h2>What customers can do</h2>
+<p>Customers handling sensitive prompt data should enable ZDR in their account settings.</p>
+<p>If you have questions about this incident or its potential impact on your organization, contact security@together.ai.</p>
+<p><strong>Vipul Ved Prakash</strong></p>
+<p>CEO and Co-founder, Together AI</p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Qwen4 Max is live on Together AI</title>
+      <link>https://www.together.ai/blog/qwen4-max</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/qwen4-max?li=1</guid>
+      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>Model Library</p>
+<p>Published 11/21/2026</p>
+<h1>Qwen4 Max is live on Together AI</h1>
+<p>Alibaba's flagship Qwen model is 30% off through November 22, 2026. We gave it a bug report and the whole Tornado repository in one request to see what a 1M-token context window is worth, and what it costs.</p>
+<ul><li>AuthorsSonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/qwen4-max">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max">Qwen4 Max in the playground</a><a href="https://www.together.ai/models/qwen4-max">Qwen4 Max model page</a><a href="https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max">Alibaba's announcement</a></li></ul>
+<p>Summary</p>
+<ul><li><strong>Qwen4 Max on Together AI:</strong> Alibaba's flagship Qwen model is available on Together Serverless Inference with a 1M-token context window.</li><li><strong>What we tested:</strong> Qwen4 Max took a bug report and all 344 files of the Tornado repository in one request, and its patch passes the maintainers' tests.</li><li><strong>Sale pricing:</strong> Through November 22, 2026, it costs \$1.05 per 1M input tokens, \$0.0525 per 1M cached input tokens and \$3.15 per 1M output tokens.</li><li><strong>Before you call it:</strong> Requests have to stream, and thinking is on by default, with thinking tokens counted as output tokens.</li></ul>
+<p>We gave <a href="https://www.together.ai/models/qwen4-max">Qwen4 Max</a> a bug report and an entire codebase in one request. The codebase was Tornado, the Python web framework: all 344 files, 652,519 tokens. The model had no tools, and we didn't select relevant files or run a retrieval step first. Seventy-two seconds later it returned a patch, and the patch passes the tests Tornado's maintainers wrote for that bug. The request cost 69 cents.</p>
+<p>It also found a precedent elsewhere in the repository. The bug report never mentions <code>tornado/iostream.py</code>, but the model pointed to code there that already handles errors the way its patch needed to. Tornado's maintainers cite the same code in their own fix.</p>
+<p>Qwen4 Max is Alibaba's flagship Qwen model. It's live on Together AI today, and it's 30% off through November 22, 2026.</p>
+<h2>The test</h2>
+<p>Tornado is an open-source Python web framework. Its repository holds about 340 files of code, tests and docs. That fits in Qwen4 Max's context window, and it's far more than anyone would paste into a prompt by hand. We picked a fix the maintainers committed on November 18, 2026, two days after Qwen4 Max was released, and tested against the repository as it was just before that commit.</p>
+<p>This is one example, chosen to show what a single call can do and what it costs.</p>
+<p>The bug is in Tornado's websocket code. When a connection closed with messages still unsent, every <code>write_message()</code> call that wasn't awaited logged an error, even though awaiting it is optional. We sent every text file in that checkout as one prompt, with a bug report that describes only the symptom:</p>
+<blockquote>write_message logs &quot;Task exception was never retrieved&quot; when the connection closesWhen a websocket connection closes while messages are still unsent (for example, the client sends its messages and a FIN, or resets the connection, without reading the replies), every write_message() call whose result was not awaited logs &quot;Task exception was never retrieved&quot; at ERROR level.Awaiting the Future returned by write_message is optional, so an unawaited call should not log anything. A caller that does await it should still get WebSocketClosedError.</blockquote>
+<p>We asked for the cause and a patch. This is the request, replayed:</p>
+<h3>What came back</h3>
+<p>The first token arrived after 54 seconds, and the reply was complete at 72. Qwen4 Max traced the error to <code>WebSocketProtocol13.write_message</code> in <code>tornado/websocket.py</code>. That method wraps each write in a task. When the connection closes, the task fails with an exception that nobody is required to collect, and Python logs that as &quot;Task exception was never retrieved.&quot;</p>
+<p>The model's patch marks the exception as retrieved. Nothing is logged, and a caller who does await the write still gets the error:</p>
+<pre><code>-        return asyncio.ensure_future(wrapper())
++        task = asyncio.ensure_future(wrapper())
++
++        # Awaiting the returned Future is optional, so an error nobody looks
++        # at must not be reported as &quot;Task exception was never retrieved&quot;.
++        # Retrieving it here leaves it in place for callers that do await.
++        def _mark_retrieved(t: &quot;asyncio.Task[None]&quot;) -&gt; None:
++            if not t.cancelled():
++                t.exception()
++
++        task.add_done_callback(_mark_retrieved)
++        return task</code></pre>
+<p>The precedent is what makes the patch read like it belongs in the project. The model's explanation says the fix should do what <code>BaseIOStream.write</code> already does for its own futures. That method is in <code>tornado/iostream.py</code>, one layer below the websocket code, and it solves the same problem the same way. The maintainers' commit makes the same comparison.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b01fded989d54b2b151f5cf_qwen4-max-repo-map.png" alt="A grid of 344 squares, one for each file in the Tornado repository, grouped by folder. Two squares in the tornado folder are highlighted and joined by a line: websocket.py, where the bug was, and iostream.py, the precedent the model pointed to."></p>
+<p>Nobody picked those files for it. All 344 went in, and the model found the two that mattered.</p>
+<h3>How we checked it</h3>
+<p>Tornado's maintainers added two regression tests with their fix: one for a write that isn't awaited, and one for a write that is. On the code before the fix, the first one fails. With the model's patch applied, both pass. We then ran Tornado's full suite, 1,673 tests, with the patch in place, and none failed.</p>
+<h3>What it cost</h3>
+<p>At the sale price, the request works out to about 69 cents, nearly all of it for the 652,519 input tokens. At list price it would be 98 cents.</p>
+<p>Sending the same repository again costs far less. Together AI caches prompt input automatically, and cached input is \$0.0525 per million tokens during the sale. When we repeated a request of about 630,000 tokens, nearly all of it came back cached. The first token arrived in 8 seconds instead of 54, and the input cost about 3 cents instead of 66.</p>
+<h2>About Qwen4 Max</h2>
+<p>Alibaba released Qwen4 Max on November 16, 2026, and describes it as the most capable model in the Qwen family to date. It positions the model for long agent work, including coding across large repositories, which is the kind of task we tested.</p>
+<p>Qwen4 Max is a sparse mixture-of-experts model with 2.4 trillion parameters, of which 71 billion are active for each token. On Work360, Alibaba's own benchmark of industry tasks across 721 specialized fields, Alibaba reports that it outperforms Qwen3.8 Max overall, uses 35% fewer tokens at high reasoning effort, and costs about 60% less per task on average. Those are Alibaba's figures, and <a href="https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max">its announcement</a> has the details.</p>
+<h2>Run it on Together AI</h2>
+<p>Qwen4 Max is on Together Serverless Inference under the model string <code>Qwen/Qwen4-Max</code>. This script sends a whole repository and a bug report in one request, the way our test did. You need the Together Python SDK (<code>pip install together</code>), a <code>TOGETHER_API_KEY</code>, a local clone of the repository and the bug report saved as <code>bug_report.md</code>. It sends every text file git tracks, so check the repository for secrets first.</p>
+<pre><code>import subprocess
+from pathlib import Path
+
+from together import Together
+
+repo = Path(&quot;tornado&quot;)
+bug_report = Path(&quot;bug_report.md&quot;).read_text()
+
+# Every file git tracks, skipping the ones that aren't text
+names = subprocess.check_output(
+    [&quot;git&quot;, &quot;-C&quot;, str(repo), &quot;ls-files&quot;], text=True
+).splitlines()
+files = []
+for name in names:
+    try:
+        files.append(f&quot;=== FILE: {name} ===\n{(repo / name).read_text()}\n&quot;)
+    except UnicodeDecodeError:
+        continue
+
+client = Together()
+
+stream = client.chat.completions.create(
+    model=&quot;Qwen/Qwen4-Max&quot;,
+    messages=[
+        {
+            &quot;role&quot;: &quot;system&quot;,
+            &quot;content&quot;: f&quot;This is a complete repository, {len(files)} files.\n\n&quot;
+            + &quot;&quot;.join(files),
+        },
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: f&quot;Here is a bug report.\n\n{bug_report}\n\n&quot;
+            &quot;Explain the cause, then write a patch.&quot;,
+        },
+    ],
+    stream=True,
+)
+
+for chunk in stream:
+    if not chunk.choices:
+        continue
+    delta = chunk.choices[0].delta
+    # delta.reasoning carries the model's thinking, delta.content the answer
+    if delta.content:
+        print(delta.content, end=&quot;&quot;, flush=True)</code></pre>
+<p>Two things in it are specific to this model. Requests have to set <code>stream=True</code>, because Qwen4 Max on Together AI accepts streaming requests only. And thinking is on by default, so the model's reasoning streams first in <code>delta.reasoning</code> and there's a pause before the answer starts. Thinking tokens count as output tokens. To skip the thinking on a simple request, pass <code>reasoning={&quot;enabled&quot;: False}</code>.</p>
+<p>To try it without writing code, open it <a href="https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max">in the playground</a>. The <a href="https://www.together.ai/models/qwen4-max">model page</a> has the same details.</p>
+<p>Available now</p>
+<p>Run Qwen4 Max on Together AI</p>
+<p>1M-token context, text and image input and automatic prompt caching, on serverless inference.</p>
+<p>Open the playground</p>
+<h2>FAQs</h2>
+<h3>How much does Qwen4 Max cost on Together AI?</h3>
+<p>Qwen4 Max on Together AI has a list price of \$1.50 per 1M input tokens, \$4.50 per 1M output tokens and \$0.075 per 1M cached input tokens. Through November 22, 2026, it's 30% off: \$1.05, \$3.15 and \$0.0525. Thinking tokens count as output tokens.</p>
+<h3>What is the context window of Qwen4 Max on Together AI?</h3>
+<p>Qwen4 Max has a 1M-token context window on Together AI. In our test, a request with 652,519 input tokens returned its first token after 54 seconds.</p>
+<h3>Does Qwen4 Max accept images?</h3>
+<p>Yes, Qwen4 Max accepts text and image input on Together AI and returns text. Send each image as an <code>image_url</code> block in the message content, as described in the <a href="https://docs.together.ai/docs/inference/vision/overview">vision docs</a>.</p>
+<h3>Why does my Qwen4 Max request fail without streaming?</h3>
+<p>Qwen4 Max on Together AI accepts streaming requests only. A request without <code>&quot;stream&quot;: true</code> returns a 400 error with the code <code>streaming_required</code>. Set <code>stream=True</code> in the SDK, or <code>&quot;stream&quot;: true</code> in the request body, and read the reply from the stream.</p>
+<h3>How do I turn off thinking on Qwen4 Max?</h3>
+<p>Pass <code>reasoning={&quot;enabled&quot;: False}</code> in the Python SDK, or <code>&quot;reasoning&quot;: {&quot;enabled&quot;: false}</code> in the request body, to turn off thinking on Qwen4 Max. Thinking is on by default, and it comes back in the <code>reasoning</code> field ahead of the answer. To get more thinking on a hard problem, set <code>reasoning_effort</code> to <code>&quot;max&quot;</code>.</p>
+<h3>Does Qwen4 Max support tool calling?</h3>
+<p>Yes, Qwen4 Max supports tool calling on Together AI through the standard <code>tools</code> parameter. It can return more than one call in a turn.</p>
+<h3>Does prompt caching work with Qwen4 Max?</h3>
+<p>Yes, prompt caching is automatic for Qwen4 Max on Together AI, and cached input tokens cost \$0.075 per 1M at list price. In our test, a repeat of a 630,000-token request came back almost entirely cached, and its first token arrived in 8 seconds instead of 54. Caching is best effort, so not every repeat is cached.</p>
+<h3>Can I fine-tune Qwen4 Max or run it on a dedicated endpoint?</h3>
+<p>No, Qwen4 Max is serverless only on Together AI today, and it isn't available for fine-tuning. Alibaba says smaller open-weight models from the Qwen4 series will follow.</p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
     <item>
       <title>Qwen3 TTS is now available on Together AI</title>
       <link>https://www.together.ai/blog/qwen3-tts</link>
@@ -4062,95 +4217,6 @@ curl -L -O \
 <p>This is a big deal for teams that want to move fast. When a new model drops from Netflix, from a research lab, from the open-source community, you can have it running in a production-grade environment almost immediately. No spinning up your own GPU VMs, no wrestling with inference server dependencies, no waiting for someone to add support for it in a managed endpoint. DCI is flexible by design: if the model exists, you can deploy it.</p>
 <p>The cost model also makes it easy to experiment. You're paying for what you use, on a container that's yours, without the overhead of managing the underlying compute. That's the kind of setup that lets you say yes to testing new models instead of filing it away for &quot;when I have time.&quot;</p>
 <p>If you're interested in Together's DCI, <a href="https://www.together.ai/contact-sales?dci=true">reach out to us</a> to get set up.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Foundational research powering efficient inference at scale</title>
-      <link>https://www.together.ai/blog/foundational-research-powering-efficient-inference-at-scale</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/foundational-research-powering-efficient-inference-at-scale?li=1</guid>
-      <pubDate>Mon, 04 May 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
-<p>Published 5/4/2026</p>
-<h1>Foundational research powering efficient inference at scale</h1>
-<p>As AI moves from research to production, the challenge for AI-native teams shifts from building models to running them — efficiently, reliably, and at scale.</p>
-<ul><li>AuthorsWill Van Eaton, Adee Feiner, Hiral Jasani</li><li>Table of contents<a href="https://www.together.ai/blog/foundational-research-powering-efficient-inference-at-scale#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
-<p>AI has spent years in the spotlight for training: the massive, GPU-intensive process of building models. But for most teams deploying AI today, ongoing inference costs are what actually shape their unit economics. Estimates put inference at 80-90% of the <a href="https://www.ankursnewsletter.com/p/the-real-price-of-ai-pre-training">total lifetime cost of a production AI system</a>, simply because it runs continuously across every user query, agent step, and API call. And while training is a bounded investment, inference scales with every new user and use case you ship.</p>
-<p>At NVIDIA GTC 2026, NVIDIA CEO Jensen Huang framed this shift plainly: “People pay for information, but people mostly pay for work. Agentic systems get work done.” That shift from AI as a novelty to AI as a workhorse is exactly what’s reshaping infrastructure priorities.</p>
-<p>For Together AI, none of this is new. The inference imperative is what we’ve been building for. Our CTO Ce Zhang covered these dynamics in depth at GTC, sharing hard-won lessons from running some of the most demanding production inference workloads in the industry.</p>
-<h2>Why inference is a different kind of hard</h2>
-<p>Inference isn’t just “running the model.” In production, it’s an optimization problem across multiple competing dimensions simultaneously:</p>
-<ul><li><strong>Latency shapes what’s possible to build.</strong> For applications like coding assistants, real-time support, or conversational agents, sub-500ms response times aren’t a nice-to-have — they determine whether a product feels like software or like waiting. Agentic workflows amplify this: five model calls at 200ms each is a full second of accumulated latency before a user sees a result. The threshold matters, and missing it has product consequences.</li><li><strong>Throughput determines your unit economics.</strong> AI-native companies face a structurally different cost profile than traditional SaaS. Where legacy software companies target 80-90% gross margins, <a href="https://www.bvp.com/atlas/the-ai-pricing-and-monetization-playbook">AI companies commonly operate at 50-60%</a>, with inference alone accounting for roughly <a href="https://www.softwareseni.com/why-ai-gross-margins-are-so-much-lower-than-saas-and-what-that-means-for-your-business/">23% of revenue at scaling-stage companies</a>. Efficient inference means more requests served per GPU-hour. That math flows directly to margins.</li><li><strong>The model landscape keeps changing. </strong>The inference stack optimized for today’s models may need significant rework tomorrow. New architectures, quantization methods, and hardware; staying at the frontier requires continuous investment across the full stack, not just one-time optimization.</li><li><strong>Concurrency is unforgiving. </strong>Serving thousands of simultaneous users means navigating wildly different context lengths, latency requirements, and cost profiles — all at once, without degradation. That’s as much a scheduling and orchestration challenge as it is a compute one.</li></ul>
-<p>This is also why the stakes are higher than most teams initially expect.</p>
-<h2>How Together approaches inference</h2>
-<p>Together’s approach to inference isn’t a single optimization. It’s a compounding stack of research, systems engineering, and hardware expertise designed to improve continuously as the frontier moves:</p>
-<ul><li><strong>Research that ships to production.</strong> The Together Research team has contributed some of the most widely adopted advances in inference efficiency: FlashAttention (now up to <a href="https://www.together.ai/blog/flashattention-4">FlashAttention-4</a>), ThunderKittens, and Aurora, our open-source adaptive speculative decoding system delivering up to 1.25x faster LLM inference. This research goes into production for customers, typically within weeks of publication.</li><li><strong>Adaptive speculative decoding.</strong> Standard speculative decoding uses a smaller draft model to propose tokens that a larger model verifies in parallel, delivering 1.5-3x speedups on predictable workloads like code completion or structured outputs. Our ATLAS and Aurora systems go further: <a href="https://www.together.ai/blog/aurora">Aurora </a>is an open-source RL-based framework that learns from live inference traces in real time, adapting as traffic patterns shift. It achieves meaningful speedups over even well-trained static speculators, without interrupting serving.</li><li><strong>Full-stack hardware optimization.</strong> Running on the latest NVIDIA Blackwell hardware (GB200 NVL72, HGX B200) means building custom parallelism strategies across 72-GPU meshes, implementing NVFP4 quantization, and constructing weights-to-production pipelines that get model releases live within days. When <a href="https://www.together.ai/customers/cursor">Cursor</a> needed production-grade latency for millions of active developers, Together AI built the full-stack infrastructure to make it work, handling strict latency SLAs across unpredictable, high-concurrency traffic.</li><li><strong>Intelligent scheduling and batching. </strong>High-throughput inference requires making smart real-time decisions: which requests to batch together, how to route based on context length and latency requirements, and when to trade throughput for responsiveness. Together’s inference engine handles this dynamically, extracting maximum efficiency from each GPU-hour without sacrificing the experience that AI-native apps and products depend on.</li></ul>
-<h2>The economics of getting this right</h2>
-<p>The <a href="https://hai.stanford.edu/ai-index">Stanford 2025 AI Index</a> documents a remarkable trend: inference costs for GPT-3.5-level performance dropped more than 280-fold between late 2022 and late 2024. But total inference spend is rising; as costs fall, teams deploy AI for more use cases, users, and agent steps. Lower costs per token haven’t reduced the infrastructure challenge; they’ve expanded the surface area of it. <a href="https://blogs.nvidia.com/blog/lowest-token-cost-ai-factories/">As the industry converges on lower token cost as a real indicator of AI infrastructure's TCO</a>, Together AI’s approach of optimizing the full hardware and software stack continues to deliver better profitability for customers.</p>
-<p>For AI-native companies, this makes inference optimization a compounding advantage. Run inference <a href="https://www.together.ai/blog/fastest-inference-for-the-top-open-source-models">2x more efficiently </a>and you serve more customers on the same hardware, while also opening up use cases that weren’t previously viable. Each gain in efficiency improvement not only flows directly to margins, but also what you’re able to build over time.</p>
-<p>That’s what Together AI prides itself on: a platform that isn’t just fast inference, but the infrastructure layer that empowers AI-native teams to grow without their costs growing faster than their revenue.</p>
-<h2>Run production-scale inference on the AI Native Cloud</h2>
-<p>Together AI is the AI Native Cloud, offering a full-stack AI platform across Serverless &amp; Dedicated Inference, Accelerated Compute, and Model Shaping — empowering you to get more value out of every GPU-hour, without sacrificing the speed and production-grade reliability users expect.</p>
-<p>Inference isn’t a fringe concern. For teams building AI-native apps today, it’s the thing that will shape margins, product roadmaps, and the ability to compete. The good news: the tools to tackle it on the AI Native Cloud have never been better.</p>
-<p>Ready to build what’s next on Together AI? <a href="http://api.together.ai">Get started today.</a></p>
-<p>_____________________________________________________________________________________</p>
-<p>Want to go deeper? Our <a href="https://www.together.ai/guides/best-practices-to-accelerate-inference-for-large-scale-production-workloads">best practices guide</a> for production inference cover speculative decoding, optimized kernels, quantization, and hardware acceleration in detail.</p>
-<h2>FAQ</h2>
-<p><strong>What is AI inference at scale?</strong></p>
-<p>AI inference is the process of running a trained model to generate a response — every time a user sends a message, triggers an agent, or makes an API call. At scale, this means serving thousands or millions of simultaneous requests, each with different context lengths, latency requirements, and cost profiles. The infrastructure challenge isn't just compute — it's orchestrating all of that efficiently, continuously, without degrading speed or reliability for any individual user.</p>
-<p><strong>Why is AI inference more expensive than training?</strong></p>
-<p>Training is an intensive but bounded investment — it happens once (or periodically when a model is updated). Inference, by contrast, runs continuously: every user interaction, every agent step, every API call generates a cost. Industry estimates put inference at<a href="https://www.ankursnewsletter.com/p/the-real-price-of-ai-pre-training"> 80-90% of the total lifetime cost of a production AI system</a>. As usage grows, so does the bill. For AI-native companies, inference is effectively the cost of goods sold — it scales directly with revenue.</p>
-<p><strong>What is speculative decoding?</strong></p>
-<p>Speculative decoding is an inference acceleration technique where a smaller, faster &quot;draft&quot; model proposes several tokens at once, which a larger target model then verifies in parallel. Tokens that match are accepted; the rest are discarded and regenerated. When the draft model is well-aligned with the target, this approach can deliver 1.5–3x speedups without changing the output. It's particularly effective for predictable workloads like code completion or structured data generation. Together AI's ATLAS system extends this further with adaptive speculative decoding that learns and adjusts from live traffic in real time.</p>
-<p><strong>What is adaptive speculative decoding?</strong></p>
-<p>Standard speculative decoding relies on a static draft model — one trained offline and fixed at deployment. The problem is that real-world traffic patterns shift constantly, and a static draft model's accuracy degrades as the domain changes. Adaptive speculative decoding solves this by continuously learning from live inference traces, updating the draft model without interrupting serving. Together AI's Aurora framework is an open-source, RL-based implementation that achieves meaningful speedups over well-trained static speculators, even when starting from scratch.</p>
-<p><strong>What does &quot;inference research&quot; mean in the context of AI?</strong></p>
-<p>Inference research is the field of study focused on making AI models run faster, cheaper, and more efficiently in production — without sacrificing output quality. It encompasses algorithm-level work (like speculative decoding and attention optimization), systems-level work (like kernel engineering and request scheduling), and hardware-level work (like quantization and GPU utilization). It's distinct from model research, which focuses on improving what models know or can do. As inference costs become the dominant expense in AI deployment, inference research has become one of the highest-leverage areas in applied AI.</p>
-<p><strong>How does inference optimization affect AI product economics?</strong></p>
-<p>Inference optimization directly improves unit economics: faster inference means more requests served per GPU-hour, which translates to lower cost per request. At scale, even modest efficiency gains compound significantly — a 2x improvement in throughput effectively halves infrastructure costs for the same workload. This matters for product teams because it determines what use cases are economically viable, how quickly margins improve as volume grows, and whether a product can sustain competitive pricing as the market matures.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>From 732 bytes to nowhere: shutting down Copy Fail in produc…</title>
-      <link>https://www.together.ai/blog/shutting-down-copy-fail-in-production</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/shutting-down-copy-fail-in-production?li=1</guid>
-      <pubDate>Thu, 30 Apr 2026 00:00:00 +0000</pubDate>
-      <description>Full title: From 732 bytes to nowhere: shutting down Copy Fail in production</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
-<p>Published 4/30/2026</p>
-<h1>From 732 bytes to nowhere: shutting down Copy Fail in production</h1>
-<ul><li>AuthorsDerek Chamorro, Max Kalika</li><li>Table of contents<a href="https://www.together.ai/blog/shutting-down-copy-fail-in-production#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
-<p>Summary</p>
-<p>We were able to get ahead of Copy Fail (CVE‑2026‑31431) by treating it as a fleet‑level emergency, shutting off the vulnerable crypto socket interface across our infrastructure within hours and rolling in kernel patches once they were stable in our AI workloads. Before upstream fixes were widely available, we relied on a targeted kernel hardening step: Unloading the vulnerable module and removing it from the module path so it could not be silently re-enabled.</p>
-<h2>Copy Fail in one paragraph</h2>
-<p>Copy Fail (CVE‑2026‑31431) is a logic bug in the Linux kernel’s crypto subsystem in the <code>algif_aead</code> AF_ALG interface used for AEAD operations. It gives any unprivileged local user a precise 4‑byte write primitive into the page cache of any readable file on the system. In practice, public exploits flip a few bytes in shared, setuid binaries in memory and ride that to root on mainstream Linux distributions. The on‑disk file never changes, and the page is never marked dirty, which means traditional file‑integrity checks don’t see the attack even as the modified binary runs.</p>
-<h2>Why this matters for AI infrastructure</h2>
-<p>On a developer laptop, Copy Fail is <em>just</em> a local privilege escalation. In a modern AI platform, “local” usually means CI jobs, multi‑tenant GPU nodes, ephemeral research environments, or third‑party workloads bringing their own dependencies.</p>
-<p>From a cloud and AI perspective, the risk looks like this:</p>
-<ul><li>A compromise inside a container with access to AF_ALG sockets can be turned into root on the underlying host.</li><li>Because the page cache is shared, a write from one workload can subtly corrupt binaries or libraries used by other tenants on the same node.</li><li>Once a host is rooted, access to attached storage, control planes, and adjacent workloads becomes much easier.</li></ul>
-<p>We already operate under the assumption that containers are not a security boundary. Copy Fail is exactly the kind of quiet, deterministic primitive that can collapse the remaining margin in shared‑kernel multi‑tenant environments if you leave the vulnerable interface exposed.</p>
-<h2>Our immediate response: disable <code>algif_aead</code> everywhere</h2>
-<p>As soon as working exploit details landed, we focused on the most direct lever available: Stop exposing the vulnerable AF_ALG interface.</p>
-<p>For Together AI’s production workloads, we do not depend on userspace <code>algif_aead</code> sockets on inference or training hosts. That gave us the freedom to take a blunt but safe action across the fleet:</p>
-<p>Unloading the <code>algif_aead</code> module shut down the vulnerable code path immediately in the running kernel. Moving the module file out of the standard module directory prevented system services or automation from re‑loading it later during normal operations.</p>
-<p>This approach had a few important properties:</p>
-<ul><li>Fast: No reboot required, which matters when you’re running long‑lived GPU jobs.</li><li>Low‑risk: Typical server and AI workloads don’t rely on AF_ALG AEAD sockets directly, so the operational impact was minimal.</li><li>Durable: Even if a host rebooted into the same vulnerable kernel, it came back up with <code>algif_aead</code> still disabled.</li></ul>
-<p>We encoded this as an idempotent compliance check in our configuration management: A host is not considered healthy until the module is unloaded and the .ko file is quarantined.</p>
-<h2>Rolling out kernel patches safely</h2>
-<p>Disabling <code>algif_aead</code> was a mitigation, not the final state. Once vendors release patches for CVE‑2026‑31431, we will move to a more traditional lifecycle:</p>
-<ul><li>Stage patched kernels in non‑production clusters that mirror our heaviest AI workloads, including dense multi‑tenant GPU nodes.</li><li>Run accelerated soak tests for performance, GPU driver compatibility, and stability under real inference and training loads.</li><li>Roll out patched kernels gradually by region and environment, starting with less shared clusters and moving toward heavily multi‑tenant ones as telemetry stayed clean.</li></ul>
-<p>Even after patching, we are keeping <code>algif_aead</code> disabled in environments that do not have a clear need for it. Narrow, specialized kernel interfaces can have an ecosystem‑wide blast radius once something goes wrong; if we can safely run without them, we will.</p>
-<p>In parallel, our detection teams added Copy Fail‑aware signals into our telemetry:</p>
-<ul><li>Alerts for unexpected AF_ALG usage or crypto module loading on nodes where it should never happen.</li><li>Behavioral monitoring for privileged binaries, looking for anomalies even when the on‑disk image remains unchanged.</li></ul>
-<h2>Lessons for running secure AI platforms</h2>
-<p>Copy Fail is a good illustration of how small kernel bugs can have outsized impact in AI infrastructure:</p>
-<ul><li>Shared kernels and dense multi‑tenancy amplify local bugs into cross‑tenant risks.</li><li>Page cache tricks can bypass traditional file‑integrity‑based defenses.</li><li>Narrow interfaces that “nobody uses” can suddenly become the main attack surface.</li></ul>
-<p>Our takeaway at Together AI is to keep tightening our kernel exposure model: Default‑off for niche interfaces, fast fleet‑wide toggles when something goes wrong, and a validation pipeline that proves these decisions are compatible with high‑performance AI workloads.</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>

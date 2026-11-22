@@ -7,7 +7,26 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 22 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>推理服务提供商的数据处理事件</title>
+      <link>https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/</guid>
+      <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Data Processing Incidents on Inference Providers</description>
+      <content:encoded><![CDATA[<h1>推理提供商的数据处理事件</h1>
+<p>OpenRouter ·11/22/2026</p>
+<p>本周早些时候，安全<a href="https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens">研究人员报告</a>称，某些推理提供商的数据遭到泄露，或有其他证据表明其数据政策未得到执行。我们一直与研究人员和各提供商密切协作，以了解这些发现，并推动提供商加以解决。</p>
+<p>这些发现并未显示 OpenRouter 存在任何入侵或未经授权的访问。此次测试的结果揭示了关于特定推理提供商的新发现。我们收到的来自各提供商的安全公告实时列表见<a href="https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/#provider-security-announcements">下文</a>。</p>
+<p>作为客户与快速演变的模型及提供商生态之间的运行层，我们非常重视数据政策的执行。我们已采取以下行动：</p>
+<ul><li>根据调查结果，将三家提供商从 OpenRouter 下线（off-board）。</li><li>将 125 个 endpoint 移出零数据保留（ZDR）资格范围。被移除的既包括研究人员标记的提供商，也包括我们出于预防考虑额外移除的 endpoint。</li><li>通知了所有可能受影响的客户。</li></ul>
+<p>以下工作正在进行中：</p>
+<ul><li>我们正在改造研究人员的测试方法，以便持续开展此类检查。</li><li>我们正在对网络路径进行技术验证，以识别请求和响应可能被转发给第三方的情况。</li><li>在恢复本次审查中移除的任何 endpoint 的 ZDR 资格之前，我们将要求其提供适当的保证与验证。</li></ul>
+<p>我们感谢 Dragos 的报告。随着我们将类似的测试技术整合进 OpenRouter，我们会不断提高标准，而希望接入 OpenRouter 的提供商必须达到这一标准。</p>
+<h2>提供商安全公告</h2>
+<ul><li>Novita：<a href="https://novita.ai/blog/minimax-requests-privacy-notice/">关于 Novita 上 MiniMax 请求的隐私说明</a></li><li>Phala：<a href="https://phala.com/posts/phala-november-preliminary-incident-report">11 月初步事件报告</a></li><li>Together：<a href="https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026">安全事件：2026 年 6 月和 7 月请求的提示词泄露</a></li></ul>
+<p><em>并非所有受影响的提供商都已公开发布公告。无论是否有公开公告，我们均已通知受影响的用户。我们鼓励所有提供商撰写事件报告，并将持续更新此列表。</em></p>]]></content:encoded>
+    </item>
     <item>
       <title>OpenRouter 现在为 Hugging Face 提供推理支持</title>
       <link>https://openrouter.ai/blog/announcements/hugging-face-inference-providers/</link>
@@ -8458,42 +8477,6 @@ print(len(vectors[0]))</code></pre>
 <p>新的基于 OpenAI 的索引我们不会把 text-embedding-ada-002 作为默认。先评估 text-embedding-3-small，如果你的检索结果证明更高的 prompt 价格和更大的向量值得，再与 text-embedding-3-large 比较。</p>
 <h3>为什么免费 embedding 模型返回 404 错误？</h3>
 <p>我们目录中的免费 embedding 路由由数据政策可能允许在你的 prompt 上训练的 provider 服务。如果你的账户隐私设置、workspace guardrail，或请求字段 <code>provider.data_collection</code> 设为 <code>deny</code> 排除了会在免费模型 prompt 上训练的 provider，就没有端点可用，请求会返回一个指明免费模型训练限制的 404 错误。在把模型 ID 判定为无效之前，先检查你账户的隐私页面和应用于该 API key 的 guardrail。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Batch API：打包请求实现半价推理</title>
-      <link>https://openrouter.ai/blog/announcements/batch-api/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/batch-api/</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Batch API: half-price inference by bundling requests</description>
-      <content:encoded><![CDATA[<p>对于大批量的工作或不需立即完成的请求，你现在可以使用新的 <a href="https://openrouter.ai/docs/batch-quickstart">batch API</a>。提交批次时，服务商可以在 24 小时窗口内自行选择何时完成请求，作为交换，他们通常只收正常 per-token 价格的 50%（有时更低）。</p>
-<p>目前适用于 <a href="https://openrouter.ai/models?variant=batch">70 多个模型</a>。使用方法见 <a href="https://openrouter.ai/docs/batch-quickstart">Batch API 文档</a>。</p>
-<p>实践中我们观察到，你几乎从不等接近 24 小时。在我们两周 beta 期间完成的 23 万+ 批次中，中位数 7 分钟完成，90% 在一小时内完成。</p>
-<p>Batch 是一个异步 API，适合你能接受高度可变响应时间的负载，例如给语料打标签、回填 embeddings、给 eval 集打分、总结积压工单，或在夜间对几千行数据跑同一个 prompt。</p>
-<h2>Batch API 如何工作</h2>
-<p>带上你的请求列表调用 <code>api/v1/batches</code>，并指定使用哪种端点形态。Chat completions、responses、messages 和 embeddings 都支持。例如：</p>
-<pre><code>curl https://openrouter.ai/api/v1/batches \
-  -H &quot;Content-Type: application/json&quot; \
-  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
-  -d '{
-  &quot;endpoint&quot;: &quot;/v1/chat/completions&quot;,
-  &quot;model&quot;: &quot;google/gemini-3.8-flash&quot;,
-  &quot;requests&quot;: [
-    { &quot;custom_id&quot;: &quot;ticket-0001&quot;, &quot;body&quot;: { &quot;messages&quot;: [{ &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Summarize this ticket in one sentence.&quot; }] } },
-    { &quot;custom_id&quot;: &quot;ticket-0002&quot;, &quot;body&quot;: { &quot;messages&quot;: [{ &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Summarize this ticket in one sentence.&quot; }] } }
-  ]
-}'</code></pre>
-<p>请求之后，开始轮询 <code>GET /api/v1/batches/:id</code>，直到状态变为 <code>completed</code>、<code>failed</code>、<code>expired</code> 或 <code>cancelled</code>。完成的批次会在同一响应中内联返回结果。</p>
-<h2>大多数批次几分钟就完成</h2>
-<p>我们查看了两周 beta 期间完成的批次，测量从受理到结果完成的时间。中位数是 7 分钟，90 分位是 1.0 小时，99 分位是 10.3 小时。我们还发现：一天中的提交时刻比你发送的请求数量影响更大。</p>
-<p><img src="https://openrouter.ai/blog/images/batch-api-hours-by-submit-hour.png" alt="Bar chart of batch completion time by the Pacific hour a batch was submitted, showing the median, 75th percentile, and 90th percentile for each hour. The median stays between 5 and 11 minutes all day. The 90th percentile sits under 1.1 hours for most hours but climbs to between 2 and 4.5 hours for batches submitted from 5am to noon Pacific, peaking at 4.5 hours for the 9am hour."></p>
-<p>太平洋时间早上 5 点到中午之间提交的批次明显比其他时段慢，最慢的十分之一要花 2 到 4.5 小时。在其他任何小时提交，90 分位都降到 1.1 小时以下；太平洋时间晚 6 点之后则不到 50 分钟。</p>
-<p>单请求批次的完成时间随时刻不同在 5 到 11 分钟之间，而 1,000 个请求以上的批次要 12 到 21 分钟。大批次确实处理更久——太平洋时间午夜到中午之间提交、超过 100 个请求的批次中，最慢的十分之一花了长达 6.8 小时。</p>
-<p><img src="https://openrouter.ai/blog/images/batch-api-median-hours-by-window-and-size.png" alt="Heatmap of median hours to complete by three-hour Pacific submission window and batch size bucket (1, 2 to 10, 11 to 100, 101 to 1k, and 1k+ requests). Every cell shows a median of 5 to 21 minutes. Each cell also lists the sample size and 90th percentile, which climbs as high as 6.8 hours for batches of 101 or more requests submitted between midnight and noon Pacific."></p>
-<h2>批次支持什么</h2>
-<ul><li>请求形态：你已经在发给 OpenRouter 的任何文本请求体形态都受支持，包括 chat completions、responses、messages 和 embeddings。</li><li>路由：每个批次在单一服务商上执行。默认情况下，在应用你的服务商白名单、数据政策和 BYOK 设置后，我们会为该模型选择最便宜的 batch 端点。</li><li>BYOK：配置了<a href="https://openrouter.ai/docs/guides/overview/auth/byok">服务商密钥</a>后，在支持该功能的服务商上，批次会经由你的密钥路由，你只需支付 BYOK 费用。</li><li>按请求的结果：每个结果独立返回，少数坏行不会让其余作业失败。</li><li>保留期：输入和结果保留 30 天，或直到你 <code>DELETE</code> 该批次。</li><li>日志：每个批次都会出现在你<a href="https://openrouter.ai/logs">日志的 Batches 标签页</a>中，含模型、服务商、状态和成本。</li><li>定价：折扣适用于 per-token 定价，且因模型而异。Web 搜索调用按标准费率计费。</li><li>输入：图像和文件必须是公开 URL。音频、视频以及 OpenRouter 自己的 web search 插件在 batch 中不可用（见文档的<a href="https://openrouter.ai/docs/batch-quickstart#limitations">限制章节</a>）。</li></ul>
-<h2>开始使用</h2>
-<p>选一个<a href="https://openrouter.ai/models?variant=batch">支持 batch 的模型</a>，取一个 <a href="https://openrouter.ai/settings/keys">API key</a>，把你的第一个批次 POST 到 <code>https://openrouter.ai/api/v1/batches</code>。<a href="https://openrouter.ai/docs/batch-quickstart">Quickstart</a> 有完整的请求与响应结构。</p>
-<p>在 Discord 的 <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> 告诉我们你在用批次做什么。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

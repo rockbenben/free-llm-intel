@@ -1,0 +1,215 @@
+---
+vendor: sensetime_sensenova
+title: SenseNova-SI-1.1-InternVL3-8B
+original_title: 
+url: https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B
+date: 2025-11-11
+lang: zh
+captured: 2026-11-22
+extractor: readability-v1
+translator: llm
+status: translated
+body_sha: 8bf0f1ee0092
+---
+
+**EN** | [中文](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B/blob/main/README_CN.md)
+
+# SenseNova-SI：以多模态基础模型扩展空间智能
+
+![Code](https://img.shields.io/badge/SenseNova_SI-Code-100000?style=flat-square&logo=github&logoColor=white)
+
+![arXiv](https://img.shields.io/badge/arXiv-SenseNova_SI-red?logo=arxiv)
+
+![Code](https://img.shields.io/badge/EASI-Code-100000?style=flat-square&logo=github&logoColor=white)
+
+![Leaderboard](https://img.shields.io/badge/%F0%9F%A4%97%20_EASI-Leaderboard-ffc107?color=ffc107&logoColor=white)
+
+🔥请查看我们最新发布的 [**SenseNova-SI-1.2-InternVL3-8B**](https://huggingface.co/sensenova/SenseNova-SI-1.2-InternVL3-8B)，在八项近期空间智能基准——VSI、MMSI、MindCube、ViewSpatial、SITE、BLINK、3DSRBench、EmbSpatial-Bench——上，于同等规模的开源模型中取得最先进性能。
+
+## 概述
+
+尽管取得了显著进展，多模态基础模型在空间智能方面仍表现出令人意外的不足。在本工作中，我们探索扩展多模态基础模型，以在 **SenseNova-SI 系列**中培养空间智能；该系列构建于已有的多模态基础之上，包括视觉理解模型（即 Qwen3-VL 和 InternVL3）以及统一理解与生成模型（即 Bagel）。我们采取系统化方法构建高性能且稳健的空间智能：在严格的空间能力分类体系下，系统整理出 SenseNova-SI-8M——八百万条多样化数据样本。SenseNova-SI 在广泛的空间智能基准上展现出前所未有的性能：VSI-Bench 上 68.7%，MMSI 上 43.3%，MindCube 上 85.6%，ViewSpatial 上 54.6%，SITE 上 50.1%，同时保持强大的通用多模态理解能力（例如 MMBench-En 上 84.9%）。更重要的是，我们分析了数据规模扩展的影响，讨论了多样化数据训练所带来的涌现泛化能力的早期迹象，分析了过拟合与语言捷径的风险，展示了一项关于空间思维链推理的初步研究，并验证了潜在的下游应用。SenseNova-SI 是一个持续进行的项目，本报告将持续更新。所有新训练的多模态基础模型均已公开释出，以促进该方向的进一步研究。*未来，SenseNova-SI 将与更大规模的内部模型集成。*
+
+## 发布信息
+
+目前，我们将 SenseNova-SI 构建于流行的开源基础模型之上，以最大化与现有研究流程的兼容性。在本次发布中，我们推出 [**SenseNova-SI-1.1-InternVL3-2B**](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-2B) 和 [**SenseNova-SI-1.1-InternVL3-8B**](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B)，它们在五项近期空间智能基准——**VSI**、**MMSI**、**MindCube**、**ViewSpatial** 和 **SITE**——上，于同等规模的开源模型中取得最先进性能。
+
+| 模型 | VSI | MMSI | MindCube-Tiny | ViewSpatial | SITE |
+| --- | --- | --- | --- | --- | --- |
+| *开源模型（~2B）* |  |  |  |  |  |
+| InternVL3-2B | 32.9 | 26.5 | 37.5 | 32.5 | 30.0 |
+| Qwen3-VL-2B-Instruct | 50.3 | 28.9 | 34.5 | 36.9 | 35.6 |
+| MindCube-3B-RawQA-SFT | 17.2 | 1.7 | 51.7 | 24.1 | 6.3 |
+| SpatialLadder-3B | 44.8 | 27.4 | 43.4 | 39.8 | 27.9 |
+| SpatialMLLM-4B | 46.3 | 26.1 | 33.4 | 34.6 | 18.0 |
+| VST-3B-SFT | 57.9 | 30.2 | 35.9 | 52.8 | 35.8 |
+| Cambrian-S-3B | 57.3 | 25.2 | 32.5 | 39.0 | 28.3 |
+| **SenseNova-SI-1.1-InternVL3-2B** | **63.7** | **34.2** | **41.8** | **52.6** | **36.7** |
+| *开源模型（~8B）* |  |  |  |  |  |
+| InternVL3-8B | 42.1 | 28.0 | 41.5 | 38.6 | 41.1 |
+| Qwen3-VL-8B-Instruct | 57.9 | 31.1 | 29.4 | 42.2 | 45.8 |
+| BAGEL-7B-MoT | 31.4 | 31.0 | 34.7 | 41.3 | 37.0 |
+| SpaceR-7B | 41.5 | 27.4 | 37.9 | 35.8 | 34.2 |
+| ViLaSR-7B | 44.6 | 30.2 | 35.1 | 35.7 | 38.7 |
+| VST-7B-SFT | 60.6 | 32.0 | 39.7 | 50.5 | 39.6 |
+| Cambrian-S-7B | 67.5 | 25.8 | 39.6 | 40.9 | 33.0 |
+| **SenseNova-SI-1.1-InternVL3-8B** | **68.7** | **43.3** | **85.6** | **54.6** | **47.7** |
+| *专有模型* |  |  |  |  |  |
+| Gemini-2.5-pro-2025-06 | 53.5 | 38.0 | 57.6 | 46.0 | 57.0 |
+| Grok-4-2025-07-09 | 47.9 | 37.8 | 63.5 | 43.2 | 47.0 |
+| GPT-5-2025-08-07 | 55.0 | 41.8 | 56.3 | 45.5 | 61.8 |
+
+## 🛠️ 快速开始
+
+### 安装
+
+我们推荐使用 [uv](https://docs.astral.sh/uv/) 管理环境。
+
+> uv 安装指南：https://docs.astral.sh/uv/getting-started/installation/#installing-uv
+
+```
+git clone git@github.com:OpenSenseNova/SenseNova-SI.git
+cd SenseNova-SI/
+uv sync --extra cu124 # or one of [cu118|cu121|cu124|cu126|cu128|cu129], depending on your CUDA version
+uv sync
+source .venv/bin/activate
+```
+
+#### Hello World
+
+一个简单的无图像测试，用于验证环境设置并下载模型。
+
+```
+python example.py \
+  --question "Hello" \
+  --model_path sensenova/SenseNova-SI-1.1-InternVL3-8B
+```
+
+### 示例
+
+#### 示例 1
+
+本示例来自 [MMSI-Bench](https://github.com/InternRobotics/MMSI-Bench) 的 `Pos-Obj-Obj` 子集：
+
+```
+python example.py \
+  --image_paths examples/Q1_1.png examples/Q1_2.png \
+  --question "<image><image>
+You are standing in front of the dice pattern and observing it. Where is the desk lamp approximately located relative to you?
+Options: A: 90 degrees counterclockwise, B: 90 degrees clockwise, C: 135 degrees counterclockwise, D: 135 degrees clockwise" \
+  --model_path sensenova/SenseNova-SI-1.1-InternVL3-8B 
+# --model_path OpenGVLab/InternVL3-8B 
+```
+
+**示例 1 详情**
+
+**Q：**你正站在骰子图案前观察它。台灯相对于你大致位于哪个方向？选项：A：逆时针 90 度，B：顺时针 90 度，C：逆时针 135 度，D：顺时针 135 度
+
+| ![第一张图片](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B/resolve/main/examples/Q1_1.png) | ![第二张图片](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B/resolve/main/examples/Q1_2.png) |
+| --- | --- |
+
+**GT: C**
+
+#### 示例 2
+
+本示例来自 [MindCube](https://mind-cube.github.io/) 的 `Rotation` 子集：
+
+```
+python example.py \
+  --image_paths examples/Q2_1.png examples/Q2_2.png \
+  --question "<image><image>
+Based on these two views showing the same scene: in which direction did I move from the first view to the second view?
+A. Directly left B. Directly right C. Diagonally forward and right D. Diagonally forward and left" \
+  --model_path sensenova/SenseNova-SI-1.1-InternVL3-8B 
+# --model_path OpenGVLab/InternVL3-8B
+```
+
+**示例 2 详情**
+
+**Q：**基于这两个展示同一场景的视图：我从第一个视图移动到第二个视图的方向是什么？正左 B. 正右 C. 斜向前右 D. 斜向前左
+
+| ![第一张图片](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B/resolve/main/examples/Q2_1.png) | ![第二张图片](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B/resolve/main/examples/Q2_2.png) |
+| --- | --- |
+
+**GT: D**
+
+#### 单次运行测试多个问题
+
+准备一个类似 [examples/examples.jsonl](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B/blob/main/examples/examples.jsonl) 的文件，其中每一行表示一个问题。
+
+模型仅加载一次，并顺序处理问题。各问题彼此保持独立。
+
+> 有关 jsonl 格式的更多详细信息，请参阅 Single-Image Data 和 Multi-Image Data 的文档。
+
+```
+python example.py \
+  --jsonl_path examples/examples.jsonl \
+  --model_path sensenova/SenseNova-SI-1.1-InternVL3-8B 
+# --model_path OpenGVLab/InternVL3-8B 
+```
+
+### 评估
+
+如需复现上述基准结果，请参考 [EASI](https://easi.lmms-lab.com/leaderboard/) 在主流空间智能基准上评估 SenseNova-SI。
+
+## 🖊️ 引用
+
+```
+@InProceedings{sensenova-si,
+  title = {Scaling Spatial Intelligence with Multimodal Foundation Models},
+  author = {Cai, Zhongang and Wang, Ruisi and Gu, Chenyang and Pu, Fanyi and Xu, Junxiang and Wang, Yubo and Yin, Wanqi and Yang, Zhitao and Wei, Chen and Sun, Qingping and Zhou, Tongxi and Li, Jiaqi and Pang, Hui En and Qian, Oscar and Wei, Yukun and Lin, Zhiqian and Shi, Xuanke and Deng, Kewang and Han, Xiaoyang and Chen, Zukai and Fan, Xiangyu and Deng, Hanming and Lu, Lewei and Pan, Liang and Li, Bo and Liu, Ziwei and Wang, Quan and Lin, Dahua and Yang, Lei},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year = {2026}
+}
+```
+
+上个月下载量
+
+101
+
+Safetensors
+
+模型大小
+
+8B 参数
+
+张量类型
+
+BF16
+
+
+## sensenova/SenseNova-SI-1.1-InternVL3-8B 的模型树
+
+基础模型
+
+OpenGVLab/InternVL3-8B-Pretrained
+
+微调
+
+OpenGVLab/InternVL3-8B-Instruct
+
+微调
+
+OpenGVLab/InternVL3-8B
+
+微调
+
+([37](https://huggingface.co/models?other=base_model:finetune:OpenGVLab/InternVL3-8B))
+
+本模型
+
+微调
+
+2 个模型
+
+量化
+
+2 个模型
+
+## 包含 sensenova/SenseNova-SI-1.1-InternVL3-8B 的合集
+
+以多模态基础模型扩展空间智能 • 16 个项目 • 2 天前更新 •  25
+
+## sensenova/SenseNova-SI-1.1-InternVL3-8B 的论文
+
+论文 • 2511.13719 • 发布于 2025 年 11 月 17 日 •  50
