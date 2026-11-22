@@ -8109,37 +8109,17 @@ class TestKimiBlogSource(unittest.TestCase):
             "https://platform.kimi.com/docs/pricing/chat"),
             "同厂商的定价文档是情报页，不能被退役前缀误伤")
 
-class TestBedrockReleaseFeed(unittest.TestCase):
-    def _feed(self, urls):
-        day = date.today().strftime("%d %b %Y") + " 00:00:00 GMT"
-        return "<rss><channel>" + "".join(
-            f"<item><title>New feature</title><guid>reused-guid</guid><link>{url}</link>"
-            f"<pubDate>{day}</pubDate><description>{body}</description></item>"
-            for url, body in urls
-        ) + "</channel></rss>"
-
-    def test_bedrock_keeps_updates_to_the_same_document_and_their_short_bodies(self):
-        c = crawler_llm_intel
-        doc = "https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html"
-        text_rows = ["Model A is available.", "Model B is available."]
-        raw = self._feed([(doc, body) for body in text_rows])
-        entries = c._bedrock_release_entries(raw)
-        articles = c.parse_feed_xml(raw, c._BEDROCK_RELEASE_FEED)
-        self.assertEqual(len({a.url for a in articles}), 2)
-        self.assertEqual([a.link for a in articles], [doc, doc])
-        self.assertIn('<guid isPermaLink="false">', c._rss_item(articles[0], articles[0].title))
-        import fulltext
-        by_url = {a.url: (html, a.link) for a, html in entries}
-        rows = [{"url": a.url, "vendor": "aws_bedrock", "title": a.title, "date": a.date}
-                for a in articles]
-        bodies = {}
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            fetch_page = mock.Mock(side_effect=AssertionError("release body must come from RSS"))
-            fulltext.fetch_bodies(root, rows, bodies, fetch=fetch_page, fetch_entry=by_url.get,
-                                  today=date.today().isoformat())
-            self.assertEqual(
-                [fulltext.read_body_doc(root / e["en_path"])[1] for e in bodies.values()], text_rows)
+class TestBedrockArticleSource(unittest.TestCase):
+    def test_source_is_the_bedrock_blog_category_feed(self):
+        root = Path(__file__).resolve().parent
+        _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        news = [s for s in sources if s["vendor_id"] == "aws_bedrock"
+                and s["type"] in crawler_llm_intel.NEWS_TYPES]
+        [source] = news
+        self.assertEqual(source["type"], "feed")
+        self.assertTrue(source["url"].endswith("/amazon-bedrock/feed/"))
+        self.assertTrue(crawler_llm_intel._is_retired_news_url(
+            "https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html#rss-old"))
 
 
 class TestSenseNovaModelSource(unittest.TestCase):

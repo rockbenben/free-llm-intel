@@ -1211,12 +1211,14 @@ sources:
   - vendor_id: aws_bedrock
     type: docs
     url: https://docs.aws.amazon.com/bedrock/
-  # Bedrock 专属文档更新 RSS。回捞 730 天；同一文档多次更新保留为独立条目。
+  # AWS 官方 Bedrock 博客分类。分类 RSS 只给最新 20 篇；
+  # 存量按分类 HTML 分页回捞 730 天，日常巡检只拉 RSS。
+  # /cn/ 分类页实测使用同一份英文订阅。
   - vendor_id: aws_bedrock
     type: feed
     lang: en
-    url: https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug.rss
-    page: https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html
+    url: https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/feed/
+    page: https://aws.amazon.com/cn/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/
 
   # Azure OpenAI / Azure AI Foundry
   - vendor_id: azure_openai

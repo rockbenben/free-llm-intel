@@ -1574,55 +1574,8 @@ def normalize_feed_date(raw: str) -> str:
     return ""
 
 
-_BEDROCK_RELEASE_FEED = "https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug.rss"
-_BEDROCK_HISTORY = "https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html"
-
-
-def _is_bedrock_release(url: str) -> bool:
-    base, _, fragment = url.partition("#")
-    return base == _BEDROCK_HISTORY and fragment.startswith("rss-")
-
-
-def _bedrock_release_entries(raw: str, cutoff: str = "") -> list[tuple[Article, str]]:
-    """读取 Bedrock RSS 中的单条变更及正文，保留可打开的官方页面链接。"""
-    from hashlib import sha256
-
-    try:
-        root = ET.fromstring(raw)
-    except ET.ParseError:
-        return []
-    entries: dict[str, tuple[Article, str]] = {}
-    for item in root.findall("./channel/item"):
-        day = normalize_feed_date(item.findtext("pubDate") or "")
-        body = (item.findtext("description") or "").strip()
-        link = (item.findtext("link") or "").strip()
-        if not day or day < cutoff or not body or not link.startswith("https://"):
-            continue
-        description = " ".join(parse_html(body, link)[0].split())
-        if not description:
-            continue
-        title = (item.findtext("title") or "").strip()
-        guid = (item.findtext("guid") or "").strip()
-        if not title or not guid:
-            continue
-        # AWS 会对同一文档重复发布更新，同日通用标题甚至可能共用 GUID。
-        digest = sha256(f"{guid}\n{link}\n{description}".encode()).hexdigest()[:16]
-        url = f"{_BEDROCK_HISTORY}#rss-{digest}"
-        if re.fullmatch(r"(?:New|Updated) (?:feature|model|topic)|Region expansion",
-                        title, flags=re.I):
-            title = description
-        if len(title) > 145:
-            title = title[:142].rsplit(" ", 1)[0] + "…"
-        entries[url] = (Article(title=title, url=url, link=link,
-                                date=day, source="官方发布说明", stype="feed"), body)
-    return list(entries.values())
-
-
 def parse_feed_xml(raw: str, base_url: str, stype: str = "feed") -> list[Article]:
     """解析 RSS 2.0 / Atom 订阅源，返回文章列表（保持源内顺序，通常最新在前）。"""
-    if base_url == _BEDROCK_RELEASE_FEED:
-        cutoff = (datetime.now() - timedelta(days=JSON_NEWS_WINDOW_DAYS)).strftime("%Y-%m-%d")
-        return [article for article, _ in _bedrock_release_entries(raw, cutoff)]
     articles: list[Article] = []
     if not raw or "<" not in raw[:500]:
         return articles
@@ -3027,6 +2980,8 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
 # 归档是「增量合并、只增不减」的 —— 从 yaml 删掉一个源之后，它的历史条目会一直留在
 # `llm-news/*.md` 与单厂商 feed 里，所以这里做一次收口。**新抓取的条目也一并挡掉。**
 RETIRED_NEWS_URL_PREFIXES: tuple[str, ...] = (
+    # Bedrock 改收独立博文，旧文档更新分条不再当作文章。
+    "https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html#rss-",
     # Google Cloud 的通用 AI 博客（Gartner 魔力象限、印度板球转播、I/O 大会速览…）：
     # 不是 Gemini 的内容，且条目全无日期。该源已于 2026-09-18 从 yaml 移除，
     # 这里清理它的历史残留（实测 11 条）。
@@ -4562,7 +4517,7 @@ def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
         # `#时间-2026-10-17` 这类）是能点开的条目标识，不能连带丢掉。
         if _drops_news_article(intel.vendor_id, a.url, title=a.title):
             continue
-        key = _article_key(a.url) if _is_bedrock_release(a.url) else _title_key(a.title)
+        key = _title_key(a.title)
         prev = kept.get(key)
         if prev is None or _prefer_article(a, prev):
             kept[key] = a
@@ -4921,8 +4876,6 @@ def _dedup_same_title(arts: list[Article]) -> list[Article]:
         （title 就是当年冻结的中文）—— 措辞可能不同（一次 AI 润色、一次机翻），
         只按显示标题归组会漏；原文标题是稳定锚，两个别名任一命中即同一篇。
         """
-        if _is_bedrock_release(a.url):
-            return {_article_key(a.url)}
         out = set()
         for s in (a.title, a.zh_title):
             n = norm_title(s)
@@ -6329,12 +6282,11 @@ def _rss_item(art: Article, title_zh: str, brand: str = "",
         if art.title.strip() and art.title.strip() != title_zh.strip():
             notes.append(f"原文标题：{art.title.strip()}")
         guid_url = art.url
-    permalink = "false" if _is_bedrock_release(art.url) else "true"
     lines = [
         "    <item>",
         f"      <title>{_rss_esc(short)}</title>",
         f"      <link>{_rss_esc(art.link or art.url)}</link>",
-        f'      <guid isPermaLink="{permalink}">{_rss_esc(guid_url)}</guid>',
+        f'      <guid isPermaLink="true">{_rss_esc(guid_url)}</guid>',
     ]
     pub = _rss_pubdate(art.date)
     if pub:
@@ -8326,25 +8278,6 @@ def main(argv: list[str] | None = None) -> int:
             last_status[u] = page.status_code or 0
             return (page.raw or "", page.ok, page.status_code or 0, page.final_url or u)
 
-        release_bodies: dict[str, tuple[str, str]] | None = None
-
-        def _fetch_release_body(u: str):
-            nonlocal release_bodies
-            if not _is_bedrock_release(u):
-                return None
-            if release_bodies is None:
-                feed = _BEDROCK_RELEASE_FEED
-                page = fetch_url(session, feed, "feed", browser=None, timeout=timeout,
-                                 lang=declared_source_lang(feed, news_lang_table()),
-                                 locale_cookie=declared_source_cookie(feed),
-                                 accept_language=declared_source_accept_language(feed),
-                                 raw_limit=BODY_RAW_LIMIT)
-                release_bodies = {
-                    a.url: (body, a.link)
-                    for a, body in _bedrock_release_entries(page.raw or "")
-                } if page.ok else {}
-            return release_bodies.get(u, ("", _BEDROCK_RELEASE_FEED))
-
         def _refetch_body(u: str):
             """`fetch_url` 的浏览器兜底只在 not ok / 4xx / sparse / 拦截标记时触发，
             覆盖不到「200 + 大量 HTML、但正文是前端渲染的」这一档 —— 实测
@@ -8372,7 +8305,6 @@ def main(argv: list[str] | None = None) -> int:
                                             retry_unreadable=args.retry_unreadable,
                                             limit=args.fetch_limit, save=_flush,
                                             refetch=_refetch_body,
-                                            fetch_entry=_fetch_release_body,
                                             skip=_skip_row, on_result=_on_result)
             _save_body_retry_ledger(retry_path, retry_state)
         # 吸收子代理/人工写到磁盘的中文译文（单点写 ledger）
