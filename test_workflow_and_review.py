@@ -8122,40 +8122,30 @@ class TestBedrockArticleSource(unittest.TestCase):
             "https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-ug-doc-history.html#rss-old"))
 
 
-class TestSenseNovaModelSource(unittest.TestCase):
-    API = "https://huggingface.co/api/models?author=sensenova&full=true"
-    PAGE = "https://huggingface.co/sensenova"
+class TestSenseNovaArticleSource(unittest.TestCase):
+    API = "https://www.sensetime.com/api/news"
+    PAGE = "https://www.sensetime.com/cn/news"
 
-    def _page(self, models):
-        return crawler_llm_intel.PageResult(
-            url=self.API, stype="model_registry", ok=True, final_url=self.API,
-            raw=json.dumps(models), display_url=self.PAGE)
-
-    def _model(self, name, **overrides):
-        return {
-            "id": f"sensenova/{name}", "author": "sensenova",
-            "createdAt": f"{date.today().isoformat()}T00:00:00Z",
-            "siblings": [{"rfilename": "README.md"}, {"rfilename": "model.safetensors"}],
-            **overrides,
-        }
-
-    def test_collects_weights_from_the_official_org_without_variant_noise(self):
-        page = self._page([
-            self._model("SenseNova-Loop-9B"),
-            self._model("SenseNova-Loop-9B-AWQ", tags=["base_model:quantized:sensenova/Loop"]),
-            self._model("SenseNova-U1-LoRAs", tags=["lora"]),
-            self._model("empty", siblings=[{"rfilename": "README.md"}]),
-            self._model("foreign", author="another-org", id="another-org/SenseNova-Lookalike"),
-            self._model("old", createdAt="2023-01-01T00:00:00Z"),
-            self._model("undated", createdAt=None),
-        ])
+    def test_official_queries_keep_articles_and_drop_unrelated_coverage(self):
+        yesterday = date.today() - timedelta(days=1)
+        release = {"title": "SenseNova Loop-9B 正式版发布", "slug": "loop-9b",
+                   "releaseDate": f"{yesterday.isoformat()}T17:00:00Z"}
+        pr = {"title": "SenseNova U1 Pro 获设计榜第一", "slug": "award",
+              "releaseDate": f"{yesterday.isoformat()}T00:00:00Z"}
+        pages = [
+            crawler_llm_intel.PageResult(url=f"{self.API}?q={query}", stype="news",
+                                         ok=True, display_url=self.PAGE,
+                                         raw=json.dumps({"items": items, "pageCount": 1}))
+            for query, items in (("SenseNova", [release, pr]), ("Token+Plan", [release]))
+        ]
         intel = crawler_llm_intel.VendorIntel(
-            "sensetime_sensenova", "商汤", self.PAGE, [], news_pages=[page])
+            "sensetime_sensenova", "商汤", self.PAGE, [], news_pages=pages)
         crawler_llm_intel.collect_news_articles(intel, mock.Mock())
         [article] = intel.all_news_articles
-        self.assertEqual(article.url, f"{self.PAGE}/SenseNova-Loop-9B")
+        self.assertEqual(article.url, f"{self.PAGE}/loop-9b")
         self.assertEqual(article.date, date.today().isoformat())
-        self.assertEqual(article.zh_title, article.title, "模型名原样保留")
+        section = crawler_llm_intel.render_news_section([intel])
+        self.assertEqual(section.count(f"]({self.PAGE})"), 1)
 
     def test_archive_keeps_developer_history_and_drops_group_pr(self):
         intel = crawler_llm_intel.VendorIntel("sensetime_sensenova", "商汤", self.PAGE, [])
@@ -8166,22 +8156,31 @@ class TestSenseNovaModelSource(unittest.TestCase):
             archive.write_text(
                 f"1. [商汤科技获纳入MSCI中国指数]({news}/stock)（2026-01-20）\n"
                 f"2. [空间智能再突破！联合创新研究]({news}/51170214)（2025-11-20）\n"
-                f"3. [商汤大装置上架DeepSeek系列模型，限免体验]({news}/51169337)（2025-02-10）\n",
+                f"3. [商汤大装置上架DeepSeek系列模型，限免体验]({news}/51169337)（2025-02-10）\n"
+                "4. [SenseNova-Loop-9B](https://huggingface.co/sensenova/SenseNova-Loop-9B)（2026-11-17）\n",
                 encoding="utf-8")
             crawler_llm_intel.write_news_archives(news_dir, [intel], clean_removed=False)
             self.assertEqual(
                 [a.url for a in crawler_llm_intel.parse_archived_articles(archive)],
                 [f"{news}/51170214", f"{news}/51169337"])
 
-    def test_yaml_only_crawls_the_official_model_registry_for_updates(self):
+    def test_yaml_targets_only_the_technical_category_and_three_official_queries(self):
+        from urllib.parse import parse_qs, urlsplit
+
         root = Path(__file__).resolve().parent
         _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
         news = [s for s in sources if s.get("vendor_id") == "sensetime_sensenova"
                 and s.get("type") in crawler_llm_intel.NEWS_TYPES]
-        self.assertEqual(news, [{
-            "vendor_id": "sensetime_sensenova", "type": "model_registry", "lang": "en",
-            "url": self.API, "page": self.PAGE,
-        }])
+        args = []
+        for source in news:
+            self.assertTrue(source["url"].startswith(self.API + "?"))
+            self.assertEqual(source["page"], self.PAGE)
+            self.assertEqual(source["lang"], "zh")
+            self.assertEqual(source["api"].replace("{page}", "1"), source["url"])
+            args.append(parse_qs(urlsplit(source["url"]).query))
+        self.assertCountEqual([q["q"][0] for q in args if "q" in q],
+                              ["SenseNova", "日日新", "Token Plan"])
+        self.assertEqual([q["categoryLabel"] for q in args if "categoryLabel" in q], [["技术博客"]])
 
     def test_removed_news_has_no_published_body(self):
         root = Path(__file__).resolve().parent

@@ -927,15 +927,36 @@ sources:
   - vendor_id: moss
     type: rate_limits
     url: https://platform.moss.cn/docs/errors-and-limits/limits
-  # 日日新官网指向 OpenSenseNova 开源仓库，模型权重由同名 Hugging Face 官方账号发布。
-  # 官方模型清单接入时共 44 个仓库，接口无后续页；回捞 730 天内有模型卡和权重的记录。
-  # 仓库创建日作为排序日期。停抓集团新闻中心，曾核实的开发者公告留在归档。
-  # 闭源模型和额度不一定出现于此，免费额度继续巡检上方官方 Token Plan 页。
+  # 商汤官网技术博客与三个官方搜索入口。先由服务端收窄，再筛模型、API 和额度动态。
+  # 每个入口目前只有一页。接口分页按 pageCount 提前停止，回捞范围为 730 天。
   - vendor_id: sensetime_sensenova
-    type: model_registry
-    lang: en
-    url: "https://huggingface.co/api/models?author=sensenova&full=true"
-    page: https://huggingface.co/sensenova
+    type: news
+    lang: zh
+    url: "https://www.sensetime.com/api/news?locale=zh-CN&page=1&pageSize=100&category=blog&categoryLabel=%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2&keywords=%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2%2C%E6%8A%80%E6%9C%AFblog"
+    page: https://www.sensetime.com/cn/news
+    api: "https://www.sensetime.com/api/news?locale=zh-CN&page={page}&pageSize=100&category=blog&categoryLabel=%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2&keywords=%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2%2C%E6%8A%80%E6%9C%AFblog"
+    api_pages: 8
+  - vendor_id: sensetime_sensenova
+    type: news
+    lang: zh
+    url: "https://www.sensetime.com/api/news?locale=zh-CN&page=1&pageSize=100&q=SenseNova"
+    page: https://www.sensetime.com/cn/news
+    api: "https://www.sensetime.com/api/news?locale=zh-CN&page={page}&pageSize=100&q=SenseNova"
+    api_pages: 8
+  - vendor_id: sensetime_sensenova
+    type: news
+    lang: zh
+    url: "https://www.sensetime.com/api/news?locale=zh-CN&page=1&pageSize=100&q=%E6%97%A5%E6%97%A5%E6%96%B0"
+    page: https://www.sensetime.com/cn/news
+    api: "https://www.sensetime.com/api/news?locale=zh-CN&page={page}&pageSize=100&q=%E6%97%A5%E6%97%A5%E6%96%B0"
+    api_pages: 8
+  - vendor_id: sensetime_sensenova
+    type: news
+    lang: zh
+    url: "https://www.sensetime.com/api/news?locale=zh-CN&page=1&pageSize=100&q=Token+Plan"
+    page: https://www.sensetime.com/cn/news
+    api: "https://www.sensetime.com/api/news?locale=zh-CN&page={page}&pageSize=100&q=Token+Plan"
+    api_pages: 8
 
   # SiliconFlow
   - vendor_id: siliconflow

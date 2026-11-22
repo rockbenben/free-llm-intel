@@ -138,7 +138,7 @@ CONDITION_TYPES = {
 # 「博客 / 动态」页：不进 README，单独输出并发现 RSS
 NEWS_TYPES = {
     "blog", "engineering", "news", "updates", "v4_news", "research", "changelog",
-    "feed", "model_registry",
+    "feed",
 }
 # 产品页及其他入口：不深度抓取
 SKIP_TYPES = {"product"}
@@ -166,7 +166,6 @@ TYPE_LABELS = {
     "engineering": "工程博客",
     "news": "新闻 / 更新",
     "updates": "更新日志",
-    "model_registry": "官方模型仓库",
     "v4_news": "版本动态",
     "research": "研究页",
     "changelog": "变更日志",
@@ -2014,54 +2013,37 @@ def extract_articles_from_longcat_home(page: PageResult,
             break
     return articles
 
-_SENSENOVA_MODEL_PATH = re.compile(r"/sensenova/([A-Za-z0-9][A-Za-z0-9._-]*)")
-
-
-def _is_sensenova_model_card(url: str) -> bool:
-    parts = urlparse(url)
-    return bool(parts.hostname == "huggingface.co" and not parts.fragment
-                and _SENSENOVA_MODEL_PATH.fullmatch(parts.path))
-
-
-def extract_articles_from_sensenova_models(page: PageResult) -> list[Article]:
-    """从官方模型仓库取权重条目，日期是 Hugging Face 仓库创建日。"""
-    parts = urlparse(page.final_url or page.url)
-    if page.stype != "model_registry" or parts.path != "/api/models":
+def extract_articles_from_sensetime_news(page: PageResult) -> list[Article]:
+    """提取商汤官网分类和搜索接口返回的独立文章。"""
+    if urlparse(page.final_url or page.url).path != "/api/news":
         return []
     try:
-        models = json.loads(json_api_body(page))
+        data = json.loads(json_api_body(page))
     except ValueError:
         return []
-    if not isinstance(models, list):
+    items = data.get("items") if isinstance(data, dict) else None
+    if not isinstance(items, list):
         return []
-    cutoff = (datetime.now() - timedelta(days=JSON_NEWS_WINDOW_DAYS)).strftime("%Y-%m-%d")
+    china_tz = timezone(timedelta(hours=8))
+    cutoff = (datetime.now(china_tz).date() - timedelta(days=JSON_NEWS_WINDOW_DAYS)).isoformat()
     articles: list[Article] = []
-    for model in models:
-        if not isinstance(model, dict) or model.get("private"):
+    for item in items:
+        if not isinstance(item, dict):
             continue
-        model_id = model.get("id")
-        match = _SENSENOVA_MODEL_PATH.fullmatch(f"/{model_id}")
-        if not match or model.get("author") != "sensenova":
+        title = " ".join(str(item.get("title") or "").split())
+        slug = str(item.get("slug") or "").strip()
+        if len(title) < 4 or not re.fullmatch(r"[^/?#\s]+", slug):
             continue
-        tags = {tag for tag in model.get("tags") or [] if isinstance(tag, str)}
-        if tags & {"gguf", "awq", "lora", "adapter"} or any(
-                tag.startswith(("base_model:quantized:", "base_model:adapter:")) for tag in tags):
+        try:
+            published = datetime.fromisoformat(str(item.get("releaseDate") or "").replace("Z", "+00:00"))
+        except ValueError:
             continue
-        files = {f.get("rfilename") for f in model.get("siblings") or []
-                 if isinstance(f, dict) and isinstance(f.get("rfilename"), str)}
-        if "README.md" not in files or not any(
-                f.endswith((".safetensors", ".onnx", ".pt", ".pth", ".ckpt"))
-                or re.fullmatch(r"pytorch_model(?:-\d+-of-\d+)?\.bin", f) for f in files):
-            continue
-        created_at = model.get("createdAt")
-        if not isinstance(created_at, str):
-            continue
-        day = _drop_future_date(normalize_feed_date(created_at))
-        if day < cutoff:
-            continue
-        name = match.group(1)
-        articles.append(Article(title=name, url=f"https://huggingface.co/{model_id}",
-                                date=day, source="官方模型仓库", stype=page.stype, zh_title=name))
+        if published.tzinfo is not None:
+            published = published.astimezone(china_tz)
+        day = published.date().isoformat()
+        if day >= cutoff:
+            articles.append(Article(title=title, url=f"https://www.sensetime.com/cn/news/{slug}",
+                                    date=_drop_future_date(day), source="官方接口", stype=page.stype))
     return articles
 
 
@@ -2070,7 +2052,7 @@ def extract_articles_from_sensenova_models(page: PageResult) -> list[Article]:
 #: 通用逻辑 —— 适配器失败不该让这条源整个空掉。
 _SITE_PAGE_EXTRACTORS = {
     "www.kimi.com": extract_articles_from_kimi_blog,
-    "huggingface.co": extract_articles_from_sensenova_models,
+    "www.sensetime.com": extract_articles_from_sensetime_news,
     "longcat.ai": extract_articles_from_longcat_home,
 }
 
@@ -3065,7 +3047,7 @@ _SENSENOVA_FREE_MODELS = re.compile(
 
 
 def _keeps_sensenova_news(title: str, url: str) -> bool:
-    """清理集团新闻中心的存量时，保留曾核实的模型、技术和开发者服务更新。"""
+    """日日新动态收录模型、技术和开发者服务更新。"""
     parts = urlparse(url)
     if (parts.hostname not in {"www.sensetime.com", "sensetime.com"}
             or parts.fragment or not re.fullmatch(r"/cn/news/[^/]+/?", parts.path)):
@@ -3185,7 +3167,7 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
 
     # 3.5) JSON 数据接口（页面纯前端渲染、官方又无 RSS 的站点，如千问 qwen.ai/research、
     #      AI21 的 WordPress wp-json）。
-    #      站点适配器排在最后：商汤的官方模型清单由 Hugging Face 适配器认领。
+    #      站点适配器排在最后：商汤的分类和搜索接口由站点适配器认领。
     for page in intel.news_pages:
         if page.ok and json_api_body(page):
             # 已知形状各试一次，谁认得出来用谁（形状不符的返回空列表）
@@ -3195,7 +3177,7 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
                  or extract_articles_from_site_page(page))
 
     if intel.vendor_id == "sensetime_sensenova":
-        articles = [a for a in articles if _is_sensenova_model_card(a.url)]
+        articles = [a for a in articles if _keeps_sensenova_news(a.title, a.url)]
 
     # 4) 同日去重：更新日志列表页里的日期锚点（如 DeepSeek /updates/#时间-2026-09-10）
     #    与对应新闻详情页（/news/<slug>）指向同一次发布时，保留详情页、丢弃锚点；
@@ -3478,14 +3460,23 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
             got = 0
             for pno in range(1, api_pages + 1):
                 api_url = api_tmpl.replace("{page}", str(pno))
-                api_page = fetch_url(session, api_url, stype, browser=None,
-                                     timeout=timeout, lang=src.get("lang") or "",
-                                     locale_cookie=(src.get("locale_cookie") or "").strip())
+                api_page = page if api_url == url else fetch_url(
+                    session, api_url, stype, browser=None, timeout=timeout,
+                    lang=src.get("lang") or "",
+                    locale_cookie=(src.get("locale_cookie") or "").strip())
                 api_page.display_url = src.get("page") or url
                 if not api_page.ok or not (api_page.raw or "").strip():
                     break
-                target.append(api_page)
-                got += 1
+                if api_page is not page:
+                    target.append(api_page)
+                    got = pno
+                try:
+                    data = json.loads(json_api_body(api_page))
+                except ValueError:
+                    data = None
+                page_count = data.get("pageCount") if isinstance(data, dict) else None
+                if isinstance(page_count, int) and pno >= page_count:
+                    break
                 if delay:
                     time.sleep(delay)
             if got:
@@ -4481,7 +4472,7 @@ def _drops_news_article(vendor_id: str, url: str, *, title: str = "",
     if _is_retired_news_url(url):
         return True
     if vendor_id == "sensetime_sensenova":
-        return not (_is_sensenova_model_card(url) or _keeps_sensenova_news(title, url))
+        return not _keeps_sensenova_news(title, url)
     if vendor_id not in NEWS_CANONICAL_ONLY_VENDORS:
         return False
     if in_archive and vendor_id not in ARCHIVE_DROP_SYNTHETIC_ANCHORS:
@@ -4621,8 +4612,14 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
     vendors_with_articles = 0
     for intel in vendors_with_news:
         lines.append(f"### {_feed_name(intel)} ({intel.vendor_id})")
+        shown_api_pages = set()
         for page in intel.news_pages:
             label = type_label(page.stype)
+            if page.display_url and page.stype != "feed":
+                display_key = (page.display_url, label, page.ok, page.error)
+                if display_key in shown_api_pages:
+                    continue
+                shown_api_pages.add(display_key)
             if page.stype == "feed":
                 # 显式 RSS/Atom 源：直接列出订阅地址
                 lines.append(f"- 📡 [{label}]({page.url})：`{page.final_url or page.url}`")

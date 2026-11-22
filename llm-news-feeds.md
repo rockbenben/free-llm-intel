@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-22 08:14:37**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-22 09:40:32**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -234,16 +234,16 @@
   - 📄 完整文章归档（共 59 篇）：[cohere.md](llm-news/cohere.md)
 
 ### 商汤 日日新 (sensetime_sensenova)
-- 页面：[官方模型仓库](https://huggingface.co/sensenova)
+- 页面：[新闻 / 更新](https://www.sensetime.com/cn/news)
   - 🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-sensetime_sensenova.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-sensetime_sensenova.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-22，标题自动汉化）：
-  1. [SenseNova-Loop-9B](https://huggingface.co/sensenova/SenseNova-Loop-9B)（2026-11-17）
-  2. [SenseNova Loop-9B正式版：让更少的参数走更深的计算路径](https://www.sensetime.com/cn/news/sensenova-loop-9b-20261118-1059)（2026-11-17）
-  3. [SenseNova-U1.5-8B-MoT-TailSteer](https://huggingface.co/sensenova/SenseNova-U1.5-8B-MoT-TailSteer)（2026-11-04）
-  4. [SenseNova 6.8 Flash 正式版发布：办公更稳，设计更美](https://www.sensetime.com/cn/news/sensenova-6-8-flash-release-20261103-1421)（2026-11-02）
-  5. [商汤开源 SenseNova Loop-9B-Preview：探索以计算深度释放模型潜力](https://www.sensetime.com/cn/news/sensenova-loop-9b-preview-20261117-1750)（2026-10-29）
-  - 📄 完整文章归档（共 74 篇）：[sensetime_sensenova.md](llm-news/sensetime_sensenova.md)
+  1. [SenseNova Loop-9B正式版：让更少的参数走更深的计算路径](https://www.sensetime.com/cn/news/sensenova-loop-9b-20261118-1059)（2026-11-17）
+  2. [SenseNova 6.8 Flash 正式版发布：办公更稳，设计更美](https://www.sensetime.com/cn/news/sensenova-6-8-flash-release-20261103-1421)（2026-11-02）
+  3. [商汤开源 SenseNova Loop-9B-Preview：探索以计算深度释放模型潜力](https://www.sensetime.com/cn/news/sensenova-loop-9b-preview-20261117-1750)（2026-10-30）
+  4. [商汤实测 GPT-6-Astra 并开源 SenseNova-RoboRSI：具身智能下一步怎么走？](https://www.sensetime.com/cn/news/gpt-6-astra-sensenova-roborsi-20261019-1513)（2026-10-19）
+  5. [“五彩斑斓的黑”也能直接出片，SenseNova U1 Pro正式版上线商汤小浣熊](https://www.sensetime.com/cn/news/sense-nova-u1-pro)（2026-09-21）
+  - 📄 完整文章归档（共 36 篇）：[sensetime_sensenova.md](llm-news/sensetime_sensenova.md)
 
 ### Meta Llama (meta_llama)
 - 页面：[官方博客](https://ai.meta.com/blog/)

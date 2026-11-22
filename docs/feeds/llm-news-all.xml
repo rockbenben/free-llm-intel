@@ -3548,14 +3548,6 @@ Ceiling: if the reviewer had to rescue the agent repeatedly
 <p><a href="/docs/models/gemini-3.5-transcribe"><code>gemini-3.5-transcribe</code></a> 和 <code>gemini-3.5-transcribe-live</code> 现在支持对听写的语音或已有文本（<code>source_text</code>）进行 语音驱动的编辑、重写和格式化。请参阅 <a href="/docs/transcribe#voice-editing">音频转写</a>和 <a href="/docs/live-api/live-transcribe#voice-editing">实时转写</a>指南。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[商汤 日日新] SenseNova-Loop-9B</title>
-      <link>https://huggingface.co/sensenova/SenseNova-Loop-9B</link>
-      <guid isPermaLink="true">https://huggingface.co/sensenova/SenseNova-Loop-9B</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>商汤 日日新</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-sensetime_sensenova.xml">商汤 日日新</source>
-    </item>
-    <item>
       <title>[商汤 日日新] SenseNova Loop-9B正式版：让更少的参数走更深的计算路径</title>
       <link>https://www.sensetime.com/cn/news/sensenova-loop-9b-20261118-1059</link>
       <guid isPermaLink="true">https://www.sensetime.com/cn/news/sensenova-loop-9b-20261118-1059</guid>
@@ -8258,6 +8250,218 @@ print(provide_token(region=&quot;&lt;AWS_REGION&gt;&quot;))')&quot;</code></pre>
 <p>prompt 缓存让 Amazon Bedrock 上的开放权重模型能够复用重复的上下文，而你的代码几乎不用改、甚至完全不用改。本文中，隐式缓存在完全没有缓存设置的情况下就覆盖了客服助手和 OpenCode 会话。显式缓存则通过一个请求选项加上每个可复用层一个 breakpoint，提供了精确的控制。无论哪种情况，每次响应里的 usage 字段都会显示哪些内容来自缓存，因此你可以用自己的流量来衡量收益。</p>
 <p>要上手的话，选一个<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-cards.html">支持 prompt 缓存的 Amazon Bedrock 开放权重模型</a>。用你自己的参考内容运行本文的示例，把缓存读取量和未缓存的输入量做对比。<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">prompt 缓存指南</a>介绍了各模型的限制与选项，Amazon Bedrock 的<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-runtime-metrics.html">运行时指标</a>则让你能跨应用跟踪缓存读写。如有问题，可以通过 <a href="https://aws.amazon.com/support/">AWS Support</a> 或 <a href="https://repost.aws/">AWS re:Post 社区</a> 联系。</p>
 <h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>[Together AI] 去年我们构建了 megakernels，今年我们删除了它们：通往 Together Compiler 之路</title>
+      <link>https://www.together.ai/blog/road-to-together-compiler</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/road-to-together-compiler</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Together AI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml">Together AI</source>
+      <description>原文标题：Last year we built megakernels. This year we deleted them: The road to Together Compiler</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>发布于 2026/11/16</p>
+<h1>去年我们构建了 megakernels，今年我们删除了它们：通往 Together Compiler 之路</h1>
+<p>Together Compiler 用 AI agent 重写并融合模型前向传播中的 GPU kernel。在 B200 上（Llama 3.2 1B 上 2,118 对 1,649 tokens/s），它比手写的 megakernel 快 28%。以下是我们如何从前者走到后者。</p>
+<ul><li>作者 Dylan Lim、Reyna Abhyankar、Simran Arora</li><li>目录<a href="https://www.together.ai/blog/road-to-together-compiler">40+ 个为生产选定的模型...40+ 个为生产选定的模型...40+ 个为生产选定的模型...</a></li></ul>
+<h2>引言</h2>
+<p>AI 推理正变得越来越异构。每周都有新的模型架构发布，推理流量在不同 batch size 和序列长度之间迁移，硬件平台也在不断增多。要在所有这些工况下都达到峰值性能，需要跟得上的优化框架。</p>
+<p>去年，我们参与发布了一些最早的 AI <a href="https://hazyresearch.stanford.edu/blog/2025-05-27-no-bubbles"><em>megakernel</em></a>，在一个高度融合的单个 GPU kernel 里执行整个模型的前向传播。它们达到了破纪录的速度，但很难投入生产。经过数月努力，我们总共只得到：一个模型、一个 batch size、一个客户。</p>
+<p>今年，我们审视了有哪些地方可以简化，并发现了出乎意料的事。只要在默认的 Torch Inductor kernel 之上加上 CUDA Graphs 和 PDL，我们就能在不写一个 kernel 的情况下恢复 98% 的 megakernel 性能。而借助“multi-kernels”和 agent 循环，我们还能进一步比过去的 megakernel 快最多 1.7 倍，在 H100 上为 Llama 1B 达到 1100 以上的 TPS。</p>
+<p>过去两年，我们一直在研究下一代推理优化系统应该是什么样子。在构建了一系列 GPU 编程与优化系统之后，我们得出了 Together Compiler——我们用于持续优化 AI 推理的框架。在这篇博文中，我们将重新审视当今编译器背后的假设，分享那些挑战我们思维的实验，并解释塑造 Together Compiler 的经验教训。我们的旅程分为三部分：</p>
+<p>第 1 部分，我们展示 Torch Compile 的启发式规则和 benchmark 方式让性能白白流失，这构成了构建全新方案的动力。</p>
+<p>第 2 部分，我们回顾当年为填补这一差距而构建的 megakernel，解释为什么它并不总是正确的优化目标，并把它的性能收益拆解为更简单的原语。</p>
+<p>第 3 部分，我们分享在打造 agent 驱动的优化基础设施过程中得到的“苦涩教训”，以及我们最终落地的生产系统。</p>
+<p>Together Compiler 的旅程，即将在你附近的影院上映！</p>
+<h2>第 1 部分：Torch Compile</h2>
+<p>十余年来，PyTorch 一直是 AI 开发的基础，它提供了模块化、易用的抽象（<code>nn.Module</code>），让快速实验成为可能。但这种模块化也有性能代价：把模型当作一个个独立操作来执行，会带来可观的启动开销，限制计算与内存搬运重叠的机会，并让 GPU 资源得不到充分利用。为了解决这些低效问题，PyTorch 推出了 Torch Compile（“PyTorch 2.0”，由 Inductor 驱动）来优化并融合操作，NVIDIA 则开发了 CUDA Graphs 来降低 kernel 启动开销。这些系统取得了巨大进展，但仍存在明显的性能差距，这常常促使 Together 的研究人员发明 FlashAttention、ThunderKittens 和 Megakernels 这样的专门实现。</p>
+<p>我们先简要介绍 Torch Compile 的工作方式，然后给出我们在 Llama 1B 上深入 Inductor 内部得到的发现。</p>
+<h3>Torch Compile 如何工作</h3>
+<p>从高层看，Torch Compile 使用一条即时编译（JIT）流水线，把 PyTorch 操作捕获成计算图、优化该图，并生成可执行的 GPU kernel。关键组件包括：</p>
+<ul><li><strong>图捕获。</strong> TorchDynamo 跟踪 Python 执行过程，把张量操作捕获进一种称为 FX graph 的中间表示。跟踪期间它使用 <em>fake tensor</em>，这类张量只携带形状、数据类型、步长等元数据，不分配也不计算底层的张量数据。这样编译器无需在 GPU 上真正执行，就能对计算进行推理。得到的 FX graph 可以在生成代码之前被变换和优化。</li><li><strong>操作与 kernel。</strong> Inductor 把捕获到的图下降（lower）到自己的中间表示，其中操作被分成若干类别，例如 <em>pointwise</em>（如激活函数）、<em>reductions</em>（如求和与 softmax）、<em>scans</em>（如累积和）和 <em>templates</em>（如 GEMM 及其他专用计算 kernel）。有些操作则改为调用 cuBLAS 等库中的现有实现，或自定义 PyTorch 算子。Inductor 把它们表示为外部 kernel（<code>ExternKernel</code>），这些实现对其融合机制通常是不透明的。</li><li><strong>融合与优化。</strong> Inductor 用贪心的两两配对算法来决定把哪些操作融合进同一个 kernel。它的 <code>can_fuse()</code> 函数检查候选融合是否合法，<code>score_fusion()</code> 则用启发式规则（例如估计的内存访问节省）给机会排序。算法反复执行有收益的融合，可能把许多操作合并进单个 kernel。然而这些决定基于局部启发式，而非对所有可能的 kernel 划分与执行策略做全局搜索。例如，即使把两项工作放在一起执行能提高 GPU 利用率，Inductor 也可能因为两者不共享内存访问而避免融合。</li></ul>
+<p>在我们目标的 Llama 1B 工作负载上，Inductor 达到 669 TPS。我们将在第 2 部分展示，这些生成的 kernel 有时已经够用，稍加修改就能达到与 megakernel 相近的性能水平。但在不同的架构和更新的硬件上，Inductor 的启发式就跟不上了。我们调查了 Inductor 最吃力的地方，并给出三个发现。</p>
+<h3>发现 #1：编译器启发式无法可靠地为各种工作负载选出最佳实现。</h3>
+<p>Inductor 提供了若干可以提升性能的编译器调优 flag。我们发现，即便是这些看似简单的配置，也展开出一个大得惊人、复杂得惊人的搜索空间。</p>
+<p><strong>最佳优化取决于工作负载。</strong> Inductor 提供一个 freezing flag，用来告诉编译器推理期间模型权重不会变化。知道这一点后，编译器可以提前变换权重，让后续计算更快。其中一种变换把权重转成 FP32 以执行某些优化，然后再转回原本的较低精度格式。我们发现，在较大的 batch size（此时 GPU 执行矩阵乘矩阵）下，启用 freezing 让吞吐提升了 10–26%。但在 batch size 为 1、推理主要使用矩阵乘向量时，启用同一个 flag 却造成 <strong>49% 的性能下降</strong>。细查之后，我们发现 FP32 转换在矩阵乘向量的路径上没有被还原，结果 GPU 处理的是更大的 32 位权重，而不是原本的低精度权重。换句话说，完全相同的编译器优化，可能让一个 batch size 变快，同时让另一个 batch size 大幅变慢。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb82d2d9c3b84572cc142f_01-inductor-config-options.webp" alt=""></p>
+<p>Inductor 配置 flag 按季度的数量变化，2022–2026</p>
+<p><strong>优化之间以无法预料的方式相互作用。</strong> 截至 2026 年第三季度，Inductor 提供了 607 个调优 flag，其中 198 个是过去一年新增的。这些 flag 控制从 kernel 融合到内存访问模式和调度的方方面面。它们的效果并不独立：单独启用 <code>aggressive_fusion</code> flag 会让 Llama 1B 吞吐下降 6 TPS，但把它和 <code>combo_kernels</code>、<code>benchmark_fusion</code>、<code>triton.coalesce_tiling_analysis</code> 这些 flag 一起启用，吞吐却提升了 3 TPS。即便是微小的配置改动，也可能在执行时间上造成可测量的微秒级差异。</p>
+<p><strong>要点：</strong> 可能的优化与配置空间非常大，我们应该系统性地<em>搜索</em>它，而不是靠猜来设置正确的 flag。</p>
+<h3>发现 #2：孤立测得最快的 kernel，在推理时未必最快。</h3>
+<p>Inductor 依据它的 benchmark 测试框架来做优化决策。我们指出这种 benchmark 误导其决策的两种不同方式，二者最终都会拖累整体性能。</p>
+<p><strong>第一，它忽略了 kernel 性能取决于缓存行为。</strong> Torch Inductor 在给单个 kernel 做 benchmark 之前会清空 GPU 的 L2 缓存，但在推理过程中，kernel 常常复用前面操作留在缓存里的数据。我们观察到，<strong>Inductor 的孤立 benchmark 计时比实际前向传播慢 39–58%</strong>，因为真实前向传播中缓存复用可以减少内存流量。</p>
+<p>benchmark 的输入也可能把缓存行为扭曲到相反的方向。例如在给 <code>torch.embedding</code> 做 benchmark 时，Inductor 把 token ID 的张量初始化为零，导致每个 token 都访问同一个 embedding 向量。对 64K token 的序列，这使该 kernel <strong>比使用随机 token ID 时快 2.1 倍</strong>，原因是人为造成的过高缓存复用。</p>
+<table><thead><tr><th>Kernel</th><th>实际推理（µs）</th><th>Inductor benchmark（µs）</th><th>开销</th></tr></thead><tbody><tr><td>块掩码切片（KV 索引）</td><td>1.22</td><td>1.92</td><td>+57.9%</td></tr><tr><td>块掩码切片（块数量）</td><td>1.34</td><td>2.05</td><td>+52.4%</td></tr><tr><td>融合的 QKV 拆分 / V-cache 写入</td><td>1.15</td><td>1.66</td><td>+44.5%</td></tr><tr><td>Embedding 查表 / 归一化</td><td>1.40</td><td>1.95</td><td>+38.8%</td></tr></tbody></table>
+<p>与真实推理相比，Inductor 的孤立 benchmark 高估了 kernel 的执行时间</p>
+<p><strong>第二，benchmark 本身的开销会导致 kernel 选型变差。</strong> 许多 decode kernel 只执行几微秒，因此精确计时至关重要。我们发现，Inductor 的 benchmark 框架对一个完全没有执行 GPU 工作的操作报出了 2.5 µs；而其他一些测量值比 Nsight Systems 报告的 GPU 执行时间高出约 3.6 µs。这是因为该框架在 L2 缓存清空后把 CPU 启动开销也算了进去，导致 Inductor 记录下了空闲时间。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83013d95f99d8024d5c4_02-random-vs-real-inputs.webp" alt=""></p>
+<p>在 GLM 5.3 上，随机输入把 MoE grouped-GEMM 的延迟高估了 4–21%</p>
+<p>这些偏差会导致错误的编译器决策。在 Llama 1B 的 output-projection GEMM 上，Inductor 选了一个 Triton kernel，实际前向传播中它耗时 <strong>7.4 µs，而 cuBLAS 为 6.4 µs</strong>——慢了 15%。我们在现代的、依赖数据的架构上也观察到这一点，例如 GLM 5.3 这类 mixture-of-experts 架构：与改用贴近真实的输入对 MoE grouped-GEMM kernel 做 benchmark 相比，PyTorch 的默认 benchmark 会慢 4–21%（如上图所示）。</p>
+<p><strong>要点：</strong> 准确的 benchmark 必须来自真实前向传播内部、基于真实输入数据的测量。</p>
+<h3>发现 #3：Inductor 把融合机会留在了桌上。</h3>
+<p>Inductor 的贪心两两融合算法先考虑两个 kernel 是否能合法融合，再评估融合是否会带来性能提升。虽然反复的两两融合可以合并多个操作，但它可能错过那些需要把更大的 kernel 组合或不同执行配置放在一起考虑的机会。</p>
+<p>我们考察了 Inductor 在 Llama 1B 上做出的融合决策，发现有些例子中即使合并有益，Inductor 仍让 kernel 保持分离。例如，我们发现两个相邻的 kernel（一个逐元素激活和一个 KV 索引 kernel），它们足够简单、可以融合，但 Inductor 的启发式因为两者不共享内存访问而拒绝了融合。</p>
+<table><thead><tr><th></th><th>Kernel 1</th><th>Kernel 2</th></tr></thead><tbody><tr><td>操作</td><td>逐元素</td><td>索引/切片</td></tr><tr><td>Grid</td><td>(6, 1, 1)</td><td>(8, 32, 1)</td></tr><tr><td>每个 CTA 的线程数</td><td>128</td><td>64</td></tr><tr><td>每个线程的寄存器数</td><td>35</td><td>96</td></tr><tr><td>CTA 总数</td><td>6</td><td>256</td></tr></tbody></table>
+<p>Llama 1B decode 中两个相邻的未融合 kernel 的启动配置</p>
+<p>由于 Inductor 以估计的内存流量节省来评估候选，它看不出有任何理由合并这两个 kernel。但我们亲自检查这些 kernel 后发现，第一个 kernel 只启动了六个 CTA，这意味着 GPU 的 132 个 SM 大多处于空闲状态。把这些操作合并成一次启动，有助于减少这种浪费。</p>
+<p><strong>要点：</strong> kernel 融合算法应该考虑利用率，而不仅仅是内存。</p>
+<h3>这些发现指向了什么</h3>
+<p>这些发现都凸显了 Inductor 的局限，让 GPU 得不到充分利用。着眼于推理优化下一代系统这一更大的目标，我们把目光转向了光谱的另一端：megakernel。如果完全去掉编译器，手工控制整个栈的每一层，性能收益究竟会从哪里来？通过弄清这一点，我们希望找到一条中间路线：以最小的复杂度自动化地获得 megakernel 的性能。</p>
+<h2>第 2 部分：Megakernels</h2>
+<p>自我们提出 Megakernels 以来，它启发了越来越多围绕下一代 AI 编译器和 GPU 执行系统的工作。本节中，我们回顾当初为什么构建它们、它们如何工作，以及我们尝试把它们投入生产时发生了什么。</p>
+<p><strong>是什么驱动了 megakernel？</strong> 我们在常规推理引擎中观察到三类低效来源——这类引擎通常借助 Torch Compile 和 CUDA Graphs 等框架，把模型当作一串 kernel 来执行：</p>
+<ul><li><strong>Kernel 启动开销。</strong> 每次 kernel 启动都会带来调度与派发开销。CUDA Graphs 大幅降低了 CPU 启动开销，但并未消除执行一串独立 GPU kernel 所涉及的所有成本。</li><li><strong>重叠受限。</strong> 常规的 kernel 边界会阻碍操作之间本可有的重叠。例如，当前层还在计算时，下一层的权重本可以从 GPU 内存中预取，让内存传输与算术运算并行推进。</li><li><strong>负载不均衡。</strong> 一块 GPU 包含许多流式多处理器（SM），工作很少能被完美地均分到它们之上。一些 SM 可能比其他 SM 更早做完分到的 thread block，导致执行资源闲置。更灵活的调度器可以在 SM 空出来时重新分配工作。</li></ul>
+<p>为解决这些低效问题，我们围绕<strong>一个执行整个模型前向传播的持久化 GPU kernel</strong> 来设计 megakernel。我们不为每个操作启动新 kernel，而是让 thread block 常驻在 GPU 上，并在其中调度后续操作。我们使用专门的 warp 来协调执行、管理共享内存等资源，并把工作单元分配给不同的 SM。我们还将共享内存划分为固定大小的<em>页（page）</em>，让操作可以随着执行推进动态申请和释放共享内存容量。</p>
+<p>结果是一个高度优化的执行系统：它能消除中间 kernel 启动、让不同操作的工作相互重叠，并动态管理 GPU 资源。在 Llama 1B 上，我们的 megakernel 达到 990 TPS，比 Inductor 的 669 TPS 提升 48%。但它也要求我们自己构建大量调度、同步和内存管理的基础设施。</p>
+<p><strong>接着我们尝试把 megakernel 投入生产。</strong></p>
+<p>在 Together AI，2025 年下半年，我们研究团队的一位 🐐 成员花了几个月时间与生产推理引擎搏斗：集成 paged KV cache、移植到 Blackwell GPU、调试竞态条件，以及处理在受控 benchmark 之外冒出来的大量实现细节。</p>
+<p>而在所有这些努力之后，我们总共得到了……<strong>一个 Llama 1B megakernel，支持一个 batch size（1）、一种精度（BF16）和一个客户。</strong></p>
+<p>性能令人印象深刻，灵活性则不然。</p>
+<p>这段经历留给我们一个问题：<strong>megakernel 之所以快，是因为所有东西都在一个巨大的 kernel 里运行，还是因为它实现了几项有价值的优化——消除启动开销、重叠操作、在 SM 之间平衡工作？</strong></p>
+<p>为了探究这一点，我们从 669 TPS 的 Torch Compile 出发，逐个消融 megakernel 提供的每一项优化。我们发现，只靠两个 NVIDIA 原语加上默认 Inductor 生成的 kernel，就能达到与优化基线相当的性能。考虑到许多研究团队构建了远比这复杂、却达不到这一目标的编译器和 megakernel 系统，这个结果令人意外。最终我们发现，<strong>把 megakernel 作为系统的目标是选错了方向</strong>，原因主要有两个。</p>
+<p>第一，消除 kernel 启动、重叠操作其实并不需要 megakernel。第二，多样的硬件与现代模型架构暴露了 megakernel 的僵化和次优性。</p>
+<h3>消除 kernel 启动开销、重叠操作并不需要 megakernel。</h3>
+<p>Megakernel 提供了一种干净的抽象，用来在计算与内存操作之间实现细粒度重叠。要实现这种重叠，归结为三件主要的事：最小化 kernel 启动开销、减少空闲 SM 造成的尾部效应、让内存预取与计算重叠。下面我们逐一细看，并说明为什么不需要单一的持久化 kernel 就能完全实现这三个目标。</p>
+<p><strong>启动开销。</strong> Kernel 启动开销代价不菲。在 PyTorch 中，GPU 操作要经过 ATen 派发机制，基于输入形状、数据类型和布局选择一个高性能实现。在 H100 上对 Llama 1B 的 down-projection 而言，这要花 37 微秒，比该 kernel 本身 15 微秒的 GPU 执行时间还多一倍以上。把 PyTorch 整个剥掉、直接用纯 C++ 启动，每次启动仍要花约 2 微秒，在一次典型前向传播的数百个 kernel 上累积起来相当可观。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb831dbe7a101172392f2e_03-profiler-trace.webp" alt=""></p>
+<p>十五微秒的工作，三十七微秒的手续</p>
+<p>PyTorch 给出的标准解法是 CUDA Graphs——一项驱动层特性，它把一串 GPU 操作捕获下来，再以低得多的 CPU 启动开销重放。代价是捕获的图要占用 GPU 内存，换来启动开销降到约 1 微秒。加上它之后，在 Torch Compile 的基础上，我们的 Llama 1B 性能提升到 864 TPS，达到 megakernel 的 87%。</p>
+<p>为进一步缩小差距，我们研究了 Programmatic Dependent Launch（PDL）——一种 CUDA 机制，允许后续 kernel 在它的前一个 kernel 结束之前就开始执行。从概念上说，PDL 让硬件可以在 SM 空出来时把下一个 kernel 的 thread block 派发进去。当时 Torch Inductor 的 Triton 后端没有提供我们需要的 PDL 控制，于是我们把生成的 kernel 编译到 PTX（NVIDIA 的底层 GPU 指令语言），并插入两条指令：在每个生产者 kernel 末尾插入 <code>griddepcontrol.launch_dependents</code>，在消费者 kernel 开头插入 <code>griddepcontrol.wait</code> 以确保同步。经过这些小的修改，我们的性能达到 953 TPS，为 megakernel 的 96%。</p>
+<p>对 CUDA Graphs 和 PDL 来说，启动开销仍然非零。但我们观察到，megakernel 也没有消除这些开销；它只是用 kernel 内部相近的同步成本，换掉了启动开销。</p>
+<table><thead><tr><th>启动 / 同步方式</th><th>H100 成本（ns）</th><th>B200 成本（ns）</th></tr></thead><tbody><tr><td>常规，cudaLaunchKernelEx</td><td>2077</td><td>2496</td></tr><tr><td>CUDA Graph</td><td>1051</td><td>915</td></tr><tr><td>PDL</td><td>731</td><td>814</td></tr><tr><td>CUDA Graph + PDL</td><td>645</td><td>642</td></tr><tr><td>Cooperative grid.sync()</td><td>1043</td><td>1281</td></tr><tr><td>Megakernel grid sync</td><td>646</td><td>795</td></tr></tbody></table>
+<p>H100 与 B200 上各启动机制的同步成本</p>
+<p>上表中，成本指从第一个 kernel 结束，到第二个 kernel 中同步原语（若适用）结束之后的时间。对 PDL 而言，只计算 kernel 之间的时间，实际 kernel 间隔分别为 577 ns 和 516 ns。有趣的是，B200 上 kernel 内的同步比 H100 略慢，因为 B200 被拆成两个独立的 die。在单个 die 上测得的同步成本，与 H100 上同等数量 SM 的成本相当。</p>
+<p><strong>计算重叠。</strong> 当工作未能均匀分配到某个 kernel 的各 SM 上时，就会出现 wave quantization：一些 SM 在最快的那个完成之前一直闲置。Megakernel 可以允许完成当前操作的 CTA 立即开始下一条指令，而不必等整个 grid 完成，从而减少这种浪费。但在实践中这一收益有限，因为各层包含固有的串行化点，任何 kernel 结构都无法消除。</p>
+<p>在我们 Llama 1B H100 megakernel 中，每层五个生产者—消费者屏障边里有三个需要全屏障，第四个实际上也是全屏障（次级 kernel 的单个 CTA 依赖于前一个 kernel 的 128 个 CTA）：</p>
+<table><thead><tr><th>边</th><th>屏障同步类型</th></tr></thead><tbody><tr><td>down_proj → rms_qkv_rope_append</td><td>全屏障</td></tr><tr><td>rms_qkv_rope_append → attention_partial</td><td>细粒度（每个 CTA 等待前一个 kernel 的 18–20 个 CTA）</td></tr><tr><td>attention_partial → o_proj</td><td>全屏障</td></tr><tr><td>o_proj → rms_upgate_silu</td><td>全屏障</td></tr><tr><td>rms_upgate_silu → down_proj</td><td>细粒度（每个 CTA 等待前一个 kernel 的 128 个 CTA）</td></tr></tbody></table>
+<p>大多数 kernel 边界都要求前一个 kernel 完成全 grid 同步</p>
+<p>这一点很重要，因为它意味着一层中大多数计算 warp 常常无法先行推进，必须先等上一条指令的 CTA 完成。这些全屏障抵消了持久化 kernel 的好处：一次 kernel 内的全 grid 同步，成本与全新启动一个 kernel 相当。我们改造了旧的 megaprofiler，让它捕获计算 warp 的开始与结束（而不只是 SM 首次进入的时刻），从而能看出有多少有用的计算工作被提前完成了。下面展示 megakernel 所宣传的理想化重叠，与更贴近现实的表示。值得注意的是，只有 attention 指令能真正利用上计算重叠。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb8332ea20bb29e3348d20_04-megaprofiler-advertised.webp" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb8338c39e2b12e26e78a7_05-megaprofiler-reality.webp" alt=""></p>
+<p><strong>内存重叠。</strong> 我们早先的 megakernel 把每个 SM 的共享内存划分为页，指令用完后立即释放，让下一条指令可以在当前指令完成的同时开始把数据预取进腾出的空间。然而这项优化只占整个前向执行时间的 3.3%。完全不做内存预加载时，我们的 TPS 仅从 990 降到 961。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83452f0ac29245ebb3bc_06-memory-preloading.webp" alt=""></p>
+<p>内存预加载有帮助，但不大</p>
+<p>虽然收益不大，但我们很好奇：要实现同等程度的内存预取收益，是否真的需要花哨的内存分页机制。为此，我们进一步推进 PDL，对它的指令做细粒度放置。把 <code>griddepcontrol.wait</code> 指令插在第一次读取前驱输出的位置之前，消费者 kernel 就能在上一个 kernel 还在计算时预加载权重。这种简单做法让 PDL 恢复了分页内存预加载高达 98% 的收益。</p>
+<p>megakernel 式的预加载还会带来 PDL 可以避免的额外成本。等待前一个操作完成的 loader warp 会常驻在 SM 上空转。这些轮询会经过计算 warp 执行 warp shuffle 所用的同一条 SM 队列，当队列填满时，计算 warp 就会停顿。在 Llama 1B 的 attention-oproj 边界上，oproj 的 loader warp 在等待 attention 操作完成时一直空转，相比朴素的 PDL 多出 1.3 us 的开销。</p>
+<p>过早的权重预加载也可能毫无意义。只有当生产者 kernel 留下空闲的内存带宽时，重叠内存加载才有帮助。在 Llama 1B 的 downproj-QKV 边界上，带宽已经饱和，这意味着提前加载 QKV 的权重会让 downproj 慢 2.2us，却让 QKV 操作快上差不多的量。因此，这一对操作如果作为两个独立 kernel 启动、完全不做内存重叠，耗时是一样的。</p>
+<p>我们之前的 Hazy Megakernel 支持越过紧邻的下一个操作做前瞻预取。这让 Llama 1B 的 up-projection 可以在 oproj 和 attention 操作仍在完成时就开始加载权重。单独靠 PDL 做不到这一点，因为它假设只有单条执行流。不过，启动专门的 L2 预取 kernel 也能达到类似效果。</p>
+<p>把这一切合在一起：默认的 PyTorch Inductor kernel，加上 CUDA graphs 和细粒度的 PDL，就能达到 975 TPS，即手写并优化过的 megakernel 基线的 98%，而且没有写哪怕一个 kernel，也没有用任何复杂的 intrinsic。仅凭 CUDA graphs 和 PDL，megakernel 从减少启动开销和最大化重叠中获得的每一项收益，都可以单独实现。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb835c10c3e71003958b3a_07-eager-to-together-compiler.webp" alt=""></p>
+<p>只加几处简单的东西，PyTorch 在 Llama 1B H100 上就能达到与高度优化的 megakernel 大致相当的性能</p>
+<h3>其他硬件与现代模型架构暴露了 megakernel 的僵化</h3>
+<p>在展示了简单原语就能恢复几乎全部 megakernel 性能之后，一个更宽泛的问题仍然存在：<strong>megakernel 是否有时不仅不必要，而且是次优的？</strong> 我们发现 megakernel 的单一巨型架构是有害的，因为硬件资源约束和现代模型架构都要求灵活、非静态的设计选择。</p>
+<p><strong>持久化 kernel 迫使硬件做取舍</strong> Megakernel 对所有指令施加固定的启动包络（launch envelope），限制了 kernel 设计。从 warp 数量到寄存器预算再到 cluster 形状，所有操作都必须一致。寄存器在调度时按 CTA 从每个 SM 的 65,536 个寄存器文件中分配。我们的 H100 Llama-1B megakernel 使用 20 个 warp（16 个计算 warp 加 4 个控制 warp），因为短的 batch-1 decode 指令在其数据行分散到更多 warp 上时能更快完成。然而，更重的 tensor-core GEMM 在 12 个 warp 时运行最好。这是因为 Hopper 的 wgmma 会把结果累积到寄存器里，超过 12 个 warp 后，最好的 tile 就放不进寄存器了。如果我们强行把这个操作塞进同样的 20 warp 指令，GEMM 会慢 1.2–1.5 倍。虽然这在 Blackwell 上不成问题（tcgen05 累积在 tensor memory 中），但它依然重要，因为像 AMD 这样的其他硬件也会遇到同样的约束。</p>
+<p>Megakernel 还会给 SM 的指令缓存（instruction cache）增加压力——那是存放 SM 正在执行的机器码的小缓冲区。把整个模型打包进一个二进制代价高昂，产生的机器码往往比指令缓存能容纳的还大。当新操作开始时，SM 为了腾空间会逐出上一个操作的指令。这会带来额外的开销：当同一个操作稍后再次出现时，kernel 必须从内存中重新取回被逐出的指令。</p>
+<p><strong>现代架构装不进单一包络</strong> Llama 1B 是一个传统的 dense-MLP、基于 GQA 的 transformer，而现代架构发展得更为复杂，混合了不同的 attention 变体、稀疏专家和不同的并行方案，每一种都有自己的首选启动配置。</p>
+<p>Blackwell 上的 Kimi K3 就是例证。该模型交替使用 KDA 层和 MLA 层，它们的 tensor-core 指令在不同的 cta_group 模式下性能最好（KDA 用 single-CTA，MLA 用 CTA-pair）。PTX 禁止把这两种不同模式混进同一个 kernel，因此 megakernel 无法在各自最优的结构下同时利用这两种 kernel。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb836d3d95f99d8024f680_08-cluster-size-heatmap.webp" alt=""></p>
+<p>Kernel 有大有小、形态各异。别把它们塞进同一个模子！</p>
+<p>推理时，不同 kernel 可能需要不同的并行方案，这会影响哪些配置最理想。对 K3，我们有时希望 MoE GEMM 走 tensor-parallel，而 attention projection 走 data-parallel。在这种配置下，TP GEMM 处理的 token 多 8 倍，其最佳 cluster size 与 ADP projection 不同。把两者强行塞进一个使用单一 cluster size 的 kernel，会造成 5–19% 的变慢。</p>
+<p>在考察开源 kernel 时，我们发现把操作从融合 kernel 里拆出来，有时反而比放在一起更快。在专家路由不均衡的情况下，把 Kimi K3 的 expert dispatch 移到 GPU 的 copy engine 上，比 Mixture of Kitten 的 MoE megakernel 快 6.9%。此外，FlashInfer 的 MegaMoE 把 dispatch 拆成自己的小 kernel、而不是与 GEMM 保持融合后，运行快了 17%。为融合而融合并不总是理想做法。</p>
+<h3>这些发现指向了什么</h3>
+<p>通过这些调查，我们意识到 megakernel 虽然有趣，但并不总是理想的目标。与其把所有东西都融进一个持久化 kernel，我们发现更重要的任务是找出应该耦合在一起、并分别调优的那一组操作。</p>
+<p>最初，我们构建了一个传统的、基于规则的编译器来解决这个问题。它涉及大量手工工作，涵盖 PTX lowering、对融合决策做动态规划、CTA 依赖跟踪，以及细粒度 PDL 插入。然而，虽然它对我们 Llama1B 模型有效，我们判定它仍然过于僵化，难以泛化并扩展到任意真实世界的推理工作负载。</p>
+<p>我们需要的是一套能持续适应并快速探索优化空间的系统。在这些实验进行的 3 月，我们注意到 coding agent 编写 GPU kernel 的能力已经相当出色。这引出一个直接的初始想法：提前构建一个由 agent 生成的 kernel 仓库，然后在编译时把 Torch 图里的操作映射到仓库中的优化实现并替换进去。我们发现这并不有效。一个 kernel 的最佳优化取决于模型、工作负载以及它周围的操作，而静态注册表很难把这些都考虑进去。</p>
+<p>此外，合成输入会误导 agent。例如，一个 agent 写了一个 top-k indexer kernel，把 attention 分数分进 2,048 个直方图桶。这个 kernel 随后用两两比较来给第 2,048 大分数所在桶里的候选排序。在随机输入上，它跑 20 µs。但真实输入里含有大量来自 ReLU 的精确零，把候选都集中到一个桶里，触发了平方级的工作量，运行时间涨到 62 ms。agent 需要真实数据和完整的执行上下文，才能生成在生产中站得住脚的优化。</p>
+<p>这些发现改变了我们的目标。<strong>我们该如何构建一个以 agent 为中心的编译器，配上合适的基础设施，让 agent 高效、准确地优化前向传播？</strong></p>
+<h2>第 3 部分：围绕 agent 构建基础设施</h2>
+<p>一旦决定让 agent 来驱动优化，我们就思考：agent 需要什么样的基础设施，才能在保证正确性的前提下对模型的前向传播做推理。作为底层系统的爱好者，我们最初假定严格的结构必不可少。然而随着 agent 能力增长，我们发现这些假设是错的，而且我们交给它们的任务也变得越来越有野心。</p>
+<p>走到最终系统经历了两个阶段。第一阶段，我们构建了精心设计的基础设施来帮助 agent 推理模型的前向传播。第二阶段，我们专注于 agentic 策略和上下文管理的工具（知识库、prompt 和研究图）。在两个阶段中，我们都发现理想的选择是把这些基础设施彻底去掉，让 agent 自由驰骋 :)。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb76c026810ca7e62e66e4_09b-happy-free-agent.webp" alt="照片：一个人站在岩石平台上举起双臂，太阳从山丘上升起。"></p>
+<p>一个快乐而自由的 agent</p>
+<h3>阶段 1：捕获一串 kernel 以便联合优化</h3>
+<p>生产推理引擎会从 Python、C++ 以及外部厂商库中派发 kernel，涉及数百万行代码。为了让 agent 清楚看到正在执行什么，我们认为需要把每次 kernel 启动捕获进一种干净的中间表示，供 agent 优化时使用。我们假设，没有这种结构，要在现代引擎的混乱中摸索会非常困难。</p>
+<p>我们从 PyTorch 的 FX Graph IR 出发。然而发现它对现代推理引擎来说不够用，因为许多 kernel 调用对 PyTorch 是不透明的。例如在 TensorRT-LLM 上的 Kimi K2.6 中，decoder 层 24 个 kernel 里有 23 个是通过 C++ 派发、被当作“自定义 torch 算子”处理的，因此对 Torch Inductor 不透明。Inductor 只把这些算子看作带输入输出张量的函数调用，却没有任何关于 kernel intrinsic 或细节的信息。于是我们把 PyTorch FX Graph 扩展成一种自定义中间表示，称为 <strong>BlockIR</strong>，并交给 agent 使用。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb8384a2f8d80b40741386_10-tracer-sequence.webp" alt=""></p>
+<p>捕获 Inductor 看不到的 kernel</p>
+<p>BlockIR：既然 FX 图无法向我们展示所有 kernel，我们就自建了一套捕获系统，下沉到驱动层。所有 kernel 无论来自哪里，都会经过驱动的 launch 调用。我们借助底层追踪工具（例如 Nvidia 上的 CUPTI、AMD 上的 rocProf）捕获每次 kernel 启动及其参数缓冲区。我们把原始 GPU 指针替换成符号引用，这些引用可以在运行时回溯到 Python 或 C++ 源码中对应的参数。由于是从活的推理引擎上捕获，每次启动还附带它实际运行时的真实输入。</p>
+<pre><code>{
+  &quot;seq&quot;: 945, &quot;event&quot;: &quot;launch&quot;, &quot;mark&quot;: 2,
+  &quot;time_us&quot;: 1787159477656781,
+  &quot;symbol&quot;: &quot;_ZN12tensorrt_llm...fused_a_gemm_kernel...&quot;,
+  &quot;module_sha&quot;: &quot;f63caa0fd3398cc69a914fc8ac66787d5b00d99e&quot;,
+  &quot;route&quot;: &quot;cuLaunchKernelEx&quot;, &quot;argsrc&quot;: &quot;kp&quot;,
+  &quot;grid&quot;: [132,1,1], &quot;block&quot;: [256,1,1], &quot;shmem&quot;: 197632,
+  &quot;nattr&quot;: 1, &quot;attr_stride&quot;: 72,
+  &quot;attrs&quot;: &quot;0600000000000000...&quot;,
+  &quot;params&quot;: [
+    {&quot;o&quot;:0,&quot;off&quot;:0,&quot;sz&quot;:8}, {&quot;o&quot;:1,&quot;off&quot;:8,&quot;sz&quot;:8},
+    {&quot;o&quot;:2,&quot;off&quot;:16,&quot;sz&quot;:8}, {&quot;o&quot;:3,&quot;off&quot;:24,&quot;sz&quot;:4}
+  ],
+  &quot;pbuf_size&quot;: 28,
+  &quot;pbuf&quot;:
+  &quot;004060dfce750000 000000d2d3750000 009022add1750000 04000000&quot;,
+  &quot;ptrs&quot;: [
+    {&quot;o&quot;:0, &quot;off&quot;:0, &quot;v&quot;:&quot;0x75cedf604000&quot;,
+     &quot;base&quot;:&quot;0x75cedf600000&quot;, &quot;size&quot;:2097152},
+    {&quot;o&quot;:1, &quot;off&quot;:8, &quot;v&quot;:&quot;0x75d3d2000000&quot;,
+     &quot;base&quot;:&quot;0x75d3d2000000&quot;, &quot;size&quot;:31457280},
+    {&quot;o&quot;:2, &quot;off&quot;:16, &quot;v&quot;:&quot;0x75d1ad229000&quot;,
+     &quot;base&quot;:&quot;0x75d1ad200000&quot;, &quot;size&quot;:2097152}
+  ]
+}</code></pre>
+<p>某个 kernel 的捕获启动数据示例。</p>
+<p>这些捕获到的信息有用，但对 agent 和人都难以解读。于是我们接着继承 PyTorch 的 TorchDispatchMode，跟踪每一次参数声明与内存分配，把捕获到的原始指针映射回源码中可读的变量。完成这轮重映射后，我们得到了<strong>如下所示的 BlockIR</strong>——一种中间表示，它跟踪前向传播中的每个 kernel 和参数，并为 agent 提供结构化的机制来推理 kernel 启动的参数。</p>
+<pre><code>rank: 1
+allocations:
+- id: alloc_00002
+  extent: 114688
+  members:
+  - operand: layer_in_hidden_states
+    offset: 0
+    extent: 114688
+    role: input
+launches:
+- id: launch_00000
+  grid: [132, 1, 1]
+  block: [256, 1, 1]
+  shmem: 197632
+  packed_size: 28
+  pointer_fields:
+  - offset: 16
+    width: 8
+    operand: layer_in_hidden_states
+    target:
+      kind: allocation_group
+      group: alloc_00000
+      member_offset: 0
+- id: launch_00001
+....
+- id: launch_00002
+....</code></pre>
+<p>BlockIR 片段示例</p>
+<p>虽然这套方案运行良好，但在让 agent 基于 BlockIR 视图做优化、并把 agent 的输出服务到生产流量上时，我们遇到了挑战：</p>
+<ul><li><strong>优化空间有限。</strong> BlockIR 只包含一串 agent 可以修改的 kernel 启动，无法让 agent 优化主机侧逻辑。例如在 Kimi K3 中，重写 MLA 的 metadata 规划步骤、在 attention 期间把长序列拆分到多个 thread block 上，能让 MLA kernel 快 1.7–2.5 倍。FX 图和 BlockIR 都无法表达这项优化，因为这种拆分在任何 kernel 启动之前就在主机上决定了。</li></ul>
+<ul><li><strong>指针级正确性的代价。</strong> BlockIR 依赖在引擎启动时把符号指针绑定到<em>每一层</em>的实时数据上。这通过严格的输入输出指针匹配和预先确定的缓冲区偏移提供了正确性保证，却让系统变得脆弱。</li></ul>
+<p>由于 BlockIR 跟踪每次启动中的每个指针，所有优化都必须维持这套跟踪。这让 kernel 融合这类优化需要格外小心，因为它会改变两个 kernel 合并后存活的参数集合。因此融合要求把新 kernel 参数缓冲区的每一个字节都映射回它所替换的那些启动。当参数有清晰的类型（单个 int、指针或 bool）时这很直接，但厂商 kernel 可能传入任意的参数结构，而我们的捕获系统对此完全不可见。当一个参数是 struct 时，我们手里只有一个不透明的字节缓冲区，必须自己拆解并与已知的分配关联起来。</p>
+<p>就连最初识别指针这一步也很脆弱。PyTorch 的 caching allocator 会在同一层内让许多张量复用同一个地址，所以为了给每个指针命名，我们把自己 hook 的启动时间戳与 PyTorch 的分配器历史对齐。然而两者由不同的时钟打戳，微小的偏差就可能导致 bug。在 AMD 上运行 GLM 5.3 时，这两个时钟漂移最多达 325 µs，把指针归到了错误的分配上，也标错了 kernel 实际读写的缓冲区。</p>
+<p>虽然这些问题都可以解决，但我们发现 agent 花在调试指针跟踪上的时间比识别优化还多。于是我们决定简化。观察到最新前沿模型的进步以及上下文压缩的质量，我们让 agent 直接生成前向传播。不要捕获系统，不要 BlockIR，只要<em>源码</em>。虽然详细的 IR 在某些场景下可能仍然重要（例如让 agent 对形式化验证做推理），但我们发现直接优化前向传播的源码极其有效！</p>
+<h3>阶段 2：去掉专家管理的上下文</h3>
+<p>此时 agent 已经能修改源码、测量真实数据，但和大多数 agentic 优化系统一样，我们假定它们仍需要结构化的指导。我们构建了一个由专家整理的知识中心，规定了一套让 agent 记录发现和实验的数据结构，并制定了精选的优化策略来引导 agent（例如用 roofline 成本模型或墙钟测量给优化目标排序，并指示 agent 优先处理排名最高的目标）。</p>
+<p>这些选择每一个都曾在开发过程中的某个时刻帮上忙。然而，随着 coding agent 快速进步，我们重新审视了这些假设。随时间逐个消融每项选择后，我们发现当初为引导 agent 而搭的脚手架，如今反而可能出人意料地约束它们。这些想法并非无可争议地糟糕，但 agent 对提供给它们的结构和上下文很敏感，有帮助与有害之间只有一线之隔。下面讨论具体例子：</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb839528be0423aa0d69ff_11-kb-ablation.webp" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83a5afc8ec74a291f17e_12-agent-communication-frequency.webp" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83b09ed5ea590f210be0_13-naive-vs-experts.webp" alt=""></p>
+<p><strong>知识库：</strong> 在 MiniMax-M3 第 3 层上（B200、TP4、batch size 1）10 次 agent 试验相对基线的加速比。加入知识库使 ensemble 的最终加速比从 5.85× 降到 4.75×（−19%），而且几乎没有改变单一策略的表现。<strong>通信：</strong> 互相频繁发消息的 agent 相对基线达到 7.72×，通信不频繁时为 6.20×，完全不通信时为 4.82×。<strong>专家策略：</strong> 朴素 ensemble（6.20×）比由六种专家编写的策略构建的 ensemble（4.92×）高 26%；这六种策略单独运行的成绩在 3.1× 到 4.3× 之间。</p>
+<ul><li><strong>知识中心。</strong> 我们的系统使用一个知识中心，积累底层技巧、来自开源和内部库的 kernel，以及来自流行公开 kernel 优化仓库的材料。消融后发现，带上这个知识中心会比不带它的 agent 性能差 25–31%。知识中心没有加速搜索，反而把 agent 锚定在已知的优化模式上，阻碍它们更有效地发现新方法。</li></ul>
+<ul><li><strong>专家策略。</strong> 我们最初给每个并行 agent 播下不同的书面策略（例如专注融合、通信—计算重叠、megakernel）。最终我们发现，只用一句“让这个前向传播尽可能快”提示每个 agent，效果就超过我们手写的指南。查看日志后我们发现，规定优化顺序（例如依据 roofline 或墙钟给 agent 应优化的 kernel 排序）会让系统陷入局部最优，因为优化工作的性能上限受优化应用顺序的制约（参见<a href="https://uwplse.org/2025/04/14/Phase-ordering.html">阶段排序问题（phase-ordering problem）</a>）。</li></ul>
+<ul><li><strong>研究与日志数据结构。</strong> 为了不让 agent 重复失败的实验，并帮助它们在早先发现的基础上继续推进，我们最初强制采用类似 DAG 的结构让 agent 记录自己的工作。为了做一项优化，agent 要在图中编写节点，代表假设、实验和候选 kernel。我们提供了 CLI，让 agent 能高效地查询和解析这套结构。消融这一决定后，我们发现这些额外的记录工作挤占了优化。每次试验中，agent 最多把 43% 的 CLI/工具调用花在研究跟踪和数据结构检查上，而这些时间几乎不产生优化价值。</li></ul>
+<ul><li><strong>Agent ensemble。</strong> 并行运行 agent 的主要动机之一，是在优化空间中探索多样化的路径并避开阶段排序问题。为防 agent 趋同，我们假设低频通信最好，让 agent 独立探索、然后定期汇总发现。然而我们观察到，这导致并行 agent 之间出现大量冗余，把算力浪费在重复工作上。我们最终的方法使用一块轻量级的留言板，让 agent 之间快速、持续地通信。</li></ul>
+<p>我们编译器早期版本的一段旧演示视频</p>
+<p>剥离这些结构之后，剩下的是一个极简系统，只聚焦两件事：给 agent 提供高保真的测量，以及确保 agent 的实验吞吐足够高。关于我们如何通过 <strong>Tiered Persistent Engine</strong> 做到这一点，可以在我们<a href="https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference">更早的博文</a>中读到更多。</p>
+<p>这个极简系统就是今天支撑 Together Compiler 的底座。在不到 24 小时内、不超过两个节点上，TKCC：</p>
+<ul><li><strong>胜过手工调优的 megakernel</strong>，生成的 TPS 比我们的 megakernel 基线高出最多 1.7 倍。</li><li><strong>登顶引擎排行榜</strong>，比高度优化的基线最多快 2.6 倍，并在 MiniMax M3.1-Flash 上以 1,111 TPS、在 DeepSeek v4.1-Flash 上以 1,205 TPS 创下最先进的低延迟性能。</li><li><strong>可泛化到不同代码库和领域</strong>，在天气建模、PDE、时间序列和生物学等开源代码库上取得最高 6.4 倍的加速。</li></ul>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83c00f693a3de9e3e01a_14-tc-vs-baselines-h100.webp" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83c7a78b6f795186511e_15-tc-vs-baselines-b200.webp" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83cf48c40cc584081059_16-throughput-vs-interactivity-sglang-b200.webp" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83eccac97f0e34e01353_17-throughput-vs-interactivity-vllm-b300-b200.webp" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83eb7b795b3d117b63bd_18-throughput-vs-interactivity-mi355x-trainium2.webp" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83f902fa5d41111283df_19-tc-vs-inferencex-p90.webp" alt=""></p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afb83ff54704abf6770bb0c_20-tc-vs-inferencex-p50.webp" alt=""></p>
+<h2>结语</h2>
+<p>把 TKCC 从传统的基于规则的编译器，推进到如今 agent 驱动的优化器，是一条漫长的路，但有三条教训格外突出。第一，优化需要高保真的测量，错误的 benchmark 选择（例如使用随机数据）会导致次优的 kernel 选型。第二，不存在一刀切的 kernel。正确的优化因模型、硬件和工作负载而异，单一的整体策略无法代表这个空间。第三，围绕 agent 构建的系统应当时刻考虑模型能力还在提升。agent 对提供给它们的脚手架很敏感，早期有帮助的框架后来可能变成约束。</p>
+<p>如果你的组织想试用 Together Compiler，<a href="https://www.together.ai/contact-sales">欢迎联系我们申请早期访问</a>！另外研究团队正在招人，欢迎通过我们的<a href="https://www.together.ai/careers">招聘页面</a>联系我们！</p>
+<h2>相关文章</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>
