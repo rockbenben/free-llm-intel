@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-22 09:40:32**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-22 11:27:46**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -34,10 +34,9 @@
 
 ### OpenAI (openai)
 - 页面：[官方博客](https://openai.com/news/)
-  - ❌ 抓取失败：HTTP 403（可直接访问页面查看）
+  - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
-  - 📡 RSS/Atom：https://openai.com/zh-Hans-CN/news/rss.xml
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-22，标题自动汉化）：
   1. [应对对抗性蒸馏](https://openai.com/index/combatting-adversarial-distillation)（2026-11-20）
@@ -204,12 +203,12 @@
 ### OpenRouter (openrouter)
 - 📡 [官方 RSS](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-22，标题自动汉化）：
-  1. [OpenRouter 现在为 Hugging Face 提供推理支持](https://openrouter.ai/blog/announcements/hugging-face-inference-providers/)（2026-11-16）
-  2. [管理密钥访问控制收紧](https://openrouter.ai/blog/announcements/scoped-management-keys/)（2026-11-16）
-  3. [RAG 中的 reranking：如何用 reranker 修复错误检索](https://openrouter.ai/blog/tutorials/reranking-rag/)（2026-11-13）
-  4. [如何阻止 AI 代理陷入无限循环](https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/)（2026-11-12）
-  5. [如何对 LLM 进行基准测试](https://openrouter.ai/blog/tutorials/how-to-benchmark-llms/)（2026-11-12）
-  - 📄 完整文章归档（共 185 篇）：[openrouter.md](llm-news/openrouter.md)
+  1. [推理服务提供商的数据处理事件](https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/)（2026-11-22）
+  2. [OpenRouter 现在为 Hugging Face 提供推理支持](https://openrouter.ai/blog/announcements/hugging-face-inference-providers/)（2026-11-16）
+  3. [管理密钥访问控制收紧](https://openrouter.ai/blog/announcements/scoped-management-keys/)（2026-11-16）
+  4. [RAG 中的 reranking：如何用 reranker 修复错误检索](https://openrouter.ai/blog/tutorials/reranking-rag/)（2026-11-13）
+  5. [如何阻止 AI 代理陷入无限循环](https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/)（2026-11-12）
+  - 📄 完整文章归档（共 186 篇）：[openrouter.md](llm-news/openrouter.md)
 
 ### Cloudflare Workers AI (cloudflare_workers_ai)
 - 📡 [官方 RSS](https://developers.cloudflare.com/workers-ai/changelog/index.xml)：`https://developers.cloudflare.com/workers-ai/changelog/index.xml`
@@ -293,12 +292,12 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/feed/)：`https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-22，标题自动汉化）：
-  1. [将 Kimi Code CLI 与 Amazon Bedrock 上的模型结合使用](https://aws.amazon.com/blogs/machine-learning/use-kimi-code-cli-with-models-on-amazon-bedrock/)（2026-11-20）
-  2. [让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款](https://aws.amazon.com/blogs/machine-learning/enable-ai-agents-to-pay-for-aws-marketplace-x402-products-with-amazon-bedrock-agentcore-payments/)（2026-11-19）
-  3. [Amazon Bedrock AgentCore harness 新增 Strands harness 默认值、内置工具与生命周期钩子](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-harness-adds-strands-harness-defaults-built-in-tools-and-lifecycle-hooks/)（2026-11-19）
-  4. [利用 Accenture 的排序方法优化 Amazon Bedrock 上的 AI 经济效益](https://aws.amazon.com/blogs/machine-learning/optimize-ai-economics-on-amazon-bedrock-with-accentures-sequenced-approach/)（2026-11-19）
-  5. [从学习到上榜：思科如何用 AWS AI League 让 1,200 名工程师掌握 agentic AI](https://aws.amazon.com/blogs/machine-learning/from-learning-to-leaderboard-how-cisco-upskilled-1200-engineers-in-agentic-ai-with-aws-ai-league/)（2026-11-19）
-  - 📄 完整文章归档（共 871 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [Meta 广告现已上线 AWS Quick](https://aws.amazon.com/blogs/machine-learning/meta-ads-is-now-available-in-aws-quick/)（2026-11-22）
+  2. [将 Kimi Code CLI 与 Amazon Bedrock 上的模型结合使用](https://aws.amazon.com/blogs/machine-learning/use-kimi-code-cli-with-models-on-amazon-bedrock/)（2026-11-20）
+  3. [让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款](https://aws.amazon.com/blogs/machine-learning/enable-ai-agents-to-pay-for-aws-marketplace-x402-products-with-amazon-bedrock-agentcore-payments/)（2026-11-19）
+  4. [Amazon Bedrock AgentCore harness 新增 Strands harness 默认值、内置工具与生命周期钩子](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-harness-adds-strands-harness-defaults-built-in-tools-and-lifecycle-hooks/)（2026-11-19）
+  5. [利用 Accenture 的排序方法优化 Amazon Bedrock 上的 AI 经济效益](https://aws.amazon.com/blogs/machine-learning/optimize-ai-economics-on-amazon-bedrock-with-accentures-sequenced-approach/)（2026-11-19）
+  - 📄 完整文章归档（共 872 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
@@ -315,12 +314,12 @@
 ### Together AI (together_ai)
 - 📡 [官方 RSS](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-22，标题自动汉化）：
-  1. [Qwen3 TTS is now available on Together AI](https://www.together.ai/blog/qwen3-tts)（2026-11-20）
-  2. [Tencent Hy4 is live on Together AI](https://www.together.ai/blog/tencent-hy4)（2026-11-19）
-  3. [推出 Together Storage Accelerator：为您的 GPU 集群提供快速、免费的数据缓存](https://www.together.ai/blog/introducing-together-storage-accelerator)（2026-11-19）
-  4. [去年我们构建了 megakernels，今年我们删除了它们：通往 Together Compiler 之路](https://www.together.ai/blog/road-to-together-compiler)（2026-11-16）
-  5. [让开放模型适用于长时程 agentic 工作负载](https://www.together.ai/blog/making-open-models-work-for-long-horizon-agentic-workloads)（2026-11-16）
-  - 📄 完整文章归档（共 102 篇）：[together_ai.md](llm-news/together_ai.md)
+  1. [安全事件：2026年6月和7月请求的 Prompt 泄露](https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026)（2026-11-21）
+  2. [Qwen4 Max 已上线 Together AI](https://www.together.ai/blog/qwen4-max)（2026-11-21）
+  3. [Qwen3 TTS is now available on Together AI](https://www.together.ai/blog/qwen3-tts)（2026-11-20）
+  4. [Tencent Hy4 is live on Together AI](https://www.together.ai/blog/tencent-hy4)（2026-11-19）
+  5. [推出 Together Storage Accelerator：为您的 GPU 集群提供快速、免费的数据缓存](https://www.together.ai/blog/introducing-together-storage-accelerator)（2026-11-19）
+  - 📄 完整文章归档（共 104 篇）：[together_ai.md](llm-news/together_ai.md)
 
 ### Fireworks AI (fireworks_ai)
 - 页面：[官方博客](https://fireworks.ai/blog)

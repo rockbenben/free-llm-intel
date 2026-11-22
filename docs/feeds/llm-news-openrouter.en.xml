@@ -7,7 +7,25 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 22 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Data Processing Incidents on Inference Providers</title>
+      <link>https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/?li=1</guid>
+      <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Data Processing Incidents on Inference Providers</h1>
+<p>OpenRouter ·11/22/2026</p>
+<p>Earlier this week, security <a href="https://www.dragos.com/blog/ai-supply-chain-security-canary-tokens">researchers reported</a> that certain inference providers had data compromised or otherwise shown evidence that their data policies were not being upheld. We have been collaborating closely with the researchers and with providers to understand the findings and encourage the providers to address them.</p>
+<p>These findings did not show any breach or unauthorized access of OpenRouter. The results of this testing revealed new findings about specific inference providers. A live list of the security announcements we have received from providers is <a href="https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/#provider-security-announcements">below</a>.</p>
+<p>As the operating layer between customers and a fast-moving ecosystem of models and providers, we take data policy enforcement very seriously. We have taken the following actions:</p>
+<ul><li>Off-boarded three providers from OpenRouter, based on the results of our investigations.</li><li>Removed 125 endpoints from Zero Data Retention (ZDR) eligibility. The removals included providers flagged by researchers, plus additional endpoints that we removed as a precautionary measure.</li><li>Notified all potentially affected customers.</li></ul>
+<p>The following work is underway:</p>
+<ul><li>We are adapting the researchers’ testing approach so we can run these checks on an ongoing basis.</li><li>We are conducting technical verification of network paths to identify instances where requests and responses may be being forwarded to third parties.</li><li>We are requiring appropriate assurances and validation before restoring ZDR eligibility to any endpoint removed in this review.</li></ul>
+<p>We are grateful for the Dragos report. As we integrate similar testing techniques into OpenRouter, we will keep raising the bar, and providers that want to be on OpenRouter will need to meet it.</p>
+<h2>Provider security announcements</h2>
+<ul><li>Novita: <a href="https://novita.ai/blog/minimax-requests-privacy-notice/">Privacy notice regarding MiniMax requests on Novita</a></li><li>Phala: <a href="https://phala.com/posts/phala-november-preliminary-incident-report">November preliminary incident report</a></li><li>Together: <a href="https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026">Security event: prompt leakage for requests in June and July of 2026</a></li></ul>
+<p><em>Not all affected providers have posted publicly. We have notified affected users regardless of whether there is a public post. We are encouraging all providers to create incident write-ups and will keep this list updated.</em></p>]]></content:encoded>
+    </item>
     <item>
       <title>OpenRouter Now Powers Inference on Hugging Face</title>
       <link>https://openrouter.ai/blog/announcements/hugging-face-inference-providers/</link>
@@ -8470,43 +8488,6 @@ print(len(vectors[0]))</code></pre>
 <p>We would not use text-embedding-ada-002 as the default for a new OpenAI-based index. Evaluate text-embedding-3-small first, then compare it with text-embedding-3-large if your retrieval results justify the higher prompt price and larger vectors.</p>
 <h3>Why does a free embedding model return a 404 error?</h3>
 <p>The free embedding routes in our catalog are served by providers whose data policy may allow training on your prompts. If your account privacy settings, a workspace guardrail, or the <code>provider.data_collection</code> request field set to <code>deny</code> excludes providers that train on free-model prompts, no endpoint is eligible and the request returns a 404 error that names the free model training restriction. Check the privacy page of your account and any guardrail applied to the API key before you treat the model ID as invalid.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Batch API: half-price inference by bundling requests</title>
-      <link>https://openrouter.ai/blog/announcements/batch-api/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/batch-api/?li=1</guid>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Batch API: half-price inference by bundling requests</h1>
-<p>Brian Thomas ·9/22/2026</p>
-<p>For large batches of work or requests that don’t need to be completed immediately, you can now use the new <a href="https://openrouter.ai/docs/batch-quickstart">batch API</a>. When submitting a batch, a provider gets to choose when during a 24 hour window they will complete the request, and in exchange they generally charge 50% (and sometimes less) of their normal per-token price.</p>
-<p>It works today on <a href="https://openrouter.ai/models?variant=batch">more than 70 models</a>. Learn how to use it in the <a href="https://openrouter.ai/docs/batch-quickstart">Batch API docs</a>.</p>
-<p>In practice, we’ve observed you rarely wait anywhere near 24 hours. Across 230k+ batches that completed over our two week beta period, the median finished in 7 minutes and 90% finished within an hour.</p>
-<p>Batch is an asynchronous API for workloads where you can accept highly variable response times, such as labeling a corpus, back-filling embeddings, scoring an eval set, summarizing a backlog of tickets, or running the same prompt across a few thousand rows overnight.</p>
-<h2>How the Batch API works</h2>
-<p>Call <code>api/v1/batches</code> with your list of requests and specify what endpoint shape to use. Chat completions, responses, messages, and embeddings are all supported. For example:</p>
-<pre><code>curl https://openrouter.ai/api/v1/batches \
-  -H &quot;Content-Type: application/json&quot; \
-  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
-  -d '{
-  &quot;endpoint&quot;: &quot;/v1/chat/completions&quot;,
-  &quot;model&quot;: &quot;google/gemini-3.8-flash&quot;,
-  &quot;requests&quot;: [
-    { &quot;custom_id&quot;: &quot;ticket-0001&quot;, &quot;body&quot;: { &quot;messages&quot;: [{ &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Summarize this ticket in one sentence.&quot; }] } },
-    { &quot;custom_id&quot;: &quot;ticket-0002&quot;, &quot;body&quot;: { &quot;messages&quot;: [{ &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Summarize this ticket in one sentence.&quot; }] } }
-  ]
-}'</code></pre>
-<p>After the request, begin polling <code>GET /api/v1/batches/:id</code> until the status is <code>completed</code>, <code>failed</code>, <code>expired</code>, or <code>cancelled</code>. Completed batches return their results inline in the same response.</p>
-<h2>Most batches finish in minutes</h2>
-<p>We looked at the batches that completed during our two week beta period and measured the time from acceptance to finished results. The median was 7 minutes, the 90th percentile was 1.0 hour, and the 99th percentile was 10.3 hours. We also found that the time of day you submit matters more than how many requests you send.</p>
-<p><img src="https://openrouter.ai/blog/images/batch-api-hours-by-submit-hour.png" alt="Bar chart of batch completion time by the Pacific hour a batch was submitted, showing the median, 75th percentile, and 90th percentile for each hour. The median stays between 5 and 11 minutes all day. The 90th percentile sits under 1.1 hours for most hours but climbs to between 2 and 4.5 hours for batches submitted from 5am to noon Pacific, peaking at 4.5 hours for the 9am hour."></p>
-<p>Batches submitted between 5am and noon Pacific are significantly slower than other times of day. The slowest tenth take 2 to 4.5 hours. Submit at any other hour and the 90th percentile drops under 1.1 hours, and after 6pm Pacific it’s under 50 minutes.</p>
-<p>A single-request batch finishes in 5 to 11 minutes depending on the hour, and a batch of 1,000 or more requests finishes in 12 to 21 minutes. Large batches do take longer to process. The slowest tenth of batches with more than 100 requests submitted between midnight and noon Pacific took as long as 6.8 hours.</p>
-<p><img src="https://openrouter.ai/blog/images/batch-api-median-hours-by-window-and-size.png" alt="Heatmap of median hours to complete by three-hour Pacific submission window and batch size bucket (1, 2 to 10, 11 to 100, 101 to 1k, and 1k+ requests). Every cell shows a median of 5 to 21 minutes. Each cell also lists the sample size and 90th percentile, which climbs as high as 6.8 hours for batches of 101 or more requests submitted between midnight and noon Pacific."></p>
-<h2>What’s supported with batches</h2>
-<ul><li>Request shapes: any text request body shape you already send to OpenRouter will be supported, including chat completions, responses, messages, and embeddings.</li><li>Routing: Each batch is executed on a single provider. By default we choose the cheapest batch endpoint for the model after your provider allowlist, data policy, and BYOK settings are applied.</li><li>BYOK: with a <a href="https://openrouter.ai/docs/guides/overview/auth/byok">provider key</a> configured, batches on providers that support it route through your key and you pay only the BYOK fee.</li><li>Per-request results: every result returns independently, so a few bad rows never fail the rest of the job.</li><li>Retention: inputs and results are kept for 30 days, or until you <code>DELETE</code> the batch.</li><li>Logging: every batch shows up in the <a href="https://openrouter.ai/logs">Batches tab of your logs</a> with model, provider, status, and cost.</li><li>Pricing: the discount applies to per-token pricing and varies by model. Web search calls bill at standard rates.</li><li>Inputs: images and files must be public URLs. Audio, video, and OpenRouter’s own web search plugin aren’t available in batch (see the <a href="https://openrouter.ai/docs/batch-quickstart#limitations">limitations section of the docs</a>).</li></ul>
-<h2>Get started</h2>
-<p>Pick a <a href="https://openrouter.ai/models?variant=batch">batch-capable model</a>, grab an <a href="https://openrouter.ai/settings/keys">API key</a>, and post your first batch to <code>https://openrouter.ai/api/v1/batches</code>. The <a href="https://openrouter.ai/docs/batch-quickstart">Quickstart</a> has the full request and response shapes.</p>
-<p>Tell us what you’re batching in <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> on Discord.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

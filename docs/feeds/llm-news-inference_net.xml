@@ -13,6 +13,7 @@
       <link>https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/</link>
       <guid isPermaLink="true">https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/</guid>
       <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：We made vLLM tokenization 120x faster with Elixir</description>
       <content:encoded><![CDATA[<p>过去几个月，我们一直在推理路由栈上下功夫，把重心越来越集中在一个用 Elixir 编写的自定义请求路由器上。这是系列博客的第一篇，讲我们如何把规模做到每天数万亿 token，以及其中的经验。本文聚焦分词器：仅靠分词这一环，我们就把 SGLang 提速 33 倍、把 vLLM 提速 12 倍。</p>
 <h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#why-does-tokenization-even-matter">#</a>分词到底为什么重要？</h2>
 <p><img src="https://inference.net/assets/request-timeline-Dr9A6UVv.png" alt="推理请求的时间线：分词、prefill，然后每一步解码一个 token，TTFT 标在第一个解码步骤之后"></p>
