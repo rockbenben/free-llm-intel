@@ -9,10 +9,9 @@ captured: 2026-10-24
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 04180b5df6a4
+body_sha: e699270eb690
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # 使用 AWS Agent Registry 在运行时发现工具
 

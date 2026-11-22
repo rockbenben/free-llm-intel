@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7e66f63914aa
+body_sha: 8d7538bbaa64
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Introducing Claude Sonnet 5.5 on AWS
 

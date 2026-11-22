@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-06
 extractor: readability-v1
 status: ok
-body_sha: 3c69e84c39e0
+body_sha: 07bb75af0c67
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Introducing GLM 5.3 on Amazon Bedrock
 

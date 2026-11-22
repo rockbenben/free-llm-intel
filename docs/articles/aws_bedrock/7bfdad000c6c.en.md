@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c04dc3a10212
+body_sha: f9346203e095
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Extending public sector intelligence with Agentforce and AWS
 

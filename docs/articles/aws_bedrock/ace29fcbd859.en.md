@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-13
 extractor: readability-v1
 status: ok
-body_sha: 9a0dd89a7ed8
+body_sha: 53728f39cc79
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Four Amazon Bedrock inference choices that affect cost
 

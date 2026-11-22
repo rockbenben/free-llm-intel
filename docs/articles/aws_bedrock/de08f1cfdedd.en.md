@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-15
 extractor: readability-v1
 status: ok
-body_sha: 731ed6372000
+body_sha: 86fc743b18a9
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Build self-improving document processing using Amazon Bedrock AgentCore
 

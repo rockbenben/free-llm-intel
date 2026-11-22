@@ -9,10 +9,9 @@ captured: 2026-11-18
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 32beb7b6c659
+body_sha: 8548733c9720
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # 降低人工智能生成成本：规则代码、判断模型
 

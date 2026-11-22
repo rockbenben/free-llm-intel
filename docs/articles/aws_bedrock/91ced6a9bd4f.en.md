@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-13
 extractor: readability-v1
 status: ok
-body_sha: 79285db4795d
+body_sha: 2911350c60d3
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Migrate to Amazon Bedrock Managed Knowledge Base with your coding agent
 

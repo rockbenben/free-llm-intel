@@ -227,6 +227,16 @@ _MARKDOWN_FENCE_RE = re.compile(r"^[ \t]*(`{3,}|~{3,})(.*)$")
 _ANYSCALE_TAIL_LABELS = {"#### 分享", "#### 标签", "#### 订阅产品更新", "#### 推荐内容"}
 _ANYSCALE_EXPLORE_RE = re.compile(r"^## .{0,30}探索 Anyscale(?: on Azure)?$")
 _HEAD_RE = re.compile(r"^\s*#{1,6}\s")
+# 文章标题（H1）：面包屑判定要用「第一个 H1」，不是「第一个标题」——面包屑自己就是个
+# 二级标题，拿 _HEAD_RE 当边界就永远删不到它（实测 AWS 博客 144 篇）。
+_H1_RE = re.compile(r"^#\s+\S")
+# 整行只有一个链接的标题行，且显示文字是**分类名**（闭集）：形如
+# "## [Artificial Intelligence](https://…/blogs/machine-learning/)"。站在 H1 之前就是
+# 站点的分类面包屑（导航）。显示文字必须整行等于闭集里的词 —— 放宽成「任意链接标题」
+# 会误删 groq changelog 那种**条目标题本身**也是链接的正文（实测 105 行）。
+_HEAD_LINK_LABELS = {"Artificial Intelligence", "Machine Learning", "Generative AI",
+                     "Amazon Web Services", "Analytics"}
+_HEAD_LINK_ONLY_RE = re.compile(r"^#{2,6}\s+\[([^\]]*)\]\([^)\s]+\)\s*$")
 _MONTHS = (r"(?:January|February|March|April|May|June|July|August|September|October"
            r"|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)")
 # 卡片元信息行：推荐区每张卡都有一行「类别+日期」，这就是推荐区的指纹
@@ -323,8 +333,14 @@ def furniture_drops(lines, page_url: str = ""):
     R9 Anyscale 中文页脚块：`#### 目录` 之后只剩分享/标签/订阅/推荐卡/探索 CTA
         （实测 14 篇文末残留；真目录在正文前、后面有 H2/H3 时不匹配）
     R10 about.fb.com 重复日期行与 OpenAI 的三连装饰字标
+    R11 第一个 H1 之前、「整行只有一个链接 + 显示文字是分类名（闭集）」的标题行：分类面包屑
+        （如 "## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)"）。
+        只在 H1 之前成立 —— 同一形状出现在正文里是正常的小标题链接（实测 3 处，如
+        CloudWatch 日志条目），H1 之后一律不动。
     """
     fenced, first_head = _fence_mask(lines)
+    first_h1 = next((i for i, l in enumerate(lines)
+                     if i not in fenced and _H1_RE.match(l)), None)
     brand = _brand_of(page_url)
     host = (urlsplit(page_url).hostname or "").removeprefix("www.")
     drop = {}
@@ -350,6 +366,10 @@ def furniture_drops(lines, page_url: str = ""):
         elif first_head is not None and i < first_head and (
                 s in _FURN_NAV_BEFORE_HEAD or _BARE_MEDIA_RE.match(s)):
             drop[i] = "R1"
+        elif (first_h1 is not None and i < first_h1
+              and (m := _HEAD_LINK_ONLY_RE.match(s))
+              and m.group(1).strip() in _HEAD_LINK_LABELS):
+            drop[i] = "R11"
     run = []
     for i, l in enumerate(lines):
         if i not in fenced and _TAG_LINK_RE.match(l.strip()):

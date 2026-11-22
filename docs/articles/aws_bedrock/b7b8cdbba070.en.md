@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 762357639474
+body_sha: 82380a7b4ce3
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Building ambient agents with Amazon Bedrock AgentCore: From event-driven signals to human-in-the-loop workflows
 

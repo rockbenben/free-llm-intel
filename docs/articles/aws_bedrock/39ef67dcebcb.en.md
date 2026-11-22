@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-20
 extractor: readability-v1
 status: ok
-body_sha: 98c1cdf00ec9
+body_sha: c3a5e4d6b0fd
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Enable AI agents to pay for AWS Marketplace x402 products with Amazon Bedrock AgentCore payments
 

@@ -12305,6 +12305,43 @@ class TestPageFurnitureStrip(unittest.TestCase):
         self.assertEqual(ft.strip_page_furniture(body), body,
                          "代码块里的同样的字串是内容，动一个字都不行")
 
+    def test_category_breadcrumb_heading_before_title_removed(self):
+        """AWS 博客的分类面包屑（整行只有一个链接的二级标题）在 H1 之前是站件。
+
+        边界两条：同一形状出现在 H1 之后是正常的小标题链接（实测 CloudWatch 条目），
+        以及没有 H1 的文档不猜边界、整块不动。
+        """
+        crumb = "## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)"
+        body = "\n".join([
+            crumb,
+            "",
+            "# Meta ads is now available in AWS Quick",
+            "",
+            "Marketers have never had more data to act on.",
+        ])
+        out = ft.strip_page_furniture(body)
+        self.assertNotIn("Artificial Intelligence", out, "分类面包屑该删")
+        self.assertIn("# Meta ads is now available in AWS Quick", out)
+        self.assertIn("Marketers have never had more data to act on.", out)
+
+        in_body = "\n".join([
+            "# 排查日志",
+            "",
+            "### [Creating a CloudWatch alarm from Logs Insights](https://example.com/a)",
+            "",
+            "正文段落。",
+        ])
+        self.assertEqual(ft.strip_page_furniture(in_body), in_body,
+                         "H1 之后的标题链接是正文，不能删")
+
+        no_h1 = "\n".join([
+            crumb,
+            "",
+            "没有标题的片段。",
+        ])
+        self.assertEqual(ft.strip_page_furniture(no_h1), no_h1,
+                         "没有 H1 就没有边界，不猜")
+
     def test_bibliography_under_further_reading_survives(self):
         # 同一个「延伸阅读」标题：文献清单（没有卡片日期）不是推荐区
         body = "\n".join([

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-05
 extractor: readability-v1
 status: ok
-body_sha: 4f63285fc412
+body_sha: 7686ff98e735
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # ServiceNow on-behalf-of token exchange with Bedrock AgentCore Gateway
 

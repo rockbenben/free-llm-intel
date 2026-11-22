@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-17
 extractor: readability-v1
 status: ok
-body_sha: 3e03798593bd
+body_sha: 991c1808ee20
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Modernizing mainframe Assembler to Java using Amazon Bedrock and AWS Transform
 

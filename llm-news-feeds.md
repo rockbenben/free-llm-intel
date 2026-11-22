@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-22 11:27:46**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-22 12:33:02**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -292,12 +292,12 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/feed/)：`https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-22，标题自动汉化）：
-  1. [Meta 广告现已上线 AWS Quick](https://aws.amazon.com/blogs/machine-learning/meta-ads-is-now-available-in-aws-quick/)（2026-11-22）
-  2. [将 Kimi Code CLI 与 Amazon Bedrock 上的模型结合使用](https://aws.amazon.com/blogs/machine-learning/use-kimi-code-cli-with-models-on-amazon-bedrock/)（2026-11-20）
-  3. [让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款](https://aws.amazon.com/blogs/machine-learning/enable-ai-agents-to-pay-for-aws-marketplace-x402-products-with-amazon-bedrock-agentcore-payments/)（2026-11-19）
-  4. [Amazon Bedrock AgentCore harness 新增 Strands harness 默认值、内置工具与生命周期钩子](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-harness-adds-strands-harness-defaults-built-in-tools-and-lifecycle-hooks/)（2026-11-19）
-  5. [利用 Accenture 的排序方法优化 Amazon Bedrock 上的 AI 经济效益](https://aws.amazon.com/blogs/machine-learning/optimize-ai-economics-on-amazon-bedrock-with-accentures-sequenced-approach/)（2026-11-19）
-  - 📄 完整文章归档（共 872 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [将 Kimi Code CLI 与 Amazon Bedrock 上的模型结合使用](https://aws.amazon.com/blogs/machine-learning/use-kimi-code-cli-with-models-on-amazon-bedrock/)（2026-11-20）
+  2. [让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款](https://aws.amazon.com/blogs/machine-learning/enable-ai-agents-to-pay-for-aws-marketplace-x402-products-with-amazon-bedrock-agentcore-payments/)（2026-11-19）
+  3. [Amazon Bedrock AgentCore harness 新增 Strands harness 默认值、内置工具与生命周期钩子](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-harness-adds-strands-harness-defaults-built-in-tools-and-lifecycle-hooks/)（2026-11-19）
+  4. [利用 Accenture 的排序方法优化 Amazon Bedrock 上的 AI 经济效益](https://aws.amazon.com/blogs/machine-learning/optimize-ai-economics-on-amazon-bedrock-with-accentures-sequenced-approach/)（2026-11-19）
+  5. [从学习到上榜：思科如何用 AWS AI League 让 1,200 名工程师掌握 agentic AI](https://aws.amazon.com/blogs/machine-learning/from-learning-to-leaderboard-how-cisco-upskilled-1200-engineers-in-agentic-ai-with-aws-ai-league/)（2026-11-19）
+  - 📄 完整文章归档（共 871 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)

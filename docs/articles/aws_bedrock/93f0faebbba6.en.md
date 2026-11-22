@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 66989ec7a284
+body_sha: da1d8073c84c
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # How Trane gets building insights 60x faster with Amazon Bedrock AgentCore
 

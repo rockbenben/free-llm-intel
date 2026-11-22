@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-21
 extractor: readability-v1
 status: ok
-body_sha: 94dad0391ace
+body_sha: 195aca48f921
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Discover tools at runtime with AWS Agent Registry
 

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4b2ef793aefe
+body_sha: a92361531dbe
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Build a multi-account AI agent with AgentCore Gateway and MCP
 

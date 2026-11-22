@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-18
 extractor: readability-v1
 status: ok
-body_sha: 9db665d674ad
+body_sha: 3c297b2a5dd4
 ---
 
-## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # Cut generative AI costs: Code for rules, models for judgment
 

@@ -7,55 +7,47 @@ date: 2026-11-21
 lang: zh
 captured: 2026-11-22
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: c6c05864da9c
+body_sha: 6b47d97f5185
 ---
 
-所有博客文章
+# Qwen4 Max 现已在 Together AI 上线
 
-模型库
+阿里巴巴的旗舰 Qwen 模型在 2026 年 11 月 22 日之前享受 30% 折扣。我们把一份 bug 报告和整个 Tornado 仓库放进同一次请求，看看 100 万 token 的上下文窗口值多少、又要花多少钱。
 
-发表于 11/21/2026
+- 本文链接：[在 playground 中试用 Qwen4 Max](https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max) [Qwen4 Max 模型页](https://www.together.ai/models/qwen4-max) [阿里巴巴的公告](https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max)
 
-# Qwen4 Max 已在 Together AI 上线
+摘要
 
-截至 2026 年 11 月 22 日，阿里巴巴的旗舰 Qwen 型号可享受 30% 的折扣。我们在一次请求中向其提供了错误报告和整个 Tornado 存储库，以了解 1M 代币上下文窗口的价值和成本。
+- **Together AI 上的 Qwen4 Max：** 阿里巴巴的旗舰 Qwen 模型已在 Together Serverless Inference 上提供，上下文窗口为 100 万 token。
+- **我们测试了什么：** Qwen4 Max 在一次请求中接收了一份 bug 报告和 Tornado 仓库的全部 344 个文件，它给出的补丁通过了维护者的测试。
+- **促销价格：** 在 2026 年 11 月 22 日之前，每 100 万输入 token 收费 1.05 美元，每 100 万缓存输入 token 收费 0.0525 美元，每 100 万输出 token 收费 3.15 美元。
+- **调用前须知：** 请求必须使用流式方式，思考默认开启，思考 token 按输出 token 计费。
 
-- 作者桑尼·汗
-- 目录[40+ 型号选择用于生产...40+ 型号选择用于生产...40+ 型号选择用于生产...](https://www.together.ai/blog/qwen4-max)
-- 本文链接【Qwen4 Max在游乐场】(https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max)【Qwen4 Max型号页面】(https://www.together.ai/models/qwen4-max)【阿里巴巴公告】(https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max)
+我们把一份 bug 报告和整个代码库放在一次请求里交给了 [Qwen4 Max](https://www.together.ai/models/qwen4-max)。代码库是 Python Web 框架 Tornado：全部 344 个文件、652,519 个 token。模型没有使用任何工具，我们也没有预先挑选相关文件或做检索。72 秒后它返回了一个补丁，该补丁通过了 Tornado 维护者为这个 bug 编写的测试。这次请求花费 69 美分。
 
-总结
+它还在仓库的其他位置找到了一处先例。bug 报告从未提到 `tornado/iostream.py`，但模型指出了那里的代码——那些代码已经按它的补丁所需的方式处理了错误。Tornado 维护者在他们自己的修复中也引用了同一段代码。
 
-- **Together AI 上的 Qwen4 Max：** 阿里巴巴的旗舰 Qwen 模型可在 Together Serverless Inference 上使用，具有 1M 代币上下文窗口。
-- **我们测试的内容：** Qwen4 Max 在一次请求中获取了一份错误报告和 Tornado 存储库的所有 344 个文件，并且其补丁通过了维护人员的测试。
-- **销售定价：** 截至 2026 年 11 月 22 日，每 100 万个输入代币的成本为 1.05 美元，每 100 万个缓存输入代币的成本为 0.0525 美元，每 100 万个输出代币的成本为 3.15 美元。
-- **在调用它之前：** 请求必须进行流式传输，默认情况下思考处于开启状态，思考令牌计为输出令牌。
-
-我们在一次请求中向 [Qwen4 Max](https://www.together.ai/models/qwen4-max) 提供了一份错误报告和整个代码库。代码库是 Tornado，Python Web 框架：所有 344 个文件，652,519 个令牌。该模型没有工具，我们没有选择相关文件或首先运行检索步骤。七十二秒后，它返回了一个补丁，并且该补丁通过了 Tornado 维护人员为该错误编写的测试。该请求花费了 69 美分。
-
-它还在存储库的其他地方找到了先例。错误报告从未提及 `tornado/iostream.py`，但模型指出那里的代码已经按照补丁所需的方式处理错误。 Tornado 的维护者在他们自己的修复中引用了相同的代码。
-
-Qwen4 Max是阿里巴巴的旗舰Qwen机型。该产品现已在 Together AI 上上线，截至 2026 年 11 月 22 日可享受 30% 折扣。
+Qwen4 Max 是阿里巴巴的旗舰 Qwen 模型。它今天已在 Together AI 上线，并在 2026 年 11 月 22 日之前享受 30% 折扣。
 
 ## 测试
 
-Tornado 是一个开源 Python Web 框架。其存储库包含大约 340 个代码、测试和文档文件。这适合 Qwen4 Max 的上下文窗口，而且远远超过任何人手动粘贴到提示中的效果。我们选择了维护者于 2026 年 11 月 18 日（即 Qwen4 Max 发布两天后）提交的修复程序，并针对该提交之前的存储库进行了测试。
+Tornado 是一个开源 Python Web 框架。其仓库包含约 340 个代码、测试与文档文件，可以放进 Qwen4 Max 的上下文窗口，而且远多于任何人会手动粘贴到 prompt 里的内容。我们选取了维护者于 2026 年 11 月 18 日提交的一个修复——那是在 Qwen4 Max 发布两天之后——并针对该提交之前的仓库状态进行测试。
 
-这是一个示例，旨在展示单个调用可以执行的操作及其成本。
+这只是一个例子，用来说明单次调用能做什么、需要多少成本。
 
-该错误存在于 Tornado 的 websocket 代码中。当连接关闭且消息仍未发送时，每个未等待的 `write_message()` 调用都会记录错误，即使等待它是可选的。我们将结帐中的每个文本文件作为一个提示发送，并附有一份仅描述症状的错误报告：
+这个 bug 位于 Tornado 的 websocket 代码中。当连接关闭而仍有消息未发送时，每个未被 await 的 `write_message()` 调用都会记录一条错误，尽管 await 它是可选的。我们把该检出目录中的每个文本文件作为同一个 prompt 发送，并附上一份只描述现象、不说明原因的 bug 报告：
 
-> write_message 在连接关闭时记录“从未检索到任务异常”当 Websocket 连接关闭而消息仍未发送时（例如，客户端发送消息和 FIN，或重置连接，而不读取回复），未等待结果的每个 write_message() 调用都会在错误级别记录“从未检索到任务异常”。等待 write_message 返回的 Future 是可选的，因此未等待的调用不应该记录任何内容。等待它的调用者仍然应该得到 WebSocketClosedError。
+> 当连接关闭时，write_message 会记录 "Task exception was never retrieved"：当 websocket 连接在仍有消息未发送的情况下关闭（例如客户端发送完消息和一个 FIN，或重置了连接，却没有读取回复）时，每个结果未被 await 的 write_message() 调用都会在 ERROR 级别记录 "Task exception was never retrieved"。await write_message 返回的 Future 是可选的，因此未 await 的调用不应记录任何内容。真正 await 它的调用方仍应收到 WebSocketClosedError。
 
-我们询问原因和补丁。这是重播的请求：
+我们要求模型给出原因和补丁。以下是重放的请求：
 
-### 回来了什么
+### 返回了什么
 
-第一个令牌在 54 秒后到达，回复在 72 秒完成。Qwen4 Max 在 `tornado/websocket.py` 中将错误追溯到 `WebSocketProtocol13.write_message`。该方法将每个写入包装在一个任务中。当连接关闭时，任务会失败，并出现一个不需要任何人收集的异常，Python 会将其记录为“从未检索到任务异常”。
+首个 token 在 54 秒后到达，回复在 72 秒时完成。Qwen4 Max 把错误定位到 `tornado/websocket.py` 中的 `WebSocketProtocol13.write_message`。该方法把每次写入包在一个 task 里。当连接关闭时，该 task 会以异常失败，而没有任何人必须去收集这个异常，Python 便会记录为 "Task exception was never retrieved"。
 
-该模型的补丁将异常标记为已检索。没有记录任何内容，等待写入的调用者仍然会收到错误：
+模型的补丁把该异常标记为已取回。这样不会记录任何内容，而真正 await 写入的调用方仍会收到错误：
 
 ```
 -        return asyncio.ensure_future(wrapper())
@@ -72,31 +64,31 @@ Tornado 是一个开源 Python Web 框架。其存储库包含大约 340 个代�
 +        return task
 ```
 
-先例使得补丁读起来就像它属于项目一样。该模型的解释说，修复应该做 `BaseIOStream.write` 已经为自己的未来所做的事情。该方法位于 `tornado/iostream.py` 中，位于 websocket 代码的下一层，它以相同的方式解决了相同的问题。维护者的提交也做了同样的比较。
+正是这处先例让这个补丁看起来像是属于该项目的一部分。模型的解释称，修复应当采用 `BaseIOStream.write` 已为其自身的 future 所做的做法。该方法位于 `tornado/iostream.py`，比 websocket 代码低一层，并用同样的方式解决了同样的问题。维护者的提交也做了同样的对照。
 
-![由 344 个方格组成的网格，Tornado 存储库中的每个文件一个，按文件夹分组。龙卷风文件夹中的两个方块突出显示并用一条线连接：websocket.py（错误所在）和 iostream.py（模型指向的先例）。](https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b01fded989d54b2b151f5cf_qwen4-max-repo-map.png)
+![一张由 344 个方格组成的网格，每格对应 Tornado 仓库中的一个文件，并按目录分组。tornado 目录中的两个方格被高亮并用一条线连接：bug 所在的 websocket.py，以及模型指出的先例 iostream.py。](https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b01fded989d54b2b151f5cf_qwen4-max-repo-map.png)
 
-没有人为此挑选这些文件。所有 344 个都输入了，模型找到了重要的两个。
+没有人替它挑选这些文件。全部 344 个文件都被送入，而模型找到了其中起关键作用的两个。
 
-### 我们如何检查它
+### 我们如何验证
 
-Tornado 的维护者在修复中添加了两项回归测试：一项针对未等待的写入，另一项针对等待的写入。在修复之前的代码中，第一个失败。应用模型的补丁后，两者都通过了。然后，我们在补丁到位的情况下运行了 Tornado 的全套套件，进行了 1,673 次测试，没有一次失败。
+Tornado 维护者在他们的修复中新增了两个回归测试：一个针对未 await 的写入，一个针对已 await 的写入。在修复前的代码上，第一个测试会失败；应用模型的补丁后，两个测试都通过。随后我们在有该补丁的情况下运行了 Tornado 的完整测试套件，共 1,673 个测试，无一失败。
 
-### 花费是多少
+### 成本是多少
 
-按销售价格计算，请求价格约为 69 美分，几乎全部用于 652,519 个输入代币。按标价计算，价格为 98 美分。
+按促销价计算，这次请求约为 69 美分，几乎全部来自 652,519 个输入 token。按标价计算则为 98 美分。
 
-再次发送相同的存储库的成本要低得多。 AI 会自动缓存提示输入，并且在销售期间缓存的输入为每百万代币 0.0525 美元。当我们重复大约 630,000 个令牌的请求时，几乎所有令牌都被缓存回来。第一个令牌在 8 秒内到达，而不是 54 秒，输入成本约为 3 美分，而不是 66 秒。
+再次发送同一仓库的成本要低得多。Together AI 会自动缓存 prompt 输入，在促销期间缓存输入的价格为每百万 token 0.0525 美元。当我们重复一次约 630,000 token 的请求时，几乎全部命中缓存。首个 token 在 8 秒后到达，而不是 54 秒，输入成本约为 3 美分，而不是 66 美分。
 
-## 关于Qwen4 Max
+## 关于 Qwen4 Max
 
-阿里巴巴于2026年11月16日发布了Qwen4 Max，并将其描述为Qwen家族迄今为止最强大的型号。它将模型定位为长期代理工作，包括跨大型存储库进行编码，这是我们测试的任务类型。
+阿里巴巴于 2026 年 11 月 16 日发布 Qwen4 Max，并称其为 Qwen 系列迄今最强的模型。它将该模型定位为长程 agent 工作，包括跨大型仓库的编码，这正是我们测试的任务类型。
 
-Qwen4 Max 是一个稀疏专家混合模型，拥有 2.4 万亿个参数，其中每个代币有 710 亿个活跃参数。在阿里巴巴自己的跨 721 个专业领域的行业任务基准 Work360 上，阿里巴巴报告称，其整体性能优于 Qwen3.8 Max，在高推理强度下使用的代币减少了 35%，平均每个任务的成本降低了约 60%。这是阿里巴巴的数据，[其公告](https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max)有详细信息。
+Qwen4 Max 是一个稀疏混合专家（MoE）模型，拥有 2.4 万亿参数，每个 token 激活其中 710 亿。在阿里巴巴自己的行业任务基准 Work360（覆盖 721 个专业领域）上，阿里巴巴称其整体表现优于 Qwen3.8 Max，在高推理强度下使用的 token 少 35%，每个任务的平均成本约低 60%。这些是阿里巴巴的数据，[其公告](https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max)中有细节。
 
 ## 在 Together AI 上运行
 
-Qwen4 Max 位于模型字符串 `Qwen/Qwen4-Max` 下的 Together Serverless Inference 上。该脚本在一个请求中发送整个存储库和错误报告，就像我们的测试所做的那样。您需要 Together Python SDK (`pip install together`)、`TOGETHER_API_KEY`、存储库的本地克隆以及保存为 `bug_report.md` 的错误报告。它发送 git 跟踪的每个文本文件，因此首先检查存储库中的机密。
+Qwen4 Max 已在 Together Serverless Inference 上提供，模型字符串为 `Qwen/Qwen4-Max`。下面的脚本会像我们的测试那样，把整个仓库和一份 bug 报告放进一次请求。你需要 Together Python SDK（`pip install together`）、一个 `TOGETHER_API_KEY`、该仓库的本地克隆，以及保存为 `bug_report.md` 的 bug 报告。它会发送 git 跟踪的每个文本文件，因此请先检查仓库中是否有密钥。
 
 ```
 import subprocess
@@ -146,50 +138,40 @@ for chunk in stream:
         print(delta.content, end="", flush=True)
 ```
 
-其中有两件事是该模型特有的。请求必须设置 `stream=True`，因为 Together AI 上的 Qwen4 Max 仅接受流请求。默认情况下，思考处于开启状态，因此模型的推理首先在 `delta.reasoning` 中流动，并且在答案开始之前有一个暂停。思考标记算作输出标记。要跳过对简单请求的思考，请传递 `reasoning={"enabled": False}`。
+其中有两点为该模型所特有。请求必须设置 `stream=True`，因为 Together AI 上的 Qwen4 Max 只接受流式请求。思考默认开启，因此模型的推理会先通过 `delta.reasoning` 流式返回，在回答开始之前有一段停顿。思考 token 计为输出 token。若要在简单请求中跳过思考，可传入 `reasoning={"enabled": False}`。
 
-要在不编写代码的情况下尝试它，请在 [playground](https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max) 打开它。 [模型页面](https://www.together.ai/models/qwen4-max) 具有相同的详细信息。
+若不想写代码，可以在 [playground](https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max) 中试用。[模型页](https://www.together.ai/models/qwen4-max) 有同样的细节。
 
-现已上市
+## 常见问题
 
-在 Together AI 上运行 Qwen4 Max
+### Qwen4 Max 在 Together AI 上的价格是多少？
 
-基于无服务器推理的 1M 令牌上下文、文本和图像输入以及自动提示缓存。
+Together AI 上 Qwen4 Max 的标价为每 100 万输入 token 1.50 美元、每 100 万输出 token 4.50 美元、每 100 万缓存输入 token 0.075 美元。在 2026 年 11 月 22 日之前享受 30% 折扣：1.05、3.15 和 0.0525 美元。思考 token 计为输出 token。
 
-打开游乐场
+### Qwen4 Max 在 Together AI 上的上下文窗口有多大？
 
-## 常见问题解答
+Qwen4 Max 在 Together AI 上的上下文窗口为 100 万 token。在我们的测试中，一次含 652,519 个输入 token 的请求在 54 秒后返回首个 token。
 
-### Qwen4 Max 在 Together AI 上的售价是多少？
+### Qwen4 Max 接受图片吗？
 
-Together AI 上的 Qwen4 Max 标价为每 100 万个输入代币 1.50 美元，每 100 万个输出代币 4.50 美元，每 100 万个缓存输入代币 0.075 美元。截至 2026 年 11 月 22 日，可享受 30% 折扣：1.05 美元、3.15 美元和 0.0525 美元。思考标记算作输出标记。
+接受，Qwen4 Max 在 Together AI 上接受文本与图片输入并返回文本。请按[视觉文档](https://docs.together.ai/docs/inference/vision/overview)的说明，把每张图片作为消息内容中的 `image_url` 块发送。
 
-###Together AI 上 Qwen4 Max 的上下文窗口是什么？
+### 为什么我的 Qwen4 Max 请求在未流式时失败？
 
-Qwen4 Max 在 Together AI 上有一个 1M 代币的上下文窗口。在我们的测试中，具有 652,519 个输入令牌的请求在 54 秒后返回其第一个令牌。
+Together AI 上的 Qwen4 Max 只接受流式请求。不带 `"stream": true` 的请求会返回 400 错误，错误码为 `streaming_required`。请在 SDK 中设置 `stream=True`，或在请求体中使用 `"stream": true`，并从流中读取回复。
 
-### Qwen4 Max 接受图像吗？
+### 如何在 Qwen4 Max 上关闭思考？
 
-是的，Qwen4 Max 接受 Together AI 上的文本和图像输入并返回文本。将每个图像作为消息内容中的 `image_url` 块发送，如 [视觉文档](https://docs.together.ai/docs/inference/vision/overview) 中所述。
+在 Python SDK 中传入 `reasoning={"enabled": False}`，或在请求体中使用 `"reasoning": {"enabled": false}`，即可关闭 Qwen4 Max 的思考。思考默认开启，并会先于答案在 `reasoning` 字段中返回。若要在困难问题上获得更多思考，可将 `reasoning_effort` 设为 `"max"`。
 
-### 为什么我的 Qwen4 Max 请求在没有流式传输的情况下失败？
+### Qwen4 Max 支持工具调用吗？
 
-Together AI 上的 Qwen4 Max 仅接受流请求。没有 `"stream": true` 的请求将返回 400 错误，代码为 `streaming_required`。在 SDK 中设置 `stream=True`，或在请求正文中设置 `"stream": true`，然后从流中读取回复。
+支持，Qwen4 Max 在 Together AI 上通过标准的 `tools` 参数支持工具调用，一次可返回多个调用。
 
-### 如何关闭 Qwen4 Max 上的思考？
+### prompt 缓存对 Qwen4 Max 有效吗？
 
-在Python SDK中传递`reasoning={"enabled": False}`，或在请求正文中传递`"reasoning": {"enabled": false}`，以关闭Qwen4 Max上的思考。默认情况下，思考处于开启状态，并且它会在答案之前返回到 `reasoning` 字段。要对难题进行更多思考，请将 `reasoning_effort` 设置为 `"max"`。
+有效，Together AI 上 Qwen4 Max 的 prompt 缓存是自动的，缓存输入 token 的标价为每 100 万 0.075 美元。在我们的测试中，重复一次 630,000 token 的请求几乎全部命中缓存，首个 token 在 8 秒后到达，而不是 54 秒。缓存是尽力而为，并非每次重复都会命中。
 
-### Qwen4 Max支持工具调用吗？
+### 我可以微调 Qwen4 Max 或在其上使用专属 endpoint 吗？
 
-是的，Qwen4 Max 支持通过标准 `tools` 参数调用 Together AI 的工具。它可以轮流返回多个调用。
-
-### 提示缓存是否适用于 Qwen4 Max？
-
-是的，Together AI 上的 Qwen4 Max 会自动进行提示缓存，并且缓存的输入令牌按标价每 1M 花费 0.075 美元。在我们的测试中，重复 630,000 个令牌的请求几乎完全被缓存，并且其第一个令牌在 8 秒内到达，而不是 54 秒。缓存是尽力而为，因此并非每个重复都被缓存。
-
-### 我可以微调 Qwen4 Max 或在专用端点上运行它吗？
-
-不，Qwen4 Max 目前仅在 Together AI 上是无服务器的，并且无法进行微调。阿里巴巴表示，Qwen4 系列的小型开放式重量型号也将随之推出。
-
-## 相关文章
+不能，Qwen4 Max 目前在 Together AI 上仅为无服务器服务，不提供微调。阿里巴巴表示后续会推出 Qwen4 系列中较小的开放权重模型。
