@@ -1,11 +1,11 @@
 # Amazon Bedrock (AWS Free Tier) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-22**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-23**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Amazon Bedrock (AWS Free Tier)（`aws_bedrock`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
-- 📡 RSS/Atom：[官方 RSS](https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/feed/)
+- 📡 RSS/Atom：[官方 RSS](https://aws.amazon.com/cn/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/feed/)
 
 ## 全部文章（共 871 篇，按日期倒序；无日期条目列于最后）
 

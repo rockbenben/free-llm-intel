@@ -185,9 +185,9 @@
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-22 10:33:39**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-23 10:59:14**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
-> 💡 **核心特性**：覆盖 **88 家厂商**（深度抓取 **163 个情报页 + 45 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
+> 💡 **核心特性**：覆盖 **88 家厂商**（深度抓取 **163 个情报页 + 48 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 34 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
 > 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [全部厂商动态（中文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [全部厂商动态（英文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（英文加 `.en.xml`）。全部厂商动态与单厂商源都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。
 > 🛰 **额度变化订阅**（新活动 / 额度调整，前值 → 后值）：[llm-intel-changes.xml](https://free-llm-intel.aishort.top/feeds/llm-intel-changes.xml)
@@ -210,7 +210,7 @@
 | **额度有效期** | 以账户内余额标注为准 |
 | **前置条件 / 限制** | 注册平台账号；按量计费，并发限制随账户充值等级（Tier）提升 |
 | **邀请 / 特惠活动** | 实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲半价）：deepseek-flash 输出 8.0/4.0、缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5、缓存命中 0.30/0.15。**周边 API 计费**：Search API（文字）与 Fetch API 每 1,000 次成功请求 5 元（自 2026 年 11 月 18 日起调用模型触发的服务端搜索与网页抓取工具本身不再计费，结果按模型 Token 用量计费）；文件解析与 OCR 每 1,000 页 1.5 元；**语音 API 限时 5 折**：语音合成（TTS）1.5 元/万字符（刊例 3 元）、语音识别（ASR）0.39 元/小时音频（刊例 0.78 元）。费用优先扣减赠送余额。 |
-| **实时巡检证据** | • 有关使用 Anthropic API 格式的示例，请参阅 Anthropic API。 |
+| **实时巡检证据** | • 当充值余额与赠送余额同时存在时，优先扣减赠送余额。<br>• (3) 更多并发限制细节，请参考限速与隔离。 |
 | **官方直达** | [定价文档（人民币峰谷价）](https://api-docs.deepseek.com/zh-cn/quick_start/pricing) ｜ [API Key 管理](https://platform.deepseek.com/api_keys) ｜ [更新日志](https://api-docs.deepseek.com/zh-cn/updates/) ｜ [API 平台](https://platform.deepseek.com/) |
 | **特别说明** | V3/R1 时代价格（缓存 0.5 元、输出 8 元）已作废；官方无 RSS，更新见 updates 页。 |
 

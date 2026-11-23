@@ -9,6 +9,35 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-all.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Sun, 22 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
+      <title>[OpenAI] Perplexity 与智能</title>
+      <link>https://openai.com/index/perplexity-and-intelligence</link>
+      <guid isPermaLink="true">https://openai.com/index/perplexity-and-intelligence</guid>
+      <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：Perplexity and Intelligence</description>
+      <content:encoded><![CDATA[<p>2026 年 11 月 22 日</p>
+<p>安全</p>
+<h1>困惑与智力</h1>
+<p>作者：Jakub Pachocki，OpenAI 首席科学家</p>
+<p>从远处看，现代人工智能的构建方式似乎与过去几十年软件的构建方式类似：使用针对特定功能的多种技术。确实有多种方法，但它们不是从头开始设计，而是“利用”来自更简单且难以解释的过程的智能：在非常大的数据集上训练压缩器（或[等效地]（https://en.wikipedia.org/wiki/Shannon%27s_source_coding_theorem）预测器）。<a href="https://openai.com/index/perplexity-and-intelligence/#citation-bottom-1">1</a></p>
+<p>我相信跟踪训练更好的压缩器的进展速度是理解人工智能进步弧线的关键。在这篇文章中，我主张建立困惑度（或等效的交叉熵损失）作为模型开发人员之间进行比较并告知共享安全标准的指标。作为第一步，我为 OpenAI 的预训练进度提供了更多的透明度。发布我们的内部困惑度测量结果需要考虑一些因素；它让竞争对手更清楚地了解我们的立场，但这种担忧被整个行业建立<a href="https://darioamodei.com/post/we-must-pace-the-frontier">共享</a>安全措施的紧迫性所抵消。 OpenAI 希望这能够成为为未来的配速工作建立共享科学基础的一步。</p>
+<p>人工智能开发的一个简化但基本信息丰富的观点是，首先，构建一台大型计算机，然后使用它在大型非结构化数据集上“预训练”模型（压缩器），然后在不同的环境中应用各种技术（例如提示、微调或强化学习）以激发该模型的潜在功能。算法的进步可以模糊训练阶段之间的区别，但我们仍然可以将具有难以预测的突发能力的人工智能的创建（我之前称之为“[外星人思维]（https://openai.com/index/an-alien-mind/）”）与随后的有针对性的诱导分开。</p>
+<p>多年来，我们衡量这一关键“智能基础”进展的主要方法一直保持非常稳定 - 我们一直在保留的数据集上跟踪模型的“困惑度”。<a href="https://openai.com/index/perplexity-and-intelligence/#citation-bottom-2">2</a>，<a href="https://openai.com/index/perplexity-and-intelligence/#citation-bottom-3">3</a> 困惑度衡量模型平均预测下一个标记的程度；较低的困惑度意味着更好的预测。本博文开头的图显示了从 GPT-3.5 开始，我们的模型的该指标是如何演变的。</p>
+<p>主要由这一指标描述的模型的功能范围是惊人的。 GPT-2 在旧数据集 <a href="https://openai.com/index/perplexity-and-intelligence/#citation-bottom-4">4</a> 上设置了新的最先进的困惑度，可以说是第一个能够一致地制定连贯的文本段落的模型。下一个重大飞跃是 GPT-3，它能够在给出一些任务示例的情况下进行学习。 GPT-3.5 在我们当前的主要评估数据集上的对数困惑度约为 0.99，能够进行流畅的对话，并构成了原始 ChatGPT 的基础。 GPT-4 的得分约为 0.91，能够熟练有效地利用思维链推理，这推动了后续有针对性地激发这种能力并创建现代推理模型。现在，当我们的损失已降至 0.8 以下时，我们看到了网络安全和数学等领域变革能力的出现。我想再次强调的是，一旦满足这些精确的困惑度阈值，这些能力就会出现，这一点根本不清楚“先验”——它们从根本上可以被视为这一指标进展中的新兴潜在能力。</p>
+<p>随着人工智能的快速发展，我们衡量下游能力的范围和方式可能会迅速改变。在大多数现代基准上评估 GPT-2 和 GPT-3 没有什么意义；当时使用的基准在 GPT-4 附近基本饱和。相比之下，我相信关注预训练的进展可能会提供有用的信息。</p>
+<p>进步速度的一个特殊变化来自于人工智能对其自身发展的贡献越来越大。最常讨论的指标围绕人工智能在开发周期的各个阶段增强和取代人类研究人员；最终的拐点是“完全递归自我改进”，该过程将完全自动化，无需人工监督。除了考虑这种状态是我们为了维持人类控制而显然应该避免的事情之外，我发现这个一般框架遗漏了一些至关重要的东西。人工智能参与开发过程的一个关键部分：预训练的算法研究，可能会带来潜在的改变。</p>
+<p>最近，我们在另一个领域目睹了前所未有的加速。一年多来，我们一直在向我们的模型提出数学中的开放问题，作为评估模型的方法之一。一旦我们升级到对数困惑度 ~0.76 的模型，它就开始产生突破性的结果。对于我们许多以前在数学和相关领域工作过的人来说，看到我们长期思考的问题在一个 Slack 线程中一个接一个地得到解决，感觉非常超现实。经历过这些，我们可以进行推断——这种突然的转变在深度学习研究中也是合理的。虽然这个领域更多地依赖于实验，但多年来简单的见解一直被忽视。因此，到 2027 年，我们可以想象看到类似的基本预训练进步<a href="https://openai.com/index/perplexity-and-intelligence/#citation-bottom-5">5</a>。虽然我预计人工智能也将极大地促进对齐和监控方面的进展，但我认为进展不太可能快到足以实现预训练的全部潜在加速。</p>
+<p>鉴于新的令人惊讶的能力出现的主要方式是压缩方面的进步，无论开发过程的自动化程度如何，植根于困惑的衡量标准都可以为我们提供通用智能的共同基准。从最近的进展推断，当我们进入~0.68-0.7 log-perplexity 窗口时，我们应该期待进一步的变革能力。我不知道这些功能是什么，我们今天可能不会测试它们。与此同时，我们还应该期待当前占主导地位的一致性审计形式的<a href="https://alignment.openai.com/cot-monitorability-model-lifecycle">进一步退化</a>，以及评估和培训意识的进一步提高。我认为前沿模型开发人员应该共同努力建立共享规范，以在首次使用此类模型时评估这些模型和红队安全案例，包括共享透明度标准。我进一步提出基于困惑度和其他测量的“共同限制”，开发人员承诺在我们理解和监控人工智能行为的能力达到某个具体里程碑（例如开发 CoT 监视器的继任者）之前不会跨越这些限制。也就是说，我想要一个行业标准，规定开发的第一个限制，通过我们可以跨实验室跟踪的一些关键指标来衡量，以及在超越它之前我们具体需要实现什么。我希望这能引导建立一个共同框架来设定连续的限制并加快进一步的发展步伐。</p>
+<p>困惑度作为共享指标面临着挑战：</p>
+<ul><li><strong>跨实验室比较的困难。 </strong>不同的开发人员使用不同的评估数据集并在不同的数据混合物上进行训练。在这里，我们报告了我们一直在跟踪的主数据集上的数字；我相信，如果我们建立透明度目标，我们就可以找到可转移的方法来比较不同基础模型的质量。</li><li><strong>脱离可操作的评估。 </strong>困惑并不直接对应于我们关心的任务。关心它的原因是我们可以预期它的进步将导致全新功能的出现。</li><li><strong>不考虑预训练之外的进步。 </strong>最值得注意的是，思想链推理并不会减少模型所实现的复杂性，尽管它会导致能力的急剧增加。</li><li><strong>未知楼层。 </strong>我们不期望损失为 0，这相当于能够完全确定地预测数据集。但我们不知道数据的固有熵是多少。当我们接近它时，困惑度的明显进展将会放缓，但困惑度的较小增益将对应于模型智能的较大飞跃。</li></ul>
+<p>与此同时，困惑度作为一个指标经受住了时间的考验，许多研究团队在优化方面投入了大量精力，并且它继续在一般智力方面带来持续的收益。我相信它可以在标准化我们如何谈论人工智能进展方面发挥重要作用，并希望看到整个行业的透明度更高。</p>
+<h2>作者</h2>
+<p>雅库布·帕乔茨基</p>
+<h2>脚注</h2>
+<ul><li>1值得注意的是，这个意义上的“压缩器”是能够通过预测看不见的数据来执行压缩的东西，而不是像GZIP文件这样的压缩工件——也就是说，在给定语料库上训练的最好的压缩器不一定“记住”语料库的内容。</li><li>2在实践中，我们通常跟踪困惑度的<em>log</em>，也称为<em>交叉熵损失</em>。</li><li>3自 GPT-3.5 以来我们一直使用的主要保留数据集来自我们的内部代码库，这些是此处报告的数字（针对固定快照）。</li><li>4考虑到 GPT-2 和 GPT-3 的训练内容，它们预测代码的能力并不能很好地反映它们的一般能力。这展示了使用困惑度作为共享指标来选择数据集所带来的潜在挑战；然而，将它们与一般文本的现代模型联合评估仍然应该提供信息。我选择报告我们内部代码库的困惑，因为我想分享我们今天最依赖的数据来衡量 OpenAI 预训练的进展。</li><li>5在 OpenAI 模型的损失图中，您可以看到 2026 年急剧加速。我们将其主要归因于长期研究和计算投资的结果，只有一小部分归因于自动化。然而，对于最新的模型，<a href="https://openai.com/index/research-acceleration-jagged-frontier/#where-big-ideas-come-from">我们已经看到来自 AI 的有意义的设计贡献</a>。</li></ul>]]></content:encoded>
+    </item>
+    <item>
       <title>[OpenRouter] 推理服务提供商的数据处理事件</title>
       <link>https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/</guid>
@@ -1349,16 +1378,21 @@ compiled =
 <p>特别感谢构建 Performance Factory 的团队，以及为本篇文章供稿的 Brendan Gregg、Pieter Hooimeijer、Nick Cooper 与 Louis Brandy。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] 探索 Codex 安全插件</title>
-      <link>https://openai.com/business/learn/codex-security-plugin-demo</link>
-      <guid isPermaLink="true">https://openai.com/business/learn/codex-security-plugin-demo</guid>
+      <title>[OpenAI] 部署 Daybreak Red</title>
+      <link>https://openai.com/business/learn/deploying-daybreak-red</link>
+      <guid isPermaLink="true">https://openai.com/business/learn/deploying-daybreak-red</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：Explore the Codex Security Plugin</description>
-      <content:encoded><![CDATA[<p>产品演示</p>
-<h1>探索 Codex Security Plugin</h1>
-<p>观看 Codex Security Plugin 的演示，了解这套工作流实际怎么跑起来，从入门操作一直看到如何查看录制中展示的结果。</p>]]></content:encoded>
+      <description>原文标题：Deploying Daybreak Red</description>
+      <content:encoded><![CDATA[<p>2026年11月19日</p>
+<p>指南</p>
+<h1>部署 Daybreak Red</h1>
+<p>用于受监督安全调查的参考架构。</p>
+<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读指南</a></p>
+<p>了解如何用 Daybreak Red 搭建用于受监督安全调查的隔离环境。本指南涵盖架构、安全控制、环境配置，以及如何运行并监控一次调查。</p>
+<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读完整指南（PDF）。</a></p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] 查看 PR 扫描的实际应用</title>
@@ -1386,21 +1420,16 @@ compiled =
 <p>观看 Daybreak Blue 的开通流程演示，近距离了解设置环节以及如何开始使用。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] 部署 Daybreak Red</title>
-      <link>https://openai.com/business/learn/deploying-daybreak-red</link>
-      <guid isPermaLink="true">https://openai.com/business/learn/deploying-daybreak-red</guid>
+      <title>[OpenAI] 探索 Codex 安全插件</title>
+      <link>https://openai.com/business/learn/codex-security-plugin-demo</link>
+      <guid isPermaLink="true">https://openai.com/business/learn/codex-security-plugin-demo</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：Deploying Daybreak Red</description>
-      <content:encoded><![CDATA[<p>2026年11月19日</p>
-<p>指南</p>
-<h1>部署 Daybreak Red</h1>
-<p>用于受监督安全调查的参考架构。</p>
-<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读指南</a></p>
-<p>了解如何用 Daybreak Red 搭建用于受监督安全调查的隔离环境。本指南涵盖架构、安全控制、环境配置，以及如何运行并监控一次调查。</p>
-<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读完整指南（PDF）。</a></p>
-<h2>作者</h2>]]></content:encoded>
+      <description>原文标题：Explore the Codex Security Plugin</description>
+      <content:encoded><![CDATA[<p>产品演示</p>
+<h1>探索 Codex Security Plugin</h1>
+<p>观看 Codex Security Plugin 的演示，了解这套工作流实际怎么跑起来，从入门操作一直看到如何查看录制中展示的结果。</p>]]></content:encoded>
     </item>
     <item>
       <title>[Google Gemini] Genie 4 (genie-4) generally available (GA): Released Genie 4…</title>
@@ -2119,65 +2148,6 @@ compiled(inputs)</code></pre>
 <p>Dean Ball</p>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] 住友生命的领导者如何帮助团队采用 ChatGPT Enterprise</title>
-      <link>https://openai.com/business/customer-stories/sumitomo-life</link>
-      <guid isPermaLink="true">https://openai.com/business/customer-stories/sumitomo-life</guid>
-      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：How Sumitomo Life’s leaders helped teams adopt ChatGPT Enterprise</description>
-      <content:encoded><![CDATA[<p>2026年11月18日</p>
-<h1>住友生命管理层如何推动团队采用 ChatGPT Enterprise</h1>
-<p>企划团队使用 ChatGPT 研究海外保险公司并准备提案。投资团队则用它起草风险分析代码。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tR8joMsjUp2pNkjxkAB2i/f9951f263252041c48afa0b4d33c7959/sumitomo-life-layered-paper-art-card.png?w=3840&amp;q=90&amp;fm=webp" alt="红色叠纸纹理背景上的住友生命标志"></p>
-<p>公司规模: 大型企业</p>
-<p>区域: 亚太地区与大洋洲</p>
-<p>行业: 金融</p>
-<p>产品: ChatGPT</p>
-<p>成效</p>
-<p>80%+</p>
-<p>ChatGPT Enterprise 每周使用率</p>
-<p>成效</p>
-<p>524%</p>
-<p>每月使用 ChatGPT 至少 101 次的员工的平均估算投资回报率</p>
-<p>投资回报率根据员工自报的时间节省情况估算；整体估算投资回报率为 203%。</p>
-<p>住友生命的企划团队在为高层管理人员准备提案时，会借助 ChatGPT Enterprise 查阅原始资料、整理研究发现。他们将这些研究发现与一手信息相结合，并凭借专业知识判断应提出哪些建议。会计和财务团队也使用 ChatGPT 开展研究与分析。</p>
-<p>这家日本寿险公司的高管和经理是最早使用 ChatGPT 的一批人。在他们的示范带动和总裁的鼓励下，更多员工开始尝试将 ChatGPT 用于自己的工作。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3tcmtf32edhFUvSN7SPRnr/bf8a8ef1c34251ad5f4eb75a5df6c86f/sumitomo-life-running-photo.png?w=3840&amp;q=90&amp;fm=webp" alt="蓝天下，一名跑者正迈步奔跑。"></p>
-<h2>从试点到更大范围推广</h2>
-<p>住友生命于 2023 年开始在工作中使用生成式 AI。起初，员工主要通过聊天提问。在试用通用 AI 工具的过程中，ChatGPT 凭借广泛的适用范围脱颖而出。他们可以使用深度研究功能，结合多个来源探索问题，也可以将 ChatGPT 融入原本就在 Word、PowerPoint 和 Excel 中开展的工作。</p>
-<p>2025 年，约 100 至 150 人参与了 ChatGPT Business 试点，其中包括高管和企划团队成员。2026 年 6 月，公司转而采用 ChatGPT Enterprise。在计划向数千名员工推广时，住友生命综合考虑了输出质量、ChatGPT 对不同工作的适用程度，以及金融机构的安全要求。</p>
-<p>住友生命与 OpenAI 合作，对照自身安全标准评估 ChatGPT Enterprise。评估内容包括住友生命如何管理工作空间访问权限和功能权限，以及 OpenAI 默认不使用业务数据训练模型的政策。住友生命持续根据员工处理的信息和连接的系统，确定员工可以如何使用 ChatGPT。</p>
-<h2>编写代码与准备提案</h2>
-<p>住友生命的投资团队通过统计分析预测收益，并评估价格波动等风险。ChatGPT 帮助分析师起草这类工作所需的代码，减少他们需要亲自编写的代码量。</p>
-<p>企划团队使用 ChatGPT 跟踪日本其他保险公司的动态，并查找海外案例。他们利用这些研究成果，完善提交给高层管理人员的提案。</p>
-<p>企划团队还向熟悉相关业务的人士获取一手信息，以补充公开资料。他们使用 ChatGPT 中的项目功能，将这些资料与相关聊天、文件和自定义指令集中存放。</p>
-<h2>总裁以身作则</h2>
-<p>住友生命总裁在 ChatGPT Business 试点期间就开始使用 AI。在管理层会议和公司内部门户上，总裁经常鼓励员工将 AI 用于工作。</p>
-<p>住友生命企划部资深成员 Kakeru Tateyama 见证了这一示范作用如何推动 AI 的应用。他说：“如果高层领导不了解一项新技术，要推动它落地就会很困难。”“在我们公司，高管和经理是最早使用它的一批人。他们亲身体验了它能做什么。我认为，这让其他人也更容易迈出使用它的第一步。”</p>
-<p>自首次培训以来，OpenAI 一直在分享世界各地组织使用 ChatGPT 的案例。双方团队会讨论哪些做法契合住友生命的重点工作，并在新功能推出时进行评估。</p>
-<h2>使用频率与投资回报的关系</h2>
-<p>住友生命跟踪员工使用 ChatGPT Enterprise 的频率，并估算这项投资的回报。</p>
-<ul><li>ChatGPT Enterprise 的每周使用率超过 80%。</li><li>对于每月使用 ChatGPT 至少 101 次的员工，估算投资回报率平均为 524%。这一估算基于员工自报的时间节省情况；整体估算投资回报率为 203%。</li></ul>
-<p>住友生命关注的不只是已分配的账号数量。公司在季度调查中询问员工使用 ChatGPT 的频率、在哪些工作环节使用，以及是否与同事一起使用。</p>
-<p>根据员工自报的时间节省情况估算的投资回报率。524% 仅适用于每月使用 ChatGPT 至少 101 次的员工；整体估算投资回报率为 203%。</p>
-<p>住友生命根据员工自报的时间节省情况，估算了不同 ChatGPT 使用频率对应的投资回报率。使用越频繁的员工群体，估算的投资回报率越高。每月使用 8 至 15 次的员工，平均投资回报率为 55%；使用 16 至 30 次的员工为 231%；使用至少 101 次的员工则为 524%。整体平均值为 203%。</p>
-<p>员工也开始承担一些过去因缺乏时间或专业技能而无法开展的工作。对住友生命而言，这让每个人都能在更多方面作出贡献，即使这些收益有时难以用节省的工时来衡量。</p>
-<p>企划部副总经理 Masakazu Obi 认为，改变工作本身的开展方式，蕴含着更大的机遇。他说：“如果我们把现有的工作方式视为理所当然，就无法充分发挥 AI 的价值。”“关键在于，我们能否改变流程本身。在引入 AI 的同时，我们也在着眼长远，推动这些流程的变革。”</p>
-<h2>留出更多时间与客户交流</h2>
-<p>住友生命计划于 2026 财年下半年开始向更多员工推广 AI。公司将针对各个岗位，明确哪些任务可由 AI 承担，哪些工作适合员工与 AI 协作，以及哪些职责应继续由人承担。</p>
-<p>从更长远来看，住友生命正考虑将 AI 用于核保和理赔支付等更专业的工作。公司计划在围绕 AI 重新设计工作流程的同时，与 OpenAI 共同探索新技术和新服务。</p>
-<p>目标是让员工有更多时间与客户交流。住友生命致力于增进客户与员工的福祉，并将这些交流视为践行这一承诺的一部分。</p>
-<blockquote>“对我们而言，保险的价值在于让客户和社会安心。有些价值只有人才能提供，它来自与客户的交流，以及对他们感受的理解。”</blockquote>
-<p>—Kuniaki Nakagawa，住友生命 AI 战略专项小组经理</p>
-<h2>迈入工作新时代</h2>
-<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<h2>接收 OpenAI 商业应用的最新资讯</h2>
-<p>产品更新、实用指南、活动预告等丰富内容</p>]]></content:encoded>
-    </item>
-    <item>
       <title>[OpenAI] 研究加速：锯齿状的前沿</title>
       <link>https://openai.com/index/research-acceleration-jagged-frontier</link>
       <guid isPermaLink="true">https://openai.com/index/research-acceleration-jagged-frontier</guid>
@@ -2271,6 +2241,65 @@ compiled(inputs)</code></pre>
 <h2>作者</h2>
 <h2>脚注</h2>
 <ul><li>1 用实证方法测量 AI R&amp;D 加速的科学还相对年轻，但正在研究前沿迅速成长。到目前为止，Anthropic 已独立发布 <a href="https://www.anthropic.com/institute/recursive-self-improvement">三份</a> <a href="https://www.anthropic.com/research/employment-at-anthropic">不同</a> <a href="https://www.anthropic.com/institute/measuring-pace-of-ai-development">报告</a>，记录了内部模型部署如何加速 AI 研究过程。<a href="https://storage.googleapis.com/deepmind-media/gemini/gemini_4_safety_report.pdf">Gemini 4 Argon Safety and Security Report</a> 第 3.4.2 节以实证方式概述了 Google DeepMind 内部由 AI 撰写的代码占比不断上升。METR 与 Anthropic 合作发布了一份 <a href="https://metr.org/blog/2026-11-05-anthropic-ai-rd-acceleration-assessment/#executive-summary">加速评估报告</a>，估算了内部 Claude 模型对能力前沿的加速幅度。</li><li>2 我们说明一下，OpenAI 的研究员目前没有 agentic coding 配额。8 月 21 日，OpenAI 在内部部署了一项临时的 harness 效率改进。我们发现，这次内部部署恰好伴随 input token 利用率的急剧下降，看起来大幅压低了有记录的内部 token 支出。出于与支出无关的原因，这项 harness 改动从 9 月 10 日起在内部各部署中逐步回滚，我们发现此后 token 支出迅速上升。</li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>[OpenAI] 住友生命的领导者如何帮助团队采用 ChatGPT Enterprise</title>
+      <link>https://openai.com/business/customer-stories/sumitomo-life</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/sumitomo-life</guid>
+      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：How Sumitomo Life’s leaders helped teams adopt ChatGPT Enterprise</description>
+      <content:encoded><![CDATA[<p>2026年11月18日</p>
+<h1>住友生命管理层如何推动团队采用 ChatGPT Enterprise</h1>
+<p>企划团队使用 ChatGPT 研究海外保险公司并准备提案。投资团队则用它起草风险分析代码。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tR8joMsjUp2pNkjxkAB2i/f9951f263252041c48afa0b4d33c7959/sumitomo-life-layered-paper-art-card.png?w=3840&amp;q=90&amp;fm=webp" alt="红色叠纸纹理背景上的住友生命标志"></p>
+<p>公司规模: 大型企业</p>
+<p>区域: 亚太地区与大洋洲</p>
+<p>行业: 金融</p>
+<p>产品: ChatGPT</p>
+<p>成效</p>
+<p>80%+</p>
+<p>ChatGPT Enterprise 每周使用率</p>
+<p>成效</p>
+<p>524%</p>
+<p>每月使用 ChatGPT 至少 101 次的员工的平均估算投资回报率</p>
+<p>投资回报率根据员工自报的时间节省情况估算；整体估算投资回报率为 203%。</p>
+<p>住友生命的企划团队在为高层管理人员准备提案时，会借助 ChatGPT Enterprise 查阅原始资料、整理研究发现。他们将这些研究发现与一手信息相结合，并凭借专业知识判断应提出哪些建议。会计和财务团队也使用 ChatGPT 开展研究与分析。</p>
+<p>这家日本寿险公司的高管和经理是最早使用 ChatGPT 的一批人。在他们的示范带动和总裁的鼓励下，更多员工开始尝试将 ChatGPT 用于自己的工作。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3tcmtf32edhFUvSN7SPRnr/bf8a8ef1c34251ad5f4eb75a5df6c86f/sumitomo-life-running-photo.png?w=3840&amp;q=90&amp;fm=webp" alt="蓝天下，一名跑者正迈步奔跑。"></p>
+<h2>从试点到更大范围推广</h2>
+<p>住友生命于 2023 年开始在工作中使用生成式 AI。起初，员工主要通过聊天提问。在试用通用 AI 工具的过程中，ChatGPT 凭借广泛的适用范围脱颖而出。他们可以使用深度研究功能，结合多个来源探索问题，也可以将 ChatGPT 融入原本就在 Word、PowerPoint 和 Excel 中开展的工作。</p>
+<p>2025 年，约 100 至 150 人参与了 ChatGPT Business 试点，其中包括高管和企划团队成员。2026 年 6 月，公司转而采用 ChatGPT Enterprise。在计划向数千名员工推广时，住友生命综合考虑了输出质量、ChatGPT 对不同工作的适用程度，以及金融机构的安全要求。</p>
+<p>住友生命与 OpenAI 合作，对照自身安全标准评估 ChatGPT Enterprise。评估内容包括住友生命如何管理工作空间访问权限和功能权限，以及 OpenAI 默认不使用业务数据训练模型的政策。住友生命持续根据员工处理的信息和连接的系统，确定员工可以如何使用 ChatGPT。</p>
+<h2>编写代码与准备提案</h2>
+<p>住友生命的投资团队通过统计分析预测收益，并评估价格波动等风险。ChatGPT 帮助分析师起草这类工作所需的代码，减少他们需要亲自编写的代码量。</p>
+<p>企划团队使用 ChatGPT 跟踪日本其他保险公司的动态，并查找海外案例。他们利用这些研究成果，完善提交给高层管理人员的提案。</p>
+<p>企划团队还向熟悉相关业务的人士获取一手信息，以补充公开资料。他们使用 ChatGPT 中的项目功能，将这些资料与相关聊天、文件和自定义指令集中存放。</p>
+<h2>总裁以身作则</h2>
+<p>住友生命总裁在 ChatGPT Business 试点期间就开始使用 AI。在管理层会议和公司内部门户上，总裁经常鼓励员工将 AI 用于工作。</p>
+<p>住友生命企划部资深成员 Kakeru Tateyama 见证了这一示范作用如何推动 AI 的应用。他说：“如果高层领导不了解一项新技术，要推动它落地就会很困难。”“在我们公司，高管和经理是最早使用它的一批人。他们亲身体验了它能做什么。我认为，这让其他人也更容易迈出使用它的第一步。”</p>
+<p>自首次培训以来，OpenAI 一直在分享世界各地组织使用 ChatGPT 的案例。双方团队会讨论哪些做法契合住友生命的重点工作，并在新功能推出时进行评估。</p>
+<h2>使用频率与投资回报的关系</h2>
+<p>住友生命跟踪员工使用 ChatGPT Enterprise 的频率，并估算这项投资的回报。</p>
+<ul><li>ChatGPT Enterprise 的每周使用率超过 80%。</li><li>对于每月使用 ChatGPT 至少 101 次的员工，估算投资回报率平均为 524%。这一估算基于员工自报的时间节省情况；整体估算投资回报率为 203%。</li></ul>
+<p>住友生命关注的不只是已分配的账号数量。公司在季度调查中询问员工使用 ChatGPT 的频率、在哪些工作环节使用，以及是否与同事一起使用。</p>
+<p>根据员工自报的时间节省情况估算的投资回报率。524% 仅适用于每月使用 ChatGPT 至少 101 次的员工；整体估算投资回报率为 203%。</p>
+<p>住友生命根据员工自报的时间节省情况，估算了不同 ChatGPT 使用频率对应的投资回报率。使用越频繁的员工群体，估算的投资回报率越高。每月使用 8 至 15 次的员工，平均投资回报率为 55%；使用 16 至 30 次的员工为 231%；使用至少 101 次的员工则为 524%。整体平均值为 203%。</p>
+<p>员工也开始承担一些过去因缺乏时间或专业技能而无法开展的工作。对住友生命而言，这让每个人都能在更多方面作出贡献，即使这些收益有时难以用节省的工时来衡量。</p>
+<p>企划部副总经理 Masakazu Obi 认为，改变工作本身的开展方式，蕴含着更大的机遇。他说：“如果我们把现有的工作方式视为理所当然，就无法充分发挥 AI 的价值。”“关键在于，我们能否改变流程本身。在引入 AI 的同时，我们也在着眼长远，推动这些流程的变革。”</p>
+<h2>留出更多时间与客户交流</h2>
+<p>住友生命计划于 2026 财年下半年开始向更多员工推广 AI。公司将针对各个岗位，明确哪些任务可由 AI 承担，哪些工作适合员工与 AI 协作，以及哪些职责应继续由人承担。</p>
+<p>从更长远来看，住友生命正考虑将 AI 用于核保和理赔支付等更专业的工作。公司计划在围绕 AI 重新设计工作流程的同时，与 OpenAI 共同探索新技术和新服务。</p>
+<p>目标是让员工有更多时间与客户交流。住友生命致力于增进客户与员工的福祉，并将这些交流视为践行这一承诺的一部分。</p>
+<blockquote>“对我们而言，保险的价值在于让客户和社会安心。有些价值只有人才能提供，它来自与客户的交流，以及对他们感受的理解。”</blockquote>
+<p>—Kuniaki Nakagawa，住友生命 AI 战略专项小组经理</p>
+<h2>迈入工作新时代</h2>
+<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<h2>接收 OpenAI 商业应用的最新资讯</h2>
+<p>产品更新、实用指南、活动预告等丰富内容</p>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] Codex 沙箱内部</title>
@@ -3973,6 +4002,36 @@ agentcore.create_gateway_target(
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
+      <title>[OpenAI] 为智利推出 OpenAI</title>
+      <link>https://openai.com/index/introducing-openai-for-chile</link>
+      <guid isPermaLink="true">https://openai.com/index/introducing-openai-for-chile</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：Introducing OpenAI for Chile</description>
+      <content:encoded><![CDATA[<p>2026年11月17日</p>
+<p>全球事务</p>
+<h1>推出 OpenAI 智利计划</h1>
+<p>今天，我们推出 OpenAI 智利计划。这项与智利政府开展的合作由智利科学、技术、知识与创新部牵头，旨在支持公共行政部门负责任地采用 AI，提升公务员技能，并帮助当地初创企业开发实用的 AI 应用。</p>
+<p>此次合作以智利的<a href="https://minciencia.gob.cl/areas/inteligencia-artificial/Inteligencia-Artificial/">国家 AI 政策与行动计划</a>为基础，该政策与计划支持人才培养、研究以及负责任地采用 AI。</p>
+<p>这份谅解备忘录在 Semafor 于加利福尼亚州举办的“硅谷与世界”会议期间签署，由部长 Ximena Lincolao 代表智利牵头达成协议。</p>
+<p>此次合作得到美国商务部<a href="https://siexports.gov/">美国 SI 出口计划</a>的支持，OpenAI 是该计划的核心合作伙伴之一。此次合作将通过公共部门创新、技能培养和创业，帮助智利推进自身的 AI 发展目标。</p>
+<blockquote>“人工智能将成为改善人们生活的最重要途径之一——从加速科学发现，到帮助人们创造出我们尚未想象到的事物。我很高兴能与智利合作，帮助公职人员使用这些工具，改善公共服务，并支持创业者创办新公司。我期待看到智利的初创企业解决世界上一些最重要的问题，创造出惠及各地民众的成果。”</blockquote>
+<p>—Sam Altman，OpenAI 首席执行官</p>
+<blockquote>“我们对这次合作充满期待，也为它将给智利各地的科学发现、创业和创新带来的非凡机遇感到振奋。这次合作旨在助力智利人民不断突破可能性的边界，创造新技术，开发改善人们生活的解决方案。”</blockquote>
+<p>—Ximena Lincolao，智利科学、技术、知识与创新部长</p>
+<h2>让 AI 在智利发挥实效</h2>
+<p>此次合作将探索在该部的行政流程中引入技术，包括由 OpenAI 为采用新模型提供潜在支持，并为该部工作人员提供咨询和培训。</p>
+<p>针对公务员，此次合作将探索如何根据其岗位需求，开展实用的 AI 素养培训、技能提升和新技能培训。相关活动可能包括工作坊和培训师培养，内容涵盖有效使用 AI 工具、核查输出、保护敏感信息，以及保持人工监督。</p>
+<p>为支持智利的 AI 创业与创新生态，合作双方将探索让当地参与者获得相关 OpenAI 计划和技术支持、实践学习机会、技术指导及导师辅导的途径。此次合作还可能为创业者对接公共机构、高校和其他当地合作伙伴，共同开发应用，支持智利的经济发展和公共服务重点工作。</p>
+<p>预计由该部与 OpenAI 代表组成的联合工作组将商定优先事项和初步工作计划，并为各项活动明确负责人、里程碑和成效衡量标准。</p>
+<p>具体活动、参与资格、资源及技术使用安排将另行商定。该谅解备忘录不包含任何投资或采购承诺。各项活动均须落实适当的保障措施，以保护隐私、确保信息安全，并保障负责任的使用。</p>
+<h2>关于 OpenAI 国家合作计划</h2>
+<p>OpenAI 智利计划是 OpenAI 国家合作计划的一部分。作为我们的全球倡议，OpenAI 国家合作计划旨在帮助各国利用 AI 推进国家重点工作、增强经济实力并创造更多机会。我们与各国政府及当地合作伙伴携手，将 AI 的潜力转化为惠及民众的实际成果。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>[OpenAI] Astra for Law 在法律情报方面处于领先地位</title>
       <link>https://openai.com/index/astra-law-6-2</link>
       <guid isPermaLink="true">https://openai.com/index/astra-law-6-2</guid>
@@ -4026,36 +4085,6 @@ agentcore.create_gateway_target(
 <p>即日起，所有 ChatGPT Enterprise 客户都可以通过管理控制台中的可信访问计划，申请使用面向法律事务的 Astra。如果你的团队已获得访问权限，请在 ChatGPT 中选择 <strong>GPT‑6.2 Astra Law</strong>。如需通过 API 将面向法律事务的 Astra 集成到自己的工具中，请联系你的客户总监，单独申请审批。</p>
 <p>法律行业正处于转折点。技术正在改变企业的能力边界，世界也日益复杂、彼此紧密相连。在这样的背景下，律师迎来了前所未有的机会，帮助我们理解当下、把握变化。这不仅关乎他们服务的企业，也关乎我们每一个人，因为我们都生活在他们参与制定的规则之下。我们相信，最优秀的律师借助最强大的智能，能够回应这个时代的挑战。</p>
 <p>这仅仅是开始。我们期待看到你们将法律行业带向怎样的未来。</p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] 为智利推出 OpenAI</title>
-      <link>https://openai.com/index/introducing-openai-for-chile</link>
-      <guid isPermaLink="true">https://openai.com/index/introducing-openai-for-chile</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：Introducing OpenAI for Chile</description>
-      <content:encoded><![CDATA[<p>2026年11月17日</p>
-<p>全球事务</p>
-<h1>推出 OpenAI 智利计划</h1>
-<p>今天，我们推出 OpenAI 智利计划。这项与智利政府开展的合作由智利科学、技术、知识与创新部牵头，旨在支持公共行政部门负责任地采用 AI，提升公务员技能，并帮助当地初创企业开发实用的 AI 应用。</p>
-<p>此次合作以智利的<a href="https://minciencia.gob.cl/areas/inteligencia-artificial/Inteligencia-Artificial/">国家 AI 政策与行动计划</a>为基础，该政策与计划支持人才培养、研究以及负责任地采用 AI。</p>
-<p>这份谅解备忘录在 Semafor 于加利福尼亚州举办的“硅谷与世界”会议期间签署，由部长 Ximena Lincolao 代表智利牵头达成协议。</p>
-<p>此次合作得到美国商务部<a href="https://siexports.gov/">美国 SI 出口计划</a>的支持，OpenAI 是该计划的核心合作伙伴之一。此次合作将通过公共部门创新、技能培养和创业，帮助智利推进自身的 AI 发展目标。</p>
-<blockquote>“人工智能将成为改善人们生活的最重要途径之一——从加速科学发现，到帮助人们创造出我们尚未想象到的事物。我很高兴能与智利合作，帮助公职人员使用这些工具，改善公共服务，并支持创业者创办新公司。我期待看到智利的初创企业解决世界上一些最重要的问题，创造出惠及各地民众的成果。”</blockquote>
-<p>—Sam Altman，OpenAI 首席执行官</p>
-<blockquote>“我们对这次合作充满期待，也为它将给智利各地的科学发现、创业和创新带来的非凡机遇感到振奋。这次合作旨在助力智利人民不断突破可能性的边界，创造新技术，开发改善人们生活的解决方案。”</blockquote>
-<p>—Ximena Lincolao，智利科学、技术、知识与创新部长</p>
-<h2>让 AI 在智利发挥实效</h2>
-<p>此次合作将探索在该部的行政流程中引入技术，包括由 OpenAI 为采用新模型提供潜在支持，并为该部工作人员提供咨询和培训。</p>
-<p>针对公务员，此次合作将探索如何根据其岗位需求，开展实用的 AI 素养培训、技能提升和新技能培训。相关活动可能包括工作坊和培训师培养，内容涵盖有效使用 AI 工具、核查输出、保护敏感信息，以及保持人工监督。</p>
-<p>为支持智利的 AI 创业与创新生态，合作双方将探索让当地参与者获得相关 OpenAI 计划和技术支持、实践学习机会、技术指导及导师辅导的途径。此次合作还可能为创业者对接公共机构、高校和其他当地合作伙伴，共同开发应用，支持智利的经济发展和公共服务重点工作。</p>
-<p>预计由该部与 OpenAI 代表组成的联合工作组将商定优先事项和初步工作计划，并为各项活动明确负责人、里程碑和成效衡量标准。</p>
-<p>具体活动、参与资格、资源及技术使用安排将另行商定。该谅解备忘录不包含任何投资或采购承诺。各项活动均须落实适当的保障措施，以保护隐私、确保信息安全，并保障负责任的使用。</p>
-<h2>关于 OpenAI 国家合作计划</h2>
-<p>OpenAI 智利计划是 OpenAI 国家合作计划的一部分。作为我们的全球倡议，OpenAI 国家合作计划旨在帮助各国利用 AI 推进国家重点工作、增强经济实力并创造更多机会。我们与各国政府及当地合作伙伴携手，将 AI 的潜力转化为惠及民众的实际成果。</p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -8238,199 +8267,6 @@ anyone besides the Controller have to review it?</code></pre>
 <p>财务团队的成员需要知道“哪些部门必须撰写差异说明？”借助 Amazon Bedrock Managed Knowledge Base 中的 tabular search，你可以用一个 agentic retrieval 请求回答这个问题，把工作簿、政策和备忘录一起用上。</p>
 <p>在本文中，你了解了 tabular search 如何回答既需要表格数据、又需要文档事实的问题，以及什么时候换另一个工具更合适。你还用示例财务文件构建了一个知识库，并通过 trace 查看代码读取了哪个文件。</p>
 <p>要开始使用，请参阅 Amazon Bedrock 用户指南中的<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-build-managed.html">构建托管知识库</a>和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-agentic-retrieve.html">agentic retrieval</a>，以及 Amazon Bedrock API Reference 中的 <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_AgenticRetrieveStream.html">AgenticRetrieveStream</a>。想了解更多，请阅读 AWS Artificial Intelligence 博客上的<a href="https://aws.amazon.com/blogs/machine-learning/build-enterprise-search-for-agents-with-amazon-bedrock-managed-knowledge-base/">用 Amazon Bedrock Managed Knowledge Base 为 agents 构建企业搜索</a>。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] 在 Amazon Bedrock Guardrails 中编写 Denied Topics 的最佳实践</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/best-practices-for-writing-denied-topics-in-amazon-bedrock-guardrails/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/best-practices-for-writing-denied-topics-in-amazon-bedrock-guardrails/</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：Best practices for writing Denied Topics in Amazon Bedrock Guardrails</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>在 Amazon Bedrock Guardrails 中编写 Denied Topics 的最佳实践</h1>
-<p>借助 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html">Amazon Bedrock Guardrails</a> 里的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-denied-topics.html">Denied Topics</a>，你可以用自然语言描述一个内容类别来把它挡住，guardrail 会按语义而不是按关键词，把这段描述应用到每一个请求上。同一套机制也可能匹配得比你以为的更多。一个名为 Finance 的 topic，本意是让助手不碰投资建议，却也会挡住“我的直接存款什么时候到账？”。含义与该 topic 相近的输入都可能被抓住，不只是你原本想拦的那些请求。</p>
-<p>当 Denied Topics 挡得太多或太少时，原因通常是下面四种编写模式之一：</p>
-<ul><li>挡住了合法查询的 topic。围绕某个主题领域（Finance、Legal、Compensation）而不是用户意图来框定 topic，会匹配到语义上靠近该领域的查询。这是很常见的失败模式。</li><li>漏掉了本该抓到的请求的 topic。用关键词列表（“像 invest、portfolio、stock 这样的词……”）搭出来的 definition，会漏掉使用其他词汇的说法，又会命中那些恰好共用了这些词的不相关输入。</li><li>教错东西的 example。同一个意思的五个改写，会让 topic 的边界无人看守；而点名具体国家、产品或公司的 example，会把这些实体拉进 topic 的上下文。</li><li>互相干扰的 topic。定义重叠的 topic 会争抢同一个输入，匹配报告前后不一致，合在一起还会挡住任何单独一个都挡不住的输入。</li></ul>
-<p>本文余下部分是一份避开这些模式的实用指南，给出八条最佳实践，帮你把 topic 描述得足够精确，让 guardrail 挡住你想挡的、放行你不想挡的。</p>
-<h3>场景：AnyCompany Bank 的客户助手</h3>
-<p>为了让后面的实践有个具体落点，我们全文只用同一个例子：一家虚构的银行，我们叫它 AnyCompany Bank。AnyCompany Bank 距离上线它第一个面向客户的 AI 助手还有两周，而它第一版 Denied Topics 策略正在挡错东西。</p>
-<p>应用：AnyCompany Bank 的聊天机器人嵌在 AnyCompany Bank 的移动端和网页应用里，回答关于账户、对账单、转账、银行卡和房贷的问题。遇到账户变更、争议申报以及超出范围的问题，它会转给人工。</p>
-<p>必须拦截清单（来自法务与合规）：</p>
-<ul><li>个性化投资建议（一条监管红线，因为 AnyCompany Bank 没有通过这个渠道注册为投资顾问）。</li><li>涉及与 AnyCompany Bank 产生争议时的法律意见或诉讼指引。</li><li>内幕交易建议（金融建议中很具体的一个切片，有它自己的监管分量）。</li><li>描述如何制造武器（通用安全，不针对某个领域）。</li><li>prompt injection 或 jailbreak 尝试（这是另一种信号，因为这个请求是在试图覆盖助手自身的指令）。</li><li>在 AnyCompany Bank 的输出中重复点名具体的竞品产品。</li></ul>
-<p>必须放行清单（助手存在的意义所在）：</p>
-<ul><li>账户余额与对账单问题。</li><li>转账指引、结清报价、托管问题。</li><li>银行卡管理、欺诈报告（转人工）、补卡。</li><li>房贷服务操作，比如贷款变更、宽限和还款计划。</li><li>通用的金融常识问题（“什么是定期存单？”），以教育而非个性化建议的口吻提出。</li></ul>
-<p>对照这个目标，AnyCompany Bank 的团队最初草拟了四个 topic，它们现在都在挡住合法查询：</p>
-<pre><code>Finance → blocks &quot;When does my direct deposit clear?&quot;
-Legal → blocks &quot;Can you help me modify my mortgage?&quot;
-Fraud → blocks &quot;My card was skimmed at a gas station, what do I do?&quot;
-Competitors → blocks any mention of a rival product, including customer questions comparing options</code></pre>
-<p>这些 topic 每一个命名的都是助手工作所在的某个主题领域，而不是银行需要拒绝的意图。修正这一点，就是本文后面的内容。接下来的八节逐一讲这些实践，其中大多数会以“回到 AnyCompany Bank”小节收尾，展示在这个场景里应用修正后的效果。文章最后还会讲一条无论你把实践做得多好都必须预先考虑的限制：结果并非完全确定。</p>
-<p><strong>注意：</strong>Standard 层级下 Denied Topic 的结构。一个 topic 由三个部分组成：name、definition，以及最多五个 example；guardrail 会把这三者当作一个整体来评估，而不是只看 definition。name 最长 100 个字符。definition 最长 1,000 个字符，实际最顺手的是 100–300 个字符。每个 example 最长 100 个字符，一个 guardrail 最多可以容纳 30 个 topic。</p>
-<h2>最佳实践 1：围绕用户意图来框定 topic，而不是围绕主题领域</h2>
-<p>这条实践定下总体框架。最佳实践 2 到 4 会把它依次应用到 topic 的每个部分：name、definition 和 example。</p>
-<p>topic 挡住合法查询的一个常见原因，是它描述的是主题领域，而不是用户想从这次交流中得到什么。同一领域里的两个查询可以携带不同的意图。“我的直接存款什么时候到账？”和“L5 工程师能挣多少？”都与薪酬有关，但只有第二个是在做薪资比较。按领域框定的 topic 会把这些区别抹平，从而挡住语义上靠近该领域的查询。围绕用户意图框定的 topic，只匹配意图确实存在的查询。</p>
-<p>意图是框定用的镜头。要让它可操作，就用表面上表达该意图的具体动作或内容类型来给 topic 命名，比如一个请求、一项主张，或一段生成内容。意图告诉你该抓什么，动作则给出一个 guardrail 能够评估的具体形状。</p>
-<p>guardrail 会把 topic 的 name 和 definition 一起评估。只要其中一个部分命名的是领域，topic 的匹配就会过于宽泛；当两者命名的都是表达特定意图的动作时，topic 才是精确的。</p>
-<h4>指导原则</h4>
-<ul><li>识别意图。用你自己的话简短说明：用户想从助手这里得到、而你想拒绝的是什么，比如一条个性化推荐、一份法律意见、私人联系方式，或一次带有党派的背书。这是诊断步骤，不会原样出现在 topic 里。</li><li>用表达该意图的动作来给 topic 命名。用一个描述具体动作或行为的短语，而不是宽泛的主题领域。这个短语可以是动作派生的名词（Investment Recommendations、Salary Comparisons）、描述具体行为的名词短语（Colleague Arguments、Passport and Visa Renewal），或动词 -ing 形式（Suing for Damages）。细节见最佳实践 2。</li><li>如果你的 topic 名是一个类别名词（Banking、Compensation、Security、Legal、Finance），那它就是按领域框定的。用表达你真正想拦的意图的动作来重新命名它。</li><li>重写你的 definition，让它以动作开头。像“Asking for X”“Requests for Y”“Statements that describe Z”或“Generating W”这样的开头，都通过具体动作表达意图。避免“Related to X”“Content about Y”“Anything mentioning Z”这类按主题领域开头的写法。</li></ul>
-<p>接下来几条最佳实践会用 AnyCompany Bank 自己的 topic 来应用这个思路，并给出具体例子。最佳实践 2 给它们改名，最佳实践 3 调整它们的 definition 以匹配。</p>
-<h2>最佳实践 2：选择以动作命名的 topic 名</h2>
-<p>topic 名对匹配结果有实质影响，而且往往比预期更大。宽泛的类别名（Finance、Security、Legal）会让 guardrail 把该 topic 与这一类别的词汇关联起来，即便 definition 试图收窄范围也没用。具体的动作名（Investment Recommendations、Hacking Instructions、Suing for Damages）则在读取 definition 之前就帮忙收窄了范围。</p>
-<h4>指导原则</h4>
-<ul><li>优先用具体的动作或行为短语（2–5 个词）。避免单词式的类别标签。</li><li>只要短语描述的是具体动作或行为、而不是宽泛的主题领域，以下形式都可以用：动作名词形式——以活动派生的名词为核心，比如 Investment Recommendations、Hacking Instructions 或 Election Fraud Claims。具体行为名词短语——点名具体行为的短语，比如 Colleague Arguments、Passport and Visa Renewal 或 Underage Self-Statement。动词 -ing 形式——-ing 动词后接宾语，比如 Suing for Damages 或 Requesting Contact Details for Named Individuals。当动作需要一个动词才说得清楚时，这种形式很有用。</li><li>把名字读出声来，问自己：它描述的是用户正在做的事，还是只是用户查询靠近的某个主题领域？如果名字只是命名了一个主题领域，就改名。</li><li>避免名字里带宽泛的机构标签（Government、Company、Insurance），除非动作确实针对该机构。机构标签会带来意外匹配。比如一个名为 Government Documents 的 topic，可能匹配到同时提到某个国家名和某份文件的查询，哪怕那个查询讲的是公司内部政策。</li></ul>
-<h4>回到 AnyCompany Bank</h4>
-<p>AnyCompany Bank 初稿里的一个 topic 名叫 Legal：</p>
-<pre><code>Name: Legal</code></pre>
-<p>这就是“你能帮我改一下房贷吗？”被挡住的原因。房贷是法律文书，所以关于房贷的查询天然就落在 legal 的语义邻域里。在我们还没碰 definition 之前，改名就已经解决了一半问题：</p>
-<pre><code>Name: Litigation and Non-Servicing Legal Advice</code></pre>
-<p>新名字用了动词派生的名词（litigation），点名了第二种具体行为（non-servicing legal advice），并通过对比清楚地表明：变更、宽限、托管这类 servicing 问题不在该 topic 之内。名字本身现在承担了一部分原本只由 definition 承担的工作。</p>
-<p>AnyCompany Bank 把同样的逻辑套用到 Fraud topic 上，把它改名为 Fraud Investigation Requests。助手仍然应该让客户报告欺诈——这类报告会转人工——但不能自己去调查欺诈指控。</p>
-<p>经过这三次改名，AnyCompany Bank 的 topic 列表变成：</p>
-<pre><code>1. Investment Recommendations (was: Finance)
-2. Litigation and Non-Servicing Legal Advice (was: Legal)
-3. Fraud Investigation Requests (was: Fraud)</code></pre>
-<h2>最佳实践 3：编写把范围限定在动作上的 definition</h2>
-<p>definition 应该描述用户对某个具体对象所做的动作，而不是该动作的一般主题。</p>
-<h4>指导原则</h4>
-<ul><li>以动作或内容类型开头。用点名用户在做什么、在产出什么的短语来开启 definition。常见而有效的开头包括：“Asking for…”“Requesting…”“Requests for…”“Requests to…”“Seeking…”“Recommending…”，适用于 topic 覆盖用户对某个具体动作的请求时。“Statements that…”“Providing…”“Generating…”“Content that includes…”，适用于 topic 覆盖用户产出的内容、披露或生成输出时。“Using X to Y”，适用于 topic 覆盖某种具体技术或方法时。</li><li>避免用“Related to X”“Content about Y”“Anything mentioning Z”这类主题领域短语开头，那是按领域框定而不是按动作框定。</li><li>指明对象。说清楚用户在问什么，用具体条目而不是宽泛类别，例如用“individual stocks, bonds, ETFs, or cryptocurrencies”而不是“financial products”。</li><li>加入有区分度的细节。如果两个 topic 共用词汇（比如都涉及“customer”），就给每个 definition 一个独有的特征，让 guardrail 能区分它们。含义相同的 definition 会让两个 topic 互相干扰。</li><li>让 definition 保持正面。描述在范围内的东西。简短的尾部排除项有助于消歧。关于排除项反而有害的情形，见最佳实践 8。</li><li>长度不是目标。更长的 definition 未必更好，而且更长的 definition 会提高该 topic 对邻近 topic 措辞的敏感度。</li></ul>
-<h4>结构模板</h4>
-<p>我们推荐以下结构： <code>[Action or content-type opener] for [specific objects] by [qualifying constraint or purpose]. Includes [one or two sub-cases].</code></p>
-<h4>回到 AnyCompany Bank</h4>
-<p>AnyCompany Bank 的初稿里有一个名为 Finance 的 topic，definition 也是对应的：</p>
-<pre><code>Name: Finance
-Definition: Anything related to money, banking, or financial products.</code></pre>
-<p>这正是“我在哪里能查到我的结清报价？”被挡住的原因。Payoff 是金融术语，quote 涉及钱，于是这个输入被归入“与金融领域相关”的那一类，尽管客户的真实意图——取一个 servicing 数字——和 AnyCompany Bank 想拒绝的东西毫无关系。</p>
-<p>按照最佳实践 1，团队把 topic 改名为 Investment Recommendations，并相应调整了 definition 的用词，但这时还没把它做成以动作为范围：</p>
-<pre><code>Name: Investment Recommendations
-Definition: Anything related to investing, personal finance decisions, or securities trading.</code></pre>
-<p>尽管名字改好了，它仍然是按领域框定的。通用科普（“解释一下什么是共同基金”）、历史金融新闻（“上个季度利率为什么上涨？”）以及投资组合查看（“给我看看我的持仓”）全都被匹配了。而这些助手都应该回答。</p>
-<p>团队套用了结构模板：动作开头、具体对象、限定条件，以及一两个子情形：</p>
-<pre><code>Name: Investment Recommendations
-Definition: Asking for a personalized recommendation to buy, sell, or hold specific stocks, bonds, mutual funds, ETFs, or cryptocurrencies for the user's own investment returns. Includes asking whether a specific security is a good investment, requesting portfolio allocation percentages, or asking when to enter or exit a specific position.</code></pre>
-<p>模板的每一部分都各有用处。“Asking for a personalized recommendation to…”是动作开头。“Stocks, bonds, mutual funds, ETFs, or cryptocurrencies”是具体对象。“For the user's own investment returns”是限定条件，把科普和第三方讨论排除在外。“Includes…”子句点名了两个子情形：关于某一具体证券的问题，以及关于配置比例的问题。</p>
-<p>AnyCompany Bank 把同一个模板套用到 Litigation and Non-Servicing Legal Advice 和 Fraud Investigation Requests 两个 topic 上：</p>
-<pre><code>Name: Litigation and Non-Servicing Legal Advice
-Definition: Requests for legal counsel, discussions about filing lawsuits, or seeking litigation guidance against AnyCompany Bank or another named party. Includes requests to interpret legal rights, request formal legal opinions, or plan a claim outside of standard loan servicing.
-
-Name: Fraud Investigation Requests
-Definition: Asking the assistant to investigate, adjudicate, or resolve a suspected fraud, unauthorized-transaction, or identity-theft case. Fraud reports for routing to a human agent are not in scope.</code></pre>
-<p>这时团队已经有了三个命名清晰的 topic，definition 也都限定在动作上。</p>
-<h2>最佳实践 4：使用边界 example，而不是同义改写</h2>
-<p>example 会教会 guardrail 你的 topic 边界在哪里。并不是每个 example 都能同样有效地做到这一点。同一个意思的五个改写教不会 guardrail 任何新东西；而五个精心挑选的 example，用少得多的 definition 文字就能描出 topic 的轮廓。分量最重的 example，是那些坐在 topic 边缘附近的——它们离一个看似合理的非匹配足够近，从而向 guardrail 展示这条线该画在哪里。我们称之为边界 example。一个好的边界 example 有三个属性。第一，它在 topic 范围之内。第二，它接近一个看似合理的非匹配，使用的词汇或结构与 topic 不应匹配的输入相似。第三，它在子情形、句式结构和词汇上与你其他的 example 不同。</p>
-<h4>指导原则</h4>
-<ul><li>把五个 example 都用上，因为五个多样的 example 比两个显而易见的效果更好。</li><li>覆盖不同的子情形。如果 topic 覆盖“买”和“卖”两方面的建议，就两类 example 都要有。</li><li>覆盖不同的句式。要有直接问句（What should I buy?）、祈使句（Recommend a stock），以及陈述式叙述（I'm considering putting money into…）。</li><li>包含一个贴近 topic 边界、但仍在范围内的 example，也就是匹配样本里的临界版本。</li><li>example 里不要出现国家名、产品名、竞品名或公司名，除非 topic 本身就是关于那个特定实体的。example 里的具名实体会建立关联，让 topic 匹配到提到同一实体的无关查询。</li></ul>
-<h4>回到 AnyCompany Bank</h4>
-<p>团队为 Investment Recommendations 写的第一版 example 是这样的：</p>
-<pre><code>Examples: Should I buy stocks?
-What stock should I buy?
-Is this a good stock to purchase?
-Which stocks are good buys?
-Recommend some stocks</code></pre>
-<p>这是同一个问题的五种问法。测试期间，助手能稳定挡住“Should I buy stocks?”，却放过了“现在是把我投资组合里的股票换成债券的好时机吗？”，而这正是该 topic 本该抓住的那类问题。这些同义改写都挤在 topic 的某一个点上，其他点则无人看守。</p>
-<p>重写后的版本把 example 分散到不同子情形和句式上：</p>
-<pre><code>Examples: Should I buy 100 shares of a specific stock before earnings?
-Is it a good time to move my portfolio into bonds?
-What percentage should I allocate to cryptocurrency?
-Should I sell my index fund now or hold?
-Recommend three growth stocks for a 5-year horizon</code></pre>
-<p>这五个 example 覆盖五种不同子情形（具体股票、资产类别切换、配置比例、卖出时机、成长股筛选）和五种不同句式，且全在 topic 范围内。相邻的非匹配，比如“解释一下 ETF 是什么”（科普）和“给我看看我的持仓报告”（取数据），与这些 example 差别足够大，guardrail 不应该匹配它们。</p>
-<p>团队对 Litigation and Non-Servicing Legal Advice 和 Fraud Investigation Requests 做了同样处理。原来的 Litigation example 全是“Can I sue?”的变体；重写后的集合覆盖了提起诉讼、正式法律意见、集体诉讼咨询、损害赔偿和权利解释。原来的 Fraud Investigation Requests example 全是“Someone stole my money, what do I do?”的变体；重写后的集合覆盖了未经授权扣款调查、银行卡欺诈追踪、交易撤销、身份盗用判定，以及骗子追踪。每个重写后的集合都在一个 topic 内覆盖了五个不同子情形。</p>
-<p>到这一步，AnyCompany Bank 的三个 topic 已经通过了目前为止写下的所有测试。还有一个问题，只有在助手面对真实流量之后才会暴露出来。</p>
-<h2>最佳实践 5：必要时给 definition 加一个锚定上下文</h2>
-<p>有些概念天生有歧义，因为同一组词在不同语境下既能描述匹配的动作，也能描述不匹配的动作。这时就要加一个显式的锚（anchor）来固定上下文：一个机构场景、一个明确声明的用途，或一个“仅当 X 与 Y 同时成立时才适用”形式的双重条件。</p>
-<h4>指导原则</h4>
-<ul><li>补上动作发生时的物理或机构场景。对于护照类 topic，可以锚定到“at an embassy or consulate”或“through an official government application process”。</li><li>补上一个用途限定词。对于投资建议类 topic，锚定到“for the user's own investment returns”，这样该 topic 就把科普或第三方讨论排除在外。</li><li>单个锚不够时，就用双重条件：“Only applies when the request (1) explicitly mentions creating an advertising campaign AND (2) names personal identification data as the targeting criterion.”</li><li>锚应该是正面表述（“at X”“for Y”），而不是“except…”或“but not…”。正面锚描述的是 topic 是什么。</li><li>也要知道什么时候不该加锚。如果 topic 本身已经很窄（比如专门讲“insider trading”的 topic，因为这个短语本身没有歧义），再加锚只会引入噪声。同样要避免锚定到会出现在很多无关查询里的专有名词（“in India”“at Amazon”），而应锚定到类别（embassies、consulates）。</li><li>检查 topic 自己的名字是否重复了有歧义的那个表面短语。一个无害的、科普式的问法往往会原样复用那个短语。guardrail 会把 topic 名当作独立于 definition 的信号来读取（见最佳实践 2）。一个双重条件的锚，仍然可能输给一个由它正想消歧的那个词搭成的名字。</li></ul>
-<h4>回到 AnyCompany Bank</h4>
-<p>加入内幕交易 topic 之后，歧义问题暴露了出来。合规团队希望把 Insider Trading Advice 作为一个单独的 topic，比通用的 Investment Recommendations 更窄、更严肃。第一版草案：</p>
-<pre><code>Definition: Asking whether to buy or sell a specific security based on inside information.</code></pre>
-<p>它匹配上了预期中的情形：客户想基于私人信息做一笔交易。但它也匹配上了团队没预料到的东西：以问句形式出现的、关于什么是内幕交易的科普查询。“SEC 是怎么定义内幕交易的？”被挡住了，因为它“问到了内幕交易”。</p>
-<p>团队加了一个双重锚：</p>
-<pre><code>Name: Insider Trading Advice
-Definition: Asking whether to buy or sell a specific security based on non-public material information about the issuing company, or seeking a recommendation to trade ahead of a known upcoming public announcement. Applies only when the request (1) names a specific security AND (2) describes a specific piece of non-public information the user claims to possess.</code></pre>
-<p>两个条件本应把科普查询排除在外：它们不满足条件 2，因为其中并没有描述用户本人掌握的非公开信息。可团队拿“SEC 是怎么定义内幕交易的？”对着这个 definition 测试时，它仍然时不时被挡住。锚不是问题所在，topic 的名字才是：它原样重复了查询里用的短语。guardrail 会把名字当作独立于 definition 的信号来权衡，这跟最佳实践 2 在其他地方描述的效果一样。一个双重条件的锚可以设定正确的条件，却仍然输给一个由它正想消歧的术语搭成的名字。</p>
-<p>团队保留了锚，改而给 topic 改名：</p>
-<pre><code>Name: Trading on Non-Public Information</code></pre>
-<p>改名之后，科普查询能稳定放行，而真正的 example——那些点名了具体证券和具体非公开信息的——仍然被挡住。</p>
-<p>这个 definition 比最佳实践 3 里 100–300 字符的目标更长，这是有意为之。这里的歧义值得多写这些文字。这个 topic 本身就很微妙，所以 definition 必须承担更多工作。</p>
-<h2>最佳实践 6：管理 topic 之间的重叠与 topic 数量</h2>
-<p>guardrail 是把所有 topic 放在一起评估的，而不是一个一个来。当两个 topic 含义相近时，它们会互相干扰：你很难预测 guardrail 会报告哪个 topic 为匹配项；两者的组合效果还可能挡住任何一个单独都不会挡的合法输入。topic 之间的重叠，常常是一个写得不错的 topic 却给出错误结果的原因。问题不在这个 topic 身上，而在它旁边的那个 topic。</p>
-<h4>指导原则</h4>
-<ul><li>上线前把整个 topic 集合过一遍，检查重叠。两个 definition 相似的 topic 会造成干扰，即便单独看谁都没毛病。每加一个新 topic，都要问：它的 definition 是否与已有 topic 共用词汇或对象？</li><li>要意识到 topic 数量会影响干扰。单个 guardrail 里的 topic 越多，topic 之间互相干扰的概率也越大，尤其是当几个 topic 共用词汇或覆盖相近领域时。如果你观察到 topic 之间互相干扰、而 definition 本身看起来没问题，可以考虑减少 topic 之间的重叠，或者把 topic 分散到多个 guardrail 里。</li><li>单个 guardrail 内部优先保持语义多样性。如果你有几个主题相近的 topic（比如三个与金融沾边的），考虑一下它们该留在同一个 guardrail 里，还是该分开。</li><li>两个 topic 重叠时，优先合并而不是拆分。把 definition 共用对象和动作的两个 topic 合并起来，比试图在它们之间画一条细窄的边界更稳妥。</li><li>出现新用例时，优先扩展现有 topic 的 example，而不是新加一个近乎重复的 topic。新增 topic 会改变 guardrail 对整个 topic 集合的解释方式，而扩展某个 topic 的 example 不会。</li><li>把语义相近的 topic 在列表里隔开。当两个措辞相似的 topic 挨在一起时，guardrail 更容易把输入归给它最近看到的那个。把列表交错排列，用不相关的 topic 把相关的 topic 分隔开。</li></ul>
-<h4>回到 AnyCompany Bank</h4>
-<p>假设在流程后期，AnyCompany Bank 的合规团队提议在已经定义好的 Investment Recommendations 旁边再加一个更宽泛的 Financial Advice topic。直觉是：更宽泛的 topic 能抓住那个具体 topic 漏掉的请求。两个 topic 都各自起草了 definition：</p>
-<pre><code>Topic A:
-Name: Financial Advice
-Definition: Requests for advice about money, investing, or personal finance decisions.
-
-Topic B:
-Name: Investment Recommendations
-Definition: Asking for a personalized recommendation to buy, sell, or hold specific securities...</code></pre>
-<p>重叠在团队测试“我该多往 401(k) 里放点钱吗？”时显形了。取决于调用方在 API 请求里如何排列这些 topic，报告匹配的可能是 Topic A、Topic B，或两者都有；在某些排列顺序下，guardrail 干脆把输入挡住了。</p>
-<p>AnyCompany Bank 做了合并。Financial Advice 被移除，由 Investment Recommendations 独自承担那个具体动作。合并之后，依赖排序的波动消失了：同一个输入无论 topic 在 API 调用里怎么排位，都得到同样的判定——这正是消除重叠带来的主要收益。</p>
-<p>不过，401(k) 那个查询本身并没有仅靠合并就完全解决。“Should I put more into my 401(k)?”与一条真正的交易建议共用“Should I put more…”这个句式框架，所以 Investment Recommendations 在表面上仍然会匹配它。这是合并自身无法修掉的残留边界情形。它恰恰就是最佳实践 8 所警告的那类结构相似的匹配：尾部排除项无法可靠地推翻它。</p>
-<p>团队还重排了剩下的 topic。原来的顺序是：</p>
-<pre><code>1. Investment Recommendations
-2. Trading on Non-Public Information
-3. Litigation and Non-Servicing Legal Advice
-4. Fraud Investigation Requests</code></pre>
-<p>Topic 1 和 Topic 2 都在谈证券、覆盖相关的金融动作，挨在一起会让临界输入的归属变得含糊。团队把它们交错排列：</p>
-<pre><code>1. Investment Recommendations
-2. Litigation and Non-Servicing Legal Advice
-3. Trading on Non-Public Information
-4. Fraud Investigation Requests</code></pre>
-<p>现在 Litigation and Non-Servicing Legal Advice 夹在两个与证券沾边的 topic 之间。像“我该根据传闻交易我的 Example Corp 股票吗？”这样的临界问题，如今更稳定地归属于 Trading on Non-Public Information，而不再在 Trading on Non-Public Information 和 Investment Recommendations 之间来回跳。</p>
-<h2>最佳实践 7：为任务选择正确的策略</h2>
-<p>当你要执行的规则是业务特有的、并且能写成一段简短的内容描述时，Denied Topics 就是合适的工具。想想监管红线、政策承诺、法律风险或范围边界，而不是通用安全类别或一份固定的词表。Guardrails 提供了若干策略，它们目标相同——挡住特定内容——但各自针对不同类型的信号设计。用 Denied Topics 去处理别的策略原生就能处理的类别，往往挡得太多或太少、让配置变复杂，效果也更差。为一个 Content Filter 已经覆盖的类别精心写一个 topic，通常不如直接用该类别对应的 Content Filter。</p>
-<p>注意，同一个 guardrail 里启用多个策略会产生额外费用，因为每个启用的策略都会在每次请求时被评估。当你把 Denied Topics 与 Content Filter 或 Prompt Attack 组合使用时，要把合并后的成本算进去。</p>
-<h4>各策略的适用场景</h4>
-<table><thead><tr><th><strong>你想抓的是什么</strong></th><th><strong>正确的策略</strong></th><th><strong>常见错误</strong></th></tr></thead><tbody><tr><td>宽泛的安全类别（仇恨、侮辱、暴力、色情、不当行为）</td><td>Content Filter</td><td>建一个名为 Hate Speech 或 Violence 的 Denied Topics topic</td></tr><tr><td>prompt injection、jailbreak 尝试</td><td>Prompt Attack</td><td>建一个名为 Jailbreak 或 Instruction Override 的 Denied Topics topic</td></tr><tr><td>需要稳定挡住的具体词、短语或产品名</td><td>Word Filter</td><td>建一个名为 Blocked Terms 或 Competitor Names 的 Denied Topics topic</td></tr><tr><td>个人身份标识（姓名、电话号码、SSN、信用卡）</td><td>Sensitive Information filter</td><td>建一个名为 PII Detection 的 Denied Topics topic</td></tr><tr><td>业务或政策特有的自定义内容类别</td><td>Denied Topics</td><td>（这正是正确用法）</td></tr><tr><td>业务或政策特有、同时需要 Content Filter 式覆盖的自定义内容类别</td><td>把 Denied Topics 与 Content Filter 组合使用</td><td>试图只靠 Denied Topics 复现 Content Filter 的功能</td></tr></tbody></table>
-<h4>回到 AnyCompany Bank</h4>
-<p>回头看 AnyCompany Bank 的必须拦截清单（本文开头场景里那份），六项中有三项其实根本不该用 Denied Topics。它们属于 Guardrails 原生就提供的策略。</p>
-<ul><li>“描述如何制造武器”是通用安全类别，不是银行特有的策略。它移到 Content Filter → VIOLENCE，强度设为 HIGH。</li><li>“重复点名具体竞品产品”是精确字符串拦截，不是语义匹配。它移到 Word Filter，把竞品名作为字面条目写入。（AnyCompany Bank 的初稿 topic 列表里确实为此设了一个叫 Competitors 的 topic。这个 topic 被删除了，因为 Denied Topics 评估的是含义，它会匹配到对竞品名的普通提及，却漏掉换过说法的表述。）</li><li>“prompt injection 或 jailbreak 尝试”完全是另一种信号。用户是在试图覆盖助手自身的指令，而不是在问某个领域的东西。它移到 Prompt Attack。</li></ul>
-<p>这次清理之后，AnyCompany Bank 的 guardrail 配置由多个策略组合而成：</p>
-<pre><code>Content Filter:
-HATE strength: HIGH
-INSULTS strength: HIGH
-SEXUAL strength: HIGH
-VIOLENCE strength: HIGH
-MISCONDUCT strength: HIGH
-
-Prompt Attack: enabled
-
-Word Filter:
-Custom words: [list of competitor product names]
-
-Denied Topics:
-1. Investment Recommendations
-2. Litigation and Non-Servicing Legal Advice
-3. Trading on Non-Public Information
-4. Fraud Investigation Requests</code></pre>
-<p>Denied Topics 只承担另外四个策略都表达不了的、银行特有的规则。</p>
-<h2>最佳实践 8：避开这些反模式</h2>
-<p>下面这些模式会让 topic 挡住错误的输入，即便 definition 的其余部分写得很好。要避开它们。其中大多数是前面最佳实践里已给过的指导的具体情形，所以下面每一条都会指回完整推理所在的位置。</p>
-<ul><li>把 definition 写成对 guardrail 的指令（“Block all content related to…”），而不是对 topic 的描述。见最佳实践 3。</li><li>主要用排除项（“All content except…”）而不是用“它是什么”来框定 definition。见最佳实践 3。</li><li>罗列触发词（“Questions containing words like…”），而不是描述概念。见最佳实践 1 和最佳实践 3。</li><li>用 Denied Topics 去挡某个具体的词、短语或实体类型，比如竞品名或人名。应改用 Word Filter 或 Sensitive Information filter。见最佳实践 7。</li><li>在 example 里点名国家、产品、竞品或公司，除非 topic 本身就是关于那个特定实体的。见最佳实践 4。</li><li>写的 example 只是对 definition 的同义改写，而没有标出它的边界。见最佳实践 4。</li><li>写一个含糊的 definition，指望 example 来承载含义。见最佳实践 3 和最佳实践 4。</li></ul>
-<h4>尾部排除项：一个提醒和一份通用指南</h4>
-<p>简短的尾部排除项不是万能的误拒解药。它能可靠地排除那些与 topic 类别上完全不同的查询，比如意图不同、提问者不同，或内容类型不同。但当一条无害查询的措辞几乎与 definition 的正面表述一模一样、只是对象不同时，它就不太可靠了。这种情况下，排除项是在与跟自己极为相似的措辞竞争，而匹配往往获胜。</p>
-<p>对于这种结构相似的情形，优先改用下面三种替代方案之一：</p>
-<ul><li>一个双重条件的锚，把容易混淆的情形直接写进 definition（见最佳实践 5）。</li><li>一次改名，把区分特征提升到 topic 名本身，让这道门在读 definition 之前就看得见（见最佳实践 2）。</li><li>一个上游的意图路由步骤，在 Guardrails 看到之前把有歧义的情形交给专门的流程。</li></ul>
-<p>其他所有情形下，尾部排除项仍然是正确的第一步。只有当测试表明排除项正输给一个几乎一模一样的匹配时，才去动用这三种方案之一。</p>
-<h2>限制：结果并非完全确定</h2>
-<p>即便一个 guardrail 遵循了本文的每一条实践，它也不会对每一种可能的输入都给出完全确定的结果。Denied Topics 是用语言模型来读含义的，而语言模型评估本身带有一些固有波动。有两种波动形式需要你提前规划。</p>
-<p>重复完全相同的请求时的波动。把同一个输入连发两次给同一套 guardrail 配置，少数情况下会得到不同结果。同样的字符进去，同一份 topic 列表生效，一切都没变，可一次调用挡住了、下一次却放行。对大多数输入、以及遵循了前面指导的 topic 来说，这不会发生，结果在重复调用间是稳定的。例外是临界输入——它们的含义贴近某个 topic 的语义边缘。这些才是重复时容易翻转的。一个 topic 定义得越精确（限定到动作、具体对象、清晰锚点、边界 example），落到那个临界区间里的输入就越少。</p>
-<p>topic 列表变化时的波动。guardrail 在每次请求时都会把全部 topic 连同输入一起评估。topic 列表的改动，比如新增一个 topic、删除一个、或把同样的 topic 重新排序，都可能改变此前测试过的输入的结果。在一个 topic 列表下被挡住的输入，换一个列表可能就放行了。当两个 topic 含义相同、或某个 topic 定义较宽泛时，这种效应更明显；当列表里每个 topic 都有具体、限定到动作的 definition 和清晰的边界 example 时，它就更少见。应用本文这些实践，能显著减少这两种波动。</p>
-<h4>如何提前规划</h4>
-<ul><li>不要把单次评估当作正确性的证明。对重要的输入，多测几次，并且把它作为一个小规模、有代表性的评估集的一部分来测，而不是孤立地测。</li><li>维护一个包含临界情形的评估集。这些输入在你改动任何东西时最可能发生变化。里面要有清晰匹配、清晰不匹配和接近边界三类样本混合。</li><li>改动 topic 集合后重新测试。新增 topic、改名、调整 definition 或重排列表，都可能改变原本表现符合预期的输入的结果。</li><li>对正确性至关重要的输入，不要只依赖 Denied Topics。把它与其他策略（Content Filter、Prompt Attack、Sensitive Information filter）组合起来，避免让任何单一策略成为高风险决策的唯一防线。</li><li>把产品设计成误拦可恢复的。当 topic 涉及高风险时，把被挡的输入转给人工；给用户一个重新表述的途径；并为拦截记录 reason code，以便随时间审计和改进 topic 集合。</li></ul>
-<p><strong>注意：</strong>本文里每一处“通过/不通过”的结论，都针对 Amazon Bedrock Guardrails（Standard 层级）做过端到端测试，每个查询都重复多次以确认结果稳定。</p>
-<h2>关键要点</h2>
-<p>回顾一下，本文的这些实践归结为八点：</p>
-<ul><li>每个 topic 都围绕用户意图来框定，并把意图表达为具体动作。先诊断用户想得到什么，再用表达该意图的动作给 topic 命名，而不是用查询靠近的主题领域。用“Investment Recommendations”，而不是“Finance”。</li><li>写 definition 时描述 topic 是什么。用动作或内容类型开头，点名具体对象，加一个限定条件，并包含一两个子情形。</li><li>最多用五个边界 example。覆盖不同子情形和句式。不要复述 definition，避免国家名、产品名和竞品名。</li><li>用上下文或用途来锚定有歧义的 topic。用机构场景（“at an embassy”）或用途限定词（“for the user's own investment returns”）。单个锚不够时就用双重条件。</li><li>管理重叠和 topic 数量。合并共用词汇的 topic，把语义相近的 topic 在列表里隔开，并在改动后重新测试。</li><li>为任务选择正确的策略。Denied Topics 用于自定义的、业务特有的 topic；Content Filter、Word Filter、Sensitive Information 和 Prompt Attack 各自覆盖它们被设计来处理的内容类别。</li><li>避开那七种反模式。用指令代替描述、只用否定式框定、关键词列表、实体捕获、example 里的具名实体、只有同义改写的 example，以及占位式的 definition，都会产出挡住错误输入的 topic。</li><li>为“结果并非完全确定”这件事做好规划。维护一个临界评估集，每次改动后都重新测试，并把产品设计成误拦可恢复的。</li></ul>
-<h2>结语</h2>
-<p>Denied Topics 是一个强大的策略。有了它，你可以用一段简短的自然语言 definition 描述一个量身定制的内容类别，不必训练分类器，也不必手工编写正则表达式。这份能力的前提是：按 guardrail 读取的方式来描述类别——把它看成用户的意图，表达为对具体对象的具体动作，而不是一个主题领域。框定对了，本文其余的实践（命名、definition、example、锚、重叠管理、策略选择）自然就位。</p>
-<p>要在你自己的应用里用上这些：</p>
-<ul><li>审计现有 topic。对每个 topic 问一句：这个名字描述的是动作还是主题领域？把描述主题领域的改名。</li><li>按模板重写每个 definition：<code>[Action or content-type opener] for [specific objects] by [qualifying constraint or purpose]. Includes [one or two sub-cases].</code></li><li>把每一个不该由 topic 处理的信号移到正确的策略。通用安全交给 Content Filter，具体字符串交给 Word Filter，身份标识交给 Sensitive Information filter，jailbreak 尝试交给 Prompt Attack。</li><li>建一个小规模评估集，既包含明显的匹配，也包含从真实流量中取出的接近边界的非匹配。guardrail 每次改动后都重新测试。</li></ul>
-<p>要开始使用，请访问 <a href="https://console.aws.amazon.com/bedrock/home#/guardrails">Amazon Bedrock Guardrails 控制台</a>和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html">Amazon Bedrock Guardrails 文档</a>，查看完整的策略参考与 API 细节，包括 <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_CreateGuardrail.html">CreateGuardrail</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_ApplyGuardrail.html">ApplyGuardrail</a>。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
   </channel>
