@@ -153,8 +153,7 @@ base_url = &quot;https://vpce-EXAMPLE-VPCEID.bedrock-runtime.us-west-2.vpce.amaz
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/enable-ai-agents-to-pay-for-aws-marketplace-x402-products-with-amazon-bedrock-agentcore-payments/</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <description>完整标题：让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款 | 原文标题：Enable AI agents to pay for AWS Marketplace x402 products with Amazon Bedrock AgentCore payments</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款</h1>
+      <content:encoded><![CDATA[<h1>让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款</h1>
 <p>Amazon Bedrock AgentCore payments 在 2026 年 8 月<a href="https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-payments-is-now-generally-available-enabling-agents-to-transact-safely-and-autonomously-at-scale/">正式可用</a>时，agent 已经能够通过 x402、MPP 这类开放协议，自主为付费 API、MCP server 和网页内容付款，既有支付限额，也有完整的可观测性。今天我们把这层自主能力延伸到 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/payments-process-payment.html#payments-process-payment-aws-billing">AWS Marketplace</a>：agent 可以自己发现并购买支持 x402 的软件、API、数据和内容，以美元记在 agent 开发者的 AWS 账单上，不再需要稳定币钱包或 API key。</p>
 <p>图 1：AgentCore payments 概览，其中展示了用于在 AWS Marketplace 上购买的新 AWS Billing 集成</p>
 <p>开发者还可以通过 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-aws-marketplace.html">AgentCore Gateway 中的 AWS Marketplace connector</a> 配置并自动化发现流程。既有 guardrails 继续生效，开发者可以用 AgentCore policy 设定支出上限和已批准的卖家，支付会话上限由 AgentCore payments 强制执行，agent 无法超支。交易可在 <a href="https://aws.amazon.com/cloudtrail/">AWS CloudTrail</a> 和 <a href="https://aws.amazon.com/aws-cost-management/aws-cost-explorer/">AWS Cost Explorer</a> 中审计。由于 agent 的购买在买卖双方都走 AWS 账户，agentic 采购满足企业对安全性和可审计性的要求。</p>
@@ -212,8 +211,7 @@ Payments this run: 1, total $0.01</code></pre>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-harness-adds-strands-harness-defaults-built-in-tools-and-lifecycle-hooks/</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <description>完整标题：Amazon Bedrock AgentCore harness 新增 Strands harness 默认值、内置工具与生命周期钩子 | 原文标题：Amazon Bedrock AgentCore harness adds Strands harness defaults, built-in tools, and lifecycle hooks</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Amazon Bedrock AgentCore harness 新增 Strands harness 默认值、内置工具与生命周期钩子</h1>
+      <content:encoded><![CDATA[<h1>Amazon Bedrock AgentCore harness 新增 Strands harness 默认值、内置工具与生命周期钩子</h1>
 <p>构建 AI agent 时，选模型只是第一步。agent 还需要工具、完成任务的指令、在长会话里管理上下文增长的手段，以及在执行任何有后果的操作（比如发放退款）之前的一道护栏。</p>
 <p>我们正在升级 Amazon Bedrock AgentCore harness，让它改用 Strands harness——这是我们今年早些时候发布的开源 agent harness，采用 Apache 2.0 许可证。AgentCore harness 还引入了生命周期钩子，让你可以在 agent 循环的指定节点运行自己的确定性检查与通知。</p>
 <p>经过这次升级，依赖托管默认值的 agent 会得到一个推荐模型、一份面向任务的系统 prompt、自动 prompt 缓存（初期面向 Amazon Bedrock 上的 Anthropic 模型）以及主动上下文管理。它们还会获得额外的内置工具，覆盖规划、Web 检索、文件系统访问、上下文卸载和任务委派。这让 agent 在长任务中能力更强，能跟踪子任务、减少上下文窗口占用、把工作委派出去。借助钩子，你可以在特定的生命周期检查点运行确定性代码，把非确定性的 AI 行为变成可预测、安全、可治理的工作流。</p>
@@ -527,8 +525,7 @@ agentcore harness invoke --region us-west-2 \
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-airbnb-uses-cost-per-task-to-operate-coding-agents-on-amazon-bedrock/</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How Airbnb uses cost per task to operate coding agents on Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Airbnb 如何用每任务成本在 Amazon Bedrock 上运营编码 agent</h1>
+      <content:encoded><![CDATA[<h1>Airbnb 如何用每任务成本在 Amazon Bedrock 上运营编码 agent</h1>
 <p>Amazon Bedrock 通过统一 API 提供来自多个提供商的基础模型，模型基础设施由 AWS 管理。它与 AWS 的访问控制和监控体系集成，prompt、代码和模型响应都在 AWS 内部处理。</p>
 <p>随着编码 agent 进入生产环境，模型与用量的变化会同时影响延迟、容量和成本。CloudWatch 中的 Amazon Bedrock 运行时指标能帮团队排查延迟上升、限流和 token 消耗变化。评估（evals）则在一组固定的代表性任务上考察 agent 的工作质量，补上这些运营指标看不到的部分。</p>
 <p>本文将介绍 Airbnb 如何为编码 agent 评估模型，以及如何监控它们在 Amazon Bedrock 上的使用情况。我们会说明每任务成本如何指导模型选择，生产数据如何在使用情况变化时帮助我们重新审视这些选择，以及用于排查延迟、限流和支出的运行时信号。</p>

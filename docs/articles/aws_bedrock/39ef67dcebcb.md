@@ -9,10 +9,8 @@ captured: 2026-11-21
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: def1cc56bc8e
+body_sha: 4ed67e10fc55
 ---
-
-## [人工智能](https://aws.amazon.com/blogs/machine-learning/)
 
 # 让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款
 
