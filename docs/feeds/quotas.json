@@ -474,7 +474,7 @@
       "anchor": "10-商汤-日日新-sensenova",
       "signup": "",
       "tiers": [
-        "recurring"
+        "limited"
       ],
       "in_guide": true,
       "free_quota": "**Token Plan 公测期免费（¥0/月，限时放量）**：通用积分池滚动 **5 小时 120,000 积分 + 每周 1,200,000 积分**；Flash-Lite 专属池 5 小时 60,000 + 每周 600,000（官方文档 2026-10-27 调整原文）；无独立注册赠金",
@@ -800,7 +800,7 @@
       "anchor": "18-复旦-moss-mosi",
       "signup": "",
       "tiers": [
-        "onetime"
+        "limited"
       ],
       "in_guide": true,
       "free_quota": "官方公开文档未见账户级注册赠金说明；模型限免见「免费模型与额度」",
@@ -1770,7 +1770,7 @@
       "anchor": "40-fireworks-ai",
       "signup": "email",
       "tiers": [
-        "onetime"
+        "limited"
       ],
       "in_guide": true,
       "free_quota": "官方已下线新号 $1 免费额度表述，全面转向预付费充值（需绑定支付方式购买点数）；当前仅存限时免费项目：Muse Glimmer 30B SFT 微调截至 11/30 完全免费且免绑定信用卡",
@@ -1974,26 +1974,27 @@
       "anchor": "45-jina-ai-reader--embeddings--reranker",
       "signup": "email",
       "tiers": [
-        "permanent"
+        "permanent",
+        "onetime"
       ],
       "in_guide": true,
-      "free_quota": "每个新 API Key 含 **10M tokens 免费额度**（官方产品页），GitHub 账号登录获取、免信用卡；免费速率限制长期有效",
-      "validity": "免费速率限制长期有效",
+      "free_quota": "新用户 API Key 含一次性 **10M tokens 免费额度**（官方定价页），免费赠额限非商用；额度用尽后可购买 token 包",
+      "validity": "注册赠额用完即止；Reader 网页转 Markdown 另有免 Key 用量（20 RPM）",
       "free_models": [
         "**Reader API**（r.jina.ai 网页转 Markdown）—— 免 key **20 RPM**、免费 key **500 RPM**",
-        "`jina-embeddings-v5`（v4 免费但限非商用）、`jina-reranker-v3.5` —— 免费层 **100 RPM / 100K TPM**，共享新 Key **10M tokens** 免费额度"
+        "`jina-embeddings-v5`、`jina-reranker-v3.5` —— 共享新用户 Key 的一次性 **10M tokens** 免费额度，限非商用"
       ],
       "tier_caveats": [
-        "Embeddings / Reranker 免费层 100 RPM / 100K TPM，共享每 Key **10M tokens** 总额度；Reader 免 key 仅 20 RPM、免费 key 500 RPM",
-        "部分模型（如 v4 embeddings）免费层**仅限非商用**；超限按量计费"
+        "Embeddings / Reranker 使用新用户一次性赠额；各端点请求和 token 速率上限见官方文档",
+        "免费赠额仅限非商用；用尽后可购买 token 包。Reader 可免 Key 使用，限 20 RPM"
       ],
       "preconditions": "GitHub 账号登录获取 API Key，免绑定信用卡",
       "promotions": "Reader 加 r.jina.ai 前缀即可提取任意网页清洁文本/Markdown。",
       "openai_compat": null,
       "links": [
         [
-          "官方主页",
-          "https://jina.ai/"
+          "API 定价",
+          "https://jina.ai/api-dashboard/pricing/"
         ],
         [
           "Reader",
@@ -2100,7 +2101,8 @@
       "anchor": "48-poolside",
       "signup": "email",
       "tiers": [
-        "permanent"
+        "limited",
+        "selfhost"
       ],
       "in_guide": true,
       "free_quota": "已从申请制转为**开放注册**，官方标注 **“Free to use for a limited time”**（限时免费，截止时间未公布，以官方后续公告为准）",
@@ -3090,12 +3092,11 @@
         "onetime"
       ],
       "in_guide": true,
-      "free_quota": "**免费层 + 试用期每日赠送**：Free 方案长期可用**基础模型**（受每日与每月消息条数限制，含有限补全/NES 与 BYOK）；新用户 **14 天 Pro 试用赠 300 Credits**；**自 2026-11-19 起，每日领取 100 Credits 仅限处于 Pro 试用期及个人付费订阅用户**（Free 用户无法再领取；每天 10:00 开窗需手动领取，漏领作废）；每份领取的 Credits 自领取起 30 天内有效，未过期可结转；Credits 用尽自动降级基础模型，不断供",
+      "free_quota": "符合资格的新用户可领取一次 **14 天 Pro 试用，含 300 Credits**。自 2026-11-19 起，**每日 100 Credits 活动仅向 Pro 试用和个人付费用户开放**，每天 10:00 开窗，需手动领取，每份奖励自领取起 30 天内有效。",
       "validity": "Pro 试用期 14 天（赠 300 Credits）；试用期内领取的每日 100 Credits 自领取日 30 天内有效（未过期结转后续天，试用到期后已领取的仍可继续使用至 30 天期满）；订阅方案的 Credits 仅当前订阅周期有效",
       "free_models": [
-        "基础模型 —— Free 方案长期可用，受每日及每月消息条数限制（含有限补全/NES 与 BYOK）",
-        "高级（premium）模型 —— 需消耗 Credits：新用户 14 天 Pro 试用赠 300 Credits，试用期内每日可手动领取 100 Credits（2026-11-19 起 Free 用户不可领）",
-        "限时免费活动 —— `Qwen3.8-Flash` 限免已延长（结束时间待公布，调用不扣 Credits）、SOTA 模型限时免费体验（按轮领取、未用过轮作废）、「经济(Efficient)」档位对付费用户限免（官方 Events 页）"
+        "基础模型 —— Free 档受每日及每月消息条数限制，含有限补全与 NES，也支持 BYOK",
+        "高级（premium）模型 —— 需消耗 Credits；符合资格的新用户可试用 Pro 14 天，含 300 Credits"
       ],
       "tier_caveats": [
         "2026-11-19 起 Free 免费用户无法再领取每日 100 Credits，该福利仅限 Pro 试用期与个人付费订阅（Lite/Pro/Pro+/Ultra）用户",
@@ -3104,7 +3105,7 @@
         "Pro/Pro+/Ultra 的月度 Credits 仅订阅周期内有效，降级或取消后未使用的额度作废"
       ],
       "preconditions": "注册 Qoder 账号（GitHub / Google 等 OAuth）；14 天 Pro 试用资格需审核（桌面端/IDE/CLI 等首次登录自动发放，移动端需在首登弹窗领取）",
-      "promotions": "九月 Offer（events/bogo）：首次购买个人版**首月 Credits 翻倍**，续费再送 1,000 bonus Credits；premium 模型低峰折扣价（events/offpeakrate）；活动汇总见 docs.qoder.com Events 页，随上下线变动",
+      "promotions": "每日 100 Credits 领取活动面向 Pro 试用和个人付费用户，截止时间待官方公布。",
       "openai_compat": null,
       "links": [
         [

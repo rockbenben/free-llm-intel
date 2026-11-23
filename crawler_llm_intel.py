@@ -3770,7 +3770,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
         """按「门槛 + 有效期」的价值排序分组（新用户视角），而非按额度机制归类。
 
         判定用到的三个信号：meta["signup"]（email/phone=免卡常规注册 / card=需绑卡）、
-        meta["tiers"]（permanent|recurring=不过期 / onetime=一次性 / selfhost=自托管）、
+        meta["tiers"]（permanent|recurring=常设 / onetime=一次性 / limited=限时 / selfhost=自托管）、
         prof["category"]（domestic=国内，一律需手机号+实名）；Part 4 工具类不属
         于任何 category 分组，其国内/海外归属看 meta["region"]（"cn"=国内产品）。
         """
@@ -3804,10 +3804,9 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
 
     # 1. 免费额度分级：唯一的真门槛是「要不要付款方式」，其次看额度过不过期。
     #    邮箱注册与手机号实名同属常规注册（人人有手机号），不算门槛。
-    L.append("### 1. 先认清四类「免费」——按能否白嫖排序")
+    L.append("### 1. 免费权益与使用条件")
     L.append("")
-    L.append("> 排序逻辑是**新用户视角**：先看要不要绑卡（实名 / 邮箱都只是常规注册，不算门槛），"
-             "再看额度会不会过期。A 类注册即用且不会过期，C 类额度最大但要先冒绑卡的风险。")
+    L.append("> 先看是否需要付款方式，再看免费权益的适用范围、使用期限和领取条件。")
     L.append(">")
     L.append("> ⚠️ 表里混着两类完全不同的额度：**大模型开放平台**发 API Key、可在自己程序里调用；"
              "**AI 编程工具**（Trae、Copilot 等，见文末 Part 4）只给编辑器内使用的积分 / Credits，"
@@ -3816,13 +3815,12 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     L.append("| 类型 | 特点与正确用法 | 代表平台（点击跳下方档案） |")
     L.append("|---|---|---|")
     tier_defs = [
-        ("A. 无条件 · 长期可用",
-         "注册即得（邮箱 / GitHub / Google 或手机号实名均可，**无需付款方式**），"
-         "不过期或按日/月滚动重置；可当长期主力，注意 RPM/RPD 限速与商用条款",
+        ("A. 常设免费权益",
+         "现行方案提供常设免费用量，**无需付款方式**；适用模型、额度和用途以官方规则为准",
          lambda m, _p: m.get("signup") != "card"
                        and bool({"permanent", "recurring"} & set(m.get("tiers") or []))),
-        ("B. 无条件 · 一次性限时",
-         "注册即到账、**无需付款方式**，但有有效期、不可重置；先想好用量再开通，薅完即走",
+        ("B. 一次性赠额或试用",
+         "**无需付款方式**；核对领取资格、有效期和适用范围",
          lambda m, _p: m.get("signup") != "card"
                        and "onetime" in (m.get("tiers") or [])
                        and not ({"permanent", "recurring"} & set(m.get("tiers") or []))),
@@ -3833,6 +3831,9 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
         ("D. 开源权重 / 自托管",
          "没有「额度」概念，自己出算力；也可走 A 类平台免费托管调用",
          lambda m, _p: "selfhost" in (m.get("tiers") or [])),
+        ("E. 限时免费 / 公测",
+         "活动或公测期间可用，关注截止时间和资格变更",
+         lambda m, _p: "limited" in (m.get("tiers") or [])),
     ]
     for label, desc, pred in tier_defs:
         dom, ovs = tier_group(pred)
@@ -3892,7 +3893,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
             tip_no += 1
     L.append(f"{tip_no}. 所有绑卡平台（见第 2 节名单）注册后立刻设置 **Budget 预算与用量告警**，"
              "记下赠金到期日，到期前关停资源、删除计费实例。")
-    L.append(f"{tip_no + 1}. 永久免费层 RPM 普遍只有个位数到几十，批量任务请走大额试用金 / 月度重置额度或错峰。")
+    L.append(f"{tip_no + 1}. 使用免费层跑批量任务前，先核对请求频率与额度上限。")
     L.append(f"{tip_no + 2}. 站外遇到的第三方聚合中转（非官方转售平台）存在跑路风险，"
              "只放低敏测试流量，不要充大额余额。")
     L.append("")

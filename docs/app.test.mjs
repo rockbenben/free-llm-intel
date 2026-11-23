@@ -292,6 +292,7 @@ test('matchQuotaFilters: 按分区、有免费额度、免绑卡、长期/周期
   assert.equal(FLI.matchQuotaFilters({ ...base, signup: 'card' }, { noCard: true }), false);
   assert.equal(FLI.matchQuotaFilters({ ...base, signup: 'phone' }, { noCard: true }), true);
   assert.equal(FLI.matchQuotaFilters({ ...base, tiers: ['onetime'] }, { longTerm: true }), false);
+  assert.equal(FLI.matchQuotaFilters({ ...base, tiers: ['limited', 'selfhost'] }, { longTerm: true }), false);
   assert.equal(FLI.matchQuotaFilters({ ...base, tiers: ['recurring'] }, { longTerm: true }), true);
   assert.equal(FLI.matchQuotaFilters({ ...base, openai_compat: null }, { onlyCompat: true }), false);
   assert.equal(FLI.matchQuotaFilters(base, {

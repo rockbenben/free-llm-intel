@@ -855,7 +855,7 @@
         <span class="filter-label">特征</span>
         <button type="button" class="pill chip" data-qfilter="onlyGuide" aria-pressed="false">有免费额度</button>
         <button type="button" class="pill chip" data-qfilter="noCard" aria-pressed="false">免绑卡</button>
-        <button type="button" class="pill chip" data-qfilter="longTerm" aria-pressed="false">长期 / 周期重置</button>
+        <button type="button" class="pill chip" data-qfilter="longTerm" aria-pressed="false">常设免费权益</button>
         <button type="button" class="pill chip" data-qfilter="onlyCompat" aria-pressed="false">OpenAI 兼容</button>
       </div>
       <p class="hint">
@@ -2007,9 +2007,10 @@ var FLI = (function () {
   };
   var PART_NAMES = { 1: '国内平台', 2: '国际平台', 3: '云平台', 4: '编程工具' };
   var TIER_BADGES = {
-    permanent: { label: '永久免费', cls: 'ok' },
-    recurring: { label: '周期重置', cls: 'ok' },
-    onetime: { label: '注册赠送', cls: 'info' },
+    permanent: { label: '有免费用量', cls: 'ok' },
+    recurring: { label: '免费额度定期刷新', cls: 'ok' },
+    onetime: { label: '一次性赠额 / 试用', cls: 'info' },
+    limited: { label: '限时免费 / 公测', cls: 'info' },
     selfhost: { label: '开源自托管', cls: '' }
   };
   function plain(s) { return FLI.plain(s); }
@@ -2111,11 +2112,6 @@ var FLI = (function () {
           tb.textContent = meta.label;
           nameBox.appendChild(tb);
         });
-      } else if (!v.in_guide) {
-        var paid = document.createElement('span');
-        paid.className = 'pill qtier';
-        paid.textContent = '按量付费';
-        nameBox.appendChild(paid);
       }
       head.appendChild(nameBox);
       if (v.homepage) {

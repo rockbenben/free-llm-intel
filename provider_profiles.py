@@ -608,8 +608,8 @@ def vendor_rank_index(vendor_id: str) -> int:
 # ---------------------------------------------------------------------------
 # 白嫖攻略元数据（README 项目介绍后的「白嫖攻略」独立生成块由 crawler 依据本表渲染）
 #
-# tiers:      permanent=永久免费层滚动重置 / onetime=注册一次性赠送 /
-#             recurring=每日/每月重置额度 / selfhost=开源权重/自托管
+# tiers:      permanent=现行常设免费用量 / onetime=一次性赠额或试用 /
+#             recurring=常设免费额度定期刷新 / limited=限时免费或公测 / selfhost=开源权重自托管
 # signup:     注册通道 / 门槛三值枚举：
 #             email=邮箱 / OAuth 为主，或邮箱与手机号并列可选、无硬性通道要求（免信用卡）；
 #             phone=中国大陆账号体系以手机号为必需 / 主注册通道（+86 短信验证码，常伴随实名）；
@@ -631,9 +631,9 @@ def vendor_rank_index(vendor_id: str) -> int:
 # 注意 aliyun_qwen / iflytek_spark 的 signup 只存在于 AI overlay（本表无该键），改值两边都要看。
 GUIDE_META: dict[str, dict] = {
     # AI 编程 / Agent 工具类（Part 4）
-    "qoder": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
-              "short": "每日可领 100 Credits + 2 周 Pro 试用送 300 Credits，Free 层不限时用基础模型",
-              "tip": "每日 Credits 需**手动领取**（漏领当天作废）；领到手后 30 天内有效、未过期会结转；高级额度用尽自动降级基础模型而非断供"},
+    "qoder": {"tiers": ["permanent", "onetime"], "signup": "email", "scenarios": ["code"],
+              "short": "Free 档限量使用基础模型；符合资格的新用户可试用 Pro 14 天，含 300 Credits",
+              "tip": "每日 100 Credits 活动仅向 Pro 试用和个人付费用户开放，须手动领取"},
     "codebuddy_workbuddy": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"], "region": "cn",
               "short": "国内体验版 0 元：500 积分/月 + 限免全模型；国际版 Free $0：100 积分/月 + 每日 30 积分 + 注册送 250",
               "tip": "「限免」条目（全模型 / 无限补全 / 99 任务）随时可能回收，以页面「限免生效中」标注为准"},
@@ -675,11 +675,11 @@ GUIDE_META: dict[str, dict] = {
                       "short": "17 个模型各 100 万 / 3 个月 + 20 元券"},
     "tencent_hunyuan": {"tiers": ["onetime"], "scenarios": ["embed"],
                         "short": "Hunyuan-a13b 与 embedding 各 100 万"},
-    "sensetime_sensenova": {"tiers": ["recurring"],
+    "sensetime_sensenova": {"tiers": ["limited"],
                             "short": "Token Plan 公测免费：5 小时 12 万 + 每周 120 万积分",
                             "pick": "**国内公测期免费 + 白嫖面最宽**：Token Plan ¥0/月，通用积分池 **5 小时 12 万 / 每周 120 万**，同池可调 `sensenova-6.8-flash`、`deepseek-v4.1-flash`、`glm-5.2`、`kimi-k3`；但**第三方模型实测容易 429**，高并发先用自研 `6.8-flash`，单号 20 个 Key",
                             "tip": "只有公测期免费（官方原话「当前额度和活动规则属于公测期权益」）；按积分计量、5 小时 + 周双层窗口；**非 SenseNova 自研模型（DeepSeek / GLM / Kimi）容易 429**，先退避重试或改用 `sensenova-6.8-flash`。"},
-    "moss": {"tiers": ["onetime"], "scenarios": ["multimodal"],
+    "moss": {"tiers": ["limited"], "scenarios": ["multimodal"],
              "short": "限时免费 0 积分：nex-n2.6（多模态语言模型）+ moss-vl-1.0 / moss-vl-realtime-1.0 视觉理解",
              "pick": "**多模态语言模型限时免费**：`nex-n2.6`（文本/图片/视频→文本）官方标「限时免费 0 积分」，2026-11-12 实测 HTTP 200 真实出文、控制台账单为零；同平台仍在限免的是 `moss-vl-1.0` 视觉理解与 `moss-vl-realtime-1.0`（实时视频理解，只吃视频帧、只回文字，不做语音）。**`moss-live-1.0` 已不在免费范围**：2026-11-18 12:00 起 ¥0.15/分钟（3 积分/分钟）",
              "tip": "**限时免费无公开截止日**，随时可能恢复计费，别按长期额度排期；`nex-n2.6` 是推理模型，小 max_tokens 下正文为空（需给足）；MOSS-Live-1.0 已开始计费（¥0.15/分），TTS/转写/文生图均按量收费，不在免费范围；`tob-kimi-k3` 需单独授权、普通 key 调它 403"},
@@ -740,8 +740,8 @@ GUIDE_META: dict[str, dict] = {
     "cohere": {"tiers": ["permanent"], "signup": "email",
                "short": "Trial Key 免费（每月 1,000 次，限非商用）",
                "tip": "Trial Key 明确仅限非商业用途，商用需升级付费套餐。"},
-    "jina_ai": {"tiers": ["permanent"], "signup": "email", "scenarios": ["embed"],
-                "short": "每 Key 1,000 万 tokens，GitHub 登录免卡"},
+    "jina_ai": {"tiers": ["permanent", "onetime"], "signup": "email", "scenarios": ["embed"],
+                "short": "Reader 网页转 Markdown 免 Key 限速可用；新用户另有一次性 1,000 万 tokens"},
     "morph_labs": {"tiers": ["permanent", "recurring"], "signup": "email",
                    "short": "每月 200 次请求 + 工具附带 $10/月算力"},
     "relace": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
@@ -754,11 +754,11 @@ GUIDE_META: dict[str, dict] = {
                "short": "无自动赠送；绑卡扣 $25 且转为余额，并非赠金"},
     "ai21_labs": {"tiers": ["onetime"], "signup": "email",
                   "short": "$10 credits，邮箱注册免卡"},
-    "fireworks_ai": {"tiers": ["onetime"], "signup": "email",
-                     "short": "新号 $1 免费额度"},
+    "fireworks_ai": {"tiers": ["limited"], "signup": "email", "scenarios": ["deploy"],
+                     "short": "Muse Glimmer 30B 训练限免至 11 月 30 日"},
     "stability_ai": {"tiers": ["onetime", "selfhost"], "signup": "email", "scenarios": ["image"],
                      "short": "新号 25 积分；开源权重年营收 < $100 万免费"},
-    "poolside": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
+    "poolside": {"tiers": ["limited", "selfhost"], "signup": "email", "scenarios": ["code"],
                  "short": "代码模型限时免费（官方未公布截止日）"},
     "huggingface": {"tiers": ["recurring"], "signup": "email",
                     "short": "Inference Providers 每月 $0.10"},
@@ -867,20 +867,18 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "qoder": {
         "category": "tools",
         "display_name": "Qoder (Agentic Coding Platform · 国际版)",
-        "free_quota": "**免费层 + 每日赠送**：Free 方案可用**基础模型**（用户消息条数受限）；新用户 **2 周 Pro 试用赠 300 Credits**；**自 2026-09-18 起**个人用户（免费与付费皆可）在 Qoder 桌面端**每日领取 100 Credits**（每天 10:00 开一个领取窗口，需手动领取，漏领当天作废不补发）；**每份奖励自领取起 30 天内有效，未过期的 Credits 结转到后续天**；Credits 用尽自动切换基础模型，不断供",
-        "validity": "每日 100 Credits 自领取日 30 天内有效（未过期结转后续天，非每日清零）；Pro 试用 2 周；订阅方案的 Credits 仅当前订阅周期有效（周期结束归零）",
+        "free_quota": "符合资格的新用户可领取一次 **14 天 Pro 试用，含 300 Credits**。自 2026-11-19 起，**每日 100 Credits 活动仅向 Pro 试用和个人付费用户开放**，每天 10:00 开窗，需手动领取，每份奖励自领取起 30 天内有效。",
+        "validity": "Pro 试用期 14 天；每日活动奖励自领取起 30 天内有效；订阅 Credits 仅当期有效",
         "free_models": [
-            "基础模型 —— Free 方案长期可用，消息条数受限（Free 列还含有限补全/NES 与 BYOK）",
-            "高级（premium）模型 —— 每日领 100 Credits（2026-09-18 起，官方未公布截止）+ Pro 试用 300 Credits 抵扣",
-            "限时免费活动 —— `Qwen3.8-Flash` 限免**至 2026-09-30 23:59:59**、SOTA 模型限时免费体验（按轮领取、未用过轮作废）、「经济(Efficient)」档位对付费用户限免（截止待定）（官方 Events 页）",
+            "基础模型 —— Free 档受每日及每月消息条数限制，含有限补全与 NES，也支持 BYOK",
+            "高级（premium）模型 —— 需消耗 Credits；符合资格的新用户可试用 Pro 14 天，含 300 Credits",
         ],
         "tier_caveats": [
-            "每日奖励必须手动领取，错过不补；已领的 30 天内有效、跨日结转",
-            "Pro/Pro+/Ultra 的月度 Credits（2,000/6,000/20,000）仅订阅周期内有效",
-            "一周年 Qwen3.8-Max 免费调用活动已于 2026-09-03 截止，勿按旧 repost 清单领取",
+            "每日 100 Credits 仅限 Pro 试用与个人付费用户，需手动领取；错过不补，已领的 30 天内有效",
+            "Pro 试用每人一次，资格以官方核验为准；付费方案的月度 Credits 仅当期有效",
         ],
-        "preconditions": "注册 Qoder 账号（GitHub / Google 等 OAuth）；每日领取需在桌面端 App 操作",
-        "promotions": "九月 Offer（events/bogo）：首次购买个人版**首月 Credits 翻倍**，续费再送 1,000 bonus Credits；premium 模型低峰折扣价（events/offpeakrate）；活动汇总见 docs.qoder.com Events 页，随上下线变动",
+        "preconditions": "注册 Qoder 账号（GitHub / Google 等 OAuth）；活动可在 Qoder 桌面端、Mobile 或 IDE 手动领取",
+        "promotions": "每日 100 Credits 领取活动面向 Pro 试用和个人付费用户，截止时间待官方公布。",
         "notes": "证据取自**国际版**文档 `docs.qoder.com`（正文明言「Qoder International」）；国内版（原通义灵码系）额度政策可能不同，未复核不予推断",
         "links": [
             ("定价与额度文档（含免费层表）", "https://docs.qoder.com/account/pricing"),
@@ -2056,21 +2054,21 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "jina_ai": {
         "category": "international",
         "display_name": "Jina AI (Reader / Embeddings / Reranker)",
-        "free_quota": "每个新 API Key 含 **10M tokens 免费额度**（官方产品页），GitHub 账号登录获取、免信用卡；免费速率限制长期有效",
-        "validity": "免费速率限制长期有效",
+        "free_quota": "新用户 API Key 含一次性 **10M tokens 免费额度**（官方定价页），免费赠额限非商用；额度用尽后可购买 token 包",
+        "validity": "注册赠额用完即止；Reader 网页转 Markdown 另有免 Key 用量（20 RPM）",
         "free_models": [
             "**Reader API**（r.jina.ai 网页转 Markdown）—— 免 key **20 RPM**、免费 key **500 RPM**",
-            "`jina-embeddings-v5`（v4 免费但限非商用）、`jina-reranker-v3.5` —— 免费层 **100 RPM / 100K TPM**，共享新 Key **10M tokens** 免费额度",
+            "`jina-embeddings-v5`、`jina-reranker-v3.5` —— 共享新用户 Key 的一次性 **10M tokens** 免费额度，限非商用",
         ],
         "tier_caveats": [
-            "Embeddings / Reranker 免费层 100 RPM / 100K TPM，共享每 Key **10M tokens** 总额度；Reader 免 key 仅 20 RPM、免费 key 500 RPM",
-            "部分模型（如 v4 embeddings）免费层**仅限非商用**；超限按量计费",
+            "Embeddings / Reranker 使用新用户一次性赠额；各端点请求和 token 速率上限见官方文档",
+            "免费赠额仅限非商用；用尽后可购买 token 包。Reader 可免 Key 使用，限 20 RPM",
         ],
         "preconditions": "GitHub 账号登录获取 API Key，免绑定信用卡",
         "promotions": "Reader 加 r.jina.ai 前缀即可提取任意网页清洁文本/Markdown。",
         "notes": "旧“100 万 tokens”说法已过时（现为 10M）；v3/v2 模型已被 v5/v3.5 取代。",
         "links": [
-            ("官方主页", "https://jina.ai/"),
+            ("API 定价", "https://jina.ai/api-dashboard/pricing/"),
             ("Reader", "https://jina.ai/reader/"),
             ("Embeddings", "https://jina.ai/embeddings/"),
             ("Reranker", "https://jina.ai/reranker/"),

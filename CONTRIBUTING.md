@@ -206,7 +206,7 @@ python crawler_llm_intel.py --only <vendor_id> --ai-review --no-browser
 
 README 项目介绍之后的「白嫖攻略」**不是手写 Markdown**，由爬虫写入独立的 `LLM-GUIDE:BEGIN/END` 生成块（在快速开始之前），依据 `provider_profiles.py` 顶部的 **`GUIDE_META`** 自动渲染（AI 核查可通过补丁里的 `guide_meta` 更新归类）：
 
-- `tiers`：免费类型（`permanent` 永久免费层 / `onetime` 注册赠送 / `recurring` 周期重置 / `selfhost` 开源权重自托管）；
+- `tiers`：`permanent` 表示现行政策有常设免费用量，`recurring` 表示常设免费额度按周期刷新，`onetime` 表示一次性赠额或试用，`limited` 表示限时免费或公测，`selfhost` 表示开源权重自托管。活动期间按周期发放的额度归 `limited`，仅在试用期内领取的福利写明试用条件；
 - `signup`：注册通道 / 门槛枚举，三值 + 空串：`email`（邮箱 / OAuth 为主，或邮箱与手机号并列可选、无硬性通道要求；免信用卡）、`phone`（中国大陆账号体系以手机号为**必需 / 主**注册通道：`+86` 短信验证码，常伴随实名；邮箱即便出现也只是可选绑定或海外入口，三方 OAuth 登录不改变本值）、`card`（需绑卡验证）；空串表示该厂商不在白嫖攻略里、暂不标注。**只有 `card` 是攻略里的真门槛**：`phone` 与 `email` 同属免卡常规注册，A/B 类分级按 `signup != "card"` 判定。
   改 `phone` 必须有注册页 / 官方文档的**一手证据**（issue #9），不许按「国内平台都用手机号」批量推断；`docs/index.html` 浏览页已加「手机号注册」分支。改完跑 `python crawler_llm_intel.py --render-only` 同步 `docs/feeds/quotas.json`（守卫 `test_committed_quotas_signup_matches_guide_meta` 会拦下忘跑的情况）。
 - `scenarios`：`code` / `flagship` / `longctx` / `multimodal`（图片/视频理解与实时音视频交互）/ `image` / `embed` / `deploy` / `credit` / `referral` / `student`；

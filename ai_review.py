@@ -181,7 +181,7 @@ FIELD_TYPES = {
     "student_benefit": str,
     "openai_compat": dict,
 }
-ALLOWED_TIERS = {"permanent", "onetime", "recurring", "selfhost"}
+ALLOWED_TIERS = {"permanent", "onetime", "recurring", "limited", "selfhost"}
 # signup 是「注册通道 / 门槛」枚举：email=邮箱 / OAuth 为主，或邮箱与手机号并列可选；
 # phone=中国大陆账号以手机号为必需 / 主注册通道（+86 短信验证码、常伴随实名），
 #       邮箱仅为可选绑定或海外入口；card=需绑卡。
@@ -204,8 +204,8 @@ SYSTEM_PROMPT = """你是「免费 LLM API 情报」核查员，服务于一个�
 4. evidence 给出 1-6 条页面原文逐字摘录（不要翻译、不要改写、不要省略号拼接），\
    url 必须使用该引文所在页面的来源地址，按来源栏逐字填写。\
 每条必须能在给定页面文本中连续找到；所有数字、模型名必须与原文一致。
-5. 攻略归类 guide_meta 仅在归类确实需要变化时给出：tiers 取值 permanent/onetime/recurring/\
-selfhost，signup 取值 email/phone/card（email=邮箱或 OAuth、或邮箱与手机号并列可选；phone=中国大陆账号以手机号为必需/主注册通道（+86 短信验证码、常伴随实名），邮箱仅为可选绑定或海外入口；card=需绑卡），scenarios 取值 code/flagship/longctx/multimodal/image/embed/deploy/credit/referral/student，\
+5. 攻略归类 guide_meta 仅在归类确实需要变化时给出：tiers 取值 permanent（当前常设的免费用量）、onetime（一次性赠额或试用）、recurring（常设免费额度按周期刷新）、limited（限时免费或公测）、selfhost（开源权重自托管）。按已证实的具体权益归类，short 写清免费范围和门槛；限时活动、公测或仅试用期可领的额度即使每日发放也不属于 recurring，只有付费用户能领的福利只写入 promotions。\
+signup 取值 email/phone/card（email=邮箱或 OAuth、或邮箱与手机号并列可选；phone=中国大陆账号以手机号为必需/主注册通道（+86 短信验证码、常伴随实名），邮箱仅为可选绑定或海外入口；card=需绑卡），scenarios 取值 code/flagship/longctx/multimodal/image/embed/deploy/credit/referral/student，\
 short 是一句话额度摘要，tip 是一句话防扣费提示；注册页 / 官方文档证明手机号是必需或主注册通道时 signup 取 phone，邮箱与手机号真正并列可选时仍取 email。
 6. 输出只能是一个 JSON 对象，不要输出解释、Markdown 代码块或多余文字。"""
 

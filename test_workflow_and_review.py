@@ -5326,7 +5326,7 @@ class TestGuideRendering(unittest.TestCase):
         # 实名不算门槛：首选清单不得再用「需手机号+实名」给平台贴摩擦标签
         self.assertNotIn("需手机号+实名", text)
         # 四家分级（实名/邮箱同属无条件），不再有「需实名」独立等级
-        self.assertIn("先认清四类", text)
+        self.assertIn("免费权益与使用条件", text)
         self.assertNotIn("先认清五类", text)
         # 已过期的限时五折不得出现在任何攻略片段中
         self.assertNotIn("限时五折", text)
@@ -5452,20 +5452,24 @@ class TestGuideRendering(unittest.TestCase):
             head = dname.split(" (")[0].split("(")[0]
             return head in rows[label]
 
-        # A. 无条件长期：国内永久层（智谱、商汤、硅基流动）与海外免卡永久层并列
-        for vid in ("zhipu_glm", "sensetime_sensenova", "siliconflow",
+        # A 类包含国内外可常设使用的免费权益。
+        for vid in ("zhipu_glm", "siliconflow", "qoder",
                     "google_gemini", "groq", "openrouter"):
-            self.assertTrue(in_row("A. 无条件 · 长期可用", vid), f"{vid} 应在 A 类")
-        # B. 无条件限时：国内实名的一次性赠送（阿里、Kimi）与海外免卡一次性并列
+            self.assertTrue(in_row("A. 常设免费权益", vid), f"{vid} 应在 A 类")
+        # B 类包含国内外的一次性试用和赠额。
         for vid in ("aliyun_qwen", "moonshot_kimi", "inception_labs"):
-            self.assertTrue(in_row("B. 无条件 · 一次性限时", vid), f"{vid} 应在 B 类")
+            self.assertTrue(in_row("B. 一次性赠额或试用", vid), f"{vid} 应在 B 类")
+        for vid in ("sensetime_sensenova", "poolside", "fireworks_ai", "moss"):
+            self.assertTrue(in_row("E. 限时免费 / 公测", vid))
+            self.assertFalse(in_row("A. 常设免费权益", vid))
+            self.assertFalse(in_row("B. 一次性赠额或试用", vid))
         # C 只装绑卡平台；国内实名平台一律不得进 C
         for vid in ("zhipu_glm", "aliyun_qwen", "siliconflow", "moonshot_kimi"):
             self.assertFalse(in_row("C. 需绑卡 · 大额云试用金", vid), f"{vid} 不应因实名进绑卡类")
         for vid in ("cerebras", "aws_bedrock", "azure_openai"):
             self.assertTrue(in_row("C. 需绑卡 · 大额云试用金", vid), f"{vid} 应在 C 类")
         # Inference.net 免费档实为观测额度（tiers 为空），不出现在任何分级里
-        for label in ("A. 无条件 · 长期可用", "B. 无条件 · 一次性限时",
+        for label in ("A. 常设免费权益", "B. 一次性赠额或试用",
                       "C. 需绑卡 · 大额云试用金"):
             self.assertNotIn("Inference.net", rows[label])
 
