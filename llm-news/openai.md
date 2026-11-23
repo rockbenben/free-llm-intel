@@ -11,7 +11,7 @@
 
 ## 全部文章（共 1419 篇，按日期倒序；无日期条目列于最后）
 
-1. [Perplexity 与智能](https://openai.com/index/perplexity-and-intelligence)（2026-11-22） <!--orig:Perplexity and Intelligence-->
+1. [困惑度与智能](https://openai.com/index/perplexity-and-intelligence)（2026-11-22） <!--orig:Perplexity and Intelligence-->
 2. [应对对抗性蒸馏](https://openai.com/index/combatting-adversarial-distillation)（2026-11-20） <!--orig:Combatting adversarial distillation-->
 3. [Hebbia 借助 GPT-6 Astra 提升金融研究能力](https://openai.com/business/customer-stories/hebbia)（2026-11-20） <!--orig:Hebbia sees improvements in financial research with GPT-6 Astra-->
 4. [AI 能否帮助科学家发现有前景的候选药物？](https://openai.com/index/introducing-medchembench)（2026-11-20） <!--orig:Can AI help scientists identify promising drug candidates?-->

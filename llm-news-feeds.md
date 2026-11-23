@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-23 10:59:17**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-23 13:33:46**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -39,7 +39,7 @@
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-23，标题自动汉化）：
-  1. [Perplexity 与智能](https://openai.com/index/perplexity-and-intelligence)（2026-11-22）
+  1. [困惑度与智能](https://openai.com/index/perplexity-and-intelligence)（2026-11-22）
   2. [应对对抗性蒸馏](https://openai.com/index/combatting-adversarial-distillation)（2026-11-20）
   3. [Hebbia 借助 GPT-6 Astra 提升金融研究能力](https://openai.com/business/customer-stories/hebbia)（2026-11-20）
   4. [AI 能否帮助科学家发现有前景的候选药物？](https://openai.com/index/introducing-medchembench)（2026-11-20）
