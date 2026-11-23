@@ -5088,11 +5088,8 @@ class TestGuideRendering(unittest.TestCase):
             "china_mobile_moma",
             # SambaNova：Plans 页要求付款方式并购买 credits，脚本赠金配置不作为实际权益依据
             "sambanova",
-            # StepFun：无通用免费档，仅 StepAudio 3 限时免（至 2026-11-17 11:59:59）——限免不构成长期额度
+            # StepFun：StepAudio 3 已于 2026-11-23 中午恢复计费。
             "stepfun",
-            # 讯飞星辰 MaaS：免费模型清单与额度只登录后可查（模型详情页需登录），
-            # 公开文档只有 Token Plan 付费积分价——免费权益无法从官方公开页核实（宁缺毋假）
-            "iflytek_maas",
         }
         root = Path(__file__).resolve().parent
         vendors, _sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
@@ -5462,7 +5459,7 @@ class TestGuideRendering(unittest.TestCase):
         # B 类包含国内外的一次性试用和赠额。
         for vid in ("aliyun_qwen", "moonshot_kimi", "inception_labs", "tongyi_lingma"):
             self.assertTrue(in_row("B. 一次性赠额或试用", vid), f"{vid} 应在 B 类")
-        for vid in ("sensetime_sensenova", "poolside", "fireworks_ai", "moss", "qiniu"):
+        for vid in ("sensetime_sensenova", "poolside", "fireworks_ai", "moss", "qiniu", "iflytek_maas"):
             self.assertTrue(in_row("E. 限时免费 / 公测", vid))
             self.assertFalse(in_row("A. 常设免费权益", vid))
             self.assertFalse(in_row("B. 一次性赠额或试用", vid))
@@ -5470,6 +5467,8 @@ class TestGuideRendering(unittest.TestCase):
             self.assertTrue(in_row("F. 免费评估 / 研究", vid))
             self.assertFalse(in_row("A. 常设免费权益", vid))
         for vid in ("tongyi_lingma", "gcp_vertex_ai", "mistral", "modular_cloud", "novita_ai"):
+            self.assertFalse(in_row("A. 常设免费权益", vid))
+        for vid in ("xiaomi_mimo", "longcat_meituan", "china_mobile_moma", "stepfun", "mara", "baseten"):
             self.assertFalse(in_row("A. 常设免费权益", vid))
         self.assertFalse(in_row("C. 需绑卡 · 大额云试用金", "gcp_vertex_ai"))
         # C 只装绑卡平台；国内实名平台一律不得进 C

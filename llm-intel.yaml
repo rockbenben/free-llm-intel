@@ -810,6 +810,9 @@ sources:
   - vendor_id: xiaomi_mimo
     type: referral
     url: https://mimo.mi.com/docs/zh-CN/quick-start/promotions/refer
+  - vendor_id: xiaomi_mimo
+    type: free_quota
+    url: https://mimo.mi.com/docs/zh-CN/quick-start/promotions/new%20user
   # 博客 / 更新动态（News 端）。小米是**自有模型厂商**（MiMo 系列），按「聚合第三方
   # 模型的平台不汇聚、自有模型厂商保留」的判据应当收录。三个页面均为前端渲染 SPA
   # （静态抓取常只拿到 ~13KB 空壳，需浏览器兜底）；更新日志正文是「日期分节标题 + 条目」。
@@ -911,11 +914,14 @@ sources:
   - vendor_id: qiniu
     type: pricing
     url: https://www.qiniu.com/ai
-  # 讯飞星辰 MaaS：平台页是 SPA + 登录墙（抓不到正文），公开可达的是官方 Token Plan 文档
-  # （模型清单与积分价格表）。免费额度不在公开文档内，档案里如实写"需登录核实、不予采信"。
+  # 讯飞星辰 MaaS：年终活动公开列出注册后可领取的 Spark-X2.6 专项额度。
+  # 到账条款以登录后页面为准。Token Plan 文档用于核对付费套餐。
   - vendor_id: iflytek_maas
     type: pricing
     url: https://www.xfyun.cn/doc/spark/TokenPlan.html
+  - vendor_id: iflytek_maas
+    type: activities
+    url: https://static.xfyun.cn/activities/promotion
 
   # 复旦 MOSS (MOSI) 开放平台：模型列表（含各模型计费标准，实测全文可达）
   - vendor_id: moss
@@ -1483,11 +1489,11 @@ sources:
     type: pricing
     url: https://www.baseten.co/pricing/
   - vendor_id: baseten
-    type: free_quota
-    url: https://www.baseten.co/startup-program/
+    type: activities
+    url: https://www.baseten.co/talk-to-us/startup-program/
   # ⚠️ 2026-09-22 起**不再为 baseten 配 News 源**：232 条里 62 条是纯平台功能
   # （CLI、RBAC、日志下载、autoscaling），与模型相关的只占 35%。
-  # baseten 本身仍在厂商总表与攻略里（它有免卡的一次性额度）。
+  # Baseten 仍在厂商总表。Startup Program 需申请，不能视作普遍注册赠额。
   - vendor_id: baseten
     type: product
     url: https://www.baseten.co/

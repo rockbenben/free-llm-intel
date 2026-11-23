@@ -697,14 +697,17 @@ GUIDE_META: dict[str, dict] = {
                              "short": "实名最高 2,000 元试用体验金"},
     "iflytek_spark": {"tiers": ["permanent", "limited"],
                       "short": "Spark-X2.5-1.7B 标免费，4B 标限时免费；按产品页面领取"},
+    "iflytek_maas": {"tiers": ["limited"], "signup": "phone",
+                    "short": "官方活动列出注册后手动领取 Spark-X2.6 的 10 亿 tokens",
+                    "tip": "活动页未公布领取截止日或到账后有效期，账户资格与额度以控制台为准。"},
     "volcengine_doubao": {"tiers": ["onetime"], "short": "新用户可试用部分模型；具体额度以开通管理页为准",
                           "tip": "开启安心体验模式，避免试用用完后继续按量扣费。"},
     "ppio": {"short": "无公开注册赠金，按量计费",
              "tip": "未实名认证用户有请求频率限制；历史“注册送 5 元”说法官方页无据。"},
     "mthreads_coding": {"tiers": ["limited", "onetime"], "scenarios": ["code"], "short": "MUSA Coding Plan 限时开放一次 30 天试用，名额以官方页面为准"},
-    "xiaomi_mimo": {"tiers": ["onetime", "selfhost"], "signup": "phone",
+    "xiaomi_mimo": {"tiers": ["onetime", "limited", "selfhost"], "signup": "phone",
                     "scenarios": ["embed", "referral"],
-                    "short": "TTS 系列限时免费 + 新用户注册赠金（40 天）",
+                    "short": "中国大陆账号首次实名赠 ¥5，一账号一次，到账后 40 天有效。TTS 系列限免。",
                     "tip": "语言模型按量计费（v2.6-pro ¥3/¥6 每百万 tokens），免费只覆盖 TTS 与缓存写入且官方标注「限时」；"
                            "注册赠金 40 天过期、不可抵 Token Plan 订阅。"},
     "anyscale": {"tiers": ["onetime"], "signup": "card",
@@ -1159,12 +1162,15 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "longcat_meituan": {
         "category": "domestic",
         "display_name": "美团 LongCat",
-        "free_quota": "官方公开 FAQ 与更新日志未列明面向所有新注册账号的赠额；已有活动赠送或账户到账以控制台规则为准。",
+        "free_quota": "公开 FAQ 与更新日志未确认新账户自动获赠或定期刷新额度。定价入口会跳转到美团登录，当前账户福利需在登录后核对。",
         "validity": "公开文档的 30 日有效期适用于购买的 Token 资源包；到账赠额按账户显示",
         "free_models": [
             "LongCat 开放平台 —— 模型 API 采用按量计费或购买 Token 资源包；控制台另有活动额度",
         ],
-        "tier_caveats": ["官方协议提到平台免费额度；公开 FAQ 未列出面向所有新账号的自动发放数额或重置周期"],
+        "tier_caveats": [
+            "官方更新日志中的每日体验额度属于旧 LongCat-2.0-Preview 内测，不能沿用于现行 LongCat-2.5。",
+            "开放平台协议提到免费额度，以产品页公示为准。公开 FAQ 未说明所有新账号的到账条件或重置周期。",
+        ],
         "preconditions": "注册并登录开放平台（定价与资源包页需登录查看）",
         "promotions": "平台有“老带新”邀请活动入口，但奖励规则未在公开页面公示，以控制台内活动页为准。",
         "invite_reward": "官方邀请返佣页：`longcat.chat/platform/referral` 与活动说明页 `longcat.chat/about`（均为前端渲染，巡检需浏览器抓取）；所称「邀请双方各 20% / 10%、被邀者额外 20%」等比例未能在静态页面复核，以页面公示为准。",
@@ -1378,18 +1384,20 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "category": "domestic",
         "display_name": "讯飞星辰",  # 平台名 MaaS 不进展示名（测试禁平台堆叠），细节在 notes
         "free_models": [
-            "**需登录控制台核实**：模型广场的在架模型清单与免费模型范围无法从官方公开页确认（公开 Token Plan 文档只有付费套餐的积分规则与计费公式，模型详情页需登录）——宁缺毋假",
+            "Spark-X2.6 —— 官方年终活动「注册即享」列出 **10 亿 Tokens**，由 MaaS 入口手动领取。",
         ],
-        "free_quota": "公开文档未见账户级注册赠送；多方报道 2026-10 起星火 Spark-X2.6 上线赠送 10 亿 Token / 31 天有效，但官方页需登录才能核实，**不予采信为档案读数**，以控制台为准",
-        "validity": "各模型与活动不同；付费档 Token Plan 按积分计费（官方文档见链接），免费额度有效期以控制台为准",
+        "free_quota": "官方活动列有注册后领取的 Spark-X2.6 专项 10 亿 Tokens。公开规则未确认通用注册余额或周期刷新。",
+        "validity": "官方注册权益区未公示领取截止日或到账后有效期。传闻中的 31 天尚未核实，以登录后所领权益的条款为准。",
         "tier_caveats": [
-            "免费模型清单与额度只在登录后的模型广场/控制台可见，公开文档未列出",
+            "公开活动页和 MaaS 首页都列出 10 亿 Tokens。领取到账、个人资格与有效期未在未登录页面显示。",
             "官方 Token Plan 文档只覆盖**付费订阅套餐**：按积分统一计量、不同模型消耗不同积分，且按时段系数浮动（工作日 08:00-22:00 为 1.0 倍，其余时段 0.8 倍）；不能据此推断免费权益",
         ],
         "preconditions": "讯飞账号（手机号/微信）注册 + 个人实名认证",
-        "promotions": "公开文档未见可核实的免费限时活动（多方报道的 Spark-X2.6 上线赠送不予采信）；Token Plan 的限时折扣属付费套餐，不构成免费权益",
+        "promotions": "年终活动的注册权益列出 10 亿 Tokens。实付满额礼包与 Token Plan 折扣另有付费条件。",
         "notes": "与「科大讯飞星火 (Spark API)」是两个平台：星火 API 在 xinghuo.xfyun.cn，星辰 MaaS 在 maas.xfyun.cn，模型广场为聚合式；官方 Token Plan 文档（www.xfyun.cn/doc/spark/TokenPlan.html）可核实的是付费套餐积分规则与计费公式，模型清单需登录模型广场查看",
         "links": [
+            ("官方活动注册权益", "https://static.xfyun.cn/activities/promotion#promotion-register"),
+            ("MaaS 活动领取入口", "https://maas.xfyun.cn/overview"),
             ("模型广场", "https://maas.xfyun.cn/modelSquare"),
             ("Token Plan 使用文档（付费套餐积分规则 / 计费公式）", "https://www.xfyun.cn/doc/spark/TokenPlan.html"),
         ],
@@ -1548,15 +1556,16 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "china_mobile_moma": {
         "category": "domestic",
         "display_name": "中国移动 九天 (MoMA)",
-        "free_quota": "免费体验包政策**无法从官方公开页面核实**（九天门户为纯动态渲染页面），需登录九天平台控制台查看实际权益——宁缺毋假",
+        "free_quota": "中国移动集团公告确认 MoMA 提供聚合模型服务，未披露新客或周期免费 API 额度。九天门户和帮助中心对未登录访问均返回 HTTP 401，无法核实账户权益。",
         "validity": "需登录控制台核实",
         "free_models": [
-            "**需登录控制台核实**：平台在架模型清单无法从官方公开页确认（旧档案“九天·海云/九天·客服/MoMA”等名称无法从现行官方页证实；移动云 MoMA 产品页已 404 下线）",
+            "集团公告列出 MoMA 接入多家厂商。各模型的免费范围与额度条件需登录九天控制台核对。",
         ],
         "preconditions": "注册中国移动/移动云账号并完成实名认证",
         "promotions": "面向行业开发者的赋能计划以官方公告为准。",
-        "notes": "本条官方公开证据不足，宁缺毋假：额度与模型信息请以登录九天门户后的控制台内容为准。",
+        "notes": "中国移动物联网设备智能体的试用 Token 面向另一个产品，无法据此确认九天 MoMA 的 API 权益。",
         "links": [
+            ("中国移动 MoMA 产品公告", "https://www1.10086.cn/aboutus/news/groupnews/index_detail_55572.html"),
             ("九天人工智能平台门户", "https://jiutian.10086.cn/portal/"),
             ("九天帮助中心", "https://jiutian.10086.cn/portal/common-helpcenter"),
             ("移动云", "https://ecloud.10086.cn/portal"),
@@ -1612,7 +1621,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
             "base_url": "https://api.xiaomimimo.com/v1",
             "models": "`mimo-v2.6-pro`, `mimo-v2.6-flash`, `mimo-v2.5-tts`",
         },
-        "free_quota": "新用户注册可获**赠金（bonus credit）**（官方促销 FAQ 原文：“You can receive bonus credit through Refer & Earn or new user registration”），**有效期 40 天**、到期自动作废；只能抵扣按量计费 API 调用费、**不可抵扣 Token Plan 订阅**。具体金额随活动变动，以控制台账户页实际到账为准",
+        "free_quota": "中国大陆尚未领过注册赠金的用户，注册并首次完成实名认证后自动到账 **¥5 API 体验金**。每账号限一次，自到账起 **40 天**有效，可抵扣按量计费模型 API。",
         "validity": "注册赠金 **40 天**有效（自到账日起、先到期先扣）；TTS 系列与缓存写入为「**限时免费**」，官方未公布截止日",
         "free_models": [
             "**语音合成 TTS 系列 —— 限时免费**：`mimo-v2.5-tts`、`mimo-v2.5-tts-voiceclone`（音色克隆）、`mimo-v2.5-tts-voicedesign`（音色设计）—— 官方定价页原文「限时免费」，且不消耗 Token Plan 套餐额度",
@@ -1628,13 +1637,14 @@ PROVIDER_PROFILES: dict[str, dict] = {
             "**限速**：`mimo-v2.6-pro` / `mimo-v2.6-flash` 均为 **100 RPM / 10M TPM**（单账号所有 API Key 合计）；`mimo-v2.6-pro-ultraspeed` 的限速需联系商务定制",
             "国内账号充值 / 购买套餐需**实名认证**；海外与国内按区域返回不同 Base URL 与 Key、**额度不互通**；`mimo-v2.5-pro` / `mimo-v2.5` 将于 **2026-10-21 10:00（北京时间）下线**",
         ],
-        "preconditions": "小米账号登录（国内手机号或微信 / 微博 / QQ / 支付宝 / Apple ID 授权；海外邮箱或 Google / Facebook）；充值 / 购买套餐需实名认证",
+        "preconditions": "¥5 注册权益仅限中国大陆账号，须首次完成实名认证。仅注册不发放。充值及购买套餐按平台认证规则。",
         "promotions": "Refer & Earn 长期活动（官方 2026-08-13 更新）：好友经邀请码注册并完成首笔 **Token Plan** 付费订阅后，邀请人得实付金额 **10%** 返利（Standard / Pro 年付与 Max 订阅为 **20%**，无 30 单上限），好友首单 **9 折**；另有 MiMo Claw 限时特惠 ¥14.9 / 月。",
         "invite_reward": "官方 6 位邀请码：**填码双方各得 API 体验金**（国内 ¥10 / 海外 $2，注册后自动填入，40 天有效）+ 首单 **9 折**；邀请人在好友首笔付费订阅后额外得 **10% 返利**（年付 / Max 为 20%，上限 30 单，订单完成 3 天后到账）。返利只能抵 API 调用费、**不可抵 Token Plan**。",
         "notes": "API 兼容 OpenAI（`https://api.xiaomimimo.com/v1`）与 Anthropic（`https://api.xiaomimimo.com/anthropic`）两种协议；Token Plan 使用独立 Base URL 与 `tp-` 前缀 Key。",
         "links": [
             ("官方主页", "https://mimo.xiaomi.com/"),
             ("开放平台 / 控制台", "https://platform.xiaomimimo.com/"),
+            ("新客注册专享", "https://mimo.mi.com/docs/zh-CN/quick-start/promotions/new%20user"),
             ("模型与定价总览", "https://mimo.mi.com/"),
             ("按量计费定价（中文）", "https://mimo.mi.com/docs/zh-CN/price/pay-as-you-go"),
             ("Token Plan 订阅定价", "https://mimo.mi.com/docs/zh-CN/price/token-plan"),
@@ -2200,14 +2210,18 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "baseten": {
         "category": "cloud",
         "display_name": "Baseten",
-        "free_quota": "现行公开定价页未确认新账户自动获赠试用额度；以控制台或书面活动条款为准。",
-        "validity": "以账户/项目协议为准",
+        "free_quota": "旧版定价提过新账号体验额度，现行公开定价页未复现该条款。访问控制台会转到登录页，未核实新账号是否自动到账。",
+        "validity": "Startup Program 获批赠额自发放起 6 个月有效。普通账户试用期限未从现行官方资料确认。",
         "free_models": ["模型部署和 Model APIs 按定价使用；公开页面未确认新账号自动获赠"],
         "tier_caveats": ["创新计划或个别试用额度按各自申请规则；公开页未确认所有新用户都能领取。"],
         "preconditions": "注册账号；Startup Program 需申请审核",
         "promotions": "Startup Program 需申请；获批后专用部署或训练最高 $25,000，Model APIs 最高 $2,500。",
         "notes": "以注册后控制台和官方活动条款为准。",
-        "links": [["定价页", "https://www.baseten.co/pricing/"], ["Startup Program", "https://www.baseten.co/talk-to-us/startup-program/"]],
+        "links": [
+            ("现行定价", "https://www.baseten.co/pricing/"),
+            ("Startup Program", "https://www.baseten.co/talk-to-us/startup-program/"),
+            ("Startup Program 到期条款", "https://www.baseten.co/startup-program-legal-disclaimers/"),
+        ],
     },
     "modular_cloud": {
         "category": "cloud",
@@ -2437,13 +2451,16 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "mara": {
         "category": "international",
         "display_name": "Mara",
-        "free_quota": "当前公开的 MARA 公司站未公示可领取的模型 API 赠额；曾收录 $5 文案的云端套餐地址现已重定向，无法确认该试用仍可领取。",
-        "validity": "不适用",
+        "free_quota": "原 MARA Inference Dashboard 已跳转到集团官网，旧套餐入口也不再显示套餐。历史 $5 文案无法验证目前仍可领取。",
+        "validity": "历史试用的现行领取条件和有效期未确认",
         "free_models": ["未能从当前可访问的官方页面核实可用的 MARA 模型 API 免费权益"],
         "preconditions": "不适用",
         "promotions": "无。",
-        "notes": "历史套餐索引出现过 MARA Inference Service 赠额；现行可领取资格尚待可访问的官方定价或控制台确认。",
-        "links": [["MARA 官网", "https://www.mara.com/"], ["原云端套餐入口", "https://cloud.mara.com/plans"]],
+        "notes": "MARA 季报确认旗下 Exaion 提供面向企业的私有云和推理基础设施，未披露旧开发者控制台赠额。",
+        "links": [
+            ("原 Inference Dashboard", "https://cloud.mara.com/"),
+            ("MARA 季报", "https://ir.mara.com/sec-filings/all-sec-filings/content/0001507605-26-000028/mara-20260930.htm"),
+        ],
     },    # ------------------------------------------------------------------
     # 2026-11-07 新增 13 家：来源为公众号《今日AI羊毛 第13期》18 条优惠的
     # 逐条官方页核实（17 条一致、1 条不一致已按官方口径修正）。
@@ -2609,13 +2626,17 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "novita_ai": {
         "category": "international",
         "display_name": "Novita AI",
-        "free_quota": "Apodex 1.1 Mini 曾在上线期间零价；当前官方模型页不再返回该端点，未确认该活动仍可用。",
+        "free_quota": "Apodex 1.1 Mini 曾上线限免。现行模型目录未列出，原详情入口返回 404，无法确认仍可免费调用。",
         "validity": "历史上线活动；当前免费资格未确认",
-        "free_models": ["Apodex 1.1 Mini 的零价属于上线促销；当前可用模型和实时价格见官方目录"],
-        "tier_caveats": ["历史活动价不代表当前可调用；调用前查看现行模型目录和实时价表。"],
+        "free_models": [
+            "Ling 3.0 Flash Fin —— 目录仍显示限免徽章，同一目录与模型详情却标价：输入 $0.075、输出 $0.22 / 百万 tokens。未查到豁免条款，按价表核对。",
+        ],
+        "tier_caveats": ["Apodex 的历史零价和 Ling 的限免徽章均不足以证明有可用免费额度。调用前核对实际价格。"],
         "preconditions": "注册账号并创建 API Key；以模型目录和账户计费条件为准",
         "links": [
             ("模型 API 定价表", "https://novita.ai/pricing"),
+            ("现行模型目录", "https://novita.ai/models"),
+            ("Ling 3.0 Flash Fin 详情定价", "https://novita.ai/models/model-detail/inclusionai-ling-3.0-flash-fin"),
             ("Apodex 上线促销说明", "https://blogs.novita.ai/apodex-1-1-mini-on-novita-ai-api-quickstart-pricing/"),
         ],
     },
@@ -2768,13 +2789,13 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "stepfun": {
         "category": "domestic",
         "display_name": "阶跃星辰 StepFun",
-        "free_quota": "无通用免费档（无账户级注册赠金）。",
-        "validity": "仅适用限免政策的 StepAudio 3 模型限免至北京时间 2026-11-17 11:59:59（12:00:00 起恢复计费）。",
+        "free_quota": "开放平台列明公开模型按实际用量计费。公开定价和账单说明未公示普遍新客赠额。Builder Program 需单独申请。",
+        "validity": "StepAudio 3 相关限免已于北京时间 2026-11-23 11:59:59 结束，12:00 起执行新价表。",
         "free_models": [
-            "StepAudio 3 中适用限时免费政策的模型（具体范围以控制台为准；限免至 2026-11-17 11:59:59 北京时间，之后恢复计费）",
+            "StepAudio 3 原适用限免的模型已恢复计费。现行公开定价页未列新的通用免费模型档。",
         ],
         "tier_caveats": [
-            "仅适用限免政策的模型限免至 2026-11-17 11:59:59；已收费模型继续原价计费，勿将整个系列视为免费",
+            "原限免只覆盖指定模型，本次生效后的价格按 2026-11-23 中午起的官方价表。",
             "Step 5 Preview 仅缓存命中输入价格：2026-10-14 00:30 前已按量调用该模型的用户保留 0.35 元/百万 tokens；其他用户为 0.70 元，非缓存输入与输出另计费",
             "个人账户 V0（累计现金充值不足 ¥100）：并发 5、100 RPM、500,000 TPM；随充值档位提升，容量不足时官方可能临时调整",
             "收录依据：阶跃星辰自研 Step 系列与 StepAudio 语音模型（自研模型厂商），无转售闭源模型 API 的业务",
@@ -2783,6 +2804,8 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "links": [
             ("定价详情", "https://platform.stepfun.com/docs/zh/guides/pricing/details"),
             ("实名要求与限速", "https://platform.stepfun.com/docs/zh/guides/pricing/rate-limits"),
+            ("官方账单说明", "https://platform.stepfun.com/docs/zh/guides/organization/billing"),
+            ("Builder Program", "https://platform.stepfun.com/builder-program"),
         ],
     },
 }
