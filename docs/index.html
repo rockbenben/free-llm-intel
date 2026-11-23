@@ -998,10 +998,12 @@ var FLI = (function () {
   function matchQuotaFilters(v, filters) {
     if (!v || !filters) return true;
     if (filters.part && v.part !== filters.part) return false;
-    if (filters.onlyGuide && !v.in_guide) return false;
+    var tiers = asList(v.tiers);
+    if (filters.onlyGuide && !tiers.some(function (tier) {
+      return ['permanent', 'recurring', 'onetime', 'limited', 'evaluation'].indexOf(tier) >= 0;
+    })) return false;
     if (filters.noCard && v.signup === 'card') return false;
     if (filters.longTerm) {
-      var tiers = asList(v.tiers);
       if (tiers.indexOf('permanent') < 0 && tiers.indexOf('recurring') < 0) return false;
     }
     if (filters.onlyCompat) {
@@ -2011,6 +2013,7 @@ var FLI = (function () {
     recurring: { label: '免费额度定期刷新', cls: 'ok' },
     onetime: { label: '一次性赠额 / 试用', cls: 'info' },
     limited: { label: '限时免费 / 公测', cls: 'info' },
+    evaluation: { label: '免费评估 / 研究', cls: 'info' },
     selfhost: { label: '开源自托管', cls: '' }
   };
   function plain(s) { return FLI.plain(s); }

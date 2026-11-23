@@ -3827,13 +3827,16 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
         ("C. 需绑卡 · 大额云试用金",
          "需信用卡或身份验证（可能有验证扣款）；额度最大，但**注册后立刻设预算告警**，"
          "记下到期日并主动关停",
-         lambda m, _p: m.get("signup") == "card"),
+         lambda m, _p: m.get("signup") == "card" and bool(m.get("tiers"))),
         ("D. 开源权重 / 自托管",
          "没有「额度」概念，自己出算力；也可走 A 类平台免费托管调用",
          lambda m, _p: "selfhost" in (m.get("tiers") or [])),
         ("E. 限时免费 / 公测",
          "活动或公测期间可用，关注截止时间和资格变更",
          lambda m, _p: "limited" in (m.get("tiers") or [])),
+        ("F. 免费评估 / 研究",
+         "供开发评估或研究体验，按官方条件使用，生产用途需另行核对授权",
+         lambda m, _p: "evaluation" in (m.get("tiers") or [])),
     ]
     for label, desc, pred in tier_defs:
         dom, ovs = tier_group(pred)
@@ -3855,8 +3858,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
             n_domestic += 1
         if meta.get("signup") == "card":
             card.append(link(idx, prof))
-    L.append(f"- 除下列 **{len(card)} 家需验证付款方式**外，其余平台注册即发 Key，无任何付款门槛；"
-             "国内平台用手机号 + 实名（常规注册，人人可办），海外平台用邮箱 / GitHub / Google 登录。")
+    L.append(f"- 已标注 **{len(card)} 家需验证付款方式**。账号验证、试用资格和额度领取条件见各家档案。")
     L.append("- ⚠️ **需绑卡**（可能有验证扣款或最低首付，赠金到账后也请立即设预算告警）："
              + "、".join(card) + "。")
     L.append("- 国内平台未完成实名时可能被限速（如 PPIO），但这是注册流程的一部分，不是额外门槛。")
@@ -3877,8 +3879,11 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
         ("credit", "大额云厂商体验金（海外需绑卡，国内需实名）"),
     ]
     for key, label in scenario_defs:
-        hits = [with_short(idx, intel, prof) for idx, intel, prof in records
-                if key in (get_guide_meta(intel.vendor_id).get("scenarios") or [])]
+        hits = []
+        for idx, intel, prof in records:
+            meta = get_guide_meta(intel.vendor_id)
+            if meta.get("tiers") and key in (meta.get("scenarios") or []):
+                hits.append(with_short(idx, intel, prof))
         if hits:
             L.append(f"- **{label}**：" + "、".join(hits) + "。")
     L.append("")

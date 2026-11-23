@@ -5085,16 +5085,11 @@ class TestGuideRendering(unittest.TestCase):
             # 存疑：不应作为可用免费额度来源（README 已如实标注）
             "ncompass", "mara",
             # 免费权益无法从官方公开页核实（宁缺毋假）
-            "china_mobile_moma", "zhinao_360",
-            # 官方称「新用户有少量免费测试额度」但**金额不公开**，暂不列（待定，见项目记忆）
-            "anthropic",
+            "china_mobile_moma",
             # SambaNova：Plans 页要求付款方式并购买 credits，脚本赠金配置不作为实际权益依据
             "sambanova",
             # StepFun：无通用免费档，仅 StepAudio 3 限时免（至 2026-11-17 11:59:59）——限免不构成长期额度
             "stepfun",
-            # 七牛云 Conatus：1024 限时活动（2026-10-24 ~ 2026-11-30，活动结束即停用）——
-            # 与 StepFun 同类，限免不构成长期额度，不进白嫖攻略（厂商总表里保留完整档案）
-            "qiniu",
             # 讯飞星辰 MaaS：免费模型清单与额度只登录后可查（模型详情页需登录），
             # 公开文档只有 Token Plan 付费积分价——免费权益无法从官方公开页核实（宁缺毋假）
             "iflytek_maas",
@@ -5134,9 +5129,13 @@ class TestGuideRendering(unittest.TestCase):
             crawler_llm_intel.order_vendor_records(intel_list))
         row_a = next(l for l in block.splitlines() if l.startswith("| **A."))
         dom, ovs = row_a.split("国内：")[1].split("<br>海外：")
-        for name in ("Trae", "通义灵码", "文心快码", "CodeBuddy"):
+        for name in ("Trae", "文心快码", "CodeBuddy"):
             self.assertIn(name, dom)
             self.assertNotIn(name, ovs)
+        row_b = next(l for l in block.splitlines() if l.startswith("| **B."))
+        trial_dom, trial_ovs = row_b.split("国内：")[1].split("<br>海外：")
+        self.assertIn("通义灵码", trial_dom)
+        self.assertNotIn("通义灵码", trial_ovs)
         for name in ("Cursor", "Kiro", "Zed", "Copilot"):
             self.assertIn(name, ovs)
 
@@ -5340,13 +5339,17 @@ class TestGuideRendering(unittest.TestCase):
         text = crawler_llm_intel.render_guide_block(
             crawler_llm_intel.order_vendor_records(self._all_vendor_intel()))
         scenarios = text.split("### 3. 按场景选", 1)[1].split("### 4.", 1)[0]
-        for vid, meta in provider_profiles.GUIDE_META.items():
+        for vid in provider_profiles.GUIDE_META:
+            meta = provider_profiles.get_guide_meta(vid)
             for scenario in meta.get("scenarios", []):
                 self.assertIn(scenario, ai_review.ALLOWED_SCENARIOS, vid)
             if meta.get("scenarios"):
                 name = provider_profiles.get_provider_profile(vid)["display_name"]
                 name = re.sub(r"[（(][^（）()]*[)）]\s*$", "", name).strip()
-                self.assertIn(name, scenarios, f"{vid} 的场景未进入攻略")
+                if meta.get("tiers"):
+                    self.assertIn(name, scenarios, f"{vid} 的场景未进入攻略")
+                else:
+                    self.assertNotIn(name, scenarios, f"{vid} 未确认免费权益却进入攻略")
 
     def test_picks_svg_covers_every_pick(self):
         """顶部速览图必须是「名单的视图」：每家首选都画进去，且没有漏出 Markdown 记号。"""
@@ -5457,12 +5460,18 @@ class TestGuideRendering(unittest.TestCase):
                     "google_gemini", "groq", "openrouter"):
             self.assertTrue(in_row("A. 常设免费权益", vid), f"{vid} 应在 A 类")
         # B 类包含国内外的一次性试用和赠额。
-        for vid in ("aliyun_qwen", "moonshot_kimi", "inception_labs"):
+        for vid in ("aliyun_qwen", "moonshot_kimi", "inception_labs", "tongyi_lingma"):
             self.assertTrue(in_row("B. 一次性赠额或试用", vid), f"{vid} 应在 B 类")
-        for vid in ("sensetime_sensenova", "poolside", "fireworks_ai", "moss"):
+        for vid in ("sensetime_sensenova", "poolside", "fireworks_ai", "moss", "qiniu"):
             self.assertTrue(in_row("E. 限时免费 / 公测", vid))
             self.assertFalse(in_row("A. 常设免费权益", vid))
             self.assertFalse(in_row("B. 一次性赠额或试用", vid))
+        for vid in ("cohere", "nvidia_nim", "typhoon", "ibm_watsonx"):
+            self.assertTrue(in_row("F. 免费评估 / 研究", vid))
+            self.assertFalse(in_row("A. 常设免费权益", vid))
+        for vid in ("tongyi_lingma", "gcp_vertex_ai", "mistral", "modular_cloud", "novita_ai"):
+            self.assertFalse(in_row("A. 常设免费权益", vid))
+        self.assertFalse(in_row("C. 需绑卡 · 大额云试用金", "gcp_vertex_ai"))
         # C 只装绑卡平台；国内实名平台一律不得进 C
         for vid in ("zhipu_glm", "aliyun_qwen", "siliconflow", "moonshot_kimi"):
             self.assertFalse(in_row("C. 需绑卡 · 大额云试用金", vid), f"{vid} 不应因实名进绑卡类")

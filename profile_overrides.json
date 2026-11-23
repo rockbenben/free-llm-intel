@@ -374,27 +374,23 @@
     "_summary": "定价体系全面调整，免费层包含有限智能体与 Grok 聊天/Imagine 用量且额度每周重置，付费档改为 Plus ($8/月) 至 Ultra ($200/月)",
     "_updated": "2026-10-13 11:08:16",
     "free_models": [
-      "Cursor 智能体 —— 免费档请求次数有限",
-      "Grok 聊天 —— 免费档请求次数有限",
-      "Grok 图像生成 (Imagine) —— 免费档用量有限",
-      "Grok 构建 —— 免费档用量有限"
+      "Cursor Free —— Agent 和 Chat 用量有限；第三方模型不在 Free 档可用范围"
     ],
-    "free_quota": "**免费层长期免费**：官方定价显示 $0/月，包含有限 AI 用量（智能体请求次数有限、聊天请求次数有限；Grok 聊天、图像生成 Imagine 与 Grok 构建有限）；用量池额度每周重置",
+    "free_quota": "Free 档提供有限的 Agent 和 Chat 用量；官方把按周重置的 Cursor 模型用量池列在付费计划。",
     "guide_meta": {
       "scenarios": [
         "code",
         "image"
       ],
-      "short": "免费层：智能体与 Grok 聊天/Imagine 请求次数有限，额度每周重置",
+      "short": "Free 档 Agent 和 Chat 用量有限；按周刷新的用量池属于付费档",
       "signup": "email",
       "tiers": [
-        "permanent",
-        "recurring"
+        "permanent"
       ],
-      "tip": "定价页仅标明「有限」未公布具体数值，用尽后可等待额度每周重置"
+      "tip": "Free 档具体限额和刷新周期以官方账户页面为准；付费计划每周刷新。"
     },
     "promotions": "套餐重构为 Plus ($8/月)、高级版 ($30/月)、Super ($100/月)、Ultra ($200/月)；高级版及以上方提供云端智能体与按 API 标价的第三方模型",
-    "validity": "免费档不限时，用量每周重置；付费升级档位调整为 Plus ($8/月)、高级版 ($30/月)、Super ($100/月)、Ultra ($200/月)"
+    "validity": "Free 档的具体刷新周期未由所核对的官方文档明确；付费计划的共享用量池每周刷新"
   },
   "deepseek": {
     "_evidence": [
@@ -554,8 +550,15 @@
     ],
     "_summary": "免费页新增「Gemini Enterprise Plus 版 30 天免费试用」这一限时活动，$300 赠金、Always Free 与 Startups 赠金数额未变，其余改动均为措辞调整。",
     "_updated": "2026-11-17 12:49:03",
-    "free_quota": "新账号 **$300 赠金（90 天）** + **Always Free** 每月免费额度（AI API、Compute Engine、BigQuery 等 20 多款产品，不计入赠金）；另可 **免费试用 Gemini Enterprise Plus 版 30 天**；**Google for Startups Cloud Program** 标准 $200,000、AI 初创公司最高 **$350,000**",
-    "promotions": "**Gemini Enterprise Plus 版 30 天免费试用**（在一个平台上管理、部署并安全守护所有 AI 智能体）；**Google for Startups Cloud Program**：标准 **$200,000**，AI 初创公司最高 **$350,000**。"
+    "free_quota": "Google Cloud 的 $300 / 90 天通用试用金仍适用于符合条件的云服务。自 2026-11-16 起新开试用或升级为付费账户时，该赠金不能支付 Gemini platform（原 Vertex AI / Gemini Enterprise Agent Platform）；生成式 AI 托管合作模型也不适用该赠金。",
+    "promotions": "**Gemini Enterprise Plus 版 30 天免费试用**（在一个平台上管理、部署并安全守护所有 AI 智能体）；**Google for Startups Cloud Program**：标准 **$200,000**，AI 初创公司最高 **$350,000**。",
+    "free_models": [
+      "Gemini platform 托管模型按各模型价表计费；Google Cloud 通用 Free Tier 与 Gemini Developer API 的免费层分别遵循各自规则"
+    ],
+    "validity": "通用试用金 90 天；Gemini platform 适用资格以 Google Cloud 试用条款及开通日期为准",
+    "tier_caveats": [
+      "自 2026-11-16 起新开试用或升级的账号无法用 $300 赠金抵扣 Gemini platform；云上其他 Always Free 产品额度不代表托管模型推理额度。"
+    ]
   },
   "github_copilot": {
     "_evidence": [
@@ -718,11 +721,11 @@
       "scenarios": [
         "longctx"
       ],
-      "short": "Spark-X2.5-1.7B 免费、4B 限时免费，需在产品页领取",
+      "short": "Spark-X2.5-1.7B 标免费，4B 标限时免费；按产品页面领取",
       "signup": "phone",
       "tiers": [
         "permanent",
-        "onetime"
+        "limited"
       ],
       "tip": "Spark-X2.5-4B 为限时免费，调用前确认免费额度状态"
     },
@@ -895,7 +898,7 @@
     ],
     "_summary": "Vibe 订阅套餐原来标注的随附 API credits（$25.5/月、$15/月两档）已从定价页删除，改为套餐额度用尽后按 API 价另行购买 PAYG credits；免费层仍无新用户赠金或免费实验层。",
     "_updated": "2026-11-21 15:01:10",
-    "free_quota": "**无新用户赠金 / 免费实验层**（现行 API 定价页未提及；旧“€5 赠金 / 1 RPS 免费层”无据）；Vibe 订阅套餐**不再随附 API credits**（旧“Pro 含 $25.5/月 API credits”已不在页面出现），超出套餐额度需按 API 价另行购买 PAYG credits"
+    "free_quota": "Free mode 有月度 Vibe / Studio 体验预算；API 调用需开通计费。Moderation 2 与 Labs 的个别零价端点按价表使用。"
   },
   "moonshot_kimi": {
     "_evidence": [
@@ -1140,16 +1143,14 @@
     "_updated": "2026-11-21 15:01:10",
     "guide_meta": {
       "scenarios": [
-        "code",
-        "credit"
+        "code"
       ],
-      "short": "Free $0/月：10 connections + 10 小时计算 + 10GB 传输/月；另有 startup program 最高 $10,000 credits + 6 个月 Growth（需资格审核）",
+      "short": "Free 档每月 10 小时集成计算和 10 GB 数据传输；另有 10 个连接",
       "signup": "email",
       "tiers": [
-        "recurring",
-        "onetime"
+        "recurring"
       ],
-      "tip": "超出免费额度按 $0.29/connection、$0.72/小时、$0.5/GB 计费，建议在 dashboard 设置 spend alerts 防超支。"
+      "tip": "Free 档到达上限即停止，额外用量需升级。Startup Program 需申请。"
     },
     "tier_caveats": [
       "免费档的 10 小时计算是**集成同步算力**，不是模型 token",
@@ -1768,8 +1769,11 @@
     ],
     "free_quota": "豆包模型分别提供 **50 万 tokens** 免费推理额度；另提供 Managed Agents 免费运行时长包",
     "guide_meta": {
-      "short": "豆包模型分别送 50 万 tokens；Managed Agents 送 30 小时",
-      "tip": "在控制台开启「安心体验模式」，超限即停，避免自动扣费。"
+      "short": "方舟新用户可试用部分模型，各模型额度以开通管理页为准",
+      "tip": "在控制台开启「安心体验模式」，超限即停，避免自动扣费。",
+      "tiers": [
+        "onetime"
+      ]
     }
   },
   "xai_grok": {
