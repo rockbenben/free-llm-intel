@@ -7,7 +7,57 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>推出具有 Anthropic 企业前沿保障和企业数据控制的 Amazon Bedrock 可信访问 API</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing the Amazon Bedrock Trusted Access API with Anthropic’s Enterprise Frontier Safeguards and Enterprise Data Controls</description>
+      <content:encoded><![CDATA[<h1>推出 Amazon Bedrock Trusted Access API，集成 Anthropic 的 Enterprise Frontier Safeguards 与 Enterprise Data Controls</h1>
+<p>今天，我们宣布 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上的 trusted access program API 全面可用。该 API 为您提供一个统一入口，用于发现、申请和加入模型提供方的 trusted access program。我们还宣布首批两个产品的公开预览：Anthropic 的 Enterprise Frontier Safeguards（EFS）和 Enterprise Data Controls（EDC）。两者均可在 Amazon Bedrock 上使用，涵盖 Claude Fable、Claude Mythos，以及通过 <a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">Cyber Verification Program</a>（CVP）使用的 Claude Opus 5.5 和 Sonnet 5.5。</p>
+<p>前沿 AI 实验室对其最强大的模型要求更严格的安全监控策略，这些策略在 Amazon Bedrock 上仍然适用。对于符合条件的客户，模型提供方还让客户对这些策略的满足方式拥有更多控制权，例如保留数据存储在哪里以及如何被审查。每个产品都有各自的条款、审批和设置。</p>
+<p>Amazon Bedrock trusted access program API 为每个提供方的产品提供一致的 Amazon Bedrock 体验。您的团队以相同方式为每个提供方发现产品、检查资格并加入。您的管理员使用现有 IAM 策略和服务控制策略决定谁可以加入。随着更多模型提供方增加产品，这些产品会出现在同一位置。</p>
+<p>EFS 和 EDC 由 AWS 与 Anthropic 合作构建。它们让您从模型使用和客户数据两个角度安全地访问 Anthropic 最强大的模型。使用 EFS 和 EDC 时，当自动化安全监控发现风险，会创建一个 Safety Case 供您的团队审查。使用 EFS 时，客户将数据存储在自己的 AWS 账户中，提示和补全内容不会被 Anthropic 或 Amazon Bedrock 保留。使用 EDC 时，保留数据存储在 Amazon 托管存储中，而非您的账户中，且提示和补全内容不会被 Anthropic 保留。一份申请即可访问两个计划。</p>
+<p>在本文中，我们解释 trusted access program API 如何工作，然后介绍 EFS 和 EDC 的存储选项与设置。</p>
+<h2>trusted access programs 如何工作</h2>
+<p>trusted access program 是模型提供方的一项具名计划，客户接受该计划条款，即可在安全审查和模型能力访问方面获得更多控制权。Amazon Bedrock trusted access program API 现在为您提供一个统一入口，用于查找您的账户可用的模型和用例计划。EFS 和 EDC 是今天首批可用的产品。提供方之后新增的产品会出现在同一位置，并遵循相同步骤。</p>
+<p>任何有权访问 trusted access program API 的人，都可以列出产品，并检查某个账户、AWS Organizations 中的某个组织或某个 Amazon Bedrock 项目的状态。状态会告诉您下一步该做什么。<code>eligible</code> 表示您符合该产品的资格并且可以加入，<code>requestable</code> 表示您需要先获得资格审批，响应中的 <code>statusReason</code> 字段会说明如何申请。模型提供方（或经模型提供方授权的 AWS）批准您的资格。</p>
+<p>加入是一个单独步骤，您在该步骤中接受提供方施加的产品条款。您在获批的范围内加入：一个账户、从管理账户加入组织中的每个账户，或单个项目。您可以随时退出。每个步骤都是对 trusted access program API 的一次调用，因此您可以通过 AWS Identity and Access Management（IAM）策略和服务控制策略（SCP）控制谁可以加入。更多信息请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/trusted-access-programs.html">trusted access programs documentation</a>。</p>
+<h2>Enterprise Frontier Safeguards</h2>
+<p>借助 Enterprise Frontier Safeguards（EFS），您可以将数据保留在自己的 AWS 环境中并拥有完全控制权。它是与 100 多家客户共同设计的，包括四分之一的 Fortune 100 企业，以及医疗、金融服务和法律等对数据可见性有严格规定的行业中的许多公司。</p>
+<p>自动化安全监控寻找仅在大量请求中才会出现的模式。这些模式包括可能导致严重伤害的故意滥用，例如攻击性网络行动。还包括超出用户请求范围的 agent 行为，例如利用软件漏洞访问内部系统。</p>
+<p>在 Amazon Bedrock 上，AWS 运营 EFS，客户输入和输出保留在客户的 AWS 账户内。只有 AWS 内的自动化安全监控会读取保留的输入和输出。AWS 人工审查员不会为 EFS 审查内容。审查由您负责。AWS 和 Anthropic 的人员均不会访问您保留的输入或输出。您的输入和输出绝不会用于训练。</p>
+<h3>工作原理</h3>
+<p>Amazon Bedrock 以单个 AWS 服务主体身份，仅通过您编写的密钥策略和存储桶策略，访问您的 <a href="https://aws.amazon.com/kms/">AWS Key Management Service</a>（AWS KMS）密钥和 <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service</a>（Amazon S3）存储桶。您可以随时移除该访问权限，但在 Amazon Bedrock 失去对您的密钥或存储桶的访问权限 24 小时后，它将停止提供受覆盖模型的服务。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/23/ML-22385-1.png" alt="EFS 工作流：Amazon Bedrock 使用您的 AWS KMS 密钥加密提示和响应，并将它们写入您的 Amazon S3 存储桶"></p>
+<p>图 1：Amazon Bedrock 上的 EFS 工作流</p>
+<p>当您调用受覆盖模型（包括 Claude Fable、Claude Mythos，以及通过 Cyber Verification Program（CVP）使用的 Claude Opus 5.5 和 Sonnet 5.5）时：</p>
+<ul><li>您的应用程序调用模型。推理的工作方式与任何 Amazon Bedrock 模型相同。</li><li>Amazon Bedrock 将提示和响应写入其保留服务和密钥服务。</li><li>这些服务使用您的 AWS KMS 密钥加密数据。</li><li>Bedrock 将提示和响应写入您的存储桶（使用您的密钥加密），或写入 Amazon 托管存储。写入您的存储桶时，Amazon 会在几分钟内写入内容。若您的密钥或存储桶出现某些故障，我们最多可重试 72 小时。</li><li>自动化安全监控在 AWS 拥有并运营的账户中运行，扫描数据并查找跨请求的滥用行为。</li><li>如果自动化安全监控发现潜在风险，会在您的存储桶中创建一个 Case 供您审查。</li></ul>
+<h3>您的团队如何处理 Case</h3>
+<p>一个 Case 概述自动化安全监控发现的内容，并引用相关转录记录。保留记录会到达您的存储桶中 <code>transcripts/</code> 前缀下，案例文件会到达 <code>review-cases/</code> 下。您的团队审查每个 Case，并将响应文件写入 <code>review-responses/</code>，说明是否发现违规（<code>violation</code> 或 <code>no_violation</code>），若发现违规，还要说明适用的策略类别。</p>
+<h2>Enterprise Data Controls</h2>
+<p>EDC 提供与 EFS 相同的自动化安全监控，对被标记活动的人工审查仍由您的团队负责。与 EFS 不同，EDC 将保留数据存储在 Amazon 托管存储中，使用 AWS 托管密钥加密，因此无需设置存储桶或密钥。符合条件的客户可通过一份加入申请访问 EFS 和 EDC。如果您的策略允许保留数据留在 Amazon 托管存储中并使用 AWS 托管密钥加密，请加入 EDC。如果您的策略要求保留数据使用您的 AWS KMS 密钥加密并留在您的 S3 存储桶中，请加入 EFS。无论哪种方式，您的团队都能审查被标记的活动。</p>
+<p>除 EFS 和 EDC 外，您目前可以通过两种方式在 Amazon Bedrock 上使用 Claude Fable 模型：</p>
+<ul><li>使用 <code>aws_review</code> 数据保留模式时，Amazon Bedrock 最多保留输入和输出 30 天，在此期间可在 AWS 边界内审查。</li><li>符合条件的客户可将当前 Fable 模型用于内部使用，并采用零数据保留（ZDR），至少持续到 2027 年 6 月 30 日。ZDR 结束后，EFS 是长期路径。</li></ul>
+<h2>选择保留数据的存储位置</h2>
+<p>使用 EFS 时，保留数据仅存储在您自己的 S3 存储桶中，并使用您的 KMS 密钥加密。Anthropic 和 AWS 都不会将其保存在自己的存储中。下表比较 EFS 与其他路径。</p>
+<table><thead><tr><th></th><th><strong>不符合 ZDR、EFS 或 EDC 资格</strong></th><th><strong>ZDR 例外（临时）</strong></th><th><strong>EFS，您自己的 Amazon S3 存储桶（公开预览）</strong></th><th><strong>EDC，Amazon 托管存储（公开预览）</strong></th></tr></thead><tbody><tr><td><strong>数据保留</strong></td><td>最多 30 天</td><td>无；对于当前 Fable 模型和现有 Cyber Verification Program 模型，内部使用至少持续到 2027 年 6 月 30 日</td><td>Amazon Bedrock 不保留副本。适用您的生命周期规则，最短 30 天。</td><td>最多 30 天，之后 Amazon Bedrock 将其删除</td></tr><tr><td><strong>保留数据的存储位置</strong></td><td>AWS 托管存储</td><td>不保留</td><td>您的 Amazon S3 存储桶</td><td>Amazon 托管存储</td></tr><tr><td><strong>加密密钥</strong></td><td>AWS 托管</td><td>不适用</td><td>您的 AWS Key Management Service（AWS KMS）密钥</td><td>AWS 托管</td></tr><tr><td><strong>安全监控</strong></td><td>可在 AWS 边界内审查</td><td>无</td><td>自动化。Case 会进入您的存储桶，供您的团队审查。</td><td>自动化。您的团队审查被标记的 Case。公开预览期间不会交付 Case。</td></tr><tr><td><strong>您的 <a href="https://aws.amazon.com/cloudtrail/">AWS CloudTrail</a> 显示的内容</strong></td><td>您的 Amazon Bedrock API 调用</td><td>您的 Amazon Bedrock API 调用</td><td>您的 Amazon Bedrock API 调用，以及 Amazon Bedrock 对您的密钥和存储桶的使用</td><td>您的 Amazon Bedrock API 调用</td></tr><tr><td><strong>存储成本</strong></td><td>不适用</td><td>不适用</td><td>常规的 Amazon S3 和 AWS KMS 费用</td><td>不适用</td></tr></tbody></table>
+<p><em>表 1：Amazon Bedrock 上 Claude Fable 模型的路径。</em></p>
+<p>存储配置一次仅适用于一个区域，没有配置的区域使用 Amazon 托管存储。在您调用受覆盖模型的每个区域中保存配置。</p>
+<h2>开始使用</h2>
+<p>首先使用 trusted access program API 检查您的 EFS 状态：</p>
+<pre><code>aws bedrock list-trusted-access-programs --region us-east-1</code></pre>
+<p>如果状态为 <code>eligible</code>，您的账户已获批。如果为 <code>requestable</code>，请按照 <code>statusReason</code> 字段中的步骤申请访问权限。加入预览会为您添加的账户关闭零数据保留。</p>
+<p>获批后，在您调用受覆盖模型的每个区域中设置 EFS：</p>
+<ul><li><strong>在同一区域创建一个 AWS KMS 密钥和一个 Amazon S3 存储桶</strong>。密钥策略和存储桶策略仅通过其服务主体授予 Amazon Bedrock 访问权限，且仅针对您账户的数据。</li><li><strong>授予您的角色权限</strong>以保存存储配置。</li><li><strong>保存您的存储配置。</strong> Amazon Bedrock 会在保存前检查您的密钥和存储桶设置，如果任何检查失败，错误信息会指出失败的检查项。</li><li><strong>将您的数据保留模式设置为</strong> <code>aws_review</code>。</li><li><strong>调用 Claude Fable 模型</strong>，然后确认 AWS CloudTrail 显示 Amazon Bedrock 使用了您的密钥。保留记录通常会在几分钟内出现在您的存储桶中，但如果 Amazon Bedrock 必须重试，则可能需要长达 72 小时。</li></ul>
+<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/anthropic-efs-enterprise-data-controls.html">EFS documentation</a> 提供了每个步骤的完整密钥策略、存储桶策略、IAM 策略和 API 调用。它还涵盖组织和项目配置以及故障排除。若要改用企业数据控制，请跳过步骤 1 和 2，并在步骤 3 中选择 Amazon 托管存储。</p>
+<h2>结论</h2>
+<p>trusted access program API 现已全面可用，为您提供一种统一方式，在 Amazon Bedrock 上查找模型提供方产品、检查您的状态并加入，同时由 IAM 策略和 SCP 控制谁可以加入。EFS 和 EDC 是首批进入公开预览的产品。它们让您在使用 Claude Fable 和 Cyber Verification Program 模型时掌控自己的数据。使用您自己的 Amazon S3 存储桶时，Amazon Bedrock 不保留数据副本，您的 AWS KMS 密钥对其进行加密，每次访问都会显示在您自己的 AWS CloudTrail 日志中。</p>
+<p>要开始使用，请通过 <code>aws bedrock list-trusted-access-programs</code> 检查您的 EFS 状态，并加入 EFS 预览。要了解更多信息，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/trusted-access-programs.html">trusted access programs documentation</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/anthropic-efs-enterprise-data-controls.html">EFS/EDC documentation</a>。</p>
+<p>要加入 EFS 和 EDC 公开预览，请与您的 AWS 账户团队合作提交请求。请准备好 AWS 账户 ID（对于项目，请准备 Amazon Bedrock 运行时项目 ARN），并注意该预览面向已加入 EFS ZDR 的客户。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
     <item>
       <title>将 Kimi Code CLI 与 Amazon Bedrock 上的模型结合使用</title>
       <link>https://aws.amazon.com/blogs/machine-learning/use-kimi-code-cli-with-models-on-amazon-bedrock/</link>
@@ -6463,62 +6513,6 @@ for result in response[&quot;evaluationResults&quot;]:
 <h2>综合运用</h2>
 <p>越来越难的反倒是选哪些评估器。挑出最能说明你是否达成业务结果的两三种行为，先量它们；等发现当前组合漏掉了某类失败，再补一个评估器。</p>
 <p>想看完整目录，调用 <code>ListEvaluators</code> API：它会在一次响应里返回内置、DeepEval、AutoEval 评估器，以及你账号下的所有自定义评估器。在挑任何一个之前，先回答两个问题：“对这个 agent 来说，成功长什么样？”以及“trace 里的哪种行为能说明它确实发生了？”</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>自主财资 agents：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/autonomous-treasury-agents-how-trovata-built-an-ai-native-solution-on-amazon-bedrock-and-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/autonomous-treasury-agents-how-trovata-built-an-ai-native-solution-on-amazon-bedrock-and-agentcore/</guid>
-      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：自主财资 agents：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生解决方案 | 原文标题：Autonomous treasury agents: How Trovata built an AI-native solution on Amazon Bedrock and AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>自主财资 agents：Trovata 如何在 Amazon Bedrock 和 AgentCore 上构建 AI 原生解决方案</h1>
-<p>企业财资团队长期面临一个难题：银行数据零散分布在数十个银行门户里，报表困在电子表格中靠手工整理，遗留的财资管理系统（TMS）又无法扩展以满足现代企业的需求。对财资团队而言，这些手工流程带来延误和差错，也让他们在最关键的时刻无法做出实时的现金决策。</p>
-<p>Trovata 是一个 AI 原生的现金与流动性管理平台，直连 10,000 多家银行，通过单一云平台服务全球企业。2023 年，Trovata 推出了首个专为财资打造的生成式 AI。如今，随着 Trovata 最新的 AI 原生更新，他们已从输出洞察，演进到部署代表财资团队行事的自主 agents。</p>
-<p>Trovata 的客户已经看到了可量化的成效：年化成本节省 100 万美元以上，每个会计团队每天节省 5 小时以上，年度 TMS 成本降低 77%，财资报表从数小时或数天缩短到不到一分钟。</p>
-<p>在本文中，我们将探讨 Trovata 如何在 Amazon Bedrock 和 Amazon Bedrock AgentCore 上构建自主财资 agents、这套架构如何借助支持银行品牌 AI 部署的基于角色的访问控制（RBAC）来保障安全，以及 agentic 工作流如何把企业财资从手工操作转变为企业级的实时决策。</p>
-<h2>解决方案概述</h2>
-<p>Trovata 作为一套 AI 原生的财资操作系统运行，通过单一系统直连 10,000 多家银行，支撑现金报告、预测、分析和资金划转。</p>
-<p>如今，财资团队面临三重压力：</p>
-<ul><li><strong>分散的银行数据</strong>散落在多个门户，需要手工汇总与对账。</li><li><strong>手工报表与对账</strong>耗费熟练团队成员数小时甚至数天的时间。</li><li><strong>遗留的 TMS 应用</strong>缺乏现代运营所需的云原生架构和 AI 能力。</li></ul>
-<p>Trovata 从 2023 年的首款财资生成式 AI，演进到具备自主 agents 的 AI 原生能力，代表着一次根本性的转变。解决方案从静态洞察转向代替财资团队持续运行的常驻 agentic 工作流。关键在于，Trovata AI 直接内建于财资操作系统之中。它不是叠加在上层的通用聊天机器人，而是与真实财资对象绑定的嵌入式智能，并经由 agents 提供一条受治理的自动化路径。</p>
-<p>Trovata 选择 AWS 来完成这次转型，有三个原因：其 serverless、云原生基础设施支持实时执行；Amazon Bedrock 为自然语言查询和 AI 功能提供大型语言模型（LLM）推理；Amazon Bedrock AgentCore 则负责 agent 编排，并带来 RBAC 安全、快速部署和全球规模。</p>
-<p>支撑 Trovata AI 原生解决方案的核心 AWS 服务包括：</p>
-<ul><li><strong>Amazon Bedrock</strong> – 用于自然语言理解与生成的 LLM 推理。</li><li><strong>Amazon Bedrock AgentCore</strong> – agent 编排、agentic 工作流与 RBAC 安全。</li><li><strong>Serverless AWS 基础设施</strong> – 企业级的实时执行。</li></ul>
-<h2>架构图</h2>
-<p>Trovata AI 架构以运行在银行品牌、受 RBAC 保护的框架内的自主财资 agents 为核心。该解决方案由若干协同工作的关键组件构成：</p>
-<ul><li><strong>Trovata AI Chat</strong> – 对多银行财资数据做自然语言查询，用户可以提出诸如 <em>“昨天我们所有账户的净现金头寸是多少？”</em> 之类的问题，并立即得到准确的回答。</li><li><strong>AI Insights</strong> – 自动异常检测、差异解释和趋势分析，主动把关键信息呈现出来。</li><li><strong>AI Agents</strong> – 按计划、触发器或规则运行的常驻工作流，用于监控活动、解释差异、检测异常并自动推送更新，无需人工干预。</li><li><strong>Agent Builder-Configurator</strong> – 用于构建和配置财资 agents 的管理控制台，让团队完全掌控 agent 的行为与范围。</li><li><strong>Enterprise RBAC</strong> – 基于角色的访问控制保护 agentic 工作流，确保 agents 在与人类用户相同的权限边界内运行。</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/ML-22181-1.png" alt="Amazon Bedrock 和 AgentCore 上的 Trovata AI 架构：把银行品牌门户与 10,000 多家银行连接到 AI Chat、AI Insights 和 AI Agents 各层"></p>
-<p>图 1：Amazon Bedrock AgentCore 上的 Trovata AI 架构，从银行品牌门户一直到多银行连接</p>
-<h2>技术实现</h2>
-<p>Trovata 在 Amazon Bedrock AgentCore 上构建其 AI 原生解决方案，把自主 agents、自然语言查询和企业访问控制结合起来。后续小节介绍团队构建了什么、主要用例，以及背后的 AgentCore 能力。</p>
-<h3>Trovata 构建了什么：AI 原生解决方案</h3>
-<p>Trovata AI 提供直接内嵌于 Trovata 财资操作系统中的自主财资管理 agents。这些 AI agents 把可重复的运营工作变成持续运行的常驻工作流。正是这类工作，耗掉了熟练专业人员大量时间。</p>
-<p>Agents 按计划、触发器或规则运行，监控活动、解释差异、检测异常并自动推送更新。整个系统运行在 Amazon Bedrock AgentCore 上——一个专为企业 AI 打造的安全、隔离环境。当用户提问时，AI 通过 Trovata 自己的、经过验证的 API 层检索数据、加以分析，并在这套安全基础设施内给出回答。</p>
-<h3>主要用例</h3>
-<ul><li><strong>现金预测</strong> – 借助情景建模，在多银行环境中自动完成现金流预测，取代基于电子表格的手工预测。</li><li><strong>自然语言查询</strong> – 企业用户用日常英语查询银行数据。例如：<em>“昨天我们所有账户的净现金头寸是多少？”</em>。</li><li><strong>异常检测</strong> – 实时检测异常交易、余额变动或现金流模式，这些可能意味着错误、欺诈或运营问题。</li><li><strong>自动对账</strong> – 由 AI 生成跨数百个账户的对账摘要，把过去要花数小时的工作缩短到几秒。</li><li><strong>Agentic workflows</strong> – 持续自主运行、无需人工干预即可监控、分析和报告的常驻 agents。</li></ul>
-<h3>来自真实客户部署的十种 agent 模式</h3>
-<p>财资团队已经开始在生产环境中构建 AI agents。Trovata 的 AI Agents Playbook 提供了一个可用的库，收录从真实客户部署中提炼的十种 agent 模式，覆盖最常见、价值最高的财资工作流。如今，多数财资团队都有 5–15 个工作流可以直接交给 AI agents。</p>
-<h3>Trovata 使用的 AgentCore 能力</h3>
-<p>Trovata 的实现用到了 Amazon Bedrock AgentCore 的几项关键能力：</p>
-<ul><li><strong>agent 编排</strong> – 面向需要顺序推理与行动的复杂财资操作的多步 agentic 工作流。</li><li><strong>RBAC 安全</strong> – 基于角色的访问控制保护 agent 的操作，确保 agents 遵守组织的权限边界。</li><li><strong>实时执行</strong> – Serverless 基础设施，可在数百个银行账户上实现亚分钟级的财资报表。</li><li><strong>银行品牌部署</strong> – agents 内嵌于银行品牌工具中，银行无需自己构建 AI 就能提供 AI 驱动的财资能力。</li></ul>
-<h3>安全与治理架构</h3>
-<table><thead><tr><th><strong>控制</strong></th><th><strong>实施</strong></th></tr></thead><tbody><tr><td><strong>企业 RBAC</strong></td><td>基于角色的访问控制保护 agentic 工作流和数据访问</td></tr><tr><td><strong>经过验证的 API 层</strong></td><td>AI 仅通过 Trovata 自己的、经过验证的 API 层检索数据 — 不直接访问数据库</td></tr><tr><td><strong>安全隔离环境</strong></td><td>AgentCore 为 AI agent 执行提供安全、隔离的运行时</td></tr><tr><td><strong>银行品牌部署</strong></td><td>agents 在银行品牌应用内运行，保持企业安全性并支持合规工作</td></tr><tr><td><strong>多银行数据治理</strong></td><td>直连 10,000 多家银行</td></tr><tr><td><strong>审计追踪</strong></td><td>记录 AI 查询与 agent 操作，供合规审查</td></tr></tbody></table>
-<h2>结果</h2>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>结果</strong></th><th><strong>背景</strong></th></tr></thead><tbody><tr><td><strong>年化成本节省</strong></td><td>100 万美元以上</td><td>基于客户案例研究</td></tr><tr><td><strong>每个会计团队节省的时间</strong></td><td>5+ 小时/天</td><td>免去手工报表与对账</td></tr><tr><td><strong>年度 TMS 成本降低</strong></td><td>77%</td><td>与遗留 TMS 工具相比</td></tr><tr><td><strong>财资报表耗时</strong></td><td>数小时/数天 → &lt;1 分钟</td><td>跨数百个账户的实时现金可视性</td></tr><tr><td><strong>银行连接</strong></td><td>100+ 家企业客户；2,000+ 家商业客户</td><td>直连 — 单一系统</td></tr><tr><td><strong>生产状态</strong></td><td>已上线</td><td>具备自主 agents 的 AI 已在生产环境运行</td></tr><tr><td><strong>可用 agent 模式</strong></td><td>10</td><td>来自真实客户部署（Agents Playbook）</td></tr></tbody></table>
-<h3>关键差异化优势</h3>
-<table><thead><tr><th><strong>差异化因素</strong></th><th><strong>说明</strong></th></tr></thead><tbody><tr><td><strong>首个财资生成式 AI</strong></td><td>2023 年推出。随最新 AI 更新演进为自主 agents</td></tr><tr><td><strong>内嵌，而非外挂</strong></td><td>AI 直接内建于财资操作系统，而非通用聊天机器人层</td></tr><tr><td><strong>银行品牌部署</strong></td><td>银行以自有品牌部署 AI agents，无需自己构建 AI</td></tr><tr><td><strong>经过验证的 API 层</strong></td><td>AI 仅通过 Trovata 经过验证的 API 访问数据 — 不直接访问数据库</td></tr><tr><td><strong>十种生产级 agent 模式</strong></td><td>来自真实客户部署的可用库</td></tr><tr><td><strong>大规模多银行</strong></td><td>单一系统上超过 10,000 家银行</td></tr></tbody></table>
-<h2>先决条件</h2>
-<p>要探索类似的架构，你需要：</p>
-<ul><li>一个可访问 Amazon Bedrock 和 Amazon Bedrock AgentCore 的 AWS 账户。</li><li>熟悉财资管理操作（现金预测、对账、多银行连接）</li><li>了解 agentic AI 架构和企业 RBAC 模型。</li><li>了解金融服务合规要求。</li></ul>
-<h2>清理</h2>
-<p>如果你在探索这套架构时部署过任何示例资源，记得删除它们，以免产生后续费用。清理为测试而创建的 Bedrock agents、AgentCore 配置及相关基础设施。</p>
-<h2>结论</h2>
-<p>Trovata 从手工财资操作走向自主、AI 驱动的财资管理，这条路径展示了 agentic AI 在金融服务中的变革潜力。年化成本节省超过 100 万美元、每个会计团队每天省下 5 小时以上、年度 TMS 成本降低 77%、报表从数小时或数天缩短到不到一分钟——成效是可以量化的。</p>
-<p>银行品牌的部署模式尤其有效。银行和企业无需自行构建，就能拿到生产就绪的 AI。Trovata AI 展示了独立软件供应商（ISV）如何借助 Amazon Bedrock AgentCore，把受治理的自主 AI agents 直接嵌入垂直软件即服务（SaaS）应用，交付具备金融服务所要求的安全性与合规意识的 AI。</p>
-<p>展望未来，Trovata 计划扩充 agent 模式、深化企业资源规划（ERP）集成，并扩展全球银行连接。公司持续推进自主财资管理的能力边界。</p>
-<h3>开始使用</h3>
-<ul><li><a href="https://trovata.io/trovata-ai">Trovata AI</a> – 了解 Trovata 的 AI 驱动财资解决方案。</li><li><a href="https://trovata.io/guides/ai-agents-playbook">Trovata AI Agents Playbook</a> – 来自真实客户部署的十种 agent 模式。</li><li><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> – 了解 AWS 上的 agent 编排。</li><li><a href="https://aws.amazon.com/marketplace">AWS Marketplace 上的 Trovata</a> – 从 AWS Marketplace 部署 Trovata。</li></ul>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
   </channel>

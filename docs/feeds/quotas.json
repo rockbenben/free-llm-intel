@@ -64,7 +64,7 @@
         "**快照版本独立**：带日期后缀版本（如 `qwen-max-2026-05-17`）与主版本独立享有额度",
         "**适用范围受限**：仅抵扣模型实时推理，不可抵扣批量调用、内置工具（联网搜索/图片搜索等）、微调与部署",
         "**扣费风险**：免费额度用尽即停（安心模式）在开通千问AI平台后默认关闭，需自行前往权益页面开启以防超额按量扣费",
-        "**Key 类型限制**：Token Plan 专属 API Key 不消耗免费额度，须使用通用 API Key"
+        "**Key 类型限制**：Token Plan 专属 API Key 不消耗免费额度，用它调用模型会直接消耗 Token Plan 的 Credits 额度，也不会转为按量付费；如需使用免费额度，请改用 API Keys 页面按量付费区域中的 API Key"
       ],
       "preconditions": "新用户需先完成实名认证才能开通千问AI平台并获得免费额度；此前已开通但未完成实名认证的用户可继续使用已有免费额度",
       "promotions": "“云大使”返利、知识库 720 小时试用等说法无法在当前官方免费额度页复核，不予采信。",
@@ -93,7 +93,7 @@
           "https://qianwen.aliyun.com/"
         ]
       ],
-      "reviewed": "2026-11-23"
+      "reviewed": "2026-11-24"
     },
     {
       "rank": 3,
@@ -663,10 +663,10 @@
       "free_quota": "注册即送 **14 元** 通用代金券（官方计费 FAQ 原文：“注册即送 14 元额度”），可抵扣付费模型 token 费用；有效期以账户内券面标注为准",
       "validity": "0 元模型长期免费；代金券有效期以账户标注为准",
       "free_models": [
-        "对话 `Xing4.0-29B`、`PaddleOCR-VL-1.5`、`Hunyuan-MT-7B` —— 定价页标注「免费」，**0 元调用**",
-        "向量 `bge-m3`、`bge-large-zh-v1.5`、`bge-large-en-v1.5` 与重排 `bge-reranker-v2-m3` —— **0 元免费**",
-        "图像 `Kolors`、语音 `SenseVoiceSmall` 与电信 `XingChenASR/GSR` 系列 —— **0 元免费**（TTS 语音合成按量收费）",
-        "付费旗舰（可用 14 元代金券抵扣）：DeepSeek-V4 系列、GLM-5.3/5.2、Kimi-K2.7-Code、LongCat-2.0、Qwen3.x 等"
+        "对话 `Xing4.0-29B`、`PaddleOCR-VL-1.5`、`Hunyuan-MT-7B`、`GLM-Z1-9B-0414` —— 定价页标注「免费」，**0 元调用**",
+        "向量 `bge-m3`、`bge-large-zh-v1.5`、`bge-large-en-v1.5` 与重排 `bge-reranker-v2-m3` —— **0 元免费**（Pro 版标价 ¥0.07/M tokens）",
+        "图像 `Kolors` —— 生成图片每图片免费；语音 `SenseVoiceSmall`、`XingChenASR V3.2`、`XingChenASR V3.2-Ultra`、`XingChenASR-Diarize-V3.0`、`XingChenGSR V1.0` —— **0 元免费**（`Xing-Audio4.0-ASR-Preview`、`Qwen3-ASR-1.7B`、`CosyVoice2-0.5B`、`MOSS-TTSD-v0.5` 按量收费）",
+        "付费旗舰（可用 14 元代金券抵扣）：DeepSeek-V4/V4.1 系列、GLM-5.3/5.2、Kimi-K2.7-Code、LongCat-2.0、Qwen3.x 等"
       ],
       "tier_caveats": [
         "**0 元只覆盖指定开源模型 / 向量 / 重排 / 画图 / 识别语音**（Xing4.0-29B、PaddleOCR-VL、Hunyuan-MT、bge 系列、Kolors、SenseVoice 等）；DeepSeek-V4、GLM-5.x、Kimi-K2.7 等旗舰全部按量计费，需使用 14 元代金券抵扣",
@@ -699,7 +699,7 @@
           "https://docs.siliconflow.com/cn/faqs/billing-rules"
         ]
       ],
-      "reviewed": "2026-11-23"
+      "reviewed": "2026-11-24"
     },
     {
       "rank": 15,
@@ -827,17 +827,17 @@
       "part": 1,
       "homepage": "https://platform.mosi.cn/",
       "anchor": "18-复旦-moss-mosi",
-      "signup": "",
+      "signup": "email",
       "tiers": [
         "limited"
       ],
       "in_guide": true,
-      "free_quota": "官方公开文档未见账户级注册赠金说明；模型限免见「免费模型与额度」",
-      "validity": "限时免费，官方未公布截止日；随时可能恢复计费，以官方公告为准",
+      "free_quota": "官方公开文档未见账户级注册赠金说明；模型限免见「免费模型与额度」（Nex-N2.6 已于 11 月 25 日 21:00 起开始计费，不再限免）",
+      "validity": "限时免费仅剩 moss-vl-1.0 / moss-vl-realtime-1.0，官方未公布截止日；Nex-N2.6 已自 11 月 25 日 21:00（北京时间）起计费（限时六折），以官方公告为准",
       "free_models": [
-        "**限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（实测 max_tokens=64 时 63 个 token 全用于推理，finish_reason=length）",
-        "**限时免费 0 积分**：`moss-vl-1.0`（多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（实时视频理解，连续图片帧+文本→增量文本，WebSocket `/v1/realtime`）",
-        "**付费（非免费，执行六折优惠）**：实时交互 MOSS-Live-1.0（¥0.15/分钟＝3 积分/分钟）；TTS 系列 MOSS-TTS-2.0-Flash-Preview / moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写目前仅列 moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时），`moss-transcribe-1.0`（原 ¥0.48/小时＝9.60 积分/小时）已从模型列表移除，官方公告于 11 月 30 日 12:00（北京时间）下线；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分、高分辨率 ¥0.18/张＝3.60 积分）"
+        "**已开始计费（限时六折）**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 官方公告「Nex-N2.6 API 于 11 月 25 日 21:00（北京时间）开始计费，限时六折」，模型页表格仍残留「限时免费 0 积分」旧标注，以公告为准；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（需给足 max_tokens）",
+        "**限时免费 0 积分**：`moss-vl-1.0`（Beta，多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（Beta，实时视频理解，连续图片帧+文本→增量文本，WebSocket `/v1/realtime`）",
+        "**付费（非免费，执行六折优惠）**：实时交互 MOSS-Live-1.0（¥0.15/分钟＝3 积分/分钟）；TTS 系列 MOSS-TTS-2.0-Flash-Preview / moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写目前仅列 moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分、高分辨率 ¥0.18/张＝3.60 积分）"
       ],
       "tier_caveats": [
         "官方未公开统一 RPM/TPM/RPD 数值，实际限速以控制台及服务端错误码为准；`moss-vl-1.0` 走 Responses API，实时模型走 WebSocket，不能直接填入 Chat Completions 客户端",
@@ -847,13 +847,13 @@
         "2026-11-12 的 API 实测响应未见计费字段；HTTP 200 本身不能证明免费，接入时须同时核对官方价格与控制台扣减记录"
       ],
       "preconditions": "注册 MOSS 开放平台账号并创建 API Key（`sk-` 开头），控制台获取；调用带 `Authorization: Bearer <key>`",
-      "promotions": "限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 标 0 积分；MOSS-Live-1.0 已于 11 月 18 日 12:00 开始计费（¥0.15/分钟），语音生成、音频转写、文生图等付费模型当前执行六折优惠。",
+      "promotions": "限时免费：moss-vl-1.0 / moss-vl-realtime-1.0 标 0 积分；Nex-N2.6 已于 11 月 25 日 21:00（北京时间）开始计费，限时六折；MOSS-Live-1.0 已于 11 月 18 日 12:00 开始计费（¥0.15/分钟），语音生成、音频转写、文生图等付费模型当前执行六折优惠。",
       "openai_compat": {
-        "summary": "nex-n2.6 限时免费 0 积分（Chat Completions）；TTS/转写/文生图收费",
         "api_key_label": "控制台创建",
         "api_key_url": "https://platform.moss.cn/app/api-keys/",
         "base_url": "https://api.mosi.cn/v1",
-        "models": "`nex-n2.6`, `nex-n2.6-2026-11-05`"
+        "models": "`nex-n2.6`, `nex-n2.6-2026-11-05`",
+        "summary": "nex-n2.6 已自 11 月 25 日 21:00 起计费（限时六折）；仅 moss-vl 系列限时免费"
       },
       "links": [
         [
@@ -873,7 +873,7 @@
           "https://platform.moss.cn/docs/errors-and-limits/limits"
         ]
       ],
-      "reviewed": "2026-11-21"
+      "reviewed": "2026-11-24"
     },
     {
       "rank": 19,
@@ -921,7 +921,7 @@
           "https://portal.qiniu.com/"
         ]
       ],
-      "reviewed": "2026-11-18"
+      "reviewed": "2026-11-24"
     },
     {
       "rank": 20,
@@ -1142,7 +1142,7 @@
       "tiers": [],
       "in_guide": false,
       "free_quota": "开放平台列明公开模型按实际用量计费。公开定价和账单说明未公示普遍新客赠额。Builder Program 需单独申请。",
-      "validity": "StepAudio 3 相关限免已于北京时间 2026-11-23 11:59:59 结束，12:00 起执行新价表。",
+      "validity": "",
       "free_models": [
         "StepAudio 3 原适用限免的模型已恢复计费。现行公开定价页未列新的通用免费模型档。"
       ],
@@ -1361,7 +1361,7 @@
           "https://console.x.ai/home"
         ]
       ],
-      "reviewed": "2026-11-21"
+      "reviewed": "2026-11-24"
     },
     {
       "rank": 30,
@@ -1818,7 +1818,7 @@
           "https://www.together.ai/pricing"
         ]
       ],
-      "reviewed": "2026-11-23"
+      "reviewed": "2026-11-24"
     },
     {
       "rank": 40,
@@ -2868,7 +2868,7 @@
           "https://www.baseten.co/startup-program-legal-disclaimers/"
         ]
       ],
-      "reviewed": "2026-11-21"
+      "reviewed": "2026-11-24"
     },
     {
       "rank": 67,

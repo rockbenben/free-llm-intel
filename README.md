@@ -50,7 +50,7 @@
 | **B. 一次性赠额或试用** | **无需付款方式**；核对领取资格、有效期和适用范围 | 国内：[通义千问](#2-通义千问-阿里云)（大部分模型各 100 万 Token / 90 天（部分模型额度已下架，以权益页为准））、[Kimi](#4-kimi-月之暗面)（实名送 15 元代金券（可抵扣 K3/K3.1 Pro，不可用于高速版））、[火山引擎](#6-火山引擎-火山方舟--豆包)（方舟新用户可试用部分模型，各模型额度以开通管理页为准）、[小米 MiMo](#7-小米-mimo)（中国大陆账号首次实名赠 ¥5，一账号一次，到账后 40 天有效。TTS 系列限免。）、[文心 ERNIE](#9-文心-ernie-百度千帆)（17 个模型各 100 万 / 3 个月 + 20 元券）、[StreamLake](#15-streamlake-快手万擎)（注册开通后分批送免费调用次数（仅基础模型推理））、[摩尔线程 MUSA Coding Plan](#17-摩尔线程-musa-coding-plan)（MUSA Coding Plan 限时开放一次 30 天试用，名额以官方页面为准）、[中国电信](#21-中国电信-天翼云--息壤智算)（实名最高 2,000 元试用体验金）、[360 智脑](#23-360-智脑)（官方文档列出 50 元新用户体验金；Mem360 记忆库为限时免费）、[通义灵码 / Qoder CN](#77-通义灵码--qoder-cn-阿里云)（新用户个人体验版含 14 天 Pro 试用和 300 Credits；旧社区版补全额度仅面向存量用户）<br>海外：[Anthropic Claude](#26-anthropic-claude)（Claude API 新用户有一次性测试赠额，金额以账户为准）、[Stability AI](#43-stability-ai)（新号 25 积分；开源权重年营收 < $100 万免费）、[AI21 Labs](#44-ai21-labs)（$10 试用赠额，有效 7 天，无需信用卡）、[InceptionLabs](#51-inceptionlabs)（新号 1 亿 free tokens，免信用卡）、[Regolo.ai](#55-regoloai-欧盟托管推理)（30 天试用：每日 100 万 tokens，全部 Core Chat 模型）、[Dify](#85-dify-云版-sandbox)（Sandbox 免费：200 message credits + 5 Apps + 50 知识库文档） |
 | **C. 需绑卡 · 大额云试用金** | 需信用卡或身份验证（可能有验证扣款）；额度最大，但**注册后立刻设预算告警**，记下到期日并主动关停 | 国内：[腾讯混元](#8-腾讯混元-tokenhub)（8款模型共享 100万 tokens + Embedding 100万）<br>海外：[Cerebras Inference](#38-cerebras-inference-晶圆级推理)（$5 赠金 / 30 天（需添加付款方式后发放））、[Anyscale](#50-anyscale)（$100 注册额度（需工作邮箱；无独立免费层，抵扣 Ray 算力））、[Parallel Web API](#57-parallel-web-api-数据--搜索-api)（Build：每月 5,000 次免费请求 + $5 额度（留卡才发）+ 注册最高 $80）、[Amazon Bedrock](#61-amazon-bedrock-aws-free-tier)（开户立得 $100，6 个月内最高合计 $200 抵扣金（需信用卡））、[Azure OpenAI / Azure AI Foundry](#62-azure-openai--azure-ai-foundry)（$200 / 30 天（需信用卡或身份验证））、[Oracle OCI Generative AI](#64-oracle-oci-generative-ai)（$300 / 30 天 + Always Free（需信用卡验证））、[DigitalOcean Inference Engine](#69-digitalocean-inference-engine)（$5 / 90 天通用试用金（非 LLM 免费层，需绑卡））、[Akamai Cloud](#70-akamai-cloud-原-linode)（新客 $100 云抵扣额度 / 60 天（需绑卡）） |
 | **D. 开源权重 / 自托管** | 没有「额度」概念，自己出算力；也可走 A 类平台免费托管调用 | 国内：[小米 MiMo](#7-小米-mimo)（中国大陆账号首次实名赠 ¥5，一账号一次，到账后 40 天有效。TTS 系列限免。）<br>海外：[Meta Llama](#37-meta-llama-开源权重)（Llama 4 Scout/Maverick 免版税权重（可经 Groq/Cloudflare 免费托管调用））、[Stability AI](#43-stability-ai)（新号 25 积分；开源权重年营收 < $100 万免费）、[Poolside](#48-poolside)（代码模型限时免费（官方未公布截止日））、[Modular](#68-modular-原-bentocloudbentoml)（Community Edition 可免费自托管；云端共享端点按 token 计费） |
-| **E. 限时免费 / 公测** | 活动或公测期间可用，关注截止时间和资格变更 | 国内：[小米 MiMo](#7-小米-mimo)（中国大陆账号首次实名赠 ¥5，一账号一次，到账后 40 天有效。TTS 系列限免。）、[商汤 日日新](#10-商汤-日日新-sensenova)（Token Plan 公测免费：5 小时 12 万 + 每周 120 万积分）、[科大讯飞星火](#11-科大讯飞星火-spark-api)（Spark-X2.5-1.7B 标免费，4B 标限时免费；按产品页面领取）、[讯飞星辰](#12-讯飞星辰)（官方活动列出注册后手动领取 Spark-X2.6 的 10 亿 tokens）、[摩尔线程 MUSA Coding Plan](#17-摩尔线程-musa-coding-plan)（MUSA Coding Plan 限时开放一次 30 天试用，名额以官方页面为准）、[复旦 MOSS](#18-复旦-moss-mosi)（限时免费 0 积分：nex-n2.6（多模态语言模型）+ moss-vl-1.0 / moss-vl-realtime-1.0 视觉理解）、[七牛云 Conatus](#19-七牛云-conatus)（Conatus 限免至 11 月 30 日；实名用户活动期每日 1 亿 Token）、[360 智脑](#23-360-智脑)（官方文档列出 50 元新用户体验金；Mem360 记忆库为限时免费）、[腾讯云 CodeBuddy / WorkBuddy](#75-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent)（国际版 Free 每月 100 基础积分；首次登录 250 积分，另有每日 30 积分限时奖励。国内档以国内定价页为准。）<br>海外：[Fireworks AI](#40-fireworks-ai)（Muse Glimmer 30B SFT 限时免费训练（新号 $1 额度已下线））、[Poolside](#48-poolside)（代码模型限时免费（官方未公布截止日））、[无问芯穹 Infini AI](#60-无问芯穹-infini-ai-genstudio)（网页体验与指定嵌入/重排接口当前暂不计费，常规推理 API 按量付费） |
+| **E. 限时免费 / 公测** | 活动或公测期间可用，关注截止时间和资格变更 | 国内：[小米 MiMo](#7-小米-mimo)（中国大陆账号首次实名赠 ¥5，一账号一次，到账后 40 天有效。TTS 系列限免。）、[商汤 日日新](#10-商汤-日日新-sensenova)（Token Plan 公测免费：5 小时 12 万 + 每周 120 万积分）、[科大讯飞星火](#11-科大讯飞星火-spark-api)（Spark-X2.5-1.7B 标免费，4B 标限时免费；按产品页面领取）、[讯飞星辰](#12-讯飞星辰)（官方活动列出注册后手动领取 Spark-X2.6 的 10 亿 tokens）、[摩尔线程 MUSA Coding Plan](#17-摩尔线程-musa-coding-plan)（MUSA Coding Plan 限时开放一次 30 天试用，名额以官方页面为准）、[复旦 MOSS](#18-复旦-moss-mosi)（仅剩 moss-vl-1.0 / moss-vl-realtime-1.0 限时免费 0 积分（视觉理解）；nex-n2.6 已于 11 月 25 日 21:00 起计费（限时六折））、[七牛云 Conatus](#19-七牛云-conatus)（Conatus 限免至 11 月 30 日；实名用户活动期每日 1 亿 Token）、[360 智脑](#23-360-智脑)（官方文档列出 50 元新用户体验金；Mem360 记忆库为限时免费）、[腾讯云 CodeBuddy / WorkBuddy](#75-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent)（国际版 Free 每月 100 基础积分；首次登录 250 积分，另有每日 30 积分限时奖励。国内档以国内定价页为准。）<br>海外：[Fireworks AI](#40-fireworks-ai)（Muse Glimmer 30B SFT 限时免费训练（新号 $1 额度已下线））、[Poolside](#48-poolside)（代码模型限时免费（官方未公布截止日））、[无问芯穹 Infini AI](#60-无问芯穹-infini-ai-genstudio)（网页体验与指定嵌入/重排接口当前暂不计费，常规推理 API 按量付费） |
 | **F. 免费评估 / 研究** | 供开发评估或研究体验，按官方条件使用，生产用途需另行核对授权 | 海外：[Cohere](#35-cohere)（Trial Key 每月最多 1,000 次，仅限评估）、[NVIDIA NIM](#36-nvidia-nim-api-catalog)（Developer Program 的 NIM 端点仅供开发、测试和评估）、[Typhoon](#59-typhoon-opentyphoon)（research showcase 免费：文本 5 RPS / 200 RPM，OCR 20 RPM，ASR 100 RPM）、[IBM watsonx.ai](#65-ibm-watsonxai-free-toolbox)（Free Toolbox / Lite 面向试用；新 IBM Cloud 账号可申请 30 天试用） |
 
 ### 2. 唯一的真门槛：要不要信用卡
@@ -64,7 +64,7 @@
 - **写代码 / 编程 Agent**：[智谱 GLM](#3-智谱-glm)（4.x 代 Flash 0 元（新旗舰 5.3 付费））、[StreamLake](#15-streamlake-快手万擎)（注册开通后分批送免费调用次数（仅基础模型推理））、[摩尔线程 MUSA Coding Plan](#17-摩尔线程-musa-coding-plan)（MUSA Coding Plan 限时开放一次 30 天试用，名额以官方页面为准）、[七牛云 Conatus](#19-七牛云-conatus)（Conatus 限免至 11 月 30 日；实名用户活动期每日 1 亿 Token）、[ModelScope 魔搭社区](#24-modelscope-魔搭社区)（魔粒制：每日登录 +200 魔粒（当日有效）+ 绑阿里云 +50 魔粒/日；按次扣减 0.5/1/2 魔粒）、[Groq Cloud](#31-groq-cloud-lpu-推理)（gpt-oss 免费层 30 RPM / 1,000 RPD）、[OpenRouter](#33-openrouter-模型统一网关)（:free 模型 20 RPM / 50 RPD（充值 $10 升至 1,000 RPD））、[Cloudflare Workers AI](#34-cloudflare-workers-ai)（每日 1 万 Neurons（kimi / GLM-5 / DeepSeek-V4 等前沿模型需付费））、[Morph Labs](#46-morph-labs)（每月 200 次请求免费（按月重置），充值 $10 起、首充再送 $5）、[Poolside](#48-poolside)（代码模型限时免费（官方未公布截止日））、[Regolo.ai](#55-regoloai-欧盟托管推理)（30 天试用：每日 100 万 tokens，全部 Core Chat 模型）、[Parallel Web API](#57-parallel-web-api-数据--搜索-api)（Build：每月 5,000 次免费请求 + $5 额度（留卡才发）+ 注册最高 $80）、[Typhoon](#59-typhoon-opentyphoon)（research showcase 免费：文本 5 RPS / 200 RPM，OCR 20 RPM，ASR 100 RPM）、[Qoder](#74-qoder-agentic-coding-platform--国际版)（Free 档限量使用基础模型；符合资格的新用户可试用 Pro 14 天，含 300 Credits）、[腾讯云 CodeBuddy / WorkBuddy](#75-腾讯云-codebuddy--workbuddy-ai-编程--应用构建-agent)（国际版 Free 每月 100 基础积分；首次登录 250 积分，另有每日 30 积分限时奖励。国内档以国内定价页为准。）、[Trae](#76-trae-字节跳动-ai-ide--中国版为主)（国际版 Free 档 Auto 模式：一次性用量额度 + 每月 5,000 次代码补全 + 2 个并发云端任务）、[通义灵码 / Qoder CN](#77-通义灵码--qoder-cn-阿里云)（新用户个人体验版含 14 天 Pro 试用和 300 Credits；旧社区版补全额度仅面向存量用户）、[文心快码 Comate](#78-文心快码-comate-百度智能云)（个人标准版长期免费：智能补全免费 + 首次赠 5000 积分（7天有效））、[GitHub Copilot Free](#79-github-copilot-free)（Free 层每月 2,000 次代码补全，受限聊天与 Agent 用量（支持 Haiku 4.5、GPT-5 mini 等入门模型及 CLI））、[Cursor](#80-cursor-ai-代码编辑器--hobby-免费层)（Free 档 Agent 和 Chat 用量有限；按周刷新的用量池属于付费档）、[Kiro](#81-kiro-aws-背景-agentic-ide)（Kiro Free 每月 50 Credits；首次升级 Pro 另有试用权益）、[Zed](#82-zed-编辑器--ai-托管额度)（Personal 档 $0 forever：2,000 次 accepted edit predictions；自带 Key 不限次）、[Arcade](#83-arcade-agent-工具调用层)（Free $0/月：每月 2,000 次 tool calls（Agent 工具层，非模型 token））、[CrewAI](#84-crewai-多-agent-编排)（Basic 免费：每月 50 次 workflow executions（编排执行次数，模型 token 另算））、[Dify](#85-dify-云版-sandbox)（Sandbox 免费：200 message credits + 5 Apps + 50 知识库文档）、[Nango](#86-nango-第三方集成--api-连接)（Free 档每月 10 小时集成计算和 10 GB 数据传输；另有 10 个连接）、[v0 by Vercel](#88-v0-by-vercel-生成式前端)（Free $0/月：每天 7 条消息（按天重置），含部署到 Vercel）。
 - **免费体验旗舰通用模型**：[通义千问](#2-通义千问-阿里云)（大部分模型各 100 万 Token / 90 天（部分模型额度已下架，以权益页为准））、[Kimi](#4-kimi-月之暗面)（实名送 15 元代金券（可抵扣 K3/K3.1 Pro，不可用于高速版））、[文心 ERNIE](#9-文心-ernie-百度千帆)（17 个模型各 100 万 / 3 个月 + 20 元券）、[Google Gemini](#28-google-gemini-google-ai-studio)（AI Studio：Gemini 3.x Flash 免费层）、[Morph Labs](#46-morph-labs)（每月 200 次请求免费（按月重置），充值 $10 起、首充再送 $5）。
 - **超长上下文（约 1M tokens）**：[Kimi](#4-kimi-月之暗面)（实名送 15 元代金券（可抵扣 K3/K3.1 Pro，不可用于高速版））、[科大讯飞星火](#11-科大讯飞星火-spark-api)（Spark-X2.5-1.7B 标免费，4B 标限时免费；按产品页面领取）、[Morph Labs](#46-morph-labs)（每月 200 次请求免费（按月重置），充值 $10 起、首充再送 $5）、[Parallel Web API](#57-parallel-web-api-数据--搜索-api)（Build：每月 5,000 次免费请求 + $5 额度（留卡才发）+ 注册最高 $80）。
-- **图片 / 视频理解与实时音视频交互**：[复旦 MOSS](#18-复旦-moss-mosi)（限时免费 0 积分：nex-n2.6（多模态语言模型）+ moss-vl-1.0 / moss-vl-realtime-1.0 视觉理解）。
+- **图片 / 视频理解与实时音视频交互**：[复旦 MOSS](#18-复旦-moss-mosi)（仅剩 moss-vl-1.0 / moss-vl-realtime-1.0 限时免费 0 积分（视觉理解）；nex-n2.6 已于 11 月 25 日 21:00 起计费（限时六折））。
 - **图像 / 视频生成**：[智谱 GLM](#3-智谱-glm)（4.x 代 Flash 0 元（新旗舰 5.3 付费））、[腾讯混元](#8-腾讯混元-tokenhub)（8款模型共享 100万 tokens + Embedding 100万）、[Stability AI](#43-stability-ai)（新号 25 积分；开源权重年营收 < $100 万免费）、[Cursor](#80-cursor-ai-代码编辑器--hobby-免费层)（Free 档 Agent 和 Chat 用量有限；按周刷新的用量池属于付费档）。
 - **Embedding / Rerank / OCR / 语音**：[小米 MiMo](#7-小米-mimo)（中国大陆账号首次实名赠 ¥5，一账号一次，到账后 40 天有效。TTS 系列限免。）、[腾讯混元](#8-腾讯混元-tokenhub)（8款模型共享 100万 tokens + Embedding 100万）、[硅基流动](#14-硅基流动-siliconflow)（bge/OCR/画图等 0 元模型 + 注册送 14 元券）、[云知声 Token Hub](#16-云知声-token-hub)（U Plan Free 档免费领：含 U2-Flash、U2-Med、ASR、TTS、OCR 权益，需专属 Key）、[Jina AI](#45-jina-ai-reader--embeddings--reranker)（Reader 网页转 Markdown 免 Key 限速可用；新用户另有一次性 1,000 万 tokens）、[无问芯穹 Infini AI](#60-无问芯穹-infini-ai-genstudio)（网页体验与指定嵌入/重排接口当前暂不计费，常规推理 API 按量付费）、[Zilliz Cloud](#73-zilliz-cloud-托管-milvus-向量库)（Serverless Free $0/月：5GB 存储 + 2.5M vCU/月 + 5 collections）。
 - **自建私有端点 / 跑任意开源模型**：[Fireworks AI](#40-fireworks-ai)（Muse Glimmer 30B SFT 限时免费训练（新号 $1 额度已下线））、[Parallel Web API](#57-parallel-web-api-数据--搜索-api)（Build：每月 5,000 次免费请求 + $5 额度（留卡才发）+ 注册最高 $80）、[Modal](#67-modal-serverless-ai-云平台)（$30 / 月免费算力，按月重置）、[Modular](#68-modular-原-bentocloudbentoml)（Community Edition 可免费自托管；云端共享端点按 token 计费）、[Lightning AI](#71-lightning-ai-gpu-云--studio)（Free 档起步 30 credits（官方口径约 50 GPU 小时）+ 1 个常驻 Studio）、[Kernel](#72-kernel-托管云浏览器)（free $0/月：每月 $5 用量额度 + 5 并发云浏览器（免绑卡））。
@@ -84,7 +84,7 @@
 8. [讯飞星辰](#12-讯飞星辰)：活动页未公布领取截止日或到账后有效期，账户资格与额度以控制台为准。
 9. [StreamLake](#15-streamlake-快手万擎)：免费额度**分批发放**（初识/探索/首金礼包）、**仅限基础模型推理**、**不可抵扣 Batch 批量推理**，具体额度以活动说明为准 ——「Air 永久免费」与「Pro 送 2000 万 tokens/30 天」均无官方依据，不予采信。
 10. [云知声 Token Hub](#16-云知声-token-hub)：套餐专属 Key 与按量计费 Key 不互换，仅在套餐有效期内可用
-11. [复旦 MOSS](#18-复旦-moss-mosi)：**限时免费无公开截止日**，随时可能恢复计费，别按长期额度排期；`nex-n2.6` 是推理模型，小 max_tokens 下正文为空（需给足）；MOSS-Live-1.0 已开始计费（¥0.15/分），TTS/转写/文生图均按量收费，不在免费范围；`tob-kimi-k3` 需单独授权、普通 key 调它 403
+11. [复旦 MOSS](#18-复旦-moss-mosi)：**nex-n2.6 已开始计费（限时六折）**，别再按免费额度排期；限免只剩 `moss-vl-1.0` / `moss-vl-realtime-1.0`，且无公开截止日；MOSS-Live-1.0 已按 ¥0.15/分计费，TTS/转写/文生图均按量收费；`nex-n2.6` 是推理模型，小 max_tokens 下正文为空；`tob-kimi-k3` 需单独授权、普通 key 调它 403
 12. [七牛云 Conatus](#19-七牛云-conatus)：单笔充值大于 100 元才可提升至每日 10 亿 Token；活动结束后停止调用。
 13. [PPIO 派欧云](#20-ppio-派欧云-分布式大模型算力)：未实名认证用户有请求频率限制；历史“注册送 5 元”说法官方页无据。
 14. [ModelScope 魔搭社区](#24-modelscope-魔搭社区)：魔粒是按次消耗的积分、每日登录奖励当日有效不累计；必须绑阿里云账号并实名（否则 401），勿按「每天 2000 次」旧口径排期
@@ -133,7 +133,7 @@
 - [讯飞星辰](#12-讯飞星辰)：官方注册权益区未公示领取截止日或到账后有效期
 - [云知声 Token Hub](#16-云知声-token-hub)：页面顶部横幅标注：U Plan 正式上线，Free 档免费领，套餐升级限时 7 折，低至 41.3 元/月
 - [摩尔线程 MUSA Coding Plan](#17-摩尔线程-musa-coding-plan)：Free Trial 即左栏 30 天免费试用（每日限量 100 名），无独立注册赠金
-- [复旦 MOSS](#18-复旦-moss-mosi)：限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 标 0 积分
+- [复旦 MOSS](#18-复旦-moss-mosi)：限时免费：moss-vl-1.0 / moss-vl-realtime-1.0 标 0 积分
 - [七牛云 Conatus](#19-七牛云-conatus)：1024 程序员节限时活动（2026-10-24 00:00 起，至 2026-11-30 23:59）
 - [中国电信](#21-中国电信-天翼云--息壤智算)：另有编程 Token Plan 3000/10000/25000/50000/100000 积分套餐（29–699 元/月，均为付费限时特惠）
 
@@ -160,7 +160,7 @@
 | **小米 MiMo** | TTS 系列限时免费；语言模型按量计费 | [控制台申请](https://platform.xiaomimimo.com/#/console/api-keys) | `https://api.xiaomimimo.com/v1` | `mimo-v2.6-pro`, `mimo-v2.6-flash`, `mimo-v2.5-tts` |
 | **文心 ERNIE** | 17 个模型各 100 万 / 3 个月 | [控制台申请](https://console.bce.baidu.com/qianfan/overview) | `https://qianfan.baidubce.com/v2` | `ERNIE-4.5-Turbo-128K`, `DeepSeek-V3.1-250821`, `Qwen3-Coder-30B-A3B-Instruct` |
 | **硅基流动** | 众多 0 元模型 + 注册送 14 元券 | [控制台申请](https://cloud.siliconflow.cn/account/ak) | `https://api.siliconflow.cn/v1` | `Xing4.0-29B`, `PaddleOCR-VL-1.5`, `bge-m3`, `Kolors` |
-| **复旦 MOSS** | nex-n2.6 限时免费 0 积分（Chat Completions）；TTS/转写/文生图收费 | [控制台创建](https://platform.moss.cn/app/api-keys/) | `https://api.mosi.cn/v1` | `nex-n2.6`, `nex-n2.6-2026-11-05` |
+| **复旦 MOSS** | nex-n2.6 已自 11 月 25 日 21:00 起计费（限时六折）；仅 moss-vl 系列限时免费 | [控制台创建](https://platform.moss.cn/app/api-keys/) | `https://api.mosi.cn/v1` | `nex-n2.6`, `nex-n2.6-2026-11-05` |
 | **七牛云 Conatus** | 实名每日 1 亿 Token；单笔充值满 100 元后每日 10 亿（活动至 11-30） | [七牛云 API Key](https://portal.qiniu.com/) | `https://api.qnaigc.com/v1` | qiniu/conatus-free |
 | **ModelScope 魔搭社区** | OpenAI 兼容（API-Inference 共享池） | [ModelScope SDK 令牌](https://modelscope.cn/my/myaccesstoken) | `https://api-inference.modelscope.cn/v1` | ['Qwen/Qwen3.5-35B-A3B', 'Qwen/Qwen2.5-Coder-32B-Instruct'] |
 | **Google Gemini** | 免费层每日滚动重置（免绑卡） | [AI Studio 申请](https://aistudio.google.com/apikey) | `https://generativelanguage.googleapis.com/v1beta/openai/` | `gemini-2.5-flash`, `gemini-3.8-flash` |
@@ -188,9 +188,9 @@
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-23 10:59:14**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-24 14:21:30**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
-> 💡 **核心特性**：覆盖 **88 家厂商**（深度抓取 **163 个情报页 + 48 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
+> 💡 **核心特性**：覆盖 **88 家厂商**（深度抓取 **165 个情报页 + 48 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 34 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
 > 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [全部厂商动态（中文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [全部厂商动态（英文）](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（英文加 `.en.xml`）。全部厂商动态与单厂商源都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。
 > 🛰 **额度变化订阅**（新活动 / 额度调整，前值 → 后值）：[llm-intel-changes.xml](https://free-llm-intel.aishort.top/feeds/llm-intel-changes.xml)
@@ -226,7 +226,7 @@
 | **注册福利 / 账户赠送** | 新用户完成实名认证并首次开通千问AI平台后，大部分模型会自动获得独立的免费额度（通常每模型 100 万 Token），具体以权益页面显示为准；新模型上线仍会发放额度；部分模型额度下架后新用户不再获得，老用户可用至到期或耗尽 |
 | **额度有效期** | **90 天**（开通时已有模型自账号开通起算；新上线模型自发布起算） |
 | **前置条件 / 限制** | 新用户需先完成实名认证才能开通千问AI平台并获得免费额度；此前已开通但未完成实名认证的用户可继续使用已有免费额度 |
-| **免费层限制 / 注意事项** | • **额度按模型独立计算，不可合并或跨模型转移**：用完后系统不会自动切换模型，需手动修改 model 参数<br>• **快照版本独立**：带日期后缀版本（如 `qwen-max-2026-05-17`）与主版本独立享有额度<br>• **适用范围受限**：仅抵扣模型实时推理，不可抵扣批量调用、内置工具（联网搜索/图片搜索等）、微调与部署<br>• **扣费风险**：免费额度用尽即停（安心模式）在开通千问AI平台后默认关闭，需自行前往权益页面开启以防超额按量扣费<br>• **Key 类型限制**：Token Plan 专属 API Key 不消耗免费额度，须使用通用 API Key |
+| **免费层限制 / 注意事项** | • **额度按模型独立计算，不可合并或跨模型转移**：用完后系统不会自动切换模型，需手动修改 model 参数<br>• **快照版本独立**：带日期后缀版本（如 `qwen-max-2026-05-17`）与主版本独立享有额度<br>• **适用范围受限**：仅抵扣模型实时推理，不可抵扣批量调用、内置工具（联网搜索/图片搜索等）、微调与部署<br>• **扣费风险**：免费额度用尽即停（安心模式）在开通千问AI平台后默认关闭，需自行前往权益页面开启以防超额按量扣费<br>• **Key 类型限制**：Token Plan 专属 API Key 不消耗免费额度，用它调用模型会直接消耗 Token Plan 的 Credits 额度，也不会转为按量付费；如需使用免费额度，请改用 API Keys 页面按量付费区域中的 API Key |
 | **邀请 / 特惠活动** | “云大使”返利、知识库 720 小时试用等说法无法在当前官方免费额度页复核，不予采信。 |
 | **邀请 / 拉新奖励** | **阿里云“云大使”官方页不可达**：第三方情报库所指 `k.aliyun.com/smarter/ai-distributor` 复核时无法访问；所称「推广返利 30%–45%」不予采信。 |
 | **实时巡检证据** | • 免费额度的有效期通常为 90 天，但两类额度的起算时间不同：<br>• 同一认证主体下重新注册账号，无法再次领取新人免费额度。<br>• 该页面包含模型调用额度、Agent 开发额度和优惠券三个页签，其中模型调用额度页签提供： |
@@ -384,7 +384,7 @@
 | **前置条件 / 限制** | 讯飞账号（手机号/微信）注册 + 个人实名认证 |
 | **免费层限制 / 注意事项** | • 公开活动页和 MaaS 首页都列出 10 亿 Tokens。领取到账、个人资格与有效期未在未登录页面显示。<br>• 官方 Token Plan 文档只覆盖**付费订阅套餐**：按积分统一计量、不同模型消耗不同积分，且按时段系数浮动（工作日 08:00-22:00 为 1.0 倍，其余时段 0.8 倍）；不能据此推断免费权益 |
 | **邀请 / 特惠活动** | 年终活动的注册权益列出 10 亿 Tokens。实付满额礼包与 Token Plan 折扣另有付费条件。 |
-| **实时巡检证据** | • 6折，1200元<br>• 赠送 AstronClaw 会员：每份套餐附赠价值 168 元的 AstronClaw 基础版月度会员，助你安全、轻松“养虾”，让算力投资转化为翻倍的业务生产力。<br>• # 8.2 套餐升级与叠加 |
+| **实时巡检证据** | • 6折，1200元<br>• 新客超拟人合成套餐套餐一·服务量：650万字符<br>• # 8.2 套餐升级与叠加 |
 | **官方直达** | [官方活动注册权益](https://static.xfyun.cn/activities/promotion#promotion-register) ｜ [MaaS 活动领取入口](https://maas.xfyun.cn/overview) ｜ [模型广场](https://maas.xfyun.cn/modelSquare) ｜ [Token Plan 使用文档（付费套餐积分规则 / 计费公式）](https://www.xfyun.cn/doc/spark/TokenPlan.html) |
 | **特别说明** | 与「科大讯飞星火 (Spark API)」是两个平台：星火 API 在 xinghuo.xfyun.cn，星辰 MaaS 在 maas.xfyun.cn，模型广场为聚合式；官方 Token Plan 文档（www.xfyun.cn/doc/spark/TokenPlan.html）可核实的是付费套餐积分规则与计费公式，模型清单需登录模型广场查看 |
 
@@ -409,7 +409,7 @@
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [硅基流动 (SiliconFlow)](https://siliconflow.cn/) |
-| **免费模型与额度** | • 对话 `Xing4.0-29B`、`PaddleOCR-VL-1.5`、`Hunyuan-MT-7B` —— 定价页标注「免费」，**0 元调用**<br>• 向量 `bge-m3`、`bge-large-zh-v1.5`、`bge-large-en-v1.5` 与重排 `bge-reranker-v2-m3` —— **0 元免费**<br>• 图像 `Kolors`、语音 `SenseVoiceSmall` 与电信 `XingChenASR/GSR` 系列 —— **0 元免费**（TTS 语音合成按量收费）<br>• 付费旗舰（可用 14 元代金券抵扣）：DeepSeek-V4 系列、GLM-5.3/5.2、Kimi-K2.7-Code、LongCat-2.0、Qwen3.x 等 |
+| **免费模型与额度** | • 对话 `Xing4.0-29B`、`PaddleOCR-VL-1.5`、`Hunyuan-MT-7B`、`GLM-Z1-9B-0414` —— 定价页标注「免费」，**0 元调用**<br>• 向量 `bge-m3`、`bge-large-zh-v1.5`、`bge-large-en-v1.5` 与重排 `bge-reranker-v2-m3` —— **0 元免费**（Pro 版标价 ¥0.07/M tokens）<br>• 图像 `Kolors` —— 生成图片每图片免费；语音 `SenseVoiceSmall`、`XingChenASR V3.2`、`XingChenASR V3.2-Ultra`、`XingChenASR-Diarize-V3.0`、`XingChenGSR V1.0` —— **0 元免费**（`Xing-Audio4.0-ASR-Preview`、`Qwen3-ASR-1.7B`、`CosyVoice2-0.5B`、`MOSS-TTSD-v0.5` 按量收费）<br>• 付费旗舰（可用 14 元代金券抵扣）：DeepSeek-V4/V4.1 系列、GLM-5.3/5.2、Kimi-K2.7-Code、LongCat-2.0、Qwen3.x 等 |
 | **注册福利 / 账户赠送** | 注册即送 **14 元** 通用代金券（官方计费 FAQ 原文：“注册即送 14 元额度”），可抵扣付费模型 token 费用；有效期以账户内券面标注为准 |
 | **额度有效期** | 0 元模型长期免费；代金券有效期以账户标注为准 |
 | **前置条件 / 限制** | 手机号注册（免费模型无需付费即可调用） |
@@ -470,15 +470,15 @@
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [复旦 MOSS (MOSI)](https://platform.mosi.cn/) |
-| **免费模型与额度** | • **限时免费 0 积分**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 实测 HTTP 200 真实出文；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（实测 max_tokens=64 时 63 个 token 全用于推理，finish_reason=length）<br>• **限时免费 0 积分**：`moss-vl-1.0`（多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（实时视频理解，连续图片帧+文本→增量文本，WebSocket `/v1/realtime`）<br>• **付费（非免费，执行六折优惠）**：实时交互 MOSS-Live-1.0（¥0.15/分钟＝3 积分/分钟）；TTS 系列 MOSS-TTS-2.0-Flash-Preview / moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写目前仅列 moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时），`moss-transcribe-1.0`（原 ¥0.48/小时＝9.60 积分/小时）已从模型列表移除，官方公告于 11 月 30 日 12:00（北京时间）下线；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分、高分辨率 ¥0.18/张＝3.60 积分） |
-| **注册福利 / 账户赠送** | 官方公开文档未见账户级注册赠金说明；模型限免见「免费模型与额度」 |
-| **额度有效期** | 限时免费，官方未公布截止日；随时可能恢复计费，以官方公告为准 |
+| **免费模型与额度** | • **已开始计费（限时六折）**：`nex-n2.6`（snapshot `nex-n2.6-2026-11-05`，多模态语言模型，文本/图片/视频→文本，`POST /v1/chat/completions`）—— 官方公告「Nex-N2.6 API 于 11 月 25 日 21:00（北京时间）开始计费，限时六折」，模型页表格仍残留「限时免费 0 积分」旧标注，以公告为准；注意它是**推理模型**，会先消耗大量 reasoning token，小 max_tokens 下正文为空（需给足 max_tokens）<br>• **限时免费 0 积分**：`moss-vl-1.0`（Beta，多模态理解，文本指令+图片/视频→文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（Beta，实时视频理解，连续图片帧+文本→增量文本，WebSocket `/v1/realtime`）<br>• **付费（非免费，执行六折优惠）**：实时交互 MOSS-Live-1.0（¥0.15/分钟＝3 积分/分钟）；TTS 系列 MOSS-TTS-2.0-Flash-Preview / moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写目前仅列 moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分、高分辨率 ¥0.18/张＝3.60 积分） |
+| **注册福利 / 账户赠送** | 官方公开文档未见账户级注册赠金说明；模型限免见「免费模型与额度」（Nex-N2.6 已于 11 月 25 日 21:00 起开始计费，不再限免） |
+| **额度有效期** | 限时免费仅剩 moss-vl-1.0 / moss-vl-realtime-1.0，官方未公布截止日；Nex-N2.6 已自 11 月 25 日 21:00（北京时间）起计费（限时六折），以官方公告为准 |
 | **前置条件 / 限制** | 注册 MOSS 开放平台账号并创建 API Key（`sk-` 开头），控制台获取；调用带 `Authorization: Bearer <key>` |
 | **免费层限制 / 注意事项** | • 官方未公开统一 RPM/TPM/RPD 数值，实际限速以控制台及服务端错误码为准；`moss-vl-1.0` 走 Responses API，实时模型走 WebSocket，不能直接填入 Chat Completions 客户端<br>• **限时免费无公开截止日**，随时可能恢复计费；TTS/转写/部分图像、以及实时交互 MOSS-Live-1.0 均已按积分计费，免费仅限上述模型，勿把「平台整体免费」当结论<br>• `nex-n2.6` 是**推理模型**：小 max_tokens 下 reasoning 吃满预算、content 为空（finish_reason=length），不是坏——要给足 max_tokens 才能拿到正文<br>• 2026-11-12 实测模型列表出现 `tob-kimi-k3`（owned_by kimi），但该次测试账号调用返回 403 `forbidden`；这只说明该账号无权调用，其他账号的开放条件以官方授权为准，勿把「列表里可见」当成「能用」<br>• 2026-11-12 的 API 实测响应未见计费字段；HTTP 200 本身不能证明免费，接入时须同时核对官方价格与控制台扣减记录 |
-| **邀请 / 特惠活动** | 限时免费：nex-n2.6 / moss-vl-1.0 / moss-vl-realtime-1.0 标 0 积分；MOSS-Live-1.0 已于 11 月 18 日 12:00 开始计费（¥0.15/分钟），语音生成、音频转写、文生图等付费模型当前执行六折优惠。 |
+| **邀请 / 特惠活动** | 限时免费：moss-vl-1.0 / moss-vl-realtime-1.0 标 0 积分；Nex-N2.6 已于 11 月 25 日 21:00（北京时间）开始计费，限时六折；MOSS-Live-1.0 已于 11 月 18 日 12:00 开始计费（¥0.15/分钟），语音生成、音频转写、文生图等付费模型当前执行六折优惠。 |
 | **实时巡检证据** | • Nex-N2.6 限时免费，调用消耗 0 积分。生产 HTTP 请求使用 https://api.mosi.cn。运行下方示例前，将 MOSS_API_ORIGIN 设为 https://api.mosi.cn，将 MOSS_API_KE… |
 | **官方直达** | [模型列表（官方全文，含计费标准）](https://platform.mosi.cn/docs/models) ｜ [MOSS 开放平台](https://platform.mosi.cn/) ｜ [快速开始（API Key 与接入示例）](https://platform.moss.cn/docs/getting-started/quickstart) ｜ [请求限制](https://platform.moss.cn/docs/errors-and-limits/limits) |
-| **特别说明** | HTTP API origin 为 `https://api.mosi.cn`，OpenAI SDK base_url 为 `https://api.mosi.cn/v1`；2026-11-12 文档入口 `platform.mosi.cn/docs/models` 实际重定向至 `platform.moss.cn/docs/models`。2026-11-12 已记录 nex-n2.6 调用出文且控制台未扣积分的实测；免费仅限上述模型，TTS/转写/图像各按字符、时长、张数计费。 |
+| **特别说明** | HTTP API origin 为 `https://api.mosi.cn`，OpenAI SDK base_url 为 `https://api.mosi.cn/v1`；2026-11-12 文档入口 `platform.mosi.cn/docs/models` 实际重定向至 `platform.moss.cn/docs/models`。模型页与快速开始页仍写着 Nex-N2.6「限时免费 0 积分」，但页头公告已宣布其 11 月 25 日 21:00 起计费（限时六折），接入前请核对控制台账单；免费仅剩 moss-vl-1.0 / moss-vl-realtime-1.0，TTS/转写/图像各按字符、时长、张数计费。 |
 
 ### 19. 七牛云 Conatus
 
@@ -573,11 +573,11 @@
 | **平台名称** | [阶跃星辰 StepFun](https://platform.stepfun.com) |
 | **免费模型与额度** | • StepAudio 3 原适用限免的模型已恢复计费。现行公开定价页未列新的通用免费模型档。 |
 | **注册福利 / 账户赠送** | 开放平台列明公开模型按实际用量计费。公开定价和账单说明未公示普遍新客赠额。Builder Program 需单独申请。 |
-| **额度有效期** | StepAudio 3 相关限免已于北京时间 2026-11-23 11:59:59 结束，12:00 起执行新价表。 |
+| **额度有效期** |  |
 | **前置条件 / 限制** | 注册 platform.stepfun.com 账号，个人账户需完成实名认证 |
 | **免费层限制 / 注意事项** | • 原限免只覆盖指定模型，本次生效后的价格按 2026-11-23 中午起的官方价表。<br>• Step 5 Preview 仅缓存命中输入价格：2026-10-14 00:30 前已按量调用该模型的用户保留 0.35 元/百万 tokens；其他用户为 0.70 元，非缓存输入与输出另计费<br>• 个人账户 V0（累计现金充值不足 ¥100）：并发 5、100 RPM、500,000 TPM；随充值档位提升，容量不足时官方可能临时调整<br>• 收录依据：阶跃星辰自研 Step 系列与 StepAudio 语音模型（自研模型厂商），无转售闭源模型 API 的业务 |
 | **邀请 / 特惠活动** | — |
-| **实时巡检证据** | • 10.00 元／个音色<br>• 【价格说明】：StepAudio 3 系列模型及相关服务自北京时间 2026 年 11 月 23 日 中午12:00:00 起按下表新价格计费。生效前，已收费的模型及服务继续按原有标准计费，适用限时免费政策的模型限免至北京时间 2026…<br>• 按量付费 API 按账户累计充值金额分档限速，累计充值金额只统计现金充值，代金券不计入。Step Plan 用量由所订阅套餐的月度 Credit 额度管理，不按累计充值金额分档。资源达到容量上限时，我们可能临时调整各档限速。 |
+| **实时巡检证据** | • 10.00 元／个音色<br>• 【价格说明】：自北京时间 2026 年 11 月 23 日中午 12:00:00 起，StepAudio 3 系列模型及相关服务已按下表价格正式计费，限时免费政策已结束。同时，受上游算力资源成本上涨影响，为持续保障服务稳定性与推理质量，我…<br>• 按量付费 API 按账户累计充值金额分档限速，累计充值金额只统计现金充值，代金券不计入。Step Plan 用量由所订阅套餐的月度 Credit 额度管理，不按累计充值金额分档。资源达到容量上限时，我们可能临时调整各档限速。 |
 | **官方直达** | [定价详情](https://platform.stepfun.com/docs/zh/guides/pricing/details) ｜ [实名要求与限速](https://platform.stepfun.com/docs/zh/guides/pricing/rate-limits) ｜ [官方账单说明](https://platform.stepfun.com/docs/zh/guides/organization/billing) ｜ [Builder Program](https://platform.stepfun.com/builder-program) |
 
 ---
@@ -1185,7 +1185,7 @@
 | **前置条件 / 限制** | 注册账号；Startup Program 需申请审核 |
 | **免费层限制 / 注意事项** | • 创新计划或个别试用额度按各自申请规则；公开页未确认所有新用户都能领取。 |
 | **邀请 / 特惠活动** | Startup Program 需申请；获批后专用部署或训练最高 $25,000，Model APIs 最高 $2,500。 |
-| **实时巡检证据** | • ModelGLM-限时5.320折 |
+| **实时巡检证据** | • 如果您被接受加入该计划，您将可以直接访问 Baseten 的平台并获得免费积分。专用部署或培训高达 25,000 美元，……高达 2,500 美元<br>• ModelGLM-限时5.320折 |
 | **官方直达** | [现行定价](https://www.baseten.co/pricing/) ｜ [Startup Program](https://www.baseten.co/talk-to-us/startup-program/) ｜ [Startup Program 到期条款](https://www.baseten.co/startup-program-legal-disclaimers/) |
 | **特别说明** | 以注册后控制台和官方活动条款为准。 |
 
@@ -1355,7 +1355,7 @@
 | **前置条件 / 限制** | 阿里云主账号登录 |
 | **免费层限制 / 注意事项** | • 灵码已并入 Qoder CN 品牌（全家桶 credits 体系）：个人专业版 Pro ¥59/月 2,000 Credits<br>• VSC 插件停止演进；团队版 / Enterprise 覆盖端与个人版不同，以计费文档为准<br>• 旧「个人专业版限时免费」活动已于 2026-05-20 结束（存量转个人社区版）——第三方仍流传的「Pro 免费版」说法自该日起不予采信 |
 | **邀请 / 特惠活动** | 公告《Qoder CN（原灵码）计费模式和价格调整》见 developer.aliyun.com/article/1757168 |
-| **实时巡检证据** | • 40 元 / 1,000 Credits<br>• 全部产品免费试用产品动态产品定价配置报价器云上成本管理<br>• 本商品不支持 5 天无理由退款，除因本公司原因或法律法规另有规定外，用户已支付的购买费用不予退还。 |
+| **实时巡检证据** | • 40 元 / 1,000 Credits<br>• 全部产品免费试用产品动态产品定价配置报价器云上成本管理<br>• 限时免费 59 元 / 月 |
 | **官方直达** | [计费说明（个人体验版 Free）](https://help.aliyun.com/zh/lingma/billing-description) ｜ [计费模式调整公告](https://developer.aliyun.com/article/1757168) |
 | **特别说明** | 与已收录的 qoder（国际版 docs.qoder.com）同族但**额度政策各自独立**，本条目只覆盖国内版；国际版情报见 Qoder 条目 |
 

@@ -7,7 +7,91 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sun, 22 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>OpenAI 和 Cisco 推出 Shirudo</title>
+      <link>https://openai.com/index/introducing-shirudo</link>
+      <guid isPermaLink="true">https://openai.com/index/introducing-shirudo</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：OpenAI and Cisco introduce Shirudo</description>
+      <content:encoded><![CDATA[<p>November 23, 2026</p>
+<p>安全</p>
+<h1>OpenAI 与 Cisco 推出 Shirudo</h1>
+<p>一个开源运行时，帮助运维人员保护正在运行的 Linux 系统，而无需等待补丁或重启</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5K7gFDr3r8vgjdIcsW6RVY/aba5325ce7902e5d1499b907f8e78f0b/shirudo-partner-logos-landscape-2x.png?w=3840&amp;q=90&amp;fm=webp" alt="橙色渐变背景上的 Shirudo 标志。"></p>
+<p>OpenAI 与 Cisco 正在推出 Shirudo，这是一个开源运行时，可帮助团队在逐步推出补丁期间保护 Linux 系统。在一项<a href="https://isovalent.com/blog/post/cisco-openai-shirudo/">受控测试</a>中，由 Codex 生成的 shield 阻止了针对正在运行的 Elasticsearch 服务的 Java4Shell 漏洞利用尝试，且无需重启。</p>
+<p>我们邀请整个行业的开发者、安全研究人员和基础设施运维人员帮助进一步发展该项目。该项目汇集了 OpenAI 的前沿 AI、安全与基础设施研究，以及 Cisco 的基础设施和安全专业知识，以帮助保护人们每天依赖的系统。</p>
+<p>测试和部署补丁仍可能需要数天或数周。在此期间保护服务可能颇具挑战，因为漏洞利用和合法请求可能依赖相同的 Linux 操作。完全阻止该操作可能会导致服务离线。</p>
+<p>Shirudo（日语意为“盾牌”）旨在帮助安全团队权衡这一取舍。团队可以测试一种称为 shield 的临时防护措施是否能阻止暴露漏洞的行为，同时允许合法请求通过。一旦运维人员批准该 shield，就可以在服务继续运行的同时部署它。</p>
+<blockquote>“我们正在为防御者提供更好的模型和工具，以更快地发现和修复漏洞，但今天发现一个 bug 并不意味着明天就能给每个系统打上补丁。我们正与 Cisco 在 Shirudo 上紧密合作，帮助团队在构建和推出修复程序期间保护那些必须保持运行的系统。如此多的团队依赖相同的软件，因此以开放方式构建这些工具是合理的。现在，当一个团队找到更好的系统保护方法时，其他团队不必从零开始。”</blockquote>
+<p>OpenAI 总裁兼联合创始人 Greg Brockman</p>
+<h2>Shirudo 的工作原理</h2>
+<p>Shirudo 使用 eBPF，这是一种 Linux 技术，允许小型程序在操作系统内部的特定位置运行。这使得可以观察可疑活动，并对正在运行的系统应用有针对性的安全防护。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/bScTLq9smNJq5XAlaHIQW/fab0e70b1aab8ca8dffb70a747056fd7/guardian-agent-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="guardian agent 使用 eBPF 探针观察内核和网络活动，并使用 eBPF 控制措施应用有针对性的防护。"></p>
+<p>guardian agent 如何使用 eBPF 观察并保护正在运行的系统。</p>
+<p>OpenAI 与 Cisco 围绕四项核心能力设计 Shirudo：</p>
+<ul><li><strong>实时防护：</strong> eBPF shields 可以阻止易受攻击的代码路径，而无需重启系统。安全团队可以在强制执行拟议的 shield 之前，监控它会对应用程序产生什么影响。</li><li><strong>以机器速度防御：</strong> OpenAI 与 Cisco 正设计 Shirudo，使 agents 具备可编程控制能力，以调查漏洞、开发有针对性的 shields，并针对漏洞利用和真实工作负载验证其有效性。由安全团队控制部署内容。</li><li><strong>可信部署：</strong> Shields 在加载前会经过加密签名和验证。Linux 的 eBPF 验证器会依据其安全规则检查 eBPF 程序，而内核安全控制会限制未经授权的更改。</li><li><strong>硬件支持的验证：</strong> Shirudo 使用 Trusted Platform Module（TPM）来支持对防护措施的加载或移除进行可验证记录。运维人员可以使用这些证据来检查系统是否满足其安全要求。</li></ul>
+<p>来自 Linux Plumbers Conference 的 <a href="https://lpc.events/event/20/contributions/2437/">Shirudo 技术演示</a>展示了如何<a href="https://www.youtube.com/watch?v=4v2xA_NJHt0">应用 shield 并在目标主机上验证它</a>。Java4Shell 漏洞是另一个示例，说明有针对性的 shield 如何在准备永久补丁期间保护正在运行的应用程序。使用 OpenAI 的 Codex，团队生成了一个 shield，它向 Java 的 Base64 解码器添加了输入检查，并将其直接附加到正在运行的 Elasticsearch 进程。当尝试利用该漏洞时，shield 拒绝了恶意输入，阻止了攻击，同时 Elasticsearch 继续运行。你可以<a href="https://isovalent.com/blog/post/cisco-openai-shirudo/">在此处</a>了解更多信息。</p>
+<h2>重新思考基础设施</h2>
+<p>Shirudo 是迈向能够适应新兴威胁同时保持可靠性的基础设施的第一步。我们希望强化大规模部署这些防护所需的操作系统基础，包括加固内核和核心服务、限制工作负载权限，以及让更新和恢复更安全。</p>
+<p>我们的长期目标是使防御者和 AI agents 能够快速识别受影响的系统、验证防护措施，并部署阻止漏洞利用而不干扰工作负载的 eBPF shields。应用程序应仅以所需的权限运行，并由自动生成和维护的策略进行治理。</p>
+<p>我们将把前沿 AI 与安全及基础设施研究结合起来，以发现漏洞并针对现实攻击测试防御措施。我们旨在让运维人员更容易检测和遏制入侵，防止攻击者在系统间移动，并将服务恢复到经过验证的已知良好状态。即使个别系统被攻陷，硬件支持的证明和独立网络控制也能提供额外保障。</p>
+<h2>开放构建</h2>
+<p>OpenAI 与 Cisco 正在开源 <a href="https://github.com/shirudo-dev/shirudo">Shirudo</a>，以便开发者、安全研究人员和基础设施运维人员检查代码、测试防护措施并为其开发做出贡献。Shirudo 采用 BSD 2-Clause 许可证，其 BPF 程序采用 BSD 和 GPL 双许可证。</p>
+<p>我们的目标是在披露漏洞的同时提供经过测试的 shields，让运维人员在准备永久补丁期间有办法评估和部署临时防护措施。</p>
+<ul><li><strong>试用 Shirudo：</strong> 按照 <a href="https://docs.shirudo.dev/start/quickstart.html">VM 快速入门</a>签名、加载并验证一项测试防护。</li><li><strong>动手实践：</strong> 通过 <a href="https://labs.isovalent.com/#/lab/shirudo-getting-started">Isovalent 的自助实验室</a>探索 Shirudo。</li><li><strong>参加技术深入探讨：</strong> 注册 <a href="https://isovalent.site/4t8Pjxc">December 15 网络研讨会</a>。</li></ul>
+<p>我们正与构建、运行和保护 Linux 系统的人们一起公开构建 Shirudo。我们欢迎对运行时和新 shields 的贡献，也欢迎对 Linux 和 eBPF 的改进。如果你想参与，请查看 <a href="https://github.com/shirudo-dev/shirudo">GitHub 上的代码</a>，阅读<a href="https://docs.shirudo.dev/index.html">文档</a>，并<a href="https://docs.shirudo.dev/contribute/support.html">告诉我们你的发现</a>。</p>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>内部法律的互联智能</title>
+      <link>https://openai.com/business/learn/connected-intelligence-for-in-house-legal</link>
+      <guid isPermaLink="true">https://openai.com/business/learn/connected-intelligence-for-in-house-legal</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Connected intelligence for in-house legal</description>
+      <content:encoded><![CDATA[<p>2026年11月23日</p>
+<p>网络研讨会</p>
+<h1>面向企业内部法务的互联智能</h1>
+<p>观看 OpenAI 的 Stacey Wang 和 Craig Bruney、LECG 的 Mary O'Carroll 以及 Cooley 的 Richard Segal 共同探讨 AI 如何帮助企业法务团队整合业务背景、构建可复用工作流程，并从外部律师处获得更多价值。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Richpanel 帮助公司在 30 天内自动化实现 50% 的支持</title>
+      <link>https://openai.com/business/customer-stories/richpanel-ai-customer-support</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/richpanel-ai-customer-support</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Richpanel helps companies automate 50% of support in 30 days</description>
+      <content:encoded><![CDATA[<p>2026年11月23日</p>
+<p>初创公司</p>
+<h1>Richpanel 帮助企业在 30 天内实现 50% 的支持自动化</h1>
+<p>Richpanel 使用 GPT‑6 Astra 和 GPT‑6.1 Sol 为其 AI 支持代理配备工具和流程，并使用 GPT‑6 Luna 进行对话。</p>
+<p><a href="https://openai.com/startups/">开始使用 OpenAI 构建</a></p>
+<p>公司规模：初创公司</p>
+<p>地区：亚太及大洋洲</p>
+<p>行业：科技</p>
+<p>产品：API</p>
+<p>AI 支持代理不仅要懂得如何回答客户请求，还需要能够执行解决方案。为此，它们需要访问正确的工具和指令。</p>
+<p>据 Richpanel CEO Amit RG 介绍，人工支持代理可以使用 20 或 30 种工具来服务客户，而他们遵循的流程可能从未被记录下来。</p>
+<p><a href="https://www.richpanel.com/">Richpanel</a> 利用 OpenAI 模型来解决这一问题，既为 AI 支持代理设置所需的工具和流程以便其采取行动，也处理客户对话。</p>
+<blockquote>“智能不再是瓶颈。瓶颈在于它周围的一切。”</blockquote>
+<p>——Amit RG，Richpanel CEO</p>
+<h2>为 AI 支持构建工具和流程</h2>
+<p>部署支持代理通常需要一名前置部署工程师将代理连接到客户的系统，并定义其工作方式。Amit 发现许多公司没有多余的工程师，于是问自己：“如果那个前置部署工程师本身就是 AI 代理呢？”</p>
+<p>于是 Richpanel 构建了它：一个负责代理设置的 AI 管理者。客户开始称它为 Boss AI。它编写流程，并定义 Richpanel 的一线支持代理、copilot 和质量保证代理如何调用所需的工具。</p>
+<p>Richpanel 使用 GPT‑6 Astra 和 GPT‑6.1 Sol 驱动 Boss AI，在构建其他代理将遵循的工具和流程时优先考虑准确性。</p>
+<h2>在支持运营中平衡智能与成本</h2>
+<p>Richpanel 将一线代理设计为处理数十万次对话，因此每次交互的成本成为模型选择的重要考量。它使用 GPT‑6 Luna 和其他 OpenAI 模型来完成这项工作。Amit 表示，Richpanel 对其 copilot 和质量保证代理也采取同样的方法。</p>
+<p>“重要的是成本与智能之间的平衡，”Amit 说。Richpanel 的客户可能已经在使用低成本的外包支持。将他们的运营自动化必须在财务上相对于这个起点是合理的。</p>
+<p>Amit 称赞 OpenAI 提供了能够处理长上下文和更长任务、同时保持成本效益的模型。Richpanel 可以使用更深入的推理来准备其支持代理，并使用更经济的模型来运行后续对话。</p>
+<blockquote>“OpenAI 模型可以运行这些长上下文、更长周期的任务，同时仍然非常具有成本效益。”</blockquote>
+<p>——Amit RG，Richpanel CEO</p>
+<h2>提升联络中心自动化率和客户满意度</h2>
+<p>在 2026 年 10 月采访之时，Amit 表示 Richpanel 在过去六个月中已完成约 300 次 AI 客户支持部署。</p>
+<p>该公司向客户保证在最初 30 天内实现 50% 的自动化率，否则退款。Amit 表示，它在所有这些部署中都达到了这一承诺，并补充道：“在每一个案例中，AI 在客户满意度方面都胜过人工支持代理。”</p>
+<h2>OpenAI &lt;3 初创公司</h2>
+<p><a href="https://openai.com/leads/startup/">加入社区</a><a href="https://openai.com/startups">开始构建</a></p>
+<h2>获取 OpenAI for Business 更新</h2>
+<p>产品更新、实用指南、即将举行的活动等。</p>]]></content:encoded>
+    </item>
     <item>
       <title>困惑度与智能</title>
       <link>https://openai.com/index/perplexity-and-intelligence</link>
@@ -293,21 +377,6 @@
 <p>特别感谢构建 Performance Factory 的团队，以及为本篇文章供稿的 Brendan Gregg、Pieter Hooimeijer、Nick Cooper 与 Louis Brandy。</p>]]></content:encoded>
     </item>
     <item>
-      <title>部署 Daybreak Red</title>
-      <link>https://openai.com/business/learn/deploying-daybreak-red</link>
-      <guid isPermaLink="true">https://openai.com/business/learn/deploying-daybreak-red</guid>
-      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Deploying Daybreak Red</description>
-      <content:encoded><![CDATA[<p>2026年11月19日</p>
-<p>指南</p>
-<h1>部署 Daybreak Red</h1>
-<p>用于受监督安全调查的参考架构。</p>
-<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读指南</a></p>
-<p>了解如何用 Daybreak Red 搭建用于受监督安全调查的隔离环境。本指南涵盖架构、安全控制、环境配置，以及如何运行并监控一次调查。</p>
-<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读完整指南（PDF）。</a></p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
       <title>查看 PR 扫描的实际应用</title>
       <link>https://openai.com/business/learn/pr-scans-demo</link>
       <guid isPermaLink="true">https://openai.com/business/learn/pr-scans-demo</guid>
@@ -337,6 +406,21 @@
       <content:encoded><![CDATA[<p>产品演示</p>
 <h1>探索 Codex Security Plugin</h1>
 <p>观看 Codex Security Plugin 的演示，了解这套工作流实际怎么跑起来，从入门操作一直看到如何查看录制中展示的结果。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>部署 Daybreak Red</title>
+      <link>https://openai.com/business/learn/deploying-daybreak-red</link>
+      <guid isPermaLink="true">https://openai.com/business/learn/deploying-daybreak-red</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Deploying Daybreak Red</description>
+      <content:encoded><![CDATA[<p>2026年11月19日</p>
+<p>指南</p>
+<h1>部署 Daybreak Red</h1>
+<p>用于受监督安全调查的参考架构。</p>
+<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读指南</a></p>
+<p>了解如何用 Daybreak Red 搭建用于受监督安全调查的隔离环境。本指南涵盖架构、安全控制、环境配置，以及如何运行并监控一次调查。</p>
+<p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读完整指南（PDF）。</a></p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>沉默的共识</title>
@@ -763,6 +847,25 @@
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
+      <title>Le Groupe Figaro 和 OpenAI 合作将 Le Figaro 新闻带入 ChatGPT</title>
+      <link>https://openai.com/index/le-groupe-figaro-and-openai-announce-partnership</link>
+      <guid isPermaLink="true">https://openai.com/index/le-groupe-figaro-and-openai-announce-partnership</guid>
+      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Le Groupe Figaro and OpenAI partner to bring Le Figaro journalism to ChatGPT</description>
+      <content:encoded><![CDATA[<p>2026年11月18日</p>
+<p>公司</p>
+<h1>费加罗集团与 OpenAI 合作，将《费加罗报》的新闻报道引入 ChatGPT</h1>
+<p>通过此次合作，用户将能在 ChatGPT 中通过摘要和节选发现《费加罗报》的新闻报道，并通过附带的链接阅读原文。</p>
+<p>费加罗集团与 OpenAI 今日<a href="https://www.groupefigaro.com/uploads/a014d3b4-4841-4a25-bee0-82f5360c1f77.pdf">宣布建立战略合作伙伴关系</a>，帮助更多人发现并阅读《费加罗报》的新闻报道。此次合作涵盖《费加罗报》及旗下相关刊物的最新报道和历史存档内容，涉及新闻、商业、文化和生活方式等领域。用户将能通过摘要和节选发现这些文章，并通过附带的链接阅读原文。</p>
+<blockquote>“此次合作体现了费加罗集团的愿景：与人工智能研究和部署领域的领军企业建立实质性的合作关系。费加罗集团拥有深厚的新闻采编传统和备受信赖的品牌，背后是一支由 600 多名记者组成的团队，为读者提供可靠的信息来源。将这些优势与 OpenAI 的技术专长和全球影响力相结合，将带来新的创新机遇，为我们的读者创造长期价值。”</blockquote>
+<p>— Marc Feuillée，Groupe Figaro 首席执行官</p>
+<blockquote>“《费加罗报》的报道帮助读者理解影响法国乃至世界的新闻事件，我们希望借助 AI，让更多人发现这些报道。我们致力于与出版机构携手，支持优质新闻报道，并将其带给新的受众，此次合作正是这一承诺的体现。”</blockquote>
+<p>— Varun Shetty，OpenAI 媒体合作副总裁</p>
+<p>《费加罗报》将保持完全的编辑独立性，并保留对其新闻报道的控制权。此次合作延续了 OpenAI 与全球新闻机构的合作，旨在让可靠信息更易被发现，为出版机构开发负责任的 AI 应用，并探索让受众接触和阅读原创报道的新方式。</p>
+<p>《费加罗报》还计划在多个团队中引入 ChatGPT Enterprise，为日常工作提供支持。在自身 AI 章程和编辑标准的指导下，《费加罗报》将探索 OpenAI 技术在工作流程和读者服务中的更多应用。</p>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>利用 OpenAI 模型推进芯片设计</title>
       <link>https://openai.com/index/advancing-chip-design-with-our-models</link>
       <guid isPermaLink="true">https://openai.com/index/advancing-chip-design-with-our-models</guid>
@@ -796,25 +899,6 @@
 <p>从书面需求出发，让模型省略原始内核中的某些功能，例如性能计数器和附加指令。这些功能对测试工作负载的吞吐量可能贡献不大，这或许能解释部分得分的优势。如果要求保留这些功能、对电路面积施加更严格的限制，并在物理综合后检查时序，就能让测试更贴近量产芯片设计。</p>
 <h2>下一步</h2>
 <p>我们已证明，模型能够在 RISC-V 评估中探索新的处理器架构，也能在 Jalapeño 及 AMD 下一代旗舰 GPU 和 CPU 等复杂成熟的量产设计基础上，做出新的实质性改进。为了以可靠的评估依据推动模型开发进程，并应对一系列设计挑战，我们正与 Synopsys 合作训练新模型 <a href="https://investor.synopsys.com/news/news-details/2026/OpenAI-and-Synopsys-Announce-GPT-Synopsys-Frontier-Intelligence-to-Revolutionize-Chip-Design/default.aspx">GPT‑Synopsys</a>，使其能够像专业芯片设计师一样使用 Synopsys 的电子设计自动化 (EDA) 工具。</p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Le Groupe Figaro 和 OpenAI 合作将 Le Figaro 新闻带入 ChatGPT</title>
-      <link>https://openai.com/index/le-groupe-figaro-and-openai-announce-partnership</link>
-      <guid isPermaLink="true">https://openai.com/index/le-groupe-figaro-and-openai-announce-partnership</guid>
-      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Le Groupe Figaro and OpenAI partner to bring Le Figaro journalism to ChatGPT</description>
-      <content:encoded><![CDATA[<p>2026年11月18日</p>
-<p>公司</p>
-<h1>费加罗集团与 OpenAI 合作，将《费加罗报》的新闻报道引入 ChatGPT</h1>
-<p>通过此次合作，用户将能在 ChatGPT 中通过摘要和节选发现《费加罗报》的新闻报道，并通过附带的链接阅读原文。</p>
-<p>费加罗集团与 OpenAI 今日<a href="https://www.groupefigaro.com/uploads/a014d3b4-4841-4a25-bee0-82f5360c1f77.pdf">宣布建立战略合作伙伴关系</a>，帮助更多人发现并阅读《费加罗报》的新闻报道。此次合作涵盖《费加罗报》及旗下相关刊物的最新报道和历史存档内容，涉及新闻、商业、文化和生活方式等领域。用户将能通过摘要和节选发现这些文章，并通过附带的链接阅读原文。</p>
-<blockquote>“此次合作体现了费加罗集团的愿景：与人工智能研究和部署领域的领军企业建立实质性的合作关系。费加罗集团拥有深厚的新闻采编传统和备受信赖的品牌，背后是一支由 600 多名记者组成的团队，为读者提供可靠的信息来源。将这些优势与 OpenAI 的技术专长和全球影响力相结合，将带来新的创新机遇，为我们的读者创造长期价值。”</blockquote>
-<p>— Marc Feuillée，Groupe Figaro 首席执行官</p>
-<blockquote>“《费加罗报》的报道帮助读者理解影响法国乃至世界的新闻事件，我们希望借助 AI，让更多人发现这些报道。我们致力于与出版机构携手，支持优质新闻报道，并将其带给新的受众，此次合作正是这一承诺的体现。”</blockquote>
-<p>— Varun Shetty，OpenAI 媒体合作副总裁</p>
-<p>《费加罗报》将保持完全的编辑独立性，并保留对其新闻报道的控制权。此次合作延续了 OpenAI 与全球新闻机构的合作，旨在让可靠信息更易被发现，为出版机构开发负责任的 AI 应用，并探索让受众接触和阅读原创报道的新方式。</p>
-<p>《费加罗报》还计划在多个团队中引入 ChatGPT Enterprise，为日常工作提供支持。在自身 AI 章程和编辑标准的指导下，《费加罗报》将探索 OpenAI 技术在工作流程和读者服务中的更多应用。</p>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -974,34 +1058,6 @@
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>为智利推出 OpenAI</title>
-      <link>https://openai.com/index/introducing-openai-for-chile</link>
-      <guid isPermaLink="true">https://openai.com/index/introducing-openai-for-chile</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing OpenAI for Chile</description>
-      <content:encoded><![CDATA[<p>2026年11月17日</p>
-<p>全球事务</p>
-<h1>推出 OpenAI 智利计划</h1>
-<p>今天，我们推出 OpenAI 智利计划。这项与智利政府开展的合作由智利科学、技术、知识与创新部牵头，旨在支持公共行政部门负责任地采用 AI，提升公务员技能，并帮助当地初创企业开发实用的 AI 应用。</p>
-<p>此次合作以智利的<a href="https://minciencia.gob.cl/areas/inteligencia-artificial/Inteligencia-Artificial/">国家 AI 政策与行动计划</a>为基础，该政策与计划支持人才培养、研究以及负责任地采用 AI。</p>
-<p>这份谅解备忘录在 Semafor 于加利福尼亚州举办的“硅谷与世界”会议期间签署，由部长 Ximena Lincolao 代表智利牵头达成协议。</p>
-<p>此次合作得到美国商务部<a href="https://siexports.gov/">美国 SI 出口计划</a>的支持，OpenAI 是该计划的核心合作伙伴之一。此次合作将通过公共部门创新、技能培养和创业，帮助智利推进自身的 AI 发展目标。</p>
-<blockquote>“人工智能将成为改善人们生活的最重要途径之一——从加速科学发现，到帮助人们创造出我们尚未想象到的事物。我很高兴能与智利合作，帮助公职人员使用这些工具，改善公共服务，并支持创业者创办新公司。我期待看到智利的初创企业解决世界上一些最重要的问题，创造出惠及各地民众的成果。”</blockquote>
-<p>—Sam Altman，OpenAI 首席执行官</p>
-<blockquote>“我们对这次合作充满期待，也为它将给智利各地的科学发现、创业和创新带来的非凡机遇感到振奋。这次合作旨在助力智利人民不断突破可能性的边界，创造新技术，开发改善人们生活的解决方案。”</blockquote>
-<p>—Ximena Lincolao，智利科学、技术、知识与创新部长</p>
-<h2>让 AI 在智利发挥实效</h2>
-<p>此次合作将探索在该部的行政流程中引入技术，包括由 OpenAI 为采用新模型提供潜在支持，并为该部工作人员提供咨询和培训。</p>
-<p>针对公务员，此次合作将探索如何根据其岗位需求，开展实用的 AI 素养培训、技能提升和新技能培训。相关活动可能包括工作坊和培训师培养，内容涵盖有效使用 AI 工具、核查输出、保护敏感信息，以及保持人工监督。</p>
-<p>为支持智利的 AI 创业与创新生态，合作双方将探索让当地参与者获得相关 OpenAI 计划和技术支持、实践学习机会、技术指导及导师辅导的途径。此次合作还可能为创业者对接公共机构、高校和其他当地合作伙伴，共同开发应用，支持智利的经济发展和公共服务重点工作。</p>
-<p>预计由该部与 OpenAI 代表组成的联合工作组将商定优先事项和初步工作计划，并为各项活动明确负责人、里程碑和成效衡量标准。</p>
-<p>具体活动、参与资格、资源及技术使用安排将另行商定。该谅解备忘录不包含任何投资或采购承诺。各项活动均须落实适当的保障措施，以保护隐私、确保信息安全，并保障负责任的使用。</p>
-<h2>关于 OpenAI 国家合作计划</h2>
-<p>OpenAI 智利计划是 OpenAI 国家合作计划的一部分。作为我们的全球倡议，OpenAI 国家合作计划旨在帮助各国利用 AI 推进国家重点工作、增强经济实力并创造更多机会。我们与各国政府及当地合作伙伴携手，将 AI 的潜力转化为惠及民众的实际成果。</p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
       <title>Astra for Law 在法律情报方面处于领先地位</title>
       <link>https://openai.com/index/astra-law-6-2</link>
       <guid isPermaLink="true">https://openai.com/index/astra-law-6-2</guid>
@@ -1053,6 +1109,34 @@
 <p>即日起，所有 ChatGPT Enterprise 客户都可以通过管理控制台中的可信访问计划，申请使用面向法律事务的 Astra。如果你的团队已获得访问权限，请在 ChatGPT 中选择 <strong>GPT‑6.2 Astra Law</strong>。如需通过 API 将面向法律事务的 Astra 集成到自己的工具中，请联系你的客户总监，单独申请审批。</p>
 <p>法律行业正处于转折点。技术正在改变企业的能力边界，世界也日益复杂、彼此紧密相连。在这样的背景下，律师迎来了前所未有的机会，帮助我们理解当下、把握变化。这不仅关乎他们服务的企业，也关乎我们每一个人，因为我们都生活在他们参与制定的规则之下。我们相信，最优秀的律师借助最强大的智能，能够回应这个时代的挑战。</p>
 <p>这仅仅是开始。我们期待看到你们将法律行业带向怎样的未来。</p>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>为智利推出 OpenAI</title>
+      <link>https://openai.com/index/introducing-openai-for-chile</link>
+      <guid isPermaLink="true">https://openai.com/index/introducing-openai-for-chile</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing OpenAI for Chile</description>
+      <content:encoded><![CDATA[<p>2026年11月17日</p>
+<p>全球事务</p>
+<h1>推出 OpenAI 智利计划</h1>
+<p>今天，我们推出 OpenAI 智利计划。这项与智利政府开展的合作由智利科学、技术、知识与创新部牵头，旨在支持公共行政部门负责任地采用 AI，提升公务员技能，并帮助当地初创企业开发实用的 AI 应用。</p>
+<p>此次合作以智利的<a href="https://minciencia.gob.cl/areas/inteligencia-artificial/Inteligencia-Artificial/">国家 AI 政策与行动计划</a>为基础，该政策与计划支持人才培养、研究以及负责任地采用 AI。</p>
+<p>这份谅解备忘录在 Semafor 于加利福尼亚州举办的“硅谷与世界”会议期间签署，由部长 Ximena Lincolao 代表智利牵头达成协议。</p>
+<p>此次合作得到美国商务部<a href="https://siexports.gov/">美国 SI 出口计划</a>的支持，OpenAI 是该计划的核心合作伙伴之一。此次合作将通过公共部门创新、技能培养和创业，帮助智利推进自身的 AI 发展目标。</p>
+<blockquote>“人工智能将成为改善人们生活的最重要途径之一——从加速科学发现，到帮助人们创造出我们尚未想象到的事物。我很高兴能与智利合作，帮助公职人员使用这些工具，改善公共服务，并支持创业者创办新公司。我期待看到智利的初创企业解决世界上一些最重要的问题，创造出惠及各地民众的成果。”</blockquote>
+<p>—Sam Altman，OpenAI 首席执行官</p>
+<blockquote>“我们对这次合作充满期待，也为它将给智利各地的科学发现、创业和创新带来的非凡机遇感到振奋。这次合作旨在助力智利人民不断突破可能性的边界，创造新技术，开发改善人们生活的解决方案。”</blockquote>
+<p>—Ximena Lincolao，智利科学、技术、知识与创新部长</p>
+<h2>让 AI 在智利发挥实效</h2>
+<p>此次合作将探索在该部的行政流程中引入技术，包括由 OpenAI 为采用新模型提供潜在支持，并为该部工作人员提供咨询和培训。</p>
+<p>针对公务员，此次合作将探索如何根据其岗位需求，开展实用的 AI 素养培训、技能提升和新技能培训。相关活动可能包括工作坊和培训师培养，内容涵盖有效使用 AI 工具、核查输出、保护敏感信息，以及保持人工监督。</p>
+<p>为支持智利的 AI 创业与创新生态，合作双方将探索让当地参与者获得相关 OpenAI 计划和技术支持、实践学习机会、技术指导及导师辅导的途径。此次合作还可能为创业者对接公共机构、高校和其他当地合作伙伴，共同开发应用，支持智利的经济发展和公共服务重点工作。</p>
+<p>预计由该部与 OpenAI 代表组成的联合工作组将商定优先事项和初步工作计划，并为各项活动明确负责人、里程碑和成效衡量标准。</p>
+<p>具体活动、参与资格、资源及技术使用安排将另行商定。该谅解备忘录不包含任何投资或采购承诺。各项活动均须落实适当的保障措施，以保护隐私、确保信息安全，并保障负责任的使用。</p>
+<h2>关于 OpenAI 国家合作计划</h2>
+<p>OpenAI 智利计划是 OpenAI 国家合作计划的一部分。作为我们的全球倡议，OpenAI 国家合作计划旨在帮助各国利用 AI 推进国家重点工作、增强经济实力并创造更多机会。我们与各国政府及当地合作伙伴携手，将 AI 的潜力转化为惠及民众的实际成果。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -2188,143 +2272,6 @@
 <h2>迈入工作新时代</h2>
 <p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
 <p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>前沿工作：人工智能对自由职业的影响</title>
-      <link>https://openai.com/index/ai-effect-on-freelance-work</link>
-      <guid isPermaLink="true">https://openai.com/index/ai-effect-on-freelance-work</guid>
-      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Work at the Frontier: AI’s effect on freelance work</description>
-      <content:encoded><![CDATA[<p>2026年11月10日</p>
-<p>公司</p>
-<h1>工作前沿：</h1>
-<p>AI 对自由职业的影响</p>
-<p>OpenAI 与 Upwork 的新研究发现，自由职业服务需求正在变化，技能出现新的组合，而 AI 相关项目的预算更高。</p>
-<p><a href="https://cdn.openai.com/pdf/openai-upwork-key-takeaways.pdf">下载核心要点</a><a href="https://cdn.openai.com/pdf/openai-upwork-full-report.pdf">阅读完整报告</a></p>
-<h2>我们为什么研究自由职业</h2>
-<p>对于自由职业者而言，市场变化体现在每一次接单中：客户需要不同的服务、提出新的技能要求，或扩大项目范围。我们与 Upwork 合作开展的新研究，让我们得以初步了解 AI 时代的这些变化。一些常见服务的市场份额正在下降，而 AI 相关项目则融合了不同的能力，预算更高，所需工时也更多。</p>
-<p>这些变化影响重大。Upwork 的<a href="https://www.upwork.com/press/releases/upworks-future-workforce-index-2026-how-ai-is-redefining-the-value-of-work-as-skilled-freelancing-accelerates">《2026 年未来劳动力指数》</a>发现，美国具备专业技能的知识工作者中，38% 从事自由职业。其<a href="https://www.upwork.com/research/future-workforce-index-2025">上一年度研究</a>估计，2024 年，自由职业形式的知识工作在美国产生了 1.5 万亿美元的收入。这些估计涵盖的范围远超 Upwork 自身的平台。</p>
-<p>与整体经济的就业统计相比，自由职业也能更早地反映变化。自由职业合同的期限通常较短，客户每次发布招聘信息时都可以调整要求。为了深入了解这些变化的根源，我们与连接客户和自由职业者的在线平台 Upwork 合作，将这些需求与人们直接使用 ChatGPT 开展的活动放在一起研究。</p>
-<h2>人们用 ChatGPT 做什么，又聘请自由职业者做什么</h2>
-<p>两个平台上的工作构成有所不同。写作在 ChatGPT 使用中的占比高得多，而视频和动画在 Upwork 面向自由职业者发布的招聘需求中占比更高。</p>
-<p>下方展示了两个平台上的各类任务。</p>
-<p>这些活动仅代表研究期间在 Upwork 上占比变化最大的部分。ChatGPT 占比数据涵盖 2025 年 1 月至 2026 年 6 月；Upwork 占比数据为 2026 年上半年。Upwork 占比变化指 2025 年上半年至 2026 年上半年的变化，以百分点计。</p>
-<h2>随着 AI 使用增加，自由职业需求正在变化</h2>
-<p>许多在 ChatGPT 中较为常见的活动，在 Upwork 上的占比有所下降；而较不常见的活动，占比则有所上升。在分析的 63 个工作类别中，43 个呈现出这一趋势。</p>
-<p>其余 20 个工作类别则呈现出相反的趋势。仅凭 ChatGPT 的使用情况，无法解释自由职业需求的变化。</p>
-<p>这一比较反映的也是人们目前如何使用 ChatGPT，而非 AI 能够支持的全部任务范围。OpenAI 将两者之间的差距称为“能力悬差”。</p>
-<p>每个点代表 Upwork 分类体系中 63 个已匹配工作子类别之一。横轴表示某类别在 2025 年下半年 ChatGPT 使用中的占比，除以其在 2023 年上半年 Upwork 招聘信息中的占比，再取自然对数。纵轴采用对数刻度，显示该类别在 Upwork 招聘信息中的占比从 2023 年上半年到 2025 年下半年的百分比变化；0% 表示市场份额保持不变。AI 使用强度为 0 处的垂直分界线表示，该类别在 ChatGPT 使用中的占比与其在基准期 Upwork 招聘信息中的占比相同。</p>
-<h2>客户要求在更多类型的工作中使用 AI，并以新的方式组合任务</h2>
-<p>到 2025 年末，客户提出 AI 使用要求的工作类型已大幅增多。客户寻求自由职业者将 AI 应用于聊天机器人开发、视频制作、营销自动化和应用集成等任务。</p>
-<p>在单个项目中，客户往往在提出其他工作要求的同时，也要求具备 AI 能力。AI 相关招聘信息列出的任务数量与其他招聘信息大致相当，但更常将以往工作中很少同时出现的任务组合在一起。</p>
-<h3>示例：一份项目需求简报</h3>
-<p>一些客户在同一条招聘信息中同时要求<strong>AI 视频生成、剪辑和动态图形制作</strong>。自由职业者需要综合运用这些技能，交付一部完整的视频。</p>
-<ul><li><img src="https://images.ctfassets.net/kftzwdyauwt9/1yL4CfmdyLQPZCrhi5OGFK/f636c8bb5ecc42bb2bc219fb44a7af8e/ai-generated-video-icon.svg" alt="">AI 生成视频</li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/frontier-freelance-icon-video-animation/6ca33b04d7588f72522821a432e5c49b/video-animation.svg" alt="">视频剪辑</li><li><img src="https://images.ctfassets.net/kftzwdyauwt9/signals-combiner-icon-motion-graphics/6858c8d15535e1b8483163969533a4f5/motion-graphics.svg" alt="">动态图形</li></ul>
-<h2>AI 相关招聘信息涵盖的工作类型更加多样</h2>
-<p>从 2023 年初到 2025 年末，AI 相关招聘信息中的<strong>任务多样性提高了 45%</strong>，相当于同等常见的任务种类从约 15 种增至约 21 种。</p>
-<p>2023 年初</p>
-<p>14.6</p>
-<p>2025 年末</p>
-<p>21.2</p>
-<p>Upwork 平台截至 2025 年的招聘信息。占比为近似值，因四舍五入，合计可能不等于 100%。</p>
-<p>Upwork 平台截至 2025 年的招聘信息。</p>
-<h2>AI 相关项目预算更高，工作量也更大</h2>
-<p>虽然 AI 相关工作与其他工作发布的时薪相近，但 AI 相关项目的固定总价预算更高，所需工时也更多。这一趋势表明，预算更高可能部分是因为工作范围更广。</p>
-<p>Upwork 截至 2026 年 4 月的数据。调整后的估计值在相同工作类型和相同发布月份内比较两组数据。</p>
-<h2>结论</h2>
-<h3>AI 可能既在改变客户聘请自由职业者从事的工作，也在改变他们发布的项目范围</h3>
-<p>AI 对工作的影响可能很难在就业统计中显现。正如我们在此前的<em>《工作前沿》</em>系列论文中指出的那样，这些影响可能最先体现在人们实际从事的工作中。</p>
-<p>由于自由职业项目更替频繁，招聘信息会随着客户需求的变化而不断更新。企业内部的工作内容可能不断变化，却不一定体现在新的招聘信息中。结合 ChatGPT 数据，这些招聘信息让我们得以初步了解：哪些活动是人们直接借助 AI 完成的，哪些是他们聘请自由职业者完成的，以及 AI 相关项目与其他工作有何不同。</p>
-<p>这些发现并不支持简单的替代论。一些在 ChatGPT 使用中较为常见的活动，在 Upwork 上的占比有所下降，但这一趋势并非普遍适用。AI 相关工作还涵盖了更多种类的活动，以较少见的方式组合任务，固定总价预算更高，所需工时也更多。</p>
-<p>综合来看，这些趋势表明，AI 可能既在改变客户对自由职业者的需求，也在改变客户组织项目的方式。</p>
-<h2>《工作前沿》系列</h2>
-<p>OpenAI 经济研究团队通过《工作前沿》系列，实时探索 AI 如何改变工作。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/71jqBtMoMmnYCEyisAnZ0K/06d8fd5ae403146245901145f9d6f703/Art_Card__4_.png?w=3840&amp;q=90&amp;fm=webp" alt="How AI is expanding what we do at work &gt; Cover image"></p>
-<h2>AI 如何拓展人们的工作内容</h2>
-<p>公司</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2jmyTNjTKCj9B3jyQBjFMr/24da3865e110be70e6e93b196cfd752c/blog-art-card-option040-v001.png?w=3840&amp;q=90&amp;fm=webp" alt="How workers are turning AI experimentation into new ways of working &gt; Cover image"></p>
-<h2>劳动者如何开拓新的工作方式</h2>
-<p>全球事务</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/KulGxB8rO1ihNTEd8LC1o/b251d14188020d4565bf03ffd19cb0fd/Research_and_analysis__1_.png?w=3840&amp;q=90&amp;fm=webp" alt="研究与分析 — OpenAI 经济研究"></p>
-<h2>更多研究 · 探索 OpenAI 经济研究</h2>
-<h2>作者</h2>
-<p>Caroline Chin、Shagun Kala、Nadav Kunievsky、Teng Liu、Alex Martin Richmond、Carl Shan</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Cogent 与 OpenAI 为企业打造网络防御工厂</title>
-      <link>https://openai.com/index/cogent-security</link>
-      <guid isPermaLink="true">https://openai.com/index/cogent-security</guid>
-      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Cogent and OpenAI build cyber defense factories for enterprises</description>
-      <content:encoded><![CDATA[<p>2026年11月10日</p>
-<p>初创企业</p>
-<h1>Cogent 与 OpenAI 为企业构建网络防御工厂</h1>
-<p>Cogent 将 OpenAI 模型与企业上下文相结合，帮助企业利用智能体自动修复漏洞</p>
-<p><a href="https://openai.com/startups/">开始使用 OpenAI 构建</a></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1b77wWqxMlNBg59VRDTuuQ/46601ae75270e4d037359127eb09a76c/cogent-security-cover-sienna.png?w=3840&amp;q=90&amp;fm=webp" alt="白色 Cogent 标志位于深色拉丝金属表面上，表面映出温暖的赭色光泽。"></p>
-<p>公司规模: 初创企业</p>
-<p>区域: 北美</p>
-<p>行业: 科技</p>
-<p>产品: API, Codex, Daybreak</p>
-<p>75%</p>
-<p>漏洞平均修复时间缩短幅度</p>
-<p>5 倍</p>
-<p>漏洞分流量的提升倍数</p>
-<p><a href="https://www.cogent.com/">Cogent Security</a> 看到，企业面临的安全风险比以往任何时候都多，而最难的并不是发现漏洞，而是修复漏洞。修复工作复杂，且涉及多个团队。这需要结合上下文理解企业环境：攻击者可能如何利用漏洞，哪些业务系统面临风险，以及哪些更改可以安全实施。</p>
-<p>Cogent 为企业构建网络防御工厂 (Cyber Defense Factory)，以自主发现并消除这些风险。这些工厂旨在帮助防御人员以机器速度行动，应对漏洞发现和利用不断加速的趋势。</p>
-<p>该公司的 AI 智能体将 GPT‑6.1 Sol 和 GPT‑5.6 与企业上下文和管控措施相结合，完成从调查到修复验证的全流程工作。智能体评估风险敞口，执行获准的更改，并确认风险已被消除。Cogent 还利用 Cyber 和 Daybreak 开展内部研究，探索攻击路径和防御能力。</p>
-<blockquote>“OpenAI 模型持续执行长时间任务的能力，让企业防御的自主性迈上新台阶：AI 智能体如今能够完成从调查到修复验证的全流程工作。”</blockquote>
-<p>—Geng Sng，Cogent 联合创始人兼首席技术官</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/78WRVzMMXnkXRcl48nSNt/b37e2ab0da4eadbeca2e6a5ae384d248/cogent-security-diagram-light.png?w=3840&amp;q=90&amp;fm=webp" alt="Cogent 网络防御工厂将企业的云、代码、端点、身份和扫描器数据接入智能体，由智能体调查风险、确定处理优先级、执行修复并验证结果，背后依托 OpenAI 模型、上下文和客户设定的管控措施。"></p>
-<h2>为智能体提供上下文和行动权限</h2>
-<p>Cogent 的上下文引擎为每位客户维护一个企业知识图谱，涵盖资产、漏洞、身份、归属和依赖关系。专门的后台智能体持续核对并整合各安全工具和系统中的信息，让调查和修复智能体对环境形成一致的理解。</p>
-<p>GPT‑6 Astra 负责这项工作的前期规划和复杂推理。由此形成了 Cogent 联合创始人兼首席技术官 Geng Sng 所说的“企业记忆执行框架”。他表示：“我们不必每接到一项新任务，就从头了解一遍整个环境。”复用上下文可以降低延迟和推理成本，减少结果不一致的情况。</p>
-<p>Cogent 的智能体策略定义了各企业允许的更改和审批要求，其策略执行引擎 TRACE 会在执行工具调用前检查调用是否符合策略。这些检查基于确定性规则，无需额外的模型推理。</p>
-<p>智能体网关独立检查授权，高风险工作则可在隔离的沙盒中运行。客户可以委托智能体开展调查，要求更改须经审批，或允许在限定范围内自主修复。</p>
-<h2>从漏洞披露到修复验证</h2>
-<p>当用于运行网站的编程语言 PHP 被披露存在名为 PHP2Shell 的严重安全漏洞时，客户求助于 Cogent 已在其环境中部署的网络防御工厂。</p>
-<p>GPT‑6.1 Sol 和 GPT‑6 Astra 为调查和修复规划提供了深度推理能力。借助 Cogent 的上下文层，智能体识别受影响的系统，评估风险敞口，并制定兼顾应用依赖关系和运营约束的方案。随后，智能体按照客户定义的审批和执行工作流编排修复操作，并验证问题是否已解决。</p>
-<p>据 Cogent 介绍，客户正在利用其网络防御工厂加快漏洞修复，并提升调查能力。借助 Cogent，一家《财富》1000 强汽车行业客户将严重漏洞的平均修复时间缩短了 75%，一家《财富》500 强 IT 服务客户则将漏洞分流吞吐量提升至原来的 5 倍。</p>
-<p>交易平台 MarketAxess 表示，Cogent 帮助其确定优先处理哪些风险敞口：“Cogent 从攻击者的视角审视我们的环境。它会追踪从互联网通往易受攻击系统的路径，并检查沿途的管控措施。我们现在将修复工作聚焦于最大的风险，以及攻击者可能利用的入侵路径。”MarketAxess 全球首席信息安全官 Vijay Bala 表示。</p>
-<h2>Cogent 为何选择 OpenAI 模型和 Codex 进行开发</h2>
-<p>Cogent 持续评估其他闭源和开源方案。据其介绍，OpenAI 模型在长时间运行的安全任务中推理能力更强，输出更忠实于实际情况，处理技术代码库时幻觉更少，执行也更可靠。这些模型能够以串行和并行方式衔接工具调用，同时在整个修复工作流中保留上下文。</p>
-<p>对于复杂调查，Cogent 优先考虑推理质量；对于较简单的工作，则优先考虑成本。Cogent 使用 GPT‑6.1 Sol 执行通用任务，使用 GPT‑5.6 处理对高级推理要求较低的日常漏洞管理任务。</p>
-<blockquote>“与其他供应商的模型相比，OpenAI 模型的成本效益更高。这对我们来说是一大优势，尤其是在运行这些庞大的智能体集群时。”</blockquote>
-<p>—Geng Sng，Cogent 联合创始人兼首席技术官</p>
-<p>使用 OpenAI 模型还减少了 Cogent 为修复漏洞和部署补丁而需要开发的配套软件。Geng 表示：“过去我们必须在执行框架层面完成的许多工作，现在都不再需要了。”他还分享道，OpenAI API“简化了请求路由和智能体编排，显著减少了内部工程开销，并加快了我们将复杂安全工作流推向市场的速度”。</p>
-<p>Cogent 的大多数工程师也选择使用 Codex 进行开发。Geng 表示，与在开源编程环境中使用相同模型相比，将 Codex 与 OpenAI 模型搭配使用能让他们的开发效率更高。Geng 说：“Codex 自带工具，我们不用再自己开发。”</p>
-<h2>拓展自主网络防御能力</h2>
-<p>通过网络安全受信访问 (Trusted Access for Cyber) 和 Daybreak 计划，Cogent 为其内部红队测试和攻击路径研究获得了技术支持。Daybreak Red 是 Daybreak 中的一个访问层级，为团队提供专用 OpenAI 模型，用于开展经授权的攻击性安全研究和漏洞研究。Geng 表示：“善于进攻，才能做好防御。”</p>
-<blockquote>“通过网络安全受信访问 (Trusted Access for Cyber) 和 Daybreak 计划，我们能够探索身份、资源和网络管控中的漏洞可能如何串联成攻击链。我们利用这些研究来了解智能体的能力，以及接下来应构建哪些防御能力。”</blockquote>
-<p>—Geng Sng，Cogent 联合创始人兼首席技术官</p>
-<p>作为企业构建自身网络防御工厂的关键合作伙伴，Cogent 计划进一步拓展能力。其发展路线图包括不断提升修复的自主性，让智能体能够执行范围更广、复杂度更高的修复操作，从简单的配置更改，到跨越不同企业系统的多步骤工作流。</p>
-<p>该公司还在开发自主发现和验证能力。其目标是建立一个闭环系统，在发现并消除风险的同时，持续从每个漏洞中学习，改进后续的调查和修复。</p>
-<h2>OpenAI 全方位赋能初创企业</h2>
-<p><a href="https://openai.com/leads/startup/">加入社区</a><a href="https://openai.com/startups">开始构建</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>ChatGPT Enterprise 现已在 AWS Marketplace 中提供</title>
-      <link>https://openai.com/index/chatgpt-enterprise-aws-marketplace</link>
-      <guid isPermaLink="true">https://openai.com/index/chatgpt-enterprise-aws-marketplace</guid>
-      <pubDate>Mon, 09 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：ChatGPT Enterprise now available in AWS Marketplace</description>
-      <content:encoded><![CDATA[<p>2026年11月9日</p>
-<h1>ChatGPT Enterprise 现已在 AWS Marketplace 上线</h1>
-<p><a href="https://aws.amazon.com/marketplace/pp/prodview-sscra4m7iracg">在 AWS Marketplace 中查看</a></p>
-<p>即日起，ChatGPT Enterprise 正式上线 AWS Marketplace。此次上线让组织能够沿用现有的 AWS 采购和结算渠道，更便捷地查找、购买和管理 ChatGPT Enterprise，并将符合条件的支出计入其 AWS 承诺消费额。</p>
-<p>每周有超过<a href="https://openai.com/index/chatgpt-ads-expands-26-new-countries/"> 12 亿人使用 ChatGPT</a>。ChatGPT Enterprise 通过 ChatGPT、ChatGPT 工作、Codex 和 dot，将这种熟悉的体验带入工作场景。随着 ChatGPT Enterprise 上线 AWS Marketplace，AWS 客户可获得与直接从 OpenAI 购买时相同的模型、功能和使用体验，新功能也将同步发布。</p>
-<p>这些 OpenAI 产品<a href="https://openai.com/index/openai-on-aws/">与 Amazon Bedrock 中提供的 OpenAI 模型相辅相成</a>。开发者可以使用 Amazon Bedrock 中的 OpenAI 模型构建 AI 应用和智能体，企业各部门的团队则可在日常工作中使用 ChatGPT Enterprise。组织可以根据自身的工作负载和治理要求，选择合适的使用方式。</p>
-<p>1 条/ 共 3 条</p>
-<blockquote>“企业希望让各个团队都能用上 AI，同时不增加采购环节。ChatGPT Enterprise 上架 AWS Marketplace 后，客户可以通过自己的 AWS 账户购买，将其与其他软件支出统一管理，并更快地从评估阶段推进到部署阶段。通过与 OpenAI 合作，我们正将全球使用最广泛的 AI 产品之一带给 AWS 客户。”</blockquote>
-<p>—Matt Yanchyshyn，AWS 负责 AWS Marketplace 和合作伙伴服务的副总裁</p>
-<blockquote>“企业越来越依赖 AWS 和 OpenAI 来应用 AI，而我们的合作就是要让两者更好地协同，为企业创造更大价值。现在，双方的共同客户可以通过他们已经信赖的云服务商，为团队引入 ChatGPT。我们正与 AWS 携手，简化 AI 的采用流程，帮助更多组织释放大规模应用 AI 的潜力。”</blockquote>
-<p>—Chris Grusz，OpenAI 云合作伙伴关系董事总经理</p>
-<blockquote>“ChatGPT Enterprise 上架 AWS Marketplace，让 Sophos 这样的企业能够更轻松地在各个团队中推广 AI。现在可以通过单一渠道采购，并将支出计入现有的 AWS 承诺消费额，从而减少那些常常拖慢企业采用 AI 的阻碍。原本花在采购上的时间，如今可以用来借助 AI 为客户创造更多价值。”</blockquote>
-<p>—John Peterson，Sophos 首席技术官</p>
-<ul><li>AWS</li><li>OpenAI</li><li>Sophos</li></ul>
-<p>符合条件的客户还可以通过 AWS Marketplace 获取 ChatGPT 医疗保健版和 ChatGPT 金融服务版。</p>
-<p>请联系你的 OpenAI 或 AWS 客户团队，确认是否符合条件，并<a href="https://aws.amazon.com/marketplace/pp/prodview-sscra4m7iracg">点击此处</a>通过 AWS Marketplace 开始使用 ChatGPT Enterprise。</p>
-<h2>作者</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -1204,6 +1204,108 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
+      <title>GPU-Native Operators in Ray Data</title>
+      <link>https://anyscale.com/blog/gpu-native-operators-in-ray-data</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/gpu-native-operators-in-ray-data?li=1</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Blog Detail</p>
+<h1>GPU-Native Operators in Ray Data</h1>
+<p>By</p>
+<p>Richard Liaw</p>
+<p>,</p>
+<p>Felix Cheung</p>
+<p>and</p>
+<p>Lee Yang</p>
+<p>|</p>
+<p>August 25, 2026</p>
+<p>Ray Data is a data engine built on Ray focused on AI workloads such as multimodal data processing and training data loading. Due to its focus on AI workloads, GPUs are a core feature of Ray Data - Ray Data is able to treat GPUs as a scheduling resource and thus is able to easily scale data processing tasks across GPUs.</p>
+<p>Despite this, Ray Data has had limited native functionality that executes directly on the GPU, delegating that responsibility to user defined functions that call GPU-enabled libraries like PyTorch or JAX.</p>
+<p>Recently, the Ray Data team at Anyscale has collaborated with the NVIDIA cuDF team to better integrate GPU-based operators into Ray Data. In particular, we’re excited to announce two new features:</p>
+<ul><li><a href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries/cudf">cuDF</a> as a backend for Ray Data map_batches</li><li>GPU-based shuffle based on <a href="https://github.com/rapidsai/rapidsmpf">RapidsMPF</a></li></ul>
+<p>On select data curation workloads, these enhancements have enabled up to 3x better TCO compared to CPU-based solutions.</p>
+<p>You can try this out today on Ray by <code>pip install -U ray==2.58</code>.</p>
+<h2>LinkBackground</h2>
+<p>Ray Data offers a set of canonical data processing operations, from IO to shuffle to UDFs. One of Ray Data’s differentiating features is that it has first-class support for GPUs for its UDFs. For example, one can schedule custom code leveraging a GPU as follows:</p>
+<pre><code>import ray
+
+ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
+
+def compute_gpu(batch: pd.DataFrame):
+    ...
+
+ds = ds.map_batches(compute_gpu, num_gpus=1, batch_size=4096, batch_format=&quot;pandas&quot;)</code></pre>
+<p>The above code will automatically launch multiple <code>compute_gpu</code> calls, all running on different processes attached to different GPUs across your Ray cluster.</p>
+<p>In using Ray Data for data deduplication tasks, we noticed two opportunities for improvement:</p>
+<ul><li>There were compute-intensive dataframe operations in the pipeline that could be accelerated by using cuDF, but this would require the user to convert data formats manually</li><li>The specific tasks had heavy hash-aggregation steps that were compute intensive and could benefit from improved GPU acceleration.</li></ul>
+<p>In order to address these opportunities, we added two key features to Ray Data: cuDF batch format support and a GPU-native shuffle backend based on RapidsMPF.</p>
+<p>cuDF batch format support and a GPU-native shuffle backend based on RapidsMPF.</p>
+<h3>LinkcuDF as a first-class batch format</h3>
+<p>Ray Data has 3 native batch formats - Pandas Dataframes, Numpy Arrays, and PyArrow Tables. Batch formats serve two purposes -- to be the data exchange format between stages, and to provide users with a more familiar interface to write custom processing functions.</p>
+<p>As of Ray 2.58, <code>map_batches</code> now accepts <code>batch_format=&quot;cudf&quot;</code>, which hands your UDF a <code>cudf.DataFrame</code> instead of a pandas DataFrame or Arrow table.</p>
+<p><strong>cuDF</strong> is NVIDIA's open-source GPU-accelerated DataFrame library, one of the NVIDIA CUDA-XTM libraries for data processing. It provides a Pandas-like API with GPU-accelerated operations. For certain computationally-heavy operations, cuDF can be up to order of magnitude faster and cheaper than alternative CPU equivalent operations.</p>
+<pre><code>import ray
+
+ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
+
+def add_minhash(batch):  # batch is a cudf.DataFrame
+    batch[&quot;minhash&quot;] = batch[&quot;text&quot;].str.minhash(seed=42, ...)
+    return batch
+
+ds = ds.map_batches(add_minhash, batch_format=&quot;cudf&quot;, num_gpus=1, batch_size=4096)</code></pre>
+<h3>LinkGPU-native shuffle via RapidsMPF</h3>
+<p>Users can now leverage GPU-accelerated <code>repartition</code> and hash aggregations through a new GPU execution path built on <a href="https://docs.rapids.ai/api/rapidsmpf/stable/">RapidsMPF</a>. Ranks talk to each other directly over UCXX. Between ranks, shuffled data take advantage of high performance transports like RDMA or NVLink, skipping the CPU and Ray object store.</p>
+<p>Similar to cuDF, for certain computationally-heavy operations, RapidsMPF-based shuffle can be up to order of magnitude faster and cheaper than alternative CPU equivalent operations.</p>
+<pre><code>from ray.data.context import DataContext, ShuffleStrategy
+
+ctx = DataContext.get_current()
+ctx.shuffle_strategy = ShuffleStrategy.GPU_SHUFFLE
+
+ds.repartition(num_blocks=256, keys=[&quot;doc_id&quot;])
+ds.groupby(&quot;band_id&quot;).count()</code></pre>
+<h2>LinkBenchmarks: fuzzy deduplication</h2>
+<p>The motivating workload for our collaboration has been <strong>fuzzy document deduplication</strong>, a standard workload for data curation for foundation model training. For our benchmarking, we used <a href="https://huggingface.co/blog/dedup">the standard MinHash-LSH approach</a> , outlined below:</p>
+<p>Fig 1: Stages in the deduplication workload</p>
+<p>Fig 1 Stages in the deduplication workload</p>
+<ul><li><strong>Generate MinHash signatures</strong> for every document.</li><li><strong>Generate LSH bands</strong> from those signatures.</li><li><strong>Group by band</strong> to find candidate duplicate pairs.</li><li><strong>Deduplicate the candidate edges.</strong></li><li><strong>Compute connected components</strong> by traversing the graph.</li><li><strong>Filter duplicates</strong></li><li><strong>Persist the survivors.</strong></li></ul>
+<p>Step 1 involves generating hash values for each n-gram, and hashing is a compute-intensive operation.</p>
+<p>Step 3 and Step 5 are the most shuffle-intensive -- a groupby operation is used to form duplicate pairs, and the connected components algorithm is a series of groupby operations.</p>
+<p>In the below experiments, we were able to see improved performance for these steps due to GPU integration and acceleration.</p>
+<p>In the below experiments, we used the FineWeb 10BT dataset on cluster sizes between 2 to 8 nodes. For CPU, we used the m8id.4xlarge instance type, which has 16 vCPUs, 64 GiB memory, and costs 1.04416 dollars per hour.</p>
+<p>For GPU evaluation, we used the g6.4xlarge instance type, which has 16 vCPUs, 64 GiB memory, and costs 1.3232 dollars per hour.</p>
+<p>Experiment code can be <a href="https://github.com/ray-project/gpu-deduplication">found here</a> using Ray 2.58</p>
+<h3>LinkGenerating MinHash signatures</h3>
+<p>In this phase, we break each document into a set of n-grams (where n is set to 5), and we generate 128 hashes per each n-gram.</p>
+<p>The hashing step is compute-intensive, and we compare a baseline Numpy-based solution with the cuDF built-in hashing implementation.</p>
+<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>1899</td><td>963</td><td>519</td></tr><tr><td>GPU (with cuDF) (s)</td><td>125</td><td>63</td><td>33</td></tr><tr><td><strong>Speedup</strong></td><td><strong>15.2</strong></td><td><strong>15.3</strong></td><td><strong>15.7</strong></td></tr></tbody></table>
+<p>From the above results, we see that GPU acceleration improves this stage of the workload up to <strong>15x faster </strong>than a similarly sized CPU cluster.</p>
+<h3>LinkThe grouping stages</h3>
+<p>In steps 3 and 5, we perform locality-sensitive hashing, which creates groups documents if they have hash collisions; and we implement an <a href="https://research.google/pubs/connected-components-in-mapreduce-and-beyond/">iterative connected components detection algorithm</a> in order to find documents that have transitive collisions (for example, if document A is found to be similar to document B, and document C is found to be similar to document B, then document A should be similar to document C).</p>
+<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>1634</td><td>850</td><td>434</td></tr><tr><td>GPU (with RapidsMPF) (s)</td><td>542</td><td>356</td><td>281</td></tr><tr><td><strong>Speedup</strong></td><td><strong>3.0</strong></td><td><strong>2.4</strong></td><td><strong>1.5</strong></td></tr></tbody></table>
+<p>In this comparison, while increasing the number of GPUs improves runtime, the marginal improvement diminishes at higher scale, thereby decreasing cost savings.</p>
+<p>Since these stages are shuffle intensive, adding more GPUs adds more communication overhead. For this particular dataset and workload, 2 GPUs was optimal, so the dataset was likely too small to take advantage of all 8 GPUs.</p>
+<h3>LinkEnd-to-end Pipeline</h3>
+<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>3718</td><td>1891</td><td>989</td></tr><tr><td>GPU acceleration (s)</td><td>939</td><td>511</td><td>360</td></tr><tr><td><strong>Speedup</strong></td><td><strong>4.0</strong></td><td><strong>3.7</strong></td><td><strong>2.7</strong></td></tr><tr><td>CPU baseline ($)</td><td><strong>$2.16</strong></td><td><strong>$2.19</strong></td><td><strong>$2.29</strong></td></tr><tr><td>GPU acceleration ($)</td><td><strong>$0.69</strong></td><td><strong>$0.75</strong></td><td><strong>$1.06</strong></td></tr><tr><td><strong>TCO Improvement</strong></td><td><strong>3.1x</strong></td><td><strong>2.9x</strong></td><td><strong>2.2x</strong></td></tr></tbody></table>
+<p>From the full pipeline on a fixed hardware configuration, we see that the GPU-accelerated solution is:</p>
+<ul><li>4x faster and 3.1x better TCO than the lowest cost CPU comparison point (at 2 nodes)</li><li>Provides TCO and runtime improvements across the board on all node scales</li></ul>
+<h2>LinkWhat's next</h2>
+<p>While the results above are promising, we are still far from the upper limits of performance. In particular, operator fusion between sequential operators that use cuDF and RapidsMPF will provide a significant step change in performance. This will allow Ray Data to avoid unnecessary host-to-device round trips between stages, allowing the data to stay within GPU memory.</p>
+<p>In working with end users, another step is to enable<strong> GPU shuffle for data preprocessors</strong> so that feature-engineering pipelines built on Ray Data's preprocessor API pick up the GPU path.</p>
+<p>We’re excited to continue investing in this area to bring the best data processing performance for your AI data workloads. Ray Data GPU shuffle is experimental today and available as part of Ray 2.58. If you try it, we'd like to hear your feedback!</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#background">Background</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#cudf-as-a-first-class-batch-format">cuDF as a first-class batch format</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#gpu-native-shuffle-via-rapidsmpf">GPU-native shuffle via RapidsMPF</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#benchmarks:-fuzzy-deduplication">Benchmarks: fuzzy deduplication</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#generating-minhash-signatures">Generating MinHash signatures</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#the-grouping-stages">The grouping stages</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#end-to-end-pipeline">End-to-end Pipeline</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#what's-next">What's next</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
+<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
+<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
+    </item>
+    <item>
       <title>Scaling Ray for AI workloads to 10k node clusters</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters?li=1</guid>
@@ -1760,108 +1862,6 @@ generator.inference_engine.engine_init_kwargs.kv_cache_dtype=fp8_e4m3</code></pr
 <ul><li>SkyRL — <a href="https://github.com/NovaSky-AI/SkyRL">https://github.com/NovaSky-AI/SkyRL</a></li><li>Qwen3.5 — <a href="https://qwen.ai/blog?id=qwen3.5">https://qwen.ai/blog?id=qwen3.5</a></li><li>Unified FP8 — <a href="https://www.lmsys.org/blog/2025-11-25-fp8-rl/">https://www.lmsys.org/blog/2025-11-25-fp8-rl/</a></li><li>NVIDIA NeMo RL: FP8 — <a href="https://docs.nvidia.com/nemo/rl/latest/fp8.html">https://docs.nvidia.com/nemo/rl/latest/fp8.html</a></li><li>DeepSeek-V3 — <a href="https://arxiv.org/abs/2412.1943">https://arxiv.org/abs/2412.1943</a></li><li>DAPO — <a href="https://arxiv.org/abs/2503.14476">https://arxiv.org/abs/2503.14476</a></li><li>SkyRL PR #1898 — <a href="https://github.com/NovaSky-AI/SkyRL/pull/1898">https://github.com/NovaSky-AI/SkyRL/pull/1898</a></li></ul>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#why-fp8-matters-for-reinforcement-learning">Why FP8 matters for reinforcement learning</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#when-independent-quantization-breaks-policy-consistency">When independent quantization breaks policy consistency</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#on-policy-fp8-weight-sync">On-Policy FP8 weight sync</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#experimental-scope">Experimental scope</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#performance-analysis">Performance analysis</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#deep-dive:-fp8-quantization-with-fp32-and-power-of-two-block-scales">Deep dive: FP8 quantization with FP32 and power-of-two block scales</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#current-scope-and-limitations">Current Scope and limitations</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#practical-takeaways">Practical takeaways</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#reproduction-notes">Reproduction Notes</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#acknowledgement">Acknowledgement</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#references">References</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>GPU-Native Operators in Ray Data</title>
-      <link>https://anyscale.com/blog/gpu-native-operators-in-ray-data</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/gpu-native-operators-in-ray-data?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>GPU-Native Operators in Ray Data</h1>
-<p>By</p>
-<p>Richard Liaw</p>
-<p>,</p>
-<p>Felix Cheung</p>
-<p>and</p>
-<p>Lee Yang</p>
-<p>|</p>
-<p>August 25, 2026</p>
-<p>Ray Data is a data engine built on Ray focused on AI workloads such as multimodal data processing and training data loading. Due to its focus on AI workloads, GPUs are a core feature of Ray Data - Ray Data is able to treat GPUs as a scheduling resource and thus is able to easily scale data processing tasks across GPUs.</p>
-<p>Despite this, Ray Data has had limited native functionality that executes directly on the GPU, delegating that responsibility to user defined functions that call GPU-enabled libraries like PyTorch or JAX.</p>
-<p>Recently, the Ray Data team at Anyscale has collaborated with the NVIDIA cuDF team to better integrate GPU-based operators into Ray Data. In particular, we’re excited to announce two new features:</p>
-<ul><li><a href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries/cudf">cuDF</a> as a backend for Ray Data map_batches</li><li>GPU-based shuffle based on <a href="https://github.com/rapidsai/rapidsmpf">RapidsMPF</a></li></ul>
-<p>On select data curation workloads, these enhancements have enabled up to 3x better TCO compared to CPU-based solutions.</p>
-<p>You can try this out today on Ray by <code>pip install -U ray==2.58</code>.</p>
-<h2>LinkBackground</h2>
-<p>Ray Data offers a set of canonical data processing operations, from IO to shuffle to UDFs. One of Ray Data’s differentiating features is that it has first-class support for GPUs for its UDFs. For example, one can schedule custom code leveraging a GPU as follows:</p>
-<pre><code>import ray
-
-ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
-
-def compute_gpu(batch: pd.DataFrame):
-    ...
-
-ds = ds.map_batches(compute_gpu, num_gpus=1, batch_size=4096, batch_format=&quot;pandas&quot;)</code></pre>
-<p>The above code will automatically launch multiple <code>compute_gpu</code> calls, all running on different processes attached to different GPUs across your Ray cluster.</p>
-<p>In using Ray Data for data deduplication tasks, we noticed two opportunities for improvement:</p>
-<ul><li>There were compute-intensive dataframe operations in the pipeline that could be accelerated by using cuDF, but this would require the user to convert data formats manually</li><li>The specific tasks had heavy hash-aggregation steps that were compute intensive and could benefit from improved GPU acceleration.</li></ul>
-<p>In order to address these opportunities, we added two key features to Ray Data: cuDF batch format support and a GPU-native shuffle backend based on RapidsMPF.</p>
-<p>cuDF batch format support and a GPU-native shuffle backend based on RapidsMPF.</p>
-<h3>LinkcuDF as a first-class batch format</h3>
-<p>Ray Data has 3 native batch formats - Pandas Dataframes, Numpy Arrays, and PyArrow Tables. Batch formats serve two purposes -- to be the data exchange format between stages, and to provide users with a more familiar interface to write custom processing functions.</p>
-<p>As of Ray 2.58, <code>map_batches</code> now accepts <code>batch_format=&quot;cudf&quot;</code>, which hands your UDF a <code>cudf.DataFrame</code> instead of a pandas DataFrame or Arrow table.</p>
-<p><strong>cuDF</strong> is NVIDIA's open-source GPU-accelerated DataFrame library, one of the NVIDIA CUDA-XTM libraries for data processing. It provides a Pandas-like API with GPU-accelerated operations. For certain computationally-heavy operations, cuDF can be up to order of magnitude faster and cheaper than alternative CPU equivalent operations.</p>
-<pre><code>import ray
-
-ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
-
-def add_minhash(batch):  # batch is a cudf.DataFrame
-    batch[&quot;minhash&quot;] = batch[&quot;text&quot;].str.minhash(seed=42, ...)
-    return batch
-
-ds = ds.map_batches(add_minhash, batch_format=&quot;cudf&quot;, num_gpus=1, batch_size=4096)</code></pre>
-<h3>LinkGPU-native shuffle via RapidsMPF</h3>
-<p>Users can now leverage GPU-accelerated <code>repartition</code> and hash aggregations through a new GPU execution path built on <a href="https://docs.rapids.ai/api/rapidsmpf/stable/">RapidsMPF</a>. Ranks talk to each other directly over UCXX. Between ranks, shuffled data take advantage of high performance transports like RDMA or NVLink, skipping the CPU and Ray object store.</p>
-<p>Similar to cuDF, for certain computationally-heavy operations, RapidsMPF-based shuffle can be up to order of magnitude faster and cheaper than alternative CPU equivalent operations.</p>
-<pre><code>from ray.data.context import DataContext, ShuffleStrategy
-
-ctx = DataContext.get_current()
-ctx.shuffle_strategy = ShuffleStrategy.GPU_SHUFFLE
-
-ds.repartition(num_blocks=256, keys=[&quot;doc_id&quot;])
-ds.groupby(&quot;band_id&quot;).count()</code></pre>
-<h2>LinkBenchmarks: fuzzy deduplication</h2>
-<p>The motivating workload for our collaboration has been <strong>fuzzy document deduplication</strong>, a standard workload for data curation for foundation model training. For our benchmarking, we used <a href="https://huggingface.co/blog/dedup">the standard MinHash-LSH approach</a> , outlined below:</p>
-<p>Fig 1: Stages in the deduplication workload</p>
-<p>Fig 1 Stages in the deduplication workload</p>
-<ul><li><strong>Generate MinHash signatures</strong> for every document.</li><li><strong>Generate LSH bands</strong> from those signatures.</li><li><strong>Group by band</strong> to find candidate duplicate pairs.</li><li><strong>Deduplicate the candidate edges.</strong></li><li><strong>Compute connected components</strong> by traversing the graph.</li><li><strong>Filter duplicates</strong></li><li><strong>Persist the survivors.</strong></li></ul>
-<p>Step 1 involves generating hash values for each n-gram, and hashing is a compute-intensive operation.</p>
-<p>Step 3 and Step 5 are the most shuffle-intensive -- a groupby operation is used to form duplicate pairs, and the connected components algorithm is a series of groupby operations.</p>
-<p>In the below experiments, we were able to see improved performance for these steps due to GPU integration and acceleration.</p>
-<p>In the below experiments, we used the FineWeb 10BT dataset on cluster sizes between 2 to 8 nodes. For CPU, we used the m8id.4xlarge instance type, which has 16 vCPUs, 64 GiB memory, and costs 1.04416 dollars per hour.</p>
-<p>For GPU evaluation, we used the g6.4xlarge instance type, which has 16 vCPUs, 64 GiB memory, and costs 1.3232 dollars per hour.</p>
-<p>Experiment code can be <a href="https://github.com/ray-project/gpu-deduplication">found here</a> using Ray 2.58</p>
-<h3>LinkGenerating MinHash signatures</h3>
-<p>In this phase, we break each document into a set of n-grams (where n is set to 5), and we generate 128 hashes per each n-gram.</p>
-<p>The hashing step is compute-intensive, and we compare a baseline Numpy-based solution with the cuDF built-in hashing implementation.</p>
-<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>1899</td><td>963</td><td>519</td></tr><tr><td>GPU (with cuDF) (s)</td><td>125</td><td>63</td><td>33</td></tr><tr><td><strong>Speedup</strong></td><td><strong>15.2</strong></td><td><strong>15.3</strong></td><td><strong>15.7</strong></td></tr></tbody></table>
-<p>From the above results, we see that GPU acceleration improves this stage of the workload up to <strong>15x faster </strong>than a similarly sized CPU cluster.</p>
-<h3>LinkThe grouping stages</h3>
-<p>In steps 3 and 5, we perform locality-sensitive hashing, which creates groups documents if they have hash collisions; and we implement an <a href="https://research.google/pubs/connected-components-in-mapreduce-and-beyond/">iterative connected components detection algorithm</a> in order to find documents that have transitive collisions (for example, if document A is found to be similar to document B, and document C is found to be similar to document B, then document A should be similar to document C).</p>
-<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>1634</td><td>850</td><td>434</td></tr><tr><td>GPU (with RapidsMPF) (s)</td><td>542</td><td>356</td><td>281</td></tr><tr><td><strong>Speedup</strong></td><td><strong>3.0</strong></td><td><strong>2.4</strong></td><td><strong>1.5</strong></td></tr></tbody></table>
-<p>In this comparison, while increasing the number of GPUs improves runtime, the marginal improvement diminishes at higher scale, thereby decreasing cost savings.</p>
-<p>Since these stages are shuffle intensive, adding more GPUs adds more communication overhead. For this particular dataset and workload, 2 GPUs was optimal, so the dataset was likely too small to take advantage of all 8 GPUs.</p>
-<h3>LinkEnd-to-end Pipeline</h3>
-<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>3718</td><td>1891</td><td>989</td></tr><tr><td>GPU acceleration (s)</td><td>939</td><td>511</td><td>360</td></tr><tr><td><strong>Speedup</strong></td><td><strong>4.0</strong></td><td><strong>3.7</strong></td><td><strong>2.7</strong></td></tr><tr><td>CPU baseline ($)</td><td><strong>$2.16</strong></td><td><strong>$2.19</strong></td><td><strong>$2.29</strong></td></tr><tr><td>GPU acceleration ($)</td><td><strong>$0.69</strong></td><td><strong>$0.75</strong></td><td><strong>$1.06</strong></td></tr><tr><td><strong>TCO Improvement</strong></td><td><strong>3.1x</strong></td><td><strong>2.9x</strong></td><td><strong>2.2x</strong></td></tr></tbody></table>
-<p>From the full pipeline on a fixed hardware configuration, we see that the GPU-accelerated solution is:</p>
-<ul><li>4x faster and 3.1x better TCO than the lowest cost CPU comparison point (at 2 nodes)</li><li>Provides TCO and runtime improvements across the board on all node scales</li></ul>
-<h2>LinkWhat's next</h2>
-<p>While the results above are promising, we are still far from the upper limits of performance. In particular, operator fusion between sequential operators that use cuDF and RapidsMPF will provide a significant step change in performance. This will allow Ray Data to avoid unnecessary host-to-device round trips between stages, allowing the data to stay within GPU memory.</p>
-<p>In working with end users, another step is to enable<strong> GPU shuffle for data preprocessors</strong> so that feature-engineering pipelines built on Ray Data's preprocessor API pick up the GPU path.</p>
-<p>We’re excited to continue investing in this area to bring the best data processing performance for your AI data workloads. Ray Data GPU shuffle is experimental today and available as part of Ray 2.58. If you try it, we'd like to hear your feedback!</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#background">Background</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#cudf-as-a-first-class-batch-format">cuDF as a first-class batch format</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#gpu-native-shuffle-via-rapidsmpf">GPU-native shuffle via RapidsMPF</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#benchmarks:-fuzzy-deduplication">Benchmarks: fuzzy deduplication</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#generating-minhash-signatures">Generating MinHash signatures</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#the-grouping-stages">The grouping stages</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#end-to-end-pipeline">End-to-end Pipeline</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#what's-next">What's next</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>

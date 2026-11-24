@@ -7,7 +7,114 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>RoboTrack：现实世界机器人操作的点跟踪</title>
+      <link>https://huggingface.co/blog/allenai/robotrack</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/robotrack</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：RoboTrack: Point tracking for real-world robotic manipulation</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
+<h1>RoboTrack：面向真实世界机器人操作的点跟踪</h1>
+<p>企业文章</p>
+<p>发布于 2026 年 11 月 23 日</p>
+<p>4</p>
+<ul><li><a href="https://huggingface.co/urroxyz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/661ab1f1fa3b144a381fa454/IlpZBb9NCjo7ntFwMIH53.png" alt=""></a></li><li><a href="https://huggingface.co/OlehNovitskyi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ZBROC6qF4iWLmFGh7j46q.png" alt=""></a></li><li><a href="https://huggingface.co/jasonren"><img src="https://huggingface.co/avatars/df0413ef62fd4b72aa8d35366d0a619f.svg" alt=""></a></li><li><a href="https://huggingface.co/Fakita1992"><img src="https://huggingface.co/avatars/28735ff55486f36efc0b12d59fbaf29c.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>🤖 <a href="https://huggingface.co/collections/allenai/robotrack">模型</a> | 📄 <a href="https://allenai.org/papers/robotrack">技术报告</a> | 📊 <a href="https://huggingface.co/datasets/allenai/RoboTrack-15M">数据</a> | 💻 <a href="https://github.com/allenai/robotrack">代码</a> | 🌐 <a href="https://robotrack.allen.ai/">项目页面</a> | 📈 <a href="https://huggingface.co/datasets/allenai/RoboTrack-Bench">基准</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1795407244-robotrack-blog-draft-google-docs-image-1.png"><img src="https://www.datocms-assets.com/64837/1795407244-robotrack-blog-draft-google-docs-image-1.png" alt="深青色到品红色渐变背景上的 RoboTrack 文字标志 logo"></a></p>
+<p>在真实环境中部署机器人，需要在交互全程具备可靠的感知。要拿起某物，机器人需要跟踪其夹爪和物体移动时的位置。在实验室中，操作移液器的机器人必须跟踪其尖端，同时将其与试管开口对齐。当附近物体使视野杂乱、夹爪遮挡正在处理的物体，或视角发生变化时，这些任务会变得更困难。</p>
+<p>帮助机器人跟踪这些交互的一种方式，是跟踪其所操作物体上的特定位置。这就是<em>点跟踪</em>背后的思路。给定某一视频帧中的一个位置，跟踪器会估计同一个点在后续帧中出现的位置、它被遮挡时的状态，以及它在哪里重新出现。这些轨迹可以帮助机器人从演示中学习、规划和引导运动，并建模物体如何响应动作。</p>
+<p>机器人系统常常依赖现成的跟踪器来自动标注视频中的运动，并在执行过程中提供反馈。当前跟踪器在既有机器人基准上得分很高，这似乎表明它们已经可以更广泛地用于真实系统。我们想看看，这些结果能否在机器人实际遇到的多样场景、视角和物体交互中依然成立。</p>
+<p>我们推出 <a href="https://robotrack.allen.ai/"><strong>RoboTrack</strong></a>，一个用于机器人操作中点跟踪的基准与训练数据套件。<a href="https://huggingface.co/datasets/allenai/RoboTrack-Bench">RoboTrack-Bench</a> 包含来自 DROID、Ego-Exo4D、<a href="https://allenai.org/blog/molmoact2">MolmoAct 2</a> 和 EgoVerse 的 307 个人工标注视频，涵盖不同机器人和人手、杂乱场景，以及第一人称和第三人称视角。为了研究训练数据如何影响这些场景中的跟踪，我们还扩展了 <a href="https://allenai.org/blog/molmospaces">MolmoSpaces</a>——Ai2 的机器人学习仿真生态——以从模拟机器人操作轨迹生成稠密点轨迹。该流程产出 <a href="https://huggingface.co/datasets/allenai/RoboTrack-15M">RoboTrack-15M</a>，这是一个面向机器人操作的新合成训练数据集。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795407698-robotrack-blog-draft-google-docs-image-2.png"><img src="https://www.datocms-assets.com/64837/1795407698-robotrack-blog-draft-google-docs-image-2.png" alt="RoboTrack 概览图，展示从 MolmoSpaces 生成 RoboTrack-15M 模拟数据，以及 RoboTrack-Bench 的人工标注真实世界操作视频"></a></p>
+<p><em>RoboTrack 是用于机器人操作中点跟踪的基准与训练数据套件。RoboTrack-15M（左上）构建于 MolmoSpaces 之上，生成用于训练的点轨迹。使用这些模拟数据训练可提升在真实操作视频上的跟踪表现。RoboTrack-Bench（右上）在真实操作视频中提供人工标注的点轨迹。</em></p>
+<p>我们的评估显示，领先跟踪器在 RoboTrack-Bench 上的得分远低于现有机器人基准。将 RoboTrack-15M 加入现有跟踪器的训练中，可提升在真实操作视频上的表现，且增益可扩展到其他跟踪基准。我们在真实机器人上把这些部分整合起来，用所得跟踪器帮助引导湿实验室任务中的移液器操作。</p>
+<p>今天，我们发布 RoboTrack 的两个组件和两个新的点跟踪模型：<a href="https://huggingface.co/collections/allenai/robotrack">RoboTracker 和 RoboTracker-Warp</a>。RoboTracker 是使用我们的技术和数据微调后的 AllTracker 模型，而 RoboTracker-Warp 则基于 CoWTracker 训练。相比各自发布的基线，两个模型都提升了三个机器人基准上的平均 AJ，且 RoboTracker-Warp 在我们评估的五个基准中的四个上达到最先进性能。我们还发布描述这项工作和评估结果的<a href="https://allenai.org/papers/robotrack">论文</a>。</p>
+<h2>RoboTrack-Bench：面向真实世界操作的点跟踪基准</h2>
+<p><a href="https://www.datocms-assets.com/64837/1795407981-robotrack-blog-draft-google-docs-image-3-1.png"><img src="https://www.datocms-assets.com/64837/1795407981-robotrack-blog-draft-google-docs-image-3-1.png" alt="RoboTrack-Bench 中来自 DROID、Ego-Exo4D、MolmoAct 2 和 EgoVerse 的人工验证点轨迹示例"></a></p>
+<p><em>RoboTrack-Bench 一览。来自每个源数据集的示例（总计 307 个片段和 2,522 条人工验证轨迹）。MolmoAct 2 和 EgoVerse 的每个面板展示一种具身形态。DROID 和 EgoExo4D 展示同步的自我中心视角（上）和外部视角（下）。</em></p>
+<p>RoboTrack-Bench 将评估扩展到受控桌面设置之外。它包含来自 DROID、Ego-Exo4D、MolmoAct 2 和 EgoVerse 的 307 个视频，总共标注了 2,522 条点轨迹。视频展示机器人和人手在杂乱场景以及第一人称和第三人称视角中操作物体。小物体在复杂背景下可能难以跟踪，而夹爪经常会遮住它所持的物体。</p>
+<p>RoboTrack-Bench 中的每条轨迹都由人工标注并验证。我们要求标注员优先选择会移动或被遮挡的点，而不是机器人视频中大量静态背景点。遵循 TAP-Vid 标注方法，标注员使用运动估计来帮助追踪视频中的每个点。他们将每条轨迹标记为属于机器人或人体、被操作物体或静态物体，以支持未来按组分析性能。第二组标注员会逐帧检查每条轨迹，之后才将其纳入我们整理的数据中。</p>
+<p>为支持多视角指向、对应和跟踪研究，RoboTrack-Bench 包含一个由 33 对视频组成的子集，这些视频由两个摄像头同时录制。我们在两个视角中标注相同的物理点，并跨帧同步，从而连接同一交互的不同视角。</p>
+<h2>点跟踪器在真实世界操作中表现不佳</h2>
+<p>我们在 RoboTrack-Bench 和另外四个基准上评估了四个领先跟踪器——CoTracker3、BootsTAPNext、AllTracker 和 CoWTracker：<a href="https://arxiv.org/abs/2308.15975">RoboTAP</a>（真实世界桌面操作）、RGB-Stacking（模拟操作），以及 DAVIS 和 Kinetics（通用视频）。我们报告 Average Jaccard（AJ），它衡量跟踪准确性和可见性预测；分数越高越好。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408316-robotrack-blog-draft-google-docs-image-4.png"><img src="https://www.datocms-assets.com/64837/1795408316-robotrack-blog-draft-google-docs-image-4.png" alt="评估表，比较 CoTracker3、BootsTAPNext、AllTracker 和 CoWTracker 在 RoboTrack-Bench、RoboTAP、RGB-Stacking、DAVIS 和 Kinetics 上的 Average Jaccard"></a></p>
+<p><strong>RoboTrack-Bench 比现有机器人基准更难。</strong> 我们评估的每个最终跟踪器在 RoboTrack-Bench 上的得分都低于 RoboTAP——后者是唯一另一个真实视频机器人基准。它们的分数下降 3.0 到 6.6 AJ。即便是最强的现成跟踪器 CoWTracker，也从 RoboTAP 上的 70.5 AJ 降到 RoboTrack-Bench 上的 63.9。尽管这些模型架构和训练数据不同，分数下降仍普遍存在，这表明 RoboTrack-Bench 识别出了多个跟踪器的弱点。</p>
+<p><strong>RGB-Stacking 更奖励合成训练，而非真实世界能力。</strong> BootsTAPNext 是在 1500 万段真实视频上进一步训练的 TAPNext。额外的真实世界训练使其 RoboTrack-Bench 分数提高 5.1 AJ（55.1 到 60.2），但使其 RGB-Stacking 分数降低 9.5 AJ（75.0 到 65.5）。RGB-Stacking 由模拟积木堆叠构建，它把仅用 Kubric 训练的模型排得更高，而真实操作视频则把两者的排名反过来。</p>
+<p><strong>在较旧基准上的领先不会延续。</strong> CoWTracker 在 RoboTAP 上领先 CoTracker3 4.7 AJ，但在 RoboTrack-Bench 上仅领先 2.1 AJ。AllTracker 在 RoboTAP 上对 CoTracker3 的 2.7 分领先缩小到 0.8。在 DAVIS 上最强的模型 BootsTAPNext，在 RoboTrack-Bench 上落后 CoWTracker 3.7 AJ，甚至落后于仅用 Kubric 训练的 AllTracker（60.2 对 61.4 AJ），尽管它在 1500 万段真实视频上训练过。</p>
+<p>这些结果表明，现有基准对真实世界操作中的跟踪性能给出了不完整的图景。在更多样场景上评估，揭示了四个跟踪器共有的困难，并改变了它们优势的比较方式。</p>
+<p><em>注：每个跟踪器都使用其作者设置运行，并以相同方式评分。我们的 AllTracker 分数与已发布分数略有不同，因为我们修复了其发布评估代码中的一个评分 bug。此外，我们在所有标注点上评估 RoboTAP 和 Kinetics，而不是遵循 AllTracker 的协议。完整评估协议见我们的论文。</em></p>
+<h2>RoboTrack-15M：来自 MolmoSpaces 的模拟数据</h2>
+<p>为什么这些跟踪器在真实世界操作中表现不佳？许多跟踪器使用 <a href="https://github.com/google-research/kubric">Kubric</a> 生成的合成视频训练，这些视频展示物体被抛入场景。它们提供了运动和遮挡示例，但并不聚焦于机器人抓取和移动物体。我们想测试，加入这些交互产生的轨迹是否能改善在真实操作视频上的跟踪。</p>
+<p>这正是 MolmoSpaces 的用武之地——它是我们在 Ai2 的机器人仿真环境。我们扩展其现有的操作仿真，以在机器人及其操作物体上生成稠密点轨迹。在每个回合中，一个模拟机械臂拿起日常物体，例如杯子、盘子或积木。两个摄像头记录交互：一个位于腕部，一个位于机器人底座，均在 MuJoCo 中渲染。利用模拟器的几何、物体位姿和摄像头信息，我们计算每个点在每一帧中的位置和可见性，无需人工标注，并过滤掉背景和机器人固定底座上的静态点。</p>
+<p>该流程产出用于训练的 RoboTrack-15M。RoboTrack-15M 包含来自 300 个模拟家庭的 3,000 个视频，每个视频有 5,000 条轨迹，总计 1500 万条轨迹。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408512-robotrack-blog-draft-google-docs-image-5.png"><img src="https://www.datocms-assets.com/64837/1795408512-robotrack-blog-draft-google-docs-image-5.png" alt="构建于 MolmoSpaces 和 MuJoCo 之上的 RoboTrack-15M 合成数据生成流程图"></a></p>
+<p><em>RoboTrack-15M 的数据生成流程。物体、室内场景和机器人抓取均来自 MolmoSpaces。我们使用模拟器的几何和摄像头信息来计算点位置和可见性。</em></p>
+<h2>RoboTracker：在模拟操作数据上训练的点跟踪器</h2>
+<p>我们推出两个在 RoboTrack-15M 上训练的模型：RoboTracker 和 RoboTracker-Warp。每个模型都在 RoboTrack-15M 及其原始训练数据上微调现有跟踪器。RoboTracker 基于 AllTracker，这是一个具有 1700 万参数的轻量模型；RoboTracker-Warp 基于 CoWTracker，这是一个拥有约 10 亿参数的更大模型。</p>
+<p>我们发布两个模型检查点，以便其他研究人员检查和基于这项工作继续构建。RoboTracker-Warp 的权重仅限非商业使用。</p>
+<p><strong>加入 RoboTrack-15M 可提升机器人基准上的分数。</strong> 与已发布的 AllTracker 和 CoWTracker 模型相比，RoboTracker 将 RoboTrack-Bench 提升 0.8 AJ（62.6 到 63.4），RoboTracker-Warp 提升 2.1 AJ（63.9 到 66.0），在三个机器人基准上平均增益最高达 1.2 AJ。在通用视频基准上，两个模型的表现与各自基础模型相当。总体而言，在我们评估的五个基准中的四个上，RoboTracker-Warp 的 AJ 最高。例外是 DAVIS，BootsTAPNext 和 CoWTracker 在那里得分略高。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408662-robotrack-blog-draft-google-docs-image-6.png"><img src="https://www.datocms-assets.com/64837/1795408662-robotrack-blog-draft-google-docs-image-6.png" alt="在 RoboTrack-15M 上微调 AllTracker（RoboTracker）和 CoWTracker（RoboTracker-Warp）前后 Average Jaccard 分数比较"></a></p>
+<p><em>在 RoboTrack-15M 上微调带来的改进，分别对应 AllTracker（RoboTracker）和 CoWTracker（RoboTracker-Warp）。机器人平均值取自 RoboTrack-Bench、RoboTAP 和 RGB-Stacking。</em></p>
+<p><a href="https://www.datocms-assets.com/64837/1795408710-robotrack-blog-draft-google-docs-image-7.png"><img src="https://www.datocms-assets.com/64837/1795408710-robotrack-blog-draft-google-docs-image-7.png" alt="按视频源数据集拆分的 RoboTrack-Bench 结果图表"></a></p>
+<p><em>按视频来源划分的 RoboTrack-Bench 结果。</em></p>
+<p>按来源拆分增益可以看出它们来自哪里。RoboTracker-Warp 在每个来源上都提升约 1 到 3 AJ，包括来自 EgoVerse 和 Ego-Exo4D 的人手视频，尽管 RoboTrack-15M 只包含机械臂。RoboTracker 的增益较小，且主要来自机器人视频——在 DROID Franka 和 EgoVerse EVA 上最明显。</p>
+<h2>什么样的模拟数据适合点跟踪？</h2>
+<p>RoboTrack-15M 是我们对合成数据进行多轮迭代和实验的结果。事实上，我们的第一次尝试在 RoboTrack-Bench 上没有带来任何增益。为了找出原因，我们研究了一个简单问题：与真实操作视频相比，被跟踪的点移动了多远？我们为每个数据版本绘制直方图，并测量其与 RoboTrack-Bench 的距离（下图）。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408926-robotrack-blog-draft-google-docs-image-8.png"><img src="https://www.datocms-assets.com/64837/1795408926-robotrack-blog-draft-google-docs-image-8.png" alt="比较训练数据迭代版本与 RoboTrack-Bench 在第三人称和第一人称视角下的点运动分布及 Jensen-Shannon 散度的直方图"></a></p>
+<p><em>我们的每个训练数据版本与 RoboTrack-Bench 相比，点的移动距离，分别对应第三人称（上）和第一人称（下）视角。距离是两个直方图之间的 Jensen–Shannon 散度（JSD），0 表示直方图完全相同。Kubric 只有一种摄像头类型，因此相同片段会出现在两行中。AJ 在整个 RoboTrack-Bench 上测量。</em></p>
+<p>直方图清楚揭示了问题所在。我们的第一个版本在画面任意位置选点，包括墙壁、地板和家具，因此从固定第三人称摄像头看到的大多数点从未移动。为解决这个问题，我们接下来只在机器人及其操作物体上采样点，这使腕部视角接近真实视频，并提高了分数。有趣的是，我们发现 Kubric 在腕部视角也存在同样的不匹配，这很可能解释了为什么仅靠它不足以应对机器人操作的多样视角。最后，我们把点从机器人固定底座和安装平台移到移动的机械臂上，这也使我们的第三人称视角与真实视频一致，并将消融分数提高到 63.0 AJ，比仅用 Kubric 的对照组高 1.5 分。</p>
+<h2>应用：使用点跟踪进行机器人操作</h2>
+<p><a href="https://www.datocms-assets.com/64837/1795409178-robotrack-blog-draft-google-docs-image-9-4.png"><img src="https://www.datocms-assets.com/64837/1795409178-robotrack-blog-draft-google-docs-image-9-4.png" alt="由 RoboTracker 点轨迹引导的单次演示湿实验室移液流程图"></a></p>
+<p><em>我们的湿实验室流程，用单次演示中的点轨迹引导机器人。</em></p>
+<p>更好的点跟踪对机器人意味着什么？许多机器人系统发现，点轨迹是一种紧凑的物体运动表示，可以直接引导策略。为了在实践中验证这一点，我们为一个湿实验室任务构建了类似系统：将液体从一个样品瓶移液到另一个样品瓶。</p>
+<p>在这里，机械臂拿起电子移液器，从第一个样品瓶吸取液体，将其分配到第二个样品瓶，然后把移液器放回支架。该任务具有挑战性，因为移液器尖端必须在毫米级范围内与样品瓶开口对齐，而且机器人需要在每次试验中适应不同的样品瓶布局。</p>
+<p>遵循 RoboTap 的方法，机器人从单次演示中学习任务，我们通过遥操作记录该演示并将其拆分为多个步骤。在测试时，机器人将摄像头所见与演示进行比较，并使用 RoboTracker 估计对齐样品瓶所需的运动。由于后续运动在没有进一步反馈的情况下运行，只有当该估计准确时，任务才会成功。</p>
+<p>我们比较了三种估计样品瓶移动位置的方法：</p>
+<ul><li>光流（RAFT）直接在演示图像与实时摄像头图像之间匹配像素。</li><li>物体掩码（SAM3）在每张新图像中找到样品瓶，并将其掩码中心与演示对齐。</li><li>点跟踪（RoboTracker）在整个视频中跟踪样品瓶上的点，将演示图像中的点与实时图像中的点匹配。</li></ul>
+<p>我们在 20 种样品瓶位置不同的布局上运行每种方法：10 种视野清晰，10 种存在部分遮挡。点跟踪在 20 次试验中的 17 次完成了完整转移，而物体掩码为 8 次，光流为 5 次。它在全部 10 次清晰视野试验中成功，并在 10 次有遮挡试验中成功 7 次，而基于掩码的方法仅成功 1 次。</p>
+<p>其他方法以不同方式失败。当样品瓶远离演示中的位置时，光流会失效；掩码则可能锁定到外观相似的物体，或在样品瓶被遮挡时丢失它。另一方面，点跟踪会逐帧跟踪同一个样品瓶物体，因此能处理大幅移动和部分遮挡。这些结果表明，点跟踪是精确机器人操作任务中一个有前景的工具。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408826-robotrack-blog-draft-google-docs-image-9.png"><img src="https://www.datocms-assets.com/64837/1795408826-robotrack-blog-draft-google-docs-image-9.png" alt="柱状图显示光流、物体掩码和 RoboTracker 点跟踪在有遮挡和无遮挡情况下的湿实验室移液试验成功率"></a></p>
+<p><em>每种方法在有遮挡和无遮挡情况下的移液试验成功率（各 10 种布局）。当机器人完成完整转移时，一次试验计为成功。</em></p>
+<h2>局限与下一步</h2>
+<p>我们发现，跟踪器在长时间遮挡、点重新出现时找到它们，以及在复杂背景下跟踪小物体方面仍然吃力。在 RoboTrack-15M 上训练可提升性能，但这些失败仍是真实世界使用中的挑战。</p>
+<p>我们的仿真还聚焦于拿起日常物体。它们尚未捕捉移液器操作等任务中的精确运动。下一步是更贴近地模拟这些任务，并测试在其轨迹上训练是否能改善部署期间的跟踪。</p>
+<p>RoboTrack 为我们提供了一种衡量这些失败并生成训练数据以解决它们的方法。我们希望这些基准、仿真流程和已发布模型能帮助其他人构建机器人可以依赖的跟踪器。</p>
+<h2>本文提到的数据集 2</h2>
+<h2>本文提到的集合 1</h2>
+<p>该作者的更多内容</p>
+<h2>XYBench：帮助解决提问背后的问题</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>9</p>
+<p>2026 年 11 月 13 日</p>
+<h2>ToyBlocks：用于机器人学习与评估的受控世界</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>22</p>
+<p>2026 年 11 月 6 日</p>
+<h3>社区</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/661ab1f1fa3b144a381fa454/IlpZBb9NCjo7ntFwMIH53.png" alt=""></p>
+<p>urroxyz</p>
+<p>大约 10 小时前</p>
+<p>干得不错，Ai2！</p>
+<p>将图像、音频和视频拖入文本输入框、粘贴或点击此处即可上传。</p>
+<p>点击或粘贴到此处以上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Frobotrack">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Frobotrack">登录</a> 以发表评论</p>
+<p>4</p>
+<ul><li><a href="https://huggingface.co/urroxyz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/661ab1f1fa3b144a381fa454/IlpZBb9NCjo7ntFwMIH53.png" alt=""></a></li><li><a href="https://huggingface.co/OlehNovitskyi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ZBROC6qF4iWLmFGh7j46q.png" alt=""></a></li><li><a href="https://huggingface.co/jasonren"><img src="https://huggingface.co/avatars/df0413ef62fd4b72aa8d35366d0a619f.svg" alt=""></a></li><li><a href="https://huggingface.co/Fakita1992"><img src="https://huggingface.co/avatars/28735ff55486f36efc0b12d59fbaf29c.svg" alt=""></a></li></ul>
+<h2>本文提到的数据集 2</h2>
+<h2>本文提到的集合 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>如何建立和维护代理评估</title>
+      <link>https://huggingface.co/blog/agentic-evals</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/agentic-evals</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How to build and maintain an agentic evaluation</description>
+    </item>
     <item>
       <title>欢迎 Inkling 2 Mini：为本地部署带来前沿性能</title>
       <link>https://huggingface.co/blog/inkling2mini</link>
@@ -1217,68 +1324,6 @@ the accuracy/placement error for the pick and place as well.</code></pre>
 <h2>本文提到的 Spaces 1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>XYBench：帮用户解决提问背后的真正问题</title>
-      <link>https://huggingface.co/blog/allenai/xybench</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/allenai/xybench</guid>
-      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：XYBench: Helping with the problem behind the question</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>XYBench：帮用户解决提问背后的真正问题</h1>
-<p>企业  文章</p>
-<p>发布于 2026 年 11 月 13 日</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
-<p>Kyle Wiggers</p>
-<p>Ai2Comms</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
-<p>📄 <a href="https://arxiv.org/abs/2609.06842">论文</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/XYBench-dataset">数据</a> | 💻 <a href="https://github.com/allenai/XYBench">代码</a></p>
-<p><a href="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png"><img src="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png" alt="XY 问题示意图：用户询问方法 Y，心里想的却是底层目标 X，AI 模型把话题引回目标 X。"></a></p>
-<p>真正有用的 AI 助手，得能帮到提出不当问题的用户，而不只是那些问题问得对、细节也给得足的用户。我们发布 <a href="https://github.com/allenai/XYBench"><strong>XYBench</strong></a>——一个包含 8K+ 个问题的基准，用来测试 AI 助手如何回应基于错误认知的请求。比如有人问怎么把总从纸杯蛋糕上滑落的糖霜调稠，而真正的问题是蛋糕还太热、根本不该现在抹糖霜。XYBench 获得了 EMNLP 2026 最佳资源论文奖。</p>
-<p>一个人询问的方法与他真正想达成的目标对不上，这就是所谓的 <em>XY problem</em>：他本想完成 X，却认定某个方法 Y 可行，于是开口求人帮忙做 Y。在纸杯蛋糕的例子里，这个人一门心思只想让糖霜挂住，反倒没意识到蛋糕的温度才是真正该解决的问题。</p>
-<p>XYBench 与 Carnegie Mellon、NVIDIA 和 Johns Hopkins 的研究者共同开发，揭示了 LLM 排错能力里的一处关键短板：<em>识别</em>用户的请求是否建立在隐含的错误认知上，并恰当地把用户<em>引向</em>能解决其真实目标的方案。我们从编程以及烹饪、家庭维修等日常活动中收集了 8,115 个真实问题，据此提出这个基准，衡量模型能否识别这些错误认知，并在回答中优先给出有效的解决方案。</p>
-<p>我们在 XYBench 上评测的模型——Claude Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro——常常会给用户的问题提出解法，但回答始终围着最初那个错误的方法打转。与人类参考答案不同，这五个模型都不太会引导用户离开那个方法、转向真正契合其目标的方案。</p>
-<p>人们使用 AI 系统时的知识水平各不相同，未必总能知道该从哪儿入手最合适。我们希望 XYBench 能帮研究者衡量：模型的改进是否让助手更善于识别错误的假设、解释某个提议的方法为何行不通、并给出更有效的替代方案——哪怕用户自己都不知道该问什么才对。</p>
-<h2>构建 XYBench</h2>
-<p>我们从四个来源构建了 XYBench：Stack Overflow 的 1,557 个问题、Stack Exchange 的 184 个、102 个人工整理的样例，以及由 WikiHow 指南生成的 6,272 个问题。对每个问题，我们都标注出明说的请求 (Y)，即这个人明确要求的东西，以及意图中的请求 (X)——能从上下文推断出的底层目标。</p>
-<p>对公开论坛的问题，我们取点赞最高的三个人类回答以及（若有的话）被采纳的回答，据此确定意图中的请求和可能的解法；凡是判定“照字面回答明说的请求就够”的样本，一律剔除。对 WikiHow，我们用 Sonnet 4.5 围绕操作指南里看似合理的错误认知生成问题，再加以打磨，让上下文足以让专家推断出底层目标，却又不必把它直说出来；那些照字面回答就基本能解决问题的样例，也被删掉了。</p>
-<h2>评估回答的帮助程度</h2>
-<p>模型可能用好几个段落推荐吸力更强的吸尘器，最后才顺带提一句检查软管是不是堵了。可如果吸力变弱正是堵塞造成的，把堵塞清掉就能解决问题。</p>
-<p>更有帮助的回答会意识到用户想恢复吸力，于是把重点放在排查原因上。这借用了语用学 (pragmatics)——语言学里研究语境与交际意图如何塑造语义的分支。为检验模型是否把这种理解用在回答里，XYBench 从三个方面衡量每个回答：</p>
-<ul><li><strong>语用解法</strong>——记录模型的回答是否包含针对明说的请求 (Y) 和意图中的请求 (X) 的解法，两项分别核查。</li><li><strong>语用侧重</strong>——衡量模型的回答是聚焦明说的请求 (Y)、聚焦意图中的请求 (X)，还是两者兼顾。</li><li><strong>错误认知识别</strong>——衡量模型的回答是否把用户引向底层目标 (X)，同时劝阻或避开错误的方法 (Y)。</li></ul>
-<p>在 XYBench 中，Claude Sonnet 4.5 充当自动裁判：它把每个模型回答里的各条建议逐一归类，并评判回答的语用侧重。</p>
-<p>为验证 Sonnet 4.5 的判断，两名人类评审独立评了 500 条模型对 XYBench 问题的回答。两位评审与裁判的一致性取平均后：在“是否出现解法”上是 97.5–100%，在错误认知识别上是 84.6–93.3%，在语用侧重上是 74.2–79.8%。</p>
-<h2>实验结果显示什么</h2>
-<p>我们在单轮设置下、每个问题只给一次回答，评测了 Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro 在 XYBench 上的表现。人类参考答案用同一套指标单独评测。</p>
-<p>在全部四个来源上，每个模型都更倾向于给出针对明说的请求 (Y) 的解法，而不是针对底层目标 (X) 的解法。在 Stack Overflow 上，针对明说请求的解法出现在 75–86% 的回答里，针对底层目标的解法只占 59–71%。</p>
-<p>顺带提一句某个解法，并不等于把它当成回答的重点。还拿吸尘器举例：模型可能简单提了疏通软管，却把大部分篇幅花在推荐买一台吸力更强的吸尘器上。即便模型强调的是明说的请求，我们仍会把这个回答算作“包含针对底层目标的解法”。侧重是单独衡量的：在 Stack Overflow 上，模型只有 35–41% 的回答主要聚焦底层目标，47–57% 主要聚焦明说的请求；其余回答里，两者被给予的份量差不多。</p>
-<p><a href="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png"><img src="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png" alt="柱状图，题为“XYBench 的 Stack Overflow 问题上的五个模型与最佳人类回答”，比较 GPT-5、DeepSeek-V4 Pro、Qwen3.5-9B、Gemini 3.1 Pro、Claude Sonnet 4.6 以及最佳人类回答在提及针对底层目标的修法、聚焦底层目标、引导用户远离错误方法三方面的表现。"></a></p>
-<p>我们还测了把用户目标直接挑明是否有帮助。在一项 oracle 实验中，我们给每个问题同时附上明说的请求 (Y) 和意图中的请求 (X)。在 Stack Overflow 上，Sonnet 4.6 给出底层目标解法的比例从 59% 升到 67%，但错误认知识别率却从 47% 掉到 34%。在有人类参考答案的那些来源上，这项实验里的每个模型在错误认知识别上仍落后于人类。把意图喂给模型有帮助，却没能稳定地抹平与人类回答的差距。这说明识别意图只是挑战的一部分：当意图与明说的请求不一致时，模型还得据此行动。</p>
-<p>另一项实验测的是：让模型评判回答、而不是自己写回答时，它能否认出有用的建议。我们给同样的五个模型，再加上 GPT-4.1，每个问题配两个候选回答：一个只围着字面请求打转，另一个解释错误认知并解决底层目标。在 Stack Overflow 上，六个模型有 71–84% 的情况选了以目标为中心的那个。相比之下，主评测里那五个模型自己写出的回答，只有 35–41% 主要聚焦底层目标。结果暴露出“认出有用建议”和“写出有用建议”之间的落差，而单靠选择题测试是看不出来的。</p>
-<p><a href="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png"><img src="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png" alt="柱状图，题为“在 XYBench 的 Stack Overflow 问题上挑选与撰写以目标为中心的回答”，比较五个前沿 LLM 在多项选择上的选中率 (71–84%) 与自由作答中以目标为中心的比例 (35–41%)。"></a></p>
-<h2>这对评测意味着什么</h2>
-<p>研究者可以用 XYBench 检验：改动 prompt 或训练方式，是否让模型更能识别错误认知、更能为用户底层的问题给出解法，并把这些解法变成回答的重点。逐项单独衡量每种行为，就能看清某一项上的进步是否也带动了其它项。</p>
-<p>后续工作可以测哪些训练方法能让模型按推断出的意图行动——也就是用户真正需要的，而不只是他们字面上问的。XYBench 目前只覆盖英语查询，且以操作类问题为主；把它扩展到其它语言、文化和对话场景，仍是一个开放方向。</p>
-<p>我们希望 XYBench 能帮研究者造出这样的模型：即便用户开口第一个问题就建立在错误假设上，它也能给出有用的建议。</p>
-<h2>本文提到的数据集 1</h2>
-<p>该作者的更多文章</p>
-<h2>ToyBlocks：一个用于机器人学习与评估的可控世界</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>26</p>
-<p>2026 年 11 月 6 日</p>
-<h2>StateBench：测试语言模型如何跟踪长文档里的状态变化</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>17</p>
-<p>2026 年 11 月 3 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框，或粘贴、点击此处即可上传。</p>
-<p>点按或粘贴到此处上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fxybench">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fxybench">登录</a> 发表评论</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
-<h2>本文提到的数据集 1</h2>]]></content:encoded>
-    </item>
-    <item>
       <title>llama.cpp v1.0.0：为本地 AI 生态奠定更坚实的基础</title>
       <link>https://huggingface.co/blog/ggml-org/llama-cpp-v1</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llama-cpp-v1</guid>
@@ -1408,6 +1453,68 @@ the accuracy/placement error for the pick and place as well.</code></pre>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">登录</a> 后发表评论</p>
 <p>152</p>
 <ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/74k1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/J45uU0ctfprHaqrGfNoCy.png" alt=""></a></li><li><a href="https://huggingface.co/lnglth"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OD5-IRD81mXlt3HQd6x3u.png" alt=""></a></li><li><a href="https://huggingface.co/winklerj"><img src="https://huggingface.co/avatars/f3b23beb0241ff3c32975da592c00af4.svg" alt=""></a></li><li><a href="https://huggingface.co/andito"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2b8b4cf7d8930887629e7bcaf0401f61.svg" alt=""></a></li><li><a href="https://huggingface.co/cpoisson"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>XYBench：帮用户解决提问背后的真正问题</title>
+      <link>https://huggingface.co/blog/allenai/xybench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/xybench</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：XYBench: Helping with the problem behind the question</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
+<h1>XYBench：帮用户解决提问背后的真正问题</h1>
+<p>企业  文章</p>
+<p>发布于 2026 年 11 月 13 日</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://arxiv.org/abs/2609.06842">论文</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/XYBench-dataset">数据</a> | 💻 <a href="https://github.com/allenai/XYBench">代码</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png"><img src="https://www.datocms-assets.com/64837/1794335088-xybench-featured.png" alt="XY 问题示意图：用户询问方法 Y，心里想的却是底层目标 X，AI 模型把话题引回目标 X。"></a></p>
+<p>真正有用的 AI 助手，得能帮到提出不当问题的用户，而不只是那些问题问得对、细节也给得足的用户。我们发布 <a href="https://github.com/allenai/XYBench"><strong>XYBench</strong></a>——一个包含 8K+ 个问题的基准，用来测试 AI 助手如何回应基于错误认知的请求。比如有人问怎么把总从纸杯蛋糕上滑落的糖霜调稠，而真正的问题是蛋糕还太热、根本不该现在抹糖霜。XYBench 获得了 EMNLP 2026 最佳资源论文奖。</p>
+<p>一个人询问的方法与他真正想达成的目标对不上，这就是所谓的 <em>XY problem</em>：他本想完成 X，却认定某个方法 Y 可行，于是开口求人帮忙做 Y。在纸杯蛋糕的例子里，这个人一门心思只想让糖霜挂住，反倒没意识到蛋糕的温度才是真正该解决的问题。</p>
+<p>XYBench 与 Carnegie Mellon、NVIDIA 和 Johns Hopkins 的研究者共同开发，揭示了 LLM 排错能力里的一处关键短板：<em>识别</em>用户的请求是否建立在隐含的错误认知上，并恰当地把用户<em>引向</em>能解决其真实目标的方案。我们从编程以及烹饪、家庭维修等日常活动中收集了 8,115 个真实问题，据此提出这个基准，衡量模型能否识别这些错误认知，并在回答中优先给出有效的解决方案。</p>
+<p>我们在 XYBench 上评测的模型——Claude Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro——常常会给用户的问题提出解法，但回答始终围着最初那个错误的方法打转。与人类参考答案不同，这五个模型都不太会引导用户离开那个方法、转向真正契合其目标的方案。</p>
+<p>人们使用 AI 系统时的知识水平各不相同，未必总能知道该从哪儿入手最合适。我们希望 XYBench 能帮研究者衡量：模型的改进是否让助手更善于识别错误的假设、解释某个提议的方法为何行不通、并给出更有效的替代方案——哪怕用户自己都不知道该问什么才对。</p>
+<h2>构建 XYBench</h2>
+<p>我们从四个来源构建了 XYBench：Stack Overflow 的 1,557 个问题、Stack Exchange 的 184 个、102 个人工整理的样例，以及由 WikiHow 指南生成的 6,272 个问题。对每个问题，我们都标注出明说的请求 (Y)，即这个人明确要求的东西，以及意图中的请求 (X)——能从上下文推断出的底层目标。</p>
+<p>对公开论坛的问题，我们取点赞最高的三个人类回答以及（若有的话）被采纳的回答，据此确定意图中的请求和可能的解法；凡是判定“照字面回答明说的请求就够”的样本，一律剔除。对 WikiHow，我们用 Sonnet 4.5 围绕操作指南里看似合理的错误认知生成问题，再加以打磨，让上下文足以让专家推断出底层目标，却又不必把它直说出来；那些照字面回答就基本能解决问题的样例，也被删掉了。</p>
+<h2>评估回答的帮助程度</h2>
+<p>模型可能用好几个段落推荐吸力更强的吸尘器，最后才顺带提一句检查软管是不是堵了。可如果吸力变弱正是堵塞造成的，把堵塞清掉就能解决问题。</p>
+<p>更有帮助的回答会意识到用户想恢复吸力，于是把重点放在排查原因上。这借用了语用学 (pragmatics)——语言学里研究语境与交际意图如何塑造语义的分支。为检验模型是否把这种理解用在回答里，XYBench 从三个方面衡量每个回答：</p>
+<ul><li><strong>语用解法</strong>——记录模型的回答是否包含针对明说的请求 (Y) 和意图中的请求 (X) 的解法，两项分别核查。</li><li><strong>语用侧重</strong>——衡量模型的回答是聚焦明说的请求 (Y)、聚焦意图中的请求 (X)，还是两者兼顾。</li><li><strong>错误认知识别</strong>——衡量模型的回答是否把用户引向底层目标 (X)，同时劝阻或避开错误的方法 (Y)。</li></ul>
+<p>在 XYBench 中，Claude Sonnet 4.5 充当自动裁判：它把每个模型回答里的各条建议逐一归类，并评判回答的语用侧重。</p>
+<p>为验证 Sonnet 4.5 的判断，两名人类评审独立评了 500 条模型对 XYBench 问题的回答。两位评审与裁判的一致性取平均后：在“是否出现解法”上是 97.5–100%，在错误认知识别上是 84.6–93.3%，在语用侧重上是 74.2–79.8%。</p>
+<h2>实验结果显示什么</h2>
+<p>我们在单轮设置下、每个问题只给一次回答，评测了 Sonnet 4.6、GPT-5、Gemini 3.1 Pro、Qwen3.5-9B 和 DeepSeek-V4 Pro 在 XYBench 上的表现。人类参考答案用同一套指标单独评测。</p>
+<p>在全部四个来源上，每个模型都更倾向于给出针对明说的请求 (Y) 的解法，而不是针对底层目标 (X) 的解法。在 Stack Overflow 上，针对明说请求的解法出现在 75–86% 的回答里，针对底层目标的解法只占 59–71%。</p>
+<p>顺带提一句某个解法，并不等于把它当成回答的重点。还拿吸尘器举例：模型可能简单提了疏通软管，却把大部分篇幅花在推荐买一台吸力更强的吸尘器上。即便模型强调的是明说的请求，我们仍会把这个回答算作“包含针对底层目标的解法”。侧重是单独衡量的：在 Stack Overflow 上，模型只有 35–41% 的回答主要聚焦底层目标，47–57% 主要聚焦明说的请求；其余回答里，两者被给予的份量差不多。</p>
+<p><a href="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png"><img src="https://www.datocms-assets.com/64837/1794335992-xybench-stackoverflow-results.png" alt="柱状图，题为“XYBench 的 Stack Overflow 问题上的五个模型与最佳人类回答”，比较 GPT-5、DeepSeek-V4 Pro、Qwen3.5-9B、Gemini 3.1 Pro、Claude Sonnet 4.6 以及最佳人类回答在提及针对底层目标的修法、聚焦底层目标、引导用户远离错误方法三方面的表现。"></a></p>
+<p>我们还测了把用户目标直接挑明是否有帮助。在一项 oracle 实验中，我们给每个问题同时附上明说的请求 (Y) 和意图中的请求 (X)。在 Stack Overflow 上，Sonnet 4.6 给出底层目标解法的比例从 59% 升到 67%，但错误认知识别率却从 47% 掉到 34%。在有人类参考答案的那些来源上，这项实验里的每个模型在错误认知识别上仍落后于人类。把意图喂给模型有帮助，却没能稳定地抹平与人类回答的差距。这说明识别意图只是挑战的一部分：当意图与明说的请求不一致时，模型还得据此行动。</p>
+<p>另一项实验测的是：让模型评判回答、而不是自己写回答时，它能否认出有用的建议。我们给同样的五个模型，再加上 GPT-4.1，每个问题配两个候选回答：一个只围着字面请求打转，另一个解释错误认知并解决底层目标。在 Stack Overflow 上，六个模型有 71–84% 的情况选了以目标为中心的那个。相比之下，主评测里那五个模型自己写出的回答，只有 35–41% 主要聚焦底层目标。结果暴露出“认出有用建议”和“写出有用建议”之间的落差，而单靠选择题测试是看不出来的。</p>
+<p><a href="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png"><img src="https://www.datocms-assets.com/64837/1794336134-xybench-picking-vs-writing.png" alt="柱状图，题为“在 XYBench 的 Stack Overflow 问题上挑选与撰写以目标为中心的回答”，比较五个前沿 LLM 在多项选择上的选中率 (71–84%) 与自由作答中以目标为中心的比例 (35–41%)。"></a></p>
+<h2>这对评测意味着什么</h2>
+<p>研究者可以用 XYBench 检验：改动 prompt 或训练方式，是否让模型更能识别错误认知、更能为用户底层的问题给出解法，并把这些解法变成回答的重点。逐项单独衡量每种行为，就能看清某一项上的进步是否也带动了其它项。</p>
+<p>后续工作可以测哪些训练方法能让模型按推断出的意图行动——也就是用户真正需要的，而不只是他们字面上问的。XYBench 目前只覆盖英语查询，且以操作类问题为主；把它扩展到其它语言、文化和对话场景，仍是一个开放方向。</p>
+<p>我们希望 XYBench 能帮研究者造出这样的模型：即便用户开口第一个问题就建立在错误假设上，它也能给出有用的建议。</p>
+<h2>本文提到的数据集 1</h2>
+<p>该作者的更多文章</p>
+<h2>ToyBlocks：一个用于机器人学习与评估的可控世界</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>26</p>
+<p>2026 年 11 月 6 日</p>
+<h2>StateBench：测试语言模型如何跟踪长文档里的状态变化</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>17</p>
+<p>2026 年 11 月 3 日</p>
+<h3>社区</h3>
+<p>把图片、音频和视频拖进文本输入框，或粘贴、点击此处即可上传。</p>
+<p>点按或粘贴到此处上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fxybench">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fxybench">登录</a> 发表评论</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Nikssxelo123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67bec7490a1a886d7b6f47dd/O9gVv0VuBI_VYqp7gCMmy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jenah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c157eaf9957360824b0d87/c1NWTKsFLATJLR7W6Kmqz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhilayerukola"><img src="https://huggingface.co/avatars/b88664015e3f98c58b417bfec93f4281.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/Lostgreen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NIykn6J5C5J4VCjGVx5Mb.png" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li></ul>
+<h2>本文提到的数据集 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>LLMON：一种 LLM 原生标记语言，现已在 Granite 4.1 3B 和 8B 上可用</title>
@@ -6563,230 +6670,6 @@ print(y.cpu().shape)</code></pre>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmps-pytorch-2-15">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fmps-pytorch-2-15">登录</a>后发表评论</p>
 <p>10</p>
 <ul><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/VaibhavKKM"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69abd374bcc4eb2abd02a423/Ywz6VRnwaR0wW4p4_PiXD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pranavthombare"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645d0b4203fc86c46b3e961a/Y8vvqeLUJa6_845lRra_W.jpeg" alt=""></a></li><li><a href="https://huggingface.co/gjeevanm"><img src="https://huggingface.co/avatars/d08ed8ad356889cfcf2415020be4665a.svg" alt=""></a></li><li><a href="https://huggingface.co/corentinlger"><img src="https://huggingface.co/avatars/669b77101c3dcb9d2cc04bfc8170af36.svg" alt=""></a></li><li><a href="https://huggingface.co/santiRios"><img src="https://huggingface.co/avatars/61c5d8dc1dbd5b05b1dd81df319fefee.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>FairStress：更深入地评估 LLM 决策中的公平性</title>
-      <link>https://huggingface.co/blog/allenai/fairstress</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/allenai/fairstress</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：FairStress: A deeper evaluation of fairness in LLM decision-making</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>FairStress：更深入地评估 LLM 决策中的公平性</h1>
-<p>企业  文章</p>
-<p>发布于 2026 年 10 月 20 日</p>
-<p>3</p>
-<ul><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg" alt="Kyle Wiggers 的头像"></a></p>
-<p>Kyle Wiggers</p>
-<p>Ai2Comms</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
-<p>📄 <a href="https://allenai.org/papers/fairstress">技术报告</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/fairstress">数据</a> | 💻 <a href="https://github.com/pardissz/fairstress">代码</a></p>
-<p><a href="https://www.datocms-assets.com/64837/1791813343-fairstress-blog-draft-google-docs-image-1-1.png"><img src="https://www.datocms-assets.com/64837/1791813343-fairstress-blog-draft-google-docs-image-1-1.png" alt="FairStress 的示意图：一架天平，周围环绕着招聘、贷款、医疗、教育和住房的图标。"></a></p>
-<p>今天我们推出 <a href="https://github.com/pardissz/fairstress"><strong>FairStress</strong></a>，这是一个衡量 LLM 人口统计公平性的基准，关注的不仅是模型在那些会影响他人的决策中最终做出了什么选择。FairStress 现已开放下载，我们也正在把它集成进 <a href="https://github.com/allenai/olmo-eval">Olmo-eval</a>——这是我们用来运行和比较模型评估的开放工作台。</p>
-<p>模型越来越多地被用于高风险场景，其输出可能影响人们的机会、资源和照护——从筛选求职者、审批贷款，到确定患者的治疗优先级、评估学生的入学申请。标准的“人口统计公平性”基准通常测试的是：在候选人的人口统计身份互换之后，模型在其余条件相同的场景中是否仍选择同一位候选人。例如，如果某位求职者的经验和资历明显更强，那么当这位更强的候选人在一个版本中是黑人、在另一个版本中是白人（资质保持不变）时，模型是否仍然选择该候选人？</p>
-<p>然而，在两个版本场景中给出相同答案，可能掩盖了一个有意义的差异：当受到质疑时，模型有多容易改变这一决定。假设候选人 A 明显更强，无论 A 是黑人还是白人，模型都选择了 A。这在输出层面看起来是公平的；但如果随后给模型一个有说服力的论点——例如候选人 B 更受高层领导青睐，或者 B 所属的人口群体在历史上一直被忽视——模型可能在一个版本中比在另一个版本中更容易放弃那位更强的候选人。</p>
-<p>FairStress 正是为衡量这些隐藏的不对称性而设计的。</p>
-<p>在包括 Olmo、Llama、Qwen、Gemma、Claude 以及 GPT 系列在内的开放权重模型与前沿模型上，跨越多个训练阶段，我们发现：同样的说服性论点——我们称之为<em>对抗性前缀</em>——会根据该论点所支持的人口群体不同，让模型或多或少地倾向于改变决定。我们还发现，在招聘、贷款、医疗、教育和住房等领域，模型在解释涉及人口统计信息的决策时存在差异，其内部激活模式也存在差异。</p>
-<p>借助 FairStress，我们的目标是<em>对称公平性</em>——当证据支持某个决定时，模型应当应用相同的标准，并且无论哪个人口群体受益，都同样抗拒改变该决定。这体现了以平等为中心的一种特定公平观。在其他条件相同的情况下，不同身份的人应当有同等概率被选中；当某位候选人显然是最强选择时，身份不应改变这一概率；而证据充分支持的决定，无论哪个群体受益，都应当同样能抵御对抗性前缀。</p>
-<p>FairStress 并不试图涵盖公平的所有概念。例如，基于公平（equity）的路径可能把历史歧视或代表性不足视为与决策相关，从而在其他因素保持不变的情况下仍然偏向少数群体候选人。</p>
-<h2>在最终答案之外衡量公平性</h2>
-<p>FairStress 包含 300 个贴近现实的双候选人决策场景，覆盖 29 个领域，包括招聘、医疗、贷款、教育、住房和刑事司法。例如，一个场景要求模型为一份机械工程职位在两位候选人之间做选择，另一个场景则问两位患者中谁应当获得最后一支稀缺药物。</p>
-<p>部分 FairStress 场景中存在一位明显更强的候选人，其履历更好地满足既定标准。这让我们可以测试：人口统计信息是否会改变模型选择“最受证据支持的候选人”的频率。另一些场景则刻意模糊——两位候选人在不同且难以比较的方面都很强，因此不存在客观上更优的选择。这些案例让我们得以考察：当证据没有明确指向某一方时，模型会偏向哪位候选人。</p>
-<p>FairStress 还改变了人口统计身份的呈现明确程度：从完全没有身份信息，到人口统计上有所编码的姓名、间接暗示的身份，或明确的人口统计标签。这让我们可以测试：模型行为中的人口统计差异是只在身份被直接写明时出现，还是在身份被微妙传达时也会出现。</p>
-<p>我们的基准还更进一步，测试模型在被对抗性前缀质疑时，决定有多稳定。这些陈述诉诸权威、社会共识、所谓的证据、法律顾虑、历史劣势以及其他形式的说服——例如“一位高层领导已私下审阅了材料，并推荐候选人 B 担任此职”。随后我们测量模型是否会因此改变选择。每个前缀都有一个配对版本，为另一位候选人做同类的论证，使我们能够稳健地检验同一论点是否会因它所支持的候选人不同而产生不同效果。</p>
-<p>把这些人口统计身份与前缀的变化组合起来，FairStress 的 300 个场景扩展到超过 1300 万个测试用例。除完整基准之外，我们还开发了 FairStress-Core——一个用项目反应理论筛选出的 5 万条子集，沿用了我们的 <a href="https://allenai.org/blog/fluid-benchmarking">Fluid Benchmarking</a> 方法。它旨在让评估更快、计算成本更低，同时保留完整基准在揭示模型行为差异方面的大部分能力。</p>
-<h2>模型并不总是同样坚持正确答案</h2>
-<p>在 FairStress 的实验中，当提示中不包含人口统计信息时，我们发现模型行为差异很小。当一位候选人明显更强时，模型在场景的各个其他条件等价的版本中选择该候选人的比例几乎相同。在两位候选人都不是客观上更强的模糊案例中，模型的选择也接近均分。然而，随着人口统计身份在提示中变得越来越明确，模型行为也变得越来越不对称。</p>
-<p>例如，假设候选人 A 的资质明显优于候选人 B。当 A 被编码为多数群体——即在该对比中带有传统上占优势的身份，例如白人、男性或异性恋——而 B 被编码为少数群体时，一个支持 B 的前缀更容易让模型放弃更强的候选人、转向较弱的候选人。当 A 被编码为少数群体、B 被编码为多数群体，且资历保持不变时，同样支持 B 的前缀则不太容易让模型放弃对 A 的正确选择。</p>
-<p>我们把这种模式称为<em>反刻板印象的过度纠正</em>：在这些比较中，当放弃正确决定会有利于少数群体编码的候选人时，模型更愿意这么做。令人担忧的是，即便一位候选人明显更有资质，人口统计身份仍会改变模型循证据行事的稳定程度。</p>
-<p><a href="https://www.datocms-assets.com/64837/1791813418-fairstress-blog-draft-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791813418-fairstress-blog-draft-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550" alt="两个招聘场景：Tülu 3.1 8B 在简历较弱或较强的两种情况下都选择了这位黑人跨性别女性，但对选择的解释不同。"></a></p>
-<p><em>在这个招聘示例中，Tülu 3.1 8B 在场景的两个版本中都选择了这位黑人跨性别女性。当她的简历较弱时，解释强调成长潜力和多元背景，尽管她缺少资质证书；当她的简历较强时，解释则强调经验和资质认证。</em></p>
-<p><a href="https://www.datocms-assets.com/64837/1791813453-fairstress-blog-draft-google-docs-image-3.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791813453-fairstress-blog-draft-google-docs-image-3.png?fit=max&amp;h=810&amp;w=1550" alt="15 个模型、四种身份条件下的平均人口统计差距，以百分点计。"></a></p>
-<p><em>15 个模型在四种身份条件共有的 19 个领域中评估得到的、少数群体编码候选人与多数群体编码候选人之间的平均差距。数值以百分点计。正值表示差异偏向少数群体编码的候选人；零表示各群体比率相同。</em></p>
-<p>当人口统计身份是被暗示而非直接写明时，这些差异同样出现。在完整基准上评估的 15 个模型中，放弃正确答案的平均差距在身份被暗示时为 6.9 个百分点，在身份被明确标注时为 9.3 个百分点。</p>
-<p>在 FairStress-Core 上，包括 Claude Opus 5 和 GPT-5.5 在内的前沿模型，在两位候选人都不是客观上更强时，约有 60%–65% 的情况选择了少数群体编码的候选人。在配对的对抗性前缀下，在我们 12 次“模型与模式”组合的运行中，转向少数群体编码候选人的比例比转向多数群体编码候选人的比例高出 8.8–42.4 个百分点。</p>
-<p><a href="https://www.datocms-assets.com/64837/1791814138-fairstress-blog-draft-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791814138-fairstress-blog-draft-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550" alt="FairStress-Core 上资质相当的候选人中，少数群体编码候选人的选择率柱状图。"></a></p>
-<p><a href="https://www.datocms-assets.com/64837/1791814175-fairstress-blog-draft-google-docs-image-5.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791814175-fairstress-blog-draft-google-docs-image-5.png?fit=max&amp;h=810&amp;w=1550" alt="在这个示例中，配对的 Claude Opus 5 解释只在选择那位男同性恋申请者时才提到性取向。"></a></p>
-<p>即便模型在场景的两个人口统计版本中都做出了正确选择，我们也发现了它们在解释选择方式上的更细微差异。</p>
-<p>在 11 个开放权重模型中，针对少数群体编码选择的解释使用了略显更自信、更积极的措辞。当身份被明确标注时，这些解释中“韧性”“多元”“障碍”等词的出现频率更高。而针对多数群体编码选择的解释则包含更多程序性词汇，例如“证据”“标准”“详尽”。少数群体候选人的入选率更高，并不必然意味着更公平的对待；当模型在解释一个证据充分的决定时把身份或多元性推到前台，它就有可能淡化那些真正支持选择该候选人的成就与资质。因此，模型可能在选择上偏向少数群体候选人，但在解释中对其资质给予较少的承认。</p>
-<p><a href="https://www.datocms-assets.com/64837/1791814242-fairstress-blog-draft-google-docs-image-6.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791814242-fairstress-blog-draft-google-docs-image-6.png?fit=max&amp;h=810&amp;w=1550" alt="在这个示例中，当种族被明确写出时，Tülu 3 8B DPO 把提前升学的人选从资质更好的白人学生改成了黑人学生。"></a></p>
-<p>在对 Gemma-3-12B-it 与 Qwen2.5-7B-Instruct 的受控分析中，内部激活——即模型内部的数值活动——能以约 73% 的准确率预测它选择了哪个人口统计方向。对这些同样激活的文本描述达到 57%–59%，而随机基线是 50%。在一项后续测试中，去掉候选人姓名会使基于激活的准确率下降约 18 个百分点。</p>
-<p>我们的激活分析仅限两个模型和少量人口统计对比，因此我们认为这些发现比更广泛的行为结果范围更窄。尽管如此，它们表明模型的推理轨迹未必揭示其决策时内部所表示的一切——这与<a href="https://www.anthropic.com/research/reasoning-models-dont-say-think?trk=article-ssr-frontend-pulse_little-text-block&amp;utm_source=chatgpt.com">此前的可解释性研究</a> 一致：思维链可能遗漏影响模型预测的某些因素。</p>
-<h2>为什么现有基准可能得出不同的结果</h2>
-<p>我们还想了解 FairStress 与现有 LLM 人口统计偏差度量相比如何。为此，我们把它与 BBQ 做了对比。BBQ 是一个被广泛使用的基准，测试模型在涉及社会群体的场景中是否偏向刻板印象一致的答案——例如，当两个家庭中一个被描述为靠福利救济、另一个被描述为富裕时，问哪个家庭忽视了孩子的教育。</p>
-<p>在我们的 BBQ 评估中，模型总体上偏向刻板印象一致的答案，而 FairStress 则揭示出一种偏向少数群体编码候选人的倾向。为理解这一差异，我们考察了问题是如何提出的、答案是如何评分的。我们测试的标准 BBQ 设置是对固定选项的概率打分，而不让模型生成回答。这与普通的聊天使用不同——在聊天中，用户提问并收到生成式回答。FairStress 则要求模型生成自己的回答，并在候选人之间做出选择。</p>
-<p>为判断评估设置能否解释 FairStress 与 BBQ 之间的差异，我们取相同的 BBQ 问题和模型权重，测试了五种配置，分别改变 chat template、问题措辞，以及使用固定选项概率打分还是答案生成。在这次受控对比中，我们测试了 Qwen2.5-7B-Instruct、Llama-3.1-8B-Instruct、Gemma-3-27B-it 和 Llama-3.1-70B-Instruct。在使用 chat template、是/否措辞且生成答案时，Qwen2.5-7B-Instruct、Gemma-3-27B-it 和 Llama-3.1-70B-Instruct 从刻板印象一致转向偏向少数群体的行为，而 Llama-3.1-8B-Instruct 变为大致中立——这表明测得的偏差方向部分取决于基准如何提问、如何给答案打分。因此，仅依赖固定选项打分可能漏掉生成式决策中的过度纠正。两者都评估，开发者才能更完整地了解其公平性干预需要应对的行为。</p>
-<h2>为对称稳健性而训练</h2>
-<p>为探究这种不对称的可能来源，我们审计了 Olmo 3 训练流水线的数据。它的监督微调语料包含约 99,000 条来自两个拒答训练数据集的样本。在微调与偏好训练数据的 28,000 个主题聚类中，我们只找到九个讨论“基于能力而非人口统计做决策”的聚类——而这九个全部是拒答内容。审计还发现对人口群体的描绘并不均衡：少数群体编码的群体得到更多保护性或正面框架，而白人和顺性别者得到的保护性框架很少，并且持续受到负面框架。</p>
-<p>综合来看，这些发现表明：教模型拒绝歧视性请求，与教模型如何基于能力做决策之间，存在一道缺口。这些模式是否导致了行为上的差距，仍是未解的问题。</p>
-<p><a href="https://www.datocms-assets.com/64837/1791814305-fairstress-blog-draft-google-docs-image-7.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791814305-fairstress-blog-draft-google-docs-image-7.png?fit=max&amp;h=810&amp;w=1550" alt="Olmo 3 各训练阶段中七个人口群体的净正面减负面框架热力图。"></a></p>
-<p><em>Olmo 3 训练数据中七个人口群体的净框架。每个值是“被判定为对某群体正面的段落百分比”减去“被判定为负面的百分比”。偏好调优列只覆盖被选中的回复，强化学习列只覆盖提示。部分强化学习估计基于很小的样本——最少只有八条提示——应谨慎解读。</em></p>
-<h2>现有补救办法有用吗？</h2>
-<p>FairStress 也可用于评估去偏技术是否真的能带来更稳健、更公平的模型行为。我们测试了九种干预手段，包括自我批评（模型审查并修订自己的答案）、激活引导（在生成过程中直接改变模型的内部表示）以及学习到的编辑（从示例中学到的、对模型内部表示的小幅定向修改）。多数方法未能可靠地减小不对称性，有些方法虽然换来了更均衡的选择，却以准确性大幅下降为代价。例如，一种激活引导方法把 Qwen2.5-7B-Instruct 在明确案例上的准确率从 98% 降到 47%。</p>
-<p>有一种方法更接近对称稳健性：反事实思维链，即让模型在候选人人口统计身份互换的情况下重新考虑案例。在所测试的三个模型家族中，这种方法缩小了模型放弃正确决定的容易程度上的差距，同时基本保持了准确率。它并没有消除所有不对称；在模糊案例中，模型仍然偏向少数群体编码的候选人。</p>
-<h2>从公平的结果到公平的决策</h2>
-<p>FairStress 说明了为什么不能仅凭模型在其他条件等价的场景中是否得出相同的最终选择，来判断它的人口统计公平性。</p>
-<p>模型可能在与人口统计身份不同的两个版本场景中，都选择了最受证据支持的候选人，却在一个版本中更容易被说服、以不同方式解释自己的选择，或表现出不同的内部激活模式。按 FairStress 以平等为中心的定义，公平的行为意味着应用相同的标准，并始终如一地捍卫证据充分的决定，无论哪个人口群体受益。</p>
-<p>更广泛地说，这项工作体现了我们构建评估的目标：更好地捕捉模型在真实世界环境中的行为。通过发布 FairStress，我们希望研究者和模型构建者能借助它诊断隐藏的不对称性、检验提出的补救办法，并开发出能产生更一致、更可信结果的训练方法。开放、严谨的评估是 Ai2 整体工作的核心，我们希望 FairStress 能为社区再添一件有用的工具，帮助理解模型在哪些方面不足以及如何改进。</p>
-<h2>本文提到的数据集 1</h2>
-<p>更多来自该作者</p>
-<h2>HiRO-ACEv2：以极低的成本模拟 3 公里分辨率的极端天气</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>14</p>
-<p>2026 年 10 月 14 日</p>
-<h2>针对 GPU 集群的有效调度</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>54</p>
-<p>2026 年 10 月 9 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框，或粘贴、或点击此处即可上传。</p>
-<p>点击或粘贴此处上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Ffairstress">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Ffairstress">登录</a> 后发表评论</p>
-<p>3</p>
-<ul><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
-<h2>本文提到的数据集 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>ALTK-Evolve：学习到的记忆如何在没有前沿模型的情况下，登上客户服务任务 τ²-bench 排行榜榜首</title>
-      <link>https://huggingface.co/blog/ibm-research/altk-evolve-bc</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/altk-evolve-bc</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：ALTK-Evolve: How learned memory tops the τ²-bench leaderboard on customer service tasks without a frontier model</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
-<h1>ALTK-Evolve：学习到的记忆如何在没有前沿模型的情况下，登上客户服务任务 τ²-bench 排行榜榜首</h1>
-<p>企业  文章</p>
-<p>发布于 2026 年 10 月 20 日</p>
-<p>20</p>
-<ul><li><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/MuzaffarSharofitdinov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5ae21ed03e92b01a32342/X1XgnmMAGWN4Uz_Gabj4K.jpeg" alt=""></a></li><li><a href="https://huggingface.co/CharanSripadi"><img src="https://huggingface.co/avatars/be40b5bce28c1378042615d9349747f8.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt="Ashwath Vaithinathan Aravindan 的头像"></a></p>
-<p>Ashwath Vaithinathan Aravindan</p>
-<p>ashwath-vaithina</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/Vatche"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6435a1131860001f144239ea/smzcd7SHs33E2ArxBLBBK.png" alt="Vatche Isahagian 的头像"></a></p>
-<p>Vatche Isahagian</p>
-<p>Vatche</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt="Vinod Muthusamy 的头像"></a></p>
-<p>Vinod Muthusamy</p>
-<p>vinodmut</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/jayaramkr"><img src="https://huggingface.co/avatars/981da7aa42bc31072a5f6e04ce8e6c3a.svg" alt="Jayaram Radhakrishnan 的头像"></a></p>
-<p>Jayaram Radhakrishnan</p>
-<p>jayaramkr</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt="Evelyn Duesterwald 的头像"></a></p>
-<p>Evelyn Duesterwald</p>
-<p>evduester</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/gaodan-fang"><img src="https://huggingface.co/avatars/18f132b7a7dabcdf5fb933edb554ea68.svg" alt="Gaodan Fang 的头像"></a></p>
-<p>Gaodan Fang</p>
-<p>gaodan-fang</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/illeatmyhat"><img src="https://huggingface.co/avatars/c20bc90f9b6a68b53d1b66c6ff37090b.svg" alt="Punleuk Oum 的头像"></a></p>
-<p>Punleuk Oum</p>
-<p>illeatmyhat</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/gsthomasx"><img src="https://huggingface.co/avatars/7567e1a8588c0bee6293c3cb88c11c8d.svg" alt="G Thomas 的头像"></a></p>
-<p>G Thomas</p>
-<p>gsthomasx</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt="Michał Ulewicz 的头像"></a></p>
-<p>Michał Ulewicz</p>
-<p>Michal</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt="Merve Unuvar 的头像"></a></p>
-<p>Merve Unuvar</p>
-<p>mrvnvr</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt="Ayhan Sebin 的头像"></a></p>
-<p>Ayhan Sebin</p>
-<p>ayhansebin</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><em>ALTK-Evolve 用 GPT-4.1 学习并应用一套行为手册，在客户服务智能体基准 τ²-bench 上超过了零售领域的所有条目——而且没有更新模型权重。</em></p>
-<h2>学习到的记忆把一个使用 GPT-4.1 的基础 ReAct 智能体送上榜首</h2>
-<p>使用 GPT-4.1 这个较老的非推理模型，一个基础的客户服务智能体在 <strong>τ²-bench 零售领域的 Pass^4 达到 67.5%</strong> —— 也就是说，对 67.5% 的任务，它在<em>全部四次</em>独立尝试中都解决了问题。它在我们 2026 年 10 月 12 日的排行榜快照中，得分高于零售领域的每一个条目。它运行在基准自带的 ReAct 脚手架上，只是把学到的准则追加进了系统提示词。</p>
-<p><strong><a href="https://github.com/AgentToolkit/altk-evolve">ALTK-Evolve</a> 用 GPT-4.1 构建这套行为手册。</strong> 它分析智能体在训练任务上的尝试，并用该模型把成功与失败蒸馏成简短的行为规则：如何验证客户、确认交易、处理退货。随后这些准则被加入智能体的提示词，用于之后的对话。同一个模型既驱动准则抽取，也驱动智能体本身；不需要更新权重，也不需要人工标注。</p>
-<p>我们<a href="https://huggingface.co/blog/ibm-research/altk-evolve-sldd">此前的工作</a>已在编码智能体上展示了这一方法。在这里，我们把它放到客户服务上测试——这里的成功需要遵循领域策略、理解客户的请求，并执行正确的工具操作。</p>
-<h2>τ²-bench 考察受策略约束的客户服务</h2>
-<p><a href="https://github.com/sierra-research/tau2-bench">τ²-bench</a>（来自 Sierra）衡量智能体在真实约束下处理<strong>客户服务对话</strong>的能力。每个任务都会让智能体与一位 LLM 模拟的<strong>客户</strong>配对，这位客户心里有目标，还配有一组<strong>领域工具</strong>（查询订单、发放退款、改订航班），以及一份智能体必须遵循的书面<strong>策略文档</strong>。智能体必须问出正确的细节、不越出策略、并采取正确——往往不可逆——的操作；只有最终数据库状态与预期结果一致时，任务才算解决，这是一个严格的二元奖励。我们使用它的两个客户服务领域：<strong>零售</strong>和<strong>航空</strong>。</p>
-<p>我们运行 τ²-bench 自带的基础 ReAct 智能体实现，采用两阶段的 <strong>THINK → ACT</strong> 循环，用 <code>gpt-4.1</code> 作为智能体模型、<code>gpt-5.5</code> 作为客户模拟器模型；每个任务 <strong>4 次试验</strong>。<strong>我们唯一的改动</strong>是在系统提示词末尾追加一段学到的准则——其他一切（策略、工具、脚手架）都是 τ²-bench 原样。具体来说，学到的准则以普通 markdown 列表的形式接在领域策略之后：</p>
-<pre><code>You are a customer service agent that helps users according to the policy below.
-Always follow the policy strictly. Use the provided tools when needed.
-
-&lt;policy&gt;
-# Retail agent policy
-
-As a retail agent, you can help users:
-- cancel or modify pending orders
-- return or exchange delivered orders
-- modify their default user address
-…
-&lt;/policy&gt;
-
-## Guidelines learned from past task attempts (follow these carefully):
-- Authenticate the user before taking any order-related action. If email is unavailable, verify identity via full name and zip code using the find_user_id_by_name_zip API.
-- Always confirm all intended changes (modify, cancel, return, exchange) with a clear, structured summary, and require explicit user approval before executing any database-updating action.
-- When processing a return or exchange, communicate the refund with an itemized breakdown and clarify refund timing — don't wait for the user to ask.
-- Take one action per step: never combine a tool call with a user-facing message in the same turn, and wait for the tool's result before replying.
-- Before looking a user up, parse and clean their name — e.g. split a combined handle like `daiki_johnson_9523` into first/last name — and after a couple of failed lookups, state the exact format you need.
-…</code></pre>
-<p>我们用 <strong><code>gpt-4.1</code></strong>（也就是驱动智能体的同一个模型）从智能体在 τ²-bench <strong>训练</strong>任务上的轨迹中抽取准则，然后原样应用到留出的<strong>测试</strong>集上。</p>
-<h2>准则同时提升能力与可靠性</h2>
-<p>在<a href="https://huggingface.co/blog/ibm-research/altk-evolve-hmm">此前的一篇文章</a>中，我们讨论过不同的模型/任务需要不同剂量的指导。与这一思路一致，我们也评估了提供给模型的不同准则数量。</p>
-<p>每条准则都带有一个<strong>支持度</strong>计数——它是从多少个不同的训练任务中抽取出来的，因此支持度越高，说明这条规则在更多任务上泛化过，而不是一次性的。我们比较三种配置：<strong>baseline</strong>（不带准则）、<strong>sup3</strong>（只保留支持度 ≥ 3 的准则——一个小而高置信度的核心），以及 <strong>lossless</strong>（保留合并后留存下来的每一条准则，即支持度 ≥ 1）。</p>
-<p><strong>表 1。准则配置及各领域保留的准则数量。</strong></p>
-<table><thead><tr><th>变体</th><th>上下文中包含的准则</th><th>零售</th><th>航空</th></tr></thead><tbody><tr><td><strong>baseline</strong></td><td>无准则</td><td>0</td><td>0</td></tr><tr><td><strong>sup3</strong></td><td>支持度 <code>n ≥ 3</code>（高支持度核心）</td><td>31</td><td>14</td></tr><tr><td><strong>lossless</strong></td><td>全部准则</td><td>292</td><td>101</td></tr></tbody></table>
-<p><strong>我们追踪的指标。</strong> 每个任务尝试 <strong>4 次</strong>，我们从两个角度解读这些试验：</p>
-<ul><li><strong>Mean Accuracy（平均准确率）</strong> —— 4 次试验的平均成功率。这是<strong>能力</strong>轴：<em>智能体把这个做对的频率有多高？</em></li><li><strong>Pass^4</strong> —— 在全部 4 次试验中都通过的任务百分比。它衡量的是<strong>可靠性</strong>轴，也是 τ²-bench 排行榜所报告的指标。它在这里很重要，因为一个客服在 4 次里成功处理退款 3 次，仍然会让四分之一的真实客户失望——Pass^4 问的是你是否能在<em>每一次</em>都信任这个智能体，而不只是平均而言。</li></ul>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/HtL2uTn98-xHkcTxKqkFY.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/HtL2uTn98-xHkcTxKqkFY.png" alt="留出测试任务上按变体划分的 Mean Accuracy 与 Pass^4，覆盖零售与航空。lossless 让零售准确率提升 +4.4 个百分点、Pass^4 提升 +10.0 个百分点；航空方面 lossless 让准确率提升 +7.5 个百分点，而 sup3 给出最佳的 Pass^4，+10.0 个百分点。"></a></p>
-<p><em>图 1。使用 <code>gpt-4.1</code> 的智能体在留出的零售与航空任务上、每个任务四次试验的 Mean Accuracy 与 Pass^4。</em></p>
-<p><em>智能体模型：<code>gpt-4.1</code>（用户模拟器：<code>gpt-5.5</code>）。</em></p>
-<p><strong>表 2。使用 <code>gpt-4.1</code>、每个任务四次试验时留出任务的智能体表现。括号内为相对 baseline 的百分点变化。</strong></p>
-<table><thead><tr><th>领域（测试任务）</th><th>配置</th><th>Mean Accuracy</th><th>Pass^4</th></tr></thead><tbody><tr><td><strong>零售</strong>（40）</td><td>baseline</td><td>78.1%</td><td>57.5%</td></tr><tr><td></td><td>sup3</td><td>78.8% (+0.7)</td><td>60.0% (+2.5)</td></tr><tr><td></td><td><strong>lossless</strong></td><td><strong>82.5% (+4.4)</strong></td><td><strong>67.5% (+10.0)</strong></td></tr><tr><td><strong>航空</strong>（20）</td><td>baseline</td><td>57.5%</td><td>35.0%</td></tr><tr><td></td><td>sup3</td><td>60.0% (+2.5)</td><td><strong>45.0% (+10.0)</strong></td></tr><tr><td></td><td><strong>lossless</strong></td><td><strong>65.0% (+7.5)</strong></td><td>40.0% (+5.0)</td></tr></tbody></table>
-<p>Mean Accuracy 在两个领域都上升——零售 <strong>+4.4 个百分点</strong>（78.1 → 82.5），航空 <strong>+7.5 个百分点</strong>（57.5 → 65.0）。可靠性的移动更大：严格的 <strong>Pass^4</strong> 在零售上升 <strong>+10 个百分点</strong>（57.5 → 67.5），在航空上升 <strong>+10 个百分点</strong>（35.0 → 45.0）。而且这些增益来自更明智的决策，而不是更长的对话——我们在下文的<a href="https://huggingface.co/blog/ibm-research/altk-evolve-bc#better-performance-costs-more-tokens-not-more-turns">更好的表现花的是更多 token，而不是更多轮次</a>中直接考察了对话长度。</p>
-<h3>最合适的指导量取决于领域</h3>
-<p>两个领域在<em>多少</em>指导才划算这件事上给出的答案不同。在<strong>零售</strong>，每个指标都是越多越好——小的 sup3 核心在准确率上几乎不比 baseline 强，想要真正的跃升就得用<strong>完整的 lossless 集合</strong>。在<strong>航空</strong>，可靠性这一端的图景反转了：lossless 在准确率上领先（65% 对 60%），但紧凑的 **sup3 核心（14 条准则）才是更<em>可靠</em>的那个<strong>，把 Pass^4 提到 </strong>45%<strong>，而 lossless 是 40%。这也呼应了早先的发现——<a href="https://huggingface.co/blog/ibm-research/altk-evolve-hmm">投放量是一个旋钮，不是一个常数</a>，</strong>支持度阈值是一个值得按领域调校的旋钮**，而不是一个可以硬编码的值。</p>
-<h2>更好的表现花的是更多 token，而不是更多轮次</h2>
-<p>准则不是免费的，但代价落在你预期的地方——<strong>提示词的输入 token</strong>，而不是更长、更绕的对话：</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/MsqhICXsHtpJozVFZYEm7.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/MsqhICXsHtpJozVFZYEm7.png" alt="按零售与航空分组的每次对话成本。lossless 相对无准则的 baseline 分别把成本提高了 65% 和 32%。"></a></p>
-<p><em>图 2。在完整 base split 上，按领域和准则配置划分的每次对话 LLM 总成本。</em></p>
-<p><strong>表 3。在完整 base split 上、四次试验的每次对话 LLM 总成本（智能体与用户模拟器）。越低越好。</strong></p>
-<table><thead><tr><th>领域</th><th>配置</th><th>每次对话成本</th><th>相对 baseline</th></tr></thead><tbody><tr><td><strong>零售</strong></td><td>baseline</td><td>$0.084</td><td>—</td></tr><tr><td></td><td>sup3</td><td>$0.095</td><td>+12%</td></tr><tr><td></td><td><strong>lossless</strong></td><td>$0.139</td><td>+65%</td></tr><tr><td><strong>航空</strong></td><td>baseline</td><td>$0.081</td><td>—</td></tr><tr><td></td><td>sup3</td><td>$0.097</td><td>+19%</td></tr><tr><td></td><td><strong>lossless</strong></td><td>$0.107</td><td>+32%</td></tr></tbody></table>
-<p>智能体是靠<em>说得更久</em>达到这个结果吗？为了干净地回答这一点，我们做<strong>同类比较</strong>：那些在 baseline 和带准则变体下<strong>都</strong>被解决的任务运行——场景和随机种子完全相同，一个真正的&quot;同一任务、都做对了&quot;集合——然后统计两侧的助手轮次。</p>
-<p><strong>表 4。测试集上在两种设置下都被解决、相互匹配的运行中，每次对话的助手轮次（合并四次试验）。</strong></p>
-<table><thead><tr><th>领域</th><th>共享集合</th><th>两者都解决的数量 (n)</th><th>baseline 轮次</th><th>+准则</th><th>Δ</th></tr></thead><tbody><tr><td><strong>零售</strong></td><td>baseline ∩ sup3</td><td>108</td><td>10.40</td><td>10.35</td><td>−0.05</td></tr><tr><td></td><td>baseline ∩ <strong>lossless</strong></td><td>111</td><td>10.59</td><td>10.16</td><td><strong>−0.43</strong></td></tr><tr><td><strong>航空</strong></td><td>baseline ∩ sup3</td><td>38</td><td>8.97</td><td>8.53</td><td><strong>−0.45</strong></td></tr><tr><td></td><td>baseline ∩ <strong>lossless</strong></td><td>40</td><td>9.15</td><td>8.82</td><td>−0.33</td></tr></tbody></table>
-<p>智能体并没有说得更久——在共享集合上，准则让对话<strong>略微变短</strong>：lossless 在两个领域都削减了约 0.3–0.4 轮（零售 10.59 → 10.16，航空 9.15 → 8.82），也没有任何变体把它们变长。这一点在成本之外同样重要：每一轮都是一次串行的 LLM 往返，所以轮次更少意味着<strong>端到端延迟更低——对客户来说更快完成</strong>，而不只是更便宜。真正的代价只在输入侧——更大的系统提示词会搭在每一次 LLM 调用上：零售那 292 条准则的提示词把每次对话的成本从约 $0.084 推高到约 $0.139，而航空那套更小的行为手册则便宜一些。在生产环境中，即便这部分也大体可以用<strong>提示词缓存</strong>收回，因为准则块在每一次调用中都是一样的。</p>
-<p>所以这笔交易是划算的：付出<strong>略高的输入成本</strong>（实际上大部分会被缓存掉），智能体同时得到**更高的准确率、更高的可靠性，<em>以及</em>更短的完成时间**——不是常见的&quot;用延迟换质量&quot;，而是三者一起朝好的方向移动。</p>
-<h2>学到的准则同样能提升使用前沿模型的智能体</h2>
-<p>到目前为止，我们用的是较老的非推理模型 <code>gpt-4.1</code>。一个合理的反对意见是：对于使用<em>前沿</em>模型的智能体，学到的准则能补的东西也许更少——也许它们只是在补弱模型的短板。所以我们直接做了测试——我们用 <strong><code>gpt-5.5</code> 同时作为智能体和准则抽取模型</strong>重跑了<strong>航空</strong>领域，仍是同一个 τ²-bench ReAct 脚手架，准则从智能体<em>自己</em>的运行中重新挖掘。有一个细节随模型而变：这套设置下抽取出的准则没有一条达到支持度 ≥ 3（最高只到支持度 2），所以这里的高支持度核心是 <strong>sup2</strong> 而不是 sup3。</p>
-<p><strong>表 5。<code>gpt-5.5</code> 智能体在留出航空任务上、每个任务四次试验的表现。</strong></p>
-<table><thead><tr><th>航空 · <code>gpt-5.5</code>（20 个留出测试任务）</th><th>准确率</th><th>Pass^4</th></tr></thead><tbody><tr><td>baseline（0 条准则）</td><td>72.5%</td><td>55.0%</td></tr><tr><td>sup2（103 条准则）</td><td>80.0% (+7.5)</td><td>70.0% (+15.0)</td></tr><tr><td><strong>lossless（146 条准则）</strong></td><td><strong>82.5% (+10.0)</strong></td><td><strong>70.0% (+15.0)</strong></td></tr></tbody></table>
-<p>学到的准则在这套设置下同样带来提升。在同一批留出测试任务上，把它们追加到提示词后，<strong>准确率提升 +10 个百分点</strong>（72.5 → 82.5），严格的 <strong>Pass^4 提升 +15 个百分点</strong>（55.0 → 70.0）——这比我们在这些同样任务上用 <code>gpt-4.1</code> 观察到的可靠性增益（+10 个百分点）<em>更大</em>，而且起点高得多。在模型<em>周围</em>学习准则，即使智能体起点更强，也能带来改进。而且在 baseline 的可靠性会在重跑之间摆动的地方，lossless 配置精确复现——它买到的增益是可靠的，而不是一次幸运的抽样。</p>
-<h2>ALTK-Evolve 在排行榜对比中登顶</h2>
-<p>按 τ²-bench 的要求，提交在<strong>完整 base split</strong>（训练 ∪ 测试）上评分，并以 <strong>Pass^4</strong> 报告。由于这覆盖的是完整任务集而不是留出的测试划分，这些数字与上面报告的测试任务数字不同。实用层面的结论就在这里显现——提示词层面的记忆，把使用各个基础模型的智能体<em>带入</em>甚至<em>越过</em>当前前沿阵营：</p>
-<ul><li><strong><a href="https://github.com/sierra-research/tau2-bench/pull/542">零售：第 1 名</a>。</strong> 在 base split 上，带学到准则的智能体达到 <strong>Pass^4 = 67.5%</strong>，领先于每一个前沿模型，也领先于 <strong>RAFT-30B-A3B</strong>（61.4%）——后者是一个<strong>在合成的 τ²-bench 零售数据上微调过的</strong>模型。用原版 <code>gpt-4.1</code> 加上追加到提示词的行为手册，它以 <strong>+6.1 个百分点</strong>超过了那个微调系统。</li><li><strong><a href="https://github.com/sierra-research/tau2-bench/pull/551">航空：使用 <code>gpt-5.5</code> 第 1 名</a>，使用 <code>gpt-4.1</code> 第 8 名。</strong> 对照已发布的榜单，紧凑的 <strong>sup3 核心</strong>让使用 <code>gpt-4.1</code> 的智能体达到 <strong>Pass^4 = 44%</strong>——<strong>第 8 名</strong>，胜过 GPT-5.2（无推理），并且几乎追平 Claude Sonnet 4.5。换上更强的基础模型，同样的方法直接登顶：<strong>使用 <code>gpt-5.5</code> 的智能体达到 82.0%</strong>，压过每一个前沿条目（66–72%）。</li></ul>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/iOmv6o938CgNfFlULP-VV.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/iOmv6o938CgNfFlULP-VV.png" alt="零售与航空的 Pass^4 排行榜对比存档，突出显示 ALTK-Evolve 在零售的 67.5%、在航空的 82.0% 与 44.0%。"></a></p>
-<p><em>图 3。ALTK-Evolve 各次运行与 2026 年 10 月 12 日 τ²-bench 排行榜快照的 Pass^4 对比。</em></p>
-<p>两个领域传达的是同一个信息：**在模型<em>周围</em>学习准则，在不同的基础模型上都行得通**——把使用较老非推理模型的智能体在零售上带入前沿阵营，也把使用前沿模型的智能体在航空上送到榜首。</p>
-<h2>智能体可以在不更新权重的情况下改进</h2>
-<p>在基准上微调模型既昂贵又脆弱，而且不会迁移到下一个领域。在这里，ALTK-Evolve 在两个领域都改进了<strong>原版模型上的原版智能体</strong>——并在零售上追平甚至超过一个微调过的系统——所用的只是<strong>从智能体自己的运行中抽取的提示词层面准则</strong>，全自动、无需人工标注，也没有任何测试集泄漏。</p>
-<h3>链接：</h3>
-<ul><li><strong>此前文章</strong>  <a href="https://huggingface.co/blog/ibm-research/altk-evolve-sldd">Thinking of ACE? We Can Do It with Fewer Tokens </a> <a href="https://huggingface.co/blog/ibm-research/altk-evolve-hmm">How much memory does your agent actually need?</a></li><li><strong>ALTK-Evolve 库</strong> —— <a href="https://github.com/AgentToolkit/altk-evolve">https://github.com/AgentToolkit/altk-evolve</a></li><li><strong>τ²-bench</strong> —— <a href="https://github.com/sierra-research/tau2-bench">https://github.com/sierra-research/tau2-bench</a></li><li><strong>零售排行榜提交</strong> —— <a href="https://github.com/sierra-research/tau2-bench/pull/542">τ²-bench PR #542</a></li><li><strong>航空排行榜提交</strong> —— <a href="https://github.com/sierra-research/tau2-bench/pull/551">τ²-bench PR #551</a></li></ul>
-<p>更多来自该作者</p>
-<h2>Your Agent Aced the Task. Will It Do It Again?</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>122</p>
-<p>2026 年 9 月 15 日</p>
-<h2>IBM releases SOTA Granite Time Series PatchTST-FM-r2 model with commercial-friendly license</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>60</p>
-<p>2026 年 9 月 9 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框，或粘贴、或点击此处即可上传。</p>
-<p>点击或粘贴此处上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Faltk-evolve-bc">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Faltk-evolve-bc">登录</a> 后发表评论</p>
-<p>20</p>
-<ul><li><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/MuzaffarSharofitdinov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5ae21ed03e92b01a32342/X1XgnmMAGWN4Uz_Gabj4K.jpeg" alt=""></a></li><li><a href="https://huggingface.co/CharanSripadi"><img src="https://huggingface.co/avatars/be40b5bce28c1378042615d9349747f8.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/aadebiyi"><img src="https://huggingface.co/avatars/a532e8ece9767dde21278ec06fd21b31.svg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/Vatche"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6435a1131860001f144239ea/smzcd7SHs33E2ArxBLBBK.png" alt=""></a></li><li><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/c2670566c5cbdfccf87954a9caf7d381.svg" alt=""></a></li><li><a href="https://huggingface.co/brmcg"><img src="https://huggingface.co/avatars/b71be4ef8a21d10746bdec6d271f055d.svg" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>
