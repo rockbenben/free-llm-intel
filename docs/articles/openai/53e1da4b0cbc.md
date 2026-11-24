@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 2c89ccb30cf7
+body_sha: 56a2cf2176f6
 ---
 
 
@@ -18,6 +18,13 @@ body_sha: 2c89ccb30cf7
 # 思科与 OpenAI 携手用 Codex 重塑企业工程
 
 通过广泛部署 Codex，Cisco 让 AI 原生开发成为企业软件构建方式的核心组成部分。
+
+
+公司规模:
+
+大型企业
+
+区域:
 
 
 

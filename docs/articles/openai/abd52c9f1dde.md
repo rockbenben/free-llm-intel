@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: db3291b29c32
+body_sha: f4ae86243124
 ---
 
 2026年8月24日
@@ -62,3 +62,5 @@ GPT‑5.6 系列现已在 Kiro 中提供。访问 [https://kiro.dev/](https://ki
 
 
 ## 作者
+
+OpenAI

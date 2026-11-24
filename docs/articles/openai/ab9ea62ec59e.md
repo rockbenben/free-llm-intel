@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 81a64a9af189
+body_sha: c643fb1cc6cb
 ---
 
 
@@ -18,6 +18,17 @@ body_sha: 81a64a9af189
 # Australian Payments Plus 借助 ChatGPT 和 Codex 加速前进
 
 借助 ChatGPT Enterprise 和 Codex，AP+ 团队节省时间、提升工作质量，并更快调查复杂支付问题。
+
+
+公司规模:
+
+大型企业
+
+区域:
+
+亚太地区与大洋洲
+
+行业:
 
 
 

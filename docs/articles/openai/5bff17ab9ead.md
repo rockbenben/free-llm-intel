@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 71f882ef83ff
+body_sha: dc0e40d43eb2
 ---
 
 
@@ -18,6 +18,27 @@ body_sha: 71f882ef83ff
 # 推动组织转型，促进业务创新
 
 DNP 利用 ChatGPT Enterprise 优化多个部门的工作流程并提升效率
+
+
+公司规模:
+
+大型企业
+
+区域:
+
+亚太地区与大洋洲
+
+行业:
+
+制造业
+
+产品:
+
+ChatGPT
+
+成效
+
+90%
 
 
 

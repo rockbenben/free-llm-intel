@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7afbbb94cfd0
+body_sha: f52fa49a0e94
 translator: agent
 ---
 
@@ -40,3 +40,5 @@ OpenAI 于 2015 年作为一家非营利组织创立，核心使命是确保通�
 
 
 ## 作者
+
+OpenAI

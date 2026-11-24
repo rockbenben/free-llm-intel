@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f10e147d55fe
+body_sha: 8970993c1c8a
 ---
 
 October 1, 2024
@@ -69,3 +69,5 @@ In line with what we observed in our first threat report, the operators’ use o
 
 
 ## Author
+
+OpenAI

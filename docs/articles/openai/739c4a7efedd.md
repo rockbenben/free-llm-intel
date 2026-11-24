@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 4281a970f84d
+body_sha: 65c78aae3467
 ---
 
 2023年3月14日
@@ -17,6 +17,33 @@ body_sha: 4281a970f84d
 # Stripe
 
 Stripe 利用 GPT‑4 提升开发者支持效率，更快速地洞察用户的业务模式，并全面增强其平台与社区工作流中的欺诈检测能力
+
+
+公司规模:
+
+大型企业
+
+区域:
+
+欧洲和英国
+
+行业:
+
+科技
+
+产品:
+
+API
+
+成效
+
+100
+
+投身于 GPT-4 原型功能开发的员工数量
+
+成效
+
+50
 
 
 

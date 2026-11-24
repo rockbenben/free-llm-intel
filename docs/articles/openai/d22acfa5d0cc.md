@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: fc341db2d94d
+body_sha: 70e79fb94af4
 ---
 
 
@@ -18,6 +18,23 @@ body_sha: fc341db2d94d
 # Cooley 如何借助 ChatGPT 加速 IPO 工作
 
 Cooley 的 GO Public 产品使用“ChatGPT 工作”，更早发现问题、聚焦专业知识，并帮助客户更快上市。
+
+
+公司规模:
+
+大型企业
+
+区域:
+
+北美
+
+行业:
+
+服务
+
+产品:
+
+ChatGPT
 
 
 

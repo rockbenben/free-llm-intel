@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: dcb951126d1a
+body_sha: 438d3abede10
 ---
 
 October 9, 2025
@@ -144,3 +144,5 @@ By discussing our definitions and evaluation methods, we aim to clarify our appr
 
 
 ## Author
+
+OpenAI

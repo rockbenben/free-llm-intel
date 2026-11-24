@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 882d2773a9b4
+body_sha: 67af6bcb12ed
 ---
 
 
@@ -18,6 +18,25 @@ body_sha: 882d2773a9b4
 # NVIDIA 如何借助 ChatGPT 工作扩展专业知识规模
 
 NVIDIA 团队使用 ChatGPT 工作减少手动任务、连接快速变化的信号，并在全球推广成功的工作流。
+
+
+公司规模:
+
+大型企业
+
+区域:
+
+北美
+
+行业:
+
+科技
+
+产品:
+
+ChatGPT
+
+16
 
 
 

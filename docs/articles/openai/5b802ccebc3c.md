@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 7a9f7d7c43a4
+body_sha: c6d18db79662
 ---
 
 
@@ -18,6 +18,23 @@ body_sha: 7a9f7d7c43a4
 # Nextdoor 工程师如何用 Codex 无界构建
 
 在 Nextdoor 的核心平台团队中，Codex 负责调查问题，并让产品工程师掌握主导权。
+
+
+公司规模:
+
+大型企业
+
+区域:
+
+北美
+
+行业:
+
+科技
+
+产品:
+
+Codex
 
 
 

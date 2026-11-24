@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e87bae8e6d56
+body_sha: 134ee3eadef9
 ---
 
 2026年10月2日
@@ -134,3 +134,5 @@ GPT‑6 是[我们迄今最先进的模型系列](https://openai.com/index/intro
 
 
 ## 作者
+
+OpenAI

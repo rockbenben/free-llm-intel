@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: afaa092f1bb6
+body_sha: 4d1026d3c153
 ---
 
 November 17, 2023
@@ -38,3 +38,5 @@ OpenAI was founded as a non-profit in 2015 with the core mission of ensuring tha
 
 
 ## Author
+
+OpenAI

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2c8d82349132
+body_sha: d86b2297e10c
 ---
 
 June 20, 2020
@@ -50,3 +50,5 @@ To guarantee that competitors develop truly sample efficient algorithms, the Min
 - AWhile direct application is not possible due to the sheer number of samples required, Sim2Real and data augmentation techniques can mittigate the need to sample real-world dynamics directly.
 
 ## Author
+
+OpenAI

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 948bafeb3e65
+body_sha: 7208d1658e81
 ---
 
 May 23, 2025
@@ -33,3 +33,5 @@ Although o3 Operator inherits o3’s coding capabilities, it does not have nativ
 
 
 ## Author
+
+OpenAI

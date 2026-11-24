@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 5dfe2d80a59d
+body_sha: b85884739719
 ---
 
 2026年4月15日
@@ -80,3 +80,5 @@ Agents SDK 的这些全新功能现已面向所有 API 用户开放。定价方�
 
 
 ## 作者
+
+OpenAI

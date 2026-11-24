@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 22dfa99159e1
+body_sha: c2ad884e6685
 ---
 
 2024年10月1日
@@ -65,3 +65,5 @@ AI 的运用使该行动能够同时管理大量社交媒体账户：我们在 X
 
 
 ## 作者
+
+OpenAI

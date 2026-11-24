@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 8b49e074ed7d
+body_sha: 375d9acd12a3
 ---
 
 2026年2月27日
@@ -52,6 +52,8 @@ body_sha: 8b49e074ed7d
 
 
 ## 作者
+
+OpenAI
 
 
 **按照标准程序，我们预计这些案件将并入现有的合并审理程序；届时，法院将指定原告方的首席律师。*

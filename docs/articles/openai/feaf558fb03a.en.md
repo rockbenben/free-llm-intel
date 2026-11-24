@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3e3460a9dae6
+body_sha: eaeb71081b0c
 ---
 
 October 30, 2025
@@ -34,3 +34,5 @@ Michigan has long been at the center of American engineering and manufacturing. 
 
 
 ## Author
+
+OpenAI

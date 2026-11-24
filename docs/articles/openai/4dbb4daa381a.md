@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 3940a5ac470a
+body_sha: 4d012b8e6be2
 ---
 
 2026年6月9日
@@ -37,3 +37,5 @@ body_sha: 3940a5ac470a
 
 
 ## 作者
+
+OpenAI

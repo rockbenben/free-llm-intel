@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fc7fa7c3f2f9
+body_sha: ba663d919e8f
 ---
 
 April 7, 2025
@@ -95,3 +95,5 @@ It’s about finding the right problem to solve and ensuring there’s a real cu
 *Canva uses OpenAI’s APIs to build parts of Magic Studio, a suite of AI products which make it easy to turn words, visuals, and ideas into extraordinary designs. **Canva also uses ChatGPT Enterprise across the company.** OpenAI and Canva are working together to make design innovation accessible to all.*
 
 ## Authors
+
+OpenAI

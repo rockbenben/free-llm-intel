@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 3370f8d6ae98
+body_sha: 4dbc0e1f50a6
 ---
 
 2025年6月1日
@@ -60,3 +60,5 @@ OpenAI 封禁了与疑似欺骗性就业活动有关的账号，这些活动利�
 
 
 ## 作者
+
+OpenAI

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e1eb4293e9b6
+body_sha: c8e90cb50f37
 ---
 
 2025年10月1日
@@ -63,3 +63,5 @@ OpenAI 封禁了参与相关活动的账号。这些活动与公开报道的威�
 
 
 ## 作者
+
+OpenAI

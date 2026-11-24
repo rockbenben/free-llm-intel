@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 79e86f215853
+body_sha: f87ad2018c93
 ---
 
 2025年8月5日
@@ -42,3 +42,5 @@ AI 的下一个前沿不仅仅关乎技术能力，更关乎谁能使用它。�
 - [2025 年](https://openai.com/news/?tags=2025)
 
 ## 作者
+
+OpenAI

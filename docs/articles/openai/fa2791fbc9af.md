@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 7ea572c94c73
+body_sha: 03a6b8bde540
 ---
 
 2026年8月26日
@@ -102,3 +102,5 @@ Rob Dickson，Wichita Public Schools 首席信息官
 
 
 ## 作者
+
+OpenAI

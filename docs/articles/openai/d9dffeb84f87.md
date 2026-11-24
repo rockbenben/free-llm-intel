@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: c9706f5c204b
+body_sha: 18698f7c2f17
 ---
 
 2024 年 12 月 27 日
@@ -70,6 +70,8 @@ OpenAI 董事会正在评估我们的公司结构，以便最好地支撑"确保
 
 
 ## 作者
+
+OpenAI
 
 
 ## 脚注

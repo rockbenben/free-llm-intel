@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 22521f9abf91
+body_sha: 9b0ba4ddbc04
 ---
 
 
@@ -22,6 +22,16 @@ Preply 使用 OpenAI 推出 AI 生成的课程摘要，提供个性化反馈和�
 
 
 ChatGPT, API, Codex
+
+公司规模:
+
+中型企业
+
+区域:
+
+全球
+
+行业:
 
 
 

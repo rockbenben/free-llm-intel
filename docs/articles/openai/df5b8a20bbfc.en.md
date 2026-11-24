@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f8dae1c9472f
+body_sha: 30b1974136e5
 ---
 
 April 22, 2025
@@ -36,3 +36,5 @@ This partnership is the latest example of The Post’s commitment to expanding t
 
 
 ## Authors
+
+OpenAI

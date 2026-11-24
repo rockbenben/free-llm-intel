@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: ad7b28fc84ec
+body_sha: b6819aec264e
 ---
 
 
@@ -18,6 +18,21 @@ body_sha: ad7b28fc84ec
 # 走进 JetBrains — 一家正在重塑全球代码编写方式的企业
 
 通过将 OpenAI 模型集成到其工具和工作流程中，JetBrains 正在重新定义开发人员借助 AI 进行设计、推理与软件构建的方式
+
+
+公司规模:
+
+中型企业
+
+区域:
+
+欧洲和英国
+
+行业:
+
+金融
+
+产品:
 
 
 

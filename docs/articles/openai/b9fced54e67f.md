@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 53fd4a2e88c8
+body_sha: 5558cc48da15
 ---
 
 2025年7月11日
@@ -94,3 +94,5 @@ OpenAI 致力于为实现欧洲大陆的人工智能目标贡献力量；从今�
 - [2025 年](https://openai.com/news/?tags=2025)
 
 ## 作者
+
+OpenAI

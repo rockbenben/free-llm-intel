@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 947eab231342
+body_sha: 782c0e45a8fd
 ---
 
 August 20, 2024
@@ -34,3 +34,5 @@ Condé Nast joins a growing list of publishers including Associated Press, Axel 
 
 
 ## Authors
+
+OpenAI

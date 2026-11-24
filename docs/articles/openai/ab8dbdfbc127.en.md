@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3136ee83136d
+body_sha: ae48ce58d2c7
 ---
 
 June 5, 2019
@@ -51,3 +51,5 @@ If you would like to help us do research on robots that learn, please get in tou
 
 
 ## Author
+
+OpenAI

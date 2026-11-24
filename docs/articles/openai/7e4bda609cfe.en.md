@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 67d2abf5167f
+body_sha: 675dc08e47b5
 ---
 
 August 16, 2017
@@ -92,3 +92,5 @@ We have many more ideas, and are [hiring⁠](https://openai.com/careers/) engine
 
 
 ## Author
+
+OpenAI

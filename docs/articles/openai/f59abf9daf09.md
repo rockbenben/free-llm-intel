@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: cc71555419ef
+body_sha: f591ec6aa4cd
 translator: agent
 ---
 
@@ -32,3 +32,5 @@ GPT‑5.4 Thinking 是 GPT‑5 系列中最新的推理模型，详见我们的 
 
 
 ## 作者
+
+OpenAI

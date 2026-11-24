@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: ba5e812b7e3e
+body_sha: 37c69d01058d
 ---
 
 2026年6月18日
@@ -65,3 +65,5 @@ OpenAI 与一个由 260 多名医生组成的全球网络合作，这些医生�
 - [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
+
+OpenAI

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0f0a84b5ad3f
+body_sha: 3f9cc055acb3
 ---
 
 December 27, 2024
@@ -69,6 +69,8 @@ We’ve learned to think of the mission as a [continuous objective](https://open
 
 
 ## Author
+
+OpenAI
 
 
 ## Footnotes
