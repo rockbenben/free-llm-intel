@@ -333,6 +333,18 @@ python crawler_llm_intel.py --mark-unreachable <slug> \
 后来维护者误判，连本地 `--allow-browser` 回捞也会一起跳过。
 正文有变更后同轮执行 `--render-only` 并运行门禁，产物随源一起提交。
 
+### 页面家具清洗预览
+
+```bash
+python crawler_llm_intel.py --furniture-preview
+python crawler_llm_intel.py --furniture-preview --furniture-rule R8 --furniture-path docs/articles/openai/xxx.en.md
+```
+
+命令只读。默认扫描中英文正文，按规则汇总受影响篇数、行数与移除的链接目标，并为每条
+规则展示前三个命中的上下文。可重复使用 `--furniture-path` 查看指定文件的全部命中，
+用 `--furniture-rule` 聚焦某条规则，句内变动记为 `INLINE`。预览对账链接目标多重集、
+代码围栏和二次清洗结果，有异常时返回 1。
+
 ### 翻译批次 QC（`--translation-qc`）
 
 本地精译一批正文后，先跑只读 QC，再 reconcile / 提交：

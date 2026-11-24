@@ -161,7 +161,7 @@ def read_body_doc(path: Path) -> Tuple[dict, str]:
 #   R1 第一条标题之前的导航词 / 头图裸媒体链接行
 #   R2 任意位置的家具标签行（分类、标签：、分享本文、下载全部图片、联系销售、
 #      试用 ChatGPT、阅读更多、返回博客、播放器倍速、加载占位…）
-#   R3 紧跟在「带值的标签」（分类/标签：/公司规模:/区域:/行业:）后面的短标签值行
+#   R3 Meta 新闻页里由模板标签包围的分类与标签值
 #   R5 「点赞/收藏/关注」之后紧跟的纯数字计数行
 _FURN_ANYWHERE = {
     "分类", "标签：", "标签:", "Categories", "Tags:",
@@ -189,7 +189,6 @@ _FURN_ANYWHERE = {
     "了解更多", "加入社区", "开始构建", "立即体验", "订阅更新",
     "阅读技术报告", "阅读报告", "查看报告", "查看完整报告",
     "Learn more", "Get started", "Read the report", "Subscribe",
-    "公司规模:", "区域:", "行业:", "地区:", "受众:", "产品:",   # 值标签本体（值走 R3）
 }
 
 # 独立的回链只在正文边界匹配。目录、筛选与锚点链接保留。
@@ -226,8 +225,10 @@ _FURN_NAV_BEFORE_HEAD = {
     "产品", "研究", "博客", "公告", "首页", "发布", "刊发", "新闻中心",
     "News", "Newsroom", "Products", "Research", "Blog", "Announcements", "Featured",
 }
-_FURN_VALUE_LABELS = {"分类", "标签：", "标签:", "Categories", "Tags:",
-                      "公司规模:", "区域:", "行业:", "地区:", "受众:"}
+_META_CATEGORY_LABELS = {"分类", "Categories"}
+_META_TAG_LABELS = {"标签：", "标签:", "Tags:"}
+_META_TAG_END_LABELS = {"下载全部图片", "DOWNLOAD ALL IMAGES", "Download all images",
+                        "分享本文", "分享此文章", "Share this article"}
 _FURN_COUNT_LABELS = {"点赞", "关注", "收藏"}
 _MARKDOWN_FENCE_RE = re.compile(r"^[ \t]*(`{3,}|~{3,})(.*)$")
 _HEAD_RE = re.compile(r"^\s*#{1,6}\s")
@@ -330,6 +331,11 @@ def _is_list_backlink(line: str, host: str) -> bool:
         return False
 
 
+def _hf_login_matches(line: str, page_path: str) -> bool:
+    auth = _HF_COMMENT_LOGIN_RE.fullmatch(line)
+    return bool(auth and unquote(auth[1]) == unquote(auth[2]) == unquote(page_path))
+
+
 def _hf_widget_drops(lines: Sequence[str], visible: list[int], fenced: set[int],
                      page_path: str) -> dict[int, str]:
     """围栏行作为匹配边界保留，围栏中的文本不参与识别。"""
@@ -337,8 +343,7 @@ def _hf_widget_drops(lines: Sequence[str], visible: list[int], fenced: set[int],
     text = ["`" if i in fenced else lines[i].strip() for i in visible]
     vote_controls = set()
     for j, line in enumerate(text):
-        auth = _HF_COMMENT_LOGIN_RE.fullmatch(line)
-        if auth and unquote(auth[1]) == unquote(auth[2]) == unquote(page_path):
+        if _hf_login_matches(line, page_path):
             drop[visible[j]] = "R17"
             vote_controls.add(j)
             end = j
@@ -373,13 +378,13 @@ def _hf_widget_drops(lines: Sequence[str], visible: list[int], fenced: set[int],
 def furniture_drops(lines, page_url: str = ""):
     """返回 {行号: 规则名}。行号按传入的 lines 计。
 
-    R1 第一条标题之前的导航词 / 头图裸媒体链接 / **整行品牌字标**（等于本页 host 的品牌词，
-       实测 openai 1442 处在标题之前；标题之后另有 741 处，那一档不在这条闸上，见 R6/R7 说明）
+    R1 第一条标题之前的导航词 / 头图裸媒体链接
     R2 任意位置的家具标签行
-    R3 紧跟在带值标签后的短标签值行
+    R3 Meta 新闻页里由模板标签包围的分类与标签值
     R5 点赞/收藏/关注后的纯数字计数行
     R6 只由分隔符或不可见字符组成的整行（`•`、`·`、`\u200b`…，零信息量）
     R7 连续的标签/年份筛选链接块（`- [x](…?tags=y)` ≥2 行，实测 804 个文件各一段）
+    R8 第一条标题之前、位于正文开头的站点字标
     R10 about.fb.com 重复日期行与 OpenAI 的三连装饰字标
     R11 第一个 H1 之前、「整行只有一个链接 + 显示文字是分类名（闭集）」的标题行：分类面包屑
         （如 "## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)"）。
@@ -413,12 +418,6 @@ def furniture_drops(lines, page_url: str = ""):
         elif ((host == "about.fb.com" and _META_DUPLICATE_DATE_RE.fullmatch(s))
               or (host == "openai.com" and s == _OPENAI_DECORATIVE_WORDMARK)):
             drop[i] = "R10"
-        elif brand and s[0] not in "-*+>|#" and s.lower().replace(" ", "").replace("-", "") == brand:
-            # 整行只有本页品牌词 = 字标。实测 741 处「标题之后」的全是孤立行（635 处在
-            # 文末当页脚、106 处前后都空），句子里的品牌词走不到这一档（要求整行相等）。
-            # 行首必须是品牌词本身：`- OpenAI` 这类列表项的 `-` 是 markdown 结构，
-            # 而比较时会剥掉连字符，不加这道闸就会把列表项当成字标删掉（实测踩过）。
-            drop[i] = "R8"
         elif first_head is not None and i < first_head and (
                 s in _FURN_NAV_BEFORE_HEAD or _BARE_MEDIA_RE.match(s)):
             drop[i] = "R1"
@@ -438,27 +437,31 @@ def furniture_drops(lines, page_url: str = ""):
     if len(run) >= 2:
         for x in run:
             drop[x] = "R7"
-    walked = set()
-    for k in sorted(i for i, v in drop.items() if v == "R2" and lines[i].strip() in _FURN_VALUE_LABELS):
-        j, n = k + 1, 0
-        while j < len(lines) and n < _VALUE_WALK_MAX:
-            if j in fenced:
-                break
-            s = lines[j].strip()
-            if not s:
-                j += 1
+    if host == "about.fb.com" and page.path.startswith("/news/"):
+        for pos, i in enumerate(visible):
+            if drop.get(i) != "R2":
                 continue
-            if _is_tag_value(s):
-                walked.add(j)
-                n += 1
-                j += 1
+            label = lines[i].strip()
+            if label in _META_CATEGORY_LABELS:
+                end_labels = _META_TAG_LABELS
+            elif label in _META_TAG_LABELS:
+                end_labels = _META_TAG_END_LABELS
+            else:
                 continue
-            if s in _FURN_ANYWHERE:   # 下一个标签（如 `标签：`）继续带值
-                j += 1
-                continue
-            break
-    for x in walked:
-        drop.setdefault(x, "R3")
+            values = []
+            for j in visible[pos + 1:pos + _VALUE_WALK_MAX + 2]:
+                if j in fenced:
+                    break
+                value = lines[j].strip()
+                if value in end_labels:
+                    for k in values:
+                        drop[k] = "R3"
+                    break
+                if value == ":":
+                    continue
+                if j in drop or not _is_tag_value(value):
+                    break
+                values.append(j)
     for k in [i for i, v in drop.items() if v == "R2" and lines[i].strip() in _FURN_COUNT_LABELS]:
         j = k + 1
         while j < len(lines) and not lines[j].strip():
@@ -467,13 +470,20 @@ def furniture_drops(lines, page_url: str = ""):
             drop[j] = "R5"
     if host == "huggingface.co" and page.path.startswith(("/blog/", "/papers/")):
         drop.update(_hf_widget_drops(lines, visible, fenced, page.path))
-    for edge in (visible, reversed(visible)):
+    for leading, edge in ((True, visible), (False, reversed(visible))):
         for i in edge:
             if i in drop:
                 continue
-            if i in fenced or not _is_list_backlink(lines[i].strip(), host):
+            if i in fenced:
                 break
-            drop[i] = "R12"
+            line = lines[i].strip()
+            if _is_list_backlink(line, host):
+                drop[i] = "R12"
+            elif (leading and brand and first_head is not None and i < first_head
+                  and line[0].isalnum() and line.lower().replace(" ", "").replace("-", "") == brand):
+                drop[i] = "R8"
+            else:
+                break
     return drop
 
 
@@ -539,8 +549,7 @@ def strip_inline_junk(body: str, page_url: str = "") -> str:
 def strip_page_furniture(body: str, page_url: str = "") -> str:
     """整行页面家具 + 串级噪声，一次洗全。**中英两侧的落盘口都走它**。
 
-    行级判据（`furniture_drops` 的 R1–R7）只删「整行等于站件闭集标签」或结构块
-    （带值标签后的短标签值、文末带卡片指纹的推荐区、连续的标签筛选链接块）；精确匹配，不猜形状。
+    行级判据见 `furniture_drops`，句内判据见 `strip_inline_junk`。
     """
     lines = (body or "").split("\n")
     drop = furniture_drops(lines, page_url)
@@ -946,6 +955,27 @@ def _absolutize(root, base_url: str) -> None:
             n.attrs["src"] = urljoin(base_url, n.attrs["src"])
 
 
+def _skip_hf_html_widgets(root, page_path: str) -> None:
+    """Hugging Face 文章模板的投票组件、评论登录提示与文件上传控件。"""
+    for node in _iter_nodes(root):
+        if node.skip:
+            continue
+        if (node.tag == "div" and node.attrs.get("data-target") == "UpvoteControl"
+                and "SVELTE_HYDRATER" in (node.attrs.get("class") or "").split()
+                and any(isinstance(child, _Node) and child.tag == "dialog" for child in node.children)):
+            node.skip = True
+        elif node.tag == "p" and _hf_login_matches(_inline(node).strip(), page_path):
+            node.skip = True
+        elif node.tag == "label" and any(
+                child.tag == "input" and child.attrs.get("type") == "file"
+                for child in _iter_nodes(node)):
+            label = " ".join(_text_of(node).split())
+            desktop, _, mobile = label.partition(".")
+            if (_HF_UPLOAD_MEDIA_RE.fullmatch(desktop)
+                    and (not mobile.strip() or _HF_UPLOAD_IMAGE_RE.fullmatch(mobile.strip()))):
+                node.skip = True
+
+
 def extract_article_markdown(html: str, base_url: str) -> dict:
     """返回 {title, byline, date, markdown, reason}。reason="" 表示成功。"""
     html = html or ""
@@ -957,6 +987,9 @@ def extract_article_markdown(html: str, base_url: str) -> dict:
     root = tree.root
     _absolutize(root, base_url)
     title, byline, date = _extract_meta(root, tree)
+    page = urlsplit(base_url)
+    if page.hostname == "huggingface.co" and page.path.startswith(("/blog/", "/papers/")):
+        _skip_hf_html_widgets(root, page.path)
 
     def _fail(reason):
         return {"title": title, "byline": byline, "date": date, "markdown": "", "reason": reason}
@@ -2326,6 +2359,39 @@ def _qc_url_key(url: str, self_url: str = "") -> str | None:
 def _md_link_targets(text: str) -> list[str]:
     plain = _qc_without_code(text)
     return _MD_LINK_RE.findall(plain) + _AUTOLINK_RE.findall(plain)
+
+
+def preview_furniture(body: str, page_url: str) -> tuple[list[tuple[int, str, str, list[str]]], list[str]]:
+    """返回逐行变更（零基行号、规则、新行、移除目标）及清洗不变量错误。"""
+    lines = body.split("\n")
+    dropped = furniture_drops(lines, page_url)
+    kept = [(i, line) for i, line in enumerate(lines) if i not in dropped]
+    inline = strip_inline_junk("\n".join(line for _, line in kept), page_url)
+    rewritten = inline.split("\n")
+    changes = {i: (rule, "") for i, rule in dropped.items()}
+    changes.update((i, ("INLINE", new)) for (i, old), new in zip(kept, rewritten) if old != new)
+    details = []
+    link_delta = Counter()
+    for i, (rule, new) in sorted(changes.items()):
+        old_urls = Counter(_md_link_targets(lines[i]))
+        new_urls = Counter(_md_link_targets(new))
+        link_delta.update(old_urls)
+        link_delta.subtract(new_urls)
+        details.append((i, rule, new, list((old_urls - new_urls).elements())))
+
+    cleaned = strip_page_furniture(body, page_url)
+    errors = []
+    if inline != cleaned or len(rewritten) != max(1, len(kept)):
+        errors.append("逐行预览与清洗结果不一致")
+    if _qc_code_blocks(body) != _qc_code_blocks(cleaned):
+        errors.append("代码围栏有变化")
+    before_urls = Counter(_md_link_targets(body))
+    after_urls = Counter(_md_link_targets(cleaned))
+    if after_urls - before_urls or before_urls - after_urls != +link_delta:
+        errors.append("链接目标增改，或移除目标与逐行记录不一致")
+    if strip_page_furniture(cleaned, page_url) != cleaned:
+        errors.append("二次清洗仍有变化")
+    return details, errors
 
 
 def translation_qc_pair(root: Path, zh_rel: str, *,

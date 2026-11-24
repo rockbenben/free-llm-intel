@@ -12297,12 +12297,76 @@ class TestPageFurnitureStrip(unittest.TestCase):
             "",
             "联系销售",
         ])
-        out = ft.strip_page_furniture(body)
+        out = ft.strip_page_furniture(body, "https://about.fb.com/news/2026/08/vr-glasses/")
         self.assertIn("我们把影院装进了一副 100 克的眼镜里。", out)
         self.assertIn("# 推出 Meta VR Glasses", out)
         for gone in ("分类", "标签：", "下载全部图片", "分享本文", "联系销售", "产品新闻"):
             self.assertNotIn(gone, out, f"{gone} 是站件，该删")
         self.assertNotIn("\nAI\n", out, "标签值也该随标签一起走")
+
+    def test_case_study_metrics_and_unbounded_tags_are_kept(self):
+        body = "\n\n".join([
+            "# 客户案例", "公司规模:", "大型企业", "区域:", "北美", "行业:", "科技",
+            "产品:", "Codex", "10x to 20x", "开发速度提升", "正在加载…", "## 交付结果",
+        ])
+        out = ft.strip_page_furniture(body, "https://openai.com/index/wasmer/")
+        self.assertEqual(out, body.replace("正在加载…\n", ""))
+
+        body = "# 指南\n\n标签：\n\n短段落\n\n## 后续"
+        out = ft.strip_page_furniture(body, "https://about.fb.com/news/2026/08/vr-glasses/")
+        self.assertIn("短段落", out)
+
+    def test_hf_html_only_skips_identified_template_widgets(self):
+        url = "https://huggingface.co/papers/2605.27209"
+        widgets = """
+          <div class="SVELTE_HYDRATER contents" data-target="UpvoteControl">
+            <div>Upvote 12</div><dialog><ul><li><a href="/voter">Voter</a></li></ul></dialog>
+          </div>
+          <label><input type="file"><div>Upload images, audio, and videos by dragging in the
+            text input, pasting, or <span>clicking here</span>.</div>
+            <div>Tap or paste here to upload images</div></label>
+          <p>· <a href="/join?next=%2Fpapers%2F2605.27209">Sign up</a> or
+            <a href="/login?next=%2Fpapers%2F2605.27209">log in</a> to comment</p>
+        """
+        article = ("<h1>Article headline</h1><p>" + "Article prose has technical details. " * 10
+                   + "</p><h3>Community</h3><p>Author reply.</p>" + widgets
+                   + '<div data-target="UpvoteControl"><p>Example content.</p></div>'
+                   + "<pre>hf papers read 2605.27209</pre><p>Author credit.</p>")
+        html = f"<article>{article}</article>"
+        out = ft.extract_article_markdown(html, url)["markdown"]
+        for removed in ("Upvote 12", "/voter", "dragging in the", "upload images", "to comment"):
+            self.assertNotIn(removed, out)
+        for kept in ("### Community", "Author reply.", "Example content.",
+                     "hf papers read 2605.27209", "Author credit."):
+            self.assertIn(kept, out)
+        self.assertIn("Upvote 12", ft.extract_article_markdown(
+            html, "https://example.com/papers/2605.27209")["markdown"])
+
+    def test_preview_reports_line_and_inline_link_changes_without_writing(self):
+        url = "https://huggingface.co/blog/x"
+        body = ("[返回博客](https://huggingface.co/blog)\n\n# 标题\n\n"
+                "[文档 (opens in a new window)](https://example.com)\n\n"
+                "```text\n[返回博客](https://huggingface.co/blog)\n```")
+        changes, errors = ft.preview_furniture(body, url)
+        self.assertEqual(errors, [])
+        self.assertEqual(changes, [
+            (0, "R12", "", ["https://huggingface.co/blog"]),
+            (4, "INLINE", "[文档](https://example.com)", []),
+        ])
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            rel = "docs/articles/huggingface/x.md"
+            doc = root / rel
+            ft.write_body_doc(doc, {"url": url}, body)
+            original = doc.read_bytes()
+            with mock.patch.object(crawler_llm_intel, "_repo_root", return_value=root), \
+                    contextlib.redirect_stdout(io.StringIO()) as output:
+                rc = crawler_llm_intel.main(["--furniture-preview", "--furniture-path", rel,
+                                            "--furniture-rule", "r12"])
+            self.assertEqual(rc, 0)
+            self.assertEqual(doc.read_bytes(), original)
+            self.assertIn("R12:", output.getvalue())
+            self.assertNotIn("INLINE", output.getvalue())
 
     def test_code_fence_interior_never_touched(self):
         body = "\n".join([
@@ -12586,30 +12650,18 @@ class TestPageFurnitureStrip(unittest.TestCase):
     # --- 站件：品牌字标 / 分隔符行 / 标签筛选链接块 ----------------------------
 
     def test_brand_wordmark_before_first_heading_gone(self):
-        body = "\n".join(["OpenAI", "", "2026年8月26日", "", "# 事件与未来之路", "", "正文。"])
+        body = "\n".join(["Loading…", "OpenAI", "", "2026年8月26日", "", "# 事件与未来之路", "", "正文。"])
         out = ft.strip_page_furniture(body, "https://openai.com/index/x")
         self.assertNotIn("OpenAI", out, "标题之前的字标该删")
         self.assertIn("# 事件与未来之路", out)
         self.assertIn("2026年8月26日", out, "日期行是正文元信息，不在这一档删")
 
-    def test_brand_wordmark_dropped_anywhere_but_never_in_prose(self):
-        # 整行只有品牌词 = 字标（实测 635 处在文末当页脚、106 处前后都空）；
-        # 但品牌词以**任何别的形状**出现都不许动——这四型就是这一档的边界
+    def test_brand_wordmark_keeps_body_mentions_and_author_credit(self):
         body = "\n".join([
-            "# 对比",
-            "",
-            "OpenAI",                                  # 孤立一行：字标，删
-            "OpenAI 与 Anthropic 的差别在于本句。",       # 句子里：留
-            "## OpenAI",                               # 标题：留
-            "| OpenAI | 12 |",                         # 表格单元格：留
-            "- OpenAI",                                # 列表项：留
+            "# 对比", "", "OpenAI", "OpenAI 与 Anthropic 的差别在于本句。",
+            "## OpenAI", "| OpenAI | 12 |", "- OpenAI", "", "## 作者", "", "OpenAI",
         ])
-        out = ft.strip_page_furniture(body, "https://openai.com/index/x")
-        lines = [l for l in out.split("\n") if l.strip()]
-        self.assertNotIn("OpenAI", lines, "整行只有品牌词的那一行该删")
-        for keep in ("OpenAI 与 Anthropic 的差别在于本句。", "## OpenAI",
-                     "| OpenAI | 12 |", "- OpenAI"):
-            self.assertIn(keep, out, "品牌词以这种形状出现是正文，不许删")
+        self.assertEqual(ft.strip_page_furniture(body, "https://openai.com/index/x"), body)
 
     def test_brand_wordmark_needs_a_host(self):
         # 诱饵：没有 page_url 就没有「本页品牌词」这条依据，一律不删

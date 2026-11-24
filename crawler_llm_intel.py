@@ -7950,6 +7950,12 @@ def build_arg_parser() -> argparse.ArgumentParser:
                         help="维护模式（不巡检、不联网）：把每个 .md/.en.md 的 frontmatter "
                              "`body_sha` 修成与磁盘正文一致（缺则补、错则改）。只动这一行，"
                              "正文与其他字段逐字保全；幂等。台账那份 body_sha 跟英文侧，不回写。")
+    parser.add_argument("--furniture-preview", action="store_true",
+                        help="只读预览中英文语料的页面家具清洗，按规则统计并检查不变量")
+    parser.add_argument("--furniture-path", action="append", default=[],
+                        help="预览指定 Markdown 文件（可重复，缺省扫描 docs/articles）")
+    parser.add_argument("--furniture-rule", type=str.upper,
+                        help="只展示指定规则的统计与样本，例如 R3、R8 或 INLINE")
     parser.add_argument("--translation-qc", action="store_true",
                         help="只读 QC（不巡检、不联网）：检查本批中文译文与同名 .en.md 的"
                              "代码块逐字、URL 多重集与 U+FFFD；"
@@ -8105,6 +8111,54 @@ def _changed_corpus_paths(root: Path, base: str = "HEAD") -> list[str]:
                   if path.endswith(".md") and not path.endswith(".en.md"))
 
 
+def _furniture_preview(root: Path, selected: list[str], only_rule: str | None) -> int:
+    import fulltext
+
+    paths = sorted({root / path for path in selected}) if selected else sorted(
+        (root / "docs/articles").glob("*/*.md"))
+    totals, files, links = Counter(), Counter(), Counter()
+    issues = 0
+    print(f"[furniture-preview] 扫描 {len(paths)} 个 Markdown 文件")
+    for path in paths:
+        name = path.relative_to(root) if path.is_relative_to(root) else path
+        try:
+            fm, body = fulltext.read_body_doc(path)
+            changes, errors = fulltext.preview_furniture(body, fm.get("url", ""))
+        except (OSError, ValueError) as exc:
+            issues += 1
+            print(f"  {name}：{exc}", file=sys.stderr)
+            continue
+        for error in errors:
+            issues += 1
+            print(f"  {name}：{error}", file=sys.stderr)
+        lines = body.split("\n")
+        seen = set()
+        for i, rule, new, removed in changes:
+            if only_rule and rule != only_rule:
+                continue
+            totals[rule] += 1
+            links[rule] += len(removed)
+            seen.add(rule)
+            if selected or totals[rule] <= 3:
+                print(f"  {rule} {name} 正文第 {i + 1} 行")
+                prev = next((line for line in reversed(lines[:i]) if line.strip()), "")
+                following = next((line for line in lines[i + 1:] if line.strip()), "")
+                if prev:
+                    print(f"      {prev[:200]}")
+                print(f"    - {lines[i][:300]}")
+                if new:
+                    print(f"    + {new[:300]}")
+                if following:
+                    print(f"      {following[:200]}")
+                if removed:
+                    print(f"      移除链接目标：{', '.join(removed)}")
+        files.update(seen)
+    for rule in sorted(totals):
+        print(f"  {rule}: {files[rule]} 篇，{totals[rule]} 行，{links[rule]} 个移除链接目标")
+    print(f"  合计 {sum(totals.values())} 行，{issues} 项检查异常")
+    return 1 if issues else 0
+
+
 def resolve_bodies_budget(parser: argparse.ArgumentParser, args) -> float:
     """正文单轮墙钟预算（秒）：`--ai-bodies` 与 `--mt-bodies` 共用同一个开关与默认值。"""
     import fulltext
@@ -8130,6 +8184,9 @@ def main(argv: list[str] | None = None) -> int:
     disk_only = args.rebuild_only or args.render_only
 
     root = _repo_root()
+
+    if args.furniture_preview:
+        return _furniture_preview(root, args.furniture_path, args.furniture_rule)
 
     # 维护模式（正文语料层，不巡检）：先于爬虫分派，读现有 articles.json 逐篇抓正文。
     if args.mark_translated:
