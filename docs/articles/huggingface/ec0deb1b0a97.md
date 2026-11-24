@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 602ee5565371
+body_sha: f2dddeca326a
 translator: agent
 ---
 
@@ -18,6 +18,10 @@ translator: agent
 
 发布于
 					2025 年 12 月 4 日
+
+
+
+
 
 Daniel Fleischer
 
@@ -181,3 +185,33 @@ community
 52
 
 2026 年 4 月 21 日
+
+### 社区
+
+InstructorOnline
+
+1 月 18 日
+
+
+1 月 18 日编辑
+
+可以用 LLM 来学习和研究数学话题吗？生成的输出每次不一样，步骤可能对也可能错吧？？
+
+deleted
+
+5 月 7 日
+
+
+此评论已被隐藏
+
+
+
+
+
+
+
+
+
+## 文中提到的模型 2
+
+## 文中提到的数据集 5

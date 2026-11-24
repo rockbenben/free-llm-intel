@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 83dcb63c86c6
+body_sha: f6c795cdcb79
 translator: agent
 ---
 
@@ -18,6 +18,10 @@ translator: agent
 
 发布于
 					2022 年 8 月 17 日
+
+
+
+
 
 Younes B
 
@@ -470,3 +474,30 @@ nlp
 25
 
 2025 年 9 月 29 日
+
+### 社区
+
+将图片、音频和视频拖到输入框、粘贴，或
+
+点击这里
+
+上传。
+
+点击或粘贴到这里上传图片
+
+· [注册](https://huggingface.co/join?next=%2Fblog%2Fhf-bitsandbytes-integration)或[登录](https://huggingface.co/login?next=%2Fblog%2Fhf-bitsandbytes-integration)即可评论
+
+
+
+- [![](https://huggingface.co/avatars/ee3327ba714e824e0e04d5cd6f950770.svg)](https://huggingface.co/TengWang)
+- [![](https://huggingface.co/avatars/f94b783c8f49019ebb0a69f6e3053b77.svg)](https://huggingface.co/jeongah)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png)](https://huggingface.co/ybelkada)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ce875d199b36f7552d4f07/bpUrvhXDagzRqZ3vxTcSF.jpeg)](https://huggingface.co/marcsun13)
+- [![](https://huggingface.co/avatars/a454cde25975abd09acb20067b447720.svg)](https://huggingface.co/fordacre)
+- [![](https://huggingface.co/avatars/269b11f3b48a48e8a5a34a7d85d53bce.svg)](https://huggingface.co/rsarkar1)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63411db18d8089ebaeef5bd3/FWZJOr1Y_ykEvYh5jtZiM.png)](https://huggingface.co/xMaulana)
+- [![](https://huggingface.co/avatars/766d0a481868c5fa27afa995c736ba0a.svg)](https://huggingface.co/iam-ajaymeena)
+- [![](https://huggingface.co/avatars/307d69eb93691eff608a32f196afa3bf.svg)](https://huggingface.co/ZeliangLee)
+- [![](https://huggingface.co/avatars/a89495511e569e4243997087daa7f007.svg)](https://huggingface.co/strategen01)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1678125746875-noauth.png)](https://huggingface.co/tmoroder)
+- [![](https://huggingface.co/avatars/ab5961e37a9bc13017afb0d7b2e3c962.svg)](https://huggingface.co/shinoun)

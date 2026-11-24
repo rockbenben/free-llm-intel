@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 65c0f16bce03
+body_sha: a3428edf8fbb
 translator: agent
 ---
 
@@ -18,6 +18,10 @@ translator: agent
 
 发布于
 					2024 年 10 月 23 日
+
+
+
+
 
 Sumedh Ghaisas
 
@@ -175,6 +179,7 @@ kirudang
 
 2025 年 2 月 17 日
 
+
 2025 年 2 月 17 日编辑
 
 Hello,
@@ -207,14 +212,12 @@ macshsgshedd
 
 How can i get API access
 
-将文件拖入文本输入框、粘贴，或
 
-点击此处
 
-，即可上传图像、音频和视频。
 
-点击或粘贴此处上传图片
 
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fsynthid-text)或[登录](https://huggingface.co/login?next=%2Fblog%2Fsynthid-text)发表评论
+
+
+
 
 ## 文中提到的 Spaces 1

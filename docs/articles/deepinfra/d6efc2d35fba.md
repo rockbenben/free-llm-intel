@@ -9,7 +9,7 @@ captured: 2026-11-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 6a8bd52f5e1e
+body_sha: 3a70e4fa7f8b
 ---
 
 # MiMo-V2.6-Pro：模型文档与集成指南
@@ -134,3 +134,11 @@ MiMo-V2.6-Pro 把万亿参数级的 MoE 架构、原生全模态支持与 1M tok
 想看它与其他近期发布在成本与 benchmark 上的对比，可参考我们关于 [DeepSeek V4 Pro 定价与提供商](https://deepinfra.com/blog/deepseek-v4-pro-pricing-guide-2026-providers-cost-analysis) 的报道。需要更多技术细节，请查阅 MiMo-V2.6 技术报告，或 Discord 与 Telegram 上的开发者社区。
 
 相关文章
+
+[![GLM-5.3-Flash 文档与集成指南](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-flash-docs.png)](https://deepinfra.com/blog/glm-5-3-flash-documentation-integration-guide)[GLM-5.3-Flash 文档与集成指南](https://deepinfra.com/blog/glm-5-3-flash-documentation-integration-guide)<p>GLM-5.3-Flash 是 Z.ai 开发的 frontier 级、原生多模态模型，托管在 DeepInfra 上。它采用 Mixture-of-Experts（MoE）架构，总参数 3,200 亿，其中推理时只有 180 亿处于激活状态。该模型为复杂、长时程任务而打造——高级软件工程、agentic 工作流与多模态推理——其上下文 [&hellip;]</p>
+
+[![GLM-5.1 API 基准：延迟、吞吐与成本](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/glm-5.1-cost.png)](https://deepinfra.com/blog/glm-5-1-api-benchmarks-latency-throughput-cost)[GLM-5.1 API 基准：延迟、吞吐与成本](https://deepinfra.com/blog/glm-5-1-api-benchmarks-latency-throughput-cost)<p>Z.ai 的 GLM-5.1 是一款 2026 年 4 月的开放权重推理模型，为长时程 agentic 工程而打造——而要顺畅地用上它，意味着得在一堆真实存在的提供商选项之间做取舍。在 10 家被评测的 API 提供商中，混合价格区间为 $0.74 到 $1.70 每 1M tokens，输出速度从 33.8 到 175.2 t/s，最快的提供商是 5.2x [&hellip;]</p>
+
+[![免费对比 Llama2 与 OpenAI 模型。](https://deepinfra.com/blog/llama-boxer.webp)](https://deepinfra.com/blog/compare-models)[免费对比 Llama2 与 OpenAI 模型。](https://deepinfra.com/blog/compare-models)在 DeepInfra，我们托管着最好的开源 LLM 模型。我们一直在努力把我们的 API 做得简单好用。今天要宣布的是一种非常便捷的方式，让你快速试用我们的模型，比如 Llama2 70b 和 [Mistral 7b](/mistralai/Mistral-7B-Instruc...
+
+[查看全部](https://deepinfra.com/blog)

@@ -9,7 +9,7 @@ captured: 2026-11-17
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 315e2d0d065e
+body_sha: 97645ce6153c
 ---
 
 # 9 个最佳开源编程模型（2026 年 11 月）
@@ -273,3 +273,11 @@ print(response.choices[0].message.content)copy
 访问 [DeepInfra 模型页面](https://deepinfra.com/models)，对比各开源模型的 context window 和定价。如有任何问题或反馈，请通过 [feedback@deepinfra.com](mailto:feedback@deepinfra.com) 联系我们。你也可以加入 [Discord](https://discord.gg/deepinfra) 社区，或在 X 上找到 [@DeepInfra](https://x.com/DeepInfra)。
 
 相关文章
+
+[![Kimi K2.5 最佳 API：为什么 DeepInfra 在速度、TTFT 和可扩展性上领先](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/02/Best-API-for-Kimi_sized.jpg)](https://deepinfra.com/blog/best-api-for-kimi-k2-5-deepinfra)[Kimi K2.5 最佳 API：为什么 DeepInfra 在速度、TTFT 和可扩展性上领先](https://deepinfra.com/blog/best-api-for-kimi-k2-5-deepinfra)<p>更新于 2026 年 11 月。Kimi K2.5 被定位为 Moonshot AI 面向现代产品工作流的“全能”模型：原生多模态（文本 + 视觉/视频）、Instant 与 Thinking 两种模式，并支持 agentic / multi-agent（“swarm”）执行模式。不过在实际应用中，模型能力只是一半的故事。提供方的推理栈决定了你的用户真正 [&hellip;]</p>
+
+[![从搜索结果到证据：NVIDIA Nemotron 3.5 Embed 与 Rerank 登陆 DeepInfra](https://deepinfra.com/blog/nvidia-nemotron-3.5-embed-rerank-release.png)](https://deepinfra.com/blog/nvidia-nemotron-3.5-embed-rerank-release)[从搜索结果到证据：NVIDIA Nemotron 3.5 Embed 与 Rerank 登陆 DeepInfra](https://deepinfra.com/blog/nvidia-nemotron-3.5-embed-rerank-release)NVIDIA Nemotron 3.5 Embed 和 Rerank 自发布首日起就已在 DeepInfra 上提供。通过 DeepInfra API 调用 Embed 1B、Embed 8B 和 Rerank 8B，无需任何部署配置，按 token 计价。
+
+[![推出 Prompt Cache Retention：让上下文保温 5 分钟或 1 小时](https://deepinfra.com/blog/prompt-cache-retention.jpg)](https://deepinfra.com/blog/prompt-cache-retention)[推出 Prompt Cache Retention：让上下文保温 5 分钟或 1 小时](https://deepinfra.com/blog/prompt-cache-retention)将 prompt 的 KV cache 保留 5 分钟或 1 小时——复用时跳过 prefill，从而更快返回首个 token，并按折扣后的缓存读取费率计费。请求里只需一个字段。
+
+[查看全部](https://deepinfra.com/blog)

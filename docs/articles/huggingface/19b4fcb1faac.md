@@ -9,15 +9,20 @@ captured: 2026-11-11
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 57cc37fd6a1f
+body_sha: 4864e0579d9e
 ---
-
 
 # BotPsy：基于十亿参数以下 agentic 语言模型的端侧个人助理
 
 团队文章
 
 发布于 November 11, 2026
+
+
+2
+
+- [![](https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg)](https://huggingface.co/joooon)
+- [![](https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg)](https://huggingface.co/milangritta)
 
 [![Milan Gritta 的头像](https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg)](https://huggingface.co/milangritta)
 
@@ -287,3 +292,17 @@ October 14, 2026
 - ![](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)
 
 September 23, 2026
+
+### 社区
+
+把图片、音频和视频拖进文本输入框、粘贴，或点击此处即可上传。
+
+点按或粘贴到此处上传图片
+
+· [注册](https://huggingface.co/join?next=%2Fblog%2Fqvac%2Fbotpsy) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fqvac%2Fbotpsy) 后发表评论
+
+
+2
+
+- [![](https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg)](https://huggingface.co/joooon)
+- [![](https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg)](https://huggingface.co/milangritta)

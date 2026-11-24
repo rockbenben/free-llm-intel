@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: ee896855e065
+body_sha: 4375c69795ae
 ---
 
 # 把来源弄对，而不只是把事实弄对：面向 MCP Agent 的 source-aware 校验
@@ -20,6 +20,15 @@ body_sha: ee896855e065
 
 发布于
 					September 29, 2026
+
+
+
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg)](https://huggingface.co/AntonioTN)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1iQUUZFQh6BZXCgGY7zJT.png)](https://huggingface.co/AlexDGenu)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QU3ijZPXiAWJKJQTof3nF.png)](https://huggingface.co/DuckDuckDown)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tGmQJzeT9SYL_sK839ifI.png)](https://huggingface.co/AlgoEnergy)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/3xs4KD-K8_TSwUNSbWp9o.png)](https://huggingface.co/fakoor)
 
 Antonio Tiene
 
@@ -145,6 +154,7 @@ Nomad-link-id
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
 
+
 ander-alvarez
 
 文章作者
@@ -157,6 +167,7 @@ mghwaz
 
 10 天前
 
+
 编辑于 10 天前
 
 我粗读了一遍论文，但没找到任何与"用更便宜的 llm agent 来做 source aware judge"的对比。以下是我对论文的理解；
@@ -168,6 +179,10 @@ mghwaz
 - 同时在回答里检查该论断是否被归到了正确的来源。
 
 看起来，(2 - 5) 这几步似乎能在 lifecycle 里用基本的 prompts 就完成，前提是你拥有那个执行 agent。如果不是，也可以通过 harness 里的 hooks 以插件形式实现。你们有没有这方面的对比。说到底，random forest 以及这一整套 eng/plumbing，相比"对 traces+ans 再做一次 llm 调用"到底买到了多少东西？
+
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
+- [![](https://huggingface.co/avatars/72f6f613035501a07c402999e7718f5f.svg)](https://huggingface.co/mghwaz)
+
 
 ander-alvarez
 
@@ -187,7 +202,9 @@ ander-alvarez
 
 在此轻点或粘贴即可上传图片
 
-· [注册](https://huggingface.co/join?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source)或[登录](https://huggingface.co/login?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source)以发表评论
+
+
+
 
 ## 本文提及的模型 2
 

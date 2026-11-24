@@ -9,13 +9,16 @@ captured: 2026-11-07
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 4f2554e40eeb
+body_sha: c0607b5d4c9e
 ---
-
 
 # 埃及英语与尼日利亚英语加入 Open ASR 排行榜
 
 Published November 6, 2026
+
+
+
+
 
 [![Eric Bezzam's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)](https://huggingface.co/bezzam)
 
@@ -64,3 +67,52 @@ aonorii
 ## About Liva AI
 
 Liva AI 通过真实用户使用的消费级产品采集多模态交互数据。由于 Liva 同时拥有数据采集环境与分发渠道，它可以围绕模型在特定领域、行业、语言、模态及交互类型上的能力短板进行针对性产品设计。这使其能够捕获在真实产品使用中自然涌现的高语境、高质量交互行为，而非人工诱导或基于特定任务的机械互动。
+
+## Spaces mentioned in this article 2
+
+More Articles from our Blog
+
+audiospeechleaderboard
+
+## Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning
+
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png)
+
+80
+
+September 30, 2026
+
+audiospeechleaderboard
+
+## The Open ASR Leaderboard Adds Its First Global South Language
+
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)
+- ![](https://huggingface.co/avatars/56ce7e0fea0166a14997e7876fb23621.svg)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/67bc3e2f4b9d3615a6e2c982/8x33LQ0fwbnUtIn9CAwv2.png)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6673251287330d7378e6b5e3/VVvuAsOUMiAPNgsdoRZjM.png)
+- +6
+
+61
+
+August 28, 2026
+
+### Community
+
+![](https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg)
+
+wookute221
+
+about 7 hours ago
+
+hay
+
+
+
+
+
+
+
+## Spaces mentioned in this article 2

@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 71384a8b1dc0
+body_sha: 619cec208cc5
 translator: agent
 ---
 
@@ -18,6 +18,10 @@ translator: agent
 
 发布于
 					2025 年 9 月 9 日
+
+
+
+
 
 Marc Marone
 
@@ -722,6 +726,7 @@ StephennFernandes
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6362d9712691058b19de1ba4/Hdqj5aGrFJJbF7oUSzoIh.jpeg)](https://huggingface.co/orionweller)
 
+
 orionweller
 
 本文作者
@@ -734,17 +739,16 @@ deleted
 
 2025 年 10 月 31 日
 
+
 此评论已被隐藏
 
-将文件拖入文本输入框、粘贴，或
 
-点击此处
 
-，即可上传图像、音频和视频。
 
-点击或粘贴此处上传图片
 
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fmmbert)或[登录](https://huggingface.co/login?next=%2Fblog%2Fmmbert)发表评论
+
+
+
 
 ## 文中提到的模型 3
 

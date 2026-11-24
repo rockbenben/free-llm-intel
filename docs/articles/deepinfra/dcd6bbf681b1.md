@@ -9,7 +9,7 @@ captured: 2026-10-24
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 96d129cb5f52
+body_sha: bd798833bc79
 ---
 
 # Wan 3.0 集成的最佳 API 提供商
@@ -192,3 +192,11 @@ Prime 按分辨率和时长计费，从 720p、2 秒时每次生成 $0.136 起�
 当你希望用一套 API 覆盖多个 Wan 代际、零数据保留，以及 1080P 渲染的单一标价时，DeepInfra 是一个有力的默认选择。一份类似的指南覆盖了 [Kimi K3 的 SaaS 工具与 API 平台](https://deepinfra.com/blog/best-kimi-k3-saas-tools-api-platforms)。
 
 相关文章
+
+[![DeepInfra 上的 GLM-5.1：Z.AI 的 Agentic 工程模型](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/GLM-5.1.png)](https://deepinfra.com/blog/glm-5-1-deepinfra-agentic-engineering-model)[DeepInfra 上的 GLM-5.1：Z.AI 的 Agentic 工程模型](https://deepinfra.com/blog/glm-5-1-deepinfra-agentic-engineering-model)<p>Z.AI 的 GLM-5.1 在 SWE-Bench Pro 上得分 58.4，在真实世界的软件工程任务上超过 Claude Opus 4.6（57.3）和 GPT-5.4（57.7）。它是 GLM-5 的直接继任者，为 agentic 工程而设计：长周期编码任务、终端操作和仓库级工作。核心设计前提是，此前的模型（包括 GLM-5）往往在 [&hellip;] 之后进入平台期</p>
+
+[![Wan 3.0 API 基准：速度、延迟与成本](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/api.png)](https://deepinfra.com/blog/wan-3-0-api-benchmarks)[Wan 3.0 API 基准：速度、延迟与成本](https://deepinfra.com/blog/wan-3-0-api-benchmarks)<p>要点 Wan 是阿里巴巴的视频生成模型家族。较早的 Wan2.2 模型以 Apache 2.0 开源权重发布，而 Wan2.6、Wan2.7 和 Wan3.0 等后续版本通过托管 API 交付。Wan 3.0 是首个接受文档和网页作为输入的 Wan 模型。它还把最大 [&hellip;] 翻倍</p>
+
+[![从截图到 tool call：DeepInfra 上的 NVIDIA Nemotron 3.5 Super VL](https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release.png)](https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release)[从截图到 tool call：DeepInfra 上的 NVIDIA Nemotron 3.5 Super VL](https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release)NVIDIA Nemotron 3.5 Super VL 是 Nemotron 家族新的开源多模态模型，发布首日即在 DeepInfra 上可用。它把视觉理解、推理和 tool calling 汇聚在一个模型中，通过兼容 OpenAI 的 API 提供，并按 token 计费。
+
+[查看全部](https://deepinfra.com/blog)

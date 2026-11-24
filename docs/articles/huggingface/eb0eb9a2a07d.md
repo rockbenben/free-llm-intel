@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 04d5baf0c73d
+body_sha: 97b65dffd5eb
 translator: agent
 ---
 
@@ -18,6 +18,10 @@ translator: agent
 
 发布于
 					2025 年 5 月 21 日
+
+
+
+
 
 Derek Liu
 
@@ -516,3 +520,26 @@ quantization
 69
 
 2026 年 7 月 23 日
+
+### 社区
+
+tolgacangoz
+
+2025 年 10 月 25 日
+
+
+此评论已被隐藏（标记为已解决）
+
+
+
+
+
+
+
+
+
+## 文中提到的模型 1
+
+## 文中提到的 Spaces 1
+
+## 文中提到的 Collections 1

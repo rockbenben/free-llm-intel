@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 2c1a1d77275d
+body_sha: 5ab42859483b
 ---
 
 # 度量语音识别中的基准优化
@@ -171,3 +171,33 @@ benchmark
 34
 
 2026 年 7 月 15 日
+
+### 社区
+
+Abc-123-Xy
+
+Aug 22
+
+nice
+
+CA111AKO111MAP
+
+Aug 22
+
+nice paper
+
+
+
+
+
+
+
+
+
+## 文中提到的模型 10
+
+## 文中提到的数据集 3
+
+## 文中提到的 Spaces 3
+
+## 文中提到的论文 1

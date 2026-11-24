@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ff2dcc833cbf
+body_sha: 69dcd7fcee3a
 translator: agent
 ---
 
@@ -18,6 +18,10 @@ translator: agent
 
 发布于
 					2026 年 1 月 29 日
+
+
+
+
 
 merve
 
@@ -358,11 +362,13 @@ ArseniyPerchik
 
 1 月 31 日
 
+
 1 月 31 日编辑
 
 条件节点有考虑吗？我是说那种根据当前节点的输出来决定下一个执行哪个节点的节点。
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
+
 
 abidlabs
 
@@ -379,6 +385,7 @@ hxgdzyuyi
 为什么不用 jupyternotebook
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
+
 
 abidlabs
 
@@ -398,6 +405,7 @@ Funnelsflex
 
 2 月 21 日
 
+
 3 月 3 日编辑
 
 这是实现流水线透明度的扎实思路。在做 Funnelsflex 部署时，我们经常看到僵化的 UI 漏斗构建器和原始 Python 脚本灵活性之间的摩擦点。Daggr 似乎弥合了这个鸿沟：逻辑留在代码里该在的地方，同时提供标准 Gradio 链式应用通常缺失的可视化状态持久化。
@@ -405,15 +413,13 @@ Funnelsflex
 能单独重跑某个节点而不触发整个推理栈，对调试复杂的弹性工作流来说是个巨大的胜利。我很想看看它在高并发环境下如何处理状态管理，但就快速原型和"可检查"的 AI 应用而言，这是一个非常干净的实现。
 [https://funnelsflex.io/](https://funnelsflex.io/)
 
-将文件拖入文本输入框、粘贴，或
 
-点击此处
 
-，即可上传图像、音频和视频。
 
-点击或粘贴此处上传图片
 
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fdaggr)或[登录](https://huggingface.co/login?next=%2Fblog%2Fdaggr)发表评论
+
+
+
 
 ## 文中提到的模型 1
 

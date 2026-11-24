@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5a10e09823aa
+body_sha: 621a2bf5a24c
 ---
 
 返回文章列表
@@ -17,6 +17,10 @@ body_sha: 5a10e09823aa
 
 发布于
 					2020 年 7 月 3 日
+
+
+
+
 
 Patrick von Platen
 
@@ -333,7 +337,7 @@ from transformers import ReformerConfig, PyTorchBenchmark, PyTorchBenchmarkArgum
 ```
 
 ```
-  Building wheel for transformers (setup.py) ... [?25l[?25hdone
+  Building wheel for transformers (setup.py) ... [?25l[?25hdone
 ```
 
 首先，比较默认 `google/reformer-enwik8` 模型（不带分块前馈层）与带分块前馈层的版本。
@@ -641,3 +645,73 @@ Reformer-Axial-Pos-Embeddings        8              512             447
 ```
 
 可以看到，在 `google/reformer-crime-and-punishment` 的情形下，使用轴向位置嵌入把内存需求降到了大约一半。
+
+## 本文提到的模型 1
+
+来自我们博客的更多文章
+
+nlp
+
+community
+
+research
+
+## 介绍 Ettin Reranker 家族
+
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)
+
+58
+
+2026 年 5 月 19 日
+
+nlp
+
+evaluation
+
+retrieval
+
+## 介绍 RTEB：检索评估的新标准
+
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/61f33092a92c9a858b654991/jFRUSeZ6DnI27dlCAQRHq.jpeg)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/5ff5943752c26e9bc240bada/Exyzf3C_gJ2KdsL4K5_cq.png)
+- ![](https://huggingface.co/avatars/7a4067accdd1005f78c3c4adad3ee0a5.svg)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/64cc0e80a257a3212c0c4b24/wqs6WZN8-3OQthcnQXgN7.png)
+- +2
+
+149
+
+2025 年 10 月 1 日
+
+### 社区
+
+deleted
+
+2025 年 10 月 31 日
+
+
+此评论已被隐藏
+
+allendorf
+
+1 月 22 日
+
+
+此评论已被隐藏（标记为垃圾）
+
+通过拖拽到文本输入框、粘贴，或
+
+点击这里
+
+上传图像、音频和视频。
+
+.
+
+点击或粘贴到这里上传图像
+
+· [注册](https://huggingface.co/join?next=%2Fblog%2Freformer) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Freformer) 以评论
+
+
+
+- [![](https://huggingface.co/avatars/ce9b99882a65fd2cb983ba71a5ac2473.svg)](https://huggingface.co/a-r-r-o-w)
+- [![](https://huggingface.co/avatars/2211bd0a7d08bf1e078b0acee40894b5.svg)](https://huggingface.co/Vivek)
+- [![](https://huggingface.co/avatars/6be635f7f258d1050cd4c6e2c2d92a62.svg)](https://huggingface.co/kamalelsaaid)
