@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-24 14:21:31**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-24 21:39:57**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -194,7 +194,7 @@
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-24，标题自动汉化）：
   1. [RoboTrack：现实世界机器人操作的点跟踪](https://huggingface.co/blog/allenai/robotrack)（2026-11-23）
-  2. [如何建立和维护代理评估](https://huggingface.co/blog/agentic-evals)（2026-11-23）
+  2. [如何构建与维护 agentic 评估](https://huggingface.co/blog/agentic-evals)（2026-11-23）
   3. [欢迎 Inkling 2 Mini：为本地部署带来前沿性能](https://huggingface.co/blog/inkling2mini)（2026-11-20）
   4. [推出 harness adapters：把常用模型适配到你的 harness，提升性能并优化成本](https://huggingface.co/blog/harness-adapters-at-scale)（2026-11-20）
   5. [DaisyRose-27B: Pushing the Frontier of Post-Training Efficiency](https://huggingface.co/blog/RadixArk/daisyrose-27b-pushing-the-frontier-of-post-trainin)（2026-11-18）
