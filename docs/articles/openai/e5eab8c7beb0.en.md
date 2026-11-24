@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 782c0e45a8fd
+body_sha: 710d6beea2dc
 ---
 
 August 20, 2024
@@ -31,8 +31,3 @@ We’re collaborating with our news partners to collect feedback and insights on
 Brad Lightcap, COO, OpenAI
 
 Condé Nast joins a growing list of publishers including Associated Press, Axel Springer, The Atlantic, Dotdash Meredith, Financial Times, LeMonde, NewsCorp, Prisa Media, TIME, Vox Media and others, in our mission to integrate journalism more deeply with AI services.
-
-
-## Authors
-
-OpenAI

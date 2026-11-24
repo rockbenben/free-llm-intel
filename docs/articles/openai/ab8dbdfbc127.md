@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 41100d17f8a5
+body_sha: 25748a1462a3
 ---
 
 June 5, 2019
@@ -48,8 +48,3 @@ Photo: Blake Tucker
 如果你也想参与我们"会学习的机器人"方向的研究，欢迎联系我们！[我们正在招人⁠](https://openai.com/careers/)。
 
 *感谢 Loren Kwan、Diane Yoon 与 Maddie Hall 共同组织本次活动，感谢所有 OpenAI 志愿者，感谢 Blake Tucker 的拍摄与摄影。*
-
-
-## 作者
-
-OpenAI

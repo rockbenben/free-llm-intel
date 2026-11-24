@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: ee9dd8f77f5d
+body_sha: 7191b24e97a6
 ---
 
 2026年8月28日
@@ -90,7 +90,3 @@ Curico 计划在成果展示日之前，于曼谷市政府下属的托育中心�
 首批成员的加入，是一项长期行动的开端。我们希望通过汇聚政府、高校、初创企业、投资者和技术合作伙伴，建立一套可复制的模式，帮助泰国创始人打造可信赖的 AI 产品，并将泰国开发的解决方案推向世界。
 
 - [2026 年](https://openai.com/news/?tags=2026)
-
-## 作者
-
-OpenAI

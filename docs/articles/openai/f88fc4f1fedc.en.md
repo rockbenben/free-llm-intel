@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 61552dd3b009
+body_sha: 3b1b14072ea4
 ---
 
 June 1, 2025
@@ -57,8 +57,3 @@ Representative examples of these activities can be mapped to the LLM ATT&CK fram
 ## Impact
 
 We disabled all accounts associated with this activity and shared relevant indicators with industry partners. While this investigation provided unusually broad visibility into a network of PRC-affiliated threat actors and their operational workflows, including tool development, open-source research, and infrastructure profiling, we found no evidence that access to our models provided these actors with novel capabilities or directions that they could not otherwise have obtained from multiple publicly available resources.
-
-
-## Author
-
-OpenAI

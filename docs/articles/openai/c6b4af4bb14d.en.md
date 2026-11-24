@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9e9ca81e1c58
+body_sha: 871fdaf3e68d
 ---
 
 July 17, 2025
@@ -59,7 +59,3 @@ We want to thank the Decoded Futures, National Center for Civic Innovation, and 
 This initiative reflects our commitment to ensuring that the benefits of AI are accessible to everyone. We’re excited to learn from today's participants and to continue building tools that empower communities and expand opportunity.
 
 - [2025](https://openai.com/news/?tags=2025)
-
-## Author
-
-OpenAI

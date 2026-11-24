@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 438d3abede10
+body_sha: bdfd3e74c5a4
 ---
 
 October 9, 2025
@@ -141,8 +141,3 @@ Similar to the previous results, we find that GPT‑5 instant and thinking outpe
 While GPT‑5 improves bias performance over prior models, challenging prompts expose opportunities for closer alignment to our [Model Spec](https://model-spec.openai.com/2025-09-12.html#overview). We are investing in improvements over the coming months and look forward to sharing results.
 
 By discussing our definitions and evaluation methods, we aim to clarify our approach, help others build their own evaluations, and hold ourselves accountable to our principles. This work acts on our [operating principle](https://openai.com/charter/) commitments to Technical Leadership and Cooperative Orientation; we hope it supports industry efforts to advance AI objectivity through shared definitions and empirical evaluation.
-
-
-## Author
-
-OpenAI

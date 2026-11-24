@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e9eac7896518
+body_sha: a32eff988bbd
 ---
 
 June 5, 2025
@@ -27,8 +27,3 @@ As we laid out in [our submission⁠](https://openai.com/global-affairs/openai-p
 It also includes *using *AI to develop groundbreaking new tools for those who defend against such abuses. By using AI as a force multiplier for our expert investigative teams, in the three months since our last report we’ve been able to detect, disrupt, and expose abusive activity including social engineering, cyber espionage, deceptive employment schemes, covert influence operations and scams.
 
 - [Read the full report](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)
-
-
-## Author
-
-OpenAI

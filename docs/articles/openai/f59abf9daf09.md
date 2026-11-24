@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f591ec6aa4cd
+body_sha: f8e95c7653d5
 translator: agent
 ---
 
@@ -29,8 +29,3 @@ Read the System Card
 GPT‑5.4 Thinking 是 GPT‑5 系列中最新的推理模型，详见我们的 [博客⁠](https://openai.com/index/introducing-gpt-5-4/)。该模型的综合安全缓解思路与系列中之前的模型类似，但 5.4 Thinking 是第一个针对网络安全（Cybersecurity）高能力（High capability）落实了缓解措施的通用模型。网络安全方面的方案建立在为 ChatGPT 和 API 中的 GPT‑5.3 Codex 所实施的最新方法之上。
 
 在本系统卡中，我们也会用 gpt-5.4-thinking 指代 GPT‑5.4 Thinking。注意，并不存在名为 GPT‑5.3 Thinking 的模型，因此作为基线对比的主要模型是 GPT‑5.2 Thinking。
-
-
-## 作者
-
-OpenAI

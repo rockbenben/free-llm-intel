@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: fade7146eebe
+body_sha: 01634dd662ed
 ---
 
 2026年8月28日
@@ -26,8 +26,3 @@ body_sha: fade7146eebe
 我们与 Cursor 签订的定制协议规定，控制权变更后，我们只有一段有限的时间可以解除合同。随着 AI 能力不断进步，我们也肩负起更高层面的责任，必须确保即将推出的模型 [Astra](https://openai.com/index/responding-next-frontier-critical-cyber-capabilities/) 按照我们的条款使用。综合考虑以上因素，我们决定在不向 Cursor 提供未来模型的前提下，将合同解除日期推迟到我们所能允许的最晚时间。
 
 我们与 Cursor 合作了近四年，非常尊重他们的团队、产品，以及他们为开发者社区所取得的成就。我们知道，受这一决定影响最大的是那些依赖 Cursor 中 OpenAI 模型的开发者。我们十分重视他们在此次过渡期间的体验，并愿意竭尽所能为他们提供支持。
-
-
-## 作者
-
-OpenAI

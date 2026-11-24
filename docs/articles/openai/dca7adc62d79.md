@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 8b79828eee48
+body_sha: e784b02245dd
 ---
 
 2026年7月30日
@@ -89,7 +89,3 @@ GPT‑5.6 Terra 和 Luna 将继续在 ChatGPT 工作、Codex 和 OpenAI API 中�
 GPT‑5.6 Sol 的快速模式将在 API 中取代“优先处理”，并与 Codex 中的 /fast 保持一致。现有标记为 priority 的 API 请求将继续正常工作。[查看完整的 API 定价详情。⁠](https://openai.com/business/pricing/#api)
 
 - [2026 年](https://openai.com/news/?tags=2026)
-
-## 作者
-
-OpenAI

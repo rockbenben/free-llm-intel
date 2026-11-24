@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: eaeb71081b0c
+body_sha: c0750f069c4d
 ---
 
 October 30, 2025
@@ -31,8 +31,3 @@ The Stargate Michigan campus is being developed by [Related Digital](https://www
 Across the US, Stargate sites are creating jobs, spurring investment in modern energy and industrial systems, and helping strengthen the supply chains needed to support the next generation of AI. Our expansion into Michigan builds on sites we’ve already announced in Texas, New Mexico, Wisconsin, and Ohio, each of which will help strengthen local economies and advance America’s leadership in AI.
 
 Michigan has long been at the center of American engineering and manufacturing. We’re proud to build here and to continue expanding the infrastructure needed to ensure the benefits of AI reach everyone.
-
-
-## Author
-
-OpenAI

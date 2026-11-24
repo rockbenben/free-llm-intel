@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 18698f7c2f17
+body_sha: 8ff54168bd71
 ---
 
 2024 年 12 月 27 日
@@ -69,9 +69,7 @@ OpenAI 董事会正在评估我们的公司结构，以便最好地支撑"确保
 我们学会了把使命看作一个[持续的目标](https://openai.com/index/planning-for-agi-and-beyond/)，而不只是造出某一个系统。世界正在为 21 世纪经济搭建一套新基础设施：能源、土地使用、芯片、数据中心、数据、AI 模型和 AI 系统。我们寻求演进，是为了迈出使命的下一步——帮助建立 AGI 经济体，并确保它惠及人类。
 
 
-## 作者
 
-OpenAI
 
 
 ## 脚注

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 675dc08e47b5
+body_sha: 163db0bb7090
 ---
 
 August 16, 2017
@@ -89,8 +89,3 @@ Bot playing versus [SirActionSlacks](http://wiki.teamliquid.net/dota2/SirActionS
 One well-established place to start is with behavioral cloning. Dota has about a million public matches a day. The replays for these matches are stored on Valve’s servers for two weeks. We’ve been downloading every expert-level replay since last November, and have amassed a dataset of 5.8M games (each game is about 45 minutes with 10 humans). We use [OpenDota](https://www.opendota.com/) to discover these replays, and are donating $12k (10 years of their fundraising goal) to support the project.
 
 We have many more ideas, and are [hiring⁠](https://openai.com/careers/) engineers (must be intrigued by machine learning, but need not be an expert) and researchers to help us make this happen. We thank Microsoft Azure and Valve for their support in this endeavor.
-
-
-## Author
-
-OpenAI

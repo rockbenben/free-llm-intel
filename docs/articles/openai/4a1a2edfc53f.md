@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 9980640b4b24
+body_sha: 2688df53a033
 ---
 
 2026年6月14日
@@ -115,8 +115,3 @@ AI 正在成为组织运营方式的新基础。要充分实现其潜力，需�
 OpenAI 合作伙伴网络是我们投资这一未来的一种方式。我们正与合作伙伴携手，把 AI 的益处带给全球企业。
 
 有兴趣与 OpenAI 共同构建的合作伙伴可访问 [https://openai.com/business/partners⁠](https://openai.com/business/partners) 了解更多。
-
-
-## 作者
-
-OpenAI

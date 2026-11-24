@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: cff10aca0c8c
+body_sha: 85b2b5ae5fc4
 ---
 
 2026年7月15日
@@ -107,8 +107,3 @@ GPT‑Red 的最终目标是提高我们模型的稳健性。在过去的六个�
 AI 智能体已被用于提升我们下一代模型的性能。我们相信，借助 GPT‑Red，我们已经开始解锁类似的安全飞轮，今天的模型可以用来提高未来模型的稳健性、协调能力和可信度。我们将继续扩大计算和数据规模，同时改进算法，以训练比当前模型更强大的后续版本 GPT‑Red。反之，这些模型将有助于提升未来 GPT 版本的安全性。
 
 我们将在本周晚些时候发布一份包含更多细节的预印本。
-
-
-## 作者
-
-OpenAI

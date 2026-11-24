@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 30b1974136e5
+body_sha: cc73d8427980
 ---
 
 April 22, 2025
@@ -33,8 +33,3 @@ This partnership reflects a shared commitment to making reliable, factual inform
 This work follows similar partnerships OpenAI has formed with more than 20 news publishers, bringing its technology to over 160 outlets and hundreds of content brands across more than 20 languages.
 
 This partnership is the latest example of The Post’s commitment to expanding the discoverability of its critical journalism through AI tools and resources. This past year, The Post launched generative AI experiments built by news for news, including Ask The Post AI and Climate Answers, created tools for its newsroom like Haystacker, and broadened its coverage accessibility for users through AI-powered summaries and audio.
-
-
-## Authors
-
-OpenAI

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5cdc7bd3afb0
+body_sha: 2e7d771f7461
 ---
 
 2025年11月12日
@@ -344,8 +344,3 @@ GPT‑5.1 更强大，也更实用，我们鼓励你亲自体验，感受不同�
 **
 
 今天推出的 GPT‑5.1 更新和全新的自定义选项，迈出了让 ChatGPT 更贴合你需求的重要一步。它更聪明、更好聊，也更能适应你的偏好。我们将在这些方向持续优化，精彩还在后头。
-
-
-## 作者
-
-OpenAI

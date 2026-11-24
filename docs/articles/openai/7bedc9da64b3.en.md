@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fb67e3bf32f1
+body_sha: a2c3c409a986
 ---
 
 June 1, 2025
@@ -47,8 +47,3 @@ As well as generating short articles and social media comments, the accounts ask
 As noted above, the Telegram channel counted 1,755 subscribers at the time of our investigation, and was regularly reposted verbatim on a domain affiliated with the Pravda network. The X account had over 27,000 followers.
 
 Using the IO impact [Breakout Scale](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/), we would assess this as being towards the upper end of Category 2: activity on multiple platforms, but little authentic engagement or evidence that their content was widely shared.
-
-
-## Author
-
-OpenAI

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 608928d62f41
+body_sha: 971980ab40f0
 ---
 
 2025年7月22日
@@ -34,8 +34,3 @@ body_sha: 608928d62f41
 过去六个月中，对 Stargate 的日益增长的兴趣帮助我们塑造并扩展了这一努力的愿景。Stargate 是 OpenAI 的综合性人工智能基础设施平台，涵盖与甲骨文、软银和 CoreWeave 的持续数据中心合作，以及通过 [OpenAI 国家合作计划⁠](https://openai.com/global-affairs/openai-for-countries/) (OpenAI for Countries) 项目对美国基础设施进行的国际投资。该项目基于我们与微软长期且持续的计算合作关系，微软将继续作为 Stargate 的技术合作伙伴。
 
 Stargate 是一个雄心勃勃的项目，旨在把握我们面前的历史性机遇。这一机遇正通过全球合作伙伴、政府和投资者的强力支持逐步实现——其中包括白宫的重要领导作用，白宫已认识到人工智能基础设施在推动创新、经济增长和国家竞争力方面将发挥的关键作用。
-
-
-## 作者
-
-OpenAI

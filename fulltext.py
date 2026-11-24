@@ -196,6 +196,8 @@ _FURN_BACK_LINK_RE = re.compile(
     r"\[\s*(?:返回文章(?:列表)?|返回博客|返回新闻|返回首页|"
     r"Back to Articles|Back to Blog|Back to Newsroom|Back to Home)\s*\]\((https?://[^)\s]+)\)")
 _LIST_PAGE_PATHS = {"", "/blog", "/news", "/articles", "/newsroom", "/blog/index.html"}
+_OPENAI_AUTHOR_HEADINGS = {"## Author", "## Authors", "## 作者"}
+_SAME_OR_HIGHER_THAN_H2_RE = re.compile(r"^#{1,2}\s")
 
 # Hugging Face 的评论表单与投票组件。只删能确认是控件的行，讨论和后续区块照常保留。
 _HF_COMMENT_LOGIN_RE = re.compile(
@@ -393,6 +395,7 @@ def furniture_drops(lines, page_url: str = ""):
     R12 正文边界上指向站内列表页的独立返回链接。
     R14 Hugging Face 页头的更新控件与紧跟已识别控件的投票者头像列表。
     R17 Hugging Face 评论区的登录/注册与上传控件。
+    R18 OpenAI 文章中只有机构名、在文末或同级章节前的作者组件。
     """
     fenced, first_head = _fence_mask(lines)
     first_h1 = next((i for i, l in enumerate(lines)
@@ -470,6 +473,16 @@ def furniture_drops(lines, page_url: str = ""):
             drop[j] = "R5"
     if host == "huggingface.co" and page.path.startswith(("/blog/", "/papers/")):
         drop.update(_hf_widget_drops(lines, visible, fenced, page.path))
+    if host == "openai.com" and page.path.startswith(("/index/", "/global-affairs/", "/business/")):
+        # OpenAI 的机构署名组件只有标题和品牌名。若下面仍有内容，保留整个作者区块。
+        for pos, (heading, author) in enumerate(zip(visible, visible[1:])):
+            if (heading in fenced or author in fenced
+                    or lines[heading].strip() not in _OPENAI_AUTHOR_HEADINGS
+                    or lines[author].strip() != "OpenAI"):
+                continue
+            if (pos + 2 == len(visible)
+                    or _SAME_OR_HIGHER_THAN_H2_RE.match(lines[visible[pos + 2]].strip())):
+                drop[heading] = drop[author] = "R18"
     for leading, edge in ((True, visible), (False, reversed(visible))):
         for i in edge:
             if i in drop:

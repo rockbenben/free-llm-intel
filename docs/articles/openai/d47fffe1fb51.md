@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 5515fdd3f7bf
+body_sha: 20045ca9972c
 ---
 
 2025年10月22日
@@ -48,7 +48,3 @@ OpenAI 的技术已成为英国数百万人不可或缺的工具。按 OpenAI �
 通过英国数据驻留、新的公共部门合作关系以及谅解备忘录框架下持续开展的工作，我们正帮助英国为可信、安全地采用人工智能奠定基础。我们期待与英国政府继续合作，让更多英国民众、企业和机构从人工智能中受益。
 
 - [2025 年](https://openai.com/news/?tags=2025)
-
-## 作者
-
-OpenAI

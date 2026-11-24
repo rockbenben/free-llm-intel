@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7208d1658e81
+body_sha: 75986e00aa6d
 ---
 
 May 23, 2025
@@ -30,8 +30,3 @@ We are replacing the existing GPT‑4o‑based model for Operator with a version
 o3 Operator uses the same multi-layered approach to safety that we used for the 4o version of Operator and described in our original [Operator System Card](https://cdn.openai.com/operator_system_card.pdf). Compared with other models in the o3 family, o3 Operator was fine-tuned with additional safety data for computer use, including safety datasets designed to teach the model our decision boundaries on confirmations and refusals.
 
 Although o3 Operator inherits o3’s coding capabilities, it does not have native access to a coding environment or Terminal.
-
-
-## Author
-
-OpenAI

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 1e9b99c22517
+body_sha: 2f15a67ce4e6
 ---
 
 2026年2月26日
@@ -50,8 +50,3 @@ Codex 应用通过无缝体验，让用户可以与智能体进行多任务协�
 Cisco、NVIDIA、Ramp 和 Datadog 等公司正采用 Codex 赋能员工，Harvey、Sierra 等初创公司也迎头赶上。
 
 要开始体验，只需在 Codex 桌面应用中直接安装 [Figma MCP Server](https://help.figma.com/hc/en-us/articles/32132100833559)。
-
-
-## 作者
-
-OpenAI

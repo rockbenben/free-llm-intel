@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: f87ad2018c93
+body_sha: 96bbf4c55e38
 ---
 
 2025年8月5日
@@ -40,7 +40,3 @@ AI 的下一个前沿不仅仅关乎技术能力，更关乎谁能使用它。�
 此次发布延续了 OpenAI 开放模型的历史，包括 [Whisper⁠](https://openai.com/research/whisper/)、[GPT‑2⁠](https://openai.com/index/gpt-2-1-5b-release/?utm_source=chatgpt.com) 和[ CLIP⁠](https://openai.com/research/clip/)。它将基于民主原则构建下一代 AI 基础设施——以开放性、思想自由和广泛访问为根基的模型。通过“OpenAI 国家合作项目”和我们的非营利组织，这些模型将使我们更接近一个世界：AI 的益处惠及更多人，各国无论大小均能参与 AI 经济，而任何地方的创新都能提升全球各地的社区。
 
 - [2025 年](https://openai.com/news/?tags=2025)
-
-## 作者
-
-OpenAI

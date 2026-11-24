@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: cf97da86f3e0
+body_sha: 1c5057f44811
 ---
 
 September 17, 2025
@@ -108,8 +108,3 @@ Scheming is a complex failure mode that we do not expect to diminish with scale.
 More materials, including the paper, full sample transcripts, and a link to Apollo's companion blog post, can be found at [antischeming.ai](https://antischeming.ai).
 
 *We partnered with Apollo Research on this study: OpenAI led most of the model training and required infrastructure, while Apollo led evaluations and analysis across the paper’s sections, built training environments, and integrated tooling with our systems. The training and test datasets were shared between both teams. Because the methodology required inspecting models’ hidden reasoning, Apollo was granted rate‑limited access to internal chain‑of‑thought (CoT) traces of OpenAI o3 and o4‑mini for the duration of the project.*
-
-
-## Author
-
-OpenAI

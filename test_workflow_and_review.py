@@ -12656,12 +12656,30 @@ class TestPageFurnitureStrip(unittest.TestCase):
         self.assertIn("# 事件与未来之路", out)
         self.assertIn("2026年8月26日", out, "日期行是正文元信息，不在这一档删")
 
-    def test_brand_wordmark_keeps_body_mentions_and_author_credit(self):
-        body = "\n".join([
-            "# 对比", "", "OpenAI", "OpenAI 与 Anthropic 的差别在于本句。",
-            "## OpenAI", "| OpenAI | 12 |", "- OpenAI", "", "## 作者", "", "OpenAI",
-        ])
-        self.assertEqual(ft.strip_page_furniture(body, "https://openai.com/index/x"), body)
+    def test_openai_footer_author_component_is_removed_as_a_unit(self):
+        url = "https://openai.com/index/x"
+        body = "# 对比\n\nOpenAI\n\nOpenAI 与 Anthropic 的差别。\n"
+        for heading in ("## 作者", "## Author", "## Authors"):
+            with self.subTest(heading=heading):
+                component = f"{heading}\n\nOpenAI\n"
+                tail = "## 参考文献\n\n- [论文](https://example.com/paper)"
+                self.assertEqual(ft.strip_page_furniture(body + component, url), body + "\n")
+                self.assertEqual(ft.strip_page_furniture(body + component + tail, url),
+                                 body + "\n" + tail)
+
+    def test_openai_author_biography_and_ambiguous_sections_are_preserved(self):
+        content = (
+            "## Authors\n\nOpenAI\n\nJane Doe",
+            "## 作者\n\nOpenAI\n\n### Jane Doe\n\n作者简介。",
+            "## 作者\n\n[OpenAI](https://openai.com/about/)",
+            "## 关于作者\n\nOpenAI",
+            "```markdown\n## Author\n\nOpenAI\n```",
+        )
+        for section in content:
+            body = f"# 文章\n\n正文。\n\n{section}"
+            self.assertEqual(ft.strip_page_furniture(body, "https://openai.com/index/x"), body)
+        other_host = "# 指南\n\n正文。\n\n## Author\n\nOpenAI"
+        self.assertEqual(ft.strip_page_furniture(other_host, "https://example.com/index/x"), other_host)
 
     def test_brand_wordmark_needs_a_host(self):
         # 诱饵：没有 page_url 就没有「本页品牌词」这条依据，一律不删

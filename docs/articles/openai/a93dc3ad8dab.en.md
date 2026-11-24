@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1c2fb7d066e4
+body_sha: 18b867fc4873
 ---
 
 November 21, 2024
@@ -87,9 +87,7 @@ Red teaming isn’t a complete solution for assessing AI risks. Its limitations 
 While red teaming aims to expand perspectives in service of risk discovery, verification, and evaluation development, we believe additional work is needed to solicit and incorporate public perspectives on ideal model behavior, policies, and other associated decision making processes.
 
 
-## Authors
 
-OpenAI
 
 
 ## Footnotes

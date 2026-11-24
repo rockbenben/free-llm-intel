@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 5121ee2b2739
+body_sha: dc8a3d0853a9
 ---
 
 2025年9月5日
@@ -59,8 +59,3 @@ body_sha: 5121ee2b2739
 ### 关于 OpenAI for Countries（国家合作计划）
 
 “OpenAI for Greece”是我们 [OpenAI for Countries](https://openai.com/global-affairs/openai-for-countries/) 计划的最新部署项目。此前，我们刚刚启动了 [Stargate Norway](https://openai.com/index/introducing-stargate-norway/) 基础设施合作伙伴关系，旨在提供由可再生能源驱动的自主人工智能能力；[与英国政府签署了谅解备忘录 (MOU)](https://openai.com/global-affairs/openai-and-uk-government-partnership/)，旨在加速人工智能采用并探索加强必要基础设施的方法；并[与爱沙尼亚政府建立了合作伙伴关系](https://openai.com/index/estonia-schools-and-chatgpt/)，在全国中学部署 ChatGPT。
-
-
-## 作者
-
-OpenAI

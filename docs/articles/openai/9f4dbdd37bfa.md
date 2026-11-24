@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 37c69d01058d
+body_sha: e3d7413fe70e
 ---
 
 2026年6月18日
@@ -63,7 +63,3 @@ OpenAI 与一个由 260 多名医生组成的全球网络合作，这些医生�
 改善人类健康将是 AGI 最个人化、最切实的影响之一。随着我们的模型不断改进，我们的目标是在这些时刻让 ChatGPT 更准确、更审慎、更有用，并继续把这种进展带给更多人。
 
 - [2026 年](https://openai.com/news/?tags=2026)
-
-## 作者
-
-OpenAI

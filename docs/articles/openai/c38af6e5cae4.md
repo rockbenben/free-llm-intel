@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 134ee3eadef9
+body_sha: 8859967a4329
 ---
 
 2026年10月2日
@@ -131,8 +131,3 @@ GPT‑6 是[我们迄今最先进的模型系列](https://openai.com/index/intro
 > Hex：从业务问题到交互式仪表板。⁠Hex 使用 GPT‑6 Astra，将有关销售渠道表现的问题转化为书面分析结果和交互式仪表板，其中还包括按地区细分的数据。它还会让模型检查数据是否合理，以及分析是否回答了业务问题。
 
 > Invideo：更好地掌控最终剪辑效果。⁠Invideo 使用 GPT‑6 Astra 规划时间线剪辑，并创建可供剪辑师进一步调整的自定义特效。据该公司报告，调色和色彩校正任务的成功率提升至原来的约三倍。几位剪辑师还在一天内制作了约 50 种特效。
-
-
-## 作者
-
-OpenAI

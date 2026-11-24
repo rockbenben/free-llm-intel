@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 93c1db792ba1
+body_sha: adf1206db0f5
 translator: agent
 ---
 
@@ -32,8 +32,3 @@ Stargate 密歇根园区由 [Related Digital](https://www.related-digital.com/ne
 在美国各地，Stargate 站点正在创造就业、带动现代能源和工业体系的投资，并帮助强化支撑下一代 AI 所需的供应链。此次向密歇根扩张，建立在我们已公布的得克萨斯、新墨西哥、威斯康星和俄亥俄站点之上——每一个站点都将助力地方经济，推进美国在 AI 领域的领先地位。
 
 密歇根长久以来一直是美国工程与制造业的中心。我们很自豪能在这里建设，并将持续扩建所需的基础设施，确保 AI 的好处惠及每个人。
-
-
-## 作者
-
-OpenAI

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: b85884739719
+body_sha: 420d3bfc3b5a
 ---
 
 2026年4月15日
@@ -77,8 +77,3 @@ Agents SDK 的这些全新功能现已面向所有 API 用户开放。定价方�
 目前，全新的运行框架与沙箱功能已率先在 Python 版本中上线，TypeScript 支持也已列入发布计划。此外，我们正致力于将包括代码模式和子智能体在内的更多智能体功能引入这两个语言版本。
 
 展望未来，我们希望进一步推动智能体生态的深度融合：通过支持更多的沙箱服务商、提供更丰富的集成方案，以及探索更多元化的接入方式，让开发者能够将 SDK 无缝嵌入其现有的工具链与系统之中。
-
-
-## 作者
-
-OpenAI

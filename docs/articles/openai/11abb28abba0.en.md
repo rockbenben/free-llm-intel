@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b147a27d020f
+body_sha: f7652d584ee2
 ---
 
 October 8, 2024
@@ -34,8 +34,3 @@ As part of the partnership, OpenAI will incorporate content from Hearst’s cele
 Hearst content in ChatGPT will feature appropriate citations and direct links, providing transparency and easy access to the original Hearst sources.
 
 Hearst’s other businesses outside of magazines and newspapers are not included in this partnership.
-
-
-## Author
-
-OpenAI

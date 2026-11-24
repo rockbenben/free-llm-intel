@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 665c7d1c875b
+body_sha: 03b3fd28b175
 ---
 
 2025年12月22日
@@ -106,7 +106,3 @@ ChatGPT Atlas 的代理模式功能强大，但也扩大了安全威胁面。清
 如果代理要成为日常任务的可信合作伙伴，它们必须具备抵御开放网络中各种操控的能力。加强提示注入防御措施是一项长期承诺，也是我们的首要任务之一。我们很快就会分享更多关于这项工作的信息。
 
 - [2025 年](https://openai.com/news/?tags=2025)
-
-## 作者
-
-OpenAI

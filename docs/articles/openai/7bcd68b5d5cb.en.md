@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6791cc2a55e0
+body_sha: c73f1d249797
 ---
 
 April 8, 2026
@@ -56,7 +56,3 @@ My first quarter at OpenAI has made me more convinced than ever that the AI tran
 At OpenAI, I feel the commitment at every level, in every function. We are wholeheartedly focused on continuously earning the right to help enterprises – and the people behind them – reinvent their companies for the future of AGI with clarity, confidence, and trust. It’s the opportunity and responsibility of a lifetime, and I couldn’t be more excited about what we’re building with our customers and partners.
 
 - [2026](https://openai.com/news/?tags=2026)
-
-## Author
-
-OpenAI

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c8761a357e8b
+body_sha: 7c6ef2449434
 ---
 
 2026年4月14日
@@ -62,7 +62,3 @@ AI 的演进正为防御者（即守护系统、数据与用户安全的专业�
 从长远来看，随着未来模型的能力迅速超越当今最顶尖的专用模型，为了确保人工智能的网络安全防线，我们需要构建更加完备、更具扩展性的防御体系。
 
 - [2026 年](https://openai.com/news/?tags=2026)
-
-## 作者
-
-OpenAI

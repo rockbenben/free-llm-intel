@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3f9cc055acb3
+body_sha: 21664fdbfbbb
 ---
 
 December 27, 2024
@@ -68,9 +68,7 @@ As we enter 2025, we will have to become more than a lab and a startup—we have
 We’ve learned to think of the mission as a [continuous objective](https://openai.com/index/planning-for-agi-and-beyond/) rather than just building any single system. The world is moving to build out a new infrastructure of energy, land use, chips, datacenters, data, AI models, and AI systems for the 21st century economy. We seek to evolve in order to take the next step in our mission, helping to build the AGI economy and ensuring it benefits humanity.
 
 
-## Author
 
-OpenAI
 
 
 ## Footnotes

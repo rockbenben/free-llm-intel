@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 9e59014ec146
+body_sha: 6ba302cc432e
 ---
 
 2025年11月26日
@@ -116,7 +116,3 @@ body_sha: 9e59014ec146
 - 如果你有任何问题、疑虑或安全问题，可通过 [mixpanelincident@openai.com⁠](mailto:mixpanelincident@openai.com) 联系我们的支持团队。
 
 - [2025 年](https://openai.com/news/?tags=2025)
-
-## 作者
-
-OpenAI

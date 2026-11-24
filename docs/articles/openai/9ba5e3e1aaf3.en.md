@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ba663d919e8f
+body_sha: 43da8b6b41e9
 ---
 
 April 7, 2025
@@ -93,7 +93,3 @@ Building a successful business still relies on understanding your customer and s
 It’s about finding the right problem to solve and ensuring there’s a real customer base that will benefit from your solution. Ultimately, passion and persistence are just as important as the technology you use.
 
 *Canva uses OpenAI’s APIs to build parts of Magic Studio, a suite of AI products which make it easy to turn words, visuals, and ideas into extraordinary designs. **Canva also uses ChatGPT Enterprise across the company.** OpenAI and Canva are working together to make design innovation accessible to all.*
-
-## Authors
-
-OpenAI

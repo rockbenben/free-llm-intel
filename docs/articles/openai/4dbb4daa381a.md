@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 4d012b8e6be2
+body_sha: 2cc92af4a52f
 ---
 
 2026年6月9日
@@ -34,8 +34,3 @@ body_sha: 4d012b8e6be2
 - 搭建对话平台：将于 5 月在华盛顿特区的 OpenAI 工作坊 (OpenAI Workshop) 组织专题讨论
 
 点击[此处](http://cdn.openai.com/pdf/561e7512-253e-424b-9734-ef4098440601/Industrial%20Policy%20for%20the%20Intelligence%20Age.pdf)阅读政策构想全文。
-
-
-## 作者
-
-OpenAI

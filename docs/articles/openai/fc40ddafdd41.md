@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: cdac2814a225
+body_sha: 79be8127ae67
 ---
 
 2026年9月3日
@@ -66,8 +66,3 @@ MS-ISAC 为数千家公共部门组织提供网络威胁情报、事件响应支
 这不仅意味着提供高能力模型的使用权限。还意味着帮助供水机构、社区银行、医疗系统和地方政府等一线防御者发现漏洞、将漏洞转化为经过测试的修复方案，并保护他们服务的人群。Daybreak 前线防御者计划体现了我们的承诺：将这种能力交到最需要它的一线防御者手中。我们的目标是利用前沿 AI，让美国人依赖的系统更难被攻击、更容易修复。
 
 符合条件的州和地方政府、关键基础设施运营商、非营利组织、[开源项目](https://openai.com/index/patch-the-planet/)维护者及支持机构，可访问 [Daybreak 网站](https://openai.com/daybreak/)，进一步了解使用权限、技术协助、培训及其他网络防御支持。
-
-
-## 作者
-
-OpenAI

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 5558cc48da15
+body_sha: 057c6696f442
 ---
 
 2025年7月11日
@@ -92,7 +92,3 @@ OpenAI 致力于为实现欧洲大陆的人工智能目标贡献力量；从今�
 这些工作共同推动了行业安全标准的制定，也为形成切实可行的《行为准则》提供了重要参考。我们将继续迭代改进安全方法，确保无论身处世界何地，每个人都能以负责任的方式使用我们的技术并从中受益。
 
 - [2025 年](https://openai.com/news/?tags=2025)
-
-## 作者
-
-OpenAI

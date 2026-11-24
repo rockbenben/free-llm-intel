@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c671412ee5c8
+body_sha: fb5267bc3041
 ---
 
 2026年4月23日
@@ -279,7 +279,3 @@ Git repo, journal, plan (Markdown files)
 | ARC-AGI-2 (Verified) | 85.0% | 73.3% | - | 83.3% | 75.8% | 77.1% |
 
 - [2026 年](https://openai.com/news/?tags=2026)
-
-## 作者
-
-OpenAI

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8970993c1c8a
+body_sha: c74736312671
 ---
 
 October 1, 2024
@@ -66,8 +66,3 @@ Throughout this investigation, our security teams leveraged ChatGPT to analyze, 
 ## Impact
 
 In line with what we observed in our first threat report, the operators’ use of our models did not appear to provide them with novel capabilities or directions that they could not otherwise have obtained from multiple publicly available resources. Our security mechanisms blocked the malicious adversary emails before they reached employee inboxes.
-
-
-## Author
-
-OpenAI

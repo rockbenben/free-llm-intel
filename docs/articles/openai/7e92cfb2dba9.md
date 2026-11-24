@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 00bf07ade00a
+body_sha: d6b751b9c1a3
 ---
 
 2026年1月16日
@@ -54,7 +54,3 @@ ChatGPT Pro 将继续提供我们最强大模型 GPT‑5.2 Pro 的完整使用�
 要比较不同套餐及其包含内容，请前往 [chatgpt.com/pricing](https://chatgpt.com/pricing)。
 
 - [2026 年](https://openai.com/news/?tags=2026)
-
-## 作者
-
-OpenAI

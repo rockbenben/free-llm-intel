@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 3e16c72e7156
+body_sha: 590f068d4c40
 ---
 
 2026年4月2日
@@ -38,8 +38,3 @@ body_sha: 3e16c72e7156
 Notion、Ramp、Braintrust 以及 Wasmer 等公司的团队已经在利用 Codex 加速其工程工作流。在这些团队中，Codex 提供了更快的执行速度、更具可重复性的工作流，并为从个人 AI 实验向全面落地的转型铺平了道路。
 
 *1**如需详细了解优惠条款与条件，请点击*[*此处*](https://help.openai.com/en/articles/20001150)*。*
-
-
-## 作者
-
-OpenAI

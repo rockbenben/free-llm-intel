@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 9de98dcb511c
+body_sha: 3c511c6d7957
 ---
 
 2026年2月27日
@@ -54,8 +54,3 @@ OpenAI 与 AWS 正在将其[现有的 380 亿美元多年期协议⁠](https://o
 ## 可用于支持 Amazon 面向客户应用的定制模型
 
 OpenAI 与亚马逊将合作开发定制化模型，供亚马逊开发者用于赋能各项面向客户的应用。亚马逊团队将能够针对直接服务客户的 AI 产品与智能体对 OpenAI 模型进行灵活调优。这些功能将与亚马逊开发者现有的模型资源（包括 Amazon Nova 系列）形成互补，为团队大规模构建与交付产品提供又一利器。
-
-
-## 作者
-
-OpenAI

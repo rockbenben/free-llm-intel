@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 634c1ecd2c83
+body_sha: f3ac9e391ce5
 ---
 
 2026年9月8日
@@ -130,8 +130,3 @@ Jamie Umpherson，Runway 首席创意官
 所有层级的 ChatGPT、ChatGPT 工作和 Codex 用户现均可在桌面端、移动端和网页端使用图像 2.5。
 
 GPT‑Image‑2.5 Sunburst 和 GPT‑Image‑2.5 Flare 已在 API 中提供，[定价详情请见此处。⁠](https://openai.com/business/pricing/#api)
-
-
-## 作者
-
-OpenAI

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e502c883c526
+body_sha: 13b2c96c010a
 ---
 
 2026年8月10日
@@ -69,8 +69,3 @@ body_sha: e502c883c526
 部分报名客户还可能获选提前体验，在正式推出前率先使用。
 
 如果你不是工作空间所有者，请将此优惠分享给负责管理 ChatGPT Business 账户的人员。优惠活动将于 8 月 20 日结束，请立即报名。有关活动方式和资格条件的更多信息，请参阅[帮助中心文章](https://help.openai.com/articles/20001420)。
-
-
-## 作者
-
-OpenAI

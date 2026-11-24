@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a76741732f0b
+body_sha: 9c0ec4ecfc1c
 ---
 
 February 1, 2026
@@ -61,8 +61,3 @@ Some of the Russian-language accounts also asked ChatGPT to help generate promot
 Like many of the IO we have described in earlier threat reports, this operation’s activity seemed designed to create the appearance of online engagement, rather than actually achieving it. The Facebook Pages typically had a few hundred followers. Typical Facebook posts received single- digit engagements. However, some of the operation’s articles appear to have been published by regional news outlets in Argentina; we are not able to independently confirm how the articles were submitted and accepted. 
 
 Using the IO impact [Breakout Scale](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/), which rates IO on a scale of 1 (lowest) to 6 (highest), we would assess this as being towards the low end of Category 4 (breakout to mainstream media), based on the placement of some of its news articles in Argentinian news sites.
-
-
-## Author
-
-OpenAI

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 39c898b50c12
+body_sha: b546a180703b
 ---
 
 2025年9月15日
@@ -103,8 +103,3 @@ Business plans can purchase credits to enable developers to go beyond their incl
 For developers using Codex CLI via API key, we plan to make GPT‑5‑Codex available in the API soon.
 
 Codex is becoming the coding partner we’ve always envisioned—one that’s faster, more reliable, and deeply integrated into the tools you already use. We’re excited to see what you build with it and will keep improving Codex to make it an even better teammate for your most ambitious projects.
-
-
-## 作者
-
-OpenAI

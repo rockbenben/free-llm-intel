@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a3f690190f57
+body_sha: bb4cd78905f6
 ---
 
 2025年10月1日
@@ -52,8 +52,3 @@ OpenAI 封禁了利用 AI 辅助恶意软件开发、调试、网络钓鱼和凭
 ## 影响
 
 我们停用了与此次行动有关的所有账户，并与合作伙伴分享了相关指标。我们没有发现证据表明，访问模型让这些行动者获得了超出公开可用技术范围的新能力。
-
-
-## 作者
-
-OpenAI

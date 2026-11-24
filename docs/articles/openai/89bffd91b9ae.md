@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: e3d667ccd610
+body_sha: 36e78b90c15c
 ---
 
 May 23, 2025
@@ -31,8 +31,3 @@ Read the System Card
 o3 Operator 使用与 4o 版 Operator 相同的多层安全方法，我们在最初的 [Operator 系统卡](https://cdn.openai.com/operator_system_card.pdf) 中描述过这套方法。与 o3 系列的其他模型相比，o3 Operator 针对计算机使用场景用额外的安全数据做了微调，包括专门设计用来让模型学习我们在确认与拒绝上决策边界的的安全数据集。
 
 虽然 o3 Operator 继承了 o3 的编程能力，但它没有原生访问编程环境或终端（Terminal）的权限。
-
-
-## 作者
-
-OpenAI

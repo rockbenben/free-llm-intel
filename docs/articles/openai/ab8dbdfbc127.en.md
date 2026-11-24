@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ae48ce58d2c7
+body_sha: 5218975e510c
 ---
 
 June 5, 2019
@@ -48,8 +48,3 @@ We were extremely pleased with the outcome of the event—this was an experiment
 If you would like to help us do research on robots that learn, please get in touch! [We’re hiring⁠](https://openai.com/careers/).
 
 *Thanks to Loren Kwan, Diane Yoon, and Maddie Hall for co-organizing the event, to all the OpenAI staff volunteers, and to Blake Tucker for filming and photography.*
-
-
-## Author
-
-OpenAI
