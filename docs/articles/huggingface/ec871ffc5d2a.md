@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ff51401cb6c8
+body_sha: 71384a8b1dc0
 translator: agent
 ---
 
@@ -18,17 +18,6 @@ translator: agent
 
 发布于
 					2025 年 9 月 9 日
-
-在 GitHub 上更新
-
-
-
-- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
-- [![](https://huggingface.co/avatars/16c289ac2f322e0816d6d5991b618254.svg)](https://huggingface.co/Francois2511)
-- [![](https://huggingface.co/avatars/3648c03f5b5f40cd208d46fd3b582739.svg)](https://huggingface.co/bogdanminko)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png)](https://huggingface.co/Stars321123)
-- [![](https://huggingface.co/avatars/6aad4ae2b795578e37fd3723879bff85.svg)](https://huggingface.co/Jyo-K)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65bd78aeb7db0ab095469e31/jj3kMgx_snMK3AOoJwRwr.jpeg)](https://huggingface.co/Ihssane123)
 
 Marc Marone
 
@@ -733,7 +722,6 @@ StephennFernandes
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6362d9712691058b19de1ba4/Hdqj5aGrFJJbF7oUSzoIh.jpeg)](https://huggingface.co/orionweller)
 
-
 orionweller
 
 本文作者
@@ -746,7 +734,6 @@ deleted
 
 2025 年 10 月 31 日
 
-
 此评论已被隐藏
 
 将文件拖入文本输入框、粘贴，或
@@ -758,21 +745,6 @@ deleted
 点击或粘贴此处上传图片
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fmmbert)或[登录](https://huggingface.co/login?next=%2Fblog%2Fmmbert)发表评论
-
-
-
-- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
-- [![](https://huggingface.co/avatars/16c289ac2f322e0816d6d5991b618254.svg)](https://huggingface.co/Francois2511)
-- [![](https://huggingface.co/avatars/3648c03f5b5f40cd208d46fd3b582739.svg)](https://huggingface.co/bogdanminko)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png)](https://huggingface.co/Stars321123)
-- [![](https://huggingface.co/avatars/6aad4ae2b795578e37fd3723879bff85.svg)](https://huggingface.co/Jyo-K)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65bd78aeb7db0ab095469e31/jj3kMgx_snMK3AOoJwRwr.jpeg)](https://huggingface.co/Ihssane123)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b999a40b24527e9c25583a/xFHCewJdf5EGn8qDPypqy.jpeg)](https://huggingface.co/DavidGF)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/60f2fc91b92afccb7c34b8ed/W2-Nay12Ef4Ltyaf8EKE9.jpeg)](https://huggingface.co/gabrielmbmb)
-- [![](https://huggingface.co/avatars/7a4067accdd1005f78c3c4adad3ee0a5.svg)](https://huggingface.co/Samoed)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/R4llnPAHwhLW99wL9AL_M.png)](https://huggingface.co/zl369)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/646264832538819c729e32ba/MVxNj8FCQzyDEcBuUvivo.jpeg)](https://huggingface.co/adaamko)
 
 ## 文中提到的模型 3
 

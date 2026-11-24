@@ -9,7 +9,7 @@ captured: 2026-11-21
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 1a902f3fb555
+body_sha: 42ca39dafd7d
 ---
 
 # DeepInfra 与 Opper AI 合作：Opper 网关接入 100+ 模型
@@ -101,11 +101,3 @@ DeepInfra 是一家推理云，2022 年成立，总部位于加利福尼亚州�
 Opper AI 是面向 agent 的欧洲 AI 网关，总部在斯德哥尔摩。它通过一个托管于欧盟、符合 GDPR 的 API 让开发者访问 700 多个领先 AI 模型，按用量付费，并提供支出上限、模型白名单、零数据保留和完整的 OpenAI SDK 兼容。
 
 相关文章
-
-[![GLM-5.3 现已在 DeepInfra 上线](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-deepinfra.png)](https://deepinfra.com/blog/glm-5-3-deepinfra)[GLM-5.3 现已在 DeepInfra 上线](https://deepinfra.com/blog/glm-5-3-deepinfra)<p>GLM-5.3 与 GLM-5.2 共享基础模型，因此每一项性能提升都来自后训练。Z.ai 扩展了已有的强化学习栈，并于 2026 年 8 月 14 日发布成果。GLM-5.3 是一款推理模型，面向复杂软件工程和长周期 agentic 任务。在 Z.ai 内部的 Code Bench 上，它比 GLM-5.2 提升 50%，[&hellip;]</p>
-
-[![推出 GPU Instances：面向 AI 工作负载的按需 GPU 算力](https://deepinfra.com/blog/gpu-instances.jpg)](https://deepinfra.com/blog/gpu-instances)[推出 GPU Instances：面向 AI 工作负载的按需 GPU 算力](https://deepinfra.com/blog/gpu-instances)用我们全新的 GPU Instances 功能，几分钟内就能启动专用 GPU 容器，为机器学习训练、推理和计算密集型工作负载而设计。
-
-[![DeepInfra 上线 NVIDIA Nemotron 模型，覆盖视觉、检索和 AI 安全](https://deepinfra.com/blog/nvidia-deepinfra-logos.png)](https://deepinfra.com/blog/nvidia-nemotron-release)[DeepInfra 上线 NVIDIA Nemotron 模型，覆盖视觉、检索和 AI 安全](https://deepinfra.com/blog/nvidia-nemotron-release)DeepInfra 从发布首日就提供全新的开放 NVIDIA Nemotron 视觉语言与 OCR AI 模型。作为专注于性能与成本效率的领先推理提供商，我们以业界最优价格提供这些前沿模型，让开发者在不牺牲预算或性能的前提下构建专用 AI agent。
-
-[查看全部](https://deepinfra.com/blog)

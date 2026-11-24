@@ -9,25 +9,15 @@ captured: 2026-11-07
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 8e7188d109e5
+body_sha: cd44ba8f282b
 ---
 
-[ 返回文章](https://huggingface.co/blog)
 
 # ToyBlocks：用于机器人学习与评估的受控世界
 
 Enterprise  Article
 
 发布于 2026 年 11 月 6 日
-
-
-5
-
-- [![](https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg)](https://huggingface.co/wookute221)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/XcLxZc6CL6VO7tOlh0T0g.jpeg)](https://huggingface.co/SmokeyPete)
-- [![](https://huggingface.co/avatars/35af30f8a3713e3eda81ac4b9be515f5.svg)](https://huggingface.co/arahul2k2)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/DPzSLPCg9RvVBvkD3Mcys.png)](https://huggingface.co/rapidum)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67953e11098348e24ae7f316/ZNT-1c2NOyhugYrzK5Vyf.png)](https://huggingface.co/sebast242)
 
 [![Kyle Wiggers 的头像](https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg)](https://huggingface.co/Ai2Comms)
 
@@ -226,15 +216,6 @@ selona 我很喜欢这个概念，我很想看看实际应用，我们如何将 
 点击或粘贴此处上传图像
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fallenai%2Ftoyblocks) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fallenai%2Ftoyblocks) 发表评论
-
-
-5
-
-- [![](https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg)](https://huggingface.co/wookute221)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/XcLxZc6CL6VO7tOlh0T0g.jpeg)](https://huggingface.co/SmokeyPete)
-- [![](https://huggingface.co/avatars/35af30f8a3713e3eda81ac4b9be515f5.svg)](https://huggingface.co/arahul2k2)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/DPzSLPCg9RvVBvkD3Mcys.png)](https://huggingface.co/rapidum)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67953e11098348e24ae7f316/ZNT-1c2NOyhugYrzK5Vyf.png)](https://huggingface.co/sebast242)
 
 ## 本文提及的模型 2
 

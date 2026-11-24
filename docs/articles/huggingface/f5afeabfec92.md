@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d0116467447e
+body_sha: d0872f5896bb
 translator: agent
 ---
 
@@ -18,17 +18,6 @@ translator: agent
 
 发布于
 					2026 年 4 月 16 日
-
-在 GitHub 上更新
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6893dd21467f7d2f5f358a95/3buD-PC8cvzsS__NJjdUi.png)](https://huggingface.co/thebajajra)
-- [![](https://huggingface.co/avatars/deae4af8cb134089d466d96f5d862da1.svg)](https://huggingface.co/anujga)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65a42052215aabac48f513b4/UtU4yfvJs0OGthiOId9H8.png)](https://huggingface.co/ai-queen)
-- [![](https://huggingface.co/avatars/bd43aa76894e7304103728e8692e37e2.svg)](https://huggingface.co/pragashglance)
-- [![](https://huggingface.co/avatars/a00d1376510799f27db0ac52dfeb156b.svg)](https://huggingface.co/Cosec)
-- [![](https://huggingface.co/avatars/7d56e339d7a1ac1f157ab1ee2516dbcf.svg)](https://huggingface.co/Devashish1110)
 
 Rahul Bajaj
 
@@ -319,36 +308,3 @@ training
 112
 
 2026 年 2 月 20 日
-
-### 社区
-
-将文件拖入文本输入框、粘贴，或
-
-点击此处
-
-，即可上传图像、音频和视频。
-
-点击或粘贴此处上传图片
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fecom-rlve)或[登录](https://huggingface.co/login?next=%2Fblog%2Fecom-rlve)发表评论
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6893dd21467f7d2f5f358a95/3buD-PC8cvzsS__NJjdUi.png)](https://huggingface.co/thebajajra)
-- [![](https://huggingface.co/avatars/deae4af8cb134089d466d96f5d862da1.svg)](https://huggingface.co/anujga)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65a42052215aabac48f513b4/UtU4yfvJs0OGthiOId9H8.png)](https://huggingface.co/ai-queen)
-- [![](https://huggingface.co/avatars/bd43aa76894e7304103728e8692e37e2.svg)](https://huggingface.co/pragashglance)
-- [![](https://huggingface.co/avatars/a00d1376510799f27db0ac52dfeb156b.svg)](https://huggingface.co/Cosec)
-- [![](https://huggingface.co/avatars/7d56e339d7a1ac1f157ab1ee2516dbcf.svg)](https://huggingface.co/Devashish1110)
-- [![](https://huggingface.co/avatars/f92e1804a7dbe0ca13779986ac761f05.svg)](https://huggingface.co/soubhikbiswas)
-- [![](https://huggingface.co/avatars/35a75cb1abdd05d3dd6e255228a5c63c.svg)](https://huggingface.co/zbigniev)
-- [![](https://huggingface.co/avatars/d4e380923631cc183df3af0394b26faa.svg)](https://huggingface.co/AnubhavGupta)
-- [![](https://huggingface.co/avatars/458e22cb7e499d79fc3030ac2a519efc.svg)](https://huggingface.co/amoghbatwal)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
-- [![](https://huggingface.co/avatars/ce331328f1abfb7da57f5fdd3c197362.svg)](https://huggingface.co/harshavardhangelivi)
-
-## 文中提到的数据集 1
-
-## 文中提到的 Spaces 1
-
-## 文中提到的 Collections 1

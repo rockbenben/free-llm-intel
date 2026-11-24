@@ -193,7 +193,42 @@ _FURN_ANYWHERE = {
     "阅读技术报告", "阅读报告", "查看报告", "查看完整报告",
     "Learn more", "Get started", "Read the report", "Subscribe",
     "公司规模:", "区域:", "行业:", "地区:", "受众:", "产品:",   # 值标签本体（值走 R3）
+    "在 GitHub 上更新", "Update on GitHub",   # Hugging Face 正文首屏的仓库 CTA（实测 90 篇）
 }
+
+# --- Hugging Face 系模板：readability 把整页的导航、投票者、侧栏、推荐区、评论区一起收了 ---
+# 这些不是「整行等于闭集标签」，各自有结构，所以单列规则（R12–R17）。
+_FURN_NAV_LINK_LABELS = {
+    "返回文章", "返回文章列表", "返回博客", "返回新闻", "返回首页", "查看全部", "View all",
+    "Back to Articles", "Back to Blog", "Back to Newsroom", "Back to Home",
+}
+#: 整行只有一个链接：`[返回文章列表](https://huggingface.co/blog)`
+_NAV_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
+#: 文章列表页路径（导航回链与「查看全部」指向的就是它）
+_LIST_PAGE_PATHS = {"", "/blog", "/news", "/articles", "/newsroom", "/blog/index.html"}
+#: 投票者头像项：`- [![](avatar)](https://huggingface.co/evijit)`。目标 path 只有一段
+#: （用户名），这一条把作者署名的 `[![X's avatar](img)](url)`（非列表项、alt 非空）挡在外面。
+_AVATAR_ITEM_RE = re.compile(r"^- \[!\[\]\(([^)]*)\)\]\(([^)]*)\)$")
+#: 侧栏计数标题：`## 本文提到的模型 4` / `## Models mentioned in this article 9`
+_SIDEBAR_HEAD_RE = re.compile(
+    r"^#{2,3}\s*(?:本文提到的[^\n]{0,24}?\d+"
+    r"|(?:Models|Datasets|Spaces|Papers|Collections?|Posts) mentioned in this article\s*\d*)\s*$")
+#: 文末推荐区标题（实测 7 种变体、45 篇）。刻意不收「更多文章」「查看更多文章」这种宽泛词。
+_MORE_HEAD_RE = re.compile(
+    r"^#{0,3}\s*(?:来自我们博客的更多文章|更多来自该作者|博客里的更多文章"
+    r"|来自该作者的更多文章|该作者的其他文章"
+    r"|More Articles from our Blog|More from this author|More articles from this author"
+    r"|More from the author)\s*$")
+#: 评论区标题。**光有标题不能删**：正文里也有讲社区活动的小节（实测 5 篇），
+#: 必须同时有评论 UI 指纹。
+_COMMUNITY_HEAD_RE = re.compile(r"^#{2,3}\s*(?:社区|Community)\s*$")
+_COMMENT_UI_RE = re.compile(
+    r"(?:上传图片|发表评论|Sign up|log in to comment|to comment|Upload images"
+    r"|拖入文本输入框|小时前|hours? ago|该评论已被隐藏|This comment has been hidden)", re.I)
+#: 作者段落标题。这一段里的头像行形态与推荐卡相同，但它是署名，必须留（AGENTS.md）。
+_AUTHOR_HEAD_RE = re.compile(
+    r"^#{2,6}\s*(?:关于作者|作者简介|作者介绍|About the author|About the authors"
+    r"|Author bio|About the team)\s*$", re.I)
 #: 只由「项目符号 / 间隔号 / 斜杠 / 不可见字符」组成的整行：零信息量
 #: （实测 `•` 478、`·` 428、`\u200b` 214、`⋅` 110、`/` 471 处）。
 #: **故意不含 `|` `-` `_` `\`**：`| --- | --- |` 是我们自己生成的表格分隔行，
@@ -319,6 +354,52 @@ def _brand_of(url: str) -> str:
     return host.split(".")[0] if host else ""
 
 
+def _host_of(url: str) -> str:
+    return (urlsplit(url).hostname or "").lower().removeprefix("www.")
+
+
+def _list_page_url(href: str, page_host: str) -> bool:
+    """`href` 是否指向本页 host 的**文章列表页**（导航回链、「查看全部」的目标）。
+
+    同 host 是硬闸：正文里的 `[查看全部](https://别的站/blog)` 不算站件。
+    """
+    if not page_host or _host_of(href) != page_host:
+        return False
+    path = (urlsplit(href).path or "").rstrip("/")
+    if path.endswith("/index.html"):
+        path = path[: -len("/index.html")]
+    return path in _LIST_PAGE_PATHS
+
+
+def _is_avatar_item(line: str) -> bool:
+    """投票者头像项：空 alt 的图片链接，且目标 path 只有一段（用户名）。
+
+    作者署名是 `[![Avijit Ghosh's avatar](…)](…)`——非列表项、alt 非空，天然不被匹配。
+    """
+    m = _AVATAR_ITEM_RE.match(line.strip())
+    if not m:
+        return False
+    if "avatar" not in m.group(1).lower():
+        return False
+    return len([x for x in urlsplit(m.group(2)).path.split("/") if x]) == 1
+
+
+def _has_prose_block(lines: Sequence[str], start: int, min_len: int = 40) -> bool:
+    """块内是否还夹着正文段落（长句带句末标点）。
+
+    推荐区、评论区只有标题、标签串、日期、用户名和短评论；出现长句就说明判据切到了正文，
+    宁可只删标题也不整块吞。阈值分开：推荐区用 40（中文 40 字已是完整句子），
+    评论区用 120（评论本身可能长，且有 UI 指纹兜着）。
+    """
+    for line in lines[start:]:
+        t = line.strip()
+        if not t or t.startswith(("#", "- [", "![")):
+            continue
+        if len(t) > min_len and re.search(r"[。！？]", t):
+            return True
+    return False
+
+
 def furniture_drops(lines, page_url: str = ""):
     """返回 {行号: 规则名}。行号按传入的 lines 计。
 
@@ -337,6 +418,18 @@ def furniture_drops(lines, page_url: str = ""):
         （如 "## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)"）。
         只在 H1 之前成立 —— 同一形状出现在正文里是正常的小标题链接（实测 3 处，如
         CloudWatch 日志条目），H1 之后一律不动。
+    R12 整行只有一个链接、显示文字在导航闭集里、且目标是**本页 host 的文章列表页**
+        （`[返回文章列表](https://huggingface.co/blog)`、`[查看全部](https://deepinfra.com/blog)`）。
+        「查看全部」若在文末收尾，上方连续的推荐卡片图一并带走（实测 deepinfra 34 篇）。
+    R14 投票者头像列表（连续 ≥2 项 `- [![](avatar)](https://host/用户名)`），以及紧贴它
+        上方的孤立计数行（点赞数）。作者署名是 `[![X's avatar](…)]`，形态不同，不在此列。
+    R15 空侧栏计数标题（`## 本文提到的模型 4`）：**只在其后没有内容时**删——下一非空行
+        必须是别的标题/站件锚点或直接到文末；真跟着列表就说明它在讲内容，留着。
+    R16 文末推荐区（`来自我们博客的更多文章` 等 7 种变体，45 篇）：标题到文末整块删。
+        块内夹着代码块或长句（`_has_prose_block`）时只删标题，不整块吞。
+    R17 评论区（`### 社区` / `### Community`）：**必须同时有评论 UI 指纹**
+        （上传控件、注册/登录发表评论、`X 小时前`…）。正文里讲社区活动的小节
+        （实测 5 篇）只靠标题匹配会误删，这道指纹闸把它们留住。
     """
     fenced, first_head = _fence_mask(lines)
     first_h1 = next((i for i, l in enumerate(lines)
@@ -456,6 +549,120 @@ def furniture_drops(lines, page_url: str = ""):
             for x in range(start, len(lines)):
                 drop.setdefault(x, "R9")
             break
+    # --- R12：导航回链 + 文末「查看全部」收尾的推荐卡 -------------------------
+    page_host = _host_of(page_url)
+    for i, l in enumerate(lines):
+        if i in fenced:
+            continue
+        m = _NAV_LINK_RE.fullmatch(l.strip())
+        if not m or m.group(1).strip() not in _FURN_NAV_LINK_LABELS:
+            continue
+        if not _list_page_url(m.group(2), page_host):
+            continue
+        drop[i] = "R12"
+        # 「查看全部」在文末收尾时，上方连续的推荐卡片一并带走（实测 deepinfra 34 篇）。
+        # 卡片未必是纯图片链接：这里常见 `[![缩略图](img)](url)[标题](url)<p>摘要</p>` 一行一张，
+        # 所以只要求行首是 `[![`，并要求整块每一行都满足——正文里的配图不会连着出现好几张。
+        # 只在它是最后一个非空行时触发，正文中间的同类 CTA 只删自己。
+        if [x for x in range(i + 1, len(lines)) if lines[x].strip()]:
+            continue
+        j, cards = i - 1, []
+        while j >= 0:
+            t = lines[j].strip()
+            if not t:
+                j -= 1
+                continue
+            if not t.startswith("[![") or "](" not in t:
+                break
+            cards.append(j)
+            j -= 1
+        for x in cards:
+            drop[x] = "R12"
+    # --- R12c：文末「图片 + 标题 + 摘要」推荐卡（WordPress 摘要，行内带 <p>）--------
+    # 这种卡片是一行一张（`[![图](img)](url)[标题](url)<p>摘要…</p>`）。收尾的「查看全部」
+    # 被删掉之后它们会变成孤儿，所以按文末指纹整块收掉。
+    # 判据分两档：文末**连续 ≥2 张**（正文不会以连排的可点击配图收尾），
+    # 或单张但带 `<p>` 摘要（摘要卡不是正文）。实测 deepinfra 35 篇命中。
+    tail = [i for i, l in enumerate(lines) if i not in fenced and lines[i].strip()]
+    cards = []
+    for i in reversed(tail):
+        t = lines[i].strip()
+        if t.startswith("[![") and "](" in t:
+            cards.append(i)
+            continue
+        break
+    if len(cards) >= 2 or (cards and "<p>" in lines[cards[0]]):
+        # 作者段落也是「一行一张头像 + 简介」，形态与推荐卡一模一样：往上找**最近的标题**，
+        # 凡是「关于作者 / 作者简介 / About the author」标题，整块留着（AWS 博客实测 28 篇、
+        # 最多 13 张头像会被这条误吞）。不能只看紧邻行——作者行有的以 `**[![` 开头，
+        # 会让「连续卡片」在段落中间断开，紧邻行就只是另一位作者而已。
+        k = min(cards) - 1
+        while k >= 0 and not _HEAD_RE.match(lines[k].strip()):
+            k -= 1
+        if not (k >= 0 and _AUTHOR_HEAD_RE.match(lines[k].strip())):
+            for x in cards:
+                drop[x] = "R12"
+    # --- R14：投票者头像列表（连续 ≥2 项）+ 紧贴它的孤立计数 ----------------
+    i = 0
+    while i < len(lines):
+        if i in fenced or not _is_avatar_item(lines[i]):
+            i += 1
+            continue
+        block, j = [], i
+        while j < len(lines) and j not in fenced and _is_avatar_item(lines[j]):
+            block.append(j)
+            j += 1
+        if len(block) < 2:                 # 孤零零一项多半是正文里的图，不动
+            i = j
+            continue
+        for x in block:
+            drop[x] = "R14"
+        k = block[0] - 1                   # 点赞数只认「紧贴头像列表」这一种位置
+        while k >= 0 and not lines[k].strip():
+            k -= 1
+        if k >= 0 and k not in fenced and re.fullmatch(r"\d{1,6}", lines[k].strip()):
+            drop[k] = "R14"
+        i = j
+    # --- R15：空侧栏计数标题（`## 本文提到的模型 4`）-----------------------
+    # 判据是「后面没有内容」：下一非空行只能是别的标题/站件锚点，或直接到文末。
+    # 侧栏之后若真跟着列表，说明它在讲内容，留着。
+    for i, l in enumerate(lines):
+        if i in fenced or not _SIDEBAR_HEAD_RE.match(l.strip()):
+            continue
+        nxt = next((x for x in range(i + 1, len(lines)) if lines[x].strip()), None)
+        if nxt is None:
+            drop[i] = "R15"
+            continue
+        if nxt in fenced:
+            continue
+        t = lines[nxt].strip()
+        if (_HEAD_RE.match(t) or _MORE_HEAD_RE.match(t)
+                or _COMMUNITY_HEAD_RE.match(t) or _SIDEBAR_HEAD_RE.match(t)):
+            drop[i] = "R15"
+    # --- R16：文末推荐区（标题 + 卡片 + 标签串，到文末）---------------------
+    for i, l in enumerate(lines):
+        if i in fenced or not _MORE_HEAD_RE.match(l.strip()):
+            continue
+        if any(x in fenced for x in range(i, len(lines))) or _has_prose_block(lines, i):
+            drop[i] = "R16"               # 块里夹着正文/代码：只删标题
+            continue
+        for x in range(i, len(lines)):
+            if lines[x].strip():
+                drop[x] = "R16"
+    # --- R17：评论区（标题 + 评论 UI 指纹，到文末）--------------------------
+    community = [i for i, l in enumerate(lines)
+                 if i not in fenced and _COMMUNITY_HEAD_RE.match(l.strip())]
+    for k in reversed(community):
+        if any(x in fenced for x in range(k, len(lines))):
+            continue
+        if not _COMMENT_UI_RE.search("\n".join(lines[k:])):
+            continue                      # 正文里讲社区的小节（实测 5 篇）靠这一闸留住
+        if _has_prose_block(lines, k, min_len=120):
+            continue
+        for x in range(k, len(lines)):
+            if lines[x].strip():
+                drop[x] = "R17"
+        break
     return drop
 
 
@@ -518,6 +725,31 @@ def strip_inline_junk(body: str, page_url: str = "") -> str:
                      for i, l in enumerate(lines))
 
 
+def _collapse_blank_runs(lines: Sequence[str]) -> list[str]:
+    """删完家具后把连续空行压成一个（围栏内部原样保留）。
+
+    不压的话，文末整块删除会留下几十个空行；只在**本轮确有删除**时调用，
+    没命中站件的正文一个字都不动。
+    """
+    fenced, _ = _fence_mask(lines)
+    out: list[str] = []
+    blanks = 0
+    for i, line in enumerate(lines):
+        if i in fenced:
+            out.append(line)
+            blanks = 0
+            continue
+        if not line.strip():
+            blanks += 1
+            if blanks > 1:
+                continue
+            out.append("")
+            continue
+        blanks = 0
+        out.append(line)
+    return out
+
+
 def strip_page_furniture(body: str, page_url: str = "") -> str:
     """整行页面家具 + 串级噪声，一次洗全。**中英两侧的落盘口都走它**。
 
@@ -527,8 +759,9 @@ def strip_page_furniture(body: str, page_url: str = "") -> str:
     lines = (body or "").split("\n")
     drop = furniture_drops(lines, page_url)
     if drop:
-        # 删的都是非栅栏行，栅栏奇偶不受影响；剩下的交给串级那一趟
-        body = "\n".join(l for i, l in enumerate(lines) if i not in drop)
+        # 删的都是非栅栏行，栅栏奇偶不受影响；删完再压空行，剩下的交给串级那一趟
+        kept = [l for i, l in enumerate(lines) if i not in drop]
+        body = "\n".join(_collapse_blank_runs(kept))
     return strip_inline_junk(body, page_url)
 
 

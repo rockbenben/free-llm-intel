@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 3e9930fdc6fe
+body_sha: 2c1a1d77275d
 ---
 
 # 度量语音识别中的基准优化
@@ -171,50 +171,3 @@ benchmark
 34
 
 2026 年 7 月 15 日
-
-### 社区
-
-Abc-123-Xy
-
-Aug 22
-
-nice
-
-CA111AKO111MAP
-
-Aug 22
-
-nice paper
-
-将文件拖入文本输入框、粘贴，或
-
-点击此处
-
-，即可上传图像、音频和视频。
-
-点击或粘贴此处上传图片
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fasr-benchmark-optimization)或[登录](https://huggingface.co/login?next=%2Fblog%2Fasr-benchmark-optimization)发表评论
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)](https://huggingface.co/bezzam)
-- [![](https://huggingface.co/avatars/a7a92c5f9e01577dd7bcebe5a345f2f7.svg)](https://huggingface.co/aliceebaird)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/r6F20gfbuflBGbpmMZ7e7.png)](https://huggingface.co/sharath25)
-- [![](https://huggingface.co/avatars/b920256b1688b73ce1b889ac53594110.svg)](https://huggingface.co/tlebryk02)
-- [![](https://huggingface.co/avatars/821e66bd12e82026f786d0a1eef9811d.svg)](https://huggingface.co/aluko26)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/697299e19695fae39c520649/y3-bbcHl-iTO1fwKurxkB.jpeg)](https://huggingface.co/0bserverx)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/AIasly97s2SiP4-4MSPDA.png)](https://huggingface.co/meharpsingh)
-- [![](https://huggingface.co/avatars/d0010ed32ae04727528ce0b500a1a8f5.svg)](https://huggingface.co/out51der)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/3rZ01yvs5yE0WzxsYFkXP.png)](https://huggingface.co/lalzuai)
-- [![](https://huggingface.co/avatars/30c19d48a1c5e20462eed58884908b2b.svg)](https://huggingface.co/myian0211)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a30495b901a5b1643c876f2/gUbDd5mrUJXM1WLXp9444.jpeg)](https://huggingface.co/Aditya172003)
-- [![](https://huggingface.co/avatars/1723bf6d3e639abec11d7361574eca96.svg)](https://huggingface.co/zahrarabiee)
-
-## 文中提到的模型 10
-
-## 文中提到的数据集 3
-
-## 文中提到的 Spaces 3
-
-## 文中提到的论文 1

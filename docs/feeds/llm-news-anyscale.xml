@@ -3015,22 +3015,7 @@ ds = ds.map_batches(
 <p>这给每个 node 上能跑多少个提取 actor 划定了明确的放置额度。GPU node 上的 CPU 提取最多占 2 个 CPU，另外 2 个 CPU 留给 GPU actor。它比标签更灵活 – GPU node 仍可在有上限的范围内分担一部分提取工作。</p>
 <h3>关键要点</h3>
 <p>这个 bug 格外棘手的地方在于，孤立地看，没有一处有问题：管道代码没错，集群总资源充足，每一项配置单独看都合理。问题只从 actor 放置、每个 actor 申请的 CPU、以及 GPU node 有限的 CPU 容量这三者的相互作用里冒出来——这正是那类没有趁手的可观测性工具就几乎无法诊断的系统性问题。</p>
-<p>Anyscale Dashboard 让事后调试不仅可行，而且有章可循。Data dashboard 指出嵌入阶段是何时空转的，Task 和 Actor Dashboard 解释了它为何停滞将近一个小时，Cluster dashboard 则精准定位了那些 CPU slot 的去向。关键在于，这一整套分析在集群已经关闭之后依然可做，不必从头复现问题。</p>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#introducing-cluster-and-actor-dashboards">介绍 Cluster and Actor Dashboards</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#debugging-a-ray-data-embeddings-pipeline-end-to-end">端到端调试一条 Ray Data 嵌入管道</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#the-pipeline">这条管道</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#step-1:-data-dashboard---when-did-the-pipeline-actually-produce-output?">第 1 步：Data Dashboard - 管道到底什么时候才真正产出输出？</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#step-2:-task-dashboard---why-is-there-no-embedding-progress?">第 2 步：Task Dashboard - 为什么嵌入毫无进展？</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#step-3:-actor-dashboard---why-was-the-embedding-actor-delayed?">第 3 步：Actor Dashboard - 嵌入 actor 为什么被延迟？</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#step-4:-cluster-dashboard---where-did-the-cpu-slots-go?">第 4 步：Cluster Dashboard - CPU slot 去哪儿了？</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#the-fix">修复方案</a></li><li><a href="https://www.anyscale.com/blog/monitor-and-debug-with-cluster-and-actor-dashboard#key-takeaway">关键要点</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnfGrZlZyKRBMsd2jSreK/05b0b3cd8d2c9ad962448365782fb980/Lila_x_SkyRL.png?w=140" alt="Lila x SkyRL"></p>
-<h4>Lila Sciences 与 Anyscale 如何把 GLM-5.3-Flash 训练扩展到 1M token</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/3uRWLXRJv2sisfuH1UpkBg/7ffa981a092ba41c591b03ef933976bf/kuberay-production-best-practices-field.png?w=140" alt="kuberay-production-best-practices-field"></p>
-<h4>生产环境中的 KubeRay：一线最佳实践</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 在 Google TPU 上支持 PyTorch"></p>
-<h4>宣布 Ray 在 Google TPU 上支持 PyTorch</h4>
-<h2>立即探索 Anyscale</h2>
-<p>用专为生产级 AI 打造的多云平台，在 Ray 上构建、运行并扩展任意 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
+<p>Anyscale Dashboard 让事后调试不仅可行，而且有章可循。Data dashboard 指出嵌入阶段是何时空转的，Task 和 Actor Dashboard 解释了它为何停滞将近一个小时，Cluster dashboard 则精准定位了那些 CPU slot 的去向。关键在于，这一整套分析在集群已经关闭之后依然可做，不必从头复现问题。</p>]]></content:encoded>
     </item>
     <item>
       <title>SkyRL 引入视觉语言强化学习</title>

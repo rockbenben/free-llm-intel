@@ -104,8 +104,7 @@ compiled =
 <ul><li>每张图都是标注的 Deepseek v4.1 或 Kimi K3.1，8 个 vCPU。</li><li>ChatTokenizer、SGLang gateway、Baseten（basetenkenizer 0.2.9）、NVIDIA Dynamo 和 HF transformers 在同一台机器上依次运行。</li><li>vLLM 和 SGLang 测的是它们自己的进程内请求预处理，在另一个 CoreWeave 区域的独立会话中进行。</li><li>vllm-rs 没有进程内模式，所以在 256 个并发客户端下通过 HTTP 测量，包含了其他库不必承担的 HTTP 开销。</li><li>我们的实现在 100% 的请求上与 vLLM 的 ID 一致。其他库的例外：SGLang gateway 在约 140 token 时匹配 98%，约 1.4K 时 87%，约 8K 时 16%，约 1M 时 0%（它跳过图像展开）；Baseten 和 HF transformers 在约 8K 时 96%；NVIDIA Dynamo 在约 8K 时 73%。其余全部 100% 一致。不匹配的请求仍计入其吞吐量。</li><li>在 Kimi K3.1 上，“Baseten”指他们的生产 K3 路径（模型的 Python renderer 加上 basetenkenizer 的 encoder），因为单靠那个 Rust 库渲染不了 Kimi 的 chat。NVIDIA Dynamo 加载不了 Kimi K3.1，HF transformers 则为它渲染了错误的 prompt（它忽略了 <code>reasoning_effort</code>）。</li><li>HF transformers 指 Python 的 <code>apply_chat_template</code> 之后接分词。</li><li>所有图都用线性刻度。数值跨越多个数量级时，每个 prompt 大小（或引擎）各有自己的轴，所以只在同一面板内比较柱高，不要跨面板比。</li></ul>
 <h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#appendix-2-vllm-and-sglang-tokenization-speedups">#</a>附录 2：vLLM 和 SGLang 的分词加速</h2>
 <p>标题里的 120 倍，是 Deepseek v4.1 在约 1M token、带 8 张内联图像时的数据：我们的分词器做到 162 req/s，而 vLLM 自己的预处理只有 1.35 req/s。下面列出两个模型上的所有 prompt 尺寸，方便你看到完整区间。所有数字都是 8 个 vCPU、进程内、使用上述版本的 vLLM 和 SGLang 自身请求预处理（chat 模板渲染加分词）下的 req/s。每个尺寸上，我们比 vLLM 快 61-181 倍，比 SGLang 快 53-112 倍，大多数尺寸落在 90-120 倍附近。</p>
-<p><img src="https://inference.net/assets/speedups-table-mlKXSjdo.png" alt="表格：ChatTokenizer、vLLM 和 SGLang 在 DeepSeek v4.1 和 Kimi K3.1 上按 prompt 大小划分的每秒请求数，以及 ChatTokenizer 比各自快多少倍"></p>
-<p><a href="https://inference.net/blog/"> 返回博客</a></p>]]></content:encoded>
+<p><img src="https://inference.net/assets/speedups-table-mlKXSjdo.png" alt="表格：ChatTokenizer、vLLM 和 SGLang 在 DeepSeek v4.1 和 Kimi K3.1 上按 prompt 大小划分的每秒请求数，以及 ChatTokenizer 比各自快多少倍"></p>]]></content:encoded>
     </item>
     <item>
       <title>MiniMax M3.1 Flash 在 Inference 上线：Day 0</title>
@@ -148,8 +147,7 @@ response = client.chat.completions.create(
     reasoning_effort=&quot;high&quot;,
 )
 print(response.choices[0].message.content)</code></pre>
-<p>前往<a href="https://inference.net/models/minimax-m3.1-flash/?utm_source=blog-minimax-m3-1-flash-day-0&amp;utm_medium=blog&amp;utm_campaign=minimax-m3-1-flash-day-0&amp;utm_content=footer-model-page">模型页面</a>试用，或<a href="https://inference.net/register?utm_source=blog-minimax-m3-1-flash-day-0&amp;utm_medium=blog&amp;utm_campaign=minimax-m3-1-flash-day-0&amp;utm_content=footer-sign-up">免费注册</a>获取 API key。</p>
-<p><a href="https://inference.net/blog/"> 返回博客</a></p>]]></content:encoded>
+<p>前往<a href="https://inference.net/models/minimax-m3.1-flash/?utm_source=blog-minimax-m3-1-flash-day-0&amp;utm_medium=blog&amp;utm_campaign=minimax-m3-1-flash-day-0&amp;utm_content=footer-model-page">模型页面</a>试用，或<a href="https://inference.net/register?utm_source=blog-minimax-m3-1-flash-day-0&amp;utm_medium=blog&amp;utm_campaign=minimax-m3-1-flash-day-0&amp;utm_content=footer-sign-up">免费注册</a>获取 API key。</p>]]></content:encoded>
     </item>
     <item>
       <title>AutoEvals 简介：自动找到最适合您任务的模型</title>

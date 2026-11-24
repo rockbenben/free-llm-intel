@@ -9,23 +9,15 @@ captured: 2026-10-24
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: f446dfd753cd
+body_sha: aeb6a5a1c94f
 ---
 
-[ 返回文章](https://huggingface.co/blog)
 
 # FairStress：更深入地评估 LLM 决策中的公平性
 
 企业  文章
 
 发布于 2026 年 10 月 20 日
-
-
-3
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
 
 [![Kyle Wiggers 的头像](https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg)](https://huggingface.co/Ai2Comms)
 
@@ -130,40 +122,3 @@ FairStress 说明了为什么不能仅凭模型在其他条件等价的场景中
 模型可能在与人口统计身份不同的两个版本场景中，都选择了最受证据支持的候选人，却在一个版本中更容易被说服、以不同方式解释自己的选择，或表现出不同的内部激活模式。按 FairStress 以平等为中心的定义，公平的行为意味着应用相同的标准，并始终如一地捍卫证据充分的决定，无论哪个人口群体受益。
 
 更广泛地说，这项工作体现了我们构建评估的目标：更好地捕捉模型在真实世界环境中的行为。通过发布 FairStress，我们希望研究者和模型构建者能借助它诊断隐藏的不对称性、检验提出的补救办法，并开发出能产生更一致、更可信结果的训练方法。开放、严谨的评估是 Ai2 整体工作的核心，我们希望 FairStress 能为社区再添一件有用的工具，帮助理解模型在哪些方面不足以及如何改进。
-
-## 本文提到的数据集 1
-
-更多来自该作者
-
-## HiRO-ACEv2：以极低的成本模拟 3 公里分辨率的极端天气
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)
-
-14
-
-2026 年 10 月 14 日
-
-## 针对 GPU 集群的有效调度
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)
-
-54
-
-2026 年 10 月 9 日
-
-### 社区
-
-把图片、音频和视频拖进文本输入框，或粘贴、或点击此处即可上传。
-
-点击或粘贴此处上传图片
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fallenai%2Ffairstress) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fallenai%2Ffairstress) 后发表评论
-
-
-3
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
-
-## 本文提到的数据集 1

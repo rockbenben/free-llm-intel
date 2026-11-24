@@ -12416,8 +12416,9 @@ class TestPageFurnitureStrip(unittest.TestCase):
         ):
             with self.subTest(host=host, line=line):
                 body = f"# 标题\n\n{line}\n\n正文。"
+                # 删完家具会把留下的空行洞压成一个空行，不再保留「原来占一行的空行」
                 self.assertEqual(ft.strip_page_furniture(body, f"https://{host}/news"),
-                                 "# 标题\n\n\n正文。")
+                                 "# 标题\n\n正文。")
                 self.assertEqual(ft.strip_page_furniture(body, f"https://{host}.example/news"), body)
 
     def test_repeat_rule_never_eats_separators_or_prose(self):
@@ -12745,6 +12746,150 @@ class TestPageFurnitureStrip(unittest.TestCase):
         out = ft.strip_page_furniture(body, "https://example.com/blog/x")
         self.assertIn("#### 目录", out, "R9 只对 anyscale.com 生效")
         self.assertIn("#### 分享", out)
+
+    # --- Hugging Face 系模板：导航回链 / 投票者 / 侧栏 / 推荐区 / 评论区 ---------
+    def test_nav_backlink_dropped_but_offhost_cta_survives(self):
+        body = "\n".join([
+            "[ 返回文章列表](https://huggingface.co/blog)", "",
+            "# 标题", "", "正文。", "",
+            "[查看全部](https://deepinfra.com/blog)", "",
+        ])
+        out = ft.strip_page_furniture(body, "https://huggingface.co/blog/x")
+        self.assertNotIn("返回文章列表", out, "同 host 列表页的导航回链该删")
+        self.assertIn("[查看全部](https://deepinfra.com/blog)", out,
+                      "指向别的 host 的同名 CTA 是正文链接，不许删")
+
+    def test_voter_avatars_dropped_authors_kept(self):
+        av = "https://cdn-avatars.huggingface.co/v1/production/uploads/a.jpeg"
+        body = "\n".join([
+            "# 标题", "", "2026 年 11 月 23 日", "",
+            "33", "",
+            "- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1.jpeg)](https://huggingface.co/u1)",
+            "- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/2.jpeg)](https://huggingface.co/u2)",
+            "",
+            "[![Avijit Ghosh's avatar](%s)](https://huggingface.co/evijit)" % av, "",
+            "Avijit Ghosh", "", "evijit", "",
+            "## 概述", "", "正文段落。",
+        ])
+        out = ft.strip_page_furniture(body, "https://huggingface.co/blog/x")
+        self.assertNotIn("/u1)", out, "投票者头像列表该整块删")
+        self.assertNotIn("/u2)", out)
+        self.assertNotIn("\n33\n", out, "紧贴头像列表的计数一起删")
+        self.assertIn("[![Avijit Ghosh's avatar]", out, "作者署名头像是正文，留着")
+        self.assertIn("Avijit Ghosh", out)
+        self.assertIn("2026 年 11 月 23 日", out, "发布日留着")
+
+    def test_vote_count_survives_without_avatar_list(self):
+        body = "\n".join(["# 标题", "", "33", "", "正文段落。", ""])
+        out = ft.strip_page_furniture(body, "https://huggingface.co/blog/x")
+        self.assertIn("33", out, "没有头像列表时，孤立数字可能是正文，不动")
+
+    def test_sidebar_count_heading_dropped_only_when_empty(self):
+        empty = "\n".join(["# 标题", "", "正文。", "", "## 本文提到的模型 4", ""])
+        out = ft.strip_page_furniture(empty, "https://huggingface.co/blog/x")
+        self.assertNotIn("本文提到的模型", out, "空侧栏标题该删")
+
+        filled = "\n".join([
+            "# 标题", "", "正文。", "",
+            "## 本文提到的模型 2", "",
+            "- [Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B)",
+            "- [MiniMax-M3.1-Flash](https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash)",
+            "",
+        ])
+        out = ft.strip_page_furniture(filled, "https://huggingface.co/blog/x")
+        self.assertIn("## 本文提到的模型 2", out, "后面真跟着列表就是内容，留着")
+
+    def test_related_zone_block_removed(self):
+        body = "\n".join([
+            "# 标题", "", "正文。", "",
+            "## 本文提到的论文 10", "",
+            "来自我们博客的更多文章", "",
+            "sometag", "",
+            "## 另一篇文章", "",
+            "- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/9.jpeg)", "",
+            "16", "", "2026 年 11 月 3 日", "",
+        ])
+        out = ft.strip_page_furniture(body, "https://huggingface.co/blog/x")
+        for gone in ("本文提到的论文", "来自我们博客的更多文章", "sometag", "另一篇文章"):
+            self.assertNotIn(gone, out, f"{gone} 属于文末推荐区")
+        self.assertIn("正文。", out)
+
+    def test_related_zone_with_prose_is_not_swallowed(self):
+        body = "\n".join([
+            "# 标题", "", "正文。", "",
+            "来自我们博客的更多文章", "",
+            "这一段其实是很长的正文句子，长度超过八十个字符，而且带着句号，说明判据切进了正文，"
+            "这时候只该删标题，不该整块吞掉后续内容。", "",
+        ])
+        out = ft.strip_page_furniture(body, "https://huggingface.co/blog/x")
+        self.assertNotIn("来自我们博客的更多文章", out)
+        self.assertIn("这一段其实是很长的正文句子", out, "块里夹着长句时整块不删")
+
+    def test_community_block_needs_comment_ui_fingerprint(self):
+        # 正文里讲社区活动的小节：标题叫「社区」，但没有任何评论 UI —— 必须留住
+        prose = "\n".join([
+            "# 标题", "", "正文。", "",
+            "## 社区", "",
+            "社区成员在两周内贡献了三万条回答，图像排行榜上有人给出了五千条偏好。", "",
+            "## 接下来做什么", "", "我们会继续组织这类活动。", "",
+        ])
+        out = ft.strip_page_furniture(prose, "https://huggingface.co/blog/x")
+        self.assertIn("## 社区", out, "没有评论 UI 指纹，说明是正文小节")
+        self.assertIn("社区成员在两周内", out)
+
+        real = "\n".join([
+            "# 标题", "", "正文。", "",
+            "### 社区", "",
+            "someone", "", "约 3 小时前", "",
+            "hello", "",
+            "将图像、音频和视频拖入文本输入框、粘贴，或点击此处上传。", "",
+        ])
+        out = ft.strip_page_furniture(real, "https://huggingface.co/blog/x")
+        self.assertNotIn("### 社区", out)
+        self.assertNotIn("拖入文本输入框", out, "真评论区整块删")
+
+    def test_avatar_list_inside_fence_untouched(self):
+        body = "\n".join([
+            "# 标题", "",
+            "```markdown",
+            "- [![](a.jpeg)](https://huggingface.co/u1)",
+            "- [![](b.jpeg)](https://huggingface.co/u2)",
+            "```", "",
+            "正文。", "",
+        ])
+        out = ft.strip_page_furniture(body, "https://huggingface.co/blog/x")
+        self.assertIn("- [![](a.jpeg)](https://huggingface.co/u1)", out, "代码块内一个字不动")
+
+    def test_trailing_summary_cards_removed(self):
+        # deepinfra 的「图片 + 标题 + 摘要」推荐卡：一行一张，删掉「查看全部」后会变孤儿
+        card = ("[![标题](https://cdn.example.com/a.png)](https://example.com/blog/a)"
+                "[标题](https://example.com/blog/a)<p>摘要内容…</p>")
+        body = "\n".join(["# 标题", "", "正文。", "", card, "", card, ""])
+        out = ft.strip_page_furniture(body, "https://example.com/blog/x")
+        self.assertNotIn("摘要内容", out, "文末连续摘要卡属于推荐区")
+        self.assertIn("正文。", out)
+
+    def test_summary_card_mid_body_kept(self):
+        card = ("[![标题](https://cdn.example.com/a.png)](https://example.com/blog/a)"
+                "[标题](https://example.com/blog/a)<p>摘要内容…</p>")
+        body = "\n".join(["# 标题", "", card, "", "正文段落。", ""])
+        out = ft.strip_page_furniture(body, "https://example.com/blog/x")
+        self.assertIn("摘要内容", out, "后面还有正文，说明不是文末推荐区，留着")
+
+    def test_author_block_with_mixed_prefixes_kept(self):
+        # AWS 博客的作者段：一行一位作者，形态与推荐卡相同，有的行以 `**[![` 开头
+        # （加粗名字在外层），会让「连续卡片」在段落中间断开 —— 判据必须往上看最近的标题
+        body = "\n".join([
+            "# 标题", "", "正文。", "",
+            "## 关于作者", "",
+            "[![](a.jpeg)](a.jpeg)**甲某** 是工程师。", "",
+            "**[![](b.jpeg)](b.jpeg)乙某** 是设计师。", "",
+            "[![](c.jpeg)](c.jpeg)**丙某** 是研究员。", "",
+            "[![](d.jpeg)](d.jpeg)**丁某** 是产品经理。", "",
+        ])
+        out = ft.strip_page_furniture(body, "https://aws.amazon.com/blogs/x")
+        for name in ("甲某", "乙某", "丙某", "丁某"):
+            self.assertIn(name, out, "作者段落不许删")
 
 
 class TestRenderOutputs(unittest.TestCase):

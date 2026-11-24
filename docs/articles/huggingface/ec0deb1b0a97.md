@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a08ad3b1744d
+body_sha: 602ee5565371
 translator: agent
 ---
 
@@ -18,17 +18,6 @@ translator: agent
 
 发布于
 					2025 年 12 月 4 日
-
-在 GitHub 上更新
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png)](https://huggingface.co/Stars321123)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/PuIDZB9XDShHohKhYmdmp.png)](https://huggingface.co/YellowjacketGames)
-- [![](https://huggingface.co/avatars/cca1f35838af8dbfcc9efe58a769a13e.svg)](https://huggingface.co/theLittleHump)
-- [![](https://huggingface.co/avatars/9469599b176034548042922c0afa7051.svg)](https://huggingface.co/dark-pen)
-- [![](https://huggingface.co/avatars/f1c0e2ac8395e4648b8a93c1a8254017.svg)](https://huggingface.co/boapps)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6055ae5d25cd24537dd59dc5/eswozkCirLrnyhufN8_-f.jpeg)](https://huggingface.co/danielkorat)
 
 Daniel Fleischer
 
@@ -192,50 +181,3 @@ community
 52
 
 2026 年 4 月 21 日
-
-### 社区
-
-InstructorOnline
-
-1 月 18 日
-
-
-1 月 18 日编辑
-
-可以用 LLM 来学习和研究数学话题吗？生成的输出每次不一样，步骤可能对也可能错吧？？
-
-deleted
-
-5 月 7 日
-
-
-此评论已被隐藏
-
-将文件拖入文本输入框、粘贴，或
-
-点击此处
-
-，即可上传图像、音频和视频。
-
-点击或粘贴此处上传图片
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fintel-deepmath)或[登录](https://huggingface.co/login?next=%2Fblog%2Fintel-deepmath)发表评论
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png)](https://huggingface.co/Stars321123)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/PuIDZB9XDShHohKhYmdmp.png)](https://huggingface.co/YellowjacketGames)
-- [![](https://huggingface.co/avatars/cca1f35838af8dbfcc9efe58a769a13e.svg)](https://huggingface.co/theLittleHump)
-- [![](https://huggingface.co/avatars/9469599b176034548042922c0afa7051.svg)](https://huggingface.co/dark-pen)
-- [![](https://huggingface.co/avatars/f1c0e2ac8395e4648b8a93c1a8254017.svg)](https://huggingface.co/boapps)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6055ae5d25cd24537dd59dc5/eswozkCirLrnyhufN8_-f.jpeg)](https://huggingface.co/danielkorat)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1664643955283-60570320cbe9c7542f3501e3.jpeg)](https://huggingface.co/orenpereg)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e0c8875c6964861ebb0c49/yzkhPSxgXtJCM62iMBOOK.jpeg)](https://huggingface.co/mber)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/606d6349f1259f30578520ad/72_XrFfgQ6p9tgJj5Bc5U.png)](https://huggingface.co/jmamou)
-- [![](https://huggingface.co/avatars/d5adafb8958f422f363d2b1ecde12ba4.svg)](https://huggingface.co/sguskin)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1616423186722-5f8907c65d083370c711f284.jpeg)](https://huggingface.co/ofirzaf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62d93cd728f9c86a4031562e/ix_LD-wjW8vCltosCVUmV.jpeg)](https://huggingface.co/danf)
-
-## 文中提到的模型 2
-
-## 文中提到的数据集 5

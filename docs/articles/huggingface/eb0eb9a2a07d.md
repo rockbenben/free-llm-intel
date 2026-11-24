@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9f902c53b3a1
+body_sha: 04d5baf0c73d
 translator: agent
 ---
 
@@ -18,17 +18,6 @@ translator: agent
 
 发布于
 					2025 年 5 月 21 日
-
-在 GitHub 上更新
-
-
-
-- [![](https://huggingface.co/avatars/1604409b53f4cc409cbeac98d51b29e1.svg)](https://huggingface.co/lumiseven)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6340651b388c3fa40f9a5bc0/vM3rB17pUNT11MUhYqfFY.png)](https://huggingface.co/adamm-hf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/654b3a5c8f78bd30275cc6a7/gJTYlz4rP9tqZ_2PKipVb.png)](https://huggingface.co/minpeter)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638f308fc4444c6ca870b60a/Q11NK-8-JbiilJ-vk2LAR.png)](https://huggingface.co/linoyts)
-- [![](https://huggingface.co/avatars/3bb8728057fa2ba0e24f5ceb1600068d.svg)](https://huggingface.co/Zmu)
-- [![](https://huggingface.co/avatars/0d7d8635d2ae52c56876e97db09f8be7.svg)](https://huggingface.co/Deadbytes)
 
 Derek Liu
 
@@ -527,43 +516,3 @@ quantization
 69
 
 2026 年 7 月 23 日
-
-### 社区
-
-tolgacangoz
-
-2025 年 10 月 25 日
-
-
-此评论已被隐藏（标记为已解决）
-
-将文件拖入文本输入框、粘贴，或
-
-点击此处
-
-，即可上传图像、音频和视频。
-
-点击或粘贴此处上传图片
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fdiffusers-quantization)或[登录](https://huggingface.co/login?next=%2Fblog%2Fdiffusers-quantization)发表评论
-
-
-
-- [![](https://huggingface.co/avatars/1604409b53f4cc409cbeac98d51b29e1.svg)](https://huggingface.co/lumiseven)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6340651b388c3fa40f9a5bc0/vM3rB17pUNT11MUhYqfFY.png)](https://huggingface.co/adamm-hf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/654b3a5c8f78bd30275cc6a7/gJTYlz4rP9tqZ_2PKipVb.png)](https://huggingface.co/minpeter)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638f308fc4444c6ca870b60a/Q11NK-8-JbiilJ-vk2LAR.png)](https://huggingface.co/linoyts)
-- [![](https://huggingface.co/avatars/3bb8728057fa2ba0e24f5ceb1600068d.svg)](https://huggingface.co/Zmu)
-- [![](https://huggingface.co/avatars/0d7d8635d2ae52c56876e97db09f8be7.svg)](https://huggingface.co/Deadbytes)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/650e5979c305ec67e6fc2c19/C9WMiNhR_QxxAecVl8b_o.png)](https://huggingface.co/jonahelisio)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67e4716128d4a2a5c8c80c61/GX7eOFpBK0MBkJ51fqVZk.png)](https://huggingface.co/angel333)
-- [![](https://huggingface.co/avatars/498080aecc4b5e0b828ea742daa41875.svg)](https://huggingface.co/mones2222)
-- [![](https://huggingface.co/avatars/b7f43a4c70139aa2527f111cc42c8007.svg)](https://huggingface.co/KagdelwarSejal)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67cfc23e88d980bafa621983/3uKqieo1ndzi8lxLDAjUJ.jpeg)](https://huggingface.co/key-life)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg)](https://huggingface.co/badaoui)
-
-## 文中提到的模型 1
-
-## 文中提到的 Spaces 1
-
-## 文中提到的 Collections 1

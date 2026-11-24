@@ -9,26 +9,13 @@ captured: 2026-11-21
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 46f18637d16e
+body_sha: e19c6308260c
 ---
 
-[ 返回文章](https://huggingface.co/blog)
 
 # 180B 参数，32GB 内存：用 Transformers 把 MoE 推理逼到极限
 
 发布于 2026 年 11 月 18 日
-
-在 GitHub 上更新
-
-
-14
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg)](https://huggingface.co/badaoui)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a5dfb8ac450460a466bd07c/huiG-tO1nldQRFCUjXvO5.jpeg)](https://huggingface.co/aisyndicate)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qz3OXCjrQi0KZZ5OJkEgq.png)](https://huggingface.co/bigmikeq92)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FZm4zYHMsgadLGM1bIAJq.png)](https://huggingface.co/dboglou)
 
 [![Tarek Ziadé 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png)](https://huggingface.co/tarekziade)
 
@@ -194,8 +181,6 @@ Transformers 没能击败 Strata。要追掉最后约 6%，得在栈上做更深
 
 最后，感谢 Niko Veit 带来 [Strata](https://github.com/niko1221/strata)。Strata 树立了消费级硬件上专家流式推理的标杆，有这些数字可追，这项工作才走到这一步。
 
-## 本文提到的模型 6
-
 ## 本文提到的 Space 1
 
 博客更多文章
@@ -225,39 +210,3 @@ open-source-collabllmtransformers
 82
 
 2026 年 10 月 16 日
-
-### 社区
-
-![](https://cdn-avatars.huggingface.co/v1/production/uploads/6afa05210b2b38354a566ca3/A-j9wYe8kZ1ZEgSrC7ZBv.png)
-
-jdjsjsj28828
-
-1 天前
-
-s7327-owner-blog-comment
-
-把图片、音频和视频拖进输入框、粘贴或点击这里即可上传。
-
-点击或粘贴此处上传图片
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fmoe-expert-streaming) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fmoe-expert-streaming) 后发表评论
-
-
-14
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg)](https://huggingface.co/badaoui)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a5dfb8ac450460a466bd07c/huiG-tO1nldQRFCUjXvO5.jpeg)](https://huggingface.co/aisyndicate)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qz3OXCjrQi0KZZ5OJkEgq.png)](https://huggingface.co/bigmikeq92)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FZm4zYHMsgadLGM1bIAJq.png)](https://huggingface.co/dboglou)
-- [![](https://huggingface.co/avatars/2fa431d2f7fda60021dae107f3138e90.svg)](https://huggingface.co/syl0390)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67e199e97f6b4386bad07cc7/fxCC9xs9m8_Qw2IHl1y2j.jpeg)](https://huggingface.co/AdrianLepers)
-- [![](https://huggingface.co/avatars/4dd5862915dc3443a05cd19076cb643f.svg)](https://huggingface.co/zaz2026)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/_t5ifHICcVJNBHoUvJ5VQ.png)](https://huggingface.co/AsTrO963)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64fdfaeb01aedd0e86014de9/UliF1du7InfuCs7RHLiA5.png)](https://huggingface.co/eramax)
-
-## 本文提到的模型 6
-
-## 本文提到的 Space 1

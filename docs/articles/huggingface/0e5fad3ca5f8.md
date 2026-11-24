@@ -9,26 +9,15 @@ captured: 2026-10-24
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 06a33f258d18
+body_sha: 833bf2b730e3
 ---
 
-[ 返回文章](https://huggingface.co/blog)
 
 # 使用 IBM Granite 时间序列模型进行集合预测
 
 企业  文章
 
 发布于 2026 年 10 月 22 日
-
-
-14
-
-- [![](https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg)](https://huggingface.co/Fearghal)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png)](https://huggingface.co/Jake893)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png)](https://huggingface.co/okoyelisbon)
-- [![](https://huggingface.co/avatars/63644064768d8ba22487d7b5ffeab88d.svg)](https://huggingface.co/ElPanaBru)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png)](https://huggingface.co/Bangla84PL)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png)](https://huggingface.co/Babysworld)
 
 [![Fearghal O'Donncha 的头像](https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg)](https://huggingface.co/Fearghal)
 
@@ -267,53 +256,3 @@ GIFT-Eval 是一个覆盖很广的基准，但总体提升并不意味着每个�
 - [重新审视通用 Transformer：拆解时间序列基础模型的强基线](https://arxiv.org/html/2602.06909v1)
 - [预测组合：一份超过 50 年的综述](https://arxiv.org/abs/2205.04216)
 - [Smith 与 Wallis（2009），预测组合之谜的简单解释](https://doi.org/10.1111/j.1468-0084.2008.00541.x)
-
-## 本文提到的模型 5
-
-## 本文提到的 Space 1
-
-更多来自该作者
-
-## ALTK-Evolve：学习到的记忆如何在无需前沿模型的情况下登顶客户服务任务的 τ²-bench 排行榜
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)
-
-25
-
-2026 年 10 月 20 日
-
-## 你的 Agent 圆满完成了任务。它还能再来一次吗？
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)
-
-122
-
-2026 年 9 月 15 日
-
-### 社区
-
-把图片、音频和视频拖进文本输入框，或粘贴、或点击此处即可上传。
-
-点击或粘贴此处上传图片
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Fgranite-timeseries-ensemble-r1) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Fgranite-timeseries-ensemble-r1) 后发表评论
-
-
-14
-
-- [![](https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg)](https://huggingface.co/Fearghal)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png)](https://huggingface.co/Jake893)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png)](https://huggingface.co/okoyelisbon)
-- [![](https://huggingface.co/avatars/63644064768d8ba22487d7b5ffeab88d.svg)](https://huggingface.co/ElPanaBru)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png)](https://huggingface.co/Bangla84PL)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png)](https://huggingface.co/Babysworld)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/wLxC26FpMurJTtMGlo2xM.png)](https://huggingface.co/wasifff)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://huggingface.co/avatars/c9d15c05751f0841bc0c431da3262d50.svg)](https://huggingface.co/vaculin)
-- [![](https://huggingface.co/avatars/ed8ccd6d4fbc0e68ce03930eae039c4b.svg)](https://huggingface.co/pankajdayama)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/c_JwpKUXjG0LeKGknmQDk.png)](https://huggingface.co/heatmynuts)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png)](https://huggingface.co/zensaintlaurent)
-
-## 本文提到的模型 5
-
-## 本文提到的 Space 1

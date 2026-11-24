@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 04e83edc8f87
+body_sha: 4076f5a17a6f
 ---
 
 # UK AISI 与 EvalEval 如何让基准测试结果可复现
@@ -19,15 +19,6 @@ body_sha: 04e83edc8f87
 2026 年 9 月 22 日
 
 在 GitHub 上更新此内容
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png)](https://huggingface.co/dariocava)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg)](https://huggingface.co/clem)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66e691d778f2c37966d1d614/1MJg4zMGny3kmC5TPdjN3.png)](https://huggingface.co/DVRRK)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/69d94b034b0d592e906bc968/8HDc1xHMRnIlqJDI6CG_4.jpeg)](https://huggingface.co/vzn2auto)
 
 Avijit Ghosh
 
@@ -201,18 +192,3 @@ Nomad-link-id
 在此轻点或粘贴以上传图片
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fevaleval-aisi) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fevaleval-aisi) 即可评论
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png)](https://huggingface.co/dariocava)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg)](https://huggingface.co/clem)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66e691d778f2c37966d1d614/1MJg4zMGny3kmC5TPdjN3.png)](https://huggingface.co/DVRRK)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/69d94b034b0d592e906bc968/8HDc1xHMRnIlqJDI6CG_4.jpeg)](https://huggingface.co/vzn2auto)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/01iAmRqyak7mlJT6EDgxJ.png)](https://huggingface.co/MikeEliteLLM)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62543749b777cd32720675c2/EF_KRZO4hTo8TWXOtvc-n.png)](https://huggingface.co/irenesolaiman)
-- [![](https://huggingface.co/avatars/89ddd33671ed6f23c8b9c33f0674033b.svg)](https://huggingface.co/Jureko11)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/IWp7GmKqFXZxE8LB2nADg.png)](https://huggingface.co/birkanoge)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64a99fe3e831371424f583b9/dhKFIea8_zxhLnc2DVQuU.png)](https://huggingface.co/enixmeng)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)

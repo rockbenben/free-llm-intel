@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9cd01cd15378
+body_sha: eb570527263a
 ---
 
 返回文章列表
@@ -17,17 +17,6 @@ body_sha: 9cd01cd15378
 
 发布于
 					2024 年 12 月 4 日
-
-在 GitHub 上更新
-
-
-
-- [![](https://huggingface.co/avatars/dd41593a55d1bec4f1a3a54fca35e646.svg)](https://huggingface.co/SamujjwalIIAI)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/628e39f4b1596566033b8d7b/-Y807up1cgMmAQsczdOPn.jpeg)](https://huggingface.co/cchristophe)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63d7acf73130cadcaf827e84/5dbueSbBbcN1NvAYznMq0.jpeg)](https://huggingface.co/karimouda)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638eb5f949de7ae552dd6211/mJkQJGpn9tXV37N2VLFCh.jpeg)](https://huggingface.co/derek-thomas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jJMt0ulikjBDFPtLFUdUq.png)](https://huggingface.co/chYassine)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1628885133347-6116d0584ef9fdfbf45dc4d9.jpeg)](https://huggingface.co/MohamedRashad)
 
 Ali El Filali
 
@@ -375,74 +364,3 @@ AraGen 基准包含 279 道定制的、主要经人工验证的问题，旨在�
 我们相信 **AraGen 排行榜** 代表了 LLM 评估的重要一步，通过 **3C3H** 评估度量结合了严格的事实与对齐评估。AraGen 旨在应对数据泄漏、可复现性和可扩展性等挑战，提供了一个稳健框架，我们相信它对许多其他语言都同样有用。
 
 展望未来，我们计划在未来三个月内通过引入新任务来扩展 AraGen 排行榜，同时半自动化数据集创建，以在不通过人工验证牺牲质量的情况下提升可扩展性。此外，我们正在探索更复杂的问题和任务，以持续挑战和打磨模型表现，确保排行榜保持动态和自适应。最后，我们旨在把这一框架扩展到该领域资源不足或代表性不够的其他语言。我们致力于这些倡议的成功，并欢迎社区协作。
-
-## 本文提到的 Space 2
-
-来自我们博客的更多文章
-
-leaderboard
-
-evaluation
-
-nlp
-
-## 阿拉伯语排行榜：引入阿拉伯语指令遵循、更新 AraGen 等
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)
-- ![](https://huggingface.co/avatars/c71a54d7c9824d17ab4ad3deaf33afd1.svg)
-- ![](https://huggingface.co/avatars/c12168cdda7085eb8d649e63115a82b5.svg)
-- ![](https://huggingface.co/avatars/9b3b2d12ad3e1959aacfefbb931986dd.svg)
-- +2
-
-20
-
-2025 年 4 月 8 日
-
-nlp
-
-research
-
-leaderboard
-
-## 开放阿拉伯语 LLM 排行榜 2
-
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)
-- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1658510827196-5fc52718fa6eef7667a4d68e.jpeg)
-- ![](https://huggingface.co/avatars/66b0d4461fe6ae8b24494e1461231e02.svg)
-- ![](https://huggingface.co/avatars/874c3eac1d738f805fa9b42d19bf4472.svg)
-- +4
-
-39
-
-2025 年 2 月 10 日
-
-### 社区
-
-通过拖拽到文本输入框、粘贴，或
-
-点击这里
-
-上传图像、音频和视频。
-
-.
-
-点击或粘贴到这里上传图像
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fleaderboard-3c3h-aragen) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fleaderboard-3c3h-aragen) 以评论
-
-
-
-- [![](https://huggingface.co/avatars/dd41593a55d1bec4f1a3a54fca35e646.svg)](https://huggingface.co/SamujjwalIIAI)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/628e39f4b1596566033b8d7b/-Y807up1cgMmAQsczdOPn.jpeg)](https://huggingface.co/cchristophe)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63d7acf73130cadcaf827e84/5dbueSbBbcN1NvAYznMq0.jpeg)](https://huggingface.co/karimouda)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638eb5f949de7ae552dd6211/mJkQJGpn9tXV37N2VLFCh.jpeg)](https://huggingface.co/derek-thomas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jJMt0ulikjBDFPtLFUdUq.png)](https://huggingface.co/chYassine)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1628885133347-6116d0584ef9fdfbf45dc4d9.jpeg)](https://huggingface.co/MohamedRashad)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/659028cbbec7ad2647547c26/_zwBYlcwPg6gqjvF9N6k3.jpeg)](https://huggingface.co/Amr-khaled)
-- [![](https://huggingface.co/avatars/0c9722d674704a88394af2dd65ef522f.svg)](https://huggingface.co/shawkyebrahim2514)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6400916cf4ff62c2616ddc2f/K96MViOF0Vg4hzPq2XJ25.png)](https://huggingface.co/Manel)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://huggingface.co/avatars/7b5d41178833ebd7aeb2b3232d56f11c.svg)](https://huggingface.co/younos)
-
-## 本文提到的 Space 2

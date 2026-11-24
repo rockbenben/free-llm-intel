@@ -9,7 +9,7 @@ captured: 2026-11-01
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 8eeed6874601
+body_sha: afa76f68e512
 ---
 
 # 开放模型为什么在发布数周后才提速
@@ -150,11 +150,3 @@ Qwen3.8-Flash-Next 本身也是一个实验性预览。它以 Qwen Community Lic
 对采购方来说，实际结论很简单。按一个新模型能做什么来评判它，而它的速度和价格要按时间点来评判，而不是只看某一天。那些在 30 天时重新测量、按自己的上下文长度测试、并保持路由灵活性的团队，会在改进到来时把它们收下，也不会因为第一周看起来慢就否定一个好模型。
 
 相关文章
-
-[![Wan 3.0 集成的最佳 API 提供商](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/integration.png)](https://deepinfra.com/blog/best-api-providers-wan-3-0-integration)[Wan 3.0 集成的最佳 API 提供商](https://deepinfra.com/blog/best-api-providers-wan-3-0-integration)<p>Wan3.0 是阿里巴巴的一体化视频生成模型。它接受文本、图像、视频、音频、文档和网页，并能产出最长 30 秒、带同步音频的 1080P 视频。用于生产会带来现实问题。视频任务是异步运行的，参考输入可能很大，而每家提供商暴露的模型功能切片都 [&hellip;]</p>
-
-[![Kimi K2.6 API 基准：延迟、TPS 与成本分析（2026）](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/kimi-2.6-api-benchmark.webp)](https://deepinfra.com/blog/kimi-k2-6-api-benchmarks-latency-throughput-cost)[Kimi K2.6 API 基准：延迟、TPS 与成本分析（2026）](https://deepinfra.com/blog/kimi-k2-6-api-benchmarks-latency-throughput-cost)<p>关于 Kimi K2.6 Kimi K2.6 是来自 Moonshot AI 的开源前沿模型，发布于 2026 年 4 月 20 日。它是一个原生多模态 agentic 模型，为长周期编码、自主执行和群体式任务编排而构建。该模型采用 Mixture-of-Experts (MoE) 架构，总参数 1 万亿，每个 token 激活 320 亿参数，使用 [&hellip;]</p>
-
-[![GLM-5.1 定价指南：API 成本对比与分析](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/GLM-5.1-provider.png)](https://deepinfra.com/blog/glm-5-1-pricing-guide-provider-comparison)[GLM-5.1 定价指南：API 成本对比与分析](https://deepinfra.com/blog/glm-5-1-pricing-guide-provider-comparison)<p>为 GLM-5.1 选择提供商是一个实实在在的经济决策。在 10 家被 benchmark 的 API 提供商中，混合定价从 $0.74 到 $1.70 per 1M tokens，输出速度从 33.8 到 175.2 t/s，最快的提供商比最慢的快 5.2x。对大规模部署的团队来说，这个差距决定了该模型能否适配一个生产 [&hellip;]</p>
-
-[查看全部](https://deepinfra.com/blog)

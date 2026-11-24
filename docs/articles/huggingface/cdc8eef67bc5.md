@@ -9,26 +9,15 @@ captured: 2026-11-14
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 41ddacdba573
+body_sha: f699257d5571
 ---
 
-[ 返回文章](https://huggingface.co/blog)
 
 # 使用 SimReady Assets 构建机器人拾放仿真
 
 企业 + 文章
 
 发布于 2026 年 11 月 13 日
-
-
-14
-
-- [![](https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg)](https://huggingface.co/ByteSage404)
-- [![](https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg)](https://huggingface.co/pomilee)
-- [![](https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg)](https://huggingface.co/jkosnik)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png)](https://huggingface.co/AiWinstone)
-- [![](https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg)](https://huggingface.co/pipwnz)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
 
 [![Dillon Bailey 的头像](https://huggingface.co/avatars/ef260ce572881087d516bcf632928740.svg)](https://huggingface.co/dillonb-nv)
 
@@ -218,8 +207,6 @@ the accuracy/placement error for the pick and place as well.
 
 祝搭建愉快！
 
-## 本文提到的数据集 3
-
 ## 本文提到的 Spaces 1
 
 该作者的更多内容
@@ -239,31 +226,3 @@ the accuracy/placement error for the pick and place as well.
 19
 
 2026 年 11 月 9 日
-
-### 社区
-
-通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。
-
-点击或粘贴此处上传图像
-
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place)或[登录](https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place)发表评论
-
-
-14
-
-- [![](https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg)](https://huggingface.co/ByteSage404)
-- [![](https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg)](https://huggingface.co/pomilee)
-- [![](https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg)](https://huggingface.co/jkosnik)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png)](https://huggingface.co/AiWinstone)
-- [![](https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg)](https://huggingface.co/pipwnz)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
-- [![](https://huggingface.co/avatars/6b59ac5f151b322f5261adacecce6b61.svg)](https://huggingface.co/yiucw)
-- [![](https://huggingface.co/avatars/a045d5a990db610dd1f4abbcca7f1bd6.svg)](https://huggingface.co/klnadim)
-- [![](https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg)](https://huggingface.co/ExceedZhang)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/683acf96542967b165847cff/tUHvC7omJt6mPPdyx1oSe.png)](https://huggingface.co/safikhan5834)
-- [![](https://huggingface.co/avatars/604ef02c6a6eac9315df923eaf7e56b4.svg)](https://huggingface.co/Eumoren)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a980914cb03264ff33c4e0c/zOqgwh5M1nCzjQGfrT0Je.jpeg)](https://huggingface.co/willemelliw)
-
-## 本文提到的数据集 3
-
-## 本文提到的 Spaces 1

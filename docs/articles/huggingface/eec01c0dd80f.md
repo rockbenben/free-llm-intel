@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c9d2f46bec43
+body_sha: ff2dcc833cbf
 translator: agent
 ---
 
@@ -18,17 +18,6 @@ translator: agent
 
 发布于
 					2026 年 1 月 29 日
-
-在 GitHub 上更新
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e24395419922d5a6d7a6cc/bOFr0La0VdpIZ06-ZWJa4.jpeg)](https://huggingface.co/emredeveloper)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
-- [![](https://huggingface.co/avatars/85bb740aa905416c52d3e70fd433bd24.svg)](https://huggingface.co/Gabriel)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/648a374f00f7a3374ee64b99/YPwSOrronoozwHbJchPn3.jpeg)](https://huggingface.co/cfahlgren1)
 
 merve
 
@@ -369,13 +358,11 @@ ArseniyPerchik
 
 1 月 31 日
 
-
 1 月 31 日编辑
 
 条件节点有考虑吗？我是说那种根据当前节点的输出来决定下一个执行哪个节点的节点。
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
-
 
 abidlabs
 
@@ -392,7 +379,6 @@ hxgdzyuyi
 为什么不用 jupyternotebook
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
-
 
 abidlabs
 
@@ -412,7 +398,6 @@ Funnelsflex
 
 2 月 21 日
 
-
 3 月 3 日编辑
 
 这是实现流水线透明度的扎实思路。在做 Funnelsflex 部署时，我们经常看到僵化的 UI 漏斗构建器和原始 Python 脚本灵活性之间的摩擦点。Daggr 似乎弥合了这个鸿沟：逻辑留在代码里该在的地方，同时提供标准 Gradio 链式应用通常缺失的可视化状态持久化。
@@ -429,21 +414,6 @@ Funnelsflex
 点击或粘贴此处上传图片
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fdaggr)或[登录](https://huggingface.co/login?next=%2Fblog%2Fdaggr)发表评论
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e24395419922d5a6d7a6cc/bOFr0La0VdpIZ06-ZWJa4.jpeg)](https://huggingface.co/emredeveloper)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
-- [![](https://huggingface.co/avatars/85bb740aa905416c52d3e70fd433bd24.svg)](https://huggingface.co/Gabriel)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/648a374f00f7a3374ee64b99/YPwSOrronoozwHbJchPn3.jpeg)](https://huggingface.co/cfahlgren1)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/CWjxjU3HSVmkWBfugVL10.png)](https://huggingface.co/hvbhanot)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg)](https://huggingface.co/jeffboudier)
-- [![](https://huggingface.co/avatars/3a2f12b6111f135e24b4844fdb1b0748.svg)](https://huggingface.co/maxcorbeau)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6415a939e38b2bdc189f1da7/alb9EC84UTeGpVqqGD6VQ.png)](https://huggingface.co/atasoglu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/J8onuxUInfk_05Jaou5Lq.png)](https://huggingface.co/johnmoonwalker)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg)](https://huggingface.co/mrdbourke)
 
 ## 文中提到的模型 1
 

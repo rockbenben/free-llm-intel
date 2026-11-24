@@ -9,7 +9,7 @@ captured: 2026-10-24
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 45b8cdba5f7b
+body_sha: 063e0c53f6fe
 ---
 
 # Wan 3.0 API 基准：速度、延迟与成本
@@ -170,11 +170,3 @@ Wan 3.0 把单次生成长度延长到 30 秒，而 Wan 2.7 是 15 秒。它新�
 语言模型的类似对比涵盖 [GLM-5.3 API 供应商](https://deepinfra.com/blog/best-glm-5-3-api-providers)。
 
 相关文章
-
-[![MCP 服务器详解：面向开发者的实用指南](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/MCP-servers.png)](https://deepinfra.com/blog/mcp-servers-explained)[MCP 服务器详解：面向开发者的实用指南](https://deepinfra.com/blog/mcp-servers-explained)<p>让一个 AI 应用访问数据库、API、文件系统或内部服务，听起来很简单，直到你要维护这套集成。你需要定义模型能访问什么、描述各项操作、安全地执行请求、返回结构化结果，还要处理认证。当另一个 AI [&hellip;]</p>
-
-[![Kimi K3 vs Claude Opus 4.8 vs GPT-5.6 Sol：实用 AI 模型对比](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/kimi-closed-source.png)](https://deepinfra.com/blog/kimi-k3-vs-claude-opus-4-8-vs-gpt-5-6-sol)[Kimi K3 vs Claude Opus 4.8 vs GPT-5.6 Sol：实用 AI 模型对比](https://deepinfra.com/blog/kimi-k3-vs-claude-opus-4-8-vs-gpt-5-6-sol)<p>这篇对比首次发布后有哪些变化 这里比较的三个模型中有两个已经被后继版本取代，GPT-5.6 Sol 的定价也发生了实质变化。目前 DeepInfra 上可用的三个最强模型，并不能按能力档次干净地分开。Kimi K3（可通过 DeepInfra 使用）、Claude Opus 4.8 和 GPT-5.6 Sol 的得分都在 [&hellip;]</p>
-
-[![最佳 Qwen3.8-27B 推理供应商（2026）](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/qwen3.8-27b-best-providers.png)](https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers)[最佳 Qwen3.8-27B 推理供应商（2026）](https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers)<p>Qwen3.8-27B 改变了开放权重模型的格局。它在参数量与推理能力之间取得了出色平衡：一个 270 亿参数的模型，能力极强却又足够紧凑。它能在单张 24GB 显卡上以 4-bit 量化运行，或在单张 80GB 显卡上以全精度运行。要找到合适的基础设施来托管、扩展或 [&hellip;]</p>
-
-[查看全部](https://deepinfra.com/blog)

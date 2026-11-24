@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: f84f1f5c6c19
+body_sha: ac36d379c65e
 ---
 
 # Agent 说它做完了，数据库却不同意
@@ -20,15 +20,6 @@ body_sha: f84f1f5c6c19
 
 发布
 					October 3, 2026
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png)](https://huggingface.co/tuhink)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a27ffbf0ea26227e43a0d29/Hk8XoWHT5braavBTjifaw.jpeg)](https://huggingface.co/Hectozar)
-- [![](https://huggingface.co/avatars/821997acf79b7113de576661b1111109.svg)](https://huggingface.co/youngko)
-- [![](https://huggingface.co/avatars/1462091a632d06d8b3bdf28a8007f621.svg)](https://huggingface.co/IronTech-Studios)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/YtxawKNmLmMd5dkoGXX6j.png)](https://huggingface.co/bedesign62)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/0K6rX9DTE_L7C_ktLloT7.jpeg)](https://huggingface.co/geminiomnidev)
 
 Tuhin Kundu
 
@@ -354,8 +345,6 @@ ThinkingBox 代码采用 MIT 许可证；基准数据采用 [CDLA-Permissive-2.0
 
 ## 本文提及的论文 1
 
-该作者的其他文章
-
 ## Foundry Managed Compute 上的 Hugging Face 模型
 
 - ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1583646260758-5e64858c87403103f9f1055d.png)
@@ -403,21 +392,6 @@ Nomad-link-id
 点击或在此粘贴以上传图片
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fmicrosoft%2Fthinkingbox) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fmicrosoft%2Fthinkingbox) 后可发表评论
-
-
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png)](https://huggingface.co/tuhink)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a27ffbf0ea26227e43a0d29/Hk8XoWHT5braavBTjifaw.jpeg)](https://huggingface.co/Hectozar)
-- [![](https://huggingface.co/avatars/821997acf79b7113de576661b1111109.svg)](https://huggingface.co/youngko)
-- [![](https://huggingface.co/avatars/1462091a632d06d8b3bdf28a8007f621.svg)](https://huggingface.co/IronTech-Studios)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/YtxawKNmLmMd5dkoGXX6j.png)](https://huggingface.co/bedesign62)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/0K6rX9DTE_L7C_ktLloT7.jpeg)](https://huggingface.co/geminiomnidev)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647cfece36e109abce3f0090/jTLaPk6En8p608on8sfZ3.png)](https://huggingface.co/jmarceno)
-- [![](https://huggingface.co/avatars/2b4cb7be234f99a0df5cea995cf46837.svg)](https://huggingface.co/garyamorris)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vIHJ-RvmYKUbiydPc5GFl.png)](https://huggingface.co/whitesal)
-- [![](https://huggingface.co/avatars/39abcb2f6dba6ec01822dce0b5a7c2ab.svg)](https://huggingface.co/sisoma2)
-- [![](https://huggingface.co/avatars/7a38edf6010c8b01c2c2e1e5c21e4b67.svg)](https://huggingface.co/Hivartei)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/reKDqB0OArc5x-li5obfp.png)](https://huggingface.co/Wizzas)
 
 ## 本文提及的数据集 1
 

@@ -9,7 +9,7 @@ captured: 2026-10-24
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 38f20f257e05
+body_sha: ea8f4ee8c579
 ---
 
 # Granite 4.2 8B：模型概述与集成指南
@@ -217,11 +217,3 @@ Granite 4.2 8B 在轻量高效与深度逻辑处理之间架起桥梁。原生�
 获取 API key，试用 [DeepInfra 上的 Granite 4.2 8B](https://deepinfra.com/ibm-granite/granite-4.2-8b)。
 
 相关文章
-
-[![DeepSeek V4 Pro：模型概述、特性与性能指南](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/deepseek-v4-pro.png)](https://deepinfra.com/blog/deepseek-v4-pro-model-overview)[DeepSeek V4 Pro：模型概述、特性与性能指南](https://deepinfra.com/blog/deepseek-v4-pro-model-overview)<p>DeepSeek V4 Pro 是 DeepSeek 的 1.6 万亿参数 Mixture-of-Experts（MoE）模型，于 2026 年 4 月 24 日在 MIT 许可证下发布。它面向高级推理、复杂软件工程和长时间运行的 agentic 任务而设计，并与 DeepSeek-V4-Flash 一同推出——后者是更轻的 284B 参数变体，专为更快、更低成本的推理打造。V4 系列是 DeepSeek 首个双层产品线 [&hellip;]</p>
-
-[![解读 DeepSeek 的 102.9 亿美元融资](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/deepseek-1029-round-1024x725.png)](https://deepinfra.com/blog/deepseeks-upcoming-round)[解读 DeepSeek 的 102.9 亿美元融资](https://deepinfra.com/blog/deepseeks-upcoming-round)<p>自 2023 年成立以来，DeepSeek 从未拿过外部资金。两年间，它拒绝了所有登门拜访的风险投资机构和大型科技公司，研究经费完全来自其母公司对冲基金 Zhejiang High-Flyer Asset Management 的收益，据报道该基金 2025 年的回报率为 56.6%。那个时代 [&hellip;]</p>
-
-[![Wan 3.0 API 基准测试：速度、延迟与成本](https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/api.png)](https://deepinfra.com/blog/wan-3-0-api-benchmarks)[Wan 3.0 API 基准测试：速度、延迟与成本](https://deepinfra.com/blog/wan-3-0-api-benchmarks)<p>关键要点 Wan 是阿里巴巴的视频生成模型系列。较早的 Wan2.2 模型以 Apache 2.0 开放权重形式发布，而 Wan2.6、Wan2.7 和 Wan3.0 等后续版本则通过托管 API 提供。Wan 3.0 是首个接受文档和网页作为输入的 Wan 模型。它还把最大 [&hellip;]</p>
-
-[查看全部](https://deepinfra.com/blog)
