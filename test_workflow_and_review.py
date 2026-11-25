@@ -5327,6 +5327,32 @@ class TestGuideRendering(unittest.TestCase):
         # 已过期的限时五折不得出现在任何攻略片段中
         self.assertNotIn("限时五折", text)
 
+    def test_top_picks_require_standing_free_access_and_mark_card_requirements(self):
+        records = [record for record in build_records()
+                   if record[1].vendor_id in {"zhipu_glm", "siliconflow", "google_gemini", "groq"}]
+        updates = {
+            "zhipu_glm": {"tiers": ["limited", "onetime"], "signup": "card"},
+            "siliconflow": {"tiers": ["permanent", "onetime"]},
+            "google_gemini": {"signup": "card"},
+            "groq": {"tiers": ["recurring"]},
+        }
+
+        def effective_meta(vendor_id):
+            return {**provider_profiles.get_guide_meta(vendor_id), **updates[vendor_id]}
+
+        with mock.patch.object(crawler_llm_intel, "get_guide_meta", side_effect=effective_meta):
+            guide = "\n".join(crawler_llm_intel.render_guide_section(records)).split("### 1.", 1)[0]
+            svg = crawler_llm_intel.render_picks_svg(records)
+
+        for view in (guide, svg):
+            self.assertIn("硅基流动", view)
+            self.assertIn("Groq Cloud", view)
+            self.assertNotIn("智谱 GLM", view)
+            self.assertIn("Google Gemini", view)
+        self.assertRegex(guide, r"\[Google Gemini\]\([^)]+\)（需绑卡）")
+        self.assertEqual(svg.count(">需绑卡</text>"), 1)
+        self.assertEqual(svg.count(">无需</text>"), 2)
+
     def _all_vendor_intel(self):
         return [crawler_llm_intel.VendorIntel(vendor_id=v, brand="", homepage="", products=[])
                 for v in provider_profiles.PROVIDER_PROFILES]
@@ -12906,7 +12932,7 @@ class TestRenderOutputs(unittest.TestCase):
         with mock.patch.dict(provider_profiles.PROVIDER_PROFILES, {
             "demo_pick": {"display_name": "Demo Pick", "category": "domestic"}
         }), mock.patch.dict(provider_profiles.GUIDE_META, {
-            "demo_pick": {"pick": "限时免费", "tiers": ["onetime"]}
+            "demo_pick": {"pick": "每日免费额度", "tiers": ["recurring"]}
         }):
             crawler_llm_intel.render_outputs(
                 self.root, [], feeds_base="https://x.test/feeds", all_vendors=vendors, reviews={})

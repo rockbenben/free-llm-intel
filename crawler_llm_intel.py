@@ -3744,6 +3744,18 @@ def sanitize_profile_view(prof: dict, today: date | None = None) -> dict:
     return {**prof, **cleaned}
 
 
+def _top_picks(records: list[tuple[int, VendorIntel, dict]]) -> list[tuple[int, VendorIntel, dict, str]]:
+    """按厂商序号选出仍有常设免费权益的推荐。"""
+    picks = []
+    for idx, intel, profile in records:
+        meta = get_guide_meta(intel.vendor_id)
+        reason = meta.get("pick")
+        has_standing_tier = bool({"permanent", "recurring"}.intersection(meta.get("tiers", [])))
+        if reason and has_standing_tier:
+            picks.append((idx, intel, profile, reason))
+    return sorted(picks, key=lambda item: item[0])
+
+
 def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[str]:
     """白嫖攻略：完全由 provider_profiles.get_guide_meta 与档案字段自动渲染（无时间戳）。"""
     L: list[str] = []
@@ -3785,24 +3797,19 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
             (dom if is_cn else ovs).append(cell)
         return dom, ovs
 
-    # 0. 懒人首选：GUIDE_META 中带 pick 推荐语的厂商（按总表序号）。
-    #    推荐厂商均免绑卡；实名/邮箱只是常规注册，不构成门槛。
-    picks = [(idx, intel, prof, get_guide_meta(intel.vendor_id).get("pick", ""))
-             for idx, intel, prof in records
-             if get_guide_meta(intel.vendor_id).get("pick")]
-    picks.sort(key=lambda t: t[0])
+    picks = _top_picks(records)
     if picks:
         L.append(f"### 0. 懒人首选：不知道选谁，先注册这 {len(picks)} 个")
         L.append("")
-        L.append(f"> 这 {len(picks)} 家都**免绑信用卡**，注册即得（国内的需手机号实名，海外的邮箱即可——都属常规注册）；"
-                 "**按用途分工、不是能力排名**：要对话 / 写代码挑「模型免费」的那家，要向量 / OCR / 画图挑「工具链」那家，"
-                 "同一类需求注册一家就够。")
+        L.append(f"> 这 {len(picks)} 家都提供**常设免费 API**，权益来自官方免费模型或定期刷新的免费档。"
+                 "按用途挑选，接入前核对免费模型和限额。需要绑卡的平台会单独标注。")
         L.append("")
         for n, (idx, intel, prof, reason) in enumerate(picks, 1):
-            L.append(f"{n}. {link(idx, prof)} —— {reason}")
+            card_label = "（需绑卡）" if get_guide_meta(intel.vendor_id).get("signup") == "card" else ""
+            L.append(f"{n}. {link(idx, prof)}{card_label} —— {reason}")
         L.append("")
 
-    # 1. 免费额度分级：唯一的真门槛是「要不要付款方式」，其次看额度过不过期。
+    # 1. 按权益期限和付款方式分组。
     #    邮箱注册与手机号实名同属常规注册（人人有手机号），不算门槛。
     L.append("### 1. 免费权益与使用条件")
     L.append("")
@@ -3849,7 +3856,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     L.append("")
 
     # 2. 注册门槛：实名/邮箱是常规注册，唯一需要单独列出的是绑卡
-    L.append("### 2. 唯一的真门槛：要不要信用卡")
+    L.append("### 2. 付款方式要求")
     L.append("")
     card, n_domestic = [], 0
     for idx, intel, prof in records:
@@ -4051,12 +4058,10 @@ def _svg_wrap(text: str, size: float, max_w: float) -> list[str]:
 
 def render_picks_svg(records: list[tuple[int, VendorIntel, dict]]) -> str:
     """把「懒人首选」渲染成自包含 SVG（无外部字体/图片依赖，GitHub 可直接显示）。"""
-    picks = [(idx, intel, prof) for idx, intel, prof in records
-             if get_guide_meta(intel.vendor_id).get("pick")]
-    picks.sort(key=lambda t: t[0])
+    picks = _top_picks(records)
 
     W, PAD = 1400, 24
-    name_x, name_w = PAD, 236
+    name_x, name_w = PAD, 266
     quota_x = name_x + name_w + 18
     bind_w = 74
     bind_x = W - PAD - bind_w
@@ -4079,14 +4084,13 @@ def render_picks_svg(records: list[tuple[int, VendorIntel, dict]]) -> str:
     y = table_top
 
     rows: list[tuple[int, int]] = []  # (row_top, row_bottom)
-    for idx, intel, prof in picks:
+    for _idx, intel, prof, reason in picks:
         meta = get_guide_meta(intel.vendor_id)
         dname = re.sub(r"[（(][^（）()]*[)）]\s*$", "", prof.get("display_name", intel.brand)).strip()
         head = _plain_md(f"{dname}")
-        quota = _plain_md(meta.get("pick", "")).strip()
+        quota = _plain_md(reason).strip()
         is_cn = prof.get("category") == "domestic" or meta.get("region") == "cn"
         tag = "国内" if is_cn else "海外"
-        signup = "需绑卡" if meta.get("signup") == "card" else "无需"
 
         head_lines = _svg_wrap(head, 17, name_w - 52)  # 留 pill 的位置
         quota_lines = _svg_wrap(quota, 14.5, quota_w)
@@ -4118,10 +4122,10 @@ def render_picks_svg(records: list[tuple[int, VendorIntel, dict]]) -> str:
             out.append(f'<text x="{quota_x}" y="{qy}" font-size="14.5" fill="#24292f">'
                        f'{_svg_escape(line)}</text>')
             qy += 22
-        out.append(f'<text x="{bind_x}" y="{top + 28}" font-size="15" fill="#24292f">{signup}</text>')
+        card_label = "需绑卡" if meta.get("signup") == "card" else "无需"
+        out.append(f'<text x="{bind_x}" y="{top + 28}" font-size="15" fill="#24292f">{card_label}</text>')
 
-    footer = (f"{len(picks)} 家均免绑信用卡（国内需手机号实名）· 按用途分工、不是能力排名 · "
-              "无法复核的旧说法一律标注「不予采信」")
+    footer = "常设免费模型或定期刷新的免费档 · 按用途选用 · 接入前核对官方限额"
     footer_y = y + 30
     height = int(footer_y + 16)
     out.append(f'<text x="{PAD}" y="{footer_y}" font-size="14" fill="#57606a">{_svg_escape(footer)}</text>')
@@ -4177,13 +4181,12 @@ def render_guide_only(root: Path, vendors: list[dict], readme_path: Path) -> int
         svg_path.parent.mkdir(parents=True, exist_ok=True)
         svg_path.write_text(svg, encoding="utf-8")
 
-    picks = [intel for _idx, intel, prof in records
-             if get_guide_meta(intel.vendor_id).get("pick")]
+    picks = _top_picks(records)
     print(f"      攻略块 {readme_path.name}：{'已重排' if readme_changed else '无内容变化'}"
           f"（首选 {len(picks)} 家："
           + "、".join(re.sub(r"[（(][^（）()]*[)）]\s*$", "",
-                             get_provider_profile(i.vendor_id).get("display_name", i.vendor_id)).strip()
-                     for i in picks) + "）")
+                             profile.get("display_name", intel.vendor_id)).strip()
+                     for _idx, intel, profile, _reason in picks) + "）")
     print(f"      速览图 {TOP_PICKS_SVG}：{'已刷新' if svg_changed else '无内容变化'}")
     print("      提示：档案字段（free_quota / free_models 等）也改过的话，"
           "再跑 --render-only 同步 quotas.json 与订阅源视图。")
@@ -4246,22 +4249,18 @@ def run_picks_audit(root: Path, vendors: list[dict], grouped: dict[str, list[dic
             stored = {}
 
     records = order_vendor_records(_stub_intel_list(vendors))
-    by_id = {intel.vendor_id: (idx, prof) for idx, intel, prof in records}
-    pick_ids = [intel.vendor_id for _idx, intel, _prof in records
-                if get_guide_meta(intel.vendor_id).get("pick")]
-
     print("=" * 78)
     print("懒人首选 · 官方页审计（只读，不写任何文件）")
     print("=" * 78)
     n_ok = n_fail = n_changed = 0
-    for vid in pick_ids:
-        idx, prof = by_id[vid]
+    for idx, listed_intel, prof, reason in _top_picks(records):
+        vid = listed_intel.vendor_id
         meta = get_guide_meta(vid)
         vendor = next((v for v in vendors if v.get("id") == vid), None)
         if vendor is None:
             continue
         print(f"\n[{idx}] {prof.get('display_name', vid)}  ({vid})")
-        print(f"    pick: {_plain_md(meta.get('pick', ''))}")
+        print(f"    pick: {_plain_md(reason)}")
         print(f"    short: {_plain_md(meta.get('short', '') or '（无）')}")
         # crawl_vendor 会逐源打印抓取行（部分走 stderr）；审计报告自己排版，这里吞掉流水账
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
