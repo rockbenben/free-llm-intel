@@ -9,46 +9,46 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>使用 Ray Train 实现 Mid-Epoch 训练恢复</title>
+      <title>使用 Ray Train 在 epoch 中途恢复训练</title>
       <link>https://anyscale.com/blog/mid-epoch-resumption-ray-train</link>
       <guid isPermaLink="true">https://anyscale.com/blog/mid-epoch-resumption-ray-train</guid>
       <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Enabling Mid-Epoch Training Resumption with Ray Train</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">首页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
-<h1>使用 Ray Train 实现 epoch 中途的训练恢复</h1>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">首页</a><a href="https://www.anyscale.com/blog">博客</a>博文详情</p>
+<h1>使用 Ray Train 在 epoch 中途恢复训练</h1>
 <p>作者：<a href="https://www.anyscale.com/blog?author=jason-li">Jason Li</a> | 2026 年 11 月 24 日</p>
-<p>在大规模场景下，训练失败越来越常见，而衡量训练基础设施是否有效，标准就在于它多快能从失败中恢复。epoch 中途恢复（mid-epoch resumption）让 Ray Train 和 Ray Data 在保存模型的同时也对你的数据加载器（data loader）做 checkpoint，这样重启后的运行会从上一个 checkpoint 的位置继续，而不会破坏 exactly-once 训练。它带来的好处如下：</p>
-<ul><li><strong>减少重复工作：</strong> 重启的任务从上一个 checkpoint 继续，而不是把整个 epoch 重新跑一遍。</li><li><strong>数据覆盖正确：</strong> 即使在多次失败的情况下，每一行在每个 epoch 中仍然恰好被训练一次。</li><li><strong>易于采用：</strong> 它与你现有的 Ray Train checkpoint 配合工作，对训练脚本的改动极少。</li></ul>
-<p>在我们的基准测试中，启用 epoch 中途恢复后，一个在 epoch 进行到 75% 时失败的任务，相比通过跳过 batch 来恢复的方式，整体运行时间<strong>快 9%</strong>，美元成本<strong>低 9%</strong>。你的 epoch 越大，失败时节省的就越多。</p>
-<p>epoch 中途恢复将随 Ray 2.61 发布，目前已可在 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">Anyscale Runtime</a> 中使用（从 Ray 2.50 版本起）。</p>
-<h2>Link epoch 中途训练失败的代价</h2>
-<p>epoch 中途的训练失败可能代价高昂。设想一次运行，其最新的 checkpoint 保存在 epoch 进行到 75% 的位置，随后在 80% 处发生 worker 故障：</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/7eqyqyQ6qiPfwU3ptlmh85/c2cab3b921ae6a0338f321ee0fe5a4dd/Mid-epoch_training_failures_can_be_costly._Picture_a_run_whose_latest_checkpoint_was_saved_75-_of_the_way_through_an_epoch__.png" alt="epoch 中途的训练失败可能代价高昂。设想一次运行，其最新的 checkpoint 保存在 epoch 进行到 75% 的位置，随后在 80% 处发生 worker 故障"></p>
-<p>epoch 中途的训练失败可能代价高昂。设想一次运行，其最新的 checkpoint 保存在 epoch 进行到 75% 的位置，随后在 80% 处发生 worker 故障</p>
-<p>模型从 75% 处的 checkpoint 恢复，但数据加载器没有任何关于自己读到哪里的记录。典型的恢复方式是从头重新开始这个 epoch，但这会带来两项代价：</p>
-<ul><li><strong>数据不均衡：</strong> 之前已消费的行在同一个 epoch 中被训练两次，而数据集其余部分只被训练一次，这会使模型学到的东西偏向那部分数据。</li><li><strong>GPU 时间：</strong> 额外的 GPU 时间被花在对已经消费过的行进行训练上。</li></ul>
-<p>这两项代价都会随 epoch 规模增长。在小数据集上，重放一个 epoch 的大部分只是很小的开销。然而，在一个需要一整天才能跑完的数据集上，一次较晚发生的失败可能又要多花一整天的 GPU 时间。</p>
-<p>为了避免这些代价，团队通常会快进到训练失败的位置，在重启后跳过已经见过的 batch。然而，对于像 Ray Data 这类即时处理数据、不保证行顺序的流式加载器，被跳过的行仍然需要重新计算，而且快进也无法保证每一行恰好被训练一次。</p>
-<p>于是，我们需要一个能自己记录哪些行已被消费、并把该记录与模型 checkpoint 一起保存的数据加载器，这样两者永远不会脱节。本文余下部分将说明 Ray Train 和 Ray Data 是如何做到这一点的，以及它在实践中节省了什么。</p>
-<h2>Link 工作原理</h2>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/62RcbskxSYDc6Cckd51bp6/bbc6ddc374dc72befaa4bc5743620d0e/With_mid-epoch_resumption__the_restart_picks_up_at_the_75-_checkpoint.png" alt="使用 epoch 中途恢复时，重启会从 75% 处的 checkpoint 继续"></p>
-<p>使用 epoch 中途恢复时，重启会从 75% 处的 checkpoint 继续</p>
-<p>核心思路是记录已消费的行，而不是记录一个位置。Ray Data 不以固定顺序分发数据行，所以只知道消费了多少个 batch 并不足以重新找到自己的位置，但知道消费了哪些行则可以。为此，每一行都需要一个唯一 ID，每个 worker 记录它训练过的 ID，重启后 Ray Data 在读取时利用该记录跳过这些行。下面我们逐步看看 Ray Train 和 Ray Data 在保存与恢复进度时是如何做的。</p>
-<h3>Link 保存进度</h3>
-<ul><li><strong>记录每个产出的 batch。</strong> 一旦你用 <code>DatasetCheckpointConfig</code> 为某个数据集开启数据 checkpoint，Ray Data 的数据迭代器交给训练循环的每个 batch 都会被记录：后台线程会把该 batch 的行 ID 写入共享存储中的文件。</li><li><strong>在 checkpoint 时提交。</strong> 当你为模型做 checkpoint 时，还要对数据迭代器调用 <code>state_dict()</code>。该调用会刷新所有剩余的行 ID、关闭当前这一组文件，并返回一个小字典：epoch、checkpoint 索引、行 ID 文件所在的路径，以及 ID 列名。</li><li><strong>与模型一起保存。</strong> 你把该字典存入与模型和优化器状态相同的 checkpoint 中，并通过 <code>ray.train.report()</code> 上报它。模型与数据加载器状态一起提交，因此它们在“已经训练了什么”上始终一致。</li></ul>
-<p>每个 worker 写入自己的文件，按 rank、epoch 和 checkpoint 索引组织：</p>
+<p>训练规模越大，故障越常见。衡量训练基础设施是否有效，要看它能多快从故障中恢复。启用 epoch 中途恢复后，Ray Train 和 Ray Data 会把数据加载器的状态连同模型一起存入检查点。作业重启时从上一个检查点继续，依然保证每行数据在一个 epoch 内恰好参与一次训练。这项功能带来三点好处：</p>
+<ul><li><strong>减少重复工作：</strong>作业重启后从上一个检查点继续，省去从头跑完整个 epoch 的开销。</li><li><strong>保证数据覆盖正确：</strong>即使发生故障，每行数据在每个 epoch 内仍恰好参与一次训练。</li><li><strong>易于接入：</strong>支持现有的 Ray Train 检查点，训练脚本只需少量改动。</li></ul>
+<p>在我们的基准测试中，作业在一个 epoch 进行到 75% 时失败。与通过跳过批次恢复相比，启用 epoch 中途恢复后，<strong>总体运行时间缩短 9%</strong>，<strong>费用降低 9%</strong>。单个 epoch 越大，发生故障时节省的开销就越多。</p>
+<p>这项功能将随 Ray 2.61 发布。目前，<a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">Anyscale Runtime</a> 从 Ray 2.50 起已支持。</p>
+<h2>epoch 中途发生训练故障的代价</h2>
+<p>训练在 epoch 中途失败，代价可能很高。假设作业在一个 epoch 进行到 75% 时保存了最新检查点，随后一个 worker 在进度达到 80% 时发生故障：</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7eqyqyQ6qiPfwU3ptlmh85/c2cab3b921ae6a0338f321ee0fe5a4dd/Mid-epoch_training_failures_can_be_costly._Picture_a_run_whose_latest_checkpoint_was_saved_75-_of_the_way_through_an_epoch__.png" alt="训练在 epoch 中途失败可能代价高昂。图中的作业在一个 epoch 进行到 75% 时保存了最新检查点，随后一个 worker 在进度达到 80% 时发生故障"></p>
+<p>训练在 epoch 中途失败可能代价高昂。图中的作业在一个 epoch 进行到 75% 时保存了最新检查点，随后一个 worker 在进度达到 80% 时发生故障。</p>
+<p>模型可以从 75% 处的检查点恢复，但数据加载器并未记录当时的加载进度。常见的恢复办法是从头跑这个 epoch，这会带来两类开销：</p>
+<ul><li><strong>数据失衡：</strong>之前已经读过的数据行在同一 epoch 内参与两次训练，其余数据行只参与一次，导致模型学到的内容偏向前一部分数据。</li><li><strong>GPU 时间：</strong>重新训练已经处理过的数据行会额外占用 GPU。</li></ul>
+<p>这两类开销都会随 epoch 的规模增长。在小数据集上，重跑大半个 epoch 的代价有限。如果一个数据集需要一天才能跑完，临近结束时发生一次故障，就可能多花一天 GPU 时间。</p>
+<p>为避免这些开销，团队通常会在重启后逐批略过已经见过的数据，尽快推进到训练失败的位置。Ray Data 这类流式加载器会即时处理数据，且不保证数据行的顺序，因此跳过的数据行仍需重新计算，这种快进办法也无法保证每行数据恰好参与一次训练。</p>
+<p>为此，数据加载器需要自行记录已经处理过哪些数据行，并把记录与模型检查点一起保存，确保两边始终同步。下面介绍 Ray Train 和 Ray Data 如何做到这一点，以及在实际运行中能节省多少开销。</p>
+<h2>工作原理</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/62RcbskxSYDc6Cckd51bp6/bbc6ddc374dc72befaa4bc5743620d0e/With_mid-epoch_resumption__the_restart_picks_up_at_the_75-_checkpoint.png" alt="启用 epoch 中途恢复后，作业重启时从 75% 处的检查点接着运行"></p>
+<p>启用 epoch 中途恢复后，作业重启时从 75% 处的检查点接着运行。</p>
+<p>关键是记录哪些数据行已经处理。Ray Data 不按固定顺序交付数据行，仅凭已处理的批次数无法找回进度，有了具体的数据行记录才可以。每行数据都需要一个唯一 ID，各 worker 记录自己训练时用过的 ID。重启后，Ray Data 在读取时根据记录跳过这些数据行。下面分别介绍 Ray Train 和 Ray Data 如何保存和恢复进度。</p>
+<h3>保存进度</h3>
+<ul><li><strong>记录每个交付的批次。</strong>通过 <code>DatasetCheckpointConfig</code> 为数据集启用数据检查点后，Ray Data 的数据迭代器每向训练循环交付一个批次，后台线程就会把该批次的数据行 ID 写入共享存储中的文件。</li><li><strong>生成检查点时提交记录。</strong>为模型创建检查点时，同时调用数据迭代器的 <code>state_dict()</code> 方法。这个调用会把尚未写入的数据行 ID 刷入存储，关闭本次使用的文件，并返回一个小字典，其中包含 epoch、检查点索引、数据行 ID 文件的存放路径和 ID 列名。</li><li><strong>与模型一起保存。</strong>把字典、模型状态和优化器状态存入同一个检查点，再用 <code>ray.train.report()</code> 上报。模型和数据加载器状态一同提交，两者记录的训练进度始终一致。</li></ul>
+<p>各 worker 分别写入自己的文件，按 rank、epoch 和检查点索引组织：</p>
 <pre><code>ray_data_checkpoints/train/
 └── rank=0/
     └── epoch=0/
         ├── checkpoint=0/chunk_0.parquet
         ├── checkpoint=1/chunk_0.parquet
         └── checkpoint=2/chunk_0.parquet</code></pre>
-<p>默认情况下，这些文件位于你的 Ray Train 存储路径下，并在一个 epoch 结束后被删除，因为该 epoch 内已没有需要恢复的内容。</p>
-<h3>Link 恢复进度</h3>
-<ul><li><strong>加载状态。</strong> 任务重启时，你的训练函数通过 <code>ray.train.get_checkpoint()</code> 拿到最新的 checkpoint，从中读取保存的字典，并通过 <code>state_dict</code> 参数把它传给 <code>ray.train.get_dataset_shard()</code>。</li><li><strong>加载已消费的行 ID。</strong> Ray Data 读取该 epoch 中截至所保存 checkpoint 索引的行 ID 文件（跨所有 rank），并对它们排序，以便快速查找。</li><li><strong>读取时过滤。</strong> 读取之后紧跟一个过滤步骤，对每一行用二分查找，丢弃 ID 在该集合中的行。被跳过的行不会进入你的预处理或训练循环。</li><li><strong>继续该 epoch。</strong> 训练用剩余的行继续。该 epoch 结束后，后续 epoch 照常读取完整数据集。</li></ul>
-<p>由于过滤作用于整个数据集，而不是每个 worker 各自处理，剩余的行会被分配给重启后运行所拥有的任意 worker。恢复过程仍然需要重新读取输入文件，但读取并过滤一行的开销远小于对它做预处理并跑一次训练步骤。</p>
-<h2>Link 使用 epoch 中途恢复</h2>
-<p>所有这些记录工作都发生在 Ray Train 和 Ray Data 内部。如果你已经用 <code>ray.train.report</code> 做 checkpoint，那么开启 epoch 中途恢复只需三处改动：告诉 Ray Train 要跟踪哪个数据集、把数据迭代器的状态与模型一起保存，并在恢复时把该状态传回去。</p>
+<p>这些文件默认放在 Ray Train 的存储路径下。一个 epoch 完成后无需再从中途恢复，其文件也随之删除。</p>
+<h3>恢复进度</h3>
+<ul><li><strong>加载状态。</strong>作业重启时，训练函数通过 <code>ray.train.get_checkpoint()</code> 获取最新检查点，读出保存的字典，再通过 <code>state_dict</code> 参数把它传给 <code>ray.train.get_dataset_shard()</code>。</li><li><strong>加载已处理的数据行 ID。</strong>Ray Data 读取该 epoch 内所有 rank 的数据行 ID 文件，读到已保存的检查点索引为止，再将 ID 排序，加快查找。</li><li><strong>边读取边过滤。</strong>读取后立即过滤，对每行数据执行二分查找，丢弃 ID 已在集合中的行。这些行不会进入预处理或训练循环。</li><li><strong>继续当前 epoch。</strong>训练用余下的数据行接着跑。当前 epoch 结束后，后续各个 epoch 照常读取完整数据集。</li></ul>
+<p>过滤针对整个数据集，剩余的数据行会分配到重启后的作业实际拥有的各个 worker。恢复时仍然要重读输入文件，但读取并过滤一行的成本远低于对它做预处理并执行一次训练步骤。</p>
+<h2>使用 epoch 中途恢复</h2>
+<p>这些记录工作由 Ray Train 和 Ray Data 在内部完成。如果你已通过 <code>ray.train.report</code> 创建检查点，只需三处改动就能启用 epoch 中途恢复：告诉 Ray Train 要跟踪哪个数据集，把数据迭代器状态与模型一起保存，恢复时再把该状态传回。</p>
 <pre><code>import ray
 from ray.train import DataConfig, DatasetCheckpointConfig, ScalingConfig
 from ray.train.torch import TorchTrainer
@@ -80,37 +80,37 @@ trainer = TorchTrainer(
     scaling_config=ScalingConfig(num_workers=16, use_gpu=True),
 )
 trainer.fit()</code></pre>
-<p>注意：<code>build_model</code>、<code>save_checkpoint</code> 和 <code>load_checkpoint</code> 代表你现有的模型与 checkpoint 代码。</p>
-<p>上面每处改动的作用如下：</p>
-<ul><li><strong>为该数据集开启数据 checkpoint。</strong> 通过 <code>DataConfig(dataset_checkpoint_configs=...)</code> 为数据集传入 <code>DatasetCheckpointConfig</code>。<code>id_column</code> 指定唯一标识每一行的列，这里是名为 id 的列。如果你的数据没有这样的列，请参阅下面的要求。</li><li><strong>在每次模型 checkpoint 时保存数据迭代器状态。</strong> 每次做 checkpoint 时，在每个 worker 上调用 <code>shard.state_dict()</code>。在每个 worker 上，该调用确保该 worker 已消费的所有行 ID 都写入共享存储。它返回的并不是这些 ID，而是一个小的、可 JSON 序列化的字典，指向每个 worker 的文件存放位置，因此在每个 worker 上它都是相同的。在调用 <code>ray.train.report</code> 之前，把它存到 checkpoint 目录中模型的旁边。</li><li><strong>在恢复时把状态传回去。</strong> 从 checkpoint 中加载该字典并传给 <code>ray.train.get_dataset_shard</code>。每个 worker 加载的是同一个字典，所以每个 worker 都可以传入它。Ray Train 使用 rank 0 的副本设置恢复后的数据集。</li></ul>
-<p>完整的可运行脚本请见 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">epoch 中途恢复文档</a>。</p>
-<h3>Link 要求</h3>
-<p>要使用 epoch 中途恢复，需满足若干条件：</p>
-<ul><li><strong>每一行都需要唯一 ID。</strong> 把 <code>id_column</code> 指向一个现有列，其值唯一且在预处理后仍然保留。如果你的数据没有这样的列，<code>generate_id_column=True</code> 会为你生成一个，并从训练循环看到的 batch 中移除。生成的 ID 目前仅支持 Parquet。</li><li><strong>只使用保留行的转换。</strong> 坚持使用不增加行的转换，例如 <code>map</code>、<code>map_batches</code> 和 <code>filter</code>，并把 ID 列一直传递到 pipeline 的末端。</li><li><strong>checkpoint 需要共享存储。</strong> 行 ID 文件默认写入你的 Ray Train 存储路径，因此它必须是每个节点都能访问的云存储或网络文件系统。</li><li><strong>自动重启需要容错。</strong> 在 <code>RunConfig</code> 中设置 <code>FailureConfig(max_failures=...)</code>，这样 Ray Train 会在失败后重启运行并恢复最新的 checkpoint。</li><li><strong>在做 checkpoint 前完成一个 batch 的消费。</strong> Ray Data 的迭代器一旦把 batch 交给你的循环，就认为该 batch 已被消费。如果你的框架会在模型训练之前把 batch 排队，请在调用 <code>ray.train.report</code> 之前清空该队列。否则，你的数据 checkpoint 会领先于模型实际训练到的位置。</li></ul>
-<h2>Link 评估影响</h2>
-<p>设置讲完了，那么当一个任务在 epoch 后期失败时，epoch 中途恢复实际能节省多少？我们在一项图像分类任务上做了基准测试。设置如下：</p>
-<ul><li><strong>模型与数据：</strong> ResNet-50（26M 参数），运行在修改过的 ImageNet 上，图像最高 2048x2048，1M 训练行、50k 验证行。</li><li><strong>集群：</strong> 16 块 A100 GPU 用于训练，另有 10 个 CPU 节点用于 Ray Data 预处理。</li><li><strong>checkpoint 与验证：</strong> 每 50 步一次。</li><li><strong>失败：</strong> 模拟在 epoch 进行到 75% 时发生失败。</li></ul>
-<p>在这个设置下，我们把同一个任务跑了两次：一次通过跳过 batch 在失败后回到恢复的位置，这也是 Hugging Face Transformers 等框架默认的做法；另一次使用 epoch 中途恢复：</p>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>基线（跳过 batch）</strong></th><th><strong>epoch 中途恢复</strong></th></tr></thead><tbody><tr><td>端到端时间</td><td>594 s</td><td><strong>542 s</strong></td></tr><tr><td>成本</td><td>$1.45</td><td><strong>$1.32</strong></td></tr></tbody></table>
-<p>与跳过 batch 相比，启用 epoch 中途恢复使端到端任务运行时间和美元成本都降低了 9%。如果不使用 epoch 中途恢复，跳过 batch 仍然需要读取、预处理并传输恢复点之前的每一行，结果只是把它们丢掉。epoch 中途恢复仍然会读取这些行，但在读取之后、任何预处理或传输到训练 worker 之前就把它们丢弃。这也是为什么 epoch 越大、预处理越重，节省就越多。</p>
-<h2>Link 总结</h2>
-<p>训练任务会失败，而任务规模越大，每次失败的代价就越高。epoch 中途恢复把数据加载器的状态纳入 checkpoint，因此重启后的 Ray Train 任务会从上一个 checkpoint 的位置继续，让每一行恰好被训练一次。在我们的基准测试中，与跳过 batch 相比，它把任务的端到端运行时间和总成本降低了 9%，并且每一行在每个 epoch 中仍然恰好被训练一次。epoch 中途恢复从 Ray 2.61 起随开源 Ray 发布，目前已在 Anyscale Runtime 中可用（从 Ray 2.50 起）。使用细节请见 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">epoch 中途恢复文档</a>。如果你遇到问题，或对下一步该构建什么有想法，请<a href="https://github.com/ray-project/ray/issues">在 GitHub 上提交 issue</a>。</p>
-<p><em>我们感谢领导 epoch 中途恢复工作的 Justin Yu，以及 Ray Train 和 Ray Data 团队的同事们，感谢他们的评审、设计反馈以及对这项工作所做的贡献。</em></p>
+<p>注：<code>build_model</code>、<code>save_checkpoint</code> 和 <code>load_checkpoint</code> 代表你已有的模型构建和检查点处理代码。</p>
+<p>上面三处改动的作用如下：</p>
+<ul><li><strong>为数据集启用数据检查点。</strong>通过 <code>DataConfig(dataset_checkpoint_configs=...)</code> 为数据集传入 <code>DatasetCheckpointConfig</code>。<code>id_column</code> 指定唯一标识每行数据的列，这里是 id。如果数据里没有这样的列，请参见下方要求。</li><li><strong>创建每个模型检查点时保存数据迭代器状态。</strong>每次创建检查点时，在各个 worker 上调用 <code>shard.state_dict()</code>，确保该 worker 已处理的数据行 ID 全部写入共享存储。这个方法返回一个简短、可序列化为 JSON 的字典，指向各 worker 文件的存放位置。因此每个 worker 拿到的字典都一样。在调用 <code>ray.train.report</code> 之前，把字典和模型一起存入检查点目录。</li><li><strong>恢复时传回状态。</strong>从检查点加载字典并传给 <code>ray.train.get_dataset_shard</code>。各 worker 加载的是同一个字典，因此都可以传入它。Ray Train 使用 rank 0 传入的副本配置恢复后的数据集。</li></ul>
+<p>完整的可运行脚本见 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">epoch 中途恢复文档</a>。</p>
+<h3>使用要求</h3>
+<p>使用 epoch 中途恢复有以下要求：</p>
+<ul><li><strong>每行数据都需要唯一 ID。</strong>将 <code>id_column</code> 指向一列已有的唯一值，并确保该列在预处理后仍然保留。如果数据里没有这样的列，<code>generate_id_column=True</code> 会生成一列，并从交给训练循环的批次中移除该列。目前只支持为 Parquet 数据生成 ID。</li><li><strong>仅使用不会新增数据行的转换。</strong>可使用 <code>map</code>、<code>map_batches</code> 和 <code>filter</code> 等转换，并将 ID 列保留到流水线末尾。</li><li><strong>检查点需要共享存储。</strong>数据行 ID 文件默认写入 Ray Train 的存储路径，因此该路径必须指向所有节点都能访问的云存储或网络文件系统。</li><li><strong>自动重启需要容错配置。</strong>在 <code>RunConfig</code> 中设置 <code>FailureConfig(max_failures=...)</code>，让 Ray Train 在故障后重启作业并恢复最新检查点。</li><li><strong>创建检查点前要完成当前批次的训练。</strong>Ray Data 的迭代器把一个批次交给训练循环时，就会把它记为已处理。如果框架会先将批次入队，再交给模型训练，请先处理完队列中的批次，再调用 <code>ray.train.report</code>，以免数据检查点的进度超前于模型实际的训练进度。</li></ul>
+<h2>效果评估</h2>
+<p>启用这项功能后，如果一次训练在 epoch 快结束时失败，实际能节省多少开销？我们用一个图像分类作业做了基准测试，配置如下：</p>
+<ul><li><strong>模型与数据：</strong>在修改过的 ImageNet 上训练 ResNet-50（2,600 万参数），图像最大分辨率为 2048 × 2048。训练集有 100 万行，验证集有 5 万行。</li><li><strong>集群：</strong>用 16 张 A100 GPU 训练，另外用 10 个 CPU 节点运行 Ray Data 预处理。</li><li><strong>检查点与验证：</strong>每 50 步执行一次。</li><li><strong>故障：</strong>在一个 epoch 进行到 75% 时模拟故障。</li></ul>
+<p>在同样的配置下，我们把作业跑了两次。第一次在故障后按 Hugging Face Transformers 等框架的默认做法，通过跳过批次回到检查点位置。第二次使用 epoch 中途恢复：</p>
+<table><thead><tr><th><strong>指标</strong></th><th><strong>基线（跳过批次）</strong></th><th><strong>epoch 中途恢复</strong></th></tr></thead><tbody><tr><td>端到端用时</td><td>594 秒</td><td><strong>542 秒</strong></td></tr><tr><td>费用</td><td>$1.45</td><td><strong>$1.32</strong></td></tr></tbody></table>
+<p>与跳过批次相比，启用 epoch 中途恢复后，作业的端到端用时和费用均降低了 9%。采用跳过批次的做法时，仍须读取、预处理并传输恢复点之前的每一行数据，之后才会把它们丢弃。采用 epoch 中途恢复时，这些行同样会被读取，但读取后立即丢弃，无需预处理，也无需传给训练 worker。因此，epoch 越大、预处理开销越高，节省的就越多。</p>
+<h2>总结</h2>
+<p>训练会发生故障，作业规模越大，每次故障的代价也越高。启用 epoch 中途恢复后，数据加载器状态会一并存入检查点。Ray Train 作业重启后从上一个检查点接着跑，每行数据恰好参与一次训练。在我们的基准测试中，与跳过批次相比，这项功能将作业的端到端用时和总费用均降低了 9%，并继续保证每行数据在每个 epoch 中恰好参与一次训练。开源版 Ray 从 2.61 起提供这项功能，Anyscale Runtime 目前已从 Ray 2.50 起提供。用法详见 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">epoch 中途恢复文档</a>。如果遇到问题，或对后续功能有想法，欢迎<a href="https://github.com/ray-project/ray/issues">在 GitHub 提交 issue</a>。</p>
+<p><em>感谢 Justin Yu 主导 epoch 中途恢复的开发，也感谢 Ray Train 和 Ray Data 团队的同事参与审阅、提供设计反馈并为这项工作作出贡献。</em></p>
 <h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#the-cost-of-mid-epoch-training-failures">epoch 中途训练失败的代价</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#how-it-works">工作原理</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#saving-progress">保存进度</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#restoring-progress">恢复进度</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#using-mid-epoch-resumption">使用 epoch 中途恢复</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#requirements">要求</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#evaluating-the-impact">评估影响</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#summary">总结</a></li></ul>
+<ul><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#the-cost-of-mid-epoch-training-failures">epoch 中途发生训练故障的代价</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#how-it-works">工作原理</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#saving-progress">保存进度</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#restoring-progress">恢复进度</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#using-mid-epoch-resumption">使用 epoch 中途恢复</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#requirements">使用要求</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#evaluating-the-impact">效果评估</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#summary">总结</a></li></ul>
 <h4>分享</h4>
 <h4>标签</h4>
-<h4>订阅产品更新</h4>
+<h4>订阅产品动态</h4>
 <h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnYL4v1LdYl6VYLJFBOsN/36d1e3f01439345dd82ffe3f1e630b85/ray_train_observability.png?w=140" alt="ray train observability"></p>
-<h4>Ray Train：借助数据摄入可观测性诊断模型训练中的 GPU 饥饿</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6vnw3Qyt9rUo9lTfzxwqJW/157ed8fc53497d5df102483b5f1a5fa8/JEPA_blog.png?w=140" alt="Real-time inference for JEPA world model architectures with Ray"></p>
-<h4>使用 Ray 为 JEPA 世界模型架构做实时推理</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5B93PEUBZLNZTWnhOrL9tZ/2e021011ac03276b725e5ffd946e7c48/Donating_KubeRay_to_the_CNCF.png?w=140" alt="Donating KubeRay to the CNCF"></p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnYL4v1LdYl6VYLJFBOsN/36d1e3f01439345dd82ffe3f1e630b85/ray_train_observability.png?w=140" alt="Ray Train 可观测性"></p>
+<h4>Ray Train：通过数据摄取可观测性诊断模型训练中的 GPU 供数不足</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6vnw3Qyt9rUo9lTfzxwqJW/157ed8fc53497d5df102483b5f1a5fa8/JEPA_blog.png?w=140" alt="使用 Ray 对 JEPA 世界模型架构执行实时推理"></p>
+<h4>使用 Ray 对 JEPA 世界模型架构执行实时推理</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5B93PEUBZLNZTWnhOrL9tZ/2e021011ac03276b725e5ffd946e7c48/Donating_KubeRay_to_the_CNCF.png?w=140" alt="将 KubeRay 捐赠给 CNCF"></p>
 <h4>将 KubeRay 捐赠给 CNCF</h4>
-<h2>立即探索 Anyscale</h2>
-<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">咨询专家</a></p>]]></content:encoded>
+<h2>了解 Anyscale</h2>
+<p>在面向生产级 AI 的多云平台上，使用 Ray 构建、运行并扩展各类 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始使用</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Ray Train：通过数据摄取可观测性诊断模型训练中的 GPU 饥饿</title>

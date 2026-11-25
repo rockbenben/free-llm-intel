@@ -9,53 +9,53 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>推出具有 Anthropic 企业前沿保障和企业数据控制的 Amazon Bedrock 可信访问 API</title>
+      <title>Amazon Bedrock 推出 Trusted Access API，支持 Claude 模型的 Enterpris…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/</guid>
       <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing the Amazon Bedrock Trusted Access API, with Enterprise Frontier Safeguards and Enterprise Data Controls for Claude models</description>
-      <content:encoded><![CDATA[<h1>推出 Amazon Bedrock Trusted Access API，集成 Anthropic 的 Enterprise Frontier Safeguards 与 Enterprise Data Controls</h1>
-<p>今天，我们宣布 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上的 trusted access program API 全面可用。该 API 为您提供一个统一入口，用于发现、申请和加入模型提供方的 trusted access program。我们还宣布首批两个产品的公开预览：Anthropic 的 Enterprise Frontier Safeguards（EFS）和 Enterprise Data Controls（EDC）。两者均可在 Amazon Bedrock 上使用，涵盖 Claude Fable、Claude Mythos，以及通过 <a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">Cyber Verification Program</a>（CVP）使用的 Claude Opus 5.5 和 Sonnet 5.5。</p>
-<p>前沿 AI 实验室对其最强大的模型要求更严格的安全监控策略，这些策略在 Amazon Bedrock 上仍然适用。对于符合条件的客户，模型提供方还让客户对这些策略的满足方式拥有更多控制权，例如保留数据存储在哪里以及如何被审查。每个产品都有各自的条款、审批和设置。</p>
-<p>Amazon Bedrock trusted access program API 为每个提供方的产品提供一致的 Amazon Bedrock 体验。您的团队以相同方式为每个提供方发现产品、检查资格并加入。您的管理员使用现有 IAM 策略和服务控制策略决定谁可以加入。随着更多模型提供方增加产品，这些产品会出现在同一位置。</p>
-<p>EFS 和 EDC 由 AWS 与 Anthropic 合作构建。它们让您从模型使用和客户数据两个角度安全地访问 Anthropic 最强大的模型。使用 EFS 和 EDC 时，当自动化安全监控发现风险，会创建一个 Safety Case 供您的团队审查。使用 EFS 时，客户将数据存储在自己的 AWS 账户中，提示和补全内容不会被 Anthropic 或 Amazon Bedrock 保留。使用 EDC 时，保留数据存储在 Amazon 托管存储中，而非您的账户中，且提示和补全内容不会被 Anthropic 保留。一份申请即可访问两个计划。</p>
-<p>在本文中，我们解释 trusted access program API 如何工作，然后介绍 EFS 和 EDC 的存储选项与设置。</p>
-<h2>trusted access programs 如何工作</h2>
-<p>trusted access program 是模型提供方的一项具名计划，客户接受该计划条款，即可在安全审查和模型能力访问方面获得更多控制权。Amazon Bedrock trusted access program API 现在为您提供一个统一入口，用于查找您的账户可用的模型和用例计划。EFS 和 EDC 是今天首批可用的产品。提供方之后新增的产品会出现在同一位置，并遵循相同步骤。</p>
-<p>任何有权访问 trusted access program API 的人，都可以列出产品，并检查某个账户、AWS Organizations 中的某个组织或某个 Amazon Bedrock 项目的状态。状态会告诉您下一步该做什么。<code>eligible</code> 表示您符合该产品的资格并且可以加入，<code>requestable</code> 表示您需要先获得资格审批，响应中的 <code>statusReason</code> 字段会说明如何申请。模型提供方（或经模型提供方授权的 AWS）批准您的资格。</p>
-<p>加入是一个单独步骤，您在该步骤中接受提供方施加的产品条款。您在获批的范围内加入：一个账户、从管理账户加入组织中的每个账户，或单个项目。您可以随时退出。每个步骤都是对 trusted access program API 的一次调用，因此您可以通过 AWS Identity and Access Management（IAM）策略和服务控制策略（SCP）控制谁可以加入。更多信息请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/trusted-access-programs.html">trusted access programs documentation</a>。</p>
+      <description>完整标题：Amazon Bedrock 推出 Trusted Access API，支持 Claude 模型的 Enterprise Frontier Safeguards 和 Enterprise Data Controls | 原文标题：Introducing the Amazon Bedrock Trusted Access API, with Enterprise Frontier Safeguards and Enterprise Data Controls for Claude models</description>
+      <content:encoded><![CDATA[<h1>Amazon Bedrock 推出 Trusted Access API，支持 Anthropic 的 Enterprise Frontier Safeguards 和 Enterprise Data Controls</h1>
+<p>今天，我们宣布可信访问计划 API 在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 正式推出。你可以通过这一入口查找模型提供商的可信访问计划、申请资格并加入。我们也宣布首批两项服务开放公开预览，分别是 Anthropic 的 Enterprise Frontier Safeguards（EFS）和 Enterprise Data Controls（EDC）。两项服务均可在 Amazon Bedrock 上使用，覆盖 Claude Fable、Claude Mythos，以及通过 <a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">Cyber Verification Program</a>（CVP）使用的 Claude Opus 5.5 和 Sonnet 5.5。</p>
+<p>前沿 AI 实验室会针对能力最强的模型制定更严格的安全监控策略。这些策略在 Amazon Bedrock 上也适用。对于符合资格的客户，模型提供商还会让客户自行控制更多策略执行细节，例如保留数据的存放位置和审查方式。各服务有各自的条款、审批流程和设置。</p>
+<p>Amazon Bedrock 的可信访问计划 API 为不同提供商的服务提供统一的使用方式。无论提供商是谁，你的团队都可以按相同流程查找服务、检查资格并加入。管理员可以利用现有的 IAM 策略和服务控制策略决定哪些人可以加入。更多模型提供商上线服务后，也会出现在同一入口。</p>
+<p>EFS 和 EDC 由 AWS 与 Anthropic 合作开发，让你在安全使用模型和保护客户数据的前提下访问 Anthropic 能力最强的模型。对 EFS 和 EDC 来说，自动化安全监控一旦发现风险，就会创建一条 Safety Case 记录供你的团队审查。使用 EFS 时，客户把数据保存在自己的 AWS 账户中，Anthropic 和 Amazon Bedrock 均不保留提示词和补全结果。使用 EDC 时，保留的数据存放在 Amazon 托管的存储中，Anthropic 不保留提示词和补全结果。提交一份申请即可获得两项计划的使用资格。</p>
+<p>本文先介绍可信访问计划 API 的工作方式，再说明 EFS 和 EDC 的存储选项及设置流程。</p>
+<h2>可信访问计划如何运作</h2>
+<p>可信访问计划是由模型提供商设立并命名的计划。客户接受计划条款后，即可获得相应的模型能力，并对安全审查拥有更多控制权。现在，你可以通过 Amazon Bedrock 的可信访问计划 API，集中查找对你的账户开放的模型与用例计划。EFS 和 EDC 是今天上线的首批服务。提供商之后新增的服务也会在同一入口显示，使用流程相同。</p>
+<p>有权访问可信访问计划 API 的用户，可以列出服务，并查看账户、AWS Organizations 中的组织或 Amazon Bedrock 项目的资格状态。状态会提示下一步操作。<code>eligible</code> 表示已有资格，可以加入。<code>requestable</code> 表示要先申请资格，响应中的 <code>statusReason</code> 字段会说明如何申请。资格由模型提供商审批，也可由提供商授权 AWS 审批。</p>
+<p>加入是单独的一步，你需要接受提供商规定的服务条款。你可以在获批的范围内加入，范围可以是单个账户、由管理账户代表组织内的所有账户加入，或单个项目。你可以随时退出。每一步都会调用可信访问计划 API，因此可以使用 AWS Identity and Access Management（IAM）策略和服务控制策略（SCP）控制谁可以加入。详情见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/trusted-access-programs.html">可信访问计划文档</a>。</p>
 <h2>Enterprise Frontier Safeguards</h2>
-<p>借助 Enterprise Frontier Safeguards（EFS），您可以将数据保留在自己的 AWS 环境中并拥有完全控制权。它是与 100 多家客户共同设计的，包括四分之一的 Fortune 100 企业，以及医疗、金融服务和法律等对数据可见性有严格规定的行业中的许多公司。</p>
-<p>自动化安全监控寻找仅在大量请求中才会出现的模式。这些模式包括可能导致严重伤害的故意滥用，例如攻击性网络行动。还包括超出用户请求范围的 agent 行为，例如利用软件漏洞访问内部系统。</p>
-<p>在 Amazon Bedrock 上，AWS 运营 EFS，客户输入和输出保留在客户的 AWS 账户内。只有 AWS 内的自动化安全监控会读取保留的输入和输出。AWS 人工审查员不会为 EFS 审查内容。审查由您负责。AWS 和 Anthropic 的人员均不会访问您保留的输入或输出。您的输入和输出绝不会用于训练。</p>
-<h3>工作原理</h3>
-<p>Amazon Bedrock 以单个 AWS 服务主体身份，仅通过您编写的密钥策略和存储桶策略，访问您的 <a href="https://aws.amazon.com/kms/">AWS Key Management Service</a>（AWS KMS）密钥和 <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service</a>（Amazon S3）存储桶。您可以随时移除该访问权限，但在 Amazon Bedrock 失去对您的密钥或存储桶的访问权限 24 小时后，它将停止提供受覆盖模型的服务。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/23/ML-22385-1.png" alt="EFS 工作流：Amazon Bedrock 使用您的 AWS KMS 密钥加密提示和响应，并将它们写入您的 Amazon S3 存储桶"></p>
-<p>图 1：Amazon Bedrock 上的 EFS 工作流</p>
-<p>当您调用受覆盖模型（包括 Claude Fable、Claude Mythos，以及通过 Cyber Verification Program（CVP）使用的 Claude Opus 5.5 和 Sonnet 5.5）时：</p>
-<ul><li>您的应用程序调用模型。推理的工作方式与任何 Amazon Bedrock 模型相同。</li><li>Amazon Bedrock 将提示和响应写入其保留服务和密钥服务。</li><li>这些服务使用您的 AWS KMS 密钥加密数据。</li><li>Bedrock 将提示和响应写入您的存储桶（使用您的密钥加密），或写入 Amazon 托管存储。写入您的存储桶时，Amazon 会在几分钟内写入内容。若您的密钥或存储桶出现某些故障，我们最多可重试 72 小时。</li><li>自动化安全监控在 AWS 拥有并运营的账户中运行，扫描数据并查找跨请求的滥用行为。</li><li>如果自动化安全监控发现潜在风险，会在您的存储桶中创建一个 Case 供您审查。</li></ul>
-<h3>您的团队如何处理 Case</h3>
-<p>一个 Case 概述自动化安全监控发现的内容，并引用相关转录记录。保留记录会到达您的存储桶中 <code>transcripts/</code> 前缀下，案例文件会到达 <code>review-cases/</code> 下。您的团队审查每个 Case，并将响应文件写入 <code>review-responses/</code>，说明是否发现违规（<code>violation</code> 或 <code>no_violation</code>），若发现违规，还要说明适用的策略类别。</p>
+<p>借助 Enterprise Frontier Safeguards（EFS），你可以将数据保留在自己的 AWS 环境中，并完全掌控它。EFS 在设计过程中与 100 多家客户合作，其中包括四分之一的 Fortune 100 企业，以及医疗、金融服务、法律等对数据可见性有严格规定的行业中的许多公司。</p>
+<p>自动化安全监控会查找只有结合多条请求才会显现的模式。其中包括可能造成严重危害的故意滥用，例如进攻性网络行动，也包括 agent 超出用户要求采取的行动，例如利用软件漏洞访问内部系统。</p>
+<p>在 Amazon Bedrock 上，EFS 由 AWS 运营，客户的输入和输出始终留在客户自己的 AWS 账户中。只有在 AWS 内运行的自动化安全监控可以读取保留的输入和输出。AWS 审查人员不为 EFS 审查内容，审查由你的团队负责。AWS 和 Anthropic 的人员均不访问保留的输入或输出。输入和输出也绝不会用于训练。</p>
+<h3>工作方式</h3>
+<p>Amazon Bedrock 以单一 AWS 服务主体的身份访问你的 <a href="https://aws.amazon.com/kms/">AWS Key Management Service</a>（AWS KMS）密钥和 <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service</a>（Amazon S3）存储桶，访问完全受你编写的密钥策略和存储桶策略约束。你可以随时撤销访问权限。Amazon Bedrock 在失去对密钥或存储桶的访问权限 24 小时后，会停止提供适用的模型。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/23/ML-22385-1.png" alt="EFS 工作流程。Amazon Bedrock 用你的 AWS KMS 密钥加密提示词和响应，并将其写入你的 Amazon S3 存储桶。"></p>
+<p>图 1　Amazon Bedrock 上的 EFS 工作流程</p>
+<p>调用适用模型时，包括 Claude Fable、Claude Mythos，以及通过 Cyber Verification Program（CVP）使用的 Claude Opus 5.5 和 Sonnet 5.5，流程如下。</p>
+<ul><li>应用调用模型。推理方式与其他 Amazon Bedrock 模型相同。</li><li>Amazon Bedrock 将提示词和响应写入其数据保留和密钥服务。</li><li>这些服务使用你的 AWS KMS 密钥加密数据。</li><li>Bedrock 将提示词和响应写入你的存储桶，使用你的密钥加密，或写入 Amazon 托管的存储。写入你的存储桶时，Amazon 会在几分钟内完成。遇到某些密钥或存储桶故障时，我们最多可重试 72 小时。</li><li>自动化安全监控在 AWS 拥有并运营的账户内运行，扫描数据并查找跨请求的滥用行为。</li><li>如果自动化安全监控发现潜在风险，就会在你的存储桶中创建一条案例记录供审查。</li></ul>
+<h3>团队如何处理案例</h3>
+<p>Case 会概述自动化安全监控发现的问题，并引用相关的对话记录。保留的数据记录写入存储桶的 <code>transcripts/</code> 前缀，案例文件写入 <code>review-cases/</code> 前缀。你的团队审查每条 Case，并将响应文件写入 <code>review-responses/</code>，说明是否发现违规（<code>violation</code> 或 <code>no_violation</code>），有违规时还要注明适用的策略类别。</p>
 <h2>Enterprise Data Controls</h2>
-<p>EDC 提供与 EFS 相同的自动化安全监控，对被标记活动的人工审查仍由您的团队负责。与 EFS 不同，EDC 将保留数据存储在 Amazon 托管存储中，使用 AWS 托管密钥加密，因此无需设置存储桶或密钥。符合条件的客户可通过一份加入申请访问 EFS 和 EDC。如果您的策略允许保留数据留在 Amazon 托管存储中并使用 AWS 托管密钥加密，请加入 EDC。如果您的策略要求保留数据使用您的 AWS KMS 密钥加密并留在您的 S3 存储桶中，请加入 EFS。无论哪种方式，您的团队都能审查被标记的活动。</p>
-<p>除 EFS 和 EDC 外，您目前可以通过两种方式在 Amazon Bedrock 上使用 Claude Fable 模型：</p>
-<ul><li>使用 <code>aws_review</code> 数据保留模式时，Amazon Bedrock 最多保留输入和输出 30 天，在此期间可在 AWS 边界内审查。</li><li>符合条件的客户可将当前 Fable 模型用于内部使用，并采用零数据保留（ZDR），至少持续到 2027 年 6 月 30 日。ZDR 结束后，EFS 是长期路径。</li></ul>
-<h2>选择保留数据的存储位置</h2>
-<p>使用 EFS 时，保留数据仅存储在您自己的 S3 存储桶中，并使用您的 KMS 密钥加密。Anthropic 和 AWS 都不会将其保存在自己的存储中。下表比较 EFS 与其他路径。</p>
-<table><thead><tr><th></th><th><strong>不符合 ZDR、EFS 或 EDC 资格</strong></th><th><strong>ZDR 例外（临时）</strong></th><th><strong>EFS，您自己的 Amazon S3 存储桶（公开预览）</strong></th><th><strong>EDC，Amazon 托管存储（公开预览）</strong></th></tr></thead><tbody><tr><td><strong>数据保留</strong></td><td>最多 30 天</td><td>无；对于当前 Fable 模型和现有 Cyber Verification Program 模型，内部使用至少持续到 2027 年 6 月 30 日</td><td>Amazon Bedrock 不保留副本。适用您的生命周期规则，最短 30 天。</td><td>最多 30 天，之后 Amazon Bedrock 将其删除</td></tr><tr><td><strong>保留数据的存储位置</strong></td><td>AWS 托管存储</td><td>不保留</td><td>您的 Amazon S3 存储桶</td><td>Amazon 托管存储</td></tr><tr><td><strong>加密密钥</strong></td><td>AWS 托管</td><td>不适用</td><td>您的 AWS Key Management Service（AWS KMS）密钥</td><td>AWS 托管</td></tr><tr><td><strong>安全监控</strong></td><td>可在 AWS 边界内审查</td><td>无</td><td>自动化。Case 会进入您的存储桶，供您的团队审查。</td><td>自动化。您的团队审查被标记的 Case。公开预览期间不会交付 Case。</td></tr><tr><td><strong>您的 <a href="https://aws.amazon.com/cloudtrail/">AWS CloudTrail</a> 显示的内容</strong></td><td>您的 Amazon Bedrock API 调用</td><td>您的 Amazon Bedrock API 调用</td><td>您的 Amazon Bedrock API 调用，以及 Amazon Bedrock 对您的密钥和存储桶的使用</td><td>您的 Amazon Bedrock API 调用</td></tr><tr><td><strong>存储成本</strong></td><td>不适用</td><td>不适用</td><td>常规的 Amazon S3 和 AWS KMS 费用</td><td>不适用</td></tr></tbody></table>
-<p><em>表 1：Amazon Bedrock 上 Claude Fable 模型的路径。</em></p>
-<p>存储配置一次仅适用于一个区域，没有配置的区域使用 Amazon 托管存储。在您调用受覆盖模型的每个区域中保存配置。</p>
+<p>EDC 提供与 EFS 相同的自动化安全监控。被标记活动的人工审查也由你的团队负责。EDC 将保留的数据存放在 Amazon 托管的存储中，并使用 AWS 托管的密钥加密，因此无需自行设置存储桶或密钥。符合资格的客户只需提交一份加入申请，即可访问 EFS 和 EDC。如果你的策略允许将保留的数据放在 Amazon 托管的存储中并使用 AWS 托管的密钥加密，可以加入 EDC。如果你的策略要求以自己的 AWS KMS 密钥加密保留数据，并将其留在自己的 S3 存储桶中，可以加入 EFS。采用任一方案，你的团队都可以审查被标记的活动。</p>
+<p>除 EFS 和 EDC 外，目前还有两种方式在 Amazon Bedrock 上使用 Claude Fable 模型。</p>
+<ul><li>在 <code>aws_review</code> 数据保留模式下，Amazon Bedrock 最多保留输入和输出 30 天，保留期间可在 AWS 边界内进行审查。</li><li>符合资格的客户至少在 2027 年 6 月 30 日之前，可以采用零数据保留（ZDR）方式在内部使用当前的 Fable 模型。ZDR 到期后，可长期使用 EFS。</li></ul>
+<h2>选择保留数据的存放位置</h2>
+<p>使用 EFS 时，保留的数据仅存放在你自己的 S3 存储桶中，由你的 KMS 密钥加密。Anthropic 和 AWS 均不会在自己的存储中保留这些数据。下表比较了 EFS 和其他方案。</p>
+<table><thead><tr><th></th><th><strong>不具备 ZDR、EFS 或 EDC 资格</strong></th><th><strong>ZDR 例外（过渡期）</strong></th><th><strong>EFS，使用自己的 Amazon S3 存储桶（公开预览）</strong></th><th><strong>EDC，使用 Amazon 托管的存储（公开预览）</strong></th></tr></thead><tbody><tr><td><strong>数据保留</strong></td><td>最多 30 天</td><td>不保留，至少持续至 2027 年 6 月 30 日，适用于当前 Fable 模型和现有 Cyber Verification Program 模型的内部使用</td><td>Amazon Bedrock 不保留副本。由你的生命周期规则决定，至少保留 30 天。</td><td>最多 30 天，之后由 Amazon Bedrock 删除</td></tr><tr><td><strong>保留数据的存放位置</strong></td><td>AWS 托管的存储</td><td>不保留</td><td>你的 Amazon S3 存储桶</td><td>Amazon 托管的存储</td></tr><tr><td><strong>加密密钥</strong></td><td>AWS 托管</td><td>不适用</td><td>你的 AWS Key Management Service（AWS KMS）密钥</td><td>AWS 托管</td></tr><tr><td><strong>安全监控</strong></td><td>可在 AWS 边界内审查</td><td>无</td><td>自动化监控。案例写入你的存储桶，由你的团队审查。</td><td>自动化监控。你的团队审查被标记的 Case。公开预览期间不交付 Case。</td></tr><tr><td><strong><a href="https://aws.amazon.com/cloudtrail/">AWS CloudTrail</a> 显示的信息</strong></td><td>你的 Amazon Bedrock API 调用</td><td>你的 Amazon Bedrock API 调用</td><td>你的 Amazon Bedrock API 调用，以及 Amazon Bedrock 对你的密钥和存储桶的使用情况</td><td>你的 Amazon Bedrock API 调用</td></tr><tr><td><strong>存储成本</strong></td><td>不适用</td><td>不适用</td><td>正常的 Amazon S3 和 AWS KMS 费用</td><td>不适用</td></tr></tbody></table>
+<p><em>表 1　Amazon Bedrock 上使用 Claude Fable 模型的方案。</em></p>
+<p>存储配置按区域生效。未配置的区域使用 Amazon 托管的存储。请在调用适用模型的每个区域分别保存配置。</p>
 <h2>开始使用</h2>
-<p>首先使用 trusted access program API 检查您的 EFS 状态：</p>
+<p>先用可信访问计划 API 检查你的 EFS 资格状态。</p>
 <pre><code>aws bedrock list-trusted-access-programs --region us-east-1</code></pre>
-<p>如果状态为 <code>eligible</code>，您的账户已获批。如果为 <code>requestable</code>，请按照 <code>statusReason</code> 字段中的步骤申请访问权限。加入预览会为您添加的账户关闭零数据保留。</p>
-<p>获批后，在您调用受覆盖模型的每个区域中设置 EFS：</p>
-<ul><li><strong>在同一区域创建一个 AWS KMS 密钥和一个 Amazon S3 存储桶</strong>。密钥策略和存储桶策略仅通过其服务主体授予 Amazon Bedrock 访问权限，且仅针对您账户的数据。</li><li><strong>授予您的角色权限</strong>以保存存储配置。</li><li><strong>保存您的存储配置。</strong> Amazon Bedrock 会在保存前检查您的密钥和存储桶设置，如果任何检查失败，错误信息会指出失败的检查项。</li><li><strong>将您的数据保留模式设置为</strong> <code>aws_review</code>。</li><li><strong>调用 Claude Fable 模型</strong>，然后确认 AWS CloudTrail 显示 Amazon Bedrock 使用了您的密钥。保留记录通常会在几分钟内出现在您的存储桶中，但如果 Amazon Bedrock 必须重试，则可能需要长达 72 小时。</li></ul>
-<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/anthropic-efs-enterprise-data-controls.html">EFS documentation</a> 提供了每个步骤的完整密钥策略、存储桶策略、IAM 策略和 API 调用。它还涵盖组织和项目配置以及故障排除。若要改用企业数据控制，请跳过步骤 1 和 2，并在步骤 3 中选择 Amazon 托管存储。</p>
-<h2>结论</h2>
-<p>trusted access program API 现已全面可用，为您提供一种统一方式，在 Amazon Bedrock 上查找模型提供方产品、检查您的状态并加入，同时由 IAM 策略和 SCP 控制谁可以加入。EFS 和 EDC 是首批进入公开预览的产品。它们让您在使用 Claude Fable 和 Cyber Verification Program 模型时掌控自己的数据。使用您自己的 Amazon S3 存储桶时，Amazon Bedrock 不保留数据副本，您的 AWS KMS 密钥对其进行加密，每次访问都会显示在您自己的 AWS CloudTrail 日志中。</p>
-<p>要开始使用，请通过 <code>aws bedrock list-trusted-access-programs</code> 检查您的 EFS 状态，并加入 EFS 预览。要了解更多信息，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/trusted-access-programs.html">trusted access programs documentation</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/anthropic-efs-enterprise-data-controls.html">EFS/EDC documentation</a>。</p>
-<p>要加入 EFS 和 EDC 公开预览，请与您的 AWS 账户团队合作提交请求。请准备好 AWS 账户 ID（对于项目，请准备 Amazon Bedrock 运行时项目 ARN），并注意该预览面向已加入 EFS ZDR 的客户。</p>
+<p>状态为 <code>eligible</code> 表示你的账户已获批。若状态为 <code>requestable</code>，请按照 <code>statusReason</code> 字段中的步骤申请访问权限。加入预览后，你所添加的账户将关闭零数据保留。</p>
+<p>获批后，在调用适用模型的每个区域中设置 EFS。</p>
+<ul><li><strong>在同一区域创建 AWS KMS 密钥和 Amazon S3 存储桶。</strong> 密钥和存储桶策略只允许 Amazon Bedrock 通过其服务主体访问，且只允许访问你的账户数据。</li><li><strong>为你的角色授予权限</strong>，以便保存存储配置。</li><li><strong>保存存储配置。</strong> Amazon Bedrock 会在保存前检查密钥和存储桶设置，出错时会指出哪项检查未通过。</li><li><strong>将数据保留模式设置为</strong> <code>aws_review</code>。</li><li><strong>调用 Claude Fable 模型</strong>，然后通过 AWS CloudTrail 确认 Amazon Bedrock 使用了你的密钥。保留的记录通常会在几分钟内出现在存储桶中。如果 Amazon Bedrock 需要重试，最多可能需要 72 小时。</li></ul>
+<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/anthropic-efs-enterprise-data-controls.html">EFS 文档</a>列出了完整的密钥策略、存储桶策略和 IAM 策略，以及每一步的 API 调用。文档也涵盖组织和项目级配置及故障排查。如果选择 Enterprise Data Controls，跳过第 1 和第 2 步，在第 3 步选择 Amazon 托管的存储。</p>
+<h2>结语</h2>
+<p>可信访问计划 API 已正式推出。你可以在同一入口查找 Amazon Bedrock 上的模型提供商服务、查询状态并加入。哪些人可以加入，由 IAM 策略和 SCP 控制。EFS 和 EDC 是首批开放公开预览的服务，让你在使用 Claude Fable 和 Cyber Verification Program 模型时掌控自己的数据。使用你自己的 Amazon S3 存储桶时，Amazon Bedrock 不保留任何副本。数据由你的 AWS KMS 密钥加密，每次访问都会出现在你自己的 AWS CloudTrail 日志中。</p>
+<p>要开始使用，请通过 <code>aws bedrock list-trusted-access-programs</code> 查询你的 EFS 资格状态，并加入 EFS 预览。更多信息参见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/trusted-access-programs.html">可信访问计划文档</a>和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/anthropic-efs-enterprise-data-controls.html">EFS/EDC 文档</a>。</p>
+<p>要加入 EFS 和 EDC 的公开预览，请联系你的 AWS 客户团队提交申请。请准备好 AWS 账户 ID。如果申请范围是项目，则准备 Amazon Bedrock runtime 项目 ARN。预览面向已加入 EFS ZDR 的客户。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>

@@ -10,7 +10,7 @@
 
 ## 全部文章（共 34 篇，按日期倒序；无日期条目列于最后）
 
-1. [研究人员正在使用 Meta 的开放权重人工智能模型来改变医学](https://about.fb.com/news/2026/11/researchers-using-meta-open-weight-ai-models-medical-breakthroughs/)（2026-11-23） <!--orig:Researchers Are Using Meta’s Open-Weight AI Models to Transform Medicine-->
+1. [研究人员用 Meta 的开放权重 AI 模型推动医学研究](https://about.fb.com/news/2026/11/researchers-using-meta-open-weight-ai-models-medical-breakthroughs/)（2026-11-23） <!--orig:Researchers Are Using Meta’s Open-Weight AI Models to Transform Medicine-->
 2. [共同推进科学：开源 AI for Science 峰会亮点](https://about.fb.com/news/2026/11/advancing-science-together-highlights-from-the-open-source-ai-for-science-summit/)（2026-11-20） <!--orig:Advancing Science Together: Highlights From the Open Source AI for Science Summit-->
 3. [Meta 欢迎 Loblaw 成为 Muse 首家加拿大零售合作伙伴](https://about.fb.com/news/2026/11/meta-welcomes-loblaw-as-first-canadian-retail-partner-to-muse/)（2026-11-18） <!--orig:Meta Welcomes Loblaw as First Canadian Retail Partner to Muse-->
 4. [Muse 在澳大利亚上线：全球首款面向所有人的个人 AI agent](https://about.fb.com/news/2026/11/muse-is-now-available-in-australia/)（2026-11-17） <!--orig:Muse Is Now Available in Australia: The World’s First Personal AI Agent Built for Everyone-->

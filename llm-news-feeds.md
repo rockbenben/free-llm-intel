@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-25 13:06:45**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-25 16:50:49**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -25,9 +25,9 @@
 - 页面：[新闻 / 更新](https://www.anthropic.com/news)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📰 **最新文章**（官方源抓取于 2026-11-25，标题自动汉化）：
-  1. [Enterprise Frontier Safeguards 的零数据保留现已处于测试阶段](https://claude.com/resources/articles/zero-data-retention-with-enterprise-frontier-safeguards)（2026-11-23）
-  2. [毕马威 (KPMG) 的托德·洛尔 (Todd Lohr) 谈人工智能：当您的数据也是客户的数据时](https://claude.com/resources/articles/kpmg-todd-lohr-on-ai-when-your-data-is-also-your-clients-data)（2026-11-23）
-  3. [Claude·希普介绍](https://claude.com/resources/articles/introducing-claude-ship)（2026-11-23）
+  1. [Enterprise Frontier Safeguards 的零数据保留现已进入测试阶段](https://claude.com/resources/articles/zero-data-retention-with-enterprise-frontier-safeguards)（2026-11-23）
+  2. [KPMG 的 Todd Lohr 谈 AI：当你的数据也是客户的数据](https://claude.com/resources/articles/kpmg-todd-lohr-on-ai-when-your-data-is-also-your-clients-data)（2026-11-23）
+  3. [推出 Claude Ship](https://claude.com/resources/articles/introducing-claude-ship)（2026-11-23）
   4. [Anthropic 宣布完成 IPO：承销商全额行使超额配售选择权，同步私募配售亦告完成](https://www.anthropic.com/news/ipo-close)（2026-11-20）
   5. [Anthropic 公布 IPO 发行价](https://www.anthropic.com/news/anthropic-prices-initial-public-offering)（2026-11-18）
   - 📄 完整文章归档（共 170 篇）：[anthropic.md](llm-news/anthropic.md)
@@ -40,10 +40,10 @@
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-25，标题自动汉化）：
   1. [GPT-6 模型展示了内在的蛋白质设计能力](https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities)（2026-11-24）
-  2. [与 Astra 一起寻找遥远的行星](https://openai.com/index/searching-for-distant-planets-with-astra)（2026-11-24）
-  3. [Intentful 如何利用点来为成长腾出更多时间](https://openai.com/business/customer-stories/intentful-dots)（2026-11-24）
-  4. [iFood 如何在 15,000 个存储库中扩展编码代理](https://openai.com/business/customer-stories/ifood)（2026-11-24）
-  5. [Clay 借助 Codex 和 ChatGPT 帮助销售团队获胜](https://openai.com/business/customer-stories/clay-plugins-openai)（2026-11-24）
+  2. [用 Astra 寻找遥远的行星](https://openai.com/index/searching-for-distant-planets-with-astra)（2026-11-24）
+  3. [Intentful 如何借助 dots 腾出更多时间发展业务](https://openai.com/business/customer-stories/intentful-dots)（2026-11-24）
+  4. [iFood 如何将编码 agent 推广到 15,000 个代码仓库](https://openai.com/business/customer-stories/ifood)（2026-11-24）
+  5. [Clay 借助 Codex 和 ChatGPT 帮助销售团队赢得订单](https://openai.com/business/customer-stories/clay-plugins-openai)（2026-11-24）
   - 📄 完整文章归档（共 1427 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (google_gemini)
@@ -193,8 +193,8 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-25，标题自动汉化）：
-  1. [Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac Lab and Newton](https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance)（2026-11-24）
-  2. [RoboTrack：现实世界机器人操作的点跟踪](https://huggingface.co/blog/allenai/robotrack)（2026-11-23）
+  1. [Microduck 避障：使用 Isaac Lab 和 Newton 的 Sim2Real 工作流程](https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance)（2026-11-24）
+  2. [RoboTrack：面向真实环境中机器人操作的点跟踪](https://huggingface.co/blog/allenai/robotrack)（2026-11-23）
   3. [如何构建与维护 agentic 评估](https://huggingface.co/blog/agentic-evals)（2026-11-23）
   4. [欢迎 Inkling 2 Mini：为本地部署带来前沿性能](https://huggingface.co/blog/inkling2mini)（2026-11-20）
   5. [推出 harness adapters：把常用模型适配到你的 harness，提升性能并优化成本](https://huggingface.co/blog/harness-adapters-at-scale)（2026-11-20）
@@ -225,7 +225,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-cohere.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-25，标题自动汉化）：
-  1. [AI就绪评估：您的企业准备好了吗？](https://cohere.com/blog/ai-readiness-assessment)（2026-11-23）
+  1. [AI 就绪度评估：你的企业准备好了吗？](https://cohere.com/blog/ai-readiness-assessment)（2026-11-23）
   2. [视频智能：让视频库中的每一刻都可搜索——推出面向企业搜索和 AI 智能体的精准、带时间戳视频检索](https://cohere.com/blog/video-intelligence-preview)（2026-11-16）
   3. [欢迎 Jaya Baloo 出任 Cohere 首位 CISO](https://cohere.com/blog/cohere-welcomes-jaya-baloo-as-first-ciso)（2026-11-12）
   4. [Embed 5 与 Rerank 5 现已上线 OpenRouter](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04）
@@ -249,7 +249,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 [官方 RSS](https://about.fb.com/news/tag/ai/feed/)：`https://about.fb.com/news/tag/ai/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-25，标题自动汉化）：
-  1. [研究人员正在使用 Meta 的开放权重人工智能模型来改变医学](https://about.fb.com/news/2026/11/researchers-using-meta-open-weight-ai-models-medical-breakthroughs/)（2026-11-23）
+  1. [研究人员用 Meta 的开放权重 AI 模型推动医学研究](https://about.fb.com/news/2026/11/researchers-using-meta-open-weight-ai-models-medical-breakthroughs/)（2026-11-23）
   2. [共同推进科学：开源 AI for Science 峰会亮点](https://about.fb.com/news/2026/11/advancing-science-together-highlights-from-the-open-source-ai-for-science-summit/)（2026-11-20）
   3. [Meta 欢迎 Loblaw 成为 Muse 首家加拿大零售合作伙伴](https://about.fb.com/news/2026/11/meta-welcomes-loblaw-as-first-canadian-retail-partner-to-muse/)（2026-11-18）
   4. [Muse 在澳大利亚上线：全球首款面向所有人的个人 AI agent](https://about.fb.com/news/2026/11/muse-is-now-available-in-australia/)（2026-11-17）
@@ -292,7 +292,7 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [官方 RSS](https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/category/artificial-intelligence/amazon-machine-learning/amazon-bedrock/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-11-25，标题自动汉化）：
-  1. [推出具有 Anthropic 企业前沿保障和企业数据控制的 Amazon Bedrock 可信访问 API](https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/)（2026-11-24）
+  1. [Amazon Bedrock 推出 Trusted Access API，支持 Claude 模型的 Enterprise Frontier Safeguards 和 Enterprise Data Controls](https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/)（2026-11-24）
   2. [将 Kimi Code CLI 与 Amazon Bedrock 上的模型结合使用](https://aws.amazon.com/blogs/machine-learning/use-kimi-code-cli-with-models-on-amazon-bedrock/)（2026-11-20）
   3. [让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款](https://aws.amazon.com/blogs/machine-learning/enable-ai-agents-to-pay-for-aws-marketplace-x402-products-with-amazon-bedrock-agentcore-payments/)（2026-11-19）
   4. [Amazon Bedrock AgentCore harness 新增 Strands harness 默认值、内置工具与生命周期钩子](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-harness-adds-strands-harness-defaults-built-in-tools-and-lifecycle-hooks/)（2026-11-19）
@@ -393,7 +393,7 @@
 ### Anyscale (anyscale)
 - 📡 [官方 RSS](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-25，标题自动汉化）：
-  1. [使用 Ray Train 实现 Mid-Epoch 训练恢复](https://anyscale.com/blog/mid-epoch-resumption-ray-train)（2026-11-24）
+  1. [使用 Ray Train 在 epoch 中途恢复训练](https://anyscale.com/blog/mid-epoch-resumption-ray-train)（2026-11-24）
   2. [Ray Train：通过数据摄取可观测性诊断模型训练中的 GPU 饥饿](https://anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train)（2026-11-17）
   3. [用 Ray 实现 JEPA 世界模型架构的实时推理](https://anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale)（2026-11-12）
   4. [向 CNCF 捐赠 KubeRay](https://anyscale.com/blog/donate-kuberay-cncf)（2026-11-09）

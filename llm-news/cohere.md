@@ -9,7 +9,7 @@
 
 ## 全部文章（共 60 篇，按日期倒序；无日期条目列于最后）
 
-1. [AI就绪评估：您的企业准备好了吗？](https://cohere.com/blog/ai-readiness-assessment)（2026-11-23） <!--orig:AI readiness assessment: Is your enterprise prepared?-->
+1. [AI 就绪度评估：你的企业准备好了吗？](https://cohere.com/blog/ai-readiness-assessment)（2026-11-23） <!--orig:AI readiness assessment: Is your enterprise prepared?-->
 2. [视频智能：让视频库中的每一刻都可搜索——推出面向企业搜索和 AI 智能体的精准、带时间戳视频检索](https://cohere.com/blog/video-intelligence-preview)（2026-11-16） <!--orig:Video intelligence: Make every moment in your video library searchableIntroducing precise, timestamped video retrieval for enterprise search and AI agents.-->
 3. [欢迎 Jaya Baloo 出任 Cohere 首位 CISO](https://cohere.com/blog/cohere-welcomes-jaya-baloo-as-first-ciso)（2026-11-12） <!--orig:Welcoming Jaya Baloo as Cohere's First CISO-->
 4. [Embed 5 与 Rerank 5 现已上线 OpenRouter](https://cohere.com/blog/embed-rerank-5-openrouter)（2026-11-04） <!--orig:Embed 5 and Rerank 5 now on OpenRouter-->

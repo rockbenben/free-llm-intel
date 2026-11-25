@@ -10,9 +10,9 @@
 
 ## 全部文章（共 170 篇，按日期倒序；无日期条目列于最后）
 
-1. [Enterprise Frontier Safeguards 的零数据保留现已处于测试阶段](https://claude.com/resources/articles/zero-data-retention-with-enterprise-frontier-safeguards)（2026-11-23） <!--orig:Zero data retention with Enterprise Frontier Safeguards is now in beta-->
-2. [毕马威 (KPMG) 的托德·洛尔 (Todd Lohr) 谈人工智能：当您的数据也是客户的数据时](https://claude.com/resources/articles/kpmg-todd-lohr-on-ai-when-your-data-is-also-your-clients-data)（2026-11-23） <!--orig:KPMG's Todd Lohr on AI when your data is also your clients' data-->
-3. [Claude·希普介绍](https://claude.com/resources/articles/introducing-claude-ship)（2026-11-23） <!--orig:Introducing Claude Ship-->
+1. [Enterprise Frontier Safeguards 的零数据保留现已进入测试阶段](https://claude.com/resources/articles/zero-data-retention-with-enterprise-frontier-safeguards)（2026-11-23） <!--orig:Zero data retention with Enterprise Frontier Safeguards is now in beta-->
+2. [KPMG 的 Todd Lohr 谈 AI：当你的数据也是客户的数据](https://claude.com/resources/articles/kpmg-todd-lohr-on-ai-when-your-data-is-also-your-clients-data)（2026-11-23） <!--orig:KPMG's Todd Lohr on AI when your data is also your clients' data-->
+3. [推出 Claude Ship](https://claude.com/resources/articles/introducing-claude-ship)（2026-11-23） <!--orig:Introducing Claude Ship-->
 4. [Anthropic 宣布完成 IPO：承销商全额行使超额配售选择权，同步私募配售亦告完成](https://www.anthropic.com/news/ipo-close)（2026-11-20） <!--orig:Anthropic announces closing of initial public offering, including full exercise of underwriters’ option to purchase additional shares, and closing of concurrent private placement-->
 5. [Anthropic 公布 IPO 发行价](https://www.anthropic.com/news/anthropic-prices-initial-public-offering)（2026-11-18） <!--orig:Anthropic prices initial public offering-->
 6. [Claude Platform 上的关联计费](https://claude.com/resources/articles/linked-billing-on-claude-platform)（2026-11-17） <!--orig:Linked billing on the Claude Platform-->

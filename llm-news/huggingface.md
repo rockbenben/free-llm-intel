@@ -10,8 +10,8 @@
 
 ## 全部文章（共 943 篇，按日期倒序；无日期条目列于最后）
 
-1. [Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac Lab and Newton](https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance)（2026-11-24）
-2. [RoboTrack：现实世界机器人操作的点跟踪](https://huggingface.co/blog/allenai/robotrack)（2026-11-23） <!--orig:RoboTrack: Point tracking for real-world robotic manipulation-->
+1. [Microduck 避障：使用 Isaac Lab 和 Newton 的 Sim2Real 工作流程](https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance)（2026-11-24） <!--orig:Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac Lab and Newton-->
+2. [RoboTrack：面向真实环境中机器人操作的点跟踪](https://huggingface.co/blog/allenai/robotrack)（2026-11-23） <!--orig:RoboTrack: Point tracking for real-world robotic manipulation-->
 3. [如何构建与维护 agentic 评估](https://huggingface.co/blog/agentic-evals)（2026-11-23） <!--orig:How to build and maintain an agentic evaluation-->
 4. [欢迎 Inkling 2 Mini：为本地部署带来前沿性能](https://huggingface.co/blog/inkling2mini)（2026-11-20） <!--orig:Welcome Inkling 2 Mini, Cutting-edge Performance for your Local Setup-->
 5. [推出 harness adapters：把常用模型适配到你的 harness，提升性能并优化成本](https://huggingface.co/blog/harness-adapters-at-scale)（2026-11-20） <!--orig:Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost-->

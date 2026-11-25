@@ -9,7 +9,7 @@
 
 ## 全部文章（共 105 篇，按日期倒序；无日期条目列于最后）
 
-1. [使用 Ray Train 实现 Mid-Epoch 训练恢复](https://anyscale.com/blog/mid-epoch-resumption-ray-train)（2026-11-24） <!--orig:Enabling Mid-Epoch Training Resumption with Ray Train-->
+1. [使用 Ray Train 在 epoch 中途恢复训练](https://anyscale.com/blog/mid-epoch-resumption-ray-train)（2026-11-24） <!--orig:Enabling Mid-Epoch Training Resumption with Ray Train-->
 2. [Ray Train：通过数据摄取可观测性诊断模型训练中的 GPU 饥饿](https://anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train)（2026-11-17） <!--orig:Ray Train: Diagnosing GPU Starvation in Model Training with Data Ingest Observability-->
 3. [用 Ray 实现 JEPA 世界模型架构的实时推理](https://anyscale.com/blog/real-time-inference-for-jepa-world-models-ray-anyscale)（2026-11-12） <!--orig:Real-time inference for JEPA world model architectures with Ray-->
 4. [向 CNCF 捐赠 KubeRay](https://anyscale.com/blog/donate-kuberay-cncf)（2026-11-09） <!--orig:Donating KubeRay to the CNCF-->

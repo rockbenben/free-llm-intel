@@ -12,13 +12,13 @@
 ## 全部文章（共 1427 篇，按日期倒序；无日期条目列于最后）
 
 1. [GPT-6 模型展示了内在的蛋白质设计能力](https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities)（2026-11-24） <!--orig:GPT-6 models demonstrate intrinsic protein-design capabilities-->
-2. [与 Astra 一起寻找遥远的行星](https://openai.com/index/searching-for-distant-planets-with-astra)（2026-11-24） <!--orig:Searching for distant planets with Astra-->
-3. [Intentful 如何利用点来为成长腾出更多时间](https://openai.com/business/customer-stories/intentful-dots)（2026-11-24） <!--orig:How Intentful uses dots to make more time for growth-->
-4. [iFood 如何在 15,000 个存储库中扩展编码代理](https://openai.com/business/customer-stories/ifood)（2026-11-24） <!--orig:How iFood scales coding agents across 15,000 repositories-->
-5. [Clay 借助 Codex 和 ChatGPT 帮助销售团队获胜](https://openai.com/business/customer-stories/clay-plugins-openai)（2026-11-24） <!--orig:Clay helps sales teams win with Codex and ChatGPT-->
-6. [OpenAI 和 Cisco 推出 Shirudo](https://openai.com/index/introducing-shirudo)（2026-11-23） <!--orig:OpenAI and Cisco introduce Shirudo-->
-7. [内部法律的互联智能](https://openai.com/business/learn/connected-intelligence-for-in-house-legal)（2026-11-23） <!--orig:Connected intelligence for in-house legal-->
-8. [Richpanel 帮助公司在 30 天内自动化实现 50% 的支持](https://openai.com/business/customer-stories/richpanel-ai-customer-support)（2026-11-23） <!--orig:Richpanel helps companies automate 50% of support in 30 days-->
+2. [用 Astra 寻找遥远的行星](https://openai.com/index/searching-for-distant-planets-with-astra)（2026-11-24） <!--orig:Searching for distant planets with Astra-->
+3. [Intentful 如何借助 dots 腾出更多时间发展业务](https://openai.com/business/customer-stories/intentful-dots)（2026-11-24） <!--orig:How Intentful uses dots to make more time for growth-->
+4. [iFood 如何将编码 agent 推广到 15,000 个代码仓库](https://openai.com/business/customer-stories/ifood)（2026-11-24） <!--orig:How iFood scales coding agents across 15,000 repositories-->
+5. [Clay 借助 Codex 和 ChatGPT 帮助销售团队赢得订单](https://openai.com/business/customer-stories/clay-plugins-openai)（2026-11-24） <!--orig:Clay helps sales teams win with Codex and ChatGPT-->
+6. [OpenAI 与 Cisco 推出 Shirudo](https://openai.com/index/introducing-shirudo)（2026-11-23） <!--orig:OpenAI and Cisco introduce Shirudo-->
+7. [企业法务如何用 AI 串联业务信息](https://openai.com/business/learn/connected-intelligence-for-in-house-legal)（2026-11-23） <!--orig:Connected intelligence for in-house legal-->
+8. [Richpanel 帮助企业在 30 天内实现 50% 的客服自动化](https://openai.com/business/customer-stories/richpanel-ai-customer-support)（2026-11-23） <!--orig:Richpanel helps companies automate 50% of support in 30 days-->
 9. [困惑度与智能](https://openai.com/index/perplexity-and-intelligence)（2026-11-22） <!--orig:Perplexity and Intelligence-->
 10. [应对对抗性蒸馏](https://openai.com/index/combatting-adversarial-distillation)（2026-11-20） <!--orig:Combatting adversarial distillation-->
 11. [Hebbia 借助 GPT-6 Astra 提升金融研究能力](https://openai.com/business/customer-stories/hebbia)（2026-11-20） <!--orig:Hebbia sees improvements in financial research with GPT-6 Astra-->
