@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta id="theme-color-override" name="theme-color" content="#f6f7f9" media="not all">
+<script>
+function applyTheme(theme) {
+  var override = theme === 'light' || theme === 'dark';
+  document.querySelector('meta[name="color-scheme"]').content = override ? theme : 'light dark';
+  var toolbarColor = document.getElementById('theme-color-override');
+  toolbarColor.content = theme === 'dark' ? '#0e1319' : '#f6f7f9';
+  toolbarColor.media = override ? 'all' : 'not all';
+  if (override) document.documentElement.setAttribute('data-theme', theme);
+  else document.documentElement.removeAttribute('data-theme');
+}
+try { applyTheme(localStorage.getItem('fli-theme')); } catch (e) {}
+</script>
 <title>LLM 厂商动态 · 额度变化 · 免费额度与活动一览 · free-llm-intel</title>
 <meta name="description" content="汇总各 LLM 厂商官方博客 / 更新日志的新文章（标题已汉化），并展示巡检采纳的额度 / 活动变化与各厂商免费额度与活动一览。官方没有 RSS 的厂商也在这里。">
 <link rel="icon" href="favicon.ico" sizes="any">
@@ -22,16 +36,9 @@
 <link rel="alternate" type="application/rss+xml" title="LLM 厂商动态（合并流）" href="feeds/llm-news-all.xml">
 <link rel="alternate" type="application/rss+xml" title="LLM Vendor News (merged, English)" href="feeds/llm-news-all.en.xml">
 <link rel="alternate" type="application/rss+xml" title="LLM 免费额度 · 新活动与新额度变化" href="feeds/llm-intel-changes.xml">
-<script>
-(function () {
-  try {
-    var t = localStorage.getItem('fli-theme');
-    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
-  } catch (e) {}
-})();
-</script>
 <style>
   :root {
+    color-scheme: light dark;
     --bg: #f6f7f9;
     --surface: #ffffff;
     --surface-subtle: #f1f4f7;
@@ -85,6 +92,7 @@
     --rd-surface: 12px;
     --rd-pill: 999px;
   }
+  :root[data-theme="light"] { color-scheme: light; }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #0e1319;
@@ -118,6 +126,7 @@
     }
   }
   :root[data-theme="dark"] {
+    color-scheme: dark;
     --bg: #0e1319;
     --surface: #151c24;
     --surface-subtle: #1b242f;
@@ -563,15 +572,18 @@
   footer ul li .n { color: var(--muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
 
   /* ---- 阅读抽屉（点开条目就地读全文） ---- */
-  .reader-overlay { position: fixed; inset: 0; background: var(--backdrop); z-index: 90; }
-  .reader-overlay[hidden] { display: none; }
   .reader-drawer {
-    position: fixed; top: 0; right: 0; bottom: 0; width: min(780px, 100vw);
-    background: var(--surface); color: var(--fg); z-index: 100;
+    position: fixed; inset: 0 0 0 auto; width: min(780px, 100%);
+    max-width: none; max-height: none; height: 100%; margin: 0; padding: 0;
+    background: var(--surface); color: var(--fg); border: 0;
     box-shadow: var(--shadow-drawer); border-left: 1px solid var(--line);
-    display: flex; flex-direction: column;
+    flex-direction: column;
   }
-  .reader-drawer[hidden] { display: none; }
+  .reader-drawer[open] { display: flex; }
+  .reader-drawer::backdrop { background: var(--backdrop); }
+  @supports (color: light-dark(white, black)) {
+    .reader-drawer::backdrop { background: light-dark(rgba(15, 23, 42, 0.42), rgba(0, 0, 0, 0.62)); }
+  }
   .reader-head {
     display: flex; align-items: center; gap: var(--sp-8);
     padding: var(--sp-12) var(--sp-16); background: var(--surface-subtle);
@@ -591,6 +603,7 @@
   }
   .reader-lang button {
     appearance: none; cursor: pointer; font-family: inherit;
+    min-height: 24px;
     padding: var(--sp-4) var(--sp-10);
     font-size: var(--fs-sm); font-weight: 500; line-height: 1.4;
     background: transparent; color: var(--muted); border: 0;
@@ -599,6 +612,8 @@
   .reader-lang button[aria-pressed="true"] {
     background: var(--chip-active-bg); color: var(--chip-active-fg);
   }
+  .reader-lang button:focus-visible { outline-offset: -3px; }
+  .reader-lang button[aria-pressed="true"]:focus-visible { outline-color: var(--chip-active-fg); }
   .reader-lang button[disabled] { cursor: not-allowed; color: var(--line-strong); }
   .reader-close {
     appearance: none; cursor: pointer; font-family: inherit;
@@ -869,21 +884,19 @@
   </div>
   </main>
 
-  <div class="reader-overlay" id="reader-overlay" hidden></div>
-  <aside class="reader-drawer" id="reader-drawer" role="dialog" aria-modal="true"
-         aria-labelledby="reader-title-text" hidden>
+  <dialog class="reader-drawer" id="reader-drawer" aria-labelledby="reader-title-text">
     <div class="reader-head">
       <div class="reader-title" id="reader-title-text"></div>
       <a class="reader-orig" id="reader-orig" href="#" target="_blank"
          rel="noopener noreferrer" title="在新标签打开原文" hidden>原文</a>
       <div class="reader-lang" role="group" aria-label="正文语言">
-        <button type="button" id="reader-lang-zh" aria-pressed="true">中</button>
-        <button type="button" id="reader-lang-en" aria-pressed="false">EN</button>
+        <button type="button" id="reader-lang-zh" aria-label="中文" aria-pressed="true">中</button>
+        <button type="button" id="reader-lang-en" lang="en" aria-label="English" aria-pressed="false">EN</button>
       </div>
-      <button type="button" class="reader-close" id="reader-close" aria-label="关闭全文">✕</button>
+      <button type="button" class="reader-close" id="reader-close" aria-label="关闭全文" autofocus>✕</button>
     </div>
     <div class="reader-body" id="reader-body" tabindex="0"></div>
-  </aside>
+  </dialog>
 
   <footer>
     <h2>按厂商订阅单源</h2>
@@ -1402,10 +1415,10 @@ var FLI = (function () {
   };
 
   // ---- 主题切换（默认跟随系统，手动切换持久化到 localStorage）----
+  var themeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+  function systemTheme() { return themeMedia.matches ? 'dark' : 'light'; }
   function effectiveTheme() {
-    var attr = document.documentElement.getAttribute('data-theme');
-    if (attr === 'light' || attr === 'dark') return attr;
-    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    return document.documentElement.getAttribute('data-theme') || systemTheme();
   }
   function paintThemeBtn() {
     var cur = effectiveTheme();
@@ -1419,14 +1432,20 @@ var FLI = (function () {
   paintThemeBtn();
   el.themeBtn.addEventListener('click', function () {
     var next = effectiveTheme() === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('fli-theme', next); } catch (e) {}
+    var override = next === systemTheme() ? null : next;
+    applyTheme(override);
+    try {
+      if (override) localStorage.setItem('fli-theme', override);
+      else localStorage.removeItem('fli-theme');
+    } catch (e) {}
     paintThemeBtn();
   });
-  if (window.matchMedia) {
-    var mq = window.matchMedia('(prefers-color-scheme: dark)');
-    if (mq.addEventListener) mq.addEventListener('change', paintThemeBtn);
-  }
+  themeMedia.addEventListener('change', paintThemeBtn);
+  window.addEventListener('storage', function (e) {
+    if (e.storageArea !== localStorage || (e.key !== 'fli-theme' && e.key !== null)) return;
+    applyTheme(e.newValue);
+    paintThemeBtn();
+  });
 
   // ---- 顶部 RSS 订阅抽屉展开/收起 ----
   el.rssToggle.addEventListener('click', function () {
@@ -1522,22 +1541,27 @@ var FLI = (function () {
 
   var CHIP_VISIBLE = 10;
   var CHIP_VISIBLE_NARROW = 8;
-  function chipVisibleLimit() {
-    return window.matchMedia('(max-width: 560px)').matches ? CHIP_VISIBLE_NARROW : CHIP_VISIBLE;
-  }
+  var narrowChips = window.matchMedia('(max-width: 560px)');
+  narrowChips.addEventListener('change', renderChips);
   function renderChips() {
     var list = vendorList();
-    el.chips.innerHTML = '';
+    var active = document.activeElement;
+    var hadFocus = el.chips.contains(active);
+    var focusTarget;
+    el.chips.replaceChildren();
     var total = document.createElement('button');
     total.type = 'button';
     total.className = 'pill chip';
     total.setAttribute('aria-pressed', state.vendor === null);
-    total.innerHTML = '全部<span class="n">' + state.all.length + '</span>';
+    var totalCount = document.createElement('span');
+    totalCount.className = 'n';
+    totalCount.textContent = state.all.length;
+    total.append('全部', totalCount);
     total.onclick = function () { state.vendor = null; render(); };
     el.chips.appendChild(total);
 
     var shown = list, hidden = 0;
-    var limit = chipVisibleLimit();
+    var limit = narrowChips.matches ? CHIP_VISIBLE_NARROW : CHIP_VISIBLE;
     if (!state.chipsExpanded && list.length > limit) {
       var head = list.slice(0, limit);
       var picked = list.find(function (v) { return v.key === state.vendor; });
@@ -1550,6 +1574,8 @@ var FLI = (function () {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'pill chip';
+      b.dataset.vendor = v.key;
+      if (hadFocus && active.dataset.vendor === v.key) focusTarget = b;
       b.setAttribute('aria-pressed', state.vendor === v.key);
       b.appendChild(document.createTextNode(v.name));
       var n = document.createElement('span');
@@ -1566,11 +1592,16 @@ var FLI = (function () {
       var more = document.createElement('button');
       more.type = 'button';
       more.className = 'pill chip more';
+      more.setAttribute('aria-expanded', String(state.chipsExpanded));
       more.textContent = state.chipsExpanded
         ? '收起' : '显示其余 ' + hidden + ' 家';
       more.onclick = function () { state.chipsExpanded = !state.chipsExpanded; renderChips(); };
       el.chips.appendChild(more);
+      if (hadFocus && (active.classList.contains('more') || active.dataset.vendor) && !focusTarget) {
+        focusTarget = more;
+      }
     }
+    if (hadFocus) (focusTarget || total).focus({ preventScroll: true });
   }
 
   function visible() {
@@ -1652,6 +1683,7 @@ var FLI = (function () {
       state.vendor = (state.vendor === vendor) ? null : vendor;
       render();
       if (deep) window.scrollTo(0, tabsDocTop());
+      el.chips.querySelector('[aria-pressed="true"]').focus();
     };
     meta.appendChild(badge);
     if (it.orig) {
@@ -1669,7 +1701,7 @@ var FLI = (function () {
       rb.onclick = function (ev) {
         ev.preventDefault();
         openReader(it.vendorId, it.slug, 'zh', it.title,
-                   {push: true, link: it.link, langs: it.langs});
+                   {push: true, link: it.link, langs: it.langs, opener: rb});
       };
       meta.appendChild(rb);
     }
@@ -1712,7 +1744,7 @@ var FLI = (function () {
     var rows = visible();
     state.rows = rows;
     if (resetShown !== false) state.shown = RENDER_CHUNK;
-    el.items.innerHTML = '';
+    el.items.replaceChildren();
     appendRows(rows, 0, Math.min(state.shown, rows.length));
     updateListMeta(rows);
   }
@@ -1723,6 +1755,8 @@ var FLI = (function () {
     state.shown += RENDER_CHUNK;
     appendRows(rows, from, Math.min(state.shown, rows.length));
     updateListMeta(rows);
+    var firstNewRow = el.items.children[from];
+    if (firstNewRow) firstNewRow.querySelector('.title a').focus();
   });
 
   function render() {
@@ -1747,7 +1781,7 @@ var FLI = (function () {
       if (ra !== rb) return ra - rb;
       return String(a.name).localeCompare(String(b.name), 'zh');
     });
-    el.vendorFeeds.innerHTML = '';
+    el.vendorFeeds.replaceChildren();
     list.forEach(function (v) {
       var li = document.createElement('li');
       var a = document.createElement('a');
@@ -1763,7 +1797,9 @@ var FLI = (function () {
       el.vendorFeeds.appendChild(li);
     });
     if (!list.length) {
-      el.vendorFeeds.innerHTML = '<li>（索引缺失）</li>';
+      var missing = document.createElement('li');
+      missing.textContent = '（索引缺失）';
+      el.vendorFeeds.appendChild(missing);
     }
   }
 
@@ -1832,7 +1868,7 @@ var FLI = (function () {
     showTab(k);
   });
 
-  var changesState = { rows: null, q: '', cache: null };
+  var changesState = { rows: null, q: '', cache: null, loading: false };
   function onlyQuota(items) {
     return (items || []).filter(function (r) { return r[1] === 'quota'; });
   }
@@ -1924,7 +1960,7 @@ var FLI = (function () {
       return hay.indexOf(changesState.q) >= 0;
     });
     var list = document.getElementById('changes-list');
-    list.innerHTML = '';
+    list.replaceChildren();
     rows.forEach(function (r) {
       var li = document.createElement('li');
       var box = document.createElement('div'); box.className = 'item';
@@ -1970,6 +2006,8 @@ var FLI = (function () {
   }
   function loadChanges() {
     if (changesState.rows) { renderChanges(); return; }
+    if (changesState.loading) return;
+    changesState.loading = true;
     var hit = cacheRead('changes');
     if (hit) {
       changesState.rows = onlyQuota(hit.data.items);
@@ -1996,7 +2034,7 @@ var FLI = (function () {
       msg.style.display = 'block';
       msg.textContent =
         '变化数据没加载出来（' + CHANGES + '：' + e.message + '）。刷新页面重试；若刚上线，稍后再来。';
-    });
+    }).finally(function () { changesState.loading = false; });
   }
   document.getElementById('cq').addEventListener('input', function (ev) {
     changesState.q = ev.target.value.trim().toLowerCase();
@@ -2004,7 +2042,7 @@ var FLI = (function () {
   });
 
   var quotasState = {
-    rows: null, q: '', cache: null,
+    rows: null, q: '', cache: null, loading: false,
     filters: { part: 0, onlyGuide: false, noCard: false, longTerm: false, onlyCompat: false }
   };
   var PART_NAMES = { 1: '国内平台', 2: '国际平台', 3: '云平台', 4: '编程工具' };
@@ -2032,7 +2070,9 @@ var FLI = (function () {
     var allRows = quotasState.rows || [];
     var counts = { 0: allRows.length, 1: 0, 2: 0, 3: 0, 4: 0 };
     allRows.forEach(function (v) { if (counts[v.part] !== undefined) counts[v.part]++; });
-    wrap.innerHTML = '';
+    var active = document.activeElement;
+    var focusedPart = wrap.contains(active) ? active.dataset.part : null;
+    wrap.replaceChildren();
     var lbl = document.createElement('span');
     lbl.className = 'filter-label';
     lbl.textContent = '分区';
@@ -2041,6 +2081,7 @@ var FLI = (function () {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'pill chip';
+      b.dataset.part = String(p);
       b.setAttribute('aria-pressed', String(quotasState.filters.part === p));
       b.appendChild(document.createTextNode(p === 0 ? '全部' : PART_NAMES[p]));
       var n = document.createElement('span');
@@ -2052,6 +2093,7 @@ var FLI = (function () {
         renderQuotas();
       };
       wrap.appendChild(b);
+      if (b.dataset.part === focusedPart) b.focus({ preventScroll: true });
     });
   }
   function syncQuotaToggleButtons() {
@@ -2091,7 +2133,7 @@ var FLI = (function () {
       return hay.indexOf(quotasState.q) >= 0;
     });
     var host = document.getElementById('quotas-list');
-    host.innerHTML = '';
+    host.replaceChildren();
     rows.forEach(function (v) {
       var div = document.createElement('div'); div.className = 'qrow';
       var head = document.createElement('div'); head.className = 'qhead';
@@ -2255,6 +2297,8 @@ var FLI = (function () {
   }
   function loadQuotas() {
     if (quotasState.rows) { renderQuotas(); return; }
+    if (quotasState.loading) return;
+    quotasState.loading = true;
     var hit = cacheRead('quotas');
     if (hit) {
       quotasState.rows = hit.data.vendors || [];
@@ -2281,7 +2325,7 @@ var FLI = (function () {
       msg.style.display = 'block';
       msg.textContent =
         '额度数据没加载出来（' + QUOTAS + '：' + e.message + '）。刷新页面重试；若刚上线，稍后再来。';
-    });
+    }).finally(function () { quotasState.loading = false; });
   }
   document.getElementById('qq').addEventListener('input', function (ev) {
     quotasState.q = ev.target.value.trim().toLowerCase();
@@ -2296,7 +2340,9 @@ var FLI = (function () {
   });
   document.getElementById('q-reset').addEventListener('click', function () {
     quotasState.q = '';
-    document.getElementById('qq').value = '';
+    var search = document.getElementById('qq');
+    search.value = '';
+    search.focus();
     quotasState.filters = { part: 0, onlyGuide: false, noCard: false, longTerm: false, onlyCompat: false };
     if (quotasState.rows) renderQuotas();
   });
@@ -2458,7 +2504,6 @@ var FLI = (function () {
 
   // ---- reader 抽屉 ----
   var reader = { vendor: '', slug: '', lang: 'zh', langs: '', title: '', link: '', open: false, lastFocus: null, pushed: false, error: false, pendingClose: false, requestId: 0 };
-  var rdOverlay = document.getElementById('reader-overlay');
   var rdDrawer = document.getElementById('reader-drawer');
   var rdTitle = document.getElementById('reader-title-text');
   var rdBody = document.getElementById('reader-body');
@@ -2472,20 +2517,20 @@ var FLI = (function () {
   }
 
   function readerShowLoading() {
-    rdBody.innerHTML = '';
     var p = document.createElement('div');
     p.className = 'reader-loading';
+    p.setAttribute('role', 'status');
     p.textContent = '加载正文…';
-    rdBody.appendChild(p);
+    rdBody.replaceChildren(p);
   }
 
   function readerShowError(title, link) {
     reader.error = true;
     rdOrig.hidden = true;
-    rdBody.innerHTML = '';
     if (!reader.title) rdTitle.textContent = '无法打开这篇正文';
     var box = document.createElement('div');
     box.className = 'reader-error';
+    box.setAttribute('role', 'status');
     var strong = document.createElement('strong');
     strong.textContent = '这篇正文还没落到语料里。';
     box.appendChild(strong);
@@ -2501,7 +2546,7 @@ var FLI = (function () {
     more.appendChild(a);
     more.appendChild(document.createTextNode('。'));
     box.appendChild(more);
-    rdBody.appendChild(box);
+    rdBody.replaceChildren(box);
   }
 
   function readerFillLinkFromState() {
@@ -2524,15 +2569,15 @@ var FLI = (function () {
     }
   }
 
-  function readerRenderMd(md) {
+  function readerRenderMd(md, lang) {
     reader.error = false;
     rdOrig.hidden = !reader.link;
     if (reader.link) rdOrig.href = reader.link;
-    rdBody.innerHTML = '';
     var wrap = document.createElement('div');
     wrap.className = 'reader-prose';
+    wrap.lang = lang === 'en' ? 'en' : 'zh-CN';
     wrap.innerHTML = FLI.mdToHtml(md);
-    rdBody.appendChild(wrap);
+    rdBody.replaceChildren(wrap);
     rdBody.scrollTop = 0;
     if (!reader.title) {
       var h = wrap.querySelector('h1,h2,h3');
@@ -2572,7 +2617,7 @@ var FLI = (function () {
       if (!isCurrent()) return;
       reader.lang = got.lang;
       var fm = /^---\n[\s\S]*?\n---\n?/.exec(got.text);
-      readerRenderMd(fm ? got.text.slice(fm[0].length) : got.text);
+      readerRenderMd(fm ? got.text.slice(fm[0].length) : got.text, got.lang);
       if (flags && got.lang === want) {
         readerSetLangButtons(flags.zh, flags.en);
         return;
@@ -2607,15 +2652,14 @@ var FLI = (function () {
     if (reader.link) rdOrig.href = reader.link;
     reader.pushed = opts.push !== false || !!(history.state && history.state.fliPushed);
     readerFillLinkFromState();
-    if (!was) {
-      reader.lastFocus = document.activeElement;
-      rdOverlay.hidden = false;
-      rdDrawer.hidden = false;
-      document.body.style.overflow = 'hidden';
-    }
-    rdTitle.textContent = reader.title;
+    rdTitle.textContent = reader.title || '文章全文';
     readerLangButtonsInit();
     readerLoad();
+    if (!was) {
+      reader.lastFocus = opts.opener || document.activeElement;
+      rdDrawer.showModal();
+      document.body.style.overflow = 'hidden';
+    }
     if (opts.push !== false) {
       var u = new URL(location.href);
       u.searchParams.set('read', vendor + '/' + slug);
@@ -2631,8 +2675,7 @@ var FLI = (function () {
     reader.open = false;
     reader.requestId++;
     reader.pushed = false;
-    rdOverlay.hidden = true;
-    rdDrawer.hidden = true;
+    rdDrawer.close();
     document.body.style.overflow = '';
     if (syncHistory !== false) {
       if (wasPushed) {
@@ -2644,28 +2687,33 @@ var FLI = (function () {
         history.replaceState(null, '', u.toString());
       }
     }
-    if (reader.pendingClose) return;
-    if (reader.lastFocus && reader.lastFocus.focus) {
-      try { reader.lastFocus.focus(); } catch (e) {}
-    }
+    if (!reader.pendingClose) restoreReaderFocus();
+  }
+
+  function restoreReaderFocus() {
+    var opener = reader.lastFocus;
     reader.lastFocus = null;
+    if (opener && opener !== document.body && opener.isConnected) opener.focus();
+    else tabs[currentTab].focus();
   }
 
   function settlePendingClose() {
     if (!reader.pendingClose) return;
     reader.pendingClose = false;
-    var f = reader.lastFocus;
-    reader.lastFocus = null;
-    if (f && f.focus) {
-      try { f.focus(); } catch (e) {}
-    }
+    restoreReaderFocus();
   }
 
   rdClose.addEventListener('click', function () { closeReader(true); });
-  rdOverlay.addEventListener('click', function () { closeReader(true); });
+  rdDrawer.addEventListener('cancel', function (e) {
+    e.preventDefault();
+    closeReader(true);
+  });
+  rdDrawer.addEventListener('click', function (e) {
+    if (e.target === rdDrawer && e.clientX < rdDrawer.getBoundingClientRect().left) closeReader(true);
+  });
   document.addEventListener('keydown', function (e) {
+    if (reader.open || e.isComposing) return;
     if (e.key === 'Escape') {
-      if (reader.open) { e.preventDefault(); closeReader(true); return; }
       if (!el.subPanel.hidden) {
         e.preventDefault();
         el.subPanel.hidden = true;
@@ -2674,7 +2722,7 @@ var FLI = (function () {
       }
       return;
     }
-    if (e.key === '/' && !reader.open && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
       var tag = document.activeElement && document.activeElement.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
       var target = currentTab === 'changes' ? document.getElementById('cq')

@@ -42,5 +42,7 @@ jobs:
             git fetch --no-tags --depth=1 origin "$QC_BASE"
           fi
           python crawler_llm_intel.py --translation-qc --qc-base "$QC_BASE" --qc-links-advisory
+      - name: Install Playwright Chromium
+        run: playwright install --with-deps chromium
       - name: Verify checked-in artifacts and invariants
         run: python -m unittest -v test_workflow_and_review.ci_suite

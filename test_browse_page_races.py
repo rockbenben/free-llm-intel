@@ -105,6 +105,7 @@ class TestBrowsePageRaces(unittest.TestCase):
         self.respond("/articles/demo/first.en.md", "Selected English body.")
         self.respond("/articles/demo/first.md", "迟到的中文正文。")
         expect(self.page.locator("#reader-body")).to_have_text("Selected English body.")
+        expect(self.page.locator(".reader-prose")).to_have_attribute("lang", "en")
         expect(self.page.locator("#reader-lang-en")).to_have_attribute("aria-pressed", "true")
         self.assertEqual(self.page.evaluate("new URL(location.href).searchParams.get('lang')"), "en")
 
@@ -144,3 +145,75 @@ class TestBrowsePageRaces(unittest.TestCase):
         self.respond("/articles/demo/first.md", "第一篇正文。")
         expect(self.page.locator("#reader-title-text")).to_have_text("文章乙")
         expect(self.page.locator("#reader-body")).to_have_text("第二篇正文。")
+
+    def test_reader_is_modal_and_escape_restores_focus_and_history(self):
+        self.respond(ARTICLES_PATH, self.article_index())
+        trigger = self.page.get_by_role("button", name="读全文：文章甲", exact=True)
+        trigger.press("Enter")
+        dialog = self.page.locator("#reader-drawer:modal")
+        expect(dialog).to_be_visible()
+        expect(self.page.locator("#reader-close")).to_be_focused()
+        self.page.locator("#q").focus()
+        expect(self.page.locator("#reader-close")).to_be_focused()
+        self.respond("/articles/demo/first.md", "第一篇正文。")
+        self.page.keyboard.press("Escape")
+        self.page.wait_for_function("!new URL(location.href).searchParams.has('read')")
+        expect(dialog).to_have_count(0)
+        expect(trigger).to_be_focused()
+        self.page.go_forward()
+        expect(dialog).to_be_visible()
+        self.page.mouse.click(10, 100)
+        self.page.wait_for_function("!new URL(location.href).searchParams.has('read')")
+        expect(trigger).to_be_focused()
+
+    def test_filter_and_load_more_keep_keyboard_position(self):
+        rows = [[f"文章 {i}", f"{ORIGIN}/{i}", "demo", "2026-11-19"] for i in range(201)]
+        self.respond(ARTICLES_PATH, {"articles": rows})
+        vendor = self.page.locator('#chips button[data-vendor="demo"]')
+        vendor.press("Enter")
+        expect(vendor).to_be_focused()
+        self.respond(VENDORS_PATH, VENDORS)
+        expect(vendor).to_be_focused()
+        self.page.locator("#more-btn").press("Enter")
+        expect(self.page.get_by_role("link", name="文章 200", exact=True)).to_be_focused()
+
+        self.page.locator("#tab-quotas").press("Enter")
+        self.respond("/feeds/quotas.json", {"vendors": [{"id": "demo", "name": "Demo AI", "part": 1}]})
+        part = self.page.locator('#q-parts button[data-part="1"]')
+        part.press("Enter")
+        expect(part).to_be_focused()
+        self.page.locator("#q-reset").press("Enter")
+        expect(self.page.locator("#qq")).to_be_focused()
+
+    def test_theme_override_persists_and_can_return_to_system(self):
+        self.page.emulate_media(color_scheme="light")
+        scheme = self.page.locator('meta[name="color-scheme"]')
+        button = self.page.locator("#theme-btn")
+        expect(scheme).to_have_attribute("content", "light dark")
+        button.click()
+        expect(scheme).to_have_attribute("content", "dark")
+        expect(self.page.locator("html")).to_have_css("color-scheme", "dark")
+        expect(self.page.locator("body")).to_have_css("background-color", "rgb(14, 19, 25)")
+        self.page.reload()
+        expect(scheme).to_have_attribute("content", "dark")
+        self.page.emulate_media(color_scheme="dark")
+        expect(scheme).to_have_attribute("content", "dark")
+        self.page.emulate_media(color_scheme="light")
+        button.click()
+        expect(scheme).to_have_attribute("content", "light dark")
+        self.assertIsNone(self.page.evaluate("localStorage.getItem('fli-theme')"))
+        self.page.emulate_media(color_scheme="dark")
+        expect(self.page.locator("body")).to_have_css("background-color", "rgb(14, 19, 25)")
+
+    def test_switching_tabs_does_not_restart_pending_feed_loads(self):
+        for name, path, payload in (
+            ("changes", "/feeds/intel-changes.json", {"items": []}),
+            ("quotas", "/feeds/quotas.json", {"vendors": []}),
+        ):
+            with self.subTest(tab=name):
+                tab = self.page.locator(f"#tab-{name}")
+                tab.click()
+                self.page.locator("#tab-news").click()
+                tab.click()
+                self.assertEqual(self.page.evaluate("fixture.seen").count(f"GET {path}"), 1)
+                self.respond(path, payload)
