@@ -9,6 +9,381 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-all.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
+      <title>[OpenAI] GPT-6 模型展示了内在的蛋白质设计能力</title>
+      <link>https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities</link>
+      <guid isPermaLink="true">https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：GPT-6 models demonstrate intrinsic protein-design capabilities</description>
+      <content:encoded><![CDATA[<p>2026年11月24日</p>
+<p>科学</p>
+<p>出版</p>
+<h1>GPT‑6 模型展现出内在的蛋白质设计能力</h1>
+<p><a href="https://cdn.openai.com/pdf/gpt-6-a-universal-foundation-model-for-protein-biology.pdf">阅读论文</a></p>
+<h2>主要发现：</h2>
+<ul><li>我们的 GPT‑6 系列模型仅凭推理和代码，就能设计新的蛋白质形状及其化学构建块的序列，而无需调用专门的生物学模型来生成这些设计。</li><li>一个内部研究模型在许多蛋白质设计任务上达到或超越了专门模型的表现。研究人员还可以通过向模型提示蛋白质应在何处附着以及应呈现何种形状来引导设计。</li><li>在与 Onava 进行的实验室测试中，基于 GPT‑6.2 设计的蛋白质在五个靶点上显示出结合（即附着）的证据。重新设计的抗体也保持了结合能力。专门模型帮助提供了序列并筛选了用于测试的候选物。</li><li>模型的书面推理和代码表明，它们运用数学、物理、化学和生物学知识来推理蛋白质形状以及与其他分子的相互作用。</li></ul>
+<p>在一篇题为<em>《GPT‑6 作为蛋白质生物学的通用基础模型：超越专门模型》</em>的预印本中，我们展示了我们的 GPT‑6 系列模型具有设计新蛋白质的<strong>内在能力</strong>：这些模型无需依赖专门的生物学模型，仅凭推理和通用编码工具就能设计新的蛋白质结构和序列。</p>
+<p>蛋白质在活细胞中承担了大量工作。它们驱动维持生命的化学反应，在血液中运输氧气，并防御身体免受感染。形状不正确的蛋白质也可能导致疾病和功能障碍。蛋白质由称为氨基酸的化学构建块链组成。这些氨基酸的顺序（即序列）有助于决定蛋白质如何折叠成三维形状，进而影响其功能。</p>
+<p>科学家通常从明确的目标出发，即他们希望蛋白质做什么。他们可能希望蛋白质阻断帮助癌细胞逃避免疫系统的信号，或帮助从空气中捕获二氧化碳。挑战在于弄清楚什么样的三维结构能使蛋白质完成其工作，以及哪种氨基酸序列能赋予其该结构。能够生成三维蛋白质结构和序列的专门生物学模型使这项工作更加可行。</p>
+<p>使用和协调这些专门模型需要大量专业知识。每个模型接受特定类型的输入和约束，而这些模型在不修改软件或进行额外训练的情况下，很难接受新类型的信息。相比之下，一个能够执行多个专门模型工作的通用模型可以轻松适应新的指令和要求。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4u7ogWwVXuqX5GRdnZxsLM/23d72378f6fea65debd91c914f32fb54/protein-workflows-intrinsic-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="比较语言模型协调专用工具与单一模型直接处理蛋白质任务的示意图。"></p>
+<p>我们的研究展示了将自然语言与内在蛋白质能力相结合的潜在力量。我们可以在从两个原子之间的单个键到蛋白质整体形状的各个尺度上引导我们的模型。例如，我们要求 GPT‑6.2 预测一个小分子将在何处以及如何与蛋白质结合。当我们已经知道哪两个原子形成了键时，我们可以将该信息提供给模型，并询问分子的其余部分将如何适配。我们可以仅通过更改提示在这些任务之间切换，而无需重新训练模型。我们还要求我们的模型设计称为 minibinder 的小型蛋白质，并标记每个 minibinder 应附着到其靶标的位置，并进一步指定每个 minibinder 应包含多少个螺旋或链。一个内部模型在其三维设计中以近乎完美的保真度遵循了该指令。</p>
+<p><em>距离中心越远的点表示性能越好。更新一代的模型在测试的 14 项蛋白质任务中的许多任务上都有所改进。</em></p>
+<h2>深入了解我们模型的蛋白质设计</h2>
+<p>我们进行了计算测试，检验 GPT‑6 系列模型能否设计小型蛋白质以结合给定靶标、围绕指定结构特征构建蛋白质、预测蛋白质结构和分子相互作用，以及排列序列变化如何影响稳定性和结合等特性。我们的最新模型在大多数任务上表现与专门模型相当或更好，尽管预测完整的蛋白质结构仍然是一个明显的弱点。</p>
+<p>模型的书面推理和代码为它们如何处理这些任务提供了线索。它们运用数学、物理、化学和编码，以及对蛋白质序列和结构中反复出现的模式的知识。例如，在设计一种旨在结合 IL-7Rα 的小型蛋白质时，模型提出了两种蛋白质可能如何相互作用，然后编写并执行代码来探索可能支持该相互作用的不同蛋白质形状和氨基酸选择。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/77JrLamL248By3sCY9fZqj/7537b78d13de9641b56233de8216a606/source_figure_1__3_.png?w=3840&amp;q=90&amp;fm=webp" alt="模型如何完成蛋白质设计"></p>
+<p><em>模型的书面推理和代码显示它运用数学、物理、化学和生物学来设计一种旨在附着到 IL-7Rα 的蛋白质。它检查靶标的表面，将五个螺旋区段排列成蛋白质形状，并检查两种蛋白质如何相互适配。</em></p>
+<p>与我们的研究合作伙伴 <a href="http://www.onava.ai">Onava</a> 一起，我们还在实验室中测试了模型的结构和序列设计。首先，Onava 基于预发布版 GPT‑6.2 设计的三维结构制造了小型蛋白质。专门模型提供了氨基酸序列并帮助筛选了用于测试的候选物。对于我们选择的五个靶标中的每一个，至少有一种蛋白质在实验室中显示出结合的证据。在单独的实验中，GPT‑6.2 为现有的 minibinder 和抗体设计了新的氨基酸序列。在使用专门模型进行候选物筛选后，许多重新设计的蛋白质也显示出与原始蛋白质相同靶标结合的证据。</p>
+<h2>实验室实验 1：设计与靶标结合的小型蛋白质</h2>
+<p>我们的第一个实验室实验测试了 GPT‑6.2 能否设计出与其预期靶标结合的小型蛋白质。我们将质量的计算测量值与 RFdiffusion（一种蛋白质设计专门模型）进行了比较，发现 GPT‑6.2 的三维设计得分略低，而我们最新的内部模型得分更高。在实验室实验中，我们基于 GPT‑6.2 的设计制造了蛋白质，并测量了它们与靶标结合的强度。</p>
+<p>我们向 GPT‑6.2 提供了五个靶标蛋白质的三维结构，并标记了我们希望 minibinder 附着的位置。然后它编写代码为潜在的 minibinder 创建三维设计，而不使用专门的蛋白质 AI 模型。</p>
+<p>为了将 GPT‑6.2 的三维设计转化为我们可以在实验室中测试的蛋白质，我们需要能够折叠成所提出结构的氨基酸序列。我们使用了一种名为 SolubleMPNN 的专门 AI 模型来为每个设计建议序列。其他专门的蛋白质模型帮助我们筛选出预测能按设计折叠并在靶标预期位点结合的候选物。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tdj7ylIVvRLZuSefgld5A/79ed19f943933341880b0e9bb1c4d6ae/wet-lab-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="从蛋白质设计到实验室测试。从靶标选择到骨架和序列设计、结构筛选、排序和实验室测试的工作流程。"></p>
+<p><em>GPT‑6.2 设计了旨在附着到所选靶标的小型蛋白质的形状。然后专门模型提出了氨基酸序列——即蛋白质化学构建块的顺序——并帮助筛选出设计供我们的研究合作伙伴 Onava 在实验室中制造和测试。</em></p>
+<p>我们在实验室中测试了 322 个 minibinder 对 5 个靶标的结合情况。其中，35 个（10.9%）测试呈阳性，表明与其预期靶标结合。我们发现了 5 个针对 PD-L1（某些癌症用来逃避免疫系统的蛋白质）的命中，3 个针对 IL-7Rα，1 个针对 TrkA，8 个针对 VEGF-A，以及 18 个针对 IL-17A。<a href="https://www.nature.com/articles/s41586-023-06415-8/figures/6">原始 RFdiffusion 研究</a>报告的命中率更高，但命中率在很大程度上取决于研究人员在实验室验证之前筛选设计的严格程度以及他们对结合的定义。尽管如此，我们的结果提供了早期证据，表明我们可以将 GPT‑6.2 的三维设计转化为在实验室中与其预期靶标结合的蛋白质。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6YdRXyaFP4SEp3mku9AcPi/e8675d403db99751eac6a843d6d32507/specific-responsive-legend-poster.svg?w=3840&amp;q=50" alt="设计蛋白质以附着到特定靶标 · 响应式图例海报"></p>
+<p><em>一个内部研究模型设计了旨在附着到灰色所示靶标蛋白质的小型蛋白质的形状。彩色形状将每个设计与蛋白质如何折叠并与其靶标适配的计算预测进行了比较。</em></p>
+<h2>实验室实验 2：为三维蛋白质结构设计新序列</h2>
+<p>我们测试了 GPT‑6.2 能否自行设计序列。我们向它提供了现有 minibinder 如何与其靶标适配的三维模型，隐去了原始氨基酸序列，并要求它提出新的序列。专门模型帮助我们选择在实验室中制造和测试哪些蛋白质。</p>
+<p>对于三个靶标，我们从已确认的 minibinder 的计算预测结构开始，这些 minibinder 的序列由 Onava 从早期研究中收集。在我们的初步实验室筛选中，我们看到 MDM2 的 88 个设计中有 75 个（85%）结合，VEGF-A 的 42 个设计中有 26 个（62%）结合，PD-1 的 59 个设计中有 8 个（14%）结合。GPT‑6.2 提出的氨基酸序列也通常与原始 minibinder 序列有显著差异，VEGF-A 的中位差异为 50%，MDM2 为 43%，PD-1 为 15%。</p>
+<p>我们还要求 GPT‑6.2 为它之前生成的三种未发表的 minibinder 形状设计新序列：两种靶向 PD-L1，一种靶向 IL-7Rα。一个专门模型 ProteinMPNN 已经为每种形状提供了一个序列，由这些序列制造的蛋白质已在实验室中显示出结合。在由 GPT‑6.2 的新序列制造的 107 个蛋白质中，14 个（13.1%）显示出结合。</p>
+<p>给定一个未发表的结构，GPT‑6.2 提出了两个显著不同的序列，两者都显示出与同一靶标结合迹象。对于相同的 PD-L1 minibinder 结构，GPT‑6.2 设计了两个序列，在总共 90 个氨基酸中分别有 52 个和 58 个与原始序列不同。两者之间也在 44 个位置不同，接近序列的一半。</p>
+<p>未发表的结构和序列的重大差异为我们提供了强有力的证据，表明 GPT‑6.2 的能力超越了记忆。结果还表明，我们可以使用 GPT‑6.2 内在地设计 minibinder 的结构及其序列。</p>
+<h2>重新设计抗体中与靶标结合的部分</h2>
+<p>研究人员经常重新设计抗体的结合环，以帮助其更紧密地抓住靶标，这一过程称为<strong>亲和力成熟</strong>。他们可能还希望抗体更具选择性地结合，从而不太可能附着到相似的蛋白质上。我们测试了朝着这些目标迈出的第一步，要求我们的模型设计新的环序列，以保持与原始靶标的结合。</p>
+<p>我们从六种结合同一蛋白质 IL-4Rα 的小型抗体（VHH）开始。对于每种抗体，我们向 GPT‑6.2 提供了其预测的三维结构和大部分氨基酸序列，省略了帮助抗体抓住靶标的三个环。我们要求模型为它们设计新序列。在我们测试的 182 个设计中，128 个（70%）显示出与 IL-4Rα 结合的迹象。</p>
+<p>然后我们测试了我们能多精确地引导模型对现有治疗性抗体进行改变。这一次，我们向模型提供了原始序列，并要求它在三个结合环中各改变大约一半的氨基酸，同时保持序列的其余部分不变。我们在实验室中将抗体重新设计的部分作为片段进行了测试。在基于五种治疗性抗体的 272 个片段中，179 个（66%）显示出与原始靶标 PD-1 或 PD-L1 的结合。</p>
+<h2>我们的模型还能设计和预测什么？</h2>
+<h3>对 minibinder 结构的精确控制，实现可编程结构设计</h3>
+<p>基于结构的可编程设计的长期目标是让研究人员用自然语言指定结构约束。在我们的计算评估中，我们的模型始终设计出接触靶标上所需位置的 minibinder。我们还可以指定 minibinder 的结构类别（全螺旋、全链或组合），并以近乎完美的保真度控制螺旋和链的数量。同样的方法让我们能够表达对结合界面更详细的要求，例如哪些靶标氨基酸在结合时应被埋藏，或者 minibinder 和靶标是否应通过特定的相互作用（如“β-折叠–β-折叠”）相互作用。随着我们模型推理能力的提高，我们设想研究人员可以像今天引导图像生成一样引导蛋白质结构生成，即描述他们想要的特征。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6hHUcGPmxSdtuz8SS3Rcth/7af1c0f8e139a63fd1433aceae7ec207/guiding-responsive-legend-poster.svg?w=3840&amp;q=50" alt="用通俗语言引导蛋白质形状 · 响应式图例海报"></p>
+<p><em>我们的模型被要求设计具有指定形状的小型蛋白质：主要是螺旋（橙色）、主要是链（蓝色）或混合。一些指令还指定了要包含的螺旋或链的数量。这些设计旨在附着到灰色所示的 PD-L1 或 PD-1。</em></p>
+<h3>围绕指定结构特征构建蛋白质</h3>
+<p>大多数酶是加速化学反应的蛋白质。在设计新酶时，研究人员可能知道几个关键氨基酸需要在反应发生位点如何排列。这些氨基酸可能沿蛋白质链相距很远。挑战在于设计蛋白质的其余部分，使得当链折叠时，它能将这些氨基酸聚集在一起并固定到位。</p>
+<p>我们在来自 <a href="https://arxiv.org/html/2502.12479v2">MotifBench</a> 的 30 个挑战上测试了我们的模型，包括来自酶和蛋白质相互结合位点的例子。我们给模型一个特定的氨基酸三维排列，称为<strong>基序</strong>，并要求它们使用编码工具围绕它设计蛋白质的其余部分。这项任务称为<strong>基序支架设计</strong>。</p>
+<p>对于每个设计，我们使用 ProteinMPNN 提出八种可能的氨基酸序列，并使用 <a href="https://huggingface.co/biohub/esmfold_v1">ESMFold</a> 预测每种序列将如何折叠。如果至少一个预测结构既保留了基序又与模型设计的整体结构密切匹配，我们将该设计计为成功。</p>
+<p>在一项初步分析中，我们最新内部模型评估的设计中有 43.7% 满足 both 标准，而 RFdiffusion 为 27.8%。虽然需要实验室实验来确定这些蛋白质是否能执行预期功能（例如加速特定反应），但这为我们的模型内在蛋白质能力提供了强有力的计算证据。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3GkRmY9bmi12lalJCbZOjU/1bb471ce9aeb8e177ea935869c355d92/motif-responsive-legend-poster.svg?w=3840&amp;q=50" alt="MotifBench · 响应式图例海报"></p>
+<p><em>一个内部研究模型围绕一个必须保持固定形状的小区域（金色所示）设计了蛋白质结构。彩色形状将模型的设计与蛋白质如何折叠的计算机预测进行了比较。仅显示金色的面板没有通过计算机检查的设计。</em></p>
+<h3>设计具有指定折叠的蛋白质</h3>
+<p>在基序支架设计中，我们指定了几个氨基酸应如何相对排列。然后我们确定是否也可以通过指定蛋白质的整体折叠来引导整个蛋白质的设计。我们给模型一个链长度和来自 <a href="https://www.cathdb.info/wiki/doku/?id=faq">CATH</a> 的代码，CATH 是科学家用来分类蛋白质结构的系统。然后模型必须确定每个氨基酸在三维空间中应处的位置。</p>
+<p>许多设计捕捉到了我们要求的整体布局。更难的部分是让链沿着正确的路径穿过它。例如，两种蛋白质可能有几个卷曲段堆积成相似的束，但它们在链连接这些段的顺序上有所不同。</p>
+<p>如果至少一个氨基酸序列被预测为采用所要求的折叠并与模型的三维设计密切匹配，我们将设计计为成功。在 200 个挑战中，我们最新内部模型评估的设计中有 18.9% 通过，而专门蛋白质设计模型 Proteina 为 17.1%。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/11XZLTWWYSfBFIEC0CGw0D/df7b4140a33a376f4ecc4f5bc2a553e6/cath-responsive-legend-poster.svg?w=3840&amp;q=50" alt="CATH 折叠设计 · 响应式图例海报"></p>
+<p><em>一个内部研究模型被要求设计具有指定整体形状的蛋白质，例如螺旋束或链层。彩色形状将选定的设计与它们如何折叠的计算机预测进行比较，显示了两者密切匹配的例子。</em></p>
+<h3>预测化学物质和蛋白质如何适配</h3>
+<p>许多药物，包括阿司匹林，都是<strong>小分子</strong>，即比它们作用的蛋白质小得多的化合物。预测小分子在何处与蛋白质结合以及如何在那里适配称为<strong>对接</strong>。这些预测可以帮助研究人员决定如何修改候选药物以使其更紧密地结合靶标。为了测试我们的模型，我们从实验确定的小分子与蛋白质结合的结构开始。我们以数字方式移除每个小分子，并向模型提供蛋白质结构以及分子原子如何连接的文本描述（称为 SMILES 的字符序列）。然后我们要求模型预测分子曾结合的位置及其取向。</p>
+<p>对于我们的第一个对接测试，我们使用了 <a href="https://pubs.rsc.org/en/content/articlehtml/2024/sc/d3sc04185a">PoseBusters 数据集</a>，这是一个三维结构集合，展示了小分子如何与蛋白质结合。研究人员通过实验确定了这些结构，为我们提供了一种检查模型预测的方法。在没有被告知每个分子在蛋白质上结合位置的情况下，模型必须预测分子适配的位置以及它朝向哪个方向。GPT‑6.2 在 93% 的评分预测中与分子的观察位置和取向密切匹配，而我们最新的内部模型为 96%，专门对接模型 DiffDock-L 为 50%。</p>
+<p>在实践中，研究人员可能已经对分子如何结合有所了解。<strong>GPT 模型的一个主要优势是我们可以在提示中直接提供额外信息</strong>。我们在来自 <a href="https://doi.org/10.1021/acs.jcim.8b00228">Scarpino 数据集</a>的 179 个结构上测试了这一点，其中每个蛋白质结构都与一个小分子形成化学键，将两者系在一起。我们告诉模型哪两个原子形成了键，并要求它们预测分子的其余部分如何与蛋白质适配。GPT‑6.2 在<a href="https://github.com/openai/protein_paper/blob/4f5fbba67d507f01c5b8f1ea2ba9f5bc8c23494b/figures/section_4/small_molecule_docking/data/success/counts_and_rates.csv">92% 的评分预测</a>中与实验结构密切匹配，我们最新的内部模型为 97%，而 <a href="https://github.com/gcorso/DiffDock/blob/main/inference.py">DiffDock</a> 达到 60%。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/45FJ72r4oYUA1DpVYhGI4N/d7101c5b7a6a618481e6362b3b400a87/ligand-docking-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="内部研究模型：预测小分子如何与蛋白质适配（低 RMSD 配体姿态）。来自 PoseBusters 和 Scarpino 数据集的示例中预测和实验配体位置的叠加。"></p>
+<p><em>一个内部研究模型预测了小分子将在何处以及如何与灰色所示的蛋白质适配。紫色显示模型的预测，青色显示在早期实验中确定的分子位置。在这些例子中，预测与实验结构密切匹配。</em></p>
+<h3>预测抗体如何与蛋白质结合</h3>
+<p>抗体结合的位置可以帮助解释它是否阻断另一种蛋白质附着到同一位点。我们测试了连续几代 GPT 预测抗体结合位置及其朝向的准确性。对于数百对抗体和靶标，我们向模型分别展示了两种蛋白质，并隐藏了它们表面上的一些原子细节（所有侧链）。</p>
+<p>在隐藏侧链细节的情况下，平均 DockQ 分数（一种常用指标，值越高表示与实验观察到的排列越接近）从 GPT‑5.6 的约 0.05 增加到 GPT‑6 的 0.28、GPT‑6.2 的 0.57，以及我们最新内部模型的 0.81，均在各模型最高评估计算设置下。</p>
+<p>由于这些结构是公开的，模型可能在训练期间见过相同的抗体-靶标对或相似的对。即便如此，即使隐藏所有侧链位置，每一代模型都更准确地预测了两种蛋白质如何适配。这一进展让我们有理由对更困难的对接问题持乐观态度。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1YHml5YMMOVbMQ7vV03a0Z/4e6dadc376a44b026d96bfd6b3ae1e8a/102-poster.svg?w=3840&amp;q=50" alt="预测抗体附着 · 视频海报"></p>
+<p><em>每一行比较了四个模型对抗体如何附着到其靶标蛋白质的预测。彩色形状显示模型的预测；深灰色显示实验中观察到的位置。随着每一代模型的更新，结果都有所改善。</em></p>
+<h3>预测突变的影响</h3>
+<p>我们可以在计算机上设计的蛋白质远远多于我们能在实验室中制造和测试的。即使我们确定了一个有前途的结构，我们可能仍有许多氨基酸序列可供选择。我们测试了我们的模型能否通过预测蛋白质序列的变化如何影响其稳定性、活性或与靶标结合的能力，来帮助研究人员决定首先制造哪些版本。</p>
+<p>我们利用了四个公开数据集，这些实验中学科学家替换了蛋白质中的一个或多个氨基酸并测量了效果。对于每个测试，我们向模型提供了科学家起始的蛋白质序列以及 50 个修改版本的序列。我们告诉模型科学家测量了什么，隐去结果，并要求它们在不使用编码工具的情况下，仅通过推理对 50 个版本进行排序。</p>
+<p>在一项蛋白质稳定性研究中，我们要求模型根据每个版本在室温下折叠的可能性对 50 个蛋白质版本进行排序。我们使用一种称为<em>秩相关</em>的度量将预测顺序与实验室观察到的顺序进行比较。值为 1 表示排名完全匹配，0 表示没有一致关系，−1 表示顺序完全相反。在稳定性研究的 265 组中，每一代模型都有所改善，从 GPT‑5.6 的 0.41 到 GPT‑6 的 0.52、GPT‑6.2 的 0.57，以及我们最新内部模型的 0.66。</p>
+<p>在四个数据集中的每一个中，GPT‑6.2 和我们最新的内部模型平均产生的排名比专门蛋白质模型 ESM2-650M 更准确。</p>
+<h3>我们模型蛋白质结构预测的早期信号</h3>
+<p>早些时候，我们依赖专门模型来预测氨基酸序列是否会折叠成我们模型设计的结构。我们想看看我们的模型离自己做出该预测有多近。我们向模型提供了具有已知三维结构的蛋白质的氨基酸序列。仅使用基本编码工具，模型预测了每条链将如何在三维中折叠。我们使用一种称为<em>TM-score</em>的度量评估了它们的预测。分数为 1 表示与真实结构完美匹配，分数高于 0.5 通常表明预测捕捉到了整体折叠。</p>
+<p>最大的收益在个别例子中可见。对于某些蛋白质，我们最新的内部模型 closely 再现了早期模型遗漏的折叠。在整个测试中，平均分数从 GPT‑5.6 的 0.16 上升到 GPT‑6.2 的 0.26 和我们最新内部模型的 0.38。专门模型 ESMFold2 平均为 0.93，因此我们的模型仅从序列可靠预测整个蛋白质结构的能力仍有很大差距。</p>
+<p>如果研究人员已经知道大部分结构并想填补缺失的部分呢？我们在 100 个抗体片段上测试了这一点。对于每一个，我们向模型提供了氨基酸序列和周围的三维结构，隐藏了帮助抗体识别靶标的六个环。我们最新的内部模型经常相当准确地预测这些环的形状和位置。ESMFold2 总体上仍然更准确，即使仅从序列工作。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/EPSBjHvFHaqO4YmjaARZl/eb92da4b71e5c45583f0ac9f96cf47f7/117-poster.svg?w=3840&amp;q=50" alt="预测蛋白质如何折叠 · 视频海报"></p>
+<p><em>每个模型被给予相同的蛋白质序列——其化学构建块的顺序——并被要求预测其三维形状。彩色形状显示预测，深灰色显示实验中测量的结构。</em></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3nlrKnz0OVUosx65582laY/725cdf154a6efc78e6ca17dd0665748f/antibody-cdr-legend-desktop.png?w=3840&amp;q=90&amp;fm=webp" alt="十个抗体结构，缺失环由内部模型以紫色预测，ESMFold2 以橙色预测。红色显示实验环。每个例子显示以埃为单位的预测误差。"></p>
+<p><em>每个模型被给予部分结构，并负责预测对应于抗体 CDR 的缺失区域。彩色区域显示内部模型和 ESMFold2 的预测与实验确定的结构进行比较。</em></p>
+<h2>局限性</h2>
+<p>重要的是要注意，我们的蛋白质设计活动依赖于专门的结构预测模型，如 Boltz-2、OpenDDE 和 ESMFold2 来筛选候选物。我们的结果表明，GPT 模型在工作流程的两个阶段具有与专门模型相当的内在能力：骨架生成，研究人员通常使用 RFdiffusion；以及序列重新设计，他们通常使用 ProteinMPNN。因此，我们的结果尚未确立我们的模型可以在没有专门模型帮助的情况下，在零样本设置中端到端地生成 de novo minibinder。</p>
+<p>我们的工作再次展示了参差不齐的能力前沿。从氨基酸序列预测完整的蛋白质结构对我们的模型来说仍然比上述几个组件任务困难得多。在该任务上，即使我们最好的内部模型也远远落后于专门的结构预测模型。</p>
+<p>一些基准结果也需要仔细解读。在要求模型从蛋白质结构推断氨基酸序列的测试中，异常高的准确性可能部分反映了记忆或生成这些结构的过程留下的模式。仅凭这些结果不能确立在不熟悉的蛋白质上的可靠性能。</p>
+<p>实验室结果为所提出的设计是否可行提供了更直接的测试，但结合只是通往有用研究工具或药物的第一步。进一步的工作需要确定特异性、稳定性和生物活性等特性，以及治疗应用的安全性和有效性。</p>
+<h2>下一步</h2>
+<p>这项工作是 OpenAI 朝着<strong>可编程分子设计</strong>迈出的早期一步。我们的目标是让科学家用通俗语言描述他们希望分子做什么，并使用我们的模型帮助设计候选物在实验室中测试。为了使这种方法对开发药物有用，我们希望在三个方面取得进展。</p>
+<ul><li><strong>为更困难的靶标寻找 minibinder。</strong> 我们希望设计能够结合到我们迄今为止尝试未能成功的靶标的分子。</li><li><strong>为结合后发生的事情而设计。</strong> 我们希望测试我们设计的分子是否能产生特定的生物效应，例如杀死癌细胞。我们还希望设计能够选择性结合其预期靶标且易于制造的分子。</li><li><strong>设计更广泛的分子。</strong> 我们的实验室实验集中在小蛋白质 minibinder 和抗体片段。我们希望将这项工作扩展到同时结合多个靶标的分子、RNA 和小分子，包括一类称为 PROTAC 的分子，它们引导细胞分解特定蛋白质。</li></ul>
+<p>在我们努力安全负责地加速科学进步的同时，我们也寻求评估和降低风险，特别是与生物安全相关的风险。帮助科学家为新药设计蛋白质的相同能力也可能被滥用。我们的<a href="https://openai.com/index/updating-our-preparedness-framework/"> preparedness framework⁠</a>指导我们如何评估这些风险并测试降低风险的保障措施。</p>
+<p>虽然实验室测试仍然是蛋白质设计的关键部分，但我们的目标是提供强大的模型，通过给科学家更多控制和灵活性来缩短每一轮设计，并减少找到功能性蛋白质所需的设计-测试循环总数。最终，我们设想使科学家能够仅通过用自然语言提示我们的模型来设计蛋白质和分子，从而大规模加速新生物技术和新药物的开发。</p>
+<ul><li>2026</li></ul>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7Fhi4CJjSh5B8NNQDDr7pd/1c5136956dbb6d35042344ed4aaeedbb/searching-for-distant-planets-with-astra-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="用 Astra 搜寻遥远行星 — 封面"></p>
+<p>用 Astra 搜寻遥远行星</p>
+<p>科学2026年11月24日</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4GWchdof3kw2l5OtMIvGt4/56144e08b813d6af76ae93adc2cefc1b/introducing-medchembench-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="MedChemBench：药物化学 AI 基准测试 — 封面"></p>
+<p>MedChemBench：药物化学 AI 基准测试</p>
+<p>研究2026年11月20日</p>
+<p><img src="https://cdn.openai.com/mdx-assets/ec712845-fc63-4359-a7d8-e2088e063904/research-acceleration-card.41531bc2.png" alt="柔和的蓝色和绿松石色渐变纹理。"></p>
+<p>研究加速：参差不齐的前沿</p>
+<p>研究2026年11月18日</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[OpenAI] 与 Astra 一起寻找遥远的行星</title>
+      <link>https://openai.com/index/searching-for-distant-planets-with-astra</link>
+      <guid isPermaLink="true">https://openai.com/index/searching-for-distant-planets-with-astra</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：Searching for distant planets with Astra</description>
+      <content:encoded><![CDATA[<p>HD 164604 b 的插图视图拉远至银河系。方框标记了一组已确认系外行星的恒星系统。距离随缩放而变化，并在最宽视野中显示距地球的距离。将鼠标悬停或点击方框可阅读其标签。使用方向键浏览标签，按 Escape 关闭标签。</p>
+<p>November 24, 2026</p>
+<p>科学</p>
+<h1>用 Astra 搜寻遥远行星</h1>
+<p>两名业余天文学家使用 Codex 和 Astra 在公开望远镜数据中寻找行星迹象。现在，他们为专业天文学家提供了一些可以更仔细查看的位置。</p>
+<p>自 <a href="https://www.nature.com/articles/355145a0">1992 年首次公布</a>以来，天文学家已确认超过 <a href="https://exoplanetarchive.ipac.caltech.edu/">6,400 颗太阳系外行星</a>。一个全球业余天文学家社区长期以来一直是这项搜寻的一部分。有些人梳理公开望远镜数据，寻找恒星亮度中微小而重复的下降——这可能预示一颗绕行行星。另一些人则用自己的望远镜观测下一次亮度下降，并与研究人员分享所见。</p>
+<p><em>数据来自 NASA Exoplanet Archive 的 <a href="https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&amp;config=PSCompPars">Planetary Systems Composite Parameters 表</a>。2026 年数据为截至 November 24, 2026 的年初至今数据。</em></p>
+<p>天文学家多年来一直在这一搜寻中使用 AI。2017 年，研究人员用 NASA <a href="https://science.nasa.gov/mission/kepler/">Kepler Space Telescope</a> 的 15,000 个信号训练了一个神经网络，这些信号天文学家此前已经检查过。模型从这些示例中学会识别星光中哪些模式最可能来自行星。当研究人员用它检查更微弱的信号时，其中一个信号引导他们发现了<a href="https://www.nasa.gov/news-release/artificial-intelligence-nasa-data-used-to-discover-eighth-planet-circling-distant-star/">一颗围绕名为 Kepler-90 的恒星运行的第八颗行星</a>。</p>
+<p>如今，像 Astra 这样的工具正帮助业余天文学家设计和运行自己的搜寻，而且常常是在已经产生过较明显系外行星信号的数据上进行。OpenAI 工程师 Kevin Bond 因热爱拍摄夜空而走入天文学。他用 Codex 搜索 Kepler 望远镜对约 100,000 颗恒星的观测数据；Kepler 是一项行星搜寻任务，运行于 2009 年至 2018 年。电子邮件基础设施初创公司 Primitive 的创始人 Ethan Byrd 一直热爱天文学。在与 Bond 各自独立工作的情况下，他尝试了多个 AI 模型，最终选择 Astra 帮助他分析约 1,900 万颗恒星的望远镜数据。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3lbz9p43Y9HBfty25S0RCQ/521c489c1fe8bcf462b0a4e07d5701ba/exoplanets-rooftop-at-sunset.jpg?w=3840&amp;q=90&amp;fm=webp" alt="日落时分，一个人蹲在屋顶上三脚架相机旁。"></p>
+<p>两次搜寻都识别出了潜在的系外行星。Bond 和 Byrd 现在已求助于天文学家，对其结果进行独立评估。Bond 联系了 SETI Institute 的一位天文学家；此人运行了一次独立搜寻，并在 Kepler 数据中发现了其中两个相同信号。Byrd 把他最强的候选之一发送给了从事 NASA Transiting Exoplanet Survey Satellite (TESS) 任务的研究人员。它已排队等待进一步分析，另有两个候选等待提交。</p>
+<h2>寻找星光中的亮度下降</h2>
+<p>寻找系外行星最常见的方法之一是观察它所环绕的恒星。当一颗行星从地球视角经过其恒星前方时，会遮挡极少量星光。天文学家把这次穿越称为凌星（transit）。在恒星亮度随时间变化的图表（称为光变曲线）上，凌星表现为一个亮度下降。如果这个下降按固定间隔反复出现，天文学家就知道何时再次观测它。</p>
+<p>在数千颗恒星中搜寻这种模式，部分上是一个编码问题。天文学家已发表方法，用于从多年测量中挑出微弱、反复出现的亮度下降。Bond 使用 Codex 比较这些方法，将它们组合进一个搜寻程序，并测试代码改动是否改善了搜寻。一个 AI agent 扫描光变曲线以寻找有希望的信号。另一个则对第一个标记出的候选进行更详细的检查。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6710Vp9hZFgzFm8CHOCLrt/20f95c70c1d86c050770e61c0fc02f3d/exoplanets-working-at-laptop-square.jpg?w=3840&amp;q=90&amp;fm=webp" alt="一名摄影师在三脚架相机旁操作笔记本电脑，屏幕和他身后的城市灯光照亮了他。"></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3He6T0iGapx53CIbUOaOxC/55df549454b5e85d7162d9c6f9b2bfbd/exoplanets-laptop-in-the-field.jpg?w=3840&amp;q=90&amp;fm=webp" alt="黑暗中，一双手放在笔记本电脑键盘上，屏幕上可见星空。"></p>
+<p>Bond 在 Kepler Space Telescope 的公开数据上运行了该程序。搜寻标记出 200 多个信号，其中 10 个来自此前已确认的行星。找到这些已知行星让 Bond 相信，该程序能够挑出他正在寻找的那类信号。</p>
+<p>两颗恒星格外突出。第一颗是 KIC 5689121，位于天琴座，是一颗相对较冷的恒星，大小约为太阳的一半。Codex 搜寻发现其亮度每 13.8 天出现一次下降。如果这是由一颗行星造成的，那么它遮挡的光量表明，其直径可能约为地球的 2.4 倍。</p>
+<p>这四条曲线展示了按 13.77 天周期对齐的同一组 Kepler 观测。</p>
+<p>第二颗恒星是 KIC 6691030，较为暗淡，位于北天。Codex 搜寻发现其亮度每 4.8 天出现一次下降，这与一颗比 Neptune 小的行星相符。这些就是 SETI Institute 天文学家独立发现的两个信号。确认它们由什么造成可能需要数月或数年。</p>
+<blockquote>“Kevin 的工作表明，配备 AI 的公民科学家如何帮助天文学家探索 Kepler Bonus Catalog——这是 Kepler 原始目标之外一个庞大的恒星集合。他的流程在传统搜寻可能遗漏的数据中发现了有希望的候选。我们的初步检查令人鼓舞，后续观测将告诉我们更多。”</blockquote>
+<p>Vishal Gajjar，SETI Institute 国际 SETI 项目副主任</p>
+<p>Byrd 使用 Astra 设计了两项搜寻。一项广泛寻找系外行星候选。另一项聚焦于恒星的宜居带。宜居带（habitable zone）是距恒星的一段距离范围，在该范围内，拥有合适大气层的行星可以在其表面维持液态水。</p>
+<p>随后，Byrd 请 Astra 审阅已发表的方法、构建搜寻软件，并对有希望的信号进行初步检查。他的搜寻利用了 NASA 于 2018 年发射的 TESS 的观测数据，以及其他公开望远镜档案的数据。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1Vvl8uwapXZthgt742dVFs/627a21d7b0a87c8aaae3250ffb45b97f/kepler-tess-orange-marker-dark.png?w=3840&amp;q=90&amp;fm=webp" alt="来自 NASA TESS 拼接图的恒星布满 2018–2020 年巡天的天空。北天与南天观测之间有一道宽阔的间隙。一个被圈出的 Kepler 天区连接到一个标注 KIC 5689121 的插图。"></p>
+<p>Kepler 在四年里观测了一个天区。TESS 在 2018 至 2020 年的前 26 个扇区中巡测了两个半球。星场来自 <a href="https://svs.gsfc.nasa.gov/14985/">NASA 截至 September 2025 的 TESS 拼接图</a>，并被裁剪到最初的巡天覆盖范围。较宽的间隙显示了 TESS 在六个观测扇区期间指向更北的位置。插图标出了 <a href="https://archive.stsci.edu/kepler/kic10/search.php?action=Search&amp;kic_kepler_id=5689121">KIC 5689121</a>，它位于原始 <a href="https://archive.stsci.edu/missions-and-data/kepler/field">Kepler 天区</a>中。参见 <a href="https://heasarc.gsfc.nasa.gov/docs/tess/what-is-tess.html">NASA 最终主任务覆盖图</a>及其<a href="https://svs.gsfc.nasa.gov/12885/">早期视场动画</a>。</p>
+<p>对数据的第一轮处理发现了 49 个候选。Byrd 把他最强的候选之一发送给了从事 TESS 任务的研究人员，目前它正在等待进一步分析。他的搜寻仍在运行。</p>
+<h2>确认一颗行星需要什么？</h2>
+<p>当天文学家看到一颗恒星变暗时，他们必须考虑还有什么其他原因可以解释。两颗恒星相互从前方经过，也能产生类似的亮度下降。甚至望远镜内部温度的变化也足以影响其仪器，使一颗恒星看起来变暗。</p>
+<p>天文学家可以利用统计方法表明，系外行星是一系列亮度下降最可能的解释。他们还可以收集更多观测，有时使用不同的方法。例如，一颗绕行行星的引力会牵引其恒星，使其轻微地朝向和远离我们运动。这种运动称为径向速度（radial velocity），表现为恒星光线颜色中的微小偏移。随后，天文学家将他们的发现发表在同行评审期刊上，以便其他人检查证据。</p>
+<p>对 Bond 和 Byrd 来说，每个候选都是一个可以检验的问题。如果有一颗行星每 13.8 天经过天琴座中那颗恒星前方，天文学家就可以等待下一次穿越。进一步观测可以帮助确定亮度下降是否按预期重复，而额外检查可以帮助确定其原因。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2SSdNPM9DjCXsOEbYcsh8B/55dabb5bdee994566b1abc42f343519f/kevin-bond-milky-way-over-ridgeline.jpg?w=3840&amp;q=90&amp;fm=webp" alt="银河斜跨繁星点点的天空，位于剪影般的山脊上方。"></p>
+<p>摄影：Kevin Bond</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3J85rc2RVvJoYQqv3OKoGo/743ec2f901fb39d6a9ddbf2eb2836374/kevin-bond-copper-moon-square.jpg?w=3840&amp;q=90&amp;fm=webp" alt="一轮铜色月亮带着苍白边缘，悬挂在点缀着暗淡星光的近乎黑色的天空中。"></p>
+<h2>参与搜寻</h2>
+<p>你不必拥有望远镜也能作出贡献。NASA 的 <a href="https://science.nasa.gov/citizen-science/exoplanet-watch/how-to-contribute/">Exoplanet Watch</a> 让你可以请求数据，并学习自己绘制光变曲线。其更广泛的<a href="https://science.nasa.gov/exoplanets/citizen-science/">系外行星公民科学项目</a>提供了其他参与方式。</p>
+<p>如果你能使用望远镜，Exoplanet Watch 会引导用户了解如何收集凌星系外行星的数据并参与观测活动。<a href="https://aavso.org/exoplanet-photometry/">AAVSO 的 Exoplanet Observing Program</a>可以向你展示如何测量星光中的亮度下降，并与研究该行星的研究人员分享你的观测。而 <a href="https://science.unistellar.com/exoplanets/unite/">Unistellar Network Investigating TESS Exoplanets</a> 则协调世界各地拥有某一类型望远镜的志愿者观测同一颗恒星，帮助天文学家捕捉可能持续超过一晚的凌星。</p>
+<p>天文学有着悠久的历史，世界各地的人们追随自己的好奇心，并分享他们的发现。Bond 和 Byrd 是这一传统的一部分。他们的搜寻仍在进行，但他们把对夜空的热爱转化为其他天文学家可以调查的线索。我们希望更多人在天文学以及整个科学领域拥有这样的机会。</p>
+<p>如果你想跟进新发现、实用指南，以及使用 AI 推动科学的研究者的观点，<a href="https://openai.com/news/science/">请查看 OpenAI 科学博客⁠</a>。</p>
+<ul><li>2026</li></ul>
+<h2>关于可视化</h2>
+<p>开场动画使用了来自 <a href="https://doi.org/10.26133/NEA13">NASA Exoplanet Archive</a> 的行星名称和宿主恒星位置；该档案由 Caltech 为 NASA 的 Exoplanet Exploration Program 运营。目录快照于 November 19, 2026 获取。行星和银河系是插图。随着视野变宽，距离标签会增大，直至达到目录中的数值。</p>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3R33tya2DbYjbinXosKZnX/791e05bf51a254cbf0b11f804f1d4d4f/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="GPT-6 系列模型展示内在的蛋白质设计能力——封面"></p>
+<p>GPT-6 模型展示内在的蛋白质设计能力</p>
+<p>科学Nov 24, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4GWchdof3kw2l5OtMIvGt4/56144e08b813d6af76ae93adc2cefc1b/introducing-medchembench-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="MedChemBench：为药物化学基准测试 AI——封面"></p>
+<p>MedChemBench：为药物化学基准测试 AI</p>
+<p>研究Nov 20, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1FaKIo74WEGULSjb4ooTrV/718f3bc75e7b2ddd276d43a0fc97760a/academic-researchers-art-card.png?w=3840&amp;q=90&amp;fm=webp" alt="学术研究人员——艺术卡片"></p>
+<p>扩大科学家对 AI 的获取渠道</p>
+<p>研究Nov 16, 2026</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[OpenAI] Intentful 如何利用点来为成长腾出更多时间</title>
+      <link>https://openai.com/business/customer-stories/intentful-dots</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/intentful-dots</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：How Intentful uses dots to make more time for growth</description>
+      <content:encoded><![CDATA[<p>November 24, 2026</p>
+<h1>Intentful 如何利用 dots 为增长腾出更多时间</h1>
+<p>一家小企业创始人的 dot 如何帮助她完成研究和提案，同时提醒她关注关键消息并解决问题。</p>
+<p><a href="https://openai.com/business/why-openai/small-business/">探索面向小型企业的 ChatGPT</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2ir6HUxIcDOXRHHpjLGfBZ/5b025cf633f0b86e16d8f4f3143e9c55/intentful-dots-hero-c.png?w=3840&amp;q=90&amp;fm=webp" alt="Intentful 字标置于温暖哑光纸上，带有压印的点行和三颗发光的点。"></p>
+<p>公司规模：SMB</p>
+<p>地区：北美</p>
+<p>行业：服务业</p>
+<p>产品：ChatGPT</p>
+<p>Marina Petrova 是 <a href="https://intentful.ai/">Intentful</a> 的 CEO 兼联合创始人。Intentful 是一支精简团队，通过实时回答客户问题的广告、让网站信息可被 AI 读取的工具等产品，帮助品牌将其营销变得可交互。该公司还为营销人员提供 AI 使用方面的咨询和培训。</p>
+<p>在旅行和旅游业，Intentful 与目的地组织以及酒店、餐厅和景点等本地企业合作。定制提案是 Marina 赢得他们业务的方式之一，向潜在客户展示可实现的目标以及交付所需的条件。</p>
+<p>为了让 Intentful 持续增长，她需要为这类战略性工作腾出更多空间，但她却把太多时间花在研究、寻找文件和排版演示文稿上。她的 <a href="https://openai.com/index/introducing-dots/">dot</a> 改变了这一切：它承担任务，甚至在 Marina 不得不开口之前就满足了她的需求。</p>
+<blockquote>“我的 dot 让我感觉自己获得了一种新的超能力。”</blockquote>
+<p>——Marina Petrova，Intentful CEO 兼联合创始人</p>
+<h2>从 300 个网站到几小时而非几天完成提案</h2>
+<p>对于 Intentful 的一家旅游客户，Marina 想为目的地数百家本地企业提出一套 Intentful AI 服务方案。在给这套方案定价之前，她需要弄清楚该方案可以覆盖哪些企业的网站，以及 Intentful 过去为类似工作向其他客户收取了多少费用。</p>
+<p>她请来了自己的 dot——她将其命名为 Aria——帮助她在几小时而非几天内完成从研究到一份可以署上自己名字的提案。首先，Marina 给 Aria 一份 URL 电子表格，以及决定纳入哪些网站的标准。例如，网站需要有一个可读取的站点地图，列出的页面不超过 3,000 个。</p>
+<blockquote>“我的 dot 查看了约 300 个网站站点地图，帮我确定哪些网站应纳入面向本地企业的新报价，并从过去的协议中提取了定价。”</blockquote>
+<p>——Marina Petrova，Intentful CEO 兼联合创始人</p>
+<p>接下来，Aria 帮助 Marina 研究定价。通过 <a href="https://chatgpt.com/business/">ChatGPT</a> 插件，Aria 查看了 Intentful 的销售数据，包括过去的合作以及在 HubSpot 中的讨论。它找出了早先协议中的定价，以及 Intentful 下一年计划中的背景信息。</p>
+<p>利用这些数据，Marina 和 Aria 随后构建了一个定价模型：页面数量决定定价层级，以往的客户协议也为价格提供了依据。“我们一起制定了一个定制定价模型，然后 Aria 将其转成一份一页纸的提案，由我审阅和编辑，”Marina 说。</p>
+<p>起草提案时，Aria 知道使用 Google Drive 中 Intentful 的模板。Marina 还可以让 Aria 参考早先的提案，这样草稿从一开始就遵循 Intentful 的风格。“我需要说明提案中要包含什么，但我不需要花一个小时琢磨版式。我的 dot 会处理这些，”Marina 说。</p>
+<p>Aria 还能发现 Marina 没想到要检查的地方。当 Marina 让 Aria 沿用早先提案中的定价时，它注意到原来的续约日期与她记忆中的时间不符。Aria 标记了这一差异，并将该日期从新草稿中排除。</p>
+<h2>及时掌握消息、任务和团队动态</h2>
+<p>Marina 使用 ChatGPT 中的 Gmail 和 Slack 插件来跟进对话、查找待办任务，并了解团队在哪里需要她。Aria 会检查需要 Marina 关注的消息。在 Marina 离线期间，Aria 发现了她一直在等待的一封回复，并告诉她其中包含当天上午的通话邀请。</p>
+<p>Marina 还使用 Aria 梳理想法、查找对话、在 CRM 中查看账户历史，或在 Asana 中打开和分配任务。她经常在旅行途中通过电话向 Aria 简要说明。</p>
+<blockquote>“在长途驾驶时，我会打电话给我的 dot，讲述需要完成的事情。我们会讨论客户提案的更新，而我的 dot 已经知道结构、格式以及需要做什么。”</blockquote>
+<p>——Marina Petrova，Intentful CEO 兼联合创始人</p>
+<p>Marina 喜欢她的 dot 能在她已经在用的工具中工作。当 Aria 写草稿时，Marina 可以在 Google Docs 中她希望修改的确切位置留下评论。对于较长的文档，她会要求 Aria 使用建议模式，以便她能看到更改了什么。</p>
+<p>Aria 还会在未被要求的情况下跟进共享工作中的变化。为了一次会议演讲，Marina 制作了演示文稿，一位同事增加了两张幻灯片。“Aria 注意到了新幻灯片，在未被要求的情况下更新了演讲者备注，并告诉了我，”Marina 说。</p>
+<p>Marina 选择 Aria 可以访问哪些信息，并且始终审核发出的邮件。她可以让工作持续推进，而不必交出最终决定权。</p>
+<h2>用 dots 向他人传授 AI 知识</h2>
+<p>当 Marina 准备一场关于 agent 的 AI 101 课程时，她用 Aria 帮助构建课程内容。这个过程本身正是她想让学员学到的一个示例：委派一项真实任务，给 agent 足够的上下文，质疑结果，并对最终发出的内容保持控制。</p>
+<p>课程结束后，Aria 的支持仍在继续。一次飞行后，Marina 看到一位参与者请求访问一份培训文件。当她向 Aria 确认时，它已经分享了该文件。而在为 50 名营销人员举办的一场课程后，Aria 注意到一个软件故障导致参与者无法打开录像。它标记了访问问题，并在链接被分享之前提出修复。</p>
+<blockquote>“有了我的 dot，我可以专注于战略性事务。我可以专注于想法和增长。”</blockquote>
+<p>——Marina Petrova，Intentful CEO 兼联合创始人</p>
+<h2>加入新的工作时代</h2>
+<p>全球超过 100 万家企业正在借助 OpenAI 取得有意义的成果。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<h2>获取 OpenAI for Business 更新</h2>
+<p>产品更新、实用指南、即将举行的活动等。</p>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5x1014vlOIPdjkarVkus75/32f9a1097944f5c9e33659058123e0c9/oai_steuerrecht_1.1.png?w=3840&amp;q=90&amp;fm=webp" alt="oai steuerrecht 1.1"></p>
+<p>Steuerrecht.com 借助 ChatGPT 提供更快的法律分析</p>
+<p>Oct 27, 2025</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5B8tYqcVtztQ9PNAvMLPLO/8f2fc1472cb497b2d2b8ff82c0c1eeba/Gondola-Option-A-Art-Card-1080x1080.png?w=3840&amp;q=90&amp;fm=webp" alt="Gondola — 艺术卡片和主视觉图"></p>
+<p>随着团队用 Codex 构建更多内容，Gondola 收入翻倍</p>
+<p>初创公司 Nov 12, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3yz3B9NBTAvhKaqu5cRCwJ/53891263fccaf6007dec3de87733ac70/ted-taylor-restaurant-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="Ted Taylor 餐厅 — 封面"></p>
+<p>加盟商用 ChatGPT Work 将现金对账时间缩短 94%</p>
+<p>Oct 20, 2026</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[OpenAI] iFood 如何在 15,000 个存储库中扩展编码代理</title>
+      <link>https://openai.com/business/customer-stories/ifood</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/ifood</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：How iFood scales coding agents across 15,000 repositories</description>
+      <content:encoded><![CDATA[<p>November 24, 2026</p>
+<h1>iFood 如何将编码智能体扩展到 15,000 个代码仓库</h1>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<p>公司规模：企业</p>
+<p>地区：拉丁美洲</p>
+<p>行业：技术</p>
+<p>产品：API</p>
+<p>15,000</p>
+<p>iFood 的代码仓库数量</p>
+<p>25,000+</p>
+<p>平台完成的运行次数</p>
+<p>US$0.04</p>
+<p>平均每次运行的推理成本</p>
+<p>2x+</p>
+<p>通过安全平台修复的漏洞数量</p>
+<p>Remote Agents Platform 将工程任务转化为 API 调用：团队将工作委托出去，执行在远程沙箱中进行，结果以合并请求的形式返回。在内部安全平台中，已修复漏洞的数量增加了一倍以上。</p>
+<h2>挑战不在于任务本身，而在于规模</h2>
+<p>iFood 维护着超过 15,000 个代码仓库。每个仓库都需要定期执行特定任务：验证代码以确保其符合内部标准、修复存在漏洞的依赖项，或运行分析。</p>
+<p>这些任务单独来看都不困难。挑战出现在任务数量成倍增加时。</p>
+<p>“为一个仓库解决这个问题很容易。挑战在于大规模地解决它，”iFood 高级软件工程师 Victor Coelho 说。“Remote Agents Platform 的设计目标，就是让在全部 15,000 个仓库中大规模解决这一问题成为可能。”</p>
+<p>在该平台出现之前，每个团队都以自己的方式应对这个问题——而他们都遇到了同一个障碍。</p>
+<p>“以前，我们的解决方案是碎片化的。想象一下，iFood 的多个团队试图解决不同的问题，却没有这一层——这个智能体运行时——可供他们使用。最终，那些解决方案总是遇到同一个问题。”</p>
+<p>缺失的并不是智能或用例，而是执行基础设施。一个专用的 <em>runtime</em>。</p>
+<blockquote>“团队可以专注于解决业务问题，并把执行委托给我们的平台。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>云端编码智能体，可通过 API 访问</h2>
+<p>团队将 Remote Agents Platform 描述为一个 API，用于启动远程智能体编码任务。该循环包含三个步骤：用户通过 REST 调用提交提示词和环境要求；平台在隔离沙箱内的专用远程运行器上处理任务；之后获取结果。</p>
+<p>“平台的入口，也就是它的接口，是一个简单的 REST API。用户可以使用这个 API 创建他们所需的运行。在内部，我们处理并管理整个生命周期，并将执行委托给隔离沙箱，”他解释道。任务进度可以实时监控。</p>
+<p>运行器的内部设计在两类不同的步骤之间交替——这种组合使整个工作流具有可预测性。</p>
+<p>确定性步骤构成工作流的首尾：开始时克隆仓库、导入智能体可用的 <em>skills</em>，并设置工作分支；结束时发布合并请求，并提供生成的产物。中间是智能体执行本身，在沙箱内运行 GPT‑5.6 Luna。</p>
+<p>“这是两者的结合：工作流中的确定性步骤与智能体执行。”</p>
+<p>沙箱运行 Ubuntu，包含 iFood 生态系统所需的工具链——Python、Java、Kotlin、C#、TypeScript、Rust、JavaScript 和 Go——以及通用工具。在沙箱之外，智能体可以访问 Nexus、GitLab、Docker、Snyk、Kubernetes 和 AWS。</p>
+<h2>为什么选择 GPT‑5.6 Luna</h2>
+<p>模型选择归结为三个需要综合考虑的因素，而不是只看其中一个。</p>
+<p>“我们选择 GPT‑5.6 Luna，是因为在同一 checkpoint 的模型中，基准测试显示它在智能、效率和执行速度——也就是完成任务的速度——之间提供了很好的平衡。这三项特质共同促使我们选择了 GPT‑5.6 Luna。”</p>
+<p>对于为规模化而构建的平台，这种平衡比一次性用例更重要。随着数万个 token 被消耗，每次运行平均四美分的成本不再是一个小细节，而成为架构层面的考虑因素。</p>
+<blockquote>“考虑到我们计划在 iFood 的许多用例中扩展该平台，OpenAI 模型所提供的效率与智能平衡，确保我们能够可持续地扩展。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>如何判断智能体是否完成了任务</h2>
+<p>大规模委托执行带来了一个新挑战：自动判断智能体是否完成了它应该完成的工作。</p>
+<p>iFood 的答案在会话之后的步骤中。执行完成后，结果会使用 OpenAI 的 Structured Outputs 处理，这要求输出符合预定义契约。</p>
+<blockquote>“我们使用 Structured Outputs 处理结果，这确保响应遵循预定义契约。从智能体会话中，我们可以识别出预期响应结构内的输出。这有助于减少不确定性，并确保我们始终能从智能体会话中获得响应，无论结果是肯定还是否定。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>首个主要用户：安全</h2>
+<p>该平台已经为 iFood 内部安全产品提供支持，该产品会扫描 15,000 个仓库中存在漏洞的依赖项，并尝试修复它们。</p>
+<p>迁移产生了直接影响：“借助我们的平台，这些变更、这些修复的准确率提高了一倍以上，”Coelho 说。</p>
+<p>这个用例说明了平台背后的理念：安全团队不需要构建自己的智能体运行时，也不需要成为智能体编排专家。它只需要调用一个 API。</p>
+<h2>异步执行把时间还给开发者</h2>
+<p>团队强调的是异步执行让开发者腾出时间做什么，而不是替代开发者。</p>
+<p>由于任务被委托出去并在无人监督下运行，开发者不必持续专注于监控它。</p>
+<p>“当他们开会时，可以启动代码修复、性能分析或其他更常规的任务——这些任务可以委托出去，而无需在当时监控它。”</p>
+<p>常规工作不再争夺团队的注意力。这就为需要判断力的问题留出了时间。</p>
+<blockquote>“你可以释放这些生产力收益，而不必在工作进行时持续监控。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>以启发它的 API 为蓝本</h2>
+<p>Remote Agents Platform 被设计为一个内部层，其方式类似于 OpenAI 向外部客户提供此类任务。</p>
+<p>“Remote Agents Platform 从 OpenAI 的 API 中汲取了很多灵感，包括 Batch API 和 Agents API，后者是更新的 OpenAI 产品。我们构建了一个类似这些产品的平台，但它是 iFood 内部的。”</p>
+<p>这种启发不仅停留在概念层面，还延伸到接口设计、资源组织方式，以及异步执行并稍后获取结果的方法。</p>
+<blockquote>“这些产品直接启发了我们构建解决方案的方式。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>结果一览</h2>
+<ul><li>平台已完成超过 25,000 项任务，消耗超过 270 亿个 token，平均每次运行成本为 US$0.04。</li><li>迁移到 Remote Agents Platform 后，内部安全平台修复的准确率和已解决漏洞数量均提高了一倍以上。</li><li>覆盖范围扩展到 iFood 的超过 15,000 个代码仓库。</li><li>所有运行均使用 GPT‑5.6 Luna，因其在智能、效率和速度之间的平衡而被选中。</li><li>Structured Outputs 确保每个会话返回的结果都遵循预定义契约，无论结果是肯定还是否定。</li><li>产品团队已从构建碎片化解决方案转向通过 REST API 委托智能体执行。</li></ul>
+<h2>给领导者的经验</h2>
+<ul><li><strong>瓶颈往往是运行时，而不是用例。</strong> 多个团队已经知道他们想要自动化什么；他们缺少的是一个运行它的环境。</li><li><strong>将确定性步骤与智能体执行结合。</strong> 克隆、发布和提供产物不需要模型；中间复杂任务才需要。</li><li><strong>把每次运行成本视为架构决策。</strong> 在规模化场景下，每任务成本决定了哪些工作可行、可以自动化。</li><li><strong>要求输出遵循契约。</strong> 没有结构化响应，就无法在大规模场景下判断智能体是否达成目标。</li><li><strong>异步执行才是真正的生产力提升。</strong> 价值在于无需监控工作，而不是一边盯着一边更快完成。</li></ul>
+<h2>建议</h2>
+<ul><li>通过内部 API 暴露智能体能力，让其他团队无需重建基础设施即可使用。</li><li>将每次运行隔离在各自沙箱中，并预装你的生态系统所需的工具链。</li><li>选择模型时综合考虑智能、成本和速度，而不是只看单一基准测试。</li><li>使用结构化输出自动分类成功与失败。</li><li>从拥有明确痛点和大量需求的内部用户开始——在 iFood，这就是安全平台。</li></ul>
+<h2>下一步</h2>
+<p>团队计划将该平台推广到 iFood 内更多用例，扩大将智能体执行委托给它的内部产品范围——而每任务成本将决定这种扩展能否持续。</p>
+<h2>加入工作新时代</h2>
+<p>全球超过 100 万家企业正在借助 OpenAI 取得有意义的成果。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<h2>获取 OpenAI for Business 更新</h2>
+<p>产品更新、实用指南、即将举行的活动等。</p>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/34uiao4dZziOAyyKO40gSJ/cb6842aa761bc32b495d19976ced17bd/oai_Cisco_1x1.png?w=3840&amp;q=90&amp;fm=webp" alt="oai Cisco 1x1"></p>
+<p>Cisco 与 OpenAI 借助 Codex 重新定义企业工程</p>
+<p>May 27, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5uPNx6tKKw9bfKsi7uepmm/9ac19cf10103ab0c10bd4407b7050e8b/oai_Rakuten_1x1.png?w=3840&amp;q=90&amp;fm=webp" alt="oai Rakuten 1x1"></p>
+<p>Rakuten 借助 Codex 将问题修复速度提高一倍</p>
+<p>Mar 11, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2R1En1qK4AOSKcuZRpKxco/64ddf998210a4e3f1a3b4c08acba25e2/oai_endava_1x1.png?w=3840&amp;q=90&amp;fm=webp" alt="oai Endava 1x1"></p>
+<p>Endava 如何借助 Codex 构建智能体型组织</p>
+<p>May 28, 2026</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[OpenAI] Clay 借助 Codex 和 ChatGPT 帮助销售团队获胜</title>
+      <link>https://openai.com/business/customer-stories/clay-plugins-openai</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/clay-plugins-openai</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：Clay helps sales teams win with Codex and ChatGPT</description>
+      <content:encoded><![CDATA[<p>2026年11月24日</p>
+<h1>Clay 借助 Codex 和 ChatGPT 帮助销售团队赢得订单</h1>
+<p>ChatGPT 和 Codex 集成帮助 Clay 用户调研交易，并将数据转化为进入市场打法（go-to-market plays），而 GPT‑6 模型负责推理。</p>
+<p><a href="https://openai.com/startups/">开始使用 OpenAI 构建</a></p>
+<p>公司规模：初创企业</p>
+<p>地区：北美</p>
+<p>行业：科技</p>
+<p>产品：API、Codex、ChatGPT</p>
+<p>即便销售团队掌握大量潜在客户数据，他们仍可能难以判断什么最重要，也难以制定制胜的推销方案。<a href="https://www.clay.com/">Clay</a> 是一款自学习收入引擎，正是为解决这一问题而设计。借助 GPT‑6 Astra、GPT‑6 Sol 及其他模型，Clay 让用户能够构建公司和人员名单，通过智能体丰富这些记录，并将这些信息用于进入市场打法。</p>
+<p>Clay 还通过 Codex 和 ChatGPT 插件，把这些能力带到客户 already 工作的地方，让创建和运行进入市场工作流、调研客户与交易变得更加容易。</p>
+<blockquote>“ChatGPT 中的 Clay 让销售代表能够更深入地了解他们试图推销的客户。它把所有这些丰富的上下文带到了他们已经在使用的地方。”</blockquote>
+<p>—Jeff Barg，Clay 人工智能负责人</p>
+<h2>为销售代表提供更多可据以行动的上下文</h2>
+<p>Clay 的 Codex 集成让构建者能够在 Codex 中创建并运行进入市场打法，同时让销售代表获取可用于调研客户或理解其试图成交的交易的所需数据。</p>
+<p>Jeff 见过销售代表将自有系统的信息与公开数据集结合，以确定如何最好地向客户传达产品价值。“客户很喜欢用 Codex 完成销售中的许多不同任务，”他说，“我们看到最优秀的销售代表从中获得了最大的赋能。”</p>
+<p>Clay 的 ChatGPT 插件把同样的客户数据带入销售代表已经在使用的另一个工具，帮助他们在不离开 ChatGPT 的情况下更深入地了解潜在客户。Jeff 说：“这非常成功。”</p>
+<h2>让智能水平与成本匹配任务需求</h2>
+<p>OpenAI 模型为 Claygent 的调研、资格认定、数据丰富和信号检测提供支持，也为帮助用户构建工作流并协调其他 Clay 智能体的智能体提供支持。</p>
+<p>Clay 将 GPT‑6 Sol 作为主要模型，较难的任务使用 GPT‑6 Astra，对成本敏感的工作则使用 GPT‑6 Luna。这一模型组合既支持后台调研和文案撰写，也支持用户直接交互的智能体。</p>
+<blockquote>“GPT-6 Sol 非常适合进入市场打法。它直觉很好，能够构建长周期、以结果为导向的进入市场任务。”</blockquote>
+<p>—Jeff Barg，Clay 人工智能负责人</p>
+<p>Responses API 让 Clay 通过同一接口使用不同水平的智能与成本。“在不同价格点上拥有相同的 Responses API，是 OpenAI 模型对我们极具吸引力的一点，”Jeff 说。</p>
+<h2>构建可随时间自我改进的端到端打法</h2>
+<p>GPT‑6 Astra 还帮助 Jeff 构建和测试软件。过去，他大部分时间都花在手动检查自己构建的功能上；现在，他可以让 GPT‑6 Astra 承担更多此类工作。</p>
+<p>他解释道：“GPT‑6 Astra 确实改变了我构建软件的方式，因为它完全闭合了工程流程的环路。现在我可以让 Astra 编写代码、添加测试，然后实际运行测试、测试功能、记录结果并上传到 PR 中。这大大简化了我的工作。”</p>
+<p>对于 Clay 的客户，Jeff 认为 GPT‑Live‑1 是一种通过语音使用 Clay 和 Codex、帮助潜在客户了解产品的方式。Clay 正在开发入站销售开发功能，让智能体能够向潜在客户展示产品或服务。他还认为 Decisions API 是将模型集成到 Clay 并开拓新用例的另一条途径。</p>
+<p>Clay 的目标是端到端承载进入市场工作流，让智能体在从结果中学习的过程中不断改进。对 Jeff 而言，目标是赋能构建者“把软件工程领域发生的那种转变带到进入市场领域”。</p>
+<h2>OpenAI &lt;3 初创企业</h2>
+<p><a href="https://openai.com/leads/startup/">加入社区</a><a href="https://openai.com/startups">开始构建</a></p>
+<h2>获取 OpenAI for Business 更新</h2>
+<p>产品更新、实用指南、即将举行的活动等。</p>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1rKCtFRlZxa18NisCqmSuN/c4f5753f8abe609e472aec9c0f2ec199/richpanel-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="Richpanel — 封面"></p>
+<p>Richpanel 帮助企业在 30 天内自动处理 50% 的支持工作</p>
+<p>初创企业2026年11月23日</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2j2sOeYR5anL69nJvTbPot/4758d44649f585b33d96cdf14742c0d4/hebbia-smoked-depth-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="Hebbia — 封面"></p>
+<p>Hebbia 借助 GPT-6 Astra 在金融研究领域取得改进</p>
+<p>2026年11月20日</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1b77wWqxMlNBg59VRDTuuQ/46601ae75270e4d037359127eb09a76c/cogent-security-cover-sienna.png?w=3840&amp;q=90&amp;fm=webp" alt="Cogent Security — 封面（赭色）"></p>
+<p>Cogent 与 OpenAI 为企业构建网络防御工厂</p>
+<p>初创企业2026年11月10日</p>]]></content:encoded>
+    </item>
+    <item>
       <title>[商汤 日日新] SenseNova U1.6 正式发布：美学进阶，字准意达</title>
       <link>https://www.sensetime.com/cn/news/sensenova-u1-6-open-source-20261124-1152</link>
       <guid isPermaLink="true">https://www.sensetime.com/cn/news/sensenova-u1-6-open-source-20261124-1152</guid>
@@ -96,13 +471,178 @@
 <p><a href="https://www.sensetime.com/cn/news/sensenova-loop-9b-day0-chips-20261123-2026"><strong>超10家芯片企业完成商汤SenseNova Loop-9B Day0适配，国产算力生态加速协同！</strong>2026/11/23</a><a href="https://www.sensetime.com/cn/news/sensetime-apec-leaders-week-20261120-1525"><strong>从大国外交现场到城市公共空间，商汤科技亮相APEC领导人会议周</strong>2026/11/20</a><a href="https://www.sensetime.com/cn/news/sensetime-raccoon-finance-20261119-1522"><strong>商汤小浣熊·金融版正式推出，深化AI在金融行业的场景化应用</strong>2026/11/19</a></p>]]></content:encoded>
     </item>
     <item>
+      <title>[Hugging Face] Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac…</title>
+      <link>https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Hugging Face</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml">Hugging Face</source>
+      <description>完整标题：Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac Lab and Newton</description>
+      <content:encoded><![CDATA[<h1>Microduck 避障：Isaac Lab 和 Newton 的 Sim2Real 工作流程</h1>
+<p>企业+文章</p>
+<p>发表于 2026 年 11 月 24 日</p>
+<p><a href="https://huggingface.co/seun-doherty"><img src="https://huggingface.co/avatars/4b73ef95f718b8754bbaee9d1e2fc926.svg" alt="Oluwaseun Doherty 的头像"></a></p>
+<p>奥卢瓦森·多尔蒂</p>
+<p>塞恩多尔蒂</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/OOyindamola"><img src="https://huggingface.co/avatars/64e43e2a38d41db5557d0d125a196c8b.svg" alt="Oyindamola Omotuyi 的头像"></a></p>
+<p>奥因达莫拉·奥莫图伊</p>
+<p>奥因达莫拉</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/AntRi31"><img src="https://huggingface.co/avatars/528279054e94db8229aea8e600d4f271.svg" alt="理查德的头像"></a></p>
+<p>理查德</p>
+<p>蚂蚁瑞31</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif" alt="Microduck避障：模拟到现实"></a></p>
+<h2>长篇大论；博士</h2>
+<p>为<a href="https://pollen-robotics.com/microduck/">Microduck</a>添加局部避障，同时保持其行走策略固定。使用可重复使用的 <a href="https://www.nvidia.com/en-us/glossary/simready/">SimReady</a> 资源构建各种课程，使用牛顿光线投射器对 ToF 传感进行建模，并在 <a href="https://developer.nvidia.com/isaac/lab">Isaac Lab</a> 中训练控制器以调整障碍物周围的游戏手柄速度命令。本教程涵盖模拟训练、评估、导出和真实机器人部署。</p>
+<h2>简介</h2>
+<p>步行策略可以使 Microduck 保持平衡，但它不会告诉机器人如何绕过路径上的障碍物。在此工作流程中，我们重用<a href="https://huggingface.co/blog/nvidia/microduck-isaac-lab-sim-to-real">第一个 Microduck 教程</a> 中的行走策略并保持其权重固定。此后续工作使用飞行时间 (ToF) 传感来训练单独的回避控制器。你用游戏手柄选择一个方向；控制器在将速度命令传递给行走策略之前调整速度命令。</p>
+<p><a href="https://isaac-sim.github.io/IsaacLab/main/index.html">NVIDIA Isaac Lab</a> 是一个开源框架，用于跨数千个 GPU 并行模拟训练策略，并提供机器人学习环境。 <a href="https://github.com/newton-physics/newton">Newton</a> 模拟物理和传感器的深度测量。我们将介绍控制架构，训练不同的障碍物布局，评估最终的策略，并准备硬件测试的接口。</p>
+<h2>1. 在Isaac Lab中设置Microduck避障</h2>
+<p>对于模拟和培训，请准备：</p>
+<ul><li>具有兼容 NVIDIA GPU 和驱动程序的 Linux 系统。有关平台要求，请参阅 <a href="https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/index.html">Isaac Lab 安装指南</a>。</li><li>Git 与 Git LFS 和 uv 包管理器。</li></ul>
+<p>对于物理机器人测试，请准备：</p>
+<ul><li>配置好的 Microduck。加载导航任务使用的相同反向间隙行走策略导出。</li><li>受支持的 ToF 传感器及其配置记录。</li><li>配对的游戏手柄和带有障碍物的水平测试区域。</li></ul>
+<h3>快速安装</h3>
+<p>如果尚未安装，请安装 <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。然后克隆 Isaac Lab 存储库的 exp/microduck 分支并安装其依赖项：</p>
+<pre><code>git lfs install
+git clone --branch exp/microduck https://github.com/isaac-sim/IsaacLab.git
+cd IsaacLab
+uv sync --frozen</code></pre>
+<p>设置完成后，列出可用的 Microduck 环境和预设：</p>
+<pre><code>uv run isaaclab list_envs --keyword MicroDuck --show_presets</code></pre>
+<h3>下载步行政策</h3>
+<p>在训练前下载并导出一次<a href="https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.2/Isaac/IsaacLab/PretrainedCheckpoints/rsl_rl/IsaacContrib-Velocity-Rough-MicroDuck_backlash_newtonmjwarp_none_rsl_rl.pt">上游反向间隙行走检查点</a>。避障任务自动加载导出的行走策略。</p>
+<pre><code>uv run isaaclab play \
+  --task IsaacContrib-Velocity-Rough-MicroDuck \
+  --rl_library rsl_rl --checkpoint pretrained \
+  --num_envs 1 --visualizer none \
+  --video newton_gl --video_length 1 \
+  presets=backlash</code></pre>
+<h2>2. 搭建障碍训练场</h2>
+<p>该环境将简单的原语与 Hugging Face 上的 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 提供的 <a href="https://www.nvidia.com/en-us/glossary/openusd/">OpenUSD</a> 资产相结合。我们在锥体旁边使用了<a href="https://huggingface.co/datasets/nvidia/simready-assets/tree/main/box_cardboard_a01">纸板箱</a>、<a href="https://huggingface.co/datasets/nvidia/simready-assets/tree/main/trashCan_office_black_a03">办公箱</a>、<a href="https://huggingface.co/datasets/nvidia/simready-assets/tree/main/table_bedside_b01">床头柜</a>。从 IsaacLab 存储库根目录，将固定的 box、bin 和 Cabinet 包下载到 asset/simready 中。</p>
+<pre><code>uvx --from huggingface-hub hf download nvidia/simready-assets \
+  --repo-type dataset \
+  --revision 9d4556bfe80868c1d27a7a7ba1c2774e63e8cedd \
+  --include &quot;box_cardboard_a01/*&quot; \
+  --include &quot;trashCan_office_black_a03/*&quot; \
+  --include &quot;table_bedside_b01/*&quot; \
+  --local-dir ./assets/simready</code></pre>
+<p>在每个情节重置时，环境代码会自动对布局进行采样，对道具进行洗牌，并改变它们的放置和旋转。大多数球场都会在鸭子前面散布障碍物，只有少量的畅通路径、障碍物和通道。该代码还反映了布局并混合了对齐和交错的行。</p>
+<p>目标在鸭子之前开始。运动命令引导其朝着目标前进，而策略则围绕障碍进行调整。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/uesbJUW3FYJxujnhTMbxN.png">！[四格网格显示 Microduck 位于棋盘地板上，并重新排列了纸板箱、垃圾箱、橱柜、红色锥体、白色障碍物和绿色球门标记。</a>](https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/uesbJUW3FYJxujnhTMbxN.png)</p>
+<p>图 1. 使用 SimReady 资产和原始几何图形的各种障碍路线布局。</p>
+<h2>3. 了解 ToF 传感如何指导步行策略</h2>
+<p><code>IsaacContrib-ObstacleAvoidance-Flat-MicroDuck</code> 任务将避障与平衡分开。导航策略使用 ToF 传感来调整 50 Hz 的前向、侧向和偏航命令。然后，冻结的行走策略将这些命令转换为联合动作，使机器人能够学习避障，而无需重新训练其行走行为。</p>
+<p>在训练期间，导航策略的参与者接收真实机器人上可用的 ToF 历史记录以及身体和控制器状态。它的批评者可以访问额外的模拟状态来指导学习，但部署不需要。</p>
+<p>奖励鼓励朝着目标前进、安全到达以及绕过障碍。仅当机器人在足够的间隙内取得进展时，遵循移动命令才能获得积分；冒险的做法会降低这种信用。处罚会阻止快速接近、突然改变命令、碰撞和跌倒。</p>
+<p>避障任务位于<a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle"><code>isaaclab_tasks.contrib.microduck_obstacle</code></a>。其配置在<a href="https://github.com/isaac-sim/IsaacLab/blob/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle/obstacle_avoidance_env_cfg.py"><code>obstacle_avoidance_env_cfg.py</code></a>中，ToF传感在<a href="https://github.com/isaac-sim/IsaacLab/blob/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle/sensors.py"><code>sensors.py</code></a>中，动作、命令、观察和奖励在<a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle/mdp"><code>mdp/</code></a>下组织。</p>
+<h3>对 ToF 传感器建模</h3>
+<p>MicroDuckToFCamera 扩展了 Newton 的 LegacyMultiMeshRayCasterCamera，以对 VL53L5CX 进行建模，这是 microduck 上的紧凑型飞行时间 (ToF) 传感器，可在 15Hz 的频率下测量 8×8 网格上的距离​​。模拟传感器具有 45° 视野和 0.12–4 m 范围。它遵循鸭子的头部，其位置与真实鸭子上的传感器类似。</p>
+<p>真实记录告知模拟中的传感器放置和地板读数。训练会增加噪声、延迟和缺失测量（包括网格边缘附近的测量），从而使策略暴露于不完美的数据。下面的摘录显示了任务配置中已包含的选定传感器设置。您不需要单独编辑或运行此代码。</p>
+<pre><code># Selected settings; mount and raycast targets omitted.
+head_tof = MicroDuckToFCameraCfg(
+    prim_path=MICRODUCK_HEAD_BODY_PATH,
+    update_period=1.0 / 15.0,
+    pattern_cfg=patterns.PinholeCameraPatternCfg(
+        focal_length=1.0, width=8, height=8,
+        horizontal_aperture=_TOF_APERTURE,
+        vertical_aperture=_TOF_APERTURE,
+    ),
+    randomization=ToFRandomizationCfg(
+        mount_pitch_degrees=(-10.0, 10.0),
+        mount_height_m=(-0.02, 0.02),
+        floor_validity_midpoint_offset_m=(0.0, 0.13),
+        near_floor_edge_impairment_probability=0.5,
+    ),
+    data_types=[&quot;distance_to_image_plane&quot;, &quot;distance_to_camera&quot;],
+    max_distance=TOF_MAX_RANGE,
+    depth_clipping_behavior=&quot;zero&quot;,
+)</code></pre>
+<h2>4. 跨并行环境训练 Microduck 策略</h2>
+<p>使用 PPO 在 16,384 个并行环境中训练导航策略，进行 1,500 次训练迭代。它的参与者、批评者、标准化者和优化者都是全新的。任务配置加载固定步行检查点、机器人模型和障碍物资产。</p>
+<p>此处显示的 16,384 个环境是可配置的，而不是最低要求。降低 <code>--num_envs</code> 以适应 GPU 的可用内存。由于并行收集经验的环境较少，达到可比较的策略性能可能需要更多的训练迭代和更长的训练时间。我们还在 NVIDIA DGX Spark 上使用 4,096 个并行环境进行了 3,000 个 PPO 更新，花费了大约 6 小时训练了该策略，展示了相同工作流程的较小规模配置。</p>
+<p>运行以下命令来训练策略：</p>
+<pre><code>uv run isaaclab train \
+  --task IsaacContrib-ObstacleAvoidance-Flat-MicroDuck \
+  --rl_library rsl_rl \
+  --num_envs 16384 \
+  --max_iterations 1500 \
+  --seed 42 \
+  --device cuda:0 \
+  --visualizer none \
+  presets=backlash</code></pre>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/RCQ8kWS0Ky4j_YU1ch-G3.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/RCQ8kWS0Ky4j_YU1ch-G3.gif" alt="摄像机从在锥体、盒子和障碍物之间导航的 MicroDuck 上拉回，以显示邻近的随机障碍路线"></a></p>
+<p>图 2. 并行 MicroDuck 避障仿真</p>
+<h2>5. 检查行为并将策略导出到 ONNX</h2>
+<p>回放使用与训练相同的道具、基元、冻结步行者和传感器随机化，并使用不同的种子来安排新的障碍物。</p>
+<p>导航检查点保存在相对于存储库根目录的 <code>logs/rsl_rl/microduck_obstacle_avoidance_tof_flat_backlash/&lt;timestamp&gt;/</code> 下。从运行中选择一个 <code>model_&lt;iteration&gt;.pt</code> 文件，并将下面的 <code>/absolute/path/to/model.pt</code> 替换为其路径。这会播放策略，打开 Newton 查看器并记录 20 秒的模拟。将 --viz 设置为 none 以进行无头录制。</p>
+<pre><code>uv run --extra video isaaclab play \
+  --task IsaacContrib-ObstacleAvoidance-Flat-MicroDuck \
+  --rl_library rsl_rl \
+  --checkpoint /absolute/path/to/model.pt \
+  --num_envs 1 \
+  --seed 6173 \
+  --device cuda:0 \
+  --viz newton_gl \
+  --video newton_gl \
+  --video_length 1000 \
+  presets=backlash</code></pre>
+<p>回放将 TorchScript 和 ONNX 模型保存在检查点的导出文件夹中。将 ONNX 数据文件与模型放在一起。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif">！[Microduck 面对红色锥体和一个明显的固定目标。叠加层识别头戴式 ToF 传感器、8 × 8 深度网格以及请求与策略引导运动。</a>](https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif)</p>
+<p>图 3. 使用请求的运动、策略引导和 ToF 输入叠加进行锥体路线评估。</p>
+<h2>6. 在真正的 Microduck 上测试避障</h2>
+<p>这些<a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/scripts/deploy/microduck_tof_nav">部署工具</a> 在笔记本电脑上运行导航模型，并将调整后的游戏手柄命令发送到机器人上的行走策略。使用与导航训练期间相同的步行策略。</p>
+<p>第 1 部分将 walker 的 ONNX 导出保存到 <code>.pretrained_checkpoints/rsl_rl/https/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.2/Isaac/IsaacLab/PretrainedCheckpoints/rsl_rl/exported/policy.onnx</code>，相对于 Isaac Lab 存储库根。</p>
+<p>使用 <a href="https://github.com/pollen-robotics/microduck/blob/main/docs/robot/cheatsheet.md#trying-your-own-file">Pollen 的策略加载指南</a> 加载步行策略。部署自述文件包含传输步骤，包括如何打包使用外部数据文件的 ONNX 导出。</p>
+<p>从 Isaac Lab 结账处，设置 SSH 访问并检查机器人直立静止的推理：</p>
+<pre><code>cd scripts/deploy/microduck_tof_nav
+ssh-copy-id microduck@ROBOT_HOST
+uv run nav_pad.py --robot ROBOT_HOST \
+  --model /absolute/path/to/navigation/exported/policy.onnx \
+  --dry-run --seconds 30</code></pre>
+<p>试运行会复制助手并流式传输传感器数据，但不发送移动命令。当障碍物进入传感器视野时，观察建议的命令。将导航 ONNX 和任何配套 .data 文件放在一起。</p>
+<p>一旦这些检查通过，就开始受监督的游戏手柄导航：</p>
+<pre><code>uv run nav_pad.py --robot ROBOT_HOST \
+  --model /absolute/path/to/navigation/exported/policy.onnx</code></pre>
+<p>向前握住操纵杆以请求移动；政策调整指挥，避障。松开摇杆即可停止，按 X 切换导航，然后使用 Ctrl-C 结束会话。默认情况下，前进速度上限为 0.15 m/s，并具有附加的近距离障碍物制动和过时输入停止功能。在测试路线之前，从空旷的区域开始并确认停止。</p>
+<p>有关控制、日志和故障排除，请参阅<a href="https://github.com/isaac-sim/IsaacLab/blob/exp/microduck/scripts/deploy/microduck_tof_nav/README.md">部署自述文件</a>。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/zJU03xK6y0Ii0XOWtmiwa.gif">！[一个白色和淡紫色的小机器人走过瓷砖地板上的三个橙色圆锥体，旁边是同一次跑步的 3D 重播。下面是传感器距离网格、圆锥检查表和策略转向决策列表。</a>](https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/zJU03xK6y0Ii0XOWtmiwa.gif)</p>
+<p>图 4.Microduck 使用其 8×8 ToF 传感器绕锥体行驶，左侧是真实镜头，右侧是根据原木进行的 3D 重建。蓝色表示政策转向，紫色表示运营商干预。</p>
+<h2>7. 在 Isaac 实验室探索 Microduck 的其他运动技能</h2>
+<p><a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck">Microduck任务合集</a>包括平坦和崎岖地形上的速度跟踪；站立恢复、坐站转换以及跌倒步行恢复 (VelStand)；踢球、捡地和前滚（Roulade）。轮滑任务增加了速度跟踪和旋转运动、蹲伏滑行、斜坡下降、站在溜冰鞋上和旋转。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/bg3GRix2mg67YBbayO_Y5.gif">！[循环的五列三行网格显示每个标记图块中一只 Microduck 的特写：Walking · Flat、Walking · Rough、Roller Skating、Swizzle、RollerSlope、StandUp · Seated、SitStand、GroundPick、BallKick、RollerCrouch、VelStand · Flat、VelStand · Rough、Roulade、Roulade、RollerStandUp 和旋转。</a>](https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/bg3GRix2mg67YBbayO_Y5.gif)</p>
+<p>图 5. 15 个 Microduck 任务视图：平坦和崎岖地形行走、恢复、物体交互和滚轴溜冰运动。</p>
+<h2>制定你的下一个政策</h2>
+<p>从<a href="https://huggingface.co/blog/nvidia/microduck-isaac-lab-sim-to-real">第一个 Microduck 教程</a> 开始，然后从 <a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck">Microduck 任务集合</a> 中选择一个任务，在 Isaac Lab 中与 Newton 一起构建下一个策略。通过改变命令、奖励或环境来探索新的行为——从崎岖地形行走到感知驱动的避障。在机器人上进行测试之前，请在训练集之外的场景中评估您的策略。</p>
+<p>＃＃ 资源</p>
+<ul><li><a href="https://pollen-robotics.com/microduck/">Microduck主页</a>（订购、快速启动、安装）</li><li><a href="https://docs.nvidia.com/learning/physical-ai/getting-started-with-isaac-lab/latest/train-a-microduck/index.html">在艾萨克实验室训练小鸭</a></li><li><a href="https://developer.nvidia.com/blog/using-ai-agents-to-teach-robots-like-microduck-to-walk-in-simulation/">训练机器人使用 AI 代理、NVIDIA Isaac Lab 和 RTX Spark 进行导航</a></li><li><a href="https://huggingface.co/blog/nvidia/microduck-isaac-lab-sim-to-real">模拟训练，部署在真实机器人上：使用 Isaac Lab 3.0 的 Microduck</a></li><li><a href="https://isaac-sim.github.io/IsaacLab/develop/source/setup/installation/index.html">艾萨克实验室安装指南</a></li><li><a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck">Microduck训练环境及配置</a></li><li><a href="https://github.com/isaac-sim/IsaacLab/blob/develop/docs/source/concepts/actuators.rst#bam-servo-model">基于牛顿的 BAM 执行器文档</a></li><li><a href="https://github.com/pollen-robotics/microduck-arena/blob/main/docs/guides/train-a-policy.md#already-have-an-onnx">Microduck Arena和ONNX提交指南</a></li><li>探索 <a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">SimReady Central，了解来自 OEM 和资产提供商的更多模拟就绪 OpenUSD 资产。</a></li><li><a href="https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place">了解如何使用 SimReady Assets 构建机器人拾放模拟</a></li><li><a href="https://github.com/pollen-robotics/microduck/blob/main/docs/robot/cheatsheet.md#trying-your-own-file">Microduck机器人软件及部署指南</a></li></ul>
+<h2>致谢</h2>
+<p>该工作流程建立在 Pollen Robotics 的 Microduck 硬件和软件、原始的 <a href="https://github.com/pollen-robotics/microduck_rl">Microduck 强化学习项目</a>、<a href="https://github.com/Rhoban/bam">BAM 执行器建模工作</a> 以及 Isaac Lab 和 Newton 集成的基础上。</p>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空间1</h2>
+<p>该作者的更多内容</p>
+<h2>使用 SimReady Assets 构建机器人拾放模拟</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>50</p>
+<p>2026 年 11 月 13 日</p>
+<h2><em>使用八个领域的 100,000 个综合业务文档评估隐私保护和实际人工智能应用</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>7</p>
+<p>2026 年 11 月 9 日</p>
+<h3>社区</h3>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空间1</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>[Amazon Bedrock] 推出具有 Anthropic 企业前沿保障和企业数据控制的 Amazon Bedrock 可信访问 API</title>
       <link>https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/</guid>
       <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
       <category>Amazon Bedrock</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：Introducing the Amazon Bedrock Trusted Access API with Anthropic’s Enterprise Frontier Safeguards and Enterprise Data Controls</description>
+      <description>原文标题：Introducing the Amazon Bedrock Trusted Access API, with Enterprise Frontier Safeguards and Enterprise Data Controls for Claude models</description>
       <content:encoded><![CDATA[<h1>推出 Amazon Bedrock Trusted Access API，集成 Anthropic 的 Enterprise Frontier Safeguards 与 Enterprise Data Controls</h1>
 <p>今天，我们宣布 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上的 trusted access program API 全面可用。该 API 为您提供一个统一入口，用于发现、申请和加入模型提供方的 trusted access program。我们还宣布首批两个产品的公开预览：Anthropic 的 Enterprise Frontier Safeguards（EFS）和 Enterprise Data Controls（EDC）。两者均可在 Amazon Bedrock 上使用，涵盖 Claude Fable、Claude Mythos，以及通过 <a href="https://support.claude.com/en/articles/14604842-cyber-verification-program">Cyber Verification Program</a>（CVP）使用的 Claude Opus 5.5 和 Sonnet 5.5。</p>
 <p>前沿 AI 实验室对其最强大的模型要求更严格的安全监控策略，这些策略在 Amazon Bedrock 上仍然适用。对于符合条件的客户，模型提供方还让客户对这些策略的满足方式拥有更多控制权，例如保留数据存储在哪里以及如何被审查。每个产品都有各自的条款、审批和设置。</p>
@@ -146,6 +686,162 @@
 <p>要开始使用，请通过 <code>aws bedrock list-trusted-access-programs</code> 检查您的 EFS 状态，并加入 EFS 预览。要了解更多信息，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/trusted-access-programs.html">trusted access programs documentation</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/anthropic-efs-enterprise-data-controls.html">EFS/EDC documentation</a>。</p>
 <p>要加入 EFS 和 EDC 公开预览，请与您的 AWS 账户团队合作提交请求。请准备好 AWS 账户 ID（对于项目，请准备 Amazon Bedrock 运行时项目 ARN），并注意该预览面向已加入 EFS ZDR 的客户。</p>
 <h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>[Together AI] 推出可抢占计算：同样的算力，一半的价格</title>
+      <link>https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Together AI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml">Together AI</source>
+      <description>原文标题：Introducing preemptible compute: the same compute, half the price</description>
+      <content:encoded><![CDATA[<p>Together GPU Clusters 公开预览：可中断的 GPU 计算，五分钟排空窗口，自动向目标容量回填。</p>
+<p>今天我们宣布 Together GPU Clusters 的可抢占计算（preemptible compute）进入公开预览，所有区域的 Kubernetes 集群均可用。可抢占节点为团队提供了一种更低成本的方式，来运行可容忍中断的工作——短实验、推理突发、批处理任务——用的就是他们已经在用的同一套 GPU 基础设施，按不足一小时计费，固定为按需价格的 50%。从今天起，你就可以为新集群或现有集群添加可抢占容量。</p>
+<h2>可抢占计算如何工作</h2>
+<p>可抢占计算为 Together GPU Clusters 增加了第二种计算类型。标准节点同步交付、绝不被抢占。可抢占节点使用同样的 NVIDIA 加速算力，取自未使用的容量，并会在那些容量他处需要时被回收。</p>
+<p>可抢占节点按按需价格的固定 50% 计费。费率恒定，不随现货（spot）市场波动。</p>
+<p>当节点被回收时，集群遵循五分钟排空（最长 5 分钟）流程：</p>
+<ul><li><strong>T+0</strong> —— 节点被 cordon，触发一个 <code>TogetherPreempted</code> Kubernetes 事件，你的 pod 收到 SIGTERM。</li><li><strong>T+0 到 T+5:00</strong> —— 你的工作负载有最长五分钟（<code>terminationGracePeriodSeconds</code>）来做 checkpoint 并退出。</li><li><strong>T+5:00</strong> —— 节点被移除。</li></ul>
+<p>节点移除后，集群仍保留其可抢占目标，并在容量可用时自动向该目标回填。你不需要申请替换容量。</p>
+<p>计费粒度为不足一小时，用量每一到两分钟计量一次。运行 12 分钟的节点大约按 12 分钟计费。</p>
+<p>可抢占节点不是独立的集群类型。他们加入你的现有集群，标记为 <code>together.ai/compute-class=preemptible</code>，让可中断的 worker 跑在折扣容量上，而协调器、login pod 和服务副本留在标准节点上。</p>
+<h2>可抢占计算适合哪里</h2>
+<p>五分钟的回收流程让恢复行为成为决定性因素。能续跑、重试或重新排队的工作可以使用可抢占容量，而关键组件应留在标准节点上。</p>
+<p><strong>短实验。</strong> Ablation、配置扫描、快速微调、评估、蒸馏、批量推理都是好候选，只要工作能从 checkpoint 恢复或在 worker 消失后重试。Ray Train、PyTorch Lightning 这类框架无需干预即可从最新 checkpoint 恢复。作为参照，一个 321B 参数模型 GLM5.3 Flash 的全权重 checkpoint 约 3.5TB，即便在性能退化的并行文件系统上写入也只需 22 秒到 4 分钟。在五分钟排空窗口内留有富余。</p>
+<p><strong>临时突发。</strong> 当批处理或内部推理需求飙升时，加入更便宜的可抢占节点吸收突发和非关键负载，而不是为峰值维持标准容量、或冒突发期标准计算可用性不足的风险。被中断的请求会重新排队；面向用户的副本留在标准节点上。</p>
+<p>共同主线：可分块、可 checkpoint、可重试的工作。多天不 checkpoint 的运行、没有回退路径的严格 SLO 服务，都不适合。</p>
+<p>Together 有很强的 dogfooding 文化——若干内部研究、开发/测试和非关键生产负载就基于我们的可抢占计算 GPU 集群，让我们得以跨产品团队利用闲置容量。</p>
+<h2>启用之前</h2>
+<ul><li><strong>把可抢占节点当临时资源。</strong> 预览期内没有最短节点生存时间，所以要频繁 checkpoint，并假设容量随时可能消失。</li><li><strong>关键组件留在标准节点。</strong> 协调器、login pod、面向用户的副本属于保证容量——用 <code>compute-class</code> label 来强制这一点。</li><li><strong>用好排空窗口。</strong> 把 <code>terminationGracePeriodSeconds</code> 设到最高 300 秒，在 pod 收到 SIGTERM 时做 checkpoint，并在节点被移除前退出。</li><li><strong>集群至少需要一个标准节点</strong>，且节点不能在两种计算类型之间就地转换。</li></ul>
+<h2>如何使用</h2>
+<p>工作负载为抢占做好准备后，设置分两部分：设定可抢占目标，并把合适的工作调度到带 label 的节点上。</p>
+<p>你可以在创建集群时或已在运行的集群上设置目标，使用 Together Cloud 控制台、CLI 或 API。API 同时报告请求的目标 <code>desired_preemptible_gpus</code> 和当前存活的容量 <code>allocated_preemptible_gpus</code>。由于可抢占节点取自未使用容量，容量紧张时实际分配量可能低于期望目标。</p>
+<h3>在新集群上</h3>
+<p>先选标准节点数，再在其上添加可抢占目标。</p>
+<pre><code>tg beta clusters create \
+  --name my-cluster --region us-central-2 --gpu-type RTX_6000_PCI \
+  --cluster-type KUBERNETES --num-gpus 8 --billing-type ON_DEMAND \
+  --num-preemptible-gpus 8 \
+  --project-id &lt;proj_id&gt;</code></pre>
+<h3>在现有集群上</h3>
+<p>需要更多 worker 容量时调高可抢占目标，工作完成后调低。全程集群保持运行。</p>
+<pre><code>tg beta clusters update &lt;cluster-id&gt; --num-preemptible-gpus 16</code></pre>
+<p>图：向现有集群添加/删除可抢占节点</p>
+<p>图：可抢占节点遵循 &quot;gpu-preemptible-xxx&quot; 命名约定</p>
+<h3>在可抢占节点上调度工作</h3>
+<p>显式瞄准可抢占节点：</p>
+<pre><code>nodeSelector:
+  together.ai/compute-class: preemptible</code></pre>
+<p>抢占通知以 SIGTERM 送达 pod、以 Kubernetes 事件（<code>reason=TogetherPreempted</code>）、在控制台的 Event Timeline、以及通过 Together API 的 <code>node_lifecycle_events</code> 提供——处理模式见<a href="https://docs.together.ai/docs/preemptible-compute">文档</a>。</p>
+<p>可抢占计算现已在 Kubernetes 集群上公开预览。Slurm 支持、更多区域、计算类型间的就地转换在下一步计划中。</p>
+<p>→ <a href="https://api.together.ai/clusters/create">创建集群</a></p>
+<p>→ <a href="https://docs.together.ai/docs/preemptible-compute">阅读文档</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[Anyscale] 使用 Ray Train 实现 Mid-Epoch 训练恢复</title>
+      <link>https://anyscale.com/blog/mid-epoch-resumption-ray-train</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/mid-epoch-resumption-ray-train</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Anyscale</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml">Anyscale</source>
+      <description>原文标题：Enabling Mid-Epoch Training Resumption with Ray Train</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">首页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
+<h1>使用 Ray Train 实现 epoch 中途的训练恢复</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=jason-li">Jason Li</a> | 2026 年 11 月 24 日</p>
+<p>在大规模场景下，训练失败越来越常见，而衡量训练基础设施是否有效，标准就在于它多快能从失败中恢复。epoch 中途恢复（mid-epoch resumption）让 Ray Train 和 Ray Data 在保存模型的同时也对你的数据加载器（data loader）做 checkpoint，这样重启后的运行会从上一个 checkpoint 的位置继续，而不会破坏 exactly-once 训练。它带来的好处如下：</p>
+<ul><li><strong>减少重复工作：</strong> 重启的任务从上一个 checkpoint 继续，而不是把整个 epoch 重新跑一遍。</li><li><strong>数据覆盖正确：</strong> 即使在多次失败的情况下，每一行在每个 epoch 中仍然恰好被训练一次。</li><li><strong>易于采用：</strong> 它与你现有的 Ray Train checkpoint 配合工作，对训练脚本的改动极少。</li></ul>
+<p>在我们的基准测试中，启用 epoch 中途恢复后，一个在 epoch 进行到 75% 时失败的任务，相比通过跳过 batch 来恢复的方式，整体运行时间<strong>快 9%</strong>，美元成本<strong>低 9%</strong>。你的 epoch 越大，失败时节省的就越多。</p>
+<p>epoch 中途恢复将随 Ray 2.61 发布，目前已可在 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">Anyscale Runtime</a> 中使用（从 Ray 2.50 版本起）。</p>
+<h2>Link epoch 中途训练失败的代价</h2>
+<p>epoch 中途的训练失败可能代价高昂。设想一次运行，其最新的 checkpoint 保存在 epoch 进行到 75% 的位置，随后在 80% 处发生 worker 故障：</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7eqyqyQ6qiPfwU3ptlmh85/c2cab3b921ae6a0338f321ee0fe5a4dd/Mid-epoch_training_failures_can_be_costly._Picture_a_run_whose_latest_checkpoint_was_saved_75-_of_the_way_through_an_epoch__.png" alt="epoch 中途的训练失败可能代价高昂。设想一次运行，其最新的 checkpoint 保存在 epoch 进行到 75% 的位置，随后在 80% 处发生 worker 故障"></p>
+<p>epoch 中途的训练失败可能代价高昂。设想一次运行，其最新的 checkpoint 保存在 epoch 进行到 75% 的位置，随后在 80% 处发生 worker 故障</p>
+<p>模型从 75% 处的 checkpoint 恢复，但数据加载器没有任何关于自己读到哪里的记录。典型的恢复方式是从头重新开始这个 epoch，但这会带来两项代价：</p>
+<ul><li><strong>数据不均衡：</strong> 之前已消费的行在同一个 epoch 中被训练两次，而数据集其余部分只被训练一次，这会使模型学到的东西偏向那部分数据。</li><li><strong>GPU 时间：</strong> 额外的 GPU 时间被花在对已经消费过的行进行训练上。</li></ul>
+<p>这两项代价都会随 epoch 规模增长。在小数据集上，重放一个 epoch 的大部分只是很小的开销。然而，在一个需要一整天才能跑完的数据集上，一次较晚发生的失败可能又要多花一整天的 GPU 时间。</p>
+<p>为了避免这些代价，团队通常会快进到训练失败的位置，在重启后跳过已经见过的 batch。然而，对于像 Ray Data 这类即时处理数据、不保证行顺序的流式加载器，被跳过的行仍然需要重新计算，而且快进也无法保证每一行恰好被训练一次。</p>
+<p>于是，我们需要一个能自己记录哪些行已被消费、并把该记录与模型 checkpoint 一起保存的数据加载器，这样两者永远不会脱节。本文余下部分将说明 Ray Train 和 Ray Data 是如何做到这一点的，以及它在实践中节省了什么。</p>
+<h2>Link 工作原理</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/62RcbskxSYDc6Cckd51bp6/bbc6ddc374dc72befaa4bc5743620d0e/With_mid-epoch_resumption__the_restart_picks_up_at_the_75-_checkpoint.png" alt="使用 epoch 中途恢复时，重启会从 75% 处的 checkpoint 继续"></p>
+<p>使用 epoch 中途恢复时，重启会从 75% 处的 checkpoint 继续</p>
+<p>核心思路是记录已消费的行，而不是记录一个位置。Ray Data 不以固定顺序分发数据行，所以只知道消费了多少个 batch 并不足以重新找到自己的位置，但知道消费了哪些行则可以。为此，每一行都需要一个唯一 ID，每个 worker 记录它训练过的 ID，重启后 Ray Data 在读取时利用该记录跳过这些行。下面我们逐步看看 Ray Train 和 Ray Data 在保存与恢复进度时是如何做的。</p>
+<h3>Link 保存进度</h3>
+<ul><li><strong>记录每个产出的 batch。</strong> 一旦你用 <code>DatasetCheckpointConfig</code> 为某个数据集开启数据 checkpoint，Ray Data 的数据迭代器交给训练循环的每个 batch 都会被记录：后台线程会把该 batch 的行 ID 写入共享存储中的文件。</li><li><strong>在 checkpoint 时提交。</strong> 当你为模型做 checkpoint 时，还要对数据迭代器调用 <code>state_dict()</code>。该调用会刷新所有剩余的行 ID、关闭当前这一组文件，并返回一个小字典：epoch、checkpoint 索引、行 ID 文件所在的路径，以及 ID 列名。</li><li><strong>与模型一起保存。</strong> 你把该字典存入与模型和优化器状态相同的 checkpoint 中，并通过 <code>ray.train.report()</code> 上报它。模型与数据加载器状态一起提交，因此它们在“已经训练了什么”上始终一致。</li></ul>
+<p>每个 worker 写入自己的文件，按 rank、epoch 和 checkpoint 索引组织：</p>
+<pre><code>ray_data_checkpoints/train/
+└── rank=0/
+    └── epoch=0/
+        ├── checkpoint=0/chunk_0.parquet
+        ├── checkpoint=1/chunk_0.parquet
+        └── checkpoint=2/chunk_0.parquet</code></pre>
+<p>默认情况下，这些文件位于你的 Ray Train 存储路径下，并在一个 epoch 结束后被删除，因为该 epoch 内已没有需要恢复的内容。</p>
+<h3>Link 恢复进度</h3>
+<ul><li><strong>加载状态。</strong> 任务重启时，你的训练函数通过 <code>ray.train.get_checkpoint()</code> 拿到最新的 checkpoint，从中读取保存的字典，并通过 <code>state_dict</code> 参数把它传给 <code>ray.train.get_dataset_shard()</code>。</li><li><strong>加载已消费的行 ID。</strong> Ray Data 读取该 epoch 中截至所保存 checkpoint 索引的行 ID 文件（跨所有 rank），并对它们排序，以便快速查找。</li><li><strong>读取时过滤。</strong> 读取之后紧跟一个过滤步骤，对每一行用二分查找，丢弃 ID 在该集合中的行。被跳过的行不会进入你的预处理或训练循环。</li><li><strong>继续该 epoch。</strong> 训练用剩余的行继续。该 epoch 结束后，后续 epoch 照常读取完整数据集。</li></ul>
+<p>由于过滤作用于整个数据集，而不是每个 worker 各自处理，剩余的行会被分配给重启后运行所拥有的任意 worker。恢复过程仍然需要重新读取输入文件，但读取并过滤一行的开销远小于对它做预处理并跑一次训练步骤。</p>
+<h2>Link 使用 epoch 中途恢复</h2>
+<p>所有这些记录工作都发生在 Ray Train 和 Ray Data 内部。如果你已经用 <code>ray.train.report</code> 做 checkpoint，那么开启 epoch 中途恢复只需三处改动：告诉 Ray Train 要跟踪哪个数据集、把数据迭代器的状态与模型一起保存，并在恢复时把该状态传回去。</p>
+<pre><code>import ray
+from ray.train import DataConfig, DatasetCheckpointConfig, ScalingConfig
+from ray.train.torch import TorchTrainer
+
+def train_func():
+    model, data_state = build_model(), None
+    if checkpoint := ray.train.get_checkpoint():
+        model, data_state = load_checkpoint(checkpoint)  # your restore logic
+
+    # Change 3: resume the data iterator from the saved state.
+    shard = ray.train.get_dataset_shard(&quot;train&quot;, state_dict=data_state)
+
+    for step, batch in enumerate(shard.iter_torch_batches(batch_size=64)):
+        ...  # training step
+        if step % 100 == 0:
+            # Change 2: save the data iterator state with the model.
+            checkpoint = save_checkpoint(model, data_state=shard.state_dict())
+            ray.train.report({&quot;step&quot;: step}, checkpoint=checkpoint)
+
+trainer = TorchTrainer(
+    train_func,
+    datasets={&quot;train&quot;: ray.data.read_parquet(&quot;s3://my-bucket/train/&quot;)},
+    # Change 1: track which rows each worker has consumed.
+    dataset_config=DataConfig(
+        dataset_checkpoint_configs={
+            &quot;train&quot;: DatasetCheckpointConfig(id_column=&quot;id&quot;)
+        }
+    ),
+    scaling_config=ScalingConfig(num_workers=16, use_gpu=True),
+)
+trainer.fit()</code></pre>
+<p>注意：<code>build_model</code>、<code>save_checkpoint</code> 和 <code>load_checkpoint</code> 代表你现有的模型与 checkpoint 代码。</p>
+<p>上面每处改动的作用如下：</p>
+<ul><li><strong>为该数据集开启数据 checkpoint。</strong> 通过 <code>DataConfig(dataset_checkpoint_configs=...)</code> 为数据集传入 <code>DatasetCheckpointConfig</code>。<code>id_column</code> 指定唯一标识每一行的列，这里是名为 id 的列。如果你的数据没有这样的列，请参阅下面的要求。</li><li><strong>在每次模型 checkpoint 时保存数据迭代器状态。</strong> 每次做 checkpoint 时，在每个 worker 上调用 <code>shard.state_dict()</code>。在每个 worker 上，该调用确保该 worker 已消费的所有行 ID 都写入共享存储。它返回的并不是这些 ID，而是一个小的、可 JSON 序列化的字典，指向每个 worker 的文件存放位置，因此在每个 worker 上它都是相同的。在调用 <code>ray.train.report</code> 之前，把它存到 checkpoint 目录中模型的旁边。</li><li><strong>在恢复时把状态传回去。</strong> 从 checkpoint 中加载该字典并传给 <code>ray.train.get_dataset_shard</code>。每个 worker 加载的是同一个字典，所以每个 worker 都可以传入它。Ray Train 使用 rank 0 的副本设置恢复后的数据集。</li></ul>
+<p>完整的可运行脚本请见 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">epoch 中途恢复文档</a>。</p>
+<h3>Link 要求</h3>
+<p>要使用 epoch 中途恢复，需满足若干条件：</p>
+<ul><li><strong>每一行都需要唯一 ID。</strong> 把 <code>id_column</code> 指向一个现有列，其值唯一且在预处理后仍然保留。如果你的数据没有这样的列，<code>generate_id_column=True</code> 会为你生成一个，并从训练循环看到的 batch 中移除。生成的 ID 目前仅支持 Parquet。</li><li><strong>只使用保留行的转换。</strong> 坚持使用不增加行的转换，例如 <code>map</code>、<code>map_batches</code> 和 <code>filter</code>，并把 ID 列一直传递到 pipeline 的末端。</li><li><strong>checkpoint 需要共享存储。</strong> 行 ID 文件默认写入你的 Ray Train 存储路径，因此它必须是每个节点都能访问的云存储或网络文件系统。</li><li><strong>自动重启需要容错。</strong> 在 <code>RunConfig</code> 中设置 <code>FailureConfig(max_failures=...)</code>，这样 Ray Train 会在失败后重启运行并恢复最新的 checkpoint。</li><li><strong>在做 checkpoint 前完成一个 batch 的消费。</strong> Ray Data 的迭代器一旦把 batch 交给你的循环，就认为该 batch 已被消费。如果你的框架会在模型训练之前把 batch 排队，请在调用 <code>ray.train.report</code> 之前清空该队列。否则，你的数据 checkpoint 会领先于模型实际训练到的位置。</li></ul>
+<h2>Link 评估影响</h2>
+<p>设置讲完了，那么当一个任务在 epoch 后期失败时，epoch 中途恢复实际能节省多少？我们在一项图像分类任务上做了基准测试。设置如下：</p>
+<ul><li><strong>模型与数据：</strong> ResNet-50（26M 参数），运行在修改过的 ImageNet 上，图像最高 2048x2048，1M 训练行、50k 验证行。</li><li><strong>集群：</strong> 16 块 A100 GPU 用于训练，另有 10 个 CPU 节点用于 Ray Data 预处理。</li><li><strong>checkpoint 与验证：</strong> 每 50 步一次。</li><li><strong>失败：</strong> 模拟在 epoch 进行到 75% 时发生失败。</li></ul>
+<p>在这个设置下，我们把同一个任务跑了两次：一次通过跳过 batch 在失败后回到恢复的位置，这也是 Hugging Face Transformers 等框架默认的做法；另一次使用 epoch 中途恢复：</p>
+<table><thead><tr><th><strong>指标</strong></th><th><strong>基线（跳过 batch）</strong></th><th><strong>epoch 中途恢复</strong></th></tr></thead><tbody><tr><td>端到端时间</td><td>594 s</td><td><strong>542 s</strong></td></tr><tr><td>成本</td><td>$1.45</td><td><strong>$1.32</strong></td></tr></tbody></table>
+<p>与跳过 batch 相比，启用 epoch 中途恢复使端到端任务运行时间和美元成本都降低了 9%。如果不使用 epoch 中途恢复，跳过 batch 仍然需要读取、预处理并传输恢复点之前的每一行，结果只是把它们丢掉。epoch 中途恢复仍然会读取这些行，但在读取之后、任何预处理或传输到训练 worker 之前就把它们丢弃。这也是为什么 epoch 越大、预处理越重，节省就越多。</p>
+<h2>Link 总结</h2>
+<p>训练任务会失败，而任务规模越大，每次失败的代价就越高。epoch 中途恢复把数据加载器的状态纳入 checkpoint，因此重启后的 Ray Train 任务会从上一个 checkpoint 的位置继续，让每一行恰好被训练一次。在我们的基准测试中，与跳过 batch 相比，它把任务的端到端运行时间和总成本降低了 9%，并且每一行在每个 epoch 中仍然恰好被训练一次。epoch 中途恢复从 Ray 2.61 起随开源 Ray 发布，目前已在 Anyscale Runtime 中可用（从 Ray 2.50 起）。使用细节请见 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">epoch 中途恢复文档</a>。如果你遇到问题，或对下一步该构建什么有想法，请<a href="https://github.com/ray-project/ray/issues">在 GitHub 上提交 issue</a>。</p>
+<p><em>我们感谢领导 epoch 中途恢复工作的 Justin Yu，以及 Ray Train 和 Ray Data 团队的同事们，感谢他们的评审、设计反馈以及对这项工作所做的贡献。</em></p>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#the-cost-of-mid-epoch-training-failures">epoch 中途训练失败的代价</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#how-it-works">工作原理</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#saving-progress">保存进度</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#restoring-progress">恢复进度</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#using-mid-epoch-resumption">使用 epoch 中途恢复</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#requirements">要求</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#evaluating-the-impact">评估影响</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#summary">总结</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnYL4v1LdYl6VYLJFBOsN/36d1e3f01439345dd82ffe3f1e630b85/ray_train_observability.png?w=140" alt="ray train observability"></p>
+<h4>Ray Train：借助数据摄入可观测性诊断模型训练中的 GPU 饥饿</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6vnw3Qyt9rUo9lTfzxwqJW/157ed8fc53497d5df102483b5f1a5fa8/JEPA_blog.png?w=140" alt="Real-time inference for JEPA world model architectures with Ray"></p>
+<h4>使用 Ray 为 JEPA 世界模型架构做实时推理</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5B93PEUBZLNZTWnhOrL9tZ/2e021011ac03276b725e5ffd946e7c48/Donating_KubeRay_to_the_CNCF.png?w=140" alt="Donating KubeRay to the CNCF"></p>
+<h4>将 KubeRay 捐赠给 CNCF</h4>
+<h2>立即探索 Anyscale</h2>
+<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">咨询专家</a></p>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] OpenAI 和 Cisco 推出 Shirudo</title>
@@ -321,6 +1017,144 @@
 <h3>获取开发者简报</h3>
 <p>产品更新、操作指南、社区聚焦等更多内容。每月发送到你的收件箱。</p>
 <p>如果你希望收到我们的月度开发者简报，请提供你的电子邮件地址。你可以随时取消订阅。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[Anthropic Claude] 毕马威 (KPMG) 的托德·洛尔 (Todd Lohr) 谈人工智能：当您的数据也是客户的数据时</title>
+      <link>https://claude.com/resources/articles/kpmg-todd-lohr-on-ai-when-your-data-is-also-your-clients-data</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/kpmg-todd-lohr-on-ai-when-your-data-is-also-your-clients-data</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Anthropic Claude</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
+      <description>原文标题：KPMG&apos;s Todd Lohr on AI when your data is also your clients&apos; data</description>
+      <content:encoded><![CDATA[<p>KPMG是全球最大的专业服务机构之一，在138个国家和地区拥有超过276,000名员工，提供审计、税务和咨询服务。Todd Lohr是KPMG美国副主席兼客户技术与创新主管，专注于通过产品和平台将AI带给客户。他从事KPMG的AI能力建设已超过十年。</p>
+<p>KPMG处理的大部分数据属于其客户，且往往来自高度监管的行业。Lohr与我们讨论了这对采用前沿AI意味着什么、嵌入企业级保障措施如何释放AI能力并加速负责任部署，以及Enterprise Frontier Safeguards将在其中扮演什么角色。</p>
+<h2><strong>KPMG为什么决定与Anthropic合作？</strong></h2>
+<p>自Anthropic成立以来，我们一直密切关注它，从合作角度看，它的使命很引人入胜，因为我们共享许多相同的价值观。</p>
+<p>在KPMG，信任是基石。客户在我们的审计、税务和咨询核心业务中期待我们做到这一点，这也是资本市场信心的基础。</p>
+<h2><strong>前沿模型眼下正在改变你们的哪些业务？</strong></h2>
+<p>十年前，我们专注于使用预测分析、机器学习，并为客户带来非常定制化的LLM应用。过去三年的标志是将通用智能带给我们的客户和KPMG员工。现在我们又到了一个转折点，我们的战略是将行业和领域知识（如税务和法律）嵌入AI平台和产品。我们与Anthropic等合作伙伴不仅帮助客户颠覆他们所在的行业，也在更广泛地颠覆专业服务本身。</p>
+<p>我们的税务业务运行在<a href="https://kpmg.com/xx/en/our-insights/ai-and-technology/kpmg-digital-gateway.html">Digital Gateway</a>上，我们将其视为交付服务的市场领先平台。随着Claude现已集成到该平台，我们推出了<a href="https://www.anthropic.com/news/anthropic-kpmg">Digital Gateway Powered by Claude</a>，将前沿AI直接融入我们的工作方式，以更高的智能、速度和规模为客户交付成果。</p>
+<h2><strong>更强的能力意味着更大的价值，但也意味着更大的滥用可能性。你如何权衡两者？</strong></h2>
+<p>我对AI能给人类和企业带来的东西持乐观态度，从医疗健康到长寿，再到农业。我们已经看到AI创造出全新的方式来服务所有行业的客户。</p>
+<p>医疗健康就是一个很好的例子。环境聆听等新兴能力可以直接从患者对话中生成临床医生笔记，医生告诉我们，这类工具每天能为他们节省数小时。临床医生始终牢牢处于流程之中，他们与患者相处而非与系统相处的每一小时，都是可以改善护理的一小时。</p>
+<p>话虽如此，同样的技术也会带来安全和保障挑战。总会有人出于恶意使用它。作为行业，我们必须理解这一点，诚实地审视它如何被使用，并为部署这些技术建立负责任、安全且可靠的框架，这一点至关重要。</p>
+<p>这就是为什么我们的<a href="https://kpmg.com/au/en/services/ai-services/trusted-ai-framework.html">Trusted AI框架</a>是KPMG创新方式的基础。作为专业服务机构，我们认真对待自己的责任，帮助组织安全可靠地实现AI的价值，同时为未来做好准备。这包括严格测试、持续监控、人工监督和独立鉴证，以帮助确保AI系统保持透明、可靠，并与其预期目的保持一致。</p>
+<p>此外，我们正在使用Claude Mythos识别系统漏洞，并更广泛地使用网络安全AI来防御这些漏洞。这是我们与Anthropic等合作伙伴大力投资的领域。</p>
+<h2><strong>KPMG提前看到了<a href="https://claude.com/resources/articles/zero-data-retention-with-enterprise-frontier-safeguards">Enterprise Frontier Safeguards</a>。你的反应是什么？</strong></h2>
+<p>看到Anthropic在保障措施上投入了如此多的思考和用心，并与合作伙伴共同推进该计划，这是积极的。具体来说，让我印象深刻的是数据留存：我们将如何能够把数据保留在组织内部，同时仍能使用前沿模型。</p>
+<p>这对KPMG这样的公司至关重要，因为在一些最敏感、受监管的环境中，我们是客户数据的受托人。我们希望客户和公司都能受益于数据与AI的强大组合，但我们必须始终按照客户希望我们使用其数据的方式、以及我们可以将其用于何种用途来行事。</p>
+<h2><strong>Enterprise Frontier Safeguards将让你们做到哪些以前做不到的事？</strong></h2>
+<p>Enterprise Frontier Safeguards将使我们能够更有信心地加快AI的使用速度，并拓展使用场景。保障架构的关键原则之一，是我们能够将数据保留在我们控制的云基础设施中。</p>
+<p>在处理受监管或高度敏感的数据时，内置这些保障措施将使我们能够自信地加速在高度监管和敏感的客户业务中部署AI。</p>
+<h2><strong>Enterprise Frontier Safeguards中的自动滥用审查将如何与KPMG自己的Trusted AI计划和风险流程配合？</strong></h2>
+<p>随着AI能力变得更强、更自主，组织需要能够以人工流程无法支撑的规模识别潜在滥用、新兴风险和意外结果。自动滥用审查通过持续评估AI系统的使用方式，并标记严重滥用的迹象供我们团队审查，有助于提供这一额外监督层。</p>
+<p>我们将自动滥用审查视为Trusted AI方法的自然延伸，也是对我们现有风险管理流程的增强。将自动监控、KPMG人工监督、治理控制和独立鉴证结合起来，能形成比任何单一方法都更强大、更有韧性的框架。</p>
+<h2><strong>在保障措施方面，你对AI供应商有什么期待？</strong></h2>
+<p>信任对我们的品牌至关重要。它实际上就是我们的商业模式。我们不会在AI能力和信任之间做取舍。我们两者都要。</p>
+<p>AI模型越强大，这些保障措施就越重要，而强有力的护栏正是让组织有信心大规模运用强大AI的原因。我们对所有供应商的期望是，安全、保障、AI使用相关的保障措施，以及与我们Trusted AI理念和计划的一致性，是我们合作方式的核心。</p>
+<p>我们必须在业务的各个方面坚定地优先考虑保障措施，当然也包括在AI的使用中。</p>
+<h2><strong>你会对眼下正在权衡前沿模型的其他领导者说些什么？</strong></h2>
+<p>你需要使用这些模型。我想不出有哪个企业或行业不会受到AI某种程度的颠覆。“观望”对大多数组织来说不太可能是可持续的答案。</p>
+<p>所以，你必须一边采用一边确保安全。想清楚安全和保障方面的问题，定义护栏并落实到位，这样你才能在企业中更快推进。大多数组织不会有不部署这些模型的奢侈选择。但它们必须以符合自身业务战略和目标的方式、以安全可靠的方式来做这件事。</p>
+<h2><strong>你们接下来会用Claude构建什么？</strong></h2>
+<p>我们已经开始让Claude投入工作，在我们的业务中构建AI原生的工作方式，特别是在税务和私募股权领域。我们还构建了前沿AI网络安全服务，正在使用Claude Mythos审视整个企业的漏洞，然后利用AI快速修补并保护企业免受这些漏洞影响。</p>
+<p>未来几个月你将看到的是加速效应。随着AI使组织能够更快地识别漏洞和风险，AI在以同样速度做出响应方面也将变得越来越重要。</p>
+<p><em>了解有关Anthropic的<a href="https://claude.com/resources/articles/zero-data-retention-with-enterprise-frontier-safeguards">Enterprise Frontier Safeguards（EFS）</a>的更多信息</em>，现已进入公开测试阶段。<em>EFS提供对复杂滥用的最先进检测，同时保持与零数据留存（ZDR）兼容：Anthropic和任何云提供商都不会留存企业数据。</em></p>
+<p>文章</p>
+<p>2026年10月22日</p>
+<h3>构建智能体：何时将子智能体折叠进主智能体循环</h3>
+<p>在Claude Platform中构建智能体时，减少子智能体数量、转而采用渐进披露的上下文和工具，可以在降低成本和提高延迟表现的同时提升质量。以下是迁移的时机和方式。</p>
+<p>Claude Platform</p>
+<p>文章</p>
+<p>2026年10月13日</p>
+<h3>Uber的CISO谈为AI构建内部威胁计划</h3>
+<p>Uber的CISO Philip Martin谈监控和可观测性对AI智能体的重要性，以及Uber的开源工具如何与Enterprise Frontier Safeguards配合使用。</p>
+<p>文章</p>
+<p>2026年10月8日</p>
+<h3>Block如何在数千个拉取请求中编排Claude Fable</h3>
+<p>Block的AI能力主管Bradley Axen谈他的团队如何评估新的大型语言模型、Claude Fable 5如何编排全公司范围的代码迁移，以及为什么保障措施是负责任地大规模部署前沿智能的关键部分。</p>
+<p>Claude Enterprise</p>
+<p>文章</p>
+<p>2026年10月6日</p>
+<h3>Comcast和Booz Allen如何使用Claude Mythos发现漏洞利用链并保护其代码库</h3>
+<p>Comcast和Booz Allen的安全团队通过Project Glasswing使用Claude Mythos级模型，发现、验证并修复其现有扫描器遗漏的漏洞。</p>
+<h2>用Claude转变你的组织运营方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>获取开发者简报</h3>
+<p>产品更新、操作指南、社区聚焦等。每月发送至你的收件箱。</p>
+<p>如果你希望收到我们的月度开发者简报，请提供你的电子邮件地址。你可以随时取消订阅。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[Anthropic Claude] Claude·希普介绍</title>
+      <link>https://claude.com/resources/articles/introducing-claude-ship</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/introducing-claude-ship</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Anthropic Claude</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
+      <description>原文标题：Introducing Claude Ship</description>
+      <content:encoded><![CDATA[<p>任何开过 pull request 的人都知道这是怎么回事。他们刚开始做下一件事，评审结果就回来了。于是他们停下来，重新翻回旧代码，推送一个修复，再等待评审重新运行。然后他们再去找人批准。</p>
+<p>这种做法有其充分理由。大多数团队希望每项变更都由人批准，而当每一行代码都由人编写时，这很容易跟上。但现在很多开发者用 agent 构建。在 Claude Code 团队，<a href="https://claude.dev/blog/solving-code-review-at-anthropic/">Claude 编写了我们的大部分代码</a>，我们也希望 PR 之后的一切都能同样快速地推进。</p>
+<p>这就是我们构建 <a href="https://claude.com/product/claude-ship">Claude Ship</a> 的原因，它今天以 beta 版推出。它可以评审 PR、修复 PR，并根据每个团队制定的策略决定哪些已准备好合并。团队仍然掌控它在哪里运行，以及哪些变更需要人工处理。目标：以团队编写代码的速度交付代码。</p>
+<blockquote>符合条件的 Claude Enterprise 组织可申领至少 $10,000 的 Claude Ship 额度，并在申领后 30 天内使用。申领截止日期为 January 15, 2027。适用条款。</blockquote>
+<h3>Claude Ship 如何运作：评审、修复和批准</h3>
+<p>Claude Ship 由已经全面可用的 <a href="https://claude.com/resources/articles/code-review-is-now-generally-available">Code Review</a> 以及两个处于 beta 版的新 agent 组成：PR Steward 和 Claude Approvals。它们共同将 pull request 推进完成评审、修复和批准决策，让团队不必手动管理每一步。</p>
+<p><img src="https://assets.claude.com/2a72b687af32e0d798bd2859b12576be1f607f13.png" alt="Claude Ship 帮助团队评审 PR、修复 PR，并决定什么可以合并。Claude Ship 使用 AI，可能漏掉缺陷、安全漏洞或其他问题。"></p>
+<p><strong>Code Review</strong> 会通过多个视角，对照代码库对 pull request 进行深入评审。它收集发现，以对抗性方式验证这些发现，对它们进行分类，并发布到 PR 上。在 Claude Code 团队，Claude 的评审是更广泛流程中的一层；从 June 到 September，合并的 PR <a href="https://claude.dev/blog/solving-code-review-at-anthropic/">增长了一倍多</a>，而回退的比例下降了 40% 以上。Code Review 为团队提供快速评审、清晰的发现，并可为每个仓库选择 Quick、Standard 或 Deep 评审级别。</p>
+<p><img src="https://assets.claude.com/a30243fe61e4cc224ebfdcdb8d693b69c125b060.png" alt="Code Review 在 pull request 上发布发现的示例。"></p>
+<p><strong>PR Steward</strong> 致力于让 PR 保持通过状态，但它的设计目标不是批准或合并 pull request。它会介入失败的 CI 检查、合并冲突，以及来自 Code Review、其他评审工具或团队成员的评审反馈。每次推送后，它会评论说明自己改了什么以及如何撤销。开发者可以评论 <code>@claude</code> 并附上指令来引导工作，或评论 <code>@claude stop</code> 让它退出。</p>
+<p><img src="https://assets.claude.com/c6832086d36407567641b1b4de4d705f79ef3fca.png" alt="PR Steward 在 pull request 上处理修复的示例。"></p>
+<p>接下来，<strong>Claude Approvals</strong> 会应用团队写成仓库文件的批准策略。如果策略允许，Claude 可以自行批准常规变更，也可以针对某些场景要求更深入的人工签核。它就像一个更智能的 CODEOWNERS 文件。团队可以让 Claude Approvals 在决策过程中考虑多种信号，包括 Code Review 的发现，或使用自然语言的自定义分类器。对大多数客户，我们建议先以仅观察模式启用，以建立信心，然后再配置分支保护，要求获得 Claude Approvals 的放行。</p>
+<p><img src="https://assets.claude.com/6beae6085c1dc6bb43a62e6acf1f5563a14f4238.png" alt="Claude Approvals 策略文件示例。"></p>
+<p><img src="https://assets.claude.com/635a1675ea125007f1d5f686db25959d8485d5fc.png" alt="满足其批准策略的 pull request 示例。"></p>
+<h2>两种上手方式</h2>
+<h3>面向开发者：在 Claude Code 中运行 <code>/ship</code></h3>
+<p>开发者可以通过 Claude Code 中新的 <code>/ship</code> 命令，在自己的 pull request 上试用 Claude Ship。当变更准备好后，他们运行 <code>/ship</code>。Claude 会推送变更、打开 PR、评审变更，并处理反馈和失败的检查，帮助其准备好合并。哪些内容可以合并取决于开发者的权限和仓库的分支规则。</p>
+<p><img src="https://assets.claude.com/3b5fa6d188937030373792607c2cc73fc01e52b1.png" alt="在 Claude Code 中运行 /ship 的示例。"></p>
+<h3>面向管理员和工程负责人：逐个仓库设置规则</h3>
+<p>为整个仓库启用 Claude Ship 后，它会在团队控制的设置和批准策略下，自动处理团队的 pull request。开发者无需手动调用 <code>/ship</code> 命令。</p>
+<ul><li><strong>管理员选择它在哪里运行。</strong> 管理员为每个仓库开启 Code Review 和 PR Steward。当已连接的仓库在其默认分支上有策略文件时，Claude Approvals 就会启动，管理员可以将其关闭。</li><li><strong>每个仓库都会获得所需的设置。</strong> 管理员选择评审级别（Quick、Standard 或 Deep）、选择评审运行时机，并配置支出限额。</li><li><strong>团队保留现有工具。</strong> Claude Ship 可与现有的分支保护和必需检查配合使用。</li></ul>
+<p>团队决定推进节奏。他们可以从一个仓库开始，选择评审级别和评审运行时机，设置每月支出限额，并让批准策略以观察模式运行，直到建立信任。</p>
+<h3>Claude Code 团队如何交付</h3>
+<p>我们在自己的许多 pull request 上运行 Claude Ship。最大的变化之一是谁能够处理客户反馈。例如，Claude Code 团队的产品经理现在可以阅读一条反馈，与 <a href="https://claude.com/product/tag">Claude Tag</a> 讨论想法和权衡，让它打开一个 PR，然后继续做下一件事，而 Claude Ship 会将其推进完成评审、修复和批准决策。</p>
+<p>最近，一位客户感到困惑，因为我们的 Analytics API 文档暗示 Admin 密钥可以拉取 Pro 和 Team 的用量。产品经理问 Claude Tag 是否已有修复正在进行，它便打开了一个修复。Code Review 没有发现阻塞项，一位文档评审者签核，Claude Approvals 通过，修复在当晚就合并了。</p>
+<h3>客户怎么说</h3>
+<p><img src="https://assets.claude.com/2ad8e82eaffc6a4868da5f81e11d8b6878fbea89.svg" alt="TELUS"></p>
+<blockquote>“我们遇到过许多情况，Claude Code Review 在人工评审者看到 pull request 之前就发现了真实问题，PR Steward 帮助贡献者修复了这些问题。我们的评审者已经在使用 Claude Code 来跟上数量，因此让 Code Review、PR Steward 和 Claude Approvals 在 pull request 打开时自动启动，会让这件事更简单。我们仍然保留人工参与，而人的时间现在花在真正需要它的变更上。”</blockquote>
+<p>Vatsal Bhatt，工程总监</p>
+<p><img src="https://assets.claude.com/6d55e4e27973e13fce3e66d63ef5618d65cb12ae.svg" alt="Carvana"></p>
+<blockquote>“PR Steward 正在帮助我们试点中的团队减少处理代码评审反馈的时间，把更多时间用于构建。我们可以根据团队流程对它进行调整，包括它如何建议变更、如何组织反馈。这种灵活性使它成为开发工作流中有用的一部分。”</blockquote>
+<p>Alex Devkar，工程与分析高级副总裁</p>
+<h3>可用性</h3>
+<p>Claude Ship 已在 Claude Team 和 Enterprise 计划中可用，适用于 GitHub 上的仓库。Code Review <a href="https://claude.com/resources/articles/code-review-is-now-generally-available">已全面可用</a>，PR Steward 和 Claude Approvals 处于 beta 版。</p>
+<p>Claude Ship 的使用按 token 计费，因此启用它会增加组织成本。金额取决于所覆盖 pull request 的数量和大小、评审级别、评审运行频率，以及 PR Steward 完成的工作量。管理员可以为 Code Review 和 PR Steward 设置支出限额。Claude Approvals 没有基础费用，但策略中的分类器按其使用的 token 计费，而使用 Claude 评审的策略会触发一次计费的 Code Review，即使在观察模式下也是如此。运行 <code>/ship</code> 会计入常规 Claude Code 使用量。</p>
+<p>Claude Ship 不适用于启用 Zero Data Retention、HIPAA 配置或客户管理加密密钥的组织。</p>
+<h3>开始使用</h3>
+<p>开发者可以更新 Claude Code，并在下一次变更时运行 <code>/ship</code>。从今天起，<code>/ship</code> 正在 Claude Code 和桌面应用中逐步推出。</p>
+<p>已经在使用 Code Review 的团队可以在某个仓库上添加 PR Steward，并添加观察模式下的批准策略。</p>
+<p>初次使用 Code Review 的团队可以阅读<a href="https://code.claude.com/docs/en/code-review-setup">设置指南</a>，连接 GitHub 并开启他们的第一个仓库。</p>
+<p>在<a href="https://code.claude.com/docs/en/claude-ship">文档</a>中了解更多。</p>
+<p>文章</p>
+<p>Nov 24, 2026</p>
+<h3>将 artifacts 变成 Mac 和 Windows 应用</h3>
+<p>像使用其他任何应用一样打开你每天使用的 artifacts，并让它们在你的电脑上做更多事情</p>
+<p>Claude apps</p>
+<p>文章</p>
+<p>Nov 24, 2026</p>
+<h3>MCP 服务器现在可以借助 Claude 发布 skills、运行任务等</h3>
+<p>Claude appsClaude Platform</p>
+<p>文章</p>
+<p>Nov 23, 2026</p>
+<h3>采用 Enterprise Frontier Safeguards 的零数据保留现已进入 beta 版</h3>
+<p>Claude Platform</p>
+<p>文章</p>
+<p>Nov 17, 2026</p>
+<h3>Claude Platform 上的关联计费</h3>
+<p>Claude Platform</p>
+<h2>借助 Claude 转变组织的运营方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>获取开发者新闻通讯</h3>
+<p>产品更新、操作指南、社区聚焦等。每月发送到你的收件箱。</p>
+<p>如果你希望收到我们的每月开发者新闻通讯，请提供你的电子邮件地址。你可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
       <title>[硅基流动] 【模型服务调整】Xing4.0-29B 模型将下线</title>
@@ -2129,31 +2963,6 @@ compiled =
 <p>观看 PR 扫描的演示，看看演示者如何在 pull request 工作流中审阅扫描结果。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] 开始使用 Daybreak Blue</title>
-      <link>https://openai.com/business/learn/daybreak-blue-onboarding-demo</link>
-      <guid isPermaLink="true">https://openai.com/business/learn/daybreak-blue-onboarding-demo</guid>
-      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：Get started with Daybreak Blue</description>
-      <content:encoded><![CDATA[<p>开始使用 Daybreak Blue | OpenAI</p>
-<p>产品演示</p>
-<h1>开始使用 Daybreak Blue</h1>
-<p>观看 Daybreak Blue 的开通流程演示，近距离了解设置环节以及如何开始使用。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] 探索 Codex 安全插件</title>
-      <link>https://openai.com/business/learn/codex-security-plugin-demo</link>
-      <guid isPermaLink="true">https://openai.com/business/learn/codex-security-plugin-demo</guid>
-      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：Explore the Codex Security Plugin</description>
-      <content:encoded><![CDATA[<p>产品演示</p>
-<h1>探索 Codex Security Plugin</h1>
-<p>观看 Codex Security Plugin 的演示，了解这套工作流实际怎么跑起来，从入门操作一直看到如何查看录制中展示的结果。</p>]]></content:encoded>
-    </item>
-    <item>
       <title>[OpenAI] 部署 Daybreak Red</title>
       <link>https://openai.com/business/learn/deploying-daybreak-red</link>
       <guid isPermaLink="true">https://openai.com/business/learn/deploying-daybreak-red</guid>
@@ -2169,6 +2978,31 @@ compiled =
 <p>了解如何用 Daybreak Red 搭建用于受监督安全调查的隔离环境。本指南涵盖架构、安全控制、环境配置，以及如何运行并监控一次调查。</p>
 <p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读完整指南（PDF）。</a></p>
 <h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>[OpenAI] 探索 Codex 安全插件</title>
+      <link>https://openai.com/business/learn/codex-security-plugin-demo</link>
+      <guid isPermaLink="true">https://openai.com/business/learn/codex-security-plugin-demo</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：Explore the Codex Security Plugin</description>
+      <content:encoded><![CDATA[<p>产品演示</p>
+<h1>探索 Codex Security Plugin</h1>
+<p>观看 Codex Security Plugin 的演示，了解这套工作流实际怎么跑起来，从入门操作一直看到如何查看录制中展示的结果。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[OpenAI] 开始使用 Daybreak Blue</title>
+      <link>https://openai.com/business/learn/daybreak-blue-onboarding-demo</link>
+      <guid isPermaLink="true">https://openai.com/business/learn/daybreak-blue-onboarding-demo</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：Get started with Daybreak Blue</description>
+      <content:encoded><![CDATA[<p>开始使用 Daybreak Blue | OpenAI</p>
+<p>产品演示</p>
+<h1>开始使用 Daybreak Blue</h1>
+<p>观看 Daybreak Blue 的开通流程演示，近距离了解设置环节以及如何开始使用。</p>]]></content:encoded>
     </item>
     <item>
       <title>[Google Gemini] Genie 4 (genie-4) generally available (GA): Released Genie 4…</title>
@@ -2885,6 +3719,65 @@ compiled(inputs)</code></pre>
 <p>Dean Ball</p>]]></content:encoded>
     </item>
     <item>
+      <title>[OpenAI] 住友生命的领导者如何帮助团队采用 ChatGPT Enterprise</title>
+      <link>https://openai.com/business/customer-stories/sumitomo-life</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/sumitomo-life</guid>
+      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：How Sumitomo Life’s leaders helped teams adopt ChatGPT Enterprise</description>
+      <content:encoded><![CDATA[<p>2026年11月18日</p>
+<h1>住友生命管理层如何推动团队采用 ChatGPT Enterprise</h1>
+<p>企划团队使用 ChatGPT 研究海外保险公司并准备提案。投资团队则用它起草风险分析代码。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tR8joMsjUp2pNkjxkAB2i/f9951f263252041c48afa0b4d33c7959/sumitomo-life-layered-paper-art-card.png?w=3840&amp;q=90&amp;fm=webp" alt="红色叠纸纹理背景上的住友生命标志"></p>
+<p>公司规模: 大型企业</p>
+<p>区域: 亚太地区与大洋洲</p>
+<p>行业: 金融</p>
+<p>产品: ChatGPT</p>
+<p>成效</p>
+<p>80%+</p>
+<p>ChatGPT Enterprise 每周使用率</p>
+<p>成效</p>
+<p>524%</p>
+<p>每月使用 ChatGPT 至少 101 次的员工的平均估算投资回报率</p>
+<p>投资回报率根据员工自报的时间节省情况估算；整体估算投资回报率为 203%。</p>
+<p>住友生命的企划团队在为高层管理人员准备提案时，会借助 ChatGPT Enterprise 查阅原始资料、整理研究发现。他们将这些研究发现与一手信息相结合，并凭借专业知识判断应提出哪些建议。会计和财务团队也使用 ChatGPT 开展研究与分析。</p>
+<p>这家日本寿险公司的高管和经理是最早使用 ChatGPT 的一批人。在他们的示范带动和总裁的鼓励下，更多员工开始尝试将 ChatGPT 用于自己的工作。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3tcmtf32edhFUvSN7SPRnr/bf8a8ef1c34251ad5f4eb75a5df6c86f/sumitomo-life-running-photo.png?w=3840&amp;q=90&amp;fm=webp" alt="蓝天下，一名跑者正迈步奔跑。"></p>
+<h2>从试点到更大范围推广</h2>
+<p>住友生命于 2023 年开始在工作中使用生成式 AI。起初，员工主要通过聊天提问。在试用通用 AI 工具的过程中，ChatGPT 凭借广泛的适用范围脱颖而出。他们可以使用深度研究功能，结合多个来源探索问题，也可以将 ChatGPT 融入原本就在 Word、PowerPoint 和 Excel 中开展的工作。</p>
+<p>2025 年，约 100 至 150 人参与了 ChatGPT Business 试点，其中包括高管和企划团队成员。2026 年 6 月，公司转而采用 ChatGPT Enterprise。在计划向数千名员工推广时，住友生命综合考虑了输出质量、ChatGPT 对不同工作的适用程度，以及金融机构的安全要求。</p>
+<p>住友生命与 OpenAI 合作，对照自身安全标准评估 ChatGPT Enterprise。评估内容包括住友生命如何管理工作空间访问权限和功能权限，以及 OpenAI 默认不使用业务数据训练模型的政策。住友生命持续根据员工处理的信息和连接的系统，确定员工可以如何使用 ChatGPT。</p>
+<h2>编写代码与准备提案</h2>
+<p>住友生命的投资团队通过统计分析预测收益，并评估价格波动等风险。ChatGPT 帮助分析师起草这类工作所需的代码，减少他们需要亲自编写的代码量。</p>
+<p>企划团队使用 ChatGPT 跟踪日本其他保险公司的动态，并查找海外案例。他们利用这些研究成果，完善提交给高层管理人员的提案。</p>
+<p>企划团队还向熟悉相关业务的人士获取一手信息，以补充公开资料。他们使用 ChatGPT 中的项目功能，将这些资料与相关聊天、文件和自定义指令集中存放。</p>
+<h2>总裁以身作则</h2>
+<p>住友生命总裁在 ChatGPT Business 试点期间就开始使用 AI。在管理层会议和公司内部门户上，总裁经常鼓励员工将 AI 用于工作。</p>
+<p>住友生命企划部资深成员 Kakeru Tateyama 见证了这一示范作用如何推动 AI 的应用。他说：“如果高层领导不了解一项新技术，要推动它落地就会很困难。”“在我们公司，高管和经理是最早使用它的一批人。他们亲身体验了它能做什么。我认为，这让其他人也更容易迈出使用它的第一步。”</p>
+<p>自首次培训以来，OpenAI 一直在分享世界各地组织使用 ChatGPT 的案例。双方团队会讨论哪些做法契合住友生命的重点工作，并在新功能推出时进行评估。</p>
+<h2>使用频率与投资回报的关系</h2>
+<p>住友生命跟踪员工使用 ChatGPT Enterprise 的频率，并估算这项投资的回报。</p>
+<ul><li>ChatGPT Enterprise 的每周使用率超过 80%。</li><li>对于每月使用 ChatGPT 至少 101 次的员工，估算投资回报率平均为 524%。这一估算基于员工自报的时间节省情况；整体估算投资回报率为 203%。</li></ul>
+<p>住友生命关注的不只是已分配的账号数量。公司在季度调查中询问员工使用 ChatGPT 的频率、在哪些工作环节使用，以及是否与同事一起使用。</p>
+<p>根据员工自报的时间节省情况估算的投资回报率。524% 仅适用于每月使用 ChatGPT 至少 101 次的员工；整体估算投资回报率为 203%。</p>
+<p>住友生命根据员工自报的时间节省情况，估算了不同 ChatGPT 使用频率对应的投资回报率。使用越频繁的员工群体，估算的投资回报率越高。每月使用 8 至 15 次的员工，平均投资回报率为 55%；使用 16 至 30 次的员工为 231%；使用至少 101 次的员工则为 524%。整体平均值为 203%。</p>
+<p>员工也开始承担一些过去因缺乏时间或专业技能而无法开展的工作。对住友生命而言，这让每个人都能在更多方面作出贡献，即使这些收益有时难以用节省的工时来衡量。</p>
+<p>企划部副总经理 Masakazu Obi 认为，改变工作本身的开展方式，蕴含着更大的机遇。他说：“如果我们把现有的工作方式视为理所当然，就无法充分发挥 AI 的价值。”“关键在于，我们能否改变流程本身。在引入 AI 的同时，我们也在着眼长远，推动这些流程的变革。”</p>
+<h2>留出更多时间与客户交流</h2>
+<p>住友生命计划于 2026 财年下半年开始向更多员工推广 AI。公司将针对各个岗位，明确哪些任务可由 AI 承担，哪些工作适合员工与 AI 协作，以及哪些职责应继续由人承担。</p>
+<p>从更长远来看，住友生命正考虑将 AI 用于核保和理赔支付等更专业的工作。公司计划在围绕 AI 重新设计工作流程的同时，与 OpenAI 共同探索新技术和新服务。</p>
+<p>目标是让员工有更多时间与客户交流。住友生命致力于增进客户与员工的福祉，并将这些交流视为践行这一承诺的一部分。</p>
+<blockquote>“对我们而言，保险的价值在于让客户和社会安心。有些价值只有人才能提供，它来自与客户的交流，以及对他们感受的理解。”</blockquote>
+<p>—Kuniaki Nakagawa，住友生命 AI 战略专项小组经理</p>
+<h2>迈入工作新时代</h2>
+<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<h2>接收 OpenAI 商业应用的最新资讯</h2>
+<p>产品更新、实用指南、活动预告等丰富内容</p>]]></content:encoded>
+    </item>
+    <item>
       <title>[OpenAI] 研究加速：锯齿状的前沿</title>
       <link>https://openai.com/index/research-acceleration-jagged-frontier</link>
       <guid isPermaLink="true">https://openai.com/index/research-acceleration-jagged-frontier</guid>
@@ -2978,65 +3871,6 @@ compiled(inputs)</code></pre>
 <h2>作者</h2>
 <h2>脚注</h2>
 <ul><li>1 用实证方法测量 AI R&amp;D 加速的科学还相对年轻，但正在研究前沿迅速成长。到目前为止，Anthropic 已独立发布 <a href="https://www.anthropic.com/institute/recursive-self-improvement">三份</a> <a href="https://www.anthropic.com/research/employment-at-anthropic">不同</a> <a href="https://www.anthropic.com/institute/measuring-pace-of-ai-development">报告</a>，记录了内部模型部署如何加速 AI 研究过程。<a href="https://storage.googleapis.com/deepmind-media/gemini/gemini_4_safety_report.pdf">Gemini 4 Argon Safety and Security Report</a> 第 3.4.2 节以实证方式概述了 Google DeepMind 内部由 AI 撰写的代码占比不断上升。METR 与 Anthropic 合作发布了一份 <a href="https://metr.org/blog/2026-11-05-anthropic-ai-rd-acceleration-assessment/#executive-summary">加速评估报告</a>，估算了内部 Claude 模型对能力前沿的加速幅度。</li><li>2 我们说明一下，OpenAI 的研究员目前没有 agentic coding 配额。8 月 21 日，OpenAI 在内部部署了一项临时的 harness 效率改进。我们发现，这次内部部署恰好伴随 input token 利用率的急剧下降，看起来大幅压低了有记录的内部 token 支出。出于与支出无关的原因，这项 harness 改动从 9 月 10 日起在内部各部署中逐步回滚，我们发现此后 token 支出迅速上升。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] 住友生命的领导者如何帮助团队采用 ChatGPT Enterprise</title>
-      <link>https://openai.com/business/customer-stories/sumitomo-life</link>
-      <guid isPermaLink="true">https://openai.com/business/customer-stories/sumitomo-life</guid>
-      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：How Sumitomo Life’s leaders helped teams adopt ChatGPT Enterprise</description>
-      <content:encoded><![CDATA[<p>2026年11月18日</p>
-<h1>住友生命管理层如何推动团队采用 ChatGPT Enterprise</h1>
-<p>企划团队使用 ChatGPT 研究海外保险公司并准备提案。投资团队则用它起草风险分析代码。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tR8joMsjUp2pNkjxkAB2i/f9951f263252041c48afa0b4d33c7959/sumitomo-life-layered-paper-art-card.png?w=3840&amp;q=90&amp;fm=webp" alt="红色叠纸纹理背景上的住友生命标志"></p>
-<p>公司规模: 大型企业</p>
-<p>区域: 亚太地区与大洋洲</p>
-<p>行业: 金融</p>
-<p>产品: ChatGPT</p>
-<p>成效</p>
-<p>80%+</p>
-<p>ChatGPT Enterprise 每周使用率</p>
-<p>成效</p>
-<p>524%</p>
-<p>每月使用 ChatGPT 至少 101 次的员工的平均估算投资回报率</p>
-<p>投资回报率根据员工自报的时间节省情况估算；整体估算投资回报率为 203%。</p>
-<p>住友生命的企划团队在为高层管理人员准备提案时，会借助 ChatGPT Enterprise 查阅原始资料、整理研究发现。他们将这些研究发现与一手信息相结合，并凭借专业知识判断应提出哪些建议。会计和财务团队也使用 ChatGPT 开展研究与分析。</p>
-<p>这家日本寿险公司的高管和经理是最早使用 ChatGPT 的一批人。在他们的示范带动和总裁的鼓励下，更多员工开始尝试将 ChatGPT 用于自己的工作。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3tcmtf32edhFUvSN7SPRnr/bf8a8ef1c34251ad5f4eb75a5df6c86f/sumitomo-life-running-photo.png?w=3840&amp;q=90&amp;fm=webp" alt="蓝天下，一名跑者正迈步奔跑。"></p>
-<h2>从试点到更大范围推广</h2>
-<p>住友生命于 2023 年开始在工作中使用生成式 AI。起初，员工主要通过聊天提问。在试用通用 AI 工具的过程中，ChatGPT 凭借广泛的适用范围脱颖而出。他们可以使用深度研究功能，结合多个来源探索问题，也可以将 ChatGPT 融入原本就在 Word、PowerPoint 和 Excel 中开展的工作。</p>
-<p>2025 年，约 100 至 150 人参与了 ChatGPT Business 试点，其中包括高管和企划团队成员。2026 年 6 月，公司转而采用 ChatGPT Enterprise。在计划向数千名员工推广时，住友生命综合考虑了输出质量、ChatGPT 对不同工作的适用程度，以及金融机构的安全要求。</p>
-<p>住友生命与 OpenAI 合作，对照自身安全标准评估 ChatGPT Enterprise。评估内容包括住友生命如何管理工作空间访问权限和功能权限，以及 OpenAI 默认不使用业务数据训练模型的政策。住友生命持续根据员工处理的信息和连接的系统，确定员工可以如何使用 ChatGPT。</p>
-<h2>编写代码与准备提案</h2>
-<p>住友生命的投资团队通过统计分析预测收益，并评估价格波动等风险。ChatGPT 帮助分析师起草这类工作所需的代码，减少他们需要亲自编写的代码量。</p>
-<p>企划团队使用 ChatGPT 跟踪日本其他保险公司的动态，并查找海外案例。他们利用这些研究成果，完善提交给高层管理人员的提案。</p>
-<p>企划团队还向熟悉相关业务的人士获取一手信息，以补充公开资料。他们使用 ChatGPT 中的项目功能，将这些资料与相关聊天、文件和自定义指令集中存放。</p>
-<h2>总裁以身作则</h2>
-<p>住友生命总裁在 ChatGPT Business 试点期间就开始使用 AI。在管理层会议和公司内部门户上，总裁经常鼓励员工将 AI 用于工作。</p>
-<p>住友生命企划部资深成员 Kakeru Tateyama 见证了这一示范作用如何推动 AI 的应用。他说：“如果高层领导不了解一项新技术，要推动它落地就会很困难。”“在我们公司，高管和经理是最早使用它的一批人。他们亲身体验了它能做什么。我认为，这让其他人也更容易迈出使用它的第一步。”</p>
-<p>自首次培训以来，OpenAI 一直在分享世界各地组织使用 ChatGPT 的案例。双方团队会讨论哪些做法契合住友生命的重点工作，并在新功能推出时进行评估。</p>
-<h2>使用频率与投资回报的关系</h2>
-<p>住友生命跟踪员工使用 ChatGPT Enterprise 的频率，并估算这项投资的回报。</p>
-<ul><li>ChatGPT Enterprise 的每周使用率超过 80%。</li><li>对于每月使用 ChatGPT 至少 101 次的员工，估算投资回报率平均为 524%。这一估算基于员工自报的时间节省情况；整体估算投资回报率为 203%。</li></ul>
-<p>住友生命关注的不只是已分配的账号数量。公司在季度调查中询问员工使用 ChatGPT 的频率、在哪些工作环节使用，以及是否与同事一起使用。</p>
-<p>根据员工自报的时间节省情况估算的投资回报率。524% 仅适用于每月使用 ChatGPT 至少 101 次的员工；整体估算投资回报率为 203%。</p>
-<p>住友生命根据员工自报的时间节省情况，估算了不同 ChatGPT 使用频率对应的投资回报率。使用越频繁的员工群体，估算的投资回报率越高。每月使用 8 至 15 次的员工，平均投资回报率为 55%；使用 16 至 30 次的员工为 231%；使用至少 101 次的员工则为 524%。整体平均值为 203%。</p>
-<p>员工也开始承担一些过去因缺乏时间或专业技能而无法开展的工作。对住友生命而言，这让每个人都能在更多方面作出贡献，即使这些收益有时难以用节省的工时来衡量。</p>
-<p>企划部副总经理 Masakazu Obi 认为，改变工作本身的开展方式，蕴含着更大的机遇。他说：“如果我们把现有的工作方式视为理所当然，就无法充分发挥 AI 的价值。”“关键在于，我们能否改变流程本身。在引入 AI 的同时，我们也在着眼长远，推动这些流程的变革。”</p>
-<h2>留出更多时间与客户交流</h2>
-<p>住友生命计划于 2026 财年下半年开始向更多员工推广 AI。公司将针对各个岗位，明确哪些任务可由 AI 承担，哪些工作适合员工与 AI 协作，以及哪些职责应继续由人承担。</p>
-<p>从更长远来看，住友生命正考虑将 AI 用于核保和理赔支付等更专业的工作。公司计划在围绕 AI 重新设计工作流程的同时，与 OpenAI 共同探索新技术和新服务。</p>
-<p>目标是让员工有更多时间与客户交流。住友生命致力于增进客户与员工的福祉，并将这些交流视为践行这一承诺的一部分。</p>
-<blockquote>“对我们而言，保险的价值在于让客户和社会安心。有些价值只有人才能提供，它来自与客户的交流，以及对他们感受的理解。”</blockquote>
-<p>—Kuniaki Nakagawa，住友生命 AI 战略专项小组经理</p>
-<h2>迈入工作新时代</h2>
-<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<h2>接收 OpenAI 商业应用的最新资讯</h2>
-<p>产品更新、实用指南、活动预告等丰富内容</p>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] Codex 沙箱内部</title>
@@ -4718,6 +5552,36 @@ agentcore.create_gateway_target(
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
+      <title>[OpenAI] 为智利推出 OpenAI</title>
+      <link>https://openai.com/index/introducing-openai-for-chile</link>
+      <guid isPermaLink="true">https://openai.com/index/introducing-openai-for-chile</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenAI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
+      <description>原文标题：Introducing OpenAI for Chile</description>
+      <content:encoded><![CDATA[<p>2026年11月17日</p>
+<p>全球事务</p>
+<h1>推出 OpenAI 智利计划</h1>
+<p>今天，我们推出 OpenAI 智利计划。这项与智利政府开展的合作由智利科学、技术、知识与创新部牵头，旨在支持公共行政部门负责任地采用 AI，提升公务员技能，并帮助当地初创企业开发实用的 AI 应用。</p>
+<p>此次合作以智利的<a href="https://minciencia.gob.cl/areas/inteligencia-artificial/Inteligencia-Artificial/">国家 AI 政策与行动计划</a>为基础，该政策与计划支持人才培养、研究以及负责任地采用 AI。</p>
+<p>这份谅解备忘录在 Semafor 于加利福尼亚州举办的“硅谷与世界”会议期间签署，由部长 Ximena Lincolao 代表智利牵头达成协议。</p>
+<p>此次合作得到美国商务部<a href="https://siexports.gov/">美国 SI 出口计划</a>的支持，OpenAI 是该计划的核心合作伙伴之一。此次合作将通过公共部门创新、技能培养和创业，帮助智利推进自身的 AI 发展目标。</p>
+<blockquote>“人工智能将成为改善人们生活的最重要途径之一——从加速科学发现，到帮助人们创造出我们尚未想象到的事物。我很高兴能与智利合作，帮助公职人员使用这些工具，改善公共服务，并支持创业者创办新公司。我期待看到智利的初创企业解决世界上一些最重要的问题，创造出惠及各地民众的成果。”</blockquote>
+<p>—Sam Altman，OpenAI 首席执行官</p>
+<blockquote>“我们对这次合作充满期待，也为它将给智利各地的科学发现、创业和创新带来的非凡机遇感到振奋。这次合作旨在助力智利人民不断突破可能性的边界，创造新技术，开发改善人们生活的解决方案。”</blockquote>
+<p>—Ximena Lincolao，智利科学、技术、知识与创新部长</p>
+<h2>让 AI 在智利发挥实效</h2>
+<p>此次合作将探索在该部的行政流程中引入技术，包括由 OpenAI 为采用新模型提供潜在支持，并为该部工作人员提供咨询和培训。</p>
+<p>针对公务员，此次合作将探索如何根据其岗位需求，开展实用的 AI 素养培训、技能提升和新技能培训。相关活动可能包括工作坊和培训师培养，内容涵盖有效使用 AI 工具、核查输出、保护敏感信息，以及保持人工监督。</p>
+<p>为支持智利的 AI 创业与创新生态，合作双方将探索让当地参与者获得相关 OpenAI 计划和技术支持、实践学习机会、技术指导及导师辅导的途径。此次合作还可能为创业者对接公共机构、高校和其他当地合作伙伴，共同开发应用，支持智利的经济发展和公共服务重点工作。</p>
+<p>预计由该部与 OpenAI 代表组成的联合工作组将商定优先事项和初步工作计划，并为各项活动明确负责人、里程碑和成效衡量标准。</p>
+<p>具体活动、参与资格、资源及技术使用安排将另行商定。该谅解备忘录不包含任何投资或采购承诺。各项活动均须落实适当的保障措施，以保护隐私、确保信息安全，并保障负责任的使用。</p>
+<h2>关于 OpenAI 国家合作计划</h2>
+<p>OpenAI 智利计划是 OpenAI 国家合作计划的一部分。作为我们的全球倡议，OpenAI 国家合作计划旨在帮助各国利用 AI 推进国家重点工作、增强经济实力并创造更多机会。我们与各国政府及当地合作伙伴携手，将 AI 的潜力转化为惠及民众的实际成果。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>[OpenAI] Astra for Law 在法律情报方面处于领先地位</title>
       <link>https://openai.com/index/astra-law-6-2</link>
       <guid isPermaLink="true">https://openai.com/index/astra-law-6-2</guid>
@@ -4771,36 +5635,6 @@ agentcore.create_gateway_target(
 <p>即日起，所有 ChatGPT Enterprise 客户都可以通过管理控制台中的可信访问计划，申请使用面向法律事务的 Astra。如果你的团队已获得访问权限，请在 ChatGPT 中选择 <strong>GPT‑6.2 Astra Law</strong>。如需通过 API 将面向法律事务的 Astra 集成到自己的工具中，请联系你的客户总监，单独申请审批。</p>
 <p>法律行业正处于转折点。技术正在改变企业的能力边界，世界也日益复杂、彼此紧密相连。在这样的背景下，律师迎来了前所未有的机会，帮助我们理解当下、把握变化。这不仅关乎他们服务的企业，也关乎我们每一个人，因为我们都生活在他们参与制定的规则之下。我们相信，最优秀的律师借助最强大的智能，能够回应这个时代的挑战。</p>
 <p>这仅仅是开始。我们期待看到你们将法律行业带向怎样的未来。</p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] 为智利推出 OpenAI</title>
-      <link>https://openai.com/index/introducing-openai-for-chile</link>
-      <guid isPermaLink="true">https://openai.com/index/introducing-openai-for-chile</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：Introducing OpenAI for Chile</description>
-      <content:encoded><![CDATA[<p>2026年11月17日</p>
-<p>全球事务</p>
-<h1>推出 OpenAI 智利计划</h1>
-<p>今天，我们推出 OpenAI 智利计划。这项与智利政府开展的合作由智利科学、技术、知识与创新部牵头，旨在支持公共行政部门负责任地采用 AI，提升公务员技能，并帮助当地初创企业开发实用的 AI 应用。</p>
-<p>此次合作以智利的<a href="https://minciencia.gob.cl/areas/inteligencia-artificial/Inteligencia-Artificial/">国家 AI 政策与行动计划</a>为基础，该政策与计划支持人才培养、研究以及负责任地采用 AI。</p>
-<p>这份谅解备忘录在 Semafor 于加利福尼亚州举办的“硅谷与世界”会议期间签署，由部长 Ximena Lincolao 代表智利牵头达成协议。</p>
-<p>此次合作得到美国商务部<a href="https://siexports.gov/">美国 SI 出口计划</a>的支持，OpenAI 是该计划的核心合作伙伴之一。此次合作将通过公共部门创新、技能培养和创业，帮助智利推进自身的 AI 发展目标。</p>
-<blockquote>“人工智能将成为改善人们生活的最重要途径之一——从加速科学发现，到帮助人们创造出我们尚未想象到的事物。我很高兴能与智利合作，帮助公职人员使用这些工具，改善公共服务，并支持创业者创办新公司。我期待看到智利的初创企业解决世界上一些最重要的问题，创造出惠及各地民众的成果。”</blockquote>
-<p>—Sam Altman，OpenAI 首席执行官</p>
-<blockquote>“我们对这次合作充满期待，也为它将给智利各地的科学发现、创业和创新带来的非凡机遇感到振奋。这次合作旨在助力智利人民不断突破可能性的边界，创造新技术，开发改善人们生活的解决方案。”</blockquote>
-<p>—Ximena Lincolao，智利科学、技术、知识与创新部长</p>
-<h2>让 AI 在智利发挥实效</h2>
-<p>此次合作将探索在该部的行政流程中引入技术，包括由 OpenAI 为采用新模型提供潜在支持，并为该部工作人员提供咨询和培训。</p>
-<p>针对公务员，此次合作将探索如何根据其岗位需求，开展实用的 AI 素养培训、技能提升和新技能培训。相关活动可能包括工作坊和培训师培养，内容涵盖有效使用 AI 工具、核查输出、保护敏感信息，以及保持人工监督。</p>
-<p>为支持智利的 AI 创业与创新生态，合作双方将探索让当地参与者获得相关 OpenAI 计划和技术支持、实践学习机会、技术指导及导师辅导的途径。此次合作还可能为创业者对接公共机构、高校和其他当地合作伙伴，共同开发应用，支持智利的经济发展和公共服务重点工作。</p>
-<p>预计由该部与 OpenAI 代表组成的联合工作组将商定优先事项和初步工作计划，并为各项活动明确负责人、里程碑和成效衡量标准。</p>
-<p>具体活动、参与资格、资源及技术使用安排将另行商定。该谅解备忘录不包含任何投资或采购承诺。各项活动均须落实适当的保障措施，以保护隐私、确保信息安全，并保障负责任的使用。</p>
-<h2>关于 OpenAI 国家合作计划</h2>
-<p>OpenAI 智利计划是 OpenAI 国家合作计划的一部分。作为我们的全球倡议，OpenAI 国家合作计划旨在帮助各国利用 AI 推进国家重点工作、增强经济实力并创造更多机会。我们与各国政府及当地合作伙伴携手，将 AI 的潜力转化为惠及民众的实际成果。</p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -7048,625 +7882,6 @@ trainer.fit()</code></pre>
 <p>César de la Fuente</p>
 <p><a href="https://openai.com/zh-Hans-CN/index/accelerating-antibiotic-discovery/">抗微生物研究⁠</a></p>
 <h2>关于本研究</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] Revolut 如何在不降低标准的情况下提高雄心</title>
-      <link>https://openai.com/business/customer-stories/revolut</link>
-      <guid isPermaLink="true">https://openai.com/business/customer-stories/revolut</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：How Revolut raises ambition without lowering the bar</description>
-      <content:encoded><![CDATA[<p>2026年11月16日</p>
-<h1>Revolut 如何在不降低标准的同时追求更高目标</h1>
-<p>借助 OpenAI 模型和 Codex，Revolut 让团队有更多精力解决复杂问题，涵盖从软件工程到金融犯罪防范的多个领域</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<p>公司规模: 大型企业</p>
-<p>区域: 全球</p>
-<p>行业: 科技, 金融</p>
-<p>产品: ChatGPT, API, Codex</p>
-<p>30–60%</p>
-<p>从任务启动到功能合并，编码时间的降幅</p>
-<p>一天</p>
-<p>将七年积累的设计文档转化为 AI 可读取的上下文所需的时间</p>
-<p>1–2 天</p>
-<p>借助 Codex 进行安全代码审查所节省的时间</p>
-<h2>让日常工作更高效</h2>
-<p><a href="http://www.revolut.com">Revolut</a> 创立之初，就是为了改变人们管理和使用资金的方式。如今，这一愿景已延伸至 40 多个市场、80 万家企业，而其消费者群体规模在过去 12 个月中增长了 23%。</p>
-<p>再加上公司文化强调由小型精干团队快速推进工作，ChatGPT 和 Codex 能与之自然契合，也就不足为奇。</p>
-<p>Revolut 全球业务营销负责人 Kim Maniovich 表示：“对一名优秀 Revolut 员工最贴切的描述是：能迅速发现问题，推导出解决思路，设计四套方案，从中选出最佳方案，然后将其推向市场。”</p>
-<p>“与 OpenAI 合作，让我们能够以极为精简、经济高效的方式构建许多同类解决方案，且契合我们独特的工作方式。”</p>
-<p>但提速只是机遇的一部分。对 Revolut 而言，更重要的问题是：当优秀人才少花时间处理具体执行环节，转而投入更多时间攻克那些可能从根本上改变金融服务的难题时，会带来哪些新的可能？</p>
-<h2>从需求量大、影响深远的领域入手</h2>
-<p>随着 Revolut 不断发展，保护客户的工作也变得更加复杂。据<a href="https://gasa.org/knowledge-base/blog/global-scams-on-the-rise-over-half-of-adults-worldwide-report-scam-encounters">一份报告</a>显示，全球超过一半的成年人表示曾在 2025 年遭遇诈骗。</p>
-<p>对 Revolut 而言，每笔交易都是一次机会。该公司可以借此识别可疑活动、调查潜在风险，并为客户提供有力且有针对性的保护。但如此庞大的交易量，远远超出了任何一家银行现有人力所能处理的范围。</p>
-<p>AI 负责人 David Abitbol 表示：“如今，我们能用 AI 解决的最大问题，就是人力扩充跟不上需求增长。”因此，由 OpenAI 模型驱动的 FinCrime 智能体，成为 Revolut 规模最大的 AI 应用程序之一。</p>
-<p>调查人员不再需要手动处理每一起符合条件的案件；智能体可以查看信息、应用 Revolut 的规则，并自动完成既定流程。</p>
-<p>GPT‑5.5 的发布成为一个转折点。Abitbol 表示，到那时，模型的能力和成本效益已足以让 Revolut 将筛查和调查工作流完全交给智能体。由此，交易监控能力得以提升，而调查人员数量无需随需求同比例增长。</p>
-<p>信息安全工程师 Mo Amiri 补充道，这“直接引入了更有力的保护措施，以及更具韧性、值得客户信赖的系统”。</p>
-<p>“快速推进，也要建立信任”，这句话很适合作为 Revolut 内部工程团队的口号。Abitbol 指出，Codex 已将编码时间缩短了 30-60%，但他也明确强调，有些防护措施绝不能妥协。</p>
-<p>他说：“我们有一套系统性框架，公司里任何人只要使用 AI 开发，就必须在开发、A/B 测试和业务指标预测各环节遵循同一套标准。因此，公司所有工程师都要达到相同的质量标准。我们开始能以合理成本部署足够强大的智能技术，从而将越来越多的初步调查和筛查工作交给智能体。”</p>
-<h2>下放执行权，而非责任</h2>
-<p>对高级平台工程师 Dmitry Pitik 来说，在搭建内部代码审查服务时，他切实体会到了编码时间缩短 30-60% 的效果。他设计了系统，将其拆解为各项功能，起初以为需要一整个开发团队才能实现。</p>
-<p>他回忆道：“我意识到，要实现这个系统，并不需要一整支开发团队。我只需启动不同的智能体，给每个智能体分配一项具体任务。”Codex 成了他的开发团队，而 Dmitry 则把更多时间用于系统设计、工作规划和审查返回的结果。</p>
-<p>Abitbol 在 Revolut 的各个团队中都看到了这种工作模式。Codex 为工程师腾出时间和精力后，他们便利用这些时间“更深入地讨论设计和最佳解决方案。因此，我们把更多时间花在设计上，而不是具体实现上。”</p>
-<p>这并不意味着 Revolut 不再需要工程专业能力，而是改变了这些能力的用武之地。Pitik 表示：“每位开发者都要对自己产出的代码负责，我们不会盲目信任 AI。”由此形成了一种新的分工模式：AI 协助实现，工程师则专注于做出关键决策，判断软件是否实用、可靠且值得开发。</p>
-<p>这些额外投入是值得的。在 Codex 处理一项任务的同时，Pitik 可以并行处理另一项任务。正如 Kim Maniovich 所说，公司员工平均每人承担“三份不同的工作”，因此，这种多任务并行能力至关重要。使用 Codex 带来了一种良性循环，尽管也充满挑战：“我们设定的目标逐月提高，但也变得更容易实现。所以，标准也在不断提升。是 AI 让这一切成为可能。”</p>
-<p>利用这些新释放的产能，Revolut 已经完成了多项工作，例如开发一款工具，用于为内部应用和面向外部用户的产品构建网页界面。</p>
-<p>又如，仅用一天就将七年积累的设计文档转化为 AI 可读取的上下文，为开发旨在提升设计师工作效率的工具奠定基础。这一实践说明，AI 可以让组织积累的知识更易于获取，从而减少使用复杂系统所需的投入。高级设计师 Dmytro Pavlov 表示：“有些工作虽然重要，但没有 AI 就很难完成。现在，我们可以把重心从这些工作转向对客户真正有价值的事情。”</p>
-<blockquote>“我意识到，我并不需要一整支开发团队。我只需启动不同的智能体，再为它们分配任务。”</blockquote>
-<p>— Dmitry Pitik，Revolut 高级平台工程师</p>
-<h2>将信任融入系统</h2>
-<p>Mo Amiri 的职责，是确保所有这些提速举措的背后，都有保护措施支撑 — 既要保护客户，也要保护 Revolut 自己的员工。这让他同时从两个角度审视 AI：AI 如何帮助 Revolut 调查问题，以及团队需要做好哪些准备才能安全地部署 AI。</p>
-<p>例如，在网络钓鱼调查中，分析师过去需要手动收集邮件、检查其中的链接和附件、追查发件人，并整理证据。他说：“有了更强大的 AI 工具，我们就能立即发现其中的关联，并深入探究真正重要的问题。”</p>
-<p>AI 负责基础调查工作，并向调查人员提供结构化的案情资料，但核查原始记录、判断解释是否合理，以及批准任何行动，仍然要由调查人员本人完成。</p>
-<p>当团队在 Revolut 引入新的 AI 应用程序时，Amiri 也遵循同样的思路。他会审视完整链路：系统能看到哪些信息、信息流向何处、能访问哪些工具、凭借这些权限能做什么，以及出错时会发生什么。他还会检验那些看似令人信服的结论，是否确实有证据支撑。</p>
-<p>他说：“最关键的决策，始终是明确由谁负责。如果 AI 工具建议修改代码，就需要有人类工程师充分理解这项变更，并为它负责。这一原则直接决定了我们如何设计审查流程：为开发者提供必要的上下文，同时避免给日常工作流增添繁杂步骤。”</p>
-<p>对 Revolut 而言，安全保障与创新并非彼此独立。安全保障为团队创造了条件，让他们能够放心采用能力更强的技术。他解释道：“真正建立对 AI 的信心，靠的就是事先深思熟虑地做出决策，并在推进过程中持续测试。”</p>
-<blockquote>“事先深思熟虑地做出决策，并在推进过程中持续测试，才能真正建立对 AI 的信心。”</blockquote>
-<p>— Mo Amiri，Revolut 信息安全工程师</p>
-<h2>成果一览</h2>
-<ul><li>从任务启动到功能合并，编码时间缩短了 30–60%</li><li>一位工程师将实现任务分派给多个 Codex 智能体，独自搭建了内部代码审查服务</li><li>仅用一天，就将约七年积累的设计系统文档转化为 AI 可读取的上下文</li><li>在一项工作量较大的安全代码审查任务中节省了一到两天的时间</li><li>借助 FinCrime 智能体筛查更多交易，无需同比例增派调查人员</li></ul>
-<h2>给管理者的启示</h2>
-<ul><li><strong>从值得解决的问题入手。</strong>Revolut 将 AI 应用于需求增长最快、最关乎客户切身利益的领域。</li><li><strong>用提速来提高目标，而非降低标准。</strong>编码和调查节省下来的时间，让团队能够优化设计、探究更棘手的问题，并处理更有价值的工作。</li><li><strong>责任仍须由人承担。</strong>AI 可以收集证据、编写代码并提出行动建议。但仍然需要人来深入解读这些工作，并为其结果负责。</li><li><strong>先建立信任，再扩大应用规模。</strong>明确系统能访问什么、能做什么，以及出错时会发生什么，并在推进过程中持续检验这些决策。</li><li><strong>提高知识的实用价值。</strong>AI 能够获取清晰、有条理的上下文时，表现会更好。梳理这些知识的过程，也往往能揭示组织自身需要进一步厘清哪些问题。</li></ul>
-<h2>未来展望</h2>
-<p>Revolut 已经展示了 AI 如何支持团队尝试更多、更复杂的工作。接下来的机会，是将这种能力、判断力与设计的结合，融入客户管理资金的方式之中。</p>
-<p>Abitbol 设想了一种更注重对话交互的界面，让客户可以请 Revolut 协助处理日常财务任务，例如冻结银行卡、管理订阅，或寻找为旅行攒钱的方法。Pavlov 看到了这种体验背后的设计挑战：将复杂功能转化为一致、熟悉且易用的体验。</p>
-<p>Kim Maniovich 则将这一未来愿景与推动工作的企业文化联系起来。“我希望，我们能通过为人们打造的产品，让他们把我们每天践行的价值观，即‘敢于追求远大目标、永不满足于现状’也融入自己的生活。”</p>
-<p>随着 AI 让开发变得更容易，真正拉开差距的，是明确该开发什么，并在开发过程中保持良好的判断力、坚守标准、深入理解客户，把工作做好。对 Revolut 而言，这正是将智能应用于工作的更大价值：减少花在具体执行环节上的时间，腾出更多精力，为每个人提供更安全、更简单、更实用的金融服务。</p>
-<p><em>银行服务由 Revolut Group 旗下持牌实体提供。请访问 </em><a href="https://www.revolut.com/"><em>Revolut.com</em></a><em>。</em></p>
-<h2>迈入工作新时代</h2>
-<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<h2>接收 OpenAI 商业应用的最新资讯</h2>
-<p>产品更新、实用指南、活动预告等丰富内容</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] LVMH 媒体部门宣布与 OpenAI 达成战略合作</title>
-      <link>https://openai.com/index/lvmh-media-division-partnership</link>
-      <guid isPermaLink="true">https://openai.com/index/lvmh-media-division-partnership</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：LVMH’s Media Division announces strategic partnership with OpenAI</description>
-      <content:encoded><![CDATA[<p>2026年11月16日</p>
-<p>公司</p>
-<h1>LVMH 媒体部门宣布与 OpenAI 建立战略合作伙伴关系</h1>
-<p><em>本消息最初由 LVMH 媒体部门发布，原文可在</em><a href="https://lesechosleparisien.fr/actualites/le-groupe/le-pole-medias-de-lvmh-annonce-un-partenariat-strategique-avec-openai/"><em>此处</em></a><em>阅读。</em></p>
-<p><strong>巴黎，2026 年 11 月 16 日</strong>——LVMH 集团媒体部门与 OpenAI 宣布签署战略协议，支持旗下所有媒体探索人工智能的新用途，并通过 ChatGPT 让更多人便捷地获取其新闻报道。该协议包括向媒体部门各团队部署 OpenAI 工具和 ChatGPT Enterprise，使他们能够开发贴合日常工作需求的 AI 应用。</p>
-<p>双方的共同目标是让媒体部门各团队能够探索并开发切实可用的 AI 应用，助力新闻工作和高质量报道。</p>
-<p>人工智能是一种强大的工具，将其用于新闻编辑室，能够让记者专注于本职工作的核心：调查、分析与写作。各团队将能够探索文献研究、文档比对和初步翻译等应用场景。目标是让他们有更多时间投入调查报道、分析和实地报道。</p>
-<p>此外，面对日益纷繁的信息环境，个性化已成为一项重要任务。在开发和提供满足客户、读者及广告主需求的产品与服务方面，人工智能是不可或缺的工具，有助于吸引并留住这些群体，推动旗下各媒体的收入增长。</p>
-<p>这项合作面向整个公司，也将提升 LVMH 集团媒体部门内容在 ChatGPT 中的可见度：针对用户的相关问题提供摘要和节选，注明来源，并附上直达原文的链接。这项合作将覆盖该部门旗下所有媒体，支持整个组织内各类岗位的转型：简化运营流程、提升效率、鼓励创新与创意，让当下的媒体为未来做好准备。部署过程中将根据每个人的使用场景提供针对性培训。</p>
-<blockquote>“LVMH 媒体部门（旗下包括 Les Echos、Le Parisien、Challenges、Paris Match、L’Opinion、Investir、L’Agefi 等媒体）正与 OpenAI 建立战略合作伙伴关系。这份协议将推动我们旗下媒体走在行业前沿。AI 的融入将为所有团队的日常工作带来助力。我们很高兴能携手一家专业能力与声誉备受全球认可的合作伙伴，开启这段旅程。”</blockquote>
-<p>—Michèle Benbunan，LVMH 集团媒体部门首席执行官</p>
-<blockquote>“优质新闻报道离不开那些开展调查、核实事实并帮助受众理解信息的新闻工作者。我们希望帮助 LVMH 媒体部门的每一位员工用好 AI，为各团队提供工具，助他们深入挖掘报道选题，开发 AI 的新用途。我们的目标是在尊重其编辑独立性的同时，帮助他们将更多时间投入到真正体现新闻报道价值的工作中。这项合作也将让 ChatGPT 用户能够获取紧跟时事的高质量新闻报道。”</blockquote>
-<p>—Emmanuel Marill，OpenAI 欧洲、中东及非洲地区董事总经理</p>
-<h2>关于 LVMH 集团媒体部门</h2>
-<p>LVMH 集团媒体部门 Groupe Les Echos-Le Parisien 汇集了 17 个媒体品牌，涵盖新闻、金融、文化、文化遗产、艺术和音乐等领域。该部门拥有 1,800 名员工，其中包括近 700 名记者，每月在法国触达超过 2,700 万人。</p>
-<p>集团旗下媒体品牌：<a href="https://boursier.com/">Boursier.com</a>、Capital Finance、Challenges、Connaissance des Arts、Historia、Investir、La Lettre de l’Expansion、L’Agefi、Le Parisien、Aujourd’hui en France、Les Echos、L’Opinion、<a href="https://medici.tv/">medici.tv</a>、Mezzo、Mieux Vivre Votre Argent、Paris Match、Radio Classique。</p>
-<p>集团旗下展会及出版社：Citadelles &amp; Mazenod、Fine Arts Paris、In Fine、Salon du Dessin。</p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] 我们第一阶段的嵌入式评估</title>
-      <link>https://openai.com/index/our-first-phase-of-embedded-assessments</link>
-      <guid isPermaLink="true">https://openai.com/index/our-first-phase-of-embedded-assessments</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：Our first phase of embedded assessments</description>
-      <content:encoded><![CDATA[<p>2026年11月16日</p>
-<p>安全</p>
-<h1>我们的第一阶段嵌入式评估</h1>
-<p>我们已与四家独立评估机构——Apollo Research、METR、Transluce 和 Goodfire——签署协议，开展第一阶段的嵌入式评估。随着 AI 能力快速发展、潜在风险不断增加，独立评估的公开报告可以让公众更清楚地了解各实验室如何评估和管理这些风险。</p>
-<p>嵌入式评估让独立专家能够深入访问实验室的内部模型和系统，在较长时间内评估模型对齐情况和安全防护措施的有效性，尤其关注与我们的安全论证相关的方面。根据每项评估的需要，评估机构可访问我们研究人员使用的部分内部资源，包括模型检查点、源代码、训练和评估数据、监测系统及技术文档，还可以与负责相关工作的研究人员和工程师交流。这些访问权限为评估机构提供了开展独立评估所需的证据和背景信息，帮助他们发现我们可能未曾预料到的失效问题。</p>
-<p>我们的初期评估聚焦于模型在训练和内部使用期间的对齐情况与安全防护措施，为我们的<a href="https://openai.com/index/towards-safety-cases-for-frontier-ai-training/">安全论证</a>提供补充。这些评估以我们的<a href="https://openai.com/index/priorities-principles-third-party-assessments/">第三方评估优先事项和原则</a>，以及多年来与<a href="https://openai.com/index/strengthening-safety-with-external-testing/">第三方评估机构</a>的合作为基础。这些合作包括近期在提供深入内部访问权限的情况下，对<a href="https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/">我们的内部监测系统</a>开展的试点评估，以及对 <a href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/">Hugging Face 事件</a>的调查。未来几个月，我们将利用从中获得的经验，深化与独立专家的合作。这些工作也有助于落实我们在《白宫超级智能协议》下作出的承诺，其中包括同意对我们的安全控制措施开展独立评估。这些合作有助于推动全行业建立更完善的独立评估与公开透明共同标准。</p>
-<h2>参与嵌入式评估试点的机构</h2>
-<h3>Apollo Research</h3>
-<p>在本次试点评估中，<a href="https://www.apolloresearch.ai/">Apollo Research</a> 将评估模型是否可能暗中采取违背开发者意图的行动，以及我们的安全防护措施能否检测到此类行为。评估将以训练、安全测试和内部使用中获得的证据为依据。Apollo 将分两个阶段评估以下四项主张：</p>
-<ul><li>训练未激励颠覆性行为。</li><li>高强度评估和红队测试未能诱发颠覆性行为。</li><li>模型在内部使用期间未曾试图实施颠覆性行为。</li><li>颠覆性行为背后的推理过程能够被检测到。</li></ul>
-<p>在 Apollo 评估的第一阶段，我们将提供对部分已公开和未发布模型及训练检查点、相关训练数据和评估结果、训练干预记录、监测系统及其标记的行为的访问权限，并安排可提供背景信息的研究人员与其交流，同时提供开展独立测试所需的工具和算力。</p>
-<h3>Goodfire</h3>
-<p><a href="https://www.goodfire.com/">Goodfire</a> 将派驻可解释性研究人员，并使用 Goodfire 平台分析模型内部机制。其评估的主要目标是训练过程监测、调试和对齐。这些评估主要面向 OpenAI 内部研究人员，他们将利用评估发现来改进安全性。随着合作推进，Goodfire 也将发布从中获得的经验和发现。</p>
-<h3>METR</h3>
-<p>我们计划与 <a href="https://metr.org/">METR</a> 开展两项评估，聚焦于模型对齐和监测：</p>
-<ul><li><strong>对齐评估：</strong>在第一阶段，METR 将评估我们迄今为止规模最大的一次强化学习训练中的不对齐行为，包括现有测试和监测器可能遗漏的失效问题。针对选定的训练任务，在商定的访问权限、资源和安全安排范围内，METR 将独立确定评估优先事项，并迭代开展搜寻、分析和引导式提取实验。访问权限将包括使用相关检查点进行采样，以及查阅本次训练任务的训练与评估运行轨迹和不对齐行为监测记录。第一阶段的评估将聚焦于我们规模最大的一次前沿模型强化学习训练。<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-1">1</a></li><li><strong>监测器评估：</strong>我们近期与 METR 合作开展了一次监测器压力测试演练<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-2">2</a>。我们已初步同意开展另一项<a href="https://metr.org/blog/2026-10-14-control-assessment-proposal/">监测器评估</a>，并希望扩大评估范围，但仍需双方就评估范围达成一致。</li></ul>
-<h3>Transluce</h3>
-<p><a href="https://transluce.org/">Transluce</a> 将对我们的后训练对齐评测开展初步评估，审视其质量和覆盖范围。在初步评估中，我们将向 Transluce 提供对部分已公开和未发布模型、我们的后训练对齐评测及相关结果、配套的模型行为数据和安全论证文档的访问权限，并安排可提供背景信息的研究人员与其交流，同时提供开展独立测试所需的工具和算力。</p>
-<p>OpenAI 和 Transluce 也有意在 2027 年初开展为期约八周的后续评估，届时将扩大访问权限，涵盖更多模型，允许更深入地访问我们的对齐评测，并提供有关评测结果如何影响模型发布决策的信息。</p>
-<h2>嵌入式评估规程</h2>
-<p>我们参考评估机构的意见制定了规程和流程，在提供深入访问权限的同时，兼顾安全、保密、监督以及评估的独立性和公正性。我们公开这些规程和流程，是为了说明我们将如何与嵌入式评估机构合作，并推动关于嵌入式评估规范的讨论——这类评估目前尚无统一标准。我们预计，随着对如何最佳开展此类评估的认识不断加深，这些规程和流程也需要持续完善。尤其在嵌入式评估的早期阶段，我们预计会遇到技术访问难题、场地限制、安全规程变化及其他意外问题。我们希望与嵌入式评估机构携手应对这些挑战，并分享从中获得的经验。</p>
-<h3>范围界定与迭代</h3>
-<p>每次合作开始时，双方都会商定评估范围，以及开展严谨评估所需的访问权限、资源和安全安排。有些评估检验特定的安全主张；另一些则让评估机构有空间在指定系统或训练任务中发现意料之外的失效模式。无论哪种情况，评估机构都需要有充分的自由，沿着证据线索继续调查、改进方法，并在评估发现有此必要时提出进一步评估的建议。我们也建立了相应流程，以应对评估推进过程中新增的访问需求。当直接访问可能暴露我们最敏感的知识产权（如模型权重或架构）时，我们会考虑替代方案，包括安排评估人员与 OpenAI 研究人员结对开展分析。</p>
-<h3>安全的现场工作环境</h3>
-<p>需要访问敏感机密信息的评估人员将在 OpenAI 办公场所现场工作，并使用 OpenAI 提供的设备开展工作。这样做的主要目的是保障他们所访问信息的安全。现场工作也让评估人员有机会与专门负责支持的工作人员交流，后者可以协助他们使用访问权限，并为评估提供背景信息。我们还要求嵌入式评估人员在开展实验和评估时，至少<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-3">3</a>遵守与 OpenAI 员工相同的安全标准。</p>
-<h3>监督与争议解决</h3>
-<p>我们的安全与安保委员会是 OpenAI Foundation 董事会下设的独立监督委员会，将有权了解嵌入式评估情况，并能够在评估开始前、进行中和结束时履行监督职责。安全与安保委员会将收到未经删节的报告，评估机构与委员会在评估期间也可以相互交流，包括私下交流。OpenAI 与任何评估机构之间的分歧，都将提交安全咨询小组和 OpenAI 高管处理，并须在规定期限内解决；分歧提交时，也将及时通知安全与安保委员会。如果分歧仍未解决，将提交安全与安保委员会处理。</p>
-<h3>员工交流与正式确认</h3>
-<p>与员工交流有助于评估人员了解内部信息及相关工作的背景。OpenAI 将授权相关员工与评估人员交流，并提供指导；评估人员也可根据需要请求与其他员工交流。为鼓励开放、坦诚的交流并保护员工隐私，这些讨论内容不得对外引用：它们可以为评估提供参考，但不能公开，也不能归于具体员工名下。评估机构可以通过单独的正式确认渠道，请求 OpenAI 出具经其确认的声明，对评估人员在与员工交流中了解到的内容予以核实、更正或澄清。这些声明不归于任何个人名下，也不用于表述个人观点。评估机构可以发布经 OpenAI 正式确认的声明，也可以披露 OpenAI 拒绝确认某项声明的情况。</p>
-<h3>利益冲突披露与冷却期</h3>
-<p>清晰、透明地管理利益冲突，包括涉及个人关系、经济利益<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-4">4</a>及其他方面的冲突，对评估的公正性和独立性至关重要。冷却期<a href="https://openai.com/zh-Hans-CN/index/our-first-phase-of-embedded-assessments/#citation-bottom-5">5</a>也需要审慎设计，让评估人员能够负责任地为不同实验室开展工作，同时谨慎处理涉及竞争的信息。我们正与评估机构合作，为利益冲突和冷却期制定明确的流程，包括允许灵活采取缓解措施，并确保要求回避的决定透明公开。</p>
-<h3>报告发布与负责任披露期限</h3>
-<p>评估机构在发布评估报告时保持独立性，但我们将保留删去机密信息的权利，这与以往的第三方合作安排一致。出于负责任披露的考虑，我们也可能请求延后公开，以留出时间处理可能带来安保或安全风险的评估发现，并修复尚存的问题。</p>
-<p>公开报告将帮助公众了解评估发现及其局限，而更详细的保密报告则为监督机构提供采取行动所需的证据。我们希望这些评估能够改进我们识别和应对风险的方式，并为公众判断我们的安全工作提供更清晰的依据。</p>
-<h2>展望未来</h2>
-<p>这些评估为我们持续开展的对齐与安全工作带来了独立视角。公开报告评估发现，将提高这些工作的透明度，并让公众更有信心了解风险是如何被识别和应对的。我们期待第一阶段的评估逐步促成长效、稳定的嵌入式合作，持续为我们最关键的安全主张和安全论证提供第三方安全信息与改进建议。</p>
-<p>我们将继续与多家独立第三方机构合作，助力建立汇集多元专业知识和方法的健康评估生态。有些调查需要持续在现场接触敏感系统；另一些则主要评估已部署或即将部署的模型，或审阅公开文档。</p>
-<p>未来几个月，我们将支持针对更多安全问题开展外部评估。我们也在探索未来开展嵌入式评估的可能性，以审查我们对安全框架的遵守情况，以及我们的组织文化和流程。我们致力于拓展这项工作，并帮助建立使其持续开展所需的能力和共同标准。</p>
-<h2>作者</h2>
-<h2>脚注</h2>
-<ul><li>1这一范围小于 METR 在其<a href="https://metr.org/blog/2026-10-14-alignment-assessment-proposal/">对齐评估提案</a>中设想的范围；该提案计划对不对齐问题开展广泛调查。</li><li>2我们近期与 METR 开展了为期三周的监测器红队测试演练，期间向其开放了代码库、监测器和相关运行轨迹的访问权限，并安排其与 OpenAI 研究人员交流，以帮助他们更好地了解我们的监测器。<a href="https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/">https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/</a></li><li>3在某些情况下，我们会根据实验条件采用更严格的标准，以开展审慎的安全审查。</li><li>4Apollo Research 和 Goodfire 会为其工作收取报酬，但报酬不与评估结果挂钩。METR 和 Transluce 不为评估收取报酬，但可能接受用于评估的 API 额度或算力。我们认为，接受报酬并不妨碍评估机构保持独立性，但公开披露这一情况很重要。</li><li>5我们要求参与嵌入式评估的第三方机构工作人员，在入驻另一家 AI 开发机构前遵守一段短暂的冷却期，以降低无意间泄露机密信息的风险。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] 借助 ChatGPT for Healthcare 推动医疗发展的更多方式</title>
-      <link>https://openai.com/index/more-ways-to-move-care-forward-with-chatgpt-for-healthcare</link>
-      <guid isPermaLink="true">https://openai.com/index/more-ways-to-move-care-forward-with-chatgpt-for-healthcare</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：More ways to move care forward with ChatGPT for Healthcare</description>
-      <content:encoded><![CDATA[<p>2026年11月16日</p>
-<h1>ChatGPT 医疗保健版：以更多方式推进诊疗工作</h1>
-<p>推出计算机操作智能体、更优质的临床解答和全新医疗插件，跨医疗软件协作，切实完成工作。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系我们的销售团队</a></p>
-<p>医疗团队需要整合电子健康记录（EHR）、医院政策、预约排班系统和支付方门户中的信息，才能提供诊疗服务并管理日常运营。通过 ChatGPT 医疗保健版，我们将团队日常使用的工具和所需的医学证据汇聚到同一平台，帮助他们减少在各个系统间查找操作的时间，把更多时间用于照护患者。</p>
-<p>今天，我们将分享<a href="https://openai.com/index/advancing-computer-use-for-healthcare-teams/">计算机操作智能体的最新进展⁠</a>，让 AI 智能体能够跨现有医疗软件完成多步骤工作。我们也在改进可信临床搜索功能，使其更好地查找、评估和引用医学证据，并为医疗插件生态系统新增 20 多款插件。</p>
-<p>这些能力相互配合，帮助医疗团队找到所需信息、依据医学证据做出决策，并在日常使用的各个系统中执行后续步骤。</p>
-<h2>借助计算机操作智能体，跨医疗系统推进工作</h2>
-<p>医疗机构经常需要在彼此独立的系统之间传递信息，以准备文书、协调诊疗并完成行政任务。计算机操作智能体可以通过操作团队现有的软件来协助完成这些步骤，包括读取屏幕内容、点击、输入以及在应用间切换。</p>
-<p>今天，我们将分享面向医疗领域的计算机操作智能体的最新进展，包括为临床和行政工作流程提供能力更强、更安全、成本更低的模型，以及支持安全部署的访问控制和审计日志。我们还将介绍与 Abridge、Ambience、Cigna Healthcare 和 CVS Health 等医疗企业的合作。这些企业正在部署智能体，用于处理转诊、在系统间传递文档，并汇总诊疗团队所需的信息。在下方演示中，一位临床医生使用 ChatGPT 应用中的语音功能，请求协助跟进一项 MRI 检查申请。智能体查阅病历，起草检查医嘱和给患者的回复，供医生审核。</p>
-<p>医疗机构可以从一个涉及多个现有应用的工作流程入手，设置智能体可访问的应用，并明确规定哪些步骤需要人工审核。要让涉及受保护健康信息的工作流程符合 HIPAA 要求，机构必须使用其与 OpenAI 签订的业务伙伴协议（BAA）所涵盖的合资格服务，应用必要的安全和数据保留设置，并将保护措施延伸至所连接的系统。与 ChatGPT 医疗保健版分享的内容不会用于训练模型。</p>
-<p>有关计算机操作研究、客户案例和演示的更多内容，请阅读<a href="https://openai.com/index/advancing-computer-use-for-healthcare-teams/">《推进面向医疗团队的计算机操作智能体发展》⁠</a>。</p>
-<h2>无论团队在哪里工作，都能获得更优质的临床解答</h2>
-<p>我们正在改进 ChatGPT 医疗保健版和 ChatGPT 临床医生版中的可信临床搜索功能，包括 ChatGPT 查找、评估和引用医学证据的方式。这些更新帮助临床医生将相关证据与临床问题相结合，转化为切实可行的后续措施，并提供可供查验的引用来源。</p>
-<p>为衡量这些更新的效果，我们开展了一项盲评，由医生评审针对多个专科真实临床问题的回答，其中也包括多轮对话。在 1,300 多次评审中，医生对更新后的体验在全部八个评估维度上都给出了更高的评分，包括事实准确性、安全性、可操作性和来源权威性。</p>
-<h2>将医疗工具汇聚到同一段对话中</h2>
-<p>我们正在扩展医疗插件生态系统，新增来自临床诊疗、诊疗协调和业务运营领域领先企业的 20 多款医疗插件。所有这些插件现已在 ChatGPT 医疗保健版中推出，也可通过<a href="https://openai.com/index/chatgpt-connects-health-records-and-healthcare-sources/">将 ChatGPT 融入 EHR 工作流程的 ChartGPT⁠</a> 使用。</p>
-<ul><li><a href="https://openai.com/zh-Hans-CN/business/plugins/aiva/"><img src="https://files.openai.com/content?id=file_00000000910881f782057a26289550c7&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=864c122a6bd0c093c722e66ef496e33153b81fbbece4bb66c04a49c2604a436a&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a09081f780afca44edc0cbac&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=1679c1219fa61235cdd3ad87c3bcb801a9e474f5df6196feda83246c98045c02&amp;v=0" alt="">Aiva</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/amion/"><img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt="">Amion</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/assort-health/"><img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt="">Assort Health</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/availity-extend/"><img src="https://images.ctfassets.net/kftzwdyauwt9/5llPzdEuwhYcAuayOlB7It/ee612f7b357a18926097e7d3eda2c01d/availity-extend-logo.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/5llPzdEuwhYcAuayOlB7It/ee612f7b357a18926097e7d3eda2c01d/availity-extend-logo.png" alt="">Availity Extend</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/elation-health/"><img src="https://files.openai.com/content?id=file_0000000061c881f7b2d1f274ece31a2b&amp;cdn=1&amp;cp=pi&amp;ma=31190400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=38e66c99c25ef2b832bfdb5fb4020525e7cb7eef2a3db8d2ac0bc9048fed0d97&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_0000000061c881f7b2d1f274ece31a2b&amp;cdn=1&amp;cp=pi&amp;ma=31190400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=38e66c99c25ef2b832bfdb5fb4020525e7cb7eef2a3db8d2ac0bc9048fed0d97&amp;v=0" alt="">Elation Health</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/ferry-health/"><img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt="">Ferry</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/imo-health/"><img src="https://files.openai.com/content?id=file_000000001b8881f5b4877bf355afaefd&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=0dc6a5cb5e8fd8782da0aa6f841753ba0a79dd51916e089f1f407ea261a842a5&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000001b8881f5b4877bf355afaefd&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=0dc6a5cb5e8fd8782da0aa6f841753ba0a79dd51916e089f1f407ea261a842a5&amp;v=0" alt="">IMO Health MCP Server</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/infinitus-relay/"><img src="https://images.ctfassets.net/kftzwdyauwt9/3DozDOAYNUEtEWVhc72Fp1/2317e788646b34de91f31cc041fa18a4/infinitus-relay.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/3DozDOAYNUEtEWVhc72Fp1/2317e788646b34de91f31cc041fa18a4/infinitus-relay.png" alt="">Infinitus Relay</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/kmed/"><img src="https://files.openai.com/content?id=file_0000000004c88212b7ca95c5179cc314&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=686cd5309cbbdb771a695798eade11f68e80f84e764a83a781946bc00ca0032d&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_0000000004c88212b7ca95c5179cc314&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=686cd5309cbbdb771a695798eade11f68e80f84e764a83a781946bc00ca0032d&amp;v=0" alt="">K Health</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/luma-health/"><img src="https://files.openai.com/content?id=file_000000004b4081f483c2e7f74f390bf4&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=bddaaf5ce03c514e4d55b010c81fdfa505d75ecb6fb9ded37609b3a22703ef4b&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000004b4081f483c2e7f74f390bf4&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=bddaaf5ce03c514e4d55b010c81fdfa505d75ecb6fb9ded37609b3a22703ef4b&amp;v=0" alt="">Luma Health</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/metriport/"><img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt="">Metriport</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/notable-integration-specs/"><img src="https://files.openai.com/content?id=file_00000000379081f68fd09edbc12acccb&amp;cdn=1&amp;cp=pi&amp;ma=31363200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=f1d16758b58a4c6caa32dbe1b887143e62cfcb83e7e82f370a5f4a4382f1eba3&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000379081f68fd09edbc12acccb&amp;cdn=1&amp;cp=pi&amp;ma=31363200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=f1d16758b58a4c6caa32dbe1b887143e62cfcb83e7e82f370a5f4a4382f1eba3&amp;v=0" alt="">Notable Integration Specs</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/oracle-hdi-overview/"><img src="https://files.openai.com/content?id=file_0000000022d882309a3c07f04b7de5f0&amp;cdn=1&amp;cp=pi&amp;ma=30326400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=c3b0b8645f5d3512bdd24367fca30725282cb686696f71fc8421b0d17597dc21&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_0000000022d882309a3c07f04b7de5f0&amp;cdn=1&amp;cp=pi&amp;ma=30326400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=c3b0b8645f5d3512bdd24367fca30725282cb686696f71fc8421b0d17597dc21&amp;v=0" alt="">Oracle HDI Overview</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/penguinai/"><img src="https://files.openai.com/content?id=file_000000000dec820887b81134f0e645d8&amp;cdn=1&amp;cp=pi&amp;ma=32659200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=24951a0935e4f1614fbe48a5492ee1bb140d6512200f764fdc8e33148ee2490e&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000000dec820887b81134f0e645d8&amp;cdn=1&amp;cp=pi&amp;ma=32659200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=24951a0935e4f1614fbe48a5492ee1bb140d6512200f764fdc8e33148ee2490e&amp;v=0" alt="">PenguinAI Medical Coding</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/photon/"><img src="https://files.openai.com/content?id=file_000000002f0881f79e084073db2c5827&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4fcb283c16dca4e280620606cbb8b8d7cab12374cb0b953a29e03c4f698b4e3b&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000002f0881f79e084073db2c5827&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4fcb283c16dca4e280620606cbb8b8d7cab12374cb0b953a29e03c4f698b4e3b&amp;v=0" alt="">Photon</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/redox/"><img src="https://images.ctfassets.net/kftzwdyauwt9/2cjSTasFjRAxKmnqbVF4MY/f15e0422d4fb2a9ca0f8e55669c06a51/redox.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/2cjSTasFjRAxKmnqbVF4MY/f15e0422d4fb2a9ca0f8e55669c06a51/redox.png" alt="">Redox</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/stedi/"><img src="https://files.openai.com/content?id=file_00000000a18471f49b5d9036b735e9c6&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=189c02ed76d9c393442ff3dac6db8edc8211d3afc4f10a12a37680fd7c695068&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000c8847243af0f2ea762e96f66&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=5278eb1485076d56126c672a312ac9d8af0719259f91ce120785001b78af21b4&amp;v=0" alt="">Stedi</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/subsalt/"><img src="https://files.openai.com/content?id=file_000000001d8c81f7ae5b13142d62d045&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=286fba4819db21e66f752e06b8aac8a2e41be62708cafe4f7df7d073723a7b8a&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000001d8c81f7ae5b13142d62d045&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=286fba4819db21e66f752e06b8aac8a2e41be62708cafe4f7df7d073723a7b8a&amp;v=0" alt="">Subsalt</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/trizetto-provider-solutions/"><img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt="">Trizetto</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/turquoise-health/"><img src="https://files.openai.com/content?id=file_000000003704822fa84f1770a9e6dca7&amp;cdn=1&amp;cp=pi&amp;ma=31968000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4cd9f0da4830e86d5cc524493ce4fd61372095e6ddde664b21bb40f26597b189&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_0000000081a0820da72a6f1f55e9683c&amp;cdn=1&amp;cp=pi&amp;ma=31276800&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=1729d03a924c1d407235b96991ac0048f75fb87b61527d24814cfbd18fccada6&amp;v=0" alt="">Turquoise</a></li><li><a href="https://openai.com/zh-Hans-CN/business/plugins/uptodate-expert-ai/"><img src="https://files.openai.com/content?id=file_000000002eb881f4b03e27aba35eacb6&amp;cdn=1&amp;cp=pi&amp;ma=31968000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=942e0bcd8c3b60385413c22434dd6940b40dbba0e30e9c35cac4b4136e87216b&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_000000002eb881f4b03e27aba35eacb6&amp;cdn=1&amp;cp=pi&amp;ma=31968000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=942e0bcd8c3b60385413c22434dd6940b40dbba0e30e9c35cac4b4136e87216b&amp;v=0" alt="">UpToDate Expert AI</a></li></ul>
-<p>借助这些插件，团队可以在同一段对话中处理更多工作：查阅患者记录和医院规程、准备供临床医生审核的处方、协调患者联络、核查保险资格，以及分析医疗费用和运营表现。</p>
-<p>了解医疗团队如何在 ChatGPT 中组合使用这些插件。</p>
-<h3>诊疗协调员 | 就诊前排除障碍</h3>
-<p>使用 <img src="https://files.openai.com/content?id=file_0000000038d48211a78834f6fd2ee80e&amp;cdn=1&amp;cp=pi&amp;ma=31104000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=b1c982248956e9c91281f8970ee47fe4d2fd5832398f6543a71cefa9fb713b15&amp;v=0" alt="">Luma Health 查找明天仍待确认的预约，然后通过 <img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt="">TriZetto 核查这些患者的保险资格。生成一份电话联系清单，列出每位患者就诊前我需要与其确认或解决的事项。</p>
-<h3>初级保健医生 | 出院后随访</h3>
-<p>我的患者曾因心力衰竭在外院住院，请使用 <img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt="">Metriport 查找出院小结。哪些用药发生了调整？针对这些调整，<img src="https://files.openai.com/content?id=file_00000000932c81f4b824fd9d97a55a6f&amp;cdn=1&amp;cp=pi&amp;ma=31881600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4c78224a09f86884c880e47a0170fee5c15b1422d26e451f162b74874b1eda6c&amp;v=0" alt="">UpToDate 建议开展哪些后续监测？请提供这两个来源的链接。</p>
-<h3>Inpatient nurse | Navigate complex care</h3>
-<p>I’m admitting a patient who uses their own insulin pump, and the admitting team has requested endocrinology input. Pull up our hospital’s inpatient pump policy in <img src="https://files.openai.com/content?id=file_00000000910881f782057a26289550c7&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=864c122a6bd0c093c722e66ef496e33153b81fbbece4bb66c04a49c2604a436a&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a09081f780afca44edc0cbac&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=1679c1219fa61235cdd3ad87c3bcb801a9e474f5df6196feda83246c98045c02&amp;v=0" alt="">AIVA, including required nursing checks and documentation, and use <img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt="">Amion to find the covering endocrinologist and how to reach them.</p>
-<h3>就医导航员 | 比较两家 MRI 检查机构</h3>
-<p>我的患者可以在这两家医院中的任意一家接受膝关节 MRI 平扫检查。使用 <img src="https://files.openai.com/content?id=file_000000002da481f58d1fd426644f9967&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=00e9f45a8caa06eaabdf01416c2735eae5c07a0320d693df5056ac7945f22e65&amp;v=0" alt="">IMO Health 找到对应的诊疗项目代码，在 <img src="https://files.openai.com/content?id=file_00000000a18471f49b5d9036b735e9c6&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=189c02ed76d9c393442ff3dac6db8edc8211d3afc4f10a12a37680fd7c695068&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000c8847243af0f2ea762e96f66&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=5278eb1485076d56126c672a312ac9d8af0719259f91ce120785001b78af21b4&amp;v=0" alt="">Stedi 中核查患者的保险资格和保障待遇，再通过 <img src="https://files.openai.com/content?id=file_000000005a28822f8ef184b3943ed23f&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=0962b4e69c6c12e1a6475757922913bf0b782c53636923cf0a2979081fe31408&amp;v=0" alt="">Turquoise Health 向我展示其保险计划针对该代码在两家医院各自的协议价格。同时指出，要估算患者需自行承担的费用，还需要哪些信息。</p>
-<h3>转诊经理 | 审查转诊及预约跟进情况</h3>
-<p>为每周转诊评审做准备，请使用 <img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt="">Assort Health 汇总转诊量、转化趋势以及主要的转诊来源诊所。使用 <img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt="">Ferry Health 按状态展示预约任务，并提供待跟进任务的链接。将转诊趋势和尚未完成的预约安排工作整理成简报，帮助我的团队确定患者跟进的优先顺序。</p>
-<h3>诊疗协调员 | 就诊前排除障碍</h3>
-<p>使用 <img src="https://files.openai.com/content?id=file_0000000038d48211a78834f6fd2ee80e&amp;cdn=1&amp;cp=pi&amp;ma=31104000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=b1c982248956e9c91281f8970ee47fe4d2fd5832398f6543a71cefa9fb713b15&amp;v=0" alt="">Luma Health 查找明天仍待确认的预约，然后通过 <img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/3aacGc2k40FVeNRPSC625Q/e02de2b7a65fcce109fa39c7835a9459/trizetto-provider-solutions.png" alt="">TriZetto 核查这些患者的保险资格。生成一份电话联系清单，列出每位患者就诊前我需要与其确认或解决的事项。</p>
-<h3>初级保健医生 | 出院后随访</h3>
-<p>我的患者曾因心力衰竭在外院住院，请使用 <img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/1gXvWVoOD6mI3Ysq0rV2jP/253c9d0a8ea589f99abe7368134f30b4/metriport.png" alt="">Metriport 查找出院小结。哪些用药发生了调整？针对这些调整，<img src="https://files.openai.com/content?id=file_00000000932c81f4b824fd9d97a55a6f&amp;cdn=1&amp;cp=pi&amp;ma=31881600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=4c78224a09f86884c880e47a0170fee5c15b1422d26e451f162b74874b1eda6c&amp;v=0" alt="">UpToDate 建议开展哪些后续监测？请提供这两个来源的链接。</p>
-<h3>Inpatient nurse | Navigate complex care</h3>
-<p>I’m admitting a patient who uses their own insulin pump, and the admitting team has requested endocrinology input. Pull up our hospital’s inpatient pump policy in <img src="https://files.openai.com/content?id=file_00000000910881f782057a26289550c7&amp;cdn=1&amp;cp=pi&amp;ma=31449600&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=864c122a6bd0c093c722e66ef496e33153b81fbbece4bb66c04a49c2604a436a&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a09081f780afca44edc0cbac&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=1679c1219fa61235cdd3ad87c3bcb801a9e474f5df6196feda83246c98045c02&amp;v=0" alt="">AIVA, including required nursing checks and documentation, and use <img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt=""><img src="https://images.ctfassets.net/kftzwdyauwt9/5PNEG3XBhICudyrpVwNNsh/95b2bb200e6777faa903904fb8573563/amion.png" alt="">Amion to find the covering endocrinologist and how to reach them.</p>
-<h3>就医导航员 | 比较两家 MRI 检查机构</h3>
-<p>我的患者可以在这两家医院中的任意一家接受膝关节 MRI 平扫检查。使用 <img src="https://files.openai.com/content?id=file_000000002da481f58d1fd426644f9967&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=00e9f45a8caa06eaabdf01416c2735eae5c07a0320d693df5056ac7945f22e65&amp;v=0" alt="">IMO Health 找到对应的诊疗项目代码，在 <img src="https://files.openai.com/content?id=file_00000000a18471f49b5d9036b735e9c6&amp;cdn=1&amp;cp=pi&amp;ma=30672000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=189c02ed76d9c393442ff3dac6db8edc8211d3afc4f10a12a37680fd7c695068&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000c8847243af0f2ea762e96f66&amp;cdn=1&amp;cp=pi&amp;ma=32400000&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=5278eb1485076d56126c672a312ac9d8af0719259f91ce120785001b78af21b4&amp;v=0" alt="">Stedi 中核查患者的保险资格和保障待遇，再通过 <img src="https://files.openai.com/content?id=file_000000005a28822f8ef184b3943ed23f&amp;cdn=1&amp;cp=pi&amp;ma=30758400&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=0962b4e69c6c12e1a6475757922913bf0b782c53636923cf0a2979081fe31408&amp;v=0" alt="">Turquoise Health 向我展示其保险计划针对该代码在两家医院各自的协议价格。同时指出，要估算患者需自行承担的费用，还需要哪些信息。</p>
-<h3>转诊经理 | 审查转诊及预约跟进情况</h3>
-<p>为每周转诊评审做准备，请使用 <img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000a35c81f59a69906d4b6e03e0&amp;cdn=1&amp;cp=pi&amp;ma=31795200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=10a6f30ef0326f42a2075c17c2dd7bd054e65e5504a27081a78b349586d2b7bd&amp;v=0" alt="">Assort Health 汇总转诊量、转化趋势以及主要的转诊来源诊所。使用 <img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt=""><img src="https://files.openai.com/content?id=file_00000000ae2c820dad7f4ad9611ec9c0&amp;cdn=1&amp;cp=pi&amp;ma=32227200&amp;ts=0&amp;p=pi&amp;cid=8&amp;sig=6e8cf9553a23fbcf29108bedd9551063a6c0c23c2bc909cf4085fb86ef594422&amp;v=0" alt="">Ferry Health 按状态展示预约任务，并提供待跟进任务的链接。将转诊趋势和尚未完成的预约安排工作整理成简报，帮助我的团队确定患者跟进的优先顺序。</p>
-<p>这些新插件加入了 ChatGPT 更广泛的插件生态系统，为各行各业的工作提供支持，涵盖<a href="https://openai.com/index/chatgpt-connects-health-records-and-healthcare-sources/">医疗数据与研究⁠</a>、文档、演示文稿以及软件开发。</p>
-<p>我们正与插件合作伙伴携手，让诊疗团队更轻松地将临床证据、患者信息和日常工具接入 ChatGPT。我们将持续投入这一生态系统，并邀请更多医疗企业与我们共同开发。</p>
-<h2>可用范围与后续步骤</h2>
-<p>ChatGPT 医疗保健版在具备治理机制的工作空间中，为临床、研究和行政团队提供支持。ChatGPT 临床医生版面向美国符合条件且通过验证的临床医生免费提供，帮助他们查阅医学证据并准备临床文书。两款产品均支持客户与 OpenAI 签订业务伙伴协议（BAA），以支持符合 HIPAA 要求的工作流程。</p>
-<ul><li><strong>ChatGPT 医疗保健版客户</strong>：ChatGPT 工作和 Codex 中的计算机操作智能体，以及改进后的可信临床搜索功能现已推出，具体可用性取决于工作空间设置。请联系工作空间管理员，启用新的医疗插件。</li><li><strong>临床医生个人用户</strong>：ChatGPT 工作和 Codex 中的计算机操作智能体，以及改进后的可信临床搜索功能现已推出。部分插件也已开放使用。<a href="https://chatgpt.com/plans/clinicians/">注册免费的 ChatGPT 临床医生版账户，即可开始使用</a>。</li><li><strong>探索计算机操作能力的开发者</strong>：OpenAI API、ChatGPT 工作和 Codex 均已提供计算机操作智能体能力。<a href="https://openai.com/contact-sales/">联系我们的销售团队⁠</a>，探讨如何在临床和行政工作流程中使用这些能力。</li></ul>
-<p>如需直接购买 ChatGPT 医疗保健版，或通过 AWS Marketplace 私有报价购买，请<a href="https://openai.com/contact-sales/">联系我们的销售团队⁠</a>。</p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] 推进面向医疗团队的计算机使用智能体</title>
-      <link>https://openai.com/index/advancing-computer-use-for-healthcare-teams</link>
-      <guid isPermaLink="true">https://openai.com/index/advancing-computer-use-for-healthcare-teams</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：Advancing computer-use agents for healthcare teams</description>
-      <content:encoded><![CDATA[<p>2026年11月16日</p>
-<h1>推进面向医疗团队的 computer-use agent</h1>
-<p>医疗行业是碎片化的：在患者真正获得诊疗之前，团队往往需要手动在系统之间搬运信息。比如，当临床医生建议做一次 MRI 时，保险公司所需的信息可能就在患者的病历里，但仍然需要团队成员把它取出来，再录入另一个独立门户，才能完成授权申请。</p>
-<p>computer-use agent 通过点击、输入和在应用之间切换来完成多步骤工作流。在医疗领域，这让 AI 能够在团队已经在用的软件中协助处理重复性工作流。</p>
-<p>今天，我们分享一组衡量模型在临床与行政工作流中表现、安全性和成本的新结果。我们也会介绍与 Abridge、Ambience、Cigna Healthcare、CVS Health 等领先医疗机构合作的方式，共同推进并应用 computer use，覆盖授权申请、转诊、出院规划以及就诊间隔期的随访。</p>
-<p>医疗团队、开发者和个体临床医生现在就可以通过 OpenAI API、ChatGPT for Healthcare 和 ChatGPT for Clinicians 使用这些能力。机构可以支持符合 HIPAA 要求的工作流，配置审批与 agent 访问权限，并记录审计日志，以实现安全部署。</p>
-<h2>从患者的一条消息到一次 MRI 授权申请</h2>
-<p>为了展示 computer-use agent 如何帮助临床医生和授权专员处理同一个 MRI 申请，我们用合成患者数据搭建了一个演示。一位患者就下背痛给自己的临床医生发消息。computer-use agent 会查阅 EHR 中该患者的就诊记录、物理治疗记录和既往影像，起草一份 MRI 医嘱、一份就诊记录以及给患者的回复，交由临床医生审核。随后，agent 用同一批记录在保险公司门户中准备一份事先授权申请，供授权专员审核。</p>
-<h2>评估有用性、安全性和成本</h2>
-<p>我们在临床医生于 EHR 收件箱中处理的任务上评估了 GPT‑6 Astra。这些任务由医生参与设计，要求 Astra 执行多步骤工作流，既考察它基于纵向患者上下文进行临床推理，也考察它在复杂界面中导航的能力。评审人员把模型的操作与它产出的记录、医嘱和患者消息放在一起查看，判断这些工作在具体任务情境下是否有帮助、在临床上是否安全。</p>
-<p>临床安全性的评估方式，是判断模型工作结果中的不准确、遗漏或操作是否有可能导致患者受到伤害。总体来看，325 项被评审的任务中有 99% 被评为安全。医生用五分制评价有用性，在 646 次评估中有 93% 选择了“非常有帮助”或“极有帮助”。</p>
-<h3>EHR 收件箱工作示例</h3>
-<h4>行政工作流的表现与成本</h4>
-<p>在 Stanford 研究人员发布的独立 benchmark <a href="https://som-shahlab.github.io/health-admin-bench-website/">HealthAdminBench</a> 上——它衡量模型在常见行政工作流上的表现——GPT‑6 Astra 拿到了可用评分细则分数的 94.3%，GPT‑6 Luna 拿到 91.8%，而每项任务成本为 8.5 美分，便宜了 98%。两个模型都在最高 reasoning effort 下评估。这些结果表明，面向高频行政工作流、既有能力又负担得起的 agent 正在取得进展。</p>
-<h2>与医疗机构共同开发 computer use</h2>
-<p>我们的合作伙伴构建的软件被数百个医疗系统使用，在全球范围内协调会员的照护，并为数亿患者提供医疗服务。下面的例子展示了这些机构如何开发、试点和部署 computer-use 应用，以节省时间、解决关键问题并改善患者照护。</p>
-<h3>CVS Health：跨临床系统完成行政工作</h3>
-<p>CVS Health 正在使用 OpenAI 的 computer-use 能力，把跨临床系统的重复性工作自动化，包括发送文档、处理转诊以及支持专科会诊。这些 agent 会操作现有应用，补上 API 无法完全覆盖的步骤。</p>
-<p>在一个生产工作流中，一个 agent 用一个周末清掉了一批积压数月的待发文档。另一个 agent 每天为数万次会诊处理系统操作步骤，帮助团队成员把精力放在需要其专业判断的工作上。CVS Health 采用校验检查和人工监督，用截图和操作记录核实动作与应用状态。CVS Health 正在开源其 <a href="https://github.com/cvs-health/cua-agent-kit">Agent Kit</a>，它基于 OpenAI 的 Agents SDK 构建，把这一做法打包成可复用的流程，供更广泛地使用。</p>
-<blockquote>“行政事务上少花一点时间，照护上就多一点时间。这对我们的团队和我们服务的每一个人都是好事。”</blockquote>
-<p>——Lagan Khare，CVS Health 工程部执行总监</p>
-<p>数据始终留在 CVS Health 企业管控的基础设施内，由其企业 AI Governance 团队和既有的负责任 AI 政策管理。生产数据不会用于训练基础模型。</p>
-<h3>Abridge：在照护的每个环节跨系统协同</h3>
-<p>Abridge 正在开发 computer-use agent，帮助临床医生在他们日常使用的各种场景和应用中执行照护计划，包括那些没有 API 的应用。其规划中的住院场景建立在临床对话之上，加入 EHR 信息以及护士和临床医生的上下文，用来判断哪些地方需要关注、下一步该如何协调。</p>
-<p>举例来说，临床医生可以让 Abridge Assistant 协助解决某位患者的出院障碍。agent 可以并行处理用药获取和居家医疗协调，在打电话、发消息的同时操作电脑界面。临床医生始终保持专注于患者，只在需要临床判断的决策上被请进来。</p>
-<p><a href="https://www.abridge.com/blog/learning-health-system">了解更多</a></p>
-<h3>Cigna：让照护经理做好会员触达准备</h3>
-<p>作为 The Cigna Group 与 OpenAI 更广泛合作的一部分，Cigna Healthcare 正在把 OpenAI 的前沿模型与自身的临床专业能力结合，汇总跨系统的相关信息，让照护团队对每位会员的需求和经历有更完整的了解。这些信息可能包括福利与保障范围、服务提供方、预约和既往互动，帮助照护团队围绕由治疗医生制定的照护计划更好地支持会员。</p>
-<p>在此之前，Cigna Healthcare 的个案管理员必须在 10 多个相互独立的临床和行政系统之间来回查找，才能收集到这些上下文。现在 computer use 可以协助在这些系统中导航，在几秒内把相关信息汇总到一起，减少查找信息的时间——最终让个案管理员有更多时间去支持会员。</p>
-<blockquote>“不到八周就从概念走到部署，这说明当我们把 AI、我们在照护管理上的专业能力，以及负责任使用所需的适当护栏结合起来，能做成什么样的事。更重要的是，这意味着我们的个案管理员能更快拿到更好、更完整的洞察，从而把时间放在最重要的事上：以个性化、有温度的照护支持患者。”</blockquote>
-<p>——Madhu Nutakki，Cigna Healthcare CIO</p>
-<h3>Ambience：让 computer use 在医疗领域可治理</h3>
-<p>computer use 让 agent 能在 API 触及不到的 EHR 和支付方门户中完成任务。在医疗领域，只有当每一个动作都可控、可审计时，这种能力才用得上。Ambience 额外构建了控制措施来支撑这种监督。</p>
-<p>在这次演示中，Ambience 使用患者病历中的证据，在保险公司网站上准备事先授权申请。当记录存在歧义时，agent 会停下来询问临床医生，然后在提交前等待批准。医疗系统可以设定 agent 能执行哪些动作，随时暂停它，并获得逐步日志用于审计。</p>
-<p>医疗初创公司正在把 computer use 的进步转化为支持照护团队的新方式。这五家公司把 AI agent 与医疗专业知识结合起来，帮助团队在系统中导航、协调下一步行动，推动照护向前走。</p>
-<h2>患者数据安全与 agent 控制</h2>
-<p>在医疗领域使用 computer-use agent，需要评估临床安全性、保护患者信息，并明确限定 agent 在没有人复核的情况下可以做什么。</p>
-<p>ChatGPT for Healthcare 提供基于角色的访问控制和审计日志，以支撑监督。机构可以在自己的工作流中加入额外的复核与审批步骤，并配置 agent 使用的应用和环境，把访问范围限定在每项任务所需的记录和操作上。机构数据不会用于训练 OpenAI 的基础模型。</p>
-<p>为支持涉及受保护健康信息的、符合 HIPAA 要求的工作流，机构必须使用其与 OpenAI 签署的 Business Associate Agreement 所覆盖的合格服务，并采用必要的安全与保留设置。</p>
-<h2>开始使用 computer-use agent</h2>
-<p>面向医疗的 computer-use agent 现已在 ChatGPT for Healthcare、ChatGPT for Clinicians 和 OpenAI API 中提供。以下是医疗机构、临床医生和开发者上手的方式。</p>
-<ul><li><strong>医疗机构：</strong> <a href="https://openai.com/contact-sales/">联系我们的销售团队</a>，讨论如何在你的临床和行政工作流中使用 AI。现有客户可以请工作区管理员在 ChatGPT Work 和 Codex 中启用 computer use。</li><li><strong>个体临床医生：</strong> 美国临床医生可以<a href="https://chatgpt.com/plans/clinicians/">立即注册免费的 ChatGPT for Clinicians 账户</a>，在 ChatGPT Work 和 Codex 中体验 computer use。</li><li><strong>开发者：</strong> 用 <a href="https://developers.openai.com/api/docs/quickstart">OpenAI API</a> 构建医疗应用，并查阅我们的 <a href="https://developers.openai.com/api/docs/guides/tools-computer-use">computer use 指南</a>，构建能在现有软件中工作的 agent。</li></ul>
-<p>我们希望这些进展能让医疗团队少花些时间在系统之间搬运信息，多花些时间照护患者。</p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026</a></li></ul>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] The King’s Trust 与 OpenAI 启动 100 万英镑合作</title>
-      <link>https://openai.com/index/the-kings-trust-and-openai</link>
-      <guid isPermaLink="true">https://openai.com/index/the-kings-trust-and-openai</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：The King’s Trust and OpenAI launch £1m partnership</description>
-      <content:encoded><![CDATA[<p>2026年11月16日</p>
-<p>全球事务</p>
-<h1>国王信托基金会与 OpenAI 启动 100 万英镑合作项目</h1>
-<p>这项新合作将帮助年轻人掌握未来职场所需的 AI 技能，优先支持未在就学或就业的群体。</p>
-<ul><li><a href="https://www.kingstrust.org.uk/">国王信托基金会</a>宣布与 OpenAI 达成重要合作，旨在帮助多达 2.5 万名年轻人掌握工作所需的 AI 技能，优先支持未在就学、就业或接受培训的群体。</li><li>OpenAI 将向这家青年慈善机构捐赠 100 万英镑，用于支持这项工作。</li><li>这项合作属于基金会将在未来几个月推出的一项更广泛的计划，该计划提供全国认可的 AI 资质认证，旨在帮助年轻人在不断变化的劳动力市场中保持竞争优势。</li><li>宣布这项合作之际，国王信托基金会正迎来成立 50 周年。面向未来，基金会将继续提供支持，帮助年轻人在 AI 日益普及的世界中取得成功。</li></ul>
-<p>国王信托基金会与 OpenAI 启动了一项 100 万英镑的合作项目，帮助英国各地的年轻人掌握工作所需的 AI 技能，优先支持未在就学、就业或接受培训（NEET）的群体。该项目计划在未来 18 个月内为多达 2.5 万名年轻人提供支持，帮助他们掌握实用技能、建立信心，在 AI 赋能的经济中迈向升学和就业。</p>
-<p>该项目将帮助弥补年轻人在 AI 使用经验方面的不足，同时回应他们的学习热情。英国开放大学的<a href="https://business.open.ac.uk/wales/knowledge-hub/harnessing-young-talent-pipelines-digital-world-could-neets-be-supported-employers">《2026 年商业晴雨表》</a>发现，在受访的 16 至 24 岁、未在就学、就业或接受培训的年轻人中，68% 愿意接受培训或提升技能，以改善就业前景。</p>
-<p>这项合作将 AI 技能学习机会、受认可的资质认证与实践经验相结合，帮助年轻人为快速变化的职场所带来的机遇和挑战做好准备。这项合作属于国王信托基金会正在制定的一项更广泛的计划，该计划提供全国认可的 AI 资质认证，旨在帮助年轻人在 AI 改变职场的过程中掌握雇主所需的技能。</p>
-<p>随着 AI 逐渐融入日常工作，国王信托基金会正与雇主、AI 专家及年轻人合作，探索年轻人在这样的职场中需要哪些技能，以及如何让这些技能与基金会现有各项计划中的就业技能培训形成互补。</p>
-<p>50 年来，国王信托基金会已为超过 130 万名年轻人提供支持。在此基础上，基金会希望确保下一代掌握在 AI 赋能的经济中蓬勃发展所需的技能与信心。</p>
-<p>在“年轻人与工作”独立评估的最终报告发布前，Alan Milburn 阁下对这项合作表示欢迎，并谈及各方共同的愿景：让年轻人获得更多学习和就业增收的机会。</p>
-<blockquote>“Young people deserve to be equipped for a changing world of work, with the skills and confidence to make the most of it. AI will bring disruption as well as opportunity, so it is vital that young people get a fair share of the opportunity and don’t bear the cost of the disruption.”</blockquote>
-<p>—Rt Hon Alan Milburn</p>
-<p>OpenAI 致力于帮助年轻人掌握技能、建立信心，从 AI 中受益，这项合作是这一更广泛承诺的一部分。这项合作延续了 OpenAI 让实用 AI 学习惠及更多人的努力，其中包括通过 <a href="https://openai.com/global-affairs/scaling-the-openai-academy/">OpenAI Academy</a> 为学生、求职者及其他学习者提供免费学习资源。</p>
-<blockquote>“AI has the potential to create enormous opportunities for young people, but only if they have the chance to develop the skills and confidence to use it. We want young people to shape the future, not be shaped by it. Through this partnership with OpenAI, we’ll help thousands of young people build practical AI skills, gain recognized qualifications and prepare for a world of work that is changing rapidly. We’re incredibly grateful for OpenAI’s support as we help the next generation unlock the opportunities of the AI era.”</blockquote>
-<p>—Jonathan Townsend, UK Chief Executive, The King’s Trust</p>
-<blockquote>“Young people who are out of education or work deserve a real foothold in the AI economy. We’re committing £1 million and our AI expertise to help The King’s Trust reach up to 25,000 young people with practical skills, recognized learning and support toward education and employment. We’re excited about the talent this can unlock. Our ambition is for young people facing the greatest barriers to have a real chance to shape, and benefit from, an AI-powered future.”</blockquote>
-<p>—Tom Duff Gordon, VP &amp; Head EMEA Policy, OpenAI</p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenAI] 在 Holiday Extras，dots 在任何人提出请求前就开始工作</title>
-      <link>https://openai.com/business/customer-stories/holiday-extras-dots</link>
-      <guid isPermaLink="true">https://openai.com/business/customer-stories/holiday-extras-dots</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>OpenAI</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
-      <description>原文标题：At Holiday Extras, dots get to work before anyone asks</description>
-      <content:encoded><![CDATA[<p>2026年11月16日</p>
-<h1>在 Holiday Extras，dot 无需吩咐就主动开工</h1>
-<p>dot 无需指示就能主动提供上线报告，提醒人们可能忽略的问题，还能在上班通勤途中一起梳理即将召开的会议。</p>
-<p><a href="https://chatgpt.com/business/">探索 ChatGPT Business</a></p>
-<p>公司规模: 中型企业</p>
-<p>区域: 欧洲和英国</p>
-<p>行业: 旅行</p>
-<p>产品: ChatGPT</p>
-<p><a href="https://www.holidayextras.com/">Holiday Extras</a> 在应用中推出新功能后的第二天，公司 AI 创新副总裁 Liam Thompson 就收到了一份关于该功能表现的报告。但他并没有要求生成这份报告。他的 dot 名叫 Beast，注意到新功能上线后，便通过 ChatGPT 插件从 Google BigQuery 中提取数据，并把结果交给了他。</p>
-<blockquote>“我都还没开口，Beast 就说‘给你，准备好了’，那一刻我真的很开心。”</blockquote>
-<p>—Liam Thompson，Holiday Extras AI 创新副总裁</p>
-<p>Holiday Extras 是一家英国旅游科技公司，帮助旅客预订出行所需的各项配套服务，从机场停车、酒店到休息室和接送服务。它的承诺很简单：少些烦心，多享假期。</p>
-<p>这份化繁为简的承诺，也同样面向员工。ChatGPT Enterprise 为员工使用 AI 奠定基础，Codex 帮助他们将专业知识转化为可用的软件和更好的客户体验，而 <a href="https://openai.com/index/introducing-dots/">dot⁠</a> 则简化了其中的各项工作。</p>
-<p>Liam 和他的同事、创新与增长总监 David Lee 分享了他们如何把 dot 用作助手和思考伙伴：一起梳理接下来的安排，发现自己可能忽略的问题，并完成那些原本得等到回到办公桌前才能处理的工作。</p>
-<h2>通勤路上聊一聊，到岗就有报告</h2>
-<p>David 给自己的 dot 起名叫 Brian，每天早上通勤时都会和它通话。他们会一起梳理接下来的会议，David 也可以让 Brian 利用已接入的公司数据生成报告。他说：“等我到了办公室，在桌前坐下，报告就已经准备好了，可以直接用。”</p>
-<p>有一次，一些 API 密钥需要停用，Brian 提醒了 David，还回查了他的邮件，列出了可能受影响的人员名单。David 不用再翻找过去的邮件往来逐一梳理，就能知道可能需要提前通知哪些人。</p>
-<blockquote>“我最喜欢 Brian 的一点是，它已经在思考那些我压根还没想到的事。”</blockquote>
-<p>—David Lee，Holiday Extras 创新与增长总监</p>
-<h2>为什么 Liam 每天要和 dot 聊上两个小时</h2>
-<p>Liam 说：“我的 dot 帮我统筹一切。”Beast 会提醒他哪些消息还没回复，也会从过去的对话中找出答案。Liam 不必再翻看聊天记录，只要问问 Beast 他们什么时候讨论过某件事、当时的答案是什么就行了。</p>
-<p>Liam 说：“有 Beast 在，我就能放松下来，因为我知道，即使漏了什么，它很可能已经处理好了，而且它一直在留意所有事情的进展。”</p>
-<p>Liam 曾试用过另外两款助手 OpenClaw 和 Hermes，但他说，自己不太放心向它们提供太多信息。他说：“在我们公司的环境中，只要是 OpenAI 的产品，我就知道可以信任。”他授权 Beast 访问自己的 Slack、邮箱、Drive 和笔记本电脑，让它能更好地帮上忙。</p>
-<p>Liam 每天早晚都会与 Beast 对话，听取简报。“我最喜欢语音。双向语音彻底改变了我与 OpenAI 产品的交互方式。”他说。“就像自然地聊天一样。我每天至少会和 Beast 语音聊两个小时。”</p>
-<h2>动画制作，从几天缩短到约十分钟</h2>
-<p>dot 也是设计伙伴。Liam 学过设计。他正在开发一款应用，于是请 Beast 为其中的 3D 角色制作动画。他授权 Beast 使用笔记本电脑上的 After Effects 和 Rive，然后看着它动手制作。</p>
-<p>Beast 为这些角色制作了动画，并将它们放进应用中。Liam 说，这项工作要是自己来做，得花上好几天；而他估计，Beast 只用了大约十分钟。Liam 说：“我在大学里学了三年设计。”看着 Beast 工作，他心想：“好吧，它做得比我还好。”</p>
-<h2>在全公司分享有效经验</h2>
-<p>对 Holiday Extras 来说，下一个机会是帮助更多人让自己的 dot 发挥作用。David 希望正在尝试使用 dot 的人分享自己的心得，让其他人看到 dot 能做什么，并亲自试一试。无论是从准备会议、动手做点东西，还是让日常生活轻松一点开始，下一个点子都可能来自任何人。</p>
-<p>这延续了公司与 OpenAI 合作的初衷：为全体员工提供尝试新工作方式所需的信心和工具，并推动有价值的发现得到推广。</p>
-<p>对于刚开始使用的人，Liam 的建议很简单：创建一个 dot，和它聊起来。“没有理由不开始。真的，直接试起来吧。”</p>
-<h2>迈入工作新时代</h2>
-<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<h2>接收 OpenAI 商业应用的最新资讯</h2>
-<p>产品更新、实用指南、活动预告等丰富内容</p>
-<h2>继续阅读</h2>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1pQ0jmmXO4srma6UqEuFtH/479d0a9d0ba2501f31c0dc3a0767430b/holiday-extras-hero.png?w=3840&amp;q=90&amp;fm=webp" alt="Holiday Extras — Hero"></p>
-<p>Holiday Extras 正在重新思考借助 Codex 能构建什么</p>
-<p>2026年11月12日</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2nAmJWUrmCwC3avCecsdYa/34ddcd27c1c89aae828a7e91539b29df/oai_Omio_1x1.png?w=3840&amp;q=90&amp;fm=webp" alt="Omio &gt; oai omio 1x1 card"></p>
-<p>Omio 如何打造对话式旅行的未来</p>
-<p>2026年6月23日</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/15d768b2-bd52-4e68-bebaf96d50b3/e3f414371811a69d73091cc36a44ce8f/holiday_extras.png?w=3840&amp;q=90&amp;fm=webp" alt="紫色背景上的白色 Holiday Extras 标志。"></p>
-<p>借助 AI 打造数据驱动的高效文化</p>
-<p>2024年3月18日</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[xAI Grok] 使用 Grok Bot 建立会计团队</title>
-      <link>https://x.ai/news/grok-bot-accounting</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-bot-accounting</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>xAI Grok</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml">xAI Grok</source>
-      <description>原文标题：Building an accounting team with Grok Bot</description>
-      <content:encoded><![CDATA[<p><a href="https://x.ai/news">返回新闻</a>2026 年 11 月 16 日</p>
-<h1>使用 Grok Bot 建立会计团队</h1>
-<p>作者：Annay (Paul) Bains、Will Smerdon 和 Erin Jenks</p>
-<p>在 SpaceXSI，五个 Grok Bot 各自端到端负责一项会计工作，从开通客户账户到收取款项。只有当工作需要有判断力时，它们才会让人参与。</p>
-<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">下载 macOS 版</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售</a></p>
-<p>大多数会计团队都围绕一组定义清晰的工作来组织日常事务，从管理客户账户到计费与收款。</p>
-<p>在 SpaceXSI，我们开始把这些工作交给 <a href="https://x.ai/bot">Grok Bot</a>。每个 Bot 负责一整条流程，独立工作，遇到需要人类判断或批准的事情时才会找我们。它们让我们能处理更多工作，而员工人数不必以同样速度增长。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_grokbotshaverealplaceson-2x-light-1adc1c4a.png" alt="Grok Bot 在 SpaceXSI 会计组织架构图上都有真实的位置：Provisioning Bot 向 Paul 汇报，Billing Bot 和 Billing Support Bot 向计费主管汇报，Cash Applications Bot 和 Collections Bot 向收款与支持主管汇报"></p>
-<p>我们构建了五个 Team Bot，每个都有经过仔细界定的职责：</p>
-<ul><li><strong>Provisioning Bot</strong> 核对合同，开通或关闭客户账户。</li><li><strong>Billing Bot</strong> 核对合同细节并生成发票。</li><li><strong>Billing Support Bot</strong> 回答计费问题，并处理 go-to-market 团队提出的请求，例如更新客户记录或调取发票。</li><li><strong>Cash Applications Bot</strong> 入账收到的付款、调查差异、核销银行手续费，并把短付款标记给收款团队。</li><li><strong>Collections Bot</strong> 处理客户的计费咨询，并协调退款等请求。</li></ul>
-<p>搭建它们的过程让我们学到很多：要让 Bot 可靠到足以负责重要业务流程，需要付出什么。下面是我们组建这个团队的做法，以及每个 Bot 具体做什么。</p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#how-we-build-and-manage-our-accounting-bots">我们如何构建和管理会计 Bot</a></h2>
-<p>我们最初试验 Grok Bot 时经历了不少试错，才想清楚该如何最好地组织这些工作。最终我们定下来的方式是：给每个 Bot 分配一个已经存在、定义清晰且范围明确的会计流程，让它从头到尾负责。我们不是让 Bot 去协助完成各种零散任务，而是交给它一项具体的、原本由团队里某个人来做的工作。</p>
-<p>关于 AI agent 的一个常见误解是：只要给它开通正确的系统权限，它就应该能胜任一份工作。实践下来我们发现，Bot 在文档、入职培训和持续辅导上的投入需求，和新员工完全一样。</p>
-<p>这些前期投入需要时间，但一旦训练完成，它们就能全天候工作，处理的工作量远超同岗位的人，准确率也更高。当我们教 Bot 一项新技能时，就像是上传了一项新能力，它可以立刻投入使用。</p>
-<h3><a href="https://x.ai/news/grok-bot-accounting#build-reliable-processes-before-assigning-them-to-bots">先把流程做可靠，再分配给 Bot</a></h3>
-<p>如果人们都还没弄清楚怎么可靠执行一个流程，Bot 也很难把它跑好。如果工作流定义不清，或者依赖没有写下来的知识，那么把它交给 Bot 并不能解决这些问题。</p>
-<p>正因如此，我们投入构建了一批应用，让会计流程更加结构化。我们用 Grok Build 创建应用，用界面来界定流程如何运转、允许执行哪些操作。这样 Bot 就有了一个受控的工作环境，而不用从头琢磨每项任务该怎么做。</p>
-<p>举例来说，我们构建了一个内部开通应用，用固定的方式来启用客户账户，并对可执行的操作加以控制。现在由我们的 Provisioning Bot 来操作这个应用。这样我们就有了一个可靠的流程，所有已执行的操作都有审计日志，人和 Bot 都能用。</p>
-<h3><a href="https://x.ai/news/grok-bot-accounting#document-each-job-as-if-youre-onboarding-an-employee">像给员工做入职一样记录每项工作</a></h3>
-<p>我们维护一份 Notion 文档，作为每个 Bot 的操作手册。文档里有 Bot 完成工作所需的知识和指示，从开票前如何核对合同细节，到哪些计费调整需要人工批准。</p>
-<p>每天晚上，Bot 会查阅这些文档来刷新知识，并标记其与现有指示之间的任何出入。它们不能自行编辑文档。只有负责各流程的人才有这个权限。</p>
-<p>当我们修改政策，或发现更好的交易处理方式时，我们会更新文档，并把新流程教给 Bot。最了解这项工作的人，始终负责定义它该如何完成。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/3-kb-structure-99883bce.png" alt="Billing Support Bot 的知识库，一份 Bot 每晚都会查阅的只读操作手册"></p>
-<h3><a href="https://x.ai/news/grok-bot-accounting#give-bots-clear-permissions-and-approval-requirements">给 Bot 明确的权限和审批要求</a></h3>
-<p>会计流程需要谨慎的控制，因为它们会影响财务报告，还可能受审计要求或控制框架的约束。我们的 Bot 可以读取所需的信息，但修改记录的能力受到更多限制。</p>
-<p>Grok Bot 还可以通过 Tailscale 等集成安全地连接内部系统。这样 Bot 就能访问私有工具和数据，而无需把这些系统暴露在公网上。公司可以控制 Bot 能访问哪些资源，访问策略与授权该连接的人员身份绑定。</p>
-<p>我们允许它们独立执行风险较低的任务，而发放抵扣或退款等敏感操作需要审批。我们还会控制谁有权授权这些操作。例如，任何拥有相应访问权限的人都可以让 Billing Support Bot 解释一张发票，但只有指定人员才能授权更改计费记录。</p>
-<h3><a href="https://x.ai/news/grok-bot-accounting#train-bots-before-letting-them-work-independently">在让 Bot 独立工作之前先训练它</a></h3>
-<p>我们训练新 Bot 的方式和新员工一样。先教它们工作是怎么做的，然后让它们观察我们执行工作，再逐步把独立完成任务的责任交给它们。这样我们就有时间在它们开始独立工作之前发现知识盲区并纠正错误。现在我们典型的入职流程大约需要三周：</p>
-<ul><li><strong>第一周：</strong> 为 Bot 搭建知识库，并让它观察我们如何执行这项工作。</li><li><strong>第二周：</strong> 让 Bot 提出操作建议并说明它打算做什么，由人员审批它的工作。</li><li><strong>第三周：</strong> 允许 Bot 独立执行日常工作，并将异常情况上报。</li></ul>
-<p>我们最早的几个 Bot 开发耗时更长。例如 Billing Support Bot 花了四到五周才上线。随着我们逐渐摸清如何组织这些工作，后续 Bot 的构建速度快了很多。发布之后我们仍会继续辅导它们，纠正错误、更新指示；而它们承担的工作，原本需要好几名全职员工。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/grokbot_diagram_fivebotsonedeallifecycle-light-7b5a7b12.png" alt="一笔交易生命周期上的五个 Bot：Provisioning Bot 开通账户，Billing Bot 发送发票，Billing Support Bot 回答销售问题，Collections Bot 处理应收账款邮箱，Cash Applications Bot 匹配付款"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#provisioning-bot-sets-up-and-closes-customer-accounts">Provisioning Bot 开通和关闭客户账户</a></h2>
-<p>Provisioning Bot 确保客户在签署合同时获得对我们产品的正确访问权限，并在合同结束时移除这些权限。它通过一个我们用 Cursor 构建的内部应用来管理这一流程，而此前这项工作需要我们团队中的人手工处理。</p>
-<p>当一笔交易成交后，Provisioning Bot 会将已签署的合同与相应的 CRM 记录进行比对。它核对订单细节是否一致，然后用我们的开通应用启用客户账户。之后，它再对照合同验证相应权益，并在 Slack 中通知销售代表开通已完成。</p>
-<p>当客户流失或合同结束时，这个 Bot 还会移除相应的权益。这帮助我们避免开通错误——这类错误可能导致客户拿不到已购买的访问权限，或者让访问权限在合同结束后仍然延续。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/provisioning-14cbaa92.png" alt="Slack 中的 Provisioning Bot 正在对照 Salesforce 检查一份已赢单的合同、启用权益，并告知销售代表账户已就绪"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#billing-bot-generates-invoices-and-checks-for-errors">Billing Bot 生成发票并检查错误</a></h2>
-<p>客户账户开通完成后，Billing Bot 就接手后续工作。在生成并发送发票之前，它会核对计费系统中的信息是否与已签署合同的条款一致。</p>
-<p>为此，Bot 会将合同与从 CRM 流入我们 Billing System 的客户记录进行比对。如果发现不一致，它会更正 Billing System 中的信息，以便继续开票，同时提醒相应团队修复底层的 CRM 记录。随后它发送发票并通知销售代表。</p>
-<p>这使开具一张发票所需的时间从大约 24 小时缩短到了几分钟。</p>
-<p>Billing Bot 还会检查税务信息是否缺失。例如，如果客户没有提供 VAT 或 GST 识别号，Bot 会通知销售代表将被计征的税款，并给他们 24 小时补上缺失的信息。以前我们可能会先把发票发出去，等客户提出问题后才去解决。现在我们可以在发票发出之前就处理好。</p>
-<p>这个 Bot 还能处理抵扣和重新开票，但需要额外的权限和审批。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-0bce498b.png" alt="Slack 中的 Billing Bot 暂缓发出发票，直到缺失的 VAT 识别号补齐，随后发送发票并通知销售代表"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#billing-support-bot-answers-questions-from-our-go-to-market-team">Billing Support Bot 回答 go-to-market 团队的问题</a></h2>
-<p>Billing Support Bot 负责处理我们 go-to-market 团队关于客户计费的请求。它连接我们的核心会计系统，让销售代表无需会计团队介入就能得到答案并完成日常更新。</p>
-<p>例如，客户可能会注意到发票上显示的使用量与其仪表盘不一致。Billing Support Bot 可以调查底层记录，解释这两个金额为何不同。</p>
-<p>这个 Bot 也能直接采取行动。如果销售代表需要更新客户的账单邮箱或增加收件人，可以在 Slack 中向 Bot 提出。它会验证新地址是否与客户的域名匹配，然后自动更新计费记录。</p>
-<p>以前，即使底层工作并不复杂，我们团队也只能逐个处理这些请求。现在 Bot 可以端到端解决其中许多请求。我们估计，Billing Support Bot 每天为整个会计团队的工作节省了大约八小时。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/billing-support-22a4aae2.png" alt="Slack 中的 Billing Support Bot 解释为什么发票总额高于使用量仪表盘，并把差额追溯到一次席位补差结算"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#cash-applications-bot-reconciles-customer-payments">Cash Applications Bot 核对客户付款</a></h2>
-<p>Cash Applications Bot 将收到的客户付款与未结发票进行核对。除了自动匹配付款之外，它还会调查差异，并处理那些原本需要会计师介入的日常调整。</p>
-<p>这个 Bot 每天检查两次付款流水，自动核销与未结发票完全匹配的付款。当付款无法匹配时，它会在我们的客户支持系统中查找汇款通知，以帮助确定这笔付款覆盖哪些发票。</p>
-<p>Bot 还会自动核销导致付款金额与发票金额不一致的银行手续费。如果客户支付的金额少于应付金额，它会把这笔短付款标记给收款团队跟进。</p>
-<p>这个过程通常需要会计师花三到四小时。Bot 大约 30 分钟就能完成。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/cash-app-3552627c.png" alt="Slack 中的 Cash Applications Bot 依据汇款通知把一笔入账与发票匹配，并把一笔短付款标记给收款团队"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#collections-bot-handles-customer-facing-billing-inquiries">Collections Bot 处理面向客户的计费咨询</a></h2>
-<p>Collections Bot 是我们第一个直接与客户沟通的会计 Bot。它监控我们的应收账款邮箱，回答计费问题，并协调需要其他 Bot 采取行动的请求。</p>
-<p>例如，如果客户申请退款，Collections Bot 会与 Billing Bot 和 Cash Applications Bot 协作调查该请求并准备必要的操作。这些 Bot 在处理退款之前必须获得授权人员的批准。</p>
-<p>我们花了大约三个月来训练 Collections Bot，因为面向客户的沟通带来了额外的安全要求。特别是，Bot 必须核实索取账户信息的人是否有权获得这些信息。</p>
-<p>它的做法是把发件人的邮箱地址与 CRM 及计费系统中已核准的联系人信息进行核对。仅仅域名看起来相似是不够的。如果信息不匹配，Bot 会把询问上报给人员处理，而不是泄露敏感信息。</p>
-<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/collections-550c874c.png" alt="Slack 中的 Collections Bot 在核实客户邮箱后，与 Billing Bot 和 Cash Applications Bot 协调处理重复发票退款"></p>
-<h2><a href="https://x.ai/news/grok-bot-accounting#building-toward-an-si-accounting-team">朝着 SI 会计团队的方向建设</a></h2>
-<p>如果没有 Grok Bot，我们估计，现在交给这五个 Bot 的工作会需要我们团队人数增加一倍以上。而现在我们正在建设这样一支团队：Bot 处理日常流程，会计师则专注于管理工作、改进系统和处理异常情况。</p>
-<p>这段经历给我们最大的启示是：打造一支高效的 AI 团队，需要投入和打造人类团队同等的用心。我们需要清晰定义工作、记录工作的执行方式，并在培训上投入。做到这些之后，我们就能把原本依赖有人随时处理的工作交给 Bot 负责。</p>
-<h2>立即试用 Grok Bot</h2>
-<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">下载 macOS 版</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[通义千问] Qwen4-Max：新同事，已就位</title>
-      <link>https://qwen.ai/blog?id=qwen4-max</link>
-      <guid isPermaLink="true">https://qwen.ai/blog?id=qwen4-max</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>通义千问</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aliyun_qwen.xml">通义千问</source>
-      <content:encoded><![CDATA[<p><a href="https://chat.qwen.ai">QWEN STUDIO</a><a href="https://discord.gg/yPEP2vHTu4">DISCORD</a></p>
-<p>我们正式发布 Qwen4-Max——与你并肩工作、创作和探索的全天候 AI 新同事。Qwen4-Max 基于 Qwen4 系列全新结构，拥有 2.4 万亿主干参数，具备原生视觉能力，支持百万 token 上下文窗口。</p>
-<p>Qwen4-Max 以更强的专业工具运用、长程任务执行与成果交付能力，推动真实世界生产力的提升。从专业工作的深度到无限创意的广度，从 3D 建模与游戏开发到复杂精密的工业制造，从金融、法律、医疗到前沿科学探索——在与你的协作中，Qwen4-Max 能够理解工作全貌并持续推进项目，让每一个目标都拥有抵达现实的路径，实现人与 AI 协同工作的全新可能。</p>
-<p>编程、办公及长程任务综合性能对比。相比 Qwen3.8-Max，Qwen4-Max 的整体能力显著提升。详情请参见<a href="https://qwen.ai/blog?id=qwen4-max#footnotes">评测说明</a>。</p>
-<p><strong>Token 效率与成本。</strong> Qwen4-Max 以更少的 token 消耗取得了优于 Qwen3.8-Max 的性能：在 <a href="https://qwen.ai/blog?id=qwen4-max#work360">Work360</a> 上，Xhigh 和 High 两档推理强度下的 token 消耗分别减少约 <strong>24%</strong> 和 <strong>35%</strong>；在 Terminal-Bench 4.0 上，分别减少约 <strong>48%</strong> 和 <strong>49%</strong>。与此同时，相比 Qwen3.8-Max，我们全面下调了 API 定价，尤其大幅降低了缓存命中价格。在我们 Work360 的评测中，单个任务的平均费用从 26.58 元降至 11.16 元，降低了 <strong>58%</strong>。</p>
-<p><img src="https://img.alicdn.com/imgextra/i1/O1CN010VgwbmS9yHH6DCXk_!!6000000004985-2-tps-3060-1440.png" alt="Work360 与 Terminal-Bench 4.0 的 token 效率。"></p>
-<h2>预训练<a href="https://qwen.ai/blog?id=qwen4-max#预训练">#</a></h2>
-<p>Qwen4-Max 采用 <strong>Qwen4 系列的全新架构</strong>，拥有 <strong>2.4T 主干参数，每个 token 激活 71B 参数，另有 328B N-gram Embedding 参数</strong>。该架构围绕 <strong>Attention、Residual 和 Embedding</strong> 三个方面对稀疏 MoE 模型进行系统升级，优化计算效率、模型容量和训练稳定性：</p>
-<ul><li><strong>GDN + Qwen Sparse Attention（QSA）：</strong> 每四层中，三层 Gated DeltaNet 将历史信息压缩为固定大小的状态，另一层 QSA 通过轻量级 Indexer，以 block 为粒度选择相关上下文，降低长序列的 Attention 计算与索引开销。</li><li><strong>Gated Residual（GR）：</strong> 将 Residual Stream 扩展为四条并行分支，通过动态读写门控增强跨层信息传递，提升训练稳定性。</li><li><strong>N-gram Embedding：</strong> 根据局部上下文查表，在第二层提供局部 token 模式的表示，以较低的额外计算开销扩展模型容量。</li></ul>
-<p>Qwen4-Max 模型结构。</p>
-<p>在 2.4T 参数规模下，Qwen4-Max 的预训练过程平稳，loss 持续下降，<strong>全程未出现 loss spike</strong>。这主要得益于模型架构和训练优化的改进。</p>
-<p>Qwen4-Max 平稳的预训练过程。</p>
-<p>在<strong>知识、代码、问答和 STEM</strong> 四类内部评测中，Qwen4-Max-Base 的 <strong>BPB（bits per byte）在全部五个参评模型中均为最低</strong>。相比 Qwen3.8-Max-Base，其各领域 BPB 下降约 <strong>5–13%</strong>，同时每个 token 的激活参数减少约 <strong>25%</strong>。</p>
-<p>内部评测：指标为 10 × BPB，越低越好。GLM-5.3 和 Kimi-K3.1-Pro 为后训练模型，后训练可能影响其与基座模型的比较。</p>
-<h2>驱动真实生产力<a href="https://qwen.ai/blog?id=qwen4-max#驱动真实生产力">#</a></h2>
-<p>Qwen4-Max 深度融入千行百业的复杂工作流，以更强的专业能力推动高质量成果交付，成为驱动真实生产力的 AI 新同事。</p>
-<h3>工业与专业应用<a href="https://qwen.ai/blog?id=qwen4-max#work360">#</a></h3>
-<p>为全面提升模型在工业与专业场景中的协作能力，我们构建了 Work360 综合场景建模框架。该框架对复杂行业场景进行系统解构与细粒度分类，建立了涵盖 26 个一级领域、182 个二级子领域和 721 个三级细分领域的层级分类体系，实现对工业与专业场景的全方位覆盖。基于这一分类体系，我们构建了极具挑战性的 Work360 行业基准测试。在最新评测中，Qwen4-Max (52.69 分) 相较于上一代模型 Qwen3.8-Max (47.74 分) 取得了显著进步，在更广泛的行业场景中成为更强大的专业生产力工具。</p>
-<p>全域覆盖</p>
-<p>模型对比</p>
-<p>任务样例</p>
-<p>Expand</p>
-<p>Expand</p>
-<p>Expand</p>
-<h3>三维世界理解与生成<a href="https://qwen.ai/blog?id=qwen4-max#三维世界理解与生成">#</a></h3>
-<h4>Blender：三维建模与场景创作<a href="https://qwen.ai/blog?id=qwen4-max#blender三维建模与场景创作">#</a></h4>
-<p>Qwen4-Max 展现出强大的三维创作能力。它能够熟练使用 Blender 工具，串联几何建模、场景搭建、材质配置与灯光渲染等环节，将创意逐步转化为细节丰富、风格鲜明的三维作品。从建筑与室内空间，到自然景观和科幻场景，Qwen4-Max 展示了对空间布局、物体结构与视觉效果的综合把握。这种三维创作能力被进一步应用于游戏开发场景，并通过 3D 打印成为实体作品，将数字创作与后续开发、制作流程相衔接，为设计探索、内容创作和原型制作提供支持。</p>
-<h4>游戏开发：基于专业引擎的游戏创作<a href="https://qwen.ai/blog?id=qwen4-max#游戏开发基于专业引擎的游戏创作">#</a></h4>
-<p>Qwen4-Max 能够熟练驾驭 Unity、Unreal Engine、Godot 等主流游戏引擎。 只需简单的自然语言需求，它就能合理利用外部资产，独立完成场景搭建、玩法逻辑开发、资产整合、材质配置、HUD 设计与特效制作，交付一个上手就能玩的游戏。开发过程中，它会实际运行游戏，根据画面与交互反馈调整各种细节——镜头跟随、角色动作、命中效果与打击感、光影与节奏配合——通过持续的运行测试与迭代，将场景、玩法和视听效果整合为可直接运行和体验的 3D 游戏。</p>
-<p><img src="https://img.alicdn.com/imgextra/i3/O1CN01xc6uwQLYf2L5CGEC_!!6000000002565-0-tps-2560-1440.jpg" alt=""><img src="https://img.alicdn.com/imgextra/i1/O1CN01dwb6hpx72DB5CGEC_!!6000000002777-0-tps-2560-1440.jpg" alt=""><img src="https://img.alicdn.com/imgextra/i3/O1CN01UbfdH8wgPOD5CGEC_!!6000000000383-0-tps-2560-1440.jpg" alt=""></p>
-<p>00:52</p>
-<p>喵出法随</p>
-<p>Qwen4-Max 在 Unreal Engine 中打造猫咪法师冒险游戏。玩家可施放多种法术、选择能力强化，并挑战逐波敌群与首领。</p>
-<p>00:39</p>
-<p>云关行</p>
-<p>Qwen4-Max 在 Unreal Engine 中打造云海仙侠冒险。玩家可御剑飞行、连续穿环，并探索场景、挑战首领。</p>
-<p>00:20</p>
-<p>飞行赛车</p>
-<p>Qwen4-Max 用 Unity 6 制作西湖主题的赛车手游。游戏支持漂移、氮气加速与展翼飞行，并交付可安装的 Android 版本。</p>
-<h4>汽车制造：从产线规划到零件设计与加工提效<a href="https://qwen.ai/blog?id=qwen4-max#汽车制造从产线规划到零件设计与加工提效">#</a></h4>
-<p>在三丰智能装备、统联精密的实际生产场景中，Qwen4-Max 将图纸理解、参数化建模与专业工具调用等能力融入工程流程，支持汽车制造中的产线规划、零件设计与加工验证等任务。其将设计生成、工具执行与反馈验证串联起来，展示了贯穿汽车制造全链路应用能力，带来可量化的效率提升。</p>
-<p>在产线层面，Qwen4-Max 根据二维布局图与工艺参数，调用既有设备库构建三维产线，并开展节拍仿真与 PLC 虚拟调试；在零件层面，它完成车门总成、摩擦轮等部件的建模与设计，并辅助开展加工工艺规划、刀路生成与仿真核验。Qwen4-Max 通过根据仿真反馈迭代加工方案，在上机前发现过切、少切等问题。在所展示的加工案例中，单个工件加工编程所需的人工投入由约 475 分钟降至 24 分钟，减少约 95%。</p>
-<h3>Agentic 视频创作<a href="https://qwen.ai/blog?id=qwen4-max#agentic-视频创作">#</a></h3>
-<p>借助 Qwen4 与 万镜一刻，您可以构建端到端的视频创作工作流——从打磨分镜脚本、搭建静态资产，到在白模预演中驱动相机动画、渲染生成独立片段，最终剪辑成连贯的多场景影片。</p>
-<p>Qwen4 强大的语言、多模态以及智能体能力给复杂视频创作带来了知识注入、可控性和稳定性。知识以文本或参考图 prompt 的形式注入到生成模型，使得生成更能反应创作者的知识和逻辑。参数化白模预演确保复杂静态资产中几何结构、比例尺度与空间关系的一致性，也可精确控制动态运镜中的相机路径、动作和事件的时间轴卡点。人机交互的自然语言化以及预演的可控性使得最终的成品更加稳定可解释。期待您使用 Qwen4 创作更多精彩的内容。</p>
-<h3>金融、法律、医疗落地实践<a href="https://qwen.ai/blog?id=qwen4-max#金融法律医疗落地实践">#</a></h3>
-<p>在专业垂直领域，Qwen4 深入金融投研、法律尽调与临床医疗三大高门槛场景，不仅可以处理繁杂的原始资料，更能完成深度的逻辑推演与证据链溯源，真正实现从“信息检索”到“专业交付”的跨越。</p>
-<p><strong>金融投研</strong>：Qwen4 可熟练调用 <strong>90 个 MCP 工具</strong>，全面获取 A 股、港美股、债券、基金及衍生品市场的行情、财务、利率与分红数据，并结合搜索对公开资料进行交叉核验。面对复杂的投研需求，它能够跟踪行业供需与订单变化、研判宏观利率与信用利差、比较股债性价比，并开展多因子回测以评估风格暴露。</p>
-<p>以下案例以沪深 300 股指衍生品为例，展示了模型如何综合资金成本、股息率与合约期限计算理论基差、分析实际贴水，并考察隐含与历史波动率的差异。最终，投研成果以 Excel 底稿和可编辑的 PPT 报告形式交付，并提供双重溯源保障：<strong>一是来源可查</strong>，点击单元格链接即可直达原始数据出处；<strong>二是图表可对照</strong>，PPT 图表与 Excel 底稿完全对齐，研究人员可随时从报告回溯至底稿，精准核对数值与计算公式。</p>
-<p><strong>企业 IPO 法律尽调</strong>：Qwen4-Max 展现出处理长程复杂法律实务的卓越能力。面对客户分批提供的 198 份格式混乱、命名不一的散乱底稿，模型能有效排除干扰，<strong>按实质内容重命名并归类</strong>为 14 个目录，自动编制底稿文件清单；同时主动检索工商登记、知识产权、司法及信用等公开信息，与底稿进行<strong>多源交叉核验</strong>，核实发行人相关事实。在核心的风险把控上，模型能<strong>深挖协议细节并剖析法律风险</strong>（如精准识别“对赌协议恢复条款”等潜在隐患），进而提供可执行的整改建议。最终，它按严苛的实务标准<strong>交付了一份 86 页、6 万余字的完整尽调报告</strong>，全面覆盖历史沿革、股权架构等 12 个模块及 14 项具体法律问题，且所有结论均附有底稿引用以便追溯，在大幅提升尽调效率的同时，有力支持律师将精力聚焦于核心风险判断。</p>
-<p><strong>危重症临床医疗</strong>：在危重症临床医疗场景中，患者往往并发症多、病情变化快，伴随高频次的检查化验，产生了体量巨大且形态各异的医疗数据——包括几十份检验单、上万字的病程记录、多份医嘱以及 1,433 张原始影像。视频中的患者在颈动脉支架术后经历室颤并复苏，拔管后出现胸痛，并于第六天再次插管。Qwen4 在单次对话中通读了整份复杂病历，完成了从信息提取到辅助决策的闭环：<strong>查指标</strong>（跨日期精准定位特定 CRP 结果）、<strong>理病程</strong>（将六天内的复杂事件对齐为清晰的时间线）、<strong>读影像</strong>（将影像归为六类序列，定位目标胸部 CT，通过多窗口并行读取数百张原始图像，准确识别出“双肺背侧实变”，与主管医生诊断完全一致）、<strong>做决策</strong>（综合多模态信息进行权衡，给出四条处置建议，与医生当日医嘱逐条对应）。通过深度的医疗协同，模型能够高效整合多源证据，为临床一线决策提供坚实可靠的辅助支持。</p>
-<p>金融</p>
-<p>法律</p>
-<p>医疗</p>
-<h2>驱动长周期智能体（24/7 Agents）<a href="https://qwen.ai/blog?id=qwen4-max#驱动长周期智能体247-agents">#</a></h2>
-<p>Qwen4-Max 支持智能体全天候推进长周期任务，通过自主规划与持续迭代，分阶段交付可用成果，兼顾自主执行与用户掌控。</p>
-<h3>持续交付：边做边交付，方向全掌控<a href="https://qwen.ai/blog?id=qwen4-max#持续交付边做边交付方向全掌控">#</a></h3>
-<p>长程智能体经常蒙头做事，缺少阶段性反馈，导致用户难以实时掌握进展、发现偏差和调整方向。为此，Qwen4-Max 融入 Live Delivery 能力，先交付可用首版，再持续交付更新版本，逐版扩展内容、提升质量。用户可依据每版交付成果评估进展、校准方向，Agent 可结合用户反馈动态调整计划，让长程任务的交付进展可见、执行方向可控。</p>
-<p>我们同步开源 <a href="https://github.com/QwenLM/Qwen-Live-Delivery-Plugin">Qwen-Live-Delivery-Plugin</a>，安装插件即可体验持续交付能力。</p>
-<h3>云资源调度：提升模型自身应用、推理与训练的资源效率<a href="https://qwen.ai/blog?id=qwen4-max#云资源调度提升模型自身应用推理与训练的资源效率">#</a></h3>
-<p>Qwen4-Max 具备围绕复杂目标与约束进行运筹建模、求解与验证的能力，从而交付高质量的优化决策方案。该能力在阿里云真实业务场景中落地，实现了模型自主迭代并优化自身所需调度方案的闭环，涵盖数据标注中的多模型调用调度、云计算 GPU 资源的在线分配调度，以及云计算 CPU 资源的离线重调度。</p>
-<p>在这一过程中，模型根据任务设定自主生成候选算法，协同阿里自研求解器 MindOpt 对可行性、目标值与耗时进行评估并获得反馈，进而通过修改代码、交叉验证来迭代更优策略。从上层模型调用到底层云资源调度，Qwen4-Max 依托可量化的反馈持续进化，直接优化了支撑其自身应用、推理与训练的运行系统，而由此带来的成本降低与资源效率提升，又将为下一轮模型迭代提供更坚实的算力支撑。在相应场景中，数据标注场景模型调用调度费用对应参考基线平均降低 10.42%，GPU 在线分配相对基线的整机空闲容量时长提升 4.62%，CPU 离线重调度场景中达到最优目标的求解速度提升超 14.61 倍。</p>
-<p>Expand</p>
-<h2>驱动科学发现<a href="https://qwen.ai/blog?id=qwen4-max#驱动科学发现">#</a></h2>
-<h3>干湿实验闭环：Qwen4 自主设计与合成新型冷却液材料<a href="https://qwen.ai/blog?id=qwen4-max#干湿实验闭环qwen4-自主设计与合成新型冷却液材料">#</a></h3>
-<p>面向下一代高功率芯片给数据中心带来的散热挑战，Qwen4 依托深度原理 Mira 提供的一体化干湿实验环境，自主完成了一种新型冷却液分子的设计、实物合成与测试验证，<strong>最终获得真实材料样品</strong>。</p>
-<p>在连续 <strong>48 小时的自主 Agent 运行</strong>中，Qwen4 全自动完成路线调研，构建包含 270 万个分子的候选空间，并依次开展结构筛选、MPA 性质预测、第一性原理计算、逆合成设计与实验规划。Qwen4 进一步调度自动化湿实验室完成真实物料的配制、合成、分离纯化与测试，将屏幕上的分子结构转化为实验室中的实体样品。经过 <strong>4 轮“分子设计-合成测试-主动学习”的闭环迭代</strong>，Qwen4 最终获得经过实验验证的新型冷却液分子。</p>
-<p>从用 AI 探索材料，到用材料支撑 AI 基础设施建设，本次任务为破解数据中心散热难题探索了新的材料路径，展现了 Qwen4 跨越数字世界与物理世界的长程科学发现能力。</p>
-<h3>药物发现：以自主科研探寻延缓认知衰退的新路径<a href="https://qwen.ai/blog?id=qwen4-max#药物发现以自主科研探寻延缓认知衰退的新路径">#</a></h3>
-<p>阿尔茨海默病逐步损害患者的记忆与认知能力，也给家庭和社会带来长期照护负担。神经炎症是其重要病理环节，参与这一过程的 NLRP3 炎症小体，为探索新的干预策略提供了重要研究方向。围绕这一靶点，Qwen4-Max 在深势科技 PharmMaster 平台上，展示了贯穿靶点研究、分子优化设计与计算评估的全链路能力。它不只是生成分子结构，更将文献与专利理解、专业工具调用和计算反馈融入持续迭代的科研流程。</p>
-<p>在这一过程中，Qwen4-Max 自主检索文献与专利证据，选择参考分子并建立评估基线，随后通过多轮结构设计、性质预测与分子对接，根据评估反馈调整优化方向，最终结合跨轮指标比较与相对结合自由能（RBFE）评估完成候选优选。整个流程累计调用工具 454 次，完成 3,239 项计算指标评估，设计优化 24 个候选分子，将证据检索、设计生成、工具执行与反馈验证串成一条完整链路。</p>
-<p>相比专利起点，最终优选分子在多项核心计算指标上实现全面改善；RBFE 计算估计显示，其与目标靶点的名义结合亲和力达到起点的约 3.6 倍。深势科技的专家认为，该分子具有较高的研究价值，值得进一步开展湿实验验证。从疾病相关靶点到高潜力候选分子，Qwen4-Max 将证据驱动的设计、专业工具执行与计算反馈相结合，展示了自主推进长程科研任务、持续优化分子并形成有价值研究成果的能力。</p>
-<p>Expand</p>
-<h2>“模型-框架-产品”协同设计<a href="https://qwen.ai/blog?id=qwen4-max#模型-框架-产品协同设计">#</a></h2>
-<p>在 Qwen4-Max 的研发过程中，我们与 Qoder 等产品团队紧密合作，协同设计模型、智能体运行框架与产品。我们从用户在日常办公和专业设计中的实际需求出发，明确模型需要解决的问题，并以端到端任务的交付质量检验整体效果。在此基础上，持续提升任务执行能力、优化用户体验，帮助用户把想法落到实处，交付可直接使用的成果。</p>
-<p>Office 文档</p>
-<p>设计：宣传网页</p>
-<p>设计：个人网站</p>
-<p>设计：小游戏</p>
-<p>Expand</p>
-<p>Expand</p>
-<p>Expand</p>
-<h2>安全<a href="https://qwen.ai/blog?id=qwen4-max#安全">#</a></h2>
-<p>在阿里巴巴，我们以六大人工智能发展原则为指导，即：以人为本、包容诚信、隐私保护、安全可靠、可信可控以及开放共治，将模型治理贯穿于整个模型生命周期——从最初的设计与研究，到开发、训练、部署以及实际应用——确保负责任的人工智能是原生内嵌于设计之中，而非事后补充。 在软件工程训练任务中，我们在功能性检查的基础上新增了代码安全检测，以增强模型的内生安全编码能力。在 Last Secure Code Bench 的“无安全提示代码重建”及“功能与漏洞双重检验”中，Qwen4-Max 的函数级功能与安全双通过率从前代（Qwen3.8-Max）的 22.0% 提升至 31.8%；在函数，文件，仓库三个粒度上的同时生成安全代码比例从 8% 提升至 14.7%，接近翻倍。模型在规避注入、内存安全和越权访问等核心风险上表现尤为突出，能显著减少默认生成的代码漏洞，协助开发者从源头压缩系统受攻击面。 在网络安全方面，我们按任务的具体用途筛选，保留用于漏洞验证、检测和修复等防御任务的数据，剔除用于提升攻击能力等进攻任务的数据。经过内部安全专家对长程任务运行轨迹（包含完整 CoT）审查发现，Qwen4-Max 的网络安全防御能力大幅提升，针对攻击性用途的防护能力也显著增强。尚未发现模型产生大规模网络安全风险的能力。 在 CBRN 方面，我们设计了安全数据并在安全后训练阶段提升了 Qwen4-Max 的内生安全。在内部评测中，Qwen4-Max 在未产生过度拒答的同时，识别出更多含有潜在风险的请求并给出安全回答。经过内部专家对模型作答（包含完整 CoT）审查发现，模型提出的方案不具备真正的创新性，也无法端到端的完成任务。尚未发现模型能够将相关知识转化为显著提升使用者能力的风险。</p>
-<h3>伦理声明<a href="https://qwen.ai/blog?id=qwen4-max#伦理声明">#</a></h3>
-<p>Qwen 旨在用于合法、建设性的用途，严禁用于造成伤害。不得将其用于剥削或危害他人（包括儿童），宣扬暴力、仇恨、歧视或虐待，或开发与使用 CBRN 危险武器；亦不得用于侵犯隐私、实施欺诈或欺骗、传播虚假信息、进行网络安全滥用或绕过安全防护机制等。 Qwen 旨在辅助人们的工作，而不是在高影响的场景中取代专业判断。在决策可能带来严重后果的情况下，人类的专业知识与监督依然至关重要。 使用 Qwen 的用户，应确保所有输入数据均以合法方式获取和使用，并取得所使用图像或视频相关个人的授权。用户不得侵犯个人对其图像或视频享有的权利或其他人格权，并须遵守适用的法律法规。</p>
-<h2>如何使用<a href="https://qwen.ai/blog?id=qwen4-max#如何使用">#</a></h2>
-<p>Qwen4-Max 已上线<a href="https://www.qianwenai.com/models/qwen4-max">千问AI平台</a>。 开发者可通过 <a href="https://platform.qianwenai.com/docs/token-plan/overview">Token Plan</a> 或 <a href="https://platform.qianwenai.com/docs/developer-guides/getting-started/introduction">API</a> 快速接入，详见平台说明。</p>
-<p>此外，该模型也可在<a href="https://qwenwork.cn">千问办公</a>、<a href="https://qoder.com.cn">Qoder CN</a>、<a href="https://www.qianwen.com">千问 App</a>、<a href="https://chat.qwen.ai/">Qwen Studio</a> 中使用。</p>
-<h2>总结<a href="https://qwen.ai/blog?id=qwen4-max#总结">#</a></h2>
-<p>Qwen4-Max 是面向工作、创作与探索场景的全天候人工智能协作伙伴。它融合先进推理、原生视觉与长程任务执行能力，将复杂目标转化为可用的交付成果与具体的研究产出。依托持续交付（Live Delivery）机制，以及模型、智能体运行框架与产品层面的协同设计，Qwen4-Max 能够持续推进项目，根据用户反馈进行动态调整，并提供可供审阅和进一步拓展的成果。 Max 只是 Qwen4 的第一款模型，系列中的小尺寸模型也将陆续开源：同源的技术路线、同一代的训练与对齐积累，面向小模型真正擅长的场景做取舍。 作为新一代智能协作伙伴，Qwen4-Max 现已就绪，可随时响应用户的协作需求。</p>
-<h2>评测说明<a href="https://qwen.ai/blog?id=qwen4-max#footnotes">#</a></h2>
-<p>JobBench：我们的分数基于更新后的<a href="https://huggingface.co/datasets/JobBench/job-bench/commit/d43a66575635da0d3f6cb9a20976dc1a60f3ffc9">数据集</a>和<a href="https://github.com/Job-Bench/job-bench-eval/commit/660b33a86ed032559df0b2fdc1ad38cf7ceb83f3">评测代码</a>评测得到。</p>
-<p>APEX-Agents v1.1：分数引用自 <a href="https://www.mercor.com/apex/apex-agents-leaderboard/">Mercor 排行榜</a>。</p>
-<p>AA-Briefcase v1.1 和 AutomationBench-AA 分数引用自 <a href="https://artificialanalysis.ai/">Artificial Analysis</a>。</p>
-<p>CodeArena 和 AgentArena 分数引用自 <a href="https://arena.ai/">Arena</a>。</p>
-<p>HLAB-Vals-1.1 分数引用自 <a href="https://www.vals.ai/benchmarks/vals_index">Vals Index</a>。</p>
-<p>Agents’ Last Exam v1.1 分数引用自 <a href="https://agents-last-exam.org/leaderboard">Agents’ Last Exam</a>。</p>
-<p>ChartoGraphy：Qwen4-Max 和 Qwen3.8-Max-0902 的分数在 <code>min_pixels</code> 设为 4096×32×32 时测得。</p>
-<h2>引用<a href="https://qwen.ai/blog?id=qwen4-max#引用">#</a></h2>
-<pre><code>bibtex@misc{qwen4,    title = {Qwen4-Max: Your New Teammate Has Arrived},    url = {https://qwen.ai/blog?id=qwen4-max},    author = {{Qwen Team}},    month = {Nov},    year = {2026}}</code></pre>]]></content:encoded>
-    </item>
-    <item>
-      <title>[腾讯混元] Hy4 flash：日常工作的极致性价比模型</title>
-      <link>https://hunyuan.tencent.com/research/hy4-flash</link>
-      <guid isPermaLink="true">https://hunyuan.tencent.com/research/hy4-flash</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <category>腾讯混元</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-tencent_hunyuan.xml">腾讯混元</source>
-      <content:encoded><![CDATA[<p>2026年11月16日</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026111517490716_6d0b8dd02dcfff6174ba34e437a09247.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1794736148;2110096148&amp;q-key-time=1794736148;2110096148&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=f6af8fb9eca18b4e30a1629a6f7cafb8172e15eb" alt=""></p>
-<p>Hy4 flash： 日常工作的极致性价比模型</p>
-<p><img src="https://hunyuan-portal-prod-1258344703.cos.ap-guangzhou.myqcloud.com/public/ai-logo-svgs/tencentcloud-color.svg" alt="腾讯云">腾讯云</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026070622081339_db7b4e83c4ccd253de47d27e656c6a1f.svg?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1783346895;2098706895&amp;q-key-time=1783346895;2098706895&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=44a94d95270276ae213ffe4696b88387477b9592" alt="OpenRouter">OpenRouter</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026111316225445_38f7d1fa6bb1f062c21920b162d05167.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1794558176;2109918176&amp;q-key-time=1794558176;2109918176&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=1b28001e4d57083d960324d03e822b41ba3e74ee" alt="WorkBuddy">WorkBuddy</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026111316231014_b52b5e93c4dadeea0b56cb690a633d10.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1794558191;2109918191&amp;q-key-time=1794558191;2109918191&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=945d16acef285a3a52b0e362afb91d0ab8713330" alt="元宝">元宝</p>
-<p><img src="https://hunyuan-portal-prod-1258344703.cos.ap-guangzhou.myqcloud.com/public/ai-logo-svgs/github.svg" alt="GitHub">GitHub</p>
-<p><img src="https://hunyuan-portal-prod-1258344703.cos.ap-guangzhou.myqcloud.com/public/ai-logo-svgs/huggingface-color.svg" alt="HuggingFace">HuggingFace</p>
-<p><img src="https://hunyuan-portal-prod-1258344703.cos.ap-guangzhou.myqcloud.com/public/ai-logo-svgs/modelscope-color.svg" alt="ModelScope">ModelScope</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026070520372391_5ab131402b8d9602f385640c3cf82490.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1783255045;2098615045&amp;q-key-time=1783255045;2098615045&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=94c5742d352e0f745d2e316a975d5d87ac1c95c0" alt="AtomGit">AtomGit</p>
-<p>我们推出 Hy4 flash，迄今为止最高性价比的 Hy 模型。其总参数量为 224B（其中 64B Engram 参数），激活参数 12B，支持多模态和 1M 上下文长度，API 价格相比 Hy4 大幅降低。</p>
-<table><thead><tr><th>API 价格（每百万 Tokens）</th><th>输入（命中缓存）</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td><strong>Hy4 flash</strong></td><td><strong>0.02元</strong></td><td><strong>0.5元</strong></td><td><strong>2元</strong></td></tr><tr><td>Hy4</td><td>0.3元</td><td>6元</td><td>18元</td></tr></tbody></table>
-<p>我们通过一系列工作在极致优化成本的同时兼顾智能水平和实用性：</p>
-<ul><li>在预训练阶段，Hy4 flash 加入了混合注意力、LatentMoE、Engram 等架构特性，KV cache 大小仅为 Hy3 的 1/24、Hy4 的 1/6，且通过大量 scaling ladder 实验确保效果符合预期；</li><li>在后训练阶段，我们通过自蒸馏 Hy4 获得了较强的综合智能水平，再通过强化学习使端到端任务输出长度降低 50%；</li><li>在评估阶段，我们构建基于 WorkBuddy 典型任务的内部评测集 WorkIndex，并结合人评，聚焦日常工作的产物效果、单轮输出长度、端到端用时，而非远离日常工作的公开榜单分数；</li><li>在推理阶段，我们结合 megakernel、4bit 量化、DFly 等手段极致优化，使 Hy4 flash 解码速度超过 150 tps，且可以大规模低成本部署运营。</li></ul>
-<p><strong>最终，Hy4 flash 在综合效果上略优于 Hy4 preview；在 WorkIndex 上单任务成本仅为 Hy4 preview 的 1/13、Hy4 的 1/20、DeepSeek-V4.1-Flash-1017（max档位，忙时价格）的 1/8。</strong></p>
-<p>图 1：内外部任务上的性能和成本。其中 WorkIndex 包含 8 个内部评测集（PPT 制作、PPT 修改、PPT 人机双写、Markdown 人机双写、文档编辑、表格修复、音视频处理、视觉理解）；Open Benchmarks 包含 7 个公开 Agent 评测集（DeepSWE、ProgramBench、Terminal-Bench 4.0、APEX-Agents、AutomationBench、HLE、OSWorld 2.1）。</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026111611534381_28e20d5526fc6c9f49093ba2468abd19.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1794801225;2110161225&amp;q-key-time=1794801225;2110161225&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=6612655f517ea49da86fd5a5008404632cf9356d" alt="Internal Buddy Index.png"> 图 2：在 WorkIndex 上的平均任务花费对比。</p>
-<p>为了衡量真实使用体验，我们邀请了 85 位 WorkBuddy 内部用户在 27 类共 259 个日常工作任务上进行盲测。结果显示，Hy4 flash 的用户满意度接近 Claude Haiku 5.5，且单任务成本显著低于其他所有模型，任务时长也最短。</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026111613050359_56fcc01725d9dee855802b478cf3c9df.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1794805506;2110165506&amp;q-key-time=1794805506;2110165506&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=cf4f5554a6f8ed491e11e40aaf3691305dcf9aa3" alt="【中】模型盲测结果.png"></p>
-<p>Hy4 flash 已在腾讯云 TokenHub、WorkBuddy、元宝、企业微信、QQ、ima、Marvis 等产品上线，即将接入 OpenRouter。11 月 30 日前，用户可在 WorkBuddy 限时免费使用，腾讯云 TokenHub API 限时 5 折使用。 我们推荐在深度搜索、文档处理、PPT生成、简单前端展示、computer use 等大部分日常任务中使用 Hy4 flash，在长程软件工程等复杂任务中使用智能上限更高的 Hy4。Hy4 flash 已在 GitHub、HuggingFace、ModelScope、AtomGit 开源，并将高频迭代，不断提升真实工作中的实用性和效率。</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026110403005137_38f7d1fa6bb1f062c21920b162d05167.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1793732454;2109092454&amp;q-key-time=1793732454;2109092454&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=0a456a5b194345dad301414e230221ee224e7ae9" alt="WorkBuddy"></p>
-<p>日常办公中，用户既看重任务完成质量，也在意完成时间和使用成本。WorkBuddy 的评测结果显示，与 Hy4 相比，平均任务耗时减少 70%，平均成本仅为 Hy4 的 1/15 左右，效果在日常工作任务上基本持平，Coding 长程任务小幅下降，并且具备原生多模态能力。总的来看，Hy4 flash 是兼顾效果、速度与成本的实用首选。</p>
-<p>WorkBuddy产品经理 Anne</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026110403012828_b52b5e93c4dadeea0b56cb690a633d10.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1793732490;2109092490&amp;q-key-time=1793732490;2109092490&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=c02d00c5985f6709fcf074128d697a7b38746961" alt="元宝"></p>
-<p>元宝真实场景下，Hy4 flash 的 Agent 能力相比 Hy3 大幅提升 13.6%，Agent 任务人工对比评估 GSB 相比 Hy3 提升 7.56%，提升亮点在于任务完成更充分、信息呈现更清晰、内容更专业可信。在元宝通用对话任务上，Hy4 flash 相比 GLM-5.3-Flash 提升 2.52%，其中多轮对话能力提升最明显。</p>
-<p>元宝产品负责人 Logan</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026111601215756_2ca7df5c2fe9a52ad7abb7456d9f73db.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1794763319;2110123319&amp;q-key-time=1794763319;2110123319&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=62cad7ed7ed70f0675b80fa8e23a71550f9c6889" alt="微信支付"></p>
-<p>在 AI 操作真机的支付客户端场景测评中，我们针对执行路径、知识利用、验收检查、造号准确性四个 Agent 流程进行评测，Hy4 flash 相比 DeepSeek-V4.1-Flash-1017，均分全部持平或更高，执行步数减少约 6%，单次输出长度缩短约 29%。执行路径更干净，对注入的知识库理解更清晰，使用更准确。在微信支付代码静态扫描场景的测评中，Hy4 flash 相比 DeepSeek-V4.1-Flash-1017，完成扫描所需时间降低 37%、消耗 Token 降低 46%，推理效果持平，模型回复内容更简练，且更能从上下文中找到决策依据。</p>
-<p>微信支付信息智能实验室 yilin 安全工程师 Simba</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026110403051259_3cce84d5fe7d7f0402c18f161e606bc8.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1793732714;2109092714&amp;q-key-time=1793732714;2109092714&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=dd2571bdce3195823e3d88b9cf0532124c9e4a98" alt="企业微信"></p>
-<p>日常办公协作中，企业微信大圆的评测结果显示，Hy4 flash 的输出速度相比 Hy4 提升 88%，思考模式下的输出 Token 减少约 60%。在企业信息检索、资料分析、文档整理等任务中，它能够自主规划工具调用并完成结果交付。Hy4 flash 兼顾响应效率与交付质量，非常适合需要快速响应和多步骤处理的办公场景。</p>
-<p>企业微信算法负责人 Dylan</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026111610200065_135ff144dd6a08bc8d026b733198b18b.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1794795603;2110155603&amp;q-key-time=1794795603;2110155603&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=ebe3bbb34f383d87b2f64469fbac4064e927de3d" alt="王者荣耀"></p>
-<p>在游戏研发 Bug 分析评测中，针对 UI 交互、系统逻辑等问题，Hy4 flash 的根因定位表现接近 DeepSeek-V4.1-Flash-1017 和 GLM-5.3-Flash，但模型请求次数减少 22.0% – 39.1%，按请求回执统计的 Token 消耗量减少 40.5% – 61.2%。Hy4 flash 平均工具调用次数分别多 51.2% 和 7.7%；输出报告篇幅短 13.8% 和 37.0%。Hy4 flash 体现出兼顾定位质量与资源效率的优势，尤其适合日常研发中高频、批量的问题排查与辅助定位。</p>
-<p>王者荣耀项目管理负责人 TH</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026110403035813_ba938573b46ba47b93f4d3805db90d82.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1793732640;2109092640&amp;q-key-time=1793732640;2109092640&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=98a64ee10ab7bd7d0c701c6c22345ec3b0aa8564" alt="ima"></p>
-<p>在基于知识库问答真实场景构建的评测显示，Hy4 flash 相比 DeepSeek-V4.1-Flash-1017 和 GLM-5.3-Flash，平均等待时间缩短约 18% – 35%；提速的同时，各项质量指标同步向好：回答整体评分提升 1.8%，回答内容质量评分提升 8.1%，思维链内容质量综合评分提升 2.1%。对于日常问答、文字整理这类知识工作，完成时间更短，并且能够拿到更优质的回复。</p>
-<p>ima产品经理 Kaycee</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026110403023983_8ca88aeaa8e8a39d2774d600860162f9.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1793732561;2109092561&amp;q-key-time=1793732561;2109092561&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=29ee4e6413e3333f9e0354abb9a212bc37d68856" alt="QQ"></p>
-<p>接入 Hy4 flash 后，小 Q 的多项 Agent 能力进一步提升，既答得好，也回得快。评测显示，相较 DeepSeek-V4.1-Flash，Hy4 flash 在音乐推荐、频道互动、QQ 空间和星座长篇解析中的表现更优，符合要求的结果占比分别高出 6.16、2.84、0.92 和 2.22 个百分点；在聊天陪伴、音乐推荐和星座长篇解析场景里，完成时间缩短约 11%–27%，让用户更快获得贴合需求的陪伴与帮助。在频道助手的 UGC 互场景中，Hy4 flash 能在近实时约束下稳定完成意图识别与工具调用。相比 DeepSeek-V4.1-Flash，对用户意图的判断准确率持平，评论 P90 耗时缩短 39%、峰值耗时缩短 47%，输出 token 减少 30%，缓存命中率大幅提升，充分满足业务要求。</p>
-<p>QQ小 Q 技术负责人 Red 频道研发 Look</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026111611315652_0b5a10603cd9facc92251ef309043828.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1794799919;2110159919&amp;q-key-time=1794799919;2110159919&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=9352141850f37518db6e441c1428476511d703d4" alt="Marvis"></p>
-<p>Hy4 flash 在 Marvis 核心 AI 管家场景中展现出很强的任务解决能力。相比 DeepSeek-V4.1-Flash-1017，多个核心场景的任务满意度均有提升：应用下载安装提升 6.2%，系统设置与诊断提升 4.4%，文档处理与调研报告生成提升 6.9%。在整体任务满意度持平的基础上，Hy4 flash 进一步强化了重点场景的任务质量，为用户带来更加可靠的 AI 管家体验。</p>
-<p>Marvis算法工程师 Baihan</p>
-<p>02 / 08</p>
-<h2>附录：模型得分</h2>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026111612180251_f78f651630a35685ae127407040a2aae.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1794802687;2110162687&amp;q-key-time=1794802687;2110162687&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=4df8a1bd294e3f5655087896cea33b48ef9125b6" alt="Hy4 flash Bench图表-全.png"></p>
-<p>目录</p>
-<p>[ 附录：模型得分]()</p>
-<p>评论（6）</p>
-<p>0/2000</p>
-<p><img src="https://hy-account-prod-1258344703.cos.ap-guangzhou.myqcloud.com/public/c0e84c5e4f20c8c8e1b5b25776468b1c/23f43eb0a80c6d65e13bca00490bbe7d.png" alt=""></p>
-<p>大老赖不赖</p>
-<p>可以的，继续加油，让我们用上更便宜的模型</p>
-<p>四川</p>
-<p>2026-11-17</p>
-<p><img src="https://hy-account-prod-1258344703.cos.ap-guangzhou.myqcloud.com/public/8ac5c570e8c2baf0c4090704b621f82b/927ece715986573985cf2eaafe91b945.png" alt=""></p>
-<p>尘跃</p>
-<p>可以</p>
-<p>广东</p>
-<p>2026-11-17</p>
-<p><img src="https://hy-account-prod-1258344703.cos.ap-guangzhou.myqcloud.com/public/1ed0ee94dfa4a83720ee1c8c9c0504eb/ccee2c9f64d90ef0fb738b6fcb8d2367.png" alt=""></p>
-<p>YOLO</p>
-<p>极致性价比</p>
-<p>上海</p>
-<p>2026-11-17</p>
-<p><img src="https://hy-account-test-1258344703.cos.ap-guangzhou.myqcloud.com/public/20250723005013_60979a0f0dd758be492cd59f4477d741de448b02.jpeg" alt=""></p>
-<p>运气贼好</p>
-<p>777</p>
-<p>辽宁</p>
-<p>2026-11-17</p>
-<h3>继续阅读</h3>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9a5ea02f/2026110614314011_cb6bad8aa277cf9d40dc98cfa2d4ad3a.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1793946700;2109306700&amp;q-key-time=1793946700;2109306700&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=f65ce2d45d0e76c67548e865da16f64577b8aefd" alt="Hy4 正式发布"></p>
-<p>Hy4 正式发布</p>
-<p>2026-11-04Hy LLM</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/210b8ba1/2026102401353815_cfa89033e01cdb8528854792d1ac71b6.jpg?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1792776939;2108136939&amp;q-key-time=1792776939;2108136939&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=2a2c6d07127192204183797a9f8138822e19ad4b" alt="Hyra 2.0：自动化科研的下一步"></p>
-<p>Hyra 2.0：自动化科研的下一步</p>
-<p>2026-11-02Hyra Team</p>
-<p><img src="https://hy-model-ap-prod-1258344703.cos.ap-guangzhou.myqcloud.com/llm-blog/default/9c5ca906/2026092121293058_779bc5a05fcb7733e4780de216614118.png?q-sign-algorithm=sha1&amp;q-ak=AKIDRl074nOsGdJ9zjMsCRWP3ShmgS3VtX4S&amp;q-sign-time=1789997370;2105357370&amp;q-key-time=1789997370;2105357370&amp;q-header-list=&amp;q-url-param-list=&amp;q-signature=b7bd8e7f50f9549d6ec0470c38ebabbd090eee02" alt="Hy Image3.5 preview 发布：为专业创作提供高性价比模型"></p>
-<p>Hy Image3.5 preview 发布：为专业创作提供高性价比模型</p>
-<p>2026-09-22caesarqin</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

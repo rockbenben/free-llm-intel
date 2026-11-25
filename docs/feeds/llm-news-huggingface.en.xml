@@ -7,7 +7,170 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac…</title>
+      <link>https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance?li=1</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac Lab and Newton</description>
+      <content:encoded><![CDATA[<h1>Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac Lab and Newton</h1>
+<p>Enterprise + Article</p>
+<p>Published November 24, 2026</p>
+<p><a href="https://huggingface.co/seun-doherty"><img src="https://huggingface.co/avatars/4b73ef95f718b8754bbaee9d1e2fc926.svg" alt="Oluwaseun Doherty's avatar"></a></p>
+<p>Oluwaseun Doherty</p>
+<p>seun-doherty</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/OOyindamola"><img src="https://huggingface.co/avatars/64e43e2a38d41db5557d0d125a196c8b.svg" alt="Oyindamola Omotuyi's avatar"></a></p>
+<p>Oyindamola Omotuyi</p>
+<p>OOyindamola</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/AntRi31"><img src="https://huggingface.co/avatars/528279054e94db8229aea8e600d4f271.svg" alt="Richard's avatar"></a></p>
+<p>Richard</p>
+<p>AntRi31</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif" alt="Microduck obstacle avoidance: simulation to reality"></a></p>
+<h2>TL;DR</h2>
+<p>Add local obstacle avoidance to <a href="https://pollen-robotics.com/microduck/">Microduck</a> while keeping its walking policy fixed. Build varied courses with reusable <a href="https://www.nvidia.com/en-us/glossary/simready/">SimReady</a> assets, model ToF sensing with Newton’s raycaster, and train a controller in <a href="https://developer.nvidia.com/isaac/lab">Isaac Lab</a> to adjust gamepad velocity commands around obstacles. This tutorial covers simulation training, evaluation, export, and real-robot deployment.</p>
+<h2>Introduction</h2>
+<p>A walking policy can keep Microduck balanced, but it does not tell the robot how to steer around an obstacle in its path. In this workflow, we reuse the walking policy from our <a href="https://huggingface.co/blog/nvidia/microduck-isaac-lab-sim-to-real">first Microduck tutorial</a> and keep its weights fixed. This follow-up trains a separate avoidance controller using time-of-flight (ToF) sensing. You choose a direction with a gamepad; the controller adjusts the velocity command before passing it to the walking policy.</p>
+<p><a href="https://isaac-sim.github.io/IsaacLab/main/index.html">NVIDIA Isaac Lab</a> is an open-source framework for training policies across thousands of GPU-parallel simulations and it provides the robot-learning environment. <a href="https://github.com/newton-physics/newton">Newton</a> simulates physics and the sensor’s depth measurements. We will cover the control architecture, train on varied obstacle layouts, evaluate the resulting policies, and prepare the interface for hardware testing.</p>
+<h2>1. Set Microduck obstacle avoidance in Isaac Lab</h2>
+<p>For simulation and training, prepare:</p>
+<ul><li>A Linux system with a compatible NVIDIA GPU and driver. See the <a href="https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/index.html">Isaac Lab installation guide</a> for platform requirements.</li><li>Git with Git LFS, and the uv package manager.</li></ul>
+<p>For physical-robot testing, prepare:</p>
+<ul><li>A configured Microduck. Load the same backlash walking-policy export used by the navigation task.</li><li>A supported ToF sensor with its configuration recorded.</li><li>A paired gamepad and a level test area with obstacles.</li></ul>
+<h3>Quick install</h3>
+<p>Install <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a> if it is not already installed. Then clone the exp/microduck branch of the Isaac Lab repository and install its dependencies:</p>
+<pre><code>git lfs install
+git clone --branch exp/microduck https://github.com/isaac-sim/IsaacLab.git
+cd IsaacLab
+uv sync --frozen</code></pre>
+<p>Once setup is complete, list the available Microduck environments and presets:</p>
+<pre><code>uv run isaaclab list_envs --keyword MicroDuck --show_presets</code></pre>
+<h3>Download the walking policy</h3>
+<p>Download and export the <a href="https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.2/Isaac/IsaacLab/PretrainedCheckpoints/rsl_rl/IsaacContrib-Velocity-Rough-MicroDuck_backlash_newtonmjwarp_none_rsl_rl.pt">upstream backlash walking checkpoint</a> once before training. The obstacle avoidance task loads the exported walking policy automatically.</p>
+<pre><code>uv run isaaclab play \
+  --task IsaacContrib-Velocity-Rough-MicroDuck \
+  --rl_library rsl_rl --checkpoint pretrained \
+  --num_envs 1 --visualizer none \
+  --video newton_gl --video_length 1 \
+  presets=backlash</code></pre>
+<h2>2. Build the obstacle course</h2>
+<p>The environment combines simple primitives with <a href="https://www.nvidia.com/en-us/glossary/openusd/">OpenUSD</a> assets available through <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> on Hugging Face. We use a <a href="https://huggingface.co/datasets/nvidia/simready-assets/tree/main/box_cardboard_a01">cardboard box</a>, <a href="https://huggingface.co/datasets/nvidia/simready-assets/tree/main/trashCan_office_black_a03">office bin</a>, <a href="https://huggingface.co/datasets/nvidia/simready-assets/tree/main/table_bedside_b01">bedside cabinet</a> alongside cones. From the IsaacLab repository root, download the pinned box, bin and cabinet packages into assets/simready.</p>
+<pre><code>uvx --from huggingface-hub hf download nvidia/simready-assets \
+  --repo-type dataset \
+  --revision 9d4556bfe80868c1d27a7a7ba1c2774e63e8cedd \
+  --include &quot;box_cardboard_a01/*&quot; \
+  --include &quot;trashCan_office_black_a03/*&quot; \
+  --include &quot;table_bedside_b01/*&quot; \
+  --local-dir ./assets/simready</code></pre>
+<p>At each episode reset, the environment code automatically samples a layout, shuffles the props, and varies their placement and rotation. Most courses scatter obstacles ahead of the duck, with a smaller mix of clear paths, barriers and passages. The code also mirrors layouts and mixes aligned and staggered rows.</p>
+<p>Goals start ahead of the duck. Movement commands guide it toward the goal while the policy adjusts them around obstacles.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/uesbJUW3FYJxujnhTMbxN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/uesbJUW3FYJxujnhTMbxN.png" alt="A four-panel grid shows Microduck on a checkerboard floor with rearranged cardboard boxes, bins, cabinets, red cones, white barriers, and green goal markers."></a></p>
+<p>Figure 1. Varied obstacle-course layouts with SimReady assets and primitive geometry.</p>
+<h2>3. Understand how ToF sensing guides the walking policy</h2>
+<p>The <code>IsaacContrib-ObstacleAvoidance-Flat-MicroDuck</code> task separates obstacle avoidance from balance. A navigation policy uses ToF sensing to adjust forward, lateral, and yaw commands at 50 Hz. The frozen walking policy then converts those commands into joint actions, allowing the robot to learn obstacle avoidance without retraining its walking behavior.</p>
+<p>During training, the navigation policy’s actor receives ToF history and body and controller state available on the real robot. Its critic has access to additional simulation state to guide learning, but is not needed for deployment.</p>
+<p>Rewards encourage progress toward the goal, safe arrivals, and movement around obstacles. Following a movement command earns credit only when the robot makes progress with sufficient clearance; risky approaches reduce that credit. Penalties discourage fast approaches, abrupt command changes, collisions, and falls.</p>
+<p>The obstacle-avoidance task lives in <a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle"><code>isaaclab_tasks.contrib.microduck_obstacle</code></a>. Its configuration is in <a href="https://github.com/isaac-sim/IsaacLab/blob/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle/obstacle_avoidance_env_cfg.py"><code>obstacle_avoidance_env_cfg.py</code></a>, ToF sensing is in <a href="https://github.com/isaac-sim/IsaacLab/blob/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle/sensors.py"><code>sensors.py</code></a>, and actions, commands, observations and rewards are organized under <a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle/mdp"><code>mdp/</code></a>.</p>
+<h3>Model the ToF sensor</h3>
+<p>MicroDuckToFCamera extends Newton’s LegacyMultiMeshRayCasterCamera to model the VL53L5CX—a compact time-of-flight (ToF) sensor on the microduck that measures distance across an 8×8 grid at 15Hz. The simulated sensor has a 45° field of view and a 0.12–4 m range. It follows the duck’s head, with placement similar to the sensor on the real duck.</p>
+<p>Real recordings informed the sensor placement and floor readings in simulation. Training adds noise, delays and missing measurements—including near the grid’s edges—to expose the policy to imperfect data. The excerpt below shows selected sensor settings already included in the task configuration. You do not need to edit or run this code separately.</p>
+<pre><code># Selected settings; mount and raycast targets omitted.
+head_tof = MicroDuckToFCameraCfg(
+    prim_path=MICRODUCK_HEAD_BODY_PATH,
+    update_period=1.0 / 15.0,
+    pattern_cfg=patterns.PinholeCameraPatternCfg(
+        focal_length=1.0, width=8, height=8,
+        horizontal_aperture=_TOF_APERTURE,
+        vertical_aperture=_TOF_APERTURE,
+    ),
+    randomization=ToFRandomizationCfg(
+        mount_pitch_degrees=(-10.0, 10.0),
+        mount_height_m=(-0.02, 0.02),
+        floor_validity_midpoint_offset_m=(0.0, 0.13),
+        near_floor_edge_impairment_probability=0.5,
+    ),
+    data_types=[&quot;distance_to_image_plane&quot;, &quot;distance_to_camera&quot;],
+    max_distance=TOF_MAX_RANGE,
+    depth_clipping_behavior=&quot;zero&quot;,
+)</code></pre>
+<h2>4. Train the Microduck policy across parallel environments</h2>
+<p>Train the navigation policy with PPO across 16,384 parallel environments for 1,500 training iterations. Its actor, critic, normalizers, and optimizer start fresh. The task configuration loads the fixed walking checkpoint, robot model, and obstacle assets.</p>
+<p>The 16,384 environments shown here are configurable, not a minimum requirement. Lower <code>--num_envs</code> to fit your GPU’s available memory. With fewer environments collecting experience in parallel, reaching comparable policy performance may require more training iterations and longer training time. We also trained this policy on NVIDIA DGX Spark in approximately 6 hours using 4,096 parallel environments for 3,000 PPO updates, demonstrating a smaller-scale configuration for the same workflow.</p>
+<p>Run this command to train the policy:</p>
+<pre><code>uv run isaaclab train \
+  --task IsaacContrib-ObstacleAvoidance-Flat-MicroDuck \
+  --rl_library rsl_rl \
+  --num_envs 16384 \
+  --max_iterations 1500 \
+  --seed 42 \
+  --device cuda:0 \
+  --visualizer none \
+  presets=backlash</code></pre>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/RCQ8kWS0Ky4j_YU1ch-G3.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/RCQ8kWS0Ky4j_YU1ch-G3.gif" alt="Camera pulls back from one MicroDuck navigating among cones, boxes, and barriers to reveal neighboring randomized obstacle courses"></a></p>
+<p>Figure 2. Parallel MicroDuck obstacle-avoidance simulation</p>
+<h2>5. Inspect behavior and export the policy to ONNX</h2>
+<p>Playback uses the same props, primitives, frozen walker and sensor randomization as training, with a different seed for new obstacle arrangements.</p>
+<p>Navigation checkpoints are saved under <code>logs/rsl_rl/microduck_obstacle_avoidance_tof_flat_backlash/&lt;timestamp&gt;/</code> relative to the repository root. Choose a <code>model_&lt;iteration&gt;.pt</code> file from your run and replace <code>/absolute/path/to/model.pt</code> below with its path. This plays the policy, opens the Newton viewer and records 20 seconds of simulation. Set --viz to none for headless recording.</p>
+<pre><code>uv run --extra video isaaclab play \
+  --task IsaacContrib-ObstacleAvoidance-Flat-MicroDuck \
+  --rl_library rsl_rl \
+  --checkpoint /absolute/path/to/model.pt \
+  --num_envs 1 \
+  --seed 6173 \
+  --device cuda:0 \
+  --viz newton_gl \
+  --video newton_gl \
+  --video_length 1000 \
+  presets=backlash</code></pre>
+<p>Playback saves TorchScript and ONNX models in the checkpoint’s exported folder. Keep the ONNX data file alongside the model.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif" alt="Microduck faces red cones and a marked fixed goal. Overlays identify the head-mounted ToF sensor, an 8 × 8 depth grid, and requested versus policy-steered motion."></a></p>
+<p>Figure 3. Cone-course evaluation with requested motion, policy steering, and ToF input overlays.</p>
+<h2>6. Test obstacle avoidance on a real Microduck</h2>
+<p>These <a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/scripts/deploy/microduck_tof_nav">deployment tools</a> run the navigation model on a laptop and send adjusted gamepad commands to the walking policy on the robot. Use the same walking policy that was used during navigation training.</p>
+<p>Section 1 saves the walker’s ONNX export to <code>.pretrained_checkpoints/rsl_rl/https/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.2/Isaac/IsaacLab/PretrainedCheckpoints/rsl_rl/exported/policy.onnx</code>, relative to the Isaac Lab repository root.</p>
+<p>Load that walking policy using <a href="https://github.com/pollen-robotics/microduck/blob/main/docs/robot/cheatsheet.md#trying-your-own-file">Pollen’s policy-loading guide</a>. The deployment README includes the transfer steps, including how to package an ONNX export that uses an external data file.</p>
+<p>From your Isaac Lab checkout, set up SSH access and check inference with the robot standing upright and still:</p>
+<pre><code>cd scripts/deploy/microduck_tof_nav
+ssh-copy-id microduck@ROBOT_HOST
+uv run nav_pad.py --robot ROBOT_HOST \
+  --model /absolute/path/to/navigation/exported/policy.onnx \
+  --dry-run --seconds 30</code></pre>
+<p>Dry-run copies the helpers and streams sensor data, but sends no movement commands. Watch the proposed commands as obstacles enter the sensor’s view. Keep the navigation ONNX and any companion .data file together.</p>
+<p>Once those checks pass, start supervised gamepad navigation:</p>
+<pre><code>uv run nav_pad.py --robot ROBOT_HOST \
+  --model /absolute/path/to/navigation/exported/policy.onnx</code></pre>
+<p>Hold the stick forward to request movement; the policy adjusts the command to avoid obstacles. Release the stick to stop, press X to toggle navigation, and use Ctrl-C to end the session. Forward speed is capped at 0.15 m/s by default, with an additional close-obstacle brake and stale-input stopping. Start in a clear area and verify stopping before testing a course.</p>
+<p>See the <a href="https://github.com/isaac-sim/IsaacLab/blob/exp/microduck/scripts/deploy/microduck_tof_nav/README.md">deployment README</a> for controls, logs and troubleshooting.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/zJU03xK6y0Ii0XOWtmiwa.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/zJU03xK6y0Ii0XOWtmiwa.gif" alt="A small white and lavender robot walks past three orange cones on a tiled floor, next to a 3D replay of the same run. Below are a sensor distance grid, a cone checklist and a list of the policy’s steering decisions."></a></p>
+<p>Figure 4. Microduck steers around cones using its 8×8 ToF sensor, with real footage on the left and a 3D rebuild from its logs on the right. Blue shows the policy steering, purple shows the operator intervention.</p>
+<h2>7. Explore other locomotion skills for Microduck in Isaac Lab</h2>
+<p>The <a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck">Microduck task collection</a> includes velocity tracking on flat and rough terrain; stand-up recovery, sit–stand transitions, and walking with fall recovery (VelStand); ball kicking, ground picking, and forward rolls (Roulade). Roller-skating tasks add velocity tracking and swizzle motion, crouch-gliding, slope descent, standing up on skates, and spins.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/bg3GRix2mg67YBbayO_Y5.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/bg3GRix2mg67YBbayO_Y5.gif" alt="A looping five-column, three-row grid shows a close-up of one Microduck in each labeled tile: Walking · Flat, Walking · Rough, Roller Skating, Swizzle, RollerSlope, StandUp · Seated, SitStand, GroundPick, BallKick, RollerCrouch, VelStand · Flat, VelStand · Rough, Roulade, RollerStandUp, and Spin."></a></p>
+<p>Figure 5. Fifteen Microduck task views: flat and rough-terrain walking, recovery, object interaction, and roller-skating motions.</p>
+<h2>Build your next policy</h2>
+<p>Start with the <a href="https://huggingface.co/blog/nvidia/microduck-isaac-lab-sim-to-real">first Microduck tutorial</a>, then choose a task from the <a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck">Microduck task collection</a> to build your next policy in Isaac Lab with Newton. Explore new behaviors by changing commands, rewards, or environments—from rough-terrain walking to perception-driven obstacle avoidance. Evaluate your policy on scenes outside the training set before testing on the robot.</p>
+<h2>Resources</h2>
+<ul><li><a href="https://pollen-robotics.com/microduck/">Microduck home page</a> (ordering, quick start, installation)</li><li><a href="https://docs.nvidia.com/learning/physical-ai/getting-started-with-isaac-lab/latest/train-a-microduck/index.html">Train a Microduck in Isaac Lab</a></li><li><a href="https://developer.nvidia.com/blog/using-ai-agents-to-teach-robots-like-microduck-to-walk-in-simulation/">Train Robots to Navigate with AI agents, NVIDIA Isaac Lab and RTX Spark</a></li><li><a href="https://huggingface.co/blog/nvidia/microduck-isaac-lab-sim-to-real">Train in Simulation, Deploy on a Real Robot: Microduck with Isaac Lab 3.0</a></li><li><a href="https://isaac-sim.github.io/IsaacLab/develop/source/setup/installation/index.html">Isaac Lab installation guide</a></li><li><a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck">Microduck training environments and configuration</a></li><li><a href="https://github.com/isaac-sim/IsaacLab/blob/develop/docs/source/concepts/actuators.rst#bam-servo-model">Newton-based BAM actuator documentation</a></li><li><a href="https://github.com/pollen-robotics/microduck-arena/blob/main/docs/guides/train-a-policy.md#already-have-an-onnx">Microduck Arena and ONNX submission guide</a></li><li>Explore <a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">SimReady Central for more simulation-ready OpenUSD assets from OEMs and asset providers.</a></li><li><a href="https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place">Learn how to Build a Robot Pick-and-Place Simulation with SimReady Assets</a></li><li><a href="https://github.com/pollen-robotics/microduck/blob/main/docs/robot/cheatsheet.md#trying-your-own-file">Microduck robot software and deployment guide</a></li></ul>
+<h2>Acknowledgments</h2>
+<p>This workflow builds on Pollen Robotics’ Microduck hardware and software, the original <a href="https://github.com/pollen-robotics/microduck_rl">Microduck reinforcement-learning project</a>, <a href="https://github.com/Rhoban/bam">BAM actuator modeling work</a>, and the Isaac Lab and Newton integrations.</p>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2>Build a Robot Pick-and-Place Simulation with SimReady Assets</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>50</p>
+<p>November 13, 2026</p>
+<h2><em>Evaluating Privacy Protection and Practical AI Applications with 100,000 Synthetic Business Documents Across Eight Domains</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>7</p>
+<p>November 9, 2026</p>
+<h3>Community</h3>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>RoboTrack: Point tracking for real-world robotic manipulatio…</title>
       <link>https://huggingface.co/blog/allenai/robotrack</link>
@@ -1426,125 +1589,6 @@ zai-org/GLM-5.3:novita     # only Novita</code></pre>
 <ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pierrci"><img src="https://huggingface.co/avatars/d4cce894629554d9a10369ecc2a7de67.svg" alt=""></a></li><li><a href="https://huggingface.co/alrightjones"><img src="https://huggingface.co/avatars/347bb31f03574c50ba0376ecac86a511.svg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Gflorent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620a77b7dbba8fc1fbb8bdb4/ZRW2pH9Iawj700OyLpJl8.png" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/abatuhanb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/681a45f2212b9872c123ad4b/_aYKRcWJO0qIYV_sZFfDn.jpeg" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>Build a Robot Pick-and-Place Simulation with SimReady Assets</title>
-      <link>https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place?li=1</guid>
-      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>Build a Robot Pick-and-Place Simulation with SimReady Assets</h1>
-<p>Enterprise + Article</p>
-<p>Published November 13, 2026</p>
-<p>14</p>
-<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/dillonb-nv"><img src="https://huggingface.co/avatars/ef260ce572881087d516bcf632928740.svg" alt="Dillon Bailey's avatar"></a></p>
-<p>Dillon Bailey</p>
-<p>dillonb-nv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt="Pomi Lee's avatar"></a></p>
-<p>Pomi Lee</p>
-<p>pomilee</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/rchadha-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kaRxLMenXEARG7KGBZJUh.png" alt="Rishabh Chadha's avatar"></a></p>
-<p>Rishabh Chadha</p>
-<p>rchadha-nv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif" alt="figure-01-pick-and-place-highlight"></a></p>
-<p>This walkthrough showcases a beverage can pick-and-place task that uses the <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G arm</a>, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140 gripper</a>, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> to compose a scene in Isaac Sim, check their behavior, and run a pick-and-place example with agent-generated controls.</p>
-<p>For robotics workflows, SimReady means an <a href="https://www.nvidia.com/en-us/glossary/openusd/">OpenUSD</a> asset has been prepared with the properties needed for a defined simulation use case, such as collisions, mass, joints, and joint drives. <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>, an open asset library on Hugging Face, lets you reuse robot and object assets with authored simulation properties and profile-validation evidence. For more about the library and its launch, read the <a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">announcement blog</a>.</p>
-<h2>What makes a robot asset SimReady?</h2>
-<p><a href="https://nvidia.github.io/simready-foundation/">SimReady Foundation</a> defines what features the OpenUSD asset needs for a simulation use case. Its specifications connect three levels:</p>
-<ul><li>Profile: a group of features for a use case, such as a robot body.</li><li>Features: capabilities needed for the use case, such as joints that can be controlled.</li><li>Requirements: checks on the settings needed for each feature, such as a joint’s drive settings.</li></ul>
-<p>For this task, those properties include the arm and gripper’s joints and a beverage can asset collisions and mass. Validation checks these settings against the profile’s requirements. The simulation then tests whether the assembled robot can use them to pick up and move the can.</p>
-<h2>What comes with the asset, and what do you add?</h2>
-<p>The <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a>, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> packages include the models and their simulation settings. You assemble the scene and add task code to define the arm–gripper assembly, work surface, starting positions, and controls for moving the arm and opening and closing the gripper.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png" alt="Figure 2"></a></p>
-<p><em>Figure 2. SimReady Central supplies the asset models and simulation settings and the example scene and controls define the pick-and-place task.</em></p>
-<h2>What should you check before running a pick-and-place task?</h2>
-<p>A robot can look visually correct while stationary in Isaac Sim but move or interact with objects incorrectly when the simulation runs. Before running pick-and-place, test its joints, movement, and contact behavior. You can ask the agent to perform these tests or do them manually in Isaac Sim.</p>
-<ul><li><strong>Joint settings:</strong> Review the arm and gripper’s joint limits and drive settings.</li><li><strong>Movement:</strong> Test a small arm movement and open and close the gripper.</li><li><strong>Contact:</strong> Confirm that the can rests on the work surface without falling through it.</li></ul>
-<p>During pick-and-place, watch whether a beverage can stay in the gripper as the arm moves. Asset structures vary, so use the settings in your loaded scene as your starting point. We will be going through the overall process of downloading the assets and composing the scene in the steps below.</p>
-<h2>Build a pick-and-place simulation in Isaac Sim</h2>
-<p>This example combines the <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> arm, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> gripper, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> in Isaac Sim. The task is to grasp the can, lift it, move it to a target, and release it. You can also leverage <a href="http://nvidia-simready-central.hf.space">SimReady Central Space</a> search service endpoint to look for OEM curated content.</p>
-<p>We will also use a frontier AI model to help create and run the task code in an open Isaac Sim scene. For this example, we use GPT-6 Sol, but another agent and model combination may work if it can load the required skills and execute Python against Isaac Sim (generated code and results can vary). The prompt provides a starting point. Inspect the generated code and check the resulting behavior before adapting the task.</p>
-<p><strong>Required Software:</strong></p>
-<ul><li>Install <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim</a> 6.2, the version used for this example, and check its system requirements.</li><li>Set up an agent of your choice that can use the Isaac Sim skills. Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Agent Skills documentation</a> to make the bundled skills available to your agent.</li><li>Install the <a href="https://huggingface.co/docs/huggingface_hub/guides/cli">Hugging Face CLI</a> only if you choose the command-line asset download option.</li><li>Use the <a href="http://nvidia-simready-central.hf.space">USD Search endpoint</a>.</li></ul>
-<h2>Step 1: Download the robot arm, gripper, and beverage can assets</h2>
-<p>Open <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> and find the <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> arm, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> gripper, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> used here. Select Download on each asset, then use Save to folder or the supplied Hugging Face command. Keep all three complete asset folders intact so Isaac Sim can find their supporting files.</p>
-<p>Use the asset versions linked in this example and provide your agent with the local USD file paths for the arm, gripper, and beverage can. An example gripper path is shown below; your download location may differ.</p>
-<pre><code>~/ASSETS/hf/src/simready-assets-c7fa7615/Robotiq_2F_140/simready_usd/Robotiq_2F_140.usda</code></pre>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif" alt="figure-05-find-robotiq"></a></p>
-<p><em>Figure 3. SimReady Central search and interactive previews help identify the Robotiq 2F-140 gripper and beverage can used in this example.</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif" alt="figure-04-download-assets"></a></p>
-<p><em>Figure 4. The beverage can’s download options include saving the asset package to a folder or using the Hugging Face CLI.</em></p>
-<h2>What does asset validation tell you?</h2>
-<p>The <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/.metadata/ur17g_1300_validation.json">arm validation report</a> uses the Robot-Body 4.0.0 profile and the <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/c7fa7615a353ebac03990208cbc2aa57426f4c48/Robotiq_2F_140/.metadata/Robotiq_2F_140_validation.json">gripper validation report</a> uses Robot-Gripper 3.0.0. Both record passing <a href="https://nvidia.github.io/simready-foundation/latest/features/FET_022_PHYSX.html">PhysX driven-joint checks</a>, which inspect joint-drive settings.</p>
-<p>SimReady profile validation provides a shared baseline for reusing these assets. The pick-and-place run then tests how the arm, gripper, can, and controller work together in the assembled scene.</p>
-<h2>Step 2: Assemble the robot and compose the scene for pick and place</h2>
-<p>With the assets downloaded, use your agent with Isaac Sim skills to help assemble the robot, run validation tools, and create the pick-and-place controls. You can also perform these steps manually using the linked documentation.</p>
-<p>Start Isaac Sim from its installation directory with the remote Python server enabled so the agent can interact with the simulation through Python:</p>
-<pre><code>./isaac-sim.sh --enable isaacsim.code_editor.python_server</code></pre>
-<p>If you are using an agent, make sure you start it from the Isaac Sim directory so that it can access the skills needed while going through the steps below.</p>
-<p>Confirm that all three assets appear without missing-file errors. Ask the agent to inspect the arm and gripper’s joint limits and drive settings, or review them yourself in Isaac Sim. The robot and the gripper contain physics joints which can be tested and validated in the Isaac Sim GUI as well. We will now assemble the arm and the gripper next so that we can control the assembly as a single articulation.</p>
-<p>You can follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html">Robot Assembler tutorial</a> for manual assembly. Here we will ask our agent to complete the assembly and validate it for us:</p>
-<p><strong>Sample prompt used in this example:</strong></p>
-<pre><code>Assemble the robot arm &lt;local path to Simready ur17g robot usd&gt;
-with the gripper &lt;local path to downloded simready Robotiq_2F_140 gripper usd&gt;
-using the Robot Assembly tutorial in Isaac Sim
-https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html.
-
-Validate the assembly on completion.</code></pre>
-<p>The agent ends up using the ‘isaac-sim-remote’ and ‘usd-articulation’ skills packaged with Isaac Sim to complete the assembly and validate the physics of the robot. We now have all the assets needed for running pick and place; the assembled robot and the soda can. We will now proceed with the final portion of the workflow.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif" alt="figure-05-joint-settings"></a></p>
-<p><em>Figure 5. Joint settings for the UR17G arm and Robotiq 2F-140 gripper in Isaac Sim.</em></p>
-<p>With the assembled robot and can in the scene, ask the agent to run the task. Evaluate the simulation behavior using the checks in the next step.</p>
-<h2>Step 3: Test the controls and run pick-and-place</h2>
-<p>Now that the assets include simulation properties and profile validation, we can now test in an assembled scene and controller. The controller coordinates the UR17G arm’s movement with the Robotiq 2F-140 gripper’s opening and closing. Use the behavior checks below to evaluate the agent-generated task. To understand or adapt the controller yourself, see the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/core_api_tutorials/tutorial_core_adding_manipulator.html">Adding a Manipulator Robot tutorial</a>.</p>
-<p><strong>Sample prompt used in this example:</strong></p>
-<pre><code>Run pick and place with the assembled robot and soda can
-&lt;path to soda can USD from SimReady library&gt; in Isaac Sim.
-
-Ensure you do a contact based grasp for picking up the can and validate
-the accuracy/placement error for the pick and place as well.</code></pre>
-<p><strong>Skills used</strong>: ‘isaac-sim-remote’, ‘manipulaiton-ik’ and ‘physics-simulation’</p>
-<p>The full task tests whether the gripper holds the can during movement and releases it at the target. Reset the scene, then run the approach, grasp, lift, hold, transfer, and release sequence. Compare your run with the opening video and the success criteria below.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif" alt="figure-06-pick-and-place-landscape"></a></p>
-<p><em>Figure 6. The UR17G arm and Robotiq 2F-140 gripper move the beverage can from the yellow pickup marker to the green target in Isaac Sim. Shown at 4× speed.</em></p>
-<p>If your run differs, note where the sequence fails and ask the agent to inspect the scene and generate controls. Reset the can and robot to the same starting state before retrying so you can compare the results.</p>
-<p><strong>Simulation assumptions:</strong></p>
-<ul><li><strong>Fixed setup:</strong> The can starts at a known position, with an anchored robot and clear, flat workspace. No vision was used and collision checks were limited.</li><li><strong>Simplified can:</strong> Deformation and liquid motion are not modeled, so this example does not test crushing.</li><li><strong>Scripted grasp and motion:</strong> A horizontal grasp uses a 2 N·m drive-effort cap chosen through simulation tests, not calibrated to fingertip forces or recommended by the manufacturer. Contact and friction hold the beverage can as the arm follows fixed waypoints without replanning. For hardware gripping-force specifications, see the <a href="https://robotiq.com/hubfs/Product-sheets/Adaptive%20Grippers/Product-sheet-Adaptive-Grippers-EN.pdf">Robotiq product sheet</a>.</li></ul>
-<p>These results apply to this scripted setup. They do not establish robustness to uncertain object positions, different payloads, or real hardware.</p>
-<h2>Build your next simulation with SimReady Assets</h2>
-<p>Build your own pick-and-place task with assets from <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>, then use an agent of your choice to help assemble the scene and run it in Isaac Sim.</p>
-<p><strong>Discover assets</strong></p>
-<ul><li><strong>Find robots and objects:</strong> Browse <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> on Hugging Face.</li><li><strong>Check what an asset supports:</strong> Review the profiles and requirements in <a href="https://nvidia.github.io/simready-foundation/latest/">SimReady Foundation</a> alongside the asset’s validation reports.</li></ul>
-<p><strong>Build a pick-and-place scene</strong></p>
-<ul><li><strong>Set up the simulator:</strong> Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim installation guide</a> for the version used in this example.</li><li><strong>Connect your agent:</strong> Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Isaac Sim Agent Skills documentation</a> to make the bundled skills available to your agent.</li><li><strong>Assemble the robot:</strong> Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html#assembling-robots">Robot Assembler tutorial</a> if you prefer to connect the arm and gripper manually.</li></ul>
-<p><strong>Prepare and contribute content</strong></p>
-<ul><li><strong>Start from CAD:</strong> Follow the <a href="https://developer.nvidia.com/blog/5-steps-to-create-simready-assets-for-robotics-with-frontier-ai-models/">5 Steps to Create SimReady Assets for Robotics</a> to prepare your own robotics assets.</li><li><strong>Validate and submit assets:</strong> Follow the <a href="https://github.com/NVIDIA-Omniverse/simready-central/blob/main/.agents/skills/submit-simready-assets/SKILL.md">SimReady Central submission guide</a> to make your assets available to other developers.</li></ul>
-<p>For inspiration, explore <a href="https://lnkd.in/p/g3-5svW6">Michael Wagner’s voice-controlled VR demo</a> or <a href="https://lnkd.in/p/gnxQ3YS8">Maziyar Panahi’s Microduck simulation</a>. Both show how developers are using SimReady assets in their own projects.</p>
-<p>What will you build? Share your scene and results in the Hugging Face comments, including the assets and Isaac Sim version you used.</p>
-<p>Happy building!</p>
-<h2>Datasets mentioned in this article 3</h2>
-<h2>Spaces mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2><em>Evaluating Privacy Protection and Practical AI Applications with 100,000 Synthetic Business Documents Across Eight Domains</em></h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>5</p>
-<p>November 9, 2026</p>
-<h2>Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan's Demographics and Financial Context</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>19</p>
-<p>November 9, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">log in</a> to comment</p>
-<p>14</p>
-<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/yiucw"><img src="https://huggingface.co/avatars/6b59ac5f151b322f5261adacecce6b61.svg" alt=""></a></li><li><a href="https://huggingface.co/klnadim"><img src="https://huggingface.co/avatars/a045d5a990db610dd1f4abbcca7f1bd6.svg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li><li><a href="https://huggingface.co/safikhan5834"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/683acf96542967b165847cff/tUHvC7omJt6mPPdyx1oSe.png" alt=""></a></li><li><a href="https://huggingface.co/Eumoren"><img src="https://huggingface.co/avatars/604ef02c6a6eac9315df923eaf7e56b4.svg" alt=""></a></li><li><a href="https://huggingface.co/willemelliw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a980914cb03264ff33c4e0c/zOqgwh5M1nCzjQGfrT0Je.jpeg" alt=""></a></li></ul>
-<h2>Datasets mentioned in this article 3</h2>
-<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
       <title>llama.cpp v1.0.0 : A stronger foundation for the local AI ec…</title>
       <link>https://huggingface.co/blog/ggml-org/llama-cpp-v1</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llama-cpp-v1?li=1</guid>
@@ -1674,6 +1718,125 @@ the accuracy/placement error for the pick and place as well.</code></pre>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">log in</a> to comment</p>
 <p>152</p>
 <ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/74k1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/J45uU0ctfprHaqrGfNoCy.png" alt=""></a></li><li><a href="https://huggingface.co/lnglth"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OD5-IRD81mXlt3HQd6x3u.png" alt=""></a></li><li><a href="https://huggingface.co/winklerj"><img src="https://huggingface.co/avatars/f3b23beb0241ff3c32975da592c00af4.svg" alt=""></a></li><li><a href="https://huggingface.co/andito"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2b8b4cf7d8930887629e7bcaf0401f61.svg" alt=""></a></li><li><a href="https://huggingface.co/cpoisson"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Build a Robot Pick-and-Place Simulation with SimReady Assets</title>
+      <link>https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place?li=1</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Build a Robot Pick-and-Place Simulation with SimReady Assets</h1>
+<p>Enterprise + Article</p>
+<p>Published November 13, 2026</p>
+<p>14</p>
+<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/dillonb-nv"><img src="https://huggingface.co/avatars/ef260ce572881087d516bcf632928740.svg" alt="Dillon Bailey's avatar"></a></p>
+<p>Dillon Bailey</p>
+<p>dillonb-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt="Pomi Lee's avatar"></a></p>
+<p>Pomi Lee</p>
+<p>pomilee</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/rchadha-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kaRxLMenXEARG7KGBZJUh.png" alt="Rishabh Chadha's avatar"></a></p>
+<p>Rishabh Chadha</p>
+<p>rchadha-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif" alt="figure-01-pick-and-place-highlight"></a></p>
+<p>This walkthrough showcases a beverage can pick-and-place task that uses the <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G arm</a>, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140 gripper</a>, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> to compose a scene in Isaac Sim, check their behavior, and run a pick-and-place example with agent-generated controls.</p>
+<p>For robotics workflows, SimReady means an <a href="https://www.nvidia.com/en-us/glossary/openusd/">OpenUSD</a> asset has been prepared with the properties needed for a defined simulation use case, such as collisions, mass, joints, and joint drives. <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>, an open asset library on Hugging Face, lets you reuse robot and object assets with authored simulation properties and profile-validation evidence. For more about the library and its launch, read the <a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">announcement blog</a>.</p>
+<h2>What makes a robot asset SimReady?</h2>
+<p><a href="https://nvidia.github.io/simready-foundation/">SimReady Foundation</a> defines what features the OpenUSD asset needs for a simulation use case. Its specifications connect three levels:</p>
+<ul><li>Profile: a group of features for a use case, such as a robot body.</li><li>Features: capabilities needed for the use case, such as joints that can be controlled.</li><li>Requirements: checks on the settings needed for each feature, such as a joint’s drive settings.</li></ul>
+<p>For this task, those properties include the arm and gripper’s joints and a beverage can asset collisions and mass. Validation checks these settings against the profile’s requirements. The simulation then tests whether the assembled robot can use them to pick up and move the can.</p>
+<h2>What comes with the asset, and what do you add?</h2>
+<p>The <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a>, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> packages include the models and their simulation settings. You assemble the scene and add task code to define the arm–gripper assembly, work surface, starting positions, and controls for moving the arm and opening and closing the gripper.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png" alt="Figure 2"></a></p>
+<p><em>Figure 2. SimReady Central supplies the asset models and simulation settings and the example scene and controls define the pick-and-place task.</em></p>
+<h2>What should you check before running a pick-and-place task?</h2>
+<p>A robot can look visually correct while stationary in Isaac Sim but move or interact with objects incorrectly when the simulation runs. Before running pick-and-place, test its joints, movement, and contact behavior. You can ask the agent to perform these tests or do them manually in Isaac Sim.</p>
+<ul><li><strong>Joint settings:</strong> Review the arm and gripper’s joint limits and drive settings.</li><li><strong>Movement:</strong> Test a small arm movement and open and close the gripper.</li><li><strong>Contact:</strong> Confirm that the can rests on the work surface without falling through it.</li></ul>
+<p>During pick-and-place, watch whether a beverage can stay in the gripper as the arm moves. Asset structures vary, so use the settings in your loaded scene as your starting point. We will be going through the overall process of downloading the assets and composing the scene in the steps below.</p>
+<h2>Build a pick-and-place simulation in Isaac Sim</h2>
+<p>This example combines the <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> arm, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> gripper, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> in Isaac Sim. The task is to grasp the can, lift it, move it to a target, and release it. You can also leverage <a href="http://nvidia-simready-central.hf.space">SimReady Central Space</a> search service endpoint to look for OEM curated content.</p>
+<p>We will also use a frontier AI model to help create and run the task code in an open Isaac Sim scene. For this example, we use GPT-6 Sol, but another agent and model combination may work if it can load the required skills and execute Python against Isaac Sim (generated code and results can vary). The prompt provides a starting point. Inspect the generated code and check the resulting behavior before adapting the task.</p>
+<p><strong>Required Software:</strong></p>
+<ul><li>Install <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim</a> 6.2, the version used for this example, and check its system requirements.</li><li>Set up an agent of your choice that can use the Isaac Sim skills. Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Agent Skills documentation</a> to make the bundled skills available to your agent.</li><li>Install the <a href="https://huggingface.co/docs/huggingface_hub/guides/cli">Hugging Face CLI</a> only if you choose the command-line asset download option.</li><li>Use the <a href="http://nvidia-simready-central.hf.space">USD Search endpoint</a>.</li></ul>
+<h2>Step 1: Download the robot arm, gripper, and beverage can assets</h2>
+<p>Open <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> and find the <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> arm, <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> gripper, and <a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">beverage can</a> used here. Select Download on each asset, then use Save to folder or the supplied Hugging Face command. Keep all three complete asset folders intact so Isaac Sim can find their supporting files.</p>
+<p>Use the asset versions linked in this example and provide your agent with the local USD file paths for the arm, gripper, and beverage can. An example gripper path is shown below; your download location may differ.</p>
+<pre><code>~/ASSETS/hf/src/simready-assets-c7fa7615/Robotiq_2F_140/simready_usd/Robotiq_2F_140.usda</code></pre>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif" alt="figure-05-find-robotiq"></a></p>
+<p><em>Figure 3. SimReady Central search and interactive previews help identify the Robotiq 2F-140 gripper and beverage can used in this example.</em></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif" alt="figure-04-download-assets"></a></p>
+<p><em>Figure 4. The beverage can’s download options include saving the asset package to a folder or using the Hugging Face CLI.</em></p>
+<h2>What does asset validation tell you?</h2>
+<p>The <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/.metadata/ur17g_1300_validation.json">arm validation report</a> uses the Robot-Body 4.0.0 profile and the <a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/c7fa7615a353ebac03990208cbc2aa57426f4c48/Robotiq_2F_140/.metadata/Robotiq_2F_140_validation.json">gripper validation report</a> uses Robot-Gripper 3.0.0. Both record passing <a href="https://nvidia.github.io/simready-foundation/latest/features/FET_022_PHYSX.html">PhysX driven-joint checks</a>, which inspect joint-drive settings.</p>
+<p>SimReady profile validation provides a shared baseline for reusing these assets. The pick-and-place run then tests how the arm, gripper, can, and controller work together in the assembled scene.</p>
+<h2>Step 2: Assemble the robot and compose the scene for pick and place</h2>
+<p>With the assets downloaded, use your agent with Isaac Sim skills to help assemble the robot, run validation tools, and create the pick-and-place controls. You can also perform these steps manually using the linked documentation.</p>
+<p>Start Isaac Sim from its installation directory with the remote Python server enabled so the agent can interact with the simulation through Python:</p>
+<pre><code>./isaac-sim.sh --enable isaacsim.code_editor.python_server</code></pre>
+<p>If you are using an agent, make sure you start it from the Isaac Sim directory so that it can access the skills needed while going through the steps below.</p>
+<p>Confirm that all three assets appear without missing-file errors. Ask the agent to inspect the arm and gripper’s joint limits and drive settings, or review them yourself in Isaac Sim. The robot and the gripper contain physics joints which can be tested and validated in the Isaac Sim GUI as well. We will now assemble the arm and the gripper next so that we can control the assembly as a single articulation.</p>
+<p>You can follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html">Robot Assembler tutorial</a> for manual assembly. Here we will ask our agent to complete the assembly and validate it for us:</p>
+<p><strong>Sample prompt used in this example:</strong></p>
+<pre><code>Assemble the robot arm &lt;local path to Simready ur17g robot usd&gt;
+with the gripper &lt;local path to downloded simready Robotiq_2F_140 gripper usd&gt;
+using the Robot Assembly tutorial in Isaac Sim
+https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html.
+
+Validate the assembly on completion.</code></pre>
+<p>The agent ends up using the ‘isaac-sim-remote’ and ‘usd-articulation’ skills packaged with Isaac Sim to complete the assembly and validate the physics of the robot. We now have all the assets needed for running pick and place; the assembled robot and the soda can. We will now proceed with the final portion of the workflow.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif" alt="figure-05-joint-settings"></a></p>
+<p><em>Figure 5. Joint settings for the UR17G arm and Robotiq 2F-140 gripper in Isaac Sim.</em></p>
+<p>With the assembled robot and can in the scene, ask the agent to run the task. Evaluate the simulation behavior using the checks in the next step.</p>
+<h2>Step 3: Test the controls and run pick-and-place</h2>
+<p>Now that the assets include simulation properties and profile validation, we can now test in an assembled scene and controller. The controller coordinates the UR17G arm’s movement with the Robotiq 2F-140 gripper’s opening and closing. Use the behavior checks below to evaluate the agent-generated task. To understand or adapt the controller yourself, see the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/core_api_tutorials/tutorial_core_adding_manipulator.html">Adding a Manipulator Robot tutorial</a>.</p>
+<p><strong>Sample prompt used in this example:</strong></p>
+<pre><code>Run pick and place with the assembled robot and soda can
+&lt;path to soda can USD from SimReady library&gt; in Isaac Sim.
+
+Ensure you do a contact based grasp for picking up the can and validate
+the accuracy/placement error for the pick and place as well.</code></pre>
+<p><strong>Skills used</strong>: ‘isaac-sim-remote’, ‘manipulaiton-ik’ and ‘physics-simulation’</p>
+<p>The full task tests whether the gripper holds the can during movement and releases it at the target. Reset the scene, then run the approach, grasp, lift, hold, transfer, and release sequence. Compare your run with the opening video and the success criteria below.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif" alt="figure-06-pick-and-place-landscape"></a></p>
+<p><em>Figure 6. The UR17G arm and Robotiq 2F-140 gripper move the beverage can from the yellow pickup marker to the green target in Isaac Sim. Shown at 4× speed.</em></p>
+<p>If your run differs, note where the sequence fails and ask the agent to inspect the scene and generate controls. Reset the can and robot to the same starting state before retrying so you can compare the results.</p>
+<p><strong>Simulation assumptions:</strong></p>
+<ul><li><strong>Fixed setup:</strong> The can starts at a known position, with an anchored robot and clear, flat workspace. No vision was used and collision checks were limited.</li><li><strong>Simplified can:</strong> Deformation and liquid motion are not modeled, so this example does not test crushing.</li><li><strong>Scripted grasp and motion:</strong> A horizontal grasp uses a 2 N·m drive-effort cap chosen through simulation tests, not calibrated to fingertip forces or recommended by the manufacturer. Contact and friction hold the beverage can as the arm follows fixed waypoints without replanning. For hardware gripping-force specifications, see the <a href="https://robotiq.com/hubfs/Product-sheets/Adaptive%20Grippers/Product-sheet-Adaptive-Grippers-EN.pdf">Robotiq product sheet</a>.</li></ul>
+<p>These results apply to this scripted setup. They do not establish robustness to uncertain object positions, different payloads, or real hardware.</p>
+<h2>Build your next simulation with SimReady Assets</h2>
+<p>Build your own pick-and-place task with assets from <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>, then use an agent of your choice to help assemble the scene and run it in Isaac Sim.</p>
+<p><strong>Discover assets</strong></p>
+<ul><li><strong>Find robots and objects:</strong> Browse <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> on Hugging Face.</li><li><strong>Check what an asset supports:</strong> Review the profiles and requirements in <a href="https://nvidia.github.io/simready-foundation/latest/">SimReady Foundation</a> alongside the asset’s validation reports.</li></ul>
+<p><strong>Build a pick-and-place scene</strong></p>
+<ul><li><strong>Set up the simulator:</strong> Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim installation guide</a> for the version used in this example.</li><li><strong>Connect your agent:</strong> Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Isaac Sim Agent Skills documentation</a> to make the bundled skills available to your agent.</li><li><strong>Assemble the robot:</strong> Follow the <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html#assembling-robots">Robot Assembler tutorial</a> if you prefer to connect the arm and gripper manually.</li></ul>
+<p><strong>Prepare and contribute content</strong></p>
+<ul><li><strong>Start from CAD:</strong> Follow the <a href="https://developer.nvidia.com/blog/5-steps-to-create-simready-assets-for-robotics-with-frontier-ai-models/">5 Steps to Create SimReady Assets for Robotics</a> to prepare your own robotics assets.</li><li><strong>Validate and submit assets:</strong> Follow the <a href="https://github.com/NVIDIA-Omniverse/simready-central/blob/main/.agents/skills/submit-simready-assets/SKILL.md">SimReady Central submission guide</a> to make your assets available to other developers.</li></ul>
+<p>For inspiration, explore <a href="https://lnkd.in/p/g3-5svW6">Michael Wagner’s voice-controlled VR demo</a> or <a href="https://lnkd.in/p/gnxQ3YS8">Maziyar Panahi’s Microduck simulation</a>. Both show how developers are using SimReady assets in their own projects.</p>
+<p>What will you build? Share your scene and results in the Hugging Face comments, including the assets and Isaac Sim version you used.</p>
+<p>Happy building!</p>
+<h2>Datasets mentioned in this article 3</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2><em>Evaluating Privacy Protection and Practical AI Applications with 100,000 Synthetic Business Documents Across Eight Domains</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>5</p>
+<p>November 9, 2026</p>
+<h2>Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan's Demographics and Financial Context</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>19</p>
+<p>November 9, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fsimready-assets-robot-pick-and-place">log in</a> to comment</p>
+<p>14</p>
+<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/yiucw"><img src="https://huggingface.co/avatars/6b59ac5f151b322f5261adacecce6b61.svg" alt=""></a></li><li><a href="https://huggingface.co/klnadim"><img src="https://huggingface.co/avatars/a045d5a990db610dd1f4abbcca7f1bd6.svg" alt=""></a></li><li><a href="https://huggingface.co/ExceedZhang"><img src="https://huggingface.co/avatars/f42dac7bbb5f8a8dd315bdbe623813e6.svg" alt=""></a></li><li><a href="https://huggingface.co/safikhan5834"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/683acf96542967b165847cff/tUHvC7omJt6mPPdyx1oSe.png" alt=""></a></li><li><a href="https://huggingface.co/Eumoren"><img src="https://huggingface.co/avatars/604ef02c6a6eac9315df923eaf7e56b4.svg" alt=""></a></li><li><a href="https://huggingface.co/willemelliw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a980914cb03264ff33c4e0c/zOqgwh5M1nCzjQGfrT0Je.jpeg" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 3</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>XYBench: Helping with the problem behind the question</title>
@@ -6757,160 +6920,6 @@ model = AutoModelForCausalLM.from_pretrained(
 <p>4</p>
 <ul><li><a href="https://huggingface.co/WaSampta"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ynKudRz9P7bewRrpK6Rfy.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/laoya0"><img src="https://huggingface.co/avatars/492ba3e5ebc95951c86b0490625b4366.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>
 <h2>Models mentioned in this article 4</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>MPS in PyTorch 2.15</title>
-      <link>https://huggingface.co/blog/mps-pytorch-2-15</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/mps-pytorch-2-15?li=1</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>MPS in PyTorch 2.15</h1>
-<p>Published October 20, 2026</p>
-<p>Update on GitHub</p>
-<p>10</p>
-<ul><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/VaibhavKKM"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69abd374bcc4eb2abd02a423/Ywz6VRnwaR0wW4p4_PiXD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pranavthombare"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645d0b4203fc86c46b3e961a/Y8vvqeLUJa6_845lRra_W.jpeg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Isalia20"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69e2191b89c9afe46240fde2/4P9gAZ1_a2vLdHIcyt3PN.png" alt="Irakli Salia's avatar"></a></p>
-<p>Irakli Salia</p>
-<p>Isalia20</p>
-<p><a href="https://huggingface.co/khushi-411"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/mHXfX1t4hIyJjQ1Vd5g0f.jpeg" alt="Khushi Agrawal's avatar"></a></p>
-<p>Khushi Agrawal</p>
-<p>khushi-411</p>
-<p>If you run models on your Mac or use MPS as your primary acceleration tool for computing, there's plenty to look forward to in PyTorch 2.15! FP8 arrives on MPS, language-model decoding gets faster paths through linear layers and softmax and new Metal kernels tackle some surprisingly expensive parts of audio, video and training workloads.</p>
-<p>A quick word about who we are: we're the PyTorch team at Hugging Face. We contribute across PyTorch, and one of our focus areas is the MPS backend, where the goal is to make your Mac a first-class place to run and train PyTorch models. At the start of 2026, running even small models on MPS often meant working around unsupported operations, performance cliffs and unexpected memory growth. So we run real models from the Hugging Face Hub across language, image and video, find where MPS falls short and fix it upstream in PyTorch, more and more often by replacing MPSGraph with dedicated Metal kernels. Much of this post is the result of that work, done together with the PyTorch maintainers and community contributors.</p>
-<h2>TL;DR</h2>
-<ul><li><strong>FP8 comes to the Mac:</strong> store <code>float8_e4m3fn</code> values in half the space of BF16 and use scaled matrix multiplication and all other ops which are supported on CUDA/CPU!</li><li><strong>MoE models decode 5–6.5× faster than in 2.14:</strong> Qwen3.6-35B-A3B goes from 9.4 to 61.3 tokens/s on an M3 Ultra, thanks to a native grouped matmul with a dedicated decoding path, fewer GPU-CPU syncs and faster top-k routing.</li><li><strong>Less time per token for every LLM:</strong> single-row linear layers use specialized matrix-vector kernels, and softmax over the vocabulary is about 8× faster.</li><li><strong>More linear algebra on the GPU:</strong> complex LU and triangular solves, faster small-matrix inverses, and faster QR decomposition.</li><li><strong>Audio, video, and training get attention too:</strong> faster paths for convolutions, padding, dropout, interpolation backward and reductions. Wan2.2's video VAE decode now peaks at 8 GiB of memory instead of 270 GiB.</li><li><strong>More control from Python:</strong> public MPS streams and more reliable event timing.</li><li><strong>Updated requirements:</strong> MPS now requires <strong>macOS 15 or later</strong>; PyTorch 2.15 requires <strong>Python 3.11 or later</strong>.</li><li><strong>A peek at 2.16:</strong> attention fully on Metal, more MPSGraph-to-Metal migrations and faster LLM decoding.</li></ul>
-<h2>What this means for you</h2>
-<p>If you run models on a Mac with transformers, diffusers or tools like ComfyUI, here's what 2.15 changes in practice:</p>
-<ul><li><strong>Much faster local LLMs.</strong> Mixture-of-experts models decode 5–6.5× faster than in 2.14: on an M3 Ultra with <code>torch.compile</code>, Qwen3.6-35B-A3B goes from 9.4 to 61.3 tokens/s and LFM2.5-8B-A1B from 23.6 to 123.6 tokens/s. Dense models benefit too, from faster linear layers and an 8× faster softmax for sampling. (<a href="https://huggingface.co/blog/mps-pytorch-2-15#faster-language-model-decoding">More</a>)</li><li><strong>Video generation that fits in memory.</strong> Decoding a video with Wan2.2's tiled VAE used to push driver memory to 270 GiB; it now peaks at about 8 GiB. (<a href="https://huggingface.co/blog/mps-pytorch-2-15#a-much-smaller-memory-footprint-for-video-decoding">More</a>)</li><li><strong>Correct image editing with Qwen-Image-2.1.</strong> On 2.14, the Qwen-Image-2.1 VAE encoder silently corrupted images on MPS, breaking image-edit workflows (<a href="https://github.com/Comfy-Org/ComfyUI/issues/16433">reported in ComfyUI</a>). The <a href="https://github.com/pytorch/pytorch/pull/195368">same padding change</a> fixes it: an encode-decode round trip now matches CPU at 29.95 dB PSNR, up from 10.06 dB.</li><li><strong>FP8 weights on your Mac.</strong> FP8 tensors take half the memory of BF16, and <code>F.scaled_mm</code> multiplies them directly on the GPU. (<a href="https://huggingface.co/blog/mps-pytorch-2-15#fp8-comes-to-mps">More</a>)</li></ul>
-<h2>Contents</h2>
-<ul><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#getting-started">Getting started</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#fp8-comes-to-mps">FP8 comes to MPS</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#faster-language-model-decoding">Faster language-model decoding</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#linear-algebra-gets-a-boost">Linear algebra gets a boost</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#convolutions-padding-and-training">Convolutions, padding, and training</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#softmax-and-reductions">Softmax and reductions</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#a-much-smaller-memory-footprint-for-video-decoding">A much smaller memory footprint for video decoding</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#more-control-with-mps-streams">More control with MPS streams</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#more-operations-work-on-mps">More operations work on MPS</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#a-sneak-peek-at-pytorch-216">A sneak peek at PyTorch 2.16</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#wrapping-up">Wrapping up</a></li></ul>
-<h2>Getting started</h2>
-<p>You'll need an Apple silicon Mac with <strong>macOS 15 or later</strong> and <strong>Python 3.11 or later</strong> (see the <a href="https://github.com/pytorch/pytorch/blob/release/2.15/RELEASE.md#release-compatibility-matrix">2.15 compatibility matrix</a>). If your OS is too old or no Metal GPU is available, the MPS availability check now tells you why.</p>
-<p>To try the release candidate in a separate environment:</p>
-<pre><code>uv pip install torch==2.15.0 --index-url https://download.pytorch.org/whl/test/cpu</code></pre>
-<h2>FP8 comes to MPS</h2>
-<p>FP8 gives you another way to save memory on your Mac. PyTorch 2.15 adds <a href="https://github.com/pytorch/pytorch/pull/194074"><code>torch.float8_e4m3fn</code></a> tensors on MPS: one byte per value, half the storage of FP16 or BF16.</p>
-<p>You can multiply these tensors with <a href="https://github.com/pytorch/pytorch/pull/196916"><code>F.scaled_mm</code></a>, which supports both tensorwise and rowwise scaling. Here's a small example with one scale per tensor:</p>
-<pre><code>import torch
-import torch.nn.functional as F
-
-def quantize_fp8(x):
-    limit = torch.finfo(torch.float8_e4m3fn).max
-    scale = x.abs().amax().clamp_min(1e-12) / limit
-    return (x / scale).to(torch.float8_e4m3fn), scale
-
-x = torch.randn(1, 1024, device=&quot;mps&quot;, dtype=torch.float32)
-weight = torch.randn(1024, 1024, device=&quot;mps&quot;, dtype=torch.float32)
-x_fp8, x_scale = quantize_fp8(x)
-w_fp8, w_scale = quantize_fp8(weight)
-
-y = F.scaled_mm(
-    x_fp8,
-    w_fp8.t(),
-    scale_a=x_scale,
-    scale_recipe_a=F.ScalingType.TensorWise,
-    scale_b=w_scale,
-    scale_recipe_b=F.ScalingType.TensorWise,
-    output_dtype=torch.bfloat16,
-)
-print(y.shape, y.dtype)</code></pre>
-<h2>Faster language-model decoding</h2>
-<p>Every LLM has a prefill phase and a decode phase. During decode, each new token goes through the model as a single row, so the big matrix multiplications turn into matrix-vector products. PyTorch 2.15 speeds up both kinds of layers that dominate this step: dense linear layers and mixture-of-experts layers.</p>
-<h3>Linear layers</h3>
-<p>MPS has had GEMV kernels for <code>torch.mm</code> since 2.14, but <code>F.linear</code> still went through MPSGraph. PyTorch 2.15 <a href="https://github.com/pytorch/pytorch/pull/198721">connects them to <code>F.linear</code></a>, so the common <code>[1, 1, hidden_size]</code> decoding input uses them directly, with eligible bias additions fused in. Across 96 BF16 layer shapes from real models, that's a <strong>1.23× geometric-mean speedup</strong>. The biggest wins land on small projections, such as the gates in MoE models, where the old path left most of the memory bandwidth unused. Large layers and LM heads were already close to bandwidth-bound, so they stay near 1×.</p>
-<h3>Mixture-of-experts layers</h3>
-<p>A mixture-of-experts layer sends different numbers of tokens to each expert. Grouped matmul handles those uneven groups in a single operation, and 2.15 gives MPS a <a href="https://github.com/pytorch/pytorch/pull/194933">native implementation</a>.</p>
-<p>In 2.14, grouped matmul copied the group offsets to the CPU and looped over the groups. The new Metal kernels read the offsets directly on the GPU, using Metal Performance Primitives where available and a separate Metal path elsewhere. Small groups, the common case during decoding, get <a href="https://github.com/pytorch/pytorch/pull/198725">their own kernel</a> as well.</p>
-<p>For example, 64 tokens can be split into groups of 16, 32, and 16:</p>
-<pre><code>import torch
-import torch.nn.functional as F
-
-tokens = torch.randn(64, 64, device=&quot;mps&quot;, dtype=torch.bfloat16)
-weights = torch.randn(3, 128, 64, device=&quot;mps&quot;, dtype=torch.bfloat16)
-ends = torch.tensor([16, 48, 64], device=&quot;mps&quot;, dtype=torch.int32)
-
-out = F.grouped_mm(tokens, weights.transpose(-2, -1), offs=ends)
-print(out.shape)  # torch.Size([64, 128])</code></pre>
-<p>The decoding kernel shows up directly in token throughput. On an <strong>M3 Ultra with <code>torch.compile</code></strong>, MoE models generate about <strong>1.3× more tokens per second</strong>:</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/moe-decode-throughput.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/moe-decode-throughput.png" alt="Bar chart of MoE decoding throughput on M3 Ultra with torch.compile. Qwen3.6-35B-A3B goes from 38.7 to 51.7 tokens/s at context 512 and 36.8 to 48.7 at context 2048; LFM2.5-8B-A1B goes from 77.1 to 103.2 and 74.9 to 98.7 tokens/s."></a></p>
-<h2>Linear algebra gets a boost</h2>
-<h3>Complex-valued computations</h3>
-<p>Working with complex tensors gets easier. <code>complex64</code> <a href="https://github.com/pytorch/pytorch/pull/188473">LU factorization</a>, <a href="https://github.com/pytorch/pytorch/pull/195369">LU solve</a> and <a href="https://github.com/pytorch/pytorch/pull/195861">triangular solve</a> now run on MPS, which also unlocks the operations and gradients built on them, such as complex determinants. Here's a small system solved directly on the GPU:</p>
-<pre><code>import torch
-
-a = torch.randn(8, 8, device=&quot;mps&quot;, dtype=torch.complex64)
-a = a + 8 * torch.eye(8, device=&quot;mps&quot;, dtype=torch.complex64)
-b = torch.randn(8, 2, device=&quot;mps&quot;, dtype=torch.complex64)
-
-lu, pivots = torch.linalg.lu_factor(a)
-x = torch.linalg.lu_solve(lu, pivots, b)
-print((a @ x - b).abs().max().item())</code></pre>
-<h3>Small matrices and larger solves</h3>
-<p>Small matrices get fast kernels too. For camera geometry and image transformations, batches of FP32 matrices up to <strong>4 × 4</strong> are <a href="https://github.com/pytorch/pytorch/pull/195944">inverted in a single Metal kernel</a> that combines factorization and solving. Larger problems get attention as well: <a href="https://github.com/pytorch/pytorch/pull/198732">QR uses blocked updates</a>, and <a href="https://github.com/pytorch/pytorch/pull/196241">triangular solves</a> turn much of their work into efficient matrix multiplication.</p>
-<p>Gated DeltaNet workloads get a <a href="https://github.com/pytorch/pytorch/pull/196900">dedicated fast path</a> for batches of <strong>16 × 16, 32 × 32 and 64 × 64 FP32 triangular systems</strong> with at least eight right-hand sides.</p>
-<p>SVD is also more robust at numerical extremes. It now correctly handles <a href="https://github.com/pytorch/pytorch/pull/200920">very small singular values</a>, <a href="https://github.com/pytorch/pytorch/pull/201037">very large or very small input magnitudes</a> and <a href="https://github.com/pytorch/pytorch/pull/201198">basis completion with <code>full_matrices=True</code></a>, which in turn makes pseudoinverse and least-squares results more reliable.</p>
-<h2>Convolutions, padding, and training</h2>
-<p>Audio models, video decoders and training loops have their own expensive operations. This release gives several of them new paths through Metal:</p>
-<table><thead><tr><th>Operation</th><th>What changes in 2.15</th></tr></thead><tbody><tr><td><a href="https://github.com/pytorch/pytorch/pull/198878"><code>conv1d</code> forward</a></td><td>Specialized kernels replace MPSGraph, plus an im2col-plus-matmul path for short outputs. Useful for audio and streaming-model shapes.</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/195368">Constant padding</a></td><td>Moves to Metal kernels, fixing runaway driver-memory growth in tiled video VAE decoding (more below).</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/196985">Reflection and replication padding</a></td><td>New Metal implementations that are faster and fix backward correctness.</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/195011">Out-of-place dropout</a></td><td><code>nn.Dropout</code> and <code>F.dropout</code> now use the existing fused kernel.</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/199687">Upsampling backward</a></td><td>A Metal gather kernel replaces the MPSGraph resize-gradient path.</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/193623">Channels-last <code>conv2d</code> backward</a></td><td>Stays on an efficient channels-last path instead of an NCHW graph with costly strided access.</td></tr></tbody></table>
-<h2>Softmax and reductions</h2>
-<p>Token sampling gets faster in 2.15 as well. <a href="https://github.com/pytorch/pytorch/pull/196071"><code>softmax</code></a> and <a href="https://github.com/pytorch/pytorch/pull/195441"><code>log_softmax</code></a> now run on dedicated Metal kernels, and large vocabularies benefit the most: an FP32 softmax over a <code>[1, 128256]</code> row of logits drops from <strong>57 µs to 7 µs</strong>, about <strong>8× faster</strong> than the MPSGraph version. The speedup holds across other common vocabulary sizes:</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/softmax-sampling.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/softmax-sampling.png" alt="Bar chart of FP32 softmax time for a single row of logits at five vocabulary sizes from 128,256 to 201,088. MPSGraph takes 50 to 74 microseconds; the Metal kernel takes 7 to 10 microseconds, a 7.1x to 8.0x speedup."></a></p>
-<h2>A much smaller memory footprint for video decoding</h2>
-<p>One of the most striking results in this release comes from the constant-padding change. The VAE decode in <code>Wan-AI/Wan2.2-TI2V-5B-Diffusers</code> makes <strong>8,764 padding calls</strong> over a full 28-tile decode. With padding on Metal, peak driver memory drops from about <strong>270 GiB to 8 GiB</strong>:</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/wan-vae-memory.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/wan-vae-memory.png" alt="Stacked bar chart of peak driver memory during the Wan2.2 tiled VAE decode. With MPSGraph padding, 8.07 GiB of allocator-reserved memory plus 262 GiB outside the allocator gives 270.1 GiB; with Metal padding the total is 8.1 GiB."></a></p>
-<table><thead><tr><th>Memory metric</th><th>MPSGraph padding</th><th>Metal padding</th></tr></thead><tbody><tr><td>Current tensor-allocation peak</td><td>4.422 GiB</td><td>4.095 GiB</td></tr><tr><td>Allocator-reserved peak</td><td>8.070 GiB</td><td>8.070 GiB</td></tr><tr><td>Total driver-memory peak</td><td>270.135 GiB</td><td>8.108 GiB</td></tr></tbody></table>
-<h2>More control with MPS streams</h2>
-<p>You can now pick which MPS stream runs your work, directly from Python. <a href="https://github.com/pytorch/pytorch/pull/191415"><code>torch.mps.Stream</code> and the <code>torch.mps.stream</code> context manager</a> provide the interface, and <a href="https://github.com/pytorch/pytorch/pull/193464"><code>Tensor.record_stream</code></a> lets the allocator track a tensor's use on another stream.</p>
-<p>Here's a small example that sends work to a separate stream and synchronizes before reading the result:</p>
-<pre><code>import torch
-
-x = torch.randn(1024, device=&quot;mps&quot;)
-torch.mps.synchronize()
-worker = torch.mps.Stream()
-
-with torch.mps.stream(worker):
-    y = x.square()
-    x.record_stream(worker)
-
-del x
-worker.synchronize()
-print(y.cpu().shape)</code></pre>
-<h2>More operations work on MPS</h2>
-<p>Several more operations now run on MPS: <a href="https://github.com/pytorch/pytorch/pull/194110"><code>torch.frexp</code></a>, <a href="https://github.com/pytorch/pytorch/pull/190495"><code>torch.logspace</code></a>, <a href="https://github.com/pytorch/pytorch/pull/192980"><code>torch.take</code> and <code>Tensor.put_</code></a>, <a href="https://github.com/pytorch/pytorch/pull/195265"><code>torch.heaviside</code></a>, <a href="https://github.com/pytorch/pytorch/pull/195225"><code>torch.special.laguerre_polynomial_l</code></a> and <a href="https://github.com/pytorch/pytorch/pull/198860">unsigned-integer comparisons</a>. <code>logspace</code> doesn't yet support integer or boolean outputs with more than one element.</p>
-<p>Attention gets a correctness fix too: the MPS math implementation of scaled dot-product attention now <a href="https://github.com/pytorch/pytorch/pull/189631">handles batch and head broadcasting correctly</a>.</p>
-<h2>A sneak peek at PyTorch 2.16</h2>
-<p>Work on 2.16 is already well underway. Some of the changes below have landed on <code>main</code> and are available in the nightlies; others are still in review, so details may change before the release.</p>
-<h3>Faster LLM decoding</h3>
-<p>Once a model's decode path no longer contains any MPSGraph ops, the GPU only starts on a token after the CPU has finished encoding all of its kernels. PyTorch 2.16 <a href="https://github.com/pytorch/pytorch/pull/200181">commits the command buffer every 16 kernels</a>, so the GPU gets to work while the CPU is still encoding the rest. For compiled BF16 decoding at a 2048-token context:</p>
-<table><thead><tr><th>Model</th><th>Before</th><th>After</th><th>Change</th></tr></thead><tbody><tr><td>LFM2.5-8B-A1B</td><td>108.8 tokens/s</td><td>126.0 tokens/s</td><td>+16%</td></tr><tr><td>Qwen3.6-35B-A3B</td><td>52.9 tokens/s</td><td>62.8 tokens/s</td><td>+19%</td></tr><tr><td>Qwen3.8-27B</td><td>12.1 tokens/s</td><td>12.6 tokens/s</td><td>+4%</td></tr></tbody></table>
-<h3>Attention runs entirely on Metal</h3>
-<p>Scaled dot-product attention is <a href="https://github.com/pytorch/pytorch/pull/201526">dropping MPSGraph completely</a>: every shape will run on Metal kernels, with dedicated vector kernels for decoding and Metal Performance Primitives for half-precision prefill on newer macOS versions. The shapes that used to fall back to MPSGraph benefit the most. On an M5 Pro, decoding with grouped-query attention (32 query heads, 8 KV heads, head dim 80, 4K context) drops from 465 µs to 65 µs, and a 4K × 4K prefill with head dim 40 goes from 42 ms to 6 ms.</p>
-<h3>More MPSGraph to Metal migrations</h3>
-<p>The move away from MPSGraph continues. Batch norm <a href="https://github.com/pytorch/pytorch/pull/201361">forward</a> and <a href="https://github.com/pytorch/pytorch/pull/201411">backward</a> are in progress, while <a href="https://github.com/pytorch/pytorch/pull/201351">MSE loss</a> (up to 12× faster on small inputs), <a href="https://github.com/pytorch/pytorch/pull/201310"><code>std_mean</code> and <code>var_mean</code></a> (up to 4× faster) and <a href="https://github.com/pytorch/pytorch/pull/201045"><code>bincount</code></a> have already landed. <code>bincount</code> is the most dramatic: when most values fall into a single bin, counting 4 million integers used to take 6.8 seconds and now takes half a millisecond.</p>
-<h3>A smaller install</h3>
-<p>Bundled shaders will <a href="https://github.com/pytorch/pytorch/pull/197529">build for Metal 3.1 by default</a>, with Metal 4 versions compiled only for the kernels that need them. That shrinks <code>libtorch_cpu.dylib</code> by about 25%, from 384 MiB to 287 MiB, and lays the groundwork for Metal 4.1 shaders with faster matmuls and native FP8 matrix multiplication.</p>
-<h2>Wrapping up</h2>
-<p>PyTorch 2.15 brings FP8 to the Mac, faster LLM decoding for dense and MoE models, more linear algebra on the GPU and a long list of operations moved from MPSGraph to dedicated Metal kernels. Give the release candidate a try!</p>
-<h3>What's next for us</h3>
-<ul><li><strong>More MPS:</strong> 2.16 will run attention entirely on Metal, and we'll keep moving operations off MPSGraph.</li><li><strong><code>torch.compile</code>:</strong> we're working on getting rid of graph breaks, so more models compile end to end.</li><li><strong>Your ideas:</strong> what else should we work on in PyTorch? If something is slow, missing or broken, on MPS or anywhere else, <a href="https://github.com/pytorch/pytorch/issues">open an issue on GitHub</a> and let us know.</li></ul>
-<p>A big thank you to <a href="https://github.com/malfet">Nikita Shulga</a>, <a href="https://github.com/kurtamohler">Kurt Mohler</a> and <a href="https://github.com/Skylion007">Aaron Gokaslan</a> for reviewing much of this work, and to everyone who contributed to MPS in this release.</p>
-<p>More Articles from our Blog</p>
-<p>tokenizerstokenizationrust</p>
-<h2>tokenizers v1: encode, decode and scaling, measured</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1674683851722-62441cb7456803e95009a08f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1666977434736-617bc8d1000dbbbf7c225eed.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li></ul>
-<p>92</p>
-<p>September 21, 2026</p>
-<p>transformerspytorchoptimization</p>
-<h2>Unlocking asynchronicity in continuous batching</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li></ul>
-<p>68</p>
-<p>May 14, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmps-pytorch-2-15">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fmps-pytorch-2-15">log in</a> to comment</p>
-<p>10</p>
-<ul><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/VaibhavKKM"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69abd374bcc4eb2abd02a423/Ywz6VRnwaR0wW4p4_PiXD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pranavthombare"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645d0b4203fc86c46b3e961a/Y8vvqeLUJa6_845lRra_W.jpeg" alt=""></a></li><li><a href="https://huggingface.co/gjeevanm"><img src="https://huggingface.co/avatars/d08ed8ad356889cfcf2415020be4665a.svg" alt=""></a></li><li><a href="https://huggingface.co/corentinlger"><img src="https://huggingface.co/avatars/669b77101c3dcb9d2cc04bfc8170af36.svg" alt=""></a></li><li><a href="https://huggingface.co/santiRios"><img src="https://huggingface.co/avatars/61c5d8dc1dbd5b05b1dd81df319fefee.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

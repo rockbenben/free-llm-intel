@@ -7,7 +7,372 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>GPT-6 模型展示了内在的蛋白质设计能力</title>
+      <link>https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities</link>
+      <guid isPermaLink="true">https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：GPT-6 models demonstrate intrinsic protein-design capabilities</description>
+      <content:encoded><![CDATA[<p>2026年11月24日</p>
+<p>科学</p>
+<p>出版</p>
+<h1>GPT‑6 模型展现出内在的蛋白质设计能力</h1>
+<p><a href="https://cdn.openai.com/pdf/gpt-6-a-universal-foundation-model-for-protein-biology.pdf">阅读论文</a></p>
+<h2>主要发现：</h2>
+<ul><li>我们的 GPT‑6 系列模型仅凭推理和代码，就能设计新的蛋白质形状及其化学构建块的序列，而无需调用专门的生物学模型来生成这些设计。</li><li>一个内部研究模型在许多蛋白质设计任务上达到或超越了专门模型的表现。研究人员还可以通过向模型提示蛋白质应在何处附着以及应呈现何种形状来引导设计。</li><li>在与 Onava 进行的实验室测试中，基于 GPT‑6.2 设计的蛋白质在五个靶点上显示出结合（即附着）的证据。重新设计的抗体也保持了结合能力。专门模型帮助提供了序列并筛选了用于测试的候选物。</li><li>模型的书面推理和代码表明，它们运用数学、物理、化学和生物学知识来推理蛋白质形状以及与其他分子的相互作用。</li></ul>
+<p>在一篇题为<em>《GPT‑6 作为蛋白质生物学的通用基础模型：超越专门模型》</em>的预印本中，我们展示了我们的 GPT‑6 系列模型具有设计新蛋白质的<strong>内在能力</strong>：这些模型无需依赖专门的生物学模型，仅凭推理和通用编码工具就能设计新的蛋白质结构和序列。</p>
+<p>蛋白质在活细胞中承担了大量工作。它们驱动维持生命的化学反应，在血液中运输氧气，并防御身体免受感染。形状不正确的蛋白质也可能导致疾病和功能障碍。蛋白质由称为氨基酸的化学构建块链组成。这些氨基酸的顺序（即序列）有助于决定蛋白质如何折叠成三维形状，进而影响其功能。</p>
+<p>科学家通常从明确的目标出发，即他们希望蛋白质做什么。他们可能希望蛋白质阻断帮助癌细胞逃避免疫系统的信号，或帮助从空气中捕获二氧化碳。挑战在于弄清楚什么样的三维结构能使蛋白质完成其工作，以及哪种氨基酸序列能赋予其该结构。能够生成三维蛋白质结构和序列的专门生物学模型使这项工作更加可行。</p>
+<p>使用和协调这些专门模型需要大量专业知识。每个模型接受特定类型的输入和约束，而这些模型在不修改软件或进行额外训练的情况下，很难接受新类型的信息。相比之下，一个能够执行多个专门模型工作的通用模型可以轻松适应新的指令和要求。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4u7ogWwVXuqX5GRdnZxsLM/23d72378f6fea65debd91c914f32fb54/protein-workflows-intrinsic-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="比较语言模型协调专用工具与单一模型直接处理蛋白质任务的示意图。"></p>
+<p>我们的研究展示了将自然语言与内在蛋白质能力相结合的潜在力量。我们可以在从两个原子之间的单个键到蛋白质整体形状的各个尺度上引导我们的模型。例如，我们要求 GPT‑6.2 预测一个小分子将在何处以及如何与蛋白质结合。当我们已经知道哪两个原子形成了键时，我们可以将该信息提供给模型，并询问分子的其余部分将如何适配。我们可以仅通过更改提示在这些任务之间切换，而无需重新训练模型。我们还要求我们的模型设计称为 minibinder 的小型蛋白质，并标记每个 minibinder 应附着到其靶标的位置，并进一步指定每个 minibinder 应包含多少个螺旋或链。一个内部模型在其三维设计中以近乎完美的保真度遵循了该指令。</p>
+<p><em>距离中心越远的点表示性能越好。更新一代的模型在测试的 14 项蛋白质任务中的许多任务上都有所改进。</em></p>
+<h2>深入了解我们模型的蛋白质设计</h2>
+<p>我们进行了计算测试，检验 GPT‑6 系列模型能否设计小型蛋白质以结合给定靶标、围绕指定结构特征构建蛋白质、预测蛋白质结构和分子相互作用，以及排列序列变化如何影响稳定性和结合等特性。我们的最新模型在大多数任务上表现与专门模型相当或更好，尽管预测完整的蛋白质结构仍然是一个明显的弱点。</p>
+<p>模型的书面推理和代码为它们如何处理这些任务提供了线索。它们运用数学、物理、化学和编码，以及对蛋白质序列和结构中反复出现的模式的知识。例如，在设计一种旨在结合 IL-7Rα 的小型蛋白质时，模型提出了两种蛋白质可能如何相互作用，然后编写并执行代码来探索可能支持该相互作用的不同蛋白质形状和氨基酸选择。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/77JrLamL248By3sCY9fZqj/7537b78d13de9641b56233de8216a606/source_figure_1__3_.png?w=3840&amp;q=90&amp;fm=webp" alt="模型如何完成蛋白质设计"></p>
+<p><em>模型的书面推理和代码显示它运用数学、物理、化学和生物学来设计一种旨在附着到 IL-7Rα 的蛋白质。它检查靶标的表面，将五个螺旋区段排列成蛋白质形状，并检查两种蛋白质如何相互适配。</em></p>
+<p>与我们的研究合作伙伴 <a href="http://www.onava.ai">Onava</a> 一起，我们还在实验室中测试了模型的结构和序列设计。首先，Onava 基于预发布版 GPT‑6.2 设计的三维结构制造了小型蛋白质。专门模型提供了氨基酸序列并帮助筛选了用于测试的候选物。对于我们选择的五个靶标中的每一个，至少有一种蛋白质在实验室中显示出结合的证据。在单独的实验中，GPT‑6.2 为现有的 minibinder 和抗体设计了新的氨基酸序列。在使用专门模型进行候选物筛选后，许多重新设计的蛋白质也显示出与原始蛋白质相同靶标结合的证据。</p>
+<h2>实验室实验 1：设计与靶标结合的小型蛋白质</h2>
+<p>我们的第一个实验室实验测试了 GPT‑6.2 能否设计出与其预期靶标结合的小型蛋白质。我们将质量的计算测量值与 RFdiffusion（一种蛋白质设计专门模型）进行了比较，发现 GPT‑6.2 的三维设计得分略低，而我们最新的内部模型得分更高。在实验室实验中，我们基于 GPT‑6.2 的设计制造了蛋白质，并测量了它们与靶标结合的强度。</p>
+<p>我们向 GPT‑6.2 提供了五个靶标蛋白质的三维结构，并标记了我们希望 minibinder 附着的位置。然后它编写代码为潜在的 minibinder 创建三维设计，而不使用专门的蛋白质 AI 模型。</p>
+<p>为了将 GPT‑6.2 的三维设计转化为我们可以在实验室中测试的蛋白质，我们需要能够折叠成所提出结构的氨基酸序列。我们使用了一种名为 SolubleMPNN 的专门 AI 模型来为每个设计建议序列。其他专门的蛋白质模型帮助我们筛选出预测能按设计折叠并在靶标预期位点结合的候选物。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tdj7ylIVvRLZuSefgld5A/79ed19f943933341880b0e9bb1c4d6ae/wet-lab-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="从蛋白质设计到实验室测试。从靶标选择到骨架和序列设计、结构筛选、排序和实验室测试的工作流程。"></p>
+<p><em>GPT‑6.2 设计了旨在附着到所选靶标的小型蛋白质的形状。然后专门模型提出了氨基酸序列——即蛋白质化学构建块的顺序——并帮助筛选出设计供我们的研究合作伙伴 Onava 在实验室中制造和测试。</em></p>
+<p>我们在实验室中测试了 322 个 minibinder 对 5 个靶标的结合情况。其中，35 个（10.9%）测试呈阳性，表明与其预期靶标结合。我们发现了 5 个针对 PD-L1（某些癌症用来逃避免疫系统的蛋白质）的命中，3 个针对 IL-7Rα，1 个针对 TrkA，8 个针对 VEGF-A，以及 18 个针对 IL-17A。<a href="https://www.nature.com/articles/s41586-023-06415-8/figures/6">原始 RFdiffusion 研究</a>报告的命中率更高，但命中率在很大程度上取决于研究人员在实验室验证之前筛选设计的严格程度以及他们对结合的定义。尽管如此，我们的结果提供了早期证据，表明我们可以将 GPT‑6.2 的三维设计转化为在实验室中与其预期靶标结合的蛋白质。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6YdRXyaFP4SEp3mku9AcPi/e8675d403db99751eac6a843d6d32507/specific-responsive-legend-poster.svg?w=3840&amp;q=50" alt="设计蛋白质以附着到特定靶标 · 响应式图例海报"></p>
+<p><em>一个内部研究模型设计了旨在附着到灰色所示靶标蛋白质的小型蛋白质的形状。彩色形状将每个设计与蛋白质如何折叠并与其靶标适配的计算预测进行了比较。</em></p>
+<h2>实验室实验 2：为三维蛋白质结构设计新序列</h2>
+<p>我们测试了 GPT‑6.2 能否自行设计序列。我们向它提供了现有 minibinder 如何与其靶标适配的三维模型，隐去了原始氨基酸序列，并要求它提出新的序列。专门模型帮助我们选择在实验室中制造和测试哪些蛋白质。</p>
+<p>对于三个靶标，我们从已确认的 minibinder 的计算预测结构开始，这些 minibinder 的序列由 Onava 从早期研究中收集。在我们的初步实验室筛选中，我们看到 MDM2 的 88 个设计中有 75 个（85%）结合，VEGF-A 的 42 个设计中有 26 个（62%）结合，PD-1 的 59 个设计中有 8 个（14%）结合。GPT‑6.2 提出的氨基酸序列也通常与原始 minibinder 序列有显著差异，VEGF-A 的中位差异为 50%，MDM2 为 43%，PD-1 为 15%。</p>
+<p>我们还要求 GPT‑6.2 为它之前生成的三种未发表的 minibinder 形状设计新序列：两种靶向 PD-L1，一种靶向 IL-7Rα。一个专门模型 ProteinMPNN 已经为每种形状提供了一个序列，由这些序列制造的蛋白质已在实验室中显示出结合。在由 GPT‑6.2 的新序列制造的 107 个蛋白质中，14 个（13.1%）显示出结合。</p>
+<p>给定一个未发表的结构，GPT‑6.2 提出了两个显著不同的序列，两者都显示出与同一靶标结合迹象。对于相同的 PD-L1 minibinder 结构，GPT‑6.2 设计了两个序列，在总共 90 个氨基酸中分别有 52 个和 58 个与原始序列不同。两者之间也在 44 个位置不同，接近序列的一半。</p>
+<p>未发表的结构和序列的重大差异为我们提供了强有力的证据，表明 GPT‑6.2 的能力超越了记忆。结果还表明，我们可以使用 GPT‑6.2 内在地设计 minibinder 的结构及其序列。</p>
+<h2>重新设计抗体中与靶标结合的部分</h2>
+<p>研究人员经常重新设计抗体的结合环，以帮助其更紧密地抓住靶标，这一过程称为<strong>亲和力成熟</strong>。他们可能还希望抗体更具选择性地结合，从而不太可能附着到相似的蛋白质上。我们测试了朝着这些目标迈出的第一步，要求我们的模型设计新的环序列，以保持与原始靶标的结合。</p>
+<p>我们从六种结合同一蛋白质 IL-4Rα 的小型抗体（VHH）开始。对于每种抗体，我们向 GPT‑6.2 提供了其预测的三维结构和大部分氨基酸序列，省略了帮助抗体抓住靶标的三个环。我们要求模型为它们设计新序列。在我们测试的 182 个设计中，128 个（70%）显示出与 IL-4Rα 结合的迹象。</p>
+<p>然后我们测试了我们能多精确地引导模型对现有治疗性抗体进行改变。这一次，我们向模型提供了原始序列，并要求它在三个结合环中各改变大约一半的氨基酸，同时保持序列的其余部分不变。我们在实验室中将抗体重新设计的部分作为片段进行了测试。在基于五种治疗性抗体的 272 个片段中，179 个（66%）显示出与原始靶标 PD-1 或 PD-L1 的结合。</p>
+<h2>我们的模型还能设计和预测什么？</h2>
+<h3>对 minibinder 结构的精确控制，实现可编程结构设计</h3>
+<p>基于结构的可编程设计的长期目标是让研究人员用自然语言指定结构约束。在我们的计算评估中，我们的模型始终设计出接触靶标上所需位置的 minibinder。我们还可以指定 minibinder 的结构类别（全螺旋、全链或组合），并以近乎完美的保真度控制螺旋和链的数量。同样的方法让我们能够表达对结合界面更详细的要求，例如哪些靶标氨基酸在结合时应被埋藏，或者 minibinder 和靶标是否应通过特定的相互作用（如“β-折叠–β-折叠”）相互作用。随着我们模型推理能力的提高，我们设想研究人员可以像今天引导图像生成一样引导蛋白质结构生成，即描述他们想要的特征。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6hHUcGPmxSdtuz8SS3Rcth/7af1c0f8e139a63fd1433aceae7ec207/guiding-responsive-legend-poster.svg?w=3840&amp;q=50" alt="用通俗语言引导蛋白质形状 · 响应式图例海报"></p>
+<p><em>我们的模型被要求设计具有指定形状的小型蛋白质：主要是螺旋（橙色）、主要是链（蓝色）或混合。一些指令还指定了要包含的螺旋或链的数量。这些设计旨在附着到灰色所示的 PD-L1 或 PD-1。</em></p>
+<h3>围绕指定结构特征构建蛋白质</h3>
+<p>大多数酶是加速化学反应的蛋白质。在设计新酶时，研究人员可能知道几个关键氨基酸需要在反应发生位点如何排列。这些氨基酸可能沿蛋白质链相距很远。挑战在于设计蛋白质的其余部分，使得当链折叠时，它能将这些氨基酸聚集在一起并固定到位。</p>
+<p>我们在来自 <a href="https://arxiv.org/html/2502.12479v2">MotifBench</a> 的 30 个挑战上测试了我们的模型，包括来自酶和蛋白质相互结合位点的例子。我们给模型一个特定的氨基酸三维排列，称为<strong>基序</strong>，并要求它们使用编码工具围绕它设计蛋白质的其余部分。这项任务称为<strong>基序支架设计</strong>。</p>
+<p>对于每个设计，我们使用 ProteinMPNN 提出八种可能的氨基酸序列，并使用 <a href="https://huggingface.co/biohub/esmfold_v1">ESMFold</a> 预测每种序列将如何折叠。如果至少一个预测结构既保留了基序又与模型设计的整体结构密切匹配，我们将该设计计为成功。</p>
+<p>在一项初步分析中，我们最新内部模型评估的设计中有 43.7% 满足 both 标准，而 RFdiffusion 为 27.8%。虽然需要实验室实验来确定这些蛋白质是否能执行预期功能（例如加速特定反应），但这为我们的模型内在蛋白质能力提供了强有力的计算证据。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3GkRmY9bmi12lalJCbZOjU/1bb471ce9aeb8e177ea935869c355d92/motif-responsive-legend-poster.svg?w=3840&amp;q=50" alt="MotifBench · 响应式图例海报"></p>
+<p><em>一个内部研究模型围绕一个必须保持固定形状的小区域（金色所示）设计了蛋白质结构。彩色形状将模型的设计与蛋白质如何折叠的计算机预测进行了比较。仅显示金色的面板没有通过计算机检查的设计。</em></p>
+<h3>设计具有指定折叠的蛋白质</h3>
+<p>在基序支架设计中，我们指定了几个氨基酸应如何相对排列。然后我们确定是否也可以通过指定蛋白质的整体折叠来引导整个蛋白质的设计。我们给模型一个链长度和来自 <a href="https://www.cathdb.info/wiki/doku/?id=faq">CATH</a> 的代码，CATH 是科学家用来分类蛋白质结构的系统。然后模型必须确定每个氨基酸在三维空间中应处的位置。</p>
+<p>许多设计捕捉到了我们要求的整体布局。更难的部分是让链沿着正确的路径穿过它。例如，两种蛋白质可能有几个卷曲段堆积成相似的束，但它们在链连接这些段的顺序上有所不同。</p>
+<p>如果至少一个氨基酸序列被预测为采用所要求的折叠并与模型的三维设计密切匹配，我们将设计计为成功。在 200 个挑战中，我们最新内部模型评估的设计中有 18.9% 通过，而专门蛋白质设计模型 Proteina 为 17.1%。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/11XZLTWWYSfBFIEC0CGw0D/df7b4140a33a376f4ecc4f5bc2a553e6/cath-responsive-legend-poster.svg?w=3840&amp;q=50" alt="CATH 折叠设计 · 响应式图例海报"></p>
+<p><em>一个内部研究模型被要求设计具有指定整体形状的蛋白质，例如螺旋束或链层。彩色形状将选定的设计与它们如何折叠的计算机预测进行比较，显示了两者密切匹配的例子。</em></p>
+<h3>预测化学物质和蛋白质如何适配</h3>
+<p>许多药物，包括阿司匹林，都是<strong>小分子</strong>，即比它们作用的蛋白质小得多的化合物。预测小分子在何处与蛋白质结合以及如何在那里适配称为<strong>对接</strong>。这些预测可以帮助研究人员决定如何修改候选药物以使其更紧密地结合靶标。为了测试我们的模型，我们从实验确定的小分子与蛋白质结合的结构开始。我们以数字方式移除每个小分子，并向模型提供蛋白质结构以及分子原子如何连接的文本描述（称为 SMILES 的字符序列）。然后我们要求模型预测分子曾结合的位置及其取向。</p>
+<p>对于我们的第一个对接测试，我们使用了 <a href="https://pubs.rsc.org/en/content/articlehtml/2024/sc/d3sc04185a">PoseBusters 数据集</a>，这是一个三维结构集合，展示了小分子如何与蛋白质结合。研究人员通过实验确定了这些结构，为我们提供了一种检查模型预测的方法。在没有被告知每个分子在蛋白质上结合位置的情况下，模型必须预测分子适配的位置以及它朝向哪个方向。GPT‑6.2 在 93% 的评分预测中与分子的观察位置和取向密切匹配，而我们最新的内部模型为 96%，专门对接模型 DiffDock-L 为 50%。</p>
+<p>在实践中，研究人员可能已经对分子如何结合有所了解。<strong>GPT 模型的一个主要优势是我们可以在提示中直接提供额外信息</strong>。我们在来自 <a href="https://doi.org/10.1021/acs.jcim.8b00228">Scarpino 数据集</a>的 179 个结构上测试了这一点，其中每个蛋白质结构都与一个小分子形成化学键，将两者系在一起。我们告诉模型哪两个原子形成了键，并要求它们预测分子的其余部分如何与蛋白质适配。GPT‑6.2 在<a href="https://github.com/openai/protein_paper/blob/4f5fbba67d507f01c5b8f1ea2ba9f5bc8c23494b/figures/section_4/small_molecule_docking/data/success/counts_and_rates.csv">92% 的评分预测</a>中与实验结构密切匹配，我们最新的内部模型为 97%，而 <a href="https://github.com/gcorso/DiffDock/blob/main/inference.py">DiffDock</a> 达到 60%。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/45FJ72r4oYUA1DpVYhGI4N/d7101c5b7a6a618481e6362b3b400a87/ligand-docking-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="内部研究模型：预测小分子如何与蛋白质适配（低 RMSD 配体姿态）。来自 PoseBusters 和 Scarpino 数据集的示例中预测和实验配体位置的叠加。"></p>
+<p><em>一个内部研究模型预测了小分子将在何处以及如何与灰色所示的蛋白质适配。紫色显示模型的预测，青色显示在早期实验中确定的分子位置。在这些例子中，预测与实验结构密切匹配。</em></p>
+<h3>预测抗体如何与蛋白质结合</h3>
+<p>抗体结合的位置可以帮助解释它是否阻断另一种蛋白质附着到同一位点。我们测试了连续几代 GPT 预测抗体结合位置及其朝向的准确性。对于数百对抗体和靶标，我们向模型分别展示了两种蛋白质，并隐藏了它们表面上的一些原子细节（所有侧链）。</p>
+<p>在隐藏侧链细节的情况下，平均 DockQ 分数（一种常用指标，值越高表示与实验观察到的排列越接近）从 GPT‑5.6 的约 0.05 增加到 GPT‑6 的 0.28、GPT‑6.2 的 0.57，以及我们最新内部模型的 0.81，均在各模型最高评估计算设置下。</p>
+<p>由于这些结构是公开的，模型可能在训练期间见过相同的抗体-靶标对或相似的对。即便如此，即使隐藏所有侧链位置，每一代模型都更准确地预测了两种蛋白质如何适配。这一进展让我们有理由对更困难的对接问题持乐观态度。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1YHml5YMMOVbMQ7vV03a0Z/4e6dadc376a44b026d96bfd6b3ae1e8a/102-poster.svg?w=3840&amp;q=50" alt="预测抗体附着 · 视频海报"></p>
+<p><em>每一行比较了四个模型对抗体如何附着到其靶标蛋白质的预测。彩色形状显示模型的预测；深灰色显示实验中观察到的位置。随着每一代模型的更新，结果都有所改善。</em></p>
+<h3>预测突变的影响</h3>
+<p>我们可以在计算机上设计的蛋白质远远多于我们能在实验室中制造和测试的。即使我们确定了一个有前途的结构，我们可能仍有许多氨基酸序列可供选择。我们测试了我们的模型能否通过预测蛋白质序列的变化如何影响其稳定性、活性或与靶标结合的能力，来帮助研究人员决定首先制造哪些版本。</p>
+<p>我们利用了四个公开数据集，这些实验中学科学家替换了蛋白质中的一个或多个氨基酸并测量了效果。对于每个测试，我们向模型提供了科学家起始的蛋白质序列以及 50 个修改版本的序列。我们告诉模型科学家测量了什么，隐去结果，并要求它们在不使用编码工具的情况下，仅通过推理对 50 个版本进行排序。</p>
+<p>在一项蛋白质稳定性研究中，我们要求模型根据每个版本在室温下折叠的可能性对 50 个蛋白质版本进行排序。我们使用一种称为<em>秩相关</em>的度量将预测顺序与实验室观察到的顺序进行比较。值为 1 表示排名完全匹配，0 表示没有一致关系，−1 表示顺序完全相反。在稳定性研究的 265 组中，每一代模型都有所改善，从 GPT‑5.6 的 0.41 到 GPT‑6 的 0.52、GPT‑6.2 的 0.57，以及我们最新内部模型的 0.66。</p>
+<p>在四个数据集中的每一个中，GPT‑6.2 和我们最新的内部模型平均产生的排名比专门蛋白质模型 ESM2-650M 更准确。</p>
+<h3>我们模型蛋白质结构预测的早期信号</h3>
+<p>早些时候，我们依赖专门模型来预测氨基酸序列是否会折叠成我们模型设计的结构。我们想看看我们的模型离自己做出该预测有多近。我们向模型提供了具有已知三维结构的蛋白质的氨基酸序列。仅使用基本编码工具，模型预测了每条链将如何在三维中折叠。我们使用一种称为<em>TM-score</em>的度量评估了它们的预测。分数为 1 表示与真实结构完美匹配，分数高于 0.5 通常表明预测捕捉到了整体折叠。</p>
+<p>最大的收益在个别例子中可见。对于某些蛋白质，我们最新的内部模型 closely 再现了早期模型遗漏的折叠。在整个测试中，平均分数从 GPT‑5.6 的 0.16 上升到 GPT‑6.2 的 0.26 和我们最新内部模型的 0.38。专门模型 ESMFold2 平均为 0.93，因此我们的模型仅从序列可靠预测整个蛋白质结构的能力仍有很大差距。</p>
+<p>如果研究人员已经知道大部分结构并想填补缺失的部分呢？我们在 100 个抗体片段上测试了这一点。对于每一个，我们向模型提供了氨基酸序列和周围的三维结构，隐藏了帮助抗体识别靶标的六个环。我们最新的内部模型经常相当准确地预测这些环的形状和位置。ESMFold2 总体上仍然更准确，即使仅从序列工作。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/EPSBjHvFHaqO4YmjaARZl/eb92da4b71e5c45583f0ac9f96cf47f7/117-poster.svg?w=3840&amp;q=50" alt="预测蛋白质如何折叠 · 视频海报"></p>
+<p><em>每个模型被给予相同的蛋白质序列——其化学构建块的顺序——并被要求预测其三维形状。彩色形状显示预测，深灰色显示实验中测量的结构。</em></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3nlrKnz0OVUosx65582laY/725cdf154a6efc78e6ca17dd0665748f/antibody-cdr-legend-desktop.png?w=3840&amp;q=90&amp;fm=webp" alt="十个抗体结构，缺失环由内部模型以紫色预测，ESMFold2 以橙色预测。红色显示实验环。每个例子显示以埃为单位的预测误差。"></p>
+<p><em>每个模型被给予部分结构，并负责预测对应于抗体 CDR 的缺失区域。彩色区域显示内部模型和 ESMFold2 的预测与实验确定的结构进行比较。</em></p>
+<h2>局限性</h2>
+<p>重要的是要注意，我们的蛋白质设计活动依赖于专门的结构预测模型，如 Boltz-2、OpenDDE 和 ESMFold2 来筛选候选物。我们的结果表明，GPT 模型在工作流程的两个阶段具有与专门模型相当的内在能力：骨架生成，研究人员通常使用 RFdiffusion；以及序列重新设计，他们通常使用 ProteinMPNN。因此，我们的结果尚未确立我们的模型可以在没有专门模型帮助的情况下，在零样本设置中端到端地生成 de novo minibinder。</p>
+<p>我们的工作再次展示了参差不齐的能力前沿。从氨基酸序列预测完整的蛋白质结构对我们的模型来说仍然比上述几个组件任务困难得多。在该任务上，即使我们最好的内部模型也远远落后于专门的结构预测模型。</p>
+<p>一些基准结果也需要仔细解读。在要求模型从蛋白质结构推断氨基酸序列的测试中，异常高的准确性可能部分反映了记忆或生成这些结构的过程留下的模式。仅凭这些结果不能确立在不熟悉的蛋白质上的可靠性能。</p>
+<p>实验室结果为所提出的设计是否可行提供了更直接的测试，但结合只是通往有用研究工具或药物的第一步。进一步的工作需要确定特异性、稳定性和生物活性等特性，以及治疗应用的安全性和有效性。</p>
+<h2>下一步</h2>
+<p>这项工作是 OpenAI 朝着<strong>可编程分子设计</strong>迈出的早期一步。我们的目标是让科学家用通俗语言描述他们希望分子做什么，并使用我们的模型帮助设计候选物在实验室中测试。为了使这种方法对开发药物有用，我们希望在三个方面取得进展。</p>
+<ul><li><strong>为更困难的靶标寻找 minibinder。</strong> 我们希望设计能够结合到我们迄今为止尝试未能成功的靶标的分子。</li><li><strong>为结合后发生的事情而设计。</strong> 我们希望测试我们设计的分子是否能产生特定的生物效应，例如杀死癌细胞。我们还希望设计能够选择性结合其预期靶标且易于制造的分子。</li><li><strong>设计更广泛的分子。</strong> 我们的实验室实验集中在小蛋白质 minibinder 和抗体片段。我们希望将这项工作扩展到同时结合多个靶标的分子、RNA 和小分子，包括一类称为 PROTAC 的分子，它们引导细胞分解特定蛋白质。</li></ul>
+<p>在我们努力安全负责地加速科学进步的同时，我们也寻求评估和降低风险，特别是与生物安全相关的风险。帮助科学家为新药设计蛋白质的相同能力也可能被滥用。我们的<a href="https://openai.com/index/updating-our-preparedness-framework/"> preparedness framework⁠</a>指导我们如何评估这些风险并测试降低风险的保障措施。</p>
+<p>虽然实验室测试仍然是蛋白质设计的关键部分，但我们的目标是提供强大的模型，通过给科学家更多控制和灵活性来缩短每一轮设计，并减少找到功能性蛋白质所需的设计-测试循环总数。最终，我们设想使科学家能够仅通过用自然语言提示我们的模型来设计蛋白质和分子，从而大规模加速新生物技术和新药物的开发。</p>
+<ul><li>2026</li></ul>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7Fhi4CJjSh5B8NNQDDr7pd/1c5136956dbb6d35042344ed4aaeedbb/searching-for-distant-planets-with-astra-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="用 Astra 搜寻遥远行星 — 封面"></p>
+<p>用 Astra 搜寻遥远行星</p>
+<p>科学2026年11月24日</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4GWchdof3kw2l5OtMIvGt4/56144e08b813d6af76ae93adc2cefc1b/introducing-medchembench-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="MedChemBench：药物化学 AI 基准测试 — 封面"></p>
+<p>MedChemBench：药物化学 AI 基准测试</p>
+<p>研究2026年11月20日</p>
+<p><img src="https://cdn.openai.com/mdx-assets/ec712845-fc63-4359-a7d8-e2088e063904/research-acceleration-card.41531bc2.png" alt="柔和的蓝色和绿松石色渐变纹理。"></p>
+<p>研究加速：参差不齐的前沿</p>
+<p>研究2026年11月18日</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>与 Astra 一起寻找遥远的行星</title>
+      <link>https://openai.com/index/searching-for-distant-planets-with-astra</link>
+      <guid isPermaLink="true">https://openai.com/index/searching-for-distant-planets-with-astra</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Searching for distant planets with Astra</description>
+      <content:encoded><![CDATA[<p>HD 164604 b 的插图视图拉远至银河系。方框标记了一组已确认系外行星的恒星系统。距离随缩放而变化，并在最宽视野中显示距地球的距离。将鼠标悬停或点击方框可阅读其标签。使用方向键浏览标签，按 Escape 关闭标签。</p>
+<p>November 24, 2026</p>
+<p>科学</p>
+<h1>用 Astra 搜寻遥远行星</h1>
+<p>两名业余天文学家使用 Codex 和 Astra 在公开望远镜数据中寻找行星迹象。现在，他们为专业天文学家提供了一些可以更仔细查看的位置。</p>
+<p>自 <a href="https://www.nature.com/articles/355145a0">1992 年首次公布</a>以来，天文学家已确认超过 <a href="https://exoplanetarchive.ipac.caltech.edu/">6,400 颗太阳系外行星</a>。一个全球业余天文学家社区长期以来一直是这项搜寻的一部分。有些人梳理公开望远镜数据，寻找恒星亮度中微小而重复的下降——这可能预示一颗绕行行星。另一些人则用自己的望远镜观测下一次亮度下降，并与研究人员分享所见。</p>
+<p><em>数据来自 NASA Exoplanet Archive 的 <a href="https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&amp;config=PSCompPars">Planetary Systems Composite Parameters 表</a>。2026 年数据为截至 November 24, 2026 的年初至今数据。</em></p>
+<p>天文学家多年来一直在这一搜寻中使用 AI。2017 年，研究人员用 NASA <a href="https://science.nasa.gov/mission/kepler/">Kepler Space Telescope</a> 的 15,000 个信号训练了一个神经网络，这些信号天文学家此前已经检查过。模型从这些示例中学会识别星光中哪些模式最可能来自行星。当研究人员用它检查更微弱的信号时，其中一个信号引导他们发现了<a href="https://www.nasa.gov/news-release/artificial-intelligence-nasa-data-used-to-discover-eighth-planet-circling-distant-star/">一颗围绕名为 Kepler-90 的恒星运行的第八颗行星</a>。</p>
+<p>如今，像 Astra 这样的工具正帮助业余天文学家设计和运行自己的搜寻，而且常常是在已经产生过较明显系外行星信号的数据上进行。OpenAI 工程师 Kevin Bond 因热爱拍摄夜空而走入天文学。他用 Codex 搜索 Kepler 望远镜对约 100,000 颗恒星的观测数据；Kepler 是一项行星搜寻任务，运行于 2009 年至 2018 年。电子邮件基础设施初创公司 Primitive 的创始人 Ethan Byrd 一直热爱天文学。在与 Bond 各自独立工作的情况下，他尝试了多个 AI 模型，最终选择 Astra 帮助他分析约 1,900 万颗恒星的望远镜数据。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3lbz9p43Y9HBfty25S0RCQ/521c489c1fe8bcf462b0a4e07d5701ba/exoplanets-rooftop-at-sunset.jpg?w=3840&amp;q=90&amp;fm=webp" alt="日落时分，一个人蹲在屋顶上三脚架相机旁。"></p>
+<p>两次搜寻都识别出了潜在的系外行星。Bond 和 Byrd 现在已求助于天文学家，对其结果进行独立评估。Bond 联系了 SETI Institute 的一位天文学家；此人运行了一次独立搜寻，并在 Kepler 数据中发现了其中两个相同信号。Byrd 把他最强的候选之一发送给了从事 NASA Transiting Exoplanet Survey Satellite (TESS) 任务的研究人员。它已排队等待进一步分析，另有两个候选等待提交。</p>
+<h2>寻找星光中的亮度下降</h2>
+<p>寻找系外行星最常见的方法之一是观察它所环绕的恒星。当一颗行星从地球视角经过其恒星前方时，会遮挡极少量星光。天文学家把这次穿越称为凌星（transit）。在恒星亮度随时间变化的图表（称为光变曲线）上，凌星表现为一个亮度下降。如果这个下降按固定间隔反复出现，天文学家就知道何时再次观测它。</p>
+<p>在数千颗恒星中搜寻这种模式，部分上是一个编码问题。天文学家已发表方法，用于从多年测量中挑出微弱、反复出现的亮度下降。Bond 使用 Codex 比较这些方法，将它们组合进一个搜寻程序，并测试代码改动是否改善了搜寻。一个 AI agent 扫描光变曲线以寻找有希望的信号。另一个则对第一个标记出的候选进行更详细的检查。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6710Vp9hZFgzFm8CHOCLrt/20f95c70c1d86c050770e61c0fc02f3d/exoplanets-working-at-laptop-square.jpg?w=3840&amp;q=90&amp;fm=webp" alt="一名摄影师在三脚架相机旁操作笔记本电脑，屏幕和他身后的城市灯光照亮了他。"></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3He6T0iGapx53CIbUOaOxC/55df549454b5e85d7162d9c6f9b2bfbd/exoplanets-laptop-in-the-field.jpg?w=3840&amp;q=90&amp;fm=webp" alt="黑暗中，一双手放在笔记本电脑键盘上，屏幕上可见星空。"></p>
+<p>Bond 在 Kepler Space Telescope 的公开数据上运行了该程序。搜寻标记出 200 多个信号，其中 10 个来自此前已确认的行星。找到这些已知行星让 Bond 相信，该程序能够挑出他正在寻找的那类信号。</p>
+<p>两颗恒星格外突出。第一颗是 KIC 5689121，位于天琴座，是一颗相对较冷的恒星，大小约为太阳的一半。Codex 搜寻发现其亮度每 13.8 天出现一次下降。如果这是由一颗行星造成的，那么它遮挡的光量表明，其直径可能约为地球的 2.4 倍。</p>
+<p>这四条曲线展示了按 13.77 天周期对齐的同一组 Kepler 观测。</p>
+<p>第二颗恒星是 KIC 6691030，较为暗淡，位于北天。Codex 搜寻发现其亮度每 4.8 天出现一次下降，这与一颗比 Neptune 小的行星相符。这些就是 SETI Institute 天文学家独立发现的两个信号。确认它们由什么造成可能需要数月或数年。</p>
+<blockquote>“Kevin 的工作表明，配备 AI 的公民科学家如何帮助天文学家探索 Kepler Bonus Catalog——这是 Kepler 原始目标之外一个庞大的恒星集合。他的流程在传统搜寻可能遗漏的数据中发现了有希望的候选。我们的初步检查令人鼓舞，后续观测将告诉我们更多。”</blockquote>
+<p>Vishal Gajjar，SETI Institute 国际 SETI 项目副主任</p>
+<p>Byrd 使用 Astra 设计了两项搜寻。一项广泛寻找系外行星候选。另一项聚焦于恒星的宜居带。宜居带（habitable zone）是距恒星的一段距离范围，在该范围内，拥有合适大气层的行星可以在其表面维持液态水。</p>
+<p>随后，Byrd 请 Astra 审阅已发表的方法、构建搜寻软件，并对有希望的信号进行初步检查。他的搜寻利用了 NASA 于 2018 年发射的 TESS 的观测数据，以及其他公开望远镜档案的数据。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1Vvl8uwapXZthgt742dVFs/627a21d7b0a87c8aaae3250ffb45b97f/kepler-tess-orange-marker-dark.png?w=3840&amp;q=90&amp;fm=webp" alt="来自 NASA TESS 拼接图的恒星布满 2018–2020 年巡天的天空。北天与南天观测之间有一道宽阔的间隙。一个被圈出的 Kepler 天区连接到一个标注 KIC 5689121 的插图。"></p>
+<p>Kepler 在四年里观测了一个天区。TESS 在 2018 至 2020 年的前 26 个扇区中巡测了两个半球。星场来自 <a href="https://svs.gsfc.nasa.gov/14985/">NASA 截至 September 2025 的 TESS 拼接图</a>，并被裁剪到最初的巡天覆盖范围。较宽的间隙显示了 TESS 在六个观测扇区期间指向更北的位置。插图标出了 <a href="https://archive.stsci.edu/kepler/kic10/search.php?action=Search&amp;kic_kepler_id=5689121">KIC 5689121</a>，它位于原始 <a href="https://archive.stsci.edu/missions-and-data/kepler/field">Kepler 天区</a>中。参见 <a href="https://heasarc.gsfc.nasa.gov/docs/tess/what-is-tess.html">NASA 最终主任务覆盖图</a>及其<a href="https://svs.gsfc.nasa.gov/12885/">早期视场动画</a>。</p>
+<p>对数据的第一轮处理发现了 49 个候选。Byrd 把他最强的候选之一发送给了从事 TESS 任务的研究人员，目前它正在等待进一步分析。他的搜寻仍在运行。</p>
+<h2>确认一颗行星需要什么？</h2>
+<p>当天文学家看到一颗恒星变暗时，他们必须考虑还有什么其他原因可以解释。两颗恒星相互从前方经过，也能产生类似的亮度下降。甚至望远镜内部温度的变化也足以影响其仪器，使一颗恒星看起来变暗。</p>
+<p>天文学家可以利用统计方法表明，系外行星是一系列亮度下降最可能的解释。他们还可以收集更多观测，有时使用不同的方法。例如，一颗绕行行星的引力会牵引其恒星，使其轻微地朝向和远离我们运动。这种运动称为径向速度（radial velocity），表现为恒星光线颜色中的微小偏移。随后，天文学家将他们的发现发表在同行评审期刊上，以便其他人检查证据。</p>
+<p>对 Bond 和 Byrd 来说，每个候选都是一个可以检验的问题。如果有一颗行星每 13.8 天经过天琴座中那颗恒星前方，天文学家就可以等待下一次穿越。进一步观测可以帮助确定亮度下降是否按预期重复，而额外检查可以帮助确定其原因。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2SSdNPM9DjCXsOEbYcsh8B/55dabb5bdee994566b1abc42f343519f/kevin-bond-milky-way-over-ridgeline.jpg?w=3840&amp;q=90&amp;fm=webp" alt="银河斜跨繁星点点的天空，位于剪影般的山脊上方。"></p>
+<p>摄影：Kevin Bond</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3J85rc2RVvJoYQqv3OKoGo/743ec2f901fb39d6a9ddbf2eb2836374/kevin-bond-copper-moon-square.jpg?w=3840&amp;q=90&amp;fm=webp" alt="一轮铜色月亮带着苍白边缘，悬挂在点缀着暗淡星光的近乎黑色的天空中。"></p>
+<h2>参与搜寻</h2>
+<p>你不必拥有望远镜也能作出贡献。NASA 的 <a href="https://science.nasa.gov/citizen-science/exoplanet-watch/how-to-contribute/">Exoplanet Watch</a> 让你可以请求数据，并学习自己绘制光变曲线。其更广泛的<a href="https://science.nasa.gov/exoplanets/citizen-science/">系外行星公民科学项目</a>提供了其他参与方式。</p>
+<p>如果你能使用望远镜，Exoplanet Watch 会引导用户了解如何收集凌星系外行星的数据并参与观测活动。<a href="https://aavso.org/exoplanet-photometry/">AAVSO 的 Exoplanet Observing Program</a>可以向你展示如何测量星光中的亮度下降，并与研究该行星的研究人员分享你的观测。而 <a href="https://science.unistellar.com/exoplanets/unite/">Unistellar Network Investigating TESS Exoplanets</a> 则协调世界各地拥有某一类型望远镜的志愿者观测同一颗恒星，帮助天文学家捕捉可能持续超过一晚的凌星。</p>
+<p>天文学有着悠久的历史，世界各地的人们追随自己的好奇心，并分享他们的发现。Bond 和 Byrd 是这一传统的一部分。他们的搜寻仍在进行，但他们把对夜空的热爱转化为其他天文学家可以调查的线索。我们希望更多人在天文学以及整个科学领域拥有这样的机会。</p>
+<p>如果你想跟进新发现、实用指南，以及使用 AI 推动科学的研究者的观点，<a href="https://openai.com/news/science/">请查看 OpenAI 科学博客⁠</a>。</p>
+<ul><li>2026</li></ul>
+<h2>关于可视化</h2>
+<p>开场动画使用了来自 <a href="https://doi.org/10.26133/NEA13">NASA Exoplanet Archive</a> 的行星名称和宿主恒星位置；该档案由 Caltech 为 NASA 的 Exoplanet Exploration Program 运营。目录快照于 November 19, 2026 获取。行星和银河系是插图。随着视野变宽，距离标签会增大，直至达到目录中的数值。</p>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3R33tya2DbYjbinXosKZnX/791e05bf51a254cbf0b11f804f1d4d4f/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="GPT-6 系列模型展示内在的蛋白质设计能力——封面"></p>
+<p>GPT-6 模型展示内在的蛋白质设计能力</p>
+<p>科学Nov 24, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4GWchdof3kw2l5OtMIvGt4/56144e08b813d6af76ae93adc2cefc1b/introducing-medchembench-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="MedChemBench：为药物化学基准测试 AI——封面"></p>
+<p>MedChemBench：为药物化学基准测试 AI</p>
+<p>研究Nov 20, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1FaKIo74WEGULSjb4ooTrV/718f3bc75e7b2ddd276d43a0fc97760a/academic-researchers-art-card.png?w=3840&amp;q=90&amp;fm=webp" alt="学术研究人员——艺术卡片"></p>
+<p>扩大科学家对 AI 的获取渠道</p>
+<p>研究Nov 16, 2026</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Intentful 如何利用点来为成长腾出更多时间</title>
+      <link>https://openai.com/business/customer-stories/intentful-dots</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/intentful-dots</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How Intentful uses dots to make more time for growth</description>
+      <content:encoded><![CDATA[<p>November 24, 2026</p>
+<h1>Intentful 如何利用 dots 为增长腾出更多时间</h1>
+<p>一家小企业创始人的 dot 如何帮助她完成研究和提案，同时提醒她关注关键消息并解决问题。</p>
+<p><a href="https://openai.com/business/why-openai/small-business/">探索面向小型企业的 ChatGPT</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2ir6HUxIcDOXRHHpjLGfBZ/5b025cf633f0b86e16d8f4f3143e9c55/intentful-dots-hero-c.png?w=3840&amp;q=90&amp;fm=webp" alt="Intentful 字标置于温暖哑光纸上，带有压印的点行和三颗发光的点。"></p>
+<p>公司规模：SMB</p>
+<p>地区：北美</p>
+<p>行业：服务业</p>
+<p>产品：ChatGPT</p>
+<p>Marina Petrova 是 <a href="https://intentful.ai/">Intentful</a> 的 CEO 兼联合创始人。Intentful 是一支精简团队，通过实时回答客户问题的广告、让网站信息可被 AI 读取的工具等产品，帮助品牌将其营销变得可交互。该公司还为营销人员提供 AI 使用方面的咨询和培训。</p>
+<p>在旅行和旅游业，Intentful 与目的地组织以及酒店、餐厅和景点等本地企业合作。定制提案是 Marina 赢得他们业务的方式之一，向潜在客户展示可实现的目标以及交付所需的条件。</p>
+<p>为了让 Intentful 持续增长，她需要为这类战略性工作腾出更多空间，但她却把太多时间花在研究、寻找文件和排版演示文稿上。她的 <a href="https://openai.com/index/introducing-dots/">dot</a> 改变了这一切：它承担任务，甚至在 Marina 不得不开口之前就满足了她的需求。</p>
+<blockquote>“我的 dot 让我感觉自己获得了一种新的超能力。”</blockquote>
+<p>——Marina Petrova，Intentful CEO 兼联合创始人</p>
+<h2>从 300 个网站到几小时而非几天完成提案</h2>
+<p>对于 Intentful 的一家旅游客户，Marina 想为目的地数百家本地企业提出一套 Intentful AI 服务方案。在给这套方案定价之前，她需要弄清楚该方案可以覆盖哪些企业的网站，以及 Intentful 过去为类似工作向其他客户收取了多少费用。</p>
+<p>她请来了自己的 dot——她将其命名为 Aria——帮助她在几小时而非几天内完成从研究到一份可以署上自己名字的提案。首先，Marina 给 Aria 一份 URL 电子表格，以及决定纳入哪些网站的标准。例如，网站需要有一个可读取的站点地图，列出的页面不超过 3,000 个。</p>
+<blockquote>“我的 dot 查看了约 300 个网站站点地图，帮我确定哪些网站应纳入面向本地企业的新报价，并从过去的协议中提取了定价。”</blockquote>
+<p>——Marina Petrova，Intentful CEO 兼联合创始人</p>
+<p>接下来，Aria 帮助 Marina 研究定价。通过 <a href="https://chatgpt.com/business/">ChatGPT</a> 插件，Aria 查看了 Intentful 的销售数据，包括过去的合作以及在 HubSpot 中的讨论。它找出了早先协议中的定价，以及 Intentful 下一年计划中的背景信息。</p>
+<p>利用这些数据，Marina 和 Aria 随后构建了一个定价模型：页面数量决定定价层级，以往的客户协议也为价格提供了依据。“我们一起制定了一个定制定价模型，然后 Aria 将其转成一份一页纸的提案，由我审阅和编辑，”Marina 说。</p>
+<p>起草提案时，Aria 知道使用 Google Drive 中 Intentful 的模板。Marina 还可以让 Aria 参考早先的提案，这样草稿从一开始就遵循 Intentful 的风格。“我需要说明提案中要包含什么，但我不需要花一个小时琢磨版式。我的 dot 会处理这些，”Marina 说。</p>
+<p>Aria 还能发现 Marina 没想到要检查的地方。当 Marina 让 Aria 沿用早先提案中的定价时，它注意到原来的续约日期与她记忆中的时间不符。Aria 标记了这一差异，并将该日期从新草稿中排除。</p>
+<h2>及时掌握消息、任务和团队动态</h2>
+<p>Marina 使用 ChatGPT 中的 Gmail 和 Slack 插件来跟进对话、查找待办任务，并了解团队在哪里需要她。Aria 会检查需要 Marina 关注的消息。在 Marina 离线期间，Aria 发现了她一直在等待的一封回复，并告诉她其中包含当天上午的通话邀请。</p>
+<p>Marina 还使用 Aria 梳理想法、查找对话、在 CRM 中查看账户历史，或在 Asana 中打开和分配任务。她经常在旅行途中通过电话向 Aria 简要说明。</p>
+<blockquote>“在长途驾驶时，我会打电话给我的 dot，讲述需要完成的事情。我们会讨论客户提案的更新，而我的 dot 已经知道结构、格式以及需要做什么。”</blockquote>
+<p>——Marina Petrova，Intentful CEO 兼联合创始人</p>
+<p>Marina 喜欢她的 dot 能在她已经在用的工具中工作。当 Aria 写草稿时，Marina 可以在 Google Docs 中她希望修改的确切位置留下评论。对于较长的文档，她会要求 Aria 使用建议模式，以便她能看到更改了什么。</p>
+<p>Aria 还会在未被要求的情况下跟进共享工作中的变化。为了一次会议演讲，Marina 制作了演示文稿，一位同事增加了两张幻灯片。“Aria 注意到了新幻灯片，在未被要求的情况下更新了演讲者备注，并告诉了我，”Marina 说。</p>
+<p>Marina 选择 Aria 可以访问哪些信息，并且始终审核发出的邮件。她可以让工作持续推进，而不必交出最终决定权。</p>
+<h2>用 dots 向他人传授 AI 知识</h2>
+<p>当 Marina 准备一场关于 agent 的 AI 101 课程时，她用 Aria 帮助构建课程内容。这个过程本身正是她想让学员学到的一个示例：委派一项真实任务，给 agent 足够的上下文，质疑结果，并对最终发出的内容保持控制。</p>
+<p>课程结束后，Aria 的支持仍在继续。一次飞行后，Marina 看到一位参与者请求访问一份培训文件。当她向 Aria 确认时，它已经分享了该文件。而在为 50 名营销人员举办的一场课程后，Aria 注意到一个软件故障导致参与者无法打开录像。它标记了访问问题，并在链接被分享之前提出修复。</p>
+<blockquote>“有了我的 dot，我可以专注于战略性事务。我可以专注于想法和增长。”</blockquote>
+<p>——Marina Petrova，Intentful CEO 兼联合创始人</p>
+<h2>加入新的工作时代</h2>
+<p>全球超过 100 万家企业正在借助 OpenAI 取得有意义的成果。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<h2>获取 OpenAI for Business 更新</h2>
+<p>产品更新、实用指南、即将举行的活动等。</p>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5x1014vlOIPdjkarVkus75/32f9a1097944f5c9e33659058123e0c9/oai_steuerrecht_1.1.png?w=3840&amp;q=90&amp;fm=webp" alt="oai steuerrecht 1.1"></p>
+<p>Steuerrecht.com 借助 ChatGPT 提供更快的法律分析</p>
+<p>Oct 27, 2025</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5B8tYqcVtztQ9PNAvMLPLO/8f2fc1472cb497b2d2b8ff82c0c1eeba/Gondola-Option-A-Art-Card-1080x1080.png?w=3840&amp;q=90&amp;fm=webp" alt="Gondola — 艺术卡片和主视觉图"></p>
+<p>随着团队用 Codex 构建更多内容，Gondola 收入翻倍</p>
+<p>初创公司 Nov 12, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3yz3B9NBTAvhKaqu5cRCwJ/53891263fccaf6007dec3de87733ac70/ted-taylor-restaurant-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="Ted Taylor 餐厅 — 封面"></p>
+<p>加盟商用 ChatGPT Work 将现金对账时间缩短 94%</p>
+<p>Oct 20, 2026</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>iFood 如何在 15,000 个存储库中扩展编码代理</title>
+      <link>https://openai.com/business/customer-stories/ifood</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/ifood</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How iFood scales coding agents across 15,000 repositories</description>
+      <content:encoded><![CDATA[<p>November 24, 2026</p>
+<h1>iFood 如何将编码智能体扩展到 15,000 个代码仓库</h1>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<p>公司规模：企业</p>
+<p>地区：拉丁美洲</p>
+<p>行业：技术</p>
+<p>产品：API</p>
+<p>15,000</p>
+<p>iFood 的代码仓库数量</p>
+<p>25,000+</p>
+<p>平台完成的运行次数</p>
+<p>US$0.04</p>
+<p>平均每次运行的推理成本</p>
+<p>2x+</p>
+<p>通过安全平台修复的漏洞数量</p>
+<p>Remote Agents Platform 将工程任务转化为 API 调用：团队将工作委托出去，执行在远程沙箱中进行，结果以合并请求的形式返回。在内部安全平台中，已修复漏洞的数量增加了一倍以上。</p>
+<h2>挑战不在于任务本身，而在于规模</h2>
+<p>iFood 维护着超过 15,000 个代码仓库。每个仓库都需要定期执行特定任务：验证代码以确保其符合内部标准、修复存在漏洞的依赖项，或运行分析。</p>
+<p>这些任务单独来看都不困难。挑战出现在任务数量成倍增加时。</p>
+<p>“为一个仓库解决这个问题很容易。挑战在于大规模地解决它，”iFood 高级软件工程师 Victor Coelho 说。“Remote Agents Platform 的设计目标，就是让在全部 15,000 个仓库中大规模解决这一问题成为可能。”</p>
+<p>在该平台出现之前，每个团队都以自己的方式应对这个问题——而他们都遇到了同一个障碍。</p>
+<p>“以前，我们的解决方案是碎片化的。想象一下，iFood 的多个团队试图解决不同的问题，却没有这一层——这个智能体运行时——可供他们使用。最终，那些解决方案总是遇到同一个问题。”</p>
+<p>缺失的并不是智能或用例，而是执行基础设施。一个专用的 <em>runtime</em>。</p>
+<blockquote>“团队可以专注于解决业务问题，并把执行委托给我们的平台。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>云端编码智能体，可通过 API 访问</h2>
+<p>团队将 Remote Agents Platform 描述为一个 API，用于启动远程智能体编码任务。该循环包含三个步骤：用户通过 REST 调用提交提示词和环境要求；平台在隔离沙箱内的专用远程运行器上处理任务；之后获取结果。</p>
+<p>“平台的入口，也就是它的接口，是一个简单的 REST API。用户可以使用这个 API 创建他们所需的运行。在内部，我们处理并管理整个生命周期，并将执行委托给隔离沙箱，”他解释道。任务进度可以实时监控。</p>
+<p>运行器的内部设计在两类不同的步骤之间交替——这种组合使整个工作流具有可预测性。</p>
+<p>确定性步骤构成工作流的首尾：开始时克隆仓库、导入智能体可用的 <em>skills</em>，并设置工作分支；结束时发布合并请求，并提供生成的产物。中间是智能体执行本身，在沙箱内运行 GPT‑5.6 Luna。</p>
+<p>“这是两者的结合：工作流中的确定性步骤与智能体执行。”</p>
+<p>沙箱运行 Ubuntu，包含 iFood 生态系统所需的工具链——Python、Java、Kotlin、C#、TypeScript、Rust、JavaScript 和 Go——以及通用工具。在沙箱之外，智能体可以访问 Nexus、GitLab、Docker、Snyk、Kubernetes 和 AWS。</p>
+<h2>为什么选择 GPT‑5.6 Luna</h2>
+<p>模型选择归结为三个需要综合考虑的因素，而不是只看其中一个。</p>
+<p>“我们选择 GPT‑5.6 Luna，是因为在同一 checkpoint 的模型中，基准测试显示它在智能、效率和执行速度——也就是完成任务的速度——之间提供了很好的平衡。这三项特质共同促使我们选择了 GPT‑5.6 Luna。”</p>
+<p>对于为规模化而构建的平台，这种平衡比一次性用例更重要。随着数万个 token 被消耗，每次运行平均四美分的成本不再是一个小细节，而成为架构层面的考虑因素。</p>
+<blockquote>“考虑到我们计划在 iFood 的许多用例中扩展该平台，OpenAI 模型所提供的效率与智能平衡，确保我们能够可持续地扩展。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>如何判断智能体是否完成了任务</h2>
+<p>大规模委托执行带来了一个新挑战：自动判断智能体是否完成了它应该完成的工作。</p>
+<p>iFood 的答案在会话之后的步骤中。执行完成后，结果会使用 OpenAI 的 Structured Outputs 处理，这要求输出符合预定义契约。</p>
+<blockquote>“我们使用 Structured Outputs 处理结果，这确保响应遵循预定义契约。从智能体会话中，我们可以识别出预期响应结构内的输出。这有助于减少不确定性，并确保我们始终能从智能体会话中获得响应，无论结果是肯定还是否定。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>首个主要用户：安全</h2>
+<p>该平台已经为 iFood 内部安全产品提供支持，该产品会扫描 15,000 个仓库中存在漏洞的依赖项，并尝试修复它们。</p>
+<p>迁移产生了直接影响：“借助我们的平台，这些变更、这些修复的准确率提高了一倍以上，”Coelho 说。</p>
+<p>这个用例说明了平台背后的理念：安全团队不需要构建自己的智能体运行时，也不需要成为智能体编排专家。它只需要调用一个 API。</p>
+<h2>异步执行把时间还给开发者</h2>
+<p>团队强调的是异步执行让开发者腾出时间做什么，而不是替代开发者。</p>
+<p>由于任务被委托出去并在无人监督下运行，开发者不必持续专注于监控它。</p>
+<p>“当他们开会时，可以启动代码修复、性能分析或其他更常规的任务——这些任务可以委托出去，而无需在当时监控它。”</p>
+<p>常规工作不再争夺团队的注意力。这就为需要判断力的问题留出了时间。</p>
+<blockquote>“你可以释放这些生产力收益，而不必在工作进行时持续监控。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>以启发它的 API 为蓝本</h2>
+<p>Remote Agents Platform 被设计为一个内部层，其方式类似于 OpenAI 向外部客户提供此类任务。</p>
+<p>“Remote Agents Platform 从 OpenAI 的 API 中汲取了很多灵感，包括 Batch API 和 Agents API，后者是更新的 OpenAI 产品。我们构建了一个类似这些产品的平台，但它是 iFood 内部的。”</p>
+<p>这种启发不仅停留在概念层面，还延伸到接口设计、资源组织方式，以及异步执行并稍后获取结果的方法。</p>
+<blockquote>“这些产品直接启发了我们构建解决方案的方式。”</blockquote>
+<p>—Victor Coelho，iFood 高级软件工程师</p>
+<h2>结果一览</h2>
+<ul><li>平台已完成超过 25,000 项任务，消耗超过 270 亿个 token，平均每次运行成本为 US$0.04。</li><li>迁移到 Remote Agents Platform 后，内部安全平台修复的准确率和已解决漏洞数量均提高了一倍以上。</li><li>覆盖范围扩展到 iFood 的超过 15,000 个代码仓库。</li><li>所有运行均使用 GPT‑5.6 Luna，因其在智能、效率和速度之间的平衡而被选中。</li><li>Structured Outputs 确保每个会话返回的结果都遵循预定义契约，无论结果是肯定还是否定。</li><li>产品团队已从构建碎片化解决方案转向通过 REST API 委托智能体执行。</li></ul>
+<h2>给领导者的经验</h2>
+<ul><li><strong>瓶颈往往是运行时，而不是用例。</strong> 多个团队已经知道他们想要自动化什么；他们缺少的是一个运行它的环境。</li><li><strong>将确定性步骤与智能体执行结合。</strong> 克隆、发布和提供产物不需要模型；中间复杂任务才需要。</li><li><strong>把每次运行成本视为架构决策。</strong> 在规模化场景下，每任务成本决定了哪些工作可行、可以自动化。</li><li><strong>要求输出遵循契约。</strong> 没有结构化响应，就无法在大规模场景下判断智能体是否达成目标。</li><li><strong>异步执行才是真正的生产力提升。</strong> 价值在于无需监控工作，而不是一边盯着一边更快完成。</li></ul>
+<h2>建议</h2>
+<ul><li>通过内部 API 暴露智能体能力，让其他团队无需重建基础设施即可使用。</li><li>将每次运行隔离在各自沙箱中，并预装你的生态系统所需的工具链。</li><li>选择模型时综合考虑智能、成本和速度，而不是只看单一基准测试。</li><li>使用结构化输出自动分类成功与失败。</li><li>从拥有明确痛点和大量需求的内部用户开始——在 iFood，这就是安全平台。</li></ul>
+<h2>下一步</h2>
+<p>团队计划将该平台推广到 iFood 内更多用例，扩大将智能体执行委托给它的内部产品范围——而每任务成本将决定这种扩展能否持续。</p>
+<h2>加入工作新时代</h2>
+<p>全球超过 100 万家企业正在借助 OpenAI 取得有意义的成果。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<h2>获取 OpenAI for Business 更新</h2>
+<p>产品更新、实用指南、即将举行的活动等。</p>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/34uiao4dZziOAyyKO40gSJ/cb6842aa761bc32b495d19976ced17bd/oai_Cisco_1x1.png?w=3840&amp;q=90&amp;fm=webp" alt="oai Cisco 1x1"></p>
+<p>Cisco 与 OpenAI 借助 Codex 重新定义企业工程</p>
+<p>May 27, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5uPNx6tKKw9bfKsi7uepmm/9ac19cf10103ab0c10bd4407b7050e8b/oai_Rakuten_1x1.png?w=3840&amp;q=90&amp;fm=webp" alt="oai Rakuten 1x1"></p>
+<p>Rakuten 借助 Codex 将问题修复速度提高一倍</p>
+<p>Mar 11, 2026</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2R1En1qK4AOSKcuZRpKxco/64ddf998210a4e3f1a3b4c08acba25e2/oai_endava_1x1.png?w=3840&amp;q=90&amp;fm=webp" alt="oai Endava 1x1"></p>
+<p>Endava 如何借助 Codex 构建智能体型组织</p>
+<p>May 28, 2026</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Clay 借助 Codex 和 ChatGPT 帮助销售团队获胜</title>
+      <link>https://openai.com/business/customer-stories/clay-plugins-openai</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/clay-plugins-openai</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Clay helps sales teams win with Codex and ChatGPT</description>
+      <content:encoded><![CDATA[<p>2026年11月24日</p>
+<h1>Clay 借助 Codex 和 ChatGPT 帮助销售团队赢得订单</h1>
+<p>ChatGPT 和 Codex 集成帮助 Clay 用户调研交易，并将数据转化为进入市场打法（go-to-market plays），而 GPT‑6 模型负责推理。</p>
+<p><a href="https://openai.com/startups/">开始使用 OpenAI 构建</a></p>
+<p>公司规模：初创企业</p>
+<p>地区：北美</p>
+<p>行业：科技</p>
+<p>产品：API、Codex、ChatGPT</p>
+<p>即便销售团队掌握大量潜在客户数据，他们仍可能难以判断什么最重要，也难以制定制胜的推销方案。<a href="https://www.clay.com/">Clay</a> 是一款自学习收入引擎，正是为解决这一问题而设计。借助 GPT‑6 Astra、GPT‑6 Sol 及其他模型，Clay 让用户能够构建公司和人员名单，通过智能体丰富这些记录，并将这些信息用于进入市场打法。</p>
+<p>Clay 还通过 Codex 和 ChatGPT 插件，把这些能力带到客户 already 工作的地方，让创建和运行进入市场工作流、调研客户与交易变得更加容易。</p>
+<blockquote>“ChatGPT 中的 Clay 让销售代表能够更深入地了解他们试图推销的客户。它把所有这些丰富的上下文带到了他们已经在使用的地方。”</blockquote>
+<p>—Jeff Barg，Clay 人工智能负责人</p>
+<h2>为销售代表提供更多可据以行动的上下文</h2>
+<p>Clay 的 Codex 集成让构建者能够在 Codex 中创建并运行进入市场打法，同时让销售代表获取可用于调研客户或理解其试图成交的交易的所需数据。</p>
+<p>Jeff 见过销售代表将自有系统的信息与公开数据集结合，以确定如何最好地向客户传达产品价值。“客户很喜欢用 Codex 完成销售中的许多不同任务，”他说，“我们看到最优秀的销售代表从中获得了最大的赋能。”</p>
+<p>Clay 的 ChatGPT 插件把同样的客户数据带入销售代表已经在使用的另一个工具，帮助他们在不离开 ChatGPT 的情况下更深入地了解潜在客户。Jeff 说：“这非常成功。”</p>
+<h2>让智能水平与成本匹配任务需求</h2>
+<p>OpenAI 模型为 Claygent 的调研、资格认定、数据丰富和信号检测提供支持，也为帮助用户构建工作流并协调其他 Clay 智能体的智能体提供支持。</p>
+<p>Clay 将 GPT‑6 Sol 作为主要模型，较难的任务使用 GPT‑6 Astra，对成本敏感的工作则使用 GPT‑6 Luna。这一模型组合既支持后台调研和文案撰写，也支持用户直接交互的智能体。</p>
+<blockquote>“GPT-6 Sol 非常适合进入市场打法。它直觉很好，能够构建长周期、以结果为导向的进入市场任务。”</blockquote>
+<p>—Jeff Barg，Clay 人工智能负责人</p>
+<p>Responses API 让 Clay 通过同一接口使用不同水平的智能与成本。“在不同价格点上拥有相同的 Responses API，是 OpenAI 模型对我们极具吸引力的一点，”Jeff 说。</p>
+<h2>构建可随时间自我改进的端到端打法</h2>
+<p>GPT‑6 Astra 还帮助 Jeff 构建和测试软件。过去，他大部分时间都花在手动检查自己构建的功能上；现在，他可以让 GPT‑6 Astra 承担更多此类工作。</p>
+<p>他解释道：“GPT‑6 Astra 确实改变了我构建软件的方式，因为它完全闭合了工程流程的环路。现在我可以让 Astra 编写代码、添加测试，然后实际运行测试、测试功能、记录结果并上传到 PR 中。这大大简化了我的工作。”</p>
+<p>对于 Clay 的客户，Jeff 认为 GPT‑Live‑1 是一种通过语音使用 Clay 和 Codex、帮助潜在客户了解产品的方式。Clay 正在开发入站销售开发功能，让智能体能够向潜在客户展示产品或服务。他还认为 Decisions API 是将模型集成到 Clay 并开拓新用例的另一条途径。</p>
+<p>Clay 的目标是端到端承载进入市场工作流，让智能体在从结果中学习的过程中不断改进。对 Jeff 而言，目标是赋能构建者“把软件工程领域发生的那种转变带到进入市场领域”。</p>
+<h2>OpenAI &lt;3 初创企业</h2>
+<p><a href="https://openai.com/leads/startup/">加入社区</a><a href="https://openai.com/startups">开始构建</a></p>
+<h2>获取 OpenAI for Business 更新</h2>
+<p>产品更新、实用指南、即将举行的活动等。</p>
+<h2>继续阅读</h2>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1rKCtFRlZxa18NisCqmSuN/c4f5753f8abe609e472aec9c0f2ec199/richpanel-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="Richpanel — 封面"></p>
+<p>Richpanel 帮助企业在 30 天内自动处理 50% 的支持工作</p>
+<p>初创企业2026年11月23日</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2j2sOeYR5anL69nJvTbPot/4758d44649f585b33d96cdf14742c0d4/hebbia-smoked-depth-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="Hebbia — 封面"></p>
+<p>Hebbia 借助 GPT-6 Astra 在金融研究领域取得改进</p>
+<p>2026年11月20日</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1b77wWqxMlNBg59VRDTuuQ/46601ae75270e4d037359127eb09a76c/cogent-security-cover-sienna.png?w=3840&amp;q=90&amp;fm=webp" alt="Cogent Security — 封面（赭色）"></p>
+<p>Cogent 与 OpenAI 为企业构建网络防御工厂</p>
+<p>初创企业2026年11月10日</p>]]></content:encoded>
+    </item>
     <item>
       <title>OpenAI 和 Cisco 推出 Shirudo</title>
       <link>https://openai.com/index/introducing-shirudo</link>
@@ -387,27 +752,6 @@
 <p>观看 PR 扫描的演示，看看演示者如何在 pull request 工作流中审阅扫描结果。</p>]]></content:encoded>
     </item>
     <item>
-      <title>开始使用 Daybreak Blue</title>
-      <link>https://openai.com/business/learn/daybreak-blue-onboarding-demo</link>
-      <guid isPermaLink="true">https://openai.com/business/learn/daybreak-blue-onboarding-demo</guid>
-      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Get started with Daybreak Blue</description>
-      <content:encoded><![CDATA[<p>开始使用 Daybreak Blue | OpenAI</p>
-<p>产品演示</p>
-<h1>开始使用 Daybreak Blue</h1>
-<p>观看 Daybreak Blue 的开通流程演示，近距离了解设置环节以及如何开始使用。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>探索 Codex 安全插件</title>
-      <link>https://openai.com/business/learn/codex-security-plugin-demo</link>
-      <guid isPermaLink="true">https://openai.com/business/learn/codex-security-plugin-demo</guid>
-      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Explore the Codex Security Plugin</description>
-      <content:encoded><![CDATA[<p>产品演示</p>
-<h1>探索 Codex Security Plugin</h1>
-<p>观看 Codex Security Plugin 的演示，了解这套工作流实际怎么跑起来，从入门操作一直看到如何查看录制中展示的结果。</p>]]></content:encoded>
-    </item>
-    <item>
       <title>部署 Daybreak Red</title>
       <link>https://openai.com/business/learn/deploying-daybreak-red</link>
       <guid isPermaLink="true">https://openai.com/business/learn/deploying-daybreak-red</guid>
@@ -421,6 +765,27 @@
 <p>了解如何用 Daybreak Red 搭建用于受监督安全调查的隔离环境。本指南涵盖架构、安全控制、环境配置，以及如何运行并监控一次调查。</p>
 <p><a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf">阅读完整指南（PDF）。</a></p>
 <h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>探索 Codex 安全插件</title>
+      <link>https://openai.com/business/learn/codex-security-plugin-demo</link>
+      <guid isPermaLink="true">https://openai.com/business/learn/codex-security-plugin-demo</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Explore the Codex Security Plugin</description>
+      <content:encoded><![CDATA[<p>产品演示</p>
+<h1>探索 Codex Security Plugin</h1>
+<p>观看 Codex Security Plugin 的演示，了解这套工作流实际怎么跑起来，从入门操作一直看到如何查看录制中展示的结果。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>开始使用 Daybreak Blue</title>
+      <link>https://openai.com/business/learn/daybreak-blue-onboarding-demo</link>
+      <guid isPermaLink="true">https://openai.com/business/learn/daybreak-blue-onboarding-demo</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Get started with Daybreak Blue</description>
+      <content:encoded><![CDATA[<p>开始使用 Daybreak Blue | OpenAI</p>
+<p>产品演示</p>
+<h1>开始使用 Daybreak Blue</h1>
+<p>观看 Daybreak Blue 的开通流程演示，近距离了解设置环节以及如何开始使用。</p>]]></content:encoded>
     </item>
     <item>
       <title>沉默的共识</title>
@@ -461,6 +826,63 @@
 <ul><li>2026</li></ul>
 <h2>作者</h2>
 <p>Dean Ball</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>住友生命的领导者如何帮助团队采用 ChatGPT Enterprise</title>
+      <link>https://openai.com/business/customer-stories/sumitomo-life</link>
+      <guid isPermaLink="true">https://openai.com/business/customer-stories/sumitomo-life</guid>
+      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How Sumitomo Life’s leaders helped teams adopt ChatGPT Enterprise</description>
+      <content:encoded><![CDATA[<p>2026年11月18日</p>
+<h1>住友生命管理层如何推动团队采用 ChatGPT Enterprise</h1>
+<p>企划团队使用 ChatGPT 研究海外保险公司并准备提案。投资团队则用它起草风险分析代码。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tR8joMsjUp2pNkjxkAB2i/f9951f263252041c48afa0b4d33c7959/sumitomo-life-layered-paper-art-card.png?w=3840&amp;q=90&amp;fm=webp" alt="红色叠纸纹理背景上的住友生命标志"></p>
+<p>公司规模: 大型企业</p>
+<p>区域: 亚太地区与大洋洲</p>
+<p>行业: 金融</p>
+<p>产品: ChatGPT</p>
+<p>成效</p>
+<p>80%+</p>
+<p>ChatGPT Enterprise 每周使用率</p>
+<p>成效</p>
+<p>524%</p>
+<p>每月使用 ChatGPT 至少 101 次的员工的平均估算投资回报率</p>
+<p>投资回报率根据员工自报的时间节省情况估算；整体估算投资回报率为 203%。</p>
+<p>住友生命的企划团队在为高层管理人员准备提案时，会借助 ChatGPT Enterprise 查阅原始资料、整理研究发现。他们将这些研究发现与一手信息相结合，并凭借专业知识判断应提出哪些建议。会计和财务团队也使用 ChatGPT 开展研究与分析。</p>
+<p>这家日本寿险公司的高管和经理是最早使用 ChatGPT 的一批人。在他们的示范带动和总裁的鼓励下，更多员工开始尝试将 ChatGPT 用于自己的工作。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3tcmtf32edhFUvSN7SPRnr/bf8a8ef1c34251ad5f4eb75a5df6c86f/sumitomo-life-running-photo.png?w=3840&amp;q=90&amp;fm=webp" alt="蓝天下，一名跑者正迈步奔跑。"></p>
+<h2>从试点到更大范围推广</h2>
+<p>住友生命于 2023 年开始在工作中使用生成式 AI。起初，员工主要通过聊天提问。在试用通用 AI 工具的过程中，ChatGPT 凭借广泛的适用范围脱颖而出。他们可以使用深度研究功能，结合多个来源探索问题，也可以将 ChatGPT 融入原本就在 Word、PowerPoint 和 Excel 中开展的工作。</p>
+<p>2025 年，约 100 至 150 人参与了 ChatGPT Business 试点，其中包括高管和企划团队成员。2026 年 6 月，公司转而采用 ChatGPT Enterprise。在计划向数千名员工推广时，住友生命综合考虑了输出质量、ChatGPT 对不同工作的适用程度，以及金融机构的安全要求。</p>
+<p>住友生命与 OpenAI 合作，对照自身安全标准评估 ChatGPT Enterprise。评估内容包括住友生命如何管理工作空间访问权限和功能权限，以及 OpenAI 默认不使用业务数据训练模型的政策。住友生命持续根据员工处理的信息和连接的系统，确定员工可以如何使用 ChatGPT。</p>
+<h2>编写代码与准备提案</h2>
+<p>住友生命的投资团队通过统计分析预测收益，并评估价格波动等风险。ChatGPT 帮助分析师起草这类工作所需的代码，减少他们需要亲自编写的代码量。</p>
+<p>企划团队使用 ChatGPT 跟踪日本其他保险公司的动态，并查找海外案例。他们利用这些研究成果，完善提交给高层管理人员的提案。</p>
+<p>企划团队还向熟悉相关业务的人士获取一手信息，以补充公开资料。他们使用 ChatGPT 中的项目功能，将这些资料与相关聊天、文件和自定义指令集中存放。</p>
+<h2>总裁以身作则</h2>
+<p>住友生命总裁在 ChatGPT Business 试点期间就开始使用 AI。在管理层会议和公司内部门户上，总裁经常鼓励员工将 AI 用于工作。</p>
+<p>住友生命企划部资深成员 Kakeru Tateyama 见证了这一示范作用如何推动 AI 的应用。他说：“如果高层领导不了解一项新技术，要推动它落地就会很困难。”“在我们公司，高管和经理是最早使用它的一批人。他们亲身体验了它能做什么。我认为，这让其他人也更容易迈出使用它的第一步。”</p>
+<p>自首次培训以来，OpenAI 一直在分享世界各地组织使用 ChatGPT 的案例。双方团队会讨论哪些做法契合住友生命的重点工作，并在新功能推出时进行评估。</p>
+<h2>使用频率与投资回报的关系</h2>
+<p>住友生命跟踪员工使用 ChatGPT Enterprise 的频率，并估算这项投资的回报。</p>
+<ul><li>ChatGPT Enterprise 的每周使用率超过 80%。</li><li>对于每月使用 ChatGPT 至少 101 次的员工，估算投资回报率平均为 524%。这一估算基于员工自报的时间节省情况；整体估算投资回报率为 203%。</li></ul>
+<p>住友生命关注的不只是已分配的账号数量。公司在季度调查中询问员工使用 ChatGPT 的频率、在哪些工作环节使用，以及是否与同事一起使用。</p>
+<p>根据员工自报的时间节省情况估算的投资回报率。524% 仅适用于每月使用 ChatGPT 至少 101 次的员工；整体估算投资回报率为 203%。</p>
+<p>住友生命根据员工自报的时间节省情况，估算了不同 ChatGPT 使用频率对应的投资回报率。使用越频繁的员工群体，估算的投资回报率越高。每月使用 8 至 15 次的员工，平均投资回报率为 55%；使用 16 至 30 次的员工为 231%；使用至少 101 次的员工则为 524%。整体平均值为 203%。</p>
+<p>员工也开始承担一些过去因缺乏时间或专业技能而无法开展的工作。对住友生命而言，这让每个人都能在更多方面作出贡献，即使这些收益有时难以用节省的工时来衡量。</p>
+<p>企划部副总经理 Masakazu Obi 认为，改变工作本身的开展方式，蕴含着更大的机遇。他说：“如果我们把现有的工作方式视为理所当然，就无法充分发挥 AI 的价值。”“关键在于，我们能否改变流程本身。在引入 AI 的同时，我们也在着眼长远，推动这些流程的变革。”</p>
+<h2>留出更多时间与客户交流</h2>
+<p>住友生命计划于 2026 财年下半年开始向更多员工推广 AI。公司将针对各个岗位，明确哪些任务可由 AI 承担，哪些工作适合员工与 AI 协作，以及哪些职责应继续由人承担。</p>
+<p>从更长远来看，住友生命正考虑将 AI 用于核保和理赔支付等更专业的工作。公司计划在围绕 AI 重新设计工作流程的同时，与 OpenAI 共同探索新技术和新服务。</p>
+<p>目标是让员工有更多时间与客户交流。住友生命致力于增进客户与员工的福祉，并将这些交流视为践行这一承诺的一部分。</p>
+<blockquote>“对我们而言，保险的价值在于让客户和社会安心。有些价值只有人才能提供，它来自与客户的交流，以及对他们感受的理解。”</blockquote>
+<p>—Kuniaki Nakagawa，住友生命 AI 战略专项小组经理</p>
+<h2>迈入工作新时代</h2>
+<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
+<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
+<h2>接收 OpenAI 商业应用的最新资讯</h2>
+<p>产品更新、实用指南、活动预告等丰富内容</p>]]></content:encoded>
     </item>
     <item>
       <title>研究加速：锯齿状的前沿</title>
@@ -554,63 +976,6 @@
 <h2>作者</h2>
 <h2>脚注</h2>
 <ul><li>1 用实证方法测量 AI R&amp;D 加速的科学还相对年轻，但正在研究前沿迅速成长。到目前为止，Anthropic 已独立发布 <a href="https://www.anthropic.com/institute/recursive-self-improvement">三份</a> <a href="https://www.anthropic.com/research/employment-at-anthropic">不同</a> <a href="https://www.anthropic.com/institute/measuring-pace-of-ai-development">报告</a>，记录了内部模型部署如何加速 AI 研究过程。<a href="https://storage.googleapis.com/deepmind-media/gemini/gemini_4_safety_report.pdf">Gemini 4 Argon Safety and Security Report</a> 第 3.4.2 节以实证方式概述了 Google DeepMind 内部由 AI 撰写的代码占比不断上升。METR 与 Anthropic 合作发布了一份 <a href="https://metr.org/blog/2026-11-05-anthropic-ai-rd-acceleration-assessment/#executive-summary">加速评估报告</a>，估算了内部 Claude 模型对能力前沿的加速幅度。</li><li>2 我们说明一下，OpenAI 的研究员目前没有 agentic coding 配额。8 月 21 日，OpenAI 在内部部署了一项临时的 harness 效率改进。我们发现，这次内部部署恰好伴随 input token 利用率的急剧下降，看起来大幅压低了有记录的内部 token 支出。出于与支出无关的原因，这项 harness 改动从 9 月 10 日起在内部各部署中逐步回滚，我们发现此后 token 支出迅速上升。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>住友生命的领导者如何帮助团队采用 ChatGPT Enterprise</title>
-      <link>https://openai.com/business/customer-stories/sumitomo-life</link>
-      <guid isPermaLink="true">https://openai.com/business/customer-stories/sumitomo-life</guid>
-      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：How Sumitomo Life’s leaders helped teams adopt ChatGPT Enterprise</description>
-      <content:encoded><![CDATA[<p>2026年11月18日</p>
-<h1>住友生命管理层如何推动团队采用 ChatGPT Enterprise</h1>
-<p>企划团队使用 ChatGPT 研究海外保险公司并准备提案。投资团队则用它起草风险分析代码。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tR8joMsjUp2pNkjxkAB2i/f9951f263252041c48afa0b4d33c7959/sumitomo-life-layered-paper-art-card.png?w=3840&amp;q=90&amp;fm=webp" alt="红色叠纸纹理背景上的住友生命标志"></p>
-<p>公司规模: 大型企业</p>
-<p>区域: 亚太地区与大洋洲</p>
-<p>行业: 金融</p>
-<p>产品: ChatGPT</p>
-<p>成效</p>
-<p>80%+</p>
-<p>ChatGPT Enterprise 每周使用率</p>
-<p>成效</p>
-<p>524%</p>
-<p>每月使用 ChatGPT 至少 101 次的员工的平均估算投资回报率</p>
-<p>投资回报率根据员工自报的时间节省情况估算；整体估算投资回报率为 203%。</p>
-<p>住友生命的企划团队在为高层管理人员准备提案时，会借助 ChatGPT Enterprise 查阅原始资料、整理研究发现。他们将这些研究发现与一手信息相结合，并凭借专业知识判断应提出哪些建议。会计和财务团队也使用 ChatGPT 开展研究与分析。</p>
-<p>这家日本寿险公司的高管和经理是最早使用 ChatGPT 的一批人。在他们的示范带动和总裁的鼓励下，更多员工开始尝试将 ChatGPT 用于自己的工作。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3tcmtf32edhFUvSN7SPRnr/bf8a8ef1c34251ad5f4eb75a5df6c86f/sumitomo-life-running-photo.png?w=3840&amp;q=90&amp;fm=webp" alt="蓝天下，一名跑者正迈步奔跑。"></p>
-<h2>从试点到更大范围推广</h2>
-<p>住友生命于 2023 年开始在工作中使用生成式 AI。起初，员工主要通过聊天提问。在试用通用 AI 工具的过程中，ChatGPT 凭借广泛的适用范围脱颖而出。他们可以使用深度研究功能，结合多个来源探索问题，也可以将 ChatGPT 融入原本就在 Word、PowerPoint 和 Excel 中开展的工作。</p>
-<p>2025 年，约 100 至 150 人参与了 ChatGPT Business 试点，其中包括高管和企划团队成员。2026 年 6 月，公司转而采用 ChatGPT Enterprise。在计划向数千名员工推广时，住友生命综合考虑了输出质量、ChatGPT 对不同工作的适用程度，以及金融机构的安全要求。</p>
-<p>住友生命与 OpenAI 合作，对照自身安全标准评估 ChatGPT Enterprise。评估内容包括住友生命如何管理工作空间访问权限和功能权限，以及 OpenAI 默认不使用业务数据训练模型的政策。住友生命持续根据员工处理的信息和连接的系统，确定员工可以如何使用 ChatGPT。</p>
-<h2>编写代码与准备提案</h2>
-<p>住友生命的投资团队通过统计分析预测收益，并评估价格波动等风险。ChatGPT 帮助分析师起草这类工作所需的代码，减少他们需要亲自编写的代码量。</p>
-<p>企划团队使用 ChatGPT 跟踪日本其他保险公司的动态，并查找海外案例。他们利用这些研究成果，完善提交给高层管理人员的提案。</p>
-<p>企划团队还向熟悉相关业务的人士获取一手信息，以补充公开资料。他们使用 ChatGPT 中的项目功能，将这些资料与相关聊天、文件和自定义指令集中存放。</p>
-<h2>总裁以身作则</h2>
-<p>住友生命总裁在 ChatGPT Business 试点期间就开始使用 AI。在管理层会议和公司内部门户上，总裁经常鼓励员工将 AI 用于工作。</p>
-<p>住友生命企划部资深成员 Kakeru Tateyama 见证了这一示范作用如何推动 AI 的应用。他说：“如果高层领导不了解一项新技术，要推动它落地就会很困难。”“在我们公司，高管和经理是最早使用它的一批人。他们亲身体验了它能做什么。我认为，这让其他人也更容易迈出使用它的第一步。”</p>
-<p>自首次培训以来，OpenAI 一直在分享世界各地组织使用 ChatGPT 的案例。双方团队会讨论哪些做法契合住友生命的重点工作，并在新功能推出时进行评估。</p>
-<h2>使用频率与投资回报的关系</h2>
-<p>住友生命跟踪员工使用 ChatGPT Enterprise 的频率，并估算这项投资的回报。</p>
-<ul><li>ChatGPT Enterprise 的每周使用率超过 80%。</li><li>对于每月使用 ChatGPT 至少 101 次的员工，估算投资回报率平均为 524%。这一估算基于员工自报的时间节省情况；整体估算投资回报率为 203%。</li></ul>
-<p>住友生命关注的不只是已分配的账号数量。公司在季度调查中询问员工使用 ChatGPT 的频率、在哪些工作环节使用，以及是否与同事一起使用。</p>
-<p>根据员工自报的时间节省情况估算的投资回报率。524% 仅适用于每月使用 ChatGPT 至少 101 次的员工；整体估算投资回报率为 203%。</p>
-<p>住友生命根据员工自报的时间节省情况，估算了不同 ChatGPT 使用频率对应的投资回报率。使用越频繁的员工群体，估算的投资回报率越高。每月使用 8 至 15 次的员工，平均投资回报率为 55%；使用 16 至 30 次的员工为 231%；使用至少 101 次的员工则为 524%。整体平均值为 203%。</p>
-<p>员工也开始承担一些过去因缺乏时间或专业技能而无法开展的工作。对住友生命而言，这让每个人都能在更多方面作出贡献，即使这些收益有时难以用节省的工时来衡量。</p>
-<p>企划部副总经理 Masakazu Obi 认为，改变工作本身的开展方式，蕴含着更大的机遇。他说：“如果我们把现有的工作方式视为理所当然，就无法充分发挥 AI 的价值。”“关键在于，我们能否改变流程本身。在引入 AI 的同时，我们也在着眼长远，推动这些流程的变革。”</p>
-<h2>留出更多时间与客户交流</h2>
-<p>住友生命计划于 2026 财年下半年开始向更多员工推广 AI。公司将针对各个岗位，明确哪些任务可由 AI 承担，哪些工作适合员工与 AI 协作，以及哪些职责应继续由人承担。</p>
-<p>从更长远来看，住友生命正考虑将 AI 用于核保和理赔支付等更专业的工作。公司计划在围绕 AI 重新设计工作流程的同时，与 OpenAI 共同探索新技术和新服务。</p>
-<p>目标是让员工有更多时间与客户交流。住友生命致力于增进客户与员工的福祉，并将这些交流视为践行这一承诺的一部分。</p>
-<blockquote>“对我们而言，保险的价值在于让客户和社会安心。有些价值只有人才能提供，它来自与客户的交流，以及对他们感受的理解。”</blockquote>
-<p>—Kuniaki Nakagawa，住友生命 AI 战略专项小组经理</p>
-<h2>迈入工作新时代</h2>
-<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<h2>接收 OpenAI 商业应用的最新资讯</h2>
-<p>产品更新、实用指南、活动预告等丰富内容</p>]]></content:encoded>
     </item>
     <item>
       <title>Codex 沙箱内部</title>
@@ -1058,6 +1423,34 @@
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
+      <title>为智利推出 OpenAI</title>
+      <link>https://openai.com/index/introducing-openai-for-chile</link>
+      <guid isPermaLink="true">https://openai.com/index/introducing-openai-for-chile</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing OpenAI for Chile</description>
+      <content:encoded><![CDATA[<p>2026年11月17日</p>
+<p>全球事务</p>
+<h1>推出 OpenAI 智利计划</h1>
+<p>今天，我们推出 OpenAI 智利计划。这项与智利政府开展的合作由智利科学、技术、知识与创新部牵头，旨在支持公共行政部门负责任地采用 AI，提升公务员技能，并帮助当地初创企业开发实用的 AI 应用。</p>
+<p>此次合作以智利的<a href="https://minciencia.gob.cl/areas/inteligencia-artificial/Inteligencia-Artificial/">国家 AI 政策与行动计划</a>为基础，该政策与计划支持人才培养、研究以及负责任地采用 AI。</p>
+<p>这份谅解备忘录在 Semafor 于加利福尼亚州举办的“硅谷与世界”会议期间签署，由部长 Ximena Lincolao 代表智利牵头达成协议。</p>
+<p>此次合作得到美国商务部<a href="https://siexports.gov/">美国 SI 出口计划</a>的支持，OpenAI 是该计划的核心合作伙伴之一。此次合作将通过公共部门创新、技能培养和创业，帮助智利推进自身的 AI 发展目标。</p>
+<blockquote>“人工智能将成为改善人们生活的最重要途径之一——从加速科学发现，到帮助人们创造出我们尚未想象到的事物。我很高兴能与智利合作，帮助公职人员使用这些工具，改善公共服务，并支持创业者创办新公司。我期待看到智利的初创企业解决世界上一些最重要的问题，创造出惠及各地民众的成果。”</blockquote>
+<p>—Sam Altman，OpenAI 首席执行官</p>
+<blockquote>“我们对这次合作充满期待，也为它将给智利各地的科学发现、创业和创新带来的非凡机遇感到振奋。这次合作旨在助力智利人民不断突破可能性的边界，创造新技术，开发改善人们生活的解决方案。”</blockquote>
+<p>—Ximena Lincolao，智利科学、技术、知识与创新部长</p>
+<h2>让 AI 在智利发挥实效</h2>
+<p>此次合作将探索在该部的行政流程中引入技术，包括由 OpenAI 为采用新模型提供潜在支持，并为该部工作人员提供咨询和培训。</p>
+<p>针对公务员，此次合作将探索如何根据其岗位需求，开展实用的 AI 素养培训、技能提升和新技能培训。相关活动可能包括工作坊和培训师培养，内容涵盖有效使用 AI 工具、核查输出、保护敏感信息，以及保持人工监督。</p>
+<p>为支持智利的 AI 创业与创新生态，合作双方将探索让当地参与者获得相关 OpenAI 计划和技术支持、实践学习机会、技术指导及导师辅导的途径。此次合作还可能为创业者对接公共机构、高校和其他当地合作伙伴，共同开发应用，支持智利的经济发展和公共服务重点工作。</p>
+<p>预计由该部与 OpenAI 代表组成的联合工作组将商定优先事项和初步工作计划，并为各项活动明确负责人、里程碑和成效衡量标准。</p>
+<p>具体活动、参与资格、资源及技术使用安排将另行商定。该谅解备忘录不包含任何投资或采购承诺。各项活动均须落实适当的保障措施，以保护隐私、确保信息安全，并保障负责任的使用。</p>
+<h2>关于 OpenAI 国家合作计划</h2>
+<p>OpenAI 智利计划是 OpenAI 国家合作计划的一部分。作为我们的全球倡议，OpenAI 国家合作计划旨在帮助各国利用 AI 推进国家重点工作、增强经济实力并创造更多机会。我们与各国政府及当地合作伙伴携手，将 AI 的潜力转化为惠及民众的实际成果。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>Astra for Law 在法律情报方面处于领先地位</title>
       <link>https://openai.com/index/astra-law-6-2</link>
       <guid isPermaLink="true">https://openai.com/index/astra-law-6-2</guid>
@@ -1109,34 +1502,6 @@
 <p>即日起，所有 ChatGPT Enterprise 客户都可以通过管理控制台中的可信访问计划，申请使用面向法律事务的 Astra。如果你的团队已获得访问权限，请在 ChatGPT 中选择 <strong>GPT‑6.2 Astra Law</strong>。如需通过 API 将面向法律事务的 Astra 集成到自己的工具中，请联系你的客户总监，单独申请审批。</p>
 <p>法律行业正处于转折点。技术正在改变企业的能力边界，世界也日益复杂、彼此紧密相连。在这样的背景下，律师迎来了前所未有的机会，帮助我们理解当下、把握变化。这不仅关乎他们服务的企业，也关乎我们每一个人，因为我们都生活在他们参与制定的规则之下。我们相信，最优秀的律师借助最强大的智能，能够回应这个时代的挑战。</p>
 <p>这仅仅是开始。我们期待看到你们将法律行业带向怎样的未来。</p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>为智利推出 OpenAI</title>
-      <link>https://openai.com/index/introducing-openai-for-chile</link>
-      <guid isPermaLink="true">https://openai.com/index/introducing-openai-for-chile</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing OpenAI for Chile</description>
-      <content:encoded><![CDATA[<p>2026年11月17日</p>
-<p>全球事务</p>
-<h1>推出 OpenAI 智利计划</h1>
-<p>今天，我们推出 OpenAI 智利计划。这项与智利政府开展的合作由智利科学、技术、知识与创新部牵头，旨在支持公共行政部门负责任地采用 AI，提升公务员技能，并帮助当地初创企业开发实用的 AI 应用。</p>
-<p>此次合作以智利的<a href="https://minciencia.gob.cl/areas/inteligencia-artificial/Inteligencia-Artificial/">国家 AI 政策与行动计划</a>为基础，该政策与计划支持人才培养、研究以及负责任地采用 AI。</p>
-<p>这份谅解备忘录在 Semafor 于加利福尼亚州举办的“硅谷与世界”会议期间签署，由部长 Ximena Lincolao 代表智利牵头达成协议。</p>
-<p>此次合作得到美国商务部<a href="https://siexports.gov/">美国 SI 出口计划</a>的支持，OpenAI 是该计划的核心合作伙伴之一。此次合作将通过公共部门创新、技能培养和创业，帮助智利推进自身的 AI 发展目标。</p>
-<blockquote>“人工智能将成为改善人们生活的最重要途径之一——从加速科学发现，到帮助人们创造出我们尚未想象到的事物。我很高兴能与智利合作，帮助公职人员使用这些工具，改善公共服务，并支持创业者创办新公司。我期待看到智利的初创企业解决世界上一些最重要的问题，创造出惠及各地民众的成果。”</blockquote>
-<p>—Sam Altman，OpenAI 首席执行官</p>
-<blockquote>“我们对这次合作充满期待，也为它将给智利各地的科学发现、创业和创新带来的非凡机遇感到振奋。这次合作旨在助力智利人民不断突破可能性的边界，创造新技术，开发改善人们生活的解决方案。”</blockquote>
-<p>—Ximena Lincolao，智利科学、技术、知识与创新部长</p>
-<h2>让 AI 在智利发挥实效</h2>
-<p>此次合作将探索在该部的行政流程中引入技术，包括由 OpenAI 为采用新模型提供潜在支持，并为该部工作人员提供咨询和培训。</p>
-<p>针对公务员，此次合作将探索如何根据其岗位需求，开展实用的 AI 素养培训、技能提升和新技能培训。相关活动可能包括工作坊和培训师培养，内容涵盖有效使用 AI 工具、核查输出、保护敏感信息，以及保持人工监督。</p>
-<p>为支持智利的 AI 创业与创新生态，合作双方将探索让当地参与者获得相关 OpenAI 计划和技术支持、实践学习机会、技术指导及导师辅导的途径。此次合作还可能为创业者对接公共机构、高校和其他当地合作伙伴，共同开发应用，支持智利的经济发展和公共服务重点工作。</p>
-<p>预计由该部与 OpenAI 代表组成的联合工作组将商定优先事项和初步工作计划，并为各项活动明确负责人、里程碑和成效衡量标准。</p>
-<p>具体活动、参与资格、资源及技术使用安排将另行商定。该谅解备忘录不包含任何投资或采购承诺。各项活动均须落实适当的保障措施，以保护隐私、确保信息安全，并保障负责任的使用。</p>
-<h2>关于 OpenAI 国家合作计划</h2>
-<p>OpenAI 智利计划是 OpenAI 国家合作计划的一部分。作为我们的全球倡议，OpenAI 国家合作计划旨在帮助各国利用 AI 推进国家重点工作、增强经济实力并创造更多机会。我们与各国政府及当地合作伙伴携手，将 AI 的潜力转化为惠及民众的实际成果。</p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -1417,6 +1782,58 @@
 <ul><li>1这一范围小于 METR 在其<a href="https://metr.org/blog/2026-10-14-alignment-assessment-proposal/">对齐评估提案</a>中设想的范围；该提案计划对不对齐问题开展广泛调查。</li><li>2我们近期与 METR 开展了为期三周的监测器红队测试演练，期间向其开放了代码库、监测器和相关运行轨迹的访问权限，并安排其与 OpenAI 研究人员交流，以帮助他们更好地了解我们的监测器。<a href="https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/">https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/</a></li><li>3在某些情况下，我们会根据实验条件采用更严格的标准，以开展审慎的安全审查。</li><li>4Apollo Research 和 Goodfire 会为其工作收取报酬，但报酬不与评估结果挂钩。METR 和 Transluce 不为评估收取报酬，但可能接受用于评估的 API 额度或算力。我们认为，接受报酬并不妨碍评估机构保持独立性，但公开披露这一情况很重要。</li><li>5我们要求参与嵌入式评估的第三方机构工作人员，在入驻另一家 AI 开发机构前遵守一段短暂的冷却期，以降低无意间泄露机密信息的风险。</li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>推进面向医疗团队的计算机使用智能体</title>
+      <link>https://openai.com/index/advancing-computer-use-for-healthcare-teams</link>
+      <guid isPermaLink="true">https://openai.com/index/advancing-computer-use-for-healthcare-teams</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Advancing computer-use agents for healthcare teams</description>
+      <content:encoded><![CDATA[<p>2026年11月16日</p>
+<h1>推进面向医疗团队的 computer-use agent</h1>
+<p>医疗行业是碎片化的：在患者真正获得诊疗之前，团队往往需要手动在系统之间搬运信息。比如，当临床医生建议做一次 MRI 时，保险公司所需的信息可能就在患者的病历里，但仍然需要团队成员把它取出来，再录入另一个独立门户，才能完成授权申请。</p>
+<p>computer-use agent 通过点击、输入和在应用之间切换来完成多步骤工作流。在医疗领域，这让 AI 能够在团队已经在用的软件中协助处理重复性工作流。</p>
+<p>今天，我们分享一组衡量模型在临床与行政工作流中表现、安全性和成本的新结果。我们也会介绍与 Abridge、Ambience、Cigna Healthcare、CVS Health 等领先医疗机构合作的方式，共同推进并应用 computer use，覆盖授权申请、转诊、出院规划以及就诊间隔期的随访。</p>
+<p>医疗团队、开发者和个体临床医生现在就可以通过 OpenAI API、ChatGPT for Healthcare 和 ChatGPT for Clinicians 使用这些能力。机构可以支持符合 HIPAA 要求的工作流，配置审批与 agent 访问权限，并记录审计日志，以实现安全部署。</p>
+<h2>从患者的一条消息到一次 MRI 授权申请</h2>
+<p>为了展示 computer-use agent 如何帮助临床医生和授权专员处理同一个 MRI 申请，我们用合成患者数据搭建了一个演示。一位患者就下背痛给自己的临床医生发消息。computer-use agent 会查阅 EHR 中该患者的就诊记录、物理治疗记录和既往影像，起草一份 MRI 医嘱、一份就诊记录以及给患者的回复，交由临床医生审核。随后，agent 用同一批记录在保险公司门户中准备一份事先授权申请，供授权专员审核。</p>
+<h2>评估有用性、安全性和成本</h2>
+<p>我们在临床医生于 EHR 收件箱中处理的任务上评估了 GPT‑6 Astra。这些任务由医生参与设计，要求 Astra 执行多步骤工作流，既考察它基于纵向患者上下文进行临床推理，也考察它在复杂界面中导航的能力。评审人员把模型的操作与它产出的记录、医嘱和患者消息放在一起查看，判断这些工作在具体任务情境下是否有帮助、在临床上是否安全。</p>
+<p>临床安全性的评估方式，是判断模型工作结果中的不准确、遗漏或操作是否有可能导致患者受到伤害。总体来看，325 项被评审的任务中有 99% 被评为安全。医生用五分制评价有用性，在 646 次评估中有 93% 选择了“非常有帮助”或“极有帮助”。</p>
+<h3>EHR 收件箱工作示例</h3>
+<h4>行政工作流的表现与成本</h4>
+<p>在 Stanford 研究人员发布的独立 benchmark <a href="https://som-shahlab.github.io/health-admin-bench-website/">HealthAdminBench</a> 上——它衡量模型在常见行政工作流上的表现——GPT‑6 Astra 拿到了可用评分细则分数的 94.3%，GPT‑6 Luna 拿到 91.8%，而每项任务成本为 8.5 美分，便宜了 98%。两个模型都在最高 reasoning effort 下评估。这些结果表明，面向高频行政工作流、既有能力又负担得起的 agent 正在取得进展。</p>
+<h2>与医疗机构共同开发 computer use</h2>
+<p>我们的合作伙伴构建的软件被数百个医疗系统使用，在全球范围内协调会员的照护，并为数亿患者提供医疗服务。下面的例子展示了这些机构如何开发、试点和部署 computer-use 应用，以节省时间、解决关键问题并改善患者照护。</p>
+<h3>CVS Health：跨临床系统完成行政工作</h3>
+<p>CVS Health 正在使用 OpenAI 的 computer-use 能力，把跨临床系统的重复性工作自动化，包括发送文档、处理转诊以及支持专科会诊。这些 agent 会操作现有应用，补上 API 无法完全覆盖的步骤。</p>
+<p>在一个生产工作流中，一个 agent 用一个周末清掉了一批积压数月的待发文档。另一个 agent 每天为数万次会诊处理系统操作步骤，帮助团队成员把精力放在需要其专业判断的工作上。CVS Health 采用校验检查和人工监督，用截图和操作记录核实动作与应用状态。CVS Health 正在开源其 <a href="https://github.com/cvs-health/cua-agent-kit">Agent Kit</a>，它基于 OpenAI 的 Agents SDK 构建，把这一做法打包成可复用的流程，供更广泛地使用。</p>
+<blockquote>“行政事务上少花一点时间，照护上就多一点时间。这对我们的团队和我们服务的每一个人都是好事。”</blockquote>
+<p>——Lagan Khare，CVS Health 工程部执行总监</p>
+<p>数据始终留在 CVS Health 企业管控的基础设施内，由其企业 AI Governance 团队和既有的负责任 AI 政策管理。生产数据不会用于训练基础模型。</p>
+<h3>Abridge：在照护的每个环节跨系统协同</h3>
+<p>Abridge 正在开发 computer-use agent，帮助临床医生在他们日常使用的各种场景和应用中执行照护计划，包括那些没有 API 的应用。其规划中的住院场景建立在临床对话之上，加入 EHR 信息以及护士和临床医生的上下文，用来判断哪些地方需要关注、下一步该如何协调。</p>
+<p>举例来说，临床医生可以让 Abridge Assistant 协助解决某位患者的出院障碍。agent 可以并行处理用药获取和居家医疗协调，在打电话、发消息的同时操作电脑界面。临床医生始终保持专注于患者，只在需要临床判断的决策上被请进来。</p>
+<p><a href="https://www.abridge.com/blog/learning-health-system">了解更多</a></p>
+<h3>Cigna：让照护经理做好会员触达准备</h3>
+<p>作为 The Cigna Group 与 OpenAI 更广泛合作的一部分，Cigna Healthcare 正在把 OpenAI 的前沿模型与自身的临床专业能力结合，汇总跨系统的相关信息，让照护团队对每位会员的需求和经历有更完整的了解。这些信息可能包括福利与保障范围、服务提供方、预约和既往互动，帮助照护团队围绕由治疗医生制定的照护计划更好地支持会员。</p>
+<p>在此之前，Cigna Healthcare 的个案管理员必须在 10 多个相互独立的临床和行政系统之间来回查找，才能收集到这些上下文。现在 computer use 可以协助在这些系统中导航，在几秒内把相关信息汇总到一起，减少查找信息的时间——最终让个案管理员有更多时间去支持会员。</p>
+<blockquote>“不到八周就从概念走到部署，这说明当我们把 AI、我们在照护管理上的专业能力，以及负责任使用所需的适当护栏结合起来，能做成什么样的事。更重要的是，这意味着我们的个案管理员能更快拿到更好、更完整的洞察，从而把时间放在最重要的事上：以个性化、有温度的照护支持患者。”</blockquote>
+<p>——Madhu Nutakki，Cigna Healthcare CIO</p>
+<h3>Ambience：让 computer use 在医疗领域可治理</h3>
+<p>computer use 让 agent 能在 API 触及不到的 EHR 和支付方门户中完成任务。在医疗领域，只有当每一个动作都可控、可审计时，这种能力才用得上。Ambience 额外构建了控制措施来支撑这种监督。</p>
+<p>在这次演示中，Ambience 使用患者病历中的证据，在保险公司网站上准备事先授权申请。当记录存在歧义时，agent 会停下来询问临床医生，然后在提交前等待批准。医疗系统可以设定 agent 能执行哪些动作，随时暂停它，并获得逐步日志用于审计。</p>
+<p>医疗初创公司正在把 computer use 的进步转化为支持照护团队的新方式。这五家公司把 AI agent 与医疗专业知识结合起来，帮助团队在系统中导航、协调下一步行动，推动照护向前走。</p>
+<h2>患者数据安全与 agent 控制</h2>
+<p>在医疗领域使用 computer-use agent，需要评估临床安全性、保护患者信息，并明确限定 agent 在没有人复核的情况下可以做什么。</p>
+<p>ChatGPT for Healthcare 提供基于角色的访问控制和审计日志，以支撑监督。机构可以在自己的工作流中加入额外的复核与审批步骤，并配置 agent 使用的应用和环境，把访问范围限定在每项任务所需的记录和操作上。机构数据不会用于训练 OpenAI 的基础模型。</p>
+<p>为支持涉及受保护健康信息的、符合 HIPAA 要求的工作流，机构必须使用其与 OpenAI 签署的 Business Associate Agreement 所覆盖的合格服务，并采用必要的安全与保留设置。</p>
+<h2>开始使用 computer-use agent</h2>
+<p>面向医疗的 computer-use agent 现已在 ChatGPT for Healthcare、ChatGPT for Clinicians 和 OpenAI API 中提供。以下是医疗机构、临床医生和开发者上手的方式。</p>
+<ul><li><strong>医疗机构：</strong> <a href="https://openai.com/contact-sales/">联系我们的销售团队</a>，讨论如何在你的临床和行政工作流中使用 AI。现有客户可以请工作区管理员在 ChatGPT Work 和 Codex 中启用 computer use。</li><li><strong>个体临床医生：</strong> 美国临床医生可以<a href="https://chatgpt.com/plans/clinicians/">立即注册免费的 ChatGPT for Clinicians 账户</a>，在 ChatGPT Work 和 Codex 中体验 computer use。</li><li><strong>开发者：</strong> 用 <a href="https://developers.openai.com/api/docs/quickstart">OpenAI API</a> 构建医疗应用，并查阅我们的 <a href="https://developers.openai.com/api/docs/guides/tools-computer-use">computer use 指南</a>，构建能在现有软件中工作的 agent。</li></ul>
+<p>我们希望这些进展能让医疗团队少花些时间在系统之间搬运信息，多花些时间照护患者。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>借助 ChatGPT for Healthcare 推动医疗发展的更多方式</title>
       <link>https://openai.com/index/more-ways-to-move-care-forward-with-chatgpt-for-healthcare</link>
       <guid isPermaLink="true">https://openai.com/index/more-ways-to-move-care-forward-with-chatgpt-for-healthcare</guid>
@@ -1468,58 +1885,6 @@
 <p>ChatGPT 医疗保健版在具备治理机制的工作空间中，为临床、研究和行政团队提供支持。ChatGPT 临床医生版面向美国符合条件且通过验证的临床医生免费提供，帮助他们查阅医学证据并准备临床文书。两款产品均支持客户与 OpenAI 签订业务伙伴协议（BAA），以支持符合 HIPAA 要求的工作流程。</p>
 <ul><li><strong>ChatGPT 医疗保健版客户</strong>：ChatGPT 工作和 Codex 中的计算机操作智能体，以及改进后的可信临床搜索功能现已推出，具体可用性取决于工作空间设置。请联系工作空间管理员，启用新的医疗插件。</li><li><strong>临床医生个人用户</strong>：ChatGPT 工作和 Codex 中的计算机操作智能体，以及改进后的可信临床搜索功能现已推出。部分插件也已开放使用。<a href="https://chatgpt.com/plans/clinicians/">注册免费的 ChatGPT 临床医生版账户，即可开始使用</a>。</li><li><strong>探索计算机操作能力的开发者</strong>：OpenAI API、ChatGPT 工作和 Codex 均已提供计算机操作智能体能力。<a href="https://openai.com/contact-sales/">联系我们的销售团队⁠</a>，探讨如何在临床和行政工作流程中使用这些能力。</li></ul>
 <p>如需直接购买 ChatGPT 医疗保健版，或通过 AWS Marketplace 私有报价购买，请<a href="https://openai.com/contact-sales/">联系我们的销售团队⁠</a>。</p>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>推进面向医疗团队的计算机使用智能体</title>
-      <link>https://openai.com/index/advancing-computer-use-for-healthcare-teams</link>
-      <guid isPermaLink="true">https://openai.com/index/advancing-computer-use-for-healthcare-teams</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Advancing computer-use agents for healthcare teams</description>
-      <content:encoded><![CDATA[<p>2026年11月16日</p>
-<h1>推进面向医疗团队的 computer-use agent</h1>
-<p>医疗行业是碎片化的：在患者真正获得诊疗之前，团队往往需要手动在系统之间搬运信息。比如，当临床医生建议做一次 MRI 时，保险公司所需的信息可能就在患者的病历里，但仍然需要团队成员把它取出来，再录入另一个独立门户，才能完成授权申请。</p>
-<p>computer-use agent 通过点击、输入和在应用之间切换来完成多步骤工作流。在医疗领域，这让 AI 能够在团队已经在用的软件中协助处理重复性工作流。</p>
-<p>今天，我们分享一组衡量模型在临床与行政工作流中表现、安全性和成本的新结果。我们也会介绍与 Abridge、Ambience、Cigna Healthcare、CVS Health 等领先医疗机构合作的方式，共同推进并应用 computer use，覆盖授权申请、转诊、出院规划以及就诊间隔期的随访。</p>
-<p>医疗团队、开发者和个体临床医生现在就可以通过 OpenAI API、ChatGPT for Healthcare 和 ChatGPT for Clinicians 使用这些能力。机构可以支持符合 HIPAA 要求的工作流，配置审批与 agent 访问权限，并记录审计日志，以实现安全部署。</p>
-<h2>从患者的一条消息到一次 MRI 授权申请</h2>
-<p>为了展示 computer-use agent 如何帮助临床医生和授权专员处理同一个 MRI 申请，我们用合成患者数据搭建了一个演示。一位患者就下背痛给自己的临床医生发消息。computer-use agent 会查阅 EHR 中该患者的就诊记录、物理治疗记录和既往影像，起草一份 MRI 医嘱、一份就诊记录以及给患者的回复，交由临床医生审核。随后，agent 用同一批记录在保险公司门户中准备一份事先授权申请，供授权专员审核。</p>
-<h2>评估有用性、安全性和成本</h2>
-<p>我们在临床医生于 EHR 收件箱中处理的任务上评估了 GPT‑6 Astra。这些任务由医生参与设计，要求 Astra 执行多步骤工作流，既考察它基于纵向患者上下文进行临床推理，也考察它在复杂界面中导航的能力。评审人员把模型的操作与它产出的记录、医嘱和患者消息放在一起查看，判断这些工作在具体任务情境下是否有帮助、在临床上是否安全。</p>
-<p>临床安全性的评估方式，是判断模型工作结果中的不准确、遗漏或操作是否有可能导致患者受到伤害。总体来看，325 项被评审的任务中有 99% 被评为安全。医生用五分制评价有用性，在 646 次评估中有 93% 选择了“非常有帮助”或“极有帮助”。</p>
-<h3>EHR 收件箱工作示例</h3>
-<h4>行政工作流的表现与成本</h4>
-<p>在 Stanford 研究人员发布的独立 benchmark <a href="https://som-shahlab.github.io/health-admin-bench-website/">HealthAdminBench</a> 上——它衡量模型在常见行政工作流上的表现——GPT‑6 Astra 拿到了可用评分细则分数的 94.3%，GPT‑6 Luna 拿到 91.8%，而每项任务成本为 8.5 美分，便宜了 98%。两个模型都在最高 reasoning effort 下评估。这些结果表明，面向高频行政工作流、既有能力又负担得起的 agent 正在取得进展。</p>
-<h2>与医疗机构共同开发 computer use</h2>
-<p>我们的合作伙伴构建的软件被数百个医疗系统使用，在全球范围内协调会员的照护，并为数亿患者提供医疗服务。下面的例子展示了这些机构如何开发、试点和部署 computer-use 应用，以节省时间、解决关键问题并改善患者照护。</p>
-<h3>CVS Health：跨临床系统完成行政工作</h3>
-<p>CVS Health 正在使用 OpenAI 的 computer-use 能力，把跨临床系统的重复性工作自动化，包括发送文档、处理转诊以及支持专科会诊。这些 agent 会操作现有应用，补上 API 无法完全覆盖的步骤。</p>
-<p>在一个生产工作流中，一个 agent 用一个周末清掉了一批积压数月的待发文档。另一个 agent 每天为数万次会诊处理系统操作步骤，帮助团队成员把精力放在需要其专业判断的工作上。CVS Health 采用校验检查和人工监督，用截图和操作记录核实动作与应用状态。CVS Health 正在开源其 <a href="https://github.com/cvs-health/cua-agent-kit">Agent Kit</a>，它基于 OpenAI 的 Agents SDK 构建，把这一做法打包成可复用的流程，供更广泛地使用。</p>
-<blockquote>“行政事务上少花一点时间，照护上就多一点时间。这对我们的团队和我们服务的每一个人都是好事。”</blockquote>
-<p>——Lagan Khare，CVS Health 工程部执行总监</p>
-<p>数据始终留在 CVS Health 企业管控的基础设施内，由其企业 AI Governance 团队和既有的负责任 AI 政策管理。生产数据不会用于训练基础模型。</p>
-<h3>Abridge：在照护的每个环节跨系统协同</h3>
-<p>Abridge 正在开发 computer-use agent，帮助临床医生在他们日常使用的各种场景和应用中执行照护计划，包括那些没有 API 的应用。其规划中的住院场景建立在临床对话之上，加入 EHR 信息以及护士和临床医生的上下文，用来判断哪些地方需要关注、下一步该如何协调。</p>
-<p>举例来说，临床医生可以让 Abridge Assistant 协助解决某位患者的出院障碍。agent 可以并行处理用药获取和居家医疗协调，在打电话、发消息的同时操作电脑界面。临床医生始终保持专注于患者，只在需要临床判断的决策上被请进来。</p>
-<p><a href="https://www.abridge.com/blog/learning-health-system">了解更多</a></p>
-<h3>Cigna：让照护经理做好会员触达准备</h3>
-<p>作为 The Cigna Group 与 OpenAI 更广泛合作的一部分，Cigna Healthcare 正在把 OpenAI 的前沿模型与自身的临床专业能力结合，汇总跨系统的相关信息，让照护团队对每位会员的需求和经历有更完整的了解。这些信息可能包括福利与保障范围、服务提供方、预约和既往互动，帮助照护团队围绕由治疗医生制定的照护计划更好地支持会员。</p>
-<p>在此之前，Cigna Healthcare 的个案管理员必须在 10 多个相互独立的临床和行政系统之间来回查找，才能收集到这些上下文。现在 computer use 可以协助在这些系统中导航，在几秒内把相关信息汇总到一起，减少查找信息的时间——最终让个案管理员有更多时间去支持会员。</p>
-<blockquote>“不到八周就从概念走到部署，这说明当我们把 AI、我们在照护管理上的专业能力，以及负责任使用所需的适当护栏结合起来，能做成什么样的事。更重要的是，这意味着我们的个案管理员能更快拿到更好、更完整的洞察，从而把时间放在最重要的事上：以个性化、有温度的照护支持患者。”</blockquote>
-<p>——Madhu Nutakki，Cigna Healthcare CIO</p>
-<h3>Ambience：让 computer use 在医疗领域可治理</h3>
-<p>computer use 让 agent 能在 API 触及不到的 EHR 和支付方门户中完成任务。在医疗领域，只有当每一个动作都可控、可审计时，这种能力才用得上。Ambience 额外构建了控制措施来支撑这种监督。</p>
-<p>在这次演示中，Ambience 使用患者病历中的证据，在保险公司网站上准备事先授权申请。当记录存在歧义时，agent 会停下来询问临床医生，然后在提交前等待批准。医疗系统可以设定 agent 能执行哪些动作，随时暂停它，并获得逐步日志用于审计。</p>
-<p>医疗初创公司正在把 computer use 的进步转化为支持照护团队的新方式。这五家公司把 AI agent 与医疗专业知识结合起来，帮助团队在系统中导航、协调下一步行动，推动照护向前走。</p>
-<h2>患者数据安全与 agent 控制</h2>
-<p>在医疗领域使用 computer-use agent，需要评估临床安全性、保护患者信息，并明确限定 agent 在没有人复核的情况下可以做什么。</p>
-<p>ChatGPT for Healthcare 提供基于角色的访问控制和审计日志，以支撑监督。机构可以在自己的工作流中加入额外的复核与审批步骤，并配置 agent 使用的应用和环境，把访问范围限定在每项任务所需的记录和操作上。机构数据不会用于训练 OpenAI 的基础模型。</p>
-<p>为支持涉及受保护健康信息的、符合 HIPAA 要求的工作流，机构必须使用其与 OpenAI 签署的 Business Associate Agreement 所覆盖的合格服务，并采用必要的安全与保留设置。</p>
-<h2>开始使用 computer-use agent</h2>
-<p>面向医疗的 computer-use agent 现已在 ChatGPT for Healthcare、ChatGPT for Clinicians 和 OpenAI API 中提供。以下是医疗机构、临床医生和开发者上手的方式。</p>
-<ul><li><strong>医疗机构：</strong> <a href="https://openai.com/contact-sales/">联系我们的销售团队</a>，讨论如何在你的临床和行政工作流中使用 AI。现有客户可以请工作区管理员在 ChatGPT Work 和 Codex 中启用 computer use。</li><li><strong>个体临床医生：</strong> 美国临床医生可以<a href="https://chatgpt.com/plans/clinicians/">立即注册免费的 ChatGPT for Clinicians 账户</a>，在 ChatGPT Work 和 Codex 中体验 computer use。</li><li><strong>开发者：</strong> 用 <a href="https://developers.openai.com/api/docs/quickstart">OpenAI API</a> 构建医疗应用，并查阅我们的 <a href="https://developers.openai.com/api/docs/guides/tools-computer-use">computer use 指南</a>，构建能在现有软件中工作的 agent。</li></ul>
-<p>我们希望这些进展能让医疗团队少花些时间在系统之间搬运信息，多花些时间照护患者。</p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026</a></li></ul>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -2060,218 +2425,6 @@
 <p>值此退伍军人节，OpenAI 感谢退役军人的服役付出，以及他们为社区作出的贡献。</p>
 <p><a href="https://chatgpt.com/veterans-claim">查看你是否符合免费使用一年 ChatGPT Plus 的资格。</a></p>
 <h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>JioStar’s chief architect on AI discovery at 500M-user scale</title>
-      <link>https://openai.com/index/jiostar-vijay-seshadri</link>
-      <guid isPermaLink="true">https://openai.com/index/jiostar-vijay-seshadri</guid>
-      <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>2026年11月11日</p>
-<h1>JioStar 首席架构师谈如何为 5 亿用户打造 AI 内容发现体验</h1>
-<p>对话 JioStar 首席架构师 Vijay Seshadri。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6yXeyZ5Lph5wYnDiSxL1Rf/fe6264331b54720f59b3c7e90a05b2b8/EF_Ep20_16.9.png?w=3840&amp;q=90&amp;fm=webp" alt="绿色纹理背景上的《高管视角》第 20 集。"></p>
-<p>公司规模: 企业</p>
-<p>区域: 亚太地区与大洋洲</p>
-<p>行业: 媒体、娱乐与体育</p>
-<p>产品: API, Codex</p>
-<p>我们的《高管视角》系列汇集了借助 AI 推动变革的领导者的见解。</p>
-<p>JioStar 运营的娱乐和体育直播平台拥有超过 5 亿用户，曾支持多达 7,250 万人同时观看体育直播。面对这样的规模，AI 必须响应迅速、运行可靠，并能投入生产环境。</p>
-<p>借助 OpenAI API，JioStar 在 JioHotstar 中构建了一款对话式助手，帮助用户查找视频和板球统计数据。观众可以通过自然的口语查找电影和节目、往期精彩片段、直播比赛瞬间或板球统计数据，并在可视化的对话体验中获取结果。</p>
-<p>在新加坡举行的 OpenAI 高管峰会上，OpenAI 东盟市场进入负责人 Sidharth Sharma 与 JioStar 首席架构师 Vijay Seshadri 展开对话，探讨了如何在约八周内打造支持 15 种以上语言的体验，以及这段经历能为推动 AI 从演示走向生产应用的领导者提供哪些经验。</p>
-<h2>是什么让你相信，AI 会从根本上改变人们发现内容的方式？</h2>
-<p>过去 25 年里，内容发现方式几乎没有太大变化。上一次重大转变是推荐机制的出现。此后的大多数变化，都只是围绕同一个思路进行迭代。</p>
-<p>但选择看什么，是一件非常个人化的事。有人可能会说：“我有点难过。给我找点能让我开心起来的内容。”即便这样一个简单的请求，也包含许多微妙之处。是怎样的难过？这个人通常看什么会开心起来？他想看喜剧、让人感到慰藉的节目，还是能让自己彻底转移注意力的内容？</p>
-<p>传统推荐系统可能很难理解他此刻的需求。而对话让观众有机会把需求说清楚。我们将其称为语音视觉界面。</p>
-<blockquote>“发现内容本就依赖视觉，但将可视化选项与口头表达的偏好和对话相结合，就能创造出一种强大的新范式。”</blockquote>
-<p>—Vijay Seshadri，JioStar 首席架构师</p>
-<p>聆听</p>
-<h2>你们是如何赶在一场大型板球赛事之前，把这个想法变成产品的？</h2>
-<p>我们在 10 月和 11 月开始梳理这个构想，而一场大型板球赛事将在次年 2 月举行。我们只有大约两个月的时间，而且要面对两类截然不同的受众：娱乐内容观众和板球迷。</p>
-<p>娱乐内容观众可能会说：“周五晚上了，给我来点惊喜吧。”也可能描述一部电影，却不知道片名。体育观众可能想了解更具体的赛况，比如击球手出局的情况、一连串六分球，或某位球员拿到特定分数的那场比赛。资深板球迷可能想了解每一球的统计数据。</p>
-<p>这些内容查找需求截然不同。我们努力在很短的时间内，将娱乐内容、体育精彩瞬间和详细的板球统计数据整合到统一的多语言体验中。</p>
-<h2>面对 JioStar 这样的规模，哪些权衡影响了技术设计？</h2>
-<p>很早的时候，我们就把问题归结为准确性、延迟和成本之间的三方权衡。每一项工程决策都必须同时平衡这三个因素。</p>
-<p>语音交互让这一点尤为重要。超过 60% 的用户使用语音而非文字：大家更愿意直接说出想看什么。即使在大规模使用时，响应也必须切合需求、足够迅速，同时成本可控。</p>
-<blockquote>“虽然听起来像老生常谈，但答案就是评估、评估、再评估。如果你是第一次构建这样的应用，即便自认为准备充分，也很可能低估评估的重要性。”</blockquote>
-<p>—Vijay Seshadri，JioStar 首席架构师</p>
-<p>聆听</p>
-<h2>生产环境中有效的评估体系应该是什么样的？</h2>
-<p>我把它分为两部分：评估框架和验证层。上线之前，评估框架应当推动系统改进。上线之后，应通过反馈闭环，将客户行为和失败案例转化为新的评估用例。</p>
-<p>这个循环可以形成不断自我强化的飞轮效应，但要做好极其困难。</p>
-<p>领域专家必不可少。在体育统计数据的评估中，我们与体育杂志编辑等专业人士合作，因为他们了解资深球迷可能会问什么。不能只靠一个提示词起步；你需要先将人类深厚的专业知识注入系统。</p>
-<h2>一个小团队是如何在约八周内构建并推出这项体验的？</h2>
-<p>我们做对的一件事，就是组建了合适的团队。一开始，我们围绕一个定义清晰的问题，组建了一支由数据科学家和工程师组成的小团队。OpenAI 的前线部署工程师与我们并肩合作，进一步明确了几项必须做好的关键工作。</p>
-<p>首先是界定范围。通过语音或文字界面，用户几乎可以问任何问题，所以我们先确定系统不应该回答哪些问题。防护措施是第一位的。</p>
-<p>在评估方面，我们从种子数据集入手，利用模型扩充数据，增加样本的多样性。我们建立了一种现在或许可以称为“生成者—检查者”的模式：一个模型帮助确定如何回答问题，另一个模型则以相互制衡的目标承担验证工作，也就是让 LLM 充当裁判。</p>
-<p>这又引出了另一个问题：谁来测试裁判？设计验证器本身就是一个评估问题。Codex 帮助团队加快了生成评估用例、更新系统等工作，但开发速度更快，并不意味着可以省去判断和验证。</p>
-<h2>回过头看，你会在哪些方面采取不同的做法？</h2>
-<p>我会更早投入资源，监控模型在生产环境中的实际效果。</p>
-<p>P99 延迟等传统基础设施指标依然重要，但仅有这些还不够。你还需要监控模型在生产环境中的实际效果。</p>
-<h2>从 AI 实验迈向生产系统时，高管应该牢记什么？</h2>
-<p>首先，技术能做到什么，与企业内部的实际情况之间，存在很大差距。如果你的公司没能跟上每一次前沿模型发布的步伐，那你并不是个例。</p>
-<p>其次，始终关注成果，而不是做了多少事。人们很容易把表面的忙碌误认为实质性进展，尤其是在企业强调投入指标的时候。例如，生成了多少行代码，并不能说明你是否创造了真正的价值。</p>
-<blockquote>“在我看来，AI 是帮助企业化繁为简的强大工具。如果我们不用它来简化业务流程、工作流和软件工程系统，就会白白错失一个巨大的机遇。”</blockquote>
-<p>—Vijay Seshadri，JioStar 首席架构师</p>
-<p>聆听</p>
-<p>最后，大多数企业低估了这项工作对人的技能和主观能动性的要求。不能仅仅开展一项通用技能培训就了事。领导者需要的是能够运用判断力、善用这些工具的人。给优秀的工程师配上 Codex 这样的工具，成效可以成倍提升；但如果缺乏验证生产系统所需的判断力，风险也会成倍增加。</p>
-<p>你手中掌握的就像是一枚火箭。尤其是在生产系统中，你需要验证和防护措施，也需要把控制权交给合适的人。</p>
-<h2>迈入工作新时代</h2>
-<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>帮助护理人员在日常生活中使用人工智能</title>
-      <link>https://openai.com/index/helping-caregivers-use-ai-in-everyday-life</link>
-      <guid isPermaLink="true">https://openai.com/index/helping-caregivers-use-ai-in-everyday-life</guid>
-      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Helping caregivers use AI in everyday life</description>
-      <content:encoded><![CDATA[<p>2026年11月10日</p>
-<p>公司</p>
-<h1>帮助照护者在日常生活中使用 AI</h1>
-<p>与照护者行动网络、阿尔茨海默病协会和美国糖尿病协会®合作，在全国家庭照护者月期间，于美国五座城市举办免费的 ChatGPT 实操工作坊。</p>
-<p>照护他人往往意味着，在兼顾工作与家庭生活的同时，还要协调日程、随时掌握相关信息并寻求支持。在全国家庭照护者月期间，我们正帮助照护者掌握 AI 技能，让部分日常事务变得更轻松，使他们有更多时间专注于所照顾的人。</p>
-<p>11 月 10 日，OpenAI Academy 将与照护者行动网络、阿尔茨海默病协会和美国糖尿病协会®合作，举办面向照护者与社区健康领域的 AI 技能交流工作坊。这项免费的线下学习活动旨在帮助照护者自信、安全地将 ChatGPT 用于实际生活。这一全国性系列活动将在美国五座城市举行，汇聚个人及家庭照护者、照护者支持组织，以及慢性病或重病患者等参与者：</p>
-<ul><li>加利福尼亚州奥克兰</li><li>佛罗里达州坦帕</li><li>宾夕法尼亚州匹兹堡</li><li>佐治亚州亚特兰大</li><li>密歇根州底特律</li></ul>
-<p>OpenAI 的一项分析估计，在美国，每周发送给 ChatGPT 的医疗健康相关消息中，有超过 4,000 万条是在咨询他人的医疗健康问题<a href="https://openai.com/zh-Hans-CN/index/helping-caregivers-use-ai-in-everyday-life/#citation-bottom-1">1</a>。在工作坊中，参与者将探索 ChatGPT 如何帮助查找资源、促进同伴互助并为照护者提供支持，包括如何：</p>
-<ul><li>整理照护日程和任务清单</li><li>将可信的教育资源转化为通俗易懂的材料</li><li>查找社区资源</li><li>编写互助小组讨论指南</li></ul>
-<p>参与者还将学习如何负责任地使用 AI，包括保护个人信息，以及了解这些工具的局限。参与者也将了解何时应咨询医疗专业人士，以及如何让 AI 工具补充而非取代医疗、法律或财务方面的专业建议。OpenAI 的活动引导员和导师将在工作坊全程提供实操指导。参与者无需编程或技术背景。</p>
-<p>1 条/ 共 4 条</p>
-<blockquote>“AI 是一种工具，能让人们更好地掌控自己和家人的生活。对照护者而言，这意味着可以减少安排日程、搜索信息的时间，把更多时间留给他们照顾的人。通过与值得信赖的社区组织合作，我们正帮助照护者掌握技能、建立信心，以安全、务实的方式使用这些工具。”</blockquote>
-<p>— Chris Lehane，OpenAI 首席全球事务官</p>
-<blockquote>“照护的未来不是用技术取代人与人之间的联结，而是通过创新，让照护更易开展、更易获得，也让各方联系更紧密。AI 确实有潜力帮助照护者查找和理解信息、协调分工，并节省宝贵的时间，但前提是我们帮助他们建立信心，并始终以他们的需求为中心。在今年的全国家庭照护者月，我们很荣幸能与 OpenAI Academy、阿尔茨海默病协会和美国糖尿病协会携手，帮助照护者探索新的可能，并让他们在塑造未来的过程中拥有发言权。”</blockquote>
-<p><strong>— Marvell Adams Jr.，照护者行动网络首席执行官</strong></p>
-<blockquote>“照护者在照顾所爱之人的同时，还要不断处理各种信息、协调日程，并作出艰难的决定。负责任的 AI 工具有望减轻日常照护工作的负担，帮助人们更高效地找到可信的信息。我们很高兴能参与这项合作，帮助照护者建立信心，安全、有效地使用这些工具。”</blockquote>
-<p><strong>— Katie Evans，阿尔茨海默病协会首席项目与使命参与官</strong></p>
-<blockquote>“照护者在照顾糖尿病患者方面发挥着至关重要的作用。他们要处理的事务繁多，使用 AI 可以帮助减轻部分工作负担。美国糖尿病协会正与 AI 平台合作，确保相关信息以我们的最新指南为依据。我们很荣幸能参与 AI 技能交流工作坊，帮助照护者自信地使用 AI。”</blockquote>
-<p><strong>— Charles “Chuck” Henderson，美国糖尿病协会®首席执行官</strong></p>
-<ul><li>Chris Lehane</li><li>Marvell Adams Jr.</li><li>Katie Evans</li><li>Charles “Chuck” Henderson</li></ul>
-<p>工作坊将这些学习机会带入当地社区，让照护者可以与同伴一起练习，并分享他们希望借助这些工具解决的日常难题。我们的合作伙伴在支持重病患者及其家人方面，拥有深厚的专业知识和丰富经验。他们与照护者自身的见解，将共同帮助当天的学习内容贴合各社区的需求。</p>
-<p>OpenAI Academy 致力于让每个人都能用上实用、易用的 AI，AI 技能交流工作坊正是这一系列工作的一部分。此前，我们已与非营利组织、小企业、基础教育工作者和老年人开展过多场活动，本次工作坊将延续这些活动的成果。</p>
-<p>我们感谢照护者行动网络、阿尔茨海默病协会、美国糖尿病协会®，以及全美各地参与活动的照护者和社区健康组织。他们的问题、想法和经验，将为今后学习资源的开发提供方向，确保这些工具能在日常照护和支持他人的工作中发挥作用。</p>
-<h2>作者</h2>
-<h2>脚注</h2>
-<ul><li>1该数据来自对 2026 年 10 月 9 日至 29 日 ChatGPT 使用情况的估算，估算过程采用了隐私保护措施</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>ChatGPT 中介绍业务</title>
-      <link>https://openai.com/index/introducing-businesses-chatgpt</link>
-      <guid isPermaLink="true">https://openai.com/index/introducing-businesses-chatgpt</guid>
-      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Businesses in ChatGPT</description>
-      <content:encoded><![CDATA[<p>2026年11月10日</p>
-<h1>推出 ChatGPT 商家功能</h1>
-<p>认领你的商家资料，及时更新信息，并了解用户如何在 ChatGPT 中与你互动</p>
-<p>我们正在推出 ChatGPT 商家功能的测试版，为商家提供一种新方式，与每周使用 ChatGPT 的 12 亿用户建立联系。通过<a href="https://chatgpt.com/business-hub?utm_source=openai&amp;utm_medium=blog&amp;utm_campaign=business_agents_launch&amp;utm_content=smb_launch_primary_cta">商家中心</a>，商家可以认领商家资料、管理信息，并查看洞察，了解用户如何在 ChatGPT 中与其互动。此外，我们还将通过商家智能体，为商家提供一种强大的全新用户互动方式，首先向美国符合条件的电商和在线服务商家开放。</p>
-<p>这些产品共同为商家创造了更多机会，让他们能够在用户探索选项、做出决策的过程中与用户建立联系。通过覆盖更广泛的商家、提供最新信息，以及支持用户通过商家智能体与商家沟通，这些产品让用户在 ChatGPT 中更好地发现商家并与其互动。在所有这些体验中，守护用户对 ChatGPT 的信任始终是我们的首要准则。</p>
-<h2>在 ChatGPT 中认领你的商家资料</h2>
-<p>企业可以通过商家中心认领其在 ChatGPT 中的商家资料，通过验证后，即可更新关键信息，并自助添加包含价格和供货情况的商品数据源。这为商家提供了一种向 ChatGPT 提供信息的新方式，帮助用户依据最准确、最新的信息探索产品和服务。</p>
-<p>凡位于 ChatGPT 可用地区且符合条件的商家，均可通过商家中心认领其在 ChatGPT 中的商家资料。现有的 OpenAI 企业客户和广告主可以直接联系其 OpenAI 客户代表，认领商家资料。Shopify 商家可以通过商家中心或 Shopify 后台关联店铺，简化验证流程。Shopify 商家符合条件的商品已通过 Shopify Catalog 接入 ChatGPT。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7gikt5P6RIMW21EE9m6ufd/a61f7348c058fbf195e3cd3cee509bfe/introducing-businesses-chatgpt-inline-01-pre-claim.png?w=3840&amp;q=90&amp;fm=webp" alt="Colorful Clatter 在 ChatGPT 中的商家资料认领界面，显示客户互动洞察、商家信息、蓝色认证勾选标记和“认领资料”按钮。"></p>
-<h2>了解用户如何与你的商家互动</h2>
-<p>商家中心提供基于汇总数据的洞察，帮助商家了解用户如何在 ChatGPT 中与其互动。其中包括商家被提及的次数和网站点击量。商家还可以探索用户发现商家时涉及的话题，也就是引用其网站的对话中常见的主题。这些洞察可以帮助商家了解自身在 ChatGPT 中的呈现方式，并发现改进所提供信息的机会。</p>
-<p>我们在设计这些洞察功能时，注重保护用户隐私。我们不会向商家分享用户的对话，也不会分享用户与商家智能体的聊天内容。洞察基于汇总数据生成，只有在对话或互动数量达到特定门槛后才会提供。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3jmbfXBdvv18XBFTeLm1ZJ/e15576b324a43a8a9306e385490b4cb5/businesses-in-chatgpt-business-insights.png?w=3840&amp;q=90&amp;fm=webp" alt="商家洞察仪表板，显示提及次数、资料浏览量、网站点击量，以及用户发现商家时最常涉及的话题。"></p>
-<h2>为商家引入智能体能力</h2>
-<p>在 ChatGPT 中认领商家资料后，符合条件的组织可以构建、测试和上线商家智能体，以这种新方式回答问题，帮助用户探索其产品和服务。</p>
-<p>当模型回答中出现某个商家时，用户可以点击查看该商家在 ChatGPT 中的资料。如果商家已开通商家智能体，客户可以选择与商家开始对话，探索其产品和服务，并进一步提问。例如，用户在比较产品时，可以询问两个选项有何区别，以及哪些功能符合自己的需求。商家智能体可以利用商家提供的信息，帮助用户深入了解这些问题。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1wcbTrMTcY7PjMVFoL6tYT/e96aff610387c29acd3bab8cd0373af4/introducing-businesses-chatgpt-profile-desktop.png?w=3840&amp;q=90&amp;fm=webp" alt="Colorful Clatter 在 ChatGPT 中经过认证的商家资料，显示商品、商家详细信息，以及开始聊天或访问其网站的选项。"></p>
-<p>对客户而言，这有助于他们更轻松地判断某项产品或服务是否适合自己。对商家而言，这提供了一种通过个性化对话，帮助有意向的客户深入了解产品和服务的方式。商家智能体对话有清晰的标识，与客户原有的 ChatGPT 对话相互独立，也与 ChatGPT 的独立回答明确区分。</p>
-<p>商家还可以<a href="https://openai.com/index/reimagining-advertising-with-ai/">付费推广其商家智能体⁠</a>，将其设为 ChatGPT Ads 的跳转目的地，触达更多潜在客户。付费推广展示位有清晰的标识，并与 ChatGPT 的回答分开呈现。</p>
-<p>商家智能体现已向美国符合条件的电商和在线服务商家开放。点击<a href="https://openai.com/policies/business-agents-policy/">此处⁠</a>，了解符合条件的商家类别。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3RPWSZdNGmGtugwiNzAkSH/9ce1bc7e4d50f7989d0497ded2f05b5e/businesses-in-chatgpt-customer-conversation.png?w=3840&amp;q=90&amp;fm=webp" alt="Colorful Clatter 的商家智能体通过推荐商品，回答客户关于礼物的问题。"></p>
-<h2>为商家在 ChatGPT 中打造专属空间</h2>
-<p>随着人们借助 AI 发现产品、比较选项并做出决策，ChatGPT 已成为用户与商家通过 AI 建立联系的平台。今天发布的功能，是推动商家更深入融入 ChatGPT 的早期一步。我们将从基础做起：准确的商家信息、实用的洞察，以及帮助用户做出明智决策的对话。未来，我们计划将 ChatGPT 商家功能和商家智能体扩展到更多市场和商家类别，并为需求更复杂的组织开发工具。</p>
-<p>随着平台不断发展，我们将探索更多方式，让商家在 ChatGPT 内外直接或通过智能体与客户建立联系。我们的目标是让 ChatGPT 在用户做决策时发挥更大作用，同时为商家提供参与其中、实现增长的新途径。</p>
-<p><a href="https://openai.com/business/businesses-in-chatgpt?utm_source=openai&amp;utm_medium=blog&amp;utm_campaign=business_agents_launch&amp;utm_content=smb_launch_primary_cta">了解更多，并⁠</a><a href="https://openai.com/business/businesses-in-chatgpt?utm_source=openai&amp;utm_medium=blog&amp;utm_campaign=business_agents_launch&amp;utm_content=smb_launch_primary_cta">在 ChatGPT 中认领你的商家资料。⁠</a></p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
-<h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>缩小人工智能在教育指导方面的差距</title>
-      <link>https://openai.com/index/closing-ai-guidance-gap-education</link>
-      <guid isPermaLink="true">https://openai.com/index/closing-ai-guidance-gap-education</guid>
-      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Closing the AI guidance gap in education</description>
-      <content:encoded><![CDATA[<p>2026年11月10日</p>
-<p>公司</p>
-<h1>弥补教育领域的 AI 使用指导缺口</h1>
-<p>借鉴 ThinkYoung 的最新研究和我们在欧洲、中东和非洲地区的合作经验，用 AI 支持自主学习。</p>
-<p><a href="https://assets.ctfassets.net/kftzwdyauwt9/3w97q66WFq2swJk1WvfN5C/a9bc88b2b5fbdd7e4abf029585c6ef2f/responsible-ai-in-education.pdf">阅读报告</a></p>
-<p>AI 正促使我们从根本上重新思考：教育应帮助社会为怎样的未来做好准备。随着智能变得更易获取和应用，问题不再只是人们需要掌握哪些知识，而是哪些技能和能力能帮助他们在 AI 赋能的世界中蓬勃发展。近期围绕国际学生评估项目（PISA）与 AI 展开的讨论，包括由<a href="https://oecdedutoday.com/generative-ai-and-student-learning-what-the-pisa-data-reveal/">经合组织的 Andreas Schleicher</a>牵头的讨论，都凸显了这一转变。这些讨论也揭示了一个核心认识：随着 AI 能力增强，教师的作用不是变得不那么重要，而是更加重要。教师的专业知识、判断力和引导学习的能力依然不可或缺。因此，教育系统必须优先帮助教师、学校和政府掌握 AI 技能、建立信心，让他们能够就这些工具的使用作出明智决策。</p>
-<p>在欧洲、中东和非洲地区，我们正与爱沙尼亚、斯洛伐克、希腊、意大利等国的政府和教育系统合作，探索 AI 如何为教育工作者提供支持。这些合作有三项共同重点：公平获取前沿 AI 工具、共同设计 AI 素养培养项目，以及持续开展衡量与评估，同时适应当地的语言、课程和制度。</p>
-<p>本报告分享了我们在欧洲、中东和非洲地区开展教育合作的初步经验，重点关注教育工作者支持、AI 素养、本地能力建设与评估。报告探讨了合作伙伴作过哪些尝试、反馈了哪些情况，以及还有哪些问题尚不明确。各国案例反映了各自特定的背景和安排，对其研究结果的解读也应限定在这些条件之内。这些经验围绕五个主题展开：明确的教育目标、教育工作者的准备、本地合作、批判性 AI 素养，以及可信的证据。</p>
-<p>这项工作已初步呈现出三个特点：</p>
-<ul><li><strong>各国合作提供了立足具体情境的经验。</strong>爱沙尼亚、希腊和斯洛伐克的实践表明，有三点经验可供其他教育系统借鉴：由公共部门有力引领，确立清晰方向；投入资源，提升教师技能与信心；根据当地课程和课堂需求提供切实支持。尽管各国的实施方式会有所不同，这些原则仍可为希望负责任地大规模引入 AI 的政府提供有益基础。</li><li><strong>弥补教育领域的 AI 使用指导缺口正变得日益迫切。</strong><a href="https://www.thinkyoung.eu/aieducation">ThinkYoung 的最新研究</a>考察了教师和学生目前使用 AI 的方式，揭示出明显的指导缺口：79% 的受访学生表示曾使用 AI 完成家庭作业或其他学习任务，但只有 47% 表示有人教过他们如何使用。各国政府需要支持教育工作者，并让学生更清楚地了解使用 AI 时应遵循的要求。下文将阐述如何更好地支持教育工作者制定 AI 的使用规则和条件。</li><li><strong>AI 为教师带来的初步益处已显现。</strong>教师的使用情况及其反馈的时间节省效果令人鼓舞。要了解 AI 在哪些方面有助于知识掌握、独立思考和长期记忆，还需要持续评估。通过观察各国政府的行动，我们总结出了一些做法，可帮助推动这一关键领域获得更多优先研究投入。</li></ul>
-<p>我们的目标是分享这些合作中的实践经验，供教育领导者结合自身情况参考。这些只是早期经验，并非供各教育系统统一遵循的模式。</p>
-<p>我们也在学习如何依据证据判断进展：教师的使用情况及其反馈的时间节省效果，提供了令人鼓舞的早期信号。问卷调查、项目监测和意见征询帮助我们了解参与者的体验及其遇到的障碍。</p>
-<p>OpenAI 的使命是确保通用人工智能惠及每一个人。帮助学习者茁壮成长，是实现这一愿景的核心。我们相信，无论背景如何、在哪里就学，每个年轻人都应有机会培养所需技能，在这个日益受到 AI 塑造的世界中积极参与。我们有责任为积累这些证据作出贡献，并以开放的态度从研究结果中学习，即使这些结果挑战了我们的既有假设。通过 OpenAI 学习实验室，我们正汇聚教育研究者，探索 AI 在何种情况下、以何种方式能够支持教育系统。</p>
-<p>今天作出的选择，将塑造下一代学习、工作和参与社会的方式。只要怀有远大目标、审慎行事，由公共部门引领，并坚持以证据为依据，AI 就能帮助扩大教育机会，增强年轻人独立理解、创造和行动的能力。</p>
-<p><em>Tom Duff Gordon </em></p>
-<p><em>全球事务副总裁，负责欧洲、中东和非洲地区</em></p>
-<p><em>Leah Belsky</em></p>
-<p><em>教育副总裁</em></p>
-<p>2026 年 11 月</p>
-<ul><li><a href="https://openai.com/news/?tags=2026">2026 年</a></li></ul>
-<h2>作者</h2>
-<p>Tom Duff Gordon、Leah Belsky</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>新加坡航空利用 OpenAI 技术提升旅行和工作水平</title>
-      <link>https://openai.com/index/singapore-airlines-travel-work</link>
-      <guid isPermaLink="true">https://openai.com/index/singapore-airlines-travel-work</guid>
-      <pubDate>Tue, 10 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Singapore Airlines elevates travel &amp; work with OpenAI technology</description>
-      <content:encoded><![CDATA[<p>2026年11月10日</p>
-<h1>新加坡航空借助 OpenAI 技术提升出行与工作体验</h1>
-<p>借助 OpenAI API 和模型，新加坡航空改善了客户支持、出行方案探索与员工工作体验，并使 Kris 客服聊天机器人的客户满意度翻倍</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/14H7MTgTXxn9etfW0YapIZ/5bb0f93a51903db4fde86615f652d8cf/singapore-airlines-curved-satin-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="深蓝色弧形缎面纹理上的白色新加坡航空标志。"></p>
-<p>公司规模: 企业</p>
-<p>区域: 亚太地区与大洋洲</p>
-<p>行业: 旅行</p>
-<p>产品: API</p>
-<p>2 倍</p>
-<p>AI 驱动的 Kris 聊天机器人带来的客户满意度评分 (CSAT) 提升</p>
-<p>约 10%</p>
-<p>客服人员使用 AI 辅助工具后，平均处理时长的降幅</p>
-<p>约 3 倍</p>
-<p>过去一年航班推荐工具月度用户数的增长</p>
-<p>AI 正逐步融入新加坡航空的客户服务、员工支持和技术开发。新加坡航空使用 OpenAI API 打造面向客户的体验，并在面向员工、具备治理机制的内部 AI 平台 Jarvis 中使用 OpenAI 模型。公司还将 OpenAI 模型用于软件开发工作流程，以提供更个性化的服务、提升工作效率，并帮助团队更高效地开展开发工作。</p>
-<blockquote>“在为客户提供更个性化的体验、提升各项业务的工作效率方面，AI 是我们工作的核心。我们正与 OpenAI 合作，开发 AI 驱动的功能，让客户的出行更轻松、更顺畅，同时帮助员工提高工作效率和成效。”</blockquote>
-<p>—George Wang，新加坡航空信息技术高级副总裁</p>
-<p>在这些应用中，新加坡航空将 OpenAI 模型与编排、内部数据管控、验证和人工审核相结合，让各团队能够以统一、负责任的方式将 AI 引入生产工作流程。</p>
-<h2>从预设脚本服务转向对话式支持</h2>
-<p>面向客户的聊天机器人 Kris，是新加坡航空最广为人知的 AI 应用之一。新加坡航空通过 OpenAI API，将 Kris 从传统的对话流程系统升级为由 LLM 驱动的对话式体验，客户满意度随之提升至原来的 2 倍。</p>
-<p>与此同时，新加坡航空为客服人员部署了 AI 辅助工具，包括由 OpenAI API 支持的通话摘要功能，让客服人员减少通话后的事务处理时间，将更多时间用于服务客户。新加坡航空客服人员的平均处理时长缩短了约 10%。</p>
-<p>在早期基于对话流程的聊天机器人设计中，每个话题都需要手动配置，每条流程都需要预先编写。这使得服务覆盖范围难以扩大。如果某种用户意图未被预先纳入，即使客户的请求本可通过自助服务解决，对话也更容易转而需要客服人员介入。</p>
-<p>新加坡航空通过 OpenAI API，将 Kris 升级为完全由 LLM 驱动的对话式体验。聊天机器人不再依赖预设流程，而是能够理解客户用自然语言表达的意图，依据知识库作答，处理多话题对话，并在必要时连同相关上下文一起转交客服人员。</p>
-<p>如今，客户可以通过 Kris 进行一般咨询、提出特殊需求、获取实时航班异常信息，以及办理部分业务。新加坡航空正持续扩展 Kris 的功能，将其覆盖范围拓展至预订变更、行李业务办理，以及更复杂的智能体交互。</p>
-<blockquote>“借助 OpenAI，Kris 已成为功能更强大的自助服务渠道。它能更自然地理解客户意图，帮助客户找到正确答案，并在需要客服人员介入时，为他们提供更清晰的上下文。”</blockquote>
-<p>—Jude Anand Suresh，新加坡航空客户服务信息技术副总裁</p>
-<h2>帮助客户用自然语言探索出行方案</h2>
-<p>航班推荐工具让客户能够用自然语言描述理想的行程，而不必反复调整筛选条件、日期和目的地。过去一年，其使用量增长至原来的近 3 倍。</p>
-<blockquote>“航班推荐工具让探索出行方案的过程更像一场自然的对话。它通过 API 接入 OpenAI 模型，帮助客户表达需求，更快地找到合适的选项。”</blockquote>
-<p>—Andy Koh，新加坡航空应用服务（销售、营销与货运）副总裁</p>
-<p>航班推荐工具基于 OpenAI API 构建，通过编排层连接票价和余票数据。它能够理解客户意图、调用相关工具，并以自然语言给出个性化的出行建议。</p>
-<p>团队还设置了安全防护机制，用于验证输入和输出、处理恶意或不当查询、减少幻觉、处理个人身份信息 (PII)，并确保通过身份验证后仅可访问每次查询所需的上下文。新加坡航空正准备进一步引入更自然的聊天机器人交互方式，让客户能够持续完善出行想法，而不必重新开始搜索。</p>
-<h2>将 AI 引入软件开发生命周期</h2>
-<p>除了面向客户的体验，新加坡航空还在软件开发生命周期的部分环节中使用 OpenAI 模型，帮助团队更高效地规划、细化、测试和审核工作。在软件开发生命周期的部分活动中，团队的工作效率提升幅度最高达 20%。</p>
-<p>如今，AI 已贯穿整个交付生命周期，而不再局限于编写代码。团队利用生成式 AI 模型辅助细化需求、分析利益相关方会议内容、编写产品规格、识别边缘情况、创建测试用例、开展架构评审，并将复杂工作拆分为更小、更易测试的任务。</p>
-<p>在开发一项商业功能时，团队在开发开始前使用 OpenAI API 审视既有假设、识别模糊的需求，并找出边缘情况。这些内容明确后，AI 帮助将其转化为设计方案、实施计划和测试用例，随后生成代码。</p>
-<p>在部署期间及之后，AI 还帮助团队理解系统在生产环境中的运行表现，并标记可能被忽视的问题。随着 AI 参与工作流程的每个环节，团队成员不再亲自制作每一项交付物，而是在整个交付生命周期中指导、审核和验证 AI 的产出。这意味着他们可以专注于真正需要人类判断的工作，例如确定优先级、架构设计、治理，以及实现利益相关方期望的成果。</p>
-<p>总体而言，OpenAI 模型正帮助新加坡航空提升需求质量、扩大测试覆盖范围，并更好地遵循内部标准。团队利用这些工作流程生成用于测试的边缘情况、评审架构方案，并在工作进入开发生命周期的后续阶段前辅助人工验证。</p>
-<h2>让员工更轻松地使用 AI</h2>
-<p>除了工程团队，新加坡航空还通过内部 AI 平台 Jarvis，让各业务部门都能使用 AI。Jarvis 由 OpenAI 模型驱动，让员工能够在治理框架下将 AI 用于日常工作，从总结文档到创建自定义工作流程。</p>
-<p>员工使用 Jarvis 在安全环境中处理 PDF、Word 文档、Excel 文件、PowerPoint 演示文稿及其他类型的文件，同时为日常工作创建自定义工作流程和轻量级知识库。如今，新加坡航空超过 60% 的员工每月都会使用 Jarvis，且使用比例仍在持续上升。</p>
-<h2>成效速览</h2>
-<ul><li>改用 AI 驱动的 Kris 聊天机器人后，<strong>客户满意度评分 (CSAT) 提升至原来的 2 倍</strong></li><li>使用 AI 辅助工具的客服人员，<strong>平均处理时长缩短约 10%</strong></li><li>过去一年，面向客户的出行方案探索工具 — 航班推荐工具的月度用户数<strong>增长至原来的 3 倍</strong></li></ul>
-<h2>展望未来</h2>
-<p>新加坡航空正持续扩大 AI 在客户和员工工作流程中的应用。对 Kris 而言，下一阶段的重点是深化自助服务，增加更多业务办理功能，帮助客户直接在聊天中解决需求。航班推荐工具正向更自然的对话式出行探索体验迈进，让客户能够通过多轮对话完善想法，而不必重新开始搜索。</p>
-<p>随着 Jarvis 向各业务部门开放，新加坡航空正着力帮助更多员工将 AI 用于日常岗位工作。这些举措与面向客户的创新相结合，正帮助新加坡航空打造这样的未来：AI 让出行更顺畅，让员工工作更高效，也让企业更敏捷地响应不断变化的需求。</p>
-<h2>迈入工作新时代</h2>
-<p>全球已有超过 100 万家企业借助 OpenAI 取得切实成果。</p>
-<p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

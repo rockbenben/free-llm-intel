@@ -7,7 +7,170 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac…</title>
+      <link>https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac Lab and Newton</description>
+      <content:encoded><![CDATA[<h1>Microduck 避障：Isaac Lab 和 Newton 的 Sim2Real 工作流程</h1>
+<p>企业+文章</p>
+<p>发表于 2026 年 11 月 24 日</p>
+<p><a href="https://huggingface.co/seun-doherty"><img src="https://huggingface.co/avatars/4b73ef95f718b8754bbaee9d1e2fc926.svg" alt="Oluwaseun Doherty 的头像"></a></p>
+<p>奥卢瓦森·多尔蒂</p>
+<p>塞恩多尔蒂</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/OOyindamola"><img src="https://huggingface.co/avatars/64e43e2a38d41db5557d0d125a196c8b.svg" alt="Oyindamola Omotuyi 的头像"></a></p>
+<p>奥因达莫拉·奥莫图伊</p>
+<p>奥因达莫拉</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/AntRi31"><img src="https://huggingface.co/avatars/528279054e94db8229aea8e600d4f271.svg" alt="理查德的头像"></a></p>
+<p>理查德</p>
+<p>蚂蚁瑞31</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif" alt="Microduck避障：模拟到现实"></a></p>
+<h2>长篇大论；博士</h2>
+<p>为<a href="https://pollen-robotics.com/microduck/">Microduck</a>添加局部避障，同时保持其行走策略固定。使用可重复使用的 <a href="https://www.nvidia.com/en-us/glossary/simready/">SimReady</a> 资源构建各种课程，使用牛顿光线投射器对 ToF 传感进行建模，并在 <a href="https://developer.nvidia.com/isaac/lab">Isaac Lab</a> 中训练控制器以调整障碍物周围的游戏手柄速度命令。本教程涵盖模拟训练、评估、导出和真实机器人部署。</p>
+<h2>简介</h2>
+<p>步行策略可以使 Microduck 保持平衡，但它不会告诉机器人如何绕过路径上的障碍物。在此工作流程中，我们重用<a href="https://huggingface.co/blog/nvidia/microduck-isaac-lab-sim-to-real">第一个 Microduck 教程</a> 中的行走策略并保持其权重固定。此后续工作使用飞行时间 (ToF) 传感来训练单独的回避控制器。你用游戏手柄选择一个方向；控制器在将速度命令传递给行走策略之前调整速度命令。</p>
+<p><a href="https://isaac-sim.github.io/IsaacLab/main/index.html">NVIDIA Isaac Lab</a> 是一个开源框架，用于跨数千个 GPU 并行模拟训练策略，并提供机器人学习环境。 <a href="https://github.com/newton-physics/newton">Newton</a> 模拟物理和传感器的深度测量。我们将介绍控制架构，训练不同的障碍物布局，评估最终的策略，并准备硬件测试的接口。</p>
+<h2>1. 在Isaac Lab中设置Microduck避障</h2>
+<p>对于模拟和培训，请准备：</p>
+<ul><li>具有兼容 NVIDIA GPU 和驱动程序的 Linux 系统。有关平台要求，请参阅 <a href="https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/index.html">Isaac Lab 安装指南</a>。</li><li>Git 与 Git LFS 和 uv 包管理器。</li></ul>
+<p>对于物理机器人测试，请准备：</p>
+<ul><li>配置好的 Microduck。加载导航任务使用的相同反向间隙行走策略导出。</li><li>受支持的 ToF 传感器及其配置记录。</li><li>配对的游戏手柄和带有障碍物的水平测试区域。</li></ul>
+<h3>快速安装</h3>
+<p>如果尚未安装，请安装 <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。然后克隆 Isaac Lab 存储库的 exp/microduck 分支并安装其依赖项：</p>
+<pre><code>git lfs install
+git clone --branch exp/microduck https://github.com/isaac-sim/IsaacLab.git
+cd IsaacLab
+uv sync --frozen</code></pre>
+<p>设置完成后，列出可用的 Microduck 环境和预设：</p>
+<pre><code>uv run isaaclab list_envs --keyword MicroDuck --show_presets</code></pre>
+<h3>下载步行政策</h3>
+<p>在训练前下载并导出一次<a href="https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.2/Isaac/IsaacLab/PretrainedCheckpoints/rsl_rl/IsaacContrib-Velocity-Rough-MicroDuck_backlash_newtonmjwarp_none_rsl_rl.pt">上游反向间隙行走检查点</a>。避障任务自动加载导出的行走策略。</p>
+<pre><code>uv run isaaclab play \
+  --task IsaacContrib-Velocity-Rough-MicroDuck \
+  --rl_library rsl_rl --checkpoint pretrained \
+  --num_envs 1 --visualizer none \
+  --video newton_gl --video_length 1 \
+  presets=backlash</code></pre>
+<h2>2. 搭建障碍训练场</h2>
+<p>该环境将简单的原语与 Hugging Face 上的 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 提供的 <a href="https://www.nvidia.com/en-us/glossary/openusd/">OpenUSD</a> 资产相结合。我们在锥体旁边使用了<a href="https://huggingface.co/datasets/nvidia/simready-assets/tree/main/box_cardboard_a01">纸板箱</a>、<a href="https://huggingface.co/datasets/nvidia/simready-assets/tree/main/trashCan_office_black_a03">办公箱</a>、<a href="https://huggingface.co/datasets/nvidia/simready-assets/tree/main/table_bedside_b01">床头柜</a>。从 IsaacLab 存储库根目录，将固定的 box、bin 和 Cabinet 包下载到 asset/simready 中。</p>
+<pre><code>uvx --from huggingface-hub hf download nvidia/simready-assets \
+  --repo-type dataset \
+  --revision 9d4556bfe80868c1d27a7a7ba1c2774e63e8cedd \
+  --include &quot;box_cardboard_a01/*&quot; \
+  --include &quot;trashCan_office_black_a03/*&quot; \
+  --include &quot;table_bedside_b01/*&quot; \
+  --local-dir ./assets/simready</code></pre>
+<p>在每个情节重置时，环境代码会自动对布局进行采样，对道具进行洗牌，并改变它们的放置和旋转。大多数球场都会在鸭子前面散布障碍物，只有少量的畅通路径、障碍物和通道。该代码还反映了布局并混合了对齐和交错的行。</p>
+<p>目标在鸭子之前开始。运动命令引导其朝着目标前进，而策略则围绕障碍进行调整。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/uesbJUW3FYJxujnhTMbxN.png">！[四格网格显示 Microduck 位于棋盘地板上，并重新排列了纸板箱、垃圾箱、橱柜、红色锥体、白色障碍物和绿色球门标记。</a>](https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/uesbJUW3FYJxujnhTMbxN.png)</p>
+<p>图 1. 使用 SimReady 资产和原始几何图形的各种障碍路线布局。</p>
+<h2>3. 了解 ToF 传感如何指导步行策略</h2>
+<p><code>IsaacContrib-ObstacleAvoidance-Flat-MicroDuck</code> 任务将避障与平衡分开。导航策略使用 ToF 传感来调整 50 Hz 的前向、侧向和偏航命令。然后，冻结的行走策略将这些命令转换为联合动作，使机器人能够学习避障，而无需重新训练其行走行为。</p>
+<p>在训练期间，导航策略的参与者接收真实机器人上可用的 ToF 历史记录以及身体和控制器状态。它的批评者可以访问额外的模拟状态来指导学习，但部署不需要。</p>
+<p>奖励鼓励朝着目标前进、安全到达以及绕过障碍。仅当机器人在足够的间隙内取得进展时，遵循移动命令才能获得积分；冒险的做法会降低这种信用。处罚会阻止快速接近、突然改变命令、碰撞和跌倒。</p>
+<p>避障任务位于<a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle"><code>isaaclab_tasks.contrib.microduck_obstacle</code></a>。其配置在<a href="https://github.com/isaac-sim/IsaacLab/blob/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle/obstacle_avoidance_env_cfg.py"><code>obstacle_avoidance_env_cfg.py</code></a>中，ToF传感在<a href="https://github.com/isaac-sim/IsaacLab/blob/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle/sensors.py"><code>sensors.py</code></a>中，动作、命令、观察和奖励在<a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck_obstacle/mdp"><code>mdp/</code></a>下组织。</p>
+<h3>对 ToF 传感器建模</h3>
+<p>MicroDuckToFCamera 扩展了 Newton 的 LegacyMultiMeshRayCasterCamera，以对 VL53L5CX 进行建模，这是 microduck 上的紧凑型飞行时间 (ToF) 传感器，可在 15Hz 的频率下测量 8×8 网格上的距离​​。模拟传感器具有 45° 视野和 0.12–4 m 范围。它遵循鸭子的头部，其位置与真实鸭子上的传感器类似。</p>
+<p>真实记录告知模拟中的传感器放置和地板读数。训练会增加噪声、延迟和缺失测量（包括网格边缘附近的测量），从而使策略暴露于不完美的数据。下面的摘录显示了任务配置中已包含的选定传感器设置。您不需要单独编辑或运行此代码。</p>
+<pre><code># Selected settings; mount and raycast targets omitted.
+head_tof = MicroDuckToFCameraCfg(
+    prim_path=MICRODUCK_HEAD_BODY_PATH,
+    update_period=1.0 / 15.0,
+    pattern_cfg=patterns.PinholeCameraPatternCfg(
+        focal_length=1.0, width=8, height=8,
+        horizontal_aperture=_TOF_APERTURE,
+        vertical_aperture=_TOF_APERTURE,
+    ),
+    randomization=ToFRandomizationCfg(
+        mount_pitch_degrees=(-10.0, 10.0),
+        mount_height_m=(-0.02, 0.02),
+        floor_validity_midpoint_offset_m=(0.0, 0.13),
+        near_floor_edge_impairment_probability=0.5,
+    ),
+    data_types=[&quot;distance_to_image_plane&quot;, &quot;distance_to_camera&quot;],
+    max_distance=TOF_MAX_RANGE,
+    depth_clipping_behavior=&quot;zero&quot;,
+)</code></pre>
+<h2>4. 跨并行环境训练 Microduck 策略</h2>
+<p>使用 PPO 在 16,384 个并行环境中训练导航策略，进行 1,500 次训练迭代。它的参与者、批评者、标准化者和优化者都是全新的。任务配置加载固定步行检查点、机器人模型和障碍物资产。</p>
+<p>此处显示的 16,384 个环境是可配置的，而不是最低要求。降低 <code>--num_envs</code> 以适应 GPU 的可用内存。由于并行收集经验的环境较少，达到可比较的策略性能可能需要更多的训练迭代和更长的训练时间。我们还在 NVIDIA DGX Spark 上使用 4,096 个并行环境进行了 3,000 个 PPO 更新，花费了大约 6 小时训练了该策略，展示了相同工作流程的较小规模配置。</p>
+<p>运行以下命令来训练策略：</p>
+<pre><code>uv run isaaclab train \
+  --task IsaacContrib-ObstacleAvoidance-Flat-MicroDuck \
+  --rl_library rsl_rl \
+  --num_envs 16384 \
+  --max_iterations 1500 \
+  --seed 42 \
+  --device cuda:0 \
+  --visualizer none \
+  presets=backlash</code></pre>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/RCQ8kWS0Ky4j_YU1ch-G3.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/RCQ8kWS0Ky4j_YU1ch-G3.gif" alt="摄像机从在锥体、盒子和障碍物之间导航的 MicroDuck 上拉回，以显示邻近的随机障碍路线"></a></p>
+<p>图 2. 并行 MicroDuck 避障仿真</p>
+<h2>5. 检查行为并将策略导出到 ONNX</h2>
+<p>回放使用与训练相同的道具、基元、冻结步行者和传感器随机化，并使用不同的种子来安排新的障碍物。</p>
+<p>导航检查点保存在相对于存储库根目录的 <code>logs/rsl_rl/microduck_obstacle_avoidance_tof_flat_backlash/&lt;timestamp&gt;/</code> 下。从运行中选择一个 <code>model_&lt;iteration&gt;.pt</code> 文件，并将下面的 <code>/absolute/path/to/model.pt</code> 替换为其路径。这会播放策略，打开 Newton 查看器并记录 20 秒的模拟。将 --viz 设置为 none 以进行无头录制。</p>
+<pre><code>uv run --extra video isaaclab play \
+  --task IsaacContrib-ObstacleAvoidance-Flat-MicroDuck \
+  --rl_library rsl_rl \
+  --checkpoint /absolute/path/to/model.pt \
+  --num_envs 1 \
+  --seed 6173 \
+  --device cuda:0 \
+  --viz newton_gl \
+  --video newton_gl \
+  --video_length 1000 \
+  presets=backlash</code></pre>
+<p>回放将 TorchScript 和 ONNX 模型保存在检查点的导出文件夹中。将 ONNX 数据文件与模型放在一起。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif">！[Microduck 面对红色锥体和一个明显的固定目标。叠加层识别头戴式 ToF 传感器、8 × 8 深度网格以及请求与策略引导运动。</a>](https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/Tqh5FK78Q1qDuzhEDGpqQ.gif)</p>
+<p>图 3. 使用请求的运动、策略引导和 ToF 输入叠加进行锥体路线评估。</p>
+<h2>6. 在真正的 Microduck 上测试避障</h2>
+<p>这些<a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/scripts/deploy/microduck_tof_nav">部署工具</a> 在笔记本电脑上运行导航模型，并将调整后的游戏手柄命令发送到机器人上的行走策略。使用与导航训练期间相同的步行策略。</p>
+<p>第 1 部分将 walker 的 ONNX 导出保存到 <code>.pretrained_checkpoints/rsl_rl/https/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.2/Isaac/IsaacLab/PretrainedCheckpoints/rsl_rl/exported/policy.onnx</code>，相对于 Isaac Lab 存储库根。</p>
+<p>使用 <a href="https://github.com/pollen-robotics/microduck/blob/main/docs/robot/cheatsheet.md#trying-your-own-file">Pollen 的策略加载指南</a> 加载步行策略。部署自述文件包含传输步骤，包括如何打包使用外部数据文件的 ONNX 导出。</p>
+<p>从 Isaac Lab 结账处，设置 SSH 访问并检查机器人直立静止的推理：</p>
+<pre><code>cd scripts/deploy/microduck_tof_nav
+ssh-copy-id microduck@ROBOT_HOST
+uv run nav_pad.py --robot ROBOT_HOST \
+  --model /absolute/path/to/navigation/exported/policy.onnx \
+  --dry-run --seconds 30</code></pre>
+<p>试运行会复制助手并流式传输传感器数据，但不发送移动命令。当障碍物进入传感器视野时，观察建议的命令。将导航 ONNX 和任何配套 .data 文件放在一起。</p>
+<p>一旦这些检查通过，就开始受监督的游戏手柄导航：</p>
+<pre><code>uv run nav_pad.py --robot ROBOT_HOST \
+  --model /absolute/path/to/navigation/exported/policy.onnx</code></pre>
+<p>向前握住操纵杆以请求移动；政策调整指挥，避障。松开摇杆即可停止，按 X 切换导航，然后使用 Ctrl-C 结束会话。默认情况下，前进速度上限为 0.15 m/s，并具有附加的近距离障碍物制动和过时输入停止功能。在测试路线之前，从空旷的区域开始并确认停止。</p>
+<p>有关控制、日志和故障排除，请参阅<a href="https://github.com/isaac-sim/IsaacLab/blob/exp/microduck/scripts/deploy/microduck_tof_nav/README.md">部署自述文件</a>。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/zJU03xK6y0Ii0XOWtmiwa.gif">！[一个白色和淡紫色的小机器人走过瓷砖地板上的三个橙色圆锥体，旁边是同一次跑步的 3D 重播。下面是传感器距离网格、圆锥检查表和策略转向决策列表。</a>](https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/zJU03xK6y0Ii0XOWtmiwa.gif)</p>
+<p>图 4.Microduck 使用其 8×8 ToF 传感器绕锥体行驶，左侧是真实镜头，右侧是根据原木进行的 3D 重建。蓝色表示政策转向，紫色表示运营商干预。</p>
+<h2>7. 在 Isaac 实验室探索 Microduck 的其他运动技能</h2>
+<p><a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck">Microduck任务合集</a>包括平坦和崎岖地形上的速度跟踪；站立恢复、坐站转换以及跌倒步行恢复 (VelStand)；踢球、捡地和前滚（Roulade）。轮滑任务增加了速度跟踪和旋转运动、蹲伏滑行、斜坡下降、站在溜冰鞋上和旋转。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/bg3GRix2mg67YBbayO_Y5.gif">！[循环的五列三行网格显示每个标记图块中一只 Microduck 的特写：Walking · Flat、Walking · Rough、Roller Skating、Swizzle、RollerSlope、StandUp · Seated、SitStand、GroundPick、BallKick、RollerCrouch、VelStand · Flat、VelStand · Rough、Roulade、Roulade、RollerStandUp 和旋转。</a>](https://cdn-uploads.huggingface.co/production/uploads/6847ab8c06094fa4afb6ee38/bg3GRix2mg67YBbayO_Y5.gif)</p>
+<p>图 5. 15 个 Microduck 任务视图：平坦和崎岖地形行走、恢复、物体交互和滚轴溜冰运动。</p>
+<h2>制定你的下一个政策</h2>
+<p>从<a href="https://huggingface.co/blog/nvidia/microduck-isaac-lab-sim-to-real">第一个 Microduck 教程</a> 开始，然后从 <a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck">Microduck 任务集合</a> 中选择一个任务，在 Isaac Lab 中与 Newton 一起构建下一个策略。通过改变命令、奖励或环境来探索新的行为——从崎岖地形行走到感知驱动的避障。在机器人上进行测试之前，请在训练集之外的场景中评估您的策略。</p>
+<p>＃＃ 资源</p>
+<ul><li><a href="https://pollen-robotics.com/microduck/">Microduck主页</a>（订购、快速启动、安装）</li><li><a href="https://docs.nvidia.com/learning/physical-ai/getting-started-with-isaac-lab/latest/train-a-microduck/index.html">在艾萨克实验室训练小鸭</a></li><li><a href="https://developer.nvidia.com/blog/using-ai-agents-to-teach-robots-like-microduck-to-walk-in-simulation/">训练机器人使用 AI 代理、NVIDIA Isaac Lab 和 RTX Spark 进行导航</a></li><li><a href="https://huggingface.co/blog/nvidia/microduck-isaac-lab-sim-to-real">模拟训练，部署在真实机器人上：使用 Isaac Lab 3.0 的 Microduck</a></li><li><a href="https://isaac-sim.github.io/IsaacLab/develop/source/setup/installation/index.html">艾萨克实验室安装指南</a></li><li><a href="https://github.com/isaac-sim/IsaacLab/tree/exp/microduck/source/isaaclab_tasks/isaaclab_tasks/contrib/microduck">Microduck训练环境及配置</a></li><li><a href="https://github.com/isaac-sim/IsaacLab/blob/develop/docs/source/concepts/actuators.rst#bam-servo-model">基于牛顿的 BAM 执行器文档</a></li><li><a href="https://github.com/pollen-robotics/microduck-arena/blob/main/docs/guides/train-a-policy.md#already-have-an-onnx">Microduck Arena和ONNX提交指南</a></li><li>探索 <a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">SimReady Central，了解来自 OEM 和资产提供商的更多模拟就绪 OpenUSD 资产。</a></li><li><a href="https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place">了解如何使用 SimReady Assets 构建机器人拾放模拟</a></li><li><a href="https://github.com/pollen-robotics/microduck/blob/main/docs/robot/cheatsheet.md#trying-your-own-file">Microduck机器人软件及部署指南</a></li></ul>
+<h2>致谢</h2>
+<p>该工作流程建立在 Pollen Robotics 的 Microduck 硬件和软件、原始的 <a href="https://github.com/pollen-robotics/microduck_rl">Microduck 强化学习项目</a>、<a href="https://github.com/Rhoban/bam">BAM 执行器建模工作</a> 以及 Isaac Lab 和 Newton 集成的基础上。</p>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空间1</h2>
+<p>该作者的更多内容</p>
+<h2>使用 SimReady Assets 构建机器人拾放模拟</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>50</p>
+<p>2026 年 11 月 13 日</p>
+<h2><em>使用八个领域的 100,000 个综合业务文档评估隐私保护和实际人工智能应用</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>7</p>
+<p>2026 年 11 月 9 日</p>
+<h3>社区</h3>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空间1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>RoboTrack：现实世界机器人操作的点跟踪</title>
       <link>https://huggingface.co/blog/allenai/robotrack</link>
@@ -1376,121 +1539,6 @@ zai-org/GLM-5.3:novita     # only Novita</code></pre>
 <ul><li><a href="https://huggingface.co/jodri-code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qEzF-jLE4GRxo82JQX_Vv.png" alt=""></a></li><li><a href="https://huggingface.co/emre5"><img src="https://huggingface.co/avatars/0c0ac76acd3f352815398249548a0f65.svg" alt=""></a></li><li><a href="https://huggingface.co/celinah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sbrandeis"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></a></li><li><a href="https://huggingface.co/Wauplin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659336880158-6273f303f6d63a28483fde12.png" alt=""></a></li><li><a href="https://huggingface.co/kramp"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pierrci"><img src="https://huggingface.co/avatars/d4cce894629554d9a10369ecc2a7de67.svg" alt=""></a></li><li><a href="https://huggingface.co/alrightjones"><img src="https://huggingface.co/avatars/347bb31f03574c50ba0376ecac86a511.svg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Gflorent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620a77b7dbba8fc1fbb8bdb4/ZRW2pH9Iawj700OyLpJl8.png" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/abatuhanb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/681a45f2212b9872c123ad4b/_aYKRcWJO0qIYV_sZFfDn.jpeg" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>使用 SimReady Assets 构建机器人拾放仿真</title>
-      <link>https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</guid>
-      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Build a Robot Pick-and-Place Simulation with SimReady Assets</description>
-      <content:encoded><![CDATA[<h1>使用 SimReady Assets 构建机器人拾放仿真</h1>
-<p>企业 + 文章</p>
-<p>发布于 2026 年 11 月 13 日</p>
-<p>14</p>
-<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/dillonb-nv"><img src="https://huggingface.co/avatars/ef260ce572881087d516bcf632928740.svg" alt="Dillon Bailey 的头像"></a></p>
-<p>Dillon Bailey</p>
-<p>dillonb-nv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt="Pomi Lee 的头像"></a></p>
-<p>Pomi Lee</p>
-<p>pomilee</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/rchadha-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kaRxLMenXEARG7KGBZJUh.png" alt="Rishabh Chadha 的头像"></a></p>
-<p>Rishabh Chadha</p>
-<p>rchadha-nv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif" alt="figure-01-pick-and-place-highlight"></a></p>
-<p>这篇演练展示了一个饮料罐拾放任务：用 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G 机械臂</a>、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140 夹爪</a>和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>在 Isaac Sim 中搭建场景，检查它们的行为，并用 agent 生成的控制逻辑跑一个拾放示例。</p>
-<p>在机器人工作流里，SimReady 指的是 <a href="https://www.nvidia.com/en-us/glossary/openusd/">OpenUSD</a> 资产已经按某个明确的仿真用例配置好所需属性，例如碰撞、质量、关节和关节驱动。<a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 是 Hugging Face 上的一个开放资产库，让你复用带有编写好的仿真属性和 profile 验证证据的机器人与物体资产。想进一步了解该库及其发布，请读<a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">公告博客</a>。</p>
-<h2>机器人资产怎样才算 SimReady？</h2>
-<p><a href="https://nvidia.github.io/simready-foundation/">SimReady Foundation</a> 规定了 OpenUSD 资产在某个仿真用例下需要具备哪些特性。其规范把三个层次串起来：</p>
-<ul><li>Profile：针对某个用例的一组特性，例如机器人本体。</li><li>Features：该用例所需的能力，例如可控制的关节。</li><li>Requirements：对每项特性所需设置的检查，例如关节的驱动设置。</li></ul>
-<p>对本任务而言，这些属性包括机械臂和夹爪的关节，以及饮料罐资产的碰撞与质量。验证会按 profile 的要求检查这些设置；随后仿真再测试组装好的机器人能否用它们抓起并搬动罐子。</p>
-<h2>资产自带什么，你又需要补什么？</h2>
-<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>这三个包里带有模型及其仿真设置。你需要组装场景，再添加任务代码来定义机械臂–夹爪组合、工作表面、起始位置，以及移动机械臂、开合夹爪的控制逻辑。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png" alt="图 2"></a></p>
-<p><em>图 2. SimReady Central 提供资产模型与仿真设置，示例场景和控制逻辑定义拾放任务。</em></p>
-<h2>运行拾放任务前该检查什么？</h2>
-<p>机器人在 Isaac Sim 里静止时看着可能没问题，但仿真一跑起来，移动或跟物体交互就可能出错。运行拾放之前，先测试它的关节、运动和接触行为。你可以让 agent 做这些测试，也可以在 Isaac Sim 里手动完成。</p>
-<ul><li><strong>关节设置：</strong> 检查机械臂与夹爪的关节限位和驱动设置。</li><li><strong>运动：</strong> 测试一次小幅机械臂移动，并开合夹爪。</li><li><strong>接触：</strong> 确认罐子稳稳放在工作面上，不会穿下去。</li></ul>
-<p>拾放过程中，留意机械臂移动时饮料罐是否一直留在夹爪里。资产结构各不相同，请以你已加载场景里的设置为起点。下面几步会走一遍下载资产、搭建场景的完整流程。</p>
-<h2>在 Isaac Sim 中搭建拾放仿真</h2>
-<p>此示例在 Isaac Sim 里把 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> 机械臂、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹爪和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>组合起来。任务是抓住罐子、抬起、移到目标位置再松开。你也可以借助 <a href="http://nvidia-simready-central.hf.space">SimReady Central Space</a> 的搜索服务端点查找 OEM 精选内容。</p>
-<p>我们还会用一个前沿 AI 模型，帮忙在打开的 Isaac Sim 场景里编写并运行任务代码。本例用的是 GPT-6 Sol；只要别的 agent 与模型组合能加载所需 skills、并针对 Isaac Sim 执行 Python，也同样可行（生成的代码和结果可能有差异）。prompt 只是一个起点。改造任务之前，先检查生成的代码，核对实际行为。</p>
-<p><strong>所需软件：</strong></p>
-<ul><li>安装本例所用的 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim</a> 6.2，并确认其系统要求。</li><li>搭一个你选的、能使用 Isaac Sim skills 的 agent。按 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Agent Skills 文档</a>把随附的 skills 提供给你的 agent。</li><li>只有在你选择用命令行下载资产时，才需要安装 <a href="https://huggingface.co/docs/huggingface_hub/guides/cli">Hugging Face CLI</a>。</li><li>使用 <a href="http://nvidia-simready-central.hf.space">USD Search endpoint</a>。</li></ul>
-<h2>第 1 步：下载机械臂、夹爪和饮料罐资产</h2>
-<p>打开 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 并找到 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> 机械臂、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹爪和本文用到的<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>。在每个资产上点 Download，再用 Save to folder 或给出的 Hugging Face 命令。三个完整的资产文件夹都要保持原样，这样 Isaac Sim 才能找到它们的支撑文件。</p>
-<p>使用本例中链接的资产版本，并把机械臂、夹爪和饮料罐的本地 USD 文件路径提供给你的 agent。下面给了一个夹爪路径示例；你的下载位置可能不同。</p>
-<pre><code>~/ASSETS/hf/src/simready-assets-c7fa7615/Robotiq_2F_140/simready_usd/Robotiq_2F_140.usda</code></pre>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif" alt="figure-05-find-robotiq"></a></p>
-<p><em>图 3. SimReady Central 的搜索与交互式预览，有助于认出本例所用的 Robotiq 2F-140 夹爪和饮料罐。</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif" alt="figure-04-download-assets"></a></p>
-<p><em>图 4. 饮料罐的下载选项包括把资产包保存到文件夹，或使用 Hugging Face CLI。</em></p>
-<h2>资产验证能告诉你什么？</h2>
-<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/.metadata/ur17g_1300_validation.json">机械臂验证报告</a>用的是 Robot-Body 4.0.0 profile，<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/c7fa7615a353ebac03990208cbc2aa57426f4c48/Robotiq_2F_140/.metadata/Robotiq_2F_140_validation.json">夹爪验证报告</a>用的是 Robot-Gripper 3.0.0。两份报告都记录了通过的 <a href="https://nvidia.github.io/simready-foundation/latest/features/FET_022_PHYSX.html">PhysX 驱动关节检查</a>，该项检查会核对关节驱动设置。</p>
-<p>SimReady 的 profile 验证为复用这些资产提供了共同的基线。随后的拾放运行，则测试机械臂、夹爪、罐子和控制器在组装好的场景里如何协同工作。</p>
-<h2>第 2 步：组装机器人并搭好拾放场景</h2>
-<p>下载资产后，让带 Isaac Sim skills 的 agent 帮你组装机器人、运行验证工具、创建拾放控制逻辑。你也可以照着相关文档手动完成这些步骤。</p>
-<p>从安装目录启动 Isaac Sim，并启用远程 Python 服务器，让 agent 能通过 Python 与仿真交互：</p>
-<pre><code>./isaac-sim.sh --enable isaacsim.code_editor.python_server</code></pre>
-<p>如果你用 agent，请从 Isaac Sim 目录启动它，这样在下面各步骤里它才能访问所需的 skills。</p>
-<p>确认三个资产都能显示、没有缺文件报错。让 agent 检查机械臂和夹爪的关节限位与驱动设置，或者你自己在 Isaac Sim 里核对。机器人和夹爪都带物理关节，同样可以在 Isaac Sim GUI 里测试和验证。接下来我们把机械臂和夹爪组装起来，好把整个组合当作一个 articulation 来控制。</p>
-<p>手动组装可以照着 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html">Robot Assembler 教程</a>做。这里我们让 agent 完成组装并替我们验证：</p>
-<p><strong>本例使用的示例 prompt：</strong></p>
-<pre><code>Assemble the robot arm &lt;local path to Simready ur17g robot usd&gt;
-with the gripper &lt;local path to downloded simready Robotiq_2F_140 gripper usd&gt;
-using the Robot Assembly tutorial in Isaac Sim
-https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html.
-
-Validate the assembly on completion.</code></pre>
-<p>agent 最终用上了 Isaac Sim 随附的 ‘isaac-sim-remote’ 和 ‘usd-articulation’ skills 来完成组装，并验证机器人的物理特性。至此运行拾放所需的资产都齐了：组装好的机器人和汽水罐。接下来进入工作流的最后一部分。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif" alt="figure-05-joint-settings"></a></p>
-<p><em>图 5. Isaac Sim 中 UR17G 机械臂与 Robotiq 2F-140 夹爪的关节设置。</em></p>
-<p>组装好的机器人和罐子都放进场景后，让 agent 运行任务，再用下一步的检查来评估仿真行为。</p>
-<h2>第 3 步：测试控制逻辑并运行拾放</h2>
-<p>资产现在带有仿真属性和 profile 验证，可以在组装好的场景和控制器里测试了。控制器把 UR17G 机械臂的运动与 Robotiq 2F-140 夹爪的开合协调起来。用下面的行为检查来评估 agent 生成的任务。想自己理解或改造控制器，请参阅<a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/core_api_tutorials/tutorial_core_adding_manipulator.html">添加机械手机器人教程</a>。</p>
-<p><strong>本例使用的示例 prompt：</strong></p>
-<pre><code>Run pick and place with the assembled robot and soda can
-&lt;path to soda can USD from SimReady library&gt; in Isaac Sim.
-
-Ensure you do a contact based grasp for picking up the can and validate
-the accuracy/placement error for the pick and place as well.</code></pre>
-<p><strong>用到的 skills</strong>：‘isaac-sim-remote’、‘manipulaiton-ik’ 和 ‘physics-simulation’</p>
-<p>完整任务会测试夹爪在移动过程中是否握住罐子、并在目标处松开。先重置场景，再依次跑接近、抓取、抬起、保持、转移和释放。把你的运行结果与开头视频以及下面的成功标准对照。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif" alt="figure-06-pick-and-place-landscape"></a></p>
-<p><em>图 6. 在 Isaac Sim 中，UR17G 机械臂与 Robotiq 2F-140 夹爪把饮料罐从黄色拾取标记移到绿色目标。以 4× 速度播放。</em></p>
-<p>如果你的运行结果不一样，记下序列在哪一步出问题，让 agent 检查场景并重新生成控制逻辑。重试前把罐子和机器人复位到相同的起始状态，方便对比结果。</p>
-<p><strong>仿真假设：</strong></p>
-<ul><li><strong>固定配置：</strong> 罐子从已知位置出发，机器人固定，工作空间干净平整。没有用视觉，碰撞检查也做了限制。</li><li><strong>简化的罐子：</strong> 没有对形变和液体运动建模，所以本例不测试挤压变形。</li><li><strong>脚本化抓取与运动：</strong> 水平抓取用了一个 2 N·m 的驱动力上限，这是通过仿真测试选的，并未按指尖力校准，也不是厂商推荐值。机械臂沿固定路径点运动、不做重新规划，靠接触和摩擦把饮料罐夹住。硬件夹持力规格请参阅 <a href="https://robotiq.com/hubfs/Product-sheets/Adaptive%20Grippers/Product-sheet-Adaptive-Grippers-EN.pdf">Robotiq 产品表</a>。</li></ul>
-<p>这些结果只适用于这套脚本化配置，并不能证明对不确定的物体位置、不同负载或真实硬件也具备鲁棒性。</p>
-<h2>用 SimReady Assets 构建你的下一个仿真</h2>
-<p>用 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 里的资产搭一个自己的拾放任务，再选一个 agent 帮你组装场景、在 Isaac Sim 里跑起来。</p>
-<p><strong>发现资产</strong></p>
-<ul><li><strong>查找机器人和物体：</strong> 在 Hugging Face 上浏览 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>。</li><li><strong>确认资产支持什么：</strong> 对照 <a href="https://nvidia.github.io/simready-foundation/latest/">SimReady Foundation</a> 里的 profiles 与 requirements，以及该资产的验证报告。</li></ul>
-<p><strong>搭建拾放场景</strong></p>
-<ul><li><strong>设置模拟器：</strong> 按本例所用的版本，参照 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim 安装指南</a>。</li><li><strong>接入你的 agent：</strong> 按 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Isaac Sim Agent Skills 文档</a> 把随附的 skills 提供给你的 agent。</li><li><strong>组装机器人：</strong> 如果你想手动连接机械臂和夹爪，请遵循 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html#assembling-robots">Robot Assembler 教程</a>。</li></ul>
-<p><strong>准备并贡献内容</strong></p>
-<ul><li><strong>从 CAD 起步：</strong> 按<a href="https://developer.nvidia.com/blog/5-steps-to-create-simready-assets-for-robotics-with-frontier-ai-models/">为机器人创建 SimReady 资产的 5 个步骤</a> 准备你自己的机器人资产。</li><li><strong>验证并提交资产：</strong> 按 <a href="https://github.com/NVIDIA-Omniverse/simready-central/blob/main/.agents/skills/submit-simready-assets/SKILL.md">SimReady Central 提交指南</a> 把你的资产开放给其他开发者。</li></ul>
-<p>想找点灵感，可以看看 <a href="https://lnkd.in/p/g3-5svW6">Michael Wagner 的声控 VR 演示</a> 或 <a href="https://lnkd.in/p/gnxQ3YS8">Maziyar Panahi 的 Microduck 仿真</a>。两者都展示了开发者如何在自己的项目里使用 SimReady 资产。</p>
-<p>你会做点什么？在 Hugging Face 评论区分享你的场景和结果，附上所用的资产和 Isaac Sim 版本。</p>
-<p>祝搭建愉快！</p>
-<h2>本文提到的数据集 3</h2>
-<h2>本文提到的 Spaces 1</h2>
-<p>该作者的更多内容</p>
-<h2><em>用覆盖八个领域的 10 万份合成商业文档评估隐私保护与实用 AI 应用</em></h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>5</p>
-<p>2026 年 11 月 9 日</p>
-<h2>Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>19</p>
-<p>2026 年 11 月 9 日</p>
-<h3>社区</h3>
-<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
-<h2>本文提到的数据集 3</h2>
-<h2>本文提到的 Spaces 1</h2>]]></content:encoded>
-    </item>
-    <item>
       <title>llama.cpp v1.0.0：为本地 AI 生态奠定更坚实的基础</title>
       <link>https://huggingface.co/blog/ggml-org/llama-cpp-v1</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llama-cpp-v1</guid>
@@ -1619,6 +1667,121 @@ the accuracy/placement error for the pick and place as well.</code></pre>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fggml-org%2Fllama-cpp-v1">登录</a> 后发表评论</p>
 <p>152</p>
 <ul><li><a href="https://huggingface.co/julien-c"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ggerganov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/ec7pRNrQQy70d-11FiACq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/698f3e5bbb8868af0007ee11/ljEcnVumnqdKB8KLdbTfj.png" alt=""></a></li><li><a href="https://huggingface.co/nisbenz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/UP6XBeYna_xGflooV6RF5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/74k1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/J45uU0ctfprHaqrGfNoCy.png" alt=""></a></li><li><a href="https://huggingface.co/lnglth"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OD5-IRD81mXlt3HQd6x3u.png" alt=""></a></li><li><a href="https://huggingface.co/winklerj"><img src="https://huggingface.co/avatars/f3b23beb0241ff3c32975da592c00af4.svg" alt=""></a></li><li><a href="https://huggingface.co/andito"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2b8b4cf7d8930887629e7bcaf0401f61.svg" alt=""></a></li><li><a href="https://huggingface.co/cpoisson"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67c5d537358173ae2f6a038c/kjxn09Z7NFluvjY_R00cC.png" alt=""></a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>使用 SimReady Assets 构建机器人拾放仿真</title>
+      <link>https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/simready-assets-robot-pick-and-place</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Build a Robot Pick-and-Place Simulation with SimReady Assets</description>
+      <content:encoded><![CDATA[<h1>使用 SimReady Assets 构建机器人拾放仿真</h1>
+<p>企业 + 文章</p>
+<p>发布于 2026 年 11 月 13 日</p>
+<p>14</p>
+<ul><li><a href="https://huggingface.co/ByteSage404"><img src="https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg" alt=""></a></li><li><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt=""></a></li><li><a href="https://huggingface.co/jkosnik"><img src="https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg" alt=""></a></li><li><a href="https://huggingface.co/AiWinstone"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png" alt=""></a></li><li><a href="https://huggingface.co/pipwnz"><img src="https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/dillonb-nv"><img src="https://huggingface.co/avatars/ef260ce572881087d516bcf632928740.svg" alt="Dillon Bailey 的头像"></a></p>
+<p>Dillon Bailey</p>
+<p>dillonb-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/pomilee"><img src="https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg" alt="Pomi Lee 的头像"></a></p>
+<p>Pomi Lee</p>
+<p>pomilee</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/rchadha-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kaRxLMenXEARG7KGBZJUh.png" alt="Rishabh Chadha 的头像"></a></p>
+<p>Rishabh Chadha</p>
+<p>rchadha-nv</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif" alt="figure-01-pick-and-place-highlight"></a></p>
+<p>这篇演练展示了一个饮料罐拾放任务：用 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G 机械臂</a>、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140 夹爪</a>和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>在 Isaac Sim 中搭建场景，检查它们的行为，并用 agent 生成的控制逻辑跑一个拾放示例。</p>
+<p>在机器人工作流里，SimReady 指的是 <a href="https://www.nvidia.com/en-us/glossary/openusd/">OpenUSD</a> 资产已经按某个明确的仿真用例配置好所需属性，例如碰撞、质量、关节和关节驱动。<a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 是 Hugging Face 上的一个开放资产库，让你复用带有编写好的仿真属性和 profile 验证证据的机器人与物体资产。想进一步了解该库及其发布，请读<a href="https://huggingface.co/blog/nvidia/simready-central-assets-robotics-ai-factories">公告博客</a>。</p>
+<h2>机器人资产怎样才算 SimReady？</h2>
+<p><a href="https://nvidia.github.io/simready-foundation/">SimReady Foundation</a> 规定了 OpenUSD 资产在某个仿真用例下需要具备哪些特性。其规范把三个层次串起来：</p>
+<ul><li>Profile：针对某个用例的一组特性，例如机器人本体。</li><li>Features：该用例所需的能力，例如可控制的关节。</li><li>Requirements：对每项特性所需设置的检查，例如关节的驱动设置。</li></ul>
+<p>对本任务而言，这些属性包括机械臂和夹爪的关节，以及饮料罐资产的碰撞与质量。验证会按 profile 的要求检查这些设置；随后仿真再测试组装好的机器人能否用它们抓起并搬动罐子。</p>
+<h2>资产自带什么，你又需要补什么？</h2>
+<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a>、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>这三个包里带有模型及其仿真设置。你需要组装场景，再添加任务代码来定义机械臂–夹爪组合、工作表面、起始位置，以及移动机械臂、开合夹爪的控制逻辑。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/J7YL_C3mUh7MWUNJ_pVtN.png" alt="图 2"></a></p>
+<p><em>图 2. SimReady Central 提供资产模型与仿真设置，示例场景和控制逻辑定义拾放任务。</em></p>
+<h2>运行拾放任务前该检查什么？</h2>
+<p>机器人在 Isaac Sim 里静止时看着可能没问题，但仿真一跑起来，移动或跟物体交互就可能出错。运行拾放之前，先测试它的关节、运动和接触行为。你可以让 agent 做这些测试，也可以在 Isaac Sim 里手动完成。</p>
+<ul><li><strong>关节设置：</strong> 检查机械臂与夹爪的关节限位和驱动设置。</li><li><strong>运动：</strong> 测试一次小幅机械臂移动，并开合夹爪。</li><li><strong>接触：</strong> 确认罐子稳稳放在工作面上，不会穿下去。</li></ul>
+<p>拾放过程中，留意机械臂移动时饮料罐是否一直留在夹爪里。资产结构各不相同，请以你已加载场景里的设置为起点。下面几步会走一遍下载资产、搭建场景的完整流程。</p>
+<h2>在 Isaac Sim 中搭建拾放仿真</h2>
+<p>此示例在 Isaac Sim 里把 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> 机械臂、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹爪和<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>组合起来。任务是抓住罐子、抬起、移到目标位置再松开。你也可以借助 <a href="http://nvidia-simready-central.hf.space">SimReady Central Space</a> 的搜索服务端点查找 OEM 精选内容。</p>
+<p>我们还会用一个前沿 AI 模型，帮忙在打开的 Isaac Sim 场景里编写并运行任务代码。本例用的是 GPT-6 Sol；只要别的 agent 与模型组合能加载所需 skills、并针对 Isaac Sim 执行 Python，也同样可行（生成的代码和结果可能有差异）。prompt 只是一个起点。改造任务之前，先检查生成的代码，核对实际行为。</p>
+<p><strong>所需软件：</strong></p>
+<ul><li>安装本例所用的 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim</a> 6.2，并确认其系统要求。</li><li>搭一个你选的、能使用 Isaac Sim skills 的 agent。按 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Agent Skills 文档</a>把随附的 skills 提供给你的 agent。</li><li>只有在你选择用命令行下载资产时，才需要安装 <a href="https://huggingface.co/docs/huggingface_hub/guides/cli">Hugging Face CLI</a>。</li><li>使用 <a href="http://nvidia-simready-central.hf.space">USD Search endpoint</a>。</li></ul>
+<h2>第 1 步：下载机械臂、夹爪和饮料罐资产</h2>
+<p>打开 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 并找到 <a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/simready_usd/ur17g_1300.usda">UR17G</a> 机械臂、<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/9c6b0cedf0066efd474b3bf473e7eaf7ae7e569f/Robotiq_2F_85/simready_usd/Robotiq_2F_85.usda">Robotiq 2F-140</a> 夹爪和本文用到的<a href="https://huggingface.co/datasets/nvidia/simready-assets/blob/653d91e182011f357cf1644013cc94ddf194d349/food_beverage_can_n01/simready_usd/sm_food_beverage_can_n01_01.usd">饮料罐</a>。在每个资产上点 Download，再用 Save to folder 或给出的 Hugging Face 命令。三个完整的资产文件夹都要保持原样，这样 Isaac Sim 才能找到它们的支撑文件。</p>
+<p>使用本例中链接的资产版本，并把机械臂、夹爪和饮料罐的本地 USD 文件路径提供给你的 agent。下面给了一个夹爪路径示例；你的下载位置可能不同。</p>
+<pre><code>~/ASSETS/hf/src/simready-assets-c7fa7615/Robotiq_2F_140/simready_usd/Robotiq_2F_140.usda</code></pre>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/FSec580RNJKj0DIXx9703.gif" alt="figure-05-find-robotiq"></a></p>
+<p><em>图 3. SimReady Central 的搜索与交互式预览，有助于认出本例所用的 Robotiq 2F-140 夹爪和饮料罐。</em></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/LJpqYrl3l5QkQ2T4JJzYd.gif" alt="figure-04-download-assets"></a></p>
+<p><em>图 4. 饮料罐的下载选项包括把资产包保存到文件夹，或使用 Hugging Face CLI。</em></p>
+<h2>资产验证能告诉你什么？</h2>
+<p><a href="https://huggingface.co/datasets/TeradyneRobotics/UniversalRobots/blob/d5d8eb795a487a5c929909bc337ee4834d62b0da/ur17g_1300/.metadata/ur17g_1300_validation.json">机械臂验证报告</a>用的是 Robot-Body 4.0.0 profile，<a href="https://huggingface.co/datasets/Robotiq-Official/simready-assets/blob/c7fa7615a353ebac03990208cbc2aa57426f4c48/Robotiq_2F_140/.metadata/Robotiq_2F_140_validation.json">夹爪验证报告</a>用的是 Robot-Gripper 3.0.0。两份报告都记录了通过的 <a href="https://nvidia.github.io/simready-foundation/latest/features/FET_022_PHYSX.html">PhysX 驱动关节检查</a>，该项检查会核对关节驱动设置。</p>
+<p>SimReady 的 profile 验证为复用这些资产提供了共同的基线。随后的拾放运行，则测试机械臂、夹爪、罐子和控制器在组装好的场景里如何协同工作。</p>
+<h2>第 2 步：组装机器人并搭好拾放场景</h2>
+<p>下载资产后，让带 Isaac Sim skills 的 agent 帮你组装机器人、运行验证工具、创建拾放控制逻辑。你也可以照着相关文档手动完成这些步骤。</p>
+<p>从安装目录启动 Isaac Sim，并启用远程 Python 服务器，让 agent 能通过 Python 与仿真交互：</p>
+<pre><code>./isaac-sim.sh --enable isaacsim.code_editor.python_server</code></pre>
+<p>如果你用 agent，请从 Isaac Sim 目录启动它，这样在下面各步骤里它才能访问所需的 skills。</p>
+<p>确认三个资产都能显示、没有缺文件报错。让 agent 检查机械臂和夹爪的关节限位与驱动设置，或者你自己在 Isaac Sim 里核对。机器人和夹爪都带物理关节，同样可以在 Isaac Sim GUI 里测试和验证。接下来我们把机械臂和夹爪组装起来，好把整个组合当作一个 articulation 来控制。</p>
+<p>手动组装可以照着 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html">Robot Assembler 教程</a>做。这里我们让 agent 完成组装并替我们验证：</p>
+<p><strong>本例使用的示例 prompt：</strong></p>
+<pre><code>Assemble the robot arm &lt;local path to Simready ur17g robot usd&gt;
+with the gripper &lt;local path to downloded simready Robotiq_2F_140 gripper usd&gt;
+using the Robot Assembly tutorial in Isaac Sim
+https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html.
+
+Validate the assembly on completion.</code></pre>
+<p>agent 最终用上了 Isaac Sim 随附的 ‘isaac-sim-remote’ 和 ‘usd-articulation’ skills 来完成组装，并验证机器人的物理特性。至此运行拾放所需的资产都齐了：组装好的机器人和汽水罐。接下来进入工作流的最后一部分。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NcKj9Cbp2iBlXh65rUf0T.gif" alt="figure-05-joint-settings"></a></p>
+<p><em>图 5. Isaac Sim 中 UR17G 机械臂与 Robotiq 2F-140 夹爪的关节设置。</em></p>
+<p>组装好的机器人和罐子都放进场景后，让 agent 运行任务，再用下一步的检查来评估仿真行为。</p>
+<h2>第 3 步：测试控制逻辑并运行拾放</h2>
+<p>资产现在带有仿真属性和 profile 验证，可以在组装好的场景和控制器里测试了。控制器把 UR17G 机械臂的运动与 Robotiq 2F-140 夹爪的开合协调起来。用下面的行为检查来评估 agent 生成的任务。想自己理解或改造控制器，请参阅<a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/core_api_tutorials/tutorial_core_adding_manipulator.html">添加机械手机器人教程</a>。</p>
+<p><strong>本例使用的示例 prompt：</strong></p>
+<pre><code>Run pick and place with the assembled robot and soda can
+&lt;path to soda can USD from SimReady library&gt; in Isaac Sim.
+
+Ensure you do a contact based grasp for picking up the can and validate
+the accuracy/placement error for the pick and place as well.</code></pre>
+<p><strong>用到的 skills</strong>：‘isaac-sim-remote’、‘manipulaiton-ik’ 和 ‘physics-simulation’</p>
+<p>完整任务会测试夹爪在移动过程中是否握住罐子、并在目标处松开。先重置场景，再依次跑接近、抓取、抬起、保持、转移和释放。把你的运行结果与开头视频以及下面的成功标准对照。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/TBsKTaclDU8oJvkXYCie8.gif" alt="figure-06-pick-and-place-landscape"></a></p>
+<p><em>图 6. 在 Isaac Sim 中，UR17G 机械臂与 Robotiq 2F-140 夹爪把饮料罐从黄色拾取标记移到绿色目标。以 4× 速度播放。</em></p>
+<p>如果你的运行结果不一样，记下序列在哪一步出问题，让 agent 检查场景并重新生成控制逻辑。重试前把罐子和机器人复位到相同的起始状态，方便对比结果。</p>
+<p><strong>仿真假设：</strong></p>
+<ul><li><strong>固定配置：</strong> 罐子从已知位置出发，机器人固定，工作空间干净平整。没有用视觉，碰撞检查也做了限制。</li><li><strong>简化的罐子：</strong> 没有对形变和液体运动建模，所以本例不测试挤压变形。</li><li><strong>脚本化抓取与运动：</strong> 水平抓取用了一个 2 N·m 的驱动力上限，这是通过仿真测试选的，并未按指尖力校准，也不是厂商推荐值。机械臂沿固定路径点运动、不做重新规划，靠接触和摩擦把饮料罐夹住。硬件夹持力规格请参阅 <a href="https://robotiq.com/hubfs/Product-sheets/Adaptive%20Grippers/Product-sheet-Adaptive-Grippers-EN.pdf">Robotiq 产品表</a>。</li></ul>
+<p>这些结果只适用于这套脚本化配置，并不能证明对不确定的物体位置、不同负载或真实硬件也具备鲁棒性。</p>
+<h2>用 SimReady Assets 构建你的下一个仿真</h2>
+<p>用 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a> 里的资产搭一个自己的拾放任务，再选一个 agent 帮你组装场景、在 Isaac Sim 里跑起来。</p>
+<p><strong>发现资产</strong></p>
+<ul><li><strong>查找机器人和物体：</strong> 在 Hugging Face 上浏览 <a href="https://huggingface.co/spaces/nvidia/simready-central">SimReady Central</a>。</li><li><strong>确认资产支持什么：</strong> 对照 <a href="https://nvidia.github.io/simready-foundation/latest/">SimReady Foundation</a> 里的 profiles 与 requirements，以及该资产的验证报告。</li></ul>
+<p><strong>搭建拾放场景</strong></p>
+<ul><li><strong>设置模拟器：</strong> 按本例所用的版本，参照 <a href="https://docs.isaacsim.omniverse.nvidia.com/latest/introduction/quickstart_index.html">Isaac Sim 安装指南</a>。</li><li><strong>接入你的 agent：</strong> 按 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/development_tools/agent_skills.html">Isaac Sim Agent Skills 文档</a> 把随附的 skills 提供给你的 agent。</li><li><strong>组装机器人：</strong> 如果你想手动连接机械臂和夹爪，请遵循 <a href="https://docs.isaacsim.omniverse.nvidia.com/6.2.0/robot_setup/assemble_robots.html#assembling-robots">Robot Assembler 教程</a>。</li></ul>
+<p><strong>准备并贡献内容</strong></p>
+<ul><li><strong>从 CAD 起步：</strong> 按<a href="https://developer.nvidia.com/blog/5-steps-to-create-simready-assets-for-robotics-with-frontier-ai-models/">为机器人创建 SimReady 资产的 5 个步骤</a> 准备你自己的机器人资产。</li><li><strong>验证并提交资产：</strong> 按 <a href="https://github.com/NVIDIA-Omniverse/simready-central/blob/main/.agents/skills/submit-simready-assets/SKILL.md">SimReady Central 提交指南</a> 把你的资产开放给其他开发者。</li></ul>
+<p>想找点灵感，可以看看 <a href="https://lnkd.in/p/g3-5svW6">Michael Wagner 的声控 VR 演示</a> 或 <a href="https://lnkd.in/p/gnxQ3YS8">Maziyar Panahi 的 Microduck 仿真</a>。两者都展示了开发者如何在自己的项目里使用 SimReady 资产。</p>
+<p>你会做点什么？在 Hugging Face 评论区分享你的场景和结果，附上所用的资产和 Isaac Sim 版本。</p>
+<p>祝搭建愉快！</p>
+<h2>本文提到的数据集 3</h2>
+<h2>本文提到的 Spaces 1</h2>
+<p>该作者的更多内容</p>
+<h2><em>用覆盖八个领域的 10 万份合成商业文档评估隐私保护与实用 AI 应用</em></h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>5</p>
+<p>2026 年 11 月 9 日</p>
+<h2>Nemotron-Personas-Finance-Japan：捕捉日本人口结构与金融背景的合成数据集</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>19</p>
+<p>2026 年 11 月 9 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<h2>本文提到的数据集 3</h2>
+<h2>本文提到的 Spaces 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>XYBench：帮用户解决提问背后的真正问题</title>
@@ -6572,157 +6735,6 @@ model = AutoModelForCausalLM.from_pretrained(
 <p>4</p>
 <ul><li><a href="https://huggingface.co/WaSampta"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ynKudRz9P7bewRrpK6Rfy.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/laoya0"><img src="https://huggingface.co/avatars/492ba3e5ebc95951c86b0490625b4366.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>
 <h2>本文中提到的模型 4</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>PyTorch 2.15 中的 MPS</title>
-      <link>https://huggingface.co/blog/mps-pytorch-2-15</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/mps-pytorch-2-15</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：MPS in PyTorch 2.15</description>
-      <content:encoded><![CDATA[<h1>PyTorch 2.15 中的 MPS</h1>
-<p>发布于 2026 年 10 月 20 日</p>
-<p><a href="https://huggingface.co/Isalia20"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69e2191b89c9afe46240fde2/4P9gAZ1_a2vLdHIcyt3PN.png" alt="Irakli Salia 的头像"></a></p>
-<p>Irakli Salia</p>
-<p>Isalia20</p>
-<p><a href="https://huggingface.co/khushi-411"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/mHXfX1t4hIyJjQ1Vd5g0f.jpeg" alt="Khushi Agrawal 的头像"></a></p>
-<p>Khushi Agrawal</p>
-<p>khushi-411</p>
-<p>如果你在 Mac 上运行模型，或者把 MPS 作为主要的计算加速手段，那么 PyTorch 2.15 有不少值得期待的东西！FP8 来到 MPS；语言模型解码通过线性层与 softmax 获得了更快的路径；新的 Metal kernel 则攻克了音频、视频和训练工作负载中一些出奇昂贵的部分。</p>
-<p>先简单说明我们是谁：我们是 Hugging Face 的 PyTorch 团队。我们在 PyTorch 的多个方向上做贡献，其中一个重点领域是 MPS 后端，目标是让你的 Mac 成为运行和训练 PyTorch 模型的一等场所。2026 年初，哪怕只是在 MPS 上运行小模型，也往往意味着要绕开不支持的操作、性能悬崖和意料之外的内存增长。于是我们拿 Hugging Face Hub 上真实的语言、图像和视频模型来跑，找出 MPS 的短板并在 PyTorch 上游修掉，而且越来越多地用专用 Metal kernel 取代 MPSGraph。本文的很多内容正是这项工作与 PyTorch 维护者、社区贡献者共同完成的成果。</p>
-<h2>太长不看（TL;DR）</h2>
-<ul><li><strong>FP8 来到 Mac：</strong> 用 BF16 一半的空间存储 <code>float8_e4m3fn</code> 数值，并使用缩放矩阵乘法以及 CUDA/CPU 上支持的所有其他算子！</li><li><strong>MoE 模型解码比 2.14 快 5–6.5 倍：</strong> 借助带专用解码路径的原生 grouped matmul、更少的 GPU-CPU 同步以及更快的 top-k 路由，Qwen3.6-35B-A3B 在 M3 Ultra 上从 9.4 tokens/s 提升到 61.3 tokens/s。</li><li><strong>每个 LLM 的每个 token 耗时更少：</strong> 单行线性层使用专门的矩阵-向量 kernel，而词表上的 softmax 大约快了 8 倍。</li><li><strong>GPU 上更多的线性代数：</strong> 复数 LU 与三角求解、更快的小矩阵求逆，以及更快的 QR 分解。</li><li><strong>音频、视频和训练同样得到关注：</strong> 卷积、padding、dropout、插值反向和归约都有了更快的路径。Wan2.2 的视频 VAE 解码现在内存峰值是 8 GiB，而不是 270 GiB。</li><li><strong>从 Python 获得更多控制：</strong> 公开的 MPS stream，以及更可靠的事件计时。</li><li><strong>更新的要求：</strong> MPS 现在需要 <strong>macOS 15 或更高版本</strong>；PyTorch 2.15 需要 <strong>Python 3.11 或更高版本</strong>。</li><li><strong>提前一瞥 2.16：</strong> attention 完全跑在 Metal 上、更多从 MPSGraph 到 Metal 的迁移，以及更快的 LLM 解码。</li></ul>
-<h2>这对你意味着什么</h2>
-<p>如果你在 Mac 上用 transformers、diffusers 或 ComfyUI 之类的工具运行模型，以下是 2.15 在实践中带来的变化：</p>
-<ul><li><strong>本地 LLM 快得多。</strong> 专家混合模型（MoE）的解码速度比 2.14 快 5–6.5 倍：在开启 <code>torch.compile</code> 的 M3 Ultra 上，Qwen3.6-35B-A3B 从 9.4 tokens/s 提升到 61.3 tokens/s，LFM2.5-8B-A1B 从 23.6 tokens/s 提升到 123.6 tokens/s。密集模型同样受益，来自更快的线性层和用于采样的、快 8 倍的 softmax。（<a href="https://huggingface.co/blog/mps-pytorch-2-15#faster-language-model-decoding">更多</a>）</li><li><strong>装得下内存的视频生成。</strong> 以前用 Wan2.2 的 tiled VAE 解码视频会把驱动内存推到 270 GiB；现在峰值约为 8 GiB。（<a href="https://huggingface.co/blog/mps-pytorch-2-15#a-much-smaller-memory-footprint-for-video-decoding">更多</a>）</li><li><strong>用 Qwen-Image-2.1 正确地编辑图像。</strong> 在 2.14 上，Qwen-Image-2.1 的 VAE 编码器会在 MPS 上悄悄损坏图像，导致图像编辑工作流失败（<a href="https://github.com/Comfy-Org/ComfyUI/issues/16433">已在 ComfyUI 中报告</a>）。<a href="https://github.com/pytorch/pytorch/pull/195368">同一处 padding 改动</a>修复了它：一次编码-解码往返现在与 CPU 的结果达到 29.95 dB PSNR，而此前只有 10.06 dB。</li><li><strong>Mac 上的 FP8 权重。</strong> FP8 张量只占 BF16 一半的内存，而 <code>F.scaled_mm</code> 直接在 GPU 上完成相乘。（<a href="https://huggingface.co/blog/mps-pytorch-2-15#fp8-comes-to-mps">更多</a>）</li></ul>
-<h2>目录</h2>
-<ul><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#getting-started">入门</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#fp8-comes-to-mps">FP8 来到 MPS</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#faster-language-model-decoding">更快的语言模型解码</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#linear-algebra-gets-a-boost">线性代数得到增强</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#convolutions-padding-and-training">卷积、padding 与训练</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#softmax-and-reductions">Softmax 与归约</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#a-much-smaller-memory-footprint-for-video-decoding">视频解码的内存占用大幅缩小</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#more-control-with-mps-streams">用 MPS stream 获得更多控制</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#more-operations-work-on-mps">更多算子在 MPS 上可用</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#a-sneak-peek-at-pytorch-216">PyTorch 2.16 抢先看</a></li><li><a href="https://huggingface.co/blog/mps-pytorch-2-15#wrapping-up">总结</a></li></ul>
-<h2>入门</h2>
-<p>你需要一台配备 <strong>macOS 15 或更高版本</strong> 和 <strong>Python 3.11 或更高版本</strong> 的 Apple silicon Mac（参见 <a href="https://github.com/pytorch/pytorch/blob/release/2.15/RELEASE.md#release-compatibility-matrix">2.15 兼容性矩阵</a>）。如果你的系统太旧，或者没有可用的 Metal GPU，MPS 可用性检查现在会告诉你原因。</p>
-<p>要在单独的环境中试用候选版本：</p>
-<pre><code>uv pip install torch==2.15.0 --index-url https://download.pytorch.org/whl/test/cpu</code></pre>
-<h2>FP8 来到 MPS</h2>
-<p>FP8 为你在 Mac 上节省内存提供了另一种方式。PyTorch 2.15 在 MPS 上新增了 <a href="https://github.com/pytorch/pytorch/pull/194074"><code>torch.float8_e4m3fn</code></a> 张量：每个值占一个字节，存储量是 FP16 或 BF16 的一半。</p>
-<p>你可以用 <a href="https://github.com/pytorch/pytorch/pull/196916"><code>F.scaled_mm</code></a> 相乘这些张量，它同时支持按张量（tensorwise）和按行（rowwise）缩放。下面是一个每个张量一个 scale 的小例子：</p>
-<pre><code>import torch
-import torch.nn.functional as F
-
-def quantize_fp8(x):
-    limit = torch.finfo(torch.float8_e4m3fn).max
-    scale = x.abs().amax().clamp_min(1e-12) / limit
-    return (x / scale).to(torch.float8_e4m3fn), scale
-
-x = torch.randn(1, 1024, device=&quot;mps&quot;, dtype=torch.float32)
-weight = torch.randn(1024, 1024, device=&quot;mps&quot;, dtype=torch.float32)
-x_fp8, x_scale = quantize_fp8(x)
-w_fp8, w_scale = quantize_fp8(weight)
-
-y = F.scaled_mm(
-    x_fp8,
-    w_fp8.t(),
-    scale_a=x_scale,
-    scale_recipe_a=F.ScalingType.TensorWise,
-    scale_b=w_scale,
-    scale_recipe_b=F.ScalingType.TensorWise,
-    output_dtype=torch.bfloat16,
-)
-print(y.shape, y.dtype)</code></pre>
-<h2>更快的语言模型解码</h2>
-<p>每个 LLM 都有 prefill 阶段和 decode 阶段。在 decode 阶段，每个新 token 都以单行形式经过模型，因此大矩阵乘法变成了矩阵-向量乘法。PyTorch 2.15 加速了这一环节中占主导的两类层：密集线性层和专家混合层。</p>
-<h3>线性层</h3>
-<p>自 2.14 起，MPS 已经为 <code>torch.mm</code> 提供了 GEMV kernel，但 <code>F.linear</code> 仍然走 MPSGraph。PyTorch 2.15 <a href="https://github.com/pytorch/pytorch/pull/198721">把它们接到了 <code>F.linear</code> 上</a>，于是常见的 <code>[1, 1, hidden_size]</code> 解码输入可以直接使用这些 kernel，并把符合条件的 bias 加法融合进去。在来自真实模型的 96 种 BF16 层形状上，这带来了 <strong>1.23 倍的几何平均加速</strong>。收益最大的是小型投影，比如 MoE 模型中的 gate，旧路径在那里浪费了大部分内存带宽。大层和 LM head 本来就已接近带宽上限，因此基本维持在 1 倍附近。</p>
-<h3>专家混合层</h3>
-<p>专家混合层会把数量不等的 token 发给每个专家。grouped matmul 用一次操作处理这些不规整的分组，而 2.15 为 MPS 提供了<a href="https://github.com/pytorch/pytorch/pull/194933">原生实现</a>。</p>
-<p>在 2.14 中，grouped matmul 会把分组偏移量拷贝到 CPU，再在分组上循环。新的 Metal kernel 直接在 GPU 上读取这些偏移量，在有条件时使用 Metal Performance Primitives，其余情况走单独的 Metal 路径。解码期间常见的小分组还额外获得了<a href="https://github.com/pytorch/pytorch/pull/198725">自己的 kernel</a>。</p>
-<p>例如，64 个 token 可以被拆成 16、32 和 16 三组：</p>
-<pre><code>import torch
-import torch.nn.functional as F
-
-tokens = torch.randn(64, 64, device=&quot;mps&quot;, dtype=torch.bfloat16)
-weights = torch.randn(3, 128, 64, device=&quot;mps&quot;, dtype=torch.bfloat16)
-ends = torch.tensor([16, 48, 64], device=&quot;mps&quot;, dtype=torch.int32)
-
-out = F.grouped_mm(tokens, weights.transpose(-2, -1), offs=ends)
-print(out.shape)  # torch.Size([64, 128])</code></pre>
-<p>解码 kernel 直接体现在 token 吞吐上。在 <strong>开启 <code>torch.compile</code> 的 M3 Ultra</strong> 上，MoE 模型每秒生成的 token 数大约<strong>提升 1.3 倍</strong>：</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/moe-decode-throughput.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/moe-decode-throughput.png" alt="M3 Ultra 上开启 torch.compile 时 MoE 解码吞吐的柱状图。Qwen3.6-35B-A3B 在上下文 512 时从 38.7 提升到 51.7 tokens/s，在上下文 2048 时从 36.8 提升到 48.7；LFM2.5-8B-A1B 则从 77.1 提升到 103.2、从 74.9 提升到 98.7 tokens/s。"></a></p>
-<h2>线性代数得到增强</h2>
-<h3>复数值计算</h3>
-<p>处理复数张量变得更轻松了。<code>complex64</code> 的 <a href="https://github.com/pytorch/pytorch/pull/188473">LU 分解</a>、<a href="https://github.com/pytorch/pytorch/pull/195369">LU 求解</a>和<a href="https://github.com/pytorch/pytorch/pull/195861">三角求解</a>现在都能在 MPS 上运行，这也解锁了建立在它们之上的算子与梯度，比如复数行列式。下面是一个直接在 GPU 上求解的小型方程组：</p>
-<pre><code>import torch
-
-a = torch.randn(8, 8, device=&quot;mps&quot;, dtype=torch.complex64)
-a = a + 8 * torch.eye(8, device=&quot;mps&quot;, dtype=torch.complex64)
-b = torch.randn(8, 2, device=&quot;mps&quot;, dtype=torch.complex64)
-
-lu, pivots = torch.linalg.lu_factor(a)
-x = torch.linalg.lu_solve(lu, pivots, b)
-print((a @ x - b).abs().max().item())</code></pre>
-<h3>小矩阵与更大规模的求解</h3>
-<p>小矩阵也获得了快速 kernel。对于相机几何和图像变换，批量最大到 <strong>4 × 4</strong> 的 FP32 矩阵现在<a href="https://github.com/pytorch/pytorch/pull/195944">在单个 Metal kernel 中求逆</a>，该 kernel 把分解和求解合并在一起。更大的问题同样得到关注：<a href="https://github.com/pytorch/pytorch/pull/198732">QR 使用分块更新</a>，而<a href="https://github.com/pytorch/pytorch/pull/196241">三角求解</a>把大部分工作转化成高效的矩阵乘法。</p>
-<p>Gated DeltaNet 工作负载获得了一条<a href="https://github.com/pytorch/pytorch/pull/196900">专用的快速路径</a>，适用于批量 <strong>16 × 16、32 × 32 和 64 × 64 的 FP32 三角方程组</strong>，且右端项至少有 8 个。</p>
-<p>SVD 在数值极端情况下也更加稳健。它现在能正确处理<a href="https://github.com/pytorch/pytorch/pull/200920">非常小的奇异值</a>、<a href="https://github.com/pytorch/pytorch/pull/201037">极大或极小的输入量级</a>以及 <a href="https://github.com/pytorch/pytorch/pull/201198"><code>full_matrices=True</code> 时的基补全</a>，这反过来让伪逆和最小二乘的结果更可靠。</p>
-<h2>卷积、padding 与训练</h2>
-<p>音频模型、视频解码器和训练循环各自都有开销高昂的算子。本次发布为其中若干算子提供了经由 Metal 的新路径：</p>
-<table><thead><tr><th>算子</th><th>2.15 中的变化</th></tr></thead><tbody><tr><td><a href="https://github.com/pytorch/pytorch/pull/198878"><code>conv1d</code> 前向</a></td><td>专用 kernel 取代 MPSGraph，另外为短输出提供 im2col 加 matmul 的路径。适用于音频和流式模型的形状。</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/195368">常量 padding</a></td><td>迁移到 Metal kernel，修复了 tiled 视频 VAE 解码中失控的驱动内存增长（详见下文）。</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/196985">反射与复制 padding</a></td><td>新的 Metal 实现更快，并修复了反向传播的正确性。</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/195011">out-of-place dropout</a></td><td><code>nn.Dropout</code> 和 <code>F.dropout</code> 现在使用已有的融合 kernel。</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/199687">上采样反向</a></td><td>用 Metal gather kernel 取代 MPSGraph 的 resize 梯度路径。</td></tr><tr><td><a href="https://github.com/pytorch/pytorch/pull/193623">channels-last <code>conv2d</code> 反向</a></td><td>保持在高效的 channels-last 路径上，而不是退回到带昂贵跨步访问的 NCHW 图。</td></tr></tbody></table>
-<h2>Softmax 与归约</h2>
-<p>token 采样在 2.15 中也变快了。<a href="https://github.com/pytorch/pytorch/pull/196071"><code>softmax</code></a> 和 <a href="https://github.com/pytorch/pytorch/pull/195441"><code>log_softmax</code></a> 现在运行在专用 Metal kernel 上，大词表收益最大：对一行 <code>[1, 128256]</code> 的 logits 做 FP32 softmax，耗时从 <strong>57 µs 降到 7 µs</strong>，约比 MPSGraph 版本<strong>快 8 倍</strong>。这一加速在其它常见词表大小上同样成立：</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/softmax-sampling.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/softmax-sampling.png" alt="五种词表大小（从 128,256 到 201,088）下，单行 logits 的 FP32 softmax 耗时柱状图。MPSGraph 需要 50 到 74 微秒；Metal kernel 需要 7 到 10 微秒，加速 7.1 倍到 8.0 倍。"></a></p>
-<h2>视频解码的内存占用大幅缩小</h2>
-<p>本次发布中最亮眼的结果之一来自常量 padding 的改动。<code>Wan-AI/Wan2.2-TI2V-5B-Diffusers</code> 中的 VAE 解码在完整的 28 个 tile 解码过程中发起了 <strong>8,764 次 padding 调用</strong>。把 padding 放到 Metal 上之后，驱动内存峰值从约 <strong>270 GiB 降到 8 GiB</strong>：</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/wan-vae-memory.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/mps-pytorch-2-15/wan-vae-memory.png" alt="Wan2.2 tiled VAE 解码期间驱动内存峰值的堆叠柱状图。使用 MPSGraph padding 时，分配器保留的 8.07 GiB 加上分配器之外的 262 GiB 合计 270.1 GiB；使用 Metal padding 时总量为 8.1 GiB。"></a></p>
-<table><thead><tr><th>内存指标</th><th>MPSGraph padding</th><th>Metal padding</th></tr></thead><tbody><tr><td>张量分配当前峰值</td><td>4.422 GiB</td><td>4.095 GiB</td></tr><tr><td>分配器保留峰值</td><td>8.070 GiB</td><td>8.070 GiB</td></tr><tr><td>驱动内存总峰值</td><td>270.135 GiB</td><td>8.108 GiB</td></tr></tbody></table>
-<h2>用 MPS stream 获得更多控制</h2>
-<p>你现在可以直接在 Python 里指定由哪个 MPS stream 来执行你的工作。<a href="https://github.com/pytorch/pytorch/pull/191415"><code>torch.mps.Stream</code> 与 <code>torch.mps.stream</code> 上下文管理器</a>提供了这套接口，而 <a href="https://github.com/pytorch/pytorch/pull/193464"><code>Tensor.record_stream</code></a>让分配器能够追踪某个张量在另一个 stream 上的使用情况。</p>
-<p>下面是一个小例子，把工作发到单独的 stream，并在读取结果前做同步：</p>
-<pre><code>import torch
-
-x = torch.randn(1024, device=&quot;mps&quot;)
-torch.mps.synchronize()
-worker = torch.mps.Stream()
-
-with torch.mps.stream(worker):
-    y = x.square()
-    x.record_stream(worker)
-
-del x
-worker.synchronize()
-print(y.cpu().shape)</code></pre>
-<h2>更多算子在 MPS 上可用</h2>
-<p>又有若干算子在 MPS 上可用： <a href="https://github.com/pytorch/pytorch/pull/194110"><code>torch.frexp</code></a>、<a href="https://github.com/pytorch/pytorch/pull/190495"><code>torch.logspace</code></a>、<a href="https://github.com/pytorch/pytorch/pull/192980"><code>torch.take</code> 和 <code>Tensor.put_</code></a>、<a href="https://github.com/pytorch/pytorch/pull/195265"><code>torch.heaviside</code></a>、<a href="https://github.com/pytorch/pytorch/pull/195225"><code>torch.special.laguerre_polynomial_l</code></a> 以及<a href="https://github.com/pytorch/pytorch/pull/198860">无符号整数比较</a>。<code>logspace</code> 目前尚不支持多元素的整数或布尔输出。</p>
-<p>attention 也获得了一处正确性修复：MPS 的 scaled dot-product attention 数学实现现在<a href="https://github.com/pytorch/pytorch/pull/189631">能正确处理 batch 与 head 的广播</a>。</p>
-<h2>PyTorch 2.16 抢先看</h2>
-<p>2.16 的工作已经在稳步推进。下面某些改动已经进入 <code>main</code> 并可在 nightly 中试用；另一些仍在评审，因此细节可能在发布前发生变化。</p>
-<h3>更快的 LLM 解码</h3>
-<p>一旦模型的 decode 路径不再包含任何 MPSGraph 算子，GPU 就要等 CPU 把所有 kernel 编码完毕才开始处理一个 token。PyTorch 2.16 <a href="https://github.com/pytorch/pytorch/pull/200181">每 16 个 kernel 就提交一次 command buffer</a>，这样 GPU 在 CPU 仍在编码其余部分时就能开始工作。对于 2048 token 上下文下的编译版 BF16 解码：</p>
-<table><thead><tr><th>模型</th><th>之前</th><th>之后</th><th>变化</th></tr></thead><tbody><tr><td>LFM2.5-8B-A1B</td><td>108.8 tokens/s</td><td>126.0 tokens/s</td><td>+16%</td></tr><tr><td>Qwen3.6-35B-A3B</td><td>52.9 tokens/s</td><td>62.8 tokens/s</td><td>+19%</td></tr><tr><td>Qwen3.8-27B</td><td>12.1 tokens/s</td><td>12.6 tokens/s</td><td>+4%</td></tr></tbody></table>
-<h3>Attention 完全运行在 Metal 上</h3>
-<p>scaled dot-product attention 正在<a href="https://github.com/pytorch/pytorch/pull/201526">彻底摆脱 MPSGraph</a>：所有形状都将运行在 Metal kernel 上，解码使用专用向量 kernel，在较新的 macOS 版本上，半精度 prefill 使用 Metal Performance Primitives。过去回退到 MPSGraph 的那些形状受益最大。在一台 M5 Pro 上，使用 grouped-query attention 解码（32 个 query head、8 个 KV head、head dim 80、4K 上下文）耗时从 465 µs 降到 65 µs，而 head dim 为 40 的 4K × 4K prefill 从 42 ms 降到 6 ms。</p>
-<h3>更多从 MPSGraph 到 Metal 的迁移</h3>
-<p>离开 MPSGraph 的步伐仍在继续。batch norm 的<a href="https://github.com/pytorch/pytorch/pull/201361">前向</a>和<a href="https://github.com/pytorch/pytorch/pull/201411">反向</a>正在进行中，而 <a href="https://github.com/pytorch/pytorch/pull/201351">MSE loss</a>（小输入上最高快 12 倍）、<a href="https://github.com/pytorch/pytorch/pull/201310"><code>std_mean</code> 与 <code>var_mean</code></a>（最高快 4 倍）以及 <a href="https://github.com/pytorch/pytorch/pull/201045"><code>bincount</code></a>已经落地。<code>bincount</code> 最为惊人：当大多数值落在同一个 bin 里时，统计 400 万个整数过去要 6.8 秒，现在只需半毫秒。</p>
-<h3>更小的安装体积</h3>
-<p>内置 shader 将<a href="https://github.com/pytorch/pytorch/pull/197529">默认按 Metal 3.1 构建</a>，只为需要它们的 kernel 编译 Metal 4 版本。这让 <code>libtorch_cpu.dylib</code> 缩小约 25%，从 384 MiB 降到 287 MiB，并为使用更快 matmul 和原生 FP8 矩阵乘法的 Metal 4.1 shader 打下基础。</p>
-<h2>总结</h2>
-<p>PyTorch 2.15 把 FP8 带到 Mac，为密集模型和 MoE 模型带来更快的 LLM 解码，把更多线性代数放到 GPU 上，并把一长串算子从 MPSGraph 迁移到专用 Metal kernel。不妨试试这个候选版本！</p>
-<h3>我们接下来做什么</h3>
-<ul><li><strong>更多 MPS 工作：</strong> 2.16 将让 attention 完全运行在 Metal 上，我们也会继续把算子迁出 MPSGraph。</li><li><strong><code>torch.compile</code>：</strong> 我们正在努力消除 graph break，让更多模型能够端到端编译。</li><li><strong>你的想法：</strong> 我们接下来还应该在 PyTorch 里做些什么？如果有哪里慢、缺失或坏掉，无论是在 MPS 还是别处，<a href="https://github.com/pytorch/pytorch/issues">在 GitHub 上开一个 issue</a>告诉我们。</li></ul>
-<p>衷心感谢 <a href="https://github.com/malfet">Nikita Shulga</a>、<a href="https://github.com/kurtamohler">Kurt Mohler</a> 和 <a href="https://github.com/Skylion007">Aaron Gokaslan</a> 评审了这项工作的大部分内容，也感谢每一位为本次发布的 MPS 做出贡献的人。</p>
-<p>来自我们博客的更多文章</p>
-<p>tokenizerstokenizationrust</p>
-<h2>tokenizers v1：编码、解码与扩展，实测</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1674683851722-62441cb7456803e95009a08f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1666977434736-617bc8d1000dbbbf7c225eed.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li></ul>
-<p>92</p>
-<p>2026 年 9 月 21 日</p>
-<p>transformerspytorchoptimization</p>
-<h2>解锁连续批处理中的异步性</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li></ul>
-<p>68</p>
-<p>2026 年 5 月 14 日</p>
-<h3>社区</h3>
-<p>在文本输入框中拖拽、粘贴或点击此处上传图片、音频和视频。</p>
-<p>点按或粘贴此处以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmps-pytorch-2-15">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fmps-pytorch-2-15">登录</a>后发表评论</p>
-<p>10</p>
-<ul><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/VaibhavKKM"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69abd374bcc4eb2abd02a423/Ywz6VRnwaR0wW4p4_PiXD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pranavthombare"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645d0b4203fc86c46b3e961a/Y8vvqeLUJa6_845lRra_W.jpeg" alt=""></a></li><li><a href="https://huggingface.co/gjeevanm"><img src="https://huggingface.co/avatars/d08ed8ad356889cfcf2415020be4665a.svg" alt=""></a></li><li><a href="https://huggingface.co/corentinlger"><img src="https://huggingface.co/avatars/669b77101c3dcb9d2cc04bfc8170af36.svg" alt=""></a></li><li><a href="https://huggingface.co/santiRios"><img src="https://huggingface.co/avatars/61c5d8dc1dbd5b05b1dd81df319fefee.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

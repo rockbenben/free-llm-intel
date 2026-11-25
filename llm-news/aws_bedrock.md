@@ -1,6 +1,6 @@
 # Amazon Bedrock (AWS Free Tier) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-24**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-25**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Amazon Bedrock (AWS Free Tier)（`aws_bedrock`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,7 +9,7 @@
 
 ## 全部文章（共 872 篇，按日期倒序；无日期条目列于最后）
 
-1. [推出具有 Anthropic 企业前沿保障和企业数据控制的 Amazon Bedrock 可信访问 API](https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/)（2026-11-24） <!--orig:Introducing the Amazon Bedrock Trusted Access API with Anthropic’s Enterprise Frontier Safeguards and Enterprise Data Controls-->
+1. [推出具有 Anthropic 企业前沿保障和企业数据控制的 Amazon Bedrock 可信访问 API](https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-trusted-access-api-with-anthropics-enterprise-frontier-safeguards-and-enterprise-data-controls/)（2026-11-24） <!--orig:Introducing the Amazon Bedrock Trusted Access API, with Enterprise Frontier Safeguards and Enterprise Data Controls for Claude models-->
 2. [将 Kimi Code CLI 与 Amazon Bedrock 上的模型结合使用](https://aws.amazon.com/blogs/machine-learning/use-kimi-code-cli-with-models-on-amazon-bedrock/)（2026-11-20） <!--orig:Use Kimi Code CLI with models on Amazon Bedrock-->
 3. [让 AI agent 借助 Amazon Bedrock AgentCore payments 为 AWS Marketplace 的 x402 商品付款](https://aws.amazon.com/blogs/machine-learning/enable-ai-agents-to-pay-for-aws-marketplace-x402-products-with-amazon-bedrock-agentcore-payments/)（2026-11-19） <!--orig:Enable AI agents to pay for AWS Marketplace x402 products with Amazon Bedrock AgentCore payments-->
 4. [Amazon Bedrock AgentCore harness 新增 Strands harness 默认值、内置工具与生命周期钩子](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-harness-adds-strands-harness-defaults-built-in-tools-and-lifecycle-hooks/)（2026-11-19） <!--orig:Amazon Bedrock AgentCore harness adds Strands harness defaults, built-in tools, and lifecycle hooks-->

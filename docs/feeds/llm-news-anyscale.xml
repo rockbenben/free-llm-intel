@@ -7,7 +7,111 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Tue, 17 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>使用 Ray Train 实现 Mid-Epoch 训练恢复</title>
+      <link>https://anyscale.com/blog/mid-epoch-resumption-ray-train</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/mid-epoch-resumption-ray-train</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Enabling Mid-Epoch Training Resumption with Ray Train</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">首页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
+<h1>使用 Ray Train 实现 epoch 中途的训练恢复</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=jason-li">Jason Li</a> | 2026 年 11 月 24 日</p>
+<p>在大规模场景下，训练失败越来越常见，而衡量训练基础设施是否有效，标准就在于它多快能从失败中恢复。epoch 中途恢复（mid-epoch resumption）让 Ray Train 和 Ray Data 在保存模型的同时也对你的数据加载器（data loader）做 checkpoint，这样重启后的运行会从上一个 checkpoint 的位置继续，而不会破坏 exactly-once 训练。它带来的好处如下：</p>
+<ul><li><strong>减少重复工作：</strong> 重启的任务从上一个 checkpoint 继续，而不是把整个 epoch 重新跑一遍。</li><li><strong>数据覆盖正确：</strong> 即使在多次失败的情况下，每一行在每个 epoch 中仍然恰好被训练一次。</li><li><strong>易于采用：</strong> 它与你现有的 Ray Train checkpoint 配合工作，对训练脚本的改动极少。</li></ul>
+<p>在我们的基准测试中，启用 epoch 中途恢复后，一个在 epoch 进行到 75% 时失败的任务，相比通过跳过 batch 来恢复的方式，整体运行时间<strong>快 9%</strong>，美元成本<strong>低 9%</strong>。你的 epoch 越大，失败时节省的就越多。</p>
+<p>epoch 中途恢复将随 Ray 2.61 发布，目前已可在 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">Anyscale Runtime</a> 中使用（从 Ray 2.50 版本起）。</p>
+<h2>Link epoch 中途训练失败的代价</h2>
+<p>epoch 中途的训练失败可能代价高昂。设想一次运行，其最新的 checkpoint 保存在 epoch 进行到 75% 的位置，随后在 80% 处发生 worker 故障：</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7eqyqyQ6qiPfwU3ptlmh85/c2cab3b921ae6a0338f321ee0fe5a4dd/Mid-epoch_training_failures_can_be_costly._Picture_a_run_whose_latest_checkpoint_was_saved_75-_of_the_way_through_an_epoch__.png" alt="epoch 中途的训练失败可能代价高昂。设想一次运行，其最新的 checkpoint 保存在 epoch 进行到 75% 的位置，随后在 80% 处发生 worker 故障"></p>
+<p>epoch 中途的训练失败可能代价高昂。设想一次运行，其最新的 checkpoint 保存在 epoch 进行到 75% 的位置，随后在 80% 处发生 worker 故障</p>
+<p>模型从 75% 处的 checkpoint 恢复，但数据加载器没有任何关于自己读到哪里的记录。典型的恢复方式是从头重新开始这个 epoch，但这会带来两项代价：</p>
+<ul><li><strong>数据不均衡：</strong> 之前已消费的行在同一个 epoch 中被训练两次，而数据集其余部分只被训练一次，这会使模型学到的东西偏向那部分数据。</li><li><strong>GPU 时间：</strong> 额外的 GPU 时间被花在对已经消费过的行进行训练上。</li></ul>
+<p>这两项代价都会随 epoch 规模增长。在小数据集上，重放一个 epoch 的大部分只是很小的开销。然而，在一个需要一整天才能跑完的数据集上，一次较晚发生的失败可能又要多花一整天的 GPU 时间。</p>
+<p>为了避免这些代价，团队通常会快进到训练失败的位置，在重启后跳过已经见过的 batch。然而，对于像 Ray Data 这类即时处理数据、不保证行顺序的流式加载器，被跳过的行仍然需要重新计算，而且快进也无法保证每一行恰好被训练一次。</p>
+<p>于是，我们需要一个能自己记录哪些行已被消费、并把该记录与模型 checkpoint 一起保存的数据加载器，这样两者永远不会脱节。本文余下部分将说明 Ray Train 和 Ray Data 是如何做到这一点的，以及它在实践中节省了什么。</p>
+<h2>Link 工作原理</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/62RcbskxSYDc6Cckd51bp6/bbc6ddc374dc72befaa4bc5743620d0e/With_mid-epoch_resumption__the_restart_picks_up_at_the_75-_checkpoint.png" alt="使用 epoch 中途恢复时，重启会从 75% 处的 checkpoint 继续"></p>
+<p>使用 epoch 中途恢复时，重启会从 75% 处的 checkpoint 继续</p>
+<p>核心思路是记录已消费的行，而不是记录一个位置。Ray Data 不以固定顺序分发数据行，所以只知道消费了多少个 batch 并不足以重新找到自己的位置，但知道消费了哪些行则可以。为此，每一行都需要一个唯一 ID，每个 worker 记录它训练过的 ID，重启后 Ray Data 在读取时利用该记录跳过这些行。下面我们逐步看看 Ray Train 和 Ray Data 在保存与恢复进度时是如何做的。</p>
+<h3>Link 保存进度</h3>
+<ul><li><strong>记录每个产出的 batch。</strong> 一旦你用 <code>DatasetCheckpointConfig</code> 为某个数据集开启数据 checkpoint，Ray Data 的数据迭代器交给训练循环的每个 batch 都会被记录：后台线程会把该 batch 的行 ID 写入共享存储中的文件。</li><li><strong>在 checkpoint 时提交。</strong> 当你为模型做 checkpoint 时，还要对数据迭代器调用 <code>state_dict()</code>。该调用会刷新所有剩余的行 ID、关闭当前这一组文件，并返回一个小字典：epoch、checkpoint 索引、行 ID 文件所在的路径，以及 ID 列名。</li><li><strong>与模型一起保存。</strong> 你把该字典存入与模型和优化器状态相同的 checkpoint 中，并通过 <code>ray.train.report()</code> 上报它。模型与数据加载器状态一起提交，因此它们在“已经训练了什么”上始终一致。</li></ul>
+<p>每个 worker 写入自己的文件，按 rank、epoch 和 checkpoint 索引组织：</p>
+<pre><code>ray_data_checkpoints/train/
+└── rank=0/
+    └── epoch=0/
+        ├── checkpoint=0/chunk_0.parquet
+        ├── checkpoint=1/chunk_0.parquet
+        └── checkpoint=2/chunk_0.parquet</code></pre>
+<p>默认情况下，这些文件位于你的 Ray Train 存储路径下，并在一个 epoch 结束后被删除，因为该 epoch 内已没有需要恢复的内容。</p>
+<h3>Link 恢复进度</h3>
+<ul><li><strong>加载状态。</strong> 任务重启时，你的训练函数通过 <code>ray.train.get_checkpoint()</code> 拿到最新的 checkpoint，从中读取保存的字典，并通过 <code>state_dict</code> 参数把它传给 <code>ray.train.get_dataset_shard()</code>。</li><li><strong>加载已消费的行 ID。</strong> Ray Data 读取该 epoch 中截至所保存 checkpoint 索引的行 ID 文件（跨所有 rank），并对它们排序，以便快速查找。</li><li><strong>读取时过滤。</strong> 读取之后紧跟一个过滤步骤，对每一行用二分查找，丢弃 ID 在该集合中的行。被跳过的行不会进入你的预处理或训练循环。</li><li><strong>继续该 epoch。</strong> 训练用剩余的行继续。该 epoch 结束后，后续 epoch 照常读取完整数据集。</li></ul>
+<p>由于过滤作用于整个数据集，而不是每个 worker 各自处理，剩余的行会被分配给重启后运行所拥有的任意 worker。恢复过程仍然需要重新读取输入文件，但读取并过滤一行的开销远小于对它做预处理并跑一次训练步骤。</p>
+<h2>Link 使用 epoch 中途恢复</h2>
+<p>所有这些记录工作都发生在 Ray Train 和 Ray Data 内部。如果你已经用 <code>ray.train.report</code> 做 checkpoint，那么开启 epoch 中途恢复只需三处改动：告诉 Ray Train 要跟踪哪个数据集、把数据迭代器的状态与模型一起保存，并在恢复时把该状态传回去。</p>
+<pre><code>import ray
+from ray.train import DataConfig, DatasetCheckpointConfig, ScalingConfig
+from ray.train.torch import TorchTrainer
+
+def train_func():
+    model, data_state = build_model(), None
+    if checkpoint := ray.train.get_checkpoint():
+        model, data_state = load_checkpoint(checkpoint)  # your restore logic
+
+    # Change 3: resume the data iterator from the saved state.
+    shard = ray.train.get_dataset_shard(&quot;train&quot;, state_dict=data_state)
+
+    for step, batch in enumerate(shard.iter_torch_batches(batch_size=64)):
+        ...  # training step
+        if step % 100 == 0:
+            # Change 2: save the data iterator state with the model.
+            checkpoint = save_checkpoint(model, data_state=shard.state_dict())
+            ray.train.report({&quot;step&quot;: step}, checkpoint=checkpoint)
+
+trainer = TorchTrainer(
+    train_func,
+    datasets={&quot;train&quot;: ray.data.read_parquet(&quot;s3://my-bucket/train/&quot;)},
+    # Change 1: track which rows each worker has consumed.
+    dataset_config=DataConfig(
+        dataset_checkpoint_configs={
+            &quot;train&quot;: DatasetCheckpointConfig(id_column=&quot;id&quot;)
+        }
+    ),
+    scaling_config=ScalingConfig(num_workers=16, use_gpu=True),
+)
+trainer.fit()</code></pre>
+<p>注意：<code>build_model</code>、<code>save_checkpoint</code> 和 <code>load_checkpoint</code> 代表你现有的模型与 checkpoint 代码。</p>
+<p>上面每处改动的作用如下：</p>
+<ul><li><strong>为该数据集开启数据 checkpoint。</strong> 通过 <code>DataConfig(dataset_checkpoint_configs=...)</code> 为数据集传入 <code>DatasetCheckpointConfig</code>。<code>id_column</code> 指定唯一标识每一行的列，这里是名为 id 的列。如果你的数据没有这样的列，请参阅下面的要求。</li><li><strong>在每次模型 checkpoint 时保存数据迭代器状态。</strong> 每次做 checkpoint 时，在每个 worker 上调用 <code>shard.state_dict()</code>。在每个 worker 上，该调用确保该 worker 已消费的所有行 ID 都写入共享存储。它返回的并不是这些 ID，而是一个小的、可 JSON 序列化的字典，指向每个 worker 的文件存放位置，因此在每个 worker 上它都是相同的。在调用 <code>ray.train.report</code> 之前，把它存到 checkpoint 目录中模型的旁边。</li><li><strong>在恢复时把状态传回去。</strong> 从 checkpoint 中加载该字典并传给 <code>ray.train.get_dataset_shard</code>。每个 worker 加载的是同一个字典，所以每个 worker 都可以传入它。Ray Train 使用 rank 0 的副本设置恢复后的数据集。</li></ul>
+<p>完整的可运行脚本请见 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">epoch 中途恢复文档</a>。</p>
+<h3>Link 要求</h3>
+<p>要使用 epoch 中途恢复，需满足若干条件：</p>
+<ul><li><strong>每一行都需要唯一 ID。</strong> 把 <code>id_column</code> 指向一个现有列，其值唯一且在预处理后仍然保留。如果你的数据没有这样的列，<code>generate_id_column=True</code> 会为你生成一个，并从训练循环看到的 batch 中移除。生成的 ID 目前仅支持 Parquet。</li><li><strong>只使用保留行的转换。</strong> 坚持使用不增加行的转换，例如 <code>map</code>、<code>map_batches</code> 和 <code>filter</code>，并把 ID 列一直传递到 pipeline 的末端。</li><li><strong>checkpoint 需要共享存储。</strong> 行 ID 文件默认写入你的 Ray Train 存储路径，因此它必须是每个节点都能访问的云存储或网络文件系统。</li><li><strong>自动重启需要容错。</strong> 在 <code>RunConfig</code> 中设置 <code>FailureConfig(max_failures=...)</code>，这样 Ray Train 会在失败后重启运行并恢复最新的 checkpoint。</li><li><strong>在做 checkpoint 前完成一个 batch 的消费。</strong> Ray Data 的迭代器一旦把 batch 交给你的循环，就认为该 batch 已被消费。如果你的框架会在模型训练之前把 batch 排队，请在调用 <code>ray.train.report</code> 之前清空该队列。否则，你的数据 checkpoint 会领先于模型实际训练到的位置。</li></ul>
+<h2>Link 评估影响</h2>
+<p>设置讲完了，那么当一个任务在 epoch 后期失败时，epoch 中途恢复实际能节省多少？我们在一项图像分类任务上做了基准测试。设置如下：</p>
+<ul><li><strong>模型与数据：</strong> ResNet-50（26M 参数），运行在修改过的 ImageNet 上，图像最高 2048x2048，1M 训练行、50k 验证行。</li><li><strong>集群：</strong> 16 块 A100 GPU 用于训练，另有 10 个 CPU 节点用于 Ray Data 预处理。</li><li><strong>checkpoint 与验证：</strong> 每 50 步一次。</li><li><strong>失败：</strong> 模拟在 epoch 进行到 75% 时发生失败。</li></ul>
+<p>在这个设置下，我们把同一个任务跑了两次：一次通过跳过 batch 在失败后回到恢复的位置，这也是 Hugging Face Transformers 等框架默认的做法；另一次使用 epoch 中途恢复：</p>
+<table><thead><tr><th><strong>指标</strong></th><th><strong>基线（跳过 batch）</strong></th><th><strong>epoch 中途恢复</strong></th></tr></thead><tbody><tr><td>端到端时间</td><td>594 s</td><td><strong>542 s</strong></td></tr><tr><td>成本</td><td>$1.45</td><td><strong>$1.32</strong></td></tr></tbody></table>
+<p>与跳过 batch 相比，启用 epoch 中途恢复使端到端任务运行时间和美元成本都降低了 9%。如果不使用 epoch 中途恢复，跳过 batch 仍然需要读取、预处理并传输恢复点之前的每一行，结果只是把它们丢掉。epoch 中途恢复仍然会读取这些行，但在读取之后、任何预处理或传输到训练 worker 之前就把它们丢弃。这也是为什么 epoch 越大、预处理越重，节省就越多。</p>
+<h2>Link 总结</h2>
+<p>训练任务会失败，而任务规模越大，每次失败的代价就越高。epoch 中途恢复把数据加载器的状态纳入 checkpoint，因此重启后的 Ray Train 任务会从上一个 checkpoint 的位置继续，让每一行恰好被训练一次。在我们的基准测试中，与跳过 batch 相比，它把任务的端到端运行时间和总成本降低了 9%，并且每一行在每个 epoch 中仍然恰好被训练一次。epoch 中途恢复从 Ray 2.61 起随开源 Ray 发布，目前已在 Anyscale Runtime 中可用（从 Ray 2.50 起）。使用细节请见 <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">epoch 中途恢复文档</a>。如果你遇到问题，或对下一步该构建什么有想法，请<a href="https://github.com/ray-project/ray/issues">在 GitHub 上提交 issue</a>。</p>
+<p><em>我们感谢领导 epoch 中途恢复工作的 Justin Yu，以及 Ray Train 和 Ray Data 团队的同事们，感谢他们的评审、设计反馈以及对这项工作所做的贡献。</em></p>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#the-cost-of-mid-epoch-training-failures">epoch 中途训练失败的代价</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#how-it-works">工作原理</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#saving-progress">保存进度</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#restoring-progress">恢复进度</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#using-mid-epoch-resumption">使用 epoch 中途恢复</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#requirements">要求</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#evaluating-the-impact">评估影响</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#summary">总结</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnYL4v1LdYl6VYLJFBOsN/36d1e3f01439345dd82ffe3f1e630b85/ray_train_observability.png?w=140" alt="ray train observability"></p>
+<h4>Ray Train：借助数据摄入可观测性诊断模型训练中的 GPU 饥饿</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6vnw3Qyt9rUo9lTfzxwqJW/157ed8fc53497d5df102483b5f1a5fa8/JEPA_blog.png?w=140" alt="Real-time inference for JEPA world model architectures with Ray"></p>
+<h4>使用 Ray 为 JEPA 世界模型架构做实时推理</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5B93PEUBZLNZTWnhOrL9tZ/2e021011ac03276b725e5ffd946e7c48/Donating_KubeRay_to_the_CNCF.png?w=140" alt="Donating KubeRay to the CNCF"></p>
+<h4>将 KubeRay 捐赠给 CNCF</h4>
+<h2>立即探索 Anyscale</h2>
+<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">咨询专家</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Ray Train：通过数据摄取可观测性诊断模型训练中的 GPU 饥饿</title>
       <link>https://anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train</link>
@@ -1018,86 +1122,6 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <ul><li>Fully Connected，旧金山（9 月 29 日 - 10 月 1 日）</li><li>Long Horizon，旧金山（10 月 20 - 21 日）</li><li>PyTorch Conference，圣何塞（10 月 20 - 21 日）</li><li>AI in Drug Discovery &amp; Development Summit（10 月 27 - 29 日）</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>Ray Data 中的 GPU 原生算子</title>
-      <link>https://anyscale.com/blog/gpu-native-operators-in-ray-data</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/gpu-native-operators-in-ray-data</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：GPU-Native Operators in Ray Data</description>
-      <content:encoded><![CDATA[<h1>Ray Data 中的 GPU 原生算子</h1>
-<p>作者：Richard Liaw、Felix Cheung 和 Lee Yang | 2026 年 8 月 25 日</p>
-<p>Ray Data 是构建在 Ray 之上、专注于多模态数据处理与训练数据加载等 AI 负载的数据引擎。由于聚焦 AI 负载，GPU 是 Ray Data 的核心特性——它能将 GPU 视为一种调度资源，从而轻松把数据处理任务扩展到大量 GPU 上。</p>
-<p>尽管如此，Ray Data 直接在 GPU 上执行的原生功能一直有限，这部分职责此前都交给调用 PyTorch、JAX 等 GPU 库的用户自定义函数。</p>
-<p>近期，Anyscale 的 Ray Data 团队与 NVIDIA cuDF 团队合作，把更多基于 GPU 的算子更好地集成进 Ray Data。我们特别兴奋地宣布两项新特性：</p>
-<ul><li><a href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries/cudf">cuDF</a> 成为 Ray Data map_batches 的后端</li><li>基于 <a href="https://github.com/rapidsai/rapidsmpf">RapidsMPF</a> 的 GPU shuffle</li></ul>
-<p>在部分数据清洗（data curation）负载上，这些增强相比基于 CPU 的方案带来了最多 3 倍的 TCO 改善。</p>
-<p>今天就可以通过 <code>pip install -U ray==2.58</code> 在 Ray 上试用。</p>
-<h2>背景</h2>
-<p>Ray Data 提供一组规范化数据处理算子，从 IO 到 shuffle 到 UDF。Ray Data 的差异化特性之一，是对 UDF 的一流 GPU 支持。例如，可以这样调度使用 GPU 的自定义代码：</p>
-<pre><code>import ray
-
-ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
-
-def compute_gpu(batch: pd.DataFrame):
-    ...
-
-ds = ds.map_batches(compute_gpu, num_gpus=1, batch_size=4096, batch_format=&quot;pandas&quot;)</code></pre>
-<p>上述代码会自动启动多个 <code>compute_gpu</code> 调用，分别运行在你 Ray 集群中挂接不同 GPU 的不同进程上。</p>
-<p>在用 Ray Data 做数据去重任务时，我们注意到两个改进机会：</p>
-<ul><li>流水线中存在计算密集的 DataFrame 操作，本可用 cuDF 加速，但这要求用户手动转换数据格式</li><li>这些特定任务有很重的哈希聚合步骤，计算密集，可以从更好的 GPU 加速中获益</li></ul>
-<p>为解决这两个机会点，我们为 Ray Data 添加了两个关键特性：cuDF 批量格式支持，以及基于 RapidsMPF 的 GPU 原生 shuffle 后端。</p>
-<h3>cuDF 成为一等公民批量格式</h3>
-<p>Ray Data 原本有 3 种原生批量格式——Pandas DataFrame、Numpy 数组和 PyArrow Table。批量格式有两个用途：作为各阶段之间的数据交换格式，以及为用户编写自定义处理函数提供更熟悉的接口。</p>
-<p>从 Ray 2.58 起，<code>map_batches</code> 接受 <code>batch_format=&quot;cudf&quot;</code>，把你的 UDF 收到的数据从 pandas DataFrame 或 Arrow table 换成 <code>cudf.DataFrame</code>。</p>
-<p><strong>cuDF</strong> 是 NVIDIA 开源的 GPU 加速 DataFrame 库，是 NVIDIA CUDA-X 数据处理库系列的一员。它以类 Pandas 的 API 提供 GPU 加速的操作。对某些计算密集的操作，cuDF 可以比等效的 CPU 实现快上最多一个数量级、成本也更低。</p>
-<pre><code>import ray
-
-ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
-
-def add_minhash(batch):  # batch is a cudf.DataFrame
-    batch[&quot;minhash&quot;] = batch[&quot;text&quot;].str.minhash(seed=42, ...)
-    return batch
-
-ds = ds.map_batches(add_minhash, batch_format=&quot;cudf&quot;, num_gpus=1, batch_size=4096)</code></pre>
-<h3>经由 RapidsMPF 的 GPU 原生 shuffle</h3>
-<p>用户现在可以通过一条构建在 <a href="https://docs.rapids.ai/api/rapidsmpf/stable/">RapidsMPF</a> 上的全新 GPU 执行路径，使用 GPU 加速的 <code>repartition</code> 与哈希聚合。各 rank 之间直接经 UCXX 通信。跨 rank 的 shuffle 数据可利用 RDMA 或 NVLink 等高性能传输，绕过 CPU 与 Ray 对象存储。</p>
-<p>与 cuDF 类似，对某些计算密集的操作，基于 RapidsMPF 的 shuffle 可以比等效的 CPU 实现快上最多一个数量级、成本也更低。</p>
-<pre><code>from ray.data.context import DataContext, ShuffleStrategy
-
-ctx = DataContext.get_current()
-ctx.shuffle_strategy = ShuffleStrategy.GPU_SHUFFLE
-
-ds.repartition(num_blocks=256, keys=[&quot;doc_id&quot;])
-ds.groupby(&quot;band_id&quot;).count()</code></pre>
-<h2>基准测试：模糊去重</h2>
-<p>推动我们这次合作的负载是<strong>模糊文档去重（fuzzy document deduplication）</strong>——基础模型训练数据清洗中的标准负载。基准测试采用<a href="https://huggingface.co/blog/dedup">标准的 MinHash-LSH 方法</a>，流程如下：</p>
-<p><em>图 1：去重负载的各阶段。</em></p>
-<ul><li>为每篇文档<strong>生成 MinHash 签名</strong>。</li><li>由签名<strong>生成 LSH band</strong>。</li><li><strong>按 band 分组</strong>，找出候选重复对。</li><li><strong>对候选边去重。</strong></li><li>通过遍历图<strong>计算连通分量</strong>。</li><li><strong>过滤重复项。</strong></li><li><strong>持久化幸存者。</strong></li></ul>
-<p>第 1 步要为每个 n-gram 生成哈希值，哈希是计算密集型操作。</p>
-<p>第 3 步与第 5 步的 shuffle 最重——groupby 操作用于形成重复对，而连通分量算法是一连串 groupby 操作。</p>
-<p>在下面的实验中，我们看到由于 GPU 的集成与加速，这些步骤的性能得到改善。</p>
-<p>以下实验使用 FineWeb 10BT 数据集，集群规模为 2 到 8 个节点。CPU 侧使用 m8id.4xlarge 实例类型：16 vCPU、64 GiB 内存，每小时 1.04416 美元。</p>
-<p>GPU 评测使用 g6.4xlarge 实例类型：16 vCPU、64 GiB 内存，每小时 1.3232 美元。</p>
-<p>实验代码基于 Ray 2.58，可<a href="https://github.com/ray-project/gpu-deduplication">在此找到</a>。</p>
-<h3>生成 MinHash 签名</h3>
-<p>这一阶段把每篇文档切成一组 n-gram（n 取 5），并为每个 n-gram 生成 128 个哈希。</p>
-<p>哈希步骤计算密集，我们比较了基于 Numpy 的基线方案与 cuDF 内置哈希实现。</p>
-<table><thead><tr><th><strong>节点数</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU 基线（s）</td><td>1899</td><td>963</td><td>519</td></tr><tr><td>GPU（cuDF）（s）</td><td>125</td><td>63</td><td>33</td></tr><tr><td><strong>加速比</strong></td><td><strong>15.2</strong></td><td><strong>15.3</strong></td><td><strong>15.7</strong></td></tr></tbody></table>
-<p>由上可见，GPU 加速让该阶段的运行比同等规模的 CPU 集群<strong>最多快 15 倍</strong>。</p>
-<h3>分组阶段</h3>
-<p>在第 3 与第 5 步，我们执行局部敏感哈希：若文档之间发生哈希碰撞则把它们归组；并实现了一种<a href="https://research.google/pubs/connected-components-in-mapreduce-and-beyond/">迭代式连通分量检测算法</a>，找出具有传递性碰撞的文档（例如文档 A 与 B 相似、C 与 B 相似，则 A 与 C 也应相似）。</p>
-<table><thead><tr><th><strong>节点数</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU 基线（s）</td><td>1634</td><td>850</td><td>434</td></tr><tr><td>GPU（RapidsMPF）（s）</td><td>542</td><td>356</td><td>281</td></tr><tr><td><strong>加速比</strong></td><td><strong>3.0</strong></td><td><strong>2.4</strong></td><td><strong>1.5</strong></td></tr></tbody></table>
-<p>在这组对比中，增加 GPU 数量虽能缩短运行时间，但更高规模下的边际改善递减，成本节省随之减少。</p>
-<p>由于这些阶段是 shuffle 密集型的，加入更多 GPU 也带来更多通信开销。对这一特定数据集与负载，2 GPU 最优——数据集可能太小，无法利用满 8 块 GPU。</p>
-<h3>端到端流水线</h3>
-<table><thead><tr><th><strong>节点数</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU 基线（s）</td><td>3718</td><td>1891</td><td>989</td></tr><tr><td>GPU 加速（s）</td><td>939</td><td>511</td><td>360</td></tr><tr><td><strong>加速比</strong></td><td><strong>4.0</strong></td><td><strong>3.7</strong></td><td><strong>2.7</strong></td></tr><tr><td>CPU 基线（$）</td><td><strong>$2.16</strong></td><td><strong>$2.19</strong></td><td><strong>$2.29</strong></td></tr><tr><td>GPU 加速（$）</td><td><strong>$0.69</strong></td><td><strong>$0.75</strong></td><td><strong>$1.06</strong></td></tr><tr><td><strong>TCO 改善</strong></td><td><strong>3.1x</strong></td><td><strong>2.9x</strong></td><td><strong>2.2x</strong></td></tr></tbody></table>
-<p>从固定硬件配置下的完整流水线可见，GPU 加速方案：</p>
-<ul><li>在成本最低的 CPU 对比点（2 节点）上，快 4 倍、TCO 改善 3.1 倍</li><li>在所有节点规模下都提供 TCO 与运行时间的改善</li></ul>
-<h2>下一步</h2>
-<p>尽管上述结果令人鼓舞，我们距离性能上限仍很远。特别是，对先后使用 cuDF 与 RapidsMPF 的算子做算子融合（operator fusion），将带来性能的阶跃式提升。这能让 Ray Data 避免各阶段之间不必要的 host-to-device 往返，让数据留在 GPU 显存内。</p>
-<p>在与终端用户的合作中，下一步还包括<strong>为数据预处理器启用 GPU shuffle</strong>，让基于 Ray Data preprocessor API 构建的特征工程流水线也能走 GPU 路径。</p>
-<p>我们很高兴继续投入这一方向，为你的 AI 数据负载带来最佳的数据处理性能。Ray Data GPU shuffle 目前处于实验阶段，随 Ray 2.58 提供。试用后欢迎给我们反馈！</p>]]></content:encoded>
-    </item>
-    <item>
       <title>将 Ray 的 AI 工作负载扩展至 10k 节点集群</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</guid>
@@ -1501,6 +1525,86 @@ generator.inference_engine.engine_init_kwargs.kv_cache_dtype=fp8_e4m3</code></pr
 <p>本工作由 SkyRL 团队完成。特别感谢 <a href="mailto:etang@anyscale.com">Eric Tang</a>、<a href="mailto:sumanthrh@anyscale.com">Sumanth Hegde</a> 和 <a href="mailto:kourosh@anyscale.com">Kourosh Hakhamaneshi</a>。</p>
 <h2>参考文献</h2>
 <ul><li>SkyRL — <a href="https://github.com/NovaSky-AI/SkyRL">https://github.com/NovaSky-AI/SkyRL</a></li><li>Qwen3.5 — <a href="https://qwen.ai/blog?id=qwen3.5">https://qwen.ai/blog?id=qwen3.5</a></li><li>Unified FP8 — <a href="https://www.lmsys.org/blog/2025-11-25-fp8-rl/">https://www.lmsys.org/blog/2025-11-25-fp8-rl/</a></li><li>NVIDIA NeMo RL: FP8 — <a href="https://docs.nvidia.com/nemo/rl/latest/fp8.html">https://docs.nvidia.com/nemo/rl/latest/fp8.html</a></li><li>DeepSeek-V3 — <a href="https://arxiv.org/abs/2412.1943">https://arxiv.org/abs/2412.1943</a></li><li>DAPO — <a href="https://arxiv.org/abs/2503.14476">https://arxiv.org/abs/2503.14476</a></li><li>SkyRL PR #1898 — <a href="https://github.com/NovaSky-AI/SkyRL/pull/1898">https://github.com/NovaSky-AI/SkyRL/pull/1898</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Ray Data 中的 GPU 原生算子</title>
+      <link>https://anyscale.com/blog/gpu-native-operators-in-ray-data</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/gpu-native-operators-in-ray-data</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：GPU-Native Operators in Ray Data</description>
+      <content:encoded><![CDATA[<h1>Ray Data 中的 GPU 原生算子</h1>
+<p>作者：Richard Liaw、Felix Cheung 和 Lee Yang | 2026 年 8 月 25 日</p>
+<p>Ray Data 是构建在 Ray 之上、专注于多模态数据处理与训练数据加载等 AI 负载的数据引擎。由于聚焦 AI 负载，GPU 是 Ray Data 的核心特性——它能将 GPU 视为一种调度资源，从而轻松把数据处理任务扩展到大量 GPU 上。</p>
+<p>尽管如此，Ray Data 直接在 GPU 上执行的原生功能一直有限，这部分职责此前都交给调用 PyTorch、JAX 等 GPU 库的用户自定义函数。</p>
+<p>近期，Anyscale 的 Ray Data 团队与 NVIDIA cuDF 团队合作，把更多基于 GPU 的算子更好地集成进 Ray Data。我们特别兴奋地宣布两项新特性：</p>
+<ul><li><a href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries/cudf">cuDF</a> 成为 Ray Data map_batches 的后端</li><li>基于 <a href="https://github.com/rapidsai/rapidsmpf">RapidsMPF</a> 的 GPU shuffle</li></ul>
+<p>在部分数据清洗（data curation）负载上，这些增强相比基于 CPU 的方案带来了最多 3 倍的 TCO 改善。</p>
+<p>今天就可以通过 <code>pip install -U ray==2.58</code> 在 Ray 上试用。</p>
+<h2>背景</h2>
+<p>Ray Data 提供一组规范化数据处理算子，从 IO 到 shuffle 到 UDF。Ray Data 的差异化特性之一，是对 UDF 的一流 GPU 支持。例如，可以这样调度使用 GPU 的自定义代码：</p>
+<pre><code>import ray
+
+ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
+
+def compute_gpu(batch: pd.DataFrame):
+    ...
+
+ds = ds.map_batches(compute_gpu, num_gpus=1, batch_size=4096, batch_format=&quot;pandas&quot;)</code></pre>
+<p>上述代码会自动启动多个 <code>compute_gpu</code> 调用，分别运行在你 Ray 集群中挂接不同 GPU 的不同进程上。</p>
+<p>在用 Ray Data 做数据去重任务时，我们注意到两个改进机会：</p>
+<ul><li>流水线中存在计算密集的 DataFrame 操作，本可用 cuDF 加速，但这要求用户手动转换数据格式</li><li>这些特定任务有很重的哈希聚合步骤，计算密集，可以从更好的 GPU 加速中获益</li></ul>
+<p>为解决这两个机会点，我们为 Ray Data 添加了两个关键特性：cuDF 批量格式支持，以及基于 RapidsMPF 的 GPU 原生 shuffle 后端。</p>
+<h3>cuDF 成为一等公民批量格式</h3>
+<p>Ray Data 原本有 3 种原生批量格式——Pandas DataFrame、Numpy 数组和 PyArrow Table。批量格式有两个用途：作为各阶段之间的数据交换格式，以及为用户编写自定义处理函数提供更熟悉的接口。</p>
+<p>从 Ray 2.58 起，<code>map_batches</code> 接受 <code>batch_format=&quot;cudf&quot;</code>，把你的 UDF 收到的数据从 pandas DataFrame 或 Arrow table 换成 <code>cudf.DataFrame</code>。</p>
+<p><strong>cuDF</strong> 是 NVIDIA 开源的 GPU 加速 DataFrame 库，是 NVIDIA CUDA-X 数据处理库系列的一员。它以类 Pandas 的 API 提供 GPU 加速的操作。对某些计算密集的操作，cuDF 可以比等效的 CPU 实现快上最多一个数量级、成本也更低。</p>
+<pre><code>import ray
+
+ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
+
+def add_minhash(batch):  # batch is a cudf.DataFrame
+    batch[&quot;minhash&quot;] = batch[&quot;text&quot;].str.minhash(seed=42, ...)
+    return batch
+
+ds = ds.map_batches(add_minhash, batch_format=&quot;cudf&quot;, num_gpus=1, batch_size=4096)</code></pre>
+<h3>经由 RapidsMPF 的 GPU 原生 shuffle</h3>
+<p>用户现在可以通过一条构建在 <a href="https://docs.rapids.ai/api/rapidsmpf/stable/">RapidsMPF</a> 上的全新 GPU 执行路径，使用 GPU 加速的 <code>repartition</code> 与哈希聚合。各 rank 之间直接经 UCXX 通信。跨 rank 的 shuffle 数据可利用 RDMA 或 NVLink 等高性能传输，绕过 CPU 与 Ray 对象存储。</p>
+<p>与 cuDF 类似，对某些计算密集的操作，基于 RapidsMPF 的 shuffle 可以比等效的 CPU 实现快上最多一个数量级、成本也更低。</p>
+<pre><code>from ray.data.context import DataContext, ShuffleStrategy
+
+ctx = DataContext.get_current()
+ctx.shuffle_strategy = ShuffleStrategy.GPU_SHUFFLE
+
+ds.repartition(num_blocks=256, keys=[&quot;doc_id&quot;])
+ds.groupby(&quot;band_id&quot;).count()</code></pre>
+<h2>基准测试：模糊去重</h2>
+<p>推动我们这次合作的负载是<strong>模糊文档去重（fuzzy document deduplication）</strong>——基础模型训练数据清洗中的标准负载。基准测试采用<a href="https://huggingface.co/blog/dedup">标准的 MinHash-LSH 方法</a>，流程如下：</p>
+<p><em>图 1：去重负载的各阶段。</em></p>
+<ul><li>为每篇文档<strong>生成 MinHash 签名</strong>。</li><li>由签名<strong>生成 LSH band</strong>。</li><li><strong>按 band 分组</strong>，找出候选重复对。</li><li><strong>对候选边去重。</strong></li><li>通过遍历图<strong>计算连通分量</strong>。</li><li><strong>过滤重复项。</strong></li><li><strong>持久化幸存者。</strong></li></ul>
+<p>第 1 步要为每个 n-gram 生成哈希值，哈希是计算密集型操作。</p>
+<p>第 3 步与第 5 步的 shuffle 最重——groupby 操作用于形成重复对，而连通分量算法是一连串 groupby 操作。</p>
+<p>在下面的实验中，我们看到由于 GPU 的集成与加速，这些步骤的性能得到改善。</p>
+<p>以下实验使用 FineWeb 10BT 数据集，集群规模为 2 到 8 个节点。CPU 侧使用 m8id.4xlarge 实例类型：16 vCPU、64 GiB 内存，每小时 1.04416 美元。</p>
+<p>GPU 评测使用 g6.4xlarge 实例类型：16 vCPU、64 GiB 内存，每小时 1.3232 美元。</p>
+<p>实验代码基于 Ray 2.58，可<a href="https://github.com/ray-project/gpu-deduplication">在此找到</a>。</p>
+<h3>生成 MinHash 签名</h3>
+<p>这一阶段把每篇文档切成一组 n-gram（n 取 5），并为每个 n-gram 生成 128 个哈希。</p>
+<p>哈希步骤计算密集，我们比较了基于 Numpy 的基线方案与 cuDF 内置哈希实现。</p>
+<table><thead><tr><th><strong>节点数</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU 基线（s）</td><td>1899</td><td>963</td><td>519</td></tr><tr><td>GPU（cuDF）（s）</td><td>125</td><td>63</td><td>33</td></tr><tr><td><strong>加速比</strong></td><td><strong>15.2</strong></td><td><strong>15.3</strong></td><td><strong>15.7</strong></td></tr></tbody></table>
+<p>由上可见，GPU 加速让该阶段的运行比同等规模的 CPU 集群<strong>最多快 15 倍</strong>。</p>
+<h3>分组阶段</h3>
+<p>在第 3 与第 5 步，我们执行局部敏感哈希：若文档之间发生哈希碰撞则把它们归组；并实现了一种<a href="https://research.google/pubs/connected-components-in-mapreduce-and-beyond/">迭代式连通分量检测算法</a>，找出具有传递性碰撞的文档（例如文档 A 与 B 相似、C 与 B 相似，则 A 与 C 也应相似）。</p>
+<table><thead><tr><th><strong>节点数</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU 基线（s）</td><td>1634</td><td>850</td><td>434</td></tr><tr><td>GPU（RapidsMPF）（s）</td><td>542</td><td>356</td><td>281</td></tr><tr><td><strong>加速比</strong></td><td><strong>3.0</strong></td><td><strong>2.4</strong></td><td><strong>1.5</strong></td></tr></tbody></table>
+<p>在这组对比中，增加 GPU 数量虽能缩短运行时间，但更高规模下的边际改善递减，成本节省随之减少。</p>
+<p>由于这些阶段是 shuffle 密集型的，加入更多 GPU 也带来更多通信开销。对这一特定数据集与负载，2 GPU 最优——数据集可能太小，无法利用满 8 块 GPU。</p>
+<h3>端到端流水线</h3>
+<table><thead><tr><th><strong>节点数</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU 基线（s）</td><td>3718</td><td>1891</td><td>989</td></tr><tr><td>GPU 加速（s）</td><td>939</td><td>511</td><td>360</td></tr><tr><td><strong>加速比</strong></td><td><strong>4.0</strong></td><td><strong>3.7</strong></td><td><strong>2.7</strong></td></tr><tr><td>CPU 基线（$）</td><td><strong>$2.16</strong></td><td><strong>$2.19</strong></td><td><strong>$2.29</strong></td></tr><tr><td>GPU 加速（$）</td><td><strong>$0.69</strong></td><td><strong>$0.75</strong></td><td><strong>$1.06</strong></td></tr><tr><td><strong>TCO 改善</strong></td><td><strong>3.1x</strong></td><td><strong>2.9x</strong></td><td><strong>2.2x</strong></td></tr></tbody></table>
+<p>从固定硬件配置下的完整流水线可见，GPU 加速方案：</p>
+<ul><li>在成本最低的 CPU 对比点（2 节点）上，快 4 倍、TCO 改善 3.1 倍</li><li>在所有节点规模下都提供 TCO 与运行时间的改善</li></ul>
+<h2>下一步</h2>
+<p>尽管上述结果令人鼓舞，我们距离性能上限仍很远。特别是，对先后使用 cuDF 与 RapidsMPF 的算子做算子融合（operator fusion），将带来性能的阶跃式提升。这能让 Ray Data 避免各阶段之间不必要的 host-to-device 往返，让数据留在 GPU 显存内。</p>
+<p>在与终端用户的合作中，下一步还包括<strong>为数据预处理器启用 GPU shuffle</strong>，让基于 Ray Data preprocessor API 构建的特征工程流水线也能走 GPU 路径。</p>
+<p>我们很高兴继续投入这一方向，为你的 AI 数据负载带来最佳的数据处理性能。Ray Data GPU shuffle 目前处于实验阶段，随 Ray 2.58 提供。试用后欢迎给我们反馈！</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Anyscale GPU 健康可观测性：从应用一直看到硬件</title>
@@ -5076,107 +5180,6 @@ def train_loop_per_worker(config: dict):
 <p>如果你是研究者，最看重简单与灵活（比如想尝试不常见的新算法或新思路，并且会花大量时间改源码），那 verifiers 值得一看。</p>
 <p>最后，如果你在开发自己的库，或者对这个方向感兴趣，可以考虑<a href="https://www.anyscale.com/blog/ray-summit-2025-call-for-proposals-cfp">向 Ray Summit 2025 提交一个演讲</a>——我们会为后训练和强化学习设置专门的分论坛。</p>
 <p>有任何问题、意见或反馈，随时联系 <a href="https://tyler-griggs.github.io/">Tyler</a> 或 <a href="https://www.linkedin.com/in/philipp-moritz-61419682/">Philipp</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>阿里云上的 Ray：构建机器学习平台</title>
-      <link>https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform</guid>
-      <pubDate>Thu, 12 Jun 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Ray on Alibaba Cloud: Building an ML Platform</description>
-      <content:encoded><![CDATA[<h1>阿里云上的 Ray：构建机器学习平台</h1>
-<p>作者：Kun Wu（阿里云） | 2025 年 6 月 12 日</p>
-<p>人工智能（AI）的推进速度前所未有。不同的用例需要不同的技术与基础设施。举例来说，批量推理需要异构的算力资源——用 CPU 节点做 I/O、用 GPU 节点做推理——才能把性能发挥到最大。此外，RLHF 通常要把 LLM 推理框架和训练框架集成到一起。因此，灵活的机器学习（ML）基础设施，对于在生产环境中可靠地部署 AI 负载至关重要。</p>
-<p>Ray 是广受欢迎的 AI 计算引擎，支撑着世界各地公司的 ML 基础设施。<a href="https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1">阿里云容器服务 Kubernetes 版</a>（ACK）把 Ray 作为一等公民来支持，帮助用户加速从概念验证走向生产的 Ray 之路。许多公司都在阿里云上广泛使用 Ray，比如 <a href="https://www.alibabacloud.com/blog/kimi-large-model-based-massive-data-preprocessing-practice-of-moonshot-ai_602119">Moonshot AI</a> 就把它用于大规模数据处理以及其他算力密集的 AI 负载。</p>
-<p>本文简要介绍 Ray 与 KubeRay，以及在 ACK 上支持 Ray 的相关工作。</p>
-<h4><strong>Ray</strong></h4>
-<p>Ray 是一个开源的分布式计算引擎，能为任意规模的分布式负载、在任意加速硬件上精确地编排基础设施。Ray 的架构分为三层：Ray Core、Ray AI Libraries 和 Ray Deployment。</p>
-<p>图 1</p>
-<h4><strong>Ray Core</strong></h4>
-<p>Ray Core 是一个强大的分布式计算引擎，它只提供一小组必备的原语（<strong>task、actor 和 object</strong>），用来构建和扩展分布式应用。Ray 的 task、actor 和 object，与编程中最基础的函数、类和变量一一对应，因此用户用 Ray Core API 编写分布式应用，就像在笔记本上编程一样。下面是 Ray Core API 的一个示例：</p>
-<pre><code>1import ray
-2import numpy as np
-3
-4# Define a task that sums the values in a matrix.
-5@ray.remote
-6def sum_matrix(matrix):
-7    return np.sum(matrix)
-8
-9# Call the task with a literal argument value.
-10print(ray.get(sum_matrix.remote(np.ones((100, 100)))))
-11# -&gt; 10000.0
-12
-13# Put a large array into the object store.
-14matrix_ref = ray.put(np.ones((1000, 1000)))
-15
-16# Call the task with the object reference as an argument.
-17print(ray.get(sum_matrix.remote(matrix_ref)))
-18# -&gt; 1000000.0</code></pre>
-<p>这个示例定义了一个 Ray task <strong>sum_matrix</strong>，用来对一个 NumPy 矩阵里的值求和。第一个调用传入的是字面量数组；第二个调用则先用 <strong>ray.put</strong> 把数组存进 Ray 的对象存储，再把对象引用传给 task。有了 Ray Core，用户写代码时不必关心 Ray 的 task、actor 和 object 分别落在哪些节点上，也不必关心它们之间如何交互。</p>
-<h4><strong>Ray AI Libraries</strong></h4>
-<p>Ray 生态包含 Ray Data、Ray Train、Ray Tune、Ray Serve 和 RLlib 等 AI 库，覆盖从数据处理、训练、调参到服务的整个 ML 生命周期。这些库都构建在 Ray Core 之上，让开发者能够高效地用上 Ray 的分布式执行能力。</p>
-<h4><strong>Ray Deployment</strong></h4>
-<p>Ray 支持以虚拟机和 Kubernetes 作为底层的容器编排层。下一节将讨论官方的 Ray on Kubernetes 方案 KubeRay。</p>
-<h2><strong>KubeRay</strong></h2>
-<p>KubeRay 是 Ray 的 Kubernetes operator，用来简化 Kubernetes 上 Ray 集群及其相关应用的生命周期管理。有了 KubeRay，<strong>数据科学家和 ML 科学家</strong>可以专注于自己的机器学习逻辑，<strong>基础设施工程师</strong>则专注于 Kubernetes。</p>
-<p>KubeRay 架构示意</p>
-<p>也就是说，数据科学家可以专心开发自己的 Python 脚本，不必关心 Kubernetes 是怎么运转的；基础设施工程师则可以专心把 KubeRay 与 Kubernetes 生态的工具集成起来，用于可观测性、流量管理和安全。</p>
-<p>KubeRay 针对不同使用方式提供了三个 API，也就是三种自定义资源定义（CRD）：RayCluster、RayJob 和 RayService。</p>
-<ul><li><strong>RayCluster</strong>：KubeRay 全面管理 RayCluster 的生命周期，包括集群的创建、删除、自动扩缩和容错。</li><li><strong>RayJob</strong>：KubeRay 会自动创建一个 RayCluster，并在集群就绪后提交作业。你也可以配置 RayJob，让它在作业结束后自动删除这个 RayCluster。</li><li><strong>RayService</strong>：RayService 由两部分组成：一个 RayCluster，以及一个或多个 Ray Serve 应用。RayService 为 RayCluster 提供零停机升级和高可用。</li></ul>
-<pre><code>1helm repo add kuberay https://ray-project.github.io/kuberay-helm/
-2helm repo update
-3
-4# Deploy KubeRay operator
-5helm install kuberay-operator kuberay/kuberay-operator
-6# Deploy a RayCluster
-7helm install raycluster kuberay/ray-cluster</code></pre>
-<p>这个示例演示了在一个已经运行起来的 Kubernetes 集群里，如何只用几条命令、借助 KubeRay 的 RayCluster CRD 轻松拉起一个 Ray 集群。更多细节见「<a href="https://docs.ray.io/en/latest/cluster/kubernetes/getting-started/raycluster-quick-start.html">RayCluster Quickstart</a>」文档。</p>
-<h2><strong>Ray on ACK</strong></h2>
-<h4><strong>Overview</strong></h4>
-<p><a href="https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1">阿里云容器服务 Kubernetes 版</a>（ACK）支持以托管组件的形式启用 KubeRay，具备以下优势，可以帮助用户把 AI 负载以极快的速度从概念验证推向生产。</p>
-<ul><li><strong>ACK 中的弹性计算</strong>：ACK 支持多种计算类型，以满足不同用例下各异的负载需求。</li><li><strong>可观测性</strong>：ACK 简化了日志与指标的持久化，并通过 Ray History Server 支持事后分析，让用户能轻松掌握 Ray 集群和应用的状态。</li><li><strong>安全性</strong>：ACK 团队基于专用的基础镜像构建 KubeRay 镜像，以尽量缩小攻击面。</li><li><strong>免运维</strong>：ACK 为 KubeRay operator 自动配置了 Vertical Pod Autoscaling（VPA），保证资源得到扩缩，从而减少故障。ACK 还负责组件升级和缺陷修复，让用户专注于应用开发。</li><li><strong>高可用部署</strong>：ACK 确保 KubeRay operator 分布在至少两个可用区，具备抵御可用区级故障的能力。</li></ul>
-<h2><strong>ACK 中的弹性计算</strong></h2>
-<p>ACK 节点池</p>
-<p>ACK 集群支持通过节点池来管理节点，从而能在不同场景下使用多种计算类型：用于智能计算的灵骏（Lingjun）节点，按量付费或包年包月的 Elastic Compute Service（ECS）实例，以及按秒计费、便于弹性的 Container Compute Service（ACS）实例。这保证了 ACK 集群能够满足不同用例下各异的负载需求。</p>
-<h2><strong>可观测性</strong></h2>
-<h4><strong>日志</strong></h4>
-<p><strong>KubeRay 日志</strong>：ACK 集群会自动采集控制面 KubeRay operator 的日志。用户可以通过控制面组件日志查看这些日志，确认 operator 的状态。</p>
-<p>KubeRay 日志</p>
-<p><strong>Ray 日志</strong>：借助资源标签，用户可以把数据面 RayCluster 的日志采集到 <a href="https://www.alibabacloud.com/help/en/sls/">Simple Log Service（SLS）</a>。与自建的日志存储方案相比，SLS 提供结构化的日志查询与分析；因为不再需要维护基础设施，总体拥有成本（TCO）降低 50%；同时具备 99.99% 的 SLA 可用性，可靠性有保障。</p>
-<p>Ray 日志</p>
-<h4><strong>指标</strong></h4>
-<p>ACK 集群默认集成了 Prometheus 监控能力。用户只需提交 PodMonitor 和 ServiceMonitor 配置，就能开启对 ACK 集群内数据面 RayCluster 监控数据的采集，随后所有 RayCluster 指标都可以通过统一的 Prometheus 接口查看。</p>
-<p>指标</p>
-<h4><strong>Ray History Server：事后分析</strong></h4>
-<p>原生的 Ray Dashboard 只在 Ray 集群运行期间可用。集群一旦终止，用户就再也看不到历史日志和监控数据。为了解决这个限制，ACK 提供了 <strong>Ray History Server</strong>，可以访问处于活跃状态和已终止的 RayCluster 自定义资源的看板。History Server 看板提供的功能与原生 Ray Dashboard 保持一致，同时还把指标监控自动接入了 <a href="https://www.alibabacloud.com/help/en/arms/product-overview/what-is-arms">Application Real-Time Monitoring Service（ARMS）</a>，无需手动部署 Prometheus 和 Grafana。下面的图示展示了如何访问和使用 History Server 看板。</p>
-<p>下图展示的是，用户在 Ray History Server 中可以访问活跃和已终止两种状态的 RayCluster 自定义资源的 Ray Dashboard。</p>
-<p>Ray 历史记录</p>
-<p>下图展示的是与 Ray Dashboard 一致的页面，也就是在 Ray head Pod 上看到的内容</p>
-<p>列表</p>
-<h2><strong>生产实践案例</strong></h2>
-<p>本节用一个真实用例来展示 Ray on ACK 的进阶能力。在这个用例中，客户面临三个核心挑战：</p>
-<ul><li>多个 RayJob 之间的配额限制与优先级排序。</li><li>为应对突发负载做资源预留（尤其是 RayService 负载）。</li><li>RayJob 终止之后 Ray Dashboard 的留存。</li></ul>
-<p>通过集成 <a href="https://github.com/kube-queue/kube-queue">kube-queue</a> 实现排队与基于优先级的调度，再配合 Ray History Server，这位客户成功地把 Ray 负载在生产环境跑了起来，同时把资源用得很充分。更多细节见下文。</p>
-<h4><strong>用 ResourcePolicy API 实现智能计算编排</strong></h4>
-<p>如前文「<strong>ACK 中的弹性计算</strong>」所述，阿里云提供了多种计算类型，它们在价格、可靠性、可用性、性能和计费模式上各有不同。要把这些各异的算力资源用好，需要成熟的调度方案。</p>
-<p>阿里云提供了 ResourcePolicy API，通过定义 Pod 偏好哪类节点的优先级，来实现计算资源类型的编排。以下面这段 YAML 为例，它优先使用包年包月的 ECS 实例，当 ECS 资源不足时切换到按量付费的 ACS 实例。把这一做法与 Kubernetes 的 Pod 自动扩缩组件（如 Ray Autoscaler 和 Horizontal Pod Autoscaler）结合起来，非常适合应对流量洪峰。</p>
-<pre><code>1apiVersion: scheduling.alibabacloud.com/v1alpha1
-2kind: ResourcePolicy
-3metadata: 
-4  name: resourcepolicy-example
-5  namespace: default
-6spec:
-7  selector:
-8    key1: value1
-9  units:
-10  - resource: ecs
-11  - resource: acs</code></pre>
-<p>该客户同时部署了基于 cron 的数据处理 RayJob 自定义资源，以及长期运行的 RayService ML 推理负载。RayJob 优先消费包年包月的 ECS 实例，资源紧张时退回到用 ACS 实例做补充算力。对于 RayService 负载，客户只使用包年包月的 ECS 实例，并预留额外容量，以支撑 RayCluster 快速扩缩来应对突发流量。更多细节见下图。</p>
-<p>智能计算编排</p>
-<h4><strong>用 kube-queue 支持多租户资源管理</strong></h4>
-<p>ACK 通过 kube-queue 支持任务排队与配额。有了配额和队列，用户可以为特定团队或服务定义保障性的资源配额，并设置上限防止超额使用，从而同时保证公平性和可扩展性。</p>
-<p>客户创建了一棵配额树，如下图所示，以便在不同团队和不同类型的负载之间高效共享资源。</p>
-<ul><li>每个团队都有自己的资源配额上下限，既保证最低可用量，也允许最大程度的超卖。</li><li>每个配额都有自己的队列，创建时定义的优先级更高的 RayJob 会在各自队列中按优先级被执行。</li></ul>
-<p>最后一张图</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

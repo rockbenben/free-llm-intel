@@ -7,7 +7,110 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Tue, 17 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Enabling Mid-Epoch Training Resumption with Ray Train</title>
+      <link>https://anyscale.com/blog/mid-epoch-resumption-ray-train</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/mid-epoch-resumption-ray-train?li=1</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Enabling Mid-Epoch Training Resumption with Ray Train</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=jason-li">Jason Li</a> | November 24, 2026</p>
+<p>Training failures are increasingly common at scale, and effective training infrastructure is judged by how quickly it recovers from them. Mid-epoch resumption lets Ray Train and Ray Data checkpoint your data loader alongside your model, so your restarted run picks up where its last checkpoint left off without breaking exactly-once training. Here's what it gives you:</p>
+<ul><li><strong>Less repeated work:</strong> a restarted job picks up from its last checkpoint, instead of starting the epoch over.</li><li><strong>Correct data coverage:</strong> every row is still trained on exactly once per epoch, even across failures.</li><li><strong>Simple adoption:</strong> it works with your existing Ray Train checkpoints and requires minimal changes to your training script.</li></ul>
+<p>In our benchmark, with mid-epoch resumption, a training job that failed 75% of the way through an epoch achieved <strong>9% faster</strong> overall runtime and <strong>9% lower dollar cost</strong> than when it skipped batches to resume. The bigger your epochs, the more it saves you on failure.</p>
+<p>Mid-epoch resumption will ship with Ray 2.61 and is currently available in the <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">Anyscale Runtime</a> starting with Ray version 2.50.</p>
+<h2>LinkThe cost of mid-epoch training failures</h2>
+<p>Mid-epoch training failures can be costly. Picture a run whose latest checkpoint was saved 75% of the way through an epoch, followed by a worker failure at 80%:</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7eqyqyQ6qiPfwU3ptlmh85/c2cab3b921ae6a0338f321ee0fe5a4dd/Mid-epoch_training_failures_can_be_costly._Picture_a_run_whose_latest_checkpoint_was_saved_75-_of_the_way_through_an_epoch__.png" alt="Mid-epoch training failures can be costly. Picture a run whose latest checkpoint was saved 75% of the way through an epoch, followed by a worker failure at 80%"></p>
+<p>Mid-epoch training failures can be costly. Picture a run whose latest checkpoint was saved 75% of the way through an epoch, followed by a worker failure at 80%</p>
+<p>The model restores from the 75% checkpoint, but the data loader has no record of where it was. The typical recovery approach is to restart the epoch from the beginning, but that has two costs:</p>
+<ul><li><strong>Data imbalance: </strong>Previously consumed rows are trained on twice in the same epoch while the rest of the dataset is trained on once, which skews what the model learns toward that part of the data.</li><li><strong>GPU time: </strong>Additional GPU time is spent training on rows that were already consumed.</li></ul>
+<p>Both of these costs grow with the size of your epoch. On a small dataset, replaying most of an epoch is a minor cost. However, on a dataset that takes a day to get through, a single late failure can cost another day of GPU time.</p>
+<p>To avoid these costs, teams often fast-forward to where training failed, iterating past the batches they've already seen after a restart. However, with streaming loaders like Ray Data that process data on the fly and don’t guarantee row order, skipped rows still need to be recomputed, and fast-forwarding can't guarantee each row is trained on exactly once.</p>
+<p>Instead, we require a data loader that keeps its own record of which rows have been consumed and saves it alongside model checkpoints so the two never drift apart. The rest of this post shows how Ray Train and Ray Data do that, and what it saves in practice.</p>
+<h2>LinkHow it works</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/62RcbskxSYDc6Cckd51bp6/bbc6ddc374dc72befaa4bc5743620d0e/With_mid-epoch_resumption__the_restart_picks_up_at_the_75-_checkpoint.png" alt="With mid-epoch resumption, the restart picks up at the 75% checkpoint"></p>
+<p>With mid-epoch resumption, the restart picks up at the 75% checkpoint</p>
+<p>The key idea is to track consumed rows rather than a position. Ray Data doesn't hand out rows in a fixed order, so knowing how many batches were consumed isn't enough to find your place again, but knowing which rows were consumed is. To make that work, every row needs a unique ID, each worker records the IDs it trains on, and after a restart Ray Data uses that record to skip those rows as it reads. Let’s walk through how Ray Train and Ray Data do this when saving and restoring progress.</p>
+<h3>LinkSaving progress</h3>
+<ul><li><strong>Record every yielded batch.</strong> Once you turn on data checkpointing for a dataset with a <code>DatasetCheckpointConfig</code>, every batch Ray Data’s data iterator hands to your training loop is recorded: a background thread writes the batch's row IDs to files in shared storage.</li><li><strong>Commit at checkpoint time.</strong> When you checkpoint the model, you also call <code>state_dict()</code> on the data iterator. That call flushes any remaining row IDs, closes out the current set of files, and returns a small dictionary: the epoch, a checkpoint index, the path where the row ID files live, and the ID column name.</li><li><strong>Save it with the model.</strong> You store that dictionary in the same checkpoint as the model and optimizer state, and report it with <code>ray.train.report()</code>. The model and the data loader state are committed together, so they always agree on what has been trained.</li></ul>
+<p>Each worker writes its own files, organized by rank, epoch, and checkpoint index:</p>
+<pre><code>ray_data_checkpoints/train/
+└── rank=0/
+    └── epoch=0/
+        ├── checkpoint=0/chunk_0.parquet
+        ├── checkpoint=1/chunk_0.parquet
+        └── checkpoint=2/chunk_0.parquet</code></pre>
+<p>By default these files live under your Ray Train storage path and are deleted once an epoch finishes, since there's nothing left to resume within it.</p>
+<h3>LinkRestoring progress</h3>
+<ul><li><strong>Load the state.</strong> When the job restarts, your training function gets the latest checkpoint from <code>ray.train.get_checkpoint()</code>, reads the saved dictionary from it, and passes it to <code>ray.train.get_dataset_shard()</code> through the <code>state_dict</code> argument.</li><li><strong>Load the consumed row IDs.</strong> Ray Data reads the row ID files for that epoch up to the saved checkpoint index, across every rank, and sorts them so lookups are fast.</li><li><strong>Filter as you read.</strong> A filter step right after the read drops any row whose ID is in that set, using a binary search per row. Skipped rows never reach your preprocessing or your training loop.</li><li><strong>Continue the epoch.</strong> Training picks up with the remaining rows. After that epoch ends, later epochs read the full dataset as usual.</li></ul>
+<p>Because the filter applies to the dataset as a whole rather than to each worker, the remaining rows are split across whatever workers the restarted run has. Restoring still rereads the input files, but reading and filtering a row costs far less than preprocessing it and running it through a training step.</p>
+<h2>LinkUsing mid-epoch resumption</h2>
+<p>All of this bookkeeping happens inside Ray Train and Ray Data. If you already checkpoint with <code>ray.train.report</code>, turning on mid-epoch resumption takes three changes: tell Ray Train which dataset to track, save the data iterator's state with your model, and pass that state back in when you restore.</p>
+<pre><code>import ray
+from ray.train import DataConfig, DatasetCheckpointConfig, ScalingConfig
+from ray.train.torch import TorchTrainer
+
+def train_func():
+    model, data_state = build_model(), None
+    if checkpoint := ray.train.get_checkpoint():
+        model, data_state = load_checkpoint(checkpoint)  # your restore logic
+
+    # Change 3: resume the data iterator from the saved state.
+    shard = ray.train.get_dataset_shard(&quot;train&quot;, state_dict=data_state)
+
+    for step, batch in enumerate(shard.iter_torch_batches(batch_size=64)):
+        ...  # training step
+        if step % 100 == 0:
+            # Change 2: save the data iterator state with the model.
+            checkpoint = save_checkpoint(model, data_state=shard.state_dict())
+            ray.train.report({&quot;step&quot;: step}, checkpoint=checkpoint)
+
+trainer = TorchTrainer(
+    train_func,
+    datasets={&quot;train&quot;: ray.data.read_parquet(&quot;s3://my-bucket/train/&quot;)},
+    # Change 1: track which rows each worker has consumed.
+    dataset_config=DataConfig(
+        dataset_checkpoint_configs={
+            &quot;train&quot;: DatasetCheckpointConfig(id_column=&quot;id&quot;)
+        }
+    ),
+    scaling_config=ScalingConfig(num_workers=16, use_gpu=True),
+)
+trainer.fit()</code></pre>
+<p>Note: <code>build_model</code>, <code>save_checkpoint</code>, and <code>load_checkpoint</code> stand in for your existing model and checkpoint code.</p>
+<p>Here's what each change above does:</p>
+<ul><li><strong>Turn on data checkpointing for the dataset.</strong> Pass a <code>DatasetCheckpointConfig</code> for the dataset through <code>DataConfig(dataset_checkpoint_configs=...)</code>. <code>id_column</code> names the column that uniquely identifies each row, here a column called id. If your data doesn't have one, see the requirements below.</li><li><strong>Save the data iterator's state with every model checkpoint.</strong> Call <code>shard.state_dict()</code> on every worker each time you checkpoint. On each worker, the call makes sure every row ID that worker has consumed is written to shared storage. What it returns isn't those IDs but a small, JSON-serializable dictionary that points to where every worker's files are stored, so it's identical on every worker. Store it in the checkpoint directory next to your model before calling <code>ray.train.report</code>.</li><li><strong>Pass the state back in on restore.</strong> Load the dictionary from the checkpoint and pass it to <code>ray.train.get_dataset_shard</code>. Every worker loads the same dictionary, so every worker can pass it in. Ray Train uses rank 0's copy to set up the restored dataset.</li></ul>
+<p>For a complete, runnable script, see the <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">mid-epoch resumption docs</a>.</p>
+<h3>LinkRequirements</h3>
+<p>To use mid-epoch resumption, there are a few conditions:</p>
+<ul><li><strong>Every row needs a unique ID.</strong> Point <code>id_column</code> at an existing column whose values are unique and survive your preprocessing. If your data doesn't have one, <code>generate_id_column=True</code> creates one for you and removes it from the batches your training loop sees. Generated IDs currently only work with Parquet.</li><li><strong>Only use row-preserving transformations.</strong> Stick to transformations that don't add rows, such as <code>map</code>, <code>map_batches</code>, and <code>filter</code>, and pass the ID column through to the end of the pipeline.</li><li><strong>Checkpoints need shared storage.</strong> Row ID files go to your Ray Train storage path by default, so it must be cloud storage or a network file system that every node can reach.</li><li><strong>Automatic restarts need fault tolerance.</strong> Set <code>FailureConfig(max_failures=...)</code> in your <code>RunConfig</code> so Ray Train restarts the run after a failure and restores the latest checkpoint.</li><li><strong>Finish consuming a batch before you checkpoint.</strong> Ray Data’s iterator counts a batch as consumed once it hands it to your loop. If your framework queues batches before the model trains on them, drain that queue before calling <code>ray.train.report</code>. Otherwise, your data checkpoint will be ahead of what the model has actually trained on.</li></ul>
+<h2>LinkEvaluating the impact</h2>
+<p>With the setup covered, how much does mid-epoch resumption actually save when a run fails late in an epoch? We benchmarked it on an image classification job. The setup is as follows:</p>
+<ul><li><strong>Model and data:</strong> ResNet-50 (26M parameters) on a modified ImageNet with images up to 2048x2048, with 1M training rows and 50k validation rows.</li><li><strong>Cluster:</strong> 16 A100 GPUs for training, plus 10 CPU nodes for Ray Data preprocessing.</li><li><strong>Checkpointing and validation:</strong> every 50 steps.</li><li><strong>Failure:</strong> a simulated failure 75% of the way through the epoch.</li></ul>
+<p>With this setup, we ran the same job twice: once skipping batches to get back to the restored position after the failure, which is what frameworks like Hugging Face Transformers do by default, and once with mid-epoch resumption:</p>
+<table><thead><tr><th><strong>Metric</strong></th><th><strong>Baseline (skip batches)</strong></th><th><strong>Mid-epoch resumption</strong></th></tr></thead><tbody><tr><td>End-to-end time</td><td>594 s</td><td><strong>542 s</strong></td></tr><tr><td>Cost</td><td>$1.45</td><td><strong>$1.32</strong></td></tr></tbody></table>
+<p>Compared to skipping batches, enabling mid-epoch resumption reduced both end-to-end job runtime and dollar cost by 9%. Without mid-epoch resumption, skipping batches still needs to read, preprocess, and transfer every row before the restore point, only to throw it away. Mid-epoch resumption still reads those rows, but drops them right after the read, before any preprocessing or transfer to the training workers. This is also why the savings grow with larger epochs and heavier preprocessing.</p>
+<h2>LinkSummary</h2>
+<p>Training runs fail, and the bigger the run, the more each failure costs. Mid-epoch resumption makes the data loader's state part of your checkpoint, so a restarted Ray Train job picks up where its last checkpoint left off, training on each row exactly once. In our benchmark, it cut the job's end-to-end runtime and total cost by 9% compared with skipping batches, and every row is still trained on exactly once per epoch. Mid-epoch resumption ships with open source Ray starting in Ray 2.61 and is available today in the Anyscale Runtime starting with Ray 2.50. For usage details, see the <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">mid-epoch resumption docs</a>. If you run into problems or have ideas for what we should build next, <a href="https://github.com/ray-project/ray/issues">file an issue on GitHub</a>.</p>
+<p><em>We'd like to thank Justin Yu, who led the work on mid-epoch resumption, and our colleagues on the Ray Train and Ray Data teams for their reviews, design feedback, and contributions to this work.</em></p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#the-cost-of-mid-epoch-training-failures">The cost of mid-epoch training failures</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#how-it-works">How it works</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#saving-progress">Saving progress</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#restoring-progress">Restoring progress</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#using-mid-epoch-resumption">Using mid-epoch resumption</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#requirements">Requirements</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#evaluating-the-impact">Evaluating the impact</a></li><li><a href="https://www.anyscale.com/blog/mid-epoch-resumption-ray-train#summary">Summary</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4UnYL4v1LdYl6VYLJFBOsN/36d1e3f01439345dd82ffe3f1e630b85/ray_train_observability.png?w=140" alt="ray train observability"></p>
+<h4>Ray Train: Diagnosing GPU Starvation in Model Training with Data Ingest Observability</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6vnw3Qyt9rUo9lTfzxwqJW/157ed8fc53497d5df102483b5f1a5fa8/JEPA_blog.png?w=140" alt="Real-time inference for JEPA world model architectures with Ray"></p>
+<h4>Real-time inference for JEPA world model architectures with Ray</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5B93PEUBZLNZTWnhOrL9tZ/2e021011ac03276b725e5ffd946e7c48/Donating_KubeRay_to_the_CNCF.png?w=140" alt="Donating KubeRay to the CNCF"></p>
+<h4>Donating KubeRay to the CNCF</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Ray Train: Diagnosing GPU Starvation in Model Training with…</title>
       <link>https://anyscale.com/blog/diagnosing-gpu-starvation-with-ray-train</link>
@@ -1204,108 +1307,6 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
-      <title>GPU-Native Operators in Ray Data</title>
-      <link>https://anyscale.com/blog/gpu-native-operators-in-ray-data</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/gpu-native-operators-in-ray-data?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>GPU-Native Operators in Ray Data</h1>
-<p>By</p>
-<p>Richard Liaw</p>
-<p>,</p>
-<p>Felix Cheung</p>
-<p>and</p>
-<p>Lee Yang</p>
-<p>|</p>
-<p>August 25, 2026</p>
-<p>Ray Data is a data engine built on Ray focused on AI workloads such as multimodal data processing and training data loading. Due to its focus on AI workloads, GPUs are a core feature of Ray Data - Ray Data is able to treat GPUs as a scheduling resource and thus is able to easily scale data processing tasks across GPUs.</p>
-<p>Despite this, Ray Data has had limited native functionality that executes directly on the GPU, delegating that responsibility to user defined functions that call GPU-enabled libraries like PyTorch or JAX.</p>
-<p>Recently, the Ray Data team at Anyscale has collaborated with the NVIDIA cuDF team to better integrate GPU-based operators into Ray Data. In particular, we’re excited to announce two new features:</p>
-<ul><li><a href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries/cudf">cuDF</a> as a backend for Ray Data map_batches</li><li>GPU-based shuffle based on <a href="https://github.com/rapidsai/rapidsmpf">RapidsMPF</a></li></ul>
-<p>On select data curation workloads, these enhancements have enabled up to 3x better TCO compared to CPU-based solutions.</p>
-<p>You can try this out today on Ray by <code>pip install -U ray==2.58</code>.</p>
-<h2>LinkBackground</h2>
-<p>Ray Data offers a set of canonical data processing operations, from IO to shuffle to UDFs. One of Ray Data’s differentiating features is that it has first-class support for GPUs for its UDFs. For example, one can schedule custom code leveraging a GPU as follows:</p>
-<pre><code>import ray
-
-ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
-
-def compute_gpu(batch: pd.DataFrame):
-    ...
-
-ds = ds.map_batches(compute_gpu, num_gpus=1, batch_size=4096, batch_format=&quot;pandas&quot;)</code></pre>
-<p>The above code will automatically launch multiple <code>compute_gpu</code> calls, all running on different processes attached to different GPUs across your Ray cluster.</p>
-<p>In using Ray Data for data deduplication tasks, we noticed two opportunities for improvement:</p>
-<ul><li>There were compute-intensive dataframe operations in the pipeline that could be accelerated by using cuDF, but this would require the user to convert data formats manually</li><li>The specific tasks had heavy hash-aggregation steps that were compute intensive and could benefit from improved GPU acceleration.</li></ul>
-<p>In order to address these opportunities, we added two key features to Ray Data: cuDF batch format support and a GPU-native shuffle backend based on RapidsMPF.</p>
-<p>cuDF batch format support and a GPU-native shuffle backend based on RapidsMPF.</p>
-<h3>LinkcuDF as a first-class batch format</h3>
-<p>Ray Data has 3 native batch formats - Pandas Dataframes, Numpy Arrays, and PyArrow Tables. Batch formats serve two purposes -- to be the data exchange format between stages, and to provide users with a more familiar interface to write custom processing functions.</p>
-<p>As of Ray 2.58, <code>map_batches</code> now accepts <code>batch_format=&quot;cudf&quot;</code>, which hands your UDF a <code>cudf.DataFrame</code> instead of a pandas DataFrame or Arrow table.</p>
-<p><strong>cuDF</strong> is NVIDIA's open-source GPU-accelerated DataFrame library, one of the NVIDIA CUDA-XTM libraries for data processing. It provides a Pandas-like API with GPU-accelerated operations. For certain computationally-heavy operations, cuDF can be up to order of magnitude faster and cheaper than alternative CPU equivalent operations.</p>
-<pre><code>import ray
-
-ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
-
-def add_minhash(batch):  # batch is a cudf.DataFrame
-    batch[&quot;minhash&quot;] = batch[&quot;text&quot;].str.minhash(seed=42, ...)
-    return batch
-
-ds = ds.map_batches(add_minhash, batch_format=&quot;cudf&quot;, num_gpus=1, batch_size=4096)</code></pre>
-<h3>LinkGPU-native shuffle via RapidsMPF</h3>
-<p>Users can now leverage GPU-accelerated <code>repartition</code> and hash aggregations through a new GPU execution path built on <a href="https://docs.rapids.ai/api/rapidsmpf/stable/">RapidsMPF</a>. Ranks talk to each other directly over UCXX. Between ranks, shuffled data take advantage of high performance transports like RDMA or NVLink, skipping the CPU and Ray object store.</p>
-<p>Similar to cuDF, for certain computationally-heavy operations, RapidsMPF-based shuffle can be up to order of magnitude faster and cheaper than alternative CPU equivalent operations.</p>
-<pre><code>from ray.data.context import DataContext, ShuffleStrategy
-
-ctx = DataContext.get_current()
-ctx.shuffle_strategy = ShuffleStrategy.GPU_SHUFFLE
-
-ds.repartition(num_blocks=256, keys=[&quot;doc_id&quot;])
-ds.groupby(&quot;band_id&quot;).count()</code></pre>
-<h2>LinkBenchmarks: fuzzy deduplication</h2>
-<p>The motivating workload for our collaboration has been <strong>fuzzy document deduplication</strong>, a standard workload for data curation for foundation model training. For our benchmarking, we used <a href="https://huggingface.co/blog/dedup">the standard MinHash-LSH approach</a> , outlined below:</p>
-<p>Fig 1: Stages in the deduplication workload</p>
-<p>Fig 1 Stages in the deduplication workload</p>
-<ul><li><strong>Generate MinHash signatures</strong> for every document.</li><li><strong>Generate LSH bands</strong> from those signatures.</li><li><strong>Group by band</strong> to find candidate duplicate pairs.</li><li><strong>Deduplicate the candidate edges.</strong></li><li><strong>Compute connected components</strong> by traversing the graph.</li><li><strong>Filter duplicates</strong></li><li><strong>Persist the survivors.</strong></li></ul>
-<p>Step 1 involves generating hash values for each n-gram, and hashing is a compute-intensive operation.</p>
-<p>Step 3 and Step 5 are the most shuffle-intensive -- a groupby operation is used to form duplicate pairs, and the connected components algorithm is a series of groupby operations.</p>
-<p>In the below experiments, we were able to see improved performance for these steps due to GPU integration and acceleration.</p>
-<p>In the below experiments, we used the FineWeb 10BT dataset on cluster sizes between 2 to 8 nodes. For CPU, we used the m8id.4xlarge instance type, which has 16 vCPUs, 64 GiB memory, and costs 1.04416 dollars per hour.</p>
-<p>For GPU evaluation, we used the g6.4xlarge instance type, which has 16 vCPUs, 64 GiB memory, and costs 1.3232 dollars per hour.</p>
-<p>Experiment code can be <a href="https://github.com/ray-project/gpu-deduplication">found here</a> using Ray 2.58</p>
-<h3>LinkGenerating MinHash signatures</h3>
-<p>In this phase, we break each document into a set of n-grams (where n is set to 5), and we generate 128 hashes per each n-gram.</p>
-<p>The hashing step is compute-intensive, and we compare a baseline Numpy-based solution with the cuDF built-in hashing implementation.</p>
-<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>1899</td><td>963</td><td>519</td></tr><tr><td>GPU (with cuDF) (s)</td><td>125</td><td>63</td><td>33</td></tr><tr><td><strong>Speedup</strong></td><td><strong>15.2</strong></td><td><strong>15.3</strong></td><td><strong>15.7</strong></td></tr></tbody></table>
-<p>From the above results, we see that GPU acceleration improves this stage of the workload up to <strong>15x faster </strong>than a similarly sized CPU cluster.</p>
-<h3>LinkThe grouping stages</h3>
-<p>In steps 3 and 5, we perform locality-sensitive hashing, which creates groups documents if they have hash collisions; and we implement an <a href="https://research.google/pubs/connected-components-in-mapreduce-and-beyond/">iterative connected components detection algorithm</a> in order to find documents that have transitive collisions (for example, if document A is found to be similar to document B, and document C is found to be similar to document B, then document A should be similar to document C).</p>
-<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>1634</td><td>850</td><td>434</td></tr><tr><td>GPU (with RapidsMPF) (s)</td><td>542</td><td>356</td><td>281</td></tr><tr><td><strong>Speedup</strong></td><td><strong>3.0</strong></td><td><strong>2.4</strong></td><td><strong>1.5</strong></td></tr></tbody></table>
-<p>In this comparison, while increasing the number of GPUs improves runtime, the marginal improvement diminishes at higher scale, thereby decreasing cost savings.</p>
-<p>Since these stages are shuffle intensive, adding more GPUs adds more communication overhead. For this particular dataset and workload, 2 GPUs was optimal, so the dataset was likely too small to take advantage of all 8 GPUs.</p>
-<h3>LinkEnd-to-end Pipeline</h3>
-<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>3718</td><td>1891</td><td>989</td></tr><tr><td>GPU acceleration (s)</td><td>939</td><td>511</td><td>360</td></tr><tr><td><strong>Speedup</strong></td><td><strong>4.0</strong></td><td><strong>3.7</strong></td><td><strong>2.7</strong></td></tr><tr><td>CPU baseline ($)</td><td><strong>$2.16</strong></td><td><strong>$2.19</strong></td><td><strong>$2.29</strong></td></tr><tr><td>GPU acceleration ($)</td><td><strong>$0.69</strong></td><td><strong>$0.75</strong></td><td><strong>$1.06</strong></td></tr><tr><td><strong>TCO Improvement</strong></td><td><strong>3.1x</strong></td><td><strong>2.9x</strong></td><td><strong>2.2x</strong></td></tr></tbody></table>
-<p>From the full pipeline on a fixed hardware configuration, we see that the GPU-accelerated solution is:</p>
-<ul><li>4x faster and 3.1x better TCO than the lowest cost CPU comparison point (at 2 nodes)</li><li>Provides TCO and runtime improvements across the board on all node scales</li></ul>
-<h2>LinkWhat's next</h2>
-<p>While the results above are promising, we are still far from the upper limits of performance. In particular, operator fusion between sequential operators that use cuDF and RapidsMPF will provide a significant step change in performance. This will allow Ray Data to avoid unnecessary host-to-device round trips between stages, allowing the data to stay within GPU memory.</p>
-<p>In working with end users, another step is to enable<strong> GPU shuffle for data preprocessors</strong> so that feature-engineering pipelines built on Ray Data's preprocessor API pick up the GPU path.</p>
-<p>We’re excited to continue investing in this area to bring the best data processing performance for your AI data workloads. Ray Data GPU shuffle is experimental today and available as part of Ray 2.58. If you try it, we'd like to hear your feedback!</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#background">Background</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#cudf-as-a-first-class-batch-format">cuDF as a first-class batch format</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#gpu-native-shuffle-via-rapidsmpf">GPU-native shuffle via RapidsMPF</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#benchmarks:-fuzzy-deduplication">Benchmarks: fuzzy deduplication</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#generating-minhash-signatures">Generating MinHash signatures</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#the-grouping-stages">The grouping stages</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#end-to-end-pipeline">End-to-end Pipeline</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#what's-next">What's next</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
       <title>Scaling Ray for AI workloads to 10k node clusters</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters?li=1</guid>
@@ -1862,6 +1863,108 @@ generator.inference_engine.engine_init_kwargs.kv_cache_dtype=fp8_e4m3</code></pr
 <ul><li>SkyRL — <a href="https://github.com/NovaSky-AI/SkyRL">https://github.com/NovaSky-AI/SkyRL</a></li><li>Qwen3.5 — <a href="https://qwen.ai/blog?id=qwen3.5">https://qwen.ai/blog?id=qwen3.5</a></li><li>Unified FP8 — <a href="https://www.lmsys.org/blog/2025-11-25-fp8-rl/">https://www.lmsys.org/blog/2025-11-25-fp8-rl/</a></li><li>NVIDIA NeMo RL: FP8 — <a href="https://docs.nvidia.com/nemo/rl/latest/fp8.html">https://docs.nvidia.com/nemo/rl/latest/fp8.html</a></li><li>DeepSeek-V3 — <a href="https://arxiv.org/abs/2412.1943">https://arxiv.org/abs/2412.1943</a></li><li>DAPO — <a href="https://arxiv.org/abs/2503.14476">https://arxiv.org/abs/2503.14476</a></li><li>SkyRL PR #1898 — <a href="https://github.com/NovaSky-AI/SkyRL/pull/1898">https://github.com/NovaSky-AI/SkyRL/pull/1898</a></li></ul>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#why-fp8-matters-for-reinforcement-learning">Why FP8 matters for reinforcement learning</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#when-independent-quantization-breaks-policy-consistency">When independent quantization breaks policy consistency</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#on-policy-fp8-weight-sync">On-Policy FP8 weight sync</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#experimental-scope">Experimental scope</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#performance-analysis">Performance analysis</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#deep-dive:-fp8-quantization-with-fp32-and-power-of-two-block-scales">Deep dive: FP8 quantization with FP32 and power-of-two block scales</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#current-scope-and-limitations">Current Scope and limitations</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#practical-takeaways">Practical takeaways</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#reproduction-notes">Reproduction Notes</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#acknowledgement">Acknowledgement</a></li><li><a href="https://www.anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl#references">References</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
+<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
+<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>GPU-Native Operators in Ray Data</title>
+      <link>https://anyscale.com/blog/gpu-native-operators-in-ray-data</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/gpu-native-operators-in-ray-data?li=1</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Blog Detail</p>
+<h1>GPU-Native Operators in Ray Data</h1>
+<p>By</p>
+<p>Richard Liaw</p>
+<p>,</p>
+<p>Felix Cheung</p>
+<p>and</p>
+<p>Lee Yang</p>
+<p>|</p>
+<p>August 25, 2026</p>
+<p>Ray Data is a data engine built on Ray focused on AI workloads such as multimodal data processing and training data loading. Due to its focus on AI workloads, GPUs are a core feature of Ray Data - Ray Data is able to treat GPUs as a scheduling resource and thus is able to easily scale data processing tasks across GPUs.</p>
+<p>Despite this, Ray Data has had limited native functionality that executes directly on the GPU, delegating that responsibility to user defined functions that call GPU-enabled libraries like PyTorch or JAX.</p>
+<p>Recently, the Ray Data team at Anyscale has collaborated with the NVIDIA cuDF team to better integrate GPU-based operators into Ray Data. In particular, we’re excited to announce two new features:</p>
+<ul><li><a href="https://developer.nvidia.com/topics/ai/data-science/cuda-x-data-science-libraries/cudf">cuDF</a> as a backend for Ray Data map_batches</li><li>GPU-based shuffle based on <a href="https://github.com/rapidsai/rapidsmpf">RapidsMPF</a></li></ul>
+<p>On select data curation workloads, these enhancements have enabled up to 3x better TCO compared to CPU-based solutions.</p>
+<p>You can try this out today on Ray by <code>pip install -U ray==2.58</code>.</p>
+<h2>LinkBackground</h2>
+<p>Ray Data offers a set of canonical data processing operations, from IO to shuffle to UDFs. One of Ray Data’s differentiating features is that it has first-class support for GPUs for its UDFs. For example, one can schedule custom code leveraging a GPU as follows:</p>
+<pre><code>import ray
+
+ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
+
+def compute_gpu(batch: pd.DataFrame):
+    ...
+
+ds = ds.map_batches(compute_gpu, num_gpus=1, batch_size=4096, batch_format=&quot;pandas&quot;)</code></pre>
+<p>The above code will automatically launch multiple <code>compute_gpu</code> calls, all running on different processes attached to different GPUs across your Ray cluster.</p>
+<p>In using Ray Data for data deduplication tasks, we noticed two opportunities for improvement:</p>
+<ul><li>There were compute-intensive dataframe operations in the pipeline that could be accelerated by using cuDF, but this would require the user to convert data formats manually</li><li>The specific tasks had heavy hash-aggregation steps that were compute intensive and could benefit from improved GPU acceleration.</li></ul>
+<p>In order to address these opportunities, we added two key features to Ray Data: cuDF batch format support and a GPU-native shuffle backend based on RapidsMPF.</p>
+<p>cuDF batch format support and a GPU-native shuffle backend based on RapidsMPF.</p>
+<h3>LinkcuDF as a first-class batch format</h3>
+<p>Ray Data has 3 native batch formats - Pandas Dataframes, Numpy Arrays, and PyArrow Tables. Batch formats serve two purposes -- to be the data exchange format between stages, and to provide users with a more familiar interface to write custom processing functions.</p>
+<p>As of Ray 2.58, <code>map_batches</code> now accepts <code>batch_format=&quot;cudf&quot;</code>, which hands your UDF a <code>cudf.DataFrame</code> instead of a pandas DataFrame or Arrow table.</p>
+<p><strong>cuDF</strong> is NVIDIA's open-source GPU-accelerated DataFrame library, one of the NVIDIA CUDA-XTM libraries for data processing. It provides a Pandas-like API with GPU-accelerated operations. For certain computationally-heavy operations, cuDF can be up to order of magnitude faster and cheaper than alternative CPU equivalent operations.</p>
+<pre><code>import ray
+
+ds = ray.data.read_parquet(&quot;s3://my-bucket/documents/&quot;)
+
+def add_minhash(batch):  # batch is a cudf.DataFrame
+    batch[&quot;minhash&quot;] = batch[&quot;text&quot;].str.minhash(seed=42, ...)
+    return batch
+
+ds = ds.map_batches(add_minhash, batch_format=&quot;cudf&quot;, num_gpus=1, batch_size=4096)</code></pre>
+<h3>LinkGPU-native shuffle via RapidsMPF</h3>
+<p>Users can now leverage GPU-accelerated <code>repartition</code> and hash aggregations through a new GPU execution path built on <a href="https://docs.rapids.ai/api/rapidsmpf/stable/">RapidsMPF</a>. Ranks talk to each other directly over UCXX. Between ranks, shuffled data take advantage of high performance transports like RDMA or NVLink, skipping the CPU and Ray object store.</p>
+<p>Similar to cuDF, for certain computationally-heavy operations, RapidsMPF-based shuffle can be up to order of magnitude faster and cheaper than alternative CPU equivalent operations.</p>
+<pre><code>from ray.data.context import DataContext, ShuffleStrategy
+
+ctx = DataContext.get_current()
+ctx.shuffle_strategy = ShuffleStrategy.GPU_SHUFFLE
+
+ds.repartition(num_blocks=256, keys=[&quot;doc_id&quot;])
+ds.groupby(&quot;band_id&quot;).count()</code></pre>
+<h2>LinkBenchmarks: fuzzy deduplication</h2>
+<p>The motivating workload for our collaboration has been <strong>fuzzy document deduplication</strong>, a standard workload for data curation for foundation model training. For our benchmarking, we used <a href="https://huggingface.co/blog/dedup">the standard MinHash-LSH approach</a> , outlined below:</p>
+<p>Fig 1: Stages in the deduplication workload</p>
+<p>Fig 1 Stages in the deduplication workload</p>
+<ul><li><strong>Generate MinHash signatures</strong> for every document.</li><li><strong>Generate LSH bands</strong> from those signatures.</li><li><strong>Group by band</strong> to find candidate duplicate pairs.</li><li><strong>Deduplicate the candidate edges.</strong></li><li><strong>Compute connected components</strong> by traversing the graph.</li><li><strong>Filter duplicates</strong></li><li><strong>Persist the survivors.</strong></li></ul>
+<p>Step 1 involves generating hash values for each n-gram, and hashing is a compute-intensive operation.</p>
+<p>Step 3 and Step 5 are the most shuffle-intensive -- a groupby operation is used to form duplicate pairs, and the connected components algorithm is a series of groupby operations.</p>
+<p>In the below experiments, we were able to see improved performance for these steps due to GPU integration and acceleration.</p>
+<p>In the below experiments, we used the FineWeb 10BT dataset on cluster sizes between 2 to 8 nodes. For CPU, we used the m8id.4xlarge instance type, which has 16 vCPUs, 64 GiB memory, and costs 1.04416 dollars per hour.</p>
+<p>For GPU evaluation, we used the g6.4xlarge instance type, which has 16 vCPUs, 64 GiB memory, and costs 1.3232 dollars per hour.</p>
+<p>Experiment code can be <a href="https://github.com/ray-project/gpu-deduplication">found here</a> using Ray 2.58</p>
+<h3>LinkGenerating MinHash signatures</h3>
+<p>In this phase, we break each document into a set of n-grams (where n is set to 5), and we generate 128 hashes per each n-gram.</p>
+<p>The hashing step is compute-intensive, and we compare a baseline Numpy-based solution with the cuDF built-in hashing implementation.</p>
+<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>1899</td><td>963</td><td>519</td></tr><tr><td>GPU (with cuDF) (s)</td><td>125</td><td>63</td><td>33</td></tr><tr><td><strong>Speedup</strong></td><td><strong>15.2</strong></td><td><strong>15.3</strong></td><td><strong>15.7</strong></td></tr></tbody></table>
+<p>From the above results, we see that GPU acceleration improves this stage of the workload up to <strong>15x faster </strong>than a similarly sized CPU cluster.</p>
+<h3>LinkThe grouping stages</h3>
+<p>In steps 3 and 5, we perform locality-sensitive hashing, which creates groups documents if they have hash collisions; and we implement an <a href="https://research.google/pubs/connected-components-in-mapreduce-and-beyond/">iterative connected components detection algorithm</a> in order to find documents that have transitive collisions (for example, if document A is found to be similar to document B, and document C is found to be similar to document B, then document A should be similar to document C).</p>
+<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>1634</td><td>850</td><td>434</td></tr><tr><td>GPU (with RapidsMPF) (s)</td><td>542</td><td>356</td><td>281</td></tr><tr><td><strong>Speedup</strong></td><td><strong>3.0</strong></td><td><strong>2.4</strong></td><td><strong>1.5</strong></td></tr></tbody></table>
+<p>In this comparison, while increasing the number of GPUs improves runtime, the marginal improvement diminishes at higher scale, thereby decreasing cost savings.</p>
+<p>Since these stages are shuffle intensive, adding more GPUs adds more communication overhead. For this particular dataset and workload, 2 GPUs was optimal, so the dataset was likely too small to take advantage of all 8 GPUs.</p>
+<h3>LinkEnd-to-end Pipeline</h3>
+<table><thead><tr><th><strong>Nodes</strong></th><th><strong>2</strong></th><th><strong>4</strong></th><th><strong>8</strong></th></tr></thead><tbody><tr><td>CPU baseline (s)</td><td>3718</td><td>1891</td><td>989</td></tr><tr><td>GPU acceleration (s)</td><td>939</td><td>511</td><td>360</td></tr><tr><td><strong>Speedup</strong></td><td><strong>4.0</strong></td><td><strong>3.7</strong></td><td><strong>2.7</strong></td></tr><tr><td>CPU baseline ($)</td><td><strong>$2.16</strong></td><td><strong>$2.19</strong></td><td><strong>$2.29</strong></td></tr><tr><td>GPU acceleration ($)</td><td><strong>$0.69</strong></td><td><strong>$0.75</strong></td><td><strong>$1.06</strong></td></tr><tr><td><strong>TCO Improvement</strong></td><td><strong>3.1x</strong></td><td><strong>2.9x</strong></td><td><strong>2.2x</strong></td></tr></tbody></table>
+<p>From the full pipeline on a fixed hardware configuration, we see that the GPU-accelerated solution is:</p>
+<ul><li>4x faster and 3.1x better TCO than the lowest cost CPU comparison point (at 2 nodes)</li><li>Provides TCO and runtime improvements across the board on all node scales</li></ul>
+<h2>LinkWhat's next</h2>
+<p>While the results above are promising, we are still far from the upper limits of performance. In particular, operator fusion between sequential operators that use cuDF and RapidsMPF will provide a significant step change in performance. This will allow Ray Data to avoid unnecessary host-to-device round trips between stages, allowing the data to stay within GPU memory.</p>
+<p>In working with end users, another step is to enable<strong> GPU shuffle for data preprocessors</strong> so that feature-engineering pipelines built on Ray Data's preprocessor API pick up the GPU path.</p>
+<p>We’re excited to continue investing in this area to bring the best data processing performance for your AI data workloads. Ray Data GPU shuffle is experimental today and available as part of Ray 2.58. If you try it, we'd like to hear your feedback!</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#background">Background</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#cudf-as-a-first-class-batch-format">cuDF as a first-class batch format</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#gpu-native-shuffle-via-rapidsmpf">GPU-native shuffle via RapidsMPF</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#benchmarks:-fuzzy-deduplication">Benchmarks: fuzzy deduplication</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#generating-minhash-signatures">Generating MinHash signatures</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#the-grouping-stages">The grouping stages</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#end-to-end-pipeline">End-to-end Pipeline</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#what's-next">What's next</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>
@@ -6047,124 +6150,6 @@ def train_loop_per_worker(config: dict):
 <h2>Explore Anyscale today</h2>
 <p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
 <p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Ray on Alibaba Cloud: Building an ML Platform</title>
-      <link>https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform?li=1</guid>
-      <pubDate>Thu, 12 Jun 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Ray on Alibaba Cloud: Building an ML Platform</h1>
-<p>By</p>
-<p>Kun Wu (Alibaba Cloud)</p>
-<p>|</p>
-<p>June 12, 2025</p>
-<p>Artificial intelligence is advancing faster than ever. Different use cases demand different techniques and infrastructure. For example, batch inference requires heterogeneous computing resources—CPU nodes for I/O and GPU nodes for inference—to maximize performance. Additionally, RLHF typically involves integrating both LLM inference and training frameworks. Therefore, flexible machine learning (ML) infrastructure is essential for reliably deploying AI workloads in production.</p>
-<p>Ray is a popular AI compute engine that powers the ML infrastructure of companies around the world. <a href="https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1">Alibaba Cloud Container Service for Kubernetes</a> (ACK) supports Ray as a first-class citizen, helping users accelerate their Ray journey from proof of concept to production. Ray is widely used on Alibaba Cloud by companies like <a href="https://www.alibabacloud.com/blog/kimi-large-model-based-massive-data-preprocessing-practice-of-moonshot-ai_602119">Moonshot AI</a> for large-scale data processing and other compute-intensive AI workloads.</p>
-<p>This blog will briefly introduce Ray and KubeRay, along with the related efforts to support Ray on ACK.</p>
-<h4>Link<strong>Ray</strong></h4>
-<p>Ray is an open-source distributed computing engine. It precisely orchestrates infrastructure for any distributed workload on any accelerator at any scale. Ray's architecture consists of three layers: Ray Core, Ray AI Libraries, and Ray Deployment.</p>
-<p>Image1</p>
-<h4>Link<strong>Ray Core</strong></h4>
-<p>Ray Core is a powerful distributed compute engine that provides a small set of essential primitives (<strong>task, actor, and object</strong>) for building and scaling distributed applications. Ray tasks, actors, and objects have a one-to-one mapping with functions, classes, and variables, which are fundamental components in programming, so users can program distributed applications with the Ray Core API just like programming on a laptop. Below is an example of Ray Core API:</p>
-<pre><code>1import ray
-2import numpy as np
-3
-4# Define a task that sums the values in a matrix.
-5@ray.remote
-6def sum_matrix(matrix):
-7    return np.sum(matrix)
-8
-9# Call the task with a literal argument value.
-10print(ray.get(sum_matrix.remote(np.ones((100, 100)))))
-11# -&gt; 10000.0
-12
-13# Put a large array into the object store.
-14matrix_ref = ray.put(np.ones((1000, 1000)))
-15
-16# Call the task with the object reference as an argument.
-17print(ray.get(sum_matrix.remote(matrix_ref)))
-18# -&gt; 1000000.0</code></pre>
-<p>This example defines a Ray task <strong>sum_matrix</strong> that sums the values in a NumPy matrix. In the first example, the task is called with a literal array. In the second, the array is first stored in Ray’s object store using <strong>ray.put</strong>, and the task is called with the object reference. With Ray Core, users can program without worrying about which nodes host Ray tasks, actors, and objects, or how they interact with each other.</p>
-<h4>Link<strong>Ray AI Libraries</strong></h4>
-<p>The Ray ecosystem includes AI libraries such as Ray Data, Ray Train, Ray Tune, Ray Serve, and RLlib that cover the ML lifecycle, from data processing to training to tuning to serving. These libraries are built on top of Ray Core, enabling developers to efficiently leverage the distributed execution capabilities of Ray.</p>
-<h4>Link<strong>Ray Deployment</strong></h4>
-<p>Ray supports virtual machines and Kubernetes as the underlying container orchestrator. The next section will discuss the official Ray on Kubernetes solution, KubeRay.</p>
-<h2>Link<strong>KubeRay</strong></h2>
-<p>KubeRay is a Ray Kubernetes operator that simplifies the management of the lifecycle of Ray clusters and associated applications on Kubernetes. KubeRay enables <strong>data scientists and ML scientists</strong> to focus on their machine learning logic while <strong>infra engineers</strong> concentrate on Kubernetes.</p>
-<p>Kuberay</p>
-<p>That is, data scientists can focus on developing their Python scripts without worrying about how Kubernetes works, and infrastructure engineers can focus on integrating KubeRay with Kubernetes ecosystem tools for observability, traffic management, and security.</p>
-<p>KubeRay provides three APIs, which are custom resource definitions (CRDs), for different usage patterns: RayCluster, RayJob, and RayService.</p>
-<ul><li><strong>RayCluster</strong>: KubeRay fully manages the lifecycle of a RayCluster, including cluster creation, deletion, autoscaling, and fault tolerance.</li><li><strong>RayJob: </strong>KubeRay automatically creates a RayCluster and submits a job when the cluster is ready. You can also configure RayJob to automatically delete the RayCluster once the job finishes.</li><li><strong>RayService: </strong>RayService is made up of two parts: a RayCluster and one or more Ray Serve applications. RayService offers zero-downtime upgrades for RayCluster and high availability.</li></ul>
-<pre><code>1helm repo add kuberay https://ray-project.github.io/kuberay-helm/
-2helm repo update
-3
-4# Deploy KubeRay operator
-5helm install kuberay-operator kuberay/kuberay-operator
-6# Deploy a RayCluster
-7helm install raycluster kuberay/ray-cluster</code></pre>
-<p>The example demonstrates how to launch a Ray cluster easily using KubeRay’s RayCluster CRD with just a few commands in a running Kubernetes cluster. See the “<a href="https://docs.ray.io/en/latest/cluster/kubernetes/getting-started/raycluster-quick-start.html">RayCluster Quickstart</a>” documentation for more details.</p>
-<h2>Link<strong>Ray on ACK</strong></h2>
-<h4>Link<strong>Overview</strong></h4>
-<p><a href="https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1">Alibaba Cloud Container Service for Kubernetes</a> (ACK) supports KubeRay as a managed component, offering the following advantages to help users move their AI workloads from proof of concept to production at lightspeed.</p>
-<ul><li><strong>Elastic Compute in ACK:</strong> ACK supports diverse compute types to meet varied workload requirements across use cases.</li><li><strong>Observability: </strong>ACK streamlines persisting logs and metrics, and enables post-mortem analysis with Ray History Server so users can easily understand the status of Ray clusters and applications.</li><li><strong>Security:</strong> ACK team builds KubeRay images based on specialized base images to minimize the attack surface.</li><li><strong>Zero Operations and Maintenance: </strong>ACK configures automatic Vertical Pod Autoscaling (VPA) for the KubeRay operator, ensuring resource scaling to reduce failures. ACK also handles component upgrades and bug fixes, allowing users to focus on application development.</li><li><strong>High Availability Deployment:</strong> ACK ensures that the KubeRay operator is distributed across at least two availability zones, providing resilience against zone-level failures.</li></ul>
-<h2>Link<strong>Elastic Compute in ACK</strong></h2>
-<p>ACK</p>
-<p>ACK clusters support node management via node pools, enabling the use of diverse compute types in different scenarios: Lingjun nodes for intelligent computing, Elastic Compute Service (ECS) instances with pay-as-you-go or subscription, and Container Compute Service (ACS) instances with per-second billing for scalability. This ensures that ACK clusters meet varied workload requirements across use cases.</p>
-<h2>Link<strong>Observability</strong></h2>
-<h4>Link<strong>Logging</strong></h4>
-<p><strong>KubeRay logs: </strong>ACK clusters automatically collect logs from the control plane’s KubeRay operator. Users can inspect these logs via the control plane component logs to verify the operator’s status.</p>
-<p>KubeRay Logs</p>
-<p><strong>Ray logs: </strong>With resource labels, users are able to gather logs from data-plane RayClusters into <a href="https://www.alibabacloud.com/help/en/sls/">Simple Log Service (SLS)</a>. Compared with self-managed log storage solutions, SLS offers structured log query and analysis, a 50% lower Total Cost of Ownership (TCO) by eliminating infrastructure maintenance, and an SLA availability of 99.99%, which ensures high reliability.</p>
-<p>Ray Logs</p>
-<h4>Link<strong>Metrics</strong></h4>
-<p>By default, ACK clusters integrate with Prometheus monitoring capabilities. Users only need to submit PodMonitor and ServiceMonitor configurations to enable the collection of monitoring data for data-plane RayClusters within ACK clusters. All RayCluster metrics can then be viewed through a unified Prometheus interface.</p>
-<p>Metrics</p>
-<h4>Link<strong>Ray History Server: Post-Mortem Analysis</strong></h4>
-<p>The native Ray Dashboard is available only while Ray clusters are running. Once a cluster is terminated, users lose access to historical logs and monitoring data. To address this limitation, ACK provides the <strong>Ray History Server</strong>, which enables access to dashboards for both active and terminated RayCluster custom resources. The History Server dashboard offers features consistent with those of the native Ray Dashboard. It also provides metric monitoring that is automatically integrated with <a href="https://www.alibabacloud.com/help/en/arms/product-overview/what-is-arms">Application Real-Time Monitoring Service (ARMS)</a>, eliminating the need to manually deploy Prometheus and Grafana. The following figures show how to access and use the History Server dashboard.</p>
-<p>In the following figure, it is shown that users can access Ray Dashboards for both active and terminated RayCluster custom resources in the Ray History Server.</p>
-<p>ray History</p>
-<p>The image below displays pages mirroring the Ray dashboard, as shown on the Ray head Pods</p>
-<p>list</p>
-<h2>Link<strong>Production Case Study</strong></h2>
-<p>This section uses an actual use case to demonstrate the advanced capabilities of Ray on ACK. In this use case, the customer faced three core challenges:</p>
-<ul><li>Quota limits and prioritization across multiple RayJobs.</li><li>Resource reservations to handle bursty workloads (particularly for RayService workloads).</li><li>Ray dashboard persistence after the termination of a RayJob.</li></ul>
-<p>By leveraging <a href="https://github.com/kube-queue/kube-queue">kube-queue</a> integration for queuing and priority-based scheduling, along with the Ray History Server, the customer successfully operationalized Ray workloads in production while utilizing resources efficiently. See the following sections for more details.</p>
-<h4>Link<strong>Smart Compute Orchestration with ResourcePolicy API</strong></h4>
-<p>As mentioned previously under <strong>“Elastic Compute in ACK,”</strong> Alibaba Cloud provides diverse compute types that differ in pricing, reliability, availability, performance, and billing models. Effectively leveraging these varied compute resources requires sophisticated scheduling approaches.</p>
-<p>Alibaba Cloud provides a ResourcePolicy API to enable the orchestration of compute resource types by defining the priorities of which types of nodes the Pod prefers. Taking the following YAML as an example, it prioritizes subscription-based ECS instances and switches to pay-as-you-go ACS instances when ECS resources are insufficient. This approach is ideal for handling traffic spikes when combined with Kubernetes Pod autoscalers, such as the Ray Autoscaler and the Horizontal Pod Autoscaler.</p>
-<pre><code>1apiVersion: scheduling.alibabacloud.com/v1alpha1
-2kind: ResourcePolicy
-3metadata: 
-4  name: resourcepolicy-example
-5  namespace: default
-6spec:
-7  selector:
-8    key1: value1
-9  units:
-10  - resource: ecs
-11  - resource: acs</code></pre>
-<p>The customer deploys both cron-based data processing RayJob custom resources and long-running RayService ML inference workloads. RayJobs preferentially consume subscription-based ECS instances, falling back to using ACS instances as supplemental compute during shortages. For RayService workloads, the customer exclusively uses subscription ECS instances, reserving extra capacity to support rapid RayCluster autoscaling to handle bursty traffic. See the following figure for more details.</p>
-<p>Smart Compute</p>
-<h4>Link<strong>Support Multi-Tenant Resource Management with kube-queue</strong></h4>
-<p>ACK supports task queuing and quotas through kube-queue. With quotas and queues, users can define guaranteed resource quotas for specific teams or services and set upper limits to prevent overuse, ensuring both fairness and scalability.</p>
-<p>The customer created a quota tree, as shown in the following figure, to efficiently share resources across different teams and types of workloads.</p>
-<ul><li>Each team has its own minimum and maximum resource quotas to ensure minimum availability and maximum overcommitted resources.</li><li>Each quota has its own queue, and higher priority RayJobs, as defined during creation, will be executed based on priority within each queue.</li></ul>
-<p>last image</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#kuberay">KubeRay</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#ray-on-ack">Ray on ACK</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#elastic-compute-in-ack">Elastic Compute in ACK</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#observability">Observability</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#production-case-study">Production Case Study</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<p>LLM</p>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale</h4>
-<h4>Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -1,6 +1,6 @@
 # Together AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-22**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-25**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Together AI（`together_ai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,27 +9,27 @@
 
 ## 全部文章（共 104 篇，按日期倒序；无日期条目列于最后）
 
-1. [安全事件：2026年6月和7月请求的 Prompt 泄露](https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026)（2026-11-21） <!--orig:Security event: Prompt leakage for requests in June and July of 2026-->
-2. [Qwen4 Max 已上线 Together AI](https://www.together.ai/blog/qwen4-max)（2026-11-21） <!--orig:Qwen4 Max is live on Together AI-->
-3. [Qwen3 TTS is now available on Together AI](https://www.together.ai/blog/qwen3-tts)（2026-11-20）
-4. [Tencent Hy4 is live on Together AI](https://www.together.ai/blog/tencent-hy4)（2026-11-19）
-5. [推出 Together Storage Accelerator：为您的 GPU 集群提供快速、免费的数据缓存](https://www.together.ai/blog/introducing-together-storage-accelerator)（2026-11-19） <!--orig:Introducing Together Storage Accelerator: fast, free data caching for your GPU cluster-->
-6. [去年我们构建了 megakernels，今年我们删除了它们：通往 Together Compiler 之路](https://www.together.ai/blog/road-to-together-compiler)（2026-11-16） <!--orig:Last year we built megakernels. This year we deleted them: The road to Together Compiler-->
-7. [让开放模型适用于长时程 agentic 工作负载](https://www.together.ai/blog/making-open-models-work-for-long-horizon-agentic-workloads)（2026-11-16） <!--orig:Making open models work for long-horizon agentic workloads-->
-8. [我们如何让编码智能体轻松使用 Together AI](https://www.together.ai/blog/how-we-do-agent-evals-at-together-ai)（2026-11-16） <!--orig:How we make Together AI easy for coding agents to use-->
-9. [Together Compiler：面向 AI 推理的持续编译](https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference)（2026-11-04） <!--orig:Together Compiler: Continual Compilation for AI inference-->
-10. [Polymorphic Inference：面向开放模型的自动调优推理](https://www.together.ai/blog/polymorphic-inference)（2026-11-04） <!--orig:Polymorphic Inference: self-tuning inference for open models-->
-11. [Together GPU 集群自动修复：从 GPU 故障到健康节点](https://www.together.ai/blog/auto-repair-for-together-gpu-clusters)（2026-10-27） <!--orig:Auto repair for Together GPU Clusters: from GPU fault to healthy node-->
-12. [Together Post-Training 上线：按你的方式做前沿级模型后训练](https://www.together.ai/blog/together-post-training)（2026-10-19） <!--orig:Together Post-Training: frontier-grade model shaping, the way that fits you-->
-13. [Meta Muse Spark Open 已在 Together AI 上线](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15） <!--orig:Meta Muse Spark Open is live on Together AI-->
-14. [与 IBM Cloud 和 NVIDIA 合作，扩展我们的企业推理容量](https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia)（2026-10-06） <!--orig:Expanding our enterprise inference capacity with IBM Cloud and NVIDIA-->
-15. [Together Link：在你已在用的 harness 中用上前沿品质的开放模型](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05） <!--orig:Together Link: open models in the harness you already use. Start with one command today.-->
-16. [花 17 美元训练你自己的 Jev](https://www.together.ai/blog/how-to-train-your-own-jev)（2026-09-23） <!--orig:How to train your own Jev for $17-->
-17. [金丝雀发布：在生产环境中零停机升级模型](https://www.together.ai/blog/canary-rollouts-upgrade-models-in-production-without-downtime)（2026-09-22） <!--orig:Canary rollouts: upgrade models in production without downtime-->
-18. [一家全球金融科技公司如何用 Dedicated Model Inference 扩展编码 Agent 流量](https://www.together.ai/blog/global-fintech-scales-coding-agent-traffic-with-dedicated-model-inference)（2026-09-18） <!--orig:How a global fintech scaled coding agent traffic with Dedicated Model Inference-->
-19. [从闭源模型迁移到开源模型的实战手册](https://www.together.ai/blog/migrating-from-closed-to-open-source-models)（2026-09-16） <!--orig:Migrating from closed to open source models, Together-->
-20. [Together AI 微调服务扩展：更多模型、实时指标与更细控制](https://www.together.ai/blog/together-ai-expands-fine-tuning-service-with-more-models-live-metrics-and-finer-controls)（2026-09-11） <!--orig:Together AI expands fine-tuning service with more models, live metrics, and finer controls-->
-21. [推出可抢占计算：同样的算力，一半的价格](https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price)（2026-09-10） <!--orig:Introducing preemptible compute: the same compute, half the price-->
+1. [推出可抢占计算：同样的算力，一半的价格](https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price)（2026-11-24） <!--orig:Introducing preemptible compute: the same compute, half the price-->
+2. [安全事件：2026年6月和7月请求的 Prompt 泄露](https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026)（2026-11-21） <!--orig:Security event: Prompt leakage for requests in June and July of 2026-->
+3. [Qwen4 Max 已上线 Together AI](https://www.together.ai/blog/qwen4-max)（2026-11-21） <!--orig:Qwen4 Max is live on Together AI-->
+4. [Qwen3 TTS is now available on Together AI](https://www.together.ai/blog/qwen3-tts)（2026-11-20）
+5. [Tencent Hy4 is live on Together AI](https://www.together.ai/blog/tencent-hy4)（2026-11-19）
+6. [推出 Together Storage Accelerator：为您的 GPU 集群提供快速、免费的数据缓存](https://www.together.ai/blog/introducing-together-storage-accelerator)（2026-11-19） <!--orig:Introducing Together Storage Accelerator: fast, free data caching for your GPU cluster-->
+7. [去年我们构建了 megakernels，今年我们删除了它们：通往 Together Compiler 之路](https://www.together.ai/blog/road-to-together-compiler)（2026-11-16） <!--orig:Last year we built megakernels. This year we deleted them: The road to Together Compiler-->
+8. [让开放模型适用于长时程 agentic 工作负载](https://www.together.ai/blog/making-open-models-work-for-long-horizon-agentic-workloads)（2026-11-16） <!--orig:Making open models work for long-horizon agentic workloads-->
+9. [我们如何让编码智能体轻松使用 Together AI](https://www.together.ai/blog/how-we-do-agent-evals-at-together-ai)（2026-11-16） <!--orig:How we make Together AI easy for coding agents to use-->
+10. [Together Compiler：面向 AI 推理的持续编译](https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference)（2026-11-04） <!--orig:Together Compiler: Continual Compilation for AI inference-->
+11. [Polymorphic Inference：面向开放模型的自动调优推理](https://www.together.ai/blog/polymorphic-inference)（2026-11-04） <!--orig:Polymorphic Inference: self-tuning inference for open models-->
+12. [Together GPU 集群自动修复：从 GPU 故障到健康节点](https://www.together.ai/blog/auto-repair-for-together-gpu-clusters)（2026-10-27） <!--orig:Auto repair for Together GPU Clusters: from GPU fault to healthy node-->
+13. [Together Post-Training 上线：按你的方式做前沿级模型后训练](https://www.together.ai/blog/together-post-training)（2026-10-19） <!--orig:Together Post-Training: frontier-grade model shaping, the way that fits you-->
+14. [Meta Muse Spark Open 已在 Together AI 上线](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15） <!--orig:Meta Muse Spark Open is live on Together AI-->
+15. [与 IBM Cloud 和 NVIDIA 合作，扩展我们的企业推理容量](https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia)（2026-10-06） <!--orig:Expanding our enterprise inference capacity with IBM Cloud and NVIDIA-->
+16. [Together Link：在你已在用的 harness 中用上前沿品质的开放模型](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05） <!--orig:Together Link: open models in the harness you already use. Start with one command today.-->
+17. [花 17 美元训练你自己的 Jev](https://www.together.ai/blog/how-to-train-your-own-jev)（2026-09-23） <!--orig:How to train your own Jev for $17-->
+18. [金丝雀发布：在生产环境中零停机升级模型](https://www.together.ai/blog/canary-rollouts-upgrade-models-in-production-without-downtime)（2026-09-22） <!--orig:Canary rollouts: upgrade models in production without downtime-->
+19. [一家全球金融科技公司如何用 Dedicated Model Inference 扩展编码 Agent 流量](https://www.together.ai/blog/global-fintech-scales-coding-agent-traffic-with-dedicated-model-inference)（2026-09-18） <!--orig:How a global fintech scaled coding agent traffic with Dedicated Model Inference-->
+20. [从闭源模型迁移到开源模型的实战手册](https://www.together.ai/blog/migrating-from-closed-to-open-source-models)（2026-09-16） <!--orig:Migrating from closed to open source models, Together-->
+21. [Together AI 微调服务扩展：更多模型、实时指标与更细控制](https://www.together.ai/blog/together-ai-expands-fine-tuning-service-with-more-models-live-metrics-and-finer-controls)（2026-09-11） <!--orig:Together AI expands fine-tuning service with more models, live metrics, and finer controls-->
 22. [驶向无限与更远方：ThunderKittens 现已登陆 NVIDIA Vera Rubin NVL72！](https://www.together.ai/blog/to-infinity-and-beyond-thunderkittens-now-on-nvidia-vera-rubin-nvl72)（2026-09-10） <!--orig:To Infinity and Beyond: ThunderKittens Now on NVIDIA Vera Rubin NVL72!-->
 23. [开源 AI 技术栈](https://www.together.ai/blog/the-open-source-ai-stack)（2026-09-09） <!--orig:The Open Source AI Stack-->
 24. [GLM-5.3 对阵 GPT-5.6 Sol：DeepSWE 上的成本、编码能力与路由](https://www.together.ai/blog/glm-5-3-vs-gpt-5-6-sol-on-deepswe-cost-coding-and-routing)（2026-08-21） <!--orig:GLM-5.3 vs. GPT-5.6 Sol on DeepSWE: Cost, Coding, and Routing-->

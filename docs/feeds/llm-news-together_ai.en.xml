@@ -7,7 +7,63 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Introducing preemptible compute: the same compute, half the…</title>
+      <link>https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price?li=1</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing preemptible compute: the same compute, half the price</description>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>GPU Clusters</p>
+<p>Published 9/10/2026</p>
+<h1>Introducing preemptible compute: the same compute, half the price</h1>
+<p>Now in public preview for Together GPU Clusters: interruptible GPU compute, with a five-minute drain window and automatic refill toward your target.</p>
+<ul><li>AuthorsPavneet Ahluwalia, Varun Chakravarthy</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<p>Today we're announcing the public preview of preemptible compute for Together GPU Clusters, available on Kubernetes clusters in all regions. Preemptible nodes give teams a lower-cost way to run interruption-tolerant work — short experiments, inference bursts, batch jobs — on the same GPU infrastructure they already use, billed sub-hourly at a flat 50% of the on-demand rate. You can add preemptible capacity to a new or existing cluster starting today.</p>
+<h2>How preemptible compute works</h2>
+<p>Preemptible compute adds a second compute type to Together GPU Clusters. Standard nodes are fulfilled synchronously and are never preempted. Preemptible nodes use the same NVIDIA accelerated compute, draw from un-used capacity, and can be reclaimed when that capacity is needed elsewhere.</p>
+<p>Preemptible nodes are billed at a flat 50% of the on-demand rate. The rate remains fixed rather than moving with a spot market.</p>
+<p>When a node is reclaimed, the cluster follows a five-minute drain (maximum 5 minutes) sequence:</p>
+<ul><li><strong>T+0</strong> — the node is cordoned, a <code>TogetherPreempted</code> Kubernetes event fires, and your pods receive SIGTERM.</li><li><strong>T+0 to T+5:00</strong> — your workload has up to five minutes (<code>terminationGracePeriodSeconds</code>) to checkpoint and exit.</li><li><strong>T+5:00</strong> — the node is removed.</li></ul>
+<p>The cluster retains its preemptible target after the node is removed and automatically refills toward that target as capacity becomes available. You do not need to request replacement capacity.</p>
+<p>Billing is sub-hourly, with usage metered every one to two minutes. A node that runs for 12 minutes is billed for approximately 12 minutes.</p>
+<p>Preemptible nodes are not a separate cluster type. They join your existing cluster, labeled <code>together.ai/compute-class=preemptible</code>, so interruptible workers run on discounted capacity while coordinators, login pods, and serving replicas stay on standard nodes.</p>
+<h2>Where preemptible compute fits</h2>
+<p>The five-minute reclamation sequence makes recovery behavior the deciding factor. Work that can resume, retry, or requeue can use preemptible capacity while critical components should remain on standard nodes.</p>
+<p><strong>Short experiments.</strong> Ablations, config sweeps, quick fine-tunes, evals, distillation, and batch inference are good candidates when the work can resume from a checkpoint or retry after a worker disappears. Frameworks such as Ray Train and PyTorch Lightning resume from the latest checkpoint without intervention. As a reference point, a full weight model checkpoint for GLM5.3 Flash, 321B parameter model is roughly 3.5TB which would take between 22s to 4mins to write to a parallel filesystem even at degraded performance. Leaving headroom inside the five-minute drain window.</p>
+<p><strong>Temporary bursts.</strong> When batch or internal inference demand spikes, add cheaper preemptible nodes to absorb the burst and non-critical workloads instead of holding standard capacity sized for your peak or risking burst standard compute availability. Interrupted requests requeue; user-facing replicas remain on standard nodes.</p>
+<p>The common thread: work that is chunked, checkpointed, or retryable. Multi-day runs without checkpointing and strict-SLO serving with no fallback are not a fit.</p>
+<p>Together has a strong culture dogfooding , several internal research, dev/test and non-critical production workloads at Together are based on our preemptible compute based GPU clusters enabling us to leverage our spare capacity across product teams.</p>
+<h2>Before you enable it</h2>
+<ul><li><strong>Treat preemptible nodes as ephemeral.</strong> There is no minimum node lifetime during the preview, so checkpoint frequently and plan for capacity to disappear at any time.</li><li><strong>Keep critical components on standard nodes.</strong> Coordinators, login pods, and user-facing replicas belong to guaranteed capacity — use the <code>compute-class</code> label to enforce it.</li><li><strong>Use the drain window.</strong> Set <code>terminationGracePeriodSeconds</code> to as much as 300 seconds, checkpoint when the pod receives SIGTERM, and exit before the node is removed.</li><li><strong>Clusters require at least one standard node</strong>, and nodes can't be converted between compute types in place.</li></ul>
+<h2>How to use it</h2>
+<p>After the workload is prepared for preemption, setup has two parts: set the preemptible target and schedule eligible work onto the labeled nodes.</p>
+<p>You can set the target when creating a cluster or on a cluster that is already running, using the Together Cloud console, CLI, or API. The API reports both the requested target, <code>desired_preemptible_gpus</code>, and the capacity currently live, <code>allocated_preemptible_gpus</code>. Because preemptible nodes draw from unused capacity, allocated capacity can remain below the desired target when capacity is tight.</p>
+<h3>On a new cluster</h3>
+<p>Choose your standard node count, then add a preemptible target on top.</p>
+<pre><code>tg beta clusters create \
+  --name my-cluster --region us-central-2 --gpu-type RTX_6000_PCI \
+  --cluster-type KUBERNETES --num-gpus 8 --billing-type ON_DEMAND \
+  --num-preemptible-gpus 8 \
+  --project-id &lt;proj_id&gt;</code></pre>
+<h3>On an existing cluster</h3>
+<p>Scale up the preemptible target when you need additional worker capacity, then lower it when the work is complete. The cluster remains running throughout.</p>
+<pre><code>tg beta clusters update &lt;cluster-id&gt; --num-preemptible-gpus 16</code></pre>
+<p>Fig: Adding/Deleting Preemptible nodes to an existing cluster</p>
+<p>Fig: Preemptible nodes follow the “gpu-preemptible-xxx” naming convention</p>
+<h3>Scheduling work on preemptible nodes</h3>
+<p>Target preemptible nodes explicitly:</p>
+<pre><code>nodeSelector:
+  together.ai/compute-class: preemptible</code></pre>
+<p>Preemption notices are delivered as SIGTERM to the pod, as Kubernetes events (<code>reason=TogetherPreempted</code>), in the console's Event Timeline, and via the Together API's <code>node_lifecycle_events</code> — handling patterns are covered in <a href="https://docs.together.ai/docs/preemptible-compute">the docs</a>.</p>
+<p>Preemptible compute is now in public preview on Kubernetes clusters. Slurm support, additional regions, and in-place conversion between compute types are planned next.</p>
+<p>→ <a href="https://api.together.ai/clusters/create">Create a cluster</a></p>
+<p>→ <a href="https://docs.together.ai/docs/preemptible-compute">Read the docs</a></p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
     <item>
       <title>Security event: Prompt leakage for requests in June and July…</title>
       <link>https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026</link>
@@ -1878,62 +1934,6 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
 <p>Together Fine-Tuning now gives you more visibility and control over the full experiment cycle, from the data the model sees to the checkpoint you deploy. You can validate a dataset before a run, follow and compare metrics while it trains, and adjust the recipe with finer controls.</p>
 <p>Support for the latest open-weight models and lower prices on selected models make that loop easier to repeat as new models arrive.</p>
 <p>-&gt; <a href="https://api.together.ai/fine-tuning">Start fine-tuning</a> -&gt; <a href="https://docs.together.ai/docs/fine-tuning/quickstart">Read the Fine-Tuning documentation</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Introducing preemptible compute: the same compute, half the…</title>
-      <link>https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price?li=1</guid>
-      <pubDate>Thu, 10 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Introducing preemptible compute: the same compute, half the price</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>GPU Clusters</p>
-<p>Published 9/10/2026</p>
-<h1>Introducing preemptible compute: the same compute, half the price</h1>
-<p>Now in public preview for Together GPU Clusters: interruptible GPU compute, with a five-minute drain window and automatic refill toward your target.</p>
-<ul><li>AuthorsPavneet Ahluwalia, Varun Chakravarthy</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
-<p>Today we're announcing the public preview of preemptible compute for Together GPU Clusters, available on Kubernetes clusters in all regions. Preemptible nodes give teams a lower-cost way to run interruption-tolerant work — short experiments, inference bursts, batch jobs — on the same GPU infrastructure they already use, billed sub-hourly at a flat 50% of the on-demand rate. You can add preemptible capacity to a new or existing cluster starting today.</p>
-<h2>How preemptible compute works</h2>
-<p>Preemptible compute adds a second compute type to Together GPU Clusters. Standard nodes are fulfilled synchronously and are never preempted. Preemptible nodes use the same NVIDIA accelerated compute, draw from un-used capacity, and can be reclaimed when that capacity is needed elsewhere.</p>
-<p>Preemptible nodes are billed at a flat 50% of the on-demand rate. The rate remains fixed rather than moving with a spot market.</p>
-<p>When a node is reclaimed, the cluster follows a five-minute drain (maximum 5 minutes) sequence:</p>
-<ul><li><strong>T+0</strong> — the node is cordoned, a <code>TogetherPreempted</code> Kubernetes event fires, and your pods receive SIGTERM.</li><li><strong>T+0 to T+5:00</strong> — your workload has up to five minutes (<code>terminationGracePeriodSeconds</code>) to checkpoint and exit.</li><li><strong>T+5:00</strong> — the node is removed.</li></ul>
-<p>The cluster retains its preemptible target after the node is removed and automatically refills toward that target as capacity becomes available. You do not need to request replacement capacity.</p>
-<p>Billing is sub-hourly, with usage metered every one to two minutes. A node that runs for 12 minutes is billed for approximately 12 minutes.</p>
-<p>Preemptible nodes are not a separate cluster type. They join your existing cluster, labeled <code>together.ai/compute-class=preemptible</code>, so interruptible workers run on discounted capacity while coordinators, login pods, and serving replicas stay on standard nodes.</p>
-<h2>Where preemptible compute fits</h2>
-<p>The five-minute reclamation sequence makes recovery behavior the deciding factor. Work that can resume, retry, or requeue can use preemptible capacity while critical components should remain on standard nodes.</p>
-<p><strong>Short experiments.</strong> Ablations, config sweeps, quick fine-tunes, evals, distillation, and batch inference are good candidates when the work can resume from a checkpoint or retry after a worker disappears. Frameworks such as Ray Train and PyTorch Lightning resume from the latest checkpoint without intervention. As a reference point, a full weight model checkpoint for GLM5.3 Flash, 321B parameter model is roughly 3.5TB which would take between 22s to 4mins to write to a parallel filesystem even at degraded performance. Leaving headroom inside the five-minute drain window.</p>
-<p><strong>Temporary bursts.</strong> When batch or internal inference demand spikes, add cheaper preemptible nodes to absorb the burst and non-critical workloads instead of holding standard capacity sized for your peak or risking burst standard compute availability. Interrupted requests requeue; user-facing replicas remain on standard nodes.</p>
-<p>The common thread: work that is chunked, checkpointed, or retryable. Multi-day runs without checkpointing and strict-SLO serving with no fallback are not a fit.</p>
-<p>Together has a strong culture dogfooding , several internal research, dev/test and non-critical production workloads at Together are based on our preemptible compute based GPU clusters enabling us to leverage our spare capacity across product teams.</p>
-<h2>Before you enable it</h2>
-<ul><li><strong>Treat preemptible nodes as ephemeral.</strong> There is no minimum node lifetime during the preview, so checkpoint frequently and plan for capacity to disappear at any time.</li><li><strong>Keep critical components on standard nodes.</strong> Coordinators, login pods, and user-facing replicas belong to guaranteed capacity — use the <code>compute-class</code> label to enforce it.</li><li><strong>Use the drain window.</strong> Set <code>terminationGracePeriodSeconds</code> to as much as 300 seconds, checkpoint when the pod receives SIGTERM, and exit before the node is removed.</li><li><strong>Clusters require at least one standard node</strong>, and nodes can't be converted between compute types in place.</li></ul>
-<h2>How to use it</h2>
-<p>After the workload is prepared for preemption, setup has two parts: set the preemptible target and schedule eligible work onto the labeled nodes.</p>
-<p>You can set the target when creating a cluster or on a cluster that is already running, using the Together Cloud console, CLI, or API. The API reports both the requested target, <code>desired_preemptible_gpus</code>, and the capacity currently live, <code>allocated_preemptible_gpus</code>. Because preemptible nodes draw from unused capacity, allocated capacity can remain below the desired target when capacity is tight.</p>
-<h3>On a new cluster</h3>
-<p>Choose your standard node count, then add a preemptible target on top.</p>
-<pre><code>tg beta clusters create \
-  --name my-cluster --region us-central-2 --gpu-type RTX_6000_PCI \
-  --cluster-type KUBERNETES --num-gpus 8 --billing-type ON_DEMAND \
-  --num-preemptible-gpus 8 \
-  --project-id &lt;proj_id&gt;</code></pre>
-<h3>On an existing cluster</h3>
-<p>Scale up the preemptible target when you need additional worker capacity, then lower it when the work is complete. The cluster remains running throughout.</p>
-<pre><code>tg beta clusters update &lt;cluster-id&gt; --num-preemptible-gpus 16</code></pre>
-<p>Fig: Adding/Deleting Preemptible nodes to an existing cluster</p>
-<p>Fig: Preemptible nodes follow the “gpu-preemptible-xxx” naming convention</p>
-<h3>Scheduling work on preemptible nodes</h3>
-<p>Target preemptible nodes explicitly:</p>
-<pre><code>nodeSelector:
-  together.ai/compute-class: preemptible</code></pre>
-<p>Preemption notices are delivered as SIGTERM to the pod, as Kubernetes events (<code>reason=TogetherPreempted</code>), in the console's Event Timeline, and via the Together API's <code>node_lifecycle_events</code> — handling patterns are covered in <a href="https://docs.together.ai/docs/preemptible-compute">the docs</a>.</p>
-<p>Preemptible compute is now in public preview on Kubernetes clusters. Slurm support, additional regions, and in-place conversion between compute types are planned next.</p>
-<p>→ <a href="https://api.together.ai/clusters/create">Create a cluster</a></p>
-<p>→ <a href="https://docs.together.ai/docs/preemptible-compute">Read the docs</a></p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>

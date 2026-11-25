@@ -188,7 +188,7 @@
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-24 14:21:30**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-25 13:06:43**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
 > 💡 **核心特性**：覆盖 **88 家厂商**（深度抓取 **165 个情报页 + 48 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 34 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
@@ -476,7 +476,7 @@
 | **前置条件 / 限制** | 注册 MOSS 开放平台账号并创建 API Key（`sk-` 开头），控制台获取；调用带 `Authorization: Bearer <key>` |
 | **免费层限制 / 注意事项** | • 官方未公开统一 RPM/TPM/RPD 数值，实际限速以控制台及服务端错误码为准；`moss-vl-1.0` 走 Responses API，实时模型走 WebSocket，不能直接填入 Chat Completions 客户端<br>• **限时免费无公开截止日**，随时可能恢复计费；TTS/转写/部分图像、以及实时交互 MOSS-Live-1.0 均已按积分计费，免费仅限上述模型，勿把「平台整体免费」当结论<br>• `nex-n2.6` 是**推理模型**：小 max_tokens 下 reasoning 吃满预算、content 为空（finish_reason=length），不是坏——要给足 max_tokens 才能拿到正文<br>• 2026-11-12 实测模型列表出现 `tob-kimi-k3`（owned_by kimi），但该次测试账号调用返回 403 `forbidden`；这只说明该账号无权调用，其他账号的开放条件以官方授权为准，勿把「列表里可见」当成「能用」<br>• 2026-11-12 的 API 实测响应未见计费字段；HTTP 200 本身不能证明免费，接入时须同时核对官方价格与控制台扣减记录 |
 | **邀请 / 特惠活动** | 限时免费：moss-vl-1.0 / moss-vl-realtime-1.0 标 0 积分；Nex-N2.6 已于 11 月 25 日 21:00（北京时间）开始计费，限时六折；MOSS-Live-1.0 已于 11 月 18 日 12:00 开始计费（¥0.15/分钟），语音生成、音频转写、文生图等付费模型当前执行六折优惠。 |
-| **实时巡检证据** | • Nex-N2.6 限时免费，调用消耗 0 积分。生产 HTTP 请求使用 https://api.mosi.cn。运行下方示例前，将 MOSS_API_ORIGIN 设为 https://api.mosi.cn，将 MOSS_API_KE… |
+| **实时巡检证据** | • ¥0.138 / 百万 Tokens2.76 积分 / 百万 Tokens输出<br>• ¥1.68 / 百万 Tokens33.60 积分 / 百万 Tokens✓—MOSS-TTS-2.0-Flash-Preview最新snapshot: moss-tts-2.0-flash-preview-2026-11-04单人文本转…<br>• 模型名称说明计费标准 六折优惠流式输出异步 |
 | **官方直达** | [模型列表（官方全文，含计费标准）](https://platform.mosi.cn/docs/models) ｜ [MOSS 开放平台](https://platform.mosi.cn/) ｜ [快速开始（API Key 与接入示例）](https://platform.moss.cn/docs/getting-started/quickstart) ｜ [请求限制](https://platform.moss.cn/docs/errors-and-limits/limits) |
 | **特别说明** | HTTP API origin 为 `https://api.mosi.cn`，OpenAI SDK base_url 为 `https://api.mosi.cn/v1`；2026-11-12 文档入口 `platform.mosi.cn/docs/models` 实际重定向至 `platform.moss.cn/docs/models`。模型页与快速开始页仍写着 Nex-N2.6「限时免费 0 积分」，但页头公告已宣布其 11 月 25 日 21:00 起计费（限时六折），接入前请核对控制台账单；免费仅剩 moss-vl-1.0 / moss-vl-realtime-1.0，TTS/转写/图像各按字符、时长、张数计费。 |
 
@@ -534,6 +534,7 @@
 | **额度有效期** | 需登录控制台核实 |
 | **前置条件 / 限制** | 注册中国移动/移动云账号并完成实名认证 |
 | **邀请 / 特惠活动** | 面向行业开发者的赋能计划以官方公告为准。 |
+| **实时巡检证据** | • 领2500万Token免费额度，体验最新国产大模型<br>• 低成本体验，特惠畅享Token，下单再享赠券好礼！每天10点限量抢购 |
 | **官方直达** | [中国移动 MoMA 产品公告](https://www1.10086.cn/aboutus/news/groupnews/index_detail_55572.html) ｜ [九天人工智能平台门户](https://jiutian.10086.cn/portal/) ｜ [九天帮助中心](https://jiutian.10086.cn/portal/common-helpcenter) ｜ [移动云](https://ecloud.10086.cn/portal) |
 | **特别说明** | 中国移动物联网设备智能体的试用 Token 面向另一个产品，无法据此确认九天 MoMA 的 API 权益。 |
 

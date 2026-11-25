@@ -7,7 +7,55 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>推出可抢占计算：同样的算力，一半的价格</title>
+      <link>https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing preemptible compute: the same compute, half the price</description>
+      <content:encoded><![CDATA[<p>Together GPU Clusters 公开预览：可中断的 GPU 计算，五分钟排空窗口，自动向目标容量回填。</p>
+<p>今天我们宣布 Together GPU Clusters 的可抢占计算（preemptible compute）进入公开预览，所有区域的 Kubernetes 集群均可用。可抢占节点为团队提供了一种更低成本的方式，来运行可容忍中断的工作——短实验、推理突发、批处理任务——用的就是他们已经在用的同一套 GPU 基础设施，按不足一小时计费，固定为按需价格的 50%。从今天起，你就可以为新集群或现有集群添加可抢占容量。</p>
+<h2>可抢占计算如何工作</h2>
+<p>可抢占计算为 Together GPU Clusters 增加了第二种计算类型。标准节点同步交付、绝不被抢占。可抢占节点使用同样的 NVIDIA 加速算力，取自未使用的容量，并会在那些容量他处需要时被回收。</p>
+<p>可抢占节点按按需价格的固定 50% 计费。费率恒定，不随现货（spot）市场波动。</p>
+<p>当节点被回收时，集群遵循五分钟排空（最长 5 分钟）流程：</p>
+<ul><li><strong>T+0</strong> —— 节点被 cordon，触发一个 <code>TogetherPreempted</code> Kubernetes 事件，你的 pod 收到 SIGTERM。</li><li><strong>T+0 到 T+5:00</strong> —— 你的工作负载有最长五分钟（<code>terminationGracePeriodSeconds</code>）来做 checkpoint 并退出。</li><li><strong>T+5:00</strong> —— 节点被移除。</li></ul>
+<p>节点移除后，集群仍保留其可抢占目标，并在容量可用时自动向该目标回填。你不需要申请替换容量。</p>
+<p>计费粒度为不足一小时，用量每一到两分钟计量一次。运行 12 分钟的节点大约按 12 分钟计费。</p>
+<p>可抢占节点不是独立的集群类型。他们加入你的现有集群，标记为 <code>together.ai/compute-class=preemptible</code>，让可中断的 worker 跑在折扣容量上，而协调器、login pod 和服务副本留在标准节点上。</p>
+<h2>可抢占计算适合哪里</h2>
+<p>五分钟的回收流程让恢复行为成为决定性因素。能续跑、重试或重新排队的工作可以使用可抢占容量，而关键组件应留在标准节点上。</p>
+<p><strong>短实验。</strong> Ablation、配置扫描、快速微调、评估、蒸馏、批量推理都是好候选，只要工作能从 checkpoint 恢复或在 worker 消失后重试。Ray Train、PyTorch Lightning 这类框架无需干预即可从最新 checkpoint 恢复。作为参照，一个 321B 参数模型 GLM5.3 Flash 的全权重 checkpoint 约 3.5TB，即便在性能退化的并行文件系统上写入也只需 22 秒到 4 分钟。在五分钟排空窗口内留有富余。</p>
+<p><strong>临时突发。</strong> 当批处理或内部推理需求飙升时，加入更便宜的可抢占节点吸收突发和非关键负载，而不是为峰值维持标准容量、或冒突发期标准计算可用性不足的风险。被中断的请求会重新排队；面向用户的副本留在标准节点上。</p>
+<p>共同主线：可分块、可 checkpoint、可重试的工作。多天不 checkpoint 的运行、没有回退路径的严格 SLO 服务，都不适合。</p>
+<p>Together 有很强的 dogfooding 文化——若干内部研究、开发/测试和非关键生产负载就基于我们的可抢占计算 GPU 集群，让我们得以跨产品团队利用闲置容量。</p>
+<h2>启用之前</h2>
+<ul><li><strong>把可抢占节点当临时资源。</strong> 预览期内没有最短节点生存时间，所以要频繁 checkpoint，并假设容量随时可能消失。</li><li><strong>关键组件留在标准节点。</strong> 协调器、login pod、面向用户的副本属于保证容量——用 <code>compute-class</code> label 来强制这一点。</li><li><strong>用好排空窗口。</strong> 把 <code>terminationGracePeriodSeconds</code> 设到最高 300 秒，在 pod 收到 SIGTERM 时做 checkpoint，并在节点被移除前退出。</li><li><strong>集群至少需要一个标准节点</strong>，且节点不能在两种计算类型之间就地转换。</li></ul>
+<h2>如何使用</h2>
+<p>工作负载为抢占做好准备后，设置分两部分：设定可抢占目标，并把合适的工作调度到带 label 的节点上。</p>
+<p>你可以在创建集群时或已在运行的集群上设置目标，使用 Together Cloud 控制台、CLI 或 API。API 同时报告请求的目标 <code>desired_preemptible_gpus</code> 和当前存活的容量 <code>allocated_preemptible_gpus</code>。由于可抢占节点取自未使用容量，容量紧张时实际分配量可能低于期望目标。</p>
+<h3>在新集群上</h3>
+<p>先选标准节点数，再在其上添加可抢占目标。</p>
+<pre><code>tg beta clusters create \
+  --name my-cluster --region us-central-2 --gpu-type RTX_6000_PCI \
+  --cluster-type KUBERNETES --num-gpus 8 --billing-type ON_DEMAND \
+  --num-preemptible-gpus 8 \
+  --project-id &lt;proj_id&gt;</code></pre>
+<h3>在现有集群上</h3>
+<p>需要更多 worker 容量时调高可抢占目标，工作完成后调低。全程集群保持运行。</p>
+<pre><code>tg beta clusters update &lt;cluster-id&gt; --num-preemptible-gpus 16</code></pre>
+<p>图：向现有集群添加/删除可抢占节点</p>
+<p>图：可抢占节点遵循 &quot;gpu-preemptible-xxx&quot; 命名约定</p>
+<h3>在可抢占节点上调度工作</h3>
+<p>显式瞄准可抢占节点：</p>
+<pre><code>nodeSelector:
+  together.ai/compute-class: preemptible</code></pre>
+<p>抢占通知以 SIGTERM 送达 pod、以 Kubernetes 事件（<code>reason=TogetherPreempted</code>）、在控制台的 Event Timeline、以及通过 Together API 的 <code>node_lifecycle_events</code> 提供——处理模式见<a href="https://docs.together.ai/docs/preemptible-compute">文档</a>。</p>
+<p>可抢占计算现已在 Kubernetes 集群上公开预览。Slurm 支持、更多区域、计算类型间的就地转换在下一步计划中。</p>
+<p>→ <a href="https://api.together.ai/clusters/create">创建集群</a></p>
+<p>→ <a href="https://docs.together.ai/docs/preemptible-compute">阅读文档</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>安全事件：2026年6月和7月请求的 Prompt 泄露</title>
       <link>https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026</link>
@@ -1779,54 +1827,6 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
 <p>首批支持计划在 GLM-5.3 上，随后是 Kimi K3。随着新工作流临近发布，我们会分享可用性细节、完整支持模型列表和完整 API 演练。</p>
 <h2>结论</h2>
 <p>Together Fine-Tuning 让你在把开放权重模型打磨成你任务上的高性能模型时，看得更早、控得更细、花得更省。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>推出可抢占计算：同样的算力，一半的价格</title>
-      <link>https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price</guid>
-      <pubDate>Thu, 10 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing preemptible compute: the same compute, half the price</description>
-      <content:encoded><![CDATA[<p>Together GPU Clusters 公开预览：可中断的 GPU 计算，五分钟排空窗口，自动向目标容量回填。</p>
-<p>今天我们宣布 Together GPU Clusters 的可抢占计算（preemptible compute）进入公开预览，所有区域的 Kubernetes 集群均可用。可抢占节点为团队提供了一种更低成本的方式，来运行可容忍中断的工作——短实验、推理突发、批处理任务——用的就是他们已经在用的同一套 GPU 基础设施，按不足一小时计费，固定为按需价格的 50%。从今天起，你就可以为新集群或现有集群添加可抢占容量。</p>
-<h2>可抢占计算如何工作</h2>
-<p>可抢占计算为 Together GPU Clusters 增加了第二种计算类型。标准节点同步交付、绝不被抢占。可抢占节点使用同样的 NVIDIA 加速算力，取自未使用的容量，并会在那些容量他处需要时被回收。</p>
-<p>可抢占节点按按需价格的固定 50% 计费。费率恒定，不随现货（spot）市场波动。</p>
-<p>当节点被回收时，集群遵循五分钟排空（最长 5 分钟）流程：</p>
-<ul><li><strong>T+0</strong> —— 节点被 cordon，触发一个 <code>TogetherPreempted</code> Kubernetes 事件，你的 pod 收到 SIGTERM。</li><li><strong>T+0 到 T+5:00</strong> —— 你的工作负载有最长五分钟（<code>terminationGracePeriodSeconds</code>）来做 checkpoint 并退出。</li><li><strong>T+5:00</strong> —— 节点被移除。</li></ul>
-<p>节点移除后，集群仍保留其可抢占目标，并在容量可用时自动向该目标回填。你不需要申请替换容量。</p>
-<p>计费粒度为不足一小时，用量每一到两分钟计量一次。运行 12 分钟的节点大约按 12 分钟计费。</p>
-<p>可抢占节点不是独立的集群类型。他们加入你的现有集群，标记为 <code>together.ai/compute-class=preemptible</code>，让可中断的 worker 跑在折扣容量上，而协调器、login pod 和服务副本留在标准节点上。</p>
-<h2>可抢占计算适合哪里</h2>
-<p>五分钟的回收流程让恢复行为成为决定性因素。能续跑、重试或重新排队的工作可以使用可抢占容量，而关键组件应留在标准节点上。</p>
-<p><strong>短实验。</strong> Ablation、配置扫描、快速微调、评估、蒸馏、批量推理都是好候选，只要工作能从 checkpoint 恢复或在 worker 消失后重试。Ray Train、PyTorch Lightning 这类框架无需干预即可从最新 checkpoint 恢复。作为参照，一个 321B 参数模型 GLM5.3 Flash 的全权重 checkpoint 约 3.5TB，即便在性能退化的并行文件系统上写入也只需 22 秒到 4 分钟。在五分钟排空窗口内留有富余。</p>
-<p><strong>临时突发。</strong> 当批处理或内部推理需求飙升时，加入更便宜的可抢占节点吸收突发和非关键负载，而不是为峰值维持标准容量、或冒突发期标准计算可用性不足的风险。被中断的请求会重新排队；面向用户的副本留在标准节点上。</p>
-<p>共同主线：可分块、可 checkpoint、可重试的工作。多天不 checkpoint 的运行、没有回退路径的严格 SLO 服务，都不适合。</p>
-<p>Together 有很强的 dogfooding 文化——若干内部研究、开发/测试和非关键生产负载就基于我们的可抢占计算 GPU 集群，让我们得以跨产品团队利用闲置容量。</p>
-<h2>启用之前</h2>
-<ul><li><strong>把可抢占节点当临时资源。</strong> 预览期内没有最短节点生存时间，所以要频繁 checkpoint，并假设容量随时可能消失。</li><li><strong>关键组件留在标准节点。</strong> 协调器、login pod、面向用户的副本属于保证容量——用 <code>compute-class</code> label 来强制这一点。</li><li><strong>用好排空窗口。</strong> 把 <code>terminationGracePeriodSeconds</code> 设到最高 300 秒，在 pod 收到 SIGTERM 时做 checkpoint，并在节点被移除前退出。</li><li><strong>集群至少需要一个标准节点</strong>，且节点不能在两种计算类型之间就地转换。</li></ul>
-<h2>如何使用</h2>
-<p>工作负载为抢占做好准备后，设置分两部分：设定可抢占目标，并把合适的工作调度到带 label 的节点上。</p>
-<p>你可以在创建集群时或已在运行的集群上设置目标，使用 Together Cloud 控制台、CLI 或 API。API 同时报告请求的目标 <code>desired_preemptible_gpus</code> 和当前存活的容量 <code>allocated_preemptible_gpus</code>。由于可抢占节点取自未使用容量，容量紧张时实际分配量可能低于期望目标。</p>
-<h3>在新集群上</h3>
-<p>先选标准节点数，再在其上添加可抢占目标。</p>
-<pre><code>tg beta clusters create \
-  --name my-cluster --region us-central-2 --gpu-type RTX_6000_PCI \
-  --cluster-type KUBERNETES --num-gpus 8 --billing-type ON_DEMAND \
-  --num-preemptible-gpus 8 \
-  --project-id &lt;proj_id&gt;</code></pre>
-<h3>在现有集群上</h3>
-<p>需要更多 worker 容量时调高可抢占目标，工作完成后调低。全程集群保持运行。</p>
-<pre><code>tg beta clusters update &lt;cluster-id&gt; --num-preemptible-gpus 16</code></pre>
-<p>图：向现有集群添加/删除可抢占节点</p>
-<p>图：可抢占节点遵循 &quot;gpu-preemptible-xxx&quot; 命名约定</p>
-<h3>在可抢占节点上调度工作</h3>
-<p>显式瞄准可抢占节点：</p>
-<pre><code>nodeSelector:
-  together.ai/compute-class: preemptible</code></pre>
-<p>抢占通知以 SIGTERM 送达 pod、以 Kubernetes 事件（<code>reason=TogetherPreempted</code>）、在控制台的 Event Timeline、以及通过 Together API 的 <code>node_lifecycle_events</code> 提供——处理模式见<a href="https://docs.together.ai/docs/preemptible-compute">文档</a>。</p>
-<p>可抢占计算现已在 Kubernetes 集群上公开预览。Slurm 支持、更多区域、计算类型间的就地转换在下一步计划中。</p>
-<p>→ <a href="https://api.together.ai/clusters/create">创建集群</a></p>
-<p>→ <a href="https://docs.together.ai/docs/preemptible-compute">阅读文档</a></p>]]></content:encoded>
     </item>
     <item>
       <title>驶向无限与更远方：ThunderKittens 现已登陆 NVIDIA Vera Rubin NVL72！</title>
