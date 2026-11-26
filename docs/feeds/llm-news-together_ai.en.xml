@@ -7,7 +7,184 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Introducing Hurdle: Run agent evals on your API, skills, and…</title>
+      <link>https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs?li=1</guid>
+      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing Hurdle: Run agent evals on your API, skills, and docs</description>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>Inference</p>
+<p>Published 11/25/2026</p>
+<h1>Introducing Hurdle: Run agent evals on your API, skills, and docs</h1>
+<p>Hurdle is an open-source npm library that runs Claude Code and Codex against tasks on your platform, scores each run with code checks, guards and an LLM judge, and shows the pass rate by model and condition.</p>
+<ul><li>AuthorsMo King, Sam Barrowclough, Hassan El Mghari</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<p>If you’re building for developers, you already know that coding agents are one of the main ways devs access your API, SDK, and docs. To find out how well agents can work with your platform, you need to test them on real-world tasks, ideally across a representative sample of models, harnesses, and conditions. Orchestrating all of this by hand is extremely tedious, which we found out the hard way when we started doing evals at Together last spring.</p>
+<p>To automate the process, we spent the last six months building <a href="https://github.com/togethercomputer/hurdle">Hurdle</a>, an npm library for running agent evals. Today we’re open-sourcing it so you can benchmark your platform's agent experience the same way we do. Get started today with <code>npx hurdle init</code> or by asking your agent to set it up for you.</p>
+<h2>How Hurdle works</h2>
+<p>Hurdle lets you test how well Claude Code and Codex can use your platform.</p>
+<p>You start by writing a <em>task</em>, which is just a prompt that a developer would hand to an agent working with your product. You can try to cover every task a developer might try, or focus on a few problem areas. Hurdle runs the agent against your tasks, records the session, and scores the run.</p>
+<p>Exactly how scoring works is up to you. You can pick one method, or mix and match:</p>
+<ul><li><strong>Code checks:</strong> Assertions about the run, such as the API requests the agent must make and the files or data it should produce.</li><li><strong>Guards:</strong> Rules that block actions the agent isn’t allowed to make, like starting an expensive GPU cluster—bad agent &gt;:( Hurdle blocks the API request and counts any attempt as a failure.</li><li><strong>Judge:</strong> An LLM that reviews the recorded session against a rubric you write in plain English, and decides whether the agent passed.</li></ul>
+<p>You can also run each task under different <em>conditions</em>, which set the context the agent starts with. For example, you can run the same task on two fresh agents, one with and one without your MCP server installed, to see how much it helps or hurts.</p>
+<p>Same goes for running evals on multiple models: Hurdle runs every task against every agent/model combo you specify. Agents don’t always run the same way twice, so you can also repeat each task/model/condition combo several times to get an overall pass rate.</p>
+<h2>Example task: Find the cheapest GPU cluster</h2>
+<p>Here’s a real task we came up with during our own eval adventures:</p>
+<blockquote>List the available GPU cluster regions and instance types, print the cheapest option, and show the exact command you would run to reserve it on demand for one hour. Do not actually reserve it.</blockquote>
+<p>To pass, the agent has to look up live regions from the API, find current prices in the docs, and produce a valid reservation command—but most importantly, it should NOT create a paid cluster.</p>
+<p>Here’s how we wrote the first three requirements as Hurdle checks:</p>
+<pre><code>// checks.mjs
+import { defineChecks } from &quot;hurdle&quot;;
+
+// Hurdle calls this function after the agent finishes
+export default defineChecks((run) =&gt; {
+
+  // Passes only if the agent made a successful GET /v1/compute/regions call
+  // Request checks only work for sandboxed runs
+  run.expect.request({
+    id: &quot;regions&quot;,
+    method: &quot;GET&quot;,
+    path: &quot;/v1/compute/regions&quot;,
+    status: 200,
+  });
+
+  // The rubric for the LLM judge
+  run.judge(
+    &quot;Using the recorded session, assess whether the agent &quot; +
+    &quot;retrieved official pricing, compared supported options, &quot; +
+    &quot;and produced a valid reservation command. &quot; +
+    &quot;Mark fail if the required pricing evidence is missing. &quot; +
+    &quot;Note confusing API responses and recovery attempts.&quot;
+  );
+});</code></pre>
+<p>And here’s the guard that prevents the agent from starting a real cluster. Hurdle enforces the guard while the agent works, and runs the checks after the agent finishes:</p>
+<pre><code>// guard.mjs
+import { defineGuard } from &quot;hurdle&quot;;
+
+export default defineGuard((guard) =&gt; {
+  // Block any request to create a cluster
+  // The check fails if the agent tries the request
+  guard.block.request({
+    id: &quot;no-reservation&quot;,
+    method: &quot;POST&quot;,
+    path: &quot;/v1/compute/clusters&quot;,
+  });
+});</code></pre>
+<h2>The eval suite</h2>
+<p>To run a task, you add it to a <em>suite</em>, a small file that picks the tasks to run, the agents and conditions to run them with, and how many times to repeat each run. For the GPU cluster task, we’re using both a deterministic code check and an LLM judge, so we set the suite's <code>verdict</code> to <code>hybrid</code> and name a judge model:</p>
+<pre><code>// example.suite.mjs
+import { defineSuite } from &quot;hurdle&quot;;
+
+export default defineSuite({
+  // The API under test, and the name of the env var that holds its key.
+  api: {
+    authorizationCredential: &quot;TOGETHER_API_KEY&quot;,
+    hosts: [&quot;api.together.ai&quot;],
+  },
+
+  tasks: [&quot;./tasks/gpu-cluster&quot;],
+
+  // The two models we tested in June.
+  agents: [
+    { runner: &quot;claude-code&quot;, model: &quot;claude-opus-4-8&quot; },
+    { runner: &quot;claude-code&quot;, model: &quot;claude-sonnet-4-6&quot; },
+  ],
+
+  // Use conditions to run each task with and without our GPU clusters skill.
+  conditions: {
+    baseline: {},
+    &quot;with-skill&quot;: {
+      skills: [{ name: &quot;together-gpu-clusters&quot;, sourceDirectory: &quot;skills/together-gpu-clusters&quot; }],
+    },
+  },
+
+  // Run every combination of task, agent, and condition 15 times.
+  repeats: 15,
+
+  // A run passes only if the code checks and the judge both pass.
+  verdict: &quot;hybrid&quot;,
+  judge: { model: &quot;claude-opus-4-8&quot; },
+});</code></pre>
+<h2>Run and view results</h2>
+<p><code>npx hurdle run</code> runs the suite. Adding <code>--view</code> opens the results viewer when the suite finishes:</p>
+<pre><code>npx hurdle run --view</code></pre>
+<p>Hurdle runs each task for every agent and condition in the suite, as many times as <code>repeats</code> says. For the suite above, that’s one task with two models under two conditions, 15 times each, or 60 runs. The checks appear in your terminal as each run finishes, marked as passed, failed, or skipped.</p>
+<p>The viewer shows the suite’s headline numbers at the top: pass rate, average duration, and average cost per run. Below that, a grid breaks down the pass rate by task and condition, so you can see which combos are failing:</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b06972f6dd7b08407d42148_01-hurdle-viewer-leaderboard.webp" alt="Hurdle results viewer leaderboard: headline tiles show 15 runs, a 77% strict pass rate, 7s average duration and $0.07 average agent cost, above a grid of pass rates by task for the baseline and with-skill conditions."></p>
+<p>Click into a run to see exactly what the agent did, including a full transcript, a list of the agent's tool calls and API requests, plus the result of every check and the judge's final assessment.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0697559d5717af57105e35_02-hurdle-viewer-run-detail.webp" alt="Hurdle run detail for one fix-the-bug run with Claude Code on Opus 5.5: the decision is Pass, followed by the task prompt and seven evaluation checks, all passed."></p>
+<p>Hurdle saves the results to <code>.hurdle/</code> in your project directory, so you can reopen the viewer by running <code>npx hurdle view</code>.</p>
+<h2>Local runs</h2>
+<p>For quick tests on tasks you trust, you can run your evals locally, much as you would if you were prompting the agent yourself.</p>
+<p>Hurdle starts the <code>claude</code> or <code>codex</code> CLI on your machine in a temporary workspace, hands it the task's prompt and files, and records the session. Every agent starts with a clean config, so your regular Claude Code or Codex setup won’t affect the results.</p>
+<p>Local runs come with two caveats: First, Hurdle can’t see or block the agent’s API requests, so you can’t use guards or request checks. But more importantly, the agent runs <em>as you</em>, so it can read local files and use your real API keys.</p>
+<p>For anything complex or risky, you should always use a sandbox.</p>
+<h2>Sandboxed runs</h2>
+<p>For production evaluations, Hurdle uses the Together Sandbox API to spin up isolated environments where coding agents can execute code, install dependencies, and interact with APIs without accessing your local machine.</p>
+<p>Each run gets a fresh sandbox, so agents start from a clean environment rather than inheriting files or state from previous runs. Together handles the sandbox infrastructure, while Hurdle manages the agent execution, API request monitoring, and evaluation results.</p>
+<p>When you start a sandboxed run, Hurdle launches a local proxy called Guardian, then opens a single WebSocket to Together, which boots a fresh <a href="https://docs.together.ai/docs/together-code-sandbox">Together Sandbox</a> for the run. The agent works inside that sandbox, which has no network access of its own. Every connection the agent opens travels back over that socket to Guardian, which allows or rejects each request.</p>
+<p>Your keys never enter the sandbox—the agent gets random stand-ins, and when it calls your API, Guardian swaps in the real key and forwards the request. The agent's calls to the model provider (Anthropic or OpenAI) go through the same route.</p>
+<p>This routing is what lets Hurdle check requests, enforce guards, and keep your keys safe:</p>
+<ul><li><strong>API request checks:</strong> Every request passes through Guardian, so your checks can see exactly which calls the agent made.</li><li><strong>Guards:</strong> Guardian answers a blocked request with a 403, so the request never reaches your API.</li><li><strong>Safe keys:</strong> The agent can use your keys but can't read them, so if a stand-in leaks into the transcript, it’s nbd.</li></ul>
+<p>By default, the sandbox doesn't limit which endpoints the agent can call. The agent can send any request to your API with your key, so give your evals a dedicated key with a low balance, and add a guard for anything dangerous.</p>
+<h2>Try it yourself</h2>
+<p>You'll need Node.js 22.18 or later and the Claude Code or Codex CLI installed.</p>
+<h3>1. Set up your project</h3>
+<p>Create a project in a new directory:</p>
+<pre><code>mkdir my-evals &amp;&amp; cd my-evals
+npx hurdle init</code></pre>
+<p>To use Codex instead of Claude, add <code>--agent codex</code>:</p>
+<pre><code>npx hurdle init --agent codex</code></pre>
+<p><code>init</code> creates an <code>evals/</code> directory with a starter suite and example task.</p>
+<h3>2. Add your API keys</h3>
+<p>Next, create a <code>.env.local</code> file in <code>my-evals</code> and add your Anthropic API key. A <code>CLAUDE_CODE_OAUTH_TOKEN</code> from <code>claude setup-token</code> works too. You'll also need to set your Together API key if you want to use sandboxes.</p>
+<pre><code># .env.local
+
+# Add your Anthropic key
+ANTHROPIC_API_KEY=your_api_key
+
+# ... Or OAuth token
+# CLAUDE_CODE_OAUTH_TOKEN=your_oauth_token
+
+# ... Or your OpenAI key
+# OPENAI_API_KEY=your_api_key
+
+# Required for sandboxes
+# TOGETHER_API_KEY=your_api_key</code></pre>
+<h3>3. Run the starter task</h3>
+<p>Then run the suite and open the results viewer:</p>
+<pre><code>npx hurdle run --view</code></pre>
+<p>The starter task asks the agent to copy a file into <code>answer.txt</code>, and a code check confirms the copied file matches the original. This run happens on your own machine with no sandbox.</p>
+<h3>4. Try a sandboxed run</h3>
+<p>To try a sandboxed run, use the bundled Together API example, which tells the agent to list the models available on Together, make one short chat completion, and save the response. The checks confirm both API requests and the saved file.</p>
+<p>Make sure you’ve set <code>TOGETHER_API_KEY</code> in <code>.env.local</code>, then run these from the same <code>my-evals</code> directory:</p>
+<pre><code>npx hurdle init api-evals --example together-api
+npx hurdle setup api-evals
+npx hurdle run api-evals --view</code></pre>
+<p><code>setup</code> checks your credentials, installs Guardian (macOS or Linux only for now), and sets the project to run in a Together sandbox. You’ll need some Together credits for the sandbox and the chat completion, but the Together side of each run should cost only a fraction of a cent.</p>
+<h2>Find your own hurdles</h2>
+<p>When you’re ready to evaluate your own product, add your API key to <code>.env.local</code> under any name you like:</p>
+<p>setup checks your credentials, installs Guardian (macOS or Linux only for now), and sets the project to run in a Together sandbox. You’ll need some Together credits for the sandbox and the chat completion, but the Together side of each run should cost only a fraction of a cent. Find your own hurdles When you’re ready to evaluate your own product, add your API key to .env.local under any name you like:</p>
+<p>Then add an <code>api</code> block to the suite that names that variable and your API's host:</p>
+<pre><code>// example.suite.mjs
+export default defineSuite({
+  api: {
+    // The name of the variable in .env.local. Don't paste the key itself here.
+    authorizationCredential: &quot;MY_API_KEY&quot;,
+    hosts: [&quot;api.example.com&quot;],
+  },
+  // ...tasks, agents, and verdict
+});</code></pre>
+<p>The agent gets an environment variable with the same name, so you can refer to it directly in your prompt.</p>
+<p><em>(One caveat for sandboxed runs: Guardian only swaps your key into the <code>Authorization</code> header, so an API that takes its key some other way won't be able to authenticate.)</em></p>
+<p>After that, pick one task your users are already giving to their agents. Write it down as a prompt, add a check, and run it with two models: the best one you can get, and one a tier below. Repeat each a few times, since any single run might pass or fail by chance.</p>
+<p>Hurdle is open source on <a href="https://github.com/togethercomputer/hurdle">GitHub</a>, along with a guide in the README on how to write your own evals.</p>
+<p>Let us know if Hurdle finds a way to trip up your agents! We’d love to hear about any obstacles you discover and how you fixed them.</p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
     <item>
       <title>Introducing preemptible compute: the same compute, half the…</title>
       <link>https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price</link>
@@ -4135,88 +4312,6 @@ together beta endpoints get $ENDPOINT_ID
 <p><strong>Should I move short-chat traffic to DeepSeek-V4?</strong> Benchmark first. V4's gains show up where KV cache dominates. Short-context, prefill-heavy workloads exercise newer kernel paths (CSA top-k selection, HCA dense reads, MXFP4 MoE weights) that are still maturing. Compare latency at your real context lengths and batch sizes before switching. Long-context agents and short chats may need different endpoint profiles even on the same weights.</p>
 <p><strong>Why did Together pick the NVIDIA HGX B200 to serve DeepSeek V4? </strong></p>
 <p>NVIDIA HGX B200 lines up with the parts of DeepSeek V4 that dominate serving cost: KV-cache pressure during long-context decode and MoE weight bandwidth during prefill. NVIDIA Blackwell <a href="https://inferencex.semianalysis.com/inference?g_rundate=2026-05-07&amp;g_runid=25472714189&amp;i_active=b200_sglang%2Cb200_trt%2Cb200_vllm%2Cb300_sglang%2Cb300_trt%2Cb300_vllm%2Cgb200_dynamo-vllm%2Cgb300_dynamo-sglang%2Cgb300_dynamo-vllm%2Cmi355x_atom%2Cmi355x_sglang&amp;g_model=DeepSeek-V4-Pro">inference performance</a> lets a single HGX B200 node to hold V4's compressed CSA / HCA / SWA cache layouts resident across many concurrent long-context requests, and its native MXFP4 support matches the format DeepSeek ships for V4's MoE weights, so we run the model's quantization end-to-end without a re-cast step. Together's HGX B200 instances inherit the same MXFP4 path and KV-compression headroom, which is why we picked it as the launch platform for V4.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Deploy and inference any model from HuggingFace</title>
-      <link>https://www.together.ai/blog/deploy-and-inference-any-model-from-huggingface</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/deploy-and-inference-any-model-from-huggingface?li=1</guid>
-      <pubDate>Fri, 08 May 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
-<p>Published 5/8/2026</p>
-<h1>Deploy and inference any model from HuggingFace</h1>
-<p>Agents, Skills, and Together Dedicated Container Inference unlocks trying any model.</p>
-<ul><li>AuthorsBlaine Kasten</li><li>Table of contents<a href="https://www.together.ai/blog/deploy-and-inference-any-model-from-huggingface#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
-<p>Something real is shifting in how developers work. Agents open up work that used to be off-limits, not because it was technically impossible, but because it required niche expertise most of us didn't have. Containerization, inference server configs, model-specific environment setup: these are the kinds of tasks that used to demand either deep expertise or hours of self-education before you could even get started. Agents allow for an elegant way to bridge those pre-requisite knowledge gaps. You describe what you want, and the agent fills in the knowledge gaps.</p>
-<p>That's the unlock. Not speed. <em>Access.</em>‍</p>
-<h2>The day Netflix dropped a new model</h2>
-<p>Netflix recently released <a href="https://huggingface.co/netflix/void-model">void-model</a> on Hugging Face. The day it came out, my instinct was the same as always: I want to try this. But wanting to try a new model and actually <em>running</em> it are two different things. Getting it into a usable environment, handling the inference server setup, figuring out the container configuration, wiring it all up correctly: that's the part that usually introduces a day or two of lag between &quot;this looks cool&quot; and &quot;okay I'm actually using it.&quot;</p>
-<p>This time, that lag was basically zero.</p>
-<p>Using <a href="https://goose-docs.ai/">Goose</a>, a CLI agent runner, combined with Together's <a href="https://github.com/togethercomputer/skills/tree/main/skills/together-dedicated-containers">dedicated containers skill</a>, I went from &quot;Netflix just dropped a model&quot; to &quot;I have a running container for it&quot; in a single session. The agent produced all the code needed to deploy void-model on Together's Dedicated Container Inference (DCI) infrastructure, essentially on release day.</p>
-<p>The output lives here: <a href="https://github.com/blainekasten/together-void-model-container">github.com/blainekasten/together-void-model-container</a>‍</p>
-<h2>Exactly what I did</h2>
-<p>The whole setup took three steps.</p>
-<p><strong>Step 1: Install the Together dedicated containers skill.</strong></p>
-<p><code>npx skills add togethercomputer/skills</code></p>
-<p>That pulls in the <a href="https://github.com/togethercomputer/skills/tree/main/skills/together-dedicated-containers">together-dedicated-containers skill</a>, which gives Goose the specific knowledge it needs to work with Together's infrastructure: how to configure the inference server, what the container spec should look like, how to wire everything up for a given model.</p>
-<p><strong>Step 2: Start a Goose session and run one prompt.</strong></p>
-<p><code>I want to deploy this model on togethers dedicated containers https://huggingface.co/netflix/void-model</code></p>
-<p>That's it. One sentence.</p>
-<p><strong>Step 3: Sit back and watch it work.</strong></p>
-<p>From there, the agent pulled the model details from Hugging Face, figured out the right inference server configuration for the model architecture, generated the container config files, and produced a complete, runnable setup, all without me having to look anything up or guide it through individual steps.</p>
-<p>The result: <a href="https://github.com/blainekasten/together-void-model-container">blainekasten/together-void-model-container,</a> a clean, working repo anyone can use to run void-model on Together infrastructure.</p>
-<p><strong>Step 4: Use your model!</strong></p>
-<p>After the agent deploys your application you can start running inference against it. The <a href="http://docs.together.ai/reference/cli">Together CLI </a>has commands to easily test inference.</p>
-<pre><code>    
-tg beta jig submit --watch --payload '{
-    &quot;video_url&quot;: &quot;https://github.com/Netflix/void-model/raw/refs/heads/main/sample/lime/input_video.mp4&quot;,
-    &quot;quadmask_url&quot;: &quot;https://github.com/Netflix/void-model/raw/refs/heads/main/sample/lime/quadmask_0.mp4&quot;,
-    &quot;prompt&quot;: &quot;Empty park bench with fallen leaves on the ground&quot;,
-    &quot;use_pass2&quot;: false
-  }'
-
-    </code></pre>
-<p>This model removes objects from videos along with all interactions they induce on the scene — not just secondary effects like shadows and reflections, but physical interactions like objects falling when a person is removed.</p>
-<p>Our inference calls with this model are asynchronous. Therefore the response of this request will return a payload with an identifier we can poll for. The response looks like this:</p>
-<pre><code>    
-{
-  &quot;model&quot;: &quot;void-byoc&quot;,
-  &quot;request_id&quot;: &quot;019dc0f3-3c73-7a3f-b4b6-87ad06091180&quot;,
-  &quot;status&quot;: &quot;running&quot;,
-  &quot;claimed_at&quot;: &quot;2026-04-24T19:24:19.447457Z&quot;,
-  &quot;created_at&quot;: &quot;2026-04-24T19:24:19.444567Z&quot;,
-  &quot;done_at&quot;: null,
-  &quot;info&quot;: null,
-  &quot;inputs&quot;: {
-    &quot;prompt&quot;: &quot;Empty park bench with fallen leaves on the ground&quot;,
-    &quot;quadmask_url&quot;: &quot;https://github.com/Netflix/void-model/raw/refs/heads/main/sample/lime/quadmask_0.mp4&quot;,
-    &quot;use_pass2&quot;: false,
-    &quot;video_url&quot;: &quot;https://github.com/Netflix/void-model/raw/refs/heads/main/sample/lime/input_video.mp4&quot;
-  },
-  &quot;outputs&quot;: null,
-  &quot;priority&quot;: 1,
-  &quot;retries&quot;: null,
-  &quot;warnings&quot;: null
-}
-
-    </code></pre>
-<p>When the inference completes, the outputs includes a URL to the hosted video. We can download it using cURL and our Together API key:</p>
-<pre><code>    
-curl -L -O \
-  https://api.together.ai/v1/storage/019dc0f3-3c73-7a3f-b4b6-87ad06091180-tmpddmhtvar.mp4 \
-  --header &quot;Authorization: Bearer $TOGETHER_API_KEY&quot;
-
-    </code></pre>
-<p>Note: -L is required to follow the http redirect in the storage url and -O will write the output to a local file.</p>
-<h2>Why Together Dedicated Container Inference</h2>
-<p>This story only works because Together's Dedicated Container Inference (DCI) is genuinely a great place to run models like this, and it's worth explaining why.</p>
-<p>DCI gives you a private, GPU-backed environment running the model of your choice, fully managed by Together. You're not fighting for shared resources, you're not configuring your own cluster, and you're not locked into a fixed menu of available models. You bring the model; Together handles the infrastructure.</p>
-<p>This is a big deal for teams that want to move fast. When a new model drops from Netflix, from a research lab, from the open-source community, you can have it running in a production-grade environment almost immediately. No spinning up your own GPU VMs, no wrestling with inference server dependencies, no waiting for someone to add support for it in a managed endpoint. DCI is flexible by design: if the model exists, you can deploy it.</p>
-<p>The cost model also makes it easy to experiment. You're paying for what you use, on a container that's yours, without the overhead of managing the underlying compute. That's the kind of setup that lets you say yes to testing new models instead of filing it away for &quot;when I have time.&quot;</p>
-<p>If you're interested in Together's DCI, <a href="https://www.together.ai/contact-sales?dci=true">reach out to us</a> to get set up.</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>

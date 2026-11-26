@@ -7,7 +7,251 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>科学家为人工智能代理划定界限</title>
+      <link>https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents</guid>
+      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Where scientists draw the line on AI agents</description>
+      <content:encoded><![CDATA[<h1>科学家在哪里为 AI agents 划定界线</h1>
+<p>企业文章</p>
+<p>发布于 2026 年 11 月 25 日</p>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://allenai.org/papers/responsible-ai-survey">技术报告</a> <a href="https://www.datocms-assets.com/64837/1795122303-responsible-featured-51.png"><img src="https://www.datocms-assets.com/64837/1795122303-responsible-featured-51.png" alt="标题图，青绿与梅紫渐变上写着“What scientists need from responsible AI agents”。"></a></p>
+<p>将研究任务委托给 AI，并不会免除科学家对工作如何完成所负的责任。例如，使用 AI 进行文献综述的研究者需要核查系统是否忽略了相互矛盾的证据，或是否提出了所引论文并不支持的论断。将数据分析交给 agentic 系统的人需要了解它使用了哪些方法、访问了哪些文件，以及结果能否被成功复现。将部分实验室流程自动化的研究者需要确信系统遵守物理安全约束，例如温度限制或材料毒性；而处理人类受试者数据的研究者则需要系统保护参与者隐私并限制谁可以访问其信息的保证。研究者还需要明确的机构指南，用于验证和披露 AI 协助完成的工作。</p>
+<p>这些伦理与安全问题是我们 AI for science 工作的核心。负责任的科学不止关乎准确性——科学领域之所以有伦理研究规范，是因为科学家和科学共同体过去的行动与选择；这些规范也涵盖研究如何开展以及产生什么影响。我们希望 AI 工具扩展科学家能够完成的事情，同时不损害他们审视证据、验证方法，以及——也许最重要的是——为自己的发现负责的能力。</p>
+<p>为了更好地理解这需要什么，我们采访了 17 位从事自然科学、应用科学和社会科学的科学家，主题是 AI agents 的负责任开发。这些系统可以使用工具，并以不同程度的自主性执行研究任务。这些采访依托于此前调查研究建立的研究者网络——我们希望了解科学家会如何引导 AI 的发展，以体现其所在领域的责任。我们询问研究者会在哪些环节欢迎 agentic 协助、可能出现什么问题，以及他们需要哪些保障措施才愿意信任 agents 来参与自己的研究。</p>
+<p>我们对这些问题的兴趣源于评估 Ai2 所开发模型安全性的工作。随着我们扩大对 AI for science 的关注，我们发现，许多针对科学应用的安全工作都强调生物学和核物理学等领域的灾难性风险。我们还需要方法来评估 agents 在使用它们的领域中是否遵循负责任研究行为的标准。</p>
+<p>我们的一个主要发现与信任有关。在全部采访中，我们识别出 <em>科学信任</em> 的五个维度：验证、隐私、客观性、问责和透明。它们共同反映出超越 AI 系统是否给出正确答案的关切。研究者还需要理解答案是如何得出的、保护敏感信息、识别偏差，并确定由谁负责验证和支持 AI 协助得出的发现。这些都是负责任研究行为的问题。</p>
+<p>另一个主要发现表明，科学家应参与决定 agents 承担哪些研究任务、这些 agents 如何运作，以及它们的表现如何被评估。即使结果在技术上正确，如果研究者无法检查它是如何产生的，或者 agent 访问了研究者授权范围之外的机密数据或文件，该结果也可能不适合科学使用。</p>
+<p>第三个关键发现关乎科学的未来。受访者在两种态度之间分化：一边是对 AI 驱动进步的兴奋，另一边是对人类科学家角色的存在性担忧。他们提出应开展 AI 使用培训，并将制定和执行指南列为一项关键且紧迫的挑战。</p>
+<h2>帮助研究者核查工作</h2>
+<p>对我们采访中的许多参与者来说，AI agents 的吸引力始于耗时的研究任务——处理大型数据集、编写代码、记录实验程序以及处理重复性行政工作。将这些活动自动化可以让研究者腾出更多时间用于实地工作、指导他人或发展新想法。它还可能使分析那些难以人工检查的大量数据成为可能。</p>
+<p>但委托研究任务也相应产生了验证 AI 系统所做工作的需求。</p>
+<p>几位参与者描述了对照原始出版物核查 AI 生成的答案，而不是直接接受摘要的字面说法。他们担心自信的回答包含细微的不准确之处，也担心工具只检索支持某一偏好假设的研究，从而强化既有假设。</p>
+<p>但检查 AI 系统的最终答案只是挑战的一部分。研究者还可能需知道 agent 省略了哪些来源、是否遵循了所要求的方法，以及在此过程中访问了哪些信息。</p>
+<p>我们的采访提示，针对科学研究的 AI agents 评估可以如何更好地反映这些关切。例如，文献综述 benchmark 可以测试 agent 是否忽略矛盾证据，或得出其来源不支持的结论。编码 benchmark 不仅可以评估生成的代码能否运行，还可以评估 agent 是否访问了授权范围之外的文件。对数据处理 agents 的评估可以将其方法和结果与既有的人工工作流程进行比较。</p>
+<p>这些例子指向一个更长期的目标——一种参与式 benchmark，由科学家帮助界定 agents 应接受测试所依据的研究实践和安全要求。我们希望评估在 Ai2 或其他地方开发的系统是否遵循其使用领域的标准，以及它们是否完成分配的任务。</p>
+<p>这些评估仍是尚待与科学家共同开发和测试的提案，而非成熟解决方案。但它们为我们在 Ai2 的工作提供了一个方向：构建开放的科研工具，意味着让其行为和局限更容易被调查，并让研究共同体在界定可信表现是什么样方面发挥作用。</p>
+<h2>让科学判断保持在流程中</h2>
+<p>验证只是将 AI 工具用于科学时的一方面考虑。受访者还提出了一个更根本的问题——当 AI 接管研究过程的部分环节时，科学专长会怎样？</p>
+<p>一位职业生涯早期的生物学家描述，自己有意识地限制 AI 的使用，同时在学习他们希望未来教给学生的技能。另一位研究者质疑，如果研究者在此过程中什么也没学到，那么产生正确结果是否足够：即使输出完美，“获得完美输出的人从中得到了什么？”</p>
+<p>一些参与者担心 AI 协助的研究可能削弱学习，尽管自动化的价值在一定程度上取决于研究者和任务。经验丰富的科学家可以合理地将熟悉的流程委托出去以节省时间，而仍在学习该流程的人则可能从亲自完成工作中受益。</p>
+<p>参与者还围绕涉及智力贡献的活动划出了不同边界。一位生物学家拒绝使用 AI 生成研究想法，认为这是应由个人保留的责任。其他人则更愿意接受 AI 协助构思或写作。例如，一位人类学家认为，科学论文的某些部分，尤其是对方法和结果的常规描述，足够程式化，可以从自动化中受益。</p>
+<p>即使是尝试用 AI 写作的研究者，有时也会重新考虑。一位政治学家描述，自己曾使用 Claude 帮助修改一篇稿件，后来决定重写整篇论文，因为其自身智力贡献的边界已变得不清晰。“我不知道哪些是 AI，哪些是我，”这位研究者说。</p>
+<p>语境也很重要。让 AI 在投稿前批评稿件，受到一些参与者的肯定；而用它来评审另一位研究者的未发表工作则引发了担忧。这一区别涉及的不只是技术能力；同行评审在保密、署名归属和公平评价他人研究方面负有责任。</p>
+<p>这些分歧表明，负责任的自动化不能通过一份可接受与不可接受任务的通用清单来定义。科学领域有不同的规范，即使从事类似工作，个别研究者也可能有不同的目标。</p>
+<p>同样的张力也适用于 AI 系统内置的保障措施。一位政治学家描述了阻止 AI 工具讨论某些主题的内容限制，可能如何干扰关于政治暴力或人权侵犯的正当研究。与此同时，处理敏感人类受试者数据的参与者希望获得关于隐私、访问权限以及信息将如何被使用的更强保证。</p>
+<p>这两种关切都合理。一个在缺乏充分保障措施下行动的 agent 可能泄露机密数据或产生有害结果，而一个受到过于宽泛约束的 agent 则可能阻止科学家开展正当的研究路径。</p>
+<p>这就是为什么科学共同体需要在塑造 AI 协助的边界方面发挥有意义的作用。开发者不仅需要了解 agent 能执行哪些活动，还需要了解研究者希望保留哪些决策、哪些地方需要保障措施——以及这些保障措施可能在哪些地方阻碍有价值的工作。</p>
+<h2>与科学家共同构建 AI agents</h2>
+<p>我们的发现指向一种从技术使用者出发的科学 AI 开发方法。</p>
+<p>研究者应能够检查 agent 的贡献、决定分配哪些工作，并保留发展自身专长的机会。实现这一点将需要诸如 agent 行动透明记录和细粒度数据控制等技术特性，以及由不同科学共同体的标准与实践所指导的评估。</p>
+<p>这还需要持续合作。我们的研究是探索性的；发现来自对 17 位在美国工作的科学家的采访，而非对科学观点的代表性调查，也不是对特定 AI agents 的实证评估。参与者既讨论了他们如今使用的生成式 AI 工具，也讨论了对更自主系统的预期。他们的视角指出了重要关切和设计优先事项，而不是就 AI 应如何在科学中使用建立共识。</p>
+<p>尽管如此，它们提供了一条前进道路。在 Ai2，我们相信 AI 可以加速科学发现，同时保留使研究可信的开放性、可复现性和独立审视。通过我们开发和评估科学 agents 的更广泛努力，我们旨在将这些原则付诸实践。这意味着与科学家合作，识别 agents 的有价值用途，并将其关切转化为具体评估，同时让人们更容易理解这些系统取得了什么成果以及如何取得。</p>
+<p>科学 AI 的前景并不仅仅是研究者可以推掉更多工作。而是他们可以探究原本可能遥不可及的问题，同时保留做出属于自己的发现所需的知识、判断力和能动性。</p>
+<p>该作者的更多内容</p>
+<h2>RoboTrack：面向真实世界机器人操作的点跟踪</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>9</p>
+<p>2026 年 11 月 23 日</p>
+<h2>XYBench：帮助解决提问背后的那个问题</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>9</p>
+<p>2026 年 11 月 13 日</p>
+<h3>社区</h3>
+<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
+<p>hocdz754</p>
+<p>约 4 小时前</p>
+<p>约 4 小时前编辑</p>
+<p>zqPV 测试完成</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>带有 CUGA 的印度语语音代理</title>
+      <link>https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga</guid>
+      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：An Indic Voice Agent with CUGA</description>
+      <content:encoded><![CDATA[<h1>使用 CUGA 构建 Indic 语音智能体</h1>
+<p>企业 文章</p>
+<p>发布于 2026 年 11 月 25 日</p>
+<p><a href="https://huggingface.co/vrunda-gadesha"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67fe070a4e8cc28ba346f53c/iEtn-b7KR5MEyQZvCyWve.jpeg" alt="Vrunda Gadesha's avatar"></a></p>
+<p>Vrunda Gadesha</p>
+<p>vrunda-gadesha</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/cyrilshaji"><img src="https://huggingface.co/avatars/bc670f3be9a7ed889acfe4f3e0de36b6.svg" alt="Cyril Shaji's avatar"></a></p>
+<p>Cyril Shaji</p>
+<p>cyrilshaji</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/jotreesa1"><img src="https://huggingface.co/avatars/4242cd627a8b42e498d409d6ce630e0e.svg" alt="Jobit Treesa Varughese's avatar"></a></p>
+<p>Jobit Treesa Varughese</p>
+<p>jotreesa1</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/nivetha-suruliraj"><img src="https://huggingface.co/avatars/a4ef2e9e9abf23dd08e8341fdc21f1d6.svg" alt="Nivetha Suruliraj's avatar"></a></p>
+<p>Nivetha Suruliraj</p>
+<p>nivetha-suruliraj</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/anu24-hugface"><img src="https://huggingface.co/avatars/9bb2181c4671349c7707cf46432efd4d.svg" alt="Anu Sugunan's avatar"></a></p>
+<p>Anu Sugunan</p>
+<p>anu24-hugface</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/0ad0b4c983b7d63b38a40c15f4d7ca3d.svg" alt="Anupama Murthi's avatar"></a></p>
+<p>Anupama Murthi</p>
+<p>anupamamurthi</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/JaydeepSen"><img src="https://huggingface.co/avatars/4d94a447f0d376c95227392661ec338f.svg" alt="Jaydeep Sen's avatar"></a></p>
+<p>Jaydeep Sen</p>
+<p>JaydeepSen</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/asinghee"><img src="https://huggingface.co/avatars/45055e2087401bb5633daeac33cedd14.svg" alt="Amith Singhee's avatar"></a></p>
+<p>Amith Singhee</p>
+<p>asinghee</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p>最有用的知识都是用英语书写和数字化的。而最需要这些知识的人，却用印地语、泰米尔语、泰卢固语、古吉拉特语、马拉地语等自己的地区语言说话和思考。许多人宁愿开口说，也不愿动手打字。</p>
+<p>我们构建了一个小型语音 Agent 来弥合这一差距，使用 <a href="https://cuga.dev">CUGA</a> 作为 Agent 的 harness（运行框架）。本文介绍该用例以及我们从中得到的经验。你可以在 <a href="https://huggingface.co/spaces/ibm-research/cuga-apps">CUGA Apps</a> 中亲自试用。</p>
+<h2>用例：农场助手</h2>
+<p>一位农民用自己的语言大声提问：<em>我怎么分辨好种子和坏种子？</em> 这个 Agent 会：</p>
+<ul><li><strong>聆听</strong>，并把语音转成文本。</li><li><strong>搜索</strong>一本 154 页、用英语写成的农业手册。</li><li><strong>回答</strong>时用提问者所用的语言，说两到四句口语化的句子，且只使用手册中写明的内容。</li><li><strong>朗读</strong>答案并展示来源页码，以便核对。</li></ul>
+<p>如果有人问板球或编程，它会礼貌地把话题引回农业，而不是凭空编造。</p>
+<h2>CUGA 在其中扮演什么角色</h2>
+<p><a href="https://cuga.dev">CUGA</a>（ConfigUrable Generalist Agent）是 IBM Research 的开源 Agent harness。它负责模型连接、工具管理、状态与护栏，因此你只需编写工具和 prompt，而不必编写 Agent 循环。在这里，我们把它作为嵌入式 SDK 用在一个小型 Web 应用中，用于三件事：</p>
+<ul><li><strong>同一个 Agent，任意模型。</strong> 通过一个设置即可在 watsonx 和 OpenAI 之间切换。</li><li><strong>知识引擎。</strong> 解析 PDF、切块、嵌入，并用 <code>agent.knowledge.search()</code> 在本地检索。</li><li><strong>对话线程。</strong> 每个问题都获得一个新线程，因此一个人的语言或上下文绝不会泄漏到另一个人那里。</li></ul>
+<p>核心设计理念很简单：<strong>CUGA 是一个文本输入、文本输出的大脑。</strong> 语音只是它外层的两个薄层。</p>
+<pre><code>audio ──▶ speech-to-text ──▶ knowledge.search ──▶ CUGA (grounded answer) ──▶ text-to-speech ──▶ audio</code></pre>
+<p>因为 Agent 始终只看到文本，所以你可以先用纯文本构建并测试它，然后再添加“耳朵”和“嘴巴”。你也可以在不改动 Agent 的情况下更换语音提供商。我们支持两种：Sarvam AI 的云端语音 API（直接从用户浏览器调用），以及在你自己的服务器上运行的开源模型（语音转文本用 SraVaani，文本转语音用 Svara）。</p>
+<h3>难点不在语音</h3>
+<p>添加语音是容易的部分。难的是<strong>跨语言检索</strong>：一个印地语问题必须找到一段英语段落。</p>
+<p>搜索的原理是把文本转成向量，再找出最接近的向量。CUGA 默认的嵌入模型仅支持英语，因此它把印地语转成的向量几乎不携带任何含义。用它时，一个印地语或泰米尔语问题仍然会检索出五段文字，但都是错误的段落。模型被正确地要求只能依据所给内容作答，于是它会平静地说“手册没有涵盖这一点”。每一层的行为都正确，所以既没有报错也没有警告。</p>
+<p>解决方案是使用多语言嵌入模型（我们用的是 <code>intfloat/multilingual-e5-large</code>），这样无论何种语言，相同的含义都会落在相同的位置。概念上很简单，但把它接入 CUGA 需要一点小的变通（教程中已展示）。之后，一份英语文档就能服务所有语言，你不需要任何译制副本。</p>
+<p>我们的建议是：在调整任何一条 prompt 之前，先用非英语语言向你的 Agent 问一个问题，检查它能否找到正确的页面。</p>
+<h3>让它听起来自然，并保持安全</h3>
+<p>有几个小决定比我们预想的更重要：</p>
+<ul><li><strong>为耳朵而写。</strong> Markdown、项目符号、引用标记以及像“millet (बाजरा)”这样括号内的翻译，在朗读出来时听起来都不对。prompt 会要求模型不要生成这些内容，一个轻量格式化器会在语音合成前清除任何漏网的内容。</li><li><strong>让护栏保持低成本。</strong> 简单的输入检查能拦住明显的跑题问题。如果有漏网的，模型会在回复开头加上 <code>OFF_TOPIC</code>，应用则换成礼貌的引导语。无需第二次 LLM 调用，因此语音链路保持快速。</li><li><strong>为每个答案提供依据。</strong> 模型只能看到检索到的段落，被要求不得使用外部知识，并且页码来源会展示给用户。</li><li><strong>把密钥留在服务器之外。</strong> 使用 Sarvam 选项时，浏览器直接与 Sarvam 通信。服务器只接收文本，永远看不到用户的密钥。</li></ul>
+<h2>试一试</h2>
+<p>无需任何设置就能看到它运行。在 Hugging Face Spaces 上打开 <strong>CUGA Apps</strong> 中的语音 Agent，用你的语言问一个农业问题，然后听答案：</p>
+<p><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-apps">Hugging Face 上的 CUGA Apps →</a></strong></p>
+<p>想自己构建一个？我们的分步教程 <a href="https://huggingface.co/blog/ibm-research/build-an-indic-voice-agent-with-cuga.md">Build an Indic Voice Agent with CUGA</a> 从空文件夹开始，逐层添加每一层。</p>
+<h2>超越农业：为 Bharat 扩展</h2>
+<p>这里没有任何内容是农业特有的。把手册换成计划文档、健康提示或法律指南，你就有了另一个助手。更换语音提供商，你就改变了部署模式，例如为速度选择云端，或为数据主权选择本地部署，而无需重写 Agent。</p>
+<p>语音优先的多语言助手，是数字服务触达那些从未被纯英语文本界面服务好的人群的方式。将它们构建在开放、可审计的 harness 之上，并让答案与人们可以核对的来源绑定，是它们赢得信任的方式。</p>
+<p>这种方法恰好落在我们正在用 IBM Bharat Core 构建的东西的交汇点上。Bharat Core 是构建在 IBM Sovereign Core 之上的优化 AI 栈，专为印度生态系统设计，可在本地基础设施上安全运行 Indic AI 工作负载。当把一个语音 Agent 从原型扩展到安全的企业应用（例如方言 KYC 系统或多语言政府机器人）时，你需要对数据主权有更强的控制。将 CUGA 灵活的 Agent harness 与 Bharat Core 的即用型 Indic 连接器和微调模型相结合，开发者就能构建完全合规、主权可控且契合印度独特语言多样性的 AI 解决方案。</p>
+<p>如果你正在为印度的规模化场景构建，请看看 <strong><a href="https://www.ibmbharatcore.info/">IBM Bharat Core</a></strong> 正在进行的工作。</p>
+<h2>进一步了解 CUGA</h2>
+<p>刚开始接触 CUGA？以下是一些入手之处：</p>
+<ul><li><strong><a href="https://cuga.dev">cuga.dev</a></strong>：CUGA 主页。</li><li><strong><a href="https://github.com/cuga-project/cuga-agent">GitHub 上的 CUGA</a></strong>：开源 harness（Apache 2.0）。给它点星、提交 issue，或领一个 good first issue。</li><li><strong><a href="https://docs.cuga.dev">CUGA 文档</a></strong>：安装配置、SDK、知识、策略与配置。</li><li><strong><a href="https://github.com/cuga-project/cuga-apps">GitHub 上的 CUGA Apps 画廊</a></strong>：Hugging Face Space 中各应用的源码。</li></ul>
+<p>可以在浏览器中试用的 Spaces：</p>
+<ul><li><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-agent">CUGA Agent</a></strong>：通用 Agent，运行在一个演示用 CRM 场景上。</li><li><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-apps">CUGA Apps</a></strong>：从一个仪表盘启动可用的 CUGA 应用。</li><li><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-policy-playground">CUGA Policy Playground</a></strong>：两个实时 Agent 并排展示，一个有策略，一个没有。</li></ul>
+<p>Hugging Face 博客上的更多 CUGA 文章：</p>
+<ul><li><strong><a href="https://huggingface.co/blog/ibm-research/cuga-on-hugging-face">CUGA on Hugging Face: Democratizing Configurable AI Agents</a></strong>：CUGA 及其可配置推理模式介绍。</li><li><strong><a href="https://huggingface.co/blog/ibm-research/cuga-apps">Build real agentic apps using CUGA: two dozen working examples on a lightweight harness</a></strong>：这个语音 Agent 所属的应用画廊。</li><li><strong><a href="https://huggingface.co/blog/ibm-research/cuga-harness">Same Model, Different Harness: CUGA, Hermes, and Deep Agents — When to Pick CUGA?</a></strong>：当模型不变时，harness 有多重要。</li></ul>
+<h2>本文提到的 Spaces 3</h2>
+<p>来自该作者的更多内容</p>
+<h2>Streamhouse 中的时间序列模型：新前沿与用例</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<p>39</p>
+<p>2026 年 11 月 18 日</p>
+<h2>Palette：教一个小模型用你的设计语言构建演示文稿</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<p>23</p>
+<p>2026 年 11 月 3 日</p>
+<h3>社区</h3>
+<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
+<p>hocdz754</p>
+<p>约 17 小时前</p>
+<p>此评论已被隐藏</p>
+<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
+<p>hocdz754</p>
+<p>约 17 小时前</p>
+<p>此评论已被隐藏</p>
+<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
+<p>hocdz754</p>
+<p>约 17 小时前</p>
+<p>此评论已被隐藏</p>
+<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
+<p>hocdz754</p>
+<p>约 17 小时前</p>
+<p>此评论已被隐藏</p>
+<h2>本文提到的 Spaces 3</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>在一台 RTX PRO 6000 上进行爬山 Inkling 2 Mini 推理</title>
+      <link>https://huggingface.co/blog/inkling-2-mini-inference-hillclimb</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/inkling-2-mini-inference-hillclimb</guid>
+      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Hill-climbing Inkling 2 Mini inference on one RTX PRO 6000</description>
+      <content:encoded><![CDATA[<h1>在单张 RTX PRO 6000 上对 Inkling 2 Mini 推理进行爬山调优</h1>
+<p>发布于 November 25, 2026</p>
+<p><a href="https://huggingface.co/nielsr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608042047613-5f1158120c833276f61f1a84.jpeg" alt="Niels Rogge 的头像"></a></p>
+<p>Niels Rogge</p>
+<p>nielsr</p>
+<p><a href="https://huggingface.co/blog/inkling2mini">Inkling 2 Mini</a> 上周发布，为本地 AI 和更小的开源模型树立了新的最先进水平。凭借约 26B 总参数（每 token 激活 3B）、多模态输入和 1M-token 上下文窗口，它在 <a href="https://artificialanalysis.ai/models/open-source">Artificial Analysis Intelligence Index v5</a> 上、以及在 48 项基准中的 32 项上领先 Gemma 4 31B 和 Qwen3.8-27B 等模型，使其成为在中等硬件上进行编码、工具使用和推理的强开源选项。我们写了一篇详细的博客文章，介绍如何在 Hugging Face 生态中使用它，见<a href="https://huggingface.co/blog/inkling2mini">这里</a>。</p>
+<p>Inkling 2 Mini 一个有趣且可能解释其出色性能的方面是其不同寻常的架构。Inkling 2 Mini 是一个循环式 <a href="https://huggingface.co/blog/moe">Mixture-of-Experts (MoE)</a> 模型，有 24 个物理层，其中中间 12 层运行三次，因此每个 token 经过 48 层。该 checkpoint 以混合 NVFP4 和 MXFP8 形式发布，并捆绑一个用于投机解码的 DSpark drafter。作为 LLM 推理的首选框架，vLLM 和 SGLang 都在 nightly 构建中支持它，不过已发布的服务 recipe 面向 NVIDIA B200 和 GB300 GPU（<code>sm100</code>），遗漏了像 NVIDIA RTX PRO 6000 这样的 <code>sm120</code> 卡，在这些卡上内核兼容性可能不同。</p>
+<p>我们想看看在单张 NVIDIA RTX PRO 6000 96 GB 上能多快地服务它，这是 <code>nvidia-rtx-pro-6000</code> <a href="https://huggingface.co/docs/inference-endpoints">Inference Endpoint</a> 背后的 GPU。我们没有手动调 flag，而是给一个编码 agent 提供了 <a href="https://github.com/sybil-solutions/inference-optimisation-skill"><code>inference-optimisation</code></a> 技能、<code>hf</code> CLI，以及对 <a href="https://huggingface.co/docs/hub/jobs-overview">Hugging Face Jobs</a> 的访问权限，让它运行了一个下午的实验。</p>
+<p>在 46 次有效基准运行中，单用户解码从 <strong>136 提升到 190.6 tok/s（+40%）</strong>（超过同一 GPU 上 <a href="https://www.localmaxxing.com/en/inference-benchmarks/cmwqfbexc089gmi01hd6hiqhn">LocalMaxxing 的 167.7 tok/s 社区 SGLang + DSpark 基准</a>），使用 vLLM nightly 和 DSpark 投机解码时，8 用户聚合吞吐从 <strong>约 570 提升到 716 tok/s（+26%）</strong>。无论是否启用投机，贪心输出都逐字节相同，长上下文 needle 检索在最高 250K token 时通过 3/3，获胜配置现在正基于固定镜像 digest 作为 Inference Endpoint 运行。所有日志、脚本和原始测量数据都在 <a href="https://github.com/NielsRogge/inkling-2-mini-hillclimb"><code>NielsRogge/inkling-2-mini-hillclimb</code></a> 中。</p>
+<h2>设置</h2>
+<p><code>inference-optimisation</code> 技能给 agent 一个固定的实验协议和一个小的、与引擎无关的基准脚本（<a href="https://github.com/sybil-solutions/inference-optimisation-skill/blob/main/skills/inference-optimisation/scripts/bench.py"><code>bench.py</code></a>）：</p>
+<ul><li>在调优前测量硬件并估计理论上限。</li><li>一次只改变一个变量，并将每个候选配置夹在两次对照运行之间（<code>control → candidate → control</code>）。只有当某项变更优于两次对照且未使其他指标回退时才保留。</li><li>将每次运行记录到 <code>PLAN.md</code>，包括回归和死胡同。</li><li>在宣布获胜者之前通过长上下文、并发和贪心等价性检查。</li></ul>
+<p><code>bench.py</code> 测量单用户解码、并发 N 下的聚合解码、若干长度下的冷 prefill 和 TTFT，直接使用服务器 usage 响应中的 token 计数。所有运行都使用固定的一组六个提示（代码、解释、故事、比较表、bash 脚本和历史摘要），temperature 1.0（模型默认值），thinking 开启，512 个输出 token，并在启用投机解码时重复 12 次。</p>
+<p>该技能是为本地 GPU 编写的，因此我们将它适配到 Hugging Face 基础设施：</p>
+<ul><li><strong>HF Jobs</strong> 用于计算。<code>rtx-pro-6000</code> Job flavor 使用与 <code>nvidia-rtx-pro-6000</code> Inference Endpoint 相同的 GPU（两者均为 $2.75/h），因此 Job 数据可以直接迁移。一个约 150 行的驱动脚本（<code>jobs/driver.py</code>）接收服务器配置列表，依次启动每个配置，运行一次不计入测量的预热，原样调用 <code>bench.py</code>，关闭服务器，并为每次运行打印一行台账。由于 Job 在独立机器上运行，agent 并行扫描了 SGLang（<code>lmsysorg/sglang:inkling-2-mini</code>）和 vLLM nightly（<code>vllm/vllm-openai:nightly</code>）。</li><li><strong>用于阅读引擎源码的 CPU Jobs。</strong> 当某个 flag 没有文档时，agent 会运行一个低成本的 <code>cpu-upgrade</code> Job，在容器内 grep 已安装的 Python 包。它就是这样找到 SGLang 的 <code>SGLANG_OPT_*</code> 环境变量和 vLLM 的 <code>speculative-config</code> 字段的。</li><li><strong>Inference Endpoints</strong> 用于部署，通过 <code>hf endpoints deploy</code> 创建，使用通过验证的精确镜像 digest 和 flags。</li></ul>
+<p>基线是我们现有的组织 endpoint 配置：SGLang 使用 <code>--attention-backend fa4</code>，且不启用投机解码。</p>
+<h2>结果</h2>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inkling-2-mini-inference-hillclimb/results.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inkling-2-mini-inference-hillclimb/results.png" alt="在单张 RTX PRO 6000 上四种配置下 Inkling 2 Mini 的单用户解码速度"></a></p>
+<p><em>单用户解码速度（12 次请求的中位数）。vLLM + DSpark 在其测得的接受率下达到内存带宽上限的约 95%。</em></p>
+<table><thead><tr><th>配置（1× RTX PRO 6000）</th><th>单用户解码（tok/s）</th><th>8 用户聚合（tok/s）</th><th>Prefill 4K / 32K（tok/s）</th><th>TTFT</th></tr></thead><tbody><tr><td>SGLang，无投机（基线）</td><td>134–139</td><td>543–598</td><td>18.7–19.1K / 16.9–19.1K</td><td>41–114 ms</td></tr><tr><td>vLLM，无投机</td><td>157.0</td><td>638</td><td>20.7K / 20.7K</td><td>33 ms</td></tr><tr><td>SGLang + DSpark（8 个 drafts）</td><td>166.6</td><td>— ¹</td><td>18.0–19.5K / 18.9–19.1K</td><td>38–51 ms</td></tr><tr><td><strong>vLLM + DSpark（7 个 drafts）</strong></td><td><strong>190.6</strong></td><td><strong>716</strong></td><td>20.7K / 20.6K</td><td>40 ms</td></tr><tr><td>已部署 endpoint（通过互联网）</td><td>194.9</td><td>673</td><td>11.7K / 19.2K ²</td><td>198 ms ²</td></tr></tbody></table>
+<p>¹ SGLang 的 RTX PRO 6000 DSpark recipe 将 <code>--max-running-requests</code> 上限设为 4。将其提高到 8 后达到 660 tok/s，仍落后于 vLLM。 ² 包含约 160 ms 的客户端到 endpoint 网络往返。</p>
+<p>全部加速来自切换到 vLLM nightly（+15%，相较无投机的 SGLang，136 → 157 tok/s）、启用带 7 个 drafts 和概率式 draft 采样的 DSpark（在此基础上再 +21%，四次运行中 157 → 190.6 tok/s：189.3、190.4、191.1 和 190.7），以及添加两个内存 flag，使 vLLM 的 DSpark 设置真正能在 96 GB 上启动：</p>
+<pre><code>vllm serve thinkingmachines/Inkling-2-Mini \
+  --tool-call-parser inkling \
+  --enable-auto-tool-choice \
+  --reasoning-parser inkling \
+  --max-model-len 262144 \
+  --gpu-memory-utilization 0.85 \
+  --speculative-config '{&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:7,&quot;draft_sample_method&quot;:&quot;probabilistic&quot;}'</code></pre>
+<p><code>num_speculative_tokens: 7</code> 和 <code>draft_sample_method: &quot;probabilistic&quot;</code> 都经过直接验证：更短的 draft 数量（例如 5）会在启动时被拒绝，因为两个引擎都会强制执行 checkpoint 的固定 block size；而在 temperature 1.0 下切换到 <code>greedy</code> draft 采样会使 vLLM 解码速度下降 11%（见<a href="https://huggingface.co/blog/inkling-2-mini-inference-hillclimb#what-didnt-work">哪些没有奏效</a>）。</p>
+<h3>为什么停在约 190 tok/s</h3>
+<p>在调优前，agent 在 Job 内探测了 RTX PRO 6000（<strong>1,469 GB/s</strong> 拷贝带宽、<strong>416 TFLOPS</strong> BF16、<strong>792 TFLOPS</strong> FP8），并从 safetensors 头读取张量大小。因为每个 token 要进行 48 次层访问，普通解码会重新读取约 2.7 GB 的注意力与稠密权重、约 2 GB 的路由专家（每层 128 个中的 8 个），以及约 0.9 GB 的 LM head。在 1,469 GB/s 下，这给出 <strong>约 256 tok/s</strong> 的单用户带宽上限。无投机时，vLLM 的 157 tok/s 达到该上限的 61%，主要受限于跨 48 次访问的内核启动延迟。</p>
+<p>投机解码改变了 MoE 上的内存计算。共同验证 8 个位置会激活其路由专家的并集，读取每层专家的约 40%，而不是 6%。在 temperature 1.0 下，我们测得的接受率约为每步 2.3 个 token（每个位置的接受率从第一个 draft 的 0.6 降到 0.33 和 0.19），带宽上限降至 <strong>约 201 tok/s</strong>。在 190.6 tok/s 时，vLLM + DSpark 已经达到<strong>硬件带宽的约 95%</strong>，因此进一步调 flag 几乎没有剩余空间。要越过 190 tok/s，需要具有更高 temperature 1.0 接受率的 drafter，或每层触及更少专家的验证路径。</p>
+<h2>哪些没有奏效</h2>
+<p>大多数候选 flag 不受支持、噪声大或更慢：</p>
+<h3>vLLM</h3>
+<table><thead><tr><th>调节项</th><th>结果</th></tr></thead><tbody><tr><td>更短的 draft 长度（3–6）</td><td>启动时被拒绝；要求 <code>num_speculative_tokens = 7</code>（checkpoint block size − 1）。</td></tr><tr><td><code>draft_sample_method: &quot;greedy&quot;</code></td><td>在 temperature 1.0 下 −11%（168.6 对约 190.4 tok/s）。</td></tr><tr><td><code>rejection_sample_method: &quot;block&quot;</code></td><td>190.1 对对照组的 190.3–190.5；无效果。</td></tr><tr><td><code>enable_adaptive_verification</code></td><td>Inkling 2 drafter 在启动时出现断言错误。</td></tr><tr><td><code>draft_lm_head_quantization: &quot;fp8&quot;</code></td><td>仅支持 DeepSeek DSpark drafters。</td></tr></tbody></table>
+<p>我们还特意跳过了 <code>rejection_sample_method: &quot;fly&quot;</code> 和 <code>&quot;synthetic&quot;</code>，因为它们会改变输出分布，而我们想要严格无损的加速。</p>
+<h3>SGLang</h3>
+<table><thead><tr><th>调节项</th><th>结果</th></tr></thead><tbody><tr><td>更短的 draft 长度（3–6）</td><td>启动时被拒绝；要求 <code>--speculative-num-draft-tokens 8</code>（捆绑 drafter 的 <code>gamma + 1</code>）。</td></tr><tr><td><code>SGLANG_ENABLE_NV_MEGA_RUNTIME_OPTIMIZATION=1</code></td><td>一次 +4%，在全新对照下未能复现。</td></tr><tr><td><code>SGLANG_OPT_USE_FUSED_DRAFT_SAMPLE=1</code></td><td>+2%，在运行间噪声范围内。</td></tr><tr><td><code>SGLANG_OPT_MOE_QUANT_ONCE=1</code></td><td>+1%，在运行间噪声范围内。</td></tr><tr><td><code>SGLANG_DSPARK_USE_GREEDY_DRAFT=1</code></td><td>在 temperature 1.0 下 −9%（156.8 对约 172 tok/s）。</td></tr></tbody></table>
+<h2>基准测试的坑</h2>
+<p>过程中有几个测量问题让我们踩了坑：</p>
+<ul><li><strong>计时 prefill 期间的 Triton JIT。</strong> vLLM 的第一次 4K prefill 返回 202 tok/s，而不是 20K，因为 Triton 在计时请求期间编译内核。跨提示长度和并发运行一次不计入测量的预热修复了 4K prefill，不过每个 Job 中的第一次运行仍会低报 32K prefill，原因是最后一个 chunk 的形状差异（已在台账中标记）。</li><li><strong>占用 GPU 内存的孤儿服务器。</strong> 初始驱动通过从 <code>setsid … &amp;</code> 保存的 PID 停止服务器，但该 PID 不保证与进程组 ID 匹配。前一个服务器仍在 8000 端口存活，破坏了下一次启动，并变成仍能通过 <code>kill -0</code> 的僵尸进程。使用 <code>subprocess.Popen(start_new_session=True)</code> 管理进程，并等待 GPU 内存和 8000 端口都空闲，解决了该问题。</li><li><strong>vLLM 日志中隐藏的 OOM 错误。</strong> vLLM + DSpark 两次在日志末尾以 <code>&quot;Engine core initialization failed&quot;</code> 崩溃，而真正原因在往上 200 行处。首先，默认 1M token 的 KV cache 需要 52.6 GiB，而在 drafter 旁边只有 48.1 GiB 空闲（<code>--max-model-len 262144</code> 解决了这个问题）。接着，由于 vLLM v0.34.0 将默认 <code>--gpu-memory-utilization</code> 从 <code>0.92</code> 提高到 <code>1.0</code>，KV cache 占用了剩余 VRAM，并使 drafter 的 5 GiB 分配发生 OOM（<code>--gpu-memory-utilization 0.85</code> 解决了这个问题）。驱动现在会打印服务器日志中的每一行错误，而不是只打印末尾。</li><li><strong>引擎方差。</strong> 在启用投机的相同运行中，vLLM 保持在 0.4% 以内，而 SGLang 波动 ±4.5%。这一波动大到足以让 <code>SGLANG_ENABLE_NV_MEGA_RUNTIME_OPTIMIZATION=1</code> 在第一次运行中看起来像 +4% 的胜利，直到重复对照排除了它。</li></ul>
+<h2>验证与部署</h2>
+<p>部署前，我们固定了确切的 vLLM nightly digest（<code>vllm/vllm-openai@sha256:eaa63fd6…</code>，构建 <code>0.34.0rc1.dev1235+gf2f9edcac</code>），并在一个 Job 内运行验收门禁：</p>
+<table><thead><tr><th>门禁</th><th>结果</th></tr></thead><tbody><tr><td>约 50% 上下文（126,537 token）下的 needle 检索</td><td>3/3，TTFT 12.5 s</td></tr><tr><td>约 95% 上下文（249,970 token）下的 needle 检索</td><td>3/3，TTFT 28.7 s</td></tr><tr><td>并发浸泡（4 × 约 58K token 请求）</td><td>4/4 成功，每个 3/3 检索</td></tr><tr><td>贪心等价性，DSpark 对比无投机（6 个提示，temp 0）</td><td>6/6 逐字节相同</td></tr><tr><td>固定镜像上的单用户解码</td><td>189.9 / 190.2 tok/s</td></tr></tbody></table>
+<p>这些通过后，我们用一个 <code>hf endpoints deploy</code> 命令部署了 endpoint，同时固定镜像 digest 和模型 revision（认证访问，空闲 60 分钟后缩容到零）：</p>
+<pre><code>hf endpoints deploy inkling2mini-tuned-dspark --namespace &lt;your-org&gt; \
+  --repo thinkingmachines/Inkling-2-Mini --revision 7a67ae2314b44ef05c87fd1d4d311c58aaeb18f6 \
+  --framework custom --custom-image &quot;vllm/vllm-openai@sha256:eaa63fd6ee3aac77f3158e80ed79ec425db3a53f7cd666bf1954e96abfaf19a7&quot; \
+  --health-route /health --port 8000 \
+  --vendor aws --region us-east-2 --accelerator gpu --instance-type nvidia-rtx-pro-6000 --instance-size x1 \
+  --min-replica 0 --max-replica 1 --scale-to-zero-timeout 60 --type authenticated \
+  --container-command &quot;vllm serve&quot; \
+  --container-args &quot;/repository --served-model-name thinkingmachines/Inkling-2-Mini --host 0.0.0.0 --port 8000 --tool-call-parser inkling --enable-auto-tool-choice --reasoning-parser inkling --max-model-len 262144 --gpu-memory-utilization 0.85 --speculative-config '{\&quot;method\&quot;:\&quot;dspark\&quot;,\&quot;num_speculative_tokens\&quot;:7,\&quot;draft_sample_method\&quot;:\&quot;probabilistic\&quot;}'&quot;</code></pre>
+<p>对在线 endpoint 运行 <code>bench.py</code> 得到单用户 194.9 tok/s，在计入网络延迟后与 Job 运行一致。</p>
+<p>本次运行的所有内容（<code>PLAN.md</code>、<code>THEORY.md</code>、<code>jobs/driver.py</code>、<code>submit.sh</code>、<code>deploy.sh</code> 以及原始 <code>ledger-<em>.jsonl</code> 文件）都在 <a href="https://github.com/NielsRogge/inkling-2-mini-hillclimb"><code>NielsRogge/inkling-2-mini-hillclimb</code></a> 中。要在另一个模型上复用该循环，请将候选与对照服务器命令放入 <code>configs/plan-</em>.json</code> 文件，并提交到与目标 endpoint 匹配的任意 HF Jobs GPU flavor。</p>
+<p>博客中的更多文章</p>
+<p>guidevllminference</p>
+<h2>用一条命令在 HF Jobs 上运行 vLLM 服务器</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li></ul>
+<p>14</p>
+<p>June 26, 2026</p>
+<p>transformersmistralvllm</p>
+<h2>欢迎 Le Chonk：Hugging Face 上的 Mistral Large 4</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/649a943906690b959319d192/k8ZlmJWF3GNpYLHrdpejY.jpeg" alt=""></li><li>+7</li></ul>
+<p>93</p>
+<p>October 29, 2026</p>
+<h3>社区</h3>]]></content:encoded>
+    </item>
     <item>
       <title>Microduck 避障：使用 Isaac Lab 和 Newton 的 Sim2Real 工作流程</title>
       <link>https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance</link>
@@ -170,100 +414,6 @@ uv run nav_pad.py --robot ROBOT_HOST \
 <h3>社区</h3>
 <h2>本文提到的数据集（1 个）</h2>
 <h2>本文提到的 Space（1 个）</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>RoboTrack：面向真实环境中机器人操作的点跟踪</title>
-      <link>https://huggingface.co/blog/allenai/robotrack</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/allenai/robotrack</guid>
-      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：RoboTrack: Point tracking for real-world robotic manipulation</description>
-      <content:encoded><![CDATA[<h1>RoboTrack：面向真实环境中机器人操作的点跟踪</h1>
-<p>企业文章</p>
-<p>发布于 2026 年 11 月 23 日</p>
-<p>4</p>
-<ul><li><a href="https://huggingface.co/urroxyz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/661ab1f1fa3b144a381fa454/IlpZBb9NCjo7ntFwMIH53.png" alt=""></a></li><li><a href="https://huggingface.co/OlehNovitskyi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ZBROC6qF4iWLmFGh7j46q.png" alt=""></a></li><li><a href="https://huggingface.co/jasonren"><img src="https://huggingface.co/avatars/df0413ef62fd4b72aa8d35366d0a619f.svg" alt=""></a></li><li><a href="https://huggingface.co/Fakita1992"><img src="https://huggingface.co/avatars/28735ff55486f36efc0b12d59fbaf29c.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
-<p>Kyle Wiggers</p>
-<p>Ai2Comms</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
-<p>🤖 <a href="https://huggingface.co/collections/allenai/robotrack">模型</a> | 📄 <a href="https://allenai.org/papers/robotrack">技术报告</a> | 📊 <a href="https://huggingface.co/datasets/allenai/RoboTrack-15M">数据</a> | 💻 <a href="https://github.com/allenai/robotrack">代码</a> | 🌐 <a href="https://robotrack.allen.ai/">项目页面</a> | 📈 <a href="https://huggingface.co/datasets/allenai/RoboTrack-Bench">基准</a></p>
-<p><a href="https://www.datocms-assets.com/64837/1795407244-robotrack-blog-draft-google-docs-image-1.png"><img src="https://www.datocms-assets.com/64837/1795407244-robotrack-blog-draft-google-docs-image-1.png" alt="从深青色渐变到洋红色的背景上的 RoboTrack 字标"></a></p>
-<p>在真实环境中部署机器人，需要它在整个交互过程中都能可靠地感知周围情况。要拿起一样东西，机器人需要在夹爪和物体移动时同步跟踪它们的位置。在实验室里，操作移液器的机器人必须一边跟踪吸头的位置，一边将吸头与管口对齐。如果周围物品杂乱、夹爪遮住了正在操作的物体，或观测角度发生变化，这些任务就会变得更难。</p>
-<p>帮助机器人跟踪这类交互的一种办法，是跟踪它所操作物体上的特定位置。这就是<em>点跟踪</em>的基本思路。给定视频一帧中的位置，跟踪器会估计同一个点在后续帧中出现在哪里、什么时候被遮挡、在哪里重新出现。这样的轨迹可以帮助机器人从演示中学习、规划和引导动作，并为物体如何响应动作建立模型。</p>
-<p>机器人系统往往依赖现成的跟踪器，在视频中自动标注运动，并在执行动作时提供反馈。现有跟踪器在成熟的机器人基准上得分很高，这表明它们可能已经可以在真实系统中得到更广泛的应用。我们想看看，在实际操作中遇到多种场景、视角和物体交互时，这些成绩还能否站得住脚。</p>
-<p>我们推出 <a href="https://robotrack.allen.ai/"><strong>RoboTrack</strong></a>，一套用于机器人操作中点跟踪的基准与训练数据。<a href="https://huggingface.co/datasets/allenai/RoboTrack-Bench">RoboTrack-Bench</a> 包含来自 DROID、Ego-Exo4D、<a href="https://allenai.org/blog/molmoact2">MolmoAct 2</a> 和 EgoVerse 的 307 段人工标注视频，涵盖不同的机器人和人手、杂乱场景以及第一人称和第三人称视角。为了研究训练数据如何影响这些情境下的跟踪效果，我们还扩展了 Ai2 用于机器人学习的仿真生态系统 <a href="https://allenai.org/blog/molmospaces">MolmoSpaces</a>，从模拟的机器人操作轨迹中生成密集的点轨迹。这套流程生成了 <a href="https://huggingface.co/datasets/allenai/RoboTrack-15M">RoboTrack-15M</a>，一个专门面向机器人操作的新合成训练数据集。</p>
-<p><a href="https://www.datocms-assets.com/64837/1795407698-robotrack-blog-draft-google-docs-image-2.png"><img src="https://www.datocms-assets.com/64837/1795407698-robotrack-blog-draft-google-docs-image-2.png" alt="RoboTrack 总览图，展示如何用 MolmoSpaces 生成 RoboTrack-15M 仿真数据，以及 RoboTrack-Bench 中人工标注的真实操作视频"></a></p>
-<p><em>RoboTrack 是一套用于机器人操作中点跟踪的基准与训练数据。RoboTrack-15M（左上）基于 MolmoSpaces 生成用于训练的点轨迹。使用这批仿真数据训练，可以改善对真实操作视频的跟踪。RoboTrack-Bench（右上）提供真实操作视频中人工标注的点轨迹。</em></p>
-<p>评估显示，领先的跟踪器在 RoboTrack-Bench 上的得分明显低于在现有机器人基准上的得分。在现有跟踪器的训练中加入 RoboTrack-15M，可以改善它在真实操作视频中的表现，其他跟踪基准上的表现也有提升。我们将这些成果应用到真实机器人上，使用由此训练的跟踪器辅助完成湿实验室任务中的移液器操作。</p>
-<p>今天我们发布 RoboTrack 的两个组成部分，以及两款新的点跟踪模型：<a href="https://huggingface.co/collections/allenai/robotrack">RoboTracker 和 RoboTracker-Warp</a>。RoboTracker 是用我们的技术和数据对 AllTracker 微调得到的，RoboTracker-Warp 则在 CoWTracker 的基础上训练而成。相较于各自已发布的基线，两款模型在三个机器人基准上的平均 AJ 均有提升。RoboTracker-Warp 在我们评估的五个基准中有四个取得了最先进的成绩。我们还一同发布介绍这项工作与评估结果的<a href="https://allenai.org/papers/robotrack">论文</a>。</p>
-<h2>RoboTrack-Bench：真实环境中机器人操作的点跟踪基准</h2>
-<p><a href="https://www.datocms-assets.com/64837/1795407981-robotrack-blog-draft-google-docs-image-3-1.png"><img src="https://www.datocms-assets.com/64837/1795407981-robotrack-blog-draft-google-docs-image-3-1.png" alt="RoboTrack-Bench 中经人工核验的点轨迹示例，分别来自 DROID、Ego-Exo4D、MolmoAct 2 和 EgoVerse"></a></p>
-<p><em>RoboTrack-Bench 概览。图中展示了各个来源数据集的示例（合计 307 段视频、2,522 条经人工核验的轨迹）。MolmoAct 2 和 EgoVerse 每幅图展示一种操作主体。DROID 和 EgoExo4D 展示同步的第一人称视角（上）和第三人称视角（下）。</em></p>
-<p>RoboTrack-Bench 将评估扩展到了受控桌面场景之外。它含有来自 DROID、Ego-Exo4D、MolmoAct 2 和 EgoVerse 的 307 段视频，合计标有 2,522 条点轨迹。这些视频从第一人称和第三人称视角，展示机器人和人手在杂乱场景中操作物体的过程。在复杂背景下，小物体很难跟踪，夹爪也经常会把夹住的物体挡住。</p>
-<p>RoboTrack-Bench 中的每条轨迹均由人工标注并核验。我们请标注人员优先选择会移动或受到遮挡的点。机器人视频中常有大量静止的背景点。参照 TAP-Vid 的标注方法，标注人员借助运动估计追踪每个点在整段视频中的位置。他们还为每条轨迹标记所属类别，即机器人或人体、被操作物体或静止物体，便于今后分析在各类别上的表现。每条轨迹在纳入整理后的数据前，都会由另一组标注人员逐帧复核。</p>
-<p>为支持多视角点定位、点对应和跟踪研究，RoboTrack-Bench 收录了 33 对由两台相机同时拍摄的视频。我们在两个视角中标注同一批物理点，逐帧同步，把同一次交互的不同视角对应起来。</p>
-<h2>点跟踪器在真实操作场景中遇到的困难</h2>
-<p>我们用 RoboTrack-Bench 和其他四个基准评估了四款领先的跟踪器，分别是 CoTracker3、BootsTAPNext、AllTracker 和 CoWTracker。其他基准为 <a href="https://arxiv.org/abs/2308.15975">RoboTAP</a>（真实桌面操作）、RGB-Stacking（仿真操作），以及 DAVIS 和 Kinetics（通用视频）。我们报告的指标是 Average Jaccard（AJ），它衡量跟踪精度和可见性预测，分数越高越好。</p>
-<p><a href="https://www.datocms-assets.com/64837/1795408316-robotrack-blog-draft-google-docs-image-4.png"><img src="https://www.datocms-assets.com/64837/1795408316-robotrack-blog-draft-google-docs-image-4.png" alt="评估表，比较 CoTracker3、BootsTAPNext、AllTracker 和 CoWTracker 在 RoboTrack-Bench、RoboTAP、RGB-Stacking、DAVIS 和 Kinetics 上的 Average Jaccard 得分"></a></p>
-<p><strong>RoboTrack-Bench 比现有机器人基准更难。</strong> 我们评估的每款最终版跟踪器在 RoboTrack-Bench 上的得分都低于在 RoboTAP 上的得分。RoboTAP 是这些基准中唯一另一个使用真实视频的机器人基准。各模型得分下降 3.0 至 6.6 AJ。就连表现最好的现成跟踪器 CoWTracker，也从 RoboTAP 上的 70.5 AJ 下降到 RoboTrack-Bench 上的 63.9 AJ。各模型的架构和训练数据不同，都会出现下降，说明 RoboTrack-Bench 能揭示多种跟踪器的弱点。</p>
-<p><strong>RGB-Stacking 更能体现合成数据训练带来的优势。</strong> BootsTAPNext 是在 TAPNext 的基础上，用 1,500 万段真实视频继续训练得到的。这些额外的真实数据让它在 RoboTrack-Bench 上提高了 5.1 AJ（从 55.1 升至 60.2），却让它在 RGB-Stacking 上下降了 9.5 AJ（从 75.0 降至 65.5）。RGB-Stacking 使用模拟的堆叠积木视频，在这个基准上，仅用 Kubric 训练的模型排名更高。在真实操作视频上的排名则正好相反。</p>
-<p><strong>在旧基准上的领先幅度难以延续。</strong> CoWTracker 在 RoboTAP 上领先 CoTracker3 4.7 AJ，在 RoboTrack-Bench 上却只领先 2.1 AJ。AllTracker 在 RoboTAP 上领先 CoTracker3 2.7 分，到了 RoboTrack-Bench 上只领先 0.8 分。BootsTAPNext 是 DAVIS 上表现最好的模型，但在 RoboTrack-Bench 上落后 CoWTracker 3.7 AJ。尽管它用 1,500 万段真实视频训练过，却仍不及只用 Kubric 训练的 AllTracker（60.2 比 61.4 AJ）。</p>
-<p>这些结果表明，现有基准不能完整反映跟踪器在真实操作场景中的表现。用更多样的场景评估，可以发现四款跟踪器都面临的难题，也会改变它们相对优势的比较结果。</p>
-<p><em>注：每款跟踪器使用其作者提供的设置运行，并按同样的方法评分。我们修复了 AllTracker 发布的评估代码中的一个评分错误，因此测得的 AllTracker 分数与原先公布的略有不同。此外，我们在 RoboTAP 和 Kinetics 上评估了所有标注点，采用的流程有别于 AllTracker。完整评估流程见论文。</em></p>
-<h2>RoboTrack-15M：来自 MolmoSpaces 的仿真数据</h2>
-<p>为什么这些跟踪器难以应对真实的操作场景？许多跟踪器使用 <a href="https://github.com/google-research/kubric">Kubric</a> 生成的合成视频训练，视频里会把物体抛入场景。这些视频提供了运动和遮挡样例，但并未着重呈现机器人抓取和移动物体的过程。我们希望测试，把这类交互的轨迹加入训练，能否改善对真实操作视频的跟踪。</p>
-<p>MolmoSpaces 是 Ai2 的机器人仿真环境。我们在现有操作仿真的基础上扩展了功能，从机器人和它所操作的物体上生成密集的点轨迹。在每个仿真回合中，机械臂会拾起一件日常物品，例如杯子、盘子或积木。两个相机分别位于手腕和机器人底座，记录这一交互，画面由 MuJoCo 渲染。利用仿真器的几何信息、物体位姿和相机信息，我们无需人工标注即可计算每一帧中各点的位置与可见性，并过滤掉背景和机器人固定底座上的静止点。</p>
-<p>这套流程生成了用于训练的 RoboTrack-15M。RoboTrack-15M 包含 300 个仿真住宅中的 3,000 段视频，每段有 5,000 条轨迹，共 1,500 万条轨迹。</p>
-<p><a href="https://www.datocms-assets.com/64837/1795408512-robotrack-blog-draft-google-docs-image-5.png"><img src="https://www.datocms-assets.com/64837/1795408512-robotrack-blog-draft-google-docs-image-5.png" alt="基于 MolmoSpaces 和 MuJoCo 的 RoboTrack-15M 合成数据生成流程图"></a></p>
-<p><em>RoboTrack-15M 的数据生成流程。物体、室内场景和机器人的抓取动作来自 MolmoSpaces。我们使用仿真器的几何信息和相机信息计算各点的位置和可见性。</em></p>
-<h2>RoboTracker：用仿真操作数据训练的点跟踪器</h2>
-<p>我们推出两款基于 RoboTrack-15M 训练的模型，RoboTracker 和 RoboTracker-Warp。两款模型都以现有跟踪器为基础，用 RoboTrack-15M 和各自的原始训练数据一起微调。RoboTracker 基于有 1,700 万参数的轻量模型 AllTracker，RoboTracker-Warp 则基于规模大得多、约有 10 亿参数的 CoWTracker。</p>
-<p>我们发布了两款模型的检查点，供研究人员检查并在此基础上继续开发。RoboTracker-Warp 的权重仅限非商业用途。</p>
-<p><strong>加入 RoboTrack-15M 可以提高机器人基准上的成绩。</strong> 与各自已发布的 AllTracker 和 CoWTracker 模型相比，RoboTracker 在 RoboTrack-Bench 上提高了 0.8 AJ（从 62.6 升至 63.4），RoboTracker-Warp 提高了 2.1 AJ（从 63.9 升至 66.0）。三个机器人基准的平均分最高提升 1.2 AJ。在通用视频基准上，两款模型都与其基础模型表现相当。总体来看，在我们评估的五个基准中，有四个是 RoboTracker-Warp 的 AJ 最高。唯一例外是 DAVIS，BootsTAPNext 和 CoWTracker 的得分略高。</p>
-<p><a href="https://www.datocms-assets.com/64837/1795408662-robotrack-blog-draft-google-docs-image-6.png"><img src="https://www.datocms-assets.com/64837/1795408662-robotrack-blog-draft-google-docs-image-6.png" alt="比较 AllTracker（RoboTracker）和 CoWTracker（RoboTracker-Warp）在用 RoboTrack-15M 微调前后的 Average Jaccard 得分"></a></p>
-<p><em>AllTracker（RoboTracker）和 CoWTracker（RoboTracker-Warp）经过 RoboTrack-15M 微调后的得分提升。机器人基准的平均分根据 RoboTrack-Bench、RoboTAP 和 RGB-Stacking 的得分计算。</em></p>
-<p><a href="https://www.datocms-assets.com/64837/1795408710-robotrack-blog-draft-google-docs-image-7.png"><img src="https://www.datocms-assets.com/64837/1795408710-robotrack-blog-draft-google-docs-image-7.png" alt="按视频来源数据集拆分的 RoboTrack-Bench 结果图表"></a></p>
-<p><em>按视频来源列出的 RoboTrack-Bench 结果。</em></p>
-<p>按来源细分，就能看出提升来自哪里。RoboTracker-Warp 在每个来源数据集上都提高了约 1 至 3 AJ，EgoVerse 和 Ego-Exo4D 的人手视频也不例外，尽管 RoboTrack-15M 只包含机械臂。RoboTracker 的提升较小，主要来自机器人视频，在 DROID Franka 和 EgoVerse EVA 上尤为明显。</p>
-<h2>什么样的仿真数据适合点跟踪？</h2>
-<p>RoboTrack-15M 是多轮合成数据迭代和实验的结果。事实上，第一版数据并未提高 RoboTrack-Bench 得分。为了找出原因，我们研究了一个简单的问题：相比真实操作视频，仿真中被跟踪的点移动了多远？我们为每一版数据绘制直方图，测量它与 RoboTrack-Bench 的分布差异（见下图）。</p>
-<p><a href="https://www.datocms-assets.com/64837/1795408926-robotrack-blog-draft-google-docs-image-8.png"><img src="https://www.datocms-assets.com/64837/1795408926-robotrack-blog-draft-google-docs-image-8.png" alt="直方图比较不同版本训练数据与 RoboTrack-Bench 的点位移分布及 Jensen–Shannon 散度，分别展示第三人称和第一人称视角"></a></p>
-<p><em>比较各版训练数据与 RoboTrack-Bench 中各点移动的距离，分别展示第三人称视角（上）和第一人称视角（下）。两个直方图之间的距离用 Jensen–Shannon 散度（JSD）衡量，0 表示直方图完全相同。Kubric 只有一种相机类型，因此两行采用的是同一批视频片段。AJ 在完整的 RoboTrack-Bench 上测得。</em></p>
-<p>直方图揭示了问题所在。第一版会从画面各处抽取点，包括墙面、地板和家具，因此固定的第三人称相机看到的大部分点从未移动。为解决这个问题，下一版只在机器人和它所操作的物体上采样，让手腕相机的视角更接近真实视频，得分也随之提高。我们还发现，Kubric 在手腕视角上有同样的分布偏差。这或许解释了为何单靠它难以覆盖机器人操作中的多种视角。最后，我们把机器人固定底座和安装平台上的采样点移到活动机械臂上，让第三人称视角也与真实视频的分布接近。在消融实验中，得分由此提高到 63.0 AJ，比只使用 Kubric 的对照高 1.5 分。</p>
-<h2>应用：用点跟踪辅助机器人操作</h2>
-<p><a href="https://www.datocms-assets.com/64837/1795409178-robotrack-blog-draft-google-docs-image-9-4.png"><img src="https://www.datocms-assets.com/64837/1795409178-robotrack-blog-draft-google-docs-image-9-4.png" alt="通过 RoboTracker 的点轨迹引导机器人从一次演示中学习湿实验室移液的流程图"></a></p>
-<p><em>我们的湿实验室流程用一次演示中的点轨迹引导机器人。</em></p>
-<p>点跟踪效果变好，对机器人技术意味着什么？许多机器人系统已经发现，点轨迹能简洁地表示物体的运动，可用于直接引导机器人的策略。为检验实际效果，我们为一项湿实验室任务构建了类似的系统，让机器人把液体从一个样品瓶移到另一个。</p>
-<p>机械臂拿起电子移液器，从第一个样品瓶吸取液体，将液体注入第二个样品瓶，再把移液器放回支架。任务的难点在于，吸头与瓶口的对准误差必须控制在毫米范围内，机器人还需要适应不同试验中的样品瓶布局。</p>
-<p>参照 RoboTap，机器人通过单次演示学习这项任务。我们通过远程操作录制演示，将其拆解为多个步骤。测试时，机器人会把相机拍到的画面与演示画面对比，用 RoboTracker 估计对准样品瓶所需的动作。之后的运动在没有进一步反馈的情况下执行，因此只有估计准确，任务才能成功。</p>
-<p>我们用三种办法估计样品瓶移到了哪里：</p>
-<ul><li>光流（RAFT）直接匹配演示图像和相机实时图像中的像素。</li><li>物体掩码（SAM3）在每张新图像中找到样品瓶，把其掩码的中心与演示画面对齐。</li><li>点跟踪（RoboTracker）在视频中持续跟踪样品瓶上的各点，将演示图像中的点与实时图像中的点匹配起来。</li></ul>
-<p>每种方法均在样品瓶摆放位置不同的 20 种布局上运行。其中 10 种视野无遮挡，另 10 种有部分遮挡。在 20 次试验中，点跟踪成功完成了 17 次完整的液体转移，物体掩码和光流分别成功 8 次和 5 次。点跟踪在无遮挡的 10 次试验中全部成功，在有遮挡的 10 次试验中成功 7 次，而基于掩码的方法在有遮挡的试验中只成功了 1 次。</p>
-<p>其他方法各有不同的失效情形。当样品瓶的位置离演示中的位置很远时，光流会失效。掩码可能选中外观相似的物体，也可能在发生遮挡时丢失样品瓶。点跟踪能逐帧跟踪同一个样品瓶，因而既能应对较大位移，也能应对部分遮挡。结果表明，点跟踪有望用于需要精确操作的机器人任务。</p>
-<p><a href="https://www.datocms-assets.com/64837/1795408826-robotrack-blog-draft-google-docs-image-9.png"><img src="https://www.datocms-assets.com/64837/1795408826-robotrack-blog-draft-google-docs-image-9.png" alt="条形图，展示光流、物体掩码和 RoboTracker 点跟踪在有无遮挡的湿实验室移液试验中的成功率"></a></p>
-<p><em>各方法在无遮挡和有遮挡的移液试验中的成功率（各 10 种布局）。机器人完成整次液体转移才计为成功。</em></p>
-<h2>局限和后续方向</h2>
-<p>我们发现，跟踪器仍难以处理长时间遮挡、在目标点再次出现时重新找到它们，以及在杂乱背景中跟踪小物体。用 RoboTrack-15M 训练可以改善表现，但这些失效情形仍给实际应用带来挑战。</p>
-<p>仿真目前也主要关注拾起日常物品，尚未涵盖移液器操作等任务需要的精细动作。下一步可以更贴近实际地模拟这些任务，再测试用相应轨迹训练能否改善实际部署中的跟踪效果。</p>
-<p>RoboTrack 让我们能衡量这些失效情形，并生成针对性的训练数据。希望这套基准、仿真流程和发布的模型能帮助其他研究人员开发出机器人可以依赖的跟踪器。</p>
-<h2>本文提及的数据集 2</h2>
-<h2>本文提及的合集 1</h2>
-<p>作者的更多文章</p>
-<h2>XYBench：识别表面提问背后的真正问题</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>9</p>
-<p>2026 年 11 月 13 日</p>
-<h2>ToyBlocks：用于机器人学习和评估的受控环境</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>22</p>
-<p>2026 年 11 月 6 日</p>
-<h3>社区</h3>
-<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/661ab1f1fa3b144a381fa454/IlpZBb9NCjo7ntFwMIH53.png" alt=""></p>
-<p>urroxyz</p>
-<p>约 10 小时前</p>
-<p>Ai2，做得真棒！</p>
-<h2>本文提及的数据集 2</h2>
-<h2>本文提及的合集 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>如何构建与维护 agentic 评估</title>
@@ -486,6 +636,100 @@ harbor run -p datasets/my-evals -a nop -e hf-sandbox</code></pre>
 <h2>本文提到的数据集 5</h2>
 <h2>本文提到的 Space 1</h2>
 <h2>本文提到的论文 10</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>RoboTrack：面向真实环境中机器人操作的点跟踪</title>
+      <link>https://huggingface.co/blog/allenai/robotrack</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/robotrack</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：RoboTrack: Point tracking for real-world robotic manipulation</description>
+      <content:encoded><![CDATA[<h1>RoboTrack：面向真实环境中机器人操作的点跟踪</h1>
+<p>企业文章</p>
+<p>发布于 2026 年 11 月 23 日</p>
+<p>4</p>
+<ul><li><a href="https://huggingface.co/urroxyz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/661ab1f1fa3b144a381fa454/IlpZBb9NCjo7ntFwMIH53.png" alt=""></a></li><li><a href="https://huggingface.co/OlehNovitskyi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ZBROC6qF4iWLmFGh7j46q.png" alt=""></a></li><li><a href="https://huggingface.co/jasonren"><img src="https://huggingface.co/avatars/df0413ef62fd4b72aa8d35366d0a619f.svg" alt=""></a></li><li><a href="https://huggingface.co/Fakita1992"><img src="https://huggingface.co/avatars/28735ff55486f36efc0b12d59fbaf29c.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>🤖 <a href="https://huggingface.co/collections/allenai/robotrack">模型</a> | 📄 <a href="https://allenai.org/papers/robotrack">技术报告</a> | 📊 <a href="https://huggingface.co/datasets/allenai/RoboTrack-15M">数据</a> | 💻 <a href="https://github.com/allenai/robotrack">代码</a> | 🌐 <a href="https://robotrack.allen.ai/">项目页面</a> | 📈 <a href="https://huggingface.co/datasets/allenai/RoboTrack-Bench">基准</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1795407244-robotrack-blog-draft-google-docs-image-1.png"><img src="https://www.datocms-assets.com/64837/1795407244-robotrack-blog-draft-google-docs-image-1.png" alt="从深青色渐变到洋红色的背景上的 RoboTrack 字标"></a></p>
+<p>在真实环境中部署机器人，需要它在整个交互过程中都能可靠地感知周围情况。要拿起一样东西，机器人需要在夹爪和物体移动时同步跟踪它们的位置。在实验室里，操作移液器的机器人必须一边跟踪吸头的位置，一边将吸头与管口对齐。如果周围物品杂乱、夹爪遮住了正在操作的物体，或观测角度发生变化，这些任务就会变得更难。</p>
+<p>帮助机器人跟踪这类交互的一种办法，是跟踪它所操作物体上的特定位置。这就是<em>点跟踪</em>的基本思路。给定视频一帧中的位置，跟踪器会估计同一个点在后续帧中出现在哪里、什么时候被遮挡、在哪里重新出现。这样的轨迹可以帮助机器人从演示中学习、规划和引导动作，并为物体如何响应动作建立模型。</p>
+<p>机器人系统往往依赖现成的跟踪器，在视频中自动标注运动，并在执行动作时提供反馈。现有跟踪器在成熟的机器人基准上得分很高，这表明它们可能已经可以在真实系统中得到更广泛的应用。我们想看看，在实际操作中遇到多种场景、视角和物体交互时，这些成绩还能否站得住脚。</p>
+<p>我们推出 <a href="https://robotrack.allen.ai/"><strong>RoboTrack</strong></a>，一套用于机器人操作中点跟踪的基准与训练数据。<a href="https://huggingface.co/datasets/allenai/RoboTrack-Bench">RoboTrack-Bench</a> 包含来自 DROID、Ego-Exo4D、<a href="https://allenai.org/blog/molmoact2">MolmoAct 2</a> 和 EgoVerse 的 307 段人工标注视频，涵盖不同的机器人和人手、杂乱场景以及第一人称和第三人称视角。为了研究训练数据如何影响这些情境下的跟踪效果，我们还扩展了 Ai2 用于机器人学习的仿真生态系统 <a href="https://allenai.org/blog/molmospaces">MolmoSpaces</a>，从模拟的机器人操作轨迹中生成密集的点轨迹。这套流程生成了 <a href="https://huggingface.co/datasets/allenai/RoboTrack-15M">RoboTrack-15M</a>，一个专门面向机器人操作的新合成训练数据集。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795407698-robotrack-blog-draft-google-docs-image-2.png"><img src="https://www.datocms-assets.com/64837/1795407698-robotrack-blog-draft-google-docs-image-2.png" alt="RoboTrack 总览图，展示如何用 MolmoSpaces 生成 RoboTrack-15M 仿真数据，以及 RoboTrack-Bench 中人工标注的真实操作视频"></a></p>
+<p><em>RoboTrack 是一套用于机器人操作中点跟踪的基准与训练数据。RoboTrack-15M（左上）基于 MolmoSpaces 生成用于训练的点轨迹。使用这批仿真数据训练，可以改善对真实操作视频的跟踪。RoboTrack-Bench（右上）提供真实操作视频中人工标注的点轨迹。</em></p>
+<p>评估显示，领先的跟踪器在 RoboTrack-Bench 上的得分明显低于在现有机器人基准上的得分。在现有跟踪器的训练中加入 RoboTrack-15M，可以改善它在真实操作视频中的表现，其他跟踪基准上的表现也有提升。我们将这些成果应用到真实机器人上，使用由此训练的跟踪器辅助完成湿实验室任务中的移液器操作。</p>
+<p>今天我们发布 RoboTrack 的两个组成部分，以及两款新的点跟踪模型：<a href="https://huggingface.co/collections/allenai/robotrack">RoboTracker 和 RoboTracker-Warp</a>。RoboTracker 是用我们的技术和数据对 AllTracker 微调得到的，RoboTracker-Warp 则在 CoWTracker 的基础上训练而成。相较于各自已发布的基线，两款模型在三个机器人基准上的平均 AJ 均有提升。RoboTracker-Warp 在我们评估的五个基准中有四个取得了最先进的成绩。我们还一同发布介绍这项工作与评估结果的<a href="https://allenai.org/papers/robotrack">论文</a>。</p>
+<h2>RoboTrack-Bench：真实环境中机器人操作的点跟踪基准</h2>
+<p><a href="https://www.datocms-assets.com/64837/1795407981-robotrack-blog-draft-google-docs-image-3-1.png"><img src="https://www.datocms-assets.com/64837/1795407981-robotrack-blog-draft-google-docs-image-3-1.png" alt="RoboTrack-Bench 中经人工核验的点轨迹示例，分别来自 DROID、Ego-Exo4D、MolmoAct 2 和 EgoVerse"></a></p>
+<p><em>RoboTrack-Bench 概览。图中展示了各个来源数据集的示例（合计 307 段视频、2,522 条经人工核验的轨迹）。MolmoAct 2 和 EgoVerse 每幅图展示一种操作主体。DROID 和 EgoExo4D 展示同步的第一人称视角（上）和第三人称视角（下）。</em></p>
+<p>RoboTrack-Bench 将评估扩展到了受控桌面场景之外。它含有来自 DROID、Ego-Exo4D、MolmoAct 2 和 EgoVerse 的 307 段视频，合计标有 2,522 条点轨迹。这些视频从第一人称和第三人称视角，展示机器人和人手在杂乱场景中操作物体的过程。在复杂背景下，小物体很难跟踪，夹爪也经常会把夹住的物体挡住。</p>
+<p>RoboTrack-Bench 中的每条轨迹均由人工标注并核验。我们请标注人员优先选择会移动或受到遮挡的点。机器人视频中常有大量静止的背景点。参照 TAP-Vid 的标注方法，标注人员借助运动估计追踪每个点在整段视频中的位置。他们还为每条轨迹标记所属类别，即机器人或人体、被操作物体或静止物体，便于今后分析在各类别上的表现。每条轨迹在纳入整理后的数据前，都会由另一组标注人员逐帧复核。</p>
+<p>为支持多视角点定位、点对应和跟踪研究，RoboTrack-Bench 收录了 33 对由两台相机同时拍摄的视频。我们在两个视角中标注同一批物理点，逐帧同步，把同一次交互的不同视角对应起来。</p>
+<h2>点跟踪器在真实操作场景中遇到的困难</h2>
+<p>我们用 RoboTrack-Bench 和其他四个基准评估了四款领先的跟踪器，分别是 CoTracker3、BootsTAPNext、AllTracker 和 CoWTracker。其他基准为 <a href="https://arxiv.org/abs/2308.15975">RoboTAP</a>（真实桌面操作）、RGB-Stacking（仿真操作），以及 DAVIS 和 Kinetics（通用视频）。我们报告的指标是 Average Jaccard（AJ），它衡量跟踪精度和可见性预测，分数越高越好。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408316-robotrack-blog-draft-google-docs-image-4.png"><img src="https://www.datocms-assets.com/64837/1795408316-robotrack-blog-draft-google-docs-image-4.png" alt="评估表，比较 CoTracker3、BootsTAPNext、AllTracker 和 CoWTracker 在 RoboTrack-Bench、RoboTAP、RGB-Stacking、DAVIS 和 Kinetics 上的 Average Jaccard 得分"></a></p>
+<p><strong>RoboTrack-Bench 比现有机器人基准更难。</strong> 我们评估的每款最终版跟踪器在 RoboTrack-Bench 上的得分都低于在 RoboTAP 上的得分。RoboTAP 是这些基准中唯一另一个使用真实视频的机器人基准。各模型得分下降 3.0 至 6.6 AJ。就连表现最好的现成跟踪器 CoWTracker，也从 RoboTAP 上的 70.5 AJ 下降到 RoboTrack-Bench 上的 63.9 AJ。各模型的架构和训练数据不同，都会出现下降，说明 RoboTrack-Bench 能揭示多种跟踪器的弱点。</p>
+<p><strong>RGB-Stacking 更能体现合成数据训练带来的优势。</strong> BootsTAPNext 是在 TAPNext 的基础上，用 1,500 万段真实视频继续训练得到的。这些额外的真实数据让它在 RoboTrack-Bench 上提高了 5.1 AJ（从 55.1 升至 60.2），却让它在 RGB-Stacking 上下降了 9.5 AJ（从 75.0 降至 65.5）。RGB-Stacking 使用模拟的堆叠积木视频，在这个基准上，仅用 Kubric 训练的模型排名更高。在真实操作视频上的排名则正好相反。</p>
+<p><strong>在旧基准上的领先幅度难以延续。</strong> CoWTracker 在 RoboTAP 上领先 CoTracker3 4.7 AJ，在 RoboTrack-Bench 上却只领先 2.1 AJ。AllTracker 在 RoboTAP 上领先 CoTracker3 2.7 分，到了 RoboTrack-Bench 上只领先 0.8 分。BootsTAPNext 是 DAVIS 上表现最好的模型，但在 RoboTrack-Bench 上落后 CoWTracker 3.7 AJ。尽管它用 1,500 万段真实视频训练过，却仍不及只用 Kubric 训练的 AllTracker（60.2 比 61.4 AJ）。</p>
+<p>这些结果表明，现有基准不能完整反映跟踪器在真实操作场景中的表现。用更多样的场景评估，可以发现四款跟踪器都面临的难题，也会改变它们相对优势的比较结果。</p>
+<p><em>注：每款跟踪器使用其作者提供的设置运行，并按同样的方法评分。我们修复了 AllTracker 发布的评估代码中的一个评分错误，因此测得的 AllTracker 分数与原先公布的略有不同。此外，我们在 RoboTAP 和 Kinetics 上评估了所有标注点，采用的流程有别于 AllTracker。完整评估流程见论文。</em></p>
+<h2>RoboTrack-15M：来自 MolmoSpaces 的仿真数据</h2>
+<p>为什么这些跟踪器难以应对真实的操作场景？许多跟踪器使用 <a href="https://github.com/google-research/kubric">Kubric</a> 生成的合成视频训练，视频里会把物体抛入场景。这些视频提供了运动和遮挡样例，但并未着重呈现机器人抓取和移动物体的过程。我们希望测试，把这类交互的轨迹加入训练，能否改善对真实操作视频的跟踪。</p>
+<p>MolmoSpaces 是 Ai2 的机器人仿真环境。我们在现有操作仿真的基础上扩展了功能，从机器人和它所操作的物体上生成密集的点轨迹。在每个仿真回合中，机械臂会拾起一件日常物品，例如杯子、盘子或积木。两个相机分别位于手腕和机器人底座，记录这一交互，画面由 MuJoCo 渲染。利用仿真器的几何信息、物体位姿和相机信息，我们无需人工标注即可计算每一帧中各点的位置与可见性，并过滤掉背景和机器人固定底座上的静止点。</p>
+<p>这套流程生成了用于训练的 RoboTrack-15M。RoboTrack-15M 包含 300 个仿真住宅中的 3,000 段视频，每段有 5,000 条轨迹，共 1,500 万条轨迹。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408512-robotrack-blog-draft-google-docs-image-5.png"><img src="https://www.datocms-assets.com/64837/1795408512-robotrack-blog-draft-google-docs-image-5.png" alt="基于 MolmoSpaces 和 MuJoCo 的 RoboTrack-15M 合成数据生成流程图"></a></p>
+<p><em>RoboTrack-15M 的数据生成流程。物体、室内场景和机器人的抓取动作来自 MolmoSpaces。我们使用仿真器的几何信息和相机信息计算各点的位置和可见性。</em></p>
+<h2>RoboTracker：用仿真操作数据训练的点跟踪器</h2>
+<p>我们推出两款基于 RoboTrack-15M 训练的模型，RoboTracker 和 RoboTracker-Warp。两款模型都以现有跟踪器为基础，用 RoboTrack-15M 和各自的原始训练数据一起微调。RoboTracker 基于有 1,700 万参数的轻量模型 AllTracker，RoboTracker-Warp 则基于规模大得多、约有 10 亿参数的 CoWTracker。</p>
+<p>我们发布了两款模型的检查点，供研究人员检查并在此基础上继续开发。RoboTracker-Warp 的权重仅限非商业用途。</p>
+<p><strong>加入 RoboTrack-15M 可以提高机器人基准上的成绩。</strong> 与各自已发布的 AllTracker 和 CoWTracker 模型相比，RoboTracker 在 RoboTrack-Bench 上提高了 0.8 AJ（从 62.6 升至 63.4），RoboTracker-Warp 提高了 2.1 AJ（从 63.9 升至 66.0）。三个机器人基准的平均分最高提升 1.2 AJ。在通用视频基准上，两款模型都与其基础模型表现相当。总体来看，在我们评估的五个基准中，有四个是 RoboTracker-Warp 的 AJ 最高。唯一例外是 DAVIS，BootsTAPNext 和 CoWTracker 的得分略高。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408662-robotrack-blog-draft-google-docs-image-6.png"><img src="https://www.datocms-assets.com/64837/1795408662-robotrack-blog-draft-google-docs-image-6.png" alt="比较 AllTracker（RoboTracker）和 CoWTracker（RoboTracker-Warp）在用 RoboTrack-15M 微调前后的 Average Jaccard 得分"></a></p>
+<p><em>AllTracker（RoboTracker）和 CoWTracker（RoboTracker-Warp）经过 RoboTrack-15M 微调后的得分提升。机器人基准的平均分根据 RoboTrack-Bench、RoboTAP 和 RGB-Stacking 的得分计算。</em></p>
+<p><a href="https://www.datocms-assets.com/64837/1795408710-robotrack-blog-draft-google-docs-image-7.png"><img src="https://www.datocms-assets.com/64837/1795408710-robotrack-blog-draft-google-docs-image-7.png" alt="按视频来源数据集拆分的 RoboTrack-Bench 结果图表"></a></p>
+<p><em>按视频来源列出的 RoboTrack-Bench 结果。</em></p>
+<p>按来源细分，就能看出提升来自哪里。RoboTracker-Warp 在每个来源数据集上都提高了约 1 至 3 AJ，EgoVerse 和 Ego-Exo4D 的人手视频也不例外，尽管 RoboTrack-15M 只包含机械臂。RoboTracker 的提升较小，主要来自机器人视频，在 DROID Franka 和 EgoVerse EVA 上尤为明显。</p>
+<h2>什么样的仿真数据适合点跟踪？</h2>
+<p>RoboTrack-15M 是多轮合成数据迭代和实验的结果。事实上，第一版数据并未提高 RoboTrack-Bench 得分。为了找出原因，我们研究了一个简单的问题：相比真实操作视频，仿真中被跟踪的点移动了多远？我们为每一版数据绘制直方图，测量它与 RoboTrack-Bench 的分布差异（见下图）。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408926-robotrack-blog-draft-google-docs-image-8.png"><img src="https://www.datocms-assets.com/64837/1795408926-robotrack-blog-draft-google-docs-image-8.png" alt="直方图比较不同版本训练数据与 RoboTrack-Bench 的点位移分布及 Jensen–Shannon 散度，分别展示第三人称和第一人称视角"></a></p>
+<p><em>比较各版训练数据与 RoboTrack-Bench 中各点移动的距离，分别展示第三人称视角（上）和第一人称视角（下）。两个直方图之间的距离用 Jensen–Shannon 散度（JSD）衡量，0 表示直方图完全相同。Kubric 只有一种相机类型，因此两行采用的是同一批视频片段。AJ 在完整的 RoboTrack-Bench 上测得。</em></p>
+<p>直方图揭示了问题所在。第一版会从画面各处抽取点，包括墙面、地板和家具，因此固定的第三人称相机看到的大部分点从未移动。为解决这个问题，下一版只在机器人和它所操作的物体上采样，让手腕相机的视角更接近真实视频，得分也随之提高。我们还发现，Kubric 在手腕视角上有同样的分布偏差。这或许解释了为何单靠它难以覆盖机器人操作中的多种视角。最后，我们把机器人固定底座和安装平台上的采样点移到活动机械臂上，让第三人称视角也与真实视频的分布接近。在消融实验中，得分由此提高到 63.0 AJ，比只使用 Kubric 的对照高 1.5 分。</p>
+<h2>应用：用点跟踪辅助机器人操作</h2>
+<p><a href="https://www.datocms-assets.com/64837/1795409178-robotrack-blog-draft-google-docs-image-9-4.png"><img src="https://www.datocms-assets.com/64837/1795409178-robotrack-blog-draft-google-docs-image-9-4.png" alt="通过 RoboTracker 的点轨迹引导机器人从一次演示中学习湿实验室移液的流程图"></a></p>
+<p><em>我们的湿实验室流程用一次演示中的点轨迹引导机器人。</em></p>
+<p>点跟踪效果变好，对机器人技术意味着什么？许多机器人系统已经发现，点轨迹能简洁地表示物体的运动，可用于直接引导机器人的策略。为检验实际效果，我们为一项湿实验室任务构建了类似的系统，让机器人把液体从一个样品瓶移到另一个。</p>
+<p>机械臂拿起电子移液器，从第一个样品瓶吸取液体，将液体注入第二个样品瓶，再把移液器放回支架。任务的难点在于，吸头与瓶口的对准误差必须控制在毫米范围内，机器人还需要适应不同试验中的样品瓶布局。</p>
+<p>参照 RoboTap，机器人通过单次演示学习这项任务。我们通过远程操作录制演示，将其拆解为多个步骤。测试时，机器人会把相机拍到的画面与演示画面对比，用 RoboTracker 估计对准样品瓶所需的动作。之后的运动在没有进一步反馈的情况下执行，因此只有估计准确，任务才能成功。</p>
+<p>我们用三种办法估计样品瓶移到了哪里：</p>
+<ul><li>光流（RAFT）直接匹配演示图像和相机实时图像中的像素。</li><li>物体掩码（SAM3）在每张新图像中找到样品瓶，把其掩码的中心与演示画面对齐。</li><li>点跟踪（RoboTracker）在视频中持续跟踪样品瓶上的各点，将演示图像中的点与实时图像中的点匹配起来。</li></ul>
+<p>每种方法均在样品瓶摆放位置不同的 20 种布局上运行。其中 10 种视野无遮挡，另 10 种有部分遮挡。在 20 次试验中，点跟踪成功完成了 17 次完整的液体转移，物体掩码和光流分别成功 8 次和 5 次。点跟踪在无遮挡的 10 次试验中全部成功，在有遮挡的 10 次试验中成功 7 次，而基于掩码的方法在有遮挡的试验中只成功了 1 次。</p>
+<p>其他方法各有不同的失效情形。当样品瓶的位置离演示中的位置很远时，光流会失效。掩码可能选中外观相似的物体，也可能在发生遮挡时丢失样品瓶。点跟踪能逐帧跟踪同一个样品瓶，因而既能应对较大位移，也能应对部分遮挡。结果表明，点跟踪有望用于需要精确操作的机器人任务。</p>
+<p><a href="https://www.datocms-assets.com/64837/1795408826-robotrack-blog-draft-google-docs-image-9.png"><img src="https://www.datocms-assets.com/64837/1795408826-robotrack-blog-draft-google-docs-image-9.png" alt="条形图，展示光流、物体掩码和 RoboTracker 点跟踪在有无遮挡的湿实验室移液试验中的成功率"></a></p>
+<p><em>各方法在无遮挡和有遮挡的移液试验中的成功率（各 10 种布局）。机器人完成整次液体转移才计为成功。</em></p>
+<h2>局限和后续方向</h2>
+<p>我们发现，跟踪器仍难以处理长时间遮挡、在目标点再次出现时重新找到它们，以及在杂乱背景中跟踪小物体。用 RoboTrack-15M 训练可以改善表现，但这些失效情形仍给实际应用带来挑战。</p>
+<p>仿真目前也主要关注拾起日常物品，尚未涵盖移液器操作等任务需要的精细动作。下一步可以更贴近实际地模拟这些任务，再测试用相应轨迹训练能否改善实际部署中的跟踪效果。</p>
+<p>RoboTrack 让我们能衡量这些失效情形，并生成针对性的训练数据。希望这套基准、仿真流程和发布的模型能帮助其他研究人员开发出机器人可以依赖的跟踪器。</p>
+<h2>本文提及的数据集 2</h2>
+<h2>本文提及的合集 1</h2>
+<p>作者的更多文章</p>
+<h2>XYBench：识别表面提问背后的真正问题</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>9</p>
+<p>2026 年 11 月 13 日</p>
+<h2>ToyBlocks：用于机器人学习和评估的受控环境</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>22</p>
+<p>2026 年 11 月 6 日</p>
+<h3>社区</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/661ab1f1fa3b144a381fa454/IlpZBb9NCjo7ntFwMIH53.png" alt=""></p>
+<p>urroxyz</p>
+<p>约 10 小时前</p>
+<p>Ai2，做得真棒！</p>
+<h2>本文提及的数据集 2</h2>
+<h2>本文提及的合集 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>欢迎 Inkling 2 Mini：为本地部署带来前沿性能</title>
@@ -1108,159 +1352,6 @@ print(response.choices[0].message.content)</code></pre>
 <h3>社区</h3>]]></content:encoded>
     </item>
     <item>
-      <title>Streamhouse 中的时间序列模型：新领域和用例</title>
-      <link>https://huggingface.co/blog/ibm-research/time-series-powered-streamhouse</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/time-series-powered-streamhouse</guid>
-      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Time-Series Models in the Streamhouse: A New Frontier and Use Cases</description>
-      <content:encoded><![CDATA[<h1>Streamhouse 中的时间序列模型：新领域和用例</h1>
-<p>企业文章</p>
-<p>发布于 2026 年 11 月 18 日</p>
-<p>26</p>
-<ul><li><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nfuller"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b12ed52be9660f0b7e5f72/r230jdYzTFj_CYmKgpz78.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/bradleyjeck"><img src="https://huggingface.co/avatars/917b1995b76ce6232153c9104a180fc6.svg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Violette"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1638698875017-noauth.jpeg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/nfuller"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b12ed52be9660f0b7e5f72/r230jdYzTFj_CYmKgpz78.jpeg" alt="Nicholas Fuller 的头像"></a></p>
-<p>Nicholas Fuller</p>
-<p>nfuller</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/thefalc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a95bef85a23d548d3a6033f/rAmRICBlEO1O8qHRZ20qO.png" alt="Sean Falconer 的头像"></a></p>
-<p>Sean Falconer</p>
-<p>thefalc</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt="Ayhan Sebin 的头像"></a></p>
-<p>Ayhan Sebin</p>
-<p>ayhansebin</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/pankajdayama"><img src="https://huggingface.co/avatars/40557bc175dc732b7fd14a23312c4462.svg" alt="Pankaj Dayama 的头像"></a></p>
-<p>Pankaj Dayama</p>
-<p>pankajdayama</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/63335566a35123bba6e5644d10e0ccd6.svg" alt="Roman Vaculin 的头像"></a></p>
-<p>Roman Vaculin</p>
-<p>vaculin</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/bzeren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a95c9b7b2432a8a934d90b4/CZFckqS6pNWYd2L6GPDEN.jpeg" alt="Bilge Zeren Aksu 的头像"></a></p>
-<p>Bilge Zeren Aksu</p>
-<p>bzeren</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/Pyjamacardinal"><img src="https://huggingface.co/avatars/f7a44228cf542b3253d40c5ed889f09e.svg" alt="Julian Payne 的头像"></a></p>
-<p>Julian Payne</p>
-<p>Pyjamacardinal</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/mjinwala"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a9607e72d4dad45f5965208/XN4yY40EvH0YRP1FvPXJr.png" alt="Mountu Jinwala 的头像"></a></p>
-<p>Mountu Jinwala</p>
-<p>mjinwala</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/wmgifford"><img src="https://huggingface.co/avatars/60ecc574000e8c41b29e7b428f9580b5.svg" alt="Wesley M. Gifford 的头像"></a></p>
-<p>Wesley M. Gifford</p>
-<p>wmgifford</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/creddyhf"><img src="https://huggingface.co/avatars/c5da273b4e6a5c07d10ac4ee345ab366.svg" alt="Chandra Reddy 的头像"></a></p>
-<p>Chandra Reddy</p>
-<p>creddyhf</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/vijaye12"><img src="https://huggingface.co/avatars/8f4026485d82038b671adc4800a2587b.svg" alt="Vijay Ekambaram 的头像"></a></p>
-<p>Vijay Ekambaram</p>
-<p>vijaye12</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/ajati"><img src="https://huggingface.co/avatars/7b9ac8a0b635bdd3de3aef0a9d138b22.svg" alt="Arindam Jati 的头像"></a></p>
-<p>Arindam Jati</p>
-<p>ajati</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/rmetzger0"><img src="https://huggingface.co/avatars/de10ec5da5336a98d268471d40eef8df.svg" alt="Robert Metzger 的头像"></a></p>
-<p>Robert Metzger</p>
-<p>rmetzger0</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><strong>实时预测、异常检测与优化，由下载量超过 5,000 万次的 IBM 时间序列模型驱动。如今已原生支持 Confluent，云端与本地皆可部署，运行在 CPU 上。</strong></p>
-<p>每家企业都在持续产生一份变化记录：一次机器读数、一笔支付、一次销售、一张订单，或者一次库存变动。这些观测构成时间序列，而其中携带的信号可以帮助团队预判接下来会发生什么。</p>
-<p>难点在于趁这些信号仍然有价值时把它们变成决策。一次生产批次跑完、一次缺货、一次支付授权之后才送达的预测，也许依然准确，却已来不及影响结果。</p>
-<p>IBM 与 Confluent 正让时间序列基础模型更贴近流动中的数据。借助 Apache Flink，团队可以用 SQL 对流式数据施加预测、异常检测与语义智能，让模型输出直达负责下一步动作的应用和人员。</p>
-<p>基础模型改变了组织处理文本、图像与文档的方式。时间序列基础模型把类似的思路延伸到数值数据：先从多样化的历史数据中学习通用模式，再把这份知识用于新的序列与任务。这类模型可以提供一个起点，团队无需为每一条序列单独训练模型。视任务与部署方式而定，团队还可以对模型做 fine-tuning，或把模型的输出与其他数据和业务逻辑结合。</p>
-<p><a href="https://events.confluent.io/early-access-flink-features"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/uNQkq4JD8ABh729KrjG0A.webp" alt="下载量超过 5,000 万次，以及支撑这一数字的四款模型家族。点击在 Confluent 上试用这些模型。"></a></p>
-<p><em>图 1. 下载量超过 5,000 万次，以及撑起这个数字的四款模型</em></p>
-<p>如今，时间序列基础模型以内置函数的形式原生运行在 Confluent 之内，云端与本地皆可。在 Confluent Cloud 中它们完全托管，无需部署任何东西（<a href="https://docs.confluent.io/cloud/current/ai/builtin-functions/forecast.html">文档</a>）。在本地，模型可以借助 Confluent Platform for Apache Flink 跑在你自己的基础设施里。（<a href="https://docs.confluent.io/cp-flink/current/jobs/sql-statements/ai/set-up-ai-functions.html">文档</a>）。这些模型运行在 CPU 上，不需要 GPU。</p>
-<p>这些模型可以支撑一系列关键业务场景：从帮助生产线保持在规格之内、发现门店异常活动，到改进单品层面的规划。它们还能提供信号来评估卡片支付，并预测交易量以协助下达大额订单。这些构件可以通用于制造业、零售、银行与航空业，把洞察带到离决策更近的地方。</p>
-<p>看看时间序列与实时上下文如何结合，共同创造价值：</p>
-<h2>Streamhouse：agentic 时代的实时数据与智能</h2>
-<p>企业的运营从不间断。订单在更新，付款在到账，货运在延误，库存一天之内反复变动。然而这些事件背后的信息往往散落在不同系统里，各系统更新节奏不一，或者依赖周期性的批处理。当应用与 AI agent 依据过时或不一致的信息行动时，就可能做出不再反映当下实况的决策。</p>
-<p>Streamhouse 通过持续捕获、处理、治理并提供当前的业务上下文来解决这个问题。Confluent 的 Data Streaming Platform 把 connect、stream、process、govern、query 五项能力汇于一处，让这份上下文可供应用、分析与 agent 使用。Apache Flink 在数据流动过程中完成转换与增强，Lightning Tables 则提供对当前状态的低延迟访问。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/M2Rn5ft2uBCZcTkyUxNfx.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/M2Rn5ft2uBCZcTkyUxNfx.png" alt="Confluent 上的 Streamhouse"></a></p>
-<p><em>图 2. Confluent 上的 Streamhouse：从既有数据源到当前的业务上下文，供 agent、应用、分析与 lakehouse 在任何地方使用。</em></p>
-<p>时间序列模型为这套架构补上预测能力。Flink 可以准备数据、调用预测与异常检测，并让结果与产生它的事件一并可用。其他模型——包括大型语言模型、统计模型和专用机器学习系统——也能在合适的位置参与进来。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/ELIbCPJpgpZn1X58rxs7p.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/ELIbCPJpgpZn1X58rxs7p.png" alt="Streamhouse 的各层：agentic 体验、端到端解决方案、流原生智能，以及 Streamhouse 本身"></a></p>
-<p><em>图 3. Streamhouse 的智能层：时间序列模型、大型语言模型，以及 ML 与统计模型，并在它们之间做编排。</em></p>
-<p>这种做法可以在四个方面帮到团队：</p>
-<p>-<strong>扩大模型开发的规模</strong>。一个预训练模型可以为众多时间序列提供共同的起点，减少为每一条序列单独开发并维护模型的需要。</p>
-<p>-<strong>随数据变化刷新预测</strong>。预测可以在流式工作流中纳入最近的观测，具体取决于模型的要求与 pipeline 的配置。</p>
-<p>-<strong>让信号离决策更近</strong>。预测与异常可以更早地路由到运营类应用，团队在那里把它们与业务上下文、规则和人工判断结合。</p>
-<p>-<strong>在 CPU 上运行紧凑模型。</strong> 这些模型足够小，可以与流式 pipeline 一起跑在标准 CPU 上，云端或本地皆可，从而减少对专用 GPU 基础设施的依赖，并简化部署。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/Rcda03VYTPUiq9sh5zW1B.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/Rcda03VYTPUiq9sh5zW1B.webp" alt="05-architecture-dynamic"></a></p>
-<p><em>图 4. Confluent 上的流原生时间序列智能</em></p>
-<h2>真实企业中的关键业务场景</h2>
-<p>以下场景展示了组织可以如何把时间序列模型、流式数据与应用逻辑组合起来。</p>
-<h3>用例 1 | 生产优化：每一桶都合乎规格</h3>
-<p>冰淇淋生产线的质量取决于 overrun——也就是搅打进混合料里的空气量。目前，工艺工程师和操作员依赖 QA 实验室在桶装完成之后所做的测量。如果换了一批新奶油，或者遇上温暖潮湿的天气而让工艺发生变化，等到团队看到结果时，可能已有数小时的产品需要返工。</p>
-<p>为了提前应对这个问题，一个预训练的 TTM 模型每 10 分钟读取一次 SCADA 遥测数据与 QA 测量值。它预测未来四小时内预计合乎规格的桶装比例，并给出一个可能区间。</p>
-<p>当预测值低于工厂目标时，优化流程会评估冷冻机抽气温度与风量的各种组合。由于模型把这些控制变量作为输入，它可以在产线做任何改动之前就为每个选项打分。操作员批准推荐的设定点，而常规调整可以在预设的护栏范围内自动执行。</p>
-<p>结果是流程变得更主动：返工更少、每吨能耗更低、质量更稳定。同样的方法也适用于烤箱、干燥机、窑炉和研磨机。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/B1eCtmZ6M0ufgJ9u_P_oU.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/B1eCtmZ6M0ufgJ9u_P_oU.webp" alt="07-production-optimization"></a></p>
-<p><em>图 5. 产品质量预测帮助操作员在做出调整之前评估冷冻机设定点。</em></p>
-<h3>用例 2 | 异常检测：从一条标记到正确的处置</h3>
-<p>某门店运营团队要监控数百家门店、数千种商品的销售。固定阈值常常把可预期的周末高峰标出来，却漏掉更安静的变化，比如某件商品卖得比预期少。警报越积越多，团队反而越来越难判断该把注意力放在哪里。</p>
-<p>AI_DETECT_ANOMALIES 依据每条销售序列的近期历史给出一个预期区间。每个新读数都会按团队选定的置信水平与该区间比对，无需为每个商品和门店单独训练模型。</p>
-<p>当销售落到预期区间之外时，这个信号可以与库存和门店数据结合，帮助找出可能的原因并建议下一步——例如检查货架或补货。同样的方法也适用于机器传感器、API 遥测、电表读数和支付量。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/vbMeXLhmrNv_BP4tSHwl7.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/vbMeXLhmrNv_BP4tSHwl7.webp" alt="08-anomaly-detection"></a></p>
-<p><em>图 6. 门店销售与预期区间做比对。在所示视图中，周期性高峰仍落在区间内，没有触发异常标记。</em></p>
-<h3>用例 3 | 供应链规划：每个 SKU、每家门店、每个小时</h3>
-<p>品类规划师与补货团队需要让每家门店都不断货，同时又不背上多余库存。但预测可能一周才刷新一次，而且往往只覆盖畅销品，长尾商品则靠更简单的规则管理。一旦销售模式在两个规划周期之间发生变化，就可能一家门店断货、另一家库存过剩。</p>
-<p>借助 AI_FORECAST，一个预训练模型可以跨商品、跨门店预测需求。在这个例子里，它产出带 P10–P90 区间的 28 天预测，并随着新销售数据的到来而刷新。规划应用把预测与库存、提前期以及规划师选定的服务水平结合起来，计算出再订货点。</p>
-<p>当预计库存将跌破该点时，agent 可以起草一份采购订单供审阅。同样的方法也能支撑备件、人员排班、ATM 现金和能源需求的规划。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/CjaQoYxJfRy89ahsPN2P3.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/CjaQoYxJfRy89ahsPN2P3.webp" alt="09-supply-chain-planning-v2"></a></p>
-<p><em>图 7. 门店级需求预测支撑出再订货点，以及一份针对燕麦奶的采购订单建议。</em></p>
-<h3>用例 4 | 欺诈与安全：每张卡都有自己的常态</h3>
-<p>欺诈团队早已依靠复杂的规则与模型来评估交易。一个持续的难题是：套用于众多持卡人的统一阈值，未必能反映每个人平常的消费方式。</p>
-<p>时间序列信号可以补上这层个体上下文。在这个例子里，每笔支付都会与基于该卡近期历史得出的预期消费区间比对。落在区间之外的交易，会连同其他信号与业务规则一起，作为额外输入送给银行现有的反欺诈系统。</p>
-<p>随后银行可以决定是批准这笔支付、要求追加认证，还是进一步调查。决策及其背后的信号都可以留存备查。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/5rPcP75nAZTLx56KSASo1.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/5rPcP75nAZTLx56KSASo1.webp" alt="10-fraud-and-security"></a></p>
-<p><em>图 8. 一笔超出该卡预期消费区间的支付，在一个示意性的欺诈工作流中触发强化认证。</em></p>
-<h3>用例 5 | 交易：让下单节奏跟随行情</h3>
-<p>执行台需要把一笔大单拆成多笔较小的交易，同时控制它对市场的影响。历史成交量曲线能提供起点，但当下的交易活跃度可能与均值相去甚远。</p>
-<p>在每一根一分钟 bar 上，PatchTST-FM 预测未来 30 分钟的成交量，并给出 P10–P90 区间。执行算法用这份预测，在交易台设定的参与率上限内安排下单节奏。</p>
-<p>如果新闻事件改变了市场活跃度，算法可以暂停并重新规划。如果交易比预期清淡，它可以缩小每一笔切分的规模，并提示该订单可能需要更长时间才能完成。每一次预测以及由此产生的执行决策，都可以留在审计轨迹里。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/wZtPpIN2ujDQEfOzfUBwm.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/wZtPpIN2ujDQEfOzfUBwm.webp" alt="12-trading"></a></p>
-<p><em>图 9. 成交量预测为一张 10 万股订单的执行计划建议提供依据。</em></p>
-<h3>用例 6 | 语义搜索：找出每一个长得像它的信号</h3>
-<p>一位可靠性工程师在调查某个异常传感器模式时，可能想知道工厂其他地方是否出现过类似的行为。</p>
-<p>TSPulse 可以生成时间序列窗口的表示，用来支撑相似度检索。在一个另行搭建的应用中，这些表示可以被索引，用于跨设备召回历史模式。工程师可以按形状检索，比如尖峰后回落、缓慢上升或阶跃变化，然后再查看相关的维护记录与运行工况。</p>
-<p>这个应用需要一条 embedding pipeline、一个索引，以及对相关上下文的访问权限。相似度能帮调查收窄范围，但它本身并不确立根因。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/8xO2-4i9W0BDyJ4TVrsGC.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/8xO2-4i9W0BDyJ4TVrsGC.webp" alt="11-semantic-search"></a></p>
-<p><em>图 10. 时间序列 embedding 可以支撑跨设备及其他信号的相似模式检索。</em></p>
-<h2>行业特定应用</h2>
-<p>同样的模型与构件可以支撑不同行业中的不同工作流：</p>
-<ul><li><strong>工业 AI：从传感器到设定点。</strong> 工厂经理希望每一批都合乎规格，也没有哪条产线被意外停机。SCADA、QA 实验室和电表的数据流在到达时即被预测。质量开始漂移时，生产优化会调整设定点；异常检测会标出任何规则都没写过的读数；语义搜索会找出故障前出现过同样模式的每一台泵。设定点、工单和警报在周期之内就抵达车间，而不是等下一份交接班报告。</li></ul>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/q8GaODH5na0inQAQ5NsSy.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/q8GaODH5na0inQAQ5NsSy.webp" alt="13-twin-plant"></a></p>
-<p><em>图 11. 工厂数字孪生，从传感器到设定点。一批新奶油让 overrun 偏离目标。预测读取产线状态，agent 提出新的抽气温度与风量，操作员批准，桶装产品重回规格。模拟数据。</em></p>
-<ul><li><strong>零售：一家门店与它的供应链。</strong> 门店经理希望周六货架是满的，周一又不要压货。销售、天气与促销数据流会针对每家门店的每个商品做出预测。供应链规划确定订单，异常检测捕捉空货架或漏送的到货，欺诈与安全模块拦下可疑的卡。订单、门店任务和拦截指令在货架空掉之前就发出去了。</li></ul>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/H2fM8uPxwgGowSbE81se3.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/H2fM8uPxwgGowSbE81se3.webp" alt="14-twin-store"></a></p>
-<p><em>图 12. 门店数字孪生，一家门店与它的供应链。燕麦奶即将促销。预测把促销计入并设定再订货点，agent 提出采购订单，规划师批准，促销当天货架是满的。模拟数据。</em></p>
-<ul><li><strong>银行：支付与交易台。</strong> 反欺诈负责人想在不误伤好客户的前提下阻止卡测试，交易员想在不推动价格的情况下完成大额订单。每一张卡、每一个标的都按各自的预期模式逐事件打分。欺诈与安全模块在授权前拦下异常刷卡，异常检测发现异常的资金流，交易模块用预测成交量安排每笔订单的节奏。</li><li><strong>航空：枢纽运营、机队与航线网络。</strong> 运行控制部门希望在还来得及行动的时候就看到扰动来临。发动机、登机口与网络数据流被实时预测和核查。异常检测捕捉漂移的发动机读数，生产优化重新平衡登机口与机组，供应链规划把备件放到飞机将要去的地方。</li></ul>
-<p>在每个行业里，Streamhouse 做的都是同一件事：Flink 运行 Granite 模型来做预测、检测与优化，Streaming Agents 基于实时上下文采取行动，而人来批准例外。</p>
-<p>去 Confluent 上探索这些模型，看看时间序列智能如何支撑实时决策。</p>
-<p><a href="https://events.confluent.io/early-access-flink-features"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/_UuP1FMzinS6oJu3XiXUW.webp" alt="在 Confluent 上试用这些模型"></a></p>
-<h3>延伸阅读</h3>
-<ul><li>代码与 notebook：<a href="https://github.com/ibm-granite/granite-tsfm">github.com/ibm-granite/granite-tsfm</a></li><li><a href="https://huggingface.co/blog/ibm-research/real-time-intelligence">Confluent 上基于 IBM 时间序列模型的实时智能</a></li><li><a href="https://huggingface.co/blog/ibm-research/granite-timeseries-ensemble-r1">用 IBM Granite 时间序列模型做集成预测</a></li><li><a href="https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series">IBM 发布采用商业友好许可的 SOTA Granite Time Series PatchTST-FM-r2 模型</a></li><li><a href="https://www.confluent.io/blog/2026-q3-confluent-intelligence-ai-update/">Confluent Intelligence 与 AI 工具新动向：让 agent 原生贴近数据流、扩大模型支持、新增 Agent Skills，以及 Confluent Assistant</a></li><li><a href="https://www.confluent.io/blog/2026-q4-confluent-bundle-launch/">Q4'26 Confluent Data Streaming Platform 新特性</a></li><li><a href="https://docs.confluent.io/cp-flink/current/changelog.html#november-2026">Confluent Platform for Apache Flink 2026 年 11 月新特性</a></li></ul>
-<p>该作者的更多文章</p>
-<h2>Palette：教一个小模型用你的设计语言搭建演示文稿</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>21</p>
-<p>2026 年 11 月 3 日</p>
-<h2>同一个模型，不同的 harness：CUGA、Hermes 与 Deep Agents —— 何时该选 CUGA？</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>38</p>
-<p>2026 年 11 月 3 日</p>
-<h3>社区</h3>
-<p>拖入文本输入框、粘贴或点击此处，即可上传图片、音频和视频。</p>]]></content:encoded>
-    </item>
-    <item>
       <title>180B Parameters, 32GB of RAM: Pushing MoE Inference to the L…</title>
       <link>https://huggingface.co/blog/moe-expert-streaming</link>
       <guid isPermaLink="true">https://huggingface.co/blog/moe-expert-streaming</guid>
@@ -1448,6 +1539,159 @@ print(processor.decode(generated, return_format=&quot;transcription_only&quot;)[
 <h2>本文提到的模型 1</h2>
 <h2>本文提到的数据集 1</h2>
 <h2>本文提到的 Space 2</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Streamhouse 中的时间序列模型：新领域和用例</title>
+      <link>https://huggingface.co/blog/ibm-research/time-series-powered-streamhouse</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/time-series-powered-streamhouse</guid>
+      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Time-Series Models in the Streamhouse: A New Frontier and Use Cases</description>
+      <content:encoded><![CDATA[<h1>Streamhouse 中的时间序列模型：新领域和用例</h1>
+<p>企业文章</p>
+<p>发布于 2026 年 11 月 18 日</p>
+<p>26</p>
+<ul><li><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nfuller"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b12ed52be9660f0b7e5f72/r230jdYzTFj_CYmKgpz78.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/bradleyjeck"><img src="https://huggingface.co/avatars/917b1995b76ce6232153c9104a180fc6.svg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Violette"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1638698875017-noauth.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/nfuller"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65b12ed52be9660f0b7e5f72/r230jdYzTFj_CYmKgpz78.jpeg" alt="Nicholas Fuller 的头像"></a></p>
+<p>Nicholas Fuller</p>
+<p>nfuller</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/thefalc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a95bef85a23d548d3a6033f/rAmRICBlEO1O8qHRZ20qO.png" alt="Sean Falconer 的头像"></a></p>
+<p>Sean Falconer</p>
+<p>thefalc</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt="Ayhan Sebin 的头像"></a></p>
+<p>Ayhan Sebin</p>
+<p>ayhansebin</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/pankajdayama"><img src="https://huggingface.co/avatars/40557bc175dc732b7fd14a23312c4462.svg" alt="Pankaj Dayama 的头像"></a></p>
+<p>Pankaj Dayama</p>
+<p>pankajdayama</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/63335566a35123bba6e5644d10e0ccd6.svg" alt="Roman Vaculin 的头像"></a></p>
+<p>Roman Vaculin</p>
+<p>vaculin</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/bzeren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a95c9b7b2432a8a934d90b4/CZFckqS6pNWYd2L6GPDEN.jpeg" alt="Bilge Zeren Aksu 的头像"></a></p>
+<p>Bilge Zeren Aksu</p>
+<p>bzeren</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/Pyjamacardinal"><img src="https://huggingface.co/avatars/f7a44228cf542b3253d40c5ed889f09e.svg" alt="Julian Payne 的头像"></a></p>
+<p>Julian Payne</p>
+<p>Pyjamacardinal</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/mjinwala"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a9607e72d4dad45f5965208/XN4yY40EvH0YRP1FvPXJr.png" alt="Mountu Jinwala 的头像"></a></p>
+<p>Mountu Jinwala</p>
+<p>mjinwala</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/wmgifford"><img src="https://huggingface.co/avatars/60ecc574000e8c41b29e7b428f9580b5.svg" alt="Wesley M. Gifford 的头像"></a></p>
+<p>Wesley M. Gifford</p>
+<p>wmgifford</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/creddyhf"><img src="https://huggingface.co/avatars/c5da273b4e6a5c07d10ac4ee345ab366.svg" alt="Chandra Reddy 的头像"></a></p>
+<p>Chandra Reddy</p>
+<p>creddyhf</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/vijaye12"><img src="https://huggingface.co/avatars/8f4026485d82038b671adc4800a2587b.svg" alt="Vijay Ekambaram 的头像"></a></p>
+<p>Vijay Ekambaram</p>
+<p>vijaye12</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ajati"><img src="https://huggingface.co/avatars/7b9ac8a0b635bdd3de3aef0a9d138b22.svg" alt="Arindam Jati 的头像"></a></p>
+<p>Arindam Jati</p>
+<p>ajati</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/rmetzger0"><img src="https://huggingface.co/avatars/de10ec5da5336a98d268471d40eef8df.svg" alt="Robert Metzger 的头像"></a></p>
+<p>Robert Metzger</p>
+<p>rmetzger0</p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><strong>实时预测、异常检测与优化，由下载量超过 5,000 万次的 IBM 时间序列模型驱动。如今已原生支持 Confluent，云端与本地皆可部署，运行在 CPU 上。</strong></p>
+<p>每家企业都在持续产生一份变化记录：一次机器读数、一笔支付、一次销售、一张订单，或者一次库存变动。这些观测构成时间序列，而其中携带的信号可以帮助团队预判接下来会发生什么。</p>
+<p>难点在于趁这些信号仍然有价值时把它们变成决策。一次生产批次跑完、一次缺货、一次支付授权之后才送达的预测，也许依然准确，却已来不及影响结果。</p>
+<p>IBM 与 Confluent 正让时间序列基础模型更贴近流动中的数据。借助 Apache Flink，团队可以用 SQL 对流式数据施加预测、异常检测与语义智能，让模型输出直达负责下一步动作的应用和人员。</p>
+<p>基础模型改变了组织处理文本、图像与文档的方式。时间序列基础模型把类似的思路延伸到数值数据：先从多样化的历史数据中学习通用模式，再把这份知识用于新的序列与任务。这类模型可以提供一个起点，团队无需为每一条序列单独训练模型。视任务与部署方式而定，团队还可以对模型做 fine-tuning，或把模型的输出与其他数据和业务逻辑结合。</p>
+<p><a href="https://events.confluent.io/early-access-flink-features"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/uNQkq4JD8ABh729KrjG0A.webp" alt="下载量超过 5,000 万次，以及支撑这一数字的四款模型家族。点击在 Confluent 上试用这些模型。"></a></p>
+<p><em>图 1. 下载量超过 5,000 万次，以及撑起这个数字的四款模型</em></p>
+<p>如今，时间序列基础模型以内置函数的形式原生运行在 Confluent 之内，云端与本地皆可。在 Confluent Cloud 中它们完全托管，无需部署任何东西（<a href="https://docs.confluent.io/cloud/current/ai/builtin-functions/forecast.html">文档</a>）。在本地，模型可以借助 Confluent Platform for Apache Flink 跑在你自己的基础设施里。（<a href="https://docs.confluent.io/cp-flink/current/jobs/sql-statements/ai/set-up-ai-functions.html">文档</a>）。这些模型运行在 CPU 上，不需要 GPU。</p>
+<p>这些模型可以支撑一系列关键业务场景：从帮助生产线保持在规格之内、发现门店异常活动，到改进单品层面的规划。它们还能提供信号来评估卡片支付，并预测交易量以协助下达大额订单。这些构件可以通用于制造业、零售、银行与航空业，把洞察带到离决策更近的地方。</p>
+<p>看看时间序列与实时上下文如何结合，共同创造价值：</p>
+<h2>Streamhouse：agentic 时代的实时数据与智能</h2>
+<p>企业的运营从不间断。订单在更新，付款在到账，货运在延误，库存一天之内反复变动。然而这些事件背后的信息往往散落在不同系统里，各系统更新节奏不一，或者依赖周期性的批处理。当应用与 AI agent 依据过时或不一致的信息行动时，就可能做出不再反映当下实况的决策。</p>
+<p>Streamhouse 通过持续捕获、处理、治理并提供当前的业务上下文来解决这个问题。Confluent 的 Data Streaming Platform 把 connect、stream、process、govern、query 五项能力汇于一处，让这份上下文可供应用、分析与 agent 使用。Apache Flink 在数据流动过程中完成转换与增强，Lightning Tables 则提供对当前状态的低延迟访问。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/M2Rn5ft2uBCZcTkyUxNfx.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/M2Rn5ft2uBCZcTkyUxNfx.png" alt="Confluent 上的 Streamhouse"></a></p>
+<p><em>图 2. Confluent 上的 Streamhouse：从既有数据源到当前的业务上下文，供 agent、应用、分析与 lakehouse 在任何地方使用。</em></p>
+<p>时间序列模型为这套架构补上预测能力。Flink 可以准备数据、调用预测与异常检测，并让结果与产生它的事件一并可用。其他模型——包括大型语言模型、统计模型和专用机器学习系统——也能在合适的位置参与进来。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/ELIbCPJpgpZn1X58rxs7p.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/ELIbCPJpgpZn1X58rxs7p.png" alt="Streamhouse 的各层：agentic 体验、端到端解决方案、流原生智能，以及 Streamhouse 本身"></a></p>
+<p><em>图 3. Streamhouse 的智能层：时间序列模型、大型语言模型，以及 ML 与统计模型，并在它们之间做编排。</em></p>
+<p>这种做法可以在四个方面帮到团队：</p>
+<p>-<strong>扩大模型开发的规模</strong>。一个预训练模型可以为众多时间序列提供共同的起点，减少为每一条序列单独开发并维护模型的需要。</p>
+<p>-<strong>随数据变化刷新预测</strong>。预测可以在流式工作流中纳入最近的观测，具体取决于模型的要求与 pipeline 的配置。</p>
+<p>-<strong>让信号离决策更近</strong>。预测与异常可以更早地路由到运营类应用，团队在那里把它们与业务上下文、规则和人工判断结合。</p>
+<p>-<strong>在 CPU 上运行紧凑模型。</strong> 这些模型足够小，可以与流式 pipeline 一起跑在标准 CPU 上，云端或本地皆可，从而减少对专用 GPU 基础设施的依赖，并简化部署。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/Rcda03VYTPUiq9sh5zW1B.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/Rcda03VYTPUiq9sh5zW1B.webp" alt="05-architecture-dynamic"></a></p>
+<p><em>图 4. Confluent 上的流原生时间序列智能</em></p>
+<h2>真实企业中的关键业务场景</h2>
+<p>以下场景展示了组织可以如何把时间序列模型、流式数据与应用逻辑组合起来。</p>
+<h3>用例 1 | 生产优化：每一桶都合乎规格</h3>
+<p>冰淇淋生产线的质量取决于 overrun——也就是搅打进混合料里的空气量。目前，工艺工程师和操作员依赖 QA 实验室在桶装完成之后所做的测量。如果换了一批新奶油，或者遇上温暖潮湿的天气而让工艺发生变化，等到团队看到结果时，可能已有数小时的产品需要返工。</p>
+<p>为了提前应对这个问题，一个预训练的 TTM 模型每 10 分钟读取一次 SCADA 遥测数据与 QA 测量值。它预测未来四小时内预计合乎规格的桶装比例，并给出一个可能区间。</p>
+<p>当预测值低于工厂目标时，优化流程会评估冷冻机抽气温度与风量的各种组合。由于模型把这些控制变量作为输入，它可以在产线做任何改动之前就为每个选项打分。操作员批准推荐的设定点，而常规调整可以在预设的护栏范围内自动执行。</p>
+<p>结果是流程变得更主动：返工更少、每吨能耗更低、质量更稳定。同样的方法也适用于烤箱、干燥机、窑炉和研磨机。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/B1eCtmZ6M0ufgJ9u_P_oU.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/B1eCtmZ6M0ufgJ9u_P_oU.webp" alt="07-production-optimization"></a></p>
+<p><em>图 5. 产品质量预测帮助操作员在做出调整之前评估冷冻机设定点。</em></p>
+<h3>用例 2 | 异常检测：从一条标记到正确的处置</h3>
+<p>某门店运营团队要监控数百家门店、数千种商品的销售。固定阈值常常把可预期的周末高峰标出来，却漏掉更安静的变化，比如某件商品卖得比预期少。警报越积越多，团队反而越来越难判断该把注意力放在哪里。</p>
+<p>AI_DETECT_ANOMALIES 依据每条销售序列的近期历史给出一个预期区间。每个新读数都会按团队选定的置信水平与该区间比对，无需为每个商品和门店单独训练模型。</p>
+<p>当销售落到预期区间之外时，这个信号可以与库存和门店数据结合，帮助找出可能的原因并建议下一步——例如检查货架或补货。同样的方法也适用于机器传感器、API 遥测、电表读数和支付量。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/vbMeXLhmrNv_BP4tSHwl7.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/vbMeXLhmrNv_BP4tSHwl7.webp" alt="08-anomaly-detection"></a></p>
+<p><em>图 6. 门店销售与预期区间做比对。在所示视图中，周期性高峰仍落在区间内，没有触发异常标记。</em></p>
+<h3>用例 3 | 供应链规划：每个 SKU、每家门店、每个小时</h3>
+<p>品类规划师与补货团队需要让每家门店都不断货，同时又不背上多余库存。但预测可能一周才刷新一次，而且往往只覆盖畅销品，长尾商品则靠更简单的规则管理。一旦销售模式在两个规划周期之间发生变化，就可能一家门店断货、另一家库存过剩。</p>
+<p>借助 AI_FORECAST，一个预训练模型可以跨商品、跨门店预测需求。在这个例子里，它产出带 P10–P90 区间的 28 天预测，并随着新销售数据的到来而刷新。规划应用把预测与库存、提前期以及规划师选定的服务水平结合起来，计算出再订货点。</p>
+<p>当预计库存将跌破该点时，agent 可以起草一份采购订单供审阅。同样的方法也能支撑备件、人员排班、ATM 现金和能源需求的规划。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/CjaQoYxJfRy89ahsPN2P3.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/CjaQoYxJfRy89ahsPN2P3.webp" alt="09-supply-chain-planning-v2"></a></p>
+<p><em>图 7. 门店级需求预测支撑出再订货点，以及一份针对燕麦奶的采购订单建议。</em></p>
+<h3>用例 4 | 欺诈与安全：每张卡都有自己的常态</h3>
+<p>欺诈团队早已依靠复杂的规则与模型来评估交易。一个持续的难题是：套用于众多持卡人的统一阈值，未必能反映每个人平常的消费方式。</p>
+<p>时间序列信号可以补上这层个体上下文。在这个例子里，每笔支付都会与基于该卡近期历史得出的预期消费区间比对。落在区间之外的交易，会连同其他信号与业务规则一起，作为额外输入送给银行现有的反欺诈系统。</p>
+<p>随后银行可以决定是批准这笔支付、要求追加认证，还是进一步调查。决策及其背后的信号都可以留存备查。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/5rPcP75nAZTLx56KSASo1.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/5rPcP75nAZTLx56KSASo1.webp" alt="10-fraud-and-security"></a></p>
+<p><em>图 8. 一笔超出该卡预期消费区间的支付，在一个示意性的欺诈工作流中触发强化认证。</em></p>
+<h3>用例 5 | 交易：让下单节奏跟随行情</h3>
+<p>执行台需要把一笔大单拆成多笔较小的交易，同时控制它对市场的影响。历史成交量曲线能提供起点，但当下的交易活跃度可能与均值相去甚远。</p>
+<p>在每一根一分钟 bar 上，PatchTST-FM 预测未来 30 分钟的成交量，并给出 P10–P90 区间。执行算法用这份预测，在交易台设定的参与率上限内安排下单节奏。</p>
+<p>如果新闻事件改变了市场活跃度，算法可以暂停并重新规划。如果交易比预期清淡，它可以缩小每一笔切分的规模，并提示该订单可能需要更长时间才能完成。每一次预测以及由此产生的执行决策，都可以留在审计轨迹里。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/wZtPpIN2ujDQEfOzfUBwm.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/wZtPpIN2ujDQEfOzfUBwm.webp" alt="12-trading"></a></p>
+<p><em>图 9. 成交量预测为一张 10 万股订单的执行计划建议提供依据。</em></p>
+<h3>用例 6 | 语义搜索：找出每一个长得像它的信号</h3>
+<p>一位可靠性工程师在调查某个异常传感器模式时，可能想知道工厂其他地方是否出现过类似的行为。</p>
+<p>TSPulse 可以生成时间序列窗口的表示，用来支撑相似度检索。在一个另行搭建的应用中，这些表示可以被索引，用于跨设备召回历史模式。工程师可以按形状检索，比如尖峰后回落、缓慢上升或阶跃变化，然后再查看相关的维护记录与运行工况。</p>
+<p>这个应用需要一条 embedding pipeline、一个索引，以及对相关上下文的访问权限。相似度能帮调查收窄范围，但它本身并不确立根因。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/8xO2-4i9W0BDyJ4TVrsGC.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/8xO2-4i9W0BDyJ4TVrsGC.webp" alt="11-semantic-search"></a></p>
+<p><em>图 10. 时间序列 embedding 可以支撑跨设备及其他信号的相似模式检索。</em></p>
+<h2>行业特定应用</h2>
+<p>同样的模型与构件可以支撑不同行业中的不同工作流：</p>
+<ul><li><strong>工业 AI：从传感器到设定点。</strong> 工厂经理希望每一批都合乎规格，也没有哪条产线被意外停机。SCADA、QA 实验室和电表的数据流在到达时即被预测。质量开始漂移时，生产优化会调整设定点；异常检测会标出任何规则都没写过的读数；语义搜索会找出故障前出现过同样模式的每一台泵。设定点、工单和警报在周期之内就抵达车间，而不是等下一份交接班报告。</li></ul>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/q8GaODH5na0inQAQ5NsSy.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/q8GaODH5na0inQAQ5NsSy.webp" alt="13-twin-plant"></a></p>
+<p><em>图 11. 工厂数字孪生，从传感器到设定点。一批新奶油让 overrun 偏离目标。预测读取产线状态，agent 提出新的抽气温度与风量，操作员批准，桶装产品重回规格。模拟数据。</em></p>
+<ul><li><strong>零售：一家门店与它的供应链。</strong> 门店经理希望周六货架是满的，周一又不要压货。销售、天气与促销数据流会针对每家门店的每个商品做出预测。供应链规划确定订单，异常检测捕捉空货架或漏送的到货，欺诈与安全模块拦下可疑的卡。订单、门店任务和拦截指令在货架空掉之前就发出去了。</li></ul>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/H2fM8uPxwgGowSbE81se3.webp"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/H2fM8uPxwgGowSbE81se3.webp" alt="14-twin-store"></a></p>
+<p><em>图 12. 门店数字孪生，一家门店与它的供应链。燕麦奶即将促销。预测把促销计入并设定再订货点，agent 提出采购订单，规划师批准，促销当天货架是满的。模拟数据。</em></p>
+<ul><li><strong>银行：支付与交易台。</strong> 反欺诈负责人想在不误伤好客户的前提下阻止卡测试，交易员想在不推动价格的情况下完成大额订单。每一张卡、每一个标的都按各自的预期模式逐事件打分。欺诈与安全模块在授权前拦下异常刷卡，异常检测发现异常的资金流，交易模块用预测成交量安排每笔订单的节奏。</li><li><strong>航空：枢纽运营、机队与航线网络。</strong> 运行控制部门希望在还来得及行动的时候就看到扰动来临。发动机、登机口与网络数据流被实时预测和核查。异常检测捕捉漂移的发动机读数，生产优化重新平衡登机口与机组，供应链规划把备件放到飞机将要去的地方。</li></ul>
+<p>在每个行业里，Streamhouse 做的都是同一件事：Flink 运行 Granite 模型来做预测、检测与优化，Streaming Agents 基于实时上下文采取行动，而人来批准例外。</p>
+<p>去 Confluent 上探索这些模型，看看时间序列智能如何支撑实时决策。</p>
+<p><a href="https://events.confluent.io/early-access-flink-features"><img src="https://cdn-uploads.huggingface.co/production/uploads/64e8143f6de557454220921e/_UuP1FMzinS6oJu3XiXUW.webp" alt="在 Confluent 上试用这些模型"></a></p>
+<h3>延伸阅读</h3>
+<ul><li>代码与 notebook：<a href="https://github.com/ibm-granite/granite-tsfm">github.com/ibm-granite/granite-tsfm</a></li><li><a href="https://huggingface.co/blog/ibm-research/real-time-intelligence">Confluent 上基于 IBM 时间序列模型的实时智能</a></li><li><a href="https://huggingface.co/blog/ibm-research/granite-timeseries-ensemble-r1">用 IBM Granite 时间序列模型做集成预测</a></li><li><a href="https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series">IBM 发布采用商业友好许可的 SOTA Granite Time Series PatchTST-FM-r2 模型</a></li><li><a href="https://www.confluent.io/blog/2026-q3-confluent-intelligence-ai-update/">Confluent Intelligence 与 AI 工具新动向：让 agent 原生贴近数据流、扩大模型支持、新增 Agent Skills，以及 Confluent Assistant</a></li><li><a href="https://www.confluent.io/blog/2026-q4-confluent-bundle-launch/">Q4'26 Confluent Data Streaming Platform 新特性</a></li><li><a href="https://docs.confluent.io/cp-flink/current/changelog.html#november-2026">Confluent Platform for Apache Flink 2026 年 11 月新特性</a></li></ul>
+<p>该作者的更多文章</p>
+<h2>Palette：教一个小模型用你的设计语言搭建演示文稿</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<p>21</p>
+<p>2026 年 11 月 3 日</p>
+<h2>同一个模型，不同的 harness：CUGA、Hermes 与 Deep Agents —— 何时该选 CUGA？</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<p>38</p>
+<p>2026 年 11 月 3 日</p>
+<h3>社区</h3>
+<p>拖入文本输入框、粘贴或点击此处，即可上传图片、音频和视频。</p>]]></content:encoded>
     </item>
     <item>
       <title>Hugging Face 与 OpenRouter 联手，让开放权重模型更易运行</title>
@@ -6414,325 +6658,6 @@ def naive_compiled(t):
 <ul><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt=""></a></li><li><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt=""></a></li><li><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt=""></a></li><li><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt=""></a></li><li><a href="https://huggingface.co/kristunlee"><img src="https://huggingface.co/avatars/c321df95ef32bbc777f7a548a2a361c3.svg" alt=""></a></li><li><a href="https://huggingface.co/daw3rd"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69e673262ada4d38aba9eac2/ufQeVAywU1lC61ZPDvPhK.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ibm-jeffkuo"><img src="https://huggingface.co/avatars/a0b862a7dbcc7196288028030d8e784a.svg" alt=""></a></li><li><a href="https://huggingface.co/profautorino"><img src="https://huggingface.co/avatars/2e55f3bbe3867009b0ade056a35dd2ee.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/gakuto-ibm"><img src="https://huggingface.co/avatars/38865a5f5ea78efa0c94919b4a619d9c.svg" alt=""></a></li></ul>
 <h2>本文提到的模型 3</h2>
 <h2>本文提到的合集 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>NVIDIA Kumo Relational 在关系型数据上超越监督式机器学习，且无需训练</title>
-      <link>https://huggingface.co/blog/nvidia/kumo-relational</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/kumo-relational</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：NVIDIA Kumo Relational Outperforms Supervised Machine Learning on Relational Data, No Training Required</description>
-      <content:encoded><![CDATA[<h1>NVIDIA Kumo Relational 在关系型数据上超越监督式机器学习，且无需训练</h1>
-<p>企业 + 文章</p>
-<p>发布于 2026 年 10 月 21 日</p>
-<p>6</p>
-<ul><li><a href="https://huggingface.co/manushm"><img src="https://huggingface.co/avatars/7badeaaeea65a041b9407fb5ad43af78.svg" alt=""></a></li><li><a href="https://huggingface.co/vstiff"><img src="https://huggingface.co/avatars/eb0f7e4f64e366b3fb8a83fc9a620102.svg" alt=""></a></li><li><a href="https://huggingface.co/nabarun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62076dd7c838f02f5a240d38/-W2SHFmToBpdC3DtIylSg.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/denizbalik"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b577596985529d871cb633/_TYJZ8gW_c8a_193LL6qy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhileshacademics"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/GU61yZwby13kuwdxlY8I9.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/jprzybylko"><img src="https://huggingface.co/avatars/51ecb619fc85a6eacb5f8d24dc02184b.svg" alt="Joshua Przybylko 的头像"></a></p>
-<p>Joshua Przybylko</p>
-<p>jprzybylko</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/profjure"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ab54181feb838e95c106144/OkVZ_iFY6Ao8EPlYmIhtN.jpeg" alt="Jure Leskovec 的头像"></a></p>
-<p>Jure Leskovec</p>
-<p>profjure</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/rusty1s"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/684040a5de1ad7f4fcec9508/FBXNe_m3fNERG2odwK5eI.png" alt="Matthias Fey 的头像"></a></p>
-<p>Matthias Fey</p>
-<p>rusty1s</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/flopeznv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a833945b6da9079ae88e830/9rGtl4NNrthgCcLOm0qgo.jpeg" alt="Federico Lopez 的头像"></a></p>
-<p>Federico Lopez</p>
-<p>flopeznv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/valterh-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a96adc7d1fd32fbb3bac0ce/TLWZJYbn9-ljfqYNL8LPH.png" alt="Valter Hudovernik 的头像"></a></p>
-<p>Valter Hudovernik</p>
-<p>valterh-nv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/akihironitta-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5e570419a1ac3172871769/p86a6r9gOmNCNIxGPNdxF.jpeg" alt="Akihiro Nitta 的头像"></a></p>
-<p>Akihiro Nitta</p>
-<p>akihironitta-nv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/RBendiasN"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5a6312525dcda9541a221a/nh314FmKReukp4NGXq_Ux.jpeg" alt="Ramona Bendias 的头像"></a></p>
-<p>Ramona Bendias</p>
-<p>RBendiasN</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/aw777"><img src="https://huggingface.co/avatars/a4a7560c008247b50f2a85ea373fdc9f.svg" alt="Ardrian Wong 的头像"></a></p>
-<p>Ardrian Wong</p>
-<p>aw777</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<h2>太长不看（TL;DR）</h2>
-<p>NVIDIA Kumo Relational 是一个预训练的关系型基础模型，直接在企业数据库上做预测。给定一个预测查询，它会把最多 10,000 条历史样本作为上下文收集起来，并在一次前向传播中预测流失、需求或欺诈等结果。它不需要任务专属训练，不需要特征工程，也不需要把表打平。Kumo Relational 是首个在常见关系型基准上超越监督式机器学习的 few-shot 基础模型。在 15 个数据库的 41 个任务上，它击败了监督式关系深度学习模型和由专家手工设计特征的梯度提升树流水线；在 SAP SALT 企业基准上，它的平均倒数排名（MRR）比 AutoGluon 集成高出 8%。它可以扩展到 500B+ 行的数据库，并且既服务人、也服务 agent：既可通过 NVIDIA 开源、GPU 原生的 structured-data-models 库使用，也可作为 NVIDIA NIM 使用。</p>
-<ul><li><strong>论文：</strong> <a href="https://arxiv.org/abs/2604.12596">https://arxiv.org/abs/2604.12596</a></li><li><strong>文档：</strong> <a href="https://docs.nvidia.com/sdgm/rfm/overview">https://docs.nvidia.com/sdgm/rfm/overview</a></li></ul>
-<h2>转向结构化数据基础模型</h2>
-<p>基础模型早已重写了语言与视觉领域的玩法。不久前，生产环境的 NLP 还意味着每个任务一个专用模型，各自配一套分词、词形还原和 n-gram 流水线。LLM 让这套栈基本过时了，原因有三：它们比最好的任务专属模型更准确、投入生产要简单得多，而且足够灵活，开启了一个 agent 应用的新时代。</p>
-<p>同样的转变如今正在结构化数据上发生。关系型数据库支撑着世界上最重要的商业决策，但在其上做预测建模仍然需要数周的特征工程、任务专属训练和调优过的流水线。结构化数据基础模型出于同样的三个原因改变了这一点：</p>
-<p><strong>当下更好的准确率：</strong> 作为可直接替换的方案，这些模型已经胜过许多生产流水线，尤其是 XGBoost。在 RelBench V1 的分类任务上，Kumo Relational 在专家手工特征上比梯度提升树平均高出近 4 个 AUROC 点。在 SAP SALT 上，它在手工特征上开箱即比 XGBoost 高出 7 个 MRR 点，微调后高出 13 个 MRR 点。这些结果有力地支持了用 Kumo Relational 替换生产环境中的 XGBoost 流水线。</p>
-<p><strong>简单与敏捷：</strong> 一个预训练模型取代了针对各个任务的独立流水线。一次新的预测变成一条查询，而不是一个项目，于是 ML 团队终于可以在组织的各个层面承接那些传统 ML 做起来过于费力的用例。</p>
-<p><strong>能预测的 agent：</strong> LLM 让 agent 能够读写与推理。结构化数据基础模型则让它们能够预判接下来会发生什么，比如哪个客户会流失，并据此行动。Kumo Relational 本身就被设计成可供 agent 调用，它的 Predictive Query Language（PQL）为 agent 提供了一个提出预测式问题的简单接口。</p>
-<p>今天，我们推出 <strong>Kumo Relational</strong>（<a href="https://arxiv.org/abs/2604.12596">论文</a>、<a href="https://docs.nvidia.com/sdgm/rfm/overview">文档</a>），这是一个把该范式带到关系型数据上的预训练基础模型。连接一个数据库，描述要预测什么，就能在一次前向传播中得到预测结果。无需训练。</p>
-<h2>Kumo Relational 如何工作</h2>
-<p>多数面向结构化数据的基础模型都是在单张扁平表上运行的。而真实世界的数据存在于关系型数据库中：用户关联到订单，订单关联到产品，它们都在随时间演进。通过手工聚合（<em>例如</em>“过去 30 天的平均订单金额”）把这些关系压平成一行，会丢失细粒度的结构信号，而且需要大量人力。</p>
-<p>Kumo Relational 是一个<em>关系型基础模型</em>（Relational Foundation Model），它直接在数据库上运行，尊重其中的表、外键和时间戳。它只需在反映真实世界数据集的合成关系数据上预训练一次，并通过<em>上下文学习</em>（in-context learning）适应每个新任务，在推理时读取最多 10,000 条上下文样本。每条样本都把某个实体在某一时点周围的局部子图与其真实标签配对（<em>例如</em>“这个用户流失了”或“这个商品卖出了 142 件”）。</p>
-<p>![NVIDIA Kumo Relational 系统概览：(a) 数据库集成，(b) 把自然语言转成预测查询的提示接口，(c) 自动生成上下文并喂给 NVIDIA Kumo Relational 模型，该模型可跨租户横向扩展。]<a href="https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/FY-lkWrNmBYRFrosRD2Le.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/FY-lkWrNmBYRFrosRD2Le.png" alt="kumo-relational-architecture"></a></p>
-<p><em>图 1. Kumo Relational 系统概览。连接数据库、指定预测查询，其余交给 Kumo Relational，从上下文生成到模型推理。</em></p>
-<p>要做出预测，Kumo Relational 必须做三件事：<strong>(1)</strong> 理解每张表里的值，<strong>(2)</strong> 把跨表的记录关联起来，<strong>(3)</strong> 把带有已知标签的上下文样本与被预测的实体关联起来。具体做法如下：</p>
-<p>![Kumo Relational 架构：(a) 带任务、users、orders 和 items 表的上下文输入；(b) 表内的列注意力和行注意力，并注入了上下文标签；(c) 跨表的图注意力和跨样本注意力。]<a href="https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/OFX2a7xwBTfUEcbedTsfe.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/OFX2a7xwBTfUEcbedTsfe.png" alt="kumo-relational-system-overview"></a></p>
-<p><em>图 2. Kumo Relational 架构：(a) 上下文输入，(b) 表内推理，(c) 跨表推理。</em></p>
-<p><strong>自动上下文生成：</strong> 任务用 <a href="https://arxiv.org/abs/2602.09572">Predictive Query Language（PQL）</a>书写，这是一种声明式接口，你只需说明要预测什么，而不是怎么预测。对于时序任务，Kumo Relational 会重放历史数据库状态：它以某个锚点时间戳为界采样以实体为中心的子图，并根据该时间戳之后的事件计算每个标签，同时只向模型提供该时间戳之前的数据。这样可以防止数据泄漏。</p>
-<p><strong>表内推理：</strong> 一个轻量网络独立处理每张表，交替进行列注意力（关联同一列内的值）和行注意力（关联同一行内的特征）。模型会学习哪些列和行对当前预测重要，并在噪声扩散之前将其过滤掉。</p>
-<p><strong>跨表推理：</strong> 一个更大的网络通过在主键/外键关系上的图注意力，把行嵌入沿着关系结构分发，并与跨上下文样本的跨样本注意力交替进行。关系推理就发生在这里，比如把用户的画像与其交易历史关联起来。由于这一阶段处理的是行嵌入，而不是每张表的每一个单元格，该设计避免了二次方开销，并能扩展到较大的上下文和更深的子图。</p>
-<h2>Kumo Relational 是如何构建的</h2>
-<p>Kumo Relational 完全在合成的关系数据上预训练，这些数据模拟了带有多种预测查询的真实世界关系型数据库。预训练分阶段进行，从单表逐步过渡到越来越复杂的关系结构。</p>
-<p>预训练所需的多样化关系型数据库很少公开，因此合成数据填补了这一空白。Kumo Relational 的生成器建立在 <a href="https://arxiv.org/abs/2602.04029">PluRel</a>（Kothapalli 等，ICML 2026）的方法之上，后者把单表数据生成器扩展到完整的关系型数据库。Kumo 团队成员参与开发了 PluRel，也是原论文的共同作者。PluRel 分三个阶段生成每个数据库：一个 schema；行与行之间的外键连接，这些行像真实数据那样聚簇；以及来自结构因果模型（Structural Causal Models）的列值，带有时间趋势和跨表依赖。生成过程很轻量，因此预训练数据实际上是无限的；PluRel 论文还表明，随着合成数据库的增加，预训练损失遵循幂律，而且这些收益能迁移到真实数据库上。</p>
-<p>通过这样的预训练，模型学会跨表过滤、关联和聚合信息，而不是依赖固定的聚合。当最高准确率至关重要时，Kumo Relational 还可以在特定数据集和任务上微调。</p>
-<h2>性能</h2>
-<p>在论文中，我们在来自 RelBench V1 与 V2、SAP SALT 和 4DBInfer 的 15 个关系型数据库上的 41 个基准上评估了 Kumo Relational，覆盖电商、医疗、企业、社交和学术领域。这些数据集都没有在预训练中出现过。Kumo Relational 在分类和回归上都优于最强的监督模型，包括关系深度学习模型和由专家手工设计的表格集成。在 <a href="https://arxiv.org/abs/2608.16319">RelArena-α</a> 排行榜（在 RelBench V1 上比较关系模型与系统）上，它开箱即位于准确率-效率的帕累托前沿：</p>
-<p>![RelArena-α 排行榜的散点图：跨任务的相对准确率（以 Elo 表示，y 轴）对每 1,000 个样本的中位推理时间（x 轴，对数刻度）。Kumo Relational 位于帕累托前沿，约 17 秒、Elo 1,842。得分最高的条目 rt-plurel 在约 7,300 秒时达到 Elo 1,878，大约慢 430 倍。其它每个基础模型、特征工程系统和监督模型的得分都更低、运行也更慢。]<a href="https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/9ITlubGvqGVnoy7j_NZDi.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/9ITlubGvqGVnoy7j_NZDi.png" alt="relarena-alpha-leaderboard"></a></p>
-<p><em>图 3. RelArena-α 排行榜：跨任务的 Elo 对每 1,000 个样本的中位推理时间（对数刻度）。在相近准确率下，Kumo Relational 比得分最高的条目快约 430 倍。</em></p>
-<p>论文还报告，在 SAP SALT 企业基准上，Kumo Relational 的平均倒数排名（MRR）比大型 AutoGluon 集成高 8%，比近期的表格基础模型高约 25%，而微调可把它对 AutoGluon 的领先扩大到 16%。它在苛刻条件下同样站得住：只用 0.2% 的训练数据作为上下文也能表现良好；即使移除了多达 75% 的外键连接仍然稳定；加入大量噪声列时性能也几乎不退化。</p>
-<h2>局限性</h2>
-<p>Kumo Relational 在具有有意义关系和时序动态的数据上表现最好，比如随时间变化的用户行为。在训练集非常大的任务上，任务专属的监督模型仍可能胜过上下文预测——在我们的基准中，上下文最多使用了 10,000 条样本。对基础模型进行微调正是为这种情况设计的。此外，预测信号必须在有限跳数内可达，因此建议先针对少数相关表提出一个聚焦的查询，再按需扩展图。</p>
-<h2>演示</h2>
-<p>Kumo Relational 原生地在数据库上做上下文学习：可以在内存中运行，也可以通过数据库与数仓连接器，或者通过一个自定义图引擎——后者借助内存映射 I/O 以最高 5 GB/s 的速度处理 500B+ 行数据。它已在 NVIDIA 新发布的 GPU 原生 structured-data-models 库中提供，这也是支撑我们姊妹模型 <a href="https://huggingface.co/blog/nvidia/kumo-tabular">Kumo Tabular</a> 的同一个开源库。该库会在首次使用时从 Hugging Face Hub 下载权重，因此你可以在一个带 GPU 的 notebook 里加载模型并直接预测。下面的代码把上下文样本、待预测实体及其相关表传给模型：</p>
-<pre><code># pip install structured-data-models
-import sdm
-
-model = sdm.models.KumoRelational(device=&quot;cuda&quot;)
-pred = model(
-    # In-context training table (fkeys/timestamps/targets):
-    x_context=...,
-    y_context=...,
-    # Prediction examples (fkeys/timestamps):
-    x_query=...,
-    # Multi-table information for context/prediction entities:
-    related_context_tables=...,
-    related_query_tables=...,
-)</code></pre>
-<p>完整的 RelBench 与 SAP SALT 流水线请见该库的<a href="https://github.com/NVIDIA/structured-data-models/tree/main/examples/relational">关系型示例</a>，其中也包括如何为每个实体采样相关表。</p>
-<p>如果想把模型作为独立服务运行，可以把它部署成 NVIDIA NIM，并在 notebook 中让开源的 <a href="https://github.com/NVIDIA/structured-data-models-client">structured-data-models-client</a> 指向它。你用 PQL 写出预测，客户端会收集上下文样本和相关表，然后发送请求：</p>
-<pre><code># pip install 'structured-data-models-client[relational]'
-import sdm_client
-
-client = sdm_client.SDMClient(url=&quot;http://localhost:8001&quot;)  # NIM URL
-query = sdm_client.PredictiveQuery(
-    # Prediction task in Predictive Query Language (PQL):
-    &quot;PREDICT COUNT(orders.*, 0, 30, days) FOR EACH users.user_id&quot;,
-    # Multi-table data as pandas DataFrames (keys/links inferred):
-    {&quot;users&quot;: ..., &quot;orders&quot;: ...},
-)
-pred = client.predict(
-    # Context examples and related tables for the entities to predict:
-    query.materialize(indices=[1, 2, 3]),
-    model=sdm_client.KumoRelational(),
-)</code></pre>
-<p>针对本地 NIM 以及在 Databricks 上的端到端运行，请见客户端的<a href="https://github.com/NVIDIA/structured-data-models-client/tree/main/examples">示例 notebook</a>。</p>
-<h2>开始用 NVIDIA Kumo Relational 构建</h2>
-<p>NVIDIA Kumo Relational 现已可用。阅读<a href="https://arxiv.org/abs/2604.12596">研究论文</a>、探索<a href="https://github.com/NVIDIA/structured-data-models-client/blob/main/examples/local/relational.ipynb">快速上手 notebook</a>，或者直接在自己的数据上开始预测。代码以 Apache 2.0 许可发布，模型权重以 OpenMDW License Agreement 1.1 版发布。NVIDIA 相信可信 AI 是共同的责任，我们已制定相关政策和实践，以支持面向广泛 AI 应用的开发。在按照我们的服务条款下载或使用时，开发者应与支持该模型的团队协作，确保该模型满足相关行业与用例的要求，并应对意外的产品滥用。请<a href="https://www.nvidia.com/en-us/product-security/">在此</a>报告模型质量、风险、安全漏洞或 NVIDIA AI 相关的问题。</p>
-<ul><li><strong>论文：</strong> <a href="https://arxiv.org/abs/2604.12596">https://arxiv.org/abs/2604.12596</a></li><li><strong>文档：</strong> <a href="https://docs.nvidia.com/sdgm/rfm/overview">https://docs.nvidia.com/sdgm/rfm/overview</a></li><li><strong>代码：</strong> <a href="https://github.com/NVIDIA/structured-data-models">https://github.com/NVIDIA/structured-data-models</a></li><li><strong>PyPI：</strong> <a href="https://pypi.org/project/structured-data-models/">https://pypi.org/project/structured-data-models/</a></li><li><strong>客户端代码：</strong> <a href="https://github.com/NVIDIA/structured-data-models-client">https://github.com/NVIDIA/structured-data-models-client</a></li><li><strong>客户端 PyPI：</strong> <a href="https://pypi.org/project/structured-data-models-client/">https://pypi.org/project/structured-data-models-client/</a></li><li><strong>权重：</strong> <a href="https://huggingface.co/nvidia/Kumo-Relational">https://huggingface.co/nvidia/Kumo-Relational</a></li><li><strong>快速上手 notebook：</strong> <a href="https://github.com/NVIDIA/structured-data-models-client/blob/main/examples/local/relational.ipynb">https://github.com/NVIDIA/structured-data-models-client/blob/main/examples/local/relational.ipynb</a></li><li><strong>相关研究：</strong> <a href="https://arxiv.org/abs/2602.09572">Predictive Query Language（PQL）</a>、<a href="https://arxiv.org/abs/2602.04029">PluRel</a>、<a href="https://huggingface.co/blog/nvidia/kumo-tabular">Kumo Tabular</a></li></ul>
-<h2>致谢</h2>
-<p>我们感谢整个 Kumo 团队给予的宝贵支持。特别感谢 Josh Przybylko、Adi Wadaskar、Hema Raghavan、Manush Murali、Raja Rao DV、Keti Jovanovska、Zack Drach、Vanja Josifovski、Myungwhan Kim、Blaž Stojanovič、Siyang Xie、Alan Krumholz、Effy Fang、Abdullah Al-chihabi、Disha Dubey、Devan Johnson、Joseph Oliveira、Angela Liu、Miha Pelko、Vedaant Jain、Sally Liu、Aleksandar S. Sokolovski、Alex Porter 和 Ramona Bendias。</p>
-<p>来自该作者的更多文章</p>
-<h2>在仿真中训练，在真实机器人上部署：基于 Isaac Lab 3.0 的 Microduck</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>5</p>
-<p>2026 年 10 月 21 日</p>
-<h2>NVIDIA Kumo Forecast 将预训练时序表示与历史模式检索和可解释性相结合</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>7</p>
-<p>2026 年 10 月 21 日</p>
-<h3>社区</h3>
-<p>在文本输入框中拖拽、粘贴或点击此处上传图片、音频和视频。</p>
-<p>点按或粘贴此处以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fkumo-relational">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fkumo-relational">登录</a>后发表评论</p>
-<p>6</p>
-<ul><li><a href="https://huggingface.co/manushm"><img src="https://huggingface.co/avatars/7badeaaeea65a041b9407fb5ad43af78.svg" alt=""></a></li><li><a href="https://huggingface.co/vstiff"><img src="https://huggingface.co/avatars/eb0f7e4f64e366b3fb8a83fc9a620102.svg" alt=""></a></li><li><a href="https://huggingface.co/nabarun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62076dd7c838f02f5a240d38/-W2SHFmToBpdC3DtIylSg.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/denizbalik"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b577596985529d871cb633/_TYJZ8gW_c8a_193LL6qy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhileshacademics"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/GU61yZwby13kuwdxlY8I9.png" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Hugging Face ❤️ TorchTPU：原生支持 TPU</title>
-      <link>https://huggingface.co/blog/hf-torchtpu</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/hf-torchtpu</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Hugging Face ❤️ TorchTPU: TPUs, Natively</description>
-      <content:encoded><![CDATA[<h1>Hugging Face ❤️ TorchTPU：原生支持 TPU</h1>
-<p>发布于 2026 年 10 月 20 日</p>
-<p><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt="Alvaro Moran 的头像"></a></p>
-<p>Alvaro Moran</p>
-<p>tengomucho</p>
-<p><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt="Jingya Huang 的头像"></a></p>
-<p>Jingya Huang</p>
-<p>Jingya</p>
-<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy 的头像"></a></p>
-<p>Simon Pagezy</p>
-<p>pagezyhf</p>
-<p><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt="Jeff Boudier 的头像"></a></p>
-<p>Jeff Boudier</p>
-<p>jeffboudier</p>
-<p><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt="Régis Pierrard 的头像"></a></p>
-<p>Régis Pierrard</p>
-<p>regisss</p>
-<p>如果你曾经试着在 TPU 上运行 PyTorch，那你大概是把代码移植到了 <code>torch_xla</code>，或者最后不得不去学 JAX。有了 <a href="https://github.com/google-pytorch/torch_tpu">TorchTPU</a> 这个原生 PyTorch 后端，TPU 现在只是又一个设备而已。它为 Hugging Face 生态打开了 TPU 的原生支持。Transformers、Diffusers 和 Kernels 都能在 TPU 上原生运行。从 Hub 里挑一个模型，把它送到 <code>&quot;tpu&quot;</code>，就完成了。</p>
-<h2>等等，TPU 是什么？🤔</h2>
-<p>TPU 是 <a href="https://cloud.google.com/tpu">Tensor Processing Unit</a> 的缩写。TPU 是 Google 自家的 AI 加速器。它们是专为一项工作打造的芯片：神经网络绝大部分时间都在做的那种矩阵运算。Google 设计它们已经大约十年，并用它们来训练和提供自家模型，包括 Gemini。</p>
-<p>TPU 可在 <a href="https://docs.cloud.google.com/tpu/docs/intro-to-tpu">Google Cloud</a> 上使用，规模从单颗芯片一直到数千颗芯片组成的 pod。当你需要大量算力——无论是训练还是大规模推理服务——它们就特别出彩。</p>
-<p>一直以来的拦路虎是软件。TPU 的软件栈是围绕 TensorFlow 和 JAX 长起来的，PyTorch 用户想进来就得更费劲。</p>
-<h2>旧的做法</h2>
-<p>到目前为止，要在 TPU 上跑 PyTorch，就意味着得走 PyTorch/XLA（<code>torch_xla</code>）。它能用，但有它的怪脾气。张量是惰性的（说的是张量，不是你），所以你的代码并不总是在你以为它执行的时候执行。微小的改动可能触发计算图重编译，而调试起来也很难推理。</p>
-<p>为了让日子好过一点，我们做了 Optimum TPU。它让 Hugging Face 模型在 TPU 上获得了推理和训练支持。既然 TorchTPU 带来了原生支持，用 Transformers 和 Diffusers 跑 Hugging Face 模型就不再需要 Optimum TPU 了。</p>
-<h2>登场：TorchTPU 🚀</h2>
-<p><a href="https://github.com/google-pytorch/torch_tpu">TorchTPU</a> 把 TPU 加成了 PyTorch 的一个新后端。你照常写普通的 PyTorch 代码。它自带为 TPU 调优过的 Pallas kernel，支持分布式训练，还有一个 <code>torch.compile</code> 集成，供你需要更高速度时使用。在 TPU VM 上安装它只需要一条命令：</p>
-<pre><code>pip install torch-tpu --extra-index-url https://download.pytorch.org/whl/cpu</code></pre>
-<p>那个额外的索引给你的是 <code>torch</code> 的 CPU 构建。没有它的话，pip 会拉取大得多的 CUDA 构建，而你在 TPU 上并不需要那个。</p>
-<h2>你常用的那些库，现在跑在 TPU 上</h2>
-<h3>Transformers</h3>
-<p>Transformers v5 是围绕一个理念构建的：成为模型定义的唯一权威来源，好让它们能跑在任何地方。&quot;任何地方&quot;如今包括了 TPU。要把模型加载到 TPU 上，传 <code>device_map=&quot;tpu&quot;</code> 即可。就这样。</p>
-<pre><code>from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_id = &quot;Qwen/Qwen3.5-9B&quot;
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    device_map=&quot;tpu&quot;, # will load model directly on the TPU
-)
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-inputs = tokenizer(&quot;The future of AI is&quot;, return_tensors=&quot;pt&quot;).to(&quot;tpu&quot;)
-out = model.generate(**inputs, max_new_tokens=64)
-print(tokenizer.decode(out[0], skip_special_tokens=True))</code></pre>
-<p>模型默认以 eager 模式运行。你也可以用 <code>torch.compile</code> 获得更好的性能，或者把它跑在分布式配置里。</p>
-<h3>图像？视频？Diffusers 在 TPU 上把它们画出来 🎨</h3>
-<p>TPU 现在在 Diffusers 里是一等设备。做原型或调试时，eager 模式只需要 <code>pipe.to(&quot;tpu&quot;)</code>。做部署时，编译模式只多一次 <code>compile</code> 调用。你的 pipeline 和代码都保持不变，也不需要维护一个 TPU 分支。</p>
-<pre><code>import torch
-from diffusers import StableDiffusion3Pipeline
-
-pipe = StableDiffusion3Pipeline.from_pretrained(
-    &quot;stabilityai/stable-diffusion-3.5-medium&quot;, dtype=torch.bfloat16
-)
-pipe.to(&quot;tpu&quot;)  # eager mode: that's the whole change
-# optional: compiled mode
-pipe.transformer.compile(backend=&quot;tpu&quot;, fullgraph=True, dynamic=False)
-
-image = pipe(&quot;a corgi astronaut planting a flag on a pizza moon&quot;).images[0]</code></pre>
-<p>第一次调用会做编译，之后每次相同图像尺寸的调用都会复用那张计算图。</p>
-<p>模型太大，放不进一颗芯片？把 <code>TensorParallelConfig</code> 传给 <code>from_pretrained</code>，transformer 就会在加载时被分片到多颗芯片上，因此完整的模型永远不必塞进一个地方。许多流行的 pipeline 开箱即支持这一点，不支持的也只是一个 <code>tp_plan</code> 的距离。<a href="https://huggingface.co/docs/diffusers/main/optimization/tpu">Diffusers TPU 指南</a>里有完整做法。</p>
-<p>下面是一些在 Cloud TPU v6e-4 上跑出来的例子：</p>
-<p><em>TP=4（每个模型分摊到四颗芯片）· bf16 · batch 1</em></p>
-<table><thead><tr><th><a href="https://huggingface.co/MiniMaxAI/MiniMax-H3">MiniMax-H3</a>（视频 + 音频）</th><th><a href="https://huggingface.co/Qwen/Qwen-Image-2.1">Qwen-Image-2.1</a></th><th></th></tr></thead><tbody><tr><td></td><td><img src="https://huggingface.co/buckets/huggingface/hf-torchtpu-blog-assets/resolve/images/qwen-image-21-capybara-1024.jpg" alt="一只戴着巫师帽的水豚，在烛光下读书，油画风格"></td><td><img src="https://huggingface.co/buckets/huggingface/hf-torchtpu-blog-assets/resolve/images/qwen-image-21-neon-2048.jpg" alt="霓虹灯店招，写着 QWEN IMAGE 2.1"></td></tr><tr><td><em>&quot;图片里那只毛绒绒的 Hugging Face 吉祥物，一张圆圆的黄色笑脸，脸颊红润，两只小手张开，站在一艘古希腊三列桨战舰的船首 […] 海浪拍打、木材吱呀作响、索具间的风声、远处的海鸥，以及一段低沉史诗感的管弦乐渐渐升起。&quot;</em> · 1344×768，5.2 秒，49 步 · 编译模式 188 秒，eager 模式 262 秒</td><td><em>&quot;一只戴着巫师帽的水豚，在烛光下读书，油画风格&quot;</em> · 1024×1024，40 步 · 编译模式 3.5 秒，eager 模式 8.0 秒</td><td><em>&quot;一块霓虹灯店招，写着 'QWEN IMAGE 2.1'，雨夜，湿漉漉的路面上有倒影&quot;</em> · 2048×2048，40 步</td></tr></tbody></table>
-<h3>Kernels</h3>
-<p><a href="https://huggingface.co/kernels?sort=trending&amp;search=tpu">Kernels Hub</a> 里有现成可用的 TPU kernel。用 Kernels 库加载一个，就能给你的模型提速。</p>
-<p>TPU kernel 是用 <a href="https://docs.jax.dev/en/latest/pallas/tpu/">Pallas</a> 写的，它让你能对硬件做底层控制。你也可以从 <a href="https://github.com/openxla/tokamax">Tokamax</a> 库里引入 kernel。下面是一个来自 Tokamax 的 ragged-dot kernel 被接入 Mixture-of-Experts 模型的例子：</p>
-<pre><code>from kernels import get_kernel
-from transformers import AutoModelForCausalLM
-from transformers.integrations.moe import ALL_EXPERTS_FUNCTIONS
-
-repo_id = &quot;tengomucho/ragged-dot-tpu&quot;
-kernel = get_kernel(repo_id, version=1, trust_remote_code=[repo_id])
-ALL_EXPERTS_FUNCTIONS.register(&quot;tokamax_ragged_dot&quot;, kernel.experts_forward)
-model = AutoModelForCausalLM.from_pretrained(
-    &quot;Qwen/Qwen3-30B-A3B-Instruct-2507&quot;,
-    experts_implementation=&quot;tokamax_ragged_dot&quot;,
-)</code></pre>
-<p>batch 越大，收益越大。在 batch size 为 64 时，Qwen3-30B-A3B 上的解码快了 21.5 倍，Gemma 4 26B-A4B 上快了 12.8 倍。</p>
-<p><a href="https://huggingface.co/buckets/huggingface/hf-torchtpu-blog-assets/resolve/images/kernel-ragged-dot-speedup.png"><img src="https://huggingface.co/buckets/huggingface/hf-torchtpu-blog-assets/resolve/images/kernel-ragged-dot-speedup.png" alt="Hub 上 ragged-dot kernel 与默认 grouped_mm 相比的解码吞吐，Qwen3-30B-A3B 与 Gemma 4 26B-A4B"></a> <em>TPU v6e-8 上的解码吞吐，Hub kernel 对比默认实现。</em></p>
-<h2>我们来测，你就不必费这个劲 🧪</h2>
-<p>我们通过运行该库的测试套件，持续改进 transformers 里的 TPU 支持。我们正在努力为 TPU 增加每日 CI，并把结果公开展示在（transformers 仪表盘）[[https://huggingface.co/spaces/transformers-community/transformers-ci-dashboard]](https://huggingface.co/spaces/transformers-community/transformers-ci-dashboard%5D)。</p>
-<p><a href="https://huggingface.co/buckets/huggingface/hf-torchtpu-blog-assets/resolve/images/tpu-ci-dashboard.png"><img src="https://huggingface.co/buckets/huggingface/hf-torchtpu-blog-assets/resolve/images/tpu-ci-dashboard.png" alt="Transformers CI 仪表盘，TPU 测试结果与其他加速器并列"></a> <em>Transformers CI 仪表盘，TPU 结果与其他加速器并列展示。仍在进行中！</em></p>
-<p>现在还不是全绿，我们对此并不介意。在 TPU 上运行的测试里，96.5% 通过。我们发现的每一个失败案例，都会变成一个小的复现脚本，以及在 TorchTPU 仓库上的一条 issue。到目前为止我们报告了 34 条 issue，其中 19 条已经修好。在 TPU 上运行还抓到了 Transformers 本身的几个 bug，比如 <code>StaticCache</code> 和 Qwen3 张量并行方案里的问题。这些我们在上游修掉了。</p>
-<p>如果有什么东西在 TPU 上出了问题，我们希望在你之前先发现它。</p>
-<h2>开始使用</h2>
-<p>对 PyTorch 用户来说，TPU 不再是一条支线任务了。安装 TorchTPU，从 Hub 取一个模型，把它送到 <code>&quot;tpu&quot;</code>。</p>
-<ul><li><a href="https://github.com/google-pytorch/torch_tpu">GitHub 上的 TorchTPU</a></li><li><a href="https://huggingface.co/kernels?sort=trending&amp;search=tpu">Hub 上的 TPU kernel</a></li><li><a href="https://docs.cloud.google.com/tpu/docs">Cloud TPU 文档</a></li></ul>
-<p>我们迫不及待想看到你做出什么 🤗。如果碰到问题，开一条 issue 告诉我们。</p>
-<p>我们博客的更多文章</p>
-<p>partnershipsgcpspaces</p>
-<h2>Google Cloud TPU 向 Hugging Face 用户开放</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62175099ae3a893ac7ce86a7/ZSFoej_60rG-hT-gmo3Pr.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1624629516652-5ff5d596f244529b3ec0fb89.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></li></ul>
-<p>24</p>
-<p>2024 年 7 月 9 日</p>
-<p>partnershipsgcphardware</p>
-<h2>让成千上万个开放 LLM 在 Vertex AI Model Garden 中绽放</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1624629516652-5ff5d596f244529b3ec0fb89.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></li></ul>
-<p>22</p>
-<p>2024 年 4 月 10 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fhf-torchtpu">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fhf-torchtpu">登录</a> 即可评论</p>
-<p>10</p>
-<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ehcalabres"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60db433e432bcf121f559073/a7LbJFHx2GUm9sH05Ns8Q.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Titrezo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67ced8f42c97b1996ac4449e/mqfSC1nIVNkqnUH6PZwKD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/MadMike477"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b232dcf6027d00161fb46c/FwXMNqgpoXBb2NWJ3X_Pq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/dhanushkac"><img src="https://huggingface.co/avatars/c292ee0a7d9f916f85c9191043d0d242.svg" alt=""></a></li><li><a href="https://huggingface.co/Chris-FIRESTARTER"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/0I537AW3doNDAzhArKa7T.jpeg" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>AnyLanguageModel 1.0：在 Apple 平台上做本地模型的一年</title>
-      <link>https://huggingface.co/blog/anylanguagemodel-1-0</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/anylanguagemodel-1-0</guid>
-      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：AnyLanguageModel 1.0: One Year of Local Models on Apple Platforms</description>
-      <content:encoded><![CDATA[<h1>AnyLanguageModel 1.0：在 Apple 平台上做本地模型的一年</h1>
-<p>发布于 2026 年 10 月 20 日</p>
-<p><a href="https://huggingface.co/mattt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt="Mattt 的头像"></a></p>
-<p>Mattt</p>
-<p>mattt</p>
-<p>去年 11 月，我们在这个博客上介绍了 <a href="https://huggingface.co/blog/anylanguagemodel">AnyLanguageModel</a>：它是 Apple 的 Foundation Models 框架的直接替换品，让你可以自选 app 使用的模型和提供方。我们听到不少 app 开发者对本地模型感到好奇，却不一定清楚该从哪里上手。他们也想避免同时支持多个推理提供方带来的额外复杂度。AnyLanguageModel 就是从这些反馈里长出来的。</p>
-<p>本地推理和托管推理各有长处，在建这一代智能 app 时，两者都有用武之地。一套共享的 API 让&quot;为每个任务挑对模型&quot;这件事更容易。</p>
-<p>一年、几十个版本之后，<a href="https://github.com/huggingface/AnyLanguageModel/releases/tag/1.0.0">AnyLanguageModel 1.0</a> 发布了，一同发布的还有 <a href="https://github.com/huggingface/swift-huggingface/releases/tag/1.0.0">swift-huggingface 1.0</a> 和 <a href="https://github.com/huggingface/swift-xet/releases/tag/1.0.0">swift-xet 1.0</a>。</p>
-<p>下面说说有哪些变化，以及接下来还有什么：</p>
-<h2>可直接替换的兼容 API</h2>
-<p>AnyLanguageModel 的核心想法没有变：用 Foundation Models API，配上适合你 app 的模型。要开始用，只需改一下 <code>import</code> 语句：</p>
-<pre><code>- import FoundationModels
-+ import AnyLanguageModel</code></pre>
-<p>同一段 session 代码随后就能用于系统模型，用于通过 llama.cpp、MLX 和 Core ML 运行的开放权重模型，也用于下面这些托管提供方。</p>
-<p>过去一年里，我们加了几个重要功能：</p>
-<ul><li><strong>工具调用</strong>在每一个提供方上都可用。</li><li><strong>受约束生成</strong>在每一个提供方上也都可以，包括嵌套的 <code>@Generable</code> 类型以及它们的数组。</li><li><strong>图像支持</strong>让你用 Foundation Models 27 的语法把图像附到 prompt 上，包括在 iOS、macOS 和 visionOS 27 上使用系统模型的时候。</li></ul>
-<p>在 OS 27 上，AnyLanguageModel 还可以配合任何符合 Foundation Models 的 <code>LanguageModel</code> 协议的模型，包括 <a href="https://github.com/apple/coreai-models">Core AI</a> 模型。</p>
-<p>与 AnyLanguageModel 配套，我们还构建了 <a href="https://github.com/huggingface/swift-huggingface">swift-huggingface</a> 和 <a href="https://github.com/huggingface/swift-xet">swift-xet</a>，把 Hub 上加速的模型下载带到 Swift app 里。</p>
-<h2>托管模型也支持</h2>
-<p>今年对托管模型的支持也扩展了。AnyLanguageModel 现在支持：</p>
-<ul><li>OpenAI 的 Chat Completions 和 Responses API</li><li><a href="https://www.openresponses.org">Open Responses</a>，适用于任何提供兼容端点的提供方</li><li>Anthropic 的 Messages API，并支持自适应思考与 effort 选项</li><li>Google 的 Gemini API</li><li>Ollama</li><li>OS 27 上的 Private Cloud Compute</li><li><a href="https://huggingface.co/docs/inference-providers/index">Hugging Face Inference Providers</a>，以及通过自定义 base URL 接入的 OpenRouter 等其他 OpenAI 兼容端点</li></ul>
-<p>借助 Inference Providers，你可以用同一段 session 代码，去使用那些大到无法在设备上运行的开放权重模型：</p>
-<pre><code>let model = OpenAILanguageModel(
-    baseURL: URL(string: &quot;https://router.huggingface.co/v1/&quot;)!,
-    apiKey: ProcessInfo.processInfo.environment[&quot;HF_TOKEN&quot;]!,
-    model: &quot;openai/gpt-oss-120b&quot;,
-    apiVariant: .chatCompletions
-)</code></pre>
-<p>托管提供方享有与本地模型相同的功能：受约束生成、带流式输出的工具调用，以及响应里的 token 用量。</p>
-<p>推理（reasoning）现在也成了对话记录的一部分。当你切换提供方时，如果新提供方无法回放推理块，这些块会自动从请求中省略。</p>
-<p>API 密钥来自一个闭包而不是字符串，因此你的 app 可以向自己的服务器获取短期 token。<a href="https://github.com/huggingface/AnyLanguageModel#api-credentials-and-security">README</a> 解释了什么时候该让用户自带密钥，什么时候该把请求走代理。</p>
-<p>AnyLanguageModel 也能在 Linux 上跑，所以同一份代码可以放在服务器上工作。</p>
-<h2>开放权重模型变强了</h2>
-<p>在我们让本地模型更易用的同时，模型本身也更有能力了，因此小模型成了不错的起点。下面是目前 Hub 上下载量最高的一些模型：</p>
-<ul><li>来自 Google 的 <a href="https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf">Gemma 4 E2B</a>，GGUF 格式，经过量化感知训练，在 <code>Q4_0</code> 下约 3.4 GB。</li><li>来自 Liquid AI 的 <a href="https://huggingface.co/LiquidAI/LFM2.5-2.6B-GGUF">LFM2.5 2.6B</a>，GGUF 格式，在 <code>Q4_K_M</code> 下约 1.7 GB。</li><li>来自阿里巴巴的 <a href="https://huggingface.co/mlx-community/Qwen3.8-27B-4bit">Qwen3.8 27B for MLX</a>，4 bit 下约 16 GB。</li></ul>
-<p>前两个能装进 iPhone，Qwen3.8 27B 则能在内存 32 GB 及以上的 Mac 上运行。选用 MLX 模型只需要一行：</p>
-<pre><code>let model = MLXLanguageModel(modelId: &quot;mlx-community/Qwen3.8-27B-4bit&quot;)</code></pre>
-<p>而如果你手边有四台顶配 Mac Studio，来自 Z.ai 的 <a href="https://huggingface.co/zai-org/GLM-5.3">GLM-5.3</a> 在 BF16 下大约要 1.5 TB。对我们其余人来说，可以通过 Inference Providers 使用它。</p>
-<h2>升级到 1.0</h2>
-<pre><code>dependencies: [
-    .package(
-        url: &quot;https://github.com/huggingface/AnyLanguageModel&quot;,
-        from: &quot;1.0.0&quot;,
-        traits: [&quot;MLX&quot;]
-    )
-]</code></pre>
-<p>如果你要升级现有的 app，请参阅 <a href="https://github.com/huggingface/AnyLanguageModel/releases/tag/1.0.0">AnyLanguageModel</a>、<a href="https://github.com/huggingface/swift-huggingface/releases/tag/1.0.0">swift-huggingface</a> 和 <a href="https://github.com/huggingface/swift-xet/releases/tag/1.0.0">swift-xet</a> 发布说明中的迁移指引，来更新你的代码。</p>
-<p>社区反馈和贡献塑造了我们的好几个主要功能。感谢<a href="https://github.com/huggingface/AnyLanguageModel/graphs/contributors">每一位贡献者</a>，是你们让 AnyLanguageModel 对 app 开发者更有用。</p>
-<h2>下一步</h2>
-<p>语言模型已被证明是把智能构建进产品的强大工具。它们也是开发者可以投入使用的众多模型类型之一。我们很期待把这套做法带到更多能力上：熟悉的 Swift API，配上可在设备上运行的、可自选的模型。即将到来：会做决策的模型，以及会倾听的模型。</p>
-<h2>链接</h2>
-<ul><li><a href="https://github.com/huggingface/AnyLanguageModel">GitHub 上的 AnyLanguageModel</a></li><li><a href="https://github.com/huggingface/swift-huggingface">GitHub 上的 swift-huggingface</a></li><li><a href="https://github.com/huggingface/swift-xet">GitHub 上的 swift-xet</a></li><li><a href="https://huggingface.co/blog/anylanguagemodel">Introducing AnyLanguageModel</a></li><li><a href="https://huggingface.co/blog/swift-huggingface">Introducing swift-huggingface</a></li></ul>
-<h2>本文中提到的模型 4</h2>
-<p>我们博客的更多文章</p>
-<p>mlxopen-sourcecommunity</p>
-<h2>oMLX 的创建者与维护者 Jun Kim 加入 Hugging Face，支持 MLX 社区</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></li><li>+1</li></ul>
-<p>98</p>
-<p>2026 年 9 月 22 日</p>
-<p>announcementmlxllm</p>
-<h2>你本会自己开的那个 PR</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/623c830997ddced06d78699b/ucB8joTPONCnc_Gj0mssR.jpeg" alt=""></li></ul>
-<p>74</p>
-<p>2026 年 4 月 16 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fanylanguagemodel-1-0">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fanylanguagemodel-1-0">登录</a> 即可评论</p>
-<p>4</p>
-<ul><li><a href="https://huggingface.co/WaSampta"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ynKudRz9P7bewRrpK6Rfy.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/laoya0"><img src="https://huggingface.co/avatars/492ba3e5ebc95951c86b0490625b4366.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>
-<h2>本文中提到的模型 4</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>
