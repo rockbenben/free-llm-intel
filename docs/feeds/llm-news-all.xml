@@ -246,6 +246,46 @@
 <p>这次运行的全部内容（<code>PLAN.md</code>、<code>THEORY.md</code>、<code>jobs/driver.py</code>、<code>submit.sh</code>、<code>deploy.sh</code>，以及原始的 <code>ledger-<em>.jsonl</code> 文件）都在 <a href="https://github.com/NielsRogge/inkling-2-mini-hillclimb"><code>NielsRogge/inkling-2-mini-hillclimb</code></a> 中。想在另一个模型上复用这套循环，就把你的候选与对照服务器命令写进一个 <code>configs/plan-</em>.json</code> 文件，然后提交到与目标 endpoint 匹配的任意 HF Jobs GPU 规格上。</p>]]></content:encoded>
     </item>
     <item>
+      <title>[Fireworks AI] Hy4 Flash 登陆 Fireworks：腾讯面向高性价比专业工作的开放模型</title>
+      <link>https://fireworks.ai/blog/hy4-flash-on-fireworks/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/hy4-flash-on-fireworks/</guid>
+      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Fireworks AI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml">Fireworks AI</source>
+      <description>原文标题：Hy4 Flash on Fireworks: Tencent&apos;s open model for cost-efficient professional work</description>
+      <content:encoded><![CDATA[<h1>Hy4 Flash 登陆 Fireworks：腾讯面向高性价比专业工作的开放模型</h1>
+<p><a href="https://fireworks.ai/models/fireworks/hy4-flash">Hy4 Flash</a>，腾讯新推出的开放权重模型，现已在 Fireworks serverless 上提供。它是一个混合专家模型，总参数量约 220B，每个 token 激活约 12B，上下文窗口 1M token（在 Fireworks 上线时为 512K），支持文本与图像输入。腾讯为文档处理、研究、办公工作与 agent 工作流而打造它。</p>
+<p>在我们记录过成本的每一项 <a href="https://fireworks.ai/specialized-intelligence-index/">Specialized Intelligence Index</a> 基准上，Hy4 Flash 都位于得分-成本帕累托前沿。在这些榜单上，没有模型能以更低的成本拿到更高的分数。最清楚的例子是 Epiq 的 CorporateBench：它以每任务低 200 倍以上的成本（$0.013 对 $2.80）略胜 Claude Opus 5.5。它还在 Rogo 的 Big Finance Benchmark 上与 Claude Opus 5 打平，在 Sierra 的 τ³-Banking 上与之持平，同样成本低 200 倍以上。</p>
+<p>Hy4 Flash 在 Fireworks serverless 上运行，Standard 层级的价格为每百万未缓存输入 token $0.07、每百万缓存输入 token $0.003、每百万输出 token $0.281，另有 Priority 层级可用。它在全球范围内提供服务。</p>
+<h2>Hy4 Flash 在专业工作上与 Claude Opus 保持同步</h2>
+<p>我们在七个 <a href="https://fireworks.ai/specialized-intelligence-index/">Specialized Intelligence Index</a> 基准上运行了 Hy4 Flash，采用与各榜单上其他所有模型相同的 harness，推理强度设为 high。成本按 Fireworks serverless 价格对记录到的 token 计算。有三项结果尤为突出：</p>
+<ul><li>在 <strong>Epiq 的 CorporateBench</strong> 上领先于 Claude Opus 5.5。该基准测试的是在数千封公司内部邮件与会议记录中回答问题。Hy4 Flash 得分 75.9%，在 14 个模型中排第 6，略高于 Claude Opus 5.5（75.4%）。它的每任务成本为 $0.013，而 Opus 5.5 为 $2.80，低 200 倍以上，并且是榜单上成本最低的模型。</li><li>在 <strong>Rogo 的 Big Finance Benchmark</strong> 上与 Claude Opus 5 打平。两者均得分 49.2%，但 Hy4 Flash 每任务成本为 $0.0065，Opus 5 为 $1.83，约高 280 倍。Hy4 Flash 也排在 Claude Opus 5.5 与 Kimi K3.1 Pro（各 48.2%）之前。榜单上唯一成本更低的模型 GPT-6 Luna 得分为 35.3%。</li><li>在 <strong>Sierra 的 τ³-Banking</strong> 上与 Claude Opus 5 相当。在这个面向银行任务的 agent 基准上，Hy4 Flash 得分为 49.2%，Opus 5 为 49.1%，每次试验成本为 $0.012 对 $2.59。它是榜单上成本最低的模型，这使它位于该榜单的成本前沿。</li></ul>
+<p>在我们记录了成本的每一个榜单上，Hy4 Flash 都是成本最低的模型，Big Finance 除外。它在 HealthBench Professional（18 个中排第 16）与 DeepSWE（22 个中排第 19）上排名更低；对于长周期软件工程，腾讯推荐更大的 Hy4。</p>
+<p><em>结果来自 Fireworks 的 <a href="https://fireworks.ai/specialized-intelligence-index/">Specialized Intelligence Index</a> 在 Hy4 Flash 的 Fireworks 部署上的运行，截至 2026 年 11 月 22 日。</em></p>
+<p>图 1：Hy4 Flash 与 Claude Opus 在三个专业基准上的对比，来自 Fireworks 的 Specialized Intelligence Index 运行结果。</p>
+<h2>已对照腾讯官方 endpoint 验证</h2>
+<p>在开放 endpoint 之前，我们在自研推理引擎 FireAttention 上让 Hy4 Flash 跑完了上线验证套件，并把结果与腾讯官方 endpoint 做了对比。每一项得分都在腾讯结果的 1 分以内。</p>
+<p>基准</p>
+<p>Fireworks 上的 Hy4 Flash</p>
+<p>AIME 2026</p>
+<p>96.67</p>
+<p>GPQA Diamond</p>
+<p>91.92</p>
+<p>SWE-bench Verified</p>
+<p>90.60</p>
+<p>Terminal-Bench 2.1</p>
+<p>83.40</p>
+<p>DeepSWE</p>
+<p>60.71</p>
+<p>MMMU-Pro</p>
+<p>77.63</p>
+<p>OCRBench</p>
+<p>82.73</p>
+<h2>今天就开始构建</h2>
+<p>在 Fireworks serverless 上<a href="https://app.fireworks.ai/models/fireworks/hy4-flash">开始使用</a> Hy4 Flash，或转向预留吞吐量以应对生产工作负载。</p>
+<p>当前定价请见 <a href="https://fireworks.ai/models/fireworks/hy4-flash">Hy4 Flash 模型页面</a>。</p>]]></content:encoded>
+    </item>
+    <item>
       <title>[Together AI] Hurdle 简介：在你的 API、技能与文档上运行 agent 评估</title>
       <link>https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs</link>
       <guid isPermaLink="true">https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs</guid>
@@ -401,7 +441,6 @@ npx hurdle run api-evals --view</code></pre>
 <p><code>setup</code> 会检查你的凭据、安装 Guardian（目前仅支持 macOS 或 Linux），并把项目设为在 Together sandbox 中运行。sandbox 和 chat completion 都需要一些 Together 余额，但 Together 这一侧每次运行只应花费不到一美分的零头。</p>
 <h2>寻找你自己的 hurdle</h2>
 <p>当你准备好评估自己的产品时，把 API key 以任意你喜欢的名字加进 <code>.env.local</code>：</p>
-<p><code>setup</code> 会检查你的凭据、安装 Guardian（目前仅支持 macOS 或 Linux），并把项目设为在 Together sandbox 中运行。sandbox 和 chat completion 都需要一些 Together 余额，但 Together 这一侧每次运行只应花费不到一美分的零头。寻找你自己的 hurdle 当你准备好评估自己的产品时，把 API key 以任意你喜欢的名字加进 .env.local：</p>
 <p>然后在这个套件里添加一个 <code>api</code> 块，写明那个变量名和你 API 的 host：</p>
 <pre><code>// example.suite.mjs
 export default defineSuite({
@@ -7790,88 +7829,6 @@ print(response.usage)copy</code></pre>
 <p><a href="https://deepinfra.com/blog/glm-5-3-flash-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-flash-deepinfra.png" alt="GLM-5.3-Flash API 现已在 DeepInfra 上线"></a><a href="https://deepinfra.com/blog/glm-5-3-flash-deepinfra">GLM-5.3-Flash API 现已在 DeepInfra 上线</a>&lt;p&gt;Z.ai 的 GLM-5.3-Flash 在推理时仅激活其 3200 亿参数中的 180 亿；按 Z.ai 报告的结果，它在要求严苛的软件工程基准 DeepSWE v1.1 上以 63.4 对 58.0 超过 Claude Opus 4.8。它是 GLM-5 系列中首个原生多模态模型，把文本、图像和视频输入与 100 万 token 的上下文结合在一起 [&amp;hellip;]&lt;/p&gt;</p>
 <p><a href="https://deepinfra.com/blog/openclaw-alternatives"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/openclaw-alternatives_rs.webp" alt="最佳 OpenClaw 替代品：Hermes Agent、ZeroClaw 与 NemoClaw"></a><a href="https://deepinfra.com/blog/openclaw-alternatives">最佳 OpenClaw 替代品：Hermes Agent、ZeroClaw 与 NemoClaw</a>&lt;p&gt;OpenClaw 在 GitHub 上有 36.2 万颗星，其 skill 市场有超过 4.4 万条社区贡献。这样的采用度不是偶然。不过，在生产环境使用它的团队反复遇到同一个抱怨：模型列表是固定的。OpenClaw 的引导式设置向导覆盖 OpenAI、Anthropic、Google、DeepSeek 和本地 Ollama。你可以 [&amp;hellip;]&lt;/p&gt;</p>
 <p><a href="https://deepinfra.com/blog/glm-5-1-pricing-guide-provider-comparison"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/GLM-5.1-provider.png" alt="GLM-5.1 定价指南：API 成本对比与分析"></a><a href="https://deepinfra.com/blog/glm-5-1-pricing-guide-provider-comparison">GLM-5.1 定价指南：API 成本对比与分析</a>&lt;p&gt;2026 年 11 月更新。对 GLM-5.1 来说，选哪家提供商是一个实实在在的经济决策。在 10 家被基准测试的 API 提供商中，混合价格从每 1M token $0.74 到 $1.70，输出速度从 33.8 到 175.2 t/s，最快的提供商比最慢的快 5.2 倍。对规模化部署的团队来说，这个差距决定了该模型是否 [&amp;hellip;]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[DeepInfra] 最佳 Kimi K3.1 Pro API 提供商（2026）：价格、档位、速度</title>
-      <link>https://deepinfra.com/blog/best-kimi-k3-1-pro-api-providers</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/best-kimi-k3-1-pro-api-providers</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>DeepInfra</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml">DeepInfra</source>
-      <description>原文标题：Best Kimi K3.1 Pro API Providers (2026): Price, Tiers, Speed</description>
-      <content:encoded><![CDATA[<h1>最佳 Kimi K3.1 Pro API 提供商（2026）：价格、档位、速度</h1>
-<p>发布于 2026.11.17，作者 DeepInfra</p>
-<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/best-kimi-k3-1-pro-api-providers-header.png" alt="最佳 Kimi K3.1 Pro API 提供商（2026）：价格、档位、速度"></p>
-<h2>最佳 Kimi K3.1 Pro 提供商概览</h2>
-<table><thead><tr><th>提供商</th><th>最适合</th></tr></thead><tbody><tr><td><strong>DeepInfra</strong></td><td>本指南提供商中价格最低（$1.90 / $9.50）、Flex 与 Priority 档、实测错误率 0%、private endpoint</td></tr><tr><td>Moonshot AI（Kimi API）</td><td>第一方访问，外加 Highspeed 变体以及 Moonshot 自家的编码与办公应用</td></tr><tr><td>DigitalOcean</td><td>在 Moonshot 标价下提供快速响应，另有专用 GPU 可用</td></tr><tr><td>Baseten</td><td>按 token 计费的快速 Model API，并可为扩展提供专用部署</td></tr><tr><td>Modal</td><td>接入 coding agent 的按 token 计费 API，每个 agentic 任务成本低</td></tr><tr><td>Amazon Bedrock</td><td>在 AWS 账户内使用 Highspeed 变体，带 Flex 与 Priority 档</td></tr><tr><td>OpenRouter</td><td>一个 API key 横跨多个主机，支持自动 failover</td></tr><tr><td>Featherless AI</td><td>一个 OpenAI 兼容 key 同时覆盖 K3.1 Pro 和庞大的 open 模型目录</td></tr></tbody></table>
-<p><strong>按优先级快速参考</strong></p>
-<ul><li>本指南提供商中每 token 价格最低：DeepInfra（每 1M token 输入 $1.90 / 输出 $9.50 / 缓存 $0.19；Flex $1.52 / $7.60）</li><li>标价下答案最快：DigitalOcean 或 Baseten</li><li>本指南中最快：Amazon Bedrock 的 Highspeed 变体，价格为标价的两倍</li><li>第一方功能与应用：Moonshot AI</li><li>一个 key 即可 failover：OpenRouter</li></ul>
-<p>Kimi K3.1 Pro 是 Moonshot AI 的 open-weight agentic 模型，<a href="https://www.kimi.ai/blog/kimi-k3-1-pro">于 2026 年 10 月 23 日发布</a>，权重在 11 月初发布到 <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Hugging Face</a>。它是 mixture-of-experts 模型，总参数 2.8T、激活参数 104B，原生多模态（输入文本和图像，输出文本），上下文窗口 1M token。它由 Kimi K3 后训练而来，强化学习算力大得多，并用 Gated DeepSeek Sparse Attention 替换了 K3 的 full-attention 层，以降低长上下文服务的成本。在 Artificial Analysis 的 Intelligence Index 上它得分 46，是同规模 29 个 open-weight 模型中最高的。它还很啰嗦，回答前会推理很久，所以在哪里运行它，会同时决定账单和等待时间。</p>
-<p>本指南按决定选择的关键维度，比较运行 Kimi K3.1 Pro 的几种方式：价格与定价档位、功能、部署模式，以及每种选项适合谁。每个条目都附一行实测速度。完整的测速与延迟对比见 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">Kimi K3.1 Pro API benchmark</a>，其中包括首 token 时间与首个答案 token 时间的对比——对这个推理模型来说，后者从约 25 秒到两分多钟不等。速度、混合价格和错误率来自 <a href="https://artificialanalysis.ai/models/kimi-k3-1-pro/providers">Artificial Analysis</a>（reasoning effort 为 max，数据抓取于 2026-11-17），它对 14 家提供商的 16 个 endpoint 就这个模型做了 benchmark。价格与功能来自各提供商自己的页面。价格截至 2026-11-17。</p>
-<h2>托管 API 提供商</h2>
-<h3>1. DeepInfra</h3>
-<p>当你按每 token 成本做决定，同时又想要生产级可靠性、服务档位和通往专用容量的路径时，DeepInfra 是最佳选择。</p>
-<ul><li><strong>当前价格：</strong> 每 1M token <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">输入 $1.90 / 输出 $9.50 / 缓存输入 $0.19</a>，较 $2.00 / $10.00 / $0.20 的标价有 5% 促销折扣</li><li><strong>Flex 档：</strong> $1.52 / $7.60 / $0.152。通过 <code>&quot;service_tier&quot;: &quot;flex&quot;</code> 启用。请求最多等待 10 分钟以获取容量，之后返回 HTTP 429，被拒绝的 Flex 请求不收费（<a href="https://deepinfra.com/blog/flex-service-tier">Flex 如何工作</a>）</li><li><strong>Priority 档：</strong> 使用 <code>&quot;service_tier&quot;: &quot;priority&quot;</code> 时为 $2.85 / $14.25 / $0.285，适用于无法排队的请求</li><li><strong>混合价格（Artificial Analysis，7:2:1）：</strong> $1.46，低于所有标准价 endpoint 的 $1.54，也低于所有快速档（$2.31 到 $4.62）。按相同权重，Flex 约为 $1.17</li><li><strong>可靠性：</strong> 在 Artificial Analysis 的测试中错误率 0.0%。DeepInfra 是 Artificial Analysis 测到的、错误率为 0% 的最便宜 endpoint</li><li><strong>上下文与输出：</strong> 1,048,576 token 上下文；每个请求最多 943,718 个输出 token。若未设置 <code>max_tokens</code>，默认取剩余上下文与 65,536 中的较小值</li><li><strong>功能：</strong> OpenAI 兼容 API、图像输入、工具调用、JSON 模式与结构化输出（JSON schema 与正则）、<code>reasoning_effort</code> 从 <code>none</code>（关闭 thinking）到 <code>max</code>、使用 <code>prompt_cache_key</code> 与可配置 TTL 的 prompt caching、每个请求最多 4 个 fallback 模型</li><li><strong>部署：</strong> serverless 按 token 计费的 API，或在专用 GPU 上的 private endpoint；零数据保留</li><li><strong>速度：</strong> 在 Artificial Analysis 上输出 46.9 tokens/s。如果响应速度就是你的产品，请测试 DigitalOcean 或 Baseten；对于批处理、agent 和对成本敏感的工作，每 token 的差距会不断累积。</li></ul>
-<p>Kimi K3.1 Pro 很能输出：Artificial Analysis 跑完它的 Intelligence Index 共统计到 1.13 亿个输出 token，而同类中位数是 1.04 亿个。因此，包括推理 token 在内的输出 token 占了账单的大头，而 DeepInfra 的 $9.50 输出价格（Flex 上 $7.60）正是省钱的地方。它适合后台 agent、文档与金融流水线、评测批跑，以及任何能接受为更低价格多等一会的负载。有一件事要在你自己的流量上实测：DeepInfra 在 Artificial Analysis 的 agentic 负载上的缓存命中率是 92.6%，低于若干主机达到的 98–100%。缓存密集的 agent 循环应设置 <code>prompt_cache_key</code>，并在预估成本前先检查命中率。</p>
-<p>用 OpenAI SDK 完成第一次调用：</p>
-<pre><code>import os
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
-    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
-)
-
-response = client.chat.completions.create(
-    model=&quot;moonshotai/Kimi-K3.1-Pro&quot;,
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Reconcile these two revenue tables and explain each difference.&quot;}],
-    temperature=1.0,
-    top_p=0.95,
-    extra_body={&quot;reasoning_effort&quot;: &quot;high&quot;, &quot;service_tier&quot;: &quot;flex&quot;},
-)
-print(response.choices[0].message.content)copy</code></pre>
-<p>endpoint 是 <code>/chat/completions</code>，认证头是 <code>Authorization: Bearer $DEEPINFRA_API_KEY</code>。完整参数见 <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro/api">Kimi K3.1 Pro API 页面</a>。</p>
-<h3>2. Moonshot AI（Kimi API）</h3>
-<p>当你想要第一方访问、Highspeed 变体，或想在 Moonshot 自家产品里使用这个模型时，Moonshot 自己的 <a href="https://platform.kimi.ai/">Kimi API</a> 是最佳选择。</p>
-<ul><li><strong>模型名称：</strong> <code>kimi-k3.1-pro</code> 与 <code>kimi-k3.1-pro-highspeed</code>（<a href="https://www.kimi.ai/blog/kimi-k3-1-pro">Moonshot 发布博文</a>）</li><li><strong>价格（Artificial Analysis）：</strong> $2.00 / $10.00 / $0.20 缓存；Highspeed $4.00 / $20.00 / $0.20</li><li><strong>Highspeed：</strong> Moonshot 称其速度是 K3.1 Pro 的 2–3 倍</li><li><strong>产品：</strong> 在 Kimi.ai、Kimi Work 和 Kimi Code 中也可用；API 客户可选择零数据保留</li><li><strong>速度：</strong> 标准 endpoint 在 Artificial Analysis 上为 31.0 tokens/s（Highspeed：69.4 tokens/s）</li></ul>
-<p>第一方 API 会最先获得 Moonshot 的新功能，而 Highspeed 变体是不离开 Moonshot 就能缩短响应时间的最简单方式。它在每一类 token 上都比 DeepInfra 贵，而且 Artificial Analysis 在测试中对标准 endpoint 测到 8.0% 的错误率，所以要把重试考虑进去。</p>
-<h3>3. DigitalOcean</h3>
-<p>当用户会等待每一个答案，而你又想留在 Moonshot 的标价水平时，<a href="https://docs.digitalocean.com/products/inference/details/pricing/">DigitalOcean Serverless Inference</a> 是最佳选择。</p>
-<ul><li><strong>价格：</strong> 每 1M token 输入 $2.00 / 输出 $10.00 / 缓存读取 $0.20</li><li><strong>计费：</strong> 预付费 serverless credits；专用 GPU 推理按 GPU 小时计费</li><li><strong>平台：</strong> 一个控制台内提供模型目录、Inference Router 和 agent 工具</li><li><strong>速度：</strong> 200.8 tokens/s，并且是 Artificial Analysis 上标准价 endpoint 中首个答案 token 时间最低的</li></ul>
-<p>对于聊天界面和交互式 coding agent，DigitalOcean 值得一试。它每 token 比 DeepInfra 的标准价贵约 5%，而且它的定价页对这个模型只列出 Standard 一个档位。</p>
-<h3>4. Baseten</h3>
-<p>当你现在想要一个按 token 计费的快速 API、并在用量增长时切换到专用部署时，<a href="https://www.baseten.co/library/kimi-k31-pro/">Baseten 的 Model API</a> 是最佳选择。</p>
-<ul><li><strong>模型：</strong> Kimi K3.1 Pro，1M 上下文，文本与图像输入</li><li><strong>价格（Artificial Analysis）：</strong> $2.00 / $10.00 / $0.20 缓存</li><li><strong>部署：</strong> 按 token 计费的 Model API，另有专用部署和针对自定义配置的工程支持</li><li><strong>速度：</strong> Artificial Analysis 上 183.0 tokens/s，是标价档中最快的之一</li></ul>
-<p>Baseten 适合预期会从共享容量迁移到专用容量的产品团队。它的每 token 价格与 Moonshot 的标价一致，因此每 token 比 DeepInfra 贵。</p>
-<h3>5. Modal</h3>
-<p>当你在 coding agent 里运行 K3.1 Pro，并希望每个完成任务的成本很低时，<a href="https://modal.com/library/moonshot/kimi-k3-1-pro">Modal 的 Model APIs</a> 是最佳选择。</p>
-<ul><li><strong>价格：</strong> 每 1M token 输入 $2.00 / 缓存输入 $0.20 / 输出 $10.00</li><li><strong>API：</strong> OpenAI 兼容，并为 Claude Code、Codex、OpenCode 和 Hermes Agent 提供原生集成</li><li><strong>输入：</strong> 文本与图像，1,048,576 token 上下文</li><li><strong>每个任务的成本：</strong> Artificial Analysis 的每个 Intelligence Index 任务 $3.19，是测到的低值之一，这得益于 100% 的缓存命中率</li><li><strong>速度：</strong> Artificial Analysis 上 118.0 tokens/s</li></ul>
-<p>Modal 的高缓存命中率意味着，对反复重发长前缀的 agent 循环来说，每个任务的实际花费低于标价给人的印象。按 token 计它收的是 Moonshot 的标价，比 DeepInfra 高约 5%。</p>
-<h3>6. Amazon Bedrock</h3>
-<p>当你的工作负载已经在 AWS 上运行，并希望在 AWS 治理下使用 Highspeed 变体时，<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3-1-highspeed.html">Amazon Bedrock</a> 是最佳选择。</p>
-<ul><li><strong>模型：</strong> Kimi K3.1 Pro Highspeed（<code>global.moonshotai.kimi-k3.1</code>），1M 上下文</li><li><strong>价格（Standard 档）：</strong> 在 global profile 上为输入 $4.00 / 输出 $20.00 / 缓存读取 $0.20；在 US 和 India profile 上为 $4.40 / $22.00 / $0.22；缓存写入每 1M token $5.00</li><li><strong>服务档位：</strong> Flex 为标准价的 0.5 倍，Priority 为 1.75 倍</li><li><strong>API：</strong> OpenAI 兼容的 Chat Completions 与 Responses，外加 Converse 和 Invoke；reasoning effort 从 <code>none</code> 到 <code>max</code>（默认 <code>max</code>）</li><li><strong>速度：</strong> Artificial Analysis 上 218.2 tokens/s，是测到的最快之一</li></ul>
-<p>Bedrock 让数据保持在 AWS 边界内，并为美国和印度的数据驻留提供区域 profile。标准价是 Moonshot 对 Highspeed 变体标价的两倍。Bedrock 的 Flex 档能把可等待的工作负载拉回 $2.00 / $10.00，但这仍高于 DeepInfra 的标准价。</p>
-<h3>7. OpenRouter</h3>
-<p>当你想要一个 API key，并在提供 K3.1 Pro 的各主机之间自动 failover 时，<a href="https://openrouter.ai/moonshotai/kimi-k3.1-pro">OpenRouter</a> 是最佳选择。</p>
-<ul><li><strong>模型 slug：</strong> <code>moonshotai/kimi-k3.1-pro</code></li><li><strong>路由的主机：</strong> 20 多个 endpoint，其中包括 DeepInfra，各自按主机自己的价格</li><li><strong>路由：</strong> 均衡、最快或最便宜模式；也可以固定到单个主机</li><li><strong>速度：</strong> 取决于所选主机；OpenRouter 增加一跳网络，但自身不提供算力</li></ul>
-<p>OpenRouter 上有些小主机价格比 DeepInfra 更低，提供的精度也各不相同。如果在意输出一致性，就固定到一个主机。最终选定某个主机的团队，通常会直接对接该主机，以获得完整的功能集、服务档位和支持。</p>
-<h3>8. Featherless AI</h3>
-<p>当你已经在用它 OpenAI 兼容的 API 跑许多 open 模型，并希望 K3.1 Pro 也用同一个 key 时，<a href="https://featherless.ai/blog/kimi-k3-1-pro-is-live-on-featherless">Featherless AI</a> 是最佳选择。</p>
-<ul><li><strong>价格（Developer 档）：</strong> 每 1M token 输入 $2.00 / 缓存 $0.20 / 输出 $10.00</li><li><strong>上下文：</strong> Developer 档为 256K；专用实例上是完整的 1M 窗口</li><li><strong>数据：</strong> 不记录 prompt 或补全内容</li><li><strong>部署：</strong> serverless API，或专用 GPU 集群</li><li><strong>速度：</strong> Artificial Analysis 未跟踪这个模型的该项数据</li></ul>
-<p>256K 窗口只有该模型原生上下文的四分之一，这对整仓库和长文档类工作有影响。它适合把许多 open 模型收拢到一家提供商旗下的团队。</p>
-<h2>关于许可证</h2>
-<p>Kimi K3.1 Pro 以 <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Kimi K3.1-Pro License</a> 发布，这是一份允许商用但附带条件的自定义许可证。任意 12 个月内集团营收超过 2000 万美元的 model-as-a-service 运营方，需要与 Moonshot 另行签约；月活跃用户超过 1 亿或月营收超过 2000 万美元的产品，必须在其界面中展示“Kimi K3.1-Pro”。许可证为内部使用和某些访问途径列明了豁免。如果上述任一门槛可能适用于你，请阅读完整文本，或询问你的提供商。</p>
-<h2>结语</h2>
-<ul><li><strong>本指南中每 token 价格最低：</strong> DeepInfra，$1.90 / $9.50 / $0.19，在 Artificial Analysis 上的混合价为 $1.46，异步工作用 Flex 为 $1.52 / $7.60</li><li><strong>实测错误率为 0% 的最低价：</strong> DeepInfra</li><li><strong>标价下答案最快：</strong> DigitalOcean 或 Baseten</li><li><strong>本指南中最快：</strong> Amazon Bedrock 的 Highspeed 变体，价格 $4.00 / $20.00</li><li><strong>每个 agentic 任务成本低：</strong> Modal，得益于 100% 的缓存命中率</li><li><strong>第一方功能与应用：</strong> Moonshot AI</li><li><strong>一个 key、自动 failover：</strong> OpenRouter</li><li><strong>一个 key 覆盖大型 open 模型目录：</strong> Featherless AI</li></ul>
-<p>各主机不断调整 serving stack，所以这个模型的速度和延迟每周都会变化，相关讨论见<a href="https://deepinfra.com/blog/why-open-models-get-faster">为什么 open 模型上线后会变快</a>。在做出承诺前，先查看 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">benchmark 指南</a> 中的最新数字。</p>
-<h3>最佳整体方案</h3>
-<p>对大多数把 Kimi K3.1 Pro 作为 API 来运行的团队，<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">DeepInfra</a> 是默认选择。在本指南的提供商中它的价格最低，输入 $1.90、输出 $9.50，而对任何能等待的工作负载，Flex 档输出价为 $7.60。它是 Artificial Analysis 测到的、错误率为 0% 的最便宜 endpoint；它提供完整的 1M 上下文，输出 token 最多可达 943K；它还提供零数据保留和 private endpoint——这一切都在一个 OpenAI 兼容 API 上，改一下 base URL 就能切换过来。对于 agent 流水线里较轻的步骤，<a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash-1017">DeepSeek V4.1 Flash</a> 可以在同一个 API 上以很小的成本运行。</p>
-<p>更多细节：成本场景见 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-pricing-guide">Kimi K3.1 Pro 定价指南</a>，速度与延迟见 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">API benchmark</a>，架构与参数见<a href="https://deepinfra.com/blog/kimi-k3-1-pro-model-overview">模型概览</a>。如果你要从 Kimi K3 迁移，<a href="https://deepinfra.com/blog/kimi-k3-pricing-providers-cost">Kimi K3 定价与提供商指南</a> 覆盖了上一代。初创公司可以通过 <a href="https://deepinfra.com/deepstart">DeepStart</a> 申请免费额度。</p>
-<p>相关文章</p>
-<p><a href="https://deepinfra.com/blog/books-llama-index"><img src="https://deepinfra.com/blog/gutenberg-robot.jpg" alt="用 DeepInfra 和 LlamaIndex 与书籍对话"></a><a href="https://deepinfra.com/blog/books-llama-index">用 DeepInfra 和 LlamaIndex 与书籍对话</a>作为 DeepInfra，我们很高兴宣布与 LlamaIndex 的集成。LlamaIndex 是一个强大的库，支持使用各种语言模型和 embedding 来索引和搜索文档。在这篇博文中，我们将展示如何用 DeepInfra 和 LlamaIndex 与书籍对话。我们将 …</p>
-<p><a href="https://deepinfra.com/blog/glm-5-3-flash-pricing-providers-cost"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-flash-pricing.png" alt="GLM-5.3-Flash 定价、提供商与成本"></a><a href="https://deepinfra.com/blog/glm-5-3-flash-pricing-providers-cost">GLM-5.3-Flash 定价、提供商与成本</a>&lt;p&gt;GLM-5.3-Flash 是 Z.ai 在 GLM-5 系列中的一款模型，于 2026 年 8 月 26 日发布。它是一个原生多模态模型，接受文本和图像输入（包括 OpenRouter 在内的一些列表还标注了视频），输出文本。Artificial Analysis 和 DeepInfra 都将其描述为拥有 320B 参数的 mixture-of-experts 模型、每次推理激活 18B 参数；DeepInfra 的列表 [&amp;hellip;]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/kimi-k2-6-api-benchmarks-latency-throughput-cost"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/kimi-2.6-api-benchmark.webp" alt="Kimi K2.6 API benchmark：延迟、TPS 与成本分析（2026）"></a><a href="https://deepinfra.com/blog/kimi-k2-6-api-benchmarks-latency-throughput-cost">Kimi K2.6 API benchmark：延迟、TPS 与成本分析（2026）</a>&lt;p&gt;关于 Kimi K2.6 Kimi K2.6 是 Moonshot AI 的开源前沿模型，于 2026 年 4 月 20 日发布。它是一个原生多模态 agentic 模型，为长周期编码、自主执行和基于 swarm 的任务编排而构建。该模型采用 Mixture-of-Experts（MoE）架构，总参数 1 万亿，每个 token 激活 320 亿参数，使用 [&amp;hellip;]&lt;/p&gt;</p>
 <p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
   </channel>
