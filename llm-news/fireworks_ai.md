@@ -14,7 +14,7 @@
 3. [Ember-1 发布](https://fireworks.ai/blog/ember-1) <!--orig:Introducing Ember-1-->
 4. [专业智力指数简介](https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks) <!--orig:Introducing the Specialized Intelligence Index-->
 5. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/llm-model-routing-deepswe) <!--orig:The frontier isn’t a model. It’s a router.-->
-6. [Hy4 Flash on Fireworks: Tencent's open model for cost-efficient professional work](https://fireworks.ai/blog/hy4-flash-on-fireworks/)
+6. [Hy4 Flash 登陆 Fireworks：腾讯面向高性价比专业工作的开放模型](https://fireworks.ai/blog/hy4-flash-on-fireworks/) <!--orig:Hy4 Flash on Fireworks: Tencent's open model for cost-efficient professional work-->
 7. [Should you switch your agents to Kimi K3.1 Pro?](https://fireworks.ai/blog/should-you-switch-your-agents-to-kimi-k3-1-pro/)
 8. [What MiniMax M3.1 Flash reveals about choosing and combining models](https://fireworks.ai/blog/what-minimax-m3-1-flash-reveals-about-choosing-and-combining-models/)
 9. [Fireworks 在 Forge 发布新产品，帮企业构建专用智能](https://fireworks.ai/blog/fireworks-unveils-new-products-at-forge-to-help-companies-build-specialized-intelligence/) <!--orig:Fireworks unveils new products at Forge to help companies build specialized intelligence-->

@@ -71,207 +71,144 @@
 <p><a href="https://www.sensetime.com/cn/news/shaomaigou-robot-store-livestream-20261126-1149"><strong>把门店交给时间检验！烧卖购机器人店完成24小时真实营业直播</strong>2026/11/25</a><a href="https://www.sensetime.com/cn/news/sensenova-u1-6-open-source-20261124-1152"><strong>SenseNova U1.6 正式发布：美学进阶，字准意达</strong>2026/11/24</a><a href="https://www.sensetime.com/cn/news/sensenova-loop-9b-day0-chips-20261123-2026"><strong>超10家芯片企业完成商汤SenseNova Loop-9B Day0适配，国产算力生态加速协同！</strong>2026/11/23</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>[Hugging Face] 科学家为人工智能代理划定界限</title>
+      <title>[Hugging Face] 科学家为 AI agent 划下的界线</title>
       <link>https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents</link>
       <guid isPermaLink="true">https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents</guid>
       <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
       <category>Hugging Face</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml">Hugging Face</source>
       <description>原文标题：Where scientists draw the line on AI agents</description>
-      <content:encoded><![CDATA[<h1>科学家在哪里为 AI agents 划定界线</h1>
-<p>企业文章</p>
-<p>发布于 2026 年 11 月 25 日</p>
-<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
+      <content:encoded><![CDATA[<h1>科学家为 AI agent 划下的界线</h1>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers's avatar"></a></p>
 <p>Kyle Wiggers</p>
 <p>Ai2Comms</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
-<p>📄 <a href="https://allenai.org/papers/responsible-ai-survey">技术报告</a> <a href="https://www.datocms-assets.com/64837/1795122303-responsible-featured-51.png"><img src="https://www.datocms-assets.com/64837/1795122303-responsible-featured-51.png" alt="标题图，青绿与梅紫渐变上写着“What scientists need from responsible AI agents”。"></a></p>
-<p>将研究任务委托给 AI，并不会免除科学家对工作如何完成所负的责任。例如，使用 AI 进行文献综述的研究者需要核查系统是否忽略了相互矛盾的证据，或是否提出了所引论文并不支持的论断。将数据分析交给 agentic 系统的人需要了解它使用了哪些方法、访问了哪些文件，以及结果能否被成功复现。将部分实验室流程自动化的研究者需要确信系统遵守物理安全约束，例如温度限制或材料毒性；而处理人类受试者数据的研究者则需要系统保护参与者隐私并限制谁可以访问其信息的保证。研究者还需要明确的机构指南，用于验证和披露 AI 协助完成的工作。</p>
-<p>这些伦理与安全问题是我们 AI for science 工作的核心。负责任的科学不止关乎准确性——科学领域之所以有伦理研究规范，是因为科学家和科学共同体过去的行动与选择；这些规范也涵盖研究如何开展以及产生什么影响。我们希望 AI 工具扩展科学家能够完成的事情，同时不损害他们审视证据、验证方法，以及——也许最重要的是——为自己的发现负责的能力。</p>
-<p>为了更好地理解这需要什么，我们采访了 17 位从事自然科学、应用科学和社会科学的科学家，主题是 AI agents 的负责任开发。这些系统可以使用工具，并以不同程度的自主性执行研究任务。这些采访依托于此前调查研究建立的研究者网络——我们希望了解科学家会如何引导 AI 的发展，以体现其所在领域的责任。我们询问研究者会在哪些环节欢迎 agentic 协助、可能出现什么问题，以及他们需要哪些保障措施才愿意信任 agents 来参与自己的研究。</p>
-<p>我们对这些问题的兴趣源于评估 Ai2 所开发模型安全性的工作。随着我们扩大对 AI for science 的关注，我们发现，许多针对科学应用的安全工作都强调生物学和核物理学等领域的灾难性风险。我们还需要方法来评估 agents 在使用它们的领域中是否遵循负责任研究行为的标准。</p>
-<p>我们的一个主要发现与信任有关。在全部采访中，我们识别出 <em>科学信任</em> 的五个维度：验证、隐私、客观性、问责和透明。它们共同反映出超越 AI 系统是否给出正确答案的关切。研究者还需要理解答案是如何得出的、保护敏感信息、识别偏差，并确定由谁负责验证和支持 AI 协助得出的发现。这些都是负责任研究行为的问题。</p>
-<p>另一个主要发现表明，科学家应参与决定 agents 承担哪些研究任务、这些 agents 如何运作，以及它们的表现如何被评估。即使结果在技术上正确，如果研究者无法检查它是如何产生的，或者 agent 访问了研究者授权范围之外的机密数据或文件，该结果也可能不适合科学使用。</p>
-<p>第三个关键发现关乎科学的未来。受访者在两种态度之间分化：一边是对 AI 驱动进步的兴奋，另一边是对人类科学家角色的存在性担忧。他们提出应开展 AI 使用培训，并将制定和执行指南列为一项关键且紧迫的挑战。</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2's avatar"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://allenai.org/papers/responsible-ai-survey">技术报告</a> <a href="https://www.datocms-assets.com/64837/1795122303-responsible-featured-51.png"><img src="https://www.datocms-assets.com/64837/1795122303-responsible-featured-51.png" alt="题为“What scientists need from responsible AI agents”的题图，青绿与梅紫渐变背景。"></a></p>
+<p>把研究任务交给 AI，并不意味着科学家就不再对工作是如何完成的负责。例如，用 AI 做文献综述的研究者，需要核查系统是否忽略了相互矛盾的证据，或者是否提出了所引论文并不支持的论断。把数据分析交给 agent 式系统的人，需要理解它用了哪些方法、访问了哪些文件，以及结果能否被成功复现。把部分实验流程自动化的研究者，需要确信系统遵守物理安全约束，比如温度上限或材料毒性；而处理人类受试者数据的研究者，则需要确信系统能保护受试者的隐私、限制谁可以访问其信息。研究者还需要明确的机构指南，用来核实和披露 AI 辅助完成的工作。</p>
+<p>这些伦理与安全问题，是我们在“AI 用于科学”这一方向上工作的核心。负责任的科学不止于准确性——科学领域之所以有伦理研究规范，是因为科学家和科学界过去的行动与选择；这些规范同样涵盖研究如何开展、会产生什么影响。我们希望 AI 工具能拓展科学家所能取得的成果，同时不损害他们审视证据、验证方法的能力，以及——或许最重要的是——为自己的研究结果负责的能力。</p>
+<p>为了更清楚地理解这需要什么，我们访谈了 17 位从事自然科学、应用科学和社会科学的科学家，了解他们对负责任地开发 AI agent 的看法。这类系统能够使用工具，并以不同程度的自主性执行研究任务。访谈依托的是此前调研工作中建立起来的研究者网络——我们想了解，科学家会如何引导 AI 的发展，使其体现各自领域的责任。我们问他们：在哪些环节欢迎 agent 的协助、可能出什么问题，以及需要什么样的防护措施，才愿意让 agent 参与自己的研究。</p>
+<p>我们对这些问题的兴趣，源自评估 Ai2 所开发模型安全性的工作。随着我们把重心扩展到“AI 用于科学”，我们发现，针对科学应用的大量安全研究都强调生物学、核物理等领域的灾难性风险。我们同样需要一些方法，来评估 agent 在其被使用的领域中是否遵循了负责任研究行为的标准。</p>
+<p>我们的主要发现之一与信任有关。在所有访谈中，我们归纳出 <em>科学信任</em> 的五个维度：验证、隐私、客观性、问责和透明。它们共同反映出一些超出“AI 系统是否给出正确答案”的关切。研究者还需要理解答案是何以得出的、保护敏感信息、识别偏见，并确定由谁来负责核实并为 AI 辅助得出的结果担责。这些都是负责任研究行为的问题。</p>
+<p>另一项主要发现则表明，科学家应当参与决定 agent 承担哪些研究任务、这些 agent 如何运行，以及它们的表现如何被评估。即便结果在技术上是正确的，如果研究者无法检查它是如何产生的，或者 agent 访问了研究者未授权的机密数据或文件，这样的结果也可能不适合用于科学研究。</p>
+<p>第三项关键发现关乎科学的未来。受访者分成两派：一派为 AI 驱动的进步感到兴奋，另一派则对人类科学家的角色怀有存在层面的担忧。他们提议开展 AI 使用方面的培训，并把制定和执行指南列为首要而紧迫的挑战。</p>
 <h2>帮助研究者核查工作</h2>
-<p>对我们采访中的许多参与者来说，AI agents 的吸引力始于耗时的研究任务——处理大型数据集、编写代码、记录实验程序以及处理重复性行政工作。将这些活动自动化可以让研究者腾出更多时间用于实地工作、指导他人或发展新想法。它还可能使分析那些难以人工检查的大量数据成为可能。</p>
-<p>但委托研究任务也相应产生了验证 AI 系统所做工作的需求。</p>
-<p>几位参与者描述了对照原始出版物核查 AI 生成的答案，而不是直接接受摘要的字面说法。他们担心自信的回答包含细微的不准确之处，也担心工具只检索支持某一偏好假设的研究，从而强化既有假设。</p>
-<p>但检查 AI 系统的最终答案只是挑战的一部分。研究者还可能需知道 agent 省略了哪些来源、是否遵循了所要求的方法，以及在此过程中访问了哪些信息。</p>
-<p>我们的采访提示，针对科学研究的 AI agents 评估可以如何更好地反映这些关切。例如，文献综述 benchmark 可以测试 agent 是否忽略矛盾证据，或得出其来源不支持的结论。编码 benchmark 不仅可以评估生成的代码能否运行，还可以评估 agent 是否访问了授权范围之外的文件。对数据处理 agents 的评估可以将其方法和结果与既有的人工工作流程进行比较。</p>
-<p>这些例子指向一个更长期的目标——一种参与式 benchmark，由科学家帮助界定 agents 应接受测试所依据的研究实践和安全要求。我们希望评估在 Ai2 或其他地方开发的系统是否遵循其使用领域的标准，以及它们是否完成分配的任务。</p>
-<p>这些评估仍是尚待与科学家共同开发和测试的提案，而非成熟解决方案。但它们为我们在 Ai2 的工作提供了一个方向：构建开放的科研工具，意味着让其行为和局限更容易被调查，并让研究共同体在界定可信表现是什么样方面发挥作用。</p>
-<h2>让科学判断保持在流程中</h2>
-<p>验证只是将 AI 工具用于科学时的一方面考虑。受访者还提出了一个更根本的问题——当 AI 接管研究过程的部分环节时，科学专长会怎样？</p>
-<p>一位职业生涯早期的生物学家描述，自己有意识地限制 AI 的使用，同时在学习他们希望未来教给学生的技能。另一位研究者质疑，如果研究者在此过程中什么也没学到，那么产生正确结果是否足够：即使输出完美，“获得完美输出的人从中得到了什么？”</p>
-<p>一些参与者担心 AI 协助的研究可能削弱学习，尽管自动化的价值在一定程度上取决于研究者和任务。经验丰富的科学家可以合理地将熟悉的流程委托出去以节省时间，而仍在学习该流程的人则可能从亲自完成工作中受益。</p>
-<p>参与者还围绕涉及智力贡献的活动划出了不同边界。一位生物学家拒绝使用 AI 生成研究想法，认为这是应由个人保留的责任。其他人则更愿意接受 AI 协助构思或写作。例如，一位人类学家认为，科学论文的某些部分，尤其是对方法和结果的常规描述，足够程式化，可以从自动化中受益。</p>
-<p>即使是尝试用 AI 写作的研究者，有时也会重新考虑。一位政治学家描述，自己曾使用 Claude 帮助修改一篇稿件，后来决定重写整篇论文，因为其自身智力贡献的边界已变得不清晰。“我不知道哪些是 AI，哪些是我，”这位研究者说。</p>
-<p>语境也很重要。让 AI 在投稿前批评稿件，受到一些参与者的肯定；而用它来评审另一位研究者的未发表工作则引发了担忧。这一区别涉及的不只是技术能力；同行评审在保密、署名归属和公平评价他人研究方面负有责任。</p>
-<p>这些分歧表明，负责任的自动化不能通过一份可接受与不可接受任务的通用清单来定义。科学领域有不同的规范，即使从事类似工作，个别研究者也可能有不同的目标。</p>
-<p>同样的张力也适用于 AI 系统内置的保障措施。一位政治学家描述了阻止 AI 工具讨论某些主题的内容限制，可能如何干扰关于政治暴力或人权侵犯的正当研究。与此同时，处理敏感人类受试者数据的参与者希望获得关于隐私、访问权限以及信息将如何被使用的更强保证。</p>
-<p>这两种关切都合理。一个在缺乏充分保障措施下行动的 agent 可能泄露机密数据或产生有害结果，而一个受到过于宽泛约束的 agent 则可能阻止科学家开展正当的研究路径。</p>
-<p>这就是为什么科学共同体需要在塑造 AI 协助的边界方面发挥有意义的作用。开发者不仅需要了解 agent 能执行哪些活动，还需要了解研究者希望保留哪些决策、哪些地方需要保障措施——以及这些保障措施可能在哪些地方阻碍有价值的工作。</p>
-<h2>与科学家共同构建 AI agents</h2>
-<p>我们的发现指向一种从技术使用者出发的科学 AI 开发方法。</p>
-<p>研究者应能够检查 agent 的贡献、决定分配哪些工作，并保留发展自身专长的机会。实现这一点将需要诸如 agent 行动透明记录和细粒度数据控制等技术特性，以及由不同科学共同体的标准与实践所指导的评估。</p>
-<p>这还需要持续合作。我们的研究是探索性的；发现来自对 17 位在美国工作的科学家的采访，而非对科学观点的代表性调查，也不是对特定 AI agents 的实证评估。参与者既讨论了他们如今使用的生成式 AI 工具，也讨论了对更自主系统的预期。他们的视角指出了重要关切和设计优先事项，而不是就 AI 应如何在科学中使用建立共识。</p>
-<p>尽管如此，它们提供了一条前进道路。在 Ai2，我们相信 AI 可以加速科学发现，同时保留使研究可信的开放性、可复现性和独立审视。通过我们开发和评估科学 agents 的更广泛努力，我们旨在将这些原则付诸实践。这意味着与科学家合作，识别 agents 的有价值用途，并将其关切转化为具体评估，同时让人们更容易理解这些系统取得了什么成果以及如何取得。</p>
-<p>科学 AI 的前景并不仅仅是研究者可以推掉更多工作。而是他们可以探究原本可能遥不可及的问题，同时保留做出属于自己的发现所需的知识、判断力和能动性。</p>
-<p>该作者的更多内容</p>
-<h2>RoboTrack：面向真实世界机器人操作的点跟踪</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>9</p>
-<p>2026 年 11 月 23 日</p>
-<h2>XYBench：帮助解决提问背后的那个问题</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
-<p>9</p>
-<p>2026 年 11 月 13 日</p>
-<h3>社区</h3>
-<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
-<p>hocdz754</p>
-<p>约 4 小时前</p>
-<p>约 4 小时前编辑</p>
-<p>zqPV 测试完成</p>]]></content:encoded>
+<p>对我们访谈中的许多参与者来说，AI agent 的吸引力始于那些耗时的研究任务——处理大型数据集、写代码、记录实验流程，以及处理重复性的行政工作。把这些活动自动化，可以让研究者腾出更多时间用于野外工作、指导学生，或构思新想法。它还能让分析那些人工难以逐一检视的数据量成为可能。</p>
+<p>但把研究任务交出去，也相应地产生了一种需求：核实 AI 系统所完成的工作。</p>
+<p>有几位参与者提到，他们会把 AI 生成的答案与原始文献对照核查，而不是直接接受摘要的表面结论。他们担心的是：自信满满的回复里藏着不易察觉的不准确之处；以及工具只检索支持某一偏好假说的研究，从而强化既有假设。</p>
+<p>但核查 AI 系统给出的最终答案，只是挑战的一部分。研究者可能还需要知道 agent 漏掉了哪些来源、它是否遵循了所要求的方法，以及它在这个过程中访问了哪些信息。</p>
+<p>我们的访谈提示了，面向科学研究的 AI agent 评估可以如何更好地反映这些关切。例如，一个文献综述基准可以检验 agent 是否会忽略相互矛盾的证据，或得出其来源并不支持的结论。一个代码基准不仅可以评估生成的代码能否运行，还可以评估 agent 是否访问了其授权范围之外的文件。对数据处理 agent 的评估，则可以把它们的方法和结果与既有的人工流程作对比。</p>
+<p>这些例子指向一个更长远的目标——一个参与式基准：由科学家参与界定 agent 应当对照检验的研究实践与安全要求。我们希望评估的，不只是 Ai2 或其他地方开发的系统能否完成被交付的任务，还有它们是否遵循了其所服务领域的标准。</p>
+<p>这些评估方案目前仍只是有待与科学家共同开发和测试的提案，而不是成熟的解决方案。但它们为我们在 Ai2 的工作提供了一个方向：构建开放的科研工具，意味着让它们的行为和局限更容易被考察，并让研究社区在界定“什么才算可信的表现”时拥有一席之地。</p>
+<h2>让科学判断始终在回路之中</h2>
+<p>在把 AI 工具用于科学这件事上，核查只是其中一项考量。受访者还提出了一个更根本的问题——当 AI 接手研究过程中的一部分工作时，科学专长会变成什么样？</p>
+<p>一位事业早期的生物学家谈到，自己在习得那些希望将来教给学生的技能时，会有意限制 AI 的使用。另一位研究者则质疑：如果研究者在这个过程中什么也没学到，仅仅产出正确结果是否足够——即便输出完美，“得到这些完美输出的人，从中真的获得了什么吗？”</p>
+<p>一些参与者担心，AI 辅助的研究可能会削弱学习，不过自动化的价值在某种程度上取决于研究者和具体任务。经验丰富的科学家为了省时，把熟悉的流程委派出去是合理的；而仍在学习该流程的人，则可能从亲手完成中获益。</p>
+<p>在涉及智力贡献的活动上，参与者划出的界线也不相同。一位生物学家拒绝用 AI 生成研究想法，认为保留这项职责应当由个人承担。其他人对 AI 辅助的构思或写作则更为开放。例如，一位人类学家认为，科学论文的某些部分——尤其是对方法和结果的例行描述——程式化程度足够高，可以从自动化中受益。</p>
+<p>即便是尝试过用 AI 辅助写作的研究者，有时也会改变主意。一位政治学家谈到，自己曾用 Claude 帮助修改一份稿件，后来决定把整篇论文重写，因为已经分不清哪些属于自己的智力贡献。“我不知道哪部分是 AI，哪部分是我自己，”这位研究者说。</p>
+<p>情境同样重要。让 AI 在投稿前批评性地审读一份稿件，得到了一些参与者的认可；但用它去评审另一位研究者尚未发表的工作，则引发了担忧。这一区分不只关乎技术能力；同行评审本身就承载着保密、署名归属以及公正评价他人研究的责任。</p>
+<p>这些分歧表明，负责任的自动化无法靠一份“可做与不可做”的通用任务清单来界定。不同科学领域有不同的规范，而个别研究者即便在做类似的工作时，目标也可能不同。</p>
+<p>同样的张力也适用于 AI 系统内置的防护措施。一位政治学家谈到，阻止 AI 工具讨论某些话题的内容限制，可能会干扰关于政治暴力或侵犯人权问题的正当研究。与此同时，处理敏感人类受试者数据的参与者，则希望在隐私、访问权限以及信息将被如何使用等方面获得更强的保证。</p>
+<p>这两种担忧都成立。缺乏足够防护措施的 agent 可能泄露机密数据或产生有害结果；而受到过宽约束的 agent，则可能让科学家无法开展正当的研究工作。</p>
+<p>正因如此，科学社区需要在划定 AI 辅助边界的过程中发挥实质性的作用。开发者需要理解的，不仅是 agent 能做哪些活动，还有研究者希望保留哪些决定权、哪里必须有防护措施——以及这些防护措施在哪些地方可能会妨碍有价值的工作。</p>
+<h2>与科学家一起构建 AI agent</h2>
+<p>我们的发现指向一种面向科学的 AI 开发路径：从将要使用这项技术的人出发。</p>
+<p>研究者应当能够审视 agent 的贡献、决定哪些工作可以交办，并保留发展自身专长的机会。要做到这一点，需要一些技术特性，比如对 agent 行为的透明记录、细粒度的数据控制，以及由不同科学社区的标准与实践所指导的评估。</p>
+<p>这还需要持续的合作。我们的研究是探索性的；结论来自对 17 位美国科学家的访谈，既不是对科学界意见的代表性调查，也不是对具体 AI agent 的实证评估。参与者既谈到了他们当下使用的生成式 AI 工具，也谈到了他们对更自主系统的期待。他们的视角指出了重要的关切和设计优先级，而不是就 AI 应如何在科学中使用达成共识。</p>
+<p>不过，它们仍提供了一条前进的路径。在 Ai2，我们相信 AI 可以加速科学发现，同时保住让研究可信的开放性、可复现性与独立审视。通过我们在开发和评估科研 agent 方面更广泛的努力，我们希望把这些原则付诸实践。这意味着与科学家合作，找出 agent 有价值的用途，把他们的关切转化为具体的评估，同时也让人们更容易理解这些系统取得了什么成果、又是如何取得的。</p>
+<p>科学 AI 的前景，并不只是研究者能交出去更多工作。而是他们能够去追问那些原本可能触及不到的问题，同时保有做出属于自己的发现所需要的知识、判断力和自主性。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Hugging Face] 带有 CUGA 的印度语语音代理</title>
+      <title>[Hugging Face] 用 CUGA 搭建印度语语音 agent</title>
       <link>https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga</guid>
       <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
       <category>Hugging Face</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml">Hugging Face</source>
       <description>原文标题：An Indic Voice Agent with CUGA</description>
-      <content:encoded><![CDATA[<h1>使用 CUGA 构建 Indic 语音智能体</h1>
-<p>企业 文章</p>
-<p>发布于 2026 年 11 月 25 日</p>
+      <content:encoded><![CDATA[<h1>用 CUGA 搭建印度语语音 agent</h1>
 <p><a href="https://huggingface.co/vrunda-gadesha"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67fe070a4e8cc28ba346f53c/iEtn-b7KR5MEyQZvCyWve.jpeg" alt="Vrunda Gadesha's avatar"></a></p>
 <p>Vrunda Gadesha</p>
-<p>vrunda-gadesha</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/cyrilshaji"><img src="https://huggingface.co/avatars/bc670f3be9a7ed889acfe4f3e0de36b6.svg" alt="Cyril Shaji's avatar"></a></p>
 <p>Cyril Shaji</p>
-<p>cyrilshaji</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/jotreesa1"><img src="https://huggingface.co/avatars/4242cd627a8b42e498d409d6ce630e0e.svg" alt="Jobit Treesa Varughese's avatar"></a></p>
 <p>Jobit Treesa Varughese</p>
-<p>jotreesa1</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/nivetha-suruliraj"><img src="https://huggingface.co/avatars/a4ef2e9e9abf23dd08e8341fdc21f1d6.svg" alt="Nivetha Suruliraj's avatar"></a></p>
 <p>Nivetha Suruliraj</p>
-<p>nivetha-suruliraj</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/anu24-hugface"><img src="https://huggingface.co/avatars/9bb2181c4671349c7707cf46432efd4d.svg" alt="Anu Sugunan's avatar"></a></p>
 <p>Anu Sugunan</p>
-<p>anu24-hugface</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/0ad0b4c983b7d63b38a40c15f4d7ca3d.svg" alt="Anupama Murthi's avatar"></a></p>
 <p>Anupama Murthi</p>
-<p>anupamamurthi</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/JaydeepSen"><img src="https://huggingface.co/avatars/4d94a447f0d376c95227392661ec338f.svg" alt="Jaydeep Sen's avatar"></a></p>
 <p>Jaydeep Sen</p>
-<p>JaydeepSen</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/asinghee"><img src="https://huggingface.co/avatars/45055e2087401bb5633daeac33cedd14.svg" alt="Amith Singhee's avatar"></a></p>
 <p>Amith Singhee</p>
-<p>asinghee</p>
 <p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research's avatar"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p>最有用的知识都是用英语书写和数字化的。而最需要这些知识的人，却用印地语、泰米尔语、泰卢固语、古吉拉特语、马拉地语等自己的地区语言说话和思考。许多人宁愿开口说，也不愿动手打字。</p>
-<p>我们构建了一个小型语音 Agent 来弥合这一差距，使用 <a href="https://cuga.dev">CUGA</a> 作为 Agent 的 harness（运行框架）。本文介绍该用例以及我们从中得到的经验。你可以在 <a href="https://huggingface.co/spaces/ibm-research/cuga-apps">CUGA Apps</a> 中亲自试用。</p>
-<h2>用例：农场助手</h2>
-<p>一位农民用自己的语言大声提问：<em>我怎么分辨好种子和坏种子？</em> 这个 Agent 会：</p>
-<ul><li><strong>聆听</strong>，并把语音转成文本。</li><li><strong>搜索</strong>一本 154 页、用英语写成的农业手册。</li><li><strong>回答</strong>时用提问者所用的语言，说两到四句口语化的句子，且只使用手册中写明的内容。</li><li><strong>朗读</strong>答案并展示来源页码，以便核对。</li></ul>
+<p>大多数有用的知识都是用英语写成并数字化的。而需要这些知识的人，大多用自己的地区语言说话和思考，比如 Hindi、Tamil、Telugu、Gujarati、Marathi 等等。许多人更愿意开口说，而不是打字。</p>
+<p>为了弥合这一差距，我们搭建了一个小型语音 agent，用 <a href="https://cuga.dev">CUGA</a> 作为 agent harness。本文介绍这一用例，以及我们从中得到的经验。你可以在 <a href="https://huggingface.co/spaces/ibm-research/cuga-apps">CUGA Apps</a> 中亲自试用。</p>
+<h2>用例：一位农场助手</h2>
+<p>一位农民用自己的语言大声提问：<em>我该怎么分辨好种子和坏种子？</em> agent 会：</p>
+<ul><li><strong>聆听</strong>，把语音转成文字。</li><li><strong>检索</strong>一本 154 页、用英语写成的农业手册。</li><li><strong>回答</strong>，用提问所用的语言说出两到四句话，且只依据手册中的内容。</li><li><strong>朗读</strong>答案并展示来源页码，以便核对。</li></ul>
 <p>如果有人问板球或编程，它会礼貌地把话题引回农业，而不是凭空编造。</p>
-<h2>CUGA 在其中扮演什么角色</h2>
-<p><a href="https://cuga.dev">CUGA</a>（ConfigUrable Generalist Agent）是 IBM Research 的开源 Agent harness。它负责模型连接、工具管理、状态与护栏，因此你只需编写工具和 prompt，而不必编写 Agent 循环。在这里，我们把它作为嵌入式 SDK 用在一个小型 Web 应用中，用于三件事：</p>
-<ul><li><strong>同一个 Agent，任意模型。</strong> 通过一个设置即可在 watsonx 和 OpenAI 之间切换。</li><li><strong>知识引擎。</strong> 解析 PDF、切块、嵌入，并用 <code>agent.knowledge.search()</code> 在本地检索。</li><li><strong>对话线程。</strong> 每个问题都获得一个新线程，因此一个人的语言或上下文绝不会泄漏到另一个人那里。</li></ul>
-<p>核心设计理念很简单：<strong>CUGA 是一个文本输入、文本输出的大脑。</strong> 语音只是它外层的两个薄层。</p>
+<h2>CUGA 处在什么位置</h2>
+<p><a href="https://cuga.dev">CUGA</a>（ConfigUrable Generalist Agent）是 IBM Research 的开源 agent harness。它负责模型接入、工具管理、状态与 guardrails，因此你只需要写工具和 prompt，而不用去写 agent 循环。在这里，我们把它当作嵌入式 SDK 用在一个小型 Web 应用里，主要做三件事：</p>
+<ul><li><strong>一个 agent，任意模型。</strong> 改一个设置就能在 watsonx 和 OpenAI 之间切换。</li><li><strong>知识引擎。</strong> 解析 PDF、切块、embed，并用 <code>agent.knowledge.search()</code> 在本地检索。</li><li><strong>会话线程。</strong> 每个问题都开一个新线程，这样一个人的语言或上下文永远不会串到另一个人那里。</li></ul>
+<p>核心的设计思路很简单：<strong>CUGA 是一个文本进、文本出的大脑。</strong> 语音只是它外面薄薄的两层。</p>
 <pre><code>audio ──▶ speech-to-text ──▶ knowledge.search ──▶ CUGA (grounded answer) ──▶ text-to-speech ──▶ audio</code></pre>
-<p>因为 Agent 始终只看到文本，所以你可以先用纯文本构建并测试它，然后再添加“耳朵”和“嘴巴”。你也可以在不改动 Agent 的情况下更换语音提供商。我们支持两种：Sarvam AI 的云端语音 API（直接从用户浏览器调用），以及在你自己的服务器上运行的开源模型（语音转文本用 SraVaani，文本转语音用 Svara）。</p>
-<h3>难点不在语音</h3>
-<p>添加语音是容易的部分。难的是<strong>跨语言检索</strong>：一个印地语问题必须找到一段英语段落。</p>
-<p>搜索的原理是把文本转成向量，再找出最接近的向量。CUGA 默认的嵌入模型仅支持英语，因此它把印地语转成的向量几乎不携带任何含义。用它时，一个印地语或泰米尔语问题仍然会检索出五段文字，但都是错误的段落。模型被正确地要求只能依据所给内容作答，于是它会平静地说“手册没有涵盖这一点”。每一层的行为都正确，所以既没有报错也没有警告。</p>
-<p>解决方案是使用多语言嵌入模型（我们用的是 <code>intfloat/multilingual-e5-large</code>），这样无论何种语言，相同的含义都会落在相同的位置。概念上很简单，但把它接入 CUGA 需要一点小的变通（教程中已展示）。之后，一份英语文档就能服务所有语言，你不需要任何译制副本。</p>
-<p>我们的建议是：在调整任何一条 prompt 之前，先用非英语语言向你的 Agent 问一个问题，检查它能否找到正确的页面。</p>
-<h3>让它听起来自然，并保持安全</h3>
-<p>有几个小决定比我们预想的更重要：</p>
-<ul><li><strong>为耳朵而写。</strong> Markdown、项目符号、引用标记以及像“millet (बाजरा)”这样括号内的翻译，在朗读出来时听起来都不对。prompt 会要求模型不要生成这些内容，一个轻量格式化器会在语音合成前清除任何漏网的内容。</li><li><strong>让护栏保持低成本。</strong> 简单的输入检查能拦住明显的跑题问题。如果有漏网的，模型会在回复开头加上 <code>OFF_TOPIC</code>，应用则换成礼貌的引导语。无需第二次 LLM 调用，因此语音链路保持快速。</li><li><strong>为每个答案提供依据。</strong> 模型只能看到检索到的段落，被要求不得使用外部知识，并且页码来源会展示给用户。</li><li><strong>把密钥留在服务器之外。</strong> 使用 Sarvam 选项时，浏览器直接与 Sarvam 通信。服务器只接收文本，永远看不到用户的密钥。</li></ul>
+<p>由于 agent 只能看到文本，你可以先用纯文本把它构建并测试好，然后再给它加上耳朵和嘴巴。你也可以在不改动 agent 的情况下替换语音提供方。我们支持两种：Sarvam AI 的云端语音 API，由用户的浏览器直接调用；以及在你自己服务器上运行的开源模型（语音识别用 SraVaani，语音合成用 Svara）。</p>
+<h3>难的不是语音</h3>
+<p>加上语音是容易的那部分。难的是<strong>跨语言检索</strong>：一个 Hindi 问题必须能找到一段英文段落。</p>
+<p>检索的原理是把文本转成向量，再找出最近的向量。CUGA 默认的 embedding 模型只支持英语，所以它会把 Hindi 转成几乎不携带任何含义的向量。用它的时候，一个 Hindi 或 Tamil 问题照样能检索出五个段落，但都是错的段落。模型被告知只能依据所给内容作答——这条指令执行得很正确——于是它悄悄地回答“手册里没有涵盖这一点”。每一层的行为都是对的，所以既没有报错，也没有告警。</p>
+<p>解决办法是改用多语言 embedding 模型（我们用的是 <code>intfloat/multilingual-e5-large</code>），这样无论什么语言，相同的含义都会落在相同的位置。概念上很简单，不过要把它接进 CUGA 还是需要一个小小的变通办法（教程中有演示）。做完这一步，一份英文文档就能服务所有语言，你也不需要任何东西的译文副本。</p>
+<p>我们的建议是：在你调整哪怕一个 prompt 之前，先用一种非英语语言向你的 agent 提一个问题，看它能不能找到正确的页面。</p>
+<h3>让它听起来得体，并保持安全</h3>
+<p>有几个小决定，重要性超出了我们的预期：</p>
+<ul><li><strong>为耳朵而写。</strong> Markdown、项目符号、引用标签，以及像“millet (बाजरा)”这样带括号的译名，朗读出来都很别扭。prompt 要求模型不要产出这些东西，而一个轻量的格式化器会在朗读之前清掉漏网的残留。</li><li><strong>让 guardrails 保持廉价。</strong> 简单的输入检查就能拦下明显的跑题问题。如果有漏网的，模型会在回复开头写上 <code>OFF_TOPIC</code>，应用再替换成一句礼貌的引导。不需要第二次 LLM 调用，所以语音链路依然很快。</li><li><strong>让每个答案都有依据。</strong> 模型只能看到检索到的段落，被要求不得使用外部知识，来源页码也会展示给用户。</li><li><strong>把密钥挡在服务器之外。</strong> 选择 Sarvam 方案时，浏览器直接与 Sarvam 通信。服务器只收到文本，永远看不到用户的密钥。</li></ul>
 <h2>试一试</h2>
-<p>无需任何设置就能看到它运行。在 Hugging Face Spaces 上打开 <strong>CUGA Apps</strong> 中的语音 Agent，用你的语言问一个农业问题，然后听答案：</p>
+<p>你不需要做任何配置就能看到它工作。在 Hugging Face Spaces 上打开 <strong>CUGA Apps</strong> 里的语音 agent，用你的语言问一个农业问题，然后听它的回答：</p>
 <p><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-apps">Hugging Face 上的 CUGA Apps →</a></strong></p>
-<p>想自己构建一个？我们的分步教程 <a href="https://huggingface.co/blog/ibm-research/build-an-indic-voice-agent-with-cuga.md">Build an Indic Voice Agent with CUGA</a> 从空文件夹开始，逐层添加每一层。</p>
-<h2>超越农业：为 Bharat 扩展</h2>
-<p>这里没有任何内容是农业特有的。把手册换成计划文档、健康提示或法律指南，你就有了另一个助手。更换语音提供商，你就改变了部署模式，例如为速度选择云端，或为数据主权选择本地部署，而无需重写 Agent。</p>
-<p>语音优先的多语言助手，是数字服务触达那些从未被纯英语文本界面服务好的人群的方式。将它们构建在开放、可审计的 harness 之上，并让答案与人们可以核对的来源绑定，是它们赢得信任的方式。</p>
-<p>这种方法恰好落在我们正在用 IBM Bharat Core 构建的东西的交汇点上。Bharat Core 是构建在 IBM Sovereign Core 之上的优化 AI 栈，专为印度生态系统设计，可在本地基础设施上安全运行 Indic AI 工作负载。当把一个语音 Agent 从原型扩展到安全的企业应用（例如方言 KYC 系统或多语言政府机器人）时，你需要对数据主权有更强的控制。将 CUGA 灵活的 Agent harness 与 Bharat Core 的即用型 Indic 连接器和微调模型相结合，开发者就能构建完全合规、主权可控且契合印度独特语言多样性的 AI 解决方案。</p>
-<p>如果你正在为印度的规模化场景构建，请看看 <strong><a href="https://www.ibmbharatcore.info/">IBM Bharat Core</a></strong> 正在进行的工作。</p>
+<p>想自己搭一个？我们的分步教程 <a href="https://huggingface.co/blog/ibm-research/build-an-indic-voice-agent-with-cuga.md">Build an Indic Voice Agent with CUGA</a> 从空文件夹开始，逐层把各部分加上去。</p>
+<h2>不止农业：为 Bharat 规模化</h2>
+<p>这里的任何东西都不专属于农业。把农业手册换成方案文件、健康提示或法律指南，你就得到另一个助手。换掉语音提供方，你就改变了部署模式——比如为追求速度用云端，或为数据主权用本地部署——而无需重写 agent。</p>
+<p>语音优先、多语言的助手，是数字服务触达那些从未被纯英文文本界面服务好的人群的方式。把它们建立在开放、可审计的 harness 之上，并让答案与人们能够核查的来源绑定，这是它们赢得信任的方式。</p>
+<p>这种方法恰好落在我们与 IBM Bharat Core 共同构建的方向的交汇处。Bharat Core 是构建在 IBM Sovereign Core 之上的优化 AI 栈，专为印度生态设计，用于在本地基础设施上安全地运行 Indic AI 负载。当把一个语音 agent 从原型扩展到安全的企业级应用（比如本地语言的 KYC 系统或多语言政务机器人）时，你需要对数据主权有更强的控制。把 CUGA 灵活的 agent harness 与 Bharat Core 开箱即用的 Indic connectors 和微调模型结合起来，开发者就能构建完全合规、主权可控、契合印度独特语言多样性的 AI 方案。</p>
+<p>如果你在面向印度做规模化构建，可以看看 <strong><a href="https://www.ibmbharatcore.info/">IBM Bharat Core</a></strong> 上的工作。</p>
 <h2>进一步了解 CUGA</h2>
-<p>刚开始接触 CUGA？以下是一些入手之处：</p>
-<ul><li><strong><a href="https://cuga.dev">cuga.dev</a></strong>：CUGA 主页。</li><li><strong><a href="https://github.com/cuga-project/cuga-agent">GitHub 上的 CUGA</a></strong>：开源 harness（Apache 2.0）。给它点星、提交 issue，或领一个 good first issue。</li><li><strong><a href="https://docs.cuga.dev">CUGA 文档</a></strong>：安装配置、SDK、知识、策略与配置。</li><li><strong><a href="https://github.com/cuga-project/cuga-apps">GitHub 上的 CUGA Apps 画廊</a></strong>：Hugging Face Space 中各应用的源码。</li></ul>
-<p>可以在浏览器中试用的 Spaces：</p>
-<ul><li><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-agent">CUGA Agent</a></strong>：通用 Agent，运行在一个演示用 CRM 场景上。</li><li><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-apps">CUGA Apps</a></strong>：从一个仪表盘启动可用的 CUGA 应用。</li><li><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-policy-playground">CUGA Policy Playground</a></strong>：两个实时 Agent 并排展示，一个有策略，一个没有。</li></ul>
+<p>刚接触 CUGA？可以从这些地方开始：</p>
+<ul><li><strong><a href="https://cuga.dev">cuga.dev</a></strong>：CUGA 的主页。</li><li><strong><a href="https://github.com/cuga-project/cuga-agent">GitHub 上的 CUGA</a></strong>：开源 harness（Apache 2.0）。给它点星、提交 issue，或者认领一个 good first issue。</li><li><strong><a href="https://docs.cuga.dev">CUGA 文档</a></strong>：安装配置、SDK、knowledge、策略与配置。</li><li><strong><a href="https://github.com/cuga-project/cuga-apps">GitHub 上的 CUGA Apps 应用库</a></strong>：Hugging Face Space 中那些应用的源码。</li></ul>
+<p>可以在浏览器里试用的 Spaces：</p>
+<ul><li><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-agent">CUGA Agent</a></strong>：通用 agent，运行在一个演示用的 CRM 场景上。</li><li><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-apps">CUGA Apps</a></strong>：从一个面板启动多个可用的 CUGA 应用。</li><li><strong><a href="https://huggingface.co/spaces/ibm-research/cuga-policy-playground">CUGA Policy Playground</a></strong>：两个真实运行的 agent 并排，一个有策略，一个没有。</li></ul>
 <p>Hugging Face 博客上的更多 CUGA 文章：</p>
-<ul><li><strong><a href="https://huggingface.co/blog/ibm-research/cuga-on-hugging-face">CUGA on Hugging Face: Democratizing Configurable AI Agents</a></strong>：CUGA 及其可配置推理模式介绍。</li><li><strong><a href="https://huggingface.co/blog/ibm-research/cuga-apps">Build real agentic apps using CUGA: two dozen working examples on a lightweight harness</a></strong>：这个语音 Agent 所属的应用画廊。</li><li><strong><a href="https://huggingface.co/blog/ibm-research/cuga-harness">Same Model, Different Harness: CUGA, Hermes, and Deep Agents — When to Pick CUGA?</a></strong>：当模型不变时，harness 有多重要。</li></ul>
-<h2>本文提到的 Spaces 3</h2>
-<p>来自该作者的更多内容</p>
-<h2>Streamhouse 中的时间序列模型：新前沿与用例</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>39</p>
-<p>2026 年 11 月 18 日</p>
-<h2>Palette：教一个小模型用你的设计语言构建演示文稿</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>23</p>
-<p>2026 年 11 月 3 日</p>
-<h3>社区</h3>
-<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
-<p>hocdz754</p>
-<p>约 17 小时前</p>
-<p>此评论已被隐藏</p>
-<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
-<p>hocdz754</p>
-<p>约 17 小时前</p>
-<p>此评论已被隐藏</p>
-<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
-<p>hocdz754</p>
-<p>约 17 小时前</p>
-<p>此评论已被隐藏</p>
-<p><img src="https://huggingface.co/avatars/56e8eb6c2dbf09d30e32171457e31075.svg" alt=""></p>
-<p>hocdz754</p>
-<p>约 17 小时前</p>
-<p>此评论已被隐藏</p>
-<h2>本文提到的 Spaces 3</h2>]]></content:encoded>
+<ul><li><strong><a href="https://huggingface.co/blog/ibm-research/cuga-on-hugging-face">CUGA on Hugging Face: Democratizing Configurable AI Agents</a></strong>：CUGA 及其可配置推理模式的介绍。</li><li><strong><a href="https://huggingface.co/blog/ibm-research/cuga-apps">Build real agentic apps using CUGA: two dozen working examples on a lightweight harness</a></strong>：本文这个语音 agent 所属的应用库。</li><li><strong><a href="https://huggingface.co/blog/ibm-research/cuga-harness">Same Model, Different Harness: CUGA, Hermes, and Deep Agents — When to Pick CUGA?</a></strong>：当模型不变时，harness 究竟有多重要。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>[Hugging Face] 在一台 RTX PRO 6000 上进行爬山 Inkling 2 Mini 推理</title>
+      <title>[Hugging Face] 在单台 RTX PRO 6000 上爬山调优 Inkling 2 Mini 推理</title>
       <link>https://huggingface.co/blog/inkling-2-mini-inference-hillclimb</link>
       <guid isPermaLink="true">https://huggingface.co/blog/inkling-2-mini-inference-hillclimb</guid>
       <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
       <category>Hugging Face</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml">Hugging Face</source>
       <description>原文标题：Hill-climbing Inkling 2 Mini inference on one RTX PRO 6000</description>
-      <content:encoded><![CDATA[<h1>在单张 RTX PRO 6000 上对 Inkling 2 Mini 推理进行爬山调优</h1>
-<p>发布于 November 25, 2026</p>
-<p><a href="https://huggingface.co/nielsr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608042047613-5f1158120c833276f61f1a84.jpeg" alt="Niels Rogge 的头像"></a></p>
+      <content:encoded><![CDATA[<h1>在单台 RTX PRO 6000 上爬山调优 Inkling 2 Mini 推理</h1>
+<p><a href="https://huggingface.co/nielsr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608042047613-5f1158120c833276f61f1a84.jpeg" alt="Niels Rogge's avatar"></a></p>
 <p>Niels Rogge</p>
 <p>nielsr</p>
-<p><a href="https://huggingface.co/blog/inkling2mini">Inkling 2 Mini</a> 上周发布，为本地 AI 和更小的开源模型树立了新的最先进水平。凭借约 26B 总参数（每 token 激活 3B）、多模态输入和 1M-token 上下文窗口，它在 <a href="https://artificialanalysis.ai/models/open-source">Artificial Analysis Intelligence Index v5</a> 上、以及在 48 项基准中的 32 项上领先 Gemma 4 31B 和 Qwen3.8-27B 等模型，使其成为在中等硬件上进行编码、工具使用和推理的强开源选项。我们写了一篇详细的博客文章，介绍如何在 Hugging Face 生态中使用它，见<a href="https://huggingface.co/blog/inkling2mini">这里</a>。</p>
-<p>Inkling 2 Mini 一个有趣且可能解释其出色性能的方面是其不同寻常的架构。Inkling 2 Mini 是一个循环式 <a href="https://huggingface.co/blog/moe">Mixture-of-Experts (MoE)</a> 模型，有 24 个物理层，其中中间 12 层运行三次，因此每个 token 经过 48 层。该 checkpoint 以混合 NVFP4 和 MXFP8 形式发布，并捆绑一个用于投机解码的 DSpark drafter。作为 LLM 推理的首选框架，vLLM 和 SGLang 都在 nightly 构建中支持它，不过已发布的服务 recipe 面向 NVIDIA B200 和 GB300 GPU（<code>sm100</code>），遗漏了像 NVIDIA RTX PRO 6000 这样的 <code>sm120</code> 卡，在这些卡上内核兼容性可能不同。</p>
-<p>我们想看看在单张 NVIDIA RTX PRO 6000 96 GB 上能多快地服务它，这是 <code>nvidia-rtx-pro-6000</code> <a href="https://huggingface.co/docs/inference-endpoints">Inference Endpoint</a> 背后的 GPU。我们没有手动调 flag，而是给一个编码 agent 提供了 <a href="https://github.com/sybil-solutions/inference-optimisation-skill"><code>inference-optimisation</code></a> 技能、<code>hf</code> CLI，以及对 <a href="https://huggingface.co/docs/hub/jobs-overview">Hugging Face Jobs</a> 的访问权限，让它运行了一个下午的实验。</p>
-<p>在 46 次有效基准运行中，单用户解码从 <strong>136 提升到 190.6 tok/s（+40%）</strong>（超过同一 GPU 上 <a href="https://www.localmaxxing.com/en/inference-benchmarks/cmwqfbexc089gmi01hd6hiqhn">LocalMaxxing 的 167.7 tok/s 社区 SGLang + DSpark 基准</a>），使用 vLLM nightly 和 DSpark 投机解码时，8 用户聚合吞吐从 <strong>约 570 提升到 716 tok/s（+26%）</strong>。无论是否启用投机，贪心输出都逐字节相同，长上下文 needle 检索在最高 250K token 时通过 3/3，获胜配置现在正基于固定镜像 digest 作为 Inference Endpoint 运行。所有日志、脚本和原始测量数据都在 <a href="https://github.com/NielsRogge/inkling-2-mini-hillclimb"><code>NielsRogge/inkling-2-mini-hillclimb</code></a> 中。</p>
-<h2>设置</h2>
-<p><code>inference-optimisation</code> 技能给 agent 一个固定的实验协议和一个小的、与引擎无关的基准脚本（<a href="https://github.com/sybil-solutions/inference-optimisation-skill/blob/main/skills/inference-optimisation/scripts/bench.py"><code>bench.py</code></a>）：</p>
-<ul><li>在调优前测量硬件并估计理论上限。</li><li>一次只改变一个变量，并将每个候选配置夹在两次对照运行之间（<code>control → candidate → control</code>）。只有当某项变更优于两次对照且未使其他指标回退时才保留。</li><li>将每次运行记录到 <code>PLAN.md</code>，包括回归和死胡同。</li><li>在宣布获胜者之前通过长上下文、并发和贪心等价性检查。</li></ul>
-<p><code>bench.py</code> 测量单用户解码、并发 N 下的聚合解码、若干长度下的冷 prefill 和 TTFT，直接使用服务器 usage 响应中的 token 计数。所有运行都使用固定的一组六个提示（代码、解释、故事、比较表、bash 脚本和历史摘要），temperature 1.0（模型默认值），thinking 开启，512 个输出 token，并在启用投机解码时重复 12 次。</p>
-<p>该技能是为本地 GPU 编写的，因此我们将它适配到 Hugging Face 基础设施：</p>
-<ul><li><strong>HF Jobs</strong> 用于计算。<code>rtx-pro-6000</code> Job flavor 使用与 <code>nvidia-rtx-pro-6000</code> Inference Endpoint 相同的 GPU（两者均为 $2.75/h），因此 Job 数据可以直接迁移。一个约 150 行的驱动脚本（<code>jobs/driver.py</code>）接收服务器配置列表，依次启动每个配置，运行一次不计入测量的预热，原样调用 <code>bench.py</code>，关闭服务器，并为每次运行打印一行台账。由于 Job 在独立机器上运行，agent 并行扫描了 SGLang（<code>lmsysorg/sglang:inkling-2-mini</code>）和 vLLM nightly（<code>vllm/vllm-openai:nightly</code>）。</li><li><strong>用于阅读引擎源码的 CPU Jobs。</strong> 当某个 flag 没有文档时，agent 会运行一个低成本的 <code>cpu-upgrade</code> Job，在容器内 grep 已安装的 Python 包。它就是这样找到 SGLang 的 <code>SGLANG_OPT_*</code> 环境变量和 vLLM 的 <code>speculative-config</code> 字段的。</li><li><strong>Inference Endpoints</strong> 用于部署，通过 <code>hf endpoints deploy</code> 创建，使用通过验证的精确镜像 digest 和 flags。</li></ul>
-<p>基线是我们现有的组织 endpoint 配置：SGLang 使用 <code>--attention-backend fa4</code>，且不启用投机解码。</p>
+<p><a href="https://huggingface.co/blog/inkling2mini">Inkling 2 Mini</a> 上周发布，为本地 AI 和更小的开源模型树立了新的 SOTA。它总参数约 26B（每 token 激活 3B），支持多模态输入，上下文窗口达 1M token，在 <a href="https://artificialanalysis.ai/models/open-source">Artificial Analysis Intelligence Index v5</a> 上领先同重量级，并在 48 项基准中的 32 项上胜过 Gemma 4 31B、Qwen3.8-27B 等模型，因此对于在普通硬件上做编码、工具调用和推理来说，它是一个很强的开放选项。我们写了一篇详尽的博客文章，介绍如何在 Hugging Face 生态中使用它，见<a href="https://huggingface.co/blog/inkling2mini">此处</a>。</p>
+<p>Inkling 2 Mini 有一个有意思的地方，或许能解释它出色的表现：它采用了不寻常的架构。Inkling 2 Mini 是一个循环式的 <a href="https://huggingface.co/blog/moe">Mixture-of-Experts (MoE)</a> 模型，有 24 个物理层，其中中间 12 层会运行三次，因此每个 token 都要经过 48 层。它的 checkpoint 以 NVFP4 与 MXFP8 混合格式发布，并内置一个用于投机解码的 DSpark drafter。LLM 推理的两个常用框架 vLLM 和 SGLang 都在 nightly 构建中支持它，不过已发布的服务配置针对的是 NVIDIA B200 和 GB300 GPU（<code>sm100</code>），遗漏了 NVIDIA RTX PRO 6000 这类 <code>sm120</code> 显卡——在后者上内核兼容性可能不同。</p>
+<p>我们想知道，在单张 NVIDIA RTX PRO 6000 96 GB 上（也就是 <code>nvidia-rtx-pro-6000</code> <a href="https://huggingface.co/docs/inference-endpoints">Inference Endpoint</a> 所用的那块 GPU），它最快能跑到多快。我们没有手工逐个调参数，而是把一个 <a href="https://github.com/sybil-solutions/inference-optimisation-skill"><code>inference-optimisation</code></a> skill、<code>hf</code> CLI 以及对 <a href="https://huggingface.co/docs/hub/jobs-overview">Hugging Face Jobs</a> 的访问权限交给一个 coding agent，让它跑了一个下午的实验。</p>
+<p>在 46 次有效的基准测试中，单用户解码从 <strong>136 tok/s 提升到 190.6 tok/s（+40%）</strong>（超过同一 GPU 上 <a href="https://www.localmaxxing.com/en/inference-benchmarks/cmwqfbexc089gmi01hd6hiqhn">LocalMaxxing 社区 SGLang + DSpark 的 167.7 tok/s 基准成绩</a>），使用 vLLM nightly 配合 DSpark 投机解码时，8 用户聚合吞吐从 <strong>约 570 tok/s 提升到 716 tok/s（+26%）</strong>。无论是否启用投机，贪婪解码的输出都逐字节相同；长上下文大海捞针检索在最高 250K token 时 3/3 通过；最终胜出的配置现在正以 Inference Endpoint 的形式、基于固定的镜像 digest 运行。所有日志、脚本和原始测量数据都在 <a href="https://github.com/NielsRogge/inkling-2-mini-hillclimb"><code>NielsRogge/inkling-2-mini-hillclimb</code></a> 中。</p>
+<h2>环境搭建</h2>
+<p><code>inference-optimisation</code> skill 给 agent 提供一套固定的实验协议，以及一个小巧、与引擎无关的基准脚本（<a href="https://github.com/sybil-solutions/inference-optimisation-skill/blob/main/skills/inference-optimisation/scripts/bench.py"><code>bench.py</code></a>）：</p>
+<ul><li>在调优之前测量硬件，并估算理论上的性能上限。</li><li>一次只改一个变量，把每个候选项夹在两次对照运行之间（<code>control → candidate → control</code>）。只有当某项改动胜过两次对照、且其他指标没有退化时才保留它。</li><li>把每次运行都记录到 <code>PLAN.md</code>，包括退步和死胡同。</li><li>在宣布胜出方案之前，先通过长上下文、并发和贪婪等价性检查。</li></ul>
+<p><code>bench.py</code> 测量单用户解码、并发度为 N 时的聚合解码、若干长度下的冷 prefill，以及 TTFT，其中的 token 数直接取自服务器的 usage 响应。所有运行都使用固定的六条 prompt 面板（一段代码、一段解释、一个故事、一个对比表格、一个 bash 脚本和一段历史综述），temperature 为 1.0（模型默认值），开启 thinking，输出 512 个 token；只要启用了投机解码，就重复 12 次。</p>
+<p>这个 skill 原本是为本地 GPU 写的，所以我们把它适配到了 Hugging Face 的基础设施上：</p>
+<ul><li>计算用 <strong>HF Jobs</strong>。<code>rtx-pro-6000</code> 这个 Job 规格用的是与 <code>nvidia-rtx-pro-6000</code> Inference Endpoint 相同的 GPU（两者都是 $2.75/小时），因此 Job 上的数字可以直接迁移。一个约 150 行的驱动脚本（<code>jobs/driver.py</code>）接收一组服务器配置，逐个启动、跑一次不计入测量的预热、原样调用 <code>bench.py</code>、关闭服务器，并为每次运行打印一行台账记录。由于 Job 跑在不同的机器上，agent 可以并行扫 SGLang（<code>lmsysorg/sglang:inkling-2-mini</code>）和 vLLM nightly（<code>vllm/vllm-openai:nightly</code>）。</li><li><strong>用 CPU Jobs 读引擎源码。</strong> 遇到没有文档的参数时，agent 会起一个便宜的 <code>cpu-upgrade</code> Job，在容器里 grep 已安装的 Python 包。SGLang 的 <code>SGLANG_OPT_*</code> 环境变量和 vLLM 的 <code>speculative-config</code> 字段就是这么找到的。</li><li>部署用 <strong>Inference Endpoints</strong>，通过 <code>hf endpoints deploy</code> 创建，使用通过验证的那个确切镜像 digest 和参数。</li></ul>
+<p>基线是我们组织现有的 endpoint 配置：SGLang 加 <code>--attention-backend fa4</code>，不启用投机解码。</p>
 <h2>结果</h2>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inkling-2-mini-inference-hillclimb/results.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inkling-2-mini-inference-hillclimb/results.png" alt="在单张 RTX PRO 6000 上四种配置下 Inkling 2 Mini 的单用户解码速度"></a></p>
-<p><em>单用户解码速度（12 次请求的中位数）。vLLM + DSpark 在其测得的接受率下达到内存带宽上限的约 95%。</em></p>
-<table><thead><tr><th>配置（1× RTX PRO 6000）</th><th>单用户解码（tok/s）</th><th>8 用户聚合（tok/s）</th><th>Prefill 4K / 32K（tok/s）</th><th>TTFT</th></tr></thead><tbody><tr><td>SGLang，无投机（基线）</td><td>134–139</td><td>543–598</td><td>18.7–19.1K / 16.9–19.1K</td><td>41–114 ms</td></tr><tr><td>vLLM，无投机</td><td>157.0</td><td>638</td><td>20.7K / 20.7K</td><td>33 ms</td></tr><tr><td>SGLang + DSpark（8 个 drafts）</td><td>166.6</td><td>— ¹</td><td>18.0–19.5K / 18.9–19.1K</td><td>38–51 ms</td></tr><tr><td><strong>vLLM + DSpark（7 个 drafts）</strong></td><td><strong>190.6</strong></td><td><strong>716</strong></td><td>20.7K / 20.6K</td><td>40 ms</td></tr><tr><td>已部署 endpoint（通过互联网）</td><td>194.9</td><td>673</td><td>11.7K / 19.2K ²</td><td>198 ms ²</td></tr></tbody></table>
-<p>¹ SGLang 的 RTX PRO 6000 DSpark recipe 将 <code>--max-running-requests</code> 上限设为 4。将其提高到 8 后达到 660 tok/s，仍落后于 vLLM。 ² 包含约 160 ms 的客户端到 endpoint 网络往返。</p>
-<p>全部加速来自切换到 vLLM nightly（+15%，相较无投机的 SGLang，136 → 157 tok/s）、启用带 7 个 drafts 和概率式 draft 采样的 DSpark（在此基础上再 +21%，四次运行中 157 → 190.6 tok/s：189.3、190.4、191.1 和 190.7），以及添加两个内存 flag，使 vLLM 的 DSpark 设置真正能在 96 GB 上启动：</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inkling-2-mini-inference-hillclimb/results.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/inkling-2-mini-inference-hillclimb/results.png" alt="Inkling 2 Mini 在单台 RTX PRO 6000 上四种配置的单用户解码速度"></a></p>
+<p><em>单用户解码速度（12 次请求的中位数）。按其测得的接受率，vLLM + DSpark 达到内存带宽上限的约 95%。</em></p>
+<table><thead><tr><th>配置（1× RTX PRO 6000）</th><th>单用户解码（tok/s）</th><th>8 用户聚合（tok/s）</th><th>Prefill 4K / 32K（tok/s）</th><th>TTFT</th></tr></thead><tbody><tr><td>SGLang，无投机（基线）</td><td>134–139</td><td>543–598</td><td>18.7–19.1K / 16.9–19.1K</td><td>41–114 ms</td></tr><tr><td>vLLM，无投机</td><td>157.0</td><td>638</td><td>20.7K / 20.7K</td><td>33 ms</td></tr><tr><td>SGLang + DSpark（8 个 draft）</td><td>166.6</td><td>— ¹</td><td>18.0–19.5K / 18.9–19.1K</td><td>38–51 ms</td></tr><tr><td><strong>vLLM + DSpark（7 个 draft）</strong></td><td><strong>190.6</strong></td><td><strong>716</strong></td><td>20.7K / 20.6K</td><td>40 ms</td></tr><tr><td>已部署的 endpoint（经互联网访问）</td><td>194.9</td><td>673</td><td>11.7K / 19.2K ²</td><td>198 ms ²</td></tr></tbody></table>
+<p>¹ SGLang 的 RTX PRO 6000 DSpark 配方把 <code>--max-running-requests</code> 上限设为 4。把它提到 8 可以到 660 tok/s，仍然落后于 vLLM。² 包含约 160 ms 的客户端到 endpoint 网络往返。</p>
+<p>全部提速来自三件事：换到 vLLM nightly（相比无投机的 SGLang 提升 15%，136 → 157 tok/s）；启用带 7 个 draft 和概率式 draft 采样的 DSpark（在此基础上再提升 21%，四次运行 157 → 190.6 tok/s，分别为 189.3、190.4、191.1 和 190.7）；以及加上两个显存参数，让 vLLM 的 DSpark 配置能在 96 GB 上真正启动：</p>
 <pre><code>vllm serve thinkingmachines/Inkling-2-Mini \
   --tool-call-parser inkling \
   --enable-auto-tool-choice \
@@ -279,24 +216,24 @@
   --max-model-len 262144 \
   --gpu-memory-utilization 0.85 \
   --speculative-config '{&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:7,&quot;draft_sample_method&quot;:&quot;probabilistic&quot;}'</code></pre>
-<p><code>num_speculative_tokens: 7</code> 和 <code>draft_sample_method: &quot;probabilistic&quot;</code> 都经过直接验证：更短的 draft 数量（例如 5）会在启动时被拒绝，因为两个引擎都会强制执行 checkpoint 的固定 block size；而在 temperature 1.0 下切换到 <code>greedy</code> draft 采样会使 vLLM 解码速度下降 11%（见<a href="https://huggingface.co/blog/inkling-2-mini-inference-hillclimb#what-didnt-work">哪些没有奏效</a>）。</p>
-<h3>为什么停在约 190 tok/s</h3>
-<p>在调优前，agent 在 Job 内探测了 RTX PRO 6000（<strong>1,469 GB/s</strong> 拷贝带宽、<strong>416 TFLOPS</strong> BF16、<strong>792 TFLOPS</strong> FP8），并从 safetensors 头读取张量大小。因为每个 token 要进行 48 次层访问，普通解码会重新读取约 2.7 GB 的注意力与稠密权重、约 2 GB 的路由专家（每层 128 个中的 8 个），以及约 0.9 GB 的 LM head。在 1,469 GB/s 下，这给出 <strong>约 256 tok/s</strong> 的单用户带宽上限。无投机时，vLLM 的 157 tok/s 达到该上限的 61%，主要受限于跨 48 次访问的内核启动延迟。</p>
-<p>投机解码改变了 MoE 上的内存计算。共同验证 8 个位置会激活其路由专家的并集，读取每层专家的约 40%，而不是 6%。在 temperature 1.0 下，我们测得的接受率约为每步 2.3 个 token（每个位置的接受率从第一个 draft 的 0.6 降到 0.33 和 0.19），带宽上限降至 <strong>约 201 tok/s</strong>。在 190.6 tok/s 时，vLLM + DSpark 已经达到<strong>硬件带宽的约 95%</strong>，因此进一步调 flag 几乎没有剩余空间。要越过 190 tok/s，需要具有更高 temperature 1.0 接受率的 drafter，或每层触及更少专家的验证路径。</p>
-<h2>哪些没有奏效</h2>
-<p>大多数候选 flag 不受支持、噪声大或更慢：</p>
+<p><code>num_speculative_tokens: 7</code> 和 <code>draft_sample_method: &quot;probabilistic&quot;</code> 都经过了直接验证：更短的 draft 数（比如 5）会在启动时被拒绝，因为两个引擎都会强制 checkpoint 的固定 block size；而改用 <code>greedy</code> draft 采样会让 vLLM 在 temperature 1.0 下的解码速度下降 11%（见<a href="https://huggingface.co/blog/inkling-2-mini-inference-hillclimb#what-didnt-work">哪些没奏效</a>）。</p>
+<h3>为什么它停在 190 tok/s 左右</h3>
+<p>调优之前，agent 在 Job 里探测了这块 RTX PRO 6000（<strong>1,469 GB/s</strong> 拷贝带宽、<strong>416 TFLOPS</strong> BF16、<strong>792 TFLOPS</strong> FP8），并从 safetensors 头部读出了各张量的大小。由于每个 token 都要访问 48 层，朴素解码会重复读取约 2.7 GB 的注意力与稠密权重、约 2 GB 的 routed experts（每层 128 个里取 8 个），以及约 0.9 GB 的 LM head。按 1,469 GB/s 计算，单用户的带宽上限是<strong>约 256 tok/s</strong>。不启用投机时，157 tok/s 的 vLLM 达到了该上限的 61%，主要受限于 48 层访问带来的内核启动延迟。</p>
+<p>投机解码改变了 MoE 上的显存算术。一次验证 8 个位置，会激活它们 routed experts 的并集，使得每层 expert 的读取量约为 40%，而不是 6%。在 temperature 1.0 下，我们实测的接受率约为每步 2.3 个 token（每个位置的接受率从第一个 draft 的 0.6 降到 0.33 和 0.19），此时带宽上限降到<strong>约 201 tok/s</strong>。190.6 tok/s 的 vLLM + DSpark 已经达到<strong>硬件带宽的约 95%</strong>，继续调参数几乎没有空间了。要突破 190 tok/s，需要一个在 temperature 1.0 下接受率更高的 drafter，或者一条每层触及 expert 更少的验证路径。</p>
+<h2>哪些没奏效</h2>
+<p>大多数候选参数要么不被支持，要么噪声太大，要么更慢：</p>
 <h3>vLLM</h3>
-<table><thead><tr><th>调节项</th><th>结果</th></tr></thead><tbody><tr><td>更短的 draft 长度（3–6）</td><td>启动时被拒绝；要求 <code>num_speculative_tokens = 7</code>（checkpoint block size − 1）。</td></tr><tr><td><code>draft_sample_method: &quot;greedy&quot;</code></td><td>在 temperature 1.0 下 −11%（168.6 对约 190.4 tok/s）。</td></tr><tr><td><code>rejection_sample_method: &quot;block&quot;</code></td><td>190.1 对对照组的 190.3–190.5；无效果。</td></tr><tr><td><code>enable_adaptive_verification</code></td><td>Inkling 2 drafter 在启动时出现断言错误。</td></tr><tr><td><code>draft_lm_head_quantization: &quot;fp8&quot;</code></td><td>仅支持 DeepSeek DSpark drafters。</td></tr></tbody></table>
-<p>我们还特意跳过了 <code>rejection_sample_method: &quot;fly&quot;</code> 和 <code>&quot;synthetic&quot;</code>，因为它们会改变输出分布，而我们想要严格无损的加速。</p>
+<table><thead><tr><th>手段</th><th>结果</th></tr></thead><tbody><tr><td>更短的 draft 长度（3–6）</td><td>启动时被拒绝；要求 <code>num_speculative_tokens = 7</code>（checkpoint block size − 1）。</td></tr><tr><td><code>draft_sample_method: &quot;greedy&quot;</code></td><td>temperature 1.0 下 −11%（168.6 对约 190.4 tok/s）。</td></tr><tr><td><code>rejection_sample_method: &quot;block&quot;</code></td><td>190.1，对照组为 190.3–190.5；没有影响。</td></tr><tr><td><code>enable_adaptive_verification</code></td><td>Inkling 2 的 drafter 在启动时触发断言错误。</td></tr><tr><td><code>draft_lm_head_quantization: &quot;fp8&quot;</code></td><td>仅支持 DeepSeek 的 DSpark drafter。</td></tr></tbody></table>
+<p>我们还有意跳过了 <code>rejection_sample_method: &quot;fly&quot;</code> 和 <code>&quot;synthetic&quot;</code>，因为它们会改变输出分布，而我们要的是严格无损的提速。</p>
 <h3>SGLang</h3>
-<table><thead><tr><th>调节项</th><th>结果</th></tr></thead><tbody><tr><td>更短的 draft 长度（3–6）</td><td>启动时被拒绝；要求 <code>--speculative-num-draft-tokens 8</code>（捆绑 drafter 的 <code>gamma + 1</code>）。</td></tr><tr><td><code>SGLANG_ENABLE_NV_MEGA_RUNTIME_OPTIMIZATION=1</code></td><td>一次 +4%，在全新对照下未能复现。</td></tr><tr><td><code>SGLANG_OPT_USE_FUSED_DRAFT_SAMPLE=1</code></td><td>+2%，在运行间噪声范围内。</td></tr><tr><td><code>SGLANG_OPT_MOE_QUANT_ONCE=1</code></td><td>+1%，在运行间噪声范围内。</td></tr><tr><td><code>SGLANG_DSPARK_USE_GREEDY_DRAFT=1</code></td><td>在 temperature 1.0 下 −9%（156.8 对约 172 tok/s）。</td></tr></tbody></table>
+<table><thead><tr><th>手段</th><th>结果</th></tr></thead><tbody><tr><td>更短的 draft 长度（3–6）</td><td>启动时被拒绝；要求 <code>--speculative-num-draft-tokens 8</code>（对内置 drafter 来说是 <code>gamma + 1</code>）。</td></tr><tr><td><code>SGLANG_ENABLE_NV_MEGA_RUNTIME_OPTIMIZATION=1</code></td><td>一次 +4%，但在新的对照组上无法复现。</td></tr><tr><td><code>SGLANG_OPT_USE_FUSED_DRAFT_SAMPLE=1</code></td><td>+2%，在运行间噪声范围内。</td></tr><tr><td><code>SGLANG_OPT_MOE_QUANT_ONCE=1</code></td><td>+1%，在运行间噪声范围内。</td></tr><tr><td><code>SGLANG_DSPARK_USE_GREEDY_DRAFT=1</code></td><td>temperature 1.0 下 −9%（156.8 对约 172 tok/s）。</td></tr></tbody></table>
 <h2>基准测试的坑</h2>
-<p>过程中有几个测量问题让我们踩了坑：</p>
-<ul><li><strong>计时 prefill 期间的 Triton JIT。</strong> vLLM 的第一次 4K prefill 返回 202 tok/s，而不是 20K，因为 Triton 在计时请求期间编译内核。跨提示长度和并发运行一次不计入测量的预热修复了 4K prefill，不过每个 Job 中的第一次运行仍会低报 32K prefill，原因是最后一个 chunk 的形状差异（已在台账中标记）。</li><li><strong>占用 GPU 内存的孤儿服务器。</strong> 初始驱动通过从 <code>setsid … &amp;</code> 保存的 PID 停止服务器，但该 PID 不保证与进程组 ID 匹配。前一个服务器仍在 8000 端口存活，破坏了下一次启动，并变成仍能通过 <code>kill -0</code> 的僵尸进程。使用 <code>subprocess.Popen(start_new_session=True)</code> 管理进程，并等待 GPU 内存和 8000 端口都空闲，解决了该问题。</li><li><strong>vLLM 日志中隐藏的 OOM 错误。</strong> vLLM + DSpark 两次在日志末尾以 <code>&quot;Engine core initialization failed&quot;</code> 崩溃，而真正原因在往上 200 行处。首先，默认 1M token 的 KV cache 需要 52.6 GiB，而在 drafter 旁边只有 48.1 GiB 空闲（<code>--max-model-len 262144</code> 解决了这个问题）。接着，由于 vLLM v0.34.0 将默认 <code>--gpu-memory-utilization</code> 从 <code>0.92</code> 提高到 <code>1.0</code>，KV cache 占用了剩余 VRAM，并使 drafter 的 5 GiB 分配发生 OOM（<code>--gpu-memory-utilization 0.85</code> 解决了这个问题）。驱动现在会打印服务器日志中的每一行错误，而不是只打印末尾。</li><li><strong>引擎方差。</strong> 在启用投机的相同运行中，vLLM 保持在 0.4% 以内，而 SGLang 波动 ±4.5%。这一波动大到足以让 <code>SGLANG_ENABLE_NV_MEGA_RUNTIME_OPTIMIZATION=1</code> 在第一次运行中看起来像 +4% 的胜利，直到重复对照排除了它。</li></ul>
+<p>过程中有几个测量问题坑了我们：</p>
+<ul><li><strong>计时 prefill 期间发生 Triton JIT。</strong> vLLM 第一次 4K prefill 返回的是 202 tok/s，而不是 20K，因为 Triton 在被计时的那个请求期间还在编译内核。跨 prompt 长度与并发度跑一次不计入测量的预热之后，4K prefill 的问题解决了；不过每个 Job 的首次运行仍会低报 32K prefill，原因是最后一个 chunk 的形状不同（已在台账中标注）。</li><li><strong>遗留的服务器占着显存。</strong> 最初的驱动脚本通过 <code>setsid … &amp;</code> 保存的 PID 去停服务器，而这个 PID 并不保证等于进程组 ID。上一个服务器一直在 8000 端口上活着，破坏了下一次启动，还变成了仍能通过 <code>kill -0</code> 检查的僵尸进程。改用 <code>subprocess.Popen(start_new_session=True)</code> 管理进程，并等到显存和 8000 端口都释放后再继续，问题就解决了。</li><li><strong>vLLM 日志里被藏起来的 OOM 报错。</strong> vLLM + DSpark 有两次在日志末尾以 <code>&quot;Engine core initialization failed&quot;</code> 死掉，而真正的原因躺在往上 200 行的位置。第一次，默认的 1M token KV cache 需要 52.6 GiB，而和 drafter 并存时只空着 48.1 GiB（用 <code>--max-model-len 262144</code> 解决）。第二次，由于 vLLM v0.34.0 把默认的 <code>--gpu-memory-utilization</code> 从 <code>0.92</code> 提高到 <code>1.0</code>，KV cache 占用了剩余显存，导致 drafter 那 5 GiB 的分配 OOM（用 <code>--gpu-memory-utilization 0.85</code> 解决）。现在驱动脚本会打印服务器日志里的每一行错误，而不只是末尾几行。</li><li><strong>引擎波动。</strong> 在启用投机的相同运行之间，vLLM 的波动保持在 0.4% 以内，而 SGLang 摆动了 ±4.5%。这个幅度足以让 <code>SGLANG_ENABLE_NV_MEGA_RUNTIME_OPTIMIZATION=1</code> 在第一次运行时看起来像是 +4% 的收益，后来被重复对照排除了。</li></ul>
 <h2>验证与部署</h2>
-<p>部署前，我们固定了确切的 vLLM nightly digest（<code>vllm/vllm-openai@sha256:eaa63fd6…</code>，构建 <code>0.34.0rc1.dev1235+gf2f9edcac</code>），并在一个 Job 内运行验收门禁：</p>
-<table><thead><tr><th>门禁</th><th>结果</th></tr></thead><tbody><tr><td>约 50% 上下文（126,537 token）下的 needle 检索</td><td>3/3，TTFT 12.5 s</td></tr><tr><td>约 95% 上下文（249,970 token）下的 needle 检索</td><td>3/3，TTFT 28.7 s</td></tr><tr><td>并发浸泡（4 × 约 58K token 请求）</td><td>4/4 成功，每个 3/3 检索</td></tr><tr><td>贪心等价性，DSpark 对比无投机（6 个提示，temp 0）</td><td>6/6 逐字节相同</td></tr><tr><td>固定镜像上的单用户解码</td><td>189.9 / 190.2 tok/s</td></tr></tbody></table>
-<p>这些通过后，我们用一个 <code>hf endpoints deploy</code> 命令部署了 endpoint，同时固定镜像 digest 和模型 revision（认证访问，空闲 60 分钟后缩容到零）：</p>
+<p>部署之前，我们锁定了确切的 vLLM nightly digest（<code>vllm/vllm-openai@sha256:eaa63fd6…</code>，构建号 <code>0.34.0rc1.dev1235+gf2f9edcac</code>），并在一个 Job 里跑了验收门禁：</p>
+<table><thead><tr><th>检查项</th><th>结果</th></tr></thead><tbody><tr><td>约 50% 上下文处的 needle 检索（126,537 token）</td><td>3/3，TTFT 12.5 s</td></tr><tr><td>约 95% 上下文处的 needle 检索（249,970 token）</td><td>3/3，TTFT 28.7 s</td></tr><tr><td>并发浸泡（4 个约 58K token 的请求）</td><td>4/4 成功，每个 3/3 检索命中</td></tr><tr><td>贪婪等价性：DSpark 与不启用投机（6 条 prompt，temp 0）</td><td>6/6 逐字节相同</td></tr><tr><td>固定镜像上的单用户解码</td><td>189.9 / 190.2 tok/s</td></tr></tbody></table>
+<p>这些通过之后，我们用一条 <code>hf endpoints deploy</code> 命令部署了 endpoint，同时固定镜像 digest 和模型 revision（认证访问，空闲 60 分钟后缩容到零）：</p>
 <pre><code>hf endpoints deploy inkling2mini-tuned-dspark --namespace &lt;your-org&gt; \
   --repo thinkingmachines/Inkling-2-Mini --revision 7a67ae2314b44ef05c87fd1d4d311c58aaeb18f6 \
   --framework custom --custom-image &quot;vllm/vllm-openai@sha256:eaa63fd6ee3aac77f3158e80ed79ec425db3a53f7cd666bf1954e96abfaf19a7&quot; \
@@ -305,49 +242,34 @@
   --min-replica 0 --max-replica 1 --scale-to-zero-timeout 60 --type authenticated \
   --container-command &quot;vllm serve&quot; \
   --container-args &quot;/repository --served-model-name thinkingmachines/Inkling-2-Mini --host 0.0.0.0 --port 8000 --tool-call-parser inkling --enable-auto-tool-choice --reasoning-parser inkling --max-model-len 262144 --gpu-memory-utilization 0.85 --speculative-config '{\&quot;method\&quot;:\&quot;dspark\&quot;,\&quot;num_speculative_tokens\&quot;:7,\&quot;draft_sample_method\&quot;:\&quot;probabilistic\&quot;}'&quot;</code></pre>
-<p>对在线 endpoint 运行 <code>bench.py</code> 得到单用户 194.9 tok/s，在计入网络延迟后与 Job 运行一致。</p>
-<p>本次运行的所有内容（<code>PLAN.md</code>、<code>THEORY.md</code>、<code>jobs/driver.py</code>、<code>submit.sh</code>、<code>deploy.sh</code> 以及原始 <code>ledger-<em>.jsonl</code> 文件）都在 <a href="https://github.com/NielsRogge/inkling-2-mini-hillclimb"><code>NielsRogge/inkling-2-mini-hillclimb</code></a> 中。要在另一个模型上复用该循环，请将候选与对照服务器命令放入 <code>configs/plan-</em>.json</code> 文件，并提交到与目标 endpoint 匹配的任意 HF Jobs GPU flavor。</p>
-<p>博客中的更多文章</p>
-<p>guidevllminference</p>
-<h2>用一条命令在 HF Jobs 上运行 vLLM 服务器</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li></ul>
-<p>14</p>
-<p>June 26, 2026</p>
-<p>transformersmistralvllm</p>
-<h2>欢迎 Le Chonk：Hugging Face 上的 Mistral Large 4</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/649a943906690b959319d192/k8ZlmJWF3GNpYLHrdpejY.jpeg" alt=""></li><li>+7</li></ul>
-<p>93</p>
-<p>October 29, 2026</p>
-<h3>社区</h3>]]></content:encoded>
+<p>对线上 endpoint 运行 <code>bench.py</code> 得到单用户 194.9 tok/s，计入网络延迟后与 Job 中的结果一致。</p>
+<p>这次运行的全部内容（<code>PLAN.md</code>、<code>THEORY.md</code>、<code>jobs/driver.py</code>、<code>submit.sh</code>、<code>deploy.sh</code>，以及原始的 <code>ledger-<em>.jsonl</code> 文件）都在 <a href="https://github.com/NielsRogge/inkling-2-mini-hillclimb"><code>NielsRogge/inkling-2-mini-hillclimb</code></a> 中。想在另一个模型上复用这套循环，就把你的候选与对照服务器命令写进一个 <code>configs/plan-</em>.json</code> 文件，然后提交到与目标 endpoint 匹配的任意 HF Jobs GPU 规格上。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Together AI] Hurdle 简介：对您的 API、技能和文档运行代理评估</title>
+      <title>[Together AI] Hurdle 简介：在你的 API、技能与文档上运行 agent 评估</title>
       <link>https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs</link>
       <guid isPermaLink="true">https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs</guid>
       <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml">Together AI</source>
       <description>原文标题：Introducing Hurdle: Run agent evals on your API, skills, and docs</description>
-      <content:encoded><![CDATA[<p>所有博客文章</p>
-<p>Inference</p>
-<p>发布于 11/25/2026</p>
-<h1>推出 Hurdle：在你的 API、技能和文档上运行 agent 评估</h1>
-<p>Hurdle 是一个开源 npm 库，它让 Claude Code 和 Codex 针对你平台上的任务运行，用代码检查、guards 和 LLM judge 为每次运行评分，并按模型和条件显示通过率。</p>
-<ul><li>作者：Mo King, Sam Barrowclough, Hassan El Mghari</li><li>目录<a href="https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs">40+ 个为生产环境选择的模型...40+ 个为生产环境选择的模型...40+ 个为生产环境选择的模型...</a></li></ul>
-<p>如果你在为开发者构建产品，你 already know 编码 agent 是开发者访问你的 API、SDK 和文档的主要方式之一。要了解 agent 能与你的平台配合得如何，你需要在真实世界任务上测试它们，最好覆盖具有代表性的模型、harness 和条件样本。手动编排这一切极其繁琐，这也是我们去年春天在 Together 开始做评估时吃尽苦头才发现的。</p>
-<p>为了自动化这个过程，我们花了过去六个月构建 <a href="https://github.com/togethercomputer/hurdle">Hurdle</a>，一个用于运行 agent 评估的 npm 库。今天我们将其开源，让你能像我们一样对你的平台 agent 体验进行基准测试。现在就用 <code>npx hurdle init</code> 开始，或者让你的 agent 帮你设置。</p>
-<h2>Hurdle 如何工作</h2>
-<p>Hurdle 让你测试 Claude Code 和 Codex 使用你平台的效果如何。</p>
-<p>你首先要写一个<em>任务</em>，它只是一个开发者会交给使用你产品的 agent 的提示词。你可以尝试覆盖开发者可能尝试的每个任务，或者聚焦于几个问题领域。Hurdle 会让 agent 针对你的任务运行，记录会话，并为运行评分。</p>
-<p>评分具体如何运作由你决定。你可以选择一种方法，或混合搭配：</p>
-<ul><li><strong>Code checks：</strong> 关于运行的断言，例如 agent 必须发起的 API 请求，以及它应生成的文件或数据。</li><li><strong>Guards：</strong> 阻止 agent 执行不被允许操作的规则，例如启动昂贵的 GPU 集群——坏 agent &gt;:( Hurdle 会阻止该 API 请求，并将任何尝试计为失败。</li><li><strong>Judge：</strong> 一个 LLM，它根据你用平实英文写的评分细则审查录制的会话，并判定 agent 是否通过。</li></ul>
-<p>你也可以在不同的<em>条件</em>下运行每个任务，这些条件设定 agent 启动时的上下文。例如，你可以在两个全新 agent 上运行同一个任务，一个安装你的 MCP server，一个不安装，以观察它有多大帮助或损害。</p>
-<p>在多个模型上运行评估也是如此：Hurdle 会让你指定的每个 agent/模型组合运行每个任务。agent 不总是以同样方式运行两次，因此你还可以将每个任务/模型/条件组合重复多次，以获得总体通过率。</p>
-<h2>示例任务：找到最便宜的 GPU 集群</h2>
-<p>这是我们在自己的 eval 探索中想出的一个真实任务：</p>
-<blockquote>列出可用的 GPU 集群区域和实例类型，打印最便宜的选项，并展示你要按需预留它一小时所执行的确切命令。不要实际预留它。</blockquote>
-<p>要通过，agent 必须从 API 查询实时区域，在文档中找到当前价格，并生成有效的预留命令——但最重要的是，它不应创建付费集群。</p>
-<p>以下是我们如何将前三个要求写成 Hurdle 检查：</p>
+      <content:encoded><![CDATA[<h1>Hurdle 简介：在你的 API、技能与文档上运行 agent 评估</h1>
+<p>Hurdle 是一个开源的 npm 库，它让 Claude Code 和 Codex 在你的平台上执行任务，用代码检查、guards 和一个 LLM judge 为每次运行打分，并按模型与条件显示通过率。</p>
+<ul><li>作者：Mo King、Sam Barrowclough、Hassan El Mghari</li><li>目录<a href="https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs">40+ 个被选定用于生产的模型……40+ 个被选定用于生产的模型……40+ 个被选定用于生产的模型……</a></li></ul>
+<p>如果你是在为开发者构建产品，你早就知道 coding agent 是开发者访问你的 API、SDK 和文档的主要方式之一。要弄清 agent 与你的平台配合得如何，你需要在真实任务上测试它们，最好覆盖有代表性的模型、harness 与条件组合。手动编排这一切极其繁琐——去年春天我们在 Together 开始做评估时，正是吃了这个苦头才知道的。</p>
+<p>为了把这一过程自动化，过去六个月我们一直在构建 <a href="https://github.com/togethercomputer/hurdle">Hurdle</a>，一个用于运行 agent 评估的 npm 库。今天我们把它开源，让你可以用和我们一样的方式，对平台的 agent 体验做基准测试。今天就可以用 <code>npx hurdle init</code> 开始，或者让你的 agent 帮你把它配置好。</p>
+<h2>Hurdle 的工作原理</h2>
+<p>Hurdle 让你测试 Claude Code 和 Codex 能在多大程度上用好你的平台。</p>
+<p>你从写一个<em>任务</em>开始，它就是一个开发者会交给 agent、让它配合你的产品工作的 prompt。你可以尝试覆盖开发者可能尝试的每一个任务，也可以聚焦在几个问题领域。Hurdle 让 agent 针对你的任务运行，记录会话，并为这次运行打分。</p>
+<p>打分具体怎么进行由你决定。你可以选一种方法，也可以混搭：</p>
+<ul><li><strong>代码检查（Code checks）：</strong> 关于本次运行的断言，比如 agent 必须发出的 API 请求，以及它应当产出的文件或数据。</li><li><strong>Guards：</strong> 阻止 agent 执行不被允许的动作的规则，比如启动一个昂贵的 GPU 集群——坏 agent &gt;:( Hurdle 会拦下该 API 请求，并把任何尝试计为失败。</li><li><strong>Judge：</strong> 一个 LLM，它按照你用平实英文写好的 rubric 审阅记录下来的会话，判定 agent 是否通过。</li></ul>
+<p>你也可以在不同的<em>条件</em>下运行每个任务，这些条件设定 agent 起步时的上下文。例如，你可以在两个全新的 agent 上运行同一个任务，一个装了你的 MCP server，一个没装，看看它帮了多少忙、又添了多少乱。</p>
+<p>在多个模型上运行评估也是同理：Hurdle 会针对你指定的每一个 agent/model 组合运行每一个任务。agent 两次运行的表现并不总是一致，所以你也可以把每个 task/model/condition 组合重复多次，以得到总体通过率。</p>
+<h2>示例任务：找出最便宜的 GPU 集群</h2>
+<p>这是我们在自己的评估冒险中想出的一个真实任务：</p>
+<blockquote>列出可用的 GPU 集群区域与实例类型，打印最便宜的选项，并给出你要按需预留它一小时时会运行的那条确切命令。不要真的预留它。</blockquote>
+<p>要判定通过，agent 必须从 API 查询实时的区域信息，在文档里找到当前价格，并产出一条有效的预留命令——但最重要的是，它绝对不能创建付费集群。</p>
+<p>下面是我们如何把前三条要求写成 Hurdle 检查的：</p>
 <pre><code>// checks.mjs
 import { defineChecks } from &quot;hurdle&quot;;
 
@@ -372,7 +294,7 @@ export default defineChecks((run) =&gt; {
     &quot;Note confusing API responses and recovery attempts.&quot;
   );
 });</code></pre>
-<p>以下是防止 agent 启动真实集群的 guard。Hurdle 在 agent 工作期间执行 guard，并在 agent 完成后运行检查：</p>
+<p>还有一个 guard，用来阻止 agent 启动真实集群。Hurdle 在 agent 工作期间执行这个 guard，并在 agent 结束后运行检查：</p>
 <pre><code>// guard.mjs
 import { defineGuard } from &quot;hurdle&quot;;
 
@@ -385,8 +307,8 @@ export default defineGuard((guard) =&gt; {
     path: &quot;/v1/compute/clusters&quot;,
   });
 });</code></pre>
-<h2>eval 套件</h2>
-<p>要运行任务，你将它加入一个<em>套件</em>，这是一个小文件，用来选择要运行的任务、运行它们的 agent 和条件，以及每次运行重复多少次。对于 GPU 集群任务，我们同时使用确定性代码检查和 LLM judge，因此将套件的 <code>verdict</code> 设为 <code>hybrid</code>，并指定一个 judge 模型：</p>
+<h2>评估套件</h2>
+<p>要运行一个任务，你把它加到一个<em>套件（suite）</em>里，这是一个小文件，用来选定要运行的任务、搭配的 agent 与条件，以及每次运行重复多少遍。对于 GPU 集群这个任务，我们既用了确定性的代码检查，也用了 LLM judge，所以把套件的 <code>verdict</code> 设为 <code>hybrid</code>，并指定一个 judge 模型：</p>
 <pre><code>// example.suite.mjs
 import { defineSuite } from &quot;hurdle&quot;;
 
@@ -421,38 +343,38 @@ export default defineSuite({
   judge: { model: &quot;claude-opus-4-8&quot; },
 });</code></pre>
 <h2>运行并查看结果</h2>
-<p><code>npx hurdle run</code> 会运行套件。加上 <code>--view</code> 会在套件完成时打开结果查看器：</p>
+<p><code>npx hurdle run</code> 运行套件。加上 <code>--view</code> 会在套件结束时打开结果查看器：</p>
 <pre><code>npx hurdle run --view</code></pre>
-<p>Hurdle 会为套件中的每个 agent 和条件运行每个任务，次数由 <code>repeats</code> 指定。对于上面的套件，这是一个任务、两个模型、两个条件，每个重复 15 次，也就是 60 次运行。每次运行完成时，检查会出现在终端中，并标记为通过、失败或跳过。</p>
-<p>查看器顶部显示套件的核心数字：通过率、平均时长和每次运行的平均成本。下方有一个网格，按任务和条件细分通过率，因此你可以看到哪些组合在失败：</p>
-<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b06972f6dd7b08407d42148_01-hurdle-viewer-leaderboard.webp" alt="Hurdle 结果查看器排行榜：标题卡片显示 15 次运行、77% 严格通过率、平均时长 7s 和平均 agent 成本 $0.07，下方是按任务展示 baseline 与 with-skill 条件通过率的网格。"></p>
-<p>点击进入一次运行，可以确切看到 agent 做了什么，包括完整记录、agent 的工具调用和 API 请求列表，以及每项检查的结果和 judge 的最终评估。</p>
-<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0697559d5717af57105e35_02-hurdle-viewer-run-detail.webp" alt="Hurdle 中一次使用 Claude Code 在 Opus 5.5 上进行的 fix-the-bug 运行详情：判定为 Pass，随后是任务提示词和七项评估检查，全部通过。"></p>
-<p>Hurdle 会将结果保存到你项目目录下的 <code>.hurdle/</code>，因此你可以运行 <code>npx hurdle view</code> 重新打开查看器。</p>
+<p>Hurdle 会为套件里的每个 agent 和每个条件运行每个任务，重复次数由 <code>repeats</code> 决定。对上面那个套件而言，就是一个任务、两个模型、两种条件，每种各 15 次，也就是 60 次运行。每次运行结束时，检查结果会出现在终端里，标记为通过、失败或跳过。</p>
+<p>查看器顶部显示套件的核心数字：通过率、平均时长和每次运行的平均成本。下面是一个网格，按任务和条件拆解通过率，让你看出哪些组合在失败：</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b06972f6dd7b08407d42148_01-hurdle-viewer-leaderboard.webp" alt="Hurdle 结果查看器的排行榜：顶部数字块显示 15 次运行、77% 的严格通过率、7 秒的平均时长和 $0.07 的平均 agent 成本，下方是按任务拆解通过率的网格，分别对应 baseline 与 with-skill 两种条件。"></p>
+<p>点进一次运行，就能准确看到 agent 做了什么，包括完整对话记录、agent 的工具调用与 API 请求清单，以及每一项检查的结果和 judge 的最终判定。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0697559d5717af57105e35_02-hurdle-viewer-run-detail.webp" alt="一次用 Claude Code 在 Opus 5.5 上修 bug 的 Hurdle 运行详情：判定为 Pass，其后是任务 prompt 和七项评估检查，全部通过。"></p>
+<p>Hurdle 把结果保存到项目目录下的 <code>.hurdle/</code>，因此你可以运行 <code>npx hurdle view</code> 重新打开查看器。</p>
 <h2>本地运行</h2>
-<p>对于你信任的任务的快速测试，你可以在本地运行评估，就像你自己给 agent 写提示词时那样。</p>
-<p>Hurdle 会在你机器上的临时工作区启动 <code>claude</code> 或 <code>codex</code> CLI，将任务的提示词和文件交给它，并记录会话。每个 agent 都从干净配置启动，因此你常规的 Claude Code 或 Codex 设置不会影响结果。</p>
-<p>本地运行有两个注意事项：第一，Hurdle 无法看到或阻止 agent 的 API 请求，因此你不能使用 guards 或请求检查。但更重要的是，agent 会<em>以你的身份</em>运行，因此它可以读取本地文件并使用你的真实 API 密钥。</p>
-<p>对于任何复杂或有风险的事情，你应始终使用沙箱。</p>
+<p>对于你信任的任务想做快速测试时，可以在本地运行你的评估，就像你自己在给 agent 下 prompt 一样。</p>
+<p>Hurdle 会在你机器上的临时工作区里启动 <code>claude</code> 或 <code>codex</code> CLI，把任务的 prompt 与文件交给它，并记录整个会话。每个 agent 都从干净的配置起步，所以你日常的 Claude Code 或 Codex 配置不会影响结果。</p>
+<p>本地运行有两个注意事项：第一，Hurdle 看不到也拦不住 agent 的 API 请求，因此你无法使用 guards 或请求检查。但更重要的是，agent 是以<em>你</em>的身份运行的，所以它能读本地文件、用你真实的 API key。</p>
+<p>凡是复杂或有风险的事，都应该使用 sandbox。</p>
 <h2>沙箱运行</h2>
-<p>对于生产评估，Hurdle 使用 Together Sandbox API 启动隔离环境，编码 agent 可以在其中执行代码、安装依赖并与 API 交互，而不会访问你的本地机器。</p>
-<p>每次运行都会获得一个全新沙箱，因此 agent 从干净环境开始，而不是继承之前运行的文件或状态。Together 处理沙箱基础设施，而 Hurdle 管理 agent 执行、API 请求监控和评估结果。</p>
-<p>当你启动一次沙箱运行时，Hurdle 会启动一个名为 Guardian 的本地代理，然后向 Together 打开单个 WebSocket，由 Together 为该次运行启动一个全新的 <a href="https://docs.together.ai/docs/together-code-sandbox">Together Sandbox</a>。agent 在该沙箱内工作，沙箱自身没有网络访问权限。agent 打开的每个连接都会通过该 socket 返回 Guardian，由 Guardian 允许或拒绝每个请求。</p>
-<p>你的密钥永远不会进入沙箱——agent 得到随机占位符；当它调用你的 API 时，Guardian 会换入真实密钥并转发请求。agent 对模型提供商（Anthropic 或 OpenAI）的调用也走同一路径。</p>
-<p>这种路由让 Hurdle 能够检查请求、执行 guards 并保障你的密钥安全：</p>
-<ul><li><strong>API 请求检查：</strong> 每个请求都经过 Guardian，因此你的检查可以确切看到 agent 发起了哪些调用。</li><li><strong>Guards：</strong> Guardian 用 403 响应被阻止的请求，因此该请求永远不会到达你的 API。</li><li><strong>安全密钥：</strong> agent 可以使用你的密钥但无法读取它们，因此如果某个占位符泄漏到记录中，也没什么大不了。</li></ul>
-<p>默认情况下，沙箱不会限制 agent 可以调用哪些 endpoint。agent 可以用你的密钥向你 API 发送任何请求，因此为你的评估使用一个低余额的专用密钥，并为任何危险操作添加 guard。</p>
-<h2>自己试试</h2>
+<p>对于生产环境的评估，Hurdle 使用 Together Sandbox API 起出隔离环境，coding agent 可以在其中执行代码、安装依赖、与 API 交互，而不会访问你的本机。</p>
+<p>每次运行都会得到一个全新的 sandbox，因此 agent 从干净的环境起步，而不会继承此前运行的文件或状态。Together 负责 sandbox 基础设施，Hurdle 则管理 agent 执行、API 请求监控和评估结果。</p>
+<p>当你启动一次沙箱运行时，Hurdle 会先启动一个名为 Guardian 的本地代理，然后向 Together 打开一个 WebSocket，由后者为这次运行起出一个全新的 <a href="https://docs.together.ai/docs/together-code-sandbox">Together Sandbox</a>。agent 在那个 sandbox 里工作，而该 sandbox 自身没有网络访问。agent 打开的每一条连接都会经那个 socket 回到 Guardian，由它放行或拒绝每一个请求。</p>
+<p>你的 key 永远不会进入 sandbox——agent 拿到的是随机的替代值，当它调用你的 API 时，Guardian 换上真实的 key 并转发请求。agent 对模型提供方（Anthropic 或 OpenAI）的调用也走同一条路径。</p>
+<p>正是这种路由让 Hurdle 能检查请求、执行 guards 并保证你的 key 安全：</p>
+<ul><li><strong>API 请求检查：</strong> 每个请求都经过 Guardian，因此你的检查能准确看到 agent 做了哪些调用。</li><li><strong>Guards：</strong> Guardian 对被拦下的请求返回 403，该请求因此永远到不了你的 API。</li><li><strong>安全的 key：</strong> agent 可以使用你的 key，但读不到它，所以就算一个替代值漏进了对话记录，也没什么大不了。</li></ul>
+<p>默认情况下，sandbox 不限制 agent 能调用哪些端点。agent 可以用你的 key 向你的 API 发送任何请求，所以给你的评估准备一个专用的、余额很低的 key，并为任何危险操作添加 guard。</p>
+<h2>自己试一试</h2>
 <p>你需要 Node.js 22.18 或更高版本，并安装 Claude Code 或 Codex CLI。</p>
 <h3>1. 设置你的项目</h3>
 <p>在新目录中创建一个项目：</p>
 <pre><code>mkdir my-evals &amp;&amp; cd my-evals
 npx hurdle init</code></pre>
-<p>要使用 Codex 而不是 Claude，添加 <code>--agent codex</code>：</p>
+<p>如果想用 Codex 而不是 Claude，加上 <code>--agent codex</code>：</p>
 <pre><code>npx hurdle init --agent codex</code></pre>
-<p><code>init</code> 会创建一个 <code>evals/</code> 目录，其中包含起始套件和示例任务。</p>
-<h3>2. 添加你的 API 密钥</h3>
-<p>接下来，在 <code>my-evals</code> 中创建一个 <code>.env.local</code> 文件，并添加你的 Anthropic API 密钥。来自 <code>claude setup-token</code> 的 <code>CLAUDE_CODE_OAUTH_TOKEN</code> 也可以。如果你想使用沙箱，还需要设置你的 Together API 密钥。</p>
+<p><code>init</code> 会创建一个 <code>evals/</code> 目录，其中包含一个入门套件和示例任务。</p>
+<h3>2. 添加你的 API key</h3>
+<p>接下来，在 <code>my-evals</code> 中创建一个 <code>.env.local</code> 文件，并加入你的 Anthropic API key。用 <code>claude setup-token</code> 得到的 <code>CLAUDE_CODE_OAUTH_TOKEN</code> 也可以。如果你想使用 sandbox，还需要设置你的 Together API key。</p>
 <pre><code># .env.local
 
 # Add your Anthropic key
@@ -466,21 +388,21 @@ ANTHROPIC_API_KEY=your_api_key
 
 # Required for sandboxes
 # TOGETHER_API_KEY=your_api_key</code></pre>
-<h3>3. 运行起始任务</h3>
+<h3>3. 运行入门任务</h3>
 <p>然后运行套件并打开结果查看器：</p>
 <pre><code>npx hurdle run --view</code></pre>
-<p>起始任务要求 agent 将一个文件复制到 <code>answer.txt</code>，一项代码检查会确认复制后的文件与原始文件匹配。这次运行发生在你自己的机器上，不使用沙箱。</p>
-<h3>4. 尝试一次沙箱运行</h3>
-<p>要尝试沙箱运行，使用捆绑的 Together API 示例，它告诉 agent 列出 Together 上可用的模型，进行一次简短的 chat completion，并保存响应。检查会确认 API 请求和保存的文件两者。</p>
-<p>确保你已在 <code>.env.local</code> 中设置 <code>TOGETHER_API_KEY</code>，然后在同一个 <code>my-evals</code> 目录中运行这些命令：</p>
+<p>入门任务让 agent 把一个文件复制到 <code>answer.txt</code>，并由一项代码检查确认复制出的文件与原始文件一致。这次运行在你的本机上发生，不使用 sandbox。</p>
+<h3>4. 试试沙箱运行</h3>
+<p>要尝试沙箱运行，可以使用内置的 Together API 示例，它让 agent 列出 Together 上可用的模型、做一次简短的 chat completion，并保存响应。检查会同时确认 API 请求和保存下来的文件。</p>
+<p>确认你已经在 <code>.env.local</code> 里设置了 <code>TOGETHER_API_KEY</code>，然后在同一个 <code>my-evals</code> 目录中运行这些命令：</p>
 <pre><code>npx hurdle init api-evals --example together-api
 npx hurdle setup api-evals
 npx hurdle run api-evals --view</code></pre>
-<p><code>setup</code> 会检查你的凭据、安装 Guardian（目前仅限 macOS 或 Linux），并将项目设置为在 Together 沙箱中运行。沙箱和 chat completion 需要一些 Together 额度，但每次运行的 Together 侧成本应只占一小部分美分。</p>
-<h2>找到你自己的 hurdles</h2>
-<p>当你准备好评估自己的产品时，将你的 API 密钥以任意名称添加到 <code>.env.local</code>：</p>
-<p>setup 会检查你的凭据、安装 Guardian（目前仅限 macOS 或 Linux），并将项目设置为在 Together 沙箱中运行。沙箱和 chat completion 需要一些 Together 额度，但每次运行的 Together 侧成本应只占一小部分美分。找到你自己的 hurdles 当你准备好评估自己的产品时，将你的 API 密钥以任意名称添加到 .env.local：</p>
-<p>然后向套件添加一个 <code>api</code> 块，在其中指定该变量和你的 API 主机：</p>
+<p><code>setup</code> 会检查你的凭据、安装 Guardian（目前仅支持 macOS 或 Linux），并把项目设为在 Together sandbox 中运行。sandbox 和 chat completion 都需要一些 Together 余额，但 Together 这一侧每次运行只应花费不到一美分的零头。</p>
+<h2>寻找你自己的 hurdle</h2>
+<p>当你准备好评估自己的产品时，把 API key 以任意你喜欢的名字加进 <code>.env.local</code>：</p>
+<p><code>setup</code> 会检查你的凭据、安装 Guardian（目前仅支持 macOS 或 Linux），并把项目设为在 Together sandbox 中运行。sandbox 和 chat completion 都需要一些 Together 余额，但 Together 这一侧每次运行只应花费不到一美分的零头。寻找你自己的 hurdle 当你准备好评估自己的产品时，把 API key 以任意你喜欢的名字加进 .env.local：</p>
+<p>然后在这个套件里添加一个 <code>api</code> 块，写明那个变量名和你 API 的 host：</p>
 <pre><code>// example.suite.mjs
 export default defineSuite({
   api: {
@@ -490,124 +412,109 @@ export default defineSuite({
   },
   // ...tasks, agents, and verdict
 });</code></pre>
-<p>agent 会获得一个同名环境变量，因此你可以在提示词中直接引用它。</p>
-<p><em>(沙箱运行的一个注意事项：Guardian 只会将你的密钥换入 <code>Authorization</code> header，因此以其他方式接收密钥的 API 将无法认证。)</em></p>
-<p>之后，选择一个你的用户已经在交给其 agent 的任务。将它写成提示词，添加一项检查，并用两个模型运行：你能获得的最好模型，以及低一个档次的模型。每个重复几次，因为任何单次运行都可能偶然通过或失败。</p>
-<p>Hurdle 在 <a href="https://github.com/togethercomputer/hurdle">GitHub</a> 上开源，README 中还有一份关于如何编写你自己的评估的指南。</p>
-<p>如果 Hurdle 找到了让你的 agent 出错的方法，请告诉我们！我们很想听听你发现的任何障碍以及你是如何修复它们的。</p>
-<h2>相关文章</h2>]]></content:encoded>
+<p>agent 会得到一个同名环境变量，因此你可以在 prompt 里直接引用它。</p>
+<p><em>(沙箱运行有一个注意事项：Guardian 只会把 key 换进 <code>Authorization</code> 头，所以那些从别处取 key 的 API 将无法完成鉴权。)</em></p>
+<p>接下来，挑一个你的用户已经在交给他们 agent 的任务。把它写成一个 prompt，加一项检查，然后用两个模型运行：你能拿到的最好的那个，以及低一个档位的那个。每个都重复几次，因为任何单次运行都可能因偶然通过或失败。</p>
+<p>Hurdle 已在 <a href="https://github.com/togethercomputer/hurdle">GitHub</a> 上开源，README 里还有一份关于如何编写你自己的评估的指南。</p>
+<p>如果 Hurdle 发现你的 agent 有能被绊倒的地方，请告诉我们！我们很想听听你发现的障碍，以及你是怎么解决的。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] GPT-6 模型展示了内在的蛋白质设计能力</title>
+      <title>[OpenAI] GPT-6 模型展现出内在的蛋白质设计能力</title>
       <link>https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities</link>
       <guid isPermaLink="true">https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities</guid>
       <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
       <description>原文标题：GPT-6 models demonstrate intrinsic protein-design capabilities</description>
-      <content:encoded><![CDATA[<p>2026年11月24日</p>
-<p>科学</p>
-<p>出版</p>
-<h1>GPT‑6 模型展现出内在的蛋白质设计能力</h1>
+      <content:encoded><![CDATA[<h1>GPT-6 模型展现出内在的蛋白质设计能力</h1>
 <p><a href="https://cdn.openai.com/pdf/gpt-6-a-universal-foundation-model-for-protein-biology.pdf">阅读论文</a></p>
 <h2>主要发现：</h2>
-<ul><li>我们的 GPT‑6 系列模型仅凭推理和代码，就能设计新的蛋白质形状及其化学构建块的序列，而无需调用专门的生物学模型来生成这些设计。</li><li>一个内部研究模型在许多蛋白质设计任务上达到或超越了专门模型的表现。研究人员还可以通过向模型提示蛋白质应在何处附着以及应呈现何种形状来引导设计。</li><li>在与 Onava 进行的实验室测试中，基于 GPT‑6.2 设计的蛋白质在五个靶点上显示出结合（即附着）的证据。重新设计的抗体也保持了结合能力。专门模型帮助提供了序列并筛选了用于测试的候选物。</li><li>模型的书面推理和代码表明，它们运用数学、物理、化学和生物学知识来推理蛋白质形状以及与其他分子的相互作用。</li></ul>
-<p>在一篇题为<em>《GPT‑6 作为蛋白质生物学的通用基础模型：超越专门模型》</em>的预印本中，我们展示了我们的 GPT‑6 系列模型具有设计新蛋白质的<strong>内在能力</strong>：这些模型无需依赖专门的生物学模型，仅凭推理和通用编码工具就能设计新的蛋白质结构和序列。</p>
-<p>蛋白质在活细胞中承担了大量工作。它们驱动维持生命的化学反应，在血液中运输氧气，并防御身体免受感染。形状不正确的蛋白质也可能导致疾病和功能障碍。蛋白质由称为氨基酸的化学构建块链组成。这些氨基酸的顺序（即序列）有助于决定蛋白质如何折叠成三维形状，进而影响其功能。</p>
-<p>科学家通常从明确的目标出发，即他们希望蛋白质做什么。他们可能希望蛋白质阻断帮助癌细胞逃避免疫系统的信号，或帮助从空气中捕获二氧化碳。挑战在于弄清楚什么样的三维结构能使蛋白质完成其工作，以及哪种氨基酸序列能赋予其该结构。能够生成三维蛋白质结构和序列的专门生物学模型使这项工作更加可行。</p>
-<p>使用和协调这些专门模型需要大量专业知识。每个模型接受特定类型的输入和约束，而这些模型在不修改软件或进行额外训练的情况下，很难接受新类型的信息。相比之下，一个能够执行多个专门模型工作的通用模型可以轻松适应新的指令和要求。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4u7ogWwVXuqX5GRdnZxsLM/23d72378f6fea65debd91c914f32fb54/protein-workflows-intrinsic-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="比较语言模型协调专用工具与单一模型直接处理蛋白质任务的示意图。"></p>
-<p>我们的研究展示了将自然语言与内在蛋白质能力相结合的潜在力量。我们可以在从两个原子之间的单个键到蛋白质整体形状的各个尺度上引导我们的模型。例如，我们要求 GPT‑6.2 预测一个小分子将在何处以及如何与蛋白质结合。当我们已经知道哪两个原子形成了键时，我们可以将该信息提供给模型，并询问分子的其余部分将如何适配。我们可以仅通过更改提示在这些任务之间切换，而无需重新训练模型。我们还要求我们的模型设计称为 minibinder 的小型蛋白质，并标记每个 minibinder 应附着到其靶标的位置，并进一步指定每个 minibinder 应包含多少个螺旋或链。一个内部模型在其三维设计中以近乎完美的保真度遵循了该指令。</p>
-<p><em>距离中心越远的点表示性能越好。更新一代的模型在测试的 14 项蛋白质任务中的许多任务上都有所改进。</em></p>
-<h2>深入了解我们模型的蛋白质设计</h2>
-<p>我们进行了计算测试，检验 GPT‑6 系列模型能否设计小型蛋白质以结合给定靶标、围绕指定结构特征构建蛋白质、预测蛋白质结构和分子相互作用，以及排列序列变化如何影响稳定性和结合等特性。我们的最新模型在大多数任务上表现与专门模型相当或更好，尽管预测完整的蛋白质结构仍然是一个明显的弱点。</p>
-<p>模型的书面推理和代码为它们如何处理这些任务提供了线索。它们运用数学、物理、化学和编码，以及对蛋白质序列和结构中反复出现的模式的知识。例如，在设计一种旨在结合 IL-7Rα 的小型蛋白质时，模型提出了两种蛋白质可能如何相互作用，然后编写并执行代码来探索可能支持该相互作用的不同蛋白质形状和氨基酸选择。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/77JrLamL248By3sCY9fZqj/7537b78d13de9641b56233de8216a606/source_figure_1__3_.png?w=3840&amp;q=90&amp;fm=webp" alt="模型如何完成蛋白质设计"></p>
-<p><em>模型的书面推理和代码显示它运用数学、物理、化学和生物学来设计一种旨在附着到 IL-7Rα 的蛋白质。它检查靶标的表面，将五个螺旋区段排列成蛋白质形状，并检查两种蛋白质如何相互适配。</em></p>
-<p>与我们的研究合作伙伴 <a href="http://www.onava.ai">Onava</a> 一起，我们还在实验室中测试了模型的结构和序列设计。首先，Onava 基于预发布版 GPT‑6.2 设计的三维结构制造了小型蛋白质。专门模型提供了氨基酸序列并帮助筛选了用于测试的候选物。对于我们选择的五个靶标中的每一个，至少有一种蛋白质在实验室中显示出结合的证据。在单独的实验中，GPT‑6.2 为现有的 minibinder 和抗体设计了新的氨基酸序列。在使用专门模型进行候选物筛选后，许多重新设计的蛋白质也显示出与原始蛋白质相同靶标结合的证据。</p>
-<h2>实验室实验 1：设计与靶标结合的小型蛋白质</h2>
-<p>我们的第一个实验室实验测试了 GPT‑6.2 能否设计出与其预期靶标结合的小型蛋白质。我们将质量的计算测量值与 RFdiffusion（一种蛋白质设计专门模型）进行了比较，发现 GPT‑6.2 的三维设计得分略低，而我们最新的内部模型得分更高。在实验室实验中，我们基于 GPT‑6.2 的设计制造了蛋白质，并测量了它们与靶标结合的强度。</p>
-<p>我们向 GPT‑6.2 提供了五个靶标蛋白质的三维结构，并标记了我们希望 minibinder 附着的位置。然后它编写代码为潜在的 minibinder 创建三维设计，而不使用专门的蛋白质 AI 模型。</p>
-<p>为了将 GPT‑6.2 的三维设计转化为我们可以在实验室中测试的蛋白质，我们需要能够折叠成所提出结构的氨基酸序列。我们使用了一种名为 SolubleMPNN 的专门 AI 模型来为每个设计建议序列。其他专门的蛋白质模型帮助我们筛选出预测能按设计折叠并在靶标预期位点结合的候选物。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tdj7ylIVvRLZuSefgld5A/79ed19f943933341880b0e9bb1c4d6ae/wet-lab-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="从蛋白质设计到实验室测试。从靶标选择到骨架和序列设计、结构筛选、排序和实验室测试的工作流程。"></p>
-<p><em>GPT‑6.2 设计了旨在附着到所选靶标的小型蛋白质的形状。然后专门模型提出了氨基酸序列——即蛋白质化学构建块的顺序——并帮助筛选出设计供我们的研究合作伙伴 Onava 在实验室中制造和测试。</em></p>
-<p>我们在实验室中测试了 322 个 minibinder 对 5 个靶标的结合情况。其中，35 个（10.9%）测试呈阳性，表明与其预期靶标结合。我们发现了 5 个针对 PD-L1（某些癌症用来逃避免疫系统的蛋白质）的命中，3 个针对 IL-7Rα，1 个针对 TrkA，8 个针对 VEGF-A，以及 18 个针对 IL-17A。<a href="https://www.nature.com/articles/s41586-023-06415-8/figures/6">原始 RFdiffusion 研究</a>报告的命中率更高，但命中率在很大程度上取决于研究人员在实验室验证之前筛选设计的严格程度以及他们对结合的定义。尽管如此，我们的结果提供了早期证据，表明我们可以将 GPT‑6.2 的三维设计转化为在实验室中与其预期靶标结合的蛋白质。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6YdRXyaFP4SEp3mku9AcPi/e8675d403db99751eac6a843d6d32507/specific-responsive-legend-poster.svg?w=3840&amp;q=50" alt="设计蛋白质以附着到特定靶标 · 响应式图例海报"></p>
-<p><em>一个内部研究模型设计了旨在附着到灰色所示靶标蛋白质的小型蛋白质的形状。彩色形状将每个设计与蛋白质如何折叠并与其靶标适配的计算预测进行了比较。</em></p>
+<ul><li>我们的 GPT-6 系列模型仅凭推理和代码，就能设计出新的蛋白质形状及其化学构建单元的序列，而无需调用专门的生物学模型来生成这些设计。</li><li>一个内部研究模型在许多蛋白质设计任务上追平或超过了专门模型。研究人员还可以通过提示模型蛋白质应当附着在哪里、应当呈现什么形状，来引导设计。</li><li>在与 Onava 合作的实验室测试中，基于 GPT-6.2 的设计制作的蛋白质在五个靶点上显示出结合（即附着）的证据。重新设计的抗体也保持了结合能力。专门模型帮助提供了序列，并挑选出候选者用于测试。</li><li>模型写下的推理和代码表明，它们会运用数学、物理、化学和生物学知识来推理蛋白质的形状以及与其他分子的相互作用。</li></ul>
+<p>在一篇题为 <em>GPT-6 as a Universal Foundation Model for Protein Biology: Beyond Specialized Models</em> 的预印本中，我们表明，我们的 GPT-6 系列模型具备设计新蛋白质的<strong>内在能力</strong>：这些模型可以设计出新的蛋白质结构和序列，而不依赖专门的生物学模型，只使用推理和通用编程工具。</p>
+<p>蛋白质在活细胞中承担了大部分工作。它们驱动维持生命的化学反应，把氧气输送过血液，并保护身体抵御感染。形状不正确的蛋白质也可能导致疾病和功能失常。蛋白质由被称为氨基酸的化学构建单元连成的链构成。这些氨基酸的排列顺序（即序列）在很大程度上决定了蛋白质如何折叠成一个三维形状，而这又进一步影响它的功能。</p>
+<p>科学家往往一开始就清楚想让一个蛋白质做什么。他们可能想让它阻断某种帮助癌细胞逃避免疫系统的信号，或者帮助从空气中捕获二氧化碳。难点在于弄清楚：什么样的三维结构能让这个蛋白质完成它的工作，以及什么样的氨基酸序列能赋予它这种结构。能够生成三维蛋白质结构和序列的专门生物学模型，让这项工作变得更可行。</p>
+<p>使用并协调这些专门模型需要相当的专业知识。每个模型只接受特定类型的输入和约束，而这些模型如果不修改软件或是额外训练，就很难接受新的信息类型。相比之下，一个能够完成多个专门模型工作的通用模型，可以轻松适应新的指令和要求。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4u7ogWwVXuqX5GRdnZxsLM/23d72378f6fea65debd91c914f32fb54/protein-workflows-intrinsic-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="图示对比了由语言模型协调专门工具，与由单一模型直接处理蛋白质任务两种情况。"></p>
+<p>我们的研究展示了把自然语言与内在的蛋白质能力结合起来可能具有的力量。我们能够在从两个原子之间的单根化学键，到蛋白质整体形状的各种尺度上引导模型。例如，我们让 GPT-6.2 预测一个小分子会在何处、以何种方式与一个蛋白质结合。当我们已经知道是哪两个原子形成了化学键时，我们可以把这一信息告诉模型，并问它分子的其余部分将如何嵌合。我们可以只靠修改提示在这些任务之间切换，而无需重新训练模型。我们还让模型设计被称为 minibinder 的小型蛋白质，并标记出每一个应当附着到靶点上的位置，还进一步指明了每个 minibinder 应当包含多少个螺旋（coil）或链段（strand）。一个内部模型在其三维设计中以近乎完美的保真度遵循了这一指令。</p>
+<p><em>距中心越远的点表示性能越好。在测试的 14 项蛋白质任务中，新一代模型在许多任务上都有所提升。</em></p>
+<h2>细看我们模型的蛋白质设计</h2>
+<p>我们对 GPT-6 系列模型进行了一系列计算测试，考察它们能否设计出可与给定靶点结合的小型蛋白质、围绕指定结构特征构建蛋白质、预测蛋白质结构和分子相互作用，并对序列变化如何影响稳定性、结合能力等性质进行排序。我们最新的模型在大多数任务上表现与专门模型相当或更好，不过在预测完整蛋白质结构这一项上，仍是一个明显的短板。</p>
+<p>模型写下的推理和代码为它们如何着手这些任务提供了线索。它们会运用数学、物理、化学和编程，并结合关于蛋白质序列和结构中反复出现模式的知识。例如，在设计一个旨在与 IL-7Rα 结合的小型蛋白质时，模型提出了这两种蛋白质可能如何相互作用，然后编写并执行代码，去探索能够支持这种相互作用的各种蛋白质形状与氨基酸选择。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/77JrLamL248By3sCY9fZqj/7537b78d13de9641b56233de8216a606/source_figure_1__3_.png?w=3840&amp;q=90&amp;fm=webp" alt="模型如何推演一次蛋白质设计"></p>
+<p><em>模型写下的推理和代码显示，它在设计一个拟附着到 IL-7Rα 上的蛋白质时动用了数学、物理、化学和生物学。它考察了靶点的表面，把五段螺旋区排列成一个蛋白质形状，并检查这两种蛋白质如何相互契合。</em></p>
+<p>我们还与我们的研究伙伴 <a href="http://www.onava.ai">Onava</a> 一起，在实验室中测试了模型在结构和序列上的设计。首先，Onava 基于 GPT-6.2 一个预发布版本所设计的三维结构制作了小型蛋白质。专门模型提供了氨基酸序列，并帮助挑选出用于测试的候选者。在我们选定的五个靶点上，每个靶点都至少有一种蛋白质在实验室中显示出结合的证据。在另外的实验中，GPT-6.2 为现有的 minibinder 和抗体设计了新的氨基酸序列。在借助专门模型完成候选筛选之后，许多重新设计的蛋白质也显示出与原始蛋白质相同靶点结合的证据。</p>
+<h2>实验室实验 1：设计能结合靶点的小型蛋白质</h2>
+<p>我们的第一个实验室实验检验了 GPT-6.2 能否设计出会与预期靶点结合的小型蛋白质。我们把计算得到的质量指标与专门用于蛋白质设计的模型 RFdiffusion 做了比较，发现 GPT-6.2 的三维设计得分略低，而我们最新的内部模型得分更高。在实验室实验中，我们基于 GPT-6.2 的设计制作了蛋白质，并测量它们与靶点结合的强度。</p>
+<p>我们把五个靶点蛋白质的三维结构交给 GPT-6.2，并标记出我们希望 minibinder 附着的位置。然后它编写代码，为潜在的 minibinder 生成三维设计，全程没有使用专门的蛋白质 AI 模型。</p>
+<p>要把 GPT-6.2 的三维设计变成可以在实验室里测试的蛋白质，我们需要能够折叠成这些拟议结构的氨基酸序列。我们使用了一个名为 SolubleMPNN 的专门 AI 模型，为每个设计提出序列。其他专门的蛋白质模型则帮助我们挑选出预计会按设计折叠、并在靶点上预期位点结合的候选者。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7tdj7ylIVvRLZuSefgld5A/79ed19f943933341880b0e9bb1c4d6ae/wet-lab-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="从蛋白质设计到实验室测试。工作流涵盖靶点选择、骨架与序列设计、结构筛选、排序和实验室测试。"></p>
+<p><em>GPT-6.2 为拟附着到选定靶点的小型蛋白质设计了形状。随后专门模型提出了氨基酸序列——即蛋白质化学构建单元的排列顺序——并帮助挑选出设计，交给我们的研究伙伴 Onava 制作并在实验室中测试。</em></p>
+<p>我们在实验室中让 322 个 minibinder 针对 5 个靶点进行了测试。其中，有 35 个（10.9%）在与预期靶点结合上呈阳性。我们在 PD-L1（一些癌症利用它来逃避免疫系统的一种蛋白质）上找到 5 个命中，在 IL-7Rα 上找到 3 个，在 TrkA 上找到 1 个，在 VEGF-A 上找到 8 个，在 IL-17A 上找到 18 个。<a href="https://www.nature.com/articles/s41586-023-06415-8/figures/6">最初的 RFdiffusion 研究</a>报告的命中率更高，但命中率在很大程度上取决于研究者在实验室验证之前筛选设计的严格程度，以及他们对结合的定义。尽管如此，我们的结果为以下这一点提供了早期证据：我们能够把 GPT-6.2 的三维设计变成在实验室中与预期靶点结合的蛋白质。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6YdRXyaFP4SEp3mku9AcPi/e8675d403db99751eac6a843d6d32507/specific-responsive-legend-poster.svg?w=3840&amp;q=50" alt="设计附着到特定靶点的蛋白质 · 响应式图例海报"></p>
+<p><em>一个内部研究模型为拟附着到图中灰色所示靶点蛋白质的小型蛋白质设计了形状。彩色形状把每个设计与该蛋白质将如何折叠、如何与靶点契合的计算预测做了对比。</em></p>
 <h2>实验室实验 2：为三维蛋白质结构设计新序列</h2>
-<p>我们测试了 GPT‑6.2 能否自行设计序列。我们向它提供了现有 minibinder 如何与其靶标适配的三维模型，隐去了原始氨基酸序列，并要求它提出新的序列。专门模型帮助我们选择在实验室中制造和测试哪些蛋白质。</p>
-<p>对于三个靶标，我们从已确认的 minibinder 的计算预测结构开始，这些 minibinder 的序列由 Onava 从早期研究中收集。在我们的初步实验室筛选中，我们看到 MDM2 的 88 个设计中有 75 个（85%）结合，VEGF-A 的 42 个设计中有 26 个（62%）结合，PD-1 的 59 个设计中有 8 个（14%）结合。GPT‑6.2 提出的氨基酸序列也通常与原始 minibinder 序列有显著差异，VEGF-A 的中位差异为 50%，MDM2 为 43%，PD-1 为 15%。</p>
-<p>我们还要求 GPT‑6.2 为它之前生成的三种未发表的 minibinder 形状设计新序列：两种靶向 PD-L1，一种靶向 IL-7Rα。一个专门模型 ProteinMPNN 已经为每种形状提供了一个序列，由这些序列制造的蛋白质已在实验室中显示出结合。在由 GPT‑6.2 的新序列制造的 107 个蛋白质中，14 个（13.1%）显示出结合。</p>
-<p>给定一个未发表的结构，GPT‑6.2 提出了两个显著不同的序列，两者都显示出与同一靶标结合迹象。对于相同的 PD-L1 minibinder 结构，GPT‑6.2 设计了两个序列，在总共 90 个氨基酸中分别有 52 个和 58 个与原始序列不同。两者之间也在 44 个位置不同，接近序列的一半。</p>
-<p>未发表的结构和序列的重大差异为我们提供了强有力的证据，表明 GPT‑6.2 的能力超越了记忆。结果还表明，我们可以使用 GPT‑6.2 内在地设计 minibinder 的结构及其序列。</p>
-<h2>重新设计抗体中与靶标结合的部分</h2>
-<p>研究人员经常重新设计抗体的结合环，以帮助其更紧密地抓住靶标，这一过程称为<strong>亲和力成熟</strong>。他们可能还希望抗体更具选择性地结合，从而不太可能附着到相似的蛋白质上。我们测试了朝着这些目标迈出的第一步，要求我们的模型设计新的环序列，以保持与原始靶标的结合。</p>
-<p>我们从六种结合同一蛋白质 IL-4Rα 的小型抗体（VHH）开始。对于每种抗体，我们向 GPT‑6.2 提供了其预测的三维结构和大部分氨基酸序列，省略了帮助抗体抓住靶标的三个环。我们要求模型为它们设计新序列。在我们测试的 182 个设计中，128 个（70%）显示出与 IL-4Rα 结合的迹象。</p>
-<p>然后我们测试了我们能多精确地引导模型对现有治疗性抗体进行改变。这一次，我们向模型提供了原始序列，并要求它在三个结合环中各改变大约一半的氨基酸，同时保持序列的其余部分不变。我们在实验室中将抗体重新设计的部分作为片段进行了测试。在基于五种治疗性抗体的 272 个片段中，179 个（66%）显示出与原始靶标 PD-1 或 PD-L1 的结合。</p>
+<p>我们测试了 GPT-6.2 能否自己设计序列。我们把现有 minibinder 与靶点结合方式的三维模型交给它，隐去原始氨基酸序列，然后让它提出新的序列。专门模型帮助我们在实验室中挑选要制作和测试的蛋白质。</p>
+<p>对三个靶点，我们从已确认的 minibinder 的计算预测结构出发，这些 minibinder 的序列是 Onava 从更早的研究中收集来的。在最初的实验室筛选中，我们看到 MDM2 的 88 个设计中有 75 个（85%）、VEGF-A 的 42 个中有 26 个（62%）、PD-1 的 59 个中有 8 个（14%）出现了结合。GPT-6.2 提出的氨基酸序列也往往与原始 minibinder 序列差异显著，中位数分别为 VEGF-A 的 50%、MDM2 的 43% 和 PD-1 的 15%。</p>
+<p>我们还让 GPT-6.2 为它此前生成的三个未发表 minibinder 形状设计新序列：两个靶向 PD-L1，一个靶向 IL-7Rα。一个专门模型 ProteinMPNN 已经为每个形状提供了一个序列，用这些序列制作的蛋白质已在实验室中显示出结合。在用 GPT-6.2 的新序列制作的 107 个蛋白质中，有 14 个（13.1%）显示出结合。</p>
+<p>面对一个未发表的结构，GPT-6.2 提出了两个差异显著的序列，两者都显示出与同一靶点结合的迹象。对于同一个 PD-L1 minibinder 结构，GPT-6.2 设计的两个序列在总共 90 个氨基酸中分别有 52 个和 58 个与原始序列不同。这两个序列彼此之间也有 44 个位置不同，接近序列的一半。</p>
+<p>未发表的结构以及序列上的显著差异，为我们提供了有力的证据，说明 GPT-6.2 的能力超出了单纯记忆。这些结果还表明，我们可以借助 GPT-6.2 自身，同时设计一个 minibinder 的结构和它的序列。</p>
+<h2>重新设计抗体中与靶点结合的部分</h2>
+<p>研究人员常常重新设计抗体的结合环，帮助它更牢固地抓住靶点，这一过程称为<strong>亲和力成熟</strong>（affinity maturation）。他们也可能希望抗体结合得更有选择性，从而更不容易附着到相似的蛋白质上。我们测试了迈向这些目标的第一步：让我们的模型设计新的环序列，同时保持与原靶点的结合。</p>
+<p>我们从六个结合同一蛋白质 IL-4Rα 的小型抗体（VHH）入手。对每个抗体，我们把它的预测三维结构和大部分氨基酸序列交给 GPT-6.2，只略去帮助抗体抓住靶点的三个环。我们让模型为这些环设计新序列。在我们测试的 182 个设计中，有 128 个（70%）显示出与 IL-4Rα 结合的迹象。</p>
+<p>接着我们测试了能把模型对现有治疗性抗体的改动引导到多精确。这一次，我们把原始序列交给模型，并要求它在三个结合环的每一个中改动约一半的氨基酸，同时保持序列其余部分不变。我们在实验室中把抗体被重新设计的部分作为片段进行测试。在基于五个治疗性抗体的 272 个片段中，有 179 个（66%）显示出与原靶点 PD-1 或 PD-L1 的结合。</p>
 <h2>我们的模型还能设计和预测什么？</h2>
-<h3>对 minibinder 结构的精确控制，实现可编程结构设计</h3>
-<p>基于结构的可编程设计的长期目标是让研究人员用自然语言指定结构约束。在我们的计算评估中，我们的模型始终设计出接触靶标上所需位置的 minibinder。我们还可以指定 minibinder 的结构类别（全螺旋、全链或组合），并以近乎完美的保真度控制螺旋和链的数量。同样的方法让我们能够表达对结合界面更详细的要求，例如哪些靶标氨基酸在结合时应被埋藏，或者 minibinder 和靶标是否应通过特定的相互作用（如“β-折叠–β-折叠”）相互作用。随着我们模型推理能力的提高，我们设想研究人员可以像今天引导图像生成一样引导蛋白质结构生成，即描述他们想要的特征。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6hHUcGPmxSdtuz8SS3Rcth/7af1c0f8e139a63fd1433aceae7ec207/guiding-responsive-legend-poster.svg?w=3840&amp;q=50" alt="用通俗语言引导蛋白质形状 · 响应式图例海报"></p>
-<p><em>我们的模型被要求设计具有指定形状的小型蛋白质：主要是螺旋（橙色）、主要是链（蓝色）或混合。一些指令还指定了要包含的螺旋或链的数量。这些设计旨在附着到灰色所示的 PD-L1 或 PD-1。</em></p>
-<h3>围绕指定结构特征构建蛋白质</h3>
-<p>大多数酶是加速化学反应的蛋白质。在设计新酶时，研究人员可能知道几个关键氨基酸需要在反应发生位点如何排列。这些氨基酸可能沿蛋白质链相距很远。挑战在于设计蛋白质的其余部分，使得当链折叠时，它能将这些氨基酸聚集在一起并固定到位。</p>
-<p>我们在来自 <a href="https://arxiv.org/html/2502.12479v2">MotifBench</a> 的 30 个挑战上测试了我们的模型，包括来自酶和蛋白质相互结合位点的例子。我们给模型一个特定的氨基酸三维排列，称为<strong>基序</strong>，并要求它们使用编码工具围绕它设计蛋白质的其余部分。这项任务称为<strong>基序支架设计</strong>。</p>
-<p>对于每个设计，我们使用 ProteinMPNN 提出八种可能的氨基酸序列，并使用 <a href="https://huggingface.co/biohub/esmfold_v1">ESMFold</a> 预测每种序列将如何折叠。如果至少一个预测结构既保留了基序又与模型设计的整体结构密切匹配，我们将该设计计为成功。</p>
-<p>在一项初步分析中，我们最新内部模型评估的设计中有 43.7% 满足 both 标准，而 RFdiffusion 为 27.8%。虽然需要实验室实验来确定这些蛋白质是否能执行预期功能（例如加速特定反应），但这为我们的模型内在蛋白质能力提供了强有力的计算证据。</p>
+<h3>对 minibinder 结构的精确控制，实现可编程的结构设计</h3>
+<p>可编程的、基于结构的设计有一个长期目标：让研究者用自然语言指定结构约束。在我们的计算评估中，我们的模型始终能设计出接触到靶点上所需位置的 minibinder。我们还可以指定 minibinder 的结构类别（全螺旋、全链段，或两者组合），并以近乎完美的保真度控制螺旋和链段的数量。同样的方法让我们能够对结合界面提出更细致的要求，例如哪些靶点氨基酸在结合时应被埋藏，或者 minibinder 与靶点是否应通过“β-sheet–β-sheet”这类特定的相互作用来结合。随着我们模型推理能力的提升，我们设想研究者能像今天引导图像生成那样，通过描述他们想要的特征来引导蛋白质结构的生成。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6hHUcGPmxSdtuz8SS3Rcth/7af1c0f8e139a63fd1433aceae7ec207/guiding-responsive-legend-poster.svg?w=3840&amp;q=50" alt="用平实语言引导蛋白质形状 · 响应式图例海报"></p>
+<p><em>我们的模型被要求设计具有指定形状的小型蛋白质：主要是螺旋（橙色）、主要是链段（蓝色），或两者混合。有些指令还规定了要包含多少个螺旋或链段。这些设计旨在附着到灰色所示的 PD-L1 或 PD-1 上。</em></p>
+<h3>围绕指定的结构特征构建蛋白质</h3>
+<p>大多数酶是加速化学反应的蛋白质。在设计一种新酶时，研究者可能已经知道反应发生位点上的少数几个关键氨基酸需要如何排列。这些氨基酸可能沿蛋白质链相距很远。难点在于设计蛋白质的其余部分，使得链条折叠时能把它们带到一起并固定到位。</p>
+<p>我们在来自 <a href="https://arxiv.org/html/2502.12479v2">MotifBench</a> 的 30 个挑战上测试了我们的模型，其中既有取自酶的示例，也有取自蛋白质彼此结合位点的示例。我们把一种特定的氨基酸三维排列交给模型，这被称为 <strong>motif</strong>（基序），并要求它们用编程工具围绕它设计蛋白质的其余部分。这项任务被称为 <strong>motif scaffolding</strong>（基序支架构建）。</p>
+<p>对每个设计，我们用 ProteinMPNN 提出八种可能的氨基酸序列，再用 <a href="https://huggingface.co/biohub/esmfold_v1">ESMFold</a> 预测每一种会如何折叠。如果至少有一个预测结构既保留了 motif，又与模型设计出的整体结构高度吻合，我们就认为该设计成功。</p>
+<p>在一项初步分析中，我们评估的来自最新内部模型的设计有 43.7% 同时满足这两项标准，相比之下 RFdiffusion 为 27.8%。虽然还需要实验室实验来判断这些蛋白质能否实现预期功能，例如加速某个特定反应，但这为我们模型内在的蛋白质能力提供了有力的计算证据。</p>
 <p><img src="https://images.ctfassets.net/kftzwdyauwt9/3GkRmY9bmi12lalJCbZOjU/1bb471ce9aeb8e177ea935869c355d92/motif-responsive-legend-poster.svg?w=3840&amp;q=50" alt="MotifBench · 响应式图例海报"></p>
-<p><em>一个内部研究模型围绕一个必须保持固定形状的小区域（金色所示）设计了蛋白质结构。彩色形状将模型的设计与蛋白质如何折叠的计算机预测进行了比较。仅显示金色的面板没有通过计算机检查的设计。</em></p>
-<h3>设计具有指定折叠的蛋白质</h3>
-<p>在基序支架设计中，我们指定了几个氨基酸应如何相对排列。然后我们确定是否也可以通过指定蛋白质的整体折叠来引导整个蛋白质的设计。我们给模型一个链长度和来自 <a href="https://www.cathdb.info/wiki/doku/?id=faq">CATH</a> 的代码，CATH 是科学家用来分类蛋白质结构的系统。然后模型必须确定每个氨基酸在三维空间中应处的位置。</p>
-<p>许多设计捕捉到了我们要求的整体布局。更难的部分是让链沿着正确的路径穿过它。例如，两种蛋白质可能有几个卷曲段堆积成相似的束，但它们在链连接这些段的顺序上有所不同。</p>
-<p>如果至少一个氨基酸序列被预测为采用所要求的折叠并与模型的三维设计密切匹配，我们将设计计为成功。在 200 个挑战中，我们最新内部模型评估的设计中有 18.9% 通过，而专门蛋白质设计模型 Proteina 为 17.1%。</p>
+<p><em>一个内部研究模型围绕一个形状必须保持固定的小区域（以金色显示）设计了蛋白质结构。彩色形状把模型的设计与计算机对该蛋白质如何折叠的预测做了对比。只显示金色的面板表示没有任何设计通过计算机检查。</em></p>
+<h3>设计具有指定折叠方式的蛋白质</h3>
+<p>在 motif 支架构建中，我们指定的是少数几个氨基酸彼此之间的相对位置。接着我们想弄清，能否也通过指定整体折叠方式来引导整个蛋白质的设计。我们把一个链长和一个来自 <a href="https://www.cathdb.info/wiki/doku/?id=faq">CATH</a> 的代码交给模型，CATH 是科学家用来对蛋白质结构进行分类的一套系统。然后模型必须弄清楚每个氨基酸在三维空间中应当位于何处。</p>
+<p>许多设计抓住了我们所要求的整体布局。更难的部分是让链条在其中沿正确的路径穿行。例如，两种蛋白质可以有好几段螺旋紧密堆叠成相似的束，但它们在链条连接这些片段的顺序上不同。</p>
+<p>如果至少有一个氨基酸序列被预测会采取所要求的折叠方式，并与模型的三维设计高度吻合，我们就认为该设计成功。在 200 个挑战中，我们评估的来自最新内部模型的设计有 18.9% 通过，相比之下专门蛋白质设计模型 Proteina 为 17.1%。</p>
 <p><img src="https://images.ctfassets.net/kftzwdyauwt9/11XZLTWWYSfBFIEC0CGw0D/df7b4140a33a376f4ecc4f5bc2a553e6/cath-responsive-legend-poster.svg?w=3840&amp;q=50" alt="CATH 折叠设计 · 响应式图例海报"></p>
-<p><em>一个内部研究模型被要求设计具有指定整体形状的蛋白质，例如螺旋束或链层。彩色形状将选定的设计与它们如何折叠的计算机预测进行比较，显示了两者密切匹配的例子。</em></p>
-<h3>预测化学物质和蛋白质如何适配</h3>
-<p>许多药物，包括阿司匹林，都是<strong>小分子</strong>，即比它们作用的蛋白质小得多的化合物。预测小分子在何处与蛋白质结合以及如何在那里适配称为<strong>对接</strong>。这些预测可以帮助研究人员决定如何修改候选药物以使其更紧密地结合靶标。为了测试我们的模型，我们从实验确定的小分子与蛋白质结合的结构开始。我们以数字方式移除每个小分子，并向模型提供蛋白质结构以及分子原子如何连接的文本描述（称为 SMILES 的字符序列）。然后我们要求模型预测分子曾结合的位置及其取向。</p>
-<p>对于我们的第一个对接测试，我们使用了 <a href="https://pubs.rsc.org/en/content/articlehtml/2024/sc/d3sc04185a">PoseBusters 数据集</a>，这是一个三维结构集合，展示了小分子如何与蛋白质结合。研究人员通过实验确定了这些结构，为我们提供了一种检查模型预测的方法。在没有被告知每个分子在蛋白质上结合位置的情况下，模型必须预测分子适配的位置以及它朝向哪个方向。GPT‑6.2 在 93% 的评分预测中与分子的观察位置和取向密切匹配，而我们最新的内部模型为 96%，专门对接模型 DiffDock-L 为 50%。</p>
-<p>在实践中，研究人员可能已经对分子如何结合有所了解。<strong>GPT 模型的一个主要优势是我们可以在提示中直接提供额外信息</strong>。我们在来自 <a href="https://doi.org/10.1021/acs.jcim.8b00228">Scarpino 数据集</a>的 179 个结构上测试了这一点，其中每个蛋白质结构都与一个小分子形成化学键，将两者系在一起。我们告诉模型哪两个原子形成了键，并要求它们预测分子的其余部分如何与蛋白质适配。GPT‑6.2 在<a href="https://github.com/openai/protein_paper/blob/4f5fbba67d507f01c5b8f1ea2ba9f5bc8c23494b/figures/section_4/small_molecule_docking/data/success/counts_and_rates.csv">92% 的评分预测</a>中与实验结构密切匹配，我们最新的内部模型为 97%，而 <a href="https://github.com/gcorso/DiffDock/blob/main/inference.py">DiffDock</a> 达到 60%。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/45FJ72r4oYUA1DpVYhGI4N/d7101c5b7a6a618481e6362b3b400a87/ligand-docking-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="内部研究模型：预测小分子如何与蛋白质适配（低 RMSD 配体姿态）。来自 PoseBusters 和 Scarpino 数据集的示例中预测和实验配体位置的叠加。"></p>
-<p><em>一个内部研究模型预测了小分子将在何处以及如何与灰色所示的蛋白质适配。紫色显示模型的预测，青色显示在早期实验中确定的分子位置。在这些例子中，预测与实验结构密切匹配。</em></p>
+<p><em>一个内部研究模型被要求设计具有指定整体形状的蛋白质，例如螺旋束或链段的层叠结构。彩色形状把选出的设计与计算机对它们将如何折叠的预测做对比，展示了二者高度吻合的示例。</em></p>
+<h3>预测化学分子与蛋白质如何相互契合</h3>
+<p>许多药物，包括阿司匹林，都是<strong>小分子</strong>（small molecule），即比它们所作用的蛋白质小得多的化合物。预测一个小分子在蛋白质何处结合、如何在该处嵌合，被称为 <strong>docking</strong>（对接）。这类预测可以帮助研究者决定如何改造一个候选药物，使它更牢固地结合靶点。为了测试我们的模型，我们从实验测定的小分子与蛋白质结合的结构出发。我们以数字方式去掉每个小分子，把蛋白质结构连同对分子中各原子如何连接的文本描述（一串被称为 SMILES 的字符）交给模型。然后我们让模型预测该分子原本结合在哪里、朝向如何。</p>
+<p>在第一次对接测试中，我们使用了 <a href="https://pubs.rsc.org/en/content/articlehtml/2024/sc/d3sc04185a">PoseBusters 数据集</a>，这是一个三维结构的集合，展示了小分子如何与蛋白质结合。这些结构由研究者通过实验测定，为我们提供了一种检验模型预测的方法。在没有被告知每个分子结合在蛋白质何处的情况下，模型必须既预测分子嵌合的位置，也预测它的朝向。在计入评分的预测中，GPT-6.2 有 93% 与观测到的分子位置和朝向高度吻合，相比之下我们最新的内部模型为 96%，专门的对接模型 DiffDock-L 为 50%。</p>
+<p>在实践中，研究者可能已经对分子如何结合有所了解。<strong>GPT 模型的一大优势在于，我们可以直接在提示中提供额外信息</strong>。我们在来自 <a href="https://doi.org/10.1021/acs.jcim.8b00228">Scarpino 数据集</a>的 179 个结构上测试了这一点，在该数据集中，每个蛋白质结构都与一个小分子形成化学键，把两者系在一起。我们告诉模型是哪两个原子形成了该化学键，并让它们预测分子其余部分如何与蛋白质嵌合。GPT-6.2 在<a href="https://github.com/openai/protein_paper/blob/4f5fbba67d507f01c5b8f1ea2ba9f5bc8c23494b/figures/section_4/small_molecule_docking/data/success/counts_and_rates.csv">计入评分的预测中有 92%</a>与实验结构高度吻合，我们最新的内部模型为 97%，而 <a href="https://github.com/gcorso/DiffDock/blob/main/inference.py">DiffDock</a> 为 60%。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/45FJ72r4oYUA1DpVYhGI4N/d7101c5b7a6a618481e6362b3b400a87/ligand-docking-desktop-light.png?w=3840&amp;q=90&amp;fm=webp" alt="内部研究模型：预测小分子如何与蛋白质嵌合（低 RMSD 配体构象）。在 PoseBusters 和 Scarpino 数据集的示例中，预测的配体位置与实验位置相互叠加。"></p>
+<p><em>一个内部研究模型预测了小分子在灰色所示的蛋白质上何处、以何种方式嵌合。紫色显示模型的预测，青色显示早前实验中测定的分子位置。在这些示例中，预测与实验结构高度吻合。</em></p>
 <h3>预测抗体如何与蛋白质结合</h3>
-<p>抗体结合的位置可以帮助解释它是否阻断另一种蛋白质附着到同一位点。我们测试了连续几代 GPT 预测抗体结合位置及其朝向的准确性。对于数百对抗体和靶标，我们向模型分别展示了两种蛋白质，并隐藏了它们表面上的一些原子细节（所有侧链）。</p>
-<p>在隐藏侧链细节的情况下，平均 DockQ 分数（一种常用指标，值越高表示与实验观察到的排列越接近）从 GPT‑5.6 的约 0.05 增加到 GPT‑6 的 0.28、GPT‑6.2 的 0.57，以及我们最新内部模型的 0.81，均在各模型最高评估计算设置下。</p>
-<p>由于这些结构是公开的，模型可能在训练期间见过相同的抗体-靶标对或相似的对。即便如此，即使隐藏所有侧链位置，每一代模型都更准确地预测了两种蛋白质如何适配。这一进展让我们有理由对更困难的对接问题持乐观态度。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1YHml5YMMOVbMQ7vV03a0Z/4e6dadc376a44b026d96bfd6b3ae1e8a/102-poster.svg?w=3840&amp;q=50" alt="预测抗体附着 · 视频海报"></p>
-<p><em>每一行比较了四个模型对抗体如何附着到其靶标蛋白质的预测。彩色形状显示模型的预测；深灰色显示实验中观察到的位置。随着每一代模型的更新，结果都有所改善。</em></p>
-<h3>预测突变的影响</h3>
-<p>我们可以在计算机上设计的蛋白质远远多于我们能在实验室中制造和测试的。即使我们确定了一个有前途的结构，我们可能仍有许多氨基酸序列可供选择。我们测试了我们的模型能否通过预测蛋白质序列的变化如何影响其稳定性、活性或与靶标结合的能力，来帮助研究人员决定首先制造哪些版本。</p>
-<p>我们利用了四个公开数据集，这些实验中学科学家替换了蛋白质中的一个或多个氨基酸并测量了效果。对于每个测试，我们向模型提供了科学家起始的蛋白质序列以及 50 个修改版本的序列。我们告诉模型科学家测量了什么，隐去结果，并要求它们在不使用编码工具的情况下，仅通过推理对 50 个版本进行排序。</p>
-<p>在一项蛋白质稳定性研究中，我们要求模型根据每个版本在室温下折叠的可能性对 50 个蛋白质版本进行排序。我们使用一种称为<em>秩相关</em>的度量将预测顺序与实验室观察到的顺序进行比较。值为 1 表示排名完全匹配，0 表示没有一致关系，−1 表示顺序完全相反。在稳定性研究的 265 组中，每一代模型都有所改善，从 GPT‑5.6 的 0.41 到 GPT‑6 的 0.52、GPT‑6.2 的 0.57，以及我们最新内部模型的 0.66。</p>
-<p>在四个数据集中的每一个中，GPT‑6.2 和我们最新的内部模型平均产生的排名比专门蛋白质模型 ESM2-650M 更准确。</p>
-<h3>我们模型蛋白质结构预测的早期信号</h3>
-<p>早些时候，我们依赖专门模型来预测氨基酸序列是否会折叠成我们模型设计的结构。我们想看看我们的模型离自己做出该预测有多近。我们向模型提供了具有已知三维结构的蛋白质的氨基酸序列。仅使用基本编码工具，模型预测了每条链将如何在三维中折叠。我们使用一种称为<em>TM-score</em>的度量评估了它们的预测。分数为 1 表示与真实结构完美匹配，分数高于 0.5 通常表明预测捕捉到了整体折叠。</p>
-<p>最大的收益在个别例子中可见。对于某些蛋白质，我们最新的内部模型 closely 再现了早期模型遗漏的折叠。在整个测试中，平均分数从 GPT‑5.6 的 0.16 上升到 GPT‑6.2 的 0.26 和我们最新内部模型的 0.38。专门模型 ESMFold2 平均为 0.93，因此我们的模型仅从序列可靠预测整个蛋白质结构的能力仍有很大差距。</p>
-<p>如果研究人员已经知道大部分结构并想填补缺失的部分呢？我们在 100 个抗体片段上测试了这一点。对于每一个，我们向模型提供了氨基酸序列和周围的三维结构，隐藏了帮助抗体识别靶标的六个环。我们最新的内部模型经常相当准确地预测这些环的形状和位置。ESMFold2 总体上仍然更准确，即使仅从序列工作。</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/EPSBjHvFHaqO4YmjaARZl/eb92da4b71e5c45583f0ac9f96cf47f7/117-poster.svg?w=3840&amp;q=50" alt="预测蛋白质如何折叠 · 视频海报"></p>
-<p><em>每个模型被给予相同的蛋白质序列——其化学构建块的顺序——并被要求预测其三维形状。彩色形状显示预测，深灰色显示实验中测量的结构。</em></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3nlrKnz0OVUosx65582laY/725cdf154a6efc78e6ca17dd0665748f/antibody-cdr-legend-desktop.png?w=3840&amp;q=90&amp;fm=webp" alt="十个抗体结构，缺失环由内部模型以紫色预测，ESMFold2 以橙色预测。红色显示实验环。每个例子显示以埃为单位的预测误差。"></p>
-<p><em>每个模型被给予部分结构，并负责预测对应于抗体 CDR 的缺失区域。彩色区域显示内部模型和 ESMFold2 的预测与实验确定的结构进行比较。</em></p>
+<p>抗体结合的位置有助于解释它是否会阻断另一种蛋白质附着到同一位点。我们测试了前后几代 GPT 在预测抗体结合位置及其朝向方面的准确度。对于数百对抗体与靶点，我们分别向模型展示这两种蛋白质，并隐去它们表面上的部分原子细节（全部侧链）。</p>
+<p>在隐去侧链细节的情况下，平均 DockQ 分数（一种常用指标，数值越高表示与实验观测到的排列越接近）从 GPT-5.6 的约 0.05 上升到 GPT-6 的 0.28、GPT-6.2 的 0.57，以及我们最新内部模型的 0.81，均取各模型评估过的最高算力设置。</p>
+<p>由于这些结构是公开的，模型在训练中可能见过相同的抗体-靶点组合或类似组合。即便如此，即使所有侧链位置都被隐去，我们每一代模型对两种蛋白质如何相互嵌合的预测都更加准确。这一进展让我们有理由对更难的对接问题保持乐观。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1YHml5YMMOVbMQ7vV03a0Z/4e6dadc376a44b026d96bfd6b3ae1e8a/102-poster.svg?w=3840&amp;q=50" alt="预测抗体的附着 · 视频封面"></p>
+<p><em>每一行比较了四个模型对抗体如何附着到其靶点蛋白质的预测。彩色形状显示模型的预测；深灰色显示实验中观测到的位置。随着模型逐代更新，结果不断改善。</em></p>
+<h3>预测突变带来的影响</h3>
+<p>我们能在计算机上设计的蛋白质，远多于在实验室中制作和测试的蛋白质。即使已经确定了一个有前景的结构，我们仍可能有许多氨基酸序列可选。我们测试了模型能否通过预测蛋白质序列的改变如何影响其稳定性、活性或与靶点结合的能力，帮助研究者决定先制作哪些版本。</p>
+<p>我们使用了四个公开数据集，它们来自科学家替换蛋白质中一个或多个氨基酸并测量其影响的实验。在每次测试中，我们把科学家起始所用蛋白质的序列以及 50 个修改版本的序列交给模型。我们告诉模型科学家测量了什么，隐去结果，并要求它们在不使用编程工具、仅靠推理的情况下为这 50 个版本排序。</p>
+<p>在一项关于蛋白质稳定性的研究中，我们让模型按每个版本在室温下保持折叠的可能性，对一个蛋白质的 50 个版本进行排序。我们用一种称为<em>秩相关</em>（rank correlation）的指标，把预测顺序与实验室观测到的顺序做了比较。数值为 1 表示排序完全一致，为 0 表示没有一致的关系，为 −1 表示顺序完全相反。在该稳定性研究的 265 组数据中，每一代模型都有所提升，从 GPT-5.6 的 0.41 到 GPT-6 的 0.52、GPT-6.2 的 0.57，以及我们最新内部模型的 0.66。</p>
+<p>在这四个数据集的每一个中，GPT-6.2 和我们最新的内部模型平均而言都给出了比专门蛋白质模型 ESM2-650M 更准确的排序。</p>
+<h3>模型蛋白质结构预测的早期信号</h3>
+<p>此前，我们依靠专门模型来预测某个氨基酸序列是否会折叠成我们模型设计出的结构。我们想看看我们的模型距离自己完成这一预测还有多远。我们把具有已知三维结构的蛋白质的氨基酸序列交给模型。仅使用基本的编程工具，模型预测了每条链如何在三维空间中折叠。我们用一种称为 <em>TM-score</em> 的指标评估了它们的预测。分数为 1 表示与真实结构完全一致，高于 0.5 通常表明预测抓住了整体折叠方式。</p>
+<p>最大的提升体现在单个示例上。对某些蛋白质，我们最新的内部模型精确复现了更早模型漏掉的折叠。在整个测试中，平均分数从 GPT-5.6 的 0.16 上升到 GPT-6.2 的 0.26 和我们最新内部模型的 0.38。专门模型 ESMFold2 的平均分为 0.93，所以我们的模型仅凭序列预测整个蛋白质结构时的可靠性仍有相当大的差距。</p>
+<p>如果研究者已经知道大部分结构，只想补上缺失的一块呢？我们在 100 个抗体片段上测试了这一点。对每一个片段，我们把氨基酸序列和周边的三维结构交给模型，同时隐去帮助抗体识别靶点的六个环。我们最新的内部模型往往能相当准确地预测这些环的形状和位置。即便仅凭序列工作，ESMFold2 在整体上仍然更准确。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/EPSBjHvFHaqO4YmjaARZl/eb92da4b71e5c45583f0ac9f96cf47f7/117-poster.svg?w=3840&amp;q=50" alt="预测蛋白质如何折叠 · 视频封面"></p>
+<p><em>每个模型都被给予相同的蛋白质序列——即其化学构建单元的排列顺序——并被要求预测它的三维形状。彩色形状显示预测结果，深灰色显示实验中测定的结构。</em></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3nlrKnz0OVUosx65582laY/725cdf154a6efc78e6ca17dd0665748f/antibody-cdr-legend-desktop.png?w=3840&amp;q=90&amp;fm=webp" alt="十个缺少环的抗体结构；其中内部模型的预测显示为紫色，ESMFold2 的预测显示为橙色。红色显示实验测得的环。每个示例都列出两种预测的误差（单位为埃）。"></p>
+<p><em>每个模型都被给予一个局部结构，并要预测对应抗体 CDR 的缺失区域。彩色区域显示内部模型与 ESMFold2 的预测，并与实验测定的结构做了对比。</em></p>
 <h2>局限性</h2>
-<p>重要的是要注意，我们的蛋白质设计活动依赖于专门的结构预测模型，如 Boltz-2、OpenDDE 和 ESMFold2 来筛选候选物。我们的结果表明，GPT 模型在工作流程的两个阶段具有与专门模型相当的内在能力：骨架生成，研究人员通常使用 RFdiffusion；以及序列重新设计，他们通常使用 ProteinMPNN。因此，我们的结果尚未确立我们的模型可以在没有专门模型帮助的情况下，在零样本设置中端到端地生成 de novo minibinder。</p>
-<p>我们的工作再次展示了参差不齐的能力前沿。从氨基酸序列预测完整的蛋白质结构对我们的模型来说仍然比上述几个组件任务困难得多。在该任务上，即使我们最好的内部模型也远远落后于专门的结构预测模型。</p>
-<p>一些基准结果也需要仔细解读。在要求模型从蛋白质结构推断氨基酸序列的测试中，异常高的准确性可能部分反映了记忆或生成这些结构的过程留下的模式。仅凭这些结果不能确立在不熟悉的蛋白质上的可靠性能。</p>
-<p>实验室结果为所提出的设计是否可行提供了更直接的测试，但结合只是通往有用研究工具或药物的第一步。进一步的工作需要确定特异性、稳定性和生物活性等特性，以及治疗应用的安全性和有效性。</p>
-<h2>下一步</h2>
-<p>这项工作是 OpenAI 朝着<strong>可编程分子设计</strong>迈出的早期一步。我们的目标是让科学家用通俗语言描述他们希望分子做什么，并使用我们的模型帮助设计候选物在实验室中测试。为了使这种方法对开发药物有用，我们希望在三个方面取得进展。</p>
-<ul><li><strong>为更困难的靶标寻找 minibinder。</strong> 我们希望设计能够结合到我们迄今为止尝试未能成功的靶标的分子。</li><li><strong>为结合后发生的事情而设计。</strong> 我们希望测试我们设计的分子是否能产生特定的生物效应，例如杀死癌细胞。我们还希望设计能够选择性结合其预期靶标且易于制造的分子。</li><li><strong>设计更广泛的分子。</strong> 我们的实验室实验集中在小蛋白质 minibinder 和抗体片段。我们希望将这项工作扩展到同时结合多个靶标的分子、RNA 和小分子，包括一类称为 PROTAC 的分子，它们引导细胞分解特定蛋白质。</li></ul>
-<p>在我们努力安全负责地加速科学进步的同时，我们也寻求评估和降低风险，特别是与生物安全相关的风险。帮助科学家为新药设计蛋白质的相同能力也可能被滥用。我们的<a href="https://openai.com/index/updating-our-preparedness-framework/"> preparedness framework⁠</a>指导我们如何评估这些风险并测试降低风险的保障措施。</p>
-<p>虽然实验室测试仍然是蛋白质设计的关键部分，但我们的目标是提供强大的模型，通过给科学家更多控制和灵活性来缩短每一轮设计，并减少找到功能性蛋白质所需的设计-测试循环总数。最终，我们设想使科学家能够仅通过用自然语言提示我们的模型来设计蛋白质和分子，从而大规模加速新生物技术和新药物的开发。</p>
-<ul><li>2026</li></ul>
-<h2>继续阅读</h2>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7Fhi4CJjSh5B8NNQDDr7pd/1c5136956dbb6d35042344ed4aaeedbb/searching-for-distant-planets-with-astra-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="用 Astra 搜寻遥远行星 — 封面"></p>
-<p>用 Astra 搜寻遥远行星</p>
-<p>科学2026年11月24日</p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4GWchdof3kw2l5OtMIvGt4/56144e08b813d6af76ae93adc2cefc1b/introducing-medchembench-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="MedChemBench：药物化学 AI 基准测试 — 封面"></p>
-<p>MedChemBench：药物化学 AI 基准测试</p>
-<p>研究2026年11月20日</p>
-<p><img src="https://cdn.openai.com/mdx-assets/ec712845-fc63-4359-a7d8-e2088e063904/research-acceleration-card.41531bc2.png" alt="柔和的蓝色和绿松石色渐变纹理。"></p>
-<p>研究加速：参差不齐的前沿</p>
-<p>研究2026年11月18日</p>]]></content:encoded>
+<p>需要指出的是，我们的蛋白质设计工作依赖 Boltz-2、OpenDDE 和 ESMFold2 等专门的结构预测模型来筛选候选者。我们的结果表明，在工作流的两个阶段上，GPT 模型具备与专门模型相当的内在能力：一是骨架生成，研究者常用 RFdiffusion；二是序列重设计，研究者常用 ProteinMPNN。因此，我们的结果尚未确立：在没有专门模型帮助的零样本设定下，我们的模型能够端到端地从头生成 minibinder。</p>
+<p>我们的工作再次展现了参差不齐的能力前沿。从氨基酸序列预测完整蛋白质结构，对我们的模型而言仍比上面若干子任务要难得多。在这项任务上，即使我们最好的内部模型也远远落后于专门的结构预测模型。</p>
+<p>一些基准结果也需要谨慎解读。在要求模型从蛋白质结构推断氨基酸序列的测试中，异常高的准确率可能部分反映了记忆，或反映了生成这些结构所用过程留下的模式。单凭这些结果，并不能确立模型在陌生蛋白质上的可靠表现。</p>
+<p>实验室结果为拟议的设计能否奏效提供了更直接的检验，但结合只是通向有用研究工具或药物的一步。后续工作还需要确立特异性、稳定性和生物活性等性质，以及疗法应用上的安全性和有效性。</p>
+<h2>接下来</h2>
+<p>这项工作是在 OpenAI 朝向<strong>可编程的分子设计</strong>迈出的早期一步。我们的目标是让科学家用平实的语言描述希望一个分子做什么，并用我们的模型帮助设计候选者，以便在实验室中测试。要让这种方法对开发药物有用，我们希望在三方面取得进展。</p>
+<ul><li><strong>为更难的靶点找到 minibinder。</strong> 我们希望设计出能结合到我们此前的尝试尚未成功的靶点上的分子。</li><li><strong>为结合之后发生的事情做设计。</strong> 我们希望测试设计出的分子能否产生特定的生物学效应，例如杀死一个癌细胞。我们还希望设计出能选择性地结合预期靶点、并且易于生产的分子。</li><li><strong>设计更广泛的分子类型。</strong> 我们的实验室实验集中在小型蛋白质 minibinder 和抗体片段上。我们希望把这项工作扩展到能同时结合多个靶点的分子、RNA 和小分子，其中包括一类被称为 PROTACs 的分子，它们引导细胞降解某个特定的蛋白质。</li></ul>
+<p>在我们努力安全、负责任地加速科学进展的同时，我们也在寻求评估并降低风险，尤其是与生物安全相关的风险。那些帮助科学家为新药设计蛋白质的能力，也可能被滥用。我们的 <a href="https://openai.com/index/updating-our-preparedness-framework/">Preparedness Framework</a> 指导我们如何评估这些风险，以及如何测试降低风险的防护措施。</p>
+<p>虽然实验室测试仍是蛋白质设计的关键一环，我们的目标是提供强大的模型，通过给科学家更多控制力和灵活性来缩短每一轮设计的周期，并减少找到一个有功能的蛋白质所需的设计—测试循环总数。最终，我们设想让科学家只需用自然语言提示我们的模型，就能设计蛋白质与分子，从而大幅加速新生物技术和新药的开发。</p>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] 用 Astra 寻找遥远的行星</title>
@@ -873,113 +780,70 @@ export default defineSuite({
 <p>初创企业 · 2026 年 11 月 10 日</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] 将工件转化为 Mac 和 Windows 应用程序</title>
+      <title>[Anthropic Claude] 把 artifacts 变成 Mac 和 Windows 应用</title>
       <link>https://claude.com/resources/articles/install-as-app</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/install-as-app</guid>
       <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：Turn artifacts into Mac and Windows apps</description>
-      <content:encoded><![CDATA[<p>从今天开始，你可以使用 Claude artifacts 创建、运行和共享桌面应用。“Install as app”功能正在 Claude for Mac 和 Windows 中以 beta 版形式逐步推出。</p>
-<p>当某个 artifact 被安装为 Mac 或 Windows 应用后，它会拥有自己的图标，并在自己的窗口中打开，而不是在 Claude 内部打开。你可以与他人共享它，并且它需要获得你的许可才能与你的电脑交互。你可以选择允许多少权限。</p>
-<p>每个应用都可以使用 Claude 和你的 connectors，并且当底层 artifact 被编辑时，它会自动更新。这为知识工作者和开发者简化了构建和维护应用的流程。应用向 Claude 发出的请求会计入你套餐的使用限制。</p>
-<p>Artifacts 最初是一种你会分享的工作成果，比如图表或网页。现在，人们把它们当作日常工作的工具，比如定期从日历和电子邮件中拉取内容的会议准备页面，或者用于跟踪当天需要发货订单的追踪器。</p>
-<p>如果你在工作中依赖某个工具，它应该像你其他应用一样打开，并在有事情需要你关注时提醒你。</p>
-<h2>已安装应用能做什么</h2>
-<p>已安装的应用可以发送通知，或将项目添加到你的菜单栏或系统托盘。你可以为每个应用选择权限，Team 和 Enterprise 管理员可以为其组织开启或关闭应用权限和完全访问权限。</p>
-<p>Anthropic 的员工曾用这些功能制作：</p>
-<ul><li><a href="https://claude.ai/artifact/HPtmhTpoSdHmRKNCJEUsoS">Linnet</a>，一个完整的分层图像编辑器</li><li><a href="https://claude.ai/artifact/UtJhPrH24ejRTTWRtohwbx">Phosphor</a>，一个看起来像是为电影片场打造的文件管理器</li><li><a href="https://claude.ai/artifact/BDCr8b2L6rbJQXhsztAL2x">Sift</a>，它会设置文件夹规则，并使用 Claude 帮你保持内容井然有序</li><li><a href="https://claude.ai/artifact/7QjDeZEKPQUsDUCmFEjvyy">Tern</a>，一个在你身边由 Claude 提供帮助和解释的终端</li><li><a href="https://claude.ai/artifact/NSkw2jaPZdkdqkrVfswSGc">Vitals</a>，一个用于查看电脑性能的菜单栏和托盘应用</li></ul>
+      <content:encoded><![CDATA[<h1>把 artifacts 变成 Mac 和 Windows 应用</h1>
+<p>从今天起，你可以用 Claude artifacts 来创建、运行和分享桌面应用。“Install as app”功能正在 Claude for Mac 和 Claude for Windows 上以 beta 形式逐步推出。</p>
+<p>当一个 artifact 被安装为 Mac 或 Windows 应用后，它会拥有自己的图标，并在自己的窗口中打开，而不是在 Claude 内部。你可以把它分享给其他人，而它在能够与你的计算机交互之前需要你的许可。允许多少，由你决定。</p>
+<p>每个应用都可以使用 Claude 和你的 connector，并且当底层的 artifact 被编辑时，它会自动更新。这为知识工作者和开发者都简化了构建和维护应用的流程。应用向 Claude 发起的请求会计入你所在套餐的用量限制。</p>
+<p>artifacts 最初只是你会分享出去的一项工作产出，比如一张图表或一个网页。如今人们把它们当作日常工作的工具，比如一个会定期从日历和邮件中取数的会议准备页面，或者一个追踪当天需要发货的订单的工具。</p>
+<p>如果你依赖某个工具来工作，它就应该像你的其他应用一样打开，并在有事情需要你关注时提醒你。</p>
+<h2>已安装的应用能做什么</h2>
+<p>已安装的应用可以发送通知，或向你的菜单栏或系统托盘添加项目。你为每个应用选择权限，Team 和 Enterprise 的管理员可以为他们的组织开启或关闭应用权限和完全访问。</p>
+<p>Anthropic 的员工用这些功能做出过：</p>
+<ul><li><a href="https://claude.ai/artifact/HPtmhTpoSdHmRKNCJEUsoS">Linnet</a>，一个完整的分层图像编辑器</li><li><a href="https://claude.ai/artifact/UtJhPrH24ejRTTWRtohwbx">Phosphor</a>，一个看起来像是为电影片场打造的文件管理器</li><li><a href="https://claude.ai/artifact/BDCr8b2L6rbJQXhsztAL2x">Sift</a>，可以设置文件夹规则，并用 Claude 帮你把东西整理得井井有条</li><li><a href="https://claude.ai/artifact/7QjDeZEKPQUsDUCmFEjvyy">Tern</a>，一个终端，Claude 就在你身边提供帮助和讲解</li><li><a href="https://claude.ai/artifact/NSkw2jaPZdkdqkrVfswSGc">Vitals</a>，一个菜单栏和托盘应用，用来瞄一眼你电脑的性能</li></ul>
 <p>你可以在<a href="https://claude.ai/artifact/9j53nCVcrSdZyCHtxUZkWJ">这里</a>看到更多由我们的一位工程师制作的演示应用。</p>
-<p><img src="https://assets.claude.com/1d558aa9dd6599dfad2f4ae46a5f7bcff085d8bb.png" alt="由 artifacts 制作的演示应用的复古像素艺术桌面，Library 应用菜单打开，并有四个应用窗口"></p>
+<p><img src="https://assets.claude.com/1d558aa9dd6599dfad2f4ae46a5f7bcff085d8bb.png" alt="用 artifacts 制作的演示应用的复古像素风桌面，Library 应用菜单已打开，并有四个应用窗口"></p>
 <h2>权限</h2>
-<p>权限有三个级别：</p>
-<ul><li><strong>默认：</strong> 已安装的应用只能执行它们在浏览器中能够执行的操作。</li><li><strong>应用权限：</strong> 应用可以请求使用 Claude 能够严格控制的常见功能，例如创建始终置顶的窗口、监听全局快捷键或发送通知。</li><li><strong>完全访问计算机：</strong> 应用可以请求运行程序，以及读取、更改或删除你的文件，而无需每次都询问。</li></ul>
-<p>你的许可仅覆盖应用的当前版本，因此每次更新后 Claude 都会再次询问，即使是你自己所做的编辑也是如此。如果应用的某一部分来自其他网站，那么该部分可能会在未经 Claude 再次询问你的情况下发生变化。</p>
-<p>你只能向你制作的应用授予完全访问权限；在 Team 和 Enterprise 中，只能向组织内人员制作的应用授予完全访问权限。Anthropic 不会在你安装应用前审核它们，因此请只向你信任的应用授予完全访问权限。</p>
+<p>共有三个权限层级：</p>
+<ul><li><strong>默认：</strong> 已安装的应用只能做它们在浏览器里能做的事。</li><li><strong>应用权限：</strong> 应用可以请求使用 Claude 能够严密控制的常用功能，比如创建始终置顶的窗口、监听全局快捷键或发送通知。</li><li><strong>完全访问计算机：</strong> 应用可以请求运行程序，以及读取、修改或删除你的文件，而不必每次都询问。</li></ul>
+<p>你的授权只覆盖应用的当前版本，因此每次更新后 Claude 都会再次询问，即便更新来自你自己的编辑。如果应用的某一部分来自另一个网站，那么这一部分可以在 Claude 不再询问你的情况下发生变化。</p>
+<p>你只能为你自己制作的应用授予完全访问权限；在 Team 和 Enterprise 上，也可以为组织内成员制作的应用授予完全访问权限。Anthropic 不会在你安装应用之前对其进行审查，所以只把完全访问权限授予你信任的应用。</p>
 <h2>开始使用</h2>
-<p>向 Claude 描述你的应用，将它作为 artifact 试用，然后点击“Install as app”。你无需打包或签名，它会使用你的 Claude 账户，因此不需要 API key 或单独登录。</p>
-<p>Install as app 正在所有套餐中以 beta 版形式逐步推出。HIPAA-ready 组织和混合部署无法使用它。它在 Team 中默认开启，完全访问权限关闭。在 Enterprise 中，它默认关闭，直到所有者将其开启。你需要联网并登录 Claude 才能打开应用。某些 artifacts 无法安装，包括 Claude Docs、Slides 和 Sheets。</p>
-<p>更新 Claude for Mac 或 Windows，打开你每天使用的 artifact，然后从 Share 菜单中选择“Install as app”。</p>
-<p>文章</p>
-<p>Nov 24, 2026</p>
-<h3>MCP servers 现在可以发布 skills、运行任务，并借助 Claude 做更多事情</h3>
-<p>Claude appsClaude Platform</p>
-<p>文章</p>
-<p>Nov 23, 2026</p>
-<h3>使用 Enterprise Frontier Safeguards 的零数据保留现已进入 beta 版</h3>
-<p>Claude Platform</p>
-<p>文章</p>
-<p>Nov 23, 2026</p>
-<h3>推出 Claude Ship</h3>
-<p>打开拉取请求，然后继续构建。Claude 现在可以审查拉取请求、修复它们，并批准团队政策允许的那些请求。</p>
-<p>Claude Ship</p>
-<p>文章</p>
-<p>Nov 17, 2026</p>
-<h3>Claude Platform 上的关联计费</h3>
-<p>Claude Platform</p>
-<h2>用 Claude 转变组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
-<h3>获取开发者简报</h3>
-<p>产品更新、操作指南、社区聚焦等。每月发送到你的收件箱。</p>
-<p>如果你希望收到我们的月度开发者简报，请提供你的电子邮件地址。你可以随时取消订阅。</p>]]></content:encoded>
+<p>向 Claude 描述你的应用，先把它当作 artifact 试用，然后点击“Install as app”。你不需要打包或签名，它使用的是你的 Claude 账号，因此无需 API key，也无需单独登录。</p>
+<p>Install as app 正在以 beta 形式向所有套餐推出。符合 HIPAA 要求的组织和混合部署无法使用。在 Team 上，它默认开启，完全访问默认关闭。在 Enterprise 上，它默认为关闭，直到所有者开启。你需要在线并已登录 Claude 才能打开应用。有些 artifacts 无法安装，包括 Claude Docs、Slides 和 Sheets。</p>
+<p>更新 Claude for Mac 或 Claude for Windows，打开一个你每天都会用到的 artifact，然后从 Share 菜单中选择“Install as app”。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] MCP 服务器现在可以与 Claude 一起传送技能、运行任务等</title>
+      <title>[Anthropic Claude] MCP 服务器现在能交付技能、运行任务，还能与 Claude 做更多事</title>
       <link>https://claude.com/resources/articles/skills-over-mcp-tasks-and-more</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/skills-over-mcp-tasks-and-more</guid>
       <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：MCP servers can now ship skills, run tasks, and more with Claude</description>
-      <content:encoded><![CDATA[<p>Skills over MCP 现已在 Claude 中进入公开测试阶段，因此 MCP 服务器可以在提供工具的同时一并发布 skills。我们还为服务器提供了与 Claude 协作处理更长、更具交互性工作的方式：Tasks 和 Elicitation 现已正式可用，File Uploads 也即将推出。</p>
-<p>两年前，Anthropic <a href="https://www.anthropic.com/news/model-context-protocol">推出了 Model Context Protocol（MCP）</a>，作为连接 AI agent 与其数据所在系统的新标准。该规范持续演进，以满足生产环境中 agent 的连接需求，并正成为 agent 消息传递与编排的基础。</p>
-<p>借助今天的更新，Claude 与服务器协作的方式更接近于它与另一个 agent 协作：向它学习、向它委派任务，并在过程中交换输入与文件。</p>
-<h2>用 Skills over MCP 在工具之外一并交付专业知识</h2>
-<p>工具名称和描述告诉 Claude 一个服务器能做什么，但并未涵盖如何处理具体用例。借助 <a href="https://modelcontextprotocol.io/extensions/skills/overview">Skills over MCP</a>，服务器可以在发布工具的同时发布 skills，帮助 Claude 承担更长的多步骤工作。Claude 仅在需要时加载 skill，从而保持较低的上下文占用。Skills 随服务器一同更新，因此开发者可以把工具与指导一并交付，用户无需单独安装任何东西。</p>
-<p>Skills 可以涵盖最佳实践、分步工作流，甚至是为某个用户的账户或组织量身定制的 playbook。使用 Skills over MCP 的案例：</p>
-<ul><li><a href="https://claude.com/marketplace/connectors/shopify">Shopify</a> 帮助 Claude 端到端地设计和更新商家的在线商店。</li><li><a href="https://claude.com/marketplace/connectors/hubspot">HubSpot</a> 负责客户入驻，并让他们在 Claude 中完成设置。</li><li><a href="https://claude.com/marketplace/connectors/atlassian">Atlassian</a> 帮助 Claude 调用深层的组织上下文，用于洞察与工作分析。</li><li><a href="https://claude.com/marketplace/connectors/carta">Carta</a> 将帮助 Claude 根据上传的文档起草并发行股权（即将推出）。</li></ul>
-<p>Skills over MCP 在 Claude 和 Claude Code 中处于公开测试阶段，在 Pro、Max 和 Ultra 套餐中默认开启，Team 套餐在管理员启用后即可使用。即将登陆 Enterprise。</p>
-<p><img src="https://assets.claude.com/c801d50355ebd35519eb1d82598a4c903298e966.png" alt="Skills over MCP（beta）：一个 MCP 服务器向 Claude 提供三个层次。Skills 承载为每个用户或组织量身定制的领域知识，tools 是 Claude 可执行的动作，resources 是 Claude 可调用的上下文。Skills 仅在需要时加载，并随服务器更新。"></p>
-<h2>MCP 服务器现在可以与 Claude 一起承担长时间运行、交互式的工作</h2>
-<p>生产环境中的 agent 正在承担更长时间、更重要的任务。服务器现在可以通过在后台运行这些工作、与用户确认进度，以及接收来自 Claude 的文件来支持这类任务。</p>
-<p><strong>把长时间运行的工作交给</strong> <strong><a href="https://modelcontextprotocol.io/extensions/tasks/overview">Tasks</a>。</strong> 过去，工具调用必须完成后 Claude 才能继续。借助 Tasks，服务器可以运行耗时的操作，甚至完整的 agent 循环，而 Claude 可以继续工作，并在结果就绪时取回。使用 Tasks，<a href="https://claude.com/marketplace/connectors/zoominfo">ZoomInfo</a> 可以执行更深入的账户与联系人研究，这在以前需要多次 prompt。</p>
-<p><img src="https://assets.claude.com/e53adba43ded0a4377bdd900155891633b3edbc7.png" alt="Tasks：Claude 将一项长时间运行的任务交给 MCP 服务器，继续自己的工作，并在结果就绪时取回。"></p>
-<p><strong>在调用中途请求输入，使用</strong> <strong><a href="https://modelcontextprotocol.io/specification/2026-07-28/client/elicitation">Elicitation</a>。</strong> 有些操作需要用户批准，比如花钱或删除数据。借助 Elicitation，服务器可以暂停，通过表单或链接向用户请求输入，然后从暂停处继续。使用 Elicitation：</p>
-<ul><li><a href="https://claude.com/marketplace/connectors/supabase">Supabase</a> 在创建付费项目前、以及执行破坏性 SQL 前确认费用。</li><li><a href="https://claude.com/marketplace/connectors/railway">Railway</a> 在做出可能具有破坏性的更改（如移除某个服务）前先询问。</li><li><a href="https://claude.com/marketplace/plugins/github">GitHub</a> 在 agent 删除仓库前，让用户输入仓库名称。</li></ul>
-<p>Tasks 和 Elicitation 现已在 Claude 和 Claude Code 中正式可用，适用于 Pro、Max 和 Ultra 套餐，并正在向 Team 和 Enterprise 组织推出。</p>
-<p><strong>收发文件，使用</strong> <strong><a href="https://github.com/modelcontextprotocol/experimental-ext-file-uploads">File Uploads</a>。</strong> Claude 将能够把文件传给 MCP 服务器，而不只是文本。File Uploads 扩展可以把 PDF、电子表格和图片发送到服务器，而无需经过上下文窗口。</p>
-<p>File Uploads 即将在 Claude 和 Claude Code 中向 Pro、Max、Ultra 以及符合条件的 Team 和 Enterprise 套餐推出。</p>
-<h2>立即为你的插件添加支持</h2>
-<p>这些功能属于开放的 MCP 规范及其扩展，因此支持它们的服务器可在任何兼容客户端中工作，而不仅限于 Claude。要添加支持，请参阅 <a href="https://code.claude.com/docs/en/mcp#use-skills-from-mcp-servers">Skills over MCP</a>、<a href="https://code.claude.com/docs/en/mcp#mcp-tasks-for-server-authors">Tasks</a>、<a href="https://code.claude.com/docs/en/mcp#respond-to-mcp-elicitation-requests">Elicitation</a> 和 <a href="https://claude.com/docs/connectors/building/files?open_in_browser=1">File Uploads</a> 的文档。</p>
-<h2>建立在更坚实的基础之上，连接生产环境中的 agent</h2>
-<p>得益于整个 AI 生态的贡献，MCP 目前的 SDK 月下载量已超过 7 亿次，面向 Claude 的 MCP 连接器超过 10,000 个。我们与 MCP 社区合作，改进了 MCP 在 Claude 中的工作方式。在过去一年里，它变得：</p>
-<ul><li><strong>更省 token：</strong> <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool">Tool search</a> 仅在需要时加载工具定义，在多服务器配置下可将它们占用的上下文减少 85% 以上。</li><li><strong>更易扩展：</strong> <a href="https://claude.com/resources/articles/bringing-mcp-2026-07-28-to-claude">最新的 MCP 规范</a> 是无状态的，并在 Claude 各产品中得到支持，使服务器更易构建，并在规模增长时更易保持可靠性。</li><li><strong>授权更简单：</strong> <a href="https://claude.com/docs/connectors/building/enterprise-managed-auth">Enterprise Managed Auth</a> 扩展让管理员只需授权一次受支持的服务器，用户即可自动连接。</li><li><strong>更具交互性：</strong> <a href="https://claude.com/docs/connectors/building/mcp-apps/quickstart">MCP Apps</a> 扩展将完整界面引入 Claude，可显示在对话旁边或以全屏方式呈现。</li></ul>
-<p>这些改进共同让 MCP 更易于构建和采用，也为该标准奠定了坚实基础，使其能够持续演进，以满足生产环境中 agent 的需求。</p>
+      <content:encoded><![CDATA[<h1>MCP 服务器现在能交付技能、运行任务，还能与 Claude 做更多事</h1>
+<p>Skills over MCP 现已在 Claude 中进入公开 beta，因此 MCP 服务器可以在提供工具的同时交付技能。我们也在为服务器提供处理更长、更具交互性的工作的方法：Tasks 与 Elicitation 现已正式可用，File Uploads 也即将推出。</p>
+<p>两年前，Anthropic <a href="https://www.anthropic.com/news/model-context-protocol">推出 Model Context Protocol（MCP）</a>，作为把 AI agent 连接到数据所在系统的新标准。该规范一直在演进，以满足生产环境中 agent 的连接需求，并正成为 agentic 消息传递与编排的基础。</p>
+<p>有了今天的这些更新，Claude 与服务器协作的方式更接近它与另一个 agent 协作：向它学习、把工作委派给它，并在过程中交换输入与文件。</p>
+<h2>用 Skills over MCP 在交付工具的同时交付专业能力</h2>
+<p>工具名称与描述告诉 Claude 一个服务器能做什么，但并未涵盖如何处理具体用例。借助 <a href="https://modelcontextprotocol.io/extensions/skills/overview">Skills over MCP</a>，服务器可以在发布工具的同时发布技能，帮助 Claude 承接更长的多步工作。Claude 只在需要时加载技能，从而把上下文占用保持在低位。技能随服务器一起更新，因此开发者可以把工具与使用指引一同交付，用户无需另外安装任何东西。</p>
+<p>技能可以涵盖最佳实践、分步工作流，甚至是为某个用户账户或组织量身定制的操作手册。使用 Skills over MCP 的包括：</p>
+<ul><li><a href="https://claude.com/marketplace/connectors/shopify">Shopify</a> 帮助 Claude 端到端地设计和更新商家的在线商店。</li><li><a href="https://claude.com/marketplace/connectors/hubspot">HubSpot</a> 为客户完成入驻，并让他们在 Claude 中完成配置。</li><li><a href="https://claude.com/marketplace/connectors/atlassian">Atlassian</a> 帮助 Claude 借助深厚的组织上下文来获得洞察、分析工作。</li><li><a href="https://claude.com/marketplace/connectors/carta">Carta</a> 将帮助 Claude 从上传的文档起草并发放股权（即将推出）。</li></ul>
+<p>Skills over MCP 在 Claude 与 Claude Code 中处于公开 beta，对 Pro、Max 和 Ultra 套餐默认开启，Team 套餐需管理员启用后可用。即将支持 Enterprise。</p>
+<p><img src="https://assets.claude.com/c801d50355ebd35519eb1d82598a4c903298e966.png" alt="Skills over MCP（beta）：一个 MCP 服务器向 Claude 交付三层内容。技能承载为每位用户或组织量身定制的领域知识，工具是 Claude 可以执行的动作，资源是 Claude 可以引入的上下文。技能只在需要时加载，并随服务器更新。"></p>
+<h2>MCP 服务器现在可以承接长时间运行、需要交互的工作</h2>
+<p>生产环境中的 agent 正在承接更长、影响更重大的任务。服务器现在可以支持这类工作：在后台运行它、与用户确认进展，并接收来自 Claude 的文件。</p>
+<p><strong>把长时间运行的工作交办给</strong> <strong><a href="https://modelcontextprotocol.io/extensions/tasks/overview">Tasks</a>。</strong> 过去，工具调用必须先结束，Claude 才能继续往下走。有了 Tasks，服务器可以运行耗时的操作，甚至完整的 agent 循环，而 Claude 继续工作，并在结果就绪时取回它。借助 Tasks，<a href="https://claude.com/marketplace/connectors/zoominfo">ZoomInfo</a> 得以执行更深入的客户与联系人调研，而这在过去需要好几轮 prompt。</p>
+<p><img src="https://assets.claude.com/e53adba43ded0a4377bdd900155891633b3edbc7.png" alt="Tasks：Claude 把一项长时间运行的任务交给 MCP 服务器，自己继续工作，并在结果就绪时取回。"></p>
+<p><strong>在调用中途用</strong> <strong><a href="https://modelcontextprotocol.io/specification/2026-07-28/client/elicitation">Elicitation</a> 请求输入。</strong> 有些操作需要用户签字同意，比如花钱或删除数据。借助 Elicitation，服务器可以暂停，通过表单或链接请用户提供输入，然后从停下的地方继续。使用 Elicitation 的包括：</p>
+<ul><li><a href="https://claude.com/marketplace/connectors/supabase">Supabase</a> 在创建付费项目之前、以及运行破坏性 SQL 之前确认费用。</li><li><a href="https://claude.com/marketplace/connectors/railway">Railway</a> 在做出可能有破坏性的更改前先行询问，比如移除某个服务。</li><li><a href="https://claude.com/marketplace/plugins/github">GitHub</a> 会在 agent 删除某个仓库之前，让用户输入该仓库的名称。</li></ul>
+<p>Tasks 与 Elicitation 现已在 Claude 和 Claude Code 中对 Pro、Max 和 Ultra 套餐正式可用，并正在向 Team 与 Enterprise 组织逐步推出。</p>
+<p><strong>用</strong> <strong><a href="https://github.com/modelcontextprotocol/experimental-ext-file-uploads">File Uploads</a> 收发文件。</strong> Claude 将能够把文件传给 MCP 服务器，而不只是文本。File Uploads 扩展可以把 PDF、电子表格和图片发送到服务器，而无需让它们经由上下文窗口。</p>
+<p>File Uploads 即将在 Claude 与 Claude Code 中向 Pro、Max、Ultra 以及符合条件的 Team 和 Enterprise 套餐推出。</p>
+<h2>现在就让你的插件支持这些功能</h2>
+<p>这些功能属于开放的 MCP 规范及其扩展，因此支持它们的服务器在任何兼容客户端中都能工作，而不只是在 Claude 中。要添加支持，请参阅 <a href="https://code.claude.com/docs/en/mcp#use-skills-from-mcp-servers">Skills over MCP</a>、<a href="https://code.claude.com/docs/en/mcp#mcp-tasks-for-server-authors">Tasks</a>、<a href="https://code.claude.com/docs/en/mcp#respond-to-mcp-elicitation-requests">Elicitation</a> 和 <a href="https://claude.com/docs/connectors/building/files?open_in_browser=1">File Uploads</a> 的文档。</p>
+<h2>建立在更坚实的基础之上：连接生产环境中的 agent</h2>
+<p>得益于 AI 生态各方的贡献，MCP 现在的 SDK 月下载量超过 7 亿次，面向 Claude 的 MCP connector 超过 10,000 个。我们与 MCP 社区合作，改进了 MCP 在 Claude 中的工作方式。过去一年里，它变得：</p>
+<ul><li><strong>更省 token：</strong> <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool">Tool search</a> 只在需要时加载工具定义，在多服务器配置下可以把它们占用的上下文削减 85% 以上。</li><li><strong>更易扩展：</strong> <a href="https://claude.com/resources/articles/bringing-mcp-2026-07-28-to-claude">最新的 MCP 规范</a> 是无状态的，并在各 Claude 产品中得到支持，让服务器更易构建，也更容易在规模增长时维持其可靠性。</li><li><strong>授权更简单：</strong> <a href="https://claude.com/docs/connectors/building/enterprise-managed-auth">Enterprise Managed Auth</a> 扩展让管理员只需对受支持的服务器授权一次，用户即可自动连接。</li><li><strong>更具交互性：</strong> <a href="https://claude.com/docs/connectors/building/mcp-apps/quickstart">MCP Apps</a> 扩展把完整界面引入 Claude，可显示在对话旁边或全屏。</li></ul>
+<p>这些改进加在一起，让 MCP 更易于在其上构建、也更易于采用，并为这一标准打下坚实基础，使其能继续演进，以满足生产环境中 agent 的需求。</p>
 <h2>感谢 MCP 社区</h2>
-<p>MCP 是一项开放标准，由 <a href="https://aaif.io/">Agentic AI Foundation</a> 托管，并由在其之上构建的人们共同塑造。<a href="https://blog.modelcontextprotocol.io/posts/mcp-turns-two">两年的进展</a>来自那些编写规范、构建 SDK、发布服务器并添加客户端支持的维护者、贡献者和开发者。感谢你们让 MCP 成为今天的样子。</p>
-<p>Article</p>
-<p>Nov 24, 2026</p>
-<h3>把 artifacts 变成 Mac 和 Windows 应用</h3>
-<p>像打开其他任何应用一样打开你每天使用的 artifacts，让它们在你的电脑上发挥更多作用</p>
-<p>Claude apps</p>
-<p>Article</p>
-<p>Nov 23, 2026</p>
-<h3>借助 Enterprise Frontier Safeguards 实现零数据保留，现已进入 beta</h3>
-<p>Claude Platform</p>
-<p>Article</p>
-<p>Nov 23, 2026</p>
-<h3>推出 Claude Ship</h3>
-<p>提交一个 pull request，然后继续构建。Claude 现在可以审查 pull request、修复它们，并批准团队策略允许的那些。</p>
-<p>Claude Ship</p>
-<p>Article</p>
-<p>Nov 17, 2026</p>
-<h3>Claude Platform 上的关联计费</h3>
-<p>Claude Platform</p>
-<h2>用 Claude 改变你的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
-<h3>订阅开发者通讯</h3>
-<p>产品更新、操作指南、社区聚焦等，每月送达你的收件箱。</p>
-<p>如果你希望收到我们每月的开发者通讯，请提供你的电子邮箱地址。你可以随时退订。</p>]]></content:encoded>
+<p>MCP 是一项开放标准，由 <a href="https://aaif.io/">Agentic AI Foundation</a> 托管，由在其之上构建的人们共同塑造。<a href="https://blog.modelcontextprotocol.io/posts/mcp-turns-two">两年的进展</a> 来自那些撰写规范、构建 SDK、发布服务器并添加客户端支持的 maintainer、贡献者和开发者。感谢你们造就了今天的 MCP。</p>]]></content:encoded>
     </item>
     <item>
       <title>[商汤 日日新] SenseNova U1.6 正式发布：美学进阶，字准意达</title>
@@ -1683,13 +1547,159 @@ trainer.fit()</code></pre>
 <p>如需接收每月的开发者通讯，请提供你的电子邮件地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] 保护编码代理的企业指南</title>
+      <title>[Anthropic Claude] 保护编码 agent 的企业指南</title>
       <link>https://claude.com/resources/articles/enterprise-guide-to-securing-coding-agents</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/enterprise-guide-to-securing-coding-agents</guid>
       <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：The enterprise guide to securing coding agents</description>
+      <content:encoded><![CDATA[<h1>保护编码 agent 的企业指南</h1>
+<h2>一边快速交付，一边保障安全</h2>
+<p>编码 agent 很可能已经在你的组织里编写代码、提交 pull request 了。对许多领先企业而言，它们还在审查、测试并合并这些代码。</p>
+<p>例如，在把整个工程组织统一到 Claude Code 之后，<a href="https://www.salesforce.com/news/stories/how-engineering-became-agentic/">Salesforce</a>¹ <a href="https://www.salesforce.com/news/stories/how-engineering-became-agentic/">报告</a>说：</p>
+<p>79%</p>
+<p>每位开发者在 Salesforce 合并的 pull request 更多</p>
+<p>5%</p>
+<p>Salesforce 的事故总数更少</p>
+<p>随着 agent 承担的工作越来越多，技术与安全负责人必须用分层控制来缓解 prompt injection 与权限滥用之类的风险，例如经过校验的权限和有边界的运行环境。</p>
+<p>前两章聚焦于界定风险的边界。我们讨论每个 AI 供应商都应满足的要求，以及需要缓解的四类 agentic 风险。</p>
+<p>接下来的三章聚焦于约束风险。我们介绍借助 Claude Code 可以部署的防御层级，以及如何集中管理和强制执行这些控制。</p>
+<p>本指南旨在提供一个有用的 agent 安全框架，让组织有把握、有信心在规模化场景下有效运行 agent。</p>
+<p>防御一个 AI agent 的组成部分：模型、模型周围的环境，以及对输入和输出的外部检查。</p>
+<p><em>本指南面向使用 Claude Team 与 Enterprise 套餐的组织。如果你通过 AWS、Google Cloud 或 Microsoft Azure 等云服务商访问 Claude，同样的原则与本地控制也适用。</em></p>
+<h2>01 设定 agent 安全的门槛</h2>
+<p>每个编码 agent 都该回答的六个问题 · 把 SaaS 要求套用到你的 AI 供应商</p>
+<blockquote>“在 agentic AI 时代，CISO 的职责并不是实现零风险。我们的工作是让 agentic 风险变得可被看清、可被约束。这样我们才能有意识地接受自己能够管理的风险，让业务按我们的方式推进，而不是绕开我们。”</blockquote>
+<p><a href="https://claude.com/resources/articles/ciso-guide-to-agentic-ai">Jason Clinton</a>，Anthropic 副 CISO</p>
+<h3>每个编码 agent 都该回答的六个问题</h3>
+<p>以下是负责人在评估编码 agent 时可以提出的六个问题，用来核实它们是否已具备企业级就绪度。</p>
+<table><thead><tr><th>要问的问题</th><th>为什么你该关心</th><th>好的回答</th><th>弱的回答</th></tr></thead><tbody><tr><td><strong>模型在应当拒绝时会拒绝吗？</strong></td><td>模型是对有害请求的第一道检查，让坏动作更不容易发生。</td><td>拒绝能力训练进了权重，并公布相关比率。</td><td>“我们的 system prompt 指示模型拒绝。”</td></tr><tr><td><strong>动作在执行之前，是否在模型之外被自动检查？</strong></td><td>外部检查可以在模型被诱导或判断失误时抓到问题。</td><td>对命令做静态分析，外加一个独立的评估模型。prompt injection 探测。</td><td>“模型能力很强。”</td></tr><tr><td><strong>爆炸半径是否被环境所约束？</strong></td><td>这限定了事件的严重程度，因而限定了风险。</td><td>内核级沙箱，管理员可以强制要求并设为 fail closed，或为每个会话提供隔离 VM。在网络层做出口白名单。</td><td>“我们指示 agent 不要离开工作目录。”</td></tr><tr><td><strong>策略能否被集中锁定？</strong></td><td>设定个人无法撤销的最低标准。</td><td>托管设置配上本地用户无法覆盖的 hard-deny 规则。</td><td>“按开发者各自的配置文件，外加一份靠自觉遵守的策略文档。”</td></tr><tr><td><strong>agent 写的代码是否安全？</strong></td><td>代码量在激增，如果检查不随代码量一起扩展，漏洞就会上线。</td><td>自动化安全审查，由人工批准高风险改动。</td><td>“模型经过训练，会写安全的代码。”</td></tr><tr><td><strong>你能否还原一起事件？</strong></td><td>合规。持续改进安全。</td><td>会话<a href="https://code.claude.com/docs/en/monitoring-usage">遥测导出</a>、<a href="https://platform.claude.com/docs/en/manage-claude/compliance-api">审计 API</a>（Enterprise），以及明确列出的已知缺口。</td><td>“日志可按需提供。”</td></tr></tbody></table>
+<h3>把 SaaS 要求套用到你的 AI 供应商</h3>
+<p>你已经有了一份 SaaS 供应商检查清单，涵盖单点登录、基于角色的访问、数据处理条款和审计日志等控制项。对 AI 供应商也应当采用类似的清单。举例来说，Claude Code 通过以下方式支持这些安全预期：</p>
+<ul><li><strong>单点登录与基于角色的访问控制</strong>（Enterprise），用你管理其他企业工具的方式来管理。</li><li>按我们的商业条款，我们<strong>不会用代码或 prompt 训练生成式模型</strong>，除非你的组织选择与我们共享这些数据。</li><li><strong>Enterprise Frontier Safeguards（分阶段推出）</strong>把零数据保留的隐私性与最先进的滥用检测防护结合起来，覆盖能力极强的模型。数据可以用你自己的密钥加密，并在你控制的存储中保留有限时间。<a href="https://www.anthropic.com/news/enterprise-frontier-safeguards">了解更多</a>。</li><li>在 Enterprise 上，一旦应用 HIPAA 配置，Claude Code CLI 与桌面应用本地模式下的 Code 标签页即享有 <strong>BAA</strong> 覆盖。</li><li>云平台上的<strong>加密选项</strong>：Amazon Bedrock 上的 AWS KMS 客户托管密钥、Google Cloud 上的 CMEK，或 Microsoft Foundry 的 Hosted on Azure 选项。</li><li><a href="https://trust.anthropic.com">Anthropic Trust Center</a> 中的 <strong>SOC 2 Type 2 报告与 ISO 27001 证书</strong>。</li></ul>
+<h2>02 识别 AI 特有的风险</h2>
+<p>凭据泄漏与权限滥用 · 未经审查的依赖与扩展 · 数据外泄 · prompt injection</p>
+<p>安全与技术负责人对凭据泄漏、权限滥用、被污染的依赖和内部威胁等风险并不陌生。然而一旦涉及 agent，攻击面、速度与规模都会改变。我们来看其中一些风险。</p>
+<table><thead><tr><th>风险</th><th>你今天怎么处理</th><th>有了 agent 之后有什么变化</th></tr></thead><tbody><tr><td><strong>凭据泄漏与权限滥用</strong></td><td>最小权限、短时效 token、通过 workload identity 或 OIDC 实现无密钥认证。定期审查权限过高的账户。人员用具名账户，软件按工作负载分配身份。</td><td>凭据应当是短时效的，并限定到具体任务或作业，而不是开发者的全部权限。agent 在开发者的会话内行动，而 Claude Code 之外的多数日志只显示开发者的名字。</td></tr><tr><td><strong>未经审查的依赖与扩展</strong></td><td>锁定版本、审查关卡、清单变更需两名审查者。配置纳入版本控制。</td><td>agent 添加依赖的速度——不分是否经过审查——都快于人工流程。扩展一旦连接，就会向 agent 下达指令。</td></tr><tr><td><strong>数据外泄</strong></td><td>在网络层做出口白名单。</td><td>被攻陷的 agent 可以通过你本就允许的服务把数据送出去。与传统恶意软件不同，它可以尝试多条路径，而攻击者不必事先定义这些路径。</td></tr><tr><td><strong>内部风险</strong></td><td>社会工程意识培训、验证、上报路径。</td><td>prompt injection：检查点转移到了工具调用与网络边界上。</td></tr></tbody></table>
+<h3>风险 1：凭据泄漏与权限滥用</h3>
+<p>agent 能读到的任何东西，它都可能泄漏出去，包括长期有效的 AWS access key 或 GitHub token 这类凭据。</p>
+<p>agent 能做的任何事，被攻陷或过于积极的 agent 都可能滥用。默认情况下，Claude Code 中的 agent 以监管它的那位开发者的身份运行。发生事件时，你可能需要区分 agent 的动作与开发者的动作，才能作出恰当的响应。</p>
+<p>pull request 对话的示意图。在流水线中，agent 的工作以它自己的名字呈现。</p>
+<h3>风险 2：未经审查的依赖与扩展</h3>
+<p>agentic 编码加快了代码生成与审查的速度，也就加快了依赖被添加、配置被修改的速度。</p>
+<p>当你让 agent 加上 JSON schema 校验时，它会找到一个包、装上最新版本，几分钟内就写出可用的代码。如果 agent 没有被指向正确的方向，这种速度本身就是风险。</p>
+<p>MCP servers、plugins、skills、subagent 定义，以及仓库里的 <code>CLAUDE.md</code> 文件也都是依赖，它们值得你像对待一个包那样去审查。与被污染的库不同——后者要等被调用才发作——它们一加载就会抵达 agent。在 agent 做任何工作之前，它们的描述与指令就已经进入了上下文窗口。</p>
+<p>在 Enterprise 套餐上，<a href="https://support.claude.com/en/articles/15927065-get-started-with-skill-and-plugin-scanning">skill 与 plugin 扫描</a>会在组织内有人上传或编辑第三方 skills 和 plugins 时检查其中的恶意内容。</p>
+<p>Enterprise 套餐上 skill 与 plugin 扫描拦截某个 plugin 时，管理员所看到的界面的示意图。</p>
+<h3>风险 3：数据外泄</h3>
+<p>每一次泄漏都需要一条通往外面的路径。难点在于，域名白名单无法把你自己账户和攻击者的账户区分开来。举例来说，如果你允许 github.com，那么 agent 就可以推送到攻击者拥有的仓库。</p>
+<p>DNS 是 HTTP 白名单容易漏掉的第二条潜在外泄路径，因为数据可以被编码进 agent 查询的名字里。</p>
+<p>当然，token 一旦泄漏，攻击者根本不需要 agent 的网络。他们可以从任何地方使用这份凭据，于是出口过滤永远看不到那个请求。</p>
+<h3>风险 4：prompt injection</h3>
+<p>自 2023 年该榜单创立以来，OWASP 在每一版 <a href="https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/">LLM 应用 Top 10</a> 中都把 prompt injection 列为首要风险。</p>
+<p>社会工程与 prompt injection 的作用方式相同。社会工程之所以能绕过技术控制，是因为受骗的人自己执行了操作，系统看到的是一个已授权的请求。被注入指令的 agent 同样以自身的权限行动，而每条日志显示的都是合法请求。</p>
+<p>对编码 agent 来说，prompt injection 可以通过多种途径发生，包括：</p>
+<ul><li>issue tracker 与 pull request 评论；</li><li>依赖的 README 与 changelog；</li><li>agent 抓取的网页；</li><li>MCP 工具调用的响应；</li><li>源文件中的注释；等等。</li></ul>
+<p>网页中的一条隐藏指令，在造成危害之前必须越过哪些关卡。</p>
+<h2>03 判断层</h2>
+<p>分层防御 · 理解对齐训练 · prompt injection 探测 · auto mode 分类器</p>
+<h3>分层防御</h3>
+<p>在 Claude Code 中，一个被攻陷或对齐不良的 agent 必须先越过多重控制和两层防御，才能造成危害。</p>
+<p>第一层基于判断。这些控制判断某件事看起来是否不对劲。</p>
+<ul><li><strong>对齐训练</strong>教 Claude 拒绝恶意请求，并偏好谨慎的动作。</li><li><strong>prompt injection 探测</strong>在 auto mode 下、Claude 对传入的工具结果采取行动之前扫描这些结果，并标记看起来像注入指令的内容。</li><li><strong>auto mode 分类器</strong>把多数拟议的工具调用与用户声明的意图做比对。</li></ul>
+<p>第二层通过限制任何命令能做什么来强制执行固定边界：</p>
+<ul><li><strong>权限规则、命令分析和 hooks</strong> 在动作运行之前，按你设定的规则检查每一个动作。</li><li><strong>沙箱与出口白名单</strong>限定一条被允许的命令能触及什么、数据能去往哪里。</li></ul>
+<p>本章讲判断层，下一章考察固定边界层。</p>
+<h3>理解对齐训练</h3>
+<p>Claude 的训练目标是<a href="https://www.anthropic.com/constitution">由一系列硬性规则支撑的良好判断</a>，比如不编写可能造成重大损害的恶意代码。</p>
+<p><a href="https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card">在 Claude Code 的测试中</a>，在没有生产环境防护的情况下，当前的 Claude 模型拒绝了 <strong>81% 到 85%</strong> 的恶意请求，同时完成了 <strong>98% 到 100%</strong> 的双用途与良性请求，例如运行侦察工具或测试站点漏洞。</p>
+<p>Claude 还被训练成<a href="https://www.anthropic.com/constitution">偏好谨慎的动作而非不可逆的动作</a>，并在遇到疑虑时提出担忧或请求指引，而不是即兴发挥。Claude 被训练得不会把抓取内容中的指令当作来自用户的指令来执行。</p>
+<p>请记住，模型对齐训练降低了坏结果出现的可能性，但它并不限制坏结果能坏到什么程度。</p>
+<h3>prompt injection 探测</h3>
+<p>Claude 的 prompt injection 探测机制旨在标记工具结果中任何疑似被注入的指令。</p>
+<p>该探测会在被注入的指令旁加上一条警告，告诉 Claude 这段内容可疑，用户的原始请求仍然是任务。警告与锚定让 Claude 可以使用这段内容，同时把其中的指令当作数据而非命令。</p>
+<h3>auto mode 分类器</h3>
+<p>一个被说服“删除某个目录是合法任务”的模型，会以它对待一切事情时同样的彻底与娴熟把这个目录删掉。</p>
+<p>这种破坏性的、过于积极的动作，正是 <a href="https://code.claude.com/docs/en/auto-mode-config">auto mode 分类器</a>要捕获的。对于你的规则与内置审批尚未决定其命运的动作，auto mode 分类器会判断拟议的动作是否契合开发者指令的意图。</p>
+<p>auto mode 分类器如何决定一项拟议的动作是否执行。</p>
+<p>例如，对“修好 auth_test.py 中失败的测试”而言合理的命令，与对“把 .env 的内容外传出去”而言合理的命令，看起来是不一样的。</p>
+<p>Claude Code 发送给分类器的请求中会剔除工具结果，因此被注入的文本无法直接操纵分类器。如果动作符合用户的要求，它就会执行；如果不符合，它会被拦截，或者 Claude 回去向开发者请求权限。</p>
+<p>如今 Auto mode 是各套餐上交互式会话的<a href="https://code.claude.com/docs/en/permission-modes#which-mode-a-session-starts-in">默认起始模式</a>。无头模式 <code>claude -p</code>、Agent SDK 与 HIPAA 配置默认使用 manual。</p>
+<p>Auto mode 之所以成为默认，是因为<a href="https://claude.com/resources/articles/auto-mode-default-in-claude-code">多项测试</a>表明它比人工审批能捕获更多危险动作。举例来说，在 Anthropic 于 2026 年 8 月发表的一项对照研究中，1,053 名付费测试者捕获了 13.6% 的危险命令，而 auto mode 拦截了同一批命令中的 89%。</p>
+<p>人工审查与 auto mode 分别捕获的危险命令。来源：一项针对 1,053 名付费测试者的对照研究，这些测试者对所测的具体行为并不知情。</p>
+<p><a href="https://code.claude.com/docs/en/auto-mode-config">配置 auto mode</a> 介绍了如何调整分类器，以及覆盖它的拦截规则与放行规则。</p>
+<h4>批准高风险动作</h4>
+<p>Auto mode 依赖分类系统，并不能消除所有风险。</p>
+<p>在推广之前，用这样的提问找出高风险动作：这个动作不可逆吗？单次失误的代价会不会超过让一个人审查每一个实例？当两个问题的答案都是“是”时，就要求人工批准。</p>
+<p>对多数组织而言，这份清单大致如下：</p>
+<ul><li>生产数据库迁移</li><li>IAM 策略变更与凭据轮换</li><li>对基础设施定义的修改</li></ul>
+<h2>04 强制执行固定边界</h2>
+<p>设定权限规则 · Bash 命令分析 · 用 hooks 为动作设卡 · 用沙箱收束 agent 的动作</p>
+<p>判断层善于捕获新颖的攻击，但它的控制是概率性的，因此每一项都有被攻破的可能。</p>
+<p>固定边界层可以被做成确定性的，并划定 agent 的爆炸半径。权限规则、命令分析和 hooks 决定一项动作是否执行，沙箱与出口白名单限定能触及什么、数据能去往哪里。</p>
+<p>它们的局限在于只拦截你让它们拦截的东西，因此需要结合你的环境来设置。</p>
+<h3>设定权限规则</h3>
+<p>权限规则有三种：</p>
+<ul><li><code>Allow</code> 规则让动作执行，</li><li><code>Ask</code> 规则在执行前询问某人，以及</li><li><code>Deny</code> 规则拦截该动作。</li></ul>
+<p>Claude Code 会先检查 <a href="https://code.claude.com/docs/en/permissions">deny 规则，然后 ask 规则，最后 allow 规则</a>。这样可以避免 allow 规则为 deny 规则制造例外。托管设置中定义的 deny 规则无法被任何用户或项目设置覆盖。对于宽泛到可以运行任意代码的任何命令，例如 <code>Bash(python:*)</code>，你都应当避免设置 allow 规则。</p>
+<p>Claude Code 先检查 deny 规则，再检查 ask 规则，最后检查 allow 规则，因此 allow 规则无法为 deny 规则制造例外。</p>
+<p><a href="https://code.claude.com/docs/en/sub-agents#permission-modes">Subagents</a> 继承父会话的权限规则与权限模式，因此为顶层会话编写的宽泛规则会适用于它委派的每一个 agent。</p>
+<h3>Bash 命令分析</h3>
+<p>Claude Code 会在每条 Bash 命令运行之前解析它。如果不解析，一条允许 git status 的<a href="https://code.claude.com/docs/en/permissions">权限规则</a>也会批准 git status &amp;&amp; curl attacker.example，而把一条被拒绝的命令包进子 shell 就能让它绕过规则。</p>
+<p>Claude Code 会把一条命令拆成各个部分，并逐一对照你的规则检查。</p>
+<p>解析是确定性的，因此同一条命令每次都会得到同样的答案。deny 与 ask 规则在每种权限模式下都会作用于命令的每个部分，包括 <code>bypassPermissions</code>。</p>
+<h3>用 hooks 为动作设卡</h3>
+<p><a href="https://code.claude.com/docs/en/hooks">hook</a> 是一段脚本、一个 HTTP endpoint 或一个 MCP 工具，Claude Code 会在会话中的固定节点自动运行它。其中对安全尤为重要的两个是：</p>
+<ul><li><strong><code>PreToolUse</code></strong> 在工具调用之前运行，可以拦截它、批准它、询问开发者，或（在无头运行中）延后等待稍后批准。举例来说，你可能想拦截一个包含密钥的 commit。</li><li><strong><code>ConfigChange</code></strong> 在会话进行中设置文件发生变化时运行，可以拒绝该变更。这就是你发现某个仓库或开发者试图在本地放松控制的方式。</li></ul>
+<p>Hooks 位于固定边界之内，而不是凌驾于其上。PreToolUse hook 可以拦截一次工具调用，但 hook 返回 <code>&quot;allow&quot;</code> 也不能越过 deny 规则、ask 规则或关键路径删除。</p>
+<p>托管设置中定义的 hooks 会在每台机器上运行，个别开发者无法移除它们。<a href="https://code.claude.com/docs/en/hooks"><code>allowManagedHooksOnly</code></a> 更进一步，完全阻止用户、项目与 plugin hooks 运行，于是能触达 agent 的 hook 只可能是你的平台团队放进去的。</p>
+<h3>用沙箱收束 agent 的动作</h3>
+<p>沙箱是控制事件严重程度最重要的方式之一，因为它限定了 agent 的活动范围。但收束 agent 说起来容易做起来难，因为约束与能力往往负相关。</p>
+<p>Claude Code 有三种主要环境：本地、带沙箱的本地，以及云端。</p>
+<p>我们将讨论默认设置，以及如何为组织内的各种用例考虑哪一种更合适。这些默认值可以被集中修改并锁定，这将在下一章介绍。</p>
+<h4>本地</h4>
+<p>多数 Claude Code 会话通过终端、IDE 或桌面应用在本地进行。默认情况下，agent 能访问你电脑上你能访问的任何东西。在 auto mode 下，分类器会审查你的规则与内置审批尚未决定其命运的动作。</p>
+<p>这是最不受收束的环境，适合低风险、自成一体的工作。对多数企业组织，我们建议对本地会话强制启用沙箱。</p>
+<h4>本地沙箱</h4>
+<p>Claude Code 沙箱在操作系统层面隔离每条 shell 命令，因此命令只能修改项目文件夹中的文件，并且只能连接白名单上的站点，除非某项例外获得批准。</p>
+<p>命令可以修改项目。别的一切要么撞墙，要么经过检查点。</p>
+<p>默认情况下，开发者或 auto mode 分类器在他们认为安全时，可以批准 agent 在沙箱之外操作，或访问不在白名单上的站点。</p>
+<p>使用<a href="https://code.claude.com/docs/en/managed-settings">托管设置</a>（下一章会展开），管理员可以让本地沙箱成为强制要求，把 agent 的命令限制在该沙箱内，并让 agent <a href="https://code.claude.com/docs/en/sandboxing#network-isolation">只能访问集中批准的站点</a>。</p>
+<p>一旦把 agent 收束进沙箱，你不会希望它通过读取项目之外的文件来获取凭据，从而逃逸出去。为对抗凭据泄漏，管理员可以为组织的凭据路径添加 Read deny 规则，并设置<a href="https://code.claude.com/docs/en/sandboxing#mask-credentials">凭据掩码</a>，让命令可以在从不持有真实值的情况下完成登录。</p>
+<h4>云会话</h4>
+<p><a href="https://claude.dev/blog/claude-code-in-the-cloud/"><strong>Claude Code 云会话</strong></a>运行在 Anthropic 托管的环境中，每个任务拥有自己的 VM。这不仅收束了 Claude 能执行的位置，也把 GitHub 凭据留在 VM 之外。</p>
+<p>云会话适合需要读取不可信内容或无人值守运行的工作。这是因为它们默认与开发者的机器和内部网络隔离，而且 VM 可以随时丢弃。</p>
+<p>云会话的构成：每一个都运行在全新的 VM 中，GitHub 凭据留在 VM 之外。</p>
+<p>当开发者创建新的云环境时，Claude 从一组有限的<a href="https://code.claude.com/docs/en/cloud-environments#default-allowed-domains">预装工具与允许域名</a>开始，不过开发者可以添加例外。开发者每次会话都必须选择要克隆哪些 repos。</p>
+<p>云环境设置的示意图。</p>
+<p>组织所有者可以设定默认环境，并发布成员无法更改其中设置的共享环境。</p>
+<p>开发者仍然可以创建新环境并修改这些环境设置。需要锁定这一点的组织会自行托管会话，在他们自行启动和运营的基础设施上运行 Claude Code，从而掌控这些会话的策略。</p>
+<p>请记住，使用零数据保留、HIPAA 配置或客户托管加密密钥的组织无法使用云会话。</p>
+<h2>05 强制执行策略</h2>
+<p>集中设置一览 · 哪些设置会生效</p>
+<p>我们在前几章介绍了默认设置。下表涵盖两种额外的配置。</p>
+<p>我们把其中一种标记为 <strong>baseline</strong>，当你想建立另一套默认值——或一个允许个别开发者在此基础上追加的起点——时应当选择它。</p>
+<p>我们把另一种标记为 <strong>locked</strong>，管理员借此锁定一组开发者层面无法更改的规则。锁定一项设置，正是把纸面策略变成可强制执行的安全控制的关键。</p>
+<p>这里并非设置的完整清单，而是聚焦于限定 agent 风险的关键维度。</p>
+<h3>集中设置一览</h3>
+<table><thead><tr><th></th><th><strong>本地会话</strong>在托管设置中设定</th><th><strong>云会话</strong>在 claude.ai 管理设置中设定</th></tr></thead><tbody><tr><td><strong>它被允许吗？</strong></td><td>可在桌面应用中关闭（<code>disableDesktopLocalSessions</code>），终端中不可关闭</td><td>组织级的云会话开关</td></tr><tr><td><strong>它被收束到什么程度？</strong></td><td><strong>Baseline：</strong> 所有本地会话开启沙箱（<code>sandbox.enabled</code>）<strong>Locked：</strong> 不开启就不运行，也不做未沙箱化的重试（<code>failIfUnavailable</code>、<code>allowUnsandboxedCommands: false</code>）</td><td><strong>Baseline：</strong> 所有者在 Cloud environments 页面创建成员无法更改设置的共享环境，并选定其中一个作为组织的默认环境<strong>Locked：</strong> 在你自行运营的基础设施上运行 Claude Code。在 Anthropic 托管的环境中，开发者仍可创建带自己设置的个人环境</td></tr><tr><td><strong>它能连接到哪里？</strong></td><td><strong>Baseline：</strong> 一份托管的批准站点清单，开发者可以在其中添加（<code>sandbox.network.allowedDomains</code>）<strong>Locked：</strong> 只有你的清单算数（<code>allowManagedDomainsOnly</code>）。该清单覆盖 shell 命令，因此要用 WebFetch 工具自身的权限规则来限制它</td><td><strong>Baseline：</strong> 默认使用 Anthropic 的可信清单（包注册中心、GitHub、云 SDK），或所有者在每个共享环境上设定的网络访问（connector、GitHub 与 Anthropic API 流量不受此设置限制）<strong>Locked：</strong> 使用<a href="https://code.claude.com/docs/en/self-hosted-environments">自托管环境</a>（公开 beta），由你自己的网络边界限制连接。Anthropic 托管的环境没有组织级白名单</td></tr><tr><td><strong>它能读取什么？</strong></td><td><strong>Baseline：</strong> 针对敏感路径的 Read deny 规则（<code>permissions.deny</code>）<strong>Locked：</strong> 把文件工具的读取限制在项目内，并阻止列出路径（<code>permissions.blockReadsOutsideWorkingDirectories</code>、<code>sandbox.filesystem.denyRead</code>）</td><td><strong>Baseline：</strong> 同样的 Read deny 规则<strong>Locked：</strong> 无法完全锁定。把 Claude GitHub App 限制在批准的 repositories 上，以控制会话能克隆和推送什么。开发者仍可从终端上传本地 repository。</td></tr><tr><td><strong>它能使用哪些凭据？</strong></td><td>用 Read deny 规则阻止凭据文件，并设置凭据掩码（<code>sandbox.credentials</code>）</td><td>所有者把密钥作为共享环境上的 Network secrets 存储，绝不要存成环境变量。</td></tr><tr><td><strong>它能使用哪些 connectors？</strong></td><td><strong>Baseline：</strong> 一份批准的清单，开发者可以在其中添加（<code>allowedMcpServers</code>）。<strong>Locked：</strong> 只有你的清单算数（<code>allowManagedMcpServersOnly</code>）桌面应用自带的 connectors 会跳过该清单，并受组织 connector 设置的限制。</td><td></td></tr><tr><td><strong>它不问就能做什么？</strong></td><td><strong>Baseline：</strong> 托管的 deny 与 ask 规则，开发者可自行添加 allow 规则。<strong>Locked：</strong> 只有你的规则与 hooks 生效，且 bypass 模式关闭（<code>allowManagedPermissionRulesOnly</code>、<code>allowManagedHooksOnly</code>、<code>permissions.disableBypassPermissionsMode</code>）。</td><td></td></tr></tbody></table>
+<h3>哪些设置会生效</h3>
+<p>托管设置可以通过三种途径到达会话：来自 Claude 管理控制台的服务器托管设置、MDM 或操作系统级策略，以及托管设置文件。只有服务器托管设置能到达 Anthropic 托管的云会话。</p>
+<p>默认情况下，Claude Code 使用第一个含有策略键的来源。把 managedSourcesBehavior 设为 “merge” 会把各管理来源合并起来。</p>
+<p>默认情况下，<a href="https://code.claude.com/docs/en/managed-settings#how-claude-code-combines-managed-sources">Claude Code 只应用排名最高的来源，并忽略其余来源</a>，按此顺序，且不给任何警告。如果你的 MDM 配置档开启了沙箱，而托管设置文件里放着出口白名单，那么该白名单永远不会生效。</p>
+<h2>06 上手</h2>
+<p>本指南中的控制是分层起效的，每一层都覆盖其他层漏掉的部分。在一个 repository 上做试点，可以在扩大推广之前看清这些层在你的环境中如何发挥作用。</p>
+<p>试点清单</p>
+<p><strong>给 repositories 分级，并做供应商审查。</strong> 按敏感度给 agent 将要触及的 repositories 排序，然后对照第 1 章的要求检查你的供应商。</p>
+<p><strong>从最低一档中挑一个 repository，</strong> 比如一个正在积极开发中的内部工具。它应当足够繁忙，能产生真实的会话，又足够低风险，失手时代价很小。</p>
+<p><strong>部署一套集中策略基线。</strong> 以严格模式开启沙箱，对凭据路径设置 deny 规则、凭据掩码、出口白名单，并启用 auto mode。设定并配置一个默认云环境。添加 <code>security-guidance</code> plugin，以及任何强制你不可让步规则的 hooks。</p>
+<p><strong>打开记录。</strong> 启用带工具内容的 OpenTelemetry 导出（beta），并确保沙箱与出口日志已被保留。</p>
+<p><strong>在两周内不改动策略地运行，</strong> 这样每个结果都能追溯回同一套配置。</p>
+<p><strong>复盘这些层做了什么。</strong> 查看分类器的拒绝、沙箱的拦截、未沙箱化的重试尝试以及被拒绝的出口。每一项要么是控制发挥了作用，要么是基线没有预想到的正当需求。应当补充工作所需的 allowlist 条目，而不是放松 deny 规则。</p>
+<p><strong>在扩展到第二个团队之前，对照第 1 章的五个问题给试点打分。</strong></p>
+<p>做对了，这套安全框架会加速而不是拖慢你的团队用编码 agent 全速运转的能力。</p>
+<p><em>¹ Salesforce Ventures 是 Anthropic 的投资方。</em></p>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] 推出 Claude Ship</title>
@@ -2205,76 +2215,75 @@ harbor run -p datasets/my-evals -a nop -e hf-sandbox</code></pre>
 <h2>本文提及的合集 1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenRouter] Claude可以生成图像吗？是的，带连接器</title>
+      <title>[OpenRouter] Claude 能生成图像吗？可以，借助连接器</title>
       <link>https://openrouter.ai/blog/tutorials/can-claude-generate-images/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/can-claude-generate-images/</guid>
       <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
       <category>OpenRouter</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml">OpenRouter</source>
       <description>原文标题：Can Claude Generate Images? Yes, with a Connector</description>
-      <content:encoded><![CDATA[<h1>Claude 能生成图片吗？可以，用连接器就行</h1>
-<p>OpenRouter ·2026/11/23</p>
-<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images.png" alt="Claude 能生成图片吗？可以，用连接器就行"><img src="https://openrouter.ai/blog/images/can-claude-generate-images-dark.png" alt="Claude 能生成图片吗？可以，用连接器就行"></p>
-<p>Claude 自身无法生成图片，因为它没有图像模型。借助连接器，它可以调用图像模型，并把成品图片交给你。</p>
-<p>你给出一句简短请求，Claude 会写出详细提示词，并在产生任何费用前展示给你看。图片返回后，Claude 能查看结果，并核对是否符合你的要求。本文以 OpenRouter MCP server 作为连接器，截至 2026 年 11 月 19 日，它可访问来自不同实验室的 74 个图像模型。</p>
-<p>如果你只想看设置步骤，请跳到<a href="https://openrouter.ai/blog/tutorials/can-claude-generate-images/#how-to-make-images-in-claude-with-a-connector">如何在 Claude 中用连接器生成图片</a>。</p>
-<h2>Tl;dr</h2>
-<ul><li>Claude 没有自己的图像模型。连接器让它调用一个模型并返回真实图片。</li><li>在 Claude 应用或 Claude Code 中添加 <code>https://mcp.openrouter.ai/mcp</code> 作为连接器。你的电脑上无需安装任何东西。</li><li>在请求中指定你要的模型，或先让 Claude 为你的任务比较模型，后者不收费。</li><li>我们 2026 年 11 月 19 日的测试图片每张成本在 $0.035 到 $0.10 之间，每张在收费前都会由你批准。</li><li>图片要么出现在聊天中，要么以链接形式提供，链接有效期为 24 小时。</li></ul>
-<h2>Claude 能生成图片吗？</h2>
-<p>Claude 无法自行生成照片或插画。Anthropic 2026 年 3 月 16 日的<a href="https://support.claude.com/en/articles/9002504-can-claude-produce-images">帮助中心文章</a>称“Claude 不会像图像生成工具那样生成照片或插画”，并指出它用 HTML 和 SVG 构建图表。其<a href="https://platform.claude.com/docs/en/build-with-claude/vision">视觉文档</a>补充道：“Claude 仅是图像理解模型。它可以解读和分析图像，但不能生成、产出、编辑、操作或创建图像。”</p>
-<p>连接器是 Claude 对添加到应用中的 MCP server 的叫法。<a href="https://openrouter.ai/docs/guides/overview/mcp-server">OpenRouter MCP server</a> 就是其中一个连接器，它可访问 <a href="https://openrouter.ai/models?output_modalities=image">OpenRouter 图像目录</a>中的每一个模型。</p>
+      <content:encoded><![CDATA[<h1>Claude 能生成图像吗？可以，借助连接器</h1>
+<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images.png" alt="Claude 能生成图像吗？可以，借助 connector"><img src="https://openrouter.ai/blog/images/can-claude-generate-images-dark.png" alt="Claude 能生成图像吗？可以，借助 connector"></p>
+<p>Claude 本身无法生成图像，因为它没有图像模型。借助 connector，它可以调用一个图像模型，把画好的图交到你手上。</p>
+<p>你给出一句简短的请求，Claude 写出详细的 prompt，并在任何计费发生之前拿给你看。图片返回后，Claude 可以查看结果，并对照你的要求做检查。本文把 OpenRouter MCP server 用作 connector，截至 2026 年 11 月 19 日，它可触达来自不同实验室的 74 个图像模型。</p>
+<p>如果你只想要配置步骤，可以跳到<a href="https://openrouter.ai/blog/tutorials/can-claude-generate-images/#how-to-make-images-in-claude-with-a-connector">如何借助 connector 在 Claude 中生成图像</a>。</p>
+<h2>太长不看（Tl;dr）</h2>
+<ul><li>Claude 没有自己的图像模型。connector 让它能调用一个模型，并返回一张真实的图片。</li><li>在 Claude app 或 Claude Code 中把 <code>https://mcp.openrouter.ai/mcp</code> 添加为 connector。你的电脑上不会安装任何东西。</li><li>在请求里指明你要的模型，或者先让 Claude 为你的任务比较各模型——这一步不计费。</li><li>2026 年 11 月 19 日，我们测试的图片每张花费在 $0.035 到 $0.10 之间，而且每一张都在你批准之后才被收费。</li><li>图片会出现在对话里，或以免登录、24 小时内有效的链接形式送达。</li></ul>
+<h2>Claude 能生成图像吗？</h2>
+<p>Claude 本身无法生成照片或插图。Anthropic 于 2026 年 3 月 16 日发布的<a href="https://support.claude.com/en/articles/9002504-can-claude-produce-images">帮助中心文章</a>称，“Claude 不像图像生成工具那样生成照片或插图”，并指出它会用 HTML 和 SVG 构建示意图与图表。其<a href="https://platform.claude.com/docs/en/build-with-claude/vision">视觉文档</a>补充说：“Claude 只是一个图像理解模型。它可以解读和分析图像，但不能生成、产出、编辑、操纵或创造图像。”</p>
+<p>connector 是 Claude 对“添加到应用中的 MCP 服务器”的叫法。<a href="https://openrouter.ai/docs/guides/overview/mcp-server">OpenRouter MCP server</a> 就是其中一个 connector，它可触达 <a href="https://openrouter.ai/models?output_modalities=image">OpenRouter 图像模型目录</a> 中的每一个模型。</p>
 <h2>Claude 用图像模型做什么？</h2>
-<p>图像模型负责绘制，Claude 负责绘制之外的工作。仅有一个图像工具时，周边工作才是难点：你自己写详细提示词，图片到达后你还要对照请求检查，并把文件搬到该去的地方。</p>
-<p>在 Claude 中，一句简短请求就够了，因为详细提示词由 Claude 来写。指定你要的模型，例如：“你能生成一张图片吗？一只红狐在雪夜的街灯下读平装书，柔和的水彩风格。使用 Seedream 5.5。”在我们的运行中，Claude 把这句话扩展成了更长的提示词。Claude 在每张图片前请求批准，批准界面会显示它写好的模型和提示词，让你在产生任何费用前阅读。</p>
-<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images-approval.jpg" alt="Claude Desktop 的批准卡片，写着“Claude 想要使用 Generate an image from OpenRouter”，显示模型、提示词以及 Deny、Allow for this task 和 Allow once 按钮。"></p>
-<p>Claude 也能查看结果。在我们的 Claude 应用运行中，图片返回后，Claude 已经看到了图片并对其进行了描述。</p>
-<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images-claude-app.jpg" alt="Claude Desktop 显示一张生成的水彩画：雪中街灯下阅读的红狐，在应用内以完整尺寸打开。"></p>
-<p>在我们的 Claude Code 运行中，Claude 打开了保存的文件，并报告说书是绿色精装，而我们要求的是平装。发生这种情况时，无需你亲自对照请求检查图片，不一致就会被发现。当你要求修改时，Claude 可以把第一张图作为参考传回模型，在我们的运行中，场景的其余部分保持不变。详见<a href="https://openrouter.ai/blog/tutorials/can-claude-generate-images/#can-claude-edit-an-image-it-generated">Claude 能编辑它生成的图片吗？</a>。</p>
-<h2>如何在 Claude 中用连接器生成图片</h2>
-<p>将 OpenRouter MCP server 添加为自定义连接器。它是远程服务器，因此你的电脑上无需安装任何东西。你需要一个带有额度的 OpenRouter 账户。</p>
-<p>在 Claude 应用中：</p>
-<ul><li>打开 Settings &gt; Connectors，添加自定义连接器。</li><li>将其命名为 <code>OpenRouter MCP</code>，并将远程 MCP server URL 设置为 <code>https://mcp.openrouter.ai/mcp</code>。OAuth 字段留空。</li><li>添加连接器，然后连接它。浏览器中会打开 OpenRouter 的同意页面。</li><li>批准此连接专用的密钥。它在 7 天内过期，你可以随时断开连接。</li></ul>
-<p>有些组织不允许自定义连接器，因此工作账户上可能没有此选项。</p>
-<p>在 Claude Code 中，运行：</p>
+<p>图像模型负责画，Claude 负责画之外的工作。只用一个图像工具时，这些周边工作恰恰是难的部分：你得自己写详细的 prompt，图片到了之后还得对照请求检查一遍，再把文件搬到它该去的地方。</p>
+<p>在 Claude 里，一句简短的请求就够了，因为详细的 prompt 由 Claude 来写。指明你要用的模型，例如：“你能生成一张图吗？雪夜里，一只红狐在路灯下读一本平装书，柔和的水彩风格。用 Seedream 5.5。”在我们的运行中，Claude 把这一行扩写成了更长的 prompt。每张图之前 Claude 都会请求批准，而那张批准卡片会显示模型和它写好的 prompt，因此你可以在任何计费发生之前先读一遍。</p>
+<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images-approval.jpg" alt="Claude Desktop 的批准卡片，标题为 “Claude wants to use Generate an image from OpenRouter”，显示模型、prompt，以及 Deny、Allow for this task 和 Allow once 三个按钮。"></p>
+<p>Claude 还能查看结果。在我们的 Claude app 运行中，图片返回之后，Claude 看过这张图并把它描述了出来。</p>
+<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images-claude-app.jpg" alt="Claude Desktop 中展示的一张生成好的水彩图：雪地里，一只红狐在路灯下读书，图片在应用内以全尺寸打开。"></p>
+<p>在我们的 Claude Code 运行中，Claude 打开了保存好的文件，并报告说我们要的是平装书，而图上是一本绿色精装书。碰上这种情况，不用你自己拿图和请求逐项比对，不匹配就会被抓出来。当你要求做改动时，Claude 可以把第一张图作为参考传回给模型；在我们的运行中，场景的其余部分保持不变。详情见<a href="https://openrouter.ai/blog/tutorials/can-claude-generate-images/#can-claude-edit-an-image-it-generated">Claude 能编辑它生成的图像吗？</a>。</p>
+<h2>如何借助 connector 在 Claude 中生成图像</h2>
+<p>把 OpenRouter MCP server 添加为自定义 connector。它是远程服务器，因此你的电脑上不会安装任何东西。你需要一个带有余额的 OpenRouter 账户。</p>
+<p>在 Claude app 中：</p>
+<ul><li>打开 Settings &gt; Connectors，添加一个自定义 connector。</li><li>把它命名为 <code>OpenRouter MCP</code>，并把远程 MCP 服务器的 URL 设为 <code>https://mcp.openrouter.ai/mcp</code>。OAuth 字段留空。</li><li>添加这个 connector，然后连接它。浏览器中会打开 OpenRouter 的授权同意页。</li><li>批准专用于这条连接的 key。它在 7 天内过期，你随时可以断开连接。</li></ul>
+<p>有些组织不允许使用自定义 connector，所以在工作账户上这个选项可能不存在。</p>
+<p>在 Claude Code 中运行：</p>
 <pre><code>claude mcp add --transport http openrouter https://mcp.openrouter.ai/mcp
 claude mcp login openrouter</code></pre>
-<p><a href="https://openrouter.ai/docs/guides/overview/mcp-server">OpenRouter MCP server 指南</a>中有每个客户端的逐点击步骤。</p>
-<h2>Claude 应该使用哪个图像模型？</h2>
-<p>指定你要的模型，因为没有单一模型适合所有任务。我们将相同的狐狸提示词发给四个模型，采用 1:1 宽高比和默认分辨率，以比较外观和价格。</p>
-<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images-four-models.jpg" alt="相同的狐狸提示词在四个图像模型上的效果，呈 2×2 网格：GPT Image 2.6 Flare、Seedream 5.5、MAI-Image-2.7 和 Nano Banana 2.1。"></p>
-<p>每一行是一次单独测量，按 2026 年 11 月 19 日的计费。每个模型页面有其当前价格。</p>
-<table><thead><tr><th>模型</th><th>Slug</th><th>时间</th><th>每张成本</th><th>尺寸</th></tr></thead><tbody><tr><td><a href="https://openrouter.ai/openai/gpt-image-2.6-flare">GPT Image 2.6 Flare</a></td><td><code>openai/gpt-image-2.6-flare</code></td><td>26.4 s</td><td>$0.094</td><td>1024×1024</td></tr><tr><td><a href="https://openrouter.ai/bytedance-seed/seedream-5-5">Seedream 5.5</a></td><td><code>bytedance-seed/seedream-5-5</code></td><td>20.9 s</td><td>$0.035</td><td>2048×2048</td></tr><tr><td><a href="https://openrouter.ai/microsoft/mai-image-2.7">MAI-Image-2.7</a></td><td><code>microsoft/mai-image-2.7</code></td><td>34.0 s</td><td>$0.035</td><td>1024×1024</td></tr><tr><td><a href="https://openrouter.ai/google/gemini-nano-banana-2.1">Nano Banana 2.1</a></td><td><code>google/gemini-nano-banana-2.1</code></td><td>13.2 s</td><td>$0.040</td><td>1024×1024</td></tr></tbody></table>
-<p>最贵的图片成本超过最便宜的两倍（$0.094 对 $0.035），而 Seedream 5.5 并列最低价，返回的图片却最大。四个模型中有三个添加了我们未要求的文字，比如书名或悬挂招牌，因此请在请求中加入“无文字”。如需更广泛的比较，请阅读<a href="https://openrouter.ai/blog/insights/image-generation-models-compared/">图像生成模型比较</a>。</p>
-<p>你可以让 Claude 在花费任何费用前为你的任务比较模型，因为查询模型不收费。当我们询问纯白背景的产品照片该用哪个模型时，Claude 从五个选项中推荐了 Nano Banana 2.1，为每个选项给出了理由和注意事项，并说明候选名单来自目录数据而非测试图片。它提出在我们同意后对前三名进行付费测试。</p>
-<p>如果你不指定模型，Claude 会自行选择。在我们的 Claude Code 运行中，它选择了 <a href="https://openrouter.ai/black-forest-labs/flux-3-image">FLUX 3 Image</a>，而在一次 Claude 应用运行中，它选择了一个较旧的模型。</p>
+<p><a href="https://openrouter.ai/docs/guides/overview/mcp-server">OpenRouter MCP server 指南</a>给出了每个客户端逐步点击的操作步骤。</p>
+<h2>Claude 该用哪个图像模型？</h2>
+<p>指明你要的模型，因为没有哪个模型适合所有任务。我们把同一个狐狸 prompt 发给了四个模型，采用 1:1 宽高比和默认分辨率，以比较观感与价格。</p>
+<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images-four-models.jpg" alt="同一个狐狸 prompt 在四个图像模型上的效果，呈两行两列的网格：GPT Image 2.6 Flare、Seedream 5.5、MAI-Image-2.7 和 Nano Banana 2.1。"></p>
+<p>每一行是一次单独的测量，按 2026 年 11 月 19 日的计费口径。每个模型的页面上都有它的当前价格。</p>
+<table><thead><tr><th>模型</th><th>Slug</th><th>耗时</th><th>每张图成本</th><th>尺寸</th></tr></thead><tbody><tr><td><a href="https://openrouter.ai/openai/gpt-image-2.6-flare">GPT Image 2.6 Flare</a></td><td><code>openai/gpt-image-2.6-flare</code></td><td>26.4 s</td><td>$0.094</td><td>1024×1024</td></tr><tr><td><a href="https://openrouter.ai/bytedance-seed/seedream-5-5">Seedream 5.5</a></td><td><code>bytedance-seed/seedream-5-5</code></td><td>20.9 s</td><td>$0.035</td><td>2048×2048</td></tr><tr><td><a href="https://openrouter.ai/microsoft/mai-image-2.7">MAI-Image-2.7</a></td><td><code>microsoft/mai-image-2.7</code></td><td>34.0 s</td><td>$0.035</td><td>1024×1024</td></tr><tr><td><a href="https://openrouter.ai/google/gemini-nano-banana-2.1">Nano Banana 2.1</a></td><td><code>google/gemini-nano-banana-2.1</code></td><td>13.2 s</td><td>$0.040</td><td>1024×1024</td></tr></tbody></table>
+<p>最贵的一张图比最便宜的贵了一倍多（$0.094 对 $0.035），而 Seedream 5.5 在并列最低价的同时给出了最大的图。四个模型里有三个加上了我们没要求的文字，比如书名或悬挂的招牌，所以在请求里加上 “no text”。想看更全面的比较，请读<a href="https://openrouter.ai/blog/insights/image-generation-models-compared/">图像生成模型对比</a>。</p>
+<p>你可以先让 Claude 为你的任务比较各模型，再花任何钱，因为查询模型不计费。当我们问纯白背景的产品图该用哪个模型时，Claude 从五个选项里推荐了 Nano Banana 2.1，为每个选项都给出理由和一条注意事项，并说明这份候选清单来自目录数据，而非测试图片。它提出，在我们同意之后可以对前三名跑付费测试。</p>
+<p>如果你不指明模型，Claude 会自己选一个。在我们的 Claude Code 运行中，它选了 <a href="https://openrouter.ai/black-forest-labs/flux-3-image">FLUX 3 Image</a>；有一次 Claude app 运行中，它选了一个更旧的模型。</p>
 <h2>费用是多少？</h2>
-<p>每张图片的成本就是生成它的模型的价格，在 2026 年 11 月 19 日的运行中为 $0.035 到 $0.10。Claude 自身的使用量单独计算。</p>
-<p>宽高比和分辨率会改变价格。GPT Image 2.6 Flare 在 16:9 下成本为 $0.058，而 1:1 下为 $0.094；FLUX 3 Image 在 16:9 和 2K 分辨率（2736×1536）下成本为 $0.10。</p>
-<p>连接器的密钥初始设有 $10 的支出上限，你可以在同意页面编辑。在我们的运行中，Claude 还在回复中重复了每张图片的成本。</p>
+<p>每张图的花费就是生成它的那个模型的价格，在我们 2026 年 11 月 19 日的运行中是 $0.035 到 $0.10。Claude 自身的用量另计。</p>
+<p>宽高比和分辨率会改变价格。GPT Image 2.6 Flare 在 16:9 下花费 $0.058，在 1:1 下为 $0.094；FLUX 3 Image 在 16:9、2K 分辨率（2736×1536）下花费 $0.10。</p>
+<p>connector 的 key 初始带有 $10 的消费上限，你可以在授权同意页上修改它。在我们的运行中，Claude 还会在回复里复述每张图的成本。</p>
 <h2>为什么图片有时以链接形式返回？</h2>
-<p><code>generate-image</code> 工具在可以签发链接时返回链接，否则返回图片本身。链接可在任何浏览器中打开，无需登录，有效期为 24 小时。</p>
-<p>在 Claude 应用中，图片显示在聊天中，Claude 也能看到它。链接会在你的浏览器中打开，在我们的运行中，Claude 没有看到那张图片，也无法在聊天中展示它。在 Claude Code 中，链接是更简单的情况，因为图片会直接下载到你的项目中。直接返回的图片会留在 Claude Code 自己的文件夹中，直到你批准复制它。</p>
-<p>你得到哪一种在请求之间会变化，即使对同一个模型也是如此。在 2026 年 11 月 19 日我们的小规模运行中，Seedream 5.5 在 4 次中 4 次返回图片本身，GPT Image 2.6 Flare 在 4 次中 3 次返回链接，FLUX 3 Image 在 2 次中 2 次返回链接，Nano Banana 2.1 各返回一次。如果你想要图片出现在 Claude 应用内，Seedream 5.5 对我们每次都做到了。如果你得到的是链接，打开它即可。</p>
-<h2>Claude Code 能生成图片吗？</h2>
-<p>可以。Claude Code 用同一个连接器生成图片，并直接放入你的项目。说明文件保存到哪里以及哪个页面使用它，例如：“这个落地页需要一张主视觉插图。使用 OpenRouter 生成一张：一只红狐在雪夜的街灯下读平装书，柔和的水彩风格。保存到 assets/hero.png 并添加到 index.html。”</p>
-<p>在我们的运行中，Claude Code 将 FLUX 3 Image 生成的 2736×1536 插图保存到该路径，并添加到了页面。完整配方请参阅 cookbook <a href="https://openrouter.ai/docs/cookbook/coding-agents/generate-images-in-claude-code">从 Claude Code 生成和编辑图片</a>。</p>
-<h2>Claude 能编辑它生成的图片吗？</h2>
-<p>可以，前提是第一张结果以链接形式返回，且模型接受图像输入。Claude 将该链接作为参考传回模型，并附上你要求的修改。</p>
-<p>在我们的 Claude Code 会话中，我们要求给狐狸加上红围巾，并让平装书有纯红色封面，保存覆盖同一文件。Claude 将第一张图传回 FLUX 3 Image，两项修改都出现了，而场景的其余部分保持不变。</p>
-<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images-claude-code-edit.jpg" alt="两版水彩狐狸插图并排：第一次请求，以及后续请求添加红围巾和红书后的同一场景。"></p>
-<p>没有链接，Claude 就无法复用该图片。在 Claude 应用中，当结果以图片本身形式返回后，要求加红围巾会根据描述生成一张新图片。场景变了，Claude 也说明了这一点。</p>
+<p><code>generate-image</code> 工具在能签发链接时返回链接，否则返回图片本身。链接可以在任意浏览器中打开，无需登录，24 小时内有效。</p>
+<p>在 Claude app 中，图片会显示在对话里，Claude 也能看到它。链接则会在你的浏览器中打开；在我们的运行中，Claude 并没有看到那张图，也无法在对话里显示它。在 Claude Code 中，链接反而是更省事的情况，因为图片会直接下载到你的项目里。直接返回的图片则留在 Claude Code 自己的文件夹中，直到你批准复制它。</p>
+<p>即使是同一个模型，返回哪种形式也会随请求而变化。在我们 2026 年 11 月 19 日的那一小批运行中，Seedream 5.5 四次全部返回图片本身，GPT Image 2.6 Flare 四次里有三次返回链接，FLUX 3 Image 两次全部返回链接，Nano Banana 2.1 则各返回一次。如果你希望图片就在 Claude app 里，Seedream 5.5 对我们每次都做到了。如果你拿到的是链接，打开它。</p>
+<h2>Claude Code 能生成图像吗？</h2>
+<p>可以。Claude Code 用同一个 connector 生成图像，并把它们直接放进你的项目。说清文件存到哪里、哪个页面会用到它，例如：“这个落地页需要一张 hero 插图。用 OpenRouter 生成一张：雪夜里，一只红狐在路灯下读一本平装书，柔和的水彩风格。保存到 assets/hero.png，并加进 index.html。”</p>
+<p>在我们的运行中，Claude Code 把 FLUX 3 Image 生成的一张 2736×1536 插图保存到了那个路径，并把它加进了页面。完整做法见 cookbook <a href="https://openrouter.ai/docs/cookbook/coding-agents/generate-images-in-claude-code">从 Claude Code 生成和编辑图像</a>。</p>
+<h2>Claude 能编辑它生成的图像吗？</h2>
+<p>能，前提是第一次结果以链接形式返回，且该模型接受图像输入。Claude 会把那个链接连同你要求的改动一起作为参考传回给模型。</p>
+<p>在我们的 Claude Code 会话中，我们要求给狐狸加一条红围巾，并把平装书换成素红封面，覆盖保存到同一个文件。Claude 把第一张图传回给 FLUX 3 Image，两处改动都出现了，而场景的其余部分保持不变。</p>
+<p><img src="https://openrouter.ai/blog/images/can-claude-generate-images-claude-code-edit.jpg" alt="两版水彩狐狸插图并排对比：第一版是原始请求，第二版是追加请求加上红围巾与红书之后的同一场景。"></p>
+<p>没有链接时，Claude 无法复用那张图。在 Claude app 中，如果返回的是图片本身，之后要求一条红围巾，得到的会是一张按描述重新生成的新图。场景变了，Claude 也说明了这一点。</p>
 <h2>常见问题</h2>
-<h3>Claude 能创建真实图片吗？</h3>
-<p>不能自行创建。没有连接器时，Claude 用 HTML 和 SVG 构建图表。借助 OpenRouter MCP server 这样的连接器，它调用图像模型并返回真实图片。</p>
-<h3>为什么 Claude 不能生成图片？</h3>
-<p>Claude 没有图像生成模型。Anthropic 的文档将其描述为“仅是图像理解模型”，因此它可以读取你给它的图片，而绘制图片需要单独的图像模型，这由连接器提供。</p>
-<h3>Claude 生成图片的方式和图像生成器一样吗？</h3>
-<p>不一样。图像模型负责绘制，Claude 根据你的请求写提示词，并能检查结果。</p>
+<h3>Claude 能创建真实的图像吗？</h3>
+<p>单靠自己不行。没有 connector 时，Claude 用 HTML 和 SVG 构建示意图与图表。有了 OpenRouter MCP server 这类 connector，它会调用图像模型，返回一张真实的图片。</p>
+<h3>为什么 Claude 不能生成图像？</h3>
+<p>Claude 没有图像生成模型。Anthropic 的文档把它描述为“只是一个图像理解模型”，因此它能读懂你给它的图片；而要画出一张图，需要另一个图像模型，由 connector 提供。</p>
+<h3>Claude 生成图像的方式和图像生成器一样吗？</h3>
+<p>不一样。图像模型负责画，Claude 根据你的请求写出 prompt，并能检查结果。</p>
 <h3>Claude 能生成视频吗？</h3>
-<p>本文未测试视频。OpenRouter MCP 连接器还有 <code>generate-video</code>、<code>generate-speech</code> 和 <code>transcribe-audio</code> 工具，它们随相同的设置一起提供。</p>
-<h2>后续步骤</h2>
-<p>将其连接到 Claude 应用或 Claude Code，生成你的第一张图片：</p>
-<ul><li><a href="https://openrouter.ai/docs/guides/overview/mcp-server">OpenRouter MCP server 指南</a>中有每个客户端的设置和完整工具列表。</li><li>cookbook <a href="https://openrouter.ai/docs/cookbook/coding-agents/generate-images-in-claude-code">从 Claude Code 生成和编辑图片</a>是项目图片的配方。</li><li><a href="https://openrouter.ai/models?output_modalities=image">OpenRouter 上的图像模型</a>页面有当前价格。</li></ul>]]></content:encoded>
+<p>本文没有测试视频。OpenRouter MCP connector 还有 <code>generate-video</code>、<code>generate-speech</code> 和 <code>transcribe-audio</code> 工具，配置方式相同。</p>
+<h2>下一步</h2>
+<p>把它连接到 Claude app 或 Claude Code，生成你的第一张图：</p>
+<ul><li><a href="https://openrouter.ai/docs/guides/overview/mcp-server">OpenRouter MCP server 指南</a> 里有每个客户端的配置方法和完整的工具清单。</li><li>cookbook <a href="https://openrouter.ai/docs/cookbook/coding-agents/generate-images-in-claude-code">从 Claude Code 生成和编辑图像</a> 是给项目配图的配方。</li><li><a href="https://openrouter.ai/models?output_modalities=image">OpenRouter 上的图像模型</a> 页面列出了当前价格。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] 困惑度与智能</title>

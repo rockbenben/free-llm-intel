@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-26 12:36:44**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-26 17:52:40**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -25,11 +25,11 @@
 - 页面：[新闻 / 更新](https://www.anthropic.com/news)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📰 **最新文章**（官方源抓取于 2026-11-26，标题自动汉化）：
-  1. [将工件转化为 Mac 和 Windows 应用程序](https://claude.com/resources/articles/install-as-app)（2026-11-24）
-  2. [MCP 服务器现在可以与 Claude 一起传送技能、运行任务等](https://claude.com/resources/articles/skills-over-mcp-tasks-and-more)（2026-11-24）
+  1. [把 artifacts 变成 Mac 和 Windows 应用](https://claude.com/resources/articles/install-as-app)（2026-11-24）
+  2. [MCP 服务器现在能交付技能、运行任务，还能与 Claude 做更多事](https://claude.com/resources/articles/skills-over-mcp-tasks-and-more)（2026-11-24）
   3. [Enterprise Frontier Safeguards 的零数据保留现已进入测试阶段](https://claude.com/resources/articles/zero-data-retention-with-enterprise-frontier-safeguards)（2026-11-23）
   4. [KPMG 的 Todd Lohr 谈 AI：当你的数据也是客户的数据](https://claude.com/resources/articles/kpmg-todd-lohr-on-ai-when-your-data-is-also-your-clients-data)（2026-11-23）
-  5. [保护编码代理的企业指南](https://claude.com/resources/articles/enterprise-guide-to-securing-coding-agents)（2026-11-23）
+  5. [保护编码 agent 的企业指南](https://claude.com/resources/articles/enterprise-guide-to-securing-coding-agents)（2026-11-23）
   - 📄 完整文章归档（共 173 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### OpenAI (openai)
@@ -39,7 +39,7 @@
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [官方 RSS](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-26，标题自动汉化）：
-  1. [GPT-6 模型展示了内在的蛋白质设计能力](https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities)（2026-11-24）
+  1. [GPT-6 模型展现出内在的蛋白质设计能力](https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities)（2026-11-24）
   2. [用 Astra 寻找遥远的行星](https://openai.com/index/searching-for-distant-planets-with-astra)（2026-11-24）
   3. [Intentful 如何借助 dots 腾出更多时间发展业务](https://openai.com/business/customer-stories/intentful-dots)（2026-11-24）
   4. [iFood 如何将编码 agent 推广到 15,000 个代码仓库](https://openai.com/business/customer-stories/ifood)（2026-11-24）
@@ -193,9 +193,9 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-26，标题自动汉化）：
-  1. [科学家为人工智能代理划定界限](https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents)（2026-11-25）
-  2. [带有 CUGA 的印度语语音代理](https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga)（2026-11-25）
-  3. [在一台 RTX PRO 6000 上进行爬山 Inkling 2 Mini 推理](https://huggingface.co/blog/inkling-2-mini-inference-hillclimb)（2026-11-25）
+  1. [科学家为 AI agent 划下的界线](https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents)（2026-11-25）
+  2. [用 CUGA 搭建印度语语音 agent](https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga)（2026-11-25）
+  3. [在单台 RTX PRO 6000 上爬山调优 Inkling 2 Mini 推理](https://huggingface.co/blog/inkling-2-mini-inference-hillclimb)（2026-11-25）
   4. [Microduck 避障：使用 Isaac Lab 和 Newton 的 Sim2Real 工作流程](https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance)（2026-11-24）
   5. [如何构建与维护 agentic 评估](https://huggingface.co/blog/agentic-evals)（2026-11-23）
   - 📄 完整文章归档（共 946 篇）：[huggingface.md](llm-news/huggingface.md)
@@ -203,7 +203,7 @@
 ### OpenRouter (openrouter)
 - 📡 [官方 RSS](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-26，标题自动汉化）：
-  1. [Claude可以生成图像吗？是的，带连接器](https://openrouter.ai/blog/tutorials/can-claude-generate-images/)（2026-11-23）
+  1. [Claude 能生成图像吗？可以，借助连接器](https://openrouter.ai/blog/tutorials/can-claude-generate-images/)（2026-11-23）
   2. [推理服务提供商的数据处理事件](https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/)（2026-11-22）
   3. [OpenRouter 现在为 Hugging Face 提供推理支持](https://openrouter.ai/blog/announcements/hugging-face-inference-providers/)（2026-11-16）
   4. [管理密钥访问控制收紧](https://openrouter.ai/blog/announcements/scoped-management-keys/)（2026-11-16）
@@ -314,7 +314,7 @@
 ### Together AI (together_ai)
 - 📡 [官方 RSS](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-26，标题自动汉化）：
-  1. [Hurdle 简介：对您的 API、技能和文档运行代理评估](https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs)（2026-11-25）
+  1. [Hurdle 简介：在你的 API、技能与文档上运行 agent 评估](https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs)（2026-11-25）
   2. [推出可抢占计算：同样的算力，一半的价格](https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price)（2026-11-24）
   3. [安全事件：2026年6月和7月请求的 Prompt 泄露](https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026)（2026-11-21）
   4. [Qwen4 Max 已上线 Together AI](https://www.together.ai/blog/qwen4-max)（2026-11-21）

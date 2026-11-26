@@ -10,9 +10,9 @@
 
 ## 全部文章（共 946 篇，按日期倒序；无日期条目列于最后）
 
-1. [科学家为人工智能代理划定界限](https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents)（2026-11-25） <!--orig:Where scientists draw the line on AI agents-->
-2. [带有 CUGA 的印度语语音代理](https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga)（2026-11-25） <!--orig:An Indic Voice Agent with CUGA-->
-3. [在一台 RTX PRO 6000 上进行爬山 Inkling 2 Mini 推理](https://huggingface.co/blog/inkling-2-mini-inference-hillclimb)（2026-11-25） <!--orig:Hill-climbing Inkling 2 Mini inference on one RTX PRO 6000-->
+1. [科学家为 AI agent 划下的界线](https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents)（2026-11-25） <!--orig:Where scientists draw the line on AI agents-->
+2. [用 CUGA 搭建印度语语音 agent](https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga)（2026-11-25） <!--orig:An Indic Voice Agent with CUGA-->
+3. [在单台 RTX PRO 6000 上爬山调优 Inkling 2 Mini 推理](https://huggingface.co/blog/inkling-2-mini-inference-hillclimb)（2026-11-25） <!--orig:Hill-climbing Inkling 2 Mini inference on one RTX PRO 6000-->
 4. [Microduck 避障：使用 Isaac Lab 和 Newton 的 Sim2Real 工作流程](https://huggingface.co/blog/nvidia/microduck-obstacle-avoidance)（2026-11-24） <!--orig:Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac Lab and Newton-->
 5. [如何构建与维护 agentic 评估](https://huggingface.co/blog/agentic-evals)（2026-11-23） <!--orig:How to build and maintain an agentic evaluation-->
 6. [RoboTrack：面向真实环境中机器人操作的点跟踪](https://huggingface.co/blog/allenai/robotrack)（2026-11-23） <!--orig:RoboTrack: Point tracking for real-world robotic manipulation-->

@@ -11,7 +11,7 @@
 
 ## 全部文章（共 1427 篇，按日期倒序；无日期条目列于最后）
 
-1. [GPT-6 模型展示了内在的蛋白质设计能力](https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities)（2026-11-24） <!--orig:GPT-6 models demonstrate intrinsic protein-design capabilities-->
+1. [GPT-6 模型展现出内在的蛋白质设计能力](https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities)（2026-11-24） <!--orig:GPT-6 models demonstrate intrinsic protein-design capabilities-->
 2. [用 Astra 寻找遥远的行星](https://openai.com/index/searching-for-distant-planets-with-astra)（2026-11-24） <!--orig:Searching for distant planets with Astra-->
 3. [Intentful 如何借助 dots 腾出更多时间发展业务](https://openai.com/business/customer-stories/intentful-dots)（2026-11-24） <!--orig:How Intentful uses dots to make more time for growth-->
 4. [iFood 如何将编码 agent 推广到 15,000 个代码仓库](https://openai.com/business/customer-stories/ifood)（2026-11-24） <!--orig:How iFood scales coding agents across 15,000 repositories-->

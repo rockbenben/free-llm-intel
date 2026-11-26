@@ -10,11 +10,11 @@
 
 ## 全部文章（共 173 篇，按日期倒序；无日期条目列于最后）
 
-1. [将工件转化为 Mac 和 Windows 应用程序](https://claude.com/resources/articles/install-as-app)（2026-11-24） <!--orig:Turn artifacts into Mac and Windows apps-->
-2. [MCP 服务器现在可以与 Claude 一起传送技能、运行任务等](https://claude.com/resources/articles/skills-over-mcp-tasks-and-more)（2026-11-24） <!--orig:MCP servers can now ship skills, run tasks, and more with Claude-->
+1. [把 artifacts 变成 Mac 和 Windows 应用](https://claude.com/resources/articles/install-as-app)（2026-11-24） <!--orig:Turn artifacts into Mac and Windows apps-->
+2. [MCP 服务器现在能交付技能、运行任务，还能与 Claude 做更多事](https://claude.com/resources/articles/skills-over-mcp-tasks-and-more)（2026-11-24） <!--orig:MCP servers can now ship skills, run tasks, and more with Claude-->
 3. [Enterprise Frontier Safeguards 的零数据保留现已进入测试阶段](https://claude.com/resources/articles/zero-data-retention-with-enterprise-frontier-safeguards)（2026-11-23） <!--orig:Zero data retention with Enterprise Frontier Safeguards is now in beta-->
 4. [KPMG 的 Todd Lohr 谈 AI：当你的数据也是客户的数据](https://claude.com/resources/articles/kpmg-todd-lohr-on-ai-when-your-data-is-also-your-clients-data)（2026-11-23） <!--orig:KPMG's Todd Lohr on AI when your data is also your clients' data-->
-5. [保护编码代理的企业指南](https://claude.com/resources/articles/enterprise-guide-to-securing-coding-agents)（2026-11-23） <!--orig:The enterprise guide to securing coding agents-->
+5. [保护编码 agent 的企业指南](https://claude.com/resources/articles/enterprise-guide-to-securing-coding-agents)（2026-11-23） <!--orig:The enterprise guide to securing coding agents-->
 6. [推出 Claude Ship](https://claude.com/resources/articles/introducing-claude-ship)（2026-11-23） <!--orig:Introducing Claude Ship-->
 7. [Anthropic 宣布完成 IPO：承销商全额行使超额配售选择权，同步私募配售亦告完成](https://www.anthropic.com/news/ipo-close)（2026-11-20） <!--orig:Anthropic announces closing of initial public offering, including full exercise of underwriters’ option to purchase additional shares, and closing of concurrent private placement-->
 8. [Anthropic 公布 IPO 发行价](https://www.anthropic.com/news/anthropic-prices-initial-public-offering)（2026-11-18） <!--orig:Anthropic prices initial public offering-->

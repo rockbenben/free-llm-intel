@@ -9,7 +9,7 @@
 
 ## 全部文章（共 105 篇，按日期倒序；无日期条目列于最后）
 
-1. [Hurdle 简介：对您的 API、技能和文档运行代理评估](https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs)（2026-11-25） <!--orig:Introducing Hurdle: Run agent evals on your API, skills, and docs-->
+1. [Hurdle 简介：在你的 API、技能与文档上运行 agent 评估](https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs)（2026-11-25） <!--orig:Introducing Hurdle: Run agent evals on your API, skills, and docs-->
 2. [推出可抢占计算：同样的算力，一半的价格](https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price)（2026-11-24） <!--orig:Introducing preemptible compute: the same compute, half the price-->
 3. [安全事件：2026年6月和7月请求的 Prompt 泄露](https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026)（2026-11-21） <!--orig:Security event: Prompt leakage for requests in June and July of 2026-->
 4. [Qwen4 Max 已上线 Together AI](https://www.together.ai/blog/qwen4-max)（2026-11-21） <!--orig:Qwen4 Max is live on Together AI-->
