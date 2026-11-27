@@ -3,6 +3,16 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-11-27
+### 七牛云 Conatus（`qiniu`）
+- 摘要：Conatus 限免活动截止时间延长至 2026 年 12 月 31 日 23:59
+- `validity`：2026-10-24 00:00 至 2026-11-30 23:59（北京时间）；结束后停止调用，不自动转付费、不自动切换其他模型 → 2026-10-24 00:00 至 2026-12-31 23:59（北京时间）；结束后停止调用，不自动转付费、不自动切换其他模型
+- `promotions`：1024 程序员节限时活动（2026-10-24 00:00 起，至 2026-11-30 23:59） → 1024 程序员节限时活动（2026-10-24 00:00 起，至 2026-12-31 23:59）
+- `openai_compat`：{"summary": "实名每日 1 亿 Token；单笔充值满 100 元后每日 10 亿（活动至 11-30）", "api_key_label": "七牛云 API Key", "api_key_url": "https://portal.qiniu.com/", "base_url": "https://api.qnaigc.com/v1", "models": "qiniu/conatus-free"} → {"summary": "实名每日 1 亿 Token；单笔充值满 100 元后每日 10 亿（活动至 12-31）", "api_key_label": "七牛云 API Key", "api_key_url": "https://portal.qiniu.com/", "base_url": "https://api.qnaigc.com/v1", "models": "qiniu/conatus-free"}
+### Morph Labs（`morph_labs`）
+- 摘要：开源模型列表新增 Kimi K3.1 Pro Abliterated（需申请审批），纳入统一的每月 200 次免费请求池。
+- `free_models`：托管开源模型（OpenAI 兼容）：`morph-kimik31`（Kimi K3.1 Pro，1M 上下文）、`morph-glm53-744b`（GLM-5.3 744B，1M）、`morph-glm53flash`（GLM-5.3-Flash，1M）、`morph-dsv41flash` / `morph-dsv41flash-1017` / `morph-dsv41flash-abliterated`（DeepSeek V4.1 Flash，1M，其中 Abliterated 标注 Gated 需申请） —— 免费层 **每月 200 次请求**（200 req free every month，按月重置）；另有 Ultra 订阅 **$200/月不限量** Kimi K3.1 与 DeepSeek V4.1 Flash、专用 API：Fast Apply `morph-v3-fast`（$0.80 输入 / $1.20 输出每 1M，262K）、`morph-v3-large`（$0.90/$1.90 每 1M，262K）、WarpGrep `morph-warp-grep-v2`（$0.80/100K，Pro 1M）、Compact `morph-compact`（$0.20/$0.50 每 1M，1M）、System One `reflex`（$0.042 输入 / $0.002 cached 每 1M，64K）、Router `morph-router`（$0.005/次） —— 均按量单独计价，无独立的每月免费算力额度 → 托管开源模型（OpenAI 兼容）：`morph-kimik31`（Kimi K3.1 Pro，1M 上下文）、`morph-kimik3-abliterated`（Kimi K3.1 Pro Abliterated，1M，标注 Gated 需申请）、`morph-glm53-744b`（GLM-5.3 744B，1M）、`morph-glm53flash`（GLM-5.3-Flash，1M）、`morph-dsv41flash` / `morph-dsv41flash-1017` / `morph-dsv41flash-abliterated`（DeepSeek V4.1 Flash，1M，其中 Abliterated 标注 Gated 需申请） —— 免费层 **每月 200 次请求**（200 req free every month，按月重置）；另有 Ultra 订阅 **$200/月不限量** Kimi K3.1 与 DeepSeek V4.1 Flash、专用 API：Fast Apply `morph-v3-fast`（$0.80 输入 / $1.20 输出每 1M，262K）、`morph-v3-large`（$0.90/$1.90 每 1M，262K）、WarpGrep `morph-warp-grep-v2`（$0.80/100K，Pro 1M）、Compact `morph-compact`（$0.20/$0.50 每 1M，1M）、System One `reflex`（$0.042 输入 / $0.002 cached 每 1M，64K）、Router `morph-router`（$0.005/次） —— 均按量单独计价，无独立的每月免费算力额度
+
 ## 2026-11-26
 ### OpenAI（`openai`）
 - 摘要：API 定价页更新 GPT-6.2 系列模型（gpt-6.2-astra 与 gpt-6.2-sol），API 仍无免费模型层并全量按需付费

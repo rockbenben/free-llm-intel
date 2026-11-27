@@ -7,7 +7,288 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Introducing the llama.cpp benchmark dashboard for AMD Ryzen…</title>
+      <link>https://huggingface.co/blog/ggml-org/llamacpp-amd-bench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llamacpp-amd-bench?li=1</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing the llama.cpp benchmark dashboard for AMD Ryzen and Radeon</description>
+      <content:encoded><![CDATA[<h1>Introducing the llama.cpp benchmark dashboard for AMD Ryzen and Radeon</h1>
+<p>Team Article</p>
+<p>Published November 26, 2026</p>
+<p><a href="https://huggingface.co/angt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67289c93ff90038d9a6e5675/klana6SP95tj8-VwXnIYC.png" alt="angt's avatar"></a></p>
+<p>angt</p>
+<p>angt</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy's avatar"></a></p>
+<p>Simon Pagezy</p>
+<p>pagezyhf</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/badaoui"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg" alt="Abdennacer Badaoui's avatar"></a></p>
+<p>Abdennacer Badaoui</p>
+<p>badaoui</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p>The <a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">llama.cpp × AMD Benchmark</a> dashboard is available on Hugging Face. It lets you track prompt processing and text generation performance across llama.cpp builds, models, and quantizations, so you can explore how local inference performs on AMD Ryzen and Radeon hardware.</p>
+<p>Local inference performance changes as models, kernels, and builds evolve. We want those changes to be easy to inspect for any AMD developer: pick a hardware, a model and a build, compare quantizations, and follow performance over time. The benchmark workflow and underlying results are public, so you can also inspect how we benchmark inference performance.</p>
+<h2>Quick start</h2>
+<p>You can choose <strong>Hardware</strong>, <strong>Model</strong>, and <strong>llama.cpp build</strong> in the Configuration sidebar. The current hardware choices are Radeon 8060S (gfx1151) and Radeon AI Pro R9700S (gfx1201).</p>
+<ul><li>In the <strong>Overview</strong> tab, compare quantizations for one hardware, model, and build. The two charts show PP512 (512 input tokens, no generation) and TG128 (128 generated tokens), both starting at context depth zero.</li><li>In the <strong>Build history</strong> tab, track PP512 and TG128 across all recorded builds for the selected hardware, model, and quantization.</li><li>In the <strong>Context</strong> <strong>scaling</strong> tab, see how token-generation throughput changes as the existing context grows, for the selected build, hardware, model, and quantization.</li></ul>
+<h2>What the numbers mean</h2>
+<p>The dashboard shows two separate tests, both measured in tokens per second:</p>
+<table><thead><tr><th>Test</th><th>Workload</th><th>What it helps you assess</th></tr></thead><tbody><tr><td><strong>PP512</strong></td><td>Process 512 input tokens</td><td>How quickly the model processes a prompt</td></tr><tr><td><strong>TG128</strong></td><td>Generate 128 tokens</td><td>How quickly the model produces output</td></tr></tbody></table>
+<p>Both tests start at context depth zero (<code>n_depth=0</code>). PP512 measures processing 512 input tokens without generation; TG128 measures generating 128 tokens without a pre-existing context. The plotted value is the mean throughput (<code>avg_ts</code>). These are useful reference workloads, while the Context scaling tab lets you explore token generation throughput as the context grows.</p>
+<h2>How we run the benchmarks</h2>
+<p>We benchmark the prebuilt binaries distributed through <a href="https://github.com/ggml-org/llama-install.sh">llama-install.sh</a>, the build and installation project behind <a href="https://llama.app/">llama.app</a>. The public <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1151.yml">gfx1151</a> and <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1201.yml">gfx1201</a> workflows are scheduled weekly and run the standard benchmarks using the <a href="https://github.com/ggml-org/llama.cpp/tree/master/tools/llama-bench">llama-bench tool</a> with Flash Attention on and off, with 10 repetitions per configuration.</p>
+<p>The model set evolves and currently includes Inkling 2 Mini, Qwen, Gemma, gpt-oss, and LFM models, covering both dense and mixture-of-experts architectures. Available GGUF formats include <code>Q4_K_M</code>, <code>Q8_0</code>, other quantizations, and higher-precision formats such as <code>BF16</code> and <code>F16</code>.</p>
+<h2>Inspect and reuse the results</h2>
+<p>The explorer reads directly from the public <a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">ggml-org/install.sh-benches-data Storage Bucket</a> on Hugging Face. The <strong>data source</strong> link beside the chart title opens the folder for the selected build, hardware, and model.</p>
+<p>Standard results use <code>&lt;build&gt;/&lt;hardware&gt;/&lt;model&gt;/&lt;quant&gt;.jsonl</code>. Workload sweeps use the same folder <code>&lt;quant&gt;-tg.jsonl</code> filename.</p>
+<p>Use them to investigate a result, make your own charts, or compare with a local run.</p>
+<h2>Join the conversation</h2>
+<p>Thanks to the AMD team for providing test infrastructure and helping validate the setup! Try the <a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">dashboard</a>, inspect the <a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">data</a>, and let us know which models and workloads you would like to see next.</p>
+<p>More from this author</p>
+<h2>How we optimized our workflows and overcame GitHub Actions limitations</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>8</p>
+<p>November 16, 2026</p>
+<p>Hot</p>
+<h2>llama.cpp v1.0.0 : A stronger foundation for the local AI ecosystem</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>238</p>
+<p>November 13, 2026</p>
+<h3>Community</h3>]]></content:encoded>
+    </item>
+    <item>
+      <title>Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and…</title>
+      <link>https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin?li=1</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference</description>
+      <content:encoded><![CDATA[<h1>Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference</h1>
+<p>Enterprise + Article</p>
+<p>Published November 26, 2026</p>
+<p><a href="https://huggingface.co/emelryan"><img src="https://huggingface.co/avatars/2adfa4eb57b97fde904fa6a74140db0d.svg" alt="Ryan Chesler's avatar"></a></p>
+<p>Ryan Chesler</p>
+<p>emelryan</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/mwawrzos"><img src="https://huggingface.co/avatars/84ba29cc389815553389bb852c3fb1e9.svg" alt="Marek Wawrzos's avatar"></a></p>
+<p>Marek Wawrzos</p>
+<p>mwawrzos</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/steve-nvidia"><img src="https://huggingface.co/avatars/a7118be5506d7e88145aaec13e88d248.svg" alt="Steve Han's avatar"></a></p>
+<p>Steve Han</p>
+<p>steve-nvidia</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p>We recently released <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse">NVIDIA Nemotron 3.5 Parse</a></strong>, a compact document model that turns page images into structured data for retrieval-augmented generation (RAG) and agents.</p>
+<p>Now we’re building on that release with <strong>synthetic training datasets, a fine-tuning recipe, and a DFlash2 speculator for faster inference</strong>. We’re also sharing how we trained Parse 3.5: first teaching document understanding through supervised fine-tuning, then using reinforcement learning to improve accuracy, consistency, and reliable completion.</p>
+<h2>What Parse 3.5 produces</h2>
+<p>Parse extracts content from pages of documents into reading order, assigns content classes such as headings, paragraphs, tables, and charts, and returns bounding boxes that locate the content. Tables and charts become structured records that can power downstream document processing applications.</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png" alt="An operations brief with predicted regions on the left and its structured extraction on the right."></a></p>
+<p><em>Figure 1. Actual model output from a synthetic operations brief, showing the connection between the page and its structured representation.</em></p>
+<p>This latest version of Parse significantly extends its ability to read charts and tables, especially in more difficult and ambiguous cases. For example, bar charts or other plots that do not have any marked numeric values. The model is able to infer values by looking at the axes and height of the bar to derive these. Tables can be especially tricky because the structure is so meaningful, a shifted row or column can totally change the interpretation and meaning. These advancements have been largely powered by synthetic data generation, rendering variations of charts and tables with known ground truth and then training our model to reverse this process.</p>
+<p>We are open-sourcing <strong>three datasets used in the Parse 3.5 training</strong>:</p>
+<ul><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Charts-V1">Synthetic Charts V1 — 9.98M examples</a>:</strong> rendered charts and structured annotations for learning categories, series, and numerical values.</li><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Tables-V1">Synthetic Tables V1 — 1M examples</a>:</strong> rendered HTML tables with targets that preserve rows, columns, headers, and cell relationships.</li><li><strong><a href="https://huggingface.co/datasets/nvidia/OCR-Synthetic-Multilingual-v2">OCR Synthetic Multilingual v2 — 7.9M examples</a>:</strong> synthetic document pages with Parse-format targets across varied fonts and layouts, for multilingual OCR and structured page reading.</li></ul>
+<p>Each release includes images, annotations, generation documentation, and the training format. Use these pairs to fine-tune document models or create new variations for a target document type or language.</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png" alt="A bar chart without printed bar values, alongside the released model’s extracted values of 18, 27, 39, and 54."></a></p>
+<p><em>Figure 2. Parse recovers 18, 27, 39, and 54 from the chart geometry</em></p>
+<h2>SFT teaches the capability; RLVR improves consistency</h2>
+<p>We trained Parse 3.5 with two phases of training. <strong>Supervised fine-tuning (SFT)</strong> spanning text, layout, tables, charts, and multilingual documents. Learning to predict structured targets established the general capability of reading a page and representing its contents.</p>
+<p>We then continued with <strong>reinforcement learning with verifiable rewards (RLVR)</strong>, using <strong>Group Relative Policy Optimization (GRPO)</strong>. Rewards check the quality of sampled extractions. For example, a chart extraction can earn a better reward for recovering the correct series and values, producing a usable structure, and finishing without repeatedly generating the same content.</p>
+<p>A difficult page can have several valid representations. These checks give the model flexibility to find a correct answer without prescribing one exact token sequence, while discouraging looping and unfinished output.</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png" alt="A matched training comparison showing extraction gains after GRPO and fewer repetition flags and token-cap hits."></a></p>
+<p><em>Figure 3. A controlled comparison of SFT and GRPO with matched evaluation settings. These are development checkpoints, separate from the final released model. Loop counts use a repetition check. <a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md#training-and-adaptation-figures">Methods</a>.</em></p>
+<p>The matched comparison shows the benefit: loop-flagged outputs fall from <strong>126 to 29 pages—about 77% fewer</strong>—and outputs reaching the 9,000-token limit fall from <strong>185 to 35</strong>. Overall score improves from <strong>66.24 to 71.38</strong>, including <strong>+5.18 points in tables</strong> and <strong>+4.15 in charts</strong>.</p>
+<h2>Faster inference through architecture and DFlash2</h2>
+<p>A parser must generate substantial text and structure for every page. Alongside the training work, we optimized how Parse 3.5 processes images and decodes those outputs.</p>
+<table><thead><tr><th><strong>Component</strong></th><th><strong>Parse 2.0</strong></th><th><strong>Parse 3.5</strong></th></tr></thead><tbody><tr><td>Page preprocessing</td><td>Fixed 2048 × 1664 canvas</td><td>NaViT dynamic rectangular inputs</td></tr><tr><td>Image-to-text connection</td><td>Encoder–decoder cross-attention</td><td>Compressed visual tokens as a causal prefix</td></tr><tr><td>Decoder self-attention</td><td>Multi-head attention</td><td>GQA-8: 16 query heads, 8 key/value heads</td></tr><tr><td>Speculative decoding</td><td></td><td>One-token lookahead (MTP); optional DFlash2</td></tr></tbody></table>
+<p><strong>NaViT preprocessing</strong> adapts the input shape to the page. A visual adapter compresses the image sequence, and the text decoder consumes it as a prefix, replacing encoder–decoder cross-attention. <strong>Grouped-query attention with eight key/value heads (GQA-8)</strong> reduces the decoder’s attention-cache memory.</p>
+<p>The built-in <strong>multi-token prediction (MTP)</strong> head supplies one-token lookahead. Our <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse/tree/main/dflash2">DFlash2 speculator</a></strong> goes further: a small draft model proposes <strong>up to 32 tokens ahead</strong>, and Parse verifies the proposals together. In the measured 32-token configuration, it averages about <strong>14 accepted draft tokens</strong>, or roughly <strong>15 output tokens of progress per verification step</strong> including the target token.</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png" alt="Throughput curves comparing Parse 2.0 with Parse 3.5 base, MTP, and DFlash2."></a></p>
+<p><em>Figure 4. Native single-pass throughput on one H200, BF16, using the same 2,078 pages. Parse 2.0 uses one trial per point; Parse 3.5 shows three-trial medians. Arrows show the gain from Parse 3.5 base to DFlash2. <a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md">Measurement details</a>.</em></p>
+<p>In the native single-pass benchmark on one H200 in BF16, DFlash2 increased throughput <strong>7.62×</strong> at concurrency 1 and <strong>1.52×</strong> at concurrency 512, compared with Parse 3.5 with speculative decoding disabled. At 512, Parse 3.5 reaches <strong>13.48 pages/s</strong> without speculation and <strong>20.44 pages/s</strong> with DFlash2, versus <strong>2.98</strong> for Parse 2.0. Those are <strong>4.53×</strong> and <strong>6.86×</strong> the Parse 2.0 throughput, respectively.</p>
+<p>Fast parsing gives us room to revisit difficult regions. Start with a full-page prediction, then add focused reprocessing where the document needs it:</p>
+<ul><li><strong>Single pass -</strong> Parse the full page once for text, layout, tables, and charts.</li><li><strong>Double pass - use for dense tables and small chart details.</strong> Crop the table and chart regions found by the parser, re-parse them at higher detail, and merge the refinements into the page output.</li><li><strong>Triple pass -</strong> Instead of only using the models full page parsing bounding boxes, use a second pass of the model in detection mode in order to get verification that all boxes have been accurately found and text has not been missed and re-extract any found charts or tables in a third pass</li></ul>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png" alt="Single-pass page parsing, double-pass crop refinement, and triple-pass refinement with an independent region detector."></a></p>
+<p><em>Figure 5. Additional stages focus computation on difficult regions. Multiple crops can require multiple requests.</em></p>
+<p>In the published reference evaluation, double and triple pass add <strong>2.18 and 2.46 ParseBench points</strong> over single pass. The additional work lets applications trade some throughput for better extraction in difficult regions. <a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse#single-double-or-triple-pass">Reference results and serving measurements</a>.</p>
+<h2>Apply the same SFT/RLVR approach to your documents</h2>
+<p>We are sharing a <strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/index.md">Parse fine-tuning recipe</a></strong> that takes developers through paired data generation, <strong>NeMo Automodel SFT</strong>, and <strong>NeMo RL GRPO</strong>, using vLLM to generate candidate answers.</p>
+<p>The worked example uses a synthetic dental form with an <strong>odontogram</strong>: a chart showing teeth, planned procedures, and affected tooth surfaces. Before adaptation, Parse reads the printed tooth numbers but misses the intended procedure table. SFT teaches it to associate each marked tooth with a procedure and its placement on the tooth.</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png" alt="A synthetic dental page, the base model’s tooth-number transcription, and the intended tooth/procedure/surface table."></a></p>
+<p><em>Figure 6. A recorded recipe example: after SFT, all six chart rows match the target. <a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/examples/dental-adaptation.md">Full image and native training label</a>.</em></p>
+<p>RLVR then reinforces accuracy and consistent completion. In the dental reference run, the estimated first-attempt success rate (sampled pass@1) rose from 0.00% for the base model to 95.85% after SFT and 96.58% after RLVR.</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png" alt="Dental sampled pass@1: 95.85% after SFT and 96.58% after RLVR, with the y-axis shown from 90% to 100%"></a></p>
+<p><em>Figure 7. Matched evaluation on 256 held-out forms from the same synthetic generator, with eight samples per page. Success requires natural completion, exact chart content, and error-free normalized page text. <a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/workflow.md#evaluation-and-dental-example-results">Evaluation protocol</a>.</em></p>
+<p>To adapt the recipe, supply your own image/label pairs and a verifier: checks that determine whether an extraction is correct. The included <strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/tree/main/src/nemotron/recipes/parse/document_rewards">document reward components</a></strong> cover text fidelity, bounding boxes, tables, chart facts, and completion. Combine the components relevant to your task, add schema checks, and use completion and repetition checks to discourage looping or unfinished output.</p>
+<p>We are excited that the community has extended and improved Parse for <strong><a href="https://huggingface.co/iapp/OpenThai2.1-OCR-Markdown-20261118">Thai</a></strong>, <strong><a href="https://huggingface.co/Reza2kn/Bina-0.4-Koochik">Persian/Farsi</a></strong>, and <strong><a href="https://huggingface.co/g3ida/absir-arabic-ocr-mini">Arabic</a></strong> already and we hope that these additional datasets and fine-tuning recipes will help encourage these efforts and future models.</p>
+<p>We thank Denis Ovchinnikov for his work on vLLM integration and independent performance validation, Oliver Holworthy for improving the fine-tuning recipe's runtime setup and reproducibility, and Bo Liu for technical review.</p>
+<h2>Models mentioned in this article 3</h2>
+<h2>Datasets mentioned in this article 4</h2>
+<p>More from this author</p>
+<h2>Microduck Obstacle Avoidance: A Sim2Real Workflow with Isaac Lab and Newton</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>13</p>
+<p>November 24, 2026</p>
+<h2>Build a Robot Pick-and-Place Simulation with SimReady Assets</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>51</p>
+<p>November 13, 2026</p>
+<h3>Community</h3>
+<h2>Models mentioned in this article 3</h2>
+<h2>Datasets mentioned in this article 4</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Swarms, Flocks, Gangs: How to build, train, and evaluate mul…</title>
+      <link>https://huggingface.co/blog/training-swarms</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/training-swarms?li=1</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems</description>
+      <content:encoded><![CDATA[<h1>Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems</h1>
+<p>Published November 26, 2026</p>
+<p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw's avatar"></a></p>
+<p>ben burtenshaw</p>
+<p>burtenshaw</p>
+<p><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt="Kashif Rasul's avatar"></a></p>
+<p>Kashif Rasul</p>
+<p>kashif</p>
+<p><em>Part 1: Understanding swarms and training to communicate</em></p>
+<p>This is an aspirational blog series for aspirational readers. We (us, the community, you) want to build our own agent swarms because they're exciting, challenging, and increasingly capable. Furthermore, it would be extremely cool if we could train our own agents to work in a swarm. And exponentially cool if those swarms used small and affordable models.</p>
+<p>That's what we'll do in this series! Each blog post will include some context on building swarms, alongside reproducible examples that you can run on Hugging Face Jobs. This post's example takes about five hours on two H200s, which costs roughly $50.</p>
+<p>Multi-Agent Systems are hard to get working. Adding agents changes the agent's context, the budget, and in turn the complexity of the whole system. Mixing agents' context together through communication is not an inherent performance boost compared to a single agent. The model needs to learn to communicate through training. How do we define what models should learn? And which model weights do we update when we're dealing with many agents?</p>
+<p>In this series, we'll work through those problems with an educational overview and practical examples. Each post will introduce a question, build a small system, and examine what happens and how you can reproduce it. This first example starts with four agents, a shared language model, and a simple verifiable task. It's ideal to implement yourself, to tinker with, and to learn from.</p>
+<p>First, we'll start off with some context on swarms.</p>
+<h2>The rise of the swarms</h2>
+<p>We've heard a lot about swarms over the past few months, both good and bad. In September this year, <a href="https://openai.com/index/navier-stokes-solution/">OpenAI announced</a> that a swarm of roughly 10,000 agents had found a singularity in the 3D Navier-Stokes equations, one of the Millennium Prize problems. A smaller group of nearly 100 agents had already disproved regularity for the unforced 3D Euler equations, a closely related open problem.</p>
+<p>But swarms don't always work on the problems we want them to. <a href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/">METR's investigation</a> of the Hugging Face incident found that around 1,200 OpenAI agents, which were supposed to be isolated, had found a way to exchange over 70,000 messages and files. Around 700 joined an attack on Hugging Face while looking for ways to fool their benchmark's scorer, without instruction to do so.</p>
+<p>A big swarm isn't, by itself, evidence that cooperation helped. <a href="https://www.dwarkesh.com/p/noam-brown">Noam Brown estimates</a> that less than 10% of the Navier-Stokes result came from multi-agent cooperation. In <a href="https://www.anthropic.com/research/multiagent-systems">Anthropic's vulnerability-finding experiment</a>, coordinated agents found more bugs than independent agents, but also searched more code and used more tokens. When the comparison was restricted to the same directories, the results per million tokens were about the same.</p>
+<h2>Did cooperation help, or did we just spend more?</h2>
+<p>Start with the simplest case. If four agents each try a task independently, the chance that at least one gets it right is higher than with a single attempt, as long as we can tell which answer is correct. That makes a useful baseline for a multi-agent system, but it doesn't show that the agents helped each other. They may simply have had more tries.</p>
+<p>Four attempts also cost four times as much. So the fairer comparison is at an equal budget: if each of four agents gets a quarter of the total tokens, can they still beat one agent that spends all of them? We can only find out by testing, because the answer depends on the task, the model and how the work is divided.</p>
+<blockquote>This series keeps asking one question: when agents communicate, does it actually help, or are we just spending more compute?</blockquote>
+<p>We understand that question through this simple expectation.</p>
+<p>Figure 1. Sketch of the expectation we want to test: compare communicating and independent agents at matched budgets.</p>
+<p>We'll treat agent count as a scaling dimension, alongside tokens and model size. Sometimes adding agents will help. Sometimes coordination will consume the budget we hoped to save. The point is to measure both. We won't start with 10,000 agents. We'll start with a small team on a task that we can check easily.</p>
+<h2>Multi-agent Systems and Reinforcement Learning</h2>
+<p>Multi-agent reinforcement learning has studied cooperation and competition long before language models were called swarms.</p>
+<p>A single agent's task is a Markov decision process: observe, act, get a reward. In a team, everyone shares the reward, but each agent sees only part of the world. This is a decentralized partially observable Markov decision process: teammates, but no one sees the whole picture.</p>
+<p>This creates three practical problems. First, teammates keep changing while each agent learns. Second, credit assignment: when the team succeeds, which actions deserve the credit? A winning team can include weak actions, and we may end up rewarding them. Third, a message changes what other agents observe, so communication is part of the policy we're training.</p>
+<p>A common solution is centralized training with decentralized execution: training uses information from the whole team, but each agent acts only on its own observations. Our first example follows this pattern with a shared team reward.</p>
+<p>Agents can also be organized in different ways. Two useful starting points are:</p>
+<ul><li><strong>A hierarchy.</strong> A lead agent assigns work to workers and collects their results. Anthropic's Research system works this way, with a separate context for each worker. Kimi K2.5's PARL trains only the orchestrator and keeps the subagents frozen, so training a multi-agent system doesn't mean updating every component. See <a href="https://www.anthropic.com/research/multi-agent-research-system">Anthropic's system description</a> and <a href="https://www.kimi.com/en/blog/kimi-k2-5">Kimi's technical blog</a>.</li><li><strong>A distributed team.</strong> Peers send each other messages and decide when to read their inboxes. No lead agent assigns the actions. This is the setup we'll use here, following the information-aggregation task in <a href="https://huggingface.co/papers/2611.08615">s³: Simple Scaling of Swarms via Cooperative Multi-agent RL</a>.</li></ul>
+<h2>Our first experiment: four agents ordering numbers</h2>
+<p>We'll reproduce the information-sharing task from <a href="https://huggingface.co/papers/2611.08615">Simple Scaling of Swarms</a> because it's interpretable and straightforward to implement. Four agents share a small language model and learn to pool what each of them knows.</p>
+<p>Each agent receives one integer from 1 to 99. It knows its own assignment and its teammates' names. It does not initially know the other agents' numbers. For example, four private assignments might be &quot;five&quot;, &quot;twenty-six&quot;, &quot;five&quot; and &quot;seventy-eight&quot;. Duplicates stay in the list, so a correct final answer is:</p>
+<pre><code>#### [5, 5, 26, 78]</code></pre>
+<p>The team succeeds when <strong>at least one agent submits the complete, correctly sorted list</strong>. One correct answer is enough; success does not require all four agents to answer correctly. An agent cannot reliably infer the other private assignments without information from its teammates.</p>
+<p>This means the task does not yet test Figure 1 directly. Each agent holds information the others need, so a single agent, or a team without messaging, cannot succeed however many retries it gets. Instead, the task tests the precondition behind Figure 1: can a small shared policy learn to communicate at all, and how many tokens does that cost? A later post moves to a task that a single agent can solve alone, where the matched-budget comparison is meaningful.</p>
+<p>The main communication tools are <code>message(to, text)</code>, <code>read_messages()</code>, and <code>check_notifications()</code>. A notification tells an agent that unread messages exist; reading its inbox makes their contents available. Agents can send direct messages or broadcast to everyone.</p>
+<p>We defined a four-agent system using <strong>one shared Qwen3-0.6B policy</strong>, with separate contexts and private inputs. We are not training four different models. The prompt explains the task and the tools, including the need to share assignments.</p>
+<p>Figure 2. The task and training loop. The private numbers illustrate a possible successful episode; this graphic is not a recorded conversation or a claim about the learned protocol at update 75.</p>
+<h3>A team reward and eight attempts at each problem</h3>
+<p>In this post, a <em>team</em> means one episode: four agents attempting one problem once. A successful team receives a reward reduced by the tokens it uses. A failed team receives zero:</p>
+<pre><code>team allowance = 4 × (8,192 work tokens + 1,024 final-answer tokens)
+               = 36,864 tokens
+
+reward = success × (1 − 0.25 × min(1, generated team tokens / 36,864))</code></pre>
+<p>For illustration, a correct team using half its allowance receives 0.875. There is no separate reward for sending messages. The incentive is to solve the task while using fewer generated tokens.</p>
+<p>For every training problem, we collect eight independent team attempts. Their rewards are normalized within that group. An attempt that does better than its group average gets a positive advantage; one that does worse gets a negative advantage. Every agent in the same team receives that team's advantage, including an agent whose own final answer was wrong.</p>
+<p>In <a href="https://github.com/huggingface/trl">TRL</a>, each agent's sampled tokens form a training row. Its incoming messages and tool results provide context. The loss is averaged within each team and then across teams, so longer conversations do not give a team more weight.</p>
+<blockquote>Our results come from the original experiment, which used 256 team attempts per update (32 problems with eight attempts each). The walkthrough uses TRL's default of --teams-per-update 128, which works out to about 150 team attempts per update.</blockquote>
+<h3>Our Results</h3>
+<p>Over 75 steps, training success rose from <strong>6.6% to 82.3%</strong>, comparing the first and last five updates. At checkpoint 75, the four-agent team solved <strong>26 of 32 held-out problems (81.25%)</strong>. <a href="https://huggingface.co/papers/2611.08615">The paper</a> reports 93.2% four-agent success after 200 updates.</p>
+<p>The team also used <strong>37.4% fewer tokens per attempt</strong>, falling from about 13k to 8k. This improvement accompanied more active information sharing: broadcasts increased from 2.38 to 5.73 per team, even as total token use fell.</p>
+<p>Figure 3. The blue curve describes training batches of 256 team attempts, collected before each update. Orange points are held-out checks after the indicated update.</p>
+<p>The team also used fewer tokens later in training. Comparing the first five updates with updates 71–75:</p>
+<table><thead><tr><th><strong>Training metric</strong></th><th><strong>Updates 1–5, mean</strong></th><th><strong>Updates 71–75, mean</strong></th></tr></thead><tbody><tr><td>Success</td><td>6.56%</td><td>82.34%</td></tr><tr><td>Generated tokens per team</td><td>12,826.9</td><td>8,026.0</td></tr><tr><td>Messages per team</td><td>3.48</td><td>6.28</td></tr><tr><td>Broadcasts per team</td><td>2.38</td><td>5.73</td></tr><tr><td>Teams with one broadcast per agent</td><td>4.06%</td><td>18.20%</td></tr></tbody></table>
+<p>That is a <strong>37.4% reduction in generated tokens per training team</strong> between those windows. At batch 75 itself, the mean was 7,624 tokens per team. These are training measurements; we did not retain held-out token-efficiency measurements for the trained checkpoint.</p>
+<p>Notice that fewer tokens did not mean fewer messages. More agents began participating but broadcasting became more common, rather than direct messaging. Generated tokens include reasoning and tool calls as well as message bodies, so message count alone does not tell us how much text the team produced.</p>
+<p>Figure 4. Top: training token use and a trailing five-update mean. Bottom: mutually exclusive communication classes, based on sent-message events. A team is classified first by whether some agent never sends, then whether any direct message occurs, then whether every agent sends exactly one broadcast; the remaining teams repeat broadcasts.</p>
+<h3>More retries or a trained team?</h3>
+<p>No agent can solve the problem alone, so the closest equivalent of &quot;a single agent with more retries&quot; is the untrained team with more retries. The training data already contains this comparison. Each update collects eight attempts per problem, and the task's answers are easy to check, so we can count a problem as solved when any of its eight attempts succeeded. Early in training, that count gives the untrained team's best-of-8 success rate:</p>
+<table><thead><tr><th></th><th><strong>Success</strong></th><th><strong>Generated tokens per problem</strong></th></tr></thead><tbody><tr><td>Untrained team, best of 8 attempts (updates 1–5)</td><td>37.5%</td><td>about 103,000</td></tr><tr><td>Trained team, one attempt (updates 71–75)</td><td>82.3%</td><td>about 8,000</td></tr></tbody></table>
+<p>With eight retries, the untrained team solves fewer than half the problems and spends about 13 times as many tokens as one attempt from the trained team. Read this as an estimate. Both rows use training problems rather than held-out ones, and updates 2–5 already sample from a slightly trained policy.</p>
+<h3>Infrastructure</h3>
+<p>The model is small, but the rollouts are not. Each update generates millions of tokens of agent conversation at contexts of up to 40k tokens. We used one H200 for the trainer and seven H200s running vLLM rollout engines to get through those rollouts quickly, and kept each worker's eight attempts together. The walkthrough below runs the same task on two GPUs. Here are the infra details:</p>
+<table><thead><tr><th><strong>Setting</strong></th><th><strong>Recorded experiment</strong></th></tr></thead><tbody><tr><td>Shared policy</td><td>Qwen3-0.6B</td></tr><tr><td>Logical agents per team</td><td>4</td></tr><tr><td>Problems per update</td><td>32</td></tr><tr><td>Team attempts per problem</td><td>8</td></tr><tr><td>Work / final tokens per agent</td><td>8,192 / 1,024</td></tr><tr><td>Learning rate / temperature</td><td>5e-7 / 1.0</td></tr><tr><td>Training problem pool</td><td>1,024 generated problems</td></tr><tr><td>Reporting endpoint</td><td>Preserved checkpoint 75</td></tr><tr><td>Execution</td><td>1 trainer GPU + 7 rollout GPUs</td></tr></tbody></table>
+<h2>Practical example: Train your own swarm</h2>
+<p>The figures above describe our original 75-update experiment. In this walkthrough we'll run <a href="https://github.com/huggingface/trl/tree/main/examples/async_grpo_s3_aggregation">TRL's swarm example</a> on Hugging Face Jobs. One H200 serves the shared Qwen3-0.6B policy with vLLM and a second H200 trains it.</p>
+<h3>1. Create a bucket for the run</h3>
+<p>Sign in with a Hugging Face account that can run Jobs and create buckets. Replace <code>YOUR_USERNAME</code> with your Hub username.</p>
+<blockquote>Use a fresh bucket for each run so earlier measurements stay available.</blockquote>
+<pre><code>uv tool install 'huggingface_hub==2.4.0'
+hf auth login
+BUCKET=&quot;YOUR_USERNAME/swarm-trl-$(date -u +%Y%m%d-%H%M%S)&quot;
+hf buckets create &quot;$BUCKET&quot;</code></pre>
+<h3>2. Run the TRL example on Hugging Face Jobs</h3>
+<p>Save the script below as <code>train-swarm.sh</code> in your current directory.</p>
+<p><code>train-swarm.sh</code></p>
+<pre><code>set -eu
+git clone --depth 1 https://github.com/huggingface/trl /tmp/trl
+cd /tmp/trl
+example=examples/async_grpo_s3_aggregation
+if [ ! -f &quot;$example/async_grpo_s3_aggregation.py&quot; ]; then
+  git fetch --depth 1 origin refs/pull/8424/head
+  git checkout --detach FETCH_HEAD
+fi
+git rev-parse HEAD &gt; /results/trl-revision.txt
+python -m pip install -e &quot;.[vllm,kernels]&quot; &quot;vllm==0.32.0&quot; datasets httpx trackio
+
+base=Qwen/Qwen3-0.6B
+url=http://127.0.0.1:8000
+export TRACKIO_DIR=/tmp/trackio
+serve() {
+  CUDA_VISIBLE_DEVICES=0 VLLM_SERVER_DEV_MODE=1 vllm serve &quot;$@&quot; \
+    --host 127.0.0.1 --max-model-len 40960 --max-num-seqs 512 --enable-prefix-caching &amp;
+  server=$!
+  until curl -fs &quot;$url/health&quot; &gt;/dev/null; do kill -0 &quot;$server&quot;; sleep 5; done
+}
+evaluate() {
+  python &quot;$example/evaluate.py&quot; --url &quot;$url&quot; --model &quot;$1&quot; --name &quot;$2&quot; \
+    --episodes 192 --concurrency 64 --out &quot;/results/$2.jsonl&quot;
+}
+
+serve &quot;$base&quot; --logprobs-mode processed_logprobs --weight-transfer-config &quot;{\&quot;backend\&quot;:\&quot;nccl\&quot;}&quot;
+evaluate &quot;$base&quot; base
+CUDA_VISIBLE_DEVICES=1 accelerate launch --num_processes 1 --mixed_precision bf16 \
+  &quot;$example/async_grpo_s3_aggregation.py&quot; --vllm-url &quot;$url&quot; \
+  --updates 50 --teams-per-update 128 --concurrent-teams 128 \
+  --report-to trackio --output-dir /tmp/swarm
+cp -r &quot;$TRACKIO_DIR&quot; /tmp/swarm/checkpoint-50 /results/
+kill &quot;$server&quot;
+wait &quot;$server&quot; || true
+serve /tmp/swarm/checkpoint-50 --logprobs-mode processed_logprobs
+evaluate /tmp/swarm/checkpoint-50 trained</code></pre>
+<p>The command below sends its contents to the job. Inside the job, vLLM serves the shared policy on GPU 0. GPU 1 runs TRL's <code>async_grpo_s3_aggregation.py</code> for 50 updates with Trackio. TRL's <code>evaluate.py</code> scores the base model and checkpoint 50 on the same 192 held-out problems. That is a larger set than the 32-problem checks in our results, which gives tighter error bars. The job saves both scores, the checkpoint, Trackio data and the exact Git commit to your bucket.</p>
+<pre><code>hf jobs run --detach --flavor h200x2 --timeout 12h \
+  --volume &quot;hf://buckets/$BUCKET:/results&quot; \
+  -- vllm/vllm-openai:v0.32.0 bash -c &quot;$(cat train-swarm.sh)&quot;</code></pre>
+<p>One TRL rollout contains a whole team conversation. The trainer compares eight attempts at the same problem and gives all four agents in an attempt the same advantage. Each update uses about 150 team attempts. TRL packs micro-batches by token count rather than by team, so the <code>--teams-per-update 128</code> setting is approximate. The <code>--report-to trackio</code> flag records training metrics at every update.</p>
+<p>This shorter run is cheaper than our original experiment, and it stops earlier on the learning curve. TRL's run of this example took about 4.8 hours on two H100s and reached 60.9% held-out success at checkpoint 50.</p>
+<blockquote>To run closer to our original experiment, change the training flags to --updates 75 --teams-per-update 256 --concurrent-teams 256, replace checkpoint-50 with checkpoint-75 in the script, and raise the job's --timeout to 24h. That is three times as many rollouts. The two codebases still differ in details such as the system prompt, so expect similar results rather than an exact replication.</blockquote>
+<h3>3. Read the results</h3>
+<p>Once the job completes, sync the bucket to a local folder. It holds the two evaluation files, the Trackio data, the TRL revision and the checkpoint-50 weights, which are the largest download. In the dashboard, compare <code>team/success</code>, <code>team/messages</code> and <code>team/tokens</code> over training. The job logs also give the held-out success rate for the base model and checkpoint 50. Each line of <code>base.jsonl</code> or <code>trained.jsonl</code> records one of those evaluation attempts.</p>
+<pre><code>hf buckets sync &quot;hf://buckets/$BUCKET&quot; ./swarm-results
+TRACKIO_DIR=&quot;$PWD/swarm-results/trackio&quot; uvx trackio show</code></pre>
+<h2>What we'll try next</h2>
+<p>This first example gives us a small environment, a shared reward and a policy that improves at pooling private information. It also shows why success, token use and communication structure need to be read together. At 75 updates, the team is solving most checked problems, but it has not converged to the cleanest communication pattern.</p>
+<p>In the coming examples, we'll take a step back from training and look at how we evaluate and analyze swarms.</p>
+<p>For now, we have something concrete to build on: four small agents, one trainable policy, a checkable task, and a reproducible way to examine what the team learned.</p>
+<h2>Papers mentioned in this article 1</h2>
+<p>More Articles from our Blog</p>
+<p>rltrlagents</p>
+<h2>Introducing harness adapters: adapt your favorite model to your harness to improve performance and cost</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63e0eea7af523c37e5a77966/B6Qs5bgr8wXcy2tPl6CVQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li><li>+6</li></ul>
+<p>158</p>
+<p>November 20, 2026</p>
+<p>llmrltrl</p>
+<h2>Async GRPO with LoRA across HF Jobs: a bucket, a proxy, and no NCCL</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
+<p>55</p>
+<p>September 10, 2026</p>
+<h3>Community</h3>
+<h2>Papers mentioned in this article 1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Where scientists draw the line on AI agents</title>
       <link>https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents</link>
@@ -6479,361 +6760,6 @@ print(result.quantile_outputs)   # quantiles</code></pre>
 <p>7</p>
 <ul><li><a href="https://huggingface.co/aboudrari"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vhoKsHAASHnAkFp9kCHYR.png" alt=""></a></li><li><a href="https://huggingface.co/happybydefault"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1640645587885-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asiddique99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ad956a599c6f5b5956ab489/R8H6LHAZS9BbGfloqKeEd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/zensaintlaurent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png" alt=""></a></li><li><a href="https://huggingface.co/mayankbhaskarr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FME67fc118KAW06M8NsbO.png" alt=""></a></li><li><a href="https://huggingface.co/iamzeid"><img src="https://huggingface.co/avatars/301da4357878770897b3f301ea6c125e.svg" alt=""></a></li></ul>
 <h2>Models mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>How Specializing the Vocabulary of SLMs Can Cut Inference Co…</title>
-      <link>https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization?li=1</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: How Specializing the Vocabulary of SLMs Can Cut Inference Cost by 77% in Real Applications</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>How Specializing the Vocabulary of SLMs Can Cut Inference Cost by 77% in Real Applications</h1>
-<p>Team Article</p>
-<p>Published October 21, 2026</p>
-<p>15</p>
-<ul><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/0074277b4edc91617019d5b43211f8cb.svg" alt=""></a></li><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/7288e407f97fa45c62e83aee9ad68a4d.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/19b3ad64ce88f2e8b8be7d7019f30e1a.svg" alt=""></a></li><li><a href="https://huggingface.co/anacsb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/0qI4aveV-RoivRDJCBdOO.png" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt=""></a></li><li><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/18094cac3217d1a105f967e53681eb56.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/bernardoaguiar"><img src="https://huggingface.co/avatars/850d728ebccddc31593f8e9a50a7c735.svg" alt="Bernardo França de Aguiar's avatar"></a></p>
-<p>Bernardo França de Aguiar</p>
-<p>bernardoaguiar</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI's avatar"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt="Gabriel Pimenta de Freitas Cardoso's avatar"></a></p>
-<p>Gabriel Pimenta de Freitas Cardoso</p>
-<p>GabrielPimenta99</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI's avatar"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/ad22fc4e8831a181f04959ae2646465b.svg" alt="Bruno Duarte's avatar"></a></p>
-<p>Bruno Duarte</p>
-<p>brunoduarte01</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI's avatar"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt="Francisco de Almeida Rocha Alves's avatar"></a></p>
-<p>Francisco de Almeida Rocha Alves</p>
-<p>falves9101</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI's avatar"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><em>Models specialized for a domain or a task by fine-tuning general open-source models, such as Qwen and Gemma, inherit a vocabulary built for many domains and general applications.</em></p>
-<p><em>In an essay grader we run in production, that vocabulary split the text the model writes most into many tokens. This article previews some results from the VocabX paper, which we will publish soon: how we specialized the vocabulary around the cost of each token rather than its frequency, and cut measured inference cost by 77% without changing the base model.</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/TYOhAFobnI4ss3UnNqMHc.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/TYOhAFobnI4ss3UnNqMHc.png" alt="Same sentence, fewer tokens: 14 tokens with the base tokenizer, 4 with VocabX"></a></p>
-<p>The tokenizer is usually treated as a fixed property of the base model, inherited and left alone. For a model specialized in a single domain, it can be one of the largest cost levers, and it is set before any training step.</p>
-<p>One of the systems we run in production is an automated grader for Portuguese essays, built on Qwen3-4B. It receives the essay, the prompt and the supporting texts, and returns a JSON assessment with a grade and a comment for each competency.</p>
-<p>The model was already small, at 4 billion parameters, and had already been trained for the task. Its tokenizer, however, was still the original Qwen3-4B one, built for many languages and many kinds of text. In the grader, it was used for a single language, Portuguese, and a single response format. That had two costs: the text the grader writes on every request took more tokens than it needed, and at every generated token the model scored a vocabulary of 151,669 entries, including many this task almost never uses.</p>
-<p>We rebuilt that vocabulary with a method we call VocabX, keeping the same base model, the same data and the same training recipe. The numbers in this article come from the current version of the paper, still under review, and may change before publication.</p>
-<h2>A Vocabulary Built for Everyone</h2>
-<p>The leading language models read and write in tokens, and the tokenizer decides how text becomes tokens. The tokenizers of the leading general-purpose models are trained on large collections of text from many domains and languages, from source code to contracts to Chinese. For a general-purpose model, that choice makes sense.</p>
-<p>For a model used in a single domain, it creates two kinds of waste at once.</p>
-<p>The first is fragmentation. The tokenizer splits into many pieces exactly what the domain repeats most. In the grader, every response starts with the same JSON envelope, the same competency names, the same evaluation phrases. In contracts, it is the boilerplate clauses. In code, the identifiers. Each of these sequences costs several tokens where one would do, and the model pays for every one of them on every request.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/K5De-hfTaOl9vUJItSijj.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/K5De-hfTaOl9vUJItSijj.png" alt="The span the grader writes in every response takes 12 tokens with the base tokenizer and 1 with VocabX"></a></p>
-<p>The second is excess. The vocabulary carries tens of thousands of entries the domain never uses, and the model computes a score for all of them at every token it generates. A model tuned to grade American school biology exams will almost never write in Chinese, yet it computes the probability of every Chinese-language token at every step. The vocabulary splits into many pieces what the domain repeats most, and carries entries the domain never uses.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/Inl5L1IDqWUBbD0Xlq-JB.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/Inl5L1IDqWUBbD0Xlq-JB.png" alt="151,669 vocabulary entries in the base tokenizer, 64,767 with VocabX"></a></p>
-<h2>Reading Is Cheap, Writing Is Expensive</h2>
-<p>The natural reaction is to count tokens and try to reduce the count. But the count is not the bill.</p>
-<p>To see why a generated token costs more, it helps to look at how inference works. It has two phases. In <em>prefill</em>, the model processes the whole input in a single pass through the network: each weight read from GPU memory is reused for every input token, and the limit is compute. In <em>decode</em>, the model generates the response one token at a time, and each token needs a full pass. Each weight read is used only a few times, and the GPU spends most of its time waiting for data to arrive from memory: the limit becomes memory bandwidth.</p>
-<p>This effect is strongest exactly where we operate: small models served with moderate batches. Batching requests splits the weight reads across them and eases the problem, but does not solve it. At every decode step, the model also reads the KV cache, the attention memory that holds the context already processed and grows with it. In the case we measured, the grader, a generated token costs 7.4 times a token read, but the ratio varies with the hardware, the problem, the batch size, the context length and other factors, and it can be larger than that. In general, the direction holds: generating costs more than reading.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/q-GjdgYd6GgXnv3-wJQsY.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/q-GjdgYd6GgXnv3-wJQsY.png" alt="In the case we measured, writing a token cost 7.4 times reading one"></a></p>
-<p>Think of a shipping company that charges per box, but charges seven times more for outgoing boxes than for incoming ones. Reducing the total number of boxes helps. Reducing the outgoing boxes helps seven times more. A method that compresses input and output equally misses most of the possible savings.</p>
-<p>The third component of the bill is the vocabulary itself. The model's last layer, the LM head, turns the internal state into a score for every possible token. To do that, it holds one row of parameters per vocabulary entry. In a model the size of Qwen3-4B, that matrix accounts for almost 10% of the parameters. It is a share that large models absorb without noticing, but it weighs on a small model.</p>
-<p>And the cost is not paid only once. The input layer looks up only the row of the token being read, but the LM head reads and multiplies the entire matrix for every generated token. Since decode is already memory-bound, every extra row is more data to move at every step. An entry the domain never uses costs exactly the same as a frequent one. That is why adding tokens can lower the count and raise the bill at the same time. VocabX does not include this term in its selection criterion, but it controls vocabulary size in two steps: the sub-word merge replaces the base vocabulary with a smaller, domain-specific one, and macros enter under a fixed budget. In the grader, the output layer went from about 152,000 to about 65,000 rows.</p>
-<h2>Why Existing Solutions Fell Short</h2>
-<p>Adapting a model's vocabulary is not a new idea. Reference methods in the literature, such as fast vocabulary transfer (FVT), multi-word tokenization (MWT) and Liquid AI's <a href="https://www.liquid.ai/blog/tokenizer-expansion">in-place tokenizer expansion</a> (in-place BPE), which continues BPE training from the original vocabulary, already reduce fragmentation. When we tested them on our problem, we found two limitations.</p>
-<p><strong>They choose tokens by frequency, not by cost.</strong> An expression that appears often in the input is worth more to them than one that appears less often in the response, even if the second is the more expensive one to serve.</p>
-<p><strong>They work on a single layer.</strong> They either adjust how words are cut into pieces, or merge whole phrases into one token. None of these three does both under the same criterion. And the grader's biggest waste was precisely in long, repeated spans such as the JSON envelope, which a sub-word method only reaches after merging each part, one by one.</p>
-<h2>How We Solved It</h2>
-<p>VocabX addresses both limitations, plus a third problem that appears on the obvious path to solving the first.</p>
-<p><strong>First, we changed the question.</strong> Instead of asking how many tokens a candidate saves, we ask how much cost and time it saves. Each eliminated token is multiplied by the price of the field it appears in: system prompt, user message or model response. In the case we measured, the grader, a token saved in the response is worth 7.4 times one saved in the input, and the vocabulary is built accordingly.</p>
-<p><strong>Second, we work on both layers at once.</strong> Back to the shipping company: you can cut boxes by packing each item better, or by recognizing that the same twelve-item kit ships every week and sending the kit in a single box. VocabX does both. At the sub-word layer, it rebuilds how domain words are cut into pieces. At the multi-word layer, it looks for whole spans that repeat, from short expressions to full lines and JSON envelopes, and turns each into a single token, which we call a macro token. Both layers are chosen under the same cost criterion, each with its own budget.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/B5Wig-4nTEutpFZlGQ6sk.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/B5Wig-4nTEutpFZlGQ6sk.gif" alt="Twelve boxes become one, and 7 tokens become one macro token"></a></p>
-<p>To find these spans, we use five miners, automatic searches for spans that repeat across the corpus, each specialized in one kind of repetition: long words, whole lines, expressions, complete sentences, and structures with punctuation such as JSON and tags. Averaged over eight corpora, the last one contributed the most, and on code it alone accounted for 17.5 points. Without all five, token reduction on the grader would drop by 55.6 points.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/_EdPyU7R3xdomvFxuadPY.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/_EdPyU7R3xdomvFxuadPY.png" alt="Two layers, one cost criterion"></a></p>
-<p><strong>Third, we estimate what the sample cannot see.</strong> Choosing tokens by cost requires knowing how much each candidate still saves after the ones already chosen. Measuring that exactly would require reprocessing the entire corpus after every choice, tens of thousands of times. A common way to do this at scale is to measure on a sample of documents, and then a candidate absent from the sample gets zero gain.</p>
-<p>An expression that appears 37 times in 50,000 documents shows up in a 400-document sample only about 26% of the time. In a contracts corpus, only 16.6% of the candidates appear in a 400-document sample; the rest are never evaluated.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/zxfdAxNxsvfBCBNeUThx5.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/zxfdAxNxsvfBCBNeUThx5.png" alt="None of the 37 occurrences lands in the 400-document sample"></a></p>
-<p>A candidate's gain has two parts. One is how much it saves over the entire corpus, and that can be counted exactly, without a sample. The other is how much of that saving is not yet covered by the tokens already chosen, and only that part needs to be estimated. For candidates the sample cannot see, we use a statistical estimate based on the behavior of the ones it can see, instead of zero. A candidate that is rare in the sample but frequent in the corpus is back in the running.</p>
-<p>That change alone, with the same sample and the same budget, raised token reduction on a contracts corpus from 44.7% to 52.8%.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/PxGLMRrjTPVYDW8rlDuBd.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/PxGLMRrjTPVYDW8rlDuBd.png" alt="With an estimate instead of zero: 44.7% to 52.8% token reduction"></a></p>
-<h2>What Changed in the Grader</h2>
-<p>To measure the real effect, we trained seven versions of the grader with the same base model, the same data, the same recipe and the same seed. The only difference between them is the tokenizer. All of them ran the same 500 requests on the same test machine, with an RTX 5090 GPU and the vLLM inference server, and cost was calculated from measured runtime.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/7CKshmOEsUkemfgL9Mopn.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/7CKshmOEsUkemfgL9Mopn.png" alt="Grader results: 77.0% cost reduction, bench score from 0.703 to 0.810"></a></p>
-<p>The model's response dropped from 350 to 101 tokens on average. Cost dropped 77.0%. Quality, measured by the bench score, which combines grading accuracy and the accuracy of screening off-topic or rule-breaking essays, rose from 0.703 to 0.810.</p>
-<p>Getting there required a course correction. The first version of the vocabulary fused each competency's grade with the surrounding JSON into a single macro token. It was the most compact option, but quality dropped: its bench score was 0.689, below the production grader's 0.703. With the grade inside the macro, each combination of grade and structure became a different variant of the same token, and the model chose both in a single step. Giving the grade its own token cost 2 extra tokens per response, raised the bench score to 0.810 and, in the measurement, was even cheaper: a 77.0% reduction, against 73.3% for the fused version.</p>
-<p>The lesson applies beyond the grader. Compression has a cost when the compressed span carries the very decision the model exists to make. The goal is not the cheapest possible vocabulary, but the cheapest one that preserves the tokens that matter.</p>
-<h2>Beyond the Grader</h2>
-<p>To find out whether the gain was specific to our case, we compared VocabX with the three reference methods on five public domains (contracts, medical papers, scientific papers, news and Python code) and three model families (Qwen3, Llama-3.1 and Gemma-3). All methods used the same mining and test documents, and the same vocabulary ceiling.</p>
-<p>VocabX compressed more than the strongest reference method in all fifteen combinations, by 1.2 to 9.3 points. In estimated inference cost, the pruned version of VocabX also led in all fifteen, with average margins of 10.2 points on Qwen3, 7.5 on Llama-3.1 and 13.6 on Gemma-3. On contracts, the pruned version reached 62.6% token reduction with 113,426 vocabulary entries, against 61.8% for the best in-place BPE configuration, which uses 207,803.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/bCCQQjpY6tU5ZAD3hXOeN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/bCCQQjpY6tU5ZAD3hXOeN.png" alt="VocabX average lead: +10.2 (Qwen3), +7.5 (Llama-3.1), +13.6 (Gemma-3) points"></a></p>
-<h2>Paying Only for the Tokens That Matter</h2>
-<p>VocabX does not make the model smarter. It makes the model stop paying for text it does not need to write piece by piece, and stop scoring a vocabulary it will never use. In our grader, that cut measured inference cost by 77%, with the same base model and the same training recipe.</p>
-<p>Specialization usually starts with data and weights. It can also start one layer earlier, in the vocabulary.</p>
-<p>The full method, the tables for every experiment and the discarded interventions will be in the VocabX paper, which we will publish soon.</p>
-<h2>Sources</h2>
-<ul><li>Dharma-AI. &quot;VocabX: Cost-Weighted Vocabulary Adaptation for Domain-Specific Language Models.&quot; In preparation (2026).</li><li>Gee, Leonidas, et al. &quot;<a href="https://aclanthology.org/2022.emnlp-industry.41/">Fast vocabulary transfer for language model compression</a>.&quot; EMNLP Industry Track (2022).</li><li>Gee, Leonidas, et al. &quot;Multi-word tokenization for sequence compression.&quot; EMNLP Industry Track (2023).</li><li>Smith, Jimmy T.H., et al. &quot;<a href="https://arxiv.org/abs/2607.15232">In-Place Tokenizer Expansion for Pre-trained LLMs</a>.&quot; arXiv:2607.15232 (2026).</li></ul>
-<h2>Further Reading</h2>
-<ul><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management-pt2">Same Cluster, 33 Points More Utilization: What Changed Was the Order</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management">GPU Management: Why Idle GPUs Are the New Grounded Aircraft</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/why-specialization-is-inevitable">Why Specialization Is Inevitable</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/specialization-beats-scale">Specialization Beats Scale: A Strategic Variable Most AI Procurement Decisions Overlook</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/text-degeneration-a-production-failure-mode">Text Degeneration: A Production Failure Mode That Most Benchmarks Do Not Track</a></li></ul>
-<p><em>Explore <a href="https://huggingface.co/Dharma-AI">Dharma AI on Hugging Face</a> to try our demos, download our open models, and see how specialized AI systems outperform general-purpose models in real enterprise applications.</em></p>
-<p>More from this author</p>
-<h2>Same Cluster, 33 Points More Utilization: What Changed Was the Order</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
-<p>20</p>
-<p>August 17, 2026</p>
-<h2>GPU Management: Why Idle GPUs Are the New Grounded Aircraft</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
-<p>97</p>
-<p>July 30, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FDharma-AI%2Fvocabx-vocabulary-specialization">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2FDharma-AI%2Fvocabx-vocabulary-specialization">log in</a> to comment</p>
-<p>15</p>
-<ul><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/0074277b4edc91617019d5b43211f8cb.svg" alt=""></a></li><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/7288e407f97fa45c62e83aee9ad68a4d.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/19b3ad64ce88f2e8b8be7d7019f30e1a.svg" alt=""></a></li><li><a href="https://huggingface.co/anacsb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/0qI4aveV-RoivRDJCBdOO.png" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt=""></a></li><li><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/18094cac3217d1a105f967e53681eb56.svg" alt=""></a></li><li><a href="https://huggingface.co/isisfc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/lgG1lEgFBLnmfARS1pLCB.png" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/506583318c7aa57f91ddfaa554e5a377.svg" alt=""></a></li><li><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt=""></a></li><li><a href="https://huggingface.co/fabriciocarraro"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64b6e46971c6bc4088f1c9c4/1nqngiZt8bm6RcE-PJDfN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Profiling TorchNeuron (Part 1): System-level profiling on AW…</title>
-      <link>https://huggingface.co/blog/amazon/profiling-torchneuron-part-1</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/amazon/profiling-torchneuron-part-1?li=1</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Profiling TorchNeuron (Part 1): System-level profiling on AWS Trainium.</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>Profiling TorchNeuron (Part 1): System-level profiling on AWS Trainium.</h1>
-<p>Enterprise  Article</p>
-<p>Published October 21, 2026</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/skoppar"><img src="https://huggingface.co/avatars/ba362a0e521f6803868998ead3614f14.svg" alt=""></a></li><li><a href="https://huggingface.co/LahariChowtoori"><img src="https://huggingface.co/avatars/ef1a34320918862e30e5ecc1e7305adb.svg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/adriansaxton"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a51391779a9d54dfdb9b467/LzvbqB5pTGvEo86NPHVTP.png" alt=""></a></li><li><a href="https://huggingface.co/hanbwang"><img src="https://huggingface.co/avatars/5016f7c40f940f0c413fd88f272f9929.svg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt="Josh Longenecker's avatar"></a></p>
-<p>Josh Longenecker</p>
-<p>jlongen-aws</p>
-<p><a href="https://huggingface.co/amazon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt="Amazon's avatar"></a> <a href="https://huggingface.co/amazon">amazon</a></p>
-<p>Many ML practitioners have some intuition about how to make models run fast, but fewer know how to analyze why a model is slow. In Part 1 of this series, you will learn how to systematically analyze inference performance and identify where the time is spent.</p>
-<p>This post starts from scratch and assumes no prior profiling experience. The walkthrough uses AWS Trainium, a purpose-built AI chip for deep learning training and inference workloads, and <a href="https://github.com/aws-neuron/torch-neuronx">TorchNeuron</a>, its open source native PyTorch backend. TorchNeuron supports standard PyTorch workflows on Trainium, including eager execution, <code>torch.compile</code>, and standard PyTorch APIs, with minimal code changes. Additionally, TorchNeuron integrates with <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/nki/index.html">Neuron Kernel Interface (NKI)</a> to enable custom operators and performance optimization for Trainium hardware. By the end, you should know:</p>
-<ul><li>How to configure <code>torch.profiler</code> with the Neuron backend and capture a clean trace.</li><li>How to read the <code>key_averages()</code> table to identify which operations consume Neuron device time and compare their Self CPU time.</li><li>How to follow one operation through Neuron Explorer, from framework dispatch through runtime scheduling to hardware execution on a NeuronCore.</li><li>How these signals change across three implementations of the same operation.</li></ul>
-<h2>Neuron as a PyTorch Backend</h2>
-<p>Before you profile a workload, it helps to understand how <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/index.html">Neuron</a> integrates with PyTorch.</p>
-<p>The Neuron backend uses PyTorch's <code>PrivateUse1</code> extension point. This mechanism lets an accelerator integrate with the framework without adding a dedicated dispatch key such as <code>cuda</code>. The <code>torch_neuronx</code> package works with upstream PyTorch to register Neuron as a native backend for PyTorch code. For details about this extension mechanism, see <a href="https://docs.pytorch.org/tutorials/advanced/privateuseone.html">Facilitating New Backend Integration by PrivateUse1</a>.</p>
-<h2>Set Up the Profiler</h2>
-<p>You use two objects to profile a Neuron workload:</p>
-<ul><li><code>NeuronConfig</code> controls which Neuron data streams and NeuronCores to capture and where to write the output. You pass it to <code>torch.profiler.profile</code> as <code>experimental_config</code>.</li><li><code>NeuronProfiler</code> takes a <code>NeuronConfig</code> and provides an <code>export_trace</code> callback. The callback writes the framework trace, <code>trace.json</code>, alongside the Neuron system traces.</li></ul>
-<pre><code>nc = NeuronConfig(
-    modes=[ProfileMode.DEVICE, ProfileMode.RUNTIME],
-    profile_output_dir=OUTPUT_DIR,
-    capture_enabled_for_nc='0',
-    correlate_device_time=True,
-)
-exporter = NeuronProfiler(nc)</code></pre>
-<p>The <code>modes</code> parameter selects the data streams to capture, such as device instructions and runtime traces. The <code>capture_enabled_for_nc</code> parameter selects the NeuronCores to trace. Setting <code>correlate_device_time=True</code> propagates device time from the trace into the <code>key_averages()</code> table, where you can compare CPU and Neuron device time. For the complete parameter reference and available <code>ProfileMode</code> values, see the NeuronConfig <a href="http://awsdocs-neuron.readthedocs-hosted.com/en/latest/tools/neuron-explorer/how-to-profile-workload.html#neuronconfig-profile-modes">Profile Modes documentation</a>.</p>
-<h2>Tooling: Neuron Explorer</h2>
-<p>Neuron Explorer is a browser-based viewer for the system trace, device timeline, and per-engine breakdown. You can access it through an SSH tunnel or the Visual Studio Code extension. In this post, you use Explorer to confirm what <code>key_averages()</code> reports numerically and inspect what happens between dispatches.</p>
-<p>After profiling, the output directory contains the system trace and, when you capture device data, matched <code>.neff</code> and <code>.ntff</code> files. The Neuron Executable File Format (NEFF) contains the compiled Neuron executable, while the matching NTFF contains its hardware instruction trace. The files share a numeric hash that identifies them as a pair. To open the profile in Neuron Explorer, upload the complete output directory for a system or combined profile. For a device-only profile, upload the matching <code>.neff</code> and <code>.ntff</code> files individually. See <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/tools/neuron-explorer/get-started.html#step-5-upload-your-profile">Step 5: Upload your profile</a> for the UI and command-line instructions.</p>
-<h2>Profile RMSNorm</h2>
-<p>For this first analysis, you profile RMSNorm, a small operation with a clear sequence of arithmetic and reduction operations.</p>
-<p>You profile three implementations of the same operation:</p>
-<ul><li>Naive RMSNorm with individual PyTorch operations: multiply, mean, add, reciprocal square root, and multiply.</li><li><code>torch.rms_norm()</code>, the PyTorch built-in lowered to a single fused Neuron kernel.</li><li>Naive RMSNorm with <code>torch.compile</code>, using the same operations as the first implementation.</li></ul>
-<p>The scripts use the same inputs, profiler configuration, and schedule so the results are directly comparable.</p>
-<p>All scripts to reproduce this work are available in the <code>torch-neuronx</code> <a href="https://github.com/aws-neuron/torch-neuronx/tree/main/examples/hf_profiling_blog_pt1">examples directory</a>.</p>
-<h2>Profile 1: Naive PyTorch Operations</h2>
-<p>Start by writing RMSNorm with individual PyTorch operations. Each line maps to one or more ATen operations and can create intermediate tensors.</p>
-<pre><code>device = torch.device('neuron')
-
-x = torch.randn(4, 512, dtype=torch.bfloat16, device=device)
-weight = torch.ones(512, dtype=torch.bfloat16, device=device)
-
-def rms_norm_fn(t):
-    x_sq = t * t                                    # square
-    mean_sq = x_sq.mean(dim=-1, keepdim=True)       # mean of squares
-    rms = torch.rsqrt(mean_sq + 1e-6)               # 1 / sqrt(mean_sq + eps)
-    return t * rms * weight                         # normalize + scale</code></pre>
-<p>Call the profiler with two arguments required for the Neuron backend:</p>
-<ul><li>Include <code>ProfilerActivity.PrivateUse1</code> to collect activity from the Neuron device.</li><li>Pass <code>NeuronConfig</code> as <code>experimental_config</code> to enable the Neuron-specific Kineto features.</li></ul>
-<p>The schedule uses <code>wait=2</code>, <code>warmup=1</code>, and <code>active=1</code> across four <code>prof.step()</code> calls. This records one warm iteration without including initial setup overhead.</p>
-<p>Call <code>torch.neuron.synchronize()</code> inside the profiler loop. Without this synchronization, the profiler can export before the device finishes and leave the Neuron time column empty.</p>
-<pre><code>with torch.profiler.profile(
-    activities=[ProfilerActivity.CPU, ProfilerActivity.PrivateUse1],
-    experimental_config=nc,
-    record_shapes=False,
-    on_trace_ready=exporter.export_trace,
-    schedule=torch.profiler.schedule(wait=2, warmup=1, active=1),
-) as prof:
-    for step in range(4):
-        with torch.no_grad():
-            _ = rms_norm_fn(x)
-        torch.neuron.synchronize()
-        prof.step()</code></pre>
-<p>After profiling finishes, inspect the <code>key_averages()</code> table. Sort by <code>self_privateuse1_time_total</code> to place the operations with the highest device cost first. The table shown here is filtered to the RMSNorm operations that report Neuron device time. The full <code>key_averages()</code> output also includes CPU-side events such as allocations and host-to-device transfers.</p>
-<pre><code>print(prof.key_averages().table(sort_by=&quot;self_privateuse1_time_total&quot;, row_limit=4))</code></pre>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/mlyyxfL6i5GfbOgUsyIuL.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/mlyyxfL6i5GfbOgUsyIuL.png" alt="The key averages table shows that three aten::mul calls account for the largest share of Neuron device time."></a></p>
-<p><em>The key averages table shows that three aten::mul calls account for the largest share of Neuron device time.</em></p>
-<p>The table shows which ATen operations ran, how often they ran, and how much time they spent on the CPU and Neuron device. <code>aten::mul</code> has the highest total device time because the function performs three multiplications.</p>
-<table><thead><tr><th>Name</th><th># Calls</th><th>Self CPU</th><th>Self NEURON</th><th>% NEURON</th></tr></thead><tbody><tr><td>aten::mul</td><td>3</td><td>60.9 μs</td><td>1,164.5 μs</td><td>49.5%</td></tr><tr><td>aten::add</td><td>1</td><td>26.6 μs</td><td>434.6 μs</td><td>18.5%</td></tr><tr><td>aten::rsqrt</td><td>1</td><td>15.6 μs</td><td>415.0 μs</td><td>17.6%</td></tr><tr><td>aten::mean</td><td>1</td><td>21.1 μs</td><td>340.8 μs</td><td>14.5%</td></tr></tbody></table>
-<p><em>Self NEURON total: 2.355 ms</em></p>
-<p>Each row maps directly to the function. <code>aten::mul</code> runs for <code>x <em> x</code>, <code>x </em> rms</code>, and the final multiplication by <code>weight</code>. <code>aten::mean</code> reduces the last dimension. <code>aten::add</code> adds the epsilon value and triggers a host-to-device copy because the scalar starts on the CPU. <code>aten::rsqrt</code> computes the reciprocal square root.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/GUGp8s5G4EV7rb09YBDbf.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/GUGp8s5G4EV7rb09YBDbf.png" alt="Neuron Explorer follows an aten::mul operation from framework dispatch through runtime scheduling to execution on the Neuron hardware lanes."></a></p>
-<p><em>Neuron Explorer follows an aten::mul operation from framework dispatch through runtime scheduling to execution on the Neuron hardware lanes.</em></p>
-<h3>Read the Trace in Explorer</h3>
-<p>In Explorer, time flows from left to right and the event lifecycle flows from top to bottom. Each ATen operation follows the same pattern: creation in the framework lane, scheduling in the runtime lane as <code>nrta_execute_schedule</code>, and device execution in the hardware lane as <code>nc_exec_running</code>.</p>
-<p>The system trace view organizes events into lanes. In the Default grouping mode, labels follow the pattern instance/PID/subsystem/identifier:</p>
-<table><thead><tr><th>Lane</th><th>Label suffix</th><th>What it shows</th></tr></thead><tbody><tr><td>Framework dispatch</td><td><code>framework/TID:&lt;id&gt;</code></td><td>Operator dispatch events (PrivateUse1 runtime), grouped by thread ID.</td></tr><tr><td>Framework device</td><td><code>framework/Stream:&lt;n&gt;</code></td><td>Device interaction events (PrivateUse1 driver), grouped by stream number.</td></tr><tr><td>Neuron Runtime</td><td><code>neuron_rt/NC:&lt;n&gt;</code></td><td>Neuron Runtime API calls, grouped by logical NeuronCore.</td></tr><tr><td>Neuron Hardware</td><td><code>neuron_hw/NC&lt;n&gt;:&lt;id&gt;</code></td><td>Hardware execution events, grouped by physical NeuronCore.</td></tr></tbody></table>
-<p>In eager mode, each operation runs independently. Use the dependency chain viewer to follow <code>aten::mul.Tensor</code> from the framework layer through runtime scheduling to device execution.</p>
-<p><a href="https://huggingface.co/datasets/jlongen-aws/blog-assets/resolve/main/hf_profiling_blog_pt1/dependency_chain.gif"><img src="https://huggingface.co/datasets/jlongen-aws/blog-assets/resolve/main/hf_profiling_blog_pt1/dependency_chain.gif" alt="The dependency chain viewer highlights the lifecycle of one operation across the framework, runtime, and hardware lanes."></a></p>
-<p><em>The dependency chain viewer highlights the lifecycle of one operation across the framework, runtime, and hardware lanes.</em></p>
-<h2>Profile 2: torch.rms_norm</h2>
-<p>Replace the individual operations with PyTorch's built-in <code>rms_norm</code> function. Neuron lowers the operation to one fused kernel:</p>
-<pre><code>def rms_norm_fn(t):
-    return torch.rms_norm(t, [512], weight)</code></pre>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/uYhQmUtuUp1LYPOu8f9bf.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/uYhQmUtuUp1LYPOu8f9bf.png" alt="The fused RMSNorm appears as one device operation in the key averages table."></a></p>
-<p><em>The fused RMSNorm appears as one device operation in the key averages table.</em></p>
-<table><thead><tr><th>Name</th><th># Calls</th><th>Self CPU</th><th>Self NEURON</th><th>% NEURON</th></tr></thead><tbody><tr><td>aten::_fused_rms_norm</td><td>1</td><td>47.6 μs</td><td>403.3 μs</td><td>100%</td></tr></tbody></table>
-<p><em>Self NEURON total: 403.3 μs</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/OfM6vRT9iPBG42s8iWK1V.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/OfM6vRT9iPBG42s8iWK1V.png" alt="The fused RMSNorm follows one framework-to-hardware path instead of dispatching each arithmetic operation separately."></a></p>
-<p><em>The fused RMSNorm follows one framework-to-hardware path instead of dispatching each arithmetic operation separately.</em></p>
-<h3>Compare the Lowering Path</h3>
-<p>In the naive implementation, each operation crosses the dispatch boundary independently and follows its own framework-to-runtime-to-hardware path. In the fused implementation, one Python call covers the complete computation. The trace contains one dispatch and one hardware event, with no gaps between component operations.</p>
-<h2>Profile 3: Naive PyTorch with torch.compile</h2>
-<p>For the final example, compile the original naive RMSNorm function with <code>torch.compile</code>.</p>
-<p>With <code>@torch.compile(backend=&quot;neuron&quot;)</code>, TorchDynamo captures the Python bytecode as an FX graph and AOTAutograd lowers it to ATen operations. The Neuron backend receives the complete graph instead of dispatching each operation separately. It fuses the operations, optimizes memory access, and compiles the graph into a single NEFF artifact. The artifact runs as one hardware dispatch.</p>
-<pre><code>@torch.compile(backend='neuron', fullgraph=True)
-def naive_compiled(t):
-    x_sq = t * t
-    mean_sq = x_sq.mean(dim=-1, keepdim=True)
-    rms = torch.rsqrt(mean_sq + 1e-6)
-    return t * rms * weight</code></pre>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/TSJ2RWScmKPKmSroHCZaI.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/TSJ2RWScmKPKmSroHCZaI.png" alt="The compiled function appears as one Torch-Compiled Region in the key averages table."></a></p>
-<p><em>The compiled function appears as one Torch-Compiled Region in the key averages table.</em></p>
-<table><thead><tr><th>Name</th><th># Calls</th><th>Self CPU</th><th>Self NEURON</th><th>% NEURON</th></tr></thead><tbody><tr><td>Torch-Compiled Region: 0/0</td><td>1</td><td>98.4 μs</td><td>375.5 μs</td><td>100%</td></tr></tbody></table>
-<p><em>Self NEURON total: 375.5 μs</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/yWIFqisMxCtJHLYb2Rcsh.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/yWIFqisMxCtJHLYb2Rcsh.png" alt="The compiled graph follows one path through runtime scheduling and hardware execution."></a></p>
-<p><em>The compiled graph follows one path through runtime scheduling and hardware execution.</em></p>
-<p>The table shows one device execution, as in Profile 2, but the code takes a different path. Instead of calling a purpose-built fused operation, the compiler discovers the fusion from the original Python function. In this run, the Neuron time is comparable to <code>torch.rms_norm</code>, at 375 μs compared with 403 μs.</p>
-<h2>Side-by-Side Summary</h2>
-<table><thead><tr><th>Variant</th><th>NEURON time</th><th>Self CPU time</th><th>Operator calls</th></tr></thead><tbody><tr><td>Naive ops</td><td>2,355 µs</td><td>~125 µs</td><td>6</td></tr><tr><td>torch.rms_norm</td><td>403 µs</td><td>~48 µs</td><td>1</td></tr><tr><td>Naive + torch.compile</td><td>376 µs</td><td>~98 µs</td><td>1</td></tr></tbody></table>
-<p>Both <code>torch.rms_norm</code> and <code>torch.compile</code> fuse RMSNorm into one kernel dispatch. In these runs, either approach takes about one-sixth of the naive implementation's device time. Fusion removes the gaps between hardware executions and avoids materializing intermediate values such as <code>x_sq</code> and <code>mean_sq</code> between separately dispatched operations.</p>
-<h2>Conclusion</h2>
-<p><code>key_averages()</code> shows which operations consume device time, while its full output also reveals CPU-side setup and transfers. Explorer provides the corresponding visual trace. You can follow one operation from framework dispatch through runtime scheduling to hardware execution and see the gaps that fusion removes.</p>
-<p>You can use the same workflow on larger models: find a hotspot in the table, verify it in the trace, and then determine whether a fused operation or <code>torch.compile</code> can reduce its cost.</p>
-<p>In Part 2, we will move into the device-level profile. You open the NEFF, inspect the TensorEngine, VectorEngine, and direct memory access (DMA) breakdown, and place the kernel on the roofline to determine whether it is compute-bound or memory-bound.</p>
-<p>Special thanks to Aritra Roy Gosthipaty for the inspiration to begin this series, and to my peers Pinak Panigrahi, Samir Araujo, Akhil Azhikodan, Esha Lakhotia and the rest for reviewing!</p>
-<h2>Datasets mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2>Record, train, and deploy from one place with Strands Agents, LeRobot, and Hugging Face Storage Buckets</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt=""></li></ul>
-<p>35</p>
-<p>August 13, 2026</p>
-<h2>From Hugging Face to Amazon SageMaker Studio in one click</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt=""></li></ul>
-<p>21</p>
-<p>July 7, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Famazon%2Fprofiling-torchneuron-part-1">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Famazon%2Fprofiling-torchneuron-part-1">log in</a> to comment</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/skoppar"><img src="https://huggingface.co/avatars/ba362a0e521f6803868998ead3614f14.svg" alt=""></a></li><li><a href="https://huggingface.co/LahariChowtoori"><img src="https://huggingface.co/avatars/ef1a34320918862e30e5ecc1e7305adb.svg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/adriansaxton"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a51391779a9d54dfdb9b467/LzvbqB5pTGvEo86NPHVTP.png" alt=""></a></li><li><a href="https://huggingface.co/hanbwang"><img src="https://huggingface.co/avatars/5016f7c40f940f0c413fd88f272f9929.svg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/arashjamalian"><img src="https://huggingface.co/avatars/c1ab8000ebd701b0031f199748b021fc.svg" alt=""></a></li></ul>
-<h2>Datasets mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Granite Speech 5.0: Transcribe, Translate, and Attribute mor…</title>
-      <link>https://huggingface.co/blog/ibm-granite/granite-speech-5</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-granite/granite-speech-5?li=1</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Granite Speech 5.0: Transcribe, Translate, and Attribute more Accurately and Faster</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>Granite Speech 5.0: Transcribe, Translate, and Attribute more Accurately and Faster</h1>
-<p>Enterprise  Article</p>
-<p>Published October 21, 2026</p>
-<p>16</p>
-<ul><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt=""></a></li><li><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt=""></a></li><li><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt=""></a></li><li><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt="George Saon's avatar"></a></p>
-<p>George Saon</p>
-<p>gsaon</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt="Brian Kingsbury's avatar"></a></p>
-<p>Brian Kingsbury</p>
-<p>bedkingsbury</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/rhoory"><img src="https://huggingface.co/avatars/672f169213139d21c7767021a0110402.svg" alt="Ron Hoory's avatar"></a></p>
-<p>Ron Hoory</p>
-<p>rhoory</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt="Vishal Sunder's avatar"></a></p>
-<p>Vishal Sunder</p>
-<p>vishalsunder</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt="Zvi Kons's avatar"></a></p>
-<p>Zvi Kons</p>
-<p>konszvi</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/ibm-jeffkuo"><img src="https://huggingface.co/avatars/a0b862a7dbcc7196288028030d8e784a.svg" alt="Jeff Kuo's avatar"></a></p>
-<p>Jeff Kuo</p>
-<p>ibm-jeffkuo</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt="Samuel Thomas's avatar"></a></p>
-<p>Samuel Thomas</p>
-<p>sthomas12</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/Avihu"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63b7e09359060ca9f4c4de35/0PH1dWNfcXTQ9H0QAeD91.jpeg" alt="Avihu Dekel's avatar"></a></p>
-<p>Avihu Dekel</p>
-<p>Avihu</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/hagaia"><img src="https://huggingface.co/avatars/eb2f357888159f5120bbf70a40cb089d.svg" alt="Hagai Aronowitz's avatar"></a></p>
-<p>Hagai Aronowitz</p>
-<p>hagaia</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt="Takashi Fukuda's avatar"></a></p>
-<p>Takashi Fukuda</p>
-<p>fukuda1</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/tohru3"><img src="https://huggingface.co/avatars/f753ef5eb24dfe8b8c38a42a20de136e.svg" alt="Tohru Nagano's avatar"></a></p>
-<p>Tohru Nagano</p>
-<p>tohru3</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/sasnov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/667113f4293b94a4f47c8653/svq32DhLFzW6NPWYC2IP7.jpeg" alt="Sashi Novitasari's avatar"></a></p>
-<p>Sashi Novitasari</p>
-<p>sasnov</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/szuk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a86fd3343bc4aae2b86f857/zQO34V3Q4u7RgrpO-9QmJ.jpeg" alt="Masayuki Suzuki's avatar"></a></p>
-<p>Masayuki Suzuki</p>
-<p>szuk</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/kristunlee"><img src="https://huggingface.co/avatars/c321df95ef32bbc777f7a548a2a361c3.svg" alt="Madison Lee's avatar"></a></p>
-<p>Madison Lee</p>
-<p>kristunlee</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p>We're excited to share three updates to IBM's Granite Speech collection: a new speech-language model, <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-2b">granite-speech-5.0-2b</a>, and revised versions of two models the community already uses, <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">granite-speech-5.0-470m-turboctc</a> and <a href="https://huggingface.co/ibm-granite/granite-speech-4.1-2b-plus">granite-speech-4.1-2b-plus</a>. Together they cover the full range of enterprise speech work: transcription and translation with high accuracy, extremely fast transcription at the edge, and recordings where who spoke, and when, matter as much as what was said.</p>
-<table><thead><tr><th>Model</th><th>Status</th><th>What's new</th><th>Best for</th></tr></thead><tbody><tr><td><code>granite-speech-5.0-2b</code></td><td>New</td><td>More accurate, noise- and reverb-robust automatic speech recognition (ASR), language-ID prompting, 2,000-term keyword biasing, better long-form translation</td><td>High-accuracy multilingual transcription and translation</td></tr><tr><td><code>granite-speech-5.0-470m-turboctc</code></td><td>Updated</td><td>Multilingual, native punctuation and capitalization, and more robust to noise and reverb</td><td>High-throughput and on-device transcription</td></tr><tr><td><code>granite-speech-4.1-2b-plus</code></td><td>Updated</td><td>Improved speaker attribution, timestamps, keyword biasing, and long-speech performance</td><td>Meetings, calls, and other multi-speaker recordings</td></tr></tbody></table>
-<h2>Granite Speech 5.0 2B: more accurate, more robust, more control</h2>
-<p><code>granite-speech-5.0-2b</code> is the successor to <code>granite-speech-4.1-2b</code> at the same parameter count. It transcribes English, French, German, Spanish, Portuguese, and Japanese, and translates to and from English in those languages, plus English to Italian and Mandarin. It was trained on 390,000 hours of public audio, plus synthetic data built for Japanese ASR, keyword biasing, and translation.</p>
-<p>What's new compared with 4.1 2B Speech:</p>
-<ul><li><strong>More accurate, more robust English ASR:</strong> Higher accuracy on English short-form benchmarks, and better handling of noise, reverberation, and distant-microphone speech.</li><li><strong>Language ID prompting:</strong> Name the input language in the prompt to steer multilingual transcription.</li><li><strong>Better long-form and conversational translation:</strong> Translation holds up for longer with more natural speech, not just short read sentences.</li><li><strong>Keyword lists up to 2,000 terms:</strong> Bias transcription and translation toward product names, people, and acronyms, in every supported language.</li><li><strong>Punctuation and capitalization on request:</strong> Ask for formatted output in the prompt; capitalization F1 ranges from 89.7 to 99.5 across our test sets.</li></ul>
-<p>The model ships under Apache 2.0 with support in Transformers, vLLM, llama.cpp, and mlx-audio for Apple Silicon.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/653fb52cbfd890805461d691/87yRtLq4X2CwMZrDhv0L_.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/653fb52cbfd890805461d691/87yRtLq4X2CwMZrDhv0L_.png" alt="granite-speech-5.0-2b average English WER compared with top open-weight ASR models"></a></p>
-<p><em>Chart 1: granite-speech-5.0-2b ranks #2 among top open-weight ASR models on average English WER (5.06%). Lower is better. Results are official, as of 21 October 2026, and averaged over the Open ASR Leaderboard’s public English short-form test sets.</em></p>
-<h2>Granite Speech 5.0 Turbo CTC: now multilingual, more robust, and even faster</h2>
-<p>When we <a href="https://huggingface.co/blog/ibm-granite/granite-speech-5-0-470m-turboctc">introduced Turbo CTC in August</a>, it was an English-only, 470M-parameter encoder built for speed. This revision keeps that footprint and adds the three things users asked for most:</p>
-<ul><li><strong>Multilingual transcription:</strong> English, Japanese, Spanish, German, French, Italian, and Portuguese.</li><li><strong>Native punctuation and capitalization:</strong> Transcripts come out ready to read, with no separate punctuation or truecasing step.</li><li><strong>More robust in difficult acoustics:</strong> Training that explicitly targets reverberant audio makes Turbo CTC more robust in echoey rooms and far-field recordings.</li></ul>
-<p>It's also faster. By compiling a single Conformer block and reusing its graph across the stack, we cut warmup time and pushed Turbo CTC to 19,870 RTFx on the Open ASR Leaderboard, up from roughly 12,600 RTFx at launch: about 1.6x faster, at the same accuracy level.</p>
-<p><em>Chart 2: Average WER vs. RTFx on the Open ASR Leaderboard (English short-form, 9 public test sets, as of October 2026). Lower WER and higher RTFx are better; RTFx is on a log scale.</em></p>
-<h2>Granite Speech 4.1 2B Plus: better at who said what, and when</h2>
-<p>The updated <code>granite-speech-4.1-2b-plus</code> is tuned for the recordings enterprises actually have: meetings, support calls, and interviews with several speakers running long. It keeps the 4.1 name because the architecture, prompt format, and API are unchanged, so it's a drop-in replacement for the current model with improved weights. This revision improves four areas:</p>
-<ul><li><strong>Speaker attribution:</strong> More accurate labeling of who is speaking. Word diarization error rate (WDER) drops 7%, and speaker-attributed WER (cpWER) drops 7% overall.</li><li><strong>Timestamps:</strong> Average timestamp shift (AAS) is cut by more than half, yielding tighter timing in captions, search, and review.</li><li><strong>Long-speech performance:</strong> WER on long-form test sets drops 24%.</li><li><strong>Keyword biasing:</strong> Errors on biased keywords fall 45% with 20-term keyword lists.</li></ul>
-<table><thead><tr><th>Capability</th><th>Metric</th><th>Previous release</th><th>Updated model</th></tr></thead><tbody><tr><td>Timestamps, all speech</td><td>AAS (average timestamp shift)</td><td>210.86</td><td><strong>98.54</strong></td></tr><tr><td>Timestamps, short speech</td><td>AAS (average timestamp shift)</td><td>29.27</td><td><strong>26.20</strong></td></tr><tr><td>Keyword biasing</td><td>Biased-word WER, 20-term lists</td><td>11.79</td><td><strong>6.48</strong></td></tr><tr><td>Long-form speech</td><td>WER, long-form test sets</td><td>13.53</td><td><strong>10.22</strong></td></tr><tr><td>Speaker attribution</td><td>WDER</td><td>4.40</td><td><strong>4.10</strong></td></tr><tr><td>Speaker-attributed transcripts</td><td>cpWER</td><td>30.50</td><td><strong>28.48</strong></td></tr></tbody></table>
-<p><em>Table 1: All metrics are error rates, so lower is better. For more detailed results, see the <a href="https://huggingface.co/ibm-granite/granite-speech-4.1-2b-plus">model card</a>.</em></p>
-<h2>Get started</h2>
-<p>Not sure which model to pick? Start here:</p>
-<ul><li><strong>Need high transcription accuracy, translation, or keyword biasing?</strong> Use <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-2b">granite-speech-5.0-2b</a>.</li><li><strong>Need raw speed or on-device transcription?</strong> Use <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">granite-speech-5.0-470m-turboctc</a>, and try it in the browser with our <a href="https://huggingface.co/blog/ibm-granite/DEMO_URL">WebGPU streaming demo</a>.</li><li><strong>Working with meetings or multi-speaker calls?</strong> Use <a href="https://huggingface.co/ibm-granite/granite-speech-4.1-2b-plus">granite-speech-4.1-2b-plus</a>.</li></ul>
-<p>These models are all released under an Apache 2.0 license with native support in Transformers. Full evaluation results, architecture details, training data, and usage examples are on each model card. We recommend pairing them with <a href="https://huggingface.co/collections/ibm-granite/granite-guardian">Granite Guardian</a> for production deployments that need additional risk detection.</p>
-<p>Give them a try and let us know what you think!</p>
-<h2>Models mentioned in this article 3</h2>
-<h2>Collections mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2>Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
-<p>69</p>
-<p>October 15, 2026</p>
-<h2>Granite 4.2 LLMs: How They're Built</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
-<p>129</p>
-<p>August 25, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-speech-5">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-speech-5">log in</a> to comment</p>
-<p>16</p>
-<ul><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt=""></a></li><li><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt=""></a></li><li><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt=""></a></li><li><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt=""></a></li><li><a href="https://huggingface.co/kristunlee"><img src="https://huggingface.co/avatars/c321df95ef32bbc777f7a548a2a361c3.svg" alt=""></a></li><li><a href="https://huggingface.co/daw3rd"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69e673262ada4d38aba9eac2/ufQeVAywU1lC61ZPDvPhK.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ibm-jeffkuo"><img src="https://huggingface.co/avatars/a0b862a7dbcc7196288028030d8e784a.svg" alt=""></a></li><li><a href="https://huggingface.co/profautorino"><img src="https://huggingface.co/avatars/2e55f3bbe3867009b0ade056a35dd2ee.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/gakuto-ibm"><img src="https://huggingface.co/avatars/38865a5f5ea78efa0c94919b4a619d9c.svg" alt=""></a></li></ul>
-<h2>Models mentioned in this article 3</h2>
-<h2>Collections mentioned in this article 1</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

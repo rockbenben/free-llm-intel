@@ -1,6 +1,6 @@
 # Fireworks AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-26**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-27**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Fireworks AI（`fireworks_ai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,12 +9,12 @@
 
 ## 全部文章（共 42 篇，按日期倒序；无日期条目列于最后）
 
-1. [Kimi K3.1 Pro 上线 Fireworks](https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/)（2026-11-04） <!--orig:Kimi K3.1 Pro is live on Fireworks-->
-2. [免费训练 Muse Glimmer：我们如何押赢 Jev](https://fireworks.ai/blog/train-muse-glimmer-for-free) <!--orig:Train Muse Glimmer for free: Our recipe for out-betting Jev-->
-3. [Ember-1 发布](https://fireworks.ai/blog/ember-1) <!--orig:Introducing Ember-1-->
-4. [专业智力指数简介](https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks) <!--orig:Introducing the Specialized Intelligence Index-->
-5. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/llm-model-routing-deepswe) <!--orig:The frontier isn’t a model. It’s a router.-->
-6. [Hy4 Flash 登陆 Fireworks：腾讯面向高性价比专业工作的开放模型](https://fireworks.ai/blog/hy4-flash-on-fireworks/)（2026-11-25） <!--orig:Hy4 Flash on Fireworks: Tencent's open model for cost-efficient professional work-->
+1. [Hy4 Flash 登陆 Fireworks：腾讯面向高性价比专业工作的开放模型](https://fireworks.ai/blog/hy4-flash-on-fireworks/)（2026-11-25） <!--orig:Hy4 Flash on Fireworks: Tencent's open model for cost-efficient professional work-->
+2. [Kimi K3.1 Pro 上线 Fireworks](https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/)（2026-11-04） <!--orig:Kimi K3.1 Pro is live on Fireworks-->
+3. [免费训练 Muse Glimmer：我们如何押赢 Jev](https://fireworks.ai/blog/train-muse-glimmer-for-free) <!--orig:Train Muse Glimmer for free: Our recipe for out-betting Jev-->
+4. [Ember-1 发布](https://fireworks.ai/blog/ember-1) <!--orig:Introducing Ember-1-->
+5. [专业智力指数简介](https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks) <!--orig:Introducing the Specialized Intelligence Index-->
+6. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/llm-model-routing-deepswe) <!--orig:The frontier isn’t a model. It’s a router.-->
 7. [Should you switch your agents to Kimi K3.1 Pro?](https://fireworks.ai/blog/should-you-switch-your-agents-to-kimi-k3-1-pro/)
 8. [What MiniMax M3.1 Flash reveals about choosing and combining models](https://fireworks.ai/blog/what-minimax-m3-1-flash-reveals-about-choosing-and-combining-models/)
 9. [Fireworks 在 Forge 发布新产品，帮企业构建专用智能](https://fireworks.ai/blog/fireworks-unveils-new-products-at-forge-to-help-companies-build-specialized-intelligence/) <!--orig:Fireworks unveils new products at Forge to help companies build specialized intelligence-->

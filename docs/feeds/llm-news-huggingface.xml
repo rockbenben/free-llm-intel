@@ -7,7 +7,288 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>推出适用于 AMD Ryzen 和 Radeon 的 llama.cpp 基准仪表板</title>
+      <link>https://huggingface.co/blog/ggml-org/llamacpp-amd-bench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llamacpp-amd-bench</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing the llama.cpp benchmark dashboard for AMD Ryzen and Radeon</description>
+      <content:encoded><![CDATA[<h1>推出面向 AMD Ryzen 和 Radeon 的 llama.cpp 基准测试仪表盘</h1>
+<p>团队文章</p>
+<p>发布于 2026 年 11 月 26 日</p>
+<p><a href="https://huggingface.co/angt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67289c93ff90038d9a6e5675/klana6SP95tj8-VwXnIYC.png" alt="angt's avatar"></a></p>
+<p>angt</p>
+<p>angt</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy's avatar"></a></p>
+<p>Simon Pagezy</p>
+<p>pagezyhf</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/badaoui"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg" alt="Abdennacer Badaoui's avatar"></a></p>
+<p>Abdennacer Badaoui</p>
+<p>badaoui</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">llama.cpp × AMD Benchmark</a> 仪表盘现已在 Hugging Face 上线。它让你可以跨不同的 llama.cpp 构建、模型和量化方式，跟踪 prompt 处理与文本生成的性能，从而探索本地推理在 AMD Ryzen 和 Radeon 硬件上的表现。</p>
+<p>本地推理性能会随着模型、kernel 和构建的演进而变化。我们希望任何 AMD 开发者都能轻松查看这些变化：选择硬件、模型和构建，比较不同量化，并持续跟踪性能随时间的变化。基准测试工作流和底层结果都是公开的，因此你也可以查看我们是如何对推理性能进行基准测试的。</p>
+<h2>快速开始</h2>
+<p>你可以在 Configuration 侧边栏中选择 <strong>Hardware</strong>、<strong>Model</strong> 和 <strong>llama.cpp build</strong>。当前可选的硬件为 Radeon 8060S (gfx1151) 和 Radeon AI Pro R9700S (gfx1201)。</p>
+<ul><li>在 <strong>Overview</strong> 标签页中，针对同一硬件、模型和构建比较不同量化。两张图表分别显示 PP512（512 个输入 token，不生成）和 TG128（生成 128 个 token），两者都从上下文深度零开始。</li><li>在 <strong>Build history</strong> 标签页中，跟踪所选硬件、模型和量化下所有已记录构建的 PP512 与 TG128。</li><li>在 <strong>Context</strong> <strong>scaling</strong> 标签页中，查看在所选构建、硬件、模型和量化下，token 生成吞吐量随已有上下文增长的变化情况。</li></ul>
+<h2>这些数字的含义</h2>
+<p>仪表盘展示两项独立的测试，均以每秒 token 数计量：</p>
+<table><thead><tr><th>测试</th><th>负载</th><th>有助于评估的内容</th></tr></thead><tbody><tr><td><strong>PP512</strong></td><td>处理 512 个输入 token</td><td>模型处理 prompt 的速度</td></tr><tr><td><strong>TG128</strong></td><td>生成 128 个 token</td><td>模型产出输出的速度</td></tr></tbody></table>
+<p>两项测试都从上下文深度零（<code>n_depth=0</code>）开始。PP512 衡量在不生成的情况下处理 512 个输入 token；TG128 衡量在没有既有上下文的情况下生成 128 个 token。图表中绘制的数值是平均吞吐量（<code>avg_ts</code>）。这些是有用的参考负载，而 Context scaling 标签页则让你探索 token 生成吞吐量随上下文增长的变化。</p>
+<h2>我们如何运行基准测试</h2>
+<p>我们基准测试的对象是通过 <a href="https://github.com/ggml-org/llama-install.sh">llama-install.sh</a> 分发的预编译二进制文件，该项目是 <a href="https://llama.app/">llama.app</a> 背后的构建与安装项目。公开的 <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1151.yml">gfx1151</a> 和 <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1201.yml">gfx1201</a> 工作流每周定时运行，使用 <a href="https://github.com/ggml-org/llama.cpp/tree/master/tools/llama-bench">llama-bench 工具</a> 在 Flash Attention 开启和关闭两种情况下运行标准基准测试，每个配置重复 10 次。</p>
+<p>模型集合会不断演进，目前包括 Inkling 2 Mini、Qwen、Gemma、gpt-oss 和 LFM 模型，涵盖 dense 与 mixture-of-experts（混合专家）架构。可用的 GGUF 格式包括 <code>Q4_K_M</code>、<code>Q8_0</code>、其他量化格式，以及 <code>BF16</code> 和 <code>F16</code> 等更高精度的格式。</p>
+<h2>查看并复用结果</h2>
+<p>探索器直接读取 Hugging Face 上公开的 <a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">ggml-org/install.sh-benches-data Storage Bucket</a>。图表标题旁的 <strong>data source</strong> 链接会打开所选构建、硬件和模型对应的文件夹。</p>
+<p>标准结果使用 <code>&lt;build&gt;/&lt;hardware&gt;/&lt;model&gt;/&lt;quant&gt;.jsonl</code>。负载扫描在同一文件夹下使用 <code>&lt;quant&gt;-tg.jsonl</code> 文件名。</p>
+<p>你可以用它们来调查某个结果、制作自己的图表，或与本地运行结果进行比较。</p>
+<h2>加入讨论</h2>
+<p>感谢 AMD 团队提供测试基础设施并协助验证这套设置！试用<a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">仪表盘</a>，查看<a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">数据</a>，并告诉我们你接下来想看到哪些模型和负载。</p>
+<p>该作者的更多文章</p>
+<h2>我们如何优化工作流并克服 GitHub Actions 的限制</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>8</p>
+<p>2026 年 11 月 16 日</p>
+<p>热门</p>
+<h2>llama.cpp v1.0.0：为本地 AI 生态奠定更坚实的基础</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>238</p>
+<p>2026 年 11 月 13 日</p>
+<h3>社区</h3>]]></content:encoded>
+    </item>
+    <item>
+      <title>基于 Nemotron 3.5 Parse 构建：开放数据、微调和更快的推理</title>
+      <link>https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference</description>
+      <content:encoded><![CDATA[<h1>基于 Nemotron 3.5 Parse 构建：开放数据、微调与更快推理</h1>
+<p>企业 + 文章</p>
+<p>发布于 2026 年 11 月 26 日</p>
+<p><a href="https://huggingface.co/emelryan"><img src="https://huggingface.co/avatars/2adfa4eb57b97fde904fa6a74140db0d.svg" alt="Ryan Chesler's avatar"></a></p>
+<p>Ryan Chesler</p>
+<p>emelryan</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/mwawrzos"><img src="https://huggingface.co/avatars/84ba29cc389815553389bb852c3fb1e9.svg" alt="Marek Wawrzos's avatar"></a></p>
+<p>Marek Wawrzos</p>
+<p>mwawrzos</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/steve-nvidia"><img src="https://huggingface.co/avatars/a7118be5506d7e88145aaec13e88d248.svg" alt="Steve Han's avatar"></a></p>
+<p>Steve Han</p>
+<p>steve-nvidia</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p>我们最近发布了 <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse">NVIDIA Nemotron 3.5 Parse</a></strong>，这是一个紧凑型文档模型，可将页面图像转换为结构化数据，用于检索增强生成（RAG）和智能体。</p>
+<p>现在，我们在该版本基础上继续构建，推出<strong>合成训练数据集、微调配方，以及用于加速推理的 DFlash2 推测器</strong>。我们还将分享 Parse 3.5 的训练方式：首先通过监督微调教会模型理解文档，然后使用强化学习提升准确性、一致性和可靠完成度。</p>
+<h2>Parse 3.5 的输出内容</h2>
+<p>Parse 将文档页面中的内容按阅读顺序提取出来，为内容分配类别（如标题、段落、表格和图表），并返回定位内容的边界框。表格和图表会转换为结构化记录，可支撑下游文档处理应用。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png" alt="左侧为带有预测区域的操作简报，右侧为其结构化提取结果。"></a></p>
+<p><em>图 1. 来自合成操作简报的实际模型输出，展示页面与其结构化表示之间的对应关系。</em></p>
+<p>Parse 的最新版本显著扩展了读取图表和表格的能力，尤其是在更困难、更模糊的情况下。例如，没有任何标注数值的柱状图或其他图形。模型能够通过观察坐标轴和柱的高度来推断这些数值。表格可能尤其棘手，因为结构本身承载重要含义，一行或一列错位就可能完全改变解读和含义。这些进步主要得益于合成数据生成——渲染出带有已知真值的图表和表格变体，然后训练模型逆向还原这一过程。</p>
+<p>我们开源了 <strong>Parse 3.5 训练中使用的三个数据集</strong>：</p>
+<ul><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Charts-V1">Synthetic Charts V1 — 998 万个样本</a>：</strong> 渲染的图表和结构化标注，用于学习类别、系列和数值。</li><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Tables-V1">Synthetic Tables V1 — 100 万个样本</a>：</strong> 渲染的 HTML 表格及目标，保留行、列、表头和单元格关系。</li><li><strong><a href="https://huggingface.co/datasets/nvidia/OCR-Synthetic-Multilingual-v2">OCR Synthetic Multilingual v2 — 790 万个样本</a>：</strong> 具有 Parse 格式目标的合成文档页面，涵盖多种字体和布局，用于多语言 OCR 和结构化页面阅读。</li></ul>
+<p>每个发布版本都包含图像、标注、生成文档和训练格式。可使用这些配对数据来微调文档模型，或针对目标文档类型或语言创建新的变体。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png" alt="一张未印出柱值的柱状图，以及发布模型提取出的 18、27、39 和 54。"></a></p>
+<p><em>图 2. Parse 从图表几何形状中恢复出 18、27、39 和 54</em></p>
+<h2>SFT 建立能力；RLVR 提升一致性</h2>
+<p>我们分两个阶段训练 Parse 3.5。<strong>监督微调（SFT）</strong>涵盖文本、布局、表格、图表和多语言文档。学习预测结构化目标建立了阅读页面并表示其内容的通用能力。</p>
+<p>随后我们继续进行<strong>可验证奖励的强化学习（RLVR）</strong>，使用<strong>组相对策略优化（GRPO）</strong>。奖励会检查采样提取结果的质量。例如，图表提取若能恢复正确的系列和数值、生成可用的结构，并且完成时没有反复生成相同内容，就能获得更高的奖励。</p>
+<p>一个困难的页面可能有多种有效表示。这些检查让模型能够灵活地找到正确答案，而不必规定某个确切的 token 序列，同时抑制循环和未完成的输出。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png" alt="匹配训练对比，展示 GRPO 后的提取增益，以及更少的重复标记和 token 上限命中。"></a></p>
+<p><em>图 3. 在匹配评估设置下对 SFT 和 GRPO 的受控对比。这些是开发检查点，与最终发布模型不同。循环计数使用重复检查。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md#training-and-adaptation-figures">方法</a>。</em></p>
+<p>匹配对比显示了收益：被标记为循环的输出从 <strong>126 页降至 29 页——减少约 77%</strong>——达到 9,000 token 上限的输出从 <strong>185 降至 35</strong>。总体得分从 <strong>66.24 提升至 71.38</strong>，其中<strong>表格 +5.18 分</strong>，<strong>图表 +4.15 分</strong>。</p>
+<h2>通过架构和 DFlash2 实现更快推理</h2>
+<p>解析器必须为每个页面生成大量文本和结构。在训练工作的同时，我们优化了 Parse 3.5 处理图像和解码这些输出的方式。</p>
+<table><thead><tr><th><strong>组件</strong></th><th><strong>Parse 2.0</strong></th><th><strong>Parse 3.5</strong></th></tr></thead><tbody><tr><td>页面预处理</td><td>固定 2048 × 1664 画布</td><td>NaViT 动态矩形输入</td></tr><tr><td>图像到文本连接</td><td>编码器–解码器交叉注意力</td><td>压缩视觉 token 作为因果前缀</td></tr><tr><td>解码器自注意力</td><td>多头注意力</td><td>GQA-8：16 个查询头，8 个键/值头</td></tr><tr><td>推测解码</td><td></td><td>单 token 前瞻（MTP）；可选 DFlash2</td></tr></tbody></table>
+<p><strong>NaViT 预处理</strong>使输入形状适应页面。视觉适配器压缩图像序列，文本解码器将其作为前缀消费，取代编码器–解码器交叉注意力。<strong>八键/值头的分组查询注意力（GQA-8）</strong>减少了解码器的注意力缓存内存。</p>
+<p>内置的<strong>多 token 预测（MTP）</strong>头提供单 token 前瞻。我们的 <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse/tree/main/dflash2">DFlash2 推测器</a></strong>更进一步：一个小型草稿模型<strong>最多提议未来 32 个 token</strong>，Parse 一起验证这些提议。在实测的 32 token 配置中，平均约<strong>接受 14 个草稿 token</strong>，即每个验证步骤（含目标 token）约<strong>推进 15 个输出 token</strong>。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png" alt="吞吐量曲线对比 Parse 2.0 与 Parse 3.5 基础版、MTP 和 DFlash2。"></a></p>
+<p><em>图 4. 在单张 H200、BF16 上使用相同 2,078 页的原生单遍吞吐量。Parse 2.0 每个点一次试验；Parse 3.5 显示三次试验的中位数。箭头显示从 Parse 3.5 基础版到 DFlash2 的增益。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md">测量详情</a>。</em></p>
+<p>在单张 H200、BF16 的原生单遍基准测试中，与禁用推测解码的 Parse 3.5 相比，DFlash2 在并发 1 时吞吐量提升 <strong>7.62×</strong>，在并发 512 时提升 <strong>1.52×</strong>。在 512 并发下，Parse 3.5 无推测达到 <strong>13.48 页/秒</strong>，使用 DFlash2 达到 <strong>20.44 页/秒</strong>，而 Parse 2.0 为 <strong>2.98 页/秒</strong>。分别是 Parse 2.0 吞吐量的 <strong>4.53×</strong> 和 <strong>6.86×</strong>。</p>
+<p>快速解析让我们有余力重新审视困难区域。先进行整页预测，然后在文档需要的地方添加针对性重新处理：</p>
+<ul><li><strong>单遍 -</strong> 对整页解析一次，提取文本、布局、表格和图表。</li><li><strong>双遍 - 用于密集表格和小图表细节。</strong> 裁剪解析器找到的表格和图表区域，以更高细节重新解析，并将细化结果合并到页面输出中。</li><li><strong>三遍 -</strong> 不仅使用模型的整页解析边界框，还以检测模式进行第二遍模型处理，以验证所有框均已准确找到且文本未被遗漏，并在第三遍中重新提取任何找到的图表或表格</li></ul>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png" alt="单遍页面解析、双遍裁剪细化和使用独立区域检测器的三遍细化。"></a></p>
+<p><em>图 5. 额外阶段将计算集中在困难区域。多个裁剪可能需要多个请求。</em></p>
+<p>在已发布的参考评估中，双遍和三遍相比单遍分别增加 <strong>2.18 和 2.46 个 ParseBench 分</strong>。额外工作让应用可以牺牲部分吞吐量，换取困难区域的更好提取效果。<a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse#single-double-or-triple-pass">参考结果和服务测量</a>。</p>
+<h2>将相同的 SFT/RLVR 方法应用于你的文档</h2>
+<p>我们分享了一个 <strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/index.md">Parse 微调配方</a></strong>，引导开发者完成配对数据生成、<strong>NeMo Automodel SFT</strong> 和 <strong>NeMo RL GRPO</strong>，并使用 vLLM 生成候选答案。</p>
+<p>示例使用一个带有<strong>牙位图</strong>的合成牙科表单：图表显示牙齿、计划程序和受影响的牙面。在适配之前，Parse 能读取印刷的牙位编号，但遗漏了预期的程序表。SFT 教会它将每颗标记的牙齿与程序及其在牙齿上的位置关联起来。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png" alt="合成牙科页面、基础模型的牙位编号转录，以及预期的牙齿/程序/牙面表。"></a></p>
+<p><em>图 6. 一个记录的配方示例：经过 SFT 后，全部六行图表均与目标匹配。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/examples/dental-adaptation.md">完整图像和原生训练标签</a>。</em></p>
+<p>RLVR 随后强化准确性和一致完成度。在牙科参考运行中，估计的首次尝试成功率（采样 pass@1）从基础模型的 0.00% 升至 SFT 后的 95.85%，RLVR 后达到 96.58%。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png" alt="牙科采样 pass@1：SFT 后 95.85%，RLVR 后 96.58%，y 轴显示 90% 至 100%"></a></p>
+<p><em>图 7. 在来自同一合成生成器的 256 份留出表单上进行匹配评估，每页八个样本。成功要求自然完成、图表内容完全正确且归一化页面文本无错误。<a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/workflow.md#evaluation-and-dental-example-results">评估协议</a>。</em></p>
+<p>要适配该配方，请提供你自己的图像/标签对和验证器：即判断提取是否正确的检查。包含的<strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/tree/main/src/nemotron/recipes/parse/document_rewards">文档奖励组件</a></strong>涵盖文本保真度、边界框、表格、图表事实和完成度。组合与你的任务相关的组件，添加模式检查，并使用完成度和重复检查来抑制循环或未完成的输出。</p>
+<p>我们很高兴社区已经为<strong><a href="https://huggingface.co/iapp/OpenThai2.1-OCR-Markdown-20261118">泰语</a></strong>、<strong><a href="https://huggingface.co/Reza2kn/Bina-0.4-Koochik">波斯语/法尔西语</a></strong>和<strong><a href="https://huggingface.co/g3ida/absir-arabic-ocr-mini">阿拉伯语</a></strong>扩展并改进了 Parse，我们希望这些额外的数据集和微调配方能帮助鼓励这些努力和未来的模型。</p>
+<p>我们感谢 Denis Ovchinnikov 在 vLLM 集成和独立性能验证方面的工作，Oliver Holworthy 改进微调配方的运行时设置和可复现性，以及 Bo Liu 的技术审阅。</p>
+<h2>本文提到的模型 3</h2>
+<h2>本文提到的数据集 4</h2>
+<p>更多来自该作者</p>
+<h2>Microduck 避障：使用 Isaac Lab 和 Newton 的 Sim2Real 工作流</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>13</p>
+<p>2026 年 11 月 24 日</p>
+<h2>使用 SimReady 资产构建机器人拾放仿真</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>51</p>
+<p>2026 年 11 月 13 日</p>
+<h3>社区</h3>
+<h2>本文提到的模型 3</h2>
+<h2>本文提到的数据集 4</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>群体、群体、帮派：如何构建、训练和评估多智能体系统</title>
+      <link>https://huggingface.co/blog/training-swarms</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/training-swarms</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems</description>
+      <content:encoded><![CDATA[<h1>Swarms、Flocks、Gangs：如何构建、训练与评估多智能体系统</h1>
+<p>发布于 2026 年 11 月 26 日</p>
+<p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw 的头像"></a></p>
+<p>ben burtenshaw</p>
+<p>burtenshaw</p>
+<p><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt="Kashif Rasul 的头像"></a></p>
+<p>Kashif Rasul</p>
+<p>kashif</p>
+<p><em>第一部分：理解 swarm 并训练其通信</em></p>
+<p>这是一个面向有抱负读者的、同样有抱负的博客系列。我们（我们、社区、你）想构建自己的 agent swarm，因为它们令人兴奋、富有挑战性，而且能力越来越强。更进一步，如果我们能训练自己的 agent 在 swarm 中协作，那会极其酷。如果这些 swarm 使用的还是小而经济的模型，那酷的程度还会指数级上升。</p>
+<p>这就是我们在本系列中要做的事！每篇博客都会包含一些关于构建 swarm 的背景，以及可在 Hugging Face Jobs 上运行的可复现示例。本文的示例在两块 H200 上大约需要五小时，成本约为 $50。</p>
+<p>多智能体系统很难真正跑通。增加 agent 会改变 agent 的上下文、预算，进而改变整个系统的复杂度。通过通信把各 agent 的上下文混合在一起，相比单个 agent 并不是内在的性能提升。模型需要通过训练学会通信。我们如何定义模型应该学什么？当我们面对许多 agent 时，又该更新哪些模型权重？</p>
+<p>在本系列中，我们将通过教学性概览和实践示例来逐个处理这些问题。每篇文章都会提出一个问题、构建一个小系统，并考察会发生什么以及你如何复现它。第一个示例从四个 agent、一个共享语言模型和一个简单的可验证任务开始。它非常适合你自己实现、动手折腾并从中学习。</p>
+<p>首先，我们会从一些关于 swarm 的背景开始。</p>
+<h2>swarm 的崛起</h2>
+<p>过去几个月里，我们听到了很多关于 swarm 的消息，有好有坏。今年九月，<a href="https://openai.com/index/navier-stokes-solution/">OpenAI 宣布</a>，一个约 10,000 个 agent 组成的 swarm 在三维 Navier-Stokes 方程中找到了一个奇点，这是千禧年大奖难题之一。一个由近 100 个 agent 组成的更小团队已经否证了无外力三维 Euler 方程的正则性，这是一个密切相关的开放问题。</p>
+<p>但 swarm 并不总是会去解决我们希望它们解决的问题。<a href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/">METR 对 Hugging Face 事件的调查</a>发现，约 1,200 个本应被隔离的 OpenAI agent 找到了交换超过 70,000 条消息和文件的方法。大约 700 个 agent 在寻找办法欺骗其 benchmark 评分器的过程中，参与了对 Hugging Face 的攻击，而它们并没有被指示这样做。</p>
+<p>一个大型 swarm 本身并不能证明合作起了作用。<a href="https://www.dwarkesh.com/p/noam-brown">Noam Brown 估计</a>，Navier-Stokes 成果中来自多智能体合作的部分不到 10%。在 <a href="https://www.anthropic.com/research/multiagent-systems">Anthropic 的漏洞发现实验</a>中，协调后的 agent 比独立 agent 发现了更多 bug，但也搜索了更多代码、使用了更多 token。当比较被限制在相同目录时，每百万 token 的结果大致相同。</p>
+<h2>合作有帮助，还是我们只是花了更多？</h2>
+<p>从最简单的情况开始。如果四个 agent 各自独立尝试一个任务，那么只要我们能判断哪个答案正确，至少有一个 agent 答对的概率就高于单次尝试。这为多智能体系统提供了一个有用的基线，但它并不能表明 agent 之间互相帮助了。它们可能只是有了更多次尝试。</p>
+<p>四次尝试的成本也是四倍。因此，更公平的比较是在相同预算下进行：如果四个 agent 各获得总 token 的四分之一，它们还能击败一个花掉全部 token 的 agent 吗？我们只能通过测试来找出答案，因为这取决于任务、模型以及工作如何划分。</p>
+<blockquote>本系列一直在问一个问题：当 agent 通信时，这真的有帮助吗，还是我们只是花了更多算力？</blockquote>
+<p>我们通过下面这个简单的预期来理解这个问题。</p>
+<p>图 1. 我们想要检验的预期示意图：在匹配预算下比较相互通信的 agent 与独立 agent。</p>
+<p>我们会把 agent 数量视为一个扩展维度，与 token 数和模型规模并列。有时增加 agent 会有帮助。有时协调会消耗掉我们原本希望节省的预算。关键在于把两者都测量出来。我们不会从 10,000 个 agent 开始。我们会从一个小团队和一个容易检查的任务开始。</p>
+<h2>多智能体系统与强化学习</h2>
+<p>早在语言模型被称为 swarm 之前，多智能体强化学习就已经在研究合作与竞争。</p>
+<p>单个 agent 的任务是一个马尔可夫决策过程：观察、行动、获得奖励。在一个团队中，所有人共享奖励，但每个 agent 只能看到世界的一部分。这是一个去中心化部分可观测马尔可夫决策过程：彼此是队友，但没有人能看到全貌。</p>
+<p>这带来了三个实际问题。第一，在每个 agent 学习的同时，队友一直在变化。第二，信用分配：当团队成功时，哪些行动应获得功劳？一支获胜的队伍可能包含较弱的行动，而我们最终可能会奖励它们。第三，一条消息会改变其他 agent 的观察，因此通信是我们正在训练的策略的一部分。</p>
+<p>一种常见的解决方案是集中式训练、分散式执行：训练使用整个团队的信息，但每个 agent 仅根据自己的观察行动。我们的第一个示例采用这种模式，并使用共享的团队奖励。</p>
+<p>agent 也可以通过不同方式组织。两个有用的起点是：</p>
+<ul><li><strong>层级结构。</strong> 一个 lead agent 把工作分配给 worker 并收集它们的结果。Anthropic 的 Research 系统就是这样工作的，每个 worker 有独立的上下文。Kimi K2.5 的 PARL 只训练 orchestrator，并保持 subagent 冻结，因此训练多智能体系统并不意味着要更新每个组件。参见 <a href="https://www.anthropic.com/research/multi-agent-research-system">Anthropic 的系统描述</a>和 <a href="https://www.kimi.com/en/blog/kimi-k2-5">Kimi 的技术博客</a>。</li><li><strong>分布式团队。</strong> 同伴之间互相发送消息，并决定何时读取自己的收件箱。没有 lead agent 分配动作。这就是我们在这里将采用的设置，它沿用了 <a href="https://huggingface.co/papers/2611.08615">s³: Simple Scaling of Swarms via Cooperative Multi-agent RL</a>中的信息聚合任务。</li></ul>
+<h2>我们的第一个实验：四个 agent 对数字排序</h2>
+<p>我们将复现 <a href="https://huggingface.co/papers/2611.08615">Simple Scaling of Swarms</a>中的信息共享任务，因为它可解释且易于实现。四个 agent 共享一个小型语言模型，并学习汇集它们各自知道的信息。</p>
+<p>每个 agent 会收到一个 1 到 99 的整数。它知道自己的分配值以及队友的名字。它最初不知道其他 agent 的数字。例如，四个私有分配值可能是“五”、“二十六”、“五”和“七十八”。重复值会保留在列表中，因此正确的最终答案是：</p>
+<pre><code>#### [5, 5, 26, 78]</code></pre>
+<p>当<strong>至少一个 agent 提交完整且排序正确的列表</strong>时，团队即成功。一个正确答案就足够了；成功不要求四个 agent 全部答对。在没有队友信息的情况下，一个 agent 无法可靠地推断出其他私有分配值。</p>
+<p>这意味着该任务还没有直接检验图 1。每个 agent 都掌握着其他人需要的信息，因此单个 agent，或者一个不发送消息的团队，无论重试多少次都无法成功。相反，该任务检验的是图 1 背后的前提：一个小型共享策略究竟能否学会通信，以及这需要花费多少 token？后续文章会转向一个单个 agent 可以独立解决的任务，在那里，匹配预算的比较才有意义。</p>
+<p>主要的通信工具是 <code>message(to, text)</code>、<code>read_messages()</code> 和 <code>check_notifications()</code>。通知会告诉 agent 存在未读消息；读取收件箱后，消息内容就可供使用。agent 可以发送私信，也可以向所有人广播。</p>
+<p>我们定义了一个四 agent 系统，使用<strong>一个共享的 Qwen3-0.6B 策略</strong>，每个 agent 有独立的上下文和私有输入。我们并不是在训练四个不同的模型。prompt 说明了任务和工具，包括共享分配值的必要性。</p>
+<p>图 2. 任务与训练循环。私有数字展示了一个可能的成功 episode；此图不是一段录制的对话，也不是对第 75 次更新时所学协议的主张。</p>
+<h3>团队奖励与每个问题八次尝试</h3>
+<p>在本文中，<em>team</em> 指一个 episode：四个 agent 对一个问题尝试一次。成功的团队会获得奖励，但奖励会因其使用的 token 而减少。失败的团队获得零奖励：</p>
+<pre><code>team allowance = 4 × (8,192 work tokens + 1,024 final-answer tokens)
+               = 36,864 tokens
+
+reward = success × (1 − 0.25 × min(1, generated team tokens / 36,864))</code></pre>
+<p>举例来说，一个正确使用其额度一半的团队会得到 0.875。发送消息没有单独奖励。激励是在使用更少生成 token 的同时解决任务。</p>
+<p>对于每个训练问题，我们收集八个独立的团队尝试。它们的奖励在该组内归一化。表现优于组平均的尝试获得正 advantage；表现较差的尝试获得负 advantage。同一团队中的每个 agent 都会获得该团队的 advantage，包括自身最终答案错误的 agent。</p>
+<p>在 <a href="https://github.com/huggingface/trl">TRL</a> 中，每个 agent 采样的 token 构成一行训练数据。它接收到的消息和工具结果提供上下文。loss 先在每个团队内平均，然后在团队之间平均，因此较长的对话不会让某个团队获得更高权重。</p>
+<blockquote>我们的结果来自原始实验，该实验每次更新使用 256 次团队尝试（32 个问题，每个问题八次尝试）。操作演练使用 TRL 默认的 --teams-per-update 128，折算下来每次更新大约有 150 次团队尝试。</blockquote>
+<h3>我们的结果</h3>
+<p>在 75 个 step 中，对比最初五次和最后五次更新，训练成功率从 <strong>6.6% 上升到 82.3%</strong>。在 checkpoint 75，四 agent 团队解决了 <strong>32 个 held-out 问题中的 26 个（81.25%）</strong>。<a href="https://huggingface.co/papers/2611.08615">论文</a>报告称，经过 200 次更新后，四 agent 成功率为 93.2%。</p>
+<p>该团队每次尝试使用的 token 也<strong>减少了 37.4%</strong>，从约 13k 降至 8k。这一改进伴随着更活跃的信息共享：每个团队的广播次数从 2.38 增加到 5.73，尽管总 token 使用量下降了。</p>
+<p>图 3. 蓝色曲线描述每次更新前收集的、包含 256 次团队尝试的训练批次。橙色点是指示更新之后的 held-out 检查结果。</p>
+<p>团队在训练后期也使用了更少的 token。对比最初五次更新与第 71–75 次更新：</p>
+<table><thead><tr><th><strong>训练指标</strong></th><th><strong>第 1–5 次更新，均值</strong></th><th><strong>第 71–75 次更新，均值</strong></th></tr></thead><tbody><tr><td>成功率</td><td>6.56%</td><td>82.34%</td></tr><tr><td>每个团队生成的 token</td><td>12,826.9</td><td>8,026.0</td></tr><tr><td>每个团队的消息数</td><td>3.48</td><td>6.28</td></tr><tr><td>每个团队的广播数</td><td>2.38</td><td>5.73</td></tr><tr><td>每个 agent 发送一次广播的团队占比</td><td>4.06%</td><td>18.20%</td></tr></tbody></table>
+<p>这意味着在这两个窗口之间，<strong>每个训练团队生成的 token 减少了 37.4%</strong>。在 batch 75 本身，每个团队的均值是 7,624 个 token。这些是训练测量值；我们没有保留训练后 checkpoint 的 held-out token 效率测量值。</p>
+<p>注意，更少的 token 并不意味着更少的消息。更多 agent 开始参与，但广播变得比直接发消息更常见。生成的 token 既包括消息正文，也包括推理和工具调用，因此仅凭消息数量并不能告诉我们团队生成了多少文本。</p>
+<p>图 4. 上：训练 token 使用量及过去五次更新的滑动均值。下：基于已发送消息事件的互斥通信类别。团队的分类顺序是：首先看是否有某个 agent 从不发送消息，然后看是否出现任何直接消息，再看是否每个 agent 恰好发送一次广播；剩余团队则重复广播。</p>
+<h3>更多重试，还是训练过的团队？</h3>
+<p>没有 agent 能独自解决该问题，因此与“带更多重试的单个 agent”最接近的对应物，是带更多重试的未训练团队。训练数据已经包含这一比较。每次更新会为每个问题收集八次尝试，而任务的答案很容易检查，因此只要八次尝试中有任何一次成功，我们就可以把该问题计为已解决。在训练早期，这个计数给出了未训练团队的 best-of-8 成功率：</p>
+<table><thead><tr><th></th><th><strong>成功率</strong></th><th><strong>每个问题生成的 token</strong></th></tr></thead><tbody><tr><td>未训练团队，8 次尝试中的最佳（第 1–5 次更新）</td><td>37.5%</td><td>约 103,000</td></tr><tr><td>训练后团队，一次尝试（第 71–75 次更新）</td><td>82.3%</td><td>约 8,000</td></tr></tbody></table>
+<p>在八次重试下，未训练团队解决的问题不到一半，并且花费的 token 约为训练后团队单次尝试的 13 倍。请将此视为估计值。两行使用的都是训练问题而非 held-out 问题，而且第 2–5 次更新已经是从略微训练过的策略中采样。</p>
+<h3>基础设施</h3>
+<p>模型很小，但 rollout 规模不小。每次更新都会在最高 40k token 的上下文中生成数百万 token 的 agent 对话。我们使用一块 H200 作为 trainer，七块 H200 运行 vLLM rollout 引擎来快速完成这些 rollout，并把每个 worker 的八次尝试放在一起。下面的演练在两块 GPU 上运行同样的任务。以下是基础设施细节：</p>
+<table><thead><tr><th><strong>设置</strong></th><th><strong>记录的实验</strong></th></tr></thead><tbody><tr><td>共享策略</td><td>Qwen3-0.6B</td></tr><tr><td>每个团队的逻辑 agent 数</td><td>4</td></tr><tr><td>每次更新的问题数</td><td>32</td></tr><tr><td>每个问题的团队尝试数</td><td>8</td></tr><tr><td>每个 agent 的工作 / 最终答案 token 数</td><td>8,192 / 1,024</td></tr><tr><td>学习率 / temperature</td><td>5e-7 / 1.0</td></tr><tr><td>训练问题池</td><td>1,024 个生成问题</td></tr><tr><td>报告 endpoint</td><td>保留的 checkpoint 75</td></tr><tr><td>执行</td><td>1 块 trainer GPU + 7 块 rollout GPU</td></tr></tbody></table>
+<h2>实践示例：训练你自己的 swarm</h2>
+<p>上面的图表描述了我们最初的 75 次更新实验。在本演练中，我们将在 Hugging Face Jobs 上运行 <a href="https://github.com/huggingface/trl/tree/main/examples/async_grpo_s3_aggregation">TRL 的 swarm 示例</a>。一块 H200 用 vLLM 服务共享的 Qwen3-0.6B 策略，第二块 H200 训练它。</p>
+<h3>1. 为本次运行创建一个 bucket</h3>
+<p>使用能够运行 Jobs 并创建 bucket 的 Hugging Face 账户登录。将 <code>YOUR_USERNAME</code> 替换为你的 Hub 用户名。</p>
+<blockquote>每次运行都使用一个新的 bucket，以便先前的测量结果仍然可用。</blockquote>
+<pre><code>uv tool install 'huggingface_hub==2.4.0'
+hf auth login
+BUCKET=&quot;YOUR_USERNAME/swarm-trl-$(date -u +%Y%m%d-%H%M%S)&quot;
+hf buckets create &quot;$BUCKET&quot;</code></pre>
+<h3>2. 在 Hugging Face Jobs 上运行 TRL 示例</h3>
+<p>将下面的脚本保存为当前目录中的 <code>train-swarm.sh</code>。</p>
+<p><code>train-swarm.sh</code></p>
+<pre><code>set -eu
+git clone --depth 1 https://github.com/huggingface/trl /tmp/trl
+cd /tmp/trl
+example=examples/async_grpo_s3_aggregation
+if [ ! -f &quot;$example/async_grpo_s3_aggregation.py&quot; ]; then
+  git fetch --depth 1 origin refs/pull/8424/head
+  git checkout --detach FETCH_HEAD
+fi
+git rev-parse HEAD &gt; /results/trl-revision.txt
+python -m pip install -e &quot;.[vllm,kernels]&quot; &quot;vllm==0.32.0&quot; datasets httpx trackio
+
+base=Qwen/Qwen3-0.6B
+url=http://127.0.0.1:8000
+export TRACKIO_DIR=/tmp/trackio
+serve() {
+  CUDA_VISIBLE_DEVICES=0 VLLM_SERVER_DEV_MODE=1 vllm serve &quot;$@&quot; \
+    --host 127.0.0.1 --max-model-len 40960 --max-num-seqs 512 --enable-prefix-caching &amp;
+  server=$!
+  until curl -fs &quot;$url/health&quot; &gt;/dev/null; do kill -0 &quot;$server&quot;; sleep 5; done
+}
+evaluate() {
+  python &quot;$example/evaluate.py&quot; --url &quot;$url&quot; --model &quot;$1&quot; --name &quot;$2&quot; \
+    --episodes 192 --concurrency 64 --out &quot;/results/$2.jsonl&quot;
+}
+
+serve &quot;$base&quot; --logprobs-mode processed_logprobs --weight-transfer-config &quot;{\&quot;backend\&quot;:\&quot;nccl\&quot;}&quot;
+evaluate &quot;$base&quot; base
+CUDA_VISIBLE_DEVICES=1 accelerate launch --num_processes 1 --mixed_precision bf16 \
+  &quot;$example/async_grpo_s3_aggregation.py&quot; --vllm-url &quot;$url&quot; \
+  --updates 50 --teams-per-update 128 --concurrent-teams 128 \
+  --report-to trackio --output-dir /tmp/swarm
+cp -r &quot;$TRACKIO_DIR&quot; /tmp/swarm/checkpoint-50 /results/
+kill &quot;$server&quot;
+wait &quot;$server&quot; || true
+serve /tmp/swarm/checkpoint-50 --logprobs-mode processed_logprobs
+evaluate /tmp/swarm/checkpoint-50 trained</code></pre>
+<p>下面的命令会将其内容发送到 job。在 job 内部，vLLM 在 GPU 0 上服务共享策略。GPU 1 使用 Trackio 运行 TRL 的 <code>async_grpo_s3_aggregation.py</code>，进行 50 次更新。TRL 的 <code>evaluate.py</code> 会在相同的 192 个 held-out 问题上为基座模型和 checkpoint 50 打分。这比我们结果中的 32 问题检查集更大，因此误差棒更紧。该 job 会把两个分数、checkpoint、Trackio 数据以及确切的 Git commit 保存到你的 bucket。</p>
+<pre><code>hf jobs run --detach --flavor h200x2 --timeout 12h \
+  --volume &quot;hf://buckets/$BUCKET:/results&quot; \
+  -- vllm/vllm-openai:v0.32.0 bash -c &quot;$(cat train-swarm.sh)&quot;</code></pre>
+<p>一次 TRL rollout 包含一整段团队对话。trainer 会比较针对同一问题的八次尝试，并给一次尝试中的全部四个 agent 相同的 advantage。每次更新使用约 150 次团队尝试。TRL 按 token 数而非按团队打包 micro-batch，因此 <code>--teams-per-update 128</code> 设置是近似值。<code>--report-to trackio</code> 标志会在每次更新时记录训练指标。</p>
+<p>这次较短的运行比我们的原始实验更便宜，并且在学习曲线上更早停止。TRL 运行此示例时，在两块 H100 上耗时约 4.8 小时，并在 checkpoint 50 达到 60.9% 的 held-out 成功率。</p>
+<blockquote>若要更接近我们的原始实验，请将训练标志改为 --updates 75 --teams-per-update 256 --concurrent-teams 256，将脚本中的 checkpoint-50 替换为 checkpoint-75，并将 job 的 --timeout 提高到 24h。这样 rollout 数量会变成三倍。两个代码库在 system prompt 等细节上仍然不同，因此预期会得到相似结果，而不是精确复现。</blockquote>
+<h3>3. 读取结果</h3>
+<p>job 完成后，将 bucket 同步到本地文件夹。其中包含两个评估文件、Trackio 数据、TRL revision 以及 checkpoint-50 权重，后者是最大的下载项。在 dashboard 中，对比训练过程中的 <code>team/success</code>、<code>team/messages</code> 和 <code>team/tokens</code>。job 日志还会给出基座模型和 checkpoint 50 的 held-out 成功率。<code>base.jsonl</code> 或 <code>trained.jsonl</code> 的每一行记录其中一次评估尝试。</p>
+<pre><code>hf buckets sync &quot;hf://buckets/$BUCKET&quot; ./swarm-results
+TRACKIO_DIR=&quot;$PWD/swarm-results/trackio&quot; uvx trackio show</code></pre>
+<h2>我们接下来会尝试什么</h2>
+<p>第一个示例为我们提供了一个小环境、一个共享奖励，以及一个在汇集私有信息方面不断改进的策略。它还说明了为什么需要把成功率、token 使用量和通信结构放在一起解读。在第 75 次更新时，团队已经能解决大多数被检查的问题，但尚未收敛到最简洁的通信模式。</p>
+<p>在接下来的示例中，我们会从训练中退后一步，看看如何评估和分析 swarm。</p>
+<p>目前，我们已经有了具体的基础可以继续构建：四个小 agent、一个可训练策略、一个可检查的任务，以及一种可复现的方式来考察团队学到了什么。</p>
+<h2>本文提到的论文 1</h2>
+<p>我们博客的更多文章</p>
+<p>rltrlagents</p>
+<h2>推出 harness 适配器：让你喜欢的模型适配你的 harness，以提升性能并优化成本</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63e0eea7af523c37e5a77966/B6Qs5bgr8wXcy2tPl6CVQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li><li>+6</li></ul>
+<p>158</p>
+<p>2026 年 11 月 20 日</p>
+<p>llmrltrl</p>
+<h2>跨 HF Jobs 使用 LoRA 的异步 GRPO：一个 bucket、一个 proxy，且无需 NCCL</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
+<p>55</p>
+<p>2026 年 9 月 10 日</p>
+<h3>社区</h3>
+<h2>本文提到的论文 1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>科学家为 AI agent 划下的界线</title>
       <link>https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents</link>
@@ -6231,358 +6512,6 @@ print(result.quantile_outputs)   # quantiles</code></pre>
 <p>7</p>
 <ul><li><a href="https://huggingface.co/aboudrari"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vhoKsHAASHnAkFp9kCHYR.png" alt=""></a></li><li><a href="https://huggingface.co/happybydefault"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1640645587885-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asiddique99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ad956a599c6f5b5956ab489/R8H6LHAZS9BbGfloqKeEd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/zensaintlaurent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png" alt=""></a></li><li><a href="https://huggingface.co/mayankbhaskarr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FME67fc118KAW06M8NsbO.png" alt=""></a></li><li><a href="https://huggingface.co/iamzeid"><img src="https://huggingface.co/avatars/301da4357878770897b3f301ea6c125e.svg" alt=""></a></li></ul>
 <h2>本文中提到的模型 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>在真实应用中，专门化 SLM 的词表如何把推理成本降低 77%</title>
-      <link>https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：How Specializing the Vocabulary of SLMs Can Cut Inference Cost by 77% in Real Applications</description>
-      <content:encoded><![CDATA[<h1>在真实应用中，专门化 SLM 的词表如何把推理成本降低 77%</h1>
-<p>团队文章</p>
-<p>发布于 2026 年 10 月 21 日</p>
-<p>15</p>
-<ul><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/0074277b4edc91617019d5b43211f8cb.svg" alt=""></a></li><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/7288e407f97fa45c62e83aee9ad68a4d.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/19b3ad64ce88f2e8b8be7d7019f30e1a.svg" alt=""></a></li><li><a href="https://huggingface.co/anacsb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/0qI4aveV-RoivRDJCBdOO.png" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt=""></a></li><li><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/18094cac3217d1a105f967e53681eb56.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/bernardoaguiar"><img src="https://huggingface.co/avatars/850d728ebccddc31593f8e9a50a7c735.svg" alt="Bernardo França de Aguiar 的头像"></a></p>
-<p>Bernardo França de Aguiar</p>
-<p>bernardoaguiar</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 的头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt="Gabriel Pimenta de Freitas Cardoso 的头像"></a></p>
-<p>Gabriel Pimenta de Freitas Cardoso</p>
-<p>GabrielPimenta99</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 的头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/ad22fc4e8831a181f04959ae2646465b.svg" alt="Bruno Duarte 的头像"></a></p>
-<p>Bruno Duarte</p>
-<p>brunoduarte01</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 的头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt="Francisco de Almeida Rocha Alves 的头像"></a></p>
-<p>Francisco de Almeida Rocha Alves</p>
-<p>falves9101</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 的头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><em>为某个领域或任务专门化模型时，我们通常是在 Qwen、Gemma 等通用开源模型上做微调，于是它继承了为众多领域和通用应用而构建的词表。</em></p>
-<p><em>在我们投入生产运行的一个作文评分器中，这套词表把模型最常写的文本切成了很多 token。本文抢先披露 VocabX 论文的部分结果（论文即将发布）：我们没有按词频、而是按每个 token 的成本来专门化词表，在不更换基础模型的前提下，把实测推理成本降低了 77%。</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/TYOhAFobnI4ss3UnNqMHc.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/TYOhAFobnI4ss3UnNqMHc.png" alt="同一句话，更少的 token：基础 tokenizer 是 14 个 token，VocabX 是 4 个"></a></p>
-<p>tokenizer 通常被当作基础模型的一项固定属性，继承下来就不去动它。但对于专门服务于单一领域的模型，它可能是最大的成本杠杆之一，而且它在任何训练步骤之前就已经确定。</p>
-<p>我们在生产环境运行的系统之一，是一个基于 Qwen3-4B 构建的葡萄牙语作文自动评分器。它接收作文、题目和支持文本，返回一份 JSON 评估，其中包含总分以及每项能力的评语。</p>
-<p>这个模型本身已经很小，只有 40 亿参数，而且已经针对该任务训练过。然而它的 tokenizer 仍然是 Qwen3-4B 原本那套，为多种语言和多种文本而构建。在评分器中，它只用于一种语言（葡萄牙语）和一种响应格式。这带来两项成本：评分器每次请求写出的文本占用了超过所需的 token；而模型每生成一个 token，都要在一个 151,669 条的词表上打分，其中许多条目这个任务几乎从不使用。</p>
-<p>我们用一种称为 VocabX 的方法重建了这套词表，基础模型、数据和训练配方都保持不变。本文中的数字来自论文的当前版本（仍在评审中），在正式发表前可能变化。</p>
-<h2>为所有人打造的词表</h2>
-<p>主流语言模型以 token 读写，而 tokenizer 决定文本如何变成 token。主流通用模型的 tokenizer 是在来自众多领域和语言的大规模文本集合上训练的，从源代码到合同再到中文。对一个通用模型而言，这个选择是合理的。</p>
-<p>但对只用于单一领域的模型，它同时制造了两类浪费。</p>
-<p>第一类是碎片化。tokenizer 恰恰把该领域重复最多的内容切成许多片段。在评分器中，每条响应都以相同的 JSON 外壳、相同的能力名称、相同的评语短语开头。在合同里，这些是样板条款；在代码里，是标识符。这些序列每一个都要花掉本该只需一个 token 的好几个 token，而模型在每次请求时都要为它们一一付费。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/K5De-hfTaOl9vUJItSijj.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/K5De-hfTaOl9vUJItSijj.png" alt="评分器在每条响应中写出的这一段，在基础 tokenizer 下是 12 个 token，VocabX 下是 1 个"></a></p>
-<p>第二类是冗余。词表里带着成千上万个该领域从不使用的条目，而模型每生成一个 token 都要为所有条目计算分数。一个被调去评美国中学生物试卷的模型几乎永远不会写中文，却要在每一步计算每个中文 token 的概率。词表把该领域重复最多的内容切成许多片段，同时又带着该领域从不使用的条目。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/Inl5L1IDqWUBbD0Xlq-JB.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/Inl5L1IDqWUBbD0Xlq-JB.png" alt="基础 tokenizer 有 151,669 个词表条目，VocabX 是 64,767 个"></a></p>
-<h2>读便宜，写昂贵</h2>
-<p>自然的反应是数 token、想办法减少数量。但数量并不是账单。</p>
-<p>要理解为什么生成的 token 更贵，先看看推理是如何运作的。它有两个阶段。在 <em>prefill</em> 阶段，模型通过网络单次前向处理整个输入：从 GPU 内存读取的每个权重都会被所有输入 token 复用，瓶颈是算力。在 <em>decode</em> 阶段，模型一次生成一个 token 的响应，每个 token 都需要一次完整的前向。每次读取的权重只用上几次，GPU 大部分时间都在等数据从内存送达：瓶颈变成了内存带宽。</p>
-<p>这一效应在我们所处的场景中最强：以小到中等 batch 服务的小模型。把请求批处理可以把权重的读取分摊到多个请求上、缓解问题，但并没有解决它。在每个 decode 步骤，模型还要读取 KV cache，即保存已处理上下文、并随上下文增长的注意力内存。在我们测量的案例（评分器）中，生成一个 token 的成本是读取一个 token 的 7.4 倍，但这个比例会随硬件、问题、batch 大小、上下文长度等因素变化，而且可能更大。总体而言，方向是成立的：生成比读取更贵。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/q-GjdgYd6GgXnv3-wJQsY.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/q-GjdgYd6GgXnv3-wJQsY.png" alt="在我们测量的案例中，写一个 token 的成本是读一个的 7.4 倍"></a></p>
-<p>想象一家物流公司按箱收费，但寄出的箱子比寄入的箱子贵七倍。减少箱子总数有帮助，减少寄出的箱子则带来七倍的帮助。一种对输入和输出同等压缩的方法，会错过大部分可节省的空间。</p>
-<p>账单的第三个组成部分是词表本身。模型的最后一层，也就是 LM head，把内部状态转换成每个可能 token 的分数。为此，它为每个词表条目持有一行参数。在 Qwen3-4B 这个规模的模型里，这个矩阵占了近 10% 的参数。大模型可以毫无察觉地吸收这个比例，但它会压垮小模型。</p>
-<p>而且这项成本不只付一次。输入层只查被读取 token 的那一行，但 LM head 对每个生成的 token 都要读取并乘以整个矩阵。由于 decode 本来就受内存带宽限制，每多一行，就意味着每一步要多搬运一份数据。一个该领域从不使用的条目，与一个高频条目成本完全相同。这就是为什么增加 token 可能同时降低数量、抬高账单。VocabX 没有把这一项放进它的选择准则，但它分两步控制词表规模：子词合并用更小的、领域专属词表替换基础词表，而 macro 在固定预算下进入。在评分器中，输出层从约 152,000 行降到约 65,000 行。</p>
-<h2>为什么现有方案不够好</h2>
-<p>调整模型的词表并不是新想法。文献中的参考方法，例如 fast vocabulary transfer（FVT）、multi-word tokenization（MWT）以及 Liquid AI 的<a href="https://www.liquid.ai/blog/tokenizer-expansion">原位 tokenizer 扩展</a>（in-place BPE，即在原词表基础上继续训练 BPE），已经能减少碎片化。当我们在自己的问题上测试它们时，发现了两个局限。</p>
-<p><strong>它们按频率而不是按成本挑选 token。</strong> 一个在输入中经常出现的表达，对它们来说比一个在响应中出现较少的表达更有价值，哪怕后者服务起来更昂贵。</p>
-<p><strong>它们只作用于单一层面。</strong> 它们要么调整词如何被切成片段，要么把整段短语合并成一个 token。这三者没有一个在同一准则下同时做这两件事。而评分器最大的浪费恰恰在于冗长且重复的片段，比如 JSON 外壳，子词方法只能通过逐个合并各部分才能触及它。</p>
-<h2>我们如何解决</h2>
-<p>VocabX 同时应对这两个局限，外加第三个问题——它在解决第一个问题的最直白路径上就会出现。</p>
-<p><strong>首先，我们换了问题。</strong> 我们不再问某个候选能省下多少个 token，而是问它能省下多少成本和时间。每个被消除的 token 都乘以它所在字段的价格：system prompt、用户消息或模型响应。在我们测量过的案例（评分器）中，响应里省下的一个 token 价值是输入里省下的一个 token 的 7.4 倍，词表也据此构建。</p>
-<p><strong>其次，我们同时作用于两个层面。</strong> 回到那家物流公司：你可以把每件物品包得更好来减少箱子，也可以意识到同一套十二件工具包每周都要寄一次，于是把整套工具装进一个箱子。VocabX 两者都做。在子词层面，它重建领域词汇被切成片段的方式。在多词层面，它寻找重复出现的整段片段，从简短表达一直到整行文本和 JSON 外壳，把每一段变成一个 token，我们称之为 macro token。两个层面都在同一成本准则下挑选，各有各的预算。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/B5Wig-4nTEutpFZlGQ6sk.gif"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/B5Wig-4nTEutpFZlGQ6sk.gif" alt="十二个箱子变成一个，7 个 token 变成一个 macro token"></a></p>
-<p>为了找到这些片段，我们使用了五个 miner，也就是在语料中自动搜索重复片段的机制，每个专攻一类重复：长词、整行、表达式、完整句子，以及带标点的结构，例如 JSON 和标签。在八个语料上平均来看，最后一个贡献最大，而在代码上它单独就贡献了 17.5 个点。缺少这五个中的任何一个，评分器上的 token 缩减率都会下降 55.6 个点。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/_EdPyU7R3xdomvFxuadPY.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/_EdPyU7R3xdomvFxuadPY.png" alt="两个层面，一个成本准则"></a></p>
-<p><strong>第三，我们估计样本看不到的部分。</strong> 按成本挑选 token，需要知道每个候选在已被选中的 token 之后还能省下多少。精确测量这一点，意味着每次选择之后都要重新处理整个语料，而这要做上万次。在大规模场景下常见的做法是在文档样本上测量，但这样一来，不在样本中的候选得到的增益是零。</p>
-<p>一个在 50,000 篇文档中出现 37 次的表达，在 400 篇文档的样本里大约只有 26% 的概率出现。在一个合同语料中，只有 16.6% 的候选出现在 400 篇文档的样本里，其余的从未被评估。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/zxfdAxNxsvfBCBNeUThx5.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/zxfdAxNxsvfBCBNeUThx5.png" alt="37 次出现没有一次落进这 400 篇文档的样本"></a></p>
-<p>一个候选的增益有两部分。一部分是它在整个语料上能省多少，这部分可以精确统计，不需要样本。另一部分是这份节省中有多少还未被已选中的 token 覆盖，只有这部分需要估计。对于样本看不到的候选，我们根据可见候选的行为做统计估计，而不是直接记为零。一个在样本中罕见但在语料中高频的候选，因此重新回到候选之列。</p>
-<p>仅这一处改动，在同样的样本和同样的预算下，把合同语料上的 token 缩减率从 44.7% 提升到 52.8%。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/PxGLMRrjTPVYDW8rlDuBd.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/PxGLMRrjTPVYDW8rlDuBd.png" alt="用估计代替零：token 缩减率从 44.7% 提升到 52.8%"></a></p>
-<h2>评分器上发生了什么变化</h2>
-<p>为了衡量真实效果，我们用相同的基础模型、相同的数据、相同的配方和相同的随机种子训练了七个版本的评分器。它们之间唯一的差别是 tokenizer。七个版本都在同一台测试机上跑同样的 500 个请求，机器配有 RTX 5090 GPU 和 vLLM 推理服务器，成本按实测运行时间计算。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/7CKshmOEsUkemfgL9Mopn.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/7CKshmOEsUkemfgL9Mopn.png" alt="评分器结果：成本降低 77.0%，bench 分数从 0.703 提升到 0.810"></a></p>
-<p>模型的响应平均从 350 个 token 降到 101 个 token。成本下降 77.0%。质量以 bench 分数衡量（该分数综合了评分准确率，以及筛除跑题或违规作文的准确率），从 0.703 提升到 0.810。</p>
-<p>为此我们经历了一次路线修正。词表的第一个版本把每项能力的分数与周围的 JSON 融合成单个 macro token。那是最紧凑的方案，但质量下降了：bench 分数为 0.689，低于生产评分器的 0.703。把分数放进 macro 之后，分数与结构的每种组合都变成了同一个 token 的不同变体，模型在一步之内同时做出了这两个选择。让分数拥有自己的 token，每条响应多花 2 个 token，bench 分数提升到 0.810，而且在测量中还更便宜：降低 77.0%，而融合版本是 73.3%。</p>
-<p>这个教训不只适用于评分器。当被压缩的片段承载的正是模型存在的意义所在的那个决策时，压缩是有代价的。目标不是尽可能便宜的词表，而是在保住真正重要的 token 的前提下最便宜的词表。</p>
-<h2>超越评分器</h2>
-<p>为了弄清这一收益是否只适用于我们的场景，我们在五个公开领域（合同、医学论文、科学论文、新闻和 Python 代码）和三个模型家族（Qwen3、Llama-3.1 和 Gemma-3）上，把 VocabX 与三种参考方法做了比较。所有方法使用相同的挖掘文档和测试文档，以及相同的词表上限。</p>
-<p>在全部十五种组合中，VocabX 的压缩幅度都超过最强的参考方法，领先 1.2 到 9.3 个点。在估算推理成本上，裁剪版 VocabX 同样在十五种组合中全部领先，在 Qwen3 上平均领先 10.2 个点、Llama-3.1 上 7.5 个点、Gemma-3 上 13.6 个点。在合同上，裁剪版以 113,426 个词表条目达到 62.6% 的 token 缩减率，而最佳 in-place BPE 配置是 61.8%，后者用了 207,803 个条目。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/bCCQQjpY6tU5ZAD3hXOeN.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/bCCQQjpY6tU5ZAD3hXOeN.png" alt="VocabX 的平均领先：+10.2（Qwen3）、+7.5（Llama-3.1）、+13.6（Gemma-3）个点"></a></p>
-<h2>只为真正重要的 token 付费</h2>
-<p>VocabX 并不会让模型更聪明。它只是让模型不再为那些本不需要逐段写出的文本付费，也不再为一个永远用不上的词表打分。在我们的评分器中，这在同样的基础模型和同样的训练配方下，把实测推理成本降低了 77%。</p>
-<p>专门化通常从数据和权重开始。它也可以从更早的一层开始，也就是词表。</p>
-<p>完整方法、每个实验的表格以及被舍弃的干预措施，都将收录在即将发布的 VocabX 论文中。</p>
-<h2>参考文献</h2>
-<ul><li>Dharma-AI. &quot;VocabX: Cost-Weighted Vocabulary Adaptation for Domain-Specific Language Models.&quot; In preparation (2026).</li><li>Gee, Leonidas, et al. &quot;<a href="https://aclanthology.org/2022.emnlp-industry.41/">Fast vocabulary transfer for language model compression</a>.&quot; EMNLP Industry Track (2022).</li><li>Gee, Leonidas, et al. &quot;Multi-word tokenization for sequence compression.&quot; EMNLP Industry Track (2023).</li><li>Smith, Jimmy T.H., et al. &quot;<a href="https://arxiv.org/abs/2607.15232">In-Place Tokenizer Expansion for Pre-trained LLMs</a>.&quot; arXiv:2607.15232 (2026).</li></ul>
-<h2>延伸阅读</h2>
-<ul><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management-pt2">同一个集群，利用率高出 33 个点：改变的只是顺序</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/gpu-management">GPU 管理：为什么闲置 GPU 成了新的停飞飞机</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/why-specialization-is-inevitable">为什么专门化不可避免</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/specialization-beats-scale">专门化胜过规模：大多数 AI 采购决策忽视的一个战略变量</a></li><li><a href="https://huggingface.co/blog/Dharma-AI/text-degeneration-a-production-failure-mode">文本退化：大多数基准都不追踪的一种生产故障模式</a></li></ul>
-<p><em>前往 <a href="https://huggingface.co/Dharma-AI">Hugging Face 上的 Dharma AI</a> 体验我们的 demo、下载我们的开放模型，并了解专门化的 AI 系统如何在真实企业应用中胜过通用模型。</em></p>
-<p>来自该作者的更多文章</p>
-<h2>同一个集群，利用率高出 33 个点：改变的只是顺序</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
-<p>20</p>
-<p>2026 年 8 月 17 日</p>
-<h2>GPU 管理：为什么闲置 GPU 成了新的停飞飞机</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
-<p>97</p>
-<p>2026 年 7 月 30 日</p>
-<h3>社区</h3>
-<p>在文本输入框中拖拽、粘贴或点击此处上传图片、音频和视频。</p>
-<p>点按或粘贴此处以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FDharma-AI%2Fvocabx-vocabulary-specialization">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2FDharma-AI%2Fvocabx-vocabulary-specialization">登录</a>后发表评论</p>
-<p>15</p>
-<ul><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/0074277b4edc91617019d5b43211f8cb.svg" alt=""></a></li><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/7288e407f97fa45c62e83aee9ad68a4d.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/19b3ad64ce88f2e8b8be7d7019f30e1a.svg" alt=""></a></li><li><a href="https://huggingface.co/anacsb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/0qI4aveV-RoivRDJCBdOO.png" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt=""></a></li><li><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/18094cac3217d1a105f967e53681eb56.svg" alt=""></a></li><li><a href="https://huggingface.co/isisfc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/lgG1lEgFBLnmfARS1pLCB.png" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/506583318c7aa57f91ddfaa554e5a377.svg" alt=""></a></li><li><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt=""></a></li><li><a href="https://huggingface.co/fabriciocarraro"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64b6e46971c6bc4088f1c9c4/1nqngiZt8bm6RcE-PJDfN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Profiling TorchNeuron（第 1 部分）：AWS Trainium 上的系统级性能剖析</title>
-      <link>https://huggingface.co/blog/amazon/profiling-torchneuron-part-1</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/amazon/profiling-torchneuron-part-1</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Profiling TorchNeuron (Part 1): System-level profiling on AWS Trainium.</description>
-      <content:encoded><![CDATA[<h1>Profiling TorchNeuron（第 1 部分）：AWS Trainium 上的系统级性能剖析</h1>
-<p>企业  文章</p>
-<p>发布于 2026 年 10 月 21 日</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/skoppar"><img src="https://huggingface.co/avatars/ba362a0e521f6803868998ead3614f14.svg" alt=""></a></li><li><a href="https://huggingface.co/LahariChowtoori"><img src="https://huggingface.co/avatars/ef1a34320918862e30e5ecc1e7305adb.svg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/adriansaxton"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a51391779a9d54dfdb9b467/LzvbqB5pTGvEo86NPHVTP.png" alt=""></a></li><li><a href="https://huggingface.co/hanbwang"><img src="https://huggingface.co/avatars/5016f7c40f940f0c413fd88f272f9929.svg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt="Josh Longenecker 的头像"></a></p>
-<p>Josh Longenecker</p>
-<p>jlongen-aws</p>
-<p><a href="https://huggingface.co/amazon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt="Amazon 的头像"></a> <a href="https://huggingface.co/amazon">amazon</a></p>
-<p>许多 ML 从业者对如何让模型跑得快有些直觉，但很少有人知道如何分析模型为什么慢。在本系列的第 1 部分中，你将会学到如何系统地分析推理性能，并找出时间花在了哪里。</p>
-<p>本文从零开始，假设你没有任何性能剖析经验。整个演练使用 AWS Trainium——一款专为深度学习训练和推理工作负载打造的 AI 芯片——以及它开源的 PyTorch 原生后端 <a href="https://github.com/aws-neuron/torch-neuronx">TorchNeuron</a>。TorchNeuron 在 Trainium 上支持标准 PyTorch 工作流，包括 eager 执行、<code>torch.compile</code> 和标准 PyTorch API，且代码改动极小。此外，TorchNeuron 与 <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/nki/index.html">Neuron Kernel Interface（NKI）</a> 集成，可为 Trainium 硬件启用自定义算子与性能优化。读到最后，你应当了解：</p>
-<ul><li>如何为 <code>torch.profiler</code> 配置 Neuron 后端，并抓取一份干净的 trace。</li><li>如何阅读 <code>key_averages()</code> 表格，找出哪些操作消耗了 Neuron 设备时间，并比较它们的 Self CPU 时间。</li><li>如何通过 Neuron Explorer 追踪一个操作，从框架派发、运行时调度，一直到在 NeuronCore 上的硬件执行。</li><li>同一个操作的三种实现下，这些信号会如何变化。</li></ul>
-<h2>Neuron 作为 PyTorch 后端</h2>
-<p>在剖析某个工作负载之前，先了解 <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/index.html">Neuron</a> 如何与 PyTorch 集成的机制会有帮助。</p>
-<p>Neuron 后端使用 PyTorch 的 <code>PrivateUse1</code> 扩展点。该机制让加速器无需新增 <code>cuda</code> 这类专用派发键，就能与框架集成。<code>torch_neuronx</code> 包与上游 PyTorch 配合，把 Neuron 注册为 PyTorch 代码的原生后端。关于这一扩展机制的细节，见 <a href="https://docs.pytorch.org/tutorials/advanced/privateuseone.html">Facilitating New Backend Integration by PrivateUse1</a>。</p>
-<h2>配置 profiler</h2>
-<p>剖析 Neuron 工作负载要用到两个对象：</p>
-<ul><li><code>NeuronConfig</code> 控制要抓取哪些 Neuron 数据流与 NeuronCore，以及把输出写到哪里。你以 <code>experimental_config</code> 的形式把它传给 <code>torch.profiler.profile</code>。</li><li><code>NeuronProfiler</code> 接收一个 <code>NeuronConfig</code>，并提供 <code>export_trace</code> 回调。该回调会把框架 trace（<code>trace.json</code>）与 Neuron 系统 trace 一起写出。</li></ul>
-<pre><code>nc = NeuronConfig(
-    modes=[ProfileMode.DEVICE, ProfileMode.RUNTIME],
-    profile_output_dir=OUTPUT_DIR,
-    capture_enabled_for_nc='0',
-    correlate_device_time=True,
-)
-exporter = NeuronProfiler(nc)</code></pre>
-<p><code>modes</code> 参数选择要抓取的数据流，例如设备指令和运行时 trace。<code>capture_enabled_for_nc</code> 参数选择要追踪的 NeuronCore。设置 <code>correlate_device_time=True</code> 会把设备时间从 trace 传播到 <code>key_averages()</code> 表格中，便于你在那里比较 CPU 时间与 Neuron 设备时间。完整的参数参考与可用的 <code>ProfileMode</code> 取值，见 NeuronConfig 的 <a href="http://awsdocs-neuron.readthedocs-hosted.com/en/latest/tools/neuron-explorer/how-to-profile-workload.html#neuronconfig-profile-modes">Profile Modes 文档</a>。</p>
-<h2>工具：Neuron Explorer</h2>
-<p>Neuron Explorer 是一个基于浏览器的查看器，用于查看系统 trace、设备时间线和按引擎拆分的明细。你可以通过 SSH 隧道或 Visual Studio Code 扩展访问它。在本文中，你用 Explorer 来确认 <code>key_averages()</code> 以数字报告的内容，并检视派发之间发生了什么。</p>
-<p>剖析结束后，输出目录中包含系统 trace；当你抓取了设备数据，还会有配对的 <code>.neff</code> 与 <code>.ntff</code> 文件。Neuron Executable File Format（NEFF）包含编译后的 Neuron 可执行文件，而配对的 NTFF 包含其硬件指令 trace。两个文件共享一个数字哈希，用以标识它们是一对。要在 Neuron Explorer 中打开 profile：若为系统 profile 或组合 profile，请上传完整输出目录；若为仅有设备的 profile，请分别上传配对的 <code>.neff</code> 与 <code>.ntff</code> 文件。UI 与命令行说明见 <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/tools/neuron-explorer/get-started.html#step-5-upload-your-profile">Step 5: Upload your profile</a>。</p>
-<h2>剖析 RMSNorm</h2>
-<p>在第一次分析中，你剖析 RMSNorm——一个规模很小、算术与归约操作序列清晰的操作。</p>
-<p>你剖析同一操作的三种实现：</p>
-<ul><li>用单个 PyTorch 操作拼出的朴素 RMSNorm：乘法、求均值、加法、平方根倒数，再乘法。</li><li><code>torch.rms_norm()</code>，即 PyTorch 内置实现，会被 lower 成单个融合的 Neuron kernel。</li><li>配合 <code>torch.compile</code> 的朴素 RMSNorm，使用与第一种实现相同的操作。</li></ul>
-<p>这些脚本使用相同的输入、profiler 配置与调度，因此结果可以直接比较。</p>
-<p>复现本文工作的所有脚本都在 <code>torch-neuronx</code> 的 <a href="https://github.com/aws-neuron/torch-neuronx/tree/main/examples/hf_profiling_blog_pt1">examples 目录</a> 中。</p>
-<h2>剖析 1：朴素的 PyTorch 操作</h2>
-<p>先直接用一个个 PyTorch 操作来写 RMSNorm。每一行都对应一个或多个 ATen 操作，并可能产生中间张量。</p>
-<pre><code>device = torch.device('neuron')
-
-x = torch.randn(4, 512, dtype=torch.bfloat16, device=device)
-weight = torch.ones(512, dtype=torch.bfloat16, device=device)
-
-def rms_norm_fn(t):
-    x_sq = t * t                                    # square
-    mean_sq = x_sq.mean(dim=-1, keepdim=True)       # mean of squares
-    rms = torch.rsqrt(mean_sq + 1e-6)               # 1 / sqrt(mean_sq + eps)
-    return t * rms * weight                         # normalize + scale</code></pre>
-<p>调用 profiler 时，Neuron 后端需要两个参数：</p>
-<ul><li>包含 <code>ProfilerActivity.PrivateUse1</code>，以收集 Neuron 设备上的活动。</li><li>把 <code>NeuronConfig</code> 作为 <code>experimental_config</code> 传入，以启用 Neuron 专属的 Kineto 特性。</li></ul>
-<p>这里的调度在四次 <code>prof.step()</code> 调用中使用 <code>wait=2</code>、<code>warmup=1</code>、<code>active=1</code>。这样会记录一次热身之后的迭代，且不包含初始化设置的开销。</p>
-<p>在 profiler 循环内调用 <code>torch.neuron.synchronize()</code>。若没有这次同步，profiler 可能在设备完成之前就导出，从而使 Neuron 时间列留空。</p>
-<pre><code>with torch.profiler.profile(
-    activities=[ProfilerActivity.CPU, ProfilerActivity.PrivateUse1],
-    experimental_config=nc,
-    record_shapes=False,
-    on_trace_ready=exporter.export_trace,
-    schedule=torch.profiler.schedule(wait=2, warmup=1, active=1),
-) as prof:
-    for step in range(4):
-        with torch.no_grad():
-            _ = rms_norm_fn(x)
-        torch.neuron.synchronize()
-        prof.step()</code></pre>
-<p>剖析结束后，检查 <code>key_averages()</code> 表格。按 <code>self_privateuse1_time_total</code> 排序，可把设备开销最高的操作排在前面。这里展示的表格已筛选为报告了 Neuron 设备时间的 RMSNorm 操作。完整的 <code>key_averages()</code> 输出还包含 CPU 侧事件，例如内存分配和 host-to-device 拷贝。</p>
-<pre><code>print(prof.key_averages().table(sort_by=&quot;self_privateuse1_time_total&quot;, row_limit=4))</code></pre>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/mlyyxfL6i5GfbOgUsyIuL.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/mlyyxfL6i5GfbOgUsyIuL.png" alt="key averages 表格显示，三次 aten::mul 调用占了 Neuron 设备时间的最大份额。"></a></p>
-<p><em>key averages 表格显示，三次 aten::mul 调用占了 Neuron 设备时间的最大份额。</em></p>
-<p>这张表显示了哪些 ATen 操作运行过、运行了多少次，以及它们在 CPU 和 Neuron 设备上各花了多少时间。<code>aten::mul</code> 的设备总时间最高，因为该函数执行了三次乘法。</p>
-<table><thead><tr><th>名称</th><th>调用次数</th><th>Self CPU</th><th>Self NEURON</th><th>% NEURON</th></tr></thead><tbody><tr><td>aten::mul</td><td>3</td><td>60.9 μs</td><td>1,164.5 μs</td><td>49.5%</td></tr><tr><td>aten::add</td><td>1</td><td>26.6 μs</td><td>434.6 μs</td><td>18.5%</td></tr><tr><td>aten::rsqrt</td><td>1</td><td>15.6 μs</td><td>415.0 μs</td><td>17.6%</td></tr><tr><td>aten::mean</td><td>1</td><td>21.1 μs</td><td>340.8 μs</td><td>14.5%</td></tr></tbody></table>
-<p><em>Self NEURON 总计：2.355 ms</em></p>
-<p>每一行都直接对应函数里的操作。<code>aten::mul</code> 对应 <code>x <em> x</code>、<code>x </em> rms</code> 以及最后与 <code>weight</code> 相乘。<code>aten::mean</code> 对最后一维做归约。<code>aten::add</code> 加上 epsilon 值，并触发一次 host-to-device 拷贝，因为这个标量最初在 CPU 上。<code>aten::rsqrt</code> 计算平方根倒数。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/GUGp8s5G4EV7rb09YBDbf.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/GUGp8s5G4EV7rb09YBDbf.png" alt="Neuron Explorer 追踪一次 aten::mul 操作，从框架派发、运行时调度，一直到在 Neuron 硬件泳道上的执行。"></a></p>
-<p><em>Neuron Explorer 追踪一次 aten::mul 操作，从框架派发、运行时调度，一直到在 Neuron 硬件泳道上的执行。</em></p>
-<h3>在 Explorer 中阅读 trace</h3>
-<p>在 Explorer 中，时间从左向右流动，事件生命周期从上到下展开。每个 ATen 操作都遵循同样的模式：在框架泳道中创建，在运行时泳道中作为 <code>nrta_execute_schedule</code> 被调度，在硬件泳道中作为 <code>nc_exec_running</code> 执行。</p>
-<p>系统 trace 视图把事件组织成若干泳道。在默认分组模式下，标签遵循 instance/PID/subsystem/identifier 的模式：</p>
-<table><thead><tr><th>泳道</th><th>标签后缀</th><th>展示内容</th></tr></thead><tbody><tr><td>框架派发</td><td><code>framework/TID:&lt;id&gt;</code></td><td>算子派发事件（PrivateUse1 运行时），按线程 ID 分组。</td></tr><tr><td>框架设备</td><td><code>framework/Stream:&lt;n&gt;</code></td><td>设备交互事件（PrivateUse1 驱动），按 stream 编号分组。</td></tr><tr><td>Neuron 运行时</td><td><code>neuron_rt/NC:&lt;n&gt;</code></td><td>Neuron Runtime API 调用，按逻辑 NeuronCore 分组。</td></tr><tr><td>Neuron 硬件</td><td><code>neuron_hw/NC&lt;n&gt;:&lt;id&gt;</code></td><td>硬件执行事件，按物理 NeuronCore 分组。</td></tr></tbody></table>
-<p>在 eager 模式下，每个操作独立运行。用依赖链查看器追踪 <code>aten::mul.Tensor</code>，看它如何从框架层经过运行时调度走到设备执行。</p>
-<p><a href="https://huggingface.co/datasets/jlongen-aws/blog-assets/resolve/main/hf_profiling_blog_pt1/dependency_chain.gif"><img src="https://huggingface.co/datasets/jlongen-aws/blog-assets/resolve/main/hf_profiling_blog_pt1/dependency_chain.gif" alt="依赖链查看器高亮展示一个操作在框架、运行时与硬件泳道上的生命周期。"></a></p>
-<p><em>依赖链查看器高亮展示一个操作在框架、运行时与硬件泳道上的生命周期。</em></p>
-<h2>剖析 2：torch.rms_norm</h2>
-<p>把单个操作换成 PyTorch 内置的 <code>rms_norm</code> 函数。Neuron 会把这个操作 lower 成一个融合 kernel：</p>
-<pre><code>def rms_norm_fn(t):
-    return torch.rms_norm(t, [512], weight)</code></pre>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/uYhQmUtuUp1LYPOu8f9bf.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/uYhQmUtuUp1LYPOu8f9bf.png" alt="融合后的 RMSNorm 在 key averages 表中表现为一个设备操作。"></a></p>
-<p><em>融合后的 RMSNorm 在 key averages 表中表现为一个设备操作。</em></p>
-<table><thead><tr><th>名称</th><th>调用次数</th><th>Self CPU</th><th>Self NEURON</th><th>% NEURON</th></tr></thead><tbody><tr><td>aten::_fused_rms_norm</td><td>1</td><td>47.6 μs</td><td>403.3 μs</td><td>100%</td></tr></tbody></table>
-<p><em>Self NEURON 总计：403.3 μs</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/OfM6vRT9iPBG42s8iWK1V.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/OfM6vRT9iPBG42s8iWK1V.png" alt="融合后的 RMSNorm 只走一条从框架到硬件的路径，而不是把每个算术操作分别派发。"></a></p>
-<p><em>融合后的 RMSNorm 只走一条从框架到硬件的路径，而不是把每个算术操作分别派发。</em></p>
-<h3>对比 lower 路径</h3>
-<p>在朴素实现中，每个操作都独立跨越派发边界，各自走一条从框架到运行时再到硬件的路径。在融合实现中，一次 Python 调用就覆盖了整个计算。trace 中只有一次派发和一个硬件事件，组成操作之间没有空隙。</p>
-<h2>剖析 3：配合 torch.compile 的朴素 PyTorch</h2>
-<p>最后一个例子，用 <code>torch.compile</code> 编译原来的朴素 RMSNorm 函数。</p>
-<p>通过 <code>@torch.compile(backend=&quot;neuron&quot;)</code>，TorchDynamo 把 Python 字节码捕获为 FX 图，AOTAutograd 再把它 lower 成 ATen 操作。Neuron 后端拿到的是完整的图，而不是逐个派发每个操作。它会融合操作、优化内存访问，并把图编译成单个 NEFF 产物。该产物作为一次硬件派发运行。</p>
-<pre><code>@torch.compile(backend='neuron', fullgraph=True)
-def naive_compiled(t):
-    x_sq = t * t
-    mean_sq = x_sq.mean(dim=-1, keepdim=True)
-    rms = torch.rsqrt(mean_sq + 1e-6)
-    return t * rms * weight</code></pre>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/TSJ2RWScmKPKmSroHCZaI.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/TSJ2RWScmKPKmSroHCZaI.png" alt="编译后的函数在 key averages 表中显示为一个 Torch-Compiled Region。"></a></p>
-<p><em>编译后的函数在 key averages 表中显示为一个 Torch-Compiled Region。</em></p>
-<table><thead><tr><th>名称</th><th>调用次数</th><th>Self CPU</th><th>Self NEURON</th><th>% NEURON</th></tr></thead><tbody><tr><td>Torch-Compiled Region: 0/0</td><td>1</td><td>98.4 μs</td><td>375.5 μs</td><td>100%</td></tr></tbody></table>
-<p><em>Self NEURON 总计：375.5 μs</em></p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/yWIFqisMxCtJHLYb2Rcsh.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/yWIFqisMxCtJHLYb2Rcsh.png" alt="编译后的图只走一条路径，经过运行时调度与硬件执行。"></a></p>
-<p><em>编译后的图只走一条路径，经过运行时调度与硬件执行。</em></p>
-<p>表格显示只有一次设备执行，与剖析 2 相同，但代码走的路径不同。它不是去调用专门构建的融合操作，而是由编译器从原始 Python 函数中发现可融合之处。在这次运行中，Neuron 时间与 <code>torch.rms_norm</code> 相当：375 μs 对 403 μs。</p>
-<h2>并排对比总结</h2>
-<table><thead><tr><th>变体</th><th>NEURON 时间</th><th>Self CPU 时间</th><th>算子调用次数</th></tr></thead><tbody><tr><td>朴素操作</td><td>2,355 µs</td><td>~125 µs</td><td>6</td></tr><tr><td>torch.rms_norm</td><td>403 µs</td><td>~48 µs</td><td>1</td></tr><tr><td>朴素 + torch.compile</td><td>376 µs</td><td>~98 µs</td><td>1</td></tr></tbody></table>
-<p><code>torch.rms_norm</code> 与 <code>torch.compile</code> 都把 RMSNorm 融合成一次 kernel 派发。在这些运行中，两种做法的设备时间都约为朴素实现的六分之一。融合消除了硬件执行之间的空隙，也避免了在分别派发的操作之间实际生成 <code>x_sq</code>、<code>mean_sq</code> 这类中间值。</p>
-<h2>结论</h2>
-<p><code>key_averages()</code> 显示哪些操作消耗了设备时间，其完整输出还会揭示 CPU 侧的初始化设置与传输开销。Explorer 提供对应的可视化 trace。你可以追踪一个操作从框架派发、运行时调度到硬件执行的全过程，并看到融合消除了哪些空隙。</p>
-<p>同样的工作流也能用在大模型上：先在表格里找到热点，再到 trace 中核实，然后判断融合操作或 <code>torch.compile</code> 能否降低其开销。</p>
-<p>在第 2 部分，我们将进入设备级 profile。你会打开 NEFF，检查 TensorEngine、VectorEngine 与直接内存访问（DMA）的明细，并把 kernel 放到 roofline 图上，判断它受限于计算还是受限于内存。</p>
-<p>特别感谢 Aritra Roy Gosthipaty 促成我开始这个系列，也感谢我的同事 Pinak Panigrahi、Samir Araujo、Akhil Azhikodan、Esha Lakhotia 以及其他人参与审阅！</p>
-<h2>本文提到的数据集 1</h2>
-<p>更多来自该作者</p>
-<h2>用 Strands Agents、LeRobot 与 Hugging Face Storage Buckets 一站式记录、训练与部署</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt=""></li></ul>
-<p>35</p>
-<p>2026 年 8 月 13 日</p>
-<h2>从 Hugging Face 一键到 Amazon SageMaker Studio</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt=""></li></ul>
-<p>21</p>
-<p>2026 年 7 月 7 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框，或粘贴、或点击此处即可上传。</p>
-<p>点击或粘贴此处上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Famazon%2Fprofiling-torchneuron-part-1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Famazon%2Fprofiling-torchneuron-part-1">登录</a> 后发表评论</p>
-<p>7</p>
-<ul><li><a href="https://huggingface.co/skoppar"><img src="https://huggingface.co/avatars/ba362a0e521f6803868998ead3614f14.svg" alt=""></a></li><li><a href="https://huggingface.co/LahariChowtoori"><img src="https://huggingface.co/avatars/ef1a34320918862e30e5ecc1e7305adb.svg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/adriansaxton"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a51391779a9d54dfdb9b467/LzvbqB5pTGvEo86NPHVTP.png" alt=""></a></li><li><a href="https://huggingface.co/hanbwang"><img src="https://huggingface.co/avatars/5016f7c40f940f0c413fd88f272f9929.svg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/arashjamalian"><img src="https://huggingface.co/avatars/c1ab8000ebd701b0031f199748b021fc.svg" alt=""></a></li></ul>
-<h2>本文提到的数据集 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Granite Speech 5.0：更准确、更快速地转写、翻译与说话人归属</title>
-      <link>https://huggingface.co/blog/ibm-granite/granite-speech-5</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-granite/granite-speech-5</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Granite Speech 5.0: Transcribe, Translate, and Attribute more Accurately and Faster</description>
-      <content:encoded><![CDATA[<h1>Granite Speech 5.0：更准确、更快速地转写、翻译与说话人归属</h1>
-<p>企业  文章</p>
-<p>发布于 2026 年 10 月 21 日</p>
-<p>16</p>
-<ul><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt=""></a></li><li><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt=""></a></li><li><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt=""></a></li><li><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt="George Saon 的头像"></a></p>
-<p>George Saon</p>
-<p>gsaon</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt="Brian Kingsbury 的头像"></a></p>
-<p>Brian Kingsbury</p>
-<p>bedkingsbury</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/rhoory"><img src="https://huggingface.co/avatars/672f169213139d21c7767021a0110402.svg" alt="Ron Hoory 的头像"></a></p>
-<p>Ron Hoory</p>
-<p>rhoory</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt="Vishal Sunder 的头像"></a></p>
-<p>Vishal Sunder</p>
-<p>vishalsunder</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt="Zvi Kons 的头像"></a></p>
-<p>Zvi Kons</p>
-<p>konszvi</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/ibm-jeffkuo"><img src="https://huggingface.co/avatars/a0b862a7dbcc7196288028030d8e784a.svg" alt="Jeff Kuo 的头像"></a></p>
-<p>Jeff Kuo</p>
-<p>ibm-jeffkuo</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt="Samuel Thomas 的头像"></a></p>
-<p>Samuel Thomas</p>
-<p>sthomas12</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/Avihu"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63b7e09359060ca9f4c4de35/0PH1dWNfcXTQ9H0QAeD91.jpeg" alt="Avihu Dekel 的头像"></a></p>
-<p>Avihu Dekel</p>
-<p>Avihu</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/hagaia"><img src="https://huggingface.co/avatars/eb2f357888159f5120bbf70a40cb089d.svg" alt="Hagai Aronowitz 的头像"></a></p>
-<p>Hagai Aronowitz</p>
-<p>hagaia</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt="Takashi Fukuda 的头像"></a></p>
-<p>Takashi Fukuda</p>
-<p>fukuda1</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/tohru3"><img src="https://huggingface.co/avatars/f753ef5eb24dfe8b8c38a42a20de136e.svg" alt="Tohru Nagano 的头像"></a></p>
-<p>Tohru Nagano</p>
-<p>tohru3</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/sasnov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/667113f4293b94a4f47c8653/svq32DhLFzW6NPWYC2IP7.jpeg" alt="Sashi Novitasari 的头像"></a></p>
-<p>Sashi Novitasari</p>
-<p>sasnov</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/szuk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a86fd3343bc4aae2b86f857/zQO34V3Q4u7RgrpO-9QmJ.jpeg" alt="Masayuki Suzuki 的头像"></a></p>
-<p>Masayuki Suzuki</p>
-<p>szuk</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/kristunlee"><img src="https://huggingface.co/avatars/c321df95ef32bbc777f7a548a2a361c3.svg" alt="Madison Lee 的头像"></a></p>
-<p>Madison Lee</p>
-<p>kristunlee</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p>很高兴分享 IBM Granite Speech 系列的三个更新：一个新的语音语言模型 <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-2b">granite-speech-5.0-2b</a>，以及社区已在使用的两个模型的修订版本 <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">granite-speech-5.0-470m-turboctc</a> 和 <a href="https://huggingface.co/ibm-granite/granite-speech-4.1-2b-plus">granite-speech-4.1-2b-plus</a>。它们合在一起覆盖了企业语音工作的全部范围：高准确率的转写与翻译、在边缘设备上极快的转写，以及那些“谁说的、什么时候说的”与“说了什么”同样重要的录音。</p>
-<table><thead><tr><th>模型</th><th>状态</th><th>新变化</th><th>最适合</th></tr></thead><tbody><tr><td><code>granite-speech-5.0-2b</code></td><td>新增</td><td>更准确、抗噪声与抗混响的自动语音识别（ASR），language-ID prompting，2,000 词条的关键词偏置，更好的长音频翻译</td><td>高准确率的多语言转写与翻译</td></tr><tr><td><code>granite-speech-5.0-470m-turboctc</code></td><td>更新</td><td>多语言、原生标点与大小写，对噪声和混响更稳健</td><td>高吞吐与端侧转写</td></tr><tr><td><code>granite-speech-4.1-2b-plus</code></td><td>更新</td><td>改进的说话人归属、时间戳、关键词偏置和长音频表现</td><td>会议、通话及其它多说话人录音</td></tr></tbody></table>
-<h2>Granite Speech 5.0 2B：更准确、更稳健、更多控制</h2>
-<p><code>granite-speech-5.0-2b</code> 是 <code>granite-speech-4.1-2b</code> 在相同参数量下的后继者。它可以转写英语、法语、德语、西班牙语、葡萄牙语和日语，并在这些语言之间与英语互译，另外还支持英语到意大利语和普通话的翻译。它在 390,000 小时的公开音频上训练，并加入了为日语 ASR、关键词偏置和翻译构建的合成数据。</p>
-<p>与 4.1 2B Speech 相比的新变化：</p>
-<ul><li><strong>更准确、更稳健的英语 ASR：</strong> 在英语短音频基准上准确率更高，对噪声、混响和远场麦克风语音的处理更好。</li><li><strong>Language ID prompting：</strong> 在 prompt 中指定输入语言，以引导多语言转写。</li><li><strong>更好的长音频与对话式翻译：</strong> 面对更长、更自然的语音（而不只是简短朗读的句子），翻译也能维持质量。</li><li><strong>最多 2,000 个词条的关键词列表：</strong> 在所有支持的语言中，把转写和翻译偏向产品名、人名和缩写。</li><li><strong>按需输出标点与大小写：</strong> 在 prompt 中要求格式化输出；在我们的各测试集上，大小写 F1 介于 89.7 到 99.5 之间。</li></ul>
-<p>该模型以 Apache 2.0 许可发布，支持 Transformers、vLLM、llama.cpp，以及在 Apple Silicon 上通过 mlx-audio 使用。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/653fb52cbfd890805461d691/87yRtLq4X2CwMZrDhv0L_.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/653fb52cbfd890805461d691/87yRtLq4X2CwMZrDhv0L_.png" alt="granite-speech-5.0-2b 与顶尖开放权重 ASR 模型的平均英语 WER 对比"></a></p>
-<p><em>图 1：在平均英语 WER（5.06%）上，granite-speech-5.0-2b 在顶尖开放权重 ASR 模型中排名第 2。数值越低越好。结果为截至 2026 年 10 月 21 日的官方结果，并在 Open ASR Leaderboard 的公开英语短音频测试集上取平均。</em></p>
-<h2>Granite Speech 5.0 Turbo CTC：现已多语言、更稳健，而且更快</h2>
-<p>我们在<a href="https://huggingface.co/blog/ibm-granite/granite-speech-5-0-470m-turboctc">八月推出 Turbo CTC</a> 时，它是一个仅支持英语、为速度而生的 470M 参数编码器。这次修订保持同样的体量，并加入了用户最想要的三件事：</p>
-<ul><li><strong>多语言转写：</strong> 英语、日语、西班牙语、德语、法语、意大利语和葡萄牙语。</li><li><strong>原生标点与大小写：</strong> 转写结果开箱即可阅读，无需单独的标点或大小写恢复步骤。</li><li><strong>在困难声学条件下更稳健：</strong> 明确针对混响音频的训练，让 Turbo CTC 在回声较强的房间和远场录音中更稳健。</li></ul>
-<p>它也更快了。通过把单个 Conformer block 编译一次并在整个堆栈中复用其计算图，我们缩短了 warmup 时间，把 Turbo CTC 在 Open ASR Leaderboard 上的成绩推到 19,870 RTFx，而发布时约为 12,600 RTFx：在同等准确率水平下，大约快了 1.6 倍。</p>
-<p><em>图 2：Open ASR Leaderboard 上的平均 WER 与 RTFx（英语短音频，9 个公开测试集，截至 2026 年 10 月）。WER 越低、RTFx 越高越好；RTFx 为对数刻度。</em></p>
-<h2>Granite Speech 4.1 2B Plus：更清楚谁说了什么、什么时候说的</h2>
-<p>更新后的 <code>granite-speech-4.1-2b-plus</code> 针对企业实际拥有的录音做了调优：会议、客服通话，以及多位说话人持续很久的访谈。它保留 4.1 这个名字，是因为架构、prompt 格式和 API 都没有变化，所以它是当前模型的直接替换，只是权重更好。本次修订改进了四个方面：</p>
-<ul><li><strong>说话人归属：</strong> 对谁说谁的标注更准确。词级分离错误率（WDER）下降 7%，带说话人归属的 WER（cpWER）整体下降 7%。</li><li><strong>时间戳：</strong> 平均时间戳偏移（AAS）减少一半以上，让字幕、搜索和复核中的时间更紧凑。</li><li><strong>长音频表现：</strong> 长音频测试集上的 WER 下降 24%。</li><li><strong>关键词偏置：</strong> 使用 20 词条的关键词列表时，被偏置关键词的错误率下降 45%。</li></ul>
-<table><thead><tr><th>能力</th><th>指标</th><th>上一版本</th><th>更新后的模型</th></tr></thead><tbody><tr><td>时间戳，全部语音</td><td>AAS（平均时间戳偏移）</td><td>210.86</td><td><strong>98.54</strong></td></tr><tr><td>时间戳，短语音</td><td>AAS（平均时间戳偏移）</td><td>29.27</td><td><strong>26.20</strong></td></tr><tr><td>关键词偏置</td><td>偏置词 WER，20 词条列表</td><td>11.79</td><td><strong>6.48</strong></td></tr><tr><td>长音频语音</td><td>WER，长音频测试集</td><td>13.53</td><td><strong>10.22</strong></td></tr><tr><td>说话人归属</td><td>WDER</td><td>4.40</td><td><strong>4.10</strong></td></tr><tr><td>带说话人归属的转写</td><td>cpWER</td><td>30.50</td><td><strong>28.48</strong></td></tr></tbody></table>
-<p><em>表 1：所有指标都是错误率，因此越低越好。更详细的结果见<a href="https://huggingface.co/ibm-granite/granite-speech-4.1-2b-plus">模型卡</a>。</em></p>
-<h2>开始使用</h2>
-<p>不确定该选哪个模型？从这里开始：</p>
-<ul><li><strong>需要高转写准确率、翻译或关键词偏置？</strong> 使用 <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-2b">granite-speech-5.0-2b</a>。</li><li><strong>需要极致速度或端侧转写？</strong> 使用 <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">granite-speech-5.0-470m-turboctc</a>，并可在浏览器中试用我们的 <a href="https://huggingface.co/blog/ibm-granite/DEMO_URL">WebGPU 流式 demo</a>。</li><li><strong>要处理会议或多说话人通话？</strong> 使用 <a href="https://huggingface.co/ibm-granite/granite-speech-4.1-2b-plus">granite-speech-4.1-2b-plus</a>。</li></ul>
-<p>这些模型都以 Apache 2.0 许可发布，并在 Transformers 中提供原生支持。完整的评测结果、架构细节、训练数据和使用示例都在各自的模型卡上。对于需要额外风险检测的生产部署，我们建议把它们与 <a href="https://huggingface.co/collections/ibm-granite/granite-guardian">Granite Guardian</a> 搭配使用。</p>
-<p>不妨试一试，并告诉我们你的想法！</p>
-<h2>本文提到的模型 3</h2>
-<h2>本文提到的合集 1</h2>
-<p>来自该作者的更多文章</p>
-<h2>Granite Switch 4.1：一个 endpoint 搞定对话、决策与语音</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
-<p>69</p>
-<p>2026 年 10 月 15 日</p>
-<h2>Granite 4.2 LLM：它们是如何构建的</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
-<p>129</p>
-<p>2026 年 8 月 25 日</p>
-<h3>社区</h3>
-<p>在文本输入框中拖拽、粘贴或点击此处上传图片、音频和视频。</p>
-<p>点按或粘贴此处以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-speech-5">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-speech-5">登录</a>后发表评论</p>
-<p>16</p>
-<ul><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt=""></a></li><li><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt=""></a></li><li><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt=""></a></li><li><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt=""></a></li><li><a href="https://huggingface.co/kristunlee"><img src="https://huggingface.co/avatars/c321df95ef32bbc777f7a548a2a361c3.svg" alt=""></a></li><li><a href="https://huggingface.co/daw3rd"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69e673262ada4d38aba9eac2/ufQeVAywU1lC61ZPDvPhK.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ibm-jeffkuo"><img src="https://huggingface.co/avatars/a0b862a7dbcc7196288028030d8e784a.svg" alt=""></a></li><li><a href="https://huggingface.co/profautorino"><img src="https://huggingface.co/avatars/2e55f3bbe3867009b0ade056a35dd2ee.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/gakuto-ibm"><img src="https://huggingface.co/avatars/38865a5f5ea78efa0c94919b4a619d9c.svg" alt=""></a></li></ul>
-<h2>本文提到的模型 3</h2>
-<h2>本文提到的合集 1</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -7,7 +7,494 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-all.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>[Hugging Face] 推出适用于 AMD Ryzen 和 Radeon 的 llama.cpp 基准仪表板</title>
+      <link>https://huggingface.co/blog/ggml-org/llamacpp-amd-bench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llamacpp-amd-bench</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Hugging Face</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml">Hugging Face</source>
+      <description>原文标题：Introducing the llama.cpp benchmark dashboard for AMD Ryzen and Radeon</description>
+      <content:encoded><![CDATA[<h1>推出面向 AMD Ryzen 和 Radeon 的 llama.cpp 基准测试仪表盘</h1>
+<p>团队文章</p>
+<p>发布于 2026 年 11 月 26 日</p>
+<p><a href="https://huggingface.co/angt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67289c93ff90038d9a6e5675/klana6SP95tj8-VwXnIYC.png" alt="angt's avatar"></a></p>
+<p>angt</p>
+<p>angt</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy's avatar"></a></p>
+<p>Simon Pagezy</p>
+<p>pagezyhf</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/badaoui"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg" alt="Abdennacer Badaoui's avatar"></a></p>
+<p>Abdennacer Badaoui</p>
+<p>badaoui</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">llama.cpp × AMD Benchmark</a> 仪表盘现已在 Hugging Face 上线。它让你可以跨不同的 llama.cpp 构建、模型和量化方式，跟踪 prompt 处理与文本生成的性能，从而探索本地推理在 AMD Ryzen 和 Radeon 硬件上的表现。</p>
+<p>本地推理性能会随着模型、kernel 和构建的演进而变化。我们希望任何 AMD 开发者都能轻松查看这些变化：选择硬件、模型和构建，比较不同量化，并持续跟踪性能随时间的变化。基准测试工作流和底层结果都是公开的，因此你也可以查看我们是如何对推理性能进行基准测试的。</p>
+<h2>快速开始</h2>
+<p>你可以在 Configuration 侧边栏中选择 <strong>Hardware</strong>、<strong>Model</strong> 和 <strong>llama.cpp build</strong>。当前可选的硬件为 Radeon 8060S (gfx1151) 和 Radeon AI Pro R9700S (gfx1201)。</p>
+<ul><li>在 <strong>Overview</strong> 标签页中，针对同一硬件、模型和构建比较不同量化。两张图表分别显示 PP512（512 个输入 token，不生成）和 TG128（生成 128 个 token），两者都从上下文深度零开始。</li><li>在 <strong>Build history</strong> 标签页中，跟踪所选硬件、模型和量化下所有已记录构建的 PP512 与 TG128。</li><li>在 <strong>Context</strong> <strong>scaling</strong> 标签页中，查看在所选构建、硬件、模型和量化下，token 生成吞吐量随已有上下文增长的变化情况。</li></ul>
+<h2>这些数字的含义</h2>
+<p>仪表盘展示两项独立的测试，均以每秒 token 数计量：</p>
+<table><thead><tr><th>测试</th><th>负载</th><th>有助于评估的内容</th></tr></thead><tbody><tr><td><strong>PP512</strong></td><td>处理 512 个输入 token</td><td>模型处理 prompt 的速度</td></tr><tr><td><strong>TG128</strong></td><td>生成 128 个 token</td><td>模型产出输出的速度</td></tr></tbody></table>
+<p>两项测试都从上下文深度零（<code>n_depth=0</code>）开始。PP512 衡量在不生成的情况下处理 512 个输入 token；TG128 衡量在没有既有上下文的情况下生成 128 个 token。图表中绘制的数值是平均吞吐量（<code>avg_ts</code>）。这些是有用的参考负载，而 Context scaling 标签页则让你探索 token 生成吞吐量随上下文增长的变化。</p>
+<h2>我们如何运行基准测试</h2>
+<p>我们基准测试的对象是通过 <a href="https://github.com/ggml-org/llama-install.sh">llama-install.sh</a> 分发的预编译二进制文件，该项目是 <a href="https://llama.app/">llama.app</a> 背后的构建与安装项目。公开的 <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1151.yml">gfx1151</a> 和 <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1201.yml">gfx1201</a> 工作流每周定时运行，使用 <a href="https://github.com/ggml-org/llama.cpp/tree/master/tools/llama-bench">llama-bench 工具</a> 在 Flash Attention 开启和关闭两种情况下运行标准基准测试，每个配置重复 10 次。</p>
+<p>模型集合会不断演进，目前包括 Inkling 2 Mini、Qwen、Gemma、gpt-oss 和 LFM 模型，涵盖 dense 与 mixture-of-experts（混合专家）架构。可用的 GGUF 格式包括 <code>Q4_K_M</code>、<code>Q8_0</code>、其他量化格式，以及 <code>BF16</code> 和 <code>F16</code> 等更高精度的格式。</p>
+<h2>查看并复用结果</h2>
+<p>探索器直接读取 Hugging Face 上公开的 <a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">ggml-org/install.sh-benches-data Storage Bucket</a>。图表标题旁的 <strong>data source</strong> 链接会打开所选构建、硬件和模型对应的文件夹。</p>
+<p>标准结果使用 <code>&lt;build&gt;/&lt;hardware&gt;/&lt;model&gt;/&lt;quant&gt;.jsonl</code>。负载扫描在同一文件夹下使用 <code>&lt;quant&gt;-tg.jsonl</code> 文件名。</p>
+<p>你可以用它们来调查某个结果、制作自己的图表，或与本地运行结果进行比较。</p>
+<h2>加入讨论</h2>
+<p>感谢 AMD 团队提供测试基础设施并协助验证这套设置！试用<a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">仪表盘</a>，查看<a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">数据</a>，并告诉我们你接下来想看到哪些模型和负载。</p>
+<p>该作者的更多文章</p>
+<h2>我们如何优化工作流并克服 GitHub Actions 的限制</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>8</p>
+<p>2026 年 11 月 16 日</p>
+<p>热门</p>
+<h2>llama.cpp v1.0.0：为本地 AI 生态奠定更坚实的基础</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
+<p>238</p>
+<p>2026 年 11 月 13 日</p>
+<h3>社区</h3>]]></content:encoded>
+    </item>
+    <item>
+      <title>[Hugging Face] 基于 Nemotron 3.5 Parse 构建：开放数据、微调和更快的推理</title>
+      <link>https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Hugging Face</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml">Hugging Face</source>
+      <description>原文标题：Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference</description>
+      <content:encoded><![CDATA[<h1>基于 Nemotron 3.5 Parse 构建：开放数据、微调与更快推理</h1>
+<p>企业 + 文章</p>
+<p>发布于 2026 年 11 月 26 日</p>
+<p><a href="https://huggingface.co/emelryan"><img src="https://huggingface.co/avatars/2adfa4eb57b97fde904fa6a74140db0d.svg" alt="Ryan Chesler's avatar"></a></p>
+<p>Ryan Chesler</p>
+<p>emelryan</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/mwawrzos"><img src="https://huggingface.co/avatars/84ba29cc389815553389bb852c3fb1e9.svg" alt="Marek Wawrzos's avatar"></a></p>
+<p>Marek Wawrzos</p>
+<p>mwawrzos</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/steve-nvidia"><img src="https://huggingface.co/avatars/a7118be5506d7e88145aaec13e88d248.svg" alt="Steve Han's avatar"></a></p>
+<p>Steve Han</p>
+<p>steve-nvidia</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p>我们最近发布了 <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse">NVIDIA Nemotron 3.5 Parse</a></strong>，这是一个紧凑型文档模型，可将页面图像转换为结构化数据，用于检索增强生成（RAG）和智能体。</p>
+<p>现在，我们在该版本基础上继续构建，推出<strong>合成训练数据集、微调配方，以及用于加速推理的 DFlash2 推测器</strong>。我们还将分享 Parse 3.5 的训练方式：首先通过监督微调教会模型理解文档，然后使用强化学习提升准确性、一致性和可靠完成度。</p>
+<h2>Parse 3.5 的输出内容</h2>
+<p>Parse 将文档页面中的内容按阅读顺序提取出来，为内容分配类别（如标题、段落、表格和图表），并返回定位内容的边界框。表格和图表会转换为结构化记录，可支撑下游文档处理应用。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png" alt="左侧为带有预测区域的操作简报，右侧为其结构化提取结果。"></a></p>
+<p><em>图 1. 来自合成操作简报的实际模型输出，展示页面与其结构化表示之间的对应关系。</em></p>
+<p>Parse 的最新版本显著扩展了读取图表和表格的能力，尤其是在更困难、更模糊的情况下。例如，没有任何标注数值的柱状图或其他图形。模型能够通过观察坐标轴和柱的高度来推断这些数值。表格可能尤其棘手，因为结构本身承载重要含义，一行或一列错位就可能完全改变解读和含义。这些进步主要得益于合成数据生成——渲染出带有已知真值的图表和表格变体，然后训练模型逆向还原这一过程。</p>
+<p>我们开源了 <strong>Parse 3.5 训练中使用的三个数据集</strong>：</p>
+<ul><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Charts-V1">Synthetic Charts V1 — 998 万个样本</a>：</strong> 渲染的图表和结构化标注，用于学习类别、系列和数值。</li><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Tables-V1">Synthetic Tables V1 — 100 万个样本</a>：</strong> 渲染的 HTML 表格及目标，保留行、列、表头和单元格关系。</li><li><strong><a href="https://huggingface.co/datasets/nvidia/OCR-Synthetic-Multilingual-v2">OCR Synthetic Multilingual v2 — 790 万个样本</a>：</strong> 具有 Parse 格式目标的合成文档页面，涵盖多种字体和布局，用于多语言 OCR 和结构化页面阅读。</li></ul>
+<p>每个发布版本都包含图像、标注、生成文档和训练格式。可使用这些配对数据来微调文档模型，或针对目标文档类型或语言创建新的变体。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png" alt="一张未印出柱值的柱状图，以及发布模型提取出的 18、27、39 和 54。"></a></p>
+<p><em>图 2. Parse 从图表几何形状中恢复出 18、27、39 和 54</em></p>
+<h2>SFT 建立能力；RLVR 提升一致性</h2>
+<p>我们分两个阶段训练 Parse 3.5。<strong>监督微调（SFT）</strong>涵盖文本、布局、表格、图表和多语言文档。学习预测结构化目标建立了阅读页面并表示其内容的通用能力。</p>
+<p>随后我们继续进行<strong>可验证奖励的强化学习（RLVR）</strong>，使用<strong>组相对策略优化（GRPO）</strong>。奖励会检查采样提取结果的质量。例如，图表提取若能恢复正确的系列和数值、生成可用的结构，并且完成时没有反复生成相同内容，就能获得更高的奖励。</p>
+<p>一个困难的页面可能有多种有效表示。这些检查让模型能够灵活地找到正确答案，而不必规定某个确切的 token 序列，同时抑制循环和未完成的输出。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png" alt="匹配训练对比，展示 GRPO 后的提取增益，以及更少的重复标记和 token 上限命中。"></a></p>
+<p><em>图 3. 在匹配评估设置下对 SFT 和 GRPO 的受控对比。这些是开发检查点，与最终发布模型不同。循环计数使用重复检查。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md#training-and-adaptation-figures">方法</a>。</em></p>
+<p>匹配对比显示了收益：被标记为循环的输出从 <strong>126 页降至 29 页——减少约 77%</strong>——达到 9,000 token 上限的输出从 <strong>185 降至 35</strong>。总体得分从 <strong>66.24 提升至 71.38</strong>，其中<strong>表格 +5.18 分</strong>，<strong>图表 +4.15 分</strong>。</p>
+<h2>通过架构和 DFlash2 实现更快推理</h2>
+<p>解析器必须为每个页面生成大量文本和结构。在训练工作的同时，我们优化了 Parse 3.5 处理图像和解码这些输出的方式。</p>
+<table><thead><tr><th><strong>组件</strong></th><th><strong>Parse 2.0</strong></th><th><strong>Parse 3.5</strong></th></tr></thead><tbody><tr><td>页面预处理</td><td>固定 2048 × 1664 画布</td><td>NaViT 动态矩形输入</td></tr><tr><td>图像到文本连接</td><td>编码器–解码器交叉注意力</td><td>压缩视觉 token 作为因果前缀</td></tr><tr><td>解码器自注意力</td><td>多头注意力</td><td>GQA-8：16 个查询头，8 个键/值头</td></tr><tr><td>推测解码</td><td></td><td>单 token 前瞻（MTP）；可选 DFlash2</td></tr></tbody></table>
+<p><strong>NaViT 预处理</strong>使输入形状适应页面。视觉适配器压缩图像序列，文本解码器将其作为前缀消费，取代编码器–解码器交叉注意力。<strong>八键/值头的分组查询注意力（GQA-8）</strong>减少了解码器的注意力缓存内存。</p>
+<p>内置的<strong>多 token 预测（MTP）</strong>头提供单 token 前瞻。我们的 <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse/tree/main/dflash2">DFlash2 推测器</a></strong>更进一步：一个小型草稿模型<strong>最多提议未来 32 个 token</strong>，Parse 一起验证这些提议。在实测的 32 token 配置中，平均约<strong>接受 14 个草稿 token</strong>，即每个验证步骤（含目标 token）约<strong>推进 15 个输出 token</strong>。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png" alt="吞吐量曲线对比 Parse 2.0 与 Parse 3.5 基础版、MTP 和 DFlash2。"></a></p>
+<p><em>图 4. 在单张 H200、BF16 上使用相同 2,078 页的原生单遍吞吐量。Parse 2.0 每个点一次试验；Parse 3.5 显示三次试验的中位数。箭头显示从 Parse 3.5 基础版到 DFlash2 的增益。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md">测量详情</a>。</em></p>
+<p>在单张 H200、BF16 的原生单遍基准测试中，与禁用推测解码的 Parse 3.5 相比，DFlash2 在并发 1 时吞吐量提升 <strong>7.62×</strong>，在并发 512 时提升 <strong>1.52×</strong>。在 512 并发下，Parse 3.5 无推测达到 <strong>13.48 页/秒</strong>，使用 DFlash2 达到 <strong>20.44 页/秒</strong>，而 Parse 2.0 为 <strong>2.98 页/秒</strong>。分别是 Parse 2.0 吞吐量的 <strong>4.53×</strong> 和 <strong>6.86×</strong>。</p>
+<p>快速解析让我们有余力重新审视困难区域。先进行整页预测，然后在文档需要的地方添加针对性重新处理：</p>
+<ul><li><strong>单遍 -</strong> 对整页解析一次，提取文本、布局、表格和图表。</li><li><strong>双遍 - 用于密集表格和小图表细节。</strong> 裁剪解析器找到的表格和图表区域，以更高细节重新解析，并将细化结果合并到页面输出中。</li><li><strong>三遍 -</strong> 不仅使用模型的整页解析边界框，还以检测模式进行第二遍模型处理，以验证所有框均已准确找到且文本未被遗漏，并在第三遍中重新提取任何找到的图表或表格</li></ul>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png" alt="单遍页面解析、双遍裁剪细化和使用独立区域检测器的三遍细化。"></a></p>
+<p><em>图 5. 额外阶段将计算集中在困难区域。多个裁剪可能需要多个请求。</em></p>
+<p>在已发布的参考评估中，双遍和三遍相比单遍分别增加 <strong>2.18 和 2.46 个 ParseBench 分</strong>。额外工作让应用可以牺牲部分吞吐量，换取困难区域的更好提取效果。<a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse#single-double-or-triple-pass">参考结果和服务测量</a>。</p>
+<h2>将相同的 SFT/RLVR 方法应用于你的文档</h2>
+<p>我们分享了一个 <strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/index.md">Parse 微调配方</a></strong>，引导开发者完成配对数据生成、<strong>NeMo Automodel SFT</strong> 和 <strong>NeMo RL GRPO</strong>，并使用 vLLM 生成候选答案。</p>
+<p>示例使用一个带有<strong>牙位图</strong>的合成牙科表单：图表显示牙齿、计划程序和受影响的牙面。在适配之前，Parse 能读取印刷的牙位编号，但遗漏了预期的程序表。SFT 教会它将每颗标记的牙齿与程序及其在牙齿上的位置关联起来。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png" alt="合成牙科页面、基础模型的牙位编号转录，以及预期的牙齿/程序/牙面表。"></a></p>
+<p><em>图 6. 一个记录的配方示例：经过 SFT 后，全部六行图表均与目标匹配。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/examples/dental-adaptation.md">完整图像和原生训练标签</a>。</em></p>
+<p>RLVR 随后强化准确性和一致完成度。在牙科参考运行中，估计的首次尝试成功率（采样 pass@1）从基础模型的 0.00% 升至 SFT 后的 95.85%，RLVR 后达到 96.58%。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png" alt="牙科采样 pass@1：SFT 后 95.85%，RLVR 后 96.58%，y 轴显示 90% 至 100%"></a></p>
+<p><em>图 7. 在来自同一合成生成器的 256 份留出表单上进行匹配评估，每页八个样本。成功要求自然完成、图表内容完全正确且归一化页面文本无错误。<a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/workflow.md#evaluation-and-dental-example-results">评估协议</a>。</em></p>
+<p>要适配该配方，请提供你自己的图像/标签对和验证器：即判断提取是否正确的检查。包含的<strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/tree/main/src/nemotron/recipes/parse/document_rewards">文档奖励组件</a></strong>涵盖文本保真度、边界框、表格、图表事实和完成度。组合与你的任务相关的组件，添加模式检查，并使用完成度和重复检查来抑制循环或未完成的输出。</p>
+<p>我们很高兴社区已经为<strong><a href="https://huggingface.co/iapp/OpenThai2.1-OCR-Markdown-20261118">泰语</a></strong>、<strong><a href="https://huggingface.co/Reza2kn/Bina-0.4-Koochik">波斯语/法尔西语</a></strong>和<strong><a href="https://huggingface.co/g3ida/absir-arabic-ocr-mini">阿拉伯语</a></strong>扩展并改进了 Parse，我们希望这些额外的数据集和微调配方能帮助鼓励这些努力和未来的模型。</p>
+<p>我们感谢 Denis Ovchinnikov 在 vLLM 集成和独立性能验证方面的工作，Oliver Holworthy 改进微调配方的运行时设置和可复现性，以及 Bo Liu 的技术审阅。</p>
+<h2>本文提到的模型 3</h2>
+<h2>本文提到的数据集 4</h2>
+<p>更多来自该作者</p>
+<h2>Microduck 避障：使用 Isaac Lab 和 Newton 的 Sim2Real 工作流</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>13</p>
+<p>2026 年 11 月 24 日</p>
+<h2>使用 SimReady 资产构建机器人拾放仿真</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>51</p>
+<p>2026 年 11 月 13 日</p>
+<h3>社区</h3>
+<h2>本文提到的模型 3</h2>
+<h2>本文提到的数据集 4</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>[Hugging Face] 群体、群体、帮派：如何构建、训练和评估多智能体系统</title>
+      <link>https://huggingface.co/blog/training-swarms</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/training-swarms</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Hugging Face</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml">Hugging Face</source>
+      <description>原文标题：Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems</description>
+      <content:encoded><![CDATA[<h1>Swarms、Flocks、Gangs：如何构建、训练与评估多智能体系统</h1>
+<p>发布于 2026 年 11 月 26 日</p>
+<p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw 的头像"></a></p>
+<p>ben burtenshaw</p>
+<p>burtenshaw</p>
+<p><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt="Kashif Rasul 的头像"></a></p>
+<p>Kashif Rasul</p>
+<p>kashif</p>
+<p><em>第一部分：理解 swarm 并训练其通信</em></p>
+<p>这是一个面向有抱负读者的、同样有抱负的博客系列。我们（我们、社区、你）想构建自己的 agent swarm，因为它们令人兴奋、富有挑战性，而且能力越来越强。更进一步，如果我们能训练自己的 agent 在 swarm 中协作，那会极其酷。如果这些 swarm 使用的还是小而经济的模型，那酷的程度还会指数级上升。</p>
+<p>这就是我们在本系列中要做的事！每篇博客都会包含一些关于构建 swarm 的背景，以及可在 Hugging Face Jobs 上运行的可复现示例。本文的示例在两块 H200 上大约需要五小时，成本约为 $50。</p>
+<p>多智能体系统很难真正跑通。增加 agent 会改变 agent 的上下文、预算，进而改变整个系统的复杂度。通过通信把各 agent 的上下文混合在一起，相比单个 agent 并不是内在的性能提升。模型需要通过训练学会通信。我们如何定义模型应该学什么？当我们面对许多 agent 时，又该更新哪些模型权重？</p>
+<p>在本系列中，我们将通过教学性概览和实践示例来逐个处理这些问题。每篇文章都会提出一个问题、构建一个小系统，并考察会发生什么以及你如何复现它。第一个示例从四个 agent、一个共享语言模型和一个简单的可验证任务开始。它非常适合你自己实现、动手折腾并从中学习。</p>
+<p>首先，我们会从一些关于 swarm 的背景开始。</p>
+<h2>swarm 的崛起</h2>
+<p>过去几个月里，我们听到了很多关于 swarm 的消息，有好有坏。今年九月，<a href="https://openai.com/index/navier-stokes-solution/">OpenAI 宣布</a>，一个约 10,000 个 agent 组成的 swarm 在三维 Navier-Stokes 方程中找到了一个奇点，这是千禧年大奖难题之一。一个由近 100 个 agent 组成的更小团队已经否证了无外力三维 Euler 方程的正则性，这是一个密切相关的开放问题。</p>
+<p>但 swarm 并不总是会去解决我们希望它们解决的问题。<a href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/">METR 对 Hugging Face 事件的调查</a>发现，约 1,200 个本应被隔离的 OpenAI agent 找到了交换超过 70,000 条消息和文件的方法。大约 700 个 agent 在寻找办法欺骗其 benchmark 评分器的过程中，参与了对 Hugging Face 的攻击，而它们并没有被指示这样做。</p>
+<p>一个大型 swarm 本身并不能证明合作起了作用。<a href="https://www.dwarkesh.com/p/noam-brown">Noam Brown 估计</a>，Navier-Stokes 成果中来自多智能体合作的部分不到 10%。在 <a href="https://www.anthropic.com/research/multiagent-systems">Anthropic 的漏洞发现实验</a>中，协调后的 agent 比独立 agent 发现了更多 bug，但也搜索了更多代码、使用了更多 token。当比较被限制在相同目录时，每百万 token 的结果大致相同。</p>
+<h2>合作有帮助，还是我们只是花了更多？</h2>
+<p>从最简单的情况开始。如果四个 agent 各自独立尝试一个任务，那么只要我们能判断哪个答案正确，至少有一个 agent 答对的概率就高于单次尝试。这为多智能体系统提供了一个有用的基线，但它并不能表明 agent 之间互相帮助了。它们可能只是有了更多次尝试。</p>
+<p>四次尝试的成本也是四倍。因此，更公平的比较是在相同预算下进行：如果四个 agent 各获得总 token 的四分之一，它们还能击败一个花掉全部 token 的 agent 吗？我们只能通过测试来找出答案，因为这取决于任务、模型以及工作如何划分。</p>
+<blockquote>本系列一直在问一个问题：当 agent 通信时，这真的有帮助吗，还是我们只是花了更多算力？</blockquote>
+<p>我们通过下面这个简单的预期来理解这个问题。</p>
+<p>图 1. 我们想要检验的预期示意图：在匹配预算下比较相互通信的 agent 与独立 agent。</p>
+<p>我们会把 agent 数量视为一个扩展维度，与 token 数和模型规模并列。有时增加 agent 会有帮助。有时协调会消耗掉我们原本希望节省的预算。关键在于把两者都测量出来。我们不会从 10,000 个 agent 开始。我们会从一个小团队和一个容易检查的任务开始。</p>
+<h2>多智能体系统与强化学习</h2>
+<p>早在语言模型被称为 swarm 之前，多智能体强化学习就已经在研究合作与竞争。</p>
+<p>单个 agent 的任务是一个马尔可夫决策过程：观察、行动、获得奖励。在一个团队中，所有人共享奖励，但每个 agent 只能看到世界的一部分。这是一个去中心化部分可观测马尔可夫决策过程：彼此是队友，但没有人能看到全貌。</p>
+<p>这带来了三个实际问题。第一，在每个 agent 学习的同时，队友一直在变化。第二，信用分配：当团队成功时，哪些行动应获得功劳？一支获胜的队伍可能包含较弱的行动，而我们最终可能会奖励它们。第三，一条消息会改变其他 agent 的观察，因此通信是我们正在训练的策略的一部分。</p>
+<p>一种常见的解决方案是集中式训练、分散式执行：训练使用整个团队的信息，但每个 agent 仅根据自己的观察行动。我们的第一个示例采用这种模式，并使用共享的团队奖励。</p>
+<p>agent 也可以通过不同方式组织。两个有用的起点是：</p>
+<ul><li><strong>层级结构。</strong> 一个 lead agent 把工作分配给 worker 并收集它们的结果。Anthropic 的 Research 系统就是这样工作的，每个 worker 有独立的上下文。Kimi K2.5 的 PARL 只训练 orchestrator，并保持 subagent 冻结，因此训练多智能体系统并不意味着要更新每个组件。参见 <a href="https://www.anthropic.com/research/multi-agent-research-system">Anthropic 的系统描述</a>和 <a href="https://www.kimi.com/en/blog/kimi-k2-5">Kimi 的技术博客</a>。</li><li><strong>分布式团队。</strong> 同伴之间互相发送消息，并决定何时读取自己的收件箱。没有 lead agent 分配动作。这就是我们在这里将采用的设置，它沿用了 <a href="https://huggingface.co/papers/2611.08615">s³: Simple Scaling of Swarms via Cooperative Multi-agent RL</a>中的信息聚合任务。</li></ul>
+<h2>我们的第一个实验：四个 agent 对数字排序</h2>
+<p>我们将复现 <a href="https://huggingface.co/papers/2611.08615">Simple Scaling of Swarms</a>中的信息共享任务，因为它可解释且易于实现。四个 agent 共享一个小型语言模型，并学习汇集它们各自知道的信息。</p>
+<p>每个 agent 会收到一个 1 到 99 的整数。它知道自己的分配值以及队友的名字。它最初不知道其他 agent 的数字。例如，四个私有分配值可能是“五”、“二十六”、“五”和“七十八”。重复值会保留在列表中，因此正确的最终答案是：</p>
+<pre><code>#### [5, 5, 26, 78]</code></pre>
+<p>当<strong>至少一个 agent 提交完整且排序正确的列表</strong>时，团队即成功。一个正确答案就足够了；成功不要求四个 agent 全部答对。在没有队友信息的情况下，一个 agent 无法可靠地推断出其他私有分配值。</p>
+<p>这意味着该任务还没有直接检验图 1。每个 agent 都掌握着其他人需要的信息，因此单个 agent，或者一个不发送消息的团队，无论重试多少次都无法成功。相反，该任务检验的是图 1 背后的前提：一个小型共享策略究竟能否学会通信，以及这需要花费多少 token？后续文章会转向一个单个 agent 可以独立解决的任务，在那里，匹配预算的比较才有意义。</p>
+<p>主要的通信工具是 <code>message(to, text)</code>、<code>read_messages()</code> 和 <code>check_notifications()</code>。通知会告诉 agent 存在未读消息；读取收件箱后，消息内容就可供使用。agent 可以发送私信，也可以向所有人广播。</p>
+<p>我们定义了一个四 agent 系统，使用<strong>一个共享的 Qwen3-0.6B 策略</strong>，每个 agent 有独立的上下文和私有输入。我们并不是在训练四个不同的模型。prompt 说明了任务和工具，包括共享分配值的必要性。</p>
+<p>图 2. 任务与训练循环。私有数字展示了一个可能的成功 episode；此图不是一段录制的对话，也不是对第 75 次更新时所学协议的主张。</p>
+<h3>团队奖励与每个问题八次尝试</h3>
+<p>在本文中，<em>team</em> 指一个 episode：四个 agent 对一个问题尝试一次。成功的团队会获得奖励，但奖励会因其使用的 token 而减少。失败的团队获得零奖励：</p>
+<pre><code>team allowance = 4 × (8,192 work tokens + 1,024 final-answer tokens)
+               = 36,864 tokens
+
+reward = success × (1 − 0.25 × min(1, generated team tokens / 36,864))</code></pre>
+<p>举例来说，一个正确使用其额度一半的团队会得到 0.875。发送消息没有单独奖励。激励是在使用更少生成 token 的同时解决任务。</p>
+<p>对于每个训练问题，我们收集八个独立的团队尝试。它们的奖励在该组内归一化。表现优于组平均的尝试获得正 advantage；表现较差的尝试获得负 advantage。同一团队中的每个 agent 都会获得该团队的 advantage，包括自身最终答案错误的 agent。</p>
+<p>在 <a href="https://github.com/huggingface/trl">TRL</a> 中，每个 agent 采样的 token 构成一行训练数据。它接收到的消息和工具结果提供上下文。loss 先在每个团队内平均，然后在团队之间平均，因此较长的对话不会让某个团队获得更高权重。</p>
+<blockquote>我们的结果来自原始实验，该实验每次更新使用 256 次团队尝试（32 个问题，每个问题八次尝试）。操作演练使用 TRL 默认的 --teams-per-update 128，折算下来每次更新大约有 150 次团队尝试。</blockquote>
+<h3>我们的结果</h3>
+<p>在 75 个 step 中，对比最初五次和最后五次更新，训练成功率从 <strong>6.6% 上升到 82.3%</strong>。在 checkpoint 75，四 agent 团队解决了 <strong>32 个 held-out 问题中的 26 个（81.25%）</strong>。<a href="https://huggingface.co/papers/2611.08615">论文</a>报告称，经过 200 次更新后，四 agent 成功率为 93.2%。</p>
+<p>该团队每次尝试使用的 token 也<strong>减少了 37.4%</strong>，从约 13k 降至 8k。这一改进伴随着更活跃的信息共享：每个团队的广播次数从 2.38 增加到 5.73，尽管总 token 使用量下降了。</p>
+<p>图 3. 蓝色曲线描述每次更新前收集的、包含 256 次团队尝试的训练批次。橙色点是指示更新之后的 held-out 检查结果。</p>
+<p>团队在训练后期也使用了更少的 token。对比最初五次更新与第 71–75 次更新：</p>
+<table><thead><tr><th><strong>训练指标</strong></th><th><strong>第 1–5 次更新，均值</strong></th><th><strong>第 71–75 次更新，均值</strong></th></tr></thead><tbody><tr><td>成功率</td><td>6.56%</td><td>82.34%</td></tr><tr><td>每个团队生成的 token</td><td>12,826.9</td><td>8,026.0</td></tr><tr><td>每个团队的消息数</td><td>3.48</td><td>6.28</td></tr><tr><td>每个团队的广播数</td><td>2.38</td><td>5.73</td></tr><tr><td>每个 agent 发送一次广播的团队占比</td><td>4.06%</td><td>18.20%</td></tr></tbody></table>
+<p>这意味着在这两个窗口之间，<strong>每个训练团队生成的 token 减少了 37.4%</strong>。在 batch 75 本身，每个团队的均值是 7,624 个 token。这些是训练测量值；我们没有保留训练后 checkpoint 的 held-out token 效率测量值。</p>
+<p>注意，更少的 token 并不意味着更少的消息。更多 agent 开始参与，但广播变得比直接发消息更常见。生成的 token 既包括消息正文，也包括推理和工具调用，因此仅凭消息数量并不能告诉我们团队生成了多少文本。</p>
+<p>图 4. 上：训练 token 使用量及过去五次更新的滑动均值。下：基于已发送消息事件的互斥通信类别。团队的分类顺序是：首先看是否有某个 agent 从不发送消息，然后看是否出现任何直接消息，再看是否每个 agent 恰好发送一次广播；剩余团队则重复广播。</p>
+<h3>更多重试，还是训练过的团队？</h3>
+<p>没有 agent 能独自解决该问题，因此与“带更多重试的单个 agent”最接近的对应物，是带更多重试的未训练团队。训练数据已经包含这一比较。每次更新会为每个问题收集八次尝试，而任务的答案很容易检查，因此只要八次尝试中有任何一次成功，我们就可以把该问题计为已解决。在训练早期，这个计数给出了未训练团队的 best-of-8 成功率：</p>
+<table><thead><tr><th></th><th><strong>成功率</strong></th><th><strong>每个问题生成的 token</strong></th></tr></thead><tbody><tr><td>未训练团队，8 次尝试中的最佳（第 1–5 次更新）</td><td>37.5%</td><td>约 103,000</td></tr><tr><td>训练后团队，一次尝试（第 71–75 次更新）</td><td>82.3%</td><td>约 8,000</td></tr></tbody></table>
+<p>在八次重试下，未训练团队解决的问题不到一半，并且花费的 token 约为训练后团队单次尝试的 13 倍。请将此视为估计值。两行使用的都是训练问题而非 held-out 问题，而且第 2–5 次更新已经是从略微训练过的策略中采样。</p>
+<h3>基础设施</h3>
+<p>模型很小，但 rollout 规模不小。每次更新都会在最高 40k token 的上下文中生成数百万 token 的 agent 对话。我们使用一块 H200 作为 trainer，七块 H200 运行 vLLM rollout 引擎来快速完成这些 rollout，并把每个 worker 的八次尝试放在一起。下面的演练在两块 GPU 上运行同样的任务。以下是基础设施细节：</p>
+<table><thead><tr><th><strong>设置</strong></th><th><strong>记录的实验</strong></th></tr></thead><tbody><tr><td>共享策略</td><td>Qwen3-0.6B</td></tr><tr><td>每个团队的逻辑 agent 数</td><td>4</td></tr><tr><td>每次更新的问题数</td><td>32</td></tr><tr><td>每个问题的团队尝试数</td><td>8</td></tr><tr><td>每个 agent 的工作 / 最终答案 token 数</td><td>8,192 / 1,024</td></tr><tr><td>学习率 / temperature</td><td>5e-7 / 1.0</td></tr><tr><td>训练问题池</td><td>1,024 个生成问题</td></tr><tr><td>报告 endpoint</td><td>保留的 checkpoint 75</td></tr><tr><td>执行</td><td>1 块 trainer GPU + 7 块 rollout GPU</td></tr></tbody></table>
+<h2>实践示例：训练你自己的 swarm</h2>
+<p>上面的图表描述了我们最初的 75 次更新实验。在本演练中，我们将在 Hugging Face Jobs 上运行 <a href="https://github.com/huggingface/trl/tree/main/examples/async_grpo_s3_aggregation">TRL 的 swarm 示例</a>。一块 H200 用 vLLM 服务共享的 Qwen3-0.6B 策略，第二块 H200 训练它。</p>
+<h3>1. 为本次运行创建一个 bucket</h3>
+<p>使用能够运行 Jobs 并创建 bucket 的 Hugging Face 账户登录。将 <code>YOUR_USERNAME</code> 替换为你的 Hub 用户名。</p>
+<blockquote>每次运行都使用一个新的 bucket，以便先前的测量结果仍然可用。</blockquote>
+<pre><code>uv tool install 'huggingface_hub==2.4.0'
+hf auth login
+BUCKET=&quot;YOUR_USERNAME/swarm-trl-$(date -u +%Y%m%d-%H%M%S)&quot;
+hf buckets create &quot;$BUCKET&quot;</code></pre>
+<h3>2. 在 Hugging Face Jobs 上运行 TRL 示例</h3>
+<p>将下面的脚本保存为当前目录中的 <code>train-swarm.sh</code>。</p>
+<p><code>train-swarm.sh</code></p>
+<pre><code>set -eu
+git clone --depth 1 https://github.com/huggingface/trl /tmp/trl
+cd /tmp/trl
+example=examples/async_grpo_s3_aggregation
+if [ ! -f &quot;$example/async_grpo_s3_aggregation.py&quot; ]; then
+  git fetch --depth 1 origin refs/pull/8424/head
+  git checkout --detach FETCH_HEAD
+fi
+git rev-parse HEAD &gt; /results/trl-revision.txt
+python -m pip install -e &quot;.[vllm,kernels]&quot; &quot;vllm==0.32.0&quot; datasets httpx trackio
+
+base=Qwen/Qwen3-0.6B
+url=http://127.0.0.1:8000
+export TRACKIO_DIR=/tmp/trackio
+serve() {
+  CUDA_VISIBLE_DEVICES=0 VLLM_SERVER_DEV_MODE=1 vllm serve &quot;$@&quot; \
+    --host 127.0.0.1 --max-model-len 40960 --max-num-seqs 512 --enable-prefix-caching &amp;
+  server=$!
+  until curl -fs &quot;$url/health&quot; &gt;/dev/null; do kill -0 &quot;$server&quot;; sleep 5; done
+}
+evaluate() {
+  python &quot;$example/evaluate.py&quot; --url &quot;$url&quot; --model &quot;$1&quot; --name &quot;$2&quot; \
+    --episodes 192 --concurrency 64 --out &quot;/results/$2.jsonl&quot;
+}
+
+serve &quot;$base&quot; --logprobs-mode processed_logprobs --weight-transfer-config &quot;{\&quot;backend\&quot;:\&quot;nccl\&quot;}&quot;
+evaluate &quot;$base&quot; base
+CUDA_VISIBLE_DEVICES=1 accelerate launch --num_processes 1 --mixed_precision bf16 \
+  &quot;$example/async_grpo_s3_aggregation.py&quot; --vllm-url &quot;$url&quot; \
+  --updates 50 --teams-per-update 128 --concurrent-teams 128 \
+  --report-to trackio --output-dir /tmp/swarm
+cp -r &quot;$TRACKIO_DIR&quot; /tmp/swarm/checkpoint-50 /results/
+kill &quot;$server&quot;
+wait &quot;$server&quot; || true
+serve /tmp/swarm/checkpoint-50 --logprobs-mode processed_logprobs
+evaluate /tmp/swarm/checkpoint-50 trained</code></pre>
+<p>下面的命令会将其内容发送到 job。在 job 内部，vLLM 在 GPU 0 上服务共享策略。GPU 1 使用 Trackio 运行 TRL 的 <code>async_grpo_s3_aggregation.py</code>，进行 50 次更新。TRL 的 <code>evaluate.py</code> 会在相同的 192 个 held-out 问题上为基座模型和 checkpoint 50 打分。这比我们结果中的 32 问题检查集更大，因此误差棒更紧。该 job 会把两个分数、checkpoint、Trackio 数据以及确切的 Git commit 保存到你的 bucket。</p>
+<pre><code>hf jobs run --detach --flavor h200x2 --timeout 12h \
+  --volume &quot;hf://buckets/$BUCKET:/results&quot; \
+  -- vllm/vllm-openai:v0.32.0 bash -c &quot;$(cat train-swarm.sh)&quot;</code></pre>
+<p>一次 TRL rollout 包含一整段团队对话。trainer 会比较针对同一问题的八次尝试，并给一次尝试中的全部四个 agent 相同的 advantage。每次更新使用约 150 次团队尝试。TRL 按 token 数而非按团队打包 micro-batch，因此 <code>--teams-per-update 128</code> 设置是近似值。<code>--report-to trackio</code> 标志会在每次更新时记录训练指标。</p>
+<p>这次较短的运行比我们的原始实验更便宜，并且在学习曲线上更早停止。TRL 运行此示例时，在两块 H100 上耗时约 4.8 小时，并在 checkpoint 50 达到 60.9% 的 held-out 成功率。</p>
+<blockquote>若要更接近我们的原始实验，请将训练标志改为 --updates 75 --teams-per-update 256 --concurrent-teams 256，将脚本中的 checkpoint-50 替换为 checkpoint-75，并将 job 的 --timeout 提高到 24h。这样 rollout 数量会变成三倍。两个代码库在 system prompt 等细节上仍然不同，因此预期会得到相似结果，而不是精确复现。</blockquote>
+<h3>3. 读取结果</h3>
+<p>job 完成后，将 bucket 同步到本地文件夹。其中包含两个评估文件、Trackio 数据、TRL revision 以及 checkpoint-50 权重，后者是最大的下载项。在 dashboard 中，对比训练过程中的 <code>team/success</code>、<code>team/messages</code> 和 <code>team/tokens</code>。job 日志还会给出基座模型和 checkpoint 50 的 held-out 成功率。<code>base.jsonl</code> 或 <code>trained.jsonl</code> 的每一行记录其中一次评估尝试。</p>
+<pre><code>hf buckets sync &quot;hf://buckets/$BUCKET&quot; ./swarm-results
+TRACKIO_DIR=&quot;$PWD/swarm-results/trackio&quot; uvx trackio show</code></pre>
+<h2>我们接下来会尝试什么</h2>
+<p>第一个示例为我们提供了一个小环境、一个共享奖励，以及一个在汇集私有信息方面不断改进的策略。它还说明了为什么需要把成功率、token 使用量和通信结构放在一起解读。在第 75 次更新时，团队已经能解决大多数被检查的问题，但尚未收敛到最简洁的通信模式。</p>
+<p>在接下来的示例中，我们会从训练中退后一步，看看如何评估和分析 swarm。</p>
+<p>目前，我们已经有了具体的基础可以继续构建：四个小 agent、一个可训练策略、一个可检查的任务，以及一种可复现的方式来考察团队学到了什么。</p>
+<h2>本文提到的论文 1</h2>
+<p>我们博客的更多文章</p>
+<p>rltrlagents</p>
+<h2>推出 harness 适配器：让你喜欢的模型适配你的 harness，以提升性能并优化成本</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63e0eea7af523c37e5a77966/B6Qs5bgr8wXcy2tPl6CVQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li><li>+6</li></ul>
+<p>158</p>
+<p>2026 年 11 月 20 日</p>
+<p>llmrltrl</p>
+<h2>跨 HF Jobs 使用 LoRA 的异步 GRPO：一个 bucket、一个 proxy，且无需 NCCL</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
+<p>55</p>
+<p>2026 年 9 月 10 日</p>
+<h3>社区</h3>
+<h2>本文提到的论文 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>[OpenRouter] 杰文斯悖论成立吗？</title>
+      <link>https://openrouter.ai/blog/insights/is-jevons-paradox-holding/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/insights/is-jevons-paradox-holding/</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <category>OpenRouter</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml">OpenRouter</source>
+      <description>原文标题：Is Jevons Paradox holding?</description>
+      <content:encoded><![CDATA[<h1>Jevons Paradox 还成立吗？</h1>
+<p>OpenRouter ·11/26/2026</p>
+<p>在 AI 热潮迄今为止的发展中，Jevons paradox（杰文斯悖论）一直是推理领域的决定性法则：随着 token 价格下降，使用量爆炸式增长，足以推高总支出。近几个月来，这一动态有所减弱。token 消耗没有放缓的迹象，但支出增长已急剧放缓。</p>
+<h2>目前的情况</h2>
+<p><img src="https://openrouter.ai/blog/images/is-jevons-paradox-holding-1.png" alt="2026 年 OpenRouter 上每周付费 token、支出和每 token 价格的折线图，以 1 月 5 日当周为基准、采用对数尺度。Token 增至 44 倍，支出增至 7.6 倍，每 token 平均价格下降 83%。自 10 月初以来，支出大致持平。"></p>
+<p>2026 年迄今为止，token 总量增至 <strong>44 倍</strong>，而总支出增至 <strong>7.6 倍</strong>。今年秋天，这种分化变得更加明显：使用量持续攀升，而自 10 月初以来支出仅小幅上升。对 token 的需求显然仍然强劲，但买家只是在不增加预算的情况下获得了多得多的产出。</p>
+<h2>各季度弹性</h2>
+<p><img src="https://openrouter.ai/blog/images/is-jevons-paradox-holding-2.png" alt="2026 年各季度 token 弹性柱状图：第一季度为 5.4，第二季度为 5.5，第三季度为 1.6，第四季度截至 11 月 16 日为 1.2。1 处的虚线标示临界点，即价格下降时支出保持持平。"></p>
+<p>弹性衡量使用量对价格的反应强度，更准确地说，是每 token 价格每下降 1% 时，token 数量增加的百分比。高于 1 时，价格下降而总支出上升，这就是 Jevons paradox。等于 1 时，支出持平：买家把节省下来的钱转化为更多 token。季度弹性将各季度开始前四周与结束前四周进行比较（以 token 数量与每 token 价格的对数变化之比计算），清晰显示了这一转变。第一季度弹性保持在 <strong>5.4</strong>，第二季度为 <strong>5.5</strong>，处于典型的 Jevons 区间，更便宜的 token 推动了大量净新增支出。第三季度降至 <strong>1.6</strong>，第四季度迄今为 <strong>1.2</strong>。</p>
+<p>这不是第一次下滑。2024 年 12 月和 2025 年 11 月，弹性也曾降至约 1，而两次都随着下一波模型发布而回升。当前的放缓可能只是两波之间的间歇，而非持久的断裂。</p>
+<h2>环比增长：token 与支出</h2>
+<p><img src="https://openrouter.ai/blog/images/is-jevons-paradox-holding-3.png" alt="2026 年每周付费 token 与支出的环比增长折线图，并标注了重大模型发布：Claude 4.6、DeepSeek V4、Kimi K3 和 GPT-5.6、DeepSeek V4.1 Flash，以及 Claude Opus 5.5。今年上半年，两条线同步变动。自 7 月以来，token 每月持续增长约 40%，而支出增长降至 0%。"></p>
+<p>将环比增长与重大模型发布放在一起绘制，可以看出两者在何处分化。2026 年上半年，支出的增长几乎与 token 一样快。自 7 月以来，两者出现分化：token 仍以每月约 <strong>39%</strong> 的速度增长，而支出增长未能跟上。重要的是，同期每 token 成本（尤其是在 Claude 或 GPT 等闭源模型系列中）仍在持续大幅下降。</p>
+<h2>这意味着什么</h2>
+<p>更便宜的推理仍在推动大规模采用，<strong>44 倍</strong>的 token 增长证明了这一点，但近几个月来，它并未带来与之匹配的支出增长。这一模式也因客户而异：与 AI 原生高增长企业相比，企业看起来更注重成本，更多地将价格下降转化为节省，而非新增支出。</p>
+<p>值得注意的是，2026 年初真正意义上的 agentic coding 的出现，很可能帮助 Jevons 悖论维持了如此强劲的成立态势，这引出了一个问题：如果支出增长恢复到此前的速度，下一次飞跃会是什么？</p>
+<p>随着下一批产品发布落地，我们将持续跟踪。</p>
+<p><em>图表涵盖 OpenRouter 上的付费使用量，不包含免费模型、BYOK、转售商和内部账户。</em></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[Together AI] Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model…</title>
+      <link>https://www.together.ai/blog/distilling-kimi-into-qwen</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/distilling-kimi-into-qwen</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Together AI</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml">Together AI</source>
+      <description>完整标题：Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>模型塑造</p>
+<p>发表于 11/26/2026</p>
+<h1>将 Kimi-K3.1-Pro 提炼为 Qwen3.8-27B：教授模型一种新语言</h1>
+<p>当我们询问老挝语时，Qwen3.8-27B 用泰语回答。我们通过Together Post-Training将Kimi-K3.1-Pro的老挝语翻译提炼出来，达到了老师评分的93%，泰语完好无损。</p>
+<ul><li>作者扎因·哈桑 (Zain Hasan)、桑尼·汗 (Sonny Khan)</li><li>目录<a href="https://www.together.ai/blog/distilling-kimi-into-qwen">40+ 型号选择用于生产...40+ 型号选择用于生产...40+ 型号选择用于生产...</a></li><li>本文中的链接<a href="https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation">GitHub 上的蒸馏食谱</a><a href="https://www.together.ai/post-training">一起训练后</a><a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a><a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a></li></ul>
+<p>总结</p>
+<ul><li><strong>差距：</strong> 当被问及老挝语时，Qwen3.8-27B 用泰语回答，得分为 5.5 chrF++，而 Kimi-K3.1-Pro 在同一测试中得分为 47.5。</li><li><strong>修复：</strong> 我们使用 Together Post-Training 在大约 3,800 个 Kimi-K3.1-Pro 的翻译上训练了一个 LoRA 适配器。</li><li><strong>结果：</strong> 学生在每个测试句子上都写上了老挝语，得分为 44.3，是老师得分的 93%，并且保留了泰语。</li><li><strong>成本：</strong> 所有实验总共花费 260 美元，代码位于训练后食谱中。</li></ul>
+<p>在进行一些实验时，我们发现最流行的小语言模型 (SLM) 之一的 <a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a> 无法书写老挝语，这是一种西南泰语，也是老挝的官方语言。如果你要求它把一个英语句子翻译成老挝语，它会用泰语回答，泰语是老挝语的近亲，它使用完全不同的文字。在 <a href="https://huggingface.co/datasets/Muennighoff/flores200">FLORES-200</a> 老挝语测试集上，该模型得分为 5.5 chrF++，即翻译与人类参考的匹配程度为 0 到 100 分，并且其输出中只有 11% 采用老挝文字。 <a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a> 在同一测试中得分 47.5。</p>
+<p>诚然，这是一个小众用例，但这种模式很常见：小型语言模型显示参差不齐的智能，在您关心的狭窄任务上表现不佳，而更大、更昂贵的模型则可以轻松处理它。为了解决这个问题，我们使用 Kimi-K3.1-Pro 作为教师，并使用 Together Post-Training 将其老挝语翻译能力提炼为 Qwen3.8-27B。</p>
+<p>在对 Kimi-K3.1-Pro 的约 3,800 个翻译进行训练后，27B 学生对每个测试句子都用老挝语作答，得分为 44.3，是老师得分的 93%。它还保留了泰语翻译能力，有趣的是，这是最难的部分。我们的第一次尝试在 25 个训练步骤内修复了老挝语，但也随之失去了泰语翻译能力。</p>
+<p>这篇文章将介绍我们如何发现差距以及最终的效果。代码、设置和成本在后半部分。所有实验总共花费 260 美元。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0765fc996c2110eb55182f_kimi-qwen-distillation-headline.png" alt="基础学生、精炼学生和 Kimi-K3.1-Pro 教师的老挝语和泰语 chrF++ 条形图。"></p>
+<p>学生从写泰语到写老挝语，达到了老师分数的 93%，并且没有失去泰语能力。</p>
+<h2>寻找差距</h2>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766387f6debb78af8c6fe_kimi-qwen-distillation-screen.png" alt="Kimi-K3.1-Pro 和 Qwen3.8-27B 11 种语言的 chrF++ 条形图，老挝语差距最大。"></p>
+<p>Kimi-K3.1-Pro 在所有 11 种语言上都击败了 Qwen3.8-27B。老挝目前差距最大（49.0 比 7.2）。</p>
+<p>我们使用的指标是 chrF++，它对字符和单词与人工参考翻译的重叠进行评分，从 0 到 100。要了解 Qwen 老挝语分数较低的重要一点是，对于 chrF++，泰语答案与老挝语参考几乎没有任何共同点。当要求翻译成老挝语时，学生的输出 50 个句子中有 45 个包含泰语文字，而仅 6 个句子包含老挝语：</p>
+<blockquote>中文：“我们现在有 4 个月大的老鼠，它们以前患有糖尿病，但现在没有患糖尿病，”他补充道。 Qwen3.8-27B（基础）：“我们现在有 4 个月大的小鼠，它们以前患有糖尿病，但现在没有糖尿病，”他补充道。</blockquote>
+<p>基本模型的泰语是一个合理的翻译，只是语言错误。我们将在结果中再次讨论这一点。</p>
+<p>关于数字的一点说明：在这 50 个句子中，Qwen3.8-27B 的 Lao 得分为 7.2，Kimi-K3.1-Pro 的得分为 49.0，而在完整的 1,012 个句子测试集上，老挝得分为 5.5 和 47.5。测试集列在“我们如何构建它”下。</p>
+<h2>计划：离策略蒸馏</h2>
+<p>蒸馏训练一个小模型（学生）在给定领域表现得像一个大模型（老师）。有两种方法可以做到这一点。</p>
+<p><strong>按策略蒸馏 (OPD)</strong>，在 Thinking Machines 的<a href="https://thinkingmachines.ai/blog/on-policy-distillation/">关于该主题的帖子</a> 中进行了描述，让学生生成文本，教师对每个标记进行评分。它需要教师对学生标记的对数概率，这实际上意味着两个模型必须共享标记生成器。由于我们将 Kimi 提炼成 Qwen 并且它们不共享标记器，所以我们走了另一个方向。</p>
+<p><strong>离策略蒸馏</strong>让教师生成文本并训练学生通过监督微调 (SFT) 来模仿它。最简单的形式只需要老师的课文。</p>
+<p>我们使用了离策略蒸馏。它使教师端相当便宜：每个教师呼叫都是普通的无服务器聊天请求，而 Kimi-K3.1-Pro 是一个相当大的模型，从不需要自己的训练资源。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766643280c184bf4a8f03_kimi-qwen-distillation-pipeline.png" alt="从英语句子到经过训练的 LoRA 适配器的蒸馏管道图。"></p>
+<p>端到端管道：英语句子进入 Kimi-K3.1-Pro，经过过滤，并成为 Together Post-Training 模型资源上 Qwen3.8-27B LoRA 会话的 SFT 行。</p>
+<p>步骤：</p>
+<ul><li>收集英语源句子。</li><li>让 Kimi-K3.1-Pro 翻译它们，关闭思维。</li><li>删除主要不在目标脚本中的任何翻译。</li><li>以翻译为目标，在 Qwen3.8-27B 上微调 LoRA 适配器，在训练时评估保留的测试句子。</li><li>将适配器保存到模型注册表中。</li></ul>
+<p>我们对学生进行了“共同后期培训”培训。一种模型资源既可以训练 LoRA 适配器，也可以训练其中的样本，因此我们可以在模型训练时对其进行评分。我们根据四个指标对每个评估进行评分：</p>
+<ul><li>chrF++ 与 FLORES-200 开发测试中的人类参考相比：每次运行开始和结束时的所有 1,012 个句子，每 25 个步骤 300 个句子（两次最长运行中的每 50 或 100 个句子）。</li><li>老挝文字率：字母主要为老挝文字的输出所占的比例。这直接抓住了泰国问题。</li><li>泰语保留：对 300 个英语到泰语的测试句子进行 chrF++，以检查模型是否丢失了已有的语言。</li><li>往返充分性：Kimi-K3.1-Pro 将每个系统的老挝语翻译回英语，我们根据原始英语进行评分。这可以独立于参考风格来检查含义。</li></ul>
+<p>保留泰语的同时获得老挝语翻译能力最终成为最棘手的部分。</p>
+<h2>泰国的惊喜</h2>
+<p>一次运行是一个对照：它以老挝人类参考资料为基础进行训练，其中 945 个来自 FLORES 开发人员，没有老师参与。 Lao 在 25 步内从 6.7 跃升至 43.3。</p>
+<p>然后我们看泰语。它从 46.7 下降到 11.7，到运行结束时为 5.3，其中 0% 的泰语输出采用泰文。该模型学会了“在要求翻译时写老挝语”，而不是“写您被要求翻译的语言”。问题已经改变方向了。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b07668c58205941917537cb_kimi-qwen-distillation-thai-chrf.png" alt="英语到泰语 chrF++ 与每次运行的训练步骤的折线图。"></p>
+<p>英语到泰语 chrF++ 300 个测试句子。仅对老挝人进行训练就可以让泰语崩溃；混合运行保留它。</p>
+<p>如果我们单独评估老挝，这次比赛看起来会是胜利者。它在这篇文章中的所有学生中获得了最高的老挝语分数。</p>
+<h2>修复泰语</h2>
+<p>仅限老挝的蒸馏运行在 Kimi-K3.1-Pro 的相同句子翻译上进行训练，以代替人类翻译。这大大减缓了损害，但并没有阻止它。泰语保持了两个时期，然后在第三个时期滑落至 44.3，300 个泰语答案中有 17 个是用老挝语写的。</p>
+<p>在训练数据中添加大约 1,000 个 Kimi-K3.1-Pro 泰语翻译修复了这个问题。 Thai 在两次混合运行中的得分分别为 47.4 和 47.8，高于基本模型，并且在任何评估中从未低于 47.3。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766965800a95e7276e19d_kimi-qwen-distillation-forgetting.png" alt="图表比较每种训练组合在询问老挝语和泰语时所写的语言。"></p>
+<p>当您要求老挝语和泰语时，每种培训组合会做什么。</p>
+<p>这是关于持续学习的一个重要观点：当你教一个模型一些新的东西时，混合数据来保护它已经做得很好的东西，这样你就不会在你关心的事情上出现回归。这是泰语，最容易与老挝语混淆的语言。</p>
+<h2>缩小老挝的其余差距</h2>
+<p>泰国是安全的，但老挝仍然短缺。每个老挝语示例约有 950 个，接受人类参考训练的学生得分为 44.7，两名精炼学生得分为 41.8 和 41.9。</p>
+<p>其中一部分是预期的。人类参考在人类参考指标上做得更好：FLORES dev 和 devtest 是通过相同的人工流程进行翻译的，因此对 dev 的培训会教授 devtest 的参考风格。精炼的学生反而学习了老师的风格。根据 Kimi-K3.1-Pro 自己的翻译进行评分，经过蒸馏的学生从 8 分上升到 58 chrF++，而接受人类参考训练的学生则达到 47 分。</p>
+<p>另一个区别是供应。 FLORES dev 拥有 997 条人类参考文献，仅此而已，而 Kimi-K3.1-Pro 可以翻译您拥有的任何英文文本。添加 3,000 个维基百科句子的翻译后，老挝语训练集的示例数量从 965 个增加到 3,834 个，并将老挝语得分从 41.9 提高到 44.3。这与人类参考运行相差不到半点，泰语完好无损。</p>
+<p>更多数据也击败了更多传递：4× 数据的一个 epoch 在 300 个测试句子上达到了 43.2，而较小的 Lao + Thai 集的 3 个 epoch 后达到了 41.3。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766a1cea7d11c54618f09_kimi-qwen-distillation-lao-chrf.png" alt="四次训练运行中英语到老挝语 chrF++ 与 SFT 步骤的折线图，教师为虚线。"></p>
+<p>英语到老挝语 chrF++，针对四次训练运行的 300 个测试句子，针对 SFT 步骤。虚线就是老师。</p>
+<p>＃＃ 结果</p>
+<table><thead><tr><th>运行</th><th>训练数据</th><th>老挝chrF++</th><th>老挝文字</th><th>泰语 chrF++</th></tr></thead><tbody><tr><td>基地学生</td><td>无</td><td>5.5</td><td>5.5 11%</td><td>46.7</td><td>46.7</td></tr><tr><td>SFT 人类参考文献</td><td>945 人工老挝语翻译</td><td>44.7</td><td>44.7 100%</td><td>5.3</td></tr><tr><td>仅限老挝蒸馏</td><td>965 Kimi-K3.1-Pro 老挝语 翻译</td><td>41.8</td><td>41.8 100%</td><td>44.3</td><td>44.3</td></tr><tr><td>老挝+泰国蒸馏酒</td><td>965 老挝语 + 989 泰语，来自 Kimi-K3.1-Pro</td><td>41.9</td><td>41.9 100%</td><td>47.4</td><td>47.4</td></tr><tr><td>蒸馏，老挝+泰语，4×老挝数据</td><td>3,834 老挝语 + 989 泰语，来自 Kimi-K3.1-Pro</td><td>44.3</td><td>44.3 100%</td><td>47.8</td><td>47.8</td></tr><tr><td>Kimi-K3.1-Pro老师</td><td>-</td><td>47.5</td><td>47.5 100%</td><td>49.9</td><td>49.9</td></tr></tbody></table>
+<p>老挝数字使用了全部1012个测试句子，泰语使用了300个。最好的成绩达到了老师分数的93%。从基础模型开始的地方开始衡量，它缩小了老挝语 92% 的基础与教师差距：</p>
+<p>$$\text{间隙闭合} = \frac{s_{\text{学生}} - s_{\text{base}}}{s_{\text{老师}} - s_{\text{base}}} = \frac{44.3 - 5.5}{47.5 - 5.5} = 0.92$$</p>
+<p><strong>基本模型主要有含义；它只是写了错误的语言。</strong> 记住老鼠的例子。在往返充分性方面，基本模型的泰语输出得分为 64.6，略高于人类老挝参考值 (64.0)。这位蒸馏生的成绩为65.7，并在100%的测试句子上写出了老挝语。所以主要的差距是语言同一性，这就是为什么每次运行都通过第一次评估（25 或 50 个步骤）来修复脚本。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766acfba479086057a0a8_kimi-qwen-distillation-lao-script.png" alt="根据训练步骤用老挝文字编写的老挝语答案所占比例的折线图。"></p>
+<p>分享用老挝文字写的老挝答案。每次运行都会通过第一次评估来修复脚本。</p>
+<p>损失曲线、代币计数和每次运行的详细信息可以在附录中找到。</p>
+<h2>五种语言培训</h2>
+<p>为了检查这是否不是老挝特有的，我们用老挝语、北索托语和祖鲁语（三个最大的差距）以及约鲁巴语（两种模型中得分最低的拉丁文字语言）训练了一个适配器，并用泰语进行保留：总共 8,871 个 Kimi-K3.1-Pro 翻译，每种语言约 2,000 个，泰语约 1,000 个，超过 831 个步骤。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766d45a7d2ce6e9d023e3_kimi-qwen-distillation-multilingual.png" alt="基础学生、蒸馏适配器和 Kimi-K3.1-Pro 五种语言的 chrF++ 条形图。"></p>
+<p>一款经过精炼的适配器可改进老挝语、北索托语、约鲁巴语和祖鲁语，并保持泰语性能。</p>
+<table><thead><tr><th>语言</th><th>基地学生</th><th>蒸馏</th><th>Kimi-K3.1-Pro</th><th>差距已缩小</th></tr></thead><tbody><tr><td>老挝</td><td>5.5</td><td>5.5 41.8</td><td>41.8 47.5</td><td>47.5 87%</td></tr><tr><td>北索托</td><td>32.7</td><td>32.7 48.0</td><td>48.0 50.7</td><td>50.7 85%</td></tr><tr><td>约鲁巴语</td><td>20.7</td><td>20.7 25.7</td><td>25.7 27.7</td><td>27.7 71%</td></tr><tr><td>祖鲁语</td><td>37.7</td><td>37.7 39.2</td><td>39.2 50.3</td><td>50.3 12%</td></tr><tr><td>泰语</td><td>46.7</td><td>46.7 48.0</td><td>48.0 49.9</td><td>49.9改进</td></tr></tbody></table>
+<p>Lao 出现在全部 1,012 个测试句子中；其余的人用300分，老师对同样的句子打分。每种语言都有进步。 Zulu 改进最少：在训练期间，其输出的 1% 到 2% 陷入重复循环，因此更多 Zulu 数据或重复惩罚是我们首先尝试的事情。</p>
+<h2>如果你有这样的差距</h2>
+<p>这是我们再次要做的事情：</p>
+<ul><li>首先筛选。每种语言五十句就足以看出老师遥遥领先的地方。</li><li>在训练之前看看基础模型出了什么问题。这里的意思就在那里，但语言是错误的，这就是为什么脚本被修复在前 25 到 50 个步骤内。</li><li>当学生达到稳定水平时，在添加纪元之前生成更多教师数据。</li><li>混合您想要保留的附近技能的数据，并在训练期间对其进行评分。仅针对老挝的评估会选择打破泰国的比赛为最佳比赛。</li></ul>
+<h2>我们如何构建它</h2>
+<p>这篇文章的其余部分是操作方法：教师数据、训练循环、设置、测试集和成本。</p>
+<h3>使用无服务器 Kimi-K3.1-Pro 生成教师数据</h3>
+<p>每一次老师的通话都是一次普通的聊天完成，思维被关闭。翻译不需要长推理：经过思考，Kimi-K3.1-Pro 在 300 个老挝语测试句子上得分较低（43.5 对 47.3），并且使用了大约 8 倍的标记。关闭此选项后，老挝语答案平均约为 175 个输出标记。</p>
+<pre><code>from together import Together
+
+client = Together()
+resp = client.chat.completions.create(
+    model=&quot;moonshotai/Kimi-K3.1-Pro&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: (
+        &quot;Translate the following English text into Lao. &quot;
+        &quot;Output only the Lao translation, with no explanation.\n\n&quot; + english
+    )}],
+    max_tokens=1024,
+    temperature=0.0,
+    chat_template_kwargs={&quot;thinking&quot;: False},
+)
+lao = resp.choices[0].message.content</code></pre>
+<p>源文本是 FLORES-200 <strong>dev</strong> 的 997 个句子，加上英语维基百科的 4,000 个句子（老挝语 3,000 个，泰语 1,000 个）。</p>
+<p>关于数据，有两件事值得了解：</p>
+<ul><li>从老师那里生成数据很便宜。 Kimi-K3.1-Pro 无服务器成本为每百万输入代币 2 美元，每百万输出代币 10 美元。所有 4,000 份老挝语翻译总共花费 7.46 美元。</li><li>训练前过滤。只有当至少 70% 的字母符合目标脚本并且不是英语的回声时，我们才会保留翻译。过滤器去除了 Kimi-K3.1-Pro 的 4% 的老挝。</li></ul>
+<p>每个幸存的翻译都会成为一个聊天格式的训练行：</p>
+<pre><code>{&quot;messages&quot;: [
+  {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Translate the following English text into Lao. Output only the Lao translation, with no explanation.\n\n&lt;English sentence&gt;&quot;},
+  {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&lt;Kimi-K3.1-Pro's Lao translation&gt;&quot;}
+]}</code></pre>
+<h3>对学生进行培训后的 Together 培训</h3>
+<p>训练后一起在代码和 GPU 之间分割训练运行。 <strong>模型资源</strong>是一组加载了基本模型的 GPU（此处为 B200）。它有一个运行 <code>forward_backward</code> 和 <code>optim_step</code> 的 <strong>trainer</strong>，以及一个可选的 <strong>generator</strong>，用于从中间检查点采样文本。 <strong>会话</strong> 是针对该资源的一次 LoRA 适配器培训。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766deb889746147db68c7_kimi-qwen-distillation-step.png" alt="笔记本电脑和模型资源之间的一个训练步骤图。"></p>
+<p>一个训练步骤：笔记本电脑构建样本并发送它们；模型资源计算损失、应用优化器步骤和用于评估的样本。</p>
+<p>我们将食谱用于三件事：</p>
+<ul><li><code>get_codec(&quot;Qwen/Qwen3.8-27B&quot;, enable_thinking=False)</code> 使用 Qwen 自己的模板呈现每个聊天。</li><li><code>build_conversation_samples</code> 屏蔽提示（损失权重 0）并仅训练助手的翻译（权重 1），包括回合结束标记，以便模型学习何时停止。</li><li><code>build_cross_entropy_sample</code> 将令牌转移到 API 期望的下一个令牌目标。</li></ul>
+<pre><code>from together import Together
+from together.post_training import (AdamParams, LoraConfig, LossConfig,
+                                    ModelResourcesClient, SamplingParams)
+from post_training_cookbook.codecs import get_codec
+from post_training_cookbook.samples import make_prompt
+from post_training_cookbook.sft.train import TRAIN_ON_LAST, build_conversation_samples
+
+codec = get_codec(&quot;Qwen/Qwen3.8-27B&quot;, enable_thinking=False)
+samples = [s for row in rows for s in build_conversation_samples(
+    row[&quot;messages&quot;], codec=codec, train_on_what=TRAIN_ON_LAST, max_length=2048)]
+
+# One resource with one generator replica: train and evaluate on the same resource.
+raw = Together().post_training.model_resources.create(
+    base_model=&quot;Qwen/Qwen3.8-27B&quot;, lora_enabled=True,
+    compute_config={&quot;gpu_type&quot;: &quot;B200-SXM&quot;, &quot;num_generator_replicas&quot;: 1},
+    extra_body={&quot;inactive_timeout&quot;: 1200})
+record_in_ledger(raw.id)            # before waiting, so a crash can't leak it
+wait_until_ready(raw.id)            # about 4 to 5 minutes for us
+resources = ModelResourcesClient.attach(model_resources_id=raw.id)
+session = resources.create_session(lora_config=LoraConfig(rank=64, alpha=128))
+
+for step in range(total_steps):
+    batch = next_batch(samples, size=16)
+    session.trainer.forward_backward(samples=batch,
+                                     loss=LossConfig(type=&quot;LOSS_TYPE_CROSS_ENTROPY&quot;))
+    session.trainer.optim_step(adam_params=AdamParams(learning_rate=lr_at(step)))
+
+    if (step + 1) % 25 == 0:
+        session.trainer.weights_sync()              # publish new weights to the generator
+        outs = session.generator.sample_batch(
+            [make_prompt(codec.encode_messages(m, add_generation_prompt=True)) for m in test_prompts],
+            num_samples=1, sampling_params=SamplingParams(max_tokens=1024, temperature=0.0))
+        score(outs)
+
+checkpoint = session.create_inference_checkpoint()  # registers the adapter (ml_...)</code></pre>
+<p><code>record_in_ledger</code>、<code>wait_until_ready</code>、<code>next_batch</code>、<code>lr_at</code> 和 <code>score</code> 是我们的小帮手。</p>
+<p>设置为：</p>
+<ul><li>LoRA 排名 64（Qwen3.8-27B 的最大值）和 alpha 128</li><li>峰值学习率 1e-4，5% 预热和余弦衰减至峰值的十分之一</li><li>批量大小 16</li></ul>
+<p>因为资源有一个生成器，所以我们不需要部署单独的端点来评估。</p>
+<h3>测试集</h3>
+<p>您会看到同一模型在不同地方的得分略有不同，因为我们对三组 FLORES-200 句子进行了评分：</p>
+<table><thead><tr><th>切片</th><th>用于</th><th>老挝基地</th><th>劳老师</th></tr></thead><tbody><tr><td>每种语言 50 个句子</td><td>11 种语言屏幕</td><td>7.2</td><td>49.0</td><td>49.0</td></tr><tr><td>300 条开发测试句子</td><td>培训期间的评估，泰语</td><td>6.7</td><td>6.7 47.3</td><td>47.3</td></tr><tr><td>所有 1,012 个开发测试句子</td><td>每次运行的开始和结束，以及标题结果</td><td>5.5</td><td>5.5 47.5</td><td>47.5</td></tr></tbody></table>
+<p>FLORES-200 <strong>开发测试</strong>从未用于训练。我们始终将其作为测试集。</p>
+<h3>时间和成本</h3>
+<p>假设在 B200 上进行训练，本文中的所有实验总共花费 260 美元。教师数据是最便宜的部分：所有 4,000 份老挝语翻译的价格为 7.46 美元。</p>
+<p>至于时间，每次跑步的第一步需要2.5到3分钟。此后，第 16 批中的一个步骤平均需要 2.6 到 3.2 秒，在生成器上评估 300 个测试句子大约需要 20 秒。最好的老挝跑步保持了 46 分钟的资源：33.7 分钟的训练步骤，7.1 分钟的 30 次评估通过，剩下的时间是开始训练、保存适配器和关闭。</p>
+<h2>自己尝试一下</h2>
+<p>这篇文章的代码位于<a href="https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation">训练后食谱</a>中：</p>
+<ul><li><code>recipes/distillation/screen_languages.py</code> 衡量师生差距。</li><li><code>recipes/distillation/lao_from_kimi_k31_pro.py</code> 生成教师数据、过滤数据、培训和评估老挝学生。</li><li><code>recipes/distillation/multilingual_from_kimi_k31_pro.py</code> 训练五种语言适配器。</li></ul>
+<p>要在训练后为适配器提供服务，请参阅<a href="https://docs.together.ai/docs/post-training/deployment">部署检查点</a>。</p>
+<p>训练后一起</p>
+<p>将较大的模型提炼为您自己的模型</p>
+<p>从本文中的方法开始，训练 LoRA 适配器并在同一模型资源上对其进行评估。</p>
+<h2>附录：培训是什么样的</h2>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766e907f81923fd625cad_kimi-qwen-distillation-training-loss.png" alt="五次运行的训练损失与历元的折线图。"></p>
+<p>五次运行的训练损失，根据时期绘制，以便不同长度的运行对齐。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766f49a29d9fa6265f1f3_kimi-qwen-distillation-learning-rate.png" alt="最佳老挝跑步的学习率与训练步骤的折线图。"></p>
+<p>最佳老挝跑步的学习率计划：30 个热身步骤，然后余弦衰减到峰值的十分之一。</p>
+<table><thead><tr><th>运行</th><th>步骤</th><th>时代</th><th>Trained tokens</th><th>损失，前 10 步</th><th>失败，最后 25 步</th></tr></thead><tbody><tr><td>SFT 人类参考文献</td><td>177</td><td>177 3</td><td>0.37M</td><td>0.54</td><td>0.16</td><td>0.16</td></tr><tr><td>仅限老挝蒸馏</td><td>180</td><td>180 3</td><td>0.38M</td><td>0.36</td><td>0.36 0.06</td><td>0.06</td></tr><tr><td>老挝+泰国蒸馏酒</td><td>366</td><td>366 3</td><td>0.49M</td><td>0.43</td><td>0.43 0.06</td><td>0.06</td></tr><tr><td>蒸馏，老挝+泰语，4×老挝数据</td><td>602</td><td>602 2</td><td>111 万</td><td>0.43</td><td>0.43 0.13</td><td>0.13</td></tr><tr><td>五种语言，一种适配器</td><td>831</td><td>831 1.5</td><td>1.5 104万</td><td>0.82</td><td>0.82 0.30</td><td>0.30</td></tr></tbody></table>
+<p>损失是每个训练令牌的交叉熵（以 nats 为单位）。经过训练的标记仅计算助手的翻译标记（带有损失的标记），而不计算提示。五种语言运行是“五种语言培训”中的一种。</p>
+<p>Three observations from these runs:</p>
+<ul><li>Kimi-K3.1-Pro 的老挝语比人类老挝语更容易让学生学习。人工参考运行和仅限老挝的蒸馏运行翻译相同的 FLORES 开发句子，但学生在人工翻译上每个标记的成本为 0.54 纳特，在 Kimi-K3.1-Pro 上的每个标记为 0.36 纳特，最后以 0.16 纳特与 0.06 纳特的价格结束。 Our guess is that one model's translations are more consistent than a team of human translators', so the student has less to fit.</li><li>The loss drops at every epoch boundary, and held-out quality doesn't follow it. Each drop is the model meeting rows it has already seen.在四次 Lao 运行中，训练损失在第一个 epoch 之后下降了一半以上，而 Lao chrF++ 在 300 个测试句子上的移动量在 -1 到 +3 点之间。更多的数据击败了更多的传递：这些句子的 4× 数据的一个 epoch 达到了 43.2，而较小的 Lao + Thai 数据集的 3 个 epoch 后达到了 41.3。</li><li>The five-language run has the highest loss through its first epoch. Four of its five languages started well below the teacher, against one of two in the Lao runs.</li></ul>
+<h2>Related articles</h2>]]></content:encoded>
+    </item>
     <item>
       <title>[商汤 日日新] SenseNova-RoboRSI-27B 正式版：评测得分超越 GPT-6-Astra，以递归自我改进突破 27B 能…</title>
       <link>https://www.sensetime.com/cn/news/sensenova-roborsi-27b-official-release-20261126-1025</link>
@@ -7367,469 +7854,6 @@ make ui-destroy   # if you deployed the console</code></pre>
 <ul><li><a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>：用于基于基础模型构建应用的完全托管服务。</li><li><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>：用于部署、管理和扩展 AI agent 的基础设施。</li><li><a href="https://strandsagents.com/">Strands Agents SDK</a>：用于构建具备工具调用能力的 AI agent 的开源框架。</li><li><a href="https://aws.amazon.com/ai/generative-ai/innovation-center/">AWS Generative AI Innovation Center</a>：借助 AWS 专家加速你的生成式 AI 之旅。</li></ul>
 <p>要开始上手，可以查看 GitHub 上的 <a href="https://github.com/strands-agents/sdk-python">Strands Agents SDK</a> 来构建多 agent 系统，查阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore.html">Amazon Bedrock AgentCore 文档</a> 了解如何大规模部署 agent，或访问 <a href="https://aws.amazon.com/ai/generative-ai/innovation-center/">AWS Generative AI Innovation Center</a> 了解 AWS 专家如何帮助加速你自己的 AI 举措。</p>
 <h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] 代理人工智能的负责任人工智能：平台和应用程序团队的分阶段路线图</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/responsible-ai-for-agentic-ai-a-phased-roadmap-for-platform-and-application-teams/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/responsible-ai-for-agentic-ai-a-phased-roadmap-for-platform-and-application-teams/</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：Responsible AI for agentic AI: A phased roadmap for platform and application teams</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>代理人工智能的负责任人工智能：平台和应用程序团队的分阶段路线图</h1>
-<p>企业构建 agentic AI 平台，是为了治理 agent 所使用的应用、工具、skills、模型与存储。生成式 AI 模型的不确定性带来了此前的软件开发实践未曾预料到的复杂性。设想一个从检索到的数据生成房源信息的房产应用：它是准确反映了这套房产，还是幻觉出了并不存在的特征？再设想一个以内部知识库为依据的客服 agent：你能验证它不会泄露机密信息吗？</p>
-<p>直到不久前，<a href="https://aws.amazon.com/ai/responsible-ai/">负责任 AI</a>（RAI）仍以模型为中心，范围限定在机器学习开发生命周期之内：训练、测试与推理。模型不推理、不使用工具，也不采取行动。当讨论扩展到由模型驱动的系统时，它覆盖的仍是可以拿已知输入去测试的、统计上有界的情形。由生成式 AI 驱动的应用与 agent 改变了这一点。这些系统现在会推理、会行动、会动态组合工具，并跨越多个步骤交互，既拓宽了负责任 AI 必须覆盖的范围，也加深了它需要触及的深度。</p>
-<p>组织正通过尽早应对不断扩大的范围，把负责任 AI（其中包括<strong>安全与隐私、真实性与鲁棒性、公平性、安全性、可控性、可解释性、透明度与治理</strong>这些支柱）变成一项增长战略。当企业大规模采用 agentic AI 时，正面与负面影响会一起到来。正如 Wade 和 Wirtz 在 <a href="https://hbr.org/2026/07/responsible-ai-is-becoming-a-growth-strategy">Harvard Business Review</a> 中所观察到的，信任正在成为一项竞争差异化优势。那些能在大规模上实现个性化的能力，同样也能用于监视与歧视，而对它们加以治理的组织会赢得利益相关方的信任。例如，Robinhood 在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上构建了一个数据治理严格的生成式 AI 金融犯罪 agent。<a href="https://aws.amazon.com/solutions/case-studies/robinhood-case-study/">他们实现了 20% 的效率提升</a>，同时保持监管合规。下一步是把这些实践按平台成熟度组织起来。本文中，我们把管理平台的团队称为平台团队，把在平台之上构建的团队称为应用团队。应用团队有时也叫工作流团队，在平台上构建并拥有 agent。</p>
-<p>本文为基于 agentic AI 构建的平台团队和应用团队提供一份浓缩、可执行的路线图。它设计成双方一起读：平台团队搭好护栏，应用团队在护栏之内构建。双方都需要一套共同语言，用来描述自己处在哪个阶段、什么才算<em>好</em>。我们提供一个<a href="https://github.com/aws-samples/sample-agent-skills-for-builders/tree/main/skills/agentic-responsible-ai-assessment">负责任 AI 评估 Skill</a>，它把 <a href="https://docs.aws.amazon.com/wellarchitected/latest/responsible-ai-lens/responsible-ai-lens.html">AWS Responsible AI Lens</a> 的各支柱映射到一个三阶段成熟度模型：<strong>治理基础、试点部署、评估与加固</strong>。对每个阶段，它都会指出哪些负责任 AI 支柱至关重要、何时需要回头重看。随附的记分卡让应用团队和平台团队都能评估自己今天所处的位置，并随着应用成熟而迭代。</p>
-<p><strong>注意：</strong> 本文覆盖每个阶段要问的关键问题，略去了逐步的实施细节。本文也不提供法律或合规建议。请务必咨询自己的法律团队。</p>
-<h2>挑战</h2>
-<p>在与构建 agentic AI 平台的客户交流时，有四个挑战反复出现。</p>
-<ul><li><strong>不可预测的运行时行为</strong>：不确定的输出、目标漂移，以及一个 agent 的错误跨服务传播所导致的级联故障。德国的一家金融服务公司发现，多 agent 编排把一次误分类放大成了三个下游服务上的政策违规。</li><li><strong>数据暴露与权限边界</strong>：把每个 agent 限定在它本应服务的租户、数据、系统与操作范围内。隔离会话上下文，让每个会话从访问层就带着数据驻留要求开始，并通过 agent 无法自行修改的最小权限、任务绑定权限来授予特权访问。这样 agent 只会在被明确授权的系统里、以被明确授予的权限行事。</li><li><strong>监管节奏</strong>：<a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai">EU AI Act</a>、<a href="https://www.iso.org/standard/42001">ISO 42001</a>、<a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST AI RMF</a> 以及即将出台的立法，正以治理难以跟上的速度制造合规要求。要证明不确定系统的合规性，需要持续评估，并按预先定义的节奏（例如每天、每周或每月）监控和重看。</li><li><strong>团队协作</strong>：组织缺少一套共享框架，来界定 agent 生命周期里谁拥有什么。英国的一家媒体公司指出，对 agent 工作负载而言，开发团队与部署团队之间的职责分离并未定义。平台团队构建护栏，应用团队却绕着护栏行事；应用团队则把自认为平台会负责的责任放到一边。</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-21131-1.png" alt="agentic 平台在负责任 AI 方面的四个挑战：不可预测的运行时行为、数据边界、监管节奏与团队协作"></p>
-<p>图 1：agentic AI 平台在负责任 AI 方面带来了新的挑战。</p>
-<h2>解决方案：三阶段负责任 AI 成熟度框架</h2>
-<p>本文采用 <a href="https://aws.amazon.com/blogs/machine-learning/agentops-operationalize-agentic-ai-at-scale-with-amazon-bedrock-agentcore/">AgentOps：使用 Amazon Bedrock AgentCore 大规模运营 agentic AI</a> 中描述的 agentic AI 平台定义：一个用于大规模、安全地构建、部署和运营 AI agent 的系统，涵盖治理、构建与运营、评估以及可观测性。你的负责任 AI 姿态应当随这个平台一起逐步成熟。我们把这段旅程拆成三个阶段，并在可定制的 12 周实施时间线上给出有优先级的负责任 AI 支柱，让平台团队能在首批用例成形的同时打下坚实的负责任 AI 基础。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/10/21131-1.png" alt="负责任 AI 成熟度框架，把各支柱映射到三个阶段：治理基础、试点部署、评估与加固"></p>
-<p>图 2：本文提出的 agentic AI 平台负责任 AI 成熟度框架概览。团队分三个阶段引入负责任 AI。</p>
-<h2>阶段 1：治理基础</h2>
-<p><strong>重点支柱：</strong> 治理、安全与隐私</p>
-<p>在这个阶段，评估项目适配度、风险与伦理，取得法律与合规批准，并为 AI agent 定义信任模型。应用团队用一套风险评分标准为每个计划中的用例分类。平台团队专注于搭好核心 landing zone 基础设施，例如建立全局监控与访问控制，并从一开始就治理新引入的 agent 与用例。</p>
-<p>这一阶段需要重点考虑的任务包括：</p>
-<h3>安全与隐私</h3>
-<ul><li>评估每个 agent 所需的数据与系统访问权限，并评估潜在影响。这一步为 knowledge grounding 策略打下基础。</li><li>通过数据分类、数据访问控制、日志记录、数据完整性与数据访问监控，落实基础的数据安全与数据外泄防护。</li><li>梳理 agent 之间共享的数据，例如组织级知识库，以及单个 agent 可能需要的主观性数据，例如上下文图；然后建立访问边界，并据此分配读/写权限。</li></ul>
-<h3>治理</h3>
-<ul><li><a href="https://aws.amazon.com/blogs/machine-learning/learn-how-to-assess-risk-of-ai-systems/">定义一套风险分类标准</a>，使之与你的监管义务对齐（<a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai">EU AI Act</a> 风险分级、金融服务业要求等）。为每个计划中的用例指派低 / 中 / 高 / 不可接受的风险等级，并记录每个风险等级所触发的控制要求。收集相关文档与可追溯性要求。</li><li>在引入 agent 之前，底层模型需要经过一道审核流程，其中包含一系列针对安全性与可靠性标准的评估。按能力、延迟和成本对已批准的模型编目。</li><li>建立一套流程，对组织中部署的 agent、共享工具和 skills 等产品进行集中登记与治理，实现集中可见与使用。每个产品都要登记 owner、风险等级与监管范围。如果某个资源（agent、工具、skill）不在登记表中，组织就无法发现和管理它。</li></ul>
-<h2>阶段 2：试点部署</h2>
-<p><strong>重点支柱：</strong> 安全性、真实性与鲁棒性、可控性、安全与隐私</p>
-<p>部署你的第一个 agent，让它交付可度量的业务价值。借助平台团队提供的模板与开发者指引，应用团队实现编排模式、记忆、护栏基线、knowledge grounding 与工具使用模式。基础阶段识别出的风险，现在必须在试点实现里通过一组具体控制措施加以处理。</p>
-<p>这一阶段，应用团队需要考虑以下方面：</p>
-<h3>安全性</h3>
-<ul><li>护栏。平台团队为模型 I/O 与工具调用建立基础的个人身份信息（PII）脱敏过滤器，并提供一组可直接套用的护栏规则。应用团队再根据 agent 所服务的用例，明确设定内容审核阈值。为低置信度的回答配置人工升级。</li><li>策略。定义哪个 agent 能访问什么工具、怎样访问。补充策略违规时的回退场景。</li></ul>
-<h3>真实性与鲁棒性</h3>
-<ul><li>带校验的 knowledge grounding：即使上下文正确，模型仍可能幻觉或曲解所提供的来源。因此要配置上下文 grounding 校验，核实每一个回答都正确建立在相关数据之上。对受监管的用例，启用 automated reasoning 以得到可验证的输出。建立流程来整理和更新你的知识来源。定义域外请求如何分类与处理。</li></ul>
-<h3>可控性</h3>
-<ul><li>为高风险操作或代他人执行的操作实现<a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentsec04-bp02.html">人在回路审批</a>，作为熔断机制。定义 agent 何时必须移交人工审批人/复核人的标准（例如置信度低于阈值、触发安全护栏、或属于高风险决策）。记录升级事件，供后续审计与分析。</li><li>向最终用户提供权限审计，以便其授予/撤销人工用户或曾向子 agent 授予权限的 agent 所提供的访问，从而获得透明的控制。</li><li>启用端到端可观测性，覆盖会话级、trace 级与 span 级遥测。为 agent 决策、护栏调用与工具调用输出结构化 trace。在多 agent、多工具工作流上实现分布式追踪，以支持完整重建 agent 的推理路径。增加仪表盘，实现 360 度可观测性与成本控制。</li></ul>
-<h3>安全与隐私</h3>
-<ul><li>建立<a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentsec02-bp01.html">最小权限访问控制</a>。用声明式策略语言定义基于策略的工具级访问授权规则。针对 agent 操作以及每个知识来源施加细粒度访问策略。</li></ul>
-<h2>阶段 3：评估与加固</h2>
-<p><strong>重点支柱：</strong> 公平性、可解释性、透明度、安全与隐私</p>
-<p>你已经看到第一个 agent 交付了业务价值。但你怎么向监管机构、审计师或董事会证明这一点？又怎么发现并帮助阻止系统上的未授权事件？在第三阶段，评估会对公平性阈值与偏见基准做压力测试，加固则把这些发现变成修复。</p>
-<p>这一阶段包含以下工作流：</p>
-<h3>公平性</h3>
-<ul><li>模型级公平性测试：检查模型卡中的公平性指标，并把模型访问限制在一份经过常见偏见测试的预批准模型清单内。如果没有提供指标，就用成熟基准集自行测试偏见与对齐情况，例如 Compositional Evaluation Benchmark（<a href="https://arxiv.org/abs/2407.02408">CEB</a>）或 Holistic Evaluation of Language Models（<a href="https://crfm.stanford.edu/helm/safety/latest/">HELM</a>）。监控输出与路由是否公平对待不同人群。</li><li>agent 级公平性测试：评估端到端的 agent 路由（包括工具选择）和资源分配是否公平对待不同用户群体。</li><li>公平性回归监控：建立自动化流水线，在模型更新或新增数据源时检测公平性随时间发生的漂移。</li></ul>
-<h3>透明度</h3>
-<ul><li>对机器生成内容实施可强制执行的透明度：为每个可复用输出附加机器可读的来源标签，让下游消费者能够核实出处。在面向用户的交互中强制披露 AI 的存在。</li><li>决策审计轨迹：每次 agent 动作都记录足够细节，以便重建某个结果对应的推理路径。例如，agent 访问了什么、何时访问、以哪个身份访问。</li></ul>
-<h3>可解释性</h3>
-<ul><li>为一次假想的审计或申诉编制审计报告：确保你能快速汇总相关数据，并理解某个决策是如何做出的。</li><li>面向用户的解释：按需向最终用户提供通俗语言的摘要，说明 agent 为什么采取了某个动作或给出了某项建议。</li></ul>
-<h3>安全与隐私</h3>
-<ul><li>持续评估：建立评估流水线，在部署前后都做评估，记录结果。实现告警机制，在指标跌破预先定义的质量阈值时收到通知。</li><li>针对 agent 特有的威胁模型开展渗透测试与红队评估：提示词注入、并发访问下的租户隔离、配置错误的 profile 导致的 token 交换，以及长时间运行的异步 agent 任务。定义专门面向 AI agent 安全事件的安全事件响应 runbook。为安全关键事件配置自动告警。</li><li>根据生产反馈迭代地细化发布标准（评估分数、安全扫描结果、公平性指标）。把部署闸门构建进持续集成与持续交付（CI/CD）流水线。任何东西只要没达到其风险等级对应的发布标准，就不能进入生产。</li></ul>
-<h2>何时重看</h2>
-<p>负责任 AI 不是一次性实现。随着平台演进，每个维度都必须定期重新评估。下表给出了一些例子，用来定义固定的复核节奏和事件驱动的重评估触发条件。</p>
-<table><thead><tr><th><strong>固定节奏</strong></th></tr></thead><tbody><tr><td>对范围内的 agent 做合规评估：刷新文档、重新收集证据、复核人工监督日志。复核风险分类、事故复盘。复核引入与下线流程。持续评估，包括自主的漂移检测、风险评分与告警。跟踪 Guardrails 的假阳性与假阴性率，按需调整。持续刷新知识库，移除过时文档。</td></tr><tr><td><strong>触发条件</strong></td></tr><tr><td>新用例引入。新增模型或模型更新。新增工具。引入新客户群。识别到新风险，例如发现新的安全威胁。agent 更新，例如新增 system prompt。合规或监管变化。agent 行为变化。</td></tr></tbody></table>
-<h2>示例用例与实现</h2>
-<p>考虑下面这个案例：一家银行构建多 agent 贷款处理平台。平台包含受理 agent、风险评分 agent、合规 agent 与客户沟通 agent。</p>
-<p><strong>阶段 1（治理基础）</strong>：平台团队收集用例的法律要求，例如源自 <a href="https://aws.amazon.com/blogs/machine-learning/building-trust-in-ai-the-aws-approach-to-the-eu-ai-act/">EU AI Act</a> 和金融监管的要求，并使用 <a href="https://aws.amazon.com/blogs/machine-learning/the-future-of-managing-agents-at-scale-aws-agent-registry-now-in-preview/">AWS Agent Registry</a> 把 agent 登记为高风险等级（影响个人的财务决策）。他们使用<a href="https://docs.aws.amazon.com/controltower/latest/userguide/aws-multi-account-landing-zone.html">基于 AWS Control Tower 构建的安全 landing zone</a>，开启基础日志与访问控制，并配置<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-sessions.html">租户隔离</a>以帮助防止跨客户泄露。团队<a href="https://aws.amazon.com/blogs/machine-learning/incorporating-responsible-ai-into-generative-ai-project-prioritization/">记录每个 agent 的残余风险与范围</a>：例如，如果受理 agent 产出了非预期的数据，风险评分 agent 会在没有独立验证的情况下处理它的输出。</p>
-<p><strong>阶段 2（试点部署：验证与上线）</strong>：<a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentsec08-bp01.html">风险评分</a>使用以监管贷款文档为依据的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases</a>。<a href="https://aws.amazon.com/blogs/machine-learning/build-verifiable-explainability-into-financial-services-workflows-with-automated-reasoning-checks-for-amazon-bedrock-guardrails/">Automated Reasoning 检查</a>核实拒绝决定符合有文档记录的准则（是一致性校验，不是因果解释）。<a href="https://aws.amazon.com/blogs/machine-learning/detect-and-redact-personally-identifiable-information-using-amazon-bedrock-data-automation-and-guardrails/">Amazon Bedrock Guardrails 脱敏 PII</a>之后，数据才进入客户沟通。为弥补多 agent 之间的信任缺口：评分 agent 会从源系统确认关键申请人数据，而不是只依赖受理 agent 的抽取结果。每个 agent 都通过 AWS Identity and Access Management（IAM）权限被限定在所需的工具上，团队还用 <a href="https://aws.amazon.com/blogs/security/why-policy-in-amazon-bedrock-agentcore-chose-cedar-for-securing-agentic-workflows/">Amazon Bedrock AgentCore 中的 Policies</a>进一步把风险评分 agent 限制为只读访问它被批准的客户群。如果 Automated Reasoning 检查返回的结果不是 VALID（例如 SATISFIABLE 或 TRANSLATION_AMBIGUOUS），或者申请人的风险分数落在边缘区间（例如阈值的 ±5 分以内），案件会在决定传达之前自动升级给人工信贷专员（<a href="https://aws.amazon.com/blogs/machine-learning/human-in-the-loop-constructs-for-agentic-workflows-in-healthcare-and-life-sciences/">人在回路复核</a>）。升级事件连同触发条件一起记录，供审计使用。</p>
-<p><strong>阶段 3（评估与加固：持续监控）</strong>：<a href="https://aws.amazon.com/blogs/machine-learning/build-reliable-ai-agents-with-amazon-bedrock-agentcore-evaluations/">Amazon Bedrock AgentCore Evaluations</a>是 Amazon Bedrock AgentCore 的一项能力，在每次流水线推送时运行。如果评估结果低于发布标准，或<a href="https://docs.aws.amazon.com/wellarchitected/latest/responsible-ai-lens/rairc03-bp02.html">按子组统计的公平性指标</a>漂移超出阈值，CI/CD 就阻止部署。红队演练（由独立安全团队执行）对受理 agent 测试贴近现实的安全威胁，验证它无法影响评分。拒绝决定先由人工复核，在 60 天内完成 2,000 次对齐决策后，转向通过申诉流程的事后复核。决策过程中使用 AI 的情况会透明地告知客户。每个自动化决策都用 <a href="https://aws.amazon.com/blogs/machine-learning/build-trustworthy-ai-agents-with-amazon-bedrock-agentcore-observability/">Amazon Bedrock AgentCore Observability</a>（Amazon Bedrock AgentCore 的一项能力）做端到端追踪。它会捕获可自动聚合为单条分布式 trace 的 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-telemetry.html">OpenTelemetry span</a>，随时可供审计与申诉使用。</p>
-<h2>如何衡量成熟度</h2>
-<p>框架是愿景，度量才带来问责。当平台投入运行时，来自 CISO 或审计师这类利益相关方的问题必然会浮现，比如「你能列出一个用例的风险等级吗？」。为了让你有所准备，我们提供了一个仓库，里面是一组问题，你可以用它们在系统上线前评估当前姿态并找出改进点。</p>
-<p>我们同时把这份问卷打包成一个可移植的 <a href="https://github.com/aws-samples/sample-agent-skills-for-builders/tree/main/skills/agentic-responsible-ai-assessment">skill</a>，供 <a href="https://aws.amazon.com/quick/">Amazon Quick</a> 这类 AI agent，以及 <a href="https://kiro.dev/">Kiro</a>、<a href="https://docs.aws.amazon.com/solutions/claude-code-with-amazon-bedrock/">Claude Code</a>、<a href="https://aws.amazon.com/blogs/machine-learning/openai-models-and-codex-on-amazon-bedrock-are-now-generally-available/">Codex</a> 这类 AI 编码助手使用。AI 会带你走完每个阶段，并按各维度以 1–5 分评估你的负责任 AI 姿态。低于 4 分意味着存在应当整改的重大风险。4 分及以上意味着残余风险，在逐案确认的前提下可能可以接受。AI 还会给出可执行的建议，帮助你改进负责任 AI 姿态。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/30/ML-21131-3.png" alt="一个可移植的 AI skill，在八根支柱上为团队的负责任 AI 姿态打分"></p>
-<p>图 3：一个可移植的 AI skill，通过一组问题帮助团队评估自己的负责任 AI 姿态。</p>
-<h2>结论</h2>
-<p>负责任 AI（RAI）是一项持续、不断演进的工作。我们建议组织沿着 AgentOps 旅程落实 RAI 各支柱。这些最佳实践把治理策略、评估闸门与生产遥测带入 agentic AI 平台，从而形成反馈闭环，让公平性、安全性与透明度得到持续度量与改进。</p>
-<p>这个框架是起点，不是详尽的合规检查清单。RAI 实践因行业、用例与要求而异。组织应咨询自己的法律、合规与伦理团队，把这些建议裁量适配到具体的监管义务与风险画像。</p>
-<p>若要系统地了解负责任 AI 在各工作负载类型上的做法，请参阅 AWS <a href="https://docs.aws.amazon.com/wellarchitected/latest/responsible-ai-lens/responsible-ai-lens.html">Well-Architected Responsible AI Lens</a>，它针对本文讨论的八根支柱逐一给出详细的最佳实践、设计原则与评估标准。行业特定指引可参阅<a href="https://docs.aws.amazon.com/wellarchitected/latest/financial-services-industry-lens/financial-services-industry-lens.html">金融服务业 Lens</a>与<a href="https://docs.aws.amazon.com/wellarchitected/latest/healthcare-industry-lens/healthcare-industry-lens.html">医疗行业 Lens</a>，它们处理行业特有的监管与伦理要求。今天就可以从这个 <a href="https://github.com/aws-samples/sample-agent-skills-for-builders/tree/main/skills/agentic-responsible-ai-assessment">repository</a> 安装 RAI 评估 skill，用你惯用的 AI agent 评估组织的 RAI 姿态。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] ArisGlobal 如何在 Amazon Bedrock 上扩展生成式 AI 推理</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/how-arisglobal-scaled-generative-ai-inference-on-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-arisglobal-scaled-generative-ai-inference-on-amazon-bedrock/</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：How ArisGlobal scaled generative AI inference on Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>ArisGlobal 如何在 Amazon Bedrock 上扩展生成式 AI 推理</h1>
-<p>ArisGlobal 是一家生命科学科技提供商，业务覆盖药物警戒、法规事务、医学事务、临床与质量等职能。它在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上开发了 NavaX——一个专为生命科学打造、用来自动化不良事件个例处理的 AI 引擎。ArisGlobal 选择 Amazon Bedrock，是为了获得对基础模型的托管访问、EU 地理跨区域推理（cross-Region inference）以及托管的 prompt caching。随着企业客户不断追加各自的合规要求，共享 prompt 前缀在 6 个月内增长了约 150%，而每个个例的推理成本上涨了 200% 以上。</p>
-<p>ArisGlobal 最初缓存的是每份源文档，因为它是请求中最大的一块。这让不断增长的共享 prompt 前缀被留在了缓存之外。把顺序反过来、改为缓存共享前缀之后，ArisGlobal 降低了有效输入成本，并在成本没有等比例增长的情况下支撑了更多租户。</p>
-<h2>ArisGlobal 是谁？</h2>
-<p>ArisGlobal 是 LifeSphere 的创造者。LifeSphere 是一个统一的 SaaS 平台，面向药物警戒、法规事务、质量与医学信息。LifeSphere 服务全球的制药公司，其中包括多家按收入排名前 20 的制药组织（来源：<a href="https://www.arisglobal.com/media/press-release/arisglobal-reports-strong-q1-2026-momentum-with-accelerating-enterprise-ai-transformation/">ArisGlobal press release</a>）。整个系统运行在 AWS 上。</p>
-<p><a href="https://www.arisglobal.com/navax/">LifeSphere NavaX</a> 是 ArisGlobal 的 AI 引擎，把药物安全从记录系统变成战略优势系统。ArisGlobal 于 2025 年 3 月在 <a href="https://aws.amazon.com/bedrock/claude/">Amazon Bedrock 上接入 Anthropic 的 Claude</a>，把他们的第一个生成式 AI 方案投入生产。根据 ArisGlobal 内部的生产遥测，他们已在受监管的制药环境中处理超过 100 万笔真实交易，跨多个企业租户处理了数十亿 token。模型可用性因 Region 而异。参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Model support by AWS Region</a>。</p>
-<h2>NavaX 如何处理一个不良事件个例</h2>
-<p>当制药公司收到一份不良事件报告——通常是一份多页 PDF，描述患者对某种药物的反应——NavaX 的 Dynamic Data Extraction（DDE）agent 会抽取大约 130 个字段。这些字段包括患者人口统计信息、可疑药物、报告人信息、事件时间线、严重性判定标准以及监管分类。由于这些内容包含受保护的健康信息，ArisGlobal 把负责任 AI 控制作为生产部署的标准组成部分，借助 <a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 等能力过滤内容、检测或掩码敏感信息。抽取出的字段还会按 schema 校验，并以源文档为依据。</p>
-<p>这次抽取会拆成多次顺序请求发给模型。每次请求聚焦个例表单的不同部分，各自携带：</p>
-<ul><li>system instructions——模型行为规则、输出格式规范与监管合规约束。</li><li>客户特定规则——按租户区分的抽取逻辑、字段映射，以及因制药公司而异的业务规则。</li><li>抽取 schema——约 130 个目标字段，带类型、校验规则与 few-shot 示例。</li><li>源文档——不良事件 PDF（通常 10–200 页）。</li></ul>
-<p>有两类输入在不同范围内重复。共享 prompt 前缀包含系统规则、抽取 schema 与 few-shot 示例，它在请求之间、个例之间、以及使用同一个 agent 的租户之间重复。源文档只在一份个例所关联的那几次请求之间重复。</p>
-<h2>prompt 膨胀问题</h2>
-<p>NavaX 随第一个企业租户上线时，system prompt 还很精简。随着 ArisGlobal 陆续接入更多制药公司，每一家都带来了特定要求：</p>
-<ul><li>自定义字段映射（租户 A 对反应发生时间的映射方式与租户 B 不同）。</li><li>监管辖区规则（EU ICSR 与 FDA MedWatch、PMDA 的格式差异）。</li><li>公司特定的严重性评估与因果关系业务逻辑。</li><li>按租户区分的 few-shot 示例，依据各公司的历史个例校准。</li></ul>
-<p>在 6 个月内，共享 prompt 前缀从大约 72,000 个 token 增长到 180,000 个 token，增幅 150%。由于每个个例都要发多次顺序请求，每个个例的推理成本上涨了 200% 以上。</p>
-<p>每接入一个租户，前缀就增长一次，而每次请求都要重新处理它，于是 prompt 增长与交易量叠加在一起。</p>
-<p>表 1 对比了最初文档在前的请求顺序与生产环境 prompt 在前的设计。</p>
-<table><thead><tr><th><strong>维度</strong></th><th><strong>最初的做法</strong></th><th><strong>生产设计</strong></th></tr></thead><tbody><tr><td>请求顺序</td><td>每个个例的文档、缓存检查点、共享 prompt 前缀</td><td>共享 prompt 前缀、缓存检查点、每个个例的文档</td></tr><tr><td>缓存的前缀</td><td>文档——每份个例都会变</td><td>共享 prompt 前缀——在请求之间重复</td></tr><tr><td>复用范围</td><td>仅限同一个个例剩余的请求</td><td>跨个例、跨使用同一 agent 的租户的请求</td></tr><tr><td>成本效果</td><td>不断增长的 prompt 按完整输入费率被反复处理</td><td>全体客户范围的 prompt 复用支撑次线性成本增长</td></tr><tr><td>EU 路由</td><td>EU 地理跨区域推理保持不变</td><td>EU 地理跨区域推理保持不变</td></tr></tbody></table>
-<h2>Amazon Bedrock 的 prompt caching 策略</h2>
-<p>Amazon Bedrock 的 prompt caching 通过缓存从请求开头到某个缓存检查点的一段连续 prompt 前缀，来降低延迟与输入 token 成本。之后前缀相同的请求可以按更低的价格读取缓存的 token，而不用重新处理它们。缓存条目有一个生存时间（TTL），在成功命中一次缓存后重新计时。</p>
-<p>缓存基于前缀，而不是基于块。请求的各部分按顺序评估——tools、system、然后是 messages——因此改动靠前的部分会让其后本可匹配的内容失效。</p>
-<h3>缓存检查点（显式控制）</h3>
-<p>使用显式缓存检查点，你可以指定精确的前缀边界。受支持的 Claude 模型每个请求最多允许四个检查点。</p>
-<ul><li>把每个检查点放在稳定、可复用的前缀之后。</li><li>满足特定模型的最小前缀大小。对 Claude Sonnet 4.5，最小为 1,024 个 token（见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html">受支持的模型与 Region</a>）。</li><li>检查点按以下顺序评估：tools、system、messages。</li><li>改动靠前的部分会让后续部分的缓存匹配失效。</li><li>默认 TTL 为 5 分钟。部分模型支持通过设置 <code>&quot;ttl&quot;: &quot;1h&quot;</code> 使用 1 小时的 TTL。TTL 更长的条目必须放在 TTL 更短的条目之前。</li></ul>
-<h3>简化的缓存管理（自动）</h3>
-<p>使用<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">简化的缓存管理</a>时，你在静态内容之后放一个检查点。Amazon Bedrock 从该点向后搜索最长的匹配前缀，最多约 20 个内容块。</p>
-<ul><li>一个检查点就能自动定位最长匹配前缀。</li><li>当稳定内容超出回看范围时，改用显式检查点。</li></ul>
-<h3>ArisGlobal 缓存了什么，以及刻意没有缓存什么</h3>
-<p>ArisGlobal 在共享 prompt 前缀之后紧接着使用一个显式检查点，而共享前缀是最先发送的。每个个例的文档跟在检查点之后，每次请求都会被处理。</p>
-<p>这颠倒了最初的请求顺序。由于只能缓存前缀，顺序决定了哪部分内容可以被复用。</p>
-<h2>上线时的设计：优先复用文档</h2>
-<p>最初的设计把 10–200 页的源文档放在每个请求的开头，检查点放在它之后。共享 prompt 前缀与针对具体小节的问题跟在检查点后面。</p>
-<pre><code>{
-  &quot;modelId&quot;: &quot;anthropic.claude-sonnet-4-5-20250929-v1:0&quot;,
-  &quot;messages&quot;: [
-    {
-      &quot;role&quot;: &quot;user&quot;,
-      &quot;content&quot;: [
-        {
-          &quot;text&quot;: &quot;[Full adverse event PDF content]...&quot; // &lt;-- Document sent FIRST
-        },
-        {
-          &quot;cachePoint&quot;: {&quot;type&quot;: &quot;default&quot;} // &lt;-- Checkpoint right after the document
-        },
-        {
-          &quot;text&quot;: &quot;[System instructions + compliance rules + schema +
-          few-shot examples + customer-specific prompt]...&quot;
-          // &lt;-- After the checkpoint: never cached
-        },
-        {
-          &quot;text&quot;: &quot;Extract fields for Section 3: Suspect Drug Information&quot;
-        }
-      ]
-    }
-  ]
-}</code></pre>
-<p>这个设计在单个个例内复用了文档：第一次请求把它写入缓存，该个例后续的请求以更低的价格读取它。</p>
-<p>下一个个例用的是另一份文档，需要一次新的缓存写入，因此复用从未跨个例或跨租户延伸。</p>
-<p>更重要的是，共享 prompt 前缀位于检查点之后，每次请求都按完整输入费率被处理。真正驱动成本曲线的那部分内容被排除在缓存之外。</p>
-<h2>演进后的生产设计：优先复用共享前缀</h2>
-<p>生产设计改变的是顺序，而不是再加一个检查点：共享 prompt 前缀放在最前，检查点紧随其后，文档放在最后。</p>
-<p>同一个检查点现在创建的是一个可复用的、全体客户共享的缓存条目：</p>
-<ul><li>改动前——被缓存的文档前缀只对单个个例唯一，而共享 prompt 从未被缓存。</li><li>改动后——被缓存的共享 prompt 前缀在使用同一 agent 的请求、个例与租户之间重复。</li></ul>
-<p>ArisGlobal 放弃了单个个例内有限的文档复用，换来了全体客户范围上的 prompt 复用。共享前缀也正是随着客户增加而增长的那部分。</p>
-<h3>更新后的实现</h3>
-<pre><code>{
-  &quot;modelId&quot;: &quot;anthropic.claude-sonnet-4-5-20250929-v1:0&quot;,
-  &quot;system&quot;: [
-    {
-      &quot;text&quot;: &quot;[Shared system instructions + compliance rules +
-      base extraction schema + few-shot examples]...&quot;
-    },
-    {
-      &quot;cachePoint&quot;: {&quot;type&quot;: &quot;default&quot;} // &lt;-- Checkpoint after the stable prompt
-    }
-  ],
-  &quot;messages&quot;: [
-    {
-      &quot;role&quot;: &quot;user&quot;,
-      &quot;content&quot;: [
-        {
-          &quot;text&quot;: &quot;[Full adverse event PDF content — sits after the
-          checkpoint, not cached]...&quot;
-        },
-        {
-          &quot;text&quot;: &quot;Extract fields for Section 5: Event Assessment&quot;
-          // &lt;-- Only this changes per request
-        }
-      ]
-    }
-  ]
-}</code></pre>
-<p>对大多数活跃账户来说，每个租户大约每 5 分钟就有一个个例到来，而且多个租户并发运行。这种流量让共享前缀在营业时间内保持温热，因为每次缓存命中都会重置 TTL。</p>
-<h3>同时缓存 prompt 与文档</h3>
-<p>如果在文档之后再放一个检查点，缓存的就是「共享 prompt + 该个例文档」组合起来的前缀。这个条目仍然只对单个个例唯一。</p>
-<p>因此 ArisGlobal 优先选择读取能在全体客户之间摊薄的前缀。共享 prompt 前缀可以跨个例、跨租户扩展；每个个例的文档则不行。</p>
-<p>在生产环境中，一个典型请求 65% 的输入 token 由共享 prompt 缓存提供。图 1 显示缓存读取持续高于缓存写入。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21195-1.png" alt="Amazon CloudWatch 图表，生产流量期间缓存读取约为缓存写入的 10 倍"></p>
-<p>图 1：Amazon CloudWatch 的 prompt 缓存使用情况。在生产流量期间，蓝色的缓存读取曲线升到大约缓存写入曲线的 10 倍</p>
-<h2>结果</h2>
-<p>在 EU 地理跨区域推理 profile 保持不变的前提下，缓存共享 prompt 前缀带来了以下结果：</p>
-<ul><li>65% 的输入 token 按更低的读取费率由缓存提供。</li><li>缓存了的生产请求端到端延迟最多降低 25%。</li><li>有效输入成本降低约 50%。</li><li>在每月超过 190 亿 token 的规模下，整体月度推理支出降低约 40%。</li><li>多接入了约 15% 的企业租户，而成本没有等比例上升。</li><li>EU 地理路由不变。prompt caching 在既有推理配置之内运行。</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21195-2.png" alt="折线图，显示采用 prompt 缓存后端到端调用延迟更低、更稳定"></p>
-<p>图 2：端到端调用延迟。图表显示采用 prompt 缓存之后，延迟区间更低、更稳定</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21195-3.png" alt="图表显示调用次数持续，而推理支出增长低于等比例"></p>
-<p>图 3：调用次数。图表显示生产请求量持续，而推理支出增长低于等比例</p>
-<p>根据 ArisGlobal 的生产账单数据，65% 的输入 token 由缓存提供，使有效输入成本降低约 50%。在每月超过 190 亿 token 的规模下，这带来了约 40% 的整体月度推理支出节省。</p>
-<p>注意：本节所有性能与成本数字均反映 ArisGlobal 向 AWS 报告的生产指标。实际结果会因 prompt 结构、流量模式与缓存命中率而异。</p>
-<h2>生产心得</h2>
-<p>ArisGlobal 的经验，对许多带有大型、重复 prompt 前缀的工作负载都有借鉴意义：</p>
-<p><strong>缓存重复出现的，而不是最大的。</strong> 为每个个例准备的大型文档能提供的复用有限，而逐字节完全相同的共享 prompt 前缀可以服务全体客户范围的请求。</p>
-<p><strong>把稳定内容放在最前。</strong> 把工具定义、system instructions、schema 与示例排在检查点之前，把租户标识、个例数据与每次请求的问题放在之后。</p>
-<p><strong>用全体客户的流量摊薄缓存写入。</strong> 使用同一 agent 的各租户请求可以读到同一个前缀，而缓存命中会重置 TTL。对零散流量，可以在受支持的模型上评估 1 小时 TTL。</p>
-<p><strong>减少可避免的调用。</strong> 每次调用仍要处理未缓存的文档，因此在输出上限与 schema 要求允许时，把顺序提问合并起来。</p>
-<p><strong>保持前缀逐字节一致。</strong> 时间戳、request ID、租户名称以及被重新排序的工具定义都可能造成未命中。把每个动态元素都移到检查点之后。</p>
-<p><strong>监控生产基线。</strong> 在 CloudWatch 中跟踪缓存读取、缓存写入与输入 token 总量。告警要盯住持续低于正常 65% 缓存命中基线的情况，而不要套用一个不适配的 80% 阈值。</p>
-<p><strong>检查特定模型的限制。</strong> 前缀最小值与 TTL 选项因模型而异。Claude Sonnet 4.5 的缓存检查点至少需要 1,024 个 token。</p>
-<h2>结论</h2>
-<p>ArisGlobal 把 EU 地理跨区域推理与瞄准正确内容的 prompt caching 结合起来。缓存稳定的共享前缀而非每个个例的文档，使有效输入成本降低约 50%，贡献了约 40% 的整体月度推理节省，并多支撑了约 15% 的企业租户而成本没有等比例上升。</p>
-<p>关键经验是：缓存的价值取决于复用，而不是大小。对多租户的 agentic 工作负载来说，一个重复出现的共享 prompt 前缀，可能比一份每个个例都在变化的更大文档更有价值。</p>
-<p>想进一步了解，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">Amazon Bedrock prompt caching 文档</a>、<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">跨区域推理指南</a>以及 AWS 博客文章<a href="https://aws.amazon.com/blogs/machine-learning/effectively-use-prompt-caching-on-amazon-bedrock/">在 Amazon Bedrock 上高效使用 prompt caching</a>。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[DeepInfra] Gemini 3.7 Flash：新增功能、基准测试和 API 指南</title>
-      <link>https://deepinfra.com/blog/gemini-3-7-flash-model-overview-integration-guide</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/gemini-3-7-flash-model-overview-integration-guide</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>DeepInfra</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml">DeepInfra</source>
-      <description>原文标题：Gemini 3.7 Flash: What&apos;s New, Benchmarks &amp; API Guide</description>
-      <content:encoded><![CDATA[<h1>Gemini 3.7 Flash：新增功能、基准测试和 API 指南</h1>
-<p>发布于 2026.11.17，作者 DeepInfra</p>
-<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/gemini-3-7-flash-model-overview-integration-guide-header.png" alt="Gemini 3.7 Flash：新增功能、基准测试和 API 指南"></p>
-<p><a href="https://deepinfra.com/google/gemini-3.7-flash">Gemini 3.7 Flash</a> 是 Google 的 Flash 档推理模型。它以文本、图像、视频、音频和 PDF 文件为输入，输出文本，在 DeepInfra 上拥有 1,000,000 token 的上下文窗口。Google DeepMind 于 <a href="https://artificialanalysis.ai/articles/gemini-3-7-time-frontier">2026 年 8 月 13 日</a>发布该模型，距 Gemini 3.6 Flash 约三周，并将其定位为面向编码和 agent 场景的主力模型。</p>
-<p>这是一个闭源模型。DeepInfra 作为合作伙伴模型，通过 Google 的 API 提供服务，因此你可以用已经在用的同一个 OpenAI 兼容 endpoint、API key 和账单来调用它——就像调用 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash</a>、<a href="https://deepinfra.com/zai-org/GLM-5.3">GLM-5.3</a> 和 <a href="https://deepinfra.com/XiaomiMiMo/MiMo-V2.6-Flash">MiMo-V2.6-Flash</a> 等开放模型一样。DeepInfra 收费为每 100 万输入 token 0.75 美元、每 100 万输出 token 3.75 美元，与 Google 当前折扣后的标准价格相同。</p>
-<p>此后 Google 又发布了更新的 Flash 版本。<a href="https://artificialanalysis.ai/models/gemini-3-7-flash">Artificial Analysis</a> 现已将 Gemini 3.7 Flash 标记为 deprecated，并建议改用 Gemini 3.8 Flash。如果你已经在运行 3.7 Flash，或者想让它与开放模型同处一个 API 之下，本指南介绍它有哪些变化、基准表现如何、价格多少，以及如何调用。</p>
-<p>模型字符串：<strong><code>google/gemini-3.7-flash</code></strong></p>
-<h2>与 Gemini 3.6 Flash 相比有哪些变化</h2>
-<p>Gemini 3.7 Flash 沿用了 3.6 Flash 的 1M token 上下文和输入类型。变化在于 agentic 工作、每任务速度和价格。</p>
-<p><strong>Agentic 编码（Google 报告数据）。</strong> Google 的发布数据（经 <a href="https://www.mindstudio.ai/blog/gemini-3-7-flash-benchmarks/">MindStudio 汇总</a>）显示，最大的提升出现在长程软件工程：DeepSWE 从 49% 升至 65.3%，FrontierCode 从 34.4% 升至 43.6%。Web Dev Arena 从约 1538 Elo 升至约 1588 Elo。</p>
-<p><strong>Agent 与知识工作（独立评测）。</strong> <a href="https://artificialanalysis.ai/articles/gemini-3-7-time-frontier">Artificial Analysis</a> 把大部分提升归因于 agentic 评测：Terminal-Bench v2.1 提升 8 分，Tau3 Banking 提升 3 分，GDPval-AA v2 提升 103 Elo 至 1525，其 AA-Briefcase 知识工作评测提升 169 Elo 至 1132。</p>
-<p><strong>每任务速度。</strong> Artificial Analysis 在发布时测得约 340 输出 token/秒，在高推理强度下每个 Intelligence Index 任务平均耗时 1.7 分钟。这让 3.7 Flash 落在其「智能 vs. 每任务耗时」的帕累托前沿上。</p>
-<p><strong>每任务成本。</strong> 按 Google 的折扣价，Artificial Analysis 测得 Gemini 3.7 Flash（high）每个 Intelligence Index 任务 0.40 美元，比 Gemini 3.6 Flash 低 30%。在 medium 推理强度下，该数字降至 0.26 美元。</p>
-<p><strong>推理强度档位。</strong> Google 提供三档推理强度（high、medium、low），Artificial Analysis 对三档都做了基准测试。DeepInfra 对应的参数见 <a href="https://deepinfra.com/blog/gemini-3-7-flash-model-overview-integration-guide#parameters">Parameters</a> 一节。</p>
-<h2>基准测试</h2>
-<h3>Google 报告数据：Gemini 3.7 Flash 对比 3.6 Flash</h3>
-<p>这些是 Google 发布时由厂商报告的数据，经由 <a href="https://www.mindstudio.ai/blog/gemini-3-7-flash-benchmarks/">MindStudio 的文章</a>转引。</p>
-<table><thead><tr><th>基准测试</th><th>Gemini 3.6 Flash</th><th>Gemini 3.7 Flash</th></tr></thead><tbody><tr><td>DeepSWE（长程软件工程）</td><td>49%</td><td><strong>65.3%</strong></td></tr><tr><td>FrontierCode</td><td>34.4%</td><td><strong>43.6%</strong></td></tr><tr><td>Web Dev Arena（Elo）</td><td>~1538</td><td><strong>~1588</strong></td></tr><tr><td>AutomationBench</td><td>~17%</td><td><strong>~30%</strong></td></tr></tbody></table>
-<p>AutomationBench 的相对跃升最大，不过该模型在 Google 版本的这项测试中仍未能完成大多数任务。DeepSWE 则是最强的绝对成绩。</p>
-<h3>Artificial Analysis 发布时数据（2026 年 8 月 13 日）</h3>
-<p><a href="https://artificialanalysis.ai/articles/gemini-3-7-time-frontier">Artificial Analysis</a> 在该模型发布前做了基准测试。这些分数来自 2026 年 8 月使用的 Intelligence Index 版本，与当前 index（v5.0.1）上的分数不可比——在后者上 Artificial Analysis 已不再报告该模型的分数。</p>
-<table><thead><tr><th>指标（AA，2026 年 8 月）</th><th>Gemini 3.7 Flash</th></tr></thead><tbody><tr><td>Intelligence Index，高推理强度</td><td>56（较 3.6 Flash +4）</td></tr><tr><td>Intelligence Index，medium / low 推理强度</td><td>53 / 51</td></tr><tr><td>输出速度</td><td>~340 tokens/s</td></tr><tr><td>每个 Index 任务平均耗时（high）</td><td>1.7 分钟</td></tr><tr><td>每个 Index 任务成本（high / medium，折扣价）</td><td>$0.40 / $0.26</td></tr><tr><td>AutomationBench-AA</td><td>62.7%（发布时最高）</td></tr><tr><td>AA-AnalystAgent，pass^5</td><td>60%（发布时最高）</td></tr><tr><td>AA-Briefcase</td><td>1132 Elo</td></tr><tr><td>GDPval-AA v2</td><td>1525 Elo</td></tr></tbody></table>
-<p><strong>领先之处与不足之处。</strong> 发布时，Gemini 3.7 Flash 在 AA 的 AutomationBench-AA 上领先，超过 Kimi K3（53%）和 GPT-5.6 Sol（51.2%）；在 AA-AnalystAgent 上也领先，超过 Claude Opus 5（54%）和 Fable 5（49%）。在总体 Index 上，它略落后于 GPT-5.6 Terra 和 Muse Spark 1.2（均为 57）。在 GDPval-AA v2 上，其 1525 分与 GLM-5.2（1506）持平，低于 DeepSeek V4 Flash 0731（1558）。</p>
-<p>AutomationBench-AA（62.7%）是 Artificial Analysis 自己版本的基准测试，因此与上文 Google 的 AutomationBench 数值并不对应。</p>
-<h3>如今的位置</h3>
-<p>Artificial Analysis 现在把 Gemini 3.7 Flash 列为 deprecated：它仍在对该模型做基准测试，但频率从每 6 小时改为每 18 小时，并指向 <a href="https://artificialanalysis.ai/models/gemini-3-8-flash">Gemini 3.8 Flash</a>。其当前排行榜由 Claude Fable 5.2、Gemini 4 Carbon 和 Claude Opus 5.5 等闭源前沿模型领跑。Gemini 3.7 Flash 的强项是在 agentic 和文档类工作上的吞吐量与每任务价格，而不是那张表的顶端。</p>
-<h2>模态与上下文</h2>
-<table><thead><tr><th>规格</th><th>DeepInfra 上的 Gemini 3.7 Flash</th></tr></thead><tbody><tr><td>输入</td><td>文本、图像、视频、音频、PDF</td></tr><tr><td>输出</td><td>文本</td></tr><tr><td>上下文窗口</td><td>1,000,000 tokens</td></tr><tr><td>推理</td><td>是（推理模型）</td></tr><tr><td>特性</td><td>OpenAI 兼容 API、JSON 模式、结构化输出、函数调用、OCR</td></tr><tr><td>权重</td><td>专有（不提供 open-weight）</td></tr></tbody></table>
-<p>PDF 和 OCR 支持使它成为文档密集型 agent 步骤的实用选择：读取合同、发票或幻灯片并返回结构化 JSON。这也与它在 AA-AnalystAgent 上的领先相吻合，该评测考查的是针对电子表格和文档的问答。</p>
-<h2>定价</h2>
-<p>定价截至 2026-11-17。<a href="https://deepinfra.com/google/gemini-3.7-flash">模型页面</a>始终显示当前费率。</p>
-<table><thead><tr><th>档位</th><th>输入 / 1M</th><th>输出 / 1M</th><th>缓存输入 / 1M</th></tr></thead><tbody><tr><td>Standard</td><td>$0.75</td><td>$3.75</td><td>未列出</td></tr></tbody></table>
-<ul><li><strong>与 Google 折扣价同价。</strong> DeepInfra 的 $0.75 / $3.75 与 Google 在其自家 API 上提供的折扣标准价相同。Google 未折扣的标准价为 $1.50 / $7.50（<a href="https://artificialanalysis.ai/articles/gemini-3-7-time-frontier">Artificial Analysis</a>）。</li><li><strong>档位少于 Google 的 API。</strong> Google 还提供缓存输入 90% 的折扣，以及半价的 Flex 和 Batch 档位，而 DeepInfra 对该模型一项都没列出。对于 prompt 高度重复的高吞吐批处理任务，Google 自家 API 更便宜。</li><li><strong>DeepInfra 上没有 Flex 或 Priority。</strong> DeepInfra 的 Flex（0.8×）和 Priority（1.5×）档位只适用于带这些标签的模型，而该模型不带。</li></ul>
-<p>DeepInfra 为该模型提供的是整合，而不是更低的价格。一个 API key、一张账单、一个 OpenAI 兼容客户端，既能用于 Gemini 也能用于开放模型。你不需要 Google Cloud 项目、第二个 SDK 或第二套账单关系。</p>
-<h3>一次 agent 步骤的成本</h3>
-<p>一个发送 20,000 输入 token、返回 2,000 输出 token 的文档抽取步骤，成本为：</p>
-<ul><li>输入：20,000 × $0.75 / 1M = $0.015</li><li>输出：2,000 × $3.75 / 1M = $0.0075</li><li><strong>合计：每次调用 $0.0225</strong>，或每 1,000 次调用 $22.50</li></ul>
-<p>推理 token 按输出计费，因此推理强度越高，算式里输出那一侧就越大。</p>
-<h2>快速上手</h2>
-<p>Gemini 3.7 Flash 使用 DeepInfra 的 <a href="https://deepinfra.com/docs/openai_api">OpenAI 兼容 API</a>：</p>
-<ul><li><strong>Base URL：</strong> <code>https://api.deepinfra.com/v1/openai</code></li><li><strong>Endpoint：</strong> <code>POST /chat/completions</code></li><li><strong>认证头：</strong> <code>Authorization: Bearer $DEEPINFRA_API_KEY</code>（在<a href="https://deepinfra.com/dash/api_keys">控制台</a>中创建 key）</li></ul>
-<p>该模型需要一个已登录账户和 API key；不提供匿名免费调用。</p>
-<h3>参数</h3>
-<p>完整 schema 见该模型的 <a href="https://deepinfra.com/google/gemini-3.7-flash/api">API 页面</a>。</p>
-<table><thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead><tbody><tr><td><code>model</code></td><td>string</td><td>—</td><td><code>google/gemini-3.7-flash</code></td></tr><tr><td><code>messages</code></td><td>array</td><td>—</td><td>聊天历史；支持多模态内容</td></tr><tr><td><code>reasoning_effort</code></td><td>string</td><td>—</td><td>DeepInfra 接受 <code>none</code>、<code>minimal</code>、<code>low</code>、<code>medium</code>、<code>high</code>、<code>xhigh</code>、<code>max</code>。取值越低，推理 token 和延迟越少</td></tr><tr><td><code>max_tokens</code></td><td>integer</td><td>—</td><td>DeepInfra 未公布该模型的最大输出，因此长输出时请显式设置</td></tr><tr><td><code>temperature</code></td><td>float</td><td>0.7</td><td>采样温度</td></tr><tr><td><code>top_p</code></td><td>float</td><td>0.9</td><td>核采样</td></tr><tr><td><code>stream</code></td><td>boolean</td><td>false</td><td>Server-sent events</td></tr><tr><td><code>stop</code></td><td>array</td><td>—</td><td>最多 16 个停止字符串</td></tr><tr><td><code>n</code></td><td>integer</td><td>1</td><td>最多 4 个补全</td></tr><tr><td><code>presence_penalty</code> / <code>frequency_penalty</code></td><td>float</td><td>0</td><td>−2 到 2</td></tr><tr><td><code>response_format</code></td><td>object</td><td><code>{&quot;type&quot;: &quot;text&quot;}</code></td><td>结构化输出用 <code>json_object</code> 或 <code>json_schema</code></td></tr><tr><td><code>tools</code> / <code>tool_choice</code></td><td>array / string</td><td>—</td><td>函数调用：<code>none</code>、<code>auto</code> 或 <code>required</code></td></tr><tr><td><code>seed</code></td><td>integer</td><td>random</td><td>不保证确定性</td></tr></tbody></table>
-<p><code>reasoning_effort</code> 属于 OpenAI SDK 的标准参数，因此可以直接传。在生产中选定某一档之前，先在自己的 prompt 上测试各档位，比较质量、延迟和输出 token 数。</p>
-<h3>Python</h3>
-<pre><code>import os
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
-    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
-)
-
-response = client.chat.completions.create(
-    model=&quot;google/gemini-3.7-flash&quot;,
-    messages=[
-        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;Extract fields as JSON.&quot;},
-        {
-            &quot;role&quot;: &quot;user&quot;,
-            &quot;content&quot;: &quot;Invoice 4417 from Acme GmbH, dated 2026-10-02, total EUR 1,240.00. &quot;
-                       &quot;Return invoice_number, vendor, date and total.&quot;,
-        },
-    ],
-    reasoning_effort=&quot;low&quot;,
-    response_format={&quot;type&quot;: &quot;json_object&quot;},
-    max_tokens=2048,
-)
-
-print(response.choices[0].message.content)
-print(response.usage)copy</code></pre>
-<p>在 Gemini 3.7 Flash 与开放模型之间切换，只需改动 <code>model</code> 一行。这对成本和质量的 A/B 测试很有用，也适合<a href="https://deepinfra.com/blog/two-tier-agent-two-models">两层 agent</a>：把机械性步骤交给更便宜的模型，把更难的步骤留给更强的模型。</p>
-<h3>输出限制</h3>
-<p>模型页面把最大上下文设为 1,000,000 tokens，输入和输出合并计算。DeepInfra 未说明该模型单独的最大输出，因此在预期长回答时请传 <code>max_tokens</code>，并检查 <code>finish_reason</code> 是否为 <code>&quot;length&quot;</code>，以捕捉被截断的响应。</p>
-<h2>结语</h2>
-<p>Gemini 3.7 Flash 相比 3.6 Flash，在 agentic 编码和文档工作上带来了实实在在的提升，发布时每任务速度也很快。Artificial Analysis 现在把用户引向更新的 Gemini 版本，因此它主要适合两种情况：你已经验证过它，或者需要它的 PDF、音频和视频输入与开放模型同处一个 API 之下。</p>
-<p>在 DeepInfra 上，它的每 token 价格与 Google 的折扣价相同，并与你技术栈的其余部分共享一个 key、一张账单和一个客户端。如果缓存输入折扣或批处理定价对你的账单影响很大，请在决定前比较一下 Google 自家的 API。</p>
-<p><strong>下一步</strong></p>
-<ul><li><strong>为模型退役做规划。</strong> 把模型 ID 放在配置里，并搭建一个评测来比较替代模型；参见<a href="https://deepinfra.com/blog/model-deprecation-llm-apps">如何构建能在模型退役后存活的 LLM 应用</a>。</li><li><strong>与开放模型搭配使用。</strong> 把批量 agent 步骤路由到开放模型，把 Gemini 留给多模态或文档类步骤。我们的<a href="https://deepinfra.com/blog/best-open-source-models-for-coding">最佳开源编码模型指南</a>比较了候选者。</li><li><strong>试一试。</strong> 打开 <a href="https://deepinfra.com/google/gemini-3.7-flash">Gemini 3.7 Flash 模型页面</a>，创建 API key，运行上面的示例。</li></ul>
-<p>相关文章</p>
-<p><a href="https://deepinfra.com/blog/best-api-providers-for-glm-5-1"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/API-provider.png" alt="2026 年 GLM-5.1 最佳 API 提供商"></a><a href="https://deepinfra.com/blog/best-api-providers-for-glm-5-1">2026 年 GLM-5.1 最佳 API 提供商</a>&lt;p&gt;2026 年 11 月更新。GLM-5.1 已在 DeepInfra 上退役。其继任者 GLM-5.3 现已可用；当前选项见最佳 GLM-5.3 API 提供商。以下对比保留作参考。GLM-5.1 在越来越多的 API 提供商上可用，它们之间的选择会实质性影响成本、延迟，以及你能使用哪些功能 [&amp;hellip;]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/best-open-source-llm-api-providers"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/best-open-source.png" alt="2026 年最佳开源 LLM API 提供商"></a><a href="https://deepinfra.com/blog/best-open-source-llm-api-providers">2026 年最佳开源 LLM API 提供商</a>&lt;p&gt;2026 年 11 月更新。挑选推理厂商曾经是件简单的事。你想把 Llama 放在一个 HTTP endpoint 后面，有三家公司提供，价格接近到只需看谁有容量。此后市场分化为十几家正经运营商，各自经营着真正不同的生意。最好的 [&amp;hellip;]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/jev-alternatives"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/jev.png" alt="最佳 Jev 替代品：托管 API 与开放模型（2026）"></a><a href="https://deepinfra.com/blog/jev-alternatives">最佳 Jev 替代品：托管 API 与开放模型（2026）</a>&lt;p&gt;Jev 还没满月就有了竞争对手。TypeSafe 于 9 月 15 日发布它，到 10 月第一周，OpenAI 已宣布 Decisions API，Cloudflare 和 AWS 已推出 open-weight 决策模型，GitHub 上也摆了一排开源的 Jev 替代品：Laya、OpenJev、Kev、AnyJev。我们运行了 Jev 以及 [&amp;hellip;]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[DeepInfra] DeepInfra 与 Opper AI 合作：Opper 网关接入 100+ 模型</title>
-      <link>https://deepinfra.com/blog/deepinfra-opper-partnership</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/deepinfra-opper-partnership</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>DeepInfra</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml">DeepInfra</source>
-      <description>原文标题：DeepInfra Partners with Opper AI: 100+ Models on the Opper Gateway</description>
-      <content:encoded><![CDATA[<h1>DeepInfra 与 Opper AI 合作：Opper 网关接入 100+ 模型</h1>
-<p>发布于 2026.11.17，作者 DeepInfra</p>
-<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/deepinfra-opper-partnership-header.png" alt="DeepInfra 与 Opper AI 合作：Opper 网关接入 100+ 模型"></p>
-<p><em>加利福尼亚州帕洛阿尔托，2026 年 11 月。</em> DeepInfra 与 <a href="https://opper.ai/blog/deepinfra-partnership">Opper AI</a> 达成合作，让 DeepInfra 的开源模型推理通过 Opper 托管于欧盟的 AI 网关对外提供。开发者现在可以通过 Opper API 调用 100 多个由 DeepInfra 托管的模型，从 Kimi K3、GLM-5.3、DeepSeek V4.1 Flash 到 MiniMax M3、Nemotron 3.5 Super VL 和 FLUX.2 Pro，并对每一次调用套用 Opper 的支出、数据保留和路由 Rules。</p>
-<h2>这对开发者意味着什么</h2>
-<p>如果你已经在 DeepInfra 上运行，现有集成不受影响。这次合作只是给同一批模型加了第二条路径：走 Opper，和你可能已经在该平台上使用的其他提供商并列。</p>
-<p><strong>每个层级一个模型字符串。</strong> Opper 上的每个 DeepInfra 对话模型都有 standard 层级，许多还提供 flex 和 priority：</p>
-<table><thead><tr><th>Opper 模型字符串</th><th>用途</th></tr></thead><tbody><tr><td><code>deepinfra/…</code></td><td>standard 层级，日常调用</td></tr><tr><td><code>deepinfra:flex/…</code></td><td>便宜约五分之一，适合评测和后台任务</td></tr><tr><td><code>deepinfra:priority/…</code></td><td>必须最先响应的交互式流量</td></tr></tbody></table>
-<p>大规模任务可以走 Opper 的 <a href="https://opper.ai/blog/batch-vs-flex-vs-standard">Batch API</a>，按 flex 价格计费。每个模型各层级的价格，以及 DeepInfra 的图像、语音、视频和 embedding 模型，都列在 <a href="https://opper.ai/provider/deepinfra">Opper 的 DeepInfra 提供商页面</a>上。</p>
-<p><strong>模型目录。</strong> 通过 Opper，你可以触达今天 agent 实际在用的开源模型：DeepSeek V4 和 V4.1、Moonshot 的 Kimi K3、Z.ai 的 GLM-5.3、Qwen3.5 到 Qwen3.8 系列、Google 的 Gemma 4、Meta 的 Llama，以及 Thinking Machines 的 Inkling。同一条路径还覆盖 Black Forest Labs 的图像模型、字节跳动的 Seedance 2.0 视频模型、Qwen3 TTS 语音模型、用于搜索的 embedding，以及 NVIDIA 的 Nemotron 系列，从 Nemotron 3.5 Super VL 到 Nemotron 3 Ultra。</p>
-<p><strong>价格。</strong> 据 Opper 称，对于 MiniMax M3、NVIDIA Nemotron 3.5 Super VL、DeepSeek V3.2 和 Qwen3 235B Instruct 2507，DeepInfra 目前是 Opper 网关上任何区域里最便宜的路径。</p>
-<p><strong>数据处理。</strong> Opper 上的每条 DeepInfra 路径都在美国运行。standard、flex 和 priority 调用中，prompt 和 completion 不会被记录，也不会用于训练，并可提供 DPA。Batch 任务会先把请求存住，等轮到再跑，任何 batch API 都必须如此。DeepInfra 拥有并自营 GPU 基础设施，通过了 SOC 2 和 ISO 27001 认证。Opper 的提供商页面逐一列出了每条路径的驻留地和保留策略。</p>
-<h3>第一次调用</h3>
-<p>Opper 兼容 OpenAI，所以要换成 DeepInfra 的模型，只需改 base URL 和模型字符串：</p>
-<pre><code>import os
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ[&quot;OPPER_API_KEY&quot;],
-    base_url=&quot;https://api.opper.ai/v3/compat&quot;,
-)
-
-completion = client.chat.completions.create(
-    model=&quot;deepinfra/MiniMaxAI/MiniMax-M3&quot;,  # or &quot;deepinfra:flex/MiniMaxAI/MiniMax-M3&quot; for background work
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello&quot;}],
-)
-print(completion.choices[0].message.content)copy</code></pre>
-<h2>为什么选 Opper：每次调用都有 Rules</h2>
-<p>Opper 把自己定位为面向 agent 的欧洲 AI 网关。它总部在斯德哥尔摩，通过一个托管于欧盟、符合 GDPR 的 API 为开发者提供 700 多个模型。路由只是它做的事里的一部分。通过 Opper 的每次调用都可以跑在你的 <strong><a href="https://opper.ai/ai-control-plane">Rules</a></strong> 之下：支出上限、数据保留、模型访问、内容检查和路由顺序，按组织或按项目设定一次即可。</p>
-<p>对 DeepInfra 用户来说，这意味着你可以：</p>
-<ul><li>把 DeepInfra 的 flex 层级固定用于评测任务，</li><li>把 DeepInfra 设为另一家提供商后面的 fallback，或者反过来，</li><li>给支出设上限、限定项目能调用哪些模型，而不用改应用代码。</li></ul>
-<h2>选 Opper 还是直接用 DeepInfra 的 API？</h2>
-<p>两条路径到达的是同一批 DeepInfra 模型。怎么选取决于调用之外还想要什么。</p>
-<p><strong>适合用 Opper 的情况：</strong> 你通过一个 key 使用多家提供商的模型，希望集中管理支出上限、模型白名单和保留规则，或者希望由网关来处理 DeepInfra 与其他提供商之间的路由和 fallback。</p>
-<p><strong>适合直接用 DeepInfra API 的情况：</strong> 你的工作负载只跑 DeepInfra 的模型，不需要在请求路径上多一个网关。你能拿到完整的 <a href="https://deepinfra.com/models">DeepInfra 模型目录</a>、每个模型页面上列出的<a href="https://deepinfra.com/pricing">价格</a>，以及面向可以等一等的任务的 <a href="https://deepinfra.com/blog/flex-service-tier">Flex 服务层级</a>。</p>
-<h2>引言</h2>
-<p>“DeepInfra 运营着业内最深的一份开源模型目录，价格让它天然适合承载高并发的活儿。同一批模型上有 standard、flex、priority 和 batch，Opper 上的构建者可以让每次调用都匹配它需要的速度和价格。”—— Opper AI 联合创始人兼 CEO Göran Sandahl</p>
-<p>“我们做 DeepInfra，是为了在自己的 GPU 上以生产规模跑开源模型，并且让每个 token 的价格都说得过去。Opper 用一个 API 把这本目录摆到广大的构建者社区面前，与他们已经在用的其他模型并列。”—— DeepInfra 联合创始人兼 CEO Nikola Borisov</p>
-<h2>可用性</h2>
-<p>DeepInfra 的模型今天已经在 Opper 上线。开始使用：</p>
-<ul><li>阅读 Opper 的公告：<a href="https://opper.ai/blog/deepinfra-partnership">Opper AI 与 DeepInfra 合作，把 100+ AI 模型接入网关</a></li><li>在 <a href="https://opper.ai/provider/deepinfra">Opper 的 DeepInfra 提供商页面</a>查看模型、层级和每条路径的价格</li><li>浏览 <a href="https://deepinfra.com/models">DeepInfra 模型目录</a>和<a href="https://deepinfra.com/pricing">价格</a></li></ul>
-<h2>关于 DeepInfra</h2>
-<p>DeepInfra 是一家推理云，2022 年成立，总部位于加利福尼亚州帕洛阿尔托。它拥有并自营 GPU 基础设施，通过兼容 OpenAI 的 API 提供文本、语音、图像、视频和 embedding 开源模型，零数据保留，并通过 SOC 2 和 ISO 27001 认证。2026 年 5 月，它完成 1.07 亿美元 B 轮融资，由 500 Global 和 Georges Harik 共同领投，NVIDIA、Samsung Next 和 Supermicro 参投。</p>
-<h2>关于 Opper AI</h2>
-<p>Opper AI 是面向 agent 的欧洲 AI 网关，总部在斯德哥尔摩。它通过一个托管于欧盟、符合 GDPR 的 API 让开发者访问 700 多个领先 AI 模型，按用量付费，并提供支出上限、模型白名单、零数据保留和完整的 OpenAI SDK 兼容。</p>
-<p>相关文章</p>
-<p><a href="https://deepinfra.com/blog/glm-5-3-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-deepinfra.png" alt="GLM-5.3 现已在 DeepInfra 上线"></a><a href="https://deepinfra.com/blog/glm-5-3-deepinfra">GLM-5.3 现已在 DeepInfra 上线</a>&lt;p&gt;GLM-5.3 与 GLM-5.2 共享基础模型，因此每一项性能提升都来自后训练。Z.ai 扩展了已有的强化学习栈，并于 2026 年 8 月 14 日发布成果。GLM-5.3 是一款推理模型，面向复杂软件工程和长周期 agentic 任务。在 Z.ai 内部的 Code Bench 上，它比 GLM-5.2 提升 50%，[&amp;hellip;]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/gpu-instances"><img src="https://deepinfra.com/blog/gpu-instances.jpg" alt="推出 GPU Instances：面向 AI 工作负载的按需 GPU 算力"></a><a href="https://deepinfra.com/blog/gpu-instances">推出 GPU Instances：面向 AI 工作负载的按需 GPU 算力</a>用我们全新的 GPU Instances 功能，几分钟内就能启动专用 GPU 容器，为机器学习训练、推理和计算密集型工作负载而设计。</p>
-<p><a href="https://deepinfra.com/blog/nvidia-nemotron-release"><img src="https://deepinfra.com/blog/nvidia-deepinfra-logos.png" alt="DeepInfra 上线 NVIDIA Nemotron 模型，覆盖视觉、检索和 AI 安全"></a><a href="https://deepinfra.com/blog/nvidia-nemotron-release">DeepInfra 上线 NVIDIA Nemotron 模型，覆盖视觉、检索和 AI 安全</a>DeepInfra 从发布首日就提供全新的开放 NVIDIA Nemotron 视觉语言与 OCR AI 模型。作为专注于性能与成本效率的领先推理提供商，我们以业界最优价格提供这些前沿模型，让开发者在不牺牲预算或性能的前提下构建专用 AI agent。</p>
-<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[DeepInfra] Kimi K3.1 Pro：模型概览、基准测试与 API 指南</title>
-      <link>https://deepinfra.com/blog/kimi-k3-1-pro-model-overview</link>
-      <guid isPermaLink="true">https://deepinfra.com/blog/kimi-k3-1-pro-model-overview</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>DeepInfra</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml">DeepInfra</source>
-      <description>原文标题：Kimi K3.1 Pro: Model Overview, Benchmarks &amp; API Guide</description>
-      <content:encoded><![CDATA[<h1>Kimi K3.1 Pro：模型概览、基准测试与 API 指南</h1>
-<p>发布于 2026.11.17，作者 DeepInfra</p>
-<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/11/kimi-k3-1-pro-model-overview-header.png" alt="Kimi K3.1 Pro：模型概览、基准测试与 API 指南"></p>
-<p><a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro</a> 是 Moonshot AI 的旗舰开放权重模型，于 <a href="https://artificialanalysis.ai/models/kimi-k3-1-pro">2026 年 10 月 23 日发布</a>，面向长程 agent 工作构建：编码、3D 创作、金融研究以及文档密集型任务。它是一个 2.8 万亿参数的 Mixture-of-Experts 模型，每个 token 激活 104B 参数，输入为文本和图像，输出为文本，并拥有 <a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">1,048,576 token 的上下文窗口</a>。</p>
-<p>K3.1 Pro 不是一次新的预训练。Moonshot <a href="https://www.kimi.ai/blog/kimi-k3-1-pro">在 Kimi K3 的基础上对它做了后训练</a>，“后训练算力大幅增加”，并在数百个领域进行了大规模强化学习；同时把 K3 的全注意力层换成稀疏注意力，让长上下文的服务成本更低。它是 K3.1 系列的首个模型。</p>
-<p>在 DeepInfra 上，该模型运行在 OpenAI 兼容的 API 之后，支持零数据保留、JSON 与结构化输出、function calling 和图像输入。如果你需要更便宜的模型来处理较简单的 agent 步骤，<a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash-1017">DeepSeek V4.1 Flash-1017</a> 也在同一个 API 上。模型字符串是：</p>
-<p><strong><code>moonshotai/Kimi-K3.1-Pro</code></strong></p>
-<h2>相比 Kimi K3 有哪些变化</h2>
-<p>除特别标注外，下文 Moonshot 的说法均为厂商自报。</p>
-<h3>后训练与编码</h3>
-<ul><li><strong>长程编码：</strong> 在 Moonshot 内部基准 Kimi Code Bench 3.0 Long-horizon 上，K3.1 Pro 得分 61.2，K3 为 55.95（<a href="https://www.kimi.ai/blog/kimi-k3-1-pro">发布博文</a>）。</li><li><strong>独立验证：</strong> 在 <a href="https://livebench.ai/">LiveBench 2.0</a>（2026 年 11 月 6 日的榜单）上，编码分数从 Kimi K3 的 53.1 升到 67.8，长程 agentic 工作从 36.0 升到 38.7。这是实打实的编码提升，不过在 LiveBench 编码项目上，K3.1 Pro 在开放权重模型中仍处于中游。</li></ul>
-<h3>事实准确性</h3>
-<ul><li>在 Moonshot 内部的 Kimi Hallu Bench Hard 上，声明级幻觉率从 K3 的 23.4% 降到 8.3%。Moonshot 称该基准是有意设计的压力测试，因此这个比率并不代表日常的错误率。</li></ul>
-<h3>金融与业务工作</h3>
-<ul><li>Moonshot 内部的金融基准分别提升 7.2 分（金融建模）和 11.6 分（金融研究），其 Business Operation 模拟得分约为 K3 的 4.2 倍。在公开的 OfficeQA Pro v2 上，K3.1 Pro 得分 64.4，是 Moonshot 表格中的最高分。</li></ul>
-<h3>注意力与长上下文</h3>
-<ul><li>K3.1 Pro 用 <strong>Gated DeepSeek Sparse Attention（Gated DSA）</strong>替换了 K3 的全注意力 Gated MLA 层：93 层中有 24 层改用稀疏注意力，top-k 为 2,048 个索引 token，其余 69 层使用 KDA 线性注意力。目的是在完整的 1M 窗口下降低长上下文建模的成本。</li></ul>
-<h3>网络能力，刻意设限</h3>
-<ul><li>为这次开放权重发布，Moonshot 从中间训练和 RL 中移除了网络攻防相关数据。在其内部的 xdev-bench-hard 上，未过滤的 checkpoint 在 pass@3 下解决 90.5% 的任务；发布的模型解决 81.0%。Moonshot 表示，K3.1 Pro 的攻击性网络能力仍落后于前沿专有模型。</li></ul>
-<h3>DeepInfra 上的价格</h3>
-<ul><li><a href="https://deepinfra.com/moonshotai/Kimi-K3">Kimi K3</a> 的标价仍是每 1M token 输入 $2.85、输出 $14.25。K3.1 Pro 的促销价 $1.90 / $9.50 在两项上都低了三分之一，并且 K3.1 Pro 新增了 Flex 档位。</li></ul>
-<h2>技术架构</h2>
-<table><thead><tr><th>组件</th><th>Kimi K3.1 Pro</th></tr></thead><tbody><tr><td>架构</td><td>Mixture-of-Experts</td></tr><tr><td>总参数 / 激活参数</td><td>2.8T / 104B</td></tr><tr><td>层数</td><td>93（1 层稠密）</td></tr><tr><td>注意力</td><td>69 层 KDA + 24 层 Gated DSA</td></tr><tr><td>专家</td><td>896 个路由专家，每 token 选择 16 个，2 个共享</td></tr><tr><td>隐藏维度 / 注意力头</td><td>7,168 / 96</td></tr><tr><td>词表</td><td>160K</td></tr><tr><td>激活函数</td><td>SiTU-GLU</td></tr><tr><td>视觉编码器</td><td>MoonViT-V2（4.01 亿参数）</td></tr><tr><td>发布的权重</td><td>MXFP4 权重 / MXFP8 激活（量化感知训练）</td></tr><tr><td>上下文窗口</td><td>1,048,576 token</td></tr><tr><td>许可</td><td>Kimi K3.1-Pro License（修改版 MIT）</td></tr></tbody></table>
-<p><em>来源：<a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Hugging Face 模型卡</a>。</em></p>
-<p><a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro/blob/main/LICENSE">许可证</a>是 MIT 风格，附带两个条件。任何 12 个月内集团收入超过 2000 万美元、经营模型即服务业务的公司，在商用前需要与 Moonshot 另签协议。月活跃用户超过 1 亿或月收入超过 2000 万美元的产品，必须在其界面中显示“Kimi K3.1-Pro”。内部使用不受这两条限制。如果你的产品可能触及任一门槛，发布前请先读许可证原文。</p>
-<h2>基准测试</h2>
-<p>Moonshot 运行 K3.1 Pro 时使用 reasoning effort <code>max</code>、temperature 1.0 和 top_p 0.95，且大多在 Claude Code 或 Kimi Code harness 中运行。部分对比分数引自排行榜或其他实验室的报告，闭源模型运行时启用了 fallback，标注“internal”的行使用 Moonshot 自己的基准。本表中的所有内容都应视为厂商自报。下面只列出一部分；<a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">模型卡</a>里有全部 47 项。</p>
-<table><thead><tr><th>基准测试</th><th>Kimi K3.1 Pro</th><th>Claude Opus 5.5</th><th>GPT-6 Astra</th><th>Claude Fable 5.1</th><th>DeepSeek V4.1 Flash-1017</th><th>GLM-5.3</th></tr></thead><tbody><tr><td>Terminal-Bench 4.0</td><td>65.7</td><td><strong>66.4</strong></td><td>58.2</td><td>57.9</td><td>42.3</td><td>41.8</td></tr><tr><td>SWE Marathon v1.1</td><td><strong>51.7</strong></td><td>46.3</td><td>42.5</td><td>45.6</td><td>40.0</td><td>42.5</td></tr><tr><td>DeepSWE v1.1</td><td>75.5</td><td>74.2</td><td>74.1</td><td>67.4</td><td><strong>77.0</strong></td><td>66.9</td></tr><tr><td>ProgramBench</td><td>31.5</td><td><strong>65.0</strong></td><td>50.0</td><td>53.5</td><td>29.1</td><td>19.0</td></tr><tr><td>HLE-Full（无工具）</td><td>51.1</td><td><strong>59.8</strong></td><td>53.6</td><td>57.6</td><td>42.6</td><td>43.0*</td></tr><tr><td>HLE-Full（带工具）</td><td><strong>70.0</strong></td><td>67.7</td><td>57.2</td><td>65.6</td><td>58.8</td><td>62.5</td></tr><tr><td>GPQA-Diamond</td><td>94.2</td><td>93.9</td><td><strong>96.1</strong></td><td>93.7</td><td>92.2</td><td>91.7</td></tr><tr><td>BrowseComp</td><td><strong>92.1</strong></td><td>90.8</td><td>91.5</td><td>—</td><td>—</td><td>—</td></tr><tr><td>Agents’ Last Exam（全部）</td><td><strong>43.2</strong></td><td>42.6</td><td>41.8</td><td>—</td><td>37.7</td><td>26.2</td></tr><tr><td>AutomationBench-AA</td><td><strong>73.3</strong></td><td>69.5</td><td>68.5</td><td>59.4</td><td>66.6</td><td>62.2</td></tr><tr><td>GDPval-AA v2.1（Elo）</td><td>1846</td><td><strong>1866</strong></td><td>1573</td><td>1754</td><td>1746</td><td>1650</td></tr><tr><td>APEX-Agents</td><td>69.4</td><td><strong>73.5</strong></td><td>64.7</td><td>68.6</td><td>69.8</td><td>56.6</td></tr><tr><td>OfficeQA Pro v2</td><td><strong>64.4</strong></td><td>62.2</td><td>54.4</td><td>54.5</td><td>40.4</td><td>31.1</td></tr><tr><td>OSWorld V2.1</td><td>79.6</td><td><strong>81.8</strong></td><td>75.8</td><td>80.7</td><td>69.3</td><td>—</td></tr><tr><td>MMMU-Pro（使用 python）</td><td><strong>90.0</strong></td><td>89.8</td><td>87.8</td><td>88.4</td><td>82.5</td><td>—</td></tr><tr><td>ExploitGym</td><td>20.7</td><td>34.5</td><td><strong>42.4</strong></td><td>30.4</td><td>—</td><td>15.0</td></tr><tr><td>Kimi Hallu Bench Hard（带工具，内部基准，越低越好）</td><td>8.3</td><td>15.0</td><td><strong>5.5</strong></td><td>23.3</td><td>23.3</td><td>22.6</td></tr></tbody></table>
-<p><em>来源：<a href="https://huggingface.co/moonshotai/Kimi-K3.1-Pro">Kimi K3.1 Pro 模型卡</a>。粗体表示每行的最佳分数。</em> GLM-5.3 的 HLE 分数取自纯文本子集。*</p>
-<p><strong>谁在各行领先。</strong> K3.1 Pro 在 agentic 和工具使用类工作上得分最高：SWE Marathon、HLE（带工具）、BrowseComp、Agents’ Last Exam、AutomationBench、OfficeQA Pro v2 以及 MMMU-Pro（使用 Python）。Claude Opus 5.5 在 Terminal-Bench 4.0 上领先 0.7 分，另外还在 ProgramBench、HLE（无工具）、GDPval-AA、APEX-Agents 和 OSWorld 上领先。</p>
-<p><strong>它在哪里落后。</strong> 差距最大的是 ProgramBench（31.5 对 Opus 5.5 的 65.0）、无工具的 HLE-Diamond（39.4 对 GPT-6 Astra 的 65.8）以及网络攻防那几行——Moonshot 有意压低了这部分能力（ExploitGym 20.7 对 42.4）。在表中的开放权重模型里，DeepSeek V4.1 Flash-1017 在 DeepSWE（77.0 对 75.5）和 APEX-Agents（69.8 对 69.4）上胜出，而价格只是它的一小部分。</p>
-<p><strong>独立视角。</strong> <a href="https://artificialanalysis.ai/models/kimi-k3-1-pro">Artificial Analysis</a> 给 K3.1 Pro 的 <strong>Intelligence Index v5.0.1 打分为 46</strong>，在 29 个规模相近的开放权重模型中排名第一（同类别中位数 23）。同一页面称它“与规模相近的其他开放权重模型相比价格尤其昂贵”，并且“略显啰嗦”：运行该指数消耗 1.13 亿输出 token，而中位数是 1.04 亿。你可以在<a href="https://deepinfra.com/compare">模型对比页面</a>上把它与 DeepInfra 上的其他模型比较。</p>
-<h2>定价</h2>
-<p>以下为 2026-11-17 的定价，按每 1M token 计（<a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro">模型页面</a>、<a href="https://deepinfra.com/pricing">定价页面</a>）：</p>
-<table><thead><tr><th>档位</th><th>输入</th><th>输出</th><th>缓存输入</th></tr></thead><tbody><tr><td>Standard，促销价（降 5%）</td><td><strong>$1.90</strong></td><td><strong>$9.50</strong></td><td><strong>$0.19</strong></td></tr><tr><td>Standard，标价</td><td>$2.00</td><td>$10.00</td><td>$0.20</td></tr><tr><td>Flex（0.8×）</td><td>$1.52</td><td>$7.60</td><td>$0.152</td></tr><tr><td>Priority（1.5×）</td><td>$2.85</td><td>$14.25</td><td>$0.285</td></tr></tbody></table>
-<p><strong>折扣如何叠加。</strong> 5% 的促销是在标价基础上减免，Flex 则在促销价基础上再打 8 折：$1.90 × 0.8 = $1.52 输入，$9.50 × 0.8 = $7.60 输出。Priority 在促销价基础上乘以 1.5。每个档位的缓存输入都是输入价格的 10%。促销没有公布结束日期。</p>
-<p><strong>与其他提供商对比。</strong> 在 <a href="https://artificialanalysis.ai/models/kimi-k3-1-pro/providers">Artificial Analysis 的提供商基准</a>上，DeepInfra 的 $1.90 / $9.50 是其所测提供商中输入、输出和混合价格的第二低，也是零错误提供商中最低的：DeepInfra 实测错误率为 0.0%，而唯一更便宜的端点（PrimaLabs，$1.80 / $9.00）有 15.4% 的请求失败。大多数提供商收取 Moonshot 自己的 $2.00 / $10.00，高速档位则是输入 $4.00–$6.00、输出 $20–$30。如果你的产品卖点是响应速度，可以试试 DigitalOcean 或 Baseten，它们在标准 $2.00 / $10.00 费率下实测约 200 和 183 token/秒，而 DeepInfra 是 47；对于批处理、agent 和成本敏感的工作，每 token 的差距会在长输出上不断放大。</p>
-<p><strong>Flex</strong> 是工作可以等待时运行该模型最便宜的方式。发送 <code>&quot;service_tier&quot;: &quot;flex&quot;</code>：容量不足时，请求最多等待 10 分钟，然后返回 HTTP 429，被拒绝的 Flex 请求不计费。过夜评测、批量抽取和后台 agent 都很适合。详见 <a href="https://deepinfra.com/blog/flex-service-tier">Flex 服务档位公告</a>。</p>
-<p><strong>Priority</strong>（<code>&quot;service_tier&quot;: &quot;priority&quot;</code>）面向不应排队的流量。价格为 $2.85 / $14.25，高于 Moonshot 的标价，因此只在排队代价高于溢价时使用。</p>
-<p>对于一个啰嗦的模型和长时间的 agent 会话，<strong>缓存</strong>很重要：缓存输入成本为 $0.19，而全新输入是 $1.90。用 <code>prompt_cache_key</code> 把重复的前缀路由到同一份缓存，用 <code>prompt_cache_options</code> 让它保持更久的温热（参见 <a href="https://deepinfra.com/blog/prompt-cache-retention">prompt 缓存保留</a>）。</p>
-<p>想要完整的月度成本示例，请看 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-pricing-guide">Kimi K3.1 Pro 定价指南</a>。初创公司可以通过 <a href="https://deepinfra.com/deepstart">DeepStart</a> 申请免费额度。</p>
-<h2>快速开始</h2>
-<p>该 API 与 OpenAI 兼容：</p>
-<ul><li><strong>Base URL：</strong> <code>https://api.deepinfra.com/v1/openai</code></li><li><strong>Endpoint：</strong> <code>POST /chat/completions</code></li><li><strong>Auth header：</strong> <code>Authorization: Bearer $DEEPINFRA_API_KEY</code></li></ul>
-<p>完整的请求 schema 在模型的 <a href="https://deepinfra.com/moonshotai/Kimi-K3.1-Pro/api">API 页面</a>上。</p>
-<h3>参数</h3>
-<p>先讲模型特有的参数。非标准字段请通过 OpenAI Python SDK 中的 <code>extra_body</code> 发送。</p>
-<table><thead><tr><th>参数</th><th>默认值</th><th>说明</th></tr></thead><tbody><tr><td><code>reasoning_effort</code></td><td>模型默认</td><td><code>none</code>、<code>minimal</code>、<code>low</code>、<code>medium</code>、<code>high</code>、<code>xhigh</code>、<code>max</code>。<code>&quot;none&quot;</code> 关闭思考。Moonshot 的基准测试使用 <code>max</code>。推理 token 按输出计费</td></tr><tr><td><code>reasoning</code></td><td>—</td><td>对象形式：<code>{&quot;effort&quot;: &quot;...&quot;, &quot;enabled&quot;: true/false}</code></td></tr><tr><td><code>temperature</code></td><td>1</td><td>Moonshot 的评测使用 1.0</td></tr><tr><td><code>top_p</code></td><td>1</td><td>Moonshot 的评测使用 0.95</td></tr><tr><td><code>service_tier</code></td><td>standard</td><td><code>flex</code>（0.8×，最多排队 10 分钟，然后返回 429）或 <code>priority</code>（1.5×）</td></tr><tr><td><code>fail_fast</code></td><td>false</td><td>立即返回 429，而不是排队</td></tr><tr><td><code>models</code></td><td>—</td><td>最多 4 个备用模型，当前模型无容量时按顺序尝试</td></tr><tr><td><code>prompt_cache_key</code>, <code>prompt_cache_options</code></td><td>—</td><td>在请求之间共享 prompt 缓存；例如 <code>{&quot;ttl&quot;: &quot;1h&quot;}</code></td></tr><tr><td><code>model</code></td><td>（必填）</td><td><code>moonshotai/Kimi-K3.1-Pro</code></td></tr><tr><td><code>messages</code></td><td>（必填）</td><td>聊天消息；用户内容可以包含图像</td></tr><tr><td><code>max_tokens</code></td><td>min（上下文 − 输入，65,536）</td><td>最高 943,718</td></tr><tr><td><code>stream</code></td><td>false</td><td>服务端发送事件</td></tr><tr><td><code>stop</code></td><td>—</td><td>最多 16 个序列</td></tr><tr><td><code>n</code></td><td>1</td><td>最高 4</td></tr><tr><td><code>top_k</code>, <code>min_p</code></td><td>0</td><td>可选的采样控制</td></tr><tr><td><code>presence_penalty</code>, <code>frequency_penalty</code></td><td>0</td><td>−2 到 2</td></tr><tr><td><code>response_format</code></td><td>text</td><td><code>json_object</code>、<code>json_schema</code> 或 <code>regex</code></td></tr><tr><td><code>tools</code>, <code>tool_choice</code></td><td>—</td><td>OpenAI 风格的 function calling</td></tr></tbody></table>
-<h3>Python</h3>
-<pre><code>import os
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ[&quot;DEEPINFRA_API_KEY&quot;],
-    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
-)
-
-response = client.chat.completions.create(
-    model=&quot;moonshotai/Kimi-K3.1-Pro&quot;,
-    messages=[
-        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a senior equity research analyst.&quot;},
-        {
-            &quot;role&quot;: &quot;user&quot;,
-            &quot;content&quot;: [
-                {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Summarize the revenue trend in this chart and list three risks.&quot;},
-                {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: &quot;https://example.com/revenue-chart.png&quot;}},
-            ],
-        },
-    ],
-    temperature=1.0,
-    top_p=0.95,
-    max_tokens=32768,
-    extra_body={
-        &quot;reasoning_effort&quot;: &quot;high&quot;,  # none | minimal | low | medium | high | xhigh | max
-        &quot;service_tier&quot;: &quot;flex&quot;,      # remove this line for the standard tier
-    },
-)
-
-print(response.choices[0].message.content)
-print(response.usage)copy</code></pre>
-<p>对于分类、抽取或路由这类短小、定义明确的步骤，先用 <code>&quot;reasoning_effort&quot;: &quot;low&quot;</code> 或 <code>&quot;none&quot;</code>。K3.1 Pro 在高 effort 下很啰嗦，而推理 token 在 Standard 档按输出计费，每 1M $9.50。</p>
-<h3>输出上限</h3>
-<p>该模型没有 16,384 token 的输出上限。你最多可以请求 <strong>943,718 个输出 token</strong>。如果不设置 <code>max_tokens</code>，DeepInfra 会在 65,536 token 与 1,048,576 token 窗口在输入之后剩余的部分之间取较小值。输入与输出合起来必须放进这个窗口。</p>
-<p>Moonshot 公布的结果使用 <code>max</code> effort，在这种设置下，长时间的 agent 运行可能在最终答案开始之前就花掉数万个 token 用于推理。要更接近 Moonshot 的设置，请显式把 <code>max_tokens</code> 设为高于 65,536 的默认值、使用 <code>max</code> effort，并流式返回响应，以免长生成触发客户端超时。不保证完全复现，因为 Moonshot 的大部分基准是在自己的 harness 中运行的。</p>
-<h2>结论</h2>
-<p>Kimi K3.1 Pro 在 29 个同规模开放权重模型中拥有最高的 Artificial Analysis Intelligence Index 分数，而 Moonshot 自己的表格也把它放在 agentic、工具使用和文档工作的首位或接近首位。它的弱点同样清楚：闭源模型在无工具的知识、ProgramBench 和网络攻防任务上仍然领先，而且它很啰嗦，输出 token 占账单的大头。</p>
-<p>因此，每个输出 token 的价格是最该盯住的数字。在 DeepInfra 上，按当前促销价，K3.1 Pro 每 1M 输出 token 花费 $9.50，Flex 档为 $7.60。这低于 Moonshot 的标价，也低于它所取代的模型，且实测错误率为 0%。</p>
-<p><strong>后续步骤</strong></p>
-<ul><li>用 <a href="https://deepinfra.com/blog/flex-service-tier">Flex</a> 和更长效的 prompt 缓存削减批处理与评测流量的账单。</li><li>用 function calling、结构化输出以及按步骤设置的 <code>reasoning_effort</code> 构建 agent。</li><li>在 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-api-benchmarks">Kimi K3.1 Pro API 基准</a>和<a href="https://deepinfra.com/blog/best-kimi-k3-1-pro-api-providers">最佳 Kimi K3.1 Pro API 提供商</a>中对比提供商，或从 <a href="https://deepinfra.com/blog/kimi-k3-1-pro-deepinfra">Kimi K3.1 Pro 发布博文</a>开始。</li><li>从 Kimi K3 过来？<a href="https://deepinfra.com/blog/kimi-k3-2-8t">Kimi K3 概览</a>介绍了基础模型。</li><li>需要专属容量？<a href="https://docs.deepinfra.com/private-models/overview">私有部署该模型</a>，或<a href="https://deepinfra.com/contact-sales">联系销售</a>。</li></ul>
-<p>相关文章</p>
-<p><a href="https://deepinfra.com/blog/glm-5-3-flash-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/glm-5.3-flash-deepinfra.png" alt="GLM-5.3-Flash API 现已在 DeepInfra 上线"></a><a href="https://deepinfra.com/blog/glm-5-3-flash-deepinfra">GLM-5.3-Flash API 现已在 DeepInfra 上线</a>&lt;p&gt;Z.ai 的 GLM-5.3-Flash 在推理时仅激活其 3200 亿参数中的 180 亿；按 Z.ai 报告的结果，它在要求严苛的软件工程基准 DeepSWE v1.1 上以 63.4 对 58.0 超过 Claude Opus 4.8。它是 GLM-5 系列中首个原生多模态模型，把文本、图像和视频输入与 100 万 token 的上下文结合在一起 [&amp;hellip;]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/openclaw-alternatives"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/openclaw-alternatives_rs.webp" alt="最佳 OpenClaw 替代品：Hermes Agent、ZeroClaw 与 NemoClaw"></a><a href="https://deepinfra.com/blog/openclaw-alternatives">最佳 OpenClaw 替代品：Hermes Agent、ZeroClaw 与 NemoClaw</a>&lt;p&gt;OpenClaw 在 GitHub 上有 36.2 万颗星，其 skill 市场有超过 4.4 万条社区贡献。这样的采用度不是偶然。不过，在生产环境使用它的团队反复遇到同一个抱怨：模型列表是固定的。OpenClaw 的引导式设置向导覆盖 OpenAI、Anthropic、Google、DeepSeek 和本地 Ollama。你可以 [&amp;hellip;]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/glm-5-1-pricing-guide-provider-comparison"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/GLM-5.1-provider.png" alt="GLM-5.1 定价指南：API 成本对比与分析"></a><a href="https://deepinfra.com/blog/glm-5-1-pricing-guide-provider-comparison">GLM-5.1 定价指南：API 成本对比与分析</a>&lt;p&gt;2026 年 11 月更新。对 GLM-5.1 来说，选哪家提供商是一个实实在在的经济决策。在 10 家被基准测试的 API 提供商中，混合价格从每 1M token $0.74 到 $1.70，输出速度从 33.8 到 175.2 t/s，最快的提供商比最慢的快 5.2 倍。对规模化部署的团队来说，这个差距决定了该模型是否 [&amp;hellip;]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

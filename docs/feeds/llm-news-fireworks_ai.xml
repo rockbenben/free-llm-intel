@@ -7,7 +7,45 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Hy4 Flash 登陆 Fireworks：腾讯面向高性价比专业工作的开放模型</title>
+      <link>https://fireworks.ai/blog/hy4-flash-on-fireworks/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/hy4-flash-on-fireworks/</guid>
+      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Hy4 Flash on Fireworks: Tencent&apos;s open model for cost-efficient professional work</description>
+      <content:encoded><![CDATA[<h1>Hy4 Flash 登陆 Fireworks：腾讯面向高性价比专业工作的开放模型</h1>
+<p><a href="https://fireworks.ai/models/fireworks/hy4-flash">Hy4 Flash</a>，腾讯新推出的开放权重模型，现已在 Fireworks serverless 上提供。它是一个混合专家模型，总参数量约 220B，每个 token 激活约 12B，上下文窗口 1M token（在 Fireworks 上线时为 512K），支持文本与图像输入。腾讯为文档处理、研究、办公工作与 agent 工作流而打造它。</p>
+<p>在我们记录过成本的每一项 <a href="https://fireworks.ai/specialized-intelligence-index/">Specialized Intelligence Index</a> 基准上，Hy4 Flash 都位于得分-成本帕累托前沿。在这些榜单上，没有模型能以更低的成本拿到更高的分数。最清楚的例子是 Epiq 的 CorporateBench：它以每任务低 200 倍以上的成本（$0.013 对 $2.80）略胜 Claude Opus 5.5。它还在 Rogo 的 Big Finance Benchmark 上与 Claude Opus 5 打平，在 Sierra 的 τ³-Banking 上与之持平，同样成本低 200 倍以上。</p>
+<p>Hy4 Flash 在 Fireworks serverless 上运行，Standard 层级的价格为每百万未缓存输入 token $0.07、每百万缓存输入 token $0.003、每百万输出 token $0.281，另有 Priority 层级可用。它在全球范围内提供服务。</p>
+<h2>Hy4 Flash 在专业工作上与 Claude Opus 保持同步</h2>
+<p>我们在七个 <a href="https://fireworks.ai/specialized-intelligence-index/">Specialized Intelligence Index</a> 基准上运行了 Hy4 Flash，采用与各榜单上其他所有模型相同的 harness，推理强度设为 high。成本按 Fireworks serverless 价格对记录到的 token 计算。有三项结果尤为突出：</p>
+<ul><li>在 <strong>Epiq 的 CorporateBench</strong> 上领先于 Claude Opus 5.5。该基准测试的是在数千封公司内部邮件与会议记录中回答问题。Hy4 Flash 得分 75.9%，在 14 个模型中排第 6，略高于 Claude Opus 5.5（75.4%）。它的每任务成本为 $0.013，而 Opus 5.5 为 $2.80，低 200 倍以上，并且是榜单上成本最低的模型。</li><li>在 <strong>Rogo 的 Big Finance Benchmark</strong> 上与 Claude Opus 5 打平。两者均得分 49.2%，但 Hy4 Flash 每任务成本为 $0.0065，Opus 5 为 $1.83，约高 280 倍。Hy4 Flash 也排在 Claude Opus 5.5 与 Kimi K3.1 Pro（各 48.2%）之前。榜单上唯一成本更低的模型 GPT-6 Luna 得分为 35.3%。</li><li>在 <strong>Sierra 的 τ³-Banking</strong> 上与 Claude Opus 5 相当。在这个面向银行任务的 agent 基准上，Hy4 Flash 得分为 49.2%，Opus 5 为 49.1%，每次试验成本为 $0.012 对 $2.59。它是榜单上成本最低的模型，这使它位于该榜单的成本前沿。</li></ul>
+<p>在我们记录了成本的每一个榜单上，Hy4 Flash 都是成本最低的模型，Big Finance 除外。它在 HealthBench Professional（18 个中排第 16）与 DeepSWE（22 个中排第 19）上排名更低；对于长周期软件工程，腾讯推荐更大的 Hy4。</p>
+<p><em>结果来自 Fireworks 的 <a href="https://fireworks.ai/specialized-intelligence-index/">Specialized Intelligence Index</a> 在 Hy4 Flash 的 Fireworks 部署上的运行，截至 2026 年 11 月 22 日。</em></p>
+<p>图 1：Hy4 Flash 与 Claude Opus 在三个专业基准上的对比，来自 Fireworks 的 Specialized Intelligence Index 运行结果。</p>
+<h2>已对照腾讯官方 endpoint 验证</h2>
+<p>在开放 endpoint 之前，我们在自研推理引擎 FireAttention 上让 Hy4 Flash 跑完了上线验证套件，并把结果与腾讯官方 endpoint 做了对比。每一项得分都在腾讯结果的 1 分以内。</p>
+<p>基准</p>
+<p>Fireworks 上的 Hy4 Flash</p>
+<p>AIME 2026</p>
+<p>96.67</p>
+<p>GPQA Diamond</p>
+<p>91.92</p>
+<p>SWE-bench Verified</p>
+<p>90.60</p>
+<p>Terminal-Bench 2.1</p>
+<p>83.40</p>
+<p>DeepSWE</p>
+<p>60.71</p>
+<p>MMMU-Pro</p>
+<p>77.63</p>
+<p>OCRBench</p>
+<p>82.73</p>
+<h2>今天就开始构建</h2>
+<p>在 Fireworks serverless 上<a href="https://app.fireworks.ai/models/fireworks/hy4-flash">开始使用</a> Hy4 Flash，或转向预留吞吐量以应对生产工作负载。</p>
+<p>当前定价请见 <a href="https://fireworks.ai/models/fireworks/hy4-flash">Hy4 Flash 模型页面</a>。</p>]]></content:encoded>
+    </item>
     <item>
       <title>Kimi K3.1 Pro 上线 Fireworks</title>
       <link>https://fireworks.ai/blog/kimi-k3-1-pro-fireworks/</link>
@@ -273,44 +311,6 @@
 <p><strong>关于成本。</strong> 本分析中的所有成本数据都来自 DeepSWE 排行榜公布的按模型数值。公开 trials 文件里的原始 cost_usd 与榜单显示的数值并不一致，对 DeepSeek 家族来说相差数倍，因此我们对每个模型的单任务成本做了缩放，使其均值与公布数值一致。准确率来自每个任务-模型对的四次原始 rollout，成本则来自榜单。</p>
 <p>来源：DeepSWE v1.1 trials，2026 年 9 月 17 日刷新。113 个任务，18 个模型各自采用其可得的最佳配置，2,034 个模型-任务单元。</p>
 <ul><li><a href="https://fireworks.ai/blog?blogTypes=Perspective">观点</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Hy4 Flash 登陆 Fireworks：腾讯面向高性价比专业工作的开放模型</title>
-      <link>https://fireworks.ai/blog/hy4-flash-on-fireworks/</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/hy4-flash-on-fireworks/</guid>
-      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Hy4 Flash on Fireworks: Tencent&apos;s open model for cost-efficient professional work</description>
-      <content:encoded><![CDATA[<h1>Hy4 Flash 登陆 Fireworks：腾讯面向高性价比专业工作的开放模型</h1>
-<p><a href="https://fireworks.ai/models/fireworks/hy4-flash">Hy4 Flash</a>，腾讯新推出的开放权重模型，现已在 Fireworks serverless 上提供。它是一个混合专家模型，总参数量约 220B，每个 token 激活约 12B，上下文窗口 1M token（在 Fireworks 上线时为 512K），支持文本与图像输入。腾讯为文档处理、研究、办公工作与 agent 工作流而打造它。</p>
-<p>在我们记录过成本的每一项 <a href="https://fireworks.ai/specialized-intelligence-index/">Specialized Intelligence Index</a> 基准上，Hy4 Flash 都位于得分-成本帕累托前沿。在这些榜单上，没有模型能以更低的成本拿到更高的分数。最清楚的例子是 Epiq 的 CorporateBench：它以每任务低 200 倍以上的成本（$0.013 对 $2.80）略胜 Claude Opus 5.5。它还在 Rogo 的 Big Finance Benchmark 上与 Claude Opus 5 打平，在 Sierra 的 τ³-Banking 上与之持平，同样成本低 200 倍以上。</p>
-<p>Hy4 Flash 在 Fireworks serverless 上运行，Standard 层级的价格为每百万未缓存输入 token $0.07、每百万缓存输入 token $0.003、每百万输出 token $0.281，另有 Priority 层级可用。它在全球范围内提供服务。</p>
-<h2>Hy4 Flash 在专业工作上与 Claude Opus 保持同步</h2>
-<p>我们在七个 <a href="https://fireworks.ai/specialized-intelligence-index/">Specialized Intelligence Index</a> 基准上运行了 Hy4 Flash，采用与各榜单上其他所有模型相同的 harness，推理强度设为 high。成本按 Fireworks serverless 价格对记录到的 token 计算。有三项结果尤为突出：</p>
-<ul><li>在 <strong>Epiq 的 CorporateBench</strong> 上领先于 Claude Opus 5.5。该基准测试的是在数千封公司内部邮件与会议记录中回答问题。Hy4 Flash 得分 75.9%，在 14 个模型中排第 6，略高于 Claude Opus 5.5（75.4%）。它的每任务成本为 $0.013，而 Opus 5.5 为 $2.80，低 200 倍以上，并且是榜单上成本最低的模型。</li><li>在 <strong>Rogo 的 Big Finance Benchmark</strong> 上与 Claude Opus 5 打平。两者均得分 49.2%，但 Hy4 Flash 每任务成本为 $0.0065，Opus 5 为 $1.83，约高 280 倍。Hy4 Flash 也排在 Claude Opus 5.5 与 Kimi K3.1 Pro（各 48.2%）之前。榜单上唯一成本更低的模型 GPT-6 Luna 得分为 35.3%。</li><li>在 <strong>Sierra 的 τ³-Banking</strong> 上与 Claude Opus 5 相当。在这个面向银行任务的 agent 基准上，Hy4 Flash 得分为 49.2%，Opus 5 为 49.1%，每次试验成本为 $0.012 对 $2.59。它是榜单上成本最低的模型，这使它位于该榜单的成本前沿。</li></ul>
-<p>在我们记录了成本的每一个榜单上，Hy4 Flash 都是成本最低的模型，Big Finance 除外。它在 HealthBench Professional（18 个中排第 16）与 DeepSWE（22 个中排第 19）上排名更低；对于长周期软件工程，腾讯推荐更大的 Hy4。</p>
-<p><em>结果来自 Fireworks 的 <a href="https://fireworks.ai/specialized-intelligence-index/">Specialized Intelligence Index</a> 在 Hy4 Flash 的 Fireworks 部署上的运行，截至 2026 年 11 月 22 日。</em></p>
-<p>图 1：Hy4 Flash 与 Claude Opus 在三个专业基准上的对比，来自 Fireworks 的 Specialized Intelligence Index 运行结果。</p>
-<h2>已对照腾讯官方 endpoint 验证</h2>
-<p>在开放 endpoint 之前，我们在自研推理引擎 FireAttention 上让 Hy4 Flash 跑完了上线验证套件，并把结果与腾讯官方 endpoint 做了对比。每一项得分都在腾讯结果的 1 分以内。</p>
-<p>基准</p>
-<p>Fireworks 上的 Hy4 Flash</p>
-<p>AIME 2026</p>
-<p>96.67</p>
-<p>GPQA Diamond</p>
-<p>91.92</p>
-<p>SWE-bench Verified</p>
-<p>90.60</p>
-<p>Terminal-Bench 2.1</p>
-<p>83.40</p>
-<p>DeepSWE</p>
-<p>60.71</p>
-<p>MMMU-Pro</p>
-<p>77.63</p>
-<p>OCRBench</p>
-<p>82.73</p>
-<h2>今天就开始构建</h2>
-<p>在 Fireworks serverless 上<a href="https://app.fireworks.ai/models/fireworks/hy4-flash">开始使用</a> Hy4 Flash，或转向预留吞吐量以应对生产工作负载。</p>
-<p>当前定价请见 <a href="https://fireworks.ai/models/fireworks/hy4-flash">Hy4 Flash 模型页面</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Should you switch your agents to Kimi K3.1 Pro?</title>

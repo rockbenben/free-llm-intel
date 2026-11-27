@@ -7,7 +7,178 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model…</title>
+      <link>https://www.together.ai/blog/distilling-kimi-into-qwen</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/distilling-kimi-into-qwen</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>模型塑造</p>
+<p>发表于 11/26/2026</p>
+<h1>将 Kimi-K3.1-Pro 提炼为 Qwen3.8-27B：教授模型一种新语言</h1>
+<p>当我们询问老挝语时，Qwen3.8-27B 用泰语回答。我们通过Together Post-Training将Kimi-K3.1-Pro的老挝语翻译提炼出来，达到了老师评分的93%，泰语完好无损。</p>
+<ul><li>作者扎因·哈桑 (Zain Hasan)、桑尼·汗 (Sonny Khan)</li><li>目录<a href="https://www.together.ai/blog/distilling-kimi-into-qwen">40+ 型号选择用于生产...40+ 型号选择用于生产...40+ 型号选择用于生产...</a></li><li>本文中的链接<a href="https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation">GitHub 上的蒸馏食谱</a><a href="https://www.together.ai/post-training">一起训练后</a><a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a><a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a></li></ul>
+<p>总结</p>
+<ul><li><strong>差距：</strong> 当被问及老挝语时，Qwen3.8-27B 用泰语回答，得分为 5.5 chrF++，而 Kimi-K3.1-Pro 在同一测试中得分为 47.5。</li><li><strong>修复：</strong> 我们使用 Together Post-Training 在大约 3,800 个 Kimi-K3.1-Pro 的翻译上训练了一个 LoRA 适配器。</li><li><strong>结果：</strong> 学生在每个测试句子上都写上了老挝语，得分为 44.3，是老师得分的 93%，并且保留了泰语。</li><li><strong>成本：</strong> 所有实验总共花费 260 美元，代码位于训练后食谱中。</li></ul>
+<p>在进行一些实验时，我们发现最流行的小语言模型 (SLM) 之一的 <a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a> 无法书写老挝语，这是一种西南泰语，也是老挝的官方语言。如果你要求它把一个英语句子翻译成老挝语，它会用泰语回答，泰语是老挝语的近亲，它使用完全不同的文字。在 <a href="https://huggingface.co/datasets/Muennighoff/flores200">FLORES-200</a> 老挝语测试集上，该模型得分为 5.5 chrF++，即翻译与人类参考的匹配程度为 0 到 100 分，并且其输出中只有 11% 采用老挝文字。 <a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a> 在同一测试中得分 47.5。</p>
+<p>诚然，这是一个小众用例，但这种模式很常见：小型语言模型显示参差不齐的智能，在您关心的狭窄任务上表现不佳，而更大、更昂贵的模型则可以轻松处理它。为了解决这个问题，我们使用 Kimi-K3.1-Pro 作为教师，并使用 Together Post-Training 将其老挝语翻译能力提炼为 Qwen3.8-27B。</p>
+<p>在对 Kimi-K3.1-Pro 的约 3,800 个翻译进行训练后，27B 学生对每个测试句子都用老挝语作答，得分为 44.3，是老师得分的 93%。它还保留了泰语翻译能力，有趣的是，这是最难的部分。我们的第一次尝试在 25 个训练步骤内修复了老挝语，但也随之失去了泰语翻译能力。</p>
+<p>这篇文章将介绍我们如何发现差距以及最终的效果。代码、设置和成本在后半部分。所有实验总共花费 260 美元。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0765fc996c2110eb55182f_kimi-qwen-distillation-headline.png" alt="基础学生、精炼学生和 Kimi-K3.1-Pro 教师的老挝语和泰语 chrF++ 条形图。"></p>
+<p>学生从写泰语到写老挝语，达到了老师分数的 93%，并且没有失去泰语能力。</p>
+<h2>寻找差距</h2>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766387f6debb78af8c6fe_kimi-qwen-distillation-screen.png" alt="Kimi-K3.1-Pro 和 Qwen3.8-27B 11 种语言的 chrF++ 条形图，老挝语差距最大。"></p>
+<p>Kimi-K3.1-Pro 在所有 11 种语言上都击败了 Qwen3.8-27B。老挝目前差距最大（49.0 比 7.2）。</p>
+<p>我们使用的指标是 chrF++，它对字符和单词与人工参考翻译的重叠进行评分，从 0 到 100。要了解 Qwen 老挝语分数较低的重要一点是，对于 chrF++，泰语答案与老挝语参考几乎没有任何共同点。当要求翻译成老挝语时，学生的输出 50 个句子中有 45 个包含泰语文字，而仅 6 个句子包含老挝语：</p>
+<blockquote>中文：“我们现在有 4 个月大的老鼠，它们以前患有糖尿病，但现在没有患糖尿病，”他补充道。 Qwen3.8-27B（基础）：“我们现在有 4 个月大的小鼠，它们以前患有糖尿病，但现在没有糖尿病，”他补充道。</blockquote>
+<p>基本模型的泰语是一个合理的翻译，只是语言错误。我们将在结果中再次讨论这一点。</p>
+<p>关于数字的一点说明：在这 50 个句子中，Qwen3.8-27B 的 Lao 得分为 7.2，Kimi-K3.1-Pro 的得分为 49.0，而在完整的 1,012 个句子测试集上，老挝得分为 5.5 和 47.5。测试集列在“我们如何构建它”下。</p>
+<h2>计划：离策略蒸馏</h2>
+<p>蒸馏训练一个小模型（学生）在给定领域表现得像一个大模型（老师）。有两种方法可以做到这一点。</p>
+<p><strong>按策略蒸馏 (OPD)</strong>，在 Thinking Machines 的<a href="https://thinkingmachines.ai/blog/on-policy-distillation/">关于该主题的帖子</a> 中进行了描述，让学生生成文本，教师对每个标记进行评分。它需要教师对学生标记的对数概率，这实际上意味着两个模型必须共享标记生成器。由于我们将 Kimi 提炼成 Qwen 并且它们不共享标记器，所以我们走了另一个方向。</p>
+<p><strong>离策略蒸馏</strong>让教师生成文本并训练学生通过监督微调 (SFT) 来模仿它。最简单的形式只需要老师的课文。</p>
+<p>我们使用了离策略蒸馏。它使教师端相当便宜：每个教师呼叫都是普通的无服务器聊天请求，而 Kimi-K3.1-Pro 是一个相当大的模型，从不需要自己的训练资源。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766643280c184bf4a8f03_kimi-qwen-distillation-pipeline.png" alt="从英语句子到经过训练的 LoRA 适配器的蒸馏管道图。"></p>
+<p>端到端管道：英语句子进入 Kimi-K3.1-Pro，经过过滤，并成为 Together Post-Training 模型资源上 Qwen3.8-27B LoRA 会话的 SFT 行。</p>
+<p>步骤：</p>
+<ul><li>收集英语源句子。</li><li>让 Kimi-K3.1-Pro 翻译它们，关闭思维。</li><li>删除主要不在目标脚本中的任何翻译。</li><li>以翻译为目标，在 Qwen3.8-27B 上微调 LoRA 适配器，在训练时评估保留的测试句子。</li><li>将适配器保存到模型注册表中。</li></ul>
+<p>我们对学生进行了“共同后期培训”培训。一种模型资源既可以训练 LoRA 适配器，也可以训练其中的样本，因此我们可以在模型训练时对其进行评分。我们根据四个指标对每个评估进行评分：</p>
+<ul><li>chrF++ 与 FLORES-200 开发测试中的人类参考相比：每次运行开始和结束时的所有 1,012 个句子，每 25 个步骤 300 个句子（两次最长运行中的每 50 或 100 个句子）。</li><li>老挝文字率：字母主要为老挝文字的输出所占的比例。这直接抓住了泰国问题。</li><li>泰语保留：对 300 个英语到泰语的测试句子进行 chrF++，以检查模型是否丢失了已有的语言。</li><li>往返充分性：Kimi-K3.1-Pro 将每个系统的老挝语翻译回英语，我们根据原始英语进行评分。这可以独立于参考风格来检查含义。</li></ul>
+<p>保留泰语的同时获得老挝语翻译能力最终成为最棘手的部分。</p>
+<h2>泰国的惊喜</h2>
+<p>一次运行是一个对照：它以老挝人类参考资料为基础进行训练，其中 945 个来自 FLORES 开发人员，没有老师参与。 Lao 在 25 步内从 6.7 跃升至 43.3。</p>
+<p>然后我们看泰语。它从 46.7 下降到 11.7，到运行结束时为 5.3，其中 0% 的泰语输出采用泰文。该模型学会了“在要求翻译时写老挝语”，而不是“写您被要求翻译的语言”。问题已经改变方向了。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b07668c58205941917537cb_kimi-qwen-distillation-thai-chrf.png" alt="英语到泰语 chrF++ 与每次运行的训练步骤的折线图。"></p>
+<p>英语到泰语 chrF++ 300 个测试句子。仅对老挝人进行训练就可以让泰语崩溃；混合运行保留它。</p>
+<p>如果我们单独评估老挝，这次比赛看起来会是胜利者。它在这篇文章中的所有学生中获得了最高的老挝语分数。</p>
+<h2>修复泰语</h2>
+<p>仅限老挝的蒸馏运行在 Kimi-K3.1-Pro 的相同句子翻译上进行训练，以代替人类翻译。这大大减缓了损害，但并没有阻止它。泰语保持了两个时期，然后在第三个时期滑落至 44.3，300 个泰语答案中有 17 个是用老挝语写的。</p>
+<p>在训练数据中添加大约 1,000 个 Kimi-K3.1-Pro 泰语翻译修复了这个问题。 Thai 在两次混合运行中的得分分别为 47.4 和 47.8，高于基本模型，并且在任何评估中从未低于 47.3。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766965800a95e7276e19d_kimi-qwen-distillation-forgetting.png" alt="图表比较每种训练组合在询问老挝语和泰语时所写的语言。"></p>
+<p>当您要求老挝语和泰语时，每种培训组合会做什么。</p>
+<p>这是关于持续学习的一个重要观点：当你教一个模型一些新的东西时，混合数据来保护它已经做得很好的东西，这样你就不会在你关心的事情上出现回归。这是泰语，最容易与老挝语混淆的语言。</p>
+<h2>缩小老挝的其余差距</h2>
+<p>泰国是安全的，但老挝仍然短缺。每个老挝语示例约有 950 个，接受人类参考训练的学生得分为 44.7，两名精炼学生得分为 41.8 和 41.9。</p>
+<p>其中一部分是预期的。人类参考在人类参考指标上做得更好：FLORES dev 和 devtest 是通过相同的人工流程进行翻译的，因此对 dev 的培训会教授 devtest 的参考风格。精炼的学生反而学习了老师的风格。根据 Kimi-K3.1-Pro 自己的翻译进行评分，经过蒸馏的学生从 8 分上升到 58 chrF++，而接受人类参考训练的学生则达到 47 分。</p>
+<p>另一个区别是供应。 FLORES dev 拥有 997 条人类参考文献，仅此而已，而 Kimi-K3.1-Pro 可以翻译您拥有的任何英文文本。添加 3,000 个维基百科句子的翻译后，老挝语训练集的示例数量从 965 个增加到 3,834 个，并将老挝语得分从 41.9 提高到 44.3。这与人类参考运行相差不到半点，泰语完好无损。</p>
+<p>更多数据也击败了更多传递：4× 数据的一个 epoch 在 300 个测试句子上达到了 43.2，而较小的 Lao + Thai 集的 3 个 epoch 后达到了 41.3。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766a1cea7d11c54618f09_kimi-qwen-distillation-lao-chrf.png" alt="四次训练运行中英语到老挝语 chrF++ 与 SFT 步骤的折线图，教师为虚线。"></p>
+<p>英语到老挝语 chrF++，针对四次训练运行的 300 个测试句子，针对 SFT 步骤。虚线就是老师。</p>
+<p>＃＃ 结果</p>
+<table><thead><tr><th>运行</th><th>训练数据</th><th>老挝chrF++</th><th>老挝文字</th><th>泰语 chrF++</th></tr></thead><tbody><tr><td>基地学生</td><td>无</td><td>5.5</td><td>5.5 11%</td><td>46.7</td><td>46.7</td></tr><tr><td>SFT 人类参考文献</td><td>945 人工老挝语翻译</td><td>44.7</td><td>44.7 100%</td><td>5.3</td></tr><tr><td>仅限老挝蒸馏</td><td>965 Kimi-K3.1-Pro 老挝语 翻译</td><td>41.8</td><td>41.8 100%</td><td>44.3</td><td>44.3</td></tr><tr><td>老挝+泰国蒸馏酒</td><td>965 老挝语 + 989 泰语，来自 Kimi-K3.1-Pro</td><td>41.9</td><td>41.9 100%</td><td>47.4</td><td>47.4</td></tr><tr><td>蒸馏，老挝+泰语，4×老挝数据</td><td>3,834 老挝语 + 989 泰语，来自 Kimi-K3.1-Pro</td><td>44.3</td><td>44.3 100%</td><td>47.8</td><td>47.8</td></tr><tr><td>Kimi-K3.1-Pro老师</td><td>-</td><td>47.5</td><td>47.5 100%</td><td>49.9</td><td>49.9</td></tr></tbody></table>
+<p>老挝数字使用了全部1012个测试句子，泰语使用了300个。最好的成绩达到了老师分数的93%。从基础模型开始的地方开始衡量，它缩小了老挝语 92% 的基础与教师差距：</p>
+<p>$$\text{间隙闭合} = \frac{s_{\text{学生}} - s_{\text{base}}}{s_{\text{老师}} - s_{\text{base}}} = \frac{44.3 - 5.5}{47.5 - 5.5} = 0.92$$</p>
+<p><strong>基本模型主要有含义；它只是写了错误的语言。</strong> 记住老鼠的例子。在往返充分性方面，基本模型的泰语输出得分为 64.6，略高于人类老挝参考值 (64.0)。这位蒸馏生的成绩为65.7，并在100%的测试句子上写出了老挝语。所以主要的差距是语言同一性，这就是为什么每次运行都通过第一次评估（25 或 50 个步骤）来修复脚本。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766acfba479086057a0a8_kimi-qwen-distillation-lao-script.png" alt="根据训练步骤用老挝文字编写的老挝语答案所占比例的折线图。"></p>
+<p>分享用老挝文字写的老挝答案。每次运行都会通过第一次评估来修复脚本。</p>
+<p>损失曲线、代币计数和每次运行的详细信息可以在附录中找到。</p>
+<h2>五种语言培训</h2>
+<p>为了检查这是否不是老挝特有的，我们用老挝语、北索托语和祖鲁语（三个最大的差距）以及约鲁巴语（两种模型中得分最低的拉丁文字语言）训练了一个适配器，并用泰语进行保留：总共 8,871 个 Kimi-K3.1-Pro 翻译，每种语言约 2,000 个，泰语约 1,000 个，超过 831 个步骤。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766d45a7d2ce6e9d023e3_kimi-qwen-distillation-multilingual.png" alt="基础学生、蒸馏适配器和 Kimi-K3.1-Pro 五种语言的 chrF++ 条形图。"></p>
+<p>一款经过精炼的适配器可改进老挝语、北索托语、约鲁巴语和祖鲁语，并保持泰语性能。</p>
+<table><thead><tr><th>语言</th><th>基地学生</th><th>蒸馏</th><th>Kimi-K3.1-Pro</th><th>差距已缩小</th></tr></thead><tbody><tr><td>老挝</td><td>5.5</td><td>5.5 41.8</td><td>41.8 47.5</td><td>47.5 87%</td></tr><tr><td>北索托</td><td>32.7</td><td>32.7 48.0</td><td>48.0 50.7</td><td>50.7 85%</td></tr><tr><td>约鲁巴语</td><td>20.7</td><td>20.7 25.7</td><td>25.7 27.7</td><td>27.7 71%</td></tr><tr><td>祖鲁语</td><td>37.7</td><td>37.7 39.2</td><td>39.2 50.3</td><td>50.3 12%</td></tr><tr><td>泰语</td><td>46.7</td><td>46.7 48.0</td><td>48.0 49.9</td><td>49.9改进</td></tr></tbody></table>
+<p>Lao 出现在全部 1,012 个测试句子中；其余的人用300分，老师对同样的句子打分。每种语言都有进步。 Zulu 改进最少：在训练期间，其输出的 1% 到 2% 陷入重复循环，因此更多 Zulu 数据或重复惩罚是我们首先尝试的事情。</p>
+<h2>如果你有这样的差距</h2>
+<p>这是我们再次要做的事情：</p>
+<ul><li>首先筛选。每种语言五十句就足以看出老师遥遥领先的地方。</li><li>在训练之前看看基础模型出了什么问题。这里的意思就在那里，但语言是错误的，这就是为什么脚本被修复在前 25 到 50 个步骤内。</li><li>当学生达到稳定水平时，在添加纪元之前生成更多教师数据。</li><li>混合您想要保留的附近技能的数据，并在训练期间对其进行评分。仅针对老挝的评估会选择打破泰国的比赛为最佳比赛。</li></ul>
+<h2>我们如何构建它</h2>
+<p>这篇文章的其余部分是操作方法：教师数据、训练循环、设置、测试集和成本。</p>
+<h3>使用无服务器 Kimi-K3.1-Pro 生成教师数据</h3>
+<p>每一次老师的通话都是一次普通的聊天完成，思维被关闭。翻译不需要长推理：经过思考，Kimi-K3.1-Pro 在 300 个老挝语测试句子上得分较低（43.5 对 47.3），并且使用了大约 8 倍的标记。关闭此选项后，老挝语答案平均约为 175 个输出标记。</p>
+<pre><code>from together import Together
+
+client = Together()
+resp = client.chat.completions.create(
+    model=&quot;moonshotai/Kimi-K3.1-Pro&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: (
+        &quot;Translate the following English text into Lao. &quot;
+        &quot;Output only the Lao translation, with no explanation.\n\n&quot; + english
+    )}],
+    max_tokens=1024,
+    temperature=0.0,
+    chat_template_kwargs={&quot;thinking&quot;: False},
+)
+lao = resp.choices[0].message.content</code></pre>
+<p>源文本是 FLORES-200 <strong>dev</strong> 的 997 个句子，加上英语维基百科的 4,000 个句子（老挝语 3,000 个，泰语 1,000 个）。</p>
+<p>关于数据，有两件事值得了解：</p>
+<ul><li>从老师那里生成数据很便宜。 Kimi-K3.1-Pro 无服务器成本为每百万输入代币 2 美元，每百万输出代币 10 美元。所有 4,000 份老挝语翻译总共花费 7.46 美元。</li><li>训练前过滤。只有当至少 70% 的字母符合目标脚本并且不是英语的回声时，我们才会保留翻译。过滤器去除了 Kimi-K3.1-Pro 的 4% 的老挝。</li></ul>
+<p>每个幸存的翻译都会成为一个聊天格式的训练行：</p>
+<pre><code>{&quot;messages&quot;: [
+  {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Translate the following English text into Lao. Output only the Lao translation, with no explanation.\n\n&lt;English sentence&gt;&quot;},
+  {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&lt;Kimi-K3.1-Pro's Lao translation&gt;&quot;}
+]}</code></pre>
+<h3>对学生进行培训后的 Together 培训</h3>
+<p>训练后一起在代码和 GPU 之间分割训练运行。 <strong>模型资源</strong>是一组加载了基本模型的 GPU（此处为 B200）。它有一个运行 <code>forward_backward</code> 和 <code>optim_step</code> 的 <strong>trainer</strong>，以及一个可选的 <strong>generator</strong>，用于从中间检查点采样文本。 <strong>会话</strong> 是针对该资源的一次 LoRA 适配器培训。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766deb889746147db68c7_kimi-qwen-distillation-step.png" alt="笔记本电脑和模型资源之间的一个训练步骤图。"></p>
+<p>一个训练步骤：笔记本电脑构建样本并发送它们；模型资源计算损失、应用优化器步骤和用于评估的样本。</p>
+<p>我们将食谱用于三件事：</p>
+<ul><li><code>get_codec(&quot;Qwen/Qwen3.8-27B&quot;, enable_thinking=False)</code> 使用 Qwen 自己的模板呈现每个聊天。</li><li><code>build_conversation_samples</code> 屏蔽提示（损失权重 0）并仅训练助手的翻译（权重 1），包括回合结束标记，以便模型学习何时停止。</li><li><code>build_cross_entropy_sample</code> 将令牌转移到 API 期望的下一个令牌目标。</li></ul>
+<pre><code>from together import Together
+from together.post_training import (AdamParams, LoraConfig, LossConfig,
+                                    ModelResourcesClient, SamplingParams)
+from post_training_cookbook.codecs import get_codec
+from post_training_cookbook.samples import make_prompt
+from post_training_cookbook.sft.train import TRAIN_ON_LAST, build_conversation_samples
+
+codec = get_codec(&quot;Qwen/Qwen3.8-27B&quot;, enable_thinking=False)
+samples = [s for row in rows for s in build_conversation_samples(
+    row[&quot;messages&quot;], codec=codec, train_on_what=TRAIN_ON_LAST, max_length=2048)]
+
+# One resource with one generator replica: train and evaluate on the same resource.
+raw = Together().post_training.model_resources.create(
+    base_model=&quot;Qwen/Qwen3.8-27B&quot;, lora_enabled=True,
+    compute_config={&quot;gpu_type&quot;: &quot;B200-SXM&quot;, &quot;num_generator_replicas&quot;: 1},
+    extra_body={&quot;inactive_timeout&quot;: 1200})
+record_in_ledger(raw.id)            # before waiting, so a crash can't leak it
+wait_until_ready(raw.id)            # about 4 to 5 minutes for us
+resources = ModelResourcesClient.attach(model_resources_id=raw.id)
+session = resources.create_session(lora_config=LoraConfig(rank=64, alpha=128))
+
+for step in range(total_steps):
+    batch = next_batch(samples, size=16)
+    session.trainer.forward_backward(samples=batch,
+                                     loss=LossConfig(type=&quot;LOSS_TYPE_CROSS_ENTROPY&quot;))
+    session.trainer.optim_step(adam_params=AdamParams(learning_rate=lr_at(step)))
+
+    if (step + 1) % 25 == 0:
+        session.trainer.weights_sync()              # publish new weights to the generator
+        outs = session.generator.sample_batch(
+            [make_prompt(codec.encode_messages(m, add_generation_prompt=True)) for m in test_prompts],
+            num_samples=1, sampling_params=SamplingParams(max_tokens=1024, temperature=0.0))
+        score(outs)
+
+checkpoint = session.create_inference_checkpoint()  # registers the adapter (ml_...)</code></pre>
+<p><code>record_in_ledger</code>、<code>wait_until_ready</code>、<code>next_batch</code>、<code>lr_at</code> 和 <code>score</code> 是我们的小帮手。</p>
+<p>设置为：</p>
+<ul><li>LoRA 排名 64（Qwen3.8-27B 的最大值）和 alpha 128</li><li>峰值学习率 1e-4，5% 预热和余弦衰减至峰值的十分之一</li><li>批量大小 16</li></ul>
+<p>因为资源有一个生成器，所以我们不需要部署单独的端点来评估。</p>
+<h3>测试集</h3>
+<p>您会看到同一模型在不同地方的得分略有不同，因为我们对三组 FLORES-200 句子进行了评分：</p>
+<table><thead><tr><th>切片</th><th>用于</th><th>老挝基地</th><th>劳老师</th></tr></thead><tbody><tr><td>每种语言 50 个句子</td><td>11 种语言屏幕</td><td>7.2</td><td>49.0</td><td>49.0</td></tr><tr><td>300 条开发测试句子</td><td>培训期间的评估，泰语</td><td>6.7</td><td>6.7 47.3</td><td>47.3</td></tr><tr><td>所有 1,012 个开发测试句子</td><td>每次运行的开始和结束，以及标题结果</td><td>5.5</td><td>5.5 47.5</td><td>47.5</td></tr></tbody></table>
+<p>FLORES-200 <strong>开发测试</strong>从未用于训练。我们始终将其作为测试集。</p>
+<h3>时间和成本</h3>
+<p>假设在 B200 上进行训练，本文中的所有实验总共花费 260 美元。教师数据是最便宜的部分：所有 4,000 份老挝语翻译的价格为 7.46 美元。</p>
+<p>至于时间，每次跑步的第一步需要2.5到3分钟。此后，第 16 批中的一个步骤平均需要 2.6 到 3.2 秒，在生成器上评估 300 个测试句子大约需要 20 秒。最好的老挝跑步保持了 46 分钟的资源：33.7 分钟的训练步骤，7.1 分钟的 30 次评估通过，剩下的时间是开始训练、保存适配器和关闭。</p>
+<h2>自己尝试一下</h2>
+<p>这篇文章的代码位于<a href="https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation">训练后食谱</a>中：</p>
+<ul><li><code>recipes/distillation/screen_languages.py</code> 衡量师生差距。</li><li><code>recipes/distillation/lao_from_kimi_k31_pro.py</code> 生成教师数据、过滤数据、培训和评估老挝学生。</li><li><code>recipes/distillation/multilingual_from_kimi_k31_pro.py</code> 训练五种语言适配器。</li></ul>
+<p>要在训练后为适配器提供服务，请参阅<a href="https://docs.together.ai/docs/post-training/deployment">部署检查点</a>。</p>
+<p>训练后一起</p>
+<p>将较大的模型提炼为您自己的模型</p>
+<p>从本文中的方法开始，训练 LoRA 适配器并在同一模型资源上对其进行评估。</p>
+<h2>附录：培训是什么样的</h2>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766e907f81923fd625cad_kimi-qwen-distillation-training-loss.png" alt="五次运行的训练损失与历元的折线图。"></p>
+<p>五次运行的训练损失，根据时期绘制，以便不同长度的运行对齐。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6b0766f49a29d9fa6265f1f3_kimi-qwen-distillation-learning-rate.png" alt="最佳老挝跑步的学习率与训练步骤的折线图。"></p>
+<p>最佳老挝跑步的学习率计划：30 个热身步骤，然后余弦衰减到峰值的十分之一。</p>
+<table><thead><tr><th>运行</th><th>步骤</th><th>时代</th><th>Trained tokens</th><th>损失，前 10 步</th><th>失败，最后 25 步</th></tr></thead><tbody><tr><td>SFT 人类参考文献</td><td>177</td><td>177 3</td><td>0.37M</td><td>0.54</td><td>0.16</td><td>0.16</td></tr><tr><td>仅限老挝蒸馏</td><td>180</td><td>180 3</td><td>0.38M</td><td>0.36</td><td>0.36 0.06</td><td>0.06</td></tr><tr><td>老挝+泰国蒸馏酒</td><td>366</td><td>366 3</td><td>0.49M</td><td>0.43</td><td>0.43 0.06</td><td>0.06</td></tr><tr><td>蒸馏，老挝+泰语，4×老挝数据</td><td>602</td><td>602 2</td><td>111 万</td><td>0.43</td><td>0.43 0.13</td><td>0.13</td></tr><tr><td>五种语言，一种适配器</td><td>831</td><td>831 1.5</td><td>1.5 104万</td><td>0.82</td><td>0.82 0.30</td><td>0.30</td></tr></tbody></table>
+<p>损失是每个训练令牌的交叉熵（以 nats 为单位）。经过训练的标记仅计算助手的翻译标记（带有损失的标记），而不计算提示。五种语言运行是“五种语言培训”中的一种。</p>
+<p>Three observations from these runs:</p>
+<ul><li>Kimi-K3.1-Pro 的老挝语比人类老挝语更容易让学生学习。人工参考运行和仅限老挝的蒸馏运行翻译相同的 FLORES 开发句子，但学生在人工翻译上每个标记的成本为 0.54 纳特，在 Kimi-K3.1-Pro 上的每个标记为 0.36 纳特，最后以 0.16 纳特与 0.06 纳特的价格结束。 Our guess is that one model's translations are more consistent than a team of human translators', so the student has less to fit.</li><li>The loss drops at every epoch boundary, and held-out quality doesn't follow it. Each drop is the model meeting rows it has already seen.在四次 Lao 运行中，训练损失在第一个 epoch 之后下降了一半以上，而 Lao chrF++ 在 300 个测试句子上的移动量在 -1 到 +3 点之间。更多的数据击败了更多的传递：这些句子的 4× 数据的一个 epoch 达到了 43.2，而较小的 Lao + Thai 数据集的 3 个 epoch 后达到了 41.3。</li><li>The five-language run has the highest loss through its first epoch. Four of its five languages started well below the teacher, against one of two in the Lao runs.</li></ul>
+<h2>Related articles</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Hurdle 简介：在你的 API、技能与文档上运行 agent 评估</title>
       <link>https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs</link>
@@ -2314,62 +2485,6 @@ tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finish
 <ul><li>数据：DeepSWE v1.1 导出，113 任务 × 每配置 4 次 trial，均为 max effort，来自公布的逐 trial 记录。每侧 452 次 trial。</li><li>评分：头条通过率使用 DeepSWE 官方评分（included_in_score，剔除基础设施错误）。Fable 因模型路由有 16 个基础设施错误，所以其严格的&quot;错误计失败&quot;分是 67.3 对官方 69.7。GLM-5.3 只有 1 个。</li><li>pass@2、pass@4、覆盖、并集与相关性使用逐任务通过计数。</li><li>成本为公布的逐 trial cost_usd。Fable 的与其 trajectory total_cost_usd 完全一致，而 GLM 的是仅索引级的。分析时 GLM-5.3 批次的逐轮 trajectory JSON 不在公开 CDN 上。</li><li>失败解剖使用公布的逐测试比例。近失指至少 80% 新测试通过且基线完好；回归指某个基线测试被破坏。领域使用基于产物的任务分类法。</li><li>级联假设有验证器决定是否升级，且给定任务时两次尝试独立。期望准确率对顺序对称，成本不对称，所以用低成本模型打头。考虑到 0.65 相关性，组合收益有限。Oracle 路由器是逐任务最佳单发选择，是任何一次命中路由器的上界。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>DeepSeek V4 Pro 0813 对比 Claude Fable 5 在 DeepSWE 上的表现：成本、编码与…</title>
-      <link>https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing</guid>
-      <pubDate>Mon, 17 Aug 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：DeepSeek V4 Pro 0813 对比 Claude Fable 5 在 DeepSWE 上的表现：成本、编码与路由 | 原文标题：DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Coding, and Routing</description>
-      <content:encoded><![CDATA[<h1>DeepSeek V4 Pro 0813 对阵 Claude Fable 5：DeepSWE 上的成本、编码能力与路由</h1>
-<p>Fable 赢在首次尝试，Pro 赢在其后的每一次尝试，而最便宜的路径是两个都用。</p>
-<h2>关键结论</h2>
-<p>先跑 DeepSeek V4 Pro 0813，失败时才升级到 Claude Fable 5。这个级联以每个任务 \$8.28 的成本解决 DeepSWE 82.7% 的任务。Fable 单独跑是 69.7%、每个 \$21.63。高 13 个百分点，便宜 62%。</p>
-<ul><li>Fable 首次即胜：pass@1 69.7% 对 62.8%，领先 7 个百分点。</li><li>Pro 赢下之后的每一次：pass@2 打平（78.5% vs 77.1%），pass@4 领先（88.5% vs 84.1%）。</li><li>价差达 90 倍。每次 rollout \$0.24 对 \$21.63。每 100 美元，Pro 解决 260 个任务，Fable 只有 3 个。</li><li>它们在任务上错开的方向不同。逐任务相关系数仅 0.39，是我们测过的最分歧的一对。两者合计覆盖 113 个任务中的 107 个。正是这种分歧让路由奏效。</li></ul>
-<p>现已可用 · 美国托管</p>
-<p>在 Together AI 上运行 DeepSeek-V4 Pro 0813</p>
-<p>1.05M 上下文，function calling 与 JSON mode，OpenAI 兼容 API，由美国基础设施提供服务。</p>
-<p>查看模型</p>
-<p>在我们的 <a href="https://www.together.ai/models/deepseek-v4-pro-0813">DeepSeek V4 Pro 0813</a> vs Claude Fable 5 DeepSWE 对比中——DeepSWE 是一个跨多种任务类型和编程语言测试模型软件工程能力的基准——两个模型位于价格表的两端。Claude Fable 5 是 DeepSWE 榜单上最贵的 rollout，DeepSeek V4 Pro 0813 则是最便宜的之一。Fable 首次尝试准确率高 7 个百分点，但每次 rollout 贵 90 倍。所以真正的问题不是哪个模型更好，而是这 90 倍溢价到底买到了什么、什么时候值得付。</p>
-<p>DeepSWE · 直接对决</p>
-<h3>DeepSeek V4 Pro 0813 vs Claude Fable 5 速览</h3>
-<table><thead><tr><th>模型</th><th>Pass@1</th><th>平均成本</th><th>每 \$100 解决数</th><th>输出 token</th><th>步数</th></tr></thead><tbody><tr><td>claude-fable-5 [max]</td><td><strong>69.7% ± 2.3%</strong></td><td>$21.63</td><td>3</td><td>115k</td><td><strong>79</strong></td></tr><tr><td>deepseek-v4-pro-0813 [max]</td><td>62.8% ± 3.1%</td><td><strong>$0.24</strong></td><td><strong>260</strong></td><td><strong>101k</strong></td><td>146</td></tr></tbody></table>
-<p>我们在全 113 个 DeepSWE 任务上用四个 trial 跑了 DeepSeek V4 Pro 0813 (max) 对 Claude Fable 5 (max)，数据来自公布的逐 trial 记录：共 904 次 rollout（各 452 次）。Fable 是昂贵的匠人；Pro 是性价比异类。两者在这个集合中的分歧也超过任何其他配对——事后证明这是它们最有意思的地方。下文每个数字都来自这次运行，因此可能与其他公开的 DeepSeek V4 Pro 0813 vs Claude Fable 5 计分卡不同。</p>
-<h2><strong>DeepSWE 计分板：pass@1 与 pass@k</strong></h2>
-<p>单次尝试，Fable 领先：pass@1 69.7% 对 Pro 的 62.8%（官方评分）。但这个领先很脆弱。两次尝试时 Pro 追平（78.5 vs 77.1），四次尝试时 Pro 的 88.5% pass@4 甩开 Fable 的 84.1% 超过四个百分点。对一个贵 90 倍的模型来说，Fable 既不占据上限，也在重试下保不住首枪优势。低成本的模型同时拥有更广的触达和更高的 best-of-k。</p>
-<h2><strong>成本对比：DeepSeek V4 Pro 0813 与 Claude Fable 5 定价</strong></h2>
-<p>每次 rollout \$0.24，DeepSeek V4 Pro 0813 比 Fable（\$21.63）便宜 90 倍：每 100 美元解决 260 个任务对 Fable 的 3 个。这是我们测过的所有配对中最宽的价差，而且 Fable 是榜单上单价最高的配置。不寻常的是，低价格并没有伴随你预期的速度惩罚：Fable 的 rollout 中位耗时 31 分钟对 Pro 的 35 分钟，大致持平——因为 Fable 是榜单上话最多的模型（115k 输出 token），尽管它步数更少（79 vs 146）。Pro 步数更多；Fable 每步写更多。两个模型都不算明显更快。</p>
-<h2><strong>失败模式：两个模型各自怎么犯错</strong></h2>
-<p>两者都很有分寸地不破坏既有功能：<strong>DeepSeek V4 Pro 0813 和 Fable 各自只在 11% 的失败案例中让现有测试套件回归</strong>，远低于 GPT 家族的 20%。差别在另一个方向：Fable 的&quot;离谱错&quot;占比在这里最大（18% vs Pro 的 10%），意思是 Fable 错的时候更常错得离谱——解法离靶心很远，而不是差一个边缘情况。Pro 更常在接近正确的地方失败（近失 66% vs Fable 的 57%）。所以两者都可以放心接受而无需重型回归门禁，但 Fable 的失误是更贵的那种，更难 debug。</p>
-<h2><strong>各自在哪里赢：按任务类型</strong></h2>
-<p>Fable 的匠心体现在重推理、精确契约的领域：8 个领域中赢 6 个，以数据建模与序列化 88%（超 Pro 24 个百分点）和语言内部机制（78）领跑。但 DeepSeek V4 Pro 0813 拿下两个，且都很重要：有状态响应式（66 vs 64），以及耐人寻味的并发与持久化（58 vs 45）：恰好在 Fable 最差的领域领先 13 个百分点。Fable 在并发上的 45% 是它最弱的一格，也是唯一一个低成本模型就是更好的工程师——而不只是更便宜——的领域。</p>
-<h2><strong>DeepSeek V4 Pro 0813 vs Claude Fable 5 按编程语言</strong></h2>
-<p>Fable 在五种语言中赢四种，但让它价格站得住的数字是 Rust：85% 对 Pro 的 65，20 个百分点的差距，是对决中最宽的单点差距。Fable 明显是序列化与 Rust 专家。其他地方比价格暗示的要接近（Python 70 vs 60，Go 71 vs 67，JavaScript 75 vs 65），而 DeepSeek V4 Pro 0813 实际拿下了 TypeScript（61 vs 57）。在 Rust 和序列化之外，付 90 倍的理由很难成立。</p>
-<h2><strong>两个模型有多大差异？</strong></h2>
-<p>以下是 Fable 挽回颜面的特性。逐任务相关系数只有 0.39，是所有 DeepSeek-Pro 配对中最低的，这两个模型是真分歧。它们各解出 88 个任务；Pro 独立解出 12 个，Fable 独立解出 7 个，只有 6 个同时难住两者。两者的并集覆盖 113 个中的 107 个（94.7%），且分歧是双向的：DeepSeek V4 Pro 0813 把 awilix-async-container-initialization 四次全收，Fable 一次都没拿下；Fable 则四次全收 Pro 挂零的四个任务（包括 koota-query-predicates 和 testem-bail-on-test-failure）。这是真正的互补，不是冗余。</p>
-<h2><strong>在两者之间路由：投资组合打法</strong></h2>
-<p>这种多样性加上价差，让级联极具吸引力。先跑 DeepSeek V4 Pro 0813，只有当你的测试套件拒绝答案时才升级到 Fable：82.7% 解决率、每任务 \$8.28。这比 Fable 单独跑（69.7%）高 13 个百分点，而成本还不到 Fable 单价（\$21.63）的一半。低成本的第一级消化了队列的大部分，Fable 的高价只施加在困难的剩余部分上，而且那些任务还额外获得一次独立的第二尝试。这个级联甚至打败了完美的一次命中 oracle 路由器（78.8%）。顺序不可颠倒：Pro 优先成本 \$8.28，Fable 优先成本 \$21.71，准确率却相同。</p>
-<h2><strong>这意味着什么</strong></h2>
-<p>Fable 5 是这张榜单上最难被论证为&quot;默认选择&quot;的单体模型：最贵的 rollout，会被重试抹平的首枪领先，也没有四枪上限优势。为且仅为两件事买它：Rust（85%）和序列化密集的工作（88%），它的质量在那儿确实配得上价格。</p>
-<p>DeepSeek V4 Pro 0813 是相反的画像：首次尝试接近 Fable 的准确率、更高的上限、持平或更好的失败画像、便宜 90 倍——尽管它在 Rust 和精确契约领域认输。而由于两者是我们测过最多样的配对，Fable 的最佳用法不是当默认，而是作为低成本 Pro 第一级之后的选择性升级，只为那几个真需要 Rust 或序列化专家的任务付费。</p>
-<p>现已可用 · 美国托管</p>
-<p>在 Together AI 上运行 DeepSeek-V4 Pro 0813</p>
-<p>1.05M 上下文，function calling 与 JSON mode，OpenAI 兼容 API，由美国基础设施提供服务。</p>
-<p>查看模型</p>
-<h2><strong>数据表：DeepSeek V4 Pro 0813 vs Claude Fable 5 完整结果</strong></h2>
-<p>DeepSWE · 完整结果</p>
-<table><thead><tr><th>指标</th><th>deepseek-v4-pro-0813 [max]</th><th>claude-fable-5 [max]</th></tr></thead><tbody><tr><td>Pass@1（官方评分）</td><td>62.8%</td><td><strong>69.7%</strong></td></tr><tr><td>Pass@1（错误计为失败）</td><td>62.8%</td><td><strong>67.3%</strong></td></tr><tr><td>Pass@2 / pass@4</td><td><strong>78.5 / 88.5%</strong></td><td>77.1 / 84.1%</td></tr><tr><td>覆盖 / 可靠性</td><td>88.5 / 71.0%</td><td>84.1 / 82.0%</td></tr><tr><td>稳定（4/4）/ 死磕（0/4）</td><td>35 / 13</td><td>56 / 18</td></tr><tr><td>每次 rollout / 总成本</td><td><strong>$0.24 / $109</strong></td><td>$21.63 / $9,346</td></tr><tr><td>每 \$100 解决数</td><td><strong>261</strong></td><td>3</td></tr><tr><td>中位分钟数 / 步数</td><td>35 / 146</td><td>31 / 79</td></tr><tr><td>中位峰值上下文 / 输出 token</td><td>232k / 101k</td><td>202k / 115k</td></tr><tr><td>失败解剖（近失 / 离谱错 / 回归）</td><td>66% / 10% / 11%</td><td>57% / 18% / 11%</td></tr><tr><td>赢得的领域（共 8）</td><td>2（stateful、concurrency）</td><td><strong>6</strong></td></tr><tr><td>赢得的语言</td><td>1（TypeScript）</td><td><strong>4（Rust 是碾压）</strong></td></tr><tr><td>逐任务相关系数 / 并集</td><td>0.39 / 113 中 107（94.7%）</td><td></td></tr><tr><td>级联 Pro → Fable（准确率 / 成本）</td><td><strong>82.7% / $8.28</strong>（Fable 单独 69.7% / $21.63）</td><td></td></tr><tr><td>Oracle 一次命中路由器</td><td>78.8%</td><td></td></tr><tr><td>基础设施错误</td><td>0</td><td>16</td></tr></tbody></table>
-<h2><strong>FAQ</strong></h2>
-<h3><strong>DeepSeek V4 Pro 0813 比 Claude Fable 5 好吗？</strong></h3>
-<p>看指标。Claude Fable 5 赢在单次尝试质量（pass@1 69.7% vs 62.8%），四枪全中（56 vs 35）也更多。DeepSeek V4 Pro 0813 在 pass@2 追平、赢下 pass@4（88.5% vs 84.1%），每次 rollout 成本低 90 倍，因此对高吞吐或可容忍重试的 agent 工作，它是更强的价值之选。</p>
-<h3><strong>DeepSeek V4 Pro 0813 比 Claude Fable 5 便宜多少？</strong></h3>
-<p>在我们的运行中，DeepSeek V4 Pro 0813 每次 rollout 成本 \$0.24，Claude Fable 5 max effort 为 \$21.63，约便宜 90 倍。按每解决任务计，Pro 每 \$100 返回 260 个解决，Fable 只有 3 个，每美元解决量约为其 80 倍。</p>
-<h3><strong>编码选 DeepSeek V4 Pro 0813 还是 Claude Fable 5？</strong></h3>
-<p>多数编码工作上，两者比价格暗示的更接近。Claude Fable 5 领先 Rust（85 vs 65）、Python、Go 和 JavaScript，8 个任务领域赢 6 个，以数据建模和序列化领衔。DeepSeek V4 Pro 0813 拿下 TypeScript（61 vs 57）、有状态响应式，以及并发与持久化（58 vs 45）——后者是 Fable 最弱的领域。</p>
-<h3><strong>我该在 DeepSeek V4 Pro 0813 和 Claude Fable 5 之间做路由吗？</strong></h3>
-<p>可以验证结果的话，应该。两个模型拥有我们测过所有配对中最低的逐任务相关系数（0.39），合计覆盖 113 个任务中的 107 个。先跑 DeepSeek V4 Pro 0813，测试套件拒绝输出时升级到 Claude Fable 5，达到 82.7%、每任务 \$8.28——超过 Fable 单独运行，也超过完美的一次命中 oracle 路由器。</p>
-<h3><strong>DeepSWE 上的 pass@k 是什么？</strong></h3>
-<p>pass@k 度量对某任务的 k 次尝试中是否至少有一次通过隐藏测试套件。pass@1 奖励一次做对；更高的 k 奖励能在多次尝试中最终抵达解法的模型。DeepSeek V4 Pro 0813 的优势随 k 增大而扩大。</p>]]></content:encoded>
-    </item>
-    <item>
       <title>在生产环境中对模型进行 A/B 测试</title>
       <link>https://www.together.ai/blog/a-b-test-models-in-production</link>
       <guid isPermaLink="true">https://www.together.ai/blog/a-b-test-models-in-production</guid>
@@ -2449,6 +2564,62 @@ tg beta endpoints rm dep_variant123    # 或者删除变体 —— 自动拆除�
 <p>你需要一个带对照 deployment 正在服务流量的 endpoint，外加一个候选 deployment（已创建、处于 <code>READY</code> 状态、<em>不</em>在流量切分中）。然后：</p>
 <ul><li>按 <strong>95/5</strong> 创建实验。</li><li>让它运行直到积累足够流量——5% 的全部意义就在于曝光保持低位的同时收集数据。</li><li>数据说话时，用一次 update 提升；结论明确时，用 rollout 晋升。结束后删除——没有别的需要清理。</li></ul>
 <p>📚 <strong>文档：</strong> Dedicated Model Inference → <a href="https://docs.together.ai/docs/dedicated-endpoints/ab-tests">A/B tests</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>DeepSeek V4 Pro 0813 对比 Claude Fable 5 在 DeepSWE 上的表现：成本、编码与…</title>
+      <link>https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing</guid>
+      <pubDate>Mon, 17 Aug 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：DeepSeek V4 Pro 0813 对比 Claude Fable 5 在 DeepSWE 上的表现：成本、编码与路由 | 原文标题：DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Coding, and Routing</description>
+      <content:encoded><![CDATA[<h1>DeepSeek V4 Pro 0813 对阵 Claude Fable 5：DeepSWE 上的成本、编码能力与路由</h1>
+<p>Fable 赢在首次尝试，Pro 赢在其后的每一次尝试，而最便宜的路径是两个都用。</p>
+<h2>关键结论</h2>
+<p>先跑 DeepSeek V4 Pro 0813，失败时才升级到 Claude Fable 5。这个级联以每个任务 \$8.28 的成本解决 DeepSWE 82.7% 的任务。Fable 单独跑是 69.7%、每个 \$21.63。高 13 个百分点，便宜 62%。</p>
+<ul><li>Fable 首次即胜：pass@1 69.7% 对 62.8%，领先 7 个百分点。</li><li>Pro 赢下之后的每一次：pass@2 打平（78.5% vs 77.1%），pass@4 领先（88.5% vs 84.1%）。</li><li>价差达 90 倍。每次 rollout \$0.24 对 \$21.63。每 100 美元，Pro 解决 260 个任务，Fable 只有 3 个。</li><li>它们在任务上错开的方向不同。逐任务相关系数仅 0.39，是我们测过的最分歧的一对。两者合计覆盖 113 个任务中的 107 个。正是这种分歧让路由奏效。</li></ul>
+<p>现已可用 · 美国托管</p>
+<p>在 Together AI 上运行 DeepSeek-V4 Pro 0813</p>
+<p>1.05M 上下文，function calling 与 JSON mode，OpenAI 兼容 API，由美国基础设施提供服务。</p>
+<p>查看模型</p>
+<p>在我们的 <a href="https://www.together.ai/models/deepseek-v4-pro-0813">DeepSeek V4 Pro 0813</a> vs Claude Fable 5 DeepSWE 对比中——DeepSWE 是一个跨多种任务类型和编程语言测试模型软件工程能力的基准——两个模型位于价格表的两端。Claude Fable 5 是 DeepSWE 榜单上最贵的 rollout，DeepSeek V4 Pro 0813 则是最便宜的之一。Fable 首次尝试准确率高 7 个百分点，但每次 rollout 贵 90 倍。所以真正的问题不是哪个模型更好，而是这 90 倍溢价到底买到了什么、什么时候值得付。</p>
+<p>DeepSWE · 直接对决</p>
+<h3>DeepSeek V4 Pro 0813 vs Claude Fable 5 速览</h3>
+<table><thead><tr><th>模型</th><th>Pass@1</th><th>平均成本</th><th>每 \$100 解决数</th><th>输出 token</th><th>步数</th></tr></thead><tbody><tr><td>claude-fable-5 [max]</td><td><strong>69.7% ± 2.3%</strong></td><td>$21.63</td><td>3</td><td>115k</td><td><strong>79</strong></td></tr><tr><td>deepseek-v4-pro-0813 [max]</td><td>62.8% ± 3.1%</td><td><strong>$0.24</strong></td><td><strong>260</strong></td><td><strong>101k</strong></td><td>146</td></tr></tbody></table>
+<p>我们在全 113 个 DeepSWE 任务上用四个 trial 跑了 DeepSeek V4 Pro 0813 (max) 对 Claude Fable 5 (max)，数据来自公布的逐 trial 记录：共 904 次 rollout（各 452 次）。Fable 是昂贵的匠人；Pro 是性价比异类。两者在这个集合中的分歧也超过任何其他配对——事后证明这是它们最有意思的地方。下文每个数字都来自这次运行，因此可能与其他公开的 DeepSeek V4 Pro 0813 vs Claude Fable 5 计分卡不同。</p>
+<h2><strong>DeepSWE 计分板：pass@1 与 pass@k</strong></h2>
+<p>单次尝试，Fable 领先：pass@1 69.7% 对 Pro 的 62.8%（官方评分）。但这个领先很脆弱。两次尝试时 Pro 追平（78.5 vs 77.1），四次尝试时 Pro 的 88.5% pass@4 甩开 Fable 的 84.1% 超过四个百分点。对一个贵 90 倍的模型来说，Fable 既不占据上限，也在重试下保不住首枪优势。低成本的模型同时拥有更广的触达和更高的 best-of-k。</p>
+<h2><strong>成本对比：DeepSeek V4 Pro 0813 与 Claude Fable 5 定价</strong></h2>
+<p>每次 rollout \$0.24，DeepSeek V4 Pro 0813 比 Fable（\$21.63）便宜 90 倍：每 100 美元解决 260 个任务对 Fable 的 3 个。这是我们测过的所有配对中最宽的价差，而且 Fable 是榜单上单价最高的配置。不寻常的是，低价格并没有伴随你预期的速度惩罚：Fable 的 rollout 中位耗时 31 分钟对 Pro 的 35 分钟，大致持平——因为 Fable 是榜单上话最多的模型（115k 输出 token），尽管它步数更少（79 vs 146）。Pro 步数更多；Fable 每步写更多。两个模型都不算明显更快。</p>
+<h2><strong>失败模式：两个模型各自怎么犯错</strong></h2>
+<p>两者都很有分寸地不破坏既有功能：<strong>DeepSeek V4 Pro 0813 和 Fable 各自只在 11% 的失败案例中让现有测试套件回归</strong>，远低于 GPT 家族的 20%。差别在另一个方向：Fable 的&quot;离谱错&quot;占比在这里最大（18% vs Pro 的 10%），意思是 Fable 错的时候更常错得离谱——解法离靶心很远，而不是差一个边缘情况。Pro 更常在接近正确的地方失败（近失 66% vs Fable 的 57%）。所以两者都可以放心接受而无需重型回归门禁，但 Fable 的失误是更贵的那种，更难 debug。</p>
+<h2><strong>各自在哪里赢：按任务类型</strong></h2>
+<p>Fable 的匠心体现在重推理、精确契约的领域：8 个领域中赢 6 个，以数据建模与序列化 88%（超 Pro 24 个百分点）和语言内部机制（78）领跑。但 DeepSeek V4 Pro 0813 拿下两个，且都很重要：有状态响应式（66 vs 64），以及耐人寻味的并发与持久化（58 vs 45）：恰好在 Fable 最差的领域领先 13 个百分点。Fable 在并发上的 45% 是它最弱的一格，也是唯一一个低成本模型就是更好的工程师——而不只是更便宜——的领域。</p>
+<h2><strong>DeepSeek V4 Pro 0813 vs Claude Fable 5 按编程语言</strong></h2>
+<p>Fable 在五种语言中赢四种，但让它价格站得住的数字是 Rust：85% 对 Pro 的 65，20 个百分点的差距，是对决中最宽的单点差距。Fable 明显是序列化与 Rust 专家。其他地方比价格暗示的要接近（Python 70 vs 60，Go 71 vs 67，JavaScript 75 vs 65），而 DeepSeek V4 Pro 0813 实际拿下了 TypeScript（61 vs 57）。在 Rust 和序列化之外，付 90 倍的理由很难成立。</p>
+<h2><strong>两个模型有多大差异？</strong></h2>
+<p>以下是 Fable 挽回颜面的特性。逐任务相关系数只有 0.39，是所有 DeepSeek-Pro 配对中最低的，这两个模型是真分歧。它们各解出 88 个任务；Pro 独立解出 12 个，Fable 独立解出 7 个，只有 6 个同时难住两者。两者的并集覆盖 113 个中的 107 个（94.7%），且分歧是双向的：DeepSeek V4 Pro 0813 把 awilix-async-container-initialization 四次全收，Fable 一次都没拿下；Fable 则四次全收 Pro 挂零的四个任务（包括 koota-query-predicates 和 testem-bail-on-test-failure）。这是真正的互补，不是冗余。</p>
+<h2><strong>在两者之间路由：投资组合打法</strong></h2>
+<p>这种多样性加上价差，让级联极具吸引力。先跑 DeepSeek V4 Pro 0813，只有当你的测试套件拒绝答案时才升级到 Fable：82.7% 解决率、每任务 \$8.28。这比 Fable 单独跑（69.7%）高 13 个百分点，而成本还不到 Fable 单价（\$21.63）的一半。低成本的第一级消化了队列的大部分，Fable 的高价只施加在困难的剩余部分上，而且那些任务还额外获得一次独立的第二尝试。这个级联甚至打败了完美的一次命中 oracle 路由器（78.8%）。顺序不可颠倒：Pro 优先成本 \$8.28，Fable 优先成本 \$21.71，准确率却相同。</p>
+<h2><strong>这意味着什么</strong></h2>
+<p>Fable 5 是这张榜单上最难被论证为&quot;默认选择&quot;的单体模型：最贵的 rollout，会被重试抹平的首枪领先，也没有四枪上限优势。为且仅为两件事买它：Rust（85%）和序列化密集的工作（88%），它的质量在那儿确实配得上价格。</p>
+<p>DeepSeek V4 Pro 0813 是相反的画像：首次尝试接近 Fable 的准确率、更高的上限、持平或更好的失败画像、便宜 90 倍——尽管它在 Rust 和精确契约领域认输。而由于两者是我们测过最多样的配对，Fable 的最佳用法不是当默认，而是作为低成本 Pro 第一级之后的选择性升级，只为那几个真需要 Rust 或序列化专家的任务付费。</p>
+<p>现已可用 · 美国托管</p>
+<p>在 Together AI 上运行 DeepSeek-V4 Pro 0813</p>
+<p>1.05M 上下文，function calling 与 JSON mode，OpenAI 兼容 API，由美国基础设施提供服务。</p>
+<p>查看模型</p>
+<h2><strong>数据表：DeepSeek V4 Pro 0813 vs Claude Fable 5 完整结果</strong></h2>
+<p>DeepSWE · 完整结果</p>
+<table><thead><tr><th>指标</th><th>deepseek-v4-pro-0813 [max]</th><th>claude-fable-5 [max]</th></tr></thead><tbody><tr><td>Pass@1（官方评分）</td><td>62.8%</td><td><strong>69.7%</strong></td></tr><tr><td>Pass@1（错误计为失败）</td><td>62.8%</td><td><strong>67.3%</strong></td></tr><tr><td>Pass@2 / pass@4</td><td><strong>78.5 / 88.5%</strong></td><td>77.1 / 84.1%</td></tr><tr><td>覆盖 / 可靠性</td><td>88.5 / 71.0%</td><td>84.1 / 82.0%</td></tr><tr><td>稳定（4/4）/ 死磕（0/4）</td><td>35 / 13</td><td>56 / 18</td></tr><tr><td>每次 rollout / 总成本</td><td><strong>$0.24 / $109</strong></td><td>$21.63 / $9,346</td></tr><tr><td>每 \$100 解决数</td><td><strong>261</strong></td><td>3</td></tr><tr><td>中位分钟数 / 步数</td><td>35 / 146</td><td>31 / 79</td></tr><tr><td>中位峰值上下文 / 输出 token</td><td>232k / 101k</td><td>202k / 115k</td></tr><tr><td>失败解剖（近失 / 离谱错 / 回归）</td><td>66% / 10% / 11%</td><td>57% / 18% / 11%</td></tr><tr><td>赢得的领域（共 8）</td><td>2（stateful、concurrency）</td><td><strong>6</strong></td></tr><tr><td>赢得的语言</td><td>1（TypeScript）</td><td><strong>4（Rust 是碾压）</strong></td></tr><tr><td>逐任务相关系数 / 并集</td><td>0.39 / 113 中 107（94.7%）</td><td></td></tr><tr><td>级联 Pro → Fable（准确率 / 成本）</td><td><strong>82.7% / $8.28</strong>（Fable 单独 69.7% / $21.63）</td><td></td></tr><tr><td>Oracle 一次命中路由器</td><td>78.8%</td><td></td></tr><tr><td>基础设施错误</td><td>0</td><td>16</td></tr></tbody></table>
+<h2><strong>FAQ</strong></h2>
+<h3><strong>DeepSeek V4 Pro 0813 比 Claude Fable 5 好吗？</strong></h3>
+<p>看指标。Claude Fable 5 赢在单次尝试质量（pass@1 69.7% vs 62.8%），四枪全中（56 vs 35）也更多。DeepSeek V4 Pro 0813 在 pass@2 追平、赢下 pass@4（88.5% vs 84.1%），每次 rollout 成本低 90 倍，因此对高吞吐或可容忍重试的 agent 工作，它是更强的价值之选。</p>
+<h3><strong>DeepSeek V4 Pro 0813 比 Claude Fable 5 便宜多少？</strong></h3>
+<p>在我们的运行中，DeepSeek V4 Pro 0813 每次 rollout 成本 \$0.24，Claude Fable 5 max effort 为 \$21.63，约便宜 90 倍。按每解决任务计，Pro 每 \$100 返回 260 个解决，Fable 只有 3 个，每美元解决量约为其 80 倍。</p>
+<h3><strong>编码选 DeepSeek V4 Pro 0813 还是 Claude Fable 5？</strong></h3>
+<p>多数编码工作上，两者比价格暗示的更接近。Claude Fable 5 领先 Rust（85 vs 65）、Python、Go 和 JavaScript，8 个任务领域赢 6 个，以数据建模和序列化领衔。DeepSeek V4 Pro 0813 拿下 TypeScript（61 vs 57）、有状态响应式，以及并发与持久化（58 vs 45）——后者是 Fable 最弱的领域。</p>
+<h3><strong>我该在 DeepSeek V4 Pro 0813 和 Claude Fable 5 之间做路由吗？</strong></h3>
+<p>可以验证结果的话，应该。两个模型拥有我们测过所有配对中最低的逐任务相关系数（0.39），合计覆盖 113 个任务中的 107 个。先跑 DeepSeek V4 Pro 0813，测试套件拒绝输出时升级到 Claude Fable 5，达到 82.7%、每任务 \$8.28——超过 Fable 单独运行，也超过完美的一次命中 oracle 路由器。</p>
+<h3><strong>DeepSWE 上的 pass@k 是什么？</strong></h3>
+<p>pass@k 度量对某任务的 k 次尝试中是否至少有一次通过隐藏测试套件。pass@1 奖励一次做对；更高的 k 奖励能在多次尝试中最终抵达解法的模型。DeepSeek V4 Pro 0813 的优势随 k 增大而扩大。</p>]]></content:encoded>
     </item>
     <item>
       <title>DeepSeek-V4 Flash 0731 与 GPT-5.6 Luna 在 DeepSWE 上的成本与编码对比</title>
@@ -3834,82 +4005,6 @@ together beta endpoints get $ENDPOINT_ID
 <p>感谢 Martijn Bartelds、Yongchan Kwon、Federico Bianchi 和 Kaitlyn Zhou 的深思熟虑反馈。感谢 Whisper、DeepSeek、Qwen 和 Cartesia 背后的开源模型构建者，他们的工作是 Violin 的地基。特别感谢 Hassan El Mghari 和 Percy Liang 在开发期间提供视频与反馈。</p>
 <h3>免责声明</h3>
 <p>Violin 提供翻译工具；用户独自对其翻译的内容负责，包括遵守版权与其他适用法律。demo 应用中上传的视频 24 小时后删除。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>服务 DeepSeek-V4：百万 token 上下文为何是推理系统问题</title>
-      <link>https://www.together.ai/blog/serving-deepseek-v4-why-million-token-context-is-an-inference-systems-problem</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/serving-deepseek-v4-why-million-token-context-is-an-inference-systems-problem</guid>
-      <pubDate>Mon, 11 May 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Serving DeepSeek-V4: why million-token context is an inference systems problem</description>
-      <content:encoded><![CDATA[<p>基准表错过了 DeepSeek-V4 的重点：真正重要的变化是架构。V4 把百万 token 上下文变成了一个服务系统问题。</p>
-<p>模型通过一种混合注意力设计支持 1M token 上下文窗口：在 key-value（KV）存储之前压缩上下文、混合压缩与局部注意力路径，并改变前缀复用的方式。这些选择降低了 KV 压力，但只有当推理引擎能管理随之而来的缓存布局、恢复局部状态、有效组批、并选择匹配负载的 endpoint 画像时，这些节省才有意义。</p>
-<p>本文聚焦 V4 的压缩稀疏注意力（CSA）/重度压缩注意力（HCA）/滑动窗口注意力（SWA）设计带来的服务影响，基于 Together 在 NVIDIA HGX B200 上的早期 bring-up 工作。V4 还包含其他架构与训练改动，包括流形约束超连接（mHC）残差连接和 Muon 优化器选择，但那些不在本文主要范围内。</p>
-<h2><strong>V4 压缩 KV 缓存的 token 轴</strong></h2>
-<p>自回归推理把先前上下文存在 KV 缓存里。decode 期间，每个新生成的 token 都从这个存储状态读取并对其做注意力。缓存随序列长度增长：</p>
-<p><code>KV cache ∝ layers × tokens × kv_heads × head_dim × bytes</code></p>
-<p>在长上下文下，KV 缓存对服务造成双重打击：它限制并发，因为每个活跃请求占用内存；它拉低吞吐，因为 decode 每一步都要读取存储的上下文。V4 之所以重要，是因为它同时进攻这个问题的两侧：要存的缓存条目更少，要流经注意力的缓存条目也更少。</p>
-<p>在 NVIDIA Blackwell 上，这种缓存压力直接映射到服务经济学。长上下文推理取决于：在保留足够 KV 以支撑并发的同时，为 decode 保住内存带宽。V4 的 token 轴压缩让这个取舍更有利：引擎有更多空间组批请求、复用前缀，把长上下文负载保持在高效服务区间内。</p>
-<p>近期的模型架构已经削减了上述乘积中的不同项。分组查询注意力（GQA）减少 KV 头数。多头潜在注意力（MLA）把 KV 压缩成潜在表示。FP8、MXFP4 和 <a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">NVFP4</a> 减少每元素字节数。DeepSeek-V3.2 稀疏注意力减少了 decode 期间需要读取的 KV 量，但全量缓存仍须常驻。</p>
-<p>DeepSeek-V4 瞄准的是 token 轴。它在 KV 存储之前压缩上下文。</p>
-<p>这才是重要的转变。</p>
-<p>在原始 BF16 多头注意力计算下，一个 70B 级模型每 token 可能需要数兆字节 KV 缓存。确切系数取决于层数、KV 头数、head 维度和精度。在 1M token 时，缓存对单个请求变得不切实际。V4 的 token 轴压缩，加上 MLA 式的头压缩与低精度 KV，把每请求缓存占用降到让超长上下文实质更可行的程度。</p>
-<p>早期 bring-up 中，V4 的服务能力更多取决于引擎如何处理 SWA 状态，而非压缩后的 CSA / HCA 缓存。一个全量 SWA 实现的实际每 token KV 占用反而高于我们的 V3 路径——约 3.8 KB 对 3.4 KB——因为引擎存储了完整的滑动窗口状态。</p>
-<p>实际收益来自缓存策略。只保留最可能被复用的 SWA 状态，我们在单个 NVIDIA HGX B200 节点上把 KV 缓存总容量从约 1.2M token 提升到 3.7M token，改动极小。这是主要的服务教训：V4 的架构创造了长上下文效率的机会，但实际兑现的容量取决于推理引擎如何存储、重算和逐出不同缓存类型。</p>
-<p>实际收益不止于完整 1M token 请求。它让 200K–500K token 的负载更并发、更不脆弱，因为引擎在内存压力迫使逐出或限制组批之前有更多 KV 预算。更早的百万 token 上下文模型在内存、并发与成本上仍留下重大服务挑战。当服务策略匹配缓存布局时，V4 把这个区间变成真正可用的负载。</p>
-<h2><strong>V4 需要多种 KV 缓存布局</strong></h2>
-<p>许多现有服务路径假设接近单一的 KV 缓存布局：每层每 token 一个缓存对象，全栈同构。V4 要求三种不同缓存类型，跨层混合。</p>
-<p>压缩稀疏注意力（CSA）以步长 4 压缩上下文，但每个压缩条目由稍宽的感受野构建。在 V4 配置中，每个条目总结 8 token 的邻域，所以相邻压缩条目在边界处重叠。当查询选取 128 个压缩条目时，它选的是局部邻域的摘要，而不是孤立的 token 位置。这让 CSA 对百万 token 前缀的选定区域拥有更细粒度的读取路径，同时仍缩减存储缓存占用。</p>
-<p>重度压缩注意力（HCA）用同样的压缩思想但步长为 128。在 1M token 上下文长度下，这把缓存从 1M 个 token 位置降为约 8K 个压缩条目。这是与 CSA 的关键差异：压缩缓存小到模型可以对其做密集注意力，而无须选择 top-k 子集。HCA 给模型对整个上下文的粗粒度全局读取，CSA 给它对选定区域的细粒度稀疏读取。</p>
-<p>滑动窗口注意力（SWA）保留局部路径。窗口很短，约 128 token，保持近期上下文精确。</p>
-<p>全栈中，引擎要管理 CSA 压缩状态、HCA 压缩状态、SWA 局部状态，以及 CSA 和 HCA 压缩器用到的短未压缩尾部状态。这些对象大小、生命周期、读取模式各不相同。</p>
-<p>新的注意力 kernel 只是工作的一部分。更难的服务问题是内存管理：组批请求、逐出缓存页、复用前缀，同时在模型不同部分依赖不同存储状态的情况下保持 decode 吞吐稳定。</p>
-<h2><strong>前缀缓存变成一种存储策略</strong></h2>
-<p>前缀缓存通常始于简单规则：共享前缀、共享 KV。在 V4 这里，问题变成：共享哪种缓存？</p>
-<p>一个共享前缀包含 CSA 状态、HCA 状态、SWA 状态，以及 CSA 与 HCA 压缩器用的未压缩尾部状态。CSA 和 HCA 足够紧凑、可高效存储。SWA 是精确局部状态，对长前缀存储更贵——一旦缓存层级移出 GPU 内存尤其如此。</p>
-<p>DeepSeek 论文描述了三种 SWA 策略。</p>
-<p>第一种存完整 SWA 缓存。复用简单，因为引擎能直接恢复完整前缀状态，但存储与写带宽增长很快。</p>
-<p>第二种存周期性 SWA checkpoint。引擎每 K 个 token 保存一次状态，缓存命中时重算中间缺口。</p>
-<p>第三种命中时重算 SWA。引擎存储压缩的 CSA / HCA 状态，前缀复用时重建 SWA 路径。代价以窗口大小乘层数为界。128 token 窗口、61 层，约 8K token 的重算。对一个 1M token 前缀，这笔取舍说得通。</p>
-<p>在我们当前的 V4 bring-up 中使用第一种策略：存完整 SWA 缓存。这让前缀复用保持直截了当，在服务路径其余部分尚未成熟时避免加入重算复杂度。代价是更高的缓存占用，这使缓存策略与逐出行为随上下文长度和并发增长变得更重要。</p>
-<p>V4 把前缀缓存变成跨缓存对象的策略决策：存 CSA 和 HCA、决定如何处理 SWA、按各自成本逐出每种类型。</p>
-<h2><strong>V4 性能依赖工作区间</strong></h2>
-<p>V4 的收益最先出现在 KV 缓存主导的地方。</p>
-<p>长上下文、decode 密集的负载大部分时间在读缓存，V4 的压缩缓存布局降低这种压力。</p>
-<p>短上下文、prefill 密集的负载走不同路径。CSA top-k 选择、HCA 压缩读取和 SWA 引入了成熟密集注意力 kernel 路径之外的操作。Kernel 成熟度重要。精度格式也重要：V4 的 MoE 权重使用 MXFP4，在 NVIDIA Blackwell GPU 上性能特性与 NVFP4 不同。这让短上下文 prefill 对 kernel 成熟度尤其敏感，而长上下文 decode 更直接从 KV 缓存缩减受益。</p>
-<p>这形成了一个区间分裂。长上下文负载早期就受益于 V4 的缓存节省；短上下文负载更依赖 kernel bring-up 与 prefill 优化。这对新架构是典型的：首个实现建立正确性，后续迭代收敛到硬件效率。</p>
-<p>Together 正在 prefill 和 decode 两条路径上继续 V4 kernel 工作。</p>
-<p>开发者应在自己的实际工作区间基准 V4。一个 1M 上下文编码 agent 与一个短上下文聊天助手，考验的是服务栈的不同部分。</p>
-<h2><strong>同一份权重需要不同的服务画像</strong></h2>
-<p>V4 拉大了不同负载形态之间的差距。</p>
-<p>长上下文 agent 最直接受益于架构。它们在 decode 时读取大量缓存，所以 V4 的压缩 KV 布局、更大的张量并行配置、组批和前缀复用都重要。这是模型的长上下文设计最先应当显形的区间。</p>
-<p>跨共享仓库的编码 agent 与之相关，但服务问题更前缀密集。同样的项目文件、仓库状态或任务脚手架可能在多个请求间重复，于是缓存分层与 SWA 重算策略成为一阶选择。瓶颈同时包括长上下文和重复上下文复用。</p>
-<p>短聊天位于频谱另一端。这些负载从百万 token 缓存压缩受益有限，反而暴露 prefill 延迟、小批开销与 kernel 成熟度。要服务好它们，可能需要更小的张量并行组、最小组批延迟，以及为短上下文路径调优的 kernel。</p>
-<p>RL rollout 关心另一种经济单位：每条长轨迹的成本。它们可能与长上下文 agent 共享服务机制，但优化目标是实验吞吐——每份训练预算能生成多少条长程 rollout——而非单纯单请求延迟。</p>
-<p>同一份权重可以服务所有这些负载，但每种在不同 endpoint 配置下表现最佳。Together 正在评估具有不同组批、并行和缓存策略的 endpoint 画像。</p>
-<h2><strong>迁移到 V4 之前该测什么</strong></h2>
-<p>百万 token 服务对那些在长任务上累积状态的系统最有意义：编码 agent、研究 agent 及其他更长程任务。对这些负载，成本模型常常从每 token 价格转向每完成轨迹的成本。</p>
-<p>把流量切到 V4 之前，基准四件事：上下文长度区间、前缀复用、缓存策略、endpoint 画像。</p>
-<p>对长上下文 agent，测缓存命中率、decode 吞吐和每完成任务成本。首 token 时间只捕捉图景的一部分。</p>
-<p>对短聊天，在你真实的上下文长度和 batch size 下比较延迟。V4 的长上下文收益未必先体现在短聊天延迟上。</p>
-<p>对共享前缀负载，测 SWA 全量存储 vs 命中重算。前缀长度、缓存层级延迟和复用频率决定答案。</p>
-<p>对 RL rollout，按轨迹长度与每实验 rollout 数计算成本，而不只看 token 价格。</p>
-<p>对混合流量，预期取舍。一个 endpoint 可以服务混合负载，但负载形态明确后，画像专用 endpoint 通常表现更好。</p>
-<p>质量仍需度量。更长上下文为有用状态、检索噪声、压缩伪影和延迟创造了更多空间。它也改变压缩策略：构建者对何时保留原始状态、何时摘要、何时重置有更多掌控。</p>
-<h2><strong>结论</strong></h2>
-<p>DeepSeek-V4 的效率是一种系统属性。架构通过沿 token 轴压缩来降低 KV 压力，但服务引擎必须管理由这一选择衍生出的缓存类型、前缀策略、kernel 路径和 endpoint 画像。</p>
-<p>这也是全栈协同设计重要之处。模型改变缓存布局，推理引擎改变内存管理与前缀策略，kernel 适配新的注意力与精度路径。NVIDIA 为 Blackwell 上的 V4 + MXFP4 提供 day 0 支持，也让开发者能用 NVFP4 优化性能。通过深度协同设计，Together AI 与 NVIDIA 都在通过软件优化持续提升硬件效率，例如 <a href="https://www.together.ai/blog/together-ai-at-nvidia-gtc-2026">NVIDIA Dynamo。极致协同设计在 DeepSeek V4 等领先开放模型上解锁最低每 token 成本，在 NVIDIA Blackwell 上释放更高性能</a>。</p>
-<p>跑起 V4 只是起点。把它的架构节省转化为更低延迟、更高并发和更便宜的长上下文负载，需要缓存策略工作、kernel 工作和负载专属的服务画像。下一步是度量：每 token KV 占用、上下文长度-吞吐曲线、前缀缓存策略影响，以及不同流量形态的 endpoint 画像。随着 V4 kernel 与缓存策略成熟，我们会发布这些数字。</p>
-<h2><strong>FAQ</strong></h2>
-<p><strong>DeepSeek-V4 的上下文窗口是什么？</strong> DeepSeek-V4 支持 1M token 上下文窗口。它通过一种混合注意力设计实现：在 key-value（KV）存储之前压缩上下文，混合压缩与局部注意力路径，并改变前缀复用方式。正是这一架构变化让百万 token 上下文成为可行的服务负载。</p>
-<p><strong>DeepSeek-V4 中的压缩稀疏注意力（CSA）是什么？</strong> CSA 以步长 4 压缩上下文，每个压缩条目总结 8 token 邻域，相邻条目在边界重叠。查询选取约 128 个这样的压缩条目，给模型一条进入前缀选定区域的细粒度稀疏路径，同时缩减存储缓存占用。</p>
-<p><strong>重度压缩注意力（HCA）是什么？</strong> HCA 使用与 CSA 相同的压缩机制但步长 128。在 1M token 上下文下，这把缓存从 1M 位置降为约 8K 压缩条目，小到模型可以对全部条目做密集注意力。HCA 提供粗粒度全局读取，CSA 提供选定区域的细粒度稀疏读取。</p>
-<p><strong>DeepSeek-V4 相比更早模型如何减小 KV 缓存？</strong> DeepSeek-V4 沿 KV 缓存的 token 轴压缩。早期技术削减缓存乘积中不同的项：GQA 减少 KV 头，MLA 压缩 head 维度，FP8/MXFP4/NVFP4 减少每元素字节数。DeepSeek-V3.2 减少了 decode 时需要读取的缓存量但保持全量缓存常驻。V4 减少的是存储的 token 条目本身数量。</p>
-<p><strong>为什么服务 DeepSeek-V4 需要多种 KV 缓存布局？</strong> 模型使用三条注意力路径（CSA、HCA 和滑动窗口注意力）跨层混合。每条产生大小、生命周期、读取模式不同的缓存对象。推理引擎必须按请求同时管理三者，这让内存管理、逐出和前缀复用比单缓存设计更难。</p>
-<p><strong>前缀缓存在 DeepSeek-V4 中如何工作？</strong> 前缀缓存变成逐缓存类型的策略决策。CSA 和 HCA 状态足够紧凑可存储。SWA 状态是精确局部状态，长前缀下变得昂贵。DeepSeek 论文描述三种选项：存全量 SWA、存周期 checkpoint，或缓存命中时重算 SWA。命中重算以窗口大小乘层数为界，对 1M token 前缀约 8K token 重算。</p>
-<p><strong>哪些负载从 DeepSeek-V4 受益最大？</strong> 长上下文、decode 密集的负载最先受益，包括编码 agent、研究 agent，以及在长任务上累积状态的 RL rollout。对这些，成本模型从每 token 价格转向每完成轨迹成本。短上下文聊天负载收益较小，因为它们暴露的是 prefill 延迟与 kernel 成熟度，而非 KV 缓存压力。</p>
-<p><strong>我该把短聊天流量迁到 DeepSeek-V4 吗？</strong> 先测。V4 的收益出现在 KV 缓存主导之处。短上下文、prefill 密集的负载考验仍在成熟的较新 kernel 路径（CSA top-k 选择、HCA 密集读取、MXFP4 MoE 权重）。切换之前在你真实的上下文长度和 batch size 下比较延迟。长上下文 agent 与短聊天即使在同一份权重上也可能需要不同的 endpoint 画像。</p>
-<p><strong>Together 为什么选 NVIDIA HGX B200 服务 DeepSeek V4？</strong></p>
-<p>NVIDIA HGX B200 正对应 DeepSeek V4 中主导服务成本的部分：长上下文 decode 期间的 KV 缓存压力和 prefill 期间的 MoE 权重带宽。NVIDIA Blackwell 的<a href="https://inferencex.semianalysis.com/inference?g_rundate=2026-05-07&amp;g_runid=25472714189&amp;i_active=b200_sglang%2Cb200_trt%2Cb200_vllm%2Cb300_sglang%2Cb300_trt%2Cb300_vllm%2Cgb200_dynamo-vllm%2Cgb300_dynamo-sglang%2Cgb300_dynamo-vllm%2Cmi355x_atom%2Cmi355x_sglang&amp;g_model=DeepSeek-V4-Pro">推理性能</a>让单个 HGX B200 节点能在大量并发长上下文请求间常驻 V4 的压缩 CSA / HCA / SWA 缓存布局，其原生 MXFP4 支持匹配 DeepSeek 为 V4 MoE 权重发布的格式，所以我们端到端运行模型的量化、无需 re-cast 步骤。Together 的 HGX B200 实例继承同样的 MXFP4 路径与 KV 压缩余量，这就是我们选它作为 V4 发布平台的原因。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
