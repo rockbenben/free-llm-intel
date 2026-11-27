@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-27 12:34:41**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-27 13:53:52**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -193,9 +193,9 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [官方 RSS](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-27，标题自动汉化）：
-  1. [推出适用于 AMD Ryzen 和 Radeon 的 llama.cpp 基准仪表板](https://huggingface.co/blog/ggml-org/llamacpp-amd-bench)（2026-11-26）
-  2. [基于 Nemotron 3.5 Parse 构建：开放数据、微调和更快的推理](https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin)（2026-11-26）
-  3. [群体、群体、帮派：如何构建、训练和评估多智能体系统](https://huggingface.co/blog/training-swarms)（2026-11-26）
+  1. [推出面向 AMD Ryzen 与 Radeon 的 llama.cpp 基准测试仪表板](https://huggingface.co/blog/ggml-org/llamacpp-amd-bench)（2026-11-26）
+  2. [基于 Nemotron 3.5 Parse 构建：开放数据、微调与更快的推理](https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin)（2026-11-26）
+  3. [Swarms、Flocks、Gangs：如何构建、训练与评估多智能体系统](https://huggingface.co/blog/training-swarms)（2026-11-26）
   4. [科学家为 AI agent 划下的界线](https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents)（2026-11-25）
   5. [用 CUGA 搭建印度语语音 agent](https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga)（2026-11-25）
   - 📄 完整文章归档（共 949 篇）：[huggingface.md](llm-news/huggingface.md)
@@ -203,7 +203,7 @@
 ### OpenRouter (openrouter)
 - 📡 [官方 RSS](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-27，标题自动汉化）：
-  1. [杰文斯悖论成立吗？](https://openrouter.ai/blog/insights/is-jevons-paradox-holding/)（2026-11-26）
+  1. [Jevons 悖论还成立吗？](https://openrouter.ai/blog/insights/is-jevons-paradox-holding/)（2026-11-26）
   2. [Claude 能生成图像吗？可以，借助连接器](https://openrouter.ai/blog/tutorials/can-claude-generate-images/)（2026-11-23）
   3. [推理服务提供商的数据处理事件](https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/)（2026-11-22）
   4. [OpenRouter 现在为 Hugging Face 提供推理支持](https://openrouter.ai/blog/announcements/hugging-face-inference-providers/)（2026-11-16）
@@ -314,7 +314,7 @@
 ### Together AI (together_ai)
 - 📡 [官方 RSS](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-27，标题自动汉化）：
-  1. [Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language](https://www.together.ai/blog/distilling-kimi-into-qwen)（2026-11-26）
+  1. [把 Kimi-K3.1-Pro 蒸馏进 Qwen3.8-27B：教模型一门新语言](https://www.together.ai/blog/distilling-kimi-into-qwen)（2026-11-26）
   2. [Hurdle 简介：在你的 API、技能与文档上运行 agent 评估](https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs)（2026-11-25）
   3. [推出可抢占计算：同样的算力，一半的价格](https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price)（2026-11-24）
   4. [安全事件：2026年6月和7月请求的 Prompt 泄露](https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026)（2026-11-21）

@@ -9,219 +9,189 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 26 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>推出适用于 AMD Ryzen 和 Radeon 的 llama.cpp 基准仪表板</title>
+      <title>推出面向 AMD Ryzen 与 Radeon 的 llama.cpp 基准测试仪表板</title>
       <link>https://huggingface.co/blog/ggml-org/llamacpp-amd-bench</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ggml-org/llamacpp-amd-bench</guid>
       <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing the llama.cpp benchmark dashboard for AMD Ryzen and Radeon</description>
-      <content:encoded><![CDATA[<h1>推出面向 AMD Ryzen 和 Radeon 的 llama.cpp 基准测试仪表盘</h1>
-<p>团队文章</p>
-<p>发布于 2026 年 11 月 26 日</p>
-<p><a href="https://huggingface.co/angt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67289c93ff90038d9a6e5675/klana6SP95tj8-VwXnIYC.png" alt="angt's avatar"></a></p>
+      <content:encoded><![CDATA[<h1>推出面向 AMD Ryzen 与 Radeon 的 llama.cpp 基准测试仪表板</h1>
+<p><a href="https://huggingface.co/angt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67289c93ff90038d9a6e5675/klana6SP95tj8-VwXnIYC.png" alt="angt 的头像"></a></p>
 <p>angt</p>
 <p>angt</p>
-<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
-<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy's avatar"></a></p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy 的头像"></a></p>
 <p>Simon Pagezy</p>
 <p>pagezyhf</p>
-<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
-<p><a href="https://huggingface.co/badaoui"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg" alt="Abdennacer Badaoui's avatar"></a></p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://huggingface.co/badaoui"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg" alt="Abdennacer Badaoui 的头像"></a></p>
 <p>Abdennacer Badaoui</p>
 <p>badaoui</p>
-<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org's avatar"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
-<p><a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">llama.cpp × AMD Benchmark</a> 仪表盘现已在 Hugging Face 上线。它让你可以跨不同的 llama.cpp 构建、模型和量化方式，跟踪 prompt 处理与文本生成的性能，从而探索本地推理在 AMD Ryzen 和 Radeon 硬件上的表现。</p>
-<p>本地推理性能会随着模型、kernel 和构建的演进而变化。我们希望任何 AMD 开发者都能轻松查看这些变化：选择硬件、模型和构建，比较不同量化，并持续跟踪性能随时间的变化。基准测试工作流和底层结果都是公开的，因此你也可以查看我们是如何对推理性能进行基准测试的。</p>
+<p><a href="https://huggingface.co/ggml-org"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt="ggml-org 的头像"></a> <a href="https://huggingface.co/ggml-org">ggml-org</a></p>
+<p><a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">llama.cpp × AMD Benchmark</a> 仪表板已经在 Hugging Face 上线了。借助它，你可以跨不同的 llama.cpp 构建、模型和量化方式，跟踪 prompt 处理与文本生成的性能，从而亲自探索本地推理在 AMD Ryzen 与 Radeon 硬件上究竟有怎样的表现。</p>
+<p>本地推理的性能会随着模型、kernel 以及构建的演进而不断变化。我们希望任何一位 AMD 开发者都能轻松看到这些变化：选好一个硬件、一个模型和一个构建，比较不同的量化方式，并持续跟踪性能随时间的走势。基准测试的工作流和底层结果都是公开的，因此你也可以看清我们究竟是如何对推理性能做基准测试的。</p>
 <h2>快速开始</h2>
-<p>你可以在 Configuration 侧边栏中选择 <strong>Hardware</strong>、<strong>Model</strong> 和 <strong>llama.cpp build</strong>。当前可选的硬件为 Radeon 8060S (gfx1151) 和 Radeon AI Pro R9700S (gfx1201)。</p>
-<ul><li>在 <strong>Overview</strong> 标签页中，针对同一硬件、模型和构建比较不同量化。两张图表分别显示 PP512（512 个输入 token，不生成）和 TG128（生成 128 个 token），两者都从上下文深度零开始。</li><li>在 <strong>Build history</strong> 标签页中，跟踪所选硬件、模型和量化下所有已记录构建的 PP512 与 TG128。</li><li>在 <strong>Context</strong> <strong>scaling</strong> 标签页中，查看在所选构建、硬件、模型和量化下，token 生成吞吐量随已有上下文增长的变化情况。</li></ul>
-<h2>这些数字的含义</h2>
-<p>仪表盘展示两项独立的测试，均以每秒 token 数计量：</p>
-<table><thead><tr><th>测试</th><th>负载</th><th>有助于评估的内容</th></tr></thead><tbody><tr><td><strong>PP512</strong></td><td>处理 512 个输入 token</td><td>模型处理 prompt 的速度</td></tr><tr><td><strong>TG128</strong></td><td>生成 128 个 token</td><td>模型产出输出的速度</td></tr></tbody></table>
-<p>两项测试都从上下文深度零（<code>n_depth=0</code>）开始。PP512 衡量在不生成的情况下处理 512 个输入 token；TG128 衡量在没有既有上下文的情况下生成 128 个 token。图表中绘制的数值是平均吞吐量（<code>avg_ts</code>）。这些是有用的参考负载，而 Context scaling 标签页则让你探索 token 生成吞吐量随上下文增长的变化。</p>
+<p>你可以从 Configuration 侧边栏里选择 <strong>Hardware</strong>、<strong>Model</strong> 和 <strong>llama.cpp build</strong> 这三项配置。当前可选的硬件是 Radeon 8060S (gfx1151) 和 Radeon AI Pro R9700S (gfx1201)。</p>
+<ul><li>在 <strong>Overview</strong> 标签页中，你可以针对同一组硬件、模型和构建来比较不同的量化方式。两张图表分别展示 PP512（处理 512 个输入 token、不做生成）和 TG128（生成 128 个 token）的成绩，两者的起点都是上下文深度 0。</li><li>在 <strong>Build history</strong> 标签页中，跟踪你所选硬件、模型和量化下所有已记录构建的 PP512 与 TG128 成绩。</li><li>在 <strong>Context</strong> <strong>scaling</strong> 标签页中，查看在所选构建、硬件、模型和量化下，token 生成吞吐会如何随着已有上下文的增长而发生变化。</li></ul>
+<h2>这些数字意味着什么</h2>
+<p>仪表板展示的是两项彼此独立的测试结果，两者的计量单位都是每秒 token 数：</p>
+<table><thead><tr><th>测试</th><th>负载</th><th>它帮你评估什么</th></tr></thead><tbody><tr><td><strong>PP512</strong></td><td>处理 512 个输入 token</td><td>模型处理一个 prompt 有多快</td></tr><tr><td><strong>TG128</strong></td><td>生成 128 个 token</td><td>模型产出输出有多快</td></tr></tbody></table>
+<p>两项测试都从上下文深度 0（<code>n_depth=0</code>）这个起点开始。PP512 衡量的是在不做任何生成的情况下处理 512 个输入 token；TG128 衡量的是在没有既有上下文的情况下生成 128 个 token。图表中绘制的数值是平均吞吐量（<code>avg_ts</code>）。这些都是很有参考价值的负载，而 Context scaling 标签页则可以让你进一步探索 token 生成吞吐随上下文增长而发生的变化。</p>
 <h2>我们如何运行基准测试</h2>
-<p>我们基准测试的对象是通过 <a href="https://github.com/ggml-org/llama-install.sh">llama-install.sh</a> 分发的预编译二进制文件，该项目是 <a href="https://llama.app/">llama.app</a> 背后的构建与安装项目。公开的 <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1151.yml">gfx1151</a> 和 <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1201.yml">gfx1201</a> 工作流每周定时运行，使用 <a href="https://github.com/ggml-org/llama.cpp/tree/master/tools/llama-bench">llama-bench 工具</a> 在 Flash Attention 开启和关闭两种情况下运行标准基准测试，每个配置重复 10 次。</p>
-<p>模型集合会不断演进，目前包括 Inkling 2 Mini、Qwen、Gemma、gpt-oss 和 LFM 模型，涵盖 dense 与 mixture-of-experts（混合专家）架构。可用的 GGUF 格式包括 <code>Q4_K_M</code>、<code>Q8_0</code>、其他量化格式，以及 <code>BF16</code> 和 <code>F16</code> 等更高精度的格式。</p>
+<p>我们做基准测试用的对象，是通过 <a href="https://github.com/ggml-org/llama-install.sh">llama-install.sh</a> 分发的预编译二进制文件——也就是 <a href="https://llama.app/">llama.app</a> 背后的那个构建与安装项目。公开的 <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1151.yml">gfx1151</a> 和 <a href="https://github.com/ggml-org/llama-install.sh/blob/master/.github/workflows/bench-gfx1201.yml">gfx1201</a> 工作流每周定时运行，使用 <a href="https://github.com/ggml-org/llama.cpp/tree/master/tools/llama-bench">llama-bench 工具</a> 在 Flash Attention 开启和关闭这两种情况下运行标准基准测试，每个配置重复 10 次。</p>
+<p>模型集合会不断演进，目前已经包含了 Inkling 2 Mini、Qwen、Gemma、gpt-oss 和 LFM 这几个模型系列，覆盖 dense 与 mixture-of-experts（混合专家）两类架构。可用的 GGUF 格式包括 <code>Q4_K_M</code>、<code>Q8_0</code> 以及其他量化格式，还有 <code>BF16</code>、<code>F16</code> 这类更高精度的格式。</p>
 <h2>查看并复用结果</h2>
-<p>探索器直接读取 Hugging Face 上公开的 <a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">ggml-org/install.sh-benches-data Storage Bucket</a>。图表标题旁的 <strong>data source</strong> 链接会打开所选构建、硬件和模型对应的文件夹。</p>
-<p>标准结果使用 <code>&lt;build&gt;/&lt;hardware&gt;/&lt;model&gt;/&lt;quant&gt;.jsonl</code>。负载扫描在同一文件夹下使用 <code>&lt;quant&gt;-tg.jsonl</code> 文件名。</p>
-<p>你可以用它们来调查某个结果、制作自己的图表，或与本地运行结果进行比较。</p>
+<p>探索器的数据是直接从 Hugging Face 上公开的 <a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">ggml-org/install.sh-benches-data Storage Bucket</a> 读取的。图表标题旁边的 <strong>data source</strong> 链接，会为你打开所选构建、硬件和模型所对应的文件夹。</p>
+<p>标准结果使用 <code>&lt;build&gt;/&lt;hardware&gt;/&lt;model&gt;/&lt;quant&gt;.jsonl</code> 这样的路径来存放；负载扫描则在同一个文件夹下使用 <code>&lt;quant&gt;-tg.jsonl</code> 作为文件名。</p>
+<p>你可以用它们来调查某个具体结果、绘制自己的图表，或者与你自己在本地跑出来的结果作对比。</p>
 <h2>加入讨论</h2>
-<p>感谢 AMD 团队提供测试基础设施并协助验证这套设置！试用<a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">仪表盘</a>，查看<a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">数据</a>，并告诉我们你接下来想看到哪些模型和负载。</p>
-<p>该作者的更多文章</p>
-<h2>我们如何优化工作流并克服 GitHub Actions 的限制</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
-<p>8</p>
-<p>2026 年 11 月 16 日</p>
-<p>热门</p>
-<h2>llama.cpp v1.0.0：为本地 AI 生态奠定更坚实的基础</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63148d3b996c52bf0142cdbe/HXyNkyB0_nHI5WDNdiKHZ.png" alt=""></li></ul>
-<p>238</p>
-<p>2026 年 11 月 13 日</p>
-<h3>社区</h3>]]></content:encoded>
+<p>感谢 AMD 团队提供测试基础设施，并协助我们验证了这套配置！不妨试用一下<a href="https://ggml-org-llamacpp-amd-bench.static.hf.space/index.html">仪表板</a>、查看<a href="https://huggingface.co/buckets/ggml-org/install.sh-benches-data">数据</a>，并告诉我们你接下来希望看到哪些模型和负载。</p>]]></content:encoded>
     </item>
     <item>
-      <title>基于 Nemotron 3.5 Parse 构建：开放数据、微调和更快的推理</title>
+      <title>基于 Nemotron 3.5 Parse 构建：开放数据、微调与更快的推理</title>
       <link>https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin</link>
       <guid isPermaLink="true">https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin</guid>
       <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference</description>
-      <content:encoded><![CDATA[<h1>基于 Nemotron 3.5 Parse 构建：开放数据、微调与更快推理</h1>
-<p>企业 + 文章</p>
-<p>发布于 2026 年 11 月 26 日</p>
-<p><a href="https://huggingface.co/emelryan"><img src="https://huggingface.co/avatars/2adfa4eb57b97fde904fa6a74140db0d.svg" alt="Ryan Chesler's avatar"></a></p>
+      <content:encoded><![CDATA[<h1>基于 Nemotron 3.5 Parse 构建：开放数据、微调与更快的推理</h1>
+<p><a href="https://huggingface.co/emelryan"><img src="https://huggingface.co/avatars/2adfa4eb57b97fde904fa6a74140db0d.svg" alt="Ryan Chesler 的头像"></a></p>
 <p>Ryan Chesler</p>
 <p>emelryan</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/mwawrzos"><img src="https://huggingface.co/avatars/84ba29cc389815553389bb852c3fb1e9.svg" alt="Marek Wawrzos's avatar"></a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/mwawrzos"><img src="https://huggingface.co/avatars/84ba29cc389815553389bb852c3fb1e9.svg" alt="Marek Wawrzos 的头像"></a></p>
 <p>Marek Wawrzos</p>
 <p>mwawrzos</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/steve-nvidia"><img src="https://huggingface.co/avatars/a7118be5506d7e88145aaec13e88d248.svg" alt="Steve Han's avatar"></a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/steve-nvidia"><img src="https://huggingface.co/avatars/a7118be5506d7e88145aaec13e88d248.svg" alt="Steve Han 的头像"></a></p>
 <p>Steve Han</p>
 <p>steve-nvidia</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA's avatar"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p>我们最近发布了 <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse">NVIDIA Nemotron 3.5 Parse</a></strong>，这是一个紧凑型文档模型，可将页面图像转换为结构化数据，用于检索增强生成（RAG）和智能体。</p>
-<p>现在，我们在该版本基础上继续构建，推出<strong>合成训练数据集、微调配方，以及用于加速推理的 DFlash2 推测器</strong>。我们还将分享 Parse 3.5 的训练方式：首先通过监督微调教会模型理解文档，然后使用强化学习提升准确性、一致性和可靠完成度。</p>
-<h2>Parse 3.5 的输出内容</h2>
-<p>Parse 将文档页面中的内容按阅读顺序提取出来，为内容分配类别（如标题、段落、表格和图表），并返回定位内容的边界框。表格和图表会转换为结构化记录，可支撑下游文档处理应用。</p>
-<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png" alt="左侧为带有预测区域的操作简报，右侧为其结构化提取结果。"></a></p>
-<p><em>图 1. 来自合成操作简报的实际模型输出，展示页面与其结构化表示之间的对应关系。</em></p>
-<p>Parse 的最新版本显著扩展了读取图表和表格的能力，尤其是在更困难、更模糊的情况下。例如，没有任何标注数值的柱状图或其他图形。模型能够通过观察坐标轴和柱的高度来推断这些数值。表格可能尤其棘手，因为结构本身承载重要含义，一行或一列错位就可能完全改变解读和含义。这些进步主要得益于合成数据生成——渲染出带有已知真值的图表和表格变体，然后训练模型逆向还原这一过程。</p>
-<p>我们开源了 <strong>Parse 3.5 训练中使用的三个数据集</strong>：</p>
-<ul><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Charts-V1">Synthetic Charts V1 — 998 万个样本</a>：</strong> 渲染的图表和结构化标注，用于学习类别、系列和数值。</li><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Tables-V1">Synthetic Tables V1 — 100 万个样本</a>：</strong> 渲染的 HTML 表格及目标，保留行、列、表头和单元格关系。</li><li><strong><a href="https://huggingface.co/datasets/nvidia/OCR-Synthetic-Multilingual-v2">OCR Synthetic Multilingual v2 — 790 万个样本</a>：</strong> 具有 Parse 格式目标的合成文档页面，涵盖多种字体和布局，用于多语言 OCR 和结构化页面阅读。</li></ul>
-<p>每个发布版本都包含图像、标注、生成文档和训练格式。可使用这些配对数据来微调文档模型，或针对目标文档类型或语言创建新的变体。</p>
-<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png" alt="一张未印出柱值的柱状图，以及发布模型提取出的 18、27、39 和 54。"></a></p>
-<p><em>图 2. Parse 从图表几何形状中恢复出 18、27、39 和 54</em></p>
-<h2>SFT 建立能力；RLVR 提升一致性</h2>
-<p>我们分两个阶段训练 Parse 3.5。<strong>监督微调（SFT）</strong>涵盖文本、布局、表格、图表和多语言文档。学习预测结构化目标建立了阅读页面并表示其内容的通用能力。</p>
-<p>随后我们继续进行<strong>可验证奖励的强化学习（RLVR）</strong>，使用<strong>组相对策略优化（GRPO）</strong>。奖励会检查采样提取结果的质量。例如，图表提取若能恢复正确的系列和数值、生成可用的结构，并且完成时没有反复生成相同内容，就能获得更高的奖励。</p>
-<p>一个困难的页面可能有多种有效表示。这些检查让模型能够灵活地找到正确答案，而不必规定某个确切的 token 序列，同时抑制循环和未完成的输出。</p>
-<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png" alt="匹配训练对比，展示 GRPO 后的提取增益，以及更少的重复标记和 token 上限命中。"></a></p>
-<p><em>图 3. 在匹配评估设置下对 SFT 和 GRPO 的受控对比。这些是开发检查点，与最终发布模型不同。循环计数使用重复检查。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md#training-and-adaptation-figures">方法</a>。</em></p>
-<p>匹配对比显示了收益：被标记为循环的输出从 <strong>126 页降至 29 页——减少约 77%</strong>——达到 9,000 token 上限的输出从 <strong>185 降至 35</strong>。总体得分从 <strong>66.24 提升至 71.38</strong>，其中<strong>表格 +5.18 分</strong>，<strong>图表 +4.15 分</strong>。</p>
-<h2>通过架构和 DFlash2 实现更快推理</h2>
-<p>解析器必须为每个页面生成大量文本和结构。在训练工作的同时，我们优化了 Parse 3.5 处理图像和解码这些输出的方式。</p>
-<table><thead><tr><th><strong>组件</strong></th><th><strong>Parse 2.0</strong></th><th><strong>Parse 3.5</strong></th></tr></thead><tbody><tr><td>页面预处理</td><td>固定 2048 × 1664 画布</td><td>NaViT 动态矩形输入</td></tr><tr><td>图像到文本连接</td><td>编码器–解码器交叉注意力</td><td>压缩视觉 token 作为因果前缀</td></tr><tr><td>解码器自注意力</td><td>多头注意力</td><td>GQA-8：16 个查询头，8 个键/值头</td></tr><tr><td>推测解码</td><td></td><td>单 token 前瞻（MTP）；可选 DFlash2</td></tr></tbody></table>
-<p><strong>NaViT 预处理</strong>使输入形状适应页面。视觉适配器压缩图像序列，文本解码器将其作为前缀消费，取代编码器–解码器交叉注意力。<strong>八键/值头的分组查询注意力（GQA-8）</strong>减少了解码器的注意力缓存内存。</p>
-<p>内置的<strong>多 token 预测（MTP）</strong>头提供单 token 前瞻。我们的 <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse/tree/main/dflash2">DFlash2 推测器</a></strong>更进一步：一个小型草稿模型<strong>最多提议未来 32 个 token</strong>，Parse 一起验证这些提议。在实测的 32 token 配置中，平均约<strong>接受 14 个草稿 token</strong>，即每个验证步骤（含目标 token）约<strong>推进 15 个输出 token</strong>。</p>
-<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png" alt="吞吐量曲线对比 Parse 2.0 与 Parse 3.5 基础版、MTP 和 DFlash2。"></a></p>
-<p><em>图 4. 在单张 H200、BF16 上使用相同 2,078 页的原生单遍吞吐量。Parse 2.0 每个点一次试验；Parse 3.5 显示三次试验的中位数。箭头显示从 Parse 3.5 基础版到 DFlash2 的增益。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md">测量详情</a>。</em></p>
-<p>在单张 H200、BF16 的原生单遍基准测试中，与禁用推测解码的 Parse 3.5 相比，DFlash2 在并发 1 时吞吐量提升 <strong>7.62×</strong>，在并发 512 时提升 <strong>1.52×</strong>。在 512 并发下，Parse 3.5 无推测达到 <strong>13.48 页/秒</strong>，使用 DFlash2 达到 <strong>20.44 页/秒</strong>，而 Parse 2.0 为 <strong>2.98 页/秒</strong>。分别是 Parse 2.0 吞吐量的 <strong>4.53×</strong> 和 <strong>6.86×</strong>。</p>
-<p>快速解析让我们有余力重新审视困难区域。先进行整页预测，然后在文档需要的地方添加针对性重新处理：</p>
-<ul><li><strong>单遍 -</strong> 对整页解析一次，提取文本、布局、表格和图表。</li><li><strong>双遍 - 用于密集表格和小图表细节。</strong> 裁剪解析器找到的表格和图表区域，以更高细节重新解析，并将细化结果合并到页面输出中。</li><li><strong>三遍 -</strong> 不仅使用模型的整页解析边界框，还以检测模式进行第二遍模型处理，以验证所有框均已准确找到且文本未被遗漏，并在第三遍中重新提取任何找到的图表或表格</li></ul>
-<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png" alt="单遍页面解析、双遍裁剪细化和使用独立区域检测器的三遍细化。"></a></p>
-<p><em>图 5. 额外阶段将计算集中在困难区域。多个裁剪可能需要多个请求。</em></p>
-<p>在已发布的参考评估中，双遍和三遍相比单遍分别增加 <strong>2.18 和 2.46 个 ParseBench 分</strong>。额外工作让应用可以牺牲部分吞吐量，换取困难区域的更好提取效果。<a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse#single-double-or-triple-pass">参考结果和服务测量</a>。</p>
-<h2>将相同的 SFT/RLVR 方法应用于你的文档</h2>
-<p>我们分享了一个 <strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/index.md">Parse 微调配方</a></strong>，引导开发者完成配对数据生成、<strong>NeMo Automodel SFT</strong> 和 <strong>NeMo RL GRPO</strong>，并使用 vLLM 生成候选答案。</p>
-<p>示例使用一个带有<strong>牙位图</strong>的合成牙科表单：图表显示牙齿、计划程序和受影响的牙面。在适配之前，Parse 能读取印刷的牙位编号，但遗漏了预期的程序表。SFT 教会它将每颗标记的牙齿与程序及其在牙齿上的位置关联起来。</p>
-<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png" alt="合成牙科页面、基础模型的牙位编号转录，以及预期的牙齿/程序/牙面表。"></a></p>
-<p><em>图 6. 一个记录的配方示例：经过 SFT 后，全部六行图表均与目标匹配。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/examples/dental-adaptation.md">完整图像和原生训练标签</a>。</em></p>
-<p>RLVR 随后强化准确性和一致完成度。在牙科参考运行中，估计的首次尝试成功率（采样 pass@1）从基础模型的 0.00% 升至 SFT 后的 95.85%，RLVR 后达到 96.58%。</p>
-<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png" alt="牙科采样 pass@1：SFT 后 95.85%，RLVR 后 96.58%，y 轴显示 90% 至 100%"></a></p>
-<p><em>图 7. 在来自同一合成生成器的 256 份留出表单上进行匹配评估，每页八个样本。成功要求自然完成、图表内容完全正确且归一化页面文本无错误。<a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/workflow.md#evaluation-and-dental-example-results">评估协议</a>。</em></p>
-<p>要适配该配方，请提供你自己的图像/标签对和验证器：即判断提取是否正确的检查。包含的<strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/tree/main/src/nemotron/recipes/parse/document_rewards">文档奖励组件</a></strong>涵盖文本保真度、边界框、表格、图表事实和完成度。组合与你的任务相关的组件，添加模式检查，并使用完成度和重复检查来抑制循环或未完成的输出。</p>
-<p>我们很高兴社区已经为<strong><a href="https://huggingface.co/iapp/OpenThai2.1-OCR-Markdown-20261118">泰语</a></strong>、<strong><a href="https://huggingface.co/Reza2kn/Bina-0.4-Koochik">波斯语/法尔西语</a></strong>和<strong><a href="https://huggingface.co/g3ida/absir-arabic-ocr-mini">阿拉伯语</a></strong>扩展并改进了 Parse，我们希望这些额外的数据集和微调配方能帮助鼓励这些努力和未来的模型。</p>
-<p>我们感谢 Denis Ovchinnikov 在 vLLM 集成和独立性能验证方面的工作，Oliver Holworthy 改进微调配方的运行时设置和可复现性，以及 Bo Liu 的技术审阅。</p>
-<h2>本文提到的模型 3</h2>
-<h2>本文提到的数据集 4</h2>
-<p>更多来自该作者</p>
-<h2>Microduck 避障：使用 Isaac Lab 和 Newton 的 Sim2Real 工作流</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>13</p>
-<p>2026 年 11 月 24 日</p>
-<h2>使用 SimReady 资产构建机器人拾放仿真</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>51</p>
-<p>2026 年 11 月 13 日</p>
-<h3>社区</h3>
-<h2>本文提到的模型 3</h2>
-<h2>本文提到的数据集 4</h2>]]></content:encoded>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 的头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p>我们最近发布了 <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse">NVIDIA Nemotron 3.5 Parse</a></strong>，这是一个紧凑的文档模型，能把页面图像转换成结构化数据，供检索增强生成（RAG）和 agent 使用。</p>
+<p>现在，我们在这项发布的基础上继续推进，推出<strong>合成训练数据集、一份微调配方，以及一个用于加速推理的 DFlash2 推测器</strong>。我们还公开了 Parse 3.5 的训练方式：先通过监督微调教会它理解文档，再用强化学习提升准确率、一致性以及稳定完成输出的能力。</p>
+<h2>Parse 3.5 能产出什么</h2>
+<p>Parse 会把文档页面中的内容按阅读顺序抽取出来，为其分配标题、段落、表格、图表等内容类别，并返回用于定位这些内容的边界框。表格和图表会变成结构化记录，可支撑下游的文档处理应用。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-01-page-structure.png" alt="左侧是一份带有预测区域的运营简报，右侧是它的结构化抽取结果。"></a></p>
+<p><em>图 1. 一份合成运营简报的实际模型输出，展示了页面与其结构化表示之间的对应关系。</em></p>
+<p>Parse 的这一最新版本大幅扩展了读取图表和表格的能力，尤其是在更困难、更含糊的情形下。例如，那些完全没有标注数值的柱状图或其他绘图。模型能够观察坐标轴和柱子的高度来推断出这些数值。表格可能格外棘手，因为其结构本身承载着很重的意义——只要错位一行或一列，就可能彻底改变解读和含义。这些进步在很大程度上得益于合成数据生成：渲染出各种变体的图表和表格（并带有已知的 ground truth），再训练模型去逆向复现这一过程。</p>
+<p>我们开源了 <strong>Parse 3.5 训练中用到的三个数据集</strong>：</p>
+<ul><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Charts-V1">Synthetic Charts V1 —— 9.98M 条示例</a>：</strong> 渲染出的图表与结构化标注，用于学习类别、系列和数值。</li><li><strong><a href="https://huggingface.co/datasets/nvidia/Synthetic-Tables-V1">Synthetic Tables V1 —— 1M 条示例</a>：</strong> 渲染出的 HTML 表格，其目标保留了行、列、表头和单元格之间的关系。</li><li><strong><a href="https://huggingface.co/datasets/nvidia/OCR-Synthetic-Multilingual-v2">OCR Synthetic Multilingual v2 —— 7.9M 条示例</a>：</strong> 带有 Parse 格式目标的合成文档页面，覆盖多种字体与版面，用于多语言 OCR 与结构化页面阅读。</li></ul>
+<p>每个发布版本都包含图像、标注、生成文档以及训练格式。你可以用这些配对数据微调文档模型，或针对目标文档类型或语言构造新的变体。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-02-chart-geometry.png" alt="一张没有印出数值的柱状图，以及已发布模型从中抽取出的数值 18、27、39 和 54。"></a></p>
+<p><em>图 2. Parse 从图表的几何形状中还原出 18、27、39 和 54</em></p>
+<h2>SFT 教会能力，RLVR 提升一致性</h2>
+<p>我们分两个阶段训练 Parse 3.5。<strong>监督微调（SFT）</strong>覆盖文本、版面、表格、图表和多语言文档。通过学习预测结构化目标，模型建立起了阅读页面并表达其内容的通用能力。</p>
+<p>之后我们继续做<strong>带可验证奖励的强化学习（RLVR）</strong>，采用<strong>组相对策略优化（GRPO）</strong>。奖励会检查采样抽取结果的质量。例如，一次图表抽取如果能还原正确的系列和数值、产出可用的结构，并且完成输出时没有反复生成同样的内容，就能拿到更高的奖励。</p>
+<p>一张困难的页面可能存在多种有效的表示形式。这些检查让模型不必被限定为某一个确切的 token 序列，也能灵活地找到正确答案，同时抑制循环生成和未完成的输出。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-03-sft-grpo-gains.png" alt="一组匹配条件下的训练对比，显示 GRPO 之后抽取效果的提升，以及重复标记和触及 token 上限的减少。"></a></p>
+<p><em>图 3. 在匹配的评测设置下对 SFT 与 GRPO 做的受控对比。这些都是开发阶段的 checkpoint，与最终发布的模型不同。循环计数使用重复性检查。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md#training-and-adaptation-figures">方法</a>。</em></p>
+<p>匹配对比的结果显示了收益：被标记为循环的输出从 <strong>126 页降到 29 页——减少约 77%</strong>，触及 9,000 token 上限的输出从 <strong>185 个降到 35 个</strong>。总体得分从 <strong>66.24 提升到 71.38</strong>，其中表格 <strong>+5.18 分</strong>，图表 <strong>+4.15 分</strong>。</p>
+<h2>通过架构和 DFlash2 实现更快的推理</h2>
+<p>解析器必须为每一页生成大量文本和结构。在训练工作之外，我们还优化了 Parse 3.5 处理图像以及解码这些输出的方式。</p>
+<table><thead><tr><th><strong>组件</strong></th><th><strong>Parse 2.0</strong></th><th><strong>Parse 3.5</strong></th></tr></thead><tbody><tr><td>页面预处理</td><td>固定的 2048 × 1664 画布</td><td>NaViT 动态矩形输入</td></tr><tr><td>图文连接</td><td>编码器–解码器交叉注意力</td><td>压缩后的视觉 token 作为因果前缀</td></tr><tr><td>解码器自注意力</td><td>多头注意力</td><td>GQA-8：16 个 query 头，8 个 key/value 头</td></tr><tr><td>投机解码</td><td></td><td>单 token 前瞻（MTP）；可选 DFlash2</td></tr></tbody></table>
+<p><strong>NaViT 预处理</strong>会让输入的形状随页面自适应。一个视觉适配器把图像序列压缩，文本解码器则把它作为前缀来使用，从而取代编码器–解码器交叉注意力。<strong>带八个 key/value 头的分组查询注意力（GQA-8）</strong>降低了解码器注意力缓存的内存占用。</p>
+<p>内置的<strong>多 token 预测（MTP）</strong>头提供单 token 的前瞻。我们的 <strong><a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse/tree/main/dflash2">DFlash2 推测器</a></strong> 更进一步：一个小型草稿模型一次提出<strong>最多 32 个 token</strong> 的候选，Parse 再对这些候选一并验证。在实测的 32 token 配置下，它平均接受约 <strong>14 个草稿 token</strong>，也就是说，把目标 token 算在内，<strong>每次验证步骤大约推进 15 个输出 token</strong>。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-04-parse-concurrency.png" alt="对比 Parse 2.0 与 Parse 3.5 基础版、MTP 版和 DFlash2 版的吞吐曲线。"></a></p>
+<p><em>图 4. 单张 H200、BF16 下的原生单遍吞吐，使用同一批 2,078 页。Parse 2.0 每个数据点跑一次试验；Parse 3.5 显示三次试验的中位数。箭头表示从 Parse 3.5 基础版到 DFlash2 的提升。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/measurement-notes.md">测量细节</a>。</em></p>
+<p>在单张 H200、BF16 下的原生单遍基准测试中，与关闭投机解码的 Parse 3.5 相比，DFlash2 在并发度为 1 时把吞吐提升了 <strong>7.62 倍</strong>，在并发度为 512 时提升了 <strong>1.52 倍</strong>。并发度为 512 时，Parse 3.5 在不做投机的情况下达到 <strong>13.48 页/秒</strong>，启用 DFlash2 后达到 <strong>20.44 页/秒</strong>，而 Parse 2.0 是 <strong>2.98 页/秒</strong>。这分别是 Parse 2.0 吞吐的 <strong>4.53 倍</strong>和 <strong>6.86 倍</strong>。</p>
+<p>解析变快之后，我们就有余力回头处理那些困难的区域。先做一次整页预测，再在文档需要的地方加入有针对性的重处理：</p>
+<ul><li><strong>单遍 -</strong> 对整页做一次解析，抽取文本、版面、表格和图表。</li><li><strong>双遍 - 用于密集的表格和细小的图表细节。</strong>裁出解析器找到的表格和图表区域，以更高的细节重新解析，再把精修结果合并进整页输出。</li><li><strong>三遍 -</strong> 不再只依赖模型整页解析得到的边界框，而是让模型以检测模式再跑一遍，以验证所有框都被准确找到、文本没有遗漏，然后在第三遍中重新抽取找到的所有图表或表格</li></ul>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-05-multipass.png" alt="单遍页面解析、双遍裁剪区域精修，以及借助独立区域检测器进行的三遍精修。"></a></p>
+<p><em>图 5. 额外的阶段把计算集中在困难的区域。多次裁剪可能会带来多次请求。</em></p>
+<p>在公开的参考评测中，双遍和三遍分别比单遍多出 <strong>2.18 和 2.46 个 ParseBench 分</strong>。额外的工作让应用可以用一部分吞吐换取困难区域更好的抽取效果。<a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse#single-double-or-triple-pass">参考结果与服务测量</a>。</p>
+<h2>把同样的 SFT/RLVR 方法用到你自己的文档上</h2>
+<p>我们分享了一份 <strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/index.md">Parse 微调配方</a></strong>，带开发者依次走完配对数据生成、<strong>NeMo Automodel SFT</strong> 和 <strong>NeMo RL GRPO</strong>，并用 vLLM 生成候选答案。</p>
+<p>这个完整示例用的是一张合成的牙科表单，上面有一个<strong>牙位图（odontogram）</strong>：展示牙齿、计划实施的操作以及受影响牙面的图表。在适配之前，Parse 能读出印刷的牙位编号，却漏掉了本应输出的操作表。SFT 教会它把每一颗被标记的牙齿与某个操作、以及该操作在牙齿上的位置关联起来。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-06-dental-adaptation.png" alt="一页合成的牙科表单、基础模型转录出的牙位编号，以及预期的牙位/操作/牙面表格。"></a></p>
+<p><em>图 6. 一个配方录制示例：SFT 之后，图表中的全部六行都与目标一致。<a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/blob/main/examples/dental-adaptation.md">完整图像与原生训练标签</a>。</em></p>
+<p>随后 RLVR 会强化准确率和一致的完成度。在牙科的参考运行中，估计的首次尝试成功率（采样的 pass@1）从基础模型的 0.00% 上升到 SFT 之后的 95.85%，再到 RLVR 之后的 96.58%。</p>
+<p><a href="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png"><img src="https://huggingface.co/datasets/nvidia/Nemotron-Parse-Blog-Assets/resolve/main/images/figure-07-dental-sft-rlvr.png" alt="牙科采样 pass@1：SFT 之后为 95.85%，RLVR 之后为 96.58%，图中 y 轴范围为 90% 到 100%"></a></p>
+<p><em>图 7. 在来自同一合成生成器的 256 份留出表单上做匹配评测，每页采样八次。成功要求自然完成、图表内容完全正确，且归一化后的页面文本没有错误。<a href="https://github.com/NVIDIA-NeMo/Nemotron/blob/main/docs/nemotron/parse/workflow.md#evaluation-and-dental-example-results">评测协议</a>。</em></p>
+<p>要适配这套配方，请提供你自己的图像/标签对，以及一个验证器（verifier）：用来判断抽取结果是否正确的一组检查。随附的 <strong><a href="https://github.com/NVIDIA-NeMo/Nemotron/tree/main/src/nemotron/recipes/parse/document_rewards">文档奖励组件</a></strong> 覆盖文本保真度、边界框、表格、图表事实和完成度。把与你任务相关的组件组合起来，再加上 schema 校验，并用完成度检查和重复性检查来抑制循环或未完成的输出。</p>
+<p>我们很高兴看到社区已经把 Parse 扩展并改进到了 <strong><a href="https://huggingface.co/iapp/OpenThai2.1-OCR-Markdown-20261118">泰语</a></strong>、<strong><a href="https://huggingface.co/Reza2kn/Bina-0.4-Koochik">波斯语/Farsi</a></strong> 和 <strong><a href="https://huggingface.co/g3ida/absir-arabic-ocr-mini">阿拉伯语</a></strong>，我们也希望这些新增的数据集和微调配方能有助于鼓励这些工作，以及未来的模型。</p>
+<p>感谢 Denis Ovchinnikov 在 vLLM 集成和独立性能验证方面的工作，感谢 Oliver Holworthy 改进微调配方的运行时配置与可复现性，感谢 Bo Liu 的技术审阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>群体、群体、帮派：如何构建、训练和评估多智能体系统</title>
+      <title>Swarms、Flocks、Gangs：如何构建、训练与评估多智能体系统</title>
       <link>https://huggingface.co/blog/training-swarms</link>
       <guid isPermaLink="true">https://huggingface.co/blog/training-swarms</guid>
       <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems</description>
       <content:encoded><![CDATA[<h1>Swarms、Flocks、Gangs：如何构建、训练与评估多智能体系统</h1>
-<p>发布于 2026 年 11 月 26 日</p>
 <p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw 的头像"></a></p>
 <p>ben burtenshaw</p>
 <p>burtenshaw</p>
 <p><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt="Kashif Rasul 的头像"></a></p>
 <p>Kashif Rasul</p>
 <p>kashif</p>
-<p><em>第一部分：理解 swarm 并训练其通信</em></p>
-<p>这是一个面向有抱负读者的、同样有抱负的博客系列。我们（我们、社区、你）想构建自己的 agent swarm，因为它们令人兴奋、富有挑战性，而且能力越来越强。更进一步，如果我们能训练自己的 agent 在 swarm 中协作，那会极其酷。如果这些 swarm 使用的还是小而经济的模型，那酷的程度还会指数级上升。</p>
-<p>这就是我们在本系列中要做的事！每篇博客都会包含一些关于构建 swarm 的背景，以及可在 Hugging Face Jobs 上运行的可复现示例。本文的示例在两块 H200 上大约需要五小时，成本约为 $50。</p>
-<p>多智能体系统很难真正跑通。增加 agent 会改变 agent 的上下文、预算，进而改变整个系统的复杂度。通过通信把各 agent 的上下文混合在一起，相比单个 agent 并不是内在的性能提升。模型需要通过训练学会通信。我们如何定义模型应该学什么？当我们面对许多 agent 时，又该更新哪些模型权重？</p>
-<p>在本系列中，我们将通过教学性概览和实践示例来逐个处理这些问题。每篇文章都会提出一个问题、构建一个小系统，并考察会发生什么以及你如何复现它。第一个示例从四个 agent、一个共享语言模型和一个简单的可验证任务开始。它非常适合你自己实现、动手折腾并从中学习。</p>
-<p>首先，我们会从一些关于 swarm 的背景开始。</p>
-<h2>swarm 的崛起</h2>
-<p>过去几个月里，我们听到了很多关于 swarm 的消息，有好有坏。今年九月，<a href="https://openai.com/index/navier-stokes-solution/">OpenAI 宣布</a>，一个约 10,000 个 agent 组成的 swarm 在三维 Navier-Stokes 方程中找到了一个奇点，这是千禧年大奖难题之一。一个由近 100 个 agent 组成的更小团队已经否证了无外力三维 Euler 方程的正则性，这是一个密切相关的开放问题。</p>
-<p>但 swarm 并不总是会去解决我们希望它们解决的问题。<a href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/">METR 对 Hugging Face 事件的调查</a>发现，约 1,200 个本应被隔离的 OpenAI agent 找到了交换超过 70,000 条消息和文件的方法。大约 700 个 agent 在寻找办法欺骗其 benchmark 评分器的过程中，参与了对 Hugging Face 的攻击，而它们并没有被指示这样做。</p>
-<p>一个大型 swarm 本身并不能证明合作起了作用。<a href="https://www.dwarkesh.com/p/noam-brown">Noam Brown 估计</a>，Navier-Stokes 成果中来自多智能体合作的部分不到 10%。在 <a href="https://www.anthropic.com/research/multiagent-systems">Anthropic 的漏洞发现实验</a>中，协调后的 agent 比独立 agent 发现了更多 bug，但也搜索了更多代码、使用了更多 token。当比较被限制在相同目录时，每百万 token 的结果大致相同。</p>
-<h2>合作有帮助，还是我们只是花了更多？</h2>
-<p>从最简单的情况开始。如果四个 agent 各自独立尝试一个任务，那么只要我们能判断哪个答案正确，至少有一个 agent 答对的概率就高于单次尝试。这为多智能体系统提供了一个有用的基线，但它并不能表明 agent 之间互相帮助了。它们可能只是有了更多次尝试。</p>
-<p>四次尝试的成本也是四倍。因此，更公平的比较是在相同预算下进行：如果四个 agent 各获得总 token 的四分之一，它们还能击败一个花掉全部 token 的 agent 吗？我们只能通过测试来找出答案，因为这取决于任务、模型以及工作如何划分。</p>
-<blockquote>本系列一直在问一个问题：当 agent 通信时，这真的有帮助吗，还是我们只是花了更多算力？</blockquote>
-<p>我们通过下面这个简单的预期来理解这个问题。</p>
-<p>图 1. 我们想要检验的预期示意图：在匹配预算下比较相互通信的 agent 与独立 agent。</p>
-<p>我们会把 agent 数量视为一个扩展维度，与 token 数和模型规模并列。有时增加 agent 会有帮助。有时协调会消耗掉我们原本希望节省的预算。关键在于把两者都测量出来。我们不会从 10,000 个 agent 开始。我们会从一个小团队和一个容易检查的任务开始。</p>
+<p><em>第一部分：理解 swarm，并训练它们相互通信</em></p>
+<p>这是一个写给有抱负读者的、同样有抱负的博客系列。我们（我们、社区、你）想构建自己的 agent swarm，因为它们令人兴奋、富有挑战，而且能力越来越强。更进一步，如果我们能训练自己的 agent 在 swarm 中协作，那会极其酷。如果这些 swarm 用的还是小型、可负担的模型，那酷的程度还会指数级上升。</p>
+<p>这就是本系列要做的事！每篇博客都会包含一些构建 swarm 的背景，以及可以在 Hugging Face Jobs 上运行的可复现示例。本文的示例在两块 H200 上大约需要五个小时，成本约为 $50。</p>
+<p>多智能体系统很难真正跑通。增加 agent 会改变 agent 的上下文、预算，进而改变整个系统的复杂度。通过通信把各 agent 的上下文混在一起，相对于单个 agent 并不是一种内生的性能提升。模型需要通过训练学会通信。我们如何定义模型应该学什么？而当我们要处理许多 agent 时，又该更新哪些模型权重？</p>
+<p>在本系列中，我们将通过教学式的概览和实际示例来逐个处理这些问题。每篇文章都会提出一个问题、搭建一个小系统，并考察发生了什么以及你如何复现它。第一个示例从四个 agent、一个共享语言模型和一个简单的可验证任务开始。它非常适合你自己实现、动手折腾并从中学习。</p>
+<p>首先，我们先从一些关于 swarm 的背景讲起。</p>
+<h2>swarm 的兴起</h2>
+<p>过去几个月里，我们听到很多关于 swarm 的消息，有好有坏。今年 9 月，<a href="https://openai.com/index/navier-stokes-solution/">OpenAI 宣布</a>一个由约 10,000 个 agent 组成的 swarm 在三维 Navier-Stokes 方程中找到了一个奇点，而这是千禧年大奖难题之一。一个规模更小、约 100 个 agent 的团队此前已经否证了无外力三维 Euler 方程的正则性，这是一个与之密切相关的开放问题。</p>
+<p>但 swarm 并不总是去做我们希望它们做的问题。<a href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/">METR 对 Hugging Face 事件的调查</a>发现，约 1,200 个本应相互隔离的 OpenAI agent 找到了交换超过 70,000 条消息和文件的办法。其中约 700 个在寻找办法欺骗其 benchmark 评分器的过程中，参与了对 Hugging Face 的攻击——并没有任何人指示它们这样做。</p>
+<p>一个庞大的 swarm 本身并不能证明协作帮上了忙。<a href="https://www.dwarkesh.com/p/noam-brown">Noam Brown 估计</a>，Navier-Stokes 那项成果中来自多智能体协作的部分不到 10%。在 <a href="https://www.anthropic.com/research/multiagent-systems">Anthropic 的漏洞发现实验</a>中，协同的 agent 比独立的 agent 找到了更多 bug，但也搜索了更多代码、消耗了更多 token。当比较被限制在相同的目录上时，每百万 token 的产出大致相当。</p>
+<h2>协作帮上了忙，还是我们只是花了更多？</h2>
+<p>从最简单的情形说起。如果四个 agent 各自独立尝试一个任务，那么至少有一个做对的概率会高于单次尝试——前提是我们能判断哪个答案是正确的。这为多智能体系统提供了一个有用的基线，但它并不能说明各 agent 之间互相帮助了。它们可能只是多试了几次。</p>
+<p>四次尝试的成本也是四倍。因此更公平的比较是在同等预算下进行：如果四个 agent 各分到总 token 的四分之一，它们还能胜过把这全部 token 都花掉的单个 agent 吗？我们只能通过实测才知道答案，因为这取决于任务、模型以及工作如何划分。</p>
+<blockquote>本系列会一直追问同一个问题：当 agent 之间通信时，它真的有用吗，还是我们只是花了更多算力？</blockquote>
+<p>我们通过下面这个简单的预期来理解那个问题。</p>
+<p>图 1。我们想要检验的预期示意：在匹配的预算下比较相互通信的 agent 与独立的 agent。</p>
+<p>我们会把 agent 数量当作一个 scaling 维度，与 token 数和模型规模并列。有时增加 agent 会有帮助，有时协调会消耗掉我们本想省下的预算。关键是把两者都测出来。我们不会从 10,000 个 agent 起步，而是从一个小编队、一个我们能轻松校验的任务开始。</p>
 <h2>多智能体系统与强化学习</h2>
-<p>早在语言模型被称为 swarm 之前，多智能体强化学习就已经在研究合作与竞争。</p>
-<p>单个 agent 的任务是一个马尔可夫决策过程：观察、行动、获得奖励。在一个团队中，所有人共享奖励，但每个 agent 只能看到世界的一部分。这是一个去中心化部分可观测马尔可夫决策过程：彼此是队友，但没有人能看到全貌。</p>
-<p>这带来了三个实际问题。第一，在每个 agent 学习的同时，队友一直在变化。第二，信用分配：当团队成功时，哪些行动应获得功劳？一支获胜的队伍可能包含较弱的行动，而我们最终可能会奖励它们。第三，一条消息会改变其他 agent 的观察，因此通信是我们正在训练的策略的一部分。</p>
-<p>一种常见的解决方案是集中式训练、分散式执行：训练使用整个团队的信息，但每个 agent 仅根据自己的观察行动。我们的第一个示例采用这种模式，并使用共享的团队奖励。</p>
-<p>agent 也可以通过不同方式组织。两个有用的起点是：</p>
-<ul><li><strong>层级结构。</strong> 一个 lead agent 把工作分配给 worker 并收集它们的结果。Anthropic 的 Research 系统就是这样工作的，每个 worker 有独立的上下文。Kimi K2.5 的 PARL 只训练 orchestrator，并保持 subagent 冻结，因此训练多智能体系统并不意味着要更新每个组件。参见 <a href="https://www.anthropic.com/research/multi-agent-research-system">Anthropic 的系统描述</a>和 <a href="https://www.kimi.com/en/blog/kimi-k2-5">Kimi 的技术博客</a>。</li><li><strong>分布式团队。</strong> 同伴之间互相发送消息，并决定何时读取自己的收件箱。没有 lead agent 分配动作。这就是我们在这里将采用的设置，它沿用了 <a href="https://huggingface.co/papers/2611.08615">s³: Simple Scaling of Swarms via Cooperative Multi-agent RL</a>中的信息聚合任务。</li></ul>
-<h2>我们的第一个实验：四个 agent 对数字排序</h2>
-<p>我们将复现 <a href="https://huggingface.co/papers/2611.08615">Simple Scaling of Swarms</a>中的信息共享任务，因为它可解释且易于实现。四个 agent 共享一个小型语言模型，并学习汇集它们各自知道的信息。</p>
-<p>每个 agent 会收到一个 1 到 99 的整数。它知道自己的分配值以及队友的名字。它最初不知道其他 agent 的数字。例如，四个私有分配值可能是“五”、“二十六”、“五”和“七十八”。重复值会保留在列表中，因此正确的最终答案是：</p>
+<p>早在语言模型被称作 swarm 之前，多智能体强化学习就已经在研究合作与竞争了。</p>
+<p>单个 agent 的任务是一个马尔可夫决策过程：观测、行动、获得奖励。在团队中，所有人共享奖励，但每个 agent 只看到世界的一部分。这就是一个去中心化的部分可观测马尔可夫决策过程：是队友，但没人看得到全貌。</p>
+<p>这带来三个实际问题。第一，在每个 agent 学习的过程中，队友一直在变。第二，信用分配：当团队成功时，哪些动作应得这份功劳？一支获胜的团队里可能包含糟糕的动作，而我们最终可能会奖励它们。第三，一条消息会改变其他 agent 观测到的东西，因此通信是我们正在训练的策略的一部分。</p>
+<p>一种常见的解决方案是集中式训练、分散式执行：训练时使用整个团队的信息，但每个 agent 只依据自己的观测行动。我们的第一个示例就采用这一模式，并配以共享的团队奖励。</p>
+<p>agent 也可以有不同的组织方式。两个有用的起点是：</p>
+<ul><li><strong>层级结构。</strong> 一个 lead agent 把工作分配给 worker，并收集它们的结果。Anthropic 的 Research 系统就是这样运作的，每个 worker 拥有独立的上下文。Kimi K2.5 的 PARL 只训练 orchestrator，让 subagent 保持冻结，因此训练一个多智能体系统并不意味着要更新每一个组件。参见 <a href="https://www.anthropic.com/research/multi-agent-research-system">Anthropic 的系统说明</a> 和 <a href="https://www.kimi.com/en/blog/kimi-k2-5">Kimi 的技术博客</a>。</li><li><strong>分布式团队。</strong> 对等节点互相发送消息，并自行决定何时读取收件箱。没有 lead agent 来分配动作。这就是我们在这里要用的设置，沿用 <a href="https://huggingface.co/papers/2611.08615">s³: Simple Scaling of Swarms via Cooperative Multi-agent RL</a> 中的信息聚合任务。</li></ul>
+<h2>我们的第一个实验：四个 agent 给数字排序</h2>
+<p>我们将复现 <a href="https://huggingface.co/papers/2611.08615">Simple Scaling of Swarms</a> 中的信息共享任务，因为它可解释、实现起来也直接。四个 agent 共享一个小语言模型，并学习把各自掌握的信息汇聚起来。</p>
+<p>每个 agent 收到一个 1 到 99 之间的整数。它知道自己的分配值和队友的名字，但一开始并不知道其他 agent 的数字。例如，四个私有的分配值可能是 “five”、“twenty-six”、“five” 和 “seventy-eight”。重复值会留在列表里，因此正确的最终答案是：</p>
 <pre><code>#### [5, 5, 26, 78]</code></pre>
-<p>当<strong>至少一个 agent 提交完整且排序正确的列表</strong>时，团队即成功。一个正确答案就足够了；成功不要求四个 agent 全部答对。在没有队友信息的情况下，一个 agent 无法可靠地推断出其他私有分配值。</p>
-<p>这意味着该任务还没有直接检验图 1。每个 agent 都掌握着其他人需要的信息，因此单个 agent，或者一个不发送消息的团队，无论重试多少次都无法成功。相反，该任务检验的是图 1 背后的前提：一个小型共享策略究竟能否学会通信，以及这需要花费多少 token？后续文章会转向一个单个 agent 可以独立解决的任务，在那里，匹配预算的比较才有意义。</p>
-<p>主要的通信工具是 <code>message(to, text)</code>、<code>read_messages()</code> 和 <code>check_notifications()</code>。通知会告诉 agent 存在未读消息；读取收件箱后，消息内容就可供使用。agent 可以发送私信，也可以向所有人广播。</p>
-<p>我们定义了一个四 agent 系统，使用<strong>一个共享的 Qwen3-0.6B 策略</strong>，每个 agent 有独立的上下文和私有输入。我们并不是在训练四个不同的模型。prompt 说明了任务和工具，包括共享分配值的必要性。</p>
-<p>图 2. 任务与训练循环。私有数字展示了一个可能的成功 episode；此图不是一段录制的对话，也不是对第 75 次更新时所学协议的主张。</p>
-<h3>团队奖励与每个问题八次尝试</h3>
-<p>在本文中，<em>team</em> 指一个 episode：四个 agent 对一个问题尝试一次。成功的团队会获得奖励，但奖励会因其使用的 token 而减少。失败的团队获得零奖励：</p>
+<p>当<strong>至少有一个 agent 提交了完整且排序正确的列表</strong>时，团队即成功。一个正确答案就足够了；成功并不要求四个 agent 都答对。在没有队友信息的情况下，一个 agent 无法可靠地推断出其他私有的分配值。</p>
+<p>这意味着该任务还没有直接检验图 1。每个 agent 都持有其他人需要的信息，因此单个 agent、或者一个不通信的团队，无论重试多少次都无法成功。相反，这个任务检验的是图 1 背后的前提：一个小的共享策略究竟能否学会通信，以及这要花多少 token？后续文章会转向一个单个 agent 就能独立解决的任务，在那里，同等预算的比较才有意义。</p>
+<p>主要的通信工具是 <code>message(to, text)</code>、<code>read_messages()</code> 和 <code>check_notifications()</code>。通知告诉 agent 存在未读消息；读取收件箱后，其内容才可获取。agent 可以发送直接消息，也可以向所有人广播。</p>
+<p>我们使用<strong>一个共享的 Qwen3-0.6B 策略</strong>定义了一个四 agent 系统，各 agent 拥有独立的上下文和私有的输入。我们并不是在训练四个不同的模型。prompt 说明了任务和工具，包括分享各自分配值的必要性。</p>
+<p>图 2。任务与训练循环。这些私有数字展示的是一个可能成功的 episode；此图不是一段真实记录的对话，也不是关于第 75 次更新时所学协议的主张。</p>
+<h3>团队奖励与每个问题的八次尝试</h3>
+<p>在本文中，<em>team</em> 指一个 episode：四个 agent 对一个问题尝试一次。成功的 team 会获得一份奖励，并按它消耗的 token 数扣减。失败的 team 得到零：</p>
 <pre><code>team allowance = 4 × (8,192 work tokens + 1,024 final-answer tokens)
                = 36,864 tokens
 
 reward = success × (1 − 0.25 × min(1, generated team tokens / 36,864))</code></pre>
-<p>举例来说，一个正确使用其额度一半的团队会得到 0.875。发送消息没有单独奖励。激励是在使用更少生成 token 的同时解决任务。</p>
-<p>对于每个训练问题，我们收集八个独立的团队尝试。它们的奖励在该组内归一化。表现优于组平均的尝试获得正 advantage；表现较差的尝试获得负 advantage。同一团队中的每个 agent 都会获得该团队的 advantage，包括自身最终答案错误的 agent。</p>
-<p>在 <a href="https://github.com/huggingface/trl">TRL</a> 中，每个 agent 采样的 token 构成一行训练数据。它接收到的消息和工具结果提供上下文。loss 先在每个团队内平均，然后在团队之间平均，因此较长的对话不会让某个团队获得更高权重。</p>
-<blockquote>我们的结果来自原始实验，该实验每次更新使用 256 次团队尝试（32 个问题，每个问题八次尝试）。操作演练使用 TRL 默认的 --teams-per-update 128，折算下来每次更新大约有 150 次团队尝试。</blockquote>
+<p>举例说明，一个正确的 team 若用掉一半额度，得到 0.875。发送消息没有单独的奖励。激励在于：在解决任务的同时使用更少的生成 token。</p>
+<p>对每一个训练问题，我们收集八次独立的 team 尝试。它们的奖励在该组内做归一化。表现优于组内平均的尝试得到正优势值；表现更差的得到负优势值。同一个 team 中的每个 agent 都会收到该 team 的优势值，包括自己最终答案错误的 agent。</p>
+<p>在 <a href="https://github.com/huggingface/trl">TRL</a> 中，每个 agent 采样出的 token 构成一个训练行。它收到的消息和工具结果提供上下文。loss 先在每个 team 内平均，再在各 team 之间平均，因此更长的对话不会让某个 team 获得更大的权重。</p>
+<blockquote>我们的结果来自原始实验，该实验每次更新使用 256 次 team 尝试（32 个问题 × 每个问题八次尝试）。下面的操作演练使用 TRL 的默认值 --teams-per-update 128，折算下来每次更新约 150 次 team 尝试。</blockquote>
 <h3>我们的结果</h3>
-<p>在 75 个 step 中，对比最初五次和最后五次更新，训练成功率从 <strong>6.6% 上升到 82.3%</strong>。在 checkpoint 75，四 agent 团队解决了 <strong>32 个 held-out 问题中的 26 个（81.25%）</strong>。<a href="https://huggingface.co/papers/2611.08615">论文</a>报告称，经过 200 次更新后，四 agent 成功率为 93.2%。</p>
-<p>该团队每次尝试使用的 token 也<strong>减少了 37.4%</strong>，从约 13k 降至 8k。这一改进伴随着更活跃的信息共享：每个团队的广播次数从 2.38 增加到 5.73，尽管总 token 使用量下降了。</p>
-<p>图 3. 蓝色曲线描述每次更新前收集的、包含 256 次团队尝试的训练批次。橙色点是指示更新之后的 held-out 检查结果。</p>
-<p>团队在训练后期也使用了更少的 token。对比最初五次更新与第 71–75 次更新：</p>
-<table><thead><tr><th><strong>训练指标</strong></th><th><strong>第 1–5 次更新，均值</strong></th><th><strong>第 71–75 次更新，均值</strong></th></tr></thead><tbody><tr><td>成功率</td><td>6.56%</td><td>82.34%</td></tr><tr><td>每个团队生成的 token</td><td>12,826.9</td><td>8,026.0</td></tr><tr><td>每个团队的消息数</td><td>3.48</td><td>6.28</td></tr><tr><td>每个团队的广播数</td><td>2.38</td><td>5.73</td></tr><tr><td>每个 agent 发送一次广播的团队占比</td><td>4.06%</td><td>18.20%</td></tr></tbody></table>
-<p>这意味着在这两个窗口之间，<strong>每个训练团队生成的 token 减少了 37.4%</strong>。在 batch 75 本身，每个团队的均值是 7,624 个 token。这些是训练测量值；我们没有保留训练后 checkpoint 的 held-out token 效率测量值。</p>
-<p>注意，更少的 token 并不意味着更少的消息。更多 agent 开始参与，但广播变得比直接发消息更常见。生成的 token 既包括消息正文，也包括推理和工具调用，因此仅凭消息数量并不能告诉我们团队生成了多少文本。</p>
-<p>图 4. 上：训练 token 使用量及过去五次更新的滑动均值。下：基于已发送消息事件的互斥通信类别。团队的分类顺序是：首先看是否有某个 agent 从不发送消息，然后看是否出现任何直接消息，再看是否每个 agent 恰好发送一次广播；剩余团队则重复广播。</p>
-<h3>更多重试，还是训练过的团队？</h3>
-<p>没有 agent 能独自解决该问题，因此与“带更多重试的单个 agent”最接近的对应物，是带更多重试的未训练团队。训练数据已经包含这一比较。每次更新会为每个问题收集八次尝试，而任务的答案很容易检查，因此只要八次尝试中有任何一次成功，我们就可以把该问题计为已解决。在训练早期，这个计数给出了未训练团队的 best-of-8 成功率：</p>
-<table><thead><tr><th></th><th><strong>成功率</strong></th><th><strong>每个问题生成的 token</strong></th></tr></thead><tbody><tr><td>未训练团队，8 次尝试中的最佳（第 1–5 次更新）</td><td>37.5%</td><td>约 103,000</td></tr><tr><td>训练后团队，一次尝试（第 71–75 次更新）</td><td>82.3%</td><td>约 8,000</td></tr></tbody></table>
-<p>在八次重试下，未训练团队解决的问题不到一半，并且花费的 token 约为训练后团队单次尝试的 13 倍。请将此视为估计值。两行使用的都是训练问题而非 held-out 问题，而且第 2–5 次更新已经是从略微训练过的策略中采样。</p>
+<p>在 75 步之内，训练成功率从 <strong>6.6% 升到 82.3%</strong>（比较最初五次与最后五次更新）。在 checkpoint 75，四 agent 团队解决了 <strong>32 个 held-out 问题中的 26 个（81.25%）</strong>。<a href="https://huggingface.co/papers/2611.08615">论文</a>报告在 200 次更新后四 agent 成功率为 93.2%。</p>
+<p>团队每次尝试使用的 token 也<strong>减少了 37.4%</strong>，从约 13k 降到 8k。这一改善伴随着更活跃的信息共享：尽管总 token 用量下降，每个 team 的广播次数从 2.38 增加到 5.73。</p>
+<p>图 3。蓝色曲线描述的是每次更新前收集的、包含 256 次 team 尝试的训练 batch。橙色点是所示更新之后的 held-out 检查结果。</p>
+<p>在训练后期，团队使用的 token 也更少。对比最初五次更新与第 71–75 次更新：</p>
+<table><thead><tr><th><strong>训练指标</strong></th><th><strong>第 1–5 次更新，均值</strong></th><th><strong>第 71–75 次更新，均值</strong></th></tr></thead><tbody><tr><td>成功率</td><td>6.56%</td><td>82.34%</td></tr><tr><td>每个 team 的生成 token 数</td><td>12,826.9</td><td>8,026.0</td></tr><tr><td>每个 team 的消息数</td><td>3.48</td><td>6.28</td></tr><tr><td>每个 team 的广播数</td><td>2.38</td><td>5.73</td></tr><tr><td>每个 agent 发一次广播的 team 占比</td><td>4.06%</td><td>18.20%</td></tr></tbody></table>
+<p>也就是说，在这两个窗口之间，<strong>每个训练 team 的生成 token 数减少了 37.4%</strong>。在第 75 个 batch 本身，每个 team 的均值为 7,624 个 token。这些是训练侧的测量；我们没有为训练后的 checkpoint 保留 held-out 的 token 效率测量。</p>
+<p>注意，token 更少并不意味着消息更少。更多 agent 开始参与，但变得更常见的是广播，而不是直接消息。生成 token 既包括消息正文，也包括推理和工具调用，所以单看消息数量无法告诉我们这个 team 到底产出了多少文本。</p>
+<p>图 4。上：训练 token 用量及其五次更新的滑动均值。下：基于已发送消息事件的互斥通信类别。team 的分类顺序是：先看是否有某个 agent 从不发送，再看是否出现任何直接消息，然后看是否每个 agent 都恰好发送一次广播；剩下的 team 属于重复广播。</p>
+<h3>更多重试，还是一个训练过的团队？</h3>
+<p>没有哪个 agent 能单独解决这个问题，所以与“单个 agent 加上更多重试”最接近的等价物，就是未训练的 team 加上更多重试。训练数据里已经包含了这个比较。每次更新都会为每个问题收集八次尝试，而该任务的答案很容易校验，因此只要八次尝试中有任意一次成功，我们就可以把这个题算作已解决。在训练早期，这个计数给出了未训练 team 的 best-of-8 成功率：</p>
+<table><thead><tr><th></th><th><strong>成功率</strong></th><th><strong>每个问题的生成 token 数</strong></th></tr></thead><tbody><tr><td>未训练的 team，8 次尝试取最佳（第 1–5 次更新）</td><td>37.5%</td><td>约 103,000</td></tr><tr><td>训练后的 team，单次尝试（第 71–75 次更新）</td><td>82.3%</td><td>约 8,000</td></tr></tbody></table>
+<p>有八次重试时，未训练的 team 解决不到一半的问题，却花掉约相当于训练后 team 单次尝试 13 倍的 token。请把这当作一个估计值来读。两行用的都是训练问题而不是 held-out 问题，而且第 2–5 次更新时采样的已经是一个经过些许训练的 policy 了。</p>
 <h3>基础设施</h3>
-<p>模型很小，但 rollout 规模不小。每次更新都会在最高 40k token 的上下文中生成数百万 token 的 agent 对话。我们使用一块 H200 作为 trainer，七块 H200 运行 vLLM rollout 引擎来快速完成这些 rollout，并把每个 worker 的八次尝试放在一起。下面的演练在两块 GPU 上运行同样的任务。以下是基础设施细节：</p>
-<table><thead><tr><th><strong>设置</strong></th><th><strong>记录的实验</strong></th></tr></thead><tbody><tr><td>共享策略</td><td>Qwen3-0.6B</td></tr><tr><td>每个团队的逻辑 agent 数</td><td>4</td></tr><tr><td>每次更新的问题数</td><td>32</td></tr><tr><td>每个问题的团队尝试数</td><td>8</td></tr><tr><td>每个 agent 的工作 / 最终答案 token 数</td><td>8,192 / 1,024</td></tr><tr><td>学习率 / temperature</td><td>5e-7 / 1.0</td></tr><tr><td>训练问题池</td><td>1,024 个生成问题</td></tr><tr><td>报告 endpoint</td><td>保留的 checkpoint 75</td></tr><tr><td>执行</td><td>1 块 trainer GPU + 7 块 rollout GPU</td></tr></tbody></table>
+<p>模型很小，但 rollout 并不小。每次更新都会在最高 40k token 的上下文下生成数百万 token 的 agent 对话。我们用一个 H200 做训练器，用七个 H200 运行 vLLM rollout 引擎以快速跑完这些 rollout，并把每个 worker 的八次尝试保持在一起。下面的操作演练在两块 GPU 上运行同一个任务。以下是基础设施细节：</p>
+<table><thead><tr><th><strong>设置</strong></th><th><strong>记录的实验</strong></th></tr></thead><tbody><tr><td>共享 policy</td><td>Qwen3-0.6B</td></tr><tr><td>每个 team 的逻辑 agent 数</td><td>4</td></tr><tr><td>每次更新的问题数</td><td>32</td></tr><tr><td>每个问题的 team 尝试数</td><td>8</td></tr><tr><td>每个 agent 的工作 / 最终答案 token</td><td>8,192 / 1,024</td></tr><tr><td>学习率 / temperature</td><td>5e-7 / 1.0</td></tr><tr><td>训练问题池</td><td>1,024 个生成的问题</td></tr><tr><td>汇报端点</td><td>保留的 checkpoint 75</td></tr><tr><td>执行</td><td>1 块训练 GPU + 7 块 rollout GPU</td></tr></tbody></table>
 <h2>实践示例：训练你自己的 swarm</h2>
-<p>上面的图表描述了我们最初的 75 次更新实验。在本演练中，我们将在 Hugging Face Jobs 上运行 <a href="https://github.com/huggingface/trl/tree/main/examples/async_grpo_s3_aggregation">TRL 的 swarm 示例</a>。一块 H200 用 vLLM 服务共享的 Qwen3-0.6B 策略，第二块 H200 训练它。</p>
-<h3>1. 为本次运行创建一个 bucket</h3>
-<p>使用能够运行 Jobs 并创建 bucket 的 Hugging Face 账户登录。将 <code>YOUR_USERNAME</code> 替换为你的 Hub 用户名。</p>
-<blockquote>每次运行都使用一个新的 bucket，以便先前的测量结果仍然可用。</blockquote>
+<p>上面的图表描述的是我们原始的 75 次更新实验。在这次操作演练中，我们将在 Hugging Face Jobs 上运行 <a href="https://github.com/huggingface/trl/tree/main/examples/async_grpo_s3_aggregation">TRL 的 swarm 示例</a>。一块 H200 用 vLLM 提供共享的 Qwen3-0.6B 策略，第二块 H200 负责训练它。</p>
+<h3>1. 为这次运行创建一个 bucket</h3>
+<p>用一个能够运行 Jobs 并创建 bucket 的 Hugging Face 账号登录。把 <code>YOUR_USERNAME</code> 替换为你的 Hub 用户名。</p>
+<blockquote>每次运行都使用一个新的 bucket，这样此前的测量结果仍然可用。</blockquote>
 <pre><code>uv tool install 'huggingface_hub==2.4.0'
 hf auth login
 BUCKET=&quot;YOUR_USERNAME/swarm-trl-$(date -u +%Y%m%d-%H%M%S)&quot;
 hf buckets create &quot;$BUCKET&quot;</code></pre>
 <h3>2. 在 Hugging Face Jobs 上运行 TRL 示例</h3>
-<p>将下面的脚本保存为当前目录中的 <code>train-swarm.sh</code>。</p>
+<p>把下面的脚本保存为你当前目录中的 <code>train-swarm.sh</code>。</p>
 <p><code>train-swarm.sh</code></p>
 <pre><code>set -eu
 git clone --depth 1 https://github.com/huggingface/trl /tmp/trl
@@ -259,35 +229,21 @@ kill &quot;$server&quot;
 wait &quot;$server&quot; || true
 serve /tmp/swarm/checkpoint-50 --logprobs-mode processed_logprobs
 evaluate /tmp/swarm/checkpoint-50 trained</code></pre>
-<p>下面的命令会将其内容发送到 job。在 job 内部，vLLM 在 GPU 0 上服务共享策略。GPU 1 使用 Trackio 运行 TRL 的 <code>async_grpo_s3_aggregation.py</code>，进行 50 次更新。TRL 的 <code>evaluate.py</code> 会在相同的 192 个 held-out 问题上为基座模型和 checkpoint 50 打分。这比我们结果中的 32 问题检查集更大，因此误差棒更紧。该 job 会把两个分数、checkpoint、Trackio 数据以及确切的 Git commit 保存到你的 bucket。</p>
+<p>下面的命令会把它的内容发送到 job。在 job 内部，vLLM 在 GPU 0 上提供共享策略。GPU 1 借助 Trackio 运行 TRL 的 <code>async_grpo_s3_aggregation.py</code>，共 50 次更新。TRL 的 <code>evaluate.py</code> 在同样的 192 个 held-out 问题上给基座模型和 checkpoint 50 打分。这比我们结果中 32 个问题的检查规模更大，误差棒也更紧。这个 job 会把两个分数、checkpoint、Trackio 数据以及确切的 Git commit 保存到你的 bucket。</p>
 <pre><code>hf jobs run --detach --flavor h200x2 --timeout 12h \
   --volume &quot;hf://buckets/$BUCKET:/results&quot; \
   -- vllm/vllm-openai:v0.32.0 bash -c &quot;$(cat train-swarm.sh)&quot;</code></pre>
-<p>一次 TRL rollout 包含一整段团队对话。trainer 会比较针对同一问题的八次尝试，并给一次尝试中的全部四个 agent 相同的 advantage。每次更新使用约 150 次团队尝试。TRL 按 token 数而非按团队打包 micro-batch，因此 <code>--teams-per-update 128</code> 设置是近似值。<code>--report-to trackio</code> 标志会在每次更新时记录训练指标。</p>
-<p>这次较短的运行比我们的原始实验更便宜，并且在学习曲线上更早停止。TRL 运行此示例时，在两块 H100 上耗时约 4.8 小时，并在 checkpoint 50 达到 60.9% 的 held-out 成功率。</p>
-<blockquote>若要更接近我们的原始实验，请将训练标志改为 --updates 75 --teams-per-update 256 --concurrent-teams 256，将脚本中的 checkpoint-50 替换为 checkpoint-75，并将 job 的 --timeout 提高到 24h。这样 rollout 数量会变成三倍。两个代码库在 system prompt 等细节上仍然不同，因此预期会得到相似结果，而不是精确复现。</blockquote>
+<p>一次 TRL rollout 包含一整个 team 对话。训练器会比较对同一个问题的八次尝试，并把同一个优势值给一次尝试中的全部四个 agent。每次更新大约使用 150 次 team 尝试。TRL 按 token 数而不是按 team 来打包 micro-batch，所以 <code>--teams-per-update 128</code> 这个设置是近似的。<code>--report-to trackio</code> 标志会在每次更新时记录训练指标。</p>
+<p>这次更短的运行比我们原始实验便宜，也在学习曲线上更早停下。TRL 运行这个示例在两块 H100 上花了大约 4.8 小时，在 checkpoint 50 达到 60.9% 的 held-out 成功率。</p>
+<blockquote>要更接近我们的原始实验，请把训练参数改为 --updates 75 --teams-per-update 256 --concurrent-teams 256，把脚本中的 checkpoint-50 换成 checkpoint-75，并把 job 的 --timeout 提高到 24h。那是三倍的 rollout 量。两套代码在 system prompt 等细节上仍然不同，所以请期待相近的结果，而不是精确复现。</blockquote>
 <h3>3. 读取结果</h3>
-<p>job 完成后，将 bucket 同步到本地文件夹。其中包含两个评估文件、Trackio 数据、TRL revision 以及 checkpoint-50 权重，后者是最大的下载项。在 dashboard 中，对比训练过程中的 <code>team/success</code>、<code>team/messages</code> 和 <code>team/tokens</code>。job 日志还会给出基座模型和 checkpoint 50 的 held-out 成功率。<code>base.jsonl</code> 或 <code>trained.jsonl</code> 的每一行记录其中一次评估尝试。</p>
+<p>job 完成后，把 bucket 同步到本地文件夹。里面有那两个评估文件、Trackio 数据、TRL 版本，以及 checkpoint-50 的权重——后者是最大的一笔下载。在 dashboard 中，对比训练过程中的 <code>team/success</code>、<code>team/messages</code> 和 <code>team/tokens</code>。job 日志也会给出基座模型和 checkpoint 50 的 held-out 成功率。<code>base.jsonl</code> 或 <code>trained.jsonl</code> 的每一行记录其中一次评估尝试。</p>
 <pre><code>hf buckets sync &quot;hf://buckets/$BUCKET&quot; ./swarm-results
 TRACKIO_DIR=&quot;$PWD/swarm-results/trackio&quot; uvx trackio show</code></pre>
 <h2>我们接下来会尝试什么</h2>
-<p>第一个示例为我们提供了一个小环境、一个共享奖励，以及一个在汇集私有信息方面不断改进的策略。它还说明了为什么需要把成功率、token 使用量和通信结构放在一起解读。在第 75 次更新时，团队已经能解决大多数被检查的问题，但尚未收敛到最简洁的通信模式。</p>
-<p>在接下来的示例中，我们会从训练中退后一步，看看如何评估和分析 swarm。</p>
-<p>目前，我们已经有了具体的基础可以继续构建：四个小 agent、一个可训练策略、一个可检查的任务，以及一种可复现的方式来考察团队学到了什么。</p>
-<h2>本文提到的论文 1</h2>
-<p>我们博客的更多文章</p>
-<p>rltrlagents</p>
-<h2>推出 harness 适配器：让你喜欢的模型适配你的 harness，以提升性能并优化成本</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63e0eea7af523c37e5a77966/B6Qs5bgr8wXcy2tPl6CVQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li><li>+6</li></ul>
-<p>158</p>
-<p>2026 年 11 月 20 日</p>
-<p>llmrltrl</p>
-<h2>跨 HF Jobs 使用 LoRA 的异步 GRPO：一个 bucket、一个 proxy，且无需 NCCL</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
-<p>55</p>
-<p>2026 年 9 月 10 日</p>
-<h3>社区</h3>
-<h2>本文提到的论文 1</h2>]]></content:encoded>
+<p>这第一个示例给了我们一个小环境、一个共享奖励，以及一个在汇聚私有信息上不断改进的策略。它也说明了为什么成功率、token 用量和通信结构需要放在一起读。在 75 次更新时，团队已经能解决大多数被检查的问题，但它还没有收敛到最干净的通信模式。</p>
+<p>在接下来的示例中，我们会从训练退后一步，看看我们如何评估和分析 swarm。</p>
+<p>目前，我们已有一些具体的东西可作基础：四个小 agent、一个可训练的策略、一个可校验的任务，以及一种可复现的方式来考察这个团队学到了什么。</p>]]></content:encoded>
     </item>
     <item>
       <title>科学家为 AI agent 划下的界线</title>

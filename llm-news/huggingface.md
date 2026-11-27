@@ -10,9 +10,9 @@
 
 ## 全部文章（共 949 篇，按日期倒序；无日期条目列于最后）
 
-1. [推出适用于 AMD Ryzen 和 Radeon 的 llama.cpp 基准仪表板](https://huggingface.co/blog/ggml-org/llamacpp-amd-bench)（2026-11-26） <!--orig:Introducing the llama.cpp benchmark dashboard for AMD Ryzen and Radeon-->
-2. [基于 Nemotron 3.5 Parse 构建：开放数据、微调和更快的推理](https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin)（2026-11-26） <!--orig:Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference-->
-3. [群体、群体、帮派：如何构建、训练和评估多智能体系统](https://huggingface.co/blog/training-swarms)（2026-11-26） <!--orig:Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems-->
+1. [推出面向 AMD Ryzen 与 Radeon 的 llama.cpp 基准测试仪表板](https://huggingface.co/blog/ggml-org/llamacpp-amd-bench)（2026-11-26） <!--orig:Introducing the llama.cpp benchmark dashboard for AMD Ryzen and Radeon-->
+2. [基于 Nemotron 3.5 Parse 构建：开放数据、微调与更快的推理](https://huggingface.co/blog/nvidia/building-on-nemotron-35-parse-open-data-fine-tunin)（2026-11-26） <!--orig:Building on Nemotron 3.5 Parse: Open Data, Fine-Tuning, and Faster Inference-->
+3. [Swarms、Flocks、Gangs：如何构建、训练与评估多智能体系统](https://huggingface.co/blog/training-swarms)（2026-11-26） <!--orig:Swarms, Flocks, Gangs: How to build, train, and evaluate multi-agent systems-->
 4. [科学家为 AI agent 划下的界线](https://huggingface.co/blog/allenai/where-scientists-draw-the-line-on-ai-agents)（2026-11-25） <!--orig:Where scientists draw the line on AI agents-->
 5. [用 CUGA 搭建印度语语音 agent](https://huggingface.co/blog/ibm-research/an-indic-voice-agent-with-cuga)（2026-11-25） <!--orig:An Indic Voice Agent with CUGA-->
 6. [在单台 RTX PRO 6000 上爬山调优 Inkling 2 Mini 推理](https://huggingface.co/blog/inkling-2-mini-inference-hillclimb)（2026-11-25） <!--orig:Hill-climbing Inkling 2 Mini inference on one RTX PRO 6000-->

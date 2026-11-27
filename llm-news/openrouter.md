@@ -9,7 +9,7 @@
 
 ## 全部文章（共 188 篇，按日期倒序；无日期条目列于最后）
 
-1. [杰文斯悖论成立吗？](https://openrouter.ai/blog/insights/is-jevons-paradox-holding/)（2026-11-26） <!--orig:Is Jevons Paradox holding?-->
+1. [Jevons 悖论还成立吗？](https://openrouter.ai/blog/insights/is-jevons-paradox-holding/)（2026-11-26） <!--orig:Is Jevons Paradox holding?-->
 2. [Claude 能生成图像吗？可以，借助连接器](https://openrouter.ai/blog/tutorials/can-claude-generate-images/)（2026-11-23） <!--orig:Can Claude Generate Images? Yes, with a Connector-->
 3. [推理服务提供商的数据处理事件](https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/)（2026-11-22） <!--orig:Data Processing Incidents on Inference Providers-->
 4. [OpenRouter 现在为 Hugging Face 提供推理支持](https://openrouter.ai/blog/announcements/hugging-face-inference-providers/)（2026-11-16） <!--orig:OpenRouter Now Powers Inference on Hugging Face-->
