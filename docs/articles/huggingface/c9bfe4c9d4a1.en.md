@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 97420720bce4
+body_sha: 5a9f50bde587
 ---
 
 # Open R1: Update #2
@@ -393,7 +393,6 @@ Were all the responses used during training, or was there a filtering step to se
 
 
 
-.
 
 
 

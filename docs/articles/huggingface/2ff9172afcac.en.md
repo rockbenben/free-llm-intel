@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a39cff32ec21
+body_sha: 59b56d7b249f
 ---
 
 # FastRTC: The Real-Time Communication Library for Python
@@ -317,7 +317,6 @@ Can you tell me a bit more about the use case [@JuanRoyo](https://huggingface.co
 
 
 
-.
 
 
 

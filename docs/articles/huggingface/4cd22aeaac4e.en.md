@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 973e9e6a476a
+body_sha: f49b317c9c93
 ---
 
 # Sentence Transformers is joining Hugging Face!
@@ -131,7 +131,3 @@ Nov 4, 2025
 
 
 This comment has been hidden
-
-
-
-.

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 829b23e326d9
+body_sha: 81dda253a397
 ---
 
 # Open LLM Leaderboard: DROP deep dive
@@ -147,9 +147,3 @@ Apr 27, 2025
 
 
 edited Apr 27, 2025
-
-.
-
-
-
-.

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 694ddbbc7880
+body_sha: 5aa229fa188c
 ---
 
 # Introducing Daggr: Chain apps programmatically, inspect visually
@@ -401,7 +401,6 @@ The ability to rerun individual nodes without triggering the entire inference st
 
 
 
-.
 
 
 

@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7849ca1c7c1a
+body_sha: 79ac017f229e
 ---
 
-返回文章列表
 
 # 用 3C3H 重新思考 LLM 评估：AraGen 基准与排行榜
 

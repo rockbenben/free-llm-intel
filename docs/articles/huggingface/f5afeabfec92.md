@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 59964c73d891
+body_sha: dee08f7e76e9
 translator: agent
 ---
 
-返回文章列表
 
 # Ecom-RLVE：面向电商对话智能体的自适应可验证环境
 

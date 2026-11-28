@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 15b7ad1b77ac
+body_sha: 1d72771540e5
 ---
 
 # Introducing Multimodal TextImage Augmentation for Document Images
@@ -286,7 +286,6 @@ July 18, 2024
 
 
 
-.
 
 
 

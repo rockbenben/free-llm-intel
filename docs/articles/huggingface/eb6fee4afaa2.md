@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7cead5391f95
+body_sha: 0d89b61e2118
 translator: agent
 ---
 
-返回文章列表
 
 # 介绍 SynthID Text
 

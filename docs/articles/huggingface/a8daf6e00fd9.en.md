@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4f5ed0a97d59
+body_sha: 1e223d0bc434
 ---
 
 # Kimina-Prover-RL
@@ -270,7 +270,6 @@ July 10, 2025
 
 
 
-.
 
 
 

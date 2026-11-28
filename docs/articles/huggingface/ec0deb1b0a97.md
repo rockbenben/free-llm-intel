@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5f2e09666fe3
+body_sha: 800987a721cd
 translator: agent
 ---
 
-返回文章列表
 
 # DeepMath：基于 smolagents 的轻量级数学推理智能体
 

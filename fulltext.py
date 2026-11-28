@@ -183,7 +183,7 @@ _FURN_ANYWHERE = {
     # 实测语料里「整行等于它、且从不出现在句子里」的站件（次数/文件数见注释）
     "Upvote",            # Hugging Face 投票按钮（1755 次 / 879 文件）
     "Published",         # 日期标签（878 / 878）
-    "Read paper",        # 论文 CTA（173 / 173）
+    "Read paper", "阅读论文", "View all topics", "查看所有主题", "查看全部主题",  # CTA/分类导航
     "Home",              # 页脚导航（88 / 86）
     "00:00", "0:00",     # 播放器时长占位
     "了解更多", "加入社区", "开始构建", "立即体验", "订阅更新",
@@ -208,7 +208,7 @@ _HF_COMMENT_LOGIN_RE = re.compile(
     r"\s*(?:to comment|(?:以|来)?发表评论)[。.]?", re.I)
 _HF_UPLOAD_IMAGE_RE = re.compile(
     r"(?:Tap or paste here to upload images|Click or paste here to upload images|"
-    r"(?:点击|点按)或粘贴此处(?:以)?(?:即可)?上传(?:图片|图像))[。.]?", re.I)
+    r"(?:点击|点按)或(?:在此)?粘贴(?:此处)?(?:以)?(?:即可)?上传(?:图片|图像))[。.]?", re.I)
 _HF_UPLOAD_MEDIA_RE = re.compile(
     r"(?:Upload images, audio, and videos by dragging in the text input, pasting, or clicking here"
     r"|(?:将|把)(?:文件|图像、音频和视频)拖(?:入|进)文本输入框[、,，]粘贴[、,，]\s*或\s*点击此处"
@@ -244,9 +244,9 @@ _FURN_SEPARATOR_RE = re.compile(r"^[\s•·⋅/⁠​‌‍﻿ ]+$")
 _TAG_LINK_RE = re.compile(r"^- \[[^\]]*\]\((?:[^)]*[?&](?:tags?|label)=)[^)]*\)$")
 _FURN_NAV_BEFORE_HEAD = {
     "产品", "研究", "博客", "公告", "首页", "发布", "刊发", "新闻中心", "返回新闻",
-    "所有博客文章", "全部博客文章",
+    "返回文章列表", "所有博客文章", "全部博客文章",
     "News", "Newsroom", "Products", "Research", "Blog", "Announcements", "Featured",
-    "All blog posts", "Back to news", "Back to News",
+    "All blog posts", "Back to news", "Back to News", "Blog Detail",
 }
 _META_CATEGORY_LABELS = {"分类", "Categories"}
 _META_TAG_LABELS = {"标签：", "标签:", "Tags:"}
@@ -531,11 +531,15 @@ def _hf_widget_drops(lines: Sequence[str], visible: list[int], fenced: set[int],
             drop[visible[j]] = "R14"
             explicit_controls.add(j)
 
-    # 兼容登录行已在旧轮被清掉、但因英文 "." 分行残留下来的上传控件提示
+    # 兼容登录行已在旧轮被清掉、但因英文 "." 分行残留下来的上传控件提示及孤立 "." / "-"
+    comm_pos = next((j for j, ln in enumerate(text) if ln in ("### Community", "### 社区")), None)
+    _hf_tail_boundary = re.compile(
+        r"^(?:## (?:Models|Datasets|Spaces|Papers|Collections) mentioned in this article|"
+        r"## 本文提到的|More Articles from our Blog|来自我们博客的更多文章)")
     for j in range(len(text)):
         if visible[j] in drop:
             continue
-        for span in range(1, min(4, len(text) - j + 1)):
+        for span in range(min(3, len(text) - j), 0, -1):
             if _HF_UPLOAD_MEDIA_RE.fullmatch(" ".join(text[j:j + span])):
                 after_j = j + span
                 if after_j < len(text) and _HF_UPLOAD_IMAGE_RE.fullmatch(text[after_j]):
@@ -548,6 +552,16 @@ def _hf_widget_drops(lines: Sequence[str], visible: list[int], fenced: set[int],
                 if not has_mismatched_login:
                     drop.update((visible[k], "R17") for k in range(j, j + span))
                 break
+        if (comm_pos is not None and j > comm_pos and text[j] == "."
+                and visible[j] not in drop):
+            nxt_j = j + 1
+            while nxt_j < len(text) and text[nxt_j] == ".":
+                nxt_j += 1
+            if nxt_j < len(text) and text[nxt_j] == "-":
+                nxt_j += 1
+            if nxt_j == len(text) or _hf_tail_boundary.match(text[nxt_j]):
+                for k in range(j, nxt_j):
+                    drop[visible[k]] = "R17"
 
     if header_date_j is not None:
         header_anchors.add(header_date_j)

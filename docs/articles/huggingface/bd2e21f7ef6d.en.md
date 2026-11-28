@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 05cdab3acc89
+body_sha: f55d177825a9
 ---
 
 # SAIR: Accelerating Pharma R&D with AI-Powered Structural Intelligence
@@ -176,7 +176,6 @@ Hi, I am having a really hard time finding AI datasets - publicly available to u
 
 
 
-.
 
 
 

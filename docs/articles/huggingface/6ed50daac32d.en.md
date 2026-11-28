@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 579475847960
+body_sha: d9962bb8769e
 ---
 
 # Tricks from OpenAI gpt-oss YOU 🫵 can use with transformers
@@ -539,7 +539,6 @@ If you can't wait for the PR to get merged and registered in PyPI, here's a patc
 
 
 
-.
 
 
 

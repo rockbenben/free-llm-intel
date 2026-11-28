@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 27b4138b4445
+body_sha: 128bcf3abfe7
 ---
 
 # Make LLM Fine-tuning 2x faster with Unsloth and 🤗 TRL
@@ -201,7 +201,6 @@ August 23, 2023
 
 
 
-.
 
 
 

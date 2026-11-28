@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0f5978806856
+body_sha: 89deb1d3f68d
 ---
 
 # Hugging Face Text Generation Inference available for AWS Inferentia2
@@ -280,7 +280,6 @@ May 9, 2024
 
 
 
-.
 
 
 

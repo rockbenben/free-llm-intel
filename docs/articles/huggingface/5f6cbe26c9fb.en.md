@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 37d99d054158
+body_sha: 184559db9f1c
 ---
 
 # Apriel-H1: The Surprising Key to Distilling Efficient Reasoning Models
@@ -228,7 +228,6 @@ June 9, 2026
 
 
 
-.
 
 
 

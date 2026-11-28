@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 831a4e2817a8
+body_sha: 75f4cc81059c
 translator: agent
 ---
 
-返回文章列表
 
 # 探索 Diffusers 中的量化后端
 

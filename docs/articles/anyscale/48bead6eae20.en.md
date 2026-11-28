@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 088ae0d2f14c
+body_sha: 8e404009ea24
 ---
 
-Blog Detail
 
 # Ray Datasets for large-scale machine learning ingest and scoring
 

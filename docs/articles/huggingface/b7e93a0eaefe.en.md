@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: dec94da4ca90
+body_sha: 99d6d3d569ea
 ---
 
 # Launching the Artificial Analysis Text to Image Leaderboard & Arena
@@ -109,7 +109,6 @@ November 20, 2024
 
 
 
-.
 
 
 

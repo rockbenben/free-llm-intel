@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 06717dce5db9
+body_sha: a02ed53e935d
 ---
 
 # 17 Reasons Why Gradio Isn't Just Another UI Library
@@ -374,7 +374,3 @@ Article author
 May 1, 2025
 
 yes, absolutely.
-
-
-
-.

@@ -8,12 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d2936f3961fd
+body_sha: 46dbd76c70a2
 ---
 
-
-
-Blog Detail
 
 # Anyscale signs definitive agreement to join Nscale
 

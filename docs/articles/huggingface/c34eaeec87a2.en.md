@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 12f958df1c0b
+body_sha: d612ca1ea8c3
 ---
 
 # Hugging Face and VirusTotal collaborate to strengthen AI security
@@ -99,7 +99,6 @@ What am I doing here?
 
 
 
-.
 
 
 

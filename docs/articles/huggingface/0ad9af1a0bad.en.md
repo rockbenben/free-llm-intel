@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-06
 extractor: readability-v1
 status: ok
-body_sha: de6806712495
+body_sha: cc2e81097ea3
 ---
 
 # Accelerate BERT inference with Hugging Face Transformers and AWS Inferentia
@@ -335,12 +335,3 @@ aws
 April 8, 2021
 
 ### Community
-
-
-
-.
-
-
-
-
--

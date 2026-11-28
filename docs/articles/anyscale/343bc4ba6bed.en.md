@@ -8,12 +8,9 @@ lang: en
 captured: 2026-10-08
 extractor: readability-v1
 status: ok
-body_sha: 9fe1fc32d1aa
+body_sha: d2185ea89462
 ---
 
-
-
-Blog Detail
 
 # Optimizing VLA Fine-Tuning Performance with LeRobot Datasets and Ray
 

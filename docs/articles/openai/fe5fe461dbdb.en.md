@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 90e1d63e1197
+body_sha: 4d60c3cad7de
 ---
-
 
 April 10, 2026
 
@@ -85,5 +84,3 @@ Learn about [getting started with ChatGPT](https://openai.com/academy/getting-st
 ## Continue learning with OpenAI Academy
 
 Discover additional guides and resources to help you build practical AI skills.
-
-View all topics

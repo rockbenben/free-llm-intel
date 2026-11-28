@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b3c5b8d1064e
+body_sha: 43278adf5940
 ---
 
 # Policy Gradient with PyTorch
@@ -200,12 +200,3 @@ trl
 September 3, 2026
 
 ### Community
-
-
-
-.
-
-
-
-
--

@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3472d98a1428
+body_sha: f254342e9c8e
 translator: agent
 ---
-
 
 2017 年 7 月 5 日
 
@@ -19,7 +18,6 @@ translator: agent
 
 # 事后经验回放
 
-阅读论文
 
 
 加载中……

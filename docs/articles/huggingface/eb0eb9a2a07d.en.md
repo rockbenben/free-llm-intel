@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 741b098879de
+body_sha: fa7aab7b8117
 ---
 
 # Exploring Quantization Backends in Diffusers
@@ -522,7 +522,6 @@ This comment has been hidden (marked as Resolved)
 
 
 
-.
 
 
 

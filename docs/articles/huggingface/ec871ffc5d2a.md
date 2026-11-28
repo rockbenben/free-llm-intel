@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a56258e3cea4
+body_sha: 94598bf99435
 translator: agent
 ---
 
-返回文章列表
 
 # mmBERT：ModernBERT 迈向多语言
 

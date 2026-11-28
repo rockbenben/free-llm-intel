@@ -8,12 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c829dfbcb655
+body_sha: f530844ffd82
 ---
 
-
-
-Blog Detail
 
 # Deep Dive: Data Ingest in a Third Generation ML Architecture
 

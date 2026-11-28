@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2fd6a44be810
+body_sha: 3aa893f3ba52
 ---
 
 # A Gentle Introduction to 8-bit Matrix Multiplication for transformers at scale using Hugging Face Transformers, Accelerate and bitsandbytes
@@ -467,7 +467,3 @@ nlp
 September 29, 2025
 
 ### Community
-
-
-
-.

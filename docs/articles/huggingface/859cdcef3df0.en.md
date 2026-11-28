@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 112acc0804fc
+body_sha: 58347c1c14ec
 ---
 
 # GPU Management: Why Idle GPUs Are the New Grounded Aircraft
@@ -184,7 +184,6 @@ I expect we will see GPU rental systems become a thing. There are a lot of high-
 
 
 
-.
 
 
 

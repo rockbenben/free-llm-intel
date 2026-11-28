@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 901c694667d9
+body_sha: a69f885fcb2b
 ---
 
 # The NLP Course is becoming the LLM Course!
@@ -142,7 +142,3 @@ ak-da3m0n
 Apr 15, 2025
 
 When is this going live?
-
-
-
-.

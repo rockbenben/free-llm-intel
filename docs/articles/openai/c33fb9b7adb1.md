@@ -8,17 +8,15 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: dc65653b7b46
+body_sha: b29beb08a7f4
 translator: agent
 ---
-
 
 2016 年 4 月 27 日
 
 
 # OpenAI Gym 公测版
 
-阅读论文
 
 
 加载中……

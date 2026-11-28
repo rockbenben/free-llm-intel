@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c827ac879645
+body_sha: 6208abe6b8cd
 ---
 
 # Asynchronous Robot Inference: Decoupling Action Prediction and Execution
@@ -250,7 +250,6 @@ Full writeup: nalinraut.github.io/blog/2026/inferential/
 
 
 
-.
 
 
 

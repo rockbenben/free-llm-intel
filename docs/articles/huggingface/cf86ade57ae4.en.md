@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: dcfa1c995d39
+body_sha: dadc32e79f2a
 ---
 
 # Illustrating Reinforcement Learning from Human Feedback (RLHF)
@@ -277,7 +277,6 @@ alexasadali2312
 
 
 
-.
 
 
 

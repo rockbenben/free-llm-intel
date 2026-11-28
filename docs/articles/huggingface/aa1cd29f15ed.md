@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3e2d2d9f4a10
+body_sha: d6a6e3c55514
 translator: agent
 ---
 
-返回文章列表
 
 # 面向文档图像的多模态 TextImage 增强登场
 

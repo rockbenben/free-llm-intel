@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 87574e66f7dc
+body_sha: 053d9649819c
 ---
 
 # The Open Arabic LLM Leaderboard 2
@@ -319,7 +319,6 @@ At the time of the release ( February 10, 2025) there was no ALLaM from SDAIA av
 
 
 
-.
 
 
 

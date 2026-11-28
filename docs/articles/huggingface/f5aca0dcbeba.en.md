@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5c727d7df68e
+body_sha: 1a1470cd2f5f
 ---
 
 # Democratizing AI Safety with RiskRubric.ai
@@ -115,7 +115,6 @@ We also have an AMA session to connect with the community and answer any further
 
 
 
-.
 
 
 

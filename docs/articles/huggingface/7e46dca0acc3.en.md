@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d3add47cde14
+body_sha: 1031d8e22c54
 ---
 
 # Getting Started With Embeddings
@@ -329,7 +329,6 @@ For your awareness, I believe the API URL for the all-MiniLM-L6-v2 transformer h
 
 
 
-.
 
 
 

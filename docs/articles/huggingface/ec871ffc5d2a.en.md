@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 49a1412de72a
+body_sha: 9753138c8972
 ---
 
 # mmBERT: ModernBERT goes Multilingual
@@ -722,7 +722,6 @@ This comment has been hidden
 
 
 
-.
 
 
 

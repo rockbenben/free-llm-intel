@@ -8,12 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 95daf710e84c
+body_sha: 99581ec2e215
 ---
 
-
-
-Blog Detail
 
 # Building Production AI Applications with Ray Serve
 

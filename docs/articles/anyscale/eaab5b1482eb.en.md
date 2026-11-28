@@ -8,12 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5a0dc7b68a3b
+body_sha: f6ef86bfb552
 ---
 
-
-
-Blog Detail
 
 # How Spotify Built a Robust Ray Platform with a Frictionless Developer Experience
 

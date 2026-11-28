@@ -8,12 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c6a4f5330a91
+body_sha: ee0e81a1604f
 ---
 
-
-
-Blog Detail
 
 # GPU (In)efficiency in AI Workloads
 

@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fc2e96860486
+body_sha: 1d3ef58aa894
 ---
-
 
 April 10, 2026
 
@@ -84,5 +83,3 @@ These features sound similar, but are best for different use cases. Below is a q
 ## Continue learning with OpenAI Academy
 
 Discover additional guides and resources to help you build practical AI skills.
-
-View all topics

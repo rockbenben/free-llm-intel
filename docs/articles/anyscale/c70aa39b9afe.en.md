@@ -8,12 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9f7aa93f1a38
+body_sha: 5d47dcc53881
 ---
 
-
-
-Blog Detail
 
 # Ray Serve: Advancing Flexibility with Async Inference, Custom Request Routing, and Custom Autoscaling
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 04aae98cff03
+body_sha: 1c1afb91b42f
 ---
 
 # Migrating the Hub from Git LFS to Xet
@@ -199,7 +199,3 @@ Jul 16, 2025
 Gotcha, didn’t realize it was global deduplication, that makes sense (*btw - is the deduplication done after upload then, or xet somehow compares diffs vs 20+ PB of data prior to upload?*).
 
 I’m not in the position where this impacts me at the moment (thankfully 🙏) and not my call but if the private storage is handled the same way it has some interesting.. implications. For example if people are paying for extra private storage, and their storage is being counted “full size” against limits whilst being deduplicated against the rest of the hub and therefore a fraction of that in reality, is that fair? Etc
-
-
-
-.

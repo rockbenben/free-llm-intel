@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: 2882c8b56708
+body_sha: 6a84e2a658e9
 ---
 
 # Getting the Source Right, Not Just the Fact: Source-Aware Verification for MCP Agents
@@ -176,7 +176,6 @@ However, part of our motivation is that introducing an LLM judge can itself give
 
 
 
-.
 
 
 

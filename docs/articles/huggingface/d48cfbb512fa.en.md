@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-06
 extractor: readability-v1
 status: ok
-body_sha: e14aa3e7d3e3
+body_sha: 30511f7cfe11
 ---
 
 # Using LoRA for Efficient Stable Diffusion Fine-Tuning
@@ -195,7 +195,6 @@ I'm particularly excited about the lower VRAM requirements. Being able to fine-t
 
 
 
-.
 
 
 

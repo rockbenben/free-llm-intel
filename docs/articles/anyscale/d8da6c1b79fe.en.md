@@ -8,12 +8,9 @@ lang: en
 captured: 2026-10-09
 extractor: readability-v1
 status: ok
-body_sha: 1c531f25f790
+body_sha: d1e9811baf5c
 ---
 
-
-
-Blog Detail
 
 # Ray on Alibaba Cloud: Building an ML Platform
 

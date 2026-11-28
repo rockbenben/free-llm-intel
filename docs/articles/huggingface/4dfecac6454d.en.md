@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3d6aaa369178
+body_sha: 74b062de382d
 ---
 
 # 🧨 Diffusers welcomes Stable Diffusion 3
@@ -331,7 +331,6 @@ June 18, 2026
 
 
 
-.
 
 
 

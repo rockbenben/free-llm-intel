@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 72b46464aa8e
+body_sha: 1b4a7427376c
 ---
 
 # Hugging Face partners with TruffleHog to Scan for Secrets
@@ -113,7 +113,6 @@ Kudos to the TruffleHog team for offering such a great tool to make our communit
 
 
 
-.
 
 
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9adf44d0f314
+body_sha: 297c2c705f6d
 ---
 
 # My Journey to a serverless transformers pipeline on 
@@ -207,7 +207,3 @@ datasets
 September 3, 2026
 
 ### Community
-
-
-
-.

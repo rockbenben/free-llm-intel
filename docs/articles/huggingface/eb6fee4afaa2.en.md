@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 01efd3ed8d9a
+body_sha: ea0b460bb424
 ---
 
 # Introducing SynthID Text
@@ -195,7 +195,6 @@ How can i get API access
 
 
 
-.
 
 
 

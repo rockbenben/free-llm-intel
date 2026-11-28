@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f8e1b64ccf3b
+body_sha: 8105cb9d9bd8
 translator: agent
 ---
-
 
 2018 年 7 月 26 日
 
@@ -19,7 +18,6 @@ translator: agent
 
 # 变分选项发现算法（Variational option discovery algorithms）
 
-阅读论文
 
 ## 摘要
 

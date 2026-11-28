@@ -8,12 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 42adc004c64c
+body_sha: 2b32cdc78045
 ---
 
-
-
-Blog Detail
 
 # Advances in Foundation Models — Technology, Society, and Applications
 

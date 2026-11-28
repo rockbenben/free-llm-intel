@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 62b817c905cc
+body_sha: 872a4af00eb6
 ---
 
 # The Technology Behind BLOOM Training
@@ -415,7 +415,6 @@ September 9, 2025
 
 
 
-.
 
 
 

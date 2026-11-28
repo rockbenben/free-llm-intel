@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9afb2a361e02
+body_sha: f7704c1307aa
 translator: agent
 ---
 
-返回文章列表
 
 # Hugging Face Accelerate 的多后端故事：FSDP 与 DeepSpeed
 

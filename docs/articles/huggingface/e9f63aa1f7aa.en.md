@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: e8ead5659149
+body_sha: e99f9b90bdd4
 ---
 
 # How UK AISI and EvalEval Are Making Benchmark Results Reproducible
@@ -154,7 +154,3 @@ Once you've watched a benchmark move just by changing inference-time compute or 
 One ask I'd put to teams adopting EEE: which fields get skipped first under deadline pressure (seed, tool access, attempt budget, oracle feedback), and do you treat a missing field as "do not cite the delta" rather than "assume defaults"?
 
 Reproducible reporting won't remove disagreement. It will make the disagreement about the right variables.
-
-
-
-.

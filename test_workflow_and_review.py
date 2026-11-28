@@ -12927,13 +12927,30 @@ class TestPageFurnitureStrip(unittest.TestCase):
         self.assertIn("Yuxin Chen", out_paper)
         self.assertIn("## Abstract", out_paper)
 
-        # Split upload prompt with whitespace before period (R17)
+        # Split upload prompt with whitespace before period (R17) & orphan "." inside Community tail
         upload_spaced = ("Upload images, audio, and videos by dragging in the text input, pasting, or\n"
                          "clicking here\n.\nTap or paste here to upload images\n"
                          "· [Sign up](https://huggingface.co/join?next=%2Fpapers%2F2605.27209) or "
                          "[log in](https://huggingface.co/login?next=%2Fpapers%2F2605.27209) to comment")
         self.assertEqual(ft.strip_page_furniture(f"# Paper\n\n### Community\n\n{upload_spaced}\n\nAfter.", paper_url),
                          "# Paper\n\n### Community\n\n\nAfter.")
+        orphan_dot = "# Blog\n\n### Community\n\n.\n\n.\n\n-\n\n## Models mentioned in this article 1"
+        self.assertEqual(
+            [ln for ln in ft.strip_page_furniture(orphan_dot, url).splitlines() if ln],
+            ["# Blog", "### Community", "## Models mentioned in this article 1"],
+        )
+        # Decoy: standalone "." mid-prose before Community must stay untouched
+        prose_dot = "# Blog\n\narXiv:2410\n\n.\n\n### Community\n\nReply."
+        self.assertEqual(ft.strip_page_furniture(prose_dot, url), prose_dot)
+
+        # Standalone labels in item 2: 返回文章列表 / Blog Detail / 阅读论文 / View all topics
+        self.assertEqual(ft.strip_page_furniture("返回文章列表\n\n# 标题\n\n正文", url).lstrip("\n"), "# 标题\n\n正文")
+        self.assertEqual(ft.strip_page_furniture("Blog Detail\n\n# Title\n\nBody", "https://www.anyscale.com/blog/x").lstrip("\n"),
+                         "# Title\n\nBody")
+        self.assertEqual(
+            [ln for ln in ft.strip_page_furniture("# 标题\n\n阅读论文\n\n正文\n\nView all topics", "https://openai.com/index/x").splitlines() if ln],
+            ["# 标题", "正文"],
+        )
 
     def test_cross_vendor_furniture_rules_and_guards(self):
         # R20 mistral trailing 0% (kept mid-body or on other hosts)

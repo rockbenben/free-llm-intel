@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 09ae8d582cf4
+body_sha: 63e434b61ace
 ---
 
 # HuggingFace, IISc partner to supercharge model building on India's diverse languages
@@ -146,7 +146,6 @@ I am interested in exploring partnership possibilities with Hugging Face. May I 
 
 
 
-.
 
 
 

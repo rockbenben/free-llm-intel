@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 16f70f315199
+body_sha: 93a41165c780
 ---
 
 2025年9月25日
@@ -20,7 +20,6 @@ body_sha: 16f70f315199
 
 我们推出 GDPval——一项全新评估指标，用于衡量模型在 44 个职业领域中具有经济价值的现实任务上的表现。
 
-阅读论文
 
 
 访问 evals.openai.com

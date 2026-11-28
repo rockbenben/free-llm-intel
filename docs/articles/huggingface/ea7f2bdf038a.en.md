@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e56b4416179c
+body_sha: 0eb8694665e3
 ---
 
 # Granite 4.0 Nano: Just how small can you go?
@@ -134,7 +134,6 @@ The whole Granite series is underrated. I've been training the Granite 3 and 4 s
 
 
 
-.
 
 
 

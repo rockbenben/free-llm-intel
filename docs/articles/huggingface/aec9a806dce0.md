@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f96cae87227e
+body_sha: 933ae8b3d711
 translator: agent
 ---
 
-返回文章列表
 
 # 面向大规模 transformers 的 8-bit 矩阵乘法入门：基于 Hugging Face Transformers、Accelerate 和 bitsandbytes
 

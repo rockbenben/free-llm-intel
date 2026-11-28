@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 71c9e5db91e6
+body_sha: aca6ffe829b5
 ---
 
 # NeoMME: an efficient Multimodal-native and Multilingual Encoder
@@ -329,7 +329,6 @@ Amazing
 
 
 
-.
 
 
 

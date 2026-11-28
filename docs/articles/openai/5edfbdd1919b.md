@@ -9,12 +9,11 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: b20843cfe6e9
+body_sha: 18317b973b06
 ---
 
 # 用时间分段模型进行预测与控制
 
-阅读论文
 
 ## 摘要
 

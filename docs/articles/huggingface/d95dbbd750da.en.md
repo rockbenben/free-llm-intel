@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8768351081d5
+body_sha: baf632fced94
 ---
 
 # Run ComfyUI workflows for free with Gradio on Hugging Face Spaces
@@ -612,7 +612,6 @@ Any progress on the fully automated workflow-to-app that was expected early 2025
 
 
 
-.
 
 
 

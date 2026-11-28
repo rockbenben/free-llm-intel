@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: 43612e57dfdd
+body_sha: 78e47f708aba
 ---
 
 # The Agent Said It Was Done. The Database Disagreed.
@@ -385,7 +385,6 @@ Practical check: can a run be marked done when the terminal-state fixture is red
 
 
 
-.
 
 
 

@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 3a717ac7162a
+body_sha: 4fefc1256ca5
 ---
-
 
 2018 年 2 月 26 日
 
@@ -25,7 +24,6 @@ Release
 查看 Baselines
 
 
-阅读论文
 
 
 Ben Barry

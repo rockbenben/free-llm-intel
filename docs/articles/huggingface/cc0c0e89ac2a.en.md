@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 74956aa17bde
+body_sha: 2e67862cfd31
 ---
 
 # Swift 🧨Diffusers: Fast Stable Diffusion for Mac
@@ -114,7 +114,3 @@ stable-diffusion
 December 1, 2022
 
 ### Community
-
-
-
-.

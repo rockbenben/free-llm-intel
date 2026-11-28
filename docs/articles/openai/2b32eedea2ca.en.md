@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 20a811dc5f5d
+body_sha: 1075e05dbe70
 ---
-
 
 April 10, 2026
 
@@ -59,5 +58,3 @@ For related tools and guidance, explore [the Google Drive integration](https://o
 ## Continue learning with OpenAI Academy
 
 Discover additional guides and resources to help you build practical AI skills.
-
-View all topics

@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8dc3da05bc46
+body_sha: 4389543a4ee0
 ---
-
 
 April 23, 2026
 
@@ -47,6 +46,5 @@ For related tools and guidance, explore [ChatGPT solutions for operations teams]
 
 Discover additional guides and resources to help you build practical AI skills.
 
-View all topics
 
 Explore ChatGPT Work

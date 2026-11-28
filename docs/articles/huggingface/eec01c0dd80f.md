@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2105a754ca85
+body_sha: 9004229487d1
 translator: agent
 ---
 
-返回文章列表
 
 # 推出 Daggr：以编程方式串联应用，以可视化方式检查
 

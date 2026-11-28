@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ed44aea16863
+body_sha: c0a70723aa4e
 ---
 
 # Mixture of Experts Explained
@@ -431,7 +431,6 @@ Chinchilla paper actually shows that for a fixed compute budget, it is better to
 
 
 
-.
 
 
 
