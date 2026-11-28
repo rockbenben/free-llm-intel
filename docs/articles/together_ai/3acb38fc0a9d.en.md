@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e27bf383ddcc
+body_sha: 373d7550c955
 ---
 
-All blog posts
 
 Inference
 
@@ -22,7 +21,6 @@ Published 9/16/2026
 A practical, five-stage playbook for moving from closed models to open source models: discover, evaluate, adapt, decide, and take it to production.
 
 - AuthorsKareem Abdol-Hamid, Zain Hasan, Sonny Khan
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/migrating-from-closed-to-open-source-models#)
 
 Migrations are the bane of any mature company. Systems are deeply integrated, you have key stakeholders across domains, and a small improvement can take months or years to integrate in traditional cases. Recently, the latest candidate for migration has been closed source to open source models (OSM). The promise of cost savings and distributed ownership of technology has always been compelling. Is it worth it though?
 
@@ -123,7 +121,3 @@ We understand that this is a very simplistic overview, but at its core we've see
 If you're going through a similar migration we encourage you to follow future blogs, or reach out to [sales@together.ai](mailto:sales@together.ai) for any questions. And we'd love any feedback on what may be missing here. Happy building!
 
 ## Related articles
-
-View All
-
-View All

@@ -12927,6 +12927,109 @@ class TestPageFurnitureStrip(unittest.TestCase):
         self.assertIn("Yuxin Chen", out_paper)
         self.assertIn("## Abstract", out_paper)
 
+        # Split upload prompt with whitespace before period (R17)
+        upload_spaced = ("Upload images, audio, and videos by dragging in the text input, pasting, or\n"
+                         "clicking here\n.\nTap or paste here to upload images\n"
+                         "· [Sign up](https://huggingface.co/join?next=%2Fpapers%2F2605.27209) or "
+                         "[log in](https://huggingface.co/login?next=%2Fpapers%2F2605.27209) to comment")
+        self.assertEqual(ft.strip_page_furniture(f"# Paper\n\n### Community\n\n{upload_spaced}\n\nAfter.", paper_url),
+                         "# Paper\n\n### Community\n\n\nAfter.")
+
+    def test_cross_vendor_furniture_rules_and_guards(self):
+        # R20 mistral trailing 0% (kept mid-body or on other hosts)
+        self.assertEqual(
+            ft.strip_page_furniture("# Title\n\nGrowth was 0%\n\n0%", "https://mistral.ai/news/x"),
+            "# Title\n\nGrowth was 0%\n",
+        )
+        self.assertEqual(
+            ft.strip_page_furniture("# Title\n\n0%", "https://example.com/news/x"),
+            "# Title\n\n0%",
+        )
+
+        # R10/R2 about.fb.com standalone 1x and consecutive duplicate date lines
+        meta_body = "# Title\n\nMeta\n\nSeptember 24, 2026\n\nSeptember 24, 2026\n\n1×\n\nProse."
+        self.assertEqual(
+            [ln for ln in ft.strip_page_furniture(meta_body, "https://about.fb.com/news/x").splitlines() if ln],
+            ["# Title", "Meta", "September 24, 2026", "Prose."],
+        )
+        self.assertEqual(
+            ft.strip_page_furniture("# Title\n\n1×", "https://example.com/news/x"),
+            "# Title\n\n1×",
+        )
+
+        # R21 together.ai marquee TOC vs real TOC
+        t_url = "https://www.together.ai/blog/aurora"
+        marquee = ("All blog posts\n\n# Aurora\n\n"
+                   "- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/aurora#)\n\n"
+                   "Body.\n\nView All")
+        self.assertEqual(
+            [ln for ln in ft.strip_page_furniture(marquee, t_url).splitlines() if ln],
+            ["# Aurora", "Body."],
+        )
+        real_toc = "# Aurora\n\n- Table of contents[Overview](https://www.together.ai/blog/aurora#overview)\n\nBody."
+        self.assertEqual(ft.strip_page_furniture(real_toc, t_url), real_toc)
+
+        # R22 claude.com broken share link + Webflow newsletter form states
+        c_url = "https://claude.com/blog/x"
+        claude = "\n\n".join([
+            "# Title",
+            "- Share[Copy link](https://claude.com/blog/x#)https://claude.com/blog/x",
+            "Body prose.",
+            "See pricing", "See pricing",
+            "### Get the developer newsletter",
+            "Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.",
+            "Thank you! You’re subscribed.",
+            "Sorry, there was a problem with your submission, please try again later.",
+        ])
+        self.assertEqual(
+            [ln for ln in ft.strip_page_furniture(claude, c_url).splitlines() if ln],
+            ["# Title", "Body prose."],
+        )
+
+        # R22 modular.com Webflow newsletter form states + CTAs
+        m_url = "https://www.modular.com/blog/x"
+        modular = "\n\n".join([
+            "# Title", "Body prose.", "Get started - FREE", "View Editions",
+            "## Sign up for our newsletter",
+            "Get all our latest news, announcements and updates delivered directly to your inbox. Unsubscribe at anytime.",
+            "Thanks for signing up to our newsletter! 🚀", "Thank you,", "Modular Sales Team",
+            "Oops! Something went wrong while submitting the form.",
+        ])
+        self.assertEqual(
+            [ln for ln in ft.strip_page_furniture(modular, m_url).splitlines() if ln],
+            ["# Title", "Body prose."],
+        )
+
+        # R23 & heading [#](...) permalink + Back to the blog on inference.net
+        i_url = "https://inference.net/blog/x"
+        inf = "\n\n".join([
+            "Aug 5, 2026", "# Title", "A", "Amar Singh",
+            "## [#](https://inference.net/blog/x/#why-it-matters)Why it matters",
+            "Prose mentioning [#](https://other.example/tag).",
+            "[ Back to the blog](https://inference.net/blog/)",
+        ])
+        self.assertEqual(
+            [ln for ln in ft.strip_page_furniture(inf, i_url).splitlines() if ln],
+            ["Aug 5, 2026", "# Title", "Amar Singh", "## Why it matters",
+             "Prose mentioning [#](https://other.example/tag)."],
+        )
+
+        # R24 github.com commit chrome
+        g_url = "https://github.com/groq/groq-changelog/commit/abc123"
+        gh = "\n\n".join([
+            "groq", "groq-changelog", "Public",
+            "- [ Fork 0 ](https://github.com/login?return_to=%2Fgroq%2Fgroq-changelog)",
+            "## File tree", "Expand file tree",
+            "### [`CHANGELOG.md`](https://github.com/groq/groq-changelog/commit/abc123#diff-1)",
+            "| `1` | `1` | `+Added model` |",
+            "## 0 commit comments", "Comments", "0", "(", "0", ")",
+        ])
+        self.assertEqual(
+            [ln for ln in ft.strip_page_furniture(gh, g_url).splitlines() if ln],
+            ["### [`CHANGELOG.md`](https://github.com/groq/groq-changelog/commit/abc123#diff-1)",
+             "| `1` | `1` | `+Added model` |"],
+        )
+
 
 class TestRenderOutputs(unittest.TestCase):
     """产出层：render_outputs 只写视图、可重复跑、不碰源（spec §3/§6）。"""

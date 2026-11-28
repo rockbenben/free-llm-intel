@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-21
 extractor: readability-v1
 status: ok
-body_sha: 60040ab76004
+body_sha: 8445ba866fb0
 ---
 
-All blog posts
 
 Model Library
 
@@ -22,7 +21,6 @@ Published 11/20/2026
 Keep one voice across your product, change its tone with a plain-language instruction and move it between 10 languages, with first audio in as little as 97ms.
 
 - AuthorsAnthony Ji, Charles Duong, Sebastien Beurnier, Sahil Yadav, Sonny Khan
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/qwen3-tts)
 - Links in this article[Compare voices in VoiceFinder](https://voicefinder.together.ai/)[Qwen3 TTS model page](https://www.together.ai/models/qwen3-tts-12hz-1-7b)[Text-to-speech docs](https://docs.together.ai/docs/text-to-speech)[Qwen's model card on Hugging Face](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice)
 
 Summary
@@ -288,7 +286,3 @@ Open [VoiceFinder](https://voicefinder.together.ai/) and select `Qwen/Qwen3-TTS-
 Yes, Qwen released Qwen3 TTS 12Hz 1.7B under the Apache 2.0 license. The weights are on Hugging Face.
 
 ## Related articles
-
-View All
-
-View All

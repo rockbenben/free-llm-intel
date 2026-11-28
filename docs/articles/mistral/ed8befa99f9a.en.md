@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2239e00f9577
+body_sha: 4b1707eaae05
 ---
 
 Product
@@ -108,5 +108,3 @@ Handoffs enable a seamless chain of actions. A single request can trigger tasks 
 ## Get started.
 
 To get started, check out our [docs](https://docs.mistral.ai/agents/introduction), create your first agent, and start building!
-
-0%

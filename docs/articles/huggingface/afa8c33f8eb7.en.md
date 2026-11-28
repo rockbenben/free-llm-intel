@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: 031d93d2ff0b
+body_sha: 2882c8b56708
 ---
 
 # Getting the Source Right, Not Just the Fact: Source-Aware Verification for MCP Agents
@@ -174,9 +174,7 @@ Hi, fair question. A source-aware LLM judge could do these checks, and we don’
 
 However, part of our motivation is that introducing an LLM judge can itself give inconsistent verdicts or confuse sources (the same kinds of errors we’re trying to catch). A second LLM call can therefore introduce new errors of its own. ProvenanceGuard uses explicit source tracking and calibrated support checks to reduce reliance on another generative judgment. The comparison you suggest would indeed be a useful further study to quantify the benefit in accuracy, latency and cost.
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

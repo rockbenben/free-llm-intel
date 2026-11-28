@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0e845d70cf4a
+body_sha: 82ca07513036
 ---
 
 # Transformers.js v3: WebGPU Support, New Models & Tasks, and More…
@@ -363,8 +363,6 @@ June 23, 2026
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

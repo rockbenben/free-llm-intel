@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d664224356f7
+body_sha: 024f3a37bdde
 ---
 
-All blog posts
 
 Model Library
 
@@ -22,7 +21,6 @@ Published 8/21/2026
 A statistical tie on the first attempt, and a 5.4x price gap that decides the rest.
 
 - AuthorsZain Hasan, Shobhit Dixit
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/glm-5-3-vs-claude-fable-5-on-deepswe-cost-coding-and-routing#)
 
 Key Takeaways
 
@@ -161,7 +159,3 @@ pass@k measures whether at least one of k attempts at a task passes the hidden t
 - Cascade assumes a verifier decides escalation and independence given the task. Expected accuracy is symmetric in order, cost is not, so lead with the lower-cost model. Given the 0.65 correlation, portfolio benefit is limited. The oracle router is the per-task best single-shot pick, an upper bound on any one-shot router.
 
 ## Related articles
-
-View All
-
-View All

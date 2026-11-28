@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 390b006db94b
+body_sha: e56b4416179c
 ---
 
 # Granite 4.0 Nano: Just how small can you go?
@@ -132,9 +132,7 @@ Nov 14, 2025
 
 The whole Granite series is underrated. I've been training the Granite 3 and 4 small models and they learn very quickly. They're my go-to models for specialized tasks.
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

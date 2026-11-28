@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-30
 extractor: readability-v1
 status: ok
-body_sha: 66a80ba5d6b3
+body_sha: 5b8503a9ed93
 ---
 
-All blog posts
 
 Model Library
 
@@ -20,7 +19,6 @@ Published 11/4/2025
 # Announcing the fastest inference for realtime voice AI agents
 
 - AuthorsRajas Bansal, Sahil Yadav, Garima Dhanania, Sri Yanamandra, Charles Zedlewski, Zain Hasan, Derek Petersen, Blaine Kasten, Sonny Khan, Rishabh Bhargava
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/the-fastest-inference-for-realtime-voice-ai-agents)
 - Links in this article[Playground](https://api.together.ai/playground/mistralai/Voxtral-Mini-3B-2507)[Speech-to-Text Documentation](https://docs.together.ai/docs/speech-to-text)[Text-to-Speech Documentation](https://docs.together.ai/docs/text-to-speech)[Model library](http://together.ai/models)‍
 
 Summary
@@ -183,7 +181,3 @@ This same approach to scale applies across our stack. Geographic distribution en
 **[Contact our sales](https://www.together.ai/contact-sales) team for enterprise options and dedicated infrastructure.
 
 ## Related articles
-
-View All
-
-View All

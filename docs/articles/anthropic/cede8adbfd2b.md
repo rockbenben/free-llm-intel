@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 961b05c60f8c
+body_sha: a6333d6ee134
 ---
 
 # T. Rowe Price 把更多 Claude 引入其投资流程
@@ -20,7 +20,6 @@ T. Rowe Price 的投资组合经理和分析师正借助 Claude 和 Claude Cowor
 - 产品：Claude 应用、[Claude Code](https://claude.com/product/claude-code)、[Claude Cowork](https://claude.com/product/cowork)
 - 日期：2026 年 9 月 10 日
 - 阅读时长：5 分钟
-- 分享：[复制链接](https://claude.com/blog/t-rowe-price-brings-more-of-claude-to-its-investment-process#)https://claude.com/blog/t-rowe-price-brings-more-of-claude-to-its-investment-process
 
 全球投资管理公司 T. Rowe Price 与 Anthropic 今日 [宣布扩大](https://www.prnewswire.com/news-releases/t-rowe-price-works-with-anthropic-to-bring-claude-to-more-of-its-investment-process-302875582.html) Claude 在该投资公司业务中的应用范围。这家全球投资管理公司的投资组合经理和分析师正借助 Claude 和 Claude Cowork 开展研究工作，其开发人员则用 Claude Code 构建投资工具。
 

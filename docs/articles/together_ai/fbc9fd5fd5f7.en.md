@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b5e0575e5588
+body_sha: 989fdee96b67
 ---
 
-All blog posts
 
 
 Published 12/17/2025
@@ -19,7 +18,6 @@ Published 12/17/2025
 # Research POV: Yes, AGI Can Happen – A Computational Perspective
 
 - AuthorsTogether AI
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/research-pov-yes-agi-can-happen#)
 - Links in this article[Yes, AGI Can Happen](https://danfu.org/notes/agi/)
 
 Summary
@@ -43,7 +41,3 @@ If you are interested in the intersection of systems engineering, hardware effic
 [Read Dan’s full analysis here.](https://danfu.org/notes/agi/)
 
 ## Related articles
-
-View All
-
-View All

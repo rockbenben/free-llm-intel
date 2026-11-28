@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0cf76a3aef83
+body_sha: e89309842e7e
 ---
 
 # Docmatix - A huge dataset for Document Visual Question Answering
@@ -111,9 +111,7 @@ July 16, 2024
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

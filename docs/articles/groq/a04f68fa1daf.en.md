@@ -8,39 +8,23 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 31e385a795a5
+body_sha: 463ef58abbad
 ---
 
-groq
 
 
-groq-changelog
 
-Public
 
-- [ Notifications ](https://github.com/login?return_to=%2Fgroq%2Fgroq-changelog) You must be signed in to change notification settings
-- [ Fork 0 ](https://github.com/login?return_to=%2Fgroq%2Fgroq-changelog)
-- [  Star  17 ](https://github.com/login?return_to=%2Fgroq%2Fgroq-changelog)
 
-## File tree
 
-Expand file tree
 
-Collapse file tree
 
-Open diff view settings
 
-Filter options
 
-- [CHANGELOG.md](https://github.com/groq/groq-changelog/commit/fc1e7dc66859b831b42594389098d756e06fcd0c#diff-06572a96a58dc510037d5efa622f9bec8519bc1beab13c9f251e97e657a9d4ed)
 
-Expand file tree
 
-Collapse file tree
 
-Open diff view settings
 
-Collapse file
 
 ### [`‎CHANGELOG.md‎`](https://github.com/groq/groq-changelog/commit/fc1e7dc66859b831b42594389098d756e06fcd0c#diff-06572a96a58dc510037d5efa622f9bec8519bc1beab13c9f251e97e657a9d4ed)
 
@@ -82,15 +66,3 @@ Lines changed: 16 additions & 0 deletions
 | `4` | `20` |  |
 | `5` | `21` | `### [ADDED] OpenAI GPT-OSS 20B & OpenAI GPT-OSS 120B` |
 |  |  |  |
-
-## 0 commit comments
-
-Comments
-
-0
-
-(
-
-0
-
-)

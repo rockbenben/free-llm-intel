@@ -9,10 +9,9 @@ captured: 2026-11-21
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: aff8d29869fa
+body_sha: 159e5cc43539
 ---
 
-所有博客文章
 
 模型库
 
@@ -23,7 +22,6 @@ body_sha: aff8d29869fa
 在整个产品里沿用同一个声音，用一句自然语言指令改变它的语气，还能在 10 种语言之间切换，首个音频最快 97ms 返回。
 
 - 作者：Anthony Ji、Charles Duong、Sebastien Beurnier、Sahil Yadav、Sonny Khan
-- 目录[40+ 个为生产环境选定的模型……40+ 个为生产环境选定的模型……40+ 个为生产环境选定的模型……](https://www.together.ai/blog/qwen3-tts)
 - 本文中的链接[在 VoiceFinder 中对比声音](https://voicefinder.together.ai/)[Qwen3 TTS 模型页](https://www.together.ai/models/qwen3-tts-12hz-1-7b)[文本转语音文档](https://docs.together.ai/docs/text-to-speech)[Qwen 在 Hugging Face 上的 model card](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice)
 
 摘要

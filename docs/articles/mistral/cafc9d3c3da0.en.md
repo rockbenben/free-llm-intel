@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 371093cbfb0b
+body_sha: 09632a21c30b
 ---
 
 Introducing 
@@ -91,5 +91,3 @@ If you're interested in joining us on our mission to bring seamless navigation t
 Read the [Robostral Navigate technical report](https://arxiv.org/abs/2607.20785) for the full architecture, training setup, and benchmark results.
 
 Report
-
-0%

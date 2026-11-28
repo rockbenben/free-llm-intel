@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0f00eda14c40
+body_sha: d78e64082738
 ---
 
 # Generating Human-level Text with Contrastive Search in Transformers 🤗
@@ -595,8 +595,6 @@ October 1, 2025
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

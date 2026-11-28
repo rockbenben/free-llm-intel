@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 82a41c9c4d66
+body_sha: e72b0ef05648
 ---
 
 # Profiling in PyTorch (Part 3): Attention is all you profile
@@ -513,9 +513,7 @@ about 1 month ago
 
 This comment has been hidden
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

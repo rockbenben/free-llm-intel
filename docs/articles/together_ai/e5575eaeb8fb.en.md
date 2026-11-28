@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f730730c5e37
+body_sha: bebfb49491cc
 ---
 
-All blog posts
 
 Company
 
@@ -20,7 +19,6 @@ Published 3/2/2026
 # Introducing Together AI’s new look
 
 - AuthorsTogether AI
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/introducing-together-ai-new-look#)
 
 If you’ve visited our website or explored our products recently, you might notice something new today. We’ve introduced a refreshed look for Together AI — one that better reflects our mission and approach. Today, we’re excited to share the story behind this evolution.
 
@@ -41,7 +39,3 @@ The new brand expresses the belief that new possibilities take form when knowled
 We hope you love the new look as much as we do — and that it continues to inspire what’s possible.
 
 ## Related articles
-
-View All
-
-View All

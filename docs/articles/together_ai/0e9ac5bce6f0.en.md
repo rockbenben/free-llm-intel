@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 10bd7131d4eb
+body_sha: b6a79c9819f4
 ---
 
-All blog posts
 
 Model Library
 
@@ -22,7 +21,6 @@ Published 8/1/2026
 Everything you need to run Moonshot AI's 2.8T open-weights model on the Together AI API: benchmarks, pricing, and copy-paste code.
 
 - AuthorsZain Hasan, Shobhit Dixit
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/kimi-k3-guide#)
 - Links in this article[Kimi K3 API & Playground](https://www.together.ai/models/kimi-k3)[ Kimi K3 vs. Fable 5](https://www.together.ai/blog/kimi-k3-vs-claude-fable-5-on-deepswe-cost-and-coding)[Kimi K3 vs GPT 5.6](https://www.together.ai/blog/kimi-k3-vs-gpt-5-6-sol-on-deepswe-cost-coding-and-routing)[ROI calculator](https://www.together.ai/open-model-roi-calculator)‍
 
 What you'll learn
@@ -538,7 +536,3 @@ Making K3 yours starts with a single API call.
 - Start building with the API: [read the docs](https://docs.together.ai/docs/quickstart)
 
 ## Related articles
-
-View All
-
-View All

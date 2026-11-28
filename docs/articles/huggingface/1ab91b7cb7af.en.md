@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f15c5b46c4b8
+body_sha: 96240d5bc161
 ---
 
 # Swift Transformers Reaches 1.0 – and Looks to the Future
@@ -160,8 +160,6 @@ Sep 27, 2025
 
 Cool to see 🍎 catching up
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 90ed592cefc4
+body_sha: 3fc22f435f07
 ---
 
 # **Deploy Hugging Face models easily with Amazon SageMaker 🏎**
@@ -326,8 +326,6 @@ February 1, 2024
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

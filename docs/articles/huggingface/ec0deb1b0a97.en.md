@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a13dd888d128
+body_sha: a8a25785af73
 ---
 
 # DeepMath: A lightweight math reasoning Agent with smolagents
@@ -191,9 +191,7 @@ May 7
 
 This comment has been hidden
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

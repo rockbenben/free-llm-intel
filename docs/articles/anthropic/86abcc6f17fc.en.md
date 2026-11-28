@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: abeee61ced53
+body_sha: 547cf185f034
 ---
 
 # Agentic coding is straining CI. Here’s how we scaled test impact analysis at Anthropic
@@ -19,7 +19,6 @@ Our CI job volume increased 25x over 6 months. We patched our test selection ser
 - Product[Claude Code](https://claude.com/product/claude-code)[Claude Enterprise](https://claude.com/solutions/enterprise)[Claude Tag](https://claude.com/product/tag)
 - DateSeptember 14, 2026
 - Reading time5min
-- Share[Copy link](https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic#)https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic
 - Author(s)Sachin Malhotra
 
 ## AI is evolving CI
@@ -192,17 +191,3 @@ The AI-native SDLC playbook
 The AI-native SDLC playbook
 
 ## Transform how your organization operates with Claude
-
-See pricing
-
-See pricing
-
-
-
-Get the developer newsletter
-
-Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.
-
-Thank you! You’re subscribed.
-
-Sorry, there was a problem with your submission, please try again later.

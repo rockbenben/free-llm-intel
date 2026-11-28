@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1c2135dd3a55
+body_sha: 702ca748867e
 ---
 
 # SetFitABSA: Few-Shot Aspect Based Sentiment Analysis using SetFit
@@ -303,9 +303,7 @@ October 1, 2025
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

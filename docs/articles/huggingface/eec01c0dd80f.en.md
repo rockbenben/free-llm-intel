@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 79f708a08fe2
+body_sha: 694ddbbc7880
 ---
 
 # Introducing Daggr: Chain apps programmatically, inspect visually
@@ -399,9 +399,7 @@ This is a solid approach to pipeline transparency. Working with Funnelsflex depl
 The ability to rerun individual nodes without triggering the entire inference stack is a huge win for debugging complex flexible workflows. I’m curious to see how it handles state management when scaling to high-concurrency environments, but for rapid prototyping and 'inspectable' AI apps, it’s a very clean implementation.
 [https://funnelsflex.io/](https://funnelsflex.io/)
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

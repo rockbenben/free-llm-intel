@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0d662301cc59
+body_sha: 19ee4ac34395
 ---
 
-All blog posts
 
 Model Library
 
@@ -22,7 +21,6 @@ Published 8/17/2026
 Fable wins the first attempt, Pro wins every attempt after, and the cheapest path is to use both.
 
 - AuthorsZain Hasan, Shobhit Dixit
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing#)
 
 Key Takeaways
 
@@ -144,7 +142,3 @@ pass@k measures whether at least one of k attempts at a task passes the hidden t
 
 
 ## Related articles
-
-View All
-
-View All

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-30
 extractor: readability-v1
 status: ok
-body_sha: 8c67b788959e
+body_sha: 522789e543f7
 ---
 
-All blog posts
 
 Model Library
 
@@ -22,7 +21,6 @@ Published 12/23/2025
 State-of-the-art multilingual TTS with human-level, emotionally aware voices in 40+ languages and real-time latency on dedicated, production-grade infrastructure.
 
 - AuthorsArielle Fidel, Rajas Bansal, Sahil Yadav, Rishabh Bhargava, Sonny Khan
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/minimax-speech-2-6)
 - Links in this article[MiniMax Speech 2.6 Turbo](https://www.together.ai/models/minimax-speech-2-6-turbo)[TTS Documentation](https://docs.together.ai/docs/text-to-speech)[X](https://x.com/togethercompute)[Discord](https://discord.gg/9Rk6sSeWEG)[We're hiring!](https://www.together.ai/about#careers) [Get Notified](https://www.together.ai/newsletter)‍
 
 Summary
@@ -172,7 +170,3 @@ Developer experience
 → [Contact Sales ](https://www.together.ai/contact-sales)for enterprise dedicated endpoint deployment and volume pricing
 
 ## Related articles
-
-View All
-
-View All

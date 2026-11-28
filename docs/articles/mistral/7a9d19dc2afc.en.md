@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 54003ad0a908
+body_sha: 701808e87ee2
 ---
-
 
 # Medium is the new large.
 
@@ -69,5 +68,3 @@ The Mistral Medium 3 API is available starting today on Mistral La Plateforme an
 ## One more thing…
 
 With the launches of [Mistral Small](https://mistral.ai/news/mistral-small-3-1) in March and Mistral Medium today, it’s no secret that we’re working on something ‘large’ over the next few weeks. With even our medium-sized model being resoundingly better than flagship open source models such as Llama 4 Maverick, we’re excited to ‘open’ up what’s to come :)
-
-0%

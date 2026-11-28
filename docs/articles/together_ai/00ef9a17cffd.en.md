@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e5046a9d940e
+body_sha: e67b265e724f
 ---
 
-All blog posts
 
 
 Published 2/23/2026
@@ -19,7 +18,6 @@ Published 2/23/2026
 # How speech models fail where it matters the most and what to do about it
 
 - AuthorsKaitlyn Zhou, Martijn Bartelds, Federico Bianchi, James Zou
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/how-speech-models-fail#)
 - Links in this article[arXiv paper](https://arxiv.org/abs/2602.12249)[Dataset](https://huggingface.co/datasets/kzhou/sf_streets)‍
 
 Summary
@@ -69,7 +67,3 @@ Our work highlights a persistent weakness in modern speech recognition. While ge
 To facilitate further research, we will be releasing both the [SF Streets dataset](https://huggingface.co/datasets/kzhou/sf_streets) and the larger US Streets benchmark. The US Streets set contains 3,600 recordings from 12 major U.S. cities. We hope these resources help the community move beyond aggregate metrics and focus on the reliability that matters most in deployment.
 
 ## Related articles
-
-View All
-
-View All

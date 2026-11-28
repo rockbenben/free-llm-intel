@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 15363fbf22d3
+body_sha: 741b098879de
 ---
 
 # Exploring Quantization Backends in Diffusers
@@ -520,9 +520,7 @@ Oct 25, 2025
 
 This comment has been hidden (marked as Resolved)
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

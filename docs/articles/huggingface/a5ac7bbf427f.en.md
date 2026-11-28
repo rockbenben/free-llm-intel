@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3f79e77df503
+body_sha: 097531c85fd1
 ---
 
 # A Hugging Face Accelerate Story of Multiple Backends: FSDP and DeepSpeed
@@ -180,9 +180,7 @@ October 29, 2024
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

@@ -14,12 +14,11 @@
       <guid isPermaLink="true">https://www.together.ai/blog/distilling-kimi-into-qwen?li=1</guid>
       <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
       <description>Full title: Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Shaping</p>
+      <content:encoded><![CDATA[<p>Model Shaping</p>
 <p>Published 11/26/2026</p>
 <h1>Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language</h1>
 <p>Qwen3.8-27B answered in Thai when we asked it for Lao. We distilled Kimi-K3.1-Pro's Lao translation into it with Together Post-Training and reached 93% of the teacher's score, with Thai intact.</p>
-<ul><li>AuthorsZain Hasan, Sonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/distilling-kimi-into-qwen">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation">Distillation cookbook on GitHub</a><a href="https://www.together.ai/post-training">Together Post-Training</a><a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a><a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a></li></ul>
+<ul><li>AuthorsZain Hasan, Sonny Khan</li><li>Links in this article<a href="https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation">Distillation cookbook on GitHub</a><a href="https://www.together.ai/post-training">Together Post-Training</a><a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a><a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a></li></ul>
 <p>Summary</p>
 <ul><li><strong>The gap:</strong> Qwen3.8-27B answers in Thai when asked for Lao and scores 5.5 chrF++, while Kimi-K3.1-Pro scores 47.5 on the same test.</li><li><strong>The fix:</strong> We trained a LoRA adapter on about 3,800 of Kimi-K3.1-Pro's translations using Together Post-Training.</li><li><strong>The result:</strong> The student writes Lao on every test sentence and scores 44.3, which is 93% of the teacher's score, and it keeps its Thai.</li><li><strong>The cost:</strong> All the experiments together cost \$260, and the code is in the post-training cookbook.</li></ul>
 <p>While running some experiments we found out that <a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a>, one of the most popular small language models (SLMs), can't write Lao, a Southwestern Tai language and the official language of Laos. If you ask it to translate an English sentence into Lao, it answers in Thai, Lao's closest relative, which uses an entirely different script. On the <a href="https://huggingface.co/datasets/Muennighoff/flores200">FLORES-200</a> Lao test set, the model scores 5.5 chrF++, a 0 to 100 score for how closely a translation matches a human reference, and only 11% of its outputs are in Lao script. <a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a> scores 47.5 on the same test.</p>
@@ -177,9 +176,7 @@ checkpoint = session.create_inference_checkpoint()  # registers the adapter (ml_
 <p>Loss is cross-entropy in nats per trained token. Trained tokens count only the assistant's translation tokens, the ones that carry loss, not the prompts. The five-language run is the one from &quot;Training on five languages&quot;.</p>
 <p>Three observations from these runs:</p>
 <ul><li>Kimi-K3.1-Pro's Lao is easier for the student to learn than human Lao. The human-reference run and the Lao-only distillation run translate the same FLORES dev sentences, yet the student starts at 0.54 nats per token on the human translations and 0.36 on Kimi-K3.1-Pro's, and finishes at 0.16 against 0.06. Our guess is that one model's translations are more consistent than a team of human translators', so the student has less to fit.</li><li>The loss drops at every epoch boundary, and held-out quality doesn't follow it. Each drop is the model meeting rows it has already seen. In the four Lao runs, training loss fell by more than half after the first epoch, while Lao chrF++ on the 300 test sentences moved by between −1 and +3 points. More data beat more passes: one epoch of the 4× data reached 43.2 on those sentences, against 41.3 after three epochs of the smaller Lao + Thai set.</li><li>The five-language run has the highest loss through its first epoch. Four of its five languages started well below the teacher, against one of two in the Lao runs.</li></ul>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Introducing Hurdle: Run agent evals on your API, skills, and…</title>
@@ -187,12 +184,11 @@ checkpoint = session.create_inference_checkpoint()  # registers the adapter (ml_
       <guid isPermaLink="true">https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs?li=1</guid>
       <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
       <description>Full title: Introducing Hurdle: Run agent evals on your API, skills, and docs</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 11/25/2026</p>
 <h1>Introducing Hurdle: Run agent evals on your API, skills, and docs</h1>
 <p>Hurdle is an open-source npm library that runs Claude Code and Codex against tasks on your platform, scores each run with code checks, guards and an LLM judge, and shows the pass rate by model and condition.</p>
-<ul><li>AuthorsMo King, Sam Barrowclough, Hassan El Mghari</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsMo King, Sam Barrowclough, Hassan El Mghari</li></ul>
 <p>If you’re building for developers, you already know that coding agents are one of the main ways devs access your API, SDK, and docs. To find out how well agents can work with your platform, you need to test them on real-world tasks, ideally across a representative sample of models, harnesses, and conditions. Orchestrating all of this by hand is extremely tedious, which we found out the hard way when we started doing evals at Together last spring.</p>
 <p>To automate the process, we spent the last six months building <a href="https://github.com/togethercomputer/hurdle">Hurdle</a>, an npm library for running agent evals. Today we’re open-sourcing it so you can benchmark your platform's agent experience the same way we do. Get started today with <code>npx hurdle init</code> or by asking your agent to set it up for you.</p>
 <h2>How Hurdle works</h2>
@@ -353,9 +349,7 @@ export default defineSuite({
 <p>After that, pick one task your users are already giving to their agents. Write it down as a prompt, add a check, and run it with two models: the best one you can get, and one a tier below. Repeat each a few times, since any single run might pass or fail by chance.</p>
 <p>Hurdle is open source on <a href="https://github.com/togethercomputer/hurdle">GitHub</a>, along with a guide in the README on how to write your own evals.</p>
 <p>Let us know if Hurdle finds a way to trip up your agents! We’d love to hear about any obstacles you discover and how you fixed them.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Introducing preemptible compute: the same compute, half the…</title>
@@ -363,12 +357,11 @@ export default defineSuite({
       <guid isPermaLink="true">https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price?li=1</guid>
       <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
       <description>Full title: Introducing preemptible compute: the same compute, half the price</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>GPU Clusters</p>
+      <content:encoded><![CDATA[<p>GPU Clusters</p>
 <p>Published 9/10/2026</p>
 <h1>Introducing preemptible compute: the same compute, half the price</h1>
 <p>Now in public preview for Together GPU Clusters: interruptible GPU compute, with a five-minute drain window and automatic refill toward your target.</p>
-<ul><li>AuthorsPavneet Ahluwalia, Varun Chakravarthy</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsPavneet Ahluwalia, Varun Chakravarthy</li></ul>
 <p>Today we're announcing the public preview of preemptible compute for Together GPU Clusters, available on Kubernetes clusters in all regions. Preemptible nodes give teams a lower-cost way to run interruption-tolerant work — short experiments, inference bursts, batch jobs — on the same GPU infrastructure they already use, billed sub-hourly at a flat 50% of the on-demand rate. You can add preemptible capacity to a new or existing cluster starting today.</p>
 <h2>How preemptible compute works</h2>
 <p>Preemptible compute adds a second compute type to Together GPU Clusters. Standard nodes are fulfilled synchronously and are never preempted. Preemptible nodes use the same NVIDIA accelerated compute, draw from un-used capacity, and can be reclaimed when that capacity is needed elsewhere.</p>
@@ -409,9 +402,7 @@ export default defineSuite({
 <p>Preemptible compute is now in public preview on Kubernetes clusters. Slurm support, additional regions, and in-place conversion between compute types are planned next.</p>
 <p>→ <a href="https://api.together.ai/clusters/create">Create a cluster</a></p>
 <p>→ <a href="https://docs.together.ai/docs/preemptible-compute">Read the docs</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Security event: Prompt leakage for requests in June and July…</title>
@@ -419,11 +410,10 @@ export default defineSuite({
       <guid isPermaLink="true">https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026?li=1</guid>
       <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
       <description>Full title: Security event: Prompt leakage for requests in June and July of 2026</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
+      <content:encoded><![CDATA[<p>Company</p>
 <p>Published 11/21/2026</p>
 <h1>Security event: Prompt leakage for requests in June and July of 2026</h1>
-<ul><li>AuthorsVipul Ved Prakash</li><li>Table of contents<a href="https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsVipul Ved Prakash</li></ul>
 <p>We are notifying customers about a security incident involving a subset of prompts submitted to Together AI’s serverless inference service in June and July 2026. An unauthorized party downloaded stored prompt samples after a credential for a private repository was exposed in a public code repository.</p>
 <p>We apologize for this incident. We are reviewing the affected data to determine what information was exposed and which customers require direct notification.</p>
 <h2>What happened</h2>
@@ -442,21 +432,18 @@ export default defineSuite({
 <p>If you have questions about this incident or its potential impact on your organization, contact security@together.ai.</p>
 <p><strong>Vipul Ved Prakash</strong></p>
 <p>CEO and Co-founder, Together AI</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Qwen4 Max is live on Together AI</title>
       <link>https://www.together.ai/blog/qwen4-max</link>
       <guid isPermaLink="true">https://www.together.ai/blog/qwen4-max?li=1</guid>
       <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 11/21/2026</p>
 <h1>Qwen4 Max is live on Together AI</h1>
 <p>Alibaba's flagship Qwen model is 30% off through November 22, 2026. We gave it a bug report and the whole Tornado repository in one request to see what a 1M-token context window is worth, and what it costs.</p>
-<ul><li>AuthorsSonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/qwen4-max">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max">Qwen4 Max in the playground</a><a href="https://www.together.ai/models/qwen4-max">Qwen4 Max model page</a><a href="https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max">Alibaba's announcement</a></li></ul>
+<ul><li>AuthorsSonny Khan</li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max">Qwen4 Max in the playground</a><a href="https://www.together.ai/models/qwen4-max">Qwen4 Max model page</a><a href="https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max">Alibaba's announcement</a></li></ul>
 <p>Summary</p>
 <ul><li><strong>Qwen4 Max on Together AI:</strong> Alibaba's flagship Qwen model is available on Together Serverless Inference with a 1M-token context window.</li><li><strong>What we tested:</strong> Qwen4 Max took a bug report and all 344 files of the Tornado repository in one request, and its patch passes the maintainers' tests.</li><li><strong>Sale pricing:</strong> Through November 22, 2026, it costs \$1.05 per 1M input tokens, \$0.0525 per 1M cached input tokens and \$3.15 per 1M output tokens.</li><li><strong>Before you call it:</strong> Requests have to stream, and thinking is on by default, with thinking tokens counted as output tokens.</li></ul>
 <p>We gave <a href="https://www.together.ai/models/qwen4-max">Qwen4 Max</a> a bug report and an entire codebase in one request. The codebase was Tornado, the Python web framework: all 344 files, 652,519 tokens. The model had no tools, and we didn't select relevant files or run a retrieval step first. Seventy-two seconds later it returned a patch, and the patch passes the tests Tornado's maintainers wrote for that bug. The request cost 69 cents.</p>
@@ -564,21 +551,18 @@ for chunk in stream:
 <p>Yes, prompt caching is automatic for Qwen4 Max on Together AI, and cached input tokens cost \$0.075 per 1M at list price. In our test, a repeat of a 630,000-token request came back almost entirely cached, and its first token arrived in 8 seconds instead of 54. Caching is best effort, so not every repeat is cached.</p>
 <h3>Can I fine-tune Qwen4 Max or run it on a dedicated endpoint?</h3>
 <p>No, Qwen4 Max is serverless only on Together AI today, and it isn't available for fine-tuning. Alibaba says smaller open-weight models from the Qwen4 series will follow.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Qwen3 TTS is now available on Together AI</title>
       <link>https://www.together.ai/blog/qwen3-tts</link>
       <guid isPermaLink="true">https://www.together.ai/blog/qwen3-tts?li=1</guid>
       <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 11/20/2026</p>
 <h1>Qwen3 TTS is now available on Together AI</h1>
 <p>Keep one voice across your product, change its tone with a plain-language instruction and move it between 10 languages, with first audio in as little as 97ms.</p>
-<ul><li>AuthorsAnthony Ji, Charles Duong, Sebastien Beurnier, Sahil Yadav, Sonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/qwen3-tts">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://voicefinder.together.ai/">Compare voices in VoiceFinder</a><a href="https://www.together.ai/models/qwen3-tts-12hz-1-7b">Qwen3 TTS model page</a><a href="https://docs.together.ai/docs/text-to-speech">Text-to-speech docs</a><a href="https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice">Qwen's model card on Hugging Face</a></li></ul>
+<ul><li>AuthorsAnthony Ji, Charles Duong, Sebastien Beurnier, Sahil Yadav, Sonny Khan</li><li>Links in this article<a href="https://voicefinder.together.ai/">Compare voices in VoiceFinder</a><a href="https://www.together.ai/models/qwen3-tts-12hz-1-7b">Qwen3 TTS model page</a><a href="https://docs.together.ai/docs/text-to-speech">Text-to-speech docs</a><a href="https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice">Qwen's model card on Hugging Face</a></li></ul>
 <p>Summary</p>
 <ul><li><strong>Qwen3 TTS on Together AI:</strong> Qwen's open text-to-speech model, on Together Serverless Inference and dedicated endpoints at \$20 per 1M characters.</li><li><strong>One voice, many deliveries:</strong> nine preset voices that change tone and emotion from a plain-language instruction such as &quot;excited and upbeat.&quot;</li><li><strong>10 languages per voice:</strong> every preset speaks Chinese, English, Japanese, Korean, German, French, Russian, Portuguese, Spanish and Italian.</li><li><strong>Built for real-time voice:</strong> first audio in as little as 97ms, with HTTP streaming and a WebSocket API for text that arrives in pieces.</li></ul>
 <p>Starting today, developers can run <a href="https://www.together.ai/models/qwen3-tts-12hz-1-7b">Qwen3 TTS</a> on Together AI, with first audio in as little as 97ms.</p>
@@ -726,21 +710,18 @@ asyncio.run(main())</code></pre>
 <p>Open <a href="https://voicefinder.together.ai/">VoiceFinder</a> and select <code>Qwen/Qwen3-TTS-12Hz-1.7B</code> in the model menu. You can preview each voice and generate up to 500 characters of your own text with it.</p>
 <h3>Is Qwen3 TTS open source?</h3>
 <p>Yes, Qwen released Qwen3 TTS 12Hz 1.7B under the Apache 2.0 license. The weights are on Hugging Face.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Tencent Hy4 is live on Together AI</title>
       <link>https://www.together.ai/blog/tencent-hy4</link>
       <guid isPermaLink="true">https://www.together.ai/blog/tencent-hy4?li=1</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 11/19/2026</p>
 <h1>Tencent Hy4 is live on Together AI</h1>
 <p>Tencent's flagship model now understands images as well as text, and developers can run it on Together Serverless Inference.</p>
-<ul><li>AuthorsSonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/tencent-hy4">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/tencent/Hy4">Hy4 in the playground</a><a href="https://www.together.ai/models/tencent-hy4">Tencent Hy4 model page</a><a href="https://www.tencent.com/tencent-launches-hy4-joining-the-ranks-of-the-worlds-leading-open-source-ai-models/">Tencent's announcement</a></li></ul>
+<ul><li>AuthorsSonny Khan</li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/tencent/Hy4">Hy4 in the playground</a><a href="https://www.together.ai/models/tencent-hy4">Tencent Hy4 model page</a><a href="https://www.tencent.com/tencent-launches-hy4-joining-the-ranks-of-the-worlds-leading-open-source-ai-models/">Tencent's announcement</a></li></ul>
 <p>TL;DR</p>
 <ul><li><strong>Tencent Hy4 on Together AI:</strong> Tencent's flagship model is now available on Together Serverless Inference with a 1M-token context window.</li><li><strong>Image input:</strong> Hy4 is the first model in the Hy family to accept images alongside text, and it supports tool calling and JSON output.</li><li><strong>What we tested:</strong> Hy4 read the values off one of our charts, rebuilt the chart as a webpage, then wrote a working browser game from one prompt.</li><li><strong>Serverless pricing:</strong> Hy4 costs \$0.83 per 1M input tokens, \$0.042 per 1M cached input tokens and \$2.50 per 1M output tokens.</li></ul>
 <p>Starting today, developers can run <a href="https://www.together.ai/models/tencent-hy4">Tencent Hy4</a> on Together Serverless Inference. Hy4 is Tencent's flagship model and the first in the Hy family to accept images alongside text.</p>
@@ -825,9 +806,7 @@ print(response.choices[0].message.content)</code></pre>
 <p>Yes, Tencent Hy4 accepts text and image input on Together AI and returns text, and it's the first model in Tencent's Hy family with vision. You send each image as an <code>image_url</code> block in the message content, as in the example above.</p>
 <h3>Does Tencent Hy4 support JSON output and tool calling?</h3>
 <p>Yes, Tencent Hy4 supports both on Together AI. You get JSON output by setting <code>response_format</code> to <code>{&quot;type&quot;: &quot;json_object&quot;}</code>, and you enable tool calling by passing your functions in the standard <code>tools</code> parameter.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Introducing Together Storage Accelerator: fast, free data ca…</title>
@@ -835,12 +814,11 @@ print(response.choices[0].message.content)</code></pre>
       <guid isPermaLink="true">https://www.together.ai/blog/introducing-together-storage-accelerator?li=1</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <description>Full title: Introducing Together Storage Accelerator: fast, free data caching for your GPU cluster</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>GPU Clusters</p>
+      <content:encoded><![CDATA[<p>GPU Clusters</p>
 <p>Published 11/19/2026</p>
 <h1>Introducing Together Storage Accelerator: fast, free data caching for your GPU cluster</h1>
 <p>A distributed cache on every GPU node: about 20x faster warm reads, one origin fetch per cluster, and no application changes. Included free with Together GPU Clusters.</p>
-<ul><li>AuthorsPavneet Ahluwalia, Vinamra Jain</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-together-storage-accelerator">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsPavneet Ahluwalia, Vinamra Jain</li></ul>
 <p>Your GPUs are only as fast as your data pipelines. Every training run that starts with a 30-minute model download, every node that re-pulls the same dataset from across the country, and every Hugging Face rate limit that stalls a job leads to compute resources sitting idle, waiting for your data, while you are paying for them.</p>
 <p>Today we're launching <strong>Together Storage Accelerator (TSA)</strong>, a distributed caching layer for Together GPU Clusters that alleviates the need for repeated data reads from object storage and Hugging Face Hub, dramatically accelerating your AI data pipelines while also cutting your data egress bills. TSA is now included <strong>free</strong> with every Together GPU Cluster.</p>
 <h2>The problem: your data lives far from your GPUs</h2>
@@ -872,9 +850,7 @@ export HF_ENDPOINT=http://tsa.tsa.svc.cluster.local:18080</code></pre>
 <p>Together Storage Accelerator is available now on Together GPU Clusters at no additional cost. Enable it from your cluster's Settings page, or see the <a href="https://docs.together.ai/docs/storage-accelerator">docs</a> to go from zero to accelerated in under ten minutes.</p>
 <p>→ <a href="https://api.together.ai/clusters/create">Create a cluster</a></p>
 <p>‍→ <a href="https://docs.together.ai/docs/storage-accelerator">Read the docs</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Last year we built megakernels. This year we deleted them: T…</title>
@@ -882,11 +858,10 @@ export HF_ENDPOINT=http://tsa.tsa.svc.cluster.local:18080</code></pre>
       <guid isPermaLink="true">https://www.together.ai/blog/road-to-together-compiler?li=1</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <description>Full title: Last year we built megakernels. This year we deleted them: The road to Together Compiler</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 11/16/2026</p>
+      <content:encoded><![CDATA[<p>Published 11/16/2026</p>
 <h1>Last year we built megakernels. This year we deleted them: The road to Together Compiler</h1>
 <p>Together Compiler uses AI agents to rewrite and fuse the GPU kernels in a model’s forward pass. It beats hand-written megakernels by 28% on B200 (2,118 vs 1,649 tokens/s on Llama 3.2 1B). This is how we got from one to the other.</p>
-<ul><li>AuthorsDylan Lim, Reyna Abhyankar, Simran Arora</li><li>Table of contents<a href="https://www.together.ai/blog/road-to-together-compiler">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsDylan Lim, Reyna Abhyankar, Simran Arora</li></ul>
 <h2>Introduction</h2>
 <p>AI inference is becoming increasingly heterogeneous. New model architectures are released every week, inference traffic shifts across different batch sizes and sequence lengths, and hardware platforms continue to proliferate. Achieving peak performance across all these regimes demands optimization frameworks that can keep up.</p>
 <p>Last year, we helped release some of the first AI <a href="https://hazyresearch.stanford.edu/blog/2025-05-27-no-bubbles"><em>megakernels</em></a>, where we executed an entire model forward pass within a single, highly fused GPU kernel. They reached record breaking speeds, but it was difficult to put them in production. After months of effort, we had a grand total of one model, one batch size, and one customer.</p>
@@ -1084,21 +1059,18 @@ launches:
 <h2>Wrapping Up</h2>
 <p>Driving TKCC from a traditional rule-based compiler to the agent-driven optimizer of today was a long road, but three lessons stood out. First, optimizations require high-fidelity measurements, and the wrong benchmarking choices (such as using random data) can lead to suboptimal kernel selection. Second, there is no one-size-fits-all kernel. The right optimizations vary across models, hardwares, and workloads and monolithic strategies cannot represent this space. Third, systems that build around agents should keep model improving capabilities in mind. Agents are sensitive to the scaffolding they are given, and frameworks that help early on can later become constraints.</p>
 <p>If your organization would like to try out the Together Compiler, <a href="https://www.together.ai/contact-sales">please reach out for early access</a>! And the research team is hiring, please reach out on our <a href="https://www.together.ai/careers">careers page</a>!</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Making open models work for long-horizon agentic workloads</title>
       <link>https://www.together.ai/blog/making-open-models-work-for-long-horizon-agentic-workloads</link>
       <guid isPermaLink="true">https://www.together.ai/blog/making-open-models-work-for-long-horizon-agentic-workloads?li=1</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 11/16/2026</p>
 <h1>Making open models work for long-horizon agentic workloads</h1>
 <p>What the harness and the inference engine each have to get right so a long agent session stays fast for long horizon tasks.</p>
-<ul><li>AuthorsZain Hasan, Parth Sareen (Ollama)</li><li>Table of contents<a href="https://www.together.ai/blog/making-open-models-work-for-long-horizon-agentic-workloads">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsZain Hasan, Parth Sareen (Ollama)</li></ul>
 <p>Summary</p>
 <p>Coding agents send the whole conversation again on every turn. Prefix caching keeps the inference engine from redoing that work, but only if the harness leaves the start of the prompt alone and the engine sends each turn back to the GPU that already has it cached. Together AI and Ollama work on opposite sides of that handoff, so we wrote down what each, the client side and the inference engine side, needs to do to successfully build agentic apps.</p>
 <p>Coding agents have an odd traffic pattern. Every time the agent takes a step, the harness sends the model the entire conversation so far: the system prompt, every tool definition, your request, every file the agent has read, and every command it has run. What comes back is usually a tool call a few dozen tokens long. Then it happens again, with everything from last time plus a little more.</p>
@@ -1170,22 +1142,19 @@ launches:
 <p>On the engine side, every turn goes back to the node that has the session cached. While the tests run, the cache waits in CPU memory. The reviewer's request slots into the running batch, and each turn processes only what's new.</p>
 <p>None of that is visible to the person using the agent; they just see it stay fast at turn ninety. But it only works if both sides do their part. A harness can keep the prompt perfectly stable and still lose the cache if the engine sends turn 7 to the wrong machine. An engine can route perfectly and still lose it if the harness changes the first line every turn.</p>
 <p>Parth writes more about building agents at <a href="http://parthsareen.com/">parthsareen.com</a>, and Ollama posts updates at <a href="http://ollama.com/blog">ollama.com/blog</a>. You can also read more about and run the open models mentioned here on <a href="https://www.together.ai/blog">https://www.together.ai/blog</a>.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>How we make Together AI easy for coding agents to use</title>
       <link>https://www.together.ai/blog/how-we-do-agent-evals-at-together-ai</link>
       <guid isPermaLink="true">https://www.together.ai/blog/how-we-do-agent-evals-at-together-ai?li=1</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
+      <content:encoded><![CDATA[<p>Company</p>
 <p>Published 11/16/2026</p>
 <h1>How we do agent evals at Together AI</h1>
 <p>Small fixes to our docs, skills, and API errors lifted task completion rate from 67% to 96%.</p>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afa9c3ab2afb145aa0ddad7_how-we-make-it-easy-for-agents-to-use-together-ai-hero.png" alt=""></p>
-<ul><li>AuthorsHassan El Mghari, Sam Barrowclough, Zain Hasan, Mo King</li><li>Table of contents<a href="https://www.together.ai/blog/how-we-do-agent-evals-at-together-ai">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsHassan El Mghari, Sam Barrowclough, Zain Hasan, Mo King</li></ul>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afa9c3ab2afb145aa0ddad7_how-we-make-it-easy-for-agents-to-use-together-ai-hero.png" alt=""></p>
 <p>Earlier this year, we started seeing more and more devs using coding agents to build with Together AI.</p>
 <p>It’s not hard to see why: It might take days or even weeks for a developer to wire up an app for production inference by hand, especially if they’re new to the platform. But for an agent using our SDK and CLI, it only takes a few minutes—at least in theory.</p>
@@ -1260,20 +1229,17 @@ launches:
 <h2>Run your own evals</h2>
 <p>If you’re running a dev platform, agents are using your product, or at least they’re definitely trying to. The best way to find out how well it’s going is to build your own evaluation system.</p>
 <p>To help with that, we’re open-sourcing the package we use to build our evals. You create a list of tasks (agent prompts) and decide how to score your runs (with code tests or an LLM judge). The package launches the agents, runs the tasks, and tracks everything in a local dashboard, so you can compare configurations and past runs. It’ll be available next week, along with another blog post on how to use it.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together Compiler: Continual Compilation for AI inference</title>
       <link>https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference</link>
       <guid isPermaLink="true">https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference?li=1</guid>
       <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 11/4/2026</p>
+      <content:encoded><![CDATA[<p>Published 11/4/2026</p>
 <h1>Together Compiler: Continual Compilation for AI inference</h1>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aead70e52653f2e9b22da01_2026-11-03-together-compiler.jpg" alt=""></p>
-<ul><li>AuthorsReyna Abhyankar, Dylan Lim, and Simran Arora</li><li>Table of contents<a href="https://www.together.ai/blog/together-compiler-continual-compilation-for-ai-inference">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://www.together.ai/blog/polymorphic-inference">Polymorphic Inference</a><a href="http://www.together.ai/together-compiler-paper">Paper</a></li></ul>
+<ul><li>AuthorsReyna Abhyankar, Dylan Lim, and Simran Arora</li><li>Links in this article<a href="https://www.together.ai/blog/polymorphic-inference">Polymorphic Inference</a><a href="http://www.together.ai/together-compiler-paper">Paper</a></li></ul>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6aead70e52653f2e9b22da01_2026-11-03-together-compiler.jpg" alt=""></p>
 <p>AI inference workloads are dynamic. There are thousands of regimes spanning new models, hardware platforms, customers, use cases, and traffic shapes. It’s no longer scalable to optimize each of these regimes by hand.</p>
 <ul><li>Architectures are highly variable: it’s been ~11 years since the Transformer. We might have thought there would be more consolidation, but none of the top-10 open-source LLMs on OpenRouter use the same architecture!</li><li>Workloads are highly variable: Together serves many trillions of tokens per day across thousands of customers, each with a different traffic shape (batch size, sequence length, MoE expert imbalance, attention sparsity, session duration, domain).</li><li>Hardware is highly variable: H100s, B200s, B300s, NVL72, VR, Groq, and more each require distinct strategies.</li></ul>
@@ -1325,21 +1291,18 @@ launches:
 <p>Check out our <a href="http://www.together.ai/together-compiler-paper">paper to learn more</a>.</p>
 <p>And if these frontiers of AI systems excite you, feel free to <a href="https://www.together.ai/contact-sales">reach out to us</a>!</p>
 <p><em>1 Trainium2 was run on a synthetic multi-turn dataset (70k ISL, 3.5k new ISL 95% cached, 700 OSL) instead of AgentX since our implementation does not yet support higher concurrencies on the limited HBM capacity.</em></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Polymorphic Inference: self-tuning inference for open models</title>
       <link>https://www.together.ai/blog/polymorphic-inference</link>
       <guid isPermaLink="true">https://www.together.ai/blog/polymorphic-inference?li=1</guid>
       <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
+      <content:encoded><![CDATA[<p>Company</p>
 <p>Published 11/4/2026</p>
 <h1>From Static to Polymorphic Inference: A new era for production open-source inference systems</h1>
 <p>As of today, many of the models you run through Together AI endpoints are fully optimized by AI agents: the world’s first production-scale recursive self-improvement (RSI) inference system.</p>
-<ul><li>AuthorsBy Simran Arora (SVP of Research, AI Systems) and Dan Fu (Founding SVP of Research)</li><li>Table of contents<a href="https://www.together.ai/blog/polymorphic-inference">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://www.together.ai/blog/together-compiler-continuous-compilation-for-ai-inference">Together Compiler</a></li></ul>
+<ul><li>AuthorsBy Simran Arora (SVP of Research, AI Systems) and Dan Fu (Founding SVP of Research)</li><li>Links in this article<a href="https://www.together.ai/blog/together-compiler-continuous-compilation-for-ai-inference">Together Compiler</a></li></ul>
 <p>Summary</p>
 <p><em>At Together AI, we focus on making AI abundantly available to every individual user and organization. Our research team – the researchers behind FlashAttention, ThunderKittens, ThunderAgent, and more – has been a key driver behind our inference excellence. As the inference market grows exponentially, we’ve been focusing on how to scale our research capacity to enable abundant intelligence for all.</em></p>
 <p>*This has required a shift in our thinking from Static Inference to **<strong>Polymorphic Inference</strong><strong> – which is our response to the velocity of new model releases, diversity of model architectures, fast-changing workloads, and fast-changing hardware platforms. In this blog, we’ll highlight our research agenda for the Polymorphic Inference era – and how we are continuously using AI agents to optimize their own inference with </strong><strong>Continuous Compilation</strong>**.*</p>
@@ -1385,9 +1348,7 @@ launches:
 <p>Inference is one of the most fascinating problems in AI Systems and we’ve unlocked a whole host of new insights through the scale at which we serve. To achieve our goal of making AI abundant for <em>everyone</em> we need our inference systems to continuously customize to each user and each workload in the Polymorphic Inference era. We’re excited to help close the loop and play a small role in making AI systems truly recursively self-improving.</p>
 <p>If the ideas behind Polymorphic Inference ring true to your organization or your use case, <a href="https://www.together.ai/contact-sales">please reach out for early access</a> – we’d love to help you navigate these new complexities.</p>
 <p>And lastly – if you want to help us tackle the challenge of Polymorphic Inference together, please take a look at our <a href="https://www.together.ai/careers">careers page</a> – we’re hiring!</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Auto repair for Together GPU Clusters: from GPU fault to hea…</title>
@@ -1395,12 +1356,11 @@ launches:
       <guid isPermaLink="true">https://www.together.ai/blog/auto-repair-for-together-gpu-clusters?li=1</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Auto repair for Together GPU Clusters: from GPU fault to healthy node</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>GPU Clusters</p>
+      <content:encoded><![CDATA[<p>GPU Clusters</p>
 <p>Published 10/27/2026</p>
 <h1>Auto repair for Together GPU Clusters: from GPU fault to healthy node</h1>
 <p>Health checks find the fault, the platform picks the lightest fix, and you decide what runs without a person in the loop, down to individual Xid codes.</p>
-<ul><li>AuthorsPavneet Ahluwalia, Dongsheng Zhang, Barbara Kazanowska</li><li>Table of contents<a href="https://www.together.ai/blog/auto-repair-for-together-gpu-clusters">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/clusters">Together GPU Clusters console</a><a href="https://docs.together.ai/docs/node-repair">Docs: Node repair</a><a href="https://docs.together.ai/docs/health-checks">Docs: Health checks</a></li></ul>
+<ul><li>AuthorsPavneet Ahluwalia, Dongsheng Zhang, Barbara Kazanowska</li><li>Links in this article<a href="https://api.together.ai/clusters">Together GPU Clusters console</a><a href="https://docs.together.ai/docs/node-repair">Docs: Node repair</a><a href="https://docs.together.ai/docs/health-checks">Docs: Health checks</a></li></ul>
 <p>At cluster scale, GPU faults are a reality. An Xid error, a double-bit ECC error, a GPU falling off the PCIe bus or a flapping InfiniBand link can stall a distributed training job or take an inference replica down. Spotting that something is wrong is usually the easy part. The hard part is everything between the fault and a healthy node again</p>
 <p>Earlier this year, we announced the launch of our fully Automatic node remediation features. Our GPU clusters customers and our internal Inference platform has been using this capability to help drive workload resiliency and minimize down time. Our customers love this capability, and we wanted to take some time break the system down and explain how it works and why we designed it this way.</p>
 <p>We first implemented “Passive health” checks system, that watches every node continuously, both inside your VM and on the host underneath it. When a check finds a fault, auto repair recommends the lightest action to fix and shows you supporting evidence behind the recommendation. You decide up front, fault by fault, whether a repair waits for approval or runs on its own. You also decide how long auto repair waits for running workload to finish. Your own detectors can open repairs through the same pipeline by writing a single annotation on a node.</p>
@@ -1461,9 +1421,7 @@ launches:
 <ul><li><strong>NVSwitch coverage.</strong> SXid faults, coalesced per node, with readable descriptions.</li><li><strong>Status back on the node.</strong> Repair progress written back as node metadata, so external detectors can close the loop where they opened it.</li><li><strong>One health surface.</strong> Click from a failed check to the repair it caused and back, plus a per-node view of health, events, and repair history.</li></ul>
 <p>Tell us what fails on your clusters that we don't catch yet. That list drives what we build next.</p>
 <p>-&gt; <a href="https://api.together.ai/clusters">Get started in the console</a> -&gt; Docs: <a href="https://docs.together.ai/docs/node-repair">Node repair</a> · <a href="https://docs.together.ai/docs/health-checks">Health checks</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together Post-Training: frontier-grade model shaping, the wa…</title>
@@ -1471,11 +1429,10 @@ launches:
       <guid isPermaLink="true">https://www.together.ai/blog/together-post-training?li=1</guid>
       <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Together Post-Training: frontier-grade model shaping, the way that fits you</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Fine-Tuning</p>
+      <content:encoded><![CDATA[<p>Fine-Tuning</p>
 <p>Published 10/19/2026</p>
 <h1>Together Post-Training: frontier-grade model shaping, the way that fits you</h1>
-<ul><li>AuthorsIvan Provilkov, Gleb Khaykin, Denis Mazur, Nikita Smetanin, Egor Timofeev, Conner Manuel, Felix Zhang, Alex Mazitov, Jasmine Li, Gleb Vazhenin, Sergei Vorobyov, Qingyang Wu, Derek Petersen, Arseniy Belorukov, Artem Chumachenko, Aman Singhal, Alpay Ariyak, Jisen Li, Vladimir Malinovskii, Maksim Abraham, Zhongzhu Zhou, Denis Fedorenko, Sonny Khan, David Wang, Jennifer Wu, Max Ryabinin</li><li>Table of contents<a href="https://www.together.ai/blog/together-post-training">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsIvan Provilkov, Gleb Khaykin, Denis Mazur, Nikita Smetanin, Egor Timofeev, Conner Manuel, Felix Zhang, Alex Mazitov, Jasmine Li, Gleb Vazhenin, Sergei Vorobyov, Qingyang Wu, Derek Petersen, Arseniy Belorukov, Artem Chumachenko, Aman Singhal, Alpay Ariyak, Jisen Li, Vladimir Malinovskii, Maksim Abraham, Zhongzhu Zhou, Denis Fedorenko, Sonny Khan, David Wang, Jennifer Wu, Max Ryabinin</li></ul>
 <p>We are introducing Together Post-Training, a new service for building custom models on our platform — both from environment rewards via RL and supervision data via SFT. This service is designed to give you flexible and efficient model shaping without the heavy infra burden.</p>
 <p>Together Post-Training makes it easy to define the training loop, while we co-optimize the systems and infrastructure underneath for model quality and training speed. Nothing now stands between you and the best model that is <em>uniquely yours</em>.</p>
 <h2>The value of custom models</h2>
@@ -1519,22 +1476,19 @@ launches:
 <p>With the launch of Together Post-Training, we’re turning frontier-grade model customization into a reliable, flexible and efficient service. The next step is for you to make the most of it. For the first eight weeks, we are offering Together Post-Training at a reduced price of $9 per GPU-hour of B200 usage. Learn how to <a href="https://docs.together.ai/docs/post-training/quickstart-rl">get started</a> today — we’re excited to see what you will build.</p>
 <p>But you don’t have to do this alone. For companies that want a partner, our forward-deployed engineers work alongside your team across the full post-training lifecycle. They’ll start with helping select the right open model and agent harness for your use case, work with you on your data and training environments, and then help with evaluations and shipping your own optimized endpoint.</p>
 <p>If you would like to collaborate with Together on training models for your organization, feel free to <a href="https://www.together.ai/contact-sales">reach out to us</a>.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Meta Muse Spark Open is live on Together AI</title>
       <link>https://www.together.ai/blog/meta-muse-spark-open</link>
       <guid isPermaLink="true">https://www.together.ai/blog/meta-muse-spark-open?li=1</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 10/15/2026</p>
 <h1>Meta Muse Spark Open is live on Together AI</h1>
 <p>Muse Spark Open, Meta's open-weight model for agentic coding, is live on Together AI with a 1M-token context window on serverless and dedicated infrastructure.</p>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6ad12692ffa1dba2fed09d76_TAI_Meta_1200x408.png" alt=""></p>
-<ul><li>Table of contents<a href="https://www.together.ai/blog/meta-muse-spark-open">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://research.meta.ai/blog/muse-spark-open">Meta's research blog</a></li></ul>
+<ul><li>Links in this article<a href="https://research.meta.ai/blog/muse-spark-open">Meta's research blog</a></li></ul>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6ad12692ffa1dba2fed09d76_TAI_Meta_1200x408.png" alt=""></p>
 <p>Meta's Muse Spark Open is available on Together AI today. We're a Day 0 launch partner for the most capable US open-weight model to date, built for long-running agentic coding workflows that keep entire codebases in context.</p>
 <p>Muse Spark Open is a step forward for agentic software engineering, computer use and web automation, and understanding documents, images, audio, and video together. Through our early access program, we offered it to select customers before launch. They evaluated it, prepared to offer it to their own customers on day 0, and shared real-world feedback with Meta.</p>
@@ -1560,9 +1514,7 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)</code></pre>
 <p>Pricing is $1.25 per 1M input tokens, $4.25 per 1M output tokens, and $0.15 per 1M cached input tokens. You can also try it in the playground.</p>
 <p><a href="https://api.together.ai/"><strong>Get started</strong></a> or <a href="https://api.together.ai/"><strong>‍</strong></a><a href="https://www.together.ai/contact-sales"><strong>Talk to an engineer</strong></a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Expanding our enterprise inference capacity with IBM Cloud a…</title>
@@ -1570,11 +1522,10 @@ print(response.choices[0].message.content)</code></pre>
       <guid isPermaLink="true">https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia?li=1</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Expanding our enterprise inference capacity with IBM Cloud and NVIDIA</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
+      <content:encoded><![CDATA[<p>Company</p>
 <p>Published 10/6/2026</p>
 <h1>Expanding our enterprise inference capacity with IBM Cloud and NVIDIA</h1>
-<ul><li>AuthorsKai Mak</li><li>Table of contents<a href="https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsKai Mak</li></ul>
 <p>We’re excited to share that Together AI is working with IBM and NVIDIA to scale enterprise-grade AI inference, starting with a large cluster of NVIDIA B300 GPUs on IBM Cloud backed by NVIDIA Spectrum-X Ethernet networking. It's the first dedicated, large-scale inference cluster of its kind on IBM Cloud, and we're the first customer running on it.</p>
 <h2>What's actually happening</h2>
 <ul><li><strong>The infrastructure</strong>: A dedicated NVIDIA B300 GPU cluster, purpose-built for inference, running on IBM Cloud.</li><li><strong>The model</strong>: We operate the inference layer, IBM provides the cloud, NVIDIA delivers the silicon and networking.</li><li><strong>The trajectory</strong>: We're planning for the future as token demand goes parabolic</li></ul>
@@ -1585,9 +1536,7 @@ print(response.choices[0].message.content)</code></pre>
 <ul><li>NVIDIA brings the silicon — B300 GPUs and Spectrum-X Ethernet networking engineered for high-throughput inference.</li><li>IBM brings decades of running mission-critical infrastructure for the world's largest enterprises.</li><li>Together AI brings the inference platform — the fastest, most efficient way to run open models in production, hardened by some of the most demanding AI workloads on the planet.</li></ul>
 <p>Put those together and the result is simple: enterprise-grade inference at massive scale – more production grade tokens, with the reliability, security and guardrails enterprises have come to expect.</p>
 <p>Open-source AI has to run everywhere, at scale, as fast and reliably as anything closed. We have spent the last few years making sure it can and this collaboration is a big step toward exactly that.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together Link: open models in the harness you already use. S…</title>
@@ -1595,12 +1544,11 @@ print(response.choices[0].message.content)</code></pre>
       <guid isPermaLink="true">https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use?li=1</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Together Link: open models in the harness you already use. Start with one command today.</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 10/5/2026</p>
 <h1>Together Link: frontier-quality open models in the harness you already use</h1>
 <p>Frontier open models in the coding agent you already use, for over 50% less</p>
-<ul><li>AuthorsWill Van Eaton, Hassan El Mghari</li><li>Table of contents<a href="https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://docs.together.ai/docs/togetherlink">Together Link docs</a><a href="https://together.ai/link">Together Link</a></li></ul>
+<ul><li>AuthorsWill Van Eaton, Hassan El Mghari</li><li>Links in this article<a href="https://docs.together.ai/docs/togetherlink">Together Link docs</a><a href="https://together.ai/link">Together Link</a></li></ul>
 <p>Summary</p>
 <p><a href="http://together.ai/link">Together Link</a> connects the harness your team already uses to the best open models on Together AI and cuts your spend by over 50%. Same agent, same workflow, a fraction of the bill.</p>
 <p>Coding agents are now commonplace for engineering teams, and every task you give them, from a one-line fix to a full rewrite, often runs on the same premium model. At scale that gets expensive quickly: engineering orgs are spending anywhere from tens of thousands to millions of dollars a month on closed models.</p>
@@ -1617,20 +1565,17 @@ print(response.choices[0].message.content)</code></pre>
 <p>Create a<a href="https://api.together.ai"> Together AI</a> account.</p>
 <p>Read our<a href="https://docs.together.ai/docs/togetherlink"> docs</a>.</p>
 <p>Rolling it out across your engineering org?<a href="https://www.together.ai/contact-sales"> Talk to our team</a> and we'll help you plan it.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>How to train your own Jev for $17</title>
       <link>https://www.together.ai/blog/how-to-train-your-own-jev</link>
       <guid isPermaLink="true">https://www.together.ai/blog/how-to-train-your-own-jev?li=1</guid>
       <pubDate>Wed, 23 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Fine-Tuning</p>
+      <content:encoded><![CDATA[<p>Fine-Tuning</p>
 <p>Published 9/23/2026</p>
 <h1>How to train your own Jev for $17</h1>
-<ul><li>AuthorsHassan El Mghari</li><li>Table of contents<a href="https://www.together.ai/blog/how-to-train-your-own-jev#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsHassan El Mghari</li></ul>
 <p>Summary</p>
 <p>We just launched our own Jev-like classifier, <a href="https://api.together.ai/models/together/Tev1-4B-experimental">together/Tev1-4B-experimental</a>, on top of Qwen3.5 4B on Together’s serverless platform. In this blog post we’ll show you how to fine-tune your own version!</p>
 <p>Jev has quickly become one of the most talked about model releases in the AI space. It’s a powerful classification model that’s both fast and incredibly cheap to run.</p>
@@ -1797,9 +1742,7 @@ tg endpoints stop ENDPOINT_ID
     </code></pre>
 <p>To use your model again later, restart the dedicated endpoint or use the Together hosted <code>together/Tev1-4B-experimental</code> version on our serverless platform.</p>
 <p>For about $17 in training costs and twenty-five minutes of waiting time, you now have your own fine-tuned classification model, deployed behind an HTTP endpoint, that answers in the format your software expects.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Canary rollouts: upgrade models in production without downti…</title>
@@ -1807,12 +1750,11 @@ tg endpoints stop ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/canary-rollouts-upgrade-models-in-production-without-downtime?li=1</guid>
       <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
       <description>Full title: Canary rollouts: upgrade models in production without downtime</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 9/22/2026</p>
 <h1>Canary rollouts: upgrade models in production without downtime</h1>
 <p>Staged traffic ramps, metric gates, and automatic rollback on dedicated inference.</p>
-<ul><li>AuthorsSiddhant Bharti, Zarni Phyo, Zain Hasan, Nikitha Suryadevara, Ted Cui</li><li>Table of contents<a href="https://www.together.ai/blog/canary-rollouts-upgrade-models-in-production-without-downtime#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://www.together.ai/blog/configuring-dedicated-model-inference">Dedicated Model Inference 101</a><a href="https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference">Autoscaling</a><a href="https://www.together.ai/blog/a-b-test-models-in-production">A/B Testing</a>📚 <strong>Docs:</strong> ‍<a href="https://docs.together.ai/docs/dedicated-endpoints/rollouts">Start a rollout</a>‍‍<a href="https://docs.together.ai/docs/dedicated-endpoints/rollout-metric-gates">Gate rollouts with metrics</a>‍‍<a href="https://docs.together.ai/reference/cli/endpoints-beta#rollout">CLI reference</a><a href="https://docs.together.ai/reference/dmi/rollouts-create">API reference: Create a rollout</a>‍</li></ul>
+<ul><li>AuthorsSiddhant Bharti, Zarni Phyo, Zain Hasan, Nikitha Suryadevara, Ted Cui</li><li>Links in this article<a href="https://www.together.ai/blog/configuring-dedicated-model-inference">Dedicated Model Inference 101</a><a href="https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference">Autoscaling</a><a href="https://www.together.ai/blog/a-b-test-models-in-production">A/B Testing</a>📚 <strong>Docs:</strong> ‍<a href="https://docs.together.ai/docs/dedicated-endpoints/rollouts">Start a rollout</a>‍‍<a href="https://docs.together.ai/docs/dedicated-endpoints/rollout-metric-gates">Gate rollouts with metrics</a>‍‍<a href="https://docs.together.ai/reference/cli/endpoints-beta#rollout">CLI reference</a><a href="https://docs.together.ai/reference/dmi/rollouts-create">API reference: Create a rollout</a>‍</li></ul>
 <p>Summary</p>
 <p>Rollouts move live traffic from your current model to a new checkpoint in gated steps. Health checks always run before traffic moves; on a canary you can also add metric gates (say p95 latency or error rate) that run after each step. If a gate trips, the rollout pauses at the canary share and you cancel it and run it in reverse. Below we run one for real: a Qwen2.5-7B → Qwen3.5-9B canary whose gate caught a 137% p95 regression at 10% of traffic; we canceled and reversed it with live requests served and none failed.</p>
 <h2>Swapping models is common practice</h2>
@@ -2090,9 +2032,7 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
 <p><strong>3. Watch it</strong> with <code>tg beta endpoints get $ENDPOINT_ID</code> (or the endpoint's Rollouts tab in the console) as it progresses through the steps. Pause, promote or cancel it with <code>tg beta endpoints rollout $ENDPOINT_ID --pause | --promote | --cancel</code>.</p>
 <p>Throughout, the endpoint URL and your clients stay unchanged; only the model behind them moves.</p>
 <p>📚 <strong>Docs:</strong> <a href="https://docs.together.ai/docs/dedicated-endpoints/rollouts">Start a rollout</a> · <a href="https://docs.together.ai/docs/dedicated-endpoints/rollout-metric-gates">Gate rollouts with metrics</a> · <a href="https://docs.together.ai/reference/cli/endpoints-beta#rollout">CLI reference</a> · <a href="https://docs.together.ai/reference/dmi/rollouts-create">API reference: Create a rollout</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>How a global fintech scaled coding agent traffic with Dedica…</title>
@@ -2100,11 +2040,10 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
       <guid isPermaLink="true">https://www.together.ai/blog/global-fintech-scales-coding-agent-traffic-with-dedicated-model-inference?li=1</guid>
       <pubDate>Fri, 18 Sep 2026 00:00:00 +0000</pubDate>
       <description>Full title: How a global fintech scaled coding agent traffic with Dedicated Model Inference</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 9/18/2026</p>
 <h1>How a global fintech scaled coding agent traffic with Dedicated Model Inference</h1>
-<ul><li>AuthorsAnkit Goyal</li><li>Table of contents<a href="https://www.together.ai/blog/global-fintech-scales-coding-agent-traffic-with-dedicated-model-inference#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsAnkit Goyal</li></ul>
 <p>Summary</p>
 <p>A global fintech runs its coding assistant on GLM 5.2 through Together's Dedicated Model Inference, handling spiky, engineering-hours traffic that static capacity planning couldn't keep up with.</p>
 <p>With DMI, the customer's engineers scale endpoints, roll out models, and test changes themselves, no tickets, no waiting on Together. The result: infrastructure that moves as fast as the teams adopting it.</p>
@@ -2138,21 +2077,18 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
 <ul><li><strong>Scaling: </strong>the customer adjusts capacity directly, no ticket to Together.</li><li><strong>Custom-weight rollouts: </strong>new model versions go live without a redeployment cycle.</li><li><strong>Blue/green testing: </strong>the customer validates changes against production traffic on its own timeline.</li></ul>
 <h2>What's next: a second workload and region</h2>
 <p>The deployment stopped being a single endpoint and started being a surface for innovation. That pattern is now repeating as a pipeline, not a one-off. The customer's team is already scoping a dedicated GLM 5.1 node in a new region, sized against a real production workload. It's a different shape of workload than the original coding assistant: a chat-style customer-support NLP workload rather than long-horizon agentic coding, landing on the same infrastructure and provisioning pattern.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Migrating from closed to open source models, Together</title>
       <link>https://www.together.ai/blog/migrating-from-closed-to-open-source-models</link>
       <guid isPermaLink="true">https://www.together.ai/blog/migrating-from-closed-to-open-source-models?li=1</guid>
       <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 9/16/2026</p>
 <h1>Migrating from closed to open source models, Together</h1>
 <p>A practical, five-stage playbook for moving from closed models to open source models: discover, evaluate, adapt, decide, and take it to production.</p>
-<ul><li>AuthorsKareem Abdol-Hamid, Zain Hasan, Sonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/migrating-from-closed-to-open-source-models#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsKareem Abdol-Hamid, Zain Hasan, Sonny Khan</li></ul>
 <p>Migrations are the bane of any mature company. Systems are deeply integrated, you have key stakeholders across domains, and a small improvement can take months or years to integrate in traditional cases. Recently, the latest candidate for migration has been closed source to open source models (OSM). The promise of cost savings and distributed ownership of technology has always been compelling. Is it worth it though?</p>
 <p>Luckily, closed to open source breaks the tradition of slow and painful migration, especially if you adopt a managed service. These services keep up with the pace of AI innovation while offloading much of the complexity from your business.</p>
 <p>Now the blast radius is much smaller, and the technical stack you need to migrate is less complex. Harnesses, gateways, and tooling are all built to adopt a variety of models. You can take full advantage of this for a quick and holistic migration from closed to open source.</p>
@@ -2199,9 +2135,7 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
 <p>A roadmap consists of all the steps needed for your OSM adoption. This should include any security/compliance, technology changes or downstream service changes that need to be made. Don't be intimidated here, the technical implementation can be as simple as switching out an endpoint!</p>
 <p>We understand that this is a very simplistic overview, but at its core we've seen this transition dozens of times with our largest customers and feel strongly that it's far less cumbersome than a traditional technical migration.</p>
 <p>If you're going through a similar migration we encourage you to follow future blogs, or reach out to <a href="mailto:sales@together.ai">sales@together.ai</a> for any questions. And we'd love any feedback on what may be missing here. Happy building!</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together AI expands fine-tuning service with more models, li…</title>
@@ -2209,12 +2143,11 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
       <guid isPermaLink="true">https://www.together.ai/blog/together-ai-expands-fine-tuning-service-with-more-models-live-metrics-and-finer-controls?li=1</guid>
       <pubDate>Fri, 11 Sep 2026 00:00:00 +0000</pubDate>
       <description>Full title: Together AI expands fine-tuning service with more models, live metrics, and finer controls</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Fine-Tuning</p>
+      <content:encoded><![CDATA[<p>Fine-Tuning</p>
 <p>Published 9/11/2026</p>
 <h1>Together AI expands fine-tuning service with more models, live metrics, and finer controls</h1>
 <p>Support for the latest open-weight models, live experiment tracking, finer controls over training and data processing, and lower prices on selected models.</p>
-<ul><li>AuthorsArtem Chumachenko, Egor Timofeev, Jasmine Li, Ruslan Khaidurov, Nikita Smetanin, Sergei Vorobyov, Arseniy Belorukov, Denis Fedorenko, Alex Moldovan, Shadi Mokhtar, Gleb Vazhenin, Sonny Khan, Adee Feiner, Jen Wu, Max Ryabinin</li><li>Table of contents<a href="https://www.together.ai/blog/together-ai-expands-fine-tuning-service-with-more-models-live-metrics-and-finer-controls#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsArtem Chumachenko, Egor Timofeev, Jasmine Li, Ruslan Khaidurov, Nikita Smetanin, Sergei Vorobyov, Arseniy Belorukov, Denis Fedorenko, Alex Moldovan, Shadi Mokhtar, Gleb Vazhenin, Sonny Khan, Adee Feiner, Jen Wu, Max Ryabinin</li></ul>
 <p>Turning an open-weight model into a high-performing model for your task takes a sequence of well-measured experiments. Teams need to understand what the model will train on, follow how each run is progressing, adjust the training recipe, and identify which checkpoint performs best.</p>
 <p>Today, we're expanding Together Fine-Tuning across that workflow. This release adds support for the latest open-weight models, live experiment tracking, finer controls over training and data processing, and lower prices on selected models.</p>
 <p>You can also inspect and validate a dataset before training, compare runs while they are in flight, and stop when validation loss plateaus.</p>
@@ -2283,9 +2216,7 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
 <p>Together Fine-Tuning now gives you more visibility and control over the full experiment cycle, from the data the model sees to the checkpoint you deploy. You can validate a dataset before a run, follow and compare metrics while it trains, and adjust the recipe with finer controls.</p>
 <p>Support for the latest open-weight models and lower prices on selected models make that loop easier to repeat as new models arrive.</p>
 <p>-&gt; <a href="https://api.together.ai/fine-tuning">Start fine-tuning</a> -&gt; <a href="https://docs.together.ai/docs/fine-tuning/quickstart">Read the Fine-Tuning documentation</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>To Infinity and Beyond: ThunderKittens Now on NVIDIA Vera Ru…</title>
@@ -2293,10 +2224,9 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
       <guid isPermaLink="true">https://www.together.ai/blog/to-infinity-and-beyond-thunderkittens-now-on-nvidia-vera-rubin-nvl72?li=1</guid>
       <pubDate>Thu, 10 Sep 2026 00:00:00 +0000</pubDate>
       <description>Full title: To Infinity and Beyond: ThunderKittens Now on NVIDIA Vera Rubin NVL72!</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 9/10/2026</p>
+      <content:encoded><![CDATA[<p>Published 9/10/2026</p>
 <h1>To Infinity and Beyond: ThunderKittens Now on NVIDIA Vera Rubin NVL72!</h1>
-<ul><li>AuthorsDylan Lim, Xinyi Li, Sonny Li, Peter Wu, Dan Fu, Simran Arora</li><li>Table of contents<a href="https://www.together.ai/blog/to-infinity-and-beyond-thunderkittens-now-on-nvidia-vera-rubin-nvl72#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsDylan Lim, Xinyi Li, Sonny Li, Peter Wu, Dan Fu, Simran Arora</li></ul>
 <p>The kernels team at Together recently received access to the NVIDIA Vera Rubin NVL72 platform. We spent the past few days digging through the new ISA and poking the chip with micros. There are many fun new features! We finished adding some functionality into ThunderKittens to write NVFP4 and FP8 GEMMs on Vera Rubin, as well as help fellow kittens explore the stars.</p>
 <p>Astronomer Kittens. So cute!</p>
 <p>Before diving into what Vera Rubin delivers, we start our journey with a quick refresher of a Blackwell GPU GEMM.</p>
@@ -2373,20 +2303,17 @@ tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finish
 <p>We hope you found some of this useful, and we are excited for everyone to start playing with them soon. From LUT GEMMs, hardware native megakernels, and new engine optimizations, there’s still plenty of interesting snippets to share. More on that soon!</p>
 <p>The kernels and performance teams at Together AI are actively hiring! If you’d like to learn more about these kernels or work with us on developing the next set of updates, please reach out to Simran or Dan!</p>
 <ul><li>Simran: simran@together.ai</li><li>Dan: danfu@together.ai</li></ul>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>The Open Source AI Stack</title>
       <link>https://www.together.ai/blog/the-open-source-ai-stack</link>
       <guid isPermaLink="true">https://www.together.ai/blog/the-open-source-ai-stack?li=1</guid>
       <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 9/9/2026</p>
 <h1>The Open Source AI Stack</h1>
-<ul><li>AuthorsHassan El Mghari</li><li>Table of contents<a href="https://www.together.ai/blog/the-open-source-ai-stack#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsHassan El Mghari</li></ul>
 <p>As the quality of open source models have bridged the gap with closed source models, a lot of developers and organizations are looking to move to open source models for more ownership, control and economics. This post is a deep dive into the open model AI stack that developers need to consider as they move from closed to open source.</p>
 <p>Using open models for agentic software development does not require learning how to train models, buying a rack full of GPUs, or becoming an expert in machine learning. From the perspective of an application developer, the stack is surprisingly familiar to using closed-source models. You have a model that answers prompts and a harness that manages the interaction between you and that model.</p>
 <p>If you already know how to use Claude Code, you’re much closer to using open models than you probably think.</p>
@@ -2497,9 +2424,7 @@ tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finish
 <p>None of these pieces need to come from the same company. And if a better model comes out next week, you can just swap it in without replacing anything else. With open-weight models, you also have the option to take the model elsewhere or even run it yourself (even on your own laptop with tools like <a href="https://ollama.com/">ollama</a>).</p>
 <p>This is the larger promise of open models.</p>
 <p>Instead of choosing an AI coding product, you can build your own AI coding stack.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>GLM-5.3 vs. GPT-5.6 Sol on DeepSWE: Cost, Coding, and Routin…</title>
@@ -2507,12 +2432,11 @@ tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finish
       <guid isPermaLink="true">https://www.together.ai/blog/glm-5-3-vs-gpt-5-6-sol-on-deepswe-cost-coding-and-routing?li=1</guid>
       <pubDate>Fri, 21 Aug 2026 00:00:00 +0000</pubDate>
       <description>Full title: GLM-5.3 vs. GPT-5.6 Sol on DeepSWE: Cost, Coding, and Routing</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 8/21/2026</p>
 <h1>GLM-5.3 vs. GPT-5.6 Sol on DeepSWE: Cost, Coding, and Routing</h1>
 <p>Sol wins the first try, GLM-5.3 wins the rest at half the price, and the cascade beats both: 85.9% at \$6.61 a task.</p>
-<ul><li>AuthorsZain Hasan, Shobhit Dixit</li><li>Table of contents<a href="https://www.together.ai/blog/glm-5-3-vs-gpt-5-6-sol-on-deepswe-cost-coding-and-routing#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsZain Hasan, Shobhit Dixit</li></ul>
 <p>Key Takeaways</p>
 <p>Don't pick one. Run GLM-5.3 first, escalate to GPT-5.6 Sol when the tests fail. That cascade solves 85.9% of DeepSWE tasks at \$6.61 each. Sol alone solves 72.7% at \$8.37. Thirteen points better, 21% cheaper.</p>
 <ul><li>Sol wins the single shot, narrowly. 72.7% pass@1 against GLM-5.3's 69.0%, a 3.7 point gap that sits inside a couple of standard deviations.</li><li>GLM-5.3 wins every retry after that. It ties Sol at pass@2 (81.1 vs. 81.0) and leads pass@4 (87.6% vs. 85.8%).</li><li>The price gap is 2.1x. \$3.99 per rollout against \$8.37. Per \$100 spent, GLM-5.3 solves 17 tasks and Sol solves 9.</li><li>Sol is faster and steadier: 19 minutes and 61 steps per rollout against GLM's 35 and 124, with 61 tasks solved four for four against 48.</li><li>GLM-5.3's failures are cleaner. It breaks tests that already passed in 11% of its failures, against 20% for Sol. Gate Sol's diffs on regressions.</li><li>The two diverge (0.43 per-task correlation) and cover 106 of 113 tasks between them, which is what makes the cascade work.</li></ul>
@@ -2556,9 +2480,7 @@ tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finish
 <p>pass@k measures whether at least one of k attempts at a task passes the hidden test suite. pass@1 rewards getting it right first try; higher k rewards a model that can eventually reach a solution across several tries. GLM-5.3's edge grows as k increases.</p>
 <h2><strong>Method and caveats</strong></h2>
 <ul><li>Data: DeepSWE v1.1 export, 113 tasks by 4 trials per config, both at max effort, from the published per-trial records. 452 trials per side.</li><li>Scoring: headline pass rates use DeepSWE's official scoring (included_in_score, infra errors excluded). GLM-5.3 has 1 infra error and Sol 2, so official and strict scoring nearly coincide. pass@2, pass@4, coverage, union, and correlation use per-task pass counts.</li><li>Costs are the published per-trial cost_usd from the index. Per-turn trajectory JSONs for the GLM-5.3 batch were not on the public CDN at analysis time, so this analysis is index-level.</li><li>Failure anatomy uses published per-test fractions. A near miss is at least 80% of new tests passing with the baseline intact; a regression means a baseline test broke. Domains use an artifact-based task taxonomy.</li><li>The cascade assumes a verifier decides escalation and independence given the task. Expected accuracy is symmetric in order, cost is not, so lead with the lower-cost model. The oracle router is the per-task best single-shot pick, an upper bound on any one-shot router.</li></ul>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>GLM-5.3 vs. Claude Fable 5 on DeepSWE: Cost, Coding, and Rou…</title>
@@ -2566,12 +2488,11 @@ tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finish
       <guid isPermaLink="true">https://www.together.ai/blog/glm-5-3-vs-claude-fable-5-on-deepswe-cost-coding-and-routing?li=1</guid>
       <pubDate>Fri, 21 Aug 2026 00:00:00 +0000</pubDate>
       <description>Full title: GLM-5.3 vs. Claude Fable 5 on DeepSWE: Cost, Coding, and Routing</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 8/21/2026</p>
 <h1>GLM-5.3 vs. Claude Fable 5 on DeepSWE: Cost, Coding, and Routing</h1>
 <p>A statistical tie on the first attempt, and a 5.4x price gap that decides the rest.</p>
-<ul><li>AuthorsZain Hasan, Shobhit Dixit</li><li>Table of contents<a href="https://www.together.ai/blog/glm-5-3-vs-claude-fable-5-on-deepswe-cost-coding-and-routing#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsZain Hasan, Shobhit Dixit</li></ul>
 <p>Key Takeaways</p>
 <p>GLM-5.3 and Claude Fable 5 finish within noise of each other on DeepSWE accuracy, but GLM-5.3 costs a fifth as much per task and wins every multi-attempt metric. When two models are this close on quality, the price gap becomes the entire decision.</p>
 <ul><li>The first attempt is level. Fable 5 posts 69.7% pass@1 and GLM-5.3 posts 69.0%, a 0.7 point gap that sits inside the error bars on both sides.</li><li>GLM-5.3 owns the retries. It leads pass@2 (81.1% vs. 77.1%) and pass@4 (87.6% vs. 84.1%), so it has the higher ceiling as well as the lower price.</li><li>The cost gap is 5.4x. \$3.99 per rollout vs. \$21.63. Per \$100 spent, GLM-5.3 solves 17 tasks and Fable solves 3.</li><li>They are near-substitutes. Per-task correlation is 0.65, the highest agreement in this set, so running both adds little coverage. Keep the lower-cost model and escalate to Fable only for Rust and serialization work.</li></ul>
@@ -2626,21 +2547,18 @@ tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finish
 <p>pass@k measures whether at least one of k attempts at a task passes the hidden test suite. pass@1 rewards getting it right on the first try, and higher k rewards a model that can eventually reach a solution across several tries. GLM-5.3's edge grows as k increases.</p>
 <h2><strong>Method and caveats</strong></h2>
 <ul><li>Data: DeepSWE v1.1 export, 113 tasks x 4 trials per configuration, both at max effort, from the published per-trial records. 452 trials per side.</li><li>Scoring: headline pass rates use DeepSWE's official scoring (included_in_score, infra errors excluded). Fable has 16 infra errors from model routing, so its strict errors-as-failures score is 67.3 against 69.7 official. GLM-5.3 has 1.</li><li>pass@2, pass@4, coverage, union, and correlation use per-task pass counts.</li><li>Costs are the published per-trial cost_usd. Fable's matches the trajectory total_cost_usd exactly, while GLM's is index-only. Per-turn trajectory JSONs for the GLM-5.3 batch were not on the public CDN at analysis time.</li><li>Failure anatomy uses published per-test fractions. Near miss means at least 80% of new tests pass with the baseline intact. Regression means a baseline test broke. Domains use an artifact-based task taxonomy.</li><li>Cascade assumes a verifier decides escalation and independence given the task. Expected accuracy is symmetric in order, cost is not, so lead with the lower-cost model. Given the 0.65 correlation, portfolio benefit is limited. The oracle router is the per-task best single-shot pick, an upper bound on any one-shot router.</li></ul>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>A/B test models in production</title>
       <link>https://www.together.ai/blog/a-b-test-models-in-production</link>
       <guid isPermaLink="true">https://www.together.ai/blog/a-b-test-models-in-production?li=1</guid>
       <pubDate>Mon, 17 Aug 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 8/17/2026</p>
 <h1>A/B test models in production</h1>
 <p>A guide to implementing A/B testing</p>
-<ul><li>AuthorsZain Hasan, Zarni Phyo, Nikitha Suryadevara, Ted Cui</li><li>Table of contents<a href="https://www.together.ai/blog/a-b-test-models-in-production#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/">Sign up</a><a href="https://docs.together.ai/docs/dedicated-endpoints/ab-tests">Docs</a></li></ul>
+<ul><li>AuthorsZain Hasan, Zarni Phyo, Nikitha Suryadevara, Ted Cui</li><li>Links in this article<a href="https://api.together.ai/">Sign up</a><a href="https://docs.together.ai/docs/dedicated-endpoints/ab-tests">Docs</a></li></ul>
 <p>Summary</p>
 <p>A/B experiments allow you to split an endpoint's live traffic into fixed cohorts of one control and up to 20 variants, each with a percentage split of the traffic. This allows you to measure how a candidate model performs <em>with real users</em> at an exposure level you choose. Ramping up a variant can also be done with one call where you can promote the winner using a blue-green rollout. Deleting the experiment returns 100% of traffic to the control without the need to make any client-side or routing logic changes to unwind afterwards. Below we'll run an experiment on a live endpoint where we create at 95%/5%, ramp to 80%/20% and 50%/50%, then delete and check the observed traffic shares at every stage.</p>
 <h2>Implementing A/B testing for LLMs in production</h2>
@@ -2713,9 +2631,7 @@ tg beta endpoints rm dep_variant123    # or delete the variant — auto-unwinds 
 <p>You need an endpoint with a control deployment serving traffic, plus a candidate deployment (created, <code>READY</code>, <em>not</em> in the traffic split). Then:</p>
 <ul><li>Create the experiment at <strong>95/5</strong>.</li><li>Let it run until you have enough volume — the whole point of 5% is that exposure stays low while you collect data.</li><li>Ramp with a single update when the data says so. Promote with a rollout when it's decisive. Delete when you're done — there's nothing else to clean up.</li></ul>
 <p>📚 <strong>Docs:</strong> Dedicated Model Inference → <a href="https://docs.together.ai/docs/dedicated-endpoints/ab-tests">A/B tests</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Cod…</title>
@@ -2723,12 +2639,11 @@ tg beta endpoints rm dep_variant123    # or delete the variant — auto-unwinds 
       <guid isPermaLink="true">https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing?li=1</guid>
       <pubDate>Mon, 17 Aug 2026 00:00:00 +0000</pubDate>
       <description>Full title: DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Coding, and Routing</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 8/17/2026</p>
 <h1>DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Coding, and Routing</h1>
 <p>Fable wins the first attempt, Pro wins every attempt after, and the cheapest path is to use both.</p>
-<ul><li>AuthorsZain Hasan, Shobhit Dixit</li><li>Table of contents<a href="https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsZain Hasan, Shobhit Dixit</li></ul>
 <p>Key Takeaways</p>
 <p>Run DeepSeek V4 Pro 0813 first, escalate to Claude Fable 5 only when it fails. That cascade solves 82.7% of DeepSWE tasks at \$8.28 each. Fable alone solves 69.7% at \$21.63. Thirteen points better, 62% cheaper.</p>
 <ul><li>Fable wins the first try. 69.7% pass@1 vs 62.8%, a 7-point lead.</li><li>Pro wins every try after. Level at pass@2 (78.5% vs 77.1%), ahead at pass@4 (88.5% vs 84.1%).</li><li>The price gap is 90x. \$0.24 per rollout vs \$21.63. Per \$100 spent, Pro solves 260 tasks and Fable solves 3.</li><li>They fail on different tasks. 0.39 per-task correlation, the most divergent pair we have measured. Between them they cover 107 of 113 tasks. That disagreement is the whole reason routing works.</li></ul>
@@ -2776,9 +2691,7 @@ tg beta endpoints rm dep_variant123    # or delete the variant — auto-unwinds 
 <p>Yes, if you can verify results. The two models have the lowest per-task correlation of any pairing we have measured (0.39) and together cover 107 of 113 tasks. Running DeepSeek V4 Pro 0813 first and escalating to Claude Fable 5 when your test suite rejects the output reaches 82.7% at \$8.28 per task, beating Fable alone and a perfect one-shot oracle router.</p>
 <h3><strong>What is pass@k on DeepSWE?</strong></h3>
 <p>pass@k measures whether at least one of k attempts at a task passes the hidden test suite. pass@1 rewards getting it right first try; higher k rewards a model that can eventually reach a solution across several tries. DeepSeek V4 Pro 0813's edge grows as k increases.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>DeepSeek-V4 Flash 0731 vs GPT-5.6 Luna on DeepSWE: Cost and…</title>
@@ -2786,12 +2699,11 @@ tg beta endpoints rm dep_variant123    # or delete the variant — auto-unwinds 
       <guid isPermaLink="true">https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding?li=1</guid>
       <pubDate>Thu, 06 Aug 2026 00:00:00 +0000</pubDate>
       <description>Full title: DeepSeek-V4 Flash 0731 vs GPT-5.6 Luna on DeepSWE: Cost and Coding</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 8/6/2026</p>
 <h1>DeepSeek-V4 Flash 0731 vs GPT-5.6 Luna on DeepSWE: Cost and Coding</h1>
 <p>The open-weight model setting the new price-intelligence bar</p>
-<ul><li>AuthorsZain Hasan, Shobhit Dixit</li><li>Table of contents<a href="https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsZain Hasan, Shobhit Dixit</li></ul>
 <p>Key Takeaways</p>
 <p>While GPT-5.6 Luna is the stronger engineer on every quality measure, DeepSeek-V4 Flash 0731 is cheap enough that a DeepSeek-first cascade beats Luna alone on both accuracy and cost.</p>
 <ul><li>GPT-5.6 Luna leads DeepSWE pass@1 decisively at 67.2% vs 53.3%, a 14 point gap, and holds the lead at every equal attempt count.</li><li>DeepSeek-V4 Flash is the cheapest model on the DeepSWE board: $0.10 per rollout vs $0.61, delivering 532 solves per $100 against Luna's 110.</li><li>DeepSeek-V4 Flash fails more cleanly, breaking the repo's existing test suite in 9% of failures vs Luna's 15%.</li><li>Running DeepSeek-V4 Flash first and escalating to Luna only on failure solves 78.9% of tasks at $0.385 each: more accurate than Luna alone and 37% cheaper.</li></ul>
@@ -2853,21 +2765,18 @@ tg beta endpoints rm dep_variant123    # or delete the variant — auto-unwinds 
 <p>Luna wins every language in our breakdown, but the margins vary. DeepSeek is respectable on Rust and competitive on query and config work, where it actually leads. Its JavaScript is the weakest cell in the matchup (35 vs 60), so JS-heavy stacks should not rely on the cheap model alone.</p>
 <h3><strong>What is pass@k on DeepSWE?</strong></h3>
 <p>pass@k measures whether at least one of k attempts at a task passes the hidden test suite. pass@1 rewards getting it right first try; higher k rewards a model that can eventually reach a solution across several tries. DeepSeek's pass@2 (70.1%) already edges Luna's pass@1 (67.2%), which is what makes the parallel-attempt and cascade economics work.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Kimi K3: the complete developer guide</title>
       <link>https://www.together.ai/blog/kimi-k3-guide</link>
       <guid isPermaLink="true">https://www.together.ai/blog/kimi-k3-guide?li=1</guid>
       <pubDate>Sat, 01 Aug 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 8/1/2026</p>
 <h1>Kimi K3: the complete developer guide</h1>
 <p>Everything you need to run Moonshot AI's 2.8T open-weights model on the Together AI API: benchmarks, pricing, and copy-paste code.</p>
-<ul><li>AuthorsZain Hasan, Shobhit Dixit</li><li>Table of contents<a href="https://www.together.ai/blog/kimi-k3-guide#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://www.together.ai/models/kimi-k3">Kimi K3 API &amp; Playground</a><a href="https://www.together.ai/blog/kimi-k3-vs-claude-fable-5-on-deepswe-cost-and-coding"> Kimi K3 vs. Fable 5</a><a href="https://www.together.ai/blog/kimi-k3-vs-gpt-5-6-sol-on-deepswe-cost-coding-and-routing">Kimi K3 vs GPT 5.6</a><a href="https://www.together.ai/open-model-roi-calculator">ROI calculator</a>‍</li></ul>
+<ul><li>AuthorsZain Hasan, Shobhit Dixit</li><li>Links in this article<a href="https://www.together.ai/models/kimi-k3">Kimi K3 API &amp; Playground</a><a href="https://www.together.ai/blog/kimi-k3-vs-claude-fable-5-on-deepswe-cost-and-coding"> Kimi K3 vs. Fable 5</a><a href="https://www.together.ai/blog/kimi-k3-vs-gpt-5-6-sol-on-deepswe-cost-coding-and-routing">Kimi K3 vs GPT 5.6</a><a href="https://www.together.ai/open-model-roi-calculator">ROI calculator</a>‍</li></ul>
 <p>What you'll learn</p>
 <ul><li>What is Kimi K3, and what makes it different?</li><li>What is under the hood: KDA, Attention Residuals, and the Stable LatentMoE architecture</li><li>How do you use reasoning effort, streaming, tools, vision, and 1M context?</li><li>How do you take it from a first API call to production?</li><li>How does Kimi K3 compare to the frontier on coding and agentic benchmarks?</li><li>How much does Kimi K3 cost on Together AI?</li></ul>
 <p>Kimi K3 is Moonshot AI's most capable model to date: a 2.8-trillion-parameter model and the world's first open-source model in the 3-trillion-parameter class. It is designed for frontier intelligence work like long-horizon coding, end-to-end knowledge work, and deep reasoning. It is also the first open-weights model competing at the GPT 5.6 Sol and Claude Fable 5 tier, and Together AI is working directly with the Moonshot team to serve it.</p>
@@ -3202,22 +3111,19 @@ print(second.choices[0].message.content)</code></pre>
 <h2>Kimi K3 is on Together AI. Run it and ship it to production.</h2>
 <p>Making K3 yours starts with a single API call.</p>
 <ul><li>Run Kimi K3 inference: <a href="https://www.together.ai/models/kimi-k3">Kimi K3 API on Together AI</a></li><li>Start building with the API: <a href="https://docs.together.ai/docs/quickstart">read the docs</a></li></ul>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Autoscaling endpoints for LLM inference</title>
       <link>https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference</link>
       <guid isPermaLink="true">https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference?li=1</guid>
       <pubDate>Fri, 31 Jul 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 7/31/2026</p>
 <h1>Autoscaling endpoints for LLM inference</h1>
 <p>Choosing scaling metrics, tuning windows, and budgeting for cold starts on dedicated inference.</p>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a6ce270839f62c9690a837b_autoscaling-hero.png" alt=""></p>
-<ul><li>AuthorsZain Hasan, SoYoung Park, Nikitha Suryadevara, Ted Cui</li><li>Table of contents<a href="https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsZain Hasan, SoYoung Park, Nikitha Suryadevara, Ted Cui</li></ul>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a6ce270839f62c9690a837b_autoscaling-hero.png" alt=""></p>
 <p>Summary</p>
 <p>With Dedicated Model Inference on the Together AI platform <strong>y</strong>ou can get your deployments to autoscale on metrics the inference engine actually understands, such as in-flight requests, TTFT, GPU utilization, token throughput. You can set replica bounds, pick a metric and target, and then tune two windows that control how eagerly it scales up and how patiently it scales down. Understanding and choosing the right metric is important because it determines how your deployment will behave under peaky traffic and impacts the latency your users will see. Below we'll cover how to choose the right metric to autoscale on and show an experiment where the same load was replayed under three different autoscale policies.</p>
@@ -3283,9 +3189,7 @@ tg beta endpoints update &quot;&quot;$DEPLOYMENT_ID&quot; \
 <p>Start with the defaults, then tune from evidence:</p>
 <ul><li>Set real bounds (<code>min</code> = what your base load needs, <code>max</code> = what your budget tolerates) and take the default <code>inflight_requests</code> target 8.</li><li>Watch a week of traffic in the <em>metrics API</em>: replica count, queue pressure, p95.</li><li>Only then, tune: latency SLO → add a <code>ttft</code> policy (if you stream); cost pressure → try utilization with honest p95 monitoring; sawtooth → widen the down-window.</li></ul>
 <p>📚 <strong>Docs:</strong> <a href="https://docs.together.ai/docs/dedicated-endpoints/overview">Dedicated Model Inference</a> → <a href="https://docs.together.ai/docs/dedicated-endpoints/scaling">Autoscaling</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together AI announces strategic partnership with Moonshot AI…</title>
@@ -3293,12 +3197,11 @@ tg beta endpoints update &quot;&quot;$DEPLOYMENT_ID&quot; \
       <guid isPermaLink="true">https://www.together.ai/blog/together-ai-announces-strategic-partnership-with-moonshot-ai-to-natively-serve-kimi-models?li=1</guid>
       <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
       <description>Full title: Together AI announces strategic partnership with Moonshot AI to natively serve Kimi models</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
+      <content:encoded><![CDATA[<p>Company</p>
 <p>Published 7/29/2026</p>
 <h1>Together AI announces strategic partnership with Moonshot AI to natively serve Kimi models</h1>
 <p>Kimi K3, Moonshot AI's 2.8-trillion-parameter open model is live on Together AI, with a commitment to land all future open Moonshot models.</p>
-<ul><li>AuthorsHiral Jasani, Arielle Fidel</li><li>Table of contents<a href="https://www.together.ai/blog/together-ai-announces-strategic-partnership-with-moonshot-ai-to-natively-serve-kimi-models#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsHiral Jasani, Arielle Fidel</li></ul>
 <p>Today we're announcing a strategic partnership with Moonshot AI, one of the leading model labs pushing the open source frontier with large-scale MoE architectures. Under this partnership, Together AI becomes a launch platform for Moonshot's model releases, starting with Kimi K3 and extending to every open weights model Moonshot ships going forward.</p>
 <p>For developers building on open models, this means day zero access to Moonshot's frontier releases through Together AI’s US-hosted infrastructure, pricing model, and tooling, while ensuring zero data retention and compliant access to models and data. Developers can also post train these models with their own data to deliver the quality and performance for their app.</p>
 <h2><strong>Frontier performance, open weights</strong></h2>
@@ -3315,21 +3218,18 @@ tg beta endpoints update &quot;&quot;$DEPLOYMENT_ID&quot; \
 <h2><strong>Join the conversation</strong></h2>
 <p>Want to hear directly from the team behind Moonshot AI and Together AI? Join Feihu Tang from the Moonshot AI team and Jue Wang and Zain Hasan from Together AI to talk through the technical decisions behind Kimi K3, how to actually run it on Together, and what's coming next. Bring your questions.</p>
 <p><a href="https://luma.com/together-8nl3"><strong>RSVP and set a reminder for the Moonshot x Together Webinar</strong></a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Configuring Dedicated Model Inference</title>
       <link>https://www.together.ai/blog/configuring-dedicated-model-inference</link>
       <guid isPermaLink="true">https://www.together.ai/blog/configuring-dedicated-model-inference?li=1</guid>
       <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 7/29/2026</p>
 <h1>Configuring Dedicated Model Inference</h1>
 <p>How endpoints, deployments, and configs fit together, and why routing follows capacity, not fixed percentages.</p>
-<ul><li>AuthorsMitali Meratwal, Zain Hasan</li><li>Table of contents<a href="https://www.together.ai/blog/configuring-dedicated-model-inference">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsMitali Meratwal, Zain Hasan</li></ul>
 <p>Summary</p>
 <p>Dedicated Model Inference on the Together AI platform consists of three parts: the <strong>endpoint</strong> (a stable name you or your clients call), <strong>deployments</strong> (specific model + hardware combinations running replicas behind it), and <strong>configs</strong> (recipes for how a model runs). A capacity-aware traffic split ties these three entities together. This architecture enables various other features such as rollouts, A/B tests, shadow experiments, zero-downtime changes possible. Below we'll show how capacity-aware routing works against a live endpoint with measured traffic.</p>
 <h2>How the resource model works</h2>
@@ -3432,9 +3332,7 @@ together beta endpoints get $ENDPOINT_ID
     </code></pre>
 <p>From here, everything else in this series is one more deployment away.</p>
 <p>📚 <strong>Docs:</strong> Dedicated Model Inference → <a href="https://docs.together.ai/docs/dedicated-endpoints/quickstart">Quickstart</a> · <a href="https://docs.together.ai/docs/dedicated-endpoints/concepts">Concepts</a> · <a href="https://docs.together.ai/docs/dedicated-endpoints/route-traffic">Route traffic</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>ThunderAgent: 2x Faster Agentic Inference for Synthetic Data…</title>
@@ -3442,11 +3340,10 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/thunderagent?li=1</guid>
       <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
       <description>Full title: ThunderAgent: 2x Faster Agentic Inference for Synthetic Data Generation at Scale</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 7/29/2026</p>
+      <content:encoded><![CDATA[<p>Published 7/29/2026</p>
 <h1>ThunderAgent: 2x Faster Agentic Inference for Synthetic Data Generation at Scale</h1>
 <p>A program-level scheduler that eliminates KV cache thrashing, delivering more than 2x single-node throughput and near-linear multi-node scaling for large-scale agentic inference.</p>
-<ul><li>AuthorsHao Kang, Ziyang Li, Weili Xu, Xinyu Yang, Yinfang Chen, Junxiong Wang, Beidi Chen, Tushar Krishna, Chenfeng Xu, Simran Arora.</li><li>Table of contents<a href="https://www.together.ai/blog/thunderagent#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://arxiv.org/abs/2602.13692">Paper</a><a href="https://github.com/ThunderAgent-org/ThunderAgent">Code</a><a href="https://www.together.ai/blog/coderforge-preview#coderforge-preview-data">CoderForge</a><a href="https://docs.sglang.io/advanced_features/sgl_model_gateway.html#cache-aware-policy-tuning">SGLang Gateway</a></li></ul>
+<ul><li>AuthorsHao Kang, Ziyang Li, Weili Xu, Xinyu Yang, Yinfang Chen, Junxiong Wang, Beidi Chen, Tushar Krishna, Chenfeng Xu, Simran Arora.</li><li>Links in this article<a href="https://arxiv.org/abs/2602.13692">Paper</a><a href="https://github.com/ThunderAgent-org/ThunderAgent">Code</a><a href="https://www.together.ai/blog/coderforge-preview#coderforge-preview-data">CoderForge</a><a href="https://docs.sglang.io/advanced_features/sgl_model_gateway.html#cache-aware-policy-tuning">SGLang Gateway</a></li></ul>
 <p>Summary</p>
 <p>We introduce ThunderAgent, a system for high throughput agentic inference. By introducing a novel program abstraction for agentic LLM request scheduling, ThunderAgent achieves up to 2.5× higher single-node throughput in our synthetic data generation pipeline, and delivers 2.4× speedup on an 8-node cluster with near-linear throughput scaling with respect to GPU nodes.</p>
 <p>Key Results</p>
@@ -3481,21 +3378,18 @@ together beta endpoints get $ENDPOINT_ID
 <p>ThunderAgent is open source and ready to use:</p>
 <ul><li><strong>GitHub</strong>: <a href="https://github.com/ThunderAgent-org/ThunderAgent">https://github.com/ThunderAgent-org/ThunderAgent</a></li><li><strong>Paper</strong>: <a href="https://arxiv.org/abs/2602.13692">https://arxiv.org/abs/2602.13692</a></li></ul>
 <p>If you're running large-scale agentic workloads, ThunderAgent can help you get a free lunch speedup from the same hardware. Try it out, and let us know how it goes.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>The production platform for open-weight AI inference</title>
       <link>https://www.together.ai/blog/the-production-platform-for-open-weight-ai-inference</link>
       <guid isPermaLink="true">https://www.together.ai/blog/the-production-platform-for-open-weight-ai-inference?li=1</guid>
       <pubDate>Thu, 23 Jul 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 7/23/2026</p>
 <h1>The production platform for open-weight AI inference</h1>
 <p>Deploy in minutes. Roll out safely. Scale to your SLOs.</p>
-<ul><li>AuthorsNikitha Suryadevara, Ted Cui, Will Van Eaton, Charles Zedlewski</li><li>Table of contents<a href="https://www.together.ai/blog/the-production-platform-for-open-weight-ai-inference#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/endpoints">Get started</a><a href="https://www.together.ai/contact-sales">Talk to our team</a><a href="https://docs.together.ai/docs/dedicated-endpoints/overview">Read the docs</a><a href="https://luma.com/together-mo2x">Sign up for the webinar</a></li></ul>
+<ul><li>AuthorsNikitha Suryadevara, Ted Cui, Will Van Eaton, Charles Zedlewski</li><li>Links in this article<a href="https://api.together.ai/endpoints">Get started</a><a href="https://www.together.ai/contact-sales">Talk to our team</a><a href="https://docs.together.ai/docs/dedicated-endpoints/overview">Read the docs</a><a href="https://luma.com/together-mo2x">Sign up for the webinar</a></li></ul>
 <p>Summary</p>
 <p>We're releasing a significant update to our inference platform, giving you complete control over performance, cost, and quality without building your own stack. Models go live in minutes and every deployment is production-grade from the start: run multiple deployments behind one stable endpoint, ship changes safely with canary, blue-green, and rolling updates that auto-roll-back on your thresholds, test on real traffic with A/B and shadow testing, and autoscale across one region or many.</p>
 <p>We're also announcing a closed beta for custom training, including full-weight and LoRA reinforcement learning and supervised fine-tuning, with checkpoints you can deploy straight to production. <a href="https://www.together.ai/contact-sales">Request access</a> to the custom training beta.</p>
@@ -3546,9 +3440,7 @@ together beta endpoints get $ENDPOINT_ID
 <p>→ <a href="https://www.together.ai/contact-sales">Talk to our team</a></p>
 <p>→ <a href="https://docs.together.ai/docs/dedicated-endpoints/overview">Read the docs</a></p>
 <p>→ <a href="https://luma.com/together-mo2x">Register for the webinar</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together AI and Y Combinator partner to launch the first ded…</title>
@@ -3556,11 +3448,10 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/together-yc-gpu-cluster?li=1</guid>
       <pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate>
       <description>Full title: Together AI and Y Combinator partner to launch the first dedicated GPU cluster for the YC community</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>GPU Clusters</p>
+      <content:encoded><![CDATA[<p>GPU Clusters</p>
 <p>Published 7/20/2026</p>
 <h1>Together AI and Y Combinator partner to launch the first dedicated GPU cluster for the YC community</h1>
-<ul><li>AuthorsDeveaux Barron, Ankit Gupta, Ellie O'Neil</li><li>Table of contents<a href="https://www.together.ai/blog/together-yc-gpu-cluster#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsDeveaux Barron, Ankit Gupta, Ellie O'Neil</li></ul>
 <p>Today, <a href="https://www.youtube.com/watch?v=tOhkv307Pm0">Together AI and Y Combinator (YC) are announcing a partnership </a>to deliver the first dedicated YC GPU cluster, giving YC's portfolio of AI-native startups easier access to the compute they need to build and scale.</p>
 <h2>Compute has become the biggest bottleneck</h2>
 <p>Breakthroughs in AI have led to a new generation of companies building AI applications, and a key input to building any of these apps is access to compute. More and more startups struggle to get this access in a timely, cost-effective way.</p>
@@ -3580,20 +3471,17 @@ together beta endpoints get $ENDPOINT_ID
 <p>Together AI and YC plan to expand the cluster, and Together will keep supporting companies as they graduate from the batch and scale with whatever setup makes sense long term. As those needs grow, founders can also tap into the rest of Together’s platform, from inference to fine-tuning and training, all on the same infrastructure they already know.</p>
 <p>If you're building an AI-native startup and want to learn more, <a href="https://www.together.ai/contact-sales">contact us.</a></p>
 <p><em>YC's next batch is currently taking applications for their Fall 2026 cycle. YC is especially excited about funding companies developing new research breakthroughs that require GPU compute. Apply at</em><a href="https://ycombinator.com/apply"><em> ycombinator.com/apply</em></a><em>.</em></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>What does 99.9% uptime mean for inference?</title>
       <link>https://www.together.ai/blog/99-9-uptime-for-inference</link>
       <guid isPermaLink="true">https://www.together.ai/blog/99-9-uptime-for-inference?li=1</guid>
       <pubDate>Thu, 16 Jul 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 7/16/2026</p>
 <h1>What does 99.9% uptime mean for inference?</h1>
-<ul><li>AuthorsRyan Lucchese, Sarung Tripathi</li><li>Table of contents<a href="https://www.together.ai/blog/99-9-uptime-for-inference#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsRyan Lucchese, Sarung Tripathi</li></ul>
 <p><strong>TL;DR</strong></p>
 <ul><li>The short version: Each reliability tier maps to a specific failure domain, and each one requires its own architecture to survive it. Roughly speaking:</li><li>99% means your architecture can survive node-level failures: GPU hardware faults, driver crashes, thermal events. Getting there generally takes automated health checking, node draining, and fast replica replacement within a single DC.</li><li>99.9% means your architecture can survive a full data center failure. That usually means model weights deployed across two facilities, enough capacity on each side to absorb the full load, and live traffic routing to both, not a cold standby.</li><li>99.99% means your architecture can survive a regional outage. That typically calls for multi-region deployment with AZ redundancy and reserved failover capacity.</li></ul>
 <p>Reliability numbers are easy to publish. What’s hard is explaining what they mean: which failure domains the architecture actually covers, whether the provider controls the infrastructure at those layers, and what happens when something breaks at 3 a.m.</p>
@@ -3633,9 +3521,7 @@ together beta endpoints get $ENDPOINT_ID
 <p>Every provider will give you a number. What matters is whether the architecture behind it is built to back it up, and whether they own the infrastructure where the guarantee has to hold.</p>
 <p>Those are answerable questions. Ask any provider to walk through the architecture behind each SLA tier. Ask whether they own the infrastructure or sit above someone else’s. Ask whether the failover paths run under live traffic. A provider that knows their infrastructure can answer these quickly.</p>
 <p>We can walk you through ours anytime. If you want to dig in, we’re here.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together AI brings Thinking Machines Lab’s new model Inkling…</title>
@@ -3643,12 +3529,11 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/together-ai-brings-thinking-machines-labs-new-model-inkling-on-day-0?li=1</guid>
       <pubDate>Wed, 15 Jul 2026 00:00:00 +0000</pubDate>
       <description>Full title: Together AI brings Thinking Machines Lab’s new model Inkling on day 0</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 7/15/2026</p>
 <h1>Together AI brings Thinking Machines Lab’s new model Inkling on day 0</h1>
 <p>Build with Inkling, a new multimodal mixture-of-experts model designed for advanced reasoning, through Together AI’s production inference platform</p>
-<ul><li>AuthorsJue Wang, Wei Gong, Yineng Zhang, Hiral Jasani</li><li>Table of contents<a href="https://www.together.ai/blog/together-ai-brings-thinking-machines-labs-new-model-inkling-on-day-0#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsJue Wang, Wei Gong, Yineng Zhang, Hiral Jasani</li></ul>
 <p>Today, Thinking Machines Lab released Inkling, a new multimodal mixture-of-experts model built for token-efficient reasoning, native multimodal understanding, and broad task versatility. Together AI is excited to collaborate with the Thinking Machines Lab team to make Inkling available to developers on our inference platform.</p>
 <p>Inkling accepts text, image, and audio inputs and produces text outputs through a unified decoder architecture. It supports controllable inference effort, allowing developers to adjust how much reasoning the model applies based on the needs of each task. Its post-training also spans a wide range of capabilities, including scientific reasoning, coding, agentic workflows, forecasting, and calibrated prediction.</p>
 <p>Under the hood, Inkling introduces several architectural innovations beyond a conventional decoder-only Transformer, including query-conditioned relative attention, short causal convolutions throughout the model, and a mixture-of-experts architecture with a shared expert sink. Together, these components are designed to support strong reasoning and multimodal capabilities while maintaining efficient model execution. Serving it efficiently at scale is nontrivial, and it's exactly the kind of workload Together AI's inference stack is built to optimize, so you get the model's efficiency gains in practice for production inference. On Together AI, Inkling runs with an optimized <a href="https://www.together.ai/blog/flashattention-4">FlashAttention-4–based attention kernel </a>designed to efficiently support its query-conditioned relative attention mechanism in production.</p>
@@ -3684,9 +3569,7 @@ together beta endpoints get $ENDPOINT_ID
 <h1>Replace with the final supported API parameter.</h1>
 <p>reasoning_effort=&quot;[SUPPORTED VALUE]&quot;, )</p>
 <p>print(response.choices[0].message.content)</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>New in Together GPU Clusters: Reliability and control for pr…</title>
@@ -3694,11 +3577,10 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/new-in-together-gpu-clusters-reliability-and-control-for-production-gpu-clusters?li=1</guid>
       <pubDate>Wed, 15 Jul 2026 00:00:00 +0000</pubDate>
       <description>Full title: New in Together GPU Clusters: Reliability and control for production GPU clusters</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>GPU Clusters</p>
+      <content:encoded><![CDATA[<p>GPU Clusters</p>
 <p>Published 7/15/2026</p>
 <h1>New in Together GPU Clusters: Reliability and control for production GPU clusters</h1>
-<ul><li>AuthorsPavneet Ahluwalia</li><li>Table of contents<a href="https://www.together.ai/blog/new-in-together-gpu-clusters-reliability-and-control-for-production-gpu-clusters#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsPavneet Ahluwalia</li></ul>
 <p>We’ve spent the last several weeks shipping a set of changes to Together GPU Clusters aimed at the operational reality of running training and inference at scale: hardware fails, schedulers leak, and teams outgrow the single-admin-kubeconfig workflow they started with. This post walks through what we shipped, why we built it the way we did, and what it means for the workloads you’re running on Together today.</p>
 <p>The changes group into two themes. The first is <strong>platform health</strong>: passive health checks, auto node repair, and Slinky 1.0, focused on catching and recovering from the failure modes that actually take down jobs. The second is <strong>operational control</strong>: a new cluster details view, external OIDC, startup scripts, and an acceptance-test opt-out, focused on giving your team the visibility, access, and customization hooks needed to run clusters as your organization grows.</p>
 <h2><strong>Catching and fixing failures as they happen</strong></h2>
@@ -3757,9 +3639,7 @@ together beta endpoints get $ENDPOINT_ID
 <p>→ <a href="https://41ifku.share-na2.hsforms.com/2PGmhmpS1SkSEglzOYCCGjQ">Share feedback</a></p>
 <p>→ <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0_zIzf6XQfVIQtwaMSV0vJ4YSqtb-uPWm6WZ2sWg_oExUyNcMeKSx8bcRWAJo1nZnz_eGE5-EM">Book customer office hours</a></p>
 <p>→ <a href="https://docs.together.ai/docs/gpu-clusters-overview">Read the docs</a>‍</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Announcing our $800M Series C to accelerate the shift to ope…</title>
@@ -3767,11 +3647,10 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/announcing-our-series-c?li=1</guid>
       <pubDate>Wed, 01 Jul 2026 00:00:00 +0000</pubDate>
       <description>Full title: Announcing our $800M Series C to accelerate the shift to open-source AI</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
+      <content:encoded><![CDATA[<p>Company</p>
 <p>Published 7/1/2026</p>
 <h1>Announcing our $800M Series C to accelerate the shift to open-source AI</h1>
-<ul><li>AuthorsVipul Ved Prakash</li><li>Table of contents<a href="https://www.together.ai/blog/announcing-our-series-c#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsVipul Ved Prakash</li></ul>
 <p>Four years ago, my co-founders and I started Together AI because we saw generative AI as a turning point for human progress. We believed this generational technology should be open and abundantly available, not controlled by a handful of companies.</p>
 <p>Since then, we have built a full-stack AI platform for open-source AI, grounded in frontier research and delivering the fastest and most efficient inference for AI applications and agents. Today, Together AI is trusted by thousands of customers, including many of the world's fastest-growing AI companies like Cognition, Decagon, Eleven Labs, Cursor, and Suno. What began as a conviction about the future of AI has grown faster than even our most optimistic projections.</p>
 <p>Today, I am excited to announce the next milestone in our journey with <a href="https://www.nytimes.com/2026/07/01/business/dealbook/together-ai-funding.html?unlocked_article_code=1.uVA.wspf.9WMvlyMEhaBk&amp;smid=nytcore-ios-share">Series C funding of $800 million</a> from an incredible group of investors including Aramco Ventures, NVIDIA, Vista Equity, General Catalyst, Emergence Capital, SE Ventures, Pegatron, Salesforce Ventures, March Capital, DTCP Growth, Lux Capital, Geodesic, PSP Partners, and others. In addition to the equity capital, we have secured commitments for over 500 MW of compute capacity to be capitalized independently by our new investors to support our expected <a href="https://www.together.ai/gpu-clusters">compute</a> growth in the coming years.</p>
@@ -3784,9 +3663,7 @@ together beta endpoints get $ENDPOINT_ID
 <p>I am proud of the platform we have built that offers choice, control, advantaged economics, and frontier performance for the full-suite of generative AI production capabilities across <a href="https://www.together.ai/serverless-inference">inference</a>, training, and accelerated compute, as well as the role that Together AI is playing in accelerating innovation and delivering the open-source AI ecosystem globally.</p>
 <p>To our customers, team, and investors: thank you for believing in this vision and helping us bring it to life. This milestone is certainly worth celebrating, but it feels far more like a beginning. We remain in the earliest days of a technological transformation that will reshape every industry.</p>
 <p>If our vision resonates with you, reach out — we are hiring across engineering, research, product, and go-to-market.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together AI at ICML 2026: frontier research across the full…</title>
@@ -3794,11 +3671,10 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/icml-2026?li=1</guid>
       <pubDate>Tue, 30 Jun 2026 00:00:00 +0000</pubDate>
       <description>Full title: Together AI at ICML 2026: frontier research across the full stack</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 6/30/2026</p>
+      <content:encoded><![CDATA[<p>Published 6/30/2026</p>
 <h1>Together AI at ICML 2026: frontier research across the full stack</h1>
 <p>Nine papers from Together AI and our peers were accepted to ICML 2026 in Seoul. If you are attending come by booth B714. We’d love to connect.</p>
-<ul><li>AuthorsTogether Research</li><li>Table of contents<a href="https://www.together.ai/blog/icml-2026#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://arxiv.org/abs/2601.16344">DSGym paper</a><a href="https://arxiv.org/abs/2602.13692">ThunderAgent paper</a><a href="https://arxiv.org/abs/2601.16175">TTT-Discover paper</a><a href="https://arxiv.org/abs/2511.21667">RARO paper</a><a href="https://arxiv.org/abs/2603.04304">V1 paper</a><a href="https://arxiv.org/abs/2602.06932">Aurora paper</a><a href="https://arxiv.org/abs/2602.21196">Untied Ulysses paper</a><a href="https://arxiv.org/abs/2511.02237">Opportunistic Expert Activation paper</a><a href="https://www.alphaxiv.org/abs/2606.parallel-kernel-bench">ParallelKernelBench paper</a></li></ul>
+<ul><li>AuthorsTogether Research</li><li>Links in this article<a href="https://arxiv.org/abs/2601.16344">DSGym paper</a><a href="https://arxiv.org/abs/2602.13692">ThunderAgent paper</a><a href="https://arxiv.org/abs/2601.16175">TTT-Discover paper</a><a href="https://arxiv.org/abs/2511.21667">RARO paper</a><a href="https://arxiv.org/abs/2603.04304">V1 paper</a><a href="https://arxiv.org/abs/2602.06932">Aurora paper</a><a href="https://arxiv.org/abs/2602.21196">Untied Ulysses paper</a><a href="https://arxiv.org/abs/2511.02237">Opportunistic Expert Activation paper</a><a href="https://www.alphaxiv.org/abs/2606.parallel-kernel-bench">ParallelKernelBench paper</a></li></ul>
 <p>Nine papers is a lot to take in as a list. The better way to read them is by where they sit in the stack. Frontier AI is not built at a single layer. It is the product of research that runs from the agent down to the GPU kernel, and a gain at any one layer is wasted if the layers around it cannot keep up.</p>
 <p>This is at the core of how we work. From frontier agents at the top to kernels at the bottom, our research touches each one, and each layer feeds the next. The research becomes part of the Together platform, and the production workloads running on that platform point us to the next research problem. Aurora, our ICML paper on adaptive speculative decoding, is a clear example: the same line of work ships today as our ATLAS speculator in production.</p>
 <p>Here is this year's work, layer by layer, top down.</p>
@@ -3995,11 +3871,10 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/parallelkernelbench?li=1</guid>
       <pubDate>Tue, 23 Jun 2026 00:00:00 +0000</pubDate>
       <description>Full title: ParallelKernelBench: Frontier LLMs can&apos;t write fast multi-GPU kernels (yet)</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 6/23/2026</p>
+      <content:encoded><![CDATA[<p>Published 6/23/2026</p>
 <h1>ParallelKernelBench: Frontier LLMs can't write fast multi-GPU kernels (yet)</h1>
 <p>The best frontier model solves under a third of 87 real-world problems — but a few generated kernels beat anything publicly available.</p>
-<ul><li>AuthorsWilly Chan, Nathan Paek, Simon Guo, Simran Arora, Daniel Y. Fu</li><li>Table of contents<a href="https://www.together.ai/blog/parallelkernelbench#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://www.alphaxiv.org/abs/2606.parallel-kernel-bench">Paper</a><a href="https://huggingface.co/datasets/togethercomputer/ParallelKernelBench_Problems">HuggingFace</a><a href="https://github.com/togethercomputer/ParallelKernelBench">Code</a></li></ul>
+<ul><li>AuthorsWilly Chan, Nathan Paek, Simon Guo, Simran Arora, Daniel Y. Fu</li><li>Links in this article<a href="https://www.alphaxiv.org/abs/2606.parallel-kernel-bench">Paper</a><a href="https://huggingface.co/datasets/togethercomputer/ParallelKernelBench_Problems">HuggingFace</a><a href="https://github.com/togethercomputer/ParallelKernelBench">Code</a></li></ul>
 <p>Summary</p>
 <p>LLMs have gotten surprisingly good at writing GPU kernels<strong>[1][2][3]</strong>, but almost all current benchmarks measuring that progress are single-GPU. In production, communication is often the bottleneck: communication overhead can account for over 20% of inference latency<strong>[4]</strong>, and that gap keeps widening as compute scales faster than interconnect bandwidth.</p>
 <p><a href="https://www.alphaxiv.org/abs/2606.parallel-kernel-bench"><strong>ParallelKernelBench</strong></a> (PKB) offers a benchmark and evaluation framework for multi-GPU kernel generation and includes 87 problems from real codebases where the task is replacing PyTorch + NCCL with a CUDA kernel that moves data directly over NVLink. We tested frontier coding models such as GPT-5.5, Gemini 3 Pro, Opus 4.7, and others. The evaluation revealed significant performance gaps across the board: under a third of problems were solved correctly, and fewer than a quarter of those beat the naive baseline.</p>
@@ -4067,9 +3942,7 @@ together beta endpoints get $ENDPOINT_ID
 <h2>References</h2>
 <ul><li>Standard Kernel. <a href="https://standardkernel.com/blog/reimagining-kernel-generation-at-the-ptx-layer-learning-from-and-outperforming-dsls/">Reimagining Kernel Generation at the PTX Layer: An LLM System Learning from DSLs to Outperform Them</a>. Standard Kernel Blog, April 2026.</li><li>Robert Tjarko Lange, Qi Sun, Aaditya Prasad, Maxence Faldor, Yujin Tang, and David Ha. <a href="https://arxiv.org/abs/2509.14279">Towards Robust Agentic CUDA Kernel Benchmarking, Verification, and Optimization</a>. arXiv:2509.14279, 2025.</li><li>Carlo Baronio, Pietro Marsella, Ben Pan, Simon Guo, and Silas Alberti. <a href="https://arxiv.org/abs/2507.11948">Kevin: Multi-Turn RL for Generating CUDA Kernels</a>. arXiv:2507.11948, 2025.</li><li>Raja Gond, Nipun Kwatra, and Ramachandran Ramjee. <a href="https://arxiv.org/abs/2505.11329">TokenWeave: Efficient Compute-Communication Overlap for Distributed LLM Inference</a>. arXiv:2505.11329, 2026.</li><li>Stuart Sul and Chris Ré. <a href="https://hazyresearch.stanford.edu/blog/2026-02-19-tk-2">ThunderKittens 2.0: Even Faster Kernels for Your GPUs</a>. Hazy Research, February 2026.</li></ul>
 <p>@misc{chan2026parallelkernelbench, title  = {ParallelKernelBench: Can LLMs Write Fast Multi-GPU Kernels?}, author = {Willy Chan and Nathan Paek and Simon Guo and Simran Arora and Daniel Y. Fu}, year   = {2026}, url    = {https://nathanjpaek.github.io/parallel-kernel-bench/} }</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Kimi K2.7 Code vs Claude Fable 5: Landing pages that cost 94…</title>
@@ -4077,11 +3950,10 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/kimi-k2-7-code-vs-claude-fable-5?li=1</guid>
       <pubDate>Wed, 17 Jun 2026 00:00:00 +0000</pubDate>
       <description>Full title: Kimi K2.7 Code vs Claude Fable 5: Landing pages that cost 94% less</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 6/17/2026</p>
 <h1>Kimi K2.7 Code vs Claude Fable 5: Landing pages that cost 94% less</h1>
-<ul><li>AuthorsHassan El Mghari</li><li>Table of contents<a href="https://www.together.ai/blog/kimi-k2-7-code-vs-claude-fable-5#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsHassan El Mghari</li></ul>
 <p><strong>Summary</strong></p>
 <p>We ran 12 landing pages through Kimi K2.7 Code and Claude Fable 5. Kimi cost 94% less and scored within a few points on nearly every page. Open-source models aren't just cheaper, they're genuinely competitive on quality. And the gap is closing faster than people realize.</p>
 <p>We ran an experiment where we had Kimi K2.7 Code and Claude Fable 5 each produce 12 landing pages for a side‑by‑side comparison. Overall, Kimi K2.7 Code cost about 94% less than Fable 5 and yielded similar-quality output, especially after we gave Kimi the right context with a design MCP.</p>
@@ -4120,9 +3992,7 @@ together beta endpoints get $ENDPOINT_ID
 <p>The biggest improvement came from giving Kimi visual inspiration through a custom MCP server. Once it could work from screenshots and design references, the pages became more readable, more structured, and more visually intentional.</p>
 <p>Combined with the lower cost, that makes open-source models a practical choice for this kind of workflow. If you can give the model stronger inputs and iterate cheaply, you can get surprisingly far.</p>
 <p>You can try open-source models like Kimi K2.7 Code in the <a href="https://api.together.ai/playground/moonshotai/Kimi-K2.7-Code">Together AI Playground</a>.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Building trust in enterprise AI: Together AI earns ISO 27001…</title>
@@ -4130,12 +4000,11 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/iso-27001-2022-certification?li=1</guid>
       <pubDate>Wed, 10 Jun 2026 00:00:00 +0000</pubDate>
       <description>Full title: Building trust in enterprise AI: Together AI earns ISO 27001:2022 certification</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
+      <content:encoded><![CDATA[<p>Company</p>
 <p>Published 6/10/2026</p>
 <h1>Building trust in enterprise AI: Together AI earns ISO 27001:2022 certification</h1>
 <p>ISO 27001:2022 builds on our existing compliance program and reinforces our commitment to helping customers run production-grade AI workloads on secure, well-governed infrastructure.</p>
-<ul><li>AuthorsLisa Ruggiero, Derek Chamorro</li><li>Table of contents<a href="https://www.together.ai/blog/iso-27001-2022-certification#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="http://trust.together.ai">Trust Center</a></li></ul>
+<ul><li>AuthorsLisa Ruggiero, Derek Chamorro</li><li>Links in this article<a href="http://trust.together.ai">Trust Center</a></li></ul>
 <p>Summary</p>
 <p>Together AI has received an ISO 27001:2022 certification from A-LIGN Compliance and Security, Inc., an <a href="https://anab.ansi.org/">ANAB-accredited</a> certification body, confirming that our Information Security Management System (ISMS) meets the latest international standard for information security management. This milestone builds on our existing compliance program and reinforces our commitment to helping customers run production-grade AI workloads on secure, well-governed infrastructure.</p>
 <p>The certification reflects a comprehensive, multi-month assessment of how we manage risk, secure data, and continuously improve security across our organization and platform.</p>
@@ -4148,9 +4017,7 @@ together beta endpoints get $ENDPOINT_ID
 <p>Achieving ISO certification is one part of a broader, defense‑in‑depth security program at Together AI. We combine secure-by-design infrastructure, rigorous access management, continuous monitoring, and formal policies and procedures so that security is embedded into how we design, build, and operate our AI platform.</p>
 <p>This certification complements our existing controls aligned with other industry frameworks such as SOC 2, which help customers in regulated industries adopt AI while meeting their compliance obligations. We will continue to evolve our ISMS and related programs to address emerging risks in AI systems, scaling our controls and governance as customers bring more sensitive and business-critical workloads to Together AI.</p>
 <p>Customers and partners can request additional security and compliance documentation, including a copy of the certificate and information about our ISO 27001 control environment, at <a href="http://trust.together.ai/">trust.together.ai</a>.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Serving MiniMax-M3 for efficient inference: Unlocking 1M-Tok…</title>
@@ -4158,11 +4025,10 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/serving-minimax-m3-for-efficient-inference-unlocking-1m-token-context-and-multimodality-without-regrets?li=1</guid>
       <pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate>
       <description>Full title: Serving MiniMax-M3 for efficient inference: Unlocking 1M-Token Context and Multimodality Without Regrets</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 6/2/2026</p>
 <h1>Serving MiniMax-M3 for efficient inference: Unlocking 1M-Token Context and Multimodality Without Regrets</h1>
-<ul><li>AuthorsYubo Wang, Michael Granado, Connor Li, Jue Wang, Brian Mak, Wei Gong, Hiral Jasani, Yineng Zhang, Dan Fu</li><li>Table of contents<a href="https://www.together.ai/blog/serving-minimax-m3-for-efficient-inference-unlocking-1m-token-context-and-multimodality-without-regrets#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsYubo Wang, Michael Granado, Connor Li, Jue Wang, Brian Mak, Wei Gong, Hiral Jasani, Yineng Zhang, Dan Fu</li></ul>
 <ul><li><strong>Together AI is the preferred cloud partner for MiniMax M3.</strong> Together AI will host the open-weights model as a developer endpoint upon its public release.</li><li>Our Inference and Kernel teams delivered <strong>significant engineering breakthroughs to serve M3 efficiently</strong>, including key optimizations such as a KV-Block-Major sparse attention kernel, a novel paged attention integration for MSA, highly optimized index scoring kernel and a Rust-based multimodal preprocessing gateway, resulting in <strong>81–125% throughput improvements </strong>across different concurrency levels.</li><li>Serving <strong>MiniMax M3 at scale in production validates Together AI as the go-to inference platform</strong> for models that push the frontier on the hard systems problems that make real-world deployment possible.</li></ul>
 <p>MiniMax launched their latest state-of-the-art model M3 and Together AI is excited to be the preferred cloud partner, enabling MiniMax to efficiently serve M3 in production at scale. Once MiniMax M3 is released as an open weights model over the coming few days, Together AI will also host the model as an endpoint for developers directly. Behind that scale is the exceptional work of our Inference and Kernel teams, who drove deep performance optimizations and ensured production-grade reliability for a model that pushes the frontier: 1M-token context window, native multimodality, and an architecture that demands serious engineering to serve efficiently. In this post, we'll walk through how we made it happen. Congratulations to the MiniMax team on a landmark model launch and continued innovation.</p>
 <p>MiniMax M3 is an all-in-one model that brings together state-of-the-art coding performance, agentic workflow support, and native multimodal reasoning. On top of these capabilities, it is also designed to support 1M context while being highly economically friendly to serve. This makes it a good fit for real-world tasks where long documents, codebases, tool use, images, and iterative reasoning often appear together and heavy in context. Compared to the previous generation, serving M3 imposes more challenges as new capabilities require optimizations on more dimensions including sparse attention computation, larger KV cache management, multimodal processing, etc.</p>
@@ -4197,9 +4063,7 @@ together beta endpoints get $ENDPOINT_ID
 <h2>Next Steps</h2>
 <p>‍<a href="https://www.together.ai/models/minimax-m3">Join the waitlist to get notified when M3 open weights are available on Together AI</a>.</p>
 <p>‍<a href="https://x.com/togethercompute/status/2061613292028612654">Check out the deep dive from MiniMax model designers and the Together inference team.</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>How Together AI built the world’s fastest speech-to-text sta…</title>
@@ -4207,12 +4071,11 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/how-together-ai-built-the-worlds-fastest-speech-to-text-stack?li=1</guid>
       <pubDate>Fri, 29 May 2026 00:00:00 +0000</pubDate>
       <description>Full title: How Together AI built the world’s fastest speech-to-text stack</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 5/29/2026</p>
 <h1>How Together AI built the world’s fastest speech-to-text stack</h1>
 <p>NVIDIA TensorRT multi-profile engines, conditional NVIDIA CUDA graphs, evented I/O, shared memory, and the Python GC fix behind Together’s ASR latency results.</p>
-<ul><li>AuthorsSebastien Beurnier</li><li>Table of contents<a href="https://www.together.ai/blog/how-together-ai-built-the-worlds-fastest-speech-to-text-stack#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsSebastien Beurnier</li></ul>
 <p>Artificial Analysis reported speed factor (Input audio seconds transcribed per second) -- Higher is better</p>
 <h2><strong>Modality matters</strong></h2>
 <p>A 1M-token text prompt can fit the entire Harry Potter series and still only weigh around 5 MB. That scale sounds enormous, but the input itself is compact. Text also arrives almost ready for inference: tokenize it, batch it, and move it through the model.</p>
@@ -4273,20 +4136,17 @@ together beta endpoints get $ENDPOINT_ID
 <p>The same constraint applies to the rest of the stack: every stage has to control both median latency and tail latency across model execution, preprocessing, transport, scheduling, and runtime behavior.</p>
 <p>‍<a href="https://www.together.ai/models/parakeet-tdt-0-6b-v3">NVIDIA Parakeet-TDT 0.6B v3</a> and <a href="https://www.together.ai/models/openai-whisper-large-v3">OpenAI Whisper Large v3</a> are available on Together. Reach out if you’re scaling voice AI in production.</p>
 <p><em>Parakeet v3 is the successor to v2, which was an English-only model that set the pace on the Hugging Face Open ASR Leaderboard for single-language throughput. v3 extends that foundation significantly, expanding language support from English to 25 European languages, adding automatic language detection without requiring a language prompt, and was trained on 1.7 million hours of audio data — including NVIDIA's Granary multilingual corpus.</em></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Benchmarking inference at scale: coding agents</title>
       <link>https://www.together.ai/blog/coding-agent-benchmarks</link>
       <guid isPermaLink="true">https://www.together.ai/blog/coding-agent-benchmarks?li=1</guid>
       <pubDate>Tue, 19 May 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 5/19/2026</p>
 <h1>Benchmarking inference at scale: coding agents</h1>
-<ul><li>AuthorsAlex Angus, Will Van Eaton, Dan Fu</li><li>Table of contents<a href="https://www.together.ai/blog/coding-agent-benchmarks#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsAlex Angus, Will Van Eaton, Dan Fu</li></ul>
 <p>Summary</p>
 <p>On a production coding agent workload, Together Inference Engine delivers <strong>31% more TPS than the next fastest OSS engine</strong> on the same hardware, and maintains 2× better TTFT at saturation. The gains come from full-stack optimization: ThunderMLA, custom kernel rewrites, and end-to-end profiling on real traffic.</p>
 <p>Most inference benchmarks measure a single user hitting a dedicated endpoint. The numbers look great. They're also useless for reasoning about production.</p>
@@ -4333,9 +4193,7 @@ together beta endpoints get $ENDPOINT_ID
 <p>These results reflect where Together Inference Engine stands today, on this workload, on this hardware configuration. We're publishing them because we think benchmarks should be meaningful: based on real workload shapes, transparent about methodology, and honest about where things start to break.</p>
 <p>Each update will be additive. The goal is a running record of what optimization actually buys you on a workload you can reason about. When the next one ships, we'll show you exactly what changed and why the numbers moved.</p>
 <p>If you're running a coding agent at scale and want to understand what this means for your workload, <a href="https://www.together.ai/contact-sales">reach out</a>.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together AI and Pearl Research Labs Team Up to Reduce the Co…</title>
@@ -4343,11 +4201,10 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/together-ai-partners-with-pearl-research-labs?li=1</guid>
       <pubDate>Fri, 15 May 2026 00:00:00 +0000</pubDate>
       <description>Full title: Together AI and Pearl Research Labs Team Up to Reduce the Cost of AI Inference</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 5/15/2026</p>
 <h1>Together AI and Pearl Research Labs Team Up to Reduce the Cost of AI Inference</h1>
-<ul><li>AuthorsSimran Arora, Pablo Cases, Julia Zhang, Karina Hernandez</li><li>Table of contents<a href="https://www.together.ai/blog/together-ai-partners-with-pearl-research-labs#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsSimran Arora, Pablo Cases, Julia Zhang, Karina Hernandez</li></ul>
 <p>Together AI’s mission is to make AI accessible and widely distributed. Today, we are excited to announce an exclusive partnership with Pearl Research Labs, the creators of the Pearl Network, a blockchain protocol. This protocol uses Proof of Useful Work to harness the computation of inference and training workloads to secure a blockchain and mine a new cryptocurrency that allows offsetting the cost of AI workloads.</p>
 <p>Pearl’s mathematical breakthrough is to generate the Pearl cryptocurrency by obtaining strong proofs of matrix multiplications that happen in the course of forward and backward passes of training and inference computations. In collaboration with Pearl Research Labs, we're introducing a new inference endpoint for <a href="https://huggingface.co/pearl-ai/Gemma-4-31B-it-pearl">Gemma-4-31B-it-pearl</a>, an instruction-tuned model. This endpoint is discounted by over 25%, offset by the future value of crypto emissions. As the spot price of ¶PRL increases, we expect to use more of the value generated by Pearl emissions to further reduce the price of this endpoint.</p>
 <p>This is our first product that integrates the Pearl Network. Eventually, we plan to expand our Pearl powered product portfolio, and offer ways for our customers to directly obtain a portion of the currency emissions.</p>
@@ -4355,9 +4212,7 @@ together beta endpoints get $ENDPOINT_ID
 <blockquote>Pearl Research Labs is excited to partner with Together AI and its world-class research and inference engineering teams to deliver the first inference endpoint that is discounted on account of the Pearl coins being generate in parallel to inference tokens.</blockquote>
 <blockquote>– Omri Weinstein, Co-founder and CEO, Pearl Research Labs</blockquote>
 <p>Learn more about the protocol at<a href="https://pearlresearch.ai"> Pearl Research Labs</a> and try out our first Pearl endpoint at <a href="http://www.together.ai/models/gemma-4-31b-it-pearl">www.together.ai/models/gemma-4-31b-it-pearl</a>!</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>Violin: An open-source video translation skill that breaks l…</title>
@@ -4365,10 +4220,9 @@ together beta endpoints get $ENDPOINT_ID
       <guid isPermaLink="true">https://www.together.ai/blog/violin-open-source-translation-skill?li=1</guid>
       <pubDate>Thu, 14 May 2026 00:00:00 +0000</pubDate>
       <description>Full title: Violin: An open-source video translation skill that breaks language barriers</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 5/14/2026</p>
+      <content:encoded><![CDATA[<p>Published 5/14/2026</p>
 <h1>Violin: An open-source video translation skill that breaks language barriers</h1>
-<ul><li>AuthorsShang Zhu, Kevin Qinghong Lin (Oxford), James Zou</li><li>Table of contents<a href="https://www.together.ai/blog/violin-open-source-translation-skill#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://www.violin-ai.com/">Try Violin</a><a href="https://github.com/shang-zhu/violin">Repo</a></li></ul>
+<ul><li>AuthorsShang Zhu, Kevin Qinghong Lin (Oxford), James Zou</li><li>Links in this article<a href="https://www.violin-ai.com/">Try Violin</a><a href="https://github.com/shang-zhu/violin">Repo</a></li></ul>
 <p>Video has become one of the most popular mediums for information sharing. Yet, the language distribution of popular video contents on the internet does not necessarily reflect the diversity of global audiences. For example, a prior study found that 66% of videos from the top 250 YouTube channels are in English, while Spanish, the second most common language, accounts for only 15% [1,2], leaving much of this content inaccessible to viewers around the world. This gap highlights the need for scalable video translation solutions.</p>
 <p><strong>Can cutting-edge AI help break down language barriers, making video content more accessible to global audiences?</strong></p>
 <p>Today, we are excited to introduce <strong>Violin</strong> — a fully open-source video translation tool, powered by <strong>Together API</strong>. The violin pipeline uses state-of-the-art speech recognition, large language models, and speech synthesis to achieve high-quality video translation.</p>
@@ -4400,9 +4254,7 @@ together beta endpoints get $ENDPOINT_ID
 <p>Violin provides the translation tool; users are solely responsible for the content they translate, including compliance with copyright and other applicable laws. Uploaded videos are deleted after 24 hours in the demo app.</p>
 <p>[1] Wikipedia, &quot;Languages used on the Internet,&quot; accessed May 8, 2026. <a href="https://en.wikipedia.org/wiki/Languages_used_on_the_Internet">https://en.wikipedia.org/wiki/Languages_used_on_the_Internet</a></p>
 <p>[2] Brian Yang, &quot;6 Common Features Of Top 250 YouTube Channels,&quot; Twinword, accessed May 12, 2026. <a href="https://www.twinword.com/blog/features-of-top-250-youtube-channels/">https://www.twinword.com/blog/features-of-top-250-youtube-channels/</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

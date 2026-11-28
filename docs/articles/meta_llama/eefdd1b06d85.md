@@ -9,10 +9,9 @@ captured: 2026-11-21
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: cb67539c2ba5
+body_sha: 6f9a0c9107f7
 ---
 
-[  返回新闻中心](https://about.fb.com/news)
 
 [ Meta ](https://about.fb.com/news/category/technologies/meta/)
 

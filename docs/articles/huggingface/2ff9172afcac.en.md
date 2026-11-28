@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ddffd5c0910a
+body_sha: a39cff32ec21
 ---
 
 # FastRTC: The Real-Time Communication Library for Python
@@ -315,9 +315,7 @@ Can you tell me a bit more about the use case [@JuanRoyo](https://huggingface.co
 
 [https://fastrtc.org/userguide/api/](https://fastrtc.org/userguide/api/)
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

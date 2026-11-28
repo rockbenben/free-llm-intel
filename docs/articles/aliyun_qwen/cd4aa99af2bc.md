@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c33c9d0ac1cf
+body_sha: e446be3590c1
 ---
 
 Qwen 系列基础模型已在物理世界的感知与理解上展现出强大能力，但
@@ -70,7 +70,7 @@ Qwen-RobotWorld
 
 阅读技术博客 →
 
-## Qwen-RobotNav：物理智能体的行动入口[#](https://qwen.ai/blog?id=qwen-robotsuite#qwen-robotnav物理智能体的行动入口)
+## Qwen-RobotNav：物理智能体的行动入口
 
 导航
 
@@ -177,7 +177,7 @@ Qwen-RobotNav 基准测试结果
 
 阅读 Qwen-RobotNav 博客 →
 
-## Qwen-RobotManip：物理智能体的交互基石[#](https://qwen.ai/blog?id=qwen-robotsuite#qwen-robotmanip物理智能体的交互基石)
+## Qwen-RobotManip：物理智能体的交互基石
 
 操作
 
@@ -344,7 +344,7 @@ RoboChallenge Table30 v1 通用赛道
 
 阅读 Qwen-RobotManip 博客 →
 
-## Qwen-RobotWorld：物理智能体的无限世界[#](https://qwen.ai/blog?id=qwen-robotsuite#qwen-robotworld物理智能体的无限世界)
+## Qwen-RobotWorld：物理智能体的无限世界
 
 想象
 
@@ -725,7 +725,7 @@ Kinova Jaco
 
 阅读 Qwen-RobotWorld 博客 →
 
-## 从模型到智能体：形成闭环[#](https://qwen.ai/blog?id=qwen-robotsuite#从模型到智能体形成闭环)
+## 从模型到智能体：形成闭环
 
 三个模型各自独立可用——但由于它们都提供**语言优先的接口**，通用 Qwen 模型可以将它们作为物理世界工具进行组合，将通用智能直接连接到物理行动。我们还有一个内部项目 **Qwen-RobotClaw**——一个机器人智能体框架，使 Qwen VLM 智能体能够将 Qwen-Robot Suite 模型作为物理世界工具调用，同时妥善管理长程任务所需的上下文与记忆，推动物理智能走向更通用、更复杂的真实应用场景。以下是目前已实现的早期示例。
 
@@ -785,7 +785,7 @@ Chat2Robot
 
 感谢 [D-Robotics（地瓜机器人）](https://www.d-robotics.cc/) 对该功能的支持。
 
-## 未来展望[#](https://qwen.ai/blog?id=qwen-robotsuite#未来展望)
+## 未来展望
 
 物理世界智能仍处于起步阶段。涉及复杂接触的长程任务、终身学习、通用规划器与物理执行器的深度融合、以及更丰富的人-机-环境交互，都仍是开放问题。但前行的路径正愈发清晰：从强大的多模态理解出发，将视觉语言表示空间桥接至每一类物理行动，扩大训练规模，并以泛化能力作为衡量成功的北极星。
 
@@ -793,7 +793,7 @@ Chat2Robot
 
 这是我们的目标——而 Qwen-Robot Suite 是迈向它的第一个完整步伐。
 
-## 引用[#](https://qwen.ai/blog?id=qwen-robotsuite#引用)
+## 引用
 
 ```
 bibtex@article{qwenrobotnav,  title={Qwen-RobotNav: A Scalable Navigation Model Designed for an Agentic Navigation System},  author={Qwen Team},  year={2026}}@article{qwenrobotmanip,  title={Qwen-RobotManip Technical Report: Alignment Unlocks Scale for Robotic Manipulation Foundation Models},  author={Qwen Team},  year={2026}}@article{qwenrobotworld,  title={Qwen-RobotWorld Technical Report: Unifying Embodied World Modeling through Language-Conditioned Video Generation},  author={Qwen Team},  year={2026}}

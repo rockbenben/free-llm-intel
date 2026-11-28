@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9c65bbdbd90f
+body_sha: 04aae98cff03
 ---
 
 # Migrating the Hub from Git LFS to Xet
@@ -200,8 +200,6 @@ Gotcha, didn’t realize it was global deduplication, that makes sense (*btw - i
 
 I’m not in the position where this impacts me at the moment (thankfully 🙏) and not my call but if the private storage is handled the same way it has some interesting.. implications. For example if people are paying for extra private storage, and their storage is being counted “full size” against limits whilst being deduplicated against the rest of the hub and therefore a fraction of that in reality, is that fair? Etc
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

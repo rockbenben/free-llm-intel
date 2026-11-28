@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 29025f5c1865
+body_sha: 958772d68a7d
 ---
 
 # Powerful ASR + diarization + speculative decoding with Hugging Face Inference Endpoints
@@ -317,9 +317,7 @@ Apr 27, 2025
 
 Tffg
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

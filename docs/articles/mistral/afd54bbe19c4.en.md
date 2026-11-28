@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: aa7203292bce
+body_sha: e74ac4c12fb1
 ---
 
 Product
@@ -166,5 +166,3 @@ The fastest way to test Search Toolkit is with the [Search Starter App](https://
 - [Set up ingestion](https://docs.mistral.ai/studio/search/search-toolkit/ingestion). Select parsers, chunking strategies, embedding models, and extractors for your data and file types.
 - [Tune indexing and ranking](https://docs.mistral.ai/studio/search/search-toolkit/search-index). Manage Vespa schemas, indexing behavior, and relevance profiles.
 - [Extend retrieval](https://docs.mistral.ai/studio/search/search-toolkit/retrieval). Add query rewriting, reranking, or hybrid retrieval to the search pipeline.
-
-0%

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e2ddbfb652b2
+body_sha: 441298cc3bd1
 ---
 
 Company
@@ -60,5 +60,3 @@ Our collaboration with NVIDIA and other coalition members reflects a shared comm
 ## The road ahead
 
 The NVIDIA Nemotron Coalition is just the beginning. Together, we’re setting a new standard for how AI is developed and deployed, one that prioritizes openness, collaboration, and real-world impact. Stay tuned for updates.
-
-0%

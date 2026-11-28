@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ac483c226d9e
+body_sha: 5c727d7df68e
 ---
 
 # Democratizing AI Safety with RiskRubric.ai
@@ -113,9 +113,7 @@ We are also working on additional integrations that would make this easier and m
 We also have an AMA session to connect with the community and answer any further questions - feel free to register and attend!
 [https://noma.security/behind-the-riskrubric-ai-algorithm-an-ama-on-transparent-ai-model-risk/](https://noma.security/behind-the-riskrubric-ai-algorithm-an-ama-on-transparent-ai-model-risk/)
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

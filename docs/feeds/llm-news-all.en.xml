@@ -384,12 +384,11 @@ TRACKIO_DIR=&quot;$PWD/swarm-results/trackio&quot; uvx trackio show</code></pre>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
       <description>Full title: Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Shaping</p>
+      <content:encoded><![CDATA[<p>Model Shaping</p>
 <p>Published 11/26/2026</p>
 <h1>Distilling Kimi-K3.1-Pro into Qwen3.8-27B: Teaching a model a new language</h1>
 <p>Qwen3.8-27B answered in Thai when we asked it for Lao. We distilled Kimi-K3.1-Pro's Lao translation into it with Together Post-Training and reached 93% of the teacher's score, with Thai intact.</p>
-<ul><li>AuthorsZain Hasan, Sonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/distilling-kimi-into-qwen">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation">Distillation cookbook on GitHub</a><a href="https://www.together.ai/post-training">Together Post-Training</a><a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a><a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a></li></ul>
+<ul><li>AuthorsZain Hasan, Sonny Khan</li><li>Links in this article<a href="https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation">Distillation cookbook on GitHub</a><a href="https://www.together.ai/post-training">Together Post-Training</a><a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a><a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a></li></ul>
 <p>Summary</p>
 <ul><li><strong>The gap:</strong> Qwen3.8-27B answers in Thai when asked for Lao and scores 5.5 chrF++, while Kimi-K3.1-Pro scores 47.5 on the same test.</li><li><strong>The fix:</strong> We trained a LoRA adapter on about 3,800 of Kimi-K3.1-Pro's translations using Together Post-Training.</li><li><strong>The result:</strong> The student writes Lao on every test sentence and scores 44.3, which is 93% of the teacher's score, and it keeps its Thai.</li><li><strong>The cost:</strong> All the experiments together cost \$260, and the code is in the post-training cookbook.</li></ul>
 <p>While running some experiments we found out that <a href="https://www.together.ai/models/qwen3-8-27b">Qwen3.8-27B</a>, one of the most popular small language models (SLMs), can't write Lao, a Southwestern Tai language and the official language of Laos. If you ask it to translate an English sentence into Lao, it answers in Thai, Lao's closest relative, which uses an entirely different script. On the <a href="https://huggingface.co/datasets/Muennighoff/flores200">FLORES-200</a> Lao test set, the model scores 5.5 chrF++, a 0 to 100 score for how closely a translation matches a human reference, and only 11% of its outputs are in Lao script. <a href="https://www.together.ai/models/kimi-k3-1-pro">Kimi-K3.1-Pro</a> scores 47.5 on the same test.</p>
@@ -547,9 +546,7 @@ checkpoint = session.create_inference_checkpoint()  # registers the adapter (ml_
 <p>Loss is cross-entropy in nats per trained token. Trained tokens count only the assistant's translation tokens, the ones that carry loss, not the prompts. The five-language run is the one from &quot;Training on five languages&quot;.</p>
 <p>Three observations from these runs:</p>
 <ul><li>Kimi-K3.1-Pro's Lao is easier for the student to learn than human Lao. The human-reference run and the Lao-only distillation run translate the same FLORES dev sentences, yet the student starts at 0.54 nats per token on the human translations and 0.36 on Kimi-K3.1-Pro's, and finishes at 0.16 against 0.06. Our guess is that one model's translations are more consistent than a team of human translators', so the student has less to fit.</li><li>The loss drops at every epoch boundary, and held-out quality doesn't follow it. Each drop is the model meeting rows it has already seen. In the four Lao runs, training loss fell by more than half after the first epoch, while Lao chrF++ on the 300 test sentences moved by between −1 and +3 points. More data beat more passes: one epoch of the 4× data reached 43.2 on those sentences, against 41.3 after three epochs of the smaller Lao + Thai set.</li><li>The five-language run has the highest loss through its first epoch. Four of its five languages started well below the teacher, against one of two in the Lao runs.</li></ul>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Hugging Face] Where scientists draw the line on AI agents</title>
@@ -806,12 +803,11 @@ checkpoint = session.create_inference_checkpoint()  # registers the adapter (ml_
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
       <description>Full title: Introducing Hurdle: Run agent evals on your API, skills, and docs</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 11/25/2026</p>
 <h1>Introducing Hurdle: Run agent evals on your API, skills, and docs</h1>
 <p>Hurdle is an open-source npm library that runs Claude Code and Codex against tasks on your platform, scores each run with code checks, guards and an LLM judge, and shows the pass rate by model and condition.</p>
-<ul><li>AuthorsMo King, Sam Barrowclough, Hassan El Mghari</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-hurdle-run-agent-evals-on-your-api-skills-and-docs">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsMo King, Sam Barrowclough, Hassan El Mghari</li></ul>
 <p>If you’re building for developers, you already know that coding agents are one of the main ways devs access your API, SDK, and docs. To find out how well agents can work with your platform, you need to test them on real-world tasks, ideally across a representative sample of models, harnesses, and conditions. Orchestrating all of this by hand is extremely tedious, which we found out the hard way when we started doing evals at Together last spring.</p>
 <p>To automate the process, we spent the last six months building <a href="https://github.com/togethercomputer/hurdle">Hurdle</a>, an npm library for running agent evals. Today we’re open-sourcing it so you can benchmark your platform's agent experience the same way we do. Get started today with <code>npx hurdle init</code> or by asking your agent to set it up for you.</p>
 <h2>How Hurdle works</h2>
@@ -972,9 +968,7 @@ export default defineSuite({
 <p>After that, pick one task your users are already giving to their agents. Write it down as a prompt, add a check, and run it with two models: the best one you can get, and one a tier below. Repeat each a few times, since any single run might pass or fail by chance.</p>
 <p>Hurdle is open source on <a href="https://github.com/togethercomputer/hurdle">GitHub</a>, along with a guide in the README on how to write your own evals.</p>
 <p>Let us know if Hurdle finds a way to trip up your agents! We’d love to hear about any obstacles you discover and how you fixed them.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] Turn artifacts into Mac and Windows apps</title>
@@ -1297,12 +1291,11 @@ uv run nav_pad.py --robot ROBOT_HOST \
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
       <description>Full title: Introducing preemptible compute: the same compute, half the price</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>GPU Clusters</p>
+      <content:encoded><![CDATA[<p>GPU Clusters</p>
 <p>Published 9/10/2026</p>
 <h1>Introducing preemptible compute: the same compute, half the price</h1>
 <p>Now in public preview for Together GPU Clusters: interruptible GPU compute, with a five-minute drain window and automatic refill toward your target.</p>
-<ul><li>AuthorsPavneet Ahluwalia, Varun Chakravarthy</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsPavneet Ahluwalia, Varun Chakravarthy</li></ul>
 <p>Today we're announcing the public preview of preemptible compute for Together GPU Clusters, available on Kubernetes clusters in all regions. Preemptible nodes give teams a lower-cost way to run interruption-tolerant work — short experiments, inference bursts, batch jobs — on the same GPU infrastructure they already use, billed sub-hourly at a flat 50% of the on-demand rate. You can add preemptible capacity to a new or existing cluster starting today.</p>
 <h2>How preemptible compute works</h2>
 <p>Preemptible compute adds a second compute type to Together GPU Clusters. Standard nodes are fulfilled synchronously and are never preempted. Preemptible nodes use the same NVIDIA accelerated compute, draw from un-used capacity, and can be reclaimed when that capacity is needed elsewhere.</p>
@@ -1343,9 +1336,7 @@ uv run nav_pad.py --robot ROBOT_HOST \
 <p>Preemptible compute is now in public preview on Kubernetes clusters. Slurm support, additional regions, and in-place conversion between compute types are planned next.</p>
 <p>→ <a href="https://api.together.ai/clusters/create">Create a cluster</a></p>
 <p>→ <a href="https://docs.together.ai/docs/preemptible-compute">Read the docs</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Anyscale] Enabling Mid-Epoch Training Resumption with Ray Train</title>
@@ -2365,11 +2356,10 @@ claude mcp login openrouter</code></pre>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
       <description>Full title: Security event: Prompt leakage for requests in June and July of 2026</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
+      <content:encoded><![CDATA[<p>Company</p>
 <p>Published 11/21/2026</p>
 <h1>Security event: Prompt leakage for requests in June and July of 2026</h1>
-<ul><li>AuthorsVipul Ved Prakash</li><li>Table of contents<a href="https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsVipul Ved Prakash</li></ul>
 <p>We are notifying customers about a security incident involving a subset of prompts submitted to Together AI’s serverless inference service in June and July 2026. An unauthorized party downloaded stored prompt samples after a credential for a private repository was exposed in a public code repository.</p>
 <p>We apologize for this incident. We are reviewing the affected data to determine what information was exposed and which customers require direct notification.</p>
 <h2>What happened</h2>
@@ -2388,9 +2378,7 @@ claude mcp login openrouter</code></pre>
 <p>If you have questions about this incident or its potential impact on your organization, contact security@together.ai.</p>
 <p><strong>Vipul Ved Prakash</strong></p>
 <p>CEO and Co-founder, Together AI</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Together AI] Qwen4 Max is live on Together AI</title>
@@ -2399,12 +2387,11 @@ claude mcp login openrouter</code></pre>
       <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 11/21/2026</p>
 <h1>Qwen4 Max is live on Together AI</h1>
 <p>Alibaba's flagship Qwen model is 30% off through November 22, 2026. We gave it a bug report and the whole Tornado repository in one request to see what a 1M-token context window is worth, and what it costs.</p>
-<ul><li>AuthorsSonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/qwen4-max">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max">Qwen4 Max in the playground</a><a href="https://www.together.ai/models/qwen4-max">Qwen4 Max model page</a><a href="https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max">Alibaba's announcement</a></li></ul>
+<ul><li>AuthorsSonny Khan</li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max">Qwen4 Max in the playground</a><a href="https://www.together.ai/models/qwen4-max">Qwen4 Max model page</a><a href="https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max">Alibaba's announcement</a></li></ul>
 <p>Summary</p>
 <ul><li><strong>Qwen4 Max on Together AI:</strong> Alibaba's flagship Qwen model is available on Together Serverless Inference with a 1M-token context window.</li><li><strong>What we tested:</strong> Qwen4 Max took a bug report and all 344 files of the Tornado repository in one request, and its patch passes the maintainers' tests.</li><li><strong>Sale pricing:</strong> Through November 22, 2026, it costs \$1.05 per 1M input tokens, \$0.0525 per 1M cached input tokens and \$3.15 per 1M output tokens.</li><li><strong>Before you call it:</strong> Requests have to stream, and thinking is on by default, with thinking tokens counted as output tokens.</li></ul>
 <p>We gave <a href="https://www.together.ai/models/qwen4-max">Qwen4 Max</a> a bug report and an entire codebase in one request. The codebase was Tornado, the Python web framework: all 344 files, 652,519 tokens. The model had no tools, and we didn't select relevant files or run a retrieval step first. Seventy-two seconds later it returned a patch, and the patch passes the tests Tornado's maintainers wrote for that bug. The request cost 69 cents.</p>
@@ -2512,9 +2499,7 @@ for chunk in stream:
 <p>Yes, prompt caching is automatic for Qwen4 Max on Together AI, and cached input tokens cost \$0.075 per 1M at list price. In our test, a repeat of a 630,000-token request came back almost entirely cached, and its first token arrived in 8 seconds instead of 54. Caching is best effort, so not every repeat is cached.</p>
 <h3>Can I fine-tune Qwen4 Max or run it on a dedicated endpoint?</h3>
 <p>No, Qwen4 Max is serverless only on Together AI today, and it isn't available for fine-tuning. Alibaba says smaller open-weight models from the Qwen4 series will follow.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] Anthropic announces closing of initial public offering, incl…</title>
@@ -3106,12 +3091,11 @@ base_url = &quot;https://vpce-EXAMPLE-VPCEID.bedrock-runtime.us-west-2.vpce.amaz
       <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 11/20/2026</p>
 <h1>Qwen3 TTS is now available on Together AI</h1>
 <p>Keep one voice across your product, change its tone with a plain-language instruction and move it between 10 languages, with first audio in as little as 97ms.</p>
-<ul><li>AuthorsAnthony Ji, Charles Duong, Sebastien Beurnier, Sahil Yadav, Sonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/qwen3-tts">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://voicefinder.together.ai/">Compare voices in VoiceFinder</a><a href="https://www.together.ai/models/qwen3-tts-12hz-1-7b">Qwen3 TTS model page</a><a href="https://docs.together.ai/docs/text-to-speech">Text-to-speech docs</a><a href="https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice">Qwen's model card on Hugging Face</a></li></ul>
+<ul><li>AuthorsAnthony Ji, Charles Duong, Sebastien Beurnier, Sahil Yadav, Sonny Khan</li><li>Links in this article<a href="https://voicefinder.together.ai/">Compare voices in VoiceFinder</a><a href="https://www.together.ai/models/qwen3-tts-12hz-1-7b">Qwen3 TTS model page</a><a href="https://docs.together.ai/docs/text-to-speech">Text-to-speech docs</a><a href="https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice">Qwen's model card on Hugging Face</a></li></ul>
 <p>Summary</p>
 <ul><li><strong>Qwen3 TTS on Together AI:</strong> Qwen's open text-to-speech model, on Together Serverless Inference and dedicated endpoints at \$20 per 1M characters.</li><li><strong>One voice, many deliveries:</strong> nine preset voices that change tone and emotion from a plain-language instruction such as &quot;excited and upbeat.&quot;</li><li><strong>10 languages per voice:</strong> every preset speaks Chinese, English, Japanese, Korean, German, French, Russian, Portuguese, Spanish and Italian.</li><li><strong>Built for real-time voice:</strong> first audio in as little as 97ms, with HTTP streaming and a WebSocket API for text that arrives in pieces.</li></ul>
 <p>Starting today, developers can run <a href="https://www.together.ai/models/qwen3-tts-12hz-1-7b">Qwen3 TTS</a> on Together AI, with first audio in as little as 97ms.</p>
@@ -3259,9 +3243,7 @@ asyncio.run(main())</code></pre>
 <p>Open <a href="https://voicefinder.together.ai/">VoiceFinder</a> and select <code>Qwen/Qwen3-TTS-12Hz-1.7B</code> in the model menu. You can preview each voice and generate up to 500 characters of your own text with it.</p>
 <h3>Is Qwen3 TTS open source?</h3>
 <p>Yes, Qwen released Qwen3 TTS 12Hz 1.7B under the Apache 2.0 license. The weights are on Hugging Face.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Inference.net] We made vLLM tokenization 120x faster with Elixir</title>
@@ -3271,7 +3253,7 @@ asyncio.run(main())</code></pre>
       <category>Inference.net</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-inference_net.en.xml">Inference.net</source>
       <content:encoded><![CDATA[<p>We’ve spent months investing in our inference routing stack, doubling down on a custom request router built in Elixir. This is the first in a series of blog posts discussing our progress and learnings in scaling to trillions of tokens a day. This post focuses on tokenizers and how we’ve managed to make SGLang 33x faster and vLLM 12x faster with tokenization alone.</p>
-<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#why-does-tokenization-even-matter">#</a>Why does tokenization even matter?</h2>
+<h2>Why does tokenization even matter?</h2>
 <p><img src="https://inference.net/assets/request-timeline-Dr9A6UVv.png" alt="Timeline of an inference request: tokenization, prefill, then decode one token per step, with TTFT marked after the first decode step"></p>
 <p>When processing an inference request there are 4 main stages before you get the first output token: Tokenization, Routing, Prefill &amp; Decode.</p>
 <p>Our routing layer makes decisions based on input context length. Knowing the length of the input requires you to tokenize it, or use a rough estimate (like one token per four characters of input). Once we’ve routed the request, we prefill and decode using one of the popular open source inference engines. All of those engines have the option to either: accept a chat completion or accept raw token IDs. Historically, we would depend on the open-source inference engines to handle tokenization, prefill and then finally start decoding.</p>
@@ -3279,7 +3261,7 @@ asyncio.run(main())</code></pre>
 <p>How we used to route requests, sending the full JSON payload to the engines</p>
 <p>Our routing layer tokenizes the request to get an estimate of how many tokens this request will take. Inference engines can process requests faster when you limit the input context length, and so knowing the length of a request allows you to route short requests to “short pools” that will provide performance gains, as compared to pools that are configured for a models full context length. The tokenizer we used for our production hot path is <a href="https://github.com/actual-computer/toks">Toks</a> (from Actual, Inc.) with the caveat that it doesn’t render chat templates and is written in C which isn’t natively in our routing stack and required work to integrate.</p>
 <p>As we have scaled demand over the past few months we’ve pushed the open-source inference engines to their limits and now have internal forks of both vLLM and SGLang patching them for efficiency. We still run up against fundamental limits because their frontends are currently written in Python, a single-threaded interpreted language, meaning slow downs, GIL (Global Interpreter Lock) contention and more which all affects your TTFT (time to first token). Instead of sending raw JSON requests, you can cut down on the overhead incurred by tokenization being executed in a Python process by sending the engines raw token IDs!</p>
-<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#tokenization-library-benchmarking">#</a>Tokenization Library Benchmarking</h2>
+<h2>Tokenization Library Benchmarking</h2>
 <p>With that all in-mind we built <code>ChatTokenizer</code> to see how much better we could do!</p>
 <p><img src="https://inference.net/assets/headline-kimi-tokens-per-second-BySqGt1u.png" alt="Bar chart of Kimi K3.1 tokenization throughput in tokens per second for ChatTokenizer, Baseten, the SGLang gateway, vllm-rs, SGLang and vLLM"></p>
 <p>~158K-token prompt with 8 vCPUs</p>
@@ -3289,7 +3271,7 @@ asyncio.run(main())</code></pre>
 <p>Our goal with the benchmarks was to see:</p>
 <ul><li>How does tokenization change with payload size? Does it back up the hypothesis we had that large context conversations cause significant slowdowns?</li><li>What is the best off-the-shelf option?</li></ul>
 <p>From the graphs you can see that vLLM and SGLang themselves are by no means the most efficient tokenizers. SGLang ships their own gateway, written in Rust, which is one of the best options (caveat: that it doesn’t tokenize images). Once we realized the gaps and poor performance of the open source options, it was clear that it was time to raise the bar</p>
-<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#what-makes-ours-faster">#</a>What makes ours faster?</h2>
+<h2>What makes ours faster?</h2>
 <p>We’ve been advocates of Elixir and BEAM and have been using it in production since last December for our Router. Ericsson’s Open Telecom Platform (OTP) has been a fundamental reason of how we’ve managed to scale up to 100s of millions of daily requests. However, it is nowhere near fast enough to beat the other tokenizers here, so we decided to lean into <a href="https://www.erlang.org/doc/system/nif.html">Native Implemented Functions (NIFs)</a> allowing us to use Rust, C &amp; Assembly as part of the BEAM supervision tree.</p>
 <p><img src="https://inference.net/assets/tokenizer-internals-DXiylxBU.png" alt="Diagram of ChatTokenizer internals across Elixir, Rust and C lanes: request processor, split images, build prompt, segment cache, encode across vCPUs, expand images, token IDs"></p>
 <p>The core of our tokenizer is still Actual’s <code>toks</code> which uses optimized assembly to produce token IDs that are 1-1 with Hugging Face’s tokenizers but at 13-151x the speed! Toks however doesn’t yet support rendering chat templates and images, among other features we needed internally. This led us to build a supporting Rust and Elixir library around it to handle those features and more.</p>
@@ -3305,26 +3287,26 @@ compiled =
     # usually passed to the engines
     default_chat_template_kwargs: %{&quot;reasoning_effort&quot; =&gt; &quot;high&quot;},
   )</code></pre>
-<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#headline-improvements">#</a>Headline Improvements</h3>
+<h3>Headline Improvements</h3>
 <p>Each of the improvements below is explained in more detail later in the post but to prevent this from being super-lengthy here are the tl;dr’s for some of the big improvements we have made.</p>
 <ul><li>Deepseek v4.1 Flash and Kimi K3.1 Pro chat templates were ported to native Rust with the Jinja/Python kept as references and validated with unit tests</li><li>A quadratic loop in the Deepseek encoders was removed and Kimi's repeated template pieces were memoized within a request</li><li>Token IDs are passed from C/Rust to Elixir as a binary of little-endian u32s rather than a list to avoid the overhead of passing around lists</li><li>Inline base64 images are found with a SIMD byte scan and handed to Rust as sub-binaries pointing into the original request rather than copying them</li><li>We avoid parsing the whole JSON body multiple times and instead extract only the fields that the engine needs</li></ul>
-<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#reading-image-metadata-instead-of-the-full-image">#</a>Reading image metadata instead of the full image</h3>
+<h3>Reading image metadata instead of the full image</h3>
 <p>Agent traffic is full of images. A single 1M token request with 8 inline images is ~30MB of JSON and almost all of that is base64. The naive path (which we originally took) is to parse the whole body, copy every image string out, base64 decode it and open the image just to find out how big it is, because that's all the engine actually needs to know to work out how many image placeholder tokens to insert.</p>
 <p>So we stopped doing that:</p>
 <ul><li>Before we parse anything we do a SIMD byte scan (memchr) over the raw request looking for <code>&quot;data:</code> strings over 4KiB.</li><li>Each image crosses into Rust as a sub-binary, which is the BEAM's way of pointing into the original request binary rather than copying it. In the JSON we swap the image out for a tiny marker (<code>data:x-chat-tokenizer-ref,0</code>) so the 30MB request parses as the few MB of text it actually is.</li><li>We read the width and height straight out of the PNG/GIF/WebP/JPEG header while it's still base64, never decoding a single pixel (and apply EXIF orientation where the engine does).</li><li>The model's own resize rules (Deepseek v4.1, Kimi K3, Qwen-VL, etc.) turn that size into the exact number of image tokens the engine would have produced.</li></ul>
 <p><img src="https://inference.net/assets/zero-copy-images-CPr_Jr3u.png" alt="Bar chart of requests per second on ~1M-token DeepSeek v4.1 requests with 8 images: ChatTokenizer after and before zero-copy images, the SGLang gateway, SGLang and vLLM"></p>
 <p>Deepseek v4.1, ~1M tokens + 8 inline images, req/s with 8 vCPUs. Before vs after zero-copy images, against the SGLang gateway and vLLM and SGLang's own preprocessing. The SGLang gateway skips image expansion so its IDs don't match the engine.</p>
 <p>That took us from 22.5 to 167 req/s on million token requests, and a single request on one core dropped from 240ms to 28ms. For comparison, vLLM and SGLang’s own preprocessing does 1.3 and 1.6 req/s on the same requests, roughly 2-3 seconds each.</p>
-<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#only-parse-the-json-you-need">#</a>Only parse the JSON you need</h3>
+<h3>Only parse the JSON you need</h3>
 <p>The other thing that surprised us was how much time went into just reading a request to then throw most of it away;</p>
 <ul><li><code>serde_json</code> checks UTF-8 on every string with a scalar loop, which was about a tenth of a whole chat request. We do one SIMD UTF-8 check over the entire body up front and then parse it as an already validated string.</li><li>Chat requests are mostly tiny objects (a message, a content part, a tool call) with a handful of keys. Hashing every key is overkill so for anything with 8 or fewer keys we just scan them.</li><li>We only pull out the fields the engine reads, and apply the engine's own request rules (like how vLLM pre-parses tool call arguments) in Rust, so the body is never parsed twice or re-serialized.</li><li>Text going into <code>toks</code> gets the same SIMD UTF-8 check. The standard library ran at ~3GB/s on CJK heavy prompts which was a fifth of <code>toks</code>' entire encode time.</li></ul>
 <p>Not everything worked. We tried parallel JSON parsing and parallel template rendering and ripped both out. Waking up threads cost more than the work they saved.</p>
-<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#while-under-load">#</a>While Under load</h2>
+<h2>While Under load</h2>
 <p>Benchmarking throughput is nice, and you can always make your numbers look many multiples higher than they will actually be in production. As part of building our library we tested how the long tail grew when under load asking ourselves, as a serving instance gets busier how slow are the slow requests?</p>
 <p><img src="https://inference.net/assets/latency-under-load-DbziloSv.png" alt="Vertical whisker plots of p50 and p99 latency per prompt size for ChatTokenizer and the SGLang gateway on DeepSeek v4.1 and Kimi K3.1"></p>
 <p>Latency per request with all 8 vCPUs busy, ours vs the SGLang gateway. The dot is p50 and the cap is p99. Each prompt size has its own axis. Lower is better.</p>
 <p>From 8K to 160K token prompts, on both models, our p99 is lower than the SGLang gateway's median. On Deepseek at ~37K tokens our p99 is 2.6ms while their p50 is 2.9ms (and their p99 is 15.9ms). This is thanks to NIFs being run on dirty CPU schedulers, a million token request never stalls the rest of the BEAM, and the router can keep routing while the tokenizer is chewing through large or many requests.</p>
-<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#how-does-this-compare-to-the-engines">#</a>How does this compare to the engines?</h2>
+<h2>How does this compare to the engines?</h2>
 <p>We took vLLM and SGLang's own request preprocessing (applying the chat template, parsing the body and then producing tokens), and benchmarked it in-process against ours.</p>
 <p><img src="https://inference.net/assets/vs-engine-preprocessing-Dgzpx28J.png" alt="Bar charts of requests per second by prompt size for ChatTokenizer, vLLM and SGLang on DeepSeek v4.1 and Kimi K3.1"></p>
 <p>Req/s by prompt size for ChatTokenizer vs vLLM and SGLang's own preprocessing, in-process with 8 vCPUs. Each prompt size has its own axis. Higher is better.</p>
@@ -3332,7 +3314,7 @@ compiled =
 <p><img src="https://inference.net/assets/engine-servers-with-our-ids-DE7swN_4.png" alt="Line charts of SGLang and vLLM HTTP server requests per second as concurrent clients rise, with our token IDs vs raw chat"></p>
 <p>Kimi K3.1 with ~37K token prompts, engine HTTP server throughput as concurrency goes up, with 4 API processes. Raw chat vs our token IDs. Each engine has its own axis. Higher is better.</p>
 <p>Sending IDs takes SGLang from 31 to 1,031 req/s (33x) and vLLM from 43 to 505 req/s (12x). With raw chat each API server process flattens out at about one core, because tokenization runs in Python under that process's GIL. Running 4 processes only takes vLLM from 13 to 43 req/s on an 8 vCPU box, while sending our ids gets the same 4 processes to 505. This is the hot path change from the start of the post, we tokenize once in the router and then inference engine never has to do it again.</p>
-<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#tokenization-accuracy">#</a>Tokenization Accuracy</h3>
+<h3>Tokenization Accuracy</h3>
 <p>A core requirement for our tokenizer is identical output with engines. If the token IDs we send don't exactly match what the engine would have produced from the raw chat, the model is seeing a different prompt to the one the customer sent which could cause the model to behave in strange ways - when we dug into this most tokenizers outside of the engines themselves aren’t!</p>
 <p>The tricky part is that tokenization isn't just running text through a tokenizer. Each engine renders the chat template and applies its own request rules first; each engine has its own weird quirks which produce slightly different tokens. vLLM for example parses tool call arguments and re-serializes them, so the JSON the model sees isn't byte for byte what the client sent. This is why we tokenize differently based on the engine we’re sending the request to ensuring that the tokens are correct for the engine.</p>
 <p><img src="https://inference.net/assets/what-accurate-means-DKqHJEJ8.png" alt="Token boxes for a tool call: vLLM's reference IDs, ChatTokenizer's identical IDs, and another tokenizer that merges a token and mismatches"></p>
@@ -3340,28 +3322,27 @@ compiled =
 <p><img src="https://inference.net/assets/accuracy-vs-throughput-DDKWNOej.png" alt="Scatter plot of the share of requests matching vLLM's token IDs against requests per second for ChatTokenizer, the SGLang gateway, Baseten, NVIDIA Dynamo, HF transformers and vLLM"></p>
 <p>Deepseek v4.1 with ~8K token prompts and 8 vCPUs. Share of requests whose token IDs exactly match vLLM's, against req/s. Up and to the right is better.</p>
 <p>On every benchmark we also compared the tokens against vLLM's and on 100% of requests, at every prompt size, on both models our outputs matched 1-1. The others perform well on short chats but drift once requests have tool calls and longer conversations in them. At ~8K tokens the SGLang gateway only matched 16% of requests (which was expected as SGLang renders the template differently from vLLM), NVIDIA Dynamo 73% and HF transformers 96%. At ~1M tokens with images every other library matched 0%, and on Kimi K3.1 HF transformers renders the wrong prompt entirely because it ignores <code>reasoning_effort</code>.</p>
-<h3><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#additional-tokenizer-comparisons">#</a>Additional Tokenizer Comparisons</h3>
+<h3>Additional Tokenizer Comparisons</h3>
 <p>Baseten wrote a blog post on how they sped up Kimi tokenization with their library, <a href="https://github.com/basetenlabs/basetenkenizer"><code>basetenkenizer</code></a>, so we wanted to compare both libraries on Kimi K3.1. Their Rust tokenizer can't render Kimi chat templates so their production path renders in Python and then encodes in Rust. To keep it fair we compared just the encode step on their own API, with both libraries encoding the exact same pre-rendered Kimi K3.1 segments.</p>
 <p><img src="https://inference.net/assets/encode-only-vs-basetenkenizer-DRelix1i.png" alt="Bar charts of Kimi K3.1 encode-only requests per second by prompt size for ChatTokenizer and basetenkenizer pinned and with default thread pools"></p>
 <p>Encode only, Kimi K3.1. Req/s for ChatTokenizer vs basetenkenizer's encode_segments on identical pre-rendered segments, 8 workers on 8 vCPUs. basetenkenizer shown pinned to 1 core per worker (its faster setting) and with its default thread pools. Each prompt size has its own axis.</p>
 <p>With 8 workers we're 1.9-5.7x faster than their fastest setting from ~200 to ~1.1M tokens.</p>
-<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#agentic-workloads-and-caching">#</a>Agentic workloads and caching</h2>
+<h2>Agentic workloads and caching</h2>
 <p>A large percentage of our traffic is agentic, which resend the whole conversation every turn. So we replayed 8 agent conversations of 213 turns each, anywhere from 2K to 160K tokens per turn.</p>
 <p><img src="https://inference.net/assets/multi-turn-agent-replay-Ct-PY_84.png" alt="Bar chart of multi-turn agent replay requests per second, cold and with the segment cache on, for each library"></p>
 <p>Multi-turn agent replay, req/s with 8 vCPUs. Solid is cold, outlined is with our segment cache on.</p>
 <p>The segment cache is content addressed and shared across every BEAM process, so once a chunk of conversation has been encoded it never gets encoded again. After about turn 30, 98-99% of tokens come straight from the cache. The gain is &quot;only&quot; 1.2-1.8x because even a fully cached turn still has to parse the request and render the whole conversation, and that grows every single turn which is still a bottleneck we want to solve!</p>
-<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#whats-next">#</a>What’s next?</h2>
+<h2>What’s next?</h2>
 <p>Sending token IDs took SGLang from 31 to 1,031 req/s and vLLM from 43 to 505 req/s on long prompts, and ChatTokenizer is 53-181x faster than the engines' own preprocessing while still matching their IDs exactly.</p>
 <p>This is the first post in a series, and next we want to write about running 10,000+ concurrent websockets to our GPU workers from a handful of Elixir nodes, how we route inference requests across engines and pools, and what we've learned about getting more prefix cache hits.</p>
 <p>If this kind of work sounds fun, we're hiring across engineering. <a href="https://jobs.ashbyhq.com/inference">Come work with us!</a> (if there isn’t a perfect fit please email or DM me)</p>
-<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#appendix-1-benchmark-methodology">#</a>Appendix 1: Benchmark Methodology</h2>
+<h2>Appendix 1: Benchmark Methodology</h2>
 <p>All the benchmarks ran on CoreWeave, one Xeon 8562Y+ node with 8 exclusive vCPUs per run. Every library ran on the same node one after the other with cold caches, and each number is the median of two 10 second runs after a 3 second warm-up. The requests come from WildChat, glaive function-calling and SWE-agent trajectories at pinned commits, bucketed by prompt size (XS ~140 tokens, S ~1.4K, M ~8K, L ~37K, XL ~160K, XXL ~1M plus 8 images).</p>
 <p>Versions: vLLM <code>21d9da46b3</code>, SGLang <code>31e55a5120</code>, basetenkenizer 0.2.9, dynamo-llm 1.6.2, Kimi K3.1 Pro at <code>6d0a020</code>.</p>
 <ul><li>Each graph is Deepseek v4.1 or Kimi K3.1 as labelled, with 8 vCPUs.</li><li>ChatTokenizer, the SGLang gateway, Baseten (basetenkenizer 0.2.9), NVIDIA Dynamo and HF transformers ran one after another on the same machine.</li><li>vLLM and SGLang were measured on their own in-process request preprocessing in a separate session on a different CoreWeave region.</li><li>vllm-rs has no in-process mode so it was measured over HTTP at 256 concurrent clients, which includes HTTP overhead the others don't pay.</li><li>Ours matched vLLM's IDs on 100% of requests. Exceptions for the others: the SGLang gateway matched 98% at ~140 tokens, 87% at ~1.4K, 16% at ~8K and 0% at ~1M (it skips image expansion); Baseten and HF transformers 96% at ~8K; NVIDIA Dynamo 73% at ~8K. Everything else matched 100%. Mismatched requests still count towards their throughput.</li><li>On Kimi K3.1, &quot;Baseten&quot; is their production K3 path (the model's Python renderer plus basetenkenizer's encoder) since the Rust library alone can't render Kimi chats. NVIDIA Dynamo can't load Kimi K3.1 and HF transformers renders the wrong prompt for it (it ignores <code>reasoning_effort</code>).</li><li>HF transformers means Python <code>apply_chat_template</code> followed by tokenization.</li><li>All graphs use linear scales. Where values span several orders of magnitude, each prompt size (or engine) gets its own axis, so compare bar heights within a panel and not across panels.</li></ul>
-<h2><a href="https://inference.net/blog/vllm-tokenization-120x-faster-with-elixir/#appendix-2-vllm-and-sglang-tokenization-speedups">#</a>Appendix 2: vLLM and SGLang tokenization speedups</h2>
+<h2>Appendix 2: vLLM and SGLang tokenization speedups</h2>
 <p>The 120x in the title is Deepseek v4.1 at ~1M tokens with 8 inline images, where our tokenizer does 162 req/s compared to vLLM's own preprocessing does 1.35 req/s. Below is every prompt size on both models so you can see the full range. All numbers are req/s with 8 vCPUs, in-process, using vLLM and SGLang's own request preprocessing (chat template rendering plus tokenization) at the versions listed above. Across every size we're 61-181x faster than vLLM and 53-112x faster than SGLang, with most sizes landing around 90-120x.</p>
-<p><img src="https://inference.net/assets/speedups-table-mlKXSjdo.png" alt="Table of ChatTokenizer, vLLM and SGLang requests per second by prompt size on DeepSeek v4.1 and Kimi K3.1, with how many times faster ChatTokenizer is than each"></p>
-<p><a href="https://inference.net/blog/"> Back to the blog</a></p>]]></content:encoded>
+<p><img src="https://inference.net/assets/speedups-table-mlKXSjdo.png" alt="Table of ChatTokenizer, vLLM and SGLang requests per second by prompt size on DeepSeek v4.1 and Kimi K3.1, with how many times faster ChatTokenizer is than each"></p>]]></content:encoded>
     </item>
     <item>
       <title>[Amazon Bedrock] Enable AI agents to pay for AWS Marketplace x402 products wi…</title>
@@ -3750,12 +3731,11 @@ agentcore harness invoke --region us-west-2 \
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Model Library</p>
+      <content:encoded><![CDATA[<p>Model Library</p>
 <p>Published 11/19/2026</p>
 <h1>Tencent Hy4 is live on Together AI</h1>
 <p>Tencent's flagship model now understands images as well as text, and developers can run it on Together Serverless Inference.</p>
-<ul><li>AuthorsSonny Khan</li><li>Table of contents<a href="https://www.together.ai/blog/tencent-hy4">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/tencent/Hy4">Hy4 in the playground</a><a href="https://www.together.ai/models/tencent-hy4">Tencent Hy4 model page</a><a href="https://www.tencent.com/tencent-launches-hy4-joining-the-ranks-of-the-worlds-leading-open-source-ai-models/">Tencent's announcement</a></li></ul>
+<ul><li>AuthorsSonny Khan</li><li>Links in this article<a href="https://api.together.ai/playground/v2/chat/tencent/Hy4">Hy4 in the playground</a><a href="https://www.together.ai/models/tencent-hy4">Tencent Hy4 model page</a><a href="https://www.tencent.com/tencent-launches-hy4-joining-the-ranks-of-the-worlds-leading-open-source-ai-models/">Tencent's announcement</a></li></ul>
 <p>TL;DR</p>
 <ul><li><strong>Tencent Hy4 on Together AI:</strong> Tencent's flagship model is now available on Together Serverless Inference with a 1M-token context window.</li><li><strong>Image input:</strong> Hy4 is the first model in the Hy family to accept images alongside text, and it supports tool calling and JSON output.</li><li><strong>What we tested:</strong> Hy4 read the values off one of our charts, rebuilt the chart as a webpage, then wrote a working browser game from one prompt.</li><li><strong>Serverless pricing:</strong> Hy4 costs \$0.83 per 1M input tokens, \$0.042 per 1M cached input tokens and \$2.50 per 1M output tokens.</li></ul>
 <p>Starting today, developers can run <a href="https://www.together.ai/models/tencent-hy4">Tencent Hy4</a> on Together Serverless Inference. Hy4 is Tencent's flagship model and the first in the Hy family to accept images alongside text.</p>
@@ -3840,9 +3820,7 @@ print(response.choices[0].message.content)</code></pre>
 <p>Yes, Tencent Hy4 accepts text and image input on Together AI and returns text, and it's the first model in Tencent's Hy family with vision. You send each image as an <code>image_url</code> block in the message content, as in the example above.</p>
 <h3>Does Tencent Hy4 support JSON output and tool calling?</h3>
 <p>Yes, Tencent Hy4 supports both on Together AI. You get JSON output by setting <code>response_format</code> to <code>{&quot;type&quot;: &quot;json_object&quot;}</code>, and you enable tool calling by passing your functions in the standard <code>tools</code> parameter.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Together AI] Introducing Together Storage Accelerator: fast, free data ca…</title>
@@ -3852,12 +3830,11 @@ print(response.choices[0].message.content)</code></pre>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
       <description>Full title: Introducing Together Storage Accelerator: fast, free data caching for your GPU cluster</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>GPU Clusters</p>
+      <content:encoded><![CDATA[<p>GPU Clusters</p>
 <p>Published 11/19/2026</p>
 <h1>Introducing Together Storage Accelerator: fast, free data caching for your GPU cluster</h1>
 <p>A distributed cache on every GPU node: about 20x faster warm reads, one origin fetch per cluster, and no application changes. Included free with Together GPU Clusters.</p>
-<ul><li>AuthorsPavneet Ahluwalia, Vinamra Jain</li><li>Table of contents<a href="https://www.together.ai/blog/introducing-together-storage-accelerator">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsPavneet Ahluwalia, Vinamra Jain</li></ul>
 <p>Your GPUs are only as fast as your data pipelines. Every training run that starts with a 30-minute model download, every node that re-pulls the same dataset from across the country, and every Hugging Face rate limit that stalls a job leads to compute resources sitting idle, waiting for your data, while you are paying for them.</p>
 <p>Today we're launching <strong>Together Storage Accelerator (TSA)</strong>, a distributed caching layer for Together GPU Clusters that alleviates the need for repeated data reads from object storage and Hugging Face Hub, dramatically accelerating your AI data pipelines while also cutting your data egress bills. TSA is now included <strong>free</strong> with every Together GPU Cluster.</p>
 <h2>The problem: your data lives far from your GPUs</h2>
@@ -3889,9 +3866,7 @@ export HF_ENDPOINT=http://tsa.tsa.svc.cluster.local:18080</code></pre>
 <p>Together Storage Accelerator is available now on Together GPU Clusters at no additional cost. Enable it from your cluster's Settings page, or see the <a href="https://docs.together.ai/docs/storage-accelerator">docs</a> to go from zero to accelerated in under ten minutes.</p>
 <p>→ <a href="https://api.together.ai/clusters/create">Create a cluster</a></p>
 <p>‍→ <a href="https://docs.together.ai/docs/storage-accelerator">Read the docs</a></p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Modular] Modular: Reintroducing MAX’s Module</title>
@@ -4000,15 +3975,7 @@ compiled(inputs)</code></pre>
 <p>Three trends from MLSys 2026</p>
 <p>May 29, 2026</p>
 <p>Build the future of AI with Modular</p>
-<p>Get started - FREE</p>
-<p>View Editions</p>
-<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="Person with blonde hair using a laptop with an Apple logo.">Sign up todaySignup to our Cloud Platform today to get started easily.<a href="https://docs.modular.com/max/get-started">Sign Up</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="Magnifying glass emoji with black handle and round clear lens.">Browse open modelsBrowse our model catalog, or deploy your own custom model<a href="https://www.modular.com/models">Browse models</a></li></ul>
-<h2>Sign up for our newsletter</h2>
-<p>Get all our latest news, announcements and updates delivered directly to your inbox. Unsubscribe at anytime.</p>
-<p>Thanks for signing up to our newsletter! 🚀</p>
-<p>Thank you,</p>
-<p>Modular Sales Team</p>
-<p>Oops! Something went wrong while submitting the form.</p>]]></content:encoded>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="Person with blonde hair using a laptop with an Apple logo.">Sign up todaySignup to our Cloud Platform today to get started easily.<a href="https://docs.modular.com/max/get-started">Sign Up</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="Magnifying glass emoji with black handle and round clear lens.">Browse open modelsBrowse our model catalog, or deploy your own custom model<a href="https://www.modular.com/models">Browse models</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] Anthropic prices initial public offering</title>
@@ -9019,11 +8986,10 @@ print(provide_token(region=&quot;&lt;AWS_REGION&gt;&quot;))')&quot;</code></pre>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
       <description>Full title: Last year we built megakernels. This year we deleted them: The road to Together Compiler</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 11/16/2026</p>
+      <content:encoded><![CDATA[<p>Published 11/16/2026</p>
 <h1>Last year we built megakernels. This year we deleted them: The road to Together Compiler</h1>
 <p>Together Compiler uses AI agents to rewrite and fuse the GPU kernels in a model’s forward pass. It beats hand-written megakernels by 28% on B200 (2,118 vs 1,649 tokens/s on Llama 3.2 1B). This is how we got from one to the other.</p>
-<ul><li>AuthorsDylan Lim, Reyna Abhyankar, Simran Arora</li><li>Table of contents<a href="https://www.together.ai/blog/road-to-together-compiler">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsDylan Lim, Reyna Abhyankar, Simran Arora</li></ul>
 <h2>Introduction</h2>
 <p>AI inference is becoming increasingly heterogeneous. New model architectures are released every week, inference traffic shifts across different batch sizes and sequence lengths, and hardware platforms continue to proliferate. Achieving peak performance across all these regimes demands optimization frameworks that can keep up.</p>
 <p>Last year, we helped release some of the first AI <a href="https://hazyresearch.stanford.edu/blog/2025-05-27-no-bubbles"><em>megakernels</em></a>, where we executed an entire model forward pass within a single, highly fused GPU kernel. They reached record breaking speeds, but it was difficult to put them in production. After months of effort, we had a grand total of one model, one batch size, and one customer.</p>
@@ -9221,9 +9187,7 @@ launches:
 <h2>Wrapping Up</h2>
 <p>Driving TKCC from a traditional rule-based compiler to the agent-driven optimizer of today was a long road, but three lessons stood out. First, optimizations require high-fidelity measurements, and the wrong benchmarking choices (such as using random data) can lead to suboptimal kernel selection. Second, there is no one-size-fits-all kernel. The right optimizations vary across models, hardwares, and workloads and monolithic strategies cannot represent this space. Third, systems that build around agents should keep model improving capabilities in mind. Agents are sensitive to the scaffolding they are given, and frameworks that help early on can later become constraints.</p>
 <p>If your organization would like to try out the Together Compiler, <a href="https://www.together.ai/contact-sales">please reach out for early access</a>! And the research team is hiring, please reach out on our <a href="https://www.together.ai/careers">careers page</a>!</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Together AI] Making open models work for long-horizon agentic workloads</title>
@@ -9232,12 +9196,11 @@ launches:
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Inference</p>
+      <content:encoded><![CDATA[<p>Inference</p>
 <p>Published 11/16/2026</p>
 <h1>Making open models work for long-horizon agentic workloads</h1>
 <p>What the harness and the inference engine each have to get right so a long agent session stays fast for long horizon tasks.</p>
-<ul><li>AuthorsZain Hasan, Parth Sareen (Ollama)</li><li>Table of contents<a href="https://www.together.ai/blog/making-open-models-work-for-long-horizon-agentic-workloads">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsZain Hasan, Parth Sareen (Ollama)</li></ul>
 <p>Summary</p>
 <p>Coding agents send the whole conversation again on every turn. Prefix caching keeps the inference engine from redoing that work, but only if the harness leaves the start of the prompt alone and the engine sends each turn back to the GPU that already has it cached. Together AI and Ollama work on opposite sides of that handoff, so we wrote down what each, the client side and the inference engine side, needs to do to successfully build agentic apps.</p>
 <p>Coding agents have an odd traffic pattern. Every time the agent takes a step, the harness sends the model the entire conversation so far: the system prompt, every tool definition, your request, every file the agent has read, and every command it has run. What comes back is usually a tool call a few dozen tokens long. Then it happens again, with everything from last time plus a little more.</p>
@@ -9309,9 +9272,7 @@ launches:
 <p>On the engine side, every turn goes back to the node that has the session cached. While the tests run, the cache waits in CPU memory. The reviewer's request slots into the running batch, and each turn processes only what's new.</p>
 <p>None of that is visible to the person using the agent; they just see it stay fast at turn ninety. But it only works if both sides do their part. A harness can keep the prompt perfectly stable and still lose the cache if the engine sends turn 7 to the wrong machine. An engine can route perfectly and still lose it if the harness changes the first line every turn.</p>
 <p>Parth writes more about building agents at <a href="http://parthsareen.com/">parthsareen.com</a>, and Ollama posts updates at <a href="http://ollama.com/blog">ollama.com/blog</a>. You can also read more about and run the open models mentioned here on <a href="https://www.together.ai/blog">https://www.together.ai/blog</a>.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Together AI] How we make Together AI easy for coding agents to use</title>
@@ -9320,13 +9281,12 @@ launches:
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
       <category>Together AI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml">Together AI</source>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Company</p>
+      <content:encoded><![CDATA[<p>Company</p>
 <p>Published 11/16/2026</p>
 <h1>How we do agent evals at Together AI</h1>
 <p>Small fixes to our docs, skills, and API errors lifted task completion rate from 67% to 96%.</p>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afa9c3ab2afb145aa0ddad7_how-we-make-it-easy-for-agents-to-use-together-ai-hero.png" alt=""></p>
-<ul><li>AuthorsHassan El Mghari, Sam Barrowclough, Zain Hasan, Mo King</li><li>Table of contents<a href="https://www.together.ai/blog/how-we-do-agent-evals-at-together-ai">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<ul><li>AuthorsHassan El Mghari, Sam Barrowclough, Zain Hasan, Mo King</li></ul>
 <p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6afa9c3ab2afb145aa0ddad7_how-we-make-it-easy-for-agents-to-use-together-ai-hero.png" alt=""></p>
 <p>Earlier this year, we started seeing more and more devs using coding agents to build with Together AI.</p>
 <p>It’s not hard to see why: It might take days or even weeks for a developer to wire up an app for production inference by hand, especially if they’re new to the platform. But for an agent using our SDK and CLI, it only takes a few minutes—at least in theory.</p>
@@ -9401,9 +9361,7 @@ launches:
 <h2>Run your own evals</h2>
 <p>If you’re running a dev platform, agents are using your product, or at least they’re definitely trying to. The best way to find out how well it’s going is to build your own evaluation system.</p>
 <p>To help with that, we’re open-sourcing the package we use to build our evals. You create a list of tasks (agent prompts) and decide how to score your runs (with code tests or an LLM judge). The package launches the agents, runs the tasks, and tracks everything in a local dashboard, so you can compare configurations and past runs. It’ll be available next week, along with another blog post on how to use it.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
+<h2>Related articles</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Modular] Modular: Modular at LLVM Developers&apos; Meeting 2026</title>
@@ -9450,15 +9408,7 @@ launches:
 <p>Modverse #55: Mojo 1.0 Beta, Community Mojo Libraries, and Real-Time Patient Conversations Powered by MAX</p>
 <p>June 10, 2026</p>
 <p>Build the future of AI with Modular</p>
-<p>Get started - FREE</p>
-<p>View Editions</p>
-<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="Person with blonde hair using a laptop with an Apple logo.">Sign up todaySignup to our Cloud Platform today to get started easily.<a href="https://docs.modular.com/max/get-started">Sign Up</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="Magnifying glass emoji with black handle and round clear lens.">Browse open modelsBrowse our model catalog, or deploy your own custom model<a href="https://www.modular.com/models">Browse models</a></li></ul>
-<h2>Sign up for our newsletter</h2>
-<p>Get all our latest news, announcements and updates delivered directly to your inbox. Unsubscribe at anytime.</p>
-<p>Thanks for signing up to our newsletter! 🚀</p>
-<p>Thank you,</p>
-<p>Modular Sales Team</p>
-<p>Oops! Something went wrong while submitting the form.</p>]]></content:encoded>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="Person with blonde hair using a laptop with an Apple logo.">Sign up todaySignup to our Cloud Platform today to get started easily.<a href="https://docs.modular.com/max/get-started">Sign Up</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="Magnifying glass emoji with black handle and round clear lens.">Browse open modelsBrowse our model catalog, or deploy your own custom model<a href="https://www.modular.com/models">Browse models</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] The Claude Tag guide for startups</title>

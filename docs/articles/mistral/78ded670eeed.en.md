@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 76b3bbc70576
+body_sha: 7ffec85df525
 ---
-
 
 # Mistral OCR
 
@@ -165,5 +164,3 @@ We are empowering our beta customers to elevate their organizational knowledge b
 ## Experience it today
 
 Mistral OCR capabilities are free to try on [le Chat](http://chat.mistral.ai). To try the API, head over to [la Plateforme](http://console.mistral.ai). We’d love to get your feedback; expect the model to continue to get even better in the weeks to come. As part of our strategic engagement programs, we will also offer on-premises deployment on a [selective basis](https://mistral.ai/contact).
-
-0%

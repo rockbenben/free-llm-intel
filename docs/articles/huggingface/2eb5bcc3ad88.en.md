@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4536385bd906
+body_sha: 6f1cda24a650
 ---
 
 # MosaicLeaks: Can your research agent keep a secret?
@@ -187,8 +187,6 @@ Jun 21
 
 can i use this at : [https://farzaneganehooshmand.com](https://farzaneganehooshmand.com) or this have dome license?
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

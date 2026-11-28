@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1820b72d3871
+body_sha: cd4f97d66144
 ---
 
-All blog posts
 
 Inference
 
@@ -20,7 +19,6 @@ Published 9/18/2026
 # How a global fintech scaled coding agent traffic with Dedicated Model Inference
 
 - AuthorsAnkit Goyal
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/global-fintech-scales-coding-agent-traffic-with-dedicated-model-inference#)
 
 Summary
 
@@ -98,7 +96,3 @@ The deployment stopped being a single endpoint and started being a surface for i
 
 
 ## Related articles
-
-View All
-
-View All

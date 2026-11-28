@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c7cb539fe53e
+body_sha: 6b9c8b20c989
 ---
 
 # Open-sourcing Knowledge Distillation Code and Weights of SD-Small and SD-Tiny
@@ -147,9 +147,7 @@ January 4, 2024
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 07eb701fdcd7
+body_sha: 279948223b2b
 ---
 
-All blog posts
 
 
 Published 3/4/2026
@@ -19,7 +18,6 @@ Published 3/4/2026
 # Cache-aware prefill–decode disaggregation (CPD) for up to 40% faster long-context LLM serving
 
 - AuthorsJiejing Zhang, Yubo Wang, Yinghui Liu, Mourya Vangala Srinivasa, Chenxi Li, Jue Wang, Yineng Zhang, Shuaiwen Leon Song, Ce Zhang
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/cache-aware-disaggregated-inference#)
 
 Summary
 
@@ -136,7 +134,3 @@ Importantly, CPD continues to deliver consistent improvements even when decode c
 These improvements are driven not by raw model execution speed, but by cache-aware isolation on the prefill path. By preventing long-running cold prefills from blocking cache-backed warm requests, CPD preserves a fast path for reuse even under high load. This highlights that as context windows grow, system-level scheduling and reuse-aware design become first-order factors in inference performance, alongside model and hardware efficiency.
 
 ## Related articles
-
-View All
-
-View All

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ba1863cd91a3
+body_sha: a4e34c439c9e
 ---
 
 # Incredibly Fast BLOOM Inference with DeepSpeed and Accelerate
@@ -300,9 +300,7 @@ February 29, 2024
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 267863543d1c
+body_sha: ed44aea16863
 ---
 
 # Mixture of Experts Explained
@@ -429,9 +429,7 @@ Nov 28, 2025
 
 Chinchilla paper actually shows that for a fixed compute budget, it is better to train a smaller model on more data rather than training a larger model for fewer steps.
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

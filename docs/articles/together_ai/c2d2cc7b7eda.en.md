@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-27
 extractor: readability-v1
 status: ok
-body_sha: 72613f4dfab8
+body_sha: 737c29ecb5e8
 ---
 
-All blog posts
 
 Model Shaping
 
@@ -22,7 +21,6 @@ Published 11/26/2026
 Qwen3.8-27B answered in Thai when we asked it for Lao. We distilled Kimi-K3.1-Pro's Lao translation into it with Together Post-Training and reached 93% of the teacher's score, with Thai intact.
 
 - AuthorsZain Hasan, Sonny Khan
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/distilling-kimi-into-qwen)
 - Links in this article[Distillation cookbook on GitHub](https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation)[Together Post-Training](https://www.together.ai/post-training)[Qwen3.8-27B](https://www.together.ai/models/qwen3-8-27b)[Kimi-K3.1-Pro](https://www.together.ai/models/kimi-k3-1-pro)
 
 Summary
@@ -342,7 +340,3 @@ Three observations from these runs:
 - The five-language run has the highest loss through its first epoch. Four of its five languages started well below the teacher, against one of two in the Lao runs.
 
 ## Related articles
-
-View All
-
-View All

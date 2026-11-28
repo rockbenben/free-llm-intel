@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6c2c28d6a2c1
+body_sha: 62b817c905cc
 ---
 
 # The Technology Behind BLOOM Training
@@ -413,9 +413,7 @@ September 9, 2025
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

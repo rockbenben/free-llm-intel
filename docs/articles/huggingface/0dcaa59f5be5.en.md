@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a6af173dbb86
+body_sha: f49afa99ad36
 ---
 
 # Accelerating SD Turbo and SDXL Turbo Inference with ONNX Runtime and Olive
@@ -187,9 +187,7 @@ April 3, 2024
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

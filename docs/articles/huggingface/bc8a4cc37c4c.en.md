@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1dc9c4108d24
+body_sha: df4934caf35d
 ---
 
 # The Reformer - Pushing the limits of language modeling
@@ -697,9 +697,7 @@ Jan 22
 
 This comment has been hidden (marked as Spam)
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

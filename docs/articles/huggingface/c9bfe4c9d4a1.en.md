@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 61bf900857eb
+body_sha: 97420720bce4
 ---
 
 # Open R1: Update #2
@@ -391,9 +391,7 @@ I had a question about the data processing for SFT. From what I understand, the 
 
 Were all the responses used during training, or was there a filtering step to select only the correct or high-quality answers? Any clarification on this would be greatly appreciated.
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

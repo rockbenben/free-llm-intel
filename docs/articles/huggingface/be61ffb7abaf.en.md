@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c0115252c36b
+body_sha: a7183a70555a
 ---
 
 # Make your ZeroGPU Spaces go brrr with ahead-of-time compilation
@@ -450,9 +450,7 @@ Nov 15, 2025
 
 This comment has been hidden
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

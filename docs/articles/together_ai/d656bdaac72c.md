@@ -9,7 +9,7 @@ captured: 2026-10-31
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: a988e07c5ed8
+body_sha: 0becfd93e08c
 ---
 
 # DeepSeek-V4 Flash 0731 与 GPT-5.6 Luna 在 DeepSWE 上的成本与编码对比
@@ -17,7 +17,6 @@ body_sha: a988e07c5ed8
 这款开放权重模型为「价格-智能比」立下了新的标杆
 
 - 作者：Zain Hasan、Shobhit Dixit
-- 目录[为生产环境选定的 40 多个模型……为生产环境选定的 40 多个模型……为生产环境选定的 40 多个模型……](https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding)
 
 核心要点
 

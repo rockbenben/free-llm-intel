@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: efd262303e19
+body_sha: 19d37534ef33
 ---
 
 # Prefill and Decode for Concurrent Requests - Optimizing LLM Performance
@@ -152,8 +152,6 @@ Sep 29, 2025
 
 yup
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

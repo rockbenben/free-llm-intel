@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: df561edbae84
+body_sha: 526d26fd683d
 ---
 
 # IBM and UC Berkeley Diagnose Why Enterprise Agents Fail Using IT-Bench and MAST
@@ -208,9 +208,7 @@ September 9, 2026
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

@@ -173,7 +173,7 @@ _FURN_ANYWHERE = {
     "联系销售团队", "试用 ChatGPT", "Try ChatGPT",
     "返回博客", "返回新闻编辑室", "返回文章", "返回首页",
     "Back to Blog", "Back to Newsroom", "Back to Articles", "Back to Home",
-    "浏览全部论文", "Browse all papers", "查看全部", "View all",
+    "浏览全部论文", "Browse all papers", "查看全部", "View all", "View All",
     "已复制", "Copied", "复制链接到剪贴板", "Copy url to clipboard",
     "暂无相关文章", "暂无相关内容", "No related articles",
     "正在加载…", "正在加载...", "加载中…", "Loading…", "Loading...",
@@ -193,8 +193,10 @@ _FURN_ANYWHERE = {
 
 # 独立的回链只在正文边界匹配。目录、筛选与锚点链接保留。
 _FURN_BACK_LINK_RE = re.compile(
-    r"\[\s*(?:返回文章(?:列表)?|返回博客|返回新闻|返回首页|"
-    r"Back to Articles|Back to Blog|Back to Newsroom|Back to Home)\s*\]\((https?://[^)\s]+)\)")
+    r"\[\s*(?:返回文章(?:列表)?|返回博客|返回新闻(?:中心)?|返回首页|"
+    r"Back to Articles|Back to the blog|Back to Blog|Back to Newsroom|Back to News|Back to Home)\s*\]\((https?://[^)\s]+)\)",
+    re.I,
+)
 _LIST_PAGE_PATHS = {"", "/blog", "/news", "/articles", "/newsroom", "/blog/index.html"}
 _OPENAI_AUTHOR_HEADINGS = {"## Author", "## Authors", "## 作者"}
 _SAME_OR_HIGHER_THAN_H2_RE = re.compile(r"^#{1,2}\s")
@@ -210,7 +212,7 @@ _HF_UPLOAD_IMAGE_RE = re.compile(
 _HF_UPLOAD_MEDIA_RE = re.compile(
     r"(?:Upload images, audio, and videos by dragging in the text input, pasting, or clicking here"
     r"|(?:将|把)(?:文件|图像、音频和视频)拖(?:入|进)文本输入框[、,，]粘贴[、,，]\s*或\s*点击此处"
-    r"\s*[，,]?\s*(?:即可|以)?上传(?:图像、音频和视频)?)[。.]?", re.I)
+    r"\s*[，,]?\s*(?:即可|以)?上传(?:图像、音频和视频)?)\s*[。.]?", re.I)
 _HF_AVATAR_ITEM_RE = re.compile(
     r"- \[!\[\]\(https://(?:cdn-avatars\.huggingface\.co/v1/production/uploads|"
     r"huggingface\.co/avatars)/[^)\s]+\)\]\(https://huggingface\.co/[\w.-]+\)")
@@ -241,8 +243,10 @@ _FURN_SEPARATOR_RE = re.compile(r"^[\s•·⋅/⁠​‌‍﻿ ]+$")
 #: 标签/年份筛选链接：`- [Community](https://openai.com/news/?tags=community)`
 _TAG_LINK_RE = re.compile(r"^- \[[^\]]*\]\((?:[^)]*[?&](?:tags?|label)=)[^)]*\)$")
 _FURN_NAV_BEFORE_HEAD = {
-    "产品", "研究", "博客", "公告", "首页", "发布", "刊发", "新闻中心",
+    "产品", "研究", "博客", "公告", "首页", "发布", "刊发", "新闻中心", "返回新闻",
+    "所有博客文章", "全部博客文章",
     "News", "Newsroom", "Products", "Research", "Blog", "Announcements", "Featured",
+    "All blog posts", "Back to news", "Back to News",
 }
 _META_CATEGORY_LABELS = {"分类", "Categories"}
 _META_TAG_LABELS = {"标签：", "标签:", "Tags:"}
@@ -270,11 +274,63 @@ _HF_HEADER_DATE_RE = re.compile(
 )
 _BARE_MEDIA_RE = re.compile(
     r"^https?://\S+\.(mp4|mp3|webm|mov|m4v|ogg|gif|png|jpe?g|webp)(\?\S*)?$")
-# about.fb.com 把六档倍速或两枚相同的日期胶囊拼成一行。
+# about.fb.com 把六档倍速或两枚相同的日期胶囊拼成一行（或连排成两行）。
 _META_PLAYER_SPEEDS = ("0.25×", "0.5×", "1×", "1.25×", "1.5×", "2×")
+_META_SINGLE_DATE_PAT = (
+    r"(?:" + _MONTHS + r"|[一二三四五六七八九十]{1,3}月)\s+\d{1,2},\s+\d{4}"
+    r"|\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日"
+)
+_META_SINGLE_DATE_RE = re.compile(_META_SINGLE_DATE_PAT)
 _META_DUPLICATE_DATE_RE = re.compile(
-    r"(?P<date>(?:" + _MONTHS + r"|[一二三四五六七八九十]{1,3}月)\s+\d{1,2},\s+\d{4}"
-    r"|\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日)\s*(?P=date)")
+    r"(?P<date>" + _META_SINGLE_DATE_PAT + r")\s*(?P=date)")
+# together.ai 侧栏跑马灯混入「目录」列表项
+_TOGETHER_MARQUEE_TOC_RE = re.compile(
+    r"^-\s*(?:Table of contents|目录)\[(.+?)\]\((https?://[^)\s]+)\)$")
+# claude.com 断链分享条与隐藏的 Webflow 表单状态
+_CLAUDE_SHARE_LINK_RE = re.compile(
+    r"^-\s*(?:Share|分享[:：]?)\[(?:Copy link|复制链接)\]\((https://claude\.com/[^)\s]+#)\)"
+    r"https://claude\.com/\S+$")
+_CLAUDE_SUBSCRIBED = {"Thank you! You’re subscribed.", "Thank you! You're subscribed."}
+_CLAUDE_FORM_ERROR = "Sorry, there was a problem with your submission, please try again later."
+_CLAUDE_NEWSLETTER_HEADS = {
+    "Get the developer newsletter", "## Get the developer newsletter",
+    "### Get the developer newsletter",
+}
+_CLAUDE_NEWSLETTER_DESC = "Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox."
+# modular.com 隐藏的 Webflow 表单状态与 CTA
+_MODULAR_FORM_CTAS = {"Get started - FREE", "View Editions"}
+_MODULAR_FORM_ERRORS = {
+    "Oops! Something went wrong while submitting the form.",
+    "哎呀！提交表单时出了点问题。",
+    "糟糕！提交表单时出了点问题。",
+}
+_MODULAR_FORM_THANKS_RE = re.compile(
+    r"^(?:Thanks for signing up to our newsletter! 🚀|"
+    r"感谢订阅我们的\s*(?:newsletter|通讯|新闻邮件)[！!]🚀)$")
+_MODULAR_FORM_SIGN_OFF = {"Thank you,", "谢谢，", "谢谢你，"}
+_MODULAR_FORM_TEAM = {"Modular Sales Team", "Modular 销售团队"}
+_MODULAR_NEWSLETTER_HEADS = {
+    "## Sign up for our newsletter", "## 订阅我们的 newsletter",
+    "## 订阅我们的通讯", "## 订阅我们的新闻邮件",
+}
+_MODULAR_NEWSLETTER_DESCS = {
+    "Get all our latest news, announcements and updates delivered directly to your inbox. Unsubscribe at anytime.",
+    "获取我们最新的新闻、公告和动态，直接送达你的收件箱。可随时退订。",
+    "把我们最新的新闻、公告和更新直接送达你的收件箱。随时可以退订。",
+    "获取我们最新的新闻、公告和更新，直接送达你的邮箱。随时可退订。",
+}
+# github.com commit 页面 UI 框（如 groq/groq-changelog）
+_GITHUB_COMMIT_CHROME_EXACT = {
+    "Public", "## File tree", "Expand file tree", "Collapse file tree",
+    "Open diff view settings", "Filter options", "Collapse file",
+    "Copy file name to clipboard", "- Display the source diff", "- Display the rich diff",
+    "| Original file line number | Diff line number | Diff line change |",
+}
+_GITHUB_COMMIT_CHROME_RE = re.compile(
+    r"^(?:- \[\s*(?:Notifications|Fork\s+\d+|Star\s+\d+)\s*\]\(https://github\.com/login\?return_to=[^)]+\).*"
+    r"|- \[[^\]]+\]\(https://github\.com/[^/]+/[^/]+/commit/[^)#]+#diff-[0-9a-f]+\)"
+    r"|Expand all lines: .+|Lines changed: \d+ additions? & \d+ deletions?)$"
+)
 # OpenAI 装饰画的三个同文本 span 被拼成一行。
 _OPENAI_DECORATIVE_WORDMARK = "ChatGPT for Academic Researchers" * 3
 _VALUE_MAX = 24
@@ -294,6 +350,8 @@ _INVISIBLE_CHARS = ''.join(chr(c) for c in (0x20, 0x09, 0xa0, 0x180e, 0x200b, 0x
                                            0x200d, 0x2060, 0xfeff))
 _EMPTY_TEXT_LINK_RE = re.compile(
     r"\[(?:[" + re.escape(_INVISIBLE_CHARS) + r"]*)\]\(([^)]*)\)")
+_HASH_ICON_LINK_RE = re.compile(
+    r"\[[" + re.escape(_INVISIBLE_CHARS) + r"]*#[" + re.escape(_INVISIBLE_CHARS) + r"]*\]\(([^)]*)\)")
 _VALUE_WALK_MAX = 8
 
 
@@ -473,6 +531,24 @@ def _hf_widget_drops(lines: Sequence[str], visible: list[int], fenced: set[int],
             drop[visible[j]] = "R14"
             explicit_controls.add(j)
 
+    # 兼容登录行已在旧轮被清掉、但因英文 "." 分行残留下来的上传控件提示
+    for j in range(len(text)):
+        if visible[j] in drop:
+            continue
+        for span in range(1, min(4, len(text) - j + 1)):
+            if _HF_UPLOAD_MEDIA_RE.fullmatch(" ".join(text[j:j + span])):
+                after_j = j + span
+                if after_j < len(text) and _HF_UPLOAD_IMAGE_RE.fullmatch(text[after_j]):
+                    after_j += 1
+                has_mismatched_login = (
+                    after_j < len(text)
+                    and _HF_COMMENT_LOGIN_RE.fullmatch(text[after_j])
+                    and not _hf_login_matches(text[after_j], page_path)
+                )
+                if not has_mismatched_login:
+                    drop.update((visible[k], "R17") for k in range(j, j + span))
+                break
+
     if header_date_j is not None:
         header_anchors.add(header_date_j)
         if page_path.startswith("/papers/"):
@@ -530,6 +606,11 @@ def furniture_drops(lines, page_url: str = ""):
     R17 Hugging Face 评论区的登录/注册与上传控件。
     R18 OpenAI 文章中只有机构名、在文末或同级章节前的作者组件。
     R19 Hugging Face 页头的作者头像、姓名与机构卡片列表（BlogAuthorsByline）。
+    R20 mistral.ai 文末阅读进度占位（0%）。
+    R21 together.ai 侧栏跑马灯混入「目录」的重复链接项。
+    R22 claude.com / modular.com 的断链分享条与隐藏 Webflow 表单状态反馈。
+    R23 inference.net 标题后与作者同首字母的纯字母头像占位。
+    R24 github.com commit 页面的仓库头部与末尾评论计数 UI 框。
     """
     fenced, first_head = _fence_mask(lines)
     first_h1 = next((i for i, l in enumerate(lines)
@@ -548,13 +629,21 @@ def furniture_drops(lines, page_url: str = ""):
         s = l.strip()
         if not s:
             continue
-        if s in _FURN_ANYWHERE or (host == "about.fb.com" and tuple(s.split()) == _META_PLAYER_SPEEDS):
+        if s in _FURN_ANYWHERE or (
+                host == "about.fb.com" and (s == "1×" or tuple(s.split()) == _META_PLAYER_SPEEDS)):
             drop[i] = "R2"
         elif i not in demo_separators and _FURN_SEPARATOR_RE.match(s):
             drop[i] = "R6"
         elif ((host == "about.fb.com" and _META_DUPLICATE_DATE_RE.fullmatch(s))
               or (host == "openai.com" and s == _OPENAI_DECORATIVE_WORDMARK)):
             drop[i] = "R10"
+        elif host == "together.ai" and (m := _TOGETHER_MARQUEE_TOC_RE.match(s)):
+            link_text, link_url = m.group(1), m.group(2)
+            if (normalize_url(link_url) == normalize_url(page_url)
+                    and re.search(r"(.{10,80}?)\1", link_text)):
+                drop[i] = "R21"
+        elif host in ("claude.com", "anthropic.com") and _CLAUDE_SHARE_LINK_RE.fullmatch(s):
+            drop[i] = "R22"
         elif first_head is not None and i < first_head and (
                 s in _FURN_NAV_BEFORE_HEAD or _BARE_MEDIA_RE.match(s)):
             drop[i] = "R1"
@@ -605,6 +694,87 @@ def furniture_drops(lines, page_url: str = ""):
             j += 1
         if j < len(lines) and j not in fenced and re.fullmatch(r"\d{1,6}", lines[j].strip()):
             drop[j] = "R5"
+    if host == "about.fb.com":
+        for prev, cur in zip(visible, visible[1:]):
+            if prev in fenced or cur in fenced:
+                continue
+            ps, cs = lines[prev].strip(), lines[cur].strip()
+            if ps == cs and _META_SINGLE_DATE_RE.fullmatch(cs):
+                drop[cur] = "R10"
+    if host == "mistral.ai" and visible:
+        last = visible[-1]
+        if last not in fenced and lines[last].strip() == "0%":
+            drop[last] = "R20"
+    if host in ("claude.com", "anthropic.com"):
+        for pos, cur in enumerate(visible):
+            if cur in fenced or lines[cur].strip() != _CLAUDE_FORM_ERROR or pos == 0:
+                continue
+            prev = visible[pos - 1]
+            if prev not in fenced and lines[prev].strip() in _CLAUDE_SUBSCRIBED:
+                drop[prev] = drop[cur] = "R22"
+                k = pos - 2
+                if k >= 0 and visible[k] not in fenced and lines[visible[k]].strip() == _CLAUDE_NEWSLETTER_DESC:
+                    drop[visible[k]] = "R22"
+                    k -= 1
+                if k >= 0 and visible[k] not in fenced and lines[visible[k]].strip() in _CLAUDE_NEWSLETTER_HEADS:
+                    drop[visible[k]] = "R22"
+                    k -= 1
+                if (k >= 1 and visible[k] not in fenced and visible[k - 1] not in fenced
+                        and lines[visible[k]].strip() == "See pricing"
+                        and lines[visible[k - 1]].strip() == "See pricing"):
+                    drop[visible[k]] = drop[visible[k - 1]] = "R22"
+    if host == "modular.com":
+        err_pos = next((pos for pos in range(len(visible) - 1, max(-1, len(visible) - 12), -1)
+                        if visible[pos] not in fenced
+                        and lines[visible[pos]].strip() in _MODULAR_FORM_ERRORS), None)
+        if err_pos is not None:
+            for pos in range(err_pos, max(-1, err_pos - 7), -1):
+                idx = visible[pos]
+                if idx in fenced:
+                    break
+                val = lines[idx].strip()
+                if (val in _MODULAR_FORM_ERRORS or _MODULAR_FORM_THANKS_RE.fullmatch(val)
+                        or val in _MODULAR_FORM_SIGN_OFF or val in _MODULAR_FORM_TEAM
+                        or val in _MODULAR_NEWSLETTER_DESCS or val in _MODULAR_NEWSLETTER_HEADS):
+                    drop[idx] = "R22"
+        for idx in visible:
+            if idx not in fenced and lines[idx].strip() in _MODULAR_FORM_CTAS:
+                drop[idx] = "R22"
+    if host == "inference.net" and first_h1 is not None:
+        h1_pos = visible.index(first_h1) if first_h1 in visible else None
+        if h1_pos is not None and h1_pos + 2 < len(visible):
+            i1, i2 = visible[h1_pos + 1], visible[h1_pos + 2]
+            if i1 not in fenced and i2 not in fenced:
+                s1, s2 = lines[i1].strip(), lines[i2].strip()
+                if re.fullmatch(r"[A-Z]", s1) and _hf_is_author_name(s2) and s2.startswith(s1):
+                    drop[i1] = "R23"
+    if host == "github.com" and "/commit/" in page.path:
+        parts = [seg for seg in page.path.split("/") if seg]
+        owner_repo = set(parts[:2])
+        diff_idx = next((pos for pos, idx in enumerate(visible)
+                         if idx not in fenced and lines[idx].strip().startswith("### [")), None)
+        if diff_idx is not None:
+            for pos in range(diff_idx):
+                idx = visible[pos]
+                if idx in fenced:
+                    continue
+                val = lines[idx].strip()
+                if (val in owner_repo or val in _GITHUB_COMMIT_CHROME_EXACT
+                        or _GITHUB_COMMIT_CHROME_RE.fullmatch(val)):
+                    drop[idx] = "R24"
+                elif (pos >= 2 and lines[visible[pos - 1]].strip() in ("+", "")
+                      and lines[visible[pos - 2]].strip().startswith("Expand all lines: ")
+                      and pos + 1 < diff_idx and lines[visible[pos + 1]].strip().startswith("Lines changed: ")):
+                    drop[idx] = "R24"
+                elif (val == "+" and pos >= 1 and lines[visible[pos - 1]].strip().startswith("Expand all lines: ")):
+                    drop[idx] = "R24"
+        tail_idx = [visible[p] for p in range(max(0, len(visible) - 6), len(visible)) if visible[p] not in fenced]
+        tail_vals = [lines[idx].strip() for idx in tail_idx]
+        if (len(tail_vals) == 6 and re.fullmatch(r"## \d+ commit comments?", tail_vals[0])
+                and tail_vals[1] == "Comments" and tail_vals[2].isdigit()
+                and tail_vals[3] == "(" and tail_vals[4].isdigit() and tail_vals[5] == ")"):
+            for idx in tail_idx:
+                drop[idx] = "R24"
     if host == "huggingface.co" and page.path.startswith(("/blog/", "/papers/")):
         drop.update(_hf_widget_drops(lines, visible, fenced, page.path))
     if host == "openai.com" and page.path.startswith(("/index/", "/global-affairs/", "/business/")):
@@ -634,8 +804,13 @@ def furniture_drops(lines, page_url: str = ""):
     return drop
 
 
+def _is_icon_link_text(text: str, is_heading: bool) -> bool:
+    stripped = text.strip(_INVISIBLE_CHARS)
+    return not stripped or (is_heading and stripped == "#")
+
+
 def _droppable_icon_targets(lines, fenced, page_url):
-    """可以被整条删掉的「不可见文字链接」目标集合。
+    """可以被整条删掉的「不可见文字链接」或标题 `#` 永久链接目标集合。
 
     只认三种，删完不减少任何指向（本次语料 256 处删除的归因）：
       1) 同页锚点 —— 基址就是本页且带 fragment（文档站标题旁的永久链接图标；164 处）；
@@ -649,23 +824,22 @@ def _droppable_icon_targets(lines, fenced, page_url):
     已知差一档的形状：站方把标题里的 `.` 当分隔符（`CLAUDE.md` → `#…-claude-md`），
     `_slug` 却把点号丢掉，这一处（实测 1 例）匹配不上就保留——不为它单独放宽归一化。
     """
-    counts, icons = {}, set()
+    counts = {}
     for i, l in enumerate(lines):
         if i in fenced:
             continue
         for m in re.finditer(r"(?<!!)\[([^\]]*)\]\(([^)]*)\)", l):
             counts[m.group(2)] = counts.get(m.group(2), 0) + 1
-            if not m.group(1).strip(_INVISIBLE_CHARS):
-                icons.add(m.group(2))
     base = normalize_url(page_url) if page_url else ""
     out = set()
     for i, l in enumerate(lines):
         if i in fenced:
             continue
+        is_heading = bool(_HEAD_RE.match(l))
         _frags, text_keys = _line_anchor_keys(l)
         for m in re.finditer(r"(?<!!)\[([^\]]*)\]\(([^)]*)\)", l):
             u = m.group(2)
-            if m.group(1).strip(_INVISIBLE_CHARS) or u in out:
+            if not _is_icon_link_text(m.group(1), is_heading) or u in out:
                 continue
             frag = urlsplit(u).fragment
             if (base and frag and normalize_url(u) == base) or counts.get(u, 0) > 1:
@@ -708,14 +882,17 @@ def strip_page_furniture(body: str, page_url: str = "") -> str:
 def _has_inline_junk(line: str, icons=frozenset()) -> bool:
     if any(rx.search(line) for rx in _INLINE_HINT_RES):
         return True
-    return any(m.group(1) in icons for m in _EMPTY_TEXT_LINK_RE.finditer(line))
+    if any(m.group(1) in icons for m in _EMPTY_TEXT_LINK_RE.finditer(line)):
+        return True
+    return bool(_HEAD_RE.match(line)) and any(
+        m.group(1) in icons for m in _HASH_ICON_LINK_RE.finditer(line))
 
 
 def _strip_inline_junk(line: str, icons=frozenset()) -> str:
     """按 `[文字](url)` 结构切开，只改「文字」段与链接外的裸文本，URL 段原样拼回。
 
     这样 `(opens in a new window)` 不可能被当成 URL 的括号误删——它只会出现在文字段。
-    三种处理：文字里嵌着无障碍提示就摘提示、保住链接；文字**只剩不可见字符**（锚点图标）
+    三种处理：文字里嵌着无障碍提示就摘提示、保住链接；文字**只剩不可见字符**（或标题里的 `#` 锚点图标）
     且该目标在 `icons` 里（同页锚点或本文另有出现）才整条删；提示占满了显示文字则把显示
     文字换成 URL 本身，**链接结构保住**——塌成裸 URL 会让相邻几条黏成 `https://ahttps://b`，
     还会让「URL 多重集不变」这条不变量没法检查。
@@ -723,6 +900,7 @@ def _strip_inline_junk(line: str, icons=frozenset()) -> str:
     """
     if not _has_inline_junk(line, icons):
         return line
+    is_heading = bool(_HEAD_RE.match(line))
     parts = re.split(r"(\[[^\]]*\]\([^)]*\))", line)
     for idx, seg in enumerate(parts):
         if idx % 2 == 1:                       # 一整段就是一个链接
@@ -732,9 +910,9 @@ def _strip_inline_junk(line: str, icons=frozenset()) -> str:
             if parts[idx - 1].endswith("!"):
                 continue                        # 图片语法 `![alt](src)`：alt 空不是家具，整段不动
             text, url = m.group(1), m.group(2)
-            # 先判定「显示文字本来就全是不可见字符」（锚点图标）；摘完提示才空的是无障碍提示
+            # 先判定「显示文字本来就全是不可见字符（或标题 `#` 图标）」（锚点图标）；摘完提示才空的是无障碍提示
             # 占满了显示文字，那是另一档。
-            icon = not text.strip(_INVISIBLE_CHARS)
+            icon = _is_icon_link_text(text, is_heading)
             if icon and url not in icons:
                 continue                        # 唯一指向别处：留着，不丢引用
             for rx in _INLINE_HINT_RES:

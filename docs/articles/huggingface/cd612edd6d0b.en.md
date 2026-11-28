@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e26df3e5c4a8
+body_sha: 5185382cdce5
 ---
 
 # ScreenEnv: Deploy your full stack Desktop Agent
@@ -401,8 +401,6 @@ Aug 1, 2025
 
 very useful !!
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

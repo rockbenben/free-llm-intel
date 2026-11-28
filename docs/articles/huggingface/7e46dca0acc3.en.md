@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 28f8d78ddf4d
+body_sha: d3add47cde14
 ---
 
 # Getting Started With Embeddings
@@ -327,9 +327,7 @@ Jul 18, 2025
 
 For your awareness, I believe the API URL for the all-MiniLM-L6-v2 transformer has now changed, meaning that the Google Colab Notebook doesn't work as written. The new URL is provided in the Hugging Face forum post here and updating to the new URL seems to fix the issue: [https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/discussions/116](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/discussions/116)
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

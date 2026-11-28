@@ -9,7 +9,7 @@ captured: 2026-10-31
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 2fffe2980b2e
+body_sha: d9f93439730c
 ---
 
 # MiniMax Speech 2.6 Turbo 现已在 Together AI 上原生提供
@@ -17,7 +17,6 @@ body_sha: 2fffe2980b2e
 最先进的多语种 TTS，在 40 多种语言上提供人类水准、懂得情绪的声音，并跑在 dedicated 的生产级基础设施上，带来实时延迟。
 
 - 作者：Arielle Fidel、Rajas Bansal、Sahil Yadav、Rishabh Bhargava、Sonny Khan
-- 目录[为生产环境选定的 40+ 款模型…为生产环境选定的 40+ 款模型…为生产环境选定的 40+ 款模型…](https://www.together.ai/blog/minimax-speech-2-6)
 - 本文中的链接[MiniMax Speech 2.6 Turbo](https://www.together.ai/models/minimax-speech-2-6-turbo)[TTS 文档](https://docs.together.ai/docs/text-to-speech)[X](https://x.com/togethercompute)[Discord](https://discord.gg/9Rk6sSeWEG)[我们正在招聘！](https://www.together.ai/about#careers) [获取通知](https://www.together.ai/newsletter)‍
 
 摘要

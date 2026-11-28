@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 85b326f7086a
+body_sha: 09ae8d582cf4
 ---
 
 # HuggingFace, IISc partner to supercharge model building on India's diverse languages
@@ -144,9 +144,7 @@ Mar 4, 2025
 
 I am interested in exploring partnership possibilities with Hugging Face. May I send an email to someone in charge of partnerships?
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

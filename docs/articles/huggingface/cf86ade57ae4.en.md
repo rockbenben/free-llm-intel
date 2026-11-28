@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ce36e62ce2d3
+body_sha: dcfa1c995d39
 ---
 
 # Illustrating Reinforcement Learning from Human Feedback (RLHF)
@@ -275,9 +275,7 @@ alexasadali2312
 [movierulz 2025](https://movierulzs.com.in/)
 [movierulz telugu](https://movierulzs.com.in/)
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

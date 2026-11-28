@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: bec93a083ed9
+body_sha: e6eb845d222b
 ---
 
 # Patch Time Series Transformer in Hugging Face - Getting Started
@@ -654,9 +654,7 @@ June 16, 2023
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

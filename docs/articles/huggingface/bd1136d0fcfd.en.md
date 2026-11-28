@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: 77af3635e2d6
+body_sha: 43612e57dfdd
 ---
 
 # The Agent Said It Was Done. The Database Disagreed.
@@ -383,9 +383,7 @@ A green success from the same process that acted is a claim, not a grade. I'd wa
 
 Practical check: can a run be marked done when the terminal-state fixture is red?
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

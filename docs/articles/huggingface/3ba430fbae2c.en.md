@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e14bd7d3ff4d
+body_sha: cfeefb282180
 ---
 
 # Building an AI WebTV
@@ -422,9 +422,7 @@ September 15, 2025
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

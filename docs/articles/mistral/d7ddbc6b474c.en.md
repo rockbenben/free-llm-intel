@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 85c8d1ef2777
+body_sha: 62115bf181df
 ---
 
 Product
@@ -46,5 +46,3 @@ For businesses, we are launching le Chat Enterprise, designed to empower your te
 We’d love your feedback! [Sign up today to access le Chat as a beta user](https://chat.mistral.ai/). Let us know of quirks that have crept in, when le Chat could reason better, or when it is not as helpful or unbiased as it should be, and we’ll improve it.
 
 Note that le Chat currently cannot access the Internet to engage in discussions, so it may be inaccurate or answer with outdated information.
-
-0%

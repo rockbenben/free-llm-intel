@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 770a5c6230a0
+body_sha: 71c9e5db91e6
 ---
 
 # NeoMME: an efficient Multimodal-native and Multilingual Encoder
@@ -327,9 +327,7 @@ Skeyij
 
 Amazing
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

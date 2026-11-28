@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b2980802c159
+body_sha: 3d6aaa369178
 ---
 
 # 🧨 Diffusers welcomes Stable Diffusion 3
@@ -329,9 +329,7 @@ June 18, 2026
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

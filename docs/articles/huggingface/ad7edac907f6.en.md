@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e7d37bf988af
+body_sha: 5a8eed3052cc
 ---
 
 # Five Big Improvements to Gradio MCP Servers
@@ -175,9 +175,7 @@ July 10, 2025
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

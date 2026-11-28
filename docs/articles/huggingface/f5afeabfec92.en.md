@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 022065458994
+body_sha: ca8eab641204
 ---
 
 # Ecom-RLVE: Adaptive Verifiable Environments for E-Commerce Conversational Agents
@@ -300,9 +300,7 @@ February 20, 2026
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

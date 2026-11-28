@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 380fbaca7868
+body_sha: 92417df5925c
 ---
 
 # Exploring the Daily Papers Page on Hugging Face
@@ -166,8 +166,6 @@ edited Mar 20, 2025
 It's still there. On the top left of the Daily Papers page, right next to "Daily Papers."
 [![Screenshot 2025-03-20 at 20.26.48.png](https://cdn-uploads.huggingface.co/production/uploads/63a369d98c0c89dcae3b8329/X09B_zS4Updqc8x8VuTx4.png)](https://cdn-uploads.huggingface.co/production/uploads/63a369d98c0c89dcae3b8329/X09B_zS4Updqc8x8VuTx4.png)
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

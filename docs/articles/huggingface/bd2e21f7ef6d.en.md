@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3cf3ceed332a
+body_sha: 05cdab3acc89
 ---
 
 # SAIR: Accelerating Pharma R&D with AI-Powered Structural Intelligence
@@ -174,9 +174,7 @@ Sep 6, 2025
 
 Hi, I am having a really hard time finding AI datasets - publicly available to used. I need your help, any recommendation or direction where to find AI related datasets relating to global AI topic, using country by country.
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

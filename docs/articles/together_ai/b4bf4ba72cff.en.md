@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 96b971f8ec68
+body_sha: da09169a6db8
 ---
 
-All blog posts
 
 Inference
 
@@ -22,7 +21,6 @@ Published 5/8/2026
 Agents, Skills, and Together Dedicated Container Inference unlocks trying any model.
 
 - AuthorsBlaine Kasten
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/deploy-and-inference-any-model-from-huggingface#)
 
 Something real is shifting in how developers work. Agents open up work that used to be off-limits, not because it was technically impossible, but because it required niche expertise most of us didn't have. Containerization, inference server configs, model-specific environment setup: these are the kinds of tasks that used to demand either deep expertise or hours of self-education before you could even get started. Agents allow for an elegant way to bridge those pre-requisite knowledge gaps. You describe what you want, and the agent fills in the knowledge gaps.
 
@@ -132,7 +130,3 @@ The cost model also makes it easy to experiment. You're paying for what you use,
 If you're interested in Together's DCI, [reach out to us](https://www.together.ai/contact-sales?dci=true) to get set up.
 
 ## Related articles
-
-View All
-
-View All

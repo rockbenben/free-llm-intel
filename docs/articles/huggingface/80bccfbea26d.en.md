@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9cddb24aa426
+body_sha: c827ac879645
 ---
 
 # Asynchronous Robot Inference: Decoupling Action Prediction and Execution
@@ -248,9 +248,7 @@ Open source. SDKs in Python, C++, and Rust.
 github.com/nalinraut/inferential
 Full writeup: nalinraut.github.io/blog/2026/inferential/
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d0806a39c41c
+body_sha: 9adf44d0f314
 ---
 
 # My Journey to a serverless transformers pipeline on 
@@ -208,8 +208,6 @@ September 3, 2026
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

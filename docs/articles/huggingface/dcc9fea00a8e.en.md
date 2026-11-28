@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 70f524638388
+body_sha: 138a79bf65a7
 ---
 
 # Supercharged Customer Service with Machine Learning
@@ -690,9 +690,7 @@ August 26, 2026
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

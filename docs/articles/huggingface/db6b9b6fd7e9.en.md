@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b1492cb38da0
+body_sha: 555b9e6d132f
 ---
 
 # Fetch Consolidates AI Tools and Saves 30% Development Time with Hugging Face on AWS
@@ -92,9 +92,7 @@ October 28, 2024
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

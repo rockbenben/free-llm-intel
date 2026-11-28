@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e2223d6ef3d3
+body_sha: 4f5ed0a97d59
 ---
 
 # Kimina-Prover-RL
@@ -268,9 +268,7 @@ July 10, 2025
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 59b479222052
+body_sha: efe1f46f1f40
 ---
 
 Product
@@ -86,5 +86,3 @@ The Python SDK is how developers write and run workflows. v3.0 is now publicly a
 ```
 uv add mistralai-workflows
 ```
-
-0%

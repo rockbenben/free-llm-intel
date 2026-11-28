@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ff5f5e6c91c0
+body_sha: c6e736090143
 ---
 
 # Granite 4.1 LLMs: How They’re Built
@@ -451,9 +451,7 @@ August 25, 2026
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

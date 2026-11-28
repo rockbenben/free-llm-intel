@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7b2f9a0e4b1a
+body_sha: b282729d37b0
 ---
 
 # Faster Training and Inference: Habana Gaudi®-2 vs Nvidia A100 80GB
@@ -148,9 +148,7 @@ March 28, 2023
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

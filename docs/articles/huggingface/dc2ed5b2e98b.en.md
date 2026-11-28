@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c6fee4b76802
+body_sha: 06717dce5db9
 ---
 
 # 17 Reasons Why Gradio Isn't Just Another UI Library
@@ -375,8 +375,6 @@ May 1, 2025
 
 yes, absolutely.
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

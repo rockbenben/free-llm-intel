@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b2dbc83736cb
+body_sha: 266519b33406
 ---
 
-All blog posts
 
 Company
 
@@ -20,7 +19,6 @@ Published 7/1/2026
 # Announcing our $800M Series C to accelerate the shift to open-source AI
 
 - AuthorsVipul Ved Prakash
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/announcing-our-series-c#)
 
 Four years ago, my co-founders and I started Together AI because we saw generative AI as a turning point for human progress. We believed this generational technology should be open and abundantly available, not controlled by a handful of companies.
 
@@ -47,7 +45,3 @@ To our customers, team, and investors: thank you for believing in this vision an
 If our vision resonates with you, reach out — we are hiring across engineering, research, product, and go-to-market.
 
 ## Related articles
-
-View All
-
-View All

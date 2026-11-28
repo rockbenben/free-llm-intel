@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-06
 extractor: readability-v1
 status: ok
-body_sha: be422674786a
+body_sha: e14aa3e7d3e3
 ---
 
 # Using LoRA for Efficient Stable Diffusion Fine-Tuning
@@ -193,9 +193,7 @@ Dec 24, 2025
 
 I'm particularly excited about the lower VRAM requirements. Being able to fine-tune on an 11 GB card opens this up to so many more people who don't have access to high-end hardware. The Pokemon example is perfect for demonstrating real-world results too. [https://playvio.io/](https://playvio.io/)
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

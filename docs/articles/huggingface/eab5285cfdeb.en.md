@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 216abddd89be
+body_sha: 5f0af01339fa
 ---
 
 # Up to 3.2x Faster Inference with LFM2.5-DSpark
@@ -193,9 +193,7 @@ August 19, 2026
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

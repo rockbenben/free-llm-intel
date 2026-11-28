@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-30
 extractor: readability-v1
 status: ok
-body_sha: dcbfafbafb61
+body_sha: afb5688c0fc5
 ---
 
-All blog posts
 
 Model Library
 
@@ -22,7 +21,6 @@ Published 8/6/2026
 The open-weight model setting the new price-intelligence bar
 
 - AuthorsZain Hasan, Shobhit Dixit
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding)
 
 Key Takeaways
 
@@ -174,7 +172,3 @@ Luna wins every language in our breakdown, but the margins vary. DeepSeek is res
 pass@k measures whether at least one of k attempts at a task passes the hidden test suite. pass@1 rewards getting it right first try; higher k rewards a model that can eventually reach a solution across several tries. DeepSeek's pass@2 (70.1%) already edges Luna's pass@1 (67.2%), which is what makes the parallel-attempt and cascade economics work.
 
 ## Related articles
-
-View All
-
-View All

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-22
 extractor: readability-v1
 status: ok
-body_sha: f9bfad7d108f
+body_sha: b89f081f3614
 ---
 
-All blog posts
 
 Model Library
 
@@ -22,7 +21,6 @@ Published 11/21/2026
 Alibaba's flagship Qwen model is 30% off through November 22, 2026. We gave it a bug report and the whole Tornado repository in one request to see what a 1M-token context window is worth, and what it costs.
 
 - AuthorsSonny Khan
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/qwen4-max)
 - Links in this article[Qwen4 Max in the playground](https://api.together.ai/playground/v2/chat/Qwen/Qwen4-Max)[Qwen4 Max model page](https://www.together.ai/models/qwen4-max)[Alibaba's announcement](https://www.alibabacloud.com/en/press-room/alibaba-unveils-qwen4-max)
 
 Summary
@@ -192,7 +190,3 @@ Yes, prompt caching is automatic for Qwen4 Max on Together AI, and cached input 
 No, Qwen4 Max is serverless only on Together AI today, and it isn't available for fine-tuning. Alibaba says smaller open-weight models from the Qwen4 series will follow.
 
 ## Related articles
-
-View All
-
-View All

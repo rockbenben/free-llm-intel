@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5cff192f9e01
+body_sha: 0371f25dcc63
 ---
 
 Product
@@ -94,5 +94,3 @@ uv tool install mistral-vibe
 ## We’re hiring.
 
 If you want to build world-class AI products with us, we'd love to hear from you. [Apply to join our team](https://mistral.ai/careers).
-
-0%

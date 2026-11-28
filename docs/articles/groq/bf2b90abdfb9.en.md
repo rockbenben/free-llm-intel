@@ -8,39 +8,24 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 20047cd6ceaf
+body_sha: 3992c11edf1c
 ---
 
-groq
 
 
-groq-changelog
 
-Public
 
-- [ Notifications ](https://github.com/login?return_to=%2Fgroq%2Fgroq-changelog) You must be signed in to change notification settings
-- [ Fork 0 ](https://github.com/login?return_to=%2Fgroq%2Fgroq-changelog)
-- [  Star  17 ](https://github.com/login?return_to=%2Fgroq%2Fgroq-changelog)
 
-## File tree
 
-Expand file tree
 
-Collapse file tree
 
-Open diff view settings
 
-Filter options
 
 - .github/workflows[stale.yaml](https://github.com/groq/groq-changelog/commit/b64680cebef49c1392ea94580fd5c99b0ff33271#diff-8ed8226600411f044974fddc34a67113e5f1a72e726ffad86676cf8c05186bec)
 
-Expand file tree
 
-Collapse file tree
 
-Open diff view settings
 
-Collapse file
 
 ### [`‎.github/workflows/stale.yaml‎`](https://github.com/groq/groq-changelog/commit/b64680cebef49c1392ea94580fd5c99b0ff33271#diff-8ed8226600411f044974fddc34a67113e5f1a72e726ffad86676cf8c05186bec)
 
@@ -61,15 +46,3 @@ Lines changed: 1 addition & 0 deletions
 | `25` | `25` | ` days-before-pr-close: 7` |
 | `26` | `26` | ` exempt-pr-labels: "dependencies,security"` |
 |  | `27` | `+ operations-per-run: 60 # Default is 30` |
-
-## 0 commit comments
-
-Comments
-
-0
-
-(
-
-0
-
-)

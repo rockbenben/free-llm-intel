@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 95b6a92e4fea
+body_sha: cb4987608a00
 ---
 
 # Agentic 编码正在给 CI 施压。这是我们如何在 Anthropic 扩展测试影响分析
@@ -20,7 +20,6 @@ body_sha: 95b6a92e4fea
 - 产品：[Claude Code](https://claude.com/product/claude-code)、[Claude Enterprise](https://claude.com/solutions/enterprise)、[Claude Tag](https://claude.com/product/tag)
 - 日期：2026 年 9 月 14 日
 - 阅读时长：5 分钟
-- 分享：[复制链接](https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic#)https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic
 - 作者：Sachin Malhotra
 
 ## AI 正在演化 CI

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: ea2cc4487ba3
+body_sha: e8ead5659149
 ---
 
 # How UK AISI and EvalEval Are Making Benchmark Results Reproducible
@@ -155,8 +155,6 @@ One ask I'd put to teams adopting EEE: which fields get skipped first under dead
 
 Reproducible reporting won't remove disagreement. It will make the disagreement about the right variables.
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

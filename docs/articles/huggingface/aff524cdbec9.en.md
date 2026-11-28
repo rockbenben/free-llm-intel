@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 05325d9fccde
+body_sha: 5ac9787cbaa2
 ---
 
 # Introducing Storage Regions on the Hub
@@ -123,8 +123,6 @@ May 21, 2024
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

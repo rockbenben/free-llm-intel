@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 95e366339f60
+body_sha: 901c694667d9
 ---
 
 # The NLP Course is becoming the LLM Course!
@@ -143,8 +143,6 @@ Apr 15, 2025
 
 When is this going live?
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

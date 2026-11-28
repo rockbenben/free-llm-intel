@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: bfbab8a50516
+body_sha: ade53d00e4be
 ---
 
 # Case Study: Millisecond Latency using Hugging Face Infinity and modern CPUs
@@ -186,9 +186,7 @@ October 26, 2021
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

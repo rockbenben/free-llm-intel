@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 35e1937b1932
+body_sha: 06d131726924
 ---
 
 # Measuring benchmark optimization in speech recognition
@@ -211,9 +211,7 @@ Aug 22
 
 nice paper
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

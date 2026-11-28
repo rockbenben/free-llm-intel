@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f4547a18c89b
+body_sha: 3ad9d318f14c
 ---
 
 # Japanese Stable Diffusion
@@ -175,9 +175,7 @@ November 25, 2022
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8cc689995522
+body_sha: 80c2e1c9fa03
 ---
 
-All blog posts
 
 Inference
 
@@ -20,7 +19,6 @@ Published 7/16/2026
 # What does 99.9% uptime mean for inference?
 
 - AuthorsRyan Lucchese, Sarung Tripathi
-- Table of contents[40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...](https://www.together.ai/blog/99-9-uptime-for-inference#)
 
 **TL;DR**
 
@@ -107,7 +105,3 @@ Those are answerable questions. Ask any provider to walk through the architectur
 We can walk you through ours anytime. If you want to dig in, we’re here.
 
 ## Related articles
-
-View All
-
-View All

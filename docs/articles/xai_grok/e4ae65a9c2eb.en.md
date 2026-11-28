@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f9048f5e80c9
+body_sha: 4426e3bb9b80
 ---
 
-Back to news
 
 May 6, 2026
 

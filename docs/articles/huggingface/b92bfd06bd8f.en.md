@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e75432ef5fbf
+body_sha: 105a62c7b50a
 ---
 
 # Safetensors is Joining the PyTorch Foundation
@@ -112,8 +112,6 @@ May 12
 
 Will there be a concerted effort now to get newer (and older) LLM models to adopt the more secure safetensors format rather than allowing AI developers to continue with pickle files as they did in the past? And what would some of the objections be, if any, for a developer to not transition to safetensors format?
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .

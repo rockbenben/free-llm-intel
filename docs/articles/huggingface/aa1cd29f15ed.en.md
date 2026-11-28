@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 60de3fe4d59f
+body_sha: 15b7ad1b77ac
 ---
 
 # Introducing Multimodal TextImage Augmentation for Document Images
@@ -284,9 +284,7 @@ July 18, 2024
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

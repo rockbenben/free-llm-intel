@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c1d1a3cf874a
+body_sha: 0b55af797fdc
 ---
 
 # Rethinking LLM Evaluation with 3C3H: AraGen Benchmark and Leaderboard
@@ -394,9 +394,7 @@ February 10, 2025
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 

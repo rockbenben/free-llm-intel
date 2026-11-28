@@ -9,13 +9,12 @@ captured: 2026-10-31
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 74a6ae716236
+body_sha: 15cdfa76f77a
 ---
 
 # 宣布面向实时语音 AI agent 的最快推理
 
 - 作者：Rajas Bansal、Sahil Yadav、Garima Dhanania、Sri Yanamandra、Charles Zedlewski、Zain Hasan、Derek Petersen、Blaine Kasten、Sonny Khan、Rishabh Bhargava
-- 目录[为生产环境选定的 40+ 款模型…为生产环境选定的 40+ 款模型…为生产环境选定的 40+ 款模型…](https://www.together.ai/blog/the-fastest-inference-for-realtime-voice-ai-agents)
 - 本文中的链接[Playground](https://api.together.ai/playground/mistralai/Voxtral-Mini-3B-2507)[语音转文本（Speech-to-Text）文档](https://docs.together.ai/docs/speech-to-text)[文本转语音（Text-to-Speech）文档](https://docs.together.ai/docs/text-to-speech)[Model library](http://together.ai/models)‍
 
 摘要

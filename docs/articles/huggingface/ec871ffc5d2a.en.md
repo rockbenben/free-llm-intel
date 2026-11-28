@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 57161694a566
+body_sha: 49a1412de72a
 ---
 
 # mmBERT: ModernBERT goes Multilingual
@@ -720,9 +720,7 @@ Oct 31, 2025
 
 This comment has been hidden
 
-Upload images, audio, and videos by dragging in the text input, pasting, or
 
-clicking here
 
 .
 
