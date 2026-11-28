@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a3428edf8fbb
+body_sha: 7cead5391f95
 translator: agent
 ---
 
@@ -23,9 +23,7 @@ translator: agent
 
 
 
-Sumedh Ghaisas
 
-sumedhghaisas
 
 客座作者
 

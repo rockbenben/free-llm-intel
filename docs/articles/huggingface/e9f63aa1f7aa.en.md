@@ -8,79 +8,43 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: 4564444a75d7
+body_sha: ea2cc4487ba3
 ---
-
 
 # How UK AISI and EvalEval Are Making Benchmark Results Reproducible
 
 					September 22, 2026
 
-Update on GitHub
 
 
-28
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png)](https://huggingface.co/dariocava)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg)](https://huggingface.co/clem)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66e691d778f2c37966d1d614/1MJg4zMGny3kmC5TPdjN3.png)](https://huggingface.co/DVRRK)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/69d94b034b0d592e906bc968/8HDc1xHMRnIlqJDI6CG_4.jpeg)](https://huggingface.co/vzn2auto)
 
-Avijit Ghosh
 
-evijit
 
-evaleval
 
-Jenny Chim
 
-j-chim
 
-evaleval
 
-Deep Joshi
 
-deeplumiere
 
-evaleval
 
-Srishti
 
-srishtiy
 
-evaleval
 
-Matt Kennedy
 
-wmmkennedy
 
-evaleval
 
-Irene Solaiman
 
-irenesolaiman
 
-evaleval
 
-Jessica McFadyen
 
-mcfadyen-aisi
 
-ai-safety-institute
 
-Lynn Tan
 
-lynn-aisi
 
-ai-safety-institute
 
-Coz
 
-coz-aisi
 
-ai-safety-institute
 
 The [EvalEval Coalition](https://evalevalai.com/) is thrilled to share that the [UK AI Security Institute (AISI)](https://www.aisi.gov.uk/) is using EvalEval's infrastructure to openly share evaluation results, supporting more reproducible and verifiable evaluation science.
 
@@ -196,23 +160,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fevaleval-aisi) or [log in](https://huggingface.co/login?next=%2Fblog%2Fevaleval-aisi) to comment
-
-
-28
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png)](https://huggingface.co/dariocava)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg)](https://huggingface.co/clem)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66e691d778f2c37966d1d614/1MJg4zMGny3kmC5TPdjN3.png)](https://huggingface.co/DVRRK)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/69d94b034b0d592e906bc968/8HDc1xHMRnIlqJDI6CG_4.jpeg)](https://huggingface.co/vzn2auto)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/01iAmRqyak7mlJT6EDgxJ.png)](https://huggingface.co/MikeEliteLLM)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62543749b777cd32720675c2/EF_KRZO4hTo8TWXOtvc-n.png)](https://huggingface.co/irenesolaiman)
-- [![](https://huggingface.co/avatars/89ddd33671ed6f23c8b9c33f0674033b.svg)](https://huggingface.co/Jureko11)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/IWp7GmKqFXZxE8LB2nADg.png)](https://huggingface.co/birkanoge)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64a99fe3e831371424f583b9/dhKFIea8_zxhLnc2DVQuU.png)](https://huggingface.co/enixmeng)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)

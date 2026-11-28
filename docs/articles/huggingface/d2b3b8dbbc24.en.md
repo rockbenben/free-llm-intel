@@ -8,43 +8,25 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 00c176347b0e
+body_sha: 9c65bbdbd90f
 ---
-
 
 # Migrating the Hub from Git LFS to Xet
 
 					July 15, 2025
 
-Update on GitHub
 
 
-29
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63eaa5f65c837d9968eea66c/dcubvuQ9s-zYaIeZ-Ih7V.jpeg)](https://huggingface.co/thompsonmj)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/673bcb3551d8d86ed0d0c484/RC7ytBAEN_C0q6AgF97xP.jpeg)](https://huggingface.co/xiarenqincai)
-- [![](https://huggingface.co/avatars/70dbaf4b2a2b682c8b26aedf82b498e2.svg)](https://huggingface.co/seto)
-- [![](https://huggingface.co/avatars/f0ee1d50bc5ddb15f60b6e9f78f11688.svg)](https://huggingface.co/blanching7)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63691c3eda9b693c2730b2a2/hBtKpgo3_9003MWCGkw5d.png)](https://huggingface.co/BrigitteTousi)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg)](https://huggingface.co/julien-c)
 
-Jared Sulzdorf
 
-jsulz
 
-xet-team
 
-Joseph Godlewski
 
-jgodlewski
 
-xet-team
 
-Sam Horradarn
 
-sirahd
 
-xet-team
 
 In January of this year, Hugging Face's [Xet Team](https://huggingface.co/xet-team) deployed a new storage backend, and shortly after shifted [~6% of Hub downloads through the infrastructure](https://huggingface.co/blog/xet-on-the-hub). This represented a significant milestone, but it was just the beginning. In 6 months, 500,000 repositories holding 20 PB joined the move to Xet as the Hub outgrows Git LFS and transitions to a storage system that scales with the workloads of AI builders.
 
@@ -223,23 +205,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fmigrating-the-hub-to-xet) or [log in](https://huggingface.co/login?next=%2Fblog%2Fmigrating-the-hub-to-xet) to comment
-
-
-29
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63eaa5f65c837d9968eea66c/dcubvuQ9s-zYaIeZ-Ih7V.jpeg)](https://huggingface.co/thompsonmj)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/673bcb3551d8d86ed0d0c484/RC7ytBAEN_C0q6AgF97xP.jpeg)](https://huggingface.co/xiarenqincai)
-- [![](https://huggingface.co/avatars/70dbaf4b2a2b682c8b26aedf82b498e2.svg)](https://huggingface.co/seto)
-- [![](https://huggingface.co/avatars/f0ee1d50bc5ddb15f60b6e9f78f11688.svg)](https://huggingface.co/blanching7)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63691c3eda9b693c2730b2a2/hBtKpgo3_9003MWCGkw5d.png)](https://huggingface.co/BrigitteTousi)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg)](https://huggingface.co/julien-c)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65d50e9ef9cbfa798c590004/FlVe8chafigMfrPpMeJRL.jpeg)](https://huggingface.co/jsulz)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/643ac5d2e2b979ae6144d68c/Z7PCNopn4cQeAYnVJDoqG.png)](https://huggingface.co/nyuuzyou)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64beb7a2c733e8552ffd63b3/ZI_DOExd737quSFZLmx58.jpeg)](https://huggingface.co/sirahd)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/667c7853ed85453a28a05f19/H2gcBeOAorIsQj3vNinYB.jpeg)](https://huggingface.co/rajatarya)

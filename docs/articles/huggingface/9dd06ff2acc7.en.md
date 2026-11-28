@@ -8,41 +8,24 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6393b3ccf58e
+body_sha: 82a41c9c4d66
 ---
-
 
 # Profiling in PyTorch (Part 3): Attention is all you profile
 
 					July 10, 2026
 
-Update on GitHub
 
 
-51
 
-- [![](https://huggingface.co/avatars/25ab2549a0a846f06cf0936924769c15.svg)](https://huggingface.co/Ajax0564)
-- [![](https://huggingface.co/avatars/3bb8728057fa2ba0e24f5ceb1600068d.svg)](https://huggingface.co/Zmu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1670152199461-629631215de6e0eb3292ae91.jpeg)](https://huggingface.co/IMvision12)
-- [![](https://huggingface.co/avatars/129d1e86bbaf764b507501f4feb177db.svg)](https://huggingface.co/Aanuoluwapo65)
-- [![](https://huggingface.co/avatars/4ec315b7ca47b5a588c6eb89f1994414.svg)](https://huggingface.co/stats-luke)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Q71vDSrUuzLoia2HRWeDf.jpeg)](https://huggingface.co/cestdove)
 
-Aritra Roy Gosthipaty
 
-ariG23498
 
-Sergio Paniego
 
-sergiopaniego
 
-Sayak Paul
 
-sayakpaul
 
-Rémi Ouazan Reboul
 
-ror
 
 [![Thumbnail of the blog post](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/torch-attention-profile/profile-3-thumbnail.png)](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/torch-attention-profile/profile-3-thumbnail.png)
 
@@ -536,24 +519,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftorch-attention-profile) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftorch-attention-profile) to comment
 
 
-51
 
-- [![](https://huggingface.co/avatars/25ab2549a0a846f06cf0936924769c15.svg)](https://huggingface.co/Ajax0564)
-- [![](https://huggingface.co/avatars/3bb8728057fa2ba0e24f5ceb1600068d.svg)](https://huggingface.co/Zmu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1670152199461-629631215de6e0eb3292ae91.jpeg)](https://huggingface.co/IMvision12)
-- [![](https://huggingface.co/avatars/129d1e86bbaf764b507501f4feb177db.svg)](https://huggingface.co/Aanuoluwapo65)
-- [![](https://huggingface.co/avatars/4ec315b7ca47b5a588c6eb89f1994414.svg)](https://huggingface.co/stats-luke)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Q71vDSrUuzLoia2HRWeDf.jpeg)](https://huggingface.co/cestdove)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6340651b388c3fa40f9a5bc0/vM3rB17pUNT11MUhYqfFY.png)](https://huggingface.co/adamm-hf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/643606c5fed1a5fd435eedaf/iQ_mazJcspCyB1-wIA7ij.jpeg)](https://huggingface.co/shadowlilac)
-- [![](https://huggingface.co/avatars/debb175d8166351eb6419e79f9dbf0a1.svg)](https://huggingface.co/EricLabile)
-- [![](https://huggingface.co/avatars/27d784ca352ecb86db8a94979fcf2c9f.svg)](https://huggingface.co/huangsean)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/RGNLn-3eobw-I0mbordiN.jpeg)](https://huggingface.co/adlito)
-- [![](https://huggingface.co/avatars/92e56ee35a2dc71503bfd59b4b5c43fb.svg)](https://huggingface.co/Sartc)
+
 
 ## Datasets mentioned in this article 1

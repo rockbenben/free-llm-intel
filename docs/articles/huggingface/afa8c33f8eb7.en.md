@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: c05421703318
+body_sha: 031d93d2ff0b
 ---
-
 
 # Getting the Source Right, Not Just the Fact: Source-Aware Verification for MCP Agents
 
@@ -21,38 +20,19 @@ Article
 					September 29, 2026
 
 
-21
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg)](https://huggingface.co/AntonioTN)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1iQUUZFQh6BZXCgGY7zJT.png)](https://huggingface.co/AlexDGenu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QU3ijZPXiAWJKJQTof3nF.png)](https://huggingface.co/DuckDuckDown)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tGmQJzeT9SYL_sK839ifI.png)](https://huggingface.co/AlgoEnergy)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/3xs4KD-K8_TSwUNSbWp9o.png)](https://huggingface.co/fakoor)
 
-Antonio Tiene
 
-AntonioTN
 
-MultiverseComputingCAI
 
-Ander Alvarez Sanz
 
-ander-alvarez
 
-MultiverseComputingCAI
 
-Oliver Wirjadi
 
-oliverwirjadi
 
-MultiverseComputingCAI
 
-Alessandro Genuardi
 
-AlexDGenu
 
-MultiverseComputingCAI
 
 Tool-using LLM agents no longer read from a single retrieved passage. Through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io), an agent can call a search tool, inspect a structured patient or account record, query a database, and pull metadata, then weave all of it into one answer. That m aakes the usual question of factuality more subtle than it looks. Most of the systems built to check LLM answers, from [RAGAS faithfulness](https://github.com/explodinggradients/ragas) to fine-grained checkers like MiniCheck, AlignScore, and SummaC, ask whether a claim is supported by the available evidence once that evidence has been pooled together. In their usual form, they do not tell us which MCP tool output supports each claim, or whether that is the source the answer names.
 
@@ -200,25 +180,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source) or [log in](https://huggingface.co/login?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source) to comment
 
 
-21
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg)](https://huggingface.co/AntonioTN)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1iQUUZFQh6BZXCgGY7zJT.png)](https://huggingface.co/AlexDGenu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QU3ijZPXiAWJKJQTof3nF.png)](https://huggingface.co/DuckDuckDown)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tGmQJzeT9SYL_sK839ifI.png)](https://huggingface.co/AlgoEnergy)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/3xs4KD-K8_TSwUNSbWp9o.png)](https://huggingface.co/fakoor)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png)](https://huggingface.co/Stars321123)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jzzvCtkAVcFuwfuh2k_va.png)](https://huggingface.co/asepsafrudin)
-- [![](https://huggingface.co/avatars/327b3a9c4c54e49640d52651c6a8428b.svg)](https://huggingface.co/kbommasani)
-- [![](https://huggingface.co/avatars/5f3f1a55b0878bbca0cd10ae8fdf2ed4.svg)](https://huggingface.co/kamal24h)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/Ft9XaIrp9M75oRHfxtCbi.png)](https://huggingface.co/abdullahashraf122)
+
 
 ## Models mentioned in this article 2
 

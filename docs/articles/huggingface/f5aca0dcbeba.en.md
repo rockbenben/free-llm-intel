@@ -8,31 +8,19 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 20800936b662
+body_sha: ac483c226d9e
 ---
-
 
 # Democratizing AI Safety with RiskRubric.ai
 
 					September 18, 2025
 
-Update on GitHub
 
 
-21
 
-- [![](https://huggingface.co/avatars/8f3fa0abf9ca323b27950da2c4161e44.svg)](https://huggingface.co/nadavlotan)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64c13ee9e98a5e02c93459ee/o7huQQPXZ5vS8r5RVDvWP.png)](https://huggingface.co/leonardtang)
-- [![](https://huggingface.co/avatars/00caacd29818152a2de7cdfdf6f06ce8.svg)](https://huggingface.co/rglauser)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/mPF9iTwFDPVKnoowo_9wn.png)](https://huggingface.co/GalOfer)
-- [![](https://huggingface.co/avatars/95ba8fc9c73075d5b4112599cca63ce1.svg)](https://huggingface.co/galmo-noma)
-- [![](https://huggingface.co/avatars/725df414d7af56b3c3542a624bad7537.svg)](https://huggingface.co/idolaman)
 
-Gal Moyal
 
-galmo-noma
 
-guest
 
 *Building trust in the open model ecosystem through standardized risk assessment*
 
@@ -131,24 +119,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Friskrubric) or [log in](https://huggingface.co/login?next=%2Fblog%2Friskrubric) to comment
 
 
-21
 
-- [![](https://huggingface.co/avatars/8f3fa0abf9ca323b27950da2c4161e44.svg)](https://huggingface.co/nadavlotan)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64c13ee9e98a5e02c93459ee/o7huQQPXZ5vS8r5RVDvWP.png)](https://huggingface.co/leonardtang)
-- [![](https://huggingface.co/avatars/00caacd29818152a2de7cdfdf6f06ce8.svg)](https://huggingface.co/rglauser)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/mPF9iTwFDPVKnoowo_9wn.png)](https://huggingface.co/GalOfer)
-- [![](https://huggingface.co/avatars/95ba8fc9c73075d5b4112599cca63ce1.svg)](https://huggingface.co/galmo-noma)
-- [![](https://huggingface.co/avatars/725df414d7af56b3c3542a624bad7537.svg)](https://huggingface.co/idolaman)
-- [![](https://huggingface.co/avatars/424ea1cb34b28f497e24ba9b99e56893.svg)](https://huggingface.co/nomaor)
-- [![](https://huggingface.co/avatars/7b68e250bc25e642d5b0e0699f4133f9.svg)](https://huggingface.co/nadavsenior)
-- [![](https://huggingface.co/avatars/02a571bc791b78d3993d9a0484b70a29.svg)](https://huggingface.co/adampo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/BCQuek0KU8EzRHaj7-yfh.png)](https://huggingface.co/Ogennoma)
-- [![](https://huggingface.co/avatars/4e84ac947e91d9b42e5753440e3a90bc.svg)](https://huggingface.co/tralon)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/I4HmR-RvH6Cvd5qQxaPcu.png)](https://huggingface.co/roynoma)
+
 
 ## Datasets mentioned in this article 1

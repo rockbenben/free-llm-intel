@@ -8,45 +8,28 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9f7fa9d922a5
+body_sha: 05325d9fccde
 ---
-
 
 # Introducing Storage Regions on the Hub
 
 					November 3, 2023
 
-Update on GitHub
 
 
-2
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://huggingface.co/avatars/900480ce5a29aac046e79fe76cb4f588.svg)](https://huggingface.co/nako-ruru)
 
-Eliott Coyac
 
-coyotte508
 
-Remy
 
-rtrm
 
-Adrien Carreira
 
-XciD
 
-Michelle Habonneau
 
-michellehbn
 
-Violette
 
-Violette
 
-Julien Chaumond
 
-julien-c
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/regions).
 
@@ -145,13 +128,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fregions) or [log in](https://huggingface.co/login?next=%2Fblog%2Fregions) to comment
-
-
-2
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://huggingface.co/avatars/900480ce5a29aac046e79fe76cb4f588.svg)](https://huggingface.co/nako-ruru)

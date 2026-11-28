@@ -8,32 +8,20 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 38213a1e8bd8
+body_sha: 5adcfaebc555
 ---
-
 
 # Swift 🧨Diffusers: Fast Stable Diffusion for Mac
 
 					February 24, 2023
 
-Update on GitHub
 
 
-5
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64bc3d865b8d826146b8d26a/B_t-4PojQyONncAhSkcGF.jpeg)](https://huggingface.co/RuneJared)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647f36a8454af0237bd49574/jshkqBUTY-GZL8As8y6Aq.jpeg)](https://huggingface.co/fdaudens)
-- [![](https://huggingface.co/avatars/3560242c1b70d8a81de7fcc13d4b4fdf.svg)](https://huggingface.co/gmarkley-VI)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/q7CzLNUkfgk9aTVIjtbfQ.jpeg)](https://huggingface.co/kotobato)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/632334c533a1e1cf9deebf37/Ioa4n2ir-XZlDmcxMUYE3.png)](https://huggingface.co/deltheil)
 
-Pedro Cuenca
 
-pcuenq
 
-Vaibhav Srivastav
 
-reach-vb
 
 Transform your text into stunning images with ease using Diffusers for Mac, a native app powered by state-of-the-art diffusion models. It leverages a bouquet of SoTA Text-to-Image models contributed by the community to the Hugging Face Hub, and converted to Core ML for blazingly fast performance. Our latest version, 1.1, is now available on the [Mac App Store](https://apps.apple.com/app/diffusers/id1666309574) with significant performance upgrades and user-friendly interface tweaks. It's a solid foundation for future feature updates. Plus, the app is fully open source with a permissive [license](https://github.com/huggingface/swift-coreml-diffusers/blob/main/LICENSE), so you can build on it too! Check out our GitHub repository at [https://github.com/huggingface/swift-coreml-diffusers](https://github.com/huggingface/swift-coreml-diffusers) for more information.
 
@@ -132,16 +120,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ffast-mac-diffusers) or [log in](https://huggingface.co/login?next=%2Fblog%2Ffast-mac-diffusers) to comment
-
-
-5
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64bc3d865b8d826146b8d26a/B_t-4PojQyONncAhSkcGF.jpeg)](https://huggingface.co/RuneJared)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647f36a8454af0237bd49574/jshkqBUTY-GZL8As8y6Aq.jpeg)](https://huggingface.co/fdaudens)
-- [![](https://huggingface.co/avatars/3560242c1b70d8a81de7fcc13d4b4fdf.svg)](https://huggingface.co/gmarkley-VI)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/q7CzLNUkfgk9aTVIjtbfQ.jpeg)](https://huggingface.co/kotobato)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/632334c533a1e1cf9deebf37/Ioa4n2ir-XZlDmcxMUYE3.png)](https://huggingface.co/deltheil)

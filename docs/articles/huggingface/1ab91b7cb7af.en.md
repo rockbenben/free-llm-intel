@@ -8,41 +8,24 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d08cf909c9ac
+body_sha: f15c5b46c4b8
 ---
-
 
 # Swift Transformers Reaches 1.0 – and Looks to the Future
 
 					September 26, 2025
 
-Update on GitHub
 
 
-43
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6597e9f42235d4056bc6980a/6N_Eira5Rj5e8ZdgekKPQ.jpeg)](https://huggingface.co/FL33TW00D-HF)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64ba8979d112af5223f16dd5/h0H57txUQm_IhxBRKIMS1.png)](https://huggingface.co/JohnMai)
-- [![](https://huggingface.co/avatars/716b6a7d1094c8036b2a8a7b9063e8aa.svg)](https://huggingface.co/blanchon)
-- [![](https://huggingface.co/avatars/1245525955d15203b5144d86cbcc7595.svg)](https://huggingface.co/iky1e)
 
-Pedro Cuenca
 
-pcuenq
 
-Christopher Fleetwood
 
-FL33TW00D-HF
 
-Mattt
 
-mattt
 
-Vaibhav Srivastav
 
-reach-vb
 
 We released [`swift-transformers`](https://github.com/huggingface/swift-transformers) two years ago (!) with the goal to support Apple developers and help them integrate local LLMs in their apps. A lot has changed since then (MLX and chat templates did not exist!), and we’ve learned how the community is actually using the library.
 
@@ -182,23 +165,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fswift-transformers) or [log in](https://huggingface.co/login?next=%2Fblog%2Fswift-transformers) to comment
-
-
-43
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6597e9f42235d4056bc6980a/6N_Eira5Rj5e8ZdgekKPQ.jpeg)](https://huggingface.co/FL33TW00D-HF)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64ba8979d112af5223f16dd5/h0H57txUQm_IhxBRKIMS1.png)](https://huggingface.co/JohnMai)
-- [![](https://huggingface.co/avatars/716b6a7d1094c8036b2a8a7b9063e8aa.svg)](https://huggingface.co/blanchon)
-- [![](https://huggingface.co/avatars/1245525955d15203b5144d86cbcc7595.svg)](https://huggingface.co/iky1e)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/643d6271b561f17fa46b42a2/7lRc7Ied_jWxqativYSvK.jpeg)](https://huggingface.co/ZachNagengast)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/632f30909c9aa2bfdf537871/YWfL5id-QczIn1s2-0Dl_.png)](https://huggingface.co/1duo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68965c341a4851b75ea18264/fJuvwlU7opMxVG_2afCMp.png)](https://huggingface.co/mark-narwhalsdev)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/679e0a4c31bab0a2a3056715/sAg-0IB7LVHe_gxEQtbNQ.jpeg)](https://huggingface.co/taher07)
-- [![](https://huggingface.co/avatars/4b11dd27792680d003d28bda85403fd7.svg)](https://huggingface.co/Samir-A)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg)](https://huggingface.co/kashif)

@@ -8,53 +8,30 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6fd2fc764d5c
+body_sha: bec93a083ed9
 ---
-
 
 # Patch Time Series Transformer in Hugging Face - Getting Started
 
 					February 1, 2024
 
-Update on GitHub
 
 
-15
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1591565751512-noauth.jpeg)](https://huggingface.co/mineshj1291)
-- [![](https://huggingface.co/avatars/2db8386b4e84f89ab11bdb8b26ecdb74.svg)](https://huggingface.co/cvel94)
-- [![](https://huggingface.co/avatars/0618b34fccffd043b85ea13bb4097056.svg)](https://huggingface.co/monoloco42)
-- [![](https://huggingface.co/avatars/a17e03d87bdfc5ea91d868729b539dc5.svg)](https://huggingface.co/TheSilentOne)
-- [![](https://huggingface.co/avatars/a6cfe4b34cf423e0bb0ad74aed7d1fb3.svg)](https://huggingface.co/Brindha7)
-- [![](https://huggingface.co/avatars/86194456844c7b2b5389de36cb258472.svg)](https://huggingface.co/RichardForests)
 
-Nam Nguyen
 
-namctin
 
-guest
 
-Wesley M. Gifford
 
-wmgifford
 
-guest
 
-Arindam Jati
 
-ajati
 
-guest
 
-Vijay Ekambaram
 
-vijaye12
 
-guest
 
-Kashif Rasul
 
-kashif
 
 In this blog, we provide examples of how to get started with PatchTST. We first demonstrate the forecasting capability of `PatchTST` on the Electricity data. We will then demonstrate the transfer learning capability of `PatchTST` by using the previously trained model to do zero-shot forecasting on the electrical transformer (ETTh1) dataset. The zero-shot forecasting performance will denote the `test` performance of the model in the `target` domain, without any training on the target domain. Subsequently, we will do linear probing and (then) finetuning of the pretrained model on the `train` part of the target data, and will validate the forecasting performance on the `test` part of the target data.
 
@@ -683,24 +660,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fpatchtst) or [log in](https://huggingface.co/login?next=%2Fblog%2Fpatchtst) to comment
 
 
-15
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1591565751512-noauth.jpeg)](https://huggingface.co/mineshj1291)
-- [![](https://huggingface.co/avatars/2db8386b4e84f89ab11bdb8b26ecdb74.svg)](https://huggingface.co/cvel94)
-- [![](https://huggingface.co/avatars/0618b34fccffd043b85ea13bb4097056.svg)](https://huggingface.co/monoloco42)
-- [![](https://huggingface.co/avatars/a17e03d87bdfc5ea91d868729b539dc5.svg)](https://huggingface.co/TheSilentOne)
-- [![](https://huggingface.co/avatars/a6cfe4b34cf423e0bb0ad74aed7d1fb3.svg)](https://huggingface.co/Brindha7)
-- [![](https://huggingface.co/avatars/86194456844c7b2b5389de36cb258472.svg)](https://huggingface.co/RichardForests)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/kjaYRuuw4e0EyaPQoTGXc.jpeg)](https://huggingface.co/nieche)
-- [![](https://huggingface.co/avatars/1c14105ac4ea1fe8e512da0c976c191c.svg)](https://huggingface.co/Roselearn)
-- [![](https://huggingface.co/avatars/f9cc86a7d2bbd4bc73815efa414fecf8.svg)](https://huggingface.co/georgeaustralia)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/6YEXqAqYur4syFhDvi-eL.png)](https://huggingface.co/yehoshua00)
-- [![](https://huggingface.co/avatars/984425b630167c573ab7e80cc7fe7cd0.svg)](https://huggingface.co/Julio-Gallego)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/YN7OObPbgXqJ_BrUOPILC.png)](https://huggingface.co/atpewpew)
+
 
 ## Papers mentioned in this article 1

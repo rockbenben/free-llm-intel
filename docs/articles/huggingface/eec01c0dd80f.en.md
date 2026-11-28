@@ -8,45 +8,26 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2075ee6adaee
+body_sha: 79f708a08fe2
 ---
-
 
 # Introducing Daggr: Chain apps programmatically, inspect visually
 
 					January 29, 2026
 
-Update on GitHub
 
 
-107
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e24395419922d5a6d7a6cc/bOFr0La0VdpIZ06-ZWJa4.jpeg)](https://huggingface.co/emredeveloper)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
-- [![](https://huggingface.co/avatars/85bb740aa905416c52d3e70fd433bd24.svg)](https://huggingface.co/Gabriel)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/648a374f00f7a3374ee64b99/YPwSOrronoozwHbJchPn3.jpeg)](https://huggingface.co/cfahlgren1)
 
-merve
 
-merve
 
-yuvraj sharma
 
-ysharma
 
-Abubakar Abid
 
-abidlabs
 
-hysts
 
-hysts
 
-Pedro Cuenca
 
-pcuenq
 
 **TL;DR:** [Daggr](https://github.com/gradio-app/daggr) is a new, open-source Python library for building AI workflows that connect Gradio apps, ML models, and custom functions. It automatically generates a visual canvas where you can inspect intermediate outputs, rerun individual steps, and manage state for complex pipelines, all in a few lines of Python code!
 
@@ -424,25 +405,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdaggr) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdaggr) to comment
 
 
-107
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e24395419922d5a6d7a6cc/bOFr0La0VdpIZ06-ZWJa4.jpeg)](https://huggingface.co/emredeveloper)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
-- [![](https://huggingface.co/avatars/85bb740aa905416c52d3e70fd433bd24.svg)](https://huggingface.co/Gabriel)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/648a374f00f7a3374ee64b99/YPwSOrronoozwHbJchPn3.jpeg)](https://huggingface.co/cfahlgren1)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/CWjxjU3HSVmkWBfugVL10.png)](https://huggingface.co/hvbhanot)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg)](https://huggingface.co/jeffboudier)
-- [![](https://huggingface.co/avatars/3a2f12b6111f135e24b4844fdb1b0748.svg)](https://huggingface.co/maxcorbeau)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6415a939e38b2bdc189f1da7/alb9EC84UTeGpVqqGD6VQ.png)](https://huggingface.co/atasoglu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/J8onuxUInfk_05Jaou5Lq.png)](https://huggingface.co/johnmoonwalker)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg)](https://huggingface.co/mrdbourke)
+
 
 ## Models mentioned in this article 1
 

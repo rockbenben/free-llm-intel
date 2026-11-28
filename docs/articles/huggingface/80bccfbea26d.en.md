@@ -8,57 +8,32 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: cdcdbba8addb
+body_sha: 9cddb24aa426
 ---
-
 
 # Asynchronous Robot Inference: Decoupling Action Prediction and Execution
 
 					July 10, 2025
 
-Update on GitHub
 
 
-56
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NwJ2pTzURXwSiQPcdCdPp.png)](https://huggingface.co/PipasGonzalez)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1653590885464-noauth.png)](https://huggingface.co/EddyGiusepe)
-- [![](https://huggingface.co/avatars/a75b1cafa0c581732f8641249b92902c.svg)](https://huggingface.co/aakinlalu)
-- [![](https://huggingface.co/avatars/0fcf9c5c2d2c3b0d6a558b4008e063d1.svg)](https://huggingface.co/xiaofan01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/HOikmxgX-kUgECNfVr53v.png)](https://huggingface.co/CyberThinker)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
 
-Francesco Capuano
 
-fracapuano
 
-Steven Palma
 
-imstevenpmwork
 
-Michel Aractingi
 
-aractingi
 
-Mustafa Shukor
 
-mshukor
 
-Dana Aubakirova
 
-danaaubakirova
 
-Adil Zouitine
 
-AdilZtn
 
-Simon  Alibert
 
-aliberts
 
-Remi Cadene
 
-cadene
 
 **TL;DR** Robotic policies are increasingly bulky, and predict chunks of future actions rather than a single next action. This results in the robot being idle while awaiting new actions to perform, introducing noticeable lags at execution, and lacking responsiveness. Asynchronous inference tightens the control loop, removing lags at runtime and resulting in more adaptive control by decoupling action prediction from action execution. In this blog post, we cover the basics behind async inference, and how it can be used to improve the performance of robotic policies in the real-world.
 
@@ -279,24 +254,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fasync-robot-inference) or [log in](https://huggingface.co/login?next=%2Fblog%2Fasync-robot-inference) to comment
 
 
-56
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/NwJ2pTzURXwSiQPcdCdPp.png)](https://huggingface.co/PipasGonzalez)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1653590885464-noauth.png)](https://huggingface.co/EddyGiusepe)
-- [![](https://huggingface.co/avatars/a75b1cafa0c581732f8641249b92902c.svg)](https://huggingface.co/aakinlalu)
-- [![](https://huggingface.co/avatars/0fcf9c5c2d2c3b0d6a558b4008e063d1.svg)](https://huggingface.co/xiaofan01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/HOikmxgX-kUgECNfVr53v.png)](https://huggingface.co/CyberThinker)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/668bd06dd58b51a628566d80/II7Yr5dT5ItMrpoMkQEy3.jpeg)](https://huggingface.co/aractingi)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg)](https://huggingface.co/julien-c)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg)](https://huggingface.co/merve)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/652d34483184d39abdc11607/N15lvxITxY8EWfl-UJ09B.png)](https://huggingface.co/Services-Oversonic)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7QqMWTFAZpw7qN7GqjfA6.png)](https://huggingface.co/Test7777722222)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63d10d4e8eaa4831005e92b5/7p7-OmWM6PqqCs7ZStPGD.jpeg)](https://huggingface.co/m-ric)
+
 
 ## Papers mentioned in this article 4

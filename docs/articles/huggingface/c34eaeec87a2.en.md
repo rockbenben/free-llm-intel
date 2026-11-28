@@ -8,35 +8,21 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f19c5a8b7e2e
+body_sha: 9a807eda26d0
 ---
-
 
 # Hugging Face and VirusTotal collaborate to strengthen AI security
 
 					October 22, 2025
 
-Update on GitHub
 
 
-56
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/TOPMN2FAGgOKrjES2ZK5-.png)](https://huggingface.co/AlphaQ32)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68baeb7dbdf2bfb823aacffc/p0J0hLKVCkzJu0auOAz1r.png)](https://huggingface.co/tarekmasryo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62175099ae3a893ac7ce86a7/ZSFoej_60rG-hT-gmo3Pr.jpeg)](https://huggingface.co/michellehbn)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://huggingface.co/avatars/3b06e97e828533065b7014605be0b15e.svg)](https://huggingface.co/kalakuntla)
-- [![](https://huggingface.co/avatars/369f9e3b4341394454c533d675c45dc5.svg)](https://huggingface.co/Wahaj-Ali)
 
-Adrien Carreira
 
-XciD
 
-Bernardo Quintero
 
-bquintero
 
-VirusTotal
 
 We’re excited to announce a new collaboration between Hugging Face and [VirusTotal](https://virustotal.com), the world’s leading threat-intelligence and malware analysis platform. This collaboration enhances the security of files shared across the Hugging Face Hub, helping protect the machine learning community from malicious or compromised assets.
 
@@ -117,24 +103,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fvirustotal) or [log in](https://huggingface.co/login?next=%2Fblog%2Fvirustotal) to comment
 
 
-56
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/TOPMN2FAGgOKrjES2ZK5-.png)](https://huggingface.co/AlphaQ32)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68baeb7dbdf2bfb823aacffc/p0J0hLKVCkzJu0auOAz1r.png)](https://huggingface.co/tarekmasryo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62175099ae3a893ac7ce86a7/ZSFoej_60rG-hT-gmo3Pr.jpeg)](https://huggingface.co/michellehbn)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://huggingface.co/avatars/3b06e97e828533065b7014605be0b15e.svg)](https://huggingface.co/kalakuntla)
-- [![](https://huggingface.co/avatars/369f9e3b4341394454c533d675c45dc5.svg)](https://huggingface.co/Wahaj-Ali)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/2gGqkOIn7xLORcABWtGGT.png)](https://huggingface.co/tigerpiotta)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6304e2965d136debcecdc096/3cAUqpKnFd5WOcZtcQXxG.png)](https://huggingface.co/Pent)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66abc1489654032803752328/TgdSHoXKcyy0uKzld7oyw.jpeg)](https://huggingface.co/assafvayner)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/B90ZaLSgjEdIb6le4k8VI.jpeg)](https://huggingface.co/andreascy)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/nqF3jkt8bmS-5BtFT1Txl.jpeg)](https://huggingface.co/TheDark08)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647656d042e5f529745a5392/1AhYPCI5duq7hRZk3KyDC.png)](https://huggingface.co/caaza)
+
 
 ## Models mentioned in this article 1

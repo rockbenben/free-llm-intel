@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a2f6477ab329
+body_sha: e2223d6ef3d3
 ---
-
 
 # Kimina-Prover-RL
 
@@ -21,128 +20,64 @@ Article
 					August 14, 2025
 
 
-17
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/655e4c26d5c0d3db535cdd66/IjYjuy2goiaHG08mFiFmU.jpeg)](https://huggingface.co/Presidentlin)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64146fc68ebec947b8c2fddc/tTTdYhcg5cp2U8LGZustC.png)](https://huggingface.co/dsantosmarco)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62a3bb1cd0d8c2c2169f0b88/eT2TS0IlQbZtz-F_zHLz9.jpeg)](https://huggingface.co/Tonic)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b79b422f5a966b9735fa46/3zUZRdWzPnYiZE-Sw567D.png)](https://huggingface.co/ricdomolm)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/641aef7b1911d3be67425338/CmCbWWB6NxkAaus59q31w.jpeg)](https://huggingface.co/purewhite42)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/mnSJ7cP3UfzyA9qkqaRx-.jpeg)](https://huggingface.co/UnluckyOrangutan)
 
-Thibaut Barroyer
 
-thibautbar
 
-AI-MO
 
-Jonas Bayer
 
-TBUGTB
 
-AI-MO
 
-Marina Vinyes
 
-mavi88
 
-AI-MO
 
-Mert Unsal
 
-mertunsal
 
-AI-MO
 
-Haiming Wang
 
-HaimingW
 
-AI-MO
 
-Xiaohan Lin
 
-XiaoHLim
 
-AI-MO
 
-MantasBaksys
 
-MantasBaksys
 
-AI-MO
 
-Junqi Liu
 
-ahhwuhu
 
-AI-MO
 
-Marco Dos Santos
 
-dsantosmarco
 
-AI-MO
 
-Flood Sung
 
-floodsung
 
-AI-MO
 
-Ying
 
-zhenzhe
 
-AI-MO
 
-Zhu Zekai
 
-hehepig166
 
-AI-MO
 
-lujianqiao
 
-rookiemango
 
-AI-MO
 
-Hugues de Saxcé
 
-desaxce
 
-AI-MO
 
-Ebony Zhang
 
-ebony59
 
-AI-MO
 
-Bolton Bailey
 
-BoltonBailey
 
-AI-MO
 
-Frederick Pu
 
-UnluckyOrangutan
 
-AI-MO
 
-Zhengying Liu
 
-evariste-liu
 
-AI-MO
 
-LI Jia
 
-liyongsea
 
-AI-MO
 
 **A slimmed-down training pipeline from Kimina Prover, with core features and full compatibility with verl.**
 
@@ -339,25 +274,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2FAI-MO%2Fkimina-prover-rl) or [log in](https://huggingface.co/login?next=%2Fblog%2FAI-MO%2Fkimina-prover-rl) to comment
 
 
-17
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/655e4c26d5c0d3db535cdd66/IjYjuy2goiaHG08mFiFmU.jpeg)](https://huggingface.co/Presidentlin)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64146fc68ebec947b8c2fddc/tTTdYhcg5cp2U8LGZustC.png)](https://huggingface.co/dsantosmarco)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62a3bb1cd0d8c2c2169f0b88/eT2TS0IlQbZtz-F_zHLz9.jpeg)](https://huggingface.co/Tonic)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b79b422f5a966b9735fa46/3zUZRdWzPnYiZE-Sw567D.png)](https://huggingface.co/ricdomolm)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/641aef7b1911d3be67425338/CmCbWWB6NxkAaus59q31w.jpeg)](https://huggingface.co/purewhite42)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/mnSJ7cP3UfzyA9qkqaRx-.jpeg)](https://huggingface.co/UnluckyOrangutan)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62928e6556fedc76e3971e19/Ye0xR859GTCs3ZTZSvlM3.jpeg)](https://huggingface.co/sorokin)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg)](https://huggingface.co/kashif)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67c7666cd51b75fc80596316/5l5x9PRzLuPwuauN-ZXDW.jpeg)](https://huggingface.co/thibautbar)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/650c5818fb7a51088736587b/u8FIlFoylRB3iSwQaBQQv.jpeg)](https://huggingface.co/desaxce)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/PdtmLEqIkalWWw0tYND6o.jpeg)](https://huggingface.co/TBUGTB)
-- [![](https://huggingface.co/avatars/9469599b176034548042922c0afa7051.svg)](https://huggingface.co/dark-pen)
+
 
 ## Models mentioned in this article 5
 

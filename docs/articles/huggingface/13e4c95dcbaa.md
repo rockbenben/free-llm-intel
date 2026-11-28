@@ -9,7 +9,7 @@ captured: 2026-11-07
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: c0607b5d4c9e
+body_sha: d80a387bd583
 ---
 
 # 埃及英语与尼日利亚英语加入 Open ASR 排行榜
@@ -20,27 +20,16 @@ Published November 6, 2026
 
 
 
-[![Eric Bezzam's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)](https://huggingface.co/bezzam)
 
-Eric Bezzam
 
-bezzam
 
-[![Ashley Mo's avatar](https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg)](https://huggingface.co/ashleymo2025)
 
-Ashley Mo
 
-ashleymo2025
 
-[![Liva AI's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png)](https://huggingface.co/liva-ai) [liva-ai](https://huggingface.co/liva-ai)
 
-[![Aoi Otani's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/hGnt9yx6LyQP5a2MBpXGg.jpeg)](https://huggingface.co/aonorii)
 
-Aoi Otani
 
-aonorii
 
-[![Liva AI's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png)](https://huggingface.co/liva-ai) [liva-ai](https://huggingface.co/liva-ai)
 
 几个月前，我们为 [Open ASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard) 引入了私有测试集：来自 Appen 和 DataOceanAI 的 11 个子集，涵盖 5 种口音的朗读与自然会话语音（[博客](https://huggingface.co/blog/open-asr-leaderboard-private-data)）。社区反响非常热烈，许多人**特别强调了保留测试集对于构建可信评测的重要性**。此后，我们又通过 Voice Arena 补充了一个针对印度口音英语的私有子集（[博客](https://huggingface.co/blog/open-asr-leaderboard-global-south)）。
 

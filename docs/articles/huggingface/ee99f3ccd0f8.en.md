@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7c14a5eaa236
+body_sha: efd262303e19
 ---
-
 
 # Prefill and Decode for Concurrent Requests - Optimizing LLM Performance
 
@@ -21,20 +20,10 @@ Article
 					April 16, 2025
 
 
-99
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/77afK2SaR0SDB66EYOoix.jpeg)](https://huggingface.co/Pouyae)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/604714a0c82d59b7347b55ae/WZFKDDUPi8JS0BK8t7mIv.jpeg)](https://huggingface.co/yangwang92)
-- [![](https://huggingface.co/avatars/8d8d426c039f83b4281d669079168325.svg)](https://huggingface.co/devin1994)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67ecf57f1f0e7c18eec758c9/cIJVFNkOkRi9NoLlIuRRX.jpeg)](https://huggingface.co/jdelavande)
-- [![](https://huggingface.co/avatars/7c95f475076470762741357e9728b760.svg)](https://huggingface.co/wry-kingsoft)
-- [![](https://huggingface.co/avatars/d544c2f64a60d9815ec4bb1091901ab9.svg)](https://huggingface.co/SR-TNG)
 
-Benjamin Merkel
 
-BM-TNG
 
-tngtech
 
 Handling load from multiple users in parallel is crucial for the performance of LLM applications. In the [previous part](https://huggingface.co/blog/tngtech/llm-performance-request-queueing) of our series on LLM performance, we discussed queueing strategies for the prioritization of different users. In this second part, we will now focus on the concurrent processing of requests, and how it impacts relevant metrics such as latency and throughput as well as GPU resource utilization.
 
@@ -168,23 +157,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftngtech%2Fllm-performance-prefill-decode-concurrent-requests) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftngtech%2Fllm-performance-prefill-decode-concurrent-requests) to comment
-
-
-99
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/77afK2SaR0SDB66EYOoix.jpeg)](https://huggingface.co/Pouyae)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/604714a0c82d59b7347b55ae/WZFKDDUPi8JS0BK8t7mIv.jpeg)](https://huggingface.co/yangwang92)
-- [![](https://huggingface.co/avatars/8d8d426c039f83b4281d669079168325.svg)](https://huggingface.co/devin1994)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67ecf57f1f0e7c18eec758c9/cIJVFNkOkRi9NoLlIuRRX.jpeg)](https://huggingface.co/jdelavande)
-- [![](https://huggingface.co/avatars/7c95f475076470762741357e9728b760.svg)](https://huggingface.co/wry-kingsoft)
-- [![](https://huggingface.co/avatars/d544c2f64a60d9815ec4bb1091901ab9.svg)](https://huggingface.co/SR-TNG)
-- [![](https://huggingface.co/avatars/795a16b28a09cc18da60cd53496ed2d2.svg)](https://huggingface.co/BM-TNG)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6340651b388c3fa40f9a5bc0/vM3rB17pUNT11MUhYqfFY.png)](https://huggingface.co/adamm-hf)
-- [![](https://huggingface.co/avatars/fd1e6d385822a7d8db1e06b8f64b10ba.svg)](https://huggingface.co/mediiiiii)
-- [![](https://huggingface.co/avatars/4f5f64e7464ea57a76c2aaf17bfc757d.svg)](https://huggingface.co/JohannesEsslinger)
-- [![](https://huggingface.co/avatars/074bd24c53096aeeb1197a371b05052f.svg)](https://huggingface.co/Pharb)
-- [![](https://huggingface.co/avatars/2df3eac8eea59b8e4e8569709e0cce7a.svg)](https://huggingface.co/rbrt)

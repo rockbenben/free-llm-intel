@@ -8,61 +8,34 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3e7930e5dea1
+body_sha: 57161694a566
 ---
-
 
 # mmBERT: ModernBERT goes Multilingual
 
 					September 9, 2025
 
-Update on GitHub
 
 
-156
 
-- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
-- [![](https://huggingface.co/avatars/16c289ac2f322e0816d6d5991b618254.svg)](https://huggingface.co/Francois2511)
-- [![](https://huggingface.co/avatars/3648c03f5b5f40cd208d46fd3b582739.svg)](https://huggingface.co/bogdanminko)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png)](https://huggingface.co/Stars321123)
-- [![](https://huggingface.co/avatars/6aad4ae2b795578e37fd3723879bff85.svg)](https://huggingface.co/Jyo-K)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65bd78aeb7db0ab095469e31/jj3kMgx_snMK3AOoJwRwr.jpeg)](https://huggingface.co/Ihssane123)
 
-Marc Marone
 
-mmarone
 
-jhu-clsp
 
-Orion Weller
 
-orionweller
 
-jhu-clsp
 
-William Fleshman
 
-will-fleshman
 
-jhu-clsp
 
-Eugene Yang
 
-eugene-yang
 
-jhu-clsp
 
-Dawn Lawrie
 
-dlawrie
 
-jhu-clsp
 
-Ben Van Durme
 
-vandurme
 
-jhu-clsp
 
 ## TL;DR
 
@@ -753,25 +726,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fmmbert) or [log in](https://huggingface.co/login?next=%2Fblog%2Fmmbert) to comment
 
 
-156
 
-- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
-- [![](https://huggingface.co/avatars/16c289ac2f322e0816d6d5991b618254.svg)](https://huggingface.co/Francois2511)
-- [![](https://huggingface.co/avatars/3648c03f5b5f40cd208d46fd3b582739.svg)](https://huggingface.co/bogdanminko)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png)](https://huggingface.co/Stars321123)
-- [![](https://huggingface.co/avatars/6aad4ae2b795578e37fd3723879bff85.svg)](https://huggingface.co/Jyo-K)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65bd78aeb7db0ab095469e31/jj3kMgx_snMK3AOoJwRwr.jpeg)](https://huggingface.co/Ihssane123)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b999a40b24527e9c25583a/xFHCewJdf5EGn8qDPypqy.jpeg)](https://huggingface.co/DavidGF)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/60f2fc91b92afccb7c34b8ed/W2-Nay12Ef4Ltyaf8EKE9.jpeg)](https://huggingface.co/gabrielmbmb)
-- [![](https://huggingface.co/avatars/7a4067accdd1005f78c3c4adad3ee0a5.svg)](https://huggingface.co/Samoed)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/R4llnPAHwhLW99wL9AL_M.png)](https://huggingface.co/zl369)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/646264832538819c729e32ba/MVxNj8FCQzyDEcBuUvivo.jpeg)](https://huggingface.co/adaamko)
+
 
 ## Models mentioned in this article 3
 

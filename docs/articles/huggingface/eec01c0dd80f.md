@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 69dcd7fcee3a
+body_sha: 2105a754ca85
 translator: agent
 ---
 
@@ -23,25 +23,15 @@ translator: agent
 
 
 
-merve
 
-merve
 
-yuvraj sharma
 
-ysharma
 
-Abubakar Abid
 
-abidlabs
 
-hysts
 
-hysts
 
-Pedro Cuenca
 
-pcuenq
 
 **TL;DR：** [Daggr](https://github.com/gradio-app/daggr) 是一个全新的开源 Python 库，用于构建连接 Gradio 应用、ML 模型和自定义函数的 AI 工作流。它会自动生成一个可视化画布，你可以在里面查看中间输出、单独重跑某个步骤、管理复杂流水线的状态——而这一切只需几行 Python 代码！
 

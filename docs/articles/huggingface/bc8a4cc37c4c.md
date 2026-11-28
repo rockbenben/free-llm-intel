@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 621a2bf5a24c
+body_sha: 8eaf9295e93a
 ---
 
 返回文章列表
@@ -22,9 +22,7 @@ body_sha: 621a2bf5a24c
 
 
 
-Patrick von Platen
 
-patrickvonplaten
 
 本文也有中文版本 [简体中文](https://huggingface.co/blog/zh/reformer)。
 

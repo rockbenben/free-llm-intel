@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0dda42fb4192
+body_sha: 61bf900857eb
 ---
-
 
 # Open R1: Update #2
 
@@ -21,56 +20,28 @@ Article
 					February 10, 2025
 
 
-219
 
-- [![](https://huggingface.co/avatars/fc53c381e1b66970cc70fc7a0466cd9d.svg)](https://huggingface.co/ArtinKim)
-- [![](https://huggingface.co/avatars/ea98beefcece0fdccc6a3927b75b0e3f.svg)](https://huggingface.co/xdev1206)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647f36a8454af0237bd49574/jshkqBUTY-GZL8As8y6Aq.jpeg)](https://huggingface.co/fdaudens)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/wFOODuqXJtAYPMa-qn_a1.png)](https://huggingface.co/jessepisel)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62f1c8517cb1f6642f2fdb8c/fEuKPMj9-w3WYY2Lf5lp9.jpeg)](https://huggingface.co/tuanlda78202)
-- [![](https://huggingface.co/avatars/283ddaa5329b6acdf69d965d565e7545.svg)](https://huggingface.co/sinnis)
 
-Loubna Ben Allal
 
-loubnabnl
 
-open-r1
 
-Lewis Tunstall
 
-lewtun
 
-open-r1
 
-Anton Lozhkov
 
-anton-l
 
-open-r1
 
-Elie Bakouch
 
-eliebak
 
-open-r1
 
-Guilherme Penedo
 
-guipenedo
 
-open-r1
 
-Hynek Kydlicek
 
-hynky
 
-open-r1
 
-Gabriel Martín Blázquez
 
-gabrielmbmb
 
-open-r1
 
 [![image/png](https://cdn-uploads.huggingface.co/production/uploads/61c141342aac764ce1654e43/7QROrgiDUrccMrPCmlvwv.png)](https://cdn-uploads.huggingface.co/production/uploads/61c141342aac764ce1654e43/7QROrgiDUrccMrPCmlvwv.png)
 
@@ -426,25 +397,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fopen-r1%2Fupdate-2) or [log in](https://huggingface.co/login?next=%2Fblog%2Fopen-r1%2Fupdate-2) to comment
 
 
-219
 
-- [![](https://huggingface.co/avatars/fc53c381e1b66970cc70fc7a0466cd9d.svg)](https://huggingface.co/ArtinKim)
-- [![](https://huggingface.co/avatars/ea98beefcece0fdccc6a3927b75b0e3f.svg)](https://huggingface.co/xdev1206)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647f36a8454af0237bd49574/jshkqBUTY-GZL8As8y6Aq.jpeg)](https://huggingface.co/fdaudens)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/wFOODuqXJtAYPMa-qn_a1.png)](https://huggingface.co/jessepisel)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62f1c8517cb1f6642f2fdb8c/fEuKPMj9-w3WYY2Lf5lp9.jpeg)](https://huggingface.co/tuanlda78202)
-- [![](https://huggingface.co/avatars/283ddaa5329b6acdf69d965d565e7545.svg)](https://huggingface.co/sinnis)
-- [![](https://huggingface.co/avatars/d9b707e26f05d9edec708feb44d8c6c8.svg)](https://huggingface.co/why217)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1636035746738-noauth.png)](https://huggingface.co/prohor)
-- [![](https://huggingface.co/avatars/efa262dc3d8d871c90b8c77fd09618b5.svg)](https://huggingface.co/rkukrej)
-- [![](https://huggingface.co/avatars/3a6b3b952641e9a69992e9657d374231.svg)](https://huggingface.co/drproduck)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/642b7e754f379cdc3de9befc/dGYym9z5vYHRwZpu7ozkh.jpeg)](https://huggingface.co/aipoly)
-- [![](https://huggingface.co/avatars/2a1785af3b1b02e495304d2b118accb0.svg)](https://huggingface.co/Shuaiii)
+
 
 ## Models mentioned in this article 8
 

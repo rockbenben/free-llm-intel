@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f8729dd6336c
+body_sha: 68df8e10ef82
 ---
-
 
 # Apriel-H1: The Surprising Key to Distilling Efficient Reasoning Models
 
@@ -21,44 +20,22 @@ Article
 					November 19, 2025
 
 
-35
 
-- [![](https://huggingface.co/avatars/62d031d7fdb0d0747476d52c78dcdb18.svg)](https://huggingface.co/ostapeno)
-- [![](https://huggingface.co/avatars/ed617ef804a5f3863cc496a5284c88a9.svg)](https://huggingface.co/nitsanluke)
-- [![](https://huggingface.co/avatars/59cc1a52f69cfeb832ea3b90ce852ae9.svg)](https://huggingface.co/harithoppil)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg)](https://huggingface.co/Steveeeeeeen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg)](https://huggingface.co/davanstrien)
-- [![](https://huggingface.co/avatars/ea41ddd50d96a0cd45acd9dc0a362072.svg)](https://huggingface.co/shruthan-r)
 
-Torsten Scholak
 
-tscholak
 
-ServiceNow-AI
 
-Oleksiy Ostapenko
 
-ostapeno
 
-ServiceNow-AI
 
-Raymond Li
 
-RaymondLi
 
-ServiceNow-AI
 
-Luke Kumar
 
-nitsanluke
 
-ServiceNow-AI
 
-Joel Lamy-Poirier
 
-jlamypoirier
 
-ServiceNow-AI
 
 We converted our 15B reasoning model to a Mamba hybrid achieving 2.1x throughput with minimal quality loss. The key? A non-obvious insight about what data to distill on, and why intuition fails here.
 
@@ -255,25 +232,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2FServiceNow-AI%2Fapriel-h1) or [log in](https://huggingface.co/login?next=%2Fblog%2FServiceNow-AI%2Fapriel-h1) to comment
 
 
-35
 
-- [![](https://huggingface.co/avatars/62d031d7fdb0d0747476d52c78dcdb18.svg)](https://huggingface.co/ostapeno)
-- [![](https://huggingface.co/avatars/ed617ef804a5f3863cc496a5284c88a9.svg)](https://huggingface.co/nitsanluke)
-- [![](https://huggingface.co/avatars/59cc1a52f69cfeb832ea3b90ce852ae9.svg)](https://huggingface.co/harithoppil)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg)](https://huggingface.co/Steveeeeeeen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg)](https://huggingface.co/davanstrien)
-- [![](https://huggingface.co/avatars/ea41ddd50d96a0cd45acd9dc0a362072.svg)](https://huggingface.co/shruthan-r)
-- [![](https://huggingface.co/avatars/84e286313264af1461389fedef8b030d.svg)](https://huggingface.co/PlayAI)
-- [![](https://huggingface.co/avatars/c80cf773f436748c992d76ca042dd5fb.svg)](https://huggingface.co/RaymondLi)
-- [![](https://huggingface.co/avatars/226f57ea23b9dd861e71b7ba7821adce.svg)](https://huggingface.co/optimass)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/iAhWDdlCKRDYln-dCN73H.png)](https://huggingface.co/nicogontier)
-- [![](https://huggingface.co/avatars/0f911fee8c173543a6e0cbd78a940676.svg)](https://huggingface.co/dotvignesh)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/651e96991b97c9f33d26bde6/-Bqs6qrmz0yCfwtB2e-6q.jpeg)](https://huggingface.co/eliebak)
+
 
 ## Models mentioned in this article 2
 

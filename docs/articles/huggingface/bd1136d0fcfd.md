@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: f84f1f5c6c19
+body_sha: 414aea9081a4
 ---
 
 # Agent 说它做完了，数据库却不同意
@@ -23,18 +23,9 @@ body_sha: f84f1f5c6c19
 
 
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png)](https://huggingface.co/tuhink)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a27ffbf0ea26227e43a0d29/Hk8XoWHT5braavBTjifaw.jpeg)](https://huggingface.co/Hectozar)
-- [![](https://huggingface.co/avatars/821997acf79b7113de576661b1111109.svg)](https://huggingface.co/youngko)
-- [![](https://huggingface.co/avatars/1462091a632d06d8b3bdf28a8007f621.svg)](https://huggingface.co/IronTech-Studios)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/YtxawKNmLmMd5dkoGXX6j.png)](https://huggingface.co/bedesign62)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/0K6rX9DTE_L7C_ktLloT7.jpeg)](https://huggingface.co/geminiomnidev)
 
-Tuhin Kundu
 
-tuhink
 
-microsoft
 
 *Microsoft ThinkingBox 给 AI agent 打分，看的是它们留下的记录，而不是它们生成的句子，并且进一步追问：它们能不能连续二十次都做对。该基准现已通过 Hugging Face 提供。*
 

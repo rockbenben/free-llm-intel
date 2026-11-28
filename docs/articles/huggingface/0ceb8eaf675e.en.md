@@ -8,29 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c8b331819b07
+body_sha: 2cd90efde800
 ---
-
 
 # Hugging Face partners with TruffleHog to Scan for Secrets
 
 					September 4, 2024
 
-Update on GitHub
 
 
-11
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1666977434736-617bc8d1000dbbbf7c225eed.png)](https://huggingface.co/mcpotato)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61d375fd733d3a83ecd1bba9/oIXwvvs1-HaCnJXMCZgkc.jpeg)](https://huggingface.co/andrewrreed)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg)](https://huggingface.co/julien-c)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/60f2fc91b92afccb7c34b8ed/W2-Nay12Ef4Ltyaf8EKE9.jpeg)](https://huggingface.co/gabrielmbmb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6527e89a8808d80ccff88b7a/CuGNmF1Et8KMQ0mCd1NEJ.jpeg)](https://huggingface.co/not-lain)
 
-Luc Georges
 
-mcpotato
 
 We're excited to announce our partnership and integration with Truffle Security, bringing TruffleHog's powerful secret scanning features to our platform as part of [our ongoing commitment to security](https://huggingface.co/blog/2024-security-features).
 
@@ -128,23 +117,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftrufflesecurity-partnership) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftrufflesecurity-partnership) to comment
 
 
-11
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1666977434736-617bc8d1000dbbbf7c225eed.png)](https://huggingface.co/mcpotato)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61d375fd733d3a83ecd1bba9/oIXwvvs1-HaCnJXMCZgkc.jpeg)](https://huggingface.co/andrewrreed)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg)](https://huggingface.co/julien-c)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/60f2fc91b92afccb7c34b8ed/W2-Nay12Ef4Ltyaf8EKE9.jpeg)](https://huggingface.co/gabrielmbmb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6527e89a8808d80ccff88b7a/CuGNmF1Et8KMQ0mCd1NEJ.jpeg)](https://huggingface.co/not-lain)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/BqQvP3IesxVY-AntNxaqY.png)](https://huggingface.co/0xed1)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6487239cca30096ea9f52115/HMte9wjKJgfcxsO-5vb_Q.jpeg)](https://huggingface.co/damerajee)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6459fa0f5b3111fbe83286e1/E6Buqu8Wd9WmIHKOCZXCc.jpeg)](https://huggingface.co/louisbrulenaudet)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5f43448a79c1ba4c353d0d8f/DiSygV3dn7A_OjmGVTrHD.jpeg)](https://huggingface.co/sugatoray)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/bN3BzkbRFxB_gSq7-YVm5.jpeg)](https://huggingface.co/nandy666)
+
 
 ## Models mentioned in this article 1

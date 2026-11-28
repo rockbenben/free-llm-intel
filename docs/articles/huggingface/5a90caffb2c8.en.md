@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-07
 extractor: readability-v1
 status: ok
-body_sha: 1325b1504c9f
+body_sha: 1d4b9b5a5554
 ---
 
-[ Back to Articles](https://huggingface.co/blog)
 
 # ToyBlocks: A controlled world for robot learning and evaluation
 
@@ -20,21 +19,11 @@ Enterprise  Article
 Published November 6, 2026
 
 
-5
 
-- [![](https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg)](https://huggingface.co/wookute221)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/XcLxZc6CL6VO7tOlh0T0g.jpeg)](https://huggingface.co/SmokeyPete)
-- [![](https://huggingface.co/avatars/35af30f8a3713e3eda81ac4b9be515f5.svg)](https://huggingface.co/arahul2k2)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/DPzSLPCg9RvVBvkD3Mcys.png)](https://huggingface.co/rapidum)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67953e11098348e24ae7f316/ZNT-1c2NOyhugYrzK5Vyf.png)](https://huggingface.co/sebast242)
 
-[![Kyle Wiggers's avatar](https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg)](https://huggingface.co/Ai2Comms)
 
-Kyle Wiggers
 
-Ai2Comms
 
-[![Ai2's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)](https://huggingface.co/allenai) [allenai](https://huggingface.co/allenai)
 
 💻 [Code](https://github.com/allenai/ToyBlocks) | 📊 [Data](https://huggingface.co/datasets/allenai/toyblocks-data) | 🤖 [Models](https://huggingface.co/collections/allenai/toyblocks) | 📖 [Documentation](https://allenai.github.io/ToyBlocks/docs/user_guide/index.html)
 
@@ -220,20 +209,11 @@ about 7 hours ago
 
 selona I love the concept, id like to see practical applications how can we encorporate AI into PLCs and OBD systems retrofit extant applications niche revenue
 
-Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fallenai%2Ftoyblocks) or [log in](https://huggingface.co/login?next=%2Fblog%2Fallenai%2Ftoyblocks) to comment
 
 
-5
 
-- [![](https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg)](https://huggingface.co/wookute221)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/XcLxZc6CL6VO7tOlh0T0g.jpeg)](https://huggingface.co/SmokeyPete)
-- [![](https://huggingface.co/avatars/35af30f8a3713e3eda81ac4b9be515f5.svg)](https://huggingface.co/arahul2k2)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/DPzSLPCg9RvVBvkD3Mcys.png)](https://huggingface.co/rapidum)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67953e11098348e24ae7f316/ZNT-1c2NOyhugYrzK5Vyf.png)](https://huggingface.co/sebast242)
+
+
 
 ## Models mentioned in this article 2
 

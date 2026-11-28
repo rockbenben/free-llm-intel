@@ -8,49 +8,28 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a1497d212bdd
+body_sha: b2980802c159
 ---
-
 
 # 🧨 Diffusers welcomes Stable Diffusion 3
 
 					June 12, 2024
 
-Update on GitHub
 
 
-99
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://huggingface.co/avatars/0e9c6507b999f7eedb86463482b967a7.svg)](https://huggingface.co/moeinshariatnia)
-- [![](https://huggingface.co/avatars/42edbf9018f41a07a3bd1dcf0e5c1e49.svg)](https://huggingface.co/zheyishine)
-- [![](https://huggingface.co/avatars/a3565133c0e9e4c09f646ec38f1690cd.svg)](https://huggingface.co/Zer0Nin3r)
-- [![](https://huggingface.co/avatars/a607674492c0aedd4096df680c4d1883.svg)](https://huggingface.co/xiaolong01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6032802e1f993496bc14d9e3/w6hr-DEQot4VVkoyRIBiy.png)](https://huggingface.co/osanseviero)
 
-Dhruv Nair
 
-dn6
 
-YiYi Xu
 
-YiYiXu
 
-Sayak Paul
 
-sayakpaul
 
-Alvaro Somoza
 
-OzzyGT
 
-Kashif Rasul
 
-kashif
 
-Apolinário from multimodal AI art
 
-multimodalart
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/sd3).
 
@@ -356,25 +335,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsd3) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsd3) to comment
 
 
-99
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://huggingface.co/avatars/0e9c6507b999f7eedb86463482b967a7.svg)](https://huggingface.co/moeinshariatnia)
-- [![](https://huggingface.co/avatars/42edbf9018f41a07a3bd1dcf0e5c1e49.svg)](https://huggingface.co/zheyishine)
-- [![](https://huggingface.co/avatars/a3565133c0e9e4c09f646ec38f1690cd.svg)](https://huggingface.co/Zer0Nin3r)
-- [![](https://huggingface.co/avatars/a607674492c0aedd4096df680c4d1883.svg)](https://huggingface.co/xiaolong01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6032802e1f993496bc14d9e3/w6hr-DEQot4VVkoyRIBiy.png)](https://huggingface.co/osanseviero)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1648966381588-6064e095abd8d3692e3e2ed6.jpeg)](https://huggingface.co/radames)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg)](https://huggingface.co/jeffboudier)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b695dcd3df8086e5ed7c89/ZULwnPE8Q5q7bxKJsJ7v5.jpeg)](https://huggingface.co/0xFieldsy)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64371b564aacf7bf786fb530/HZl_fPo7YclFEuuLSme3K.png)](https://huggingface.co/Nymbo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/651e93137b2a2e027f9e55df/5oXWJeEDCrMJLA4s_0I93.png)](https://huggingface.co/Aurelien-Morgan)
-- [![](https://huggingface.co/avatars/8011cc6e4a919cb30f30d1be783de6d4.svg)](https://huggingface.co/Rohit311)
+
 
 ## Models mentioned in this article 4
 

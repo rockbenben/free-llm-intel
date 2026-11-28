@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2c2d617d3257
+body_sha: 4536385bd906
 ---
-
 
 # MosaicLeaks: Can your research agent keep a secret?
 
@@ -21,26 +20,13 @@ Article
 					June 18, 2026
 
 
-15
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/657ab009e1113b5af51588ee/Yhdq9wtstQl4lvWwzXnXW.png)](https://huggingface.co/deegerwalker)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65ca8745d64d82c92fa7c71f/xayDYjs_LoAsa8BEgDlhb.jpeg)](https://huggingface.co/spandanagella)
-- [![](https://huggingface.co/avatars/b4723a2510ad4ff22b7169924fd305b6.svg)](https://huggingface.co/mrajan)
-- [![](https://huggingface.co/avatars/5427b05b3ef627d4d8281f9a33bb98ab.svg)](https://huggingface.co/ExceedZhang)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68750699d365b5bf3756c71c/j39Nlb_MXxhT10E9yfsVm.png)](https://huggingface.co/ILer33)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64bba174da140e4619248401/uXYk0Ubx5SzOKvFhzZcmy.jpeg)](https://huggingface.co/bojansandhaus)
 
-Alexander Gurung
 
-agurung
 
-ServiceNow
 
-Rafael Pardinas
 
-rafapi-snow
 
-ServiceNow
 
 [![arXiv](https://img.shields.io/badge/arXiv-2605.30727-b31b1b.svg)](https://arxiv.org/abs/2605.30727)
 
@@ -206,23 +192,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2FServiceNow%2Fmosaicleaks) or [log in](https://huggingface.co/login?next=%2Fblog%2FServiceNow%2Fmosaicleaks) to comment
-
-
-15
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/657ab009e1113b5af51588ee/Yhdq9wtstQl4lvWwzXnXW.png)](https://huggingface.co/deegerwalker)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65ca8745d64d82c92fa7c71f/xayDYjs_LoAsa8BEgDlhb.jpeg)](https://huggingface.co/spandanagella)
-- [![](https://huggingface.co/avatars/b4723a2510ad4ff22b7169924fd305b6.svg)](https://huggingface.co/mrajan)
-- [![](https://huggingface.co/avatars/5427b05b3ef627d4d8281f9a33bb98ab.svg)](https://huggingface.co/ExceedZhang)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68750699d365b5bf3756c71c/j39Nlb_MXxhT10E9yfsVm.png)](https://huggingface.co/ILer33)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64bba174da140e4619248401/uXYk0Ubx5SzOKvFhzZcmy.jpeg)](https://huggingface.co/bojansandhaus)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp)](https://huggingface.co/victor)
-- [![](https://huggingface.co/avatars/2f4fcab1d19bee411ead0ac538c4126e.svg)](https://huggingface.co/pCriisS)
-- [![](https://huggingface.co/avatars/0e2a406f3c8ae3d17e7e67139aca4553.svg)](https://huggingface.co/Tabbab321)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FG49LyjRUUXYXJ1TPp6BF.png)](https://huggingface.co/rafapi-snow)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/SUSAsNhSj4_KHqyDGJnkr.png)](https://huggingface.co/Pegasus10)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67dd4bc560468ed611839028/gyLOZkOszb6NHENA9sWiY.jpeg)](https://huggingface.co/khojoii)

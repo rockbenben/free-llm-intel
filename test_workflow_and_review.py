@@ -12348,6 +12348,14 @@ class TestPageFurnitureStrip(unittest.TestCase):
           <div class="SVELTE_HYDRATER contents" data-target="UpvoteControl">
             <div>Upvote 12</div><dialog><ul><li><a href="/voter">Voter</a></li></ul></dialog>
           </div>
+          <div class="SVELTE_HYDRATER contents" data-target="BlogAuthorsByline">
+            <div><a href="/alice"><img alt="Alice's avatar" src="/avatars/a.svg"></a>
+            <span class="fullname">Alice</span><span>alice</span></div>
+          </div>
+          <div class="flex items-center">
+            <a href="/login?next=%2Fpapers%2F2605.27209"><div>Upvote <span>12</span></div></a>
+            <ul><li><a href="/u1"><img src="/avatars/u1.svg"></a></li></ul>
+          </div>
           <label><input type="file"><div>Upload images, audio, and videos by dragging in the
             text input, pasting, or <span>clicking here</span>.</div>
             <div>Tap or paste here to upload images</div></label>
@@ -12357,12 +12365,14 @@ class TestPageFurnitureStrip(unittest.TestCase):
         article = ("<h1>Article headline</h1><p>" + "Article prose has technical details. " * 10
                    + "</p><h3>Community</h3><p>Author reply.</p>" + widgets
                    + '<div data-target="UpvoteControl"><p>Example content.</p></div>'
+                   + '<div data-target="BlogAuthorsByline"><p>Author bio section.</p></div>'
                    + "<pre>hf papers read 2605.27209</pre><p>Author credit.</p>")
         html = f"<article>{article}</article>"
         out = ft.extract_article_markdown(html, url)["markdown"]
-        for removed in ("Upvote 12", "/voter", "dragging in the", "upload images", "to comment"):
+        for removed in ("Upvote 12", "/voter", "/alice", "Alice", "/u1",
+                        "dragging in the", "upload images", "to comment"):
             self.assertNotIn(removed, out)
-        for kept in ("### Community", "Author reply.", "Example content.",
+        for kept in ("### Community", "Author reply.", "Example content.", "Author bio section.",
                      "hf papers read 2605.27209", "Author credit."):
             self.assertIn(kept, out)
         self.assertIn("Upvote 12", ft.extract_article_markdown(
@@ -12861,6 +12871,61 @@ class TestPageFurnitureStrip(unittest.TestCase):
     def test_demo_slash_and_unrelated_blank_lines_survive(self):
         body = "# 标题\n\n\nDemo\n\n1\n\n/\n\n5\n\n加载中…"
         self.assertEqual(ft.strip_page_furniture(body), body.removesuffix("\n加载中…"))
+
+    def test_hf_header_voters_and_byline_cards_removed_while_body_preserved(self):
+        url = "https://huggingface.co/blog/x"
+        voter1 = "- [![](https://huggingface.co/avatars/u1.svg)](https://huggingface.co/u1)"
+        voter2 = "- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/u2.jpeg)](https://huggingface.co/u2)"
+        author_card = "\n\n".join([
+            "[![Alice's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/a.jpeg)](https://huggingface.co/alice)",
+            "Alice",
+            "alice",
+            "[![Org's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/o.png)](https://huggingface.co/org) [org](https://huggingface.co/org)",
+            "[![Bob 的头像](https://huggingface.co/avatars/b.svg)](https://huggingface.co/bob)",
+            "Bob",
+            "bob",
+            "guest",
+        ])
+        body_avatar = "\n\n".join([
+            "# Title", "", "March 26, 2025", "", "Update on GitHub", "", "1", "", voter1, "",
+            author_card, "", "## Overview", "", "Article prose.",
+        ])
+        out = ft.strip_page_furniture(body_avatar, url)
+        self.assertEqual([ln for ln in out.splitlines() if ln.strip()],
+                         ["# Title", "March 26, 2025", "## Overview", "Article prose."])
+
+        # Old crawl plain-text author stack + bare date + no Update on GitHub
+        body_plain = "\n\n".join([
+            "# Title", "", "Team", "", "Article", "", "March 26, 2025", "", "50", "",
+            voter1, voter2, "", "Leandro von Werra", "lvwerra", "open-r1", "",
+            "Huang, Tai", "isaacmac", "Intel", "", "Hello, world!", "", "Longer prose paragraph.",
+        ])
+        out_plain = ft.strip_page_furniture(body_plain, url)
+        self.assertNotIn("lvwerra", out_plain)
+        self.assertNotIn("isaacmac", out_plain)
+        self.assertNotIn("u1.svg", out_plain)
+        self.assertIn("Hello, world!", out_plain)
+        self.assertIn("Longer prose paragraph.", out_plain)
+
+        # Decoy: same author cards placed inside body prose, code fence, or non-HF host must survive
+        decoy_mid = f"# Title\n\nMarch 26, 2025\n\nIntro paragraph.\n\n{author_card}\n\nMore prose."
+        self.assertEqual(ft.strip_page_furniture(decoy_mid, url), decoy_mid)
+        decoy_fence = f"# Title\n\nMarch 26, 2025\n\n```markdown\n{author_card}\n```\n\nBody."
+        self.assertEqual(ft.strip_page_furniture(decoy_fence, url), decoy_fence)
+        self.assertEqual(ft.strip_page_furniture(body_avatar, "https://example.com/blog/x"), body_avatar)
+
+        # /papers/ voter block after Submitted by · org badge
+        paper_url = "https://huggingface.co/papers/2605.27209"
+        paper = "\n\n".join([
+            "Papers", "arxiv:2605.27209", "# Paper Title", "Published on May 26",
+            "Submitted by", "Yuxin Chen", "on May 27",
+            "· [![meituan-longcat](https://cdn-avatars.huggingface.co/v1/production/uploads/o.png) LongCat](https://huggingface.co/meituan-longcat)",
+            "12", voter1, voter2, "## Abstract", "Paper prose.",
+        ])
+        out_paper = ft.strip_page_furniture(paper, paper_url)
+        self.assertNotIn("u1.svg", out_paper)
+        self.assertIn("Yuxin Chen", out_paper)
+        self.assertIn("## Abstract", out_paper)
 
 
 class TestRenderOutputs(unittest.TestCase):

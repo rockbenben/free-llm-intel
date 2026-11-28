@@ -9,16 +9,13 @@ captured: 2026-11-26
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 729868c1c303
+body_sha: 85867cb4f9f8
 ---
 
 # 在单台 RTX PRO 6000 上爬山调优 Inkling 2 Mini 推理
 
-[![Niels Rogge's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/1608042047613-5f1158120c833276f61f1a84.jpeg)](https://huggingface.co/nielsr)
 
-Niels Rogge
 
-nielsr
 
 [Inkling 2 Mini](https://huggingface.co/blog/inkling2mini) 上周发布，为本地 AI 和更小的开源模型树立了新的 SOTA。它总参数约 26B（每 token 激活 3B），支持多模态输入，上下文窗口达 1M token，在 [Artificial Analysis Intelligence Index v5](https://artificialanalysis.ai/models/open-source) 上领先同重量级，并在 48 项基准中的 32 项上胜过 Gemma 4 31B、Qwen3.8-27B 等模型，因此对于在普通硬件上做编码、工具调用和推理来说，它是一个很强的开放选项。我们写了一篇详尽的博客文章，介绍如何在 Hugging Face 生态中使用它，见[此处](https://huggingface.co/blog/inkling2mini)。
 

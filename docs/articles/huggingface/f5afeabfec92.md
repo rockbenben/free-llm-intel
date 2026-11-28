@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c1cb26cdd638
+body_sha: 59964c73d891
 translator: agent
 ---
 
@@ -23,27 +23,16 @@ translator: agent
 
 
 
-Rahul Bajaj
 
-thebajajra
 
-owlgebra-ai
 
-Jaya Nupur
 
-ai-queen
 
-owlgebra-ai
 
-Anuj Garg
 
-pmonad
 
-owlgebra-ai
 
-ben burtenshaw
 
-burtenshaw
 
 > TL;DR —— 我们把 RLVE 框架从单轮推理谜题扩展到多轮、工具增强的电商对话。EcomRLVE-GYM 提供 8 个可验证环境——商品发现、替代品推荐、购物车构建、退货、订单跟踪、政策问答、组合规划、多意图旅程——每个环境都有程序化问题生成、12 轴难度课程和算法可验证的奖励。我们用 DAPO 训练了一个 Qwen 3 8B 模型 300 步，并给出初步结果，证明环境扩展与自适应难度可以迁移到智能体式真实世界任务完成上。
 

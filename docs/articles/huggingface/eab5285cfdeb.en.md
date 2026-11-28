@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4e8ac1788068
+body_sha: 216abddd89be
 ---
-
 
 # Up to 3.2x Faster Inference with LFM2.5-DSpark
 
@@ -21,44 +20,22 @@ Article
 					August 20, 2026
 
 
-56
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/646e57a5cb6ea6e6b6df1ad4/PlGhM2SUynFBUdYAylaZK.jpeg)](https://huggingface.co/fernandofernandes)
-- [![](https://huggingface.co/avatars/33d508f28166e6a6b449d742fa1f60e0.svg)](https://huggingface.co/mayankagarwal)
-- [![](https://huggingface.co/avatars/ee4a89ebc7a0716e21deaebc86e062e6.svg)](https://huggingface.co/nathanrchn)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67379ceb30d6ac7169c5dc99/hQZ-atHUbYkcfjsgQ0ywE.png)](https://huggingface.co/mmd-k)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp)](https://huggingface.co/FlameF0X)
 
-xx
 
-tugot17
 
-LiquidAI
 
-Leonie Monigatti
 
-iamleonie
 
-LiquidAI
 
-Fernando Fernandes Neto
 
-fernandofernandes
 
-LiquidAI
 
-Tarek Dakhran
 
-tdakhran
 
-LiquidAI
 
-nathan ranchin
 
-nathanrchn
 
-LiquidAI
 
 Today, we release **DSpark draft model checkpoints** for three models from our LFM2.5 family: LFM2.5-1.2B-Instruct, LFM2.5-2.6B, and LFM2.5-8B-A1B. These add a speculative decoding path that trades a minimal memory increase for a large decoding speedup without changing output quality:
 
@@ -222,25 +199,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2FLiquidAI%2Flfm25-dspark) or [log in](https://huggingface.co/login?next=%2Fblog%2FLiquidAI%2Flfm25-dspark) to comment
 
 
-56
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/646e57a5cb6ea6e6b6df1ad4/PlGhM2SUynFBUdYAylaZK.jpeg)](https://huggingface.co/fernandofernandes)
-- [![](https://huggingface.co/avatars/33d508f28166e6a6b449d742fa1f60e0.svg)](https://huggingface.co/mayankagarwal)
-- [![](https://huggingface.co/avatars/ee4a89ebc7a0716e21deaebc86e062e6.svg)](https://huggingface.co/nathanrchn)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67379ceb30d6ac7169c5dc99/hQZ-atHUbYkcfjsgQ0ywE.png)](https://huggingface.co/mmd-k)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp)](https://huggingface.co/FlameF0X)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/b3-Xov8BZ4gmTUDOe1wz7.png)](https://huggingface.co/ODanchi-1)
-- [![](https://huggingface.co/avatars/5da6b01d9377592f8cd3170d0b700f3e.svg)](https://huggingface.co/ludsvick)
-- [![](https://huggingface.co/avatars/473432078df13239e9a48a23ef36d3f4.svg)](https://huggingface.co/mohsendev1)
-- [![](https://huggingface.co/avatars/d78a1504df949d46e6e98156cc336e93.svg)](https://huggingface.co/ironwill2000)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65cc6e71df78d51bb8bd237c/mqHWbwAVTravT8yi0OuOY.png)](https://huggingface.co/tahamajs)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6925170b7498c53accb82dcf/sw8GFcd3_z3oPhqVSi8xq.jpeg)](https://huggingface.co/patraparnab25)
+
 
 ## Models mentioned in this article 6
 

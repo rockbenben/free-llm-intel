@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f74e2bba73f4
+body_sha: 7849ca1c7c1a
 ---
 
 返回文章列表
@@ -22,33 +22,19 @@ body_sha: f74e2bba73f4
 
 
 
-Ali El Filali
 
-alielfilali01
 
-inceptionai
 
-Neha Sengupta
 
-neha1710
 
-inceptionai
 
-Abouelseoud
 
-Arwa88
 
-inceptionai
 
-Preslav Nakov
 
-preslavnakov
 
-MBZUAI
 
-Clémentine Fourrier
 
-clefourrier
 
 在大语言模型（LLM）快速演进的版图中，全面而稳健的评估方法始终是一个关键挑战，对低资源语言尤其如此。在这篇博客中，我们推出 AraGen——一个面向阿拉伯语 LLM 的生成任务基准与排行榜，它基于 3C3H（一种新的自然语言生成评估度量），我们希望对其他语言的同类工作也能有所启发。
 

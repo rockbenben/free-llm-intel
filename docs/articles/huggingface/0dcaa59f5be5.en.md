@@ -8,41 +8,24 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: bc8a0be03ee9
+body_sha: a6af173dbb86
 ---
-
 
 # Accelerating SD Turbo and SDXL Turbo Inference with ONNX Runtime and Olive
 
 					January 15, 2024
 
-Update on GitHub
 
 
-7
 
-- [![](https://huggingface.co/avatars/56e0004f2098df6293fb9f2b73c484d2.svg)](https://huggingface.co/Sakshaml2it)
-- [![](https://huggingface.co/avatars/f1c2033b4abcd65fed7abc1934874d48.svg)](https://huggingface.co/NikolayKozloff)
-- [![](https://huggingface.co/avatars/84e286313264af1461389fedef8b030d.svg)](https://huggingface.co/PlayAI)
-- [![](https://huggingface.co/avatars/49041af5490097ba5a79a3882ef61ecf.svg)](https://huggingface.co/zgh36)
-- [![](https://huggingface.co/avatars/679dc6b7ec715ab23a319f62cc253b51.svg)](https://huggingface.co/JackPrince)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
 
-Sophie Schoenmeyer
 
-sschoenmeyer
 
-guest
 
-Tianlei Wu
 
-tlwu
 
-guest
 
-Morgan Funtowicz
 
-mfuntowicz
 
 ## Introduction
 
@@ -210,19 +193,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsdxl_ort_inference) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsdxl_ort_inference) to comment
 
 
-7
 
-- [![](https://huggingface.co/avatars/56e0004f2098df6293fb9f2b73c484d2.svg)](https://huggingface.co/Sakshaml2it)
-- [![](https://huggingface.co/avatars/f1c2033b4abcd65fed7abc1934874d48.svg)](https://huggingface.co/NikolayKozloff)
-- [![](https://huggingface.co/avatars/84e286313264af1461389fedef8b030d.svg)](https://huggingface.co/PlayAI)
-- [![](https://huggingface.co/avatars/49041af5490097ba5a79a3882ef61ecf.svg)](https://huggingface.co/zgh36)
-- [![](https://huggingface.co/avatars/679dc6b7ec715ab23a319f62cc253b51.svg)](https://huggingface.co/JackPrince)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://huggingface.co/avatars/90c9c231ef5279ea9f687e15887ed25d.svg)](https://huggingface.co/qwertyuiopasdfg)
+
 
 ## Models mentioned in this article 6

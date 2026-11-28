@@ -9,7 +9,7 @@ captured: 2026-11-21
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 3cf7a130f99a
+body_sha: 3237e4e94fd3
 ---
 
 # 180B 参数，32GB 内存：用 Transformers 把 MoE 推理逼到极限
@@ -20,11 +20,8 @@ body_sha: 3cf7a130f99a
 
 
 
-[![Tarek Ziadé 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png)](https://huggingface.co/tarekziade)
 
-Tarek Ziadé
 
-tarekziade
 
 *把 MoE 专家直接从 SSD 流式读取，token 生成速度与 Strata 相差不到 6%。*
 

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-21
 extractor: readability-v1
 status: ok
-body_sha: 7fff70d7b134
+body_sha: 633165c2889d
 ---
 
-[ Back to Articles](https://huggingface.co/blog)
 
 # FairStress: A deeper evaluation of fairness in LLM decision-making
 
@@ -20,19 +19,11 @@ Enterprise  Article
 Published October 20, 2026
 
 
-3
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
 
-[![Kyle Wiggers's avatar](https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg)](https://huggingface.co/Ai2Comms)
 
-Kyle Wiggers
 
-Ai2Comms
 
-[![Ai2's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)](https://huggingface.co/allenai) [allenai](https://huggingface.co/allenai)
 
 📄 [Tech Report](https://allenai.org/papers/fairstress) | 🤗 [Data](https://huggingface.co/datasets/allenai/fairstress) | 💻 [Code](https://github.com/pardissz/fairstress)
 
@@ -152,17 +143,10 @@ October 9, 2026
 
 ### Community
 
-Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fallenai%2Ffairstress) or [log in](https://huggingface.co/login?next=%2Fblog%2Fallenai%2Ffairstress) to comment
 
 
-3
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
+
+
 
 ## Datasets mentioned in this article 1

@@ -8,41 +8,24 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: edee7157efe0
+body_sha: c0115252c36b
 ---
-
 
 # Make your ZeroGPU Spaces go brrr with ahead-of-time compilation
 
 					September 2, 2025
 
-Update on GitHub
 
 
-83
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647da8591a1fcad2fdbf9059/5mFh9G9aGM3X8kZt6GPMN.jpeg)](https://huggingface.co/JunHowie)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6702f8bd419fcb9e5d4e894c/QgFKs5g8MUm-yIl0IVNDB.png)](https://huggingface.co/ronedgecomb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/684e90fad2ea04609acb10a7/LhVA2DNxsSMAnC0QK7LBU.png)](https://huggingface.co/xyntraistudios)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg)](https://huggingface.co/sayakpaul)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638f308fc4444c6ca870b60a/Q11NK-8-JbiilJ-vk2LAR.png)](https://huggingface.co/linoyts)
 
-Charles Bensimon
 
-cbensimon
 
-Sayak Paul
 
-sayakpaul
 
-Linoy Tsaban
 
-linoyts
 
-Apolinário from multimodal AI art
 
-multimodalart
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/zerogpu-aoti).
 
@@ -473,25 +456,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fzerogpu-aoti) or [log in](https://huggingface.co/login?next=%2Fblog%2Fzerogpu-aoti) to comment
 
 
-83
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647da8591a1fcad2fdbf9059/5mFh9G9aGM3X8kZt6GPMN.jpeg)](https://huggingface.co/JunHowie)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6702f8bd419fcb9e5d4e894c/QgFKs5g8MUm-yIl0IVNDB.png)](https://huggingface.co/ronedgecomb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/684e90fad2ea04609acb10a7/LhVA2DNxsSMAnC0QK7LBU.png)](https://huggingface.co/xyntraistudios)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg)](https://huggingface.co/sayakpaul)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638f308fc4444c6ca870b60a/Q11NK-8-JbiilJ-vk2LAR.png)](https://huggingface.co/linoyts)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1649143001781-624bebf604abc7ebb01789af.jpeg)](https://huggingface.co/multimodalart)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/664cfaf0fc66a5a3ee05c852/hYsT009Heg__cSRKaV4Zj.jpeg)](https://huggingface.co/rahul7star)
-- [![](https://huggingface.co/avatars/909635453bf62a2a7118a01dd51b811c.svg)](https://huggingface.co/evalstate)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
+
 
 ## Models mentioned in this article 1
 

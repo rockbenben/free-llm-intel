@@ -8,29 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3b23ea35d607
+body_sha: 0e845d70cf4a
 ---
-
 
 # Transformers.js v3: WebGPU Support, New Models & Tasks, and More…
 
 					October 22, 2024
 
-Update on GitHub
 
 
-85
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg)](https://huggingface.co/lysandre)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64371b564aacf7bf786fb530/HZl_fPo7YclFEuuLSme3K.png)](https://huggingface.co/Nymbo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594214747713-5e9ecfc04957053f60648a3e.png)](https://huggingface.co/lhoestq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://huggingface.co/avatars/973db41f23cd375c588e7828c5efe5ce.svg)](https://huggingface.co/pierrci)
 
-Joshua
 
-Xenova
 
 After more than a year of development, we're excited to announce the release of 🤗 Transformers.js v3!
 
@@ -379,23 +368,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftransformersjs-v3) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftransformersjs-v3) to comment
-
-
-85
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg)](https://huggingface.co/lysandre)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64371b564aacf7bf786fb530/HZl_fPo7YclFEuuLSme3K.png)](https://huggingface.co/Nymbo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594214747713-5e9ecfc04957053f60648a3e.png)](https://huggingface.co/lhoestq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://huggingface.co/avatars/973db41f23cd375c588e7828c5efe5ce.svg)](https://huggingface.co/pierrci)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6340651b388c3fa40f9a5bc0/vM3rB17pUNT11MUhYqfFY.png)](https://huggingface.co/adamm-hf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6643cc9a9d42d1d77c1c830f/QYvjWqiiXvyeidYhNm9M5.jpeg)](https://huggingface.co/elliesleightholm)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Qz1WRFYfs6ZSnRz88wEZt.jpeg)](https://huggingface.co/denizaybey)
-- [![](https://huggingface.co/avatars/9302038f3922be4f8f3e6c2c04d18edf.svg)](https://huggingface.co/eduard26)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/648a374f00f7a3374ee64b99/YPwSOrronoozwHbJchPn3.jpeg)](https://huggingface.co/cfahlgren1)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6192895f3b8aa351a46fadfd/gsGa2PvHTKAv7MNbyLH8y.jpeg)](https://huggingface.co/celinah)

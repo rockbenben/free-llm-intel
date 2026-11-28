@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6ef087f63f2c
+body_sha: 3e2d2d9f4a10
 translator: agent
 ---
 
@@ -23,19 +23,12 @@ translator: agent
 
 
 
-Dana Aubakirova
 
-danaaubakirova
 
-Pablo Montalvo
 
-Molbap
 
-Vladimir Iglovikov
 
-Ternaus
 
-guest
 
 在这篇博文中，我们提供一份教程，讲解如何使用一种与 Albumentations AI 合作开发的、面向文档图像的新数据增强技术。
 

@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 499d81d5d421
+body_sha: 9afb2a361e02
 translator: agent
 ---
 
@@ -23,27 +23,16 @@ translator: agent
 
 
 
-Yu Chin Fabian Lim
 
-mirinflim
 
-guest
 
-aldo pareja
 
-aldopareja
 
-guest
 
-Zachary Mueller
 
-muellerzr
 
-Stas Bekman
 
-stas
 
-ContextualAI
 
 本文也有中文版本 [简体中文](https://huggingface.co/blog/zh/deepspeed-to-fsdp-and-back)。
 

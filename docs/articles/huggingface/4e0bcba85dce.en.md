@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 05707b896d03
+body_sha: df561edbae84
 ---
-
 
 # IBM and UC Berkeley Diagnose Why Enterprise Agents Fail Using IT-Bench and MAST
 
@@ -21,32 +20,16 @@ Article
 					February 18, 2026
 
 
-20
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg)](https://huggingface.co/ayhansebin)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/667b7e36835224aefa39cff7/q3vdGdyLt-3tnY84VF8EC.png)](https://huggingface.co/Brun3y)
-- [![](https://huggingface.co/avatars/e920d369c23a404042e9ddd02a87372c.svg)](https://huggingface.co/jcadden)
-- [![](https://huggingface.co/avatars/ed9723b5fd015bb65e8dceb0a6d86ff9.svg)](https://huggingface.co/ankita-naik)
-- [![](https://huggingface.co/avatars/5427b05b3ef627d4d8281f9a33bb98ab.svg)](https://huggingface.co/ExceedZhang)
-- [![](https://huggingface.co/avatars/d428412a09ed5e90cb68e95c11cece0a.svg)](https://huggingface.co/kaafivikrant)
 
-Ayhan Sebin
 
-ayhansebin
 
-ibm-research
 
-Rohan Arora
 
-rohan-arora
 
-ibm-research
 
-Saurabh Jha
 
-saurabhjha1
 
-ibm-research
 
 [Ayhan Sebin](https://huggingface.co/ayhansebin) [Saurabh Jha](https://saurabhjha.one/) [Rohan Arora](https://rohanarora.name/) [Daby Sow](https://scholar.google.com/citations?user=son-DloAAAAJ&hl=en) [Mert Cemri](https://people.eecs.berkeley.edu/~mert_cemri/) [Melissa Pan](https://melissa-pan.github.io/) [Ion Stoica](https://people.eecs.berkeley.edu/~istoica/)
 
@@ -231,25 +214,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Fitbenchandmast) or [log in](https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Fitbenchandmast) to comment
 
 
-20
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg)](https://huggingface.co/ayhansebin)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/667b7e36835224aefa39cff7/q3vdGdyLt-3tnY84VF8EC.png)](https://huggingface.co/Brun3y)
-- [![](https://huggingface.co/avatars/e920d369c23a404042e9ddd02a87372c.svg)](https://huggingface.co/jcadden)
-- [![](https://huggingface.co/avatars/ed9723b5fd015bb65e8dceb0a6d86ff9.svg)](https://huggingface.co/ankita-naik)
-- [![](https://huggingface.co/avatars/5427b05b3ef627d4d8281f9a33bb98ab.svg)](https://huggingface.co/ExceedZhang)
-- [![](https://huggingface.co/avatars/d428412a09ed5e90cb68e95c11cece0a.svg)](https://huggingface.co/kaafivikrant)
-- [![](https://huggingface.co/avatars/b4538a73b5aca8eaf24c5231676fec7c.svg)](https://huggingface.co/saurabhjha1)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6165bde72e2c2c45e01cb0ae/Y673pW5LOKPC62cQrfaRA.jpeg)](https://huggingface.co/ygivenx)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6956c42fcfda474c0675a4a1/8cYCteO-4lEc4PoAfrjfU.jpeg)](https://huggingface.co/basilcheer)
-- [![](https://huggingface.co/avatars/916c15ec3edb2a9d5844c3db4817a225.svg)](https://huggingface.co/azizayan)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65ba8b772db90cb31145dbee/IPDWXByN8mGKdJQpdkwzY.jpeg)](https://huggingface.co/invincible-jha)
-- [![](https://huggingface.co/avatars/29acf32af3954c38dd3cafeefb2fdad6.svg)](https://huggingface.co/Albrras)
+
 
 ## Datasets mentioned in this article 2
 

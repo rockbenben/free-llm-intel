@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-11
 extractor: readability-v1
 status: ok
-body_sha: ecce79318726
+body_sha: ffdf2fb8b618
 ---
 
-[ Back to Articles](https://huggingface.co/blog)
 
 # BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model
 
@@ -20,66 +19,35 @@ Team Article
 Published November 11, 2026
 
 
-2
 
-- [![](https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg)](https://huggingface.co/joooon)
-- [![](https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg)](https://huggingface.co/milangritta)
 
-[![Milan Gritta's avatar](https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg)](https://huggingface.co/milangritta)
 
-Milan Gritta
 
-milangritta
 
-[![QVAC's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![Jihye Back's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/61a623353aff6ad7c083e882/biFOfePqURZW0snJHfy_Y.jpeg)](https://huggingface.co/happy-jihye)
 
-Jihye Back
 
-happy-jihye
 
-[![QVAC's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![JinUk, Cho's avatar](https://huggingface.co/avatars/1299f5cd3558e75571711d544f4a6d29.svg)](https://huggingface.co/jucho2725)
 
-JinUk, Cho
 
-jucho2725
 
-[![QVAC's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![ohjoon kwon's avatar](https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg)](https://huggingface.co/joooon)
 
-ohjoon kwon
 
-joooon
 
-[![QVAC's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![Patrik Lambert's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/Pmar3VJzQzgT4gdO8dpwt.png)](https://huggingface.co/patrik-lambert)
 
-Patrik Lambert
 
-patrik-lambert
 
-[![QVAC's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![Mathias Buus's avatar](https://huggingface.co/avatars/04b3527ef6ff1d6feebcad80e5c0e5c6.svg)](https://huggingface.co/mafintosh)
 
-Mathias Buus
 
-mafintosh
 
-[![QVAC's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![Amril Nurman's avatar](https://huggingface.co/avatars/321662b676eb3141ce8410614e581e2c.svg)](https://huggingface.co/Nurman)
 
-Amril Nurman
 
-Nurman
 
-[![QVAC's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
 Frontier cloud LLMs carry high operational costs that can fluctuate unexpectedly, and relying on such third-party models introduces vulnerabilities, as providers can modify, deny, or deprecate access at any time. Furthermore, proprietary models offer limited customization for specific workflows, while posing risks to privacy, data control, and transparency. Besides, not every task demands frontier-level intelligence: small, specialized agents can be equally capable on specific tasks and significantly cheaper to run, since many routine or smaller workloads can be processed efficiently on-device. As intelligence per parameter continues to improve rapidly, we aim to stand at the forefront of this shift toward performant, privacy-focused, self-hosted models.
 
@@ -295,15 +263,3 @@ October 14, 2026
 September 23, 2026
 
 ### Community
-
-Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fqvac%2Fbotpsy) or [log in](https://huggingface.co/login?next=%2Fblog%2Fqvac%2Fbotpsy) to comment
-
-
-2
-
-- [![](https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg)](https://huggingface.co/joooon)
-- [![](https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg)](https://huggingface.co/milangritta)

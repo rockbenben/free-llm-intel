@@ -8,32 +8,20 @@ lang: en
 captured: 2026-11-20
 extractor: readability-v1
 status: ok
-body_sha: 8398592d0497
+body_sha: dd8bfd4a6338
 ---
 
-[ Back to Articles](https://huggingface.co/blog)
 
 # 180B Parameters, 32GB of RAM: Pushing MoE Inference to the Limit with Transformers
 
 Published November 18, 2026
 
-Update on GitHub
 
 
-14
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg)](https://huggingface.co/badaoui)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a5dfb8ac450460a466bd07c/huiG-tO1nldQRFCUjXvO5.jpeg)](https://huggingface.co/aisyndicate)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qz3OXCjrQi0KZZ5OJkEgq.png)](https://huggingface.co/bigmikeq92)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FZm4zYHMsgadLGM1bIAJq.png)](https://huggingface.co/dboglou)
 
-[![Tarek Ziadé's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/657f3d21f4f72f2c4c51d2ca/EUpt1X9P3BSaLHehRDEd-.png)](https://huggingface.co/tarekziade)
 
-Tarek Ziadé
 
-tarekziade
 
 *Streaming MoE experts directly from SSD gets within 6% of Strata on token generation.*
 
@@ -235,27 +223,11 @@ jdjsjsj28828
 
 s7327-owner-blog-comment
 
-Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fmoe-expert-streaming) or [log in](https://huggingface.co/login?next=%2Fblog%2Fmoe-expert-streaming) to comment
 
 
-14
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg)](https://huggingface.co/badaoui)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a5dfb8ac450460a466bd07c/huiG-tO1nldQRFCUjXvO5.jpeg)](https://huggingface.co/aisyndicate)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/qz3OXCjrQi0KZZ5OJkEgq.png)](https://huggingface.co/bigmikeq92)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FZm4zYHMsgadLGM1bIAJq.png)](https://huggingface.co/dboglou)
-- [![](https://huggingface.co/avatars/2fa431d2f7fda60021dae107f3138e90.svg)](https://huggingface.co/syl0390)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67e199e97f6b4386bad07cc7/fxCC9xs9m8_Qw2IHl1y2j.jpeg)](https://huggingface.co/AdrianLepers)
-- [![](https://huggingface.co/avatars/4dd5862915dc3443a05cd19076cb643f.svg)](https://huggingface.co/zaz2026)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/_t5ifHICcVJNBHoUvJ5VQ.png)](https://huggingface.co/AsTrO963)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64fdfaeb01aedd0e86014de9/UliF1du7InfuCs7RHLiA5.png)](https://huggingface.co/eramax)
+
+
 
 ## Models mentioned in this article 6
 

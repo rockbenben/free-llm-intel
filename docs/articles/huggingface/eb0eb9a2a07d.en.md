@@ -8,37 +8,22 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 612415f1ec9d
+body_sha: 15363fbf22d3
 ---
-
 
 # Exploring Quantization Backends in Diffusers
 
 					May 21, 2025
 
-Update on GitHub
 
 
-45
 
-- [![](https://huggingface.co/avatars/1604409b53f4cc409cbeac98d51b29e1.svg)](https://huggingface.co/lumiseven)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6340651b388c3fa40f9a5bc0/vM3rB17pUNT11MUhYqfFY.png)](https://huggingface.co/adamm-hf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/654b3a5c8f78bd30275cc6a7/gJTYlz4rP9tqZ_2PKipVb.png)](https://huggingface.co/minpeter)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638f308fc4444c6ca870b60a/Q11NK-8-JbiilJ-vk2LAR.png)](https://huggingface.co/linoyts)
-- [![](https://huggingface.co/avatars/3bb8728057fa2ba0e24f5ceb1600068d.svg)](https://huggingface.co/Zmu)
-- [![](https://huggingface.co/avatars/0d7d8635d2ae52c56876e97db09f8be7.svg)](https://huggingface.co/Deadbytes)
 
-Derek Liu
 
-derekl35
 
-Marc Sun
 
-marcsun13
 
-Sayak Paul
 
-sayakpaul
 
 Large diffusion models like Flux (a flow-based text-to-image generation model) can create stunning images, but their size can be a hurdle, demanding significant memory and compute resources. Quantization offers a powerful solution, shrinking these models to make them more accessible without drastically compromising performance. But the big question always is: can you actually tell the difference in the final image?
 
@@ -541,25 +526,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdiffusers-quantization) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdiffusers-quantization) to comment
 
 
-45
 
-- [![](https://huggingface.co/avatars/1604409b53f4cc409cbeac98d51b29e1.svg)](https://huggingface.co/lumiseven)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6340651b388c3fa40f9a5bc0/vM3rB17pUNT11MUhYqfFY.png)](https://huggingface.co/adamm-hf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/654b3a5c8f78bd30275cc6a7/gJTYlz4rP9tqZ_2PKipVb.png)](https://huggingface.co/minpeter)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638f308fc4444c6ca870b60a/Q11NK-8-JbiilJ-vk2LAR.png)](https://huggingface.co/linoyts)
-- [![](https://huggingface.co/avatars/3bb8728057fa2ba0e24f5ceb1600068d.svg)](https://huggingface.co/Zmu)
-- [![](https://huggingface.co/avatars/0d7d8635d2ae52c56876e97db09f8be7.svg)](https://huggingface.co/Deadbytes)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/650e5979c305ec67e6fc2c19/C9WMiNhR_QxxAecVl8b_o.png)](https://huggingface.co/jonahelisio)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67e4716128d4a2a5c8c80c61/GX7eOFpBK0MBkJ51fqVZk.png)](https://huggingface.co/angel333)
-- [![](https://huggingface.co/avatars/498080aecc4b5e0b828ea742daa41875.svg)](https://huggingface.co/mones2222)
-- [![](https://huggingface.co/avatars/b7f43a4c70139aa2527f111cc42c8007.svg)](https://huggingface.co/KagdelwarSejal)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67cfc23e88d980bafa621983/3uKqieo1ndzi8lxLDAjUJ.jpeg)](https://huggingface.co/key-life)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg)](https://huggingface.co/badaoui)
+
 
 ## Models mentioned in this article 1
 

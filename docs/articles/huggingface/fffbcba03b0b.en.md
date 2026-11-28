@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3937d113e74e
+body_sha: 770a5c6230a0
 ---
-
 
 # NeoMME: an efficient Multimodal-native and Multilingual Encoder
 
@@ -21,26 +20,13 @@ Article
 					September 3, 2026
 
 
-121
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68c435c869d3aa0e590b0361/RZcEZherMz2CeJo5kuWHh.png)](https://huggingface.co/ABonnetH)
-- [![](https://huggingface.co/avatars/871961801ee9242f5bcd77e097720a54.svg)](https://huggingface.co/ivanv4)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/gCLGNIpWsU7LJC0U9fEZc.png)](https://huggingface.co/enzo-damion-h)
-- [![](https://huggingface.co/avatars/cb119b58fabbb25ca80c7cc975581a9e.svg)](https://huggingface.co/Diazmathh)
-- [![](https://huggingface.co/avatars/4881b4bdf30634089ddba7d607108c1e.svg)](https://huggingface.co/rghermi-h)
-- [![](https://huggingface.co/avatars/e15d64d814c3ee65ffc7fe39d82969ea.svg)](https://huggingface.co/vincentcoyette)
 
-Tony Wu
 
-tonywu71
 
-Hcompany
 
-Aurélien Lac
 
-h-aurelien-lac
 
-Hcompany
 
 [![Hugging Face](https://img.shields.io/badge/Collection-FFD21E?style=for-the-badge&logo=huggingface&logoColor=000)](https://hf.co/collections/Hcompany/neomme) [![Hugging Face Paper](https://img.shields.io/badge/HF_Paper-FFD21E?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/papers/2609.01657) [![arXiv](https://img.shields.io/badge/arXiv-2609.01657-b31b1b.svg?style=for-the-badge)](https://arxiv.org/abs/2609.01657)
 
@@ -347,25 +333,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2FHcompany%2Fneomme) or [log in](https://huggingface.co/login?next=%2Fblog%2FHcompany%2Fneomme) to comment
 
 
-121
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68c435c869d3aa0e590b0361/RZcEZherMz2CeJo5kuWHh.png)](https://huggingface.co/ABonnetH)
-- [![](https://huggingface.co/avatars/871961801ee9242f5bcd77e097720a54.svg)](https://huggingface.co/ivanv4)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/gCLGNIpWsU7LJC0U9fEZc.png)](https://huggingface.co/enzo-damion-h)
-- [![](https://huggingface.co/avatars/cb119b58fabbb25ca80c7cc975581a9e.svg)](https://huggingface.co/Diazmathh)
-- [![](https://huggingface.co/avatars/4881b4bdf30634089ddba7d607108c1e.svg)](https://huggingface.co/rghermi-h)
-- [![](https://huggingface.co/avatars/e15d64d814c3ee65ffc7fe39d82969ea.svg)](https://huggingface.co/vincentcoyette)
-- [![](https://huggingface.co/avatars/c9920b2a634b67720b5f9e72895a2e0c.svg)](https://huggingface.co/emricksini-h)
-- [![](https://huggingface.co/avatars/8460159705ac1d164708fe37d537843f.svg)](https://huggingface.co/GeoffroyRecruit)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6377b63b24d97f9f7ec70064/vBl68PAwwp353MOeOahMH.jpeg)](https://huggingface.co/antonioloison)
-- [![](https://huggingface.co/avatars/b0b759dff09f3aff8396f1955a798cc6.svg)](https://huggingface.co/VictorGoubet)
-- [![](https://huggingface.co/avatars/4f454f97611c1f6a0e2bf16d846072c5.svg)](https://huggingface.co/mbrunel-H)
-- [![](https://huggingface.co/avatars/82fa6ee9beae1c52f988a5b4d47d09ae.svg)](https://huggingface.co/jrhcompany)
+
 
 ## Models mentioned in this article 7
 

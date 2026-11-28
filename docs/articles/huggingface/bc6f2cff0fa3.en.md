@@ -8,29 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6da9a51b4dac
+body_sha: 6c2c28d6a2c1
 ---
-
 
 # The Technology Behind BLOOM Training
 
 					July 14, 2022
 
-Update on GitHub
 
 
-45
 
-- [![](https://huggingface.co/avatars/1ae2fc3910a64bd91d20aadb267c0bc3.svg)](https://huggingface.co/Gmc2)
-- [![](https://huggingface.co/avatars/cb9ed422b3fa29a7def61fd7cc23916b.svg)](https://huggingface.co/Ron0155)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65e1af952c57566accb3a3a9/Dw6BZ3Al6nVdIpyUafSBw.png)](https://huggingface.co/mimipynb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
-- [![](https://huggingface.co/avatars/f81135fa90ab916061d8982d6fe35c70.svg)](https://huggingface.co/SingularityKChen)
-- [![](https://huggingface.co/avatars/d36017c73cd6e4e501732c5719236195.svg)](https://huggingface.co/paxton)
 
-Stas Bekman
 
-stas
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/bloom-megatron-deepspeed).
 
@@ -430,24 +419,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fbloom-megatron-deepspeed) or [log in](https://huggingface.co/login?next=%2Fblog%2Fbloom-megatron-deepspeed) to comment
 
 
-45
 
-- [![](https://huggingface.co/avatars/1ae2fc3910a64bd91d20aadb267c0bc3.svg)](https://huggingface.co/Gmc2)
-- [![](https://huggingface.co/avatars/cb9ed422b3fa29a7def61fd7cc23916b.svg)](https://huggingface.co/Ron0155)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65e1af952c57566accb3a3a9/Dw6BZ3Al6nVdIpyUafSBw.png)](https://huggingface.co/mimipynb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
-- [![](https://huggingface.co/avatars/f81135fa90ab916061d8982d6fe35c70.svg)](https://huggingface.co/SingularityKChen)
-- [![](https://huggingface.co/avatars/d36017c73cd6e4e501732c5719236195.svg)](https://huggingface.co/paxton)
-- [![](https://huggingface.co/avatars/0225546cb41ceeb696e8c8f967a742a1.svg)](https://huggingface.co/i4never)
-- [![](https://huggingface.co/avatars/1a20dec6a1e48017f9a650ac2e510b4e.svg)](https://huggingface.co/namespace-Pt)
-- [![](https://huggingface.co/avatars/952e6e576d18c178dbd7866d07ea8836.svg)](https://huggingface.co/danielje)
-- [![](https://huggingface.co/avatars/508632be12b5ba56be92595544cf2879.svg)](https://huggingface.co/Difei666)
-- [![](https://huggingface.co/avatars/dfb13e31eee48411ba75b780d5a2ff47.svg)](https://huggingface.co/vangogh0318)
-- [![](https://huggingface.co/avatars/d1fc2a5d632452aede8ddf3b14feaaba.svg)](https://huggingface.co/Cx330-qxd)
+
 
 ## Models mentioned in this article 2

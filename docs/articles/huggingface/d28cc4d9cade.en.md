@@ -8,29 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 72ac0660cdf4
+body_sha: 380fbaca7868
 ---
-
 
 # Exploring the Daily Papers Page on Hugging Face
 
 					September 23, 2024
 
-Update on GitHub
 
 
-67
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg)](https://huggingface.co/kramp)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63a369d98c0c89dcae3b8329/AiH2zjy1cnt9OADAAZMLD.jpeg)](https://huggingface.co/AdinaY)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61868ce808aae0b5499a2a95/F6BA0anbsoY_Z7M1JrwOe.jpeg)](https://huggingface.co/fffiloni)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg)](https://huggingface.co/julien-c)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/60f2fc91b92afccb7c34b8ed/W2-Nay12Ef4Ltyaf8EKE9.jpeg)](https://huggingface.co/gabrielmbmb)
 
-Adina Yakefu
 
-AdinaY
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/daily-papers).
 
@@ -182,23 +171,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdaily-papers) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdaily-papers) to comment
-
-
-67
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62d6c40ba71903fb4c1e3261/SQGmYShjtveXBf8HVpxPp.jpeg)](https://huggingface.co/kramp)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63a369d98c0c89dcae3b8329/AiH2zjy1cnt9OADAAZMLD.jpeg)](https://huggingface.co/AdinaY)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61868ce808aae0b5499a2a95/F6BA0anbsoY_Z7M1JrwOe.jpeg)](https://huggingface.co/fffiloni)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg)](https://huggingface.co/julien-c)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/60f2fc91b92afccb7c34b8ed/W2-Nay12Ef4Ltyaf8EKE9.jpeg)](https://huggingface.co/gabrielmbmb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5fd5e18a90b6dc4633f6d292/gZXHW5dd9R86AV9LMZ--y.png)](https://huggingface.co/MaziyarPanahi)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1667018139063-noauth.jpeg)](https://huggingface.co/ojasvisingh786)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63d10d4e8eaa4831005e92b5/7p7-OmWM6PqqCs7ZStPGD.jpeg)](https://huggingface.co/m-ric)
-- [![](https://huggingface.co/avatars/5d75fffa9bad36d20adb8f47141d1f0b.svg)](https://huggingface.co/literate-goggles)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp)](https://huggingface.co/victor)

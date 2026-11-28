@@ -8,71 +8,39 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3e6aad2dbcf4
+body_sha: e92b8b875e68
 ---
-
 
 # The Open Arabic LLM Leaderboard 2
 
 					February 10, 2025
 
-Update on GitHub
 
 
-39
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6740a691ddc2c8e208a41102/Lt-aqBhzx-tQ58kFlSPjp.jpeg)](https://huggingface.co/robb-0)
-- [![](https://huggingface.co/avatars/eccc801aa993bd11486c68422b6a5071.svg)](https://huggingface.co/hassanraha)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/60420dccc15e823a685f2b03/AOApMWt_jvm9e6XQ2vlrJ.jpeg)](https://huggingface.co/dvilasuero)
-- [![](https://huggingface.co/avatars/66b0d4461fe6ae8b24494e1461231e02.svg)](https://huggingface.co/tarickMorty)
-- [![](https://huggingface.co/avatars/598ecc79af157308a031693aec53dcf2.svg)](https://huggingface.co/basma-b)
 
-Ali El Filali
 
-alielfilali01
 
-2A2I
 
-Manel ALOUI
 
-Manel-Hik
 
-OALL
 
-Tarique Husaain
 
-tarickMorty
 
-AI71ai
 
-Ahmed Alzubaidi
 
-amztheory
 
-tiiuae
 
-Basma Boussaha
 
-basma-b
 
-tiiuae
 
-Ruxandra Cojocaru
 
-rcojocaru
 
-tiiuae
 
-Hakim Hacid
 
-HakimHacid
 
-tiiuae
 
-Clémentine Fourrier
 
-clefourrier
 
 ## Current status of Arabic LLMs leaderboards
 
@@ -355,25 +323,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fleaderboard-arabic-v2) or [log in](https://huggingface.co/login?next=%2Fblog%2Fleaderboard-arabic-v2) to comment
 
 
-39
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6740a691ddc2c8e208a41102/Lt-aqBhzx-tQ58kFlSPjp.jpeg)](https://huggingface.co/robb-0)
-- [![](https://huggingface.co/avatars/eccc801aa993bd11486c68422b6a5071.svg)](https://huggingface.co/hassanraha)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/60420dccc15e823a685f2b03/AOApMWt_jvm9e6XQ2vlrJ.jpeg)](https://huggingface.co/dvilasuero)
-- [![](https://huggingface.co/avatars/66b0d4461fe6ae8b24494e1461231e02.svg)](https://huggingface.co/tarickMorty)
-- [![](https://huggingface.co/avatars/598ecc79af157308a031693aec53dcf2.svg)](https://huggingface.co/basma-b)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6460bc5a933afb0106a7b31c/ps-YRqNufnVi_lP7CL05-.jpeg)](https://huggingface.co/rcojocaru)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1658510827196-5fc52718fa6eef7667a4d68e.jpeg)](https://huggingface.co/Manel-Hik)
-- [![](https://huggingface.co/avatars/874c3eac1d738f805fa9b42d19bf4472.svg)](https://huggingface.co/amztheory)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg)](https://huggingface.co/Steveeeeeeen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6423906a2d5965e7229efdc0/QDCWEO-pMQ3x3GOxLMYqx.png)](https://huggingface.co/MH0386)
+
 
 ## Models mentioned in this article 2
 

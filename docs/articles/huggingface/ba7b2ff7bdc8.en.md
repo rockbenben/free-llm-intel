@@ -8,28 +8,20 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fede0798bf2f
+body_sha: ba1863cd91a3
 ---
-
 
 # Incredibly Fast BLOOM Inference with DeepSpeed and Accelerate
 
 					September 16, 2022
 
-Update on GitHub
 
 
-1
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/sy5ecTddjvTlUzElCzwLf.png)](https://huggingface.co/sumitraut7)
 
-Stas Bekman
 
-stas
 
-Sylvain Gugger
 
-sgugger
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/bloom-inference-pytorch-scripts).
 
@@ -314,13 +306,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fbloom-inference-pytorch-scripts) or [log in](https://huggingface.co/login?next=%2Fblog%2Fbloom-inference-pytorch-scripts) to comment
 
 
-1
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/sy5ecTddjvTlUzElCzwLf.png)](https://huggingface.co/sumitraut7)
+
 
 ## Models mentioned in this article 1

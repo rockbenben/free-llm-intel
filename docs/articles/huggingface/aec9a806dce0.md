@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f6c795cdcb79
+body_sha: f96cae87227e
 translator: agent
 ---
 
@@ -23,15 +23,10 @@ translator: agent
 
 
 
-Younes B
 
-ybelkada
 
-Tim Dettmers
 
-timdettmers
 
-guest
 
 本文也有中文版本 [简体中文](https://huggingface.co/blog/zh/hf-bitsandbytes-integration)。
 

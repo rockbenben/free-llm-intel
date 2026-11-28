@@ -9,7 +9,7 @@ captured: 2026-11-11
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 4864e0579d9e
+body_sha: 1eed1f043293
 ---
 
 # BotPsy：基于十亿参数以下 agentic 语言模型的端侧个人助理
@@ -19,66 +19,35 @@ body_sha: 4864e0579d9e
 发布于 November 11, 2026
 
 
-2
 
-- [![](https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg)](https://huggingface.co/joooon)
-- [![](https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg)](https://huggingface.co/milangritta)
 
-[![Milan Gritta 的头像](https://huggingface.co/avatars/30ff51594b6454a1eced9a0d472d2ec1.svg)](https://huggingface.co/milangritta)
 
-Milan Gritta
 
-milangritta
 
-[![QVAC 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![Jihye Back 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/61a623353aff6ad7c083e882/biFOfePqURZW0snJHfy_Y.jpeg)](https://huggingface.co/happy-jihye)
 
-Jihye Back
 
-happy-jihye
 
-[![QVAC 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![JinUk, Cho 的头像](https://huggingface.co/avatars/1299f5cd3558e75571711d544f4a6d29.svg)](https://huggingface.co/jucho2725)
 
-JinUk, Cho
 
-jucho2725
 
-[![QVAC 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![ohjoon kwon 的头像](https://huggingface.co/avatars/0532faec32a12d143b5329642a709b0f.svg)](https://huggingface.co/joooon)
 
-ohjoon kwon
 
-joooon
 
-[![QVAC 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![Patrik Lambert 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/Pmar3VJzQzgT4gdO8dpwt.png)](https://huggingface.co/patrik-lambert)
 
-Patrik Lambert
 
-patrik-lambert
 
-[![QVAC 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![Mathias Buus 的头像](https://huggingface.co/avatars/04b3527ef6ff1d6feebcad80e5c0e5c6.svg)](https://huggingface.co/mafintosh)
 
-Mathias Buus
 
-mafintosh
 
-[![QVAC 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
-[![Amril Nurman 的头像](https://huggingface.co/avatars/321662b676eb3141ce8410614e581e2c.svg)](https://huggingface.co/Nurman)
 
-Amril Nurman
 
-Nurman
 
-[![QVAC 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/68d540a9b913fd49b5e41e0b/ooEaWBPmchmGPmfjyAXEr.png)](https://huggingface.co/qvac) [qvac](https://huggingface.co/qvac)
 
 前沿云端 LLM 的运营成本很高，且可能意外波动；依赖这类第三方模型还会带来隐患，因为提供方随时可能修改、拒绝或停用访问权限。此外，专有模型对特定工作流的定制空间有限，同时给隐私、数据掌控和透明度带来风险。再说，并非每项任务都需要前沿级别的智能：小型专用 agent 在特定任务上同样能胜任，运行成本却低得多，因为许多常规或较小的负载都能在端侧高效处理。随着单位参数的智能水平持续快速提升，我们希望站在这一转向的前沿——迈向高性能、注重隐私、可自托管的模型。
 

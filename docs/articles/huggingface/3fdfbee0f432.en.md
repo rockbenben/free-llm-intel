@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 05b6480e88f6
+body_sha: ff5f5e6c91c0
 ---
-
 
 # Granite 4.1 LLMs: How They’re Built
 
@@ -21,20 +20,10 @@ Article
 					April 29, 2026
 
 
-94
 
-- [![](https://huggingface.co/avatars/0dde9fc08665da77b55d82ccc10ece6e.svg)](https://huggingface.co/felixreverett)
-- [![](https://huggingface.co/avatars/23ca580a198e7bc83757b1aceb60b673.svg)](https://huggingface.co/bbissell)
-- [![](https://huggingface.co/avatars/d99bdc84b67a660c04f7a6d84de571c8.svg)](https://huggingface.co/aheching)
-- [![](https://huggingface.co/avatars/498c22a1bf17c72916cc8db6471df0b5.svg)](https://huggingface.co/jtvino)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63b7e09359060ca9f4c4de35/0PH1dWNfcXTQ9H0QAeD91.jpeg)](https://huggingface.co/Avihu)
-- [![](https://huggingface.co/avatars/59ca21bbf7cd7bac10ac0a12cb447560.svg)](https://huggingface.co/padusum)
 
-Yousaf Shah
 
-yousafshah
 
-ibm-granite
 
 *An in-depth technical walkthrough of data engineering, pre-training, supervised fine-tuning, and reinforcement learning behind the Granite 4.1 LLMs.*
 
@@ -468,25 +457,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-4-1) or [log in](https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-4-1) to comment
 
 
-94
 
-- [![](https://huggingface.co/avatars/0dde9fc08665da77b55d82ccc10ece6e.svg)](https://huggingface.co/felixreverett)
-- [![](https://huggingface.co/avatars/23ca580a198e7bc83757b1aceb60b673.svg)](https://huggingface.co/bbissell)
-- [![](https://huggingface.co/avatars/d99bdc84b67a660c04f7a6d84de571c8.svg)](https://huggingface.co/aheching)
-- [![](https://huggingface.co/avatars/498c22a1bf17c72916cc8db6471df0b5.svg)](https://huggingface.co/jtvino)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63b7e09359060ca9f4c4de35/0PH1dWNfcXTQ9H0QAeD91.jpeg)](https://huggingface.co/Avihu)
-- [![](https://huggingface.co/avatars/59ca21bbf7cd7bac10ac0a12cb447560.svg)](https://huggingface.co/padusum)
-- [![](https://huggingface.co/avatars/65cd41ce603160ffe1c65ac0cb61e71f.svg)](https://huggingface.co/torapon)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg)](https://huggingface.co/davanstrien)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65995de7f82b15d663011d3c/S2Vw3G2QTkurEOUDL6ArW.png)](https://huggingface.co/bkataru)
-- [![](https://huggingface.co/avatars/167e37030635f7ff65f21b1423b7930e.svg)](https://huggingface.co/ayjleex)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/639582473d9ac9664fd436f5/yWH354yTLKVchFD2N498z.jpeg)](https://huggingface.co/ashish23)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/679bb8770109de6d9f78cdff/1y9Ocz8ch9CXYD3Ln072w.jpeg)](https://huggingface.co/dhirajjoshi116)
+
 
 ## Papers mentioned in this article 1
 

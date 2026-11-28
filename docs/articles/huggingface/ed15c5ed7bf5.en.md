@@ -8,34 +8,22 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d25c52fbec0f
+body_sha: bfbab8a50516
 ---
-
 
 # Case Study: Millisecond Latency using Hugging Face Infinity and modern CPUs
 
 					January 13, 2022
 
-Update on GitHub
 
 
-3
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ieWKT7fYXDNg7tIkTwc1b.jpeg)](https://huggingface.co/david0709)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6347fd88c241cb6791d1ad7c/MzTYGBwTRtmHbCVE4Z9IC.png)](https://huggingface.co/loysoj)
-- [![](https://huggingface.co/avatars/18aa82390bfcb819105a7feeee5dc70c.svg)](https://huggingface.co/DevShehanAvishka)
 
-Philipp Schmid
 
-philschmid
 
-Jeff Boudier
 
-jeffboudier
 
-Morgan Funtowicz
 
-mfuntowicz
 
 December 2022 Update: Infinity is no longer offered by Hugging Face as a commercial inference solution. To deploy and accelerate your models, we recommend the following new solutions:
 
@@ -204,15 +192,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Finfinity-cpu-performance) or [log in](https://huggingface.co/login?next=%2Fblog%2Finfinity-cpu-performance) to comment
 
 
-3
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ieWKT7fYXDNg7tIkTwc1b.jpeg)](https://huggingface.co/david0709)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6347fd88c241cb6791d1ad7c/MzTYGBwTRtmHbCVE4Z9IC.png)](https://huggingface.co/loysoj)
-- [![](https://huggingface.co/avatars/18aa82390bfcb819105a7feeee5dc70c.svg)](https://huggingface.co/DevShehanAvishka)
+
 
 ## Models mentioned in this article 1

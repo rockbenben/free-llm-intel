@@ -8,32 +8,20 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8664919221e7
+body_sha: 280421290585
 ---
-
 
 # Hugging Face Text Generation Inference available for AWS Inferentia2
 
 					February 1, 2024
 
-Update on GitHub
 
 
-5
 
-- [![](https://huggingface.co/avatars/c3689858ec90f9a4295932cd0a9a8f15.svg)](https://huggingface.co/Akram1990)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64dc7217d4d94f5027493f3b/Y4H3oYvwkQqCk6rvQTf1w.jpeg)](https://huggingface.co/bezir)
-- [![](https://huggingface.co/avatars/cf962c56f4ae5a281034b00d38308c64.svg)](https://huggingface.co/Samrudhi123)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63107b18e87051f3e3e0f598/R9onir4Y0MZuq1jEWCZ2-.jpeg)](https://huggingface.co/ucyang)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1679214766924-noauth.jpeg)](https://huggingface.co/SMAntony)
 
-Philipp Schmid
 
-philschmid
 
-David Corvoysier
 
-dacorvo
 
 We are excited to announce the general availability of Hugging Face Text Generation Inference (TGI) on AWS Inferentia2 and Amazon SageMaker.
 
@@ -296,17 +284,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftext-generation-inference-on-inferentia2) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftext-generation-inference-on-inferentia2) to comment
 
 
-5
 
-- [![](https://huggingface.co/avatars/c3689858ec90f9a4295932cd0a9a8f15.svg)](https://huggingface.co/Akram1990)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64dc7217d4d94f5027493f3b/Y4H3oYvwkQqCk6rvQTf1w.jpeg)](https://huggingface.co/bezir)
-- [![](https://huggingface.co/avatars/cf962c56f4ae5a281034b00d38308c64.svg)](https://huggingface.co/Samrudhi123)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63107b18e87051f3e3e0f598/R9onir4Y0MZuq1jEWCZ2-.jpeg)](https://huggingface.co/ucyang)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1679214766924-noauth.jpeg)](https://huggingface.co/SMAntony)
+
 
 ## Models mentioned in this article 4

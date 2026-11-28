@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f2dddeca326a
+body_sha: 5f2e09666fe3
 translator: agent
 ---
 
@@ -23,23 +23,14 @@ translator: agent
 
 
 
-Daniel Fleischer
 
-danf
 
-Intel
 
-Moshe Berchansky
 
-mber
 
-Intel
 
-Moshe Wasserblat
 
-moshew
 
-Intel
 
 ![An LLM is using a calculator to answer questions.](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/intel-deepmath/deepmath-figure.jpg)
 

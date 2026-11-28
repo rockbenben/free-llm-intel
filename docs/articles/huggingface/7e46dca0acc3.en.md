@@ -8,29 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2362771fb57d
+body_sha: 28f8d78ddf4d
 ---
-
 
 # Getting Started With Embeddings
 
 					June 23, 2022
 
-Update on GitHub
 
 
-120
 
-- [![](https://huggingface.co/avatars/8200cd11fe245400de7750795323ea24.svg)](https://huggingface.co/Mark10667)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/655b564616de0c93aee1e808/5Psi_hmWriN3ssGmle4VO.jpeg)](https://huggingface.co/robertgil)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6625449ff8c506eb7faaadce/RpXcAZjG7bUM0O2B3Y2kh.png)](https://huggingface.co/Rayato159)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/y1W6Co4jIYB95Cx6Tjrsd.jpeg)](https://huggingface.co/ImranzamanML)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6429c4a25673845d98527f47/rexRJ07fmEMoLZw79i21A.png)](https://huggingface.co/grantjr)
-- [![](https://huggingface.co/avatars/963e577ac78d31b20e2c0fa8a18e4800.svg)](https://huggingface.co/jegarciaor)
 
-Omar Espejel
 
-espejelomar
 
 Check out this tutorial with the Notebook Companion: [ ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg) ](https://colab.research.google.com/github/huggingface/blog/blob/main/notebooks/80_getting_started_with_embeddings.ipynb)
 
@@ -344,25 +333,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fgetting-started-with-embeddings) or [log in](https://huggingface.co/login?next=%2Fblog%2Fgetting-started-with-embeddings) to comment
 
 
-120
 
-- [![](https://huggingface.co/avatars/8200cd11fe245400de7750795323ea24.svg)](https://huggingface.co/Mark10667)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/655b564616de0c93aee1e808/5Psi_hmWriN3ssGmle4VO.jpeg)](https://huggingface.co/robertgil)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6625449ff8c506eb7faaadce/RpXcAZjG7bUM0O2B3Y2kh.png)](https://huggingface.co/Rayato159)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/y1W6Co4jIYB95Cx6Tjrsd.jpeg)](https://huggingface.co/ImranzamanML)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6429c4a25673845d98527f47/rexRJ07fmEMoLZw79i21A.png)](https://huggingface.co/grantjr)
-- [![](https://huggingface.co/avatars/963e577ac78d31b20e2c0fa8a18e4800.svg)](https://huggingface.co/jegarciaor)
-- [![](https://huggingface.co/avatars/67806da539034be177393793c5c73919.svg)](https://huggingface.co/bencmbit98)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1666853944551-noauth.jpeg)](https://huggingface.co/Sandeepa)
-- [![](https://huggingface.co/avatars/ff8ec521d1e69b0dfddb1df88741e593.svg)](https://huggingface.co/dkimds)
-- [![](https://huggingface.co/avatars/9022859acb977ecd1ff1ca629ab7f391.svg)](https://huggingface.co/tugceozgirgin)
-- [![](https://huggingface.co/avatars/38139d5f6afdc37f1bc5020eeced0876.svg)](https://huggingface.co/RajeshLaddu)
-- [![](https://huggingface.co/avatars/d06d6a339bc0c5ad73b02827297c37d9.svg)](https://huggingface.co/kjawad)
+
 
 ## Models mentioned in this article 1
 

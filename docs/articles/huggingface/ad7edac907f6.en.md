@@ -8,29 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2c058b30c16d
+body_sha: e7d37bf988af
 ---
-
 
 # Five Big Improvements to Gradio MCP Servers
 
 					July 17, 2025
 
-Update on GitHub
 
 
-24
 
-- [![](https://huggingface.co/avatars/562c38e275f51d1c95af1024487cc92b.svg)](https://huggingface.co/gn00029914)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/HXKKlyDzNjei5x-6w7gL2.jpeg)](https://huggingface.co/iamsingularity)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg)](https://huggingface.co/jeffboudier)
-- [![](https://huggingface.co/avatars/879acb38789bd8505896759c6db8fda0.svg)](https://huggingface.co/jmj-minju)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
 
-Freddy Boulton
 
-freddyaboulton
 
 [Gradio](https://gradio.app) is an open-source Python package for creating AI-powered web applications. Gradio is compliant with the [MCP server protocol](https://modelcontextprotocol.io/introduction) and powers thousands of MCP servers hosted on [Hugging Face Spaces](https://hf.co/spaces). The Gradio team is **betting big** on Gradio and Spaces being the best way to build and host AI-powered MCP servers.
 
@@ -192,24 +181,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fgradio-mcp-updates) or [log in](https://huggingface.co/login?next=%2Fblog%2Fgradio-mcp-updates) to comment
 
 
-24
 
-- [![](https://huggingface.co/avatars/562c38e275f51d1c95af1024487cc92b.svg)](https://huggingface.co/gn00029914)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/HXKKlyDzNjei5x-6w7gL2.jpeg)](https://huggingface.co/iamsingularity)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg)](https://huggingface.co/jeffboudier)
-- [![](https://huggingface.co/avatars/879acb38789bd8505896759c6db8fda0.svg)](https://huggingface.co/jmj-minju)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://huggingface.co/avatars/909635453bf62a2a7118a01dd51b811c.svg)](https://huggingface.co/evalstate)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg)](https://huggingface.co/merve)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647f36a8454af0237bd49574/jshkqBUTY-GZL8As8y6Aq.jpeg)](https://huggingface.co/fdaudens)
-- [![](https://huggingface.co/avatars/7fcc0cdf306e3bbb454f7cd58efc633f.svg)](https://huggingface.co/simonholm)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e24395419922d5a6d7a6cc/bOFr0La0VdpIZ06-ZWJa4.jpeg)](https://huggingface.co/emredeveloper)
+
 
 ## Datasets mentioned in this article 1

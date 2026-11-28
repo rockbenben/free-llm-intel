@@ -8,33 +8,20 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: bcfb3b4f5e0f
+body_sha: e26df3e5c4a8
 ---
-
 
 # ScreenEnv: Deploy your full stack Desktop Agent
 
 					July 10, 2025
 
-Update on GitHub
 
 
-77
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/630df2bf8df86f1e5bec538c/Cljm7XPueDHHQDIO0461N.jpeg)](https://huggingface.co/hironow)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/j_1BcYB_3v6R59t_LilCN.jpeg)](https://huggingface.co/rahul1493)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g5cD9CzBJagr34X3T_rxK.png)](https://huggingface.co/Hardik1910)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6455528dfbe00f9e73c14661/rgW33HCYq3-emlf6Zk293.png)](https://huggingface.co/rogerscuall)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65e5d45cf09dfaab9b0ef691/kYVh_LVcrV5_uk-ITtU5o.jpeg)](https://huggingface.co/DarrenHuangTW)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63d10d4e8eaa4831005e92b5/7p7-OmWM6PqqCs7ZStPGD.jpeg)](https://huggingface.co/m-ric)
 
-Amir Mahla
 
-A-Mahla
 
-Aymeric Roucher
 
-m-ric
 
 **TL;DR**: ScreenEnv is a powerful Python library that lets you create isolated Ubuntu desktop environments in Docker containers for testing and deploying GUI Agents (aka Computer Use agents). With built-in support for the Model Context Protocol (MCP), it's never been easier to deploy desktop agents that can see, click, and interact with real applications.
 
@@ -419,23 +406,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fscreenenv) or [log in](https://huggingface.co/login?next=%2Fblog%2Fscreenenv) to comment
-
-
-77
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/630df2bf8df86f1e5bec538c/Cljm7XPueDHHQDIO0461N.jpeg)](https://huggingface.co/hironow)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/j_1BcYB_3v6R59t_LilCN.jpeg)](https://huggingface.co/rahul1493)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g5cD9CzBJagr34X3T_rxK.png)](https://huggingface.co/Hardik1910)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6455528dfbe00f9e73c14661/rgW33HCYq3-emlf6Zk293.png)](https://huggingface.co/rogerscuall)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65e5d45cf09dfaab9b0ef691/kYVh_LVcrV5_uk-ITtU5o.jpeg)](https://huggingface.co/DarrenHuangTW)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63d10d4e8eaa4831005e92b5/7p7-OmWM6PqqCs7ZStPGD.jpeg)](https://huggingface.co/m-ric)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67f2f500e329a81a62a05d44/DOlzc8GFQzrnfVrsOdtbN.png)](https://huggingface.co/A-Mahla)
-- [![](https://huggingface.co/avatars/dc736bc9f749ef69e1b7fca8ed0584f6.svg)](https://huggingface.co/chongxi666)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/660bc459d81d6112496f30f8/jMrpAckFyg-_iHMI7sn2h.jpeg)](https://huggingface.co/eustlb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6821b385525882a5706eed20/R8BdCB6qwmlaHgYtwu_hB.jpeg)](https://huggingface.co/h-tonywu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6663093dc7adb6d708d27a49/1yOQD8ibhfyiZUs6pzGXU.jpeg)](https://huggingface.co/ErwandKer)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66a9e76d8b6380ffd5d7cc00/eYeqz2onGhaAcL0qv_8zL.png)](https://huggingface.co/chmadran)

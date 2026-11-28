@@ -8,41 +8,24 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 749b8e0c93f3
+body_sha: 29025f5c1865
 ---
-
 
 # Powerful ASR + diarization + speculative decoding with Hugging Face Inference Endpoints
 
 					May 1, 2024
 
-Update on GitHub
 
 
-83
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62990c4743898d5a4f7eacb4/gIRotoJl4rHBVC0lU1n18.png)](https://huggingface.co/ugurcanvurgun)
-- [![](https://huggingface.co/avatars/b2725bb163fa15d6c5856121780d52eb.svg)](https://huggingface.co/Csplk)
-- [![](https://huggingface.co/avatars/253086bb97bfb344eef07076c103c0fb.svg)](https://huggingface.co/blaklion)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63107b18e87051f3e3e0f598/R9onir4Y0MZuq1jEWCZ2-.jpeg)](https://huggingface.co/ucyang)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62fd2359085065dcf869c657/TXavf9PzwzQFg33rrwxeL.png)](https://huggingface.co/charlescai2016)
 
-Sergei Petrov
 
-sergeipetrov
 
-Vaibhav Srivastav
 
-reach-vb
 
-Pedro Cuenca
 
-pcuenq
 
-Philipp Schmid
 
-philschmid
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/asr-diarization).
 
@@ -340,25 +323,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fasr-diarization) or [log in](https://huggingface.co/login?next=%2Fblog%2Fasr-diarization) to comment
 
 
-83
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62990c4743898d5a4f7eacb4/gIRotoJl4rHBVC0lU1n18.png)](https://huggingface.co/ugurcanvurgun)
-- [![](https://huggingface.co/avatars/b2725bb163fa15d6c5856121780d52eb.svg)](https://huggingface.co/Csplk)
-- [![](https://huggingface.co/avatars/253086bb97bfb344eef07076c103c0fb.svg)](https://huggingface.co/blaklion)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63107b18e87051f3e3e0f598/R9onir4Y0MZuq1jEWCZ2-.jpeg)](https://huggingface.co/ucyang)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62fd2359085065dcf869c657/TXavf9PzwzQFg33rrwxeL.png)](https://huggingface.co/charlescai2016)
-- [![](https://huggingface.co/avatars/86194456844c7b2b5389de36cb258472.svg)](https://huggingface.co/RichardForests)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1639773384591-5f353bb37e58354338621655.jpeg)](https://huggingface.co/nbroad)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64c1c77c245c55a21c6f5a13/d9zlSksf3TxWpBbb-r0fd.jpeg)](https://huggingface.co/Reza2kn)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp)](https://huggingface.co/victor)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63c1c9d0c58fcfeac189c527/0RDPL8XCqlo164CHsuBT8.jpeg)](https://huggingface.co/simonweniger)
-- [![](https://huggingface.co/avatars/f02b5b457f818e87b3ab8c1341b12062.svg)](https://huggingface.co/ClayFace)
+
 
 ## Models mentioned in this article 3
 

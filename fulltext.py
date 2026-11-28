@@ -214,8 +214,25 @@ _HF_UPLOAD_MEDIA_RE = re.compile(
 _HF_AVATAR_ITEM_RE = re.compile(
     r"- \[!\[\]\(https://(?:cdn-avatars\.huggingface\.co/v1/production/uploads|"
     r"huggingface\.co/avatars)/[^)\s]+\)\]\(https://huggingface\.co/[\w.-]+\)")
-_HF_UPDATE_LABELS = {"在 GitHub 上更新", "Update on GitHub"}
+_HF_UPDATE_LABELS = {"在 GitHub 上更新", "在 GitHub 上更新此内容", "Update on GitHub"}
 _HF_VOTE_LABELS = {"Upvote", "点赞", "投票"}
+_HF_ROLE_BADGES = {"guest", "huggingface"}
+_HF_INTRO_WORDS = {
+    "Introduction", "Overview", "Abstract", "Summary", "Background",
+    "Motivation", "Conclusion", "Prerequisites", "Setup", "Installation",
+    "Usage", "Demo", "Results", "Acknowledgements", "References", "Note",
+}
+_HF_HANDLE_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,49}$")
+_HF_AUTHOR_AVATAR_RE = re.compile(
+    r"^\[!\[([^\]]*?)(?:'s avatar| ?的头像)\]"
+    r"\(https://(?:cdn-avatars\.huggingface\.co/v1/production/uploads|huggingface\.co/avatars)/[^)\s]+\)\]"
+    r"\(https://huggingface\.co/([^)\s/]+)\)"
+    r"(?:\s+\[[^\]]+\]\(https://huggingface\.co/\2\))?$"
+)
+_HF_PAPER_BY_ORG_RE = re.compile(
+    r"^·\s*\[!\[[^\]]+\]\(https://(?:cdn-avatars\.huggingface\.co/v1/production/uploads|"
+    r"huggingface\.co/avatars)/[^)\s]+\)[^\]]*\]\(https://huggingface\.co/[^)\s/]+\)$"
+)
 #: 只由「项目符号 / 间隔号 / 斜杠 / 不可见字符」组成的整行：零信息量
 #: （实测 `•` 478、`·` 428、`\u200b` 214、`⋅` 110、`/` 471 处）。
 #: **故意不含 `|` `-` `_` `\`**：`| --- | --- |` 是我们自己生成的表格分隔行，
@@ -246,6 +263,11 @@ _HEAD_LINK_LABELS = {"Artificial Intelligence", "Machine Learning", "Generative 
 _HEAD_LINK_ONLY_RE = re.compile(r"^#{2,6}\s+\[([^\]]*)\]\([^)\s]+\)\s*$")
 _MONTHS = (r"(?:January|February|March|April|May|June|July|August|September|October"
            r"|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)")
+_HF_HEADER_DATE_RE = re.compile(
+    r"^(?:Published(?:\s+on)?\s+|(?:发布于|发表于|发布)\s*)?"
+    r"(?:" + _MONTHS + r"\s+\d{1,2}(?:,\s*\d{4})?|\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日|\d{1,2}\s*月\s*\d{1,2}\s*日)$",
+    re.I,
+)
 _BARE_MEDIA_RE = re.compile(
     r"^https?://\S+\.(mp4|mp3|webm|mov|m4v|ogg|gif|png|jpe?g|webp)(\?\S*)?$")
 # about.fb.com 把六档倍速或两枚相同的日期胶囊拼成一行。
@@ -338,16 +360,101 @@ def _hf_login_matches(line: str, page_path: str) -> bool:
     return bool(auth and unquote(auth[1]) == unquote(auth[2]) == unquote(page_path))
 
 
+def _hf_is_author_name(line: str) -> bool:
+    """Hugging Face BlogAuthorsByline 中的纯文本作者名（排除正文句子与 Markdown 块）。"""
+    if not line or len(line) > 60 or line[0] in "#![]*-*>|`":
+        return False
+    if line.isdigit():
+        return False
+    if re.search(r"[!?。！？；：:]", line):
+        return False
+    if re.search(r"\b[A-Za-z]{2,}\.$", line):
+        return False
+    if line.count(", ") > 1:
+        return False
+    return True
+
+
+def _hf_author_drops(text: Sequence[str], visible: Sequence[int], drop: dict[int, str],
+                     start: int, *, allow_plain: bool) -> dict[int, str]:
+    """识别紧跟在 Hugging Face 页头后的 BlogAuthorsByline 作者卡片堆栈（R19）。"""
+    out: dict[int, str] = {}
+    j = start
+    if j < len(text) and _HF_AUTHOR_AVATAR_RE.fullmatch(text[j]):
+        while j < len(text):
+            m = _HF_AUTHOR_AVATAR_RE.fullmatch(text[j])
+            if not m:
+                break
+            alt_name, slug = m.group(1), m.group(2)
+            has_org_link = f"](https://huggingface.co/{slug}) [" in text[j]
+            out[visible[j]] = "R19"
+            j += 1
+            if has_org_link:
+                continue
+            if j < len(text) and not _HF_AUTHOR_AVATAR_RE.fullmatch(text[j]):
+                if text[j] == alt_name or (
+                        j + 1 < len(text) and text[j + 1].lower() == slug.lower()
+                        and _hf_is_author_name(text[j])):
+                    out[visible[j]] = "R19"
+                    j += 1
+            if j < len(text) and text[j].lower() == slug.lower():
+                out[visible[j]] = "R19"
+                j += 1
+            if j < len(text) and not _HF_AUTHOR_AVATAR_RE.fullmatch(text[j]):
+                if text[j] in _HF_ROLE_BADGES or (
+                        _HF_HANDLE_RE.fullmatch(text[j]) and not text[j].isdigit()
+                        and j + 1 < len(text) and _HF_AUTHOR_AVATAR_RE.fullmatch(text[j + 1])):
+                    out[visible[j]] = "R19"
+                    j += 1
+        return out
+    if not allow_plain:
+        return out
+    while j + 1 < len(text):
+        name, handle = text[j], text[j + 1]
+        if (not _hf_is_author_name(name)
+                or not _HF_HANDLE_RE.fullmatch(handle) or handle.isdigit()
+                or (handle in _HF_INTRO_WORDS and name == handle)):
+            break
+        out[visible[j]] = "R19"
+        out[visible[j + 1]] = "R19"
+        j += 2
+        if j < len(text):
+            cand = text[j]
+            cand_is_next = (
+                _hf_is_author_name(cand)
+                and j + 1 < len(text)
+                and _HF_HANDLE_RE.fullmatch(text[j + 1])
+                and not text[j + 1].isdigit()
+            )
+            if (not cand_is_next
+                    and (cand in _HF_ROLE_BADGES
+                         or (_HF_HANDLE_RE.fullmatch(cand) and len(cand) <= 45
+                             and not cand.isdigit() and cand not in _HF_INTRO_WORDS))):
+                out[visible[j]] = "R19"
+                j += 1
+    return out
+
+
 def _hf_widget_drops(lines: Sequence[str], visible: list[int], fenced: set[int],
                      page_path: str) -> dict[int, str]:
     """围栏行作为匹配边界保留，围栏中的文本不参与识别。"""
     drop = {}
     text = ["`" if i in fenced else lines[i].strip() for i in visible]
-    vote_controls = set()
+    first_h1_j = next((j for j, line in enumerate(text[:6]) if _H1_RE.match(line)), None)
+    header_date_j = None
+    if first_h1_j is not None:
+        header_date_j = next(
+            (j for j in range(first_h1_j + 1, min(len(text), first_h1_j + 8))
+             if _HF_HEADER_DATE_RE.fullmatch(text[j])),
+            None,
+        )
+
+    explicit_controls = set()
+    header_anchors = set()
     for j, line in enumerate(text):
         if _hf_login_matches(line, page_path):
             drop[visible[j]] = "R17"
-            vote_controls.add(j)
+            explicit_controls.add(j)
             end = j
             if j and _HF_UPLOAD_IMAGE_RE.fullmatch(text[j - 1]):
                 end -= 1
@@ -358,22 +465,48 @@ def _hf_widget_drops(lines: Sequence[str], visible: list[int], fenced: set[int],
                     drop.update((visible[k], "R17") for k in range(start, end))
                     break
         elif line in _HF_VOTE_LABELS:
-            vote_controls.add(j)
+            explicit_controls.add(j)
         elif line in _HF_UPDATE_LABELS and any(
-                re.match(r"^(?:Published(?: on)?(?:$|\s)|(?:发布于|发表于)(?:$|\s|\d))", label)
+                _HF_HEADER_DATE_RE.fullmatch(label)
+                or re.match(r"^(?:Published(?: on)?(?:$|\s)|(?:发布于|发表于)(?:$|\s|\d))", label)
                 for label in text[max(0, j - 2):j]):
             drop[visible[j]] = "R14"
-            vote_controls.add(j)
+            explicit_controls.add(j)
 
-    for pos in vote_controls:
+    if header_date_j is not None:
+        header_anchors.add(header_date_j)
+        if page_path.startswith("/papers/"):
+            for j in range(header_date_j + 1, min(len(text), header_date_j + 8)):
+                if _HF_PAPER_BY_ORG_RE.fullmatch(text[j]):
+                    header_anchors.add(j)
+
+    for pos in explicit_controls | header_anchors:
         start = pos + 1
         has_count = start < len(text) and re.fullmatch(r"\d{1,6}", text[start])
         first_avatar = start + bool(has_count)
         end = first_avatar
         while end < len(text) and _HF_AVATAR_ITEM_RE.fullmatch(text[end]):
             end += 1
-        if end - first_avatar >= 2:
+        if end - first_avatar >= 1:
             drop.update((visible[k], "R14") for k in range(start, end))
+
+    if first_h1_j is not None:
+        cursor = (header_date_j + 1) if header_date_j is not None else (first_h1_j + 1)
+        while cursor < len(text) and visible[cursor] in drop:
+            cursor += 1
+        bare_dash = None
+        if (header_date_j is not None and cursor < len(text) and text[cursor] == "-"
+                and cursor <= header_date_j + 4):
+            bare_dash = cursor
+            cursor += 1
+        authors = _hf_author_drops(
+            text, visible, drop, cursor,
+            allow_plain=(page_path.startswith("/blog/") and header_date_j is not None),
+        )
+        if authors:
+            if bare_dash is not None:
+                drop[visible[bare_dash]] = "R14"
+            drop.update(authors)
     return drop
 
 
@@ -396,6 +529,7 @@ def furniture_drops(lines, page_url: str = ""):
     R14 Hugging Face 页头的更新控件与紧跟已识别控件的投票者头像列表。
     R17 Hugging Face 评论区的登录/注册与上传控件。
     R18 OpenAI 文章中只有机构名、在文末或同级章节前的作者组件。
+    R19 Hugging Face 页头的作者头像、姓名与机构卡片列表（BlogAuthorsByline）。
     """
     fenced, first_head = _fence_mask(lines)
     first_h1 = next((i for i, l in enumerate(lines)
@@ -969,13 +1103,28 @@ def _absolutize(root, base_url: str) -> None:
 
 
 def _skip_hf_html_widgets(root, page_path: str) -> None:
-    """Hugging Face 文章模板的投票组件、评论登录提示与文件上传控件。"""
+    """Hugging Face 文章模板的投票组件、作者卡片、评论登录提示与文件上传控件。"""
     for node in _iter_nodes(root):
         if node.skip:
             continue
-        if (node.tag == "div" and node.attrs.get("data-target") == "UpvoteControl"
-                and "SVELTE_HYDRATER" in (node.attrs.get("class") or "").split()
+        classes = (node.attrs.get("class") or "").split()
+        target = node.attrs.get("data-target")
+        if (node.tag == "div" and target == "UpvoteControl"
+                and "SVELTE_HYDRATER" in classes
                 and any(isinstance(child, _Node) and child.tag == "dialog" for child in node.children)):
+            node.skip = True
+        elif (node.tag == "div" and target == "BlogAuthorsByline"
+                and "SVELTE_HYDRATER" in classes
+                and any((c.tag == "span" and "fullname" in (c.attrs.get("class") or "").split())
+                        or (c.tag == "img" and (c.attrs.get("alt") or "").endswith("'s avatar"))
+                        for c in _iter_nodes(node))):
+            node.skip = True
+        elif (page_path.startswith("/papers/") and node.tag == "div"
+                and any(isinstance(c, _Node) and c.tag == "a"
+                        and f"login?next={page_path}" in unquote(c.attrs.get("href") or "")
+                        and "Upvote" in _text_of(c)
+                        for c in node.children)
+                and any(isinstance(c, _Node) and c.tag == "ul" for c in node.children)):
             node.skip = True
         elif node.tag == "p" and _hf_login_matches(_inline(node).strip(), page_path):
             node.skip = True

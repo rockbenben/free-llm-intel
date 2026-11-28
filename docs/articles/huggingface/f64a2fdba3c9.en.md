@@ -8,32 +8,22 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d44a2f2d8a82
+body_sha: f4547a18c89b
 ---
-
 
 # Japanese Stable Diffusion
 
 					October 5, 2022
 
-Update on GitHub
 
 
-1
 
-- [![](https://huggingface.co/avatars/b7de5aa184fe4d96d7aa9e3503fc1cf0.svg)](https://huggingface.co/qalqi)
 
-Max Shakespeare
 
-mshing
 
-guest
 
-Kei Sawada
 
-keisawada
 
-guest
 
 [![Open In Hugging Face Spaces](https://img.shields.io/badge/🤗 Hugging Face-Spaces-blue)](https://huggingface.co/spaces/rinna/japanese-stable-diffusion)
 
@@ -191,13 +181,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fjapanese-stable-diffusion) or [log in](https://huggingface.co/login?next=%2Fblog%2Fjapanese-stable-diffusion) to comment
 
 
-1
 
-- [![](https://huggingface.co/avatars/b7de5aa184fe4d96d7aa9e3503fc1cf0.svg)](https://huggingface.co/qalqi)
+
 
 ## Models mentioned in this article 6

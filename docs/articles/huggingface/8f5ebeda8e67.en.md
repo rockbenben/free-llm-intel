@@ -8,49 +8,28 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c80176bb57a3
+body_sha: 267863543d1c
 ---
-
 
 # Mixture of Experts Explained
 
 					December 11, 2023
 
-Update on GitHub
 
 
-1188
 
-- [![](https://huggingface.co/avatars/930213330b6a6bd66825a6dd5d5f9758.svg)](https://huggingface.co/N-avin-N)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/636c2d34cfb49b4682196ffe/1acJDW0pRgO9tPp1jmX1-.jpeg)](https://huggingface.co/thiomajid)
-- [![](https://huggingface.co/avatars/213e7d98d0ee1bd70dd46a3a17c4033d.svg)](https://huggingface.co/mutexmonk)
-- [![](https://huggingface.co/avatars/a6cf48befd61b49d24286350f3c894c4.svg)](https://huggingface.co/kazuakey)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5f43448a79c1ba4c353d0d8f/DiSygV3dn7A_OjmGVTrHD.jpeg)](https://huggingface.co/sugatoray)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638a103212794d978d374658/4uoFbnWdvzXwgRT18UCTy.png)](https://huggingface.co/gri11)
 
-Omar Sanseviero
 
-osanseviero
 
-Lewis Tunstall
 
-lewtun
 
-Philipp Schmid
 
-philschmid
 
-Sourab Mangrulkar
 
-smangrul
 
-Younes B
 
-ybelkada
 
-Pedro Cuenca
 
-pcuenq
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/moe).
 
@@ -456,25 +435,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fmoe) or [log in](https://huggingface.co/login?next=%2Fblog%2Fmoe) to comment
 
 
-1188
 
-- [![](https://huggingface.co/avatars/930213330b6a6bd66825a6dd5d5f9758.svg)](https://huggingface.co/N-avin-N)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/636c2d34cfb49b4682196ffe/1acJDW0pRgO9tPp1jmX1-.jpeg)](https://huggingface.co/thiomajid)
-- [![](https://huggingface.co/avatars/213e7d98d0ee1bd70dd46a3a17c4033d.svg)](https://huggingface.co/mutexmonk)
-- [![](https://huggingface.co/avatars/a6cf48befd61b49d24286350f3c894c4.svg)](https://huggingface.co/kazuakey)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5f43448a79c1ba4c353d0d8f/DiSygV3dn7A_OjmGVTrHD.jpeg)](https://huggingface.co/sugatoray)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638a103212794d978d374658/4uoFbnWdvzXwgRT18UCTy.png)](https://huggingface.co/gri11)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6032802e1f993496bc14d9e3/w6hr-DEQot4VVkoyRIBiy.png)](https://huggingface.co/osanseviero)
-- [![](https://huggingface.co/avatars/934e75062c18adb59f67200d4315a6ba.svg)](https://huggingface.co/dididao)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5edf9030636bdb3834e2da08/At8kxNZmG7ZWuxx7P3dlM.png)](https://huggingface.co/erinkhoo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61790cc7ccfa5dff786bf0c5/qrMvRYD7cyVycHGLePaGB.jpeg)](https://huggingface.co/rhnfzl)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/656dbc6b6836cb340aa180fd/rBiqI5BCNXzOt-ia5JhC5.jpeg)](https://huggingface.co/tusharpaul)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png)](https://huggingface.co/mrfakename)
+
 
 ## Models mentioned in this article 4
 

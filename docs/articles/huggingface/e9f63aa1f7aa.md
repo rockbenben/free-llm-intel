@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 04e83edc8f87
+body_sha: 83e4720026c1
 ---
 
 # UK AISI 与 EvalEval 如何让基准测试结果可复现
@@ -18,70 +18,36 @@ body_sha: 04e83edc8f87
 
 2026 年 9 月 22 日
 
-在 GitHub 上更新此内容
 
 
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png)](https://huggingface.co/dariocava)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg)](https://huggingface.co/clem)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66e691d778f2c37966d1d614/1MJg4zMGny3kmC5TPdjN3.png)](https://huggingface.co/DVRRK)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/69d94b034b0d592e906bc968/8HDc1xHMRnIlqJDI6CG_4.jpeg)](https://huggingface.co/vzn2auto)
 
-Avijit Ghosh
 
-evijit
 
-evaleval
 
-Jenny Chim
 
-j-chim
 
-evaleval
 
-Deep Joshi
 
-deeplumiere
 
-evaleval
 
-Srishti
 
-srishtiy
 
-evaleval
 
-Matt Kennedy
 
-wmmkennedy
 
-evaleval
 
-Irene Solaiman
 
-irenesolaiman
 
-evaleval
 
-Jessica McFadyen
 
-mcfadyen-aisi
 
-ai-safety-institute
 
-Lynn Tan
 
-lynn-aisi
 
-ai-safety-institute
 
-Coz
 
-coz-aisi
 
-ai-safety-institute
 
 [EvalEval Coalition](https://evalevalai.com/) 很高兴地分享，[UK AI Security Institute（AISI）](https://www.aisi.gov.uk/)正在使用 EvalEval 的基础设施来公开分享评测结果，支持更可复现、更可验证的评测科学。
 

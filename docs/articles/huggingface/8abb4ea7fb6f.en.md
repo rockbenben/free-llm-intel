@@ -8,25 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9e094dbb6ecf
+body_sha: 7b2f9a0e4b1a
 ---
-
 
 # Faster Training and Inference: Habana Gaudi®-2 vs Nvidia A100 80GB
 
 					December 14, 2022
 
-Update on GitHub
 
 
-2
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64848653ad9a14dd2ec42b14/Cnlsgthjjc-Nhak8_jnl2.jpeg)](https://huggingface.co/edlee123)
-- [![](https://huggingface.co/avatars/ebda0c12cdb2361e35ad7e6c13f6f2dd.svg)](https://huggingface.co/eero-tt)
 
-Régis Pierrard
 
-regisss
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/habana-gaudi-2-benchmark).
 
@@ -161,14 +154,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fhabana-gaudi-2-benchmark) or [log in](https://huggingface.co/login?next=%2Fblog%2Fhabana-gaudi-2-benchmark) to comment
 
 
-2
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64848653ad9a14dd2ec42b14/Cnlsgthjjc-Nhak8_jnl2.jpeg)](https://huggingface.co/edlee123)
-- [![](https://huggingface.co/avatars/ebda0c12cdb2361e35ad7e6c13f6f2dd.svg)](https://huggingface.co/eero-tt)
+
 
 ## Models mentioned in this article 5

@@ -8,25 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2ba02e07e87f
+body_sha: 90ed592cefc4
 ---
-
 
 # **Deploy Hugging Face models easily with Amazon SageMaker 🏎**
 
 					July 8, 2021
 
-Update on GitHub
 
 
-2
 
-- [![](https://huggingface.co/avatars/5727a1c624ff64329939684ed62f5293.svg)](https://huggingface.co/SalahAbdoNLP)
-- [![](https://huggingface.co/avatars/129d1e86bbaf764b507501f4feb177db.svg)](https://huggingface.co/Aanuoluwapo65)
 
-Philipp Schmid
 
-philschmid
 
 Earlier this year[ we announced a strategic collaboration with Amazon](https://huggingface.co/blog/the-partnership-amazon-sagemaker-and-hugging-face) to make it easier for companies to use Hugging Face in Amazon SageMaker, and ship cutting-edge Machine Learning features faster. We introduced new Hugging Face Deep Learning Containers (DLCs) to[ train Hugging Face Transformer models in Amazon SageMaker](https://huggingface.co/transformers/sagemaker.html#getting-started-train-a-transformers-model).
 
@@ -338,13 +331,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdeploy-hugging-face-models-easily-with-amazon-sagemaker) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdeploy-hugging-face-models-easily-with-amazon-sagemaker) to comment
-
-
-2
-
-- [![](https://huggingface.co/avatars/5727a1c624ff64329939684ed62f5293.svg)](https://huggingface.co/SalahAbdoNLP)
-- [![](https://huggingface.co/avatars/129d1e86bbaf764b507501f4feb177db.svg)](https://huggingface.co/Aanuoluwapo65)

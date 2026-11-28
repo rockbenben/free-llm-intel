@@ -8,33 +8,20 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 421cea97f587
+body_sha: 0cf76a3aef83
 ---
-
 
 # Docmatix - A huge dataset for Document Visual Question Answering
 
 					July 18, 2024
 
-Update on GitHub
 
 
-80
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6253fb19d3e43081e102af4f/0M0Ksd8rzm_g4k-hl0xP6.jpeg)](https://huggingface.co/Dreamer312)
-- [![](https://huggingface.co/avatars/fb50773ac49948940eb231834ee6f2fd.svg)](https://huggingface.co/irotem98)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/utGl1liVi34zGMz6fi6Jz.jpeg)](https://huggingface.co/JayRay5)
-- [![](https://huggingface.co/avatars/ad7e7c6e7e6c24e0e75e718d49db990e.svg)](https://huggingface.co/marcovaldo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1666440274544-6353dc3e3bc1819d22d41e7f.jpeg)](https://huggingface.co/TankNee)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61ed0ff29539bc0a3bbc89f4/iYWK7GParA7Ke5F6q132W.jpeg)](https://huggingface.co/mfarre)
 
-Andres Marafioti
 
-andito
 
-Hugo Laurençon
 
-HugoLaurencon
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/docmatix).
 
@@ -130,25 +117,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdocmatix) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdocmatix) to comment
 
 
-80
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6253fb19d3e43081e102af4f/0M0Ksd8rzm_g4k-hl0xP6.jpeg)](https://huggingface.co/Dreamer312)
-- [![](https://huggingface.co/avatars/fb50773ac49948940eb231834ee6f2fd.svg)](https://huggingface.co/irotem98)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/utGl1liVi34zGMz6fi6Jz.jpeg)](https://huggingface.co/JayRay5)
-- [![](https://huggingface.co/avatars/ad7e7c6e7e6c24e0e75e718d49db990e.svg)](https://huggingface.co/marcovaldo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1666440274544-6353dc3e3bc1819d22d41e7f.jpeg)](https://huggingface.co/TankNee)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61ed0ff29539bc0a3bbc89f4/iYWK7GParA7Ke5F6q132W.jpeg)](https://huggingface.co/mfarre)
-- [![](https://huggingface.co/avatars/db193ee4ec32c14dd36388deb4152b2b.svg)](https://huggingface.co/SKB2021)
-- [![](https://huggingface.co/avatars/82ec820375403def510c895d4bf9c12d.svg)](https://huggingface.co/windgrin)
-- [![](https://huggingface.co/avatars/50f05c2692b8bf04d7477918eddd7a8e.svg)](https://huggingface.co/yzlii)
-- [![](https://huggingface.co/avatars/5476622a4961f4fe5d1c85476badad37.svg)](https://huggingface.co/imjliao)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66330485060ab1f666c9c0e4/fcVdNVk61zwFylOEUzxyR.png)](https://huggingface.co/mransby-groq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/mSruVvc9kNgzZaSbZ5r6M.png)](https://huggingface.co/chenhaodev)
+
 
 ## Models mentioned in this article 1
 

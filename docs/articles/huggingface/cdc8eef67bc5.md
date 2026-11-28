@@ -9,7 +9,7 @@ captured: 2026-11-14
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 27a623088530
+body_sha: 6119aa430db6
 ---
 
 # 使用 SimReady Assets 构建机器人拾放仿真
@@ -19,38 +19,19 @@ body_sha: 27a623088530
 发布于 2026 年 11 月 13 日
 
 
-14
 
-- [![](https://huggingface.co/avatars/9f55e9f6faf6a311cccd0c08d0427db5.svg)](https://huggingface.co/ByteSage404)
-- [![](https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg)](https://huggingface.co/pomilee)
-- [![](https://huggingface.co/avatars/ec3d8d16e74f37584636ad4822d24f26.svg)](https://huggingface.co/jkosnik)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/oSUZPwq6TTEGqIPc62BVo.png)](https://huggingface.co/AiWinstone)
-- [![](https://huggingface.co/avatars/7b54d53f6c5d49197fd5399e19dc7b6b.svg)](https://huggingface.co/pipwnz)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
 
-[![Dillon Bailey 的头像](https://huggingface.co/avatars/ef260ce572881087d516bcf632928740.svg)](https://huggingface.co/dillonb-nv)
 
-Dillon Bailey
 
-dillonb-nv
 
-[![NVIDIA 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png)](https://huggingface.co/nvidia) [nvidia](https://huggingface.co/nvidia)
 
-[![Pomi Lee 的头像](https://huggingface.co/avatars/55b482d76fb0269a3e3a1838049b459f.svg)](https://huggingface.co/pomilee)
 
-Pomi Lee
 
-pomilee
 
-[![NVIDIA 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png)](https://huggingface.co/nvidia) [nvidia](https://huggingface.co/nvidia)
 
-[![Rishabh Chadha 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kaRxLMenXEARG7KGBZJUh.png)](https://huggingface.co/rchadha-nv)
 
-Rishabh Chadha
 
-rchadha-nv
 
-[![NVIDIA 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png)](https://huggingface.co/nvidia) [nvidia](https://huggingface.co/nvidia)
 
 [![figure-01-pick-and-place-highlight](https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif)](https://cdn-uploads.huggingface.co/production/uploads/6abfe9e7d7cf09a9b38ef308/NlngGWIKZEQ8kuWKZtoyM.gif)
 

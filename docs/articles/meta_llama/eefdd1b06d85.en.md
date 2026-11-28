@@ -8,10 +8,9 @@ lang: en
 captured: 2026-11-20
 extractor: readability-v1
 status: ok
-body_sha: 93c8e2f680f4
+body_sha: f31fd76ed9aa
 ---
 
-[  Back to Newsroom](https://about.fb.com/news)
 
 [ Meta ](https://about.fb.com/news/category/technologies/meta/)
 

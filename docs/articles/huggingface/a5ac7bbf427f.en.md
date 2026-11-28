@@ -8,47 +8,27 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 579a82a3c5bf
+body_sha: 3f79e77df503
 ---
-
 
 # A Hugging Face Accelerate Story of Multiple Backends: FSDP and DeepSpeed
 
 					June 13, 2024
 
-Update on GitHub
 
 
-63
 
-- [![](https://huggingface.co/avatars/611a96669ddcd187c298a67ec24a509a.svg)](https://huggingface.co/HammerW)
-- [![](https://huggingface.co/avatars/c2b45478a6cd0e614191ab8f73c0173e.svg)](https://huggingface.co/geshijoker)
-- [![](https://huggingface.co/avatars/47f09e5d4236a1281b904fcae220ca43.svg)](https://huggingface.co/RobotSail)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6459fa0f5b3111fbe83286e1/E6Buqu8Wd9WmIHKOCZXCc.jpeg)](https://huggingface.co/louisbrulenaudet)
-- [![](https://huggingface.co/avatars/5353fa05db1e2f5f4b209f6216dde553.svg)](https://huggingface.co/llm2big)
-- [![](https://huggingface.co/avatars/0a6dbfe8a09dc050d4acbd01c2dbd663.svg)](https://huggingface.co/gogo8232)
 
-Yu Chin Fabian Lim
 
-mirinflim
 
-guest
 
-aldo pareja
 
-aldopareja
 
-guest
 
-Zachary Mueller
 
-muellerzr
 
-Stas Bekman
 
-stas
 
-ContextualAI
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/deepspeed-to-fsdp-and-back).
 
@@ -206,24 +186,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdeepspeed-to-fsdp-and-back) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdeepspeed-to-fsdp-and-back) to comment
 
 
-63
 
-- [![](https://huggingface.co/avatars/611a96669ddcd187c298a67ec24a509a.svg)](https://huggingface.co/HammerW)
-- [![](https://huggingface.co/avatars/c2b45478a6cd0e614191ab8f73c0173e.svg)](https://huggingface.co/geshijoker)
-- [![](https://huggingface.co/avatars/47f09e5d4236a1281b904fcae220ca43.svg)](https://huggingface.co/RobotSail)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6459fa0f5b3111fbe83286e1/E6Buqu8Wd9WmIHKOCZXCc.jpeg)](https://huggingface.co/louisbrulenaudet)
-- [![](https://huggingface.co/avatars/5353fa05db1e2f5f4b209f6216dde553.svg)](https://huggingface.co/llm2big)
-- [![](https://huggingface.co/avatars/0a6dbfe8a09dc050d4acbd01c2dbd663.svg)](https://huggingface.co/gogo8232)
-- [![](https://huggingface.co/avatars/4faff084ae3495a28dd1ae26b7608386.svg)](https://huggingface.co/aldopareja)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594311341799-5f07383b19cb630495b812cd.jpeg)](https://huggingface.co/stas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62f47c093561a52aa5a67c90/d4sFnllrLH5BWbZDRNvMn.jpeg)](https://huggingface.co/rootacess)
-- [![](https://huggingface.co/avatars/c32741e7fc57c9a08722fab3877a7b81.svg)](https://huggingface.co/tjruwase)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1639773384591-5f353bb37e58354338621655.jpeg)](https://huggingface.co/nbroad)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/651e93137b2a2e027f9e55df/5oXWJeEDCrMJLA4s_0I93.png)](https://huggingface.co/Aurelien-Morgan)
+
 
 ## Models mentioned in this article 1

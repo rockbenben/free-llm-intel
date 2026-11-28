@@ -8,33 +8,20 @@ lang: en
 captured: 2026-10-06
 extractor: readability-v1
 status: ok
-body_sha: 231b93e7a5e8
+body_sha: be422674786a
 ---
-
 
 # Using LoRA for Efficient Stable Diffusion Fine-Tuning
 
 					January 26, 2023
 
-Update on GitHub
 
 
-84
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/615b8a9c23f3c5e91441a387/b7wAb09b-doTD5zf4gZOc.jpeg)](https://huggingface.co/Broomva)
-- [![](https://huggingface.co/avatars/7d47ce449a26a2b2f44e99369d28c5b2.svg)](https://huggingface.co/arslanali900)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png)](https://huggingface.co/mrfakename)
-- [![](https://huggingface.co/avatars/5ef1e6ed4d77275727e7be8297ac36e2.svg)](https://huggingface.co/eurekaylj)
-- [![](https://huggingface.co/avatars/cb500c762af93de33f8b2bd154a71410.svg)](https://huggingface.co/Mahendran)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/OqiF10RKo-bytyIkmX8HJ.png)](https://huggingface.co/privategeek24)
 
-Pedro Cuenca
 
-pcuenq
 
-Sayak Paul
 
-sayakpaul
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/lora).
 
@@ -212,25 +199,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Flora) or [log in](https://huggingface.co/login?next=%2Fblog%2Flora) to comment
 
 
-84
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/615b8a9c23f3c5e91441a387/b7wAb09b-doTD5zf4gZOc.jpeg)](https://huggingface.co/Broomva)
-- [![](https://huggingface.co/avatars/7d47ce449a26a2b2f44e99369d28c5b2.svg)](https://huggingface.co/arslanali900)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62e54f0eae9d3f10acb95cb9/VAyk05hqB3OZWXEZW-B0q.png)](https://huggingface.co/mrfakename)
-- [![](https://huggingface.co/avatars/5ef1e6ed4d77275727e7be8297ac36e2.svg)](https://huggingface.co/eurekaylj)
-- [![](https://huggingface.co/avatars/cb500c762af93de33f8b2bd154a71410.svg)](https://huggingface.co/Mahendran)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/OqiF10RKo-bytyIkmX8HJ.png)](https://huggingface.co/privategeek24)
-- [![](https://huggingface.co/avatars/25a7099518dbd446f7385cf858272d4e.svg)](https://huggingface.co/ttaox)
-- [![](https://huggingface.co/avatars/3d84982fbd33d2ea16a4cbf5f4c5659e.svg)](https://huggingface.co/hollowsense)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/645917af8aa54fb020f83351/g-g9TvDM42P2-YWwgcWuW.jpeg)](https://huggingface.co/nglebm19)
-- [![](https://huggingface.co/avatars/54a2342bf21ea1efbbcc0f7b9c6d996c.svg)](https://huggingface.co/Greencow2000)
-- [![](https://huggingface.co/avatars/3d73fd4d964c0e047cbc255fb60b29e8.svg)](https://huggingface.co/UGVly)
-- [![](https://huggingface.co/avatars/b50148b860164be46a00a2991c9fad15.svg)](https://huggingface.co/Gezhiwa)
+
 
 ## Models mentioned in this article 1
 

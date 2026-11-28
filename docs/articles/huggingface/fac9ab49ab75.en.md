@@ -8,22 +8,17 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fcfb24f3f4b7
+body_sha: c23fde483bca
 ---
-
 
 # Policy Gradient with PyTorch
 
 					June 30, 2022
 
-Update on GitHub
 
 
--
 
-Thomas Simonini
 
-ThomasSimonini
 
 ## Unit 5, of the [Deep Reinforcement Learning Class with Hugging Face 🤗](https://github.com/huggingface/deep-rl-class)
 
@@ -212,9 +207,7 @@ clicking here
 
 .
 
-Tap or paste here to upload images
 
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdeep-rl-pg) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdeep-rl-pg) to comment
 
 
 -

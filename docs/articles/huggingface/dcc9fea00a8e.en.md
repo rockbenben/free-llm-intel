@@ -8,24 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8d54bfc832da
+body_sha: 70f524638388
 ---
-
 
 # Supercharged Customer Service with Machine Learning
 
 					April 25, 2022
 
-Update on GitHub
 
 
-1
 
-- [![](https://huggingface.co/avatars/b2d08085ec8ebb5aa583ff2747564b1e.svg)](https://huggingface.co/pawara101)
 
-Patrick von Platen
 
-patrickvonplaten
 
 In this blog post, we will simulate a real-world customer service use case and use tools machine learning tools of the Hugging Face ecosystem to address it.
 
@@ -702,13 +696,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsupercharge-customer-service-with-machine-learning) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsupercharge-customer-service-with-machine-learning) to comment
 
 
-1
 
-- [![](https://huggingface.co/avatars/b2d08085ec8ebb5aa583ff2747564b1e.svg)](https://huggingface.co/pawara101)
+
 
 ## Models mentioned in this article 3

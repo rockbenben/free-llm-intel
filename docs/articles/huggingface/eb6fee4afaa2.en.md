@@ -8,55 +8,31 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ab476a5a2a82
+body_sha: dbfd756e7f90
 ---
-
 
 # Introducing SynthID Text
 
 					October 23, 2024
 
-Update on GitHub
 
 
-63
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ce875d199b36f7552d4f07/bpUrvhXDagzRqZ3vxTcSF.jpeg)](https://huggingface.co/marcsun13)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61868ce808aae0b5499a2a95/F6BA0anbsoY_Z7M1JrwOe.jpeg)](https://huggingface.co/fffiloni)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6527e89a8808d80ccff88b7a/CuGNmF1Et8KMQ0mCd1NEJ.jpeg)](https://huggingface.co/not-lain)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64a0784d7b57fab3a5d63868/iqA0qF0nYAstSWsSS94RH.png)](https://huggingface.co/Erfan-Shayegani)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1677134945205-62f32eab52ad88c930bb3f3b.png)](https://huggingface.co/codelion)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1613511937628-5fb15d1e84389b139cf3b508.jpeg)](https://huggingface.co/MoritzLaurer)
 
-Sumedh Ghaisas
 
-sumedhghaisas
 
-guest
 
-Sumanth Dathathri
 
-sdathath
 
-guest
 
-Ryan Mullins
 
-RyanMullins
 
-guest
 
-Joao Gante
 
-joaogante
 
-Marc Sun
 
-marcsun13
 
-Raushan Turganbay
 
-RaushanTurganbay
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/synthid-text).
 
@@ -223,24 +199,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsynthid-text) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsynthid-text) to comment
 
 
-63
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ce875d199b36f7552d4f07/bpUrvhXDagzRqZ3vxTcSF.jpeg)](https://huggingface.co/marcsun13)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61868ce808aae0b5499a2a95/F6BA0anbsoY_Z7M1JrwOe.jpeg)](https://huggingface.co/fffiloni)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6527e89a8808d80ccff88b7a/CuGNmF1Et8KMQ0mCd1NEJ.jpeg)](https://huggingface.co/not-lain)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64a0784d7b57fab3a5d63868/iqA0qF0nYAstSWsSS94RH.png)](https://huggingface.co/Erfan-Shayegani)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1677134945205-62f32eab52ad88c930bb3f3b.png)](https://huggingface.co/codelion)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1613511937628-5fb15d1e84389b139cf3b508.jpeg)](https://huggingface.co/MoritzLaurer)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/651ea296c887c687e09158af/ju9Zx2xDBVhDLnLL1e1Mq.jpeg)](https://huggingface.co/brunatrevelin)
-- [![](https://huggingface.co/avatars/b36027822d6b00831eb9c232031194f0.svg)](https://huggingface.co/Jarrodbarnes)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65a402a53522df7a27125823/tVR6lZlKmjPqi7dTZBGoS.jpeg)](https://huggingface.co/RyanMullins)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1657623563546-noauth.png)](https://huggingface.co/toxcik)
-- [![](https://huggingface.co/avatars/31f8d5a88a8469da13478a9379f597f5.svg)](https://huggingface.co/nikilpatel94)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61d375fd733d3a83ecd1bba9/oIXwvvs1-HaCnJXMCZgkc.jpeg)](https://huggingface.co/andrewrreed)
+
 
 ## Spaces mentioned in this article 1

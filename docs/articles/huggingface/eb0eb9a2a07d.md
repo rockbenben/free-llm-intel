@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 97b65dffd5eb
+body_sha: 831a4e2817a8
 translator: agent
 ---
 
@@ -23,17 +23,11 @@ translator: agent
 
 
 
-Derek Liu
 
-derekl35
 
-Marc Sun
 
-marcsun13
 
-Sayak Paul
 
-sayakpaul
 
 像 Flux（一种基于 flow 的文本生成图像模型）这样的大型扩散模型能生成令人惊艳的图像，但体量可能成为门槛——需要大量显存和算力。量化提供了一个有力的解法：把这些模型压缩，让它们在不过多牺牲性能的前提下更易使用。但灵魂拷问永远是：你真的能看出最终图像的差别吗？
 

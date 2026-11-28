@@ -8,65 +8,36 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 544583f6ddc5
+body_sha: 35e1937b1932
 ---
-
 
 # Measuring benchmark optimization in speech recognition
 
 					August 21, 2026
 
-Update on GitHub
 
 
-68
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)](https://huggingface.co/bezzam)
-- [![](https://huggingface.co/avatars/a7a92c5f9e01577dd7bcebe5a345f2f7.svg)](https://huggingface.co/aliceebaird)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/r6F20gfbuflBGbpmMZ7e7.png)](https://huggingface.co/sharath25)
-- [![](https://huggingface.co/avatars/b920256b1688b73ce1b889ac53594110.svg)](https://huggingface.co/tlebryk02)
-- [![](https://huggingface.co/avatars/821e66bd12e82026f786d0a1eef9811d.svg)](https://huggingface.co/aluko26)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/697299e19695fae39c520649/y3-bbcHl-iTO1fwKurxkB.jpeg)](https://huggingface.co/0bserverx)
 
-Theo Lebryk
 
-tlebryk02
 
-HumeAI
 
-Eric Bezzam
 
-bezzam
 
-Alice
 
-aliceebaird
 
-HumeAI
 
-David Ayllon
 
-dayllon
 
-HumeAI
 
-Jakub Piotr Cłapa
 
-jpc
 
-HumeAI
 
-Jens Madsen
 
-jens-hume-ai
 
-HumeAI
 
-Panagiotis Tzirakis
 
-tzirakis
 
-HumeAI
 
 Public voice AI benchmarks increasingly suggest that models are performing at human levels. Yet those scores don't always reflect how models work in the real-world. Since public benchmarks are open and widely used, models can also become optimized for the tests themselves. Their scores may improve because they have learned benchmark-specific patterns and not because they have become better at the underlying task.
 
@@ -246,25 +217,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fasr-benchmark-optimization) or [log in](https://huggingface.co/login?next=%2Fblog%2Fasr-benchmark-optimization) to comment
 
 
-68
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)](https://huggingface.co/bezzam)
-- [![](https://huggingface.co/avatars/a7a92c5f9e01577dd7bcebe5a345f2f7.svg)](https://huggingface.co/aliceebaird)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/r6F20gfbuflBGbpmMZ7e7.png)](https://huggingface.co/sharath25)
-- [![](https://huggingface.co/avatars/b920256b1688b73ce1b889ac53594110.svg)](https://huggingface.co/tlebryk02)
-- [![](https://huggingface.co/avatars/821e66bd12e82026f786d0a1eef9811d.svg)](https://huggingface.co/aluko26)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/697299e19695fae39c520649/y3-bbcHl-iTO1fwKurxkB.jpeg)](https://huggingface.co/0bserverx)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/AIasly97s2SiP4-4MSPDA.png)](https://huggingface.co/meharpsingh)
-- [![](https://huggingface.co/avatars/d0010ed32ae04727528ce0b500a1a8f5.svg)](https://huggingface.co/out51der)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/3rZ01yvs5yE0WzxsYFkXP.png)](https://huggingface.co/lalzuai)
-- [![](https://huggingface.co/avatars/30c19d48a1c5e20462eed58884908b2b.svg)](https://huggingface.co/myian0211)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a30495b901a5b1643c876f2/gUbDd5mrUJXM1WLXp9444.jpeg)](https://huggingface.co/Aditya172003)
-- [![](https://huggingface.co/avatars/1723bf6d3e639abec11d7361574eca96.svg)](https://huggingface.co/zahrarabiee)
+
 
 ## Models mentioned in this article 10
 

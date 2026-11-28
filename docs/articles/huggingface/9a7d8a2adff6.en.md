@@ -8,57 +8,32 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ada3863607e1
+body_sha: 1c2135dd3a55
 ---
-
 
 # SetFitABSA: Few-Shot Aspect Based Sentiment Analysis using SetFit
 
 					December 6, 2023
 
-Update on GitHub
 
 
-15
 
-- [![](https://huggingface.co/avatars/8726c33b2a51dbfa01005cf544db9683.svg)](https://huggingface.co/rifqimrf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6527e40351d1165df6742820/vQQuKY20-C19zRFbp-ANf.jpeg)](https://huggingface.co/Davide1999)
-- [![](https://huggingface.co/avatars/d878916cf92e8a80b1924252dfc78813.svg)](https://huggingface.co/abhit07)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/652d4c80cdb2a91205748172/4pllgslkBbYJsCrte5iW0.png)](https://huggingface.co/trinhhung)
-- [![](https://huggingface.co/avatars/6dd8370ab2e3267dd932484209feac2b.svg)](https://huggingface.co/omymble)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6504504c901ad9217f00f55a/51YMEjHwQ8tC2ALXDOwjn.jpeg)](https://huggingface.co/Arnic)
 
-Ronen Laperdon
 
-ronenlap
 
-guest
 
-Tom Aarsen
 
-tomaarsen
 
-Lewis Tunstall
 
-lewtun
 
-Daniel Korat
 
-danielkorat
 
-guest
 
-Oren Pereg
 
-orenpereg
 
-guest
 
-Moshe Wasserblat
 
-moshew
 
-guest
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/setfit-absa).
 
@@ -334,24 +309,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsetfit-absa) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsetfit-absa) to comment
 
 
-15
 
-- [![](https://huggingface.co/avatars/8726c33b2a51dbfa01005cf544db9683.svg)](https://huggingface.co/rifqimrf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6527e40351d1165df6742820/vQQuKY20-C19zRFbp-ANf.jpeg)](https://huggingface.co/Davide1999)
-- [![](https://huggingface.co/avatars/d878916cf92e8a80b1924252dfc78813.svg)](https://huggingface.co/abhit07)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/652d4c80cdb2a91205748172/4pllgslkBbYJsCrte5iW0.png)](https://huggingface.co/trinhhung)
-- [![](https://huggingface.co/avatars/6dd8370ab2e3267dd932484209feac2b.svg)](https://huggingface.co/omymble)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6504504c901ad9217f00f55a/51YMEjHwQ8tC2ALXDOwjn.jpeg)](https://huggingface.co/Arnic)
-- [![](https://huggingface.co/avatars/05abfc3acab69ba127384c921f01dc13.svg)](https://huggingface.co/Cunyli)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/sm9Gc-O-FPe77_Nh75NMH.png)](https://huggingface.co/ronalhung)
-- [![](https://huggingface.co/avatars/b09e9fc0d5247a8fe7c0caee387c217f.svg)](https://huggingface.co/Al-Mahi)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/b442635LOSVlWxXaT7bJL.png)](https://huggingface.co/darisdzakwanhoesien)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/HX_LuSrU-md-3bvjw-fzx.png)](https://huggingface.co/JingRANer)
-- [![](https://huggingface.co/avatars/ea72a23c6752d8cf6b5da9cb6553418a.svg)](https://huggingface.co/dcleere)
+
 
 ## Datasets mentioned in this article 1

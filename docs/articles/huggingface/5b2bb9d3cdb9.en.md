@@ -8,31 +8,19 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 211810e8a565
+body_sha: d4350cc641f6
 ---
-
 
 # Make LLM Fine-tuning 2x faster with Unsloth and 🤗 TRL
 
 					January 10, 2024
 
-Update on GitHub
 
 
-77
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63581bce0e4fef2198254575/yMzMAZCXYul2fRKHpbcvx.png)](https://huggingface.co/jucamohedano)
-- [![](https://huggingface.co/avatars/084c2c1e9ff7cf474be8e6a4f39d297d.svg)](https://huggingface.co/lanj133)
-- [![](https://huggingface.co/avatars/068505bec3b58e78e9c6d91a47fa3ac6.svg)](https://huggingface.co/realdanielbyrne)
-- [![](https://huggingface.co/avatars/5b5eaf65f6260d81fce18c1ee5fdefd1.svg)](https://huggingface.co/mitjamartini)
-- [![](https://huggingface.co/avatars/70d5e6c9ff08c99ca73bc28a8a30c407.svg)](https://huggingface.co/kartikmehta204)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63107b18e87051f3e3e0f598/R9onir4Y0MZuq1jEWCZ2-.jpeg)](https://huggingface.co/ucyang)
 
-Daniel (Unsloth)
 
-danielhanchen
 
-guest
 
 Pulling your hair out because LLM fine-tuning is taking forever? In this post, we introduce a lightweight tool developed by the community to make LLM fine-tuning go super fast!
 
@@ -217,24 +205,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Funsloth-trl) or [log in](https://huggingface.co/login?next=%2Fblog%2Funsloth-trl) to comment
 
 
-77
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63581bce0e4fef2198254575/yMzMAZCXYul2fRKHpbcvx.png)](https://huggingface.co/jucamohedano)
-- [![](https://huggingface.co/avatars/084c2c1e9ff7cf474be8e6a4f39d297d.svg)](https://huggingface.co/lanj133)
-- [![](https://huggingface.co/avatars/068505bec3b58e78e9c6d91a47fa3ac6.svg)](https://huggingface.co/realdanielbyrne)
-- [![](https://huggingface.co/avatars/5b5eaf65f6260d81fce18c1ee5fdefd1.svg)](https://huggingface.co/mitjamartini)
-- [![](https://huggingface.co/avatars/70d5e6c9ff08c99ca73bc28a8a30c407.svg)](https://huggingface.co/kartikmehta204)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63107b18e87051f3e3e0f598/R9onir4Y0MZuq1jEWCZ2-.jpeg)](https://huggingface.co/ucyang)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64895f0b8c69af83c466eacf/Bhn8e3KzR80w3xe2FMvyE.png)](https://huggingface.co/Karamouche)
-- [![](https://huggingface.co/avatars/09a6c67f3da6cfbcde6bf31e8a175f38.svg)](https://huggingface.co/YeungNLP)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6495db1662ae62cd134a52fc/L7UXMJE0_hUA7eVFm83wG.jpeg)](https://huggingface.co/santyzenith)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1659971187637-60d3b57ad7b174177faabd6e.jpeg)](https://huggingface.co/chansung)
-- [![](https://huggingface.co/avatars/f6a4a8d04476f72ecda1c253736fa3d2.svg)](https://huggingface.co/YxBxRyXJx)
-- [![](https://huggingface.co/avatars/9f4bdb373790586063d0800bfc179c2e.svg)](https://huggingface.co/enrsam)
+
 
 ## Datasets mentioned in this article 1

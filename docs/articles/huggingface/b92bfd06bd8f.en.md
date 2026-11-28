@@ -8,33 +8,20 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2f6ff4005223
+body_sha: e75432ef5fbf
 ---
-
 
 # Safetensors is Joining the PyTorch Foundation
 
 					April 8, 2026
 
-Update on GitHub
 
 
-42
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1666977434736-617bc8d1000dbbbf7c225eed.png)](https://huggingface.co/mcpotato)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg)](https://huggingface.co/julien-c)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/69c4c97bea5bffda021d4e4e/45XGDj29b7YgXb4I9DKZk.jpeg)](https://huggingface.co/LOYOLABIZ)
-- [![](https://huggingface.co/avatars/cdeb6e415b4bfa6667029efd347088f6.svg)](https://huggingface.co/stgrue)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6258561f4d4291e8e63d8ae6/EYjinEYAcbtm_dL5QmmRi.png)](https://huggingface.co/Sylvestre)
 
-Luc Georges
 
-mcpotato
 
-Lysandre
 
-lysandre
 
 Today, we're announcing that Safetensors has joined the PyTorch Foundation as a foundation-hosted project under the Linux Foundation, alongside DeepSpeed, Helion, Ray, vLLM, and PyTorch itself.
 
@@ -130,23 +117,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsafetensors-joins-pytorch-foundation) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsafetensors-joins-pytorch-foundation) to comment
-
-
-42
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1666977434736-617bc8d1000dbbbf7c225eed.png)](https://huggingface.co/mcpotato)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg)](https://huggingface.co/julien-c)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/69c4c97bea5bffda021d4e4e/45XGDj29b7YgXb4I9DKZk.jpeg)](https://huggingface.co/LOYOLABIZ)
-- [![](https://huggingface.co/avatars/cdeb6e415b4bfa6667029efd347088f6.svg)](https://huggingface.co/stgrue)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6258561f4d4291e8e63d8ae6/EYjinEYAcbtm_dL5QmmRi.png)](https://huggingface.co/Sylvestre)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg)](https://huggingface.co/lysandre)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67d7dea1786ddcb3af5a44b3/gEgXTH4oO91GIzjHR-yrb.png)](https://huggingface.co/CarolinePascal)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68750699d365b5bf3756c71c/j39Nlb_MXxhT10E9yfsVm.png)](https://huggingface.co/ILer33)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1643012094339-61914f536d34e827404ceb99.jpeg)](https://huggingface.co/hysts)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)

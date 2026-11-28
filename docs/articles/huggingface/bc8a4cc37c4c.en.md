@@ -8,26 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 47bf6e9a988d
+body_sha: 1dc9c4108d24
 ---
-
 
 # The Reformer - Pushing the limits of language modeling
 
 					July 3, 2020
 
-Update on GitHub
 
 
-3
 
-- [![](https://huggingface.co/avatars/ce9b99882a65fd2cb983ba71a5ac2473.svg)](https://huggingface.co/a-r-r-o-w)
-- [![](https://huggingface.co/avatars/2211bd0a7d08bf1e078b0acee40894b5.svg)](https://huggingface.co/Vivek)
-- [![](https://huggingface.co/avatars/6be635f7f258d1050cd4c6e2c2d92a62.svg)](https://huggingface.co/kamalelsaaid)
 
-Patrick von Platen
 
-patrickvonplaten
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/reformer).
 
@@ -711,15 +703,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Freformer) or [log in](https://huggingface.co/login?next=%2Fblog%2Freformer) to comment
 
 
-3
 
-- [![](https://huggingface.co/avatars/ce9b99882a65fd2cb983ba71a5ac2473.svg)](https://huggingface.co/a-r-r-o-w)
-- [![](https://huggingface.co/avatars/2211bd0a7d08bf1e078b0acee40894b5.svg)](https://huggingface.co/Vivek)
-- [![](https://huggingface.co/avatars/6be635f7f258d1050cd4c6e2c2d92a62.svg)](https://huggingface.co/kamalelsaaid)
+
 
 ## Models mentioned in this article 1

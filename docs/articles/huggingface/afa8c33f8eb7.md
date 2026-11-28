@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 4375c69795ae
+body_sha: be548b46e926
 ---
 
 # 把来源弄对，而不只是把事实弄对：面向 MCP Agent 的 source-aware 校验
@@ -23,36 +23,18 @@ body_sha: 4375c69795ae
 
 
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg)](https://huggingface.co/AntonioTN)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1iQUUZFQh6BZXCgGY7zJT.png)](https://huggingface.co/AlexDGenu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QU3ijZPXiAWJKJQTof3nF.png)](https://huggingface.co/DuckDuckDown)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tGmQJzeT9SYL_sK839ifI.png)](https://huggingface.co/AlgoEnergy)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/3xs4KD-K8_TSwUNSbWp9o.png)](https://huggingface.co/fakoor)
 
-Antonio Tiene
 
-AntonioTN
 
-MultiverseComputingCAI
 
-Ander Alvarez Sanz
 
-ander-alvarez
 
-MultiverseComputingCAI
 
-Oliver Wirjadi
 
-oliverwirjadi
 
-MultiverseComputingCAI
 
-Alessandro Genuardi
 
-AlexDGenu
 
-MultiverseComputingCAI
 
 使用工具的 LLM agent 不再只从单篇检索到的段落里取信息。借助 [Model Context Protocol (MCP)](https://modelcontextprotocol.io)，一个 agent 可以调用搜索工具、查看结构化的患者或账户记录、查询数据库、拉取元数据，然后把这一切编织进同一个回答。这让那个关于事实性的老问题比看上去更微妙。为核查 LLM 回答而建立的绝大多数系统，从 [RAGAS faithfulness](https://github.com/explodinggradients/ragas) 到 MiniCheck、AlignScore、SummaC 这类细粒度检查器，问的都是：一旦可用证据被汇总到一处，某条论断是否被这些证据支撑。在它们的常见形态里，这些系统并不告诉我们每条论断是由哪个 MCP 工具输出支撑的，也不告诉我们那是不是回答里所点名的来源。
 

@@ -8,49 +8,28 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 50758df2aaa8
+body_sha: 427218ddb515
 ---
-
 
 # Open LLM Leaderboard: DROP deep dive
 
 					December 1, 2023
 
-Update on GitHub
 
 
-11
 
-- [![](https://huggingface.co/avatars/e77cd178b081bd137642040ae2a88f9e.svg)](https://huggingface.co/Kar420)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1606406298765-noauth.jpeg)](https://huggingface.co/albertvillanova)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6477300f9b76d1d5c89d5e19/nBzPq98VFCK9Knx5DrcwB.jpeg)](https://huggingface.co/Askinkaty)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/651baa9837fecec1fe84034d/bnbi-vyKcbU5OOnqvJpgI.jpeg)](https://huggingface.co/catastropiyush)
-- [![](https://huggingface.co/avatars/910f5f934bc14913a1ba2692de271fef.svg)](https://huggingface.co/shivanandmn)
 
-Clémentine Fourrier
 
-clefourrier
 
-Alex Cabrera
 
-cabreraalex
 
-guest
 
-Stella Biderman
 
-stellaathena
 
-guest
 
-Nathan Habib
 
-SaylorTwift
 
-Thomas Wolf
 
-thomwolf
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/open-llm-leaderboard-drop).
 
@@ -176,22 +155,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fopen-llm-leaderboard-drop) or [log in](https://huggingface.co/login?next=%2Fblog%2Fopen-llm-leaderboard-drop) to comment
-
-
-11
-
-- [![](https://huggingface.co/avatars/e77cd178b081bd137642040ae2a88f9e.svg)](https://huggingface.co/Kar420)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1606406298765-noauth.jpeg)](https://huggingface.co/albertvillanova)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6477300f9b76d1d5c89d5e19/nBzPq98VFCK9Knx5DrcwB.jpeg)](https://huggingface.co/Askinkaty)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/651baa9837fecec1fe84034d/bnbi-vyKcbU5OOnqvJpgI.jpeg)](https://huggingface.co/catastropiyush)
-- [![](https://huggingface.co/avatars/910f5f934bc14913a1ba2692de271fef.svg)](https://huggingface.co/shivanandmn)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/M4dM1oWYcIzmek_6aB3op.png)](https://huggingface.co/nofl)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/628debe0ce274a882affe104/h7FdF0-ZUijI4dS5MM4uB.jpeg)](https://huggingface.co/zhiminy)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64ad7b82ca0e2e433bfe32ce/TFXmRPFFS9yuKeK8oTnTN.jpeg)](https://huggingface.co/arun-AiBharat)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1644340617257-noauth.png)](https://huggingface.co/clefourrier)
-- [![](https://huggingface.co/avatars/054c7402f73bf025fadd35337de110b8.svg)](https://huggingface.co/Kenmotsu09)

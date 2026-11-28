@@ -8,41 +8,25 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 61be3450afbd
+body_sha: c7cb539fe53e
 ---
-
 
 # Open-sourcing Knowledge Distillation Code and Weights of SD-Small and SD-Tiny
 
 					August 1, 2023
 
-Update on GitHub
 
 
-4
 
-- [![](https://huggingface.co/avatars/f1c2033b4abcd65fed7abc1934874d48.svg)](https://huggingface.co/NikolayKozloff)
-- [![](https://huggingface.co/avatars/258ac3470afa9a062c4ad79ed0320cff.svg)](https://huggingface.co/shtest001)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65ae3e7fb189e85e6038b4fb/tnsZ8FC7UsgPgQGrqCAZV.jpeg)](https://huggingface.co/tensorkelechi)
-- [![](https://huggingface.co/avatars/fce78d43798122afa134da87f1075385.svg)](https://huggingface.co/paoche11)
 
-Harish Prabhala
 
-harishp
 
-segmind
 
-Yatharth Gupta
 
-Warlord-K
 
-segmind
 
-Grzegorz
 
-Gothos
 
-guest
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/sd_distillation).
 
@@ -169,16 +153,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsd_distillation) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsd_distillation) to comment
 
 
-4
 
-- [![](https://huggingface.co/avatars/f1c2033b4abcd65fed7abc1934874d48.svg)](https://huggingface.co/NikolayKozloff)
-- [![](https://huggingface.co/avatars/258ac3470afa9a062c4ad79ed0320cff.svg)](https://huggingface.co/shtest001)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65ae3e7fb189e85e6038b4fb/tnsZ8FC7UsgPgQGrqCAZV.jpeg)](https://huggingface.co/tensorkelechi)
-- [![](https://huggingface.co/avatars/fce78d43798122afa134da87f1075385.svg)](https://huggingface.co/paoche11)
+
 
 ## Models mentioned in this article 1

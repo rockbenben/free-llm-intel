@@ -8,37 +8,22 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 31fc01a7b342
+body_sha: 8e999e99651a
 ---
-
 
 # Launching the Artificial Analysis Text to Image Leaderboard & Arena
 
 					June 6, 2024
 
-Update on GitHub
 
 
-16
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638eb5f949de7ae552dd6211/mJkQJGpn9tXV37N2VLFCh.jpeg)](https://huggingface.co/derek-thomas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62b085e6a14cbd643867d561/9gR-XStGUTE-T6vVhKUlA.png)](https://huggingface.co/thliang01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65d9903fdceb54d42011a98d/5jnLeCY9sDtS98JyO9qzX.jpeg)](https://huggingface.co/meng-shao)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1667018139063-noauth.jpeg)](https://huggingface.co/ojasvisingh786)
-- [![](https://huggingface.co/avatars/6bbe81608f9fb82506dec7cbd182d94b.svg)](https://huggingface.co/hppdqdq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647f36a8454af0237bd49574/jshkqBUTY-GZL8As8y6Aq.jpeg)](https://huggingface.co/fdaudens)
 
-Micah Hill-Smith
 
-mhillsmith
 
-ArtificialAnalysis
 
-George Cameron
 
-georgewritescode
 
-ArtificialAnalysis
 
 In two short years since the advent of diffusion-based image generators, AI image models have achieved near-photographic quality. How do these models compare? Are the open-source alternatives on par with their proprietary counterparts?
 
@@ -128,24 +113,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fleaderboard-artificial-analysis2) or [log in](https://huggingface.co/login?next=%2Fblog%2Fleaderboard-artificial-analysis2) to comment
 
 
-16
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638eb5f949de7ae552dd6211/mJkQJGpn9tXV37N2VLFCh.jpeg)](https://huggingface.co/derek-thomas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62b085e6a14cbd643867d561/9gR-XStGUTE-T6vVhKUlA.png)](https://huggingface.co/thliang01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65d9903fdceb54d42011a98d/5jnLeCY9sDtS98JyO9qzX.jpeg)](https://huggingface.co/meng-shao)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1667018139063-noauth.jpeg)](https://huggingface.co/ojasvisingh786)
-- [![](https://huggingface.co/avatars/6bbe81608f9fb82506dec7cbd182d94b.svg)](https://huggingface.co/hppdqdq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647f36a8454af0237bd49574/jshkqBUTY-GZL8As8y6Aq.jpeg)](https://huggingface.co/fdaudens)
-- [![](https://huggingface.co/avatars/2a6062d390533e6693a106aa00d85267.svg)](https://huggingface.co/myagudaev)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/60c8d264224e250fb0178f77/i8fbkBVcoFeJRmkQ9kYAE.png)](https://huggingface.co/Abecid)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b695dcd3df8086e5ed7c89/ZULwnPE8Q5q7bxKJsJ7v5.jpeg)](https://huggingface.co/0xFieldsy)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/673902aa41d69ace67e40cad/Ber311om5T2bziYeN4GJx.jpeg)](https://huggingface.co/aidiffusion99)
-- [![](https://huggingface.co/avatars/d3501c12545757a8adb60c5ad7be18f9.svg)](https://huggingface.co/m-tuyishime)
-- [![](https://huggingface.co/avatars/1cabf575c0c6e99a7e0e1e2c59402346.svg)](https://huggingface.co/Jzelll)
+
 
 ## Spaces mentioned in this article 4

@@ -8,47 +8,28 @@ lang: en
 captured: 2026-11-07
 extractor: readability-v1
 status: ok
-body_sha: bb47a3416526
+body_sha: f87925076760
 ---
 
-[ Back to Articles](https://huggingface.co/blog)
 
 # Egyptian and Nigerian English join the Open ASR Leaderboard
 
 Published November 6, 2026
 
-Update on GitHub
 
 
-5
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)](https://huggingface.co/bezzam)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png)](https://huggingface.co/ausyeternal)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png)](https://huggingface.co/decypher01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg)](https://huggingface.co/luckygall)
-- [![](https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg)](https://huggingface.co/ashleymo2025)
 
-[![Eric Bezzam's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)](https://huggingface.co/bezzam)
 
-Eric Bezzam
 
-bezzam
 
-[![Ashley Mo's avatar](https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg)](https://huggingface.co/ashleymo2025)
 
-Ashley Mo
 
-ashleymo2025
 
-[![Liva AI's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png)](https://huggingface.co/liva-ai) [liva-ai](https://huggingface.co/liva-ai)
 
-[![Aoi Otani's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/hGnt9yx6LyQP5a2MBpXGg.jpeg)](https://huggingface.co/aonorii)
 
-Aoi Otani
 
-aonorii
 
-[![Liva AI's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/64d5eff05900b6d111c9e1ad/upXC_tilVUY3zVD_7UqJu.png)](https://huggingface.co/liva-ai) [liva-ai](https://huggingface.co/liva-ai)
 
 A few months ago, we added private data to the [Open ASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard): 11 splits from Appen and DataOceanAI covering scripted and conversational speech from five accents ([blog](https://huggingface.co/blog/open-asr-leaderboard-private-data)). The community response was great, with many **highlighting the importance of held-out sets for trustworthy evaluations**. Since then, we added one more private split for Indian-accented English with Voice Arena ([blog](https://huggingface.co/blog/open-asr-leaderboard-global-south)).
 
@@ -117,19 +98,10 @@ about 7 hours ago
 
 hay
 
-Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fopen-asr-leaderboard-liva) or [log in](https://huggingface.co/login?next=%2Fblog%2Fopen-asr-leaderboard-liva) to comment
 
 
-5
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)](https://huggingface.co/bezzam)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/g0ECTo_lbbi8O4Wt_e37M.png)](https://huggingface.co/ausyeternal)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/OcluLHMjRNEC15-7X46GD.png)](https://huggingface.co/decypher01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6824dfdc3df9a0dff0a59b6f/WizAqpnpoeY2_C1NUPQDT.jpeg)](https://huggingface.co/luckygall)
-- [![](https://huggingface.co/avatars/d380b48d9b44431a5376b465daf057fb.svg)](https://huggingface.co/ashleymo2025)
+
+
 
 ## Spaces mentioned in this article 2

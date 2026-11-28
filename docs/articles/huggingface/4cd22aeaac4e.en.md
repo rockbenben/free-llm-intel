@@ -8,29 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 729826b321dd
+body_sha: a29b4ca4c8f3
 ---
-
 
 # Sentence Transformers is joining Hugging Face!
 
 					October 22, 2025
 
-Update on GitHub
 
 
-90
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6397f4c8fec7b4ee64c47b0b/nQHZhb4nqkvnH-noBQ4AZ.jpeg)](https://huggingface.co/yasserrmd)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/U9J8jW-hR-XMOdas-MPpT.jpeg)](https://huggingface.co/pkedzia)
-- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
-- [![](https://huggingface.co/avatars/909635453bf62a2a7118a01dd51b811c.svg)](https://huggingface.co/evalstate)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64371b564aacf7bf786fb530/HZl_fPo7YclFEuuLSme3K.png)](https://huggingface.co/Nymbo)
 
-Tom Aarsen
 
-tomaarsen
 
 Today, we are announcing that Sentence Transformers is transitioning from Iryna Gurevych’s [Ubiquitous Knowledge Processing (UKP) Lab](https://www.informatik.tu-darmstadt.de/ukp/ukp_home/index.en.jsp) at the TU Darmstadt to Hugging Face. Hugging Face's [Tom Aarsen](https://huggingface.co/tomaarsen) has already been maintaining the library since late 2023 and will continue to lead the project. At its new home, Sentence Transformers will benefit from Hugging Face's robust infrastructure, including continuous integration and testing, ensuring that it stays up-to-date with the latest advancements in Information Retrieval and Natural Language Processing.
 
@@ -148,23 +137,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsentence-transformers-joins-hf) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsentence-transformers-joins-hf) to comment
-
-
-90
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6397f4c8fec7b4ee64c47b0b/nQHZhb4nqkvnH-noBQ4AZ.jpeg)](https://huggingface.co/yasserrmd)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/U9J8jW-hR-XMOdas-MPpT.jpeg)](https://huggingface.co/pkedzia)
-- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
-- [![](https://huggingface.co/avatars/909635453bf62a2a7118a01dd51b811c.svg)](https://huggingface.co/evalstate)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64371b564aacf7bf786fb530/HZl_fPo7YclFEuuLSme3K.png)](https://huggingface.co/Nymbo)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/677163e2e1fda44f3e180d25/3BfQO6Kkx6S4UDmZ9mPyD.png)](https://huggingface.co/MoSBAIHI)
-- [![](https://huggingface.co/avatars/08fcfc18646e9ec10ddc8d39b5d70e2d.svg)](https://huggingface.co/Michael-17272)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62f64acd8465979f6279803e/8nOYruu-Q1Q-UCh5mj1Eq.png)](https://huggingface.co/MarcGrumpyOlejak)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63107b18e87051f3e3e0f598/R9onir4Y0MZuq1jEWCZ2-.jpeg)](https://huggingface.co/ucyang)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1596282490682-noauth.jpeg)](https://huggingface.co/umangkeshri)
-- [![](https://huggingface.co/avatars/8f2b1cffd58abcfe673de07ad7ecb9e4.svg)](https://huggingface.co/keaganchs)

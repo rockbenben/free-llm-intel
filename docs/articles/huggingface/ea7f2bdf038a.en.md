@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 692c423cf54b
+body_sha: 390b006db94b
 ---
-
 
 # Granite 4.0 Nano: Just how small can you go?
 
@@ -21,26 +20,13 @@ Article
 					October 28, 2025
 
 
-128
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65c1173865086cabf46fe1b9/FAv5DpwQ-t9Qqo8936Tp1.jpeg)](https://huggingface.co/ibibrahim)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg)](https://huggingface.co/merve)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg)](https://huggingface.co/davanstrien)
-- [![](https://huggingface.co/avatars/0cf4c75a0531f337f0b3319faced4f65.svg)](https://huggingface.co/emmagauthier)
 
-Kate Soule
 
-katesoule
 
-ibm-granite
 
-Rameswar Panda
 
-rpand002
 
-ibm-granite
 
 Today we are excited to share [Granite 4.0 Nano](https://huggingface.co/collections/ibm-granite/granite-40-nano-language-models), our smallest models yet, released as part of IBM's Granite 4.0 model family. Designed for the edge and on-device applications, these models demonstrate excellent performance for their size and represent IBM's continued commitment to develop powerful, useful, models that don't require hundreds of billions of parameters to get the job done.
 
@@ -152,24 +138,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-4-nano) or [log in](https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-4-nano) to comment
 
 
-128
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65c1173865086cabf46fe1b9/FAv5DpwQ-t9Qqo8936Tp1.jpeg)](https://huggingface.co/ibibrahim)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg)](https://huggingface.co/merve)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg)](https://huggingface.co/davanstrien)
-- [![](https://huggingface.co/avatars/0cf4c75a0531f337f0b3319faced4f65.svg)](https://huggingface.co/emmagauthier)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6422eab8e2029ade06eeee2c/Gai3BHr2WJ0YuhdumqQ_z.png)](https://huggingface.co/MElHuseyni)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64319ed9034ecbefddd4f46f/PnglqSRCJFT7xM1pP3XnO.png)](https://huggingface.co/gheorgheiuga)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/639582473d9ac9664fd436f5/yWH354yTLKVchFD2N498z.jpeg)](https://huggingface.co/ashish23)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63b7e09359060ca9f4c4de35/0PH1dWNfcXTQ9H0QAeD91.jpeg)](https://huggingface.co/Avihu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/5f106ce5348d4c7346cd19ab/Uu08yZZlFuj3dtG4wld3n.jpeg)](https://huggingface.co/abdullah)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/630b4269e67c604e9b7a429c/qsmA2ObMFfLwPIAyveo9F.jpeg)](https://huggingface.co/sroecker)
+
 
 ## Collections mentioned in this article 2

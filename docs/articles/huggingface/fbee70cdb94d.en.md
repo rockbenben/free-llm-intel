@@ -8,53 +8,30 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9b51d348bb2d
+body_sha: c1d1a3cf874a
 ---
-
 
 # Rethinking LLM Evaluation with 3C3H: AraGen Benchmark and Leaderboard
 
 					December 4, 2024
 
-Update on GitHub
 
 
-39
 
-- [![](https://huggingface.co/avatars/dd41593a55d1bec4f1a3a54fca35e646.svg)](https://huggingface.co/SamujjwalIIAI)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/628e39f4b1596566033b8d7b/-Y807up1cgMmAQsczdOPn.jpeg)](https://huggingface.co/cchristophe)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63d7acf73130cadcaf827e84/5dbueSbBbcN1NvAYznMq0.jpeg)](https://huggingface.co/karimouda)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638eb5f949de7ae552dd6211/mJkQJGpn9tXV37N2VLFCh.jpeg)](https://huggingface.co/derek-thomas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jJMt0ulikjBDFPtLFUdUq.png)](https://huggingface.co/chYassine)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1628885133347-6116d0584ef9fdfbf45dc4d9.jpeg)](https://huggingface.co/MohamedRashad)
 
-Ali El Filali
 
-alielfilali01
 
-inceptionai
 
-Neha Sengupta
 
-neha1710
 
-inceptionai
 
-Abouelseoud
 
-Arwa88
 
-inceptionai
 
-Preslav Nakov
 
-preslavnakov
 
-MBZUAI
 
-Clémentine Fourrier
 
-clefourrier
 
 In the rapidly evolving landscape of large language models (LLMs), comprehensive and robust evaluation methodologies remain a critical challenge, particularly for low-resource languages. In this blog, we introduce AraGen, a generative tasks benchmark and leaderboard for Arabic LLMs, based on 3C3H, a new evaluation measure for NLG which we hope will inspire work for other languages as well.
 
@@ -423,24 +400,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fleaderboard-3c3h-aragen) or [log in](https://huggingface.co/login?next=%2Fblog%2Fleaderboard-3c3h-aragen) to comment
 
 
-39
 
-- [![](https://huggingface.co/avatars/dd41593a55d1bec4f1a3a54fca35e646.svg)](https://huggingface.co/SamujjwalIIAI)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/628e39f4b1596566033b8d7b/-Y807up1cgMmAQsczdOPn.jpeg)](https://huggingface.co/cchristophe)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63d7acf73130cadcaf827e84/5dbueSbBbcN1NvAYznMq0.jpeg)](https://huggingface.co/karimouda)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638eb5f949de7ae552dd6211/mJkQJGpn9tXV37N2VLFCh.jpeg)](https://huggingface.co/derek-thomas)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jJMt0ulikjBDFPtLFUdUq.png)](https://huggingface.co/chYassine)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1628885133347-6116d0584ef9fdfbf45dc4d9.jpeg)](https://huggingface.co/MohamedRashad)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/659028cbbec7ad2647547c26/_zwBYlcwPg6gqjvF9N6k3.jpeg)](https://huggingface.co/Amr-khaled)
-- [![](https://huggingface.co/avatars/0c9722d674704a88394af2dd65ef522f.svg)](https://huggingface.co/shawkyebrahim2514)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6400916cf4ff62c2616ddc2f/K96MViOF0Vg4hzPq2XJ25.png)](https://huggingface.co/Manel)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://huggingface.co/avatars/7b5d41178833ebd7aeb2b3232d56f11c.svg)](https://huggingface.co/younos)
+
 
 ## Spaces mentioned in this article 2

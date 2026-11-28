@@ -8,25 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c36d741f6682
+body_sha: e14bd7d3ff4d
 ---
-
 
 # Building an AI WebTV
 
 					July 17, 2023
 
-Update on GitHub
 
 
-2
 
-- [![](https://huggingface.co/avatars/0d04d6b1d64b08eadbbd8ed7d7e16505.svg)](https://huggingface.co/pxlpshr)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/XOz5jE5ru4Ifusaihcabl.jpeg)](https://huggingface.co/JMArts)
 
-ARCHIVED ACCOUNT
 
-jbilcke-hf
 
 The AI WebTV is an experimental demo to showcase the latest advancements in automatic video and music synthesis.
 
@@ -435,15 +428,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fai-webtv) or [log in](https://huggingface.co/login?next=%2Fblog%2Fai-webtv) to comment
 
 
-2
 
-- [![](https://huggingface.co/avatars/0d04d6b1d64b08eadbbd8ed7d7e16505.svg)](https://huggingface.co/pxlpshr)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/XOz5jE5ru4Ifusaihcabl.jpeg)](https://huggingface.co/JMArts)
+
 
 ## Models mentioned in this article 4
 

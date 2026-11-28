@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: 40538b2a7fbf
+body_sha: 77af3635e2d6
 ---
-
 
 # The Agent Said It Was Done. The Database Disagreed.
 
@@ -21,20 +20,10 @@ Article
 					October 3, 2026
 
 
-64
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png)](https://huggingface.co/tuhink)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a27ffbf0ea26227e43a0d29/Hk8XoWHT5braavBTjifaw.jpeg)](https://huggingface.co/Hectozar)
-- [![](https://huggingface.co/avatars/821997acf79b7113de576661b1111109.svg)](https://huggingface.co/youngko)
-- [![](https://huggingface.co/avatars/1462091a632d06d8b3bdf28a8007f621.svg)](https://huggingface.co/IronTech-Studios)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/YtxawKNmLmMd5dkoGXX6j.png)](https://huggingface.co/bedesign62)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/0K6rX9DTE_L7C_ktLloT7.jpeg)](https://huggingface.co/geminiomnidev)
 
-Tuhin Kundu
 
-tuhink
 
-microsoft
 
 *Microsoft ThinkingBox grades AI agents on the records they leave behind, not the sentences they generate, and then asks whether they can do it twenty times in a row. It is now available through Hugging Face.*
 
@@ -400,25 +389,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fmicrosoft%2Fthinkingbox) or [log in](https://huggingface.co/login?next=%2Fblog%2Fmicrosoft%2Fthinkingbox) to comment
 
 
-64
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png)](https://huggingface.co/tuhink)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a27ffbf0ea26227e43a0d29/Hk8XoWHT5braavBTjifaw.jpeg)](https://huggingface.co/Hectozar)
-- [![](https://huggingface.co/avatars/821997acf79b7113de576661b1111109.svg)](https://huggingface.co/youngko)
-- [![](https://huggingface.co/avatars/1462091a632d06d8b3bdf28a8007f621.svg)](https://huggingface.co/IronTech-Studios)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/YtxawKNmLmMd5dkoGXX6j.png)](https://huggingface.co/bedesign62)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/0K6rX9DTE_L7C_ktLloT7.jpeg)](https://huggingface.co/geminiomnidev)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/647cfece36e109abce3f0090/jTLaPk6En8p608on8sfZ3.png)](https://huggingface.co/jmarceno)
-- [![](https://huggingface.co/avatars/2b4cb7be234f99a0df5cea995cf46837.svg)](https://huggingface.co/garyamorris)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vIHJ-RvmYKUbiydPc5GFl.png)](https://huggingface.co/whitesal)
-- [![](https://huggingface.co/avatars/39abcb2f6dba6ec01822dce0b5a7c2ab.svg)](https://huggingface.co/sisoma2)
-- [![](https://huggingface.co/avatars/7a38edf6010c8b01c2c2e1e5c21e4b67.svg)](https://huggingface.co/Hivartei)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/reKDqB0OArc5x-li5obfp.png)](https://huggingface.co/Wizzas)
+
 
 ## Datasets mentioned in this article 1
 

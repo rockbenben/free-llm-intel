@@ -8,35 +8,21 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 46e533fc0400
+body_sha: febd529d7e2b
 ---
-
 
 # A Gentle Introduction to 8-bit Matrix Multiplication for transformers at scale using Hugging Face Transformers, Accelerate and bitsandbytes
 
 					August 17, 2022
 
-Update on GitHub
 
 
-140
 
-- [![](https://huggingface.co/avatars/ee3327ba714e824e0e04d5cd6f950770.svg)](https://huggingface.co/TengWang)
-- [![](https://huggingface.co/avatars/f94b783c8f49019ebb0a69f6e3053b77.svg)](https://huggingface.co/jeongah)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png)](https://huggingface.co/ybelkada)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ce875d199b36f7552d4f07/bpUrvhXDagzRqZ3vxTcSF.jpeg)](https://huggingface.co/marcsun13)
-- [![](https://huggingface.co/avatars/a454cde25975abd09acb20067b447720.svg)](https://huggingface.co/fordacre)
-- [![](https://huggingface.co/avatars/269b11f3b48a48e8a5a34a7d85d53bce.svg)](https://huggingface.co/rsarkar1)
 
-Younes B
 
-ybelkada
 
-Tim Dettmers
 
-timdettmers
 
-guest
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/hf-bitsandbytes-integration).
 
@@ -487,23 +473,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fhf-bitsandbytes-integration) or [log in](https://huggingface.co/login?next=%2Fblog%2Fhf-bitsandbytes-integration) to comment
-
-
-140
-
-- [![](https://huggingface.co/avatars/ee3327ba714e824e0e04d5cd6f950770.svg)](https://huggingface.co/TengWang)
-- [![](https://huggingface.co/avatars/f94b783c8f49019ebb0a69f6e3053b77.svg)](https://huggingface.co/jeongah)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1648631057413-noauth.png)](https://huggingface.co/ybelkada)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ce875d199b36f7552d4f07/bpUrvhXDagzRqZ3vxTcSF.jpeg)](https://huggingface.co/marcsun13)
-- [![](https://huggingface.co/avatars/a454cde25975abd09acb20067b447720.svg)](https://huggingface.co/fordacre)
-- [![](https://huggingface.co/avatars/269b11f3b48a48e8a5a34a7d85d53bce.svg)](https://huggingface.co/rsarkar1)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63411db18d8089ebaeef5bd3/FWZJOr1Y_ykEvYh5jtZiM.png)](https://huggingface.co/xMaulana)
-- [![](https://huggingface.co/avatars/766d0a481868c5fa27afa995c736ba0a.svg)](https://huggingface.co/iam-ajaymeena)
-- [![](https://huggingface.co/avatars/307d69eb93691eff608a32f196afa3bf.svg)](https://huggingface.co/ZeliangLee)
-- [![](https://huggingface.co/avatars/a89495511e569e4243997087daa7f007.svg)](https://huggingface.co/strategen01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1678125746875-noauth.png)](https://huggingface.co/tmoroder)
-- [![](https://huggingface.co/avatars/ab5961e37a9bc13017afb0d7b2e3c962.svg)](https://huggingface.co/shinoun)

@@ -8,39 +8,23 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ff3bd4f93a36
+body_sha: 60de3fe4d59f
 ---
-
 
 # Introducing Multimodal TextImage Augmentation for Document Images
 
 					August 6, 2024
 
-Update on GitHub
 
 
-33
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e3f98a9db5da2dc1efab76/7DEh2SkVDHt5VMGmdLLsP.jpeg)](https://huggingface.co/alkibijad)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ee535a190ddd6214f30dc2/f4pNRFs9XVLToponWndWJ.jpeg)](https://huggingface.co/de-Rodrigo)
-- [![](https://huggingface.co/avatars/af4083af77a109281b129215012e5429.svg)](https://huggingface.co/babaswananda)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/OqiF10RKo-bytyIkmX8HJ.png)](https://huggingface.co/privategeek24)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638eb5f949de7ae552dd6211/mJkQJGpn9tXV37N2VLFCh.jpeg)](https://huggingface.co/derek-thomas)
-- [![](https://huggingface.co/avatars/3c8e246a1ee0a8bbad66c4ffb46cfc7e.svg)](https://huggingface.co/drdn)
 
-Dana Aubakirova
 
-danaaubakirova
 
-Pablo Montalvo
 
-Molbap
 
-Vladimir Iglovikov
 
-Ternaus
 
-guest
 
 In this blog post, we provide a tutorial on how to use a new data augmentation technique for document images, developed in collaboration with Albumentations AI.
 
@@ -306,24 +290,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdoc_aug_hf_alb) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdoc_aug_hf_alb) to comment
 
 
-33
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e3f98a9db5da2dc1efab76/7DEh2SkVDHt5VMGmdLLsP.jpeg)](https://huggingface.co/alkibijad)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ee535a190ddd6214f30dc2/f4pNRFs9XVLToponWndWJ.jpeg)](https://huggingface.co/de-Rodrigo)
-- [![](https://huggingface.co/avatars/af4083af77a109281b129215012e5429.svg)](https://huggingface.co/babaswananda)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/OqiF10RKo-bytyIkmX8HJ.png)](https://huggingface.co/privategeek24)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/638eb5f949de7ae552dd6211/mJkQJGpn9tXV37N2VLFCh.jpeg)](https://huggingface.co/derek-thomas)
-- [![](https://huggingface.co/avatars/3c8e246a1ee0a8bbad66c4ffb46cfc7e.svg)](https://huggingface.co/drdn)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Y5Lr9MsfuTrUNOig29z62.jpeg)](https://huggingface.co/BeefOven)
-- [![](https://huggingface.co/avatars/fe3107c60414d2241fa21a451c78f71f.svg)](https://huggingface.co/nightwatch)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/BNZWfvArvA_5BEi8Ta_c2.png)](https://huggingface.co/psyche414)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1670594087059-630412d57373aacccd88af95.jpeg)](https://huggingface.co/alfredplpl)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/660c2d134ba2fcc848b03e21/oIxOALwKoNaNw3nh0bmrS.png)](https://huggingface.co/qubvel-hf)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg)](https://huggingface.co/Molbap)
+
 
 ## Datasets mentioned in this article 2

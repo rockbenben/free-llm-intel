@@ -8,22 +8,17 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1fcdac6856bb
+body_sha: b1492cb38da0
 ---
-
 
 # Fetch Consolidates AI Tools and Saves 30% Development Time with Hugging Face on AWS
 
 					February 23, 2023
 
-Update on GitHub
 
 
--
 
-Violette
 
-Violette
 
 *If you need support in using Hugging Face and AWS, please get in touch with us [here](https://huggingface.co/contact/sales?from=support) - our team will contact you to discuss your requirements!*
 
@@ -103,9 +98,7 @@ clicking here
 
 .
 
-Tap or paste here to upload images
 
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ffetch-eap-case-study) or [log in](https://huggingface.co/login?next=%2Fblog%2Ffetch-eap-case-study) to comment
 
 
 -

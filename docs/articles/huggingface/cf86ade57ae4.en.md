@@ -8,45 +8,26 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 930a086afe35
+body_sha: ce36e62ce2d3
 ---
-
 
 # Illustrating Reinforcement Learning from Human Feedback (RLHF)
 
 					December 9, 2022
 
-Update on GitHub
 
 
-431
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/yjB1iV-VzifT2u8ekuo8p.jpeg)](https://huggingface.co/diligentotter)
-- [![](https://huggingface.co/avatars/d802e4a708144d34a7114ab8a8f99e96.svg)](https://huggingface.co/dutitello)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65f42e30c9940817caaaa8e6/MPIGw-5MYRqbBy7qJWtUg.png)](https://huggingface.co/Esmail-AGumaan)
-- [![](https://huggingface.co/avatars/73ff345965db3793b9367b69fc8d5906.svg)](https://huggingface.co/wentaohu)
-- [![](https://huggingface.co/avatars/e900eeddc2891c728c288c0ae43194ba.svg)](https://huggingface.co/panfc)
-- [![](https://huggingface.co/avatars/b7a372e9aebec1f696773f9fc8d5ce72.svg)](https://huggingface.co/john000z)
 
-Nathan Lambert
 
-natolambert
 
-Louis Castricato
 
-LouisCastricato
 
-guest
 
-Leandro von Werra
 
-lvwerra
 
-Alex Havrilla
 
-Dahoas
 
-guest
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/rlhf).
 
@@ -300,24 +281,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Frlhf) or [log in](https://huggingface.co/login?next=%2Fblog%2Frlhf) to comment
 
 
-431
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/yjB1iV-VzifT2u8ekuo8p.jpeg)](https://huggingface.co/diligentotter)
-- [![](https://huggingface.co/avatars/d802e4a708144d34a7114ab8a8f99e96.svg)](https://huggingface.co/dutitello)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65f42e30c9940817caaaa8e6/MPIGw-5MYRqbBy7qJWtUg.png)](https://huggingface.co/Esmail-AGumaan)
-- [![](https://huggingface.co/avatars/73ff345965db3793b9367b69fc8d5906.svg)](https://huggingface.co/wentaohu)
-- [![](https://huggingface.co/avatars/e900eeddc2891c728c288c0ae43194ba.svg)](https://huggingface.co/panfc)
-- [![](https://huggingface.co/avatars/b7a372e9aebec1f696773f9fc8d5ce72.svg)](https://huggingface.co/john000z)
-- [![](https://huggingface.co/avatars/66f1fa4280b26e7c7dd44a719ead4a14.svg)](https://huggingface.co/Devenvaruv)
-- [![](https://huggingface.co/avatars/f4d8b92c8c70608b76299a28fedeb83d.svg)](https://huggingface.co/varuy322)
-- [![](https://huggingface.co/avatars/6fe0f41d011fb2ae8912bd77e7c75002.svg)](https://huggingface.co/addi-green)
-- [![](https://huggingface.co/avatars/b11da4902bc5e328a2c95b9a70aa04db.svg)](https://huggingface.co/s-addi)
-- [![](https://huggingface.co/avatars/bc45553e1daf4faf9023e6b75b5fa631.svg)](https://huggingface.co/three-Body)
-- [![](https://huggingface.co/avatars/f6116d89d02df33d8d90586fc2c563be.svg)](https://huggingface.co/hammers)
+
 
 ## Datasets mentioned in this article 1

@@ -8,65 +8,36 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7230a35c03f4
+body_sha: 95e366339f60
 ---
-
 
 # The NLP Course is becoming the LLM Course!
 
 					April 3, 2025
 
-Update on GitHub
 
 
-109
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/669ce09bdc9c86e6ab3bc74a/6IB_-sFRXq6KgaSCIYkPc.png)](https://huggingface.co/ranobrega)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6270d2ddbcef985363d774fa/HOKAxx_FKVRF-87WpGQbF.png)](https://huggingface.co/real-jiakai)
-- [![](https://huggingface.co/avatars/e55253efd9dab60819257255e2dd959d.svg)](https://huggingface.co/krumeto)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/663ce8bfc6827e9ba288eed4/0xrGyvLOq8DtP4TQsesnS.jpeg)](https://huggingface.co/arthurbresnu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg)](https://huggingface.co/sergiopaniego)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kVGapWPRrfM8KMaANu3VW.png)](https://huggingface.co/omarAhmed03)
 
-ben burtenshaw
 
-burtenshaw
 
-Vaibhav Srivastav
 
-reach-vb
 
-Lewis Tunstall
 
-lewtun
 
-Florent Daudens
 
-fdaudens
 
-Pedro Cuenca
 
-pcuenq
 
-Tom Aarsen
 
-tomaarsen
 
-Eliott Coyac
 
-coyotte508
 
-Mishig ᠮᠢᠰᠾᠢᠭ
 
-mishig
 
-Sergio Paniego
 
-sergiopaniego
 
-Julien Chaumond
 
-julien-c
 
 [![image/gif](https://cdn-uploads.huggingface.co/production/uploads/62d648291fa3e4e7ae3fa6e8/I6Pq5TftMqjLOqZzKNplg.gif)](https://cdn-uploads.huggingface.co/production/uploads/62d648291fa3e4e7ae3fa6e8/I6Pq5TftMqjLOqZzKNplg.gif)
 
@@ -177,23 +148,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fllm-course) or [log in](https://huggingface.co/login?next=%2Fblog%2Fllm-course) to comment
-
-
-109
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/669ce09bdc9c86e6ab3bc74a/6IB_-sFRXq6KgaSCIYkPc.png)](https://huggingface.co/ranobrega)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6270d2ddbcef985363d774fa/HOKAxx_FKVRF-87WpGQbF.png)](https://huggingface.co/real-jiakai)
-- [![](https://huggingface.co/avatars/e55253efd9dab60819257255e2dd959d.svg)](https://huggingface.co/krumeto)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/663ce8bfc6827e9ba288eed4/0xrGyvLOq8DtP4TQsesnS.jpeg)](https://huggingface.co/arthurbresnu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg)](https://huggingface.co/sergiopaniego)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kVGapWPRrfM8KMaANu3VW.png)](https://huggingface.co/omarAhmed03)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg)](https://huggingface.co/pcuenq)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6759f3ce55a27f3bc40ad9d1/bYY2kuTUPmOBsWT8N6RvU.jpeg)](https://huggingface.co/arnaudstdr)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/637bbf3f1f3d18b9ce7d5064/unHbqxaRm4U4gclpQ38CF.jpeg)](https://huggingface.co/mihirdeo16)
-- [![](https://huggingface.co/avatars/9282ea64024e99f9207a49b18f7465fd.svg)](https://huggingface.co/Samyueru)
-- [![](https://huggingface.co/avatars/05c4cea1aa96667c5b4fa989ae04a546.svg)](https://huggingface.co/mehmet582025)

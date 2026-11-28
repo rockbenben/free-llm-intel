@@ -8,52 +8,30 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9711a2b87520
+body_sha: cd99cb192de1
 ---
 
 # Tricks from OpenAI gpt-oss YOU 🫵 can use with transformers
 
 					September 11, 2025
 
-Update on GitHub
 
 
-191
 
-- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
-- [![](https://huggingface.co/avatars/42a0e5964fdf0e782e7a9f35d090e61d.svg)](https://huggingface.co/algovenus)
-- [![](https://huggingface.co/avatars/4e55a11d467c95ff5d5fd1437c4afff7.svg)](https://huggingface.co/nryn21)
-- [![](https://huggingface.co/avatars/027ef71d9e5f2fddf7a7b499896d1599.svg)](https://huggingface.co/Mint1456)
-- [![](https://huggingface.co/avatars/399496202a6ce4ffd269b19b47ef8083.svg)](https://huggingface.co/gysgysgys)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
 
-Aritra Roy Gosthipaty
 
-ariG23498
 
-Sergio Paniego
 
-sergiopaniego
 
-Vaibhav Srivastav
 
-reach-vb
 
-Pedro Cuenca
 
-pcuenq
 
-Arthur Zucker
 
-ArthurZ
 
-Nathan Habib
 
-SaylorTwift
 
-Cyril Vallez
 
-cyrilvallez
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/faster-transformers).
 
@@ -565,25 +543,10 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ffaster-transformers) or [log in](https://huggingface.co/login?next=%2Fblog%2Ffaster-transformers) to comment
 
 
-191
 
-- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
-- [![](https://huggingface.co/avatars/42a0e5964fdf0e782e7a9f35d090e61d.svg)](https://huggingface.co/algovenus)
-- [![](https://huggingface.co/avatars/4e55a11d467c95ff5d5fd1437c4afff7.svg)](https://huggingface.co/nryn21)
-- [![](https://huggingface.co/avatars/027ef71d9e5f2fddf7a7b499896d1599.svg)](https://huggingface.co/Mint1456)
-- [![](https://huggingface.co/avatars/399496202a6ce4ffd269b19b47ef8083.svg)](https://huggingface.co/gysgysgys)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1674683851722-62441cb7456803e95009a08f.jpeg)](https://huggingface.co/ArthurZ)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg)](https://huggingface.co/sergiopaniego)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65baa31607366d903890bcf4/6M9WaawnvJ-2h5wSUic1I.jpeg)](https://huggingface.co/badaoui)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg)](https://huggingface.co/SaylorTwift)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655385361868-61b85ce86eb1f2c5e6233736.jpeg)](https://huggingface.co/reach-vb)
+
 
 ## Models mentioned in this article 3
 

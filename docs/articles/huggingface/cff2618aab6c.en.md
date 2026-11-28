@@ -8,28 +8,20 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: add9f711b131
+body_sha: d0806a39c41c
 ---
-
 
 # My Journey to a serverless transformers pipeline on 
 Google Cloud
 
 					March 18, 2021
 
-Update on GitHub
 
 
-2
 
-- [![](https://huggingface.co/avatars/a7d8c7f80c20644e5b82d65187caeee7.svg)](https://huggingface.co/beneit)
-- [![](https://huggingface.co/avatars/4fcc35d6d58f1c9fec095aa6256cfe56.svg)](https://huggingface.co/varadasantosh)
 
-Dominici
 
-Maxence
 
-guest
 
 > A guest blog post by community member Maxence Dominici
 
@@ -221,13 +213,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fhow-to-deploy-a-pipeline-to-google-clouds) or [log in](https://huggingface.co/login?next=%2Fblog%2Fhow-to-deploy-a-pipeline-to-google-clouds) to comment
-
-
-2
-
-- [![](https://huggingface.co/avatars/a7d8c7f80c20644e5b82d65187caeee7.svg)](https://huggingface.co/beneit)
-- [![](https://huggingface.co/avatars/4fcc35d6d58f1c9fec095aa6256cfe56.svg)](https://huggingface.co/varadasantosh)

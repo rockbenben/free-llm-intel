@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ebe03db80b96
+body_sha: 3cf3ceed332a
 ---
-
 
 # SAIR: Accelerating Pharma R&D with AI-Powered Structural Intelligence
 
@@ -21,38 +20,19 @@ Article
 					September 2, 2025
 
 
-36
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vno1Zeup3WGCGxUX9e3cT.png)](https://huggingface.co/negar-iravani)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655882584229-noauth.jpeg)](https://huggingface.co/AnarSnowball)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1583857746553-5df7e9e5da6d0311fd3d53f9.jpeg)](https://huggingface.co/thomwolf)
-- [![](https://huggingface.co/avatars/06ae1c6550f4407a057eb1bcfb6fd2cb.svg)](https://huggingface.co/kryczko)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68a77a29646ad764c5cf2629/y_sSPjSh5BWX3Rx4lI85l.png)](https://huggingface.co/rudiplesch-sbx)
 
-Arman Zaribafiyan
 
-arman-zaribafiyan
 
-SandboxAQ
 
-Georgia Channing
 
-cgeorgiaw
 
-SandboxAQ
 
-Rudi Plesch
 
-rudiplesch-sbx
 
-SandboxAQ
 
-Zane Beckwith
 
-zanebeckwithsaq
 
-SandboxAQ
 
 This summer, SandboxAQ released the **Structurally Augmented IC50 Repository (**[**SAIR**](https://huggingface.co/datasets/SandboxAQ/SAIR)**)**, **the largest dataset of co-folded 3D protein-ligand structures paired with experimentally measured IC₅₀ labels, directly linking molecular structure to drug potency** and overcoming a longstanding scarcity in training data. This dataset is now available on Hugging Face, and for the first time, researchers have open access to more than **5 million** AI‑generated, high‑accuracy protein-ligand 3D structures, each paired with validated empirical binding potency data.
 
@@ -200,24 +180,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2FSandboxAQ%2Fsair-data-accelerating-drug-discovery-with-ai) or [log in](https://huggingface.co/login?next=%2Fblog%2FSandboxAQ%2Fsair-data-accelerating-drug-discovery-with-ai) to comment
 
 
-36
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vno1Zeup3WGCGxUX9e3cT.png)](https://huggingface.co/negar-iravani)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1655882584229-noauth.jpeg)](https://huggingface.co/AnarSnowball)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1583857746553-5df7e9e5da6d0311fd3d53f9.jpeg)](https://huggingface.co/thomwolf)
-- [![](https://huggingface.co/avatars/06ae1c6550f4407a057eb1bcfb6fd2cb.svg)](https://huggingface.co/kryczko)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68a77a29646ad764c5cf2629/y_sSPjSh5BWX3Rx4lI85l.png)](https://huggingface.co/rudiplesch-sbx)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/6rK4zLboxtGU8LF-Ny0td.png)](https://huggingface.co/arman-zaribafiyan)
-- [![](https://huggingface.co/avatars/4469db9022f663a0f0d776335d878bda.svg)](https://huggingface.co/bruecknera)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/aEbBWDD2z-DUHivQ2zRLs.png)](https://huggingface.co/zanebeckwithsaq)
-- [![](https://huggingface.co/avatars/d1a387921648fdb469b4779e46699cfb.svg)](https://huggingface.co/jk2297)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/gkVJdLM6poTWQpvyCtBeY.png)](https://huggingface.co/sleichen)
-- [![](https://huggingface.co/avatars/82648fe4cd6336e5f5c33fe759098163.svg)](https://huggingface.co/yafyaf)
+
 
 ## Datasets mentioned in this article 1

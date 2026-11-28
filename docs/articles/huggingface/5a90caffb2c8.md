@@ -9,7 +9,7 @@ captured: 2026-11-07
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 2420d5661997
+body_sha: 784eecd5074b
 ---
 
 # ToyBlocks：用于机器人学习与评估的受控世界
@@ -19,21 +19,11 @@ Enterprise  Article
 发布于 2026 年 11 月 6 日
 
 
-5
 
-- [![](https://huggingface.co/avatars/ab7fc92bae0354165d3f9890ac7f5b0b.svg)](https://huggingface.co/wookute221)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/XcLxZc6CL6VO7tOlh0T0g.jpeg)](https://huggingface.co/SmokeyPete)
-- [![](https://huggingface.co/avatars/35af30f8a3713e3eda81ac4b9be515f5.svg)](https://huggingface.co/arahul2k2)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/DPzSLPCg9RvVBvkD3Mcys.png)](https://huggingface.co/rapidum)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67953e11098348e24ae7f316/ZNT-1c2NOyhugYrzK5Vyf.png)](https://huggingface.co/sebast242)
 
-[![Kyle Wiggers 的头像](https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg)](https://huggingface.co/Ai2Comms)
 
-Kyle Wiggers
 
-Ai2Comms
 
-[![Ai2 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)](https://huggingface.co/allenai) [allenai](https://huggingface.co/allenai)
 
 💻 [代码](https://github.com/allenai/ToyBlocks) | 📊 [数据](https://huggingface.co/datasets/allenai/toyblocks-data) | 🤖 [模型](https://huggingface.co/collections/allenai/toyblocks) | 📖 [文档](https://allenai.github.io/ToyBlocks/docs/user_guide/index.html)
 

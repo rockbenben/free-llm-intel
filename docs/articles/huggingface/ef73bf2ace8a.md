@@ -9,7 +9,7 @@ captured: 2026-10-24
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 7ca53e062bd5
+body_sha: 7436af97f1bb
 ---
 
 # FairStress：更深入地评估 LLM 决策中的公平性
@@ -19,19 +19,11 @@ body_sha: 7ca53e062bd5
 发布于 2026 年 10 月 20 日
 
 
-3
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
 
-[![Kyle Wiggers 的头像](https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg)](https://huggingface.co/Ai2Comms)
 
-Kyle Wiggers
 
-Ai2Comms
 
-[![Ai2 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)](https://huggingface.co/allenai) [allenai](https://huggingface.co/allenai)
 
 📄 [技术报告](https://allenai.org/papers/fairstress) | 🤗 [数据](https://huggingface.co/datasets/allenai/fairstress) | 💻 [代码](https://github.com/pardissz/fairstress)
 

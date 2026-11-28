@@ -8,20 +8,16 @@ lang: en
 captured: 2026-11-26
 extractor: readability-v1
 status: ok
-body_sha: 38b7ded6a8d6
+body_sha: 528b6d0cd805
 ---
-
 
 # Hill-climbing Inkling 2 Mini inference on one RTX PRO 6000
 
 Published November 25, 2026
 
 
-[![Niels Rogge's avatar](https://cdn-avatars.huggingface.co/v1/production/uploads/1608042047613-5f1158120c833276f61f1a84.jpeg)](https://huggingface.co/nielsr)
 
-Niels Rogge
 
-nielsr
 
 [Inkling 2 Mini](https://huggingface.co/blog/inkling2mini) came out last week and sets a new state of the art for local AI and smaller open-source models. With ~26B total parameters (3B active per token), multimodal inputs, and a 1M-token context window, it leads its weight class on the [Artificial Analysis Intelligence Index v5](https://artificialanalysis.ai/models/open-source) and across 32 of 48 benchmarks against models like Gemma 4 31B and Qwen3.8-27B, making it a strong open option for coding, tool use, and reasoning on modest hardware. We wrote an extensive blog post on how you can use it within the Hugging Face ecosystem [here](https://huggingface.co/blog/inkling2mini).
 

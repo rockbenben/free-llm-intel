@@ -8,29 +8,18 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3354a6511787
+body_sha: 0f00eda14c40
 ---
-
 
 # Generating Human-level Text with Contrastive Search in Transformers 🤗
 
 					November 8, 2022
 
-Update on GitHub
 
 
-18
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64fdd75999123d7698d04d69/EgrM9qMAqfC_SZFgiLoZ1.jpeg)](https://huggingface.co/kimleang123)
-- [![](https://huggingface.co/avatars/284bd5458f559e1036a7c68cd5f1c8e2.svg)](https://huggingface.co/hvgg1ngface)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64c3e7625e5bc55a92de44c7/oM_U7qblVwnjk29htvQen.jpeg)](https://huggingface.co/pedropauletti)
-- [![](https://huggingface.co/avatars/15262cde59a2df265215575b8c97a867.svg)](https://huggingface.co/singhmnprt01)
-- [![](https://huggingface.co/avatars/cbef8f9192d219949f6201ebd38fa7af.svg)](https://huggingface.co/showgun01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6032802e1f993496bc14d9e3/w6hr-DEQot4VVkoyRIBiy.png)](https://huggingface.co/osanseviero)
 
-Tian Lan
 
-GMFTBY
 
 This article is also available in Chinese [简体中文](https://huggingface.co/blog/zh/introducing-csearch).
 
@@ -611,23 +600,3 @@ Upload images, audio, and videos by dragging in the text input, pasting, or
 clicking here
 
 .
-
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fintroducing-csearch) or [log in](https://huggingface.co/login?next=%2Fblog%2Fintroducing-csearch) to comment
-
-
-18
-
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64fdd75999123d7698d04d69/EgrM9qMAqfC_SZFgiLoZ1.jpeg)](https://huggingface.co/kimleang123)
-- [![](https://huggingface.co/avatars/284bd5458f559e1036a7c68cd5f1c8e2.svg)](https://huggingface.co/hvgg1ngface)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64c3e7625e5bc55a92de44c7/oM_U7qblVwnjk29htvQen.jpeg)](https://huggingface.co/pedropauletti)
-- [![](https://huggingface.co/avatars/15262cde59a2df265215575b8c97a867.svg)](https://huggingface.co/singhmnprt01)
-- [![](https://huggingface.co/avatars/cbef8f9192d219949f6201ebd38fa7af.svg)](https://huggingface.co/showgun01)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6032802e1f993496bc14d9e3/w6hr-DEQot4VVkoyRIBiy.png)](https://huggingface.co/osanseviero)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/618b40a1cabd3c4c8e448203/Ccgv0dwgHEIb4vwYwHgQz.jpeg)](https://huggingface.co/sadhaklal)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1652289278612-60638ffcc1b431dab68bf985.jpeg)](https://huggingface.co/Roh)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62928e6556fedc76e3971e19/Ye0xR859GTCs3ZTZSvlM3.jpeg)](https://huggingface.co/sorokin)
-- [![](https://huggingface.co/avatars/8e40cbf1a600b01e9b1ebc2f1704cb19.svg)](https://huggingface.co/khanosama783)
-- [![](https://huggingface.co/avatars/b45ff440e8942f666c9222c10eebd839.svg)](https://huggingface.co/zhen21)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65dba1f1b62d242ed88b2d2a/90xx14mCZ-MIHiF4SVPFO.jpeg)](https://huggingface.co/Jibbscript)

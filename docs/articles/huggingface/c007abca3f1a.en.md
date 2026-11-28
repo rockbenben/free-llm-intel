@@ -8,49 +8,28 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: aaa3d7dba16c
+body_sha: 85b326f7086a
 ---
-
 
 # HuggingFace, IISc partner to supercharge model building on India's diverse languages
 
 					February 27, 2025
 
-Update on GitHub
 
 
-31
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61b839889f7cfeae618e72c9/5kFRCChdqwv7MGM8T_y5v.jpeg)](https://huggingface.co/rbiswasfc)
-- [![](https://huggingface.co/avatars/13aa6a9a79d9caeda105de81bd692cf8.svg)](https://huggingface.co/sid-artpark)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64e6f435c0cc3e95d1d2485c/z0AYSVOtUvvbG10xeKLow.png)](https://huggingface.co/llm-artpark)
-- [![](https://huggingface.co/avatars/6e3b64d2a4d61b4781ce665d06db812d.svg)](https://huggingface.co/jigarkdoshi)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65c07bca8e150328840949f5/xKu-F08hrJXx36_puq0sH.jpeg)](https://huggingface.co/theharshithh)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/42ZnpUdf-jANafNZ_2-Qg.png)](https://huggingface.co/physmatician)
 
-Prasanta Kumar Ghosh
 
-prasantg
 
-ARTPARK-IISc
 
-Nihar Desai
 
-nihar-artpark
 
-ARTPARK-IISc
 
-Sanka
 
-Visruth-sanka
 
-ARTPARK-IISc
 
-Sujith Pulikodan
 
-SujithPulikodan
 
-ARTPARK-IISc
 
 The Indian Institute of Science [IISc](https://iisc.ac.in/) and [ARTPARK](https://artpark.in/) partner with Hugging Face to enable developers across the globe to access [Vaani](https://vaani.iisc.ac.in/), India's most diverse open-source, multi-modal, multi-lingual dataset. Both organisations share a commitment to building inclusive, accessible, and state-of-the-art AI technologies that honor linguistic and cultural diversity.
 
@@ -171,24 +150,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fiisc-huggingface-collab) or [log in](https://huggingface.co/login?next=%2Fblog%2Fiisc-huggingface-collab) to comment
 
 
-31
 
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61b839889f7cfeae618e72c9/5kFRCChdqwv7MGM8T_y5v.jpeg)](https://huggingface.co/rbiswasfc)
-- [![](https://huggingface.co/avatars/13aa6a9a79d9caeda105de81bd692cf8.svg)](https://huggingface.co/sid-artpark)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64e6f435c0cc3e95d1d2485c/z0AYSVOtUvvbG10xeKLow.png)](https://huggingface.co/llm-artpark)
-- [![](https://huggingface.co/avatars/6e3b64d2a4d61b4781ce665d06db812d.svg)](https://huggingface.co/jigarkdoshi)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65c07bca8e150328840949f5/xKu-F08hrJXx36_puq0sH.jpeg)](https://huggingface.co/theharshithh)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/42ZnpUdf-jANafNZ_2-Qg.png)](https://huggingface.co/physmatician)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
-- [![](https://huggingface.co/avatars/da7059645ea516e7d76440d861320fa2.svg)](https://huggingface.co/nihar-artpark)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6640bbd0220cfa8cbfdce080/wiAHUu5ewawyipNs0YFBR.png)](https://huggingface.co/John6666)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/613a226b0fd0cb3c9b9ede5a/Dhi8bmqnAiG6s1rqNxJjM.jpeg)](https://huggingface.co/pulkitmehtawork)
-- [![](https://huggingface.co/avatars/4bf3733caf68a04bab9ed970197e730d.svg)](https://huggingface.co/adit94)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
+
 
 ## Datasets mentioned in this article 1

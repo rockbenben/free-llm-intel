@@ -8,33 +8,20 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3142192fcf12
+body_sha: ddffd5c0910a
 ---
-
 
 # FastRTC: The Real-Time Communication Library for Python
 
 					February 25, 2025
 
-Update on GitHub
 
 
-176
 
-- [![](https://huggingface.co/avatars/6d9c5b56418518844089a90bdd39eacd.svg)](https://huggingface.co/fronkar)
-- [![](https://huggingface.co/avatars/3c29d862b02a196c8a53ff09a2c91f09.svg)](https://huggingface.co/Tahahah)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6672b7b12f70d803182f9855/cvFnQl1UODN7hXq6JJLpy.jpeg)](https://huggingface.co/ramanbansal)
-- [![](https://huggingface.co/avatars/750b1b70c99f407050c41824422f5800.svg)](https://huggingface.co/basah)
-- [![](https://huggingface.co/avatars/84e286313264af1461389fedef8b030d.svg)](https://huggingface.co/PlayAI)
-- [![](https://huggingface.co/avatars/25414fa5790345c4b5772e551e6f5008.svg)](https://huggingface.co/Pussinsilicon)
 
-Freddy Boulton
 
-freddyaboulton
 
-Abubakar Abid
 
-abidlabs
 
 In the last few months, many new real-time speech models have been released and entire companies have been founded around both open and closed source models. To name a few milestones:
 
@@ -334,24 +321,9 @@ clicking here
 
 .
 
-Tap or paste here to upload images
-
-· [Sign up](https://huggingface.co/join?next=%2Fblog%2Ffastrtc) or [log in](https://huggingface.co/login?next=%2Fblog%2Ffastrtc) to comment
 
 
-176
 
-- [![](https://huggingface.co/avatars/6d9c5b56418518844089a90bdd39eacd.svg)](https://huggingface.co/fronkar)
-- [![](https://huggingface.co/avatars/3c29d862b02a196c8a53ff09a2c91f09.svg)](https://huggingface.co/Tahahah)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6672b7b12f70d803182f9855/cvFnQl1UODN7hXq6JJLpy.jpeg)](https://huggingface.co/ramanbansal)
-- [![](https://huggingface.co/avatars/750b1b70c99f407050c41824422f5800.svg)](https://huggingface.co/basah)
-- [![](https://huggingface.co/avatars/84e286313264af1461389fedef8b030d.svg)](https://huggingface.co/PlayAI)
-- [![](https://huggingface.co/avatars/25414fa5790345c4b5772e551e6f5008.svg)](https://huggingface.co/Pussinsilicon)
-- [![](https://huggingface.co/avatars/a7760013f6920774127080c673d426e0.svg)](https://huggingface.co/Twelve2five)
-- [![](https://huggingface.co/avatars/451f8c40db7c8a10ff6ee42ab42c8170.svg)](https://huggingface.co/AyaKhaled)
-- [![](https://huggingface.co/avatars/6fa016e0a86aab520d7c8fb936cff244.svg)](https://huggingface.co/alyahya)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/KUdsH8Mnh736sOt-kABHG.png)](https://huggingface.co/abdouuu)
-- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64db92c723557cdce314432d/Z7qpaVZW8hGJIjCLtDs66.jpeg)](https://huggingface.co/geradeluxer)
-- [![](https://huggingface.co/avatars/2e2bb347bf994bf22c258d39b6f88392.svg)](https://huggingface.co/kashyapkp)
+
 
 ## Models mentioned in this article 3
