@@ -7,7 +7,113 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-all.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 26 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 27 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>[硅基流动] 【账户安全】API Key 仅在新建时展示一次，不再回显明文</title>
+      <link>https://docs.siliconflow.cn/docs/release-notes/overview#%E8%B4%A6%E6%88%B7%E5%AE%89%E5%85%A8api-key-%E4%BB%85%E5%9C%A8%E6%96%B0%E5%BB%BA%E6%97%B6%E5%B1%95%E7%A4%BA%E4%B8%80%E6%AC%A1%E4%B8%8D%E5%86%8D%E5%9B%9E%E6%98%BE%E6%98%8E%E6%96%87</link>
+      <guid isPermaLink="true">https://docs.siliconflow.cn/docs/release-notes/overview#%E8%B4%A6%E6%88%B7%E5%AE%89%E5%85%A8api-key-%E4%BB%85%E5%9C%A8%E6%96%B0%E5%BB%BA%E6%97%B6%E5%B1%95%E7%A4%BA%E4%B8%80%E6%AC%A1%E4%B8%8D%E5%86%8D%E5%9B%9E%E6%98%BE%E6%98%8E%E6%96%87</guid>
+      <pubDate>Fri, 27 Nov 2026 00:00:00 +0000</pubDate>
+      <category>硅基流动</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-siliconflow.xml">硅基流动</source>
+      <content:encoded><![CDATA[<h3><a href="https://docs.siliconflow.cn/docs/release-notes/overview#账户安全api-key-仅在新建时展示一次不再回显明文">【账户安全】API Key 仅在新建时展示一次，不再回显明文</a></h3>
+<p>为提升账户安全，自 <strong>2026-11-28</strong> 起，API Key 的明文仅在新建时展示一次，平台不再以任何形式回显完整 Key。</p>
+<ul><li><strong>新建 API Key</strong>：创建成功时展示一次完整明文，请立即复制并妥善保管；此后无法再次查看。</li><li><strong>存量 API Key</strong>：不再支持查看或复制明文；已配置在客户端、环境变量或第三方工具中的 Key，调用不受影响。</li><li><strong>如何区分不同 Key</strong>：平台会保留每个 Key 的末尾几位，并保存在该 Key 的备注信息中。在 <a href="https://cloud.siliconflow.cn/account/ak">API 密钥</a> 管理界面与费用明细中，可据此分辨对应的 Key。</li></ul>
+<p>如已遗失某个 Key 的明文，请新建一个 API Key 替换旧 Key，确认替换完成后再删除旧 Key。创建方式参见<a href="https://docs.siliconflow.cn/docs/userguide/quickstart">快速入门</a>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[Hugging Face] 将 Trainium3 带上赛道：用 LTX-2.5 生成视频</title>
+      <link>https://huggingface.co/blog/video-trainium3</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/video-trainium3</guid>
+      <pubDate>Fri, 27 Nov 2026 00:00:00 +0000</pubDate>
+      <category>Hugging Face</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml">Hugging Face</source>
+      <description>原文标题：Taking Trainium3 to the Track: Generating Videos with LTX-2.5</description>
+      <content:encoded><![CDATA[<h1>把 Trainium3 开上赛道：用 LTX-2.5 生成视频</h1>
+<p>发布：November 27, 2026</p>
+<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier 的头像"></a></p>
+<p>David Corvoysier</p>
+<p>dacorvo</p>
+<p><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt="Jingya Huang 的头像"></a></p>
+<p>Jingya Huang</p>
+<p>Jingya</p>
+<p><a href="https://huggingface.co/sayakpaul"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt="Sayak Paul 的头像"></a></p>
+<p>Sayak Paul</p>
+<p>sayakpaul</p>
+<p>得益于我们与 AWS 的合作，我们很幸运地获得了一台 Trainium3 机器（<a href="https://aws.amazon.com/ec2/instance-types/trn3/">trn3.48xlarge</a>，64 个 NeuronCore）一个月的使用权。这个月的大部分时间，我们都在上面测试 Hugging Face 模型，并让更多模型跑起来。</p>
+<p>还剩五天时，我允许自己找点乐子。当你拥有一辆法拉利，时不时就想把它开上赛道。于是我问自己：如果我试着生成视频会怎样？</p>
+<p>我选了 Lightricks 的 <a href="https://huggingface.co/Lightricks/LTX-2.5-Diffusers">LTX-2.5</a>，它能同时生成视频和声音。最终，在模型加载完成后，在机器一半的算力上，生成一段带声音的 10 秒片段需要 22 到 23 秒。结果如下。</p>
+<p><em>一只海豹梦见了温暖的沙滩。完全在 Trainium3 上生成。</em></p>
+<h2>两个目标</h2>
+<p>我有两个目标。第一个是看看在 Trainium3 上用 <a href="https://github.com/huggingface/diffusers">diffusers</a> 生成视频有多容易。不是示例里的简单片段：我想根据脚本制作短片，更接近真实用例，就像起草一部电影。第二个目标是性能。我想接近 CUDA 或 LTX 自家 API 所能达到的水平。</p>
+<p>关于 CUDA，我没有找到真正可对比的数字。唯一的是 LTX 声称在四块 B200 GPU 上，一段 10 秒 720p 片段耗时 6.8 秒，但没有说明是如何测量的。所以我把 CUDA 放到一边，改为与 LTX 的在线 API 比较；<a href="https://venturebeat.com/technology/ltx-2-5-can-generate-a-10-second-ai-video-from-an-image-in-just-6-8-seconds-on-nvidia-superchips-and-its-open-weights">LTX 表示</a>，它能在 23.7 秒内生成一段 10 秒 1080p 片段。最终，这套配置与之相当，甚至快了约一秒：在模型加载完成后，在机器一半的算力上，一段 10 秒、2048×1024 的片段耗时 22 到 23 秒。考虑到我优化流水线的时间很少，这已经不错了。</p>
+<h2>工作原理</h2>
+<p>输入是一部影片：一个由镜头组成的 JSON 列表，每个镜头都有一个名称和一个提示词，很像分镜脚本。LTX-2.5 对长提示词效果更好，因此每个提示词都是一段文字，描述风格、主体、运动、镜头、光线和声音。下面是海豹影片的文件，提示词已缩短：</p>
+<pre><code>[
+  {&quot;name&quot;: &quot;dream&quot;, &quot;prompt&quot;: &quot;Style: cinematic, realistic, shallow depth of field. A plump seal ... is fast asleep on warm golden sand under palm trees ...&quot;,
+   &quot;seed&quot;: 3},
+  {&quot;name&quot;: &quot;nap&quot;, &quot;prompt&quot;: &quot;Style: cinematic, realistic, wide-angle lens. ... a plump grey seal is fast asleep on a small ice floe ...&quot;,
+   &quot;seed&quot;: 1, &quot;to&quot;: {&quot;shot&quot;: &quot;iceberg&quot;, &quot;frames&quot;: 9}},
+  {&quot;name&quot;: &quot;iceberg&quot;, &quot;prompt&quot;: &quot;Style: cinematic, realistic, wide-angle lens. ... the whole iceberg slowly rolls over ... and washes over the seal. ...&quot;},
+  {&quot;name&quot;: &quot;shake&quot;, &quot;prompt&quot;: &quot;Style: cinematic, realistic, wide-angle lens. ... It slowly shakes its head and body ... and flops down on its belly on the floe, ...&quot;,
+   &quot;from&quot;: {&quot;shot&quot;: &quot;iceberg&quot;, &quot;frames&quot;: 25}}
+]</code></pre>
+<p>每个镜头都有一个 <code>name</code> 和一个 <code>prompt</code>，还可以有一个 <code>seed</code>，用来保留我从多个 take 中选中的那一个。镜头通过两个键连接起来。这种连接正是关键，因为仅靠提示词无法让主体从一个镜头延续到下一个镜头：</p>
+<ul><li><code>from</code>：该镜头从较早镜头的最后几帧开始。从较早镜头的最后一帧开始，可以在剪辑点前后保持主体的外观；从它的最后 25 帧（1 秒）开始，还能延续运动。</li><li><code>to</code>：该镜头结束于较晚镜头的开头几帧，从而过渡到该镜头。</li></ul>
+<p>镜头也可以裁剪，或在上面绘制字幕。</p>
+<p>用镜头制作影片就像做动画，有两条路可走。顺拍（straight ahead）：每个镜头接在前一个镜头之后。姿势到姿势（pose to pose）：先制作关键镜头，直到做出你满意的一个；然后让它之前的镜头结束于它的开头几帧（<code>to</code>），让它之后的镜头从它的最后几帧开始（<code>from</code>）。当一部影片逐步推向一个高潮（payoff，即一切都在导向的时刻），这个高潮就是关键镜头。我通过试错找到了这个顺序，并以 <code>iceberg</code> 为起点，按姿势到姿势的方式制作了海豹影片。</p>
+<p>高潮是 <code>iceberg</code>：冰山翻了过来，它掀起的波浪浇透了海豹。<code>nap</code> 是睡觉的海豹，它结束于 <code>iceberg</code> 的开头 9 帧（<code>to</code>），这样海豹、浮冰和冰山进入高潮时都保持一致。<code>shake</code> 从 <code>iceberg</code> 的最后 25 帧开始（<code>from</code>）：湿淋淋的海豹抖掉身上的水，啪地趴到浮冰上。<code>dream</code> 是单独制作的，然后通过一个剪辑与其余部分连接起来。</p>
+<p><em>海豹影片的镜头链。作为高潮的 <code>iceberg</code> 最先制作；<code>nap</code> 结束于它的开头 9 帧，<code>shake</code> 从它的最后 25 帧开始，因此海豹、浮冰和冰山保持一致。</em></p>
+<p>在 diffusers 这一侧，三条流水线共享 <a href="https://huggingface.co/Lightricks/LTX-2.5-Diffusers">LTX-2.5</a> 的模型。<code>LTX2Pipeline</code> 仅根据提示词制作镜头，<code>LTX2ConditionPipeline</code> 制作从另一个镜头的帧开始或结束的镜头。这两条流水线遵循模型卡中的两阶段蒸馏配方：8 步，然后第三条流水线 <code>LTX2LatentUpsamplePipeline</code> 在最后 3 步之前把 latent 上采样 ×2。</p>
+<p>生成全部由 diffusers 流水线完成。影片部分是在此之上约 160 行 Python：读取影片文件，对镜头排序，使每个关键帧都在需要它的镜头之前存在，并切出要交接的帧；然后裁剪、加字幕、平衡声音并组装影片。代码在 <a href="https://github.com/dacorvo/video-generation">dacorvo/video-generation</a>。我保留的影片在 <a href="https://huggingface.co/buckets/dacorvo/video-generation/tree/entertainment">dacorvo/video-generation</a> bucket 中，附有它们的 JSON 文件：海豹、狐狸和山羊；山羊影片裁剪了两个镜头，并在其高潮画面上绘制了字幕。</p>
+<p><em>狐狸影片：雪中漫步，按“顺拍”制作：每个镜头接在前一个镜头之后。</em></p>
+<p><em>山羊影片：两个被裁剪的镜头，以及在高潮画面上绘制的字幕。</em></p>
+<h2>在 Trainium3 上运行</h2>
+<p>开箱即用时，模型无法在 NeuronCores 上运行：transformer 放不进一个 NeuronCore，而且 diffusers 没有拆分它的方案。第一次能跑起来的尝试（模型卡的流水线，transformer 拆到 4 个核心上，外加少量补丁）对一段 10 秒片段耗时约 <strong>5 min 20 s</strong>，而其中 NeuronCores 实际计算的时间只有约 45 秒。更重要的是，目标分辨率根本无法达到。</p>
+<p>五天后：</p>
+<table><thead><tr><th>带声音的 10 秒片段</th><th>NeuronCores</th><th>实际耗时</th><th>在 NeuronCores 上</th><th>相比第一次尝试</th></tr></thead><tbody><tr><td>第一次尝试，960×544</td><td>4</td><td>5 min 20 s</td><td>45 s</td><td>1×</td></tr><tr><td>优化后，2048×1024（像素约多 4×）</td><td>32</td><td>22 到 23 s</td><td>15 s</td><td>14×</td></tr></tbody></table>
+<p>达到这一步需要三类工作：让模型能在 NeuronCores 上运行（需要张量并行），把它拆分到更多 NeuronCores 上（序列并行），以及让主机跟上它们。</p>
+<p><em>TP-4 × SP-8：一个片段使用 32 个核心。权重按 4 路拆分，每个核心分到每一层的一条；视频 token 按 8 路拆分，每颗芯片分到片段的一段。</em></p>
+<p>下面大多数修复都在设备侧，大部分精力也花在那里。端到端最大的节省来自主机：这是最容易摘到的果子，因为浪费显然就在那里。</p>
+<h3>让它跑起来需要什么</h3>
+<table><thead><tr><th>问题</th><th>变通方案</th><th>结果</th></tr></thead><tbody><tr><td>transformer 无法放进一个 NeuronCore，而且 diffusers 没有针对它的张量并行方案</td><td>一个<a href="https://github.com/dacorvo/video-generation/blob/main/parallel.py#L50">方案</a>，以及一个在单个 rank 的注意力头上运行的<a href="https://github.com/dacorvo/video-generation/blob/main/parallel.py#L65">注意力处理器</a></td><td>transformer 在 4 个核心上运行</td></tr><tr><td>文本编码器无法和 transformer 一起放进一个 NeuronCore，因此它在 CPU 上运行。diffusers 支持这种方式的流水线拆分，但它的 LTX-2 流水线会在 NeuronCores 上给文本编码器提供输入</td><td>把流水线固定到主机上，并将 transformer 的输入移到核心上、输出移回</td><td>流水线运行，且其 transformer 在核心上</td></tr><tr><td>作为一个图编译时，transformer 在某个尺寸下返回 NaN，而且每个新进程都会重新追踪它，即使所有图都在缓存中</td><td>用 <code>compile_repeated_blocks</code> 编译一个 block</td><td>输出为有限值，追踪时间从 388 s 降到 18 s</td></tr><tr><td>torch-neuronx 完全以 bf16 计算 bf16 GELU，连常量也不例外（<a href="https://github.com/aws-neuron/torch-neuronx/issues/1049">#1049</a>）</td><td>用 fp32 计算 GELU</td><td>transformer 相对 fp32 的误差：0.297 → 0.158（CPU bf16：0.160）</td></tr><tr><td>在 2048×1024 下，按 4 路拆分的 transformer block 图无法加载</td><td>在此之上把视频 token 按 8 路拆分（序列并行）：在 diffusers 的 <code>set_attn_processor</code> 钩子上使用两个自定义注意力处理器，每个都围绕其集合通信调用做几次张量 reshape（<a href="https://github.com/dacorvo/video-generation/blob/main/parallel.py#L141">代码</a>）</td><td>第 2 阶段在 4 × 8 = 32 个核心上运行，每步 3.0 s</td></tr><tr><td>从帧开始的镜头每个视频 token 都有一个 timestep，其 block 图无法加载</td><td>只嵌入两个 timestep，并为每个 token 选择一个（<a href="https://github.com/dacorvo/video-generation/blob/main/timesteps.py">代码</a>）</td><td>从帧开始的镜头耗时与从提示词开始的镜头大致相同</td></tr></tbody></table>
+<h3>让它变快需要什么</h3>
+<table><thead><tr><th>问题</th><th>变通方案</th><th>收益</th></tr></thead><tbody><tr><td>每个 rank（每个 NeuronCore 一个进程）都运行整个流水线，而且它们都在一个 socket 的 CPU 上编码提示词</td><td>只在 rank 0 上运行流水线，并把每次调用的参数发送给其他 rank</td><td>提示词编码：约 205 s → 7.5 s</td></tr><tr><td>torch-neuronx 的分配器让大部分内存段未被使用（<a href="https://github.com/aws-neuron/torch-neuronx/issues/1052">#1052</a>）</td><td>把参数打包进最大 1 GiB 的缓冲区</td><td>每个核心的内存：22.96 GiB → 10.2 GiB</td></tr><tr><td>除非序列长度是 128 个 token 的倍数，否则注意力会以普通算子运行</td><td>以 1024×512（每帧 512 个 token）生成，并设置 <code>NEURON_LOGICAL_NC_CONFIG=2</code></td><td>transformer 单步：4.3 s → 3.0 s</td></tr><tr><td>视频解码在 CPU 上很慢，而且增加 CPU 核心也没有帮助</td><td>在 NeuronCores 上按帧拆分解码，并通过共享内存把帧传给 rank 0</td><td>在 2048×1024 下解码：357 s → 1.6 s</td></tr><tr><td>复制到设备的跨步切片会由设备上一次缓慢的复制来填充（<a href="https://github.com/aws-neuron/torch-neuronx/issues/1050">#1050</a>）</td><td>复制前调用 <a href="https://github.com/dacorvo/video-generation/blob/main/parallel.py#L231-L235"><code>.contiguous()</code></a></td><td>在 16 个核心上的单步：5.6 s → 1.0 s</td></tr><tr><td>只有 rank 0 运行流水线的 CPU 阶段（文本编码器、上采样器、声码器），但每个 rank 都会获得一个节点范围的 torch 线程池，31 个 rank 会让它得不到足够资源</td><td>将 rank 0 的线程固定到其他 rank 不使用的 CPU 上，并把其他 rank 的线程数限制在它们应得的份额（<a href="https://github.com/dacorvo/video-generation/blob/main/generate.py#L330">代码</a>）</td><td>提示词编码：7.4 s → 3.3 s。第 1 阶段单步：0.9 s → 0.6 s</td></tr><tr><td>流水线把提示词填充到 1024 个 token，而 CPU 上的文本编码器也会编码填充部分</td><td>只对提示词本身的 token 运行文本编码器</td><td>提示词编码：3.4 s → 1.4 s</td></tr></tbody></table>
+<p>有三个问题始终没有得到解释：transformer 作为一个图编译时在某个尺寸下返回 NaN；第一个结束于关键帧的镜头在每个新进程中都很慢（即使所有图都在缓存中）；latent 上采样器无法与 transformer 一起加载，因此它留在 CPU 上。</p>
+<p>其中一些问题正在上游修复。<a href="https://github.com/huggingface/diffusers/pull/15420">diffusers#15420</a>（开放中）修复了 LTX-2 流水线，这将使上面的第二个变通方案不再必要。<a href="https://github.com/huggingface/diffusers/pull/14725">diffusers#14725</a>（仍开放）将张量并行和上下文并行纳入一个 <code>ParallelConfig</code>，并且计划为 LTX-2.5 提供一个 <code>_tp_plan</code>。</p>
+<h2>经验教训</h2>
+<ul><li><strong>两边都大幅下降：主机和设备。</strong> 一旦运行起来，一个片段的主机时间从约 280 s 降到约 8 s（约 35×），其在 NeuronCores 上的时间从 45 s 降到 15 s（3×，像素数为四倍，而且还有第一次尝试甚至无法加载的第二阶段）。</li><li><strong>序列并行才是一个片段用上整台机器的方式。</strong> 张量并行由内存决定（transformer 放不进一个核心），并受 32 个注意力头限制。把序列拆分到更多核心上，才让 64 个 NeuronCore 中的 32 个用于单个片段，也才让 2048×1024 真正成为可能——通过缩小每个核心的图，直到它能加载。</li><li><strong>在 Trainium 上，要为图的大小做规划。</strong> 形状决定注意力是否走快速 kernel，而过大的图会加载失败。</li><li><strong>先对照 CPU 检查。</strong> 模型的每种拆分都在设备上运行前先在 CPU 上检查，而与 CPU 的对比发现了 GELU 问题。</li><li><strong>保持被追踪的代码稳定。</strong> 在我使用的构建中，torch-neuronx 的缓存键包含每个被追踪算子的文件和行号，因此一次编辑可能触发每个图长达 30 分钟的重新编译。我已经报告了这个问题（<a href="https://github.com/aws-neuron/torch-neuronx/issues/1027">aws-neuron/torch-neuronx#1027</a>），该 issue 现已关闭。</li><li><strong>一部影片需要的不仅是提示词。</strong> 仅靠提示词无法让一个角色或一座山从一个镜头延续到下一个镜头，因此镜头会从其他镜头的帧开始或结束。每个镜头也保持在一个地点：在狐狸影片的早期版本中，当一个镜头把狐狸从森林带到湖边时，模型叠化到了另一只狐狸。</li><li><strong>每个镜头多拍几个 take。</strong> 模型经常把某个细节弄错：同一个提示词在 4 个 take 中有 3 个给山羊生成了滑稽的角。我为每个新镜头做 4 个 take，再挑一个。</li></ul>
+<h2>专业用例</h2>
+<p>在性能方面，模型加载完成后，一段带声音的 10 秒 2048×1024 片段需要 22 到 23 秒。在实例一半的算力上，这已可与 LTX 的付费 API 匹敌。服务会让进程保持运行，因为它们加载模型约需 3 分钟，而第一个片段需要 80 秒。</p>
+<p>在功能方面，diffusers 具备起草一部电影所需的能力。镜头来自提示词，并通过从其他镜头的帧开始或结束，让主体从一个镜头延续到下一个镜头。不同 take 通过 seed 区分，影片文件会保留我选中的那个。用同样的代码和影片文件重新运行，你会逐字节得到同一部影片。镜头也可以从一张图像开始，例如分镜帧或角色设定图；条件流水线会像处理帧一样处理它（我没有在影片中尝试过）。</p>
+<p>让它仍停留在草稿阶段的原因：</p>
+<ul><li>模型仍会把细节弄错，因此每个新镜头都需要多个 take。</li><li>每个镜头都会生成自己的声音。影片会平衡背景音量，但声音不会从一个镜头延续到下一个镜头。</li><li>一个镜头最长 20 秒，这是模型的限制。</li></ul>
+<h2>从影片到世界模型</h2>
+<p>LTX 称 LTX-2.5 为世界模型，机器人技术是新兴用途。机器人、汽车和无人机从摄像头所见内容的视频中学习，而世界模型可以生成更多这类视频，包括太罕见或拍摄风险太高的事件。所以我也用同样的代码在真实素材上试了试：一个镜头可以从真实摄像头片段的第一秒开始，并虚构接下来发生的事。一帧不够，因为模型无法从中判断物体运动有多快。</p>
+<p>下面是一台 Fourier GR1-T2 人形机器人头部相机的画面（片段来自 NVIDIA 的 <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-GR00T-GR1">GR1-100</a>），俯视一张桌子。在真实的 6 秒片段中，机器人的左手从盘子里拿起一个橙子，放进托盘。模型只看到该片段的第一秒（双手抬起，尚未发生任何动作），并虚构其余部分。真实发生的情况，与它的虚构并列：</p>
+<p><em>GR1-T2 人形机器人头部相机的真实素材，以及 LTX-2.5 根据其第一秒虚构出的后续。</em></p>
+<p>同样的场景，同样的抓取：模型自行虚构了抓取动作，并让桌子、手和水果与真实素材保持一致。更有趣的是那些没有发生的事件。从同一秒开始，只改变提示词，一个人俯身也去抓橙子，人手和机器人手一起把它搬到托盘里。五个 take，先是真实素材：</p>
+<p><em>真实片段，然后是五个生成 take，内容是一个人帮机器人搬橙子。</em></p>
+<p>每个人的手势和时机在每个 take 中都不同，而机器人的手臂会适应它们。这就是它对训练的吸引力：不是片段的一个延续，而是一组延续分布，每一个都可以从其影片文件和 seed 复现。</p>
+<p>该 bucket 的 <a href="https://huggingface.co/buckets/dacorvo/video-generation/tree/robotics">robotics</a> 文件夹里有这五个 take 及其 JSON 文件，还有一个来自暴风雪中汽车前视摄像头的第二个示例（<a href="https://www.boreas.utias.utoronto.ca/">Boreas</a>），其中的替代事件是一辆经过的卡车把雪泥溅到镜头上。当被要求改为让汽车加速时，模型保持了原速度：提示词无法覆盖第一秒素材已经暗示的内容。</p>
+<p>这些视频遵循提示词，而不是机器人或汽车的指令：训练设置需要以这些动作作为条件进行生成。为此，团队会用自己的机器人的帧和动作微调 <a href="https://huggingface.co/Lightricks/LTX-2.5-Pre-Trained">LTX-2.5 的预训练 checkpoint</a>。</p>
+<p>法拉利只用一半的气缸就跑完了赛道。</p>
+<h2>本文提到的模型 2</h2>
+<h2>本文提到的数据集 1</h2>
+<p>博客更多文章</p>
+<p>tpugooglegcp</p>
+<h2>Hugging Face ❤️ TorchTPU：TPU，原生支持</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></li><li>+1</li></ul>
+<p>55</p>
+<p>October 20, 2026</p>
+<p>neurontorchtransformers</p>
+<h2>你的模型能在 AWS Trainium 上运行吗？查一查</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt=""></li></ul>
+<p>33</p>
+<p>October 23, 2026</p>
+<h3>社区</h3>
+<h2>本文提到的模型 2</h2>
+<h2>本文提到的数据集 1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>[Hugging Face] 推出面向 AMD Ryzen 与 Radeon 的 llama.cpp 基准测试仪表板</title>
       <link>https://huggingface.co/blog/ggml-org/llamacpp-amd-bench</link>
@@ -2249,6 +2355,17 @@ trainer.fit()</code></pre>
 <h3>订阅开发者通讯</h3>
 <p>每月发送到你的邮箱，内容包括产品更新、操作指南、社区精选等。</p>
 <p>如需接收每月的开发者通讯，请提供你的电子邮件地址。你可以随时退订。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>[智谱 GLM] GLM-5.4 新一代旗舰模型上线</title>
+      <link>https://docs.bigmodel.cn/cn/update/new-releases#2026-11-23</link>
+      <guid isPermaLink="true">https://docs.bigmodel.cn/cn/update/new-releases#2026-11-23</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <category>智谱 GLM</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-zhipu_glm.xml">智谱 GLM</source>
+      <content:encoded><![CDATA[<p>GLM-5.4 新一代旗舰模型上线</p>
+<p>💬 <a href="https://docs.bigmodel.cn/cn/guide/models/glm-5.4"><strong>GLM-5.4</strong></a></p>
+<ul><li>以 Scaling Loop 突破智能上限：采用 Loop Transformer 架构，通过循环复用网络层实现更深度推理，智能水平比肩 2–3T 级模型。</li><li>原生视觉编程，解锁“泛 Coding”创作：具备原生视觉编程能力，融合代码与视觉理解能力，支持视频创作、游戏开发、3D 建模与机械设计。</li><li>自主完成复杂任务：多阶段拆解与自我验证能力全面增强，可自主调用工具、多轮迭代，高效交付长链路复杂任务。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>[硅基流动] 【模型服务调整】Xing4.0-29B 模型将下线</title>
@@ -7530,280 +7647,6 @@ matches = dp.search_discoverable_registry_records(
 <h2>结论</h2>
 <p>在本文中，我们展示了如何在 AWS Agent Registry 中添加自定义元数据，让每条记录都拥有一套通用的事实，例如运行环境、所属业务单元、数据分级和安全扫描状态。以一个 MCP server 为例，我们展示了管理员定义 schema、发布者与现有自动化填写取值、你在 AWS Lambda 中构建的审批函数做出审批决定，以及消费者用元数据过滤条件找到已审批的 server。由于 schema 归管理员所有，每个团队都使用相同的字段和值，而正是这种一致性，让 AWS Agent Registry 中的审批与搜索变得可靠。</p>
 <ul><li><strong>动手试试：</strong> 使用 <a href="https://github.com/awslabs/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/custom-metadata-in-registry">GitHub 仓库中的示例</a>。</li><li><strong>深入了解：</strong> 阅读 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html">AWS Agent Registry 开发者指南</a>和<a href="https://docs.aws.amazon.com/agent-registry-control/latest/APIReference/API_CustomMetadataSchemaConfiguration.html">自定义元数据 API 参考</a>。</li><li><strong>可用性：</strong> 参见<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agentcore-regions.html">受支持的 AWS Regions</a>。</li></ul>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] 通过 Amazon Bedrock AgentCore 保护 Snowflake Cortex AI 的 OAuth 模…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/secure-oauth-patterns-for-snowflake-cortex-ai-through-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/secure-oauth-patterns-for-snowflake-cortex-ai-through-amazon-bedrock-agentcore/</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>完整标题：通过 Amazon Bedrock AgentCore 保护 Snowflake Cortex AI 的 OAuth 模式 | 原文标题：Secure OAuth patterns for Snowflake Cortex AI through Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>通过 Amazon Bedrock AgentCore 保护 Snowflake Cortex AI 的 OAuth 模式</h1>
-<p>如今的企业需要一条清晰的路径，把身份验证与授权控制延伸到 agentic 层，而这往往要么依赖宽泛的服务账号权限，要么依赖自建的认证集成，从而增加运维开销。当运行在 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>（一个可用任意框架、任意模型大规模构建、连接和优化 agent 的平台）上的 AI agent 需要通过 <a href="https://modelcontextprotocol.io/">Model Context Protocol</a>（MCP）调用 <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp">Snowflake 托管的 MCP 服务器</a>（该服务器把 <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents">Snowflake Cortex Agents</a> 作为其工具类型之一对外提供）时，企业首先要回答的问题是：agent 如何完成认证？本文介绍我们在 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity.html">Amazon Bedrock AgentCore Identity</a>（Amazon Bedrock AgentCore 的一项能力）上测试过的三种 Open Authorization（OAuth）配置：Snowflake OAuth（按用户，无外部 Identity Provider，即 IdP）、借助第三方 Identity Provider 的三足 OAuth（企业单点登录，即 SSO），以及借助第三方 Identity Provider 的两足 OAuth（共享服务用户）。Amazon Bedrock AgentCore Identity 还支持 on-behalf-of（OBO）授权（TOKEN_EXCHANGE），可在没有同意提示的情况下为无人值守工作负载提供按用户身份。我们聚焦于端到端测试过的这三种配置，并在行文中标注 OBO 适合放在哪里。读到最后，你将能判断哪种模式适合自己的企业场景。</p>
-<h2>解决方案概览</h2>
-<p><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html">Amazon Bedrock AgentCore Gateway</a> 是 Amazon Bedrock AgentCore 的一项能力，通过 MCP 服务器目标把 AI agent 连接到外部工具提供商。它以 Snowflake 托管的 MCP 服务器为目标，后者把 Cortex Search 和 Cortex Analyst 呈现为 MCP 工具，供具备 MCP 能力的客户端发现和调用。Gateway 并不充当包装器，而是把所配置各目标的能力聚合成一份统一目录，并以一个 tools/list 响应呈现给 agent。</p>
-<p>本文的核心是 Amazon Bedrock AgentCore Gateway 的<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-outbound-auth.html">出站认证</a>：它如何获取 OAuth token，并将其呈现给 Snowflake 托管的 MCP 服务器。Amazon Bedrock AgentCore Identity 充当凭证代理：Gateway 先调用 GetWorkloadAccessTokenForJWT 获取工作负载 token（因为 Gateway 的入站认证使用 JSON Web Token（JWT）），再针对已配置的提供商调用 GetResourceOauth2Token。AgentCore Identity 负责 token 保管库、token 刷新以及用户与 token 的绑定，并自动获取、缓存和刷新 token。</p>
-<p>Amazon Bedrock AgentCore Identity 支持三种 OAuth 配置，覆盖两种授权类型（authorization_code 和 client_credentials）：</p>
-<ul><li><a href="https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview">Snowflake OAuth</a>：Snowflake 自身充当 OAuth 授权服务器。每个用户通过 Authorization Code 授权（3LO）直接向 Snowflake 认证，无需外部身份提供商。</li><li>使用第三方 Identity Provider 的三足 OAuth：用户通过企业 SSO 配合 Authorization Code 授权完成认证。Snowflake 通过其<a href="https://docs.snowflake.com/en/user-guide/oauth-ext-overview">外部 OAuth</a> 安全集成信任 IdP 签发的 JSON Web Token（JWT）。</li><li>使用第三方 IdP 的两足 OAuth 模式：共享服务用户通过 IdP 的 client_credentials 授权完成认证。无需任何用户交互或同意，非常适合机器对机器的工作负载。</li></ul>
-<p>Amazon Bedrock AgentCore Identity 还提供 API key 凭证提供商（支持 Snowflake Programmatic Access Token）。本文聚焦 OAuth，因为它能实现按用户归因和自动 token 刷新。每种配置都在 Amazon Bedrock AgentCore Identity 中使用一个凭证提供商（CustomOauth2、OktaOauth2 或 MicrosoftOauth2），并在 Snowflake 侧使用对应的安全集成。</p>
-<p><strong>注意：</strong> 我们用 Okta 和 Microsoft Entra ID 搭配 Snowflake 托管的 MCP 服务器测试了这些模式。模式 2 和模式 3（外部 IdP）遵循标准 OAuth 流程，因此可以推广到其他受 OAuth 保护的 MCP 服务器，但要针对你的 SaaS 提供商校验 token 声明、scope 和 audience 设置。只有模式 1 是 Snowflake 特定的，因为它依赖 Snowflake 内置的 OAuth 授权服务器。Snowflake 特定的元素包括 OAUTH_AUTHORIZATION_SERVER 这个 issuer 锁定参数、session:role: / session:scope: 语法、BLOCKED_ROLES_LIST、LOGIN_NAME / EMAIL_ADDRESS 映射以及 QUERY_HISTORY 归因。如果你的 SaaS 对外暴露自己的内部 OAuth 服务器，那么出站 OAuth 的配置方式与 Snowflake OAuth 相同。</p>
-<table><thead><tr><th><strong>模式</strong></th><th><strong>OAuth 授权</strong></th><th><strong>AgentCore Identity 凭证提供商厂商</strong></th><th><strong>Snowflake 安全集成</strong></th><th><strong>Snowflake 查询身份映射</strong></th></tr></thead><tbody><tr><td>Snowflake OAuth – 3LO</td><td>authorization_code</td><td>自定义提供商（CustomOauth2）</td><td>TYPE = OAUTH，OAUTH_CLIENT = CUSTOM</td><td>真实用户，及其被分配的角色</td></tr><tr><td>借助外部 IdP 的 3LO</td><td>authorization_code</td><td>内置提供商（如 OktaOauth2、MicrosoftOauth2）</td><td>TYPE = EXTERNAL_OAUTH + OAUTH_AUTHORIZATION_SERVER（用 ALTER ACCOUNT / DATABASE / SCHEMA 设置）；EXTERNAL_OAUTH_TYPE = OKTA / AZURE / PING_FEDERATE / CUSTOM</td><td>真实用户，及其被分配的角色</td></tr><tr><td>借助外部 IdP 的 2LO</td><td>client_credentials</td><td>内置提供商（如 OktaOauth2、MicrosoftOauth2）或 CustomOauth2</td><td>TYPE = EXTERNAL_OAUTH + OAUTH_AUTHORIZATION_SERVER（用 ALTER ACCOUNT / DATABASE / SCHEMA 设置）；EXTERNAL_OAUTH_TYPE = OKTA / AZURE / PING_FEDERATE / CUSTOM</td><td>共享的 Snowflake 服务用户</td></tr></tbody></table>
-<p><strong>备注：</strong></p>
-<ul><li>2LO 不要求使用内置厂商。配合 CLIENT_CREDENTIALS 授权的 CustomOauth2 可与你所选的任意 OAuth 2.0 授权服务器搭配使用。</li><li>当由 Amazon Bedrock AgentCore Gateway 代理 token 时（也就是本文的模式），Snowflake 通过 TYPE = EXTERNAL_OAUTH 安全集成对其校验。设置 OAUTH_AUTHORIZATION_SERVER（用 ALTER ACCOUNT、DATABASE 或 SCHEMA）正是让直连 MCP 客户端能经 Protected Resource Metadata 端点自动发现你的 IdP 的原因，同时它把 MCP 端点 issuer 锁定到该集成上。</li><li>如果你用 OAUTH_AUTHORIZATION_SERVER 把某个 MCP scope issuer 锁定到外部 IdP（模式 2），那么该 scope 内的 MCP 服务器会拒绝 Snowflake OAuth token（模式 1），且不会回退。如果你需要在同一个账户里同时使用两种模式，请按 schema 或 database 分别设置该参数，使每个 scope 解析到正确的授权服务器。</li></ul>
-<h2>解决方案架构</h2>
-<p>下图展示了我们构建的方案及其所用组件：面向用户的 AI 应用；运行在 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore Runtime</a>（Amazon Bedrock AgentCore 的一项能力）上的 <a href="https://strandsagents.com/">Strands agent</a>；用于推理的 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>，其中 <a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 会对 prompt 和响应中的个人身份信息（PII）做脱敏；<a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a>，这是完全托管的检索增强生成（RAG）能力，面向 <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service（Amazon S3）</a> 中的保单文档；以 Snowflake 托管的 MCP 服务器为目标的 Amazon Bedrock AgentCore Gateway；以及持有 token 保管库的 Amazon Bedrock AgentCore Identity。三种模式的出站 OAuth 路径形状相同：Gateway 通过 AgentCore Identity 解析出 token，AgentCore Identity 从授权服务器获取并续期 token，随后 Gateway 把该 token 呈现给 Snowflake 托管的 MCP 服务器。模式之间的差异在于由哪个授权服务器签发 token、以何种授权签发：Snowflake 自身内置的 OAuth 服务器，还是第三方 IdP。这些差异已在模式对比表中列明，而每种模式的运行时流程在本文后面各有自己的时序图。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-1-2.png" alt="架构图：用户访问 AI 应用，该应用调用 Amazon Bedrock AgentCore runtime 上的 Strands agent，该 agent 使用带 Guardrails 的 Amazon Bedrock 与 Amazon Bedrock Knowledge Bases，并通过 AgentCore Gateway 调用 Snowflake Cortex AI 工具。AgentCore Identity 从 Snowflake 内置 OAuth 服务器或第三方身份提供商获取 token。"></p>
-<p>图 1：方案概览：Amazon Bedrock AgentCore 上的参考 agent，通过 Snowflake 托管的 MCP 服务器把 Amazon Bedrock Knowledge Bases 与 Snowflake Cortex AI 结合，以及三种 OAuth 模式下各不相同的那台授权服务器</p>
-<h2>模式分析</h2>
-<p>以下各节逐一细看每种模式：认证流程、配置步骤与取舍，帮你为自己的用例选出合适的做法。</p>
-<h3>模式 1：Snowflake OAuth（三足）</h3>
-<p>Snowflake OAuth 模式采用三足 OAuth（3LO）流程，在无需外部身份提供商的前提下实现按用户认证。每个用户用自己的凭证向 Snowflake 认证，同意使用某个特定的 Snowflake role，Amazon Bedrock AgentCore Identity 则缓存该用户的 access token 和 refresh token。此后每次调用 Snowflake 都以该用户身份执行，QUERY_HISTORY 记录的是其真实用户名。注意，按 role 同意并不是默认行为。Snowflake 托管的 MCP 服务器对外声明 session:role:all 并回退到 DEFAULT_ROLE，因此你要设置 OAUTH_SCOPES_SUPPORTED（账户级、database 级或 schema 级参数，用 ALTER 设置）来收窄服务器对外声明的 role scope，并限制集成上的 ALLOWED_ROLES_LIST，以强制约束用户可同意哪些 role（PRE_AUTHORIZED_ROLES_LIST 则相反：它列出跳过同意步骤的 role）。</p>
-<p>这一模式的吸引力在于简单：不需要外部身份提供商。Snowflake 同时充当授权服务器和资源服务器，对外提供自己内置的 OAuth 端点（/oauth/authorize 和 /oauth/token-request）。配置要按特定顺序进行，因为在凭证提供商创建出来之前，回调 URL 并不存在。管理员先在 Amazon Bedrock AgentCore Identity 中用占位的 client credentials 创建 CustomOauth2 凭证提供商，并记下 AgentCore Identity 返回的 callbackUrl。随后把这个 callbackUrl 注册为 Snowflake 安全集成的 redirect URI，该集成以 TYPE = OAUTH、OAUTH_CLIENT = CUSTOM 创建。最后，管理员用 Snowflake 签发的真实 client ID 和 secret 更新凭证提供商，并为提供商的 oauthDiscovery 配置显式的授权服务器元数据：issuer（Snowflake 账户 URL）、授权端点（/oauth/authorize）和 token 端点（/oauth/token-request）。</p>
-<p>下面的截图展示了在 Amazon Bedrock AgentCore Identity 中使用 Snowflake OAuth（3LO）设置配置凭证提供商厂商的步骤。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-2-2.png" alt="AgentCore 控制台显示一个用于 Snowflake 的 Custom OAuth2 凭证提供商，包含其回调 URL、client ID，以及 Snowflake 的授权端点和 token 端点。"></p>
-<p>图 2：在 Amazon Bedrock AgentCore Identity 中配置 Snowflake OAuth（3LO）凭证提供商厂商</p>
-<p>接下来，Amazon Bedrock AgentCore Gateway 的配置指向 Snowflake 托管的 MCP 服务器端点，并引用自定义的 Snowflake OAuth 作为出站认证。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-3-2.png" alt="AgentCore 控制台显示处于 Ready 状态的 Snowflake MCP 服务器网关目标，出站认证使用 Snowflake OAuth 提供商，scope 为 session:role:ANALYST_ROLE。"></p>
-<p>图 3：Amazon Bedrock AgentCore Gateway 配置指向 Snowflake 托管的 MCP 服务器端点，并以 Snowflake OAuth（3LO）作为出站认证</p>
-<p>下面的时序图展示了 Snowflake OAuth 模式的运行时授权流程。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-4-2.png" alt="Snowflake OAuth 3LO 运行时流程的时序图：Gateway 返回 -32042 elicitation，用户在 Snowflake 登录，应用调用 CompleteResourceTokenAuth，重试的工具调用以该用户身份执行。"></p>
-<p>图 4：Snowflake OAuth（3LO）运行时授权流程：Amazon Bedrock AgentCore Gateway 的 MCP 服务器目标采用 AUTHORIZATION_CODE 授权、按用户的 Snowflake OAuth，以及 session:role:ANALYST_ROLE scope</p>
-<p><a href="https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview#snowflake-oauth-authorization-flow">Snowflake OAuth 授权流程</a>的工作方式如下：</p>
-<ul><li>当某个工具调用需要 Snowflake token 时，Amazon Bedrock AgentCore Gateway 会调用 GetWorkloadAccessTokenForJWT 获取工作负载 token，并调用 GetResourceOauth2Token，在 Amazon Bedrock AgentCore Identity 的 token 保管库中查找该用户的 token。如果没有缓存 token，Gateway 返回 JSON-RPC 错误码 <a href="https://aws.amazon.com/blogs/machine-learning/connecting-mcp-servers-to-amazon-bedrock-agentcore-gateway-using-authorization-code-flow/">-32042</a>，其中携带一个 URL elicitation。该授权 URL 属于 AgentCore Identity，且为 <code>session-URI-bound</code>。客户端在用户的浏览器中打开该 URL，请求被路由到 Snowflake 内置的授权服务器（/oauth/authorize），并显示 Snowflake 登录界面。</li><li>用户输入自己的 Snowflake 凭证，随后看到同意界面，要求其授权以某个特定的 Snowflake role 访问（例如 ANALYST_ROLE）。请求 scope 中的 role 名必须大写（例如 session:role:ANALYST_ROLE）。</li><li>用户同意后，Snowflake 的授权服务器把一个授权码返回给 Amazon Bedrock AgentCore Identity 的回调 URL。AgentCore Identity 随后把用户浏览器重定向到带 session URI 的 return URL。</li><li>只有当应用带上用户身份和 session URI（有效期为 10 分钟）调用 CompleteResourceTokenAuth 之后，AgentCore Identity 才会完成授权码交换。这一步把授权码绑定到最初的请求上，从而阻止授权 URL 劫持。这里使用的 return URL 通过调用 UpdateWorkloadIdentity 注册。在生产环境中，该 URL 对应的端点由你的 Web 应用托管；对于采用 JWT 入站认证的 gateway，则由 AgentCore Identity Consent Portal（<code>&lt;portal-url&gt;/connect/callback</code>）托管。agentcore dev CLI 只在本地开发时托管它。随后 AgentCore Identity 在 Snowflake 的 token 端点（/oauth/token-request）用授权码换取 access token，以及可选的 refresh token。</li><li>当客户端重试该工具调用时，Amazon Bedrock AgentCore Gateway 从 AgentCore Identity 取回缓存的 access token，并呈现给 Snowflake 托管的 MCP 服务器。Snowflake 校验该 token，并创建一个限定在已同意 role 范围内的用户会话。所同意的 scope 只控制<strong>主</strong> role。由于次要 role 由集成管控，请设置 OAUTH_USE_SECONDARY_ROLES = NONE（默认值），这样会话就无法携带超出已同意 role 的权限——若设为 IMPLICIT 则会允许这种情况。</li></ul>
-<p>Access token 的有效期很短。默认有效期为 600 秒（最长 3600 秒）。access token 过期后，Amazon Bedrock AgentCore Identity 会自动使用 refresh token 换取新的 access token，无需用户交互。如果安全集成被配置为禁止刷新 token，用户就必须通过同意界面重新授权。refresh token 的有效期由 OAUTH_REFRESH_TOKEN_VALIDITY 控制。参考实现将其设为 86400 秒（1 天），而 Snowflake 最多允许 90 天。OAUTH_ISSUE_REFRESH_TOKENS（默认 TRUE）决定是否签发 refresh token。</p>
-<p><strong>注意：</strong> 默认情况下，Snowflake 会避免 ACCOUNTADMIN、ORGADMIN、GLOBALORGADMIN 和 SECURITYADMIN 这些 role 被用于 OAuth 集成。这由 Snowflake OAuth 的 BLOCKED_ROLES_LIST（外部 OAuth 对应 EXTERNAL_OAUTH_BLOCKED_ROLES_LIST）控制，适用于全部三种模式，且只覆盖主 role。当 OAUTH_USE_SECONDARY_ROLES = IMPLICIT 时，次要 role 仍可能携带这些特权 role。</p>
-<h4>注意事项</h4>
-<p>Snowflake OAuth 模式是实现按用户审计留痕的最简路径。它不需要外部 IdP 配置，也不引入额外的厂商依赖。最适合以下场景：</p>
-<ul><li>用户已经拥有 Snowflake 凭证，并且愿意直接登录。</li><li>你希望在没有外部身份提供商的情况下，让 QUERY_HISTORY 具备按用户归因。</li><li>你正处于概念验证阶段，想快速验证按用户模型。</li><li>合规要求强制个人可问责，因此每条查询都必须能追溯到具体用户，而不是共享服务用户。</li><li>你希望把用户生命周期（创建、注销、role 授予）完全放在 Snowflake 内管理。</li><li>你想避开 token 声明映射的复杂性。token 由 Snowflake 签发，它清楚 token 代表哪个用户。</li></ul>
-<h3>模式 2：使用第三方 Identity Provider（IdP）的三足 OAuth（3LO）</h3>
-<p>这一模式把按用户认证与企业单点登录结合起来。用户通过外部 IdP 登录，由 IdP 强制执行多因素认证（MFA）、条件访问和会话策略。IdP 签发的 JWT 被呈现给 Snowflake，Snowflake 通过其<a href="https://docs.snowflake.com/en/user-guide/oauth-ext-custom">外部 OAuth 安全集成</a>对其校验（可选择用 OAUTH_AUTHORIZATION_SERVER 把 issuer 锁定到 MCP 服务器所在的 schema、database 或账户）。Snowflake 通过 JSON Web Key Set（JWKS）验证 issuer、audience 和签名。然后它把由 EXTERNAL_OAUTH_TOKEN_USER_MAPPING_CLAIM 设置的可配置声明（<a href="https://www.okta.com/">Okta</a> 用 sub，<a href="https://www.microsoft.com/en-us/security/business/microsoft-entra">Microsoft Entra ID</a> 用 upn）映射到 Snowflake 用户的 LOGIN_NAME 或 EMAIL_ADDRESS（通过 EXTERNAL_OAUTH_SNOWFLAKE_USER_MAPPING_ATTRIBUTE），并以该用户身份运行查询。安全集成的参数值区分大小写。</p>
-<p>与模式 1 的关键区别在于：授权服务器是你的企业 IdP（例如 Okta、Microsoft Entra ID），而不是 Snowflake。Snowflake 仍是资源服务器。用户用他们在其他所有企业应用中使用的同一套凭证和策略进行认证，无需单独的 Snowflake 密码。</p>
-<p>在 Amazon Bedrock AgentCore 侧，Amazon Bedrock AgentCore Identity 为流行的身份提供商提供内置的凭证提供商厂商（例如 OktaOauth2 和 MicrosoftOauth2）。与模式 1 使用的通用 CustomOauth2 提供商不同，这些厂商通过 includedOauth2ProviderConfig 接收 client ID、client secret 和 IdP 端点。Snowflake 托管的 MCP 服务器使用预先注册的 OAuth 客户端，因此你需要提前注册每个 client ID 和 secret，这正是必须先走「创建、记录 callbackUrl、注册、更新」这一顺序的原因。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-5-2.png" alt="AgentCore 控制台显示一个 Okta OAuth2 凭证提供商，包含其回调 URL、client ID，以及 Okta 的授权端点和 token 端点。"></p>
-<p>图 5：在 Amazon Bedrock AgentCore Identity 中配置 Okta OAuth（三足）凭证提供商厂商</p>
-<p>接下来，Amazon Bedrock AgentCore Gateway 的配置指向 Snowflake 托管的 MCP 服务器端点，并引用 Okta 凭证提供商作为出站认证。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-6-2.png" alt="AgentCore 控制台显示处于 Ready 状态的 Okta 3LO 网关目标，出站认证使用 Okta 提供商，scope 为 session:role:ANALYST_ROLE。"></p>
-<p>图 6：Amazon Bedrock AgentCore Gateway 配置指向 Snowflake 托管的 MCP 服务器端点，并以 Okta 三足 OAuth 作为出站认证</p>
-<p>下面的时序图展示了使用外部 IdP 的三足 OAuth 模式的运行时授权流程。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-7-2.png" alt="使用外部身份提供商的三足 OAuth 流程时序图：用户通过 Okta 或 Microsoft Entra ID 登录，AgentCore Identity 在 CompleteResourceTokenAuth 之后保存 token，Snowflake 通过其外部 OAuth 集成校验该 token。"></p>
-<p>图 7：使用外部 IdP 的 3LO 运行时授权流程：Amazon Bedrock AgentCore Gateway 的 MCP 服务器目标采用 AUTHORIZATION_CODE 授权，出站认证使用第三方 IdP</p>
-<p>Snowflake 外部 OAuth 安全集成的流程如下：</p>
-<ul><li>当某个工具调用需要 Snowflake token 时，Amazon Bedrock AgentCore Gateway 会调用 GetWorkloadAccessTokenForJWT 获取工作负载 token，并调用 GetResourceOauth2Token，在 Amazon Bedrock AgentCore Identity 的 token 保管库中查找该用户的 token。如果没有缓存 token，Gateway 返回携带 URL elicitation 的 JSON-RPC 错误码 -32042。该授权 URL 属于 AgentCore Identity，且为 <code>session-URI-bound</code>，而不是 IdP 的。客户端在用户的浏览器中打开该 URL，AgentCore Identity 再把用户路由到 IdP。</li><li>用户通过第三方 IdP 配合企业 SSO（包括 MFA）完成认证，并同意所请求的 scope。对 Okta 而言，role scope 的形式是 session:role:ANALYST_ROLE。Microsoft Entra ID 的委派流程则使用 session:scope:。</li><li>IdP 把授权码返回给 Amazon Bedrock AgentCore Identity 的回调 URL，AgentCore Identity 把用户浏览器重定向到带 session URI 的 return URL。只有在应用调用 CompleteResourceTokenAuth 校验用户身份和 session URI 之后，AgentCore Identity 才会用授权码换取 access token（如果 IdP 签发 refresh token，也会一并换取）并缓存到按用户的 token 保管库中。</li><li>当客户端重试该工具调用（以及此后的调用）时，Amazon Bedrock AgentCore Gateway 从 Amazon Bedrock AgentCore Identity 取回缓存的、由 IdP 签发的 JWT，并呈现给 Snowflake 托管的 MCP 服务器。Snowflake 通过其外部 OAuth 集成校验该 token：验证 JWKS 签名和 audience（aud）声明，把配置的用户声明（Okta 用 sub，Microsoft Entra ID 用 upn）映射到 Snowflake 用户，并以已认证用户的身份执行查询。Snowflake 在运行时不会调用 IdP，而是用 IdP 公布的 JWKS 签名密钥在本地校验 token。</li><li>access token 过期后，如果签发了 refresh token（对 Okta，需要请求 offline_access scope），Amazon Bedrock AgentCore Identity 会自动用它刷新。在 refresh token 过期之前，无需用户交互。</li></ul>
-<p>Token 生命周期治理：与模式 1 由 Snowflake 控制 token 生命周期不同，这里 access token 和 refresh token 的生命周期由 IdP 决定，Amazon Bedrock AgentCore Identity 负责透明地刷新。如果签发了 refresh token，用户只有在它过期时才需要重新认证，具体取决于 IdP 的会话策略；否则，access token 过期后用户就要重新认证。</p>
-<h4>注意事项</h4>
-<p>在以下情况选择使用第三方 IdP 的三足 OAuth（3LO）：</p>
-<ul><li>你的组织或安全团队要求所有认证都经由企业 SSO，以便集中落实 MFA、条件访问和会话管理。</li><li>你想利用 IdP 的现有能力，例如基于组的 role 映射、会话超时策略和基于地理位置的条件的访问规则。</li><li>你需要在 Snowflake 的 QUERY_HISTORY 中获得按用户审计留痕。</li><li>你希望在所有应用（包括 AI agent）上统一执行安全策略。</li><li>你需要集中式访问控制。在 IdP 中停用某个用户，有助于阻止新的 Snowflake 授权，但已缓存的 token 在过期前仍然有效。要强制用户重新授权，应用可以在下一次请求时传 forceAuthentication=true，这会清除已存的 refresh token 并开启新的授权流程。要彻底吊销访问，就在 IdP 或 Snowflake 侧撤销授权。</li></ul>
-<h3>模式 3：使用第三方 Identity Provider（IdP）的两足 OAuth（2LO）</h3>
-<p>两足 OAuth 模式使用 OAuth 2.0 的 client_credentials 授权。这是机器对机器的流程，不需要用户交互。Amazon Bedrock AgentCore Identity 用配置的 client ID 和 client secret 从 IdP 获取 JWT，Amazon Bedrock AgentCore Gateway 把它呈现给 Snowflake，Snowflake 则以共享服务用户的身份执行请求，无论查询最初由哪个终端用户发起。</p>
-<p>这一模式在运维上最为直接：没有同意界面、没有按用户的 token 保管库、没有浏览器重定向。用户走的是同一条代码路径。Amazon Bedrock AgentCore Identity 自动获取并缓存 client_credentials token，Amazon Bedrock AgentCore Gateway 在每次向 Snowflake 托管的 MCP 服务器发起出站调用时都呈现它。</p>
-<p>与模式 1、模式 2 的关键区别是：不做按用户身份传递。Snowflake 的 QUERY_HISTORY 把查询都记在同一个服务用户名下。代价是用运维上的简化换取了按用户审计的粒度。在 Amazon Bedrock AgentCore 侧，凭证提供商使用 client_credentials 授权类型：可以是内置厂商（OktaOauth2、MicrosoftOauth2），也可以是通用的 CustomOauth2 提供商。配置需要 IdP 的 token 端点、client ID 和 client secret。Amazon Bedrock AgentCore Identity 在第一次工具调用时从 IdP 获取 token（即 Gateway 调用 GetResourceOauth2Token 时），将其缓存；由于 client_credentials 不签发 refresh token，它会在 token 过期前请求一个新的。agent 层代码无需任何改动。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-8-2.png" alt="AgentCore 控制台显示用于 client credentials 流程的 Custom OAuth2 凭证提供商，包含 Okta 的 token 端点和 token 响应类型。"></p>
-<p>图 8：在 Amazon Bedrock AgentCore Identity 中配置 client_credentials（两足）凭证提供商厂商</p>
-<p>接下来，Amazon Bedrock AgentCore Gateway 的配置引用 Snowflake 托管的 MCP 服务器端点和两足 OAuth 凭证提供商作为出站认证。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-9-2.png" alt="AgentCore 控制台显示处于 Ready 状态的 2LO 网关目标，出站认证使用 client credentials 提供商，scope 为 session:role:MCP_GATEWAY_ROLE。"></p>
-<p>图 9：Amazon Bedrock AgentCore Gateway 配置指向 Snowflake 托管的 MCP 服务器端点，并以两足 OAuth（client_credentials）作为出站认证</p>
-<p>下面的时序图展示了两足 OAuth 模式的运行时授权流程。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/16/ML-21095-10-2.png" alt="2LO client credentials 流程的时序图：AgentCore Identity 从 Okta 或 Microsoft Entra ID 请求 token，过程中没有用户参与；Snowflake 校验该 token 并以共享服务用户身份运行查询。"></p>
-<p>图 10：使用外部 IdP 的 2LO 运行时授权流程：Amazon Bedrock AgentCore Gateway 的 MCP 服务器目标采用 CLIENT_CREDENTIALS 授权，出站认证使用第三方 IdP</p>
-<p>Snowflake 外部 OAuth 安全集成的 2LO 流程如下：</p>
-<ul><li>当某个工具调用需要 Snowflake token 时，Amazon Bedrock AgentCore Gateway 会调用 GetWorkloadAccessTokenForJWT 获取工作负载 token，并调用 Amazon Bedrock AgentCore Identity 凭证提供商上的 GetResourceOauth2Token。如果有有效的缓存 token，Identity 会立即返回。</li><li>Amazon Bedrock AgentCore Identity 用配置的 client ID 和 client secret，以 client_credentials 授权调用第三方 IdP 的 token 端点。对 Okta 而言，请求的 scope 中包含 Snowflake role（例如 session:role:MCP_GATEWAY_ROLE）。对 Microsoft Entra ID 而言，客户端请求 api:<code>//&lt;application-id&gt;/.default</code> scope，role 则来自某个 app role 的 roles 声明，该 app role 的值是 session:role:MCP_GATEWAY_ROLE。</li><li>IdP 返回一个 access token（一个 JWT，没有 refresh token），其 aud 声明是 Snowflake 账户 URL，或 EXTERNAL_OAUTH_AUDIENCE_LIST 中列出的额外值（对 Microsoft Entra ID，通常是 Application ID URI）。对 Okta，sub 声明是 client ID。对 Microsoft Entra ID，client ID 放在 appid/azp 中，而 sub 持有服务主体的对象 ID（一个 GUID），因此使用 Entra 时，LOGIN_NAME 必须映射到该 GUID。</li><li>Amazon Bedrock AgentCore Gateway 把该 JWT 呈现给 Snowflake 托管的 MCP 服务器。Snowflake 通过其外部 OAuth 集成校验该 token（可选地用 OAUTH_AUTHORIZATION_SERVER 锁定 issuer，如模式 2 那样）。它通过 EXTERNAL_OAUTH_JWS_KEYS_URL（或 EXTERNAL_OAUTH_RSA_PUBLIC_KEY）验证签名，通过 EXTERNAL_OAUTH_ISSUER 验证 issuer，并对照 Snowflake 账户 URL 加上 EXTERNAL_OAUTH_AUDIENCE_LIST 中的任何额外值来校验 aud 声明（这些安全集成参数值区分大小写）。随后 Snowflake 通过 LOGIN_NAME 把 sub 声明映射到一个 Snowflake 服务用户，并在该服务用户的 role 下执行查询。与模式 2 一样，Snowflake 在本地校验 token，运行时不会调用 IdP。</li><li>Amazon Bedrock AgentCore Identity 把 token 缓存到 token 保管库（跨用户共享，而不是按用户）。后续调用会复用它，而 Identity 会在 token 过期前用 client_credentials 授权请求一个新 token。</li></ul>
-<p>由于两足 OAuth 目标不需要用户同意，Amazon Bedrock AgentCore Gateway 会在创建目标时连接 Snowflake 托管的 MCP 服务器，并通过创建目标期间的隐式同步发现工具。在三足 OAuth 模式（模式 1 和模式 2）中，Gateway 目标支持两种创建方式：(1) 由管理员完成授权码流程，使工具通过隐式同步被发现；(2) 由管理员预先提供工具 schema。（发现行为是目标的 ListingMode 属性，而不是授权类型的属性。）</p>
-<h4>注意事项</h4>
-<p>对于自动化、无人值守和批处理工作负载，更推荐两足 OAuth 模式。它在以下情况下最理想：</p>
-<ul><li>你的工作负载是机器对机器的：定时任务、后台流水线，或没有人工介入的系统级 agent。</li><li>不需要按用户身份，且审计上可以接受共享服务用户。</li><li>你需要最直接的运维模型：没有同意流程、没有按用户的 token 管理、没有浏览器重定向。</li><li>Gateway 能在创建目标时连接 Snowflake，并通过隐式同步发现 MCP 工具，无需等待用户交互。</li><li>所有用户在同一个 Snowflake role 下共享相同的数据访问权限。</li></ul>
-<p><strong>接受以下取舍：</strong></p>
-<ul><li>由于每个请求都以共享服务用户身份运行，Snowflake 的行级安全（row-level security）和列掩码（column masking）策略会按该用户的权限作用于请求。以 CURRENT_USER() 和 CURRENT_ROLE() 为键的策略都会解析到那一个服务用户及其唯一 role，这正是 on-behalf-of（OBO）方案最有力的理由。</li><li>不存在用户级的 token 吊销。要切断访问，需在 IdP 侧吊销 client credentials，或停用 Snowflake 安全集成。</li><li>如果凭证泄露，agent 的访问会受影响。请定期轮换 client secret，并把服务用户限制在最小权限访问范围内。</li></ul>
-<h2>模式对比</h2>
-<table><thead><tr><th><strong>方面</strong></th><th><strong>模式 1：Snowflake OAuth（3LO）</strong></th><th><strong>模式 2：使用外部 IdP 的 3LO</strong></th><th><strong>模式 3：使用外部 IdP 的 2LO</strong></th></tr></thead><tbody><tr><td>OAuth 授权类型</td><td>authorization_code</td><td>authorization_code</td><td>client_credentials</td></tr><tr><td>AgentCore Identity 提供商</td><td>自定义提供商（CustomOauth2）</td><td>内置提供商（例如 OktaOauth2 或 MicrosoftOauth2）</td><td>内置提供商（例如 OktaOauth2、MicrosoftOauth2）或 CustomOauth2</td></tr><tr><td>授权服务器</td><td>Snowflake 内置 OAuth</td><td>第三方 IdP（例如 Okta、Entra ID）</td><td>第三方 IdP（例如 Okta、Entra ID）</td></tr><tr><td>Snowflake 可见的身份</td><td>真实用户</td><td>真实用户</td><td>共享服务用户</td></tr><tr><td>RBAC 模型</td><td>按用户的 Snowflake role</td><td>按用户的 Snowflake role</td><td>请求使用的单一 role</td></tr><tr><td>审计粒度（QUERY_HISTORY）</td><td>真实用户名</td><td>真实用户名</td><td>服务用户</td></tr><tr><td>是否需要外部 IdP</td><td>否</td><td>是</td><td>是</td></tr><tr><td>Snowflake 安全集成</td><td>TYPE = OAUTH，OAUTH_CLIENT = CUSTOM</td><td>TYPE = EXTERNAL_OAUTH + OAUTH_AUTHORIZATION_SERVER（用 ALTER ACCOUNT / DATABASE / SCHEMA 设置）</td><td>TYPE = EXTERNAL_OAUTH + OAUTH_AUTHORIZATION_SERVER（用 ALTER ACCOUNT / DATABASE / SCHEMA 设置）</td></tr><tr><td>用户登录体验</td><td>Snowflake 登录 + 同意</td><td>企业 SSO</td><td>无（无用户交互）</td></tr><tr><td>MFA / 条件访问</td><td>按 Snowflake 账户设置</td><td>由 IdP 强制执行</td><td>不适用</td></tr><tr><td>MCP 协议修订版¹</td><td>2025-11-25</td><td>2025-11-25</td><td>2025-11-25（在 2LO gateway 上未固定）</td></tr><tr><td>Token 生命周期治理</td><td>Snowflake 安全集成</td><td>IdP 授权服务器策略</td><td>IdP 授权服务器策略</td></tr><tr><td>可无人值守运行（定时任务）²</td><td>仅持续到 refresh token 过期（参考应用：1 天，最长 90 天）</td><td>仅持续到 refresh token 过期（取决于 IdP 会话策略）</td><td>是：无需用户交互。</td></tr><tr><td>最适合</td><td>需要在没有 IdP 的情况下实现按用户审计的 POC</td><td>已有企业 SSO 的企业应用</td><td>内部 agent、批处理任务、服务间调用</td></tr></tbody></table>
-<p>¹ MCP 协议修订版：对于三足模式（模式 1 和模式 2），gateway 在其支持的 MCP 修订版中固定为 2025-11-25，这是 URL 模式 elicitation（-32042）握手所要求的。参考实现的 2LO gateway（模式 3）不固定该版本，因为 2LO 没有 elicitation 步骤。在未启用 MCP 版本更新的账户上，受支持的版本集合在 gateway 创建时就已固定。</p>
-<p>² 可无人值守运行：模式 1 和模式 2 只能无人值守运行到 refresh token 过期为止。之后重新同意需要活跃的浏览器、同一个用户，并且要在 10 分钟的授权窗口（CompleteResourceTokenAuth）内完成，这就是 3LO 不适合完全无人值守的定时任务的原因。模式 3（2LO）没有 refresh token，也没有同意步骤，因此可以无限期无人值守运行。</p>
-<p>本文的三种配置覆盖两种授权类型：authorization_code（模式 1 和模式 2）与 client_credentials（模式 3）。Amazon Bedrock AgentCore Identity 还支持 on-behalf-of（OBO）token 交换（TOKEN_EXCHANGE），它能为无人值守工作负载提供按用户身份，且<em>无需</em>同意提示。</p>
-<p>OBO 把一个入站用户 token 换成保留真实用户身份的 Snowflake 范围 token，因此 QUERY_HISTORY 能把每条查询归因到真实用户，同时保持模式 3 那种无人值守、机器对机器的流程（没有浏览器重定向，没有同意界面）。在 Snowflake 侧，它使用与模式 2、模式 3 相同的 TYPE = EXTERNAL_OAUTH 集成（可选地用 OAUTH_AUTHORIZATION_SERVER 锁定 issuer）。在 AgentCore 侧，它在 OAuth 凭证提供商上通过 onBehalfOfTokenExchangeConfig 配置（对 Okta/RFC 8693 使用授权模式 TOKEN_EXCHANGE，对 Microsoft Entra 使用 JWT_AUTHORIZATION_GRANT）。OBO 走的是外部 OAuth 路径（模式 2 和模式 3）。</p>
-<p>OBO 在 Amazon Bedrock AgentCore Identity 上已正式可用，但它超出了本文测试的这三种配置的范围。</p>
-<h2>亲自试一试</h2>
-<p>为看到这些模式的实际运行，我们构建了一个金融服务信用风险评估 agent 作为参考工作负载。单个 agent 把 Amazon S3 中的银行保单文档（通过 Amazon Bedrock Knowledge Bases）与 Snowflake 中的客户数据结合起来。它评估贷款资格、搜索客户档案，并查询账户和交易数据。该 demo 在全部三种 OAuth 配置下演练三个 MCP 工具（Cortex Search、Cortex Analyst 和 SQL Execution），方便你在自己的 AWS 账户中并排比较。</p>
-<p>尽管 demo 面向金融服务，这些模式同样适用于医疗、供应链、保险等领域。三个实现均已公开，可通过单个 <code>deploy.sh</code> 脚本端到端部署：</p>
-<ul><li><strong>Snowflake OAuth（3LO）：</strong> <a href="https://github.com/aws-samples/aws-generativeai-partner-samples/tree/main/snowflake/amazon-bedrock-agentcore-snowflake-cortex-mcp/amazon-bedrock-agentcore-snowflake-mcp-gateway-3lo">amazon-bedrock-agentcore-snowflake-mcp-gateway-3lo</a>。</li><li><strong>使用外部 IdP 的 3LO：</strong> <a href="https://github.com/aws-samples/aws-generativeai-partner-samples/tree/main/snowflake/amazon-bedrock-agentcore-snowflake-cortex-mcp/amazon-bedrock-agentcore-snowflake-mcp-gateway-3lo-okta">amazon-bedrock-agentcore-snowflake-mcp-gateway-3lo-okta</a>。</li><li><strong>使用外部 IdP 的 2LO：</strong> <a href="https://github.com/aws-samples/aws-generativeai-partner-samples/tree/main/snowflake/amazon-bedrock-agentcore-snowflake-cortex-mcp/amazon-bedrock-agentcore-snowflake-mcp-gateway">amazon-bedrock-agentcore-snowflake-mcp-gateway</a>。</li></ul>
-<p><strong>注意：</strong> 出于演示目的，参考实现把 SYSTEM_EXECUTE_SQL 与 Cortex Agent 暴露在同一个 MCP 服务器上。Snowflake 建议只把 Cortex Agent 作为面向客户的唯一工具，用来回答受治理的业务问题。如果需要直接 SQL，请把它放在单独的 MCP 服务器上，并使用专用的最小权限 role。</p>
-<h2>结语</h2>
-<p>本文介绍了三种 OAuth 配置，用于通过 Amazon Bedrock AgentCore Gateway 在 MCP 上为 AI agent 认证访问 Snowflake Cortex AI。Snowflake OAuth 提供了通往按用户审计留痕的最简路径，且不依赖外部 IdP。使用外部 IdP 的三足 OAuth 增加了企业 SSO、集中式 MFA 和条件访问，同时保留按用户身份。使用外部 IdP 的两足 OAuth 则通过共享服务用户服务机器对机器的场景。</p>
-<p>在这三种模式中，agent 代码与 Snowflake MCP 工具集保持不变。OAuth 的接线方式在四个具体方面不同：</p>
-<ul><li>授权类型切换：模式 1 和模式 2 用 authorization_code，模式 3 用 client_credentials。</li><li>AUTHORIZATION_CODE 目标需要一个 return URL，它在目标上通过 defaultReturnUrl 设置，也可以在每次请求时覆盖。2LO 目标不需要。</li><li>3LO 目标在创建时要求隐式同步或预先提供工具 schema，而 2LO 目标在创建目标期间就同步其工具，没有用户授权步骤。</li><li>模式 2 和模式 3 可以设置 OAUTH_AUTHORIZATION_SERVER，把某个 MCP scope issuer 锁定到外部 IdP，并让直连 MCP 客户端自动发现它。模式 1 不设置该参数。设置之后，模式 1 和模式 2 无法共享同一个 scope，如前所述。</li></ul>
-<p>除此之外，只有 Amazon Bedrock AgentCore Identity 凭证提供商（CustomOauth2、OktaOauth2 或 MicrosoftOauth2）和 Snowflake 安全集成不同。理解了授权类型、token 签发、用户映射和审计行为上的这些差异，你就能针对自己的合规、运维和用户体验需求选出合适的 OAuth 配置。</p>
-<p>要上手，请查看我们 <a href="https://github.com/aws-samples/aws-generativeai-partner-samples/tree/main/snowflake/amazon-bedrock-agentcore-snowflake-cortex-mcp">GitHub 仓库</a>中的参考实现。想进一步了解 Amazon Bedrock AgentCore，请访问 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore 服务详情页</a>或<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html">开发者指南</a>。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] 使用 Amazon Bedrock AgentCore 构建 WhatsApp AI 代理</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/build-whatsapp-ai-agents-with-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-whatsapp-ai-agents-with-amazon-bedrock-agentcore/</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：Build WhatsApp AI agents with Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 Amazon Bedrock AgentCore 构建 WhatsApp AI 代理</h1>
-<p>在拉丁美洲、印度和东南亚，WhatsApp 是使用最广泛的消息应用之一。这使它自然成为构建 AI agent 的地方。对许多终端用户来说，这正是他们期望与企业互动的方式。然而，它也是一个真正难以开发对接的平台，即便你的 agent 已经运行在 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html">Amazon Bedrock AgentCore</a> 上。</p>
-<p>难的部分很少是 agent 本身，而是集成。入站消息以深度嵌套、依类型而异的 payload 形式到达，必须先完成认证和规范化，agent 才能读取。语音消息、图片和文档等媒体各自需要自己的处理流水线。除消息处理之外，你还需要能跨会话保留的对话记忆、用于提醒的持久调度，以及一条经过认证的路径，让外部系统可以触发外发消息。并且，在终端用户最后一条消息之后超过 24 小时发送的任何内容，都必须使用事先通过审核的 Meta 消息模板。</p>
-<p>把这些接起来，意味着要配置 10 多个 AWS 服务，并了解一组 WhatsApp 系统行为——大多数团队都是踩坑之后才知道它们。这些对客户都不可见，但每一处都必须正常工作。大多数团队要么从零自建，要么把集成交给第三方服务。</p>
-<p><a href="https://github.com/awslabs/social-messaging-agent-runtime-toolkit">SMART（Social Messaging Agent Runtime Toolkit）</a> 是第三种选择：一个开源 Python SDK 与 Terraform stack，为你提供完整的渠道层。你只需提供一个运行在 Amazon Bedrock AgentCore runtime 上的 agent，其余由 SMART 处理。一条命令即可把整套基础设施部署到你的 AWS 账户。</p>
-<p>已有团队在使用 SMART 配合 Amazon Bedrock AgentCore 运行。Webmotors 最初按两个月的工期立项，最终把交付压缩到六周，并在正式上线之前就让内部团队进入受控生产环境。</p>
-<p>无论你是从零开始，还是迁移已有的 agent，agent 的逻辑都由你掌控，渠道交给 SMART。</p>
-<h2>你不必自己构建的渠道层</h2>
-<p>下表对比了各项关注点自行构建的成本与 SMART 提供的能力。</p>
-<table><thead><tr><th><strong>关注点</strong></th><th><strong>自行构建</strong></th><th><strong>使用 SMART</strong></th></tr></thead><tbody><tr><td><strong>Webhook 接入</strong></td><td>签名校验、嵌套 payload、十几种消息类型</td><td>已处理，你收到的是干净的 prompt</td></tr><tr><td><strong>媒体</strong></td><td>下载、转写、存储、清理，以及发送前上传外发文件</td><td>双向全生命周期</td></tr><tr><td><strong>消息模板与 24 小时窗口</strong></td><td>Meta 审核流程、类别规则、跟踪每个对话处于哪个窗口</td><td>在 YAML 中声明，由 CLI 同步</td></tr><tr><td><strong>对话记忆</strong></td><td>多层记忆、会话中断处理</td><td>Amazon Bedrock AgentCore memory，一次函数调用</td></tr><tr><td><strong>调度与触发</strong></td><td>Amazon EventBridge Scheduler 接线、认证入口、路由</td><td>内置</td></tr><tr><td><strong>基础设施</strong></td><td>10 多个 AWS 服务拼装在一起</td><td>一次 <code>terraform apply</code></td></tr><tr><td><strong>本地开发</strong></td><td>每次改动都要重新部署并开隧道</td><td>用 CLI 在本地测试，无需重新部署</td></tr></tbody></table>
-<h2>agentic 层</h2>
-<p>Amazon Bedrock AgentCore 是一个用于大规模构建、连接和优化 agent 的平台，支持任意框架或模型。SMART 建立在其两项主要能力之上：</p>
-<ul><li><em>AgentCore runtime</em> 负责托管并扩缩容你的 agent，无需你管理基础设施。</li><li><em>AgentCore memory </em>在会话与部署之间持久保留对话历史，并自动按每个电话号码限定作用域。</li></ul>
-<p>由于 AgentCore 与框架无关，SMART 同样如此。<a href="https://strandsagents.com/">Strands Agents</a> 会自动接好记忆。LangGraph、Pydantic-AI，或其他让你掌控对话循环的框架也可以集成。无论使用哪种框架，SDK 都暴露相同的记忆与会话钩子。你的产品中真正带来差异化的部分——框架、模型、prompt 与业务逻辑——仍完全由你掌控。</p>
-<p>SMART 与你的 agent 之间的接口约定刻意保持得很小：agent 接收入站消息，返回文本，可选附带富消息附件。其余一切——会话接线、记忆绑定、发送调度——都由系统替你处理。</p>
-<p>下面的示例是一个 SMART 项目完整的 <code>agent.py</code>。脚手架命令（<code>socialagent init</code>）会在其周围创建项目结构与配置。你的 agent 逻辑就写在这个文件里。</p>
-<pre><code># --- AgentCore: runtime entry point ---
-from bedrock_agentcore.runtime import BedrockAgentCoreApp
-from strands import Agent
-from strands.models import BedrockModel
-# --- SMART: channel helpers ---
-from socialagent_runtime import create_session_manager, socialagent_notify_context, SocialAgentResponse
-
-app = BedrockAgentCoreApp()                                # AgentCore Runtime
-model = BedrockModel(model_id=&quot;us.anthropic.claude-haiku-5-5&quot;)          #Or any Bedrock model
-
-@app.entrypoint
-async def invoke(payload: dict, context: object = None) -&gt; SocialAgentResponse:
-    agent = Agent(
-        model=model,
-        system_prompt=&quot;You are a helpful WhatsApp assistant. Keep replies short.&quot;,
-        session_manager=create_session_manager(payload),   # AgentCore Memory, pre-wired
-    )
-    with socialagent_notify_context() as outbound:         # SMART: collects outbound messages
-        result = agent(payload[&quot;prompt&quot;], invocation_state={&quot;phone&quot;: payload[&quot;phone&quot;]})
-    return SocialAgentResponse(result=str(result), outbound_messages=outbound)  # SMART: response envelope
-
-app.run()</code></pre>
-<p><code>create_session_manager()</code> 函数把 agent 绑定到按该电话号码限定作用域的 AgentCore memory，因此历史在会话与部署之间都能保留，保留期为记忆的留存时长（默认 7 天）。</p>
-<p><code>socialagent_notify_context()</code> 包装器是另一个值得保留的模式。工具有时需要在 agent 仍在工作时发送内容，例如按钮列表或进度更新。立即发送会破坏对话历史，用户的下一条消息就会失败。这个包装器则先把这些消息收集起来，等本轮结束后再按顺序发出。你的工具仍照常发送消息，无需处理时机问题。</p>
-<h2>架构</h2>
-<p>下图展示了一条入站消息如何从 WhatsApp 传到你的 agent 再返回，以及共享基础设施所处的位置。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/13/ML-21698-1.png" alt="SMART 架构：一条 WhatsApp 消息经过消息层、agent 层和服务层，流经 AWS End User Messaging、AWS Lambda 与 Amazon Bedrock AgentCore"></p>
-<p>图 1：一条入站 WhatsApp 消息如何经由 SMART 渠道层流向 agent 并返回</p>
-<p>SMART 核心 stack 划分为若干独立的层：消息处理层、agent 层和服务层。AWS End User Messaging Social 接收入站 WhatsApp 消息，并将它们路由到处理层。一个 AWS Lambda 函数负责渠道逻辑，而 Amazon Bedrock AgentCore 为 agent 本身提供运行时、记忆和可观测性。Amazon DynamoDB（可选，用于按用户保存状态）、AWS Secrets Manager、Amazon CloudWatch 和 Amazon Simple Storage Service（Amazon S3）等支撑服务，为整套 stack 提供状态管理、凭证、监控和存储。</p>
-<p>入站事件通过 Amazon Simple Notification Service（Amazon SNS）到达。每收到一个事件，webhook Lambda 函数会校验 SNS 消息签名、规范化 payload，并对每个用户做限流（启用 DynamoDB 状态表时，默认每分钟 20 条消息）。随后它会发出已读回执和「正在输入」提示，让对话在模型完成之前就有回应感。语音消息走 Amazon Transcribe。其他媒体会变成一个描述符，或者送入你注册的 hook，以便自定义处理。当 agent 被限流或失败时，用户会收到一条可自定义的可读消息，而不是一片沉默。</p>
-<p>基于 SMART 构建的 agent 会直接与终端用户交互，因此生产部署应当包含适当的安全防护。Terraform stack 默认会创建并配置一个 <a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 资源。通过环境配置中的一个 <code>guardrail</code> 变量，你可以使用 stack 的默认护栏、自带护栏，或完全退出。施加哪些控制由你决定，SMART 只负责确保接线已经就位。</p>
-<p>消息准备好后，webhook 函数把它传给 AgentCore runtime。AgentCore memory 在会话之间维护对话上下文；Amazon Bedrock AgentCore 的能力之一 AgentCore Observability 会追踪每一步，便于调试与审计。</p>
-<p>webhook 函数负责发送回复，以及本轮中你的工具排队发出的消息。通知函数处理轮次之外的发送，例如主动推送或定时消息。外部系统向由 API key 和 Lambda authorizer 保护的 Amazon API Gateway 端点发送 POST 请求，即可触发你的事件处理器。事件发布到 Amazon SNS 后，由 event Lambda 运行你的处理器。Amazon EventBridge Scheduler 负责基于时间的触达，例如提醒和周期性回访。借助通过 AWS End User Messaging 管理的消息模板，你可以在 24 小时 WhatsApp 会话窗口之外发送结构化通知。</p>
-<p>一次 <code>socialagent deploy</code> 会预置以下资源（底层执行的是 <code>terraform apply</code>）。</p>
-<ul><li>Amazon Bedrock AgentCore runtime 与 AgentCore memory。</li><li>webhook、notification、event 和 scheduler 四个 Lambda 函数，运行 Python 3.12，各自带有 AWS X-Ray 追踪和死信队列。</li><li>Amazon SNS 摄取主题与事件 API。</li><li>Amazon EventBridge Scheduler。</li><li>用于媒体和审计日志的 Amazon S3 存储桶。</li><li>Amazon CloudWatch 仪表板与告警。</li></ul>
-<p>agent 容器镜像和 Lambda layer 会在 apply 期间由 AWS CodeBuild 构建。本地不需要 Docker。</p>
-<h2>你需要什么</h2>
-<p>部署之前，请确认你已具备以下条件。</p>
-<ul><li>AWS End User Messaging Social，且已关联 WhatsApp Business Account（WABA）并注册了电话号码。该账户就是 Meta 发放给企业的身份标识。分步指南见 <a href="https://docs.aws.amazon.com/social-messaging/latest/userguide/getting-started.html">Getting started with AWS End User Messaging Social</a>，其中会带你完成 WABA 关联和电话号码注册。</li><li>一个 AWS 账户，且你的 AWS 区域中已提供 AgentCore runtime 和 AgentCore memory，并已启用模型访问权限。本演练默认使用 Amazon Bedrock 上的 Claude Haiku 5.5。你可以通过 Bedrock 访问更多基础模型（FM）。参见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">各区域的模型支持</a>。</li><li>本地 Python 3.11 或更高版本。</li><li>Terraform 1.7 或更高版本、uv，以及 AWS Command Line Interface（AWS CLI）。仓库为部署者角色附带了一份起步用的 AWS Identity and Access Management（IAM）策略。完整操作列表见基础设施的 README。</li></ul>
-<p><strong>注意：</strong>这是示例代码，不适用于生产用途。部署前，你应当与安全与法务团队合作，以满足组织的安全、监管与合规要求。</p>
-<h2>发布上线</h2>
-<p>首先克隆仓库并生成项目脚手架。</p>
-<pre><code>git clone https://github.com/awslabs/social-messaging-agent-runtime-toolkit smart &amp;&amp; cd smart &amp;&amp; make install
-uv run socialagent init my-bot --blueprint personal-assistant</code></pre>
-<p><code>--blueprint</code> 旗标用于选择项目蓝图。仓库自带三个蓝图，不传参数时默认使用 <code>minimal</code>：</p>
-<ul><li><code>minimal</code>：一个只有骨架的 echo agent，没有工具、skills 或消息模板。从这里开始从零构建。</li><li><code>personal-assistant</code>：一个通用助手，具备对话记忆、按用户状态、调度、skills，以及富媒体/语音/图片媒体工具，基于 Strands 构建。适合从这里开始做对话式、多面手的 agent。</li><li><code>appointment-scheduler</code>：一个预约 agent，引导用户浏览条目目录和时间段，确认预约，将其存为按用户状态，并发送提醒。适合从这里开始做调度与预约流程。</li></ul>
-<p>你会得到一个项目，其中包含 <code>agent.py</code>、<code>socialagent.dev.yaml</code>（项目的部署配置）、webhook、notification、event 和 scheduler 各路径的 handler 桩，以及一份 vendored 的 <code>socialagent_runtime/</code> 副本。personal-assistant 和 appointment-scheduler 蓝图还会带来工具、skills 和用于消息模板的 <code>templates.yaml</code>。<code>minimal</code> 不包含这些，需要时自行添加。</p>
-<p>接下来在本地迭代，完全不需要任何基础设施。</p>
-<pre><code>cd projects/my-bot
-uv run socialagent dev --entrypoint agent.py</code></pre>
-<p><code>socialagent dev</code> 命令会在终端 read-eval-print loop（REPL）中运行真实的 agent 循环和真实工具，AWS 渠道 I/O 则被替换为桩实现。记忆变成由本地文件支撑的会话，状态变成一份在你的多个开发会话之间共享的本地 JSON 文件。通知会打印到终端，包括按钮和列表行。一次性调度立即执行；周期性调度会被注册，但不会触发。工具调用会直接显示在行内。回复像在 WhatsApp 上一样以单条消息返回。<code>/event</code> 和 <code>/schedule</code> 命令可以走一遍对应的 handler 路径。整个过程不涉及部署，所以保存改动后就能立刻测试。</p>
-<p>有两点需要注意。模型调用是真实的，因此 <code>minimal</code> 之外的蓝图需要 AWS 凭证和 Amazon Bedrock 访问权限。REPL 也不会模拟 IAM 或 Meta 的模板审核。在认为某项工作完成之前，强烈建议通过已部署的 stack 进行测试。</p>
-<p>你可以通过 recipe 添加能力。每个 recipe 是一个普通的 Python 函数，外加一个 markdown skill，用来告诉 agent 何时使用它。</p>
-<pre><code>uv run socialagent recipe add voice-reply    # or rich-messages, generate-image</code></pre>
-<p>把 recipe 接到 agentic 层是开发者的职责，正因如此，即使更换 agent 框架，recipe 也仍然可移植。</p>
-<p>本地行为调好之后，部署 stack。</p>
-<pre><code>uv run socialagent bootstrap   # once per account and stage
-# set whatsapp.phone_number_id in socialagent.dev.yaml, then:
-uv run socialagent deploy</code></pre>
-<p>有一步 Terraform 无法替你完成。AWS End User Messaging Social 需要知道把入站消息投递到哪里。请把你的 WhatsApp Business Account 指向 stack 创建的 Amazon SNS 主题。该设置保存在业务账户上，而不在 stack 里。你可以在管理控制台中使用 Bind 操作，或用 CLI 执行 <code>aws socialmessaging put-whatsapp-business-account-event-destinations</code>，把 WABA 的事件目标指向 stack 的 SNS 主题。在完成关联之前，入站消息会无处可去，而且不会报任何错。</p>
-<p>当项目包含 <code>templates.yaml</code> 时，部署步骤还会把消息模板与 Meta 同步。如果你需要单独同步模板，请运行 <code>uv run socialagent templates sync</code>，它会从 <code>socialagent.dev.yaml</code> 读取电话号码 ID 和前缀，从 <code>templates.yaml</code> 读取模板定义。被拒的模板会导致部署失败，因此请先修正措辞再重试。</p>
-<p>Meta 按用途对模板分类，事务性模板的发送规则比营销类模板更宽松。请保持措辞朴素。emoji 和营销式语言通常是模板被重新归类为营销类的原因。运行 <code>templates sync --force</code> 会重新注册所有模板，把已审核通过的也重新送交 Meta 审核；普通的 sync 会跳过它们。除非需要修改内容，否则不要动已审核通过的模板。</p>
-<p>现在你就可以给自己的 WhatsApp 号码发消息了。</p>
-<h2>运维</h2>
-<p>上线一个 bot 是一个项目；运维一批 bot 则是没人做过预算的部分，因此你还获得一个可选的、拥有独立 Terraform root 的管理控制台。它只需部署一次。每个设置了 <code>admin_registry_bucket</code> 的 SMART stack 会在部署时把自己注册到一个共享的 Amazon S3 registry，管理控制台再从那里发现这些 stack。</p>
-<p>控制台让你一眼看到整个 bot 队列的健康状况，再深入到单个 bot。在单个 stack 视图中，你可以做以下事情。</p>
-<ul><li>查看真实对话并人工回复。</li><li>查看并取消 Amazon EventBridge 调度，浏览按用户存储的状态。</li><li>重启单个 Lambda 函数或 runtime。</li><li>查看部署历史、最近的错误和 Amazon CloudWatch 日志。</li><li>触发测试事件。</li><li>管理消息模板（提供 WhatsApp 风格的渲染效果），并在 Meta 重新归类某个模板时看到警告。</li></ul>
-<p>前面提到的电话号码绑定也由控制台负责，因此把号码重新绑定到另一个 stack 只是一个界面操作。</p>
-<p>登录通过 Amazon Cognito 完成，强制要求多因素认证（MFA）。随后每条 API 路由都会执行基于角色的权限控制。控制台本身通过 Amazon CloudFront 从私有 Amazon S3 存储桶提供服务。</p>
-<p>控制台端到端运行在 AWS 服务上。所有对话只涉及两个提供方：Meta 和 AWS。模型调用可能通过 Amazon Bedrock 的跨区域推理在其他 AWS 区域处理。关于推理路由、媒体处理和服务退出选项的细节，请参见仓库中的 <code>docs/data-flows.md</code>。</p>
-<h2>清理</h2>
-<p>为避免持续计费，请按以下顺序拆除这些 stack。</p>
-<pre><code>uv run socialagent destroy
-make ui-destroy   # if you deployed the console</code></pre>
-<p>Terraform 不会移除三样东西。存放着对象的媒体和审计 S3 存储桶会阻止销毁，除非设置了 <code>enable_force_destroy</code>。注册到 Meta 的模板会保留。你的电话号码注册属于账户级别，会原地保留。</p>
-<h2>开始使用</h2>
-<p>构建 WhatsApp AI 产品时，差异化在于 agent，而渠道集成会吃掉你的路线图。SMART 为你挪动了这条边界。你只需写一个 prompt、几个工具和业务逻辑，换来的是 webhook 接入、媒体处理、对话记忆、调度与模板管理；这一切背后，是一条命令即可完成的基础设施、本地开发循环，以及运行在你自己的 AWS 账户中的管理控制台。</p>
-<p>要进一步深入，可以采取以下后续步骤。</p>
-<ul><li>从 <a href="https://github.com/awslabs/social-messaging-agent-runtime-toolkit">GitHub 上的 SMART 仓库</a>获取代码。</li><li>用 <a href="https://docs.aws.amazon.com/social-messaging/latest/userguide/getting-started.html">AWS End User Messaging Social</a> 设置好你的 WhatsApp Business Account。</li><li>从 <code>socialagent init</code> 和 <code>socialagent dev</code> 开始，它们不需要任何 AWS 基础设施。</li><li>阅读仓库中的文档，了解本文概述的各个主题，包括通知、媒体处理、事件与调度、按用户状态和消息模板。</li><li>如需进一步研究，参见 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html">AgentCore 文档</a>。</li></ul>
-<p>我们很期待看到你用它构建出什么。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] LoanPro 如何使用 Amazon Bedrock AgentCore 构建代理 AI 贷款服务助手</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/how-loanpro-built-an-agentic-ai-loan-servicing-assistant-with-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-loanpro-built-an-agentic-ai-loan-servicing-assistant-with-amazon-bedrock-agentcore/</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：How LoanPro built an agentic AI loan servicing assistant with Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>LoanPro 如何用 Amazon Bedrock AgentCore 构建 agentic AI 贷款服务助手</h1>
-<p><em>本文由 AWS 的 Mariah Miller 与 LoanPro 的 Colin Terry 合著</em></p>
-<p>你有没有想过，当你打电话给银行寻求支持时，电话另一端的人是什么体验？当借款人打电话给贷款机构时，应答坐席必须先翻出几十个字段的账户数据、交易历史和工作流队列，才能在帮助借款人之前理清情况。而时钟一直在走。手工拼装这些上下文意味着更长的通话、不稳定的服务质量，以及坐席的挫败感。一个基于 agentic AI 构建的贷款服务助手改变了这一点。</p>
-<p><a href="https://www.loanpro.io/">LoanPro</a>是面向现代贷款机构的操作系统，它着手改变这一现状。LoanPro 与 AWS 合作伙伴 <a href="https://allcloud.io/">AllCloud</a> 以及 <a href="https://aws.amazon.com/ai/generative-ai/innovation-center/">AWS Generative AI Innovation Center</a> 合作，构建了一个多 agent AI 助手，让服务坐席能立即拿到综合好的借款人上下文和可执行的下一步建议。根据 AllCloud 公布的案例研究，早期结果显示客户通话时长最多缩短了 15%。</p>
-<p>本文介绍业务挑战、构建在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 和 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 上的 agentic AI 架构，以及 LoanPro 取得的成果。Amazon Bedrock 是一项完全托管的服务，通过单一 API 提供来自领先 AI 公司的一系列高性能基础模型，并提供以安全、隐私和负责任 AI 构建生成式 AI 应用所需的能力。</p>
-<h2>关于 LoanPro</h2>
-<p>LoanPro 是一个现代的、API 优先的借贷与信贷平台，自动化从放款到还款结清的整个贷款生命周期。LoanPro 成立于 2015 年，是各类贷款机构的记录系统（system of record）：既包括金融科技公司，也包括银行与信用合作社，以及把借贷作为增值服务提供的企业。据 LoanPro 称，该平台服务超过 450 家贷款机构，其平台上管理的贷款覆盖约 31% 的美国家庭。该平台在企业级规模上支撑着整个金融服务行业的贷款管理。</p>
-<p>LoanPro 本身不是贷款机构，而是贷款机构运行其业务的操作系统。这个区别很重要，因为 LoanPro 的 AI 战略旨在让它所服务的机构在平台上共同受益，而不是服务于某一家借贷业务。</p>
-<h2>挑战</h2>
-<p>LoanPro 的核心用户群体之一是服务坐席：他们负责管理借款人账户、接听来电、处理付款并解决问题。在与客户的实时交互中，坐席可能需要查看：</p>
-<ul><li>借款人完整的还款历史，包括逾期和退票的付款。</li><li>当前有效的贷款条款、费用和当前余额。</li><li>以往的交互记录和未关闭的支持工单。</li><li>可用的工作流动作，例如还款计划、延期或升级处理。</li></ul>
-<p>在引入 AI 助手之前，坐席要在多个界面和标签页之间来回切换，手工拼出完整情况。经验较少的坐席耗时更长，结果也因接电话的人不同而不一致。LoanPro 需要的方案能够：</p>
-<ul><li>即时把账户数据综合成一份连贯的摘要。</li><li>根据账户上下文推荐正确的下一步动作。</li><li>让不同经验水平的坐席交付更一致的服务质量。</li></ul>
-<h2>解决方案概览</h2>
-<p>LoanPro 与 AllCloud 合作，在 AWS Generative AI Innovation Center 的协助下，用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 设计并构建了一个多 agent AI 助手。该助手在 Amazon Bedrock 上运行 Anthropic 的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5-5.html">Claude Sonnet 5.5</a>、<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html">Claude Haiku 5.5</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-5-5.html">Claude Opus 5.5</a>（参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-cards.html">Models at a glance in Amazon Bedrock</a>）。模型可用性因 AWS Region 而异。按 Region 查询模型可用性，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">Regional availability by models in Amazon Bedrock</a>。整条链路由 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 编排，这是一个可用任意框架、任意模型大规模构建、连接和优化 agent 的平台。agent 逻辑用 <a href="https://strandsagents.com/">Strands Agents SDK</a> 构建，这是一个用于构建具备工具调用能力的 AI agent 的开源框架。系统通过一个 composer 协调各个专用 agent，由它把每个请求路由到合适的专家，这样每个 agent 都只处理一项聚焦任务，可以独立评估和改进。团队选择这些托管服务，而不是自建 agent 运行时和模型访问层。Amazon Bedrock 通过单一 API 提供对领先基础模型的访问，让团队无需管理单独的 endpoint 就能灵活采用新模型。Amazon Bedrock AgentCore 提供托管的 agent 运行时，免去在生产环境运行 agent 的运维负担。</p>
-<p>图 1 从实现角度展示了这一流程。用户请求通过 <a href="https://docs.aws.amazon.com/apigateway/">Amazon API Gateway</a> 上的 LoanPro API v2 进入。一个 <a href="https://docs.aws.amazon.com/lambda/">AWS Lambda</a> handler 把请求放入 <a href="https://docs.aws.amazon.com/sqs/">Amazon Simple Queue Service（Amazon SQS）</a> 队列。随后 Agent Interceptor Lambda 函数调用 Loan Summary Agent。该 agent 运行在 Amazon Bedrock AgentCore 的 AgentCore runtime（Amazon Bedrock AgentCore 的一项能力）上，并使用 Amazon Bedrock 上 Anthropic 的 Claude 模型。它通过 Amazon Bedrock AgentCore Gateway（Amazon Bedrock AgentCore 的一项能力）上的 <a href="https://modelcontextprotocol.io/">Model Context Protocol（MCP）</a> 服务器访问工具。该 gateway 从一份目录中查找正确的工具，这份目录由 Loan Summary Service 注册到 AWS Systems Manager <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html">Parameter Store</a> 中。Loan Summary Tool Lambda 函数会针对 LoanPro 的单点登录（SSO）服务校验调用方的签名。随后它从 LoanPro 的贷款管理系统获取账户数据，该系统运行在 <a href="https://docs.aws.amazon.com/ec2/">Amazon Elastic Compute Cloud（Amazon EC2）</a> 上，位于 <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html">Network Load Balancer</a> 之后。该系统基于角色的访问控制也会校验同一个签名。LoanPro 还会对照用户权限和合规控制检查每个请求，然后把该动作写入审计留痕。后续各节将分别介绍这些部分：多 agent 系统、它调用的工具，以及 gateway。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/11/11/ML-21891-1.png" alt="LoanPro 在 Amazon Bedrock 和 Amazon Bedrock AgentCore 上的 AI 服务架构（LoanPro 工程团队，2026 年 10 月）：API Gateway → Handler Lambda → SQS → Agent Interceptor → AgentCore runtime → Gateway → Parameter Store 目录 → Loan Summary Tool → SSO/JWK → 带 RBAC 的 NLB/EC2"></p>
-<p>图 1：LoanPro AI 服务助手的整体架构</p>
-<p>该架构有四个关键组件，它们把图 1 中的各个部分与负责协调和执行的 composer agent 及 Invoke API Tool 结合起来：</p>
-<h3>使用 Strands Agents SDK 的多 agent 架构</h3>
-<p>该方案采用基于 Strands Agents SDK 构建的多 agent 架构。不是一个单一的大一统模型处理所有任务，而是多个专用 agent 协作，服务贷款服务工作流的不同环节。一个 agent 专注于数据获取和账户摘要，另一个负责动作选择和流程推荐，还有一个 composer agent 把每个请求路由到正确的专家并组合出最终响应。这种关注点分离让每个 agent 更容易独立评估、调优和扩展。</p>
-<h3>工具使用：Data Retrieval 与 Invoke API</h3>
-<p>agent 通过<strong>工具使用</strong>（tool use，Amazon Bedrock 中用于调用外部函数和 API 的能力）从 LoanPro 的内部系统获取借款人数据。支撑该助手的主要有两个工具：</p>
-<ul><li><strong>Data Retrieval Tool：</strong> 从 LoanPro 的数据层获取账户详情、还款历史、贷款条款和借款人元数据，在图 1 中表现为 Loan Summary Tool。它横跨 8 个不同的 API 端点，为每个账户综合约 1400 个字段。</li><li><strong>Invoke API Tool：</strong> 在 LoanPro 平台内触发工作流动作，例如向坐席呈现信息面板，或发起一段预定义的自动化序列。</li></ul>
-<p>通过连接 LoanPro 现有的 API，该助手可以直接使用实时生产数据，无需单独的数据管道或数据仓库。</p>
-<h3>搭配 AWS Lambda 的 Amazon Bedrock AgentCore Gateway</h3>
-<p>AgentCore Gateway 是 agent 与其所调用工具之间的安全访问层。它通过 Model Context Protocol（MCP）把 LoanPro 的 API 作为工具暴露给 agent，处理认证并管理这些连接。<a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 是一项无需预置或管理服务器即可运行代码的 serverless 计算服务，它在 gateway 与 LoanPro 的 API 之间提供集成层。团队选择 AgentCore Gateway 搭配 Lambda，而不是直接集成，原因有三：它把认证集中到一个托管入口点，把 LoanPro 的 API 隔离在托管边界之后，并让新工具无需重新部署 agent 就能加入。这种 serverless 做法使基础设施保持轻量，并能随请求量自动扩缩。在图 1 中，Agent Interceptor（一个 AWS Lambda 函数）调用 AgentCore runtime 上的 agent。AgentCore Gateway 执行这层访问控制，在请求到达 Loan Summary Tool 之前逐一筛查。由于该助手运行在受监管的借贷场景中，生产部署为这些组件配备了额外控制：LoanPro 基于角色的访问控制和合规护栏作用于每个请求，AI 动作会写入 LoanPro 的审计留痕，并归属到一位具名的责任人。</p>
-<h3>集成到 LoanPro 现有的 Web 门户</h3>
-<p>该助手直接嵌入 LoanPro 现有的 Web 门户，也就是服务坐席已经在用的同一个界面。坐席通过两个组件与 AI 助手交互：</p>
-<ul><li><strong>Account summary view（账户摘要视图）：</strong> 当坐席打开某个借款人账户时，助手会自动生成一段叙述式摘要，涵盖该账户的健康状况、近期活动和未了结的问题。原始数据由此变成一段关于借款人处境的连贯叙事。</li><li><strong>Conversational chat interface（对话式聊天界面）：</strong> 坐席可以用自然语言追问，深入查看具体的账户细节。团队把这一能力形容为让坐席「与贷款对话」。坐席在聊天界面中的每次交互都会被记录，从而保留借款人对话期间所执行操作的审计记录。</li></ul>
-<h2>实施方法</h2>
-<p>LoanPro 与 <a href="https://aws.amazon.com/ai/generative-ai/innovation-center/">AWS Generative AI Innovation Center</a>（它把 AWS 的应用科学家与客户和合作伙伴配对，以加速生成式 AI 举措）以及 AWS Premier Consulting Partner AllCloud 共同构建了该助手。三个团队一起设计并构建了这套方案。最初只是一次聚焦的合作，如今已进入生产运行，为 LoanPro 的服务坐席提供支持。</p>
-<p>这项工作分为两条并行的工作流：</p>
-<h3>工作流 1：服务坐席助手</h3>
-<p>主要工作流构建了如今已在生产环境运行的 AI 助手。关键活动包括：</p>
-<ul><li>选择并梳理 agent 需要获取的数据源（应用数据、贷款历史、借款人记录）。</li><li>开发 agent 的自主数据获取和智能动作选择功能。</li><li>反复迭代 prompt，以提升获取准确度和输出质量。</li><li>记录 LoanPro 的安全模型和集成模式，为生产路线图提供依据。</li></ul>
-<h3>工作流 2：LLM 账户规则自动化咨询</h3>
-<p>LoanPro 已有一个概念验证（POC），用大语言模型（LLM）为其 Clojure 规则引擎把自然语言转换成规则自动化代码。核心功能可用，但该方案已知有若干限制：频繁超时、缺少监控、没有部署策略。AllCloud 进行了架构评审并给出建议，把这个既有 POC 推进到可上生产的状态，包括一份书面的生产架构和风险评估。</p>
-<h2>评估流水线</h2>
-<p>一条结构化评估流水线，对照 LoanPro 领域专家（SME）建立的基准来验证 agent 的准确度。团队组装了 150 个由 SME 标注账户组成的基准集。在该基准上，他们衡量 agent 获取数据、总结发现和选择合适动作的能力，要求达到 99% 的准确率目标，agent 达成了该目标。这套框架延续到生产中，让 LoanPro 拥有一套可重复的流程来长期衡量和改进 agent 表现。</p>
-<h2>成果</h2>
-<p>部署 AI 助手带来了可衡量的运营影响：</p>
-<ul><li><strong>客户通话时长最多缩短 15%</strong>（来源：AllCloud 案例研究）。在 LoanPro 早期上线贷款机构合作伙伴的 800 多名服务专业人员中，坐席此前每次通话要花 18–20% 的时间（5–7 次点击、1–2.5 分钟）来了解账户情况。AI 助手把这份上下文整合成一次点击，每次通话节省 1 到近 2 分钟。对这些坐席而言，相当于每个坐席每工作小时最多收回 9 分钟，也就是每个工作小时约 120 小时的坐席产能。</li><li><strong>内部工单量下降近 8%</strong>（来源：LoanPro）。平台上的贷款机构报告支持升级工单减少，因为坐席在首次通话中就解决了更多问题。</li><li><strong>15 秒内生成账户摘要</strong>（来源：LoanPro 内部基准）。叙述式摘要会在打开账户后 15 秒内把原始借款人数据转成连贯的账户故事，而此前坐席需要手动浏览 3–5 分钟。</li><li><strong>一致的服务质量</strong>。该助手为平台上所有坐席提供同等水平的账户上下文和动作建议，减少了与个人经验水平相关的波动。</li><li><strong>符合合规要求的交互日志</strong>。坐席通过 AI 助手执行的每个动作和查询都会被记录，为借款人对话期间的交互提供可审计记录。</li><li><strong>负责任的 AI 控制</strong>。<a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 对 agent 响应应用内容过滤和 grounding 校验，与 LoanPro 的合规护栏和基于角色的访问控制（RBAC）一起，确保输出在到达服务坐席和借款人之前符合策略。</li></ul>
-<blockquote>“AI 助手改变了服务坐席的工作方式。坐席不再需要把每次通话的头几分钟花在浏览界面和拼装上下文上，而是打开账户就能立刻看到全貌，并附有关于下一步该做什么的规范性建议。这份时间节省会在成千上万次通话中不断累积。”<br>        — Colin Terry，LoanPro 首席产品官</blockquote>
-<h2>展望</h2>
-<p>在服务坐席助手取得成功的基础上，LoanPro 与 AllCloud 正在扩大合作。团队正在开发更多 AI agent，把智能能力扩展到借贷工作流的更多环节，从贷款服务走向催收和放款支持等领域。</p>
-<p>模块化的多 agent 架构让这种扩展切实可行。新的 agent 可以基于同一套 Amazon Bedrock AgentCore 基础设施独立构建和部署，无需重新设计核心系统。随着 Strands Agents SDK 和 Amazon Bedrock AgentCore 持续演进，LoanPro 计划在有新能力可用时加以引入。</p>
-<h2>结语</h2>
-<p>本文展示了 LoanPro、AWS Generative AI Innovation Center 与 AllCloud 如何用 Amazon Bedrock 和 Amazon Bedrock AgentCore 构建多 agent AI 助手，帮助服务坐席更快、更一致地处理借款人来电。该方案自主获取数据、实时生成账户摘要，并推荐最佳下一步动作，把客户通话时长最多缩短了 15%。</p>
-<p>如果你正在为客户面向的工作流构建 agentic AI 方案，以下资源可供参考：</p>
-<ul><li><a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>：用于基于基础模型构建应用的完全托管服务。</li><li><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>：用于部署、管理和扩展 AI agent 的基础设施。</li><li><a href="https://strandsagents.com/">Strands Agents SDK</a>：用于构建具备工具调用能力的 AI agent 的开源框架。</li><li><a href="https://aws.amazon.com/ai/generative-ai/innovation-center/">AWS Generative AI Innovation Center</a>：借助 AWS 专家加速你的生成式 AI 之旅。</li></ul>
-<p>要开始上手，可以查看 GitHub 上的 <a href="https://github.com/strands-agents/sdk-python">Strands Agents SDK</a> 来构建多 agent 系统，查阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore.html">Amazon Bedrock AgentCore 文档</a> 了解如何大规模部署 agent，或访问 <a href="https://aws.amazon.com/ai/generative-ai/innovation-center/">AWS Generative AI Innovation Center</a> 了解 AWS 专家如何帮助加速你自己的 AI 举措。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
   </channel>

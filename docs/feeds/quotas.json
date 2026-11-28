@@ -837,7 +837,7 @@
       "free_models": [
         "**限时免费 0 积分**：`moss-vl-1.0`（Beta，文本指令和图片／视频转为文本，`POST /v1/responses`）、`moss-vl-realtime-1.0`（Beta，连续图片帧和文本转为增量文本，WebSocket `/v1/realtime`）",
         "**Nex-N2.6 API 计费**：自 2026-11-25 21:00（北京时间）起按量计费。官方六折价每百万 token 为输入 ¥0.48（缓存命中 ¥0.138）、输出 ¥1.68，实际按积分结算。",
-        "**其他付费模型**：实时交互 MOSS-Live-1.0（¥0.15/分钟＝3 积分/分钟）；TTS 系列 MOSS-TTS-2.0-Flash-Preview / moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写 moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分，高分辨率 ¥0.18/张＝3.60 积分）"
+        "**其他付费模型**：实时交互 MOSS-Live-1.0 当前标价 ¥0.15/分钟＝3 积分/分钟，官方公告自 12 月 4 日 12:00（北京时间）起区分语音／视频计费（分档价格以届时模型页为准）；TTS 系列 MOSS-TTS-2.0-Flash-Preview / moss-tts-1.5-flash / moss-tts-1.0-pro / moss-ttsd-1.0 / moss-voice-generator-1.0（¥1.20/万字符＝24 积分/万字符）；转写 moss-transcribe-diarize-pro（¥1.20/小时＝24 积分/小时）；文生图 moss-image-base-1.0 / moss-image-sft-1.0（低分辨率 ¥0.12/张＝2.40 积分，高分辨率 ¥0.18/张＝3.60 积分）"
       ],
       "tier_caveats": [
         "官方未公开统一 RPM/TPM/RPD 数值，实际限速以控制台及服务端错误码为准；`moss-vl-1.0` 走 Responses API，实时模型走 WebSocket，不能直接填入 Chat Completions 客户端",
@@ -877,7 +877,7 @@
           "https://platform.moss.cn/docs/errors-and-limits/limits"
         ]
       ],
-      "reviewed": "2026-11-26"
+      "reviewed": "2026-11-28"
     },
     {
       "rank": 19,
@@ -1133,7 +1133,7 @@
           "https://modelscope.cn/headlines/detail/342"
         ]
       ],
-      "reviewed": ""
+      "reviewed": "2026-11-28"
     },
     {
       "rank": 25,
@@ -1177,7 +1177,7 @@
           "https://platform.stepfun.com/builder-program"
         ]
       ],
-      "reviewed": "2026-11-21"
+      "reviewed": "2026-11-28"
     },
     {
       "rank": 26,
@@ -1429,9 +1429,13 @@
       "free_quota": "**Free Plan 免费层长期存在**（官方速率文档），邮箱注册即得 API Key、免信用卡；更高限额 / Batch / Flex 需升级付费 Developer plan",
       "validity": "限额按分钟与按天滚动重置",
       "free_models": [
-        "`openai/gpt-oss-120b`、`gpt-oss-20b` —— 免费层 **30 RPM / 1,000 RPD / 8K TPM**",
-        "`qwen/qwen3.6-27b`、`qwen3.8-27b`（Preview）、`meta-llama/llama-prompt-guard-2`、`groq/compound`(-mini)、`whisper-large-v3`(-turbo)、Orpheus TTS —— 免费层可用（各模型限额见官方速率文档，按组织级计量，缓存命中 token 不计入限速）",
-        "旧 Llama-3.1-8b / Llama-3.3-70b 已转 Enterprise 付费（旧“30 RPM / 14,400 RPD / 6,000 TPM 统一限额”说法已过时）"
+        "`openai/gpt-oss-120b`、`openai/gpt-oss-20b` —— 免费层 **30 RPM / 1,000 RPD / 8K TPM / 200K TPD**",
+        "`qwen/qwen3.8-27b` —— 免费层 **30 RPM / 1,000 RPD / 8K TPM / 200K TPD**",
+        "`openai/gpt-oss-safeguard-20b` —— 免费层 **3 RPM / 1,000 RPD / 2K TPM / 200K TPD**（限额明显更低）",
+        "`meta-llama/llama-prompt-guard-2-22m`、`meta-llama/llama-prompt-guard-2-86m` —— 免费层 **30 RPM / 14.4K RPD / 15K TPM / 500K TPD**",
+        "`canopylabs/orpheus-v1-english`、`canopylabs/orpheus-arabic-saudi`（TTS） —— 免费层 **10 RPM / 100 RPD / 1.2K TPM / 3.6K TPD**",
+        "`whisper-large-v3`、`whisper-large-v3-turbo`（STT） —— 免费层 **20 RPM / 2,000 RPD / 7.2K ASH / 28.8K ASD**",
+        "免费层为组织级计量、缓存命中 token 不计入限速；更高限额 / Batch / Flex 需升级 Developer plan；旧 Llama-3.1-8b / Llama-3.3-70b 未出现在免费层速率表中"
       ],
       "tier_caveats": [
         "免费层只覆盖 gpt-oss / Qwen / 部分工具模型（gpt-oss 为 30 RPM / 1,000 RPD / 8K TPM，组织级计量）；**旧 Llama-3.1-8b、Llama-3.3-70b 已转 Enterprise 付费**，按旧清单调用会扣费",
@@ -1440,11 +1444,11 @@
       "preconditions": "邮箱注册即可获取 API Key，免信用卡",
       "promotions": "**定价页已下线**：`groq.com/pricing` 现跳官方首页（2026-11-03 复核），付费档位与单价改在控制台查看；自研 LPU 硬件推理速度快。",
       "openai_compat": {
-        "summary": "30 RPM / 1,000 RPD 高速推理（免绑卡）",
         "api_key_label": "控制台申请",
         "api_key_url": "https://console.groq.com/keys",
         "base_url": "https://api.groq.com/openai/v1",
-        "models": "`openai/gpt-oss-120b`, `qwen/qwen3.6-27b`"
+        "models": "`openai/gpt-oss-120b`, `qwen/qwen3.8-27b`",
+        "summary": "30 RPM / 1,000 RPD 高速推理（免绑卡）"
       },
       "links": [
         [
@@ -1472,7 +1476,7 @@
           "https://console.groq.com/settings/limits"
         ]
       ],
-      "reviewed": "2026-09-27"
+      "reviewed": "2026-11-28"
     },
     {
       "rank": 32,
@@ -2453,7 +2457,7 @@
           "https://regolo.ai/pricing"
         ]
       ],
-      "reviewed": "2026-11-17"
+      "reviewed": "2026-11-28"
     },
     {
       "rank": 56,
@@ -2564,7 +2568,7 @@
           "https://cloud.sambanova.ai/plans"
         ]
       ],
-      "reviewed": ""
+      "reviewed": "2026-11-28"
     },
     {
       "rank": 59,
@@ -2616,7 +2620,7 @@
           "https://docs.opentyphoon.ai/en/rate-limits/"
         ]
       ],
-      "reviewed": ""
+      "reviewed": "2026-11-28"
     },
     {
       "rank": 60,
@@ -3084,13 +3088,14 @@
         "recurring"
       ],
       "in_guide": true,
-      "free_quota": "free $0/月 + 用量费：**每月 $5 免费额度**、5 并发浏览器、live view、stealth mode（含验证码求解与代理）、managed auth（3 connections）、session replay",
+      "free_quota": "free $0/月 + 用量费：**每月 $5 免费额度**、5 并发浏览器、live view、stealth mode（含验证码求解与 Kernel 托管住宅代理）、managed auth（3 connections）、session replays（1 天）、文件上传/下载、vaults & payments（3 vaults）",
       "validity": "每月 $5 额度；官方 FAQ 另写 “Your first $5 in usage is free”",
       "free_models": [
         "**无免费模型层**——免费的是云浏览器用量额度（每月 $5），浏览器时长/算力按用量计费"
       ],
       "tier_caveats": [
         "$5 额度用尽即产生费用",
+        "免费代理额度有限：hobbyist 含 5GB 免费代理、start-up 含 20GB 免费代理，free 计划仅含 stealth mode 附带的托管住宅代理；企业版代理价格由订单约定",
         "hobbyist $30/月起才升到 $10/月额度与 10 并发"
       ],
       "preconditions": "免绑卡注册（FAQ：“You can sign up without a credit card”）",
@@ -3106,7 +3111,7 @@
           "https://dashboard.onkernel.com/sign-up"
         ]
       ],
-      "reviewed": "2026-11-23"
+      "reviewed": "2026-11-28"
     },
     {
       "rank": 73,
@@ -3571,7 +3576,7 @@
           "https://app.crewai.com/"
         ]
       ],
-      "reviewed": "2026-11-23"
+      "reviewed": "2026-11-28"
     },
     {
       "rank": 85,
